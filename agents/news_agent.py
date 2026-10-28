@@ -35,8 +35,12 @@ def fetch_news(symbols, start, end, use_cache=True):
                 params["symbols"] = ",".join(symbols)
             if token:
                 params["page_token"] = token
-            r = requests.get(f"{config.ALPACA_DATA_URL}/v1beta1/news",
+            try:
+                r = requests.get(f"{config.ALPACA_DATA_URL}/v1beta1/news",
                              headers=_headers(), params=params, timeout=30)
+            except (requests.ConnectionError, requests.Timeout):
+                time.sleep(10)
+                continue
             if r.status_code == 429:
                 time.sleep(3)
                 continue

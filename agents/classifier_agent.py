@@ -56,14 +56,19 @@ def _ask_claude(symbol, headline, summary):
             symbol=symbol, headline=headline, summary=(summary or "")[:600],
             categories=", ".join(CATEGORIES))}],
     }
-    for _ in range(4):
+    for attempt in range(8):
         t0 = time.time()
-        r = requests.post("https://api.anthropic.com/v1/messages", json=body, timeout=60,
-                          headers={"x-api-key": config.ANTHROPIC_KEY,
-                                   "anthropic-version": "2023-06-01",
-                                   "content-type": "application/json"})
-        if r.status_code in (429, 529, 500):
-            time.sleep(5)
+        try:
+            r = requests.post("https://api.anthropic.com/v1/messages", json=body, timeout=60,
+                              headers={"x-api-key": config.ANTHROPIC_KEY,
+                                       "anthropic-version": "2023-06-01",
+                                       "content-type": "application/json"})
+        except (requests.ConnectionError, requests.Timeout):
+            # Network blips happen on long runs; wait and try again (up to ~4 minutes).
+            time.sleep(min(60, 2 ** attempt * 2))
+            continue
+        if r.status_code in (429, 500, 502, 503, 529):
+            time.sleep(min(60, 2 ** attempt * 2))
             continue
         r.raise_for_status()
         data = r.json()
@@ -86,7 +91,9 @@ def _ask_claude(symbol, headline, summary):
             "new_information": bool(out.get("new_information", True)),
             "model": config.CLAUDE_MODEL,
         }
-    raise RuntimeError("Claude API kept failing")
+    # Still failing after all retries: skip this one item (not cached, so the next run
+    # retries it) instead of losing hours of work.
+    return None
 
 
 _POS = r"beat|beats|tops|surpass|raise[sd]? (guidance|outlook)|upgrade|approv|record|wins?|award|" \
@@ -134,6 +141,9 @@ def classify_events(events_df, workers=8):
             return cache[key]
         if use_claude:
             res = _ask_claude(row["symbol"], row["headline"], row.get("summary", ""))
+            if res is None:
+                return {"score": 0.0, "confidence": 0.0, "category": "other",
+                        "new_information": False, "model": "unclassified"}
         else:
             res = _keyword_model(row["headline"], row.get("summary", ""))
         _save(key, res)

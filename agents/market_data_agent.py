@@ -17,8 +17,12 @@ def _fetch_range(symbol, start, end, timeframe="1Min", adjustment="raw"):
         }
         if token:
             params["page_token"] = token
-        r = requests.get(f"{config.ALPACA_DATA_URL}/v2/stocks/bars",
+        try:
+            r = requests.get(f"{config.ALPACA_DATA_URL}/v2/stocks/bars",
                          headers=_headers(), params=params, timeout=60)
+        except (requests.ConnectionError, requests.Timeout):
+            time.sleep(10)
+            continue
         if r.status_code == 429:
             time.sleep(3)
             continue

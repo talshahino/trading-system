@@ -66,6 +66,10 @@ def main():
         mode, period = "מצב דמו (נתונים סינתטיים)", "90 ימי מסחר"
         checks = {"survivorship": "לא רלוונטי בנתונים סינתטיים."}
     else:
+        if config.KEY_PROBLEMS:
+            for problem in config.KEY_PROBLEMS:
+                print(f"::error::{problem}")
+            sys.exit(1)
         from agents import market_data_agent, news_agent
         caps = {}
         if args.universe == "all":

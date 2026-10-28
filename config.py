@@ -23,11 +23,29 @@ def _load_env():
 _load_env()
 
 # --- Keys ---
-# .strip(): keys pasted from a phone often carry a hidden space or line break,
-# which makes every request fail.
-ALPACA_KEY = os.getenv("ALPACA_API_KEY_ID", "").strip()
-ALPACA_SECRET = os.getenv("ALPACA_API_SECRET_KEY", "").strip()
-ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip()
+# Keys pasted from a phone often carry hidden characters (spaces, line breaks,
+# right-to-left marks from a Hebrew keyboard). Invisible ones are removed; anything
+# else that is not plain ASCII is reported by name (never by value).
+_INVISIBLE = dict.fromkeys(map(ord, "\u200b\u200c\u200d\u200e\u200f\u202a\u202b\u202c"
+                                    "\u202d\u202e\u2066\u2067\u2068\u2069\ufeff\u00a0"))
+KEY_PROBLEMS = []
+
+
+def _key(name):
+    raw = os.getenv(name, "")
+    v = raw.translate(_INVISIBLE).strip()
+    bad = [i for i, ch in enumerate(v) if ord(ch) > 126 or ord(ch) < 33]
+    if bad:
+        KEY_PROBLEMS.append(
+            f"{name}: contains {len(bad)} non-key characters (letters/symbols such as Hebrew "
+            f"or spaces) at positions {bad[0] + 1}-{bad[-1] + 1} of {len(v)}. "
+            "Paste only the key itself.")
+    return v
+
+
+ALPACA_KEY = _key("ALPACA_API_KEY_ID")
+ALPACA_SECRET = _key("ALPACA_API_SECRET_KEY")
+ANTHROPIC_KEY = _key("ANTHROPIC_API_KEY")
 
 # --- Data ---
 ALPACA_DATA_URL = "https://data.alpaca.markets"

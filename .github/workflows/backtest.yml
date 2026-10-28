@@ -1,0 +1,109 @@
+name: Backtest
+
+# Runs the stage-1 backtest on GitHub's servers. Start it by hand from the Actions tab
+# ("Run workflow"); nothing runs automatically.
+# Keys come from the repository's Actions secrets and never appear in the code or logs:
+#   ALPACA_API_KEY_ID, ALPACA_API_SECRET_KEY, ANTHROPIC_API_KEY
+
+on:
+  workflow_dispatch:
+    inputs:
+      demo:
+        description: "Synthetic data only (no keys needed, ~1 minute) - use to check the setup"
+        type: boolean
+        default: false
+      track:
+        description: "Which track"
+        type: choice
+        options: [all, intraday, swing, position]
+        default: all
+      start:
+        description: "Start date (YYYY-MM-DD)"
+        default: "2025-10-01"
+      end:
+        description: "End date (YYYY-MM-DD). Empty = yesterday"
+        default: ""
+      max_symbols:
+        description: "Max tickers in the universe (built from the news itself)"
+        default: "150"
+
+permissions:
+  contents: write   # to save the reports back into the repository
+
+concurrency:
+  group: backtest
+  cancel-in-progress: false
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      # Downloaded news, prices and Claude classifications are kept between runs,
+      # so a second run is fast and never pays Claude twice for the same headline.
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: bt-cache-${{ github.run_id }}
+          restore-keys: bt-cache-
+
+      - name: Run backtest
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          END="${{ inputs.end }}"
+          if [ -z "$END" ]; then END=$(date -u -d "yesterday" +%F); fi
+          if [ "${{ inputs.demo }}" = "true" ]; then
+            python run_backtest.py --demo --track "${{ inputs.track }}"
+          else
+            if [ -z "$ALPACA_API_KEY_ID" ] || [ -z "$ALPACA_API_SECRET_KEY" ]; then
+              echo "::error::Missing ALPACA_API_KEY_ID / ALPACA_API_SECRET_KEY in the repository's Actions secrets"
+              exit 1
+            fi
+            python run_backtest.py --universe all --track "${{ inputs.track }}" \
+              --start "${{ inputs.start }}" --end "$END" --max-symbols "${{ inputs.max_symbols }}"
+          fi
+          echo "END_DATE=$END" >> "$GITHUB_ENV"
+
+      - name: Save data cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: bt-cache-${{ github.run_id }}
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ github.run_number }}
+          path: output/
+          if-no-files-found: warn
+
+      # Reports (HTML only, no data, no keys) are committed to reports/<date>_<run>/
+      # so every run stays in the repository's history.
+      - name: Commit reports
+        if: success()
+        run: |
+          DIR="reports/$(date -u +%F)_run${{ github.run_number }}${{ inputs.demo && '_demo' || '' }}"
+          mkdir -p "$DIR"
+          cp output/report_*.html "$DIR"/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports
+          git commit -m "Backtest reports: ${{ inputs.track }} ${{ inputs.start }} to ${END_DATE}${{ inputs.demo && ' (demo)' || '' }}"
+          git pull --rebase
+          git push

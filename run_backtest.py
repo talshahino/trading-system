@@ -163,5 +163,27 @@ def main():
         print(f"          {text}")
 
 
+def _explain(e):
+    """One plain line about what went wrong, without ever printing a key."""
+    import requests
+    if isinstance(e, requests.HTTPError) and e.response is not None:
+        code, url = e.response.status_code, e.response.url.split("?")[0]
+        if "alpaca" in url and code in (401, 403):
+            return (f"Alpaca refused the keys ({code}). Check ALPACA_API_KEY_ID / ALPACA_API_SECRET_KEY: "
+                    "they must be the Paper account keys, copied without spaces.")
+        if "anthropic" in url and code in (401, 403):
+            return f"Claude API refused the key ({code}). Check ANTHROPIC_API_KEY."
+        if "anthropic" in url and code == 400:
+            return f"Claude API rejected the request (400): {e.response.text[:300]}"
+        return f"HTTP {code} from {url}: {e.response.text[:300]}"
+    return f"{type(e).__name__}: {e}"
+
+
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:  # noqa: BLE001
+        msg = _explain(e)
+        # "::error::" makes GitHub Actions show the message on the run's summary page.
+        print(f"::error::{msg}")
+        raise

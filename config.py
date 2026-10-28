@@ -23,9 +23,11 @@ def _load_env():
 _load_env()
 
 # --- Keys ---
-ALPACA_KEY = os.getenv("ALPACA_API_KEY_ID", "")
-ALPACA_SECRET = os.getenv("ALPACA_API_SECRET_KEY", "")
-ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+# .strip(): keys pasted from a phone often carry a hidden space or line break,
+# which makes every request fail.
+ALPACA_KEY = os.getenv("ALPACA_API_KEY_ID", "").strip()
+ALPACA_SECRET = os.getenv("ALPACA_API_SECRET_KEY", "").strip()
+ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "").strip()
 
 # --- Data ---
 ALPACA_DATA_URL = "https://data.alpaca.markets"

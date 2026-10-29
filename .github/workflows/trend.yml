@@ -1,0 +1,117 @@
+name: Trend backtest
+
+# Runs the trend-following / momentum ETF backtest on GitHub's servers. Start it by hand from the Actions tab
+# ("Run workflow"); nothing runs automatically.
+# Keys come from the repository's Actions secrets and never appear in the code or logs:
+#   ALPACA_API_KEY_ID, ALPACA_API_SECRET_KEY
+
+on:
+  workflow_dispatch:
+    inputs:
+      demo:
+        description: "Synthetic data only (no keys needed, ~1 minute) - use to check the setup"
+        type: boolean
+        default: false
+      start:
+        description: "Start date (YYYY-MM-DD). Alpaca price history starts in 2016"
+        default: "2016-01-01"
+      end:
+        description: "End date (YYYY-MM-DD). Empty = yesterday"
+        default: ""
+
+permissions:
+  contents: write   # to save the reports back into the repository
+
+concurrency:
+  group: backtest
+  cancel-in-progress: false
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      # Downloaded news, prices and Claude classifications are kept between runs,
+      # so a second run is fast and never pays Claude twice for the same headline.
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: trend-cache-${{ github.run_id }}
+          restore-keys: trend-cache-
+
+      - name: Run backtest
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+          MAX_RUN_MINUTES: "320"   # stop cleanly before GitHub's limit so the cache is saved
+        run: |
+          END="${{ inputs.end }}"
+          if [ -z "$END" ]; then END=$(date -u -d "yesterday" +%F); fi
+          echo "END_DATE=$END" >> "$GITHUB_ENV"
+
+          # Live progress: every 3 minutes the last lines of the log are pushed to the
+          # 'progress' branch (log only - keys are never printed), so progress can be
+          # checked without opening the Actions page.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git worktree add --detach /tmp/progress >/dev/null 2>&1
+          ( cd /tmp/progress && git checkout -q --orphan progress && git rm -rq --cached . && \
+            find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} + ) || true
+          touch run.log
+          (
+            while true; do
+              sleep 180
+              { echo "run ${{ github.run_number }} - updated $(date -u '+%F %T') UTC"; echo; \
+                tail -n 150 run.log | tr '\r' '\n' | tail -n 150; } > /tmp/progress/log.txt
+              ( cd /tmp/progress && git add log.txt && git commit -qm "progress run ${{ github.run_number }}" \
+                && git push -qf origin HEAD:progress ) >/dev/null 2>&1 || true
+            done
+          ) &
+
+          set -o pipefail
+          if [ "${{ inputs.demo }}" = "true" ]; then
+            python -u run_trend.py --demo 2>&1 | tee run.log
+          else
+            python -u run_trend.py --start "${{ inputs.start }}" --end "$END" 2>&1 | tee run.log
+          fi
+
+      - name: Save data cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: trend-cache-${{ github.run_id }}
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ github.run_number }}
+          path: output/
+          if-no-files-found: warn
+
+      # Reports (HTML only, no data, no keys) are committed to reports/<date>_<run>/
+      # so every run stays in the repository's history.
+      - name: Commit reports
+        if: success() && hashFiles('output/report_*.html') != ''
+        run: |
+          DIR="reports/$(date -u +%F)_trend_run${{ github.run_number }}${{ inputs.demo && '_demo' || '' }}"
+          mkdir -p "$DIR"
+          cp output/report_*.html "$DIR"/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports
+          git commit -m "Trend backtest report: ${{ inputs.start }} to ${END_DATE}${{ inputs.demo && ' (demo)' || '' }}"
+          git pull --rebase
+          git push

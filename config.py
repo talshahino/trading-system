@@ -110,6 +110,26 @@ TRACKS = {
     "position": {"label": "דו־שבועי", "unit": "d", "horizons": [7, 10],
                  "default_h": 10, "unit_he": "ימים"},
 }
+# Smart exits. Besides a plain time exit, every trade is also replayed with a stop-loss and
+# a profit target sized to the stock's own volatility over the holding period:
+#   stop   = k_stop   x sigma,  target = k_target x sigma,  sigma = daily vol x sqrt(days held)
+# The trade exits at whichever is hit first; otherwise at the end of the holding period.
+# Same bar touches both -> counted as a stop (conservative). A gap through the stop fills
+# at the open, i.e. worse than the stop.
+#   trailing: the stop follows the best price reached (locks in gains), no fixed target.
+EXIT_MODES = {
+    "time":    None,                # reference only: exit at the end of the holding period
+    "st1x2":   (1.0, 2.0, False),   # tight stop, target twice as far
+    "st15x3":  (1.5, 3.0, False),   # wider stop, target twice as far
+    "trail1":  (1.0, None, True),   # trailing stop 1 sigma behind the best price
+    "trail15": (1.5, None, True),   # trailing stop 1.5 sigma behind the best price
+}
+EXIT_LABELS_HE = {"time": "יציאה בסוף הזמן (להשוואה בלבד)", "st1x2": "סטופ 1σ, יעד 2σ",
+                  "st15x3": "סטופ 1.5σ, יעד 3σ", "trail1": "סטופ נגרר 1σ", "trail15": "סטופ נגרר 1.5σ"}
+# The user's rule: exits must be smart. The plain time exit is shown for comparison but
+# is never chosen as the trading rule unless this is set to 1.
+ALLOW_TIME_EXIT = os.getenv("ALLOW_TIME_EXIT", "0") == "1"
+
 # Multi-day tracks are measured against the market (SPY), as if each trade were hedged
 # with an opposite SPY position. This is the cost of that hedge, in bps.
 HEDGE_COST_BPS = float(os.getenv("HEDGE_COST_BPS", "2"))

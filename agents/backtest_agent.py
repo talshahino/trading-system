@@ -21,6 +21,51 @@ def rc(h):
     """Return-column name for horizon h in the active track, e.g. ret_15m or ret_3d."""
     return f"ret_{h}{TRACK['unit']}"
 
+def _sigma(daily_vol, h):
+    days = h / 390 if TRACK["unit"] == "m" else h
+    v = daily_vol if daily_vol == daily_vol and daily_vol else 0.03
+    return v * np.sqrt(days)
+
+
+def _path_exit(entry_px, o, hi, lo, c, direction, stop_pct, target_pct, gap_fill, trailing=False):
+    """Walk bars in order; return (bar offset, exit price) of the first stop/target touch,
+    or (None, None) if neither is hit. direction +1 long, -1 short. With trailing=True the
+    stop follows the best price seen so far (updated after each bar, so a bar can't both
+    set a new high and trigger the stop it created)."""
+    best = entry_px
+    target = None
+    if target_pct is not None:
+        target = entry_px * (1 + target_pct) if direction > 0 else entry_px * (1 - target_pct)
+    for k in range(len(c)):
+        stop = best * (1 - stop_pct) if direction > 0 else best * (1 + stop_pct)
+        if gap_fill and k > 0:
+            if direction > 0 and o[k] <= stop:
+                return k, o[k]
+            if direction < 0 and o[k] >= stop:
+                return k, o[k]
+        hit_stop = lo[k] <= stop if direction > 0 else hi[k] >= stop
+        hit_tgt = target is not None and (hi[k] >= target if direction > 0 else lo[k] <= target)
+        if hit_stop:
+            return k, stop
+        if hit_tgt:
+            return k, target
+        if trailing:
+            best = max(best, hi[k]) if direction > 0 else min(best, lo[k])
+    return None, None
+
+
+def exit_col(h, mode, side):
+    return f"x_{h}{TRACK['unit']}_{mode}_{side}"
+
+
+def pos_ret(df, h, mode):
+    """Position return (already signed) for each row, trading in the direction of its score."""
+    long_ = np.sign(df["score"]) > 0
+    if mode == "time":
+        return np.sign(df["score"]) * df[rc(h)]
+    return pd.Series(np.where(long_, df[exit_col(h, mode, "L")], df[exit_col(h, mode, "S")]),
+                     index=df.index)
+
 
 def _in_rth(ts_utc):
     t = ts_utc.tz_convert(NY)
@@ -59,6 +104,7 @@ def measure_reactions(events, bars_by_symbol):
         day = entry_t.tz_convert(NY).date()
         rec["entry_time"], rec["entry_px"] = entry_t, entry_px
 
+        O, H, L, C = (bars[k].to_numpy() for k in ("o", "h", "l", "c"))
         for h in config.HORIZONS_MIN:
             # Bars are stamped by their start; the bar starting at entry+h-1 closes at entry+h.
             exit_target = entry_t + pd.Timedelta(minutes=h - 1)
@@ -66,7 +112,17 @@ def measure_reactions(events, bars_by_symbol):
             exit_t = bars.index[j]
             if exit_t.tz_convert(NY).date() != day or exit_t.tz_convert(NY).hour >= 16:
                 continue  # don't hold overnight
-            rec[f"ret_{h}m"] = bars["c"].iat[j] / entry_px - 1
+            raw = C[j] / entry_px - 1
+            rec[f"ret_{h}m"] = raw
+            sig = _sigma(getattr(ev, "daily_vol", np.nan), h)
+            for mode, ks in config.EXIT_MODES.items():
+                if ks is None:
+                    continue
+                for side, d in (("L", 1), ("S", -1)):
+                    k, px = _path_exit(entry_px, O[idx:j + 1], H[idx:j + 1], L[idx:j + 1], C[idx:j + 1],
+                                       d, ks[0] * sig, None if ks[1] is None else ks[1] * sig,
+                                       gap_fill=False, trailing=ks[2])
+                    rec[exit_col(h, mode, side)] = d * ((px if k is not None else C[j]) / entry_px - 1)
         rows.append(rec)
     return pd.DataFrame(rows)
 
@@ -101,17 +157,35 @@ def measure_reactions_daily(events, daily_by_symbol, market_daily):
         entry_day = bars.index[i]
         entry_px = bars["o"].iat[i]
         rec["entry_time"], rec["entry_px"] = opens[i].tz_convert("UTC"), entry_px
+        O, H, L, C = (bars[k].to_numpy() for k in ("o", "h", "l", "c"))
+
+        def mret(d0, d1):
+            if mkt is not None and d0 in mkt.index and d1 in mkt.index:
+                return mkt.at[d1, "c"] / mkt.at[d0, "o"] - 1
+            return np.nan
+
         for h in TRACK["horizons"]:
             j = i + h - 1
             if j >= len(bars):
                 continue
             exit_day = bars.index[j]
-            raw = bars["c"].iat[j] / entry_px - 1
-            m_ret = np.nan
-            if mkt is not None and entry_day in mkt.index and exit_day in mkt.index:
-                m_ret = mkt.at[exit_day, "c"] / mkt.at[entry_day, "o"] - 1
+            raw = C[j] / entry_px - 1
+            m_ret = mret(entry_day, exit_day)
             rec[f"raw_{h}d"] = raw
             rec[rc(h)] = raw - m_ret if not np.isnan(m_ret) else np.nan
+            sig = _sigma(getattr(ev, "daily_vol", np.nan), h)
+            for mode, ks in config.EXIT_MODES.items():
+                if ks is None:
+                    continue
+                for side, d in (("L", 1), ("S", -1)):
+                    k, px = _path_exit(entry_px, O[i:j + 1], H[i:j + 1], L[i:j + 1], C[i:j + 1],
+                                       d, ks[0] * sig, None if ks[1] is None else ks[1] * sig,
+                                       gap_fill=True, trailing=ks[2])
+                    end = j if k is None else i + k
+                    px = C[j] if k is None else px
+                    m = mret(entry_day, bars.index[end])
+                    # Hedged: the stock's move minus the market's move over the days actually held.
+                    rec[exit_col(h, mode, side)] = d * ((px / entry_px - 1) - m) if not np.isnan(m) else np.nan
         rows.append(rec)
     return pd.DataFrame(rows)
 
@@ -149,11 +223,12 @@ def select(df, threshold, min_conf=0.0, require_new=False, category=None):
     return sel
 
 
-def strategy_returns(df, horizon, threshold, min_conf=0.0, require_new=False, category=None):
+def strategy_returns(df, horizon, threshold, min_conf=0.0, require_new=False, category=None,
+                     exit="time"):
     """Trade in the direction of the score when |score| >= threshold (optionally only one
     type of news). Net of a per-stock cost that depends on its liquidity score."""
     sel = select(df, threshold, min_conf, require_new, category)
-    return np.sign(sel["score"]) * sel[rc(horizon)] - _cost(sel)
+    return pos_ret(sel, horizon, exit) - _cost(sel)
 
 
 def position_size(sel, horizon):
@@ -182,7 +257,7 @@ def dollar_results(df, rule):
     the day stops once its loss hits the limit, and everything halts once the balance
     falls MAX_DRAWDOWN_PCT below the starting balance."""
     sel = select(df, rule["threshold"], rule["min_conf"], rule["require_new"], rule.get("category"))
-    sel = sel.assign(net=np.sign(sel["score"]) * sel[rc(rule["horizon"])] - _cost(sel))
+    sel = sel.assign(net=pos_ret(sel, rule["horizon"], rule.get("exit", "time")) - _cost(sel))
     sel = sel.assign(base_size=position_size(sel, rule["horizon"]))
     sel = sel.dropna(subset=["net"]).sort_values("entry_time")
 
@@ -245,7 +320,7 @@ def band_table(df, rule, column, width=10):
     how many bps the average trade changes per +10 points of that score."""
     sel = select(df.dropna(subset=["entry_px"]), rule["threshold"], rule["min_conf"],
                  rule["require_new"], rule.get("category"))
-    sel = sel.assign(net=np.sign(sel["score"]) * sel[rc(rule["horizon"])] - _cost(sel))
+    sel = sel.assign(net=pos_ret(sel, rule["horizon"], rule.get("exit", "time")) - _cost(sel))
     sel = sel.dropna(subset=["net", column])
     rows = []
     bands = pd.cut(sel[column], _edges(width), include_lowest=True, right=False)
@@ -295,10 +370,11 @@ def walk_forward(df):
             for conf in [0.0, 0.6, 0.8]:
                 for new in [False, True]:
                     for cat in categories:
-                        s = _trade_stats(strategy_returns(train, h, th, conf, new, cat))
-                        if s["trades"] >= config.MIN_TRADES_FOR_RULE:
-                            grid.append({"horizon": h, "threshold": th, "min_conf": conf,
-                                         "new_only": new, "category": cat, **s})
+                        for ex in [m for m in config.EXIT_MODES if m != "time" or config.ALLOW_TIME_EXIT]:
+                            s = _trade_stats(strategy_returns(train, h, th, conf, new, cat, ex))
+                            if s["trades"] >= config.MIN_TRADES_FOR_RULE:
+                                grid.append({"horizon": h, "threshold": th, "min_conf": conf,
+                                             "new_only": new, "category": cat, "exit": ex, **s})
     if not grid:
         return {"split": split, "split_moved": split_moved, "uses_llm": uses_llm,
                 "grid": pd.DataFrame(), "best": None,
@@ -308,7 +384,8 @@ def walk_forward(df):
     best = g.sort_values("t_stat", ascending=False).iloc[0]
     rule = dict(horizon=int(best["horizon"]), threshold=float(best["threshold"]),
                 min_conf=float(best["min_conf"]), require_new=bool(best["new_only"]),
-                category=best["category"] if isinstance(best["category"], str) else None)
+                category=best["category"] if isinstance(best["category"], str) else None,
+                exit=str(best["exit"]))
     contamination = None
     if uses_llm:
         # Same rule, before vs after the model's knowledge cutoff. A big drop after the
@@ -316,8 +393,13 @@ def walk_forward(df):
         before = _trade_stats(strategy_returns(d[d["time"] < cutoff], **rule))
         after = _trade_stats(strategy_returns(d[d["time"] >= cutoff], **rule))
         contamination = {"before": before, "after": after}
+    exit_rows = []
+    for ex in config.EXIT_MODES:
+        st = _trade_stats(strategy_returns(test, **{**rule, "exit": ex}))
+        exit_rows.append({"exit_he": config.EXIT_LABELS_HE.get(ex, ex), **st})
     return {
         "split": split, "split_moved": split_moved, "uses_llm": uses_llm,
+        "exit_compare": pd.DataFrame(exit_rows),
         "contamination": contamination, "best": rule, "grid": g,
         "train": _trade_stats(strategy_returns(train, **rule)),
         "test": _trade_stats(strategy_returns(test, **rule)),

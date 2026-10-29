@@ -137,13 +137,20 @@ def write_report(results, wf, react, cats, mode_label, period, bands=None, check
         rule_html = (f"<p>הכלל שנבחר: כניסה בכיוון הסנטימנט כש־|ציון| ≥ {b['threshold']}, "
                      f"ביטחון ≥ {b['min_conf']}, {'רק מידע חדש, ' if b['require_new'] else ''}"
                      f"{('רק חדשות מסוג ' + html.escape(b['category']) + ', ') if b.get('category') else ''}"
-                     f"יציאה אחרי {b['horizon']} {TRACK['unit_he']}. נבדקו {wf['configs_tried']} שילובים.</p>")
+                     f"{config.EXIT_LABELS_HE.get(b.get('exit', 'time'), '')}, "
+                     f"החזקה מקסימלית {b['horizon']} {TRACK['unit_he']}. נבדקו {wf['configs_tried']} שילובים.</p>")
         cmp = pd.DataFrame([{"period": "אימון (בחירת הכלל)", **wf["train"]},
                             {"period": "מבחן (לא נראה)", **wf["test"]}])
         rule_html += _table(cmp, {"period": "תקופה", "trades": "עסקאות", "avg_bps": "ממוצע bps",
                                   "win_rate": "אחוז הצלחה", "t_stat": "t", "total_pct": "סה״כ %",
                                   "worst_bps": "הגרועה bps"},
                             {"trades": "int", "win_rate": "pct"})
+        if wf.get("exit_compare") is not None:
+            ec = wf["exit_compare"]
+            rule_html += ("<p class='mut'>אותו כלל בתקופת המבחן, בכל אחת משיטות היציאה:</p>" +
+                          _table(ec, {"exit_he": "יציאה", "trades": "עסקאות", "avg_bps": "ממוצע bps",
+                                      "win_rate": "הצלחה", "t_stat": "t", "worst_bps": "הגרועה bps"},
+                                 {"trades": "int", "win_rate": "pct"}))
         u = wf["test_usd"]
         halt = (f" <b>המסחר נעצר ב־{u['halted_on']} אחרי ירידה של {config.MAX_DRAWDOWN_PCT * 100:g}% מיתרת הפתיחה.</b>"
                 if u.get("halted_on") else "")

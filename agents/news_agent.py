@@ -13,50 +13,84 @@ def _headers():
     return {"APCA-API-KEY-ID": config.ALPACA_KEY, "APCA-API-SECRET-KEY": config.ALPACA_SECRET}
 
 
+def _fetch_range(symbols, start_iso, end_iso, label):
+    """All news between two ISO timestamps, following page tokens."""
+    items, token, net_fail = [], None, 0
+    while True:
+        params = {"start": start_iso, "end": end_iso, "limit": 50, "sort": "asc",
+                  "include_content": "false"}
+        if symbols:
+            params["symbols"] = ",".join(symbols)
+        if token:
+            params["page_token"] = token
+        try:
+            r = requests.get(f"{config.ALPACA_DATA_URL}/v1beta1/news",
+                             headers=_headers(), params=params, timeout=30)
+        except (requests.ConnectionError, requests.Timeout):
+            net_fail += 1
+            if net_fail > 30:  # ~5 minutes of no network: give up with a clear error
+                raise
+            time.sleep(10)
+            continue
+        if r.status_code == 429:
+            time.sleep(3)
+            continue
+        r.raise_for_status()
+        data = r.json()
+        items.extend(data.get("news", []))
+        token = data.get("next_page_token")
+        if len(items) % 5000 < 50:
+            print(f"  news {label}: {len(items)} items so far", flush=True)
+        if not token:
+            return items
+        time.sleep(0.3)  # free plan allows 200 requests a minute
+
+
+def _migrate_legacy(tag):
+    """Older versions cached one big file per date range. Split any such file into the
+    monthly files used now, so that work is never downloaded twice."""
+    for f in config.CACHE_DIR.glob(f"news_{tag}_????-??-??_????-??-??.json"):
+        try:
+            _, _, a, b = f.stem.split("_", 3)
+            a, b = pd.Timestamp(a), pd.Timestamp(b)
+            items = json.loads(f.read_text())
+        except Exception:  # noqa: BLE001
+            continue
+        by_month = {}
+        for it in items:
+            by_month.setdefault(it["created_at"][:7], []).append(it)
+        for m in pd.period_range(a, b, freq="M"):
+            covered = m.start_time >= a and m.end_time.normalize() <= b
+            out = config.CACHE_DIR / f"news_{tag}_{m}.json"
+            if covered and not out.exists():
+                out.write_text(json.dumps(by_month.get(str(m), [])))
+
+
 def fetch_news(symbols, start, end, use_cache=True):
     """Return a DataFrame: id, time (UTC), headline, summary, source, symbols(list).
-    symbols=None pulls ALL news in the period (used to build a survivorship-free universe)."""
-    tag = "ALL" if not symbols else '-'.join(sorted(symbols))[:80]
-    key = f"news_{tag}_{start}_{end}.json"
-    cache_file = config.CACHE_DIR / key
-    if use_cache and cache_file.exists():
-        items = json.loads(cache_file.read_text())
-    else:
-        items, token = [], None
-        while True:
-            params = {
-                "start": f"{start}T00:00:00Z",
-                "end": f"{end}T23:59:59Z",
-                "limit": 50,
-                "sort": "asc",
-                "include_content": "false",
-            }
-            if symbols:
-                params["symbols"] = ",".join(symbols)
-            if token:
-                params["page_token"] = token
-            try:
-                r = requests.get(f"{config.ALPACA_DATA_URL}/v1beta1/news",
-                             headers=_headers(), params=params, timeout=30)
-            except (requests.ConnectionError, requests.Timeout):
-                net_fail = locals().get('net_fail', 0) + 1
-                if net_fail > 30:  # ~5 minutes of no network: give up with a clear error
-                    raise
-                time.sleep(10)
-                continue
-            if r.status_code == 429:
-                time.sleep(3)
-                continue
-            r.raise_for_status()
-            data = r.json()
-            items.extend(data.get("news", []))
-            token = data.get("next_page_token")
-            print(f"  news: {len(items)} items so far", end="\r")
-            if not token:
-                break
-            time.sleep(0.35)  # stay under the free-plan rate limit (200/min)
-        print()
-        cache_file.write_text(json.dumps(items))
+    symbols=None pulls ALL news in the period (used to build a survivorship-free universe).
+    Cached one file per calendar month, so a later run with a newer end date only
+    downloads the months it has not seen."""
+    tag = "ALL" if not symbols else "-".join(sorted(symbols))[:80]
+    if use_cache:
+        _migrate_legacy(tag)
+    start_ts, end_ts = pd.Timestamp(start), pd.Timestamp(end)
+    today = pd.Timestamp.utcnow().tz_localize(None).normalize()
+    items = []
+    for m in pd.period_range(start_ts, end_ts, freq="M"):
+        m_start, m_end = m.start_time, m.end_time.normalize()
+        full_month = start_ts <= m_start and m_end <= end_ts and m_end < today
+        f = config.CACHE_DIR / f"news_{tag}_{m}.json"
+        if use_cache and full_month and f.exists():
+            month_items = json.loads(f.read_text())
+            print(f"  news {m}: {len(month_items)} items (cached)", flush=True)
+        else:
+            a, b = max(m_start, start_ts), min(m_end, end_ts)
+            month_items = _fetch_range(symbols, f"{a:%Y-%m-%d}T00:00:00Z", f"{b:%Y-%m-%d}T23:59:59Z", str(m))
+            print(f"  news {m}: {len(month_items)} items (downloaded)", flush=True)
+            if full_month:
+                f.write_text(json.dumps(month_items))
+        items.extend(month_items)
 
     if not items:
         return pd.DataFrame(columns=["id", "time", "headline", "summary", "source", "symbols"])

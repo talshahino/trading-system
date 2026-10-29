@@ -66,17 +66,38 @@ jobs:
         run: |
           END="${{ inputs.end }}"
           if [ -z "$END" ]; then END=$(date -u -d "yesterday" +%F); fi
+          echo "END_DATE=$END" >> "$GITHUB_ENV"
+
+          # Live progress: every 3 minutes the last lines of the log are pushed to the
+          # 'progress' branch (log only - keys are never printed), so progress can be
+          # checked without opening the Actions page.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git worktree add --detach /tmp/progress >/dev/null 2>&1
+          ( cd /tmp/progress && git checkout -q --orphan progress && git rm -rq --cached . && \
+            find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} + ) || true
+          touch run.log
+          (
+            while true; do
+              sleep 180
+              { echo "run ${{ github.run_number }} - updated $(date -u '+%F %T') UTC"; echo; \
+                tail -n 150 run.log | tr '\r' '\n' | tail -n 150; } > /tmp/progress/log.txt
+              ( cd /tmp/progress && git add log.txt && git commit -qm "progress run ${{ github.run_number }}" \
+                && git push -qf origin HEAD:progress ) >/dev/null 2>&1 || true
+            done
+          ) &
+
+          set -o pipefail
           if [ "${{ inputs.demo }}" = "true" ]; then
-            python run_backtest.py --demo --track "${{ inputs.track }}"
+            python -u run_backtest.py --demo --track "${{ inputs.track }}" 2>&1 | tee run.log
           else
             if [ -z "$ALPACA_API_KEY_ID" ] || [ -z "$ALPACA_API_SECRET_KEY" ]; then
               echo "::error::Missing ALPACA_API_KEY_ID / ALPACA_API_SECRET_KEY in the repository's Actions secrets"
               exit 1
             fi
-            python run_backtest.py --universe all --track "${{ inputs.track }}" \
-              --start "${{ inputs.start }}" --end "$END" --max-symbols "${{ inputs.max_symbols }}"
+            python -u run_backtest.py --universe all --track "${{ inputs.track }}" \
+              --start "${{ inputs.start }}" --end "$END" --max-symbols "${{ inputs.max_symbols }}" 2>&1 | tee run.log
           fi
-          echo "END_DATE=$END" >> "$GITHUB_ENV"
 
       - name: Save data cache
         if: always()

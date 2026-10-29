@@ -236,10 +236,18 @@ def classify_events(events_df, workers=8):
     rows = events_df.to_dict("records")
     tag = config.CLAUDE_MODEL if use_claude else "keywords"
 
+    done = {"n": 0}
+    lock = threading.Lock()
+    total_new = sum(1 for r in rows if f"{tag}|{r['id']}|{r['symbol']}" not in cache)
+
     def work(row):
         key = f"{tag}|{row['id']}|{row['symbol']}"
         if key in cache:
             return cache[key]
+        with lock:
+            done["n"] += 1
+            if done["n"] % 250 == 0 or done["n"] == total_new:
+                print(f"  classified {done['n']}/{total_new} new headlines", flush=True)
         if use_claude:
             res = _ask_claude(row["symbol"], row["headline"], row.get("summary", ""))
             if res is None:

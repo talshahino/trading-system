@@ -48,21 +48,49 @@ def _save(key, result):
         f.write(json.dumps({"key": key, "result": result}) + "\n")
 
 
-def _ask_claude(symbol, headline, summary):
-    body = {
+def _body(symbol, headline, summary):
+    return {
         "model": config.CLAUDE_MODEL,
         "max_tokens": 150,
         "messages": [{"role": "user", "content": PROMPT.format(
             symbol=symbol, headline=headline, summary=(summary or "")[:600],
             categories=", ".join(CATEGORIES))}],
     }
+
+
+def _headers():
+    return {"x-api-key": config.ANTHROPIC_KEY, "anthropic-version": "2023-06-01",
+            "content-type": "application/json"}
+
+
+def _parse(message, meta):
+    """Turn a Claude message into our result dict (or a 'no opinion' result if unreadable)."""
+    usage = message.get("usage", {})
+    meta = {"input_tokens": usage.get("input_tokens", 0),
+            "output_tokens": usage.get("output_tokens", 0), **meta}
+    text = "".join(b.get("text", "") for b in message.get("content", []) if b.get("type") == "text")
+    m = re.search(r"\{.*\}", text, re.S)
+    try:
+        out = json.loads(m.group(0))
+        return {**meta,
+                "score": max(-1.0, min(1.0, float(out.get("score", 0)))),
+                "confidence": max(0.0, min(1.0, float(out.get("confidence", 0)))),
+                "category": out.get("category", "other") if out.get("category") in CATEGORIES else "other",
+                "new_information": bool(out.get("new_information", True)),
+                "model": config.CLAUDE_MODEL}
+    except (AttributeError, ValueError, TypeError):
+        return {"score": 0.0, "confidence": 0.0, "category": "other",
+                "new_information": False, "model": config.CLAUDE_MODEL, **meta}
+
+
+def _ask_claude(symbol, headline, summary):
+    """One live call (used for small jobs, and later for real-time news)."""
+    body = _body(symbol, headline, summary)
     for attempt in range(8):
         t0 = time.time()
         try:
             r = requests.post("https://api.anthropic.com/v1/messages", json=body, timeout=60,
-                              headers={"x-api-key": config.ANTHROPIC_KEY,
-                                       "anthropic-version": "2023-06-01",
-                                       "content-type": "application/json"})
+                              headers=_headers())
         except (requests.ConnectionError, requests.Timeout):
             # Network blips happen on long runs; wait and try again (up to ~4 minutes).
             time.sleep(min(60, 2 ** attempt * 2))
@@ -71,29 +99,102 @@ def _ask_claude(symbol, headline, summary):
             time.sleep(min(60, 2 ** attempt * 2))
             continue
         r.raise_for_status()
-        data = r.json()
-        usage = data.get("usage", {})
-        meta = {"input_tokens": usage.get("input_tokens", 0),
-                "output_tokens": usage.get("output_tokens", 0),
-                "latency_ms": int((time.time() - t0) * 1000)}
-        text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
-        m = re.search(r"\{.*\}", text, re.S)
-        try:
-            out = json.loads(m.group(0))
-        except (AttributeError, ValueError):
-            # Unreadable answer: record it as "no opinion" instead of crashing the run.
-            return {"score": 0.0, "confidence": 0.0, "category": "other",
-                    "new_information": False, "model": config.CLAUDE_MODEL, **meta}
-        return {**meta,
-            "score": max(-1.0, min(1.0, float(out.get("score", 0)))),
-            "confidence": max(0.0, min(1.0, float(out.get("confidence", 0)))),
-            "category": out.get("category", "other") if out.get("category") in CATEGORIES else "other",
-            "new_information": bool(out.get("new_information", True)),
-            "model": config.CLAUDE_MODEL,
-        }
+        return _parse(r.json(), {"latency_ms": int((time.time() - t0) * 1000), "batch": False})
     # Still failing after all retries: skip this one item (not cached, so the next run
     # retries it) instead of losing hours of work.
     return None
+
+
+# ---------- Batch mode: thousands of headlines in one job, half the price ----------
+_PENDING_FILE = config.CACHE_DIR / "pending_batches.json"
+BATCH_URL = "https://api.anthropic.com/v1/messages/batches"
+
+
+def _api(method, url, **kw):
+    for attempt in range(8):
+        try:
+            r = requests.request(method, url, headers=_headers(), timeout=120, **kw)
+        except (requests.ConnectionError, requests.Timeout):
+            time.sleep(min(60, 2 ** attempt * 2))
+            continue
+        if r.status_code in (429, 500, 502, 503, 529):
+            time.sleep(min(60, 2 ** attempt * 2))
+            continue
+        r.raise_for_status()
+        return r
+    raise RuntimeError(f"Claude batch API unreachable: {method} {url}")
+
+
+def _load_pending():
+    try:
+        return json.loads(_PENDING_FILE.read_text())
+    except (FileNotFoundError, ValueError):
+        return []
+
+
+def _save_pending(pending):
+    _PENDING_FILE.write_text(json.dumps(pending))
+
+
+def _collect(batch_id, keymap, cache):
+    """Download a finished batch and cache every successful result."""
+    info = _api("GET", f"{BATCH_URL}/{batch_id}").json()
+    got = 0
+    r = _api("GET", info["results_url"])
+    for line in r.text.splitlines():
+        if not line.strip():
+            continue
+        rec = json.loads(line)
+        key = keymap.get(rec.get("custom_id"))
+        res = rec.get("result", {})
+        if key and res.get("type") == "succeeded":
+            out = _parse(res["message"], {"latency_ms": 0, "batch": True})
+            cache[key] = out
+            _save(key, out)
+            got += 1
+    return got
+
+
+def _run_batches(todo, cache):
+    """todo: list of (key, row). Submits in chunks, waits, caches results.
+    Unfinished batches are remembered in pending_batches.json and picked up next run."""
+    pending = _load_pending()
+    # 1. Finish anything a previous run left behind.
+    for b in list(pending):
+        info = _api("GET", f"{BATCH_URL}/{b['id']}").json()
+        if info.get("processing_status") == "ended":
+            print(f"  collecting earlier batch {b['id']}: {_collect(b['id'], b['keys'], cache)} results")
+            pending.remove(b)
+    _save_pending(pending)
+    waiting = {k for b in pending for k in b["keys"].values()}
+    todo = [(k, row) for k, row in todo if k not in cache and k not in waiting]
+
+    # 2. Submit the rest.
+    for i in range(0, len(todo), config.BATCH_CHUNK):
+        chunk = todo[i:i + config.BATCH_CHUNK]
+        keys = {f"r{i + j}": k for j, (k, _) in enumerate(chunk)}
+        reqs = [{"custom_id": cid, "params": _body(row["symbol"], row["headline"], row.get("summary", ""))}
+                for cid, (_, row) in zip(keys, chunk)]
+        info = _api("POST", BATCH_URL, json={"requests": reqs}).json()
+        pending.append({"id": info["id"], "keys": keys})
+        _save_pending(pending)
+        print(f"  submitted batch {info['id']} ({len(reqs)} headlines)")
+
+    # 3. Wait for them.
+    deadline = time.time() + config.BATCH_MAX_WAIT_MIN * 60
+    while pending and time.time() < deadline:
+        time.sleep(config.BATCH_POLL_SEC)
+        for b in list(pending):
+            info = _api("GET", f"{BATCH_URL}/{b['id']}").json()
+            c = info.get("request_counts", {})
+            print(f"  batch {b['id']}: {info.get('processing_status')} "
+                  f"(done {c.get('succeeded', 0) + c.get('errored', 0)}/{len(b['keys'])})")
+            if info.get("processing_status") == "ended":
+                print(f"  collected {_collect(b['id'], b['keys'], cache)} results")
+                pending.remove(b)
+                _save_pending(pending)
+    if pending:
+        print(f"  {len(pending)} batch(es) still processing; the next run will collect them.")
 
 
 _POS = r"beat|beats|tops|surpass|raise[sd]? (guidance|outlook)|upgrade|approv|record|wins?|award|" \
@@ -125,7 +226,7 @@ def _keyword_model(headline, summary):
             "category": cat, "new_information": True, "model": "keywords"}
 
 
-_USAGE_COLS = ["input_tokens", "output_tokens", "latency_ms"]
+_USAGE_COLS = ["input_tokens", "output_tokens", "latency_ms", "batch"]
 
 
 def classify_events(events_df, workers=8):
@@ -150,6 +251,12 @@ def classify_events(events_df, workers=8):
         return res
 
     print(f"  classifying {len(rows)} events with {'Claude (' + tag + ')' if use_claude else 'keyword fallback'}")
+    if use_claude and config.USE_BATCH:
+        todo = [(f"{tag}|{r['id']}|{r['symbol']}", r) for r in rows]
+        todo = [(k, r) for k, r in todo if k not in cache]
+        if len(todo) >= config.BATCH_MIN:
+            print(f"  {len(todo)} new headlines -> batch mode (half price)")
+            _run_batches(todo, cache)
     with ThreadPoolExecutor(max_workers=workers if use_claude else 1) as ex:
         results = list(ex.map(work, rows))
     out = events_df.copy()

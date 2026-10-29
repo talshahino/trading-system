@@ -63,6 +63,13 @@ MODEL_KNOWLEDGE_CUTOFF = os.getenv("MODEL_KNOWLEDGE_CUTOFF", "2026-06-30")
 # USD per million tokens, used for the cost estimate (Haiku 5.5, prompts under 100K tokens).
 CLAUDE_INPUT_USD_PER_MTOK = float(os.getenv("CLAUDE_INPUT_USD_PER_MTOK", "0.10"))
 CLAUDE_OUTPUT_USD_PER_MTOK = float(os.getenv("CLAUDE_OUTPUT_USD_PER_MTOK", "0.50"))
+# Batch mode for historical runs: many headlines in one job, half the price, usually done
+# within an hour. Live trading always uses single calls.
+USE_BATCH = os.getenv("USE_BATCH", "1") == "1"
+BATCH_MIN = int(os.getenv("BATCH_MIN", "200"))           # smaller jobs go one by one
+BATCH_CHUNK = int(os.getenv("BATCH_CHUNK", "10000"))     # headlines per batch
+BATCH_POLL_SEC = int(os.getenv("BATCH_POLL_SEC", "60"))
+BATCH_MAX_WAIT_MIN = int(os.getenv("BATCH_MAX_WAIT_MIN", "240"))
 
 # --- Backtest assumptions ---
 # Seconds between news publication and our order reaching the market (realistic: 30-90s).

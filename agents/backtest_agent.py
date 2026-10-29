@@ -195,6 +195,27 @@ def _cost(sel):
     return (sel["cost_bps"] + extra) / 1e4
 
 
+def _borrow_rate(df):
+    """Yearly fee for borrowing the shares of a short, per row (fraction). Easy-to-borrow
+    stocks are cheap; hard-to-borrow ones (often small caps right after an offering) can
+    cost tens of percent a year."""
+    etb = df["easy_to_borrow"] if "easy_to_borrow" in df else pd.Series(True, index=df.index)
+    return np.where(etb.fillna(False).astype(bool), config.BORROW_FEE_ETB_PCT, config.BORROW_FEE_HTB_PCT) / 100
+
+
+def _hold_days(h):
+    # Conservative: charge the borrow for the maximum holding period, even if a stop exits earlier.
+    return h / 390 if TRACK["unit"] == "m" else h * 365 / 252
+
+
+def net_ret(sel, h, mode):
+    """Net return per trade: position return minus trading cost, hedge cost and, for
+    shorts, the borrow fee."""
+    short = np.sign(sel["score"]) < 0
+    borrow = np.where(short, _borrow_rate(sel) * _hold_days(h) / 365, 0.0)
+    return pos_ret(sel, h, mode) - _cost(sel) - borrow
+
+
 def _trade_stats(r):
     """r = net returns per trade (fractions)."""
     r = r.dropna()
@@ -216,6 +237,9 @@ def _trade_stats(r):
 
 def select(df, threshold, min_conf=0.0, require_new=False, category=None):
     sel = df[(df["score"].abs() >= threshold) & (df["confidence"] >= min_conf)]
+    if "shortable" in sel and not config.ALLOW_UNSHORTABLE:
+        # A short the broker won't allow can't be traded.
+        sel = sel[~((np.sign(sel["score"]) < 0) & ~sel["shortable"].fillna(False).astype(bool))]
     if require_new:
         sel = sel[sel["new_information"]]
     if category:
@@ -228,7 +252,7 @@ def strategy_returns(df, horizon, threshold, min_conf=0.0, require_new=False, ca
     """Trade in the direction of the score when |score| >= threshold (optionally only one
     type of news). Net of a per-stock cost that depends on its liquidity score."""
     sel = select(df, threshold, min_conf, require_new, category)
-    return pos_ret(sel, horizon, exit) - _cost(sel)
+    return net_ret(sel, horizon, exit)
 
 
 def position_size(sel, horizon):
@@ -257,14 +281,14 @@ def dollar_results(df, rule):
     the day stops once its loss hits the limit, and everything halts once the balance
     falls MAX_DRAWDOWN_PCT below the starting balance."""
     sel = select(df, rule["threshold"], rule["min_conf"], rule["require_new"], rule.get("category"))
-    sel = sel.assign(net=pos_ret(sel, rule["horizon"], rule.get("exit", "time")) - _cost(sel))
+    sel = sel.assign(net=net_ret(sel, rule["horizon"], rule.get("exit", "time")))
     sel = sel.assign(base_size=position_size(sel, rule["horizon"]))
     sel = sel.dropna(subset=["net"]).sort_values("entry_time")
 
     equity = peak = config.EQUITY
     day, day_pnl, day_start = None, 0.0, equity
     stopped_days, halted_on = set(), None
-    pnls, sizes, times = [], [], []
+    pnls, sizes, times, fracs = [], [], [], []
     for r in sel.itertuples(index=False):
         d = pd.Timestamp(r.entry_time).tz_convert(NY).date()
         if d != day:
@@ -275,6 +299,7 @@ def dollar_results(df, rule):
             continue
         size = r.base_size * scale * (equity / config.EQUITY)
         pnl = size * r.net
+        fracs.append(pnl / equity)
         equity += pnl
         day_pnl += pnl
         peak = max(peak, equity)
@@ -289,7 +314,61 @@ def dollar_results(df, rule):
     return {"pnl_usd": float(np.sum(pnls)) if pnls else 0.0, "max_drawdown_usd": dd,
             "avg_size_usd": float(np.mean(sizes)) if sizes else np.nan, "curve_usd": curve,
             "end_equity": equity, "trades_taken": len(pnls),
-            "days_stopped": len(stopped_days), "halted_on": halted_on}
+            "days_stopped": len(stopped_days), "halted_on": halted_on,
+            "trade_fracs": np.array(fracs), "times": times}
+
+
+def monte_carlo(test_usd, runs=None, seed=3):
+    """Risk of the rule over one year: the test-period trades (as a share of the balance)
+    are replayed in random order, at the test period's pace, many times. Returns the
+    chance of hitting the overall stop (MAX_DRAWDOWN_PCT below the start) within a year,
+    and the spread of yearly results and drawdowns."""
+    runs = config.MONTE_CARLO_RUNS if runs is None else runs
+    f, t = test_usd.get("trade_fracs"), test_usd.get("times")
+    if f is None or len(f) < 10:
+        return None
+    span_days = max((pd.Timestamp(t[-1]) - pd.Timestamp(t[0])).days, 30)
+    per_year = int(round(len(f) * 365 / span_days))
+    rng = np.random.default_rng(seed)
+    floor = 1 - config.MAX_DRAWDOWN_PCT
+    ends, dds, halts = [], [], 0
+    for _ in range(runs):
+        path = np.cumprod(1 + rng.choice(f, size=per_year, replace=True))
+        hit = np.nonzero(path <= floor)[0]
+        if len(hit):
+            halts += 1
+            path = path[:hit[0] + 1]
+        peak = np.maximum.accumulate(np.concatenate([[1.0], path]))
+        dds.append(float((np.concatenate([[1.0], path]) / peak - 1).min()))
+        ends.append(float(path[-1] - 1))
+    ends, dds = np.array(ends), np.array(dds)
+    return {"runs": runs, "trades_per_year": per_year, "halt_prob": halts / runs,
+            "median_year": float(np.median(ends)), "p5_year": float(np.percentile(ends, 5)),
+            "p95_year": float(np.percentile(ends, 95)), "loss_prob": float((ends < 0).mean()),
+            "median_dd": float(np.median(dds)), "p5_dd": float(np.percentile(dds, 5))}
+
+
+def side_split(df, rule):
+    """The rule's trades split into longs and shorts, plus how many shorts the broker
+    would not have allowed and how many are hard to borrow."""
+    out = {}
+    base = df[(df["score"].abs() >= rule["threshold"]) & (df["confidence"] >= rule["min_conf"])]
+    if rule["require_new"]:
+        base = base[base["new_information"]]
+    if rule.get("category"):
+        base = base[base["category"] == rule["category"]]
+    shorts_all = base[np.sign(base["score"]) < 0]
+    if "shortable" in base:
+        out["blocked_shorts"] = int((~shorts_all["shortable"].fillna(False).astype(bool)).sum())
+    sel = select(df, rule["threshold"], rule["min_conf"], rule["require_new"], rule.get("category"))
+    net = net_ret(sel, rule["horizon"], rule.get("exit", "time"))
+    is_short = np.sign(sel["score"]) < 0
+    out["long"] = _trade_stats(net[~is_short])
+    out["short"] = _trade_stats(net[is_short])
+    if "easy_to_borrow" in sel:
+        sh = sel[is_short]
+        out["htb_shorts"] = int((~sh["easy_to_borrow"].fillna(False).astype(bool)).sum())
+    return out
 
 
 def _edges(width):
@@ -320,7 +399,7 @@ def band_table(df, rule, column, width=10):
     how many bps the average trade changes per +10 points of that score."""
     sel = select(df.dropna(subset=["entry_px"]), rule["threshold"], rule["min_conf"],
                  rule["require_new"], rule.get("category"))
-    sel = sel.assign(net=pos_ret(sel, rule["horizon"], rule.get("exit", "time")) - _cost(sel))
+    sel = sel.assign(net=net_ret(sel, rule["horizon"], rule.get("exit", "time")))
     sel = sel.dropna(subset=["net", column])
     rows = []
     bands = pd.cut(sel[column], _edges(width), include_lowest=True, right=False)
@@ -370,6 +449,9 @@ def luck_test(train, categories, real_best_t, runs=None, seed=11):
     new = train["new_information"].fillna(False).to_numpy().astype(bool)
     cat = train["category"].to_numpy()
     cost = _cost(train).to_numpy()
+    borrow_rate = _borrow_rate(train)
+    can_short = (train["shortable"].fillna(False).astype(bool).to_numpy()
+                 if "shortable" in train and not config.ALLOW_UNSHORTABLE else np.ones(len(train), bool))
 
     masks = []
     for th in THRESHOLDS:
@@ -386,12 +468,14 @@ def luck_test(train, categories, real_best_t, runs=None, seed=11):
 
     legs = []                                            # (long return, short return) per horizon/exit
     for h in TRACK["horizons"]:
+        b = borrow_rate * _hold_days(h) / 365
         for ex in _search_exits():
             if ex == "time":
                 r = train[rc(h)].to_numpy()
-                legs.append((r, -r))
+                L, S = r, -r
             else:
-                legs.append((train[exit_col(h, ex, "L")].to_numpy(), train[exit_col(h, ex, "S")].to_numpy()))
+                L, S = train[exit_col(h, ex, "L")].to_numpy(), train[exit_col(h, ex, "S")].to_numpy()
+            legs.append((L, np.where(can_short, S - b, np.nan)))
 
     def best_t(direction):
         best = -np.inf
@@ -479,8 +563,10 @@ def walk_forward(df):
         "contamination": contamination, "best": rule, "grid": g,
         "train": _trade_stats(strategy_returns(train, **rule)),
         "test": _trade_stats(strategy_returns(test, **rule)),
-        "test_usd": dollar_results(test, rule),
+        "test_usd": (tu := dollar_results(test, rule)),
+        "risk": monte_carlo(tu),
         "n_train": len(train), "n_test": len(test),
         "configs_tried": len(g),
         "luck": luck,
+        "sides": {"train": side_split(train, rule), "test": side_split(test, rule)},
     }

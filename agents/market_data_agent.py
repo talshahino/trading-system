@@ -91,3 +91,16 @@ def get_daily_bars(symbol, start, end):
     df["t"] = (pd.to_datetime(df["t"], utc=True).dt.tz_convert("America/New_York")
                .dt.normalize().dt.tz_localize(None))
     return df.drop_duplicates("t").sort_values("t").set_index("t")[["o", "h", "l", "c", "v"]]
+
+
+def asset_flags():
+    """{symbol: (shortable, easy_to_borrow)} for every active US stock, as Alpaca sees it
+    today. Delisted tickers are missing (treated as hard to borrow, not shortable)."""
+    try:
+        r = requests.get(f"{config.ALPACA_TRADING_URL}/v2/assets", headers=_headers(),
+                         params={"status": "active", "asset_class": "us_equity"}, timeout=60)
+        r.raise_for_status()
+        return {a["symbol"]: (bool(a.get("shortable")), bool(a.get("easy_to_borrow"))) for a in r.json()}
+    except Exception as e:  # noqa: BLE001
+        print(f"  (could not read short-borrow flags: {e})")
+        return None

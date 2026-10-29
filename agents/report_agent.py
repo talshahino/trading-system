@@ -137,6 +137,45 @@ def _checks_html(wf, checks):
     return "".join(f"<div class='chk'><b>{html.escape(k)}</b><p>{v}</p></div>" for k, v in rows)
 
 
+def _sides_html(sides):
+    if not sides:
+        return ""
+    rows = []
+    for period, he in (("train", "אימון"), ("test", "מבחן")):
+        sd = sides.get(period) or {}
+        for side, she in (("long", "לונג (קנייה)"), ("short", "שורט (מכירה בחסר)")):
+            st = sd.get(side)
+            if st and st["trades"]:
+                rows.append({"p": f"{he} · {she}", **st})
+    if not rows:
+        return ""
+    t = sides.get("test") or {}
+    note = (f"עמלת השאלה לשורט כלולה: {config.BORROW_FEE_ETB_PCT:g}% בשנה במניה קלה להשאלה, "
+            f"{config.BORROW_FEE_HTB_PCT:g}% בשנה במניה קשה להשאלה, לכל תקופת ההחזקה המקסימלית. ")
+    if "blocked_shorts" in t:
+        note += (f"בתקופת המבחן: {t['blocked_shorts']} שורטים הוצאו כי הברוקר לא מאפשר שורט במניה, "
+                 f"{t.get('htb_shorts', 0)} מהשורטים שנשארו במניות קשות להשאלה. "
+                 "(הנתון הוא של היום ולא של יום העסקה, אז זה קירוב.)")
+    return ("<h3>לונג מול שורט</h3>" + f"<p class='mut'>{note}</p>" +
+            _table(pd.DataFrame(rows), {"p": "תקופה וכיוון", "trades": "עסקאות", "avg_bps": "ממוצע bps נטו",
+                                        "win_rate": "הצלחה", "t_stat": "t", "worst_bps": "הגרועה bps"},
+                   {"trades": "int", "win_rate": "pct"}))
+
+
+def _risk_html(risk):
+    if not risk:
+        return ""
+    pct = lambda v: f"{v * 100:+.1f}%"
+    return (f"<h3>סיכון לשנה (סימולציה)</h3><p>עסקאות תקופת המבחן שוחזרו בסדר אקראי {risk['runs']:,} פעמים, "
+            f"בקצב של כ־{risk['trades_per_year']} עסקאות בשנה, עם אותו גודל פוזיציה. "
+            f"<b>סיכוי לעצירה כללית (הפסד {config.MAX_DRAWDOWN_PCT * 100:g}% מיתרת הפתיחה) תוך שנה: "
+            f"{risk['halt_prob'] * 100:.1f}%</b>. סיכוי לשנה מפסידה: {risk['loss_prob'] * 100:.0f}%. "
+            f"תשואה שנתית: חציון {pct(risk['median_year'])}, תרחיש רע (5%) {pct(risk['p5_year'])}, "
+            f"תרחיש טוב (95%) {pct(risk['p95_year'])}. ירידה מקסימלית: חציון {pct(risk['median_dd'])}, "
+            f"תרחיש רע {pct(risk['p5_dd'])}.</p>"
+            "<p class='mut'>הסימולציה לא כוללת את העצירה היומית ומניחה שהעתיד דומה לתקופת המבחן.</p>")
+
+
 def _latency_html(latency):
     if not latency:
         return ""
@@ -201,6 +240,8 @@ def write_report(results, wf, react, cats, mode_label, period, bands=None, check
                       f"{u['trades_taken']} עסקאות, גודל ממוצע ${u['avg_size_usd']:,.0f}, "
                       f"ימים שנעצרו במגבלה היומית: {u['days_stopped']}.{halt}</p>")
         rule_html += _curve_svg(u.get("curve_usd"))
+        rule_html += _sides_html(wf.get("sides"))
+        rule_html += _risk_html(wf.get("risk"))
 
     react_cols = {"band": "סנטימנט 0–100", "events": "אירועים"}
     from agents.backtest_agent import TRACK

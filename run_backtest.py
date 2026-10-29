@@ -104,6 +104,14 @@ def main():
     print("[2] classifier agent")
     events = classifier_agent.classify_events(events)
     checks["cost"] = classifier_agent.cost_summary(events)
+    if not args.demo:
+        flags = market_data_agent.asset_flags()
+        if flags is not None:
+            events["shortable"] = events["symbol"].map(lambda x: flags.get(x, (False, False))[0])
+            events["easy_to_borrow"] = events["symbol"].map(lambda x: flags.get(x, (False, False))[1])
+            n_sym = events["symbol"].nunique()
+            n_etb = events.drop_duplicates("symbol")["easy_to_borrow"].sum()
+            print(f"    short-borrow flags: {n_etb}/{n_sym} tickers easy to borrow today")
     symbols = sorted(set(events["symbol"]))
     pre = (pd.Timestamp(args.start) - pd.Timedelta(days=60)).strftime("%Y-%m-%d")
     # Multi-day tracks need prices up to two weeks after the last news item.

@@ -103,6 +103,17 @@ LATENCY_MAX_MINUTES = float(os.getenv("LATENCY_MAX_MINUTES", "90"))
 COST_BPS_LIQUID = float(os.getenv("COST_BPS_LIQUID", "5"))       # liquidity score 100
 COST_BPS_ILLIQUID = float(os.getenv("COST_BPS_ILLIQUID", "40"))  # liquidity score 1
 
+# --- Shorts ---
+# Yearly borrow fee (%) for shorts. Alpaca says whether a stock is "easy to borrow" today
+# (not historically, so this is an approximation). Hard-to-borrow fees vary a lot; 30% a
+# year is a deliberately pessimistic average for small caps after an offering.
+BORROW_FEE_ETB_PCT = float(os.getenv("BORROW_FEE_ETB_PCT", "0.5"))
+BORROW_FEE_HTB_PCT = float(os.getenv("BORROW_FEE_HTB_PCT", "30"))
+# 0 = shorts in stocks the broker says can't be shorted are dropped from the backtest.
+ALLOW_UNSHORTABLE = os.getenv("ALLOW_UNSHORTABLE", "0") == "1"
+# Risk simulation: replays a year of the test-period trades in random order this many times.
+MONTE_CARLO_RUNS = int(os.getenv("MONTE_CARLO_RUNS", "5000"))
+
 # --- Position sizing (used to turn % returns into dollars) ---
 EQUITY = float(os.getenv("EQUITY", "10000"))    # demo account starts at $10,000
 

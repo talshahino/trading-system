@@ -152,15 +152,24 @@ TRACKS = {
 # Same bar touches both -> counted as a stop (conservative). A gap through the stop fills
 # at the open, i.e. worse than the stop.
 #   trailing: the stop follows the best price reached (locks in gains), no fixed target.
+# (stop in sigmas, target in sigmas or None, trailing?, max stop distance or None)
+# The capped versions never let the stop sit further than STOP_CAP from the entry, even in
+# very volatile stocks, and size the position by that closer stop (bigger position,
+# same risk), at the price of being stopped out more often.
+STOP_CAP = float(os.getenv("STOP_CAP", "0.15"))
 EXIT_MODES = {
-    "time":    None,                # reference only: exit at the end of the holding period
-    "st1x2":   (1.0, 2.0, False),   # tight stop, target twice as far
-    "st15x3":  (1.5, 3.0, False),   # wider stop, target twice as far
-    "trail1":  (1.0, None, True),   # trailing stop 1 sigma behind the best price
-    "trail15": (1.5, None, True),   # trailing stop 1.5 sigma behind the best price
+    "time":      None,                          # reference only: exit at the end of the holding period
+    "st1x2":     (1.0, 2.0, False, None),       # tight stop, target twice as far
+    "st15x3":    (1.5, 3.0, False, None),       # wider stop, target twice as far
+    "trail1":    (1.0, None, True, None),       # trailing stop 1 sigma behind the best price
+    "trail15":   (1.5, None, True, None),       # trailing stop 1.5 sigma behind the best price
+    "st15x3cap": (1.5, 3.0, False, STOP_CAP),   # as st15x3, stop never further than STOP_CAP
+    "trail15cap": (1.5, None, True, STOP_CAP),  # as trail15, stop never further than STOP_CAP
 }
 EXIT_LABELS_HE = {"time": "יציאה בסוף הזמן (להשוואה בלבד)", "st1x2": "סטופ 1σ, יעד 2σ",
-                  "st15x3": "סטופ 1.5σ, יעד 3σ", "trail1": "סטופ נגרר 1σ", "trail15": "סטופ נגרר 1.5σ"}
+                  "st15x3": "סטופ 1.5σ, יעד 3σ", "trail1": "סטופ נגרר 1σ", "trail15": "סטופ נגרר 1.5σ",
+                  "st15x3cap": f"סטופ 1.5σ (עד {STOP_CAP:.0%}), יעד 3σ",
+                  "trail15cap": f"סטופ נגרר 1.5σ (עד {STOP_CAP:.0%})"}
 # The user's rule: exits must be smart. The plain time exit is shown for comparison but
 # is never chosen as the trading rule unless this is set to 1.
 ALLOW_TIME_EXIT = os.getenv("ALLOW_TIME_EXIT", "0") == "1"
@@ -169,6 +178,18 @@ ALLOW_TIME_EXIT = os.getenv("ALLOW_TIME_EXIT", "0") == "1"
 # with an opposite SPY position. This is the cost of that hedge, in bps.
 HEDGE_COST_BPS = float(os.getenv("HEDGE_COST_BPS", "2"))
 MARKET_SYMBOL = os.getenv("MARKET_SYMBOL", "SPY")
+# Small stocks move with small-cap index more than with the S&P 500, so they are hedged
+# against IWM (Russell 2000) instead: anything with liquidity score below this.
+SMALL_MARKET_SYMBOL = os.getenv("SMALL_MARKET_SYMBOL", "IWM")
+SMALL_BELOW_LIQUIDITY = float(os.getenv("SMALL_BELOW_LIQUIDITY", "60"))
+# Skip penny stocks (price at entry).
+MIN_PRICE = float(os.getenv("MIN_PRICE", "1"))
+# Portfolio limits in the dollar replay: open positions at once, and total short exposure
+# as a share of the balance. A position counts as open for its maximum holding period.
+MAX_OPEN_POSITIONS = int(os.getenv("MAX_OPEN_POSITIONS", "10"))
+MAX_SHORT_EXPOSURE_PCT = float(os.getenv("MAX_SHORT_EXPOSURE_PCT", "1.0"))
+# Squeeze protection: no shorts in stocks that are hard to borrow (a sign of crowded shorts).
+SKIP_HTB_SHORTS = os.getenv("SKIP_HTB_SHORTS", "1") == "1"
 # News tagged with many tickers is usually a roundup, not a stock-specific event.
 MAX_SYMBOLS_PER_NEWS = int(os.getenv("MAX_SYMBOLS_PER_NEWS", "2"))
 # Only trade during regular hours (09:30-16:00 New York).

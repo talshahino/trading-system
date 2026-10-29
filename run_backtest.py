@@ -45,8 +45,9 @@ def _minute_to_daily(bars):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--demo", action="store_true", help="synthetic data, no keys needed")
-    ap.add_argument("--track", default="all", choices=list(config.TRACKS) + ["all"],
-                    help="intraday = minutes, swing = up to a week, position = two weeks")
+    ap.add_argument("--track", default="all", choices=list(config.TRACKS) + ["all", "multiday"],
+                    help="intraday = minutes, swing = up to a week, position = two weeks, "
+                         "multiday = swing + position")
     ap.add_argument("--symbols", help="comma separated tickers")
     ap.add_argument("--universe", help="text file with one ticker per line, or 'all' to build the "
                     "list from every ticker that had news in the period (includes later-delisted ones)")
@@ -55,7 +56,9 @@ def main():
     ap.add_argument("--start", default="2025-10-01")
     ap.add_argument("--end", default="2026-09-30")
     args = ap.parse_args()
-    tracks = list(config.TRACKS) if args.track == "all" else [args.track]
+    tracks = (list(config.TRACKS) if args.track == "all" else
+              [t for t, v in config.TRACKS.items() if v["unit"] == "d"] if args.track == "multiday" else
+              [args.track])
 
     # ---- 1. News (shared by all tracks) ----
     if args.demo:
@@ -105,6 +108,8 @@ def main():
     events = classifier_agent.classify_events(events)
     checks["cost"] = classifier_agent.cost_summary(events)
     if not args.demo:
+        from agents import offering_agent
+        events = offering_agent.enrich(events)
         flags = market_data_agent.asset_flags()
         if flags is not None:
             events["shortable"] = events["symbol"].map(lambda x: flags.get(x, (False, False))[0])
@@ -140,7 +145,8 @@ def main():
                     bars[s] = market_data_agent.get_daily_bars(s, pre, post)
             print()
             if tr["unit"] == "d":
-                market = market_data_agent.get_daily_bars(config.MARKET_SYMBOL, pre, post)
+                market = {m: market_data_agent.get_daily_bars(m, pre, post)
+                          for m in (config.MARKET_SYMBOL, config.SMALL_MARKET_SYMBOL)}
             no_bars = sorted(s for s, b in bars.items() if b is None or b.empty)
             if no_bars:
                 checks["survivorship_" + name] = no_bars
@@ -160,10 +166,23 @@ def main():
         react = backtest_agent.reaction_table(results)
         cats = backtest_agent.category_table(results)
         wf = backtest_agent.walk_forward(results)
-        bands = {}
+        bands, details = {}, {}
         if wf and wf.get("best"):
             for col in features_agent.SCORE_COLUMNS:
                 bands[col] = backtest_agent.band_table(results, wf["best"], col)
+            if "offering_type" in results and results["offering_type"].notna().any():
+                from agents.offering_agent import TYPES_HE
+                r = results.assign(offering_type_he=results["offering_type"].map(TYPES_HE))
+                details = {
+                    "סוג ההנפקה": backtest_agent.group_table(r, wf["best"], "offering_type_he"),
+                    "כולל כתבי אופציה": backtest_agent.group_table(
+                        r.assign(w=r["warrants"].map({True: "כן", False: "לא"})), wf["best"], "w"),
+                    "הנחה למחיר השוק": backtest_agent.group_table(
+                        r, wf["best"], "discount_pct", [0, 5, 10, 20, 100], ["0–5%", "5–10%", "10–20%", "מעל 20%"]),
+                    "גודל ביחס לשווי החברה": backtest_agent.group_table(
+                        r, wf["best"], "size_pct_of_market_cap", [0, 5, 10, 20, 1000], ["עד 5%", "5–10%", "10–20%", "מעל 20%"]),
+                    "גידור מול": backtest_agent.group_table(r, wf["best"], "hedge"),
+                }
         latency = None
         if tr["unit"] == "m" and not args.demo:
             from agents import latency_agent
@@ -171,7 +190,7 @@ def main():
             latency = latency_agent.latency_study(results, bars)
         print(f"[5] track '{name}': report")
         path, _ = report_agent.write_report(results, wf, react, cats, mode, period, bands, tr_checks,
-                                            latency=latency)
+                                            latency=latency, details=details)
         status, text = report_agent.verdict(wf)
         summary.append((name, status, text, path))
 

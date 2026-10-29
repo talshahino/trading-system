@@ -13,10 +13,10 @@ on:
         type: boolean
         default: false
       track:
-        description: "Which track"
+        description: "Which track (multiday = swing + position; intraday was ruled out in run 8)"
         type: choice
-        options: [all, intraday, swing, position]
-        default: all
+        options: [multiday, all, intraday, swing, position]
+        default: multiday
       start:
         description: "Start date (YYYY-MM-DD)"
         default: "2025-10-01"
@@ -25,7 +25,7 @@ on:
         default: ""
       max_symbols:
         description: "Max tickers in the universe (built from the news itself)"
-        default: "400"
+        default: "1200"
 
 permissions:
   contents: write   # to save the reports back into the repository

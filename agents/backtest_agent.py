@@ -27,6 +27,12 @@ def _sigma(daily_vol, h):
     return v * np.sqrt(days)
 
 
+def _stop(ks, sig):
+    """Stop distance for an exit mode: ks[0] sigmas, never further than its cap (if any)."""
+    st = ks[0] * sig
+    return min(st, ks[3]) if len(ks) > 3 and ks[3] else st
+
+
 def _path_exit(entry_px, o, hi, lo, c, direction, stop_pct, target_pct, gap_fill, trailing=False):
     """Walk bars in order; return (bar offset, exit price) of the first stop/target touch,
     or (None, None) if neither is hit. direction +1 long, -1 short. With trailing=True the
@@ -120,7 +126,7 @@ def measure_reactions(events, bars_by_symbol):
                     continue
                 for side, d in (("L", 1), ("S", -1)):
                     k, px = _path_exit(entry_px, O[idx:j + 1], H[idx:j + 1], L[idx:j + 1], C[idx:j + 1],
-                                       d, ks[0] * sig, None if ks[1] is None else ks[1] * sig,
+                                       d, _stop(ks, sig), None if ks[1] is None else ks[1] * sig,
                                        gap_fill=False, trailing=ks[2])
                     rec[exit_col(h, mode, side)] = d * ((px if k is not None else C[j]) / entry_px - 1)
         rows.append(rec)
@@ -133,7 +139,9 @@ def measure_reactions_daily(events, daily_by_symbol, market_daily):
     EXCESS returns versus the market over the same days, so a trade only counts as a
     win if the stock beat the market."""
     lat = pd.Timedelta(seconds=config.ENTRY_LATENCY_SEC)
-    mkt = market_daily
+    # market_daily: one DataFrame, or {symbol: DataFrame} to hedge small stocks with the
+    # small-cap index and the rest with the S&P 500.
+    markets = market_daily if isinstance(market_daily, dict) else {"_": market_daily}
     rows = []
     for ev in events.itertuples(index=False):
         rec = ev._asdict()
@@ -141,6 +149,14 @@ def measure_reactions_daily(events, daily_by_symbol, market_daily):
         for h in TRACK["horizons"]:
             rec[rc(h)] = np.nan
             rec[f"raw_{h}d"] = np.nan
+        if len(markets) > 1:
+            liq = getattr(ev, "liquidity_score", np.nan)
+            small = liq == liq and liq < config.SMALL_BELOW_LIQUIDITY
+            hedge = config.SMALL_MARKET_SYMBOL if small and config.SMALL_MARKET_SYMBOL in markets else config.MARKET_SYMBOL
+        else:
+            hedge = next(iter(markets))
+        mkt = markets.get(hedge)
+        rec["hedge"] = hedge
         bars = daily_by_symbol.get(ev.symbol)
         if bars is None or bars.empty:
             rec["skip_reason"] = "no bars"
@@ -179,7 +195,7 @@ def measure_reactions_daily(events, daily_by_symbol, market_daily):
                     continue
                 for side, d in (("L", 1), ("S", -1)):
                     k, px = _path_exit(entry_px, O[i:j + 1], H[i:j + 1], L[i:j + 1], C[i:j + 1],
-                                       d, ks[0] * sig, None if ks[1] is None else ks[1] * sig,
+                                       d, _stop(ks, sig), None if ks[1] is None else ks[1] * sig,
                                        gap_fill=True, trailing=ks[2])
                     end = j if k is None else i + k
                     px = C[j] if k is None else px
@@ -237,6 +253,11 @@ def _trade_stats(r):
 
 def select(df, threshold, min_conf=0.0, require_new=False, category=None):
     sel = df[(df["score"].abs() >= threshold) & (df["confidence"] >= min_conf)]
+    if "entry_px" in sel and config.MIN_PRICE:
+        sel = sel[~(sel["entry_px"] < config.MIN_PRICE)]
+    if "easy_to_borrow" in sel and config.SKIP_HTB_SHORTS:
+        # Squeeze protection: hard-to-borrow usually means a crowded short.
+        sel = sel[~((np.sign(sel["score"]) < 0) & ~sel["easy_to_borrow"].fillna(False).astype(bool))]
     if "shortable" in sel and not config.ALLOW_UNSHORTABLE:
         # A short the broker won't allow can't be traded.
         sel = sel[~((np.sign(sel["score"]) < 0) & ~sel["shortable"].fillna(False).astype(bool))]
@@ -255,12 +276,17 @@ def strategy_returns(df, horizon, threshold, min_conf=0.0, require_new=False, ca
     return net_ret(sel, horizon, exit)
 
 
-def position_size(sel, horizon):
+def position_size(sel, horizon, exit="time"):
     """Dollars per trade. Volatile stocks get smaller positions, thin stocks are capped
-    by how much actually trades in a minute."""
+    by how much actually trades in a minute. With a capped stop the risk distance is the
+    cap (when closer than 2 sigma), so the position is bigger for the same risk."""
     days = horizon / 390 if TRACK["unit"] == "m" else horizon
     sigma_h = sel["daily_vol"].fillna(0.03) * np.sqrt(days)
-    by_risk = config.EQUITY * config.RISK_PCT / np.maximum(2 * sigma_h, 1e-4)
+    dist = 2 * sigma_h
+    ks = config.EXIT_MODES.get(exit)
+    if ks and len(ks) > 3 and ks[3]:
+        dist = np.minimum(dist, ks[3])
+    by_risk = config.EQUITY * config.RISK_PCT / np.maximum(dist, 1e-4)
     by_equity = config.EQUITY * config.MAX_POSITION_PCT
     # Entry happens within a minute (intraday) or at the opening auction / first minutes
     # (multi-day); either way we cap at a share of an average minute's dollar volume.
@@ -282,15 +308,22 @@ def dollar_results(df, rule):
     falls MAX_DRAWDOWN_PCT below the starting balance."""
     sel = select(df, rule["threshold"], rule["min_conf"], rule["require_new"], rule.get("category"))
     sel = sel.assign(net=net_ret(sel, rule["horizon"], rule.get("exit", "time")))
-    sel = sel.assign(base_size=position_size(sel, rule["horizon"]))
+    sel = sel.assign(base_size=position_size(sel, rule["horizon"], rule.get("exit", "time")))
     sel = sel.dropna(subset=["net"]).sort_values("entry_time")
 
     equity = peak = config.EQUITY
     day, day_pnl, day_start = None, 0.0, equity
     stopped_days, halted_on = set(), None
     pnls, sizes, times, fracs = [], [], [], []
+    hold = (pd.Timedelta(minutes=rule["horizon"]) if TRACK["unit"] == "m"
+            else pd.Timedelta(days=int(np.ceil(rule["horizon"] * 7 / 5))))
+    open_pos, skipped_limits = [], 0                       # (exit time, size, is_short)
     for r in sel.itertuples(index=False):
-        d = pd.Timestamp(r.entry_time).tz_convert(NY).date()
+        now = pd.Timestamp(r.entry_time)
+        open_pos = [p for p in open_pos if p[0] > now]
+        is_short = r.score < 0
+        short_expo = sum(p[1] for p in open_pos if p[2])
+        d = now.tz_convert(NY).date()
         if d != day:
             day, day_pnl, day_start = d, 0.0, equity
         scale = risk_scale(equity)
@@ -298,6 +331,11 @@ def dollar_results(df, rule):
             stopped_days.add(d)
             continue
         size = r.base_size * scale * (equity / config.EQUITY)
+        if len(open_pos) >= config.MAX_OPEN_POSITIONS or (
+                is_short and short_expo + size > config.MAX_SHORT_EXPOSURE_PCT * equity):
+            skipped_limits += 1
+            continue
+        open_pos.append((now + hold, size, is_short))
         pnl = size * r.net
         fracs.append(pnl / equity)
         equity += pnl
@@ -315,7 +353,7 @@ def dollar_results(df, rule):
             "avg_size_usd": float(np.mean(sizes)) if sizes else np.nan, "curve_usd": curve,
             "end_equity": equity, "trades_taken": len(pnls),
             "days_stopped": len(stopped_days), "halted_on": halted_on,
-            "trade_fracs": np.array(fracs), "times": times}
+            "trade_fracs": np.array(fracs), "times": times, "skipped_limits": skipped_limits}
 
 
 def monte_carlo(test_usd, runs=None, seed=3):
@@ -346,6 +384,17 @@ def monte_carlo(test_usd, runs=None, seed=3):
             "median_year": float(np.median(ends)), "p5_year": float(np.percentile(ends, 5)),
             "p95_year": float(np.percentile(ends, 95)), "loss_prob": float((ends < 0).mean()),
             "median_dd": float(np.median(dds)), "p5_dd": float(np.percentile(dds, 5))}
+
+
+def _with_htb(test, rule):
+    """Same rule in the test period if hard-to-borrow shorts were allowed (no squeeze filter)."""
+    if not config.SKIP_HTB_SHORTS or "easy_to_borrow" not in test:
+        return None
+    config.SKIP_HTB_SHORTS = False
+    try:
+        return _trade_stats(strategy_returns(test, **rule))
+    finally:
+        config.SKIP_HTB_SHORTS = True
 
 
 def side_split(df, rule):
@@ -413,6 +462,28 @@ def band_table(df, rule, column, width=10):
     return pd.DataFrame(rows), slope
 
 
+def group_table(df, rule, column, bins=None, labels=None):
+    """The chosen rule's trades (whole period) grouped by a detail column, e.g. offering
+    type, or a number cut into bins."""
+    if column not in df:
+        return pd.DataFrame()
+    sel = select(df.dropna(subset=["entry_px"]), rule["threshold"], rule["min_conf"],
+                 rule["require_new"], rule.get("category"))
+    sel = sel.assign(net=net_ret(sel, rule["horizon"], rule.get("exit", "time"))).dropna(subset=["net"])
+    key = sel[column]
+    if bins is not None:
+        key = pd.cut(pd.to_numeric(key, errors="coerce"), bins, labels=labels, include_lowest=True)
+        key = key.astype(object).where(key.notna(), "לא צוין")
+    else:
+        key = key.astype(object).where(key.notna(), "לא צוין")
+    rows = []
+    for k, g in sel.groupby(key, observed=True):
+        st = _trade_stats(g["net"])
+        st["group"] = str(k)
+        rows.append(st)
+    return pd.DataFrame(rows).sort_values("trades", ascending=False) if rows else pd.DataFrame()
+
+
 def category_table(df, horizon=None, threshold=0.5):
     horizon = horizon or TRACK["default_h"]
     d = df.dropna(subset=["entry_px"])
@@ -452,13 +523,16 @@ def luck_test(train, categories, real_best_t, runs=None, seed=11):
     borrow_rate = _borrow_rate(train)
     can_short = (train["shortable"].fillna(False).astype(bool).to_numpy()
                  if "shortable" in train and not config.ALLOW_UNSHORTABLE else np.ones(len(train), bool))
+    if "easy_to_borrow" in train and config.SKIP_HTB_SHORTS:
+        can_short = can_short & train["easy_to_borrow"].fillna(False).astype(bool).to_numpy()
+    price_ok = ~(train["entry_px"].to_numpy() < config.MIN_PRICE) if config.MIN_PRICE else np.ones(len(train), bool)
 
     masks = []
     for th in THRESHOLDS:
         for cf in CONFIDENCES:
             for nw in (False, True):
                 for c in categories:
-                    m = (absd >= th) & (conf >= cf)
+                    m = (absd >= th) & (conf >= cf) & price_ok
                     if nw:
                         m &= new
                     if c:
@@ -569,4 +643,5 @@ def walk_forward(df):
         "configs_tried": len(g),
         "luck": luck,
         "sides": {"train": side_split(train, rule), "test": side_split(test, rule)},
+        "test_with_htb": _with_htb(test, rule),
     }

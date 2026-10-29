@@ -200,7 +200,22 @@ def _latency_html(latency):
     return out
 
 
-def write_report(results, wf, react, cats, mode_label, period, bands=None, checks=None, latency=None):
+def _details_html(details):
+    out = ""
+    for name, tbl in (details or {}).items():
+        if tbl is None or tbl.empty:
+            continue
+        out += (f"<h3>{html.escape(name)}</h3>" +
+                _table(tbl, {"group": "קבוצה", "trades": "עסקאות", "avg_bps": "ממוצע bps נטו",
+                             "win_rate": "הצלחה", "t_stat": "t"}, {"trades": "int", "win_rate": "pct"}))
+    if not out:
+        return ""
+    return ("<h2>פירוט לפי פרטי החדשה</h2><p class='mut'>כל העסקאות של הכלל על כל התקופה. "
+            "הפירוט לא שימש לבחירת הכלל, הוא מראה איפה הרווח נוצר.</p>" + out)
+
+
+def write_report(results, wf, react, cats, mode_label, period, bands=None, checks=None, latency=None,
+                 details=None):
     from agents.backtest_agent import TRACK
     csv_path = config.OUTPUT_DIR / f"events_{TRACK_NAME()}.csv"
     results.to_csv(csv_path, index=False)
@@ -238,9 +253,15 @@ def write_report(results, wf, react, cats, mode_label, period, bands=None, check
                       f"רווח/הפסד בתקופת המבחן <b>${u['pnl_usd']:,.0f}</b> "
                       f"(יתרה ${u['end_equity']:,.0f}), ירידה מקסימלית ${u['max_drawdown_usd']:,.0f}, "
                       f"{u['trades_taken']} עסקאות, גודל ממוצע ${u['avg_size_usd']:,.0f}, "
-                      f"ימים שנעצרו במגבלה היומית: {u['days_stopped']}.{halt}</p>")
+                      f"ימים שנעצרו במגבלה היומית: {u['days_stopped']}, "
+                      f"עסקאות שדולגו בגלל תקרות התיק (עד {config.MAX_OPEN_POSITIONS} פוזיציות, "
+                      f"שורט עד {config.MAX_SHORT_EXPOSURE_PCT:.0%} מהיתרה): {u.get('skipped_limits', 0)}.{halt}</p>")
         rule_html += _curve_svg(u.get("curve_usd"))
         rule_html += _sides_html(wf.get("sides"))
+        wh = wf.get("test_with_htb")
+        if wh and wh["trades"]:
+            rule_html += (f"<p class='mut'>הגנה מסקוויז: שורטים במניות קשות להשאלה לא נכללו. אילו היו נכללים, "
+                          f"תקופת המבחן הייתה: {wh['trades']} עסקאות, {wh['avg_bps']:,.1f} bps לעסקה, t={wh['t_stat']:.1f}.</p>")
         rule_html += _risk_html(wf.get("risk"))
 
     react_cols = {"band": "סנטימנט 0–100", "events": "אירועים"}
@@ -277,6 +298,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 {_latency_html(latency)}
 <h2>כלל מסחר: אימון מול מבחן</h2>
 {rule_html or "<p>אין מספיק נתונים.</p>"}
+{_details_html(details)}
 <h2>איפה הכלל עובד? פילוח לפי ציונים</h2>
 <p class="mut">כל העסקאות של הכלל שנבחר, על כל התקופה, מחולקות לפי ציון 0–100. 100 = גדולה/נזילה/תנודתית/חזקה ביותר.</p>
 {_bands_html(bands or {})}

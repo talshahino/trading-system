@@ -159,3 +159,14 @@ RTH_ONLY = os.getenv("RTH_ONLY", "1") == "1"
 # Share of the period (by time) used to pick rules; the rest is the untouched test.
 TRAIN_FRACTION = float(os.getenv("TRAIN_FRACTION", "0.7"))
 MIN_TRADES_FOR_RULE = int(os.getenv("MIN_TRADES_FOR_RULE", "30"))
+# Multiple-testing correction: the whole rule search is repeated this many times on
+# training data where each event's direction was flipped at random. If random data often
+# produces a rule as good as the real one, the real one is probably luck.
+SHUFFLE_RUNS = int(os.getenv("SHUFFLE_RUNS", "200"))
+MAX_LUCK_P = float(os.getenv("MAX_LUCK_P", "0.05"))
+
+# Index / sector / commodity funds: their "news" is market news, not company news.
+ETFS = set("""SPY QQQ IWM DIA VOO VTI IVV RSP MDY XLK XLF XLE XLV XLI XLY XLP XLU XLB XLRE XLC
+SMH SOXX XBI IBB KRE KBE XHB XRT ITB GLD SLV USO UNG GDX GDXJ TLT IEF SHY HYG LQD AGG BND EEM EFA
+FXI KWEB EWZ EWJ INDA VEA VWO ARKK ARKG TQQQ SQQQ SPXL SPXS SOXL SOXS UVXY VXX SVXY IBIT FBTC
+ETHA GBTC BITO TNA TZA LABU LABD NVDL TSLL MSTU JEPI SCHD VNQ""".split())

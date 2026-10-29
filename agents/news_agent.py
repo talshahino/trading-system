@@ -125,6 +125,7 @@ def universe_from_news(news_df, min_news=5, max_symbols=300):
     counts = df.explode("symbols")["symbols"].value_counts()
     counts = counts[counts.index.str.fullmatch(r"[A-Z]{1,5}")]  # plain US tickers
     counts = counts[counts >= min_news]
+    counts = counts[~counts.index.isin(config.ETFS)]           # funds, not companies
     return list(counts.head(max_symbols).index)
 
 

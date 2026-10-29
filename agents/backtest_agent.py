@@ -345,6 +345,80 @@ def category_table(df, horizon=None, threshold=0.5):
     return pd.DataFrame(out).sort_values("trades", ascending=False) if out else pd.DataFrame()
 
 
+THRESHOLDS = [0.3, 0.5, 0.7, 0.85]
+CONFIDENCES = [0.0, 0.6, 0.8]
+
+
+def _search_exits():
+    return [m for m in config.EXIT_MODES if m != "time" or config.ALLOW_TIME_EXIT]
+
+
+def luck_test(train, categories, real_best_t, runs=None, seed=11):
+    """Multiple-testing correction. Hundreds of rules are tried, so the best one looks good
+    even on pure noise. Here the ENTIRE search is repeated `runs` times on the training
+    data with each event's direction flipped at random (same stocks, same days, same exits,
+    but the sentiment no longer says anything). Returns the share of those random searches
+    whose best t-stat was at least the real one: the chance the real rule is just luck."""
+    runs = config.SHUFFLE_RUNS if runs is None else runs
+    if runs <= 0 or train.empty or not np.isfinite(real_best_t):
+        return None
+    rng = np.random.default_rng(seed)
+    score = train["score"].to_numpy()
+    sgn = np.sign(score)
+    absd = np.abs(score)
+    conf = train["confidence"].to_numpy()
+    new = train["new_information"].fillna(False).to_numpy().astype(bool)
+    cat = train["category"].to_numpy()
+    cost = _cost(train).to_numpy()
+
+    masks = []
+    for th in THRESHOLDS:
+        for cf in CONFIDENCES:
+            for nw in (False, True):
+                for c in categories:
+                    m = (absd >= th) & (conf >= cf)
+                    if nw:
+                        m &= new
+                    if c:
+                        m &= cat == c
+                    masks.append(m)
+    M = np.array(masks, dtype=np.float32)               # rules x events
+
+    legs = []                                            # (long return, short return) per horizon/exit
+    for h in TRACK["horizons"]:
+        for ex in _search_exits():
+            if ex == "time":
+                r = train[rc(h)].to_numpy()
+                legs.append((r, -r))
+            else:
+                legs.append((train[exit_col(h, ex, "L")].to_numpy(), train[exit_col(h, ex, "S")].to_numpy()))
+
+    def best_t(direction):
+        best = -np.inf
+        for L, S in legs:
+            r = np.where(direction > 0, L, S) - cost
+            r = np.where(sgn == 0, np.nan, r)            # the real rule never trades a 0 score
+            ok = np.isfinite(r)
+            rv = np.where(ok, r, 0.0).astype(np.float64)
+            n = M @ ok.astype(np.float32)
+            s1 = M @ rv
+            s2 = M @ (rv * rv)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                mean = s1 / n
+                var = (s2 - n * mean * mean) / (n - 1)
+                t = mean / np.sqrt(var / n)
+            t = np.where((n >= config.MIN_TRADES_FOR_RULE) & (var > 0), t, -np.inf)
+            best = max(best, float(np.nanmax(t)))
+        return best
+
+    hits = 0
+    for _ in range(runs):
+        flip = rng.choice([-1.0, 1.0], size=len(sgn))
+        if best_t(sgn * flip) >= real_best_t:
+            hits += 1
+    return {"p": (hits + 1) / (runs + 1), "runs": runs, "hits": hits}
+
+
 def walk_forward(df):
     """Pick the best (horizon, threshold, confidence, new-only) on the train period,
     then report the SAME rule on the test period it never saw."""
@@ -366,11 +440,11 @@ def walk_forward(df):
     categories = [None] + [c for c, n in cat_counts.items() if n >= config.MIN_TRADES_FOR_RULE]
     grid = []
     for h in TRACK["horizons"]:
-        for th in [0.3, 0.5, 0.7, 0.85]:
-            for conf in [0.0, 0.6, 0.8]:
+        for th in THRESHOLDS:
+            for conf in CONFIDENCES:
                 for new in [False, True]:
                     for cat in categories:
-                        for ex in [m for m in config.EXIT_MODES if m != "time" or config.ALLOW_TIME_EXIT]:
+                        for ex in _search_exits():
                             s = _trade_stats(strategy_returns(train, h, th, conf, new, cat, ex))
                             if s["trades"] >= config.MIN_TRADES_FOR_RULE:
                                 grid.append({"horizon": h, "threshold": th, "min_conf": conf,
@@ -386,6 +460,8 @@ def walk_forward(df):
                 min_conf=float(best["min_conf"]), require_new=bool(best["new_only"]),
                 category=best["category"] if isinstance(best["category"], str) else None,
                 exit=str(best["exit"]))
+    print(f"    luck test: repeating the search of {len(g)} rules {config.SHUFFLE_RUNS}x on shuffled directions")
+    luck = luck_test(train, categories, float(best["t_stat"]))
     contamination = None
     if uses_llm:
         # Same rule, before vs after the model's knowledge cutoff. A big drop after the
@@ -406,4 +482,5 @@ def walk_forward(df):
         "test_usd": dollar_results(test, rule),
         "n_train": len(train), "n_test": len(test),
         "configs_tried": len(g),
+        "luck": luck,
     }

@@ -54,10 +54,15 @@ def verdict(wf):
     t = wf["test"]
     if wf.get("uses_llm") and t["trades"] < config.MIN_TRADES_FOR_RULE:
         return "weak", (f"אין מספיק עסקאות אחרי תאריך האימון של המודל ({config.MODEL_KNOWLEDGE_CUTOFF}) "
-                        f"כדי לבדוק בצורה נקייה ({t['trades']} עסקאות). צריך להאריך את התקופה עד היום "
-                        "או להרחיב את רשימת המניות.")
+                        f"כדי לבדוק בצורה נקייה ({t['trades']} עסקאות, צריך לפחות {config.MIN_TRADES_FOR_RULE}). "
+                        "הפתרון: יותר מניות ברשימה, או לחכות לעוד חודשים של נתונים.")
     if t["trades"] < config.MIN_TRADES_FOR_RULE:
         return "weak", f"הכלל נבחר, אבל בתקופת המבחן היו רק {t['trades']} עסקאות. מוקדם לקבוע."
+    luck = wf.get("luck")
+    lucky = luck is not None and luck["p"] > config.MAX_LUCK_P
+    if t["avg_bps"] > 0 and (t["t_stat"] or 0) >= 2 and lucky:
+        return "weak", (f"הכלל הרוויח בתקופת המבחן, אבל בבדיקת המזל {luck['p'] * 100:.0f}% מהחיפושים על נתונים "
+                        "אקראיים מצאו כלל טוב לפחות כמוהו. לא מספיק כדי לעבור לדמו.")
     if t["avg_bps"] > 0 and (t["t_stat"] or 0) >= 2:
         return "pass", "הכלל שנבחר על העבר המשיך להרוויח גם בתקופה שלא ראה, אחרי עלויות. מועמד לשלב הדמו."
     if t["avg_bps"] > 0:
@@ -100,6 +105,17 @@ def _checks_html(wf, checks):
         rows.append(("הטיית זיכרון של המודל", line))
     else:
         rows.append(("הטיית זיכרון של המודל", "לא רלוונטי: הסיווג נעשה במילות מפתח ולא ב־Claude."))
+    # 1b. Multiple testing
+    luck = (wf or {}).get("luck")
+    if luck:
+        p = luck["p"]
+        word = ("סביר שזה לא מזל." if p <= config.MAX_LUCK_P else
+                "<b>ייתכן מאוד שזה מזל: חיפוש על נתונים אקראיים מוצא כללים כאלה לעתים קרובות.</b>")
+        rows.append(("בדיקת מזל (ריבוי בדיקות)", (
+            f"נבדקו {wf['configs_tried']} כללים, ולכן הטוב ביניהם ייראה טוב גם במקרה. כל החיפוש חזר על עצמו "
+            f"{luck['runs']} פעמים על נתוני האימון כשכיוון כל חדשה הוגרל באקראי. "
+            f"ב־{luck['hits']} מהן נמצא כלל טוב לפחות כמו האמיתי: <b>סיכוי למזל {p * 100:.1f}%</b> "
+            f"(הסף: {config.MAX_LUCK_P * 100:g}%). {word}")))
     # 2. Survivorship
     sv = checks.get("survivorship")
     if sv:

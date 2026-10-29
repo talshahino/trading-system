@@ -265,7 +265,26 @@ def select(df, threshold, min_conf=0.0, require_new=False, category=None):
         sel = sel[sel["new_information"]]
     if category:
         sel = sel[sel["category"] == category]
+    if TRACK.get("min_dollar_volume") and "avg_dollar_volume" in sel:
+        sel = sel[sel["avg_dollar_volume"] >= TRACK["min_dollar_volume"]]
+    if TRACK.get("dedupe_days") and len(sel):
+        sel = _dedupe(sel, TRACK["dedupe_days"])
     return sel
+
+
+def _dedupe(sel, days):
+    """Enter on the first signal that meets the rule, then ignore that stock for `days`
+    (overlapping trades in the same stock would count one bet several times)."""
+    gap = pd.Timedelta(days=days)
+    keep = []
+    last = {}
+    sel = sel.sort_values("time")
+    for idx, sym, t in zip(sel.index, sel["symbol"], sel["time"]):
+        if sym in last and t - last[sym] < gap:
+            continue
+        last[sym] = t
+        keep.append(idx)
+    return sel.loc[keep]
 
 
 def strategy_returns(df, horizon, threshold, min_conf=0.0, require_new=False, category=None,
@@ -569,6 +588,9 @@ def luck_test(train, categories, real_best_t, runs=None, seed=11):
             best = max(best, float(np.nanmax(t)))
         return best
 
+    # Measure the real data the same way as the shuffled data (no per-stock de-duplication),
+    # so the comparison is like for like.
+    real_best_t = best_t(sgn)
     hits = 0
     for _ in range(runs):
         flip = rng.choice([-1.0, 1.0], size=len(sgn))
@@ -585,7 +607,7 @@ def walk_forward(df):
         return None
     split = d["time"].quantile(config.TRAIN_FRACTION)
     cutoff = pd.Timestamp(config.MODEL_KNOWLEDGE_CUTOFF, tz="UTC") + pd.Timedelta(days=1)
-    uses_llm = (d["model"] != "keywords").any()
+    uses_llm = (~d["model"].isin(["keywords", "rules"])).any()
     split_moved = False
     if uses_llm and split < cutoff:
         # The model may remember what happened after older news. Never test on that period.

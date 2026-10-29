@@ -144,7 +144,19 @@ TRACKS = {
                  "default_h": 3, "unit_he": "ימים"},
     "position": {"label": "דו־שבועי", "unit": "d", "horizons": [7, 10],
                  "default_h": 10, "unit_he": "ימים"},
+    # Not news: open-market purchases by company insiders (SEC Form 4). Run with run_insider.py.
+    "insider":  {"label": "קניות מנהלים (טופס 4)", "unit": "d", "horizons": [5, 10, 20, 40],
+                 "default_h": 20, "unit_he": "ימים", "source": "insider",
+                 # Once in a stock, ignore further signals in it for this many calendar days.
+                 "dedupe_days": 30, "min_dollar_volume": 1e6},
 }
+NEWS_TRACKS = [k for k, v in TRACKS.items() if v.get("source", "news") == "news"]
+
+# --- Insider purchases (SEC Form 4 bulk data sets, free) ---
+# The SEC asks automated tools to identify themselves with a contact email.
+SEC_CONTACT_EMAIL = os.getenv("SEC_CONTACT_EMAIL", "").strip()
+INSIDER_CLUSTER_DAYS = int(os.getenv("INSIDER_CLUSTER_DAYS", "30"))
+INSIDER_MIN_VALUE = float(os.getenv("INSIDER_MIN_VALUE", "10000"))   # ignore token purchases
 # Smart exits. Besides a plain time exit, every trade is also replayed with a stop-loss and
 # a profit target sized to the stock's own volatility over the holding period:
 #   stop   = k_stop   x sigma,  target = k_target x sigma,  sigma = daily vol x sqrt(days held)

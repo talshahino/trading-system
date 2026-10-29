@@ -45,7 +45,7 @@ def _minute_to_daily(bars):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--demo", action="store_true", help="synthetic data, no keys needed")
-    ap.add_argument("--track", default="all", choices=list(config.TRACKS) + ["all", "multiday"],
+    ap.add_argument("--track", default="all", choices=config.NEWS_TRACKS + ["all", "multiday"],
                     help="intraday = minutes, swing = up to a week, position = two weeks, "
                          "multiday = swing + position")
     ap.add_argument("--symbols", help="comma separated tickers")
@@ -56,8 +56,8 @@ def main():
     ap.add_argument("--start", default="2025-10-01")
     ap.add_argument("--end", default="2026-09-30")
     args = ap.parse_args()
-    tracks = (list(config.TRACKS) if args.track == "all" else
-              [t for t, v in config.TRACKS.items() if v["unit"] == "d"] if args.track == "multiday" else
+    tracks = (list(config.NEWS_TRACKS) if args.track == "all" else
+              [t for t in config.NEWS_TRACKS if config.TRACKS[t]["unit"] == "d"] if args.track == "multiday" else
               [args.track])
 
     # ---- 1. News (shared by all tracks) ----

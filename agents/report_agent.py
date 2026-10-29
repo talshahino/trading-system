@@ -43,6 +43,11 @@ def _curve_svg(curve):
             f"<p class='cap'>רווח מצטבר בתקופת המבחן בדולרים, אחרי עלויות: ${y[-1]:,.0f}</p>")
 
 
+def INSIDER():
+    from agents.backtest_agent import TRACK
+    return TRACK.get("source") == "insider"
+
+
 def TRACK_NAME():
     from agents.backtest_agent import TRACK
     return next(k for k, v in config.TRACKS.items() if v is TRACK)
@@ -104,7 +109,8 @@ def _checks_html(wf, checks):
                 line += " <b>ירידה חדה אחרי התאריך: ייתכן שהמודל \"זכר\" חלק מהתוצאות. סמוך רק על התקופה שאחרי.</b>"
         rows.append(("הטיית זיכרון של המודל", line))
     else:
-        rows.append(("הטיית זיכרון של המודל", "לא רלוונטי: הסיווג נעשה במילות מפתח ולא ב־Claude."))
+        rows.append(("הטיית זיכרון של המודל", "לא רלוונטי: אין כאן AI, הנתונים מובנים מדיווחי SEC."
+                     if INSIDER() else "לא רלוונטי: הסיווג נעשה במילות מפתח ולא ב־Claude."))
     # 1b. Multiple testing
     luck = (wf or {}).get("luck")
     if luck:
@@ -133,7 +139,8 @@ def _checks_html(wf, checks):
                if not math.isnan(cost['median_latency_ms']) else "")
         )))
     else:
-        rows.append(("עלות Claude", "לא נמדדה בהרצה הזו (מילות מפתח, או שהכול הגיע מהקאש)."))
+        if not INSIDER():
+            rows.append(("עלות Claude", "לא נמדדה בהרצה הזו (מילות מפתח, או שהכול הגיע מהקאש)."))
     return "".join(f"<div class='chk'><b>{html.escape(k)}</b><p>{v}</p></div>" for k, v in rows)
 
 
@@ -252,11 +259,17 @@ def write_report(results, wf, react, cats, mode_label, period, bands=None, check
     rule_html = ""
     if wf and wf.get("best"):
         b = wf["best"]
-        rule_html = (f"<p>הכלל שנבחר: כניסה בכיוון הסנטימנט כש־|ציון| ≥ {b['threshold']}, "
-                     f"ביטחון ≥ {b['min_conf']}, {'רק מידע חדש, ' if b['require_new'] else ''}"
-                     f"{('רק חדשות מסוג ' + html.escape(b['category']) + ', ') if b.get('category') else ''}"
-                     f"{config.EXIT_LABELS_HE.get(b.get('exit', 'time'), '')}, "
-                     f"החזקה מקסימלית {b['horizon']} {TRACK['unit_he']}. נבדקו {wf['configs_tried']} שילובים.</p>")
+        if INSIDER():
+            from agents.insider_agent import rule_text
+            rule_html = (f"<p>הכלל שנבחר: קנייה בפתיחת יום המסחר שאחרי הדיווח, כש{html.escape(rule_text(b))}. "
+                         f"{config.EXIT_LABELS_HE.get(b.get('exit', 'time'), '')}, החזקה מקסימלית {b['horizon']} "
+                         f"{TRACK['unit_he']}. נבדקו {wf['configs_tried']} שילובים.</p>")
+        else:
+            rule_html = (f"<p>הכלל שנבחר: כניסה בכיוון הסנטימנט כש־|ציון| ≥ {b['threshold']}, "
+                         f"ביטחון ≥ {b['min_conf']}, {'רק מידע חדש, ' if b['require_new'] else ''}"
+                         f"{('רק חדשות מסוג ' + html.escape(b['category']) + ', ') if b.get('category') else ''}"
+                         f"{config.EXIT_LABELS_HE.get(b.get('exit', 'time'), '')}, "
+                         f"החזקה מקסימלית {b['horizon']} {TRACK['unit_he']}. נבדקו {wf['configs_tried']} שילובים.</p>")
         cmp = pd.DataFrame([{"period": "אימון (בחירת הכלל)", **wf["train"]},
                             {"period": "מבחן (לא נראה)", **wf["test"]}])
         rule_html += _table(cmp, {"period": "תקופה", "trades": "עסקאות", "avg_bps": "ממוצע bps",
@@ -288,7 +301,7 @@ def write_report(results, wf, react, cats, mode_label, period, bands=None, check
                           f"תקופת המבחן הייתה: {wh['trades']} עסקאות, {wh['avg_bps']:,.1f} bps לעסקה, t={wh['t_stat']:.1f}.</p>")
         rule_html += _risk_html(wf.get("risk"))
 
-    react_cols = {"band": "סנטימנט 0–100", "events": "אירועים"}
+    react_cols = {"band": "מנהלים שקנו" if INSIDER() else "סנטימנט 0–100", "events": "אירועים"}
     from agents.backtest_agent import TRACK
     react_cols.update({f"h{h}_avg_bps": f"{h} {TRACK['unit_he']}" for h in TRACK["horizons"]})
     cat_html = _table(cats, {"category": "קטגוריה", "trades": "עסקאות", "avg_bps": "ממוצע bps",
@@ -311,13 +324,13 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 .chk{{background:var(--card);border-radius:8px;padding:10px 14px;margin:8px 0}} .chk p{{margin:4px 0 0;font-size:14px}}
 .curve{{width:100%;height:180px;background:var(--card);margin-top:10px}} .zero{{stroke:var(--line)}}
 </style></head><body><main>
-<h1>בקטסט סיגנלי חדשות · מסלול {html.escape(TRACK['label'])}</h1>
+<h1>{'בקטסט' if INSIDER() else 'בקטסט סיגנלי חדשות'} · מסלול {html.escape(TRACK['label'])}</h1>
 <p class="mut">{html.escape(mode_label)} · {html.escape(period)} · השהיית כניסה {config.ENTRY_LATENCY_SEC} שנ׳ · עלות {config.COST_BPS_LIQUID:g}–{config.COST_BPS_ILLIQUID:g} bps לפי נזילות</p>
 <div class="v {status}"><b>שורה תחתונה:</b> {text}</div>
 <h2>בדיקות אמינות</h2>
 {_checks_html(wf, checks or {})}
-<h2>האם המניות זזות לפי הסנטימנט?</h2>
-<p class="mut">0 = שלילי מאוד, 50 = ניטרלי, 100 = חיובי מאוד. תנועה ממוצעת אחרי הכניסה, בלי עלויות{' (ביחס לשוק)' if TRACK['unit'] == 'd' else ''}. אם יש סיגנל, המספרים יעלו ככל שהציון עולה.</p>
+{"<h2>האם המניות עולות אחרי קניות מנהלים?</h2><p class='mut'>תנועה ממוצעת ביחס לשוק אחרי הכניסה, בלי עלויות, לפי כמה מנהלים שונים קנו ב־30 הימים האחרונים. אם יש סיגנל, המספרים חיוביים ועולים עם מספר המנהלים.</p>" if INSIDER() else
+f"<h2>האם המניות זזות לפי הסנטימנט?</h2><p class='mut'>0 = שלילי מאוד, 50 = ניטרלי, 100 = חיובי מאוד. תנועה ממוצעת אחרי הכניסה, בלי עלויות{' (ביחס לשוק)' if TRACK['unit'] == 'd' else ''}. אם יש סיגנל, המספרים יעלו ככל שהציון עולה.</p>"}
 {_table(react, react_cols, {"events": "int"})}
 {_latency_html(latency)}
 <h2>כלל מסחר: אימון מול מבחן</h2>
@@ -327,7 +340,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 <h2>איפה הכלל עובד? פילוח לפי ציונים</h2>
 <p class="mut">כל העסקאות של הכלל שנבחר, על כל התקופה, מחולקות לפי ציון 0–100. 100 = גדולה/נזילה/תנודתית/חזקה ביותר.</p>
 {_bands_html(bands or {})}
-<h2>לפי סוג חדשה ({TRACK['default_h']} {TRACK['unit_he']}, ציון ≥ 0.5)</h2>
+<h2>{"לפי תפקיד הקונה הבכיר" if INSIDER() else "לפי סוג חדשה"} ({TRACK['default_h']} {TRACK['unit_he']}{"" if INSIDER() else ", ציון ≥ 0.5"})</h2>
 {cat_html or "<p class='mut'>אין פילוח קטגוריות במצב מילות מפתח.</p>"}
 <h2>נתונים</h2>
 <p class="mut">{len(results):,} אירועים, {traded:,} נמדדו. דולגו: {html.escape(skip_txt) or "—"}.</p>

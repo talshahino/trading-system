@@ -73,17 +73,17 @@ COST_BPS_LIQUID = float(os.getenv("COST_BPS_LIQUID", "5"))       # liquidity sco
 COST_BPS_ILLIQUID = float(os.getenv("COST_BPS_ILLIQUID", "40"))  # liquidity score 1
 
 # --- Position sizing (used to turn % returns into dollars) ---
-EQUITY = float(os.getenv("EQUITY", "100000"))   # demo account starts at $100,000
+EQUITY = float(os.getenv("EQUITY", "10000"))    # demo account starts at $10,000
 
 # --- Risk rules (the user's decisions, see the spec) ---
 # Daily loss limit: trading stops for the rest of the day once the day's loss reaches it.
 DAILY_LOSS_PCT = float(os.getenv("DAILY_LOSS_PCT", "2")) / 100
-# Max loss measured from the STARTING balance: at 90,000 of 100,000 everything stops
+# Max loss measured from the STARTING balance: at 9,000 of 10,000 everything stops
 # (demo too) for a system review.
 MAX_DRAWDOWN_PCT = float(os.getenv("MAX_DRAWDOWN_PCT", "10")) / 100
 # Risk scales with the balance, but less than proportionally (square root), both ways:
 #   scale = (equity / starting equity) ** RISK_SCALING_POWER, kept between the two bounds.
-#   +21% balance -> x1.10 (daily limit 2.2%); 90,000 (the stop line) -> x0.95 (1.9%).
+#   +21% balance -> x1.10 (daily limit 2.2%); 9,000 (the stop line) -> x0.95 (1.9%).
 RISK_SCALING_POWER = float(os.getenv("RISK_SCALING_POWER", "0.5"))
 RISK_SCALE_MIN = float(os.getenv("RISK_SCALE_MIN", "0.5"))
 RISK_SCALE_MAX = float(os.getenv("RISK_SCALE_MAX", "1.5"))

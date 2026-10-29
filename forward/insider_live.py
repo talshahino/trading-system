@@ -7,7 +7,7 @@ THE RULE (decided on 2026-10-29, before any forward data existed; do not tune it
     total bought in that day's filings >= $100,000.
   - Stock price >= $1, average traded value >= $1M a day, daily volatility >= 5.5%
     (volatility score 80+), tradable on Alpaca. Not already held.
-  - Buy the next trading day. Size: risk 0.5% of a virtual $10,000 account against a
+  - Buy the next trading day. Size: risk 1.5% of a virtual $10,000 account against a
     2-sigma move over 10 days (max 25% of the account, max 10 positions).
   - Exit: stop 1.5 sigma below, target 3 sigma above (sigma = daily vol x sqrt(10)),
     or after 10 trading days, whichever comes first.
@@ -44,7 +44,7 @@ MIN_PRICE = 1.0
 MIN_DOLLAR_VOL = 1e6
 MIN_DAILY_VOL = 0.055
 HOLD_DAYS = 10
-RISK_PCT = 0.005
+RISK_PCT = 0.015   # changed from 0.5% on 2026-10-29 (day 1, user's decision); sizing only, the rule is unchanged
 MAX_POS_PCT = 0.25
 MAX_POSITIONS = 10
 STOP_SIG, TARGET_SIG = 1.5, 3.0

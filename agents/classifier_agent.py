@@ -184,6 +184,7 @@ def _run_batches(todo, cache):
     deadline = time.time() + config.BATCH_MAX_WAIT_MIN * 60
     while pending and time.time() < deadline:
         time.sleep(config.BATCH_POLL_SEC)
+        config.check_time_budget()  # unfinished batches stay in pending_batches.json
         for b in list(pending):
             info = _api("GET", f"{BATCH_URL}/{b['id']}").json()
             c = info.get("request_counts", {})
@@ -244,6 +245,7 @@ def classify_events(events_df, workers=8):
         key = f"{tag}|{row['id']}|{row['symbol']}"
         if key in cache:
             return cache[key]
+        config.check_time_budget()
         with lock:
             done["n"] += 1
             if done["n"] % 250 == 0 or done["n"] == total_new:

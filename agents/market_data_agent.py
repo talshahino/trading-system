@@ -10,6 +10,7 @@ from agents.news_agent import _headers
 def _fetch_range(symbol, start, end, timeframe="1Min", adjustment="raw"):
     bars, token = [], None
     while True:
+        config.check_time_budget()
         params = {
             "symbols": symbol, "timeframe": timeframe,
             "start": start, "end": end, "limit": 10000,

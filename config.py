@@ -47,6 +47,24 @@ ALPACA_KEY = _key("ALPACA_API_KEY_ID")
 ALPACA_SECRET = _key("ALPACA_API_SECRET_KEY")
 ANTHROPIC_KEY = _key("ANTHROPIC_API_KEY")
 
+# --- Time budget ---
+# GitHub stops a job after 6 hours, possibly before the data cache is saved. The run
+# therefore stops itself cleanly before that, keeping everything downloaded so far;
+# the next run continues from there.
+import time as _time
+RUN_STARTED = _time.time()
+MAX_RUN_MINUTES = float(os.getenv("MAX_RUN_MINUTES", "0"))  # 0 = no limit (local runs)
+
+
+class TimeBudgetReached(Exception):
+    pass
+
+
+def check_time_budget():
+    if MAX_RUN_MINUTES and (_time.time() - RUN_STARTED) / 60 > MAX_RUN_MINUTES:
+        raise TimeBudgetReached()
+
+
 # --- Data ---
 ALPACA_DATA_URL = "https://data.alpaca.markets"
 ALPACA_TRADING_URL = os.getenv("ALPACA_TRADING_URL", "https://paper-api.alpaca.markets")

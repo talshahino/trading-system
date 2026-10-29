@@ -17,6 +17,7 @@ def _fetch_range(symbols, start_iso, end_iso, label):
     """All news between two ISO timestamps, following page tokens."""
     items, token, net_fail = [], None, 0
     while True:
+        config.check_time_budget()
         params = {"start": start_iso, "end": end_iso, "limit": 50, "sort": "asc",
                   "include_content": "false"}
         if symbols:

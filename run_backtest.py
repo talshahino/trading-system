@@ -186,6 +186,10 @@ def _explain(e):
 if __name__ == "__main__":
     try:
         main()
+    except config.TimeBudgetReached:
+        print("::notice::Time budget reached. Everything downloaded and classified so far is saved; "
+              "run the workflow again and it will continue from here.")
+        sys.exit(0)
     except Exception as e:  # noqa: BLE001
         msg = _explain(e)
         # "::error::" makes GitHub Actions show the message on the run's summary page.

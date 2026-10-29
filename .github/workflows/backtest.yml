@@ -63,6 +63,7 @@ jobs:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
           ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MAX_RUN_MINUTES: "320"   # stop cleanly before GitHub's limit so the cache is saved
         run: |
           END="${{ inputs.end }}"
           if [ -z "$END" ]; then END=$(date -u -d "yesterday" +%F); fi
@@ -117,7 +118,7 @@ jobs:
       # Reports (HTML only, no data, no keys) are committed to reports/<date>_<run>/
       # so every run stays in the repository's history.
       - name: Commit reports
-        if: success()
+        if: success() && hashFiles('output/report_*.html') != ''
         run: |
           DIR="reports/$(date -u +%F)_run${{ github.run_number }}${{ inputs.demo && '_demo' || '' }}"
           mkdir -p "$DIR"

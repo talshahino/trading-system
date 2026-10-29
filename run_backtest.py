@@ -172,9 +172,12 @@ def _explain(e):
     import requests
     if isinstance(e, requests.HTTPError) and e.response is not None:
         code, url = e.response.status_code, e.response.url.split("?")[0]
+        body = e.response.text[:300]
         if "alpaca" in url and code in (401, 403):
-            return (f"Alpaca refused the keys ({code}). Check ALPACA_API_KEY_ID / ALPACA_API_SECRET_KEY: "
-                    "they must be the Paper account keys, copied without spaces.")
+            if "subscription" in body.lower() or "sip" in body.lower():
+                return f"Alpaca: the free data plan does not allow this request ({code}): {body}"
+            return (f"Alpaca refused the request ({code}) at {url}: {body}. If this is about the keys, "
+                    "check ALPACA_API_KEY_ID / ALPACA_API_SECRET_KEY (Paper account keys, no spaces).")
         if "anthropic" in url and code in (401, 403):
             return f"Claude API refused the key ({code}). Check ANTHROPIC_API_KEY."
         if "anthropic" in url and code == 400:

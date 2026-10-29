@@ -40,22 +40,36 @@ def _fetch_range(symbol, start, end, timeframe="1Min", adjustment="raw"):
     return bars
 
 
+def _clip_end(iso):
+    """The free data plan refuses SIP data from the last 15 minutes (HTTP 403), so never ask
+    for anything newer than 20 minutes ago (this also covers end dates in the future)."""
+    latest = pd.Timestamp.now(tz="UTC") - pd.Timedelta(minutes=20)
+    return min(pd.Timestamp(iso), latest).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
 def get_bars(symbol, start, end):
     """Return DataFrame indexed by UTC minute with columns o,h,l,c,v."""
     months = pd.period_range(start=start, end=end, freq="M")
     frames = []
     for m in months:
         f = config.CACHE_DIR / f"bars_{symbol}_{m}_{config.BAR_FEED}.csv.gz"
-        if f.exists():
+        # Only months that are completely over are cached; the current month is re-fetched.
+        month_over = m.end_time.tz_localize("UTC") < pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)
+        if f.exists() and month_over:
             df = pd.read_csv(f, parse_dates=["t"])
         else:
             m_start = m.start_time.strftime("%Y-%m-%dT00:00:00Z")
-            m_end = (m.end_time.floor("D")).strftime("%Y-%m-%dT23:59:59Z")
+            m_end = _clip_end((m.end_time.floor("D")).strftime("%Y-%m-%dT23:59:59Z"))
+            if pd.Timestamp(m_end) <= pd.Timestamp(m_start):
+                continue
             raw = _fetch_range(symbol, m_start, m_end)
             df = pd.DataFrame(raw, columns=["t", "o", "h", "l", "c", "v", "n", "vw"])
-            df.to_csv(f, index=False)
+            if month_over:
+                df.to_csv(f, index=False)
             df["t"] = pd.to_datetime(df["t"])
         frames.append(df)
+    if not frames:
+        return pd.DataFrame(columns=["o", "h", "l", "c", "v"])
     df = pd.concat(frames, ignore_index=True)
     if df.empty:
         return df
@@ -69,7 +83,7 @@ def get_daily_bars(symbol, start, end):
     if f.exists():
         df = pd.read_csv(f)
     else:
-        raw = _fetch_range(symbol, f"{start}T00:00:00Z", f"{end}T23:59:59Z", "1Day", "all")
+        raw = _fetch_range(symbol, f"{start}T00:00:00Z", _clip_end(f"{end}T23:59:59Z"), "1Day", "all")
         df = pd.DataFrame(raw, columns=["t", "o", "h", "l", "c", "v", "n", "vw"])
         df.to_csv(f, index=False)
     if df.empty:

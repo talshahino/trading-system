@@ -145,10 +145,14 @@ def write_report(results, wf, react, cats, mode_label, period, bands=None, check
                                   "worst_bps": "הגרועה bps"},
                             {"trades": "int", "win_rate": "pct"})
         u = wf["test_usd"]
-        rule_html += (f"<p>בחשבון של ${config.EQUITY:,.0f}, סיכון {config.RISK_PCT * 100:g}% לעסקה: "
-                      f"רווח/הפסד בתקופת המבחן <b>${u['pnl_usd']:,.0f}</b>, "
-                      f"ירידה מקסימלית ${u['max_drawdown_usd']:,.0f}, "
-                      f"גודל עסקה ממוצע ${u['avg_size_usd']:,.0f}.</p>")
+        halt = (f" <b>המסחר נעצר ב־{u['halted_on']} אחרי ירידה של {config.MAX_DRAWDOWN_PCT * 100:g}% מהשיא.</b>"
+                if u.get("halted_on") else "")
+        rule_html += (f"<p>חשבון דמו של ${config.EQUITY:,.0f} לפי כללי הסיכון (סיכון בסיס {config.RISK_PCT * 100:g}% לעסקה, "
+                      f"עצירה יומית ב־{config.DAILY_LOSS_PCT * 100:g}%, עצירה כללית ב־{config.MAX_DRAWDOWN_PCT * 100:g}% מהשיא): "
+                      f"רווח/הפסד בתקופת המבחן <b>${u['pnl_usd']:,.0f}</b> "
+                      f"(יתרה ${u['end_equity']:,.0f}), ירידה מקסימלית ${u['max_drawdown_usd']:,.0f}, "
+                      f"{u['trades_taken']} עסקאות, גודל ממוצע ${u['avg_size_usd']:,.0f}, "
+                      f"ימים שנעצרו במגבלה היומית: {u['days_stopped']}.{halt}</p>")
         rule_html += _curve_svg(u.get("curve_usd"))
 
     react_cols = {"band": "סנטימנט 0–100", "events": "אירועים"}

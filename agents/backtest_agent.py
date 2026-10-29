@@ -169,15 +169,51 @@ def position_size(sel, horizon):
     return np.minimum(np.minimum(by_risk, by_equity), by_liquidity)
 
 
+def risk_scale(equity):
+    """Risk grows with the balance, slower than the balance (square root), and shrinks the
+    same way after losses."""
+    ratio = max(equity, 1) / config.EQUITY
+    return float(np.clip(ratio ** config.RISK_SCALING_POWER, config.RISK_SCALE_MIN, config.RISK_SCALE_MAX))
+
+
 def dollar_results(df, rule):
+    """Replays the rule's trades in time order on an account that starts at EQUITY and
+    obeys the risk rules: risk per trade and the daily loss limit scale with the balance,
+    the day stops once its loss hits the limit, and everything halts at the max drawdown."""
     sel = select(df, rule["threshold"], rule["min_conf"], rule["require_new"], rule.get("category"))
-    net = np.sign(sel["score"]) * sel[rc(rule["horizon"])] - _cost(sel)
-    size = position_size(sel, rule["horizon"])
-    pnl = (size * net).dropna()
-    curve = pnl.cumsum()
-    dd = (curve - curve.cummax()).min() if len(curve) else np.nan
-    return {"pnl_usd": pnl.sum(), "max_drawdown_usd": dd, "avg_size_usd": size[pnl.index].mean(),
-            "curve_usd": curve}
+    sel = sel.assign(net=np.sign(sel["score"]) * sel[rc(rule["horizon"])] - _cost(sel))
+    sel = sel.assign(base_size=position_size(sel, rule["horizon"]))
+    sel = sel.dropna(subset=["net"]).sort_values("entry_time")
+
+    equity = peak = config.EQUITY
+    day, day_pnl, day_start = None, 0.0, equity
+    stopped_days, halted_on = set(), None
+    pnls, sizes, times = [], [], []
+    for r in sel.itertuples(index=False):
+        d = pd.Timestamp(r.entry_time).tz_convert(NY).date()
+        if d != day:
+            day, day_pnl, day_start = d, 0.0, equity
+        scale = risk_scale(equity)
+        if day_pnl <= -config.DAILY_LOSS_PCT * scale * day_start:
+            stopped_days.add(d)
+            continue
+        size = r.base_size * scale * (equity / config.EQUITY)
+        pnl = size * r.net
+        equity += pnl
+        day_pnl += pnl
+        peak = max(peak, equity)
+        pnls.append(pnl); sizes.append(size); times.append(r.entry_time)
+        if equity <= peak * (1 - config.MAX_DRAWDOWN_PCT):
+            halted_on = d
+            break
+
+    curve = pd.Series(np.cumsum(pnls), index=times) if pnls else pd.Series(dtype=float)
+    # Peak includes the starting balance, so a loss from day one counts as drawdown.
+    dd = (curve - curve.cummax().clip(lower=0)).min() if len(curve) else np.nan
+    return {"pnl_usd": float(np.sum(pnls)) if pnls else 0.0, "max_drawdown_usd": dd,
+            "avg_size_usd": float(np.mean(sizes)) if sizes else np.nan, "curve_usd": curve,
+            "end_equity": equity, "trades_taken": len(pnls),
+            "days_stopped": len(stopped_days), "halted_on": halted_on}
 
 
 def _edges(width):

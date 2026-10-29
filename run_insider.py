@@ -47,6 +47,23 @@ def demo_data(seed=5):
     return pd.DataFrame(rows), bars, {"SPY": mkt, "IWM": mkt}
 
 
+def prior_return(events, bars, n=20):
+    """Stock return over the n sessions up to the filing day (known at entry, no peeking).
+    Tested addition: research finds insider buying after a sharp drop is the stronger signal."""
+    out = pd.Series(np.nan, index=events.index)
+    days = pd.to_datetime(events["time"]).dt.tz_convert("America/New_York").dt.normalize().dt.tz_localize(None)
+    for sym, idx in events.groupby("symbol").groups.items():
+        b = bars.get(sym)
+        if b is None or b.empty:
+            continue
+        c = b["c"]
+        pos = c.index.searchsorted(days.loc[idx].to_numpy(), side="right") - 1
+        for i, p in zip(idx, pos):
+            if p >= n:
+                out.at[i] = c.iat[p] / c.iat[p - n] - 1
+    return out
+
+
 def reaction_by_insiders(results):
     d = results.dropna(subset=["entry_px"]).copy()
     d["band"] = d["n_insiders"].clip(upper=4).map({1: "1", 2: "2", 3: "3", 4: "4+"})
@@ -106,6 +123,7 @@ def main():
     ev = features_agent.add_scores(events, bars, {})
     results = backtest_agent.measure_reactions_daily(ev, bars, market)
     results["year"] = pd.to_datetime(results["time"]).dt.year
+    results["prior_ret_20d"] = prior_return(results, bars)
     react = reaction_by_insiders(results)
     cats = backtest_agent.category_table(results, threshold=0.3)
     if not cats.empty:
@@ -115,8 +133,20 @@ def main():
     if wf and wf.get("best"):
         for col in ("size_score", "liquidity_score", "volatility_score"):
             bands[col] = backtest_agent.band_table(results, wf["best"], col)
-        details = {"לפי שנה (יציבות לאורך זמן)": backtest_agent.group_table(results, wf["best"], "year"),
+        bins, labels = [-10, -0.20, -0.10, 0, 0.10, 10], ["ירידה של 20%+", "ירידה 10–20%", "ירידה 0–10%",
+                                                          "עלייה 0–10%", "עלייה 10%+"]
+        test = results[results["time"] > wf["split"]]
+        details = {"תוספת שנבדקה: תנועת המניה ב־20 הימים שלפני הדיווח, תקופת המבחן בלבד":
+                       backtest_agent.group_table(test, wf["best"], "prior_ret_20d", bins, labels),
+                   "אותה תוספת, כל עשר השנים":
+                       backtest_agent.group_table(results, wf["best"], "prior_ret_20d", bins, labels),
+                   "לפי שנה (יציבות לאורך זמן)": backtest_agent.group_table(results, wf["best"], "year"),
                    "גידור מול": backtest_agent.group_table(results, wf["best"], "hedge")}
+        for k in list(details)[:2]:
+            t = details[k]
+            if not t.empty:
+                order = {l: i for i, l in enumerate(labels)}
+                details[k] = t.assign(_o=t["group"].map(order).fillna(99)).sort_values("_o").drop(columns="_o")
         if not details["לפי שנה (יציבות לאורך זמן)"].empty:
             details["לפי שנה (יציבות לאורך זמן)"] = details["לפי שנה (יציבות לאורך זמן)"].sort_values("group")
 

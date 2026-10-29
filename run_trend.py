@@ -26,13 +26,19 @@ import pandas as pd
 
 import config
 
-UNIVERSE = ["SPY", "QQQ", "IWM", "EFA", "EEM", "VNQ", "TLT", "IEF", "LQD", "HYG", "GLD", "DBC"]
+BASE_UNIVERSE = ["SPY", "QQQ", "IWM", "EFA", "EEM", "VNQ", "TLT", "IEF", "LQD", "HYG", "GLD", "DBC"]
+# More markets that don't move together: Japan, Europe, China, inflation-linked bonds,
+# international government bonds, silver, oil, agriculture, the US dollar.
+EXTRA = ["EWJ", "VGK", "FXI", "TIP", "BWX", "SLV", "USO", "DBA", "UUP"]
+UNIVERSE = BASE_UNIVERSE + EXTRA
+COMBO_TREND = 0.7          # combo = 70% trend (vol-targeted) + 30% momentum
 CASH = "SHV"
 COST = 0.0005          # per side
 TARGET_VOL = 0.08
 NAMES_HE = {"trend": "מעקב מגמה (ממוצע 200 יום)", "trend_vt": "מעקב מגמה + יעד תנודתיות 8%",
-            "momentum": "מומנטום: 3 החזקים", "spy": "S&P 500 קנה והחזק (השוואה)",
-            "6040": "60/40 מניות/אג״ח (השוואה)"}
+            "momentum": "מומנטום: 3 החזקים", "combo": "שילוב: 70% מגמה + 30% מומנטום",
+            "trend_vt12": "מעקב מגמה + יעד 8%, 12 קרנות (הרצה קודמת)",
+            "spy": "S&P 500 קנה והחזק (השוואה)", "6040": "60/40 מניות/אג״ח (השוואה)"}
 
 
 def load_prices(start, end, demo=False):
@@ -165,7 +171,8 @@ def _svg(curves):
     w, h = 640, 220
     allv = np.concatenate([c.values for c in curves.values()])
     lo, hi = np.log(allv.min()), np.log(allv.max())
-    colors = {"trend": "#1f8a4c", "trend_vt": "#2b6cb0", "momentum": "#b7791f", "spy": "#888", "6040": "#bbb"}
+    colors = {"trend": "#1f8a4c", "trend_vt": "#2b6cb0", "momentum": "#b7791f", "combo": "#9b2c9b",
+              "trend_vt12": "#6fa8dc", "spy": "#888", "6040": "#bbb"}
     lines, legend = "", ""
     for k, c in curves.items():
         x = np.linspace(0, w, len(c))
@@ -208,7 +215,7 @@ table{{border-collapse:collapse;width:100%;background:var(--card);font-size:13px
 th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}}
 </style></head><body><main>
 <h1>בקטסט · מעקב מגמה ומומנטום על קרנות סל</h1>
-<p class="mut">{html.escape(mode)} · {html.escape(period)} · 12 קרנות סל (מניות ארה״ב, חו״ל, שווקים מתעוררים, נדל״ן, אג״ח, זהב, סחורות) · איזון חודשי · עלות 5 bps לצד · מזומן = אג״ח ממשלתי קצר (SHV)</p>
+<p class="mut">{html.escape(mode)} · {html.escape(period)} · {len(UNIVERSE)} קרנות סל (מניות ארה״ב, אירופה, יפן, סין, שווקים מתעוררים, נדל״ן, אג״ח ממשלתיות וקונצרניות, אג״ח צמודות ואג״ח חו״ל, זהב, כסף, נפט, חקלאות, סחורות, דולר) · איזון חודשי · עלות 5 bps לצד · מזומן = אג״ח ממשלתי קצר (SHV)</p>
 <p>הכללים נקבעו מראש לפי מחקר של עשרות שנים, בלי חיפוש ובלי התאמה לנתונים, ולכן אין צורך בבדיקת מזל.
 האסטרטגיה עם היחס הטוב ביותר בין תשואה לסיכון (Sharpe): <b>{html.escape(NAMES_HE[best])}</b>.</p>
 <h2>סיכום</h2>
@@ -231,6 +238,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 
 
 def main():
+    global UNIVERSE
     ap = argparse.ArgumentParser()
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--start", default="2016-01-01")
@@ -238,12 +246,27 @@ def main():
     args = ap.parse_args()
     print("[1] prices")
     px = load_prices(args.start, args.end, args.demo)
+    missing = [u for u in UNIVERSE if u not in px.columns]
+    if missing:
+        print(f"    no data for {missing}: left out")
+    UNIVERSE[:] = [u for u in UNIVERSE if u in px.columns]
     px = px.dropna(how="any")
     print(f"    {len(px)} days, {px.index[0].date()} → {px.index[-1].date()}")
-    results = {}
-    for k in ("trend", "trend_vt", "momentum", "spy", "6040"):
+    results, series = {}, {}
+    for k in ("trend", "trend_vt", "momentum", "combo", "trend_vt12", "spy", "6040"):
         print(f"[2] {k}")
-        r = simulate(px, k)
+        if k == "combo":
+            a, b = series["trend_vt"], series["momentum"]
+            idx = a.index.intersection(b.index)
+            r = COMBO_TREND * a[idx] + (1 - COMBO_TREND) * b[idx]
+        elif k == "trend_vt12":
+            full = UNIVERSE
+            UNIVERSE = [u for u in BASE_UNIVERSE if u in px.columns]
+            r = simulate(px, "trend_vt")
+            UNIVERSE = full
+        else:
+            r = simulate(px, k)
+        series[k] = r
         mid = r.index[len(r) // 2]
         results[k] = {"st": stats(r), "risk": dd_risk(r), "first": stats(r[r.index < mid]),
                       "second": stats(r[r.index >= mid])}

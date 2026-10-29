@@ -21,6 +21,9 @@ def _fetch_range(symbol, start, end, timeframe="1Min", adjustment="raw"):
             r = requests.get(f"{config.ALPACA_DATA_URL}/v2/stocks/bars",
                          headers=_headers(), params=params, timeout=60)
         except (requests.ConnectionError, requests.Timeout):
+            net_fail = locals().get('net_fail', 0) + 1
+            if net_fail > 30:  # ~5 minutes of no network: give up with a clear error
+                raise
             time.sleep(10)
             continue
         if r.status_code == 429:

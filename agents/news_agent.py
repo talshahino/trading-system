@@ -39,6 +39,9 @@ def fetch_news(symbols, start, end, use_cache=True):
                 r = requests.get(f"{config.ALPACA_DATA_URL}/v1beta1/news",
                              headers=_headers(), params=params, timeout=30)
             except (requests.ConnectionError, requests.Timeout):
+                net_fail = locals().get('net_fail', 0) + 1
+                if net_fail > 30:  # ~5 minutes of no network: give up with a clear error
+                    raise
                 time.sleep(10)
                 continue
             if r.status_code == 429:

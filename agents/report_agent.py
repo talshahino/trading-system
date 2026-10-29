@@ -137,7 +137,31 @@ def _checks_html(wf, checks):
     return "".join(f"<div class='chk'><b>{html.escape(k)}</b><p>{v}</p></div>" for k, v in rows)
 
 
-def write_report(results, wf, react, cats, mode_label, period, bands=None, checks=None):
+def _latency_html(latency):
+    if not latency:
+        return ""
+    tbl, info = latency
+    head = "<h2>כמה מהר צריך להיות?</h2>"
+    if tbl is None or tbl.empty:
+        return head + "<p class='mut'>אין עדיין מדידות של עסקאות בודדות.</p>"
+    note = (f"לכל חדשה עם |ציון| ≥ {info['min_abs_score']} נמדד המחיר מעסקאות בודדות ברגע הפרסום ואחרי 1–60 שניות. "
+            "כל השורות יוצאות באותה שעה, כך שההבדל ביניהן הוא רק כמה מאוחר נכנסנו. "
+            "<b>0 שנ׳ = המחיר ברגע הפרסום עצמו: גבול עליון תיאורטי</b>, אי אפשר באמת לקנות בו אחרי שקוראים את החדשה. "
+            f"נמדדו {info['measured']:,} מתוך {info['events']:,} חדשות"
+            + (" (השאר יימדדו בהרצה הבאה)." if info.get("stopped") else "."))
+    out = head + f"<p class='mut'>{note}</p>"
+    for h in sorted(tbl["h"].unique()):
+        t = tbl[tbl["h"] == h].sort_values("lat").copy()
+        t["lat_he"] = t["lat"].map(lambda x: f"{int(x)} שנ׳")
+        out += (f"<h3>יציאה {h} דק׳ אחרי הכניסה המקורית</h3>" +
+                _table(t, {"lat_he": "כניסה אחרי", "events": "חדשות", "gross_bps": "תנועה bps",
+                           "net_bps": "נטו bps", "t_stat": "t", "strong_events": "חזקות (≥0.5)",
+                           "strong_net_bps": "נטו חזקות bps"},
+                       {"events": "int", "strong_events": "int"}))
+    return out
+
+
+def write_report(results, wf, react, cats, mode_label, period, bands=None, checks=None, latency=None):
     from agents.backtest_agent import TRACK
     csv_path = config.OUTPUT_DIR / f"events_{TRACK_NAME()}.csv"
     results.to_csv(csv_path, index=False)
@@ -209,6 +233,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 <h2>האם המניות זזות לפי הסנטימנט?</h2>
 <p class="mut">0 = שלילי מאוד, 50 = ניטרלי, 100 = חיובי מאוד. תנועה ממוצעת אחרי הכניסה, בלי עלויות{' (ביחס לשוק)' if TRACK['unit'] == 'd' else ''}. אם יש סיגנל, המספרים יעלו ככל שהציון עולה.</p>
 {_table(react, react_cols, {"events": "int"})}
+{_latency_html(latency)}
 <h2>כלל מסחר: אימון מול מבחן</h2>
 {rule_html or "<p>אין מספיק נתונים.</p>"}
 <h2>איפה הכלל עובד? פילוח לפי ציונים</h2>

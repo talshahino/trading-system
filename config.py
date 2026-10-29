@@ -73,14 +73,17 @@ ALPACA_TRADING_URL = os.getenv("ALPACA_TRADING_URL", "https://paper-api.alpaca.m
 BAR_FEED = os.getenv("BAR_FEED", "sip")
 
 # --- Classifier ---
-CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-haiku-5-5")
+# Claude Haiku 4.5 for the backtest: its training data ends July 2025, BEFORE the news we
+# test on (from October 2025), so it cannot "remember" what happened after any headline and
+# the whole period is clean, training part included. (Haiku 5.5 knew up to June 2026,
+# which contaminated the training period.)
+CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-haiku-4-5")
 # The model may already "know" what happened after news from before this date, which
 # inflates results. The untouched test period always starts after it.
-# Claude Haiku 5.5: June 2026. Update if you switch models.
-MODEL_KNOWLEDGE_CUTOFF = os.getenv("MODEL_KNOWLEDGE_CUTOFF", "2026-06-30")
-# USD per million tokens, used for the cost estimate (Haiku 5.5, prompts under 100K tokens).
-CLAUDE_INPUT_USD_PER_MTOK = float(os.getenv("CLAUDE_INPUT_USD_PER_MTOK", "0.10"))
-CLAUDE_OUTPUT_USD_PER_MTOK = float(os.getenv("CLAUDE_OUTPUT_USD_PER_MTOK", "0.50"))
+MODEL_KNOWLEDGE_CUTOFF = os.getenv("MODEL_KNOWLEDGE_CUTOFF", "2025-07-31")
+# USD per million tokens, used for the cost estimate (Haiku 4.5; Haiku 5.5 is 0.10 / 0.50).
+CLAUDE_INPUT_USD_PER_MTOK = float(os.getenv("CLAUDE_INPUT_USD_PER_MTOK", "1.00"))
+CLAUDE_OUTPUT_USD_PER_MTOK = float(os.getenv("CLAUDE_OUTPUT_USD_PER_MTOK", "5.00"))
 # Batch mode for historical runs: many headlines in one job, half the price, usually done
 # within an hour. Live trading always uses single calls.
 USE_BATCH = os.getenv("USE_BATCH", "1") == "1"
@@ -92,6 +95,9 @@ BATCH_MAX_WAIT_MIN = int(os.getenv("BATCH_MAX_WAIT_MIN", "240"))
 # --- Backtest assumptions ---
 # Seconds between news publication and our order reaching the market (realistic: 30-90s).
 ENTRY_LATENCY_SEC = int(os.getenv("ENTRY_LATENCY_SEC", "60"))
+# Latency study (intraday track): trade-by-trade prices around the strongest news items.
+# Minutes per run spent downloading them; the rest continues on the next run (cached).
+LATENCY_MAX_MINUTES = float(os.getenv("LATENCY_MAX_MINUTES", "90"))
 # Round-trip cost in basis points (spread + slippage + fees). 10 bps = 0.10%.
 # Scaled by liquidity score: thin stocks cost more.
 COST_BPS_LIQUID = float(os.getenv("COST_BPS_LIQUID", "5"))       # liquidity score 100
@@ -157,7 +163,7 @@ MAX_SYMBOLS_PER_NEWS = int(os.getenv("MAX_SYMBOLS_PER_NEWS", "2"))
 # Only trade during regular hours (09:30-16:00 New York).
 RTH_ONLY = os.getenv("RTH_ONLY", "1") == "1"
 # Share of the period (by time) used to pick rules; the rest is the untouched test.
-TRAIN_FRACTION = float(os.getenv("TRAIN_FRACTION", "0.7"))
+TRAIN_FRACTION = float(os.getenv("TRAIN_FRACTION", "0.6"))
 MIN_TRADES_FOR_RULE = int(os.getenv("MIN_TRADES_FOR_RULE", "30"))
 # Multiple-testing correction: the whole rule search is repeated this many times on
 # training data where each event's direction was flipped at random. If random data often

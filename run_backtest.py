@@ -156,8 +156,14 @@ def main():
         if wf and wf.get("best"):
             for col in features_agent.SCORE_COLUMNS:
                 bands[col] = backtest_agent.band_table(results, wf["best"], col)
+        latency = None
+        if tr["unit"] == "m" and not args.demo:
+            from agents import latency_agent
+            print(f"    latency study: trade-by-trade prices around strong news (up to {config.LATENCY_MAX_MINUTES:g} min)")
+            latency = latency_agent.latency_study(results, bars)
         print(f"[5] track '{name}': report")
-        path, _ = report_agent.write_report(results, wf, react, cats, mode, period, bands, tr_checks)
+        path, _ = report_agent.write_report(results, wf, react, cats, mode, period, bands, tr_checks,
+                                            latency=latency)
         status, text = report_agent.verdict(wf)
         summary.append((name, status, text, path))
 

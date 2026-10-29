@@ -208,3 +208,15 @@ ETFS = set("""SPY QQQ IWM DIA VOO VTI IVV RSP MDY XLK XLF XLE XLV XLI XLY XLP XL
 SMH SOXX XBI IBB KRE KBE XHB XRT ITB GLD SLV USO UNG GDX GDXJ TLT IEF SHY HYG LQD AGG BND EEM EFA
 FXI KWEB EWZ EWJ INDA VEA VWO ARKK ARKG TQQQ SQQQ SPXL SPXS SOXL SOXS UVXY VXX SVXY IBIT FBTC
 ETHA GBTC BITO TNA TZA LABU LABD NVDL TSLL MSTU JEPI SCHD VNQ""".split())
+
+# Rules found in earlier runs, re-checked as-is (no searching) on every run. Checking a
+# fixed rule on new stocks and new months is the cleanest test there is: nothing is fitted.
+CANDIDATE_RULES = {
+    "swing": [{"name": "הנפקות ודילול (נמצא בהרצה 8)", "horizon": 5, "threshold": 0.7, "min_conf": 0.8,
+               "require_new": False, "category": "offering/dilution", "exit": "trail15"}],
+    "position": [{"name": "הנפקות ודילול (נמצא בהרצה 8)", "horizon": 10, "threshold": 0.7, "min_conf": 0.8,
+                  "require_new": False, "category": "offering/dilution", "exit": "trail15"}],
+}
+# The 400-ticker universe of run 8, so the candidate can be checked separately on the
+# stocks it was found on and on the stocks added later.
+CANDIDATE_BASE_UNIVERSE = int(os.getenv("CANDIDATE_BASE_UNIVERSE", "400"))

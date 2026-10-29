@@ -214,8 +214,32 @@ def _details_html(details):
             "הפירוט לא שימש לבחירת הכלל, הוא מראה איפה הרווח נוצר.</p>" + out)
 
 
+def _candidates_html(candidates):
+    out = ""
+    for cand, tbl, det in candidates or []:
+        if tbl is None or tbl.empty:
+            continue
+        t = tbl.copy()
+        t["label"] = t["group"] + " · " + t["period"] + " · שורט קשה להשאלה: " + t["htb"]
+        t["short_pct"] = t["short_share"]
+        out += (f"<h2>בדיקה חוזרת: {html.escape(cand['name'])}</h2>"
+                "<p class='mut'>הכלל נבדק כמו שהוא, בלי שום חיפוש: |ציון| ≥ "
+                f"{cand['threshold']}, ביטחון ≥ {cand['min_conf']}, {html.escape(cand['category'])}, "
+                f"{config.EXIT_LABELS_HE.get(cand['exit'], cand['exit'])}, עד {cand['horizon']} ימים. "
+                "השורות של המניות שנוספו הן מבחן נקי לגמרי: הכלל מעולם לא ראה אותן.</p>" +
+                _table(t, {"label": "קבוצה", "trades": "עסקאות", "avg_bps": "ממוצע bps נטו",
+                           "win_rate": "הצלחה", "t_stat": "t", "short_pct": "שורט", "worst_bps": "הגרועה bps"},
+                       {"trades": "int", "win_rate": "pct", "short_pct": "pct"}))
+        for name, d in (det or {}).items():
+            if d is not None and not d.empty:
+                out += (f"<h3>{html.escape(name)} (כל התקופה, כולל שורט קשה להשאלה)</h3>" +
+                        _table(d, {"group": "קבוצה", "trades": "עסקאות", "avg_bps": "ממוצע bps נטו",
+                                   "win_rate": "הצלחה", "t_stat": "t"}, {"trades": "int", "win_rate": "pct"}))
+    return out
+
+
 def write_report(results, wf, react, cats, mode_label, period, bands=None, checks=None, latency=None,
-                 details=None):
+                 details=None, candidates=None):
     from agents.backtest_agent import TRACK
     csv_path = config.OUTPUT_DIR / f"events_{TRACK_NAME()}.csv"
     results.to_csv(csv_path, index=False)
@@ -299,6 +323,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 <h2>כלל מסחר: אימון מול מבחן</h2>
 {rule_html or "<p>אין מספיק נתונים.</p>"}
 {_details_html(details)}
+{_candidates_html(candidates)}
 <h2>איפה הכלל עובד? פילוח לפי ציונים</h2>
 <p class="mut">כל העסקאות של הכלל שנבחר, על כל התקופה, מחולקות לפי ציון 0–100. 100 = גדולה/נזילה/תנודתית/חזקה ביותר.</p>
 {_bands_html(bands or {})}

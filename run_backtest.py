@@ -183,6 +183,29 @@ def main():
                         r, wf["best"], "size_pct_of_market_cap", [0, 5, 10, 20, 1000], ["עד 5%", "5–10%", "10–20%", "מעל 20%"]),
                     "גידור מול": backtest_agent.group_table(r, wf["best"], "hedge"),
                 }
+        candidates = []
+        for cand in config.CANDIDATE_RULES.get(name, []):
+            if wf and wf.get("split") is not None and not args.demo and args.universe == "all":
+                base = set(news_agent.universe_from_news(news, args.min_news, config.CANDIDATE_BASE_UNIVERSE))
+                tbl = backtest_agent.candidate_check(results, cand, wf["split"], base)
+                det = {}
+                if "offering_type" in results:
+                    from agents.offering_agent import TYPES_HE
+                    old_htb = config.SKIP_HTB_SHORTS
+                    config.SKIP_HTB_SHORTS = False
+                    try:
+                        rr = results.assign(offering_type_he=results["offering_type"].map(TYPES_HE),
+                                            w=results["warrants"].map({True: "כן", False: "לא"}),
+                                            etb=results.get("easy_to_borrow", pd.Series(dtype=object)).map(
+                                                {True: "קלה להשאלה", False: "קשה להשאלה"}))
+                        det = {"סוג ההנפקה": backtest_agent.group_table(rr, cand, "offering_type_he"),
+                               "כתבי אופציה": backtest_agent.group_table(rr, cand, "w"),
+                               "הנחה": backtest_agent.group_table(rr, cand, "discount_pct", [0, 5, 10, 20, 100],
+                                                                 ["0–5%", "5–10%", "10–20%", "מעל 20%"]),
+                               "השאלה": backtest_agent.group_table(rr, cand, "etb")}
+                    finally:
+                        config.SKIP_HTB_SHORTS = old_htb
+                candidates.append((cand, tbl, det))
         latency = None
         if tr["unit"] == "m" and not args.demo:
             from agents import latency_agent
@@ -190,7 +213,7 @@ def main():
             latency = latency_agent.latency_study(results, bars)
         print(f"[5] track '{name}': report")
         path, _ = report_agent.write_report(results, wf, react, cats, mode, period, bands, tr_checks,
-                                            latency=latency, details=details)
+                                            latency=latency, details=details, candidates=candidates)
         status, text = report_agent.verdict(wf)
         summary.append((name, status, text, path))
 

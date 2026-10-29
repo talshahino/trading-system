@@ -645,3 +645,29 @@ def walk_forward(df):
         "sides": {"train": side_split(train, rule), "test": side_split(test, rule)},
         "test_with_htb": _with_htb(test, rule),
     }
+
+
+def candidate_check(df, rule, split, base_universe):
+    """A fixed rule from an earlier run, no searching: whole period and the part after
+    `split`, on all stocks / the stocks it was found on / the stocks added since, with and
+    without the squeeze filter (hard-to-borrow shorts)."""
+    d = df.dropna(subset=["entry_px"])
+    r = {k: rule[k] for k in ("horizon", "threshold", "min_conf", "require_new", "category", "exit")}
+    groups = [("כל המניות", d),
+              (f"{len(base_universe)} המניות של הרצה 8", d[d["symbol"].isin(base_universe)]),
+              ("המניות שנוספו (לא נראו מעולם)", d[~d["symbol"].isin(base_universe)])]
+    rows = []
+    for gname, g in groups:
+        for htb in (False, True):
+            old = config.SKIP_HTB_SHORTS
+            config.SKIP_HTB_SHORTS = not htb
+            try:
+                for pname, part in (("כל התקופה", g), ("אחרי נקודת החלוקה", g[g["time"] > split])):
+                    st = _trade_stats(strategy_returns(part, **r))
+                    sel = select(part, r["threshold"], r["min_conf"], r["require_new"], r["category"])
+                    st.update({"group": gname, "htb": "כן" if htb else "לא", "period": pname,
+                               "short_share": float((np.sign(sel["score"]) < 0).mean()) if len(sel) else np.nan})
+                    rows.append(st)
+            finally:
+                config.SKIP_HTB_SHORTS = old
+    return pd.DataFrame(rows)

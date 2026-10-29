@@ -179,7 +179,8 @@ def risk_scale(equity):
 def dollar_results(df, rule):
     """Replays the rule's trades in time order on an account that starts at EQUITY and
     obeys the risk rules: risk per trade and the daily loss limit scale with the balance,
-    the day stops once its loss hits the limit, and everything halts at the max drawdown."""
+    the day stops once its loss hits the limit, and everything halts once the balance
+    falls MAX_DRAWDOWN_PCT below the starting balance."""
     sel = select(df, rule["threshold"], rule["min_conf"], rule["require_new"], rule.get("category"))
     sel = sel.assign(net=np.sign(sel["score"]) * sel[rc(rule["horizon"])] - _cost(sel))
     sel = sel.assign(base_size=position_size(sel, rule["horizon"]))
@@ -203,7 +204,7 @@ def dollar_results(df, rule):
         day_pnl += pnl
         peak = max(peak, equity)
         pnls.append(pnl); sizes.append(size); times.append(r.entry_time)
-        if equity <= peak * (1 - config.MAX_DRAWDOWN_PCT):
+        if equity <= config.EQUITY * (1 - config.MAX_DRAWDOWN_PCT):
             halted_on = d
             break
 

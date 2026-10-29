@@ -1,0 +1,48 @@
+name: Forward test - insider buys (paper)
+
+# Runs by itself every trading day at 15:00 UTC (10:00 or 11:00 New York): reads
+# yesterday's SEC Form 4 filings, places paper orders in the Alpaca Paper account for the
+# fixed rule in forward/insider_live.py, closes positions after 10 trading days, and
+# commits forward/state.json, forward/insider_log.csv and forward/report.html.
+# Paper money only. Keys come from the repository's Actions secrets.
+
+on:
+  schedule:
+    - cron: "0 15 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forward-insider
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Run forward test
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+          SEC_CONTACT_EMAIL: ${{ secrets.SEC_CONTACT_EMAIL }}
+        run: python -u forward/insider_live.py
+      - name: Save state and log
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/state.json forward/insider_log.csv forward/report.html 2>/dev/null || true
+          if git diff --cached --quiet; then echo "nothing to save"; exit 0; fi
+          git commit -m "Forward test (insider buys): $(date -u +%F)"
+          git pull --rebase
+          git push

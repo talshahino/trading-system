@@ -236,10 +236,200 @@ def s_cup_handle(df):
     return long_, np.zeros(n, bool), {"stop": ("level", sl, sl), "target": ("level", tg, tg)}
 
 
+def _ny_minutes(df):
+    idx = df.index.tz_convert(NY)
+    return (idx.hour * 60 + idx.minute).to_numpy(), pd.Series(idx.date).to_numpy()
+
+
+def _opening_range(df, start_min=570):
+    """High/low of the bar that starts at 9:30 NY (start_min) each day, known from the next bar."""
+    h, l = df["h"].to_numpy(), df["l"].to_numpy()
+    mins, day = _ny_minutes(df)
+    n = len(h)
+    rh, rl, known = np.full(n, np.nan), np.full(n, np.nan), np.zeros(n, bool)
+    cur, ch, cl, seen = None, np.nan, np.nan, False
+    for i in range(n):
+        if day[i] != cur:
+            cur, ch, cl, seen = day[i], np.nan, np.nan, False
+        if mins[i] == start_min:
+            ch, cl, seen = h[i], l[i], True
+            continue
+        if seen:
+            rh[i], rl[i], known[i] = ch, cl, True
+    return rh, rl, known, mins
+
+
+def s_ny_orb_15m(df):
+    """TT11 NY opening-range breakout, 15 minutes (@_itskinglouis, NAS100). Mark the high/low
+    of the 9:30 New York 15-minute candle. First full candle close above (below) the range ->
+    enter at the next candle. Stop below (above) the recent low (high) = extreme of the last 3
+    candles (assumed). Target 2.5R. One trade per day; only until 16:00 NY (assumed)."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    rh, rl, known, mins = _opening_range(df)
+    _, day = _ny_minutes(df)
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    lo3 = pd.Series(l).rolling(3).min().to_numpy()
+    hi3 = pd.Series(h).rolling(3).max().to_numpy()
+    done = set()
+    for i in range(n):
+        if not known[i] or mins[i] >= 960 or day[i] in done:
+            continue
+        if c[i] > rh[i]:
+            long_[i] = True
+            done.add(day[i])
+        elif c[i] < rl[i]:
+            short[i] = True
+            done.add(day[i])
+    return long_, short, {"stop": ("level", lo3, hi3), "target": ("R", 2.5)}
+
+
+def s_orb_retest_5m(df):
+    """TT13 Opening range breakout and retest, 5 minutes (@thecrypteller, also @cyforex2).
+    Range = first 5-minute candle after the 9:30 NY open. Wait for a close beyond the range,
+    then the first candle that taps the broken level and closes back on the breakout side ->
+    enter in the breakout direction. Stop beyond the other side of the range. Target 2R.
+    One trade per day."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    rh, rl, known, mins = _opening_range(df)
+    _, day = _ny_minutes(df)
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    state, cur, done = 0, None, False
+    for i in range(n):
+        if day[i] != cur:
+            cur, state, done = day[i], 0, False
+        if not known[i] or done or mins[i] >= 960:
+            continue
+        if state == 0:
+            state = 1 if c[i] > rh[i] else -1 if c[i] < rl[i] else 0
+        elif state == 1 and l[i] <= rh[i] and c[i] > rh[i]:
+            long_[i], done = True, True
+        elif state == -1 and h[i] >= rl[i] and c[i] < rl[i]:
+            short[i], done = True, True
+    a = atr(h, l, c, 14)
+    return long_, short, {"stop": ("level", rl - 0.1 * a, rh + 0.1 * a), "target": ("R", 2.0)}
+
+
+def s_prev_ny_session_fade(df):
+    """TT16 Previous New York session high/low fade (@forextristan, US30). Mark yesterday's
+    NY session (9:30-16:00 NY) high and low. Today, during the NY session, the first touch of
+    either level is faded: short at the high, long at the low. Stop slightly beyond the level
+    (0.1 ATR, assumed). Target 4R (stated)."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    mins, day = _ny_minutes(df)
+    a = atr(h, l, c, 14)
+    sess = (mins >= 570) & (mins < 960)
+    g = pd.DataFrame({"d": day, "h": np.where(sess, h, np.nan), "l": np.where(sess, l, np.nan)})
+    daily = g.groupby("d").agg(sh=("h", "max"), sl=("l", "min")).shift(1)
+    m = g[["d"]].join(daily, on="d")
+    ph, pl = m["sh"].to_numpy(), m["sl"].to_numpy()
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    cur, used = None, False
+    for i in range(n):
+        if day[i] != cur:
+            cur, used = day[i], False
+        if used or not sess[i] or not np.isfinite(ph[i]):
+            continue
+        if h[i] >= ph[i] and c[i] < ph[i]:
+            short[i], used = True, True
+        elif l[i] <= pl[i] and c[i] > pl[i]:
+            long_[i], used = True, True
+    return long_, short, {"stop": ("level", pl - 0.1 * a, ph + 0.1 * a), "target": ("R", 4.0)}
+
+
+def s_fib_golden_zone(df):
+    """TT12 Fibonacci golden zone pullback, 5 minutes (@il.gufo.notturno). Trend up when price
+    breaks the recent swing high (20-bar high). Fib from the swing low before the break to the
+    new high. When price pulls back into 0.618-0.79 and a bullish candle closes there, buy.
+    Stop just below the 0.79 level (stated), target 1:2 (stated). Mirror for downtrends."""
+    o, h, l, c = (df[x].to_numpy() for x in "ohlc")
+    a = atr(h, l, c, 14)
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    hi20 = pd.Series(h).rolling(20).max().shift(1).to_numpy()
+    lo20 = pd.Series(l).rolling(20).min().shift(1).to_numpy()
+    i = 21
+    while i < n - 1:
+        d = 1 if h[i] > hi20[i] else -1 if l[i] < lo20[i] else 0
+        if d == 0:
+            i += 1
+            continue
+        base = lo20[i] if d == 1 else hi20[i]
+        ext = h[i] if d == 1 else l[i]
+        k = i + 1
+        while k < min(n, i + 60):
+            if d == 1:
+                if h[k] > ext and l[k] > ext - 0.618 * (ext - base):
+                    ext = h[k]
+                rng = ext - base
+                z1, z2 = ext - 0.618 * rng, ext - 0.79 * rng
+                if l[k] < base:
+                    break
+                if l[k] <= z1 and c[k] >= z2 and c[k] > o[k]:
+                    long_[k], sl_l[k] = True, z2 - 0.05 * a[k]
+                    break
+            else:
+                if l[k] < ext and h[k] < ext + 0.618 * (base - ext):
+                    ext = l[k]
+                rng = base - ext
+                z1, z2 = ext + 0.618 * rng, ext + 0.79 * rng
+                if h[k] > base:
+                    break
+                if h[k] >= z1 and c[k] <= z2 and c[k] < o[k]:
+                    short[k], sl_s[k] = True, z2 + 0.05 * a[k]
+                    break
+            k += 1
+        i = k + 1
+    return long_, short & ~long_, {"stop": ("level", sl_l, sl_s), "target": ("R", 2.0)}
+
+
+def s_15m_candle_sweep_1m(df):
+    """TT19 15-minute candle range sweep, executed on 1 minute (@protradingschool0). Range =
+    the previous completed 15-minute candle. On the 1-minute chart, price breaks the range and
+    a candle closes back inside -> enter at that close, against the break. Stop beyond the
+    sweep's extreme. Target: 'next key level' in the video -> 2R assumed."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    g = df[["h", "l"]].resample("15min", label="left", closed="left").agg({"h": "max", "l": "min"})
+    prev = g.shift(1).reindex(df.index, method="ffill")
+    rh, rl = prev["h"].to_numpy(), prev["l"].to_numpy()
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    block = df.index.floor("15min")
+    state, ext, cur = 0, np.nan, None
+    for i in range(n):
+        if block[i] != cur:
+            cur, state, ext = block[i], 0, np.nan
+        if not np.isfinite(rh[i]):
+            continue
+        if state == 0:
+            if h[i] > rh[i]:
+                state, ext = 1, h[i]
+            elif l[i] < rl[i]:
+                state, ext = -1, l[i]
+        if state == 1:
+            ext = max(ext, h[i])
+            if c[i] < rh[i]:
+                short[i], sl_s[i], state = True, ext, 2
+        elif state == -1:
+            ext = min(ext, l[i])
+            if c[i] > rl[i]:
+                long_[i], sl_l[i], state = True, ext, 2
+    return long_, short & ~long_, {"stop": ("level", sl_l, sl_s), "target": ("R", 2.0)}
+
+
 # id: (name, fn, timeframes stated in the video or None = every timeframe)
 TIKTOK = {
     "TT01": ("First 4H candle false breakout (TikTok)", s_first4h_fakeout, ["5Min"]),
     "TT02": ("Type 1 dealing range 25% + FVG (TikTok)", s_dealing_range, None),
     "TT03": ("ICT sweep+POI+IFVG+CISD (TikTok)", s_ict_4conditions, ["1Min", "5Min"]),
     "TT04": ("Cup and handle breakout (TikTok)", s_cup_handle, None),
+    "TT11": ("NY 9:30 opening range breakout 15m, 2.5R (TikTok)", s_ny_orb_15m, ["15Min"]),
+    "TT12": ("Fibonacci golden zone pullback 5m (TikTok)", s_fib_golden_zone, ["5Min"]),
+    "TT13": ("Opening range break and retest 5m (TikTok)", s_orb_retest_5m, ["5Min"]),
+    "TT16": ("Previous NY session high/low fade, 4R (TikTok)", s_prev_ny_session_fade, ["5Min", "15Min"]),
+    "TT19": ("15m candle range sweep on 1m (TikTok)", s_15m_candle_sweep_1m, ["1Min"]),
 }

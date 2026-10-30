@@ -313,3 +313,107 @@ CLASSIC.update({
     "TV30": ("IBS mean reversion (long only)", s_ibs, HTF),
     "TV31": ("Engulfing at 20-bar extreme, 2R", s_engulfing_swing, HTF),
 })
+
+
+# ---------------- batch 3 ----------------
+def s_weekly_breakout(df):
+    """Previous-week high/low breakout: first close above last week's high buys, below last
+    week's low sells (once per week each). Stop at last week's midpoint, target 2R."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    wk = df.index.tz_convert("UTC").tz_localize(None).to_period("W").astype(str).to_numpy()
+    g = pd.DataFrame({"w": wk, "h": h, "l": l})
+    prev = g.groupby("w", sort=False).agg(h=("h", "max"), l=("l", "min")).shift(1)
+    m = g[["w"]].join(prev, on="w")
+    ph, pl = m["h"].to_numpy(dtype=float), m["l"].to_numpy(dtype=float)
+    up, dn = c > ph, c < pl
+    fu = pd.Series(up).groupby(wk).cumsum().to_numpy() == 1
+    fd = pd.Series(dn).groupby(wk).cumsum().to_numpy() == 1
+    mid = (ph + pl) / 2
+    return up & fu, dn & fd & ~(up & fu), {"stop": ("level", mid, mid), "target": ("R", 2.0)}
+
+
+def s_keltner_fade(df):
+    """Keltner fade: a close back inside EMA20 +/- 2.5 ATR after closing outside -> fade toward
+    the EMA (exit at the EMA). Stop 1.5 ATR."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    mid, a = ema(c, 20), atr(h, l, c, 10)
+    up_b, lo_b = mid + 2.5 * a, mid - 2.5 * a
+    was_lo = np.r_[False, (c < lo_b)[:-1]]
+    was_hi = np.r_[False, (c > up_b)[:-1]]
+    return was_lo & (c > lo_b), was_hi & (c < up_b), {"stop": ("atr", 1.5), "target": None,
+                                                      "exit_long": c >= mid, "exit_short": c <= mid}
+
+
+def s_hull_turn(df):
+    """Hull moving average (Alan Hull, 55) turning up with price above EMA200 -> buy (mirror).
+    Stop 2 ATR, target 2R."""
+    c = df["c"].to_numpy()
+    def wma(x, n):
+        w = np.arange(1, n + 1)
+        return pd.Series(x).rolling(n).apply(lambda v: np.dot(v, w) / w.sum(), raw=True).to_numpy()
+    n = 55
+    hull = wma(2 * wma(c, n // 2) - wma(c, n), int(np.sqrt(n)))
+    slope = np.diff(hull, prepend=np.nan)
+    up = np.r_[False, (slope[1:] > 0) & (slope[:-1] <= 0)]
+    dn = np.r_[False, (slope[1:] < 0) & (slope[:-1] >= 0)]
+    e = ema(c, 200)
+    return up & (c > e), dn & (c < e), {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+def s_willr_pullback(df):
+    """Williams %R (14) pullback in trend: close > EMA100 and %R rises back above -80 -> buy
+    (mirror below -20 in downtrends). Stop 1.5 ATR, target 2R."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    hi, lo = pd.Series(h).rolling(14).max().to_numpy(), pd.Series(l).rolling(14).min().to_numpy()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        wr = -100 * (hi - c) / (hi - lo)
+    e = ema(c, 100)
+    up = np.r_[False, (wr[1:] > -80) & (wr[:-1] <= -80)]
+    dn = np.r_[False, (wr[1:] < -20) & (wr[:-1] >= -20)]
+    return up & (c > e), dn & (c < e), {"stop": ("atr", 1.5), "target": ("R", 2.0)}
+
+
+def s_ema20_bounce(df):
+    """EMA20 bounce in a strong trend: EMA20 > EMA50 and both rising, the bar touches EMA20 and
+    closes above it as a bullish candle -> buy (mirror). Stop below the bar low - 0.5 ATR, 2R."""
+    o, h, l, c = (df[x].to_numpy() for x in "ohlc")
+    e20, e50, a = ema(c, 20), ema(c, 50), atr(h, l, c, 14)
+    rise = np.r_[False, (e20[1:] > e20[:-1]) & (e50[1:] > e50[:-1])]
+    fall = np.r_[False, (e20[1:] < e20[:-1]) & (e50[1:] < e50[:-1])]
+    up = (e20 > e50) & rise & (l <= e20) & (c > e20) & (c > o)
+    dn = (e20 < e50) & fall & (h >= e20) & (c < e20) & (c < o)
+    return up, dn, {"stop": ("level", l - 0.5 * a, h + 0.5 * a), "target": ("R", 2.0)}
+
+
+def s_three_bar_reversal(df):
+    """Three-bar reversal at a 20-bar extreme: bar i-1 makes the lowest low of 20 bars and bar i
+    closes above the high of bar i-1 -> buy (mirror). Stop below bar i-1's low, target 2R."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    ll20 = pd.Series(l).rolling(20).min().to_numpy()
+    hh20 = pd.Series(h).rolling(20).max().to_numpy()
+    pl, ph = np.r_[np.nan, l[:-1]], np.r_[np.nan, h[:-1]]
+    pll, phh = np.r_[np.nan, ll20[:-1]], np.r_[np.nan, hh20[:-1]]
+    up = (pl <= pll) & (c > ph)
+    dn = (ph >= phh) & (c < pl)
+    return up, dn & ~up, {"stop": ("level", pl, ph), "target": ("R", 2.0)}
+
+
+def s_donchian_fade_rsi2(df):
+    """Donchian extreme fade (Connors style): close at a new 10-bar low with RSI(2) < 5 and
+    close above SMA200 -> buy; mirror. Exit when close crosses the 5-bar SMA. Stop 2.5 ATR."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    r2, s200, s5 = rsi(c, 2), sma(c, 200), sma(c, 5)
+    up = (l <= pd.Series(l).rolling(10).min().to_numpy()) & (r2 < 5) & (c > s200)
+    dn = (h >= pd.Series(h).rolling(10).max().to_numpy()) & (r2 > 95) & (c < s200)
+    return up, dn, {"stop": ("atr", 2.5), "target": None, "exit_long": c > s5, "exit_short": c < s5}
+
+
+CLASSIC.update({
+    "TV32": ("Previous-week high/low breakout, 2R", s_weekly_breakout, HTF),
+    "TV33": ("Keltner fade to the mean", s_keltner_fade, HTF),
+    "TV34": ("Hull MA 55 turn + EMA200, 2R", s_hull_turn, HTF),
+    "TV35": ("Williams %R pullback in trend, 2R", s_willr_pullback, HTF),
+    "TV36": ("EMA20 bounce in strong trend, 2R", s_ema20_bounce, HTF),
+    "TV37": ("Three-bar reversal at 20-bar extreme, 2R", s_three_bar_reversal, HTF),
+    "TV38": ("Donchian 10 fade + RSI(2) (Connors)", s_donchian_fade_rsi2, HTF),
+})

@@ -140,3 +140,83 @@ def verdict(df):
     best = df.sort_values(["p_both", "funded_year_ret"], ascending=False).iloc[0]
     ok = best["p_both"] >= 0.5 and (np.isnan(best["funded_lost"]) or best["funded_lost"] <= 0.3)
     return bool(ok), best
+
+
+def weekly_track(trades, risk_levels=(0.0025, 0.005, 0.01, 0.02), weeks=52, daily_pct=0.05, max_pct=0.10):
+    """The user's main test: an account under FTMO loss limits ($100,000, daily loss 5% of the
+    initial balance from the day's start, never below $90,000) starts on every week of the
+    period and trades the strategy for up to a year. Its result is sampled after week 1,
+    2, ... 52. Once a limit is broken, the account stops (blown) for good.
+    Returns {risk: DataFrame(week, alive, profitable, median_pnl_pct)} and the start count."""
+    tr = trades.sort_values("time").reset_index(drop=True)
+    if len(tr) < 20:
+        return None, 0
+    tr["day"] = _days(tr["time"])
+    t0, t1 = tr["time"].iloc[0], tr["time"].iloc[-1]
+    starts = pd.date_range(t0, t1 - pd.Timedelta(weeks=weeks), freq="7D")
+    if len(starts) == 0:
+        return None, 0
+    times = pd.DatetimeIndex(tr["time"])
+    out = {}
+    for risk in risk_levels:
+        snap = np.full((len(starts), weeks), np.nan)
+        for si, s in enumerate(starts):
+            end = s + pd.Timedelta(weeks=weeks)
+            a, b = times.searchsorted(s), times.searchsorted(end)
+            seg = tr.iloc[a:b]
+            bal, floor = INITIAL, INITIAL * (1 - max_pct)
+            day, day_start, open_pos, blown = None, bal, [], False
+            week_i = 0
+            marks = [s + pd.Timedelta(weeks=w + 1) for w in range(weeks)]
+
+            def close_until(when):
+                nonlocal bal, blown
+                for p in sorted([p for p in open_pos if p[0] <= when], key=lambda p: p[0]):
+                    bal += p[1] * p[2]
+                    open_pos.remove(p)
+                    if bal <= floor or bal < day_start - INITIAL * daily_pct:
+                        blown = True
+                        return
+
+            for t in seg.itertuples(index=False):
+                while week_i < weeks and marks[week_i] <= t.time and not blown:
+                    close_until(marks[week_i])
+                    snap[si, week_i] = bal
+                    week_i += 1
+                if blown:
+                    break
+                close_until(t.time)
+                if blown:
+                    break
+                if t.day != day:
+                    day, day_start = t.day, bal
+                risk_usd = INITIAL * risk
+                open_risk = sum(p[1] for p in open_pos)
+                if len(open_pos) >= MAX_OPEN or bal - open_risk - risk_usd <= floor or \
+                        bal - open_risk - risk_usd < day_start - INITIAL * daily_pct * 0.9:
+                    continue
+                open_pos.append((t.exit_time, risk_usd, t.r))
+            if not blown:
+                close_until(end)
+            while week_i < weeks:
+                snap[si, week_i] = -1.0 if blown else bal     # -1 marks a blown account
+                week_i += 1
+        rows = []
+        for w in range(weeks):
+            col = snap[:, w]
+            alive = col > 0
+            rows.append({"week": w + 1, "alive": alive.mean(),
+                         "profitable": (alive & (col > INITIAL)).mean(),
+                         "median_pnl_pct": float(np.median(np.where(alive, col / INITIAL - 1, -max_pct))) * 100})
+        out[risk] = pd.DataFrame(rows)
+    return out, len(starts)
+
+
+def weekly_verdict(track, min_profitable=0.6):
+    """Good = at the best risk level, at least 60% of the year-long accounts are alive AND in
+    profit after 52 weeks."""
+    if not track:
+        return False, None
+    best_risk = max(track, key=lambda r: (track[r]["profitable"].iloc[-1], track[r]["median_pnl_pct"].iloc[-1]))
+    last = track[best_risk].iloc[-1]
+    return bool(last["profitable"] >= min_profitable), best_risk

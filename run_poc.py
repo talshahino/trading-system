@@ -16,6 +16,7 @@ import pandas as pd
 
 import config
 from agents import ftmo_agent as F
+from agents import news_calendar as NC
 from agents import poc_agent as P
 
 ETFS = ["SPY", "QQQ", "IWM", "DIA", "GLD", "SLV", "TLT", "XLE", "XLF", "SMH"]
@@ -116,6 +117,19 @@ def main():
                     all_tr.append(t.assign(symbol=s, tf=tf, cls=cls, cost=cost, family=fam))
             print(f"  {s} {tf}: {len(df):,} bars")
     tr = pd.concat(all_tr, ignore_index=True)
+    tr["exit_time"] = tr["time"] + pd.to_timedelta(tr["held"] * tr["tf"].map(TF_MIN), unit="min")
+    # News rule: no trade may open or close from 5 minutes before to 5 minutes after a
+    # high-impact release for one of the instrument's currencies.
+    news_info = None
+    if not args.demo and args.market == "forex":
+        events, real_end = NC.load()
+        drop = pd.Series(False, index=tr.index)
+        for sym, idx in tr.groupby("symbol").groups.items():
+            sub = tr.loc[idx]
+            drop.loc[idx] = (NC.blocked(sub["time"], sym, events) | NC.blocked(sub["exit_time"], sym, events)).to_numpy()
+        news_info = {"dropped": int(drop.sum()), "total": len(tr), "real_end": real_end, "events": len(events)}
+        print(f"news filter: {drop.sum():,} of {len(tr):,} trade rows touch a +-5 min news window -> removed")
+        tr = tr[~drop]
     split = tr["time"].quantile(0.6) if args.demo else SPLIT
     tr["period"] = np.where(tr["time"] < split, "train", "test")
     print(f"{len(tr):,} trade rows")
@@ -148,17 +162,37 @@ def main():
                 by_cls = {c: stats(q["r"]) for c, q in part.groupby("cls")}
                 rows[per] = (st, by_cls)
                 if per == "test" and len(part) >= 20:
-                    pt = part.assign(exit_time=part["time"] + pd.to_timedelta(part["held"] * TF_MIN[tf], unit="min"))
-                    ftmo_tbl = F.evaluate(pt[["time", "exit_time", "r"]])
+                    pt = part[["time", "exit_time", "r"]]
+                    ftmo_tbl = F.evaluate(pt)
                     ftmo_ok, ftmo_best = F.verdict(ftmo_tbl)
-                    # Too few trades = luck can pass a challenge; demand a real sample.
+                    weekly, n_starts = F.weekly_track(pt)
+                    week_ok, week_risk = F.weekly_verdict(weekly)
+                    # Too few trades = luck can look good; demand a real sample.
                     ftmo_ok = ftmo_ok and len(part) >= 100
+                    week_ok = week_ok and len(part) >= 100
                 elif per == "test":
                     ftmo_tbl, ftmo_ok, ftmo_best = None, False, None
+                    weekly, n_starts, week_ok, week_risk = None, 0, False, None
             results.append({"family": fam, "tf": tf, "label": label, "rule": rule, "rows": rows, "n_rules": len(grid),
-                            "grid": grid, "ftmo": ftmo_tbl, "ftmo_ok": ftmo_ok, "ftmo_best": ftmo_best})
+                            "grid": grid, "ftmo": ftmo_tbl, "ftmo_ok": ftmo_ok, "ftmo_best": ftmo_best,
+                            "weekly": weekly, "n_starts": n_starts, "week_ok": week_ok, "week_risk": week_risk})
             print(fam, tf, label, rule, {p: (round(v[0]["avg_r"], 3), v[0]["trades"]) for p, v in rows.items()})
-    report(results, args)
+    report(results, args, news_info)
+
+
+def _weekly_html(res):
+    w, risk = res.get("weekly"), res.get("week_risk")
+    if not w or risk is None:
+        return "<p class='mut'>מעקב שבועי: אין מספיק נתונים לשנה שלמה.</p>"
+    t = w[risk]
+    pick = t[t["week"].isin([1, 2, 4, 8, 13, 26, 39, 52])]
+    rows = "".join(f"<tr><td>{int(r.week)}</td><td>{_pct(r.alive)}</td><td><b>{_pct(r.profitable)}</b></td>"
+                   f"<td>{r.median_pnl_pct:+.1f}%</td></tr>" for r in pick.itertuples())
+    mark = "✅ טוב: רוב החשבונות רווחיים אחרי שנה" if res.get("week_ok") else "❌ לא מספיק טוב"
+    return (f"<p><b>מעקב שבועי, חשבון של $100,000 בתנאי FTMO</b> ({res['n_starts']} חשבונות שמתחילים כל שבוע, "
+            f"סיכון {risk * 100:g}% לעסקה): {mark}</p>"
+            "<div class='tw'><table><tr><th>שבוע</th><th>חשבונות חיים</th><th>חיים ורווחיים</th><th>רווח חציוני</th></tr>"
+            + rows + "</table></div>")
 
 
 def _pct(v):
@@ -181,6 +215,21 @@ def _ftmo_html(res):
             + rows + "</table></div>")
 
 
+def _news_html(n):
+    if not n:
+        return ""
+    return (f"<p class='mut'>הודעות כלכליות: {n['events']:,} הודעות בהשפעה גבוהה. נתונים מלאים עד {n['real_end']:%Y-%m-%d}, "
+            "ואחר כך רק דוח התעסוקה האמריקאי והחלטות הריבית של הפד. "
+            f"{n['dropped']:,} מתוך {n['total']:,} עסקאות נפתחו או נסגרו בחלון של 5 דקות סביב הודעה, והוצאו.</p>")
+
+
+def _wk(r):
+    w, risk = r.get("weekly"), r.get("week_risk")
+    if not w or risk is None:
+        return "—"
+    return _pct(w[risk]["profitable"].iloc[-1]) + f" ({risk * 100:g}%)"
+
+
 def _summary_html(results):
     rows = ""
     for r in results:
@@ -189,15 +238,18 @@ def _summary_html(results):
         rows += (f"<tr><td>{html.escape(FAMILY_SHORT.get(r['family'], r['family']))}</td><td>{TF_HE[r['tf']]}</td>"
                  f"<td>{'טובה ביותר' if r['label'] == 'best' else 'כמו בסרטון'}</td><td>{st['trades']:,}</td>"
                  f"<td>{'—' if st['avg_r'] != st['avg_r'] else f'{st['avg_r']:+.2f}'}</td>"
-                 f"<td>{'—' if b is None else _pct(b['p_both'])}</td><td>{'✅' if r.get('ftmo_ok') else '❌'}</td></tr>")
-    return ("<h2>שורה תחתונה: מי עובר את תנאי FTMO?</h2>"
-            "<p class='mut'>מסנן: בתקופת המבחן (2023 ואילך), ברמת הסיכון הטובה ביותר, רוב תאריכי ההתחלה עוברים את שני השלבים "
-            "(יעד 10% ואז 5%, הפסד יומי עד 5% והפסד כולל עד 10% מ־$100,000, לפחות 4 ימי מסחר), ו־70% לפחות מהחשבונות הממומנים שורדים שנה. בנוסף, לפחות 100 עסקאות בתקופת המבחן, כי עם מעט עסקאות גם מזל עובר אתגר.</p>"
+                 f"<td>{_wk(r)}</td><td>{'✅' if r.get('week_ok') else '❌'}</td>"
+                 f"<td>{'—' if b is None else _pct(b['p_both'])}</td></tr>")
+    return ("<h2>שורה תחתונה: איזו אסטרטגיה טובה בתנאי FTMO?</h2>"
+            "<p class='mut'>המסנן הראשי: חשבון של $100,000 בתנאי FTMO (הפסד יומי עד 5%, הפסד כולל עד 10%, בלי מסחר 5 דקות לפני ואחרי הודעות כלכליות חשובות) "
+            "מתחיל בכל שבוע של תקופת המבחן (2023 ואילך) וסוחר עד שנה. התוצאה נדגמת כל שבוע, וחשבון שנשרף נעצר. "
+            "<b>טוב = לפחות 60% מהחשבונות חיים ורווחיים אחרי 52 שבועות</b>, עם לפחות 100 עסקאות במבחן. "
+            "בעמודה האחרונה, לידיעה: הסיכוי לעבור את אתגר ה־2-Step (יעד 10% ואז 5%).</p>"
             "<div class='tw'><table><tr><th>אסטרטגיה</th><th>גרף</th><th>קריאה</th><th>עסקאות במבחן</th><th>ממוצע R</th>"
-            "<th>עובר את שני השלבים</th><th>מסנן</th></tr>" + rows + "</table></div>")
+            "<th>רווחיים אחרי שנה (סיכון)</th><th>מסנן</th><th>עובר אתגר 2-Step</th></tr>" + rows + "</table></div>")
 
 
-def report(results, args):
+def report(results, args, news_info=None):
     f = lambda v, d=2: "—" if v is None or (isinstance(v, float) and math.isnan(v)) else f"{v:+.{d}f}"
     body = ""
     for fam in FAMILY_HE:
@@ -229,7 +281,7 @@ def report(results, args):
                      + cls_rows + "</table></div>"
                      f"<p>בחשבון של $10,000 עם סיכון של 1.5% לעסקה: בערך <b>{f(yearly * 1.5 if yearly == yearly else np.nan, 1)}%</b> בשנה "
                      f"({st_test['per_year']:.0f} עסקאות בשנה × {f(st_test['avg_r'])}R × 1.5%), בלי להתחשב בחפיפה בין עסקאות.</p>"
-                     + _ftmo_html(res))
+                     + _weekly_html(res) + _ftmo_html(res))
     page = f"""<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>POC Strategy Backtest</title>
 <style>:root{{--bg:#f7f7f5;--fg:#1d1d1b;--mut:#6b6b66;--card:#fff;--line:#e3e3de}}
@@ -244,6 +296,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 <b>R אקראי</b> = אותן עסקאות (כיוון, סטופ ויעד) בנקודות כניסה אקראיות. אם ה־POC עובד, היתרון על האקראי צריך להיות חיובי, ו־t של היתרון 2 ומעלה.
 ההשוואה לאקראי הוגנת במיוחד בכניסות "תגובה" (כניסה בפתיחת הנר הבא). בכניסות "נגיעה" (פקודה ממתינה) הנר שבו נכנסים מחושב בצורה פסימית: רק הסטופ יכול להיפגע בו.</p>
 {_summary_html(results)}
+{_news_html(news_info)}
 <h2>אסטרטגיית FTMO: איך נבדק</h2>
 <p class="mut">כל אסטרטגיה מקבלת חשבון של $100,000 שמתחיל בתאריכים שונים לאורך תקופת המבחן (40 תאריכי התחלה), עם העסקאות בסדר האמיתי שלהן.
 הבוט לא פותח עסקה שהסטופ שלה עלול לשבור את מגבלת ההפסד היומית או הכוללת, ועד 3 עסקאות פתוחות. רק פער מחיר מעבר לסטופ יכול עדיין לשבור כלל.

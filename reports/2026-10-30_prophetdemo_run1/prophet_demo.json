@@ -1,0 +1,499 @@
+{
+ "TV01 + TV04 (מה שרץ בדמו)": {
+  "preset": "ftmo_2step_100k",
+  "data_quality": "full",
+  "trades": 764,
+  "verdict": {
+   "verdict": "FAIL",
+   "reasons": [
+    "continuous account breached (breach_max) in phase Challenge",
+    "rolling pass rate 41.9% below bar",
+    "rolling breach rate 58.1% above bar"
+   ],
+   "warnings": [
+    "news blackout applied upstream by the backtest"
+   ]
+  },
+  "rolling": {
+   "samples": 109,
+   "completed": 105,
+   "passed": 44,
+   "breached": 61,
+   "incomplete": 4,
+   "pass_rate_pct": 41.9,
+   "breach_rate_pct": 58.1,
+   "median_days_to_pass": 89.5,
+   "breach_reasons": {
+    "breach_max": 61
+   }
+  },
+  "weekly_track": [
+   {
+    "week": 1,
+    "status": "alive",
+    "pnl_pct": -2.1
+   },
+   {
+    "week": 2,
+    "status": "alive",
+    "pnl_pct": -2.95
+   },
+   {
+    "week": 3,
+    "status": "alive",
+    "pnl_pct": -4.74
+   },
+   {
+    "week": 4,
+    "status": "alive",
+    "pnl_pct": -4.45
+   },
+   {
+    "week": 5,
+    "status": "alive",
+    "pnl_pct": -3.63
+   },
+   {
+    "week": 6,
+    "status": "alive",
+    "pnl_pct": -5.47
+   },
+   {
+    "week": 7,
+    "status": "alive",
+    "pnl_pct": -2.88
+   },
+   {
+    "week": 8,
+    "status": "alive",
+    "pnl_pct": -6.62
+   },
+   {
+    "week": 9,
+    "status": "alive",
+    "pnl_pct": -9.52
+   },
+   {
+    "week": 10,
+    "status": "breach_max",
+    "pnl_pct": null
+   }
+  ],
+  "continuous": [
+   {
+    "phase": "Challenge",
+    "status": "breach_max",
+    "start": "2024-10-01 20:00:00+00:00",
+    "end": "2024-12-04 13:04:00+00:00",
+    "end_idx": 51939,
+    "trading_days": 29,
+    "calendar_days": 63.71111111111111,
+    "worst_daily_use_pct": 54.3,
+    "worst_total_use_pct": 100.7,
+    "final_pnl_pct": -9.52
+   }
+  ],
+  "news_violations": [],
+  "news_violation_count": 0
+ },
+ "TV01 לבד (סטופ x0.75)": {
+  "preset": "ftmo_2step_100k",
+  "data_quality": "full",
+  "trades": 518,
+  "verdict": {
+   "verdict": "PASS",
+   "reasons": [],
+   "warnings": [
+    "news blackout applied upstream by the backtest"
+   ]
+  },
+  "rolling": {
+   "samples": 109,
+   "completed": 73,
+   "passed": 57,
+   "breached": 16,
+   "incomplete": 36,
+   "pass_rate_pct": 78.1,
+   "breach_rate_pct": 21.9,
+   "median_days_to_pass": 117.0,
+   "breach_reasons": {
+    "breach_max": 16
+   }
+  },
+  "weekly_track": [
+   {
+    "week": 1,
+    "status": "alive",
+    "pnl_pct": -2.33
+   },
+   {
+    "week": 2,
+    "status": "alive",
+    "pnl_pct": -3.18
+   },
+   {
+    "week": 3,
+    "status": "alive",
+    "pnl_pct": -3.44
+   },
+   {
+    "week": 4,
+    "status": "alive",
+    "pnl_pct": -1.53
+   },
+   {
+    "week": 5,
+    "status": "alive",
+    "pnl_pct": -0.4
+   },
+   {
+    "week": 6,
+    "status": "alive",
+    "pnl_pct": -2.86
+   },
+   {
+    "week": 7,
+    "status": "alive",
+    "pnl_pct": 2.75
+   },
+   {
+    "week": 8,
+    "status": "alive",
+    "pnl_pct": 0.94
+   },
+   {
+    "week": 9,
+    "status": "alive",
+    "pnl_pct": 0.15
+   },
+   {
+    "week": 10,
+    "status": "alive",
+    "pnl_pct": 0.06
+   },
+   {
+    "week": 11,
+    "status": "alive",
+    "pnl_pct": 0.43
+   },
+   {
+    "week": 12,
+    "status": "alive",
+    "pnl_pct": 2.91
+   },
+   {
+    "week": 13,
+    "status": "alive",
+    "pnl_pct": 2.57
+   },
+   {
+    "week": 14,
+    "status": "alive",
+    "pnl_pct": 7.0
+   },
+   {
+    "week": 15,
+    "status": "alive",
+    "pnl_pct": 11.1
+   },
+   {
+    "week": 16,
+    "status": "alive",
+    "pnl_pct": 9.07
+   },
+   {
+    "week": 17,
+    "status": "alive",
+    "pnl_pct": 7.13
+   },
+   {
+    "week": 18,
+    "status": "alive",
+    "pnl_pct": 6.7
+   },
+   {
+    "week": 19,
+    "status": "alive",
+    "pnl_pct": 9.49
+   },
+   {
+    "week": 20,
+    "status": "alive",
+    "pnl_pct": 9.63
+   },
+   {
+    "week": 21,
+    "status": "alive",
+    "pnl_pct": 8.23
+   },
+   {
+    "week": 22,
+    "status": "alive",
+    "pnl_pct": 7.1
+   },
+   {
+    "week": 23,
+    "status": "alive",
+    "pnl_pct": 9.62
+   },
+   {
+    "week": 24,
+    "status": "alive",
+    "pnl_pct": 14.52
+   },
+   {
+    "week": 25,
+    "status": "alive",
+    "pnl_pct": 16.09
+   },
+   {
+    "week": 26,
+    "status": "alive",
+    "pnl_pct": 18.22
+   },
+   {
+    "week": 27,
+    "status": "alive",
+    "pnl_pct": 23.27
+   },
+   {
+    "week": 28,
+    "status": "alive",
+    "pnl_pct": 24.64
+   },
+   {
+    "week": 29,
+    "status": "alive",
+    "pnl_pct": 23.43
+   },
+   {
+    "week": 30,
+    "status": "alive",
+    "pnl_pct": 21.63
+   },
+   {
+    "week": 31,
+    "status": "alive",
+    "pnl_pct": 21.29
+   },
+   {
+    "week": 32,
+    "status": "alive",
+    "pnl_pct": 19.85
+   },
+   {
+    "week": 33,
+    "status": "alive",
+    "pnl_pct": 16.75
+   },
+   {
+    "week": 34,
+    "status": "alive",
+    "pnl_pct": 19.14
+   },
+   {
+    "week": 35,
+    "status": "alive",
+    "pnl_pct": 17.89
+   },
+   {
+    "week": 36,
+    "status": "alive",
+    "pnl_pct": 16.8
+   },
+   {
+    "week": 37,
+    "status": "alive",
+    "pnl_pct": 16.49
+   },
+   {
+    "week": 38,
+    "status": "alive",
+    "pnl_pct": 14.69
+   },
+   {
+    "week": 39,
+    "status": "alive",
+    "pnl_pct": 16.57
+   },
+   {
+    "week": 40,
+    "status": "alive",
+    "pnl_pct": 17.33
+   },
+   {
+    "week": 41,
+    "status": "alive",
+    "pnl_pct": 17.61
+   },
+   {
+    "week": 42,
+    "status": "alive",
+    "pnl_pct": 17.68
+   },
+   {
+    "week": 43,
+    "status": "alive",
+    "pnl_pct": 19.36
+   },
+   {
+    "week": 44,
+    "status": "alive",
+    "pnl_pct": 20.07
+   },
+   {
+    "week": 45,
+    "status": "alive",
+    "pnl_pct": 19.27
+   },
+   {
+    "week": 46,
+    "status": "alive",
+    "pnl_pct": 14.91
+   },
+   {
+    "week": 47,
+    "status": "alive",
+    "pnl_pct": 14.15
+   },
+   {
+    "week": 48,
+    "status": "alive",
+    "pnl_pct": 10.43
+   },
+   {
+    "week": 49,
+    "status": "alive",
+    "pnl_pct": 10.57
+   },
+   {
+    "week": 50,
+    "status": "alive",
+    "pnl_pct": 8.67
+   },
+   {
+    "week": 51,
+    "status": "alive",
+    "pnl_pct": 12.01
+   },
+   {
+    "week": 52,
+    "status": "alive",
+    "pnl_pct": 18.73
+   }
+  ],
+  "continuous": [
+   {
+    "phase": "Challenge",
+    "status": "passed",
+    "start": "2024-10-01 20:00:00+00:00",
+    "end": "2025-01-13 20:00:00+00:00",
+    "end_idx": 77396,
+    "trading_days": 41,
+    "calendar_days": 104.0,
+    "worst_daily_use_pct": 40.6,
+    "worst_total_use_pct": 44.6,
+    "final_pnl_pct": 11.1
+   },
+   {
+    "phase": "Verification",
+    "status": "passed",
+    "start": "2025-01-13 20:00:00+00:00",
+    "end": "2025-04-01 16:00:00+00:00",
+    "end_idx": 144493,
+    "trading_days": 37,
+    "calendar_days": 77.83333333333333,
+    "worst_daily_use_pct": 38.4,
+    "worst_total_use_pct": 55.6,
+    "final_pnl_pct": 7.12
+   }
+  ],
+  "news_violations": [],
+  "news_violation_count": 0
+ },
+ "TV04 לבד": {
+  "preset": "ftmo_2step_100k",
+  "data_quality": "full",
+  "trades": 368,
+  "verdict": {
+   "verdict": "FAIL",
+   "reasons": [
+    "continuous account breached (breach_max) in phase Challenge"
+   ],
+   "warnings": [
+    "news blackout applied upstream by the backtest"
+   ]
+  },
+  "rolling": {
+   "samples": 109,
+   "completed": 89,
+   "passed": 76,
+   "breached": 13,
+   "incomplete": 20,
+   "pass_rate_pct": 85.4,
+   "breach_rate_pct": 14.6,
+   "median_days_to_pass": 165.8,
+   "breach_reasons": {
+    "breach_max": 13
+   }
+  },
+  "weekly_track": [
+   {
+    "week": 1,
+    "status": "alive",
+    "pnl_pct": 0.23
+   },
+   {
+    "week": 2,
+    "status": "alive",
+    "pnl_pct": -0.81
+   },
+   {
+    "week": 3,
+    "status": "alive",
+    "pnl_pct": -2.88
+   },
+   {
+    "week": 4,
+    "status": "alive",
+    "pnl_pct": -5.37
+   },
+   {
+    "week": 5,
+    "status": "alive",
+    "pnl_pct": -5.1
+   },
+   {
+    "week": 6,
+    "status": "alive",
+    "pnl_pct": -8.28
+   },
+   {
+    "week": 7,
+    "status": "alive",
+    "pnl_pct": -8.04
+   },
+   {
+    "week": 8,
+    "status": "breach_max",
+    "pnl_pct": null
+   }
+  ],
+  "continuous": [
+   {
+    "phase": "Challenge",
+    "status": "breach_max",
+    "start": "2024-10-02 16:00:00+00:00",
+    "end": "2024-11-25 00:00:00+00:00",
+    "end_idx": 20645,
+    "trading_days": 12,
+    "calendar_days": 53.333333333333336,
+    "worst_daily_use_pct": 61.5,
+    "worst_total_use_pct": 102.0,
+    "final_pnl_pct": -10.2
+   }
+  ],
+  "news_violations": [],
+  "news_violation_count": 0
+ }
+}

@@ -6,7 +6,7 @@ signals at the bar close, entry at the next bar's open.
 import numpy as np
 import pandas as pd
 
-from agents.rules_agent import atr
+from agents.rules_agent import atr, ema
 
 NY = "America/New_York"
 
@@ -421,6 +421,238 @@ def s_15m_candle_sweep_1m(df):
     return long_, short & ~long_, {"stop": ("level", sl_l, sl_s), "target": ("R", 2.0)}
 
 
+LDN = "Europe/London"
+
+
+def _local(df, tz):
+    idx = df.index.tz_convert(tz)
+    return (idx.hour * 60 + idx.minute).to_numpy(), pd.Series(idx.date).to_numpy()
+
+
+def _fvg_retest(o, h, l, c, a, d, start, end):
+    """First FVG in direction d formed in [start, end) and retested before end.
+    Returns (entry_bar, stop) or (None, None). Long: gap = h[m-2] .. l[m]; entry when price dips
+    into it and closes above its bottom; stop under the gap."""
+    for m in range(max(start, 2), end):
+        if d == 1 and l[m] > h[m - 2]:
+            bot, top = h[m - 2], l[m]
+            for k in range(m + 1, end):
+                if c[k] < bot:
+                    break
+                if l[k] <= top and c[k] > bot:
+                    return k, bot - 0.1 * a[k]
+        if d == -1 and h[m] < l[m - 2]:
+            bot, top = h[m], l[m - 2]
+            for k in range(m + 1, end):
+                if c[k] > top:
+                    break
+                if h[k] >= bot and c[k] < top:
+                    return k, top + 0.1 * a[k]
+    return None, None
+
+
+def _range_sweep_fvg(df, tz, r_start, r_end, w_end, sweep_stop):
+    """Shared engine: daily range [r_start, r_end) local minutes; after it, until w_end, a sweep of
+    one side then an FVG retest in the reversal direction -> trade to the opposite end."""
+    o, h, l, c = (df[x].to_numpy() for x in "ohlc")
+    a = atr(h, l, c, 14)
+    mins, day = _local(df, tz)
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    starts = np.flatnonzero(np.r_[True, day[1:] != day[:-1]])
+    ends = np.r_[starts[1:], n]
+    for s0, e0 in zip(starts, ends):
+        rng = np.flatnonzero((mins[s0:e0] >= r_start) & (mins[s0:e0] < r_end)) + s0
+        win = np.flatnonzero((mins[s0:e0] >= r_end) & (mins[s0:e0] < w_end)) + s0
+        if len(rng) == 0 or len(win) == 0:
+            continue
+        rh, rl = h[rng].max(), l[rng].min()
+        w0, w1 = win[0], win[-1] + 1
+        for i in range(w0, w1):
+            if h[i] > rh or l[i] < rl:
+                d = -1 if h[i] > rh else 1
+                k, st = _fvg_retest(o, h, l, c, a, d, i, w1)
+                if k is None:
+                    break
+                ext = h[i:k + 1].max() if d == -1 else l[i:k + 1].min()
+                if d == 1:
+                    long_[k], tg_l[k] = True, rh
+                    sl_l[k] = (ext - 0.1 * a[k]) if sweep_stop else st
+                else:
+                    short[k], tg_s[k] = True, rl
+                    sl_s[k] = (ext + 0.1 * a[k]) if sweep_stop else st
+                break
+    return long_, short & ~long_, {"stop": ("level", sl_l, sl_s), "target": ("level", tg_l, tg_s)}
+
+
+def s_london_1h_crt(df):
+    """TT35 London opening 1-hour candle range (@wesleytfxc, @primeswingtrader). Range = the
+    08:00-09:00 London candle. A wick through one side (the body back inside) -> on the lower
+    timeframe enter at the first fair value gap retest in the reversal direction. Stop just
+    beyond the FVG, target the opposite end of the 1-hour candle. Window until 12:00 London
+    (assumed)."""
+    return _range_sweep_fvg(df, LDN, 480, 540, 720, sweep_stop=False)
+
+
+def s_london_twilight(df):
+    """TT36 'London Twilight Model' (@massimotsr, 5 videos). Range = the 2:00 AM New York 1-hour
+    candle. Sweep of its high (low), then on 1 minute an inverted FVG / order block in the
+    reversal direction -> enter. Stop at the swing extreme of the sweep, target the opposite
+    end of the 2 AM range. Window 03:00-08:00 NY (assumed). The optional higher-timeframe key
+    level tap is not modelled."""
+    return _range_sweep_fvg(df, NY, 120, 180, 480, sweep_stop=True)
+
+
+def s_silver_bullet(df):
+    """TT39 ICT Silver Bullet (@blosefx, @fluxchart, @the.trading.geek1). Only 10:00-11:00 NY.
+    A sweep of the prior 60-bar high (low), then an FVG in the reversal direction forms and is
+    retested -> enter. Stop beyond the sweep extreme (@solidtrader85's correction), target 2R
+    (stated minimum)."""
+    o, h, l, c = (df[x].to_numpy() for x in "ohlc")
+    a = atr(h, l, c, 14)
+    mins, day = _ny_minutes(df)
+    n = len(c)
+    hi = pd.Series(h).rolling(60).max().shift(1).to_numpy()
+    lo = pd.Series(l).rolling(60).min().shift(1).to_numpy()
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    inwin = (mins >= 600) & (mins < 660)
+    done = set()
+    for i in np.flatnonzero(inwin):
+        if day[i] in done or not np.isfinite(hi[i]):
+            continue
+        d = -1 if h[i] > hi[i] else 1 if l[i] < lo[i] else 0
+        if d == 0:
+            continue
+        end = i
+        while end < n and inwin[end] and day[end] == day[i]:
+            end += 1
+        k, _ = _fvg_retest(o, h, l, c, a, d, i, end)
+        if k is None:
+            continue
+        done.add(day[i])
+        if d == 1:
+            long_[k], sl_l[k] = True, l[i:k + 1].min() - 0.1 * a[k]
+        else:
+            short[k], sl_s[k] = True, h[i:k + 1].max() + 0.1 * a[k]
+    return long_, short & ~long_, {"stop": ("level", sl_l, sl_s), "target": ("R", 2.0)}
+
+
+def s_opr_vwap(df):
+    """TT40 Opening range + VWAP (@horiizonfx, gold). Range 15:00-15:30 Paris = 09:00-09:30 NY.
+    A close beyond it counts only if the session VWAP (from NY midnight) is on the other side of
+    price (break down -> VWAP above). Wait for a retest of the broken edge that closes back
+    outside -> enter. Stop just beyond the VWAP, target 1:3. One trade per day."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    v = df["v"].to_numpy() if "v" in df else np.ones(len(c))
+    v = np.where(v > 0, v, 1.0)
+    a = atr(h, l, c, 14)
+    mins, day = _ny_minutes(df)
+    tp = (h + l + c) / 3
+    g = pd.Series(day)
+    vwap = (pd.Series(tp * v).groupby(g).cumsum() / pd.Series(v).groupby(g).cumsum()).to_numpy()
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    cur, rh, rl, state, done = None, -np.inf, np.inf, 0, False
+    for i in range(n):
+        if day[i] != cur:
+            cur, rh, rl, state, done = day[i], -np.inf, np.inf, 0, False
+        if 540 <= mins[i] < 570:
+            rh, rl = max(rh, h[i]), min(rl, l[i])
+            continue
+        if done or mins[i] < 570 or mins[i] >= 960 or not np.isfinite(rh):
+            continue
+        if state == 0:
+            if c[i] > rh and vwap[i] < c[i]:
+                state = 1
+            elif c[i] < rl and vwap[i] > c[i]:
+                state = -1
+        elif state == 1 and l[i] <= rh and c[i] > rh:
+            long_[i], sl_l[i], done = True, min(vwap[i], rl) - 0.1 * a[i], True
+        elif state == -1 and h[i] >= rl and c[i] < rl:
+            short[i], sl_s[i], done = True, max(vwap[i], rh) + 0.1 * a[i], True
+    return long_, short, {"stop": ("level", sl_l, sl_s), "target": ("R", 3.0)}
+
+
+def s_ny_8am_retest(df):
+    """TT41 New York 8:00 AM 15-minute candle break and retest (@rp_profits). Zone = the 08:00
+    ET 15-minute candle. From 09:00 ET the first close beyond the zone sets the direction; the
+    retest of the zone that closes back on the breakout side is the entry. Stop slightly beyond
+    the other side of the zone, target 1:3 (stated). One trade per day, until 12:00 ET."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 14)
+    mins, day = _ny_minutes(df)
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    cur, zh, zl, state, done = None, np.nan, np.nan, 0, False
+    for i in range(n):
+        if day[i] != cur:
+            cur, zh, zl, state, done = day[i], np.nan, np.nan, 0, False
+        if mins[i] == 480:
+            zh, zl = h[i], l[i]
+            continue
+        if done or not np.isfinite(zh) or mins[i] < 540 or mins[i] >= 720:
+            continue
+        if state == 0:
+            state = 1 if c[i] > zh else -1 if c[i] < zl else 0
+        elif state == 1 and l[i] <= zh and c[i] > zh:
+            long_[i], sl_l[i], done = True, zl - 0.1 * a[i], True
+        elif state == -1 and h[i] >= zl and c[i] < zl:
+            short[i], sl_s[i], done = True, zh + 0.1 * a[i], True
+    return long_, short, {"stop": ("level", sl_l, sl_s), "target": ("R", 3.0)}
+
+
+def s_ema_9_21_1h(df):
+    """TT45 EMA 9/21 crossover on 1 hour (@whitehattraders27). Bullish cross buys, bearish cross
+    sells. Stop below/above the recent swing (lowest/highest of 10 bars, assumed). Target 1:2."""
+    c = df["c"].to_numpy()
+    e9, e21 = ema(c, 9), ema(c, 21)
+    up = np.zeros(len(c), bool)
+    dn = np.zeros(len(c), bool)
+    up[1:] = (e9[1:] > e21[1:]) & (e9[:-1] <= e21[:-1])
+    dn[1:] = (e9[1:] < e21[1:]) & (e9[:-1] >= e21[:-1])
+    return up, dn, {"stop": ("lowest", 10), "target": ("R", 2.0)}
+
+
+def s_break_retest(df):
+    """TT56 Break and retest of a swing level (@user1239509627, @tarzantrader, @realnolanivey,
+    @wchampfx, @savvybtrades). Level = the 20-bar high (low). A close through it, then within 10
+    bars a retest that touches the level and closes back on the breakout side -> enter. Stop
+    beyond the retested level (0.3 ATR, assumed), target 2:1 (stated by @realnolanivey)."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 14)
+    hi = pd.Series(h).rolling(20).max().shift(1).to_numpy()
+    lo = pd.Series(l).rolling(20).min().shift(1).to_numpy()
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    i = 21
+    while i < n - 1:
+        d = 1 if c[i] > hi[i] else -1 if c[i] < lo[i] else 0
+        if d == 0:
+            i += 1
+            continue
+        lvl = hi[i] if d == 1 else lo[i]
+        k = i + 1
+        while k < min(n, i + 11):
+            if d == 1 and c[k] < lvl - 0.3 * a[k]:
+                break
+            if d == -1 and c[k] > lvl + 0.3 * a[k]:
+                break
+            if d == 1 and l[k] <= lvl and c[k] > lvl:
+                long_[k], sl_l[k] = True, lvl - 0.3 * a[k]
+                break
+            if d == -1 and h[k] >= lvl and c[k] < lvl:
+                short[k], sl_s[k] = True, lvl + 0.3 * a[k]
+                break
+            k += 1
+        i = k + 1
+    return long_, short & ~long_, {"stop": ("level", sl_l, sl_s), "target": ("R", 2.0)}
+
+
 # id: (name, fn, timeframes stated in the video or None = every timeframe)
 TIKTOK = {
     "TT01": ("First 4H candle false breakout (TikTok)", s_first4h_fakeout, ["5Min"]),
@@ -432,4 +664,11 @@ TIKTOK = {
     "TT13": ("Opening range break and retest 5m (TikTok)", s_orb_retest_5m, ["5Min"]),
     "TT16": ("Previous NY session high/low fade, 4R (TikTok)", s_prev_ny_session_fade, ["5Min", "15Min"]),
     "TT19": ("15m candle range sweep on 1m (TikTok)", s_15m_candle_sweep_1m, ["1Min"]),
+    "TT35": ("London 1H opening candle sweep + FVG (TikTok)", s_london_1h_crt, ["5Min"]),
+    "TT36": ("London Twilight Model 2AM range (TikTok)", s_london_twilight, ["1Min"]),
+    "TT39": ("ICT Silver Bullet 10-11 NY (TikTok)", s_silver_bullet, ["1Min", "5Min"]),
+    "TT40": ("Opening range + VWAP filter, 1:3 (TikTok)", s_opr_vwap, ["5Min"]),
+    "TT41": ("NY 8AM 15m candle break and retest, 1:3 (TikTok)", s_ny_8am_retest, ["15Min"]),
+    "TT45": ("EMA 9/21 crossover 1H, 1:2 (TikTok)", s_ema_9_21_1h, ["1Hour"]),
+    "TT56": ("Break and retest of swing level, 2:1 (TikTok)", s_break_retest, ["15Min", "1Hour"]),
 }

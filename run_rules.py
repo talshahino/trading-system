@@ -25,7 +25,7 @@ from agents import rules_agent as R
 import run_poc as RP
 
 SYMBOLS = RP.FX + RP.COMMOD
-SWEEP_RISKS = {"TV04": (0.0025, 0.005, 0.0075, 0.01)}   # strategy -> risks to test in Prophet
+SWEEP_RISKS = (0.0025, 0.005, 0.0075, 0.01)   # TV strategies: Prophet at each of these risks per trade
 LOW_RISK = 0.0075            # every other strategy: 25% below the 1% main risk
 MAX_PROPHET_TRADES = 25000   # minute-by-minute replay is skipped above this (too slow, and such systems burn anyway)
 _BARS = {}                   # 1-minute bars per symbol, loaded once per run
@@ -126,7 +126,7 @@ def _summarise(sid, tf, parts, split, args, results):
         export_trades(sid, tf, w[0].attrs.get("ledger"))
         res["prophet"] = prophet_check(w[0].attrs.get("ledger"), args)
     res["risk_tests"] = {}
-    for rk in SWEEP_RISKS.get(sid, (LOW_RISK,)):
+    for rk in (SWEEP_RISKS if sid.startswith("TV") else (LOW_RISK,)):
         if len(after) < 5:
             continue
         w2 = acc[rk] if rk in acc else F.account_path(after, rk, start=split)
@@ -197,7 +197,7 @@ def _risk_cell(r):
 def _sweep_html(results):
     out = ""
     for r in results:
-        if r["sid"] not in SWEEP_RISKS or not r.get("risk_tests"):
+        if not r["sid"].startswith("TV") or not r.get("risk_tests"):
             continue
         rows = "".join(f"<tr><td>{rk * 100:g}%</td><td>{_acc_text(t['account'])}</td><td>{_prophet_cell(t['prophet'])}</td></tr>"
                        for rk, t in sorted(r["risk_tests"].items()))

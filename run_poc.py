@@ -24,9 +24,19 @@ COST = {"etf": 0.0002, "stock": 0.0003, "crypto": 0.002}     # per side
 TIMEFRAMES = ["15Min", "1Hour", "1Day"]
 TF_HE = {"15Min": "15 דקות", "1Hour": "שעה", "1Day": "יום"}
 SPLIT = pd.Timestamp("2023-01-01", tz="UTC")
-LITERAL = ("reaction", "swing/high", 5)       # closest to what the video shows
+# Closest reading to what each video shows.
+LITERAL = {"trend_poc": ("reaction", "swing/high", 5), "range_breakout": ("reaction", "range/measured", 0),
+           "range_sweep": ("reaction", "range/measured", 0), "va_fade": ("reaction", "extreme/poc", 0)}
+FAMILY_HE = {"trend_poc": "סרטונים 1–2: מגמה, פרופיל משפל לשיא, חזרה ל־POC",
+             "range_breakout": "סרטון 3: דשדוש, פריצה, חזרה ל־POC של הדשדוש",
+             "range_sweep": "סרטון 5: דשדוש, \"מניפולציה\" (שבירה שקרית של צד אחד), התפרצות לצד השני, חזרה ל־POC",
+             "va_fade": "סרטון 4: נגיעה בקצה אזור הערך של היום הקודם ודחייה, יעד ה־POC של אתמול"}
 ENTRY_HE = {"touch": "נגיעה ב־POC (פקודה ממתינה)", "reaction": "תגובה: נר שסוגר בחזרה מעבר ל־POC"}
-EXIT_HE = {"swing/high": "סטופ מעבר לשפל/שיא, יעד בקצה התנועה", "swing/2R": "סטופ מעבר לשפל/שיא, יעד 1:2",
+EXIT_HE = {"range/2R": "סטופ בצד השני של הדשדוש, יעד 1:2", "range/3R": "סטופ בצד השני של הדשדוש, יעד 1:3",
+           "range/measured": "סטופ בצד השני של הדשדוש, יעד בגובה הדשדוש מעל הפריצה",
+           "atr/measured": "סטופ ATR אחד, יעד בגובה הדשדוש מעל הפריצה",
+           "atr/poc": "סטופ ATR אחד, יעד POC של אתמול", "extreme/poc": "סטופ מעבר לקיצון של היום, יעד POC של אתמול",
+           "swing/high": "סטופ מעבר לשפל/שיא, יעד בקצה התנועה", "swing/2R": "סטופ מעבר לשפל/שיא, יעד 1:2",
            "swing/3R": "סטופ מעבר לשפל/שיא, יעד 1:3", "atr/high": "סטופ ATR אחד, יעד בקצה התנועה",
            "atr/2R": "סטופ ATR אחד, יעד 1:2", "atr/3R": "סטופ ATR אחד, יעד 1:3"}
 
@@ -71,10 +81,15 @@ def main():
                 continue
             data[(s, tf)] = df
             cost = COST["etf"] if args.demo else COST[asset_class(s)]
-            for k in (3, 5):
-                tr = P.trades(df, k, cost)
-                if not tr.empty:
-                    all_tr.append(tr.assign(symbol=s, tf=tf, cls="etf" if args.demo else asset_class(s), cost=cost))
+            cls = "etf" if args.demo else asset_class(s)
+            parts = [("trend_poc", P.trades(df, k, cost)) for k in (3, 5)]
+            parts += [("range_breakout", P.trades_range(df, False, cost)),
+                      ("range_sweep", P.trades_range(df, True, cost))]
+            if tf != "1Day":
+                parts.append(("va_fade", P.trades_fade(df, cost, crypto=cls == "crypto")))
+            for fam, t in parts:
+                if not t.empty:
+                    all_tr.append(t.assign(symbol=s, tf=tf, cls=cls, cost=cost, family=fam))
             print(f"  {s} {tf}: {len(df):,} bars")
     tr = pd.concat(all_tr, ignore_index=True)
     split = tr["time"].quantile(0.6) if args.demo else SPLIT
@@ -82,7 +97,7 @@ def main():
     print(f"{len(tr):,} trade rows")
 
     results = []
-    for tf, g in tr.groupby("tf"):
+    for (fam, tf), g in tr.groupby(["family", "tf"]):
         train = g[g["period"] == "train"]
         grid = []
         for (e, x, k), gg in train.groupby(["entry", "exit", "k"]):
@@ -90,7 +105,7 @@ def main():
             grid.append({"entry": e, "exit": x, "k": k, **st})
         grid = pd.DataFrame(grid).sort_values("t", ascending=False)
         best = tuple(grid.iloc[0][["entry", "exit", "k"]])
-        for label, rule in (("best", best), ("literal", LITERAL)):
+        for label, rule in (("best", best), ("literal", LITERAL[fam])):
             sel = g[(g["entry"] == rule[0]) & (g["exit"] == rule[1]) & (g["k"] == rule[2])]
             rows = {}
             for per in ("train", "test"):
@@ -108,17 +123,20 @@ def main():
                            if len(part) else 0})
                 by_cls = {c: stats(q["r"]) for c, q in part.groupby("cls")}
                 rows[per] = (st, by_cls)
-            results.append({"tf": tf, "label": label, "rule": rule, "rows": rows, "n_rules": len(grid),
+            results.append({"family": fam, "tf": tf, "label": label, "rule": rule, "rows": rows, "n_rules": len(grid),
                             "grid": grid})
-            print(tf, label, rule, {p: (round(v[0]["avg_r"], 3), v[0]["trades"]) for p, v in rows.items()})
+            print(fam, tf, label, rule, {p: (round(v[0]["avg_r"], 3), v[0]["trades"]) for p, v in rows.items()})
     report(results, args)
 
 
 def report(results, args):
     f = lambda v, d=2: "—" if v is None or (isinstance(v, float) and math.isnan(v)) else f"{v:+.{d}f}"
     body = ""
-    for tf in (["1Hour"] if args.demo else TIMEFRAMES):
-        for res in [r for r in results if r["tf"] == tf]:
+    for fam in FAMILY_HE:
+      if any(r["family"] == fam for r in results):
+        body += f"<h2>{html.escape(FAMILY_HE[fam])}</h2>"
+      for tf in (["1Hour"] if args.demo else TIMEFRAMES):
+        for res in [r for r in results if r["tf"] == tf and r["family"] == fam]:
             e, x, k = res["rule"]
             title = ("הקריאה הטובה ביותר על 2016–2022" if res["label"] == "best"
                      else "הקריאה הכי קרובה לסרטון")
@@ -154,9 +172,11 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 <p class="mut">{'דמו (נתונים סינתטיים)' if args.demo else 'נתונים אמיתיים (Alpaca)'} · {args.start} עד {args.end} ·
 10 קרנות סל, 10 מניות גדולות, ביטקוין/את׳ריום/סולנה · עלות לצד: קרנות 2 bps, מניות 3 bps, קריפטו 20 bps</p>
 <p><b>R</b> = יחידת סיכון: ‎+1R פירושו שהרווחת בדיוק את מה שסיכנת, ‎−1R שהגעת לסטופ. ממוצע R חיובי אחרי עלויות = רווחי.
-<b>R אקראי</b> = אותן עסקאות (כיוון, סטופ ויעד) בנקודות כניסה אקראיות. אם ה־POC עובד, היתרון על האקראי צריך להיות חיובי, ו־t של היתרון 2 ומעלה.</p>
+<b>R אקראי</b> = אותן עסקאות (כיוון, סטופ ויעד) בנקודות כניסה אקראיות. אם ה־POC עובד, היתרון על האקראי צריך להיות חיובי, ו־t של היתרון 2 ומעלה.
+ההשוואה לאקראי הוגנת במיוחד בכניסות "תגובה" (כניסה בפתיחת הנר הבא). בכניסות "נגיעה" (פקודה ממתינה) הנר שבו נכנסים מחושב בצורה פסימית: רק הסטופ יכול להיפגע בו.</p>
 {body}
-<p class="mut">הסרטונים לא מגדירים סטופ, יעד ו"תגובה", ולכן נבדקו 24 קריאות לכל מסגרת זמן (2 כניסות × 6 יציאות × 2 גדלי פיבוט). הקריאה נבחרה על 2016–2022 בלבד.
+<p class="mut">הסרטונים לא מגדירים סטופ, יעד ו"תגובה", ולכן נבדקו כמה קריאות לכל אסטרטגיה ומסגרת זמן. הקריאה הטובה נבחרה על 2016–2022 בלבד.
+הגדרות קבועות: דשדוש = 20 נרות שהטווח שלהם עד 4 ATR; אזור ערך = 70% מהמחזור סביב ה־POC; "תגובה" = נר שסוגר בחזרה מעבר לרמה. אישור "order flow" מסרטון 4 לא נבדק (אין נתונים).
 זה כלי מחקר, לא ייעוץ השקעות.</p></main></body></html>"""
     path = config.OUTPUT_DIR / "report_poc.html"
     path.write_text(page, encoding="utf-8")

@@ -234,7 +234,9 @@ def trades(df, k, cost_side):
             for stop_kind, tgt_kind in EXITS:
                 stop = sw_start if stop_kind == "swing" else fill_px - d * atr[fill_t - 1]
                 risk = d * (fill_px - stop)
-                if risk <= 0:
+                # A stop closer than a quarter of a typical bar is not a real stop (it would
+                # also make R explode on tiny distances): skip.
+                if risk < 0.25 * atr[fill_t - 1]:
                     continue
                 target = (sw_end if tgt_kind == "high" else
                           fill_px + d * risk * (2 if tgt_kind == "2R" else 3))
@@ -272,3 +274,192 @@ def random_baseline(df, tr, cost_side, draws=20, seed=1):
                 vals.append(res[0] - 2 * cost_side * e / abs(e - stop))
         out.append(np.mean(vals) if vals else np.nan)
     return tr.assign(r_rand=out)
+
+
+# ---------------- more setups from the other videos ----------------
+RANGE_N = 20          # bars that define a consolidation
+RANGE_ATR = 4.0       # consolidation = the last 20 bars span at most 4 ATR
+RANGE_EXITS = [("range", "2R"), ("range", "3R"), ("range", "measured"),
+               ("atr", "2R"), ("atr", "3R"), ("atr", "measured")]
+
+
+def _profile(h, l, v, a, b):
+    lo, hi = l[a:b + 1].min(), h[a:b + 1].max()
+    if hi <= lo:
+        return None
+    edges = np.linspace(lo, hi, BINS + 1)
+    prof = np.zeros(BINS)
+    for i in range(a, b + 1):
+        if h[i] > l[i]:
+            ov = np.clip(np.minimum(edges[1:], h[i]) - np.maximum(edges[:-1], l[i]), 0, None)
+            prof += v[i] * ov / (h[i] - l[i])
+        else:
+            prof[min(int((h[i] - lo) / (hi - lo) * BINS), BINS - 1)] += v[i]
+    return edges, prof
+
+
+def _value_area(edges, prof, share=0.70):
+    """POC, value area high and low (the 70% of volume around the POC)."""
+    j = int(prof.argmax())
+    lo_i, hi_i, tot = j, j, prof[j]
+    total = prof.sum()
+    while tot < share * total and (lo_i > 0 or hi_i < len(prof) - 1):
+        down = prof[lo_i - 1] if lo_i > 0 else -1
+        up = prof[hi_i + 1] if hi_i < len(prof) - 1 else -1
+        if up >= down:
+            hi_i += 1
+            tot += prof[hi_i]
+        else:
+            lo_i -= 1
+            tot += prof[lo_i]
+    return (edges[j] + edges[j + 1]) / 2, edges[hi_i + 1], edges[lo_i]
+
+
+def _range_setups(df, sweep):
+    """Consolidation -> (optional sweep of one side) -> breakout: (dir, breakout_bar, poc, lo, hi)."""
+    h, l, c, v = (df[x].to_numpy() for x in "hlcv")
+    atr = _atr(h, l, c)
+    n = len(c)
+    out = []
+    t = RANGE_N
+    while t < n - 1:
+        a = t - RANGE_N + 1
+        lo, hi = l[a:t + 1].min(), h[a:t + 1].max()
+        if not (np.isfinite(atr[t]) and hi - lo <= RANGE_ATR * atr[t]):
+            t += 1
+            continue
+        start, swept_lo, swept_hi, setup = a, False, False, None
+        u = t + 1
+        while u < min(n, t + 100):
+            if sweep:
+                if l[u] < lo:
+                    swept_lo = True
+                if h[u] > hi:
+                    swept_hi = True
+                if c[u] > hi and swept_lo and not (h[u] > hi and l[u] < lo):
+                    setup = (1, u)
+                    break
+                if c[u] < lo and swept_hi and not (h[u] > hi and l[u] < lo):
+                    setup = (-1, u)
+                    break
+                if c[u] > hi + (hi - lo) or c[u] < lo - (hi - lo):
+                    break                               # ran away without the pattern
+            else:
+                if c[u] > hi:
+                    setup = (1, u)
+                    break
+                if c[u] < lo:
+                    setup = (-1, u)
+                    break
+            u += 1
+        if setup:
+            prof = _profile(h, l, v, start, u - 1)
+            if prof:
+                poc = _value_area(*prof)[0]
+                out.append((setup[0], setup[1], poc, lo, hi))
+        t = max(u, t + 1) + 1
+    return out
+
+
+def trades_range(df, sweep, cost_side):
+    """Consolidation breakout (or sweep then breakout), pullback to the range's POC."""
+    if len(df) < 200:
+        return pd.DataFrame()
+    o, h, l, c = (df[x].to_numpy() for x in "ohlc")
+    atr = _atr(h, l, c)
+    n = len(c)
+    rows = []
+    for d, b, poc, lo, hi in _range_setups(df, sweep):
+        opp = lo if d > 0 else hi
+        for entry_kind in ENTRIES:
+            fill_t, fill_px, touched = None, None, False
+            for t in range(b + 1, min(b + 1 + MAX_WAIT, n - 1)):
+                touch = l[t] <= poc if d > 0 else h[t] >= poc
+                if entry_kind == "touch" and touch:
+                    fill_t, fill_px = t, (min(o[t], poc) if d > 0 else max(o[t], poc))
+                    break
+                if (d > 0 and c[t] < opp) or (d < 0 and c[t] > opp):
+                    break                               # back through the whole range: failed
+                if entry_kind == "reaction":
+                    touched = touched or touch
+                    if touched and ((d > 0 and c[t] > poc) or (d < 0 and c[t] < poc)):
+                        fill_t, fill_px = t + 1, o[t + 1]
+                        break
+            if fill_t is None or not np.isfinite(atr[fill_t - 1]):
+                continue
+            for stop_kind, tgt_kind in RANGE_EXITS:
+                stop = opp if stop_kind == "range" else fill_px - d * atr[fill_t - 1]
+                risk = d * (fill_px - stop)
+                # A stop closer than a quarter of a typical bar is not a real stop (it would
+                # also make R explode on tiny distances): skip.
+                if risk < 0.25 * atr[fill_t - 1]:
+                    continue
+                target = ((hi + (hi - lo)) if d > 0 else (lo - (hi - lo))) if tgt_kind == "measured" else \
+                    fill_px + d * risk * (2 if tgt_kind == "2R" else 3)
+                if d * (target - fill_px) <= 0:
+                    continue
+                res = _walk(o, h, l, c, fill_t, d, fill_px, stop, target, entry_kind == "touch")
+                if res is None:
+                    continue
+                r_mult, ret, held = res
+                rows.append({"time": df.index[fill_t], "bar": fill_t, "dir": d, "entry": entry_kind,
+                             "exit": f"{stop_kind}/{tgt_kind}", "k": 0,
+                             "stop_pct": abs(fill_px - stop) / fill_px, "tgt_pct": abs(target - fill_px) / fill_px,
+                             "r": r_mult - 2 * cost_side * fill_px / risk, "ret": ret - 2 * cost_side, "held": held})
+    return pd.DataFrame(rows)
+
+
+def trades_fade(df, cost_side, crypto=False):
+    """Fade the value-area extremes of the PREVIOUS session back to its POC (intraday only).
+    Long: price trades below yesterday's value-area low and the bar closes back above it ->
+    buy next open, target yesterday's POC. Short: mirror at the value-area high.
+    Exit at the target, the stop, or the end of the session."""
+    if len(df) < 200:
+        return pd.DataFrame()
+    o, h, l, c, v = (df[x].to_numpy() for x in "ohlcv")
+    atr = _atr(h, l, c)
+    idx = df.index if crypto else df.index.tz_convert(NY)
+    sess = pd.Series(idx.date)
+    bounds = sess.ne(sess.shift()).to_numpy().nonzero()[0].tolist() + [len(c)]
+    rows = []
+    for s in range(1, len(bounds) - 1):
+        pa, pb, a, b = bounds[s - 1], bounds[s] - 1, bounds[s], bounds[s + 1] - 1
+        prof = _profile(h, l, v, pa, pb)
+        if not prof or b - a < 3:
+            continue
+        poc, vah, val = _value_area(*prof)
+        done = {1: False, -1: False}
+        for t in range(a, b):
+            for d, edge in ((1, val), (-1, vah)):
+                if done[d]:
+                    continue
+                if d > 0 and not (l[t] < val < c[t] < poc):
+                    continue
+                if d < 0 and not (h[t] > vah > c[t] > poc):
+                    continue
+                done[d] = True
+                e_t, e = t + 1, o[t + 1]
+                if not np.isfinite(atr[t]) or d * (poc - e) <= 0:
+                    continue
+                ext = l[a:t + 1].min() if d > 0 else h[a:t + 1].max()
+                for stop_kind, stop in (("atr", e - d * atr[t]), ("extreme", ext - d * 0.1 * atr[t])):
+                    risk = d * (e - stop)
+                    if risk < 0.25 * atr[t]:
+                        continue
+                    # walk until target, stop or the session's last bar
+                    r_mult = None
+                    for u in range(e_t, b + 1):
+                        if (d > 0 and l[u] <= stop) or (d < 0 and h[u] >= stop):
+                            px = o[u] if ((d > 0 and o[u] <= stop) or (d < 0 and o[u] >= stop)) and u > e_t else stop
+                            r_mult = d * (px - e) / risk
+                            break
+                        if (d > 0 and h[u] >= poc) or (d < 0 and l[u] <= poc):
+                            r_mult = d * (poc - e) / risk
+                            break
+                    if r_mult is None:
+                        r_mult = d * (c[b] - e) / risk
+                    rows.append({"time": df.index[e_t], "bar": e_t, "dir": d, "entry": "reaction",
+                                 "exit": f"{stop_kind}/poc", "k": 0, "stop_pct": risk / e,
+                                 "tgt_pct": abs(poc - e) / e, "r": r_mult - 2 * cost_side * e / risk,
+                                 "ret": 0.0, "held": 0})
+    return pd.DataFrame(rows)

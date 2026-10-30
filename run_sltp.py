@@ -38,6 +38,8 @@ def variant(fn, sm, tg):
             plan["stop"] = st
         if plan.get("trail_atr"):
             plan["trail_atr"] = plan["trail_atr"] * sm
+        if tg is None and not any(plan.get(k) is not None for k in ("trail_atr", "exit_long", "opposite", "max_bars", "line")):
+            return lo & False, sh & False, plan        # no exit left except the stop: not a real variant
         if tg != "orig":
             plan["target"] = None if tg is None else ("R", tg)
             if tg is None:

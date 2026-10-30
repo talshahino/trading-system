@@ -80,6 +80,8 @@ def main(src, out):
         jr.append({"time": il(pd.Timestamp(t, tz="UTC")) if t else "", "strategy": row[1], "symbol": row[2],
                    "dir": {"1": "קנייה", "-1": "מכירה"}.get(row[3], ""), "event": kind})
     jr.reverse()
+    for i, r in enumerate(jr):
+        r["n"] = str(len(jr) - i)
     for name, rows in [("status", status), ("equity", eqc), ("trades", tr), ("positions", ps),
                        ("monthly", monthly), ("journal", jr)]:
         (out / f"{name}.json").write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")

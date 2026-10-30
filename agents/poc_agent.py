@@ -161,6 +161,22 @@ def bars(symbol, timeframe, start, end):
 
 
 # ---------------- strategy ----------------
+def _compact(df):
+    """Small dtypes: 1-minute runs produce millions of rows."""
+    if df.empty:
+        return df
+    for c in ("stop_pct", "tgt_pct", "r", "ret"):
+        df[c] = df[c].astype("float32")
+    for c in ("bar", "held"):
+        df[c] = df[c].astype("int32")
+    for c in ("dir", "k"):
+        df[c] = df[c].astype("int8")
+    for c in ("entry", "exit"):
+        df[c] = df[c].astype("category")
+    return df
+
+
+
 def _pivots(h, l, k):
     """Indices of swing highs / lows: higher than the k bars before (strictly) and at least as
     high as the k bars after (vectorized, so 1-minute data stays fast)."""
@@ -264,7 +280,7 @@ def trades(df, k, cost_side):
     setups = _setups(df, k)
     o, h, l, c = o.tolist(), h.tolist(), l.tolist(), c.tolist()
     n = len(c)
-    rows = []
+    rows, busy = [], {}
     for d, t0, poc, sw_start, sw_end in setups:
         if t0 >= n - 2:
             continue
@@ -289,6 +305,9 @@ def trades(df, k, cost_side):
             if fill_t is None or not np.isfinite(atr[fill_t - 1]):
                 continue
             for stop_kind, tgt_kind in EXITS:
+                vkey = (entry_kind, stop_kind, tgt_kind)
+                if fill_t <= busy.get(vkey, -1):
+                    continue        # already in a trade with this variant on this instrument
                 stop = sw_start if stop_kind == "swing" else fill_px - d * atr[fill_t - 1]
                 risk = d * (fill_px - stop)
                 # A stop closer than a quarter of a typical bar is not a real stop (it would
@@ -303,12 +322,13 @@ def trades(df, k, cost_side):
                 if res is None:
                     continue
                 r_mult, ret, held = res
+                busy[vkey] = fill_t + held
                 cost_r = 2 * cost_side * fill_px / risk
                 rows.append({"time": df.index[fill_t], "bar": fill_t, "dir": d, "entry": entry_kind,
                              "exit": f"{stop_kind}/{tgt_kind}", "k": k,
                              "stop_pct": abs(fill_px - stop) / fill_px, "tgt_pct": abs(target - fill_px) / fill_px,
                              "r": r_mult - cost_r, "ret": ret - 2 * cost_side, "held": held})
-    return pd.DataFrame(rows)
+    return _compact(pd.DataFrame(rows))
 
 
 def random_baseline(df, tr, cost_side, draws=20, seed=1):
@@ -433,7 +453,7 @@ def trades_range(df, sweep, cost_side):
     setups = _range_setups(df, sweep)
     o, h, l, c = o.tolist(), h.tolist(), l.tolist(), c.tolist()
     n = len(c)
-    rows = []
+    rows, busy = [], {}
     for d, b, poc, lo, hi in setups:
         opp = lo if d > 0 else hi
         for entry_kind in ENTRIES:
@@ -453,6 +473,9 @@ def trades_range(df, sweep, cost_side):
             if fill_t is None or not np.isfinite(atr[fill_t - 1]):
                 continue
             for stop_kind, tgt_kind in RANGE_EXITS:
+                vkey = (entry_kind, stop_kind, tgt_kind)
+                if fill_t <= busy.get(vkey, -1):
+                    continue        # already in a trade with this variant on this instrument
                 stop = opp if stop_kind == "range" else fill_px - d * atr[fill_t - 1]
                 risk = d * (fill_px - stop)
                 # A stop closer than a quarter of a typical bar is not a real stop (it would
@@ -467,11 +490,12 @@ def trades_range(df, sweep, cost_side):
                 if res is None:
                     continue
                 r_mult, ret, held = res
+                busy[vkey] = fill_t + held
                 rows.append({"time": df.index[fill_t], "bar": fill_t, "dir": d, "entry": entry_kind,
                              "exit": f"{stop_kind}/{tgt_kind}", "k": 0,
                              "stop_pct": abs(fill_px - stop) / fill_px, "tgt_pct": abs(target - fill_px) / fill_px,
                              "r": r_mult - 2 * cost_side * fill_px / risk, "ret": ret - 2 * cost_side, "held": held})
-    return pd.DataFrame(rows)
+    return _compact(pd.DataFrame(rows))
 
 
 def trades_fade(df, cost_side, crypto=False):
@@ -528,4 +552,4 @@ def trades_fade(df, cost_side, crypto=False):
                                  "exit": f"{stop_kind}/poc", "k": 0, "stop_pct": risk / e,
                                  "tgt_pct": abs(poc - e) / e, "r": r_mult - 2 * cost_side * e / risk,
                                  "ret": 0.0, "held": (u if r_mult is not None else b) - e_t})
-    return pd.DataFrame(rows)
+    return _compact(pd.DataFrame(rows))

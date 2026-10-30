@@ -92,18 +92,26 @@ def main():
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--start", default="2016-01-01")
     ap.add_argument("--end", default="2026-10-29")
+    ap.add_argument("--download-only", action="store_true", help="only fetch and cache the price data")
     ap.add_argument("--market", default="forex", choices=["forex", "stocks"],
                     help="forex = 5 currency pairs + gold, silver, oil (Dukascopy); stocks = ETFs, stocks, crypto (Alpaca)")
     args = ap.parse_args()
     symbols = (["DEMO1", "DEMO2", "DEMO3"] if args.demo else FX + COMMOD if args.market == "forex"
                else ETFS + STOCKS + CRYPTO)
-    all_tr, data = [], {}
+    results, news_info, news_tot = [], None, [0, 0]
+    events = real_end = None
+    if not args.demo and args.market == "forex":
+        events, real_end = NC.load()
     for tf in (["1Hour"] if args.demo else TIMEFRAMES):
+        all_tr, data = [], {}
         for i, s in enumerate(symbols):
             st = max(args.start, MINUTE_START) if tf.endswith("Min") else args.start
             df = demo_bars(i) if args.demo else P.bars(s, tf, st, args.end)
             if df is None or df.empty:
                 print(f"  {s} {tf}: no data")
+                continue
+            if args.download_only:
+                print(f"  {s} {tf}: {len(df):,} bars (downloaded)")
                 continue
             data[(s, tf)] = df
             cost = COST["etf"] if args.demo else cost_of(s)
@@ -118,69 +126,76 @@ def main():
                 if not t.empty:
                     all_tr.append(t.assign(symbol=s, tf=tf, cls=cls, cost=cost, family=fam))
             print(f"  {s} {tf}: {len(df):,} bars")
-    tr = pd.concat(all_tr, ignore_index=True)
-    tr["exit_time"] = tr["time"] + pd.to_timedelta(tr["held"] * tr["tf"].map(TF_MIN), unit="min")
-    # News rule: no trade may open or close from 5 minutes before to 5 minutes after a
-    # high-impact release for one of the instrument's currencies.
-    news_info = None
-    if not args.demo and args.market == "forex":
-        events, real_end = NC.load()
-        drop = pd.Series(False, index=tr.index)
-        for sym, idx in tr.groupby("symbol").groups.items():
-            sub = tr.loc[idx]
-            drop.loc[idx] = (NC.blocked(sub["time"], sym, events) | NC.blocked(sub["exit_time"], sym, events)).to_numpy()
-        news_info = {"dropped": int(drop.sum()), "total": len(tr), "real_end": real_end, "events": len(events)}
-        print(f"news filter: {drop.sum():,} of {len(tr):,} trade rows touch a +-5 min news window -> removed")
-        tr = tr[~drop]
-    split = tr["time"].quantile(0.6) if args.demo else SPLIT
-    tr["period"] = np.where(tr["time"] < split, "train", "test")
-    print(f"{len(tr):,} trade rows")
+        if args.download_only or not all_tr:
+            continue
+        tr = pd.concat(all_tr, ignore_index=True)
+        del all_tr
+        tr["exit_time"] = tr["time"] + pd.to_timedelta(tr["held"] * tr["tf"].map(TF_MIN), unit="min")
+        # News rule: no trade may open or close from 5 minutes before to 5 minutes after a
+        # high-impact release for one of the instrument's currencies.
+        if not args.demo and args.market == "forex":
+            drop = pd.Series(False, index=tr.index)
+            for sym, idx in tr.groupby("symbol").groups.items():
+                sub = tr.loc[idx]
+                drop.loc[idx] = (NC.blocked(sub["time"], sym, events) | NC.blocked(sub["exit_time"], sym, events)).to_numpy()
+            news_tot[0] += int(drop.sum()); news_tot[1] += len(tr)
+            news_info = {"dropped": news_tot[0], "total": news_tot[1], "real_end": real_end, "events": len(events)}
+            print(f"news filter: {drop.sum():,} of {len(tr):,} trade rows touch a +-5 min news window -> removed")
+            tr = tr[~drop]
+        split = tr["time"].quantile(0.6) if args.demo else SPLIT
+        tr["period"] = np.where(tr["time"] < split, "train", "test")
+        print(f"{len(tr):,} trade rows")
 
-    results = []
-    for (fam, tf), g in tr.groupby(["family", "tf"]):
-        train = g[g["period"] == "train"]
-        grid = []
-        for (e, x, k), gg in train.groupby(["entry", "exit", "k"]):
-            st = stats(gg["r"])
-            grid.append({"entry": e, "exit": x, "k": k, **st})
-        grid = pd.DataFrame(grid).sort_values("t", ascending=False)
-        best = tuple(grid.iloc[0][["entry", "exit", "k"]])
-        for label, rule in (("best", best), ("literal", LITERAL[fam])):
-            sel = g[(g["entry"] == rule[0]) & (g["exit"] == rule[1]) & (g["k"] == rule[2])]
-            rows = {}
-            for per in ("train", "test"):
-                part = sel[sel["period"] == per]
-                # random comparison: same symbol/timeframe, same direction, stop and target
-                rnd = []
-                for (s, tf2), q in part.groupby(["symbol", "tf"]):
-                    rnd.append(P.random_baseline(data[(s, tf2)], q, q["cost"].iloc[0], draws=10))
-                part = pd.concat(rnd) if rnd else part.assign(r_rand=[])
-                st = stats(part["r"])
-                diff = (part["r"] - part["r_rand"]).dropna()
-                st.update({"rand_r": float(part["r_rand"].mean()) if len(part) else np.nan,
-                           "edge_t": stats(diff)["t"],
-                           "per_year": len(part) / max((part["time"].max() - part["time"].min()).days / 365, 0.5)
-                           if len(part) else 0})
-                by_cls = {c: stats(q["r"]) for c, q in part.groupby("cls")}
-                rows[per] = (st, by_cls)
-                if per == "test" and len(part) >= 20:
-                    pt = part[["time", "exit_time", "r"]]
-                    ftmo_tbl = F.evaluate(pt)
-                    ftmo_ok, ftmo_best = F.verdict(ftmo_tbl)
-                    # The user's test: one $100,000 FTMO-rules account per strategy, opened on the
-                    # first day of the test period, sampled weekly, stopped when burned.
-                    accounts = {rk: F.account_path(pt, rk, start=split) for rk in RISKS}
-                    w_main, blown_main, _ = accounts[MAIN_RISK]
-                    week_ok = (blown_main is None and len(w_main) and w_main["balance"].iloc[-1] > F.INITIAL
-                               and len(part) >= 100)
-                    ftmo_ok = ftmo_ok and len(part) >= 100
-                elif per == "test":
-                    ftmo_tbl, ftmo_ok, ftmo_best = None, False, None
-                    accounts, week_ok = {}, False
-            results.append({"family": fam, "tf": tf, "label": label, "rule": rule, "rows": rows, "n_rules": len(grid),
-                            "grid": grid, "ftmo": ftmo_tbl, "ftmo_ok": ftmo_ok, "ftmo_best": ftmo_best,
-                            "accounts": accounts, "week_ok": week_ok})
-            print(fam, tf, label, rule, {p: (round(v[0]["avg_r"], 3), v[0]["trades"]) for p, v in rows.items()})
+        for (fam, _tf), g in tr.groupby(["family", "tf"], observed=True):
+            train = g[g["period"] == "train"]
+            grid = []
+            for (e, x, k), gg in train.groupby(["entry", "exit", "k"]):
+                st = stats(gg["r"])
+                grid.append({"entry": e, "exit": x, "k": k, **st})
+            grid = pd.DataFrame(grid).sort_values("t", ascending=False)
+            best = tuple(grid.iloc[0][["entry", "exit", "k"]])
+            for label, rule in (("best", best), ("literal", LITERAL[fam])):
+                sel = g[(g["entry"] == rule[0]) & (g["exit"] == rule[1]) & (g["k"] == rule[2])]
+                rows = {}
+                for per in ("train", "test"):
+                    part = sel[sel["period"] == per]
+                    # random comparison: same symbol/timeframe, same direction, stop and target
+                    rnd = []
+                    for (s, tf2), q in part.groupby(["symbol", "tf"]):
+                        rnd.append(P.random_baseline(data[(s, tf2)], q, q["cost"].iloc[0], draws=10))
+                    part = pd.concat(rnd) if rnd else part.assign(r_rand=[])
+                    st = stats(part["r"])
+                    diff = (part["r"] - part["r_rand"]).dropna()
+                    st.update({"rand_r": float(part["r_rand"].mean()) if len(part) else np.nan,
+                               "edge_t": stats(diff)["t"],
+                               "per_year": len(part) / max((part["time"].max() - part["time"].min()).days / 365, 0.5)
+                               if len(part) else 0})
+                    by_cls = {c: stats(q["r"]) for c, q in part.groupby("cls")}
+                    rows[per] = (st, by_cls)
+                    if per == "test" and len(part) >= 20:
+                        pt = part[["time", "exit_time", "r"]]
+                        ftmo_tbl = F.evaluate(pt)
+                        ftmo_ok, ftmo_best = F.verdict(ftmo_tbl)
+                        # The user's test: one $100,000 FTMO-rules account per strategy, opened on the
+                        # first day of the test period, sampled weekly, stopped when burned.
+                        accounts = {rk: F.account_path(pt, rk, start=split) for rk in RISKS}
+                        w_main, blown_main, _ = accounts[MAIN_RISK]
+                        week_ok = (blown_main is None and len(w_main) and w_main["balance"].iloc[-1] > F.INITIAL
+                                   and len(part) >= 100)
+                        ftmo_ok = ftmo_ok and len(part) >= 100
+                    elif per == "test":
+                        ftmo_tbl, ftmo_ok, ftmo_best = None, False, None
+                        accounts, week_ok = {}, False
+                results.append({"family": fam, "tf": tf, "label": label, "rule": rule, "rows": rows, "n_rules": len(grid),
+                                "grid": grid, "ftmo": ftmo_tbl, "ftmo_ok": ftmo_ok, "ftmo_best": ftmo_best,
+                                "accounts": accounts, "week_ok": week_ok})
+                print(fam, tf, label, rule, {p: (round(v[0]["avg_r"], 3), v[0]["trades"]) for p, v in rows.items()})
+        del data, tr
+        import gc
+        gc.collect()
+    if args.download_only:
+        print("download only: done")
+        return
     report(results, args, news_info)
 
 

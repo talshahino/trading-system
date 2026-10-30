@@ -59,6 +59,26 @@ jobs:
           key: poc-cache-${{ github.run_id }}
           restore-keys: poc-cache-
 
+      # Download first and save the cache right away, so a later crash never loses the
+      # (slow) price downloads.
+      - name: Download price data
+        if: ${{ !inputs.demo }}
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+          MAX_RUN_MINUTES: "200"
+        run: |
+          END="${{ inputs.end }}"
+          if [ -z "$END" ]; then END=$(date -u -d "yesterday" +%F); fi
+          python -u run_poc.py --download-only --market "${{ inputs.market }}" --start "${{ inputs.start }}" --end "$END"
+
+      - name: Save price data
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}-dl
+
       - name: Run backtest
         env:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}

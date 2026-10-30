@@ -391,6 +391,9 @@ def run(df, fn, cost_side):
 from agents.tiktok_strategies import TIKTOK  # noqa: E402
 
 STRATEGIES.update(TIKTOK)
+from agents.classic_strategies import CLASSIC  # noqa: E402
+
+STRATEGIES.update(CLASSIC)
 
 
 def timeframe_ok(sid, tf):

@@ -11,6 +11,7 @@ import argparse
 import html
 import math
 import sys
+import traceback
 from pathlib import Path
 
 import numpy as np
@@ -24,6 +25,7 @@ from agents import rules_agent as R
 import run_poc as RP
 
 SYMBOLS = RP.FX + RP.COMMOD
+ERRORS = []   # tracebacks of strategies that crashed; shown at the end of the report
 TIMEFRAMES = RP.TIMEFRAMES + ["4Hour"]
 SPLIT, SPLIT_HE = RP.SPLIT, RP.SPLIT_HE
 
@@ -63,7 +65,11 @@ def main():
             for sid in ids:
                 if not args.demo and not R.timeframe_ok(sid, tf):
                     continue
-                t = R.run(df, R.STRATEGIES[sid][1], cost)
+                try:
+                    t = R.run(df, R.STRATEGIES[sid][1], cost)
+                except Exception:  # noqa: BLE001 - one broken strategy must not kill the run
+                    ERRORS.append(f"{sid} {tf} {s}:\n{traceback.format_exc()}")
+                    continue
                 if t.empty:
                     continue
                 if events is not None:
@@ -75,22 +81,47 @@ def main():
         for sid, parts in per_sid.items():
             if not parts:
                 continue
-            tr = pd.concat(parts, ignore_index=True).sort_values("time")
-            before, after = tr[tr["time"] < split], tr[tr["time"] >= split]
-            acc = {rk: F.account_path(after, rk, start=split) for rk in RP.RISKS} if len(after) >= 5 else {}
-            ch = F.evaluate(after[["time", "exit_time", "r"]]) if len(after) >= 20 else None
-            _, ch_best = F.verdict(ch)
-            res = {"sid": sid, "name": R.STRATEGIES[sid][0], "tf": tf, "before": RP.stats(before["r"]),
-                   "after": RP.stats(after["r"]), "accounts": acc, "ftmo_best": ch_best,
-                   "by_sym": {s: RP.stats(q["r"]) for s, q in after.groupby("symbol")}}
-            w = acc.get(RP.MAIN_RISK, (pd.DataFrame(), None, None))
-            res["ok"] = bool(len(after) >= 100 and w[1] is None and len(w[0]) and w[0]["balance"].iloc[-1] > F.INITIAL)
-            results.append(res)
-            if (res["ok"] or f"{sid}:{tf}" in args.export.split(",")) and len(w[0]):
-                export_trades(sid, tf, w[0].attrs.get("ledger"))
-                res["prophet"] = prophet_check(w[0].attrs.get("ledger"), args)
-            print(sid, tf, "trades", len(after), "avgR", round(res["after"]["avg_r"], 3) if len(after) else None)
-    report(results, args)
+            try:
+                _summarise(sid, tf, parts, split, args, results)
+            except Exception:  # noqa: BLE001
+                ERRORS.append(f"{sid} {tf} summary:\n{traceback.format_exc()}")
+    safe_report(results, args)
+
+
+def safe_report(results, args):
+    """Write the report; a result that breaks the HTML is dropped and its traceback shown."""
+    try:
+        report(results, args)
+        return
+    except Exception:  # noqa: BLE001
+        ERRORS.append(f"report:\n{traceback.format_exc()}")
+    good = []
+    for r in results:
+        try:
+            report([r], args)
+            good.append(r)
+        except Exception:  # noqa: BLE001
+            ERRORS.append(f"report row {r.get('sid')} {r.get('tf')}:\n{traceback.format_exc()}")
+    report(good, args)
+
+
+def _summarise(sid, tf, parts, split, args, results):
+    """Account replay, FTMO challenge odds and Trading Prophet for one strategy/timeframe."""
+    tr = pd.concat(parts, ignore_index=True).sort_values("time")
+    before, after = tr[tr["time"] < split], tr[tr["time"] >= split]
+    acc = {rk: F.account_path(after, rk, start=split) for rk in RP.RISKS} if len(after) >= 5 else {}
+    ch = F.evaluate(after[["time", "exit_time", "r"]]) if len(after) >= 20 else None
+    _, ch_best = F.verdict(ch)
+    res = {"sid": sid, "name": R.STRATEGIES[sid][0], "tf": tf, "before": RP.stats(before["r"]),
+           "after": RP.stats(after["r"]), "accounts": acc, "ftmo_best": ch_best,
+           "by_sym": {s: RP.stats(q["r"]) for s, q in after.groupby("symbol")}}
+    w = acc.get(RP.MAIN_RISK, (pd.DataFrame(), None, None))
+    res["ok"] = bool(len(after) >= 100 and w[1] is None and len(w[0]) and w[0]["balance"].iloc[-1] > F.INITIAL)
+    results.append(res)
+    if (res["ok"] or f"{sid}:{tf}" in args.export.split(",")) and len(w[0]):
+        export_trades(sid, tf, w[0].attrs.get("ledger"))
+        res["prophet"] = prophet_check(w[0].attrs.get("ledger"), args)
+    print(sid, tf, "trades", len(after), "avgR", round(res["after"]["avg_r"], 3) if len(after) else None)
 
 
 def prophet_check(led, args):
@@ -175,6 +206,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 <th>חשבון $100K מ־{SPLIT_HE} (סיכון 1%)</th><th>שרד ורווחי</th><th>עובר אתגר 2-Step</th><th>Trading Prophet (הפסד צף דקה־דקה)</th></tr>{rows}</table></div>
 <h2>הכללים שנבדקו</h2><ul>{doc}</ul>
 {body}
+{"" if not ERRORS else "<h2>שגיאות בהרצה</h2><pre style='white-space:pre-wrap;font-size:12px'>" + html.escape(chr(10).join(ERRORS)) + "</pre>"}
 <p class="mut">פרמטרים שהמחבר לא פרסם הושלמו בהנחות מקובלות, כמפורט בתיאור של כל אסטרטגיה. זה כלי מחקר, לא ייעוץ השקעות.</p>
 </main></body></html>"""
     path = config.OUTPUT_DIR / "report_rules.html"

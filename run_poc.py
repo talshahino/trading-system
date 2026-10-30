@@ -20,7 +20,12 @@ from agents import poc_agent as P
 ETFS = ["SPY", "QQQ", "IWM", "DIA", "GLD", "SLV", "TLT", "XLE", "XLF", "SMH"]
 STOCKS = ["AAPL", "MSFT", "NVDA", "AMZN", "META", "TSLA", "GOOGL", "AMD", "JPM", "NFLX"]
 CRYPTO = ["BTC/USD", "ETH/USD", "SOL/USD"]
-COST = {"etf": 0.0002, "stock": 0.0003, "crypto": 0.002}     # per side
+FX = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD"]
+COMMOD = ["XAUUSD", "XAGUSD", "WTI"]
+# Per side, as a share of price: typical retail spread + slippage.
+# EURUSD ~0.6 pip spread = ~0.006% round trip; gold ~$0.30 on ~$2,500 = ~0.012%.
+COST = {"etf": 0.0002, "stock": 0.0003, "crypto": 0.002, "fx": 0.00005, "XAUUSD": 0.0001,
+        "XAGUSD": 0.0003, "WTI": 0.0003}
 TIMEFRAMES = ["15Min", "1Hour", "1Day"]
 TF_HE = {"15Min": "15 דקות", "1Hour": "שעה", "1Day": "יום"}
 SPLIT = pd.Timestamp("2023-01-01", tz="UTC")
@@ -42,7 +47,15 @@ EXIT_HE = {"range/2R": "סטופ בצד השני של הדשדוש, יעד 1:2",
 
 
 def asset_class(s):
+    if s in FX:
+        return "fx"
+    if s in COMMOD:
+        return "commodity"
     return "crypto" if "/" in s else "etf" if s in ETFS else "stock"
+
+
+def cost_of(s):
+    return COST.get(s) or COST[asset_class(s)]
 
 
 def demo_bars(seed):
@@ -70,8 +83,11 @@ def main():
     ap.add_argument("--demo", action="store_true")
     ap.add_argument("--start", default="2016-01-01")
     ap.add_argument("--end", default="2026-10-29")
+    ap.add_argument("--market", default="forex", choices=["forex", "stocks"],
+                    help="forex = 5 currency pairs + gold, silver, oil (Dukascopy); stocks = ETFs, stocks, crypto (Alpaca)")
     args = ap.parse_args()
-    symbols = ["DEMO1", "DEMO2", "DEMO3"] if args.demo else ETFS + STOCKS + CRYPTO
+    symbols = (["DEMO1", "DEMO2", "DEMO3"] if args.demo else FX + COMMOD if args.market == "forex"
+               else ETFS + STOCKS + CRYPTO)
     all_tr, data = [], {}
     for tf in (["1Hour"] if args.demo else TIMEFRAMES):
         for i, s in enumerate(symbols):
@@ -80,13 +96,14 @@ def main():
                 print(f"  {s} {tf}: no data")
                 continue
             data[(s, tf)] = df
-            cost = COST["etf"] if args.demo else COST[asset_class(s)]
+            cost = COST["etf"] if args.demo else cost_of(s)
             cls = "etf" if args.demo else asset_class(s)
             parts = [("trend_poc", P.trades(df, k, cost)) for k in (3, 5)]
             parts += [("range_breakout", P.trades_range(df, False, cost)),
                       ("range_sweep", P.trades_range(df, True, cost))]
             if tf != "1Day":
-                parts.append(("va_fade", P.trades_fade(df, cost, crypto=cls == "crypto")))
+                # Forex/commodities/crypto trade around the clock: a "session" is the UTC day.
+                parts.append(("va_fade", P.trades_fade(df, cost, crypto=cls in ("crypto", "fx", "commodity"))))
             for fam, t in parts:
                 if not t.empty:
                     all_tr.append(t.assign(symbol=s, tf=tf, cls=cls, cost=cost, family=fam))
@@ -147,7 +164,7 @@ def report(results, args):
                          f"<td><b>{f(st['avg_r'])}</b></td><td>{f(st['t'], 1)}</td><td>{f(st['rand_r'])}</td>"
                          f"<td>{f(st['avg_r'] - st['rand_r'] if st['rand_r'] == st['rand_r'] else np.nan)}</td><td>{f(st['edge_t'], 1)}</td></tr>")
             cls_rows = "".join(
-                f"<tr><td>{ {'etf': 'קרנות סל', 'stock': 'מניות', 'crypto': 'קריפטו'}[c] }</td><td>{s['trades']:,}</td>"
+                f"<tr><td>{ {'etf': 'קרנות סל', 'stock': 'מניות', 'crypto': 'קריפטו', 'fx': 'מט״ח', 'commodity': 'סחורות'}[c] }</td><td>{s['trades']:,}</td>"
                 f"<td>{f(s['avg_r'])}</td><td>{f(s['t'], 1)}</td></tr>"
                 for c, s in res["rows"]["test"][1].items())
             st_test = res["rows"]["test"][0]
@@ -170,7 +187,7 @@ body{{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,sans
 th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}}h3{{margin-top:28px}}</style></head><body><main>
 <h1>בקטסט · אסטרטגיית POC מהסרטונים</h1>
 <p class="mut">{'דמו (נתונים סינתטיים)' if args.demo else 'נתונים אמיתיים (Alpaca)'} · {args.start} עד {args.end} ·
-10 קרנות סל, 10 מניות גדולות, ביטקוין/את׳ריום/סולנה · עלות לצד: קרנות 2 bps, מניות 3 bps, קריפטו 20 bps</p>
+{'5 צמדי מט״ח (EURUSD, GBPUSD, USDJPY, AUDUSD, USDCAD), זהב, כסף ונפט (Dukascopy, ווליום = מספר עדכוני מחיר) · עלות לצד: מט״ח 0.5 bps, זהב 1 bps, כסף ונפט 3 bps' if args.market == 'forex' else '10 קרנות סל, 10 מניות גדולות, ביטקוין/את׳ריום/סולנה · עלות לצד: קרנות 2 bps, מניות 3 bps, קריפטו 20 bps'}</p>
 <p><b>R</b> = יחידת סיכון: ‎+1R פירושו שהרווחת בדיוק את מה שסיכנת, ‎−1R שהגעת לסטופ. ממוצע R חיובי אחרי עלויות = רווחי.
 <b>R אקראי</b> = אותן עסקאות (כיוון, סטופ ויעד) בנקודות כניסה אקראיות. אם ה־POC עובד, היתרון על האקראי צריך להיות חיובי, ו־t של היתרון 2 ומעלה.
 ההשוואה לאקראי הוגנת במיוחד בכניסות "תגובה" (כניסה בפתיחת הנר הבא). בכניסות "נגיעה" (פקודה ממתינה) הנר שבו נכנסים מחושב בצורה פסימית: רק הסטופ יכול להיפגע בו.</p>

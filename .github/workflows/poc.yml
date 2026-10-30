@@ -12,6 +12,11 @@ on:
         description: "Synthetic data only (no keys needed, ~1 minute) - use to check the setup"
         type: boolean
         default: false
+      market:
+        description: "forex = currency pairs + gold/silver/oil; stocks = ETFs, stocks, crypto"
+        type: choice
+        options: [forex, stocks]
+        default: forex
       start:
         description: "Start date (YYYY-MM-DD). Alpaca price history starts in 2016"
         default: "2016-01-01"
@@ -40,6 +45,10 @@ jobs:
 
       - name: Install
         run: pip install -r requirements.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
       # Downloaded news, prices and Claude classifications are kept between runs,
       # so a second run is fast and never pays Claude twice for the same headline.
@@ -83,7 +92,7 @@ jobs:
           if [ "${{ inputs.demo }}" = "true" ]; then
             python -u run_poc.py --demo 2>&1 | tee run.log
           else
-            python -u run_poc.py --start "${{ inputs.start }}" --end "$END" 2>&1 | tee run.log
+            python -u run_poc.py --market "${{ inputs.market }}" --start "${{ inputs.start }}" --end "$END" 2>&1 | tee run.log
           fi
 
       - name: Save data cache

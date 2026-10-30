@@ -66,9 +66,49 @@ def _get(url, params):
         time.sleep(0.3)
 
 
+# Forex and commodities come from Dukascopy (a Swiss bank's free historical feed) through
+# the open-source dukascopy-node tool. Forex has no central exchange, so "volume" there is
+# tick volume (how many price updates), which is also what TradingView shows on forex.
+DUKA = {"EURUSD": "eurusd", "GBPUSD": "gbpusd", "USDJPY": "usdjpy", "AUDUSD": "audusd",
+        "USDCAD": "usdcad", "XAUUSD": "xauusd", "XAGUSD": "xagusd", "WTI": "lightcmdusd"}
+DUKA_TF = {"15Min": "m15", "1Hour": "h1", "1Day": "d1"}
+
+
+def _duka_year(symbol, timeframe, y, end):
+    import glob
+    import os
+    import shutil
+    import subprocess
+    import tempfile
+    tmp = tempfile.mkdtemp()
+    to = min(pd.Timestamp(f"{y}-12-31"), pd.Timestamp(end)).strftime("%Y-%m-%d")
+    cmd = ["npx", "--yes", "dukascopy-node@1.51.1", "-i", DUKA[symbol], "-from", f"{y}-01-01", "-to", to,
+           "-t", DUKA_TF[timeframe], "-v", "-vu", "units", "-f", "csv", "-dir", tmp, "-s",
+           "-r", "3", "-bs", "5", "-bp", "500", "--cache", "--cache-path", str(config.CACHE_DIR / "duka_raw")]
+    chrome = os.environ.get("CHROME_PATH") or shutil.which("google-chrome") or shutil.which("chromium")
+    if chrome:
+        cmd += ["--chrome-path", chrome]
+    for attempt in range(3):
+        config.check_time_budget()
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
+        files = glob.glob(os.path.join(tmp, "*.csv"))
+        if files:
+            df = pd.read_csv(files[0])
+            shutil.rmtree(tmp, ignore_errors=True)
+            df = df.rename(columns={"timestamp": "t", "open": "o", "high": "h", "low": "l",
+                                    "close": "c", "volume": "v"})
+            df["t"] = pd.to_datetime(df["t"], unit="ms", utc=True).dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+            return df[["t", "o", "h", "l", "c", "v"]]
+        time.sleep(20 * (attempt + 1))
+    raise RuntimeError(f"Dukascopy download failed for {symbol} {timeframe} {y}: "
+                       f"{(r.stderr or r.stdout)[-400:]}")
+
+
 def bars(symbol, timeframe, start, end):
-    """OHLCV for a stock/ETF ('SPY') or crypto ('BTC/USD'), cached per year."""
+    """OHLCV for a stock/ETF ('SPY'), crypto ('BTC/USD') or forex/commodity ('XAUUSD'),
+    cached per year."""
     crypto = "/" in symbol
+    duka = symbol in DUKA
     frames = []
     now = pd.Timestamp.now(tz="UTC") - pd.Timedelta(minutes=20)
     for y in range(pd.Timestamp(start).year, pd.Timestamp(end).year + 1):
@@ -82,6 +122,13 @@ def bars(symbol, timeframe, start, end):
                 continue
             p = {"symbols": symbol, "timeframe": timeframe, "start": s.strftime("%Y-%m-%dT%H:%M:%SZ"),
                  "end": e.strftime("%Y-%m-%dT%H:%M:%SZ"), "limit": 10000, "sort": "asc"}
+            if duka:
+                df = _duka_year(symbol, timeframe, y, e.strftime("%Y-%m-%d"))
+                if y < now.year:
+                    df.to_csv(f, index=False)
+                frames.append(df)
+                print(f"    {symbol} {timeframe} {y}: {len(df):,} bars")
+                continue
             if crypto:
                 raw = _get(f"{config.ALPACA_DATA_URL}/v1beta3/crypto/us/bars", p)
             else:
@@ -98,7 +145,7 @@ def bars(symbol, timeframe, start, end):
         return df
     df["t"] = pd.to_datetime(df["t"], utc=True)
     df = df.drop_duplicates("t").sort_values("t").set_index("t")[["o", "h", "l", "c", "v"]]
-    if not crypto and timeframe != "1Day":
+    if not crypto and not duka and timeframe != "1Day":
         ny = df.index.tz_convert(NY)
         mins = ny.hour * 60 + ny.minute
         df = df[(mins >= 570) & (mins < 960)]          # regular hours only

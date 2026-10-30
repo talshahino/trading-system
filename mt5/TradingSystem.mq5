@@ -14,7 +14,7 @@
 //| -> close all and stop.                                            |
 //+------------------------------------------------------------------+
 #property copyright "trading-system"
-#property version   "1.00"
+#property version   "1.10"
 
 #include <Trade/Trade.mqh>
 
@@ -26,6 +26,9 @@ input double DailyPct     = 5.0;        // FTMO maximum daily loss
 input double MaxPct       = 10.0;       // FTMO maximum loss
 input int    NewsMinutes  = 5;          // no entries this many minutes before/after high-impact news
 input int    H1History    = 4000;       // 1-hour bars used to build the 4-hour bars (indicator warm-up)
+input string GitHubToken  = "";         // fine-grained token (this repository, Contents: read & write) - for the dashboard
+input string GitHubRepo   = "talshahino/trading-system";
+input int    PushMinutes  = 30;         // how often the account state is sent to the dashboard
 
 CTrade trade;
 string syms[];
@@ -382,6 +385,137 @@ string ResolveSymbol(string want)
    return "";
 }
 
+
+//---------------- dashboard feed: account state -> GitHub (branch "live", file live/state.json) ----------------
+datetime lastPush = 0;
+string Esc(string x) { StringReplace(x, "\\", "\\\\"); StringReplace(x, "\"", "\\\""); StringReplace(x, "\n", " "); StringReplace(x, "\r", " "); return x; }
+string Num(double v, int d = 2) { return DoubleToString(v, d); }
+string Iso(datetime utc) { string t = TimeToString(utc, TIME_DATE | TIME_SECONDS); StringReplace(t, ".", "-"); StringReplace(t, " ", "T"); return t + "Z"; }
+string StratOf(long magic) { return magic == MAGIC_TV01 ? "TV01" : (magic == MAGIC_TV04 ? "TV04" : "manual"); }
+
+void RecordEquity()                                       // one point per push, kept on disk
+{
+   int f = FileOpen("TradingSystem_equity.csv", FILE_READ | FILE_WRITE | FILE_CSV | FILE_ANSI | FILE_SHARE_READ, ',');
+   if(f == INVALID_HANDLE) return;
+   FileSeek(f, 0, SEEK_END);
+   FileWrite(f, Iso(TimeGMT()), Num(AccountInfoDouble(ACCOUNT_BALANCE)), Num(AccountInfoDouble(ACCOUNT_EQUITY)));
+   FileClose(f);
+}
+string EquityJson()
+{
+   string lines[]; int n = 0;
+   int f = FileOpen("TradingSystem_equity.csv", FILE_READ | FILE_TXT | FILE_ANSI | FILE_SHARE_READ);
+   if(f != INVALID_HANDLE)
+   {
+      while(!FileIsEnding(f)) { string ln = FileReadString(f); if(ln == "") continue; ArrayResize(lines, n + 1, 1000); lines[n++] = ln; }
+      FileClose(f);
+   }
+   string out = ""; int from = MathMax(0, n - 4000);       // last ~80 days at 30-minute points
+   for(int i = from; i < n; i++)
+   {
+      string p[]; if(StringSplit(lines[i], ',', p) < 3) continue;
+      out += (out == "" ? "" : ",") + "{\"t\":\"" + p[0] + "\",\"balance\":" + p[1] + ",\"equity\":" + p[2] + "}";
+   }
+   return "[" + out + "]";
+}
+string TradesJson()                                       // closed positions, one row each
+{
+   HistorySelect(0, TimeCurrent() + 86400);
+   int base = ServerBaseOffset();
+   string out = "";
+   for(int i = 0; i < HistoryDealsTotal(); i++)
+   {
+      ulong d = HistoryDealGetTicket(i);
+      long entry = HistoryDealGetInteger(d, DEAL_ENTRY);
+      if(entry != DEAL_ENTRY_OUT && entry != DEAL_ENTRY_OUT_BY) continue;
+      long pos = HistoryDealGetInteger(d, DEAL_POSITION_ID);
+      double inPx = 0; datetime inT = 0; long magic = HistoryDealGetInteger(d, DEAL_MAGIC); double comm = 0;
+      for(int j = 0; j < HistoryDealsTotal(); j++)
+      {
+         ulong e = HistoryDealGetTicket(j);
+         if(HistoryDealGetInteger(e, DEAL_POSITION_ID) == pos && HistoryDealGetInteger(e, DEAL_ENTRY) == DEAL_ENTRY_IN)
+         { inPx = HistoryDealGetDouble(e, DEAL_PRICE); inT = (datetime)HistoryDealGetInteger(e, DEAL_TIME); magic = HistoryDealGetInteger(e, DEAL_MAGIC); comm += HistoryDealGetDouble(e, DEAL_COMMISSION); }
+      }
+      long type = HistoryDealGetInteger(d, DEAL_TYPE);       // the closing deal is opposite to the position
+      double net = HistoryDealGetDouble(d, DEAL_PROFIT) + HistoryDealGetDouble(d, DEAL_SWAP) + HistoryDealGetDouble(d, DEAL_COMMISSION) + comm;
+      out += (out == "" ? "" : ",") + "{\"id\":" + IntegerToString(pos) + ",\"strategy\":\"" + StratOf(magic) + "\",\"symbol\":\"" + Esc(HistoryDealGetString(d, DEAL_SYMBOL)) +
+             "\",\"dir\":\"" + (type == DEAL_TYPE_SELL ? "buy" : "sell") + "\",\"volume\":" + Num(HistoryDealGetDouble(d, DEAL_VOLUME)) +
+             ",\"open_utc\":\"" + (inT > 0 ? Iso(ServerToUtc(inT, base)) : "") + "\",\"open_price\":" + Num(inPx, 5) +
+             ",\"close_utc\":\"" + Iso(ServerToUtc((datetime)HistoryDealGetInteger(d, DEAL_TIME), base)) + "\",\"close_price\":" + Num(HistoryDealGetDouble(d, DEAL_PRICE), 5) +
+             ",\"profit\":" + Num(net) + "}";
+   }
+   return "[" + out + "]";
+}
+string PositionsJson()
+{
+   int base = ServerBaseOffset();
+   string out = "";
+   for(int i = PositionsTotal() - 1; i >= 0; i--)
+   {
+      ulong tk = PositionGetTicket(i);
+      if(!PositionSelectByTicket(tk)) continue;
+      out += (out == "" ? "" : ",") + "{\"id\":" + IntegerToString((long)tk) + ",\"strategy\":\"" + StratOf(PositionGetInteger(POSITION_MAGIC)) +
+             "\",\"symbol\":\"" + Esc(PositionGetString(POSITION_SYMBOL)) + "\",\"dir\":\"" + (PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY ? "buy" : "sell") +
+             "\",\"volume\":" + Num(PositionGetDouble(POSITION_VOLUME)) + ",\"open_utc\":\"" + Iso(ServerToUtc((datetime)PositionGetInteger(POSITION_TIME), base)) +
+             "\",\"open_price\":" + Num(PositionGetDouble(POSITION_PRICE_OPEN), 5) + ",\"stop\":" + Num(PositionGetDouble(POSITION_SL), 5) +
+             ",\"target\":" + Num(PositionGetDouble(POSITION_TP), 5) + ",\"profit\":" + Num(PositionGetDouble(POSITION_PROFIT) + PositionGetDouble(POSITION_SWAP)) + "}";
+   }
+   return "[" + out + "]";
+}
+string JournalJson()                                      // the robot's last 300 actions (opened / skipped and why)
+{
+   string lines[]; int n = 0;
+   int f = FileOpen("TradingSystem_journal.csv", FILE_READ | FILE_TXT | FILE_ANSI | FILE_SHARE_READ);
+   if(f != INVALID_HANDLE)
+   {
+      while(!FileIsEnding(f)) { string ln = FileReadString(f); if(ln == "" || StringFind(ln, "utc_time") == 0) continue; ArrayResize(lines, n + 1, 500); lines[n++] = ln; }
+      FileClose(f);
+   }
+   string out = "";
+   for(int i = MathMax(0, n - 300); i < n; i++) out += (out == "" ? "" : ",") + "\"" + Esc(lines[i]) + "\"";
+   return "[" + out + "]";
+}
+bool Http(string method, string url, string body, string &resp, int &code)
+{
+   string hdr = "Authorization: Bearer " + GitHubToken + "\r\nAccept: application/vnd.github+json\r\nUser-Agent: TradingSystem-EA\r\nContent-Type: application/json\r\n";
+   char data[], res[]; string rh;
+   if(body != "") { int k = StringToCharArray(body, data, 0, WHOLE_ARRAY, CP_UTF8); ArrayResize(data, k - 1); }
+   ResetLastError();
+   code = WebRequest(method, url, hdr, 15000, data, res, rh);
+   resp = CharArrayToString(res, 0, WHOLE_ARRAY, CP_UTF8);
+   if(code == -1) { Print("Dashboard: web request failed (", GetLastError(), "). Add https://api.github.com under Tools > Options > Expert Advisors > Allow WebRequest."); return false; }
+   return true;
+}
+void PushState()
+{
+   if(GitHubToken == "" || TimeGMT() - lastPush < PushMinutes * 60) return;
+   lastPush = TimeGMT();
+   RecordEquity();
+   string json = "{\"updated_utc\":\"" + Iso(TimeGMT()) + "\",\"server\":\"" + Esc(AccountInfoString(ACCOUNT_SERVER)) +
+                 "\",\"strategies\":\"" + Esc(Strategies) + "\",\"initial\":" + Num(InitialBalance) +
+                 ",\"balance\":" + Num(AccountInfoDouble(ACCOUNT_BALANCE)) + ",\"equity\":" + Num(AccountInfoDouble(ACCOUNT_EQUITY)) +
+                 ",\"day_start\":" + Num(DayStart()) + ",\"halted_today\":" + (Halted() ? "true" : "false") +
+                 ",\"halted_forever\":" + (GlobalVariableCheck(gvPrefix + "halt_forever") ? "true" : "false") +
+                 ",\"positions\":" + PositionsJson() + ",\"trades\":" + TradesJson() + ",\"equity_curve\":" + EquityJson() +
+                 ",\"journal\":" + JournalJson() + "}";
+   uchar raw[], key[], b64[];
+   int k = StringToCharArray(json, raw, 0, WHOLE_ARRAY, CP_UTF8); ArrayResize(raw, k - 1);
+   if(CryptEncode(CRYPT_BASE64, raw, key, b64) <= 0) return;
+   string content = CharArrayToString(b64, 0, WHOLE_ARRAY, CP_ACP);
+   StringReplace(content, "\r", ""); StringReplace(content, "\n", "");
+   string url = "https://api.github.com/repos/" + GitHubRepo + "/contents/live/state.json";
+   string resp; int code;
+   string sha = "";
+   if(Http("GET", url + "?ref=live", "", resp, code) && code == 200)
+   {
+      int a = StringFind(resp, "\"sha\":\"");
+      if(a >= 0) { int b = StringFind(resp, "\"", a + 7); sha = StringSubstr(resp, a + 7, b - a - 7); }
+   }
+   string body = "{\"message\":\"account state\",\"branch\":\"live\",\"content\":\"" + content + "\"" + (sha != "" ? ",\"sha\":\"" + sha + "\"" : "") + "}";
+   if(Http("PUT", url, body, resp, code) && (code == 200 || code == 201)) Print("Dashboard: state sent");
+   else if(code != -1) Print("Dashboard: GitHub answered ", code, " ", StringSubstr(resp, 0, 200));
+}
+
 //---------------- main loop ----------------
 int OnInit()
 {
@@ -407,6 +541,7 @@ void OnTick() {}
 void OnTimer()
 {
    Guard();
+   PushState();
    for(int k = 0; k < ArraySize(syms); k++)
    {
       string s = syms[k];

@@ -417,3 +417,145 @@ CLASSIC.update({
     "TV37": ("Three-bar reversal at 20-bar extreme, 2R", s_three_bar_reversal, HTF),
     "TV38": ("Donchian 10 fade + RSI(2) (Connors)", s_donchian_fade_rsi2, HTF),
 })
+
+
+# ---------------- batch 4 ----------------
+def s_chandelier_trend(df):
+    """Chandelier exit trend (Chuck LeBeau): long line = 22-bar highest high - 3 ATR22, short
+    line = 22-bar lowest low + 3 ATR22. Close crossing above the short line buys (trend flips up),
+    below the long line sells. Stop trails on the chandelier line."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 22)
+    lng = pd.Series(h).rolling(22).max().to_numpy() - 3 * a
+    sht = pd.Series(l).rolling(22).min().to_numpy() + 3 * a
+    up, _ = _cross(c, np.r_[np.nan, sht[:-1]])
+    _, dn = _cross(c, np.r_[np.nan, lng[:-1]])
+    line = np.where(c > sht, lng, sht)
+    return up, dn & ~up, {"stop": ("trail_line",), "line": line, "target": None}
+
+
+def s_roc_adx(df):
+    """ROC momentum with ADX: ROC(20) crosses above 0 while ADX(14) > 20 and rising -> buy
+    (mirror). Stop 2 ATR, ATR trail 3."""
+    from agents.rules_agent import adx
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    roc = pd.Series(c).pct_change(20).to_numpy()
+    ad = adx(h, l, c, 14)
+    rising = np.r_[False, ad[1:] > ad[:-1]]
+    up, dn = _cross(roc, np.zeros(len(c)))
+    ok = (ad > 20) & rising
+    return up & ok, dn & ok, {"stop": ("atr", 2.0), "target": None, "trail_atr": 3.0}
+
+
+def s_aroon(df):
+    """Aroon (Chande, 25): Aroon Up crosses above Aroon Down with Aroon Up > 70 -> buy (mirror).
+    Stop 2 ATR, target 2R."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    n = 25
+    au = pd.Series(h).rolling(n + 1).apply(lambda v: 100 * np.argmax(v) / n, raw=True).to_numpy()
+    ad = pd.Series(l).rolling(n + 1).apply(lambda v: 100 * np.argmin(v) / n, raw=True).to_numpy()
+    up, dn = _cross(au, ad)
+    return up & (au > 70), dn & (ad > 70), {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+def s_cci_trend(df):
+    """CCI(20) trend (Lambert): CCI crosses above +100 buys, below -100 sells; exit when CCI
+    crosses back through 0. Stop 2 ATR."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    tp = (h + l + c) / 3
+    m = pd.Series(tp).rolling(20).mean()
+    md = pd.Series(tp).rolling(20).apply(lambda v: np.mean(np.abs(v - v.mean())), raw=True)
+    cci = ((pd.Series(tp) - m) / (0.015 * md)).to_numpy()
+    up, _ = _cross(cci, np.full(len(c), 100.0))
+    _, dn = _cross(cci, np.full(len(c), -100.0))
+    return up, dn, {"stop": ("atr", 2.0), "target": None, "exit_long": cci < 0, "exit_short": cci > 0}
+
+
+def s_donchian_adx(df):
+    """Donchian 20 breakout filtered by ADX(14) > 25. Stop 2 ATR, exit on the opposite
+    10-bar breakout."""
+    from agents.rules_agent import adx
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    strong = adx(h, l, c, 14) > 25
+    return (c > _hh(h, 20)) & strong, (c < _ll(l, 20)) & strong, {"stop": ("atr", 2.0), "target": None,
+                                                                  "exit_long": c < _ll(l, 10), "exit_short": c > _hh(h, 10)}
+
+
+def s_pin_bar(df):
+    """Pin bar at a 20-bar extreme: lower wick >= 2/3 of the range and the low is the 20-bar low
+    -> buy (mirror for upper wick at the high). Stop beyond the wick, target 2R."""
+    o, h, l, c = (df[x].to_numpy() for x in "ohlc")
+    rng = np.where(h - l > 0, h - l, np.nan)
+    lw = (np.minimum(o, c) - l) / rng
+    uw = (h - np.maximum(o, c)) / rng
+    up = (lw >= 2 / 3) & (l <= pd.Series(l).rolling(20).min().to_numpy())
+    dn = (uw >= 2 / 3) & (h >= pd.Series(h).rolling(20).max().to_numpy())
+    return up, dn & ~up, {"stop": ("level", l, h), "target": ("R", 2.0)}
+
+
+def s_vortex(df):
+    """Vortex indicator (Botes/Siepman, 14): VI+ crosses above VI- buys (mirror). Stop 2 ATR,
+    ATR trail 3."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    pc, ph, pl = np.r_[c[0], c[:-1]], np.r_[h[0], h[:-1]], np.r_[l[0], l[:-1]]
+    tr = np.maximum(h - l, np.maximum(abs(h - pc), abs(l - pc)))
+    s = lambda x: pd.Series(x).rolling(14).sum().to_numpy()
+    vp, vm = s(abs(h - pl)) / s(tr), s(abs(l - ph)) / s(tr)
+    up, dn = _cross(vp, vm)
+    return up, dn, {"stop": ("atr", 2.0), "target": None, "trail_atr": 3.0}
+
+
+def s_trix(df):
+    """TRIX (Hutson, 15) crosses its 9-signal: above buys (mirror), only with price on the same
+    side of EMA200. Stop 2 ATR, target 2R."""
+    c = df["c"].to_numpy()
+    t = ema(ema(ema(c, 15), 15), 15)
+    trix = 100 * np.diff(t, prepend=np.nan) / np.r_[np.nan, t[:-1]]
+    sig = pd.Series(trix).ewm(span=9, adjust=False).mean().to_numpy()
+    up, dn = _cross(trix, sig)
+    e = ema(c, 200)
+    return up & (c > e), dn & (c < e), {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+def s_elder_impulse(df):
+    """Elder impulse system: EMA13 rising and MACD histogram rising = green bar; the first green
+    bar after a non-green one buys (mirror red). Exit when the impulse turns the other colour.
+    Stop 2 ATR."""
+    from agents.rules_agent import macd
+    c = df["c"].to_numpy()
+    e13 = ema(c, 13)
+    _, _, hist = macd(c)
+    green = np.r_[False, (e13[1:] > e13[:-1]) & (hist[1:] > hist[:-1])]
+    red = np.r_[False, (e13[1:] < e13[:-1]) & (hist[1:] < hist[:-1])]
+    fg = np.r_[False, green[1:] & ~green[:-1]]
+    fr = np.r_[False, red[1:] & ~red[:-1]]
+    return fg, fr, {"stop": ("atr", 2.0), "target": None, "exit_long": red, "exit_short": green}
+
+
+def s_turn_of_month(df):
+    """Turn-of-month (Ariel 1987; Lakonishok & Smidt): long indices from the last 2 trading days
+    of the month; stop 2 ATR, target 2R (no time exit). Long only; applies to any instrument."""
+    c = df["c"].to_numpy()
+    idx = df.index.tz_convert("UTC")
+    day = pd.Series(idx.date)
+    month = idx.to_period("M") if idx.tz is None else idx.tz_localize(None).to_period("M")
+    days = pd.DataFrame({"m": month.astype(str), "d": day}).drop_duplicates()
+    days["rank_from_end"] = days.groupby("m").cumcount(ascending=False)
+    last2 = set(days.loc[days["rank_from_end"] == 1, "d"])
+    first_bar = np.r_[True, day.to_numpy()[1:] != day.to_numpy()[:-1]]
+    sig = first_bar & day.isin(last2).to_numpy()
+    return sig, np.zeros(len(c), bool), {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+CLASSIC.update({
+    "TV39": ("Chandelier exit trend (LeBeau)", s_chandelier_trend, HTF),
+    "TV40": ("ROC(20) momentum + rising ADX", s_roc_adx, HTF),
+    "TV41": ("Aroon 25 cross, 2R", s_aroon, HTF),
+    "TV42": ("CCI(20) +/-100 trend", s_cci_trend, HTF),
+    "TV43": ("Donchian 20 + ADX>25", s_donchian_adx, HTF),
+    "TV44": ("Pin bar at 20-bar extreme, 2R", s_pin_bar, HTF),
+    "TV45": ("Vortex 14 cross + ATR trail", s_vortex, HTF),
+    "TV46": ("TRIX 15/9 cross + EMA200, 2R", s_trix, HTF),
+    "TV47": ("Elder impulse system", s_elder_impulse, HTF),
+    "TV48": ("Turn-of-month long, 2R", s_turn_of_month, HTF),
+})

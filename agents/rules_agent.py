@@ -165,6 +165,114 @@ def s_supertrend(df):
     return up, dn, {"stop": ("atr", 3.0), "target": None, "opposite": True}
 
 
+def _utc(df):
+    idx = df.index.tz_convert("UTC")
+    return idx.hour.to_numpy(), pd.Series(idx.date).to_numpy()
+
+
+def _prev_day_hlc(df):
+    """Previous UTC day's high, low, close for every bar (known at the bar, no peeking)."""
+    _, day = _utc(df)
+    g = pd.DataFrame({"d": day, "h": df["h"].to_numpy(), "l": df["l"].to_numpy(), "c": df["c"].to_numpy()})
+    daily = g.groupby("d").agg(h=("h", "max"), l=("l", "min"), c=("c", "last")).shift(1)
+    m = g[["d"]].join(daily, on="d")
+    return m["h"].to_numpy(), m["l"].to_numpy(), m["c"].to_numpy()
+
+
+def s_london_breakout(df):
+    """London breakout (classic forex): the Asian range is 00:00-07:00 UTC. From 07:00 to
+    10:00 UTC, a close above the range high buys / below the low sells (first break only).
+    Stop at the other side of the range, target 1.5R, everything closed at 16:00 UTC."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    hour, day = _utc(df)
+    g = pd.DataFrame({"d": day, "hr": hour, "h": h, "l": l})
+    asia = g[g["hr"] < 7].groupby("d").agg(ah=("h", "max"), al=("l", "min"))
+    m = g[["d"]].join(asia, on="d")
+    ah, al = m["ah"].to_numpy(), m["al"].to_numpy()
+    window = (hour >= 7) & (hour < 10)
+    up, dn = window & (c > ah), window & (c < al)
+    # first break of the day only
+    first = pd.Series(up | dn).groupby(day).cumsum().to_numpy() == 1
+    long_, short = up & first, dn & first & ~up
+    return long_, short, {"stop": ("level", al, ah), "target": ("R", 1.5), "force_exit": hour >= 16}
+
+
+def s_bollinger_mr(df):
+    """Bollinger mean reversion: close below the lower band (20, 2) with RSI(14) < 30 buys,
+    above the upper band with RSI > 70 sells; exit when price returns to the middle band.
+    Stop 2 ATR(14)."""
+    c = df["c"].to_numpy()
+    mid = sma(c, 20)
+    sd = pd.Series(c).rolling(20).std().to_numpy()
+    r = rsi(c)
+    long_, short = (c < mid - 2 * sd) & (r < 30), (c > mid + 2 * sd) & (r > 70)
+    return long_, short, {"stop": ("atr", 2.0), "target": None, "exit_long": c > mid, "exit_short": c < mid}
+
+
+def s_rsi2(df):
+    """Connors RSI(2): above SMA200 buy when RSI(2) < 10, exit when close > SMA5; below
+    SMA200 sell when RSI(2) > 90, exit when close < SMA5. Stop 3 ATR(14) (Connors uses none)."""
+    c = df["c"].to_numpy()
+    r2, s200, s5 = rsi(c, 2), sma(c, 200), sma(c, 5)
+    return (c > s200) & (r2 < 10), (c < s200) & (r2 > 90), {"stop": ("atr", 3.0), "target": None,
+                                                           "exit_long": c > s5, "exit_short": c < s5}
+
+
+def s_fvg(df):
+    """ICT Fair Value Gap: a bullish gap = low of bar i above high of bar i-2 after a strong
+    bar. Within the next 20 bars, when price dips into the gap and the bar closes back above
+    its bottom, buy at the next open. Stop just below the gap, target 2R. Mirror for sells."""
+    o, h, l, c = (df[x].to_numpy() for x in "ohlc")
+    a = atr(h, l, c, 14)
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    for i in range(2, n - 1):
+        strong = abs(c[i - 1] - o[i - 1]) > 1.0 * a[i - 1]
+        if strong and l[i] > h[i - 2]:                       # bullish gap [h[i-2], l[i]]
+            top, bot = l[i], h[i - 2]
+            for t in range(i + 1, min(n, i + 21)):
+                if c[t] < bot:
+                    break
+                if l[t] <= top and c[t] > bot:
+                    long_[t], sl_l[t] = True, bot - 0.1 * a[t]
+                    break
+        if strong and h[i] < l[i - 2]:                       # bearish gap [h[i], l[i-2]]
+            bot, top = h[i], l[i - 2]
+            for t in range(i + 1, min(n, i + 21)):
+                if c[t] > top:
+                    break
+                if h[t] >= bot and c[t] < top:
+                    short[t], sl_s[t] = True, top + 0.1 * a[t]
+                    break
+    return long_, short & ~long_, {"stop": ("level", sl_l, sl_s), "target": ("R", 2.0)}
+
+
+def s_sweep(df):
+    """Liquidity sweep reversal (SMC): price trades beyond the previous day's high/low and the
+    bar closes back inside -> fade it. Stop beyond the sweep's extreme, target 2R."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    ph, pl, _ = _prev_day_hlc(df)
+    a = atr(h, l, c, 14)
+    long_ = (l < pl) & (c > pl)
+    short = (h > ph) & (c < ph)
+    return long_, short & ~long_, {"stop": ("level", l - 0.1 * a, h + 0.1 * a), "target": ("R", 2.0)}
+
+
+def s_pivot(df):
+    """Daily floor pivots: P = (H+L+C)/3 of the previous day, S1 = 2P-H, R1 = 2P-L. Price
+    dips below S1 and closes back above -> buy, target P; mirror at R1. Stop half the
+    S1-P distance beyond S1 (R1)."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    ph, pl, pc = _prev_day_hlc(df)
+    P = (ph + pl + pc) / 3
+    s1, r1 = 2 * P - ph, 2 * P - pl
+    long_ = (l < s1) & (c > s1)
+    short = (h > r1) & (c < r1)
+    return long_, short & ~long_, {"stop": ("level", s1 - 0.5 * (P - s1), r1 + 0.5 * (r1 - P)),
+                                   "target": ("level", P, P)}
+
+
 STRATEGIES = {
     "TV01": ("Gold Pro Strategy (zackseal)", s_gold_pro),
     "TV02": ("AsliGold DCH10 breakout", s_dch10),
@@ -172,6 +280,12 @@ STRATEGIES = {
     "TV04": ("Golden Edge Pro (MACD hist + volume)", s_golden_edge),
     "TV05": ("control Scalper (UT Bot + ADX/RSI)", s_ut_scalper),
     "TV06": ("Supertrend 10/3", s_supertrend),
+    "TV07": ("London breakout (Asian range)", s_london_breakout),
+    "TV08": ("Bollinger + RSI mean reversion", s_bollinger_mr),
+    "TV09": ("Connors RSI(2)", s_rsi2),
+    "TV10": ("ICT Fair Value Gap", s_fvg),
+    "TV11": ("Liquidity sweep of previous day", s_sweep),
+    "TV12": ("Daily pivot bounce S1/R1", s_pivot),
 }
 
 
@@ -198,14 +312,29 @@ def run(df, fn, cost_side):
             stop = e - d * st[1] * a[i]
         elif st[0] == "lowest":
             stop = (l[max(0, i - st[1] + 1):i + 1].min() if d > 0 else h[max(0, i - st[1] + 1):i + 1].max())
+        elif st[0] == "level":
+            stop = st[1][i] if d > 0 else st[2][i]
         else:
             stop = line[i]
+        if not np.isfinite(stop):
+            i += 1
+            continue
         risk = d * (e - stop)
         if risk < 0.25 * a[i]:
             i += 1
             continue
         tg = plan.get("target")
-        target = None if tg is None else (e + d * tg[1] * a[i] if tg[0] == "atr" else e + d * tg[1] * risk)
+        if tg is None:
+            target = None
+        elif tg[0] == "atr":
+            target = e + d * tg[1] * a[i]
+        elif tg[0] == "level":
+            target = tg[1][i] if d > 0 else tg[2][i]
+            if not np.isfinite(target) or d * (target - e) <= 0:
+                i += 1
+                continue
+        else:
+            target = e + d * tg[1] * risk
         be = plan.get("breakeven")
         trail = plan.get("trail_atr")
         best = e
@@ -230,6 +359,14 @@ def run(df, fn, cost_side):
             if be and target is not None and d * (best - e) >= be[0] * d * (target - e):
                 lvl = e * (1 + d * be[1])
                 stop = max(stop, lvl) if d > 0 else min(stop, lvl)
+            ex = plan.get("exit_long") if d > 0 else plan.get("exit_short")
+            if ex is not None and ex[t] and t + 1 < n:
+                exit_px, exit_t = o[t + 1], t + 1
+                break
+            fe = plan.get("force_exit")
+            if fe is not None and fe[t]:
+                exit_px, exit_t = c[t], t
+                break
             if plan.get("opposite") and sig[t] == -d and t + 1 < n:
                 exit_px, exit_t = o[t + 1], t + 1
                 reverse_at = t          # the opposite signal can open the next trade at the same open

@@ -110,6 +110,13 @@ def bars(symbol, timeframe, start, end):
     cached per year."""
     crypto = "/" in symbol
     duka = symbol in DUKA
+    if timeframe == "4Hour":
+        h1 = bars(symbol, "1Hour", start, end)
+        if h1.empty:
+            return h1
+        agg = h1.resample("4h", label="left", closed="left").agg(
+            {"o": "first", "h": "max", "l": "min", "c": "last", "v": "sum"}).dropna()
+        return agg[agg["v"] > 0]
     if duka and timeframe in RESAMPLE:
         m1 = bars(symbol, "1Min", start, end)
         if m1.empty:

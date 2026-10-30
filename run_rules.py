@@ -22,7 +22,7 @@ from agents import rules_agent as R
 import run_poc as RP
 
 SYMBOLS = RP.FX + RP.COMMOD
-TIMEFRAMES = RP.TIMEFRAMES
+TIMEFRAMES = RP.TIMEFRAMES + ["4Hour"]
 SPLIT, SPLIT_HE = RP.SPLIT, RP.SPLIT_HE
 
 

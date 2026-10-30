@@ -31,8 +31,8 @@ COST = {"etf": 0.0002, "stock": 0.0003, "crypto": 0.002, "fx": 0.00005, "XAUUSD"
 TIMEFRAMES = ["1Min", "5Min", "15Min", "1Hour"]
 RISKS = (0.005, 0.01, 0.02)     # risk per trade, % of the $100,000
 MAIN_RISK = 0.01
-TF_MIN = {"1Min": 1, "5Min": 5, "15Min": 15, "1Hour": 60, "1Day": 1440}
-TF_HE = {"1Min": "דקה", "5Min": "5 דקות", "15Min": "15 דקות", "1Hour": "שעה", "1Day": "יום"}
+TF_MIN = {"1Min": 1, "5Min": 5, "15Min": 15, "1Hour": 60, "4Hour": 240, "1Day": 1440}
+TF_HE = {"4Hour": "4 שעות", "1Min": "דקה", "5Min": "5 דקות", "15Min": "15 דקות", "1Hour": "שעה", "1Day": "יום"}
 # 1-minute history is huge; minute timeframes start in 2021 (train 2021-2025, test 2026).
 MINUTE_START = "2021-01-01"
 # Rules are chosen on everything before the last 12 months; the FTMO account opens exactly

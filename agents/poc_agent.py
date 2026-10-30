@@ -513,6 +513,7 @@ def trades_fade(df, cost_side, crypto=False):
                         continue
                     # walk until target, stop or the session's last bar
                     r_mult = None
+                    u = b
                     for u in range(e_t, b + 1):
                         if (d > 0 and l[u] <= stop) or (d < 0 and h[u] >= stop):
                             px = o[u] if ((d > 0 and o[u] <= stop) or (d < 0 and o[u] >= stop)) and u > e_t else stop
@@ -526,5 +527,5 @@ def trades_fade(df, cost_side, crypto=False):
                     rows.append({"time": df.index[e_t], "bar": e_t, "dir": d, "entry": "reaction",
                                  "exit": f"{stop_kind}/poc", "k": 0, "stop_pct": risk / e,
                                  "tgt_pct": abs(poc - e) / e, "r": r_mult - 2 * cost_side * e / risk,
-                                 "ret": 0.0, "held": 0})
+                                 "ret": 0.0, "held": (u if r_mult is not None else b) - e_t})
     return pd.DataFrame(rows)

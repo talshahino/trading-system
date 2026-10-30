@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 import config
+from agents import ftmo_agent as F
 from agents import poc_agent as P
 
 ETFS = ["SPY", "QQQ", "IWM", "DIA", "GLD", "SLV", "TLT", "XLE", "XLF", "SMH"]
@@ -27,6 +28,7 @@ COMMOD = ["XAUUSD", "XAGUSD", "WTI"]
 COST = {"etf": 0.0002, "stock": 0.0003, "crypto": 0.002, "fx": 0.00005, "XAUUSD": 0.0001,
         "XAGUSD": 0.0003, "WTI": 0.0003}
 TIMEFRAMES = ["1Min", "5Min", "15Min", "1Hour"]
+TF_MIN = {"1Min": 1, "5Min": 5, "15Min": 15, "1Hour": 60, "1Day": 1440}
 TF_HE = {"1Min": "דקה", "5Min": "5 דקות", "15Min": "15 דקות", "1Hour": "שעה", "1Day": "יום"}
 # 1-minute history is huge; minute timeframes start in 2021 (train 2021-2022, test 2023+).
 MINUTE_START = "2021-01-01"
@@ -34,6 +36,8 @@ SPLIT = pd.Timestamp("2023-01-01", tz="UTC")
 # Closest reading to what each video shows.
 LITERAL = {"trend_poc": ("reaction", "swing/high", 5), "range_breakout": ("reaction", "range/measured", 0),
            "range_sweep": ("reaction", "range/measured", 0), "va_fade": ("reaction", "extreme/poc", 0)}
+FAMILY_SHORT = {"trend_poc": "מגמה + POC", "range_breakout": "פריצת דשדוש", "range_sweep": "מניפולציה + פריצה",
+                "va_fade": "דחייה מאזור הערך"}
 FAMILY_HE = {"trend_poc": "סרטונים 1–2: מגמה, פרופיל משפל לשיא, חזרה ל־POC",
              "range_breakout": "סרטון 3: דשדוש, פריצה, חזרה ל־POC של הדשדוש",
              "range_sweep": "סרטון 5: דשדוש, \"מניפולציה\" (שבירה שקרית של צד אחד), התפרצות לצד השני, חזרה ל־POC",
@@ -143,10 +147,54 @@ def main():
                            if len(part) else 0})
                 by_cls = {c: stats(q["r"]) for c, q in part.groupby("cls")}
                 rows[per] = (st, by_cls)
+                if per == "test" and len(part) >= 20:
+                    pt = part.assign(exit_time=part["time"] + pd.to_timedelta(part["held"] * TF_MIN[tf], unit="min"))
+                    ftmo_tbl = F.evaluate(pt[["time", "exit_time", "r"]])
+                    ftmo_ok, ftmo_best = F.verdict(ftmo_tbl)
+                    # Too few trades = luck can pass a challenge; demand a real sample.
+                    ftmo_ok = ftmo_ok and len(part) >= 100
+                elif per == "test":
+                    ftmo_tbl, ftmo_ok, ftmo_best = None, False, None
             results.append({"family": fam, "tf": tf, "label": label, "rule": rule, "rows": rows, "n_rules": len(grid),
-                            "grid": grid})
+                            "grid": grid, "ftmo": ftmo_tbl, "ftmo_ok": ftmo_ok, "ftmo_best": ftmo_best})
             print(fam, tf, label, rule, {p: (round(v[0]["avg_r"], 3), v[0]["trades"]) for p, v in rows.items()})
     report(results, args)
+
+
+def _pct(v):
+    return "—" if v is None or (isinstance(v, float) and math.isnan(v)) else f"{v * 100:.0f}%"
+
+
+def _ftmo_html(res):
+    t = res.get("ftmo")
+    if t is None or t.empty:
+        return "<p class='mut'>FTMO: מעט מדי עסקאות בתקופת המבחן.</p>"
+    rows = "".join(
+        f"<tr><td>{r.risk * 100:g}%</td><td>{_pct(r.p_phase1)}</td><td><b>{_pct(r.p_both)}</b></td>"
+        f"<td>{'—' if r.median_days != r.median_days else int(r.median_days)}</td><td>{_pct(r.p_1step)}</td>"
+        f"<td>{_pct(r.funded_lost)}</td><td>{'—' if r.funded_payout != r.funded_payout else f'${r.funded_payout:,.0f}'}</td></tr>"
+        for r in t.itertuples())
+    mark = "✅ עובר את מסנן FTMO" if res.get("ftmo_ok") else "❌ לא עובר את מסנן FTMO"
+    return ("<p><b>חשבון FTMO של $100,000 (תקופת המבחן):</b> " + mark + "</p>"
+            "<div class='tw'><table><tr><th>סיכון לעסקה</th><th>עובר שלב 1</th><th>עובר את שני השלבים</th>"
+            "<th>ימים (חציון)</th><th>עובר 1-Step</th><th>חשבון ממומן נשרף תוך שנה</th><th>תשלום שנתי לך (חציון)</th></tr>"
+            + rows + "</table></div>")
+
+
+def _summary_html(results):
+    rows = ""
+    for r in results:
+        st = r["rows"]["test"][0]
+        b = r.get("ftmo_best")
+        rows += (f"<tr><td>{html.escape(FAMILY_SHORT.get(r['family'], r['family']))}</td><td>{TF_HE[r['tf']]}</td>"
+                 f"<td>{'טובה ביותר' if r['label'] == 'best' else 'כמו בסרטון'}</td><td>{st['trades']:,}</td>"
+                 f"<td>{'—' if st['avg_r'] != st['avg_r'] else f'{st['avg_r']:+.2f}'}</td>"
+                 f"<td>{'—' if b is None else _pct(b['p_both'])}</td><td>{'✅' if r.get('ftmo_ok') else '❌'}</td></tr>")
+    return ("<h2>שורה תחתונה: מי עובר את תנאי FTMO?</h2>"
+            "<p class='mut'>מסנן: בתקופת המבחן (2023 ואילך), ברמת הסיכון הטובה ביותר, רוב תאריכי ההתחלה עוברים את שני השלבים "
+            "(יעד 10% ואז 5%, הפסד יומי עד 5% והפסד כולל עד 10% מ־$100,000, לפחות 4 ימי מסחר), ו־70% לפחות מהחשבונות הממומנים שורדים שנה. בנוסף, לפחות 100 עסקאות בתקופת המבחן, כי עם מעט עסקאות גם מזל עובר אתגר.</p>"
+            "<div class='tw'><table><tr><th>אסטרטגיה</th><th>גרף</th><th>קריאה</th><th>עסקאות במבחן</th><th>ממוצע R</th>"
+            "<th>עובר את שני השלבים</th><th>מסנן</th></tr>" + rows + "</table></div>")
 
 
 def report(results, args):
@@ -180,7 +228,8 @@ def report(results, args):
                      "<p class='mut'>במבחן לפי סוג נכס:</p><div class='tw'><table><tr><th>נכס</th><th>עסקאות</th><th>ממוצע R</th><th>t</th></tr>"
                      + cls_rows + "</table></div>"
                      f"<p>בחשבון של $10,000 עם סיכון של 1.5% לעסקה: בערך <b>{f(yearly * 1.5 if yearly == yearly else np.nan, 1)}%</b> בשנה "
-                     f"({st_test['per_year']:.0f} עסקאות בשנה × {f(st_test['avg_r'])}R × 1.5%), בלי להתחשב בחפיפה בין עסקאות.</p>")
+                     f"({st_test['per_year']:.0f} עסקאות בשנה × {f(st_test['avg_r'])}R × 1.5%), בלי להתחשב בחפיפה בין עסקאות.</p>"
+                     + _ftmo_html(res))
     page = f"""<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>POC Strategy Backtest</title>
 <style>:root{{--bg:#f7f7f5;--fg:#1d1d1b;--mut:#6b6b66;--card:#fff;--line:#e3e3de}}
@@ -194,6 +243,11 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 <p><b>R</b> = יחידת סיכון: ‎+1R פירושו שהרווחת בדיוק את מה שסיכנת, ‎−1R שהגעת לסטופ. ממוצע R חיובי אחרי עלויות = רווחי.
 <b>R אקראי</b> = אותן עסקאות (כיוון, סטופ ויעד) בנקודות כניסה אקראיות. אם ה־POC עובד, היתרון על האקראי צריך להיות חיובי, ו־t של היתרון 2 ומעלה.
 ההשוואה לאקראי הוגנת במיוחד בכניסות "תגובה" (כניסה בפתיחת הנר הבא). בכניסות "נגיעה" (פקודה ממתינה) הנר שבו נכנסים מחושב בצורה פסימית: רק הסטופ יכול להיפגע בו.</p>
+{_summary_html(results)}
+<h2>אסטרטגיית FTMO: איך נבדק</h2>
+<p class="mut">כל אסטרטגיה מקבלת חשבון של $100,000 שמתחיל בתאריכים שונים לאורך תקופת המבחן (40 תאריכי התחלה), עם העסקאות בסדר האמיתי שלהן.
+הבוט לא פותח עסקה שהסטופ שלה עלול לשבור את מגבלת ההפסד היומית או הכוללת, ועד 3 עסקאות פתוחות. רק פער מחיר מעבר לסטופ יכול עדיין לשבור כלל.
+"תשלום שנתי" = 90% מהרווח של חשבון ממומן בשנה שאחרי המעבר (חציון).</p>
 {body}
 <p class="mut">הסרטונים לא מגדירים סטופ, יעד ו"תגובה", ולכן נבדקו כמה קריאות לכל אסטרטגיה ומסגרת זמן. הקריאה הטובה נבחרה על 2016–2022 בלבד.
 הגדרות קבועות: דשדוש = 20 נרות שהטווח שלהם עד 4 ATR; אזור ערך = 70% מהמחזור סביב ה־POC; "תגובה" = נר שסוגר בחזרה מעבר לרמה. אישור "order flow" מסרטון 4 לא נבדק (אין נתונים).

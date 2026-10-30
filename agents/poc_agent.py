@@ -99,7 +99,11 @@ def _duka_year(symbol, timeframe, y, end):
         r = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
         files = glob.glob(os.path.join(tmp, "*.csv"))
         if files:
-            df = pd.read_csv(files[0])
+            try:
+                df = pd.read_csv(files[0])
+            except pd.errors.EmptyDataError:   # no bars for this symbol/year (e.g. before listing)
+                shutil.rmtree(tmp, ignore_errors=True)
+                return pd.DataFrame(columns=["t", "o", "h", "l", "c", "v"])
             shutil.rmtree(tmp, ignore_errors=True)
             df = df.rename(columns={"timestamp": "t", "open": "o", "high": "h", "low": "l",
                                     "close": "c", "volume": "v"})
@@ -133,8 +137,14 @@ def bars(symbol, timeframe, start, end):
     now = pd.Timestamp.now(tz="UTC") - pd.Timedelta(minutes=20)
     for y in range(pd.Timestamp(start).year, pd.Timestamp(end).year + 1):
         f = config.CACHE_DIR / f"poc_{symbol.replace('/', '-')}_{timeframe}_{y}.csv.gz"
+        cached = None
         if f.exists():
-            df = pd.read_csv(f)
+            try:
+                cached = pd.read_csv(f)
+            except pd.errors.EmptyDataError:   # a zero-byte cache file: drop it and download again
+                f.unlink()
+        if cached is not None:
+            df = cached
         else:
             s = max(pd.Timestamp(f"{y}-01-01", tz="UTC"), pd.Timestamp(start, tz="UTC"))
             e = min(pd.Timestamp(f"{y}-12-31 23:59", tz="UTC"), now)

@@ -43,13 +43,20 @@ def main():
     events = None
     if not args.demo:
         events, real_end = NC.load()
-    results = []
+    results, missing = [], set()
     for tf in (["1Hour"] if args.demo else TIMEFRAMES):
         per_sid = {sid: [] for sid in ids}
         universe = RP.FTMO_ALL if args.market == "ftmo" else SYMBOLS
         for i, s in enumerate(["DEMO1", "DEMO2"] if args.demo else universe):
             st = max(args.start, RP.MINUTE_START) if tf.endswith("Min") else args.start
-            df = RP.demo_bars(i) if args.demo else P.bars(s, tf, st, args.end)
+            try:
+                df = RP.demo_bars(i) if args.demo else P.bars(s, tf, st, args.end)
+            except config.TimeBudgetReached:
+                raise
+            except Exception as e:  # noqa: BLE001
+                print(f"  {s} {tf}: NO DATA ({str(e)[-200:]})")
+                missing.add(s)
+                continue
             if df is None or df.empty:
                 continue
             cost = 0.00005 if args.demo else RP.cost_of(s)

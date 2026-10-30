@@ -118,7 +118,13 @@ def main():
         all_tr, data = [], {}
         for i, s in enumerate(symbols):
             st = max(args.start, MINUTE_START) if tf.endswith("Min") else args.start
-            df = demo_bars(i) if args.demo else P.bars(s, tf, st, args.end)
+            try:
+                df = demo_bars(i) if args.demo else P.bars(s, tf, st, args.end)
+            except config.TimeBudgetReached:
+                raise
+            except Exception as e:  # noqa: BLE001 - one instrument must not stop the whole run
+                print(f"  {s} {tf}: DOWNLOAD FAILED: {str(e)[-300:]}")
+                continue
             if df is None or df.empty:
                 print(f"  {s} {tf}: no data")
                 continue

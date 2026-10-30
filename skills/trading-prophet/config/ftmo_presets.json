@@ -1,0 +1,46 @@
+{
+  "_comment": "FTMO rule presets. Verify against https://ftmo.com before every real purchase - FTMO changes rules. Percentages are of the INITIAL account balance.",
+  "ftmo_2step_100k": {
+    "account_size": 100000,
+    "phases": [
+      {"name": "Challenge", "profit_target_pct": 10.0},
+      {"name": "Verification", "profit_target_pct": 5.0}
+    ],
+    "max_daily_loss_pct": 5.0,
+    "daily_loss_base": "initial",
+    "max_loss_pct": 10.0,
+    "max_loss_type": "static",
+    "min_trading_days": 4,
+    "max_calendar_days": null,
+    "day_boundary_tz": "Europe/Prague",
+    "target_requires_flat": true
+  },
+  "ftmo_1step_100k": {
+    "_warning": "1-Step rules differ between sources (max loss 6% vs 10% EOD-trailing; Best Day rule not modelled). Confirm on ftmo.com and edit before relying on this preset.",
+    "account_size": 100000,
+    "phases": [
+      {"name": "1-Step", "profit_target_pct": 10.0}
+    ],
+    "max_daily_loss_pct": 3.0,
+    "daily_loss_base": "initial",
+    "max_loss_pct": 10.0,
+    "max_loss_type": "eod_trailing",
+    "min_trading_days": 4,
+    "max_calendar_days": null,
+    "day_boundary_tz": "Europe/Prague",
+    "target_requires_flat": true
+  },
+  "prophet_policy": {
+    "_comment": "The user's own pass bar on top of FTMO rules.",
+    "news_blackout_minutes": 5,
+    "news_policy": "fail",
+    "news_min_impact": "high",
+    "rolling_start_every_days": 7,
+    "rolling_min_completed_samples": 8,
+    "rolling_min_pass_rate_pct": 50.0,
+    "rolling_max_breach_rate_pct": 25.0,
+    "continuous_horizon_weeks": 52,
+    "require_continuous_no_breach": true,
+    "require_full_equity_data": true
+  }
+}

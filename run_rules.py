@@ -203,7 +203,12 @@ def _sweep_html(results):
             continue
         rows = "".join(f"<tr><td>{rk * 100:g}%</td><td>{_acc_text(t['account'])}</td><td>{_prophet_cell(t['prophet'])}</td></tr>"
                        for rk, t in sorted(r["risk_tests"].items()))
-        out += (f"<h3>{r['sid']} · {RP.TF_HE[r['tf']]} · Trading Prophet לפי רמת סיכון</h3><div class='tw'><table>"
+        b = r["before"]
+        oos_ok = b["trades"] >= 30 and b["avg_r"] == b["avg_r"] and b["avg_r"] > 0 and (b.get("t") or 0) > 1
+        oos = (f"<p class='mut'>בדיקה מחוץ למדגם (לפני {SPLIT_HE}): {b['trades']:,} עסקאות, ממוצע "
+               f"{b['avg_r']:+.2f}R, t={b.get('t', float('nan')):.1f} · "
+               f"{'✅ רווחית גם בשנים שלא נבחרה עליהן' if oos_ok else '❌ לא רווחית באופן מובהק לפני כן'}</p>")
+        out += (f"<h3>{r['sid']} · {RP.TF_HE[r['tf']]} · Trading Prophet לפי רמת סיכון</h3>{oos}<div class='tw'><table>"
                 f"<tr><th>סיכון לעסקה</th><th>חשבון $100K</th><th>Trading Prophet</th></tr>{rows}</table></div>")
     return out
 

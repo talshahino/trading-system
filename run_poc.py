@@ -332,8 +332,6 @@ def report(results, args, news_info=None):
                      "<th>R אקראי</th><th>יתרון על אקראי</th><th>t של היתרון</th></tr>" + rows + "</table></div>"
                      "<p class='mut'>במבחן לפי סוג נכס:</p><div class='tw'><table><tr><th>נכס</th><th>עסקאות</th><th>ממוצע R</th><th>t</th></tr>"
                      + cls_rows + "</table></div>"
-                     f"<p>בחשבון של $10,000 עם סיכון של 1.5% לעסקה: בערך <b>{f(yearly * 1.5 if yearly == yearly else np.nan, 1)}%</b> בשנה "
-                     f"({st_test['per_year']:.0f} עסקאות בשנה × {f(st_test['avg_r'])}R × 1.5%), בלי להתחשב בחפיפה בין עסקאות.</p>"
                      + _weekly_html(res) + _ftmo_html(res))
     page = f"""<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>POC Strategy Backtest</title>

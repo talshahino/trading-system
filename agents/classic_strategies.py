@@ -559,3 +559,103 @@ CLASSIC.update({
     "TV47": ("Elder impulse system", s_elder_impulse, HTF),
     "TV48": ("Turn-of-month long, 2R", s_turn_of_month, HTF),
 })
+
+
+# ---------------- variants of last-year Prophet passers (TV04, TV14, TV25, TV28) ----------------
+def _with_target(base, target):
+    """Same entries/stops as `base`, different take-profit (R multiple, or None = base exit only)."""
+    def fn(df):
+        lg, sh, plan = base(df)
+        plan = dict(plan)
+        plan["target"] = ("R", target) if target else None
+        return lg, sh, plan
+    fn.__doc__ = f"Variant of {base.__name__} with target {target}R. " + (base.__doc__ or "")
+    return fn
+
+
+def _tv04():
+    from agents.rules_agent import STRATEGIES
+    return STRATEGIES["TV04"][1]
+
+
+def s_tv04_15(df):
+    return _with_target(_tv04(), 1.5)(df)
+
+
+def s_tv04_3(df):
+    return _with_target(_tv04(), 3.0)(df)
+
+
+CLASSIC.update({
+    "TV49": ("TV04 Golden Edge, target 1.5R (variant)", s_tv04_15, HTF),
+    "TV50": ("TV04 Golden Edge, target 3R (variant)", s_tv04_3, HTF),
+    "TV51": ("TV14 Turtle 55/20 + 3R target (variant)", _with_target(s_turtle_55, 3.0), HTF),
+    "TV52": ("TV25 Heikin-Ashi + 2R target (variant)", _with_target(s_heikin_ashi, 2.0), HTF),
+    "TV53": ("TV25 Heikin-Ashi + 3R target (variant)", _with_target(s_heikin_ashi, 3.0), HTF),
+    "TV54": ("TV28 Stochastic pullback, 1.5R (variant)", _with_target(s_stoch_pullback, 1.5), HTF),
+    "TV55": ("TV28 Stochastic pullback, 3R (variant)", _with_target(s_stoch_pullback, 3.0), HTF),
+})
+
+
+# ---------------- batch 5 ----------------
+def s_envelope_fade(df):
+    """Moving-average envelope fade: close below SMA20 x (1 - 2.5 x ATR%) ... implemented as
+    SMA20 -/+ 3% of price scaled by volatility: close outside SMA20 +/- 2.5 x ATR14 then back
+    inside -> fade; exit at SMA20. Stop 1.5 ATR. (Envelope with ATR width instead of fixed %.)"""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    m, a = sma(c, 20), atr(h, l, c, 14)
+    lo, hi = m - 2.5 * a, m + 2.5 * a
+    was_lo, was_hi = np.r_[False, (c < lo)[:-1]], np.r_[False, (c > hi)[:-1]]
+    return was_lo & (c > lo), was_hi & (c < hi), {"stop": ("atr", 1.5), "target": None,
+                                                  "exit_long": c >= m, "exit_short": c <= m}
+
+
+def s_double_bottom(df):
+    """Double bottom/top neckline break: two swing lows (5-bar pivots) within 0.5 ATR of each
+    other, 10-60 bars apart; a close above the highest high between them (neckline) buys.
+    Stop below the lower bottom, target = neckline + pattern height. Mirror for tops."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 14)
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    piv_l = [i for i in range(5, n - 5) if l[i] == l[i - 5:i + 6].min()]
+    piv_h = [i for i in range(5, n - 5) if h[i] == h[i - 5:i + 6].max()]
+    for lst, d in ((piv_l, 1), (piv_h, -1)):
+        for j in range(1, len(lst)):
+            i1, i2 = lst[j - 1], lst[j]
+            if not 10 <= i2 - i1 <= 60:
+                continue
+            p1, p2 = (l[i1], l[i2]) if d == 1 else (h[i1], h[i2])
+            if abs(p1 - p2) > 0.5 * a[i2]:
+                continue
+            neck = h[i1:i2].max() if d == 1 else l[i1:i2].min()
+            for k in range(i2 + 5, min(n, i2 + 40)):
+                if d == 1 and c[k] > neck:
+                    long_[k], sl_l[k], tg_l[k] = True, min(p1, p2) - 0.1 * a[k], neck + (neck - min(p1, p2))
+                    break
+                if d == -1 and c[k] < neck:
+                    short[k], sl_s[k], tg_s[k] = True, max(p1, p2) + 0.1 * a[k], neck - (max(p1, p2) - neck)
+                    break
+    return long_, short & ~long_, {"stop": ("level", sl_l, sl_s), "target": ("level", tg_l, tg_s)}
+
+
+def s_kst(df):
+    """Know Sure Thing (Pring): KST crosses its 9-SMA signal -> trade in that direction, with price
+    on the same side of EMA200. Stop 2 ATR, target 2R."""
+    c = pd.Series(df["c"].to_numpy())
+    roc = lambda n: c.pct_change(n) * 100
+    kst = (roc(10).rolling(10).mean() + 2 * roc(15).rolling(10).mean() + 3 * roc(20).rolling(10).mean()
+           + 4 * roc(30).rolling(15).mean()).to_numpy()
+    sig = pd.Series(kst).rolling(9).mean().to_numpy()
+    up, dn = _cross(kst, sig)
+    cc = c.to_numpy()
+    e = ema(cc, 200)
+    return up & (cc > e), dn & (cc < e), {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+CLASSIC.update({
+    "TV56": ("ATR envelope fade to SMA20", s_envelope_fade, HTF),
+    "TV57": ("Double bottom/top neckline break", s_double_bottom, HTF),
+    "TV58": ("KST cross + EMA200, 2R", s_kst, HTF),
+})

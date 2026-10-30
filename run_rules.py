@@ -147,6 +147,22 @@ def prophet_check(led, args):
     return res
 
 
+def _prophet_cell(p):
+    """Verdict plus the reasons, so a failure says why (e.g. which FTMO limit broke and when)."""
+    if not p:
+        return "—"
+    v = p["verdict"]
+    why = "; ".join(v.get("reasons") or [])
+    cont = p.get("continuous") or []
+    if cont:
+        last = cont[-1]
+        why += f" | רציף: {last['phase']} {last['status']} {str(last['end'])[:10]}"
+    roll = p.get("rolling") or {}
+    if roll.get("completed"):
+        why += f" | מעבר {roll.get('pass_rate_pct')}% פסילה {roll.get('breach_rate_pct')}% ({roll.get('completed')} דגימות)"
+    return PROPHET_HE[v["verdict"]] + f"<div class='mut'>{html.escape(why)}</div>"
+
+
 PROPHET_HE = {"PASS": "✅ עובר", "FAIL": "❌ נכשל", "PROVISIONAL": "🟡 בתנאי", "INSUFFICIENT": "⚪ חסר מידע"}
 
 
@@ -176,7 +192,7 @@ def report(results, args):
         rows += (f"<tr><td>{r['sid']}</td><td>{html.escape(r['name'])}</td><td>{RP.TF_HE[r['tf']]}</td>"
                  f"<td>{r['after']['trades']:,}</td><td>{f2(r['after']['avg_r'])}</td><td>{RP._wk(r)}</td>"
                  f"<td>{'✅' if r['ok'] else '❌'}</td><td>{'—' if r['ftmo_best'] is None else RP._pct(r['ftmo_best']['p_both'])}</td>"
-                 f"<td>{PROPHET_HE[r['prophet']['verdict']['verdict']] if r.get('prophet') else '—'}</td></tr>")
+                 f"<td>{_prophet_cell(r.get('prophet'))}</td></tr>")
     body = ""
     for r in results:
         sym = "".join(f"<tr><td>{s}</td><td>{q['trades']:,}</td><td>{f2(q['avg_r'])}</td><td>{f2(q['t'])}</td></tr>"

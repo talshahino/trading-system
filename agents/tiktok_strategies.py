@@ -653,6 +653,88 @@ def s_break_retest(df):
     return long_, short & ~long_, {"stop": ("level", sl_l, sl_s), "target": ("R", 2.0)}
 
 
+def s_orb_30s_fade(df):
+    """YT01 Opening-range false-breakout fade (YouTube 5a8mNmb9VzM, NQ/ES). Range = the first
+    bar after 9:30 NY (the video uses a 30-second candle; 1-minute substitute here). Price
+    trades beyond the range and a candle closes back inside -> enter against the breakout at
+    that close. Stop at the extreme of the failed breakout, target 2R, one trade per day, flat
+    at 11:00 NY (assumed). The video's break-even after one hour is not modelled."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    rh, rl, known, mins = _opening_range(df)
+    _, day = _ny_minutes(df)
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    cur, state, ext, done = None, 0, np.nan, False
+    for i in range(n):
+        if day[i] != cur:
+            cur, state, ext, done = day[i], 0, np.nan, False
+        if not known[i] or done or mins[i] >= 660:
+            continue
+        if state == 0:
+            if h[i] > rh[i]:
+                state, ext = 1, h[i]
+            elif l[i] < rl[i]:
+                state, ext = -1, l[i]
+        if state == 1:
+            ext = max(ext, h[i])
+            if c[i] < rh[i]:
+                short[i], sl_s[i], done = True, ext, True
+        elif state == -1:
+            ext = min(ext, l[i])
+            if c[i] > rl[i]:
+                long_[i], sl_l[i], done = True, ext, True
+    return long_, short, {"stop": ("level", sl_l, sl_s), "target": ("R", 2.0), "force_exit": mins >= 660}
+
+
+def s_sd_first_retest(df):
+    """YT03 Supply/demand zone, first retest (YouTube LpeThhwHiGA). Impulse = 3 same-direction
+    candles moving > 1.5 ATR, or one candle with body > 1.5 ATR. Zone = the last opposite-colour
+    candle before the impulse. First return to the zone within 100 bars -> enter. Stop beyond
+    the zone wick, target the swing extreme from which the return began. Skip when reward/risk
+    < 1.5 (assumed thresholds as listed)."""
+    o, h, l, c = (df[x].to_numpy() for x in "ohlc")
+    a = atr(h, l, c, 14)
+    n = len(c)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    up, dn = c > o, c < o
+    for i in range(3, n - 1):
+        if not np.isfinite(a[i]):
+            continue
+        for d in (1, -1):
+            same = up if d == 1 else dn
+            big = abs(c[i] - o[i]) > 1.5 * a[i] and same[i]
+            three = same[i] and same[i - 1] and same[i - 2] and d * (c[i] - o[i - 2]) > 1.5 * a[i]
+            if not (big or three):
+                continue
+            j = i - (0 if big else 2) - 1
+            while j > 0 and same[j]:
+                j -= 1
+            zl, zh = l[j], h[j]
+            ext = h[i] if d == 1 else l[i]
+            for k in range(i + 1, min(n - 1, i + 101)):
+                if d == 1:
+                    ext = max(ext, h[k])
+                    if l[k] < zl:
+                        break
+                    if l[k] <= zh:
+                        risk, rew = zh - zl, ext - zh
+                        if risk > 0 and rew >= 1.5 * risk and c[k] > zl:
+                            long_[k], sl_l[k], tg_l[k] = True, zl - 0.1 * a[k], ext
+                        break
+                else:
+                    ext = min(ext, l[k])
+                    if h[k] > zh:
+                        break
+                    if h[k] >= zl:
+                        risk, rew = zh - zl, zl - ext
+                        if risk > 0 and rew >= 1.5 * risk and c[k] < zh:
+                            short[k], sl_s[k], tg_s[k] = True, zh + 0.1 * a[k], ext
+                        break
+    return long_, short & ~long_, {"stop": ("level", sl_l, sl_s), "target": ("level", tg_l, tg_s)}
+
+
 # id: (name, fn, timeframes stated in the video or None = every timeframe)
 TIKTOK = {
     "TT01": ("First 4H candle false breakout (TikTok)", s_first4h_fakeout, ["5Min"]),
@@ -671,4 +753,6 @@ TIKTOK = {
     "TT41": ("NY 8AM 15m candle break and retest, 1:3 (TikTok)", s_ny_8am_retest, ["15Min"]),
     "TT45": ("EMA 9/21 crossover 1H, 1:2 (TikTok)", s_ema_9_21_1h, ["1Hour"]),
     "TT56": ("Break and retest of swing level, 2:1 (TikTok)", s_break_retest, ["15Min", "1Hour"]),
+    "YT01": ("Opening range false-breakout fade, 2R (YouTube)", s_orb_30s_fade, ["1Min"]),
+    "YT03": ("Supply/demand zone first retest (YouTube)", s_sd_first_retest, ["5Min", "15Min", "1Hour"]),
 }

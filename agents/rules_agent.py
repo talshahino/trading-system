@@ -176,7 +176,8 @@ def _prev_day_hlc(df):
     g = pd.DataFrame({"d": day, "h": df["h"].to_numpy(), "l": df["l"].to_numpy(), "c": df["c"].to_numpy()})
     daily = g.groupby("d").agg(h=("h", "max"), l=("l", "min"), c=("c", "last")).shift(1)
     m = g[["d"]].join(daily, on="d")
-    return m["h"].to_numpy(), m["l"].to_numpy(), m["c"].to_numpy()
+    # float cast: for crypto the first day's shifted row is None in an object column -> NaN
+    return (m["h"].to_numpy(dtype=float), m["l"].to_numpy(dtype=float), m["c"].to_numpy(dtype=float))
 
 
 def s_london_breakout(df):

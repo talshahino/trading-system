@@ -35,9 +35,10 @@ TF_MIN = {"1Min": 1, "5Min": 5, "15Min": 15, "1Hour": 60, "1Day": 1440}
 TF_HE = {"1Min": "דקה", "5Min": "5 דקות", "15Min": "15 דקות", "1Hour": "שעה", "1Day": "יום"}
 # 1-minute history is huge; minute timeframes start in 2021 (train 2021-2025, test 2026).
 MINUTE_START = "2021-01-01"
-# Rules are chosen on everything before 2026; the FTMO account opens on 1.1.2026 and runs to
-# today on data the choice never saw.
-SPLIT = pd.Timestamp("2026-01-01", tz="UTC")
+# Rules are chosen on everything before the last 12 months; the FTMO account opens exactly
+# one year ago and runs to today on data the choice never saw.
+SPLIT = pd.Timestamp("2025-10-30", tz="UTC")
+SPLIT_HE = "30.10.2025"
 # Closest reading to what each video shows.
 LITERAL = {"trend_poc": ("reaction", "swing/high", 5), "range_breakout": ("reaction", "range/measured", 0),
            "range_sweep": ("reaction", "range/measured", 0), "va_fade": ("reaction", "extreme/poc", 0)}
@@ -235,7 +236,7 @@ def _weekly_html(res):
         f"סיכון {rk * 100:g}%: " + (f"נשרף ב־{pd.Timestamp(acc[rk][1]):%m/%Y}" if acc[rk][1] is not None else
                                     f"${acc[rk][0]['balance'].iloc[-1]:,.0f}" if len(acc[rk][0]) else "—")
         for rk in RISKS if rk != MAIN_RISK and rk in acc)
-    return (f"<p><b>חשבון FTMO של $100,000, נפתח ב־1.1.2026, סיכון {MAIN_RISK * 100:g}% לעסקה:</b> {status} · "
+    return (f"<p><b>חשבון FTMO של $100,000, נפתח ב־{SPLIT_HE}, סיכון {MAIN_RISK * 100:g}% לעסקה:</b> {status} · "
             f"יתרה אחרונה ${w['balance'].iloc[-1]:,.0f} · שיא ${w['peak'].max():,.0f}</p>" + _curve(w, blown) +
             "<div class='tw'><table><tr><th>שנה</th><th>פתיחה</th><th>סוף</th><th>שיא</th><th>שפל</th><th>שרד את השנה</th></tr>"
             + yrows + "</table></div>"
@@ -294,11 +295,11 @@ def _summary_html(results):
                  f"<td>{'—' if b is None else _pct(b['p_both'])}</td></tr>")
     return ("<h2>שורה תחתונה: איזו אסטרטגיה טובה בתנאי FTMO?</h2>"
             "<p class='mut'>המסנן הראשי: לכל אסטרטגיה חשבון אחד של $100,000 בחוקי FTMO (הפסד יומי עד 5%, הפסד כולל עד 10%, "
-            "בלי מסחר 5 דקות לפני ואחרי הודעות כלכליות חשובות), שנפתח ב־1.1.2026, תחילת תקופת המבחן, ורץ עד היום. "
+            f"בלי מסחר 5 דקות לפני ואחרי הודעות כלכליות חשובות), שנפתח ב־{SPLIT_HE}, שנה אחורה, ורץ עד היום. "
             "היתרה נדגמת כל שבוע, וחשבון שנשרף נעצר. <b>טוב = שרד עד היום ורווחי</b>, עם לפחות 100 עסקאות. "
             "בעמודה האחרונה, לידיעה: הסיכוי לעבור את אתגר ה־2-Step (יעד 10% ואז 5%) מתאריכי התחלה שונים.</p>"
             "<div class='tw'><table><tr><th>אסטרטגיה</th><th>גרף</th><th>קריאה</th><th>עסקאות במבחן</th><th>ממוצע R</th>"
-            "<th>חשבון $100K מ־1.1.2026 (סיכון 1%)</th><th>מסנן</th><th>עובר אתגר 2-Step</th></tr>" + rows + "</table></div>")
+            f"<th>חשבון $100K מ־{SPLIT_HE} (סיכון 1%)</th><th>מסנן</th><th>עובר אתגר 2-Step</th></tr>" + rows + "</table></div>")
 
 
 def report(results, args, news_info=None):
@@ -310,10 +311,10 @@ def report(results, args, news_info=None):
       for tf in (["1Hour"] if args.demo else TIMEFRAMES):
         for res in [r for r in results if r["tf"] == tf and r["family"] == fam]:
             e, x, k = res["rule"]
-            title = ("הקריאה הטובה ביותר עד סוף 2025" if res["label"] == "best"
+            title = ("הקריאה הטובה ביותר על הנתונים שלפני השנה האחרונה" if res["label"] == "best"
                      else "הקריאה הכי קרובה לסרטון")
             rows = ""
-            for per, he in (("train", "עד סוף 2025 (בחירה)"), ("test", "2026 (מבחן)")):
+            for per, he in (("train", f"עד {SPLIT_HE} (בחירה)"), ("test", "השנה האחרונה (מבחן)")):
                 st, by = res["rows"][per]
                 rows += (f"<tr><td>{he}</td><td>{st['trades']:,}</td><td>{'—' if st['win'] != st['win'] else f"{st['win'] * 100:.0f}%"}</td>"
                          f"<td><b>{f(st['avg_r'])}</b></td><td>{f(st['t'], 1)}</td><td>{f(st['rand_r'])}</td>"
@@ -342,7 +343,7 @@ body{{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,sans
 .mut{{color:var(--mut);font-size:13px}}.tw{{overflow-x:auto}}table{{border-collapse:collapse;width:100%;background:var(--card);font-size:13px}}
 th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}}h3{{margin-top:28px}}</style></head><body><main>
 <h1>בקטסט · אסטרטגיית POC מהסרטונים</h1>
-<p class="mut">{'דמו (נתונים סינתטיים)' if args.demo else 'נתונים אמיתיים (' + ('Dukascopy' if args.market == 'forex' else 'Alpaca') + ')'} · שעה: {args.start} עד {args.end}, דקה / 5 / 15 דקות: {max(args.start, MINUTE_START)} עד {args.end} · חלוקה: עד סוף 2025 בחירה, 2026 מבחן ·
+<p class="mut">{'דמו (נתונים סינתטיים)' if args.demo else 'נתונים אמיתיים (' + ('Dukascopy' if args.market == 'forex' else 'Alpaca') + ')'} · שעה: {args.start} עד {args.end}, דקה / 5 / 15 דקות: {max(args.start, MINUTE_START)} עד {args.end} · חלוקה: עד {SPLIT_HE} בחירה, השנה האחרונה מבחן ·
 {'5 צמדי מט״ח (EURUSD, GBPUSD, USDJPY, AUDUSD, USDCAD), זהב, כסף ונפט (Dukascopy, ווליום = מספר עדכוני מחיר) · עלות לצד: מט״ח 0.5 bps, זהב 1 bps, כסף ונפט 3 bps' if args.market == 'forex' else '10 קרנות סל, 10 מניות גדולות, ביטקוין/את׳ריום/סולנה · עלות לצד: קרנות 2 bps, מניות 3 bps, קריפטו 20 bps'}</p>
 <p><b>R</b> = יחידת סיכון: ‎+1R פירושו שהרווחת בדיוק את מה שסיכנת, ‎−1R שהגעת לסטופ. ממוצע R חיובי אחרי עלויות = רווחי.
 <b>R אקראי</b> = אותן עסקאות (כיוון, סטופ ויעד) בנקודות כניסה אקראיות. אם ה־POC עובד, היתרון על האקראי צריך להיות חיובי, ו־t של היתרון 2 ומעלה.
@@ -354,7 +355,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 הבוט לא פותח עסקה שהסטופ שלה עלול לשבור את מגבלת ההפסד היומית או הכוללת, ועד 3 עסקאות פתוחות. רק פער מחיר מעבר לסטופ יכול עדיין לשבור כלל.
 "תשלום שנתי" = 90% מהרווח של חשבון ממומן בשנה שאחרי המעבר (חציון).</p>
 {body}
-<p class="mut">הסרטונים לא מגדירים סטופ, יעד ו"תגובה", ולכן נבדקו כמה קריאות לכל אסטרטגיה ומסגרת זמן. הקריאה הטובה נבחרה על הנתונים שעד סוף 2025 בלבד.
+<p class="mut">הסרטונים לא מגדירים סטופ, יעד ו"תגובה", ולכן נבדקו כמה קריאות לכל אסטרטגיה ומסגרת זמן. הקריאה הטובה נבחרה על הנתונים שלפני {SPLIT_HE} בלבד.
 הגדרות קבועות: דשדוש = 20 נרות שהטווח שלהם עד 4 ATR; אזור ערך = 70% מהמחזור סביב ה־POC; "תגובה" = נר שסוגר בחזרה מעבר לרמה. אישור "order flow" מסרטון 4 לא נבדק (אין נתונים).
 זה כלי מחקר, לא ייעוץ השקעות.</p></main></body></html>"""
     path = config.OUTPUT_DIR / "report_poc.html"

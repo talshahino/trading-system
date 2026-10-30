@@ -10,6 +10,8 @@ published parameters, no searching. Same test as the POC strategies:
 import argparse
 import html
 import math
+import sys
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -77,8 +79,35 @@ def main():
             results.append(res)
             if (res["ok"] or f"{sid}:{tf}" in args.export.split(",")) and len(w[0]):
                 export_trades(sid, tf, w[0].attrs.get("ledger"))
+                res["prophet"] = prophet_check(w[0].attrs.get("ledger"), args)
             print(sid, tf, "trades", len(after), "avgR", round(res["after"]["avg_r"], 3) if len(after) else None)
     report(results, args)
+
+
+def prophet_check(led, args):
+    """Trading Prophet: replay the executed trades minute by minute (floating loss on equity,
+    as FTMO measures it). The account replay above only checks limits when a trade closes."""
+    if led is None or led.empty or args.demo:
+        return None
+    sys.path.insert(0, str(Path(__file__).parent / "skills" / "trading-prophet" / "scripts"))
+    from ledger_adapter import evaluate_ledger
+    frames = {}
+    start = max(pd.Timestamp(led["time"].min()), pd.Timestamp(RP.MINUTE_START, tz="UTC"))
+    for s in led["symbol"].unique():
+        try:
+            frames[s] = P.bars(s, "1Min", start.strftime("%Y-%m-%d"), args.end)
+        except Exception as e:  # noqa: BLE001
+            print(f"  prophet: no 1-minute bars for {s}: {e}")
+    try:
+        res = evaluate_ledger(led, frames)
+    except Exception as e:  # noqa: BLE001
+        print(f"  prophet failed: {e}")
+        return None
+    print(f"  Trading Prophet: {res['verdict']['verdict']} {res['verdict']['reasons']}")
+    return res
+
+
+PROPHET_HE = {"PASS": "✅ עובר", "FAIL": "❌ נכשל", "PROVISIONAL": "🟡 בתנאי", "INSUFFICIENT": "⚪ חסר מידע"}
 
 
 def export_trades(sid, tf, led):
@@ -106,7 +135,8 @@ def report(results, args):
     for r in results:
         rows += (f"<tr><td>{r['sid']}</td><td>{html.escape(r['name'])}</td><td>{RP.TF_HE[r['tf']]}</td>"
                  f"<td>{r['after']['trades']:,}</td><td>{f2(r['after']['avg_r'])}</td><td>{RP._wk(r)}</td>"
-                 f"<td>{'✅' if r['ok'] else '❌'}</td><td>{'—' if r['ftmo_best'] is None else RP._pct(r['ftmo_best']['p_both'])}</td></tr>")
+                 f"<td>{'✅' if r['ok'] else '❌'}</td><td>{'—' if r['ftmo_best'] is None else RP._pct(r['ftmo_best']['p_both'])}</td>"
+                 f"<td>{PROPHET_HE[r['prophet']['verdict']['verdict']] if r.get('prophet') else '—'}</td></tr>")
     body = ""
     for r in results:
         sym = "".join(f"<tr><td>{s}</td><td>{q['trades']:,}</td><td>{f2(q['avg_r'])}</td><td>{f2(q['t'])}</td></tr>"
@@ -133,7 +163,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 בלי עסקאות 5 דקות לפני ואחרי הודעות כלכליות חשובות · חשבון FTMO של $100,000 לכל אסטרטגיה מ־{SPLIT_HE}, נדגם כל שבוע, נעצר כשנשרף.</p>
 <h2>שורה תחתונה</h2>
 <div class='tw'><table><tr><th>#</th><th>אסטרטגיה</th><th>גרף</th><th>עסקאות בשנה האחרונה</th><th>ממוצע R</th>
-<th>חשבון $100K מ־{SPLIT_HE} (סיכון 1%)</th><th>שרד ורווחי</th><th>עובר אתגר 2-Step</th></tr>{rows}</table></div>
+<th>חשבון $100K מ־{SPLIT_HE} (סיכון 1%)</th><th>שרד ורווחי</th><th>עובר אתגר 2-Step</th><th>Trading Prophet (הפסד צף דקה־דקה)</th></tr>{rows}</table></div>
 <h2>הכללים שנבדקו</h2><ul>{doc}</ul>
 {body}
 <p class="mut">פרמטרים שהמחבר לא פרסם הושלמו בהנחות מקובלות, כמפורט בתיאור של כל אסטרטגיה. זה כלי מחקר, לא ייעוץ השקעות.</p>

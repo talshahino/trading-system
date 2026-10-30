@@ -52,6 +52,7 @@ class Trade:
     profit: float  # gross price P&L (MT5 "Profit" column)
     commission: float = 0.0
     swap: float = 0.0
+    k: float | None = None  # money per 1.0 price move, if known (e.g. risk / stop distance)
 
     @property
     def net(self) -> float:
@@ -64,6 +65,8 @@ class Trade:
         profit = direction * (close - open) * k  ->  k = profit / (direction * move).
         This avoids needing contract size / tick value / account currency.
         """
+        if self.k:
+            return self.k
         move = self.direction * (self.close_price - self.open_price)
         if abs(move) < _EPS or abs(self.profit) < _EPS:
             return None

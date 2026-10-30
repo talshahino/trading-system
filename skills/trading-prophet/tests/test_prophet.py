@@ -1,4 +1,4 @@
-"""Tests for Trading Prophet (נביא המסחר). Run: python -m pytest tests -q"""
+"""Tests for Trading Prophet. Run: python -m pytest tests -q"""
 
 import datetime as dt
 import sys
@@ -172,4 +172,29 @@ def test_mt5_tester_ftmo_gate(tmp_path):
     passed, _, _ = evaluate_ftmo_finalist({"report_file": str(rep)}, {"report_tz": "UTC", "accept_provisional": True,
                                                                      "policy_overrides": {"news_policy": "flag"}})
     assert passed
-    assert (tmp_path / "Bot_EURUSD.htm.prophet.md").read_text(encoding="utf-8").startswith("# נביא המסחר")
+    assert (tmp_path / "Bot_EURUSD.htm.prophet.md").read_text(encoding="utf-8").startswith("# Trading Prophet")
+
+
+def test_ledger_adapter_catches_intraday_dip():
+    import pandas as pd
+    from ledger_adapter import evaluate_ledger, ledger_to_trades
+    rows, frames_rows = [], []
+    t = pd.Timestamp("2025-01-06 09:00", tz="UTC")
+    for d in range(120):
+        day = t + pd.Timedelta(days=d)
+        if day.weekday() >= 5:
+            continue
+        # long EURUSD, 1% risk ($1000) with a 0.0010 stop -> k = 1,000,000 $/price unit
+        rows.append({"time": day, "exit_time": day + pd.Timedelta(hours=2), "symbol": "EURUSD", "dir": 1,
+                     "entry_px": 1.1000, "stop_px": 1.0990, "exit_px": 1.1003, "taken": "בוצעה",
+                     "risk_usd": 1000.0, "pnl_usd": 300.0})
+        lo = 1.0940 if d == 15 else 1.0995  # day 15: -6% floating, then recovers and closes green
+        frames_rows += [(day + pd.Timedelta(minutes=m), 1.1004, lo) for m in range(120)]
+    led = pd.DataFrame(rows)
+    assert ledger_to_trades(led)[0].value_per_price_unit == pytest.approx(1_000_000)
+    bars = pd.DataFrame(frames_rows, columns=["t", "h", "l"]).set_index("t")
+    res = evaluate_ledger(led, {"EURUSD": bars}, policy_overrides={"rolling_min_completed_samples": 1})
+    assert res["continuous"][0]["status"] == "breach_daily"
+    assert res["verdict"]["verdict"] == "FAIL"
+    no_bars = evaluate_ledger(led, None, policy_overrides={"rolling_min_completed_samples": 1})
+    assert no_bars["continuous"][0]["status"] != "breach_daily"  # closed-only replay misses it

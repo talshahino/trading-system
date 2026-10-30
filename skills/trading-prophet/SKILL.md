@@ -1,9 +1,9 @@
 ---
 name: trading-prophet
-description: נביא המסחר – judge any trading strategy or MT5 robot against exact FTMO prop-firm rules ($100K 2-Step by default). Use when the user wants to know if a strategy/EA/backtest would pass FTMO, batch-test MT5 robots with an FTMO gate, or test strategies collected from videos/social media.
+description: Trading Prophet – judge any trading strategy or MT5 robot against exact FTMO prop-firm rules ($100K 2-Step by default). Use when the user wants to know if a strategy/EA/backtest would pass FTMO, batch-test MT5 robots with an FTMO gate, or test strategies collected from videos/social media.
 ---
 
-# נביא המסחר (Trading Prophet)
+# Trading Prophet
 
 Decides whether a strategy would survive and pass an FTMO challenge — not whether it
 makes the most money. Fail-closed: missing data never turns into a pass.
@@ -54,6 +54,14 @@ python scripts/prophet.py --equity equity.csv
   or `time,open,high,low,close`. Without bars the verdict is at best `PROVISIONAL`.
 - News CSV: `time,currency,impact,title` in UTC (the fxmacrodata-calendar /
   economic-calendar-fetcher skills from tradermonty/claude-trading-skills can feed it).
+
+## Inside this repo's rules backtest (run_rules.py)
+
+Every surviving (or `--export`ed) strategy is replayed by `scripts/ledger_adapter.py`
+on 1-minute Dukascopy bars. The repo's own account replay checks limits only when a
+trade closes; Prophet adds the intraday floating loss. Position size per trade comes
+from `risk_usd / |entry − stop|`. Result appears as the "Trading Prophet" column in
+`report_rules.html`.
 
 ## Batch-test MT5 robots with the FTMO gate
 

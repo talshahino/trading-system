@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""נביא המסחר (Trading Prophet) - run an FTMO verdict on one strategy.
+"""Trading Prophet - run an FTMO verdict on one strategy.
 
 Examples:
   python prophet.py --report Bot_EURUSD.htm --bars bars/ --news news.csv
@@ -65,7 +65,13 @@ def evaluate(report=None, equity_csv=None, bars_dir=None, news_csv=None,
                           policy["news_blackout_minutes"])
     elif not news_csv:
         warnings.append("no news calendar supplied: news blackout rule not checked")
+    return evaluate_series(series, trades, rules, policy, preset, scale_mode, hits, warnings)
 
+
+def evaluate_series(series, trades, rules, policy, preset, scale_mode="relative",
+                    hits=None, warnings=None) -> dict:
+    """Core: run the simulator on an already-built equity series."""
+    hits, warnings = hits or [], list(warnings or [])
     sim = Simulator(series, rules, scale_mode)
     cont = sim.challenge(0) if series.points else None
     track = sim.weekly_track(policy["continuous_horizon_weeks"])
@@ -83,7 +89,7 @@ def evaluate(report=None, equity_csv=None, bars_dir=None, news_csv=None,
 
 def render_he(res: dict, name: str) -> str:
     v, roll = res["verdict"], res["rolling"]
-    out = [f"# נביא המסחר – {name}", "", f"## פסק דין: {_HE_VERDICT[v['verdict']]}", ""]
+    out = [f"# Trading Prophet – {name}", "", f"## פסק דין: {_HE_VERDICT[v['verdict']]}", ""]
     if v["reasons"]:
         out += ["**סיבות:**"] + [f"- {r}" for r in v["reasons"]] + [""]
     out += ["## חשבון רציף מהיום הראשון", "", "| שלב | תוצאה | ימי מסחר | ימים קלנדריים | ניצול הפסד יומי מקס' | ניצול הפסד כולל מקס' | רווח |",

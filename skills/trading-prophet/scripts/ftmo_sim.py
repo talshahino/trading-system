@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FTMO challenge simulator - the core of "Trading Prophet" (נביא המסחר).
+"""FTMO challenge simulator - the core of "Trading Prophet".
 
 Given an equity timeline (see equity.py) it answers three questions:
 

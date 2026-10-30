@@ -126,7 +126,9 @@ def _summarise(sid, tf, parts, split, args, results):
         export_trades(sid, tf, w[0].attrs.get("ledger"))
         res["prophet"] = prophet_check(w[0].attrs.get("ledger"), args)
     res["risk_tests"] = {}
-    for rk in (SWEEP_RISKS if sid.startswith("TV") else (LOW_RISK,)):
+    # lower risk cannot make a losing system pass, so the 4-level sweep runs only where the average trade is positive
+    sweep = sid.startswith("TV") and len(after) and res["after"]["avg_r"] > 0
+    for rk in (SWEEP_RISKS if sweep else (LOW_RISK,)):
         if len(after) < 5:
             continue
         w2 = acc[rk] if rk in acc else F.account_path(after, rk, start=split)

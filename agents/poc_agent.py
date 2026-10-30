@@ -70,7 +70,12 @@ def _get(url, params):
 # the open-source dukascopy-node tool. Forex has no central exchange, so "volume" there is
 # tick volume (how many price updates), which is also what TradingView shows on forex.
 DUKA = {"EURUSD": "eurusd", "GBPUSD": "gbpusd", "USDJPY": "usdjpy", "AUDUSD": "audusd",
-        "USDCAD": "usdcad", "XAUUSD": "xauusd", "XAGUSD": "xagusd", "WTI": "lightcmdusd"}
+        "USDCAD": "usdcad", "XAUUSD": "xauusd", "XAGUSD": "xagusd", "WTI": "lightcmdusd",
+        # FTMO's other markets: stock indices, more commodities, crypto (Dukascopy CFDs)
+        "US30": "usa30idxusd", "US100": "usatechidxusd", "US500": "usa500idxusd",
+        "GER40": "deuidxeur", "UK100": "gbridxgbp", "JP225": "jpnidxjpy",
+        "BRENT": "brentcmdusd", "NATGAS": "gascmdusd", "COPPER": "coppercmdusd",
+        "BTCUSD": "btcusd", "ETHUSD": "ethusd"}
 DUKA_TF = {"1Min": "m1", "1Hour": "h1", "1Day": "d1"}
 RESAMPLE = {"5Min": "5min", "15Min": "15min"}      # built locally from 1-minute bars
 

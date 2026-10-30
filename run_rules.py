@@ -32,6 +32,10 @@ def main():
     ap.add_argument("--start", default="2016-01-01")
     ap.add_argument("--end", default="2026-10-29")
     ap.add_argument("--only", default="", help="comma separated strategy ids, e.g. TV01,TV03")
+    ap.add_argument("--market", default="ftmo", choices=["forex", "ftmo"],
+                    help="forex = 5 pairs + gold/silver/oil; ftmo = also indices, more commodities, crypto")
+    ap.add_argument("--export", default="", help="strategy:timeframe pairs to export trade by trade, "
+                    "e.g. TV01:4Hour,TV09:1Hour (survivors are always exported)")
     args = ap.parse_args()
     ids = [x for x in args.only.split(",") if x] or list(R.STRATEGIES)
     events = None
@@ -40,7 +44,8 @@ def main():
     results = []
     for tf in (["1Hour"] if args.demo else TIMEFRAMES):
         per_sid = {sid: [] for sid in ids}
-        for i, s in enumerate(["DEMO1", "DEMO2"] if args.demo else SYMBOLS):
+        universe = RP.FTMO_ALL if args.market == "ftmo" else SYMBOLS
+        for i, s in enumerate(["DEMO1", "DEMO2"] if args.demo else universe):
             st = max(args.start, RP.MINUTE_START) if tf.endswith("Min") else args.start
             df = RP.demo_bars(i) if args.demo else P.bars(s, tf, st, args.end)
             if df is None or df.empty:
@@ -61,8 +66,7 @@ def main():
                 continue
             tr = pd.concat(parts, ignore_index=True).sort_values("time")
             before, after = tr[tr["time"] < split], tr[tr["time"] >= split]
-            acc = {rk: F.account_path(after[["time", "exit_time", "r"]], rk, start=split) for rk in RP.RISKS} \
-                if len(after) >= 5 else {}
+            acc = {rk: F.account_path(after, rk, start=split) for rk in RP.RISKS} if len(after) >= 5 else {}
             ch = F.evaluate(after[["time", "exit_time", "r"]]) if len(after) >= 20 else None
             _, ch_best = F.verdict(ch)
             res = {"sid": sid, "name": R.STRATEGIES[sid][0], "tf": tf, "before": RP.stats(before["r"]),
@@ -71,8 +75,29 @@ def main():
             w = acc.get(RP.MAIN_RISK, (pd.DataFrame(), None, None))
             res["ok"] = bool(len(after) >= 100 and w[1] is None and len(w[0]) and w[0]["balance"].iloc[-1] > F.INITIAL)
             results.append(res)
+            if (res["ok"] or f"{sid}:{tf}" in args.export.split(",")) and len(w[0]):
+                export_trades(sid, tf, w[0].attrs.get("ledger"))
             print(sid, tf, "trades", len(after), "avgR", round(res["after"]["avg_r"], 3) if len(after) else None)
     report(results, args)
+
+
+def export_trades(sid, tf, led):
+    """Trade-by-trade table for one strategy/timeframe in the $100,000 account (1% risk)."""
+    if led is None or led.empty:
+        return
+    ny = "Asia/Jerusalem"
+    out = pd.DataFrame({
+        "אסטרטגיה": f"{sid} {R.STRATEGIES[sid][0]}", "גרף": RP.TF_HE[tf], "נכס": led["symbol"],
+        "כיוון": led["dir"].map({1: "קנייה", -1: "מכירה"}),
+        "כניסה (שעון ישראל)": pd.to_datetime(led["time"]).dt.tz_convert(ny).dt.strftime("%d.%m.%Y %H:%M"),
+        "מחיר כניסה": led["entry_px"].round(5), "סטופ": led["stop_px"].round(5), "יעד": led["target_px"].round(5),
+        "יציאה (שעון ישראל)": pd.to_datetime(led["exit_time"]).dt.tz_convert(ny).dt.strftime("%d.%m.%Y %H:%M"),
+        "מחיר יציאה": led["exit_px"].round(5), "סיבת יציאה": led["reason"], "תוצאה ב־R": led["r"].round(2),
+        "בחשבון": led.get("taken"), "רווח/הפסד $": led.get("pnl_usd", pd.Series(dtype=float)).round(0),
+        "יתרה אחרי": led.get("balance_after", pd.Series(dtype=float)).round(0)})
+    path = config.OUTPUT_DIR / f"trades_{sid}_{tf}.csv"
+    out.to_csv(path, index=False, encoding="utf-8-sig")
+    print(f"  exported {len(out)} trades -> {path.name}")
 
 
 def report(results, args):

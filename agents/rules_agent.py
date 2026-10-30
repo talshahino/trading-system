@@ -338,16 +338,18 @@ def run(df, fn, cost_side):
         be = plan.get("breakeven")
         trail = plan.get("trail_atr")
         best = e
-        exit_px, exit_t, reverse_at = None, None, None
+        stop0 = stop
+        exit_px, exit_t, reverse_at, reason = None, None, None, ""
         for t in range(e_t, min(n, e_t + (plan.get("max_bars") or 10**9))):
             if t > e_t and ((d > 0 and o[t] <= stop) or (d < 0 and o[t] >= stop)):
-                exit_px, exit_t = o[t], t
+                exit_px, exit_t, reason = o[t], t, ("סטופ (פער פתיחה)" if stop == stop0 else "סטופ נגרר (פער פתיחה)")
                 break
             if (d > 0 and l[t] <= stop) or (d < 0 and h[t] >= stop):
                 exit_px, exit_t = stop, t
+                reason = "סטופ" if stop == stop0 else ("סטופ נגרר / נקודת איזון" if d * (stop - e) >= 0 else "סטופ נגרר")
                 break
             if target is not None and t > e_t and ((d > 0 and h[t] >= target) or (d < 0 and l[t] <= target)):
-                exit_px, exit_t = (max(target, o[t]) if d > 0 else min(target, o[t])), t
+                exit_px, exit_t, reason = (max(target, o[t]) if d > 0 else min(target, o[t])), t, "יעד"
                 break
             # updates at the bar close, used from the next bar on
             best = max(best, h[t]) if d > 0 else min(best, l[t])
@@ -361,21 +363,23 @@ def run(df, fn, cost_side):
                 stop = max(stop, lvl) if d > 0 else min(stop, lvl)
             ex = plan.get("exit_long") if d > 0 else plan.get("exit_short")
             if ex is not None and ex[t] and t + 1 < n:
-                exit_px, exit_t = o[t + 1], t + 1
+                exit_px, exit_t, reason = o[t + 1], t + 1, "סיגנל יציאה"
                 break
             fe = plan.get("force_exit")
             if fe is not None and fe[t]:
-                exit_px, exit_t = c[t], t
+                exit_px, exit_t, reason = c[t], t, "סגירה בשעה קבועה"
                 break
             if plan.get("opposite") and sig[t] == -d and t + 1 < n:
-                exit_px, exit_t = o[t + 1], t + 1
+                exit_px, exit_t, reason = o[t + 1], t + 1, "סיגנל הפוך"
                 reverse_at = t          # the opposite signal can open the next trade at the same open
                 break
         if exit_px is None:
             exit_t = min(n - 1, e_t + (plan.get("max_bars") or 10**9) - 1)
-            exit_px = c[exit_t]
+            exit_px, reason = c[exit_t], ("יציאת זמן" if plan.get("max_bars") else "סוף הנתונים")
         r_mult = d * (exit_px - e) / risk - 2 * cost_side * e / risk
         rows.append({"time": df.index[e_t], "exit_time": df.index[exit_t], "dir": d, "r": float(r_mult),
-                     "held": int(exit_t - e_t)})
+                     "held": int(exit_t - e_t), "entry_px": float(e), "exit_px": float(exit_px),
+                     "stop_px": float(stop0), "target_px": float(target) if target is not None else np.nan,
+                     "reason": reason})
         i = reverse_at if reverse_at is not None else max(exit_t, i + 1)
     return pd.DataFrame(rows)

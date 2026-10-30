@@ -22,7 +22,9 @@ FOMC = ["2025-01-29", "2025-03-19", "2025-05-07", "2025-06-18", "2025-07-30", "2
         "2026-10-28", "2026-12-09"]
 CURRENCIES = {"EURUSD": ["EUR", "USD"], "GBPUSD": ["GBP", "USD"], "USDJPY": ["USD", "JPY"],
               "AUDUSD": ["AUD", "USD"], "USDCAD": ["USD", "CAD"], "XAUUSD": ["USD"], "XAGUSD": ["USD"],
-              "WTI": ["USD", "CAD"]}
+              "WTI": ["USD", "CAD"], "US30": ["USD"], "US100": ["USD"], "US500": ["USD"],
+              "GER40": ["EUR"], "UK100": ["GBP"], "JP225": ["JPY"], "BRENT": ["USD"], "NATGAS": ["USD"],
+              "COPPER": ["USD", "CNY"], "BTCUSD": ["USD"], "ETHUSD": ["USD"]}
 
 
 def _download():

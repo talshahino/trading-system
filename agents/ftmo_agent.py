@@ -237,17 +237,19 @@ def account_path(trades, risk, start=None, daily_pct=0.05, max_pct=0.10):
     day, day_start, open_pos, blown_at = None, bal, [], None
     marks = list(pd.date_range(start + pd.Timedelta(weeks=1), end + pd.Timedelta(weeks=1), freq="7D"))
     snaps, mi = [], 0
+    ledger = {}                      # trade index -> what happened to it in this account
 
     def close_until(when):
         nonlocal bal, blown_at
         for p in sorted([p for p in open_pos if p[0] <= when], key=lambda p: p[0]):
             bal += p[1] * p[2]
             open_pos.remove(p)
+            ledger[p[3]].update(pnl_usd=p[1] * p[2], balance_after=bal)
             if blown_at is None and (bal <= floor or bal < day_start - INITIAL * daily_pct):
                 blown_at = p[0]
                 return
 
-    for t in tr.itertuples(index=False):
+    for t in tr.itertuples(index=True):
         while mi < len(marks) and marks[mi] <= t.time and blown_at is None:
             close_until(marks[mi])
             snaps.append((marks[mi], bal))
@@ -266,10 +268,14 @@ def account_path(trades, risk, start=None, daily_pct=0.05, max_pct=0.10):
             # bot can never trade again, so the account is as good as burned.
             blown_at = t.time
             break
-        if len(open_pos) >= MAX_OPEN or bal - open_risk - r_usd <= floor or \
-                bal - open_risk - r_usd < day_start - INITIAL * daily_pct * 0.9:
+        if len(open_pos) >= MAX_OPEN:
+            ledger[t.Index] = {"taken": "דולג: כבר 3 עסקאות פתוחות"}
             continue
-        open_pos.append((t.exit_time, r_usd, t.r))
+        if bal - open_risk - r_usd <= floor or bal - open_risk - r_usd < day_start - INITIAL * daily_pct * 0.9:
+            ledger[t.Index] = {"taken": "דולג: שומר מגבלות ההפסד"}
+            continue
+        ledger[t.Index] = {"taken": "בוצעה", "risk_usd": r_usd}
+        open_pos.append((t.exit_time, r_usd, t.r, t.Index))
     if blown_at is None:
         while mi < len(marks):
             close_until(marks[mi])
@@ -289,4 +295,6 @@ def account_path(trades, risk, start=None, daily_pct=0.05, max_pct=0.10):
         died = blown_at is not None and pd.Timestamp(blown_at).year == y
         yearly.append({"year": y, "start": y_start, "end": g["balance"].iloc[-1], "peak": g["balance"].max(),
                        "low": g["balance"].min(), "survived": not died and (blown_at is None or pd.Timestamp(blown_at).year > y)})
+    led = pd.DataFrame.from_dict(ledger, orient="index")
+    w.attrs["ledger"] = tr.join(led, how="left").drop(columns=["day"])
     return w, blown_at, pd.DataFrame(yearly)

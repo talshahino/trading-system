@@ -15,8 +15,8 @@ on:
       market:
         description: "forex = currency pairs + gold/silver/oil; stocks = ETFs, stocks, crypto"
         type: choice
-        options: [forex, stocks]
-        default: forex
+        options: [ftmo, forex]
+        default: ftmo
       start:
         description: "Start date (YYYY-MM-DD). Alpaca price history starts in 2016"
         default: "2016-01-01"
@@ -112,7 +112,7 @@ jobs:
           if [ "${{ inputs.demo }}" = "true" ]; then
             python -u run_rules.py --demo 2>&1 | tee run.log
           else
-            python -u run_rules.py --start "${{ inputs.start }}" --end "$END" 2>&1 | tee run.log
+            python -u run_rules.py --market "${{ inputs.market }}" --export "TV01:4Hour,TV02:4Hour,TV04:4Hour,TV09:1Hour,TV09:4Hour" --start "${{ inputs.start }}" --end "$END" 2>&1 | tee run.log
           fi
 
       - name: Save data cache
@@ -138,6 +138,7 @@ jobs:
           DIR="reports/$(date -u +%F)_tv_run${{ github.run_number }}${{ inputs.demo && '_demo' || '' }}"
           mkdir -p "$DIR"
           cp output/report_*.html "$DIR"/
+          cp output/trades_*.csv "$DIR"/ 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports

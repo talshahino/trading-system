@@ -24,10 +24,15 @@ STOCKS = ["AAPL", "MSFT", "NVDA", "AMZN", "META", "TSLA", "GOOGL", "AMD", "JPM",
 CRYPTO = ["BTC/USD", "ETH/USD", "SOL/USD"]
 FX = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD"]
 COMMOD = ["XAUUSD", "XAGUSD", "WTI"]
+INDICES = ["US30", "US100", "US500", "GER40", "UK100", "JP225"]
+COMMOD2 = ["BRENT", "NATGAS", "COPPER"]
+CRYPTO_CFD = ["BTCUSD", "ETHUSD"]
+FTMO_ALL = FX + COMMOD + INDICES + COMMOD2 + CRYPTO_CFD
 # Per side, as a share of price: typical retail spread + slippage.
 # EURUSD ~0.6 pip spread = ~0.006% round trip; gold ~$0.30 on ~$2,500 = ~0.012%.
 COST = {"etf": 0.0002, "stock": 0.0003, "crypto": 0.002, "fx": 0.00005, "XAUUSD": 0.0001,
-        "XAGUSD": 0.0003, "WTI": 0.0003}
+        "XAGUSD": 0.0003, "WTI": 0.0003, "index": 0.00005, "BRENT": 0.0003, "NATGAS": 0.0006,
+        "COPPER": 0.0003, "BTCUSD": 0.0005, "ETHUSD": 0.0007}
 TIMEFRAMES = ["1Min", "5Min", "15Min", "1Hour"]
 RISKS = (0.005, 0.01, 0.02)     # risk per trade, % of the $100,000
 MAIN_RISK = 0.01
@@ -61,8 +66,12 @@ EXIT_HE = {"range/2R": "סטופ בצד השני של הדשדוש, יעד 1:2",
 def asset_class(s):
     if s in FX:
         return "fx"
-    if s in COMMOD:
+    if s in COMMOD or s in COMMOD2:
         return "commodity"
+    if s in INDICES:
+        return "index"
+    if s in CRYPTO_CFD:
+        return "crypto"
     return "crypto" if "/" in s else "etf" if s in ETFS else "stock"
 
 
@@ -96,11 +105,11 @@ def main():
     ap.add_argument("--start", default="2016-01-01")
     ap.add_argument("--end", default="2026-10-29")
     ap.add_argument("--download-only", action="store_true", help="only fetch and cache the price data")
-    ap.add_argument("--market", default="forex", choices=["forex", "stocks"],
+    ap.add_argument("--market", default="forex", choices=["forex", "stocks", "ftmo"],
                     help="forex = 5 currency pairs + gold, silver, oil (Dukascopy); stocks = ETFs, stocks, crypto (Alpaca)")
     args = ap.parse_args()
     symbols = (["DEMO1", "DEMO2", "DEMO3"] if args.demo else FX + COMMOD if args.market == "forex"
-               else ETFS + STOCKS + CRYPTO)
+               else FTMO_ALL if args.market == "ftmo" else ETFS + STOCKS + CRYPTO)
     results, news_info, news_tot = [], None, [0, 0]
     events = real_end = None
     if not args.demo and args.market == "forex":
@@ -320,7 +329,7 @@ def report(results, args, news_info=None):
                          f"<td><b>{f(st['avg_r'])}</b></td><td>{f(st['t'], 1)}</td><td>{f(st['rand_r'])}</td>"
                          f"<td>{f(st['avg_r'] - st['rand_r'] if st['rand_r'] == st['rand_r'] else np.nan)}</td><td>{f(st['edge_t'], 1)}</td></tr>")
             cls_rows = "".join(
-                f"<tr><td>{ {'etf': 'קרנות סל', 'stock': 'מניות', 'crypto': 'קריפטו', 'fx': 'מט״ח', 'commodity': 'סחורות'}[c] }</td><td>{s['trades']:,}</td>"
+                f"<tr><td>{ {'etf': 'קרנות סל', 'stock': 'מניות', 'crypto': 'קריפטו', 'fx': 'מט״ח', 'commodity': 'סחורות', 'index': 'מדדים'}[c] }</td><td>{s['trades']:,}</td>"
                 f"<td>{f(s['avg_r'])}</td><td>{f(s['t'], 1)}</td></tr>"
                 for c, s in res["rows"]["test"][1].items())
             st_test = res["rows"]["test"][0]

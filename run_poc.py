@@ -26,8 +26,10 @@ COMMOD = ["XAUUSD", "XAGUSD", "WTI"]
 # EURUSD ~0.6 pip spread = ~0.006% round trip; gold ~$0.30 on ~$2,500 = ~0.012%.
 COST = {"etf": 0.0002, "stock": 0.0003, "crypto": 0.002, "fx": 0.00005, "XAUUSD": 0.0001,
         "XAGUSD": 0.0003, "WTI": 0.0003}
-TIMEFRAMES = ["15Min", "1Hour", "1Day"]
-TF_HE = {"15Min": "15 דקות", "1Hour": "שעה", "1Day": "יום"}
+TIMEFRAMES = ["1Min", "5Min", "15Min", "1Hour"]
+TF_HE = {"1Min": "דקה", "5Min": "5 דקות", "15Min": "15 דקות", "1Hour": "שעה", "1Day": "יום"}
+# 1-minute history is huge; minute timeframes start in 2021 (train 2021-2022, test 2023+).
+MINUTE_START = "2021-01-01"
 SPLIT = pd.Timestamp("2023-01-01", tz="UTC")
 # Closest reading to what each video shows.
 LITERAL = {"trend_poc": ("reaction", "swing/high", 5), "range_breakout": ("reaction", "range/measured", 0),
@@ -91,7 +93,8 @@ def main():
     all_tr, data = [], {}
     for tf in (["1Hour"] if args.demo else TIMEFRAMES):
         for i, s in enumerate(symbols):
-            df = demo_bars(i) if args.demo else P.bars(s, tf, args.start, args.end)
+            st = max(args.start, MINUTE_START) if tf.endswith("Min") else args.start
+            df = demo_bars(i) if args.demo else P.bars(s, tf, st, args.end)
             if df is None or df.empty:
                 print(f"  {s} {tf}: no data")
                 continue
@@ -155,10 +158,10 @@ def report(results, args):
       for tf in (["1Hour"] if args.demo else TIMEFRAMES):
         for res in [r for r in results if r["tf"] == tf and r["family"] == fam]:
             e, x, k = res["rule"]
-            title = ("הקריאה הטובה ביותר על 2016–2022" if res["label"] == "best"
+            title = ("הקריאה הטובה ביותר עד 2022" if res["label"] == "best"
                      else "הקריאה הכי קרובה לסרטון")
             rows = ""
-            for per, he in (("train", "2016–2022 (בחירה)"), ("test", "2023 ואילך (מבחן)")):
+            for per, he in (("train", "עד 2022 (בחירה)"), ("test", "2023 ואילך (מבחן)")):
                 st, by = res["rows"][per]
                 rows += (f"<tr><td>{he}</td><td>{st['trades']:,}</td><td>{'—' if st['win'] != st['win'] else f"{st['win'] * 100:.0f}%"}</td>"
                          f"<td><b>{f(st['avg_r'])}</b></td><td>{f(st['t'], 1)}</td><td>{f(st['rand_r'])}</td>"
@@ -186,7 +189,7 @@ body{{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,sans
 .mut{{color:var(--mut);font-size:13px}}.tw{{overflow-x:auto}}table{{border-collapse:collapse;width:100%;background:var(--card);font-size:13px}}
 th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}}h3{{margin-top:28px}}</style></head><body><main>
 <h1>בקטסט · אסטרטגיית POC מהסרטונים</h1>
-<p class="mut">{'דמו (נתונים סינתטיים)' if args.demo else 'נתונים אמיתיים (Alpaca)'} · {args.start} עד {args.end} ·
+<p class="mut">{'דמו (נתונים סינתטיים)' if args.demo else 'נתונים אמיתיים (' + ('Dukascopy' if args.market == 'forex' else 'Alpaca') + ')'} · שעה: {args.start} עד {args.end}, דקה / 5 / 15 דקות: {max(args.start, MINUTE_START)} עד {args.end} · חלוקה: עד סוף 2022 בחירה, 2023 ואילך מבחן ·
 {'5 צמדי מט״ח (EURUSD, GBPUSD, USDJPY, AUDUSD, USDCAD), זהב, כסף ונפט (Dukascopy, ווליום = מספר עדכוני מחיר) · עלות לצד: מט״ח 0.5 bps, זהב 1 bps, כסף ונפט 3 bps' if args.market == 'forex' else '10 קרנות סל, 10 מניות גדולות, ביטקוין/את׳ריום/סולנה · עלות לצד: קרנות 2 bps, מניות 3 bps, קריפטו 20 bps'}</p>
 <p><b>R</b> = יחידת סיכון: ‎+1R פירושו שהרווחת בדיוק את מה שסיכנת, ‎−1R שהגעת לסטופ. ממוצע R חיובי אחרי עלויות = רווחי.
 <b>R אקראי</b> = אותן עסקאות (כיוון, סטופ ויעד) בנקודות כניסה אקראיות. אם ה־POC עובד, היתרון על האקראי צריך להיות חיובי, ו־t של היתרון 2 ומעלה.

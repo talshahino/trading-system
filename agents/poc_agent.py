@@ -71,7 +71,8 @@ def _get(url, params):
 # tick volume (how many price updates), which is also what TradingView shows on forex.
 DUKA = {"EURUSD": "eurusd", "GBPUSD": "gbpusd", "USDJPY": "usdjpy", "AUDUSD": "audusd",
         "USDCAD": "usdcad", "XAUUSD": "xauusd", "XAGUSD": "xagusd", "WTI": "lightcmdusd"}
-DUKA_TF = {"15Min": "m15", "1Hour": "h1", "1Day": "d1"}
+DUKA_TF = {"1Min": "m1", "1Hour": "h1", "1Day": "d1"}
+RESAMPLE = {"5Min": "5min", "15Min": "15min"}      # built locally from 1-minute bars
 
 
 def _duka_year(symbol, timeframe, y, end):
@@ -109,6 +110,13 @@ def bars(symbol, timeframe, start, end):
     cached per year."""
     crypto = "/" in symbol
     duka = symbol in DUKA
+    if duka and timeframe in RESAMPLE:
+        m1 = bars(symbol, "1Min", start, end)
+        if m1.empty:
+            return m1
+        agg = m1.resample(RESAMPLE[timeframe], label="left", closed="left").agg(
+            {"o": "first", "h": "max", "l": "min", "c": "last", "v": "sum"}).dropna()
+        return agg[agg["v"] > 0]
     frames = []
     now = pd.Timestamp.now(tz="UTC") - pd.Timedelta(minutes=20)
     for y in range(pd.Timestamp(start).year, pd.Timestamp(end).year + 1):
@@ -154,15 +162,15 @@ def bars(symbol, timeframe, start, end):
 
 # ---------------- strategy ----------------
 def _pivots(h, l, k):
-    n = len(h)
-    ph, pl = [], []
-    for i in range(k, n - k):
-        win_h = h[i - k:i + k + 1]
-        win_l = l[i - k:i + k + 1]
-        if h[i] == win_h.max() and (win_h == h[i]).sum() == 1:
-            ph.append(i)
-        if l[i] == win_l.min() and (win_l == l[i]).sum() == 1:
-            pl.append(i)
+    """Indices of swing highs / lows: higher than the k bars before (strictly) and at least as
+    high as the k bars after (vectorized, so 1-minute data stays fast)."""
+    hs, ls = pd.Series(h), pd.Series(l)
+    left_h = hs.shift(1).rolling(k).max()
+    right_h = hs[::-1].shift(1).rolling(k).max()[::-1]
+    left_l = ls.shift(1).rolling(k).min()
+    right_l = ls[::-1].shift(1).rolling(k).min()[::-1]
+    ph = np.flatnonzero(((hs > left_h) & (hs >= right_h)).to_numpy()).tolist()
+    pl = np.flatnonzero(((ls < left_l) & (ls <= right_l)).to_numpy()).tolist()
     return ph, pl
 
 
@@ -252,10 +260,12 @@ def trades(df, k, cost_side):
     if len(df) < 200:
         return pd.DataFrame()
     o, h, l, c = (df[x].to_numpy() for x in "ohlc")
-    atr = _atr(h, l, c)
+    atr = _atr(h, l, c).tolist()
+    setups = _setups(df, k)
+    o, h, l, c = o.tolist(), h.tolist(), l.tolist(), c.tolist()
     n = len(c)
     rows = []
-    for d, t0, poc, sw_start, sw_end in _setups(df, k):
+    for d, t0, poc, sw_start, sw_end in setups:
         if t0 >= n - 2:
             continue
         for entry_kind in ENTRIES:
@@ -276,7 +286,7 @@ def trades(df, k, cost_side):
                     if touched and ((d > 0 and c[t] > poc) or (d < 0 and c[t] < poc)):
                         fill_t, fill_px = t + 1, o[t + 1]
                         break
-            if fill_t is None or not np.isfinite(atr[min(fill_t, n - 1)]):
+            if fill_t is None or not np.isfinite(atr[fill_t - 1]):
                 continue
             for stop_kind, tgt_kind in EXITS:
                 stop = sw_start if stop_kind == "swing" else fill_px - d * atr[fill_t - 1]
@@ -306,8 +316,9 @@ def random_baseline(df, tr, cost_side, draws=20, seed=1):
     if tr.empty:
         return tr.assign(r_rand=[])
     rng = np.random.default_rng(seed)
-    o, h, l, c = (df[x].to_numpy() for x in "ohlc")
+    o, h, l, c = (df[x].to_numpy().tolist() for x in "ohlc")
     n = len(c)
+    draws = max(2, min(draws, 300_000 // max(len(tr), 1)))   # keep huge 1-minute sets fast
     out = []
     for row in tr.itertuples(index=False):
         vals = []
@@ -367,14 +378,19 @@ def _range_setups(df, sweep):
     h, l, c, v = (df[x].to_numpy() for x in "hlcv")
     atr = _atr(h, l, c)
     n = len(c)
+    span = (pd.Series(h).rolling(RANGE_N).max() - pd.Series(l).rolling(RANGE_N).min()).to_numpy()
+    ok = np.flatnonzero(np.isfinite(atr) & (span <= RANGE_ATR * atr))
     out = []
     t = RANGE_N
     while t < n - 1:
+        j = bisect.bisect_left(ok, t)
+        if j >= len(ok):
+            break
+        t = int(ok[j])
+        if t >= n - 1:
+            break
         a = t - RANGE_N + 1
         lo, hi = l[a:t + 1].min(), h[a:t + 1].max()
-        if not (np.isfinite(atr[t]) and hi - lo <= RANGE_ATR * atr[t]):
-            t += 1
-            continue
         start, swept_lo, swept_hi, setup = a, False, False, None
         u = t + 1
         while u < min(n, t + 100):
@@ -413,10 +429,12 @@ def trades_range(df, sweep, cost_side):
     if len(df) < 200:
         return pd.DataFrame()
     o, h, l, c = (df[x].to_numpy() for x in "ohlc")
-    atr = _atr(h, l, c)
+    atr = _atr(h, l, c).tolist()
+    setups = _range_setups(df, sweep)
+    o, h, l, c = o.tolist(), h.tolist(), l.tolist(), c.tolist()
     n = len(c)
     rows = []
-    for d, b, poc, lo, hi in _range_setups(df, sweep):
+    for d, b, poc, lo, hi in setups:
         opp = lo if d > 0 else hi
         for entry_kind in ENTRIES:
             fill_t, fill_px, touched = None, None, False

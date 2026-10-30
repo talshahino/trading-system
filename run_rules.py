@@ -61,6 +61,8 @@ def main():
                 continue
             cost = 0.00005 if args.demo else RP.cost_of(s)
             for sid in ids:
+                if not args.demo and not R.timeframe_ok(sid, tf):
+                    continue
                 t = R.run(df, R.STRATEGIES[sid][1], cost)
                 if t.empty:
                     continue

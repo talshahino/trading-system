@@ -287,6 +287,7 @@ STRATEGIES = {
     "TV11": ("Liquidity sweep of previous day", s_sweep),
     "TV12": ("Daily pivot bounce S1/R1", s_pivot),
 }
+# Optional 3rd element: the timeframes the source states (None/absent = run on every timeframe).
 
 
 # ---------------- engine ----------------
@@ -383,3 +384,15 @@ def run(df, fn, cost_side):
                      "reason": reason})
         i = reverse_at if reverse_at is not None else max(exit_t, i + 1)
     return pd.DataFrame(rows)
+
+
+# TikTok-harvested strategies (agents/tiktok_strategies.py), registered last to avoid a cycle.
+from agents.tiktok_strategies import TIKTOK  # noqa: E402
+
+STRATEGIES.update(TIKTOK)
+
+
+def timeframe_ok(sid, tf):
+    """True if the strategy's source allows this timeframe."""
+    entry = STRATEGIES[sid]
+    return len(entry) < 3 or entry[2] is None or tf in entry[2]

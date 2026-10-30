@@ -220,3 +220,73 @@ def weekly_verdict(track, min_profitable=0.6):
     best_risk = max(track, key=lambda r: (track[r]["profitable"].iloc[-1], track[r]["median_pnl_pct"].iloc[-1]))
     last = track[best_risk].iloc[-1]
     return bool(last["profitable"] >= min_profitable), best_risk
+
+
+def account_path(trades, risk, start=None, daily_pct=0.05, max_pct=0.10):
+    """The user's test: ONE $100,000 account per strategy under FTMO loss limits, opened on
+    the first day of the test period and left running. Every week the balance is sampled
+    (level, change, peak); the account stops for good the moment a limit is broken.
+    Returns (weekly DataFrame, blown_time or None, yearly DataFrame)."""
+    tr = trades.sort_values("time").reset_index(drop=True)
+    if tr.empty:
+        return pd.DataFrame(), None, pd.DataFrame()
+    tr["day"] = _days(tr["time"])
+    start = pd.Timestamp(start) if start is not None else tr["time"].iloc[0]
+    end = tr["exit_time"].max()
+    bal, floor = INITIAL, INITIAL * (1 - max_pct)
+    day, day_start, open_pos, blown_at = None, bal, [], None
+    marks = list(pd.date_range(start + pd.Timedelta(weeks=1), end + pd.Timedelta(weeks=1), freq="7D"))
+    snaps, mi = [], 0
+
+    def close_until(when):
+        nonlocal bal, blown_at
+        for p in sorted([p for p in open_pos if p[0] <= when], key=lambda p: p[0]):
+            bal += p[1] * p[2]
+            open_pos.remove(p)
+            if blown_at is None and (bal <= floor or bal < day_start - INITIAL * daily_pct):
+                blown_at = p[0]
+                return
+
+    for t in tr.itertuples(index=False):
+        while mi < len(marks) and marks[mi] <= t.time and blown_at is None:
+            close_until(marks[mi])
+            snaps.append((marks[mi], bal))
+            mi += 1
+        if blown_at is not None:
+            break
+        close_until(t.time)
+        if blown_at is not None:
+            break
+        if t.day != day:
+            day, day_start = t.day, bal
+        r_usd = INITIAL * risk
+        open_risk = sum(p[1] for p in open_pos)
+        if not open_pos and bal - r_usd <= floor:
+            # Not formally breached, but one more full stop would break the 10% limit: the
+            # bot can never trade again, so the account is as good as burned.
+            blown_at = t.time
+            break
+        if len(open_pos) >= MAX_OPEN or bal - open_risk - r_usd <= floor or \
+                bal - open_risk - r_usd < day_start - INITIAL * daily_pct * 0.9:
+            continue
+        open_pos.append((t.exit_time, r_usd, t.r))
+    if blown_at is None:
+        while mi < len(marks):
+            close_until(marks[mi])
+            snaps.append((marks[mi], bal))
+            mi += 1
+            if blown_at is not None:
+                break
+    else:
+        snaps.append((blown_at, bal))
+    w = pd.DataFrame(snaps, columns=["week_end", "balance"])
+    w["change"] = w["balance"].diff().fillna(w["balance"] - INITIAL)
+    w["peak"] = w["balance"].cummax().clip(lower=INITIAL)
+    yearly = []
+    for y, g in w.groupby(w["week_end"].dt.year):
+        prev = w[w["week_end"] < g["week_end"].iloc[0]]["balance"]
+        y_start = prev.iloc[-1] if len(prev) else INITIAL
+        died = blown_at is not None and pd.Timestamp(blown_at).year == y
+        yearly.append({"year": y, "start": y_start, "end": g["balance"].iloc[-1], "peak": g["balance"].max(),
+                       "low": g["balance"].min(), "survived": not died and (blown_at is None or pd.Timestamp(blown_at).year > y)})
+    return w, blown_at, pd.DataFrame(yearly)

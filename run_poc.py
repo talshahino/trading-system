@@ -29,6 +29,8 @@ COMMOD = ["XAUUSD", "XAGUSD", "WTI"]
 COST = {"etf": 0.0002, "stock": 0.0003, "crypto": 0.002, "fx": 0.00005, "XAUUSD": 0.0001,
         "XAGUSD": 0.0003, "WTI": 0.0003}
 TIMEFRAMES = ["1Min", "5Min", "15Min", "1Hour"]
+RISKS = (0.005, 0.01, 0.02)     # risk per trade, % of the $100,000
+MAIN_RISK = 0.01
 TF_MIN = {"1Min": 1, "5Min": 5, "15Min": 15, "1Hour": 60, "1Day": 1440}
 TF_HE = {"1Min": "דקה", "5Min": "5 דקות", "15Min": "15 דקות", "1Hour": "שעה", "1Day": "יום"}
 # 1-minute history is huge; minute timeframes start in 2021 (train 2021-2022, test 2023+).
@@ -165,34 +167,64 @@ def main():
                     pt = part[["time", "exit_time", "r"]]
                     ftmo_tbl = F.evaluate(pt)
                     ftmo_ok, ftmo_best = F.verdict(ftmo_tbl)
-                    weekly, n_starts = F.weekly_track(pt)
-                    week_ok, week_risk = F.weekly_verdict(weekly)
-                    # Too few trades = luck can look good; demand a real sample.
+                    # The user's test: one $100,000 FTMO-rules account per strategy, opened on the
+                    # first day of the test period, sampled weekly, stopped when burned.
+                    accounts = {rk: F.account_path(pt, rk, start=split) for rk in RISKS}
+                    w_main, blown_main, _ = accounts[MAIN_RISK]
+                    week_ok = (blown_main is None and len(w_main) and w_main["balance"].iloc[-1] > F.INITIAL
+                               and len(part) >= 100)
                     ftmo_ok = ftmo_ok and len(part) >= 100
-                    week_ok = week_ok and len(part) >= 100
                 elif per == "test":
                     ftmo_tbl, ftmo_ok, ftmo_best = None, False, None
-                    weekly, n_starts, week_ok, week_risk = None, 0, False, None
+                    accounts, week_ok = {}, False
             results.append({"family": fam, "tf": tf, "label": label, "rule": rule, "rows": rows, "n_rules": len(grid),
                             "grid": grid, "ftmo": ftmo_tbl, "ftmo_ok": ftmo_ok, "ftmo_best": ftmo_best,
-                            "weekly": weekly, "n_starts": n_starts, "week_ok": week_ok, "week_risk": week_risk})
+                            "accounts": accounts, "week_ok": week_ok})
             print(fam, tf, label, rule, {p: (round(v[0]["avg_r"], 3), v[0]["trades"]) for p, v in rows.items()})
     report(results, args, news_info)
 
 
+def _curve(w, blown):
+    if w is None or len(w) < 2:
+        return ""
+    y = w["balance"].tolist()
+    lo, hi = min(y + [90000]), max(y + [110000])
+    W, H = 640, 160
+    pts = " ".join(f"{i / (len(y) - 1) * W:.1f},{H - (v - lo) / (hi - lo) * H:.1f}" for i, v in enumerate(y))
+    ystart = H - (100000 - lo) / (hi - lo) * H
+    yfloor = H - (90000 - lo) / (hi - lo) * H
+    col = "#c0392b" if blown is not None else ("#1f8a4c" if y[-1] > 100000 else "#b7791f")
+    return (f"<svg viewBox='0 0 {W} {H}' preserveAspectRatio='none' style='width:100%;height:160px;background:var(--card)'>"
+            f"<line x1='0' x2='{W}' y1='{ystart:.1f}' y2='{ystart:.1f}' stroke='#999' stroke-dasharray='4'/>"
+            f"<line x1='0' x2='{W}' y1='{yfloor:.1f}' y2='{yfloor:.1f}' stroke='#c0392b' stroke-dasharray='2'/>"
+            f"<polyline points='{pts}' fill='none' stroke='{col}' stroke-width='2'/></svg>"
+            "<p class='mut'>היתרה בכל שבוע. קו מקווקו אפור = $100,000, אדום = $90,000 (נשרף).</p>")
+
+
 def _weekly_html(res):
-    w, risk = res.get("weekly"), res.get("week_risk")
-    if not w or risk is None:
-        return "<p class='mut'>מעקב שבועי: אין מספיק נתונים לשנה שלמה.</p>"
-    t = w[risk]
-    pick = t[t["week"].isin([1, 2, 4, 8, 13, 26, 39, 52])]
-    rows = "".join(f"<tr><td>{int(r.week)}</td><td>{_pct(r.alive)}</td><td><b>{_pct(r.profitable)}</b></td>"
-                   f"<td>{r.median_pnl_pct:+.1f}%</td></tr>" for r in pick.itertuples())
-    mark = "✅ טוב: רוב החשבונות רווחיים אחרי שנה" if res.get("week_ok") else "❌ לא מספיק טוב"
-    return (f"<p><b>מעקב שבועי, חשבון של $100,000 בתנאי FTMO</b> ({res['n_starts']} חשבונות שמתחילים כל שבוע, "
-            f"סיכון {risk * 100:g}% לעסקה): {mark}</p>"
-            "<div class='tw'><table><tr><th>שבוע</th><th>חשבונות חיים</th><th>חיים ורווחיים</th><th>רווח חציוני</th></tr>"
-            + rows + "</table></div>")
+    acc = res.get("accounts") or {}
+    if MAIN_RISK not in acc:
+        return "<p class='mut'>חשבון FTMO: מעט מדי עסקאות.</p>"
+    w, blown, yearly = acc[MAIN_RISK]
+    if w is None or w.empty:
+        return "<p class='mut'>חשבון FTMO: אין עסקאות בתקופת המבחן.</p>"
+    status = (f"❌ נשרף ב־{pd.Timestamp(blown):%d.%m.%Y}" if blown is not None else
+              ("✅ שרד ורווחי" if w["balance"].iloc[-1] > F.INITIAL else "⚠️ שרד, אבל בהפסד"))
+    yrows = "".join(f"<tr><td>{int(r.year)}</td><td>${r.start:,.0f}</td><td>${r.end:,.0f}</td><td>${r.peak:,.0f}</td>"
+                    f"<td>${r.low:,.0f}</td><td>{'כן' if r.survived else 'לא'}</td></tr>" for r in yearly.itertuples())
+    wrows = "".join(f"<tr><td>{r.week_end:%d.%m.%Y}</td><td>${r.balance:,.0f}</td><td>{r.change:+,.0f}</td><td>${r.peak:,.0f}</td></tr>"
+                    for r in w.itertuples())
+    others = " · ".join(
+        f"סיכון {rk * 100:g}%: " + (f"נשרף ב־{pd.Timestamp(acc[rk][1]):%m/%Y}" if acc[rk][1] is not None else
+                                    f"${acc[rk][0]['balance'].iloc[-1]:,.0f}" if len(acc[rk][0]) else "—")
+        for rk in RISKS if rk != MAIN_RISK and rk in acc)
+    return (f"<p><b>חשבון FTMO של $100,000, נפתח ב־1.1.2023, סיכון {MAIN_RISK * 100:g}% לעסקה:</b> {status} · "
+            f"יתרה אחרונה ${w['balance'].iloc[-1]:,.0f} · שיא ${w['peak'].max():,.0f}</p>" + _curve(w, blown) +
+            "<div class='tw'><table><tr><th>שנה</th><th>פתיחה</th><th>סוף</th><th>שיא</th><th>שפל</th><th>שרד את השנה</th></tr>"
+            + yrows + "</table></div>"
+            f"<p class='mut'>לשם השוואה, אותו חשבון ב{others}.</p>"
+            f"<details><summary>דגימה שבועית ({len(w)} שבועות)</summary><div class='tw'><table>"
+            "<tr><th>סוף שבוע</th><th>יתרה</th><th>שינוי בשבוע</th><th>שיא עד כה</th></tr>" + wrows + "</table></div></details>")
 
 
 def _pct(v):
@@ -224,10 +256,13 @@ def _news_html(n):
 
 
 def _wk(r):
-    w, risk = r.get("weekly"), r.get("week_risk")
-    if not w or risk is None:
+    acc = r.get("accounts") or {}
+    if MAIN_RISK not in acc or acc[MAIN_RISK][0] is None or acc[MAIN_RISK][0].empty:
         return "—"
-    return _pct(w[risk]["profitable"].iloc[-1]) + f" ({risk * 100:g}%)"
+    w, blown, _ = acc[MAIN_RISK]
+    if blown is not None:
+        return f"נשרף {pd.Timestamp(blown):%m/%Y}"
+    return f"${w['balance'].iloc[-1]:,.0f} (שיא ${w['peak'].max():,.0f})"
 
 
 def _summary_html(results):
@@ -241,12 +276,12 @@ def _summary_html(results):
                  f"<td>{_wk(r)}</td><td>{'✅' if r.get('week_ok') else '❌'}</td>"
                  f"<td>{'—' if b is None else _pct(b['p_both'])}</td></tr>")
     return ("<h2>שורה תחתונה: איזו אסטרטגיה טובה בתנאי FTMO?</h2>"
-            "<p class='mut'>המסנן הראשי: חשבון של $100,000 בתנאי FTMO (הפסד יומי עד 5%, הפסד כולל עד 10%, בלי מסחר 5 דקות לפני ואחרי הודעות כלכליות חשובות) "
-            "מתחיל בכל שבוע של תקופת המבחן (2023 ואילך) וסוחר עד שנה. התוצאה נדגמת כל שבוע, וחשבון שנשרף נעצר. "
-            "<b>טוב = לפחות 60% מהחשבונות חיים ורווחיים אחרי 52 שבועות</b>, עם לפחות 100 עסקאות במבחן. "
-            "בעמודה האחרונה, לידיעה: הסיכוי לעבור את אתגר ה־2-Step (יעד 10% ואז 5%).</p>"
+            "<p class='mut'>המסנן הראשי: לכל אסטרטגיה חשבון אחד של $100,000 בחוקי FTMO (הפסד יומי עד 5%, הפסד כולל עד 10%, "
+            "בלי מסחר 5 דקות לפני ואחרי הודעות כלכליות חשובות), שנפתח ב־1.1.2023, תחילת תקופת המבחן, ורץ עד היום. "
+            "היתרה נדגמת כל שבוע, וחשבון שנשרף נעצר. <b>טוב = שרד עד היום ורווחי</b>, עם לפחות 100 עסקאות. "
+            "בעמודה האחרונה, לידיעה: הסיכוי לעבור את אתגר ה־2-Step (יעד 10% ואז 5%) מתאריכי התחלה שונים.</p>"
             "<div class='tw'><table><tr><th>אסטרטגיה</th><th>גרף</th><th>קריאה</th><th>עסקאות במבחן</th><th>ממוצע R</th>"
-            "<th>רווחיים אחרי שנה (סיכון)</th><th>מסנן</th><th>עובר אתגר 2-Step</th></tr>" + rows + "</table></div>")
+            "<th>חשבון $100K מ־1.1.2023 (סיכון 1%)</th><th>מסנן</th><th>עובר אתגר 2-Step</th></tr>" + rows + "</table></div>")
 
 
 def report(results, args, news_info=None):

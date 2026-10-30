@@ -25,6 +25,10 @@ from agents import rules_agent as R
 import run_poc as RP
 
 SYMBOLS = RP.FX + RP.COMMOD
+SWEEP_RISKS = {"TV04": (0.0025, 0.005, 0.0075, 0.01)}   # strategy -> risks to test in Prophet
+LOW_RISK = 0.0075            # every other strategy: 25% below the 1% main risk
+MAX_PROPHET_TRADES = 25000   # minute-by-minute replay is skipped above this (too slow, and such systems burn anyway)
+_BARS = {}                   # 1-minute bars per symbol, loaded once per run
 ERRORS = []   # tracebacks of strategies that crashed; shown at the end of the report
 TIMEFRAMES = RP.TIMEFRAMES + ["4Hour"]
 SPLIT, SPLIT_HE = RP.SPLIT, RP.SPLIT_HE
@@ -121,6 +125,14 @@ def _summarise(sid, tf, parts, split, args, results):
     if (res["ok"] or f"{sid}:{tf}" in args.export.split(",")) and len(w[0]):
         export_trades(sid, tf, w[0].attrs.get("ledger"))
         res["prophet"] = prophet_check(w[0].attrs.get("ledger"), args)
+    res["risk_tests"] = {}
+    for rk in SWEEP_RISKS.get(sid, (LOW_RISK,)):
+        if len(after) < 5:
+            continue
+        w2 = acc[rk] if rk in acc else F.account_path(after, rk, start=split)
+        led = w2[0].attrs.get("ledger") if len(w2[0]) else None
+        pr = prophet_check(led, args) if led is not None and len(after) <= MAX_PROPHET_TRADES else None
+        res["risk_tests"][rk] = {"account": w2, "prophet": pr, "skipped": len(after) > MAX_PROPHET_TRADES}
     print(sid, tf, "trades", len(after), "avgR", round(res["after"]["avg_r"], 3) if len(after) else None)
 
 
@@ -134,10 +146,14 @@ def prophet_check(led, args):
     frames = {}
     start = max(pd.Timestamp(led["time"].min()), pd.Timestamp(RP.MINUTE_START, tz="UTC"))
     for s in led["symbol"].unique():
-        try:
-            frames[s] = P.bars(s, "1Min", start.strftime("%Y-%m-%d"), args.end)
-        except Exception as e:  # noqa: BLE001
-            print(f"  prophet: no 1-minute bars for {s}: {e}")
+        if s not in _BARS:
+            try:
+                _BARS[s] = P.bars(s, "1Min", (SPLIT - pd.Timedelta(days=7)).strftime("%Y-%m-%d"), args.end)  # last year only: memory
+            except Exception as e:  # noqa: BLE001
+                print(f"  prophet: no 1-minute bars for {s}: {e}")
+                _BARS[s] = None
+        if _BARS[s] is not None:
+            frames[s] = _BARS[s][_BARS[s].index >= start]
     try:
         res = evaluate_ledger(led, frames)
     except Exception as e:  # noqa: BLE001
@@ -161,6 +177,33 @@ def _prophet_cell(p):
     if roll.get("completed"):
         why += f" | מעבר {roll.get('pass_rate_pct')}% פסילה {roll.get('breach_rate_pct')}% ({roll.get('completed')} דגימות)"
     return PROPHET_HE[v["verdict"]] + f"<div class='mut'>{html.escape(why)}</div>"
+
+
+def _acc_text(w2):
+    w, blown, _ = w2
+    if blown is not None:
+        return f"נשרף {pd.Timestamp(blown):%m/%Y}"
+    return f"${w['balance'].iloc[-1]:,.0f}" if len(w) else "—"
+
+
+def _risk_cell(r):
+    t = (r.get("risk_tests") or {}).get(LOW_RISK)
+    if not t:
+        return "—"
+    pr = "דולג (יותר מדי עסקאות)" if t["skipped"] else _prophet_cell(t["prophet"])
+    return f"{_acc_text(t['account'])}<br>{pr}"
+
+
+def _sweep_html(results):
+    out = ""
+    for r in results:
+        if r["sid"] not in SWEEP_RISKS or not r.get("risk_tests"):
+            continue
+        rows = "".join(f"<tr><td>{rk * 100:g}%</td><td>{_acc_text(t['account'])}</td><td>{_prophet_cell(t['prophet'])}</td></tr>"
+                       for rk, t in sorted(r["risk_tests"].items()))
+        out += (f"<h3>{r['sid']} · {RP.TF_HE[r['tf']]} · Trading Prophet לפי רמת סיכון</h3><div class='tw'><table>"
+                f"<tr><th>סיכון לעסקה</th><th>חשבון $100K</th><th>Trading Prophet</th></tr>{rows}</table></div>")
+    return out
 
 
 PROPHET_HE = {"PASS": "✅ עובר", "FAIL": "❌ נכשל", "PROVISIONAL": "🟡 בתנאי", "INSUFFICIENT": "⚪ חסר מידע"}
@@ -192,7 +235,7 @@ def report(results, args):
         rows += (f"<tr><td>{r['sid']}</td><td>{html.escape(r['name'])}</td><td>{RP.TF_HE[r['tf']]}</td>"
                  f"<td>{r['after']['trades']:,}</td><td>{f2(r['after']['avg_r'])}</td><td>{RP._wk(r)}</td>"
                  f"<td>{'✅' if r['ok'] else '❌'}</td><td>{'—' if r['ftmo_best'] is None else RP._pct(r['ftmo_best']['p_both'])}</td>"
-                 f"<td>{_prophet_cell(r.get('prophet'))}</td></tr>")
+                 f"<td>{_prophet_cell(r.get('prophet'))}</td><td>{_risk_cell(r)}</td></tr>")
     body = ""
     for r in results:
         sym = "".join(f"<tr><td>{s}</td><td>{q['trades']:,}</td><td>{f2(q['avg_r'])}</td><td>{f2(q['t'])}</td></tr>"
@@ -219,7 +262,8 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 בלי עסקאות 5 דקות לפני ואחרי הודעות כלכליות חשובות · חשבון FTMO של $100,000 לכל אסטרטגיה מ־{SPLIT_HE}, נדגם כל שבוע, נעצר כשנשרף.</p>
 <h2>שורה תחתונה</h2>
 <div class='tw'><table><tr><th>#</th><th>אסטרטגיה</th><th>גרף</th><th>עסקאות בשנה האחרונה</th><th>ממוצע R</th>
-<th>חשבון $100K מ־{SPLIT_HE} (סיכון 1%)</th><th>שרד ורווחי</th><th>עובר אתגר 2-Step</th><th>Trading Prophet (הפסד צף דקה־דקה)</th></tr>{rows}</table></div>
+<th>חשבון $100K מ־{SPLIT_HE} (סיכון 1%)</th><th>שרד ורווחי</th><th>עובר אתגר 2-Step</th><th>Trading Prophet (הפסד צף דקה־דקה)</th><th>סיכון 0.75%: חשבון + Prophet</th></tr>{rows}</table></div>
+{_sweep_html(results)}
 <h2>הכללים שנבדקו</h2><ul>{doc}</ul>
 {body}
 {"" if not ERRORS else "<h2>שגיאות בהרצה</h2><pre style='white-space:pre-wrap;font-size:12px'>" + html.escape(chr(10).join(ERRORS)) + "</pre>"}

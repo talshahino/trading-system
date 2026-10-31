@@ -292,11 +292,20 @@ STRATEGIES = {
 
 
 # ---------------- engine ----------------
-def run(df, fn, cost_side):
-    """Trades for one strategy on one instrument/timeframe (one position at a time)."""
+def run(df, fn, cost_side, breakeven=None, session_exit=None):
+    """Trades for one strategy on one instrument/timeframe (one position at a time).
+    breakeven=(fraction of the way to the target, offset as share of price): overrides the
+    strategy's own breakeven rule. session_exit: boolean mask of bars at whose close every
+    position is closed (stocks: no overnight gaps)."""
     if len(df) < 300:
         return pd.DataFrame()
     long_, short, plan = fn(df)
+    if breakeven is not None:
+        plan = {**plan, "breakeven": breakeven}
+    if session_exit is not None:
+        fe0 = plan.get("force_exit")
+        se = np.asarray(session_exit, dtype=bool)
+        plan = {**plan, "force_exit": se if fe0 is None else (np.asarray(fe0, dtype=bool) | se)}
     o, h, l, c = (df[x].to_numpy() for x in "ohlc")
     a = atr(h, l, c, 14)
     line = plan.get("line")

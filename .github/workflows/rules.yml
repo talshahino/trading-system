@@ -35,6 +35,9 @@ on:
       combos_file:
         description: "Repo path of a sid|timeframe|symbol list: run only these, save their trades"
         default: ""
+      extra:
+        description: "Extra flags, e.g. --stock-session-exit --breakeven 0.6"
+        default: ""
       test_from:
         description: "Judge every combo directly from this date (YYYY-MM-DD), no selection period. Empty = old split"
         default: ""
@@ -43,7 +46,7 @@ permissions:
   contents: write   # to save the reports back into the repository
 
 concurrency:
-  group: backtest-${{ inputs.timeframes }}-${{ inputs.symbols }}-${{ inputs.only }}-${{ inputs.combos_file }}
+  group: backtest-${{ inputs.timeframes }}-${{ inputs.symbols }}-${{ inputs.only }}-${{ inputs.combos_file }}-${{ inputs.extra }}
   cancel-in-progress: false
 
 jobs:
@@ -127,7 +130,7 @@ jobs:
           if [ "${{ inputs.demo }}" = "true" ]; then
             python -u run_rules.py --demo 2>&1 | tee run.log
           else
-            python -u run_rules.py --market "${{ inputs.market }}" --export "TV01:4Hour,TV02:4Hour,TV04:4Hour,TV09:1Hour,TV09:4Hour" --start "${{ inputs.start }}" --end "$END" --timeframes "${{ inputs.timeframes }}" --test-from "${{ inputs.test_from }}" --symbols "${{ inputs.symbols }}" --only "${{ inputs.only }}" --combos-file "${{ inputs.combos_file }}" 2>&1 | tee run.log
+            python -u run_rules.py --market "${{ inputs.market }}" --export "TV01:4Hour,TV02:4Hour,TV04:4Hour,TV09:1Hour,TV09:4Hour" --start "${{ inputs.start }}" --end "$END" --timeframes "${{ inputs.timeframes }}" --test-from "${{ inputs.test_from }}" --symbols "${{ inputs.symbols }}" --only "${{ inputs.only }}" --combos-file "${{ inputs.combos_file }}" ${{ inputs.extra }} 2>&1 | tee run.log
           fi
 
       - name: Save data cache

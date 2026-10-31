@@ -45,6 +45,7 @@ SPREADS = {}     # historical 1-minute spread per instrument
 SPREAD_EST = set()   # instruments whose spread is estimated (no bid/ask history)
 NC.CURRENCIES.update(U.CURRENCIES)
 COMBO_TRADES = []
+VARIANT = [""]
 MISSING = set()   # instruments with no history for a timeframe
 NO_TRADES = []   # strategy/timeframe/instrument that produced no trade at all, so nothing to judge
 
@@ -63,6 +64,10 @@ def main():
     ap.add_argument("--respect-tf", action="store_true",
                     help="only run a strategy on the timeframes its source states (default: every timeframe)")
     ap.add_argument("--symbols", default="", help="comma separated subset of the instrument universe (empty = all)")
+    ap.add_argument("--stock-session-exit", action="store_true",
+                    help="stocks: close every position at the end of the trading session (no overnight gaps)")
+    ap.add_argument("--breakeven", type=float, default=0.0,
+                    help="move the stop to entry + spread/commission once price covered this share of the way to the target (e.g. 0.6)")
     ap.add_argument("--combos-file", default="",
                     help="file with sid|timeframe|symbol lines: run only these and save their trades (no Prophet)")
     ap.add_argument("--test-from", default="",
@@ -73,6 +78,9 @@ def main():
         SPLIT = pd.Timestamp(args.test_from, tz="UTC")
         SPLIT_HE = SPLIT.strftime("%d.%m.%Y")
         TEST_FROM_MODE[0] = True
+    VARIANT[0] = " · ".join(x for x in [
+        "מניות נסגרות בסוף יום המסחר" if args.stock_session_exit else "",
+        f"סטופ לנקודת איזון + ספרד ועמלה אחרי {args.breakeven:.0%} מהדרך ליעד" if args.breakeven else ""] if x) or "בלי ניהול עסקה נוסף"
     ids = [x for x in args.only.split(",") if x] or list(R.STRATEGIES)
     combos = None
     if args.combos_file:
@@ -116,13 +124,28 @@ def main():
                     SPREADS[s] = None
                 if SPREADS[s] is None or len(SPREADS[s]) == 0:
                     SPREAD_EST.add(s)
+            sess = session_mask(df, s, tf) if (args.stock_session_exit and not args.demo) else None
+            be = None
+            if args.breakeven:
+                px = float(df["c"].median())
+                off = 0.00005
+                if real:
+                    sp = SPREADS.get(s)
+                    sp_px = float(sp.median()) if sp is not None and len(sp) else px * C.EST_SPREAD.get(U.CLASS[s], 0.0003)
+                    spec = U.spec(s)
+                    if spec["commissionType"] == "flat_USD":
+                        comm = px * float(spec["commission"]) / (float(spec["contractSize"]) * U.BASE_USD.get(spec["code"].split("/")[0], 1.0))
+                    else:
+                        comm = px * 2 * float(spec["commission"]) / 100.0
+                    off = (sp_px + comm) / px
+                be = (args.breakeven, off)
             for sid in ids:
                 if combos is not None and (sid, tf, s) not in combos:
                     continue
                 if args.respect_tf and not R.timeframe_ok(sid, tf):
                     continue
                 try:
-                    t = R.run(df, R.STRATEGIES[sid][1], cost)
+                    t = R.run(df, R.STRATEGIES[sid][1], cost, breakeven=be, session_exit=sess)
                 except Exception:  # noqa: BLE001 - one broken strategy must not kill the run
                     ERRORS.append(f"{sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue
@@ -162,13 +185,30 @@ def main():
     except Exception:  # noqa: BLE001
         ERRORS.append(f"portfolio:\n{traceback.format_exc()}")
     MISSING.update(missing)
-    if combos is not None:
+    if combos is not None or (args.test_from and COMBO_TRADES):
         cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason"]
         out = pd.concat(COMBO_TRADES, ignore_index=True)[cols] if COMBO_TRADES else pd.DataFrame(columns=cols)
         tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
         out.to_csv(config.OUTPUT_DIR / f"combo_trades_{tag}.csv.gz", index=False)
         print("saved", len(out), "trades for", out.groupby(["sid", "tf", "symbol"]).ngroups if len(out) else 0, "combos")
     safe_report(results, args)
+
+
+SESSION = {"US": ("America/New_York", 16 * 60), "EU": ("Europe/Berlin", 17 * 60 + 30)}
+
+
+def session_mask(df, s, tf):
+    """Stocks only: True on the bars whose close is within 15 minutes of the exchange close,
+    or that are the last bar of their trading day."""
+    if U.CLASS.get(s) != "stock":
+        return None
+    tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[s] else SESSION["EU"]
+    loc = df.index.tz_convert(tz)
+    end = loc + pd.Timedelta(minutes=RP.TF_MIN[tf])
+    mins = end.hour * 60 + end.minute + (end.normalize() > loc.normalize()) * 1440
+    day = pd.Series(loc.normalize(), index=df.index)
+    last = (day != day.shift(-1)).to_numpy()
+    return (mins >= close_min - 15) | last
 
 
 def safe_report(results, args):
@@ -210,6 +250,8 @@ def _per_symbol(sid, tf, parts, split, args):
                 led = w2[0].attrs.get("ledger") if len(w2[0]) else None
                 row["tests"][rk] = {"account": w2, "prophet": prophet_check(led, args) if led is not None else None}
             passed = any(x["prophet"] and x["prophet"]["verdict"]["verdict"] == "PASS" for x in row["tests"].values())
+            if passed and args.test_from:
+                COMBO_TRADES.append(after.assign(sid=sid, tf=tf))
             if not args.test_from:
                 SELECTED_AFTER.append(after.assign(combo=f"{sid}|{tf}|{sym}"))
         PER_SYMBOL.append(row)
@@ -439,6 +481,7 @@ body{{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,sans
 .mut{{color:var(--mut);font-size:13px}}.tw{{overflow-x:auto}}table{{border-collapse:collapse;width:100%;background:var(--card);font-size:13px}}
 th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}}h3{{margin-top:28px}}li{{margin:6px 0}}</style></head><body><main>
 <h1>בקטסט · אסטרטגיות מ־TradingView</h1>
+<p class='mut'>{VARIANT[0]}</p>
 <p class="mut">{'דמו' if args.demo else 'Dukascopy'}: 5 צמדי מט״ח, זהב, כסף ונפט · גרפים: דקה, 5, 15 דקות ושעה · הפרמטרים כפי שפורסמו, בלי חיפוש ובלי התאמה ·
 בלי עסקאות 5 דקות לפני ואחרי הודעות כלכליות חשובות · חשבון FTMO של $100,000 לכל אסטרטגיה מ־{SPLIT_HE}, נדגם כל שבוע, נעצר כשנשרף.</p>
 {_per_symbol_html()}

@@ -350,6 +350,7 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
         trail = plan.get("trail_atr")
         best = e
         stop0 = stop
+        free_t = None    # first bar from which the stop sits at/beyond entry (no money at risk)
         exit_px, exit_t, reverse_at, reason = None, None, None, ""
         for t in range(e_t, min(n, e_t + (plan.get("max_bars") or 10**9))):
             if t > e_t and ((d > 0 and o[t] <= stop) or (d < 0 and o[t] >= stop)):
@@ -372,6 +373,8 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             if be and target is not None and d * (best - e) >= be[0] * d * (target - e):
                 lvl = e * (1 + d * be[1])
                 stop = max(stop, lvl) if d > 0 else min(stop, lvl)
+            if free_t is None and d * (stop - e) >= 0 and t + 1 < n:
+                free_t = t + 1
             ex = plan.get("exit_long") if d > 0 else plan.get("exit_short")
             if ex is not None and ex[t] and t + 1 < n:
                 exit_px, exit_t, reason = o[t + 1], t + 1, "סיגנל יציאה"
@@ -391,7 +394,8 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
         rows.append({"time": df.index[e_t], "exit_time": df.index[exit_t], "dir": d, "r": float(r_mult),
                      "held": int(exit_t - e_t), "entry_px": float(e), "exit_px": float(exit_px),
                      "stop_px": float(stop0), "target_px": float(target) if target is not None else np.nan,
-                     "reason": reason})
+                     "reason": reason,
+                     "free_time": df.index[free_t] if free_t is not None and free_t <= exit_t else pd.NaT})
         i = reverse_at if reverse_at is not None else max(exit_t, i + 1)
     return pd.DataFrame(rows)
 

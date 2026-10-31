@@ -8,10 +8,13 @@ on:
       n:
         description: "How many portfolios"
         default: "3"
+      extra:
+        description: "Extra flags for verify_portfolio.py, e.g. --free-risk-at-breakeven"
+        default: ""
 permissions:
   contents: write
 concurrency:
-  group: portfolio
+  group: portfolio-${{ inputs.extra }}
   cancel-in-progress: false
 jobs:
   portfolio:
@@ -41,7 +44,7 @@ jobs:
         run: |
           mkdir -p output
           python -u portfolio_search.py --trades "${{ inputs.trades }}" --out output/portfolios.json --n "${{ inputs.n }}" | tee output/search.log
-          python -u verify_portfolio.py --trades "${{ inputs.trades }}" --portfolios output/portfolios.json --end "$(date -u -d yesterday +%F)"
+          python -u verify_portfolio.py --trades "${{ inputs.trades }}" --portfolios output/portfolios.json --end "$(date -u -d yesterday +%F)" ${{ inputs.extra }}
       - name: Commit
         if: always()
         run: |

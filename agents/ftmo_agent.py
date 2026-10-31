@@ -23,6 +23,7 @@ import pandas as pd
 INITIAL = 100_000.0
 CET = "Europe/Prague"
 MAX_OPEN = 3
+FREE_RISK_AT_BREAKEVEN = False   # account_path guard: a position whose stop is at/beyond entry risks nothing
 
 
 def _days(ts):
@@ -262,7 +263,7 @@ def account_path(trades, risk, start=None, daily_pct=0.05, max_pct=0.10):
         if t.day != day:
             day, day_start = t.day, bal
         r_usd = INITIAL * risk
-        open_risk = sum(p[1] for p in open_pos)
+        open_risk = sum(p[1] for p in open_pos if not (FREE_RISK_AT_BREAKEVEN and p[4] is not None and p[4] <= t.time))
         if not open_pos and bal - r_usd <= floor:
             # Not formally breached, but one more full stop would break the 10% limit: the
             # bot can never trade again, so the account is as good as burned.
@@ -275,7 +276,8 @@ def account_path(trades, risk, start=None, daily_pct=0.05, max_pct=0.10):
             ledger[t.Index] = {"taken": "דולג: שומר מגבלות ההפסד"}
             continue
         ledger[t.Index] = {"taken": "בוצעה", "risk_usd": r_usd}
-        open_pos.append((t.exit_time, r_usd, t.r, t.Index))
+        ft = getattr(t, "free_time", None)
+        open_pos.append((t.exit_time, r_usd, t.r, t.Index, ft if ft is not None and ft == ft else None))
     if blown_at is None:
         while mi < len(marks):
             close_until(marks[mi])

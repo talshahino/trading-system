@@ -186,7 +186,7 @@ def main():
         ERRORS.append(f"portfolio:\n{traceback.format_exc()}")
     MISSING.update(missing)
     if combos is not None or (args.test_from and COMBO_TRADES):
-        cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason"]
+        cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason", "free_time"]
         out = pd.concat(COMBO_TRADES, ignore_index=True)[cols] if COMBO_TRADES else pd.DataFrame(columns=cols)
         tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
         out.to_csv(config.OUTPUT_DIR / f"combo_trades_{tag}.csv.gz", index=False)

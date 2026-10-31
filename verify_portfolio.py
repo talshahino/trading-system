@@ -32,7 +32,10 @@ def main():
     ap.add_argument("--portfolios", required=True)
     ap.add_argument("--end", required=True)
     ap.add_argument("--test-from", default="2025-04-30")
+    ap.add_argument("--free-risk-at-breakeven", action="store_true",
+                    help="robot guard: a position whose stop reached entry no longer counts as open risk")
     args = ap.parse_args()
+    F.FREE_RISK_AT_BREAKEVEN = args.free_risk_at_breakeven
     RR.SPLIT = pd.Timestamp(args.test_from, tz="UTC")
     t = PS.load(args.trades)
     ports = json.load(open(args.portfolios, encoding="utf-8"))
@@ -66,7 +69,8 @@ def main():
             f".mut{{color:#666}}.tw{{overflow-x:auto;margin:8px 0}}</style></head><body><h1>תיקי צירופים ל־FTMO</h1>"
             f"<p class='mut'>כל הצירופים של תיק סוחרים יחד בחשבון $100K אחד מ־{args.test_from}, כל אחד רק בנכס ובגרף שלו. "
             f"בחיפוש: היום הגרוע לא מתחת ל־{PS.DAILY_CAP:.0%}- והיתרה לא מתחת ל־{1 - PS.MAX_DD:.0%}. "
-            f"הבדיקה כאן: Trading Prophet עם ההפסד הצף דקה אחרי דקה, ושומר המגבלות של הבוט פעיל. כשההון מגיע ליעד השלב, הרובוט סוגר את כל העסקאות הפתוחות.</p>"
+            f"הבדיקה כאן: Trading Prophet עם ההפסד הצף דקה אחרי דקה, ושומר המגבלות של הבוט פעיל. כשההון מגיע ליעד השלב, הרובוט סוגר את כל העסקאות הפתוחות. "
+            f"{'עסקה שהסטופ שלה הגיע לנקודת הכניסה לא נספרת יותר כסיכון פתוח, אז נכנסות עוד עסקאות.' if args.free_risk_at_breakeven else 'כל עסקה פתוחה נספרת בסיכון המלא שלה עד שהיא נסגרת.'}</p>"
             + "".join(blocks) + "</body></html>")
     (config.OUTPUT_DIR / "report_portfolios.html").write_text(page, encoding="utf-8")
 

@@ -29,9 +29,12 @@ EXCLUDE = {"SPCX"}    # SpaceX history from Alpaca is not reliable (14 trades av
 
 
 def load(pattern):
-    fr = [pd.read_csv(f, parse_dates=["time", "exit_time"]) for f in sorted(glob.glob(pattern))]
+    files = sorted({f for g in pattern.split(",") for f in glob.glob(g.strip())})
+    fr = [pd.read_csv(f, parse_dates=["time", "exit_time"]) for f in files]
     t = pd.concat(fr, ignore_index=True)
     t = t[~t["symbol"].isin(EXCLUDE)]
+    if "free_time" in t:
+        t["free_time"] = pd.to_datetime(t["free_time"], utc=True, errors="coerce")
     t["combo"] = t["sid"] + "|" + t["tf"] + "|" + t["symbol"]
     t["day"] = t["exit_time"].dt.tz_convert("Europe/Prague").dt.normalize()
     return t.drop_duplicates(["combo", "time"])

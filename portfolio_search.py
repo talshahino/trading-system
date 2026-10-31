@@ -24,12 +24,14 @@ import pandas as pd
 INITIAL = 100_000.0
 RISKS = (0.0025, 0.005, 0.0075, 0.01)
 DAILY_CAP = 0.03      # 2% buffer under FTMO's 5% for floating loss inside the day
-MAX_DD = 0.07         # 3% buffer under FTMO's 10%
+MAX_DD = 0.07
+EXCLUDE = {"SPCX"}    # SpaceX history from Alpaca is not reliable (14 trades averaging +55R)         # 3% buffer under FTMO's 10%
 
 
 def load(pattern):
     fr = [pd.read_csv(f, parse_dates=["time", "exit_time"]) for f in sorted(glob.glob(pattern))]
     t = pd.concat(fr, ignore_index=True)
+    t = t[~t["symbol"].isin(EXCLUDE)]
     t["combo"] = t["sid"] + "|" + t["tf"] + "|" + t["symbol"]
     t["day"] = t["exit_time"].dt.tz_convert("Europe/Prague").dt.normalize()
     return t.drop_duplicates(["combo", "time"])

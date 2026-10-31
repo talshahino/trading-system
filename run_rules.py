@@ -29,6 +29,12 @@ SWEEP_RISKS = (0.0025, 0.005, 0.0075, 0.01)   # TV strategies: Prophet at each o
 LOW_RISK = 0.0075            # every other strategy: 25% below the 1% main risk
 MAX_PROPHET_TRADES = 25000   # minute-by-minute replay is skipped above this (too slow, and such systems burn anyway)
 _BARS = {}                   # 1-minute bars per symbol, loaded once per run
+POOLED_SWEEP = False         # all-instruments-in-one-account sweep, replaced by per-instrument selection
+SEL_MIN_TRADES, SEL_MIN_AVG_R, SEL_MIN_T = 30, 0.05, 1.5   # instrument+timeframe selection on the earlier period
+PER_SYMBOL_RISKS = (0.005, 0.0075, 0.01)
+PER_SYMBOL = []              # one row per (strategy, timeframe, instrument) that passed selection
+SELECTED_AFTER = []          # their last-year trades, for the portfolio test
+PORTFOLIO = {}
 ERRORS = []   # tracebacks of strategies that crashed; shown at the end of the report
 TIMEFRAMES = RP.TIMEFRAMES + ["4Hour"]
 SPLIT, SPLIT_HE = RP.SPLIT, RP.SPLIT_HE
@@ -89,6 +95,14 @@ def main():
                 _summarise(sid, tf, parts, split, args, results)
             except Exception:  # noqa: BLE001
                 ERRORS.append(f"{sid} {tf} summary:\n{traceback.format_exc()}")
+            try:
+                _per_symbol(sid, tf, parts, split, args)
+            except Exception:  # noqa: BLE001
+                ERRORS.append(f"{sid} {tf} per-symbol:\n{traceback.format_exc()}")
+    try:
+        _portfolio(args)
+    except Exception:  # noqa: BLE001
+        ERRORS.append(f"portfolio:\n{traceback.format_exc()}")
     safe_report(results, args)
 
 
@@ -107,6 +121,78 @@ def safe_report(results, args):
         except Exception:  # noqa: BLE001
             ERRORS.append(f"report row {r.get('sid')} {r.get('tf')}:\n{traceback.format_exc()}")
     report(good, args)
+
+
+def _per_symbol(sid, tf, parts, split, args):
+    """Instrument-by-instrument: choose (strategy, timeframe, instrument) on the EARLIER period only
+    (trades >= 30, avg >= +0.05R, t >= 1.5), then judge it on the last year with Trading Prophet,
+    trading that one instrument alone. No last-year information is used for the choice."""
+    for t in parts:
+        if t.empty:
+            continue
+        sym = t["symbol"].iloc[0]
+        before, after = t[t["time"] < split], t[t["time"] >= split]
+        b = RP.stats(before["r"])
+        if not (b["trades"] >= SEL_MIN_TRADES and b["avg_r"] >= SEL_MIN_AVG_R and (b["t"] or 0) >= SEL_MIN_T):
+            continue
+        a = RP.stats(after["r"])
+        row = {"sid": sid, "tf": tf, "symbol": sym, "before": b, "after": a, "tests": {}}
+        if len(after) >= 5:
+            SELECTED_AFTER.append(after.assign(combo=f"{sid}|{tf}|{sym}"))
+            for rk in PER_SYMBOL_RISKS:
+                w2 = F.account_path(after, rk, start=split)
+                led = w2[0].attrs.get("ledger") if len(w2[0]) else None
+                row["tests"][rk] = {"account": w2, "prophet": prophet_check(led, args) if led is not None else None}
+        PER_SYMBOL.append(row)
+
+
+def _portfolio(args):
+    """All selected (strategy, timeframe, instrument) combos traded together in ONE $100K account
+    over the last year - the honest out-of-sample test of the whole selection."""
+    if not SELECTED_AFTER:
+        return
+    tr = pd.concat(SELECTED_AFTER, ignore_index=True).sort_values("time").reset_index(drop=True)
+    PORTFOLIO["combos"] = tr["combo"].nunique()
+    PORTFOLIO["after"] = RP.stats(tr["r"])
+    PORTFOLIO["tests"] = {}
+    for rk in (0.0025, 0.005, 0.0075):
+        w2 = F.account_path(tr, rk, start=SPLIT)
+        led = w2[0].attrs.get("ledger") if len(w2[0]) else None
+        PORTFOLIO["tests"][rk] = {"account": w2, "prophet": prophet_check(led, args) if led is not None else None}
+
+
+def _per_symbol_html():
+    if not PER_SYMBOL:
+        return "<h2>התאמה לנכס ולגרף</h2><p class='mut'>אף שילוב של אסטרטגיה, גרף ונכס לא עבר את סינון התקופה הקודמת.</p>"
+    def best(row):
+        ok = [rk for rk, t in row["tests"].items() if t["prophet"] and t["prophet"]["verdict"]["verdict"] == "PASS"]
+        return max(ok) if ok else None
+    rows = sorted(PER_SYMBOL, key=lambda r: (best(r) is None, -(r["after"]["avg_r"] if r["after"]["avg_r"] == r["after"]["avg_r"] else -9)))
+    body = ""
+    for r in rows:
+        bk = best(r)
+        cells = "".join(f"<td>{_acc_text(t['account'])}<br>{_prophet_cell(t['prophet'])}</td>" for rk, t in sorted(r["tests"].items()))
+        cells += "<td></td>" * (len(PER_SYMBOL_RISKS) - len(r["tests"]))
+        a, b = r["after"], r["before"]
+        f2 = lambda v: "—" if v != v else f"{v:+.2f}"
+        body += (f"<tr><td>{'✅' if bk else '❌'}</td><td>{r['sid']}</td><td>{html.escape(R.STRATEGIES[r['sid']][0])}</td>"
+                 f"<td>{RP.TF_HE[r['tf']]}</td><td>{r['symbol']}</td><td>{b['trades']} · {f2(b['avg_r'])}R · t={b['t']:.1f}</td>"
+                 f"<td>{a['trades']} · {f2(a['avg_r'])}R</td><td>{'—' if bk is None else f'{bk * 100:g}%'}</td>{cells}</tr>")
+    heads = "".join(f"<th>סיכון {rk * 100:g}%</th>" for rk in PER_SYMBOL_RISKS)
+    port = ""
+    if PORTFOLIO:
+        prow = "".join(f"<tr><td>{rk * 100:g}%</td><td>{_acc_text(t['account'])}</td><td>{_prophet_cell(t['prophet'])}</td></tr>"
+                       for rk, t in sorted(PORTFOLIO["tests"].items()))
+        pa = PORTFOLIO["after"]
+        port = (f"<h3>תיק משולב: כל {PORTFOLIO['combos']} השילובים שנבחרו, בחשבון אחד</h3><p class='mut'>השנה האחרונה: "
+                f"{pa['trades']:,} עסקאות, ממוצע {pa['avg_r']:+.2f}R</p><div class='tw'><table><tr><th>סיכון</th><th>חשבון $100K</th>"
+                f"<th>Trading Prophet</th></tr>{prow}</table></div>")
+    n_ok = sum(1 for r in PER_SYMBOL if best(r))
+    return (f"<h2>התאמה לנכס ולגרף</h2><p class='mut'>שלב 1 (בחירה, {SEL_MIN_TRADES}+ עסקאות, ממוצע ≥{SEL_MIN_AVG_R:+.2f}R, t≥{SEL_MIN_T}) "
+            f"על התקופה שלפני {SPLIT_HE} בלבד. שלב 2: Trading Prophet על השנה האחרונה, כל שילוב לבד בחשבון משלו. "
+            f"נבחרו {len(PER_SYMBOL)} שילובים, {n_ok} עברו את Prophet.</p>{port}<div class='tw'><table><tr><th></th><th>#</th>"
+            f"<th>אסטרטגיה</th><th>גרף</th><th>נכס</th><th>לפני (עסקאות · ממוצע · t)</th><th>השנה האחרונה</th>"
+            f"<th>סיכון מקסימלי שעובר</th>{heads}</tr>{body}</table></div>")
 
 
 def _summarise(sid, tf, parts, split, args, results):
@@ -128,7 +214,7 @@ def _summarise(sid, tf, parts, split, args, results):
     res["risk_tests"] = {}
     # lower risk cannot make a losing system pass, so the 4-level sweep runs only where the average trade is positive
     sweep = sid.startswith("TV") and len(after) and res["after"]["avg_r"] > 0
-    for rk in (SWEEP_RISKS if sweep else (LOW_RISK,)):
+    for rk in (SWEEP_RISKS if (sweep and POOLED_SWEEP) else ()):
         if len(after) < 5:
             continue
         w2 = acc[rk] if rk in acc else F.account_path(after, rk, start=split)
@@ -267,6 +353,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 <h1>בקטסט · אסטרטגיות מ־TradingView</h1>
 <p class="mut">{'דמו' if args.demo else 'Dukascopy'}: 5 צמדי מט״ח, זהב, כסף ונפט · גרפים: דקה, 5, 15 דקות ושעה · הפרמטרים כפי שפורסמו, בלי חיפוש ובלי התאמה ·
 בלי עסקאות 5 דקות לפני ואחרי הודעות כלכליות חשובות · חשבון FTMO של $100,000 לכל אסטרטגיה מ־{SPLIT_HE}, נדגם כל שבוע, נעצר כשנשרף.</p>
+{_per_symbol_html()}
 <h2>שורה תחתונה</h2>
 <div class='tw'><table><tr><th>#</th><th>אסטרטגיה</th><th>גרף</th><th>עסקאות בשנה האחרונה</th><th>ממוצע R</th>
 <th>חשבון $100K מ־{SPLIT_HE} (סיכון 1%)</th><th>שרד ורווחי</th><th>עובר אתגר 2-Step</th><th>Trading Prophet (הפסד צף דקה־דקה)</th><th>סיכון 0.75%: חשבון + Prophet</th></tr>{rows}</table></div>

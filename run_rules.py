@@ -50,13 +50,17 @@ def main():
                     help="forex = 5 pairs + gold/silver/oil; ftmo = also indices, more commodities, crypto")
     ap.add_argument("--export", default="", help="strategy:timeframe pairs to export trade by trade, "
                     "e.g. TV01:4Hour,TV09:1Hour (survivors are always exported)")
+    ap.add_argument("--timeframes", default="", help="comma separated subset of 1Min,5Min,15Min,1Hour,4Hour (empty = all)")
+    ap.add_argument("--respect-tf", action="store_true",
+                    help="only run a strategy on the timeframes its source states (default: every timeframe)")
     args = ap.parse_args()
     ids = [x for x in args.only.split(",") if x] or list(R.STRATEGIES)
     events = None
     if not args.demo:
         events, real_end = NC.load()
     results, missing = [], set()
-    for tf in (["1Hour"] if args.demo else TIMEFRAMES):
+    tfs = [x for x in args.timeframes.split(",") if x] or TIMEFRAMES
+    for tf in (["1Hour"] if args.demo else tfs):
         per_sid = {sid: [] for sid in ids}
         universe = RP.FTMO_ALL if args.market == "ftmo" else SYMBOLS
         for i, s in enumerate(["DEMO1", "DEMO2"] if args.demo else universe):
@@ -73,7 +77,7 @@ def main():
                 continue
             cost = 0.00005 if args.demo else RP.cost_of(s)
             for sid in ids:
-                if not args.demo and not R.timeframe_ok(sid, tf):
+                if args.respect_tf and not R.timeframe_ok(sid, tf):
                     continue
                 try:
                     t = R.run(df, R.STRATEGIES[sid][1], cost)

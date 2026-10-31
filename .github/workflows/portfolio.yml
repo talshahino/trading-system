@@ -39,6 +39,7 @@ jobs:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
           ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
         run: |
+          mkdir -p output
           python -u portfolio_search.py --trades "${{ inputs.trades }}" --out output/portfolios.json --n "${{ inputs.n }}" | tee output/search.log
           python -u verify_portfolio.py --trades "${{ inputs.trades }}" --portfolios output/portfolios.json --end "$(date -u -d yesterday +%F)"
       - name: Commit

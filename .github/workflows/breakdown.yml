@@ -1,0 +1,57 @@
+name: Portfolio weekly breakdown
+on:
+  workflow_dispatch:
+    inputs:
+      trades:
+        description: "Glob of combo trade files"
+        default: "reports/*/combo_trades_*.csv.gz"
+      configs:
+        description: "rank:risk:free(1/0),..."
+        default: "1:0.005:1,2:0.006:1,3:0.005:0"
+      portfolios:
+        description: "Portfolios json"
+        default: "data/portfolio/portfolios_B_2026-10-31.json"
+permissions:
+  contents: write
+concurrency:
+  group: breakdown
+  cancel-in-progress: false
+jobs:
+  portfolio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Breakdown
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: |
+          mkdir -p output
+          python -u portfolio_breakdown.py --trades "${{ inputs.trades }}" --portfolios "${{ inputs.portfolios }}" --configs "${{ inputs.configs }}" --end "$(date -u -d yesterday +%F)" --out output/breakdown.json
+      - name: Commit
+        if: always()
+        run: |
+          DIR="reports/$(date -u +%F)_breakdown_run${{ github.run_number }}"
+          mkdir -p "$DIR"
+          cp output/breakdown.json "$DIR"/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports
+          git commit -m "Portfolio breakdown run ${{ github.run_number }}" || true
+          for i in 1 2 3 4 5 6; do git pull --rebase && git push && break; sleep 15; done

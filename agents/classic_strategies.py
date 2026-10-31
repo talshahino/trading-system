@@ -659,3 +659,60 @@ CLASSIC.update({
     "TV57": ("Double bottom/top neckline break", s_double_bottom, HTF),
     "TV58": ("KST cross + EMA200, 2R", s_kst, HTF),
 })
+
+
+# ---------------- batch 6 ----------------
+def s_bb_walk(df):
+    """Bollinger band walk (trend): two consecutive closes above the upper band (20, 2) buy, two
+    below the lower band sell. Exit on a close back through the middle band. Stop 2 ATR."""
+    c = df["c"].to_numpy()
+    m = sma(c, 20)
+    sd = pd.Series(c).rolling(20).std().to_numpy()
+    ab, bl = c > m + 2 * sd, c < m - 2 * sd
+    up = ab & np.r_[False, ab[:-1]] & ~np.r_[False, False, ab[:-2]]
+    dn = bl & np.r_[False, bl[:-1]] & ~np.r_[False, False, bl[:-2]]
+    return up, dn, {"stop": ("atr", 2.0), "target": None, "exit_long": c < m, "exit_short": c > m}
+
+
+def s_rsi50_ema200(df):
+    """RSI(14) crossing 50 in the direction of the EMA200 trend: up-cross above 50 with close >
+    EMA200 buys (mirror). Stop 1.5 ATR, target 2R."""
+    c = df["c"].to_numpy()
+    r = rsi(c, 14)
+    up, dn = _cross(r, np.full(len(c), 50.0))
+    e = ema(c, 200)
+    return up & (c > e), dn & (c < e), {"stop": ("atr", 1.5), "target": ("R", 2.0)}
+
+
+def s_vol_expansion(df):
+    """Volatility expansion bar continuation: a bar with range > 2 x ATR14 closing in its top
+    quarter buys at the next open (mirror: bottom quarter sells). Stop at the bar's midpoint,
+    target 2R."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = np.r_[np.nan, atr(h, l, c, 14)[:-1]]
+    rng = h - l
+    pos = np.where(rng > 0, (c - l) / np.where(rng > 0, rng, 1), 0.5)
+    big = rng > 2 * a
+    mid = (h + l) / 2
+    return big & (pos >= 0.75), big & (pos <= 0.25), {"stop": ("level", mid, mid), "target": ("R", 2.0)}
+
+
+def s_ma_ribbon(df):
+    """EMA ribbon (10/20/30/40/50/60): the first bar on which all six are stacked in order buys
+    (mirror). Exit when the 10 crosses the 30 the other way. Stop 2 ATR, ATR trail 3."""
+    c = df["c"].to_numpy()
+    es = [ema(c, n) for n in (10, 20, 30, 40, 50, 60)]
+    bull = np.all([es[i] > es[i + 1] for i in range(5)], axis=0)
+    bear = np.all([es[i] < es[i + 1] for i in range(5)], axis=0)
+    fb = np.r_[False, bull[1:] & ~bull[:-1]]
+    fs = np.r_[False, bear[1:] & ~bear[:-1]]
+    return fb, fs, {"stop": ("atr", 2.0), "target": None, "trail_atr": 3.0,
+                    "exit_long": es[0] < es[2], "exit_short": es[0] > es[2]}
+
+
+CLASSIC.update({
+    "TV59": ("Bollinger band walk (trend)", s_bb_walk, HTF),
+    "TV60": ("RSI 50 cross with EMA200 trend, 2R", s_rsi50_ema200, HTF),
+    "TV61": ("Volatility expansion bar continuation, 2R", s_vol_expansion, HTF),
+    "TV62": ("EMA ribbon 10-60 stack + ATR trail", s_ma_ribbon, HTF),
+})

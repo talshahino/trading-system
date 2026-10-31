@@ -221,7 +221,7 @@ def _per_symbol_html():
         a, b = r["after"], r["before"]
         f2 = lambda v: "—" if v != v else f"{v:+.2f}"
         body += (f"<tr><td>{'✅' if bk else '❌'}</td><td>{r['sid']}</td><td>{html.escape(R.STRATEGIES[r['sid']][0])}</td>"
-                 f"<td>{RP.TF_HE[r['tf']]}</td><td>{r['symbol']}</td><td>{b['trades']} · {f2(b['avg_r'])}R · t={b['t']:.1f}</td>"
+                 f"<td>{RP.TF_HE[r['tf']]}</td><td>{r['symbol']}</td><td>{'—' if TEST_FROM_MODE[0] else f"{b['trades']} · {f2(b['avg_r'])}R · t={b['t']:.1f}"}</td>"
                  f"<td>{a['trades']} · {f2(a['avg_r'])}R</td><td>{'—' if bk is None else f'{bk * 100:g}%'}</td>{cells}</tr>")
     heads = "".join(f"<th>סיכון {rk * 100:g}%</th>" for rk in PER_SYMBOL_RISKS)
     port = ""

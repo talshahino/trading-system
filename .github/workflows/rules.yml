@@ -26,6 +26,9 @@ on:
       timeframes:
         description: "Comma separated subset of 1Min,5Min,15Min,1Hour,4Hour. Empty = all"
         default: ""
+      only:
+        description: "Comma separated strategy ids. Empty = all"
+        default: ""
       symbols:
         description: "Comma separated instruments subset. Empty = all"
         default: ""
@@ -37,7 +40,7 @@ permissions:
   contents: write   # to save the reports back into the repository
 
 concurrency:
-  group: backtest-${{ inputs.timeframes }}-${{ inputs.symbols }}
+  group: backtest-${{ inputs.timeframes }}-${{ inputs.symbols }}-${{ inputs.only }}
   cancel-in-progress: false
 
 jobs:
@@ -121,7 +124,7 @@ jobs:
           if [ "${{ inputs.demo }}" = "true" ]; then
             python -u run_rules.py --demo 2>&1 | tee run.log
           else
-            python -u run_rules.py --market "${{ inputs.market }}" --export "TV01:4Hour,TV02:4Hour,TV04:4Hour,TV09:1Hour,TV09:4Hour" --start "${{ inputs.start }}" --end "$END" --timeframes "${{ inputs.timeframes }}" --test-from "${{ inputs.test_from }}" --symbols "${{ inputs.symbols }}" 2>&1 | tee run.log
+            python -u run_rules.py --market "${{ inputs.market }}" --export "TV01:4Hour,TV02:4Hour,TV04:4Hour,TV09:1Hour,TV09:4Hour" --start "${{ inputs.start }}" --end "$END" --timeframes "${{ inputs.timeframes }}" --test-from "${{ inputs.test_from }}" --symbols "${{ inputs.symbols }}" --only "${{ inputs.only }}" 2>&1 | tee run.log
           fi
 
       - name: Save data cache

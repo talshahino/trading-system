@@ -80,7 +80,7 @@ DUKA_TF = {"1Min": "m1", "1Hour": "h1", "1Day": "d1"}
 RESAMPLE = {"5Min": "5min", "15Min": "15min"}      # built locally from 1-minute bars
 
 
-def _duka_year(symbol, timeframe, y, end):
+def _duka_year(symbol, timeframe, y, end, price="bid"):
     import glob
     import os
     import shutil
@@ -89,7 +89,7 @@ def _duka_year(symbol, timeframe, y, end):
     tmp = tempfile.mkdtemp()
     to = min(pd.Timestamp(f"{y}-12-31"), pd.Timestamp(end)).strftime("%Y-%m-%d")
     cmd = ["npx", "--yes", "dukascopy-node@1.51.1", "-i", DUKA[symbol], "-from", f"{y}-01-01", "-to", to,
-           "-t", DUKA_TF[timeframe], "-v", "-vu", "units", "-f", "csv", "-dir", tmp, "-s",
+           "-t", DUKA_TF[timeframe], "-p", price, "-v", "-vu", "units", "-f", "csv", "-dir", tmp, "-s",
            "-r", "3", "-bs", "5", "-bp", "500", "--cache", "--cache-path", str(config.CACHE_DIR / "duka_raw")]
     chrome = os.environ.get("CHROME_PATH") or shutil.which("google-chrome") or shutil.which("chromium")
     if chrome:
@@ -112,6 +112,41 @@ def _duka_year(symbol, timeframe, y, end):
         time.sleep(20 * (attempt + 1))
     raise RuntimeError(f"Dukascopy download failed for {symbol} {timeframe} {y}: "
                        f"{(r.stderr or r.stdout)[-400:]}")
+
+
+def spread_1m(symbol, start, end):
+    """Historical spread per minute (ask close - bid close) from Dukascopy, in price units.
+    Empty Series when the instrument has no Dukascopy history (spread then estimated)."""
+    if symbol not in DUKA:
+        return pd.Series(dtype="float64")
+    bid = bars(symbol, "1Min", start, end)
+    frames = []
+    now = pd.Timestamp.now(tz="UTC") - pd.Timedelta(minutes=20)
+    for y in range(pd.Timestamp(start).year, pd.Timestamp(end).year + 1):
+        f = config.CACHE_DIR / f"poc_{symbol.replace('/', '-')}_1Min_ask_{y}.csv.gz"
+        df = None
+        if f.exists():
+            try:
+                df = pd.read_csv(f)
+            except pd.errors.EmptyDataError:
+                f.unlink()
+        if df is None:
+            e = min(pd.Timestamp(f"{y}-12-31 23:59", tz="UTC"), now)
+            if e <= max(pd.Timestamp(f"{y}-01-01", tz="UTC"), pd.Timestamp(start, tz="UTC")):
+                continue
+            df = _duka_year(symbol, "1Min", y, e.strftime("%Y-%m-%d"), price="ask")
+            if y < now.year:
+                df.to_csv(f, index=False)
+        frames.append(df)
+    if not frames or bid.empty:
+        return pd.Series(dtype="float64")
+    ask = pd.concat(frames, ignore_index=True)
+    if ask.empty:
+        return pd.Series(dtype="float64")
+    ask["t"] = pd.to_datetime(ask["t"], utc=True)
+    ask = ask.drop_duplicates("t").set_index("t")["c"]
+    sp = (ask - bid["c"]).dropna()
+    return sp[sp >= 0].astype("float32")
 
 
 def bars(symbol, timeframe, start, end):
@@ -575,3 +610,10 @@ def trades_fade(df, cost_side, crypto=False):
                                  "tgt_pct": abs(poc - e) / e, "r": r_mult - 2 * cost_side * e / risk,
                                  "ret": 0.0, "held": (u if r_mult is not None else b) - e_t})
     return _compact(pd.DataFrame(rows))
+
+
+# the 94 FTMO instruments chosen by the user (agents/ftmo_universe.py)
+from agents import ftmo_universe as _U  # noqa: E402
+
+for _k, _v in _U.DUKA.items():
+    DUKA.setdefault(_k, _v)

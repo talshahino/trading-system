@@ -19,6 +19,8 @@ import pandas as pd
 
 import config
 from agents import ftmo_agent as F
+from agents import ftmo_costs as C
+from agents import ftmo_universe as U
 from agents import news_calendar as NC
 from agents import poc_agent as P
 from agents import rules_agent as R
@@ -39,6 +41,10 @@ ERRORS = []   # tracebacks of strategies that crashed; shown at the end of the r
 TIMEFRAMES = RP.TIMEFRAMES + ["4Hour"]
 SPLIT, SPLIT_HE = RP.SPLIT, RP.SPLIT_HE
 TEST_FROM_MODE = [False]
+SPREADS = {}     # historical 1-minute spread per instrument
+SPREAD_EST = set()   # instruments whose spread is estimated (no bid/ask history)
+NC.CURRENCIES.update(U.CURRENCIES)
+MISSING = set()   # instruments with no history for a timeframe
 NO_TRADES = []   # strategy/timeframe/instrument that produced no trade at all, so nothing to judge
 
 
@@ -72,7 +78,7 @@ def main():
     tfs = [x for x in args.timeframes.split(",") if x] or TIMEFRAMES
     for tf in (["1Hour"] if args.demo else tfs):
         per_sid = {sid: [] for sid in ids}
-        universe = RP.FTMO_ALL if args.market == "ftmo" else SYMBOLS
+        universe = U.SYMBOLS if args.market == "ftmo" else SYMBOLS
         if args.symbols:
             universe = [x for x in universe if x in args.symbols.split(",")]
         for i, s in enumerate(["DEMO1", "DEMO2"] if args.demo else universe):
@@ -86,8 +92,21 @@ def main():
                 missing.add(s)
                 continue
             if df is None or df.empty:
+                print(f"  {s} {tf}: NO DATA (empty)")
+                missing.add(s)
                 continue
-            cost = 0.00005 if args.demo else RP.cost_of(s)
+            real = (not args.demo) and s in U.ALL       # FTMO's own costs, applied per trade below
+            cost = 0.00005 if args.demo else (0.0 if real else RP.cost_of(s))
+            if real and s not in SPREADS:
+                try:
+                    SPREADS[s] = P.spread_1m(s, (SPLIT - pd.Timedelta(days=7)).strftime("%Y-%m-%d"), args.end)
+                except config.TimeBudgetReached:
+                    raise
+                except Exception:  # noqa: BLE001
+                    ERRORS.append(f"spread {s}:\n{traceback.format_exc()}")
+                    SPREADS[s] = None
+                if SPREADS[s] is None or len(SPREADS[s]) == 0:
+                    SPREAD_EST.add(s)
             for sid in ids:
                 if args.respect_tf and not R.timeframe_ok(sid, tf):
                     continue
@@ -99,6 +118,8 @@ def main():
                 if t.empty:
                     NO_TRADES.append(f"{sid} {RP.TF_HE[tf]} {s}")
                     continue
+                if real:
+                    t = C.apply(t, s, SPREADS.get(s))
                 if events is not None:
                     bad = NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events)
                     t = t[~bad]
@@ -122,6 +143,7 @@ def main():
             _portfolio(args)
     except Exception:  # noqa: BLE001
         ERRORS.append(f"portfolio:\n{traceback.format_exc()}")
+    MISSING.update(missing)
     safe_report(results, args)
 
 
@@ -351,6 +373,18 @@ def export_trades(sid, tf, led):
     print(f"  exported {len(out)} trades -> {path.name}")
 
 
+def _data_html():
+    sp = []
+    for s, v in sorted(SPREADS.items()):
+        if v is not None and len(v):
+            sp.append(f"{html.escape(s)}: {float(v.median()):.6g}")
+    return ("<h2>נתונים ועלויות</h2><p class='mut'>עלויות לפי FTMO (ftmo.com/en/symbols): עמלה וסוויפ לכל נכס, "
+            "וספרד היסטורי של הדקה שבה נפתחה העסקה (Dukascopy, מחיר קנייה פחות מחיר מכירה).</p>"
+            f"<p>ספרד חציוני (ביחידות מחיר): {', '.join(sp) or '—'}</p>"
+            f"<p>ספרד משוער (אין היסטוריית קנייה/מכירה): {', '.join(sorted(SPREAD_EST)) or 'אין'}</p>"
+            f"<p>נכסים בלי נתונים: {', '.join(sorted(MISSING)) or 'אין'}</p>")
+
+
 def report(results, args):
     f2 = lambda v: "—" if v is None or (isinstance(v, float) and math.isnan(v)) else f"{v:+.2f}"
     rows = ""
@@ -390,6 +424,7 @@ th,td{{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;whit
 {_sweep_html(results)}
 <h2>הכללים שנבדקו</h2><ul>{doc}</ul>
 {body}
+{_data_html()}
 {"" if not ERRORS else "<h2>שגיאות בהרצה</h2><pre style='white-space:pre-wrap;font-size:12px'>" + html.escape(chr(10).join(ERRORS)) + "</pre>"}
 <p class="mut">פרמטרים שהמחבר לא פרסם הושלמו בהנחות מקובלות, כמפורט בתיאור של כל אסטרטגיה. זה כלי מחקר, לא ייעוץ השקעות.</p>
 </main></body></html>"""

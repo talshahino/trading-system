@@ -31,7 +31,7 @@ permissions:
   contents: write   # to save the reports back into the repository
 
 concurrency:
-  group: backtest
+  group: backtest-${{ inputs.timeframes }}
   cancel-in-progress: false
 
 jobs:

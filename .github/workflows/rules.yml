@@ -26,6 +26,9 @@ on:
       timeframes:
         description: "Comma separated subset of 1Min,5Min,15Min,1Hour,4Hour. Empty = all"
         default: ""
+      test_from:
+        description: "Judge every combo directly from this date (YYYY-MM-DD), no selection period. Empty = old split"
+        default: ""
 
 permissions:
   contents: write   # to save the reports back into the repository
@@ -115,7 +118,7 @@ jobs:
           if [ "${{ inputs.demo }}" = "true" ]; then
             python -u run_rules.py --demo 2>&1 | tee run.log
           else
-            python -u run_rules.py --market "${{ inputs.market }}" --export "TV01:4Hour,TV02:4Hour,TV04:4Hour,TV09:1Hour,TV09:4Hour" --start "${{ inputs.start }}" --end "$END" --timeframes "${{ inputs.timeframes }}" 2>&1 | tee run.log
+            python -u run_rules.py --market "${{ inputs.market }}" --export "TV01:4Hour,TV02:4Hour,TV04:4Hour,TV09:1Hour,TV09:4Hour" --start "${{ inputs.start }}" --end "$END" --timeframes "${{ inputs.timeframes }}" --test-from "${{ inputs.test_from }}" 2>&1 | tee run.log
           fi
 
       - name: Save data cache

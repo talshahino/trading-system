@@ -38,6 +38,7 @@ PORTFOLIO = {}
 ERRORS = []   # tracebacks of strategies that crashed; shown at the end of the report
 TIMEFRAMES = RP.TIMEFRAMES + ["4Hour"]
 SPLIT, SPLIT_HE = RP.SPLIT, RP.SPLIT_HE
+TEST_FROM_MODE = [False]
 
 
 def main():
@@ -53,7 +54,14 @@ def main():
     ap.add_argument("--timeframes", default="", help="comma separated subset of 1Min,5Min,15Min,1Hour,4Hour (empty = all)")
     ap.add_argument("--respect-tf", action="store_true",
                     help="only run a strategy on the timeframes its source states (default: every timeframe)")
+    ap.add_argument("--test-from", default="",
+                    help="YYYY-MM-DD: judge every (strategy, timeframe, instrument) directly from this date, no earlier selection period")
     args = ap.parse_args()
+    global SPLIT, SPLIT_HE
+    if args.test_from:
+        SPLIT = pd.Timestamp(args.test_from, tz="UTC")
+        SPLIT_HE = SPLIT.strftime("%d.%m.%Y")
+        TEST_FROM_MODE[0] = True
     ids = [x for x in args.only.split(",") if x] or list(R.STRATEGIES)
     events = None
     if not args.demo:
@@ -137,16 +145,23 @@ def _per_symbol(sid, tf, parts, split, args):
         sym = t["symbol"].iloc[0]
         before, after = t[t["time"] < split], t[t["time"] >= split]
         b = RP.stats(before["r"])
-        if not (b["trades"] >= SEL_MIN_TRADES and b["avg_r"] >= SEL_MIN_AVG_R and (b["t"] or 0) >= SEL_MIN_T):
-            continue
         a = RP.stats(after["r"])
+        if args.test_from:
+            # no selection period: every combo is judged on the test window. Only skip combos that cannot pass:
+            # too few trades for 8 rolling samples / 4 trading days, or a net loss over the whole window.
+            if a["trades"] < 10 or after["r"].sum() <= 0:
+                continue
+        elif not (b["trades"] >= SEL_MIN_TRADES and b["avg_r"] >= SEL_MIN_AVG_R and (b["t"] or 0) >= SEL_MIN_T):
+            continue
         row = {"sid": sid, "tf": tf, "symbol": sym, "before": b, "after": a, "tests": {}}
         if len(after) >= 5:
-            SELECTED_AFTER.append(after.assign(combo=f"{sid}|{tf}|{sym}"))
             for rk in PER_SYMBOL_RISKS:
                 w2 = F.account_path(after, rk, start=split)
                 led = w2[0].attrs.get("ledger") if len(w2[0]) else None
                 row["tests"][rk] = {"account": w2, "prophet": prophet_check(led, args) if led is not None else None}
+            passed = any(x["prophet"] and x["prophet"]["verdict"]["verdict"] == "PASS" for x in row["tests"].values())
+            if passed or not args.test_from:
+                SELECTED_AFTER.append(after.assign(combo=f"{sid}|{tf}|{sym}"))
         PER_SYMBOL.append(row)
 
 
@@ -192,6 +207,12 @@ def _per_symbol_html():
                 f"{pa['trades']:,} עסקאות, ממוצע {pa['avg_r']:+.2f}R</p><div class='tw'><table><tr><th>סיכון</th><th>חשבון $100K</th>"
                 f"<th>Trading Prophet</th></tr>{prow}</table></div>")
     n_ok = sum(1 for r in PER_SYMBOL if best(r))
+    if TEST_FROM_MODE[0]:
+        return (f"<h2>התאמה לנכס ולגרף</h2><p class='mut'>בלי תקופת בחירה: כל שילוב של אסטרטגיה, גרף ונכס נבדק ישירות ב־Trading Prophet "
+                f"מ־{SPLIT_HE}, לבד בחשבון משלו (דולגו רק שילובים עם פחות מ־10 עסקאות או הפסד נטו בתקופה). "
+                f"נבדקו {len(PER_SYMBOL)} שילובים, {n_ok} עברו. התיק המשולב כולל רק את מי שעבר.</p>{port}<div class='tw'><table><tr><th></th><th>#</th>"
+                f"<th>אסטרטגיה</th><th>גרף</th><th>נכס</th><th>לפני (עסקאות · ממוצע · t)</th><th>תקופת הבדיקה</th>"
+                f"<th>סיכון מקסימלי שעובר</th>{heads}</tr>{body}</table></div>")
     return (f"<h2>התאמה לנכס ולגרף</h2><p class='mut'>שלב 1 (בחירה, {SEL_MIN_TRADES}+ עסקאות, ממוצע ≥{SEL_MIN_AVG_R:+.2f}R, t≥{SEL_MIN_T}) "
             f"על התקופה שלפני {SPLIT_HE} בלבד. שלב 2: Trading Prophet על השנה האחרונה, כל שילוב לבד בחשבון משלו. "
             f"נבחרו {len(PER_SYMBOL)} שילובים, {n_ok} עברו את Prophet.</p>{port}<div class='tw'><table><tr><th></th><th>#</th>"

@@ -1,0 +1,163 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>TradingView Strategies</title>
+<style>:root{--bg:#f7f7f5;--fg:#1d1d1b;--mut:#6b6b66;--card:#fff;--line:#e3e3de}
+@media (prefers-color-scheme:dark){:root{--bg:#151514;--fg:#ececea;--mut:#9a9a94;--card:#1e1e1c;--line:#33332f}}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 system-ui,sans-serif}main{max-width:860px;margin:auto;padding:20px 16px 40px}
+.mut{color:var(--mut);font-size:13px}.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;background:var(--card);font-size:13px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}h3{margin-top:28px}li{margin:6px 0}</style></head><body><main>
+<h1>בקטסט · אסטרטגיות מ־TradingView</h1>
+<p class="mut">Dukascopy: 5 צמדי מט״ח, זהב, כסף ונפט · גרפים: דקה, 5, 15 דקות ושעה · הפרמטרים כפי שפורסמו, בלי חיפוש ובלי התאמה ·
+בלי עסקאות 5 דקות לפני ואחרי הודעות כלכליות חשובות · חשבון FTMO של $100,000 לכל אסטרטגיה מ־30.04.2025, נדגם כל שבוע, נעצר כשנשרף.</p>
+<h2>התאמה לנכס ולגרף</h2><p class='mut'>אף שילוב של אסטרטגיה, גרף ונכס לא עבר את סינון התקופה הקודמת.</p>
+<h2>שורה תחתונה</h2>
+<div class='tw'><table><tr><th>#</th><th>אסטרטגיה</th><th>גרף</th><th>עסקאות בשנה האחרונה</th><th>ממוצע R</th>
+<th>חשבון $100K מ־30.04.2025 (סיכון 1%)</th><th>שרד ורווחי</th><th>עובר אתגר 2-Step</th><th>Trading Prophet (הפסד צף דקה־דקה)</th><th>סיכון 0.75%: חשבון + Prophet</th></tr></table></div>
+
+<h2>הכללים שנבדקו</h2><ul><li><b>TV01</b> Gold Pro Strategy (zackseal): TV &#x27;Gold Pro Strategy&#x27; (zackseal): EMA50 vs EMA200 trend + price on that side of EMA200,
+    MACD(12,26,9) crossover, RSI(14) 50-70 for longs / 30-50 for shorts. Stop 3 ATR(14),
+    trailing. No fixed target.</li><li><b>TV02</b> AsliGold DCH10 breakout: TV &#x27;AsliGold XAUUSD DCH10 Trend Breakout&#x27;: close crosses above the previous 10-bar high,
+    ADX(14) &gt; 20, long only. ATR(14) stop and target (multipliers not published: 2 / 4
+    assumed), time stop (20 bars assumed).</li><li><b>TV03</b> Golden Master v1 (EMA200 + MACD): TV &#x27;Golden Master Strategy v1&#x27;: close above EMA200, MACD(12,26,9) crosses above signal
+    below zero, histogram rising. Stop = lowest low of the last 4 bars, target 1:3,
+    break-even at 50% of the target. Long only.</li><li><b>TV04</b> Golden Edge Pro (MACD hist + volume): TV &#x27;Golden Edge Pro&#x27;: MACD(16,26,9) histogram crosses above 0, EMA6(vol) &gt; EMA8(vol),
+    volume &gt; 50% of the previous bar. Target ATR(14) x 2 (not published, assumed); stop not
+    published (1.5 ATR assumed); break-even at 69% of target -&gt; entry + 0.48%. Long only.</li><li><b>TV05</b> control Scalper (UT Bot + ADX/RSI): TV &#x27;control Scalper&#x27;: UT Bot signals (key 1, ATR 10 - common defaults, not published),
+    only when ADX(14) is between 16 and 20, RSI(14) &gt; 55 for longs / &lt; 45 for shorts. Exit on
+    the opposite signal; the UT trailing line is the stop.</li><li><b>TV06</b> Supertrend 10/3: TV classic &#x27;Supertrend Strategy&#x27; (ATR 10, factor 3): long on an up flip, short on a down
+    flip, always in the market (exit = opposite flip); stop = 3 ATR as the risk unit.</li><li><b>TV07</b> London breakout (Asian range): London breakout (classic forex): the Asian range is 00:00-07:00 UTC. From 07:00 to
+    10:00 UTC, a close above the range high buys / below the low sells (first break only).
+    Stop at the other side of the range, target 1.5R, everything closed at 16:00 UTC.</li><li><b>TV08</b> Bollinger + RSI mean reversion: Bollinger mean reversion: close below the lower band (20, 2) with RSI(14) &lt; 30 buys,
+    above the upper band with RSI &gt; 70 sells; exit when price returns to the middle band.
+    Stop 2 ATR(14).</li><li><b>TV09</b> Connors RSI(2): Connors RSI(2): above SMA200 buy when RSI(2) &lt; 10, exit when close &gt; SMA5; below
+    SMA200 sell when RSI(2) &gt; 90, exit when close &lt; SMA5. Stop 3 ATR(14) (Connors uses none).</li><li><b>TV10</b> ICT Fair Value Gap: ICT Fair Value Gap: a bullish gap = low of bar i above high of bar i-2 after a strong
+    bar. Within the next 20 bars, when price dips into the gap and the bar closes back above
+    its bottom, buy at the next open. Stop just below the gap, target 2R. Mirror for sells.</li><li><b>TV11</b> Liquidity sweep of previous day: Liquidity sweep reversal (SMC): price trades beyond the previous day&#x27;s high/low and the
+    bar closes back inside -&gt; fade it. Stop beyond the sweep&#x27;s extreme, target 2R.</li><li><b>TV12</b> Daily pivot bounce S1/R1: Daily floor pivots: P = (H+L+C)/3 of the previous day, S1 = 2P-H, R1 = 2P-L. Price
+    dips below S1 and closes back above -&gt; buy, target P; mirror at R1. Stop half the
+    S1-P distance beyond S1 (R1).</li><li><b>TT01</b> First 4H candle false breakout (TikTok): TT01 First 4H candle false breakout (@tradingdata2). New York time. Range = high/low
+    of the day&#x27;s first 4H candle (assumed 00:00-04:00 NY), usable once it has closed and
+    until the NY day ends. On the 5-minute chart: a candle BODY closes outside the range,
+    then a candle closes back inside -&gt; fade it (broke up = short, broke down = long).
+    Stop at the extreme of the breakout move, target 2R. Several trades per day allowed.
+    Not modelled: moving the stop to a &#x27;nearer key level&#x27; when the breakout is very wide.</li><li><b>TT02</b> Type 1 dealing range 25% + FVG (TikTok): TT02 Type 1 dealing range (@ali_khanict). False breakout below a 20-bar consolidation
+    (close back inside within 3 bars), then expansion above the consolidation high. Dealing
+    range = false-break low to expansion high. Buy when price retraces to the 25% level and
+    that level sits inside a bullish fair value gap of the expansion. Targets in the video:
+    50% level and range high -&gt; modelled as target = range high with the stop moved to
+    break-even at the 50% level. Stop below the range low (not stated; assumed). Mirror for
+    shorts (assumed).</li><li><b>TT03</b> ICT sweep+POI+IFVG+CISD (TikTok): TT03 Sweep + HTF POI + IFVG + CISD (@alawadtrd). All four, in order (short shown,
+    long mirrored): (1) price sweeps a major high (above the 20-bar high); (2) the sweep
+    trades into a bearish 15-minute FVG (higher-timeframe point of interest); (3) a bullish
+    FVG on the entry chart is then closed through (it inverts = IFVG); (4) CISD: a close below
+    the open of the latest run of up-candles. Enter on the CISD close, stop above the IFVG
+    top, target 2R (stated 1:2). Window: 40 bars after the sweep (assumed).</li><li><b>TT04</b> Cup and handle breakout (TikTok): TT04 Cup and handle (@smart.forex.pips). Edge = a swing high (5 bars each side). Price
+    falls at least 2 ATR, bottoms, and comes back to within 0.25 x depth of the edge within
+    20-150 bars (the cup; bottom in the middle 60% of the cup = &#x27;rounded&#x27;, assumed). Then a
+    pullback under the edge no deeper than half the cup (the handle). Entry: a candle closes
+    above the edge. Stop under the handle low. Target = edge + cup depth. Long only (as in
+    the video).</li><li><b>TT11</b> NY 9:30 opening range breakout 15m, 2.5R (TikTok): TT11 NY opening-range breakout, 15 minutes (@_itskinglouis, NAS100). Mark the high/low
+    of the 9:30 New York 15-minute candle. First full candle close above (below) the range -&gt;
+    enter at the next candle. Stop below (above) the recent low (high) = extreme of the last 3
+    candles (assumed). Target 2.5R. One trade per day; only until 16:00 NY (assumed).</li><li><b>TT12</b> Fibonacci golden zone pullback 5m (TikTok): TT12 Fibonacci golden zone pullback, 5 minutes (@il.gufo.notturno). Trend up when price
+    breaks the recent swing high (20-bar high). Fib from the swing low before the break to the
+    new high. When price pulls back into 0.618-0.79 and a bullish candle closes there, buy.
+    Stop just below the 0.79 level (stated), target 1:2 (stated). Mirror for downtrends.</li><li><b>TT13</b> Opening range break and retest 5m (TikTok): TT13 Opening range breakout and retest, 5 minutes (@thecrypteller, also @cyforex2).
+    Range = first 5-minute candle after the 9:30 NY open. Wait for a close beyond the range,
+    then the first candle that taps the broken level and closes back on the breakout side -&gt;
+    enter in the breakout direction. Stop beyond the other side of the range. Target 2R.
+    One trade per day.</li><li><b>TT16</b> Previous NY session high/low fade, 4R (TikTok): TT16 Previous New York session high/low fade (@forextristan, US30). Mark yesterday&#x27;s
+    NY session (9:30-16:00 NY) high and low. Today, during the NY session, the first touch of
+    either level is faded: short at the high, long at the low. Stop slightly beyond the level
+    (0.1 ATR, assumed). Target 4R (stated).</li><li><b>TT19</b> 15m candle range sweep on 1m (TikTok): TT19 15-minute candle range sweep, executed on 1 minute (@protradingschool0). Range =
+    the previous completed 15-minute candle. On the 1-minute chart, price breaks the range and
+    a candle closes back inside -&gt; enter at that close, against the break. Stop beyond the
+    sweep&#x27;s extreme. Target: &#x27;next key level&#x27; in the video -&gt; 2R assumed.</li><li><b>TT35</b> London 1H opening candle sweep + FVG (TikTok): TT35 London opening 1-hour candle range (@wesleytfxc, @primeswingtrader). Range = the
+    08:00-09:00 London candle. A wick through one side (the body back inside) -&gt; on the lower
+    timeframe enter at the first fair value gap retest in the reversal direction. Stop just
+    beyond the FVG, target the opposite end of the 1-hour candle. Window until 12:00 London
+    (assumed).</li><li><b>TT36</b> London Twilight Model 2AM range (TikTok): TT36 &#x27;London Twilight Model&#x27; (@massimotsr, 5 videos). Range = the 2:00 AM New York 1-hour
+    candle. Sweep of its high (low), then on 1 minute an inverted FVG / order block in the
+    reversal direction -&gt; enter. Stop at the swing extreme of the sweep, target the opposite
+    end of the 2 AM range. Window 03:00-08:00 NY (assumed). The optional higher-timeframe key
+    level tap is not modelled.</li><li><b>TT39</b> ICT Silver Bullet 10-11 NY (TikTok): TT39 ICT Silver Bullet (@blosefx, @fluxchart, @the.trading.geek1). Only 10:00-11:00 NY.
+    A sweep of the prior 60-bar high (low), then an FVG in the reversal direction forms and is
+    retested -&gt; enter. Stop beyond the sweep extreme (@solidtrader85&#x27;s correction), target 2R
+    (stated minimum).</li><li><b>TT40</b> Opening range + VWAP filter, 1:3 (TikTok): TT40 Opening range + VWAP (@horiizonfx, gold). Range 15:00-15:30 Paris = 09:00-09:30 NY.
+    A close beyond it counts only if the session VWAP (from NY midnight) is on the other side of
+    price (break down -&gt; VWAP above). Wait for a retest of the broken edge that closes back
+    outside -&gt; enter. Stop just beyond the VWAP, target 1:3. One trade per day.</li><li><b>TT41</b> NY 8AM 15m candle break and retest, 1:3 (TikTok): TT41 New York 8:00 AM 15-minute candle break and retest (@rp_profits). Zone = the 08:00
+    ET 15-minute candle. From 09:00 ET the first close beyond the zone sets the direction; the
+    retest of the zone that closes back on the breakout side is the entry. Stop slightly beyond
+    the other side of the zone, target 1:3 (stated). One trade per day, until 12:00 ET.</li><li><b>TT45</b> EMA 9/21 crossover 1H, 1:2 (TikTok): TT45 EMA 9/21 crossover on 1 hour (@whitehattraders27). Bullish cross buys, bearish cross
+    sells. Stop below/above the recent swing (lowest/highest of 10 bars, assumed). Target 1:2.</li><li><b>TT56</b> Break and retest of swing level, 2:1 (TikTok): TT56 Break and retest of a swing level (@user1239509627, @tarzantrader, @realnolanivey,
+    @wchampfx, @savvybtrades). Level = the 20-bar high (low). A close through it, then within 10
+    bars a retest that touches the level and closes back on the breakout side -&gt; enter. Stop
+    beyond the retested level (0.3 ATR, assumed), target 2:1 (stated by @realnolanivey).</li><li><b>YT01</b> Opening range false-breakout fade, 2R (YouTube): YT01 Opening-range false-breakout fade (YouTube 5a8mNmb9VzM, NQ/ES). Range = the first
+    bar after 9:30 NY (the video uses a 30-second candle; 1-minute substitute here). Price
+    trades beyond the range and a candle closes back inside -&gt; enter against the breakout at
+    that close. Stop at the extreme of the failed breakout, target 2R, one trade per day, flat
+    at 11:00 NY (assumed). The video&#x27;s break-even after one hour is not modelled.</li><li><b>YT03</b> Supply/demand zone first retest (YouTube): YT03 Supply/demand zone, first retest (YouTube LpeThhwHiGA). Impulse = 3 same-direction
+    candles moving &gt; 1.5 ATR, or one candle with body &gt; 1.5 ATR. Zone = the last opposite-colour
+    candle before the impulse. First return to the zone within 100 bars -&gt; enter. Stop beyond
+    the zone wick, target the swing extreme from which the return began. Skip when reward/risk
+    &lt; 1.5 (assumed thresholds as listed).</li><li><b>TV13</b> Turtle System 1 (20/10 breakout): Turtle System 1 (Dennis/Faith): close above the 20-bar high buys, below the 20-bar low
+    sells. Stop 2N (N = ATR20). Exit on the opposite 10-bar breakout. No target.</li><li><b>TV14</b> Turtle System 2 (55/20 breakout): Turtle System 2: 55-bar breakout entries, stop 2N, exit on the opposite 20-bar breakout.</li><li><b>TV15</b> Keltner channel breakout + ATR trail: Keltner channel breakout (Chester Keltner / Linda Raschke version): close above
+    EMA20 + 2 x ATR10 buys, below EMA20 - 2 x ATR10 sells. Stop 2 ATR, ATR trailing stop 3 ATR.</li><li><b>TV16</b> Golden cross 50/200 + ATR trail: 50/200 moving-average trend (golden/death cross): SMA50 crossing above SMA200 buys,
+    below sells. Stop 3 ATR, ATR trailing stop 3 ATR, reverse on the opposite cross.</li><li><b>TV17</b> Bollinger squeeze breakout: Bollinger squeeze breakout (John Bollinger): band width (20, 2) at its lowest of the last
+    120 bars marks a squeeze; within the next 10 bars a close outside the band enters in that
+    direction. Stop 2 ATR, ATR trailing stop 2.5 ATR.</li><li><b>TV18</b> Inside-bar breakout, 2R: Inside-bar breakout: bar i-1 is inside bar i-2 (the mother bar); a close above the mother
+    high buys, below the mother low sells. Stop at the other side of the mother bar, target 2R.</li><li><b>TV19</b> RSI trend pullback (EMA50/200), 3R: Trend pullback with RSI (Andrew Cardwell style): uptrend when EMA50 &gt; EMA200; RSI(14)
+    dips under 40 and crosses back above 40 -&gt; buy (mirror at 60 in downtrends). Stop 2 ATR,
+    target 3R.</li><li><b>TV20</b> Ichimoku TK cross above/below cloud: Ichimoku (Hosoda, 9/26/52): Tenkan crosses above Kijun while price is above the cloud -&gt;
+    buy (mirror below). Stop at Kijun (assumed via level), ATR trail 3, exit when price closes
+    back inside/through the cloud.</li><li><b>TV21</b> Parabolic SAR + EMA200: Parabolic SAR (Wilder, 0.02/0.2) with EMA200 filter: SAR flips below price while price is
+    above EMA200 -&gt; buy (mirror). Stop trails on the SAR line.</li><li><b>TV22</b> MACD zero-line cross + EMA200, 2R: MACD (12/26/9) zero-line trend: MACD line crosses above zero with price above EMA200 -&gt;
+    buy (mirror). Stop 2 ATR, target 2R.</li><li><b>TV23</b> Triple EMA 8/21/55 pullback, 2R: Triple EMA 8/21/55 stack: EMAs aligned (8&gt;21&gt;55), price dips to the 21 EMA and closes back
+    above the 8 EMA -&gt; buy (mirror). Stop below the 55 EMA (level), target 2R.</li><li><b>TV24</b> ADX&gt;25 DI cross + ATR trail: ADX/DI (Wilder): +DI crosses above -DI with ADX(14) &gt; 25 -&gt; buy (mirror). Stop 2 ATR,
+    ATR trail 3.</li><li><b>TV25</b> Heikin-Ashi trend + EMA50: Heikin-Ashi trend: first green HA candle with no lower wick, above EMA50 -&gt; buy (mirror:
+    red, no upper wick, below EMA50). Exit on the first opposite-colour HA candle. Stop 2 ATR.</li><li><b>TV26</b> NR7 breakout, 2R: NR7 breakout (Toby Crabel): the bar with the narrowest range of the last 7; a close above
+    its high on the next bar buys, below its low sells. Stop at the other side of the NR7 bar,
+    target 2R.</li><li><b>TV27</b> Previous-day high/low breakout, 2R: Previous-day high/low breakout: first close above yesterday&#x27;s high buys, below
+    yesterday&#x27;s low sells (once per day each). Stop at yesterday&#x27;s midpoint, target 2R.</li><li><b>TV28</b> Stochastic pullback in trend, 2R: Stochastic pullback in trend (Lane, 14/3/3): uptrend (close &gt; EMA200), %K crosses above %D
+    below 20 -&gt; buy (mirror above 80 in downtrend). Stop 1.5 ATR, target 2R.</li><li><b>TV29</b> Z-score mean reversion: Z-score mean reversion: z = (close - SMA20) / stdev20. z &lt; -2 buys, z &gt; 2 sells; exit
+    back at the mean (z crosses 0). Stop 2.5 ATR.</li><li><b>TV30</b> IBS mean reversion (long only): Internal Bar Strength (index mean reversion): IBS = (close - low) / (high - low).
+    IBS &lt; 0.2 with close above SMA200 buys; exit when IBS &gt; 0.8 or at a 2.5 ATR stop. Long only.</li><li><b>TV31</b> Engulfing at 20-bar extreme, 2R: Engulfing at a swing extreme: bullish engulfing whose low is the lowest of 20 bars -&gt;
+    buy (mirror at a 20-bar high). Stop beyond the pattern, target 2R.</li><li><b>TV32</b> Previous-week high/low breakout, 2R: Previous-week high/low breakout: first close above last week&#x27;s high buys, below last
+    week&#x27;s low sells (once per week each). Stop at last week&#x27;s midpoint, target 2R.</li><li><b>TV33</b> Keltner fade to the mean: Keltner fade: a close back inside EMA20 +/- 2.5 ATR after closing outside -&gt; fade toward
+    the EMA (exit at the EMA). Stop 1.5 ATR.</li><li><b>TV34</b> Hull MA 55 turn + EMA200, 2R: Hull moving average (Alan Hull, 55) turning up with price above EMA200 -&gt; buy (mirror).
+    Stop 2 ATR, target 2R.</li><li><b>TV35</b> Williams %R pullback in trend, 2R: Williams %R (14) pullback in trend: close &gt; EMA100 and %R rises back above -80 -&gt; buy
+    (mirror below -20 in downtrends). Stop 1.5 ATR, target 2R.</li><li><b>TV36</b> EMA20 bounce in strong trend, 2R: EMA20 bounce in a strong trend: EMA20 &gt; EMA50 and both rising, the bar touches EMA20 and
+    closes above it as a bullish candle -&gt; buy (mirror). Stop below the bar low - 0.5 ATR, 2R.</li><li><b>TV37</b> Three-bar reversal at 20-bar extreme, 2R: Three-bar reversal at a 20-bar extreme: bar i-1 makes the lowest low of 20 bars and bar i
+    closes above the high of bar i-1 -&gt; buy (mirror). Stop below bar i-1&#x27;s low, target 2R.</li><li><b>TV38</b> Donchian 10 fade + RSI(2) (Connors): Donchian extreme fade (Connors style): close at a new 10-bar low with RSI(2) &lt; 5 and
+    close above SMA200 -&gt; buy; mirror. Exit when close crosses the 5-bar SMA. Stop 2.5 ATR.</li><li><b>TV39</b> Chandelier exit trend (LeBeau): Chandelier exit trend (Chuck LeBeau): long line = 22-bar highest high - 3 ATR22, short
+    line = 22-bar lowest low + 3 ATR22. Close crossing above the short line buys (trend flips up),
+    below the long line sells. Stop trails on the chandelier line.</li><li><b>TV40</b> ROC(20) momentum + rising ADX: ROC momentum with ADX: ROC(20) crosses above 0 while ADX(14) &gt; 20 and rising -&gt; buy
+    (mirror). Stop 2 ATR, ATR trail 3.</li><li><b>TV41</b> Aroon 25 cross, 2R: Aroon (Chande, 25): Aroon Up crosses above Aroon Down with Aroon Up &gt; 70 -&gt; buy (mirror).
+    Stop 2 ATR, target 2R.</li><li><b>TV42</b> CCI(20) +/-100 trend: CCI(20) trend (Lambert): CCI crosses above +100 buys, below -100 sells; exit when CCI
+    crosses back through 0. Stop 2 ATR.</li><li><b>TV43</b> Donchian 20 + ADX&gt;25: Donchian 20 breakout filtered by ADX(14) &gt; 25. Stop 2 ATR, exit on the opposite
+    10-bar breakout.</li><li><b>TV44</b> Pin bar at 20-bar extreme, 2R: Pin bar at a 20-bar extreme: lower wick &gt;= 2/3 of the range and the low is the 20-bar low
+    -&gt; buy (mirror for upper wick at the high). Stop beyond the wick, target 2R.</li><li><b>TV45</b> Vortex 14 cross + ATR trail: Vortex indicator (Botes/Siepman, 14): VI+ crosses above VI- buys (mirror). Stop 2 ATR,
+    ATR trail 3.</li><li><b>TV46</b> TRIX 15/9 cross + EMA200, 2R: TRIX (Hutson, 15) crosses its 9-signal: above buys (mirror), only with price on the same
+    side of EMA200. Stop 2 ATR, target 2R.</li><li><b>TV47</b> Elder impulse system: Elder impulse system: EMA13 rising and MACD histogram rising = green bar; the first green
+    bar after a non-green one buys (mirror red). Exit when the impulse turns the other colour.
+    Stop 2 ATR.</li><li><b>TV48</b> Turn-of-month long, 2R: Turn-of-month (Ariel 1987; Lakonishok &amp; Smidt): long indices from the last 2 trading days
+    of the month; stop 2 ATR, target 2R (no time exit). Long only; applies to any instrument.</li><li><b>TV49</b> TV04 Golden Edge, target 1.5R (variant): </li><li><b>TV50</b> TV04 Golden Edge, target 3R (variant): </li><li><b>TV51</b> TV14 Turtle 55/20 + 3R target (variant): Variant of s_turtle_55 with target 3.0R. Turtle System 2: 55-bar breakout entries, stop 2N, exit on the opposite 20-bar breakout.</li><li><b>TV52</b> TV25 Heikin-Ashi + 2R target (variant): Variant of s_heikin_ashi with target 2.0R. Heikin-Ashi trend: first green HA candle with no lower wick, above EMA50 -&gt; buy (mirror:
+    red, no upper wick, below EMA50). Exit on the first opposite-colour HA candle. Stop 2 ATR.</li><li><b>TV53</b> TV25 Heikin-Ashi + 3R target (variant): Variant of s_heikin_ashi with target 3.0R. Heikin-Ashi trend: first green HA candle with no lower wick, above EMA50 -&gt; buy (mirror:
+    red, no upper wick, below EMA50). Exit on the first opposite-colour HA candle. Stop 2 ATR.</li><li><b>TV54</b> TV28 Stochastic pullback, 1.5R (variant): Variant of s_stoch_pullback with target 1.5R. Stochastic pullback in trend (Lane, 14/3/3): uptrend (close &gt; EMA200), %K crosses above %D
+    below 20 -&gt; buy (mirror above 80 in downtrend). Stop 1.5 ATR, target 2R.</li><li><b>TV55</b> TV28 Stochastic pullback, 3R (variant): Variant of s_stoch_pullback with target 3.0R. Stochastic pullback in trend (Lane, 14/3/3): uptrend (close &gt; EMA200), %K crosses above %D
+    below 20 -&gt; buy (mirror above 80 in downtrend). Stop 1.5 ATR, target 2R.</li><li><b>TV56</b> ATR envelope fade to SMA20: Moving-average envelope fade: close below SMA20 x (1 - 2.5 x ATR%) ... implemented as
+    SMA20 -/+ 3% of price scaled by volatility: close outside SMA20 +/- 2.5 x ATR14 then back
+    inside -&gt; fade; exit at SMA20. Stop 1.5 ATR. (Envelope with ATR width instead of fixed %.)</li><li><b>TV57</b> Double bottom/top neckline break: Double bottom/top neckline break: two swing lows (5-bar pivots) within 0.5 ATR of each
+    other, 10-60 bars apart; a close above the highest high between them (neckline) buys.
+    Stop below the lower bottom, target = neckline + pattern height. Mirror for tops.</li><li><b>TV58</b> KST cross + EMA200, 2R: Know Sure Thing (Pring): KST crosses its 9-SMA signal -&gt; trade in that direction, with price
+    on the same side of EMA200. Stop 2 ATR, target 2R.</li><li><b>TV59</b> Bollinger band walk (trend): Bollinger band walk (trend): two consecutive closes above the upper band (20, 2) buy, two
+    below the lower band sell. Exit on a close back through the middle band. Stop 2 ATR.</li><li><b>TV60</b> RSI 50 cross with EMA200 trend, 2R: RSI(14) crossing 50 in the direction of the EMA200 trend: up-cross above 50 with close &gt;
+    EMA200 buys (mirror). Stop 1.5 ATR, target 2R.</li><li><b>TV61</b> Volatility expansion bar continuation, 2R: Volatility expansion bar continuation: a bar with range &gt; 2 x ATR14 closing in its top
+    quarter buys at the next open (mirror: bottom quarter sells). Stop at the bar&#x27;s midpoint,
+    target 2R.</li><li><b>TV62</b> EMA ribbon 10-60 stack + ATR trail: EMA ribbon (10/20/30/40/50/60): the first bar on which all six are stacked in order buys
+    (mirror). Exit when the 10 crosses the 30 the other way. Stop 2 ATR, ATR trail 3.</li></ul>
+
+<h2>נתונים ועלויות</h2><p class='mut'>עלויות לפי FTMO (ftmo.com/en/symbols): עמלה וסוויפ לכל נכס, וספרד היסטורי של הדקה שבה נפתחה העסקה (Dukascopy, מחיר קנייה פחות מחיר מכירה).</p><p>ספרד חציוני (ביחידות מחיר): AIRF: 0.06, BA: 0.138, DIS: 0.046, GBPJPY: 0.018, IBM: 0.178, MCD: 0.148, NVDA: 0.026, SNOW: 0.356, US2000: 0.36, WTI: 0.05</p><p>ספרד משוער (אין היסטוריית קנייה/מכירה): אין</p><p>נכסים בלי נתונים: אין</p>
+
+<p class="mut">פרמטרים שהמחבר לא פרסם הושלמו בהנחות מקובלות, כמפורט בתיאור של כל אסטרטגיה. זה כלי מחקר, לא ייעוץ השקעות.</p>
+</main></body></html>

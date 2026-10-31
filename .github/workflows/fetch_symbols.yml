@@ -1,0 +1,22 @@
+name: Fetch FTMO symbols page
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download page
+        run: |
+          mkdir -p data/ftmo_symbols
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36"
+          curl -sSL -A "$UA" -o data/ftmo_symbols/symbols_en.html -w "%{http_code} %{size_download}\n" https://ftmo.com/en/symbols/ | tee data/ftmo_symbols/status.txt
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ftmo_symbols
+          git commit -m "FTMO symbols page snapshot" || true
+          git pull --rebase && git push

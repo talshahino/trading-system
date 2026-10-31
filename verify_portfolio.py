@@ -7,7 +7,9 @@ replayed minute by minute (floating loss on equity). Writes output/report_portfo
 import argparse
 import html
 import json
+import sys
 import types
+from pathlib import Path
 
 import pandas as pd
 
@@ -18,6 +20,10 @@ import run_poc as RP
 import run_rules as RR
 
 F.MAX_OPEN = 99            # the portfolio robot caps by risk, not by a count of 3
+sys.path.insert(0, str(Path(__file__).parent / "skills" / "trading-prophet" / "scripts"))
+import ftmo_sim  # noqa: E402
+
+ftmo_sim.CLOSE_ALL_AT_TARGET = True   # the robot closes all positions when equity hits the target
 
 
 def main():
@@ -36,7 +42,7 @@ def main():
         names = [c["combo"] for c in p["combos"]]
         tr = t[t["combo"].isin(names)].sort_values("time").reset_index(drop=True)
         res = {}
-        for rk in sorted({p["risk"], 0.005, 0.0075, 0.01, 0.0025}):
+        for rk in sorted({p["risk"], 0.0025, 0.0035, 0.005, 0.006, 0.0075, 0.01}):
             w = F.account_path(tr, rk, start=RR.SPLIT)
             led = w[0].attrs.get("ledger") if len(w[0]) else None
             res[rk] = (w, RR.prophet_check(led, ns) if led is not None else None)
@@ -60,7 +66,7 @@ def main():
             f".mut{{color:#666}}.tw{{overflow-x:auto;margin:8px 0}}</style></head><body><h1>תיקי צירופים ל־FTMO</h1>"
             f"<p class='mut'>כל הצירופים של תיק סוחרים יחד בחשבון $100K אחד מ־{args.test_from}, כל אחד רק בנכס ובגרף שלו. "
             f"בחיפוש: היום הגרוע לא מתחת ל־{PS.DAILY_CAP:.0%}- והיתרה לא מתחת ל־{1 - PS.MAX_DD:.0%}. "
-            f"הבדיקה כאן: Trading Prophet עם ההפסד הצף דקה אחרי דקה, ושומר המגבלות של הבוט פעיל.</p>"
+            f"הבדיקה כאן: Trading Prophet עם ההפסד הצף דקה אחרי דקה, ושומר המגבלות של הבוט פעיל. כשההון מגיע ליעד השלב, הרובוט סוגר את כל העסקאות הפתוחות.</p>"
             + "".join(blocks) + "</body></html>")
     (config.OUTPUT_DIR / "report_portfolios.html").write_text(page, encoding="utf-8")
 

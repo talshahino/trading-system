@@ -62,6 +62,11 @@ class ChallengeResult:
         return (self.phases[-1].end - self.start).total_seconds() / 86400
 
 
+# A multi-strategy robot is rarely flat, so it closes everything once equity reaches the target
+# (counted on the minute's worst equity, so the closing balance is at least the target).
+CLOSE_ALL_AT_TARGET = False
+
+
 class Simulator:
     def __init__(self, series: EquitySeries, rules: dict, scale_mode: str = "relative"):
         self.s = series
@@ -132,6 +137,9 @@ class Simulator:
             if max_cal and (pt.ts - start_ts).days > max_cal:
                 return result("timeout", i)
             if bal >= target and len(days) >= min_days and (pt.open_count == 0 or not need_flat):
+                return result("passed", i)
+            if CLOSE_ALL_AT_TARGET and eq >= target and len(days) >= min_days:
+                prev_bal = eq   # the robot closes every open position the minute equity reaches the target
                 return result("passed", i)
         return result("incomplete", len(pts) - 1)
 

@@ -1,0 +1,33 @@
+{
+ "name": "bot2",
+ "portfolio": 2,
+ "initial": 100000,
+ "risk": 0.0045,
+ "free_risk_at_breakeven": true,
+ "magic_base": 280000,
+ "combos": [
+  "TV02|1Hour|US30",
+  "TV13|15Min|TSLA",
+  "TV46|15Min|ASML",
+  "TV20|1Hour|XAGUSD",
+  "TV13|4Hour|USDCAD",
+  "TV02|1Hour|GBPJPY",
+  "TV56|4Hour|USDJPY",
+  "TV06|4Hour|XAUUSD",
+  "YT03|1Hour|NVDA",
+  "TT16|4Hour|JP225",
+  "TV56|4Hour|US2000",
+  "TV36|1Hour|ARM",
+  "TV36|4Hour|SIEGn",
+  "TV02|1Hour|WMT",
+  "TV55|15Min|GME",
+  "TV33|4Hour|US100",
+  "TV36|1Hour|QCOM",
+  "TT13|15Min|INTC",
+  "TV37|4Hour|GBPUSD",
+  "TT45|4Hour|XRP/USD",
+  "TV47|4Hour|WTI",
+  "TT56|1Hour|PLTR"
+ ],
+ "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target"
+}

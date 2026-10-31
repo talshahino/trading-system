@@ -389,13 +389,15 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
                 break
         if exit_px is None:
             exit_t = min(n - 1, e_t + (plan.get("max_bars") or 10**9) - 1)
-            exit_px, reason = c[exit_t], ("יציאת זמן" if plan.get("max_bars") else "סוף הנתונים")
+            timed = plan.get("max_bars") and e_t + plan["max_bars"] - 1 <= n - 1
+            exit_px, reason = c[exit_t], ("יציאת זמן" if timed else "סוף הנתונים")
         r_mult = d * (exit_px - e) / risk - 2 * cost_side * e / risk
         rows.append({"time": df.index[e_t], "exit_time": df.index[exit_t], "dir": d, "r": float(r_mult),
                      "held": int(exit_t - e_t), "entry_px": float(e), "exit_px": float(exit_px),
                      "stop_px": float(stop0), "target_px": float(target) if target is not None else np.nan,
                      "reason": reason,
-                     "free_time": df.index[free_t] if free_t is not None and free_t <= exit_t else pd.NaT})
+                     "free_time": df.index[free_t] if free_t is not None and free_t <= exit_t else pd.NaT,
+                     "stop_last": float(stop)})
         i = reverse_at if reverse_at is not None else max(exit_t, i + 1)
     return pd.DataFrame(rows)
 

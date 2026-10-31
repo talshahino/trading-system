@@ -32,6 +32,9 @@ on:
       symbols:
         description: "Comma separated instruments subset. Empty = all"
         default: ""
+      combos_file:
+        description: "Repo path of a sid|timeframe|symbol list: run only these, save their trades"
+        default: ""
       test_from:
         description: "Judge every combo directly from this date (YYYY-MM-DD), no selection period. Empty = old split"
         default: ""
@@ -40,7 +43,7 @@ permissions:
   contents: write   # to save the reports back into the repository
 
 concurrency:
-  group: backtest-${{ inputs.timeframes }}-${{ inputs.symbols }}-${{ inputs.only }}
+  group: backtest-${{ inputs.timeframes }}-${{ inputs.symbols }}-${{ inputs.only }}-${{ inputs.combos_file }}
   cancel-in-progress: false
 
 jobs:
@@ -124,7 +127,7 @@ jobs:
           if [ "${{ inputs.demo }}" = "true" ]; then
             python -u run_rules.py --demo 2>&1 | tee run.log
           else
-            python -u run_rules.py --market "${{ inputs.market }}" --export "TV01:4Hour,TV02:4Hour,TV04:4Hour,TV09:1Hour,TV09:4Hour" --start "${{ inputs.start }}" --end "$END" --timeframes "${{ inputs.timeframes }}" --test-from "${{ inputs.test_from }}" --symbols "${{ inputs.symbols }}" --only "${{ inputs.only }}" 2>&1 | tee run.log
+            python -u run_rules.py --market "${{ inputs.market }}" --export "TV01:4Hour,TV02:4Hour,TV04:4Hour,TV09:1Hour,TV09:4Hour" --start "${{ inputs.start }}" --end "$END" --timeframes "${{ inputs.timeframes }}" --test-from "${{ inputs.test_from }}" --symbols "${{ inputs.symbols }}" --only "${{ inputs.only }}" --combos-file "${{ inputs.combos_file }}" 2>&1 | tee run.log
           fi
 
       - name: Save data cache
@@ -151,6 +154,7 @@ jobs:
           mkdir -p "$DIR"
           cp output/report_*.html "$DIR"/
           cp output/trades_*.csv "$DIR"/ 2>/dev/null || true
+          cp output/combo_trades_*.csv.gz "$DIR"/ 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports

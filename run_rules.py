@@ -44,6 +44,7 @@ TEST_FROM_MODE = [False]
 SPREADS = {}     # historical 1-minute spread per instrument
 SPREAD_EST = set()   # instruments whose spread is estimated (no bid/ask history)
 NC.CURRENCIES.update(U.CURRENCIES)
+COMBO_TRADES = []
 MISSING = set()   # instruments with no history for a timeframe
 NO_TRADES = []   # strategy/timeframe/instrument that produced no trade at all, so nothing to judge
 
@@ -62,6 +63,8 @@ def main():
     ap.add_argument("--respect-tf", action="store_true",
                     help="only run a strategy on the timeframes its source states (default: every timeframe)")
     ap.add_argument("--symbols", default="", help="comma separated subset of the instrument universe (empty = all)")
+    ap.add_argument("--combos-file", default="",
+                    help="file with sid|timeframe|symbol lines: run only these and save their trades (no Prophet)")
     ap.add_argument("--test-from", default="",
                     help="YYYY-MM-DD: judge every (strategy, timeframe, instrument) directly from this date, no earlier selection period")
     args = ap.parse_args()
@@ -71,6 +74,10 @@ def main():
         SPLIT_HE = SPLIT.strftime("%d.%m.%Y")
         TEST_FROM_MODE[0] = True
     ids = [x for x in args.only.split(",") if x] or list(R.STRATEGIES)
+    combos = None
+    if args.combos_file:
+        combos = {tuple(l.strip().split("|")) for l in open(args.combos_file, encoding="utf-8") if l.strip()}
+        ids = sorted({c[0] for c in combos})
     events = None
     if not args.demo:
         events, real_end = NC.load()
@@ -81,6 +88,8 @@ def main():
         universe = U.SYMBOLS if args.market == "ftmo" else SYMBOLS
         if args.symbols:
             universe = [x for x in universe if x in args.symbols.split(",")]
+        if combos is not None:
+            universe = [x for x in universe if any(c[1] == tf and c[2] == x for c in combos)]
         for i, s in enumerate(["DEMO1", "DEMO2"] if args.demo else universe):
             st = max(args.start, RP.MINUTE_START) if tf.endswith("Min") else args.start
             try:
@@ -108,6 +117,8 @@ def main():
                 if SPREADS[s] is None or len(SPREADS[s]) == 0:
                     SPREAD_EST.add(s)
             for sid in ids:
+                if combos is not None and (sid, tf, s) not in combos:
+                    continue
                 if args.respect_tf and not R.timeframe_ok(sid, tf):
                     continue
                 try:
@@ -126,6 +137,13 @@ def main():
                 per_sid[sid].append(t.assign(symbol=s))
             print(f"  {s} {tf}: {len(df):,} bars")
         split = (pd.Timestamp("2018-07-01", tz="UTC") if args.demo else SPLIT)
+        if combos is not None:
+            for sid, parts in per_sid.items():
+                for t in parts:
+                    a = t[t["time"] >= split]
+                    if len(a):
+                        COMBO_TRADES.append(a.assign(sid=sid, tf=tf))
+            continue
         for sid, parts in per_sid.items():
             if not parts:
                 continue
@@ -144,6 +162,12 @@ def main():
     except Exception:  # noqa: BLE001
         ERRORS.append(f"portfolio:\n{traceback.format_exc()}")
     MISSING.update(missing)
+    if combos is not None:
+        cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason"]
+        out = pd.concat(COMBO_TRADES, ignore_index=True)[cols] if COMBO_TRADES else pd.DataFrame(columns=cols)
+        tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
+        out.to_csv(config.OUTPUT_DIR / f"combo_trades_{tag}.csv.gz", index=False)
+        print("saved", len(out), "trades for", out.groupby(["sid", "tf", "symbol"]).ngroups if len(out) else 0, "combos")
     safe_report(results, args)
 
 

@@ -65,12 +65,22 @@ def server_offset_hours(probe):
     return int(round((tick.time - time.time()) / 3600.0))
 
 
+def server_to_utc(seconds):
+    """FTMO's MT5 server clock is New York time + 7 hours (GMT+2 in winter, GMT+3 in summer),
+    so every bar is converted with the DST rule of its own date. (The offset can't be read from
+    the last tick: on weekends that tick is Friday's.)"""
+    naive = pd.to_datetime(pd.Series(seconds).to_numpy(), unit="s") - pd.Timedelta(hours=7)
+    ny = pd.DatetimeIndex(naive).tz_localize("America/New_York", ambiguous=np.zeros(len(naive), bool),
+                                             nonexistent="shift_forward")
+    return ny.tz_convert("UTC")
+
+
 def bars(sym, tf, off):
     rates = mt5.copy_rates_from_pos(mt5_name(sym), MT5_TF[tf], 0, BARS[tf])
     if rates is None or len(rates) < 50:
         return None
     df = pd.DataFrame(rates)
-    df.index = pd.to_datetime(df["time"] - off * 3600, unit="s", utc=True)
+    df.index = server_to_utc(df["time"])
     df = df.rename(columns={"open": "o", "high": "h", "low": "l", "close": "c", "tick_volume": "v"})[["o", "h", "l", "c", "v"]]
     if tf == "4Hour":
         df = df.resample("4h", label="left", closed="left").agg(

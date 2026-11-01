@@ -58,7 +58,8 @@ NEWS_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
 
 def log(msg):
     line = f"{dt.datetime.now():%Y-%m-%d %H:%M:%S} {msg}"
-    print(line, flush=True)
+    if sys.stdout is not None:          # pythonw (hidden, no window) has no console to print to
+        print(line, flush=True)
     JOURNAL.append(line)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(line + "\n")
@@ -490,12 +491,20 @@ def main():
     LOG_FILE = ROOT / "live" / f"{name}.log"
     STATE_FILE = ROOT / "live" / f"{name}_state.json"
     STATE = json.loads(STATE_FILE.read_text(encoding="utf-8")) if STATE_FILE.exists() else {"entry": {}, "risk": {}}
-    if not mt5.initialize(path=args.terminal, portable=True):
-        sys.exit(f"MT5 did not start: {mt5.last_error()}  (open the terminal and log in first)")
+    for attempt in range(10):           # at Windows start-up MT5 may need a while
+        if mt5.initialize(path=args.terminal, portable=True):
+            break
+        log(f"MT5 did not start ({mt5.last_error()}), trying again in 60 s")
+        time.sleep(60)
+    else:
+        REP.notify(f"{name}: לא עלה", f"לא הצלחתי להתחבר ל־MT5 ({args.terminal}). פתח את MT5, התחבר לחשבון והפעל את הבוט שוב.",
+                   priority=5, tags=["warning"])
+        sys.exit("MT5 did not start")
     ai = mt5.account_info()
     log(f"{name}: account {ai.login} {ai.server} balance {ai.balance:,.0f} | {len(cfg['combos'])} combos, "
         f"risk {cfg['risk'] * 100:g}% | {'DRY RUN' if args.dry_run else 'LIVE ON THIS ACCOUNT'}")
     if "demo" not in ai.server.lower() and "trial" not in ai.server.lower() and not args.dry_run:
+        REP.notify(f"{name}: סירב לסחור", f"השרת {ai.server} לא נראה כמו חשבון דמו.", priority=5, tags=["warning"])
         sys.exit(f"server {ai.server} does not look like a demo: refusing to trade")
     log("checking the 39 instruments in MT5...")
     combos = []

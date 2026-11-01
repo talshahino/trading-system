@@ -1,0 +1,1637 @@
+[
+ {
+  "combo": "TV40|5Min|TSLA",
+  "best": {
+   "variant": "none",
+   "train": {
+    "n": 156,
+    "sum": 27.98,
+    "avg": 0.179,
+    "pf": 1.44
+   },
+   "valid": {
+    "n": 76,
+    "sum": 4.61,
+    "avg": 0.061,
+    "pf": 1.12
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 156,
+    "sum": 27.98,
+    "avg": 0.179,
+    "pf": 1.44
+   },
+   "valid": {
+    "n": 76,
+    "sum": 4.61,
+    "avg": 0.061,
+    "pf": 1.12
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 156,
+     "sum": 27.98,
+     "avg": 0.179,
+     "pf": 1.44
+    },
+    "valid": {
+     "n": 76,
+     "sum": 4.61,
+     "avg": 0.061,
+     "pf": 1.12
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 116,
+     "sum": 18.06,
+     "avg": 0.156,
+     "pf": 1.34
+    },
+    "valid": {
+     "n": 56,
+     "sum": 6.39,
+     "avg": 0.114,
+     "pf": 1.25
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 156,
+     "sum": 27.98,
+     "avg": 0.179,
+     "pf": 1.44
+    },
+    "valid": {
+     "n": 76,
+     "sum": 4.61,
+     "avg": 0.061,
+     "pf": 1.12
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 128,
+     "sum": 18.05,
+     "avg": 0.141,
+     "pf": 1.37
+    },
+    "valid": {
+     "n": 61,
+     "sum": 7.14,
+     "avg": 0.117,
+     "pf": 1.23
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 100,
+     "sum": 17.56,
+     "avg": 0.176,
+     "pf": 1.41
+    },
+    "valid": {
+     "n": 47,
+     "sum": 4.61,
+     "avg": 0.098,
+     "pf": 1.18
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 68,
+     "sum": 5.64,
+     "avg": 0.083,
+     "pf": 1.2
+    },
+    "valid": {
+     "n": 32,
+     "sum": -0.63,
+     "avg": -0.02,
+     "pf": 0.95
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TV03|15Min|AAPL",
+  "best": {
+   "variant": "adx_trend",
+   "train": {
+    "n": 22,
+    "sum": 9.79,
+    "avg": 0.445,
+    "pf": 2.61
+   },
+   "valid": {
+    "n": 19,
+    "sum": 5.27,
+    "avg": 0.277,
+    "pf": 2.12
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 46,
+    "sum": 6.13,
+    "avg": 0.133,
+    "pf": 1.43
+   },
+   "valid": {
+    "n": 27,
+    "sum": 2.18,
+    "avg": 0.081,
+    "pf": 1.24
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 46,
+     "sum": 6.13,
+     "avg": 0.133,
+     "pf": 1.43
+    },
+    "valid": {
+     "n": 27,
+     "sum": 2.18,
+     "avg": 0.081,
+     "pf": 1.24
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 46,
+     "sum": 6.13,
+     "avg": 0.133,
+     "pf": 1.43
+    },
+    "valid": {
+     "n": 27,
+     "sum": 2.18,
+     "avg": 0.081,
+     "pf": 1.24
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 22,
+     "sum": 9.79,
+     "avg": 0.445,
+     "pf": 2.61
+    },
+    "valid": {
+     "n": 19,
+     "sum": 5.27,
+     "avg": 0.277,
+     "pf": 2.12
+    }
+   },
+   {
+    "variant": "adx_range",
+    "train": {
+     "n": 24,
+     "sum": -3.66,
+     "avg": -0.153,
+     "pf": 0.56
+    },
+    "valid": {
+     "n": 8,
+     "sum": -3.09,
+     "avg": -0.387,
+     "pf": 0.29
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 22,
+     "sum": -0.6,
+     "avg": -0.027,
+     "pf": 0.92
+    },
+    "valid": {
+     "n": 19,
+     "sum": 3.68,
+     "avg": 0.194,
+     "pf": 1.6
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 10,
+     "sum": 1.91,
+     "avg": 0.191,
+     "pf": 1.81
+    },
+    "valid": {
+     "n": 11,
+     "sum": -3.72,
+     "avg": -0.338,
+     "pf": 0.34
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 36,
+     "sum": 4.22,
+     "avg": 0.117,
+     "pf": 1.35
+    },
+    "valid": {
+     "n": 16,
+     "sum": 5.9,
+     "avg": 0.369,
+     "pf": 2.71
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TV17|15Min|AAPL",
+  "best": {
+   "variant": "none",
+   "train": {
+    "n": 79,
+    "sum": 17.5,
+    "avg": 0.222,
+    "pf": 1.65
+   },
+   "valid": {
+    "n": 33,
+    "sum": -0.37,
+    "avg": -0.011,
+    "pf": 0.97
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 79,
+    "sum": 17.5,
+    "avg": 0.222,
+    "pf": 1.65
+   },
+   "valid": {
+    "n": 33,
+    "sum": -0.37,
+    "avg": -0.011,
+    "pf": 0.97
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 79,
+     "sum": 17.5,
+     "avg": 0.222,
+     "pf": 1.65
+    },
+    "valid": {
+     "n": 33,
+     "sum": -0.37,
+     "avg": -0.011,
+     "pf": 0.97
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 59,
+     "sum": 14.86,
+     "avg": 0.252,
+     "pf": 1.77
+    },
+    "valid": {
+     "n": 26,
+     "sum": 3.33,
+     "avg": 0.128,
+     "pf": 1.34
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 55,
+     "sum": 14.8,
+     "avg": 0.269,
+     "pf": 1.82
+    },
+    "valid": {
+     "n": 25,
+     "sum": -2.83,
+     "avg": -0.113,
+     "pf": 0.76
+    }
+   },
+   {
+    "variant": "adx_range",
+    "train": {
+     "n": 37,
+     "sum": 2.56,
+     "avg": 0.069,
+     "pf": 1.2
+    },
+    "valid": {
+     "n": 13,
+     "sum": 2.7,
+     "avg": 0.208,
+     "pf": 1.61
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 50,
+     "sum": 12.77,
+     "avg": 0.255,
+     "pf": 1.67
+    },
+    "valid": {
+     "n": 25,
+     "sum": 2.83,
+     "avg": 0.113,
+     "pf": 1.27
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 34,
+     "sum": 2.82,
+     "avg": 0.083,
+     "pf": 1.18
+    },
+    "valid": {
+     "n": 13,
+     "sum": 1.93,
+     "avg": 0.149,
+     "pf": 1.45
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 50,
+     "sum": 15.55,
+     "avg": 0.311,
+     "pf": 2.14
+    },
+    "valid": {
+     "n": 23,
+     "sum": -4.72,
+     "avg": -0.205,
+     "pf": 0.61
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TV02|15Min|TSLA",
+  "best": {
+   "variant": "none",
+   "train": {
+    "n": 172,
+    "sum": 25.35,
+    "avg": 0.147,
+    "pf": 1.53
+   },
+   "valid": {
+    "n": 82,
+    "sum": 18.68,
+    "avg": 0.228,
+    "pf": 1.74
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 172,
+    "sum": 25.35,
+    "avg": 0.147,
+    "pf": 1.53
+   },
+   "valid": {
+    "n": 82,
+    "sum": 18.68,
+    "avg": 0.228,
+    "pf": 1.74
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 172,
+     "sum": 25.35,
+     "avg": 0.147,
+     "pf": 1.53
+    },
+    "valid": {
+     "n": 82,
+     "sum": 18.68,
+     "avg": 0.228,
+     "pf": 1.74
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 105,
+     "sum": 5.58,
+     "avg": 0.053,
+     "pf": 1.16
+    },
+    "valid": {
+     "n": 62,
+     "sum": 6.85,
+     "avg": 0.111,
+     "pf": 1.32
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 172,
+     "sum": 25.35,
+     "avg": 0.147,
+     "pf": 1.53
+    },
+    "valid": {
+     "n": 82,
+     "sum": 18.68,
+     "avg": 0.228,
+     "pf": 1.74
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 120,
+     "sum": 12.58,
+     "avg": 0.105,
+     "pf": 1.36
+    },
+    "valid": {
+     "n": 61,
+     "sum": 15.31,
+     "avg": 0.251,
+     "pf": 1.79
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 90,
+     "sum": 22.85,
+     "avg": 0.254,
+     "pf": 2.06
+    },
+    "valid": {
+     "n": 44,
+     "sum": 15.72,
+     "avg": 0.357,
+     "pf": 2.38
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 92,
+     "sum": 9.3,
+     "avg": 0.101,
+     "pf": 1.34
+    },
+    "valid": {
+     "n": 41,
+     "sum": 3.64,
+     "avg": 0.089,
+     "pf": 1.25
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TV13|15Min|TSLA",
+  "best": {
+   "variant": "none",
+   "train": {
+    "n": 292,
+    "sum": 30.82,
+    "avg": 0.106,
+    "pf": 1.27
+   },
+   "valid": {
+    "n": 145,
+    "sum": 14.48,
+    "avg": 0.1,
+    "pf": 1.25
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 292,
+    "sum": 30.82,
+    "avg": 0.106,
+    "pf": 1.27
+   },
+   "valid": {
+    "n": 145,
+    "sum": 14.48,
+    "avg": 0.1,
+    "pf": 1.25
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 292,
+     "sum": 30.82,
+     "avg": 0.106,
+     "pf": 1.27
+    },
+    "valid": {
+     "n": 145,
+     "sum": 14.48,
+     "avg": 0.1,
+     "pf": 1.25
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 225,
+     "sum": 20.93,
+     "avg": 0.093,
+     "pf": 1.24
+    },
+    "valid": {
+     "n": 108,
+     "sum": 11.92,
+     "avg": 0.11,
+     "pf": 1.26
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 230,
+     "sum": 15.32,
+     "avg": 0.067,
+     "pf": 1.17
+    },
+    "valid": {
+     "n": 119,
+     "sum": 10.88,
+     "avg": 0.091,
+     "pf": 1.22
+    }
+   },
+   {
+    "variant": "adx_range",
+    "train": {
+     "n": 103,
+     "sum": 8.67,
+     "avg": 0.084,
+     "pf": 1.22
+    },
+    "valid": {
+     "n": 44,
+     "sum": 2.34,
+     "avg": 0.053,
+     "pf": 1.13
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 215,
+     "sum": 25.87,
+     "avg": 0.12,
+     "pf": 1.33
+    },
+    "valid": {
+     "n": 113,
+     "sum": 7.6,
+     "avg": 0.067,
+     "pf": 1.15
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 180,
+     "sum": 8.58,
+     "avg": 0.048,
+     "pf": 1.12
+    },
+    "valid": {
+     "n": 97,
+     "sum": 7.21,
+     "avg": 0.074,
+     "pf": 1.19
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 164,
+     "sum": 30.59,
+     "avg": 0.187,
+     "pf": 1.52
+    },
+    "valid": {
+     "n": 76,
+     "sum": 8.56,
+     "avg": 0.113,
+     "pf": 1.29
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TV24|15Min|TSLA",
+  "best": {
+   "variant": "none",
+   "train": {
+    "n": 102,
+    "sum": 14.54,
+    "avg": 0.143,
+    "pf": 1.44
+   },
+   "valid": {
+    "n": 50,
+    "sum": 13.79,
+    "avg": 0.276,
+    "pf": 1.77
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 102,
+    "sum": 14.54,
+    "avg": 0.143,
+    "pf": 1.44
+   },
+   "valid": {
+    "n": 50,
+    "sum": 13.79,
+    "avg": 0.276,
+    "pf": 1.77
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 102,
+     "sum": 14.54,
+     "avg": 0.143,
+     "pf": 1.44
+    },
+    "valid": {
+     "n": 50,
+     "sum": 13.79,
+     "avg": 0.276,
+     "pf": 1.77
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 56,
+     "sum": 12.21,
+     "avg": 0.218,
+     "pf": 1.65
+    },
+    "valid": {
+     "n": 21,
+     "sum": 2.99,
+     "avg": 0.142,
+     "pf": 1.46
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 102,
+     "sum": 14.54,
+     "avg": 0.143,
+     "pf": 1.44
+    },
+    "valid": {
+     "n": 50,
+     "sum": 13.79,
+     "avg": 0.276,
+     "pf": 1.77
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 71,
+     "sum": 1.6,
+     "avg": 0.023,
+     "pf": 1.06
+    },
+    "valid": {
+     "n": 35,
+     "sum": 8.62,
+     "avg": 0.246,
+     "pf": 1.78
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 54,
+     "sum": 9.42,
+     "avg": 0.174,
+     "pf": 1.51
+    },
+    "valid": {
+     "n": 30,
+     "sum": 5.54,
+     "avg": 0.185,
+     "pf": 1.51
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 53,
+     "sum": 1.73,
+     "avg": 0.033,
+     "pf": 1.09
+    },
+    "valid": {
+     "n": 20,
+     "sum": 8.25,
+     "avg": 0.413,
+     "pf": 2.19
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TV50|15Min|XOM",
+  "best": {
+   "variant": "with_trend200",
+   "train": {
+    "n": 65,
+    "sum": 8.54,
+    "avg": 0.131,
+    "pf": 1.26
+   },
+   "valid": {
+    "n": 30,
+    "sum": 7.94,
+    "avg": 0.265,
+    "pf": 1.63
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 88,
+    "sum": 8.22,
+    "avg": 0.093,
+    "pf": 1.19
+   },
+   "valid": {
+    "n": 38,
+    "sum": 6.77,
+    "avg": 0.178,
+    "pf": 1.41
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 88,
+     "sum": 8.22,
+     "avg": 0.093,
+     "pf": 1.19
+    },
+    "valid": {
+     "n": 38,
+     "sum": 6.77,
+     "avg": 0.178,
+     "pf": 1.41
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 65,
+     "sum": 8.54,
+     "avg": 0.131,
+     "pf": 1.26
+    },
+    "valid": {
+     "n": 30,
+     "sum": 7.94,
+     "avg": 0.265,
+     "pf": 1.63
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 49,
+     "sum": 6.19,
+     "avg": 0.126,
+     "pf": 1.24
+    },
+    "valid": {
+     "n": 28,
+     "sum": 5.55,
+     "avg": 0.198,
+     "pf": 1.41
+    }
+   },
+   {
+    "variant": "adx_range",
+    "train": {
+     "n": 39,
+     "sum": 2.03,
+     "avg": 0.052,
+     "pf": 1.12
+    },
+    "valid": {
+     "n": 10,
+     "sum": 1.22,
+     "avg": 0.122,
+     "pf": 1.41
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 68,
+     "sum": -2.95,
+     "avg": -0.043,
+     "pf": 0.92
+    },
+    "valid": {
+     "n": 31,
+     "sum": 8.1,
+     "avg": 0.261,
+     "pf": 1.7
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 44,
+     "sum": 1.29,
+     "avg": 0.029,
+     "pf": 1.06
+    },
+    "valid": {
+     "n": 19,
+     "sum": -0.25,
+     "avg": -0.013,
+     "pf": 0.97
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 44,
+     "sum": 6.93,
+     "avg": 0.157,
+     "pf": 1.33
+    },
+    "valid": {
+     "n": 19,
+     "sum": 7.02,
+     "avg": 0.37,
+     "pf": 2.05
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TT03|1Hour|FRA40",
+  "best": {
+   "variant": "vol_normal",
+   "train": {
+    "n": 45,
+    "sum": 10.89,
+    "avg": 0.242,
+    "pf": 1.44
+   },
+   "valid": {
+    "n": 31,
+    "sum": 7.1,
+    "avg": 0.229,
+    "pf": 1.45
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 58,
+    "sum": 8.01,
+    "avg": 0.138,
+    "pf": 1.24
+   },
+   "valid": {
+    "n": 42,
+    "sum": 1.7,
+    "avg": 0.04,
+    "pf": 1.07
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 58,
+     "sum": 8.01,
+     "avg": 0.138,
+     "pf": 1.24
+    },
+    "valid": {
+     "n": 42,
+     "sum": 1.7,
+     "avg": 0.04,
+     "pf": 1.07
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 38,
+     "sum": 10.13,
+     "avg": 0.267,
+     "pf": 1.47
+    },
+    "valid": {
+     "n": 25,
+     "sum": 11.31,
+     "avg": 0.452,
+     "pf": 1.98
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 35,
+     "sum": -10.97,
+     "avg": -0.314,
+     "pf": 0.56
+    },
+    "valid": {
+     "n": 26,
+     "sum": 0.05,
+     "avg": 0.002,
+     "pf": 1.0
+    }
+   },
+   {
+    "variant": "adx_range",
+    "train": {
+     "n": 38,
+     "sum": 10.27,
+     "avg": 0.27,
+     "pf": 1.49
+    },
+    "valid": {
+     "n": 20,
+     "sum": 2.35,
+     "avg": 0.118,
+     "pf": 1.24
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 45,
+     "sum": 10.89,
+     "avg": 0.242,
+     "pf": 1.44
+    },
+    "valid": {
+     "n": 31,
+     "sum": 7.1,
+     "avg": 0.229,
+     "pf": 1.45
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 28,
+     "sum": -7.99,
+     "avg": -0.285,
+     "pf": 0.6
+    },
+    "valid": {
+     "n": 23,
+     "sum": 9.69,
+     "avg": 0.421,
+     "pf": 1.93
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 37,
+     "sum": 10.62,
+     "avg": 0.287,
+     "pf": 1.58
+    },
+    "valid": {
+     "n": 20,
+     "sum": -9.01,
+     "avg": -0.45,
+     "pf": 0.42
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TT56|1Hour|XOM",
+  "best": {
+   "variant": "adx_trend",
+   "train": {
+    "n": 42,
+    "sum": 12.19,
+    "avg": 0.29,
+    "pf": 1.89
+   },
+   "valid": {
+    "n": 18,
+    "sum": 1.97,
+    "avg": 0.11,
+    "pf": 1.33
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 51,
+    "sum": 8.98,
+    "avg": 0.176,
+    "pf": 1.45
+   },
+   "valid": {
+    "n": 20,
+    "sum": 1.16,
+    "avg": 0.058,
+    "pf": 1.17
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 51,
+     "sum": 8.98,
+     "avg": 0.176,
+     "pf": 1.45
+    },
+    "valid": {
+     "n": 20,
+     "sum": 1.16,
+     "avg": 0.058,
+     "pf": 1.17
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 42,
+     "sum": 9.24,
+     "avg": 0.22,
+     "pf": 1.54
+    },
+    "valid": {
+     "n": 15,
+     "sum": -1.9,
+     "avg": -0.127,
+     "pf": 0.7
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 42,
+     "sum": 12.19,
+     "avg": 0.29,
+     "pf": 1.89
+    },
+    "valid": {
+     "n": 18,
+     "sum": 1.97,
+     "avg": 0.11,
+     "pf": 1.33
+    }
+   },
+   {
+    "variant": "adx_range",
+    "train": {
+     "n": 9,
+     "sum": -3.22,
+     "avg": -0.357,
+     "pf": 0.47
+    },
+    "valid": {
+     "n": 2,
+     "sum": -0.81,
+     "avg": -0.406,
+     "pf": 0.22
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 30,
+     "sum": 3.64,
+     "avg": 0.121,
+     "pf": 1.29
+    },
+    "valid": {
+     "n": 11,
+     "sum": 0.68,
+     "avg": 0.062,
+     "pf": 1.17
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 25,
+     "sum": -0.82,
+     "avg": -0.033,
+     "pf": 0.94
+    },
+    "valid": {
+     "n": 4,
+     "sum": -2.71,
+     "avg": -0.678,
+     "pf": 0.05
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 26,
+     "sum": 9.79,
+     "avg": 0.377,
+     "pf": 2.37
+    },
+    "valid": {
+     "n": 16,
+     "sum": 3.87,
+     "avg": 0.242,
+     "pf": 1.95
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TV37|4Hour|FRA40",
+  "best": {
+   "variant": "vol_low",
+   "train": {
+    "n": 24,
+    "sum": 10.5,
+    "avg": 0.438,
+    "pf": 1.98
+   },
+   "valid": {
+    "n": 15,
+    "sum": 1.48,
+    "avg": 0.099,
+    "pf": 1.18
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 42,
+    "sum": 8.86,
+    "avg": 0.211,
+    "pf": 1.43
+   },
+   "valid": {
+    "n": 24,
+    "sum": 7.26,
+    "avg": 0.303,
+    "pf": 1.58
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 42,
+     "sum": 8.86,
+     "avg": 0.211,
+     "pf": 1.43
+    },
+    "valid": {
+     "n": 24,
+     "sum": 7.26,
+     "avg": 0.303,
+     "pf": 1.58
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 8,
+     "sum": -2.62,
+     "avg": -0.328,
+     "pf": 0.6
+    },
+    "valid": {
+     "n": 6,
+     "sum": 6.91,
+     "avg": 1.151,
+     "pf": 7.02
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 29,
+     "sum": 6.87,
+     "avg": 0.237,
+     "pf": 1.51
+    },
+    "valid": {
+     "n": 16,
+     "sum": 5.31,
+     "avg": 0.332,
+     "pf": 1.63
+    }
+   },
+   {
+    "variant": "adx_range",
+    "train": {
+     "n": 21,
+     "sum": -0.79,
+     "avg": -0.038,
+     "pf": 0.94
+    },
+    "valid": {
+     "n": 8,
+     "sum": 1.95,
+     "avg": 0.244,
+     "pf": 1.48
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 28,
+     "sum": 7.56,
+     "avg": 0.27,
+     "pf": 1.62
+    },
+    "valid": {
+     "n": 17,
+     "sum": 7.57,
+     "avg": 0.446,
+     "pf": 1.91
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 21,
+     "sum": 1.26,
+     "avg": 0.06,
+     "pf": 1.11
+    },
+    "valid": {
+     "n": 9,
+     "sum": 5.78,
+     "avg": 0.642,
+     "pf": 2.38
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 24,
+     "sum": 10.5,
+     "avg": 0.438,
+     "pf": 1.98
+    },
+    "valid": {
+     "n": 15,
+     "sum": 1.48,
+     "avg": 0.099,
+     "pf": 1.18
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TV37|4Hour|N25",
+  "best": {
+   "variant": "adx_trend",
+   "train": {
+    "n": 20,
+    "sum": 8.65,
+    "avg": 0.432,
+    "pf": 1.99
+   },
+   "valid": {
+    "n": 7,
+    "sum": 5.64,
+    "avg": 0.806,
+    "pf": 3.6
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 43,
+    "sum": 3.85,
+    "avg": 0.09,
+    "pf": 1.14
+   },
+   "valid": {
+    "n": 19,
+    "sum": 9.87,
+    "avg": 0.52,
+    "pf": 2.32
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 43,
+     "sum": 3.85,
+     "avg": 0.09,
+     "pf": 1.14
+    },
+    "valid": {
+     "n": 19,
+     "sum": 9.87,
+     "avg": 0.52,
+     "pf": 2.32
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 22,
+     "sum": -9.38,
+     "avg": -0.426,
+     "pf": 0.51
+    },
+    "valid": {
+     "n": 10,
+     "sum": 5.28,
+     "avg": 0.528,
+     "pf": 3.18
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 20,
+     "sum": 8.65,
+     "avg": 0.432,
+     "pf": 1.99
+    },
+    "valid": {
+     "n": 7,
+     "sum": 5.64,
+     "avg": 0.806,
+     "pf": 3.6
+    }
+   },
+   {
+    "variant": "adx_range",
+    "train": {
+     "n": 31,
+     "sum": -4.19,
+     "avg": -0.135,
+     "pf": 0.82
+    },
+    "valid": {
+     "n": 12,
+     "sum": 4.23,
+     "avg": 0.353,
+     "pf": 1.8
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 28,
+     "sum": 3.91,
+     "avg": 0.14,
+     "pf": 1.23
+    },
+    "valid": {
+     "n": 14,
+     "sum": 6.28,
+     "avg": 0.448,
+     "pf": 2.18
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 27,
+     "sum": 8.09,
+     "avg": 0.299,
+     "pf": 1.55
+    },
+    "valid": {
+     "n": 7,
+     "sum": 3.53,
+     "avg": 0.504,
+     "pf": 2.53
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 20,
+     "sum": -4.72,
+     "avg": -0.236,
+     "pf": 0.67
+    },
+    "valid": {
+     "n": 13,
+     "sum": 6.13,
+     "avg": 0.471,
+     "pf": 2.14
+    }
+   }
+  ]
+ },
+ {
+  "combo": "TV12|4Hour|AAPL",
+  "best": {
+   "variant": "vol_low",
+   "train": {
+    "n": 59,
+    "sum": 10.28,
+    "avg": 0.174,
+    "pf": 1.79
+   },
+   "valid": {
+    "n": 10,
+    "sum": -0.73,
+    "avg": -0.073,
+    "pf": 0.76
+   }
+  },
+  "base": {
+   "variant": "none",
+   "train": {
+    "n": 88,
+    "sum": 4.53,
+    "avg": 0.051,
+    "pf": 1.18
+   },
+   "valid": {
+    "n": 51,
+    "sum": 7.91,
+    "avg": 0.155,
+    "pf": 1.58
+   }
+  },
+  "all": [
+   {
+    "variant": "none",
+    "train": {
+     "n": 88,
+     "sum": 4.53,
+     "avg": 0.051,
+     "pf": 1.18
+    },
+    "valid": {
+     "n": 51,
+     "sum": 7.91,
+     "avg": 0.155,
+     "pf": 1.58
+    }
+   },
+   {
+    "variant": "with_trend200",
+    "train": {
+     "n": 45,
+     "sum": 1.61,
+     "avg": 0.036,
+     "pf": 1.13
+    },
+    "valid": {
+     "n": 24,
+     "sum": 5.8,
+     "avg": 0.242,
+     "pf": 2.21
+    }
+   },
+   {
+    "variant": "adx_trend",
+    "train": {
+     "n": 67,
+     "sum": 4.13,
+     "avg": 0.062,
+     "pf": 1.25
+    },
+    "valid": {
+     "n": 28,
+     "sum": 4.37,
+     "avg": 0.156,
+     "pf": 1.69
+    }
+   },
+   {
+    "variant": "adx_range",
+    "train": {
+     "n": 21,
+     "sum": 0.4,
+     "avg": 0.019,
+     "pf": 1.05
+    },
+    "valid": {
+     "n": 24,
+     "sum": 2.77,
+     "avg": 0.116,
+     "pf": 1.34
+    }
+   },
+   {
+    "variant": "vol_normal",
+    "train": {
+     "n": 60,
+     "sum": -5.37,
+     "avg": -0.09,
+     "pf": 0.72
+    },
+    "valid": {
+     "n": 34,
+     "sum": 1.65,
+     "avg": 0.048,
+     "pf": 1.15
+    }
+   },
+   {
+    "variant": "vol_high",
+    "train": {
+     "n": 29,
+     "sum": -5.75,
+     "avg": -0.198,
+     "pf": 0.5
+    },
+    "valid": {
+     "n": 41,
+     "sum": 8.64,
+     "avg": 0.211,
+     "pf": 1.81
+    }
+   },
+   {
+    "variant": "vol_low",
+    "train": {
+     "n": 59,
+     "sum": 10.28,
+     "avg": 0.174,
+     "pf": 1.79
+    },
+    "valid": {
+     "n": 10,
+     "sum": -0.73,
+     "avg": -0.073,
+     "pf": 0.76
+    }
+   }
+  ]
+ }
+]

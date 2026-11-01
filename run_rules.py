@@ -45,6 +45,67 @@ SPREADS = {}     # historical 1-minute spread per instrument
 SPREAD_EST = set()   # instruments whose spread is estimated (no bid/ask history)
 NC.CURRENCIES.update(U.CURRENCIES)
 COMBO_TRADES = []
+OPT_RESULTS = []
+# trade-management grid: target (None = strategy's own, "none" = no target), breakeven fraction (0 = off), ATR-stop scale
+OPT_TARGETS = [None, ("R", 1.5), ("R", 2.0), ("R", 3.0), "none"]
+OPT_BE = [0.0, 0.4, 0.6, 0.8]
+OPT_STOP = [0.75, 1.0, 1.5]
+
+
+def _variant(fn, target, stop_scale):
+    def g(df):
+        lo, sh, plan = fn(df)
+        plan = dict(plan)
+        if target == "none":
+            plan["target"] = None
+        elif target is not None:
+            plan["target"] = target
+        st = plan.get("stop")
+        if stop_scale != 1.0 and st and st[0] == "atr":
+            plan["stop"] = ("atr", st[1] * stop_scale)
+        return lo, sh, plan
+    return g
+
+
+def _stats(r):
+    r = pd.Series(r, dtype="float64")
+    if r.empty:
+        return {"n": 0, "sum": 0.0, "avg": 0.0, "pf": 0.0}
+    gain, loss = r[r > 0].sum(), -r[r < 0].sum()
+    return {"n": int(len(r)), "sum": round(float(r.sum()), 2), "avg": round(float(r.mean()), 3),
+            "pf": round(float(gain / loss), 2) if loss > 0 else 99.0}
+
+
+def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args):
+    """Every grid variant of one combo: choose on the training window, then check on the later window."""
+    fn = R.STRATEGIES[sid][1]
+    t0, t1 = SPLIT, pd.Timestamp(args.optimize, tz="UTC")
+    off = be[1] if be else 0.0001
+    rows, keep = [], {}
+    atr_stop = (fn(df.iloc[:400])[2].get("stop") or ("",))[0] == "atr"
+    for tg in OPT_TARGETS:
+        for bf in OPT_BE:
+            for sc in (OPT_STOP if atr_stop else [1.0]):
+                t = R.run(df, _variant(fn, tg, sc), cost, breakeven=(bf, off) if bf else None, session_exit=sess)
+                if t.empty:
+                    continue
+                if real:
+                    t = C.apply(t, s, SPREADS.get(s))
+                if events is not None:
+                    t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
+                tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
+                key = f"{'own' if tg is None else ('none' if tg == 'none' else f'{tg[1]:g}R')}|be{bf:g}|stop{sc:g}"
+                rows.append({"variant": key, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
+                keep[key] = t[t["time"] >= t0]
+    if not rows:
+        return
+    base_key = "own|be0.6|stop1"
+    ok = [x for x in rows if x["train"]["n"] >= 20]
+    best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
+    base = next((x for x in rows if x["variant"] == base_key), None)
+    OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows})
+    for k in {best["variant"], base_key} & set(keep):
+        COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
 VARIANT = [""]
 MISSING = set()   # instruments with no history for a timeframe
 NO_TRADES = []   # strategy/timeframe/instrument that produced no trade at all, so nothing to judge
@@ -68,6 +129,9 @@ def main():
                     help="stocks: close every position at the end of the trading session (no overnight gaps)")
     ap.add_argument("--breakeven", type=float, default=0.0,
                     help="move the stop to entry + spread/commission once price covered this share of the way to the target (e.g. 0.6)")
+    ap.add_argument("--optimize", default="",
+                    help="YYYY-MM-DD: with --combos-file, try a grid of trade-management values per combo, choose on "
+                         "--test-from..this date, check on this date..end")
     ap.add_argument("--combos-file", default="",
                     help="file with sid|timeframe|symbol lines: run only these and save their trades (no Prophet)")
     ap.add_argument("--test-from", default="",
@@ -144,6 +208,12 @@ def main():
                     continue
                 if args.respect_tf and not R.timeframe_ok(sid, tf):
                     continue
+                if args.optimize:
+                    try:
+                        optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args)
+                    except Exception:  # noqa: BLE001
+                        ERRORS.append(f"optimize {sid} {tf} {s}:\n{traceback.format_exc()}")
+                    continue
                 try:
                     t = R.run(df, R.STRATEGIES[sid][1], cost, breakeven=be, session_exit=sess)
                 except Exception:  # noqa: BLE001 - one broken strategy must not kill the run
@@ -185,9 +255,16 @@ def main():
     except Exception:  # noqa: BLE001
         ERRORS.append(f"portfolio:\n{traceback.format_exc()}")
     MISSING.update(missing)
+    if args.optimize:
+        tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
+        import json as _json
+        (config.OUTPUT_DIR / f"optimize_{tag}.json").write_text(_json.dumps(OPT_RESULTS, ensure_ascii=False, indent=1), encoding="utf-8")
+        print("optimized", len(OPT_RESULTS), "combos")
     if combos is not None or (args.test_from and COMBO_TRADES):
         cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason", "free_time"]
-        out = pd.concat(COMBO_TRADES, ignore_index=True)[cols] if COMBO_TRADES else pd.DataFrame(columns=cols)
+        if args.optimize:
+            cols = cols + ["variant"]
+        out = pd.concat(COMBO_TRADES, ignore_index=True).reindex(columns=cols) if COMBO_TRADES else pd.DataFrame(columns=cols)
         tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
         out.to_csv(config.OUTPUT_DIR / f"combo_trades_{tag}.csv.gz", index=False)
         print("saved", len(out), "trades for", out.groupby(["sid", "tf", "symbol"]).ngroups if len(out) else 0, "combos")

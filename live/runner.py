@@ -463,7 +463,22 @@ def save_state():
     STATE_FILE.write_text(json.dumps(STATE, indent=1), encoding="utf-8")
 
 
+def no_quick_edit():
+    """Windows console: clicking inside the window ("QuickEdit") pauses the program until a key is
+    pressed - the bot would silently freeze. Turn it off for this window."""
+    try:
+        import ctypes
+        k = ctypes.windll.kernel32
+        h = k.GetStdHandle(-10)
+        mode = ctypes.c_uint32()
+        if k.GetConsoleMode(h, ctypes.byref(mode)):
+            k.SetConsoleMode(h, (mode.value & ~0x0040) | 0x0080)
+    except Exception:  # noqa: BLE001 - not Windows / no console
+        pass
+
+
 def main():
+    no_quick_edit()
     global ACC, STATE, STATE_FILE, LOG_FILE, MAGICS, MAGICS_BY_COMBO
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)

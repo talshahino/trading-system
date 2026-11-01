@@ -38,7 +38,7 @@ td.n{font-family:var(--mono)}
 .up{color:var(--up)}.down{color:var(--down)}.mut{color:var(--mut)}
 .chip{background:var(--chip);border-radius:999px;padding:1px 8px;font-size:.8rem}
 pre{margin:0;font-family:var(--mono);font-size:.78rem;white-space:pre-wrap;max-height:320px;overflow:auto;direction:ltr;text-align:left}
-svg text{fill:var(--mut);font-size:11px;font-family:var(--mono)}
+svg{direction:ltr}svg text{fill:var(--mut);font-size:11px;font-family:var(--mono)}
 .empty{color:var(--mut);padding:8px 0}
 </style>
 </head>
@@ -90,17 +90,17 @@ function chart(pts, init) {
   const W = Math.max(320, el.clientWidth), H = 220, L = 70, R = 10, T = 10, B = 26;
   const t = pts.map(p => new Date(p[0]).getTime()), ys = pts.flatMap(p => [p[1], p[2]]).concat([init]);
   const x0 = Math.min(...t), x1 = Math.max(...t), y0 = Math.min(...ys), y1 = Math.max(...ys), pad = (y1 - y0) * 0.1 || 500;
-  const X = v => W - R - (v - x0) / ((x1 - x0) || 1) * (W - L - R);
+  const X = v => L + (v - x0) / ((x1 - x0) || 1) * (W - L - R);
   const Y = v => T + (y1 + pad - v) / ((y1 - y0 + 2 * pad) || 1) * (H - T - B);
   const line = i => pts.map((p, k) => `${k ? "L" : "M"}${X(t[k]).toFixed(1)},${Y(p[i]).toFixed(1)}`).join("");
   let g = "";
   for (let k = 0; k <= 4; k++) { const v = y0 - pad + k * (y1 - y0 + 2 * pad) / 4;
-    g += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="4" y="${Y(v) + 4}">${money(v)}</text>`; }
+    g += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${money(v)}</text>`; }
   el.innerHTML = `<svg width="100%" viewBox="0 0 ${W} ${H}" role="img" aria-label="הון ויתרה">${g}
     <line x1="${L}" x2="${W - R}" y1="${Y(init)}" y2="${Y(init)}" stroke="var(--mut)" stroke-dasharray="4 4"/>
     <path d="${line(2)}" fill="none" stroke="var(--warn)" stroke-width="1.2"/>
     <path d="${line(1)}" fill="none" stroke="var(--up)" stroke-width="2"/>
-    <text x="${W - R}" y="${H - 6}" text-anchor="start">${il(pts[pts.length - 1][0])}</text><text x="${L}" y="${H - 6}" text-anchor="end">${il(pts[0][0])}</text></svg>
+    <text x="${W - R}" y="${H - 6}" text-anchor="end">${il(pts[pts.length - 1][0])}</text><text x="${L}" y="${H - 6}" text-anchor="start">${il(pts[0][0])}</text></svg>
     <div class="mut" style="font-size:.8rem">ירוק: יתרה · כתום: הון כולל עסקאות פתוחות · מקווקו: $100,000</div>`;
 }
 

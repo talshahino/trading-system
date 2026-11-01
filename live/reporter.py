@@ -28,6 +28,8 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
         return
     if key:
         _LAST[key] = time.time()
+    if priority < 5 and quiet_now():
+        priority = 2          # night: shows in the app without sound or vibration; urgent alerts still ring
     try:
         # JSON publishing: Hebrew titles are not allowed in HTTP headers
         r = requests.post("https://ntfy.sh/", timeout=10, json={
@@ -35,6 +37,15 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
         return None if r.status_code == 200 else f"ntfy answered {r.status_code}: {r.text[:120]}"
     except Exception as e:  # noqa: BLE001 - a notification must never stop the robot
         return f"notification failed: {e}"
+
+
+def quiet_now():
+    """Quiet hours (Israel time) from live/notify.json, default 21:00-06:00."""
+    import datetime as dt
+    from zoneinfo import ZoneInfo
+    a, b = _CFG.get("quiet_from", 21), _CFG.get("quiet_to", 6)
+    h = dt.datetime.now(ZoneInfo("Asia/Jerusalem")).hour
+    return (h >= a or h < b) if a > b else (a <= h < b)
 
 
 def token():

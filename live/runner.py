@@ -171,8 +171,10 @@ def lots_for(sym, entry, sl, risk_usd):
         return 0.0
     lots = risk_usd / per_lot
     step = info.volume_step or 0.01
-    lots = np.floor(lots / step) * step
-    return float(min(max(lots, 0.0), info.volume_max)) if lots >= info.volume_min else 0.0
+    lots = np.floor(lots / step + 1e-9) * step
+    digits = max(0, len(f"{step:.8f}".rstrip("0").split(".")[1]))
+    lots = round(float(min(max(lots, 0.0), info.volume_max)), digits)
+    return lots if lots >= info.volume_min else 0.0
 
 
 def send(req, what):
@@ -265,6 +267,8 @@ def step(combo, sid, tf, sym, off):
     # and add one flat bar after it, because the engine enters on the bar AFTER a signal.
     forming = df.index[-1]
     last_closed = df.index[-2]
+    if pd.Timestamp.now(tz="UTC") - forming >= pd.Timedelta(minutes=TF_MIN[tf]):
+        return          # the newest bar is not in progress: market closed (weekend/holiday/session break)
     df.iloc[-1, df.columns.get_indexer(["h", "l", "c"])] = df["o"].iloc[-1]
     dummy = df.iloc[[-1]].copy()
     dummy.index = [forming + pd.Timedelta(minutes=TF_MIN[tf])]

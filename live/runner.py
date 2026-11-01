@@ -497,6 +497,7 @@ def main():
         f"risk {cfg['risk'] * 100:g}% | {'DRY RUN' if args.dry_run else 'LIVE ON THIS ACCOUNT'}")
     if "demo" not in ai.server.lower() and "trial" not in ai.server.lower() and not args.dry_run:
         sys.exit(f"server {ai.server} does not look like a demo: refusing to trade")
+    log("checking the 39 instruments in MT5...")
     combos = []
     for c in cfg["combos"]:
         sid, tf, sym = c.split("|")
@@ -518,7 +519,12 @@ def main():
         log(f"dashboard: {'GitHub token found' if REP.token() else 'NO GitHub token - create live/github_token.txt'}")
     done = {}
     probe = mt5_name(combos[0][3])
+    import faulthandler
+    hang_file = open(ROOT / "live" / f"{name}_hang.txt", "w")
+    log("running: checking the strategies every 20 seconds")
     while True:
+        # if one loop takes over 5 minutes, write where the program is stuck to live/<bot>_hang.txt
+        faulthandler.dump_traceback_later(300, repeat=True, file=hang_file)
         try:
             if not ACC.guard():
                 off = server_offset_hours(probe)

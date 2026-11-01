@@ -76,6 +76,55 @@ def _stats(r):
             "pf": round(float(gain / loss), 2) if loss > 0 else 99.0}
 
 
+def _regimes(df):
+    """Market-regime masks (known at the bar's close). Each is (allow_long, allow_short)."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    e200 = R.ema(c, 200)
+    a = R.adx(h, l, c, 14)
+    at = R.atr(h, l, c, 14) / c
+    pr = pd.Series(at).rolling(500, min_periods=100).rank(pct=True).to_numpy()
+    yes = np.ones(len(c), bool)
+    return {
+        "none": (yes, yes),
+        "with_trend200": (c > e200, c < e200),
+        "adx_trend": (a > 20, a > 20),
+        "adx_range": (a < 20, a < 20),
+        "vol_normal": ((pr > 0.2) & (pr < 0.9), (pr > 0.2) & (pr < 0.9)),
+        "vol_high": (pr >= 0.5, pr >= 0.5),
+        "vol_low": (pr < 0.5, pr < 0.5),
+    }
+
+
+def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args):
+    """Each regime filter on one combo: choose on the training window, check on the later window."""
+    fn = R.STRATEGIES[sid][1]
+    t0, t1 = SPLIT, pd.Timestamp(args.filters, tz="UTC")
+    regimes = _regimes(df)
+    rows, keep = [], {}
+    for name, (al, ash) in regimes.items():
+        def g(d, al=al, ash=ash):
+            lo, sh, plan = fn(d)
+            return np.asarray(lo, bool) & al, np.asarray(sh, bool) & ash, plan
+        t = R.run(df, g, cost, breakeven=be, session_exit=sess)
+        if t.empty:
+            continue
+        if real:
+            t = C.apply(t, s, SPREADS.get(s))
+        if events is not None:
+            t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
+        tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
+        rows.append({"variant": name, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
+        keep[name] = t[t["time"] >= t0]
+    if not rows:
+        return
+    ok = [x for x in rows if x["train"]["n"] >= 20]
+    best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
+    base = next((x for x in rows if x["variant"] == "none"), None)
+    OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows})
+    for k in {best["variant"], "none"} & set(keep):
+        COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
+
+
 def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args):
     """Every grid variant of one combo: choose on the training window, then check on the later window."""
     fn = R.STRATEGIES[sid][1]
@@ -131,6 +180,9 @@ def main():
                     help="move the stop to entry + spread/commission once price covered this share of the way to the target (e.g. 0.6)")
     ap.add_argument("--optimize", default="",
                     help="YYYY-MM-DD: with --combos-file, try a grid of trade-management values per combo, choose on "
+                         "--test-from..this date, check on this date..end")
+    ap.add_argument("--filters", default="",
+                    help="YYYY-MM-DD: with --combos-file, try market-regime filters per combo, choose on "
                          "--test-from..this date, check on this date..end")
     ap.add_argument("--combos-file", default="",
                     help="file with sid|timeframe|symbol lines: run only these and save their trades (no Prophet)")
@@ -208,6 +260,12 @@ def main():
                     continue
                 if args.respect_tf and not R.timeframe_ok(sid, tf):
                     continue
+                if args.filters:
+                    try:
+                        filter_combo(df, sid, tf, s, cost, sess, be, real, events, args)
+                    except Exception:  # noqa: BLE001
+                        ERRORS.append(f"filters {sid} {tf} {s}:\n{traceback.format_exc()}")
+                    continue
                 if args.optimize:
                     try:
                         optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args)
@@ -255,6 +313,11 @@ def main():
     except Exception:  # noqa: BLE001
         ERRORS.append(f"portfolio:\n{traceback.format_exc()}")
     MISSING.update(missing)
+    if args.filters:
+        tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
+        import json as _json
+        (config.OUTPUT_DIR / f"filters_{tag}.json").write_text(_json.dumps(OPT_RESULTS, ensure_ascii=False, indent=1), encoding="utf-8")
+        print("filtered", len(OPT_RESULTS), "combos")
     if args.optimize:
         tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
         import json as _json
@@ -262,7 +325,7 @@ def main():
         print("optimized", len(OPT_RESULTS), "combos")
     if combos is not None or (args.test_from and COMBO_TRADES):
         cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason", "free_time"]
-        if args.optimize:
+        if args.optimize or args.filters:
             cols = cols + ["variant"]
         out = pd.concat(COMBO_TRADES, ignore_index=True).reindex(columns=cols) if COMBO_TRADES else pd.DataFrame(columns=cols)
         tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]

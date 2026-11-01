@@ -36,6 +36,16 @@ from agents import ftmo_universe as U  # noqa: E402
 from agents import rules_agent as R  # noqa: E402
 
 import MetaTrader5 as mt5  # noqa: E402  (pip install MetaTrader5, Windows only)
+from live import reporter as REP  # noqa: E402
+from collections import deque  # noqa: E402
+
+JOURNAL = deque(maxlen=300)
+TF_HE = {"1Min": "דקה", "5Min": "5 דק׳", "15Min": "15 דק׳", "1Hour": "שעה", "4Hour": "4 שעות"}
+
+
+def pretty(combo):
+    sid, tf, sym = combo.split("|")
+    return f"{sid} · {TF_HE.get(tf, tf)} · {sym}"
 
 SYM_BY_MAGIC = {}
 TF_MIN = {"1Min": 1, "5Min": 5, "15Min": 15, "1Hour": 60, "4Hour": 240}
@@ -49,6 +59,7 @@ NEWS_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
 def log(msg):
     line = f"{dt.datetime.now():%Y-%m-%d %H:%M:%S} {msg}"
     print(line, flush=True)
+    JOURNAL.append(line)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(line + "\n")
 
@@ -73,6 +84,16 @@ def server_to_utc(seconds):
     ny = pd.DatetimeIndex(naive).tz_localize("America/New_York", ambiguous=np.zeros(len(naive), bool),
                                              nonexistent="shift_forward")
     return ny.tz_convert("UTC")
+
+
+def utc_to_server(ts):
+    """A UTC moment as the server clock shows it, in the form MT5's history functions expect."""
+    t = pd.Timestamp(ts).tz_convert("America/New_York").tz_localize(None) + pd.Timedelta(hours=7)
+    return t.tz_localize("UTC").to_pydatetime()
+
+
+def server_ts(seconds):
+    return server_to_utc([seconds])[0]
 
 
 def bars(sym, tf, off):
@@ -137,8 +158,8 @@ class Account:
         return [p for p in (mt5.positions_get() or []) if p.magic in MAGICS]
 
     def day_start_balance(self):
-        since = prague_midnight_utc().to_pydatetime()
-        deals = mt5.history_deals_get(since, dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=1)) or []
+        since = utc_to_server(prague_midnight_utc())
+        deals = mt5.history_deals_get(since, utc_to_server(pd.Timestamp.now(tz="UTC")) + dt.timedelta(days=1)) or []
         realized = sum(d.profit + d.commission + d.swap for d in deals if d.entry in (1, 3))
         return mt5.account_info().balance - realized
 
@@ -164,6 +185,8 @@ class Account:
         ai = mt5.account_info()
         if ai.equity <= self.day_start_balance() - self.initial * 0.045 or ai.equity <= self.initial * 0.91:
             log(f"EMERGENCY equity {ai.equity:,.0f}: closing everything until Prague midnight")
+            REP.notify(f"{BOT}: עצירת חירום", f"ההון ירד ל־${ai.equity:,.0f}. כל העסקאות נסגרות והבוט לא נכנס לעסקאות עד חצות (שעון פראג).",
+                       priority=5, tags=["rotating_light"])
             for p in self.positions():
                 close(p, "emergency")
             self.halt_until = prague_midnight_utc() + pd.Timedelta(days=1)
@@ -194,6 +217,9 @@ def send(req, what):
     r = mt5.order_send(req)
     if r is None or r.retcode != mt5.TRADE_RETCODE_DONE:
         log(f"FAILED {what}: {None if r is None else (r.retcode, r.comment)}")
+        if r is None or r.retcode not in (10018,):           # 10018 = market closed: not worth a message
+            REP.notify(f"{BOT}: פקודה נכשלה", f"{what}\n{None if r is None else (r.retcode, r.comment)}",
+                       priority=4, tags=["warning"], key="fail:" + what[:20], every=1800)
         return None
     log(f"OK {what}: {r.order}")
     return r
@@ -217,6 +243,10 @@ def open_trade(combo, sym, d, sl, tp, entry_time):
            "deviation": 20, "magic": MAGICS_BY_COMBO[combo], "comment": combo[:31],
            "type_time": mt5.ORDER_TIME_GTC, "type_filling": mt5.ORDER_FILLING_IOC}
     r = send(req, f"open {combo} {'buy' if d > 0 else 'sell'} {lots} @ {px} sl {sl:.5g} tp {tp}")
+    if r is not None and not ACC.dry:
+        REP.notify(f"{BOT}: עסקה נפתחה", f"{pretty(combo)}\n{'קנייה' if d > 0 else 'מכירה'} {lots} @ {px:g}\n"
+                   f"סטופ {sl:.5g} · יעד {'—' if not (tp == tp and tp is not None) else f'{tp:.5g}'} · סיכון ${ACC.risk_usd:,.0f}",
+                   tags=["chart_with_upwards_trend" if d > 0 else "chart_with_downwards_trend"])
     if r is not None:
         STATE["entry"][combo] = str(entry_time)
         STATE["risk"][str(r.order)] = lots * abs(px - sl) / info.trade_tick_size * info.trade_tick_value
@@ -335,6 +365,96 @@ def step(combo, sid, tf, sym, off):
     open_trade(combo, sym, int(t["dir"]), float(t["stop_px"]), float(t["target_px"]), t["time"])
 
 
+# ---------------- monitoring: notifications + dashboard ----------------
+BOT = "bot"
+MON = {"open": {}, "free": set(), "day": None, "warned": set(), "push": 0, "eq": 0}
+
+
+def deals_since(days):
+    now = pd.Timestamp.now(tz="UTC")
+    return [d for d in (mt5.history_deals_get(utc_to_server(now - pd.Timedelta(days=days)),
+                                              utc_to_server(now) + dt.timedelta(days=1)) or [])
+            if d.magic in MAGICS]
+
+
+def combo_of(magic):
+    for c, m in MAGICS_BY_COMBO.items():
+        if m == magic:
+            return c
+    return str(magic)
+
+
+def monitor():
+    now = pd.Timestamp.now(tz="UTC")
+    ai = mt5.account_info()
+    pos = {p.ticket: p for p in ACC.positions()}
+    # closed positions (stop, target, bot close, emergency)
+    for tk, p in list(MON["open"].items()):
+        if tk not in pos:
+            ds = [d for d in deals_since(10) if d.position_id == tk and d.entry in (1, 3)]
+            pnl = sum(d.profit + d.commission + d.swap for d in ds)
+            why = ds[-1].comment if ds else ""
+            REP.notify(f"{BOT}: עסקה נסגרה {'ברווח' if pnl >= 0 else 'בהפסד'} ${pnl:+,.0f}",
+                       f"{pretty(combo_of(p.magic))}\n{why}\nיתרה ${ai.balance:,.0f}",
+                       tags=["white_check_mark" if pnl >= 0 else "x"])
+            MON["open"].pop(tk)
+            MON["free"].discard(tk)
+    for tk, p in pos.items():
+        MON["open"][tk] = p
+        if p.sl and tk not in MON["free"] and ((p.type == 0 and p.sl >= p.price_open) or (p.type == 1 and p.sl <= p.price_open)):
+            MON["free"].add(tk)
+            REP.notify(f"{BOT}: סטופ בנקודת איזון", f"{pretty(combo_of(p.magic))}\nהעסקה כבר לא יכולה להפסיד", tags=["shield"])
+    # daily loss warnings and the daily summary (Prague day)
+    day = pd.Timestamp.now(tz="Europe/Prague").normalize()
+    ds_bal = ACC.day_start_balance()
+    if MON["day"] is not None and day != MON["day"]:
+        closed = [d for d in deals_since(1) if d.entry in (1, 3)]
+        REP.notify(f"{BOT}: סיכום יום", f"יתרה ${ai.balance:,.0f} ({(ai.balance - ACC.initial) / ACC.initial * 100:+.2f}% מההתחלה)\n"
+                   f"עסקאות שנסגרו ב־24 שעות: {len(closed)} · פתוחות: {len(pos)}", tags=["calendar"])
+        MON["warned"] = set()
+    MON["day"] = day
+    dd = (ds_bal - ai.equity) / ACC.initial * 100
+    for lvl in (2, 3, 4):
+        if dd >= lvl and lvl not in MON["warned"]:
+            MON["warned"].add(lvl)
+            REP.notify(f"{BOT}: הפסד יומי {dd:.1f}%", f"ההון ${ai.equity:,.0f} · רף FTMO היומי 5% · הבוט עוצר הכל ב־4.5%",
+                       priority=4 if lvl < 4 else 5, tags=["warning"])
+    # equity history every 5 minutes, dashboard every 3 minutes
+    if time.time() - MON["eq"] >= 300:
+        MON["eq"] = time.time()
+        STATE.setdefault("equity", []).append([now.isoformat(timespec="minutes"), round(ai.balance, 2), round(ai.equity, 2)])
+        STATE["equity"] = STATE["equity"][-12000:]
+        save_state()
+    if time.time() - MON["push"] >= 180:
+        MON["push"] = time.time()
+        err = REP.push_state(MON["name"], dashboard_state(ai, pos, ds_bal, now))
+        if err:
+            log(err)
+            REP.notify(f"{BOT}: הדשבורד לא מתעדכן", err, priority=3, key="push", every=6 * 3600)
+
+
+def dashboard_state(ai, pos, ds_bal, now):
+    trades = []
+    for d in deals_since(60):
+        if d.entry not in (1, 3):
+            continue
+        trades.append({"time": server_ts(d.time).isoformat(), "combo": combo_of(d.magic), "symbol": d.symbol,
+                       "dir": "קנייה" if d.type == 1 else "מכירה", "lots": d.volume, "price": d.price,
+                       "pnl": round(d.profit + d.commission + d.swap, 2), "why": d.comment})
+    return {
+        "bot": MON["name"], "updated_utc": now.isoformat(), "account": ai.login, "server": ai.server,
+        "initial": ACC.initial, "risk": MON["cfg"]["risk"], "free_risk_at_breakeven": ACC.free,
+        "balance": ai.balance, "equity": ai.equity, "day_start": ds_bal,
+        "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "combos": MON["combos"],
+        "positions": [{"combo": combo_of(p.magic), "symbol": p.symbol, "dir": "קנייה" if p.type == 0 else "מכירה",
+                       "lots": p.volume, "open": p.price_open, "sl": p.sl, "tp": p.tp, "pnl": round(p.profit + p.swap, 2),
+                       "since": server_ts(p.time).isoformat(),
+                       "free": bool(p.sl and ((p.type == 0 and p.sl >= p.price_open) or (p.type == 1 and p.sl <= p.price_open)))}
+                      for p in pos.values()],
+        "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:], "journal": list(JOURNAL)[-150:],
+    }
+
+
 # ---------------- main ----------------
 def save_state():
     STATE_FILE.write_text(json.dumps(STATE, indent=1), encoding="utf-8")
@@ -370,6 +490,12 @@ def main():
     MAGICS = set(MAGICS_BY_COMBO.values())
     SYM_BY_MAGIC.update({MAGICS_BY_COMBO[c]: c.split("|")[2] for c in cfg["combos"]})
     ACC = Account(cfg, args.dry_run)
+    global BOT
+    BOT = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}.get(name, name)
+    MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])
+    if not args.dry_run:
+        REP.notify(f"{BOT} התחיל לעבוד", f"חשבון {ai.login} · יתרה ${ai.balance:,.0f} · {len(combos)} צירופים · סיכון {cfg['risk'] * 100:g}%",
+                   tags=["robot"])
     done = {}
     probe = mt5_name(combos[0][3])
     while True:
@@ -386,12 +512,21 @@ def main():
                         step(combo, sid, tf, sym, off)
                     except Exception:  # noqa: BLE001
                         log(f"error {combo}:\n{traceback.format_exc()}")
+                        REP.notify(f"{BOT}: שגיאה", f"{pretty(combo)}\n{traceback.format_exc()[-300:]}", priority=4,
+                                   tags=["warning"], key="err:" + combo, every=3600)
                     done[combo] = bar_start
         except Exception:  # noqa: BLE001
             log(f"loop error:\n{traceback.format_exc()}")
             if not mt5.initialize(path=args.terminal, portable=True):
                 log("MT5 connection lost; retrying in 60 s")
+                REP.notify(f"{BOT}: אין חיבור ל־MT5", "בדוק ש־MT5 פתוח ומחובר לחשבון. הבוט מנסה שוב כל דקה.",
+                           priority=5, tags=["warning"], key="mt5lost", every=1800)
                 time.sleep(60)
+        try:
+            if not args.dry_run:
+                monitor()
+        except Exception:  # noqa: BLE001
+            log(f"monitor error:\n{traceback.format_exc()}")
         time.sleep(20)
 
 

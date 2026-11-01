@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>בוטי FTMO · דשבורד</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6f4;--panel:#fff;--fg:#18201c;--mut:#5f6b64;--line:#dde3de;--up:#0f7a52;--down:#b3342b;--warn:#b36a1b;--chip:#e8f0eb;
+--sans:"Heebo",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1412;--panel:#161d1a;--fg:#e5ebe7;--mut:#94a39a;--line:#28322d;--up:#3fc28a;--down:#ef7a70;--warn:#e0a060;--chip:#1c2923;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px}
+.wrap{max-width:1150px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-left)) 48px;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+h1{margin:0;font-size:1.6rem;font-weight:800}
+h2{margin:0 0 8px;font-size:1.05rem}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{font:inherit;padding:6px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--fg);cursor:pointer}
+.tabs button[aria-selected="true"]{border-color:var(--up);box-shadow:inset 0 -3px 0 var(--up)}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:4px 12px;border-radius:999px;font-weight:600;font-size:.9rem}
+.pill.ok{background:color-mix(in srgb,var(--up) 15%,transparent);color:var(--up)}
+.pill.bad{background:color-mix(in srgb,var(--down) 15%,transparent);color:var(--down)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.kv{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kv b{font-family:var(--mono);font-size:1.25rem;font-weight:500}
+.kv span{color:var(--mut);font-size:.8rem}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--up)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px;min-width:0}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.78rem;color:var(--mut);font-weight:500}
+td.n{font-family:var(--mono)}
+.up{color:var(--up)}.down{color:var(--down)}.mut{color:var(--mut)}
+.chip{background:var(--chip);border-radius:999px;padding:1px 8px;font-size:.8rem}
+pre{margin:0;font-family:var(--mono);font-size:.78rem;white-space:pre-wrap;max-height:320px;overflow:auto;direction:ltr;text-align:left}
+svg text{fill:var(--mut);font-size:11px;font-family:var(--mono)}
+.empty{color:var(--mut);padding:8px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><h1>בוטי FTMO</h1><div class="mut" id="sub">טוען…</div></div>
+  <div class="tabs" id="tabs"></div>
+</header>
+<div><span class="pill" id="status">—</span></div>
+<div class="kpis" id="kpis"></div>
+<div class="card"><h2>הון לאורך זמן</h2><div id="chart"></div></div>
+<div class="card"><h2>עסקאות פתוחות</h2><div class="tw" id="open"></div></div>
+<div class="card"><h2>רווח לפי צירוף (עסקאות סגורות)</h2><div class="tw" id="bycombo"></div></div>
+<div class="card"><h2>עסקאות שנסגרו</h2><div class="tw" id="closed"></div></div>
+<div class="card"><h2>יומן הבוט</h2><pre id="journal"></pre></div>
+</div>
+<script>
+const BOTS = ["bot1", "bot2", "bot3"];
+const NAMES = {bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3"};
+const RAW = b => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/${b}_state.json?t=${Date.now()}`;
+const API = b => `https://api.github.com/repos/talshahino/trading-system/contents/live/${b}_state.json?ref=live`;
+let cur = "bot1", found = {};
+const $ = id => document.getElementById(id);
+const money = v => (v < 0 ? "-" : "") + "$" + Math.abs(Math.round(v)).toLocaleString("en-US");
+const pct = v => (v > 0 ? "+" : "") + v.toFixed(2) + "%";
+const il = iso => new Date(iso).toLocaleString("he-IL", {timeZone: "Asia/Jerusalem", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"});
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const TF = {"1Min": "דקה", "5Min": "5 דק׳", "15Min": "15 דק׳", "1Hour": "שעה", "4Hour": "4 שעות"};
+const combo = c => { const [s, t, y] = String(c).split("|"); return t ? `${s} · ${TF[t] || t} · ${y}` : c; };
+
+async function load(b) {
+  try { const r = await fetch(RAW(b), {cache: "no-store"}); if (r.ok) return await r.json(); } catch (e) {}
+  try { const r = await fetch(API(b), {headers: {Accept: "application/vnd.github.raw"}}); if (r.ok) return await r.json(); } catch (e) {}
+  return null;
+}
+
+function tabs() {
+  $("tabs").innerHTML = "";
+  BOTS.filter(b => found[b]).forEach(b => {
+    const x = document.createElement("button"); x.textContent = NAMES[b]; x.setAttribute("aria-selected", b === cur);
+    x.onclick = () => { cur = b; render(found[b]); tabs(); }; $("tabs").appendChild(x);
+  });
+}
+
+function chart(pts, init) {
+  const el = $("chart");
+  if (!pts || pts.length < 2) { el.innerHTML = '<div class="empty">הגרף יופיע אחרי כמה דקות של עבודה.</div>'; return; }
+  const W = Math.max(320, el.clientWidth), H = 220, L = 70, R = 10, T = 10, B = 26;
+  const t = pts.map(p => new Date(p[0]).getTime()), ys = pts.flatMap(p => [p[1], p[2]]).concat([init]);
+  const x0 = Math.min(...t), x1 = Math.max(...t), y0 = Math.min(...ys), y1 = Math.max(...ys), pad = (y1 - y0) * 0.1 || 500;
+  const X = v => W - R - (v - x0) / ((x1 - x0) || 1) * (W - L - R);
+  const Y = v => T + (y1 + pad - v) / ((y1 - y0 + 2 * pad) || 1) * (H - T - B);
+  const line = i => pts.map((p, k) => `${k ? "L" : "M"}${X(t[k]).toFixed(1)},${Y(p[i]).toFixed(1)}`).join("");
+  let g = "";
+  for (let k = 0; k <= 4; k++) { const v = y0 - pad + k * (y1 - y0 + 2 * pad) / 4;
+    g += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="4" y="${Y(v) + 4}">${money(v)}</text>`; }
+  el.innerHTML = `<svg width="100%" viewBox="0 0 ${W} ${H}" role="img" aria-label="הון ויתרה">${g}
+    <line x1="${L}" x2="${W - R}" y1="${Y(init)}" y2="${Y(init)}" stroke="var(--mut)" stroke-dasharray="4 4"/>
+    <path d="${line(2)}" fill="none" stroke="var(--warn)" stroke-width="1.2"/>
+    <path d="${line(1)}" fill="none" stroke="var(--up)" stroke-width="2"/>
+    <text x="${W - R}" y="${H - 6}" text-anchor="start">${il(pts[pts.length - 1][0])}</text><text x="${L}" y="${H - 6}" text-anchor="end">${il(pts[0][0])}</text></svg>
+    <div class="mut" style="font-size:.8rem">ירוק: יתרה · כתום: הון כולל עסקאות פתוחות · מקווקו: $100,000</div>`;
+}
+
+function table(el, head, rows, empty) {
+  $(el).innerHTML = rows.length ? `<table><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr>${rows.join("")}</table>` : `<div class="empty">${empty}</div>`;
+}
+
+function render(s) {
+  if (!s) return;
+  const age = (Date.now() - new Date(s.updated_utc).getTime()) / 60000;
+  const st = $("status");
+  if (age < 10) { st.className = "pill ok"; st.textContent = `● פעיל · עודכן לפני ${Math.max(0, Math.round(age))} דק׳`; }
+  else { st.className = "pill bad"; st.textContent = `● לא מדווח כבר ${age < 120 ? Math.round(age) + " דק׳" : (age / 60).toFixed(1) + " שעות"} – בדוק את המחשב`; }
+  if (s.halted_until) { st.className = "pill warn"; st.textContent = "עצירת חירום עד חצות (שעון פראג)"; }
+  $("sub").textContent = `${NAMES[s.bot] || s.bot} · חשבון ${s.account} · ${s.combos.length} צירופים · סיכון ${(s.risk * 100).toFixed(3).replace(/0+$/, "")}% לעסקה`;
+  const init = s.initial, dayPnl = s.equity - s.day_start, dayPct = dayPnl / init * 100, tot = (s.equity - init) / init * 100;
+  const dayUsed = Math.max(0, -dayPct) / 5 * 100, totUsed = Math.max(0, -tot) / 10 * 100;
+  const k = (v, l, extra = "") => `<div class="kv"><b>${v}</b><span>${l}</span>${extra}</div>`;
+  const bar = u => `<div class="bar"><i style="width:${Math.min(100, u)}%;background:${u > 80 ? "var(--down)" : u > 50 ? "var(--warn)" : "var(--up)"}"></i></div>`;
+  $("kpis").innerHTML = k(money(s.balance), "יתרה") + k(money(s.equity), "הון (כולל פתוחות)") +
+    k(`<span class="${tot >= 0 ? "up" : "down"}">${pct(tot)}</span>`, "מתחילת החשבון") +
+    k(`<span class="${dayPnl >= 0 ? "up" : "down"}">${money(dayPnl)} (${pct(dayPct)})</span>`, `היום · נוצל ${dayUsed.toFixed(0)}% מרף ההפסד היומי (5%)`, bar(dayUsed)) +
+    k(`${totUsed.toFixed(0)}%`, "נוצל מרף ההפסד הכולל (10%)", bar(totUsed)) + k(String(s.positions.length), "עסקאות פתוחות");
+  chart(s.equity_curve, init);
+  table("open", ["צירוף", "כיוון", "לוטים", "כניסה", "סטופ", "יעד", "רווח צף", "מאז"], s.positions.map(p =>
+    `<tr><td>${esc(combo(p.combo))}${p.free ? ' <span class="chip">באיזון</span>' : ""}</td><td>${p.dir}</td><td class="n">${p.lots}</td><td class="n">${p.open}</td><td class="n">${p.sl || "—"}</td><td class="n">${p.tp || "—"}</td><td class="n ${p.pnl >= 0 ? "up" : "down"}">${money(p.pnl)}</td><td class="n">${il(p.since)}</td></tr>`), "אין עסקאות פתוחות כרגע.");
+  const by = {};
+  s.trades.forEach(t => { const b = by[t.combo] ||= {n: 0, w: 0, pnl: 0}; b.n++; b.pnl += t.pnl; if (t.pnl > 0) b.w++; });
+  table("bycombo", ["צירוף", "עסקאות", "מנצחות", "רווח/הפסד"], Object.entries(by).sort((a, b) => b[1].pnl - a[1].pnl).map(([c, b]) =>
+    `<tr><td>${esc(combo(c))}</td><td class="n">${b.n}</td><td class="n">${Math.round(b.w / b.n * 100)}%</td><td class="n ${b.pnl >= 0 ? "up" : "down"}">${money(b.pnl)}</td></tr>`), "עוד לא נסגרו עסקאות.");
+  table("closed", ["זמן", "צירוף", "כיוון סגירה", "לוטים", "מחיר", "רווח/הפסד", "סיבה"], s.trades.slice().reverse().slice(0, 100).map(t =>
+    `<tr><td class="n">${il(t.time)}</td><td>${esc(combo(t.combo))}</td><td>${t.dir}</td><td class="n">${t.lots}</td><td class="n">${t.price}</td><td class="n ${t.pnl >= 0 ? "up" : "down"}">${money(t.pnl)}</td><td>${esc(t.why)}</td></tr>`), "עוד לא נסגרו עסקאות.");
+  $("journal").textContent = (s.journal || []).slice().reverse().join("\n");
+}
+
+async function tick() {
+  for (const b of BOTS) { const s = await load(b); if (s) found[b] = s; }
+  if (!found[cur]) cur = BOTS.find(b => found[b]) || cur;
+  tabs();
+  if (found[cur]) render(found[cur]); else $("sub").textContent = "עוד אין נתונים מהבוטים. הם יופיעו כמה דקות אחרי שהבוט מתחיל לעבוד עם טוקן GitHub.";
+}
+tick(); setInterval(tick, 60000);
+</script>
+</body>
+</html>

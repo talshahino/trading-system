@@ -1,0 +1,38 @@
+name: Bot watchdog
+# Every 15 minutes: if a bot that reported before has been silent for 20+ minutes, send a phone alert
+# (ntfy topic in live/notify.json). One alert when it goes silent, then a reminder every 6 hours.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: live/notify.json
+      - name: Check bot heartbeats
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, datetime as dt
+          topic = json.load(open("live/notify.json"))["topic"]
+          now = dt.datetime.now(dt.timezone.utc)
+          names = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}
+          for b, he in names.items():
+              try:
+                  s = json.load(urllib.request.urlopen(f"https://raw.githubusercontent.com/talshahino/trading-system/live/live/{b}_state.json?t={now.timestamp()}", timeout=20))
+              except Exception:
+                  continue                      # this bot never reported: nothing to watch
+              age = (now - dt.datetime.fromisoformat(s["updated_utc"])).total_seconds() / 60
+              print(b, "age", round(age), "min")
+              if age < 20 or age > 7 * 24 * 60:
+                  continue
+              if age < 35 or (age % 360) < 15:
+                  msg = f"{he} לא דיווח כבר {round(age)} דקות. בדוק שהמחשב דלוק, ש־MT5 פתוח ושהחלון השחור של הבוט פתוח."
+                  req = urllib.request.Request(f"https://ntfy.sh/{topic}", data=msg.encode(), method="POST",
+                                               headers={"Title": f"{he} לא מגיב".encode(), "Priority": "5", "Tags": "rotating_light"})
+                  urllib.request.urlopen(req, timeout=20)
+          PY

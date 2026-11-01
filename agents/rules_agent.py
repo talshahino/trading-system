@@ -409,6 +409,9 @@ STRATEGIES.update(TIKTOK)
 from agents.classic_strategies import CLASSIC  # noqa: E402
 
 STRATEGIES.update(CLASSIC)
+from agents.session_strategies import SESSION  # noqa: E402
+
+STRATEGIES.update(SESSION)
 
 
 def timeframe_ok(sid, tf):

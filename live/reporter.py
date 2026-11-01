@@ -41,11 +41,13 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
 
 def quiet_now():
     """Quiet hours (Israel time) from live/notify.json, default 21:00-06:00."""
-    import datetime as dt
-    from zoneinfo import ZoneInfo
-    a, b = _CFG.get("quiet_from", 21), _CFG.get("quiet_to", 6)
-    h = dt.datetime.now(ZoneInfo("Asia/Jerusalem")).hour
-    return (h >= a or h < b) if a > b else (a <= h < b)
+    try:
+        import pandas as pd        # pandas ships its own time-zone data (Windows has none for zoneinfo)
+        a, b = _CFG.get("quiet_from", 21), _CFG.get("quiet_to", 6)
+        h = pd.Timestamp.now(tz="Asia/Jerusalem").hour
+        return (h >= a or h < b) if a > b else (a <= h < b)
+    except Exception:  # noqa: BLE001
+        return False
 
 
 def token():

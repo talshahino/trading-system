@@ -428,6 +428,9 @@ def monitor():
     if time.time() - MON["push"] >= 180:
         MON["push"] = time.time()
         err = REP.push_state(MON["name"], dashboard_state(ai, pos, ds_bal, now))
+        if not MON.get("pushed_once"):
+            MON["pushed_once"] = True
+            log(f"dashboard update: {err or 'OK'}")
         if err:
             log(err)
             REP.notify(f"{BOT}: הדשבורד לא מתעדכן", err, priority=3, key="push", every=6 * 3600)
@@ -494,8 +497,10 @@ def main():
     BOT = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}.get(name, name)
     MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])
     if not args.dry_run:
-        REP.notify(f"{BOT} התחיל לעבוד", f"חשבון {ai.login} · יתרה ${ai.balance:,.0f} · {len(combos)} צירופים · סיכון {cfg['risk'] * 100:g}%",
-                   tags=["robot"])
+        err = REP.notify(f"{BOT} התחיל לעבוד", f"חשבון {ai.login} · יתרה ${ai.balance:,.0f} · {len(combos)} צירופים · סיכון {cfg['risk'] * 100:g}%",
+                         tags=["robot"])
+        log(f"phone notifications: {err or 'OK (topic ' + REP._CFG['topic'] + ')'}")
+        log(f"dashboard: {'GitHub token found' if REP.token() else 'NO GitHub token - create live/github_token.txt'}")
     done = {}
     probe = mt5_name(combos[0][3])
     while True:

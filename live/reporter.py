@@ -29,11 +29,12 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
     if key:
         _LAST[key] = time.time()
     try:
-        requests.post(f"https://ntfy.sh/{_CFG['topic']}", data=message.encode("utf-8"), timeout=10,
-                      headers={"Title": title.encode("utf-8"), "Priority": str(priority),
-                               "Tags": ",".join(tags or [])})
-    except Exception:  # noqa: BLE001 - a notification must never stop the robot
-        pass
+        # JSON publishing: Hebrew titles are not allowed in HTTP headers
+        r = requests.post("https://ntfy.sh/", timeout=10, json={
+            "topic": _CFG["topic"], "title": title, "message": message, "priority": int(priority), "tags": list(tags or [])})
+        return None if r.status_code == 200 else f"ntfy answered {r.status_code}: {r.text[:120]}"
+    except Exception as e:  # noqa: BLE001 - a notification must never stop the robot
+        return f"notification failed: {e}"
 
 
 def token():

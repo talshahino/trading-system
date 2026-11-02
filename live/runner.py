@@ -200,12 +200,21 @@ def _calendar():
 
 
 def news_window(sym, now=None):
-    """Standard rule: inside 3 minutes (FTMO: 2) before/after a restricted event on this instrument."""
+    """Standard rule around FTMO restricted events on this instrument: no open position from
+    3 minutes before to 3 minutes after the release.
+    "close": 3.5 to 2.5 minutes before - close what is open (FTMO's own ban starts 2 minutes before);
+    "hold":  2.5 minutes before to 3 minutes after - no opening, closing or stop moves; None otherwise."""
     if not CLOSE_BREAKS:
-        return False
+        return None
     now = now or pd.Timestamp.now(tz="UTC")
-    return any(CAL.restricted_affects(sym, ins) and abs((now - t).total_seconds()) <= 180
-               for t, ins in _calendar()["restricted"])
+    phase = None
+    for t, ins in _calendar()["restricted"]:
+        d = (now - t).total_seconds()
+        if -210 <= d <= 180 and CAL.restricted_affects(sym, ins):
+            if d < -150:
+                return "close"
+            phase = "hold"
+    return phase
 
 
 def holiday_block(sym, now=None, before_min=30):
@@ -226,8 +235,14 @@ def break_close(now):
         return
     for p in ACC.positions():
         sym = SYM_BY_MAGIC.get(p.magic)
-        if sym is None or news_window(sym, now):
-            continue                                   # no closing around a restricted event: try after it
+        if sym is None:
+            continue
+        nw = news_window(sym, now)
+        if nw == "close":
+            close(p, "restricted news ahead (Standard rule)")
+            continue
+        if nw == "hold":
+            continue                                   # FTMO's ban window: no closing now
         if break_soon(sym, now):
             close(p, "market break ahead (Standard rule)")
         elif (h := holiday_block(sym, now)):
@@ -405,7 +420,7 @@ def stock_session_close(now):
     """Stocks: close every position 15 minutes before the exchange closes (no overnight gaps)."""
     for p in ACC.positions():
         sym = SYM_BY_MAGIC.get(p.magic)
-        if sym is None or U.CLASS.get(sym) != "stock" or news_window(sym, now):
+        if sym is None or U.CLASS.get(sym) != "stock" or news_window(sym, now) == "hold":
             continue
         tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
         loc = now.tz_convert(tz)
@@ -441,15 +456,18 @@ def step(combo, sid, tf, sym, off):
         DIAG[combo]["last_signal"] = f"{tr.iloc[-1]['time']} {'buy' if tr.iloc[-1]['dir'] > 0 else 'sell'} {tr.iloc[-1]['reason']}"
         DIAG[combo]["trades_in_window"] = int(len(tr))
     pos = [p for p in ACC.positions() if p.magic == MAGICS_BY_COMBO[combo]]
-    if news_window(sym, now):
-        # FTMO restricted event within 3 minutes: no opening, closing or stop moves now.
-        # A new entry of this bar is dropped (the backtest's entry time is gone); the rest is retried after it.
+    nw = news_window(sym, now)
+    if nw:
+        # FTMO restricted event: no position from 3 minutes before to 3 minutes after it.
+        # An open one is closed before FTMO's ban starts; a new entry of this bar is dropped.
+        if nw == "close" and pos:
+            close(pos[0], "restricted news ahead (Standard rule)")
         new = tr[tr["time"] == forming] if len(tr) else tr
         if len(new) and STATE["entry"].get(combo) != str(new.iloc[-1]["time"]):
             STATE["entry"][combo] = str(new.iloc[-1]["time"])
             save_state()
-            log(f"skip {combo}: FTMO restricted event within 3 minutes (Standard rule)")
-        DIAG[combo]["news_window"] = True
+            log(f"skip {combo}: FTMO restricted event, no trades from 3 min before to 3 min after (Standard rule)")
+        DIAG[combo]["news_window"] = nw
         return False
 
     def stop_now():

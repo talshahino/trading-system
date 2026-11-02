@@ -386,8 +386,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, {"ok": True, "accounts": public_accounts(), "version": (UPD.local() or "")[:7],
                                     "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"]} if UPDATE["sha"] else None,
                                     "pin_set": bool(CFG.get("pin_hash")), "push_devices": len(CFG.get("subs", [])),
-                                    "watchdog_push": WATCH["ok"],
-                                    "journal": list(JOURNAL)[-60:]})
+                                    "watchdog_push": WATCH["ok"]})
         if path == "/vapid":
             return self._send(200, {"key": vapid_public()})
         if len(parts) == 3 and parts[0] == "bot" and parts[2] in ("live", "state"):
@@ -506,8 +505,7 @@ def push_manager_state():
     encrypted, as a GitHub secret) nobody can send anything to them."""
     state = {"url": TUN.URL["url"], "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
              "accounts": [{"name": a["name"], "label": a.get("label", a["name"])} for a in accounts()],
-             "subs": CFG.get("subs", []), "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting"),
-             "journal": [l for l in list(JOURNAL)[-25:] if "password" not in l.lower()]}
+             "subs": CFG.get("subs", []), "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
     err = REP.push_state("manager", state)
     if err:
         log(err)

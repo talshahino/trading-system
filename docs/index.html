@@ -211,19 +211,14 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
           <span class="mut">הסיסמה נשמרת מוצפנת רק במחשב הבוטים. כרגע אפשר להוסיף רק חשבון דמו.</span></div>
       </form>
       <div class="msg" id="addMsg"></div></div>
-    <div class="card"><h3>יומן המנהל</h3><pre id="mJournal"></pre></div>
   </section>
 
-  <section class="view" id="v-log">
-    <div class="card"><h3>יומן הבוט</h3><pre id="journal"></pre></div>
-  </section>
 </main>
 
 <nav class="tabs" id="tabs">
   <button data-v="v-acc" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>חשבון</button>
   <button data-v="v-stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>סטטיסטיקה</button>
   <button data-v="v-mgr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>ניהול</button>
-  <button data-v="v-log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>יומן</button>
 </nav>
 
 <script>
@@ -410,7 +405,6 @@ function render(s, liveOnly = false) {
     return `<tr><td class="num">${il(t.time)}</td><td><b>${esc(c.y)}</b></td><td class="mut"><bdi>${esc(c.s)}</bdi> · ${esc(c.t)}</td><td>${esc(t.dir)}</td><td class="num">${t.lots}</td><td class="num">${t.price}</td>
       <td class="num ${cls(t.pnl)}">${money(t.pnl, true)}</td><td class="num ${cls(t.pnl)}">${pct(t.pnl / init * 100)}</td><td class="mut">${esc(t.why)}</td></tr>`; }), "אין עסקאות בתקופה הזו.");
 
-  $("journal").textContent = (s.journal || []).slice().reverse().join("\n");
 }
 
 document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
@@ -500,7 +494,6 @@ function renderMgr() {
     catch (e) { note("accMsg", e.message, false); }
     setTimeout(mgrRefresh, 1500);
   });
-  $("mJournal").textContent = m ? (m.journal || []).slice().reverse().join("\n") : "";
 }
 function confirmBox(n) { return prompt(`להסיר את ${n}? הבוט ייעצר והחשבון יוסר מהרשימה. כתוב "הסר" לאישור:`) === "הסר"; }
 async function mgrRefresh() { await findMgr(); renderMgr(); mgrBots(); }

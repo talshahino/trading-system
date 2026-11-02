@@ -707,7 +707,7 @@ def dashboard_state(ai, pos, ds_bal, now):
         "balance": ai.balance, "equity": ai.equity, "day_start": ds_bal,
         "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "combos": MON["combos"],
         "positions": positions_doc(pos), "live_url": TUN.URL["url"],
-        "diag": DIAG, "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:], "journal": list(JOURNAL)[-150:],
+        "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:],   # the bot's log stays on the computer only
     }
 
 

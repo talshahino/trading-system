@@ -111,7 +111,7 @@ def main():
             st[c] = pd.to_datetime(st[c], utc=True)
         st["free_time"] = pd.to_datetime(st["free_time"], utc=True, errors="coerce")
         print(f"news rule: {before} trades -> {len(st)}; closed before an event: {(st['reason'] == 'נסגרה לפני הודעה מוגבלת').sum()}, "
-              f"delayed entries: {st['reason_news'].notna().sum()}")
+              f"signals in the window, not taken: {before - len(st)}")
         trades["Standard"] = st.reset_index(drop=True)
     out = []
     for b in (1, 2, 3):

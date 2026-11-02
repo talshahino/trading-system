@@ -482,11 +482,10 @@ def step(combo, sid, tf, sym, off):
         if nw == "close" and pos:
             close(pos[0], "restricted news ahead (Standard rule)")   # closed for the news: not reopened
         new = tr[tr["time"] == forming] if len(tr) else tr
-        if len(new) and STATE["entry"].get(combo) != str(new.iloc[-1]["time"]) \
-                and STATE.setdefault("delayed", {}).get(combo) != str(new.iloc[-1]["time"]):
-            STATE["delayed"][combo] = str(new.iloc[-1]["time"])     # entry waits until 3 minutes after the event
+        if len(new) and STATE["entry"].get(combo) != str(new.iloc[-1]["time"]):
+            STATE["entry"][combo] = str(new.iloc[-1]["time"])       # a signal inside the window is not taken, not later either
             save_state()
-            log(f"wait {combo}: FTMO restricted event - the entry waits until 3 min after it (Standard rule)")
+            log(f"skip {combo}: signal within 3 min of an FTMO restricted event - not taken (Standard rule)")
         DIAG[combo]["news_window"] = nw
         NEWS_RETRY.add(combo)
         return False
@@ -520,28 +519,12 @@ def step(combo, sid, tf, sym, off):
         # an opposite signal may open the next trade on this same bar: fall through
     if not len(tr):
         return
-    delayed = STATE.setdefault("delayed", {}).pop(combo, None)
     t = tr[tr["time"] == forming]
-    if t.empty and delayed:                            # an entry held back by a restricted event
-        t = tr[(tr["time"].astype(str) == delayed) & (tr["reason"] == "סוף הנתונים")]
-    if delayed:
-        save_state()
     if t.empty:
-        if delayed:
-            log(f"skip {combo}: the entry held back by the news is no longer running")
         return
     t = t.iloc[-1]
     if STATE["entry"].get(combo) == str(t["time"]):
         return                                         # already handled this entry
-    if delayed == str(t["time"]):
-        tick = mt5.symbol_info_tick(mt5_name(sym))
-        px = (tick.ask if t["dir"] > 0 else tick.bid) if tick else None
-        lo, hi = sorted((float(t["stop_px"]), float(t["target_px"])))
-        if px is None or not (lo < px < hi):
-            STATE["entry"][combo] = str(t["time"])
-            save_state()
-            log(f"skip {combo}: after the news the price {px} is no longer between the stop and the target")
-            return
     if U.CLASS.get(sym) == "stock":
         tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
         loc = pd.Timestamp.now(tz="UTC").tz_convert(tz)

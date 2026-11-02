@@ -127,9 +127,8 @@ def apply_news(trades, minute_open, restricted):
     """Restricted events, minute by minute, on a trade list from the backtest engine:
     - a trade open 3 minutes before an event on its instrument is closed then (1-minute price) and
       is not reopened;
-    - a trade whose entry falls between 3 minutes before and 3 minutes after the event waits: it
-      opens 3 minutes after the event, if it is still running (exit later) and the price is still
-      between its stop and its target; otherwise it is dropped.
+    - a trade whose entry falls between 3 minutes before and 3 minutes after the event is not taken
+      (not later either).
     minute_open(symbol, utc time) -> the 1-minute open price at that time (or the next minute), or None.
     The R of a changed trade is recomputed with the same stop and target; its costs (in price) are kept."""
     out = []
@@ -144,17 +143,9 @@ def apply_news(trades, minute_open, restricted):
             a, b = t - BEFORE, t + AFTER
             if r["exit_time"] <= a or r["time"] > b:
                 continue
-            if a <= r["time"] <= b:                       # entry inside the window: wait for b
-                if r["exit_time"] <= b:
-                    drop = True
-                    break
-                px = minute_open(r["symbol"], b)
-                if px is None or not (min(st, tg) < px < max(st, tg)):
-                    drop = True
-                    break
-                r["time"], r["entry_px"], r["reason_news"] = b, px, "כניסה נדחתה בגלל הודעה"
-                e0 = px
-                continue
+            if a <= r["time"] <= b:                       # signal inside the window: no trade at all
+                drop = True
+                break
             px = minute_open(r["symbol"], a)              # open at a: close 3 minutes before the event
             if px is None:
                 continue

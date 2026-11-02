@@ -204,6 +204,9 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .subt::-webkit-scrollbar{display:none}
 .subt button{flex:0 0 auto;border:0;border-radius:12px;background:var(--seg);padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:42px}
 .subt button[aria-selected="true"]{background:var(--vps);color:#fff}
+.subt{align-items:center}
+.subt button[data-s="ov"]{font-size:17px;padding:13px 24px;min-height:52px;border-radius:14px;background:var(--vps-soft);color:var(--vps);box-shadow:inset 0 0 0 1.5px var(--vps)}
+.subt button[data-s="ov"][aria-selected="true"]{background:linear-gradient(135deg,#1F3A5F,#2C5A8F);color:#fff;box-shadow:0 6px 16px rgba(31,58,95,.35)}
 .badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#2C7BE5;color:#fff;font-size:12px;font-family:var(--mono)}
 .subt button[aria-selected="true"] .badge{background:#fff;color:var(--vps)}
 .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
@@ -306,7 +309,7 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .mgrid .k{font-size:13px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:6px}
 .mgrid .v{font-family:var(--mono);font-weight:700;font-size:18px;margin-top:4px;direction:ltr;unicode-bidi:isolate;text-align:right}
 .bars text{fill:var(--muted);font-size:10.5px;font-family:var(--mono)}
-.danger{width:100%;border:2px solid #D0453A;background:var(--neg-soft);color:#D0453A;font-weight:800;font-size:16px;border-radius:12px;min-height:50px;cursor:pointer}
+.dangerbtn{width:100%;border:2px solid #D0453A;background:var(--neg-soft);color:#D0453A;font-weight:800;font-size:16px;border-radius:12px;min-height:50px;cursor:pointer}
 @media (min-width:761px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 </head>
@@ -329,24 +332,7 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
   </section>
 
   <section class="view" id="v-stats">
-    <div class="seg" id="bots" role="tablist" aria-label="בחירת חשבון"></div>
-    <div class="acct" id="acct">טוען…</div>
-    <div class="card">
-      <h3>יתרה לאורך זמן</h3>
-      <div class="kpis" id="skpis"></div>
-      <div id="chart" style="margin-top:12px"></div>
-    </div>
-    <div class="card">
-      <h3>סיכום תקופות</h3>
-      <div class="tools"><div class="seg" id="perSeg"></div></div>
-      <div class="tw" id="periods"></div>
-    </div>
-    <div class="card"><h3>לפי צירוף <span class="cnt" id="comboN">0</span></h3><div class="list" id="combos"></div></div>
-    <div class="card">
-      <h3>היסטוריית עסקאות</h3>
-      <div class="tools"><div class="seg" id="histSeg"></div></div>
-      <div class="tw" id="hist"></div>
-    </div>
+    <div id="allStats"><div class="empty">טוען…</div></div>
   </section>
 
   <section class="view" id="v-news">
@@ -370,21 +356,14 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
     <div class="card"><h3>מחשב הבוטים</h3>
       <div class="row"><i class="dot" id="mDot"></i><span id="mState">מחפש את המנהל…</span></div>
       <div class="msg mut" id="mVer"></div></div>
-    <div class="card"><h3>קוד סודי</h3>
-      <div class="row"><input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="הקוד שבחרת בהתקנה" style="max-width:260px">
-        <button class="btn" id="pinSave">שמור</button><button class="btn ghost" id="pinForget">שכח</button></div>
-      <div class="msg" id="pinMsg"></div></div>
-    <div class="card"><h3>התראות</h3>
-      <div class="row"><span class="mut" id="pushState">ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה.</span><button class="btn" id="pushBtn">הפעל התראות</button></div>
-      <div class="msg" id="pushMsg"></div></div>
     <div class="card" id="updCard" style="display:none"><h3>עדכון</h3>
       <div id="updText" style="margin-bottom:10px"></div>
       <div class="row"><button class="btn ok" id="updBtn">אשר עדכון</button><span class="mut">העסקאות הפתוחות נשארות עם הסטופ והיעד, והבוטים עולים מחדש תוך כדקה.</span></div>
       <div class="msg" id="updMsg"></div></div>
+    <div class="card"><h3>התראות</h3>
+      <div class="row"><span class="mut" id="pushState">ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה.</span><button class="btn" id="pushBtn">הפעל התראות</button></div>
+      <div class="msg" id="pushMsg"></div></div>
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
-    <div class="card"><h3>לוגים</h3>
-      <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
-      <div class="msg" id="logMsg"></div></div>
     <div class="card"><h3>הוספת חשבון</h3>
       <form class="form" id="addForm" autocomplete="off">
         <label class="full">שם לחשבון<input id="fNick" maxlength="40" placeholder="למשל: אתגר 100K ראשון"></label>
@@ -396,6 +375,13 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
           <span class="mut">הסיסמה נשמרת מוצפנת רק במחשב הבוטים. כרגע אפשר להוסיף רק חשבון דמו.</span></div>
       </form>
       <div class="msg" id="addMsg"></div></div>
+    <div class="card"><h3>לוגים</h3>
+      <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
+      <div class="msg" id="logMsg"></div></div>
+    <div class="card"><h3>קוד סודי</h3>
+      <div class="row"><input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="הקוד שבחרת בהתקנה" style="max-width:260px">
+        <button class="btn" id="pinSave">שמור</button><button class="btn ghost" id="pinForget">שכח</button></div>
+      <div class="msg" id="pinMsg"></div></div>
   </div>
   </div>
 </aside>
@@ -408,7 +394,7 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
   <div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div></div>
 <div class="pop" id="pop"><div class="box"><h4 id="popT"></h4><p id="popB"></p><button class="btn" id="popOk">הבנתי</button></div></div>
 <nav class="tabs" id="tabs">
-  <button data-v="v-stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>סטטיסטיקה</button>
+  <button data-v="v-stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>סטטיסטיקה כוללת</button>
   <button data-v="v-acc" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>חשבון</button>
   <button data-v="v-news"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4M8 14h3M8 17h6"/></svg>חדשות</button>
 </nav>
@@ -556,7 +542,7 @@ function render(s, liveOnly = false) {
 document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === b.dataset.v));
-  if (b.dataset.v === "v-stats" && found[cur]) { botsBar(); render(found[cur]); }
+  if (b.dataset.v === "v-stats") renderAll();
   if (b.dataset.v === "v-acc") { UI.view = "list"; showAcc(); }
   if (b.dataset.v === "v-news") loadNews();
   scrollTo(0, 0);
@@ -651,9 +637,9 @@ function renderMgr() {
   $("updCard").style.display = m && m.update ? "" : "none";
   if (m && m.update) $("updText").innerHTML = `<b>${esc(m.update.title)}</b> <span class="mut num">${esc(m.update.sha)}</span>`;
   $("accs").innerHTML = m && m.accounts.length ? m.accounts.map(a => `<div class="acc"><i class="dot ${a.running ? "on" : a.enabled ? "mid" : ""}"></i>
-      <span class="nm">${esc(a.label)}</span><span class="pill ${a.running ? "pos" : ""}">${a.running ? "פועל" : a.enabled ? "עולה…" : "עצור"}</span>
+      <span class="nm">${esc(a.label)}</span><span class="pill ${a.running ? "pos" : ""}">${a.archived ? "סגור" : a.running ? "פועל" : a.enabled ? "עולה…" : "עצור"}</span>
       ${a.server ? `<span class="mut">${esc(a.server)}</span>` : ""}
-      <span class="row">${a.enabled ? `<button class="btn danger" data-a="stop" data-n="${esc(a.name)}">עצור</button>` : `<button class="btn ok" data-a="start" data-n="${esc(a.name)}">הפעל</button>`}
+      <span class="row">${a.archived ? "" : a.enabled ? `<button class="btn danger" data-a="stop" data-n="${esc(a.name)}">עצור</button>` : `<button class="btn ok" data-a="start" data-n="${esc(a.name)}">הפעל</button>`}
       <button class="btn ghost" data-a="rename" data-n="${esc(a.name)}">שנה שם</button>
       ${a.login ? `<button class="btn ghost" data-a="remove" data-n="${esc(a.name)}">הסר</button>` : ""}</span></div>`).join("")
     : `<div class="empty">${m ? "אין חשבונות עדיין." : "ממתין למנהל…"}</div>`;
@@ -799,7 +785,7 @@ async function tick() {
   if (!found[cur]) cur = BOTS.find(b => found[b]) || cur;
   updConn();
   if ($("v-acc").classList.contains("on")) { if (UI.view === "det") renderDet(); else renderList(); }
-  if ($("v-stats").classList.contains("on")) { botsBar(); if (found[cur]) render(found[cur]); }
+  if ($("v-stats").classList.contains("on")) renderAll();
 }
 /* ================= Accounts (FTMO-style): list → account screen (overview, trades, statistics, details) ================= */
 const BOT_TPL = {bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3"};
@@ -821,6 +807,7 @@ const INFO = {
   balance: ["יתרה", "הכסף בחשבון אחרי העסקאות שכבר נסגרו. לא כולל רווח או הפסד של עסקאות פתוחות."],
   equity: ["הון", "שווי החשבון ברגע זה: היתרה ועוד הרווח או ההפסד של העסקאות הפתוחות. לפי ההון FTMO בודקת את מגבלות ההפסד."],
   open: ["רווח/הפסד פתוח", "הרווח או ההפסד של העסקאות שעדיין פתוחות. הוא הופך לחלק מהיתרה רק כשהעסקה נסגרת."],
+  wd: ["סך הכל נמשך", "כל הכסף שנמשך מהחשבון לבנק (לפי המשיכות שנרשמו בפרטי החשבון). הרווח/הפסד מהפתיחה כולל את מה שנמשך, כך שמשיכה לא נראית כמו הפסד."],
   today: ["רווח היום", "השינוי בהון מתחילת היום של FTMO (חצות בשעון פראג, 01:00 בשעון ישראל בחורף)."],
   dayAllowed: ["הפסד מותר היום", "כמה עוד אפשר להפסיד היום, כולל עסקאות פתוחות, לפני שעוברים את מגבלת ההפסד היומי של FTMO: 5% מגודל החשבון מתחת ליתרה של תחילת היום. הבוט עוצר הכל כבר ב־4.5%."],
   maxAllowed: ["הפסד מותר כולל", "כמה עוד אפשר להפסיד, כולל עסקאות פתוחות, לפני שעוברים את מגבלת ההפסד הכוללת של FTMO: ההון אסור שירד מתחת ל־90% מגודל החשבון ההתחלתי."],
@@ -873,7 +860,8 @@ function calc(s, a) {
   const lw = s.lows || {};
   const dayLow = lw.day === today && lw.day_low != null ? Math.min(lw.day_low, eq) : Math.min(eq, ...curve.filter(p => pragueDay(p[0]) === today).map(p => p[2]));
   const allLow = lw.all_low != null ? Math.min(lw.all_low, eq) : Math.min(eq, ...curve.map(p => p[2]));
-  return {init, eq, bal, ds, tot: eq - init, open: eq - bal, today: eq - ds, dayLow, allLow,
+  const wds = (a && a.withdrawals) || [], wd = wds.reduce((x, w) => x + (+w.amount || 0), 0);
+  return {init, eq, bal, ds, tot: eq + wd - init, wd, wds, open: eq - bal, today: eq - ds, dayLow, allLow,
           tgt: (a && a.target_pct) || 10, dayLim: ds - 0.05 * init, maxLim: 0.9 * init};
 }
 function curveOf(s) {
@@ -972,7 +960,8 @@ function ov(s, a, light) {
   const k = calc(s, a);
   const tile = (key, v, p) => `<div class="tile"><div class="k">${INFO[key][0]} ${ib(key)}</div><div class="v ${key === "balance" || key === "equity" ? "" : cls(v)}">${usd(v, key !== "balance" && key !== "equity")}</div>${p != null ? `<div class="p ${cls(p)}">${pct(p)}</div>` : ""}</div>`;
   const tiles = tile("balance", k.bal, (k.bal - k.init) / k.init * 100) + tile("equity", k.eq, (k.eq - k.init) / k.init * 100) +
-    tile("open", k.open, k.open / k.init * 100) + tile("today", k.today, k.today / k.init * 100);
+    tile("open", k.open, k.open / k.init * 100) + tile("today", k.today, k.today / k.init * 100) +
+    (k.wd ? `<div class="tile" style="grid-column:1/-1"><div class="k">${INFO.wd[0]} ${ib("wd")}</div><div class="v">${usd(k.wd)}</div><div class="lbl" style="margin-top:4px">רווח/הפסד כולל משיכות: <span class="num ${cls(k.tot)}">${usd(k.tot, true)} · ${pct(k.tot / k.init * 100)}</span></div></div>` : "");
   const dl = k.dayLow - k.ds, al = k.allLow - k.init;
   const obj = (key, lim, v) => { const okk = -v < lim; return `<div class="obj"><div class="ol"><div class="k">${INFO[key][0]} ${ib(key)}</div><div class="v">−$${lim.toLocaleString("en-US", {minimumFractionDigits: 2})}</div></div>
     <div class="or ${okk ? "pos" : "neg"}"><small>${pct(v / k.init * 100)}</small><b>${usd(v, true)}</b></div><span class="${okk ? "okc" : "badc"}">${okk ? ICON.check : ICON.x}</span></div>`; };
@@ -1024,6 +1013,8 @@ function eqChart(s, a) {
     <path d="${path(eq)}L${X(x1).toFixed(1)},${H - B}L${X(x0).toFixed(1)},${H - B}Z" fill="url(#eqg)"/>
     <path d="${path(bl)}" fill="none" stroke="#2C7BE5" stroke-width="1.2" opacity=".7"/>
     <path d="${path(eq)}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round"/>
+    ${k.wds.map(w => { const tv = new Date(w.date + "T12:00:00").getTime(); if (tv < x0 || tv > x1) return ""; const xx = X(tv).toFixed(1);
+      return `<line x1="${xx}" x2="${xx}" y1="${T}" y2="${H - B}" stroke="#946C00" stroke-dasharray="3 3"/><text x="${xx}" y="${T + 10}" text-anchor="middle" style="fill:#946C00;font-weight:700">משיכה $${Math.round(w.amount).toLocaleString("en-US")}</text>`; }).join("")}
     <g id="cross" style="display:none"><line id="cx" y1="${T}" y2="${H - B}" stroke="${col}" stroke-width="1.5"/><circle id="cd" r="6" fill="${col}" stroke="#fff" stroke-width="2"/></g></svg>
     <div class="tip" id="ctip"></div><div class="foot" style="margin-top:4px">קו צבעוני: הון (כולל עסקאות פתוחות) · כחול: יתרה · מקווקו: נקודת ההתחלה ${usd(init)}</div>`;
   const svg = el.querySelector("svg"), tip = $("ctip");
@@ -1281,19 +1272,75 @@ function details(s, a) {
       ${li("סיום", a.archived_at ? `<span class="num">${dtF(a.archived_at)}</span>` : "—", " " + ib("end"))}
       ${li("גודל החשבון", `<span class="num">${usd(k.init)}</span>`)}${li("יעד רווח", `<span class="num">${k.tgt}% · ${usd(k.init * (1 + k.tgt / 100))}</span>`, live ? ' <button class="btn ghost" id="dTgt" style="min-height:30px;padding:4px 10px;margin-inline-start:6px">שנה</button>' : "")}
       ${li("סיכון לעסקה", `<span class="num">${((s.risk || 0) * 100).toFixed(3).replace(/\.?0+$/, "")}%</span>`)}${li("ברוקר", "FTMO")}${li("שרת", esc(s.server || a.server || "—"))}${li("פלטפורמה", "MetaTrader 5")}</div>
+    <div class="row" style="justify-content:space-between;margin:18px 2px 8px"><span class="h4" style="margin:0">משיכות</span>${live ? '<button class="btn" id="dWd" style="min-height:36px;padding:6px 14px">רישום משיכה +</button>' : ""}</div>
+    <div class="lst">${k.wds.length ? k.wds.map(w => `<div class="li"><span class="k num">${w.date.split("-").reverse().join(".")}${w.note ? " · " + esc(w.note) : ""}</span><span class="v"><span class="num">${usd(w.amount)}</span>${live ? ` <button class="btn ghost" data-wdel="${esc(w.id)}" style="min-height:30px;padding:4px 10px;margin-inline-start:6px">מחק</button>` : ""}</span></div>`).join("") +
+      `<div class="li"><span class="k"><b>סך הכל נמשך</b></span><span class="v num"><b>${usd(k.wd)}</b></span></div>` : '<div class="li"><span class="k">עוד לא נרשמו משיכות.</span></div>'}</div>
     <div class="card row" style="justify-content:space-between"><b>מוצג ברשימת החשבונות</b><label class="sw"><input type="checkbox" id="dVis" ${a.hidden ? "" : "checked"} ${live ? "" : "disabled"}><span></span></label></div>
-    ${a.archived ? "" : `<div class="h4" style="margin-top:22px">אזור מסוכן</div><button class="danger" id="dClose" ${live ? "" : "disabled"}>סגור חשבון</button>
+    ${a.archived ? "" : `<div class="h4" style="margin-top:22px">אזור מסוכן</div><button class="dangerbtn" id="dClose" ${live ? "" : "disabled"}>סגור חשבון</button>
       <div class="foot" style="margin-top:8px">סגירה עוצרת את הבוט של החשבון הזה לצמיתות ומעבירה את החשבון להיסטוריה. עסקאות פתוחות נשארות עם הסטופ והיעד שלהן.</div>`}
     <div class="msg" id="dMsg">${live ? "" : "שינויים אפשריים רק כשמחשב הבוטים מחובר."}</div>`;
   const run = async (path, body, ok) => { try { await act(path, body); note("dMsg", ok, true); await findMgr(); renderDet(); } catch (e) { note("dMsg", e.message, false); } };
   if ($("dRen")) $("dRen").onclick = () => { const v = prompt("שם חדש לחשבון:", nick(a)); if (v) run(`/accounts/${encodeURIComponent(a.name)}/rename`, {nickname: v}, "השם עודכן."); };
   if ($("dTgt")) $("dTgt").onclick = () => { const v = prompt("יעד רווח באחוזים מגודל החשבון:", k.tgt); if (v) run(`/accounts/${encodeURIComponent(a.name)}/target`, {pct: parseFloat(v)}, "היעד עודכן."); };
+  if ($("dWd")) $("dWd").onclick = () => {
+    const v = parseFloat(String(prompt("סכום המשיכה בדולרים:") || "").replace(/[$,\s]/g, "")); if (!(v > 0)) return;
+    const today = new Date().toLocaleDateString("en-CA", IL), dd = prompt("תאריך המשיכה (שנה-חודש-יום):", today); if (!dd) return;
+    run(`/accounts/${encodeURIComponent(a.name)}/withdraw`, {amount: v, date: dd.trim()}, "המשיכה נרשמה.");
+  };
+  $("dBody").querySelectorAll("[data-wdel]").forEach(b => b.onclick = () => { if (confirm("למחוק את המשיכה הזו?")) run(`/accounts/${encodeURIComponent(a.name)}/withdraw_del`, {id: b.dataset.wdel}, "המשיכה נמחקה."); });
   $("dVis").onchange = e => run(`/accounts/${encodeURIComponent(a.name)}/hide`, {hidden: !e.target.checked}, e.target.checked ? "החשבון מוצג ברשימה." : "החשבון הוסתר. הוא ממשיך לעבוד, ואפשר למצוא אותו ב'חשבונות מוסתרים'.");
   if ($("dClose")) $("dClose").onclick = () => { if (prompt(`לסגור את "${nick(a)}"? הבוט ייעצר והחשבון יעבור להיסטוריה. כתוב "סגור" לאישור:`) === "סגור") run(`/accounts/${encodeURIComponent(a.name)}/archive`, {}, "החשבון נסגר ועבר להיסטוריה."); };
 }
+
+const CHEV = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>';
+/* ================= Overall statistics: all accounts together (active / closed) ================= */
+function aggr(list) {
+  const rows = list.map(a => { const s = found[a.name]; if (!s) return {a}; const k = calc(s, a); return {a, s, k, cl: closedOf(s)}; });
+  const ok = rows.filter(r => r.s), cl = ok.flatMap(r => r.cl);
+  const w = cl.filter(c => c.net > 0), l = cl.filter(c => c.net < 0), gw = w.reduce((x, c) => x + c.net, 0), gl = -l.reduce((x, c) => x + c.net, 0);
+  const sum = f => ok.reduce((x, r) => x + f(r), 0);
+  return {rows, ok, cl, size: sum(r => r.k.init), eq: sum(r => r.k.eq), wd: sum(r => r.k.wd), pnl: sum(r => r.k.tot), today: sum(r => r.k.today),
+          n: cl.length, win: cl.length ? w.length / cl.length : 0, pf: gl ? gw / gl : (gw ? Infinity : 0), avgW: w.length ? gw / w.length : 0, avgL: l.length ? -gl / l.length : 0,
+          lots: cl.reduce((x, c) => x + c.lots, 0)};
+}
+function groupHtml(title, g, active) {
+  if (!g.rows.length) return `<div class="h4" style="margin-top:18px">${title}</div><div class="empty" style="margin-bottom:12px">${active ? "אין חשבונות פעילים." : "עוד אין חשבונות סגורים."}</div>`;
+  const exp = g.win * g.avgW + (1 - g.win) * g.avgL;
+  const m = (k, v, c = "") => `<div><div class="k">${k}</div><div class="v ${c}">${v}</div></div>`;
+  return `<div class="h4" style="margin-top:18px">${title} <span class="badge">${g.rows.length}</span></div>
+    <div class="tiles" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+      <div class="tile"><div class="k">רווח/הפסד כולל</div><div class="v ${cls(g.pnl)}">${usd(g.pnl, true)}</div><div class="p ${cls(g.pnl)}">${g.size ? pct(g.pnl / g.size * 100) : "—"}</div></div>
+      <div class="tile"><div class="k">${active ? "היום" : "נמשך"}</div><div class="v ${active ? cls(g.today) : ""}">${active ? usd(g.today, true) : usd(g.wd)}</div><div class="p ${active ? cls(g.today) : ""}">${active ? (g.size ? pct(g.today / g.size * 100) : "") : ""}</div></div>
+      <div class="tile"><div class="k">גודל החשבונות</div><div class="v">${usd(g.size)}</div></div>
+      <div class="tile"><div class="k">${active ? "הון כולל" : "יתרה בסגירה"}</div><div class="v">${usd(g.eq)}</div>${active && g.wd ? `<div class="p">נמשך ${usd(g.wd)}</div>` : ""}</div></div>
+    <div class="card"><div class="mgrid">${m("עסקאות", g.n)}${m("אחוז הצלחה", g.n ? (g.win * 100).toFixed(1) + "%" : "—")}${m("Profit factor", g.n ? (g.pf === Infinity ? "∞" : g.pf.toFixed(2)) : "—", g.pf >= 1 ? "pos" : g.n ? "neg" : "")}
+      ${m("תוחלת לעסקה", g.n ? usd(exp, true) : "—", cls(exp))}${m("רווח ממוצע", g.avgW ? usd(g.avgW) : "—", "pos")}${m("הפסד ממוצע", g.avgL ? usd(g.avgL) : "—", "neg")}</div></div>
+    <div class="tl">${'<div class="th" style="grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) auto 14px"><span>חשבון</span><span>עסקאות · הצלחה</span><span>רווח/הפסד</span><span></span></div>'}
+      ${g.rows.map(r => { if (!r.s) return `<div class="tr"><div class="tg" style="grid-template-columns:minmax(0,1.6fr) auto"><div class="s">${esc(nick(r.a))}</div><span class="mut">אין נתונים</span></div></div>`;
+        const ww = r.cl.filter(c => c.net > 0).length;
+        return `<div class="tr" data-open="${esc(r.a.name)}"><div class="tg" style="grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) auto 14px">
+          <div style="min-width:0"><div class="s">${esc(nick(r.a))}</div><div class="lbl">${esc(botL(r.a))} · ${usd(r.k.init).replace(".00", "")}${r.k.wd ? " · נמשך " + usd(r.k.wd) : ""}</div></div>
+          <div class="d">${r.cl.length} · ${r.cl.length ? Math.round(ww / r.cl.length * 100) + "%" : "—"}</div>
+          <div style="text-align:end"><div class="pl ${cls(r.k.tot)}">${usd(r.k.tot, true)}</div><div class="lbl num ${cls(r.k.tot)}">${pct(r.k.tot / r.k.init * 100)}</div></div><span class="chev">${CHEV}</span></div></div>`; }).join("")}</div>`;
+}
+function renderAll() {
+  const all = accList(), act = aggr(all.filter(a => !a.archived)), done = aggr(all.filter(a => a.archived)), tot = aggr(all);
+  const syms = {}; tot.cl.forEach(c => syms[c.symbol] = (syms[c.symbol] || 0) + c.net);
+  const symData = Object.entries(syms).sort((a, b) => b[1] - a[1]).slice(0, 12);
+  const accData = tot.ok.map(r => [nick(r.a), r.k.tot]);
+  $("allStats").innerHTML = `<div class="acard" style="cursor:default"><div class="ah"><span class="an">כל החשבונות</span><span class="am">${act.rows.length} פעילים · ${done.rows.length} סגורים</span></div>
+      <div class="big ${cls(tot.pnl)}" style="margin-top:12px">${usdBig(tot.pnl, true)}</div>
+      <div class="lbl">רווח/הפסד כולל (כולל משיכות) · <span class="num ${cls(tot.pnl)}">${tot.size ? pct(tot.pnl / tot.size * 100) : "—"}</span> מסך גודל החשבונות</div>
+      <div class="af"><span><span class="mut">גודל כולל</span> <b>${usd(tot.size)}</b></span><span><span class="mut">נמשך</span> <b>${usd(tot.wd)}</b></span><span><span class="mut">עסקאות</span> <b>${tot.n}</b></span></div></div>
+    ${groupHtml("חשבונות פעילים", act, true)}${groupHtml("חשבונות סגורים", done, false)}
+    <div class="h4" style="margin-top:18px">השוואה</div>${barsCard("רווח/הפסד לפי חשבון", accData)}${barsCard("רווח/הפסד לפי נכס (כל החשבונות)", symData)}`;
+}
+$("allStats").onclick = e => { const r = e.target.closest("[data-open]"); if (!r) return;
+  document.querySelectorAll("#tabs button").forEach(x => x.setAttribute("aria-selected", x.dataset.v === "v-acc"));
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === "v-acc")); openAcc(r.dataset.open); };
 $("pop").onclick = e => { if (e.target.id === "pop" || e.target.id === "popOk") $("pop").classList.remove("on"); };
 
-addEventListener("resize", () => { if ($("v-stats").classList.contains("on") && found[cur]) chart(found[cur].equity_curve, found[cur].initial); if ($("eqc") && found[UI.cur]) eqChart(found[UI.cur], accBy(UI.cur)); });
+addEventListener("resize", () => { if ($("eqc") && found[UI.cur]) eqChart(found[UI.cur], accBy(UI.cur)); });
 tick(); setInterval(tick, 60000); setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
 </script>
 </body>

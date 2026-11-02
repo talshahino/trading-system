@@ -304,7 +304,8 @@ def public_accounts(with_run=True):
         out.append({"name": a["name"], "label": a.get("label", a["name"]), "nickname": a.get("nickname"), "bot": a.get("bot"), "login": a.get("login"),
                     "server": a.get("server"), "enabled": a.get("enabled", False), "running": running(a["name"]) if with_run else None,
                     "archived": bool(a.get("archived")), "archived_at": a.get("archived_at"), "hidden": bool(a.get("hidden")),
-                    "created": a.get("created"), "broker": "FTMO", "platform": "MetaTrader 5", "target_pct": a.get("target_pct", 10)})
+                    "created": a.get("created"), "broker": "FTMO", "platform": "MetaTrader 5", "target_pct": a.get("target_pct", 10),
+                    "withdrawals": a.get("withdrawals", [])})
     return out
 
 
@@ -460,6 +461,24 @@ class Handler(BaseHTTPRequestHandler):
                 if not acc_by(name):
                     raise ValueError("אין חשבון כזה")
                 rename_account(name, d.get("nickname"))
+                return self._send(200, {"ok": True})
+            if path.startswith("/accounts/") and path.endswith(("/withdraw", "/withdraw_del")):
+                a = acc_by(path.split("/")[2])
+                if not a:
+                    raise ValueError("אין חשבון כזה")
+                w = a.setdefault("withdrawals", [])
+                if path.endswith("/withdraw_del"):
+                    a["withdrawals"] = [x for x in w if x.get("id") != d.get("id")]
+                else:
+                    amt = round(float(d.get("amount")), 2)
+                    if not 0 < amt < 10_000_000:
+                        raise ValueError("סכום לא תקין")
+                    date = str(d.get("date") or time.strftime("%Y-%m-%d"))[:10]
+                    time.strptime(date, "%Y-%m-%d")
+                    w.append({"id": f"{int(time.time() * 1000)}", "amount": amt, "date": date, "note": str(d.get("note") or "")[:80]})
+                    w.sort(key=lambda x: x["date"])
+                save()
+                push_manager_state()
                 return self._send(200, {"ok": True})
             if path.startswith("/accounts/") and path.endswith("/target"):
                 a = acc_by(path.split("/")[2])

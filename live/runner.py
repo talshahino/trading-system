@@ -39,6 +39,7 @@ from agents import ftmo_calendar as CAL  # noqa: E402
 import MetaTrader5 as mt5  # noqa: E402  (pip install MetaTrader5, Windows only)
 from live import reporter as REP  # noqa: E402
 from live import tunnel as TUN  # noqa: E402
+from live import updater as UPD  # noqa: E402
 from collections import deque  # noqa: E402
 
 JOURNAL = deque(maxlen=300)
@@ -752,6 +753,9 @@ def main():
     global BOT
     BOT = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}.get(name, name)
     MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])
+    if not args.dry_run:
+        UPD.startup(log, BOT)
+        UPD.announce(log, BOT, STATE, save_state)
     if not args.dry_run and cfg.get("live_tunnel", True):
         port = 8760 + int("".join(ch for ch in name if ch.isdigit()) or 0)
         try:
@@ -814,13 +818,18 @@ def main():
                 monitor()
         except Exception:  # noqa: BLE001
             log(f"monitor error:\n{traceback.format_exc()}")
-        for _ in range(10):                       # 5 seconds, refreshing the live dashboard feed twice a second
+        try:
+            if not args.dry_run:
+                UPD.tick(log, BOT, STATE, save_state, lambda: len(ACC.positions()), lambda: UPD.restart_self(log))
+        except Exception:  # noqa: BLE001
+            log(f"update error:\n{traceback.format_exc()}")
+        for _ in range(20):                       # 5 seconds, refreshing the live dashboard feed 4 times a second
             try:
                 if not args.dry_run:
                     refresh_live()
             except Exception:  # noqa: BLE001
                 pass
-            time.sleep(0.5)
+            time.sleep(0.25)
 
 
 if __name__ == "__main__":

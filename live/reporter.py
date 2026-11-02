@@ -39,6 +39,17 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
         return f"notification failed: {e}"
 
 
+def notify_action(title, message, label, url, body, priority=4):
+    """Notification with a button that POSTs `body` to `url` (ntfy "http" action)."""
+    try:
+        r = requests.post("https://ntfy.sh/", timeout=10, json={
+            "topic": _CFG["topic"], "title": title, "message": message, "priority": int(priority), "tags": ["arrow_up"],
+            "actions": [{"action": "http", "label": label, "url": url, "method": "POST", "body": body, "clear": True}]})
+        return None if r.status_code == 200 else f"ntfy answered {r.status_code}: {r.text[:120]}"
+    except Exception as e:  # noqa: BLE001
+        return f"notification failed: {e}"
+
+
 def quiet_now():
     """Quiet hours (Israel time) from live/notify.json, default 21:00-06:00."""
     try:

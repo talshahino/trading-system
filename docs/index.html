@@ -380,7 +380,7 @@ async function livePoll() {
   } catch (e) { setLive(false); }
   liveBusy = false;
 }
-setInterval(livePoll, 1000);
+setInterval(livePoll, 250);
 
 async function tick() {
   for (const b of BOTS) {

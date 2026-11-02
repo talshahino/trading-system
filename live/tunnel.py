@@ -1,12 +1,12 @@
 """Real-time dashboard feed: a small read-only web server inside the bot plus a free Cloudflare
 "quick tunnel" (no account needed) that gives it a public https address.
 
-- The bot keeps two snapshots in memory: LIVE (account + open positions, refreshed every half
+- The bot keeps two snapshots in memory: LIVE (account + open positions, refreshed every quarter
   second) and FULL (the whole dashboard state, refreshed every 15 seconds).
 - Server: http://127.0.0.1:<port>/live and /state, JSON, read-only, CORS open.
 - Tunnel: cloudflared.exe (downloaded to live/ on first use) prints an address like
   https://xxxx.trycloudflare.com; the bot writes it into the GitHub state file ("live_url"),
-  and the dashboard then reads /live from it every second.
+  and the dashboard then reads /live from it 4 times a second.
 """
 from __future__ import annotations
 

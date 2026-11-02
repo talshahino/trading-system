@@ -165,34 +165,169 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
   .light span.t{display:none}
 }
 .seg.days{flex-wrap:wrap;justify-content:flex-start}.seg.days button{flex:0 0 auto;padding-inline:10px}
+/* ---------- header: logo + name on the left, connection dot on the right ---------- */
+.top{direction:ltr}
+.top .conn{direction:rtl;display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);font-weight:600;white-space:nowrap}
+
+/* ---------- accounts list ---------- */
+.sec{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin:4px 2px 10px;display:flex;align-items:center;gap:8px}
+.acard{background:var(--panel);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px;cursor:pointer;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent}
+.acard:active{transform:scale(.995)}
+.acard .ah{display:flex;align-items:center;gap:10px;min-width:0}
+.acard .an{font-weight:800;font-size:17px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acard .am{font-size:12px;color:var(--muted);margin-inline-start:auto;white-space:nowrap}
+.acard .ab{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:12px;align-items:center;margin-top:12px}
+.big{font-family:var(--mono);font-weight:700;font-size:26px;line-height:1.1;direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+.big small{font-size:.62em;opacity:.8}
+.lbl{font-size:12px;color:var(--muted);margin-top:2px}
+.acard .af{display:flex;justify-content:space-between;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;flex-wrap:wrap}
+.acard .af b{font-family:var(--mono);direction:ltr;unicode-bidi:isolate}
+.spark{width:100%;height:70px;display:block}
+.rowcard{display:flex;align-items:center;gap:12px;background:var(--panel);border-radius:16px;box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;cursor:pointer}
+.rowcard .rn{font-weight:700}
+.rowcard .rs{font-size:12px;color:var(--muted);margin-top:2px}
+.rowcard .re{margin-inline-start:auto;text-align:end}
+.chev{color:var(--muted);display:inline-grid;place-items:center}
+.back{border:0;background:var(--seg);border-radius:10px;min-width:40px;height:40px;display:grid;place-items:center;cursor:pointer;color:var(--ink);flex:0 0 auto}
+
+/* ---------- account screen ---------- */
+.dhd{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.ttl{flex:1;min-width:0}
+.ttl h1{margin:0;font-size:27px;line-height:1.15;font-weight:800;letter-spacing:-.01em;
+  background:linear-gradient(90deg,#12161C 0%,#1F3A5F 70%,#2C5A8F 100%);-webkit-background-clip:text;background-clip:text;color:transparent;overflow-wrap:anywhere}
+.ttl .bar{height:3px;width:46px;border-radius:2px;background:linear-gradient(90deg,#D8A243,#F8DFA2);margin:8px 0 8px}
+.ttl .sub{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.subt{display:flex;gap:8px;overflow-x:auto;margin:0 -16px 14px;padding:2px 16px 4px;scrollbar-width:none}
+.subt::-webkit-scrollbar{display:none}
+.subt button{flex:0 0 auto;border:0;border-radius:12px;background:var(--seg);padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:42px}
+.subt button[aria-selected="true"]{background:var(--vps);color:#fff}
+.badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#2C7BE5;color:#fff;font-size:12px;font-family:var(--mono)}
+.subt button[aria-selected="true"] .badge{background:#fff;color:var(--vps)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.tile{background:var(--panel);border-radius:16px;box-shadow:var(--shadow);padding:13px 14px;min-width:0}
+.tile .k{font-size:12.5px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:6px}
+.tile .v{font-family:var(--mono);font-weight:700;font-size:19px;margin-top:4px;direction:ltr;unicode-bidi:isolate;text-align:right;overflow-wrap:anywhere}
+.tile .p{font-family:var(--mono);font-size:12.5px;margin-top:2px;direction:ltr;unicode-bidi:isolate;text-align:right}
+.ib{border:0;background:none;padding:0;width:20px;height:20px;border-radius:50%;cursor:pointer;color:var(--muted);display:inline-grid;place-items:center;flex:0 0 auto}
+.ib svg{width:17px;height:17px}
+.ctools{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ctools .seg{margin:0}
+.ctools .seg button{min-height:34px;padding:6px 14px}
+.eqc{position:relative;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.eqc svg text{fill:var(--muted);font-size:10.5px;font-family:var(--mono)}
+.tip{position:absolute;top:6px;pointer-events:none;background:var(--ink);color:#fff;border-radius:10px;padding:7px 10px;font-size:12px;line-height:1.45;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.2);display:none;direction:rtl}
+.tip b{font-family:var(--mono);direction:ltr;unicode-bidi:isolate}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.sw{position:relative;width:46px;height:28px;flex:0 0 auto}
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw span{position:absolute;inset:0;border-radius:14px;background:var(--faint);transition:.2s;cursor:pointer}
+.sw span::after{content:"";position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.2s}
+.sw input:checked+span{background:#2C7BE5}
+.sw input:checked+span::after{right:21px}
+.obj{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.obj:last-child{border-bottom:0}
+.obj .ol{flex:1;min-width:0}
+.obj .ol .k{font-size:13px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:6px}
+.obj .ol .v{font-family:var(--mono);font-weight:700;font-size:16px;margin-top:3px;direction:ltr;unicode-bidi:isolate;text-align:right}
+.obj .or{text-align:end;font-family:var(--mono);direction:ltr;unicode-bidi:isolate}
+.obj .or b{display:block;font-size:16px}
+.obj .or small{font-size:12px}
+.okc,.badc{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;color:#fff}
+.okc{background:#1E8A4C;box-shadow:0 0 0 4px rgba(30,138,76,.16),0 0 16px rgba(30,138,76,.55)}
+.badc{background:#D0453A;box-shadow:0 0 0 4px rgba(208,69,58,.16),0 0 16px rgba(208,69,58,.55)}
+.okc svg,.badc svg{width:18px;height:18px}
+
+/* trades */
+.tl{background:var(--panel);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
+.tl .th{display:grid;grid-template-columns:22px minmax(0,1.25fr) minmax(0,1fr) auto 14px;gap:10px;padding:10px 14px;font-size:12px;color:var(--muted);font-weight:600;background:var(--sunk)}
+.tr{padding:11px 14px;border-top:1px solid var(--line);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tr:active{background:var(--sunk)}
+.tr .tg{display:grid;grid-template-columns:22px minmax(0,1.25fr) minmax(0,1fr) auto 14px;gap:10px;align-items:center}
+.tr .d{font-size:12.5px;line-height:1.35;font-family:var(--mono);direction:ltr;text-align:right}
+.tr .s{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr .pl{font-family:var(--mono);font-weight:700;font-size:15.5px;direction:ltr;unicode-bidi:isolate}
+.arr{width:20px;height:20px}
+.pb{margin:12px 2px 2px;direction:ltr}
+.pb .trk{position:relative;height:8px;border-radius:4px;background:var(--faint)}
+.pb .seg-l,.pb .seg-r{position:absolute;top:0;bottom:0}
+.pb .seg-l{border-radius:4px 0 0 4px}.pb .seg-r{border-radius:0 4px 4px 0}
+.pb .ent{position:absolute;top:-4px;width:2px;height:16px;background:var(--ink);margin-left:-1px;border-radius:1px}
+.pb .slm{position:absolute;top:-3px;width:3px;height:14px;background:#D0453A;margin-left:-1.5px;border-radius:2px}
+.pb .slm.be{background:#1E8A4C}
+.pb .cur{position:absolute;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.pb .lab{position:relative;height:30px;font-size:11px;color:var(--muted);font-family:var(--mono)}
+.pb .lab span{position:absolute;top:5px;white-space:nowrap}
+.pb .lab .m{transform:translateX(-50%);color:var(--ink);font-weight:600}
+.pb .lab .r{right:0}
+.pb .way{font-family:var(--sans);font-size:12px;text-align:center;margin-top:-2px;direction:rtl}
+.search{display:flex;gap:8px;margin-bottom:10px}
+.search input{flex:1}
+.fbtn{border:0;background:var(--panel);box-shadow:var(--shadow);border-radius:10px;width:46px;cursor:pointer;display:grid;place-items:center}
+.fbtn.on{background:var(--vps);color:#fff}
+.fbox{display:none;background:var(--panel);border-radius:14px;box-shadow:var(--shadow);padding:12px;margin-bottom:10px}
+.fbox.on{display:block}
+.fbox .tools{margin-bottom:8px}
+
+/* detail sheets (trade detail, chart) */
+.page{position:fixed;inset:0;z-index:35;background:var(--bg);overflow-y:auto;display:none;padding:calc(env(safe-area-inset-top) + 12px) 16px calc(24px + env(safe-area-inset-bottom))}
+.page.on{display:block}
+.page .ph{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.page .ph b{font-size:20px;font-weight:800}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 14px;margin-bottom:16px}
+.kv .k{font-size:13px;color:var(--muted);font-weight:600}
+.kv .v{font-size:17px;font-weight:700;margin-top:3px;overflow-wrap:anywhere}
+.side{display:inline-flex;align-items:center;gap:4px;border-radius:7px;padding:3px 9px;font-size:13px;font-weight:700;color:#fff;margin-top:6px}
+.side.buy{background:#1E8A4C}.side.sell{background:#D0453A}
+.lst{background:var(--panel);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.lst .li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 15px;border-top:1px solid var(--line);font-size:15px}
+.lst .li:first-child{border-top:0}
+.lst .li .k{color:var(--muted)}
+.lst .li .v{font-weight:600;text-align:end}
+.h4{font-size:14px;font-weight:700;margin:4px 2px 8px;display:flex;align-items:center;gap:6px}
+.vbtn{width:100%;border:2px solid #2C7BE5;background:none;color:#2C7BE5;font-weight:800;font-size:16px;border-radius:12px;min-height:48px;cursor:pointer;margin-bottom:18px}
+.tfs{display:flex;gap:4px;overflow-x:auto;background:var(--seg);border-radius:12px;padding:4px;margin-bottom:10px;direction:ltr}
+.tfs button{flex:1 0 auto;border:0;background:none;border-radius:9px;padding:7px 10px;font-weight:700;font-size:13px;cursor:pointer;min-height:36px}
+.tfs button[aria-selected="true"]{background:var(--vps);color:#fff}
+#tvBox{position:relative;height:min(68vh,560px);background:var(--panel);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;direction:ltr}
+#tvOver{position:absolute;inset:0;pointer-events:none;z-index:3}
+.tvinfo{position:absolute;top:8px;left:8px;z-index:4;background:rgba(18,22,28,.86);color:#fff;border-radius:10px;padding:7px 10px;font-size:12px;line-height:1.5;font-family:var(--mono);pointer-events:none}
+/* info popup */
+.pop{position:fixed;inset:0;z-index:60;background:rgba(18,22,28,.45);display:none;align-items:center;justify-content:center;padding:20px}
+.pop.on{display:flex}
+.pop .box{background:var(--panel);border-radius:18px;padding:18px;max-width:420px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.pop .box h4{margin:0 0 8px;font-size:17px}
+.pop .box p{margin:0 0 14px;color:var(--ink);line-height:1.6;font-size:14.5px}
+.mgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 14px}
+.mgrid .k{font-size:13px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:6px}
+.mgrid .v{font-family:var(--mono);font-weight:700;font-size:18px;margin-top:4px;direction:ltr;unicode-bidi:isolate;text-align:right}
+.bars text{fill:var(--muted);font-size:10.5px;font-family:var(--mono)}
+.danger{width:100%;border:2px solid #D0453A;background:var(--neg-soft);color:#D0453A;font-weight:800;font-size:16px;border-radius:12px;min-height:50px;cursor:pointer}
+@media (min-width:761px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 </head>
 <body>
 <header class="top">
   <button class="brand" id="brandBtn" title="ניהול" aria-label="פתח ניהול"><svg width="30" height="30" aria-hidden="true" viewBox="0 0 100 100"><defs><linearGradient id="bghd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1F3A5F"/><stop offset="1" stop-color="#0F1C2E"/></linearGradient><linearGradient id="lthd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8DFA2"/><stop offset="1" stop-color="#D8A243"/></linearGradient><linearGradient id="lnhd" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#FFD978"/><stop offset="1" stop-color="#FFB38A"/></linearGradient><filter id="shhd" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.6" flood-color="#000" flood-opacity=".28"/></filter><filter id="glhd" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter></defs><rect width="100" height="100" rx="23" fill="url(#bghd)"/><rect x="1" y="1" width="98" height="98" rx="22" fill="none" stroke="#fff" stroke-opacity=".08"/><g transform="translate(0.0 0.0) scale(1.0)"><g filter="url(#shhd)" fill="url(#lthd)"><rect x="15" y="19" width="70" height="11.5" rx="5.75"/><rect x="25.5" y="25" width="11.5" height="56" rx="5.75"/><rect x="63" y="25" width="11.5" height="56" rx="5.75"/></g><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="#152842" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#glhd)" opacity=".55"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="6.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84" cy="33.5" r="5.6" fill="#FFD978" stroke="#152842" stroke-width="2.4"/></g></svg><span class="wm">Taloona <b>Trade</b></span></button>
   <div class="sp"></div>
-  <div class="light" title="הבוט מדווח"><i class="dot" id="lBot"></i><span class="t">בוט</span></div>
-  <div class="light" title="עדכון בזמן אמת"><i class="dot" id="lLive"></i><span class="t">זמן אמת</span></div>
-  <div class="light" title="שומר ההפסד"><i class="dot" id="lGuard"></i><span class="t">שומר</span></div>
+  <div class="conn" title="חיבור למחשב הבוטים"><i class="dot" id="lConn"></i><span id="lConnT">מתחבר…</span></div>
 </header>
 
 <main>
-  <div class="seg" id="bots" role="tablist" aria-label="בחירת בוט"></div>
-  <div class="acct" id="acct">טוען…</div>
-  <div class="banner" id="banner"></div>
-
   <section class="view on" id="v-acc">
-    <div class="grid">
-      <div class="card"><h3>הון</h3><div class="hero"><b class="num" id="eq">—</b><small id="eqs">—</small></div></div>
-      <div class="card"><h3>היום · יום פראג</h3><div class="hero"><b class="num" id="day">—</b><small id="days">—</small></div>
-        <div class="gauge"><i id="dayG"></i></div><div class="foot" id="dayF">—</div></div>
-      <div class="card"><h3>סיכון פתוח</h3><div class="hero"><b class="num" id="risk">—</b><small id="risks">—</small></div>
-        <div class="gauge"><i id="totG"></i></div><div class="foot" id="totF">—</div></div>
+    <div id="accList"><div class="empty">טוען…</div></div>
+    <div id="accDet" style="display:none">
+      <div class="dhd"><button class="back" id="dBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><div class="ttl"><h1 id="dTitle"></h1><div class="bar"></div><div class="sub" id="dSub"></div></div></div>
+      <div class="subt" id="dSubt" role="tablist"></div>
+      <div class="banner" id="dBan"></div>
+      <div id="dBody"></div>
     </div>
-    <div class="card"><h3>עסקאות פתוחות <span class="cnt" id="openN">0</span></h3><div class="list" id="open"></div></div>
   </section>
 
   <section class="view" id="v-stats">
+    <div class="seg" id="bots" role="tablist" aria-label="בחירת חשבון"></div>
+    <div class="acct" id="acct">טוען…</div>
     <div class="card">
       <h3>יתרה לאורך זמן</h3>
       <div class="kpis" id="skpis"></div>
@@ -265,6 +400,10 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
   <div class="row"><b id="logTitle">לוג</b><span class="sp" style="flex:1"></span><button class="btn ghost" id="logCopy">העתק</button><button class="btn" id="logClose">סגור</button></div>
   <pre id="logText"></pre></div></div>
 
+<div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
+<div class="page" id="chartPg" style="z-index:36"><div class="ph"><button class="back" id="cpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="cpTitle"></b></div>
+  <div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div></div>
+<div class="pop" id="pop"><div class="box"><h4 id="popT"></h4><p id="popB"></p><button class="btn" id="popOk">הבנתי</button></div></div>
 <nav class="tabs" id="tabs">
   <button data-v="v-stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>סטטיסטיקה</button>
   <button data-v="v-acc" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>חשבון</button>
@@ -311,7 +450,7 @@ function segment(el, items, sel, on) {
 }
 
 function botsBar() {
-  segment("bots", BOTS.filter(b => found[b]).map(b => [b, NAMES[b]]), cur, k => { cur = k; lastFull = 0; setLive(false); botsBar(); render(found[cur]); });
+  segment("bots", BOTS.filter(b => found[b]).map(b => [b, NAMES[b]]), cur, k => { cur = k; botsBar(); render(found[cur]); });
 }
 
 /* balance chart: green fill above the starting balance, red below, end-of-day % labels */
@@ -363,55 +502,8 @@ function stats(tr) {
 
 function render(s, liveOnly = false) {
   if (!s) return;
-  const now = Date.now(), age = (now - new Date(s.updated_utc).getTime()) / 60000;
   const init = s.initial, risk = s.risk;
-  $("lBot").className = "dot " + (age < 10 ? "on" : age < 30 ? "mid" : "off");
-  $("lBot").parentElement.title = age < 10 ? `הבוט מדווח · לפני ${Math.max(0, Math.round(age))} דק׳` : `אין דיווח כבר ${Math.round(age)} דק׳`;
-  $("lGuard").className = "dot " + (s.halted_until ? "off" : "on");
-  const ban = $("banner");
-  if (s.halted_until) { ban.className = "banner on neg"; ban.textContent = "עצירת חירום: ההפסד היומי הגיע ל־4.5%. הבוט סגר הכל ולא ייכנס לעסקאות עד חצות (שעון פראג)."; }
-  else if (age >= 10) { ban.className = "banner on warn"; ban.textContent = `הבוט לא מדווח כבר ${age < 120 ? Math.round(age) + " דקות" : (age / 60).toFixed(1) + " שעות"}. בדוק שהמחשב ו־MetaTrader פתוחים.`; }
-  else ban.className = "banner";
-  $("acct").innerHTML = `<b>${NAMES[s.bot] || s.bot}</b> · חשבון ${esc(s.account)} · ${esc(s.server)} · ${s.combos.length} צירופים · סיכון ${(risk * 100).toFixed(3).replace(/\.?0+$/, "")}% לעסקה · ${liveOk ? '<span class="pos">● בזמן אמת</span> · ' + new Date(s.updated_utc).toLocaleTimeString("he-IL", IL) : "עודכן " + il(s.updated_utc)}`;
-
-  // account view
-  const tot = (s.equity - init) / init * 100;
-  $("eq").textContent = money(s.equity);
-  $("eqs").innerHTML = `יתרה ${money(s.balance)} · <span class="${cls(tot)}">${pct(tot)}</span> מהפתיחה · ${s.positions.length ? s.positions.length + " עסקאות פתוחות" : "אין עסקאות פתוחות"}`;
-  const today = pragueKey(new Date().toISOString(), "day");
-  const tToday = s.trades.filter(t => pragueKey(t.time, "day") === today);
-  const dayPnl = s.equity - s.day_start, dayPct = dayPnl / init * 100;
-  $("day").innerHTML = `<span class="${cls(dayPnl)}">${money(dayPnl, true)}</span>`;
-  $("days").textContent = `${tToday.length} עסקאות נסגרו היום · ${pct(dayPct)}`;
-  const lost = Math.max(0, -dayPct);
-  $("dayG").style.width = Math.min(100, lost / 5 * 100) + "%";
-  $("dayG").style.background = lost >= 3 ? "var(--neg)" : lost >= 2 ? "var(--warn)" : "var(--pos)";
-  $("dayF").textContent = `הפסד היום ${lost.toFixed(2)}% · 4.5% עוצר כניסות ובולם הכל · הגבול של FTMO 5%`;
-  const riskUsd = init * risk, openRisk = s.positions.filter(p => !p.free).length * risk * 100;
-  $("risk").textContent = openRisk.toFixed(2) + "%";
-  $("risks").textContent = `${s.positions.filter(p => !p.free).length} בסיכון מלא · ${s.positions.filter(p => p.free).length} בנקודת איזון`;
-  const totLost = Math.max(0, -tot);
-  $("totG").style.width = Math.min(100, totLost / 10 * 100) + "%";
-  $("totG").style.background = totLost >= 7 ? "var(--neg)" : totLost >= 4 ? "var(--warn)" : "var(--pos)";
-  $("totF").textContent = `ירידה מהפתיחה ${totLost.toFixed(2)}% מתוך 10% המותרים`;
-
-  $("openN").textContent = s.positions.length;
-  $("open").innerHTML = s.positions.length ? s.positions.map(p => {
-    const c = parts(p.combo), buy = /buy|קני/i.test(p.dir), tp = p.tp || null, sl = p.sl || null;
-    const dSL = Math.abs(p.open - (sl || p.open)), dTP = Math.abs((tp || p.open) - p.open);
-    const rr = dSL && dTP ? dTP / dSL : 2, slPnl = p.free ? 0 : -riskUsd, tpPnl = riskUsd * rr;
-    const pos = Math.max(0, Math.min(1, (p.pnl - slPnl) / ((tpPnl - slPnl) || 1)));
-    const zero = Math.max(0, Math.min(1, (0 - slPnl) / ((tpPnl - slPnl) || 1)));
-    return `<div class="ch ${p.pnl > 0 ? "c-pos" : p.pnl < 0 ? "c-neg" : ""}">
-      <div class="chh"><span class="nm">${esc(c.y)}</span><span class="pill ${buy ? "pos" : "neg"}">${buy ? "קנייה" : "מכירה"}</span>
-        <span class="pill vps"><bdi>${esc(c.s)}</bdi> · ${esc(c.t)}</span>${p.free ? '<span class="pill warn">בנקודת איזון</span>' : ""}
-        <span class="val"><b class="num ${cls(p.pnl)}">${money(p.pnl, true)}</b><small class="mut">מאז ${il(p.since)}</small></span></div>
-      <div class="prog"><i style="left:${(zero * 100).toFixed(1)}%"></i><b style="left:${(pos * 100).toFixed(1)}%"></b></div>
-      <div class="progl"><span>SL ${p.sl || "—"}</span><span>${tp ? (pos * 100).toFixed(0) + "% מהדרך ליעד" : "בלי יעד קבוע"}</span><span>TP ${p.tp || "—"}</span></div>
-      <div class="kps"><div class="kp"><small>כניסה</small><b class="num">${p.open}</b></div><div class="kp"><small>לוטים</small><b class="num">${p.lots}</b></div>
-        <div class="kp"><small>סטופ</small><b class="num">${p.sl || "—"}</b></div><div class="kp"><small>יעד</small><b class="num">${p.tp || "—"}</b></div></div></div>`;
-  }).join("") : '<div class="empty">אין עסקאות פתוחות כרגע. הבוט נכנס רק כשאסטרטגיה נותנת אות בנר חדש.</div>';
-
+  $("acct").innerHTML = `<b>${esc(NAMES[s.bot] || s.bot)}</b> · חשבון ${esc(s.account)} · ${(s.combos || []).length} צירופים · סיכון ${(risk * 100).toFixed(3).replace(/\.?0+$/, "")}% לעסקה · עודכן ${il(s.updated_utc)}`;
   if (liveOnly) return;
   // stats view
   const tr = s.trades.slice().sort((a, b) => new Date(a.time) - new Date(b.time));
@@ -461,32 +553,50 @@ function render(s, liveOnly = false) {
 document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === b.dataset.v));
-  if (b.dataset.v === "v-stats" && found[cur]) chart(found[cur].equity_curve, found[cur].initial);
+  if (b.dataset.v === "v-stats" && found[cur]) { botsBar(); render(found[cur]); }
+  if (b.dataset.v === "v-acc") { UI.view = "list"; showAcc(); }
   if (b.dataset.v === "v-news") loadNews();
   scrollTo(0, 0);
 });
 
-/* real time: the bot serves /live (every second) and /state (full) through its tunnel; its address is in the GitHub state */
-let liveOk = false, liveBusy = false, lastFull = 0;
-function setLive(ok) { liveOk = ok; $("lLive").className = "dot " + (ok ? "on" : (found[cur] && found[cur].live_url) || mgr ? "off" : ""); }
+/* real time through the manager: the open account 4 times a second (full state every 20 s), the list every 2 s */
+let liveOk = false, liveBusy = false, lastFull = 0, listBusy = false, listT = 0;
+const viaMgr = n => mgr && mgrInfo && mgrInfo.accounts.some(a => a.name === n && !a.archived);
+function onLive(n, j, full) {
+  const s = found[n] || (found[n] = {});
+  Object.assign(s, j); LIVE[n] = Date.now();
+}
 async function livePoll() {
-  const s = found[cur];
-  const viaMgr = mgr && mgrInfo && mgrInfo.accounts.some(a => a.name === cur);
-  const base = viaMgr ? `${mgr}/bot/${cur}` : s && s.live_url;
-  if (liveBusy || !s || !base) { if (!liveBusy) setLive(false); return; }
-  liveBusy = true;
-  try {
-    const full = Date.now() - lastFull > 20000;
-    const r = await fetch(base + (full ? "/state" : "/live"), {cache: "no-store"});
-    if (!r.ok) throw new Error(r.status);
-    const j = await r.json();
-    if (j && j.updated_utc) {
-      Object.assign(s, j);
-      setLive(true);
-      if (full) { lastFull = Date.now(); render(s); } else render(s, true);
-    }
-  } catch (e) { setLive(false); }
-  liveBusy = false;
+  updConn();
+  const accOn = $("v-acc").classList.contains("on");
+  const n = accOn && UI.view === "det" ? UI.cur : null;
+  if (n && viaMgr(n) && !liveBusy) {
+    liveBusy = true;
+    try {
+      const full = Date.now() - lastFull > 20000 || !found[n];
+      const r = await fetch(`${mgr}/bot/${encodeURIComponent(n)}/${full ? "state" : "live"}`, {cache: "no-store"});
+      if (!r.ok) throw new Error(r.status);
+      const j = await r.json();
+      if (j && j.updated_utc && UI.cur === n) {
+        onLive(n, j, full);
+        if (full) { lastFull = Date.now(); renderDet(UI.sub === "ov" && !!$("ovTiles")); } else renderDet(true);
+      }
+    } catch (e) {}
+    liveBusy = false;
+  }
+  if (accOn && UI.view !== "det" && !listBusy && Date.now() - listT > 2000 && mgr && mgrInfo) {
+    listBusy = true; listT = Date.now();
+    await Promise.all(accList().filter(a => viaMgr(a.name)).map(async a => {
+      try { const r = await fetch(`${mgr}/bot/${encodeURIComponent(a.name)}/live`, {cache: "no-store"}); if (r.ok) { const j = await r.json(); if (j && j.updated_utc && found[a.name]) onLive(a.name, j); } } catch (e) {}
+    }));
+    if (UI.view !== "det") renderList();
+    listBusy = false;
+  }
+}
+function updConn() {
+  const on = !!mgrInfo;
+  $("lConn").className = "dot " + (on ? "on" : mgr || mgrSeen ? "off" : "");
+  $("lConnT").textContent = on ? "מחובר" : "לא מחובר";
 }
 setInterval(livePoll, 250);
 
@@ -505,13 +615,13 @@ function kv(key, val) {           // shared with the service worker (sw.js)
 const getPin = () => { try { return localStorage.getItem("pin") || ""; } catch (e) { return ""; } };
 async function findMgr() {
   let url = null;
-  try { const r = await fetch(MGR_STATE(), {cache: "no-store"}); if (r.ok) { const j = await r.json(); mgrSeen = j.updated_utc; url = j.url; } } catch (e) {}
+  try { const r = await fetch(MGR_STATE(), {cache: "no-store"}); if (r.ok) { const j = await r.json(); mgrSeen = j.updated_utc; url = j.url; mgrDoc = j; } } catch (e) {}
   // GitHub's file server can hand out a copy up to ~5 minutes old (a new tunnel address then looks missing):
   // ask GitHub's API for the current copy instead, at most once a minute (it allows 60 requests an hour).
   if ((!url || (mgr && url === mgr && !mgrInfo)) && Date.now() - apiTry > 60000) {
     apiTry = Date.now();
     try { const r = await fetch(MGR_API + "&t=" + Date.now(), {cache: "no-store", headers: {Accept: "application/vnd.github.raw+json"}});
-      if (r.ok) { const j = await r.json(); mgrSeen = j.updated_utc || mgrSeen; if (j.url) url = j.url; } } catch (e) {}
+      if (r.ok) { const j = await r.json(); mgrSeen = j.updated_utc || mgrSeen; if (j.url) url = j.url; if (j.accounts) mgrDoc = j; } } catch (e) {}
   }
   if (url) { if (url !== mgr) mgrInfo = null; mgr = url; kv("mgr", mgr); }
   if (!mgr) return null;
@@ -575,8 +685,7 @@ $("logCopy").onclick = async () => { try { await navigator.clipboard.writeText($
 function confirmBox(n) { return prompt(`להסיר את ${n}? הבוט ייעצר והחשבון יוסר מהרשימה. כתוב "הסר" לאישור:`) === "הסר"; }
 async function mgrRefresh() { await findMgr(); renderMgr(); mgrBots(); if (!$("logSheet").classList.contains("on")) logButtons(); }
 function mgrBots() {
-  if (!mgrInfo) return;
-  mgrInfo.accounts.forEach(a => { if (!BOTS.includes(a.name)) BOTS.push(a.name); NAMES[a.name] = a.label; });
+  accList().forEach(a => { if (!BOTS.includes(a.name)) BOTS.push(a.name); NAMES[a.name] = a.label || a.name; });
 }
 $("pin").value = getPin();
 $("pinSave").onclick = async () => {
@@ -676,18 +785,505 @@ function renderNews() {
 setInterval(() => { if ($("v-news").classList.contains("on")) loadNews(); }, 10 * 60000);
 
 async function tick() {
-  if (!mgrInfo) { await findMgr(); mgrBots(); }
-  for (const b of BOTS) {
-    const s = await load(b);
-    if (!s) continue;
-    if (b === cur && liveOk && found[b]) { found[b].live_url = s.live_url; continue; }   // the live feed is fresher
-    found[b] = s;
-  }
+  if (!mgrInfo) await findMgr();
+  mgrBots();
+  await Promise.all(BOTS.map(async b => {
+    const st = await load(b);
+    if (!st) return;
+    if (isLive(b) && found[b]) { found[b] = Object.assign(st, {balance: found[b].balance, equity: found[b].equity, positions: found[b].positions, updated_utc: found[b].updated_utc, lows: found[b].lows || st.lows}); return; }
+    found[b] = st;
+  }));
   if (!found[cur]) cur = BOTS.find(b => found[b]) || cur;
-  botsBar();
-  if (found[cur]) render(found[cur]); else $("acct").textContent = "עוד אין נתונים מהבוטים. הם מופיעים כמה דקות אחרי שבוט מתחיל לעבוד.";
+  updConn();
+  if ($("v-acc").classList.contains("on")) { if (UI.view === "det") renderDet(); else renderList(); }
+  if ($("v-stats").classList.contains("on")) { botsBar(); if (found[cur]) render(found[cur]); }
 }
-addEventListener("resize", () => found[cur] && chart(found[cur].equity_curve, found[cur].initial));
+/* ================= Accounts (FTMO-style): list → account screen (overview, trades, statistics, details) ================= */
+const BOT_TPL = {bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3"};
+const TFMAP = {"1Min": "1m", "5Min": "5m", "15Min": "15m", "1Hour": "1h", "4Hour": "4h"};
+const TFSEC = {"1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400, "1w": 604800};
+const TFLBL = {"1m": "דקה", "5m": "5 דק׳", "15m": "15 דק׳", "1h": "שעה", "4h": "4 שעות", "1d": "יומי", "1w": "שבועי"};
+const UI = {view: "list", cur: null, sub: "ov", unit: "$", lines: false, filt: {q: "", day: "all", side: "all", res: "all"}, sq: "", allDays: false};
+const LIVE = {};                      // account name → time of the last real-time update
+let mgrDoc = null;                    // manager_state.json (accounts list when the manager can't be reached)
+const ICON = {
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5" stroke-linecap="round"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  up: '<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="#1E8A4C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M9 7h8v8"/></svg>',
+  down: '<svg class="arr" viewBox="0 0 24 24" fill="none" stroke="#D0453A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10M17 9v8H9"/></svg>',
+  filter: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2.2" fill="currentColor"/><circle cx="15" cy="12" r="2.2" fill="currentColor"/><circle cx="8" cy="18" r="2.2" fill="currentColor"/></svg>',
+};
+const INFO = {
+  balance: ["יתרה", "הכסף בחשבון אחרי העסקאות שכבר נסגרו. לא כולל רווח או הפסד של עסקאות פתוחות."],
+  equity: ["הון", "שווי החשבון ברגע זה: היתרה ועוד הרווח או ההפסד של העסקאות הפתוחות. לפי ההון FTMO בודקת את מגבלות ההפסד."],
+  open: ["רווח/הפסד פתוח", "הרווח או ההפסד של העסקאות שעדיין פתוחות. הוא הופך לחלק מהיתרה רק כשהעסקה נסגרת."],
+  today: ["רווח היום", "השינוי בהון מתחילת היום של FTMO (חצות בשעון פראג, 01:00 בשעון ישראל בחורף)."],
+  dayAllowed: ["הפסד מותר היום", "כמה עוד אפשר להפסיד היום, כולל עסקאות פתוחות, לפני שעוברים את מגבלת ההפסד היומי של FTMO: 5% מגודל החשבון מתחת ליתרה של תחילת היום. הבוט עוצר הכל כבר ב־4.5%."],
+  maxAllowed: ["הפסד מותר כולל", "כמה עוד אפשר להפסיד, כולל עסקאות פתוחות, לפני שעוברים את מגבלת ההפסד הכוללת של FTMO: ההון אסור שירד מתחת ל־90% מגודל החשבון ההתחלתי."],
+  dayLoss: ["הפסד יומי מקסימלי", "השפל הנמוך ביותר של ההון היום (כולל הפסד צף של עסקאות פתוחות) ביחס ליתרה בתחילת היום. וי ירוק: לא עברנו את 5%. איקס אדום: עברנו."],
+  maxLoss: ["הפסד מקסימלי", "השפל הנמוך ביותר של ההון מאז פתיחת החשבון (כולל הפסד צף) ביחס לגודל החשבון. וי ירוק: לא ירדנו יותר מ־10%."],
+  avgW: ["רווח ממוצע", "הרווח הנטו הממוצע של עסקה שנסגרה ברווח."],
+  avgL: ["הפסד ממוצע", "ההפסד הנטו הממוצע של עסקה שנסגרה בהפסד."],
+  win: ["אחוז הצלחה", "כמה מהעסקאות שנסגרו הסתיימו ברווח."],
+  n: ["מספר עסקאות", "כמה עסקאות נסגרו בחשבון."],
+  lots: ["לוטים", "סך הנפח (בלוטים) של כל העסקאות שנסגרו."],
+  sharpe: ["יחס שארפ", "הרווח היומי הממוצע חלקי התנודתיות היומית, בחישוב שנתי. מעל 1 נחשב טוב. מוצג אחרי 5 ימי מסחר לפחות."],
+  rrr: ["יחס סיכוי/סיכון ממוצע", "הרווח הממוצע חלקי ההפסד הממוצע. 2 אומר שעסקה מרוויחה מכניסה בממוצע פי 2 ממה שעסקה מפסידה לוקחת."],
+  exp: ["תוחלת", "כמה עסקה ממוצעת מכניסה (או מפסידה): אחוז ההצלחה כפול הרווח הממוצע, פחות אחוז הכישלון כפול ההפסד הממוצע."],
+  pf: ["Profit factor", "סך הרווחים חלקי סך ההפסדים. מעל 1 = החשבון מרוויח."],
+  start: ["התחלה", "המועד שבו הבוט התחיל לעבוד על החשבון."],
+  end: ["סיום", "המועד שבו החשבון נסגר והועבר להיסטוריה."],
+};
+function info(k) { $("popT").textContent = INFO[k][0]; $("popB").textContent = INFO[k][1]; $("pop").classList.add("on"); }
+const ib = k => `<button class="ib" data-i="${k}" aria-label="הסבר">${ICON.info}</button>`;
+document.addEventListener("click", e => { const b = e.target.closest("[data-i]"); if (b) { e.stopPropagation(); info(b.dataset.i); } }, true);
+
+/* ---------- data ---------- */
+function accList() {
+  const src = (mgrInfo && mgrInfo.accounts && mgrInfo.accounts.length ? mgrInfo.accounts : null) || (mgrDoc && mgrDoc.accounts) || [];
+  if (src.length) return src;
+  return BOTS.filter(b => found[b]).map(b => ({name: b, label: NAMES[b], bot: b, enabled: true}));
+}
+const accBy = n => accList().find(a => a.name === n) || {name: n, label: NAMES[n] || n, bot: n};
+const nick = a => a.nickname || String(a.label || a.name).split(" · ")[0];
+const botL = a => BOT_TPL[a.bot] || String(a.label || "").split(" · ").pop() || a.name;
+const isLive = n => Date.now() - (LIVE[n] || 0) < 3000;
+const pragueDay = d => new Date(d).toLocaleDateString("en-CA", {timeZone: "Europe/Prague"});
+const twoD = v => Math.abs(v).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const usd = (v, sign) => (v < 0 ? "−" : sign && v > 0 ? "+" : "") + "$" + twoD(v);
+const usdBig = (v, sign) => { const s = twoD(v), i = s.lastIndexOf("."); return (v < 0 ? "−" : sign && v > 0 ? "+" : "") + "$" + s.slice(0, i) + "<small>" + s.slice(i) + "</small>"; };
+const dOnly = iso => new Date(iso).toLocaleDateString("he-IL", {...IL, day: "2-digit", month: "2-digit", year: "numeric"});
+const tOnly = iso => new Date(iso).toLocaleTimeString("he-IL", {...IL, hour: "2-digit", minute: "2-digit", second: "2-digit"});
+const dtF = iso => dOnly(iso) + " " + tOnly(iso);
+const dur = (a, b) => { let m = Math.max(0, Math.round((new Date(b) - new Date(a)) / 60000)); const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60); m %= 60;
+  return (d ? d + "d " : "") + (h ? h + "h " : "") + (d ? "" : m + "m"); };
+
+function closedOf(s) {
+  if (s.closed) return s.closed;
+  return (s.trades || []).map((t, i) => ({id: "t" + i, combo: t.combo, symbol: t.symbol, side: /קני|buy/i.test(t.dir) ? "buy" : "sell", lots: t.lots,
+    open_t: null, open_px: null, close_t: t.time, close_px: t.price, sl0: 0, tp0: 0, sl: 0, tp: 0, gross: t.pnl, swap: 0, comm: 0, net: t.pnl, why: t.why, pip: 1}));
+}
+function calc(s, a) {
+  const init = s.initial || 100000, eq = s.equity, bal = s.balance, ds = s.day_start ?? bal;
+  const curve = s.equity_curve || [], today = pragueDay(new Date());
+  const lw = s.lows || {};
+  const dayLow = lw.day === today && lw.day_low != null ? Math.min(lw.day_low, eq) : Math.min(eq, ...curve.filter(p => pragueDay(p[0]) === today).map(p => p[2]));
+  const allLow = lw.all_low != null ? Math.min(lw.all_low, eq) : Math.min(eq, ...curve.map(p => p[2]));
+  return {init, eq, bal, ds, tot: eq - init, open: eq - bal, today: eq - ds, dayLow, allLow,
+          tgt: (a && a.target_pct) || 10, dayLim: ds - 0.05 * init, maxLim: 0.9 * init};
+}
+function curveOf(s) {
+  const c = (s.equity_curve || []).slice();
+  if (s.updated_utc && s.equity != null) c.push([s.updated_utc, s.balance, s.equity]);
+  return c;
+}
+
+/* ---------- small sparkline (equity vs. the starting balance) ---------- */
+function spark(s, init) {
+  const pts = curveOf(s).map(p => p[2]);
+  if (pts.length < 2) return '<div class="lbl" style="text-align:center">הגרף יתמלא בקרוב</div>';
+  const W = 200, H = 70, lo = Math.min(init, ...pts), hi = Math.max(init, ...pts), r = (hi - lo) || 1;
+  const X = i => (i / (pts.length - 1) * W).toFixed(1), Y = v => (6 + (hi - v) / r * (H - 12)).toFixed(1);
+  const d = pts.map((v, i) => `${i ? "L" : "M"}${X(i)},${Y(v)}`).join("");
+  const up = pts[pts.length - 1] >= init, col = up ? "#1E8A4C" : "#D0453A", id = "g" + Math.random().toString(36).slice(2, 7);
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".28"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+    <line x1="0" x2="${W}" y1="${Y(init)}" y2="${Y(init)}" stroke="#5B6470" stroke-dasharray="4 4" stroke-width="1" vector-effect="non-scaling-stroke"/>
+    <path d="${d}L${W},${H}L0,${H}Z" fill="url(#${id})"/><path d="${d}" fill="none" stroke="${col}" stroke-width="2.2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+}
+
+/* ---------- accounts list ---------- */
+function stateWord(a) { return a.archived ? ["סגור", ""] : a.running || isLive(a.name) ? ["פעיל", "on"] : a.enabled === false ? ["עצור", ""] : ["לא מחובר", "mid"]; }
+function accCard(a) {
+  const s = found[a.name];
+  const [w, c] = stateWord(a);
+  const head = `<div class="ah"><i class="dot ${c}"></i><span class="an">${esc(nick(a))}</span><span class="am">${esc(botL(a))}${a.login ? " · #" + String(a.login).slice(-4) : ""} · ${w}</span></div>`;
+  if (!s) return `<div class="acard" data-acc="${esc(a.name)}">${head}<div class="lbl" style="margin-top:10px">עוד אין נתונים מהחשבון הזה.</div></div>`;
+  const k = calc(s, a);
+  return `<div class="acard" data-acc="${esc(a.name)}">${head}
+    <div class="ab"><div><div class="big ${cls(k.tot)}">${usdBig(k.tot, true)}</div><div class="lbl">רווח/הפסד מהפתיחה · <span class="num ${cls(k.tot)}">${pct(k.tot / k.init * 100)}</span></div>
+      <div class="big ${cls(k.today)}" style="font-size:17px;margin-top:10px">${usdBig(k.today, true)}</div><div class="lbl">היום · <span class="num ${cls(k.today)}">${pct(k.today / k.init * 100)}</span></div></div>
+      <div>${spark(s, k.init)}</div></div>
+    <div class="af"><span><span class="mut">הון</span> <b>${usd(k.eq)}</b></span><span><span class="mut">יתרה</span> <b>${usd(k.bal)}</b></span></div></div>`;
+}
+function renderList() {
+  const all = accList(), vis = all.filter(a => !a.hidden);
+  const act = vis.filter(a => !a.archived), hist = all.filter(a => a.archived), hid = all.filter(a => a.hidden);
+  let h = "";
+  if (UI.view === "list") {
+    h = `<div class="sec">חשבונות פעילים</div>` + (act.length ? act.map(accCard).join("") : '<div class="empty" style="margin-bottom:12px">אין חשבונות פעילים. מוסיפים חשבון מהניהול (לחיצה על הלוגו).</div>');
+    h += `<div class="sec" style="margin-top:18px">היסטוריה</div><div class="rowcard" data-go="hist"><div><div class="rn">חשבונות היסטוריים</div><div class="rs">חשבונות שנסגרו, עם כל הסטטיסטיקה שלהם</div></div><div class="re"><b class="num">${vis.filter(a => a.archived).length}</b></div><span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></div>`;
+    h += `<div class="rowcard" data-go="hidden"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 3l18 18M10.6 6.1A9.8 9.8 0 0112 6c5 0 9 6 9 6a16 16 0 01-2.6 3.2M6.5 7.6C4.3 9.1 3 12 3 12s4 6 9 6a8.6 8.6 0 004-1M9.9 10a3 3 0 004.1 4.1"/></svg><div class="rn">חשבונות מוסתרים</div><div class="re"><b class="num">${hid.length}</b></div><span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></div>`;
+  } else {
+    const list = UI.view === "hist" ? hist.filter(a => !a.hidden) : hid;
+    h = `<div class="dhd"><button class="back" data-go="list" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><div class="ttl"><h1 style="font-size:22px">${UI.view === "hist" ? "חשבונות היסטוריים" : "חשבונות מוסתרים"}</h1></div></div>`;
+    h += list.length ? list.map(a => {
+      if (!a.archived) return accCard(a);
+      const s = found[a.name], k = s ? calc(s, a) : null;
+      return `<div class="rowcard" data-acc="${esc(a.name)}"><div style="min-width:0"><div class="rn">${esc(nick(a))}</div><div class="rs">${esc(botL(a))}${a.login ? " · " + a.login : ""}${a.archived_at ? " · " + ilDay(a.archived_at) : ""}</div></div>
+        <div class="re">${k ? `<b class="num">${usd(k.eq)}</b><div class="rs ${cls(k.tot)}">● ${k.tot >= 0 ? "נסגר ברווח" : "נסגר בהפסד"} <span class="num">${pct(k.tot / k.init * 100)}</span></div>` : '<span class="mut">אין נתונים</span>'}</div></div>`;
+    }).join("") : `<div class="empty">${UI.view === "hist" ? "עוד אין חשבונות בהיסטוריה. חשבון עובר לכאן כשסוגרים אותו בלשונית 'פרטי החשבון'." : "אין חשבונות מוסתרים."}</div>`;
+  }
+  $("accList").innerHTML = h;
+}
+$("accList").onclick = e => {
+  const g = e.target.closest("[data-go]"); if (g) { UI.view = g.dataset.go; renderList(); scrollTo(0, 0); return; }
+  const c = e.target.closest("[data-acc]"); if (c) openAcc(c.dataset.acc);
+};
+function openAcc(n) { UI.from = UI.view; UI.view = "det"; UI.cur = n; UI.sub = "ov"; lastFull = 0; showAcc(); scrollTo(0, 0); }
+function showAcc() {
+  const det = UI.view === "det";
+  $("accList").style.display = det ? "none" : ""; $("accDet").style.display = det ? "" : "none";
+  if (det) renderDet(); else renderList();
+}
+
+/* ---------- account screen ---------- */
+const SUBS = [["ov", "מבט על"], ["tr", "עסקאות"], ["st", "סטטיסטיקה"], ["ac", "פרטי החשבון"]];
+function renderDet(light) {
+  const a = accBy(UI.cur), s = found[UI.cur];
+  const live = isLive(UI.cur);
+  $("dTitle").textContent = nick(a);
+  $("dSub").innerHTML = `<span class="pill vps">${esc(botL(a))}</span>` + (a.archived ? '<span class="pill">החשבון סגור</span>' :
+    live ? `<span class="pos">● בזמן אמת</span><span class="num">${new Date(s.updated_utc).toLocaleTimeString("he-IL", IL)}</span>`
+         : `<span class="neg">● לא מחובר</span>${s ? `<span>עודכן ${il(s.updated_utc)}</span>` : ""}`);
+  $("dSubt").innerHTML = SUBS.map(([k, l]) => `<button data-s="${k}" aria-selected="${UI.sub === k}">${l}${k === "tr" && s && s.positions && s.positions.length ? `<span class="badge">${s.positions.length}</span>` : ""}</button>`).join("");
+  const ban = $("dBan");
+  const age = s ? (Date.now() - new Date(s.updated_utc).getTime()) / 60000 : 0;
+  if (s && s.halted_until) { ban.className = "banner on neg"; ban.textContent = "עצירת חירום: ההפסד היומי הגיע ל־4.5%. הבוט סגר הכל ולא ייכנס לעסקאות עד חצות (שעון פראג)."; }
+  else if (s && !a.archived && a.enabled !== false && !live && age >= 10) { ban.className = "banner on warn"; ban.textContent = `החשבון לא מדווח כבר ${age < 120 ? Math.round(age) + " דקות" : (age / 60).toFixed(1) + " שעות"}. בדוק שהמחשב ו־MetaTrader פתוחים.`; }
+  else ban.className = "banner";
+  if (!s) { $("dBody").innerHTML = '<div class="empty">עוד אין נתונים מהחשבון הזה. הם מופיעים כמה דקות אחרי שהבוט מתחיל לעבוד.</div>'; return; }
+  if (UI.sub === "ov") ov(s, a, light);
+  else if (UI.sub === "tr") trades(s, a, light);
+  else if (!light && UI.sub === "st") statsTab(s, a);
+  else if (!light && UI.sub === "ac") details(s, a);
+}
+$("dSubt").onclick = e => { const b = e.target.closest("[data-s]"); if (b) { UI.sub = b.dataset.s; $("dBody").innerHTML = ""; renderDet(); } };
+$("dBack").onclick = () => { UI.view = UI.from && UI.from !== "det" ? UI.from : "list"; showAcc(); scrollTo(0, 0); };
+
+/* overview */
+function ov(s, a, light) {
+  const k = calc(s, a);
+  const tile = (key, v, p) => `<div class="tile"><div class="k">${INFO[key][0]} ${ib(key)}</div><div class="v ${key === "balance" || key === "equity" ? "" : cls(v)}">${usd(v, key !== "balance" && key !== "equity")}</div>${p != null ? `<div class="p ${cls(p)}">${pct(p)}</div>` : ""}</div>`;
+  const tiles = tile("balance", k.bal, (k.bal - k.init) / k.init * 100) + tile("equity", k.eq, (k.eq - k.init) / k.init * 100) +
+    tile("open", k.open, k.open / k.init * 100) + tile("today", k.today, k.today / k.init * 100);
+  const dl = k.dayLow - k.ds, al = k.allLow - k.init;
+  const obj = (key, lim, v) => { const okk = -v < lim; return `<div class="obj"><div class="ol"><div class="k">${INFO[key][0]} ${ib(key)}</div><div class="v">−$${lim.toLocaleString("en-US", {minimumFractionDigits: 2})}</div></div>
+    <div class="or ${okk ? "pos" : "neg"}"><small>${pct(v / k.init * 100)}</small><b>${usd(v, true)}</b></div><span class="${okk ? "okc" : "badc"}">${okk ? ICON.check : ICON.x}</span></div>`; };
+  const rest = `<div class="tiles" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+      <div class="tile"><div class="k">${INFO.dayAllowed[0]} ${ib("dayAllowed")}</div><div class="v">${usd(Math.max(0, k.eq - k.dayLim))}</div></div>
+      <div class="tile"><div class="k">${INFO.maxAllowed[0]} ${ib("maxAllowed")}</div><div class="v">${usd(Math.max(0, k.eq - k.maxLim))}</div></div></div>
+    <div class="h4">יעדי מסחר</div><div class="card" style="padding:4px 14px">${obj("dayLoss", 0.05 * k.init, Math.min(0, dl))}${obj("maxLoss", 0.1 * k.init, Math.min(0, al))}</div>`;
+  if (light && $("ovTiles")) { $("ovTiles").innerHTML = tiles; $("ovRest").innerHTML = rest; return; }
+  $("dBody").innerHTML = `<div class="h4">תוצאות נוכחיות</div><div class="tiles" id="ovTiles">${tiles}</div>
+    <div class="card"><div class="ctools"><div class="seg" id="unitSeg"></div></div><div class="eqc" id="eqc"></div>
+      <div class="legend"><span><i style="background:#1E8A4C"></i>יעד רווח: <b class="num">${usd(k.init * (1 + k.tgt / 100))}</b></span>
+        <span><i style="background:#E07A2E"></i>הפסד יומי מקסימלי: <b class="num">${usd(k.dayLim)}</b></span>
+        <span><i style="background:#D0453A"></i>הפסד מקסימלי: <b class="num">${usd(k.maxLim)}</b></span></div>
+      <div class="row" style="margin-top:10px;justify-content:space-between"><span class="mut">קווי יעדים בגרף</span><label class="sw"><input type="checkbox" id="linesSw" ${UI.lines ? "checked" : ""}><span></span></label></div></div>
+    <div class="h4">הפסדים מותרים</div><div id="ovRest">${rest}</div>`;
+  const unitSeg = () => segment("unitSeg", [["$", "$"], ["%", "%"]], UI.unit, u => { UI.unit = u; unitSeg(); eqChart(s, a); });
+  unitSeg();
+  $("linesSw").onchange = e => { UI.lines = e.target.checked; eqChart(s, a); };
+  eqChart(s, a);
+}
+
+/* big interactive equity chart: touch / drag to read the value at any moment */
+function eqChart(s, a) {
+  const el = $("eqc"); if (!el) return;
+  const k = calc(s, a), pts = curveOf(s);
+  if (pts.length < 2) { el.innerHTML = '<div class="empty">הגרף יתמלא אחרי כמה דקות של עבודה.</div>'; return; }
+  const P = UI.unit === "%", init = k.init, cv = v => P ? (v - init) / init * 100 : v;
+  const W = Math.max(300, el.clientWidth || 600), H = 260, L = P ? 50 : 70, R = 10, T = 12, B = 26;
+  const t = pts.map(p => new Date(p[0]).getTime()), eq = pts.map(p => cv(p[2])), bl = pts.map(p => cv(p[1]));
+  const lines = UI.lines ? [[cv(init * (1 + k.tgt / 100)), "#1E8A4C"], [cv(k.dayLim), "#E07A2E"], [cv(k.maxLim), "#D0453A"]] : [];
+  const ys = eq.concat(bl, [cv(init)], lines.map(l => l[0]));
+  let y0 = Math.min(...ys), y1 = Math.max(...ys); const pad = (y1 - y0) * 0.08 || (P ? 0.2 : 200); y0 -= pad; y1 += pad;
+  const x0 = t[0], x1 = t[t.length - 1];
+  const X = v => L + (v - x0) / ((x1 - x0) || 1) * (W - L - R), Y = v => T + (y1 - v) / ((y1 - y0) || 1) * (H - T - B);
+  const fmt = v => P ? (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2) + "%" : "$" + Math.round(v).toLocaleString("en-US");
+  let g = "";
+  for (let i = 0; i <= 4; i++) { const v = y0 + i * (y1 - y0) / 4; g += `<line x1="${L}" x2="${W - R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="#E6E9EE"/><text x="${L - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end">${fmt(v)}</text>`; }
+  for (let i = 0; i <= 3; i++) { const tv = x0 + i * (x1 - x0) / 3; g += `<text x="${X(tv).toFixed(1)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === 3 ? "end" : "middle"}">${il(new Date(tv).toISOString())}</text>`; }
+  const path = arr => arr.map((v, i) => `${i ? "L" : "M"}${X(t[i]).toFixed(1)},${Y(v).toFixed(1)}`).join("");
+  const base = Y(cv(init)), up = eq[eq.length - 1] >= cv(init), col = up ? "#1E8A4C" : "#D0453A";
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;direction:ltr">
+    <defs><linearGradient id="eqg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".22"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>${g}
+    ${lines.map(([v, c]) => `<line x1="${L}" x2="${W - R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="${c}" stroke-width="1.6"/>`).join("")}
+    <line x1="${L}" x2="${W - R}" y1="${base.toFixed(1)}" y2="${base.toFixed(1)}" stroke="#2C7BE5" stroke-dasharray="5 4"/>
+    <path d="${path(eq)}L${X(x1).toFixed(1)},${H - B}L${X(x0).toFixed(1)},${H - B}Z" fill="url(#eqg)"/>
+    <path d="${path(bl)}" fill="none" stroke="#2C7BE5" stroke-width="1.2" opacity=".7"/>
+    <path d="${path(eq)}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round"/>
+    <g id="cross" style="display:none"><line id="cx" y1="${T}" y2="${H - B}" stroke="${col}" stroke-width="1.5"/><circle id="cd" r="6" fill="${col}" stroke="#fff" stroke-width="2"/></g></svg>
+    <div class="tip" id="ctip"></div><div class="foot" style="margin-top:4px">קו צבעוני: הון (כולל עסקאות פתוחות) · כחול: יתרה · מקווקו: נקודת ההתחלה ${usd(init)}</div>`;
+  const svg = el.querySelector("svg"), tip = $("ctip");
+  const at = ev => {
+    const r = svg.getBoundingClientRect(), x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left, sx = x * W / r.width;
+    const tv = x0 + (sx - L) / (W - L - R) * (x1 - x0);
+    let i = 0, best = Infinity; t.forEach((v, j) => { const d = Math.abs(v - tv); if (d < best) { best = d; i = j; } });
+    const e$ = pts[i][2], ch = e$ - init;
+    $("cross").style.display = ""; $("cx").setAttribute("x1", X(t[i])); $("cx").setAttribute("x2", X(t[i]));
+    $("cd").setAttribute("cx", X(t[i])); $("cd").setAttribute("cy", Y(eq[i]));
+    tip.innerHTML = `${dtF(pts[i][0])}<br>הון <b>${usd(e$)}</b><br>שינוי <b class="${ch >= 0 ? "" : ""}">${usd(ch, true)} · ${pct(ch / init * 100)}</b>`;
+    tip.style.display = "block";
+    const px = X(t[i]) * r.width / W, tw = tip.offsetWidth;
+    tip.style.left = Math.max(0, Math.min(r.width - tw, px - tw / 2)) + "px";
+  };
+  const end = () => { $("cross").style.display = "none"; tip.style.display = "none"; };
+  svg.addEventListener("pointerdown", at); svg.addEventListener("pointermove", ev => { if (ev.pointerType === "mouse" || ev.buttons) at(ev); });
+  svg.addEventListener("touchmove", at, {passive: true}); svg.addEventListener("pointerleave", end); svg.addEventListener("touchend", () => setTimeout(end, 1800));
+}
+
+/* trades: open (with the stop ↔ target bar) and closed (search + filter) */
+function bar(p) {
+  const dir = p.side === "buy" || /קני/.test(p.dir) ? 1 : -1, en = p.open, px = p.now;
+  const sl0 = p.sl0 || p.sl, tp = p.tp || p.tp0;
+  const dS = sl0 ? Math.abs(en - sl0) : 0, dT = tp ? Math.abs(tp - en) : 0;
+  const lo = -(dS || dT || Math.abs(px - en) || 1), hi = dT || dS || Math.abs(px - en) || 1;
+  const F = u => Math.max(0, Math.min(1, (u - lo) / (hi - lo)));
+  const u = (px - en) * dir, uSl = p.sl ? (p.sl - en) * dir : lo;
+  const fe = F(0), fc = F(u), fs = F(uSl);
+  const lossRoom = uSl < 0 ? -uSl : dS;
+  let way, inten;
+  if (u >= 0) { inten = tp ? Math.min(1, u / dT) : Math.min(1, u / (dS || 1)); way = tp ? `<span class="pos">${(Math.min(1, u / dT) * 100).toFixed(0)}% מהדרך ל־TP</span>` : '<span class="pos">ברווח · בלי TP קבוע</span>'; }
+  else { inten = Math.min(1, -u / (lossRoom || 1)); way = `<span class="neg">${(inten * 100).toFixed(0)}% מהדרך לסטופ</span>`; }
+  const g = .25 + .75 * inten;
+  const fill = u >= 0 ? `left:${(fe * 100).toFixed(2)}%;width:${((fc - fe) * 100).toFixed(2)}%;background:rgba(30,138,76,${g.toFixed(2)});box-shadow:0 0 ${(4 + 14 * inten).toFixed(0)}px rgba(30,138,76,${(.25 + .6 * inten).toFixed(2)})`
+                      : `left:${(fc * 100).toFixed(2)}%;width:${((fe - fc) * 100).toFixed(2)}%;background:rgba(208,69,58,${g.toFixed(2)});box-shadow:0 0 ${(4 + 14 * inten).toFixed(0)}px rgba(208,69,58,${(.25 + .6 * inten).toFixed(2)})`;
+  const be = uSl >= 0;
+  return `<div class="pb"><div class="trk">
+      <div class="seg-l" style="left:0;width:${(fe * 100).toFixed(2)}%;background:rgba(208,69,58,.14)"></div>
+      <div class="seg-r" style="left:${(fe * 100).toFixed(2)}%;right:0;background:rgba(30,138,76,.14)"></div>
+      <div style="position:absolute;top:0;bottom:0;border-radius:4px;${fill}"></div>
+      ${p.sl && Math.abs(p.sl - sl0) > 1e-9 ? `<div class="slm ${be ? "be" : ""}" style="left:${(fs * 100).toFixed(2)}%" title="סטופ נוכחי"></div>` : ""}
+      <div class="ent" style="left:${(fe * 100).toFixed(2)}%"></div>
+      <div class="cur" style="left:${(fc * 100).toFixed(2)}%;background:${u >= 0 ? "#1E8A4C" : "#D0453A"}"></div></div>
+    <div class="lab"><span style="left:0" class="neg">SL ${sl0 || "—"}${p.sl && Math.abs(p.sl - sl0) > 1e-9 ? ` → ${p.sl}` : ""}</span><span class="m" style="left:${(fe * 100).toFixed(2)}%">${en}</span><span class="r pos">TP ${tp || "—"}</span></div>
+    <div class="way">${way}${be ? ' · <span class="pos">הסטופ בנקודת איזון ומעלה</span>' : ""}</div></div>`;
+}
+const trRow = (side, t, sym, pl, key, extra = "") => `<div class="tr" data-t="${esc(key)}"><div class="tg">${side === "buy" ? ICON.up : ICON.down}
+  <div class="d">${t ? dOnly(t) + "<br>" + tOnly(t) : "—"}</div>
+  <div class="s"><bdi>${esc(sym)}</bdi></div><div class="pl ${cls(pl)}">${usd(pl, true)}</div><span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></div>${extra}</div>`;
+const TH = '<div class="th"><span></span><span>פתיחה</span><span>נכס</span><span>רווח/הפסד</span><span></span></div>';
+function filtered(s) {
+  const f = UI.filt, q = f.q.trim().toLowerCase(), now = Date.now();
+  return closedOf(s).filter(c => (!q || c.symbol.toLowerCase().includes(q) || String(c.id).includes(q) || String(c.combo).toLowerCase().includes(q))
+    && (f.side === "all" || c.side === f.side) && (f.res === "all" || (f.res === "win" ? c.net > 0 : c.net < 0))
+    && (f.day === "all" || (f.day === "today" ? pragueDay(c.close_t) === pragueDay(new Date()) : f.day === "7" ? now - new Date(c.close_t) < 7 * 864e5 : f.day === "30" ? now - new Date(c.close_t) < 30 * 864e5 : ilKey(c.close_t) === f.day)))
+    .slice().reverse();
+}
+function trades(s, a, light) {
+  const open = (s.positions || []).map(p => trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p))).join("");
+  const openH = `<div class="h4">עסקאות פתוחות <span class="badge">${(s.positions || []).length}</span></div><div class="tl">${TH}${open || '<div class="empty" style="border-radius:0">אין עסקאות פתוחות כרגע.</div>'}</div>`;
+  if (light && $("trOpen")) { $("trOpen").innerHTML = openH; return; }
+  $("dBody").innerHTML = `<div id="trOpen">${openH}</div>
+    <div class="h4" style="margin-top:18px">עסקאות סגורות</div>
+    <div class="search"><input id="tq" placeholder="חיפוש לפי נכס או מספר עסקה" value="${esc(UI.filt.q)}" autocomplete="off"><button class="fbtn" id="tfb" aria-label="סינון">${ICON.filter}</button></div>
+    <div class="fbox" id="tfbox"><div class="tools"><div class="seg" id="fDay"></div></div><div class="tools"><input type="date" id="fDate" style="max-width:200px"></div>
+      <div class="tools"><div class="seg" id="fSide"></div><div class="seg" id="fRes"></div></div></div>
+    <div class="tl" id="trClosed"></div>`;
+  const draw = () => {
+    const list = filtered(s);
+    $("trClosed").innerHTML = TH + (list.length ? list.slice(0, 300).map(c => trRow(c.side, c.open_t || c.close_t, c.symbol, c.net, "c" + c.id)).join("") : '<div class="empty" style="border-radius:0">אין עסקאות סגורות שמתאימות.</div>');
+    $("tfb").classList.toggle("on", UI.filt.day !== "all" || UI.filt.side !== "all" || UI.filt.res !== "all");
+  };
+  const segs = () => {
+    segment("fDay", [["all", "הכל"], ["today", "היום"], ["7", "7 ימים"], ["30", "30 ימים"]], UI.filt.day, k => { UI.filt.day = k; $("fDate").value = ""; segs(); draw(); });
+    segment("fSide", [["all", "קנייה ומכירה"], ["buy", "קנייה"], ["sell", "מכירה"]], UI.filt.side, k => { UI.filt.side = k; segs(); draw(); });
+    segment("fRes", [["all", "הכל"], ["win", "רווח"], ["loss", "הפסד"]], UI.filt.res, k => { UI.filt.res = k; segs(); draw(); });
+  };
+  segs(); draw();
+  $("tq").oninput = e => { UI.filt.q = e.target.value; draw(); };
+  $("tfb").onclick = () => $("tfbox").classList.toggle("on");
+  $("fDate").onchange = e => { if (e.target.value) { UI.filt.day = e.target.value; segs(); draw(); } };
+}
+$("dBody").addEventListener("click", e => {
+  const r = e.target.closest("[data-t]"); if (!r) return;
+  const s = found[UI.cur], k = r.dataset.t;
+  if (k[0] === "o") { const p = (s.positions || []).find(p => "o" + (p.ticket || p.since) === k); if (p) tradePage(p, true); }
+  else { const c = closedOf(s).find(c => "c" + c.id === k); if (c) tradePage(c, false); }
+});
+
+/* one trade: every detail, like FTMO's trade page, plus "view chart" */
+let TP = null;
+function tradePage(x, isOpen) {
+  const s = found[UI.cur];
+  const t = isOpen ? {id: x.ticket, combo: x.combo, symbol: x.symbol, side: x.side || (/קני/.test(x.dir) ? "buy" : "sell"), lots: x.lots, open_t: x.since, open_px: x.open,
+    close_t: null, close_px: x.now, sl0: x.sl0 || x.sl, tp0: x.tp0 || x.tp, sl: x.sl, tp: x.tp, mae: x.mae, mfe: x.mfe, net: x.pnl, gross: x.pnl, swap: null, comm: null, pip: x.pip || 1} : x;
+  TP = {t, isOpen};
+  const dir = t.side === "buy" ? 1 : -1, pip = t.pip || 1;
+  const pips = t.open_px != null && t.close_px != null ? (t.close_px - t.open_px) * dir / pip : null;
+  const pf = v => v == null ? "—" : (Math.round(v * 100) / 100).toFixed(2);
+  const c = parts(t.combo);
+  const li = (k, v, cl = "") => `<div class="li"><span class="k">${k}</span><span class="v ${cl}">${v}</span></div>`;
+  const sl = t.sl0 || t.sl, tp = t.tp || t.tp0;
+  $("tpTitle").textContent = `${isOpen ? "עסקה פתוחה" : "עסקה סגורה"} ${t.id && !String(t.id).startsWith("t") ? t.id : ""}`;
+  $("tpBody").innerHTML = `<div class="kv">
+      <div><div class="k">סוג</div><div class="v num">${String(t.id).startsWith("t") ? "—" : t.id}</div><span class="side ${t.side}">${t.side === "buy" ? "↗ קנייה" : "↘ מכירה"}</span></div>
+      <div><div class="k">פתיחה</div><div class="v num">${t.open_t ? dtF(t.open_t) : "—"}</div></div>
+      <div><div class="k">נפח</div><div class="v num">${t.lots}</div></div>
+      <div><div class="k">נכס</div><div class="v"><bdi>${esc(t.symbol)}</bdi></div></div>
+      <div><div class="k">${isOpen ? "רווח/הפסד פתוח" : "רווח/הפסד"}</div><div class="v num ${cls(t.net)}">${usd(t.net, true)}</div></div>
+      <div><div class="k">פיפס</div><div class="v num ${cls(pips || 0)}">${pf(pips)}</div></div>
+      <div><div class="k">משך</div><div class="v num">${t.open_t ? dur(t.open_t, t.close_t || new Date()) : "—"}</div></div>
+      <div><div class="k">אסטרטגיה</div><div class="v"><bdi>${esc(c.s)}</bdi> · ${esc(c.t)}</div></div></div>
+    <button class="vbtn" id="vChart">הצג גרף</button>
+    <div class="h4">$ מחיר</div><div class="lst">${li("סוג", t.side === "buy" ? "קנייה" : "מכירה", t.side === "buy" ? "pos" : "neg")}${li("פתיחה", `<span class="num">${t.open_px ?? "—"}</span>`)}${li(isOpen ? "מחיר נוכחי" : "סגירה", `<span class="num">${t.close_px ?? "—"}</span>`)}</div>
+    <div class="h4">🛡 הגנת עסקה</div><div class="lst">${li("SL", `<span class="num">${sl || "—"}</span>`)}${t.sl && sl && Math.abs(t.sl - sl) > 1e-9 ? li("SL אחרון (אחרי הזזה)", `<span class="num">${t.sl}</span>`) : ""}
+      ${li("SL פיפס", `<span class="num">${sl && t.open_px != null ? pf((sl - t.open_px) * dir / pip) : "—"}</span>`)}${li("TP", `<span class="num">${tp || "—"}</span>`)}
+      ${li("TP פיפס", `<span class="num">${tp && t.open_px != null ? pf((tp - t.open_px) * dir / pip) : "—"}</span>`)}</div>
+    <div class="h4">✓ תוצאות</div><div class="lst">${li("רווח ברוטו", `<span class="num">${t.gross != null ? usd(t.gross, true) : "—"}</span>`)}${li("סוואפ", `<span class="num">${t.swap != null ? usd(t.swap) : "—"}</span>`)}
+      ${li("עמלה", `<span class="num">${t.comm != null ? usd(t.comm) : "—"}</span>`)}${li(isOpen ? "רווח נטו (פתוח)" : "רווח נטו", `<span class="num ${cls(t.net)}">${usd(t.net, true)}</span>`)}
+      ${!isOpen && t.why ? li("סיבת סגירה", esc(t.reason === "sl" ? "סטופ" : t.reason === "tp" ? "יעד (TP)" : t.why)) : ""}</div>
+    <div class="h4">◷ זמן</div><div class="lst">${li("פתיחה", `<span class="num">${t.open_t ? dtF(t.open_t) : "—"}</span>`)}${li("סגירה", `<span class="num">${t.close_t ? dtF(t.close_t) : "עדיין פתוחה"}</span>`)}</div>`;
+  $("vChart").onclick = () => chartPage();
+  $("tradePg").classList.add("on"); $("tradePg").scrollTop = 0;
+}
+$("tpBack").onclick = () => $("tradePg").classList.remove("on");
+
+/* the trade on a candle chart (TradingView's free library) with a position box like TradingView's tool */
+let TV = null, tvLib = null;
+function loadTV() {
+  return tvLib ||= new Promise((res, rej) => { const sc = document.createElement("script");
+    sc.src = "https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"; sc.onload = () => res(window.LightweightCharts); sc.onerror = rej; document.head.appendChild(sc); });
+}
+const ilOff = sec => { const d = new Date(sec * 1000); return Math.round((new Date(d.toLocaleString("en-US", IL)) - new Date(d.toLocaleString("en-US", {timeZone: "UTC"}))) / 1000); };
+function defaultTf(t) {
+  const order = ["1m", "5m", "15m", "1h", "4h", "1d", "1w"];
+  let tf = TFMAP[String(t.combo).split("|")[1]] || "15m";
+  const span = (new Date(t.close_t || Date.now()) - new Date(t.open_t || t.close_t)) / 1000;
+  while (order.indexOf(tf) > 0 && span / TFSEC[tf] < 6) tf = order[order.indexOf(tf) - 1];      // a short trade: smaller candles
+  return tf;
+}
+async function chartPage(tf) {
+  const {t, isOpen} = TP;
+  tf = tf || defaultTf(t);
+  $("chartPg").classList.add("on");
+  $("cpTitle").textContent = `${t.symbol} · ${t.side === "buy" ? "קנייה" : "מכירה"}`;
+  segment("tfSeg", Object.keys(TFSEC).map(k => [k, TFLBL[k]]), tf, k => chartPage(k));
+  $("tfSeg").className = "tfs";
+  const box = $("tvBox"), msg = $("cpMsg");
+  if (!t.open_t) { msg.textContent = "לעסקה הזו אין זמן פתיחה שמור (היא מלפני העדכון), אז אי אפשר לצייר אותה."; return; }
+  const a = accBy(UI.cur);
+  if (!mgr || !mgrInfo || a.archived) { msg.textContent = "הגרף נטען מ־MetaTrader דרך מחשב הבוטים, ורק כשהוא מחובר."; return; }
+  msg.textContent = "טוען נרות…";
+  const o = Math.floor(new Date(t.open_t) / 1000), c = Math.floor(new Date(t.close_t || Date.now()) / 1000), step = TFSEC[tf];
+  const from = o - step * 80, to = Math.min(Math.floor(Date.now() / 1000), c + step * 40);
+  let j;
+  try { const r = await fetch(`${mgr}/bot/${encodeURIComponent(UI.cur)}/candles?symbol=${encodeURIComponent(t.symbol)}&tf=${tf}&from=${from}&to=${to}`, {cache: "no-store"}); j = await r.json(); }
+  catch (e) { msg.textContent = "לא הצלחתי להביא נרות מהמחשב. נסה שוב."; return; }
+  if (!j || j.error || !j.bars || !j.bars.length) { msg.textContent = j && j.error ? "הבוט עוד לא תומך בגרף: צריך לאשר את העדכון בניהול." : "אין נרות לטווח הזה."; return; }
+  msg.textContent = "";
+  const LW = await loadTV().catch(() => null);
+  if (!LW) { msg.textContent = "ספריית הגרפים לא נטענה. בדוק חיבור לאינטרנט."; return; }
+  if (TV) { TV.chart.remove(); TV = null; }
+  const off = ilOff(o);
+  const chart = LW.createChart(box, {layout: {background: {color: "#fff"}, textColor: "#5B6470", fontFamily: "Instrument Sans, Heebo, sans-serif"},
+    grid: {vertLines: {color: "#EEF1F4"}, horzLines: {color: "#EEF1F4"}}, rightPriceScale: {borderColor: "#E6E9EE"},
+    timeScale: {borderColor: "#E6E9EE", timeVisible: true, secondsVisible: false}, crosshair: {mode: 0}, autoSize: true});
+  const ser = chart.addCandlestickSeries({upColor: "#1E8A4C", downColor: "#D0453A", borderVisible: false, wickUpColor: "#1E8A4C", wickDownColor: "#D0453A",
+    priceFormat: {type: "price", precision: j.digits ?? 2, minMove: Math.pow(10, -(j.digits ?? 2))},
+    autoscaleInfoProvider: orig => { const r = orig(); if (!r) return r; const ex = [t.open_px, t.sl0 || t.sl, t.tp || t.tp0, t.close_px].filter(v => v);
+      return {priceRange: {minValue: Math.min(r.priceRange.minValue, ...ex), maxValue: Math.max(r.priceRange.maxValue, ...ex)}}; }});
+  ser.setData(j.bars.map(b => ({time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]})));
+  const snap = sec => { const k = j.bars.findLast ? j.bars.findLast(b => b[0] <= sec) : [...j.bars].reverse().find(b => b[0] <= sec); return (k ? k[0] : j.bars[0][0]) + off; };
+  const buy = t.side === "buy";
+  const mk = [{time: snap(o), position: buy ? "belowBar" : "aboveBar", color: buy ? "#1E8A4C" : "#D0453A", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}];
+  if (!isOpen) mk.push({time: snap(c), position: buy ? "aboveBar" : "belowBar", color: "#12161C", shape: buy ? "arrowDown" : "arrowUp", text: "יציאה"});
+  ser.setMarkers(mk.sort((a, b) => a.time - b.time));
+  if (t.mae) ser.createPriceLine({price: t.mae, color: "#D0453A", lineStyle: 1, lineWidth: 1, title: "MAE"});
+  if (t.mfe) ser.createPriceLine({price: t.mfe, color: "#1E8A4C", lineStyle: 1, lineWidth: 1, title: "MFE"});
+  const sl = t.sl0 || t.sl, tpv = t.tp || t.tp0;
+  // green box: to the target; without a target: to the best price reached (only if the trade ended in profit)
+  const green = tpv || (t.net > 0 ? (t.mfe || t.close_px) : null);
+  const draw = () => {
+    const ts = chart.timeScale(), x1 = ts.timeToCoordinate(snap(o)), x2 = isOpen ? box.clientWidth - 60 : ts.timeToCoordinate(snap(c));
+    if (x1 == null || x2 == null) { $("tvOver").innerHTML = ""; return; }
+    const ye = ser.priceToCoordinate(t.open_px), ysl = sl ? ser.priceToCoordinate(sl) : null, ytp = green ? ser.priceToCoordinate(green) : null, yx = ser.priceToCoordinate(t.close_px);
+    const w = Math.max(6, x2 - x1), rect = (y1, y2, col) => y1 == null || y2 == null ? "" : `<rect x="${x1}" y="${Math.min(y1, y2)}" width="${w}" height="${Math.abs(y2 - y1)}" fill="${col}"/>`;
+    $("tvOver").innerHTML = `<svg width="100%" height="100%">${rect(ye, ytp, "rgba(30,138,76,.18)")}${rect(ye, ysl, "rgba(208,69,58,.18)")}
+      <line x1="${x1}" x2="${x1 + w}" y1="${ye}" y2="${ye}" stroke="#5B6470" stroke-width="1.2"/>
+      ${yx != null ? `<line x1="${x1}" y1="${ye}" x2="${x2}" y2="${yx}" stroke="#12161C" stroke-dasharray="4 4" stroke-width="1.3"/>` : ""}</svg>`;
+  };
+  chart.timeScale().subscribeVisibleTimeRangeChange(draw);
+  new ResizeObserver(() => requestAnimationFrame(draw)).observe(box);
+  const span = Math.max(c - o, step * 10);
+  chart.timeScale().setVisibleRange({from: o + off - span * 0.8, to: Math.min(to, c + span * 0.5) + off});
+  ser.priceScale().applyOptions({autoScale: true});
+  TV = {chart};
+  setTimeout(draw, 50); setTimeout(draw, 400);
+  $("tvInfo").innerHTML = `${buy ? "קנייה" : "מכירה"} · ${t.lots}<br>פתיחה <bdi>${t.open_px}</bdi><br>${isOpen ? "עכשיו" : "סגירה"} <bdi>${t.close_px}</bdi><br>משך <bdi>${dur(t.open_t, t.close_t || new Date())}</bdi>`;
+}
+$("cpBack").onclick = () => { $("chartPg").classList.remove("on"); if (TV) { TV.chart.remove(); TV = null; } $("tvOver").innerHTML = ""; };
+
+/* statistics of one account */
+function statsTab(s, a) {
+  const k = calc(s, a), all = closedOf(s);
+  const q = UI.sq.trim().toLowerCase(), cl = all.filter(c => !q || c.symbol.toLowerCase().includes(q) || String(c.combo).toLowerCase().includes(q));
+  const w = cl.filter(c => c.net > 0), l = cl.filter(c => c.net < 0);
+  const gw = w.reduce((x, c) => x + c.net, 0), gl = -l.reduce((x, c) => x + c.net, 0);
+  const avgW = w.length ? gw / w.length : 0, avgL = l.length ? -gl / l.length : 0, wr = cl.length ? w.length / cl.length : 0;
+  const days = {};
+  cl.forEach(c => { const d = pragueDay(c.close_t); (days[d] ||= {n: 0, lots: 0, pnl: 0}); days[d].n++; days[d].lots += c.lots; days[d].pnl += c.net; });
+  const dk = Object.keys(days).sort().reverse(), dr = dk.map(d => days[d].pnl / k.init);
+  const mean = dr.reduce((x, v) => x + v, 0) / (dr.length || 1), sd = Math.sqrt(dr.reduce((x, v) => x + (v - mean) ** 2, 0) / Math.max(1, dr.length - 1));
+  const sharpe = dr.length >= 5 && sd > 0 ? mean / sd * Math.sqrt(252) : null;
+  const m = (key, v, c = "") => `<div><div class="k">${INFO[key][0]} ${ib(key)}</div><div class="v ${c}">${v}</div></div>`;
+  const grid = m("balance", usd(k.bal)) + m("equity", usd(k.eq)) + m("avgW", w.length ? usd(avgW) : "—", "pos") + m("avgL", l.length ? usd(avgL) : "—", "neg") +
+    m("win", cl.length ? (wr * 100).toFixed(2) + "%" : "—") + m("n", cl.length) + m("lots", (Math.round(cl.reduce((x, c) => x + c.lots, 0) * 100) / 100).toLocaleString("en-US")) +
+    m("sharpe", sharpe == null ? "—" : sharpe.toFixed(2)) + m("rrr", w.length && l.length ? (avgW / -avgL).toFixed(2) : "—") +
+    m("exp", cl.length ? usd(wr * avgW + (1 - wr) * avgL, true) : "—", cls(wr * avgW + (1 - wr) * avgL)) + m("pf", gl ? (gw / gl).toFixed(2) : gw ? "∞" : "—", gl && gw / gl >= 1 ? "pos" : "neg");
+  const rows = (UI.allDays ? dk : dk.slice(0, 5)).map(d => `<tr><td class="num">${d.split("-").reverse().join(".")}</td><td class="num">${days[d].n}</td><td class="num">${Math.round(days[d].lots * 100) / 100}</td><td class="num ${cls(days[d].pnl)}">${usd(days[d].pnl, true)}</td></tr>`);
+  const sum = (key, f) => { const o = {}; cl.forEach(c => { const kk = key(c); o[kk] = (o[kk] || 0) + c.net; }); return Object.entries(o).sort(f || ((a, b) => String(a[0]).localeCompare(String(b[0])))); };
+  const hours = sum(c => String(new Date(c.open_t || c.close_t).toLocaleString("en-GB", {...IL, hour: "2-digit", hour12: false})).slice(0, 2) + ":00");
+  const vols = sum(c => c.lots, (a, b) => +a[0] - +b[0]).slice(-10);
+  const sides = sum(c => c.side === "buy" ? "קנייה" : "מכירה");
+  const syms = sum(c => c.symbol, (a, b) => b[1] - a[1]).slice(0, 10);
+  $("dBody").innerHTML = `<div class="card"><div class="mgrid">${grid}</div></div>
+    <div class="row" style="justify-content:space-between;margin:16px 2px 8px"><span class="h4" style="margin:0">סיכום יומי</span>${dk.length > 5 ? `<button class="btn ghost" id="allDays" style="min-height:34px;padding:6px 12px">${UI.allDays ? "הצג פחות" : "הצג הכל ›"}</button>` : ""}</div>
+    <div class="card" style="padding:0;overflow:hidden">${rows.length ? `<table><thead><tr><th>תאריך</th><th>עסקאות</th><th>לוטים</th><th>תוצאה</th></tr></thead><tbody>${rows.join("")}</tbody></table>` : '<div class="empty">עוד לא נסגרו עסקאות.</div>'}</div>
+    <div class="search" style="margin-top:16px"><input id="sq" placeholder="סינון הגרפים לפי נכס או אסטרטגיה" value="${esc(UI.sq)}" autocomplete="off"></div>
+    <div id="sBars">${barsCard("לפי שעת פתיחה (שעון ישראל)", hours)}${barsCard("לפי נפח (לוטים)", vols)}${barsCard("קנייה / מכירה", sides)}${barsCard("לפי נכס", syms)}</div>`;
+  if ($("allDays")) $("allDays").onclick = () => { UI.allDays = !UI.allDays; statsTab(s, a); };
+  $("sq").oninput = e => { UI.sq = e.target.value; const pos = e.target.selectionStart; statsTab(s, a); $("sq").focus(); $("sq").setSelectionRange(pos, pos); };
+}
+function barsCard(title, data) {
+  if (!data.length) return `<div class="card"><h3>${title}</h3><div class="empty">אין נתונים.</div></div>`;
+  const W = 600, H = 200, L = 50, R = 8, T = 10, B = 30, vals = data.map(d => d[1]);
+  const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals), r = (hi - lo) || 1;
+  const Y = v => T + (hi - v) / r * (H - T - B), bw = Math.min(34, (W - L - R) / data.length * .55);
+  let g = "";
+  for (let i = 0; i <= 3; i++) { const v = lo + i * r / 3; g += `<line x1="${L}" x2="${W - R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="#E6E9EE"/><text x="${L - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end">${Math.abs(v) >= 1000 ? (v / 1000).toFixed(1) + "K" : Math.round(v)}</text>`; }
+  const bars = data.map(([kk, v], i) => { const cx = L + (i + .5) * (W - L - R) / data.length, y = Y(Math.max(0, v)), h = Math.max(2, Math.abs(Y(v) - Y(0)));
+    return `<rect x="${(cx - bw / 2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="5" fill="${v >= 0 ? "#1E8A4C" : "#D0453A"}"><title>${esc(kk)}: ${usd(v, true)}</title></rect>
+      <text x="${cx.toFixed(1)}" y="${H - 10}" text-anchor="middle">${esc(String(kk).length > 9 ? String(kk).slice(0, 8) + "…" : kk)}</text>`; }).join("");
+  return `<div class="card"><h3>${title}</h3><svg class="bars" viewBox="0 0 ${W} ${H}" width="100%" style="display:block;direction:ltr">${g}<line x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}" stroke="#5B6470"/>${bars}</svg></div>`;
+}
+
+/* account details: status, dates, size, broker, platform; show/hide; close account */
+function details(s, a) {
+  const k = calc(s, a), live = !!(mgrInfo && mgrInfo.accounts.some(x => x.name === a.name));
+  const st = a.archived ? ['<span class="mut">סגור (בהיסטוריה)</span>'] : a.running || isLive(a.name) ? ['<span class="pos">פעיל</span>'] : a.enabled === false ? ['<span class="mut">עצור</span>'] : ['<span class="warn">לא מחובר</span>'];
+  const li = (kk, v, extra = "") => `<div class="li"><span class="k">${kk}</span><span class="v">${v}${extra}</span></div>`;
+  $("dBody").innerHTML = `<div class="row" style="justify-content:space-between;margin:0 2px 8px"><span class="h4" style="margin:0">פרטי החשבון</span>${live ? '<button class="btn ghost" id="dRen" style="min-height:34px;padding:6px 12px">ערוך שם ›</button>' : ""}</div>
+    <div class="lst">${li("סטטוס", st[0])}${li("שם החשבון", esc(nick(a)))}${li("מספר חשבון", `<span class="num">${esc(s.account || a.login || "—")}</span>`)}${li("בוט", esc(botL(a)))}
+      ${li("התחלה", `<span class="num">${dtF(a.created || s.started || (s.equity_curve && s.equity_curve[0] && s.equity_curve[0][0]) || s.updated_utc)}</span>`, " " + ib("start"))}
+      ${li("סיום", a.archived_at ? `<span class="num">${dtF(a.archived_at)}</span>` : "—", " " + ib("end"))}
+      ${li("גודל החשבון", `<span class="num">${usd(k.init)}</span>`)}${li("יעד רווח", `<span class="num">${k.tgt}% · ${usd(k.init * (1 + k.tgt / 100))}</span>`, live ? ' <button class="btn ghost" id="dTgt" style="min-height:30px;padding:4px 10px;margin-inline-start:6px">שנה</button>' : "")}
+      ${li("סיכון לעסקה", `<span class="num">${((s.risk || 0) * 100).toFixed(3).replace(/\.?0+$/, "")}%</span>`)}${li("ברוקר", "FTMO")}${li("שרת", esc(s.server || a.server || "—"))}${li("פלטפורמה", "MetaTrader 5")}</div>
+    <div class="card row" style="justify-content:space-between"><b>מוצג ברשימת החשבונות</b><label class="sw"><input type="checkbox" id="dVis" ${a.hidden ? "" : "checked"} ${live ? "" : "disabled"}><span></span></label></div>
+    ${a.archived ? "" : `<div class="h4" style="margin-top:22px">אזור מסוכן</div><button class="danger" id="dClose" ${live ? "" : "disabled"}>סגור חשבון</button>
+      <div class="foot" style="margin-top:8px">סגירה עוצרת את הבוט של החשבון הזה לצמיתות ומעבירה את החשבון להיסטוריה. עסקאות פתוחות נשארות עם הסטופ והיעד שלהן.</div>`}
+    <div class="msg" id="dMsg">${live ? "" : "שינויים אפשריים רק כשמחשב הבוטים מחובר."}</div>`;
+  const run = async (path, body, ok) => { try { await act(path, body); note("dMsg", ok, true); await findMgr(); renderDet(); } catch (e) { note("dMsg", e.message, false); } };
+  if ($("dRen")) $("dRen").onclick = () => { const v = prompt("שם חדש לחשבון:", nick(a)); if (v) run(`/accounts/${encodeURIComponent(a.name)}/rename`, {nickname: v}, "השם עודכן."); };
+  if ($("dTgt")) $("dTgt").onclick = () => { const v = prompt("יעד רווח באחוזים מגודל החשבון:", k.tgt); if (v) run(`/accounts/${encodeURIComponent(a.name)}/target`, {pct: parseFloat(v)}, "היעד עודכן."); };
+  $("dVis").onchange = e => run(`/accounts/${encodeURIComponent(a.name)}/hide`, {hidden: !e.target.checked}, e.target.checked ? "החשבון מוצג ברשימה." : "החשבון הוסתר. הוא ממשיך לעבוד, ואפשר למצוא אותו ב'חשבונות מוסתרים'.");
+  if ($("dClose")) $("dClose").onclick = () => { if (prompt(`לסגור את "${nick(a)}"? הבוט ייעצר והחשבון יעבור להיסטוריה. כתוב "סגור" לאישור:`) === "סגור") run(`/accounts/${encodeURIComponent(a.name)}/archive`, {}, "החשבון נסגר ועבר להיסטוריה."); };
+}
+$("pop").onclick = e => { if (e.target.id === "pop" || e.target.id === "popOk") $("pop").classList.remove("on"); };
+
+addEventListener("resize", () => { if ($("v-stats").classList.contains("on") && found[cur]) chart(found[cur].equity_curve, found[cur].initial); if ($("eqc") && found[UI.cur]) eqChart(found[UI.cur], accBy(UI.cur)); });
 tick(); setInterval(tick, 60000); setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
 </script>
 </body>

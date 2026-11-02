@@ -265,7 +265,8 @@ def add_account(d):
     (LIVE / "bots" / f"{name}.json").write_text(json.dumps(cfg, ensure_ascii=False, indent=1), encoding="utf-8")
     port = max([PORT] + [a["port"] for a in accounts()]) + 1
     a = {"name": name, "bot": bot, "nickname": nickname, "label": f"{nickname} · {BOT_TEMPLATES[bot]}", "login": int(login), "server": server,
-         "terminal": str(dest / "terminal64.exe"), "port": port, "enabled": True, "password": encrypt(password)}
+         "terminal": str(dest / "terminal64.exe"), "port": port, "enabled": True, "password": encrypt(password),
+         "created": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     with LOCK:
         accounts().append(a)
     save()
@@ -297,13 +298,33 @@ def remove_account(name):
     log(f"account removed: {name}")
 
 
-def public_accounts():
+def public_accounts(with_run=True):
     out = []
     for a in accounts():
         out.append({"name": a["name"], "label": a.get("label", a["name"]), "nickname": a.get("nickname"), "bot": a.get("bot"), "login": a.get("login"),
-                    "server": a.get("server"), "enabled": a.get("enabled", False), "running": running(a["name"]),
-                    "port": a["port"]})
+                    "server": a.get("server"), "enabled": a.get("enabled", False), "running": running(a["name"]) if with_run else None,
+                    "archived": bool(a.get("archived")), "archived_at": a.get("archived_at"), "hidden": bool(a.get("hidden")),
+                    "created": a.get("created"), "broker": "FTMO", "platform": "MetaTrader 5", "target_pct": a.get("target_pct", 10)})
     return out
+
+
+def archive_account(name):
+    """'Close account' in the app: the bot stops for good and the account moves to the history list."""
+    a = acc_by(name)
+    a["enabled"] = False
+    stop_bot(name)
+    a["archived"] = True
+    a["archived_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    save()
+    log(f"account closed (moved to history): {name}")
+    push_manager_state()
+
+
+def hide_account(name, hidden):
+    a = acc_by(name)
+    a["hidden"] = bool(hidden)
+    save()
+    push_manager_state()
 
 
 # ---------------- updates ----------------
@@ -389,12 +410,13 @@ class Handler(BaseHTTPRequestHandler):
                                     "watchdog_push": WATCH["ok"]})
         if path == "/vapid":
             return self._send(200, {"key": vapid_public()})
-        if len(parts) == 3 and parts[0] == "bot" and parts[2] in ("live", "state"):
+        if len(parts) == 3 and parts[0] == "bot" and parts[2] in ("live", "state", "candles"):
             port = bot_port(parts[1])
             if not port:
                 return self._send(404, {"error": "no such bot"})
             try:
-                r = requests.get(f"http://127.0.0.1:{port}/{parts[2]}", timeout=5)
+                q = self.path.partition("?")[2] if parts[2] == "candles" else ""
+                r = requests.get(f"http://127.0.0.1:{port}/{parts[2]}" + (f"?{q}" if q else ""), timeout=15 if q else 5)
                 return self._send(r.status_code, r.json())
             except Exception:  # noqa: BLE001
                 return self._send(503, {"error": "bot not answering"})
@@ -439,12 +461,34 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError("אין חשבון כזה")
                 rename_account(name, d.get("nickname"))
                 return self._send(200, {"ok": True})
+            if path.startswith("/accounts/") and path.endswith("/target"):
+                a = acc_by(path.split("/")[2])
+                if not a:
+                    raise ValueError("אין חשבון כזה")
+                v = float(d.get("pct"))
+                if not 0.5 <= v <= 50:
+                    raise ValueError("יעד בין 0.5% ל־50%")
+                a["target_pct"] = round(v, 2)
+                save()
+                push_manager_state()
+                return self._send(200, {"ok": True})
+            if path.startswith("/accounts/") and path.endswith(("/archive", "/hide")):
+                name, act = path.split("/")[2], path.split("/")[3]
+                if not acc_by(name):
+                    raise ValueError("אין חשבון כזה")
+                if act == "archive":
+                    archive_account(name)
+                else:
+                    hide_account(name, d.get("hidden", True))
+                return self._send(200, {"ok": True})
             if path.startswith("/accounts/") and path.endswith(("/start", "/stop", "/remove")):
                 name, act = path.split("/")[2], path.split("/")[3]
                 a = acc_by(name)
                 if not a:
                     raise ValueError("אין חשבון כזה")
                 if act == "start":
+                    if a.get("archived"):
+                        raise ValueError("החשבון סגור ונמצא בהיסטוריה")
                     a["enabled"] = True
                     save()
                     start_bot(a)
@@ -512,7 +556,7 @@ def push_manager_state():
     subscriptions for GitHub's watchdog: without the private signing key (kept on this computer and,
     encrypted, as a GitHub secret) nobody can send anything to them."""
     state = {"url": TUN.URL["url"], "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-             "accounts": [{"name": a["name"], "label": a.get("label", a["name"])} for a in accounts()],
+             "accounts": public_accounts(with_run=False),
              "subs": CFG.get("subs", []), "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
     err = REP.push_state("manager", state)
     if err:

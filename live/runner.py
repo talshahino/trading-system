@@ -675,7 +675,11 @@ def monitor():
 
 
 def positions_doc(pos):
-    return [{"combo": combo_of(p.magic), "symbol": p.symbol, "dir": "קנייה" if p.type == 0 else "מכירה",
+    meta = STATE.get("pos_meta", {})
+    return [{"ticket": p.ticket, "side": "buy" if p.type == 0 else "sell", "sl0": meta.get(str(p.ticket), {}).get("sl0") or p.sl,
+             "tp0": meta.get(str(p.ticket), {}).get("tp0") or p.tp, "mae": meta.get(str(p.ticket), {}).get("mae"),
+             "mfe": meta.get(str(p.ticket), {}).get("mfe"), "pip": pip_size(p.symbol),
+             "combo": combo_of(p.magic), "symbol": p.symbol, "dir": "קנייה" if p.type == 0 else "מכירה",
              "lots": p.volume, "open": p.price_open, "now": p.price_current, "sl": p.sl, "tp": p.tp,
              "pnl": round(p.profit + p.swap, 2), "since": server_ts(p.time).isoformat(),
              "free": bool(p.sl and ((p.type == 0 and p.sl >= p.price_open) or (p.type == 1 and p.sl <= p.price_open)))}
@@ -688,9 +692,137 @@ def refresh_live():
     if ai is None:
         return
     pos = {p.ticket: p for p in ACC.positions()}
+    track_live(ai, pos)
     TUN.SNAP["live"] = {"bot": MON["name"], "updated_utc": pd.Timestamp.now(tz="UTC").isoformat(), "balance": ai.balance,
-                        "equity": ai.equity, "day_start": MON.get("ds_bal", ai.balance),
+                        "equity": ai.equity, "day_start": MON.get("ds_bal", ai.balance), "lows": STATE.get("lows", {}),
                         "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "positions": positions_doc(pos)}
+
+
+# ---------------- app data: closed trades, the lowest floating equity, candles ----------------
+def pip_size(sym):
+    s = sym.upper().split(".")[0]
+    if s.startswith("XAU"):
+        return 0.1
+    if s.startswith("XAG"):
+        return 0.01
+    if len(s) == 6 and s.isalpha():
+        return 0.01 if "JPY" in s else 0.0001
+    return 1.0
+
+
+def track_live(ai, pos):
+    """Every quarter second: the day's and the all-time lowest equity (FTMO's loss limits count open
+    trades too), and each open position's first stop/target and its worst/best price so far."""
+    day = pd.Timestamp.now(tz="Europe/Prague").strftime("%Y-%m-%d")
+    lw = STATE.setdefault("lows", {})
+    if "all_low" not in lw:
+        lw["all_low"] = min([e for _t, _b, e in STATE.get("equity", [])] + [ai.equity])
+    if lw.get("day") != day:
+        lw.update(day=day, day_low=ai.equity)
+    lw["day_low"] = min(lw["day_low"], ai.equity)
+    lw["all_low"] = min(lw["all_low"], ai.equity)
+    meta = STATE.setdefault("pos_meta", {})
+    for tk, p in pos.items():
+        px, buy = p.price_current, p.type == 0
+        m = meta.setdefault(str(tk), {"sl0": p.sl, "tp0": p.tp, "mae": px, "mfe": px})
+        if not m.get("sl0") and p.sl:
+            m["sl0"] = p.sl
+        if not m.get("tp0") and p.tp:
+            m["tp0"] = p.tp
+        m["mae"] = min(m["mae"], px) if buy else max(m["mae"], px)
+        m["mfe"] = max(m["mfe"], px) if buy else min(m["mfe"], px)
+        m["sl"], m["tp"] = p.sl, p.tp
+    if len(meta) > 800:
+        for k in sorted(meta, key=int)[:len(meta) - 800]:
+            meta.pop(k)
+
+
+REASON = {4: "sl", 5: "tp", 6: "so"}
+
+
+def closed_doc(days=60):
+    """Every closed position (open + close deals put together), cached once it is final."""
+    by = {}
+    for d in deals_since(days):
+        by.setdefault(d.position_id, []).append(d)
+    cache = STATE.setdefault("closed", {})
+    meta = STATE.get("pos_meta", {})
+    for pid, ds in by.items():
+        key = str(pid)
+        ins = [d for d in ds if d.entry == 0]
+        outs = [d for d in ds if d.entry in (1, 3)]
+        if not ins or not outs or key in cache:
+            continue
+        o = ins[0]
+        vol = sum(d.volume for d in outs) or o.volume
+        if vol + 1e-9 < o.volume:                      # partly closed: wait for the rest
+            continue
+        m = meta.get(key, {})
+        sl0, tp0 = m.get("sl0"), m.get("tp0")
+        if sl0 is None:
+            try:
+                od = [x for x in (mt5.history_orders_get(position=pid) or []) if x.position_id == pid]
+                if od:
+                    sl0, tp0 = od[0].sl, od[0].tp
+            except Exception:  # noqa: BLE001
+                pass
+        cache[key] = {
+            "id": pid, "combo": combo_of(o.magic), "symbol": o.symbol, "side": "buy" if o.type == 0 else "sell",
+            "lots": o.volume, "open_t": server_ts(o.time).isoformat(), "open_px": o.price,
+            "close_t": server_ts(outs[-1].time).isoformat(), "close_px": round(sum(d.price * d.volume for d in outs) / vol, 6),
+            "sl0": sl0 or 0, "tp0": tp0 or 0, "sl": m.get("sl", sl0) or 0, "tp": m.get("tp", tp0) or 0,
+            "mae": m.get("mae"), "mfe": m.get("mfe"),
+            "gross": round(sum(d.profit for d in ds), 2), "swap": round(sum(d.swap for d in ds), 2),
+            "comm": round(sum(d.commission + getattr(d, "fee", 0.0) for d in ds), 2),
+            "net": round(sum(d.profit + d.swap + d.commission + getattr(d, "fee", 0.0) for d in ds), 2),
+            "why": outs[-1].comment, "reason": REASON.get(outs[-1].reason, ""), "pip": pip_size(o.symbol)}
+    if len(cache) > 3000:
+        for k in sorted(cache, key=lambda k: cache[k]["close_t"])[:len(cache) - 3000]:
+            cache.pop(k)
+    return sorted(cache.values(), key=lambda x: x["close_t"])
+
+
+import queue  # noqa: E402
+import threading  # noqa: E402
+CANDLE_Q = queue.Queue()
+CANDLE_TF = {"1m": "M1", "5m": "M5", "15m": "M15", "1h": "H1", "4h": "H4", "1d": "D1", "1w": "W1"}
+
+
+def _candles_now(q):
+    sym, tf = q.get("symbol", ""), CANDLE_TF.get(q.get("tf", ""))
+    if not tf or mt5.symbol_info(sym) is None:
+        return {"error": "unknown symbol or timeframe"}
+    t0 = pd.Timestamp(int(q["from"]), unit="s", tz="UTC")
+    t1 = pd.Timestamp(int(q.get("to") or time.time()), unit="s", tz="UTC")
+    rates = mt5.copy_rates_range(sym, getattr(mt5, "TIMEFRAME_" + tf), utc_to_server(t0), utc_to_server(t1))
+    if rates is None or not len(rates):
+        return {"symbol": sym, "tf": q["tf"], "bars": []}
+    rates = rates[-3000:]
+    ts = [int(x.timestamp()) for x in server_to_utc(rates["time"])]
+    return {"symbol": sym, "tf": q["tf"], "digits": mt5.symbol_info(sym).digits,
+            "bars": [[t, float(r["open"]), float(r["high"]), float(r["low"]), float(r["close"])] for t, r in zip(ts, rates)]}
+
+
+def candles(q):
+    """Called from the web server's thread: MT5 is only touched from the main loop, so hand it over."""
+    box = {"ev": threading.Event()}
+    CANDLE_Q.put((q, box))
+    if not box["ev"].wait(12):
+        return {"error": "busy, try again"}
+    return box["doc"]
+
+
+def serve_candles():
+    while not CANDLE_Q.empty():
+        q, box = CANDLE_Q.get_nowait()
+        try:
+            box["doc"] = _candles_now(q)
+        except Exception as e:  # noqa: BLE001
+            box["doc"] = {"error": str(e)}
+        box["ev"].set()
+
+
+TUN.ROUTES["/candles"] = candles
 
 
 def dashboard_state(ai, pos, ds_bal, now):
@@ -708,6 +840,8 @@ def dashboard_state(ai, pos, ds_bal, now):
         "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "combos": MON["combos"],
         "positions": positions_doc(pos), "live_url": TUN.URL["url"],
         "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:],   # the bot's log stays on the computer only
+        "closed": closed_doc()[-500:], "lows": STATE.get("lows", {}), "label": BOT,
+        "started": (STATE.get("equity") or [[now.isoformat()]])[0][0],
     }
 
 
@@ -893,6 +1027,7 @@ def main():
         for _ in range(20):                       # 5 seconds, refreshing the live dashboard feed 4 times a second
             try:
                 if not args.dry_run:
+                    serve_candles()
                     refresh_live()
             except Exception:  # noqa: BLE001
                 pass

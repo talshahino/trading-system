@@ -24,12 +24,19 @@ DOWNLOAD = "https://github.com/cloudflare/cloudflared/releases/latest/download/c
 
 SNAP = {"live": {}, "full": {}}
 URL = {"url": None, "err": None}
+ROUTES = {}            # extra read-only paths, e.g. "/candles": fn(query dict) -> json doc (or None for 404)
 
 
 class _Handler(BaseHTTPRequestHandler):
     def do_GET(self):  # noqa: N802
         path = self.path.split("?")[0].rstrip("/")
         doc = SNAP["live"] if path == "/live" else SNAP["full"] if path == "/state" else None
+        if path in ROUTES:
+            from urllib.parse import parse_qsl
+            try:
+                doc = ROUTES[path](dict(parse_qsl(self.path.partition("?")[2])))
+            except Exception as e:  # noqa: BLE001
+                doc = {"error": str(e)}
         if doc is None:
             self.send_response(404)
             self.end_headers()

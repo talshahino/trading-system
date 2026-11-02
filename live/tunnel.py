@@ -47,8 +47,20 @@ class _Handler(BaseHTTPRequestHandler):
         pass
 
 
+class ExclusiveServer(ThreadingHTTPServer):
+    """A port only one program can hold (Windows otherwise lets a second copy bind the same port,
+    which hides a duplicate bot or manager)."""
+    allow_reuse_address = False
+
+    def server_bind(self):
+        import socket
+        if hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+
 def serve(port):
-    srv = ThreadingHTTPServer(("127.0.0.1", port), _Handler)
+    srv = ExclusiveServer(("127.0.0.1", port), _Handler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     return srv
 
@@ -88,24 +100,35 @@ def tunnel(port, log, on_url, name="bot"):
     _kill_old(pid_file)
 
     def run():
+        wait = 30
         while True:
             if not _ensure_exe(log):
                 time.sleep(600)
                 continue
             try:
                 flags = 0x08000000 if hasattr(subprocess, "CREATE_NO_WINDOW") else 0   # no extra black window
-                p = subprocess.Popen([str(EXE), "tunnel", "--no-autoupdate", "--url", f"http://127.0.0.1:{port}"],
+                attempt = getattr(run, "n", 0)
+                run.n = attempt + 1
+                proto = ["--protocol", "http2"] if attempt % 2 else []     # some networks block QUIC (UDP): try plain TCP too
+                p = subprocess.Popen([str(EXE), "tunnel", "--no-autoupdate", *proto, "--url", f"http://127.0.0.1:{port}"],
                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, creationflags=flags)
                 pid_file.write_text(str(p.pid))
+                tail = []
                 for line in p.stdout:
+                    tail = (tail + [line.strip()])[-12:]
                     m = re.search(r"https://[a-z0-9-]+\.trycloudflare\.com", line)
                     if m and m.group(0) != URL["url"]:
-                        URL["url"] = m.group(0)
+                        URL["url"], URL["err"] = m.group(0), None
+                        wait = 30
                         on_url(URL["url"])
                 p.wait()
-                log(f"tunnel stopped (code {p.returncode}); restarting in 30 s")
+                why = next((t for t in reversed(tail) if " ERR " in t or "error" in t.lower() or "failed" in t.lower()), tail[-1] if tail else "")
+                URL["err"] = why[-200:]
+                log(f"tunnel stopped (code {p.returncode}): {why[-200:]}; restarting in {wait} s")
             except Exception as e:  # noqa: BLE001
-                log(f"tunnel error: {e}; restarting in 30 s")
+                URL["err"] = str(e)
+                log(f"tunnel error: {e}; restarting in {wait} s")
             URL["url"] = None
-            time.sleep(30)
+            time.sleep(wait)
+            wait = min(wait * 2, 600)        # Cloudflare limits how often a new quick tunnel may be asked for
     threading.Thread(target=run, daemon=True).start()

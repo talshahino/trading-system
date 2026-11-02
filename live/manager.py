@@ -530,7 +530,11 @@ def main():
                            "terminal": r"C:\MT5_bot1\terminal64.exe", "port": 8761, "enabled": True})
     save()
     vapid_public()
-    srv = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
+    try:
+        srv = TUN.ExclusiveServer(("127.0.0.1", PORT), Handler)
+    except OSError:
+        log("another copy of the manager is already running: this one stops")
+        return
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     log(f"manager running on port {PORT}; accounts: {', '.join(a['name'] for a in accounts()) or 'none'}")
 

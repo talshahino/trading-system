@@ -103,29 +103,34 @@ def tick(log, bot, state, save_state, open_count, restart):
             log(f"update command check failed: {e}")
 
 
+def apply(sha):
+    """Download version `sha` from GitHub and install it over the program folder, plus packages."""
+    r = requests.get(f"https://codeload.github.com/{REPO}/zip/{sha}", timeout=120)
+    r.raise_for_status()
+    z = zipfile.ZipFile(io.BytesIO(r.content))
+    top = z.namelist()[0].split("/")[0]
+    for info in z.infolist():
+        rel = info.filename[len(top) + 1:]
+        if not rel or info.is_dir():
+            continue
+        dest = ROOT / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        data = z.read(info)
+        if dest.exists() and dest.read_bytes() == data:
+            continue
+        tmp = dest.with_suffix(dest.suffix + ".new")
+        tmp.write_bytes(data)
+        os.replace(tmp, dest)
+    subprocess.run([sys.executable.replace("pythonw", "python"), "-m", "pip", "install", "-q", "-r", str(ROOT / "live" / "requirements.txt")],
+                   capture_output=True, timeout=600)
+    VERSION.write_text(sha)
+
+
 def install(sha, log, bot, state, save_state, restart):
     log(f"installing update {sha[:7]}...")
     REP.notify(f"{bot}: מתעדכן", "מוריד את הגרסה החדשה ומפעיל מחדש. זה לוקח כחצי דקה.", tags=["arrows_counterclockwise"])
     try:
-        r = requests.get(f"https://codeload.github.com/{REPO}/zip/{sha}", timeout=120)
-        r.raise_for_status()
-        z = zipfile.ZipFile(io.BytesIO(r.content))
-        top = z.namelist()[0].split("/")[0]
-        for info in z.infolist():
-            rel = info.filename[len(top) + 1:]
-            if not rel or info.is_dir():
-                continue
-            dest = ROOT / rel
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            data = z.read(info)
-            if dest.exists() and dest.read_bytes() == data:
-                continue
-            tmp = dest.with_suffix(dest.suffix + ".new")
-            tmp.write_bytes(data)
-            os.replace(tmp, dest)
-        subprocess.run([sys.executable.replace("pythonw", "python"), "-m", "pip", "install", "-q", "-r", str(ROOT / "requirements.txt")],
-                       capture_output=True, timeout=600)
-        VERSION.write_text(sha)
+        apply(sha)
         state["updated_to"] = sha
         save_state()
     except Exception as e:  # noqa: BLE001

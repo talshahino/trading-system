@@ -20,6 +20,7 @@ News: no entries within 5 minutes of a high-impact release (ForexFactory weekly 
 from __future__ import annotations
 
 import argparse
+import os
 import datetime as dt
 import json
 import sys
@@ -683,6 +684,18 @@ def no_quick_edit():
         pass
 
 
+MANAGED = os.environ.get("MANAGED") == "1"
+
+
+def mt5_init(terminal):
+    """Start/attach MetaTrader. Started by the manager for an account added in the app: log in with
+    the account it passes (the password never touches a file here)."""
+    if os.environ.get("MT5_LOGIN"):
+        return mt5.initialize(path=terminal, portable=True, login=int(os.environ["MT5_LOGIN"]),
+                              password=os.environ.get("MT5_PASSWORD", ""), server=os.environ.get("MT5_SERVER", ""))
+    return mt5.initialize(path=terminal, portable=True)
+
+
 def main():
     no_quick_edit()
     global ACC, STATE, STATE_FILE, LOG_FILE, MAGICS, MAGICS_BY_COMBO
@@ -697,7 +710,7 @@ def main():
     STATE_FILE = ROOT / "live" / f"{name}_state.json"
     STATE = json.loads(STATE_FILE.read_text(encoding="utf-8")) if STATE_FILE.exists() else {"entry": {}, "risk": {}}
     for attempt in range(10):           # at Windows start-up MT5 may need a while
-        if mt5.initialize(path=args.terminal, portable=True):
+        if mt5_init(args.terminal):
             break
         log(f"MT5 did not start ({mt5.last_error()}), trying again in 60 s")
         time.sleep(60)
@@ -751,15 +764,20 @@ def main():
             names = ", ".join(sorted({f"{t} ({c})" for dd, c, t in cal["holidays"] if dd == d and "Daylight" not in t}))
             log(f"  {d.strftime('%a %d.%m')}  holiday: {names} -> market closed for {', '.join(hit)}")
     global BOT
-    BOT = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}.get(name, name)
+    BOT = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}.get(name) or cfg.get("label") or name
     MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])
-    if not args.dry_run:
+    if not args.dry_run and not MANAGED:
         UPD.startup(log, BOT)
         UPD.announce(log, BOT, STATE, save_state)
-    if not args.dry_run and cfg.get("live_tunnel", True):
-        port = 8760 + int("".join(ch for ch in name if ch.isdigit()) or 0)
+    if not args.dry_run:
+        port = int(os.environ.get("BOT_PORT") or 8760 + int("".join(ch for ch in name if ch.isdigit())[:1] or 0))
         try:
-            TUN.serve(port)
+            TUN.serve(port)                     # also the guard against running the same bot twice
+        except OSError:
+            log(f"another copy of {name} is already running (port {port} is taken): this one stops")
+            sys.exit(4)
+    if not args.dry_run and not MANAGED and cfg.get("live_tunnel", True):
+        try:
 
             def on_url(u):
                 log(f"real-time dashboard feed: {u}")
@@ -808,7 +826,7 @@ def main():
                         tried[combo], tried_bar[combo] = now, bar_start
         except Exception:  # noqa: BLE001
             log(f"loop error:\n{traceback.format_exc()}")
-            if not mt5.initialize(path=args.terminal, portable=True):
+            if not mt5_init(args.terminal):
                 log("MT5 connection lost; retrying in 60 s")
                 REP.notify(f"{BOT}: אין חיבור ל־MT5", "בדוק ש־MT5 פתוח ומחובר לחשבון. הבוט מנסה שוב כל דקה.",
                            priority=5, tags=["warning"], key="mt5lost", every=1800)
@@ -819,7 +837,7 @@ def main():
         except Exception:  # noqa: BLE001
             log(f"monitor error:\n{traceback.format_exc()}")
         try:
-            if not args.dry_run:
+            if not args.dry_run and not MANAGED:
                 UPD.tick(log, BOT, STATE, save_state, lambda: len(ACC.positions()), lambda: UPD.restart_self(log))
         except Exception:  # noqa: BLE001
             log(f"update error:\n{traceback.format_exc()}")

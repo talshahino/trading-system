@@ -28,6 +28,7 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
         return
     if key:
         _LAST[key] = time.time()
+    _to_app(title, message, priority >= 5)
     if priority < 5 and quiet_now():
         priority = 2          # night: shows in the app without sound or vibration; urgent alerts still ring
     try:
@@ -37,6 +38,19 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
         return None if r.status_code == 200 else f"ntfy answered {r.status_code}: {r.text[:120]}"
     except Exception as e:  # noqa: BLE001 - a notification must never stop the robot
         return f"notification failed: {e}"
+
+
+def _to_app(title, message, urgent):
+    """Started by the manager: the same notification also goes to the app (Web Push)."""
+    import os
+    key = os.environ.get("MANAGER_KEY")
+    if not key:
+        return
+    try:
+        requests.post("http://127.0.0.1:8760/push", timeout=5, headers={"X-Local": key},
+                      json={"title": title, "body": message, "urgent": urgent})
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def notify_action(title, message, label, url, body, priority=4):

@@ -275,7 +275,8 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 const BOTS = ["bot1", "bot2", "bot3"];
 const NAMES = {bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3"};
 const MGR_STATE = () => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/manager_state.json?t=${Date.now()}`;
-let mgr = null, mgrInfo = null, mgrSeen = null;
+let mgr = null, mgrInfo = null, mgrSeen = null, apiTry = 0;
+const MGR_API = "https://api.github.com/repos/talshahino/trading-system/contents/live/manager_state.json?ref=live";
 const RAW = b => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/${b}_state.json?t=${Date.now()}`;
 const API = b => `https://api.github.com/repos/talshahino/trading-system/contents/live/${b}_state.json?ref=live`;
 let cur = "bot1", found = {}, per = "day", hist = "week";
@@ -503,7 +504,16 @@ function kv(key, val) {           // shared with the service worker (sw.js)
 }
 const getPin = () => { try { return localStorage.getItem("pin") || ""; } catch (e) { return ""; } };
 async function findMgr() {
-  try { const r = await fetch(MGR_STATE(), {cache: "no-store"}); if (r.ok) { const j = await r.json(); mgrSeen = j.updated_utc; if (j.url) { mgr = j.url; kv("mgr", mgr); } } } catch (e) {}
+  let url = null;
+  try { const r = await fetch(MGR_STATE(), {cache: "no-store"}); if (r.ok) { const j = await r.json(); mgrSeen = j.updated_utc; url = j.url; } } catch (e) {}
+  // GitHub's file server can hand out a copy up to ~5 minutes old (a new tunnel address then looks missing):
+  // ask GitHub's API for the current copy instead, at most once a minute (it allows 60 requests an hour).
+  if ((!url || (mgr && url === mgr && !mgrInfo)) && Date.now() - apiTry > 60000) {
+    apiTry = Date.now();
+    try { const r = await fetch(MGR_API + "&t=" + Date.now(), {cache: "no-store", headers: {Accept: "application/vnd.github.raw+json"}});
+      if (r.ok) { const j = await r.json(); mgrSeen = j.updated_utc || mgrSeen; if (j.url) url = j.url; } } catch (e) {}
+  }
+  if (url) { if (url !== mgr) mgrInfo = null; mgr = url; kv("mgr", mgr); }
   if (!mgr) return null;
   try { const r = await fetch(mgr + "/status", {cache: "no-store"}); if (r.ok) { mgrInfo = await r.json(); return mgrInfo; } } catch (e) {}
   mgrInfo = null; return null;

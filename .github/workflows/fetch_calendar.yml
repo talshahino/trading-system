@@ -43,6 +43,19 @@ jobs:
           (out / "responses.json").write_text(json.dumps(caught, ensure_ascii=False, indent=1), encoding="utf-8")
           print(len(caught), [c["url"] for c in caught])
           PY
+      - name: Calendar history from FTMO's API
+        run: |
+          python - <<'PY'
+          import json, requests, pandas as pd
+          out = []
+          for a in pd.date_range("2025-04-01", "2026-12-31", freq="7D"):
+              b = a + pd.Timedelta(days=6, hours=23, minutes=59, seconds=59)
+              r = requests.get("https://gw2.ftmo.com/public-api/v1/economic-calendar", timeout=30, params={
+                  "dateFrom": a.strftime("%Y-%m-%dT00:00:00Z"), "dateTo": b.strftime("%Y-%m-%dT%H:%M:%SZ"), "timezone": "UTC"})
+              out += [i for i in r.json().get("items", []) if i.get("restriction") or i.get("impact") == "holiday"]
+          json.dump(out, open("data/ftmo_calendar/history.json", "w"), ensure_ascii=False, indent=0)
+          print(len(out))
+          PY
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"

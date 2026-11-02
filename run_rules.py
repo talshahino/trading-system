@@ -8,6 +8,7 @@ published parameters, no searching. Same test as the POC strategies:
   python run_rules.py [--demo]
 """
 import argparse
+import json
 import html
 import math
 import sys
@@ -174,6 +175,9 @@ def main():
     ap.add_argument("--respect-tf", action="store_true",
                     help="only run a strategy on the timeframes its source states (default: every timeframe)")
     ap.add_argument("--symbols", default="", help="comma separated subset of the instrument universe (empty = all)")
+    ap.add_argument("--news-exit", action="store_true",
+                    help="FTMO Standard + user rule: no position from 3 min before to 3 min after FTMO restricted events "
+                         "(data/ftmo_calendar/history.json); holidays close the affected markets for the day")
     ap.add_argument("--break-exit", action="store_true",
                     help="FTMO Standard account: close every position before any market break longer than 2 hours (weekends too)")
     ap.add_argument("--stock-session-exit", action="store_true",
@@ -246,6 +250,10 @@ def main():
             if args.break_exit and not args.demo:
                 bm = break_mask(df, tf)
                 sess = bm if sess is None else (np.asarray(sess, dtype=bool) | bm)
+            news_block = None
+            if args.news_exit and not args.demo:
+                nm, news_block = news_masks(df, s, tf)
+                sess = nm if sess is None else (np.asarray(sess, dtype=bool) | nm)
             be = None
             if args.breakeven:
                 px = float(df["c"].median())
@@ -278,7 +286,8 @@ def main():
                         ERRORS.append(f"optimize {sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue
                 try:
-                    t = R.run(df, R.STRATEGIES[sid][1], cost, breakeven=be, session_exit=sess)
+                    fn0 = R.STRATEGIES[sid][1]
+                    t = R.run(df, fn0 if news_block is None else _blocked(fn0, news_block), cost, breakeven=be, session_exit=sess)
                 except Exception:  # noqa: BLE001 - one broken strategy must not kill the run
                     ERRORS.append(f"{sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue
@@ -340,6 +349,23 @@ def main():
 
 
 SESSION = {"US": ("America/New_York", 16 * 60), "EU": ("Europe/Berlin", 17 * 60 + 30)}
+
+
+_CAL_HIST = None
+
+
+def news_masks(df, s, tf):
+    """(exit mask, no-entry mask) for FTMO restricted events and holidays: see ftmo_calendar.masks."""
+    global _CAL_HIST
+    from agents import ftmo_calendar as CAL
+    if _CAL_HIST is None:
+        _CAL_HIST = CAL.parse(json.load(open(Path(__file__).parent / "data" / "ftmo_calendar" / "history.json", encoding="utf-8")))
+    return CAL.masks(df, s, RP.TF_MIN[tf], *_CAL_HIST)
+
+
+def _blocked(fn, noent):
+    from agents import ftmo_calendar as CAL
+    return CAL.blocked(fn, noent)
 
 
 def break_mask(df, tf):

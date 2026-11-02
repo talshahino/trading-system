@@ -137,9 +137,20 @@ def break_mask(df, tf):
 def exit_mask(df, sym, tf):
     m = session_mask(df, sym, tf)
     if CLOSE_BREAKS:
-        b = break_mask(df, tf)
+        b = break_mask(df, tf) | cal_masks(df, sym, tf)[0]
         m = b if m is None else (np.asarray(m, dtype=bool) | b)
     return m
+
+
+def cal_masks(df, sym, tf):
+    """FTMO restricted events + holidays, the same masks the backtest uses (--news-exit)."""
+    c = _calendar()
+    return CAL.masks(df, sym, TF_MIN[tf], c["restricted"], c["holidays"])
+
+
+def strat(sid, df, sym, tf):
+    fn = R.STRATEGIES[sid][1]
+    return CAL.blocked(fn, cal_masks(df, sym, tf)[1]) if CLOSE_BREAKS else fn
 
 
 def learn_breaks(sym):
@@ -185,7 +196,11 @@ def _calendar():
     if time.time() - _CAL["t"] > 3600:
         now = pd.Timestamp.now(tz="UTC")
         try:
-            _CAL["restricted"], _CAL["holidays"] = CAL.parse(CAL.fetch(now - pd.Timedelta(days=2), now + pd.Timedelta(days=9)))
+            try:      # ~200 days back, so the replay knows the past events too; else just the coming days
+                items = CAL.fetch(now - pd.Timedelta(days=200), now + pd.Timedelta(days=9))
+            except Exception:  # noqa: BLE001
+                items = CAL.fetch(now - pd.Timedelta(days=2), now + pd.Timedelta(days=9))
+            _CAL["restricted"], _CAL["holidays"] = CAL.parse(items)
             _CAL["warned"] = False
         except Exception as e:  # noqa: BLE001
             log(f"FTMO calendar not available ({e}); trying again in 10 minutes")
@@ -451,7 +466,7 @@ def step(combo, sid, tf, sym, off):
     dummy.index = [forming + pd.Timedelta(minutes=TF_MIN[tf])]
     df = pd.concat([df, dummy])
     be = (0.6, be_offset(sym, float(df["c"].iloc[-3])))
-    tr = R.run(df, R.STRATEGIES[sid][1], 0.0, breakeven=be, session_exit=exit_mask(df, sym, tf))
+    tr = R.run(df, strat(sid, df, sym, tf), 0.0, breakeven=be, session_exit=exit_mask(df, sym, tf))
     if len(tr):
         DIAG[combo]["last_signal"] = f"{tr.iloc[-1]['time']} {'buy' if tr.iloc[-1]['dir'] > 0 else 'sell'} {tr.iloc[-1]['reason']}"
         DIAG[combo]["trades_in_window"] = int(len(tr))
@@ -472,7 +487,7 @@ def step(combo, sid, tf, sym, off):
 
     def stop_now():
         """The stop as the backtest has it after the last CLOSED bar (the helper bars must not move it)."""
-        tc = R.run(df.iloc[:-2], R.STRATEGIES[sid][1], 0.0, breakeven=be, session_exit=exit_mask(df.iloc[:-2], sym, tf))
+        tc = R.run(df.iloc[:-2], strat(sid, df.iloc[:-2], sym, tf), 0.0, breakeven=be, session_exit=exit_mask(df.iloc[:-2], sym, tf))
         m = tc[tc["time"].astype(str) == STATE["entry"].get(combo, "")] if len(tc) else tc
         return float(m.iloc[-1]["stop_last"]) if len(m) and m.iloc[-1]["reason"] == "סוף הנתונים" else None
 

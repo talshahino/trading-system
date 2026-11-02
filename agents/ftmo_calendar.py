@@ -8,6 +8,7 @@
 """
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 from agents import ftmo_universe as U
@@ -67,3 +68,35 @@ def fetch(date_from, date_to):
         "dateTo": pd.Timestamp(date_to).strftime("%Y-%m-%dT23:59:59Z"), "timezone": "UTC"})
     r.raise_for_status()
     return r.json().get("items", [])
+
+
+def masks(df, sym, tf_minutes, restricted, holidays):
+    """(exit mask, no-entry mask) over df's bars, the same in the backtest and in the live replay.
+    Restricted event at t: an open position closes at the close of the last bar ending by t - 3.5 min,
+    and no trade enters on a bar that overlaps t - 3.5 min .. t + 3 min.
+    Holiday of the instrument's market (UTC day D): close at the last bar ending by D - 30 min, no entries on D."""
+    start = df.index
+    end = start + pd.Timedelta(minutes=tf_minutes)
+    ex = np.zeros(len(df), bool)
+    noent = np.zeros(len(df), bool)
+    spans = [(t - pd.Timedelta(seconds=210), t + pd.Timedelta(minutes=3)) for t, ins in restricted if restricted_affects(sym, ins)]
+    spans += [(d - pd.Timedelta(minutes=30), d + pd.Timedelta(days=1)) for d, cur, ti in holidays if holiday_affects(sym, cur, ti)]
+    for a, b in spans:
+        if b < start[0] or a > end[-1]:
+            continue
+        k = end.searchsorted(a, side="right") - 1          # last bar ending by a
+        if 0 <= k < len(df) and start[min(k + 1, len(df) - 1)] < b:
+            ex[k] = True
+        noent[end.searchsorted(a, side="right"):start.searchsorted(b, side="left")] = True
+    return ex, noent
+
+
+def blocked(fn, noent):
+    """The strategy, but no signal whose entry bar (the next one) is in `noent`."""
+    def g(df):
+        long_, short, plan = fn(df)
+        blk = np.zeros(len(df), bool)
+        m = min(len(noent), len(df)) - 1
+        blk[:m] = noent[1:m + 1]
+        return np.asarray(long_, bool) & ~blk, np.asarray(short, bool) & ~blk, plan
+    return g

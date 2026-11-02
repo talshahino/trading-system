@@ -58,6 +58,8 @@ def margin_check(led, kind):
         need = ex.at[i, "margin"]
         if used + need > bal:              # free margin (equity - used) smaller than this order needs
             refused.append({"combo": ex.at[i, "combo"], "time": str(t), "need": round(need), "used": round(used)})
+        if ex.at[i, "exit_time"] <= t:     # opened and closed within the same moment
+            continue
         open_ids.add(i)                    # counted anyway, as in the backtest, to see how far over it goes
         used += need
         if used > peak:

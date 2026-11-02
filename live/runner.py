@@ -413,7 +413,7 @@ def close(p, why):
            "type": mt5.ORDER_TYPE_SELL if p.type == 0 else mt5.ORDER_TYPE_BUY,
            "price": tick.bid if p.type == 0 else tick.ask, "deviation": 20, "magic": p.magic,
            "comment": why[:31], "type_filling": mt5.ORDER_FILLING_IOC}
-    send(req, f"close {p.comment} ({why})")
+    return send(req, f"close {p.comment} ({why})")
 
 
 def move_stop(p, new_sl):
@@ -853,6 +853,46 @@ def serve_candles():
 
 TUN.ROUTES["/candles"] = candles
 
+# manual close from the app (manager → this bot's local port, with the manager's key): done in the main loop
+ACTION_Q = queue.Queue()
+
+
+def manual_close(d):
+    box = {"ev": threading.Event()}
+    ACTION_Q.put((d, box))
+    if not box["ev"].wait(20):
+        return {"error": "הבוט עסוק, נסה שוב"}
+    return box["doc"]
+
+
+def serve_actions():
+    while not ACTION_Q.empty():
+        d, box = ACTION_Q.get_nowait()
+        try:
+            pos = ACC.positions()
+            if d.get("all"):
+                pick = pos
+            else:
+                pick = [p for p in pos if str(p.ticket) == str(d.get("ticket"))]
+                if not pick:
+                    box["doc"] = {"error": "העסקה כבר לא פתוחה"}
+                    box["ev"].set()
+                    continue
+            ok, bad = [], []
+            for p in pick:
+                (ok if close(p, "app close") else bad).append(p.ticket)
+            log(f"manual close from the app: closed {ok}, failed {bad}")
+            if ok:
+                REP.notify(f"{BOT}: נסגר ידנית מהאפליקציה", f"{len(ok)} עסקאות נסגרו" if len(ok) > 1 else "עסקה אחת נסגרה", tags=["hand"])
+            box["doc"] = {"ok": not bad, "closed": ok, "failed": bad,
+                          **({"error": "חלק מהעסקאות לא נסגרו (אולי השוק סגור)"} if bad else {})}
+        except Exception as e:  # noqa: BLE001
+            box["doc"] = {"error": str(e)}
+        box["ev"].set()
+
+
+TUN.POST_ROUTES["/close"] = manual_close
+
 
 def dashboard_state(ai, pos, ds_bal, now):
     trades = []
@@ -1057,6 +1097,7 @@ def main():
             try:
                 if not args.dry_run:
                     serve_candles()
+                    serve_actions()
                     refresh_live()
             except Exception:  # noqa: BLE001
                 pass

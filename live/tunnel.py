@@ -25,6 +25,7 @@ DOWNLOAD = "https://github.com/cloudflare/cloudflared/releases/latest/download/c
 SNAP = {"live": {}, "full": {}}
 URL = {"url": None, "err": None}
 ROUTES = {}            # extra read-only paths, e.g. "/candles": fn(query dict) -> json doc (or None for 404)
+POST_ROUTES = {}       # actions, only for the manager on this computer (header X-Local = MANAGER_KEY)
 
 
 class _Handler(BaseHTTPRequestHandler):
@@ -46,6 +47,26 @@ class _Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Cache-Control", "no-store")
         self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_POST(self):  # noqa: N802
+        import os
+        path = self.path.split("?")[0].rstrip("/")
+        key = os.environ.get("MANAGER_KEY")
+        if path not in POST_ROUTES or not key or self.headers.get("X-Local") != key:
+            self.send_response(403)
+            self.end_headers()
+            return
+        try:
+            n = int(self.headers.get("Content-Length") or 0)
+            doc = POST_ROUTES[path](json.loads(self.rfile.read(n) or b"{}") if n else {})
+        except Exception as e:  # noqa: BLE001
+            doc = {"error": str(e)}
+        body = json.dumps(doc, ensure_ascii=False, default=str).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)

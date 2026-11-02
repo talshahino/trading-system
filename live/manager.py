@@ -592,6 +592,17 @@ class Handler(BaseHTTPRequestHandler):
                 save()
                 push_manager_state()
                 return self._send(200, {"ok": True})
+            if path.startswith("/accounts/") and path.endswith("/close"):        # close one trade / all trades now
+                a = acc_by(path.split("/")[2])
+                if not a or not running(a["name"]):
+                    raise ValueError("הבוט של החשבון הזה לא רץ כרגע")
+                body = {"all": True} if d.get("all") else {"ticket": str(d.get("ticket") or "")}
+                r = requests.post(f"http://127.0.0.1:{a['port']}/close", json=body, headers={"X-Local": CFG["local_key"]}, timeout=30)
+                j = r.json() if r.status_code == 200 else {"error": f"הבוט ענה {r.status_code}"}
+                log(f"{a['name']}: close from the app {body} -> {j}")
+                if j.get("error") and not j.get("closed"):
+                    raise ValueError(j["error"])
+                return self._send(200, j)
             if path.startswith("/accounts/") and path.endswith("/mt5"):
                 a = acc_by(path.split("/")[2])
                 if not a:

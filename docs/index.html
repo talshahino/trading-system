@@ -311,6 +311,26 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .bars text{fill:var(--muted);font-size:10.5px;font-family:var(--mono)}
 .dangerbtn{width:100%;border:2px solid #D0453A;background:var(--neg-soft);color:#D0453A;font-weight:800;font-size:16px;border-radius:12px;min-height:50px;cursor:pointer}
 @media (min-width:761px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* slide to close */
+.slide{position:relative;height:50px;border-radius:25px;background:var(--neg-soft);margin:10px 0 2px;overflow:hidden;user-select:none;-webkit-user-select:none;direction:rtl}
+.slide.all{background:#D0453A;margin-top:12px}
+.slide span{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:14px;color:#D0453A;padding-inline-start:40px;pointer-events:none}
+.slide.all span{color:#fff}
+.slide .fill{position:absolute;top:0;bottom:0;right:0;width:0;background:rgba(208,69,58,.18);border-radius:25px}
+.slide.all .fill{background:rgba(0,0,0,.18)}
+.slide .knob{position:absolute;top:4px;right:4px;width:42px;height:42px;border-radius:50%;background:#D0453A;color:#fff;display:grid;place-items:center;touch-action:none;cursor:grab;box-shadow:0 2px 6px rgba(0,0,0,.25);z-index:2}
+.slide.all .knob{background:#fff;color:#D0453A}
+.slide .knob svg{width:22px;height:22px}
+.slide.off{opacity:.45;pointer-events:none}
+.slide.busy span::after{content:" …"}
+.ask{position:fixed;inset:0;z-index:70;background:rgba(18,22,28,.5);display:none;align-items:center;justify-content:center;padding:20px}
+.ask.on{display:flex}
+.ask .box{background:var(--panel);border-radius:18px;padding:20px;max-width:380px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25);text-align:center}
+.ask .box h4{margin:0 0 6px;font-size:18px}
+.ask .box p{margin:0 0 16px;color:var(--muted);line-height:1.5}
+.ask .box .row{justify-content:center}
+.ask .box .btn{min-width:110px}
 </style>
 </head>
 <body>
@@ -398,6 +418,7 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 <div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
 <div class="page" id="chartPg" style="z-index:36"><div class="ph"><button class="back" id="cpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="cpTitle"></b></div>
   <div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div></div>
+<div class="ask" id="ask"><div class="box"><h4 id="askT">האם אתה בטוח?</h4><p id="askB"></p><div class="row"><button class="btn danger" id="askYes" style="background:#D0453A;color:#fff">כן, סגור</button><button class="btn ghost" id="askNo">לא</button></div></div></div>
 <div class="pop" id="pop"><div class="box"><h4 id="popT"></h4><p id="popB"></p><button class="btn" id="popOk">הבנתי</button></div></div>
 <nav class="tabs" id="tabs">
   <button data-v="v-stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>סטטיסטיקה כוללת</button>
@@ -1114,9 +1135,13 @@ function filtered(s) {
     .slice().reverse();
 }
 function trades(s, a, light) {
-  const open = (s.positions || []).map(p => trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p))).join("");
-  const openH = `<div class="h4">עסקאות פעילות <span class="badge">${(s.positions || []).length}</span></div><div class="tl">${TH}${open || '<div class="empty" style="border-radius:0">אין עסקאות פעילות כרגע.</div>'}</div>`;
-  if (light && $("trOpen")) { $("trOpen").innerHTML = openH; return; }
+  const can = viaMgr(UI.cur) && !a.archived, ps = s.positions || [];
+  const open = ps.map(p => `<div>${trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p))}
+    ${p.ticket ? `<div style="padding:0 14px 12px">${slider("t:" + p.ticket, `גרור לסגירת העסקה ב־${esc(p.symbol)}`, false, can)}</div>` : ""}</div>`).join("");
+  const openH = `<div class="h4">עסקאות פעילות <span class="badge">${ps.length}</span></div><div class="tl">${TH}${open || '<div class="empty" style="border-radius:0">אין עסקאות פעילות כרגע.</div>'}</div>
+    ${ps.length ? slider("all", `גרור לסגירת כל ${ps.length > 1 ? ps.length + " העסקאות" : "העסקה"}`, true, can) : ""}
+    ${ps.length && !can ? '<div class="foot" style="margin-top:6px">סגירה מהאפליקציה אפשרית רק כשמחשב הבוטים מחובר.</div>' : ""}`;
+  if (light && $("trOpen")) { if (!UI.drag) $("trOpen").innerHTML = openH; return; }
   $("dBody").innerHTML = `<div id="trOpen">${openH}</div>
     <div class="h4" style="margin-top:18px">עסקאות סגורות</div>
     <div class="search"><input id="tq" placeholder="חיפוש לפי נכס או מספר עסקה" value="${esc(UI.filt.q)}" autocomplete="off"><button class="fbtn" id="tfb" aria-label="סינון">${ICON.filter}</button></div>
@@ -1371,6 +1396,39 @@ function renderAll() {
 $("allStats").onclick = e => { const r = e.target.closest("[data-open]"); if (!r) return;
   document.querySelectorAll("#tabs button").forEach(x => x.setAttribute("aria-selected", x.dataset.v === "v-acc"));
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === "v-acc")); openAcc(r.dataset.open); };
+
+/* slide to close: drag the knob from right to left to the end, then confirm */
+const ARROW_L = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6M20 6l-6 6 6 6" opacity=".55"/></svg>';
+const slider = (key, text, all, can) => `<div class="slide ${all ? "all" : ""} ${can ? "" : "off"}" data-slide="${key}"><div class="fill"></div><span>${text}</span><div class="knob">${ARROW_L}</div></div>`;
+function ask(title, body) {
+  return new Promise(res => { $("askT").textContent = title; $("askB").textContent = body; $("ask").classList.add("on");
+    const done = v => { $("ask").classList.remove("on"); $("askYes").onclick = $("askNo").onclick = null; res(v); };
+    $("askYes").onclick = () => done(true); $("askNo").onclick = () => done(false); });
+}
+document.addEventListener("pointerdown", ev => {
+  const knob = ev.target.closest(".slide .knob"); if (!knob) return;
+  const sl = knob.parentElement, fill = sl.querySelector(".fill"), max = sl.clientWidth - knob.offsetWidth - 8, x0 = ev.clientX;
+  UI.drag = true; knob.setPointerCapture(ev.pointerId); knob.style.transition = fill.style.transition = "none";
+  let dx = 0;
+  const move = e => { dx = Math.max(0, Math.min(max, x0 - e.clientX)); knob.style.transform = `translateX(${-dx}px)`; fill.style.width = (dx + 46) + "px"; };
+  const back = () => { knob.style.transition = fill.style.transition = "transform .25s, width .25s"; knob.style.transform = ""; fill.style.width = "0"; };
+  const up = async () => {
+    knob.removeEventListener("pointermove", move); knob.removeEventListener("pointerup", up); knob.removeEventListener("pointercancel", up);
+    if (dx < max * 0.92) { back(); UI.drag = false; return; }
+    const key = sl.dataset.slide, s = found[UI.cur], all = key === "all";
+    const p = all ? null : (s.positions || []).find(x => "t:" + x.ticket === key);
+    const ok = await ask("האם אתה בטוח?", all ? `לסגור עכשיו את כל ${(s.positions || []).length} העסקאות הפעילות במחיר השוק?`
+      : `לסגור עכשיו את ${p ? p.symbol : "העסקה"} במחיר השוק? ${p ? "רווח/הפסד נוכחי: \u2066" + usd(p.pnl, true) + "\u2069" : ""}`);
+    if (!ok) { back(); UI.drag = false; return; }
+    sl.classList.add("busy"); sl.querySelector("span").textContent = "סוגר";
+    try {
+      const j = await act(`/accounts/${encodeURIComponent(UI.cur)}/close`, all ? {all: true} : {ticket: key.slice(2)});
+      sl.querySelector("span").textContent = j.failed && j.failed.length ? `נסגרו ${j.closed.length}, נכשלו ${j.failed.length}` : "נסגר ✓";
+    } catch (e) { sl.querySelector("span").textContent = e.message; back(); }
+    setTimeout(() => { UI.drag = false; lastFull = 0; }, 1800);
+  };
+  knob.addEventListener("pointermove", move); knob.addEventListener("pointerup", up); knob.addEventListener("pointercancel", up);
+});
 $("pop").onclick = e => { if (e.target.id === "pop" || e.target.id === "popOk") $("pop").classList.remove("on"); };
 
 addEventListener("resize", () => { if ($("eqc") && found[UI.cur]) eqChart(found[UI.cur], accBy(UI.cur)); });

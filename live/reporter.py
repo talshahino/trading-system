@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import base64
+import random
 import json
 import time
 from pathlib import Path
@@ -91,14 +92,24 @@ def push_state(name, state: dict):
         return "no GitHub token (live/github_token.txt): dashboard not updated"
     url = f"https://api.github.com/repos/{REPO}/contents/live/{name}_state.json"
     h = {"Authorization": f"Bearer {tok}", "Accept": "application/vnd.github+json"}
-    try:
-        r = requests.get(url, params={"ref": "live"}, headers=h, timeout=15)
-        sha = r.json().get("sha") if r.status_code == 200 else None
-        body = {"message": f"{name} state", "branch": "live",
-                "content": base64.b64encode(json.dumps(state, ensure_ascii=False, default=str).encode("utf-8")).decode()}
-        if sha:
-            body["sha"] = sha
-        r = requests.put(url, headers=h, json=body, timeout=20)
-        return None if r.status_code in (200, 201) else f"GitHub answered {r.status_code}: {r.text[:150]}"
-    except Exception as e:  # noqa: BLE001
-        return f"dashboard push failed: {e}"
+    content = base64.b64encode(json.dumps(state, ensure_ascii=False, default=str).encode("utf-8")).decode()
+    err = None
+    # Several writers share branch "live" (each bot, the manager, the calendar job): when two save at the
+    # same moment GitHub answers 409 (the branch moved). That is harmless: read again and retry.
+    for attempt in range(4):
+        try:
+            r = requests.get(url, params={"ref": "live"}, headers=h, timeout=15)
+            sha = r.json().get("sha") if r.status_code == 200 else None
+            body = {"message": f"{name} state", "branch": "live", "content": content}
+            if sha:
+                body["sha"] = sha
+            r = requests.put(url, headers=h, json=body, timeout=20)
+            if r.status_code in (200, 201):
+                return None
+            err = f"GitHub answered {r.status_code}: {r.text[:150]}"
+            if r.status_code not in (409, 422, 500, 502, 503):
+                return err
+        except Exception as e:  # noqa: BLE001
+            err = f"dashboard push failed: {e}"
+        time.sleep(1.5 + attempt * 2 + random.random() * 2)
+    return err

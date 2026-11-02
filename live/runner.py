@@ -672,9 +672,12 @@ def monitor():
         if not MON.get("pushed_once"):
             MON["pushed_once"] = True
             log(f"dashboard update: {err or 'OK'}")
+        MON["push_fail"] = MON.get("push_fail", 0) + 1 if err else 0
         if err:
             log(err)
-            REP.notify(f"{BOT}: הדשבורד לא מתעדכן", err, priority=3, key="push", every=6 * 3600)
+            if MON["push_fail"] >= 3:                 # a single failed save is retried at the next one (3 min)
+                REP.notify(f"{BOT}: הנתונים לא נשמרים ב־GitHub", f"כבר {MON['push_fail']} ניסיונות נכשלו. האפליקציה עדיין מתעדכנת בזמן אמת דרך המחשב.\n{err[:120]}",
+                           priority=3, key="push", every=6 * 3600)
 
 
 def _at(p, price):

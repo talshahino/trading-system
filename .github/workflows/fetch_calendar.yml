@@ -45,6 +45,7 @@ jobs:
           PY
       - name: Calendar history from FTMO's API
         run: |
+          pip install -q requests pandas
           python - <<'PY'
           import json, requests, pandas as pd
           out = []

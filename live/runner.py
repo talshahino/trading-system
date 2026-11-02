@@ -796,6 +796,18 @@ def closed_doc(days=60):
     return sorted(cache.values(), key=lambda x: x["close_t"])
 
 
+def withdrawals_doc(days=730):
+    """Money taken out of the account (MetaTrader balance operations with a negative amount, e.g. a payout)."""
+    now = pd.Timestamp.now(tz="UTC")
+    out = []
+    for d in mt5.history_deals_get(utc_to_server(now - pd.Timedelta(days=days)), utc_to_server(now) + dt.timedelta(days=1)) or []:
+        if d.type == mt5.DEAL_TYPE_BALANCE and d.profit < 0:
+            t = server_ts(d.time)
+            out.append({"id": str(d.ticket), "amount": round(-d.profit, 2), "date": t.tz_convert("Asia/Jerusalem").strftime("%Y-%m-%d"),
+                        "time": t.isoformat(), "note": d.comment or ""})
+    return out
+
+
 import queue  # noqa: E402
 import threading  # noqa: E402
 CANDLE_Q = queue.Queue()
@@ -854,7 +866,7 @@ def dashboard_state(ai, pos, ds_bal, now):
         "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "combos": MON["combos"],
         "positions": positions_doc(pos), "live_url": TUN.URL["url"],
         "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:],   # the bot's log stays on the computer only
-        "closed": closed_doc()[-500:], "lows": STATE.get("lows", {}), "label": BOT,
+        "closed": closed_doc()[-500:], "lows": STATE.get("lows", {}), "label": BOT, "withdrawals": withdrawals_doc(),
         "started": (STATE.get("equity") or [[now.isoformat()]])[0][0],
     }
 

@@ -807,7 +807,7 @@ const INFO = {
   balance: ["יתרה", "הכסף בחשבון אחרי העסקאות שכבר נסגרו. לא כולל רווח או הפסד של עסקאות פתוחות."],
   equity: ["הון", "שווי החשבון ברגע זה: היתרה ועוד הרווח או ההפסד של העסקאות הפתוחות. לפי ההון FTMO בודקת את מגבלות ההפסד."],
   open: ["רווח/הפסד פתוח", "הרווח או ההפסד של העסקאות שעדיין פתוחות. הוא הופך לחלק מהיתרה רק כשהעסקה נסגרת."],
-  wd: ["סך הכל נמשך", "כל הכסף שנמשך מהחשבון לבנק (לפי המשיכות שנרשמו בפרטי החשבון). הרווח/הפסד מהפתיחה כולל את מה שנמשך, כך שמשיכה לא נראית כמו הפסד."],
+  wd: ["סך הכל נמשך", "כל הכסף שנמשך מהחשבון, כפי שהוא רשום ב־MetaTrader (פעולות יתרה שליליות). הרווח/הפסד מהפתיחה כולל את מה שנמשך, כך שמשיכה לא נראית כמו הפסד."],
   today: ["רווח היום", "השינוי בהון מתחילת היום של FTMO (חצות בשעון פראג, 01:00 בשעון ישראל בחורף)."],
   dayAllowed: ["הפסד מותר היום", "כמה עוד אפשר להפסיד היום, כולל עסקאות פתוחות, לפני שעוברים את מגבלת ההפסד היומי של FTMO: 5% מגודל החשבון מתחת ליתרה של תחילת היום. הבוט עוצר הכל כבר ב־4.5%."],
   maxAllowed: ["הפסד מותר כולל", "כמה עוד אפשר להפסיד, כולל עסקאות פתוחות, לפני שעוברים את מגבלת ההפסד הכוללת של FTMO: ההון אסור שירד מתחת ל־90% מגודל החשבון ההתחלתי."],
@@ -860,7 +860,7 @@ function calc(s, a) {
   const lw = s.lows || {};
   const dayLow = lw.day === today && lw.day_low != null ? Math.min(lw.day_low, eq) : Math.min(eq, ...curve.filter(p => pragueDay(p[0]) === today).map(p => p[2]));
   const allLow = lw.all_low != null ? Math.min(lw.all_low, eq) : Math.min(eq, ...curve.map(p => p[2]));
-  const wds = (a && a.withdrawals) || [], wd = wds.reduce((x, w) => x + (+w.amount || 0), 0);
+  const wds = s.withdrawals || [], wd = wds.reduce((x, w) => x + (+w.amount || 0), 0);      // read by the bot from MetaTrader
   return {init, eq, bal, ds, tot: eq + wd - init, wd, wds, open: eq - bal, today: eq - ds, dayLow, allLow,
           tgt: (a && a.target_pct) || 10, dayLim: ds - 0.05 * init, maxLim: 0.9 * init};
 }
@@ -1278,9 +1278,8 @@ function details(s, a) {
       ${li("סיום", a.archived_at ? `<span class="num">${dtF(a.archived_at)}</span>` : "—", " " + ib("end"))}
       ${li("גודל החשבון", `<span class="num">${usd(k.init)}</span>`)}${li("יעד רווח", `<span class="num">${k.tgt}% · ${usd(k.init * (1 + k.tgt / 100))}</span>`, live ? ' <button class="btn ghost" id="dTgt" style="min-height:30px;padding:4px 10px;margin-inline-start:6px">שנה</button>' : "")}
       ${li("סיכון לעסקה", `<span class="num">${((s.risk || 0) * 100).toFixed(3).replace(/\.?0+$/, "")}%</span>`)}${li("ברוקר", "FTMO")}${li("שרת", esc(s.server || a.server || "—"))}${li("פלטפורמה", "MetaTrader 5")}</div>
-    <div class="row" style="justify-content:space-between;margin:18px 2px 8px"><span class="h4" style="margin:0">משיכות</span>${live ? '<button class="btn" id="dWd" style="min-height:36px;padding:6px 14px">רישום משיכה +</button>' : ""}</div>
-    <div class="lst">${k.wds.length ? k.wds.map(w => `<div class="li"><span class="k num">${w.date.split("-").reverse().join(".")}${w.note ? " · " + esc(w.note) : ""}</span><span class="v"><span class="num">${usd(w.amount)}</span>${live ? ` <button class="btn ghost" data-wdel="${esc(w.id)}" style="min-height:30px;padding:4px 10px;margin-inline-start:6px">מחק</button>` : ""}</span></div>`).join("") +
-      `<div class="li"><span class="k"><b>סך הכל נמשך</b></span><span class="v num"><b>${usd(k.wd)}</b></span></div>` : '<div class="li"><span class="k">עוד לא נרשמו משיכות.</span></div>'}</div>
+    ${k.wds.length ? `<div class="h4" style="margin-top:18px">משיכות (מ־MetaTrader)</div><div class="lst">${k.wds.map(w => `<div class="li"><span class="k num">${w.date.split("-").reverse().join(".")}${w.note ? " · " + esc(w.note) : ""}</span><span class="v num">${usd(w.amount)}</span></div>`).join("")}
+      <div class="li"><span class="k"><b>סך הכל נמשך</b></span><span class="v num"><b>${usd(k.wd)}</b></span></div></div>` : ""}
     <div class="card row" style="justify-content:space-between"><b>מוצג ברשימת החשבונות</b><label class="sw"><input type="checkbox" id="dVis" ${a.hidden ? "" : "checked"} ${live ? "" : "disabled"}><span></span></label></div>
     ${a.archived ? "" : `<div class="h4" style="margin-top:22px">אזור מסוכן</div><button class="dangerbtn" id="dClose" ${live ? "" : "disabled"}>סגור חשבון</button>
       <div class="foot" style="margin-top:8px">סגירה עוצרת את הבוט של החשבון הזה לצמיתות ומעבירה את החשבון להיסטוריה. עסקאות פתוחות נשארות עם הסטופ והיעד שלהן.</div>`}
@@ -1288,12 +1287,6 @@ function details(s, a) {
   const run = async (path, body, ok) => { try { await act(path, body); note("dMsg", ok, true); await findMgr(); renderDet(); } catch (e) { note("dMsg", e.message, false); } };
   if ($("dRen")) $("dRen").onclick = () => { const v = prompt("שם חדש לחשבון:", nick(a)); if (v) run(`/accounts/${encodeURIComponent(a.name)}/rename`, {nickname: v}, "השם עודכן."); };
   if ($("dTgt")) $("dTgt").onclick = () => { const v = prompt("יעד רווח באחוזים מגודל החשבון:", k.tgt); if (v) run(`/accounts/${encodeURIComponent(a.name)}/target`, {pct: parseFloat(v)}, "היעד עודכן."); };
-  if ($("dWd")) $("dWd").onclick = () => {
-    const v = parseFloat(String(prompt("סכום המשיכה בדולרים:") || "").replace(/[$,\s]/g, "")); if (!(v > 0)) return;
-    const today = new Date().toLocaleDateString("en-CA", IL), dd = prompt("תאריך המשיכה (שנה-חודש-יום):", today); if (!dd) return;
-    run(`/accounts/${encodeURIComponent(a.name)}/withdraw`, {amount: v, date: dd.trim()}, "המשיכה נרשמה.");
-  };
-  $("dBody").querySelectorAll("[data-wdel]").forEach(b => b.onclick = () => { if (confirm("למחוק את המשיכה הזו?")) run(`/accounts/${encodeURIComponent(a.name)}/withdraw_del`, {id: b.dataset.wdel}, "המשיכה נמחקה."); });
   $("dVis").onchange = e => run(`/accounts/${encodeURIComponent(a.name)}/hide`, {hidden: !e.target.checked}, e.target.checked ? "החשבון מוצג ברשימה." : "החשבון הוסתר. הוא ממשיך לעבוד, ואפשר למצוא אותו ב'חשבונות מוסתרים'.");
   if ($("dClose")) $("dClose").onclick = () => { if (prompt(`לסגור את "${nick(a)}"? הבוט ייעצר והחשבון יעבור להיסטוריה. כתוב "סגור" לאישור:`) === "סגור") run(`/accounts/${encodeURIComponent(a.name)}/archive`, {}, "החשבון נסגר ועבר להיסטוריה."); };
 }

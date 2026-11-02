@@ -207,6 +207,29 @@ def start_bot(a):
     log(f"started {a['name']}")
 
 
+def port_owner(port):
+    """The process listening on a local port (Windows netstat), or None."""
+    try:
+        out = subprocess.run(["netstat", "-ano", "-p", "TCP"], capture_output=True, text=True, timeout=20).stdout
+        for line in out.splitlines():
+            f = line.split()
+            if len(f) >= 5 and f[1].endswith(f":{port}") and f[3].upper() == "LISTENING":
+                return int(f[4])
+    except Exception:  # noqa: BLE001
+        pass
+    return None
+
+
+def free_port(a):
+    """A bot left running by an earlier manager (or by botN.bat) still holds the account's port and runs
+    old code: stop it so this manager can start (and later update) the bot itself."""
+    pid = port_owner(a["port"])
+    if pid and pid != os.getpid() and not running(a["name"]):
+        subprocess.run(["taskkill", "/F", "/PID", str(pid)], capture_output=True, timeout=20)
+        log(f"{a['name']}: stopped an older copy (pid {pid}) that was holding port {a['port']}; starting the managed bot")
+        time.sleep(3)
+
+
 def stop_bot(name):
     p = PROCS.pop(name, None)
     if p and p.poll() is None:
@@ -226,12 +249,8 @@ def watchdog():
                     if a.get("started") and time.time() - a["started"] < 120:
                         continue                              # it just stopped right after starting: wait
                     p = PROCS.get(a["name"])
-                    if p is not None and p.returncode == 4:   # already running outside the manager (botN.bat)
-                        if time.time() - a.get("busy_log", 0) > 3600:
-                            a["busy_log"] = time.time()
-                            log(f"{a['name']} is already running in its own window; the manager leaves it alone")
-                        if time.time() - a["started"] < 300:
-                            continue
+                    if p is not None and p.returncode == 4:   # an older copy holds the port: take over
+                        free_port(a)
                     elif a.get("started"):
                         log(f"{a['name']} stopped by itself: starting it again")
                         push(f"{a.get('label', a['name'])} נעצר", "המנהל מפעיל אותו מחדש.", urgent=True)
@@ -360,6 +379,9 @@ def install_update():
     names = [a["name"] for a in accounts() if running(a["name"])]
     for n in names:
         stop_bot(n)
+    for a in accounts():
+        if a.get("enabled"):
+            free_port(a)
     try:
         UPD.apply(sha)
     except Exception as e:  # noqa: BLE001
@@ -637,6 +659,7 @@ def main():
         push("העדכון הותקן", f"הכל רץ בגרסה {(UPD.local() or '?')[:7]}.")
     for a in accounts():
         if a.get("enabled"):
+            free_port(a)
             start_bot(a)
     threading.Thread(target=watchdog, daemon=True).start()
     threading.Thread(target=update_check, daemon=True).start()

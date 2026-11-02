@@ -188,7 +188,21 @@ def bars(symbol, timeframe, start, end):
             p = {"symbols": symbol, "timeframe": timeframe, "start": s.strftime("%Y-%m-%dT%H:%M:%SZ"),
                  "end": e.strftime("%Y-%m-%dT%H:%M:%SZ"), "limit": 10000, "sort": "asc"}
             if duka:
-                df = _duka_year(symbol, timeframe, y, e.strftime("%Y-%m-%d"))
+                try:
+                    df = _duka_year(symbol, timeframe, y, e.strftime("%Y-%m-%d"))
+                except RuntimeError as err:
+                    if timeframe != "1Hour":
+                        raise
+                    # Dukascopy's hourly download sometimes fails for a whole year: build the hours from minutes
+                    print(f"    {symbol} 1Hour {y}: hourly download failed, building it from 1-minute bars ({str(err)[-80:]})")
+                    m1 = bars(symbol, "1Min", s.strftime("%Y-%m-%d"), e.strftime("%Y-%m-%d"))
+                    m1 = m1[(m1.index >= s) & (m1.index <= e)]
+                    agg = m1.resample("1h", label="left", closed="left").agg(
+                        {"o": "first", "h": "max", "l": "min", "c": "last", "v": "sum"}).dropna()
+                    agg = agg[agg["v"] > 0]
+                    df = agg.reset_index().rename(columns={agg.index.name or "index": "t"})
+                    df["t"] = df["t"].dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    df = df[["t", "o", "h", "l", "c", "v"]]
                 if y < now.year:
                     df.to_csv(f, index=False)
                 frames.append(df)

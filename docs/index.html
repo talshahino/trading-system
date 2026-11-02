@@ -111,6 +111,29 @@ pre{margin:0;font-family:var(--mono);font-size:12px;line-height:1.55;white-space
 .banner.on{display:block}
 .banner.neg{background:var(--neg-soft);color:var(--neg)}.banner.warn{background:var(--warn-soft);color:var(--warn)}
 
+/* management drawer (opens from the logo, slides in from the right) */
+.brand{cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;border:0;background:none;padding:4px 6px;margin:-4px -6px;border-radius:10px;font:inherit}
+.brand:active{background:var(--seg)}
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(18,22,28,.4);opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;z-index:45;width:min(460px,92vw);background:var(--bg);box-shadow:-8px 0 30px rgba(18,22,28,.18);
+  transform:translateX(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column}
+.drawer.on{transform:translateX(0)}
+.drawer .dh{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;border-bottom:1px solid var(--line);background:var(--panel)}
+.drawer .dh b{font-size:17px;flex:1}
+.drawer .db{overflow-y:auto;padding:14px 14px calc(20px + env(safe-area-inset-bottom));flex:1}
+.xbtn{border:0;background:var(--seg);width:38px;height:38px;border-radius:10px;font-size:20px;cursor:pointer;color:var(--ink)}
+/* news */
+.nrow{display:grid;grid-template-columns:52px 12px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line)}
+.nrow:last-child{border-bottom:0}
+.nrow.past{opacity:.55}
+.nrow .t{font-family:var(--mono);font-size:13px;direction:ltr}
+.nrow .ttl{font-weight:600;font-size:14px;min-width:0}
+.nrow .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.imp{width:10px;height:10px;border-radius:50%}
+.imp.high{background:var(--neg)}.imp.medium{background:#E08A2E}.imp.low{background:#E3C14B}.imp.holiday{background:var(--muted)}
+.dayh{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin:14px 2px 2px}
+.dayh:first-child{margin-top:0}
 /* logs sheet */
 .sheet{position:fixed;inset:0;z-index:50;background:rgba(18,22,28,.45);display:none;align-items:flex-end;justify-content:center}
 .sheet.on{display:flex}
@@ -141,11 +164,12 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
   .hero b{font-size:24px}
   .light span.t{display:none}
 }
+.seg.days{flex-wrap:wrap;justify-content:flex-start}.seg.days button{flex:0 0 auto;padding-inline:10px}
 </style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><svg width="30" height="30" aria-hidden="true" viewBox="0 0 100 100"><defs><linearGradient id="bghd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1F3A5F"/><stop offset="1" stop-color="#0F1C2E"/></linearGradient><linearGradient id="lthd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8DFA2"/><stop offset="1" stop-color="#D8A243"/></linearGradient><linearGradient id="lnhd" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#FFD978"/><stop offset="1" stop-color="#FFB38A"/></linearGradient><filter id="shhd" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.6" flood-color="#000" flood-opacity=".28"/></filter><filter id="glhd" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter></defs><rect width="100" height="100" rx="23" fill="url(#bghd)"/><rect x="1" y="1" width="98" height="98" rx="22" fill="none" stroke="#fff" stroke-opacity=".08"/><g transform="translate(0.0 0.0) scale(1.0)"><g filter="url(#shhd)" fill="url(#lthd)"><rect x="15" y="19" width="70" height="11.5" rx="5.75"/><rect x="25.5" y="25" width="11.5" height="56" rx="5.75"/><rect x="63" y="25" width="11.5" height="56" rx="5.75"/></g><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="#152842" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#glhd)" opacity=".55"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="6.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84" cy="33.5" r="5.6" fill="#FFD978" stroke="#152842" stroke-width="2.4"/></g></svg><span class="wm">Taloona <b>Trade</b></span></div>
+  <button class="brand" id="brandBtn" title="ניהול" aria-label="פתח ניהול"><svg width="30" height="30" aria-hidden="true" viewBox="0 0 100 100"><defs><linearGradient id="bghd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1F3A5F"/><stop offset="1" stop-color="#0F1C2E"/></linearGradient><linearGradient id="lthd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8DFA2"/><stop offset="1" stop-color="#D8A243"/></linearGradient><linearGradient id="lnhd" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#FFD978"/><stop offset="1" stop-color="#FFB38A"/></linearGradient><filter id="shhd" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.6" flood-color="#000" flood-opacity=".28"/></filter><filter id="glhd" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter></defs><rect width="100" height="100" rx="23" fill="url(#bghd)"/><rect x="1" y="1" width="98" height="98" rx="22" fill="none" stroke="#fff" stroke-opacity=".08"/><g transform="translate(0.0 0.0) scale(1.0)"><g filter="url(#shhd)" fill="url(#lthd)"><rect x="15" y="19" width="70" height="11.5" rx="5.75"/><rect x="25.5" y="25" width="11.5" height="56" rx="5.75"/><rect x="63" y="25" width="11.5" height="56" rx="5.75"/></g><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="#152842" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#glhd)" opacity=".55"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="6.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84" cy="33.5" r="5.6" fill="#FFD978" stroke="#152842" stroke-width="2.4"/></g></svg><span class="wm">Taloona <b>Trade</b></span></button>
   <div class="sp"></div>
   <div class="light" title="הבוט מדווח"><i class="dot" id="lBot"></i><span class="t">בוט</span></div>
   <div class="light" title="עדכון בזמן אמת"><i class="dot" id="lLive"></i><span class="t">זמן אמת</span></div>
@@ -187,7 +211,22 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
     </div>
   </section>
 
-  <section class="view" id="v-mgr">
+  <section class="view" id="v-news">
+    <div class="card">
+      <h3>יומן אירועים · FTMO</h3>
+      <div class="tools"><div class="seg" id="newsMode"></div></div>
+      <div class="tools"><div class="seg days" id="newsDays" style="flex:1 1 auto"></div></div>
+      <div id="newsList"><div class="empty">טוען…</div></div>
+      <div class="foot" id="newsFoot" style="margin-top:10px"></div>
+    </div>
+  </section>
+
+</main>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="ניהול" aria-hidden="true">
+  <div class="dh"><b>ניהול</b><button class="xbtn" id="drawerClose" aria-label="סגור">×</button></div>
+  <div class="db">
+  <div id="v-mgr">
     <div class="card" id="installCard" style="display:none"><h3>אפליקציה</h3>
       <div class="row"><span class="mut">אפשר להתקין את הדשבורד כאפליקציה במסך הבית.</span><button class="btn" id="installBtn">התקן אפליקציה</button></div></div>
     <div class="card"><h3>מחשב הבוטים</h3>
@@ -219,17 +258,17 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
           <span class="mut">הסיסמה נשמרת מוצפנת רק במחשב הבוטים. כרגע אפשר להוסיף רק חשבון דמו.</span></div>
       </form>
       <div class="msg" id="addMsg"></div></div>
-  </section>
-
-</main>
+  </div>
+  </div>
+</aside>
 <div class="sheet" id="logSheet"><div class="box">
   <div class="row"><b id="logTitle">לוג</b><span class="sp" style="flex:1"></span><button class="btn ghost" id="logCopy">העתק</button><button class="btn" id="logClose">סגור</button></div>
   <pre id="logText"></pre></div></div>
 
 <nav class="tabs" id="tabs">
-  <button data-v="v-acc" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>חשבון</button>
   <button data-v="v-stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>סטטיסטיקה</button>
-  <button data-v="v-mgr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>ניהול</button>
+  <button data-v="v-acc" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>חשבון</button>
+  <button data-v="v-news"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4M8 14h3M8 17h6"/></svg>חדשות</button>
 </nav>
 
 <script>
@@ -422,7 +461,7 @@ document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === b.dataset.v));
   if (b.dataset.v === "v-stats" && found[cur]) chart(found[cur].equity_curve, found[cur].initial);
-  if (b.dataset.v === "v-mgr") mgrRefresh();
+  if (b.dataset.v === "v-news") loadNews();
   scrollTo(0, 0);
 });
 
@@ -572,7 +611,59 @@ let installEvt = null;
 addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; $("installCard").style.display = ""; });
 $("installBtn").onclick = async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; $("installCard").style.display = "none"; };
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
-setInterval(() => { if ($("v-mgr").classList.contains("on")) mgrRefresh(); }, 5000);
+setInterval(() => { if ($("drawer").classList.contains("on")) mgrRefresh(); }, 5000);
+function drawer(open) {
+  $("drawer").classList.toggle("on", open); $("scrim").classList.toggle("on", open);
+  $("drawer").setAttribute("aria-hidden", !open); document.body.style.overflow = open ? "hidden" : "";
+  if (open) mgrRefresh();
+}
+$("brandBtn").onclick = () => drawer(!$("drawer").classList.contains("on"));
+$("drawerClose").onclick = () => drawer(false);
+$("scrim").onclick = () => drawer(false);
+addEventListener("keydown", e => { if (e.key === "Escape") drawer(false); });
+
+/* ---------- News: FTMO's economic calendar (feed: live/calendar.json, refreshed every 2 hours) ---------- */
+const CAL_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/calendar.json?t=${Math.floor(Date.now() / 300000)}`;
+const DAYS_HE = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"];
+const DAYS_FULL = ["יום ראשון", "יום שני", "יום שלישי", "יום רביעי", "יום חמישי", "יום שישי", "שבת"];
+const ilKey = d => new Date(d).toLocaleDateString("en-CA", IL);
+let cal = null, newsAll = false, newsDay = null;
+async function loadNews() {
+  try { const r = await fetch(CAL_URL(), {cache: "no-store"}); if (r.ok) cal = await r.json(); } catch (e) {}
+  renderNews();
+}
+function weekDays() {
+  const now = new Date(), today = new Date(ilKey(now) + "T12:00:00");
+  const mon = new Date(today); mon.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+  return [...Array(5)].map((_, i) => { const d = new Date(mon); d.setDate(mon.getDate() + i); return d; });
+}
+function renderNews() {
+  const days = weekDays(), todayK = ilKey(new Date());
+  if (!newsDay) newsDay = days.some(d => ilKey(d) === todayK) ? todayK : "week";
+  segment("newsMode", [["r", "חדשות מוגבלות"], ["all", "כל החדשות"]], newsAll ? "all" : "r", k => { newsAll = k === "all"; renderNews(); });
+  segment("newsDays", [...days.map(d => [ilKey(d), `${DAYS_HE[d.getDay()]} ${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}`]), ["week", "כל השבוע"]],
+          newsDay, k => { newsDay = k; renderNews(); });
+  if (!cal) { $("newsList").innerHTML = '<div class="empty">היומן עוד לא זמין. נסה שוב בעוד כמה דקות.</div>'; return; }
+  const wk = new Set(days.map(ilKey)), now = Date.now();
+  const items = (cal.items || []).filter(i => (newsAll || i.restriction) && (newsDay === "week" ? wk.has(ilKey(i.date)) : ilKey(i.date) === newsDay))
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+  const byDay = {};
+  items.forEach(i => (byDay[ilKey(i.date)] ||= []).push(i));
+  const nextT = items.map(i => new Date(i.date).getTime()).find(t => t > now);
+  $("newsList").innerHTML = items.length ? Object.entries(byDay).map(([k, list]) => {
+    const d = new Date(k + "T12:00:00");
+    return `<div class="dayh">${DAYS_FULL[d.getDay()]} ${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}</div>` + list.map(i => {
+      const t = new Date(i.date), hol = i.impact === "holiday", past = t.getTime() < now - 3 * 60000;
+      const vals = [i.actual != null ? `בפועל <bdi dir="ltr">${esc(i.actual)}</bdi>` : "", i.forecast != null ? `צפי <bdi dir="ltr">${esc(i.forecast)}</bdi>` : "", i.previous != null ? `קודם <bdi dir="ltr">${esc(i.previous)}</bdi>` : ""].filter(Boolean).join(" · ");
+      return `<div class="nrow ${past ? "past" : ""}" ${t.getTime() === nextT ? 'style="background:var(--warn-soft);border-radius:8px"' : ""}>
+        <span class="t">${hol ? "—" : t.toLocaleTimeString("he-IL", {...IL, hour: "2-digit", minute: "2-digit"})}</span><i class="imp ${esc(i.impact)}"></i>
+        <div class="ttl">${esc(i.title)}${vals ? `<div class="sub">${vals}</div>` : ""}</div>
+        <div class="row" style="gap:4px;justify-content:flex-end"><span class="pill vps"><bdi>${esc(i.instrument)}</bdi></span>${i.restriction ? '<span class="pill neg">מוגבל</span>' : hol ? '<span class="pill">חג</span>' : ""}</div></div>`;
+    }).join("");
+  }).join("") : `<div class="empty">${newsAll ? "אין אירועים" : "אין חדשות מוגבלות"} ${newsDay === "week" ? "השבוע" : "ביום הזה"}.</div>`;
+  $("newsFoot").textContent = `מקור: יומן האירועים של FTMO (מבוסס forexfactory.com) · שעון ישראל · עודכן ${cal.updated_utc ? il(cal.updated_utc) : "—"}`;
+}
+setInterval(() => { if ($("v-news").classList.contains("on")) loadNews(); }, 10 * 60000);
 
 async function tick() {
   if (!mgrInfo) { await findMgr(); mgrBots(); }

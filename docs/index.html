@@ -111,6 +111,11 @@ pre{margin:0;font-family:var(--mono);font-size:12px;line-height:1.55;white-space
 .banner.on{display:block}
 .banner.neg{background:var(--neg-soft);color:var(--neg)}.banner.warn{background:var(--warn-soft);color:var(--warn)}
 
+/* logs sheet */
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(18,22,28,.45);display:none;align-items:flex-end;justify-content:center}
+.sheet.on{display:flex}
+.sheet .box{background:var(--panel);width:100%;max-width:900px;max-height:88vh;border-radius:18px 18px 0 0;padding:14px 16px calc(14px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}
+.sheet pre{margin:0;font-family:var(--mono);font-size:11.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word;direction:ltr;text-align:left;overflow:auto;background:var(--sunk);border-radius:10px;padding:10px;flex:1}
 /* management */
 .form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:600;min-width:0}
@@ -200,6 +205,9 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
       <div class="row"><button class="btn ok" id="updBtn">אשר עדכון</button><span class="mut">העסקאות הפתוחות נשארות עם הסטופ והיעד, והבוטים עולים מחדש תוך כדקה.</span></div>
       <div class="msg" id="updMsg"></div></div>
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
+    <div class="card"><h3>לוגים</h3>
+      <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
+      <div class="msg" id="logMsg"></div></div>
     <div class="card"><h3>הוספת חשבון</h3>
       <form class="form" id="addForm" autocomplete="off">
         <label class="full">שם לחשבון<input id="fNick" maxlength="40" placeholder="למשל: אתגר 100K ראשון"></label>
@@ -214,6 +222,9 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
   </section>
 
 </main>
+<div class="sheet" id="logSheet"><div class="box">
+  <div class="row"><b id="logTitle">לוג</b><span class="sp" style="flex:1"></span><button class="btn ghost" id="logCopy">העתק</button><button class="btn" id="logClose">סגור</button></div>
+  <pre id="logText"></pre></div></div>
 
 <nav class="tabs" id="tabs">
   <button data-v="v-acc" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>חשבון</button>
@@ -495,8 +506,25 @@ function renderMgr() {
     setTimeout(mgrRefresh, 1500);
   });
 }
+function logButtons() {
+  const m = mgrInfo;
+  $("logBtns").innerHTML = '<button class="btn ghost" data-log="manager">לוג המנהל</button>' +
+    (m ? m.accounts.map(a => `<button class="btn ghost" data-log="${esc(a.name)}">לוג ${esc(a.label)}</button>`).join("") : "");
+  $("logBtns").querySelectorAll("button").forEach(b => b.onclick = async () => {
+    b.disabled = true; note("logMsg", "טוען…");
+    try {
+      const j = await act("/logs", {which: b.dataset.log});
+      $("logTitle").textContent = b.textContent; $("logText").textContent = j.lines.slice().reverse().join("\n") || "הלוג ריק.";
+      $("logSheet").classList.add("on"); note("logMsg", "");
+    } catch (e) { note("logMsg", e.message, false); }
+    b.disabled = false;
+  });
+}
+$("logClose").onclick = () => $("logSheet").classList.remove("on");
+$("logSheet").onclick = e => { if (e.target.id === "logSheet") $("logSheet").classList.remove("on"); };
+$("logCopy").onclick = async () => { try { await navigator.clipboard.writeText($("logText").textContent); $("logCopy").textContent = "הועתק"; setTimeout(() => $("logCopy").textContent = "העתק", 1500); } catch (e) {} };
 function confirmBox(n) { return prompt(`להסיר את ${n}? הבוט ייעצר והחשבון יוסר מהרשימה. כתוב "הסר" לאישור:`) === "הסר"; }
-async function mgrRefresh() { await findMgr(); renderMgr(); mgrBots(); }
+async function mgrRefresh() { await findMgr(); renderMgr(); mgrBots(); if (!$("logSheet").classList.contains("on")) logButtons(); }
 function mgrBots() {
   if (!mgrInfo) return;
   mgrInfo.accounts.forEach(a => { if (!BOTS.includes(a.name)) BOTS.push(a.name); NAMES[a.name] = a.label; });

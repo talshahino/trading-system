@@ -455,6 +455,14 @@ class Handler(BaseHTTPRequestHandler):
                 else:
                     remove_account(name)
                 return self._send(200, {"ok": True})
+            if path == "/logs":                          # behind the secret code only; never published
+                which = str(d.get("which") or "manager")
+                if which != "manager" and not acc_by(which):
+                    raise ValueError("אין לוג כזה")
+                f = LIVE / f"{which}.log"
+                lines = f.read_text(encoding="utf-8", errors="replace").splitlines()[-400:] if f.exists() else []
+                lines = [l for l in lines if "password" not in l.lower()]
+                return self._send(200, {"ok": True, "lines": lines})
             if path == "/update/approve":
                 threading.Thread(target=install_update, daemon=True).start()
                 return self._send(200, {"ok": True})

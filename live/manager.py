@@ -156,7 +156,7 @@ def push(title, body, urgent=False, action=None, tag=None):
     except ImportError:
         log("pywebpush is not installed; run: python -m pip install -r requirements.txt")
         return
-    quiet = REP.quiet_now() and not urgent
+    quiet = REP.quiet_now()                  # quiet hours: everything silent, no exceptions (the user's rule)
     data = json.dumps({"title": title, "body": body, "silent": quiet, "action": action, "tag": tag}, ensure_ascii=False)
     dead = []
     for s in subs:

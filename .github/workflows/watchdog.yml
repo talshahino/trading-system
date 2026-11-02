@@ -50,7 +50,10 @@ jobs:
           def alert(title, msg):
               if pem and subs:
                   from pywebpush import webpush
-                  data = json.dumps({"title": title, "body": msg, "silent": False, "tag": "watchdog"}, ensure_ascii=False)
+                  il = (now + dt.timedelta(hours=2 if now.month in (11, 12, 1, 2, 3) else 3)).hour   # Israel time (approx. DST)
+                  a, b = cfg.get("quiet_from", 21), cfg.get("quiet_to", 8)
+                  quiet = (il >= a or il < b) if a > b else (a <= il < b)
+                  data = json.dumps({"title": title, "body": msg, "silent": quiet, "tag": "watchdog"}, ensure_ascii=False)
                   for s in subs:
                       try:
                           webpush(subscription_info=s, data=data, vapid_private_key="vapid.pem",

@@ -31,8 +31,8 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
     _to_app(title, message, priority >= 5)
     if _CFG.get("ntfy", True) is False:
         return None            # notifications go to the app only
-    if priority < 5 and quiet_now():
-        priority = 2          # night: shows in the app without sound or vibration; urgent alerts still ring
+    if quiet_now():
+        priority = 2          # quiet hours: shown without sound or vibration, no exceptions
     try:
         # JSON publishing: Hebrew titles are not allowed in HTTP headers
         r = requests.post("https://ntfy.sh/", timeout=10, json={
@@ -67,10 +67,10 @@ def notify_action(title, message, label, url, body, priority=4):
 
 
 def quiet_now():
-    """Quiet hours (Israel time) from live/notify.json, default 21:00-06:00."""
+    """Quiet hours (Israel time) from live/notify.json, default 21:00-08:00."""
     try:
         import pandas as pd        # pandas ships its own time-zone data (Windows has none for zoneinfo)
-        a, b = _CFG.get("quiet_from", 21), _CFG.get("quiet_to", 6)
+        a, b = _CFG.get("quiet_from", 21), _CFG.get("quiet_to", 8)
         h = pd.Timestamp.now(tz="Asia/Jerusalem").hour
         return (h >= a or h < b) if a > b else (a <= h < b)
     except Exception:  # noqa: BLE001

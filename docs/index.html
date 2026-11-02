@@ -476,6 +476,9 @@ function renderMgr() {
   $("mDot").className = "dot " + (m ? "on" : mgr ? "off" : "");
   $("mState").textContent = m ? "המנהל מחובר" : mgr ? "המנהל לא עונה. בדוק שהמחשב דולק." : "המנהל עוד לא הותקן במחשב.";
   $("mVer").textContent = m ? `גרסה ${m.version || "?"} · ${m.push_devices} מכשירים מקבלים התראות` : "";
+  $("pushState").textContent = !m ? "ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה." : m.watchdog_push
+    ? "פעיל: התראות מהבוטים, וגם התראה אם המחשב כבה או מתנתק."
+    : "התראות מהבוטים פעילות. להתראה כשהמחשב כבה צריך להוסיף הרשאה ב־GitHub (פעם אחת).";
   $("updCard").style.display = m && m.update ? "" : "none";
   if (m && m.update) $("updText").innerHTML = `<b>${esc(m.update.title)}</b> <span class="mut num">${esc(m.update.sha)}</span>`;
   $("accs").innerHTML = m && m.accounts.length ? m.accounts.map(a => `<div class="acc"><i class="dot ${a.running ? "on" : a.enabled ? "mid" : ""}"></i>

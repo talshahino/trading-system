@@ -1,6 +1,8 @@
 name: Bot watchdog
-# Every 15 minutes (GitHub may run it later): if a bot that reported before has been silent for 20+ minutes,
-# send a phone alert (ntfy topic in live/notify.json), at most once an hour per bot while it stays silent.
+# Every 15 minutes (GitHub may run it later): if the bots' manager or a bot that reported before has been
+# silent for 20+ minutes (computer off, asleep, no internet), alert the phone - at most once an hour each.
+# The alert goes straight to the Taloona Trade app (Web Push, signed with the key the manager stores as the
+# VAPID_PRIVATE_PEM secret); without that secret it falls back to ntfy unless live/notify.json says "ntfy": false.
 on:
   schedule:
     - cron: "*/15 * * * *"
@@ -19,37 +21,78 @@ jobs:
           path: watchdog
           key: watchdog-${{ github.run_id }}
           restore-keys: watchdog-
-      - name: Check bot heartbeats
+      - name: Install
+        run: pip install -q pywebpush
+      - name: Check heartbeats
+        env:
+          VAPID_PRIVATE_PEM: ${{ secrets.VAPID_PRIVATE_PEM }}
         run: |
           mkdir -p watchdog
           python3 - <<'PY'
           import json, os, urllib.request, datetime as dt
-          topic = json.load(open("live/notify.json"))["topic"]
+          cfg = json.load(open("live/notify.json"))
           now = dt.datetime.now(dt.timezone.utc)
           memo_f = "watchdog/last_alert.json"
           memo = json.load(open(memo_f)) if os.path.exists(memo_f) else {}
-          names = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}
-          for b, he in names.items():
+          RAW = "https://raw.githubusercontent.com/talshahino/trading-system/live/live/{}_state.json?t=" + str(now.timestamp())
+
+          def get(name):
               try:
-                  s = json.load(urllib.request.urlopen(f"https://raw.githubusercontent.com/talshahino/trading-system/live/live/{b}_state.json?t={now.timestamp()}", timeout=20))
+                  return json.load(urllib.request.urlopen(RAW.format(name), timeout=20))
               except Exception:
-                  continue                      # this bot never reported: nothing to watch
-              age = (now - dt.datetime.fromisoformat(s["updated_utc"])).total_seconds() / 60
-              print(b, "age", round(age), "min")
+                  return None
+          mgr = get("manager") or {}
+          subs = mgr.get("subs") or []
+          pem = os.environ.get("VAPID_PRIVATE_PEM") or ""
+          if pem:
+              open("vapid.pem", "w").write(pem)
+
+          def alert(title, msg):
+              if pem and subs:
+                  from pywebpush import webpush
+                  data = json.dumps({"title": title, "body": msg, "silent": False, "tag": "watchdog"}, ensure_ascii=False)
+                  for s in subs:
+                      try:
+                          webpush(subscription_info=s, data=data, vapid_private_key="vapid.pem",
+                                  vapid_claims={"sub": "mailto:bots@trading-system.local"}, ttl=6 * 3600)
+                      except Exception as e:
+                          print("push failed", e)
+                  print("app alert sent:", title)
+              elif cfg.get("ntfy", True) is not False:
+                  body = json.dumps({"topic": cfg["topic"], "title": title, "message": msg, "priority": 5, "tags": ["rotating_light"]}).encode()
+                  urllib.request.urlopen(urllib.request.Request("https://ntfy.sh/", data=body, method="POST",
+                                                                headers={"Content-Type": "application/json"}), timeout=20)
+                  print("ntfy alert sent:", title)
+              else:
+                  print("no way to alert yet (the manager has not stored the signing key):", title)
+
+          watch = []
+          if mgr.get("updated_utc"):
+              watch.append(("manager", "מחשב הבוטים", mgr["updated_utc"]))
+          for a in mgr.get("accounts") or [{"name": b, "label": l} for b, l in (("bot1", "בוט 1"), ("bot2", "בוט 2"), ("bot3", "בוט 3"))]:
+              s = get(a["name"])
+              if s and s.get("updated_utc"):
+                  watch.append((a["name"], a.get("label", a["name"]), s["updated_utc"]))
+          down = []
+          for key, he, ts in watch:
+              age = (now - dt.datetime.fromisoformat(ts.replace("Z", "+00:00"))).total_seconds() / 60
+              print(key, "age", round(age), "min")
               if age < 20 or age > 7 * 24 * 60:
-                  memo.pop(b, None)
+                  memo.pop(key, None)
                   continue
-              last = memo.get(b)
+              last = memo.get(key)
               if last and (now - dt.datetime.fromisoformat(last)).total_seconds() < 3600:
                   continue
-              memo[b] = now.isoformat()
+              memo[key] = now.isoformat()
+              down.append((key, he, age))
+          if any(k == "manager" for k, _, _ in down):
+              age = next(a for k, _, a in down if k == "manager")
               t = f"{round(age)} דקות" if age < 120 else f"{age / 60:.1f} שעות"
-              msg = (f"{he} לא דיווח כבר {t}. בדוק שהמחשב דלוק ולא במצב שינה, ש־MT5 פתוח, ושהחלון השחור של הבוט פתוח "
-                     f"(אם בכותרת החלון כתוב Select, לחץ Esc).")
-              body = json.dumps({"topic": topic, "title": f"{he} לא מגיב", "message": msg, "priority": 5, "tags": ["rotating_light"]}).encode()
-              urllib.request.urlopen(urllib.request.Request("https://ntfy.sh/", data=body, method="POST",
-                                                            headers={"Content-Type": "application/json"}), timeout=20)
-              print("alert sent", b)
+              alert("מחשב הבוטים לא מגיב", f"אין סימן חיים כבר {t}. בדוק שהמחשב דלוק, לא במצב שינה ומחובר לאינטרנט.")
+          else:
+              for key, he, age in down:
+                  t = f"{round(age)} דקות" if age < 120 else f"{age / 60:.1f} שעות"
+                  alert(f"{he} לא מגיב", f"{he} לא דיווח כבר {t}. בדוק ש־MetaTrader פתוח ומחובר לחשבון.")
           json.dump(memo, open(memo_f, "w"))
           PY
       - uses: actions/cache/save@v4

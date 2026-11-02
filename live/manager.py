@@ -371,6 +371,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, {"ok": True, "accounts": public_accounts(), "version": (UPD.local() or "")[:7],
                                     "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"]} if UPDATE["sha"] else None,
                                     "pin_set": bool(CFG.get("pin_hash")), "push_devices": len(CFG.get("subs", [])),
+                                    "watchdog_push": WATCH["ok"],
                                     "journal": list(JOURNAL)[-60:]})
         if path == "/vapid":
             return self._send(200, {"key": vapid_public()})
@@ -413,6 +414,7 @@ class Handler(BaseHTTPRequestHandler):
                         CFG["subs"].append(sub)
                 save()
                 push("התראות פעילות", "מעכשיו ההתראות של הבוטים יגיעו לאפליקציה הזו.")
+                threading.Thread(target=push_manager_state, daemon=True).start()
                 return self._send(200, {"ok": True})
             if path == "/accounts/add":
                 a = add_account(d)
@@ -444,19 +446,58 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(500, {"error": str(e)})
 
 
+WATCH = {"ok": None, "msg": ""}
+
+
+def watchdog_secret():
+    """Give GitHub's watchdog (it notices when this computer is off) the key it needs to send the
+    alert straight to the app: the push signing key is stored as an encrypted GitHub Actions secret.
+    Needs the GitHub token to have "Secrets: Read and write" on this repository."""
+    tok = REP.token()
+    if not tok:
+        WATCH.update(ok=False, msg="no GitHub token")
+        return
+    try:
+        from nacl import encoding, public
+        h = {"Authorization": f"Bearer {tok}", "Accept": "application/vnd.github+json"}
+        base = f"https://api.github.com/repos/{REP.REPO}/actions/secrets"
+        r = requests.get(base + "/public-key", headers=h, timeout=20)
+        if r.status_code in (401, 403, 404):
+            WATCH.update(ok=False, msg="the GitHub token needs the Secrets permission")
+            log("computer-off alerts to the app: the GitHub token needs 'Secrets: Read and write' (see the app)")
+            return
+        r.raise_for_status()
+        k = r.json()
+        box = public.SealedBox(public.PublicKey(k["key"].encode(), encoding.Base64Encoder()))
+        val = base64.b64encode(box.encrypt(VAPID_FILE.read_bytes())).decode()
+        r = requests.put(base + "/VAPID_PRIVATE_PEM", headers=h, timeout=20, json={"encrypted_value": val, "key_id": k["key_id"]})
+        r.raise_for_status()
+        WATCH.update(ok=True, msg="")
+        log("computer-off alerts: GitHub's watchdog can now notify the app directly")
+    except Exception as e:  # noqa: BLE001
+        WATCH.update(ok=False, msg=str(e)[:120])
+        log(f"computer-off alerts setup failed: {e}")
+
+
 def push_manager_state():
-    """Tell the app where the manager is (public GitHub file, no secrets)."""
+    """Tell the app where the manager is (public GitHub file). It also lists the app's notification
+    subscriptions for GitHub's watchdog: without the private signing key (kept on this computer and,
+    encrypted, as a GitHub secret) nobody can send anything to them."""
     state = {"url": TUN.URL["url"], "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-             "accounts": [{"name": a["name"], "label": a.get("label", a["name"])} for a in accounts()]}
+             "accounts": [{"name": a["name"], "label": a.get("label", a["name"])} for a in accounts()],
+             "subs": CFG.get("subs", [])}
     err = REP.push_state("manager", state)
     if err:
         log(err)
 
 
 def heartbeat():
+    """Every 10 minutes: the app's address + a sign of life for GitHub's watchdog."""
     while True:
         time.sleep(600)
         push_manager_state()
+        if not WATCH["ok"]:
+            watchdog_secret()
 
 
 def main():
@@ -504,6 +545,7 @@ def main():
             start_bot(a)
     threading.Thread(target=watchdog, daemon=True).start()
     threading.Thread(target=update_check, daemon=True).start()
+    threading.Thread(target=watchdog_secret, daemon=True).start()
     threading.Thread(target=heartbeat, daemon=True).start()
     while True:
         time.sleep(3600)

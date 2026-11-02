@@ -230,6 +230,59 @@ def free_port(a):
         time.sleep(3)
 
 
+# ---------------- MetaTrader window: hidden from the screen and taskbar, still trading ----------------
+def mt5_windows(terminal):
+    """Main windows of the MetaTrader started from this terminal64.exe (Windows only)."""
+    if os.name != "nt" or not terminal:
+        return []
+    import ctypes
+    from ctypes import wintypes
+    user32, kernel32 = ctypes.windll.user32, ctypes.windll.kernel32
+    target = os.path.normcase(os.path.abspath(terminal))
+    found = []
+
+    @ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+    def cb(hwnd, _):
+        cls = ctypes.create_unicode_buffer(256)
+        user32.GetClassNameW(hwnd, cls, 256)
+        if not cls.value.startswith("MetaQuotes::MetaTrader"):
+            return True
+        pid = wintypes.DWORD()
+        user32.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
+        h = kernel32.OpenProcess(0x1000, False, pid.value)          # PROCESS_QUERY_LIMITED_INFORMATION
+        if h:
+            buf, n = ctypes.create_unicode_buffer(1024), wintypes.DWORD(1024)
+            if kernel32.QueryFullProcessImageNameW(h, 0, buf, ctypes.byref(n)) and os.path.normcase(buf.value) == target:
+                found.append(hwnd)
+            kernel32.CloseHandle(h)
+        return True
+    user32.EnumWindows(cb, 0)
+    return found
+
+
+def mt5_show(a, show):
+    import ctypes
+    n = 0
+    for hwnd in mt5_windows(a.get("terminal")):
+        visible = bool(ctypes.windll.user32.IsWindowVisible(hwnd))
+        if visible != show:
+            ctypes.windll.user32.ShowWindow(hwnd, 9 if show else 0)      # SW_RESTORE / SW_HIDE
+            n += 1
+    return n
+
+
+def mt5_hider():
+    """Keep hidden MetaTraders hidden (MetaTrader opens a new window when a bot restarts it)."""
+    while True:
+        try:
+            for a in list(accounts()):
+                if a.get("mt5_hidden"):
+                    mt5_show(a, False)
+        except Exception:  # noqa: BLE001
+            pass
+        time.sleep(5)
+
+
 def stop_bot(name):
     p = PROCS.pop(name, None)
     if p and p.poll() is None:
@@ -360,7 +413,8 @@ def public_accounts(with_run=True):
                     "server": a.get("server"), "enabled": a.get("enabled", False), "running": running(a["name"]) if with_run else None,
                     "archived": bool(a.get("archived")), "archived_at": a.get("archived_at"), "hidden": bool(a.get("hidden")),
                     "created": a.get("created"), "broker": "FTMO", "platform": "MetaTrader 5", "target_pct": a.get("target_pct", 10),
-                    "preparing": bool(a.get("preparing")), "prepare_error": a.get("prepare_error")})
+                    "preparing": bool(a.get("preparing")), "prepare_error": a.get("prepare_error"),
+                    "mt5_hidden": bool(a.get("mt5_hidden"))})
     return out
 
 
@@ -538,6 +592,15 @@ class Handler(BaseHTTPRequestHandler):
                 save()
                 push_manager_state()
                 return self._send(200, {"ok": True})
+            if path.startswith("/accounts/") and path.endswith("/mt5"):
+                a = acc_by(path.split("/")[2])
+                if not a:
+                    raise ValueError("אין חשבון כזה")
+                a["mt5_hidden"] = bool(d.get("hidden"))
+                save()
+                n = mt5_show(a, not a["mt5_hidden"])
+                log(f"{a['name']}: MetaTrader {'hidden' if a['mt5_hidden'] else 'shown'} ({n} windows)")
+                return self._send(200, {"ok": True, "windows": n})
             if path.startswith("/accounts/") and path.endswith("/target"):
                 a = acc_by(path.split("/")[2])
                 if not a:
@@ -701,6 +764,7 @@ def main():
             free_port(a)
             start_bot(a)
     threading.Thread(target=watchdog, daemon=True).start()
+    threading.Thread(target=mt5_hider, daemon=True).start()
     threading.Thread(target=update_check, daemon=True).start()
     threading.Thread(target=watchdog_secret, daemon=True).start()
     threading.Thread(target=heartbeat, daemon=True).start()

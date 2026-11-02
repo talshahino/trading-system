@@ -77,6 +77,8 @@ def main():
     ap.add_argument("--end", required=True)
     ap.add_argument("--start", default="2025-04-30")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--risk", default="", help="override a bot's risk, e.g. 3:0.0025")
+    ap.add_argument("--bots", default="1,2,3")
     ap.add_argument("--news", action="store_true",
                     help="apply FTMO restricted events minute by minute to the Standard trades (ftmo_calendar.apply_news)")
     args = ap.parse_args()
@@ -122,8 +124,10 @@ def main():
         st.to_csv(Path(args.out).parent / "news_trades.csv.gz", index=False)
         trades["Standard"] = st
     out = []
-    for b in (1, 2, 3):
+    over = {int(k): float(v) for k, v in (x.split(":") for x in args.risk.split(",") if x)}
+    for b in (int(x) for x in args.bots.split(",")):
         cfg = json.load(open(ROOT / "live" / "bots" / f"bot{b}.json", encoding="utf-8"))
+        cfg["risk"] = over.get(b, cfg["risk"])
         combos = cfg["combos"]
         F.FREE_RISK_AT_BREAKEVEN = bool(cfg["free_risk_at_breakeven"])
         for kind, t in trades.items():

@@ -1,0 +1,39 @@
+name: Snapshot a web page (design reference)
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        required: true
+permissions:
+  contents: read
+jobs:
+  snap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Render
+        run: |
+          pip install -q playwright && python -m playwright install --with-deps chromium >/dev/null
+          mkdir -p snap
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          url = "${{ inputs.url }}"
+          with sync_playwright() as p:
+              b = p.chromium.launch()
+              for name, vp in (("desktop", {"width": 1440, "height": 900}), ("phone", {"width": 390, "height": 844})):
+                  pg = b.new_page(viewport=vp, device_scale_factor=2 if name == "phone" else 1)
+                  pg.goto(url, wait_until="networkidle", timeout=90000)
+                  pg.wait_for_timeout(6000)
+                  pg.screenshot(path=f"snap/{name}.png", full_page=True)
+                  if name == "desktop":
+                      open("snap/page.html", "w").write(pg.content())
+                      css = pg.evaluate("""() => [...document.styleSheets].map(s => { try { return [...s.cssRules].map(r => r.cssText).join('\\n') } catch(e) { return '/* ' + s.href + ' */' } }).join('\\n')""")
+                      open("snap/styles.css", "w").write(css)
+              b.close()
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: snap
+          path: snap

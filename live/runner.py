@@ -4,7 +4,7 @@ terminal, with exactly the code that was backtested (agents/rules_agent.py).
 How it decides (every 5 s it checks for newly closed bars):
   1. fetch the combo's bars from MT5, convert to UTC like the backtest (4H = UTC-aligned from 1H),
      append the bar that just opened with open=high=low=close (nothing from the future)
-  2. replay the strategy with the backtest engine (same breakeven at 60%, stocks closed at session end)
+  2. replay the strategy with the backtest engine (same breakeven at 60%, stocks closed at session end; with close_before_breaks, every position closed before market breaks over 2 hours)
   3. the replay's last trade tells what to do now:
        - a trade entering on the bar that just opened -> open it (same stop and target)
        - our open trade still open in the replay      -> move the stop to the replay's current stop
@@ -119,6 +119,71 @@ def session_mask(df, sym, tf):
     mins = end.hour * 60 + end.minute + (end.normalize() > loc.normalize()) * 1440
     day = pd.Series(loc.normalize(), index=df.index)
     return (mins >= close_min - 15) | (day != day.shift(-1)).to_numpy()
+
+
+CLOSE_BREAKS = False          # FTMO Standard account: no positions through market breaks over 2 hours
+BREAKS = {}                   # symbol -> {(server weekday, server minute of day)} where such a break starts
+_BREAKS_AT = {}
+
+
+def break_mask(df, tf):
+    """Same rule as the backtest (run_rules.break_mask): the last bar before a gap over 2 hours."""
+    start = df.index.to_series()
+    gap = start.shift(-1) - (start + pd.Timedelta(minutes=TF_MIN[tf]))
+    return (gap > pd.Timedelta(hours=2)).to_numpy()
+
+
+def exit_mask(df, sym, tf):
+    m = session_mask(df, sym, tf)
+    if CLOSE_BREAKS:
+        b = break_mask(df, tf)
+        m = b if m is None else (np.asarray(m, dtype=bool) | b)
+    return m
+
+
+def learn_breaks(sym):
+    """When this instrument's breaks over 2 hours start, in server time, from ~5 weeks of MT5
+    1-minute bars. A break must have been seen at least twice (a one-off holiday is not a pattern).
+    Start minutes are rounded down to a quarter hour, so the close comes 15-30 minutes before."""
+    rates = mt5.copy_rates_from_pos(mt5_name(sym), mt5.TIMEFRAME_M1, 0, 60000)
+    if rates is None or len(rates) < 1000:
+        return BREAKS.get(sym, set())
+    t = pd.to_datetime(pd.Series(rates["time"]), unit="s")
+    nxt = t.shift(-1)
+    starts = (t + pd.Timedelta(minutes=1))[(nxt - t) > pd.Timedelta(hours=2)]
+    keys = pd.Series([(x.weekday(), (x.hour * 60 + x.minute) // 15 * 15) for x in starts])
+    cnt = keys.value_counts()
+    return {k for k, n in cnt.items() if n >= 2}
+
+
+def break_soon(sym, now, minutes=15):
+    """True when a market break over 2 hours starts within `minutes` (server-time schedule)."""
+    if not CLOSE_BREAKS:
+        return False
+    if sym not in BREAKS or time.time() - _BREAKS_AT.get(sym, 0) > 6 * 3600:
+        try:
+            BREAKS[sym] = learn_breaks(sym)
+        except Exception as e:  # noqa: BLE001
+            log(f"break schedule {sym}: {e}")
+            BREAKS.setdefault(sym, set())
+        _BREAKS_AT[sym] = time.time()
+    srv = pd.Timestamp(utc_to_server(now)).tz_localize(None)
+    mod = srv.weekday() * 1440 + srv.hour * 60 + srv.minute
+    for wd, m in BREAKS[sym]:
+        ahead = (wd * 1440 + m - mod + 15) % (7 * 1440) - 15   # m is rounded down: the real start is m..m+15
+        if -15 < ahead <= minutes:
+            return True
+    return False
+
+
+def break_close(now):
+    """Standard account: close every position 15-30 minutes before a break over 2 hours (weekends too)."""
+    if not CLOSE_BREAKS:
+        return
+    for p in ACC.positions():
+        sym = SYM_BY_MAGIC.get(p.magic)
+        if sym is not None and break_soon(sym, now):
+            close(p, "market break ahead (Standard rule)")
 
 
 def prague_midnight_utc():
@@ -323,7 +388,7 @@ def step(combo, sid, tf, sym, off):
     dummy.index = [forming + pd.Timedelta(minutes=TF_MIN[tf])]
     df = pd.concat([df, dummy])
     be = (0.6, be_offset(sym, float(df["c"].iloc[-3])))
-    tr = R.run(df, R.STRATEGIES[sid][1], 0.0, breakeven=be, session_exit=session_mask(df, sym, tf))
+    tr = R.run(df, R.STRATEGIES[sid][1], 0.0, breakeven=be, session_exit=exit_mask(df, sym, tf))
     if len(tr):
         DIAG[combo]["last_signal"] = f"{tr.iloc[-1]['time']} {'buy' if tr.iloc[-1]['dir'] > 0 else 'sell'} {tr.iloc[-1]['reason']}"
         DIAG[combo]["trades_in_window"] = int(len(tr))
@@ -331,7 +396,7 @@ def step(combo, sid, tf, sym, off):
 
     def stop_now():
         """The stop as the backtest has it after the last CLOSED bar (the helper bars must not move it)."""
-        tc = R.run(df.iloc[:-2], R.STRATEGIES[sid][1], 0.0, breakeven=be, session_exit=session_mask(df.iloc[:-2], sym, tf))
+        tc = R.run(df.iloc[:-2], R.STRATEGIES[sid][1], 0.0, breakeven=be, session_exit=exit_mask(df.iloc[:-2], sym, tf))
         m = tc[tc["time"].astype(str) == STATE["entry"].get(combo, "")] if len(tc) else tc
         return float(m.iloc[-1]["stop_last"]) if len(m) and m.iloc[-1]["reason"] == "סוף הנתונים" else None
 
@@ -368,6 +433,9 @@ def step(combo, sid, tf, sym, off):
         loc = pd.Timestamp.now(tz="UTC").tz_convert(tz)
         if loc.hour * 60 + loc.minute >= close_min - 15:
             return                                     # no new stock trades in the last 15 minutes
+    if break_soon(sym, pd.Timestamp.now(tz="UTC")):
+        log(f"skip {combo}: market break over 2 hours starts within 15 minutes (Standard rule)")
+        return
     if news_near(sym):
         log(f"skip {combo}: high-impact news within 5 minutes")
         return
@@ -534,6 +602,17 @@ def main():
     MAGICS = set(MAGICS_BY_COMBO.values())
     SYM_BY_MAGIC.update({MAGICS_BY_COMBO[c]: c.split("|")[2] for c in cfg["combos"]})
     ACC = Account(cfg, args.dry_run)
+    global CLOSE_BREAKS
+    CLOSE_BREAKS = bool(cfg.get("close_before_breaks"))
+    if CLOSE_BREAKS:
+        for c, sid, tf, sym in combos:
+            if sym not in BREAKS:
+                BREAKS[sym] = learn_breaks(sym)
+                _BREAKS_AT[sym] = time.time()
+        days = "Mon Tue Wed Thu Fri Sat Sun".split()
+        log("Standard account rule: every position closes 15-30 min before a market break over 2 hours (server time):")
+        for s_, b in sorted(BREAKS.items()):
+            log(f"  {s_}: " + (", ".join(f"{days[d]} {m // 60:02d}:{m % 60:02d}" for d, m in sorted(b)) or "no breaks found"))
     global BOT
     BOT = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}.get(name, name)
     MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])
@@ -555,6 +634,7 @@ def main():
                 off = server_offset_hours(probe)
                 now = pd.Timestamp.now(tz="UTC")
                 stock_session_close(now)
+                break_close(now)
                 for combo, sid, tf, sym in combos:
                     bar_start = now.floor(f"{TF_MIN[tf]}min")
                     if done.get(combo) == bar_start or (now - bar_start).total_seconds() < 3:

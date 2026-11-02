@@ -112,7 +112,15 @@ def main():
         st["free_time"] = pd.to_datetime(st["free_time"], utc=True, errors="coerce")
         print(f"news rule: {before} trades -> {len(st)}; closed before an event: {(st['reason'] == 'נסגרה לפני הודעה מוגבלת').sum()}, "
               f"signals in the window, not taken: {before - len(st)}")
-        trades["Standard"] = st.reset_index(drop=True)
+        orig = trades["Standard"].set_index(["combo", "time"])["r"]
+        st = st.reset_index(drop=True)
+        chg = st.join(orig.rename("r_before"), on=["combo", "time"])
+        chg = chg[(chg["r"] - chg["r_before"]).abs() > 1e-9]
+        print("changed trades:", len(chg), "sum R before", round(chg["r_before"].sum(), 1), "after", round(chg["r"].sum(), 1),
+              "| NaN r:", int(st["r"].isna().sum()))
+        print(chg.sort_values("r").head(15)[["combo", "time", "exit_time", "dir", "entry_px", "stop_px", "exit_px", "r_before", "r"]].to_string())
+        st.to_csv(Path(args.out).parent / "news_trades.csv.gz", index=False)
+        trades["Standard"] = st
     out = []
     for b in (1, 2, 3):
         cfg = json.load(open(ROOT / "live" / "bots" / f"bot{b}.json", encoding="utf-8"))

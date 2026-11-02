@@ -34,6 +34,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from agents import ftmo_universe as U  # noqa: E402
 from agents import rules_agent as R  # noqa: E402
+from agents import ftmo_calendar as CAL  # noqa: E402
 
 import MetaTrader5 as mt5  # noqa: E402  (pip install MetaTrader5, Windows only)
 from live import reporter as REP  # noqa: E402
@@ -176,14 +177,61 @@ def break_soon(sym, now, minutes=15):
     return False
 
 
+_CAL = {"t": 0, "restricted": [], "holidays": [], "warned": False}
+
+
+def _calendar():
+    """FTMO's calendar (restricted events + holidays), refreshed every hour."""
+    if time.time() - _CAL["t"] > 3600:
+        now = pd.Timestamp.now(tz="UTC")
+        try:
+            _CAL["restricted"], _CAL["holidays"] = CAL.parse(CAL.fetch(now - pd.Timedelta(days=2), now + pd.Timedelta(days=9)))
+            _CAL["warned"] = False
+        except Exception as e:  # noqa: BLE001
+            log(f"FTMO calendar not available ({e}); trying again in 10 minutes")
+            if not _CAL["warned"]:
+                REP.notify(f"{BOT}: אין יומן FTMO", "לא הצלחתי לקרוא את יומן האירועים של FTMO. אנסה שוב כל 10 דקות.",
+                           priority=4, tags=["warning"])
+                _CAL["warned"] = True
+            _CAL["t"] = time.time() - 3000
+            return _CAL
+        _CAL["t"] = time.time()
+    return _CAL
+
+
+def news_window(sym, now=None):
+    """Standard rule: inside 3 minutes (FTMO: 2) before/after a restricted event on this instrument."""
+    if not CLOSE_BREAKS:
+        return False
+    now = now or pd.Timestamp.now(tz="UTC")
+    return any(CAL.restricted_affects(sym, ins) and abs((now - t).total_seconds()) <= 180
+               for t, ins in _calendar()["restricted"])
+
+
+def holiday_block(sym, now=None, before_min=30):
+    """Standard rule: the instrument's market is closed for a holiday today (UTC), or will be within
+    `before_min` minutes. Returns the holiday name or None."""
+    if not CLOSE_BREAKS:
+        return None
+    now = now or pd.Timestamp.now(tz="UTC")
+    for day, cur, title in _calendar()["holidays"]:
+        if CAL.holiday_affects(sym, cur, title) and day - pd.Timedelta(minutes=before_min) <= now < day + pd.Timedelta(days=1):
+            return f"{title} ({cur})"
+    return None
+
+
 def break_close(now):
     """Standard account: close every position 15-30 minutes before a break over 2 hours (weekends too)."""
     if not CLOSE_BREAKS:
         return
     for p in ACC.positions():
         sym = SYM_BY_MAGIC.get(p.magic)
-        if sym is not None and break_soon(sym, now):
+        if sym is None or news_window(sym, now):
+            continue                                   # no closing around a restricted event: try after it
+        if break_soon(sym, now):
             close(p, "market break ahead (Standard rule)")
+        elif (h := holiday_block(sym, now)):
+            close(p, f"holiday ahead: {h} (Standard rule)")
 
 
 def prague_midnight_utc():
@@ -357,7 +405,7 @@ def stock_session_close(now):
     """Stocks: close every position 15 minutes before the exchange closes (no overnight gaps)."""
     for p in ACC.positions():
         sym = SYM_BY_MAGIC.get(p.magic)
-        if sym is None or U.CLASS.get(sym) != "stock":
+        if sym is None or U.CLASS.get(sym) != "stock" or news_window(sym, now):
             continue
         tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
         loc = now.tz_convert(tz)
@@ -393,6 +441,16 @@ def step(combo, sid, tf, sym, off):
         DIAG[combo]["last_signal"] = f"{tr.iloc[-1]['time']} {'buy' if tr.iloc[-1]['dir'] > 0 else 'sell'} {tr.iloc[-1]['reason']}"
         DIAG[combo]["trades_in_window"] = int(len(tr))
     pos = [p for p in ACC.positions() if p.magic == MAGICS_BY_COMBO[combo]]
+    if news_window(sym, now):
+        # FTMO restricted event within 3 minutes: no opening, closing or stop moves now.
+        # A new entry of this bar is dropped (the backtest's entry time is gone); the rest is retried after it.
+        new = tr[tr["time"] == forming] if len(tr) else tr
+        if len(new) and STATE["entry"].get(combo) != str(new.iloc[-1]["time"]):
+            STATE["entry"][combo] = str(new.iloc[-1]["time"])
+            save_state()
+            log(f"skip {combo}: FTMO restricted event within 3 minutes (Standard rule)")
+        DIAG[combo]["news_window"] = True
+        return False
 
     def stop_now():
         """The stop as the backtest has it after the last CLOSED bar (the helper bars must not move it)."""
@@ -433,6 +491,9 @@ def step(combo, sid, tf, sym, off):
         loc = pd.Timestamp.now(tz="UTC").tz_convert(tz)
         if loc.hour * 60 + loc.minute >= close_min - 15:
             return                                     # no new stock trades in the last 15 minutes
+    if (h := holiday_block(sym)):
+        log(f"skip {combo}: market closed for {h} (Standard rule)")
+        return
     if break_soon(sym, pd.Timestamp.now(tz="UTC")):
         log(f"skip {combo}: market break over 2 hours starts within 15 minutes (Standard rule)")
         return
@@ -613,6 +674,18 @@ def main():
         log("Standard account rule: every position closes 15-30 min before a market break over 2 hours (server time):")
         for s_, b in sorted(BREAKS.items()):
             log(f"  {s_}: " + (", ".join(f"{days[d]} {m // 60:02d}:{m % 60:02d}" for d, m in sorted(b)) or "no breaks found"))
+        cal = _calendar()
+        syms = sorted({c[3] for c in combos})
+        il = lambda t: t.tz_convert("Asia/Jerusalem").strftime("%a %d.%m %H:%M")  # noqa: E731
+        ev = [(t, ins, [x for x in syms if CAL.restricted_affects(x, ins)]) for t, ins in cal["restricted"] if t > pd.Timestamp.now(tz="UTC")]
+        log(f"FTMO calendar: {len(cal['restricted'])} restricted events, {len(cal['holidays'])} holidays loaded. Coming up for this bot (Israel time):")
+        for t, ins, hit in sorted(ev):
+            if hit:
+                log(f"  {il(t)}  restricted: {ins} -> {', '.join(hit)}")
+        for day, cur, title in sorted(cal["holidays"]):
+            hit = [x for x in syms if CAL.holiday_affects(x, cur, title)]
+            if hit and day >= pd.Timestamp.now(tz="UTC").normalize():
+                log(f"  {day.strftime('%a %d.%m')}  holiday: {title} ({cur}) -> {', '.join(hit)}")
     global BOT
     BOT = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}.get(name, name)
     MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])

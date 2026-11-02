@@ -17,6 +17,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Render page and capture calendar data
+        continue-on-error: true
         run: |
           pip install -q playwright && python -m playwright install --with-deps chromium >/dev/null
           mkdir -p data/ftmo_calendar

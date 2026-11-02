@@ -308,7 +308,7 @@ def step(combo, sid, tf, sym, off):
     now = pd.Timestamp.now(tz="UTC")
     if df is None:
         DIAG[combo] = {"at": now.isoformat(timespec="seconds"), "bars": 0}
-        return
+        return False
     # The newest MT5 bar is still forming: keep only its open (what the backtest knows at entry),
     # and add one flat bar after it, because the engine enters on the bar AFTER a signal.
     forming = df.index[-1]
@@ -317,7 +317,7 @@ def step(combo, sid, tf, sym, off):
                    "age_min": round((now - forming).total_seconds() / 60, 1)}
     if now - forming >= pd.Timedelta(minutes=TF_MIN[tf]):
         DIAG[combo]["stale"] = True
-        return          # the newest bar is not in progress: market closed (weekend/holiday/session break)
+        return False    # the newest bar has not appeared yet (just started, or market closed): try again soon
     df.iloc[-1, df.columns.get_indexer(["h", "l", "c"])] = df["o"].iloc[-1]
     dummy = df.iloc[[-1]].copy()
     dummy.index = [forming + pd.Timedelta(minutes=TF_MIN[tf])]
@@ -542,7 +542,7 @@ def main():
                          tags=["robot"])
         log(f"phone notifications: {err or 'OK (topic ' + REP._CFG['topic'] + ')'}")
         log(f"dashboard: {'GitHub token found' if REP.token() else 'NO GitHub token - create live/github_token.txt'}")
-    done = {}
+    done, tried, tried_bar = {}, {}, {}
     probe = mt5_name(combos[0][3])
     import faulthandler
     hang_file = open(ROOT / "live" / f"{name}_hang.txt", "w")
@@ -559,13 +559,21 @@ def main():
                     bar_start = now.floor(f"{TF_MIN[tf]}min")
                     if done.get(combo) == bar_start or (now - bar_start).total_seconds() < 3:
                         continue
+                    # a bar that MT5 has not produced yet is retried, at most once a minute, until it appears
+                    wait = 20 if (now - bar_start).total_seconds() < 120 else 60
+                    if tried_bar.get(combo) == bar_start and (now - tried[combo]).total_seconds() < wait:
+                        continue
+                    handled = True
                     try:
-                        step(combo, sid, tf, sym, off)
+                        handled = step(combo, sid, tf, sym, off) is not False
                     except Exception:  # noqa: BLE001
                         log(f"error {combo}:\n{traceback.format_exc()}")
                         REP.notify(f"{BOT}: שגיאה", f"{pretty(combo)}\n{traceback.format_exc()[-300:]}", priority=4,
                                    tags=["warning"], key="err:" + combo, every=3600)
-                    done[combo] = bar_start
+                    if handled:
+                        done[combo] = bar_start
+                    else:
+                        tried[combo], tried_bar[combo] = now, bar_start
         except Exception:  # noqa: BLE001
             log(f"loop error:\n{traceback.format_exc()}")
             if not mt5.initialize(path=args.terminal, portable=True):

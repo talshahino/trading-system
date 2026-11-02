@@ -312,16 +312,17 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .dangerbtn{width:100%;border:2px solid #D0453A;background:var(--neg-soft);color:#D0453A;font-weight:800;font-size:16px;border-radius:12px;min-height:50px;cursor:pointer}
 @media (min-width:761px){.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
 
-/* slide to close */
-.slide{position:relative;height:50px;border-radius:25px;background:var(--neg-soft);margin:10px 0 2px;overflow:hidden;user-select:none;-webkit-user-select:none;direction:rtl}
-.slide.all{background:#D0453A;margin-top:12px}
-.slide span{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:14px;color:#D0453A;padding-inline-start:40px;pointer-events:none}
-.slide.all span{color:#fff}
-.slide .fill{position:absolute;top:0;bottom:0;right:0;width:0;background:rgba(208,69,58,.18);border-radius:25px}
-.slide.all .fill{background:rgba(0,0,0,.18)}
-.slide .knob{position:absolute;top:4px;right:4px;width:42px;height:42px;border-radius:50%;background:#D0453A;color:#fff;display:grid;place-items:center;touch-action:none;cursor:grab;box-shadow:0 2px 6px rgba(0,0,0,.25);z-index:2}
-.slide.all .knob{background:#fff;color:#D0453A}
-.slide .knob svg{width:22px;height:22px}
+/* slide to close: a thin rail and a bigger round knob, calm colors (closing can be in profit or in loss) */
+.slide{position:relative;height:52px;margin:6px 0 2px;user-select:none;-webkit-user-select:none;direction:rtl}
+.slide span{position:absolute;top:0;left:0;right:0;text-align:center;font-weight:600;font-size:12.5px;color:var(--muted);pointer-events:none}
+.slide .rail{position:absolute;left:0;right:0;top:32px;height:6px;border-radius:3px;background:var(--faint)}
+.slide .fill{position:absolute;top:0;bottom:0;right:0;width:0;border-radius:3px;background:var(--vps)}
+.slide .knob{position:absolute;top:20px;right:0;width:30px;height:30px;border-radius:50%;background:var(--panel);color:var(--vps);border:2px solid var(--vps);
+  display:grid;place-items:center;touch-action:none;cursor:grab;box-shadow:0 2px 6px rgba(18,22,28,.18);z-index:2}
+.slide .knob svg{width:16px;height:16px}
+.slide.all{margin-top:14px;padding:0 4px}
+.slide.all span{color:var(--vps);font-weight:700}
+.slide.all .knob{background:var(--vps);color:#fff}
 .slide.off{opacity:.45;pointer-events:none}
 .slide.busy span::after{content:" …"}
 .ask{position:fixed;inset:0;z-index:70;background:rgba(18,22,28,.5);display:none;align-items:center;justify-content:center;padding:20px}
@@ -1137,7 +1138,7 @@ function filtered(s) {
 function trades(s, a, light) {
   const can = viaMgr(UI.cur) && !a.archived, ps = s.positions || [];
   const open = ps.map(p => `<div>${trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p))}
-    ${p.ticket ? `<div style="padding:0 14px 12px">${slider("t:" + p.ticket, `גרור לסגירת העסקה ב־${esc(p.symbol)}`, false, can)}</div>` : ""}</div>`).join("");
+    ${p.ticket ? `<div style="padding:0 14px 10px">${slider("t:" + p.ticket, `גרור לסגירת העסקה ב־${esc(p.symbol)}`, false, can)}</div>` : ""}</div>`).join("");
   const openH = `<div class="h4">עסקאות פעילות <span class="badge">${ps.length}</span></div><div class="tl">${TH}${open || '<div class="empty" style="border-radius:0">אין עסקאות פעילות כרגע.</div>'}</div>
     ${ps.length ? slider("all", `גרור לסגירת כל ${ps.length > 1 ? ps.length + " העסקאות" : "העסקה"}`, true, can) : ""}
     ${ps.length && !can ? '<div class="foot" style="margin-top:6px">סגירה מהאפליקציה אפשרית רק כשמחשב הבוטים מחובר.</div>' : ""}`;
@@ -1399,7 +1400,7 @@ $("allStats").onclick = e => { const r = e.target.closest("[data-open]"); if (!r
 
 /* slide to close: drag the knob from right to left to the end, then confirm */
 const ARROW_L = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6M20 6l-6 6 6 6" opacity=".55"/></svg>';
-const slider = (key, text, all, can) => `<div class="slide ${all ? "all" : ""} ${can ? "" : "off"}" data-slide="${key}"><div class="fill"></div><span>${text}</span><div class="knob">${ARROW_L}</div></div>`;
+const slider = (key, text, all, can) => `<div class="slide ${all ? "all" : ""} ${can ? "" : "off"}" data-slide="${key}"><span>${text}</span><div class="rail"><div class="fill"></div></div><div class="knob">${ARROW_L}</div></div>`;
 function ask(title, body) {
   return new Promise(res => { $("askT").textContent = title; $("askB").textContent = body; $("ask").classList.add("on");
     const done = v => { $("ask").classList.remove("on"); $("askYes").onclick = $("askNo").onclick = null; res(v); };
@@ -1407,10 +1408,10 @@ function ask(title, body) {
 }
 document.addEventListener("pointerdown", ev => {
   const knob = ev.target.closest(".slide .knob"); if (!knob) return;
-  const sl = knob.parentElement, fill = sl.querySelector(".fill"), max = sl.clientWidth - knob.offsetWidth - 8, x0 = ev.clientX;
+  const sl = knob.parentElement, fill = sl.querySelector(".fill"), max = sl.clientWidth - knob.offsetWidth, x0 = ev.clientX;
   UI.drag = true; knob.setPointerCapture(ev.pointerId); knob.style.transition = fill.style.transition = "none";
   let dx = 0;
-  const move = e => { dx = Math.max(0, Math.min(max, x0 - e.clientX)); knob.style.transform = `translateX(${-dx}px)`; fill.style.width = (dx + 46) + "px"; };
+  const move = e => { dx = Math.max(0, Math.min(max, x0 - e.clientX)); knob.style.transform = `translateX(${-dx}px)`; fill.style.width = (dx + knob.offsetWidth / 2) + "px"; };
   const back = () => { knob.style.transition = fill.style.transition = "transform .25s, width .25s"; knob.style.transform = ""; fill.style.width = "0"; };
   const up = async () => {
     knob.removeEventListener("pointermove", move); knob.removeEventListener("pointerup", up); knob.removeEventListener("pointercancel", up);

@@ -245,7 +245,7 @@ def watchdog():
     while True:
         try:
             for a in list(accounts()):
-                if a.get("enabled") and not running(a["name"]):
+                if a.get("enabled") and not a.get("preparing") and not running(a["name"]):
                     if a.get("started") and time.time() - a["started"] < 120:
                         continue                              # it just stopped right after starting: wait
                     p = PROCS.get(a["name"])
@@ -276,22 +276,58 @@ def add_account(d):
     if not (template / "terminal64.exe").exists():
         raise ValueError(f"לא מצאתי MetaTrader להעתקה ב־{template}")
     dest = Path(rf"C:\MT5_{login}")
-    if not dest.exists():
-        log(f"copying MetaTrader to {dest} ...")
-        shutil.copytree(template, dest, ignore=shutil.ignore_patterns("logs", "Logs", "Bases", "Tester", "*.log"))
     cfg = json.loads((LIVE / "bots" / f"{bot}.json").read_text(encoding="utf-8"))
     cfg.update(name=name, label=f"{nickname} · {BOT_TEMPLATES[bot]}", bot_label=BOT_TEMPLATES[bot], account=int(login), live_tunnel=False)
     (LIVE / "bots" / f"{name}.json").write_text(json.dumps(cfg, ensure_ascii=False, indent=1), encoding="utf-8")
     port = max([PORT] + [a["port"] for a in accounts()]) + 1
     a = {"name": name, "bot": bot, "nickname": nickname, "label": f"{nickname} · {BOT_TEMPLATES[bot]}", "login": int(login), "server": server,
          "terminal": str(dest / "terminal64.exe"), "port": port, "enabled": True, "password": encrypt(password),
-         "created": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+         "created": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "preparing": True}
     with LOCK:
         accounts().append(a)
     save()
-    log(f"account added: {a['label']} ({server})")
-    start_bot(a)
+    log(f"account added: {a['label']} ({server}); preparing its own MetaTrader in {dest}")
+    threading.Thread(target=_prepare_and_start, args=(a, template, dest), daemon=True).start()
     return a
+
+
+def _copy_mt5(src, dst):
+    """Copy a MetaTrader folder for a new account (its own portable copy: each account needs its own
+    MetaTrader). Files the running MetaTrader keeps locked, logs, history caches and the tester are skipped."""
+    skip = {"logs", "bases", "tester"}
+    for root, dirs, files in os.walk(src):
+        dirs[:] = [d for d in dirs if d.lower() not in skip]
+        rel = Path(root).relative_to(src)
+        (dst / rel).mkdir(parents=True, exist_ok=True)
+        for f in files:
+            if f.lower().endswith(".log"):
+                continue
+            try:
+                shutil.copy2(Path(root) / f, dst / rel / f)
+            except OSError:
+                pass
+
+
+def _prepare_and_start(a, template, dest):
+    try:
+        log(f"copying MetaTrader to {dest} ...")
+        _copy_mt5(template, dest)
+        if not (dest / "terminal64.exe").exists():
+            raise RuntimeError(f"the copy in {dest} has no terminal64.exe")
+        a.pop("preparing", None)
+        a.pop("prepare_error", None)
+        save()
+        log(f"{a['name']}: MetaTrader ready, starting the bot (MetaTrader opens and logs in to {a['login']})")
+        start_bot(a)
+        push(f"{a.get('label', a['name'])} נוסף", "MetaTrader נפתח במחשב ומתחבר לחשבון. החשבון יופיע בחשבונות הפעילים תוך דקה־שתיים.")
+    except Exception as e:  # noqa: BLE001
+        a["prepare_error"] = str(e)[:200]
+        a["enabled"] = False
+        a.pop("preparing", None)
+        save()
+        log(f"{a['name']}: preparing MetaTrader failed: {e}")
+        push("הוספת החשבון נכשלה", f"{e}", urgent=True)
+    push_manager_state()
 
 
 def rename_account(name, nickname):
@@ -324,7 +360,7 @@ def public_accounts(with_run=True):
                     "server": a.get("server"), "enabled": a.get("enabled", False), "running": running(a["name"]) if with_run else None,
                     "archived": bool(a.get("archived")), "archived_at": a.get("archived_at"), "hidden": bool(a.get("hidden")),
                     "created": a.get("created"), "broker": "FTMO", "platform": "MetaTrader 5", "target_pct": a.get("target_pct", 10),
-                    "withdrawals": a.get("withdrawals", [])})
+                    "preparing": bool(a.get("preparing")), "prepare_error": a.get("prepare_error")})
     return out
 
 
@@ -658,7 +694,10 @@ def main():
         save()
         push("העדכון הותקן", f"הכל רץ בגרסה {(UPD.local() or '?')[:7]}.")
     for a in accounts():
-        if a.get("enabled"):
+        if a.get("preparing"):                    # the manager stopped while copying MetaTrader: finish it
+            threading.Thread(target=_prepare_and_start, args=(a, Path(CFG.get("mt5_template") or r"C:\MT5_bot1"),
+                                                            Path(a["terminal"]).parent), daemon=True).start()
+        elif a.get("enabled"):
             free_port(a)
             start_bot(a)
     threading.Thread(target=watchdog, daemon=True).start()

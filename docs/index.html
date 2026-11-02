@@ -608,21 +608,28 @@ function kv(key, val) {           // shared with the service worker (sw.js)
   });
 }
 const getPin = () => { try { return localStorage.getItem("pin") || ""; } catch (e) { return ""; } };
+let mgrT = "";
+function takeDoc(j) {            // only a copy newer than the newest one already seen counts (GitHub's file server can hand out old ones)
+  if (!j || !j.updated_utc || j.updated_utc < mgrT) return null;
+  mgrT = j.updated_utc; mgrSeen = j.updated_utc; if (j.accounts) mgrDoc = j;
+  return j.url || null;
+}
 async function findMgr() {
   let url = null;
-  try { const r = await fetch(MGR_STATE(), {cache: "no-store"}); if (r.ok) { const j = await r.json(); mgrSeen = j.updated_utc; url = j.url; mgrDoc = j; } } catch (e) {}
-  // GitHub's file server can hand out a copy up to ~5 minutes old (a new tunnel address then looks missing):
-  // ask GitHub's API for the current copy instead, at most once a minute (it allows 60 requests an hour).
-  if ((!url || (mgr && url === mgr && !mgrInfo)) && Date.now() - apiTry > 60000) {
+  try { const r = await fetch(MGR_STATE(), {cache: "no-store"}); if (r.ok) url = takeDoc(await r.json()); } catch (e) {}
+  // a new tunnel address may not be on the file server yet: ask GitHub's API (at most once a minute; it allows 60 an hour)
+  if ((!url || !mgrInfo) && Date.now() - apiTry > 60000) {
     apiTry = Date.now();
     try { const r = await fetch(MGR_API + "&t=" + Date.now(), {cache: "no-store", headers: {Accept: "application/vnd.github.raw+json"}});
-      if (r.ok) { const j = await r.json(); mgrSeen = j.updated_utc || mgrSeen; if (j.url) url = j.url; if (j.accounts) mgrDoc = j; } } catch (e) {}
+      if (r.ok) url = takeDoc(await r.json()) || url; } catch (e) {}
   }
-  if (url) { if (url !== mgr) mgrInfo = null; mgr = url; kv("mgr", mgr); }
+  if (url && url !== mgr) { mgrInfo = null; mgr = url; kv("mgr", mgr); }
   if (!mgr) return null;
-  try { const r = await fetch(mgr + "/status", {cache: "no-store"}); if (r.ok) { mgrInfo = await r.json(); return mgrInfo; } } catch (e) {}
-  mgrInfo = null; return null;
+  try { const r = await fetch(mgr + "/status", {cache: "no-store"}); if (r.ok) { mgrInfo = await r.json(); mgrMiss = 0; return mgrInfo; } } catch (e) {}
+  if (++mgrMiss >= 2) mgrInfo = null;          // one missed answer is not a disconnection
+  return mgrInfo;
 }
+let mgrMiss = 0;
 async function act(path, body = {}) {
   if (!mgr) throw new Error("אין חיבור למחשב הבוטים");
   const r = await fetch(mgr + path, {method: "POST", headers: {"Content-Type": "application/json", "X-Pin": getPin()}, body: JSON.stringify(body)});

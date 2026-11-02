@@ -35,8 +35,10 @@ self.addEventListener("push", e => {
 });
 
 async function managerUrl() {
+  const saved = await kv("mgr");                 // the address the app last connected to (newest)
+  if (saved) { try { const r = await fetch(saved + "/status", {cache: "no-store"}); if (r.ok) return saved; } catch (x) {} }
   try { const r = await fetch(STATE_URL + "?t=" + Date.now(), {cache: "no-store"}); if (r.ok) { const j = await r.json(); if (j.url) return j.url; } } catch (x) {}
-  return kv("mgr");
+  return saved;
 }
 
 self.addEventListener("notificationclick", e => {

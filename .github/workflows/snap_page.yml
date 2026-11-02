@@ -33,7 +33,18 @@ jobs:
                       open("snap/styles.css", "w").write(css)
               b.close()
           PY
-      - uses: actions/upload-artifact@v4
-        with:
-          name: snap
-          path: snap
+      - name: Print (base64, for download through the log)
+        run: |
+          pip install -q pillow
+          python - <<'PY'
+          import base64, io
+          from PIL import Image
+          for n in ("desktop", "phone"):
+              im = Image.open(f"snap/{n}.png").convert("RGB")
+              w = 1000 if n == "desktop" else 600
+              im = im.resize((w, int(im.height * w / im.width)))
+              buf = io.BytesIO(); im.save(buf, "JPEG", quality=70)
+              print(f"=====BEGIN {n}.jpg"); print(base64.b64encode(buf.getvalue()).decode()); print(f"=====END {n}.jpg")
+          for n in ("styles.css",):
+              print(f"=====BEGIN {n}"); print(base64.b64encode(open(f"snap/{n}", "rb").read()).decode()); print(f"=====END {n}")
+          PY

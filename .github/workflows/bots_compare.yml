@@ -1,0 +1,52 @@
+name: Bots Swing vs Standard
+on:
+  workflow_dispatch:
+    inputs:
+      swing:
+        description: "Glob of Swing (normal) trade files"
+      standard:
+        description: "Glob of Standard (--break-exit) trade files"
+permissions:
+  contents: write
+concurrency:
+  group: bots-compare
+  cancel-in-progress: false
+jobs:
+  portfolio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Compare
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: |
+          mkdir -p output
+          python -u bots_compare.py --swing "${{ inputs.swing }}" --standard "${{ inputs.standard }}" --end "$(date -u -d yesterday +%F)" --out output/bots_compare.json
+      - name: Commit
+        if: always()
+        run: |
+          DIR="reports/$(date -u +%F)_bots_compare_run${{ github.run_number }}"
+          mkdir -p "$DIR"
+          cp output/bots_compare.json "$DIR"/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports
+          git commit -m "Bots Swing vs Standard run ${{ github.run_number }}" || true
+          for i in 1 2 3 4 5 6; do git pull --rebase && git push && break; sleep 15; done

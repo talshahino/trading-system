@@ -174,6 +174,8 @@ def main():
     ap.add_argument("--respect-tf", action="store_true",
                     help="only run a strategy on the timeframes its source states (default: every timeframe)")
     ap.add_argument("--symbols", default="", help="comma separated subset of the instrument universe (empty = all)")
+    ap.add_argument("--break-exit", action="store_true",
+                    help="FTMO Standard account: close every position before any market break longer than 2 hours (weekends too)")
     ap.add_argument("--stock-session-exit", action="store_true",
                     help="stocks: close every position at the end of the trading session (no overnight gaps)")
     ap.add_argument("--breakeven", type=float, default=0.0,
@@ -241,6 +243,9 @@ def main():
                 if SPREADS[s] is None or len(SPREADS[s]) == 0:
                     SPREAD_EST.add(s)
             sess = session_mask(df, s, tf) if (args.stock_session_exit and not args.demo) else None
+            if args.break_exit and not args.demo:
+                bm = break_mask(df, tf)
+                sess = bm if sess is None else (np.asarray(sess, dtype=bool) | bm)
             be = None
             if args.breakeven:
                 px = float(df["c"].median())
@@ -335,6 +340,14 @@ def main():
 
 
 SESSION = {"US": ("America/New_York", 16 * 60), "EU": ("Europe/Berlin", 17 * 60 + 30)}
+
+
+def break_mask(df, tf):
+    """True on the last bar before a market break longer than 2 hours (FTMO Standard account
+    rule: no positions held through such breaks, weekends included)."""
+    start = df.index.to_series()
+    gap = start.shift(-1) - (start + pd.Timedelta(minutes=RP.TF_MIN[tf]))
+    return (gap > pd.Timedelta(hours=2)).to_numpy()
 
 
 def session_mask(df, s, tf):

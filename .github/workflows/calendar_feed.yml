@@ -1,0 +1,43 @@
+name: FTMO calendar feed for the app
+# Every 2 hours: FTMO's economic calendar (this week and next) -> live/calendar.json on branch "live",
+# which the app's News tab reads (the app also tries FTMO's API directly first).
+on:
+  schedule:
+    - cron: "17 */2 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: calendar-feed
+jobs:
+  feed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: live
+      - name: Fetch
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, datetime as dt
+          today = dt.datetime.now(dt.timezone.utc).date()
+          mon = today - dt.timedelta(days=today.weekday())
+          a, b = mon - dt.timedelta(days=1), mon + dt.timedelta(days=13)
+          url = ("https://gw2.ftmo.com/public-api/v1/economic-calendar?dateFrom=%sT00:00:00Z&dateTo=%sT23:59:59Z&timezone=UTC" % (a, b))
+          req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Origin": "https://ftmo.com"})
+          with urllib.request.urlopen(req, timeout=30) as r:
+              print("CORS:", r.headers.get("Access-Control-Allow-Origin"))
+              items = json.load(r).get("items", [])
+          import os
+          os.makedirs("live", exist_ok=True)
+          json.dump({"updated_utc": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), "items": items},
+                    open("live/calendar.json", "w"), ensure_ascii=False)
+          print(len(items), "events")
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add live/calendar.json
+          git commit -m "calendar feed" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase -q && git push -q && break; sleep 10; done

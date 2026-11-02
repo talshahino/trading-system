@@ -176,8 +176,8 @@ def main():
                     help="only run a strategy on the timeframes its source states (default: every timeframe)")
     ap.add_argument("--symbols", default="", help="comma separated subset of the instrument universe (empty = all)")
     ap.add_argument("--news-exit", action="store_true",
-                    help="FTMO Standard + user rule: no position from 3 min before to 3 min after FTMO restricted events "
-                         "(data/ftmo_calendar/history.json); holidays close the affected markets for the day")
+                    help="FTMO calendar holidays (data/ftmo_calendar/history.json) close the affected markets for the day; "
+                         "restricted events are applied minute by minute later (bots_compare.py --news)")
     ap.add_argument("--break-exit", action="store_true",
                     help="FTMO Standard account: close every position before any market break longer than 2 hours (weekends too)")
     ap.add_argument("--stock-session-exit", action="store_true",

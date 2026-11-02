@@ -101,17 +101,15 @@ def fetch(date_from, date_to):
 
 
 def masks(df, sym, tf_minutes, restricted, holidays):
-    """(exit mask, no-entry mask) over df's bars, the same in the backtest and in the live replay.
-    Restricted event at t: an open position closes at the close of the last bar ending by t - 3.5 min,
-    and no trade enters on a bar that overlaps t - 3.5 min .. t + 3 min.
-    Holiday of the instrument's market (UTC day D): close at the last bar ending by D - 30 min, no entries on D."""
+    """(exit mask, no-entry mask) over df's bars for HOLIDAYS, the same in the backtest and in the
+    live replay: the instrument's market is closed on UTC day D -> close at the last bar ending by
+    D - 30 min, no entries on D. (Restricted events are handled minute by minute: apply_news.)"""
     start = df.index
     end = start + pd.Timedelta(minutes=tf_minutes)
     ex = np.zeros(len(df), bool)
     noent = np.zeros(len(df), bool)
-    spans = [(t - pd.Timedelta(seconds=210), t + pd.Timedelta(minutes=3)) for t, ins in restricted if restricted_affects(sym, ins)]
-    spans += [(d - pd.Timedelta(minutes=30), d + pd.Timedelta(days=1)) for d in closed_days(sym, holidays)]
-    for a, b in spans:
+    for d in closed_days(sym, holidays):
+        a, b = d - pd.Timedelta(minutes=30), d + pd.Timedelta(days=1)
         if b < start[0] or a > end[-1]:
             continue
         k = end.searchsorted(a, side="right") - 1          # last bar ending by a
@@ -119,6 +117,58 @@ def masks(df, sym, tf_minutes, restricted, holidays):
             ex[k] = True
         noent[end.searchsorted(a, side="right"):start.searchsorted(b, side="left")] = True
     return ex, noent
+
+
+BEFORE = pd.Timedelta(minutes=3)      # the user's rule: no open position from 3 minutes before
+AFTER = pd.Timedelta(minutes=3)       # ... to 3 minutes after a restricted event on the instrument
+
+
+def apply_news(trades, minute_open, restricted):
+    """Restricted events, minute by minute, on a trade list from the backtest engine:
+    - a trade open 3 minutes before an event on its instrument is closed then (1-minute price) and
+      is not reopened;
+    - a trade whose entry falls between 3 minutes before and 3 minutes after the event waits: it
+      opens 3 minutes after the event, if it is still running (exit later) and the price is still
+      between its stop and its target; otherwise it is dropped.
+    minute_open(symbol, utc time) -> the 1-minute open price at that time (or the next minute), or None.
+    The R of a changed trade is recomputed with the same stop and target; its costs (in price) are kept."""
+    out = []
+    for r in trades.to_dict("records"):
+        ev = sorted(t for t, ins in restricted if restricted_affects(r["symbol"], ins))
+        d = r["dir"]
+        e0, st, tg = r["entry_px"], r["stop_px"], r["target_px"]
+        gross = d * (r["exit_px"] - e0) / abs(e0 - st) if abs(e0 - st) > 0 else 0.0
+        cost_px = (gross - r["r"]) * abs(e0 - st)
+        drop = False
+        for t in ev:
+            a, b = t - BEFORE, t + AFTER
+            if r["exit_time"] <= a or r["time"] > b:
+                continue
+            if a <= r["time"] <= b:                       # entry inside the window: wait for b
+                if r["exit_time"] <= b:
+                    drop = True
+                    break
+                px = minute_open(r["symbol"], b)
+                if px is None or not (min(st, tg) < px < max(st, tg)):
+                    drop = True
+                    break
+                r["time"], r["entry_px"], r["reason_news"] = b, px, "כניסה נדחתה בגלל הודעה"
+                e0 = px
+                continue
+            px = minute_open(r["symbol"], a)              # open at a: close 3 minutes before the event
+            if px is None:
+                continue
+            r["exit_time"], r["exit_px"], r["reason"] = a, px, "נסגרה לפני הודעה מוגבלת"
+            if r.get("free_time") is not None and r["free_time"] == r["free_time"] and r["free_time"] > a:
+                r["free_time"] = None
+            break
+        if drop:
+            continue
+        risk = abs(r["entry_px"] - st)
+        if risk > 0:
+            r["r"] = d * (r["exit_px"] - r["entry_px"]) / risk - cost_px / risk
+        out.append(r)
+    return pd.DataFrame(out, columns=list(trades.columns) + (["reason_news"] if "reason_news" not in trades.columns else []))
 
 
 def blocked(fn, noent):

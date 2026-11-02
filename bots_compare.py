@@ -77,11 +77,42 @@ def main():
     ap.add_argument("--end", required=True)
     ap.add_argument("--start", default="2025-04-30")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--news", action="store_true",
+                    help="apply FTMO restricted events minute by minute to the Standard trades (ftmo_calendar.apply_news)")
     args = ap.parse_args()
     start = pd.Timestamp(args.start, tz="UTC")
     RR.SPLIT = start
     ns = types.SimpleNamespace(demo=False, end=args.end)
     trades = {"Swing": PS.load(args.swing), "Standard": PS.load(args.standard)}
+    if args.news:
+        from agents import ftmo_calendar as CAL
+        restricted, _ = CAL.parse(json.load(open(ROOT / "data" / "ftmo_calendar" / "history.json", encoding="utf-8")))
+
+        def minute_open(sym, t):
+            if sym not in PB._BARS:
+                try:
+                    PB._BARS[sym] = PB.P.bars(sym, "1Min", (start - pd.Timedelta(days=7)).strftime("%Y-%m-%d"), args.end)
+                except Exception as e:  # noqa: BLE001
+                    print("no bars", sym, e)
+                    PB._BARS[sym] = None
+            b = PB._BARS[sym]
+            if b is None or b.empty:
+                return None
+            i = b.index.searchsorted(t)
+            if i >= len(b) or b.index[i] - t > pd.Timedelta(minutes=30):
+                return None
+            return float(b["o"].iloc[i])
+        want = {c for b in (1, 2, 3) for c in json.load(open(ROOT / "live" / "bots" / f"bot{b}.json", encoding="utf-8"))["combos"]}
+        st = trades["Standard"]
+        st = st[st["combo"].isin(want)]
+        before = len(st)
+        st = CAL.apply_news(st, minute_open, restricted)
+        for c in ("time", "exit_time"):
+            st[c] = pd.to_datetime(st[c], utc=True)
+        st["free_time"] = pd.to_datetime(st["free_time"], utc=True, errors="coerce")
+        print(f"news rule: {before} trades -> {len(st)}; closed before an event: {(st['reason'] == 'נסגרה לפני הודעה מוגבלת').sum()}, "
+              f"delayed entries: {st['reason_news'].notna().sum()}")
+        trades["Standard"] = st.reset_index(drop=True)
     out = []
     for b in (1, 2, 3):
         cfg = json.load(open(ROOT / "live" / "bots" / f"bot{b}.json", encoding="utf-8"))

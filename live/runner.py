@@ -215,21 +215,24 @@ def _calendar():
 
 
 def news_window(sym, now=None):
-    """Standard rule around FTMO restricted events on this instrument: no open position from
-    3 minutes before to 3 minutes after the release.
-    "close": 3.5 to 2.5 minutes before - close what is open (FTMO's own ban starts 2 minutes before);
-    "hold":  2.5 minutes before to 3 minutes after - no opening, closing or stop moves; None otherwise."""
+    """The user's rule around FTMO restricted events on this instrument: no open position and no new
+    trade from 3 minutes before to 3 minutes after the release.
+    "close": 3 to 2 minutes before - close what is open (FTMO's own ban starts 2 minutes before);
+    "hold":  2 minutes before to 3 minutes after - no opening, closing or stop moves; None otherwise."""
     if not CLOSE_BREAKS:
         return None
     now = now or pd.Timestamp.now(tz="UTC")
     phase = None
     for t, ins in _calendar()["restricted"]:
         d = (now - t).total_seconds()
-        if -210 <= d <= 180 and CAL.restricted_affects(sym, ins):
-            if d < -150:
+        if -180 <= d <= 180 and CAL.restricted_affects(sym, ins):
+            if d < -120:
                 return "close"
             phase = "hold"
     return phase
+
+
+NEWS_RETRY = set()            # combos waiting for a restricted-event window to end
 
 
 def holiday_block(sym, now=None, before_min=30):
@@ -477,14 +480,17 @@ def step(combo, sid, tf, sym, off):
         # FTMO restricted event: no position from 3 minutes before to 3 minutes after it.
         # An open one is closed before FTMO's ban starts; a new entry of this bar is dropped.
         if nw == "close" and pos:
-            close(pos[0], "restricted news ahead (Standard rule)")
+            close(pos[0], "restricted news ahead (Standard rule)")   # closed for the news: not reopened
         new = tr[tr["time"] == forming] if len(tr) else tr
-        if len(new) and STATE["entry"].get(combo) != str(new.iloc[-1]["time"]):
-            STATE["entry"][combo] = str(new.iloc[-1]["time"])
+        if len(new) and STATE["entry"].get(combo) != str(new.iloc[-1]["time"]) \
+                and STATE.setdefault("delayed", {}).get(combo) != str(new.iloc[-1]["time"]):
+            STATE["delayed"][combo] = str(new.iloc[-1]["time"])     # entry waits until 3 minutes after the event
             save_state()
-            log(f"skip {combo}: FTMO restricted event, no trades from 3 min before to 3 min after (Standard rule)")
+            log(f"wait {combo}: FTMO restricted event - the entry waits until 3 min after it (Standard rule)")
         DIAG[combo]["news_window"] = nw
+        NEWS_RETRY.add(combo)
         return False
+    NEWS_RETRY.discard(combo)
 
     def stop_now():
         """The stop as the backtest has it after the last CLOSED bar (the helper bars must not move it)."""
@@ -514,12 +520,28 @@ def step(combo, sid, tf, sym, off):
         # an opposite signal may open the next trade on this same bar: fall through
     if not len(tr):
         return
+    delayed = STATE.setdefault("delayed", {}).pop(combo, None)
     t = tr[tr["time"] == forming]
+    if t.empty and delayed:                            # an entry held back by a restricted event
+        t = tr[(tr["time"].astype(str) == delayed) & (tr["reason"] == "סוף הנתונים")]
+    if delayed:
+        save_state()
     if t.empty:
+        if delayed:
+            log(f"skip {combo}: the entry held back by the news is no longer running")
         return
     t = t.iloc[-1]
     if STATE["entry"].get(combo) == str(t["time"]):
         return                                         # already handled this entry
+    if delayed == str(t["time"]):
+        tick = mt5.symbol_info_tick(mt5_name(sym))
+        px = (tick.ask if t["dir"] > 0 else tick.bid) if tick else None
+        lo, hi = sorted((float(t["stop_px"]), float(t["target_px"])))
+        if px is None or not (lo < px < hi):
+            STATE["entry"][combo] = str(t["time"])
+            save_state()
+            log(f"skip {combo}: after the news the price {px} is no longer between the stop and the target")
+            return
     if U.CLASS.get(sym) == "stock":
         tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
         loc = pd.Timestamp.now(tz="UTC").tz_convert(tz)
@@ -531,7 +553,7 @@ def step(combo, sid, tf, sym, off):
     if break_soon(sym, pd.Timestamp.now(tz="UTC")):
         log(f"skip {combo}: market break over 2 hours starts within 15 minutes (Standard rule)")
         return
-    if news_near(sym):
+    if not CLOSE_BREAKS and news_near(sym):
         log(f"skip {combo}: high-impact news within 5 minutes")
         return
     if not ACC.allows():
@@ -751,7 +773,7 @@ def main():
                     if done.get(combo) == bar_start or (now - bar_start).total_seconds() < 3:
                         continue
                     # a bar that MT5 has not produced yet is retried, at most once a minute, until it appears
-                    wait = 5 if (now - bar_start).total_seconds() < 120 else 60
+                    wait = 5 if (now - bar_start).total_seconds() < 120 or combo in NEWS_RETRY else 60
                     if tried_bar.get(combo) == bar_start and (now - tried[combo]).total_seconds() < wait:
                         continue
                     handled = True

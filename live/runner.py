@@ -311,7 +311,10 @@ class Account:
     def day_start_balance(self):
         since = utc_to_server(prague_midnight_utc())
         deals = mt5.history_deals_get(since, utc_to_server(pd.Timestamp.now(tz="UTC")) + dt.timedelta(days=1)) or []
-        realized = sum(d.profit + d.commission + d.swap for d in deals if d.entry in (1, 3))
+        # everything that changed the balance since midnight: closed profit/loss, and the commission/swap/fees
+        # of every trade deal, also of positions opened today that are still open (FTMO: the day's limit is
+        # 5% of the account size below the balance at the start of the day)
+        realized = sum(d.profit + d.commission + d.swap + getattr(d, "fee", 0.0) for d in deals if d.type in (0, 1))
         return mt5.account_info().balance - realized
 
     def open_risk(self):

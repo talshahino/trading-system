@@ -167,7 +167,10 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .seg.days{flex-wrap:wrap;justify-content:flex-start}.seg.days button{flex:0 0 auto;padding-inline:10px}
 /* ---------- header: logo + name on the left, connection dot on the right ---------- */
 .top{direction:ltr}
-.top .conn{direction:rtl;display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);font-weight:600;white-space:nowrap}
+.top .conn{direction:rtl;display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);font-weight:700;white-space:nowrap;
+  border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:7px 13px;min-height:38px;cursor:pointer;box-shadow:var(--shadow);-webkit-tap-highlight-color:transparent}
+.top .conn:active{background:var(--seg)}
+.brand{cursor:default}.brand:active{background:none}
 
 /* ---------- accounts list ---------- */
 .sec{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin:4px 2px 10px;display:flex;align-items:center;gap:8px}
@@ -309,9 +312,9 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 </head>
 <body>
 <header class="top">
-  <button class="brand" id="brandBtn" title="ניהול" aria-label="פתח ניהול"><svg width="30" height="30" aria-hidden="true" viewBox="0 0 100 100"><defs><linearGradient id="bghd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1F3A5F"/><stop offset="1" stop-color="#0F1C2E"/></linearGradient><linearGradient id="lthd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8DFA2"/><stop offset="1" stop-color="#D8A243"/></linearGradient><linearGradient id="lnhd" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#FFD978"/><stop offset="1" stop-color="#FFB38A"/></linearGradient><filter id="shhd" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.6" flood-color="#000" flood-opacity=".28"/></filter><filter id="glhd" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter></defs><rect width="100" height="100" rx="23" fill="url(#bghd)"/><rect x="1" y="1" width="98" height="98" rx="22" fill="none" stroke="#fff" stroke-opacity=".08"/><g transform="translate(0.0 0.0) scale(1.0)"><g filter="url(#shhd)" fill="url(#lthd)"><rect x="15" y="19" width="70" height="11.5" rx="5.75"/><rect x="25.5" y="25" width="11.5" height="56" rx="5.75"/><rect x="63" y="25" width="11.5" height="56" rx="5.75"/></g><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="#152842" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#glhd)" opacity=".55"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="6.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84" cy="33.5" r="5.6" fill="#FFD978" stroke="#152842" stroke-width="2.4"/></g></svg><span class="wm">Taloona <b>Trade</b></span></button>
+  <div class="brand" id="brandBtn"><svg width="30" height="30" aria-hidden="true" viewBox="0 0 100 100"><defs><linearGradient id="bghd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1F3A5F"/><stop offset="1" stop-color="#0F1C2E"/></linearGradient><linearGradient id="lthd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8DFA2"/><stop offset="1" stop-color="#D8A243"/></linearGradient><linearGradient id="lnhd" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#FFD978"/><stop offset="1" stop-color="#FFB38A"/></linearGradient><filter id="shhd" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.6" flood-color="#000" flood-opacity=".28"/></filter><filter id="glhd" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter></defs><rect width="100" height="100" rx="23" fill="url(#bghd)"/><rect x="1" y="1" width="98" height="98" rx="22" fill="none" stroke="#fff" stroke-opacity=".08"/><g transform="translate(0.0 0.0) scale(1.0)"><g filter="url(#shhd)" fill="url(#lthd)"><rect x="15" y="19" width="70" height="11.5" rx="5.75"/><rect x="25.5" y="25" width="11.5" height="56" rx="5.75"/><rect x="63" y="25" width="11.5" height="56" rx="5.75"/></g><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="#152842" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#glhd)" opacity=".55"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="6.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84" cy="33.5" r="5.6" fill="#FFD978" stroke="#152842" stroke-width="2.4"/></g></svg><span class="wm">Taloona <b>Trade</b></span></div>
   <div class="sp"></div>
-  <div class="conn" title="חיבור למחשב הבוטים"><i class="dot" id="lConn"></i><span id="lConnT">מתחבר…</span></div>
+  <button class="conn" id="connBtn" title="ניהול" aria-label="פתח ניהול"><i class="dot" id="lConn"></i><span id="lConnT">מתחבר…</span></button>
 </header>
 
 <main>
@@ -736,7 +739,7 @@ function drawer(open) {
   $("drawer").setAttribute("aria-hidden", !open); document.body.style.overflow = open ? "hidden" : "";
   if (open) mgrRefresh();
 }
-$("brandBtn").onclick = () => drawer(!$("drawer").classList.contains("on"));
+$("connBtn").onclick = () => drawer(!$("drawer").classList.contains("on"));
 $("drawerClose").onclick = () => drawer(false);
 $("scrim").onclick = () => drawer(false);
 addEventListener("keydown", e => { if (e.key === "Escape") drawer(false); });
@@ -874,8 +877,11 @@ function calc(s, a) {
           tgt: (a && a.target_pct) || 10, dayLim: ds - 0.05 * init, maxLim: 0.9 * init};
 }
 function curveOf(s) {
-  const c = (s.equity_curve || []).slice();
+  let c = (s.equity_curve || []).slice();
   if (s.updated_utc && s.equity != null) c.push([s.updated_utc, s.balance, s.equity]);
+  // start where the account first moved (no long flat line from before the first trade)
+  const init = s.initial || (c[0] && c[0][1]), i = c.findIndex(p => Math.abs(p[1] - init) > 0.005 || Math.abs(p[2] - init) > 0.005);
+  if (i > 1) c = c.slice(i - 1);
   return c;
 }
 
@@ -1004,7 +1010,11 @@ function eqChart(s, a) {
   const fmt = v => P ? (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2) + "%" : "$" + Math.round(v).toLocaleString("en-US");
   let g = "";
   for (let i = 0; i <= 4; i++) { const v = y0 + i * (y1 - y0) / 4; g += `<line x1="${L}" x2="${W - R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="#E6E9EE"/><text x="${L - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end">${fmt(v)}</text>`; }
-  for (let i = 0; i <= 3; i++) { const tv = x0 + i * (x1 - x0) / 3; g += `<text x="${X(tv).toFixed(1)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === 3 ? "end" : "middle"}">${il(new Date(tv).toISOString())}</text>`; }
+  // time labels: as many as fit without touching each other
+  const short = x1 - x0 < 36 * 3600e3, lab = tv => { const d = new Date(tv);
+    return short ? d.toLocaleTimeString("he-IL", {...IL, hour: "2-digit", minute: "2-digit"}) : d.toLocaleDateString("he-IL", {...IL, day: "2-digit", month: "2-digit"}) + " " + d.toLocaleTimeString("he-IL", {...IL, hour: "2-digit"}) + ":00"; };
+  const nL = Math.max(2, Math.min(6, Math.floor((W - L - R) / (short ? 70 : 105)) + 1));
+  for (let i = 0; i < nL; i++) { const tv = x0 + i * (x1 - x0) / (nL - 1); g += `<text x="${X(tv).toFixed(1)}" y="${H - 8}" text-anchor="${i === 0 ? "start" : i === nL - 1 ? "end" : "middle"}">${lab(tv)}</text>`; }
   const path = arr => arr.map((v, i) => `${i ? "L" : "M"}${X(t[i]).toFixed(1)},${Y(v).toFixed(1)}`).join("");
   const base = Y(cv(init)), up = eq[eq.length - 1] >= cv(init), col = up ? "#1E8A4C" : "#D0453A";
   el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;direction:ltr">

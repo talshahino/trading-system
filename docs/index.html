@@ -647,17 +647,25 @@ function renderMgr() {
       ${a.server ? `<span class="mut">${esc(a.server)}</span>` : ""}
       <span class="row">${a.archived ? "" : a.enabled ? `<button class="btn danger" data-a="stop" data-n="${esc(a.name)}">עצור</button>` : `<button class="btn ok" data-a="start" data-n="${esc(a.name)}">הפעל</button>`}
       <button class="btn ghost" data-a="rename" data-n="${esc(a.name)}">שנה שם</button>
-      ${a.archived ? "" : `<button class="btn ghost" data-a="mt5" data-h="${a.mt5_hidden ? 0 : 1}" data-n="${esc(a.name)}">${a.mt5_hidden ? "הצג MetaTrader" : "הסתר MetaTrader"}</button>`}
-      ${a.login ? `<button class="btn ghost" data-a="remove" data-n="${esc(a.name)}">הסר</button>` : ""}</span></div>`).join("")
+
+      ${a.login ? `<button class="btn ghost" data-a="remove" data-n="${esc(a.name)}">הסר</button>` : ""}</span>
+      ${a.archived ? "" : `<div class="row" style="width:100%;justify-content:space-between;margin-top:4px"><span>הצג / הסתר MT5 במחשב המקור</span>
+        <label class="sw"><input type="checkbox" data-mt5="${esc(a.name)}" ${a.mt5_hidden ? "" : "checked"}><span></span></label></div>`}</div>`).join("")
     : `<div class="empty">${m ? "אין חשבונות עדיין." : "ממתין למנהל…"}</div>`;
+  $("accs").querySelectorAll("input[data-mt5]").forEach(c => c.onchange = async () => {
+    c.disabled = true;
+    try { await act(`/accounts/${encodeURIComponent(c.dataset.mt5)}/mt5`, {hidden: !c.checked});
+      note("accMsg", c.checked ? "MT5 מוצג שוב במחשב המקור." : "MT5 הוסתר מהמסך ומשורת המשימות במחשב המקור. הוא ממשיך לעבוד.", true); }
+    catch (e) { c.checked = !c.checked; note("accMsg", e.message, false); }
+    c.disabled = false; setTimeout(mgrRefresh, 1500);
+  });
   $("accs").querySelectorAll("button[data-a]").forEach(b => b.onclick = async () => {
     const a = b.dataset.a, n = b.dataset.n;
     if (a === "remove" && !confirmBox(n)) return;
     let body = {};
-    if (a === "mt5") body = {hidden: b.dataset.h === "1"};
     if (a === "rename") { const nk = prompt("שם חדש לחשבון:", (mgrInfo.accounts.find(x => x.name === n) || {}).nickname || ""); if (!nk) return; body = {nickname: nk}; }
     b.disabled = true;
-    try { await act(`/accounts/${encodeURIComponent(n)}/${a}`, body); note("accMsg", a === "mt5" ? (body.hidden ? "MetaTrader הוסתר מהמסך ומשורת המשימות. הוא ממשיך לעבוד." : "MetaTrader מוצג שוב במחשב.") : a === "stop" ? "הבוט נעצר." : a === "start" ? "הבוט מופעל." : a === "rename" ? "השם עודכן. הבוט עולה מחדש עם השם החדש." : "החשבון הוסר.", true); }
+    try { await act(`/accounts/${encodeURIComponent(n)}/${a}`, body); note("accMsg", a === "stop" ? "הבוט נעצר." : a === "start" ? "הבוט מופעל." : a === "rename" ? "השם עודכן. הבוט עולה מחדש עם השם החדש." : "החשבון הוסר.", true); }
     catch (e) { note("accMsg", e.message, false); }
     setTimeout(mgrRefresh, 1500);
   });

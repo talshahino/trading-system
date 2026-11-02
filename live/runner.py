@@ -1,7 +1,7 @@
 """Live demo robot: runs one portfolio of (strategy, timeframe, instrument) combos on one MT5
 terminal, with exactly the code that was backtested (agents/rules_agent.py).
 
-How it decides (every 20 s it checks for newly closed bars):
+How it decides (every 5 s it checks for newly closed bars):
   1. fetch the combo's bars from MT5, convert to UTC like the backtest (4H = UTC-aligned from 1H),
      append the bar that just opened with open=high=low=close (nothing from the future)
   2. replay the strategy with the backtest engine (same breakeven at 60%, stocks closed at session end)

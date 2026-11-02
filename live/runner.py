@@ -38,6 +38,7 @@ from agents import ftmo_calendar as CAL  # noqa: E402
 
 import MetaTrader5 as mt5  # noqa: E402  (pip install MetaTrader5, Windows only)
 from live import reporter as REP  # noqa: E402
+from live import tunnel as TUN  # noqa: E402
 from collections import deque  # noqa: E402
 
 JOURNAL = deque(maxlen=300)
@@ -587,6 +588,10 @@ def monitor():
     # daily loss warnings and the daily summary (Prague day)
     day = pd.Timestamp.now(tz="Europe/Prague").normalize()
     ds_bal = ACC.day_start_balance()
+    MON["ds_bal"] = ds_bal
+    if time.time() - MON.get("full_t", 0) >= 15:
+        MON["full_t"] = time.time()
+        TUN.SNAP["full"] = dashboard_state(ai, pos, ds_bal, now)
     if MON["day"] is not None and day != MON["day"]:
         closed = [d for d in deals_since(1) if d.entry in (1, 3)]
         REP.notify(f"{BOT}: סיכום יום", f"יתרה ${ai.balance:,.0f} ({(ai.balance - ACC.initial) / ACC.initial * 100:+.2f}% מההתחלה)\n"
@@ -621,6 +626,25 @@ def monitor():
             REP.notify(f"{BOT}: הדשבורד לא מתעדכן", err, priority=3, key="push", every=6 * 3600)
 
 
+def positions_doc(pos):
+    return [{"combo": combo_of(p.magic), "symbol": p.symbol, "dir": "קנייה" if p.type == 0 else "מכירה",
+             "lots": p.volume, "open": p.price_open, "now": p.price_current, "sl": p.sl, "tp": p.tp,
+             "pnl": round(p.profit + p.swap, 2), "since": server_ts(p.time).isoformat(),
+             "free": bool(p.sl and ((p.type == 0 and p.sl >= p.price_open) or (p.type == 1 and p.sl <= p.price_open)))}
+            for p in pos.values()]
+
+
+def refresh_live():
+    """The real-time snapshot the dashboard reads every second through the tunnel."""
+    ai = mt5.account_info()
+    if ai is None:
+        return
+    pos = {p.ticket: p for p in ACC.positions()}
+    TUN.SNAP["live"] = {"bot": MON["name"], "updated_utc": pd.Timestamp.now(tz="UTC").isoformat(), "balance": ai.balance,
+                        "equity": ai.equity, "day_start": MON.get("ds_bal", ai.balance),
+                        "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "positions": positions_doc(pos)}
+
+
 def dashboard_state(ai, pos, ds_bal, now):
     trades = []
     for d in deals_since(60):
@@ -634,11 +658,7 @@ def dashboard_state(ai, pos, ds_bal, now):
         "initial": ACC.initial, "risk": MON["cfg"]["risk"], "free_risk_at_breakeven": ACC.free,
         "balance": ai.balance, "equity": ai.equity, "day_start": ds_bal,
         "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "combos": MON["combos"],
-        "positions": [{"combo": combo_of(p.magic), "symbol": p.symbol, "dir": "קנייה" if p.type == 0 else "מכירה",
-                       "lots": p.volume, "open": p.price_open, "sl": p.sl, "tp": p.tp, "pnl": round(p.profit + p.swap, 2),
-                       "since": server_ts(p.time).isoformat(),
-                       "free": bool(p.sl and ((p.type == 0 and p.sl >= p.price_open) or (p.type == 1 and p.sl <= p.price_open)))}
-                      for p in pos.values()],
+        "positions": positions_doc(pos), "live_url": TUN.URL["url"],
         "diag": DIAG, "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:], "journal": list(JOURNAL)[-150:],
     }
 
@@ -732,6 +752,18 @@ def main():
     global BOT
     BOT = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}.get(name, name)
     MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])
+    if not args.dry_run and cfg.get("live_tunnel", True):
+        port = 8760 + int("".join(ch for ch in name if ch.isdigit()) or 0)
+        try:
+            TUN.serve(port)
+
+            def on_url(u):
+                log(f"real-time dashboard feed: {u}")
+                MON["push"] = 0                     # tell the dashboard the new address right away
+            TUN.tunnel(port, log, on_url, name)
+            log(f"real-time feed: local server on port {port}, starting the tunnel...")
+        except Exception as e:  # noqa: BLE001
+            log(f"real-time feed not started: {e}")
     if not args.dry_run:
         err = REP.notify(f"{BOT} התחיל לעבוד", f"חשבון {ai.login} · יתרה ${ai.balance:,.0f} · {len(combos)} צירופים · סיכון {cfg['risk'] * 100:g}%",
                          tags=["robot"])
@@ -782,7 +814,13 @@ def main():
                 monitor()
         except Exception:  # noqa: BLE001
             log(f"monitor error:\n{traceback.format_exc()}")
-        time.sleep(5)
+        for _ in range(10):                       # 5 seconds, refreshing the live dashboard feed twice a second
+            try:
+                if not args.dry_run:
+                    refresh_live()
+            except Exception:  # noqa: BLE001
+                pass
+            time.sleep(0.5)
 
 
 if __name__ == "__main__":

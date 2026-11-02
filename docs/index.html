@@ -118,6 +118,7 @@ pre{margin:0;font-family:var(--mono);font-size:12px;line-height:1.55;white-space
   <div class="brand"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8" fill="#1F3A5F"/><path d="M8 21l5-6 4 3 7-9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>FTMO BOTS</div>
   <div class="sp"></div>
   <div class="light" title="הבוט מדווח"><i class="dot" id="lBot"></i><span class="t">בוט</span></div>
+  <div class="light" title="עדכון בזמן אמת"><i class="dot" id="lLive"></i><span class="t">זמן אמת</span></div>
   <div class="light" title="שומר ההפסד"><i class="dot" id="lGuard"></i><span class="t">שומר</span></div>
 </header>
 
@@ -204,7 +205,7 @@ function segment(el, items, sel, on) {
 }
 
 function botsBar() {
-  segment("bots", BOTS.filter(b => found[b]).map(b => [b, NAMES[b]]), cur, k => { cur = k; botsBar(); render(found[cur]); });
+  segment("bots", BOTS.filter(b => found[b]).map(b => [b, NAMES[b]]), cur, k => { cur = k; lastFull = 0; setLive(false); botsBar(); render(found[cur]); });
 }
 
 /* balance chart: green fill above the starting balance, red below, end-of-day % labels */
@@ -254,7 +255,7 @@ function stats(tr) {
           avgW: w.length ? gw / w.length : 0, avgL: l.length ? -gl / l.length : 0};
 }
 
-function render(s) {
+function render(s, liveOnly = false) {
   if (!s) return;
   const now = Date.now(), age = (now - new Date(s.updated_utc).getTime()) / 60000;
   const init = s.initial, risk = s.risk;
@@ -265,7 +266,7 @@ function render(s) {
   if (s.halted_until) { ban.className = "banner on neg"; ban.textContent = "עצירת חירום: ההפסד היומי הגיע ל־4.5%. הבוט סגר הכל ולא ייכנס לעסקאות עד חצות (שעון פראג)."; }
   else if (age >= 10) { ban.className = "banner on warn"; ban.textContent = `הבוט לא מדווח כבר ${age < 120 ? Math.round(age) + " דקות" : (age / 60).toFixed(1) + " שעות"}. בדוק שהמחשב ו־MetaTrader פתוחים.`; }
   else ban.className = "banner";
-  $("acct").innerHTML = `<b>${NAMES[s.bot] || s.bot}</b> · חשבון ${esc(s.account)} · ${esc(s.server)} · ${s.combos.length} צירופים · סיכון ${(risk * 100).toFixed(3).replace(/\.?0+$/, "")}% לעסקה · עודכן ${il(s.updated_utc)}`;
+  $("acct").innerHTML = `<b>${NAMES[s.bot] || s.bot}</b> · חשבון ${esc(s.account)} · ${esc(s.server)} · ${s.combos.length} צירופים · סיכון ${(risk * 100).toFixed(3).replace(/\.?0+$/, "")}% לעסקה · ${liveOk ? '<span class="pos">● בזמן אמת</span> · ' + new Date(s.updated_utc).toLocaleTimeString("he-IL", IL) : "עודכן " + il(s.updated_utc)}`;
 
   // account view
   const tot = (s.equity - init) / init * 100;
@@ -305,6 +306,7 @@ function render(s) {
         <div class="kp"><small>סטופ</small><b class="num">${p.sl || "—"}</b></div><div class="kp"><small>יעד</small><b class="num">${p.tp || "—"}</b></div></div></div>`;
   }).join("") : '<div class="empty">אין עסקאות פתוחות כרגע. הבוט נכנס רק כשאסטרטגיה נותנת אות בנר חדש.</div>';
 
+  if (liveOnly) return;
   // stats view
   const tr = s.trades.slice().sort((a, b) => new Date(a.time) - new Date(b.time));
   const st = stats(tr);
@@ -358,8 +360,35 @@ document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
   scrollTo(0, 0);
 });
 
+/* real time: the bot serves /live (every second) and /state (full) through its tunnel; its address is in the GitHub state */
+let liveOk = false, liveBusy = false, lastFull = 0;
+function setLive(ok) { liveOk = ok; $("lLive").className = "dot " + (ok ? "on" : found[cur] && found[cur].live_url ? "off" : ""); }
+async function livePoll() {
+  const s = found[cur];
+  if (liveBusy || !s || !s.live_url) { if (!liveBusy) setLive(false); return; }
+  liveBusy = true;
+  try {
+    const full = Date.now() - lastFull > 20000;
+    const r = await fetch(s.live_url + (full ? "/state" : "/live"), {cache: "no-store"});
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    if (j && j.updated_utc) {
+      Object.assign(s, j);
+      setLive(true);
+      if (full) { lastFull = Date.now(); render(s); } else render(s, true);
+    }
+  } catch (e) { setLive(false); }
+  liveBusy = false;
+}
+setInterval(livePoll, 1000);
+
 async function tick() {
-  for (const b of BOTS) { const s = await load(b); if (s) found[b] = s; }
+  for (const b of BOTS) {
+    const s = await load(b);
+    if (!s) continue;
+    if (b === cur && liveOk && found[b]) { found[b].live_url = s.live_url; continue; }   // the live feed is fresher
+    found[b] = s;
+  }
   if (!found[cur]) cur = BOTS.find(b => found[b]) || cur;
   botsBar();
   if (found[cur]) render(found[cur]); else $("acct").textContent = "עוד אין נתונים מהבוטים. הם מופיעים כמה דקות אחרי שבוט מתחיל לעבוד.";

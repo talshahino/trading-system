@@ -567,6 +567,54 @@ def combo_of(magic):
     return str(magic)
 
 
+def status_line(ai):
+    risk = ACC.open_risk() / ACC.initial * 100
+    return f"יתרה ${ai.balance:,.0f} · הון ${ai.equity:,.0f} · סיכון פתוח {risk:.2f}%"
+
+
+def _equity_at(t):
+    """Equity at UTC time t from the 5-minute history (the last point before it), else None."""
+    best = None
+    for ts, _bal, eq in STATE.get("equity", []):
+        if pd.Timestamp(ts) <= t:
+            best = eq
+        else:
+            break
+    return best
+
+
+REPORT_KINDS = (("day", "דוח יומי", "היום"), ("week", "דוח שבועי", "השבוע"), ("month", "דוח חודשי", "החודש"))
+
+
+def reports(ai, now=None):
+    """Israel time: daily at 22:00; weekly on Friday at 23:30; monthly on the month's last weekday at
+    23:30 (the last hour before the close). Profit/loss is against the account size, from the previous
+    report of the same kind (the first time: from the start of the day/week/month)."""
+    il = (now or pd.Timestamp.now(tz="UTC")).tz_convert("Asia/Jerusalem")
+    last_wd = (il + pd.offsets.MonthEnd(0)).normalize()
+    while last_wd.weekday() >= 5:
+        last_wd -= pd.Timedelta(days=1)
+    due = {"day": il.hour == 22 and il.minute < 30,
+           "week": il.weekday() == 4 and (il.hour, il.minute) >= (23, 30),
+           "month": il.normalize() == last_wd and (il.hour, il.minute) >= (23, 30)}
+    starts = {"day": il.normalize(), "week": il.normalize() - pd.Timedelta(days=il.weekday()), "month": il.normalize().replace(day=1)}
+    rep = STATE.setdefault("reports", {})
+    for kind, title, word in REPORT_KINDS:
+        key = il.strftime("%Y-%m-%d")
+        if not due[kind] or rep.get(kind, {}).get("key") == key:
+            continue
+        prev = rep.get(kind, {})
+        base = prev.get("eq") if prev.get("eq") is not None else _equity_at(starts[kind].tz_convert("UTC"))
+        base = base if base is not None else ACC.initial
+        pnl = ai.equity - base
+        pct = pnl / ACC.initial * 100
+        sign = "רווח" if pnl >= 0 else "הפסד"
+        REP.notify(f"{BOT} · {title}", f"{sign} {word}: {'+' if pnl >= 0 else '−'}${abs(pnl):,.0f} ({pct:+.2f}% מהחשבון)\n{status_line(ai)}",
+                   tags=["bar_chart"])
+        rep[kind] = {"key": key, "eq": ai.equity, "t": pd.Timestamp.now(tz="UTC").isoformat()}
+        save_state()
+
+
 def monitor():
     now = pd.Timestamp.now(tz="UTC")
     ai = mt5.account_info()
@@ -595,11 +643,9 @@ def monitor():
         MON["full_t"] = time.time()
         TUN.SNAP["full"] = dashboard_state(ai, pos, ds_bal, now)
     if MON["day"] is not None and day != MON["day"]:
-        closed = [d for d in deals_since(1) if d.entry in (1, 3)]
-        REP.notify(f"{BOT}: סיכום יום", f"יתרה ${ai.balance:,.0f} ({(ai.balance - ACC.initial) / ACC.initial * 100:+.2f}% מההתחלה)\n"
-                   f"עסקאות שנסגרו ב־24 שעות: {len(closed)} · פתוחות: {len(pos)}", tags=["calendar"])
         MON["warned"] = set()
     MON["day"] = day
+    reports(ai)
     dd = (ds_bal - ai.equity) / ACC.initial * 100
     for lvl in (2, 3, 4):
         if dd >= lvl and lvl not in MON["warned"]:
@@ -764,7 +810,10 @@ def main():
             names = ", ".join(sorted({f"{t} ({c})" for dd, c, t in cal["holidays"] if dd == d and "Daylight" not in t}))
             log(f"  {d.strftime('%a %d.%m')}  holiday: {names} -> market closed for {', '.join(hit)}")
     global BOT
-    BOT = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}.get(name) or cfg.get("label") or name
+    tmpl = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}
+    bot_label = cfg.get("bot_label") or tmpl.get(name) or name
+    nick = os.environ.get("BOT_NICKNAME") or cfg.get("nickname")
+    BOT = f"{nick} · {bot_label}" if nick else bot_label
     MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])
     if not args.dry_run and not MANAGED:
         UPD.startup(log, BOT)
@@ -787,7 +836,7 @@ def main():
         except Exception as e:  # noqa: BLE001
             log(f"real-time feed not started: {e}")
     if not args.dry_run:
-        err = REP.notify(f"{BOT} התחיל לעבוד", f"חשבון {ai.login} · יתרה ${ai.balance:,.0f} · {len(combos)} צירופים · סיכון {cfg['risk'] * 100:g}%",
+        err = REP.notify(f"{BOT} התחיל לעבוד", status_line(ai),
                          tags=["robot"])
         log(f"phone notifications: {err or 'OK (topic ' + REP._CFG['topic'] + ')'}")
         log(f"dashboard: {'GitHub token found' if REP.token() else 'NO GitHub token - create live/github_token.txt'}")

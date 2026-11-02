@@ -195,7 +195,7 @@ def start_bot(a):
     if running(a["name"]):
         return
     env = os.environ.copy()
-    env.update(MANAGED="1", BOT_PORT=str(a["port"]), MANAGER_KEY=CFG["local_key"])
+    env.update(MANAGED="1", BOT_PORT=str(a["port"]), MANAGER_KEY=CFG["local_key"], BOT_NICKNAME=a.get("nickname") or "")
     if a.get("password"):
         env.update(MT5_LOGIN=str(a["login"]), MT5_SERVER=a["server"], MT5_PASSWORD=decrypt(a["password"]))
     py = sys.executable.replace("pythonw.exe", "python.exe")
@@ -243,9 +243,9 @@ def watchdog():
 
 def add_account(d):
     bot, login, server = d.get("bot"), str(d.get("login", "")).strip(), str(d.get("server", "")).strip()
-    password = d.get("password") or ""
-    if bot not in BOT_TEMPLATES or not login.isdigit() or not server or not password:
-        raise ValueError("חסר מידע: בוט, מספר חשבון, שרת וסיסמה")
+    password, nickname = d.get("password") or "", str(d.get("nickname", "")).strip()[:40]
+    if bot not in BOT_TEMPLATES or not login.isdigit() or not server or not password or not nickname:
+        raise ValueError("חסר מידע: שם לחשבון, בוט, מספר חשבון, שרת וסיסמה")
     if "demo" not in server.lower() and "trial" not in server.lower():
         raise ValueError("כרגע מותר רק חשבון דמו (השרת חייב להכיל Demo)")
     name = f"{bot}_{login}"
@@ -261,10 +261,10 @@ def add_account(d):
         log(f"copying MetaTrader to {dest} ...")
         shutil.copytree(template, dest, ignore=shutil.ignore_patterns("logs", "Logs", "Bases", "Tester", "*.log"))
     cfg = json.loads((LIVE / "bots" / f"{bot}.json").read_text(encoding="utf-8"))
-    cfg.update(name=name, label=f"{BOT_TEMPLATES[bot]} · {login}", account=int(login), live_tunnel=False)
+    cfg.update(name=name, label=f"{nickname} · {BOT_TEMPLATES[bot]}", bot_label=BOT_TEMPLATES[bot], account=int(login), live_tunnel=False)
     (LIVE / "bots" / f"{name}.json").write_text(json.dumps(cfg, ensure_ascii=False, indent=1), encoding="utf-8")
     port = max([PORT] + [a["port"] for a in accounts()]) + 1
-    a = {"name": name, "bot": bot, "label": f"{BOT_TEMPLATES[bot]} · {login}", "login": int(login), "server": server,
+    a = {"name": name, "bot": bot, "nickname": nickname, "label": f"{nickname} · {BOT_TEMPLATES[bot]}", "login": int(login), "server": server,
          "terminal": str(dest / "terminal64.exe"), "port": port, "enabled": True, "password": encrypt(password)}
     with LOCK:
         accounts().append(a)
@@ -272,6 +272,21 @@ def add_account(d):
     log(f"account added: {a['label']} ({server})")
     start_bot(a)
     return a
+
+
+def rename_account(name, nickname):
+    nickname = str(nickname or "").strip()[:40]
+    if not nickname:
+        raise ValueError("צריך לכתוב שם")
+    a = acc_by(name)
+    a["nickname"] = nickname
+    a["label"] = f"{nickname} · {BOT_TEMPLATES.get(a.get('bot'), a['name'])}"
+    save()
+    log(f"renamed {name}: {a['label']}")
+    if running(name):                          # the bot shows the new name from its next start
+        stop_bot(name)
+        start_bot(a)
+    push_manager_state()
 
 
 def remove_account(name):
@@ -285,7 +300,7 @@ def remove_account(name):
 def public_accounts():
     out = []
     for a in accounts():
-        out.append({"name": a["name"], "label": a.get("label", a["name"]), "bot": a.get("bot"), "login": a.get("login"),
+        out.append({"name": a["name"], "label": a.get("label", a["name"]), "nickname": a.get("nickname"), "bot": a.get("bot"), "login": a.get("login"),
                     "server": a.get("server"), "enabled": a.get("enabled", False), "running": running(a["name"]),
                     "port": a["port"]})
     return out
@@ -419,6 +434,12 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/accounts/add":
                 a = add_account(d)
                 return self._send(200, {"ok": True, "name": a["name"]})
+            if path.startswith("/accounts/") and path.endswith("/rename"):
+                name = path.split("/")[2]
+                if not acc_by(name):
+                    raise ValueError("אין חשבון כזה")
+                rename_account(name, d.get("nickname"))
+                return self._send(200, {"ok": True})
             if path.startswith("/accounts/") and path.endswith(("/start", "/stop", "/remove")):
                 name, act = path.split("/")[2], path.split("/")[3]
                 a = acc_by(name)

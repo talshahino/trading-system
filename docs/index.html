@@ -202,6 +202,7 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
     <div class="card"><h3>הוספת חשבון</h3>
       <form class="form" id="addForm" autocomplete="off">
+        <label class="full">שם לחשבון<input id="fNick" maxlength="40" placeholder="למשל: אתגר 100K ראשון"></label>
         <label>בוט<select id="fBot"><option value="bot1">בוט 1</option><option value="bot2">בוט 2</option><option value="bot3">בוט 3</option></select></label>
         <label>שרת<input id="fServer" value="FTMO-Demo" autocapitalize="off" spellcheck="false"></label>
         <label>מספר חשבון<input id="fLogin" inputmode="numeric" autocomplete="off"></label>
@@ -486,13 +487,16 @@ function renderMgr() {
       <span class="nm">${esc(a.label)}</span><span class="pill ${a.running ? "pos" : ""}">${a.running ? "פועל" : a.enabled ? "עולה…" : "עצור"}</span>
       ${a.server ? `<span class="mut">${esc(a.server)}</span>` : ""}
       <span class="row">${a.enabled ? `<button class="btn danger" data-a="stop" data-n="${esc(a.name)}">עצור</button>` : `<button class="btn ok" data-a="start" data-n="${esc(a.name)}">הפעל</button>`}
+      <button class="btn ghost" data-a="rename" data-n="${esc(a.name)}">שנה שם</button>
       ${a.login ? `<button class="btn ghost" data-a="remove" data-n="${esc(a.name)}">הסר</button>` : ""}</span></div>`).join("")
     : `<div class="empty">${m ? "אין חשבונות עדיין." : "ממתין למנהל…"}</div>`;
   $("accs").querySelectorAll("button[data-a]").forEach(b => b.onclick = async () => {
     const a = b.dataset.a, n = b.dataset.n;
     if (a === "remove" && !confirmBox(n)) return;
+    let body = {};
+    if (a === "rename") { const nk = prompt("שם חדש לחשבון:", (mgrInfo.accounts.find(x => x.name === n) || {}).nickname || ""); if (!nk) return; body = {nickname: nk}; }
     b.disabled = true;
-    try { await act(`/accounts/${encodeURIComponent(n)}/${a}`); note("accMsg", a === "stop" ? "הבוט נעצר." : a === "start" ? "הבוט מופעל." : "החשבון הוסר.", true); }
+    try { await act(`/accounts/${encodeURIComponent(n)}/${a}`, body); note("accMsg", a === "stop" ? "הבוט נעצר." : a === "start" ? "הבוט מופעל." : a === "rename" ? "השם עודכן. הבוט עולה מחדש עם השם החדש." : "החשבון הוסר.", true); }
     catch (e) { note("accMsg", e.message, false); }
     setTimeout(mgrRefresh, 1500);
   });
@@ -522,8 +526,8 @@ $("addForm").onsubmit = async ev => {
   ev.preventDefault();
   $("addBtn").disabled = true; note("addMsg", "מוסיף… העתקת MetaTrader יכולה לקחת דקה.");
   try {
-    await act("/accounts/add", {bot: $("fBot").value, server: $("fServer").value.trim(), login: $("fLogin").value.trim(), password: $("fPass").value});
-    $("fPass").value = ""; $("fLogin").value = "";
+    await act("/accounts/add", {nickname: $("fNick").value.trim(), bot: $("fBot").value, server: $("fServer").value.trim(), login: $("fLogin").value.trim(), password: $("fPass").value});
+    $("fPass").value = ""; $("fLogin").value = ""; $("fNick").value = "";
     note("addMsg", "החשבון נוסף והבוט מופעל. MetaTrader ייפתח במחשב ויתחבר לחשבון.", true);
   } catch (e) { note("addMsg", e.message, false); }
   $("addBtn").disabled = false; mgrRefresh();

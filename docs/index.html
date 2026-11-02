@@ -4,11 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F2F4F6">
+<meta name="application-name" content="Taloona Trade">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
-<title>בוטי FTMO</title>
+<title>Taloona Trade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -30,7 +31,8 @@ button{font:inherit;color:inherit}
 .top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;
   background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .brand{font-weight:800;letter-spacing:.08em;font-size:17px;color:var(--vps);display:flex;align-items:center;gap:8px;white-space:nowrap}
-.brand svg{width:26px;height:26px}
+.brand svg{width:30px;height:30px;flex:0 0 auto}
+.brand .wm{letter-spacing:.01em;color:#12161C;font-weight:800}.brand .wm b{color:#C8922E;font-weight:700}
 .sp{flex:1}
 .light{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:12px;color:var(--muted);padding:0 4px;min-height:36px}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--faint);box-shadow:0 0 0 3px color-mix(in srgb,currentColor 0%,transparent)}
@@ -137,7 +139,7 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 </head>
 <body>
 <header class="top">
-  <div class="brand"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8" fill="#1F3A5F"/><path d="M8 21l5-6 4 3 7-9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>FTMO BOTS</div>
+  <div class="brand"><svg width="30" height="30" aria-hidden="true" viewBox="0 0 100 100"><defs><linearGradient id="bghd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1F3A5F"/><stop offset="1" stop-color="#0F1C2E"/></linearGradient><linearGradient id="lthd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8DFA2"/><stop offset="1" stop-color="#D8A243"/></linearGradient><linearGradient id="lnhd" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#FFD978"/><stop offset="1" stop-color="#FFB38A"/></linearGradient><filter id="shhd" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.6" stdDeviation="1.6" flood-color="#000" flood-opacity=".28"/></filter><filter id="glhd" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4"/></filter></defs><rect width="100" height="100" rx="23" fill="url(#bghd)"/><rect x="1" y="1" width="98" height="98" rx="22" fill="none" stroke="#fff" stroke-opacity=".08"/><g transform="translate(0.0 0.0) scale(1.0)"><g filter="url(#shhd)" fill="url(#lthd)"><rect x="15" y="19" width="70" height="11.5" rx="5.75"/><rect x="25.5" y="25" width="11.5" height="56" rx="5.75"/><rect x="63" y="25" width="11.5" height="56" rx="5.75"/></g><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="#152842" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#glhd)" opacity=".55"/><path d="M13 73 L33 56.5 L48 64.5 L84 33.5" fill="none" stroke="url(#lnhd)" stroke-width="6.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="84" cy="33.5" r="5.6" fill="#FFD978" stroke="#152842" stroke-width="2.4"/></g></svg><span class="wm">Taloona <b>Trade</b></span></div>
   <div class="sp"></div>
   <div class="light" title="הבוט מדווח"><i class="dot" id="lBot"></i><span class="t">בוט</span></div>
   <div class="light" title="עדכון בזמן אמת"><i class="dot" id="lLive"></i><span class="t">זמן אמת</span></div>

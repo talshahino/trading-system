@@ -1,9 +1,9 @@
-/* FTMO Bots app: notifications from the bots' manager (Web Push) and the "approve update" button. */
+/* Taloona Trade app: notifications from the bots' manager (Web Push) and the "approve update" button. */
 const STATE_URL = "https://raw.githubusercontent.com/talshahino/trading-system/live/live/manager_state.json";
-const SHELL = "ftmo-bots-v1";
+const SHELL = "taloona-v2";
 
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(SHELL).then(c => c.addAll(["./", "./index.html", "./icon-192.png"])).catch(() => {})); });
-self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
+self.addEventListener("activate", e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== SHELL).map(k => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", e => {
   const u = new URL(e.request.url);
   if (e.request.method !== "GET" || u.origin !== location.origin) return;     // live data always from the network
@@ -27,11 +27,11 @@ function kv(key, val) {
 
 self.addEventListener("push", e => {
   let d = {};
-  try { d = e.data.json(); } catch (x) { d = {title: "FTMO Bots", body: e.data ? e.data.text() : ""}; }
+  try { d = e.data.json(); } catch (x) { d = {title: "Taloona Trade", body: e.data ? e.data.text() : ""}; }
   const opt = {body: d.body || "", dir: "rtl", lang: "he", icon: "icon-192.png", badge: "badge.png",
                silent: !!d.silent, tag: d.tag || undefined, renotify: !!d.tag, data: d, requireInteraction: d.action === "approve_update"};
   if (d.action === "approve_update") opt.actions = [{action: "approve", title: "אשר עדכון"}, {action: "later", title: "אחר כך"}];
-  e.waitUntil(self.registration.showNotification(d.title || "FTMO Bots", opt));
+  e.waitUntil(self.registration.showNotification(d.title || "Taloona Trade", opt));
 });
 
 async function managerUrl() {
@@ -52,7 +52,7 @@ self.addEventListener("notificationclick", e => {
           msg = r.ok ? "העדכון אושר. הבוטים מתעדכנים ועולים מחדש תוך כדקה." : "האישור נכשל: " + ((await r.json()).error || r.status);
         } catch (x) { msg = "אין חיבור למחשב הבוטים. נסה שוב מתוך האפליקציה."; }
       }
-      await self.registration.showNotification("FTMO Bots", {body: msg, dir: "rtl", lang: "he", icon: "icon-192.png", badge: "badge.png", tag: "update"});
+      await self.registration.showNotification("Taloona Trade", {body: msg, dir: "rtl", lang: "he", icon: "icon-192.png", badge: "badge.png", tag: "update"});
     })());
     return;
   }

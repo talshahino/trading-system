@@ -29,6 +29,8 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
     if key:
         _LAST[key] = time.time()
     _to_app(title, message, priority >= 5)
+    if _CFG.get("ntfy", True) is False:
+        return None            # notifications go to the app only
     if priority < 5 and quiet_now():
         priority = 2          # night: shows in the app without sound or vibration; urgent alerts still ring
     try:

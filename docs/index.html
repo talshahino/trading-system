@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F2F4F6">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
 <title>בוטי FTMO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700;800&family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -104,7 +108,25 @@ pre{margin:0;font-family:var(--mono);font-size:12px;line-height:1.55;white-space
 .banner.on{display:block}
 .banner.neg{background:var(--neg-soft);color:var(--neg)}.banner.warn{background:var(--warn-soft);color:var(--warn)}
 
+/* management */
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:600;min-width:0}
+.form .full{grid-column:1/-1}
+input,select{font:inherit;font-size:15px;color:var(--ink);background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px;width:100%}
+input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
+.btn{border:0;border-radius:10px;padding:10px 16px;min-height:44px;font-weight:700;font-size:14px;cursor:pointer;background:var(--vps);color:#fff}
+.btn.ghost{background:var(--seg);color:var(--ink)}
+.btn.danger{background:var(--neg-soft);color:var(--neg)}
+.btn.ok{background:var(--pos);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.msg{font-size:13px;margin-top:8px;min-height:18px}
+.acc{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.acc:last-child{border-bottom:0}
+.acc .nm{font-weight:700}
+.acc .row{margin-inline-start:auto}
 @media (max-width:760px){
+  .form{grid-template-columns:1fr}
   .grid{grid-template-columns:1fr}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
   .kps{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -157,6 +179,37 @@ pre{margin:0;font-family:var(--mono);font-size:12px;line-height:1.55;white-space
     </div>
   </section>
 
+  <section class="view" id="v-mgr">
+    <div class="card" id="installCard" style="display:none"><h3>אפליקציה</h3>
+      <div class="row"><span class="mut">אפשר להתקין את הדשבורד כאפליקציה במסך הבית.</span><button class="btn" id="installBtn">התקן אפליקציה</button></div></div>
+    <div class="card"><h3>מחשב הבוטים</h3>
+      <div class="row"><i class="dot" id="mDot"></i><span id="mState">מחפש את המנהל…</span></div>
+      <div class="msg mut" id="mVer"></div></div>
+    <div class="card"><h3>קוד סודי</h3>
+      <div class="row"><input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="הקוד שבחרת בהתקנה" style="max-width:260px">
+        <button class="btn" id="pinSave">שמור</button><button class="btn ghost" id="pinForget">שכח</button></div>
+      <div class="msg" id="pinMsg"></div></div>
+    <div class="card"><h3>התראות</h3>
+      <div class="row"><span class="mut" id="pushState">ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה.</span><button class="btn" id="pushBtn">הפעל התראות</button></div>
+      <div class="msg" id="pushMsg"></div></div>
+    <div class="card" id="updCard" style="display:none"><h3>עדכון</h3>
+      <div id="updText" style="margin-bottom:10px"></div>
+      <div class="row"><button class="btn ok" id="updBtn">אשר עדכון</button><span class="mut">העסקאות הפתוחות נשארות עם הסטופ והיעד, והבוטים עולים מחדש תוך כדקה.</span></div>
+      <div class="msg" id="updMsg"></div></div>
+    <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
+    <div class="card"><h3>הוספת חשבון</h3>
+      <form class="form" id="addForm" autocomplete="off">
+        <label>בוט<select id="fBot"><option value="bot1">בוט 1</option><option value="bot2">בוט 2</option><option value="bot3">בוט 3</option></select></label>
+        <label>שרת<input id="fServer" value="FTMO-Demo" autocapitalize="off" spellcheck="false"></label>
+        <label>מספר חשבון<input id="fLogin" inputmode="numeric" autocomplete="off"></label>
+        <label>סיסמת החשבון<input id="fPass" type="password" autocomplete="new-password"></label>
+        <div class="full row"><button class="btn" type="submit" id="addBtn">הוסף והפעל</button>
+          <span class="mut">הסיסמה נשמרת מוצפנת רק במחשב הבוטים. כרגע אפשר להוסיף רק חשבון דמו.</span></div>
+      </form>
+      <div class="msg" id="addMsg"></div></div>
+    <div class="card"><h3>יומן המנהל</h3><pre id="mJournal"></pre></div>
+  </section>
+
   <section class="view" id="v-log">
     <div class="card"><h3>יומן הבוט</h3><pre id="journal"></pre></div>
   </section>
@@ -165,12 +218,15 @@ pre{margin:0;font-family:var(--mono);font-size:12px;line-height:1.55;white-space
 <nav class="tabs" id="tabs">
   <button data-v="v-acc" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg>חשבון</button>
   <button data-v="v-stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>סטטיסטיקה</button>
+  <button data-v="v-mgr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>ניהול</button>
   <button data-v="v-log"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 4h12v16H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>יומן</button>
 </nav>
 
 <script>
 const BOTS = ["bot1", "bot2", "bot3"];
 const NAMES = {bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3"};
+const MGR_STATE = () => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/manager_state.json?t=${Date.now()}`;
+let mgr = null, mgrInfo = null;
 const RAW = b => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/${b}_state.json?t=${Date.now()}`;
 const API = b => `https://api.github.com/repos/talshahino/trading-system/contents/live/${b}_state.json?ref=live`;
 let cur = "bot1", found = {}, per = "day", hist = "week";
@@ -357,19 +413,22 @@ document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
   document.querySelectorAll("#tabs button").forEach(x => x.setAttribute("aria-selected", x === b));
   document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === b.dataset.v));
   if (b.dataset.v === "v-stats" && found[cur]) chart(found[cur].equity_curve, found[cur].initial);
+  if (b.dataset.v === "v-mgr") mgrRefresh();
   scrollTo(0, 0);
 });
 
 /* real time: the bot serves /live (every second) and /state (full) through its tunnel; its address is in the GitHub state */
 let liveOk = false, liveBusy = false, lastFull = 0;
-function setLive(ok) { liveOk = ok; $("lLive").className = "dot " + (ok ? "on" : found[cur] && found[cur].live_url ? "off" : ""); }
+function setLive(ok) { liveOk = ok; $("lLive").className = "dot " + (ok ? "on" : (found[cur] && found[cur].live_url) || mgr ? "off" : ""); }
 async function livePoll() {
   const s = found[cur];
-  if (liveBusy || !s || !s.live_url) { if (!liveBusy) setLive(false); return; }
+  const viaMgr = mgr && mgrInfo && mgrInfo.accounts.some(a => a.name === cur);
+  const base = viaMgr ? `${mgr}/bot/${cur}` : s && s.live_url;
+  if (liveBusy || !s || !base) { if (!liveBusy) setLive(false); return; }
   liveBusy = true;
   try {
     const full = Date.now() - lastFull > 20000;
-    const r = await fetch(s.live_url + (full ? "/state" : "/live"), {cache: "no-store"});
+    const r = await fetch(base + (full ? "/state" : "/live"), {cache: "no-store"});
     if (!r.ok) throw new Error(r.status);
     const j = await r.json();
     if (j && j.updated_utc) {
@@ -382,7 +441,107 @@ async function livePoll() {
 }
 setInterval(livePoll, 250);
 
+/* ---------- the bots' manager: control, accounts, notifications, updates ---------- */
+function kv(key, val) {           // shared with the service worker (sw.js)
+  return new Promise(res => {
+    try {
+      const o = indexedDB.open("ftmo-bots", 1);
+      o.onupgradeneeded = () => o.result.createObjectStore("kv");
+      o.onerror = () => res(null);
+      o.onsuccess = () => { const tx = o.result.transaction("kv", val === undefined ? "readonly" : "readwrite"), st = tx.objectStore("kv");
+        const q = val === undefined ? st.get(key) : (val === null ? st.delete(key) : st.put(val, key)); q.onsuccess = () => res(q.result); q.onerror = () => res(null); };
+    } catch (e) { res(null); }
+  });
+}
+const getPin = () => { try { return localStorage.getItem("pin") || ""; } catch (e) { return ""; } };
+async function findMgr() {
+  try { const r = await fetch(MGR_STATE(), {cache: "no-store"}); if (r.ok) { const j = await r.json(); if (j.url) { mgr = j.url; kv("mgr", mgr); } } } catch (e) {}
+  if (!mgr) return null;
+  try { const r = await fetch(mgr + "/status", {cache: "no-store"}); if (r.ok) { mgrInfo = await r.json(); return mgrInfo; } } catch (e) {}
+  mgrInfo = null; return null;
+}
+async function act(path, body = {}) {
+  if (!mgr) throw new Error("אין חיבור למחשב הבוטים");
+  const r = await fetch(mgr + path, {method: "POST", headers: {"Content-Type": "application/json", "X-Pin": getPin()}, body: JSON.stringify(body)});
+  let j = {}; try { j = await r.json(); } catch (e) {}
+  if (!r.ok) throw new Error(j.error || ("שגיאה " + r.status));
+  return j;
+}
+const note = (id, text, ok) => { $(id).className = "msg " + (ok === true ? "pos" : ok === false ? "neg" : "mut"); $(id).textContent = text; };
+function renderMgr() {
+  const m = mgrInfo;
+  $("mDot").className = "dot " + (m ? "on" : mgr ? "off" : "");
+  $("mState").textContent = m ? "המנהל מחובר" : mgr ? "המנהל לא עונה. בדוק שהמחשב דולק." : "המנהל עוד לא הותקן במחשב.";
+  $("mVer").textContent = m ? `גרסה ${m.version || "?"} · ${m.push_devices} מכשירים מקבלים התראות` : "";
+  $("updCard").style.display = m && m.update ? "" : "none";
+  if (m && m.update) $("updText").innerHTML = `<b>${esc(m.update.title)}</b> <span class="mut num">${esc(m.update.sha)}</span>`;
+  $("accs").innerHTML = m && m.accounts.length ? m.accounts.map(a => `<div class="acc"><i class="dot ${a.running ? "on" : a.enabled ? "mid" : ""}"></i>
+      <span class="nm">${esc(a.label)}</span><span class="pill ${a.running ? "pos" : ""}">${a.running ? "פועל" : a.enabled ? "עולה…" : "עצור"}</span>
+      ${a.server ? `<span class="mut">${esc(a.server)}</span>` : ""}
+      <span class="row">${a.enabled ? `<button class="btn danger" data-a="stop" data-n="${esc(a.name)}">עצור</button>` : `<button class="btn ok" data-a="start" data-n="${esc(a.name)}">הפעל</button>`}
+      ${a.login ? `<button class="btn ghost" data-a="remove" data-n="${esc(a.name)}">הסר</button>` : ""}</span></div>`).join("")
+    : `<div class="empty">${m ? "אין חשבונות עדיין." : "ממתין למנהל…"}</div>`;
+  $("accs").querySelectorAll("button[data-a]").forEach(b => b.onclick = async () => {
+    const a = b.dataset.a, n = b.dataset.n;
+    if (a === "remove" && !confirmBox(n)) return;
+    b.disabled = true;
+    try { await act(`/accounts/${encodeURIComponent(n)}/${a}`); note("accMsg", a === "stop" ? "הבוט נעצר." : a === "start" ? "הבוט מופעל." : "החשבון הוסר.", true); }
+    catch (e) { note("accMsg", e.message, false); }
+    setTimeout(mgrRefresh, 1500);
+  });
+  $("mJournal").textContent = m ? (m.journal || []).slice().reverse().join("\n") : "";
+}
+function confirmBox(n) { return prompt(`להסיר את ${n}? הבוט ייעצר והחשבון יוסר מהרשימה. כתוב "הסר" לאישור:`) === "הסר"; }
+async function mgrRefresh() { await findMgr(); renderMgr(); mgrBots(); }
+function mgrBots() {
+  if (!mgrInfo) return;
+  mgrInfo.accounts.forEach(a => { if (!BOTS.includes(a.name)) BOTS.push(a.name); NAMES[a.name] = a.label; });
+}
+$("pin").value = getPin();
+$("pinSave").onclick = async () => {
+  const v = $("pin").value.trim();
+  try { localStorage.setItem("pin", v); } catch (e) {}
+  await kv("pin", v);
+  try { await act("/auth"); note("pinMsg", "הקוד נכון ונשמר במכשיר הזה.", true); } catch (e) { note("pinMsg", e.message, false); }
+};
+$("pinForget").onclick = async () => { try { localStorage.removeItem("pin"); } catch (e) {} await kv("pin", null); $("pin").value = ""; note("pinMsg", "הקוד נמחק מהמכשיר הזה."); };
+$("updBtn").onclick = async () => {
+  $("updBtn").disabled = true;
+  try { await act("/update/approve"); note("updMsg", "העדכון אושר. הבוטים מתעדכנים ועולים מחדש תוך כדקה.", true); }
+  catch (e) { note("updMsg", e.message, false); $("updBtn").disabled = false; }
+};
+$("addForm").onsubmit = async ev => {
+  ev.preventDefault();
+  $("addBtn").disabled = true; note("addMsg", "מוסיף… העתקת MetaTrader יכולה לקחת דקה.");
+  try {
+    await act("/accounts/add", {bot: $("fBot").value, server: $("fServer").value.trim(), login: $("fLogin").value.trim(), password: $("fPass").value});
+    $("fPass").value = ""; $("fLogin").value = "";
+    note("addMsg", "החשבון נוסף והבוט מופעל. MetaTrader ייפתח במחשב ויתחבר לחשבון.", true);
+  } catch (e) { note("addMsg", e.message, false); }
+  $("addBtn").disabled = false; mgrRefresh();
+};
+const b64u = s => { const p = "=".repeat((4 - s.length % 4) % 4), b = atob((s + p).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(b, c => c.charCodeAt(0)); };
+$("pushBtn").onclick = async () => {
+  try {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) throw new Error("הדפדפן הזה לא תומך בהתראות. פתח ב־Chrome.");
+    if (!getPin()) throw new Error("קודם שמור את הקוד הסודי.");
+    if (await Notification.requestPermission() !== "granted") throw new Error("ההרשאה להתראות לא ניתנה. אפשר לשנות בהגדרות האתר.");
+    const reg = await navigator.serviceWorker.ready;
+    const key = (await (await fetch(mgr + "/vapid")).json()).key;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) sub = await reg.pushManager.subscribe({userVisibleOnly: true, applicationServerKey: b64u(key)});
+    await act("/subscribe", {subscription: sub.toJSON()});
+    note("pushMsg", "ההתראות פעילות. אמורה להגיע עכשיו התראת בדיקה.", true);
+  } catch (e) { note("pushMsg", e.message, false); }
+};
+let installEvt = null;
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; $("installCard").style.display = ""; });
+$("installBtn").onclick = async () => { if (!installEvt) return; installEvt.prompt(); await installEvt.userChoice; installEvt = null; $("installCard").style.display = "none"; };
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+setInterval(() => { if ($("v-mgr").classList.contains("on")) mgrRefresh(); }, 5000);
+
 async function tick() {
+  if (!mgrInfo) { await findMgr(); mgrBots(); }
   for (const b of BOTS) {
     const s = await load(b);
     if (!s) continue;
@@ -394,7 +553,7 @@ async function tick() {
   if (found[cur]) render(found[cur]); else $("acct").textContent = "עוד אין נתונים מהבוטים. הם מופיעים כמה דקות אחרי שבוט מתחיל לעבוד.";
 }
 addEventListener("resize", () => found[cur] && chart(found[cur].equity_curve, found[cur].initial));
-tick(); setInterval(tick, 60000);
+tick(); setInterval(tick, 60000); setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
 </script>
 </body>
 </html>

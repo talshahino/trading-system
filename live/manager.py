@@ -462,8 +462,15 @@ def heartbeat():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--set-pin", action="store_true")
+    ap.add_argument("--only-if-missing", action="store_true")
     args = ap.parse_args()
     load()
+    if args.set_pin and args.only_if_missing and CFG.get("pin_hash"):
+        print("A secret code is already set (to change it: python live\\manager.py --set-pin).")
+        return
+    if (args.set_pin or not CFG.get("pin_hash")) and not sys.stdin:
+        log("no secret code set: run live\\install_manager.bat first")
+        return
     if args.set_pin or not CFG.get("pin_hash"):
         import getpass
         while True:

@@ -332,6 +332,14 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .ask .box p{margin:0 0 16px;color:var(--muted);line-height:1.5}
 .ask .box .row{justify-content:center}
 .ask .box .btn{min-width:110px}
+
+/* active trades: each trade its own card, its close slider in the card's footer */
+.tcards{display:flex;flex-direction:column;gap:12px;margin-bottom:6px}
+.tcard{background:var(--panel);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(31,58,95,.10)}
+.tcard .tr{border-top:0}
+.tfoot{background:rgba(31,58,95,.05);border-top:1px dashed rgba(31,58,95,.18);padding:4px 14px 10px}
+.allcard{border-radius:16px;padding:10px 14px 12px;margin-top:4px;background:rgba(31,58,95,.07);border:1.5px solid rgba(31,58,95,.22)}
+.allcard b{display:block;font-size:13.5px;color:var(--vps)}
 </style>
 </head>
 <body>
@@ -1137,10 +1145,11 @@ function filtered(s) {
 }
 function trades(s, a, light) {
   const can = viaMgr(UI.cur) && !a.archived, ps = s.positions || [];
-  const open = ps.map(p => `<div>${trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p))}
-    ${p.ticket ? `<div style="padding:0 14px 10px">${slider("t:" + p.ticket, `גרור לסגירת העסקה ב־${esc(p.symbol)}`, false, can)}</div>` : ""}</div>`).join("");
-  const openH = `<div class="h4">עסקאות פעילות <span class="badge">${ps.length}</span></div><div class="tl">${TH}${open || '<div class="empty" style="border-radius:0">אין עסקאות פעילות כרגע.</div>'}</div>
-    ${ps.length ? slider("all", `גרור לסגירת כל ${ps.length > 1 ? ps.length + " העסקאות" : "העסקה"}`, true, can) : ""}
+  const open = ps.map(p => `<div class="tcard">${trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p))}
+    ${p.ticket ? `<div class="tfoot">${slider("t:" + p.ticket, `גרור לסגירת העסקה ב־${esc(p.symbol)}`, false, can)}</div>` : ""}</div>`).join("");
+  const openH = `<div class="h4">עסקאות פעילות <span class="badge">${ps.length}</span></div>
+    <div class="tcards">${open || '<div class="empty">אין עסקאות פעילות כרגע.</div>'}</div>
+    ${ps.length > 1 ? `<div class="allcard"><b>כל העסקאות הפעילות (${ps.length})</b>${slider("all", `גרור לסגירת כל ${ps.length} העסקאות`, true, can)}</div>` : ""}
     ${ps.length && !can ? '<div class="foot" style="margin-top:6px">סגירה מהאפליקציה אפשרית רק כשמחשב הבוטים מחובר.</div>' : ""}`;
   if (light && $("trOpen")) { if (!UI.drag) $("trOpen").innerHTML = openH; return; }
   $("dBody").innerHTML = `<div id="trOpen">${openH}</div>

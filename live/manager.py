@@ -485,7 +485,8 @@ def push_manager_state():
     encrypted, as a GitHub secret) nobody can send anything to them."""
     state = {"url": TUN.URL["url"], "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
              "accounts": [{"name": a["name"], "label": a.get("label", a["name"])} for a in accounts()],
-             "subs": CFG.get("subs", [])}
+             "subs": CFG.get("subs", []), "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting"),
+             "journal": [l for l in list(JOURNAL)[-25:] if "password" not in l.lower()]}
     err = REP.push_state("manager", state)
     if err:
         log(err)

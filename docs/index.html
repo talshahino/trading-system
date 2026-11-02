@@ -229,7 +229,7 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 const BOTS = ["bot1", "bot2", "bot3"];
 const NAMES = {bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3"};
 const MGR_STATE = () => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/manager_state.json?t=${Date.now()}`;
-let mgr = null, mgrInfo = null;
+let mgr = null, mgrInfo = null, mgrSeen = null;
 const RAW = b => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/${b}_state.json?t=${Date.now()}`;
 const API = b => `https://api.github.com/repos/talshahino/trading-system/contents/live/${b}_state.json?ref=live`;
 let cur = "bot1", found = {}, per = "day", hist = "week";
@@ -458,7 +458,7 @@ function kv(key, val) {           // shared with the service worker (sw.js)
 }
 const getPin = () => { try { return localStorage.getItem("pin") || ""; } catch (e) { return ""; } };
 async function findMgr() {
-  try { const r = await fetch(MGR_STATE(), {cache: "no-store"}); if (r.ok) { const j = await r.json(); if (j.url) { mgr = j.url; kv("mgr", mgr); } } } catch (e) {}
+  try { const r = await fetch(MGR_STATE(), {cache: "no-store"}); if (r.ok) { const j = await r.json(); mgrSeen = j.updated_utc; if (j.url) { mgr = j.url; kv("mgr", mgr); } } } catch (e) {}
   if (!mgr) return null;
   try { const r = await fetch(mgr + "/status", {cache: "no-store"}); if (r.ok) { mgrInfo = await r.json(); return mgrInfo; } } catch (e) {}
   mgrInfo = null; return null;
@@ -474,7 +474,8 @@ const note = (id, text, ok) => { $(id).className = "msg " + (ok === true ? "pos"
 function renderMgr() {
   const m = mgrInfo;
   $("mDot").className = "dot " + (m ? "on" : mgr ? "off" : "");
-  $("mState").textContent = m ? "המנהל מחובר" : mgr ? "המנהל לא עונה. בדוק שהמחשב דולק." : "המנהל עוד לא הותקן במחשב.";
+  $("mState").textContent = m ? "המנהל מחובר" : mgr ? "המנהל לא עונה. בדוק שהמחשב דולק."
+    : mgrSeen ? "המנהל פועל, אבל החיבור לאפליקציה עוד לא עלה. מנסה שוב…" : "המנהל עוד לא הותקן במחשב.";
   $("mVer").textContent = m ? `גרסה ${m.version || "?"} · ${m.push_devices} מכשירים מקבלים התראות` : "";
   $("pushState").textContent = !m ? "ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה." : m.watchdog_push
     ? "פעיל: התראות מהבוטים, וגם התראה אם המחשב כבה או מתנתק."
@@ -508,7 +509,8 @@ $("pinSave").onclick = async () => {
   const v = $("pin").value.trim();
   try { localStorage.setItem("pin", v); } catch (e) {}
   await kv("pin", v);
-  try { await act("/auth"); note("pinMsg", "הקוד נכון ונשמר במכשיר הזה.", true); } catch (e) { note("pinMsg", e.message, false); }
+  try { await act("/auth"); note("pinMsg", "הקוד נכון ונשמר במכשיר הזה.", true); }
+  catch (e) { note("pinMsg", mgr && mgrInfo ? e.message : "הקוד נשמר במכשיר. אין כרגע חיבור למחשב, אז עוד לא בדקתי שהוא נכון.", mgr && mgrInfo ? false : undefined); }
 };
 $("pinForget").onclick = async () => { try { localStorage.removeItem("pin"); } catch (e) {} await kv("pin", null); $("pin").value = ""; note("pinMsg", "הקוד נמחק מהמכשיר הזה."); };
 $("updBtn").onclick = async () => {
@@ -531,6 +533,7 @@ $("pushBtn").onclick = async () => {
   try {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) throw new Error("הדפדפן הזה לא תומך בהתראות. פתח ב־Chrome.");
     if (!getPin()) throw new Error("קודם שמור את הקוד הסודי.");
+    if (!mgr || !mgrInfo) throw new Error("אין חיבור למחשב הבוטים כרגע. נסה שוב כשהנקודה ליד 'המנהל מחובר' ירוקה.");
     if (await Notification.requestPermission() !== "granted") throw new Error("ההרשאה להתראות לא ניתנה. אפשר לשנות בהגדרות האתר.");
     const reg = await navigator.serviceWorker.ready;
     const key = (await (await fetch(mgr + "/vapid")).json()).key;

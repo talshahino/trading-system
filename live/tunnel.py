@@ -111,7 +111,8 @@ def tunnel(port, log, on_url, name="bot"):
                 run.n = attempt + 1
                 proto = ["--protocol", "http2"] if attempt % 2 else []     # some networks block QUIC (UDP): try plain TCP too
                 p = subprocess.Popen([str(EXE), "tunnel", "--no-autoupdate", *proto, "--url", f"http://127.0.0.1:{port}"],
-                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, creationflags=flags)
+                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, creationflags=flags,
+                                     encoding="utf-8", errors="replace")   # cloudflared prints UTF-8; Windows' default (cp1252) crashed on it
                 pid_file.write_text(str(p.pid))
                 tail = []
                 for line in p.stdout:
@@ -128,6 +129,10 @@ def tunnel(port, log, on_url, name="bot"):
             except Exception as e:  # noqa: BLE001
                 URL["err"] = str(e)
                 log(f"tunnel error: {e}; restarting in {wait} s")
+                try:
+                    p.kill()                    # never leave a running tunnel behind before starting another one
+                except Exception:  # noqa: BLE001
+                    pass
             URL["url"] = None
             time.sleep(wait)
             wait = min(wait * 2, 600)        # Cloudflare limits how often a new quick tunnel may be asked for

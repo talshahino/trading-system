@@ -1052,6 +1052,10 @@ function bar(p) {
   const fill = u >= 0 ? `left:${(fe * 100).toFixed(2)}%;width:${((fc - fe) * 100).toFixed(2)}%;background:rgba(30,138,76,${g.toFixed(2)});box-shadow:0 0 ${(4 + 14 * inten).toFixed(0)}px rgba(30,138,76,${(.25 + .6 * inten).toFixed(2)})`
                       : `left:${(fc * 100).toFixed(2)}%;width:${((fe - fc) * 100).toFixed(2)}%;background:rgba(208,69,58,${g.toFixed(2)});box-shadow:0 0 ${(4 + 14 * inten).toFixed(0)}px rgba(208,69,58,${(.25 + .6 * inten).toFixed(2)})`;
   const be = uSl >= 0;
+  // dollars at the stop / target: from MT5 (sl_usd, tp_usd); otherwise estimated from the current P/L per price unit
+  const per = Math.abs(px - en) > 1e-9 ? p.pnl / ((px - en) * dir) : null;
+  const slUsd = p.sl_usd ?? (p.sl && per ? per * (p.sl - en) * dir : null), tpUsd = tp ? (p.tp_usd ?? (per ? per * (tp - en) * dir : null)) : null;
+  const usdL = v => v == null ? "—" : usd(v, true);
   return `<div class="pb"><div class="trk">
       <div class="seg-l" style="left:0;width:${(fe * 100).toFixed(2)}%;background:rgba(208,69,58,.14)"></div>
       <div class="seg-r" style="left:${(fe * 100).toFixed(2)}%;right:0;background:rgba(30,138,76,.14)"></div>
@@ -1059,7 +1063,9 @@ function bar(p) {
       ${p.sl && Math.abs(p.sl - sl0) > 1e-9 ? `<div class="slm ${be ? "be" : ""}" style="left:${(fs * 100).toFixed(2)}%" title="סטופ נוכחי"></div>` : ""}
       <div class="ent" style="left:${(fe * 100).toFixed(2)}%"></div>
       <div class="cur" style="left:${(fc * 100).toFixed(2)}%;background:${u >= 0 ? "#1E8A4C" : "#D0453A"}"></div></div>
-    <div class="lab"><span style="left:0" class="neg">SL ${sl0 || "—"}${p.sl && Math.abs(p.sl - sl0) > 1e-9 ? ` → ${p.sl}` : ""}</span><span class="m" style="left:${(fe * 100).toFixed(2)}%">${en}</span><span class="r pos">TP ${tp || "—"}</span></div>
+    <div class="lab" style="height:20px"><span class="m" style="left:${Math.max(12, Math.min(88, fe * 100)).toFixed(2)}%;top:3px">${en}</span></div>
+    <div class="lab" style="height:36px"><span style="left:0;top:0;line-height:1.35"><span class="neg">SL ${sl0 || "—"}${p.sl && Math.abs(p.sl - sl0) > 1e-9 ? ` → ${p.sl}` : ""}</span><br><b class="${slUsd != null && slUsd >= 0 ? "pos" : "neg"}">${usdL(slUsd)}</b></span>
+      <span class="r pos" style="top:0;line-height:1.35;text-align:right">TP ${tp || "—"}<br><b>${tp ? usdL(tpUsd) : "—"}</b></span></div>
     <div class="way">${way}${be ? ' · <span class="pos">הסטופ בנקודת איזון ומעלה</span>' : ""}</div></div>`;
 }
 const trRow = (side, t, sym, pl, key, extra = "") => `<div class="tr" data-t="${esc(key)}"><div class="tg">${side === "buy" ? ICON.up : ICON.down}
@@ -1075,7 +1081,7 @@ function filtered(s) {
 }
 function trades(s, a, light) {
   const open = (s.positions || []).map(p => trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p))).join("");
-  const openH = `<div class="h4">עסקאות פתוחות <span class="badge">${(s.positions || []).length}</span></div><div class="tl">${TH}${open || '<div class="empty" style="border-radius:0">אין עסקאות פתוחות כרגע.</div>'}</div>`;
+  const openH = `<div class="h4">עסקאות פעילות <span class="badge">${(s.positions || []).length}</span></div><div class="tl">${TH}${open || '<div class="empty" style="border-radius:0">אין עסקאות פעילות כרגע.</div>'}</div>`;
   if (light && $("trOpen")) { $("trOpen").innerHTML = openH; return; }
   $("dBody").innerHTML = `<div id="trOpen">${openH}</div>
     <div class="h4" style="margin-top:18px">עסקאות סגורות</div>

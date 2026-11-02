@@ -677,9 +677,20 @@ def monitor():
             REP.notify(f"{BOT}: הדשבורד לא מתעדכן", err, priority=3, key="push", every=6 * 3600)
 
 
+def _at(p, price):
+    """Profit/loss in dollars if the position closes at price (MT5's own calculation, before commission)."""
+    if not price:
+        return None
+    try:
+        v = mt5.order_calc_profit(mt5.ORDER_TYPE_BUY if p.type == 0 else mt5.ORDER_TYPE_SELL, p.symbol, p.volume, p.price_open, price)
+        return round(v, 2) if v is not None else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def positions_doc(pos):
     meta = STATE.get("pos_meta", {})
-    return [{"ticket": p.ticket, "side": "buy" if p.type == 0 else "sell", "sl0": meta.get(str(p.ticket), {}).get("sl0") or p.sl,
+    return [{"ticket": p.ticket, "sl_usd": _at(p, p.sl), "tp_usd": _at(p, p.tp), "side": "buy" if p.type == 0 else "sell", "sl0": meta.get(str(p.ticket), {}).get("sl0") or p.sl,
              "tp0": meta.get(str(p.ticket), {}).get("tp0") or p.tp, "mae": meta.get(str(p.ticket), {}).get("mae"),
              "mfe": meta.get(str(p.ticket), {}).get("mfe"), "pip": pip_size(p.symbol),
              "combo": combo_of(p.magic), "symbol": p.symbol, "dir": "קנייה" if p.type == 0 else "מכירה",

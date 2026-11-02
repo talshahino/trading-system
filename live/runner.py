@@ -300,15 +300,23 @@ def stock_session_close(now):
             close(p, "session end")
 
 
+DIAG = {}
+
+
 def step(combo, sid, tf, sym, off):
     df = bars(sym, tf, off)
+    now = pd.Timestamp.now(tz="UTC")
     if df is None:
+        DIAG[combo] = {"at": now.isoformat(timespec="seconds"), "bars": 0}
         return
     # The newest MT5 bar is still forming: keep only its open (what the backtest knows at entry),
     # and add one flat bar after it, because the engine enters on the bar AFTER a signal.
     forming = df.index[-1]
     last_closed = df.index[-2]
-    if pd.Timestamp.now(tz="UTC") - forming >= pd.Timedelta(minutes=TF_MIN[tf]):
+    DIAG[combo] = {"at": now.isoformat(timespec="seconds"), "bars": len(df), "forming": forming.isoformat(),
+                   "age_min": round((now - forming).total_seconds() / 60, 1)}
+    if now - forming >= pd.Timedelta(minutes=TF_MIN[tf]):
+        DIAG[combo]["stale"] = True
         return          # the newest bar is not in progress: market closed (weekend/holiday/session break)
     df.iloc[-1, df.columns.get_indexer(["h", "l", "c"])] = df["o"].iloc[-1]
     dummy = df.iloc[[-1]].copy()
@@ -316,6 +324,9 @@ def step(combo, sid, tf, sym, off):
     df = pd.concat([df, dummy])
     be = (0.6, be_offset(sym, float(df["c"].iloc[-3])))
     tr = R.run(df, R.STRATEGIES[sid][1], 0.0, breakeven=be, session_exit=session_mask(df, sym, tf))
+    if len(tr):
+        DIAG[combo]["last_signal"] = f"{tr.iloc[-1]['time']} {'buy' if tr.iloc[-1]['dir'] > 0 else 'sell'} {tr.iloc[-1]['reason']}"
+        DIAG[combo]["trades_in_window"] = int(len(tr))
     pos = [p for p in ACC.positions() if p.magic == MAGICS_BY_COMBO[combo]]
 
     def stop_now():
@@ -421,6 +432,11 @@ def monitor():
             REP.notify(f"{BOT}: הפסד יומי {dd:.1f}%", f"ההון ${ai.equity:,.0f} · רף FTMO היומי 5% · הבוט עוצר הכל ב־4.5%",
                        priority=4 if lvl < 4 else 5, tags=["warning"])
     # equity history every 5 minutes, dashboard every 3 minutes
+    if time.time() - MON.get("diag_log", 0) >= 1800 and DIAG:
+        MON["diag_log"] = time.time()
+        vals = list(DIAG.values())
+        log(f"status: {len(vals)} combos checked | no data {sum(1 for v in vals if not v.get('bars'))} | "
+            f"market closed {sum(1 for v in vals if v.get('stale'))} | open positions {len(pos)}")
     if time.time() - MON["eq"] >= 300:
         MON["eq"] = time.time()
         STATE.setdefault("equity", []).append([now.isoformat(timespec="minutes"), round(ai.balance, 2), round(ai.equity, 2)])
@@ -455,7 +471,7 @@ def dashboard_state(ai, pos, ds_bal, now):
                        "since": server_ts(p.time).isoformat(),
                        "free": bool(p.sl and ((p.type == 0 and p.sl >= p.price_open) or (p.type == 1 and p.sl <= p.price_open)))}
                       for p in pos.values()],
-        "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:], "journal": list(JOURNAL)[-150:],
+        "diag": DIAG, "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:], "journal": list(JOURNAL)[-150:],
     }
 
 

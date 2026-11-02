@@ -1,0 +1,139 @@
+[
+ {
+  "bot": 3,
+  "account": "Swing",
+  "risk": 0.0025,
+  "combos_with_trades": 26,
+  "trades": 5303,
+  "skipped_by_guard": 0,
+  "end_balance": 218920,
+  "blown": null,
+  "worst_intraday_pct": -2.43,
+  "lowest_equity": 94526,
+  "losing_weeks": 18,
+  "weeks": 79,
+  "prophet": "PASS",
+  "prophet_reasons": [],
+  "pass_rate_pct": 100.0,
+  "breach_rate_pct": 0.0,
+  "samples": 67,
+  "exit_reasons": {
+   "סגירה בשעה קבועה": 1954,
+   "סטופ": 1435,
+   "יעד": 593,
+   "סיגנל יציאה": 378,
+   "סטופ נגרר / נקודת איזון": 367,
+   "יציאת זמן": 252,
+   "סטופ נגרר": 211,
+   "סטופ נגרר (פער פתיחה)": 109
+  },
+  "margin": {
+   "peak_margin": 465013,
+   "peak_when": "2026-08-10 18:45:00+00:00",
+   "peak_pct": 465.0,
+   "refused": 359,
+   "refused_examples": [
+    {
+     "combo": "SS11|5Min|PFE",
+     "time": "2025-05-01 14:35:00+00:00",
+     "need": 59545,
+     "used": 66781
+    },
+    {
+     "combo": "TV29|1Hour|US2000",
+     "time": "2025-05-01 15:00:00+00:00",
+     "need": 2238,
+     "used": 126326
+    },
+    {
+     "combo": "TV50|15Min|ASML",
+     "time": "2025-05-02 14:30:00+00:00",
+     "need": 44231,
+     "used": 62527
+    },
+    {
+     "combo": "TV50|15Min|ASML",
+     "time": "2025-05-05 14:30:00+00:00",
+     "need": 55713,
+     "used": 76421
+    },
+    {
+     "combo": "SS07|15Min|NVDA",
+     "time": "2025-05-06 14:45:00+00:00",
+     "need": 27543,
+     "used": 76759
+    },
+    {
+     "combo": "TT01|1Hour|US100",
+     "time": "2025-05-06 15:00:00+00:00",
+     "need": 2001,
+     "used": 104302
+    },
+    {
+     "combo": "TV36|1Hour|GOOG",
+     "time": "2025-05-06 15:00:00+00:00",
+     "need": 26176,
+     "used": 106303
+    },
+    {
+     "combo": "TV12|4Hour|ARM",
+     "time": "2025-05-06 16:00:00+00:00",
+     "need": 23974,
+     "used": 80928
+    }
+   ],
+   "median_margin_per_trade_by_class": {
+    "energy": 1067.0,
+    "fx": 4301.0,
+    "index": 3729.0,
+    "metal": 1860.0,
+    "stock": 23324.0
+   }
+  },
+  "quality": "full"
+ },
+ {
+  "bot": 3,
+  "account": "Standard",
+  "risk": 0.0025,
+  "combos_with_trades": 26,
+  "trades": 5302,
+  "skipped_by_guard": 0,
+  "end_balance": 206432,
+  "blown": null,
+  "worst_intraday_pct": -2.5,
+  "lowest_equity": 91749,
+  "losing_weeks": 24,
+  "weeks": 79,
+  "prophet": "PASS",
+  "prophet_reasons": [],
+  "pass_rate_pct": 100.0,
+  "breach_rate_pct": 0.0,
+  "samples": 67,
+  "exit_reasons": {
+   "סגירה בשעה קבועה": 1929,
+   "סטופ": 1412,
+   "יעד": 567,
+   "סיגנל יציאה": 360,
+   "סטופ נגרר / נקודת איזון": 350,
+   "יציאת זמן": 252,
+   "סטופ נגרר": 205,
+   "נסגרה לפני הודעה מוגבלת": 119
+  },
+  "margin": {
+   "peak_margin": 139641,
+   "peak_when": "2026-08-10 18:45:00+00:00",
+   "peak_pct": 139.6,
+   "refused": 0,
+   "refused_examples": [],
+   "median_margin_per_trade_by_class": {
+    "energy": 320.0,
+    "fx": 1290.0,
+    "index": 1118.0,
+    "metal": 558.0,
+    "stock": 7004.0
+   }
+  },
+  "quality": "full"
+ }
+]

@@ -238,9 +238,10 @@ def holiday_block(sym, now=None, before_min=30):
     if not CLOSE_BREAKS:
         return None
     now = now or pd.Timestamp.now(tz="UTC")
-    for day, cur, title in _calendar()["holidays"]:
-        if CAL.holiday_affects(sym, cur, title) and day - pd.Timedelta(minutes=before_min) <= now < day + pd.Timedelta(days=1):
-            return f"{title} ({cur})"
+    hol = _calendar()["holidays"]
+    for day in CAL.closed_days(sym, hol):
+        if day - pd.Timedelta(minutes=before_min) <= now < day + pd.Timedelta(days=1):
+            return ", ".join(sorted({f"{t} ({c})" for d, c, t in hol if d == day and "Daylight" not in t}))
     return None
 
 
@@ -715,10 +716,14 @@ def main():
         for t, ins, hit in sorted(ev):
             if hit:
                 log(f"  {il(t)}  restricted: {ins} -> {', '.join(hit)}")
-        for day, cur, title in sorted(cal["holidays"]):
-            hit = [x for x in syms if CAL.holiday_affects(x, cur, title)]
-            if hit and day >= pd.Timestamp.now(tz="UTC").normalize():
-                log(f"  {day.strftime('%a %d.%m')}  holiday: {title} ({cur}) -> {', '.join(hit)}")
+        days_hit = {}
+        for x in syms:
+            for d in CAL.closed_days(x, cal["holidays"]):
+                if d >= pd.Timestamp.now(tz="UTC").normalize():
+                    days_hit.setdefault(d, []).append(x)
+        for d, hit in sorted(days_hit.items()):
+            names = ", ".join(sorted({f"{t} ({c})" for dd, c, t in cal["holidays"] if dd == d and "Daylight" not in t}))
+            log(f"  {d.strftime('%a %d.%m')}  holiday: {names} -> market closed for {', '.join(hit)}")
     global BOT
     BOT = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}.get(name, name)
     MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])

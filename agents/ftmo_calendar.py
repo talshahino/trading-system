@@ -16,6 +16,11 @@ from agents import ftmo_universe as U
 API = "https://gw2.ftmo.com/public-api/v1/economic-calendar"
 US_INDICES = {"US30", "US100", "US500", "US2000"}
 OIL = {"WTI", "BRENT"}
+EU_COUNTRY = ("German", "French", "Italian", "Spanish", "Dutch")
+EU_HOME = {"GER40": "German", "EU50": "German", "ADSGn": "German", "ALVG": "German", "BAYGn": "German",
+           "DBKGn": "German", "SIEGn": "German", "VOWG_p": "German", "BMW": "German", "MBG": "German",
+           "FRA40": "French", "AIRF": "French", "LVMH": "French", "TTE": "French",
+           "RACE": "Italian", "SPN35": "Spanish", "IBE": "Spanish", "SAN": "Spanish", "N25": "Dutch", "ASML": "Dutch"}
 
 
 def _fx_currencies(sym):
@@ -38,15 +43,40 @@ def restricted_affects(sym, instrument: str) -> bool:
 
 
 def holiday_affects(sym, currency: str, title: str = "") -> bool:
-    """Does a bank holiday of `currency` close the market of `sym`? (FX keeps trading.)"""
+    """Does a bank holiday of `currency` alone close the market of `sym`? (FX: see closed_days.)"""
     if "Daylight" in title:
         return False
     cls = U.CLASS.get(sym)
     if cls in ("index", "stock"):
-        return currency in U.CURRENCIES.get(sym, [])
+        if currency not in U.CURRENCIES.get(sym, []):
+            return False
+        country = next((c for c in EU_COUNTRY if title.startswith(c)), None)
+        if currency == "EUR" and country:          # "German Bank Holiday" closes German markets only
+            return EU_HOME.get(sym) == country
+        return True
     if cls in ("energy", "metal"):
         return currency == "USD"
     return False
+
+
+def closed_days(sym, holidays):
+    """UTC days on which `sym`'s market is closed for a holiday, from FTMO's calendar.
+    Indices/stocks: a holiday of their country. Energy/metals: a US holiday.
+    FX pairs: both currencies on holiday the same day (Christmas, New Year, Good Friday for EURGBP...)."""
+    by_day, titles = {}, {}
+    for d, cur, title in holidays:
+        if "Daylight" not in title:
+            by_day.setdefault(d, set()).add(cur)
+            titles.setdefault(d, []).append((cur, title))
+    out = []
+    fx = _fx_currencies(sym) if U.CLASS.get(sym) == "fx" else set()
+    for d, curs in sorted(by_day.items()):
+        if fx:
+            if fx <= curs:
+                out.append(d)
+        elif any(holiday_affects(sym, c, t) for c, t in titles[d]):
+            out.append(d)
+    return out
 
 
 def parse(items):
@@ -80,7 +110,7 @@ def masks(df, sym, tf_minutes, restricted, holidays):
     ex = np.zeros(len(df), bool)
     noent = np.zeros(len(df), bool)
     spans = [(t - pd.Timedelta(seconds=210), t + pd.Timedelta(minutes=3)) for t, ins in restricted if restricted_affects(sym, ins)]
-    spans += [(d - pd.Timedelta(minutes=30), d + pd.Timedelta(days=1)) for d, cur, ti in holidays if holiday_affects(sym, cur, ti)]
+    spans += [(d - pd.Timedelta(minutes=30), d + pd.Timedelta(days=1)) for d in closed_days(sym, holidays)]
     for a, b in spans:
         if b < start[0] or a > end[-1]:
             continue

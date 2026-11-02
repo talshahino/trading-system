@@ -369,7 +369,13 @@ def send(req, what):
         log(f"[dry-run] {what}: {req}")
         return None
     r = mt5.order_send(req)
+    if r is not None and r.retcode == 10030 and req.get("action") == mt5.TRADE_ACTION_DEAL:   # filling mode not allowed: try the others
+        for fill in (mt5.ORDER_FILLING_FOK, mt5.ORDER_FILLING_RETURN):
+            r = mt5.order_send({**req, "type_filling": fill})
+            if r is not None and r.retcode == mt5.TRADE_RETCODE_DONE:
+                break
     if r is None or r.retcode != mt5.TRADE_RETCODE_DONE:
+        MON["last_fail"] = (None, str(mt5.last_error())) if r is None else (r.retcode, r.comment)
         log(f"FAILED {what}: {None if r is None else (r.retcode, r.comment)}")
         if r is None or r.retcode not in (10018,):           # 10018 = market closed: not worth a message
             REP.notify(f"{BOT}: פקודה נכשלה", f"{what}\n{None if r is None else (r.retcode, r.comment)}",
@@ -853,6 +859,9 @@ def serve_candles():
 
 TUN.ROUTES["/candles"] = candles
 
+FAIL_HE = {10018: "השוק של הנכס הזה סגור עכשיו", 10027: "המסחר האוטומטי (Algo Trading) כבוי ב־MetaTrader", 10026: "המסחר האוטומטי חסום בשרת",
+           10004: "המחיר זז, נסה שוב", 10021: "אין מחיר כרגע", 10030: "סוג הביצוע לא נתמך", 10031: "אין חיבור לשרת", 10017: "המסחר בנכס הזה חסום"}
+
 # manual close from the app (manager → this bot's local port, with the manager's key): done in the main loop
 ACTION_Q = queue.Queue()
 
@@ -878,14 +887,19 @@ def serve_actions():
                     box["doc"] = {"error": "העסקה כבר לא פתוחה"}
                     box["ev"].set()
                     continue
-            ok, bad = [], []
+            ok, bad, why = [], [], []
             for p in pick:
-                (ok if close(p, "app close") else bad).append(p.ticket)
-            log(f"manual close from the app: closed {ok}, failed {bad}")
+                if close(p, "app close"):
+                    ok.append(p.ticket)
+                else:
+                    bad.append(p.ticket)
+                    code, text = MON.get("last_fail", (None, ""))
+                    why.append(f"{p.symbol}: {FAIL_HE.get(code, '')} (MetaTrader: {text} {code or ''})".replace(":  (", ": ("))
+            log(f"manual close from the app: closed {ok}, failed {bad} {why}")
             if ok:
                 REP.notify(f"{BOT}: נסגר ידנית מהאפליקציה", f"{len(ok)} עסקאות נסגרו" if len(ok) > 1 else "עסקה אחת נסגרה", tags=["hand"])
             box["doc"] = {"ok": not bad, "closed": ok, "failed": bad,
-                          **({"error": "חלק מהעסקאות לא נסגרו (אולי השוק סגור)"} if bad else {})}
+                          **({"error": "לא נסגר: " + " · ".join(why)} if bad else {})}
         except Exception as e:  # noqa: BLE001
             box["doc"] = {"error": str(e)}
         box["ev"].set()

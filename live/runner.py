@@ -546,7 +546,7 @@ def main():
     probe = mt5_name(combos[0][3])
     import faulthandler
     hang_file = open(ROOT / "live" / f"{name}_hang.txt", "w")
-    log("running: checking the strategies every 20 seconds")
+    log("running: checking the strategies every 5 seconds")
     while True:
         # if one loop takes over 5 minutes, write where the program is stuck to live/<bot>_hang.txt
         faulthandler.dump_traceback_later(300, repeat=True, file=hang_file)
@@ -560,7 +560,7 @@ def main():
                     if done.get(combo) == bar_start or (now - bar_start).total_seconds() < 3:
                         continue
                     # a bar that MT5 has not produced yet is retried, at most once a minute, until it appears
-                    wait = 20 if (now - bar_start).total_seconds() < 120 else 60
+                    wait = 5 if (now - bar_start).total_seconds() < 120 else 60
                     if tried_bar.get(combo) == bar_start and (now - tried[combo]).total_seconds() < wait:
                         continue
                     handled = True
@@ -586,7 +586,7 @@ def main():
                 monitor()
         except Exception:  # noqa: BLE001
             log(f"monitor error:\n{traceback.format_exc()}")
-        time.sleep(20)
+        time.sleep(5)
 
 
 if __name__ == "__main__":

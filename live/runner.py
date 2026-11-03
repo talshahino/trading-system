@@ -422,24 +422,39 @@ def open_trade(combo, sym, d, sl, tp, entry_time):
     if d * (px - sl) <= 0 or (tp == tp and tp is not None and d * (tp - px) <= 0):
         log(f"skip {combo}: price {px} already beyond stop/target")
         return
+    sl = round(sl, mt5.symbol_info(name).digits)          # size the trade for the stop exactly as it will be sent
     lots = lots_for(sym, px, sl, ACC.risk_usd)
     if lots <= 0:
         log(f"skip {combo}: lot size too small")
         return
     info = mt5.symbol_info(name)
+    # last check before sending: the loss at the stop (MetaTrader's own calculation, for this exact size and
+    # the stop as it will be sent) may never be above the risk set for this bot. Otherwise: no trade + alert.
+    sl_r = round(sl, info.digits)
+    try:
+        loss = abs(mt5.order_calc_profit(mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, name, lots, px, sl_r) or 0.0)
+    except Exception:  # noqa: BLE001
+        loss = 0.0
+    if not loss:
+        loss = lots * abs(px - sl_r) / info.trade_tick_size * info.trade_tick_value
+    if loss > ACC.risk_usd + 0.01:
+        log(f"BLOCKED {combo}: {lots} lots would lose ${loss:,.2f} at the stop, above the bot's risk ${ACC.risk_usd:,.2f}")
+        REP.notify(f"{BOT}: עסקה נחסמה", f"{pretty(combo)}\nבסטופ היא הייתה מפסידה ${loss:,.0f}, יותר מהסיכון שהוגדר (${ACC.risk_usd:,.0f}). לא נפתחה.",
+                   priority=4, tags=["no_entry"], key="block:" + combo, every=3600)
+        return
     req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": name, "volume": lots,
            "type": mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, "price": px,
-           "sl": round(sl, info.digits), "tp": round(tp, info.digits) if tp == tp and tp is not None else 0.0,
+           "sl": sl_r, "tp": round(tp, info.digits) if tp == tp and tp is not None else 0.0,
            "deviation": 20, "magic": MAGICS_BY_COMBO[combo], "comment": combo[:31],
            "type_time": mt5.ORDER_TIME_GTC, "type_filling": mt5.ORDER_FILLING_IOC}
     r = send(req, f"open {combo} {'buy' if d > 0 else 'sell'} {lots} @ {px} sl {sl:.5g} tp {tp}")
     if r is not None and not ACC.dry:
         REP.notify(f"{BOT}: עסקה נפתחה", f"{pretty(combo)}\n{'קנייה' if d > 0 else 'מכירה'} {lots} @ {px:g}\n"
-                   f"סטופ {sl:.5g} · יעד {'—' if not (tp == tp and tp is not None) else f'{tp:.5g}'} · סיכון ${ACC.risk_usd:,.0f}",
+                   f"סטופ {sl:.5g} · יעד {'—' if not (tp == tp and tp is not None) else f'{tp:.5g}'} · הפסד בסטופ ${loss:,.0f}",
                    tags=["chart_with_upwards_trend" if d > 0 else "chart_with_downwards_trend"])
     if r is not None:
         STATE["entry"][combo] = str(entry_time)
-        STATE["risk"][str(r.order)] = lots * abs(px - sl) / info.trade_tick_size * info.trade_tick_value
+        STATE["risk"][str(r.order)] = loss
         save_state()
 
 

@@ -370,7 +370,20 @@ def lots_for(sym, entry, sl, risk_usd):
     info = mt5.symbol_info(mt5_name(sym))
     if info is None or info.trade_tick_size == 0:
         return 0.0
-    per_lot = abs(entry - sl) / info.trade_tick_size * info.trade_tick_value
+    # the loss of 1 lot at the stop as MetaTrader itself calculates it (contract sizes differ between servers:
+    # on MetaQuotes-Demo 1 lot of silver is 5,000 oz and the tick value it reports did not match that)
+    per_lot = 0.0
+    try:
+        v = mt5.order_calc_profit(mt5.ORDER_TYPE_BUY if sl < entry else mt5.ORDER_TYPE_SELL, info.name, 1.0, entry, sl)
+        per_lot = abs(v) if v else 0.0
+    except Exception:  # noqa: BLE001
+        per_lot = 0.0
+    tick_way = abs(entry - sl) / info.trade_tick_size * info.trade_tick_value
+    if per_lot <= 0:
+        per_lot = tick_way
+    elif tick_way > 0 and abs(per_lot - tick_way) / per_lot > 0.2:
+        log(f"{sym}: lot value check - MetaTrader's profit calculator says ${per_lot:,.2f} per lot at the stop, the tick value says ${tick_way:,.2f}; using the larger (safer)")
+        per_lot = max(per_lot, tick_way)
     if per_lot <= 0:
         return 0.0
     lots = risk_usd / per_lot

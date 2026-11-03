@@ -91,6 +91,21 @@ def set_pin(pin):
     save()
 
 
+def set_viewer_pin(pin):
+    """A second, read-only code (e.g. for a family member): it may see and get notifications, never act."""
+    salt = secrets.token_hex(16)
+    CFG["viewer_salt"] = salt
+    CFG["viewer_hash"] = hashlib.pbkdf2_hmac("sha256", pin.encode(), bytes.fromhex(salt), 200_000).hex()
+    save()
+
+
+def viewer_ok(pin):
+    if not CFG.get("viewer_hash") or not pin:
+        return False
+    h = hashlib.pbkdf2_hmac("sha256", str(pin).encode(), bytes.fromhex(CFG["viewer_salt"]), 200_000).hex()
+    return hmac.compare_digest(h, CFG["viewer_hash"])
+
+
 def pin_ok(pin):
     if time.time() < FAILS["until"] or not CFG.get("pin_hash") or not pin:
         return False
@@ -98,6 +113,8 @@ def pin_ok(pin):
     if hmac.compare_digest(h, CFG["pin_hash"]):
         FAILS["n"] = 0
         return True
+    if viewer_ok(pin):                     # the read-only code is not a wrong owner code
+        return False
     FAILS["n"] += 1
     if FAILS["n"] >= 5:
         FAILS["until"], FAILS["n"] = time.time() + 900, 0
@@ -521,7 +538,7 @@ class Handler(BaseHTTPRequestHandler):
         if path in ("", "/status"):
             return self._send(200, {"ok": True, "accounts": public_accounts(), "version": (UPD.local() or "")[:7],
                                     "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"]} if UPDATE["sha"] else None,
-                                    "pin_set": bool(CFG.get("pin_hash")), "push_devices": len(CFG.get("subs", [])),
+                                    "pin_set": bool(CFG.get("pin_hash")), "viewer_set": bool(CFG.get("viewer_hash")), "push_devices": len(CFG.get("subs", [])),
                                     "watchdog_push": WATCH["ok"]})
         if path == "/vapid":
             return self._send(200, {"key": vapid_public()})
@@ -564,10 +581,30 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, {"ok": True})
         if time.time() < FAILS["until"]:
             return self._send(429, {"error": "נעול ל־15 דקות אחרי 5 קודים שגויים"})
-        if not pin_ok(self.headers.get("X-Pin") or d.get("pin")):
-            return self._send(401, {"error": "קוד שגוי"})
+        pin = self.headers.get("X-Pin") or d.get("pin")
+        if not pin_ok(pin):
+            if not viewer_ok(pin):
+                return self._send(401, {"error": "קוד שגוי"})
+            if path == "/auth":
+                return self._send(200, {"ok": True, "role": "viewer"})
+            if path != "/subscribe":
+                return self._send(403, {"error": "קוד צפייה: אפשר לראות בלבד, בלי פעולות"})
         try:
             if path == "/auth":
+                return self._send(200, {"ok": True, "role": "owner"})
+            if path == "/viewer_pin":
+                v = str(d.get("viewer") or "").strip()
+                if len(v) < 4:
+                    raise ValueError("קוד הצפייה צריך לפחות 4 תווים")
+                if hmac.compare_digest(hashlib.pbkdf2_hmac("sha256", v.encode(), bytes.fromhex(CFG["pin_salt"]), 200_000).hex(), CFG["pin_hash"]):
+                    raise ValueError("קוד הצפייה חייב להיות שונה מהקוד שלך")
+                set_viewer_pin(v)
+                log("read-only code set")
+                return self._send(200, {"ok": True})
+            if path == "/viewer_pin_del":
+                CFG.pop("viewer_hash", None)
+                CFG.pop("viewer_salt", None)
+                save()
                 return self._send(200, {"ok": True})
             if path == "/subscribe":
                 sub = d.get("subscription")

@@ -338,6 +338,8 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .tcard{background:var(--panel);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;border:1px solid rgba(31,58,95,.10)}
 .tcard .tr{border-top:0}
 .tfoot{background:rgba(31,58,95,.05);border-top:1px dashed rgba(31,58,95,.18);padding:4px 14px 10px}
+body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .row,body.viewer #logCard,body.viewer .own,body.viewer #dRen,body.viewer #dTgt,body.viewer #addAccBtn,body.viewer #ownerOnly{display:none!important}
+#viewBan{display:none}body.viewer #viewBan{display:block;text-align:center;font-size:12.5px;color:var(--mut);padding:4px 0 0}
 .allcard{border-radius:16px;padding:10px 14px 12px;margin-top:4px;background:rgba(31,58,95,.07);border:1.5px solid rgba(31,58,95,.22)}
 .allcard b{display:block;font-size:13.5px;color:var(--vps)}
 </style>
@@ -348,6 +350,7 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
   <div class="sp"></div>
   <button class="conn" id="connBtn" title="ניהול" aria-label="פתח ניהול"><i class="dot" id="lConn"></i><span id="lConnT">מתחבר…</span></button>
 </header>
+<div id="viewBan">מצב צפייה בלבד</div>
 
 <main>
   <section class="view on" id="v-acc">
@@ -393,13 +396,18 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
       <div class="row"><span class="mut" id="pushState">ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה.</span><button class="btn" id="pushBtn">הפעל התראות</button></div>
       <div class="msg" id="pushMsg"></div></div>
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
-    <div class="card"><h3>לוגים</h3>
+    <div class="card" id="logCard"><h3>לוגים</h3>
       <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
       <div class="msg" id="logMsg"></div></div>
     <div class="card"><h3>קוד סודי</h3>
       <div class="row"><input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="הקוד שבחרת בהתקנה" style="max-width:260px">
         <button class="btn" id="pinSave">שמור</button><button class="btn ghost" id="pinForget">שכח</button></div>
       <div class="msg" id="pinMsg"></div></div>
+    <div class="card" id="viewerCard" style="display:none"><h3>קוד צפייה</h3>
+      <div class="mut" style="margin-bottom:8px">קוד שני, למשל לבן משפחה: רואים את כל הנתונים ומקבלים התראות, בלי שום פעולה (בלי סגירת עסקאות, בלי עצירה והפעלה, בלי עדכונים).</div>
+      <div class="row"><input id="vpin" type="password" inputmode="numeric" autocomplete="off" placeholder="קוד צפייה חדש (לפחות 4 תווים)" style="max-width:260px">
+        <button class="btn" id="vpinSave">שמור</button><button class="btn ghost" id="vpinDel">בטל קוד צפייה</button></div>
+      <div class="msg" id="vpinMsg"></div></div>
   </div>
   </div>
 </aside>
@@ -638,6 +646,9 @@ function kv(key, val) {           // shared with the service worker (sw.js)
   });
 }
 const getPin = () => { try { return localStorage.getItem("pin") || ""; } catch (e) { return ""; } };
+const getRole = () => { try { return localStorage.getItem("role") || ""; } catch (e) { return ""; } };
+const setRole = r => { try { r ? localStorage.setItem("role", r) : localStorage.removeItem("role"); } catch (e) {}
+  document.body.classList.toggle("viewer", r === "viewer"); const vc = document.getElementById("viewerCard"); if (vc) vc.style.display = r === "owner" ? "" : "none"; };
 let mgrT = "";
 function takeDoc(j) {            // only a copy newer than the newest one already seen counts (GitHub's file server can hand out old ones)
   if (!j || !j.updated_utc || j.updated_utc < mgrT) return null;
@@ -668,8 +679,11 @@ async function act(path, body = {}) {
   return j;
 }
 const note = (id, text, ok) => { $(id).className = "msg " + (ok === true ? "pos" : ok === false ? "neg" : "mut"); $(id).textContent = text; };
+let roleAsked = false;
 function renderMgr() {
   const m = mgrInfo;
+  if (m && getPin() && !getRole() && !roleAsked) { roleAsked = true; act("/auth").then(j => setRole(j.role || "owner")).catch(() => {}); }
+  if (m && $("vpinMsg") && !$("vpinMsg").textContent) note("vpinMsg", m.viewer_set ? "יש כרגע קוד צפייה פעיל." : "אין כרגע קוד צפייה.");
   $("mDot").className = "dot " + (m ? "on" : mgr ? "off" : "");
   $("mState").textContent = m ? "המנהל מחובר" : mgr ? "המנהל לא עונה. בדוק שהמחשב דולק."
     : mgrSeen ? "המנהל פועל, אבל החיבור לאפליקציה עוד לא עלה. מנסה שוב…" : "המנהל עוד לא הותקן במחשב.";
@@ -734,10 +748,21 @@ $("pinSave").onclick = async () => {
   const v = $("pin").value.trim();
   try { localStorage.setItem("pin", v); } catch (e) {}
   await kv("pin", v);
-  try { await act("/auth"); note("pinMsg", "הקוד נכון ונשמר במכשיר הזה.", true); }
+  try { const j = await act("/auth"); setRole(j.role || "owner");
+    note("pinMsg", j.role === "viewer" ? "קוד צפייה נכון ונשמר. אפשר לראות הכל ולהפעיל התראות; פעולות לא זמינות." : "הקוד נכון ונשמר במכשיר הזה.", true); }
   catch (e) { note("pinMsg", mgr && mgrInfo ? e.message : "הקוד נשמר במכשיר. אין כרגע חיבור למחשב, אז עוד לא בדקתי שהוא נכון.", mgr && mgrInfo ? false : undefined); }
 };
-$("pinForget").onclick = async () => { try { localStorage.removeItem("pin"); } catch (e) {} await kv("pin", null); $("pin").value = ""; note("pinMsg", "הקוד נמחק מהמכשיר הזה."); };
+$("pinForget").onclick = async () => { try { localStorage.removeItem("pin"); } catch (e) {} await kv("pin", null); $("pin").value = ""; setRole(""); note("pinMsg", "הקוד נמחק מהמכשיר הזה."); };
+setRole(getRole());
+$("vpinSave").onclick = async () => {
+  const v = $("vpin").value.trim();
+  try { await act("/viewer_pin", {viewer: v}); $("vpin").value = ""; note("vpinMsg", "קוד הצפייה נשמר. מי שמקליד אותו רואה הכל, בלי פעולות.", true); await findMgr(); renderMgr(); }
+  catch (e) { note("vpinMsg", e.message, false); }
+};
+$("vpinDel").onclick = async () => {
+  try { await act("/viewer_pin_del"); note("vpinMsg", "קוד הצפייה בוטל. מכשירים שהשתמשו בו כבר לא יכולים להתחבר איתו.", true); await findMgr(); renderMgr(); }
+  catch (e) { note("vpinMsg", e.message, false); }
+};
 $("updBtn").onclick = async () => {
   $("updBtn").disabled = true;
   try { await act("/update/approve"); note("updMsg", "העדכון אושר. הבוטים מתעדכנים ועולים מחדש תוך כדקה.", true); }
@@ -1348,9 +1373,9 @@ function details(s, a) {
       ${li("סיכון לעסקה", `<span class="num">${((s.risk || 0) * 100).toFixed(3).replace(/\.?0+$/, "")}%</span>`)}${li("ברוקר", "FTMO")}${li("שרת", esc(s.server || a.server || "—"))}${li("פלטפורמה", "MetaTrader 5")}</div>
     ${k.wds.length ? `<div class="h4" style="margin-top:18px">משיכות (מ־MetaTrader)</div><div class="lst">${k.wds.map(w => `<div class="li"><span class="k num">${w.date.split("-").reverse().join(".")}${w.note ? " · " + esc(w.note) : ""}</span><span class="v num">${usd(w.amount)}</span></div>`).join("")}
       <div class="li"><span class="k"><b>סך הכל נמשך</b></span><span class="v num"><b>${usd(k.wd)}</b></span></div></div>` : ""}
-    <div class="card row" style="justify-content:space-between"><b>מוצג ברשימת החשבונות</b><label class="sw"><input type="checkbox" id="dVis" ${a.hidden ? "" : "checked"} ${live ? "" : "disabled"}><span></span></label></div>
-    ${a.archived ? "" : `<div class="h4" style="margin-top:22px">אזור מסוכן</div><button class="dangerbtn" id="dClose" ${live ? "" : "disabled"}>סגור חשבון</button>
-      <div class="foot" style="margin-top:8px">סגירה עוצרת את הבוט של החשבון הזה לצמיתות ומעבירה את החשבון להיסטוריה. עסקאות פתוחות נשארות עם הסטופ והיעד שלהן.</div>`}
+    <div class="card row own" style="justify-content:space-between"><b>מוצג ברשימת החשבונות</b><label class="sw"><input type="checkbox" id="dVis" ${a.hidden ? "" : "checked"} ${live ? "" : "disabled"}><span></span></label></div>
+    ${a.archived ? "" : `<div class="own"><div class="h4" style="margin-top:22px">אזור מסוכן</div><button class="dangerbtn" id="dClose" ${live ? "" : "disabled"}>סגור חשבון</button>
+      <div class="foot" style="margin-top:8px">סגירה עוצרת את הבוט של החשבון הזה לצמיתות ומעבירה את החשבון להיסטוריה. עסקאות פתוחות נשארות עם הסטופ והיעד שלהן.</div></div>`}
     <div class="msg" id="dMsg">${live ? "" : "שינויים אפשריים רק כשמחשב הבוטים מחובר."}</div>`;
   const run = async (path, body, ok) => { try { await act(path, body); note("dMsg", ok, true); await findMgr(); renderDet(); } catch (e) { note("dMsg", e.message, false); } };
   if ($("dRen")) $("dRen").onclick = () => { const v = prompt("שם חדש לחשבון:", nick(a)); if (v) run(`/accounts/${encodeURIComponent(a.name)}/rename`, {nickname: v}, "השם עודכן."); };

@@ -424,6 +424,9 @@ STRATEGIES.update(MOMENTUM)
 from agents.event_strategies import EVENTS  # noqa: E402
 
 STRATEGIES.update(EVENTS)
+from agents.gap_breakout_strategies import GAPS_BREAKOUTS  # noqa: E402
+
+STRATEGIES.update(GAPS_BREAKOUTS)
 
 
 def timeframe_ok(sid, tf):

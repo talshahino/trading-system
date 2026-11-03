@@ -23,6 +23,11 @@ import pandas as pd
 INITIAL = 100_000.0
 CET = "Europe/Prague"
 MAX_OPEN = 3
+# Entry guard (the bot's own limits, inside FTMO's 5% / 10%). GRADED: near a limit the risk of a new trade
+# shrinks to GRADE_SHARE of the room that is left (so the limit is never crossed by the stops) instead of
+# the trade being skipped; a trade whose risk would be under GRADE_MIN of the normal risk is skipped.
+GUARD_DAILY, GUARD_TOTAL = 0.045, 0.10
+GRADED, GRADE_SHARE, GRADE_MIN = False, 0.5, 0.10
 FREE_RISK_AT_BREAKEVEN = False   # account_path guard: a position whose stop is at/beyond entry risks nothing
 
 
@@ -264,7 +269,7 @@ def account_path(trades, risk, start=None, daily_pct=0.05, max_pct=0.10):
             day, day_start = t.day, bal
         r_usd = INITIAL * risk
         open_risk = sum(p[1] for p in open_pos if not (FREE_RISK_AT_BREAKEVEN and p[4] is not None and p[4] <= t.time))
-        if not open_pos and bal - r_usd <= floor:
+        if not GRADED and not open_pos and bal - r_usd <= floor:
             # Not formally breached, but one more full stop would break the 10% limit: the
             # bot can never trade again, so the account is as good as burned.
             blown_at = t.time
@@ -272,7 +277,14 @@ def account_path(trades, risk, start=None, daily_pct=0.05, max_pct=0.10):
         if len(open_pos) >= MAX_OPEN:
             ledger[t.Index] = {"taken": "דולג: כבר 3 עסקאות פתוחות"}
             continue
-        if bal - open_risk - r_usd <= floor or bal - open_risk - r_usd < day_start - INITIAL * daily_pct * 0.9:
+        g_total, g_day = INITIAL * (1 - GUARD_TOTAL), day_start - INITIAL * GUARD_DAILY
+        room = min(bal - open_risk - g_total, bal - open_risk - g_day)
+        if GRADED:
+            r_usd = min(r_usd, GRADE_SHARE * room)
+            if r_usd < GRADE_MIN * INITIAL * risk:
+                ledger[t.Index] = {"taken": "דולג: שומר מגבלות ההפסד"}
+                continue
+        elif r_usd > room or bal - open_risk - r_usd <= g_total:
             ledger[t.Index] = {"taken": "דולג: שומר מגבלות ההפסד"}
             continue
         ledger[t.Index] = {"taken": "בוצעה", "risk_usd": r_usd}

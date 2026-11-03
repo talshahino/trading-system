@@ -314,6 +314,10 @@ def news_near(sym, minutes=5):
 
 
 # ---------------- account ----------------
+GUARD_DAILY, GUARD_TOTAL = 0.045, 0.09          # the bot's own loss limits (FTMO's are 5% / 10%)
+GRADE_SHARE, GRADE_MIN = 0.5, 0.10              # near a limit: risk = half the room left; skip under 10% of normal
+
+
 class Account:
     def __init__(self, cfg, dry):
         self.cfg, self.dry = cfg, dry
@@ -351,12 +355,17 @@ class Account:
             tot += loss if loss is not None else max(STATE["risk"].get(str(p.ticket), 0.0), self.risk_usd)
         return tot
 
-    def allows(self):
+    def allowed_risk(self):
+        """The risk (dollars) a new trade may take now. The bot's limits: 4.5% below the day's starting
+        balance and 9% below the account size, counting every open position as if it hit its stop.
+        Far from a limit: the normal risk. Near it: half of the room that is left, so the stops can never
+        cross the limit; under 10% of the normal risk the trade is skipped."""
         ai = mt5.account_info()
         ds = self.day_start_balance()
-        floor_total = self.initial * (1 - 0.10)
-        new = self.open_risk() + self.risk_usd
-        return (ai.balance - new > floor_total) and (ai.balance - new >= ds - self.initial * 0.05 * 0.9)
+        left = ai.balance - self.open_risk()
+        room = min(left - self.initial * (1 - GUARD_TOTAL), left - (ds - self.initial * GUARD_DAILY))
+        r = min(self.risk_usd, GRADE_SHARE * room)
+        return r if r >= GRADE_MIN * self.risk_usd else 0.0
 
     def guard(self):
         """Emergency stop: floating daily loss reaches 4.5% -> close everything until Prague midnight."""
@@ -424,7 +433,8 @@ def send(req, what):
     return r
 
 
-def open_trade(combo, sym, d, sl, tp, entry_time):
+def open_trade(combo, sym, d, sl, tp, entry_time, risk=None):
+    risk = ACC.risk_usd if risk is None else risk
     name = mt5_name(sym)
     tick = mt5.symbol_info_tick(name)
     px = tick.ask if d > 0 else tick.bid
@@ -432,7 +442,7 @@ def open_trade(combo, sym, d, sl, tp, entry_time):
         log(f"skip {combo}: price {px} already beyond stop/target")
         return
     sl = round(sl, mt5.symbol_info(name).digits)          # size the trade for the stop exactly as it will be sent
-    lots = lots_for(sym, px, sl, ACC.risk_usd)
+    lots = lots_for(sym, px, sl, risk)
     if lots <= 0:
         log(f"skip {combo}: lot size too small")
         return
@@ -446,9 +456,9 @@ def open_trade(combo, sym, d, sl, tp, entry_time):
         loss = 0.0
     if not loss:
         loss = lots * abs(px - sl_r) / info.trade_tick_size * info.trade_tick_value
-    if loss > ACC.risk_usd + 0.01:
-        log(f"BLOCKED {combo}: {lots} lots would lose ${loss:,.2f} at the stop, above the bot's risk ${ACC.risk_usd:,.2f}")
-        REP.notify(f"{BOT}: עסקה נחסמה", f"{pretty(combo)}\nבסטופ היא הייתה מפסידה ${loss:,.0f}, יותר מהסיכון שהוגדר (${ACC.risk_usd:,.0f}). לא נפתחה.",
+    if loss > risk + 0.01:
+        log(f"BLOCKED {combo}: {lots} lots would lose ${loss:,.2f} at the stop, above the allowed risk ${risk:,.2f}")
+        REP.notify(f"{BOT}: עסקה נחסמה", f"{pretty(combo)}\nבסטופ היא הייתה מפסידה ${loss:,.0f}, יותר מהסיכון המותר (${risk:,.0f}). לא נפתחה.",
                    priority=4, tags=["no_entry"], key="block:" + combo, every=3600)
         return
     req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": name, "volume": lots,
@@ -459,7 +469,8 @@ def open_trade(combo, sym, d, sl, tp, entry_time):
     r = send(req, f"open {combo} {'buy' if d > 0 else 'sell'} {lots} @ {px} sl {sl:.5g} tp {tp}")
     if r is not None and not ACC.dry:
         REP.notify(f"{BOT}: עסקה נפתחה", f"{pretty(combo)}\n{'קנייה' if d > 0 else 'מכירה'} {lots} @ {px:g}\n"
-                   f"סטופ {sl:.5g} · יעד {'—' if not (tp == tp and tp is not None) else f'{tp:.5g}'} · הפסד בסטופ ${loss:,.0f}",
+                   f"סטופ {sl:.5g} · יעד {'—' if not (tp == tp and tp is not None) else f'{tp:.5g}'} · הפסד בסטופ ${loss:,.0f}"
+                   + (f"\nסיכון מוקטן: קרוב לגבול ההפסד (רגיל ${ACC.risk_usd:,.0f})" if risk < ACC.risk_usd - 0.5 else ""),
                    tags=["chart_with_upwards_trend" if d > 0 else "chart_with_downwards_trend"])
     if r is not None:
         STATE["entry"][combo] = str(entry_time)
@@ -605,10 +616,11 @@ def step(combo, sid, tf, sym, off):
     if not CLOSE_BREAKS and news_near(sym):
         log(f"skip {combo}: high-impact news within 5 minutes")
         return
-    if not ACC.allows():
-        log(f"skip {combo}: daily/total loss guard")
+    risk = ACC.allowed_risk()
+    if risk <= 0:
+        log(f"skip {combo}: too close to the daily 4.5% / total 9% limit")
         return
-    open_trade(combo, sym, int(t["dir"]), float(t["stop_px"]), float(t["target_px"]), t["time"])
+    open_trade(combo, sym, int(t["dir"]), float(t["stop_px"]), float(t["target_px"]), t["time"], risk)
 
 
 # ---------------- monitoring: notifications + dashboard ----------------

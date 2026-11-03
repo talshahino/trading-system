@@ -81,7 +81,13 @@ def main():
     ap.add_argument("--bots", default="1,2,3")
     ap.add_argument("--news", action="store_true",
                     help="apply FTMO restricted events minute by minute to the Standard trades (ftmo_calendar.apply_news)")
+    ap.add_argument("--graded", action="store_true", help="risk shrinks near the bot's limits instead of skipping")
+    ap.add_argument("--guard", default="", help="bot limits daily,total, e.g. 0.045,0.09")
     args = ap.parse_args()
+    if args.graded:
+        F.GRADED = True
+    if args.guard:
+        F.GUARD_DAILY, F.GUARD_TOTAL = (float(x) for x in args.guard.split(","))
     start = pd.Timestamp(args.start, tz="UTC")
     RR.SPLIT = start
     ns = types.SimpleNamespace(demo=False, end=args.end)

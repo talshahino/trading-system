@@ -759,7 +759,6 @@ const b64u = s => { const p = "=".repeat((4 - s.length % 4) % 4), b = atob((s + 
 $("pushBtn").onclick = async () => {
   try {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) throw new Error("הדפדפן הזה לא תומך בהתראות. פתח ב־Chrome.");
-    if (!getPin()) throw new Error("קודם שמור את הקוד הסודי.");
     if (!mgr || !mgrInfo) throw new Error("אין חיבור למחשב הבוטים כרגע. נסה שוב כשהנקודה ליד 'המנהל מחובר' ירוקה.");
     if (await Notification.requestPermission() !== "granted") throw new Error("ההרשאה להתראות לא ניתנה. אפשר לשנות בהגדרות האתר.");
     const reg = await navigator.serviceWorker.ready;
@@ -767,7 +766,7 @@ $("pushBtn").onclick = async () => {
     let sub = await reg.pushManager.getSubscription();
     if (!sub) sub = await reg.pushManager.subscribe({userVisibleOnly: true, applicationServerKey: b64u(key)});
     await act("/subscribe", {subscription: sub.toJSON()});
-    note("pushMsg", "ההתראות פעילות. אמורה להגיע עכשיו התראת בדיקה.", true);
+    note("pushMsg", getPin() ? "ההתראות פעילות. אמורה להגיע עכשיו התראת בדיקה." : "ההתראות פעילות במכשיר הזה (צפייה בלבד).", true);
   } catch (e) { note("pushMsg", e.message, false); }
 };
 let installEvt = null;

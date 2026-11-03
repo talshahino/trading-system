@@ -549,6 +549,19 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(403, {"error": "forbidden"})
             push(d.get("title", ""), d.get("body", ""), urgent=bool(d.get("urgent")), tag=d.get("tag"))
             return self._send(200, {"ok": True})
+        if path == "/subscribe" and not (self.headers.get("X-Pin") or d.get("pin")):
+            # notifications only (view): a device without the secret code may subscribe; every action still needs it
+            sub = d.get("subscription")
+            if not sub or "endpoint" not in sub or len(json.dumps(sub)) > 2000:
+                return self._send(400, {"error": "no subscription"})
+            with LOCK:
+                if sub not in CFG["subs"]:
+                    if len(CFG["subs"]) >= 20:
+                        return self._send(429, {"error": "יותר מדי מכשירים מקבלים התראות"})
+                    CFG["subs"].append(sub)
+            save()
+            threading.Thread(target=push_manager_state, daemon=True).start()
+            return self._send(200, {"ok": True})
         if time.time() < FAILS["until"]:
             return self._send(429, {"error": "נעול ל־15 דקות אחרי 5 קודים שגויים"})
         if not pin_ok(self.headers.get("X-Pin") or d.get("pin")):

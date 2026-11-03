@@ -23,6 +23,7 @@ import argparse
 import os
 import datetime as dt
 import json
+import re
 import sys
 import time
 import traceback
@@ -427,21 +428,42 @@ def lots_for(sym, entry, sl, risk_usd):
     return lots if lots >= info.volume_min else 0.0
 
 
+def _fill_modes(symbol):
+    """The filling modes this server allows for the symbol, the allowed ones first (other brokers' demos
+    often refuse IOC; MetaTrader then answers with an error or with nothing at all)."""
+    info = mt5.symbol_info(symbol)
+    fm = getattr(info, "filling_mode", 0) or 0
+    allowed = [m for bit, m in ((2, mt5.ORDER_FILLING_IOC), (1, mt5.ORDER_FILLING_FOK)) if fm & bit]
+    return allowed + [m for m in (mt5.ORDER_FILLING_IOC, mt5.ORDER_FILLING_FOK, mt5.ORDER_FILLING_RETURN) if m not in allowed]
+
+
+def _comment(text):
+    return re.sub(r"[^A-Za-z0-9 |_.-]", "", str(text))[:27]
+
+
 def send(req, what):
     if ACC.dry:
         log(f"[dry-run] {what}: {req}")
         return None
-    r = mt5.order_send(req)
-    if r is not None and r.retcode == 10030 and req.get("action") == mt5.TRADE_ACTION_DEAL:   # filling mode not allowed: try the others
-        for fill in (mt5.ORDER_FILLING_FOK, mt5.ORDER_FILLING_RETURN):
+    req = {**req, "comment": _comment(req.get("comment", ""))}
+    r, err = None, None
+    if req.get("action") == mt5.TRADE_ACTION_DEAL:
+        for fill in _fill_modes(req["symbol"]):
             r = mt5.order_send({**req, "type_filling": fill})
-            if r is not None and r.retcode == mt5.TRADE_RETCODE_DONE:
+            if r is None:
+                err = mt5.last_error()
+                continue
+            if r.retcode != 10030:                      # 10030 = this filling mode is not allowed: try the next
                 break
+    else:
+        r = mt5.order_send(req)
+        if r is None:
+            err = mt5.last_error()
     if r is None or r.retcode != mt5.TRADE_RETCODE_DONE:
-        MON["last_fail"] = (None, str(mt5.last_error())) if r is None else (r.retcode, r.comment)
-        log(f"FAILED {what}: {None if r is None else (r.retcode, r.comment)}")
+        MON["last_fail"] = (None, str(err)) if r is None else (r.retcode, r.comment)
+        log(f"FAILED {what}: {('no answer', err) if r is None else (r.retcode, r.comment)}")
         if r is None or r.retcode not in (10018,):           # 10018 = market closed: not worth a message
-            REP.notify(f"{BOT}: פקודה נכשלה", f"{what}\n{None if r is None else (r.retcode, r.comment)}",
+            REP.notify(f"{BOT}: פקודה נכשלה", f"{what}\n{('MetaTrader לא ענה', err) if r is None else (r.retcode, r.comment)}",
                        priority=4, tags=["warning"], key="fail:" + what[:20], every=1800)
         return None
     log(f"OK {what}: {r.order}")

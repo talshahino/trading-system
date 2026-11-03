@@ -3,8 +3,8 @@ every week, and the bot trades this instrument only when it is among the stronge
 weakest (sell) of its group. Same contract as agents/rules_agent.py.
 
 Ranks use weekly closes (Friday) of every instrument in the FTMO universe, loaded with UNIVERSE_BARS
-(the backtest's normal loader: every run downloads the whole market first). A new week's position is
-opened on the week's first bar from ranks of the weeks that already ended (no peeking) and closed on the
+(the backtest's normal loader: every run downloads the whole market first). A position is opened on the first
+bar of each day of the week from ranks of the weeks that already ended (no peeking) and closed on the
 week's last bar (FTMO Standard closes before the weekend anyway).
 """
 import numpy as np
@@ -75,6 +75,10 @@ def _signals(df, score_fn, group, top):
     is_top = (rank[sym] <= k) & (cnt >= 3)
     is_bot = (rank[sym] > cnt - k) & (cnt >= 3)
     wk, first, last = _week_frame(df)
+    # enter on the first bar of every New York day of the week (shares are closed every evening, so they
+    # re-enter each morning; 24-hour instruments simply stay in until the week's last bar)
+    day = np.array([d.isoformat() for d in df.index.tz_convert(NY).date])
+    first = np.r_[True, day[1:] != day[:-1]]
     prev = {str(p): str(p - 1) for p in set(wk)}         # ranks of the week that just ended
     top_w = {str(p): bool(v) for p, v in zip(sc.index.tz_localize(None).to_period("W-FRI"), is_top.to_numpy())}
     bot_w = {str(p): bool(v) for p, v in zip(sc.index.tz_localize(None).to_period("W-FRI"), is_bot.to_numpy())}

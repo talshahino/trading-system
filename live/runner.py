@@ -131,6 +131,21 @@ def bars(sym, tf, off):
     return df
 
 
+_PARTNER_OK = {}
+
+
+def partner_bars(sym, tf, start, end):
+    """Bars of a related instrument for the inter-market strategies (agents/intermarket_strategies), from MT5."""
+    if sym not in _PARTNER_OK:
+        name = map_symbol(sym)
+        _PARTNER_OK[sym] = bool(name and mt5.symbol_select(name, True))
+        if not _PARTNER_OK[sym]:
+            log(f"WARNING: partner {sym} is not available on this server - its inter-market combos give no signals")
+    if not _PARTNER_OK[sym]:
+        return None
+    return bars(sym, tf, None)
+
+
 def session_mask(df, sym, tf):
     if U.CLASS.get(sym) != "stock":
         return None
@@ -546,6 +561,11 @@ def step(combo, sid, tf, sym, off):
     dummy = df.iloc[[-1]].copy()
     dummy.index = [forming + pd.Timedelta(minutes=TF_MIN[tf])]
     df = pd.concat([df, dummy])
+    df.attrs.update(symbol=sym, tf=tf)          # strategies that need the instrument (inter-market, events)
+    if sid.startswith("IM"):
+        from agents import intermarket_strategies as IM
+        IM.PARTNER_BARS = partner_bars
+        IM._CACHE.clear()                       # fresh partner bars every time, never yesterday's
     be = (0.6, be_offset(sym, float(df["c"].iloc[-3])))
     tr = R.run(df, strat(sid, df, sym, tf), 0.0, breakeven=be, session_exit=exit_mask(df, sym, tf))
     if len(tr):

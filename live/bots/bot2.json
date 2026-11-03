@@ -27,8 +27,10 @@
   "TV37|4Hour|GBPUSD",
   "TT45|4Hour|XRP/USD",
   "TV47|4Hour|WTI",
-  "TT56|1Hour|PLTR"
+  "TT56|1Hour|PLTR",
+  "BK07|1Hour|EURJPY",
+  "SE02|1Hour|USDJPY"
  ],
- "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user",
+ "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added BK07|1Hour|EURJPY and SE02|1Hour|USDJPY (new families, backtest with the bot), approved by the user",
  "close_before_breaks": true
 }

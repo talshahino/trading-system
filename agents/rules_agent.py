@@ -430,6 +430,9 @@ STRATEGIES.update(GAPS_BREAKOUTS)
 from agents.quantpedia_strategies import QUANTPEDIA  # noqa: E402
 
 STRATEGIES.update(QUANTPEDIA)
+from agents.book_strategies import BOOKS  # noqa: E402
+
+STRATEGIES.update(BOOKS)
 
 
 def timeframe_ok(sid, tf):

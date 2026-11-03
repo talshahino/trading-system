@@ -421,6 +421,9 @@ STRATEGIES.update(INTERMARKET)
 from agents.momentum_strategies import MOMENTUM  # noqa: E402
 
 STRATEGIES.update(MOMENTUM)
+from agents.event_strategies import EVENTS  # noqa: E402
+
+STRATEGIES.update(EVENTS)
 
 
 def timeframe_ok(sid, tf):

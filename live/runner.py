@@ -339,7 +339,16 @@ class Account:
         for p in self.positions():
             if self.free and p.sl and ((p.type == 0 and p.sl >= p.price_open) or (p.type == 1 and p.sl <= p.price_open)):
                 continue
-            tot += STATE["risk"].get(str(p.ticket), self.risk_usd)
+            # what this position really loses at its stop now (MetaTrader's calculation); a position without a
+            # stop, or when the calculation fails, counts with the larger of the stored risk and the bot's risk
+            loss = None
+            if p.sl:
+                try:
+                    v = mt5.order_calc_profit(p.type, p.symbol, p.volume, p.price_open, p.sl)
+                    loss = max(0.0, -v) if v is not None else None
+                except Exception:  # noqa: BLE001
+                    loss = None
+            tot += loss if loss is not None else max(STATE["risk"].get(str(p.ticket), 0.0), self.risk_usd)
         return tot
 
     def allows(self):

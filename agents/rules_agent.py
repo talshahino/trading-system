@@ -427,6 +427,9 @@ STRATEGIES.update(EVENTS)
 from agents.gap_breakout_strategies import GAPS_BREAKOUTS  # noqa: E402
 
 STRATEGIES.update(GAPS_BREAKOUTS)
+from agents.quantpedia_strategies import QUANTPEDIA  # noqa: E402
+
+STRATEGIES.update(QUANTPEDIA)
 
 
 def timeframe_ok(sid, tf):

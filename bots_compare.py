@@ -83,6 +83,8 @@ def main():
                     help="apply FTMO restricted events minute by minute to the Standard trades (ftmo_calendar.apply_news)")
     ap.add_argument("--graded", action="store_true", help="risk shrinks near the bot's limits instead of skipping")
     ap.add_argument("--guard", default="", help="bot limits daily,total, e.g. 0.045,0.09")
+    ap.add_argument("--add", default="", help="file of candidate combos: each bot is also run with all of them added "
+                                               "and with each one added alone (variant column)")
     args = ap.parse_args()
     if args.graded:
         F.GRADED = True
@@ -90,8 +92,11 @@ def main():
         F.GUARD_DAILY, F.GUARD_TOTAL = (float(x) for x in args.guard.split(","))
     start = pd.Timestamp(args.start, tz="UTC")
     RR.SPLIT = start
+    cands = [l.strip() for l in open(args.add, encoding="utf-8") if l.strip()] if args.add else []
+    variants = [("bot", [])] + ([("+all", cands)] + [("+" + c, [c]) for c in cands] if cands else [])
     ns = types.SimpleNamespace(demo=False, end=args.end)
-    trades = {"Swing": PS.load(args.swing), "Standard": PS.load(args.standard)}
+    trades = {"Swing": PS.load(args.swing), "Standard": PS.load(args.standard)} if args.swing != "none" else \
+        {"Standard": PS.load(args.standard)}
     if args.news:
         from agents import ftmo_calendar as CAL
         restricted, _ = CAL.parse(json.load(open(ROOT / "data" / "ftmo_calendar" / "history.json", encoding="utf-8")))
@@ -111,6 +116,7 @@ def main():
                 return None
             return float(b["o"].iloc[i])
         want = {c for b in (1, 2, 3) for c in json.load(open(ROOT / "live" / "bots" / f"bot{b}.json", encoding="utf-8"))["combos"]}
+        want |= set(cands)
         st = trades["Standard"]
         st = st[st["combo"].isin(want)]
         before = len(st)
@@ -134,9 +140,9 @@ def main():
     for b in (int(x) for x in args.bots.split(",")):
         cfg = json.load(open(ROOT / "live" / "bots" / f"bot{b}.json", encoding="utf-8"))
         cfg["risk"] = over.get(b, cfg["risk"])
-        combos = cfg["combos"]
         F.FREE_RISK_AT_BREAKEVEN = bool(cfg["free_risk_at_breakeven"])
-        for kind, t in trades.items():
+        for (variant, extra), (kind, t) in ((v, k) for v in variants for k in trades.items()):
+            combos = list(cfg["combos"]) + [c for c in extra if c not in cfg["combos"]]
             tr = t[t["combo"].isin(combos)].sort_values("time").reset_index(drop=True)
             w = F.account_path(tr, cfg["risk"], start=start)
             led = w[0].attrs["ledger"]
@@ -145,7 +151,7 @@ def main():
             weeks = PB.breakdown(df, start)
             ex = led[led["taken"] == "בוצעה"]
             roll = (pr or {}).get("rolling") or {}
-            row = {"bot": b, "account": kind, "risk": cfg["risk"], "combos_with_trades": int(tr["combo"].nunique()),
+            row = {"bot": b, "variant": variant, "account": kind, "risk": cfg["risk"], "combos_with_trades": int(tr["combo"].nunique()),
                    "trades": int(len(ex)), "skipped_by_guard": int((led["taken"] != "בוצעה").sum()),
                    "end_balance": round(float(df["balance"].iloc[-1])) if len(df) else None,
                    "blown": str(w[1]) if w[1] is not None else None,

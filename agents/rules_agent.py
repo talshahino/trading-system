@@ -412,6 +412,9 @@ STRATEGIES.update(CLASSIC)
 from agents.session_strategies import SESSION  # noqa: E402
 
 STRATEGIES.update(SESSION)
+from agents.seasonal_strategies import SEASONAL  # noqa: E402
+
+STRATEGIES.update(SEASONAL)
 
 
 def timeframe_ok(sid, tf):

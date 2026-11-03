@@ -340,6 +340,7 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .tfoot{background:rgba(31,58,95,.05);border-top:1px dashed rgba(31,58,95,.18);padding:4px 14px 10px}
 body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .row,body.viewer #logCard,body.viewer .own,body.viewer #dRen,body.viewer #dTgt,body.viewer #addAccBtn,body.viewer #ownerOnly{display:none!important}
 #viewBan{display:none}body.viewer #viewBan{display:block;text-align:center;font-size:12.5px;color:var(--mut);padding:4px 0 0}
+#accDet{overflow-x:clip}#dBody{will-change:transform;touch-action:pan-y}
 .allcard{border-radius:16px;padding:10px 14px 12px;margin-top:4px;background:rgba(31,58,95,.07);border:1.5px solid rgba(31,58,95,.22)}
 .allcard b{display:block;font-size:13.5px;color:var(--vps)}
 </style>
@@ -1041,24 +1042,49 @@ function renderDet(light) {
   else if (!light && UI.sub === "ac") details(s, a);
 }
 $("dSubt").onclick = e => { const b = e.target.closest("[data-s]"); if (b) { UI.sub = b.dataset.s; $("dBody").innerHTML = ""; renderDet(); } };
-/* swipe the account screen left/right to move between its tabs (RTL: the next tab sits to the left, so dragging right brings it in) */
+/* swipe the account screen left/right to move between its tabs. The screen follows the finger; a short
+   quick flick or a drag past ~1/5 of the width switches. RTL: the next tab sits to the left, so dragging
+   right brings it in. Vertical scrolling stays normal. */
 {
-  let sx = 0, sy = 0, st = 0, ok = false;
-  const NOSWIPE = ".slide,.eqc,.tw,.seg,input,textarea,select,.sw,[data-noswipe]";
-  $("dBody").addEventListener("touchstart", e => {
-    const t = e.touches[0]; ok = e.touches.length === 1 && !e.target.closest(NOSWIPE);
-    sx = t.clientX; sy = t.clientY; st = Date.now();
+  const B = $("dBody"), NOSWIPE = ".slide,.eqc,input,textarea,select,.sw,[data-noswipe]";
+  let sx = 0, sy = 0, st = 0, mode = "", dx = 0;
+  const canScrollX = el => { for (let e = el; e && e !== B; e = e.parentElement) if (e.scrollWidth > e.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(e).overflowX)) return true; return false; };
+  const idx = () => SUBS.findIndex(([k]) => k === UI.sub);
+  B.addEventListener("touchstart", e => {
+    const t = e.touches[0];
+    mode = e.touches.length === 1 && UI.view === "det" && !e.target.closest(NOSWIPE) && !canScrollX(e.target) ? "?" : "";
+    sx = t.clientX; sy = t.clientY; st = Date.now(); dx = 0; B.style.transition = "none";
   }, {passive: true});
-  $("dBody").addEventListener("touchend", e => {
-    if (!ok || UI.view !== "det") return;
-    const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
-    if (Math.abs(dx) < 60 || Math.abs(dx) < 1.8 * Math.abs(dy) || Date.now() - st > 700) return;
-    const i = SUBS.findIndex(([k]) => k === UI.sub), j = i + (dx > 0 ? 1 : -1);
-    if (j < 0 || j >= SUBS.length) return;
-    UI.sub = SUBS[j][0]; $("dBody").innerHTML = ""; renderDet();
-    const b = $("dSubt").querySelector(`[data-s="${UI.sub}"]`); if (b && b.scrollIntoView) b.scrollIntoView({block: "nearest", inline: "center"});
-    $("dBody").animate([{opacity: .3, transform: `translateX(${dx > 0 ? -24 : 24}px)`}, {opacity: 1, transform: "none"}], {duration: 180, easing: "ease-out"});
-  }, {passive: true});
+  B.addEventListener("touchmove", e => {
+    if (!mode) return;
+    const t = e.touches[0], mx = t.clientX - sx, my = t.clientY - sy;
+    if (mode === "?") {
+      if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
+      mode = Math.abs(mx) > Math.abs(my) * 0.9 ? "x" : "";
+      if (!mode) return;
+    }
+    e.preventDefault();
+    const j = idx() + (mx > 0 ? 1 : -1), edge = j < 0 || j >= SUBS.length;
+    dx = mx; B.style.transform = `translateX(${edge ? mx * 0.25 : mx}px)`; B.style.opacity = String(1 - Math.min(.35, Math.abs(mx) / 900));
+  }, {passive: false});
+  const end = () => {
+    if (mode !== "x") { mode = ""; return; }
+    mode = "";
+    const v = Math.abs(dx) / Math.max(1, Date.now() - st), j = idx() + (dx > 0 ? 1 : -1);
+    const go = (Math.abs(dx) > innerWidth * 0.2 || (v > 0.3 && Math.abs(dx) > 25)) && j >= 0 && j < SUBS.length;
+    B.style.transition = "transform .16s ease-out, opacity .16s ease-out";
+    if (!go) { B.style.transform = ""; B.style.opacity = ""; return; }
+    const w = innerWidth * (dx > 0 ? 1 : -1);
+    B.style.transform = `translateX(${w}px)`; B.style.opacity = "0";
+    setTimeout(() => {
+      UI.sub = SUBS[j][0]; B.innerHTML = ""; renderDet();
+      const b = $("dSubt").querySelector(`[data-s="${UI.sub}"]`); if (b && b.scrollIntoView) b.scrollIntoView({block: "nearest", inline: "center"});
+      B.style.transition = "none"; B.style.transform = `translateX(${-w * 0.35}px)`; B.style.opacity = "0";
+      requestAnimationFrame(() => requestAnimationFrame(() => { B.style.transition = "transform .2s ease-out, opacity .2s ease-out"; B.style.transform = ""; B.style.opacity = ""; }));
+    }, 150);
+  };
+  B.addEventListener("touchend", end, {passive: true});
+  B.addEventListener("touchcancel", () => { mode = "x"; dx = 0; end(); }, {passive: true});
 }
 $("dBack").onclick = () => { UI.view = UI.from && UI.from !== "det" ? UI.from : "list"; showAcc(); scrollTo(0, 0); };
 

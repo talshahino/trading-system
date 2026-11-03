@@ -69,8 +69,25 @@ def log(msg):
         f.write(line + "\n")
 
 
+SYMMAP = {}          # instrument -> this server's symbol name, when it differs from FTMO's (see live/symbols.py)
+
+
 def mt5_name(sym):
-    return U.ALL[sym][0].replace("/", "")
+    return SYMMAP.get(sym) or U.ALL[sym][0].replace("/", "")
+
+
+def map_symbol(sym):
+    """FTMO's name if this server has it; otherwise the same instrument under another name (another broker's demo)."""
+    name = U.ALL[sym][0].replace("/", "")
+    info = mt5.symbol_info(name)
+    if info is not None and info.trade_mode != 0:
+        return name
+    from live import symbols as SY
+    hit = SY.resolve(sym, U.ALL[sym][0], mt5.symbols_get() or [])
+    if hit is None:
+        return None
+    SYMMAP[sym] = hit.name
+    return hit.name
 
 
 # ---------------- time ----------------
@@ -991,9 +1008,12 @@ def main():
     combos = []
     for c in cfg["combos"]:
         sid, tf, sym = c.split("|")
-        if not mt5.symbol_select(mt5_name(sym), True):
-            log(f"WARNING: symbol {mt5_name(sym)} not available on this account - {c} is off")
+        name = map_symbol(sym)
+        if name is None or not mt5.symbol_select(name, True):
+            log(f"WARNING: {sym} ({U.ALL[sym][0]}) cannot be traded on this server - {c} is off")
             continue
+        if name != U.ALL[sym][0].replace("/", ""):
+            log(f"{sym}: on this server it is {name}")
         combos.append((c, sid, tf, sym))
     MAGICS_BY_COMBO = {c: cfg["magic_base"] + i for i, c in enumerate(cfg["combos"])}
     MAGICS = set(MAGICS_BY_COMBO.values())

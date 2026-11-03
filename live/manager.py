@@ -451,9 +451,11 @@ def update_check():
                 if not UPD.touches_bot(UPD.local(), sha):
                     UPD.VERSION.write_text(sha)
                 else:
+                    first = UPDATE["sha"] is None          # one notification per waiting update, not per commit
                     UPDATE.update(sha=sha, title=title)
                     log(f"update available: {sha[:7]} {title}")
-                    push("יש עדכון לבוטים", title, action="approve_update", tag="update")
+                    if first:
+                        push("יש עדכון לבוטים", title, action="approve_update", tag="update")
             UPDATE["checked"] = time.time()
         except Exception as e:  # noqa: BLE001
             log(f"update check failed: {e}")

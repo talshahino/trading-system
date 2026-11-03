@@ -42,6 +42,9 @@ def remote():
 
 
 BOT_CODE = ("live/", "agents/", "skills/", "config.py", "requirements.txt", "data/ftmo_symbols/")
+# research-only strategy families: no bot trades them, so a change there is not a bot update
+RESEARCH = tuple(f"agents/{x}_strategies.py" for x in
+                 ("seasonal", "intermarket", "momentum", "event", "gap_breakout", "quantpedia", "book"))
 
 
 def touches_bot(a, b):
@@ -51,7 +54,8 @@ def touches_bot(a, b):
         r = requests.get(f"https://api.github.com/repos/{REPO}/compare/{a}...{b}", headers=_headers(), timeout=20)
         r.raise_for_status()
         files = [f["filename"] for f in r.json().get("files", [])]
-        return any(f.startswith(BOT_CODE) and not f.endswith("_state.json") for f in files) or len(files) >= 300
+        return any(f.startswith(BOT_CODE) and not f.endswith("_state.json") and f not in RESEARCH
+                   for f in files) or len(files) >= 300
     except Exception:  # noqa: BLE001
         return True
 

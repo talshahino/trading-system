@@ -234,6 +234,7 @@ def main():
                 print(f"  {s} {tf}: NO DATA (empty)")
                 missing.add(s)
                 continue
+            df.attrs.update(symbol=s, tf=tf)              # strategies that use a partner instrument read these
             real = (not args.demo) and s in U.ALL       # FTMO's own costs, applied per trade below
             cost = 0.00005 if args.demo else (0.0 if real else RP.cost_of(s))
             if real and s not in SPREADS:

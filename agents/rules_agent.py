@@ -415,6 +415,9 @@ STRATEGIES.update(SESSION)
 from agents.seasonal_strategies import SEASONAL  # noqa: E402
 
 STRATEGIES.update(SEASONAL)
+from agents.intermarket_strategies import INTERMARKET  # noqa: E402
+
+STRATEGIES.update(INTERMARKET)
 
 
 def timeframe_ok(sid, tf):

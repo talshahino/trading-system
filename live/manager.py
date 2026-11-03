@@ -208,9 +208,30 @@ def running(name):
     return p is not None and p.poll() is None
 
 
+def sync_config(a):
+    """An added account runs its own copy of a bot's settings (live/bots/<name>.json). Refresh it from the
+    bot it follows (combos, risk, rules) at every start, keeping only the account's own fields, so a change
+    to bot2.json / bot3.json reaches the account with the next update."""
+    bot = a.get("bot")
+    if not bot or bot == a["name"]:
+        return
+    src, dst = LIVE / "bots" / f"{bot}.json", LIVE / "bots" / f"{a['name']}.json"
+    try:
+        cfg = json.loads(src.read_text(encoding="utf-8"))
+        old = json.loads(dst.read_text(encoding="utf-8")) if dst.exists() else {}
+        cfg.update({k: old[k] for k in ("name", "label", "bot_label", "account", "live_tunnel") if k in old})
+        cfg["name"] = a["name"]
+        if cfg != old:
+            dst.write_text(json.dumps(cfg, ensure_ascii=False, indent=1), encoding="utf-8")
+            log(f"{a['name']}: settings refreshed from {bot}.json")
+    except Exception as e:  # noqa: BLE001
+        log(f"{a['name']}: could not refresh settings from {bot}.json: {e}")
+
+
 def start_bot(a):
     if running(a["name"]):
         return
+    sync_config(a)
     env = os.environ.copy()
     env.update(MANAGED="1", BOT_PORT=str(a["port"]), MANAGER_KEY=CFG["local_key"], BOT_NICKNAME=a.get("nickname") or "")
     if a.get("password"):

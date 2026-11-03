@@ -340,7 +340,8 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .tfoot{background:rgba(31,58,95,.05);border-top:1px dashed rgba(31,58,95,.18);padding:4px 14px 10px}
 body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .row,body.viewer #logCard,body.viewer .own,body.viewer #dRen,body.viewer #dTgt,body.viewer #addAccBtn,body.viewer #ownerOnly{display:none!important}
 #viewBan{display:none}body.viewer #viewBan{display:block;text-align:center;font-size:12.5px;color:var(--mut);padding:4px 0 0}
-#accDet{overflow-x:clip}#dBody{will-change:transform;touch-action:pan-y}
+#accDet{overflow-x:clip;position:relative}#dBody{will-change:transform;touch-action:pan-y}
+.sk{border-radius:10px;background:linear-gradient(90deg,rgba(127,127,127,.08),rgba(127,127,127,.16),rgba(127,127,127,.08))}
 .allcard{border-radius:16px;padding:10px 14px 12px;margin-top:4px;background:rgba(31,58,95,.07);border:1.5px solid rgba(31,58,95,.22)}
 .allcard b{display:block;font-size:13.5px;color:var(--vps)}
 </style>
@@ -1013,7 +1014,8 @@ $("accList").onclick = e => {
   const g = e.target.closest("[data-go]"); if (g) { UI.view = g.dataset.go; renderList(); scrollTo(0, 0); return; }
   const c = e.target.closest("[data-acc]"); if (c) openAcc(c.dataset.acc);
 };
-function openAcc(n) { UI.from = UI.view; UI.view = "det"; UI.cur = n; UI.sub = "ov"; lastFull = 0; showAcc(); scrollTo(0, 0); }
+function openAcc(n) { UI.from = UI.view; UI.view = "det"; UI.cur = n; UI.sub = "ov"; lastFull = 0; for (const k in SNAP) delete SNAP[k]; showAcc(); scrollTo(0, 0);
+  setTimeout(() => SUBS.forEach(([k]) => { if (k !== UI.sub) snapTab(k); }), 900); }
 function showAcc() {
   const det = UI.view === "det";
   $("accList").style.display = det ? "none" : ""; $("accDet").style.display = det ? "" : "none";
@@ -1041,50 +1043,92 @@ function renderDet(light) {
   else if (!light && UI.sub === "st") statsTab(s, a);
   else if (!light && UI.sub === "ac") details(s, a);
 }
-$("dSubt").onclick = e => { const b = e.target.closest("[data-s]"); if (b) { UI.sub = b.dataset.s; $("dBody").innerHTML = ""; renderDet(); } };
-/* swipe the account screen left/right to move between its tabs. The screen follows the finger; a short
-   quick flick or a drag past ~1/5 of the width switches. RTL: the next tab sits to the left, so dragging
-   right brings it in. Vertical scrolling stays normal. */
+$("dSubt").onclick = e => { const b = e.target.closest("[data-s]"); if (b) { if (UI.sub === "ov") SNAP.ov = $("dBody").innerHTML.replace(/\sid="[^"]*"/g, ""); UI.sub = b.dataset.s; $("dBody").innerHTML = ""; renderDet();
+  setTimeout(() => SUBS.forEach(([k]) => { if (k !== UI.sub) snapTab(k); }), 400); } };
+/* swipe between the account tabs like pages: the neighbouring tab is visible beside the current one and
+   follows the finger; on release both spring into place (a light overshoot). RTL: the next tab sits to the
+   left, so dragging right brings it in. A short flick or a drag past ~1/5 of the width switches. */
+const SNAP = {};
+function snapTab(k) {                       // render tab k off screen once, to show it while dragging
+  const a = accBy(UI.cur), s = found[UI.cur], B = $("dBody");
+  if (!a || !s || k === UI.sub || k === "ov") return;     // "מבט על" has a live chart: shown as a light preview
+  const off = document.createElement("div"), cur = UI.sub;
+  off.style.cssText = `position:absolute;left:-20000px;top:0;width:${B.offsetWidth}px;visibility:hidden`;
+  document.body.appendChild(off);
+  B.id = "dBodyLive"; off.id = "dBody"; UI.sub = k;
+  try { if (k === "tr") trades(s, a, false); else if (k === "st") statsTab(s, a); else if (k === "ac") details(s, a);
+    SNAP[k] = off.innerHTML.replace(/\sid="[^"]*"/g, ""); }
+  catch (e) {} finally { UI.sub = cur; off.id = ""; B.id = "dBody"; off.remove(); }
+}
+function preview(k) {
+  if (SNAP[k]) return SNAP[k];
+  const l = (SUBS.find(x => x[0] === k) || [k, k])[1];
+  return `<div class="card"><h3>${l}</h3><div class="sk" style="height:120px"></div></div><div class="card"><div class="sk" style="height:220px"></div></div>`;
+}
 {
   const B = $("dBody"), NOSWIPE = ".slide,.eqc,input,textarea,select,.sw,[data-noswipe]";
-  let sx = 0, sy = 0, st = 0, mode = "", dx = 0;
+  const SPRING = "cubic-bezier(.2,1.35,.45,1)";
+  let sx = 0, sy = 0, lx = 0, lt = 0, vx = 0, mode = "", dx = 0, G = null, gj = -1, W = 0;
   const canScrollX = el => { for (let e = el; e && e !== B; e = e.parentElement) if (e.scrollWidth > e.clientWidth + 4 && /(auto|scroll)/.test(getComputedStyle(e).overflowX)) return true; return false; };
   const idx = () => SUBS.findIndex(([k]) => k === UI.sub);
+  const ghost = j => {
+    if (G && gj === j) return;
+    if (G) G.remove();
+    gj = j; G = null;
+    if (j < 0 || j >= SUBS.length) return;
+    G = document.createElement("div");
+    G.className = "swipeGhost";
+    G.style.cssText = `position:absolute;top:${B.offsetTop}px;left:${B.offsetLeft}px;width:${B.offsetWidth}px;pointer-events:none;will-change:transform`;
+    G.innerHTML = preview(SUBS[j][0]);
+    B.parentElement.appendChild(G);
+  };
+  const place = (x, anim) => {
+    const t = anim ? `transform .38s ${SPRING}` : "none";
+    B.style.transition = t; B.style.transform = x ? `translateX(${x}px)` : "";
+    if (G) { G.style.transition = t; G.style.transform = `translateX(${x + (gj > idx() ? -1 : 1) * (W + 16)}px)`; }
+  };
   B.addEventListener("touchstart", e => {
     const t = e.touches[0];
     mode = e.touches.length === 1 && UI.view === "det" && !e.target.closest(NOSWIPE) && !canScrollX(e.target) ? "?" : "";
-    sx = t.clientX; sy = t.clientY; st = Date.now(); dx = 0; B.style.transition = "none";
+    sx = lx = t.clientX; sy = t.clientY; lt = Date.now(); vx = 0; dx = 0; W = B.offsetWidth;
   }, {passive: true});
   B.addEventListener("touchmove", e => {
     if (!mode) return;
     const t = e.touches[0], mx = t.clientX - sx, my = t.clientY - sy;
     if (mode === "?") {
-      if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
-      mode = Math.abs(mx) > Math.abs(my) * 0.9 ? "x" : "";
+      if (Math.abs(mx) < 6 && Math.abs(my) < 6) return;
+      mode = Math.abs(mx) > Math.abs(my) * 0.8 ? "x" : "";
       if (!mode) return;
+      B.parentElement.style.position = B.parentElement.style.position || "relative";
     }
     e.preventDefault();
-    const j = idx() + (mx > 0 ? 1 : -1), edge = j < 0 || j >= SUBS.length;
-    dx = mx; B.style.transform = `translateX(${edge ? mx * 0.25 : mx}px)`; B.style.opacity = String(1 - Math.min(.35, Math.abs(mx) / 900));
+    const now = Date.now(); vx = 0.7 * vx + 0.3 * ((t.clientX - lx) / Math.max(1, now - lt)); lx = t.clientX; lt = now;
+    const j = idx() + (mx > 0 ? 1 : -1);
+    ghost(j);
+    dx = (j < 0 || j >= SUBS.length) ? mx * 0.3 : mx;          // rubber band at the first / last tab
+    place(dx, false);
   }, {passive: false});
+  const done = () => { if (G) G.remove(); G = null; gj = -1; B.style.transition = ""; B.style.transform = ""; };
   const end = () => {
     if (mode !== "x") { mode = ""; return; }
     mode = "";
-    const v = Math.abs(dx) / Math.max(1, Date.now() - st), j = idx() + (dx > 0 ? 1 : -1);
-    const go = (Math.abs(dx) > innerWidth * 0.2 || (v > 0.3 && Math.abs(dx) > 25)) && j >= 0 && j < SUBS.length;
-    B.style.transition = "transform .16s ease-out, opacity .16s ease-out";
-    if (!go) { B.style.transform = ""; B.style.opacity = ""; return; }
-    const w = innerWidth * (dx > 0 ? 1 : -1);
-    B.style.transform = `translateX(${w}px)`; B.style.opacity = "0";
+    const j = idx() + (dx > 0 ? 1 : -1);
+    const go = G && j === gj && (Math.abs(dx) > W * 0.2 || (Math.abs(vx) > 0.25 && Math.sign(vx) === Math.sign(dx)));
+    if (!go) { place(0, true); setTimeout(done, 380); return; }
+    const to = (dx > 0 ? 1 : -1) * (W + 16);
+    place(to, true);
     setTimeout(() => {
-      UI.sub = SUBS[j][0]; B.innerHTML = ""; renderDet();
+      const prev = UI.sub;
+      if (prev === "ov") SNAP.ov = B.innerHTML.replace(/\sid="[^"]*"/g, "");
+      UI.sub = SUBS[j][0];
+      B.style.transition = "none"; B.style.transform = "";
+      B.innerHTML = ""; renderDet(); done();
       const b = $("dSubt").querySelector(`[data-s="${UI.sub}"]`); if (b && b.scrollIntoView) b.scrollIntoView({block: "nearest", inline: "center"});
-      B.style.transition = "none"; B.style.transform = `translateX(${-w * 0.35}px)`; B.style.opacity = "0";
-      requestAnimationFrame(() => requestAnimationFrame(() => { B.style.transition = "transform .2s ease-out, opacity .2s ease-out"; B.style.transform = ""; B.style.opacity = ""; }));
-    }, 150);
+      setTimeout(() => SUBS.forEach(([k]) => { if (k !== UI.sub) snapTab(k); }), 400);
+    }, 360);
   };
   B.addEventListener("touchend", end, {passive: true});
-  B.addEventListener("touchcancel", () => { mode = "x"; dx = 0; end(); }, {passive: true});
+  B.addEventListener("touchcancel", () => { if (mode === "x") { dx = 0; end(); } mode = ""; }, {passive: true});
 }
 $("dBack").onclick = () => { UI.view = UI.from && UI.from !== "det" ? UI.from : "list"; showAcc(); scrollTo(0, 0); };
 

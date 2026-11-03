@@ -1008,12 +1008,12 @@ def main():
     combos = []
     for c in cfg["combos"]:
         sid, tf, sym = c.split("|")
-        name = map_symbol(sym)
-        if name is None or not mt5.symbol_select(name, True):
+        sname = map_symbol(sym)
+        if sname is None or not mt5.symbol_select(sname, True):
             log(f"WARNING: {sym} ({U.ALL[sym][0]}) cannot be traded on this server - {c} is off")
             continue
-        if name != U.ALL[sym][0].replace("/", ""):
-            log(f"{sym}: on this server it is {name}")
+        if sname != U.ALL[sym][0].replace("/", ""):
+            log(f"{sym}: on this server it is {sname}")
         combos.append((c, sid, tf, sym))
     MAGICS_BY_COMBO = {c: cfg["magic_base"] + i for i, c in enumerate(cfg["combos"])}
     MAGICS = set(MAGICS_BY_COMBO.values())

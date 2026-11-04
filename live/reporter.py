@@ -21,6 +21,16 @@ REPO = "talshahino/trading-system"
 _CFG = json.loads((ROOT / "live" / "notify.json").read_text(encoding="utf-8"))
 _TOKEN_FILE = ROOT / "live" / "github_token.txt"
 _LAST = {}
+_LAST_FILE = None          # set by the bot: the "already told" times survive a restart (update, crash)
+
+
+def remember_alerts(path):
+    global _LAST_FILE
+    _LAST_FILE = Path(path)
+    try:
+        _LAST.update({k: float(v) for k, v in json.loads(_LAST_FILE.read_text(encoding="utf-8")).items()})
+    except Exception:  # noqa: BLE001
+        pass
 
 
 def notify(title, message, priority=3, tags=None, key=None, every=0):
@@ -29,6 +39,11 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
         return
     if key:
         _LAST[key] = time.time()
+        if _LAST_FILE is not None:
+            try:
+                _LAST_FILE.write_text(json.dumps(_LAST), encoding="utf-8")
+            except Exception:  # noqa: BLE001
+                pass
     _to_app(title, message, priority >= 5)
     if _CFG.get("ntfy", True) is False:
         return None            # notifications go to the app only

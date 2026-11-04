@@ -139,6 +139,11 @@ def partner_bars(sym, tf, start, end):
     """Bars of a related instrument for the inter-market strategies (agents/intermarket_strategies), from MT5."""
     if sym not in _PARTNER_OK:
         name = map_symbol(sym)
+        if name is None:                        # only its prices are needed: a symbol closed for trading will do
+            from live import symbols as SY
+            hit = SY.resolve(sym, U.ALL[sym][0], mt5.symbols_get() or [], tradable_only=False)
+            if hit is not None:
+                name = SYMMAP[sym] = hit.name
         _PARTNER_OK[sym] = bool(name and mt5.symbol_select(name, True))
         if not _PARTNER_OK[sym]:
             log(f"WARNING: partner {sym} is not available on this server - its inter-market combos give no signals")

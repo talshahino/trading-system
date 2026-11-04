@@ -143,7 +143,9 @@ def main():
         for k, g in t.groupby(col):
             lv = summarise(g)
             bv = summarise(bt[bt[col] == k]) if len(bt) else {"n": 0}
-            res[key].append({col: k, "live": lv, "backtest": bv, "candidates": hints(lv, bv)})
+            res[key].append({col: k, "live": lv, "backtest": bv, "candidates": hints(lv, bv),
+                             # losing live after enough trades: check with loo.py whether the bot is better without it
+                             "check_removal": bool(lv.get("n", 0) >= MIN_LIVE and lv.get("avg_r", 0) < 0)})
         res[key].sort(key=lambda x: -x["live"]["n"])
     (OUT / "summary.json").write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"live trades: {len(t)} in {len(res['accounts'])} accounts | strategies: {len(res['strategies'])} | "

@@ -330,6 +330,8 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
         if not np.isfinite(stop):
             i += 1
             continue
+        if plan.get("stop_scale") and plan["stop_scale"] != 1.0:       # variant tests: stop nearer / farther
+            stop = e - plan["stop_scale"] * (e - stop)
         risk = d * (e - stop)
         if risk < 0.25 * a[i]:
             i += 1
@@ -346,9 +348,26 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
                 continue
         else:
             target = e + d * tg[1] * risk
+        pb = plan.get("entry_pullback")          # variant tests: a limit order k x risk better, valid W bars
+        if pb and pb[0] > 0:
+            lim = e - d * pb[0] * risk
+            hit = None
+            for t in range(e_t, min(n, e_t + pb[1])):
+                if (d > 0 and l[t] <= lim) or (d < 0 and h[t] >= lim):
+                    hit = t
+                    break
+            if hit is None:
+                i += 1
+                continue
+            e_t, e = hit, (min(lim, o[hit]) if d > 0 else max(lim, o[hit]))
+            risk = d * (e - stop)
+            if risk <= 0:
+                i += 1
+                continue
         be = plan.get("breakeven")
         trail = plan.get("trail_atr")
         best = e
+        worst = e
         stop0 = stop
         free_t = None    # first bar from which the stop sits at/beyond entry (no money at risk)
         exit_px, exit_t, reverse_at, reason = None, None, None, ""
@@ -365,6 +384,7 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
                 break
             # updates at the bar close, used from the next bar on
             best = max(best, h[t]) if d > 0 else min(best, l[t])
+            worst = min(worst, l[t]) if d > 0 else max(worst, h[t])
             if trail:
                 ts = best - d * trail * a[t]
                 stop = max(stop, ts) if d > 0 else min(stop, ts)
@@ -397,7 +417,8 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
                      "stop_px": float(stop0), "target_px": float(target) if target is not None else np.nan,
                      "reason": reason,
                      "free_time": df.index[free_t] if free_t is not None and free_t <= exit_t else pd.NaT,
-                     "stop_last": float(stop)})
+                     "stop_last": float(stop),
+                     "mfe_r": float(d * (best - e) / risk), "mae_r": float(d * (e - worst) / risk)})
         i = reverse_at if reverse_at is not None else max(exit_t, i + 1)
     return pd.DataFrame(rows)
 

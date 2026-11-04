@@ -48,12 +48,14 @@ NC.CURRENCIES.update(U.CURRENCIES)
 COMBO_TRADES = []
 OPT_RESULTS = []
 # trade-management grid: target (None = strategy's own, "none" = no target), breakeven fraction (0 = off), ATR-stop scale
-OPT_TARGETS = [None, ("R", 1.5), ("R", 2.0), ("R", 3.0), "none"]
-OPT_BE = [0.0, 0.4, 0.6, 0.8]
-OPT_STOP = [0.75, 1.0, 1.5]
+OPT_TARGETS = [None, ("R", 1.0), ("R", 1.5), ("R", 2.0), ("R", 3.0), "none"]
+OPT_BE = [None]                 # None = the run's own --breakeven (the bots' rule)
+OPT_STOP = [0.75, 1.0, 1.25, 1.5]
+OPT_ENTRY = [0.0, 0.25, 0.5]     # limit order this many R better than the next open, valid 3 bars
+OPT_ALL_TRADES = True            # keep every variant's trades (improve.py chooses, not the run)
 
 
-def _variant(fn, target, stop_scale):
+def _variant(fn, target, stop_scale, pullback=0.0):
     def g(df):
         lo, sh, plan = fn(df)
         plan = dict(plan)
@@ -61,9 +63,10 @@ def _variant(fn, target, stop_scale):
             plan["target"] = None
         elif target is not None:
             plan["target"] = target
-        st = plan.get("stop")
-        if stop_scale != 1.0 and st and st[0] == "atr":
-            plan["stop"] = ("atr", st[1] * stop_scale)
+        if stop_scale != 1.0:
+            plan["stop_scale"] = stop_scale
+        if pullback:
+            plan["entry_pullback"] = (pullback, 3)
         return lo, sh, plan
     return g
 
@@ -126,17 +129,18 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args):
         COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
 
 
-def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args):
-    """Every grid variant of one combo: choose on the training window, then check on the later window."""
-    fn = R.STRATEGIES[sid][1]
+def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """Every grid variant of one combo (target x stop distance x entry): stats on the training window and
+    on the later window. All variants' trades are kept for improve.py, which decides."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
     t0, t1 = SPLIT, pd.Timestamp(args.optimize, tz="UTC")
-    off = be[1] if be else 0.0001
     rows, keep = [], {}
-    atr_stop = (fn(df.iloc[:400])[2].get("stop") or ("",))[0] == "atr"
+    bf = be[0] if be else 0.0
     for tg in OPT_TARGETS:
-        for bf in OPT_BE:
-            for sc in (OPT_STOP if atr_stop else [1.0]):
-                t = R.run(df, _variant(fn, tg, sc), cost, breakeven=(bf, off) if bf else None, session_exit=sess)
+        for sc in OPT_STOP:
+            for pb in OPT_ENTRY:
+                t = R.run(df, _variant(fn, tg, sc, pb), cost, breakeven=be, session_exit=sess)
                 if t.empty:
                     continue
                 if real:
@@ -144,17 +148,17 @@ def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args):
                 if events is not None:
                     t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
                 tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
-                key = f"{'own' if tg is None else ('none' if tg == 'none' else f'{tg[1]:g}R')}|be{bf:g}|stop{sc:g}"
+                key = f"{'own' if tg is None else ('none' if tg == 'none' else f'{tg[1]:g}R')}|be{bf:g}|stop{sc:g}|entry{pb:g}"
                 rows.append({"variant": key, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
                 keep[key] = t[t["time"] >= t0]
     if not rows:
         return
-    base_key = "own|be0.6|stop1"
+    base_key = f"own|be{bf:g}|stop1|entry0"
     ok = [x for x in rows if x["train"]["n"] >= 20]
     best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
     base = next((x for x in rows if x["variant"] == base_key), None)
     OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows})
-    for k in {best["variant"], base_key} & set(keep):
+    for k in (set(keep) if OPT_ALL_TRADES else {best["variant"], base_key} & set(keep)):
         COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
 VARIANT = [""]
 MISSING = set()   # instruments with no history for a timeframe
@@ -282,7 +286,7 @@ def main():
                     continue
                 if args.optimize:
                     try:
-                        optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args)
+                        optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
                     except Exception:  # noqa: BLE001
                         ERRORS.append(f"optimize {sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue
@@ -339,7 +343,8 @@ def main():
         (config.OUTPUT_DIR / f"optimize_{tag}.json").write_text(_json.dumps(OPT_RESULTS, ensure_ascii=False, indent=1), encoding="utf-8")
         print("optimized", len(OPT_RESULTS), "combos")
     if combos is not None or (args.test_from and COMBO_TRADES):
-        cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason", "free_time"]
+        cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason", "free_time",
+                "mfe_r", "mae_r"]
         if args.optimize or args.filters:
             cols = cols + ["variant"]
         out = pd.concat(COMBO_TRADES, ignore_index=True).reindex(columns=cols) if COMBO_TRADES else pd.DataFrame(columns=cols)

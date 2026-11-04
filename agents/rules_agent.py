@@ -454,6 +454,9 @@ STRATEGIES.update(QUANTPEDIA)
 from agents.book_strategies import BOOKS  # noqa: E402
 
 STRATEGIES.update(BOOKS)
+from agents.github_strategies import GITHUB  # noqa: E402
+
+STRATEGIES.update(GITHUB)
 
 
 def timeframe_ok(sid, tf):

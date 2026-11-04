@@ -467,7 +467,12 @@ def send(req, what):
     if r is None or r.retcode != mt5.TRADE_RETCODE_DONE:
         MON["last_fail"] = (None, str(err)) if r is None else (r.retcode, r.comment)
         log(f"FAILED {what}: {('no answer', err) if r is None else (r.retcode, r.comment)}")
-        if r is None or r.retcode not in (10018,):           # 10018 = market closed: not worth a message
+        if r is not None and r.retcode == 10027:
+            # the Algo Trading button of this account's MetaTrader is off: only the user can turn it on
+            REP.notify(f"{BOT}: המסחר האוטומטי כבוי", "בחלון MetaTrader של החשבון הזה הכפתור Algo Trading כבוי, ולכן "
+                       "הבוט לא יכול לפתוח או לסגור עסקאות. הצג את החלון מהאפליקציה ולחץ על Algo Trading (שיהיה ירוק).",
+                       priority=5, tags=["warning"], key="algo_off", every=3600)
+        elif r is None or r.retcode not in (10018,):           # 10018 = market closed: not worth a message
             REP.notify(f"{BOT}: פקודה נכשלה", f"{what}\n{('MetaTrader לא ענה', err) if r is None else (r.retcode, r.comment)}",
                        priority=4, tags=["warning"], key="fail:" + what[:20], every=1800)
         return None

@@ -1,6 +1,6 @@
 /* Taloona Trade app: notifications from the bots' manager (Web Push) and the "approve update" button. */
 const STATE_URL = "https://raw.githubusercontent.com/talshahino/trading-system/live/live/manager_state.json";
-const SHELL = "taloona-v4";
+const SHELL = "taloona-v5";
 
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(SHELL).then(c => c.addAll(["./", "./index.html", "./icon-192.png"])).catch(() => {})); });
 self.addEventListener("activate", e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== SHELL).map(k => caches.delete(k)))).then(() => self.clients.claim())));
@@ -36,6 +36,23 @@ self.addEventListener("push", e => {
 
 const MGR_API = "https://api.github.com/repos/talshahino/trading-system/contents/live/manager_state.json?ref=live";
 
+const hex2b = h => Uint8Array.from(h.match(/../g).map(x => parseInt(x, 16)));
+const b64b = x => Uint8Array.from(atob(x), c => c.charCodeAt(0));
+async function openUrl(j, pin) {
+  if (!j) return null;
+  if (j.url) return j.url;
+  for (const e of j.url_enc || []) {
+    try {
+      const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pin || ""), "PBKDF2", false, ["deriveBits"]);
+      const bits = new Uint8Array(await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-256", salt: hex2b(e.s), iterations: 200000}, base, 256));
+      const kb = await crypto.subtle.digest("SHA-256", new Uint8Array([...bits, ...new TextEncoder().encode("url")]));
+      const key = await crypto.subtle.importKey("raw", kb, "AES-GCM", false, ["decrypt"]);
+      return new TextDecoder().decode(await crypto.subtle.decrypt({name: "AES-GCM", iv: b64b(e.iv)}, key, b64b(e.ct)));
+    } catch (x) {}
+  }
+  return null;
+}
+
 async function alive(u) {
   if (!u) return false;
   try { const r = await fetch(u + "/status", {cache: "no-store"}); return r.ok; } catch (x) { return false; }
@@ -47,11 +64,12 @@ async function managerUrl() {
   const saved = await kv("mgr");
   if (await alive(saved)) return saved;
   let raw = null, api = null;
-  try { const r = await fetch(STATE_URL + "?t=" + Date.now(), {cache: "no-store"}); if (r.ok) raw = (await r.json()).url; } catch (x) {}
+  const pin = await kv("pin");
+  try { const r = await fetch(STATE_URL + "?t=" + Date.now(), {cache: "no-store"}); if (r.ok) raw = await openUrl(await r.json(), pin); } catch (x) {}
   if (raw && raw !== saved && await alive(raw)) { await kv("mgr", raw); return raw; }
   try {
     const r = await fetch(MGR_API + "&t=" + Date.now(), {cache: "no-store", headers: {Accept: "application/vnd.github.raw+json"}});
-    if (r.ok) api = (await r.json()).url;
+    if (r.ok) api = await openUrl(await r.json(), pin);
   } catch (x) {}
   if (api && await alive(api)) { await kv("mgr", api); return api; }
   return api || raw || saved;

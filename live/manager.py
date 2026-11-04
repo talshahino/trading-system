@@ -624,11 +624,13 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError("קוד הצפייה חייב להיות שונה מהקוד שלך")
                 set_viewer_pin(v)
                 log("read-only code set")
+                threading.Thread(target=push_manager_state, daemon=True).start()
                 return self._send(200, {"ok": True})
             if path == "/viewer_pin_del":
                 CFG.pop("viewer_hash", None)
                 CFG.pop("viewer_salt", None)
                 save()
+                threading.Thread(target=push_manager_state, daemon=True).start()
                 return self._send(200, {"ok": True})
             if path == "/subscribe":
                 sub = d.get("subscription")
@@ -778,11 +780,30 @@ def watchdog_secret():
         log(f"computer-off alerts setup failed: {e}")
 
 
+def seal_url(url):
+    """The computer's address, published only encrypted: once with a key derived from the secret code and
+    once from the read-only code. The app derives the same key from the code it has (PBKDF2 as stored in
+    pin_hash / viewer_hash, then SHA-256 with "url"), so without a code nobody can read where the computer
+    is. AES-256-GCM, fresh nonce each time."""
+    if not url:
+        return []
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+    out = []
+    for h, salt in ((CFG.get("pin_hash"), CFG.get("pin_salt")), (CFG.get("viewer_hash"), CFG.get("viewer_salt"))):
+        if not h or not salt:
+            continue
+        key = hashlib.sha256(bytes.fromhex(h) + b"url").digest()
+        iv = secrets.token_bytes(12)
+        ct = AESGCM(key).encrypt(iv, url.encode(), None)
+        out.append({"s": salt, "iv": base64.b64encode(iv).decode(), "ct": base64.b64encode(ct).decode()})
+    return out
+
+
 def push_manager_state():
     """Tell the app where the manager is (public GitHub file). It also lists the app's notification
     subscriptions for GitHub's watchdog: without the private signing key (kept on this computer and,
     encrypted, as a GitHub secret) nobody can send anything to them."""
-    state = {"url": TUN.URL["url"], "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    state = {"url_enc": seal_url(TUN.URL["url"]), "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
              "accounts": public_accounts(with_run=False),
              "subs": CFG.get("subs", []), "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
     err = REP.push_state("manager", state)

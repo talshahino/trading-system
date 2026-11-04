@@ -30,7 +30,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "reports" / "trade_review"
 KS = (1.0, 1.5, 2.0, 3.0)
-MIN_LIVE = 10           # live trades of a strategy before it gets a hint
+MIN_LIVE = 6            # live trades of a strategy before it gets a hint (user: 6)
 
 
 def live_trades(states):

@@ -739,7 +739,10 @@ function renderMgr() {
   });
   $("accs").querySelectorAll("button[data-a]").forEach(b => b.onclick = async () => {
     const a = b.dataset.a, n = b.dataset.n;
-    if (a === "remove" && !confirmBox(n)) return;
+    if (a === "remove") {
+      const lbl = (mgrInfo.accounts.find(x => x.name === n) || {}).label || n;
+      if (!(await ask("להסיר את החשבון?", `${lbl}: הבוט שלו ייעצר והחשבון יוסר מהרשימה. העסקאות הפתוחות נשארות ב־MetaTrader עם הסטופ והיעד.`))) return;
+    }
     let body = {};
     if (a === "rename") { const nk = prompt("שם חדש לחשבון:", (mgrInfo.accounts.find(x => x.name === n) || {}).nickname || ""); if (!nk) return; body = {nickname: nk}; }
     b.disabled = true;

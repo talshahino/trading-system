@@ -727,6 +727,7 @@ class Handler(BaseHTTPRequestHandler):
                     stop_bot(name)
                 else:
                     remove_account(name)
+                threading.Thread(target=push_manager_state, daemon=True).start()
                 return self._send(200, {"ok": True})
             if path == "/logs":                          # behind the secret code only; never published
                 which = str(d.get("which") or "manager")

@@ -143,7 +143,7 @@ def main():
         F.FREE_RISK_AT_BREAKEVEN = bool(cfg["free_risk_at_breakeven"])
         for (variant, extra), (kind, t) in ((v, k) for v in variants for k in trades.items()):
             combos = list(cfg["combos"]) + [c for c in extra if c not in cfg["combos"]]
-            tr = t[t["combo"].isin(combos)].sort_values("time").reset_index(drop=True)
+            tr = t[t["combo"].isin(combos) & (pd.to_datetime(t["time"], utc=True) >= start)].sort_values("time").reset_index(drop=True)
             w = F.account_path(tr, cfg["risk"], start=start)
             led = w[0].attrs["ledger"]
             pr = RR.prophet_check(led, ns)

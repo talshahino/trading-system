@@ -421,7 +421,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <form class="form" id="addForm" autocomplete="off">
         <label class="full">שם לחשבון<input id="fNick" maxlength="40" placeholder="למשל: אתגר 100K ראשון"></label>
         <label>בוט<select id="fBot"><option value="bot1">בוט 1</option><option value="bot2">בוט 2</option><option value="bot3">בוט 3</option><option value="bot4">בוט 4</option></select></label>
-        <label>שרת<input id="fServer" value="FTMO-Demo" autocapitalize="off" spellcheck="false"></label>
+        <label>שרת<input id="fServer" list="fServers" placeholder="בחר או הקלד, למשל MetaQuotes-Demo" autocapitalize="off" spellcheck="false"><datalist id="fServers"><option value="MetaQuotes-Demo"><option value="FTMO-Demo"></datalist></label>
         <label>מספר חשבון<input id="fLogin" inputmode="numeric" autocomplete="off"></label>
         <label>סיסמת החשבון<input id="fPass" type="password" autocomplete="new-password"></label>
         <div class="full row"><button class="btn" type="submit" id="addBtn">הוסף והפעל</button>

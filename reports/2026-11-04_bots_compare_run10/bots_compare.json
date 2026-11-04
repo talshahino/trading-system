@@ -1,0 +1,183 @@
+[
+ {
+  "bot": 1,
+  "variant": "bot",
+  "account": "Standard",
+  "risk": 0.00375,
+  "combos_with_trades": 41,
+  "trades": 6651,
+  "skipped_by_guard": 125,
+  "end_balance": 400627,
+  "blown": null,
+  "worst_intraday_pct": -3.98,
+  "lowest_equity": 96598,
+  "losing_weeks": 16,
+  "weeks": 80,
+  "prophet": "PASS",
+  "prophet_reasons": [],
+  "pass_rate_pct": 100.0,
+  "breach_rate_pct": 0.0,
+  "samples": 74,
+  "exit_reasons": {
+   "סגירה בשעה קבועה": 2313,
+   "סטופ": 1745,
+   "סיגנל יציאה": 668,
+   "יעד": 500,
+   "סטופ נגרר / נקודת איזון": 485,
+   "סטופ נגרר": 423,
+   "סטופ נגרר (פער פתיחה)": 282,
+   "נסגרה לפני הודעה מוגבלת": 158
+  },
+  "margin": {
+   "peak_margin": 137061,
+   "peak_when": "2025-07-28 14:15:00+00:00",
+   "peak_pct": 137.1,
+   "refused": 4,
+   "refused_examples": [
+    {
+     "combo": "TT56|1Hour|XOM",
+     "time": "2025-05-06 14:00:00+00:00",
+     "need": 25116,
+     "used": 88406
+    },
+    {
+     "combo": "TV05|15Min|WMT",
+     "time": "2025-07-22 19:00:00+00:00",
+     "need": 63043,
+     "used": 72690
+    },
+    {
+     "combo": "TV38|15Min|GOOG",
+     "time": "2025-07-28 14:15:00+00:00",
+     "need": 12674,
+     "used": 124387
+    },
+    {
+     "combo": "TV03|15Min|AAPL",
+     "time": "2025-09-09 13:30:00+00:00",
+     "need": 166727,
+     "used": 35121
+    }
+   ],
+   "median_margin_per_trade_by_class": {
+    "crypto": 3224.0,
+    "energy": 393.0,
+    "fx": 1580.0,
+    "index": 1237.0,
+    "metal": 1014.0,
+    "stock": 9845.0
+   }
+  },
+  "quality": "full"
+ },
+ {
+  "bot": 2,
+  "variant": "bot",
+  "account": "Standard",
+  "risk": 0.0045,
+  "combos_with_trades": 24,
+  "trades": 3436,
+  "skipped_by_guard": 14,
+  "end_balance": 328472,
+  "blown": null,
+  "worst_intraday_pct": -3.07,
+  "lowest_equity": 99991,
+  "losing_weeks": 15,
+  "weeks": 80,
+  "prophet": "PASS",
+  "prophet_reasons": [],
+  "pass_rate_pct": 100.0,
+  "breach_rate_pct": 0.0,
+  "samples": 71,
+  "exit_reasons": {
+   "סגירה בשעה קבועה": 1619,
+   "סטופ": 885,
+   "סיגנל יציאה": 329,
+   "יעד": 228,
+   "סטופ נגרר / נקודת איזון": 129,
+   "נסגרה לפני הודעה מוגבלת": 109,
+   "יציאת זמן": 99,
+   "סטופ נגרר": 19
+  },
+  "margin": {
+   "peak_margin": 80469,
+   "peak_when": "2025-11-03 10:00:00+00:00",
+   "peak_pct": 80.5,
+   "refused": 0,
+   "refused_examples": [],
+   "median_margin_per_trade_by_class": {
+    "crypto": 2471.0,
+    "energy": 338.0,
+    "fx": 1879.0,
+    "index": 1960.0,
+    "metal": 741.0,
+    "stock": 10172.0
+   }
+  },
+  "quality": "full"
+ },
+ {
+  "bot": 3,
+  "variant": "bot",
+  "account": "Standard",
+  "risk": 0.00375,
+  "combos_with_trades": 26,
+  "trades": 5314,
+  "skipped_by_guard": 6,
+  "end_balance": 265695,
+  "blown": null,
+  "worst_intraday_pct": -3.05,
+  "lowest_equity": 93209,
+  "losing_weeks": 22,
+  "weeks": 80,
+  "prophet": "PASS",
+  "prophet_reasons": [],
+  "pass_rate_pct": 98.6,
+  "breach_rate_pct": 1.4,
+  "samples": 70,
+  "exit_reasons": {
+   "סגירה בשעה קבועה": 1941,
+   "סטופ": 1429,
+   "יעד": 580,
+   "סיגנל יציאה": 367,
+   "סטופ נגרר / נקודת איזון": 356,
+   "יציאת זמן": 253,
+   "סטופ נגרר": 204,
+   "סטופ נגרר (פער פתיחה)": 105
+  },
+  "margin": {
+   "peak_margin": 209461,
+   "peak_when": "2026-08-10 18:45:00+00:00",
+   "peak_pct": 209.5,
+   "refused": 3,
+   "refused_examples": [
+    {
+     "combo": "TV24|15Min|TSLA",
+     "time": "2025-06-13 16:30:00+00:00",
+     "need": 6454,
+     "used": 95328
+    },
+    {
+     "combo": "TV17|15Min|AAPL",
+     "time": "2025-07-25 19:30:00+00:00",
+     "need": 32887,
+     "used": 84286
+    },
+    {
+     "combo": "SS07|15Min|NVDA",
+     "time": "2025-07-29 15:30:00+00:00",
+     "need": 18030,
+     "used": 110423
+    }
+   ],
+   "median_margin_per_trade_by_class": {
+    "energy": 480.0,
+    "fx": 1911.0,
+    "index": 1662.0,
+    "metal": 837.0,
+    "stock": 10192.0
+   }
+  },
+  "quality": "full"
+ }
+]

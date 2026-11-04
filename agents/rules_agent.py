@@ -457,6 +457,12 @@ STRATEGIES.update(BOOKS)
 from agents.github_strategies import GITHUB  # noqa: E402
 
 STRATEGIES.update(GITHUB)
+from agents.quantconnect_strategies import QUANTCONNECT  # noqa: E402
+
+STRATEGIES.update(QUANTCONNECT)
+from agents.forum_strategies import FORUMS  # noqa: E402
+
+STRATEGIES.update(FORUMS)
 
 
 def timeframe_ok(sid, tf):

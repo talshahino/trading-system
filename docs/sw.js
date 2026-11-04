@@ -1,6 +1,6 @@
 /* Taloona Trade app: notifications from the bots' manager (Web Push) and the "approve update" button. */
 const STATE_URL = "https://raw.githubusercontent.com/talshahino/trading-system/live/live/manager_state.json";
-const SHELL = "taloona-v3";
+const SHELL = "taloona-v4";
 
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(SHELL).then(c => c.addAll(["./", "./index.html", "./icon-192.png"])).catch(() => {})); });
 self.addEventListener("activate", e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== SHELL).map(k => caches.delete(k)))).then(() => self.clients.claim())));
@@ -34,11 +34,27 @@ self.addEventListener("push", e => {
   e.waitUntil(self.registration.showNotification(d.title || "Taloona Trade", opt));
 });
 
+const MGR_API = "https://api.github.com/repos/talshahino/trading-system/contents/live/manager_state.json?ref=live";
+
+async function alive(u) {
+  if (!u) return false;
+  try { const r = await fetch(u + "/status", {cache: "no-store"}); return r.ok; } catch (x) { return false; }
+}
+
 async function managerUrl() {
-  const saved = await kv("mgr");                 // the address the app last connected to (newest)
-  if (saved) { try { const r = await fetch(saved + "/status", {cache: "no-store"}); if (r.ok) return saved; } catch (x) {} }
-  try { const r = await fetch(STATE_URL + "?t=" + Date.now(), {cache: "no-store"}); if (r.ok) { const j = await r.json(); if (j.url) return j.url; } } catch (x) {}
-  return saved;
+  // the computer's address changes whenever the manager restarts: try the one the app last used, then the
+  // published one (the file server can hand out a copy a few minutes old), then GitHub's API (always fresh)
+  const saved = await kv("mgr");
+  if (await alive(saved)) return saved;
+  let raw = null, api = null;
+  try { const r = await fetch(STATE_URL + "?t=" + Date.now(), {cache: "no-store"}); if (r.ok) raw = (await r.json()).url; } catch (x) {}
+  if (raw && raw !== saved && await alive(raw)) { await kv("mgr", raw); return raw; }
+  try {
+    const r = await fetch(MGR_API + "&t=" + Date.now(), {cache: "no-store", headers: {Accept: "application/vnd.github.raw+json"}});
+    if (r.ok) api = (await r.json()).url;
+  } catch (x) {}
+  if (api && await alive(api)) { await kv("mgr", api); return api; }
+  return api || raw || saved;
 }
 
 self.addEventListener("notificationclick", e => {

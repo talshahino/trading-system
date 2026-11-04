@@ -1,0 +1,201 @@
+[
+ {
+  "bot": 1,
+  "variant": "bot",
+  "account": "Standard",
+  "risk": 0.00375,
+  "combos_with_trades": 41,
+  "trades": 6558,
+  "skipped_by_guard": 129,
+  "end_balance": 451582,
+  "blown": null,
+  "worst_intraday_pct": -4.05,
+  "lowest_equity": 96706,
+  "losing_weeks": 15,
+  "weeks": 80,
+  "prophet": "PASS",
+  "prophet_reasons": [],
+  "pass_rate_pct": 100.0,
+  "breach_rate_pct": 0.0,
+  "samples": 74,
+  "exit_reasons": {
+   "סגירה בשעה קבועה": 2214,
+   "סטופ": 1816,
+   "סיגנל יציאה": 592,
+   "יעד": 499,
+   "סטופ נגרר / נקודת איזון": 487,
+   "סטופ נגרר": 417,
+   "סטופ נגרר (פער פתיחה)": 287,
+   "נסגרה לפני הודעה מוגבלת": 157
+  },
+  "margin": {
+   "peak_margin": 160356,
+   "peak_when": "2025-07-22 19:00:00+00:00",
+   "peak_pct": 160.4,
+   "refused": 6,
+   "refused_examples": [
+    {
+     "combo": "TT56|1Hour|XOM",
+     "time": "2025-05-06 14:00:00+00:00",
+     "need": 33488,
+     "used": 89554
+    },
+    {
+     "combo": "TT56|1Hour|XOM",
+     "time": "2025-05-15 17:00:00+00:00",
+     "need": 63920,
+     "used": 42731
+    },
+    {
+     "combo": "TV05|15Min|WMT",
+     "time": "2025-07-22 19:00:00+00:00",
+     "need": 84057,
+     "used": 76299
+    },
+    {
+     "combo": "TV03|15Min|AAPL",
+     "time": "2025-07-28 14:15:00+00:00",
+     "need": 23236,
+     "used": 116553
+    },
+    {
+     "combo": "TV03|15Min|AAPL",
+     "time": "2025-09-09 13:30:00+00:00",
+     "need": 166727,
+     "used": 34541
+    },
+    {
+     "combo": "TV33|15Min|MSTR",
+     "time": "2026-01-30 14:30:00+00:00",
+     "need": 835119,
+     "used": 10688
+    }
+   ],
+   "median_margin_per_trade_by_class": {
+    "crypto": 3218.0,
+    "energy": 422.0,
+    "fx": 1653.0,
+    "index": 1224.0,
+    "metal": 1255.0,
+    "stock": 11061.0
+   }
+  },
+  "quality": "full"
+ },
+ {
+  "bot": 2,
+  "variant": "bot",
+  "account": "Standard",
+  "risk": 0.0045,
+  "combos_with_trades": 24,
+  "trades": 3630,
+  "skipped_by_guard": 13,
+  "end_balance": 357230,
+  "blown": null,
+  "worst_intraday_pct": -3.77,
+  "lowest_equity": 98904,
+  "losing_weeks": 15,
+  "weeks": 80,
+  "prophet": "PASS",
+  "prophet_reasons": [],
+  "pass_rate_pct": 98.6,
+  "breach_rate_pct": 1.4,
+  "samples": 71,
+  "exit_reasons": {
+   "סגירה בשעה קבועה": 1568,
+   "סטופ": 1038,
+   "יעד": 373,
+   "סיגנל יציאה": 240,
+   "סטופ נגרר / נקודת איזון": 199,
+   "נסגרה לפני הודעה מוגבלת": 90,
+   "יציאת זמן": 79,
+   "סטופ נגרר": 19
+  },
+  "margin": {
+   "peak_margin": 80469,
+   "peak_when": "2025-11-03 10:00:00+00:00",
+   "peak_pct": 80.5,
+   "refused": 0,
+   "refused_examples": [],
+   "median_margin_per_trade_by_class": {
+    "crypto": 2471.0,
+    "energy": 341.0,
+    "fx": 2124.0,
+    "index": 2414.0,
+    "metal": 738.0,
+    "stock": 12379.0
+   }
+  },
+  "quality": "full"
+ },
+ {
+  "bot": 3,
+  "variant": "bot",
+  "account": "Standard",
+  "risk": 0.00375,
+  "combos_with_trades": 26,
+  "trades": 5199,
+  "skipped_by_guard": 12,
+  "end_balance": 291666,
+  "blown": null,
+  "worst_intraday_pct": -3.22,
+  "lowest_equity": 96801,
+  "losing_weeks": 23,
+  "weeks": 80,
+  "prophet": "PASS",
+  "prophet_reasons": [],
+  "pass_rate_pct": 100.0,
+  "breach_rate_pct": 0.0,
+  "samples": 67,
+  "exit_reasons": {
+   "סגירה בשעה קבועה": 1785,
+   "סטופ": 1574,
+   "יעד": 489,
+   "סיגנל יציאה": 366,
+   "יציאת זמן": 317,
+   "סטופ נגרר / נקודת איזון": 306,
+   "סטופ נגרר": 179,
+   "סטופ נגרר (פער פתיחה)": 102
+  },
+  "margin": {
+   "peak_margin": 214384,
+   "peak_when": "2026-08-10 18:45:00+00:00",
+   "peak_pct": 214.4,
+   "refused": 4,
+   "refused_examples": [
+    {
+     "combo": "TV50|15Min|XOM",
+     "time": "2025-07-29 14:30:00+00:00",
+     "need": 30429,
+     "used": 97750
+    },
+    {
+     "combo": "TV28|15Min|AMZN",
+     "time": "2025-07-29 15:15:00+00:00",
+     "need": 27753,
+     "used": 128179
+    },
+    {
+     "combo": "SS07|15Min|NVDA",
+     "time": "2025-07-29 15:30:00+00:00",
+     "need": 18030,
+     "used": 155932
+    },
+    {
+     "combo": "TV29|1Hour|US2000",
+     "time": "2025-07-29 16:00:00+00:00",
+     "need": 1703,
+     "used": 152971
+    }
+   ],
+   "median_margin_per_trade_by_class": {
+    "energy": 479.0,
+    "fx": 1914.0,
+    "index": 1867.0,
+    "metal": 833.0,
+    "stock": 12149.0
+   }
+  },
+  "quality": "full"
+ }
+]

@@ -309,6 +309,47 @@ def mt5_show(a, show):
     return n
 
 
+MT5_CMD_ALGO = 32851          # MetaTrader 5's own menu command that switches the Algo Trading button
+
+
+def algo_keeper():
+    """A bot whose MetaTrader has Algo Trading switched off cannot trade (orders come back 10027). The bot
+    reports the button's state; when it is off, the manager presses it (MetaTrader's own menu command sent
+    to that terminal's window), at most once every 10 minutes per account, and checks it really came on."""
+    import ctypes
+    last = {}
+    while True:
+        try:
+            for a in list(accounts()):
+                if not a.get("enabled") or a.get("archived") or not running(a["name"]):
+                    continue
+                port = bot_port(a["name"])
+                try:
+                    live = requests.get(f"http://127.0.0.1:{port}/live", timeout=5).json()
+                except Exception:  # noqa: BLE001
+                    continue
+                if live.get("algo", True) or time.time() - last.get(a["name"], 0) < 600:
+                    continue
+                last[a["name"]] = time.time()
+                wins = mt5_windows(a.get("terminal"))
+                for hwnd in wins:
+                    ctypes.windll.user32.PostMessageW(hwnd, 0x0111, MT5_CMD_ALGO, 0)      # WM_COMMAND
+                time.sleep(8)
+                try:
+                    ok = requests.get(f"http://127.0.0.1:{port}/live", timeout=5).json().get("algo")
+                except Exception:  # noqa: BLE001
+                    ok = None
+                log(f"{a['name']}: Algo Trading was off in its MetaTrader; pressed it ({len(wins)} windows) -> {'on' if ok else 'still off'}")
+                label = a.get("label", a["name"])
+                if ok:
+                    push(f"{label}: המסחר האוטומטי הופעל", "הכפתור Algo Trading היה כבוי ב־MetaTrader של החשבון. המחשב הדליק אותו, והבוט ממשיך לסחור.")
+                else:
+                    push(f"{label}: המסחר האוטומטי כבוי", "לא הצלחתי להדליק את Algo Trading מרחוק. הצג את חלון MetaTrader מהאפליקציה ולחץ על Algo Trading.", urgent=True)
+        except Exception:  # noqa: BLE001
+            log(f"algo keeper error:\n{traceback.format_exc()}")
+        time.sleep(60)
+
+
 def mt5_hider():
     """Keep hidden MetaTraders hidden (MetaTrader opens a new window when a bot restarts it)."""
     while True:
@@ -874,6 +915,7 @@ def main():
             start_bot(a)
     threading.Thread(target=watchdog, daemon=True).start()
     threading.Thread(target=mt5_hider, daemon=True).start()
+    threading.Thread(target=algo_keeper, daemon=True).start()
     threading.Thread(target=update_check, daemon=True).start()
     threading.Thread(target=watchdog_secret, daemon=True).start()
     threading.Thread(target=heartbeat, daemon=True).start()

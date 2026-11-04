@@ -467,7 +467,9 @@ def send(req, what):
     if r is None or r.retcode != mt5.TRADE_RETCODE_DONE:
         MON["last_fail"] = (None, str(err)) if r is None else (r.retcode, r.comment)
         log(f"FAILED {what}: {('no answer', err) if r is None else (r.retcode, r.comment)}")
-        if r is not None and r.retcode == 10027:
+        if r is not None and r.retcode == 10027 and os.environ.get("MANAGED"):
+            pass                                    # the manager switches Algo Trading on and tells the user
+        elif r is not None and r.retcode == 10027:
             # the Algo Trading button of this account's MetaTrader is off: only the user can turn it on
             REP.notify(f"{BOT}: המסחר האוטומטי כבוי", "בחלון MetaTrader של החשבון הזה הכפתור Algo Trading כבוי, ולכן "
                        "הבוט לא יכול לפתוח או לסגור עסקאות. הצג את החלון מהאפליקציה ולחץ על Algo Trading (שיהיה ירוק).",
@@ -860,7 +862,8 @@ def refresh_live():
     track_live(ai, pos)
     TUN.SNAP["live"] = {"bot": MON["name"], "updated_utc": pd.Timestamp.now(tz="UTC").isoformat(), "balance": ai.balance,
                         "equity": ai.equity, "day_start": MON.get("ds_bal", ai.balance), "lows": STATE.get("lows", {}),
-                        "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "positions": positions_doc(pos)}
+                        "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "positions": positions_doc(pos),
+                        "algo": bool(getattr(mt5.terminal_info(), "trade_allowed", True))}   # MetaTrader's Algo Trading button
 
 
 # ---------------- app data: closed trades, the lowest floating equity, candles ----------------

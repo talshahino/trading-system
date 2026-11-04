@@ -165,6 +165,32 @@ MISSING = set()   # instruments with no history for a timeframe
 NO_TRADES = []   # strategy/timeframe/instrument that produced no trade at all, so nothing to judge
 
 
+def _shifted(fn, k):
+    """Null version of a strategy: signals and every per-bar plan array moved k bars later (entries are no
+    longer tied to the bars that produced them). Levels move with their signal, so stops/targets stay valid
+    distances from that signal's price; the engine skips the ones now on the wrong side."""
+    import numpy as _np
+
+    def g(df):
+        L, S, plan = fn(df)
+        sh = lambda a: _np.r_[_np.zeros(k, dtype=_np.asarray(a).dtype), _np.asarray(a)[:-k]] if len(a) > k else _np.zeros_like(a)  # noqa: E731
+        shf = lambda a: _np.r_[_np.full(k, _np.nan), _np.asarray(a, float)[:-k]] if len(a) > k else _np.full(len(a), _np.nan)  # noqa: E731
+        p2 = dict(plan)
+        for key in ("stop", "target"):
+            v = plan.get(key)
+            if v and v[0] == "level":
+                p2[key] = ("level", shf(v[1]), shf(v[2]))
+        for key in ("exit_long", "exit_short"):
+            if plan.get(key) is not None:
+                p2[key] = sh(_np.asarray(plan[key], bool))
+        if plan.get("line") is not None:
+            p2["line"] = shf(plan["line"])
+        if plan.get("trail_after_px") is not None:
+            p2["trail_after_px"] = shf(plan["trail_after_px"])
+        return sh(_np.asarray(L, bool)), sh(_np.asarray(S, bool)), p2
+    return g
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--demo", action="store_true")
@@ -196,6 +222,9 @@ def main():
                          "--test-from..this date, check on this date..end")
     ap.add_argument("--combos-file", default="",
                     help="file with sid|timeframe|symbol lines: run only these and save their trades (no Prophet)")
+    ap.add_argument("--null-shift", type=int, default=0,
+                    help="NULL TEST: every strategy's signals (and their stop/target arrays) are moved K bars later, so "
+                         "they no longer match the prices they were computed from: no edge left. What passes is luck.")
     ap.add_argument("--test-from", default="",
                     help="YYYY-MM-DD: judge every (strategy, timeframe, instrument) directly from this date, no earlier selection period")
     args = ap.parse_args()
@@ -292,6 +321,8 @@ def main():
                     continue
                 try:
                     fn0 = R.STRATEGIES[sid][1]
+                    if args.null_shift:
+                        fn0 = _shifted(fn0, args.null_shift)
                     t = R.run(df, fn0 if news_block is None else _blocked(fn0, news_block), cost, breakeven=be, session_exit=sess)
                 except Exception:  # noqa: BLE001 - one broken strategy must not kill the run
                     ERRORS.append(f"{sid} {tf} {s}:\n{traceback.format_exc()}")

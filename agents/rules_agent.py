@@ -385,8 +385,13 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             # updates at the bar close, used from the next bar on
             best = max(best, h[t]) if d > 0 else min(best, l[t])
             worst = min(worst, l[t]) if d > 0 else max(worst, h[t])
-            if trail:
+            tap = plan.get("trail_after_px")   # the ATR trail starts only once this far in profit
+            if trail and (tap is None or d * (best - e) >= tap[i]):
                 ts = best - d * trail * a[t]
+                stop = max(stop, ts) if d > 0 else min(stop, ts)
+            tr_r = plan.get("trail_r")     # MQL5-style: once k R in profit, the stop trails k R behind the best price
+            if tr_r and d * (best - e) >= tr_r * risk:
+                ts = best - d * tr_r * risk
                 stop = max(stop, ts) if d > 0 else min(stop, ts)
             if st[0] == "trail_line":
                 stop = max(stop, line[t]) if d > 0 else min(stop, line[t])
@@ -463,6 +468,15 @@ STRATEGIES.update(QUANTCONNECT)
 from agents.forum_strategies import FORUMS  # noqa: E402
 
 STRATEGIES.update(FORUMS)
+from agents.pattern_strategies import PATTERNS  # noqa: E402
+
+STRATEGIES.update(PATTERNS)
+from agents.mql5_strategies import MQL5  # noqa: E402
+
+STRATEGIES.update(MQL5)
+from agents.paper_strategies import PAPERS  # noqa: E402
+
+STRATEGIES.update(PAPERS)
 
 
 def timeframe_ok(sid, tf):

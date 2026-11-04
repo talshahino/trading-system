@@ -407,9 +407,15 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="msg" id="pinMsg"></div></div>
     <div class="card" id="viewerCard" style="display:none"><h3>קוד צפייה</h3>
       <div class="mut" style="margin-bottom:8px">קוד שני, למשל לבן משפחה: רואים את כל הנתונים ומקבלים התראות, בלי שום פעולה (בלי סגירת עסקאות, בלי עצירה והפעלה, בלי עדכונים).</div>
-      <div class="row"><input id="vpin" type="password" inputmode="numeric" autocomplete="off" placeholder="קוד צפייה חדש (לפחות 4 תווים)" style="max-width:260px">
+      <div class="row"><input id="vpin" type="password" inputmode="numeric" autocomplete="off" placeholder="קוד צפייה חדש (לפחות 6 תווים)" style="max-width:260px">
         <button class="btn" id="vpinSave">שמור</button><button class="btn ghost" id="vpinDel">בטל קוד צפייה</button></div>
       <div class="msg" id="vpinMsg"></div></div>
+    <div class="card" id="newPinCard" style="display:none"><h3>החלפת הקוד הסודי</h3>
+      <div class="mut" style="margin-bottom:8px">קוד חדש של לפחות 8 תווים (מומלץ גם אותיות). המכשיר הזה מתעדכן מיד; במכשיר אחר תקליד את הקוד החדש.</div>
+      <div class="row"><input id="npin" type="password" autocomplete="new-password" placeholder="קוד חדש" style="max-width:200px">
+        <input id="npin2" type="password" autocomplete="new-password" placeholder="שוב, לאימות" style="max-width:200px">
+        <button class="btn" id="npinSave">החלף</button></div>
+      <div class="msg" id="npinMsg"></div></div>
   </div>
   </div>
 </aside>
@@ -650,7 +656,7 @@ function kv(key, val) {           // shared with the service worker (sw.js)
 const getPin = () => { try { return localStorage.getItem("pin") || ""; } catch (e) { return ""; } };
 const getRole = () => { try { return localStorage.getItem("role") || ""; } catch (e) { return ""; } };
 const setRole = r => { try { r ? localStorage.setItem("role", r) : localStorage.removeItem("role"); } catch (e) {}
-  document.body.classList.toggle("viewer", r === "viewer"); const vc = document.getElementById("viewerCard"); if (vc) vc.style.display = r === "owner" ? "" : "none"; };
+  document.body.classList.toggle("viewer", r === "viewer"); for (const id of ["viewerCard", "newPinCard"]) { const vc = document.getElementById(id); if (vc) vc.style.display = r === "owner" ? "" : "none"; } };
 let mgrT = "";
 function takeDoc(j) {            // only a copy newer than the newest one already seen counts (GitHub's file server can hand out old ones)
   if (!j || !j.updated_utc || j.updated_utc < mgrT) return null;
@@ -662,13 +668,22 @@ const KEYS = {};
 const hex2b = h => Uint8Array.from(h.match(/../g).map(x => parseInt(x, 16)));
 const b64b = x => Uint8Array.from(atob(x), c => c.charCodeAt(0));
 let needCode = false;
+let urlKey = null;                // random key of the published address, fetched once from the computer
 async function openUrl(j) {
   if (!j) return null;
   if (j.url) return j.url;
   const pin = getPin(), list = j.url_enc || [];
+  if (!crypto.subtle) return null;
+  if (urlKey === null) urlKey = (await kv("url_key")) || "";
+  if (urlKey) for (const e of list.filter(x => x.k)) {
+    try {
+      if (!KEYS.url) KEYS.url = await crypto.subtle.importKey("raw", hex2b(urlKey), "AES-GCM", false, ["decrypt"]);
+      return new TextDecoder().decode(await crypto.subtle.decrypt({name: "AES-GCM", iv: b64b(e.iv)}, KEYS.url, b64b(e.ct)));
+    } catch (x) {}
+  }
   needCode = !pin && list.length > 0;
-  if (!pin || !crypto.subtle) return null;
-  for (const e of list) {
+  if (!pin) return null;
+  for (const e of list.filter(x => x.s)) {
     try {
       const ck = e.s + "|" + pin;
       if (!KEYS[ck]) {
@@ -693,11 +708,17 @@ async function findMgr() {
   }
   if (url && url !== mgr) { mgrInfo = null; mgr = url; kv("mgr", mgr); }
   if (!mgr) return null;
-  try { const r = await fetch(mgr + "/status", {cache: "no-store"}); if (r.ok) { mgrInfo = await r.json(); mgrMiss = 0; return mgrInfo; } } catch (e) {}
+  try { const r = await fetch(mgr + "/status", {cache: "no-store"}); if (r.ok) { mgrInfo = await r.json(); mgrMiss = 0; pairKey(); return mgrInfo; } } catch (e) {}
   if (++mgrMiss >= 2) mgrInfo = null;          // one missed answer is not a disconnection
   return mgrInfo;
 }
-let mgrMiss = 0;
+let mgrMiss = 0, pairing = false;
+async function pairKey() {         // once per device: take the address key, so the code is never needed to find the computer
+  if (pairing || !getPin() || (urlKey === null ? (urlKey = (await kv("url_key")) || "") : urlKey)) return;
+  pairing = true;
+  try { const j = await act("/url_key"); if (j.key) { urlKey = j.key; KEYS.url = null; await kv("url_key", j.key); } } catch (e) {}
+  pairing = false;
+}
 async function act(path, body = {}) {
   if (!mgr) throw new Error("אין חיבור למחשב הבוטים");
   const r = await fetch(mgr + path, {method: "POST", headers: {"Content-Type": "application/json", "X-Pin": getPin()}, body: JSON.stringify(body)});
@@ -783,8 +804,17 @@ $("pinSave").onclick = async () => {
     note("pinMsg", j.role === "viewer" ? "קוד צפייה נכון ונשמר. אפשר לראות הכל ולהפעיל התראות; פעולות לא זמינות." : "הקוד נכון ונשמר במכשיר הזה.", true); }
   catch (e) { note("pinMsg", mgr && mgrInfo ? e.message : "הקוד נשמר במכשיר. אין כרגע חיבור למחשב, אז עוד לא בדקתי שהוא נכון.", mgr && mgrInfo ? false : undefined); }
 };
-$("pinForget").onclick = async () => { try { localStorage.removeItem("pin"); } catch (e) {} await kv("pin", null); $("pin").value = ""; setRole(""); note("pinMsg", "הקוד נמחק מהמכשיר הזה."); };
+$("pinForget").onclick = async () => { try { localStorage.removeItem("pin"); } catch (e) {} await kv("pin", null); await kv("url_key", null); urlKey = ""; KEYS.url = null; $("pin").value = ""; setRole(""); note("pinMsg", "הקוד נמחק מהמכשיר הזה."); };
 setRole(getRole());
+$("npinSave").onclick = async () => {
+  const a = $("npin").value.trim(), b = $("npin2").value.trim();
+  if (a.length < 8) return note("npinMsg", "לפחות 8 תווים", false);
+  if (a !== b) return note("npinMsg", "שני הקודים לא זהים", false);
+  try { await pairKey(); await act("/pin_change", {new: a});
+    try { localStorage.setItem("pin", a); } catch (e) {} await kv("pin", a); $("pin").value = a; $("npin").value = $("npin2").value = "";
+    note("npinMsg", "הקוד הוחלף ונשמר במכשיר הזה.", true); }
+  catch (e) { note("npinMsg", e.message, false); }
+};
 $("vpinSave").onclick = async () => {
   const v = $("vpin").value.trim();
   try { await act("/viewer_pin", {viewer: v}); $("vpin").value = ""; note("vpinMsg", "קוד הצפייה נשמר. מי שמקליד אותו רואה הכל, בלי פעולות.", true); await findMgr(); renderMgr(); }

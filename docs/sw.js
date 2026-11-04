@@ -1,6 +1,6 @@
 /* Taloona Trade app: notifications from the bots' manager (Web Push) and the "approve update" button. */
 const STATE_URL = "https://raw.githubusercontent.com/talshahino/trading-system/live/live/manager_state.json";
-const SHELL = "taloona-v5";
+const SHELL = "taloona-v6";
 
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(SHELL).then(c => c.addAll(["./", "./index.html", "./icon-192.png"])).catch(() => {})); });
 self.addEventListener("activate", e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== SHELL).map(k => caches.delete(k)))).then(() => self.clients.claim())));
@@ -41,7 +41,15 @@ const b64b = x => Uint8Array.from(atob(x), c => c.charCodeAt(0));
 async function openUrl(j, pin) {
   if (!j) return null;
   if (j.url) return j.url;
-  for (const e of j.url_enc || []) {
+  let uk = null;
+  try { uk = await kv("url_key"); } catch (x) {}
+  if (uk) for (const e of (j.url_enc || []).filter(x => x.k)) {
+    try {
+      const key = await crypto.subtle.importKey("raw", hex2b(uk), "AES-GCM", false, ["decrypt"]);
+      return new TextDecoder().decode(await crypto.subtle.decrypt({name: "AES-GCM", iv: b64b(e.iv)}, key, b64b(e.ct)));
+    } catch (x) {}
+  }
+  for (const e of (j.url_enc || []).filter(x => x.s)) {
     try {
       const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pin || ""), "PBKDF2", false, ["deriveBits"]);
       const bits = new Uint8Array(await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-256", salt: hex2b(e.s), iterations: 200000}, base, 256));

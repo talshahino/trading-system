@@ -12,7 +12,9 @@ What it does
 - Checks GitHub for new bot code and installs it when you approve in the app, then restarts all.
 
 Security: every action needs your secret code (PIN), set once at install. Its hash only is stored.
-After 5 wrong codes, actions are locked for 15 minutes. Reading the live data stays open, as before.
+After 5 wrong codes a client (by its address) is locked for 15 minutes; 30 wrong codes from all
+clients together lock everyone for the rest of those 15 minutes. Reading the live data stays open.
+The computer's address is published encrypted with a random key (url_key) each phone fetches once.
 
   python live/manager.py            (live/manager.bat, or hidden at Windows start: manager_hidden.vbs)
   python live/manager.py --set-pin  (change the secret code)
@@ -52,7 +54,9 @@ BOT_TEMPLATES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bo
 JOURNAL = deque(maxlen=300)
 PROCS = {}
 LOCK = threading.RLock()
-FAILS = {"n": 0, "until": 0}
+FAILS = {}          # per client (Cloudflare's CF-Connecting-IP): {"n", "until", "busy"}
+GLOBAL_FAILS = deque(maxlen=200)   # times of wrong codes from every client (a cap for many clients)
+PUSH_HOSTS = ("fcm.googleapis.com", "updates.push.services.mozilla.com", "web.push.apple.com", ".notify.windows.com")
 CFG = {}
 
 
@@ -75,6 +79,8 @@ def load():
     CFG.setdefault("accounts", [])
     CFG.setdefault("subs", [])
     CFG.setdefault("local_key", secrets.token_hex(16))   # bots use it to ask for a push (localhost only)
+    CFG.setdefault("url_key", secrets.token_hex(32))     # random key of the published computer address (not from a code)
+    CFG.setdefault("paired", {})                         # which code holders already got url_key
 
 
 def save():
@@ -106,21 +112,50 @@ def viewer_ok(pin):
     return hmac.compare_digest(h, CFG["viewer_hash"])
 
 
+def _hash(pin, salt):
+    return hashlib.pbkdf2_hmac("sha256", str(pin).encode(), bytes.fromhex(salt), 200_000).hex()
+
+
+def check_codes(pin, client):
+    """-> "owner", "viewer", None (wrong) or "locked". The attempt is reserved under the lock BEFORE the
+    slow hash, so parallel wrong codes can never get more than 5 tries per client in 15 minutes; on top,
+    at most 30 wrong codes from all clients together per 15 minutes. A client that is locked out does
+    not lock out the others (the owner keeps control from his phone)."""
+    now = time.time()
+    with LOCK:
+        rec = FAILS.setdefault(client, {"n": 0, "until": 0, "busy": 0})
+        recent = sum(1 for t in GLOBAL_FAILS if now - t < 900)
+        if now < rec["until"] or rec["n"] + rec["busy"] >= 5 or recent >= 30:
+            return "locked"
+        rec["busy"] += 1
+    try:
+        owner = bool(pin and CFG.get("pin_hash") and hmac.compare_digest(_hash(pin, CFG["pin_salt"]), CFG["pin_hash"]))
+        viewer = (not owner) and bool(pin and CFG.get("viewer_hash")
+                                      and hmac.compare_digest(_hash(pin, CFG["viewer_salt"]), CFG["viewer_hash"]))
+    finally:
+        with LOCK:
+            rec["busy"] -= 1
+    with LOCK:
+        if owner or viewer:
+            rec["n"] = 0
+            return "owner" if owner else "viewer"
+        rec["n"] += 1
+        GLOBAL_FAILS.append(now)
+        if rec["n"] >= 5:
+            rec["until"], rec["n"] = now + 900, 0
+            log(f"5 wrong secret codes from {client}: that client is locked for 15 minutes")
+            threading.Thread(target=push, args=("קוד שגוי 5 פעמים",
+                             "מישהו הקליד קוד שגוי 5 פעמים. הוא נחסם ל־15 דקות (המכשיר שלך לא נחסם)."),
+                             kwargs={"urgent": True}, daemon=True).start()
+        if len(FAILS) > 500:                 # forget old clients
+            for k in [k for k, v in FAILS.items() if v["until"] < now and not v["busy"]][:250]:
+                FAILS.pop(k, None)
+    return None
+
+
 def pin_ok(pin):
-    if time.time() < FAILS["until"] or not CFG.get("pin_hash") or not pin:
-        return False
-    h = hashlib.pbkdf2_hmac("sha256", str(pin).encode(), bytes.fromhex(CFG["pin_salt"]), 200_000).hex()
-    if hmac.compare_digest(h, CFG["pin_hash"]):
-        FAILS["n"] = 0
-        return True
-    if viewer_ok(pin):                     # the read-only code is not a wrong owner code
-        return False
-    FAILS["n"] += 1
-    if FAILS["n"] >= 5:
-        FAILS["until"], FAILS["n"] = time.time() + 900, 0
-        log("5 wrong secret codes: actions locked for 15 minutes")
-        push("קוד שגוי 5 פעמים", "מישהו הקליד קוד שגוי 5 פעמים. הפעולות נעולות ל־15 דקות.", urgent=True)
-    return False
+    """Owner code check for the command line (no client)."""
+    return bool(pin and CFG.get("pin_hash") and hmac.compare_digest(_hash(pin, CFG["pin_salt"]), CFG["pin_hash"]))
 
 
 def _dpapi(data: bytes, protect: bool) -> bytes:
@@ -405,7 +440,7 @@ def add_account(d):
         raise ValueError("החשבון הזה כבר מחובר לבוט הזה")
     if any(str(a.get("login")) == login for a in accounts()):
         raise ValueError("החשבון הזה כבר מחובר לבוט אחר. אסור שני בוטים על אותו חשבון.")
-    template = Path(d.get("template") or CFG.get("mt5_template") or r"C:\MT5_bot1")
+    template = Path(CFG.get("mt5_template") or r"C:\MT5_bot1")      # never from the request
     if not (template / "terminal64.exe").exists():
         raise ValueError(f"לא מצאתי MetaTrader להעתקה ב־{template}")
     dest = Path(rf"C:\MT5_{login}")
@@ -634,7 +669,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/subscribe" and not (self.headers.get("X-Pin") or d.get("pin")):
             # notifications only (view): a device without the secret code may subscribe; every action still needs it
             sub = d.get("subscription")
-            if not sub or "endpoint" not in sub or len(json.dumps(sub)) > 2000:
+            if not sub or "endpoint" not in sub or len(json.dumps(sub)) > 2000 or not push_endpoint_ok(sub["endpoint"]):
                 return self._send(400, {"error": "no subscription"})
             with LOCK:
                 if sub not in CFG["subs"]:
@@ -644,12 +679,23 @@ class Handler(BaseHTTPRequestHandler):
             save()
             threading.Thread(target=push_manager_state, daemon=True).start()
             return self._send(200, {"ok": True})
-        if time.time() < FAILS["until"]:
-            return self._send(429, {"error": "נעול ל־15 דקות אחרי 5 קודים שגויים"})
         pin = self.headers.get("X-Pin") or d.get("pin")
-        if not pin_ok(pin):
-            if not viewer_ok(pin):
-                return self._send(401, {"error": "קוד שגוי"})
+        client = self.headers.get("CF-Connecting-IP") or self.client_address[0]
+        role = check_codes(pin, client)
+        if role == "locked":
+            return self._send(429, {"error": "נעול ל־15 דקות אחרי 5 קודים שגויים"})
+        if role is None:
+            return self._send(401, {"error": "קוד שגוי"})
+        if path == "/url_key":                                # both codes: the key of the published address
+            with LOCK:
+                first = not CFG["paired"].get(role)
+                CFG["paired"][role] = True
+            save()
+            if first:
+                log(f"{role} device got the address key; the code-derived copy is no longer published")
+                threading.Thread(target=push_manager_state, daemon=True).start()
+            return self._send(200, {"ok": True, "key": CFG["url_key"]})
+        if role == "viewer":
             if path == "/auth":
                 return self._send(200, {"ok": True, "role": "viewer"})
             if path != "/subscribe":
@@ -657,13 +703,28 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if path == "/auth":
                 return self._send(200, {"ok": True, "role": "owner"})
+            if path == "/pin_change":
+                new = str(d.get("new") or "").strip()
+                if len(new) < 8:
+                    raise ValueError("הקוד החדש צריך לפחות 8 תווים")
+                if not CFG["paired"].get("owner"):
+                    raise ValueError("סגור ופתח את האפליקציה פעם אחת ונסה שוב")
+                if CFG.get("viewer_hash") and hmac.compare_digest(_hash(new, CFG["viewer_salt"]), CFG["viewer_hash"]):
+                    raise ValueError("הקוד החדש חייב להיות שונה מקוד הצפייה")
+                set_pin(new)
+                log("owner code changed")
+                push("הקוד הסודי הוחלף", "הקוד הסודי של המערכת הוחלף עכשיו.", urgent=True)
+                threading.Thread(target=push_manager_state, daemon=True).start()
+                return self._send(200, {"ok": True})
             if path == "/viewer_pin":
                 v = str(d.get("viewer") or "").strip()
-                if len(v) < 4:
-                    raise ValueError("קוד הצפייה צריך לפחות 4 תווים")
+                if len(v) < 6:
+                    raise ValueError("קוד הצפייה צריך לפחות 6 תווים")
                 if hmac.compare_digest(hashlib.pbkdf2_hmac("sha256", v.encode(), bytes.fromhex(CFG["pin_salt"]), 200_000).hex(), CFG["pin_hash"]):
                     raise ValueError("קוד הצפייה חייב להיות שונה מהקוד שלך")
                 set_viewer_pin(v)
+                CFG["paired"]["viewer"] = False          # the new code's device fetches the key on its first visit
+                save()
                 log("read-only code set")
                 threading.Thread(target=push_manager_state, daemon=True).start()
                 return self._send(200, {"ok": True})
@@ -675,7 +736,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True})
             if path == "/subscribe":
                 sub = d.get("subscription")
-                if not sub or "endpoint" not in sub:
+                if not sub or "endpoint" not in sub or not push_endpoint_ok(sub["endpoint"]):
                     raise ValueError("no subscription")
                 with LOCK:
                     if sub not in CFG["subs"]:
@@ -822,22 +883,32 @@ def watchdog_secret():
         log(f"computer-off alerts setup failed: {e}")
 
 
+def push_endpoint_ok(ep):
+    from urllib.parse import urlparse
+    u = urlparse(str(ep))
+    h = (u.hostname or "").lower()
+    return u.scheme == "https" and any(h == x or (x.startswith(".") and h.endswith(x)) for x in PUSH_HOSTS)
+
+
+def _seal(key, url, **extra):
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+    iv = secrets.token_bytes(12)
+    ct = AESGCM(key).encrypt(iv, url.encode(), None)
+    return {**extra, "iv": base64.b64encode(iv).decode(), "ct": base64.b64encode(ct).decode()}
+
+
 def seal_url(url):
-    """The computer's address, published only encrypted: once with a key derived from the secret code and
-    once from the read-only code. The app derives the same key from the code it has (PBKDF2 as stored in
-    pin_hash / viewer_hash, then SHA-256 with "url"), so without a code nobody can read where the computer
-    is. AES-256-GCM, fresh nonce each time."""
+    """The computer's address, published only encrypted (AES-256-GCM, fresh nonce each time) with a random
+    32-byte key (url_key) that each phone gets once from the manager after entering its code. A key derived
+    from a short code could be found offline by trying every code, so the code-derived copy is published
+    only until the holder of that code has fetched url_key (the transition after this change)."""
     if not url:
         return []
-    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-    out = []
-    for h, salt in ((CFG.get("pin_hash"), CFG.get("pin_salt")), (CFG.get("viewer_hash"), CFG.get("viewer_salt"))):
-        if not h or not salt:
-            continue
-        key = hashlib.sha256(bytes.fromhex(h) + b"url").digest()
-        iv = secrets.token_bytes(12)
-        ct = AESGCM(key).encrypt(iv, url.encode(), None)
-        out.append({"s": salt, "iv": base64.b64encode(iv).decode(), "ct": base64.b64encode(ct).decode()})
+    out = [_seal(bytes.fromhex(CFG["url_key"]), url, k=1)]
+    for role, h, salt in (("owner", CFG.get("pin_hash"), CFG.get("pin_salt")),
+                          ("viewer", CFG.get("viewer_hash"), CFG.get("viewer_salt"))):
+        if h and salt and not CFG["paired"].get(role):
+            out.append(_seal(hashlib.sha256(bytes.fromhex(h) + b"url").digest(), url, s=salt))
     return out
 
 

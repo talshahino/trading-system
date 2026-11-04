@@ -346,18 +346,28 @@ class Account:
         self.risk_usd = self.initial * cfg["risk"]
         self.free = cfg["free_risk_at_breakeven"]
         self.halt_until = None
+        self._ds = None              # (Prague midnight, day-start balance): the last good reading
+        self._halt_retry = 0.0
 
     def positions(self):
         return [p for p in (mt5.positions_get() or []) if p.magic in MAGICS]
 
     def day_start_balance(self):
         since = utc_to_server(prague_midnight_utc())
-        deals = mt5.history_deals_get(since, utc_to_server(pd.Timestamp.now(tz="UTC")) + dt.timedelta(days=1)) or []
+        deals = mt5.history_deals_get(since, utc_to_server(pd.Timestamp.now(tz="UTC")) + dt.timedelta(days=1))
+        if deals is None:
+            # no answer from MT5 is NOT "no deals today": an empty list would hide today's realized loss from the
+            # guard and the emergency stop. Use today's last good value, or stop this loop (MT5 is re-initialized).
+            if self._ds and self._ds[0] == since:
+                return self._ds[1]
+            raise RuntimeError(f"history_deals_get failed: {mt5.last_error()}")
         # everything that changed the balance since midnight: closed profit/loss, and the commission/swap/fees
         # of every trade deal, also of positions opened today that are still open (FTMO: the day's limit is
         # 5% of the account size below the balance at the start of the day)
         realized = sum(d.profit + d.commission + d.swap + getattr(d, "fee", 0.0) for d in deals if d.type in (0, 1))
-        return mt5.account_info().balance - realized
+        v = mt5.account_info().balance - realized
+        self._ds = (since, v)
+        return v
 
     def open_risk(self):
         tot = 0.0
@@ -391,6 +401,14 @@ class Account:
     def guard(self):
         """Emergency stop: floating daily loss reaches 4.5% -> close everything until Prague midnight."""
         if self.halt_until and pd.Timestamp.now(tz="UTC") < self.halt_until:
+            # a close that failed at the emergency (market closed, no quote, requote...) is tried again every minute
+            if time.time() - self._halt_retry >= 60:
+                self._halt_retry = time.time()
+                left = self.positions()
+                if left:
+                    log(f"emergency stop: {len(left)} position(s) still open - closing again")
+                    for p in left:
+                        close(p, "emergency")
             return True
         ai = mt5.account_info()
         if ai.equity <= self.day_start_balance() - self.initial * 0.045 or ai.equity <= self.initial * 0.91:
@@ -399,7 +417,8 @@ class Account:
                        priority=5, tags=["rotating_light"])
             for p in self.positions():
                 close(p, "emergency")
-            self.halt_until = prague_midnight_utc() + pd.Timedelta(days=1)
+            self._halt_retry = time.time()
+            self.halt_until = (pd.Timestamp.now(tz="Europe/Prague").normalize() + pd.DateOffset(days=1)).tz_convert("UTC")
             return True
         return False
 
@@ -464,7 +483,13 @@ def send(req, what):
         r = mt5.order_send(req)
         if r is None:
             err = mt5.last_error()
-    if r is None or r.retcode != mt5.TRADE_RETCODE_DONE:
+    # a market deal that filled only partly (10010) or was accepted for execution (10008) is a live position:
+    # treat it as done, so the bot records and manages it (otherwise it would sit on the account unmanaged)
+    ok = r is not None and (r.retcode == mt5.TRADE_RETCODE_DONE or
+                            (req.get("action") == mt5.TRADE_ACTION_DEAL and r.retcode in (10008, 10010)))
+    if r is not None and r.retcode in (10008, 10010):
+        log(f"{what}: accepted with code {r.retcode} ({r.comment}) - managed as open")
+    if not ok:
         MON["last_fail"] = (None, str(err)) if r is None else (r.retcode, r.comment)
         log(f"FAILED {what}: {('no answer', err) if r is None else (r.retcode, r.comment)}")
         if r is not None and r.retcode == 10027 and os.environ.get("MANAGED"):
@@ -646,7 +671,8 @@ def step(combo, sid, tf, sym, off):
             if (sn := stop_now()) is not None:
                 move_stop(p, sn)
             return
-        close(p, reason)                               # exit signal / opposite signal / time / session end
+        if close(p, reason) is None:                   # exit signal / opposite signal / time / session end
+            return                                     # the close failed: never open a new trade next to it
         # an opposite signal may open the next trade on this same bar: fall through
     if not len(tr):
         return
@@ -690,7 +716,7 @@ def deals_since(days):
 
 
 def combo_of(magic):
-    for c, m in MAGICS_BY_COMBO.items():
+    for c, m in (STATE.get("magic_map") or MAGICS_BY_COMBO).items():
         if m == magic:
             return c
     return str(magic)
@@ -1075,7 +1101,41 @@ def dashboard_state(ai, pos, ds_bal, now):
 
 # ---------------- main ----------------
 def save_state():
-    STATE_FILE.write_text(json.dumps(STATE, indent=1), encoding="utf-8")
+    """Written to a temporary file and then swapped in, so a bot killed mid-write never leaves a broken
+    state file behind; the previous good copy is kept as .bak."""
+    tmp = STATE_FILE.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(STATE, indent=1), encoding="utf-8")
+    if STATE_FILE.exists():
+        try:
+            os.replace(STATE_FILE, STATE_FILE.with_suffix(".json.bak"))
+        except OSError:
+            pass
+    os.replace(tmp, STATE_FILE)
+
+
+def load_state(path):
+    for f in (path, path.with_suffix(".json.bak")):
+        if f.exists():
+            try:
+                return json.loads(f.read_text(encoding="utf-8"))
+            except (ValueError, OSError):
+                log(f"state file {f.name} is damaged - trying the backup")
+                REP.notify(f"{path.stem}: קובץ מצב פגום", "הבוט עלה מגיבוי של קובץ המצב. העסקאות הפתוחות מנוהלות כרגיל.",
+                           priority=4, tags=["warning"])
+    return {"entry": {}, "risk": {}}
+
+
+def magic_map(cfg):
+    """One fixed MT5 magic number per combo, kept in the state file: removing or reordering combos in the
+    config never moves an open position to another combo. A combo seen for the first time gets the next
+    free number (the old rule, base + list position, is kept for the combos that already had it)."""
+    mm = STATE.setdefault("magic_map", {})
+    if not mm:
+        mm.update({c: cfg["magic_base"] + i for i, c in enumerate(cfg["combos"])})
+    for c in cfg["combos"]:
+        if c not in mm:
+            mm[c] = max(list(mm.values()) + [cfg["magic_base"] + len(cfg["combos"]) - 1]) + 1
+    return mm
 
 
 def no_quick_edit():
@@ -1116,7 +1176,7 @@ def main():
     name = Path(args.config).stem
     LOG_FILE = ROOT / "live" / f"{name}.log"
     STATE_FILE = ROOT / "live" / f"{name}_state.json"
-    STATE = json.loads(STATE_FILE.read_text(encoding="utf-8")) if STATE_FILE.exists() else {"entry": {}, "risk": {}}
+    STATE = load_state(STATE_FILE)
     for attempt in range(10):           # at Windows start-up MT5 may need a while
         if mt5_init(args.terminal):
             break
@@ -1143,9 +1203,16 @@ def main():
         if sname != U.ALL[sym][0].replace("/", ""):
             log(f"{sym}: on this server it is {sname}")
         combos.append((c, sid, tf, sym))
-    MAGICS_BY_COMBO = {c: cfg["magic_base"] + i for i, c in enumerate(cfg["combos"])}
-    MAGICS = set(MAGICS_BY_COMBO.values())
-    SYM_BY_MAGIC.update({MAGICS_BY_COMBO[c]: c.split("|")[2] for c in cfg["combos"]})
+    mm = magic_map(cfg)
+    save_state()
+    MAGICS_BY_COMBO = {c: mm[c] for c in cfg["combos"]}
+    MAGICS = set(mm.values())                     # also combos removed since: their positions stay guarded and closed
+    SYM_BY_MAGIC.update({m: c.split("|")[2] for c, m in mm.items()})
+    stray = [p for p in (mt5.positions_get() or []) if p.magic not in MAGICS
+             and cfg["magic_base"] <= p.magic < cfg["magic_base"] + 10000]
+    if stray:
+        REP.notify(f"{name}: עסקה בלי שיוך", f"{len(stray)} עסקאות פתוחות עם מספר של הבוט שלא שייך לאף אסטרטגיה: "
+                   + ", ".join(f"{p.symbol} #{p.ticket}" for p in stray), priority=4, tags=["warning"])
     ACC = Account(cfg, args.dry_run)
     global CLOSE_BREAKS
     CLOSE_BREAKS = bool(cfg.get("close_before_breaks"))

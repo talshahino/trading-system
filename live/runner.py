@@ -99,19 +99,49 @@ def server_offset_hours(probe):
     return int(round((tick.time - time.time()) / 3600.0))
 
 
+SERVER_CLOCK = {"tz": "NY+7"}     # FTMO: New York + 7 h. MetaQuotes: Eastern European time (EU daylight rules)
+
+
+def pick_server_clock(server, probe):
+    """The two clocks differ only in the 3-4 weeks a year when the US and the EU change clocks on
+    different dates. Default by server name; when the last tick is fresh, the measured offset decides."""
+    tz = "Europe/Athens" if "metaquotes" in str(server).lower() else "NY+7"
+    try:
+        tick = mt5.symbol_info_tick(probe)
+        now = pd.Timestamp.now(tz="UTC").floor("s")
+        if tick is not None and abs(tick.time - time.time() - 3600 * round((tick.time - time.time()) / 3600)) < 120:
+            off = round((tick.time - time.time()) / 3600)
+            ny7 = round((now.tz_convert("America/New_York").utcoffset().total_seconds() + 7 * 3600) / 3600)
+            eet = round(now.tz_convert("Europe/Athens").utcoffset().total_seconds() / 3600)
+            if ny7 != eet and off in (ny7, eet):
+                tz = "NY+7" if off == ny7 else "Europe/Athens"
+    except Exception:  # noqa: BLE001
+        pass
+    SERVER_CLOCK["tz"] = tz
+    return tz
+
+
 def server_to_utc(seconds):
-    """FTMO's MT5 server clock is New York time + 7 hours (GMT+2 in winter, GMT+3 in summer),
-    so every bar is converted with the DST rule of its own date. (The offset can't be read from
-    the last tick: on weekends that tick is Friday's.)"""
-    naive = pd.to_datetime(pd.Series(seconds).to_numpy(), unit="s") - pd.Timedelta(hours=7)
-    ny = pd.DatetimeIndex(naive).tz_localize("America/New_York", ambiguous=np.zeros(len(naive), bool),
-                                             nonexistent="shift_forward")
-    return ny.tz_convert("UTC")
+    """MT5 bar/deal times are the server's wall clock. FTMO's server is New York time + 7 hours (GMT+2 in
+    winter, GMT+3 in summer, US daylight dates); MetaQuotes' demo is Eastern European time (EU dates).
+    Every time is converted with the rule of its own date. (The offset can't be read from the last tick
+    alone: on weekends that tick is Friday's.)"""
+    naive = pd.to_datetime(pd.Series(seconds).to_numpy(), unit="s")
+    if SERVER_CLOCK["tz"] == "NY+7":
+        naive = naive - pd.Timedelta(hours=7)
+        tz = "America/New_York"
+    else:
+        tz = SERVER_CLOCK["tz"]
+    loc = pd.DatetimeIndex(naive).tz_localize(tz, ambiguous=np.zeros(len(naive), bool), nonexistent="shift_forward")
+    return loc.tz_convert("UTC")
 
 
 def utc_to_server(ts):
     """A UTC moment as the server clock shows it, in the form MT5's history functions expect."""
-    t = pd.Timestamp(ts).tz_convert("America/New_York").tz_localize(None) + pd.Timedelta(hours=7)
+    if SERVER_CLOCK["tz"] == "NY+7":
+        t = pd.Timestamp(ts).tz_convert("America/New_York").tz_localize(None) + pd.Timedelta(hours=7)
+    else:
+        t = pd.Timestamp(ts).tz_convert(SERVER_CLOCK["tz"]).tz_localize(None)
     return t.tz_localize("UTC").to_pydatetime()
 
 
@@ -126,6 +156,14 @@ def bars(sym, tf, off):
     df = pd.DataFrame(rates)
     df.index = server_to_utc(df["time"])
     df = df.rename(columns={"open": "o", "high": "h", "low": "l", "close": "c", "tick_volume": "v"})[["o", "h", "l", "c", "v"]]
+    if U.CLASS.get(sym) == "stock" and not U.DUKA.get(sym):
+        # the backtest of these stocks uses Alpaca bars of the regular session only, labelled by their start:
+        # the 09:00 hour bar (09:30-10:00) does not exist there, so it must not exist here either
+        ny = df.index.tz_convert("America/New_York")
+        m = ny.hour * 60 + ny.minute
+        df = df[(m >= 570) & (m < 960)]
+        if len(df) < 50:
+            return None
     if tf == "4Hour":
         df = df.resample("4h", label="left", closed="left").agg(
             {"o": "first", "h": "max", "l": "min", "c": "last", "v": "sum"}).dropna()
@@ -575,10 +613,27 @@ def move_stop(p, new_sl):
 
 
 # ---------------- strategy step ----------------
+SPREADS = {}
+
+
+def typical_spread(sym):
+    """Median of the spreads this bot has seen for the symbol (sampled at every step, last 300), so the
+    rollover's wide spread never moves a breakeven level."""
+    tick = mt5.symbol_info_tick(mt5_name(sym))
+    if tick and tick.ask > tick.bid:
+        q = SPREADS.setdefault(sym, deque(STATE.get("spreads", {}).get(sym, []), maxlen=300))
+        q.append(float(tick.ask - tick.bid))
+        if len(q) % 20 == 0:
+            STATE.setdefault("spreads", {})[sym] = list(q)          # kept across restarts
+    q = SPREADS.get(sym)
+    if not q:
+        return 0.0
+    return float(np.median(q))
+
+
 def be_offset(sym, px):
     spec = U.spec(sym)
-    tick = mt5.symbol_info_tick(mt5_name(sym))
-    spread = (tick.ask - tick.bid) if tick else 0.0
+    spread = typical_spread(sym)
     if spec["commissionType"] == "flat_USD":
         comm = px * float(spec["commission"]) / (float(spec["contractSize"]) * U.BASE_USD.get(spec["code"].split("/")[0], 1.0))
     else:
@@ -613,9 +668,16 @@ def step(combo, sid, tf, sym, off):
     last_closed = df.index[-2]
     DIAG[combo] = {"at": now.isoformat(timespec="seconds"), "bars": len(df), "forming": forming.isoformat(),
                    "age_min": round((now - forming).total_seconds() / 60, 1)}
-    if now - forming >= pd.Timedelta(minutes=TF_MIN[tf]):
+    # the symbol's own clock (its last tick), not the wall clock: some feeds (MetaQuotes' shares) arrive late,
+    # and a bar is "current" when it is the newest bar of its own feed
+    tick = mt5.symbol_info_tick(mt5_name(sym))
+    feed_now = server_ts(tick.time) if tick is not None and tick.time else now
+    feed_now = min(now, max(feed_now, forming))
+    DIAG[combo]["feed_lag_min"] = round((now - feed_now).total_seconds() / 60, 1)
+    if feed_now - forming >= pd.Timedelta(minutes=TF_MIN[tf]) or now - forming >= pd.Timedelta(minutes=TF_MIN[tf] + 30):
         DIAG[combo]["stale"] = True
         return False    # the newest bar has not appeared yet (just started, or market closed): try again soon
+    late = feed_now - forming > pd.Timedelta(minutes=min(5.0, TF_MIN[tf] / 4))
     df.iloc[-1, df.columns.get_indexer(["h", "l", "c"])] = df["o"].iloc[-1]
     dummy = df.iloc[[-1]].copy()
     dummy.index = [forming + pd.Timedelta(minutes=TF_MIN[tf])]
@@ -682,6 +744,14 @@ def step(combo, sid, tf, sym, off):
     t = t.iloc[-1]
     if STATE["entry"].get(combo) == str(t["time"]):
         return                                         # already handled this entry
+    if late:
+        # the bar is already older than a quarter of it (max 5 min): a restart, a reconnect or a late feed.
+        # The backtest entered at the bar's open; entering now at another price changes the stop distance
+        # and every level in R, so this entry is skipped (and remembered as handled).
+        log(f"skip {combo}: entry signal seen {(feed_now - forming).total_seconds() / 60:.1f} min into the bar")
+        STATE["entry"][combo] = str(t["time"])
+        save_state()
+        return
     if U.CLASS.get(sym) == "stock":
         tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
         loc = pd.Timestamp.now(tz="UTC").tz_convert(tz)
@@ -1203,6 +1273,9 @@ def main():
         if sname != U.ALL[sym][0].replace("/", ""):
             log(f"{sym}: on this server it is {sname}")
         combos.append((c, sid, tf, sym))
+    if combos:
+        tzname = pick_server_clock(ai.server, mt5_name(combos[0][3]))
+        log(f"server clock: {'New York + 7 h (FTMO)' if tzname == 'NY+7' else tzname + ' (EU daylight dates)'}")
     mm = magic_map(cfg)
     save_state()
     MAGICS_BY_COMBO = {c: mm[c] for c in cfg["combos"]}

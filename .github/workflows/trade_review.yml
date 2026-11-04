@@ -1,0 +1,45 @@
+name: Live trade review
+
+# Every evening: every closed trade of every bot account (state files on branch `live`) gets its
+# what-ifs (target at 1 / 1.5 / 2 / 3 R, a nearer stop), accumulated per strategy next to the strategy's
+# backtest. Output: reports/trade_review/ (live_trades.csv, summary.json). Read-only for the bots.
+
+on:
+  schedule:
+    - cron: "37 22 * * 1-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trade-review
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install pandas numpy
+      - name: Review
+        run: |
+          mkdir -p /tmp/states
+          for f in $(git ls-tree --name-only origin/live live/ | grep '_state.json$'); do
+            git show "origin/live:$f" > "/tmp/states/$(basename "$f")"
+          done
+          python -u trade_review.py --states /tmp/states
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/trade_review
+          git commit -m "Live trade review $(date -u +%F)" || exit 0
+          for i in 1 2 3 4 5 6; do git pull --rebase && git push && break; sleep 15; done

@@ -344,7 +344,8 @@ def watchdog():
                         free_port(a)
                     elif a.get("started"):
                         log(f"{a['name']} stopped by itself: starting it again")
-                        push(f"{a.get('label', a['name'])} נעצר", "המנהל מפעיל אותו מחדש.", urgent=True)
+                        if not WATCH.get("installing"):
+                            push(f"{a.get('label', a['name'])} נעצר", "המנהל מפעיל אותו מחדש.", urgent=True)
                     start_bot(a)
         except Exception:  # noqa: BLE001
             log(f"watchdog error:\n{traceback.format_exc()}")
@@ -505,7 +506,8 @@ def install_update():
     if not sha:
         raise ValueError("אין עדכון שמחכה")
     log(f"installing update {sha[:7]}: stopping the bots")
-    push("מתעדכן", "עוצר את הבוטים, מתקין ומפעיל הכל מחדש. העסקאות נשארות עם הסטופ והיעד.", tag="update")
+    WATCH["installing"] = True                     # the watchdog must not report the planned stops
+    # no message here: the user gets one "update installed" when everything runs again (or "update failed")
     names = [a["name"] for a in accounts() if running(a["name"])]
     for n in names:
         stop_bot(n)
@@ -517,6 +519,7 @@ def install_update():
     except Exception as e:  # noqa: BLE001
         log(f"update failed: {e}")
         push("העדכון נכשל", f"{e}. הבוטים חוזרים לעבוד בגרסה הקודמת.", urgent=True, tag="update")
+        WATCH["installing"] = False
         for a in accounts():
             if a.get("enabled"):
                 start_bot(a)

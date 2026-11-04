@@ -747,11 +747,31 @@ def monitor():
                        tags=["white_check_mark" if pnl >= 0 else "x"])
             MON["open"].pop(tk)
             MON["free"].discard(tk)
+    seeded = MON.get("seeded", False)              # first pass after a start: remember, do not announce
+    sls = MON.setdefault("sl", {})
     for tk, p in pos.items():
         MON["open"][tk] = p
-        if p.sl and tk not in MON["free"] and ((p.type == 0 and p.sl >= p.price_open) or (p.type == 1 and p.sl <= p.price_open)):
+        free = bool(p.sl) and ((p.type == 0 and p.sl >= p.price_open) or (p.type == 1 and p.sl <= p.price_open))
+        if free and tk not in MON["free"]:
             MON["free"].add(tk)
-            REP.notify(f"{BOT}: סטופ בנקודת איזון", f"{pretty(combo_of(p.magic))}\nהעסקה כבר לא יכולה להפסיד", tags=["shield"])
+            if seeded:
+                REP.notify(f"{BOT}: סטופ בנקודת איזון", f"{pretty(combo_of(p.magic))}\nהעסקה כבר לא יכולה להפסיד", tags=["shield"])
+                sls[tk] = (p.sl, time.time())
+        old = sls.get(tk)
+        if old is None:
+            sls[tk] = (p.sl, 0.0 if seeded else time.time())
+        elif p.sl and abs(p.sl - old[0]) > 1e-12 and seeded:
+            if time.time() - old[1] >= 1800:
+                info = mt5.symbol_info(p.symbol)
+                d = info.digits if info else 5
+                REP.notify(f"{BOT}: הסטופ הוזז", f"{pretty(combo_of(p.magic))}\nסטופ חדש {p.sl:.{d}f} (היה {old[0]:.{d}f})",
+                           tags=["arrow_up" if p.type == 0 else "arrow_down"])
+                sls[tk] = (p.sl, time.time())
+            else:
+                sls[tk] = (p.sl, old[1])
+    for tk in [k for k in sls if k not in pos]:
+        sls.pop(tk)
+    MON["seeded"] = True
     # daily loss warnings and the daily summary (Prague day)
     day = pd.Timestamp.now(tz="Europe/Prague").normalize()
     ds_bal = ACC.day_start_balance()
@@ -759,14 +779,18 @@ def monitor():
     if time.time() - MON.get("full_t", 0) >= 15:
         MON["full_t"] = time.time()
         TUN.SNAP["full"] = dashboard_state(ai, pos, ds_bal, now)
-    if MON["day"] is not None and day != MON["day"]:
-        MON["warned"] = set()
+    wk = STATE.setdefault("warned", {})
+    if wk.get("day") != str(day.date()):
+        STATE["warned"] = wk = {"day": str(day.date()), "levels": []}
+    MON["warned"] = set(wk["levels"])
     MON["day"] = day
     reports(ai)
     dd = (ds_bal - ai.equity) / ACC.initial * 100
     for lvl in (2, 3, 4):
         if dd >= lvl and lvl not in MON["warned"]:
             MON["warned"].add(lvl)
+            wk["levels"] = sorted(MON["warned"])
+            save_state()
             REP.notify(f"{BOT}: הפסד יומי {dd:.1f}%", f"ההון ${ai.equity:,.0f} · רף FTMO היומי 5% · הבוט עוצר הכל ב־4.5%",
                        priority=4 if lvl < 4 else 5, tags=["warning"])
     # equity history every 5 minutes, dashboard every 3 minutes
@@ -1164,8 +1188,8 @@ def main():
         except Exception as e:  # noqa: BLE001
             log(f"real-time feed not started: {e}")
     if not args.dry_run:
-        err = REP.notify(f"{BOT} התחיל לעבוד", status_line(ai),
-                         tags=["robot"])
+        # under the manager (updates, restarts) the manager sends one "update installed" message instead
+        err = None if os.environ.get("MANAGED") else REP.notify(f"{BOT} התחיל לעבוד", status_line(ai), tags=["robot"])
         log(f"phone notifications: {err or 'OK (topic ' + REP._CFG['topic'] + ')'}")
         log(f"dashboard: {'GitHub token found' if REP.token() else 'NO GitHub token - create live/github_token.txt'}")
     done, tried, tried_bar = {}, {}, {}

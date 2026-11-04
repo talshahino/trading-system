@@ -85,7 +85,7 @@ def tick(log, bot, state, save_state, open_count, restart):
             sha, title = remote()
             if local() and sha != local() and state.get("offered_sha") != sha and not touches_bot(local(), sha):
                 VERSION.write_text(sha)            # only reports/data changed: nothing to install
-            elif local() and sha != local() and state.get("offered_sha") != sha:
+            elif local() and sha != local() and state.get("offered_sha") != sha and REP._CFG.get("ntfy") is not False:
                 state["offered_sha"] = sha
                 save_state()
                 REP.notify_action(f"{bot}: יש עדכון", f"{title}\nעסקאות פתוחות: {open_count()} (נשארות עם הסטופ והיעד, הבוט ממשיך לנהל אותן אחרי העדכון)",
@@ -93,7 +93,7 @@ def tick(log, bot, state, save_state, open_count, restart):
                 log(f"update available: {sha[:7]} {title}")
         except Exception as e:  # noqa: BLE001
             log(f"update check failed: {e}")
-    if now - _S["poll"] >= 15:
+    if now - _S["poll"] >= 15 and REP._CFG.get("ntfy") is not False:
         _S["poll"] = now
         try:
             r = requests.get(f"https://ntfy.sh/{CMD_TOPIC}/json", params={"poll": "1", "since": str(_S["since"])}, timeout=15)
@@ -107,27 +107,90 @@ def tick(log, bot, state, save_state, open_count, restart):
             log(f"update command check failed: {e}")
 
 
+MANIFEST = ROOT / "live" / "installed_files.txt"
+PROTECT = ("live/manager.json", "live/vapid_private.pem", "live/github_token.txt", "live/version.txt",
+           "live/installed_files.txt")
+
+
+def _py():
+    return sys.executable.replace("pythonw", "python")
+
+
 def apply(sha):
-    """Download version `sha` from GitHub and install it over the program folder, plus packages."""
+    """Install version `sha` safely:
+    1. download it and unpack it into a staging folder next to the program (nothing changed yet)
+    2. check it there: every Python file compiles and the strategy engine imports
+    3. install its Python packages (a failure stops here, the running version stays as it was)
+    4. back up every file that will be replaced or removed, then swap the new files in
+    5. any error while swapping: every file is put back from the backup
+    6. files removed upstream since the last install are removed here too (from the install list)
+    The version number is written only at the very end."""
+    import py_compile
+    import shutil
     r = requests.get(f"https://codeload.github.com/{REPO}/zip/{sha}", timeout=120)
     r.raise_for_status()
     z = zipfile.ZipFile(io.BytesIO(r.content))
     top = z.namelist()[0].split("/")[0]
+    stage = ROOT / "_update" / f"stage_{sha[:7]}"
+    backup = ROOT / "_update" / f"backup_{sha[:7]}"
+    for d in (stage, backup):
+        shutil.rmtree(d, ignore_errors=True)
+    files = {}
     for info in z.infolist():
         rel = info.filename[len(top) + 1:]
-        if not rel or info.is_dir():
-            continue
-        dest = ROOT / rel
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        data = z.read(info)
-        if dest.exists() and dest.read_bytes() == data:
-            continue
-        tmp = dest.with_suffix(dest.suffix + ".new")
-        tmp.write_bytes(data)
-        os.replace(tmp, dest)
-    subprocess.run([sys.executable.replace("pythonw", "python"), "-m", "pip", "install", "-q", "-r", str(ROOT / "live" / "requirements.txt")],
-                   capture_output=True, timeout=600)
+        if rel and not info.is_dir() and rel not in PROTECT:
+            files[rel] = z.read(info)
+            (stage / rel).parent.mkdir(parents=True, exist_ok=True)
+            (stage / rel).write_bytes(files[rel])
+    # 2. check before touching anything
+    for rel in files:
+        if rel.endswith(".py") and rel.startswith(("live/", "agents/")):
+            py_compile.compile(str(stage / rel), doraise=True)
+    chk = subprocess.run([_py(), "-c", "from agents import rules_agent; print(len(rules_agent.STRATEGIES))"],
+                         cwd=str(stage), capture_output=True, text=True, timeout=300)
+    if chk.returncode != 0:
+        raise RuntimeError("the new version does not start: " + ((chk.stderr or chk.stdout).strip().splitlines() or ["?"])[-1][-200:])
+    # 3. packages first: a failed install leaves the running version untouched
+    pip = subprocess.run([_py(), "-m", "pip", "install", "-q", "-r", str(stage / "live" / "requirements.txt")],
+                         capture_output=True, text=True, timeout=900)
+    if pip.returncode != 0:
+        raise RuntimeError("installing Python packages failed: " + ((pip.stderr or pip.stdout).strip().splitlines() or ["?"])[-1][-200:])
+    old = set(MANIFEST.read_text(encoding="utf-8").split("\n")) - {""} if MANIFEST.exists() else set()
+    gone = [rel for rel in old - set(files) if rel not in PROTECT and (ROOT / rel).is_file()]
+    changed = [rel for rel, data in files.items() if not ((ROOT / rel).exists() and (ROOT / rel).read_bytes() == data)]
+    created = []
+    try:
+        for rel in changed + gone:                    # 4. backup
+            if (ROOT / rel).exists():
+                (backup / rel).parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(ROOT / rel, backup / rel)
+        for rel in changed:
+            dest = ROOT / rel
+            if not dest.exists():
+                created.append(rel)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            tmp = dest.with_suffix(dest.suffix + ".new")
+            tmp.write_bytes(files[rel])
+            os.replace(tmp, dest)
+        for rel in gone:
+            (ROOT / rel).unlink()
+    except Exception:
+        for rel in changed + gone:                    # 5. put everything back
+            if (backup / rel).exists():
+                (ROOT / rel).parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(backup / rel, ROOT / rel)
+        for rel in created:
+            try:
+                (ROOT / rel).unlink()
+            except OSError:
+                pass
+        raise
+    MANIFEST.write_text("\n".join(sorted(files)), encoding="utf-8")
     VERSION.write_text(sha)
+    shutil.rmtree(stage, ignore_errors=True)
+    for d in (ROOT / "_update").glob("backup_*"):         # keep only this install's backup (the previous version)
+        if d != backup:
+            shutil.rmtree(d, ignore_errors=True)
 
 
 def install(sha, log, bot, state, save_state, restart):

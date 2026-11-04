@@ -198,7 +198,7 @@ def vapid_public():
     return base64.urlsafe_b64encode(raw).decode().rstrip("=")
 
 
-def push(title, body, urgent=False, action=None, tag=None):
+def push(title, body, urgent=False, action=None, tag=None, extra=None):
     """Notification to every phone/computer that turned notifications on in the app."""
     subs = list(CFG.get("subs", []))
     if not subs:
@@ -209,7 +209,7 @@ def push(title, body, urgent=False, action=None, tag=None):
         log("pywebpush is not installed; run: python -m pip install -r requirements.txt")
         return
     quiet = REP.quiet_now()                  # quiet hours: everything silent, no exceptions (the user's rule)
-    data = json.dumps({"title": title, "body": body, "silent": quiet, "action": action, "tag": tag}, ensure_ascii=False)
+    data = json.dumps({"title": title, "body": body, "silent": quiet, "action": action, "tag": tag, **(extra or {})}, ensure_ascii=False)
     dead = []
     for s in subs:
         try:
@@ -566,11 +566,11 @@ def update_check():
                 if not UPD.touches_bot(UPD.local(), sha):
                     UPD.VERSION.write_text(sha)
                 else:
-                    first = UPDATE["sha"] is None          # one notification per waiting update, not per commit
+                    # every new waiting version is announced (same tag: it replaces the earlier notice on the
+                    # phone), and an approval counts only for the exact version it was given for
                     UPDATE.update(sha=sha, title=title)
                     log(f"update available: {sha[:7]} {title}")
-                    if first:
-                        push("יש עדכון לבוטים", title, action="approve_update", tag="update")
+                    push("יש עדכון לבוטים", title, action="approve_update", tag="update", extra={"sha": sha[:7]})
             UPDATE["checked"] = time.time()
         except Exception as e:  # noqa: BLE001
             log(f"update check failed: {e}")
@@ -840,6 +840,11 @@ class Handler(BaseHTTPRequestHandler):
                 lines = [l for l in lines if "password" not in l.lower()]
                 return self._send(200, {"ok": True, "lines": lines})
             if path == "/update/approve":
+                want = str(d.get("sha") or "")
+                if not UPDATE["sha"]:
+                    raise ValueError("אין עדכון שמחכה")
+                if len(want) < 7 or not UPDATE["sha"].startswith(want):
+                    raise ValueError("בינתיים הגיעה גרסה חדשה יותר. פתח את העדכון שוב ואשר אותה.")
                 threading.Thread(target=install_update, daemon=True).start()
                 return self._send(200, {"ok": True})
             return self._send(404, {"error": "not found"})

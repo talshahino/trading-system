@@ -1,6 +1,6 @@
 /* Taloona Trade app: notifications from the bots' manager (Web Push) and the "approve update" button. */
 const STATE_URL = "https://raw.githubusercontent.com/talshahino/trading-system/live/live/manager_state.json";
-const SHELL = "taloona-v6";
+const SHELL = "taloona-v7";
 
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(SHELL).then(c => c.addAll(["./", "./index.html", "./icon-192.png"])).catch(() => {})); });
 self.addEventListener("activate", e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== SHELL).map(k => caches.delete(k)))).then(() => self.clients.claim())));
@@ -92,7 +92,8 @@ self.addEventListener("notificationclick", e => {
       let msg = "אין קוד סודי שמור באפליקציה. פתח את האפליקציה ואשר שם.";
       if (pin && url) {
         try {
-          const r = await fetch(url + "/update/approve", {method: "POST", headers: {"Content-Type": "application/json", "X-Pin": pin}, body: "{}"});
+          const sha = (e.notification.data && e.notification.data.sha) || "";
+          const r = await fetch(url + "/update/approve", {method: "POST", headers: {"Content-Type": "application/json", "X-Pin": pin}, body: JSON.stringify({sha})});
           msg = r.ok ? "העדכון אושר. הבוטים מתעדכנים ועולים מחדש תוך כדקה." : "האישור נכשל: " + ((await r.json()).error || r.status);
         } catch (x) { msg = "אין חיבור למחשב הבוטים. נסה שוב מתוך האפליקציה."; }
       }

@@ -826,7 +826,7 @@ $("vpinDel").onclick = async () => {
 };
 $("updBtn").onclick = async () => {
   $("updBtn").disabled = true;
-  try { await act("/update/approve"); note("updMsg", "העדכון אושר. הבוטים מתעדכנים ועולים מחדש תוך כדקה.", true); }
+  try { await act("/update/approve", {sha: (mgrInfo && mgrInfo.update && mgrInfo.update.sha) || ""}); note("updMsg", "העדכון אושר. הבוטים מתעדכנים ועולים מחדש תוך כדקה.", true); }
   catch (e) { note("updMsg", e.message, false); $("updBtn").disabled = false; }
 };
 $("addForm").onsubmit = async ev => {

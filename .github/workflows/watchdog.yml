@@ -72,7 +72,7 @@ jobs:
           watch = []
           if mgr.get("updated_utc"):
               watch.append(("manager", "מחשב הבוטים", mgr["updated_utc"]))
-          for a in mgr.get("accounts") or [{"name": b, "label": l} for b, l in (("bot1", "בוט 1"), ("bot2", "בוט 2"), ("bot3", "בוט 3"))]:
+          for a in mgr.get("accounts") or [{"name": b, "label": l} for b, l in (("bot1", "בוט 1"), ("bot2", "בוט 2"), ("bot3", "בוט 3"), ("bot4", "בוט 4"))]:
               if a.get("archived") or a.get("enabled") is False:      # closed or stopped on purpose
                   continue
               s = get(a["name"])

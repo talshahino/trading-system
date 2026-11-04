@@ -1,0 +1,29 @@
+{
+ "name": "bot4",
+ "portfolio": 4,
+ "initial": 100000,
+ "risk": 0.0045,
+ "free_risk_at_breakeven": true,
+ "magic_base": 300000,
+ "combos": [
+  "BK05|15Min|EURUSD",
+  "GH02|1Hour|USDJPY",
+  "BK05|1Hour|EURUSD",
+  "GH02|1Hour|XAUUSD",
+  "BK05|15Min|INTC",
+  "SE02|1Hour|GBPJPY",
+  "FR01|1Hour|EURUSD",
+  "GH09|1Hour|USDJPY",
+  "QP02|1Hour|XAGUSD",
+  "FR01|1Hour|GBPUSD",
+  "QC07|15Min|ARM",
+  "FR08|5Min|SPCX",
+  "IM03|4Hour|USDCAD",
+  "GH04|1Hour|EURJPY",
+  "QC04|4Hour|USDCAD",
+  "SE01|1Hour|CSCO",
+  "SE01|1Hour|WMT"
+ ],
+ "note": "04.11.2026: built from the new families' combos that passed the first test (GitHub, QuantConnect, forums, books, seasonality, inter-market, Quantpedia), chosen on 2025 and checked on 2026 and by reshuffling; MetaQuotes-demo instruments only (FX, metals, US shares); risk 0.45% chosen by the user; FTMO Standard rule: closed before market breaks over 2 hours",
+ "close_before_breaks": true
+}

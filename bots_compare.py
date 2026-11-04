@@ -115,7 +115,7 @@ def main():
             if i >= len(b) or b.index[i] - t > pd.Timedelta(minutes=30):
                 return None
             return float(b["o"].iloc[i])
-        want = {c for b in (1, 2, 3) for c in json.load(open(ROOT / "live" / "bots" / f"bot{b}.json", encoding="utf-8"))["combos"]}
+        want = {c for b in (1, 2, 3, 4) for c in json.load(open(ROOT / "live" / "bots" / f"bot{b}.json", encoding="utf-8"))["combos"]}
         want |= set(cands)
         st = trades["Standard"]
         st = st[st["combo"].isin(want)]

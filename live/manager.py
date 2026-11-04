@@ -48,7 +48,7 @@ LIVE = ROOT / "live"
 CFG_FILE = LIVE / "manager.json"
 VAPID_FILE = LIVE / "vapid_private.pem"
 PORT = 8760
-BOT_TEMPLATES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}
+BOT_TEMPLATES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4"}
 JOURNAL = deque(maxlen=300)
 PROCS = {}
 LOCK = threading.RLock()

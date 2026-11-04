@@ -123,7 +123,7 @@ def main():
     over = dict(x.split("=") for x in args.combos.split(",") if x)
     rows = []
     for edge in (float(x) for x in args.edge.split(",")):
-        for b in (1, 2, 3):
+        for b in (1, 2, 3, 4):
             cfg = json.load(open(ROOT / "live" / "bots" / f"bot{b}.json", encoding="utf-8"))
             combos = cfg["combos"]
             if str(b) in over:

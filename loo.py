@@ -45,7 +45,7 @@ def main():
         t[c] = pd.to_datetime(t[c], utc=True, errors="coerce")
     over = dict(x.split("=") for x in args.combos.split(",") if x)
     out = []
-    for b in (1, 2, 3):
+    for b in (1, 2, 3, 4):
         cfg = json.load(open(ROOT / "live" / "bots" / f"bot{b}.json", encoding="utf-8"))
         F.FREE_RISK_AT_BREAKEVEN = bool(cfg["free_risk_at_breakeven"])
         combos = cfg["combos"] if str(b) not in over else [l.strip() for l in open(over[str(b)], encoding="utf-8") if l.strip()]

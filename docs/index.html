@@ -420,7 +420,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
     <div class="card">
       <form class="form" id="addForm" autocomplete="off">
         <label class="full">שם לחשבון<input id="fNick" maxlength="40" placeholder="למשל: אתגר 100K ראשון"></label>
-        <label>בוט<select id="fBot"><option value="bot1">בוט 1</option><option value="bot2">בוט 2</option><option value="bot3">בוט 3</option></select></label>
+        <label>בוט<select id="fBot"><option value="bot1">בוט 1</option><option value="bot2">בוט 2</option><option value="bot3">בוט 3</option><option value="bot4">בוט 4</option></select></label>
         <label>שרת<input id="fServer" value="FTMO-Demo" autocapitalize="off" spellcheck="false"></label>
         <label>מספר חשבון<input id="fLogin" inputmode="numeric" autocomplete="off"></label>
         <label>סיסמת החשבון<input id="fPass" type="password" autocomplete="new-password"></label>
@@ -447,7 +447,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 
 <script>
 const BOTS = ["bot1", "bot2", "bot3"];
-const NAMES = {bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3"};
+const NAMES = {bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3", bot4: "בוט 4"};
 const MGR_STATE = () => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/manager_state.json?t=${Date.now()}`;
 let mgr = null, mgrInfo = null, mgrSeen = null, apiTry = 0;
 const MGR_API = "https://api.github.com/repos/talshahino/trading-system/contents/live/manager_state.json?ref=live";
@@ -869,7 +869,7 @@ async function tick() {
   if ($("v-stats").classList.contains("on")) renderAll();
 }
 /* ================= Accounts (FTMO-style): list → account screen (overview, trades, statistics, details) ================= */
-const BOT_TPL = {bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3"};
+const BOT_TPL = {bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3", bot4: "בוט 4"};
 const TFMAP = {"1Min": "1m", "5Min": "5m", "15Min": "15m", "1Hour": "1h", "4Hour": "4h"};
 const TFSEC = {"1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400, "1w": 604800};
 const TFLBL = {"1m": "דקה", "5m": "5 דק׳", "15m": "15 דק׳", "1h": "שעה", "4h": "4 שעות", "1d": "יומי", "1w": "שבועי"};

@@ -1162,7 +1162,7 @@ def main():
             names = ", ".join(sorted({f"{t} ({c})" for dd, c, t in cal["holidays"] if dd == d and "Daylight" not in t}))
             log(f"  {d.strftime('%a %d.%m')}  holiday: {names} -> market closed for {', '.join(hit)}")
     global BOT
-    tmpl = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3"}
+    tmpl = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4"}
     bot_label = cfg.get("bot_label") or tmpl.get(name) or name
     nick = os.environ.get("BOT_NICKNAME") or cfg.get("nickname")
     BOT = f"{nick} · {bot_label}" if nick else bot_label

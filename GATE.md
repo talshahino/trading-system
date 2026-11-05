@@ -25,7 +25,7 @@ test (SPRT) on its own demo trades: H0 mean R = 0 vs H1 mean R = half its backte
 Accept H1 -> full size; accept H0 -> removed.
 
 ## 4. Fixed removal rule (all combos, including the existing ones)
-Removed, with no second chance, when its own demo record, cumulative R since 2026-11-01, falls below
+Proposed for removal (the phone gets a notice; removed only after the user approves - user, 05.11.2026), when its own demo record, cumulative R since 2026-11-01, falls below
 -2 x sqrt(trades) x (its backtest standard deviation of R) after at least 6 trades: a fall a no-loss-in-
 expectation combo makes less than 2.5% of the time.
 

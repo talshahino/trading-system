@@ -31,6 +31,36 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "reports" / "trade_review"
 KS = (1.0, 1.5, 2.0, 3.0)
 MIN_LIVE = 6            # live trades of a strategy before it gets a hint (user: 6)
+HOLDOUT_FROM = "2026-11-01"
+# backtest trades of every live combo (live rules), for each combo's standard deviation of R
+BT_LIVE = ("reports/2026-11-04_bots_compare_run14/news_trades.csv.gz", "reports/2026-11-04_tv_run61[2-9]/combo_trades_*.csv.gz",
+           "reports/2026-11-04_tv_run644/combo_trades_*.csv.gz")
+
+
+def removal_rule(t):
+    """GATE.md rule 4 (registered 04.11.2026; the user removes, after approving): a combo's demo record since
+    2026-11-01, all accounts together, after at least 6 trades, below -2 x sqrt(n) x its backtest standard
+    deviation of R. A combo with no loss in expectation falls that low less than 2.5% of the time."""
+    sd = {}
+    for pat in BT_LIVE:
+        for f in glob.glob(str(ROOT / pat)):
+            try:
+                d = pd.read_csv(f)
+            except Exception:  # noqa: BLE001
+                continue
+            if "combo" not in d:
+                d["combo"] = d["sid"] + "|" + d["tf"] + "|" + d["symbol"]
+            for k, v in d.groupby("combo")["r"].std().items():
+                sd.setdefault(k, float(v))
+    x = t[pd.to_datetime(t["open_t"], utc=True) >= pd.Timestamp(HOLDOUT_FROM, tz="UTC")]
+    out = []
+    for k, g in x.groupby("combo"):
+        n, cum = len(g), float(g["exit_r"].sum())
+        s_ = sd.get(k, 1.0)
+        line = -2.0 * np.sqrt(n) * s_
+        out.append({"combo": k, "trades": n, "cum_r": round(cum, 2), "line_r": round(line, 2), "bt_sd": round(s_, 2),
+                    "remove": bool(n >= MIN_LIVE and cum < line)})
+    return sorted(out, key=lambda r: r["cum_r"] - r["line_r"])
 
 
 def live_trades(states):
@@ -148,6 +178,14 @@ def main():
                              "check_removal": bool(lv.get("n", 0) >= MIN_LIVE and lv.get("avg_r", 0) < 0)})
         res[key].sort(key=lambda x: -x["live"]["n"])
     (OUT / "summary.json").write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
+    rf = OUT / "removal.json"
+    before = set(json.loads(rf.read_text(encoding="utf-8")).get("proposed", [])) if rf.exists() else set()
+    rows = removal_rule(t)
+    now_prop = [r["combo"] for r in rows if r["remove"]]
+    rf.write_text(json.dumps({"updated": res["updated"], "rule": "GATE.md 4 - removed only after the user approves",
+                              "proposed": sorted(before | set(now_prop)), "new": [c for c in now_prop if c not in before],
+                              "combos": rows}, ensure_ascii=False, indent=1), encoding="utf-8")
+    print("removal rule: new proposals", [c for c in now_prop if c not in before])
     print(f"live trades: {len(t)} in {len(res['accounts'])} accounts | strategies: {len(res['strategies'])} | "
           f"with candidates: {sum(1 for x in res['strategies'] if x['candidates'])}")
 

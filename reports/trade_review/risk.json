@@ -1,12 +1,12 @@
 {
- "updated": "2026-11-05T16:18:11+00:00",
+ "updated": "2026-11-05T16:27:41+00:00",
  "sample": "2026-11-02",
  "since": "2026-11-01",
  "backtest": {
   "from": "2025-04-30",
   "to": "2026-11-01",
   "split": "2026-01-01",
-  "trades": 26267
+  "trades": 19176
  },
  "rule": {
   "k_trades": 20,
@@ -108,8 +108,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 3
+       "bt_trades": 499,
+       "demo_trades": 3,
+       "mfe_median_r": 0.66,
+       "mae_winners_p90_r": 0.58
       },
       "hours": {
        "00-04": {
@@ -156,9 +158,9 @@
        }
       },
       "together": {
-       "with": "TT56|1Hour|GME",
-       "corr": 0.1,
-       "lost_together_days": 13
+       "with": "MQ02|1Hour|XAUUSD",
+       "corr": 0.17,
+       "lost_together_days": 18
       }
      }
     },
@@ -183,10 +185,10 @@
        },
        "backtest": {
         "trades": 143,
-        "win_pct": 39.2,
-        "mean_r": 0.297,
-        "sum_r": 42.53,
-        "pf": 1.55
+        "win_pct": 39.9,
+        "mean_r": 0.322,
+        "sum_r": 46.0,
+        "pf": 1.59
        }
       },
       "stability": {
@@ -194,15 +196,15 @@
        "demo": null,
        "backtest": {
         "score": 0.96,
-        "without_best_r": 32.6,
+        "without_best_r": 36.08,
         "max_loss_r": 1.28,
-        "avg_win_r": 2.15,
-        "drawdown_r": 14.73,
-        "sd_r": 2.04,
+        "avg_win_r": 2.18,
+        "drawdown_r": 13.7,
+        "sd_r": 2.06,
         "checks": [
          1.0,
          1.0,
-         0.88
+         0.89
         ]
        }
       },
@@ -220,22 +222,24 @@
        "backtest": {
         "buy": {
          "trades": 74,
-         "mean_r": 0.22
+         "mean_r": 0.25
         },
         "sell": {
          "trades": 69,
-         "mean_r": 0.38
+         "mean_r": 0.4
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 143,
+       "demo_trades": 1,
+       "mfe_median_r": 1.08,
+       "mae_winners_p90_r": 0.83
       },
       "hours": {
        "00-04": {
         "trades": 19,
-        "mean_r": -0.12
+        "mean_r": -0.08
        },
        "04-08": {
         "trades": 31,
@@ -243,15 +247,15 @@
        },
        "08-12": {
         "trades": 22,
-        "mean_r": 0.31
+        "mean_r": 0.36
        },
        "12-16": {
         "trades": 14,
-        "mean_r": -0.11
+        "mean_r": -0.15
        },
        "16-20": {
         "trades": 36,
-        "mean_r": 0.35
+        "mean_r": 0.4
        },
        "20-24": {
         "trades": 21,
@@ -269,17 +273,17 @@
        },
        "mid": {
         "trades": 47,
-        "mean_r": 0.45
+        "mean_r": 0.51
        },
        "high": {
         "trades": 48,
-        "mean_r": 0.13
+        "mean_r": 0.15
        }
       },
       "together": {
-       "with": "TV14|4Hour|XPTUSD",
-       "corr": 0.1,
-       "lost_together_days": 9
+       "with": "MQ02|1Hour|XAUUSD",
+       "corr": 0.13,
+       "lost_together_days": 17
       }
      }
     },
@@ -357,8 +361,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 495,
+       "demo_trades": 1,
+       "mfe_median_r": 0.51,
+       "mae_winners_p90_r": 0.63
       },
       "hours": {
        "08-12": {
@@ -393,9 +399,9 @@
        }
       },
       "together": {
-       "with": "TT41|1Hour|USDCHF",
-       "corr": 0.14,
-       "lost_together_days": 29
+       "with": "YT03|4Hour|GBPUSD",
+       "corr": 0.15,
+       "lost_together_days": 21
       }
      }
     },
@@ -485,8 +491,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 328,
+       "demo_trades": 2,
+       "near_miss_pct": 0.6,
+       "reach_pct": 3.4,
+       "mfe_of_target_median_pct": 30.0,
+       "mfe_median_r": 0.6,
+       "mae_winners_p90_r": 0.69
       },
       "hours": {
        "12-16": {
@@ -601,8 +612,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 252,
+       "demo_trades": 0,
+       "near_miss_pct": 0.4,
+       "reach_pct": 1.2,
+       "mfe_of_target_median_pct": 34.0,
+       "mfe_median_r": 0.68,
+       "mae_winners_p90_r": 0.68
       },
       "hours": {
        "12-16": {
@@ -670,11 +686,11 @@
         "pf": 0.0
        },
        "backtest": {
-        "trades": 318,
-        "win_pct": 44.0,
-        "mean_r": 0.107,
-        "sum_r": 34.15,
-        "pf": 1.22
+        "trades": 319,
+        "win_pct": 42.9,
+        "mean_r": 0.103,
+        "sum_r": 32.79,
+        "pf": 1.2
        }
       },
       "stability": {
@@ -694,11 +710,11 @@
        },
        "backtest": {
         "score": 0.95,
-        "without_best_r": 23.7,
+        "without_best_r": 22.34,
         "max_loss_r": 1.23,
-        "avg_win_r": 1.38,
-        "drawdown_r": 26.36,
-        "sd_r": 1.43,
+        "avg_win_r": 1.42,
+        "drawdown_r": 26.4,
+        "sd_r": 1.44,
         "checks": [
          1.0,
          1.0,
@@ -719,18 +735,23 @@
        },
        "backtest": {
         "buy": {
-         "trades": 135,
-         "mean_r": 0.14
+         "trades": 136,
+         "mean_r": 0.11
         },
         "sell": {
          "trades": 183,
-         "mean_r": 0.09
+         "mean_r": 0.1
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 3
+       "bt_trades": 319,
+       "demo_trades": 3,
+       "near_miss_pct": 2.2,
+       "reach_pct": 6.9,
+       "mfe_of_target_median_pct": 41.0,
+       "mfe_median_r": 0.82,
+       "mae_winners_p90_r": 0.85
       },
       "hours": {
        "00-04": {
@@ -747,15 +768,15 @@
        },
        "12-16": {
         "trades": 48,
-        "mean_r": 0.06
+        "mean_r": 0.09
        },
        "16-20": {
         "trades": 78,
-        "mean_r": 0.21
+        "mean_r": 0.2
        },
        "20-24": {
-        "trades": 75,
-        "mean_r": 0.04
+        "trades": 76,
+        "mean_r": 0.02
        }
       },
       "market": {
@@ -764,16 +785,16 @@
         0.41
        ],
        "low": {
-        "trades": 106,
-        "mean_r": 0.27
+        "trades": 107,
+        "mean_r": 0.28
        },
        "mid": {
         "trades": 106,
-        "mean_r": 0.07
+        "mean_r": 0.04
        },
        "high": {
         "trades": 106,
-        "mean_r": -0.02
+        "mean_r": -0.01
        }
       },
       "together": {
@@ -806,7 +827,7 @@
         "trades": 52,
         "win_pct": 57.7,
         "mean_r": 0.809,
-        "sum_r": 42.05,
+        "sum_r": 42.04,
         "pf": 2.96
        }
       },
@@ -850,8 +871,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 52,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 60.0,
+       "mfe_median_r": 1.79,
+       "mae_winners_p90_r": 0.84
       },
       "hours": {
        "00-04": {
@@ -898,9 +924,9 @@
        }
       },
       "together": {
-       "with": "FR03|15Min|GBPUSD",
-       "corr": 0.11,
-       "lost_together_days": 2
+       "with": "TV14|4Hour|XPTUSD",
+       "corr": 0.1,
+       "lost_together_days": 1
       }
      }
     },
@@ -912,48 +938,41 @@
      "sum_r": 1.91,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.027,
+     "target": 1.028,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.95R מול -0.22R של הבוט, יציבות 0.55, 2 עסקאות"
+       "why": "רווח ממוצע +0.95R מול -0.22R של הבוט, יציבות 0.57, 2 עסקאות"
+      },
+      {
+       "kind": "tp",
+       "value": 0.7,
+       "bt_gain_r": [
+        0.211,
+        0.115
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.7: בבקטסט +0.21R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
       },
       {
        "bt_trades": 36,
        "bt_mean_r": [
-        -0.52,
-        -0.22
+        -0.45,
+        -0.12
        ],
        "demo": {
         "trades": 0,
         "mean_r": null
        },
-       "why": "שעות 20:00-24:00: בבקטסט -0.52R ו־-0.22R לעסקה בשני החצאים (36 עסקאות)",
+       "why": "שעות 20:00-24:00: בבקטסט -0.45R ו־-0.12R לעסקה בשני החצאים (36 עסקאות)",
        "kind": "hours",
        "value": [
         20,
         24
        ],
        "label": "לא לסחור 20:00-24:00"
-      },
-      {
-       "bt_trades": 99,
-       "bt_mean_r": [
-        -0.19,
-        -0.11
-       ],
-       "demo": {
-        "trades": 1,
-        "mean_r": 0.12
-       },
-       "why": "תנודתיות גבוהה (סטופ מעל 0.31% מהמחיר): בבקטסט -0.19R ו־-0.11R לעסקה בשני החצאים (99 עסקאות), בדמו +0.12R ב־1",
-       "kind": "vol",
-       "value": {
-        "max_pct": 0.315
-       },
-       "label": "לא לסחור בתנודתיות גבוהה"
       }
      ],
      "detail": {
@@ -967,26 +986,26 @@
        },
        "backtest": {
         "trades": 298,
-        "win_pct": 33.6,
-        "mean_r": -0.064,
-        "sum_r": -18.93,
-        "pf": 0.88
+        "win_pct": 34.6,
+        "mean_r": -0.018,
+        "sum_r": -5.34,
+        "pf": 0.97
        }
       },
       "stability": {
-       "score": 0.55,
+       "score": 0.57,
        "demo": null,
        "backtest": {
-        "score": 0.55,
-        "without_best_r": -23.1,
+        "score": 0.57,
+        "without_best_r": -11.45,
         "max_loss_r": 1.96,
-        "avg_win_r": 1.42,
-        "drawdown_r": 23.94,
-        "sd_r": 1.25,
+        "avg_win_r": 1.53,
+        "drawdown_r": 21.1,
+        "sd_r": 1.33,
         "checks": [
          0.0,
-         0.81,
-         0.83
+         0.86,
+         0.87
         ]
        }
       },
@@ -1004,42 +1023,47 @@
        "backtest": {
         "buy": {
          "trades": 156,
-         "mean_r": -0.03
+         "mean_r": 0.02
         },
         "sell": {
          "trades": 142,
-         "mean_r": -0.11
+         "mean_r": -0.06
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 298,
+       "demo_trades": 2,
+       "near_miss_pct": 5.4,
+       "reach_pct": 6.0,
+       "mfe_of_target_median_pct": 41.0,
+       "mfe_median_r": 0.81,
+       "mae_winners_p90_r": 0.68
       },
       "hours": {
        "00-04": {
         "trades": 31,
-        "mean_r": 0.09
+        "mean_r": 0.08
        },
        "04-08": {
         "trades": 82,
-        "mean_r": -0.07
+        "mean_r": -0.09
        },
        "08-12": {
         "trades": 48,
-        "mean_r": -0.25
+        "mean_r": -0.21
        },
        "12-16": {
         "trades": 38,
-        "mean_r": -0.07
+        "mean_r": 0.19
        },
        "16-20": {
         "trades": 63,
-        "mean_r": 0.18
+        "mean_r": 0.22
        },
        "20-24": {
         "trades": 36,
-        "mean_r": -0.38
+        "mean_r": -0.3
        }
       },
       "market": {
@@ -1049,21 +1073,21 @@
        ],
        "low": {
         "trades": 100,
-        "mean_r": -0.04
+        "mean_r": 0.03
        },
        "mid": {
         "trades": 99,
-        "mean_r": -0.01
+        "mean_r": 0.01
        },
        "high": {
         "trades": 99,
-        "mean_r": -0.15
+        "mean_r": -0.09
        }
       },
       "together": {
-       "with": "TV03|15Min|AAPL",
-       "corr": 0.15,
-       "lost_together_days": 17
+       "with": "TV11|4Hour|USDJPY",
+       "corr": 0.16,
+       "lost_together_days": 42
       }
      }
     },
@@ -1078,16 +1102,26 @@
      "target": 1.007,
      "recs": [
       {
+       "kind": "tp",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.079,
+        0.158
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.6: בבקטסט +0.08R ו־+0.16R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      },
+      {
        "bt_trades": 35,
        "bt_mean_r": [
-        -0.39,
-        -0.24
+        -0.42,
+        -0.17
        ],
        "demo": {
         "trades": 0,
         "mean_r": null
        },
-       "why": "שעות 12:00-16:00: בבקטסט -0.39R ו־-0.24R לעסקה בשני החצאים (35 עסקאות)",
+       "why": "שעות 12:00-16:00: בבקטסט -0.42R ו־-0.17R לעסקה בשני החצאים (35 עסקאות)",
        "kind": "hours",
        "value": [
         12,
@@ -1107,25 +1141,25 @@
        },
        "backtest": {
         "trades": 247,
-        "win_pct": 47.0,
-        "mean_r": 0.059,
-        "sum_r": 14.57,
-        "pf": 1.12
+        "win_pct": 45.7,
+        "mean_r": 0.076,
+        "sum_r": 18.85,
+        "pf": 1.16
        }
       },
       "stability": {
-       "score": 0.94,
+       "score": 0.95,
        "demo": null,
        "backtest": {
-        "score": 0.94,
-        "without_best_r": 11.19,
+        "score": 0.95,
+        "without_best_r": 15.47,
         "max_loss_r": 1.35,
-        "avg_win_r": 1.15,
-        "drawdown_r": 11.47,
-        "sd_r": 1.22,
+        "avg_win_r": 1.22,
+        "drawdown_r": 12.65,
+        "sd_r": 1.25,
         "checks": [
          1.0,
-         0.91,
+         0.95,
          0.91
         ]
        }
@@ -1144,17 +1178,22 @@
        "backtest": {
         "buy": {
          "trades": 125,
-         "mean_r": 0.16
+         "mean_r": 0.19
         },
         "sell": {
          "trades": 122,
-         "mean_r": -0.05
+         "mean_r": -0.04
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 247,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 4.9,
+       "mfe_of_target_median_pct": 42.0,
+       "mfe_median_r": 0.85,
+       "mae_winners_p90_r": 0.67
       },
       "hours": {
        "00-04": {
@@ -1163,23 +1202,23 @@
        },
        "04-08": {
         "trades": 89,
-        "mean_r": 0.18
+        "mean_r": 0.19
        },
        "08-12": {
         "trades": 41,
-        "mean_r": 0.3
+        "mean_r": 0.32
        },
        "12-16": {
         "trades": 35,
-        "mean_r": -0.29
+        "mean_r": -0.25
        },
        "16-20": {
         "trades": 38,
-        "mean_r": -0.02
+        "mean_r": -0.05
        },
        "20-24": {
         "trades": 20,
-        "mean_r": 0.15
+        "mean_r": 0.26
        }
       },
       "market": {
@@ -1193,16 +1232,16 @@
        },
        "mid": {
         "trades": 82,
-        "mean_r": 0.18
+        "mean_r": 0.23
        },
        "high": {
         "trades": 82,
-        "mean_r": 0.03
+        "mean_r": 0.04
        }
       },
       "together": {
        "with": "TV11|4Hour|AUDUSD",
-       "corr": 0.13,
+       "corr": 0.16,
        "lost_together_days": 42
       }
      }
@@ -1227,27 +1266,27 @@
         "pf": null
        },
        "backtest": {
-        "trades": 281,
-        "win_pct": 57.3,
-        "mean_r": 0.093,
-        "sum_r": 26.25,
-        "pf": 1.24
+        "trades": 283,
+        "win_pct": 57.6,
+        "mean_r": 0.105,
+        "sum_r": 29.84,
+        "pf": 1.27
        }
       },
       "stability": {
-       "score": 0.88,
+       "score": 0.89,
        "demo": null,
        "backtest": {
-        "score": 0.88,
-        "without_best_r": 22.38,
+        "score": 0.89,
+        "without_best_r": 25.97,
         "max_loss_r": 1.21,
-        "avg_win_r": 0.85,
-        "drawdown_r": 18.06,
-        "sd_r": 1.02,
+        "avg_win_r": 0.87,
+        "drawdown_r": 17.54,
+        "sd_r": 1.04,
         "checks": [
          1.0,
-         0.79,
-         0.87
+         0.81,
+         0.88
         ]
        }
       },
@@ -1264,18 +1303,20 @@
        },
        "backtest": {
         "buy": {
-         "trades": 141,
-         "mean_r": 0.13
+         "trades": 142,
+         "mean_r": 0.12
         },
         "sell": {
-         "trades": 140,
-         "mean_r": 0.06
+         "trades": 141,
+         "mean_r": 0.09
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 283,
+       "demo_trades": 1,
+       "mfe_median_r": 0.7,
+       "mae_winners_p90_r": 0.79
       },
       "hours": {
        "00-04": {
@@ -1288,7 +1329,7 @@
        },
        "08-12": {
         "trades": 45,
-        "mean_r": 0.19
+        "mean_r": 0.16
        },
        "12-16": {
         "trades": 28,
@@ -1296,34 +1337,34 @@
        },
        "16-20": {
         "trades": 82,
-        "mean_r": 0.08
+        "mean_r": 0.14
        },
        "20-24": {
-        "trades": 63,
-        "mean_r": 0.06
+        "trades": 65,
+        "mean_r": 0.05
        }
       },
       "market": {
        "cut_pct": [
-        0.442,
-        0.594
+        0.44,
+        0.593
        ],
        "low": {
-        "trades": 94,
-        "mean_r": 0.03
+        "trades": 95,
+        "mean_r": 0.04
        },
        "mid": {
-        "trades": 93,
-        "mean_r": 0.04
+        "trades": 94,
+        "mean_r": 0.08
        },
        "high": {
         "trades": 94,
-        "mean_r": 0.21
+        "mean_r": 0.2
        }
       },
       "together": {
        "with": "TV29|4Hour|US500",
-       "corr": 0.17,
+       "corr": 0.18,
        "lost_together_days": 10
       }
      }
@@ -1414,8 +1455,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 3
+       "bt_trades": 272,
+       "demo_trades": 3,
+       "mfe_median_r": 0.71,
+       "mae_winners_p90_r": 0.76
       },
       "hours": {
        "12-16": {
@@ -1450,9 +1493,9 @@
        }
       },
       "together": {
-       "with": "TV15|4Hour|ETHUSD",
-       "corr": 0.1,
-       "lost_together_days": 13
+       "with": "TV56|1Hour|US2000",
+       "corr": 0.11,
+       "lost_together_days": 25
       }
      }
     },
@@ -1470,7 +1513,7 @@
        "kind": "mult",
        "value": 0.9,
        "label": "סיכון ×0.9",
-       "why": "רווח ממוצע -0.72R מול -0.22R של הבוט, יציבות 0.78, 4 עסקאות"
+       "why": "רווח ממוצע -0.72R מול -0.22R של הבוט, יציבות 0.80, 4 עסקאות"
       }
      ],
      "detail": {
@@ -1484,14 +1527,14 @@
        },
        "backtest": {
         "trades": 194,
-        "win_pct": 38.7,
-        "mean_r": 0.073,
-        "sum_r": 14.21,
-        "pf": 1.17
+        "win_pct": 39.7,
+        "mean_r": 0.156,
+        "sum_r": 30.26,
+        "pf": 1.37
        }
       },
       "stability": {
-       "score": 0.78,
+       "score": 0.8,
        "demo": {
         "score": 0.0,
         "without_best_r": -2.43,
@@ -1506,16 +1549,16 @@
         ]
        },
        "backtest": {
-        "score": 0.94,
-        "without_best_r": 9.04,
+        "score": 0.96,
+        "without_best_r": 23.11,
         "max_loss_r": 1.16,
-        "avg_win_r": 1.28,
-        "drawdown_r": 18.68,
-        "sd_r": 1.25,
+        "avg_win_r": 1.46,
+        "drawdown_r": 13.9,
+        "sd_r": 1.39,
         "checks": [
          1.0,
          1.0,
-         0.81
+         0.88
         ]
        }
       },
@@ -1533,42 +1576,44 @@
        "backtest": {
         "buy": {
          "trades": 112,
-         "mean_r": -0.09
+         "mean_r": 0.0
         },
         "sell": {
          "trades": 82,
-         "mean_r": 0.29
+         "mean_r": 0.37
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 3
+       "bt_trades": 194,
+       "demo_trades": 3,
+       "mfe_median_r": 1.04,
+       "mae_winners_p90_r": 0.69
       },
       "hours": {
        "00-04": {
         "trades": 29,
-        "mean_r": 0.41
+        "mean_r": 0.45
        },
        "04-08": {
         "trades": 33,
-        "mean_r": -0.12
+        "mean_r": -0.04
        },
        "08-12": {
         "trades": 23,
-        "mean_r": 0.34
+        "mean_r": 0.42
        },
        "12-16": {
         "trades": 20,
-        "mean_r": 0.3
+        "mean_r": 0.34
        },
        "16-20": {
         "trades": 56,
-        "mean_r": -0.09
+        "mean_r": -0.04
        },
        "20-24": {
         "trades": 33,
-        "mean_r": -0.09
+        "mean_r": 0.12
        }
       },
       "market": {
@@ -1578,21 +1623,21 @@
        ],
        "low": {
         "trades": 65,
-        "mean_r": -0.08
+        "mean_r": -0.01
        },
        "mid": {
         "trades": 64,
-        "mean_r": 0.11
+        "mean_r": 0.24
        },
        "high": {
         "trades": 65,
-        "mean_r": 0.19
+        "mean_r": 0.24
        }
       },
       "together": {
        "with": "FR03|15Min|GBPUSD",
-       "corr": 0.16,
-       "lost_together_days": 8
+       "corr": 0.18,
+       "lost_together_days": 9
       }
      }
     },
@@ -1663,8 +1708,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 62,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 9.7,
+       "mfe_of_target_median_pct": 43.0,
+       "mfe_median_r": 0.85,
+       "mae_winners_p90_r": 0.64
       },
       "hours": {
        "16-20": {
@@ -1695,8 +1745,8 @@
        }
       },
       "together": {
-       "with": "TV11|4Hour|AUDUSD",
-       "corr": 0.11,
+       "with": "MQ11|4Hour|MSTR",
+       "corr": 0.14,
        "lost_together_days": 8
       }
      }
@@ -1710,7 +1760,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.007,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "tp",
+       "value": 0.8,
+       "bt_gain_r": [
+        0.108,
+        0.052
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.8: בבקטסט +0.11R ו־+0.05R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -1723,25 +1784,25 @@
        "backtest": {
         "trades": 87,
         "win_pct": 44.8,
-        "mean_r": 0.142,
-        "sum_r": 12.36,
-        "pf": 1.3
+        "mean_r": 0.173,
+        "sum_r": 15.02,
+        "pf": 1.33
        }
       },
       "stability": {
-       "score": 0.95,
+       "score": 0.97,
        "demo": null,
        "backtest": {
-        "score": 0.95,
-        "without_best_r": 9.35,
+        "score": 0.97,
+        "without_best_r": 12.01,
         "max_loss_r": 1.37,
-        "avg_win_r": 1.38,
-        "drawdown_r": 8.37,
-        "sd_r": 1.39,
+        "avg_win_r": 1.54,
+        "drawdown_r": 6.27,
+        "sd_r": 1.5,
         "checks": [
          1.0,
          1.0,
-         0.84
+         0.9
         ]
        }
       },
@@ -1763,18 +1824,23 @@
         },
         "sell": {
          "trades": 34,
-         "mean_r": 0.17
+         "mean_r": 0.24
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 87,
+       "demo_trades": 0,
+       "near_miss_pct": 1.1,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 28.0,
+       "mfe_median_r": 0.83,
+       "mae_winners_p90_r": 0.85
       },
       "hours": {
        "16-20": {
         "trades": 87,
-        "mean_r": 0.14
+        "mean_r": 0.17
        }
       },
       "market": {
@@ -1784,21 +1850,21 @@
        ],
        "low": {
         "trades": 29,
-        "mean_r": 0.01
+        "mean_r": 0.11
        },
        "mid": {
         "trades": 29,
-        "mean_r": 0.18
+        "mean_r": 0.26
        },
        "high": {
         "trades": 29,
-        "mean_r": 0.24
+        "mean_r": 0.15
        }
       },
       "together": {
        "with": "TV41|4Hour|NZDUSD",
        "corr": 0.16,
-       "lost_together_days": 6
+       "lost_together_days": 7
       }
      }
     },
@@ -1811,7 +1877,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.007,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "tp",
+       "value": 0.5,
+       "bt_gain_r": [
+        0.083,
+        0.089
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.5: בבקטסט +0.08R ו־+0.09R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -1869,8 +1946,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 137,
+       "demo_trades": 0,
+       "near_miss_pct": 1.5,
+       "reach_pct": 2.2,
+       "mfe_of_target_median_pct": 40.0,
+       "mfe_median_r": 0.79,
+       "mae_winners_p90_r": 0.82
       },
       "hours": {
        "12-16": {
@@ -1932,26 +2014,26 @@
        },
        "backtest": {
         "trades": 66,
-        "win_pct": 47.0,
-        "mean_r": 0.089,
-        "sum_r": 5.87,
-        "pf": 1.25
+        "win_pct": 50.0,
+        "mean_r": 0.18,
+        "sum_r": 11.85,
+        "pf": 1.47
        }
       },
       "stability": {
-       "score": 0.91,
+       "score": 0.94,
        "demo": null,
        "backtest": {
-        "score": 0.91,
-        "without_best_r": 3.89,
+        "score": 0.94,
+        "without_best_r": 9.88,
         "max_loss_r": 1.11,
-        "avg_win_r": 0.96,
-        "drawdown_r": 5.4,
-        "sd_r": 0.99,
+        "avg_win_r": 1.12,
+        "drawdown_r": 6.14,
+        "sd_r": 1.1,
         "checks": [
          1.0,
-         0.92,
-         0.82
+         1.0,
+         0.83
         ]
        }
       },
@@ -1969,42 +2051,47 @@
        "backtest": {
         "buy": {
          "trades": 34,
-         "mean_r": 0.17
+         "mean_r": 0.1
         },
         "sell": {
          "trades": 32,
-         "mean_r": 0.01
+         "mean_r": 0.26
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 66,
+       "demo_trades": 2,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 43.0,
+       "mfe_median_r": 0.85,
+       "mae_winners_p90_r": 0.83
       },
       "hours": {
        "00-04": {
         "trades": 8,
-        "mean_r": 0.0
+        "mean_r": 0.09
        },
        "04-08": {
         "trades": 11,
-        "mean_r": 0.2
+        "mean_r": 0.21
        },
        "08-12": {
         "trades": 8,
-        "mean_r": 0.32
+        "mean_r": 0.37
        },
        "12-16": {
         "trades": 9,
-        "mean_r": -0.02
+        "mean_r": -0.08
        },
        "16-20": {
         "trades": 15,
-        "mean_r": -0.08
+        "mean_r": 0.01
        },
        "20-24": {
         "trades": 15,
-        "mean_r": 0.16
+        "mean_r": 0.42
        }
       },
       "market": {
@@ -2014,20 +2101,20 @@
        ],
        "low": {
         "trades": 22,
-        "mean_r": 0.33
+        "mean_r": 0.41
        },
        "mid": {
         "trades": 22,
-        "mean_r": -0.09
+        "mean_r": 0.11
        },
        "high": {
         "trades": 22,
-        "mean_r": 0.03
+        "mean_r": 0.02
        }
       },
       "together": {
        "with": "TV14|4Hour|XPTUSD",
-       "corr": 0.17,
+       "corr": 0.18,
        "lost_together_days": 6
       }
      }
@@ -2041,7 +2128,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.007,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "sl",
+       "value": 0.75,
+       "bt_gain_r": [
+        0.139,
+        0.067
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.75: בבקטסט +0.14R ו־+0.07R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -2099,8 +2197,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 75,
+       "demo_trades": 0,
+       "mfe_median_r": 0.83,
+       "mae_winners_p90_r": 0.72
       },
       "hours": {
        "12-16": {
@@ -2135,9 +2235,9 @@
        }
       },
       "together": {
-       "with": "TV02|15Min|TSLA",
-       "corr": 0.12,
-       "lost_together_days": 13
+       "with": "FR03|15Min|GBPUSD",
+       "corr": 0.23,
+       "lost_together_days": 2
       }
      }
     },
@@ -2149,13 +2249,13 @@
      "sum_r": 1.06,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.054,
+     "target": 1.056,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.35R מול -0.22R של הבוט, יציבות 0.77, 3 עסקאות"
+       "why": "רווח ממוצע +0.35R מול -0.22R של הבוט, יציבות 0.80, 3 עסקאות"
       }
      ],
      "detail": {
@@ -2169,14 +2269,14 @@
        },
        "backtest": {
         "trades": 112,
-        "win_pct": 59.8,
-        "mean_r": 0.112,
-        "sum_r": 12.49,
-        "pf": 1.49
+        "win_pct": 60.7,
+        "mean_r": 0.151,
+        "sum_r": 16.95,
+        "pf": 1.6
        }
       },
       "stability": {
-       "score": 0.77,
+       "score": 0.8,
        "demo": {
         "score": 0.5,
         "without_best_r": -0.39,
@@ -2191,16 +2291,16 @@
         ]
        },
        "backtest": {
-        "score": 0.81,
-        "without_best_r": 10.89,
+        "score": 0.85,
+        "without_best_r": 15.35,
         "max_loss_r": 1.11,
-        "avg_win_r": 0.57,
-        "drawdown_r": 4.22,
-        "sd_r": 0.7,
+        "avg_win_r": 0.66,
+        "drawdown_r": 5.33,
+        "sd_r": 0.75,
         "checks": [
          1.0,
-         0.53,
-         0.89
+         0.67,
+         0.88
         ]
        }
       },
@@ -2218,7 +2318,7 @@
        "backtest": {
         "buy": {
          "trades": 58,
-         "mean_r": 0.13
+         "mean_r": 0.21
         },
         "sell": {
          "trades": 54,
@@ -2227,13 +2327,15 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 3
+       "bt_trades": 112,
+       "demo_trades": 3,
+       "mfe_median_r": 0.56,
+       "mae_winners_p90_r": 0.69
       },
       "hours": {
        "00-04": {
         "trades": 13,
-        "mean_r": 0.11
+        "mean_r": 0.1
        },
        "04-08": {
         "trades": 4,
@@ -2241,19 +2343,19 @@
        },
        "08-12": {
         "trades": 6,
-        "mean_r": 0.6
+        "mean_r": 0.64
        },
        "12-16": {
         "trades": 15,
-        "mean_r": -0.11
+        "mean_r": -0.06
        },
        "16-20": {
         "trades": 41,
-        "mean_r": 0.14
+        "mean_r": 0.17
        },
        "20-24": {
         "trades": 33,
-        "mean_r": 0.01
+        "mean_r": 0.08
        }
       },
       "market": {
@@ -2263,21 +2365,21 @@
        ],
        "low": {
         "trades": 38,
-        "mean_r": 0.04
+        "mean_r": 0.1
        },
        "mid": {
         "trades": 37,
-        "mean_r": 0.11
+        "mean_r": 0.15
        },
        "high": {
         "trades": 37,
-        "mean_r": 0.19
+        "mean_r": 0.21
        }
       },
       "together": {
        "with": "TV29|4Hour|US500",
-       "corr": 0.26,
-       "lost_together_days": 15
+       "corr": 0.29,
+       "lost_together_days": 14
       }
      }
     },
@@ -2348,8 +2450,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 59,
+       "demo_trades": 1,
+       "mfe_median_r": 0.76,
+       "mae_winners_p90_r": 0.88
       },
       "hours": {
        "00-04": {
@@ -2397,7 +2501,7 @@
       },
       "together": {
        "with": "TV41|4Hour|NZDUSD",
-       "corr": 0.17,
+       "corr": 0.18,
        "lost_together_days": 6
       }
      }
@@ -2410,13 +2514,13 @@
      "sum_r": 3.57,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.041,
+     "target": 1.043,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +1.79R מול -0.22R של הבוט, יציבות 0.79, 2 עסקאות"
+       "why": "רווח ממוצע +1.79R מול -0.22R של הבוט, יציבות 0.83, 2 עסקאות"
       }
      ],
      "detail": {
@@ -2430,26 +2534,26 @@
        },
        "backtest": {
         "trades": 114,
-        "win_pct": 57.9,
-        "mean_r": 0.061,
-        "sum_r": 6.91,
-        "pf": 1.24
+        "win_pct": 64.9,
+        "mean_r": 0.133,
+        "sum_r": 15.18,
+        "pf": 1.52
        }
       },
       "stability": {
-       "score": 0.79,
+       "score": 0.83,
        "demo": null,
        "backtest": {
-        "score": 0.79,
-        "without_best_r": 5.06,
+        "score": 0.83,
+        "without_best_r": 13.33,
         "max_loss_r": 1.1,
-        "avg_win_r": 0.54,
-        "drawdown_r": 3.47,
-        "sd_r": 0.69,
+        "avg_win_r": 0.6,
+        "drawdown_r": 3.67,
+        "sd_r": 0.75,
         "checks": [
          1.0,
-         0.47,
-         0.9
+         0.58,
+         0.92
         ]
        }
       },
@@ -2467,22 +2571,24 @@
        "backtest": {
         "buy": {
          "trades": 60,
-         "mean_r": 0.09
+         "mean_r": 0.18
         },
         "sell": {
          "trades": 54,
-         "mean_r": 0.03
+         "mean_r": 0.08
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 114,
+       "demo_trades": 2,
+       "mfe_median_r": 0.59,
+       "mae_winners_p90_r": 0.73
       },
       "hours": {
        "00-04": {
         "trades": 15,
-        "mean_r": 0.06
+        "mean_r": 0.02
        },
        "04-08": {
         "trades": 9,
@@ -2490,19 +2596,19 @@
        },
        "08-12": {
         "trades": 8,
-        "mean_r": 0.26
+        "mean_r": 0.18
        },
        "12-16": {
         "trades": 6,
-        "mean_r": 0.21
+        "mean_r": 0.29
        },
        "16-20": {
         "trades": 41,
-        "mean_r": 0.04
+        "mean_r": 0.21
        },
        "20-24": {
         "trades": 35,
-        "mean_r": 0.03
+        "mean_r": 0.09
        }
       },
       "market": {
@@ -2512,21 +2618,21 @@
        ],
        "low": {
         "trades": 38,
-        "mean_r": 0.16
+        "mean_r": 0.26
        },
        "mid": {
         "trades": 38,
-        "mean_r": -0.16
+        "mean_r": -0.08
        },
        "high": {
         "trades": 38,
-        "mean_r": 0.18
+        "mean_r": 0.22
        }
       },
       "together": {
        "with": "TV29|4Hour|US30",
-       "corr": 0.26,
-       "lost_together_days": 15
+       "corr": 0.29,
+       "lost_together_days": 14
       }
      }
     },
@@ -2539,7 +2645,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.007,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "tp",
+       "value": 0.9,
+       "bt_gain_r": [
+        0.059,
+        0.139
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.9: בבקטסט +0.06R ו־+0.14R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -2551,26 +2668,26 @@
        },
        "backtest": {
         "trades": 77,
-        "win_pct": 40.3,
-        "mean_r": 0.015,
-        "sum_r": 1.16,
-        "pf": 1.03
+        "win_pct": 37.7,
+        "mean_r": 0.294,
+        "sum_r": 22.66,
+        "pf": 1.53
        }
       },
       "stability": {
-       "score": 0.59,
+       "score": 0.96,
        "demo": null,
        "backtest": {
-        "score": 0.59,
-        "without_best_r": -5.06,
+        "score": 0.96,
+        "without_best_r": 16.44,
         "max_loss_r": 1.22,
-        "avg_win_r": 1.34,
-        "drawdown_r": 9.12,
-        "sd_r": 1.45,
+        "avg_win_r": 2.24,
+        "drawdown_r": 8.67,
+        "sd_r": 1.89,
         "checks": [
-         0.0,
          1.0,
-         0.78
+         1.0,
+         0.87
         ]
        }
       },
@@ -2588,38 +2705,43 @@
        "backtest": {
         "buy": {
          "trades": 41,
-         "mean_r": 0.05
+         "mean_r": 0.43
         },
         "sell": {
          "trades": 36,
-         "mean_r": -0.03
+         "mean_r": 0.14
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 77,
+       "demo_trades": 0,
+       "near_miss_pct": 3.9,
+       "reach_pct": 2.6,
+       "mfe_of_target_median_pct": 30.0,
+       "mfe_median_r": 0.88,
+       "mae_winners_p90_r": 0.72
       },
       "hours": {
        "00-04": {
         "trades": 6,
-        "mean_r": 1.05
+        "mean_r": 2.05
        },
        "04-08": {
         "trades": 5,
-        "mean_r": -0.57
+        "mean_r": -0.86
        },
        "08-12": {
         "trades": 12,
-        "mean_r": -0.02
+        "mean_r": 0.88
        },
        "12-16": {
         "trades": 17,
-        "mean_r": 0.09
+        "mean_r": 0.42
        },
        "16-20": {
         "trades": 27,
-        "mean_r": 0.09
+        "mean_r": 0.11
        },
        "20-24": {
         "trades": 10,
@@ -2633,21 +2755,21 @@
        ],
        "low": {
         "trades": 26,
-        "mean_r": -0.02
+        "mean_r": 0.38
        },
        "mid": {
         "trades": 25,
-        "mean_r": 0.05
+        "mean_r": 0.21
        },
        "high": {
         "trades": 26,
-        "mean_r": 0.01
+        "mean_r": 0.29
        }
       },
       "together": {
-       "with": "TV56|1Hour|US2000",
-       "corr": 0.14,
-       "lost_together_days": 11
+       "with": "TV21|15Min|ASML",
+       "corr": 0.15,
+       "lost_together_days": 21
       }
      }
     },
@@ -2672,26 +2794,26 @@
        },
        "backtest": {
         "trades": 71,
-        "win_pct": 52.1,
-        "mean_r": 0.116,
-        "sum_r": 8.24,
-        "pf": 1.34
+        "win_pct": 56.3,
+        "mean_r": 0.237,
+        "sum_r": 16.83,
+        "pf": 1.73
        }
       },
       "stability": {
-       "score": 0.85,
+       "score": 0.9,
        "demo": null,
        "backtest": {
-        "score": 0.85,
-        "without_best_r": 4.04,
+        "score": 0.9,
+        "without_best_r": 11.4,
         "max_loss_r": 1.37,
-        "avg_win_r": 0.88,
+        "avg_win_r": 1.0,
         "drawdown_r": 5.03,
-        "sd_r": 1.1,
+        "sd_r": 1.29,
         "checks": [
          1.0,
-         0.72,
-         0.85
+         0.82,
+         0.87
         ]
        }
       },
@@ -2709,17 +2831,19 @@
        "backtest": {
         "buy": {
          "trades": 36,
-         "mean_r": 0.06
+         "mean_r": 0.27
         },
         "sell": {
          "trades": 35,
-         "mean_r": 0.17
+         "mean_r": 0.21
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 71,
+       "demo_trades": 1,
+       "mfe_median_r": 0.81,
+       "mae_winners_p90_r": 0.61
       },
       "hours": {
        "00-04": {
@@ -2728,7 +2852,7 @@
        },
        "04-08": {
         "trades": 11,
-        "mean_r": 0.42
+        "mean_r": 0.53
        },
        "08-12": {
         "trades": 9,
@@ -2736,11 +2860,11 @@
        },
        "12-16": {
         "trades": 10,
-        "mean_r": 0.35
+        "mean_r": 1.02
        },
        "16-20": {
         "trades": 25,
-        "mean_r": -0.02
+        "mean_r": 0.01
        },
        "20-24": {
         "trades": 8,
@@ -2754,21 +2878,21 @@
        ],
        "low": {
         "trades": 24,
-        "mean_r": 0.18
+        "mean_r": 0.45
        },
        "mid": {
         "trades": 23,
-        "mean_r": 0.08
+        "mean_r": 0.11
        },
        "high": {
         "trades": 24,
-        "mean_r": 0.09
+        "mean_r": 0.15
        }
       },
       "together": {
-       "with": "TV15|4Hour|ETHUSD",
-       "corr": 0.19,
-       "lost_together_days": 1
+       "with": "MQ11|4Hour|MSTR",
+       "corr": 0.2,
+       "lost_together_days": 6
       }
      }
     },
@@ -2839,8 +2963,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 67,
+       "demo_trades": 1,
+       "mfe_median_r": 0.99,
+       "mae_winners_p90_r": 0.33
       },
       "hours": {
        "00-04": {
@@ -2887,9 +3013,9 @@
        }
       },
       "together": {
-       "with": "TV17|1Hour|DXY",
+       "with": "TV03|15Min|AAPL",
        "corr": 0.19,
-       "lost_together_days": 1
+       "lost_together_days": 4
       }
      }
     },
@@ -2902,7 +3028,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.007,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "sl",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.091,
+        0.064
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.6: בבקטסט +0.09R ו־+0.06R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -2960,8 +3097,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 96,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 1.0,
+       "mfe_of_target_median_pct": 24.0,
+       "mfe_median_r": 0.49,
+       "mae_winners_p90_r": 0.49
       },
       "hours": {
        "12-16": {
@@ -3011,7 +3153,36 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.007,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "tp",
+       "value": 0.7,
+       "bt_gain_r": [
+        0.058,
+        0.135
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.7: בבקטסט +0.06R ו־+0.14R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      },
+      {
+       "bt_trades": 24,
+       "bt_mean_r": [
+        -0.16,
+        -0.21
+       ],
+       "demo": {
+        "trades": 0,
+        "mean_r": null
+       },
+       "why": "שעות 08:00-12:00: בבקטסט -0.16R ו־-0.21R לעסקה בשני החצאים (24 עסקאות)",
+       "kind": "hours",
+       "value": [
+        8,
+        12
+       ],
+       "label": "לא לסחור 08:00-12:00"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -3023,26 +3194,26 @@
        },
        "backtest": {
         "trades": 155,
-        "win_pct": 41.3,
-        "mean_r": 0.034,
-        "sum_r": 5.28,
-        "pf": 1.09
+        "win_pct": 41.9,
+        "mean_r": 0.035,
+        "sum_r": 5.44,
+        "pf": 1.08
        }
       },
       "stability": {
-       "score": 0.89,
+       "score": 0.9,
        "demo": null,
        "backtest": {
-        "score": 0.89,
-        "without_best_r": 3.29,
-        "max_loss_r": 1.42,
-        "avg_win_r": 1.05,
-        "drawdown_r": 9.41,
-        "sd_r": 1.03,
+        "score": 0.9,
+        "without_best_r": 3.45,
+        "max_loss_r": 1.49,
+        "avg_win_r": 1.16,
+        "drawdown_r": 12.21,
+        "sd_r": 1.12,
         "checks": [
          1.0,
-         0.82,
-         0.86
+         0.86,
+         0.84
         ]
        }
       },
@@ -3069,33 +3240,38 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 155,
+       "demo_trades": 0,
+       "near_miss_pct": 1.3,
+       "reach_pct": 0.6,
+       "mfe_of_target_median_pct": 39.0,
+       "mfe_median_r": 0.77,
+       "mae_winners_p90_r": 0.73
       },
       "hours": {
        "00-04": {
         "trades": 24,
-        "mean_r": 0.35
+        "mean_r": 0.19
        },
        "04-08": {
         "trades": 15,
-        "mean_r": -0.0
+        "mean_r": 0.02
        },
        "08-12": {
         "trades": 24,
-        "mean_r": -0.11
+        "mean_r": -0.19
        },
        "12-16": {
         "trades": 41,
-        "mean_r": 0.07
+        "mean_r": 0.1
        },
        "16-20": {
         "trades": 36,
-        "mean_r": -0.06
+        "mean_r": 0.01
        },
        "20-24": {
         "trades": 15,
-        "mean_r": -0.07
+        "mean_r": 0.05
        }
       },
       "market": {
@@ -3105,21 +3281,21 @@
        ],
        "low": {
         "trades": 52,
-        "mean_r": -0.0
+        "mean_r": 0.02
        },
        "mid": {
         "trades": 51,
-        "mean_r": 0.01
+        "mean_r": 0.12
        },
        "high": {
         "trades": 52,
-        "mean_r": 0.09
+        "mean_r": -0.03
        }
       },
       "together": {
        "with": "YT03|4Hour|RACE",
-       "corr": 0.14,
-       "lost_together_days": 1
+       "corr": 0.13,
+       "lost_together_days": 2
       }
      }
     },
@@ -3190,8 +3366,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 71,
+       "demo_trades": 1,
+       "near_miss_pct": 2.8,
+       "reach_pct": 7.0,
+       "mfe_of_target_median_pct": 27.0,
+       "mfe_median_r": 0.57,
+       "mae_winners_p90_r": 0.79
       },
       "hours": {
        "16-20": {
@@ -3223,7 +3404,7 @@
       },
       "together": {
        "with": "FR03|15Min|GBPUSD",
-       "corr": 0.12,
+       "corr": 0.11,
        "lost_together_days": 3
       }
      }
@@ -3236,7 +3417,7 @@
      "sum_r": -0.4,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.015,
+     "target": 1.014,
      "recs": [],
      "detail": {
       "profit": {
@@ -3307,8 +3488,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 123,
+       "demo_trades": 2,
+       "mfe_median_r": 0.61,
+       "mae_winners_p90_r": 0.81
       },
       "hours": {
        "12-16": {
@@ -3416,8 +3599,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 84,
+       "demo_trades": 1,
+       "near_miss_pct": 0.0,
+       "reach_pct": 2.4,
+       "mfe_of_target_median_pct": 22.0,
+       "mfe_median_r": 0.44,
+       "mae_winners_p90_r": 0.54
       },
       "hours": {
        "04-08": {
@@ -3545,8 +3733,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 3
+       "bt_trades": 224,
+       "demo_trades": 3,
+       "mfe_median_r": 0.31,
+       "mae_winners_p90_r": 0.46
       },
       "hours": {
        "12-16": {
@@ -3654,8 +3844,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 30,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 25.0,
+       "mfe_median_r": 0.5,
+       "mae_winners_p90_r": 0.78
       },
       "hours": {
        "04-08": {
@@ -3713,7 +3908,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 0.983,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "tp",
+       "value": 0.5,
+       "bt_gain_r": [
+        0.078,
+        0.179
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.5: בבקטסט +0.08R ו־+0.18R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -3771,8 +3977,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 71,
+       "demo_trades": 0,
+       "near_miss_pct": 1.4,
+       "reach_pct": 11.3,
+       "mfe_of_target_median_pct": 50.0,
+       "mfe_median_r": 0.99,
+       "mae_winners_p90_r": 0.6
       },
       "hours": {
        "12-16": {
@@ -3880,8 +4091,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 73,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 2.7,
+       "mfe_of_target_median_pct": 20.0,
+       "mfe_median_r": 0.59,
+       "mae_winners_p90_r": 0.5
       },
       "hours": {
        "12-16": {
@@ -3989,8 +4205,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 101,
+       "demo_trades": 1,
+       "near_miss_pct": 0.0,
+       "reach_pct": 3.0,
+       "mfe_of_target_median_pct": 20.0,
+       "mfe_median_r": 0.61,
+       "mae_winners_p90_r": 0.7
       },
       "hours": {
        "08-12": {
@@ -4040,7 +4261,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.007,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "tp",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.065,
+        0.271
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.6: בבקטסט +0.07R ו־+0.27R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -4098,8 +4330,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 40,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 28.0,
+       "mfe_median_r": 0.83,
+       "mae_winners_p90_r": 0.93
       },
       "hours": {
        "00-04": {
@@ -4219,8 +4456,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 28,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 7.1,
+       "mfe_of_target_median_pct": 23.0,
+       "mfe_median_r": 0.73,
+       "mae_winners_p90_r": 0.52
       },
       "hours": {
        "04-08": {
@@ -4315,8 +4557,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 267,
+       "demo_trades": 1,
+       "mfe_median_r": 0.66,
+       "mae_winners_p90_r": 0.72
       },
       "hours": {
        "12-16": {
@@ -4351,9 +4595,9 @@
        }
       },
       "together": {
-       "with": "TV20|1Hour|XAUUSD",
-       "corr": 0.1,
-       "lost_together_days": 19
+       "with": "MQ11|4Hour|MSTR",
+       "corr": 0.24,
+       "lost_together_days": 34
       }
      }
     },
@@ -4372,6 +4616,16 @@
        "value": 0.95,
        "label": "סיכון ×0.95",
        "why": "רווח ממוצע -0.47R מול -0.22R של הבוט, יציבות 0.68, 3 עסקאות"
+      },
+      {
+       "kind": "sl",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.084,
+        0.071
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.6: בבקטסט +0.08R ו־+0.07R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
       }
      ],
      "detail": {
@@ -4443,8 +4697,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 3
+       "bt_trades": 255,
+       "demo_trades": 3,
+       "near_miss_pct": 0.4,
+       "reach_pct": 2.0,
+       "mfe_of_target_median_pct": 19.0,
+       "mfe_median_r": 0.39,
+       "mae_winners_p90_r": 0.47
       },
       "hours": {
        "12-16": {
@@ -4479,9 +4738,9 @@
        }
       },
       "together": {
-       "with": "TV24|15Min|KO",
-       "corr": 0.11,
-       "lost_together_days": 21
+       "with": "MQ02|1Hour|XAUUSD",
+       "corr": 0.13,
+       "lost_together_days": 13
       }
      }
     },
@@ -4552,8 +4811,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 147,
+       "demo_trades": 0,
+       "near_miss_pct": 0.7,
+       "reach_pct": 1.4,
+       "mfe_of_target_median_pct": 21.0,
+       "mfe_median_r": 0.63,
+       "mae_winners_p90_r": 0.69
       },
       "hours": {
        "16-20": {
@@ -4604,7 +4868,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.56R מול -0.22R של הבוט, יציבות 0.88, 2 עסקאות"
+       "why": "רווח ממוצע -0.56R מול -0.22R של הבוט, יציבות 0.92, 2 עסקאות"
       }
      ],
      "detail": {
@@ -4618,26 +4882,26 @@
        },
        "backtest": {
         "trades": 163,
-        "win_pct": 47.9,
-        "mean_r": 0.136,
-        "sum_r": 22.14,
-        "pf": 1.35
+        "win_pct": 48.5,
+        "mean_r": 0.184,
+        "sum_r": 29.91,
+        "pf": 1.45
        }
       },
       "stability": {
-       "score": 0.88,
+       "score": 0.92,
        "demo": null,
        "backtest": {
-        "score": 0.88,
-        "without_best_r": 20.01,
+        "score": 0.92,
+        "without_best_r": 27.79,
         "max_loss_r": 1.5,
-        "avg_win_r": 1.1,
-        "drawdown_r": 14.56,
-        "sd_r": 1.11,
+        "avg_win_r": 1.22,
+        "drawdown_r": 13.16,
+        "sd_r": 1.18,
         "checks": [
          1.0,
-         0.82,
-         0.83
+         0.88,
+         0.86
         ]
        }
       },
@@ -4655,38 +4919,43 @@
        "backtest": {
         "buy": {
          "trades": 70,
-         "mean_r": 0.3
+         "mean_r": 0.36
         },
         "sell": {
          "trades": 93,
-         "mean_r": 0.01
+         "mean_r": 0.05
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 163,
+       "demo_trades": 2,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.6,
+       "mfe_of_target_median_pct": 46.0,
+       "mfe_median_r": 0.92,
+       "mae_winners_p90_r": 0.74
       },
       "hours": {
        "00-04": {
         "trades": 20,
-        "mean_r": 0.25
+        "mean_r": 0.29
        },
        "04-08": {
         "trades": 32,
-        "mean_r": 0.09
+        "mean_r": 0.2
        },
        "08-12": {
         "trades": 34,
-        "mean_r": 0.36
+        "mean_r": 0.37
        },
        "12-16": {
         "trades": 37,
-        "mean_r": 0.13
+        "mean_r": 0.2
        },
        "16-20": {
         "trades": 30,
-        "mean_r": -0.03
+        "mean_r": -0.02
        },
        "20-24": {
         "trades": 10,
@@ -4700,21 +4969,21 @@
        ],
        "low": {
         "trades": 55,
-        "mean_r": 0.28
+        "mean_r": 0.37
        },
        "mid": {
         "trades": 54,
-        "mean_r": 0.1
+        "mean_r": 0.06
        },
        "high": {
         "trades": 54,
-        "mean_r": 0.03
+        "mean_r": 0.11
        }
       },
       "together": {
-       "with": "TV05|15Min|WMT",
+       "with": "TV62|1Hour|USDCAD",
        "corr": 0.11,
-       "lost_together_days": 7
+       "lost_together_days": 23
       }
      }
     },
@@ -4732,7 +5001,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.60R מול -0.22R של הבוט, יציבות 0.90, 2 עסקאות"
+       "why": "רווח ממוצע -0.60R מול -0.22R של הבוט, יציבות 0.91, 2 עסקאות"
       }
      ],
      "detail": {
@@ -4746,25 +5015,25 @@
        },
        "backtest": {
         "trades": 385,
-        "win_pct": 55.1,
-        "mean_r": 0.115,
-        "sum_r": 44.12,
-        "pf": 1.36
+        "win_pct": 56.1,
+        "mean_r": 0.137,
+        "sum_r": 52.87,
+        "pf": 1.43
        }
       },
       "stability": {
-       "score": 0.9,
+       "score": 0.91,
        "demo": null,
        "backtest": {
-        "score": 0.9,
-        "without_best_r": 41.01,
+        "score": 0.91,
+        "without_best_r": 48.8,
         "max_loss_r": 1.15,
-        "avg_win_r": 0.79,
-        "drawdown_r": 9.56,
-        "sd_r": 0.91,
+        "avg_win_r": 0.81,
+        "drawdown_r": 9.78,
+        "sd_r": 0.94,
         "checks": [
          1.0,
-         0.77,
+         0.79,
          0.94
         ]
        }
@@ -4783,7 +5052,7 @@
        "backtest": {
         "buy": {
          "trades": 385,
-         "mean_r": 0.11
+         "mean_r": 0.14
         },
         "sell": {
          "trades": 0,
@@ -4792,13 +5061,15 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 385,
+       "demo_trades": 2,
+       "mfe_median_r": 0.7,
+       "mae_winners_p90_r": 0.74
       },
       "hours": {
        "16-20": {
         "trades": 385,
-        "mean_r": 0.11
+        "mean_r": 0.14
        }
       },
       "market": {
@@ -4808,21 +5079,21 @@
        ],
        "low": {
         "trades": 129,
-        "mean_r": 0.13
+        "mean_r": 0.16
        },
        "mid": {
         "trades": 128,
-        "mean_r": 0.16
+        "mean_r": 0.19
        },
        "high": {
         "trades": 128,
-        "mean_r": 0.05
+        "mean_r": 0.06
        }
       },
       "together": {
        "with": "TV29|4Hour|US500",
-       "corr": 0.09,
-       "lost_together_days": 19
+       "corr": 0.11,
+       "lost_together_days": 18
       }
      }
     },
@@ -4893,8 +5164,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 120,
+       "demo_trades": 0,
+       "mfe_median_r": 1.03,
+       "mae_winners_p90_r": 0.72
       },
       "hours": {
        "00-04": {
@@ -4967,11 +5240,11 @@
         "pf": null
        },
        "backtest": {
-        "trades": 51,
-        "win_pct": 45.1,
-        "mean_r": 0.686,
-        "sum_r": 34.97,
-        "pf": 2.29
+        "trades": 52,
+        "win_pct": 44.2,
+        "mean_r": 0.772,
+        "sum_r": 40.13,
+        "pf": 2.43
        }
       },
       "stability": {
@@ -4979,15 +5252,15 @@
        "demo": null,
        "backtest": {
         "score": 0.97,
-        "without_best_r": 22.73,
+        "without_best_r": 27.89,
         "max_loss_r": 1.16,
-        "avg_win_r": 2.7,
+        "avg_win_r": 2.97,
         "drawdown_r": 5.49,
-        "sd_r": 2.71,
+        "sd_r": 2.8,
         "checks": [
          1.0,
          1.0,
-         0.91
+         0.92
         ]
        }
       },
@@ -5004,8 +5277,8 @@
        },
        "backtest": {
         "buy": {
-         "trades": 51,
-         "mean_r": 0.69
+         "trades": 52,
+         "mean_r": 0.77
         },
         "sell": {
          "trades": 0,
@@ -5014,9 +5287,9 @@
        }
       },
       "exits": {
-       "bt_trades": 51,
+       "bt_trades": 52,
        "demo_trades": 0,
-       "mfe_median_r": 0.88,
+       "mfe_median_r": 0.91,
        "mae_winners_p90_r": 0.9
       },
       "hours": {
@@ -5030,11 +5303,11 @@
        },
        "08-12": {
         "trades": 16,
-        "mean_r": 1.46
+        "mean_r": 1.6
        },
        "12-16": {
-        "trades": 11,
-        "mean_r": -0.24
+        "trades": 12,
+        "mean_r": 0.03
        },
        "16-20": {
         "trades": 15,
@@ -5047,12 +5320,12 @@
       },
       "market": {
        "cut_pct": [
-        0.097,
-        0.141
+        0.099,
+        0.143
        ],
        "low": {
-        "trades": 17,
-        "mean_r": 2.1
+        "trades": 18,
+        "mean_r": 2.05
        },
        "mid": {
         "trades": 17,
@@ -5060,13 +5333,13 @@
        },
        "high": {
         "trades": 17,
-        "mean_r": 0.14
+        "mean_r": 0.38
        }
       },
       "together": {
-       "with": "TV62|1Hour|USDCAD",
-       "corr": 0.16,
-       "lost_together_days": 8
+       "with": "TV05|15Min|WMT",
+       "corr": 0.23,
+       "lost_together_days": 2
       }
      }
     },
@@ -5224,17 +5497,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 182,
+        "win_pct": 54.4,
+        "mean_r": 0.098,
+        "sum_r": 17.92,
+        "pf": 1.47
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.72,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.72,
+        "without_best_r": 13.8,
+        "max_loss_r": 1.44,
+        "avg_win_r": 0.57,
+        "drawdown_r": 3.53,
+        "sd_r": 0.72,
+        "checks": [
+         1.0,
+         0.23,
+         0.94
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -5249,22 +5534,58 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 108,
+         "mean_r": 0.1
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 74,
+         "mean_r": 0.1
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 182,
+       "demo_trades": 0,
+       "mfe_median_r": 0.42,
+       "mae_winners_p90_r": 0.49
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "12-16": {
+        "trades": 60,
+        "mean_r": 0.12
+       },
+       "16-20": {
+        "trades": 109,
+        "mean_r": 0.08
+       },
+       "20-24": {
+        "trades": 13,
+        "mean_r": 0.16
+       }
+      },
+      "market": {
+       "cut_pct": [
+        3.406,
+        3.997
+       ],
+       "low": {
+        "trades": 61,
+        "mean_r": 0.1
+       },
+       "mid": {
+        "trades": 60,
+        "mean_r": 0.12
+       },
+       "high": {
+        "trades": 61,
+        "mean_r": 0.07
+       }
+      },
+      "together": {
+       "with": "TV33|15Min|MSTR",
+       "corr": 0.24,
+       "lost_together_days": 34
+      }
      }
     },
     {
@@ -5287,17 +5608,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 107,
+        "win_pct": 62.6,
+        "mean_r": 0.12,
+        "sum_r": 12.79,
+        "pf": 1.53
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.81,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.81,
+        "without_best_r": 10.04,
+        "max_loss_r": 1.07,
+        "avg_win_r": 0.55,
+        "drawdown_r": 3.43,
+        "sd_r": 0.76,
+        "checks": [
+         1.0,
+         0.53,
+         0.91
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -5312,22 +5645,70 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 55,
+         "mean_r": 0.04
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 52,
+         "mean_r": 0.2
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 107,
+       "demo_trades": 0,
+       "mfe_median_r": 0.61,
+       "mae_winners_p90_r": 0.65
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 16,
+        "mean_r": 0.31
+       },
+       "04-08": {
+        "trades": 23,
+        "mean_r": 0.23
+       },
+       "08-12": {
+        "trades": 12,
+        "mean_r": 0.28
+       },
+       "12-16": {
+        "trades": 14,
+        "mean_r": 0.04
+       },
+       "16-20": {
+        "trades": 26,
+        "mean_r": -0.05
+       },
+       "20-24": {
+        "trades": 16,
+        "mean_r": -0.01
+       }
+      },
+      "market": {
+       "cut_pct": [
+        1.195,
+        1.581
+       ],
+       "low": {
+        "trades": 36,
+        "mean_r": 0.22
+       },
+       "mid": {
+        "trades": 35,
+        "mean_r": 0.15
+       },
+       "high": {
+        "trades": 36,
+        "mean_r": -0.01
+       }
+      },
+      "together": {
+       "with": "TV39|1Hour|JP225",
+       "corr": 0.17,
+       "lost_together_days": 18
+      }
      }
     }
    ]
@@ -5358,26 +5739,26 @@
        },
        "backtest": {
         "trades": 212,
-        "win_pct": 50.5,
-        "mean_r": 0.186,
-        "sum_r": 39.44,
-        "pf": 1.47
+        "win_pct": 50.0,
+        "mean_r": 0.21,
+        "sum_r": 44.49,
+        "pf": 1.51
        }
       },
       "stability": {
-       "score": 0.96,
+       "score": 0.98,
        "demo": null,
        "backtest": {
-        "score": 0.96,
-        "without_best_r": 36.65,
+        "score": 0.98,
+        "without_best_r": 41.7,
         "max_loss_r": 1.25,
-        "avg_win_r": 1.16,
-        "drawdown_r": 7.94,
-        "sd_r": 1.16,
+        "avg_win_r": 1.24,
+        "drawdown_r": 6.95,
+        "sd_r": 1.2,
         "checks": [
          1.0,
-         0.96,
-         0.94
+         0.99,
+         0.95
         ]
        }
       },
@@ -5395,7 +5776,7 @@
        "backtest": {
         "buy": {
          "trades": 212,
-         "mean_r": 0.19
+         "mean_r": 0.21
         },
         "sell": {
          "trades": 0,
@@ -5404,13 +5785,18 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 212,
+       "demo_trades": 0,
+       "near_miss_pct": 1.4,
+       "reach_pct": 1.4,
+       "mfe_of_target_median_pct": 44.0,
+       "mfe_median_r": 0.89,
+       "mae_winners_p90_r": 0.8
       },
       "hours": {
        "00-04": {
         "trades": 13,
-        "mean_r": 0.32
+        "mean_r": 0.31
        },
        "04-08": {
         "trades": 20,
@@ -5418,11 +5804,11 @@
        },
        "08-12": {
         "trades": 41,
-        "mean_r": 0.42
+        "mean_r": 0.51
        },
        "12-16": {
         "trades": 40,
-        "mean_r": 0.33
+        "mean_r": 0.39
        },
        "16-20": {
         "trades": 62,
@@ -5430,7 +5816,7 @@
        },
        "20-24": {
         "trades": 36,
-        "mean_r": -0.06
+        "mean_r": -0.08
        }
       },
       "market": {
@@ -5440,21 +5826,21 @@
        ],
        "low": {
         "trades": 71,
-        "mean_r": 0.39
+        "mean_r": 0.42
        },
        "mid": {
         "trades": 70,
-        "mean_r": 0.12
+        "mean_r": 0.11
        },
        "high": {
         "trades": 71,
-        "mean_r": 0.05
+        "mean_r": 0.1
        }
       },
       "together": {
-       "with": "TV02|1Hour|GBPJPY",
-       "corr": 0.15,
-       "lost_together_days": 28
+       "with": "TV37|4Hour|GBPUSD",
+       "corr": 0.14,
+       "lost_together_days": 13
       }
      }
     },
@@ -5525,8 +5911,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 434,
+       "demo_trades": 0,
+       "mfe_median_r": 0.81,
+       "mae_winners_p90_r": 0.72
       },
       "hours": {
        "12-16": {
@@ -5562,8 +5950,8 @@
       },
       "together": {
        "with": "TV37|4Hour|GBPUSD",
-       "corr": 0.09,
-       "lost_together_days": 27
+       "corr": 0.11,
+       "lost_together_days": 26
       }
      }
     },
@@ -5634,8 +6022,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 291,
+       "demo_trades": 1,
+       "near_miss_pct": 0.3,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 36.0,
+       "mfe_median_r": 0.73,
+       "mae_winners_p90_r": 0.78
       },
       "hours": {
        "08-12": {
@@ -5671,7 +6064,7 @@
       },
       "together": {
        "with": "TV13|4Hour|USDCAD",
-       "corr": 0.15,
+       "corr": 0.13,
        "lost_together_days": 23
       }
      }
@@ -5684,7 +6077,7 @@
      "sum_r": 0.36,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.002,
+     "target": 1.001,
      "recs": [],
      "detail": {
       "profit": {
@@ -5743,8 +6136,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 149,
+       "demo_trades": 1,
+       "mfe_median_r": 0.86,
+       "mae_winners_p90_r": 0.77
       },
       "hours": {
        "00-04": {
@@ -5818,26 +6213,26 @@
        },
        "backtest": {
         "trades": 98,
-        "win_pct": 53.1,
-        "mean_r": 0.184,
-        "sum_r": 18.04,
-        "pf": 1.61
+        "win_pct": 49.0,
+        "mean_r": 0.255,
+        "sum_r": 24.97,
+        "pf": 1.72
        }
       },
       "stability": {
-       "score": 0.89,
+       "score": 0.96,
        "demo": null,
        "backtest": {
-        "score": 0.89,
-        "without_best_r": 13.66,
+        "score": 0.96,
+        "without_best_r": 20.58,
         "max_loss_r": 1.24,
-        "avg_win_r": 0.92,
-        "drawdown_r": 6.92,
-        "sd_r": 1.12,
+        "avg_win_r": 1.25,
+        "drawdown_r": 7.88,
+        "sd_r": 1.27,
         "checks": [
          1.0,
-         0.83,
-         0.85
+         1.0,
+         0.87
         ]
        }
       },
@@ -5855,42 +6250,44 @@
        "backtest": {
         "buy": {
          "trades": 49,
-         "mean_r": 0.18
+         "mean_r": 0.3
         },
         "sell": {
          "trades": 49,
-         "mean_r": 0.19
+         "mean_r": 0.21
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 98,
+       "demo_trades": 1,
+       "mfe_median_r": 0.86,
+       "mae_winners_p90_r": 0.8
       },
       "hours": {
        "00-04": {
         "trades": 12,
-        "mean_r": 0.1
+        "mean_r": 0.29
        },
        "04-08": {
         "trades": 12,
-        "mean_r": -0.06
+        "mean_r": -0.01
        },
        "08-12": {
         "trades": 15,
-        "mean_r": 0.34
+        "mean_r": 0.26
        },
        "12-16": {
         "trades": 10,
-        "mean_r": 0.41
+        "mean_r": 0.56
        },
        "16-20": {
         "trades": 30,
-        "mean_r": 0.1
+        "mean_r": 0.27
        },
        "20-24": {
         "trades": 19,
-        "mean_r": 0.28
+        "mean_r": 0.21
        }
       },
       "market": {
@@ -5900,11 +6297,11 @@
        ],
        "low": {
         "trades": 33,
-        "mean_r": 0.43
+        "mean_r": 0.54
        },
        "mid": {
         "trades": 32,
-        "mean_r": 0.03
+        "mean_r": 0.15
        },
        "high": {
         "trades": 33,
@@ -5913,8 +6310,8 @@
       },
       "together": {
        "with": "GH08|1Hour|USDCAD",
-       "corr": 0.29,
-       "lost_together_days": 19
+       "corr": 0.26,
+       "lost_together_days": 22
       }
      }
     },
@@ -5940,9 +6337,9 @@
        "backtest": {
         "trades": 187,
         "win_pct": 47.6,
-        "mean_r": 0.133,
-        "sum_r": 24.93,
-        "pf": 1.33
+        "mean_r": 0.139,
+        "sum_r": 25.94,
+        "pf": 1.34
        }
       },
       "stability": {
@@ -5950,15 +6347,15 @@
        "demo": null,
        "backtest": {
         "score": 0.94,
-        "without_best_r": 22.94,
+        "without_best_r": 23.95,
         "max_loss_r": 1.42,
-        "avg_win_r": 1.14,
-        "drawdown_r": 6.96,
-        "sd_r": 1.12,
+        "avg_win_r": 1.16,
+        "drawdown_r": 7.83,
+        "sd_r": 1.13,
         "checks": [
          1.0,
-         0.88,
-         0.93
+         0.89,
+         0.92
         ]
        }
       },
@@ -5976,7 +6373,7 @@
        "backtest": {
         "buy": {
          "trades": 187,
-         "mean_r": 0.13
+         "mean_r": 0.14
         },
         "sell": {
          "trades": 0,
@@ -5985,8 +6382,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 187,
+       "demo_trades": 2,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 44.0,
+       "mfe_median_r": 0.87,
+       "mae_winners_p90_r": 0.68
       },
       "hours": {
        "00-04": {
@@ -5995,7 +6397,7 @@
        },
        "04-08": {
         "trades": 37,
-        "mean_r": 0.16
+        "mean_r": 0.18
        },
        "08-12": {
         "trades": 42,
@@ -6021,7 +6423,7 @@
        ],
        "low": {
         "trades": 63,
-        "mean_r": 0.37
+        "mean_r": 0.38
        },
        "mid": {
         "trades": 62,
@@ -6033,9 +6435,9 @@
        }
       },
       "together": {
-       "with": "TV02|1Hour|US30",
-       "corr": 0.15,
-       "lost_together_days": 28
+       "with": "FR03|15Min|GBPUSD",
+       "corr": 0.12,
+       "lost_together_days": 6
       }
      }
     },
@@ -6047,8 +6449,19 @@
      "sum_r": 1.6,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.02,
-     "recs": [],
+     "target": 1.022,
+     "recs": [
+      {
+       "kind": "sl",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.103,
+        0.122
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.6: בבקטסט +0.10R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -6061,25 +6474,25 @@
        "backtest": {
         "trades": 75,
         "win_pct": 56.0,
-        "mean_r": 0.206,
-        "sum_r": 15.47,
-        "pf": 1.67
+        "mean_r": 0.31,
+        "sum_r": 23.23,
+        "pf": 2.0
        }
       },
       "stability": {
-       "score": 0.85,
+       "score": 0.9,
        "demo": null,
        "backtest": {
-        "score": 0.85,
-        "without_best_r": 8.13,
+        "score": 0.9,
+        "without_best_r": 15.89,
         "max_loss_r": 1.49,
-        "avg_win_r": 0.92,
+        "avg_win_r": 1.1,
         "drawdown_r": 5.58,
-        "sd_r": 1.25,
+        "sd_r": 1.32,
         "checks": [
          1.0,
-         0.69,
-         0.86
+         0.83,
+         0.88
         ]
        }
       },
@@ -6097,38 +6510,40 @@
        "backtest": {
         "buy": {
          "trades": 34,
-         "mean_r": 0.2
+         "mean_r": 0.23
         },
         "sell": {
          "trades": 41,
-         "mean_r": 0.21
+         "mean_r": 0.38
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 75,
+       "demo_trades": 1,
+       "mfe_median_r": 0.69,
+       "mae_winners_p90_r": 0.77
       },
       "hours": {
        "00-04": {
         "trades": 12,
-        "mean_r": -0.31
+        "mean_r": -0.27
        },
        "04-08": {
         "trades": 11,
-        "mean_r": 0.32
+        "mean_r": 0.43
        },
        "08-12": {
         "trades": 16,
-        "mean_r": 0.65
+        "mean_r": 0.75
        },
        "12-16": {
         "trades": 15,
-        "mean_r": 0.36
+        "mean_r": 0.58
        },
        "16-20": {
         "trades": 14,
-        "mean_r": 0.15
+        "mean_r": 0.23
        },
        "20-24": {
         "trades": 7,
@@ -6142,21 +6557,21 @@
        ],
        "low": {
         "trades": 25,
-        "mean_r": 0.21
+        "mean_r": 0.26
        },
        "mid": {
         "trades": 25,
-        "mean_r": 0.27
+        "mean_r": 0.47
        },
        "high": {
         "trades": 25,
-        "mean_r": 0.14
+        "mean_r": 0.2
        }
       },
       "together": {
-       "with": "GH08|1Hour|USDCAD",
-       "corr": 0.05,
-       "lost_together_days": 9
+       "with": "FR03|15Min|GBPUSD",
+       "corr": 0.12,
+       "lost_together_days": 2
       }
      }
     },
@@ -6181,10 +6596,10 @@
        },
        "backtest": {
         "trades": 50,
-        "win_pct": 60.0,
-        "mean_r": 0.124,
-        "sum_r": 6.19,
-        "pf": 1.91
+        "win_pct": 58.0,
+        "mean_r": 0.116,
+        "sum_r": 5.8,
+        "pf": 1.79
        }
       },
       "stability": {
@@ -6192,15 +6607,15 @@
        "demo": null,
        "backtest": {
         "score": 0.74,
-        "without_best_r": 4.93,
+        "without_best_r": 4.54,
         "max_loss_r": 1.01,
-        "avg_win_r": 0.43,
-        "drawdown_r": 1.56,
-        "sd_r": 0.5,
+        "avg_win_r": 0.45,
+        "drawdown_r": 2.42,
+        "sd_r": 0.52,
         "checks": [
          1.0,
-         0.34,
-         0.88
+         0.39,
+         0.82
         ]
        }
       },
@@ -6218,17 +6633,19 @@
        "backtest": {
         "buy": {
          "trades": 25,
-         "mean_r": 0.12
+         "mean_r": 0.14
         },
         "sell": {
          "trades": 25,
-         "mean_r": 0.13
+         "mean_r": 0.09
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 50,
+       "demo_trades": 1,
+       "mfe_median_r": 0.6,
+       "mae_winners_p90_r": 0.73
       },
       "hours": {
        "00-04": {
@@ -6237,7 +6654,7 @@
        },
        "04-08": {
         "trades": 10,
-        "mean_r": 0.48
+        "mean_r": 0.45
        },
        "08-12": {
         "trades": 7,
@@ -6245,15 +6662,15 @@
        },
        "12-16": {
         "trades": 7,
-        "mean_r": 0.16
+        "mean_r": 0.06
        },
        "16-20": {
         "trades": 16,
-        "mean_r": 0.05
+        "mean_r": 0.1
        },
        "20-24": {
         "trades": 9,
-        "mean_r": -0.01
+        "mean_r": -0.03
        }
       },
       "market": {
@@ -6267,17 +6684,17 @@
        },
        "mid": {
         "trades": 16,
-        "mean_r": 0.1
+        "mean_r": 0.11
        },
        "high": {
         "trades": 17,
-        "mean_r": 0.09
+        "mean_r": 0.05
        }
       },
       "together": {
        "with": "TV20|1Hour|XAGUSD",
-       "corr": 0.13,
-       "lost_together_days": 6
+       "corr": 0.12,
+       "lost_together_days": 5
       }
      }
     },
@@ -6348,8 +6765,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 66,
+       "demo_trades": 0,
+       "near_miss_pct": 4.5,
+       "reach_pct": 9.1,
+       "mfe_of_target_median_pct": 17.0,
+       "mfe_median_r": 0.53,
+       "mae_winners_p90_r": 0.55
       },
       "hours": {
        "16-20": {
@@ -6380,9 +6802,9 @@
        }
       },
       "together": {
-       "with": "SE02|1Hour|USDJPY",
-       "corr": 0.12,
-       "lost_together_days": 14
+       "with": "MQ11|4Hour|MSTR",
+       "corr": 0.18,
+       "lost_together_days": 6
       }
      }
     },
@@ -6395,7 +6817,18 @@
      "mult": 1.0,
      "risk_pct": 0.45,
      "target": 1.001,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "tp",
+       "value": 0.9,
+       "bt_gain_r": [
+        0.138,
+        0.088
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.9: בבקטסט +0.14R ו־+0.09R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -6453,8 +6886,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 46,
+       "demo_trades": 0,
+       "near_miss_pct": 2.2,
+       "reach_pct": 8.7,
+       "mfe_of_target_median_pct": 14.0,
+       "mfe_median_r": 0.55,
+       "mae_winners_p90_r": 0.8
       },
       "hours": {
        "00-04": {
@@ -6485,9 +6923,9 @@
        }
       },
       "together": {
-       "with": "TV02|1Hour|GBPJPY",
-       "corr": 0.07,
-       "lost_together_days": 10
+       "with": "TV47|4Hour|WTI",
+       "corr": 0.12,
+       "lost_together_days": 6
       }
      }
     },
@@ -6512,10 +6950,10 @@
        },
        "backtest": {
         "trades": 78,
-        "win_pct": 60.3,
-        "mean_r": 0.215,
-        "sum_r": 16.79,
-        "pf": 1.67
+        "win_pct": 59.0,
+        "mean_r": 0.225,
+        "sum_r": 17.58,
+        "pf": 1.66
        }
       },
       "stability": {
@@ -6523,15 +6961,15 @@
        "demo": null,
        "backtest": {
         "score": 0.92,
-        "without_best_r": 14.53,
-        "max_loss_r": 1.05,
-        "avg_win_r": 0.89,
-        "drawdown_r": 5.85,
-        "sd_r": 0.99,
+        "without_best_r": 15.32,
+        "max_loss_r": 1.13,
+        "avg_win_r": 0.96,
+        "drawdown_r": 6.89,
+        "sd_r": 1.02,
         "checks": [
          1.0,
          0.91,
-         0.86
+         0.84
         ]
        }
       },
@@ -6549,22 +6987,24 @@
        "backtest": {
         "buy": {
          "trades": 37,
-         "mean_r": 0.33
+         "mean_r": 0.31
         },
         "sell": {
          "trades": 41,
-         "mean_r": 0.11
+         "mean_r": 0.15
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 78,
+       "demo_trades": 0,
+       "mfe_median_r": 0.86,
+       "mae_winners_p90_r": 0.86
       },
       "hours": {
        "00-04": {
         "trades": 10,
-        "mean_r": 0.64
+        "mean_r": 0.75
        },
        "04-08": {
         "trades": 12,
@@ -6576,15 +7016,15 @@
        },
        "12-16": {
         "trades": 15,
-        "mean_r": -0.06
+        "mean_r": -0.14
        },
        "16-20": {
         "trades": 20,
-        "mean_r": 0.01
+        "mean_r": -0.01
        },
        "20-24": {
         "trades": 15,
-        "mean_r": 0.27
+        "mean_r": 0.36
        }
       },
       "market": {
@@ -6594,20 +7034,20 @@
        ],
        "low": {
         "trades": 26,
-        "mean_r": -0.0
+        "mean_r": -0.05
        },
        "mid": {
         "trades": 26,
-        "mean_r": -0.01
+        "mean_r": 0.01
        },
        "high": {
         "trades": 26,
-        "mean_r": 0.65
+        "mean_r": 0.72
        }
       },
       "together": {
        "with": "TV33|4Hour|US100",
-       "corr": 0.14,
+       "corr": 0.13,
        "lost_together_days": 5
       }
      }
@@ -6679,8 +7119,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 79,
+       "demo_trades": 1,
+       "near_miss_pct": 0.0,
+       "reach_pct": 3.8,
+       "mfe_of_target_median_pct": 28.0,
+       "mfe_median_r": 0.56,
+       "mae_winners_p90_r": 0.69
       },
       "hours": {
        "16-20": {
@@ -6784,8 +7229,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 80,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 3.8,
+       "mfe_of_target_median_pct": 19.0,
+       "mfe_median_r": 0.38,
+       "mae_winners_p90_r": 0.45
       },
       "hours": {
        "04-08": {
@@ -6897,8 +7347,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 98,
+       "demo_trades": 1,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 22.0,
+       "mfe_median_r": 0.44,
+       "mae_winners_p90_r": 0.46
       },
       "hours": {
        "12-16": {
@@ -7006,8 +7461,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 155,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.6,
+       "mfe_of_target_median_pct": 23.0,
+       "mfe_median_r": 0.7,
+       "mae_winners_p90_r": 0.8
       },
       "hours": {
        "12-16": {
@@ -7069,25 +7529,25 @@
        },
        "backtest": {
         "trades": 45,
-        "win_pct": 57.8,
-        "mean_r": 0.192,
-        "sum_r": 8.65,
-        "pf": 1.55
+        "win_pct": 55.6,
+        "mean_r": 0.245,
+        "sum_r": 11.05,
+        "pf": 1.62
        }
       },
       "stability": {
-       "score": 0.92,
+       "score": 0.96,
        "demo": null,
        "backtest": {
-        "score": 0.92,
-        "without_best_r": 5.64,
+        "score": 0.96,
+        "without_best_r": 8.02,
         "max_loss_r": 1.13,
-        "avg_win_r": 0.94,
-        "drawdown_r": 3.03,
-        "sd_r": 1.06,
+        "avg_win_r": 1.15,
+        "drawdown_r": 3.39,
+        "sd_r": 1.2,
         "checks": [
          1.0,
-         0.9,
+         1.0,
          0.88
         ]
        }
@@ -7106,26 +7566,28 @@
        "backtest": {
         "buy": {
          "trades": 19,
-         "mean_r": -0.05
+         "mean_r": -0.07
         },
         "sell": {
          "trades": 26,
-         "mean_r": 0.37
+         "mean_r": 0.47
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 45,
+       "demo_trades": 0,
+       "mfe_median_r": 0.76,
+       "mae_winners_p90_r": 0.73
       },
       "hours": {
        "00-04": {
         "trades": 6,
-        "mean_r": 0.31
+        "mean_r": 0.11
        },
        "04-08": {
         "trades": 5,
-        "mean_r": 0.62
+        "mean_r": 0.88
        },
        "08-12": {
         "trades": 7,
@@ -7137,11 +7599,11 @@
        },
        "16-20": {
         "trades": 15,
-        "mean_r": 0.11
+        "mean_r": 0.25
        },
        "20-24": {
         "trades": 8,
-        "mean_r": -0.28
+        "mean_r": -0.25
        }
       },
       "market": {
@@ -7151,20 +7613,20 @@
        ],
        "low": {
         "trades": 15,
-        "mean_r": 0.5
+        "mean_r": 0.62
        },
        "mid": {
         "trades": 15,
-        "mean_r": 0.03
+        "mean_r": 0.16
        },
        "high": {
         "trades": 15,
-        "mean_r": 0.04
+        "mean_r": -0.04
        }
       },
       "together": {
        "with": "TV56|4Hour|US2000",
-       "corr": 0.14,
+       "corr": 0.13,
        "lost_together_days": 5
       }
      }
@@ -7255,8 +7717,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 164,
+       "demo_trades": 1,
+       "near_miss_pct": 1.2,
+       "reach_pct": 2.4,
+       "mfe_of_target_median_pct": 23.0,
+       "mfe_median_r": 0.46,
+       "mae_winners_p90_r": 0.64
       },
       "hours": {
        "12-16": {
@@ -7291,9 +7758,9 @@
        }
       },
       "together": {
-       "with": "GH08|1Hour|USDCAD",
-       "corr": 0.1,
-       "lost_together_days": 16
+       "with": "MQ02|1Hour|XAUUSD",
+       "corr": 0.11,
+       "lost_together_days": 11
       }
      }
     },
@@ -7364,8 +7831,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 218,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 19.0,
+       "mfe_median_r": 0.37,
+       "mae_winners_p90_r": 0.43
       },
       "hours": {
        "16-20": {
@@ -7396,9 +7868,9 @@
        }
       },
       "together": {
-       "with": "TV02|1Hour|WMT",
-       "corr": 0.06,
-       "lost_together_days": 9
+       "with": "MQ02|1Hour|XAUUSD",
+       "corr": 0.1,
+       "lost_together_days": 11
       }
      }
     },
@@ -7423,10 +7895,10 @@
        },
        "backtest": {
         "trades": 94,
-        "win_pct": 44.7,
-        "mean_r": 0.121,
-        "sum_r": 11.35,
-        "pf": 1.31
+        "win_pct": 42.6,
+        "mean_r": 0.112,
+        "sum_r": 10.54,
+        "pf": 1.27
        }
       },
       "stability": {
@@ -7434,15 +7906,15 @@
        "demo": null,
        "backtest": {
         "score": 0.94,
-        "without_best_r": 6.38,
+        "without_best_r": 5.57,
         "max_loss_r": 1.07,
-        "avg_win_r": 1.15,
-        "drawdown_r": 8.94,
-        "sd_r": 1.24,
+        "avg_win_r": 1.24,
+        "drawdown_r": 8.43,
+        "sd_r": 1.28,
         "checks": [
          1.0,
          1.0,
-         0.82
+         0.83
         ]
        }
       },
@@ -7460,17 +7932,22 @@
        "backtest": {
         "buy": {
          "trades": 48,
-         "mean_r": 0.12
+         "mean_r": 0.17
         },
         "sell": {
          "trades": 46,
-         "mean_r": 0.12
+         "mean_r": 0.05
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 94,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 2.1,
+       "mfe_of_target_median_pct": 28.0,
+       "mfe_median_r": 0.56,
+       "mae_winners_p90_r": 0.6
       },
       "hours": {
        "00-04": {
@@ -7479,23 +7956,23 @@
        },
        "04-08": {
         "trades": 18,
-        "mean_r": 0.3
+        "mean_r": 0.29
        },
        "08-12": {
         "trades": 18,
-        "mean_r": 0.12
+        "mean_r": 0.21
        },
        "12-16": {
         "trades": 12,
-        "mean_r": 0.17
+        "mean_r": 0.37
        },
        "16-20": {
         "trades": 20,
-        "mean_r": 0.06
+        "mean_r": -0.02
        },
        "20-24": {
         "trades": 15,
-        "mean_r": -0.01
+        "mean_r": -0.2
        }
       },
       "market": {
@@ -7505,21 +7982,21 @@
        ],
        "low": {
         "trades": 32,
-        "mean_r": 0.56
+        "mean_r": 0.57
        },
        "mid": {
         "trades": 31,
-        "mean_r": -0.28
+        "mean_r": -0.33
        },
        "high": {
         "trades": 31,
-        "mean_r": 0.06
+        "mean_r": 0.09
        }
       },
       "together": {
-       "with": "TV02|1Hour|US30",
-       "corr": 0.13,
-       "lost_together_days": 13
+       "with": "FR03|15Min|GBPUSD",
+       "corr": 0.17,
+       "lost_together_days": 5
       }
      }
     },
@@ -7544,10 +8021,10 @@
        },
        "backtest": {
         "trades": 38,
-        "win_pct": 52.6,
-        "mean_r": 0.527,
-        "sum_r": 20.03,
-        "pf": 2.37
+        "win_pct": 50.0,
+        "mean_r": 0.51,
+        "sum_r": 19.37,
+        "pf": 2.32
        }
       },
       "stability": {
@@ -7555,11 +8032,11 @@
        "demo": null,
        "backtest": {
         "score": 0.93,
-        "without_best_r": 17.14,
+        "without_best_r": 16.49,
         "max_loss_r": 1.32,
-        "avg_win_r": 1.73,
+        "avg_win_r": 1.79,
         "drawdown_r": 6.91,
-        "sd_r": 1.39,
+        "sd_r": 1.4,
         "checks": [
          1.0,
          1.0,
@@ -7585,18 +8062,23 @@
         },
         "sell": {
          "trades": 22,
-         "mean_r": 0.31
+         "mean_r": 0.28
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 38,
+       "demo_trades": 0,
+       "near_miss_pct": 2.6,
+       "reach_pct": 2.6,
+       "mfe_of_target_median_pct": 68.0,
+       "mfe_median_r": 1.36,
+       "mae_winners_p90_r": 0.93
       },
       "hours": {
        "00-04": {
         "trades": 8,
-        "mean_r": 0.36
+        "mean_r": 0.28
        },
        "04-08": {
         "trades": 5,
@@ -7630,7 +8112,7 @@
        },
        "mid": {
         "trades": 12,
-        "mean_r": 0.44
+        "mean_r": 0.38
        },
        "high": {
         "trades": 13,
@@ -7638,9 +8120,9 @@
        }
       },
       "together": {
-       "with": "BK07|1Hour|EURJPY",
-       "corr": 0.13,
-       "lost_together_days": 3
+       "with": "MQ11|4Hour|MSTR",
+       "corr": 0.14,
+       "lost_together_days": 7
       }
      }
     },
@@ -7665,26 +8147,26 @@
        },
        "backtest": {
         "trades": 211,
-        "win_pct": 42.2,
-        "mean_r": 0.083,
-        "sum_r": 17.44,
-        "pf": 1.31
+        "win_pct": 37.9,
+        "mean_r": 0.091,
+        "sum_r": 19.27,
+        "pf": 1.33
        }
       },
       "stability": {
-       "score": 0.9,
+       "score": 0.93,
        "demo": null,
        "backtest": {
-        "score": 0.9,
-        "without_best_r": 14.49,
+        "score": 0.93,
+        "without_best_r": 13.29,
         "max_loss_r": 1.1,
-        "avg_win_r": 0.82,
-        "drawdown_r": 9.73,
-        "sd_r": 0.83,
+        "avg_win_r": 0.97,
+        "drawdown_r": 11.06,
+        "sd_r": 0.97,
         "checks": [
          1.0,
-         0.83,
-         0.87
+         0.93,
+         0.86
         ]
        }
       },
@@ -7702,42 +8184,44 @@
        "backtest": {
         "buy": {
          "trades": 105,
-         "mean_r": 0.13
+         "mean_r": 0.2
         },
         "sell": {
          "trades": 106,
-         "mean_r": 0.03
+         "mean_r": -0.01
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 211,
+       "demo_trades": 0,
+       "mfe_median_r": 0.56,
+       "mae_winners_p90_r": 0.4
       },
       "hours": {
        "00-04": {
         "trades": 32,
-        "mean_r": 0.4
+        "mean_r": 0.27
        },
        "04-08": {
         "trades": 26,
-        "mean_r": -0.17
+        "mean_r": -0.24
        },
        "08-12": {
         "trades": 46,
-        "mean_r": 0.03
+        "mean_r": 0.14
        },
        "12-16": {
         "trades": 48,
-        "mean_r": 0.19
+        "mean_r": 0.32
        },
        "16-20": {
         "trades": 35,
-        "mean_r": -0.07
+        "mean_r": -0.09
        },
        "20-24": {
         "trades": 24,
-        "mean_r": 0.03
+        "mean_r": -0.08
        }
       },
       "market": {
@@ -7747,20 +8231,20 @@
        ],
        "low": {
         "trades": 71,
-        "mean_r": 0.09
+        "mean_r": 0.15
        },
        "mid": {
         "trades": 70,
-        "mean_r": 0.01
+        "mean_r": -0.05
        },
        "high": {
         "trades": 70,
-        "mean_r": 0.15
+        "mean_r": 0.17
        }
       },
       "together": {
-       "with": "TT45|4Hour|XRP/USD",
-       "corr": 0.11,
+       "with": "TT16|4Hour|JP225",
+       "corr": 0.12,
        "lost_together_days": 6
       }
      }
@@ -7832,8 +8316,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 63,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 4.8,
+       "mfe_of_target_median_pct": 31.0,
+       "mfe_median_r": 0.63,
+       "mae_winners_p90_r": 0.61
       },
       "hours": {
        "16-20": {
@@ -7864,9 +8353,9 @@
        }
       },
       "together": {
-       "with": "FR03|15Min|GBPUSD",
+       "with": "GH08|1Hour|USDCAD",
        "corr": 0.06,
-       "lost_together_days": 2
+       "lost_together_days": 9
       }
      }
     },
@@ -7892,9 +8381,9 @@
        "backtest": {
         "trades": 115,
         "win_pct": 35.7,
-        "mean_r": 0.227,
-        "sum_r": 26.07,
-        "pf": 1.37
+        "mean_r": 0.215,
+        "sum_r": 24.71,
+        "pf": 1.34
        }
       },
       "stability": {
@@ -7902,11 +8391,11 @@
        "demo": null,
        "backtest": {
         "score": 0.95,
-        "without_best_r": 14.32,
+        "without_best_r": 12.96,
         "max_loss_r": 1.28,
         "avg_win_r": 2.38,
         "drawdown_r": 13.36,
-        "sd_r": 2.21,
+        "sd_r": 2.22,
         "checks": [
          1.0,
          1.0,
@@ -7928,17 +8417,19 @@
        "backtest": {
         "buy": {
          "trades": 74,
-         "mean_r": 0.11
+         "mean_r": 0.1
         },
         "sell": {
          "trades": 41,
-         "mean_r": 0.44
+         "mean_r": 0.42
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 115,
+       "demo_trades": 0,
+       "mfe_median_r": 0.83,
+       "mae_winners_p90_r": 0.81
       },
       "hours": {
        "00-04": {
@@ -7951,11 +8442,11 @@
        },
        "08-12": {
         "trades": 84,
-        "mean_r": 0.26
+        "mean_r": 0.25
        },
        "12-16": {
         "trades": 8,
-        "mean_r": 0.09
+        "mean_r": -0.01
        }
       },
       "market": {
@@ -7969,11 +8460,11 @@
        },
        "mid": {
         "trades": 38,
-        "mean_r": 0.0
+        "mean_r": -0.02
        },
        "high": {
         "trades": 38,
-        "mean_r": 0.27
+        "mean_r": 0.25
        }
       },
       "together": {
@@ -7997,7 +8488,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.59R מול +0.34R של הבוט, יציבות 0.90, 2 עסקאות"
+       "why": "רווח ממוצע -0.59R מול +0.34R של הבוט, יציבות 0.91, 2 עסקאות"
       }
      ],
      "detail": {
@@ -8011,25 +8502,25 @@
        },
        "backtest": {
         "trades": 385,
-        "win_pct": 55.1,
-        "mean_r": 0.115,
-        "sum_r": 44.12,
-        "pf": 1.36
+        "win_pct": 56.1,
+        "mean_r": 0.137,
+        "sum_r": 52.87,
+        "pf": 1.43
        }
       },
       "stability": {
-       "score": 0.9,
+       "score": 0.91,
        "demo": null,
        "backtest": {
-        "score": 0.9,
-        "without_best_r": 41.01,
+        "score": 0.91,
+        "without_best_r": 48.8,
         "max_loss_r": 1.15,
-        "avg_win_r": 0.79,
-        "drawdown_r": 9.56,
-        "sd_r": 0.91,
+        "avg_win_r": 0.81,
+        "drawdown_r": 9.78,
+        "sd_r": 0.94,
         "checks": [
          1.0,
-         0.77,
+         0.79,
          0.94
         ]
        }
@@ -8048,7 +8539,7 @@
        "backtest": {
         "buy": {
          "trades": 385,
-         "mean_r": 0.11
+         "mean_r": 0.14
         },
         "sell": {
          "trades": 0,
@@ -8057,13 +8548,15 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 385,
+       "demo_trades": 2,
+       "mfe_median_r": 0.7,
+       "mae_winners_p90_r": 0.74
       },
       "hours": {
        "16-20": {
         "trades": 385,
-        "mean_r": 0.11
+        "mean_r": 0.14
        }
       },
       "market": {
@@ -8073,20 +8566,20 @@
        ],
        "low": {
         "trades": 129,
-        "mean_r": 0.13
+        "mean_r": 0.16
        },
        "mid": {
         "trades": 128,
-        "mean_r": 0.16
+        "mean_r": 0.19
        },
        "high": {
         "trades": 128,
-        "mean_r": 0.05
+        "mean_r": 0.06
        }
       },
       "together": {
        "with": "YT03|1Hour|NVDA",
-       "corr": 0.12,
+       "corr": 0.11,
        "lost_together_days": 14
       }
      }
@@ -8111,11 +8604,11 @@
         "pf": null
        },
        "backtest": {
-        "trades": 51,
-        "win_pct": 45.1,
-        "mean_r": 0.686,
-        "sum_r": 34.97,
-        "pf": 2.29
+        "trades": 52,
+        "win_pct": 44.2,
+        "mean_r": 0.772,
+        "sum_r": 40.13,
+        "pf": 2.43
        }
       },
       "stability": {
@@ -8123,15 +8616,15 @@
        "demo": null,
        "backtest": {
         "score": 0.97,
-        "without_best_r": 22.73,
+        "without_best_r": 27.89,
         "max_loss_r": 1.16,
-        "avg_win_r": 2.7,
+        "avg_win_r": 2.97,
         "drawdown_r": 5.49,
-        "sd_r": 2.71,
+        "sd_r": 2.8,
         "checks": [
          1.0,
          1.0,
-         0.91
+         0.92
         ]
        }
       },
@@ -8148,8 +8641,8 @@
        },
        "backtest": {
         "buy": {
-         "trades": 51,
-         "mean_r": 0.69
+         "trades": 52,
+         "mean_r": 0.77
         },
         "sell": {
          "trades": 0,
@@ -8158,9 +8651,9 @@
        }
       },
       "exits": {
-       "bt_trades": 51,
+       "bt_trades": 52,
        "demo_trades": 0,
-       "mfe_median_r": 0.88,
+       "mfe_median_r": 0.91,
        "mae_winners_p90_r": 0.9
       },
       "hours": {
@@ -8174,11 +8667,11 @@
        },
        "08-12": {
         "trades": 16,
-        "mean_r": 1.46
+        "mean_r": 1.6
        },
        "12-16": {
-        "trades": 11,
-        "mean_r": -0.24
+        "trades": 12,
+        "mean_r": 0.03
        },
        "16-20": {
         "trades": 15,
@@ -8191,12 +8684,12 @@
       },
       "market": {
        "cut_pct": [
-        0.097,
-        0.141
+        0.099,
+        0.143
        ],
        "low": {
-        "trades": 17,
-        "mean_r": 2.1
+        "trades": 18,
+        "mean_r": 2.05
        },
        "mid": {
         "trades": 17,
@@ -8204,12 +8697,12 @@
        },
        "high": {
         "trades": 17,
-        "mean_r": 0.14
+        "mean_r": 0.38
        }
       },
       "together": {
-       "with": "TV02|1Hour|GBPJPY",
-       "corr": 0.13,
+       "with": "TV37|4Hour|GBPUSD",
+       "corr": 0.17,
        "lost_together_days": 5
       }
      }
@@ -8227,14 +8720,14 @@
       {
        "bt_trades": 67,
        "bt_mean_r": [
-        -0.27,
-        -0.47
+        -0.49,
+        -0.39
        ],
        "demo": {
         "trades": 0,
         "mean_r": null
        },
-       "why": "שעות 16:00-20:00: בבקטסט -0.27R ו־-0.47R לעסקה בשני החצאים (67 עסקאות)",
+       "why": "שעות 16:00-20:00: בבקטסט -0.49R ו־-0.39R לעסקה בשני החצאים (67 עסקאות)",
        "kind": "hours",
        "value": [
         16,
@@ -8254,26 +8747,26 @@
        },
        "backtest": {
         "trades": 155,
-        "win_pct": 36.8,
-        "mean_r": 0.148,
-        "sum_r": 23.01,
-        "pf": 1.24
+        "win_pct": 35.5,
+        "mean_r": 0.268,
+        "sum_r": 41.55,
+        "pf": 1.4
        }
       },
       "stability": {
-       "score": 0.95,
+       "score": 0.97,
        "demo": null,
        "backtest": {
-        "score": 0.95,
-        "without_best_r": 15.07,
+        "score": 0.97,
+        "without_best_r": 33.47,
         "max_loss_r": 1.57,
-        "avg_win_r": 2.08,
-        "drawdown_r": 17.09,
-        "sd_r": 1.84,
+        "avg_win_r": 2.64,
+        "drawdown_r": 11.55,
+        "sd_r": 2.18,
         "checks": [
          1.0,
          1.0,
-         0.86
+         0.92
         ]
        }
       },
@@ -8291,11 +8784,11 @@
        "backtest": {
         "buy": {
          "trades": 75,
-         "mean_r": 0.16
+         "mean_r": 0.3
         },
         "sell": {
          "trades": 80,
-         "mean_r": 0.14
+         "mean_r": 0.24
         }
        }
       },
@@ -8303,16 +8796,16 @@
        "bt_trades": 155,
        "demo_trades": 0,
        "mfe_median_r": 0.97,
-       "mae_winners_p90_r": 0.89
+       "mae_winners_p90_r": 0.81
       },
       "hours": {
        "00-04": {
         "trades": 17,
-        "mean_r": 0.64
+        "mean_r": 0.54
        },
        "04-08": {
         "trades": 14,
-        "mean_r": 0.98
+        "mean_r": 1.85
        },
        "08-12": {
         "trades": 1,
@@ -8320,15 +8813,15 @@
        },
        "12-16": {
         "trades": 19,
-        "mean_r": 0.64
+        "mean_r": 0.99
        },
        "16-20": {
         "trades": 67,
-        "mean_r": -0.39
+        "mean_r": -0.43
        },
        "20-24": {
         "trades": 37,
-        "mean_r": 0.37
+        "mean_r": 0.47
        }
       },
       "market": {
@@ -8338,21 +8831,21 @@
        ],
        "low": {
         "trades": 52,
-        "mean_r": 0.3
+        "mean_r": 0.75
        },
        "mid": {
         "trades": 51,
-        "mean_r": 0.2
+        "mean_r": 0.22
        },
        "high": {
         "trades": 52,
-        "mean_r": -0.05
+        "mean_r": -0.16
        }
       },
       "together": {
        "with": "TV13|4Hour|USDCAD",
-       "corr": 0.29,
-       "lost_together_days": 19
+       "corr": 0.26,
+       "lost_together_days": 22
       }
      }
     },
@@ -8376,17 +8869,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 217,
+        "win_pct": 26.3,
+        "mean_r": 0.222,
+        "sum_r": 48.25,
+        "pf": 1.29
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.96,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.96,
+        "without_best_r": 39.81,
+        "max_loss_r": 1.92,
+        "avg_win_r": 3.81,
+        "drawdown_r": 23.27,
+        "sd_r": 2.66,
+        "checks": [
+         1.0,
+         1.0,
+         0.89
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -8401,22 +8906,73 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 105,
+         "mean_r": 0.42
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 112,
+         "mean_r": 0.04
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 217,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.5,
+       "mfe_of_target_median_pct": 10.0,
+       "mfe_median_r": 0.77,
+       "mae_winners_p90_r": 0.91
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 21,
+        "mean_r": 0.4
+       },
+       "04-08": {
+        "trades": 49,
+        "mean_r": 0.46
+       },
+       "08-12": {
+        "trades": 39,
+        "mean_r": -0.04
+       },
+       "12-16": {
+        "trades": 32,
+        "mean_r": -0.09
+       },
+       "16-20": {
+        "trades": 42,
+        "mean_r": 0.02
+       },
+       "20-24": {
+        "trades": 34,
+        "mean_r": 0.62
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.109,
+        0.189
+       ],
+       "low": {
+        "trades": 73,
+        "mean_r": 0.43
+       },
+       "mid": {
+        "trades": 72,
+        "mean_r": -0.01
+       },
+       "high": {
+        "trades": 72,
+        "mean_r": 0.24
+       }
+      },
+      "together": {
+       "with": "TV56|4Hour|USDJPY",
+       "corr": 0.1,
+       "lost_together_days": 9
+      }
      }
     },
     {
@@ -8439,17 +8995,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 182,
+        "win_pct": 54.4,
+        "mean_r": 0.098,
+        "sum_r": 17.92,
+        "pf": 1.47
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.72,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.72,
+        "without_best_r": 13.8,
+        "max_loss_r": 1.44,
+        "avg_win_r": 0.57,
+        "drawdown_r": 3.53,
+        "sd_r": 0.72,
+        "checks": [
+         1.0,
+         0.23,
+         0.94
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -8464,22 +9032,58 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 108,
+         "mean_r": 0.1
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 74,
+         "mean_r": 0.1
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 182,
+       "demo_trades": 0,
+       "mfe_median_r": 0.42,
+       "mae_winners_p90_r": 0.49
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "12-16": {
+        "trades": 60,
+        "mean_r": 0.12
+       },
+       "16-20": {
+        "trades": 109,
+        "mean_r": 0.08
+       },
+       "20-24": {
+        "trades": 13,
+        "mean_r": 0.16
+       }
+      },
+      "market": {
+       "cut_pct": [
+        3.406,
+        3.997
+       ],
+       "low": {
+        "trades": 61,
+        "mean_r": 0.1
+       },
+       "mid": {
+        "trades": 60,
+        "mean_r": 0.12
+       },
+       "high": {
+        "trades": 61,
+        "mean_r": 0.07
+       }
+      },
+      "together": {
+       "with": "YT03|1Hour|NVDA",
+       "corr": 0.18,
+       "lost_together_days": 6
+      }
      }
     },
     {
@@ -8502,17 +9106,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 107,
+        "win_pct": 62.6,
+        "mean_r": 0.12,
+        "sum_r": 12.79,
+        "pf": 1.53
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.81,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.81,
+        "without_best_r": 10.04,
+        "max_loss_r": 1.07,
+        "avg_win_r": 0.55,
+        "drawdown_r": 3.43,
+        "sd_r": 0.76,
+        "checks": [
+         1.0,
+         0.53,
+         0.91
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -8527,22 +9143,70 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 55,
+         "mean_r": 0.04
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 52,
+         "mean_r": 0.2
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 107,
+       "demo_trades": 0,
+       "mfe_median_r": 0.61,
+       "mae_winners_p90_r": 0.65
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 16,
+        "mean_r": 0.31
+       },
+       "04-08": {
+        "trades": 23,
+        "mean_r": 0.23
+       },
+       "08-12": {
+        "trades": 12,
+        "mean_r": 0.28
+       },
+       "12-16": {
+        "trades": 14,
+        "mean_r": 0.04
+       },
+       "16-20": {
+        "trades": 26,
+        "mean_r": -0.05
+       },
+       "20-24": {
+        "trades": 16,
+        "mean_r": -0.01
+       }
+      },
+      "market": {
+       "cut_pct": [
+        1.195,
+        1.581
+       ],
+       "low": {
+        "trades": 36,
+        "mean_r": 0.22
+       },
+       "mid": {
+        "trades": 35,
+        "mean_r": 0.15
+       },
+       "high": {
+        "trades": 36,
+        "mean_r": -0.01
+       }
+      },
+      "together": {
+       "with": "TV13|4Hour|USDCAD",
+       "corr": 0.13,
+       "lost_together_days": 8
+      }
      }
     }
    ]
@@ -8562,6 +9226,16 @@
      "risk_pct": 0.375,
      "target": 1.005,
      "recs": [
+      {
+       "kind": "tp",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.053,
+        0.123
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.6: בבקטסט +0.05R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      },
       {
        "bt_trades": 100,
        "bt_mean_r": [
@@ -8603,7 +9277,7 @@
        "demo": null,
        "backtest": {
         "score": 0.86,
-        "without_best_r": 36.78,
+        "without_best_r": 36.77,
         "max_loss_r": 1.84,
         "avg_win_r": 1.08,
         "drawdown_r": 23.33,
@@ -8638,8 +9312,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 769,
+       "demo_trades": 0,
+       "near_miss_pct": 0.3,
+       "reach_pct": 0.8,
+       "mfe_of_target_median_pct": 40.0,
+       "mfe_median_r": 0.8,
+       "mae_winners_p90_r": 0.75
       },
       "hours": {
        "00-04": {
@@ -8687,7 +9366,7 @@
       },
       "together": {
        "with": "SS14|1Hour|US500",
-       "corr": 0.18,
+       "corr": 0.17,
        "lost_together_days": 29
       }
      }
@@ -8714,25 +9393,25 @@
        "backtest": {
         "trades": 355,
         "win_pct": 40.0,
-        "mean_r": 0.075,
-        "sum_r": 26.49,
-        "pf": 1.21
+        "mean_r": 0.121,
+        "sum_r": 42.99,
+        "pf": 1.33
        }
       },
       "stability": {
-       "score": 0.96,
+       "score": 0.98,
        "demo": null,
        "backtest": {
-        "score": 0.96,
-        "without_best_r": 16.02,
+        "score": 0.98,
+        "without_best_r": 32.51,
         "max_loss_r": 1.15,
-        "avg_win_r": 1.09,
+        "avg_win_r": 1.22,
         "drawdown_r": 12.26,
-        "sd_r": 1.17,
+        "sd_r": 1.28,
         "checks": [
          1.0,
-         0.97,
-         0.92
+         1.0,
+         0.93
         ]
        }
       },
@@ -8750,34 +9429,36 @@
        "backtest": {
         "buy": {
          "trades": 183,
-         "mean_r": 0.02
+         "mean_r": 0.07
         },
         "sell": {
          "trades": 172,
-         "mean_r": 0.13
+         "mean_r": 0.18
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 355,
+       "demo_trades": 0,
+       "mfe_median_r": 0.65,
+       "mae_winners_p90_r": 0.62
       },
       "hours": {
        "00-04": {
         "trades": 42,
-        "mean_r": 0.23
+        "mean_r": 0.26
        },
        "04-08": {
         "trades": 64,
-        "mean_r": 0.08
+        "mean_r": 0.09
        },
        "08-12": {
         "trades": 56,
-        "mean_r": 0.21
+        "mean_r": 0.24
        },
        "12-16": {
         "trades": 39,
-        "mean_r": 0.05
+        "mean_r": 0.3
        },
        "16-20": {
         "trades": 115,
@@ -8785,7 +9466,7 @@
        },
        "20-24": {
         "trades": 39,
-        "mean_r": -0.11
+        "mean_r": -0.03
        }
       },
       "market": {
@@ -8795,20 +9476,20 @@
        ],
        "low": {
         "trades": 119,
-        "mean_r": 0.1
+        "mean_r": 0.16
        },
        "mid": {
         "trades": 118,
-        "mean_r": 0.14
+        "mean_r": 0.18
        },
        "high": {
         "trades": 118,
-        "mean_r": -0.01
+        "mean_r": 0.02
        }
       },
       "together": {
        "with": "SS09|1Hour|T",
-       "corr": 0.18,
+       "corr": 0.16,
        "lost_together_days": 45
       }
      }
@@ -8841,10 +9522,10 @@
        },
        "backtest": {
         "trades": 252,
-        "win_pct": 44.8,
-        "mean_r": 0.129,
-        "sum_r": 32.55,
-        "pf": 1.28
+        "win_pct": 44.0,
+        "mean_r": 0.138,
+        "sum_r": 34.73,
+        "pf": 1.29
        }
       },
       "stability": {
@@ -8852,15 +9533,15 @@
        "demo": null,
        "backtest": {
         "score": 0.98,
-        "without_best_r": 30.54,
+        "without_best_r": 32.72,
         "max_loss_r": 1.33,
-        "avg_win_r": 1.31,
-        "drawdown_r": 8.55,
-        "sd_r": 1.24,
+        "avg_win_r": 1.38,
+        "drawdown_r": 11.39,
+        "sd_r": 1.26,
         "checks": [
          1.0,
-         0.99,
-         0.94
+         1.0,
+         0.93
         ]
        }
       },
@@ -8878,42 +9559,47 @@
        "backtest": {
         "buy": {
          "trades": 130,
-         "mean_r": 0.16
+         "mean_r": 0.14
         },
         "sell": {
          "trades": 122,
-         "mean_r": 0.1
+         "mean_r": 0.13
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 252,
+       "demo_trades": 2,
+       "near_miss_pct": 0.4,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 45.0,
+       "mfe_median_r": 0.9,
+       "mae_winners_p90_r": 0.79
       },
       "hours": {
        "00-04": {
         "trades": 26,
-        "mean_r": 0.64
+        "mean_r": 0.59
        },
        "04-08": {
         "trades": 47,
-        "mean_r": 0.28
+        "mean_r": 0.34
        },
        "08-12": {
         "trades": 29,
-        "mean_r": 0.36
+        "mean_r": 0.34
        },
        "12-16": {
         "trades": 51,
-        "mean_r": -0.01
+        "mean_r": 0.05
        },
        "16-20": {
         "trades": 72,
-        "mean_r": -0.11
+        "mean_r": -0.12
        },
        "20-24": {
         "trades": 27,
-        "mean_r": 0.02
+        "mean_r": -0.01
        }
       },
       "market": {
@@ -8927,17 +9613,17 @@
        },
        "mid": {
         "trades": 84,
-        "mean_r": 0.21
+        "mean_r": 0.2
        },
        "high": {
         "trades": 84,
-        "mean_r": 0.15
+        "mean_r": 0.18
        }
       },
       "together": {
-       "with": "TV21|1Hour|XAUUSD",
-       "corr": 0.12,
-       "lost_together_days": 44
+       "with": "TV60|4Hour|SPN35",
+       "corr": 0.11,
+       "lost_together_days": 10
       }
      }
     },
@@ -8981,25 +9667,25 @@
        },
        "backtest": {
         "trades": 193,
-        "win_pct": 45.1,
-        "mean_r": 0.175,
-        "sum_r": 33.73,
+        "win_pct": 43.5,
+        "mean_r": 0.186,
+        "sum_r": 35.94,
         "pf": 1.42
        }
       },
       "stability": {
-       "score": 0.95,
+       "score": 0.97,
        "demo": null,
        "backtest": {
-        "score": 0.95,
-        "without_best_r": 26.4,
+        "score": 0.97,
+        "without_best_r": 28.61,
         "max_loss_r": 1.47,
-        "avg_win_r": 1.31,
-        "drawdown_r": 9.8,
-        "sd_r": 1.29,
+        "avg_win_r": 1.46,
+        "drawdown_r": 11.23,
+        "sd_r": 1.34,
         "checks": [
          1.0,
-         0.94,
+         1.0,
          0.91
         ]
        }
@@ -9018,17 +9704,22 @@
        "backtest": {
         "buy": {
          "trades": 87,
-         "mean_r": 0.33
+         "mean_r": 0.39
         },
         "sell": {
          "trades": 106,
-         "mean_r": 0.05
+         "mean_r": 0.02
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 193,
+       "demo_trades": 0,
+       "near_miss_pct": 1.0,
+       "reach_pct": 1.6,
+       "mfe_of_target_median_pct": 47.0,
+       "mfe_median_r": 0.93,
+       "mae_winners_p90_r": 0.79
       },
       "hours": {
        "00-04": {
@@ -9037,19 +9728,19 @@
        },
        "04-08": {
         "trades": 20,
-        "mean_r": 0.14
+        "mean_r": 0.34
        },
        "12-16": {
         "trades": 29,
-        "mean_r": 0.58
+        "mean_r": 0.55
        },
        "16-20": {
         "trades": 68,
-        "mean_r": 0.21
+        "mean_r": 0.24
        },
        "20-24": {
         "trades": 53,
-        "mean_r": 0.09
+        "mean_r": 0.04
        }
       },
       "market": {
@@ -9059,21 +9750,21 @@
        ],
        "low": {
         "trades": 65,
-        "mean_r": 0.37
+        "mean_r": 0.35
        },
        "mid": {
         "trades": 64,
-        "mean_r": 0.07
+        "mean_r": 0.08
        },
        "high": {
         "trades": 64,
-        "mean_r": 0.08
+        "mean_r": 0.12
        }
       },
       "together": {
-       "with": "TV35|4Hour|NATGAS",
-       "corr": 0.08,
-       "lost_together_days": 9
+       "with": "TV15|1Hour|INTC",
+       "corr": 0.06,
+       "lost_together_days": 25
       }
      }
     },
@@ -9092,6 +9783,16 @@
        "value": 1.05,
        "label": "סיכון ×1.05",
        "why": "רווח ממוצע +1.89R מול -0.17R של הבוט, יציבות 0.95, 1 עסקאות"
+      },
+      {
+       "kind": "tp",
+       "value": 0.7,
+       "bt_gain_r": [
+        0.2,
+        0.405
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.7: בבקטסט +0.20R ו־+0.41R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
       }
      ],
      "detail": {
@@ -9151,8 +9852,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 124,
+       "demo_trades": 1,
+       "near_miss_pct": 1.6,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 47.0,
+       "mfe_median_r": 1.41,
+       "mae_winners_p90_r": 0.78
       },
       "hours": {
        "00-04": {
@@ -9272,8 +9978,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 151,
+       "demo_trades": 0,
+       "mfe_median_r": 0.84,
+       "mae_winners_p90_r": 0.63
       },
       "hours": {
        "12-16": {
@@ -9328,24 +10036,17 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.67R מול -0.17R של הבוט, יציבות 0.78, 3 עסקאות"
+       "why": "רווח ממוצע -0.67R מול -0.17R של הבוט, יציבות 0.81, 3 עסקאות"
       },
       {
-       "bt_trades": 71,
-       "bt_mean_r": [
-        -0.17,
-        -0.13
+       "kind": "tp",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.139,
+        0.052
        ],
-       "demo": {
-        "trades": 2,
-        "mean_r": -0.5
-       },
-       "why": "תנודתיות גבוהה (סטופ מעל 0.17% מהמחיר): בבקטסט -0.17R ו־-0.13R לעסקה בשני החצאים (71 עסקאות), בדמו -0.50R ב־2",
-       "kind": "vol",
-       "value": {
-        "max_pct": 0.1731
-       },
-       "label": "לא לסחור בתנודתיות גבוהה"
+       "demo_gain_r": null,
+       "why": "יעד ×0.6: בבקטסט +0.14R ו־+0.05R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
       }
      ],
      "detail": {
@@ -9360,13 +10061,13 @@
        "backtest": {
         "trades": 212,
         "win_pct": 45.8,
-        "mean_r": 0.041,
-        "sum_r": 8.76,
-        "pf": 1.08
+        "mean_r": 0.094,
+        "sum_r": 19.99,
+        "pf": 1.18
        }
       },
       "stability": {
-       "score": 0.78,
+       "score": 0.81,
        "demo": {
         "score": 0.0,
         "without_best_r": -2.0,
@@ -9381,16 +10082,16 @@
         ]
        },
        "backtest": {
-        "score": 0.9,
-        "without_best_r": 6.8,
+        "score": 0.93,
+        "without_best_r": 18.04,
         "max_loss_r": 1.54,
-        "avg_win_r": 1.18,
+        "avg_win_r": 1.35,
         "drawdown_r": 18.48,
-        "sd_r": 1.22,
+        "sd_r": 1.3,
         "checks": [
          1.0,
-         0.85,
-         0.84
+         0.93,
+         0.86
         ]
        }
       },
@@ -9408,42 +10109,47 @@
        "backtest": {
         "buy": {
          "trades": 112,
-         "mean_r": 0.18
+         "mean_r": 0.23
         },
         "sell": {
          "trades": 100,
-         "mean_r": -0.12
+         "mean_r": -0.06
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 3
+       "bt_trades": 212,
+       "demo_trades": 3,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 49.0,
+       "mfe_median_r": 0.98,
+       "mae_winners_p90_r": 0.78
       },
       "hours": {
        "00-04": {
         "trades": 19,
-        "mean_r": -0.57
+        "mean_r": -0.49
        },
        "04-08": {
         "trades": 25,
-        "mean_r": 0.1
+        "mean_r": -0.08
        },
        "08-12": {
         "trades": 37,
-        "mean_r": 0.43
+        "mean_r": 0.54
        },
        "12-16": {
         "trades": 48,
-        "mean_r": 0.15
+        "mean_r": 0.2
        },
        "16-20": {
         "trades": 49,
-        "mean_r": -0.06
+        "mean_r": 0.05
        },
        "20-24": {
         "trades": 34,
-        "mean_r": -0.09
+        "mean_r": -0.01
        }
       },
       "market": {
@@ -9453,21 +10159,21 @@
        ],
        "low": {
         "trades": 71,
-        "mean_r": 0.11
+        "mean_r": 0.16
        },
        "mid": {
         "trades": 70,
-        "mean_r": 0.16
+        "mean_r": 0.22
        },
        "high": {
         "trades": 71,
-        "mean_r": -0.15
+        "mean_r": -0.1
        }
       },
       "together": {
        "with": "TV50|15Min|ASML",
-       "corr": 0.09,
-       "lost_together_days": 20
+       "corr": 0.1,
+       "lost_together_days": 21
       }
      }
     },
@@ -9538,8 +10244,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 183,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 22.0,
+       "mfe_median_r": 0.67,
+       "mae_winners_p90_r": 0.8
       },
       "hours": {
        "08-12": {
@@ -9601,26 +10312,26 @@
        },
        "backtest": {
         "trades": 492,
-        "win_pct": 57.9,
-        "mean_r": 0.039,
-        "sum_r": 19.28,
-        "pf": 1.12
+        "win_pct": 59.6,
+        "mean_r": 0.063,
+        "sum_r": 30.91,
+        "pf": 1.19
        }
       },
       "stability": {
-       "score": 0.83,
+       "score": 0.85,
        "demo": null,
        "backtest": {
-        "score": 0.83,
-        "without_best_r": 16.41,
+        "score": 0.85,
+        "without_best_r": 28.04,
         "max_loss_r": 1.15,
-        "avg_win_r": 0.63,
-        "drawdown_r": 17.55,
-        "sd_r": 0.81,
+        "avg_win_r": 0.66,
+        "drawdown_r": 13.92,
+        "sd_r": 0.84,
         "checks": [
          1.0,
-         0.59,
-         0.9
+         0.63,
+         0.93
         ]
        }
       },
@@ -9638,17 +10349,19 @@
        "backtest": {
         "buy": {
          "trades": 252,
-         "mean_r": 0.03
+         "mean_r": 0.04
         },
         "sell": {
          "trades": 240,
-         "mean_r": 0.05
+         "mean_r": 0.09
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 492,
+       "demo_trades": 0,
+       "mfe_median_r": 0.56,
+       "mae_winners_p90_r": 0.78
       },
       "hours": {
        "00-04": {
@@ -9665,15 +10378,15 @@
        },
        "12-16": {
         "trades": 56,
-        "mean_r": -0.05
+        "mean_r": -0.03
        },
        "16-20": {
         "trades": 275,
-        "mean_r": 0.04
+        "mean_r": 0.08
        },
        "20-24": {
         "trades": 96,
-        "mean_r": -0.06
+        "mean_r": -0.05
        }
       },
       "market": {
@@ -9683,21 +10396,21 @@
        ],
        "low": {
         "trades": 164,
-        "mean_r": -0.0
+        "mean_r": 0.05
        },
        "mid": {
         "trades": 164,
-        "mean_r": -0.0
+        "mean_r": 0.01
        },
        "high": {
         "trades": 164,
-        "mean_r": 0.12
+        "mean_r": 0.13
        }
       },
       "together": {
-       "with": "SS09|1Hour|T",
+       "with": "SS11|5Min|PFE",
        "corr": 0.11,
-       "lost_together_days": 39
+       "lost_together_days": 13
       }
      }
     },
@@ -9710,7 +10423,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.005,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "tp",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.223,
+        0.087
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.6: בבקטסט +0.22R ו־+0.09R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -9721,27 +10445,27 @@
         "pf": null
        },
        "backtest": {
-        "trades": 167,
-        "win_pct": 48.5,
-        "mean_r": 0.099,
-        "sum_r": 16.51,
+        "trades": 168,
+        "win_pct": 47.0,
+        "mean_r": 0.1,
+        "sum_r": 16.85,
         "pf": 1.21
        }
       },
       "stability": {
-       "score": 0.91,
+       "score": 0.93,
        "demo": null,
        "backtest": {
-        "score": 0.91,
-        "without_best_r": 13.19,
+        "score": 0.93,
+        "without_best_r": 13.52,
         "max_loss_r": 1.27,
-        "avg_win_r": 1.16,
-        "drawdown_r": 20.02,
-        "sd_r": 1.22,
+        "avg_win_r": 1.22,
+        "drawdown_r": 18.35,
+        "sd_r": 1.25,
         "checks": [
          1.0,
-         0.95,
-         0.79
+         0.98,
+         0.81
         ]
        }
       },
@@ -9759,17 +10483,22 @@
        "backtest": {
         "buy": {
          "trades": 88,
-         "mean_r": 0.17
+         "mean_r": 0.15
         },
         "sell": {
-         "trades": 79,
-         "mean_r": 0.02
+         "trades": 80,
+         "mean_r": 0.05
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 168,
+       "demo_trades": 0,
+       "near_miss_pct": 1.2,
+       "reach_pct": 1.2,
+       "mfe_of_target_median_pct": 40.0,
+       "mfe_median_r": 0.79,
+       "mae_winners_p90_r": 0.81
       },
       "hours": {
        "00-04": {
@@ -9786,39 +10515,39 @@
        },
        "12-16": {
         "trades": 31,
-        "mean_r": 0.24
+        "mean_r": 0.15
        },
        "16-20": {
         "trades": 42,
-        "mean_r": 0.35
+        "mean_r": 0.43
        },
        "20-24": {
-        "trades": 24,
-        "mean_r": -0.16
+        "trades": 25,
+        "mean_r": -0.17
        }
       },
       "market": {
        "cut_pct": [
-        0.209,
-        0.482
+        0.207,
+        0.478
        ],
        "low": {
         "trades": 56,
-        "mean_r": -0.05
+        "mean_r": -0.03
        },
        "mid": {
-        "trades": 55,
-        "mean_r": 0.24
+        "trades": 56,
+        "mean_r": 0.19
        },
        "high": {
         "trades": 56,
-        "mean_r": 0.11
+        "mean_r": 0.15
        }
       },
       "together": {
        "with": "SS11|5Min|PFE",
        "corr": 0.1,
-       "lost_together_days": 5
+       "lost_together_days": 6
       }
      }
     },
@@ -9889,8 +10618,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 111,
+       "demo_trades": 1,
+       "near_miss_pct": 8.1,
+       "reach_pct": 47.7,
+       "mfe_of_target_median_pct": 88.0,
+       "mfe_median_r": 0.5,
+       "mae_winners_p90_r": 0.55
       },
       "hours": {
        "12-16": {
@@ -9940,7 +10674,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.005,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "sl",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.156,
+        0.057
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.6: בבקטסט +0.16R ו־+0.06R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -9998,8 +10743,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 112,
+       "demo_trades": 0,
+       "mfe_median_r": 0.69,
+       "mae_winners_p90_r": 0.48
       },
       "hours": {
        "12-16": {
@@ -10035,7 +10782,7 @@
       },
       "together": {
        "with": "SS14|1Hour|US500",
-       "corr": 0.07,
+       "corr": 0.06,
        "lost_together_days": 5
       }
      }
@@ -10107,8 +10854,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 126,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.8,
+       "mfe_of_target_median_pct": 30.0,
+       "mfe_median_r": 0.9,
+       "mae_winners_p90_r": 0.7
       },
       "hours": {
        "12-16": {
@@ -10216,8 +10968,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 148,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 1.4,
+       "mfe_of_target_median_pct": 31.0,
+       "mfe_median_r": 0.62,
+       "mae_winners_p90_r": 0.69
       },
       "hours": {
        "16-20": {
@@ -10328,8 +11085,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 201,
+       "demo_trades": 2,
+       "mfe_median_r": 0.47,
+       "mae_winners_p90_r": 0.46
       },
       "hours": {
        "12-16": {
@@ -10437,8 +11196,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 80,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 17.0,
+       "mfe_median_r": 0.34,
+       "mae_winners_p90_r": 0.47
       },
       "hours": {
        "04-08": {
@@ -10554,8 +11318,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 89,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 13.0,
+       "mfe_median_r": 0.27,
+       "mae_winners_p90_r": 0.4
       },
       "hours": {
        "04-08": {
@@ -10594,9 +11363,9 @@
        }
       },
       "together": {
-       "with": "SS14|1Hour|US500",
-       "corr": 0.13,
-       "lost_together_days": 5
+       "with": "TV50|1Hour|XAGUSD",
+       "corr": 0.12,
+       "lost_together_days": 11
       }
      }
     },
@@ -10609,7 +11378,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.005,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "tp",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.12,
+        0.189
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.6: בבקטסט +0.12R ו־+0.19R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -10623,7 +11403,7 @@
         "trades": 77,
         "win_pct": 46.8,
         "mean_r": 0.055,
-        "sum_r": 4.2,
+        "sum_r": 4.21,
         "pf": 1.13
        }
       },
@@ -10667,8 +11447,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 77,
+       "demo_trades": 0,
+       "near_miss_pct": 1.3,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 38.0,
+       "mfe_median_r": 0.77,
+       "mae_winners_p90_r": 0.74
       },
       "hours": {
        "00-04": {
@@ -10745,7 +11530,7 @@
         "win_pct": 50.4,
         "mean_r": 0.048,
         "sum_r": 6.73,
-        "pf": 1.18
+        "pf": 1.17
        }
       },
       "stability": {
@@ -10788,8 +11573,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 139,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 4.3,
+       "mfe_of_target_median_pct": 22.0,
+       "mfe_median_r": 0.45,
+       "mae_winners_p90_r": 0.43
       },
       "hours": {
        "12-16": {
@@ -10854,24 +11644,6 @@
        "kind": "dir",
        "value": 1,
        "label": "רק קנייה"
-      },
-      {
-       "bt_trades": 43,
-       "bt_mean_r": [
-        -0.26,
-        -0.17
-       ],
-       "demo": {
-        "trades": 0,
-        "mean_r": null
-       },
-       "why": "שעות 08:00-12:00: בבקטסט -0.26R ו־-0.17R לעסקה בשני החצאים (43 עסקאות)",
-       "kind": "hours",
-       "value": [
-        8,
-        12
-       ],
-       "label": "לא לסחור 08:00-12:00"
       }
      ],
      "detail": {
@@ -10886,25 +11658,25 @@
        "backtest": {
         "trades": 85,
         "win_pct": 36.5,
-        "mean_r": 0.106,
-        "sum_r": 9.03,
-        "pf": 1.17
+        "mean_r": 0.175,
+        "sum_r": 14.89,
+        "pf": 1.28
        }
       },
       "stability": {
-       "score": 0.93,
+       "score": 0.95,
        "demo": null,
        "backtest": {
-        "score": 0.93,
-        "without_best_r": 6.55,
+        "score": 0.95,
+        "without_best_r": 12.41,
         "max_loss_r": 1.08,
-        "avg_win_r": 1.98,
-        "drawdown_r": 12.16,
-        "sd_r": 1.51,
+        "avg_win_r": 2.17,
+        "drawdown_r": 10.33,
+        "sd_r": 1.57,
         "checks": [
          1.0,
          1.0,
-         0.8
+         0.85
         ]
        }
       },
@@ -10922,7 +11694,7 @@
        "backtest": {
         "buy": {
          "trades": 60,
-         "mean_r": 0.27
+         "mean_r": 0.36
         },
         "sell": {
          "trades": 25,
@@ -10931,8 +11703,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 85,
+       "demo_trades": 0,
+       "near_miss_pct": 1.2,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 34.0,
+       "mfe_median_r": 0.85,
+       "mae_winners_p90_r": 0.83
       },
       "hours": {
        "00-04": {
@@ -10945,11 +11722,11 @@
        },
        "08-12": {
         "trades": 43,
-        "mean_r": -0.22
+        "mean_r": -0.14
        },
        "12-16": {
         "trades": 19,
-        "mean_r": 0.49
+        "mean_r": 0.61
        },
        "16-20": {
         "trades": 13,
@@ -10963,20 +11740,20 @@
        ],
        "low": {
         "trades": 29,
-        "mean_r": 0.29
+        "mean_r": 0.33
        },
        "mid": {
         "trades": 28,
-        "mean_r": -0.05
+        "mean_r": 0.03
        },
        "high": {
         "trades": 28,
-        "mean_r": 0.07
+        "mean_r": 0.15
        }
       },
       "together": {
        "with": "TV02|15Min|JP225",
-       "corr": 0.18,
+       "corr": 0.17,
        "lost_together_days": 29
       }
      }
@@ -11048,8 +11825,10 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 1
+       "bt_trades": 237,
+       "demo_trades": 1,
+       "mfe_median_r": 0.4,
+       "mae_winners_p90_r": 0.49
       },
       "hours": {
        "12-16": {
@@ -11085,7 +11864,7 @@
       },
       "together": {
        "with": "TV21|1Hour|XAUUSD",
-       "corr": 0.18,
+       "corr": 0.16,
        "lost_together_days": 45
       }
      }
@@ -11157,8 +11936,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 61,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 35.0,
+       "mfe_median_r": 0.71,
+       "mae_winners_p90_r": 0.8
       },
       "hours": {
        "16-20": {
@@ -11189,9 +11973,9 @@
        }
       },
       "together": {
-       "with": "TT03|1Hour|US30",
-       "corr": 0.1,
-       "lost_together_days": 5
+       "with": "TV29|1Hour|US2000",
+       "corr": 0.11,
+       "lost_together_days": 13
       }
      }
     },
@@ -11204,7 +11988,18 @@
      "mult": 1.0,
      "risk_pct": 0.375,
      "target": 1.005,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "tp",
+       "value": 0.5,
+       "bt_gain_r": [
+        0.168,
+        0.084
+       ],
+       "demo_gain_r": null,
+       "why": "יעד ×0.5: בבקטסט +0.17R ו־+0.08R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -11262,8 +12057,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 236,
+       "demo_trades": 0,
+       "near_miss_pct": 4.7,
+       "reach_pct": 10.6,
+       "mfe_of_target_median_pct": 62.0,
+       "mfe_median_r": 0.65,
+       "mae_winners_p90_r": 0.63
       },
       "hours": {
        "12-16": {
@@ -11371,8 +12171,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 65,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 1.5,
+       "mfe_of_target_median_pct": 41.0,
+       "mfe_median_r": 0.82,
+       "mae_winners_p90_r": 0.86
       },
       "hours": {
        "08-12": {
@@ -11480,8 +12285,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 341,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 29.0,
+       "mfe_median_r": 0.57,
+       "mae_winners_p90_r": 0.6
       },
       "hours": {
        "12-16": {
@@ -11513,7 +12323,7 @@
       },
       "together": {
        "with": "SS14|1Hour|US500",
-       "corr": 0.15,
+       "corr": 0.13,
        "lost_together_days": 25
       }
      }
@@ -11592,8 +12402,13 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 2
+       "bt_trades": 296,
+       "demo_trades": 2,
+       "near_miss_pct": 0.0,
+       "reach_pct": 0.0,
+       "mfe_of_target_median_pct": 14.0,
+       "mfe_median_r": 0.29,
+       "mae_winners_p90_r": 0.41
       },
       "hours": {
        "12-16": {
@@ -11661,17 +12476,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 271,
+        "win_pct": 43.9,
+        "mean_r": 0.06,
+        "sum_r": 16.2,
+        "pf": 1.17
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.92,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.92,
+        "without_best_r": 5.83,
+        "max_loss_r": 1.18,
+        "avg_win_r": 0.92,
+        "drawdown_r": 10.54,
+        "sd_r": 1.16,
+        "checks": [
+         1.0,
+         0.86,
+         0.9
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -11686,22 +12513,70 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 133,
+         "mean_r": 0.02
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 138,
+         "mean_r": 0.09
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 271,
+       "demo_trades": 0,
+       "mfe_median_r": 0.45,
+       "mae_winners_p90_r": 0.71
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 13,
+        "mean_r": -0.06
+       },
+       "04-08": {
+        "trades": 17,
+        "mean_r": -0.11
+       },
+       "08-12": {
+        "trades": 75,
+        "mean_r": 0.42
+       },
+       "12-16": {
+        "trades": 69,
+        "mean_r": -0.12
+       },
+       "16-20": {
+        "trades": 74,
+        "mean_r": -0.07
+       },
+       "20-24": {
+        "trades": 23,
+        "mean_r": 0.04
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.216,
+        0.343
+       ],
+       "low": {
+        "trades": 91,
+        "mean_r": 0.22
+       },
+       "mid": {
+        "trades": 90,
+        "mean_r": 0.05
+       },
+       "high": {
+        "trades": 90,
+        "mean_r": -0.09
+       }
+      },
+      "together": {
+       "with": "BK05|1Hour|EURUSD",
+       "corr": 0.89,
+       "lost_together_days": 106
+      }
      }
     },
     {
@@ -11724,17 +12599,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 106,
+        "win_pct": 39.6,
+        "mean_r": 0.095,
+        "sum_r": 10.02,
+        "pf": 1.24
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.94,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.94,
+        "without_best_r": 5.4,
+        "max_loss_r": 1.05,
+        "avg_win_r": 1.22,
+        "drawdown_r": 8.74,
+        "sd_r": 1.16,
+        "checks": [
+         1.0,
+         1.0,
+         0.83
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -11749,8 +12636,8 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 106,
+         "mean_r": 0.09
         },
         "sell": {
          "trades": 0,
@@ -11759,12 +12646,60 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 106,
+       "demo_trades": 0,
+       "mfe_median_r": 0.63,
+       "mae_winners_p90_r": 0.67
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 17,
+        "mean_r": 0.05
+       },
+       "04-08": {
+        "trades": 21,
+        "mean_r": -0.02
+       },
+       "08-12": {
+        "trades": 19,
+        "mean_r": 0.59
+       },
+       "12-16": {
+        "trades": 14,
+        "mean_r": -0.09
+       },
+       "16-20": {
+        "trades": 22,
+        "mean_r": -0.03
+       },
+       "20-24": {
+        "trades": 13,
+        "mean_r": 0.0
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.315,
+        0.423
+       ],
+       "low": {
+        "trades": 36,
+        "mean_r": -0.1
+       },
+       "mid": {
+        "trades": 35,
+        "mean_r": 0.05
+       },
+       "high": {
+        "trades": 35,
+        "mean_r": 0.34
+       }
+      },
+      "together": {
+       "with": "GH09|1Hour|USDJPY",
+       "corr": 0.25,
+       "lost_together_days": 16
+      }
      }
     },
     {
@@ -11787,17 +12722,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 250,
+        "win_pct": 44.8,
+        "mean_r": 0.062,
+        "sum_r": 15.49,
+        "pf": 1.2
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.86,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.86,
+        "without_best_r": 5.57,
+        "max_loss_r": 1.39,
+        "avg_win_r": 0.84,
+        "drawdown_r": 9.1,
+        "sd_r": 1.12,
+        "checks": [
+         1.0,
+         0.68,
+         0.9
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -11812,22 +12759,70 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 122,
+         "mean_r": 0.02
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 128,
+         "mean_r": 0.11
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 250,
+       "demo_trades": 0,
+       "mfe_median_r": 0.41,
+       "mae_winners_p90_r": 0.69
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 11,
+        "mean_r": -0.2
+       },
+       "04-08": {
+        "trades": 20,
+        "mean_r": -0.21
+       },
+       "08-12": {
+        "trades": 49,
+        "mean_r": 0.5
+       },
+       "12-16": {
+        "trades": 56,
+        "mean_r": 0.02
+       },
+       "16-20": {
+        "trades": 88,
+        "mean_r": -0.06
+       },
+       "20-24": {
+        "trades": 26,
+        "mean_r": 0.04
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.234,
+        0.354
+       ],
+       "low": {
+        "trades": 84,
+        "mean_r": 0.21
+       },
+       "mid": {
+        "trades": 83,
+        "mean_r": 0.08
+       },
+       "high": {
+        "trades": 83,
+        "mean_r": -0.1
+       }
+      },
+      "together": {
+       "with": "BK05|15Min|EURUSD",
+       "corr": 0.89,
+       "lost_together_days": 106
+      }
      }
     },
     {
@@ -11839,7 +12834,26 @@
      "mult": 1.0,
      "risk_pct": 0.45,
      "target": 1.0,
-     "recs": [],
+     "recs": [
+      {
+       "bt_trades": 22,
+       "bt_mean_r": [
+        -0.11,
+        -0.23
+       ],
+       "demo": {
+        "trades": 0,
+        "mean_r": null
+       },
+       "why": "שעות 08:00-12:00: בבקטסט -0.11R ו־-0.23R לעסקה בשני החצאים (22 עסקאות)",
+       "kind": "hours",
+       "value": [
+        8,
+        12
+       ],
+       "label": "לא לסחור 08:00-12:00"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -11850,17 +12864,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 111,
+        "win_pct": 44.1,
+        "mean_r": 0.07,
+        "sum_r": 7.73,
+        "pf": 1.22
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.88,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.88,
+        "without_best_r": 2.59,
+        "max_loss_r": 1.13,
+        "avg_win_r": 0.88,
+        "drawdown_r": 8.93,
+        "sd_r": 1.01,
+        "checks": [
+         1.0,
+         0.86,
+         0.79
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -11875,8 +12901,8 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 111,
+         "mean_r": 0.07
         },
         "sell": {
          "trades": 0,
@@ -11885,12 +12911,60 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 111,
+       "demo_trades": 0,
+       "mfe_median_r": 0.38,
+       "mae_winners_p90_r": 0.59
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 13,
+        "mean_r": 0.07
+       },
+       "04-08": {
+        "trades": 21,
+        "mean_r": 0.26
+       },
+       "08-12": {
+        "trades": 22,
+        "mean_r": -0.17
+       },
+       "12-16": {
+        "trades": 18,
+        "mean_r": 0.06
+       },
+       "16-20": {
+        "trades": 27,
+        "mean_r": 0.13
+       },
+       "20-24": {
+        "trades": 10,
+        "mean_r": 0.06
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.978,
+        1.193
+       ],
+       "low": {
+        "trades": 37,
+        "mean_r": 0.26
+       },
+       "mid": {
+        "trades": 37,
+        "mean_r": 0.02
+       },
+       "high": {
+        "trades": 37,
+        "mean_r": -0.07
+       }
+      },
+      "together": {
+       "with": "BK05|1Hour|EURUSD",
+       "corr": 0.16,
+       "lost_together_days": 22
+      }
      }
     },
     {
@@ -11902,7 +12976,18 @@
      "mult": 1.0,
      "risk_pct": 0.45,
      "target": 1.0,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "sl",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.069,
+        0.066
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.6: בבקטסט +0.07R ו־+0.07R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -11913,17 +12998,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 202,
+        "win_pct": 54.0,
+        "mean_r": 0.135,
+        "sum_r": 27.22,
+        "pf": 1.63
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.85,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.85,
+        "without_best_r": 22.1,
+        "max_loss_r": 1.16,
+        "avg_win_r": 0.65,
+        "drawdown_r": 3.64,
+        "sd_r": 0.78,
+        "checks": [
+         1.0,
+         0.6,
+         0.95
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -11938,22 +13035,58 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 103,
+         "mean_r": 0.21
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 99,
+         "mean_r": 0.06
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 202,
+       "demo_trades": 0,
+       "mfe_median_r": 0.51,
+       "mae_winners_p90_r": 0.52
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "12-16": {
+        "trades": 2,
+        "mean_r": 1.05
+       },
+       "16-20": {
+        "trades": 161,
+        "mean_r": 0.15
+       },
+       "20-24": {
+        "trades": 39,
+        "mean_r": 0.02
+       }
+      },
+      "market": {
+       "cut_pct": [
+        2.402,
+        3.353
+       ],
+       "low": {
+        "trades": 68,
+        "mean_r": 0.19
+       },
+       "mid": {
+        "trades": 67,
+        "mean_r": 0.14
+       },
+       "high": {
+        "trades": 67,
+        "mean_r": 0.07
+       }
+      },
+      "together": {
+       "with": "SE01|1Hour|WMT",
+       "corr": 0.1,
+       "lost_together_days": 48
+      }
      }
     },
     {
@@ -11976,17 +13109,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 388,
+        "win_pct": 52.6,
+        "mean_r": 0.071,
+        "sum_r": 27.59,
+        "pf": 1.21
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.9,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.9,
+        "without_best_r": 22.73,
+        "max_loss_r": 1.16,
+        "avg_win_r": 0.78,
+        "drawdown_r": 11.18,
+        "sd_r": 0.92,
+        "checks": [
+         1.0,
+         0.76,
+         0.93
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12001,8 +13146,8 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 388,
+         "mean_r": 0.07
         },
         "sell": {
          "trades": 0,
@@ -12011,12 +13156,40 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 388,
+       "demo_trades": 0,
+       "mfe_median_r": 0.66,
+       "mae_winners_p90_r": 0.66
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "16-20": {
+        "trades": 388,
+        "mean_r": 0.07
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.168,
+        0.217
+       ],
+       "low": {
+        "trades": 130,
+        "mean_r": 0.02
+       },
+       "mid": {
+        "trades": 129,
+        "mean_r": -0.03
+       },
+       "high": {
+        "trades": 129,
+        "mean_r": 0.22
+       }
+      },
+      "together": {
+       "with": "IM03|4Hour|USDCAD",
+       "corr": 0.12,
+       "lost_together_days": 17
+      }
      }
     },
     {
@@ -12039,17 +13212,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 43,
+        "win_pct": 55.8,
+        "mean_r": 0.23,
+        "sum_r": 9.91,
+        "pf": 1.55
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.94,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.94,
+        "without_best_r": 7.33,
+        "max_loss_r": 1.22,
+        "avg_win_r": 1.16,
+        "drawdown_r": 4.16,
+        "sd_r": 1.19,
+        "checks": [
+         1.0,
+         0.97,
+         0.85
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12064,8 +13249,8 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 43,
+         "mean_r": 0.23
         },
         "sell": {
          "trades": 0,
@@ -12074,12 +13259,48 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 43,
+       "demo_trades": 0,
+       "mfe_median_r": 1.16,
+       "mae_winners_p90_r": 0.74
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 11,
+        "mean_r": 0.34
+       },
+       "04-08": {
+        "trades": 3,
+        "mean_r": 0.7
+       },
+       "08-12": {
+        "trades": 29,
+        "mean_r": 0.14
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.261,
+        0.321
+       ],
+       "low": {
+        "trades": 15,
+        "mean_r": -0.28
+       },
+       "mid": {
+        "trades": 14,
+        "mean_r": 0.34
+       },
+       "high": {
+        "trades": 14,
+        "mean_r": 0.66
+       }
+      },
+      "together": {
+       "with": "FR01|1Hour|GBPUSD",
+       "corr": 0.27,
+       "lost_together_days": 6
+      }
      }
     },
     {
@@ -12102,17 +13323,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 152,
+        "win_pct": 44.7,
+        "mean_r": 0.123,
+        "sum_r": 18.63,
+        "pf": 1.64
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.89,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.89,
+        "without_best_r": 15.06,
+        "max_loss_r": 1.05,
+        "avg_win_r": 0.7,
+        "drawdown_r": 3.73,
+        "sd_r": 0.73,
+        "checks": [
+         1.0,
+         0.75,
+         0.92
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12127,22 +13360,70 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 91,
+         "mean_r": 0.13
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 61,
+         "mean_r": 0.11
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 152,
+       "demo_trades": 0,
+       "mfe_median_r": 0.34,
+       "mae_winners_p90_r": 0.42
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 17,
+        "mean_r": 0.08
+       },
+       "04-08": {
+        "trades": 24,
+        "mean_r": -0.04
+       },
+       "08-12": {
+        "trades": 29,
+        "mean_r": 0.42
+       },
+       "12-16": {
+        "trades": 36,
+        "mean_r": 0.19
+       },
+       "16-20": {
+        "trades": 33,
+        "mean_r": -0.02
+       },
+       "20-24": {
+        "trades": 13,
+        "mean_r": -0.01
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.336,
+        0.454
+       ],
+       "low": {
+        "trades": 51,
+        "mean_r": 0.06
+       },
+       "mid": {
+        "trades": 50,
+        "mean_r": 0.18
+       },
+       "high": {
+        "trades": 51,
+        "mean_r": 0.12
+       }
+      },
+      "together": {
+       "with": "GH02|1Hour|USDJPY",
+       "corr": 0.25,
+       "lost_together_days": 16
+      }
      }
     },
     {
@@ -12165,17 +13446,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 109,
+        "win_pct": 51.4,
+        "mean_r": 0.098,
+        "sum_r": 10.72,
+        "pf": 1.29
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.87,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.87,
+        "without_best_r": 8.32,
+        "max_loss_r": 1.2,
+        "avg_win_r": 0.86,
+        "drawdown_r": 9.51,
+        "sd_r": 0.94,
+        "checks": [
+         1.0,
+         0.81,
+         0.8
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12190,22 +13483,58 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 74,
+         "mean_r": 0.12
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 35,
+         "mean_r": 0.06
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 109,
+       "demo_trades": 0,
+       "mfe_median_r": 0.69,
+       "mae_winners_p90_r": 0.66
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 72,
+        "mean_r": 0.08
+       },
+       "04-08": {
+        "trades": 1,
+        "mean_r": -0.85
+       },
+       "08-12": {
+        "trades": 36,
+        "mean_r": 0.15
+       }
+      },
+      "market": {
+       "cut_pct": [
+        3.626,
+        5.584
+       ],
+       "low": {
+        "trades": 37,
+        "mean_r": -0.06
+       },
+       "mid": {
+        "trades": 36,
+        "mean_r": 0.32
+       },
+       "high": {
+        "trades": 36,
+        "mean_r": 0.03
+       }
+      },
+      "together": {
+       "with": "GH02|1Hour|XAUUSD",
+       "corr": 0.1,
+       "lost_together_days": 8
+      }
      }
     },
     {
@@ -12217,7 +13546,18 @@
      "mult": 1.0,
      "risk_pct": 0.45,
      "target": 1.0,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "sl",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.082,
+        0.071
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.6: בבקטסט +0.08R ו־+0.07R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -12228,17 +13568,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 39,
+        "win_pct": 56.4,
+        "mean_r": 0.315,
+        "sum_r": 12.29,
+        "pf": 1.74
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.95,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.95,
+        "without_best_r": 9.22,
+        "max_loss_r": 1.09,
+        "avg_win_r": 1.32,
+        "drawdown_r": 4.24,
+        "sd_r": 1.29,
+        "checks": [
+         1.0,
+         1.0,
+         0.85
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12253,8 +13605,8 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 39,
+         "mean_r": 0.32
         },
         "sell": {
          "trades": 0,
@@ -12263,12 +13615,48 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 39,
+       "demo_trades": 0,
+       "mfe_median_r": 1.35,
+       "mae_winners_p90_r": 0.79
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 10,
+        "mean_r": 0.8
+       },
+       "04-08": {
+        "trades": 2,
+        "mean_r": 0.23
+       },
+       "08-12": {
+        "trades": 27,
+        "mean_r": 0.14
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.291,
+        0.348
+       ],
+       "low": {
+        "trades": 13,
+        "mean_r": -0.17
+       },
+       "mid": {
+        "trades": 13,
+        "mean_r": 0.31
+       },
+       "high": {
+        "trades": 13,
+        "mean_r": 0.8
+       }
+      },
+      "together": {
+       "with": "FR01|1Hour|EURUSD",
+       "corr": 0.27,
+       "lost_together_days": 6
+      }
      }
     },
     {
@@ -12291,17 +13679,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 468,
+        "win_pct": 40.4,
+        "mean_r": 0.042,
+        "sum_r": 19.71,
+        "pf": 1.18
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.89,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.89,
+        "without_best_r": 14.79,
+        "max_loss_r": 1.03,
+        "avg_win_r": 0.68,
+        "drawdown_r": 7.89,
+        "sd_r": 0.75,
+        "checks": [
+         1.0,
+         0.74,
+         0.94
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12316,22 +13716,58 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 244,
+         "mean_r": 0.06
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 224,
+         "mean_r": 0.02
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 468,
+       "demo_trades": 0,
+       "mfe_median_r": 0.39,
+       "mae_winners_p90_r": 0.49
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "12-16": {
+        "trades": 11,
+        "mean_r": -0.03
+       },
+       "16-20": {
+        "trades": 379,
+        "mean_r": 0.07
+       },
+       "20-24": {
+        "trades": 78,
+        "mean_r": -0.08
+       }
+      },
+      "market": {
+       "cut_pct": [
+        2.152,
+        2.945
+       ],
+       "low": {
+        "trades": 156,
+        "mean_r": 0.06
+       },
+       "mid": {
+        "trades": 156,
+        "mean_r": 0.04
+       },
+       "high": {
+        "trades": 156,
+        "mean_r": 0.03
+       }
+      },
+      "together": {
+       "with": "GH04|1Hour|EURJPY",
+       "corr": 0.1,
+       "lost_together_days": 18
+      }
      }
     },
     {
@@ -12343,7 +13779,18 @@
      "mult": 1.0,
      "risk_pct": 0.45,
      "target": 1.0,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "sl",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.06,
+        0.063
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.6: בבקטסט +0.06R ו־+0.06R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -12354,17 +13801,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 164,
+        "win_pct": 42.7,
+        "mean_r": 0.199,
+        "sum_r": 32.71,
+        "pf": 1.5
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.94,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.94,
+        "without_best_r": 26.78,
+        "max_loss_r": 1.56,
+        "avg_win_r": 1.4,
+        "drawdown_r": 12.9,
+        "sd_r": 1.4,
+        "checks": [
+         1.0,
+         0.94,
+         0.87
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12379,22 +13838,58 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 70,
+         "mean_r": 0.29
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 94,
+         "mean_r": 0.13
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 164,
+       "demo_trades": 0,
+       "mfe_median_r": 0.68,
+       "mae_winners_p90_r": 0.67
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "12-16": {
+        "trades": 3,
+        "mean_r": -1.03
+       },
+       "16-20": {
+        "trades": 98,
+        "mean_r": 0.38
+       },
+       "20-24": {
+        "trades": 63,
+        "mean_r": -0.03
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.81,
+        1.307
+       ],
+       "low": {
+        "trades": 55,
+        "mean_r": 0.03
+       },
+       "mid": {
+        "trades": 54,
+        "mean_r": 0.39
+       },
+       "high": {
+        "trades": 55,
+        "mean_r": 0.18
+       }
+      },
+      "together": {
+       "with": "GH09|1Hour|USDJPY",
+       "corr": 0.13,
+       "lost_together_days": 11
+      }
      }
     },
     {
@@ -12406,7 +13901,18 @@
      "mult": 1.0,
      "risk_pct": 0.45,
      "target": 1.0,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "sl",
+       "value": 0.75,
+       "bt_gain_r": [
+        0.11,
+        0.068
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.75: בבקטסט +0.11R ו־+0.07R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -12417,17 +13923,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 64,
+        "win_pct": 46.9,
+        "mean_r": 0.221,
+        "sum_r": 14.17,
+        "pf": 1.64
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.91,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.91,
+        "without_best_r": 9.79,
+        "max_loss_r": 1.56,
+        "avg_win_r": 1.2,
+        "drawdown_r": 4.81,
+        "sd_r": 1.21,
+        "checks": [
+         1.0,
+         0.85,
+         0.87
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12442,22 +13960,70 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 37,
+         "mean_r": 0.03
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 27,
+         "mean_r": 0.49
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 64,
+       "demo_trades": 0,
+       "mfe_median_r": 0.8,
+       "mae_winners_p90_r": 0.58
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 6,
+        "mean_r": 0.43
+       },
+       "04-08": {
+        "trades": 9,
+        "mean_r": 0.05
+       },
+       "08-12": {
+        "trades": 5,
+        "mean_r": 0.53
+       },
+       "12-16": {
+        "trades": 14,
+        "mean_r": -0.31
+       },
+       "16-20": {
+        "trades": 19,
+        "mean_r": 0.6
+       },
+       "20-24": {
+        "trades": 11,
+        "mean_r": 0.13
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.292,
+        0.323
+       ],
+       "low": {
+        "trades": 22,
+        "mean_r": 0.18
+       },
+       "mid": {
+        "trades": 21,
+        "mean_r": 0.55
+       },
+       "high": {
+        "trades": 21,
+        "mean_r": -0.06
+       }
+      },
+      "together": {
+       "with": "QC04|4Hour|USDCAD",
+       "corr": 0.22,
+       "lost_together_days": 3
+      }
      }
     },
     {
@@ -12480,17 +14046,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 89,
+        "win_pct": 51.7,
+        "mean_r": 0.102,
+        "sum_r": 9.11,
+        "pf": 1.23
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.91,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.91,
+        "without_best_r": 6.64,
+        "max_loss_r": 1.2,
+        "avg_win_r": 1.05,
+        "drawdown_r": 9.08,
+        "sd_r": 1.1,
+        "checks": [
+         1.0,
+         0.93,
+         0.81
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12505,8 +14083,8 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 89,
+         "mean_r": 0.1
         },
         "sell": {
          "trades": 0,
@@ -12515,12 +14093,60 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 89,
+       "demo_trades": 0,
+       "mfe_median_r": 0.81,
+       "mae_winners_p90_r": 0.77
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 15,
+        "mean_r": 0.11
+       },
+       "04-08": {
+        "trades": 12,
+        "mean_r": 0.04
+       },
+       "08-12": {
+        "trades": 14,
+        "mean_r": -0.1
+       },
+       "12-16": {
+        "trades": 16,
+        "mean_r": 0.26
+       },
+       "16-20": {
+        "trades": 19,
+        "mean_r": -0.04
+       },
+       "20-24": {
+        "trades": 13,
+        "mean_r": 0.38
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.312,
+        0.385
+       ],
+       "low": {
+        "trades": 30,
+        "mean_r": 0.13
+       },
+       "mid": {
+        "trades": 29,
+        "mean_r": 0.49
+       },
+       "high": {
+        "trades": 30,
+        "mean_r": -0.31
+       }
+      },
+      "together": {
+       "with": "FR01|1Hour|EURUSD",
+       "corr": 0.1,
+       "lost_together_days": 5
+      }
      }
     },
     {
@@ -12543,17 +14169,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 80,
+        "win_pct": 50.0,
+        "mean_r": 0.109,
+        "sum_r": 8.76,
+        "pf": 1.4
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.87,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.87,
+        "without_best_r": 5.16,
+        "max_loss_r": 1.04,
+        "avg_win_r": 0.77,
+        "drawdown_r": 6.26,
+        "sd_r": 0.88,
+        "checks": [
+         1.0,
+         0.83,
+         0.8
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12568,22 +14206,58 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 39,
+         "mean_r": -0.0
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 41,
+         "mean_r": 0.22
         }
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 80,
+       "demo_trades": 0,
+       "mfe_median_r": 0.53,
+       "mae_winners_p90_r": 0.53
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "00-04": {
+        "trades": 10,
+        "mean_r": -0.04
+       },
+       "08-12": {
+        "trades": 57,
+        "mean_r": 0.07
+       },
+       "12-16": {
+        "trades": 13,
+        "mean_r": 0.38
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.431,
+        0.489
+       ],
+       "low": {
+        "trades": 27,
+        "mean_r": 0.2
+       },
+       "mid": {
+        "trades": 26,
+        "mean_r": -0.05
+       },
+       "high": {
+        "trades": 27,
+        "mean_r": 0.17
+       }
+      },
+      "together": {
+       "with": "IM03|4Hour|USDCAD",
+       "corr": 0.22,
+       "lost_together_days": 3
+      }
      }
     },
     {
@@ -12606,17 +14280,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 371,
+        "win_pct": 57.4,
+        "mean_r": 0.167,
+        "sum_r": 62.0,
+        "pf": 1.57
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.9,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.9,
+        "without_best_r": 58.89,
+        "max_loss_r": 1.2,
+        "avg_win_r": 0.8,
+        "drawdown_r": 9.24,
+        "sd_r": 0.9,
+        "checks": [
+         1.0,
+         0.75,
+         0.95
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12631,8 +14317,8 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 371,
+         "mean_r": 0.17
         },
         "sell": {
          "trades": 0,
@@ -12641,12 +14327,44 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 371,
+       "demo_trades": 0,
+       "mfe_median_r": 0.76,
+       "mae_winners_p90_r": 0.64
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "12-16": {
+        "trades": 23,
+        "mean_r": 0.27
+       },
+       "16-20": {
+        "trades": 348,
+        "mean_r": 0.16
+       }
+      },
+      "market": {
+       "cut_pct": [
+        1.246,
+        1.64
+       ],
+       "low": {
+        "trades": 124,
+        "mean_r": 0.21
+       },
+       "mid": {
+        "trades": 123,
+        "mean_r": 0.19
+       },
+       "high": {
+        "trades": 124,
+        "mean_r": 0.1
+       }
+      },
+      "together": {
+       "with": "SE01|1Hour|WMT",
+       "corr": 0.11,
+       "lost_together_days": 75
+      }
      }
     },
     {
@@ -12669,17 +14387,29 @@
         "pf": null
        },
        "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 370,
+        "win_pct": 54.1,
+        "mean_r": 0.143,
+        "sum_r": 52.81,
+        "pf": 1.46
        }
       },
       "stability": {
-       "score": 0.5,
+       "score": 0.92,
        "demo": null,
-       "backtest": null
+       "backtest": {
+        "score": 0.92,
+        "without_best_r": 48.77,
+        "max_loss_r": 1.17,
+        "avg_win_r": 0.84,
+        "drawdown_r": 9.57,
+        "sd_r": 0.95,
+        "checks": [
+         1.0,
+         0.81,
+         0.94
+        ]
+       }
       },
       "direction": {
        "demo": {
@@ -12694,8 +14424,8 @@
        },
        "backtest": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 370,
+         "mean_r": 0.14
         },
         "sell": {
          "trades": 0,
@@ -12704,12 +14434,44 @@
        }
       },
       "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
+       "bt_trades": 370,
+       "demo_trades": 0,
+       "mfe_median_r": 0.74,
+       "mae_winners_p90_r": 0.6
       },
-      "hours": {},
-      "market": {},
-      "together": null
+      "hours": {
+       "12-16": {
+        "trades": 24,
+        "mean_r": -0.18
+       },
+       "16-20": {
+        "trades": 346,
+        "mean_r": 0.17
+       }
+      },
+      "market": {
+       "cut_pct": [
+        1.151,
+        1.384
+       ],
+       "low": {
+        "trades": 124,
+        "mean_r": 0.29
+       },
+       "mid": {
+        "trades": 123,
+        "mean_r": 0.04
+       },
+       "high": {
+        "trades": 123,
+        "mean_r": 0.09
+       }
+      },
+      "together": {
+       "with": "SE01|1Hour|CSCO",
+       "corr": 0.11,
+       "lost_together_days": 75
+      }
      }
     }
    ]

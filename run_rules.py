@@ -222,12 +222,16 @@ def main():
                          "--test-from..this date, check on this date..end")
     ap.add_argument("--combos-file", default="",
                     help="file with sid|timeframe|symbol lines: run only these and save their trades (no Prophet)")
+    ap.add_argument("--est-spread", type=float, default=0.0,
+                    help="spread (share of price) for stocks without bid/ask history (default 0.0003): a stress test")
     ap.add_argument("--null-shift", type=int, default=0,
                     help="NULL TEST: every strategy's signals (and their stop/target arrays) are moved K bars later, so "
                          "they no longer match the prices they were computed from: no edge left. What passes is luck.")
     ap.add_argument("--test-from", default="",
                     help="YYYY-MM-DD: judge every (strategy, timeframe, instrument) directly from this date, no earlier selection period")
     args = ap.parse_args()
+    if args.est_spread:
+        C.EST_SPREAD["stock"] = args.est_spread
     global SPLIT, SPLIT_HE
     if args.test_from:
         SPLIT = pd.Timestamp(args.test_from, tz="UTC")

@@ -42,6 +42,7 @@ def bot_days(t, combos, risk, start, end, edge=1.0):
     d["r"] = d["r"] - (1 - edge) * d["r"].mean()
     d["exit_time"] = pd.to_datetime(d["exit_time"], utc=True)
     d["day"] = d["exit_time"].dt.tz_convert("Europe/Prague").dt.normalize().dt.tz_localize(None)
+    d["day"] = d["day"] + pd.offsets.BDay(0)        # weekend exits (reopen gaps) count on the next trading day
     d = d.sort_values("exit_time")
     usd = INIT * risk
     by = {k: (g["r"].to_numpy() * usd).tolist() for k, g in d.groupby("day")}

@@ -81,13 +81,15 @@ def main():
     ap.add_argument("--bots", default="1,2,3")
     ap.add_argument("--news", action="store_true",
                     help="apply FTMO restricted events minute by minute to the Standard trades (ftmo_calendar.apply_news)")
+    ap.add_argument("--legacy", action="store_true", help="old defaults (skip near limits, 10% total guard)")
     ap.add_argument("--graded", action="store_true", help="risk shrinks near the bot's limits instead of skipping")
     ap.add_argument("--guard", default="", help="bot limits daily,total, e.g. 0.045,0.09")
     ap.add_argument("--add", default="", help="file of candidate combos: each bot is also run with all of them added "
                                                "and with each one added alone (variant column)")
     args = ap.parse_args()
-    if args.graded:
-        F.GRADED = True
+    # the live bots' own rules by default (graded risk, 4.5% / 9% guards); --legacy for the old replay
+    F.GRADED = True if not args.legacy else bool(args.graded)
+    F.GUARD_DAILY, F.GUARD_TOTAL = (0.045, 0.09) if not args.legacy else (F.GUARD_DAILY, F.GUARD_TOTAL)
     if args.guard:
         F.GUARD_DAILY, F.GUARD_TOTAL = (float(x) for x in args.guard.split(","))
     start = pd.Timestamp(args.start, tz="UTC")
@@ -168,6 +170,9 @@ def main():
             print(json.dumps({k: v for k, v in row.items() if k not in ("margin", "exit_reasons")}, ensure_ascii=False))
             print("  margin:", json.dumps(row["margin"], ensure_ascii=False, default=str)[:600])
     Path(args.out).parent.mkdir(exist_ok=True)
+    settings = {**vars(args), "graded": F.GRADED, "guard_daily": F.GUARD_DAILY, "guard_total": F.GUARD_TOTAL}
+    for row in out:
+        row["settings"] = settings
     json.dump(out, open(args.out, "w", encoding="utf-8"), ensure_ascii=False, indent=1, default=str)
 
 

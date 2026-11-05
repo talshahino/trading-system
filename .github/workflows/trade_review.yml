@@ -1,12 +1,13 @@
 name: Live trade review
 
-# Every evening: every closed trade of every bot account (state files on branch `live`) gets its
+# Every morning at 08:00 Israel time (user, 05.11.2026; no notifications): every closed trade of every bot account (state files on branch `live`) gets its
 # what-ifs (target at 1 / 1.5 / 2 / 3 R, a nearer stop), accumulated per strategy next to the strategy's
-# backtest. Output: reports/trade_review/ (live_trades.csv, summary.json). Read-only for the bots.
+# backtest, and the strategy review of "ניהול בוטים" (risk_review.py -> risk.json). Read-only for the bots.
 
 on:
   schedule:
-    - cron: "37 22 * * 1-5"
+    # every morning 08:00 Israel time (06:00 UTC in winter, 05:00 in summer; GitHub may start it a little late)
+    - cron: "0 5,6 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -21,15 +22,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      - name: Only at 08:00-09:59 Israel time (the two UTC times cover summer and winter time)
+        id: gate
+        run: |
+          h=$(TZ=Asia/Jerusalem date +%H)
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$h" = "08" ] || [ "$h" = "09" ]; then echo "go=true" >> "$GITHUB_OUTPUT"; else echo "skip: $h:00 in Israel"; fi
       - uses: actions/checkout@v4
+        if: steps.gate.outputs.go == 'true'
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v5
+        if: steps.gate.outputs.go == 'true'
         with:
           python-version: "3.12"
       - name: Install
+        if: steps.gate.outputs.go == 'true'
         run: pip install pandas numpy pywebpush
       - name: Review
+        if: steps.gate.outputs.go == 'true'
         run: |
           mkdir -p /tmp/states
           for f in $(git ls-tree --name-only origin/live live/ | grep '_state.json$'); do
@@ -37,36 +47,12 @@ jobs:
           done
           python -u trade_review.py --states /tmp/states
       - name: Risk per strategy (recommendations for the app; nothing changes without the user's approval)
+        if: steps.gate.outputs.go == 'true'
         run: |
           git show origin/live:live/manager_state.json > /tmp/manager_state.json || echo '{}' > /tmp/manager_state.json
           python -u risk_review.py --states /tmp/states --manager /tmp/manager_state.json
-      - name: Tell the phone about new removal proposals (GATE.md rule 4; nothing is removed without approval)
-        env:
-          VAPID_PRIVATE_PEM: ${{ secrets.VAPID_PRIVATE_PEM }}
-        run: |
-          python3 - <<'PY'
-          import json, os, subprocess
-          r = json.load(open("reports/trade_review/removal.json"))
-          if not r.get("new"):
-              print("no new removal proposals"); raise SystemExit(0)
-          rows = {x["combo"]: x for x in r["combos"]}
-          msg = "\n".join(f"{c}: {rows[c]['cum_r']:+.1f}R ב־{rows[c]['trades']} עסקאות (קו {rows[c]['line_r']:.1f}R)" for c in r["new"])
-          msg += "\nלא הוסר כלום. לאישור: ניהול ← ניהול בוטים."
-          pem = os.environ.get("VAPID_PRIVATE_PEM") or ""
-          mgr = json.loads(subprocess.run(["git", "show", "origin/live:live/manager_state.json"], capture_output=True, text=True).stdout or "{}")
-          if not pem or not mgr.get("subs"):
-              print("no way to notify"); raise SystemExit(0)
-          open("vapid.pem", "w").write(pem)
-          from pywebpush import webpush
-          data = json.dumps({"title": "הצעה להסרת אסטרטגיה", "body": msg, "tag": "removal"}, ensure_ascii=False)
-          for s in mgr["subs"]:
-              try:
-                  webpush(subscription_info=s, data=data, vapid_private_key="vapid.pem",
-                          vapid_claims={"sub": "mailto:bots@trading-system.local"}, ttl=24 * 3600)
-              except Exception as e:
-                  print("push failed", e)
-          PY
       - name: Commit
+        if: steps.gate.outputs.go == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

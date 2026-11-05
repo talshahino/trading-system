@@ -26,7 +26,8 @@ For each combo, in each bot, from the demo record since 2026-11-01 (and from its
   together    the bot's other combo whose daily results move most with this one (backtest correlation)
   removal     GATE.md rule 4 (trade_review.removal_rule): "remove" = no new trades
 
-Recommendations are refreshed once a week (sample = the week's Monday); the numbers every evening. A declined
+Recommendations and numbers are worked out every morning at 08:00 Israel time from the data of that moment
+(sample = the Israel date; user, 05.11.2026: daily, no notifications). A declined
 recommendation comes back only in a later sample, and only if the record still calls for it.
 
   python risk_review.py --states <dir with *_state.json> [--manager <manager_state.json>] [--backtest 'glob']
@@ -325,9 +326,8 @@ def targets(stats, bot_mean, now):
     return {c: float(x) for c, x in zip(raw, v)}
 
 
-def week_of(ts):
-    d = ts.tz_convert(TZ).normalize()
-    return (d - pd.Timedelta(days=d.weekday())).strftime("%Y-%m-%d")
+def day_of(ts):
+    return ts.tz_convert(TZ).strftime("%Y-%m-%d")
 
 
 def decided_value(dec, kind, combo):
@@ -341,7 +341,7 @@ def main():
     ap.add_argument("--backtest", default=BT_DEFAULT)
     args = ap.parse_args()
     now_ts = pd.Timestamp.now(tz="UTC")
-    sample = week_of(now_ts)
+    sample = day_of(now_ts)
     mgr = json.loads(Path(args.manager).read_text(encoding="utf-8")) if args.manager and Path(args.manager).exists() else {}
     decided = mgr.get("risk") or {}
     prev = json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
@@ -387,13 +387,13 @@ def main():
                          "together": tog.get(c), "recs": [x for x in (dir_rec, ex_rec, hr_rec, mk_rec) if x]}
         tg = targets(stats, bot_mean, cur)
         old = {x["combo"]: x for x in ((prev.get("bots") or {}).get(bot) or {}).get("combos") or []}
-        # a new backtest (more trades) is new evidence: the week's recommendations are worked out again
+        # a second run the same day keeps that day's recommendations, unless the backtest changed
         same_week = prev.get("sample") == sample and (prev.get("backtest") or {}).get("trades") == len(bt)
         rows = []
         for c in cfg["combos"]:
             m_now = cur.get(c, 1.0)
             if same_week and c in old and "recs" in old[c]:
-                recs = [r for r in old[c]["recs"] if r["kind"] != "remove"]     # frozen for the week
+                recs = [r for r in old[c]["recs"] if r["kind"] != "remove"]     # kept for the day
             else:
                 recs = []
                 if m_now > 0 and c in tg:

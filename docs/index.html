@@ -1664,7 +1664,7 @@ function botsRender() {
   $("bpSeg").querySelectorAll("button").forEach(x => x.onclick = () => { BP.bot = x.dataset.b; botsRender(); });
   const pend = rows.flatMap(r => r.pend.map(x => [r, x]));
   const cell = r => {
-    if (!r.pend.length) return (r.recs.length ? '<span class="mut">נדחה השבוע</span>' : '<span class="mut">—</span>')
+    if (!r.pend.length) return (r.recs.length ? '<span class="mut">נדחה היום</span>' : '<span class="mut">—</span>')
       + (r.mult === 0 && owner ? `<div class="acts"><button class="btn ghost" data-back="${esc(r.combo)}">החזר</button></div>` : "");
     const first = r.pend[0];
     return recLine(first, b.risk_pct) + (r.pend.length > 1 ? `<br><small class="mut">ועוד ${r.pend.length - 1}</small>` : "")
@@ -1682,7 +1682,7 @@ function botsRender() {
       <div class="kpi"><small>סיכון הבוט</small><div class="num" style="font-weight:700;margin-top:4px">${pctTxt(b.risk_pct)}</div></div>
       <div class="kpi"><small>עסקאות בדמו</small><div class="num" style="font-weight:700;margin-top:4px">${b.trades}</div></div>
       <div class="kpi"><small>המלצות</small><div class="num" style="font-weight:700;margin-top:4px">${pend.length}</div></div></div>
-      <div class="foot" style="margin-top:10px;line-height:1.55">כל המלצה נשענת על רווחיות ויציבות בדמו, ונבדקת גם על הבקטסט בשני חצאים. הקש על שורה כדי לראות את המספרים. ההמלצות מתחדשות פעם בשבוע (דגימה מ־${esc(BP.doc.sample)}), הנתונים כל ערב (עודכן ${esc(upd)}). שום דבר לא משתנה בלי אישור.</div>
+      <div class="foot" style="margin-top:10px;line-height:1.55">כל המלצה נשענת על רווחיות ויציבות בדמו, ונבדקת גם על הבקטסט בשני חצאים. הקש על שורה כדי לראות את המספרים. הנתונים וההמלצות מתחדשים כל בוקר ב־08:00 (עודכן ${esc(upd)}). שום דבר לא משתנה בלי אישור.</div>
       ${owner && pend.length > 1 ? `<div class="row" style="margin-top:10px"><button class="btn ok" id="bpAll">אשר הכל (${pend.length})</button></div>` : ""}
       <div class="msg" id="bpMsg"></div></div>
     <div class="card" style="padding:0"><div class="tw"><table class="rt"><thead><tr><th>אסטרטגיה</th><th>הצלחה</th><th>עסקאות</th><th>סיכון</th><th>המלצה</th></tr></thead><tbody>${tr}</tbody></table></div></div>`;
@@ -1693,7 +1693,7 @@ function botsRender() {
     if (q.kind === "remove" && !(await askYes("להסיר את האסטרטגיה?", `${r.combo}: הבוט לא יפתח בה עסקאות חדשות. עסקה פתוחה נשארת עם הסטופ והיעד. אפשר להחזיר אותה בכל רגע.`, "כן, הסר"))) return;
     bpRun([recCall(bot, r.combo, q)], "אושר. העסקה הבאה שלה תיפתח לפי השינוי.", "bpMsg"); });
   $("bpBody").querySelectorAll("[data-no]").forEach(x => x.onclick = () => { const r = byC(x.dataset.no), q = r.pend[0];
-    bpRun([["/risk/reject", {bot, combo: r.combo, kind: q.kind, sample: BP.doc.sample}]], "נדחה. ההמלצה לא תחזור עד הדגימה הבאה.", "bpMsg"); });
+    bpRun([["/risk/reject", {bot, combo: r.combo, kind: q.kind, sample: BP.doc.sample}]], "נדחה. ההמלצה לא תחזור עד הבדיקה של מחר בבוקר.", "bpMsg"); });
   $("bpBody").querySelectorAll("[data-back]").forEach(x => x.onclick = () =>
     bpRun([["/risk/set", {bot, combo: x.dataset.back, kind: "mult", value: 1}]], "האסטרטגיה חזרה לסחור בסיכון של הבוט.", "bpMsg"));
   if ($("bpAll")) $("bpAll").onclick = async () => {
@@ -1714,7 +1714,7 @@ function detailRender() {
   const ex = d.exits || {}, dir = d.direction || {}, hr = d.hours || {}, mk = d.market || {}, tg = d.together;
   const recHtml = r.recs.length ? r.recs.map((q, i) => `<div class="li" style="align-items:flex-start"><div style="min-width:0"><b>${recLine(q, b.risk_pct)}</b>
       <div class="mut" style="font-size:12.5px;margin-top:4px;line-height:1.5">${whyHtml(q.why)}</div></div>
-      <div>${q.rejected ? '<span class="mut">נדחה השבוע</span>' : owner ? `<div class="acts" style="margin:0"><button class="btn ok" data-dok="${i}">אשר</button><button class="btn ghost" data-dno="${i}">דחה</button></div>` : ""}</div></div>`).join("")
+      <div>${q.rejected ? '<span class="mut">נדחה היום</span>' : owner ? `<div class="acts" style="margin:0"><button class="btn ok" data-dok="${i}">אשר</button><button class="btn ghost" data-dno="${i}">דחה</button></div>` : ""}</div></div>`).join("")
     : '<div class="li"><span class="mut">אין כרגע המלצה. האסטרטגיה עובדת כמו שהיא.</span></div>';
   const applied = Object.entries(r.applied);
   const chk = (ok, txt) => `<div class="li"><span class="k">${txt}</span><span class="v">${ok == null ? "—" : ok >= 0.99 ? '<span class="pos">✓</span>' : ok <= 0.01 ? '<span class="neg">✗</span>' : `<span class="warn num">${ok}</span>`}</span></div>`;
@@ -1750,7 +1750,7 @@ function detailRender() {
     if (q.kind === "remove" && !(await askYes("להסיר את האסטרטגיה?", "הבוט לא יפתח בה עסקאות חדשות. אפשר להחזיר אותה בכל רגע.", "כן, הסר"))) return;
     bpRun([recCall(bot, r.combo, q)], "אושר. העסקה הבאה שלה תיפתח לפי השינוי.", "bdMsg"); });
   $("bdBody").querySelectorAll("[data-dno]").forEach(x => x.onclick = () => { const q = r.recs[+x.dataset.dno];
-    bpRun([["/risk/reject", {bot, combo: r.combo, kind: q.kind, sample: BP.doc.sample}]], "נדחה עד הדגימה הבאה.", "bdMsg"); });
+    bpRun([["/risk/reject", {bot, combo: r.combo, kind: q.kind, sample: BP.doc.sample}]], "נדחה עד הבדיקה של מחר בבוקר.", "bdMsg"); });
   $("bdBody").querySelectorAll("[data-undo]").forEach(x => x.onclick = () =>
     bpRun([["/risk/set", {bot, combo: r.combo, kind: x.dataset.undo, value: null}]], "בוטל. חזר להתנהגות הרגילה.", "bdMsg"));
 }

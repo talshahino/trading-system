@@ -1165,6 +1165,9 @@ def dashboard_state(ai, pos, ds_bal, now):
         "positions": positions_doc(pos), "live_url": TUN.URL["url"],
         "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:],   # the bot's log stays on the computer only
         "closed": closed_doc()[-500:], "lows": STATE.get("lows", {}), "label": BOT, "withdrawals": withdrawals_doc(),
+        # typical spread per symbol as this broker quotes it (median of what the bot saw): checks the backtest's
+        # cost estimate for the shares that have no bid/ask history
+        "spreads": {k: {"median": float(np.median(q)), "n": len(q)} for k, q in SPREADS.items() if q},
         "started": (STATE.get("equity") or [[now.isoformat()]])[0][0],
     }
 

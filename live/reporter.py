@@ -58,19 +58,28 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
         return f"notification failed: {e}"
 
 
+PUSH_STAT = {"ok": 0, "fail": 0, "no_key": 0, "last_err": None, "last_t": None}   # published in the bot's state
+
+
 def _to_app(title, message, urgent):
     """Started by the manager: the same notification also goes to the app (Web Push)."""
     import os
     key = os.environ.get("MANAGER_KEY")
+    PUSH_STAT["last_t"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     if not key:
+        PUSH_STAT["no_key"] += 1
         return
     try:
         r = requests.post("http://127.0.0.1:8760/push", timeout=8, headers={"X-Local": key},
                           json={"title": title, "body": message, "urgent": urgent})
-        if r.status_code != 200:
-            print(f"app notification refused by the manager: {r.status_code} {r.text[:120]}", flush=True)
+        if r.status_code == 200:
+            PUSH_STAT["ok"] += 1
+        else:
+            PUSH_STAT["fail"] += 1
+            PUSH_STAT["last_err"] = f"{r.status_code} {r.text[:80]}"
     except Exception as e:  # noqa: BLE001
-        print(f"app notification not delivered to the manager: {e}", flush=True)
+        PUSH_STAT["fail"] += 1
+        PUSH_STAT["last_err"] = str(e)[:120]
 
 
 def notify_action(title, message, label, url, body, priority=4):

@@ -593,7 +593,22 @@ def update_check():
         time.sleep(300)
 
 
+INSTALL_LOCK = threading.Lock()
+
+
 def install_update():
+    # one install at a time: a second approval (notification button + app) must not unpack into the same
+    # staging folder while the first one is checking it
+    if not INSTALL_LOCK.acquire(blocking=False):
+        log("update approval ignored: an install is already running")
+        return
+    try:
+        _install_update()
+    finally:
+        INSTALL_LOCK.release()
+
+
+def _install_update():
     sha = UPDATE["sha"]
     if not sha:
         raise ValueError("אין עדכון שמחכה")
@@ -861,6 +876,8 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValueError("אין עדכון שמחכה")
                 if len(want) < 7 or not UPDATE["sha"].startswith(want):
                     raise ValueError("בינתיים הגיעה גרסה חדשה יותר. פתח את העדכון שוב ואשר אותה.")
+                if INSTALL_LOCK.locked():
+                    return self._send(200, {"ok": True, "already": True})
                 threading.Thread(target=install_update, daemon=True).start()
                 return self._send(200, {"ok": True})
             return self._send(404, {"error": "not found"})

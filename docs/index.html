@@ -1660,7 +1660,7 @@ const recCall = (bot, combo, r) => ["/risk/set", {bot, combo, kind: r.kind === "
 function botsRender() {
   const bot = BP.bot, b = BP.doc.bots[bot], rows = bpRows(bot), owner = getRole() !== "viewer";
   const bots = Object.keys(BP.doc.bots);
-  $("bpSeg").innerHTML = bots.map(x => `<button data-b="${esc(x)}" aria-selected="${x === bot}">${esc(NAMES[x] || x)}</button>`).join("");
+  $("bpSeg").innerHTML = bots.map(x => `<button data-b="${esc(x)}" aria-selected="${x === bot}">בוט ${esc(x.replace(/^bot/, ""))}</button>`).join("");
   $("bpSeg").querySelectorAll("button").forEach(x => x.onclick = () => { BP.bot = x.dataset.b; botsRender(); });
   const pend = rows.flatMap(r => r.pend.map(x => [r, x]));
   const cell = r => {
@@ -1697,7 +1697,7 @@ function botsRender() {
   $("bpBody").querySelectorAll("[data-back]").forEach(x => x.onclick = () =>
     bpRun([["/risk/set", {bot, combo: x.dataset.back, kind: "mult", value: 1}]], "האסטרטגיה חזרה לסחור בסיכון של הבוט.", "bpMsg"));
   if ($("bpAll")) $("bpAll").onclick = async () => {
-    if (!(await askYes("לאשר את כל ההמלצות?", `${pend.length} המלצות ב${NAMES[bot] || bot}` + (pend.some(([, q]) => q.kind === "remove") ? ", כולל הסרה של אסטרטגיה." : "."), "כן, אשר הכל"))) return;
+    if (!(await askYes("לאשר את כל ההמלצות?", `${pend.length} המלצות בבוט ${bot.replace(/^bot/, "")}` + (pend.some(([, q]) => q.kind === "remove") ? ", כולל הסרה של אסטרטגיה." : "."), "כן, אשר הכל"))) return;
     bpRun(pend.map(([r, q]) => recCall(bot, r.combo, q)), `אושרו ${pend.length} המלצות.`, "bpMsg");
   };
 }

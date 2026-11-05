@@ -48,7 +48,9 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "reports" / "trade_review" / "risk.json"
 HOLDOUT_FROM = TR.HOLDOUT_FROM
 TEST_FROM, SPLIT = "2025-04-30", "2026-01-01"
-BT_DEFAULT = "reports/*_tv_run674/combo_trades_*.csv.gz"     # every live combo, live rules, with MFE/MAE
+# every live combo, live rules, with MFE/MAE (run 674); until it is there, the bots' own backtests (MFE/MAE only in part)
+BT_DEFAULT = "reports/*_tv_run674/combo_trades_*.csv.gz"
+BT_FALLBACK = ("reports/2026-11-04_tv_run6*/combo_trades_*.csv.gz", "reports/2026-11-04_bots_compare_run14/news_trades.csv.gz")
 K_TRADES, FULL_EDGE_R, SPAN, UNSTABLE = 20, 0.4, 0.5, 0.25
 LO, HI, STEP = 0.5, 1.5, 0.05
 TP_F, SL_F = (0.5, 0.6, 0.7, 0.8, 0.9), (0.6, 0.75, 0.9)
@@ -88,8 +90,11 @@ def demo_trades(states):
 
 
 def backtest(pattern):
+    files = glob.glob(str(ROOT / pattern))
+    if not files and pattern == BT_DEFAULT:
+        files = [f for p in BT_FALLBACK for f in glob.glob(str(ROOT / p))]
     parts = []
-    for f in glob.glob(str(ROOT / pattern)):
+    for f in files:
         try:
             parts.append(pd.read_csv(f))
         except Exception:  # noqa: BLE001
@@ -107,7 +112,8 @@ def backtest(pattern):
     d["mfe_r"] = d["mfe_r"].clip(lower=0)
     d["mae_r"] = d["mae_r"].clip(lower=0)
     d["net"] = d["r"]
-    return d.drop_duplicates(["combo", "time"]).reset_index(drop=True)
+    d = d.sort_values("mfe_r", na_position="last")           # a copy with MFE/MAE wins over one without
+    return d.drop_duplicates(["combo", "time"]).sort_values("time").reset_index(drop=True)
 
 
 def halves(d):
@@ -381,7 +387,8 @@ def main():
                          "together": tog.get(c), "recs": [x for x in (dir_rec, ex_rec, hr_rec, mk_rec) if x]}
         tg = targets(stats, bot_mean, cur)
         old = {x["combo"]: x for x in ((prev.get("bots") or {}).get(bot) or {}).get("combos") or []}
-        same_week = prev.get("sample") == sample
+        # a new backtest (more trades) is new evidence: the week's recommendations are worked out again
+        same_week = prev.get("sample") == sample and (prev.get("backtest") or {}).get("trades") == len(bt)
         rows = []
         for c in cfg["combos"]:
             m_now = cur.get(c, 1.0)

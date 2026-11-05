@@ -372,6 +372,31 @@ def news_near(sym, minutes=5):
     return any(c in cur and abs((t - now).total_seconds()) <= minutes * 60 for t, c in _NEWS["ev"])
 
 
+# ---------------- per-combo risk (approved by the user in the app: "ניהול בוטים") ----------------
+RISK_FILE = ROOT / "live" / "risk.json"      # written only by the manager after the user approves; never in git
+_RM = {"mtime": None, "mult": {}}
+
+
+def bot_base():
+    return os.environ.get("BOT_BASE") or str(MON["name"]).split("_")[0]
+
+
+def risk_mult(combo):
+    """The combo's risk multiplier: 1 = the bot's risk; 0.5..1.5 after an approved change; 0 = no new trades
+    (removal approved). Unknown or unreadable -> 1, so a missing file never changes anything."""
+    try:
+        m = RISK_FILE.stat().st_mtime
+        if m != _RM["mtime"]:
+            d = json.loads(RISK_FILE.read_text(encoding="utf-8"))
+            _RM.update(mtime=m, mult={k: float(v) for k, v in ((d.get(bot_base()) or {}).get("mult") or {}).items()})
+    except FileNotFoundError:
+        _RM.update(mtime=None, mult={})
+    except Exception as e:  # noqa: BLE001
+        log(f"risk.json unreadable, keeping the last values: {e}")
+    v = _RM["mult"].get(combo, 1.0)
+    return v if v == 0 or 0.5 <= v <= 1.5 else 1.0
+
+
 # ---------------- account ----------------
 GUARD_DAILY, GUARD_TOTAL = 0.045, 0.09          # the bot's own loss limits (FTMO's are 5% / 10%)
 GRADE_SHARE, GRADE_MIN = 0.5, 0.10              # near a limit: risk = half the room left; skip under 10% of normal
@@ -424,17 +449,18 @@ class Account:
             tot += loss if loss is not None else max(STATE["risk"].get(str(p.ticket), 0.0), self.risk_usd)
         return tot
 
-    def allowed_risk(self):
+    def allowed_risk(self, mult=1.0):
         """The risk (dollars) a new trade may take now. The bot's limits: 4.5% below the day's starting
         balance and 9% below the account size, counting every open position as if it hit its stop.
-        Far from a limit: the normal risk. Near it: half of the room that is left, so the stops can never
-        cross the limit; under 10% of the normal risk the trade is skipped."""
+        Far from a limit: the normal risk (times the combo's approved multiplier). Near it: half of the room
+        that is left, so the stops can never cross the limit; under 10% of the normal risk the trade is skipped."""
+        base = self.risk_usd * mult
         ai = mt5.account_info()
         ds = self.day_start_balance()
         left = ai.balance - self.open_risk()
         room = min(left - self.initial * (1 - GUARD_TOTAL), left - (ds - self.initial * GUARD_DAILY))
-        r = min(self.risk_usd, GRADE_SHARE * room)
-        return r if r >= GRADE_MIN * self.risk_usd else 0.0
+        r = min(base, GRADE_SHARE * room)
+        return r if r >= GRADE_MIN * base else 0.0
 
     def guard(self):
         """Emergency stop: floating daily loss reaches 4.5% -> close everything until Prague midnight."""
@@ -545,8 +571,9 @@ def send(req, what):
     return r
 
 
-def open_trade(combo, sym, d, sl, tp, entry_time, risk=None):
-    risk = ACC.risk_usd if risk is None else risk
+def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0):
+    risk = ACC.risk_usd * mult if risk is None else risk
+    base = ACC.risk_usd * mult
     name = mt5_name(sym)
     tick = mt5.symbol_info_tick(name)
     px = tick.ask if d > 0 else tick.bid
@@ -582,7 +609,8 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None):
     if r is not None and not ACC.dry:
         REP.notify(f"{BOT}: עסקה נפתחה", f"{pretty(combo)}\n{'קנייה' if d > 0 else 'מכירה'} {lots} @ {px:g}\n"
                    f"סטופ {sl:.5g} · יעד {'—' if not (tp == tp and tp is not None) else f'{tp:.5g}'} · הפסד בסטופ ${loss:,.0f}"
-                   + (f"\nסיכון מוקטן: קרוב לגבול ההפסד (רגיל ${ACC.risk_usd:,.0f})" if risk < ACC.risk_usd - 0.5 else ""),
+                   + (f"\nסיכון לאסטרטגיה: ×{mult:g} מהרגיל" if abs(mult - 1) > 1e-9 else "")
+                   + (f"\nסיכון מוקטן: קרוב לגבול ההפסד (רגיל ${base:,.0f})" if risk < base - 0.5 else ""),
                    tags=["chart_with_upwards_trend" if d > 0 else "chart_with_downwards_trend"])
     if r is not None:
         STATE["entry"][combo] = str(entry_time)
@@ -766,11 +794,15 @@ def step(combo, sid, tf, sym, off):
     if not CLOSE_BREAKS and news_near(sym):
         log(f"skip {combo}: high-impact news within 5 minutes")
         return
-    risk = ACC.allowed_risk()
+    mult = risk_mult(combo)
+    if mult <= 0:
+        log(f"skip {combo}: removed by the user (no new trades)")
+        return
+    risk = ACC.allowed_risk(mult)
     if risk <= 0:
         log(f"skip {combo}: too close to the daily 4.5% / total 9% limit")
         return
-    open_trade(combo, sym, int(t["dir"]), float(t["stop_px"]), float(t["target_px"]), t["time"], risk)
+    open_trade(combo, sym, int(t["dir"]), float(t["stop_px"]), float(t["target_px"]), t["time"], risk, mult)
 
 
 # ---------------- monitoring: notifications + dashboard ----------------
@@ -1169,6 +1201,7 @@ def dashboard_state(ai, pos, ds_bal, now):
         # cost estimate for the shares that have no bid/ask history
         "spreads": {k: {"median": float(np.median(q)), "n": len(q)} for k, q in SPREADS.items() if q},
         "app_push": REP.PUSH_STAT, "managed": MANAGED,
+        "risk_mult": {c: risk_mult(c) for c in MON["combos"] if risk_mult(c) != 1.0},
         "started": (STATE.get("equity") or [[now.isoformat()]])[0][0],
     }
 

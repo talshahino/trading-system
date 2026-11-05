@@ -27,6 +27,7 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import secrets
 import shutil
 import subprocess
@@ -245,6 +246,56 @@ def push(title, body, urgent=False, action=None, tag=None, extra=None):
         save()
 
 
+# ---------------- per-combo risk ("ניהול בוטים" in the app) ----------------
+RISK_FILE = LIVE / "risk.json"      # {bot: {"mult": {combo: m}, "rejected": {combo: sample}, "log": [...]}}; read by the bots
+RISK_LOCK = threading.Lock()
+
+
+def risk_doc():
+    try:
+        return json.loads(RISK_FILE.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def risk_change(bot, combo, mult=None, reject=None):
+    """The user's decision on one recommendation. mult: 1 = the bot's risk, 0.5..1.5, 0 = no new trades
+    (removal). reject: the sample id whose recommendation for this combo is declined."""
+    if not re.fullmatch(r"bot\d{1,2}", str(bot)):
+        raise ValueError("אין בוט כזה")
+    f = LIVE / "bots" / f"{bot}.json"
+    if not f.exists() or combo not in json.loads(f.read_text(encoding="utf-8"))["combos"]:
+        raise ValueError("האסטרטגיה לא נמצאת בבוט הזה")
+    with RISK_LOCK:
+        d = risk_doc()
+        b = d.setdefault(bot, {"mult": {}, "rejected": {}, "log": []})
+        now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        if reject is not None:
+            b["rejected"][combo] = str(reject)[:20]
+            b["log"].append({"t": now, "combo": combo, "rejected": str(reject)[:20]})
+        else:
+            try:
+                m = round(float(mult), 2)
+            except (TypeError, ValueError):
+                raise ValueError("מכפיל לא תקין") from None
+            if not (m == 0 or 0.5 <= m <= 1.5):
+                raise ValueError("מכפיל לא תקין")
+            old = b["mult"].get(combo, 1.0)
+            if m == 1.0:
+                b["mult"].pop(combo, None)
+            else:
+                b["mult"][combo] = m
+            b["rejected"].pop(combo, None)
+            b["log"].append({"t": now, "combo": combo, "from": old, "to": m})
+        b["log"] = b["log"][-200:]
+        tmp = RISK_FILE.with_suffix(".tmp")
+        tmp.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+        os.replace(tmp, RISK_FILE)
+    log(f"risk {bot} {combo}: " + (f"recommendation declined ({reject})" if reject is not None else f"x{old:g} -> x{m:g}"))
+    threading.Thread(target=push_manager_state, daemon=True).start()
+    return d[bot]
+
+
 # ---------------- bots ----------------
 def accounts():
     return CFG["accounts"]
@@ -284,7 +335,7 @@ def start_bot(a):
         return
     sync_config(a)
     env = os.environ.copy()
-    env.update(MANAGED="1", BOT_PORT=str(a["port"]), MANAGER_KEY=CFG["local_key"], BOT_NICKNAME=a.get("nickname") or "")
+    env.update(MANAGED="1", BOT_BASE=str(a.get("bot") or a["name"]).split("_")[0], BOT_PORT=str(a["port"]), MANAGER_KEY=CFG["local_key"], BOT_NICKNAME=a.get("nickname") or "")
     if a.get("password"):
         env.update(MT5_LOGIN=str(a["login"]), MT5_SERVER=a["server"], MT5_PASSWORD=decrypt(a["password"]))
     py = sys.executable.replace("pythonw.exe", "python.exe")
@@ -670,7 +721,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, {"ok": True, "accounts": public_accounts(), "version": (UPD.local() or "")[:7],
                                     "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"]} if UPDATE["sha"] else None,
                                     "pin_set": bool(CFG.get("pin_hash")), "viewer_set": bool(CFG.get("viewer_hash")), "push_devices": len(CFG.get("subs", [])),
-                                    "watchdog_push": WATCH["ok"]})
+                                    "watchdog_push": WATCH["ok"],
+                                    "risk": {b: {"mult": v.get("mult", {}), "rejected": v.get("rejected", {})} for b, v in risk_doc().items()}})
         if path == "/vapid":
             return self._send(200, {"key": vapid_public()})
         if len(parts) == 3 and parts[0] == "bot" and parts[2] in ("live", "state", "candles"):
@@ -870,6 +922,12 @@ class Handler(BaseHTTPRequestHandler):
                 lines = f.read_text(encoding="utf-8", errors="replace").splitlines()[-400:] if f.exists() else []
                 lines = [l for l in lines if "password" not in l.lower()]
                 return self._send(200, {"ok": True, "lines": lines})
+            if path == "/risk/set":
+                b = risk_change(d.get("bot"), str(d.get("combo") or ""), mult=d.get("mult"))
+                return self._send(200, {"ok": True, "mult": b["mult"]})
+            if path == "/risk/reject":
+                b = risk_change(d.get("bot"), str(d.get("combo") or ""), reject=d.get("sample") or "")
+                return self._send(200, {"ok": True, "rejected": b["rejected"]})
             if path == "/update/approve":
                 want = str(d.get("sha") or "")
                 if not UPDATE["sha"]:
@@ -956,7 +1014,9 @@ def push_manager_state():
     encrypted, as a GitHub secret) nobody can send anything to them."""
     state = {"url_enc": seal_url(TUN.URL["url"]), "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
              "accounts": public_accounts(with_run=False),
-             "subs": CFG.get("subs", []), "push_log": list(PUSH_LOG), "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
+             "subs": CFG.get("subs", []), "push_log": list(PUSH_LOG),
+             "risk": {b: {"mult": v.get("mult", {}), "rejected": v.get("rejected", {})} for b, v in risk_doc().items()},
+             "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
     err = REP.push_state("manager", state)
     if err:
         log(err)

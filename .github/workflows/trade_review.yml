@@ -36,6 +36,10 @@ jobs:
             git show "origin/live:$f" > "/tmp/states/$(basename "$f")"
           done
           python -u trade_review.py --states /tmp/states
+      - name: Risk per strategy (recommendations for the app; nothing changes without the user's approval)
+        run: |
+          git show origin/live:live/manager_state.json > /tmp/manager_state.json || echo '{}' > /tmp/manager_state.json
+          python -u risk_review.py --states /tmp/states --manager /tmp/manager_state.json
       - name: Tell the phone about new removal proposals (GATE.md rule 4; nothing is removed without approval)
         env:
           VAPID_PRIVATE_PEM: ${{ secrets.VAPID_PRIVATE_PEM }}
@@ -47,7 +51,7 @@ jobs:
               raise SystemExit("no new removal proposals")
           rows = {x["combo"]: x for x in r["combos"]}
           msg = "\n".join(f"{c}: {rows[c]['cum_r']:+.1f}R ב־{rows[c]['trades']} עסקאות (קו {rows[c]['line_r']:.1f}R)" for c in r["new"])
-          msg += "\nלא הוסר כלום. להסרה: אשר ל־Claude."
+          msg += "\nלא הוסר כלום. לאישור: ניהול ← ניהול בוטים."
           pem = os.environ.get("VAPID_PRIVATE_PEM") or ""
           mgr = json.loads(subprocess.run(["git", "show", "origin/live:live/manager_state.json"], capture_output=True, text=True).stdout or "{}")
           if not pem or not mgr.get("subs"):

@@ -374,27 +374,56 @@ def news_near(sym, minutes=5):
 
 # ---------------- per-combo risk (approved by the user in the app: "ניהול בוטים") ----------------
 RISK_FILE = ROOT / "live" / "risk.json"      # written only by the manager after the user approves; never in git
-_RM = {"mtime": None, "mult": {}}
+_RM = {"mtime": None, "bot": {}}
 
 
 def bot_base():
     return os.environ.get("BOT_BASE") or str(MON["name"]).split("_")[0]
 
 
-def risk_mult(combo):
-    """The combo's risk multiplier: 1 = the bot's risk; 0.5..1.5 after an approved change; 0 = no new trades
-    (removal approved). Unknown or unreadable -> 1, so a missing file never changes anything."""
+def _risk_section():
     try:
         m = RISK_FILE.stat().st_mtime
         if m != _RM["mtime"]:
             d = json.loads(RISK_FILE.read_text(encoding="utf-8"))
-            _RM.update(mtime=m, mult={k: float(v) for k, v in ((d.get(bot_base()) or {}).get("mult") or {}).items()})
+            _RM.update(mtime=m, bot=d.get(bot_base()) or {})
     except FileNotFoundError:
-        _RM.update(mtime=None, mult={})
+        _RM.update(mtime=None, bot={})
     except Exception as e:  # noqa: BLE001
         log(f"risk.json unreadable, keeping the last values: {e}")
-    v = _RM["mult"].get(combo, 1.0)
+    return _RM["bot"]
+
+
+def risk_mult(combo):
+    """The combo's risk multiplier: 1 = the bot's risk; 0.5..1.5 after an approved change; 0 = no new trades
+    (removal approved). Unknown or unreadable -> 1, so a missing file never changes anything."""
+    try:
+        v = float((_risk_section().get("mult") or {}).get(combo, 1.0))
+    except (TypeError, ValueError):
+        return 1.0
     return v if v == 0 or 0.5 <= v <= 1.5 else 1.0
+
+
+def combo_rules(combo):
+    """The other approved changes of a combo (each checked; anything odd is ignored):
+    dir 1/-1 = buy only / sell only; tp f = target at f x its distance; sl f = stop at f x its distance (same
+    dollar risk); hours [a, b) = no new trades in that Israel-time block; vol {max_pct|min_pct} = no new trades
+    when the stop is farther / nearer than that % of the price."""
+    s, out = _risk_section(), {}
+    try:
+        if (v := (s.get("dir") or {}).get(combo)) in (1, -1):
+            out["dir"] = v
+        if (v := (s.get("tp") or {}).get(combo)) is not None and 0.3 <= float(v) < 1:
+            out["tp"] = float(v)
+        if (v := (s.get("sl") or {}).get(combo)) is not None and 0.5 <= float(v) < 1:
+            out["sl"] = float(v)
+        if (v := (s.get("hours") or {}).get(combo)) and len(v) == 2 and 0 <= int(v[0]) < int(v[1]) <= 24:
+            out["hours"] = [int(v[0]), int(v[1])]
+        if (v := (s.get("vol") or {}).get(combo)) and isinstance(v, dict) and ({"max_pct", "min_pct"} & set(v)):
+            out["vol"] = {k: float(x) for k, x in v.items() if k in ("max_pct", "min_pct")}
+    except (TypeError, ValueError):
+        pass
+    return out
 
 
 # ---------------- account ----------------
@@ -571,15 +600,21 @@ def send(req, what):
     return r
 
 
-def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0):
+def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=None):
     risk = ACC.risk_usd * mult if risk is None else risk
     base = ACC.risk_usd * mult
+    rules = rules or {}
     name = mt5_name(sym)
     tick = mt5.symbol_info_tick(name)
     px = tick.ask if d > 0 else tick.bid
     if d * (px - sl) <= 0 or (tp == tp and tp is not None and d * (tp - px) <= 0):
         log(f"skip {combo}: price {px} already beyond stop/target")
         return
+    # approved exit changes: nearer stop (the lots follow it: the same dollar risk), nearer target
+    if rules.get("sl"):
+        sl = px - d * rules["sl"] * abs(px - sl)
+    if rules.get("tp") and tp == tp and tp is not None:
+        tp = px + d * rules["tp"] * abs(tp - px)
     sl = round(sl, mt5.symbol_info(name).digits)          # size the trade for the stop exactly as it will be sent
     lots = lots_for(sym, px, sl, risk)
     if lots <= 0:
@@ -610,6 +645,7 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0):
         REP.notify(f"{BOT}: עסקה נפתחה", f"{pretty(combo)}\n{'קנייה' if d > 0 else 'מכירה'} {lots} @ {px:g}\n"
                    f"סטופ {sl:.5g} · יעד {'—' if not (tp == tp and tp is not None) else f'{tp:.5g}'} · הפסד בסטופ ${loss:,.0f}"
                    + (f"\nסיכון לאסטרטגיה: ×{mult:g} מהרגיל" if abs(mult - 1) > 1e-9 else "")
+                   + (f"\nסטופ ×{rules['sl']:g}" if rules.get("sl") else "") + (f" · יעד ×{rules['tp']:g}" if rules.get("tp") else "")
                    + (f"\nסיכון מוקטן: קרוב לגבול ההפסד (רגיל ${base:,.0f})" if risk < base - 0.5 else ""),
                    tags=["chart_with_upwards_trend" if d > 0 else "chart_with_downwards_trend"])
     if r is not None:
@@ -794,15 +830,30 @@ def step(combo, sid, tf, sym, off):
     if not CLOSE_BREAKS and news_near(sym):
         log(f"skip {combo}: high-impact news within 5 minutes")
         return
-    mult = risk_mult(combo)
+    mult, rules = risk_mult(combo), combo_rules(combo)
+    why = None
     if mult <= 0:
-        log(f"skip {combo}: removed by the user (no new trades)")
+        why = "removed by the user (no new trades)"
+    elif rules.get("dir") and int(t["dir"]) != rules["dir"]:
+        why = f"{'buy' if rules['dir'] > 0 else 'sell'} only (approved by the user)"
+    elif rules.get("hours") and rules["hours"][0] <= pd.Timestamp.now(tz="Asia/Jerusalem").hour < rules["hours"][1]:
+        why = f"no trades {rules['hours'][0]:02d}:00-{rules['hours'][1]:02d}:00 Israel (approved by the user)"
+    elif rules.get("vol"):
+        e0 = float(t["entry_px"]) if t.get("entry_px") == t.get("entry_px") and t.get("entry_px") else None
+        sp = abs(e0 - float(t["stop_px"])) / e0 * 100 if e0 else None
+        v = rules["vol"]
+        if sp is not None and (("max_pct" in v and sp > v["max_pct"]) or ("min_pct" in v and sp <= v["min_pct"])):
+            why = f"volatility filter: stop {sp:.3f}% of the price (approved by the user)"
+    if why:
+        log(f"skip {combo}: {why}")
+        STATE["entry"][combo] = str(t["time"])         # handled: this entry is not taken
+        save_state()
         return
     risk = ACC.allowed_risk(mult)
     if risk <= 0:
         log(f"skip {combo}: too close to the daily 4.5% / total 9% limit")
         return
-    open_trade(combo, sym, int(t["dir"]), float(t["stop_px"]), float(t["target_px"]), t["time"], risk, mult)
+    open_trade(combo, sym, int(t["dir"]), float(t["stop_px"]), float(t["target_px"]), t["time"], risk, mult, rules)
 
 
 # ---------------- monitoring: notifications + dashboard ----------------
@@ -1202,6 +1253,7 @@ def dashboard_state(ai, pos, ds_bal, now):
         "spreads": {k: {"median": float(np.median(q)), "n": len(q)} for k, q in SPREADS.items() if q},
         "app_push": REP.PUSH_STAT, "managed": MANAGED,
         "risk_mult": {c: risk_mult(c) for c in MON["combos"] if risk_mult(c) != 1.0},
+        "combo_rules": {c: r for c in MON["combos"] if (r := combo_rules(c))},
         "started": (STATE.get("equity") or [[now.isoformat()]])[0][0],
     }
 

@@ -282,6 +282,8 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .page .ph{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .page .ph b{font-size:20px;font-weight:800}
 #botsPg{z-index:50}
+#bdPg{z-index:52}
+.rt tr[data-row]{cursor:pointer}
 .rt td,.rt th{padding:9px 4px;vertical-align:middle;font-size:12.5px}
 .rt td:first-child,.rt th:first-child{padding-inline-start:10px}
 .rt td:last-child,.rt th:last-child{padding-inline-end:8px}
@@ -459,6 +461,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 <div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
 <div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>ניהול בוטים</b></div>
   <div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
+<div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
 <div class="page" id="chartPg" style="z-index:36"><div class="ph"><button class="back" id="cpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="cpTitle"></b></div>
   <div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div></div>
 <div class="ask" id="ask"><div class="box"><h4 id="askT">האם אתה בטוח?</h4><p id="askB"></p><div class="row"><button class="btn danger" id="askYes" style="background:#D0453A;color:#fff">כן, סגור</button><button class="btn ghost" id="askNo">לא</button></div></div></div>
@@ -1600,81 +1603,156 @@ $("allStats").onclick = e => { const r = e.target.closest("[data-open]"); if (!r
 /* slide to close: drag the knob from right to left to the end, then confirm */
 const ARROW_L = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6M20 6l-6 6 6 6" opacity=".55"/></svg>';
 const slider = (key, text, all, can) => `<div class="slide ${all ? "all" : ""} ${can ? "" : "off"}" data-slide="${key}"><span>${text}</span><div class="rail"><div class="fill"></div></div><div class="knob">${ARROW_L}</div></div>`;
-// ---------------- ניהול בוטים: strategies, demo record, risk recommendations (approved one by one) ----------------
+// ---------------- ניהול בוטים: strategies, demo record, recommendations backed by numbers (approved one by one) ----------------
 const RISK_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/trade_review/risk.json?t=${Math.floor(Date.now() / 60000)}`;
-const BP = {doc: null, bot: null, busy: false};
+const BP = {doc: null, bot: null, busy: false, combo: null};
 const pctTxt = v => v == null ? "—" : (+v).toLocaleString("he-IL", {maximumFractionDigits: 3}) + "%";
-function bpDecided(bot) {   // the user's decisions: live from the manager, else its last published copy
+const rTxt = v => v == null ? "—" : (v > 0 ? "+" : "") + (+v).toFixed(2) + "R";
+const rNum = v => `<span class="num">${rTxt(v)}</span>`;
+const whyHtml = t => esc(t || "").replace(/([+\-]?\d[\d.,:]*(?:R|%)?(?:-\d[\d.:]*)?)/g, '<span class="num">$1</span>');
+const KIND_NAME = {mult: "סיכון", remove: "הסרה", dir: "כיוון", tp: "יעד", sl: "סטופ", hours: "שעות", vol: "תנודתיות"};
+function bpDecided(bot) {
   const r = (mgrInfo && mgrInfo.risk) || (mgrDoc && mgrDoc.risk) || {};
-  return r[bot] || {mult: {}, rejected: {}};
+  return r[bot] || {};
 }
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 async function botsOpen() {
-  $("botsPg").classList.add("on"); $("botsPg").scrollTop = 0;
+  $("botsPg").classList.add("on");
   if (!BP.doc) $("bpBody").innerHTML = '<div class="empty">טוען…</div>';
   try { const r = await fetch(RISK_URL(), {cache: "no-store"}); if (r.ok) BP.doc = await r.json(); } catch (e) {}
   if (!BP.doc) { $("bpBody").innerHTML = '<div class="empty">אין עדיין נתונים. הם מתעדכנים כל ערב.</div>'; return; }
   const bots = Object.keys(BP.doc.bots);
   if (!BP.bot || !bots.includes(BP.bot)) BP.bot = bots[0];
-  $("bpSeg").innerHTML = bots.map(b => `<button data-b="${esc(b)}" aria-selected="${b === BP.bot}">${esc(NAMES[b] || b)}</button>`).join("");
-  $("bpSeg").querySelectorAll("button").forEach(x => x.onclick = () => { BP.bot = x.dataset.b; botsOpen(); });
   botsRender();
 }
 function bpRows(bot) {
-  const b = BP.doc.bots[bot], dec = bpDecided(bot), base = b.risk_pct;
+  const b = BP.doc.bots[bot], dec = bpDecided(bot), base = b.risk_pct, rej = dec.rejected || {};
   return b.combos.map(c => {
     const mult = dec.mult && c.combo in dec.mult ? +dec.mult[c.combo] : 1;
-    let rec = c.rec && Math.abs(c.rec.mult - mult) > 1e-9 ? c.rec : null;
-    const rejected = rec && (rec.rejected || (dec.rejected || {})[c.combo] === BP.doc.sample);
-    return {...c, mult, risk: base * mult, rec, rejected};
-  }).sort((x, y) => (!!(y.rec && !y.rejected) - !!(x.rec && !x.rejected)) || (y.trades - x.trades));
+    const applied = {}; ["dir", "tp", "sl", "hours", "vol"].forEach(k => { if (dec[k] && c.combo in dec[k]) applied[k] = dec[k][c.combo]; });
+    const recs = (c.recs || []).map(r => ({...r, risk: r.kind === "mult" ? base * r.value : null,
+        rejected: r.kind !== "remove" && (r.rejected || rej[`${r.kind}:${c.combo}`] === BP.doc.sample)}))
+      .filter(r => r.kind === "mult" ? Math.abs(r.value - mult) > 1e-9 : r.kind === "remove" ? mult !== 0 : !same(applied[r.kind], r.value));
+    const pend = recs.filter(r => !r.rejected);
+    return {...c, mult, risk: base * mult, applied, recs, pend};
+  }).sort((x, y) => (y.pend.length - x.pend.length) || (y.trades - x.trades));
 }
+function recLine(r, base) {
+  if (r.kind === "remove") return '<span class="rec rm">להסיר</span>';
+  if (r.kind === "mult") return `<span class="rec ${r.value > 1 ? "up" : "down"}">${r.value > 1 ? "▲" : "▼"} סיכון ל־<span class="num">${pctTxt(base * r.value)}</span></span>`;
+  return `<span class="rec down">${esc(r.label || KIND_NAME[r.kind])}</span>`;
+}
+function appliedTxt(k, v) {
+  return k === "dir" ? (v > 0 ? "רק קנייה" : "רק מכירה") : k === "tp" ? `יעד ×${v}` : k === "sl" ? `סטופ ×${v}`
+    : k === "hours" ? `בלי ${String(v[0]).padStart(2, "0")}:00-${String(v[1]).padStart(2, "0")}:00` : k === "vol" ? (v.max_pct ? "בלי תנודתיות גבוהה" : "בלי תנודתיות נמוכה") : "";
+}
+async function bpRun(list, label, msgId) {
+  if (BP.busy) return; BP.busy = true;
+  document.querySelectorAll("#bpBody button,#bdBody button").forEach(x => x.disabled = true);
+  let ok = true, text = label;
+  try {
+    for (const [path, body] of list) { const j = await act(path, body); if (j.risk && mgrInfo) mgrInfo.risk = j.risk; }
+  } catch (e) { ok = false; text = e.message; }
+  BP.busy = false; botsRender(); if (BP.combo) detailRender();
+  note(msgId, text, ok);
+}
+const recCall = (bot, combo, r) => ["/risk/set", {bot, combo, kind: r.kind === "remove" ? "mult" : r.kind, value: r.value}];
 function botsRender() {
   const bot = BP.bot, b = BP.doc.bots[bot], rows = bpRows(bot), owner = getRole() !== "viewer";
-  const pend = rows.filter(r => r.rec && !r.rejected);
-  const recTxt = r => !r.rec ? '<span class="mut">—</span>'
-    : r.rec.action === "remove" ? `<span class="rec rm">להסיר</span><br><small class="mut">${esc(r.rec.why || "")}</small>`
-    : `<span class="rec ${r.rec.action}">${r.rec.action === "up" ? "▲ להעלות" : "▼ להוריד"}</span><br><small class="mut">ל־<span class="num">${pctTxt(b.risk_pct * r.rec.mult)}</span> (×${r.rec.mult})</small>`;
-  const actTxt = r => !owner ? "" : r.rec && !r.rejected
-    ? `<div class="acts"><button class="btn ok" data-ok="${esc(r.combo)}">אשר</button><button class="btn ghost" data-no="${esc(r.combo)}">דחה</button></div>`
-    : r.rejected ? '<div class="mut" style="margin-top:4px">נדחה השבוע</div>'
-    : r.mult === 0 ? `<div class="acts"><button class="btn ghost" data-back="${esc(r.combo)}">החזר</button></div>` : "";
-  const tr = rows.map(r => { const p = parts(r.combo);
-    return `<tr class="${r.rec && !r.rejected ? "has" : ""}"><td class="cb"><b>${esc(p.y)}</b><small>${esc(p.s)} · ${esc(p.t)}</small></td>
+  const bots = Object.keys(BP.doc.bots);
+  $("bpSeg").innerHTML = bots.map(x => `<button data-b="${esc(x)}" aria-selected="${x === bot}">${esc(NAMES[x] || x)}</button>`).join("");
+  $("bpSeg").querySelectorAll("button").forEach(x => x.onclick = () => { BP.bot = x.dataset.b; botsRender(); });
+  const pend = rows.flatMap(r => r.pend.map(x => [r, x]));
+  const cell = r => {
+    if (!r.pend.length) return (r.recs.length ? '<span class="mut">נדחה השבוע</span>' : '<span class="mut">—</span>')
+      + (r.mult === 0 && owner ? `<div class="acts"><button class="btn ghost" data-back="${esc(r.combo)}">החזר</button></div>` : "");
+    const first = r.pend[0];
+    return recLine(first, b.risk_pct) + (r.pend.length > 1 ? `<br><small class="mut">ועוד ${r.pend.length - 1}</small>` : "")
+      + (owner ? (r.pend.length === 1 ? `<div class="acts"><button class="btn ok" data-ok="${esc(r.combo)}">אשר</button><button class="btn ghost" data-no="${esc(r.combo)}">דחה</button></div>`
+        : `<div class="acts"><button class="btn" data-open="${esc(r.combo)}">פרטים</button></div>`) : "");
+  };
+  const tr = rows.map(r => { const p = parts(r.combo); const ap = Object.entries(r.applied).map(([k, v]) => appliedTxt(k, v)).join(" · ");
+    return `<tr class="${r.pend.length ? "has" : ""}" data-row="${esc(r.combo)}"><td class="cb"><b>${esc(p.y)}</b><small>${esc(p.s)} · ${esc(p.t)}</small>${ap ? `<small class="vps" style="display:block;color:var(--vps)">${esc(ap)}</small>` : ""}</td>
       <td class="num">${r.win_pct == null ? "—" : Math.round(r.win_pct) + "%"}</td><td class="num">${r.trades}</td>
       <td>${r.mult === 0 ? '<span class="pill neg">הוסרה</span>' : `<span class="num">${pctTxt(r.risk)}</span>${r.mult !== 1 ? `<br><small class="mut num">×${r.mult}</small>` : ""}`}</td>
-      <td class="rc">${recTxt(r)}${actTxt(r)}</td></tr>`; }).join("");
+      <td class="rc">${cell(r)}</td></tr>`; }).join("");
   const upd = new Date(BP.doc.updated).toLocaleString("he-IL", {day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit"});
   $("bpBody").innerHTML = `
-    <div class="card"><div class="kpis" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+    <div class="card"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
       <div class="kpi"><small>סיכון הבוט</small><div class="num" style="font-weight:700;margin-top:4px">${pctTxt(b.risk_pct)}</div></div>
       <div class="kpi"><small>עסקאות בדמו</small><div class="num" style="font-weight:700;margin-top:4px">${b.trades}</div></div>
       <div class="kpi"><small>המלצות</small><div class="num" style="font-weight:700;margin-top:4px">${pend.length}</div></div></div>
-      <div class="foot" style="margin-top:10px;line-height:1.55">כל אסטרטגיה מתחילה בסיכון של הבוט. מי שמרוויחה יותר מממוצע הבוט מקבלת קצת יותר, ומי שפחות מקבלת קצת פחות: בין חצי לפי אחד וחצי, וככל שיש יותר עסקאות השינוי גדול יותר. ההמלצות מתחדשות פעם בשבוע (דגימה מ־${esc(BP.doc.sample)}), הנתונים כל ערב (עודכן ${esc(upd)}). שום דבר לא משתנה בלי אישור.</div>
+      <div class="foot" style="margin-top:10px;line-height:1.55">כל המלצה נשענת על רווחיות ויציבות בדמו, ונבדקת גם על הבקטסט בשני חצאים. הקש על שורה כדי לראות את המספרים. ההמלצות מתחדשות פעם בשבוע (דגימה מ־${esc(BP.doc.sample)}), הנתונים כל ערב (עודכן ${esc(upd)}). שום דבר לא משתנה בלי אישור.</div>
       ${owner && pend.length > 1 ? `<div class="row" style="margin-top:10px"><button class="btn ok" id="bpAll">אשר הכל (${pend.length})</button></div>` : ""}
       <div class="msg" id="bpMsg"></div></div>
     <div class="card" style="padding:0"><div class="tw"><table class="rt"><thead><tr><th>אסטרטגיה</th><th>הצלחה</th><th>עסקאות</th><th>סיכון</th><th>המלצה</th></tr></thead><tbody>${tr}</tbody></table></div></div>`;
-  const run = async (list, label) => {
-    if (BP.busy) return; BP.busy = true;
-    $("bpBody").querySelectorAll("button").forEach(x => x.disabled = true);
-    try {
-      for (const [path, body] of list) await act(path, body);
-      note("bpMsg", label, true);
-      await findMgr();
-    } catch (e) { note("bpMsg", e.message, false); }
-    BP.busy = false; const m = $("bpMsg").textContent, ok = $("bpMsg").className; botsRender(); $("bpMsg").textContent = m; $("bpMsg").className = ok;
-  };
   const byC = c => rows.find(r => r.combo === c);
-  $("bpBody").querySelectorAll("[data-ok]").forEach(x => x.onclick = async () => { const r = byC(x.dataset.ok);
-    if (r.rec.action === "remove" && !(await askYes("להסיר את האסטרטגיה?", `${r.combo}: הבוט לא יפתח בה עסקאות חדשות. עסקה פתוחה נשארת עם הסטופ והיעד. אפשר להחזיר אותה בכל רגע.`, "כן, הסר"))) return;
-    run([["/risk/set", {bot, combo: r.combo, mult: r.rec.mult}]], r.rec.action === "remove" ? "האסטרטגיה הוסרה. הבוט לא יפתח בה עסקאות חדשות." : "אושר. העסקה הבאה שלה תיפתח בסיכון החדש."); });
-  $("bpBody").querySelectorAll("[data-no]").forEach(x => x.onclick = () =>
-    run([["/risk/reject", {bot, combo: x.dataset.no, sample: BP.doc.sample}]], "נדחה. ההמלצה לא תחזור עד הדגימה הבאה."));
+  $("bpBody").querySelectorAll("tr[data-row]").forEach(x => x.onclick = e => { if (!e.target.closest("button")) detailOpen(x.dataset.row); });
+  $("bpBody").querySelectorAll("[data-open]").forEach(x => x.onclick = () => detailOpen(x.dataset.open));
+  $("bpBody").querySelectorAll("[data-ok]").forEach(x => x.onclick = async () => { const r = byC(x.dataset.ok), q = r.pend[0];
+    if (q.kind === "remove" && !(await askYes("להסיר את האסטרטגיה?", `${r.combo}: הבוט לא יפתח בה עסקאות חדשות. עסקה פתוחה נשארת עם הסטופ והיעד. אפשר להחזיר אותה בכל רגע.`, "כן, הסר"))) return;
+    bpRun([recCall(bot, r.combo, q)], "אושר. העסקה הבאה שלה תיפתח לפי השינוי.", "bpMsg"); });
+  $("bpBody").querySelectorAll("[data-no]").forEach(x => x.onclick = () => { const r = byC(x.dataset.no), q = r.pend[0];
+    bpRun([["/risk/reject", {bot, combo: r.combo, kind: q.kind, sample: BP.doc.sample}]], "נדחה. ההמלצה לא תחזור עד הדגימה הבאה.", "bpMsg"); });
   $("bpBody").querySelectorAll("[data-back]").forEach(x => x.onclick = () =>
-    run([["/risk/set", {bot, combo: x.dataset.back, mult: 1}]], "האסטרטגיה חזרה לסחור בסיכון של הבוט."));
+    bpRun([["/risk/set", {bot, combo: x.dataset.back, kind: "mult", value: 1}]], "האסטרטגיה חזרה לסחור בסיכון של הבוט.", "bpMsg"));
   if ($("bpAll")) $("bpAll").onclick = async () => {
-    if (pend.some(r => r.rec.action === "remove") && !(await askYes("לאשר את כל ההמלצות?", "יש ביניהן גם הסרה של אסטרטגיה.", "כן, אשר הכל"))) return;
-    run(pend.map(r => ["/risk/set", {bot, combo: r.combo, mult: r.rec.mult}]), `אושרו ${pend.length} המלצות.`);
+    if (!(await askYes("לאשר את כל ההמלצות?", `${pend.length} המלצות ב${NAMES[bot] || bot}` + (pend.some(([, q]) => q.kind === "remove") ? ", כולל הסרה של אסטרטגיה." : "."), "כן, אשר הכל"))) return;
+    bpRun(pend.map(([r, q]) => recCall(bot, r.combo, q)), `אושרו ${pend.length} המלצות.`, "bpMsg");
   };
+}
+function detailOpen(combo) { BP.combo = combo; $("bdPg").classList.add("on"); $("bdPg").scrollTop = 0; detailRender(); }
+function detailRender() {
+  const bot = BP.bot, b = BP.doc.bots[bot], r = bpRows(bot).find(x => x.combo === BP.combo), owner = getRole() !== "viewer";
+  if (!r) return;
+  const d = r.detail || {}, p = parts(r.combo);
+  $("bdTitle").textContent = `${p.y} · ${p.s} · ${p.t}`;
+  const li = (k, v) => `<div class="li"><span class="k">${k}</span><span class="v">${v}</span></div>`;
+  const two = (k, a, z) => `<tr><td>${k}</td><td class="num">${a}</td><td class="num">${z}</td></tr>`;
+  const pr = d.profit || {}, pd_ = pr.demo || {}, pb = pr.backtest || {};
+  const st = d.stability || {}, sd = st.demo, sb = st.backtest;
+  const ex = d.exits || {}, dir = d.direction || {}, hr = d.hours || {}, mk = d.market || {}, tg = d.together;
+  const recHtml = r.recs.length ? r.recs.map((q, i) => `<div class="li" style="align-items:flex-start"><div style="min-width:0"><b>${recLine(q, b.risk_pct)}</b>
+      <div class="mut" style="font-size:12.5px;margin-top:4px;line-height:1.5">${whyHtml(q.why)}</div></div>
+      <div>${q.rejected ? '<span class="mut">נדחה השבוע</span>' : owner ? `<div class="acts" style="margin:0"><button class="btn ok" data-dok="${i}">אשר</button><button class="btn ghost" data-dno="${i}">דחה</button></div>` : ""}</div></div>`).join("")
+    : '<div class="li"><span class="mut">אין כרגע המלצה. האסטרטגיה עובדת כמו שהיא.</span></div>';
+  const applied = Object.entries(r.applied);
+  const chk = (ok, txt) => `<div class="li"><span class="k">${txt}</span><span class="v">${ok == null ? "—" : ok >= 0.99 ? '<span class="pos">✓</span>' : ok <= 0.01 ? '<span class="neg">✗</span>' : `<span class="warn num">${ok}</span>`}</span></div>`;
+  const blocks = Object.entries(hr);
+  $("bdBody").innerHTML = `
+    <div class="h4">המלצות</div><div class="lst">${recHtml}</div><div class="msg" id="bdMsg" style="margin:-8px 2px 8px;min-height:0"></div>
+    ${applied.length ? `<div class="h4">שינויים שאישרת</div><div class="lst">${applied.map(([k, v]) => `<div class="li"><span>${esc(appliedTxt(k, v))}</span>${owner ? `<button class="btn ghost" data-undo="${k}">בטל</button>` : ""}</div>`).join("")}</div>` : ""}
+    <div class="h4">רווחיות</div><div class="card" style="padding:0"><div class="tw"><table><thead><tr><th></th><th>דמו</th><th>בקטסט</th></tr></thead><tbody>
+      ${two("עסקאות", pd_.trades ?? "—", pb.trades ?? "—")}${two("הצלחה", pd_.win_pct == null ? "—" : Math.round(pd_.win_pct) + "%", pb.win_pct == null ? "—" : Math.round(pb.win_pct) + "%")}
+      ${two("רווח ממוצע לעסקה", rTxt(pd_.mean_r), rTxt(pb.mean_r))}${two("סך הכל", rTxt(pd_.sum_r), rTxt(pb.sum_r))}${two("רווחים / הפסדים", pd_.pf ?? "—", pb.pf ?? "—")}
+      ${two("ממוצע הבוט בדמו", rTxt(b.mean_r), "")}</tbody></table></div></div>
+    <div class="h4">יציבות <span class="pill ${st.score >= 0.67 ? "pos" : st.score >= 0.34 ? "warn" : "neg"}">${st.score ?? "—"}</span></div>
+    <div class="lst">${(() => { const x = sd || sb; const src = sd ? "דמו" : "בקטסט"; return x ? `
+      ${chk(x.checks[0], `לא תלויה בעסקה אחת (בלי הטובה ביותר: ${rNum(x.without_best_r)})`)}
+      ${chk(x.checks[1], `ההפסד הגדול ${rNum(-x.max_loss_r)} מול רווח ממוצע ${rNum(x.avg_win_r)}`)}
+      ${chk(x.checks[2], `הירידה העמוקה ${rNum(-x.drawdown_r)} מתוך כל הרווחים`)}
+      ${li("פיזור התוצאות", `<span class="num">${x.sd_r}R</span>`)}${li("מקור", src + (sd && sb ? `, בקטסט ${sb.score}` : ""))}` : li("מעט מדי עסקאות", "—"); })()}</div>
+    <div class="h4">יעד וסטופ: ניצול התנועה</div><div class="lst">
+      ${li("הגיעו ליעד", ex.reach_pct == null ? "—" : `<span class="num">${ex.reach_pct}%</span>`)}
+      ${li("הגיעו ל־90% מהיעד ואז הפסידו", ex.near_miss_pct == null ? "—" : `<span class="num">${ex.near_miss_pct}%</span>`)}
+      ${li("טיפוסית הגיעו עד", ex.mfe_of_target_median_pct == null ? "—" : `<span class="num">${ex.mfe_of_target_median_pct}%</span> מהיעד`)}
+      ${li("עסקה מרוויחה ירדה נגדנו עד (90%)", ex.mae_winners_p90_r == null ? "—" : `<span class="num">${ex.mae_winners_p90_r}R</span>`)}
+      ${li("עסקאות בבדיקה", `<span class="num">${ex.bt_trades ?? 0}</span> בקטסט · <span class="num">${ex.demo_trades ?? 0}</span> דמו`)}</div>
+    <div class="h4">כיוון</div><div class="card" style="padding:0"><table><thead><tr><th></th><th>קנייה</th><th>מכירה</th></tr></thead><tbody>
+      ${["demo", "backtest"].map(k => dir[k] ? two(k === "demo" ? "דמו" : "בקטסט", `${rTxt(dir[k].buy.mean_r)} · ${dir[k].buy.trades}`, `${rTxt(dir[k].sell.mean_r)} · ${dir[k].sell.trades}`) : "").join("")}</tbody></table></div>
+    ${blocks.length ? `<div class="h4">שעות (שעון ישראל, בקטסט)</div><div class="card" style="padding:0"><table><thead><tr><th>שעות</th><th>עסקאות</th><th>ממוצע</th></tr></thead><tbody>
+      ${blocks.map(([k, v]) => `<tr><td class="num">${k}</td><td class="num">${v.trades}</td><td class="num ${v.mean_r < 0 ? "neg" : "pos"}">${rTxt(v.mean_r)}</td></tr>`).join("")}</tbody></table></div>` : ""}
+    ${mk.low ? `<div class="h4">מצב שוק: תנודתיות (בקטסט)</div><div class="card" style="padding:0"><table><thead><tr><th>תנודתיות</th><th>עסקאות</th><th>ממוצע</th></tr></thead><tbody>
+      ${[["low", "נמוכה"], ["mid", "בינונית"], ["high", "גבוהה"]].map(([k, n]) => `<tr><td>${n}</td><td class="num">${mk[k].trades}</td><td class="num ${mk[k].mean_r < 0 ? "neg" : "pos"}">${rTxt(mk[k].mean_r)}</td></tr>`).join("")}</tbody></table></div>` : ""}
+    <div class="h4">תלות באסטרטגיות אחרות בבוט</div><div class="lst">${tg ? li(`הכי קשורה: ${esc(parts(tg.with).y)} · ${esc(parts(tg.with).s)}`, `<span class="num ${tg.corr >= 0.5 ? "neg" : ""}">${tg.corr}</span>`) + li("ימים שבהם שתיהן הפסידו", `<span class="num">${tg.lost_together_days}</span>`) : li("אין מספיק נתונים", "—")}</div>
+    <div class="foot" style="line-height:1.55">R = הסיכון בעסקה. בקטסט: ${esc(BP.doc.backtest ? BP.doc.backtest.from + " עד " + BP.doc.backtest.to : "")}, בכללים של הבוט החי. דמו: מ־${esc(BP.doc.since)}.</div>`;
+  $("bdBody").querySelectorAll("[data-dok]").forEach(x => x.onclick = async () => { const q = r.recs[+x.dataset.dok];
+    if (q.kind === "remove" && !(await askYes("להסיר את האסטרטגיה?", "הבוט לא יפתח בה עסקאות חדשות. אפשר להחזיר אותה בכל רגע.", "כן, הסר"))) return;
+    bpRun([recCall(bot, r.combo, q)], "אושר. העסקה הבאה שלה תיפתח לפי השינוי.", "bdMsg"); });
+  $("bdBody").querySelectorAll("[data-dno]").forEach(x => x.onclick = () => { const q = r.recs[+x.dataset.dno];
+    bpRun([["/risk/reject", {bot, combo: r.combo, kind: q.kind, sample: BP.doc.sample}]], "נדחה עד הדגימה הבאה.", "bdMsg"); });
+  $("bdBody").querySelectorAll("[data-undo]").forEach(x => x.onclick = () =>
+    bpRun([["/risk/set", {bot, combo: r.combo, kind: x.dataset.undo, value: null}]], "בוטל. חזר להתנהגות הרגילה.", "bdMsg"));
 }
 async function askYes(title, body, yes) {
   const b = $("askYes"), t = b.textContent; b.textContent = yes;
@@ -1682,6 +1760,7 @@ async function askYes(title, body, yes) {
 }
 $("botsBtn").onclick = () => botsOpen();
 $("bpBack").onclick = () => $("botsPg").classList.remove("on");
+$("bdBack").onclick = () => { $("bdPg").classList.remove("on"); BP.combo = null; };
 
 function ask(title, body) {
   return new Promise(res => { $("askT").textContent = title; $("askB").textContent = body; $("ask").classList.add("on");

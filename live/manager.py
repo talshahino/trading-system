@@ -258,42 +258,74 @@ def risk_doc():
         return {}
 
 
-def risk_change(bot, combo, mult=None, reject=None):
-    """The user's decision on one recommendation. mult: 1 = the bot's risk, 0.5..1.5, 0 = no new trades
-    (removal). reject: the sample id whose recommendation for this combo is declined."""
+KINDS = ("mult", "dir", "tp", "sl", "hours", "vol")
+
+
+def _risk_value(kind, v):
+    """Checks one approved value; None = back to the bot's normal behaviour for that kind."""
+    try:
+        if kind == "mult":
+            m = round(float(v), 2)
+            if m == 0 or 0.5 <= m <= 1.5:
+                return None if m == 1.0 else m
+        elif v is None:
+            return None
+        elif kind == "dir" and int(v) in (1, -1):
+            return int(v)
+        elif kind == "tp" and 0.3 <= float(v) < 1:
+            return round(float(v), 2)
+        elif kind == "sl" and 0.5 <= float(v) < 1:
+            return round(float(v), 2)
+        elif kind == "hours" and len(v) == 2 and 0 <= int(v[0]) < int(v[1]) <= 24:
+            return [int(v[0]), int(v[1])]
+        elif kind == "vol" and isinstance(v, dict) and len(v) == 1 and next(iter(v)) in ("max_pct", "min_pct") and 0 < float(next(iter(v.values()))) < 100:
+            return {k: float(x) for k, x in v.items()}
+    except (TypeError, ValueError):
+        pass
+    raise ValueError("ערך לא תקין")
+
+
+def risk_change(bot, combo, kind="mult", value=None, reject=None):
+    """The user's decision on one recommendation. kind: mult (1 = the bot's risk, 0.5..1.5, 0 = no new trades),
+    dir, tp, sl, hours, vol (None = undo). reject: the sample id whose recommendation of this kind is declined."""
     if not re.fullmatch(r"bot\d{1,2}", str(bot)):
         raise ValueError("אין בוט כזה")
+    if kind not in KINDS and not (reject is not None and kind == "remove"):
+        raise ValueError("סוג המלצה לא מוכר")
     f = LIVE / "bots" / f"{bot}.json"
     if not f.exists() or combo not in json.loads(f.read_text(encoding="utf-8"))["combos"]:
         raise ValueError("האסטרטגיה לא נמצאת בבוט הזה")
+    val = None if reject is not None else _risk_value(kind, value)
     with RISK_LOCK:
         d = risk_doc()
-        b = d.setdefault(bot, {"mult": {}, "rejected": {}, "log": []})
+        b = d.setdefault(bot, {})
+        for k in KINDS + ("rejected",):
+            b.setdefault(k, {})
+        b.setdefault("log", [])
         now = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         if reject is not None:
-            b["rejected"][combo] = str(reject)[:20]
-            b["log"].append({"t": now, "combo": combo, "rejected": str(reject)[:20]})
+            b["rejected"][f"{kind}:{combo}"] = str(reject)[:20]
+            b["log"].append({"t": now, "combo": combo, "kind": kind, "rejected": str(reject)[:20]})
         else:
-            try:
-                m = round(float(mult), 2)
-            except (TypeError, ValueError):
-                raise ValueError("מכפיל לא תקין") from None
-            if not (m == 0 or 0.5 <= m <= 1.5):
-                raise ValueError("מכפיל לא תקין")
-            old = b["mult"].get(combo, 1.0)
-            if m == 1.0:
-                b["mult"].pop(combo, None)
+            old = b[kind].get(combo)
+            if val is None:
+                b[kind].pop(combo, None)
             else:
-                b["mult"][combo] = m
-            b["rejected"].pop(combo, None)
-            b["log"].append({"t": now, "combo": combo, "from": old, "to": m})
-        b["log"] = b["log"][-200:]
+                b[kind][combo] = val
+            for k in [k for k in b["rejected"] if k.endswith(":" + combo) and k.split(":")[0] in (kind, "remove" if kind == "mult" else kind)]:
+                b["rejected"].pop(k)
+            b["log"].append({"t": now, "combo": combo, "kind": kind, "from": old, "to": val})
+        b["log"] = b["log"][-300:]
         tmp = RISK_FILE.with_suffix(".tmp")
         tmp.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
         os.replace(tmp, RISK_FILE)
-    log(f"risk {bot} {combo}: " + (f"recommendation declined ({reject})" if reject is not None else f"x{old:g} -> x{m:g}"))
+    log(f"risk {bot} {combo} {kind}: " + (f"recommendation declined ({reject})" if reject is not None else f"{old} -> {val}"))
     threading.Thread(target=push_manager_state, daemon=True).start()
     return d[bot]
+
+
+def risk_public():
+    return {b: {k: v.get(k, {}) for k in KINDS + ("rejected",)} for b, v in risk_doc().items()}
 
 
 # ---------------- bots ----------------
@@ -722,7 +754,7 @@ class Handler(BaseHTTPRequestHandler):
                                     "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"]} if UPDATE["sha"] else None,
                                     "pin_set": bool(CFG.get("pin_hash")), "viewer_set": bool(CFG.get("viewer_hash")), "push_devices": len(CFG.get("subs", [])),
                                     "watchdog_push": WATCH["ok"],
-                                    "risk": {b: {"mult": v.get("mult", {}), "rejected": v.get("rejected", {})} for b, v in risk_doc().items()}})
+                                    "risk": risk_public()})
         if path == "/vapid":
             return self._send(200, {"key": vapid_public()})
         if len(parts) == 3 and parts[0] == "bot" and parts[2] in ("live", "state", "candles"):
@@ -923,11 +955,12 @@ class Handler(BaseHTTPRequestHandler):
                 lines = [l for l in lines if "password" not in l.lower()]
                 return self._send(200, {"ok": True, "lines": lines})
             if path == "/risk/set":
-                b = risk_change(d.get("bot"), str(d.get("combo") or ""), mult=d.get("mult"))
-                return self._send(200, {"ok": True, "mult": b["mult"]})
+                kind = str(d.get("kind") or "mult")
+                risk_change(d.get("bot"), str(d.get("combo") or ""), kind, d.get("value", d.get("mult")))
+                return self._send(200, {"ok": True, "risk": risk_public()})
             if path == "/risk/reject":
-                b = risk_change(d.get("bot"), str(d.get("combo") or ""), reject=d.get("sample") or "")
-                return self._send(200, {"ok": True, "rejected": b["rejected"]})
+                risk_change(d.get("bot"), str(d.get("combo") or ""), str(d.get("kind") or "mult"), reject=d.get("sample") or "")
+                return self._send(200, {"ok": True, "risk": risk_public()})
             if path == "/update/approve":
                 want = str(d.get("sha") or "")
                 if not UPDATE["sha"]:
@@ -1015,7 +1048,7 @@ def push_manager_state():
     state = {"url_enc": seal_url(TUN.URL["url"]), "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
              "accounts": public_accounts(with_run=False),
              "subs": CFG.get("subs", []), "push_log": list(PUSH_LOG),
-             "risk": {b: {"mult": v.get("mult", {}), "rejected": v.get("rejected", {})} for b, v in risk_doc().items()},
+             "risk": risk_public(),
              "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
     err = REP.push_state("manager", state)
     if err:

@@ -65,10 +65,12 @@ def _to_app(title, message, urgent):
     if not key:
         return
     try:
-        requests.post("http://127.0.0.1:8760/push", timeout=5, headers={"X-Local": key},
-                      json={"title": title, "body": message, "urgent": urgent})
-    except Exception:  # noqa: BLE001
-        pass
+        r = requests.post("http://127.0.0.1:8760/push", timeout=8, headers={"X-Local": key},
+                          json={"title": title, "body": message, "urgent": urgent})
+        if r.status_code != 200:
+            print(f"app notification refused by the manager: {r.status_code} {r.text[:120]}", flush=True)
+    except Exception as e:  # noqa: BLE001
+        print(f"app notification not delivered to the manager: {e}", flush=True)
 
 
 def notify_action(title, message, label, url, body, priority=4):

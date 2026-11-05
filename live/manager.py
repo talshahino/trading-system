@@ -198,6 +198,17 @@ def vapid_public():
     return base64.urlsafe_b64encode(raw).decode().rstrip("=")
 
 
+PUSH_LOG = deque(maxlen=40)
+
+
+def _kind(title):
+    for k, w in (("open", "נפתחה"), ("close", "נסגר"), ("stop", "סטופ"), ("report", "דוח"), ("update", "עדכון"),
+                 ("emergency", "חירום"), ("error", "שגיאה"), ("fail", "נכשל")):
+        if w in title:
+            return k
+    return "other"
+
+
 def push(title, body, urgent=False, action=None, tag=None, extra=None):
     """Notification to every phone/computer that turned notifications on in the app."""
     subs = list(CFG.get("subs", []))
@@ -210,19 +221,24 @@ def push(title, body, urgent=False, action=None, tag=None, extra=None):
         return
     quiet = REP.quiet_now()                  # quiet hours: everything silent, no exceptions (the user's rule)
     data = json.dumps({"title": title, "body": body, "silent": quiet, "action": action, "tag": tag, **(extra or {})}, ensure_ascii=False)
-    dead = []
+    dead, res = [], []
     for s in subs:
         try:
             webpush(subscription_info=s, data=data, vapid_private_key=str(VAPID_FILE),
                     vapid_claims={"sub": "mailto:bots@trading-system.local"}, ttl=24 * 3600)
+            res.append("ok")
         except WebPushException as e:
             code = getattr(e.response, "status_code", None)
+            res.append(str(code or "err"))
             if code in (404, 410):
                 dead.append(s)
             else:
                 log(f"push failed: {e}")
         except Exception as e:  # noqa: BLE001
+            res.append("err")
             log(f"push failed: {e}")
+    # delivery record without any content (published): when, which kind, and each device's answer
+    PUSH_LOG.append({"t": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "kind": _kind(title), "silent": quiet, "to": res})
     if dead:
         with LOCK:
             CFG["subs"] = [s for s in CFG["subs"] if s not in dead]
@@ -923,7 +939,7 @@ def push_manager_state():
     encrypted, as a GitHub secret) nobody can send anything to them."""
     state = {"url_enc": seal_url(TUN.URL["url"]), "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
              "accounts": public_accounts(with_run=False),
-             "subs": CFG.get("subs", []), "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
+             "subs": CFG.get("subs", []), "push_log": list(PUSH_LOG), "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
     err = REP.push_state("manager", state)
     if err:
         log(err)

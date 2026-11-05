@@ -48,14 +48,14 @@ jobs:
           import json, os, subprocess
           r = json.load(open("reports/trade_review/removal.json"))
           if not r.get("new"):
-              raise SystemExit("no new removal proposals")
+              print("no new removal proposals"); raise SystemExit(0)
           rows = {x["combo"]: x for x in r["combos"]}
           msg = "\n".join(f"{c}: {rows[c]['cum_r']:+.1f}R ב־{rows[c]['trades']} עסקאות (קו {rows[c]['line_r']:.1f}R)" for c in r["new"])
           msg += "\nלא הוסר כלום. לאישור: ניהול ← ניהול בוטים."
           pem = os.environ.get("VAPID_PRIVATE_PEM") or ""
           mgr = json.loads(subprocess.run(["git", "show", "origin/live:live/manager_state.json"], capture_output=True, text=True).stdout or "{}")
           if not pem or not mgr.get("subs"):
-              raise SystemExit("no way to notify")
+              print("no way to notify"); raise SystemExit(0)
           open("vapid.pem", "w").write(pem)
           from pywebpush import webpush
           data = json.dumps({"title": "הצעה להסרת אסטרטגיה", "body": msg, "tag": "removal"}, ensure_ascii=False)

@@ -204,8 +204,8 @@ def main():
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
                   "rules": "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
                            "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1"})
-    trades = {t["id"]: t for t in state.get("trades", [])}
-    acc = state.get("account") or {"initial": INITIAL, "risk_pct": round(RISK * 100, 3), "ledger": [], "breached": None}
+    trades = {t["id"]: t for t in (state.get("watch") or [])}
+    acc = state.get("vacct") or {"initial": INITIAL, "risk_pct": round(RISK * 100, 3), "ledger": [], "breached": None}
 
     def balance():
         return acc["initial"] + sum(x["pnl"] for x in acc["ledger"])
@@ -308,7 +308,7 @@ def main():
         trades = {t["id"]: t for t in closed + live_ + cancelled}
         rs = [t["r"] for t in closed if t.get("r") is not None]
         state.update({"updated_utc": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
-                      "trades": sorted(trades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
+                      "watch": sorted(trades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
                       "summary": {"closed": len(rs), "sum_r": round(float(np.sum(rs)), 2) if rs else 0.0,
                                   "avg_r": round(float(np.mean(rs)), 3) if rs else None, "win_pct": round(100 * float(np.mean(np.array(rs) > 0)), 1) if rs else None,
                                   "open": sum(t["status"] == "open" for t in live_), "pending": sum(t["status"] == "pending" for t in live_)},
@@ -322,7 +322,37 @@ def main():
             curve.append([x["exit_time"], round(run, 2)])
         acc.update({"balance": round(bal, 2), "equity": round(eq, 2), "profit": round(bal - acc["initial"], 2),
                     "today": round(day_pnl(today), 2), "curve": curve[-300:]})
-        state["account"] = acc
+        # the same fields as a real bot's state, so the app shows this account like the demo accounts
+        now_iso = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+        ec = acc.setdefault("eq_curve", [])
+        if not ec or ec[-1][1] != round(bal, 2) or ec[-1][2] != round(eq, 2) or now_iso[:15] != ec[-1][0][:15]:
+            ec.append([now_iso, round(bal, 2), round(eq, 2)])
+            del ec[:-4000]
+        acc.setdefault("started", now_iso)
+        pip = lambda n: 0.01 if n.endswith("JPY") else 0.0001 if (len(n) == 6 and n.isalpha()) else 1.0  # noqa: E731
+        combo = lambda n: f"OWN|15Min|{n}"  # noqa: E731
+        counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
+        state.update({"account": "וירטואלי", "server": "צפייה בלבד · בלי כסף", "initial": acc["initial"], "risk": RISK,
+                      "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
+                      "halted_until": None, "combos": [combo(n) for n in SYMBOLS], "started": acc["started"], "withdrawals": [],
+                      "equity_curve": ec, "lows": {},
+                      "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
+                                     "combo": combo(t["symbol"]), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
+                                     "now": t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
+                                     "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
+                                     "sl_usd": -(t.get("risk_usd") or 0), "tp_usd": (t.get("risk_usd") or 0) * (t.get("rr") or 0),
+                                     "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": pip(t["symbol"]), "free": False,
+                                     "mae": None, "mfe": None} for t in live_ if t["status"] == "open" and t.get("risk_usd")],
+                      "trades": [{"time": t["exit_time"], "combo": combo(t["symbol"]), "symbol": t["symbol"],
+                                  "dir": "קנייה" if t["dir"] > 0 else "מכירה", "lots": "וירטואלי", "price": t["exit"], "pnl": t["pnl"],
+                                  "why": t.get("reason")} for t in counted],
+                      "closed": [{"id": t["id"], "combo": combo(t["symbol"]), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
+                                  "lots": "וירטואלי", "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
+                                  "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": None, "mfe": None,
+                                  "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
+                                  "reason": {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה"}.get(t.get("reason"), ""),
+                                  "pip": pip(t["symbol"])} for t in counted]})
+        state["vacct"] = acc
         try:
             STATE_F.write_text(json.dumps(state, ensure_ascii=False, default=str), encoding="utf-8")
         except Exception as e:  # noqa: BLE001

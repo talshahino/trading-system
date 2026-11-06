@@ -1,10 +1,10 @@
 """The user's own strategy (memory 31.10.2026; scalping bot, 06.11.2026) as a backtest on 1-minute data.
 
   direction  1-hour chart: EMA20 above (below) EMA50 on completed hours -> only longs (shorts)
-  impulse    15-minute chart: a run of 3-7 consecutive large candles in that direction (range >= K x the
-             median range of the last 96 candles, body >= half the range); volume of the run >= 2 x the median
-             (the "buyer / seller mass")
-  gap        1-minute chart, inside the FIRST candle of the run: the largest fair-value gap (bar j-1's high below
+  impulse    15-minute chart: bodies suddenly much bigger than the recent history: 3-5 candles moving >= K x
+             their count x the average body of the 30 before, two of them >= 1.5 x it (a small one between is
+             fine); volume rule: the window's volume >= 2 x the median (the "buyer / seller mass")
+  gap        1-minute chart, inside the FIRST candle of the impulse (else the second): the largest fair-value gap (bar j-1's high below
              bar j+1's low for a long); entry = its near edge (bar j+1's low), on the pullback
   stop       the SECOND 15-minute swing low (high) back below (above) the entry, not the first
   target     the nearest high (low): the nearest existing 15m swing high (low) beyond the impulse's extreme
@@ -12,7 +12,7 @@
              way from where it was when the setup appeared to the target; no entry around FTMO restricted news and holidays, positions closed before them and before
              market breaks; one position at a time per instrument
 Costs: the real spread at the entry minute (Dukascopy ask - bid) + FTMO commission, in R.
-Variants (to see what each rule is worth): K 1.5 / 2.0, volume rule on / off, stop at the second / first swing.
+Variants (to see what each rule is worth): K 1.5 / 2.5, volume rule on / off, stop at the second / first swing.
 TRAIN 2024-01-01..2025-04-30, VALID after.
 
   python own_strategy.py --symbols EURUSD,GBPUSD
@@ -31,7 +31,7 @@ import run_poc as RP
 import run_rules as RR
 from scalp_map import comm_px
 
-VARIANTS = [(k, vol, sw) for k in (1.5, 2.0) for vol in (True, False) for sw in (2, 1)]
+VARIANTS = [(k, vol, sw) for k in (1.5, 2.5) for vol in (True, False) for sw in (2, 1)]
 
 
 def resample(df, rule):
@@ -71,39 +71,50 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
     sl_i, sl_p = np.array([x[0] for x in sl_]), np.array([x[1] for x in sl_])
     out = []
     for K, vol_rule, which in variants:
-        big_up = (rng >= K * med) & (body >= 0.5 * rng)
-        big_dn = (rng >= K * med) & (-body >= 0.5 * rng)
+        # impulse (user, 06.11.2026): candle bodies suddenly much bigger than the recent history "seen by eye" -
+        # a window of 3-5 candles whose move in the trend's direction is >= K x (its length) x the average body
+        # of the 30 candles before it, with at least two candles of 1.5 x that average in the direction; a small
+        # candle in the middle is allowed
+        avgb = pd.Series(np.abs(body)).rolling(30, min_periods=20).mean().shift(1).to_numpy()
+        n15 = len(c)
         busy_until = -1
         i = 0
-        n15 = len(c)
         while i < n15:
             d = trend[i]
-            big = big_up if d > 0 else big_dn if d < 0 else None
-            if big is None or not big[i]:
+            if not (d in (1, -1)) or not np.isfinite(avgb[i]) or avgb[i] <= 0:
                 i += 1
                 continue
-            j = i
-            while j + 1 < n15 and big[j + 1] and trend[j + 1] == d:
-                j += 1
-            run = j - i + 1
-            first, last = i, j
-            i = j + 1
-            if not (3 <= run <= 7):
+            hit = None
+            for w in (3, 4, 5):
+                j = i + w - 1
+                if j >= n15 or np.any(trend[i:j + 1] != d):
+                    break
+                base_b = avgb[i]
+                net = d * (c[j] - o[i])
+                bigs = int(np.sum(d * body[i:j + 1] >= 1.5 * base_b))
+                if d * body[i] > 0 and net >= K * w * base_b and bigs >= 2:
+                    hit = j
+                    break
+            if hit is None:
+                i += 1
                 continue
+            first, last = i, hit
+            i = hit + 1
             if vol_rule and not (v[first:last + 1].mean() >= 2 * medv[first] if np.isfinite(medv[first]) and medv[first] > 0 else False):
                 continue
             setup_t = t15[last] + pd.Timedelta(minutes=15)          # the run is known when its last candle closes
-            a = t1.searchsorted(t15[first])
-            b = t1.searchsorted(t15[first] + pd.Timedelta(minutes=15))
-            if b - a < 3:
-                continue
-            # the largest 1-minute fair-value gap inside the first impulse candle
+            # the largest 1-minute fair-value gap inside the first impulse candle (if none, the second)
             best, edge = 0.0, None
-            for jj in range(a + 1, b - 1):
-                if d > 0 and l1[jj + 1] > h1[jj - 1] and l1[jj + 1] - h1[jj - 1] > best:
-                    best, edge = l1[jj + 1] - h1[jj - 1], l1[jj + 1]
-                if d < 0 and h1[jj + 1] < l1[jj - 1] and l1[jj - 1] - h1[jj + 1] > best:
-                    best, edge = l1[jj - 1] - h1[jj + 1], h1[jj + 1]
+            for cand_i in (first, first + 1):
+                if edge is not None or cand_i > last:
+                    break
+                a = t1.searchsorted(t15[cand_i])
+                b = t1.searchsorted(t15[cand_i] + pd.Timedelta(minutes=15))
+                for jj in range(a + 1, b - 1):
+                    if d > 0 and l1[jj + 1] > h1[jj - 1] and l1[jj + 1] - h1[jj - 1] > best:
+                        best, edge = l1[jj + 1] - h1[jj - 1], l1[jj + 1]
+                    if d < 0 and h1[jj + 1] < l1[jj - 1] and l1[jj - 1] - h1[jj + 1] > best:
+                        best, edge = l1[jj - 1] - h1[jj + 1], h1[jj + 1]
             if edge is None:
                 continue
             # target: the nearest existing 15m swing high (low) beyond the impulse's extreme (the next resistance)
@@ -127,7 +138,7 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                 continue
             stop = cand[-which]
             risk = d * (edge - stop)
-            if risk <= 0 or d * (target - edge) < risk:          # at least 1:1
+            if risk < 0.25 * med[last] or risk <= 0 or d * (target - edge) < risk:   # a real stop (>= 1/4 of a normal 15m range), at least 1:1
                 continue
             s0 = t1.searchsorted(setup_t)
             if s0 >= n1 or s0 <= busy_until:

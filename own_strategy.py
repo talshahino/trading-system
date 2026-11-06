@@ -112,9 +112,9 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                 b = t1.searchsorted(t15[cand_i] + pd.Timedelta(minutes=15))
                 for jj in range(a + 1, b - 1):
                     if d > 0 and l1[jj + 1] > h1[jj - 1] and l1[jj + 1] - h1[jj - 1] > best:
-                        best, edge = l1[jj + 1] - h1[jj - 1], l1[jj + 1]
+                        best, edge, far, gap_t = l1[jj + 1] - h1[jj - 1], l1[jj + 1], h1[jj - 1], t1[jj]
                     if d < 0 and h1[jj + 1] < l1[jj - 1] and l1[jj - 1] - h1[jj + 1] > best:
-                        best, edge = l1[jj - 1] - h1[jj + 1], h1[jj + 1]
+                        best, edge, far, gap_t = l1[jj - 1] - h1[jj + 1], h1[jj + 1], l1[jj - 1], t1[jj]
             if edge is None:
                 continue
             # target: the nearest existing 15m swing high (low) beyond the impulse's extreme (the next resistance)
@@ -180,7 +180,9 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
             busy_until = ex_q
             out.append({"symbol": s, "variant": f"K{K:g}|vol{int(vol_rule)}|sw{which}", "time": t1[fill], "exit_time": t1[ex_q],
                         "dir": int(d), "entry": px, "stop": stop, "target": target, "exit": ex_px, "reason": why,
-                        "rr": round(d * (target - px) / rk, 2), "cost_r": round(cost[fill] / rk, 3), "r": round(r, 4)})
+                        "rr": round(d * (target - px) / rk, 2), "cost_r": round(cost[fill] / rk, 3), "r": round(r, 4),
+                        "imp_start": t15[first], "imp_end": t15[last] + pd.Timedelta(minutes=15), "gap_t": gap_t,
+                        "gap_near": edge, "gap_far": far, "setup_t": setup_t})
     return out
 
 

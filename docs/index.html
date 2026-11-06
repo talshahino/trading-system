@@ -1798,15 +1798,33 @@ function wbRender() {
   if (!d) { box.innerHTML = '<div class="empty">הבוט עוד לא דיווח. הוא מתחיל לעבוד אחרי אישור העדכון, כשבוט 1 פועל והשוק פתוח.</div>'; return; }
   const sm = d.summary || {}, owner = getRole() !== "viewer";
   const trades = (d.trades || []).filter(t => t.status !== "cancelled");
-  let h = `<div class="card"><div class="mut" style="margin-bottom:8px">${esc(d.rules || "")}</div>
+  const ac = d.account || null, usd = v => (v < 0 ? "−" : "") + "$" + Math.abs(v).toLocaleString("en-US", {maximumFractionDigits: 0});
+  let curveSvg = "";
+  if (ac && ac.curve && ac.curve.length > 1) {
+    const ys = ac.curve.map(x => x[1]), lo = Math.min(...ys, ac.initial), hi = Math.max(...ys, ac.initial), W = 320, H = 70, n = ys.length;
+    const X = i => 4 + (W - 8) * i / (n - 1), Y = v => hi === lo ? H / 2 : 4 + (H - 8) * (hi - v) / (hi - lo);
+    const pts = ys.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(" ");
+    curveSvg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:${H}px;direction:ltr" role="img" aria-label="יתרה לאורך זמן">
+      <line x1="0" x2="${W}" y1="${Y(ac.initial)}" y2="${Y(ac.initial)}" stroke="#C9CED6" stroke-dasharray="4 4"/>
+      <polyline points="${pts}" fill="none" stroke="${ys[n - 1] >= ac.initial ? "#1E8A4C" : "#D0453A"}" stroke-width="2"/></svg>`;
+  }
+  let h = ac ? `<div class="card"><h3>חשבון וירטואלי · $${Number(ac.initial).toLocaleString("en-US")} התחלתי</h3>
+    ${ac.breached ? '<div class="banner neg" style="margin-bottom:8px">החשבון הווירטואלי נשרף (הפסד של 10%). לא נפתחות עוד עסקאות.</div>' : ""}
+    <div class="kv"><div><small class="mut">יתרה</small><b><bdi>${usd(ac.balance)}</bdi></b></div><div><small class="mut">הון כולל עסקאות פתוחות</small><b><bdi>${usd(ac.equity)}</bdi></b></div>
+    <div><small class="mut">רווח מתחילת הדרך</small><b class="${ac.profit >= 0 ? "pos" : "neg"}"><bdi>${usd(ac.profit)}</bdi> (<bdi>${(100 * ac.profit / ac.initial).toFixed(2)}%</bdi>)</b></div>
+    <div><small class="mut">היום</small><b class="${ac.today >= 0 ? "pos" : "neg"}"><bdi>${usd(ac.today)}</bdi></b></div></div>
+    ${curveSvg}<div class="mut">סיכון לעסקה ${ac.risk_pct}% מהיתרה · עצירה יומית ב־4.5% · נשרף ב־10%, כמו חשבונות הדמו</div></div>` : "";
+  h += `<div class="card"><div class="mut" style="margin-bottom:8px">${esc(d.rules || "")}</div>
     <div class="kv"><div><small class="mut">עסקאות שנסגרו</small><b>${sm.closed ?? 0}</b></div><div><small class="mut">סך הכל (בסיכונים)</small><b class="${(sm.sum_r || 0) >= 0 ? "pos" : "neg"}"><bdi>${(sm.sum_r ?? 0).toFixed(2)}</bdi></b></div>
     <div><small class="mut">אחוז הצלחה</small><b>${sm.win_pct == null ? "—" : sm.win_pct + "%"}</b></div><div><small class="mut">פתוחות · מחכות</small><b>${sm.open ?? 0} · ${sm.pending ?? 0}</b></div></div>
     <div class="mut">עודכן ${wTime(d.updated_utc)} · ללא כסף אמיתי, שום פקודה לא נשלחת לברוקר</div></div>`;
   if (!trades.length) h += '<div class="empty">עוד אין עסקאות. כשהבוט יזהה דחף ופער, הן יופיעו כאן ותקבל התראה.</div>';
   for (const t of trades) {
     const st = WB_ST[t.status] || [t.status, ""], buy = t.dir > 0, m = WB.marks[t.id] || t.mark || {};
-    const res = t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון</span>`
-      : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון</span>` : `<span class="pill ${st[1]}">${st[0]}</span>`;
+    const money = v => v == null ? "" : ` · <bdi>${v >= 0 ? "+" : "−"}$${Math.abs(v).toLocaleString("en-US", {maximumFractionDigits: 0})}</bdi>`;
+    const res = t.skipped ? `<span class="pill">לא נספרה בחשבון (${t.skipped === "daily" ? "עצירה יומית" : "החשבון נשרף"})</span>`
+      : t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון${money(t.pnl)}</span>`
+      : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון${money(t.pnl_now)}</span>` : `<span class="pill ${st[1]}">${st[0]}</span>`;
     h += `<div class="card wt" data-id="${esc(t.id)}"><div class="hd"><b>${esc(t.symbol)}</b><span class="pill ${buy ? "pos" : "neg"}">${buy ? "קנייה" : "מכירה"}</span>${res}</div>
       <div class="mut">כניסה <bdi>${wPx(t.symbol, t.entry)}</bdi> · סטופ <bdi>${wPx(t.symbol, t.stop)}</bdi> · יעד <bdi>${wPx(t.symbol, t.target)}</bdi>${t.rr ? ` · יחס 1:${t.rr}` : ""}<br>
       ${t.time ? "נכנסה " + wTime(t.time) : "נוצרה " + wTime(t.setup_t)}${t.exit_time ? " · יצאה " + wTime(t.exit_time) : ""} · דחף של ${t.leg || "?"} נרות</div>

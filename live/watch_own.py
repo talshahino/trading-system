@@ -51,6 +51,9 @@ SYMBOLS = {"US100": ["US100.cash", "US100"], "US30": ["US30.cash", "US30"], "US5
            "USDJPY": ["USDJPY"], "GBPUSD": ["GBPUSD"], "GBPJPY": ["GBPJPY"], "USDCHF": ["USDCHF"], "AUDUSD": ["AUDUSD"],
            "NZDUSD": ["NZDUSD"]}
 KEEP = 60                     # closed trades kept in the state (with their candles)
+# virtual demo account (user, 06.11.2026): $100,000 like the other demo accounts, risk per trade as bots 2 and 4,
+# the bots' own daily stop (4.5%, FTMO's limit is 5%) and FTMO's 10% maximum loss
+INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.0045, 0.045, 0.10
 
 
 def log(msg):
@@ -202,6 +205,16 @@ def main():
                   "rules": "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
                            "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1"})
     trades = {t["id"]: t for t in state.get("trades", [])}
+    acc = state.get("account") or {"initial": INITIAL, "risk_pct": round(RISK * 100, 3), "ledger": [], "breached": None}
+
+    def balance():
+        return acc["initial"] + sum(x["pnl"] for x in acc["ledger"])
+
+    def prague_day(ts):
+        return pd.Timestamp(ts).tz_convert("Europe/Prague").strftime("%Y-%m-%d")
+
+    def day_pnl(day):
+        return sum(x["pnl"] for x in acc["ledger"] if prague_day(x["exit_time"]) == day)
     REP.remember_alerts(LIVE / f"{NAME}_alerts.json")
     last_push = 0
     while True:
@@ -238,6 +251,30 @@ def main():
                     else:
                         rec["m15"], rec["m1"] = old.get("m15"), old.get("m1")
                     prev = old.get("status")
+                    # the virtual account: the risk is fixed when the trade opens, from the balance at that moment
+                    for f in ("risk_usd", "skipped"):
+                        if f in old:
+                            rec[f] = old[f]
+                    if rec["status"] in ("open", "closed") and "risk_usd" not in rec and "skipped" not in rec:
+                        bal, day = balance(), prague_day(rec["time"])
+                        start = bal - day_pnl(day)
+                        if acc.get("breached"):
+                            rec["skipped"] = "breach"
+                        elif day_pnl(day) <= -DAILY_STOP * start:
+                            rec["skipped"] = "daily"
+                        else:
+                            rec["risk_usd"] = round(bal * RISK, 2)
+                    if rec.get("risk_usd"):
+                        if rec["status"] == "closed" and rec.get("r") is not None:
+                            rec["pnl"] = round(rec["r"] * rec["risk_usd"], 2)
+                            if not any(x["id"] == k for x in acc["ledger"]):
+                                acc["ledger"].append({"id": k, "exit_time": rec["exit_time"], "pnl": rec["pnl"]})
+                                if balance() <= acc["initial"] * (1 - MAX_LOSS) and not acc.get("breached"):
+                                    acc["breached"] = rec["exit_time"]
+                                    REP.notify("סקלפינג (צפייה): החשבון הווירטואלי נשרף", f"היתרה ירדה ל־${balance():,.0f} (10% הפסד). לא נפתחות עוד עסקאות וירטואליות.",
+                                               tags=["eyes"], key="wbreach", every=86400 * 30)
+                        elif rec["status"] == "open" and rec.get("r_now") is not None:
+                            rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
                     side = "קנייה" if rec["dir"] > 0 else "מכירה"
                     if prev is None and rec["status"] == "pending":
@@ -249,7 +286,8 @@ def main():
                                    tags=["eyes"], key=f"wo:{k}", every=86400)
                     if prev != "closed" and rec["status"] == "closed":
                         word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה"}.get(rec["reason"], "")
-                        REP.notify(f"סקלפינג (צפייה): {name} נסגרה {word}", f"{side} · {'+' if (rec['r'] or 0) >= 0 else ''}{rec['r']:.2f} סיכון (וירטואלי)",
+                        usd = f" · {'+' if rec.get('pnl', 0) >= 0 else '−'}${abs(rec.get('pnl', 0)):,.0f} · יתרה ${balance():,.0f}" if rec.get("pnl") is not None else ""
+                        REP.notify(f"סקלפינג (צפייה): {name} נסגרה {word}", f"{side} · {'+' if (rec['r'] or 0) >= 0 else ''}{rec['r']:.2f} סיכון{usd} (וירטואלי)",
                                    tags=["eyes"], key=f"wc:{k}", every=86400)
             except Exception:  # noqa: BLE001 - one instrument must not stop the others
                 errors.append(f"{name}: {traceback.format_exc()[-300:]}")
@@ -275,6 +313,16 @@ def main():
                                   "avg_r": round(float(np.mean(rs)), 3) if rs else None, "win_pct": round(100 * float(np.mean(np.array(rs) > 0)), 1) if rs else None,
                                   "open": sum(t["status"] == "open" for t in live_), "pending": sum(t["status"] == "pending" for t in live_)},
                       "instruments": {k: src.broker.get(k) for k in SYMBOLS}, "errors": errors[-5:]})
+        bal = balance()
+        eq = bal + sum(t.get("pnl_now") or 0 for t in live_ if t["status"] == "open")
+        today = prague_day(pd.Timestamp.now(tz="UTC"))
+        curve, run = [[None, acc["initial"]]], acc["initial"]
+        for x in sorted(acc["ledger"], key=lambda x: x["exit_time"] or ""):
+            run += x["pnl"]
+            curve.append([x["exit_time"], round(run, 2)])
+        acc.update({"balance": round(bal, 2), "equity": round(eq, 2), "profit": round(bal - acc["initial"], 2),
+                    "today": round(day_pnl(today), 2), "curve": curve[-300:]})
+        state["account"] = acc
         try:
             STATE_F.write_text(json.dumps(state, ensure_ascii=False, default=str), encoding="utf-8")
         except Exception as e:  # noqa: BLE001

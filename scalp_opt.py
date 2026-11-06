@@ -82,7 +82,7 @@ def main():
     args = ap.parse_args()
     end = args.end or (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
     events, _ = NC.load()
-    tag = args.symbols.replace(",", "_")[:60]
+    tag = args.symbols.replace(",", "_").replace("/", "-")[:60]
     res, daily, errors = [], [], []
     for s in [x for x in args.symbols.split(",") if x]:
         t0 = time.time()

@@ -95,14 +95,14 @@ class Source:
         return None
 
     def update(self, name):
-        if name not in self.broker:
-            b = self.resolve(name)
+        if name not in self.df:
+            b = self.broker.get(name) or self.resolve(name)
             if not b:
                 return None
             self.broker[name] = b
             parts, now, step = [], time.time(), 2 * 86400       # the server returns at most 3000 candles a call
             for k in range(DAYS // 2, 0, -1):
-                parts.append(self.get(b, now - k * step, now - (k - 1) * step))
+                parts.append(self.get(b, now - k * step, now - (k - 1) * step))   # bot 1 busy: retried next minute
             self.df[name] = pd.concat(parts)
         else:
             last = self.df[name].index[-1].timestamp() if len(self.df[name]) else time.time() - DAYS * 86400

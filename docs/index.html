@@ -283,6 +283,11 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .page .ph b{font-size:20px;font-weight:800}
 #botsPg{z-index:50}
 #bdPg{z-index:52}
+#wbPg{z-index:53}#wcPg{z-index:54}
+.wt{display:grid;gap:8px}.wt .hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px}.wt .hd b{font-size:16px}
+.wt .acts{display:flex;flex-wrap:wrap;gap:8px}.wt .acts .btn{min-height:38px;padding:7px 12px;font-size:13.5px}
+.btn.yes.on{background:var(--pos)}.btn.no.on{background:var(--neg)}.wt textarea{width:100%;box-sizing:border-box;min-height:54px;border-radius:10px;border:1px solid var(--line, #E6E9EE);padding:8px;font:inherit;background:var(--sunk);color:var(--ink)}
+.wchart{height:300px;position:relative;margin-bottom:6px}.wchart.small{height:260px}
 .rt tr[data-row]{cursor:pointer}
 .rt td,.rt th{padding:9px 4px;vertical-align:middle;font-size:12.5px}
 .rt td:first-child,.rt th:first-child{padding-inline-start:10px}
@@ -415,6 +420,8 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="msg" id="pushMsg"></div></div>
     <div class="card"><h3>ניהול בוטים</h3>
       <div class="row"><span class="mut" id="botsHint">האסטרטגיות של כל בוט, התוצאות שלהן בדמו והמלצות לשינוי סיכון.</span><button class="btn" id="botsBtn">ניהול בוטים</button></div></div>
+    <div class="card"><h3>בוט סקלפינג · צפייה בלבד</h3>
+      <div class="row"><span class="mut" id="wbHint">האסטרטגיה שלך בזמן אמת, בלי כסף: כל עסקה וירטואלית עם הגרף שלה, וסימון אם היית לוקח אותה.</span><button class="btn" id="wbBtn">פתח</button></div></div>
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
     <div class="card" id="logCard"><h3>לוגים</h3>
       <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
@@ -462,6 +469,8 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 <div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>ניהול בוטים</b></div>
   <div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
+<div class="page" id="wbPg"><div class="ph"><button class="back" id="wbBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>בוט סקלפינג · צפייה</b></div><div id="wbBody"><div class="empty">טוען…</div></div></div>
+<div class="page" id="wcPg"><div class="ph"><button class="back" id="wcBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="wcTitle"></b></div><div id="wcBody"></div></div>
 <div class="page" id="chartPg" style="z-index:36"><div class="ph"><button class="back" id="cpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="cpTitle"></b></div>
   <div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div></div>
 <div class="ask" id="ask"><div class="box"><h4 id="askT">האם אתה בטוח?</h4><p id="askB"></p><div class="row"><button class="btn danger" id="askYes" style="background:#D0453A;color:#fff">כן, סגור</button><button class="btn ghost" id="askNo">לא</button></div></div></div>
@@ -1769,6 +1778,107 @@ async function askYes(title, body, yes) {
   const v = await ask(title, body); b.textContent = t; return v;
 }
 $("botsBtn").onclick = () => botsOpen();
+
+/* scalping watch bot (no money): virtual trades of the user's impulse strategy, the user marks each one */
+const WB = {doc: null, marks: {}};
+const WB_ST = {pending: ["מחכה לנגיעה בפער", ""], open: ["עסקה וירטואלית פתוחה", "warn"], closed: ["נסגרה", ""], cancelled: ["בוטלה", ""]};
+const wDec = s => /^(US\d|GER\d|UK\d|JP\d|FRA\d|EU\d)/.test(s) || s.startsWith("XA") ? 2 : s.endsWith("JPY") ? 3 : 5;
+const wPx = (s, p) => p == null ? "—" : Number(p).toFixed(wDec(s));
+const wTime = iso => iso ? new Date(iso).toLocaleString("he-IL", {timeZone: "Asia/Jerusalem", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"}) : "—";
+async function wbOpen() {
+  $("wbPg").classList.add("on");
+  try { const r = await fetch(RAW("watch_own"), {cache: "no-store"}); if (r.ok) WB.doc = await r.json(); } catch (e) {}
+  if (!WB.doc) {
+    try { const r = await fetch(API("watch_own") + "&t=" + Date.now(), {cache: "no-store", headers: {Accept: "application/vnd.github.raw+json"}}); if (r.ok) WB.doc = await r.json(); } catch (e) {}
+  }
+  wbRender();
+}
+function wbRender() {
+  const d = WB.doc, box = $("wbBody");
+  if (!d) { box.innerHTML = '<div class="empty">הבוט עוד לא דיווח. הוא מתחיל לעבוד אחרי אישור העדכון, כשבוט 1 פועל והשוק פתוח.</div>'; return; }
+  const sm = d.summary || {}, owner = getRole() !== "viewer";
+  const trades = (d.trades || []).filter(t => t.status !== "cancelled");
+  let h = `<div class="card"><div class="mut" style="margin-bottom:8px">${esc(d.rules || "")}</div>
+    <div class="kv"><div><small class="mut">עסקאות שנסגרו</small><b>${sm.closed ?? 0}</b></div><div><small class="mut">סך הכל (בסיכונים)</small><b class="${(sm.sum_r || 0) >= 0 ? "pos" : "neg"}"><bdi>${(sm.sum_r ?? 0).toFixed(2)}</bdi></b></div>
+    <div><small class="mut">אחוז הצלחה</small><b>${sm.win_pct == null ? "—" : sm.win_pct + "%"}</b></div><div><small class="mut">פתוחות · מחכות</small><b>${sm.open ?? 0} · ${sm.pending ?? 0}</b></div></div>
+    <div class="mut">עודכן ${wTime(d.updated_utc)} · ללא כסף אמיתי, שום פקודה לא נשלחת לברוקר</div></div>`;
+  if (!trades.length) h += '<div class="empty">עוד אין עסקאות. כשהבוט יזהה דחף ופער, הן יופיעו כאן ותקבל התראה.</div>';
+  for (const t of trades) {
+    const st = WB_ST[t.status] || [t.status, ""], buy = t.dir > 0, m = WB.marks[t.id] || t.mark || {};
+    const res = t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון</span>`
+      : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון</span>` : `<span class="pill ${st[1]}">${st[0]}</span>`;
+    h += `<div class="card wt" data-id="${esc(t.id)}"><div class="hd"><b>${esc(t.symbol)}</b><span class="pill ${buy ? "pos" : "neg"}">${buy ? "קנייה" : "מכירה"}</span>${res}</div>
+      <div class="mut">כניסה <bdi>${wPx(t.symbol, t.entry)}</bdi> · סטופ <bdi>${wPx(t.symbol, t.stop)}</bdi> · יעד <bdi>${wPx(t.symbol, t.target)}</bdi>${t.rr ? ` · יחס 1:${t.rr}` : ""}<br>
+      ${t.time ? "נכנסה " + wTime(t.time) : "נוצרה " + wTime(t.setup_t)}${t.exit_time ? " · יצאה " + wTime(t.exit_time) : ""} · דחף של ${t.leg || "?"} נרות</div>
+      <div class="acts"><button class="btn ghost" data-chart="${esc(t.id)}">גרף העסקה</button>
+        ${owner ? `<button class="btn ghost yes ${m.take === "yes" ? "on" : ""}" data-take="yes">הייתי לוקח</button><button class="btn ghost no ${m.take === "no" ? "on" : ""}" data-take="no">לא הייתי לוקח</button>` : (m.take ? `<span class="pill">${m.take === "yes" ? "היית לוקח" : "לא היית לוקח"}</span>` : "")}</div>
+      ${owner ? `<textarea placeholder="למה? מה ראית או מה חסר">${esc(m.why || "")}</textarea><div class="msg mut" data-msg></div>` : (m.why ? `<div class="mut">${esc(m.why)}</div>` : "")}</div>`;
+  }
+  box.innerHTML = h;
+  box.querySelectorAll("[data-chart]").forEach(b => b.onclick = () => wcOpen(b.dataset.chart));
+  box.querySelectorAll(".wt").forEach(card => {
+    const id = card.dataset.id, ta = card.querySelector("textarea"), msg = card.querySelector("[data-msg]");
+    const save = async take => {
+      const cur = WB.marks[id] || (WB.doc.trades.find(x => x.id === id) || {}).mark || {};
+      const body = {id, take: take === undefined ? (cur.take ?? null) : take, why: ta ? ta.value.trim() : ""};
+      try { const j = await act("/watch/mark", body); WB.marks[id] = j.mark || body; if (msg) note(msg.id = msg.id || "wm" + Math.random().toString(36).slice(2), "נשמר", true); wbRender(); }
+      catch (e) { if (msg) { msg.id = msg.id || "wm" + Math.random().toString(36).slice(2); note(msg.id, e.message || "לא נשמר. בדוק שהמחשב מחובר.", false); } }
+    };
+    card.querySelectorAll("[data-take]").forEach(b => b.onclick = () => save(b.dataset.take));
+    if (ta) ta.addEventListener("change", () => save());
+  });
+}
+let WC = [];
+async function wcOpen(id) {
+  const t = (WB.doc.trades || []).find(x => x.id === id);
+  if (!t) return;
+  $("wcPg").classList.add("on");
+  $("wcTitle").textContent = `${t.symbol} · ${t.dir > 0 ? "קנייה" : "מכירה"}`;
+  $("wcBody").innerHTML = `<div class="mut" style="margin-bottom:6px">גרף 15 דקות: הדחף והכניסה</div><div class="card"><div class="wchart" id="wc15"></div></div>
+    <div class="mut" style="margin-bottom:6px">גרף דקה: העסקה עד 10 דקות אחרי היציאה (ירוק עד היעד, אדום עד הסטופ)</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>`;
+  WC.forEach(c => c.remove()); WC = [];
+  const LW = await loadTV().catch(() => null);
+  if (!LW) { $("wcMsg").textContent = "ספריית הגרפים לא נטענה. בדוק חיבור לאינטרנט."; return; }
+  const off = ilOff(Date.parse(t.time || t.setup_t) / 1000), dec = wDec(t.symbol), buy = t.dir > 0;
+  const mk = (el, bars) => {
+    const ch = LW.createChart(el, {layout: {background: {color: "#fff"}, textColor: "#5B6470", fontFamily: "Instrument Sans, Heebo, sans-serif"},
+      grid: {vertLines: {color: "#EEF1F4"}, horzLines: {color: "#EEF1F4"}}, rightPriceScale: {borderColor: "#E6E9EE"},
+      timeScale: {borderColor: "#E6E9EE", timeVisible: true, secondsVisible: false}, crosshair: {mode: 0}, autoSize: true});
+    const s = ch.addCandlestickSeries({upColor: "#1E8A4C", downColor: "#D0453A", borderVisible: false, wickUpColor: "#1E8A4C", wickDownColor: "#D0453A",
+      priceFormat: {type: "price", precision: dec, minMove: Math.pow(10, -dec)}});
+    s.setData((bars || []).map(b => ({time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]})));
+    WC.push(ch); return {ch, s, bars: bars || []};
+  };
+  const snap = (bars, sec) => { let k = bars[0] ? bars[0][0] : sec; for (const b of bars) { if (b[0] <= sec) k = b[0]; else break; } return k + off; };
+  const line = (s, p, c, title, st = 0) => p != null && s.createPriceLine({price: p, color: c, lineWidth: st ? 1 : 2, lineStyle: st, axisLabelVisible: true, title});
+  // 15 minutes: the impulse, the first gap of the move, the entry
+  const A = mk($("wc15"), t.m15), tin = Date.parse(t.time || t.setup_t) / 1000;
+  line(A.s, t.gap_lo, "#B8862B", "פער", 2); line(A.s, t.gap_hi, "#B8862B", "", 2);
+  line(A.s, t.entry, "#1E3A5F", "כניסה"); line(A.s, t.stop, "#D0453A", "סטופ"); line(A.s, t.target, "#1E8A4C", "יעד");
+  A.s.setMarkers([{time: snap(A.bars, Date.parse(t.leg_start) / 1000), position: buy ? "belowBar" : "aboveBar", color: "#B8862B", shape: buy ? "arrowUp" : "arrowDown", text: "תחילת דחף"},
+    {time: snap(A.bars, Date.parse(t.leg_top) / 1000), position: buy ? "aboveBar" : "belowBar", color: "#B8862B", shape: buy ? "arrowDown" : "arrowUp", text: "שיא הדחף"},
+    ...(t.time ? [{time: snap(A.bars, tin), position: buy ? "belowBar" : "aboveBar", color: "#1E3A5F", shape: "circle", text: "כניסה"}] : [])].sort((a, b) => a.time - b.time));
+  A.ch.timeScale().fitContent();
+  // 1 minute: the rest of the trade, with the position box
+  const B = mk($("wc1"), t.m1);
+  if (t.time && B.bars.length) {
+    const t0 = snap(B.bars, tin), last = B.bars[B.bars.length - 1][0] + off, t1 = t.exit_time ? snap(B.bars, Date.parse(t.exit_time) / 1000) : last, pts = [];
+    for (const b of B.bars) { const x = b[0] + off; if (x >= t0 && x <= t1) pts.push(x); }
+    const box = (val, good) => { if (val == null) return; const c = good ? "rgba(30,138,76,.22)" : "rgba(208,69,58,.22)", l = good ? "#1E8A4C" : "#D0453A";
+      const s = B.ch.addBaselineSeries({baseValue: {type: "price", price: t.entry}, lineWidth: 2, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+        topLineColor: l, bottomLineColor: l, topFillColor1: c, topFillColor2: c, bottomFillColor1: c, bottomFillColor2: c});
+      s.setData(pts.map(x => ({time: x, value: val}))); };
+    box(t.target, true); box(t.stop, false);
+    const ms = [{time: t0, position: buy ? "belowBar" : "aboveBar", color: "#1E3A5F", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}];
+    if (t.exit_time) ms.push({time: t1, position: "inBar", color: t.r >= 0 ? "#1E8A4C" : "#D0453A", shape: "square", text: t.reason === "target" ? "יציאה ביעד" : t.reason === "stop" ? "יציאה בסטופ" : "יציאה"});
+    B.s.setMarkers(ms);
+  }
+  line(B.s, t.entry, "#1E3A5F", "כניסה", 2);
+  B.ch.timeScale().fitContent();
+}
+$("wbBtn").onclick = () => wbOpen();
+$("wbBack").onclick = () => $("wbPg").classList.remove("on");
+$("wcBack").onclick = () => { $("wcPg").classList.remove("on"); WC.forEach(c => c.remove()); WC = []; };
 $("bpBack").onclick = () => $("botsPg").classList.remove("on");
 $("bdBack").onclick = () => { $("bdPg").classList.remove("on"); BP.combo = null; };
 

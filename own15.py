@@ -39,7 +39,10 @@ from scalp_map import comm_px
 # (K, 1h-trend filter, entry: '15m' gap edge / '1m' gap inside the 15m gap, target: '15m' / '1m' nearest swing high)
 # last5: the last 1-minute turning point before the entry (5 minutes each side) beyond it (the user's marks, 06.11.2026);
 # last5x: the same without the 1:1 minimum
-VARIANTS = [(2.0, False, '1m', t) for t in ('15p', 'last5', 'last5x')]
+# struct: the last real correction before the entry (the user, 06.11.2026): the last 1-minute turning point beyond the
+# entry after which the price made a new low below the low before it (a high in a sideways pause does not count);
+# structx: the same without the 1:1 minimum
+VARIANTS = [(2.0, False, '1m', t) for t in ('15p', 'struct', 'structx')]
 PIP = {"JPY": 0.01}
 BODY_X = 2.5        # the leg's average body vs the 50 candles before it
 MIN_GAP = 0.33      # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
@@ -195,6 +198,20 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                         if d * (pv - px) > 0 and d * (pv - nxt) >= 0.5 * a15[i]:
                             lv2.append(pv)
                     lv = lv2
+                if tmode in ("struct", "structx"):
+                    q0 = t1.searchsorted(t15[pk])
+                    sw = sh1 if d > 0 else sl1
+                    arr = h1 if d > 0 else l1
+                    sw = [i for i in sw if q0 <= i and i + w1 <= fill and d * (arr[i] - px) > 0]
+                    lv = []
+                    for i in reversed(sw):
+                        if d > 0:
+                            ok = l1[i:fill + 1].min() <= l1[max(0, i - 30):i].min() - 0.4 * a15[pk]
+                        else:
+                            ok = h1[i:fill + 1].max() >= h1[max(0, i - 30):i].max() + 0.4 * a15[pk]
+                        if ok:
+                            lv = [arr[i]]
+                            break
                 if tmode in ("last5", "last5x"):
                     # the last 1-minute swing before the fill (5 minutes each side, confirmed by the fill) beyond the entry:
                     # for a buy the last swing high above the entry, for a sell the last swing low below it
@@ -225,7 +242,7 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                     continue
                 target = (min(lv) if d > 0 else max(lv)) - d * tbuf
                 risk = d * (px - stop)
-                if risk <= 0 or (tmode not in ("n10x", "last5x") and d * (target - px) < risk) or d * (target - px) <= 0:
+                if risk <= 0 or (tmode not in ("n10x", "last5x", "structx") and d * (target - px) < risk) or d * (target - px) <= 0:
                     continue
                 ex_px = ex_q = why = None
                 for q in range(fill, n1):

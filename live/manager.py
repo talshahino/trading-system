@@ -507,9 +507,63 @@ def stop_bot(name):
         log(f"stopped {name}")
 
 
+# ---------------- scalping watch bot (no money: reads bot 1's candles, reports virtual trades) ----------------
+WATCH_NAME = "watch_own"
+MARKS_FILE = LIVE / "watch_marks.json"
+MARKS_LOCK = threading.Lock()
+
+
+def watch_source():
+    """The account whose MetaTrader the watch bot reads candles from: bot 1 (FTMO's own symbol names), running."""
+    for a in accounts():
+        if a["name"] == "bot1" and a.get("enabled") and running(a["name"]):
+            return a
+    return None
+
+
+def start_watch():
+    if running(WATCH_NAME) or not CFG.get("watch_own", True):
+        return
+    src = watch_source()
+    if not src:
+        return
+    env = os.environ.copy()
+    env.update(MANAGED="1", SOURCE_PORT=str(src["port"]), MANAGER_KEY=CFG["local_key"])
+    py = sys.executable.replace("pythonw.exe", "python.exe")
+    PROCS[WATCH_NAME] = subprocess.Popen([py, str(LIVE / "watch_own.py")], cwd=str(ROOT), env=env,
+                                         creationflags=0x08000000 if os.name == "nt" else 0, stdout=subprocess.DEVNULL,
+                                         stderr=open(LIVE / f"{WATCH_NAME}_stderr.log", "a"))
+    log("started the scalping watch bot (no money)")
+
+
+def watch_mark(d):
+    k = str(d.get("id") or "")
+    if not k or len(k) > 80 or not re.fullmatch(r"[A-Za-z0-9./|-]+", k):
+        raise ValueError("עסקה לא מוכרת")
+    take = d.get("take")
+    if take not in ("yes", "no", None):
+        raise ValueError("סימון לא מוכר")
+    why = str(d.get("why") or "")[:500]
+    with MARKS_LOCK:
+        try:
+            marks = json.loads(MARKS_FILE.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            marks = {}
+        if take is None and not why:
+            marks.pop(k, None)
+        else:
+            marks[k] = {"take": take, "why": why, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+        tmp = MARKS_FILE.with_suffix(".tmp")
+        tmp.write_text(json.dumps(marks, ensure_ascii=False, indent=1), encoding="utf-8")
+        tmp.replace(MARKS_FILE)
+    return marks.get(k)
+
+
 def watchdog():
     while True:
         try:
+            if not WATCH.get("installing"):
+                start_watch()
             for a in list(accounts()):
                 if a.get("enabled") and not a.get("preparing") and not running(a["name"]):
                     if a.get("started") and time.time() - a["started"] < 120:
@@ -699,6 +753,7 @@ def _install_update():
     WATCH["installing"] = True                     # the watchdog must not report the planned stops
     # no message here: the user gets one "update installed" when everything runs again (or "update failed")
     names = [a["name"] for a in accounts() if running(a["name"])]
+    stop_bot(WATCH_NAME)
     for n in names:
         stop_bot(n)
     for a in accounts():
@@ -948,12 +1003,14 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True})
             if path == "/logs":                          # behind the secret code only; never published
                 which = str(d.get("which") or "manager")
-                if which != "manager" and not acc_by(which):
+                if which not in ("manager", WATCH_NAME) and not acc_by(which):
                     raise ValueError("אין לוג כזה")
                 f = LIVE / f"{which}.log"
                 lines = f.read_text(encoding="utf-8", errors="replace").splitlines()[-400:] if f.exists() else []
                 lines = [l for l in lines if "password" not in l.lower()]
                 return self._send(200, {"ok": True, "lines": lines})
+            if path == "/watch/mark":
+                return self._send(200, {"ok": True, "mark": watch_mark(d)})
             if path == "/risk/set":
                 kind = str(d.get("kind") or "mult")
                 risk_change(d.get("bot"), str(d.get("combo") or ""), kind, d.get("value", d.get("mult")))

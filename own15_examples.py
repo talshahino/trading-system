@@ -37,7 +37,7 @@ def main():
     a = ap.parse_args()
     end = a.end or (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
     ev, _ = NC.load()
-    O.BODY_X, O.MIN_GAP = a.body, a.min_gap
+    O.CORE.BODY_X, O.CORE.MIN_GAP = a.body, a.min_gap
     variant = (a.k, False, a.entry_mode, a.target_mode)
     allt, data = [], {}
     for s in [x for x in a.symbols.split(",") if x]:

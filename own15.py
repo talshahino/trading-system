@@ -42,7 +42,9 @@ from scalp_map import comm_px
 # struct: the last real correction before the entry (the user, 06.11.2026): the last 1-minute turning point beyond the
 # entry after which the price made a new low below the low before it (a high in a sideways pause does not count);
 # structx: the same without the 1:1 minimum
-VARIANTS = [(2.0, False, '1m', t) for t in ('15p', 'struct', 'structx')]
+# grid (the user, 06.11.2026): target at the 1st / 2nd / 3rd correction beyond the entry (then the impulse's top), stop at the
+# 1st / 2nd / 3rd 15m swing beyond the entry or at the impulse's origin - every combination from the same entries
+VARIANTS = [(2.0, False, '1m', 'grid')]
 PIP = {"JPY": 0.01}
 BODY_X = 2.5        # the leg's average body vs the 50 candles before it
 MIN_GAP = 0.33      # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
@@ -238,6 +240,55 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                     lv1 = [x for x in lv1 if d * (x - px) > 0]
                     if lv1:
                         lv = lv1
+                if tmode == "grid":
+                    q0 = t1.searchsorted(t15[pk])
+                    arr = h1 if d > 0 else l1
+                    sw = [i for i in (sh1 if d > 0 else sl1) if q0 <= i and i + w1 <= fill and d * (arr[i] - px) > 0]
+                    corr = []
+                    for i in reversed(sw):
+                        if d > 0:
+                            ok = l1[i:fill + 1].min() <= l1[max(0, i - 30):i].min() - 0.4 * a15[pk]
+                        else:
+                            ok = h1[i:fill + 1].max() >= h1[max(0, i - 30):i].max() + 0.4 * a15[pk]
+                        if ok:
+                            corr.append(arr[i])
+                    corr = sorted(set(corr), key=lambda x: d * (x - px))
+                    if d * (peak - px) > 0 and (not corr or d * (peak - corr[-1]) > 0):
+                        corr.append(peak)                               # the impulse's top is the last high
+                    buf = 4 * pip if pip else 0.1 * a15[pk]
+                    sws = [(SL if d > 0 else SH)[i] for i in (sl_idx if d > 0 else sh_idx) if lo_i <= i and i + 2 <= tq]
+                    sws = sorted({x for x in sws if d * (px - x) > 0}, key=lambda x: d * (px - x))
+                    stops = {f"s{k + 1}": sws[k] - d * buf for k in range(min(3, len(sws)))}
+                    stops["so"] = stop
+                    ends = []
+                    for tn in range(min(3, len(corr))):
+                        tgt = corr[tn] - d * tbuf
+                        for sname, stp in stops.items():
+                            rk = d * (px - stp)
+                            if rk <= 0 or d * (tgt - px) <= 0:
+                                continue
+                            ex_px = ex_q = why = None
+                            for q in range(fill, n1):
+                                if (d > 0 and l1[q] <= stp) or (d < 0 and h1[q] >= stp):
+                                    ex_px, ex_q, why = ((min(stp, o1[q]) if d > 0 else max(stp, o1[q])) if q > fill else stp), q, "stop"
+                                    break
+                                if q > fill and ((d > 0 and h1[q] >= tgt) or (d < 0 and l1[q] <= tgt)):
+                                    ex_px, ex_q, why = (max(tgt, o1[q]) if d > 0 else min(tgt, o1[q])), q, "target"
+                                    break
+                                if stop_at[q]:
+                                    ex_px, ex_q, why = c1[q], q, "forced"
+                                    break
+                            if ex_px is None:
+                                continue
+                            ends.append(ex_q)
+                            out.append({"symbol": s, "variant": f"t{tn + 1}|{sname}", "time": t1[fill], "exit_time": t1[ex_q],
+                                        "dir": d, "entry": px, "stop": stp, "target": tgt, "exit": ex_px, "reason": why,
+                                        "rr": round(d * (tgt - px) / rk, 2), "cost_r": round(cost[fill] / rk, 3),
+                                        "r": round((d * (ex_px - px) - cost[fill]) / rk, 4), "leg": int(L),
+                                        "leg_start": t15[lo_i], "leg_top": t15[pk], "gap_lo": min(gap), "gap_hi": max(gap)})
+                    if ends:
+                        busy_until = min(ends)                              # one setup at a time per instrument
+                    continue
                 if not lv:
                     continue
                 target = (min(lv) if d > 0 else max(lv)) - d * tbuf

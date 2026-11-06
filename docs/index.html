@@ -1124,12 +1124,14 @@ function renderDet(light) {
   $("dTitle").textContent = nick(a);
   $("dSub").innerHTML = `<span class="pill vps">${esc(botL(a))}</span>` + (a.archived ? '<span class="pill">החשבון סגור</span>' :
     live ? `<span class="pos">● בזמן אמת</span><span class="num">${new Date(s.updated_utc).toLocaleTimeString("he-IL", IL)}</span>`
+         : a.virtual && s && (a.running || Date.now() - new Date(s.updated_utc) < 6 * 60000)
+           ? `<span class="pos">● פעיל</span><span>מתעדכן כל 2 דקות · עודכן ${il(s.updated_utc)}</span>`      // virtual: read from GitHub, not live
          : `<span class="neg">● לא מחובר</span>${s ? `<span>עודכן ${il(s.updated_utc)}</span>` : ""}`);
   $("dSubt").innerHTML = SUBS.map(([k, l]) => `<button data-s="${k}" aria-selected="${UI.sub === k}">${l}${k === "tr" && s && s.positions && s.positions.length ? `<span class="badge">${s.positions.length}</span>` : ""}</button>`).join("");
   const ban = $("dBan");
   const age = s ? (Date.now() - new Date(s.updated_utc).getTime()) / 60000 : 0;
   if (s && s.halted_until) { ban.className = "banner on neg"; ban.textContent = "עצירת חירום: ההפסד היומי הגיע ל־4.5%. הבוט סגר הכל ולא ייכנס לעסקאות עד חצות (שעון פראג)."; }
-  else if (s && !a.archived && a.enabled !== false && !live && age >= 10) { ban.className = "banner on warn"; ban.textContent = `החשבון לא מדווח כבר ${age < 120 ? Math.round(age) + " דקות" : (age / 60).toFixed(1) + " שעות"}. ${a.virtual ? "בוט הצפייה קורא נרות מבוט 1: בדוק שהמחשב ובוט 1 פועלים (בסוף שבוע השוק סגור)." : "בדוק שהמחשב ו־MetaTrader פתוחים."}`; }
+  else if (s && !a.archived && a.enabled !== false && !live && age >= (a.virtual ? 15 : 10)) { ban.className = "banner on warn"; ban.textContent = `החשבון לא מדווח כבר ${age < 120 ? Math.round(age) + " דקות" : (age / 60).toFixed(1) + " שעות"}. ${a.virtual ? "בוט הצפייה קורא נרות מבוט 1: בדוק שהמחשב ובוט 1 פועלים (בסוף שבוע השוק סגור)." : "בדוק שהמחשב ו־MetaTrader פתוחים."}`; }
   else ban.className = "banner";
   if (!s) { $("dBody").innerHTML = '<div class="empty">עוד אין נתונים מהחשבון הזה. הם מופיעים כמה דקות אחרי שהבוט מתחיל לעבוד.</div>'; return; }
   if (UI.sub === "ov") ov(s, a, light);

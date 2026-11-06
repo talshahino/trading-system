@@ -37,7 +37,7 @@ from own_strategy import resample, swings
 from scalp_map import comm_px
 
 # (K, 1h-trend filter, entry: '15m' gap edge / '1m' gap inside the 15m gap, target: '15m' / '1m' nearest swing high)
-VARIANTS = [(k, False, e, t) for k in (2.0, 3.0) for e in ('15m', '1m') for t in ('15m', '1m', '15p')]
+VARIANTS = [(2.0, False, '1m', t) for t in ('15p', 'n10', 'n10x')]   # n10: nearest 1m high (10 min each side) >= 0.5 R away; n10x: same without the 1:1 minimum
 PIP = {"JPY": 0.01}
 BODY_X = 2.5        # the leg's average body vs the 50 candles before it
 MIN_GAP = 0.33      # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
@@ -75,6 +75,9 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
     out = []
     # 1-minute swing highs / lows (5 minutes each side), for the target on the 1-minute chart
     w1 = 5
+    w10 = 10
+    sh10 = np.flatnonzero(h1 == pd.Series(h1).rolling(2 * w10 + 1, center=True).max().to_numpy())
+    sl10 = np.flatnonzero(l1 == pd.Series(l1).rolling(2 * w10 + 1, center=True).min().to_numpy())
     sh1 = np.flatnonzero(h1 == pd.Series(h1).rolling(2 * w1 + 1, center=True).max().to_numpy())
     sl1 = np.flatnonzero(l1 == pd.Series(l1).rolling(2 * w1 + 1, center=True).min().to_numpy())
     for K, tfil, emode, tmode in variants:
@@ -190,6 +193,15 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                         if d * (pv - px) > 0 and d * (pv - nxt) >= 0.5 * a15[i]:
                             lv2.append(pv)
                     lv = lv2
+                if tmode in ("n10", "n10x"):
+                    # the user (06.11.2026, two marked charts): the nearest 1-minute high (10 minutes each side lower)
+                    # above the entry, made after the impulse's top and known at the fill, at least half the stop away
+                    q0 = t1.searchsorted(t15[pk])
+                    sw = sh10 if d > 0 else sl10
+                    sw = sw[(sw >= q0) & (sw + w10 <= fill)]
+                    rk0 = d * (px - stop)
+                    lv = [(h1 if d > 0 else l1)[i] for i in sw]
+                    lv = [x for x in lv if d * (x - px) >= 0.5 * rk0]
                 if tmode == "1m":
                     # nearest 1-minute swing high (low) above (below) the entry, made after the leg's top, known at the fill
                     q0 = t1.searchsorted(t15[pk])
@@ -203,7 +215,7 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                     continue
                 target = (min(lv) if d > 0 else max(lv)) - d * tbuf
                 risk = d * (px - stop)
-                if risk <= 0 or d * (target - px) < risk:
+                if risk <= 0 or (tmode != "n10x" and d * (target - px) < risk) or d * (target - px) <= 0:
                     continue
                 ex_px = ex_q = why = None
                 for q in range(fill, n1):

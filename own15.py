@@ -1,4 +1,5 @@
-"""The user's own strategy, version 2 (user, 06.11.2026, drawn on a chart): everything on the 15-minute chart.
+"""The user's own strategy, version 3 (user, 06.11.2026, drawn and marked on charts): identified on the 15-minute chart;
+entry on the 1-minute gap inside the 15-minute gap (variant), target the nearest 1-minute swing high (variant).
 
   impulse   a leg of 8-30 fifteen-minute candles from a swing low to a swing high (mirror for sells) that is
             clearly bigger than the recent history: its size >= K x the typical move over the same number of
@@ -35,10 +36,11 @@ import run_rules as RR
 from own_strategy import resample, swings
 from scalp_map import comm_px
 
-VARIANTS = [(k, tf) for k in (2.0, 3.0, 4.0) for tf in (True, False)]
+# (K, 1h-trend filter, entry: '15m' gap edge / '1m' gap inside the 15m gap, target: '15m' / '1m' nearest swing high)
+VARIANTS = [(k, False, e, t) for k in (2.0, 3.0) for e in ('15m', '1m') for t in ('15m', '1m')]
 PIP = {"JPY": 0.01}
-BODY_X = 1.5        # the leg's average body vs the 50 candles before it
-MIN_GAP = 0.0       # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
+BODY_X = 2.5        # the leg's average body vs the 50 candles before it
+MIN_GAP = 0.33      # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
 
 
 def pip_of(s):
@@ -71,7 +73,11 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
     typ = {L: pd.Series(np.abs(c - np.r_[np.full(L, np.nan), c[:-L]])).rolling(480, min_periods=200).median().shift(1).to_numpy()
            for L in range(8, 31)}
     out = []
-    for K, tfil in variants:
+    # 1-minute swing highs / lows (5 minutes each side), for the target on the 1-minute chart
+    w1 = 5
+    sh1 = np.flatnonzero(h1 == pd.Series(h1).rolling(2 * w1 + 1, center=True).max().to_numpy())
+    sl1 = np.flatnonzero(l1 == pd.Series(l1).rolling(2 * w1 + 1, center=True).min().to_numpy())
+    for K, tfil, emode, tmode in variants:
         busy_until = -1
         used_peaks = set()
         setups = []
@@ -114,18 +120,36 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                 ar = (h - l)[max(0, lo_i - 30):lo_i].mean() if lo_i > 0 else np.nan
                 for k in range(lo_i + 1, pk):
                     if d > 0 and l[k + 1] > h[k - 1] and l[k + 1] - h[k - 1] >= MIN_GAP * ar:
-                        gap = (l[k + 1], h[k - 1]); break
+                        gap, gk = (l[k + 1], h[k - 1]), k; break
                     if d < 0 and h[k + 1] < l[k - 1] and l[k - 1] - h[k + 1] >= MIN_GAP * ar:
-                        gap = (h[k + 1], l[k - 1]); break
+                        gap, gk = (h[k + 1], l[k - 1]), k; break
                 if gap is None:
                     continue
                 entry = gap[0]                                   # near edge: touched first on the way back
+                if emode == "1m":
+                    # the user (06.11.2026): inside the 15m gap, the 1-minute gap of the same move; enter at its near edge
+                    a_ = t1.searchsorted(t15[gk - 1]); b_ = t1.searchsorted(t15[gk + 1] + pd.Timedelta(minutes=15))
+                    zlo, zhi = min(gap), max(gap)
+                    best1, e1 = 0.0, None
+                    for jj in range(a_ + 1, b_ - 1):
+                        if d > 0 and l1[jj + 1] > h1[jj - 1]:
+                            lo_, hi_ = h1[jj - 1], l1[jj + 1]
+                        elif d < 0 and h1[jj + 1] < l1[jj - 1]:
+                            lo_, hi_ = h1[jj + 1], l1[jj - 1]
+                        else:
+                            continue
+                        ov = min(hi_, zhi) - max(lo_, zlo)
+                        if ov > 0 and hi_ - lo_ > best1:
+                            best1, e1 = hi_ - lo_, (hi_ if d > 0 else lo_)
+                    if e1 is None:
+                        continue
+                    entry = e1
                 buf = 4 * pip if pip else 0.1 * a15[pk]
                 tbuf = 2 * pip if pip else 0.05 * a15[pk]
                 stop = origin - d * buf
                 used_peaks.add(pk)
-                setups.append((conf, d, pk, lo_i, peak, entry, stop, tbuf, gap, L))
-        for conf, d, pk, lo_i, peak, entry, stop, tbuf, gap, L in sorted(setups, key=lambda x: x[0]):
+                setups.append((conf, d, pk, lo_i, peak, entry, stop, tbuf, gap, L, tmode))
+        for conf, d, pk, lo_i, peak, entry, stop, tbuf, gap, L, tmode in sorted(setups, key=lambda x: x[0]):
             if True:
                 # walk the 1-minute bars from the confirmation for 8 hours
                 s0 = t1.searchsorted(t15[conf])
@@ -153,6 +177,15 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                 known = [i for i in (sh_idx if d > 0 else sl_idx) if lo_i <= i and i + 2 <= tq]
                 lv = [(SH if d > 0 else SL)[i] for i in known]
                 lv = [x for x in lv if d * (x - px) > 0]
+                if tmode == "1m":
+                    # nearest 1-minute swing high (low) above (below) the entry, made after the leg's top, known at the fill
+                    q0 = t1.searchsorted(t15[pk])
+                    sw = sh1 if d > 0 else sl1
+                    sw = sw[(sw >= q0) & (sw + w1 <= fill)]
+                    lv1 = [(h1 if d > 0 else l1)[i] for i in sw]
+                    lv1 = [x for x in lv1 if d * (x - px) > 0]
+                    if lv1:
+                        lv = lv1
                 if not lv:
                     continue
                 target = (min(lv) if d > 0 else max(lv)) - d * tbuf
@@ -173,7 +206,7 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                 if ex_px is None:
                     continue
                 busy_until = ex_q
-                out.append({"symbol": s, "variant": f"K{K:g}|trend{int(tfil)}", "time": t1[fill], "exit_time": t1[ex_q],
+                out.append({"symbol": s, "variant": f"K{K:g}|e{emode}|t{tmode}", "time": t1[fill], "exit_time": t1[ex_q],
                             "dir": d, "entry": px, "stop": stop, "target": target, "exit": ex_px, "reason": why,
                             "rr": round(d * (target - px) / risk, 2), "cost_r": round(cost[fill] / risk, 3),
                             "r": round((d * (ex_px - px) - cost[fill]) / risk, 4), "leg": int(L),

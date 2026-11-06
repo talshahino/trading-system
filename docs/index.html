@@ -420,12 +420,12 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
       <div class="msg" id="logMsg"></div></div>
     <div class="card"><h3>קוד סודי</h3>
-      <div class="row"><input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="הקוד שבחרת בהתקנה" style="max-width:260px">
+      <div class="row"><input id="pin" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="הקוד שבחרת בהתקנה" style="max-width:260px">
         <button class="btn" id="pinSave">שמור</button><button class="btn ghost" id="pinForget">שכח</button></div>
       <div class="msg" id="pinMsg"></div></div>
     <div class="card" id="viewerCard" style="display:none"><h3>קוד צפייה</h3>
       <div class="mut" style="margin-bottom:8px">קוד שני, למשל לבן משפחה: רואים את כל הנתונים ומקבלים התראות, בלי שום פעולה (בלי סגירת עסקאות, בלי עצירה והפעלה, בלי עדכונים).</div>
-      <div class="row"><input id="vpin" type="password" inputmode="numeric" autocomplete="off" placeholder="קוד צפייה חדש (לפחות 6 תווים)" style="max-width:260px">
+      <div class="row"><input id="vpin" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="קוד צפייה חדש (לפחות 6 תווים)" style="max-width:260px">
         <button class="btn" id="vpinSave">שמור</button><button class="btn ghost" id="vpinDel">בטל קוד צפייה</button></div>
       <div class="msg" id="vpinMsg"></div></div>
     <div class="card" id="newPinCard" style="display:none"><h3>החלפת הקוד הסודי</h3>
@@ -688,7 +688,7 @@ function takeDoc(j) {            // only a copy newer than the newest one alread
 const KEYS = {};
 const hex2b = h => Uint8Array.from(h.match(/../g).map(x => parseInt(x, 16)));
 const b64b = x => Uint8Array.from(atob(x), c => c.charCodeAt(0));
-let needCode = false;
+let needCode = false, codeLocked = false;
 let urlKey = null;                // random key of the published address, fetched once from the computer
 async function openUrl(j) {
   if (!j) return null;
@@ -703,6 +703,7 @@ async function openUrl(j) {
     } catch (x) {}
   }
   needCode = !pin && list.length > 0;
+  codeLocked = !!pin && !list.some(x => x.s);    // the code-derived copy is no longer published: this code was already paired
   if (!pin) return null;
   for (const e of list.filter(x => x.s)) {
     try {
@@ -823,7 +824,10 @@ $("pinSave").onclick = async () => {
   if (!mgr || !mgrInfo) { mgrT = ""; apiTry = 0; try { await findMgr(); renderMgr(); } catch (e) {} }   // the code also unlocks the address
   try { const j = await act("/auth"); setRole(j.role || "owner");
     note("pinMsg", j.role === "viewer" ? "קוד צפייה נכון ונשמר. אפשר לראות הכל ולהפעיל התראות; פעולות לא זמינות." : "הקוד נכון ונשמר במכשיר הזה.", true); }
-  catch (e) { note("pinMsg", mgr && mgrInfo ? e.message : "הקוד נשמר במכשיר. אין כרגע חיבור למחשב, אז עוד לא בדקתי שהוא נכון.", mgr && mgrInfo ? false : undefined); }
+  catch (e) { note("pinMsg", mgr && mgrInfo ? e.message
+    : codeLocked ? "הקוד כבר חובר למכשיר אחר, ולכן המכשיר הזה לא מוצא את המחשב. בעל המערכת צריך לשמור שוב את קוד הצפייה (הגדרות ← קוד צפייה ← שמור), ואז להקליד כאן את הקוד מיד."
+    : !mgr ? "הקוד לא פתח את כתובת המחשב. בדוק שהקוד מוקלד בדיוק, כולל אותיות גדולות וקטנות."
+    : "הקוד נשמר במכשיר. אין כרגע חיבור למחשב, אז עוד לא בדקתי שהוא נכון.", mgr && mgrInfo ? false : (codeLocked || !mgr) ? false : undefined); }
 };
 $("pinForget").onclick = async () => { try { localStorage.removeItem("pin"); } catch (e) {} await kv("pin", null); await kv("url_key", null); urlKey = ""; KEYS.url = null; $("pin").value = ""; setRole(""); note("pinMsg", "הקוד נמחק מהמכשיר הזה."); };
 setRole(getRole());

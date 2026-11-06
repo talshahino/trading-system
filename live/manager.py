@@ -1036,7 +1036,9 @@ def seal_url(url):
     out = [_seal(bytes.fromhex(CFG["url_key"]), url, k=1)]
     for role, h, salt in (("owner", CFG.get("pin_hash"), CFG.get("pin_salt")),
                           ("viewer", CFG.get("viewer_hash"), CFG.get("viewer_salt"))):
-        if h and salt and not CFG["paired"].get(role):
+        # the read-only code opens the address on every device, always (user, 06.11.2026: a family member uses it
+        # on a computer and a phone); it gives viewing only - every action needs the owner's code
+        if h and salt and (role == "viewer" or not CFG["paired"].get(role)):
             out.append(_seal(hashlib.sha256(bytes.fromhex(h) + b"url").digest(), url, s=salt))
     return out
 

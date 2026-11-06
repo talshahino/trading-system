@@ -483,3 +483,6 @@ def timeframe_ok(sid, tf):
     """True if the strategy's source allows this timeframe."""
     entry = STRATEGIES[sid]
     return len(entry) < 3 or entry[2] is None or tf in entry[2]
+from agents.scalp_strategies import SCALP  # noqa: E402
+
+STRATEGIES.update(SCALP)

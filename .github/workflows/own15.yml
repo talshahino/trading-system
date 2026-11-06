@@ -1,0 +1,136 @@
+name: Own strategy v2 (15m)
+
+# Each 1-minute scalping strategy (SC01-SC04) on its own: target x stop x holding time grid, chosen on
+# 2024-01-01..2025-04-30, judged after (scalp_opt.py). Read-only for the bots.
+
+on:
+  workflow_dispatch:
+    inputs:
+      symbols:
+        description: "Comma separated instruments"
+        default: "EURUSD"
+      market:
+        type: choice
+        options: [ftmo]
+        default: ftmo
+      start:
+        default: "2024-01-01"
+      end:
+        default: ""
+      demo:
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # to save the reports back into the repository
+
+concurrency:
+  group: own15-${{ inputs.symbols }}
+  cancel-in-progress: false
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Downloaded news, prices and Claude classifications are kept between runs,
+      # so a second run is fast and never pays Claude twice for the same headline.
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+
+      # Download first and save the cache right away, so a later crash never loses the
+      # (slow) price downloads.
+      - name: Download price data
+        if: ${{ !inputs.demo }}
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+          MAX_RUN_MINUTES: "200"
+        run: |
+          END="${{ inputs.end }}"
+          if [ -z "$END" ]; then END=$(date -u -d "yesterday" +%F); fi
+          python -u run_poc.py --download-only --market "${{ inputs.market }}" --start "${{ inputs.start }}" --end "$END"
+
+      - name: Save price data
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}-dl
+
+      - name: Run backtest
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+          MAX_RUN_MINUTES: "320"   # stop cleanly before GitHub's limit so the cache is saved
+        run: |
+          END="${{ inputs.end }}"
+          if [ -z "$END" ]; then END=$(date -u -d "yesterday" +%F); fi
+          echo "END_DATE=$END" >> "$GITHUB_ENV"
+
+          # Live progress: every 3 minutes the last lines of the log are pushed to the
+          # 'progress' branch (log only - keys are never printed), so progress can be
+          # checked without opening the Actions page.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git worktree add --detach /tmp/progress >/dev/null 2>&1
+          ( cd /tmp/progress && git checkout -q --orphan progress && git rm -rq --cached . && \
+            find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} + ) || true
+          touch run.log
+          (
+            while true; do
+              sleep 180
+              { echo "run ${{ github.run_number }} - updated $(date -u '+%F %T') UTC"; echo; \
+                tail -n 150 run.log | tr '\r' '\n' | tail -n 150; } > /tmp/progress/log.txt
+              ( cd /tmp/progress && git add log.txt && git commit -qm "progress run ${{ github.run_number }}" \
+                && git push -qf origin HEAD:progress ) >/dev/null 2>&1 || true
+            done
+          ) &
+
+          set -o pipefail
+          python -u own15.py --symbols "${{ inputs.symbols }}" --start "${{ inputs.start }}" --end "$END" 2>&1 | tee run.log
+
+      - name: Save data cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ github.run_number }}
+          path: output/
+          if-no-files-found: warn
+
+      - name: Commit results
+        if: success() && hashFiles('output/own15_*.csv.gz') != ''
+        run: |
+          DIR="reports/$(date -u +%F)_own15_run${{ github.run_number }}"
+          mkdir -p "$DIR"
+          cp output/own15_*.csv.gz "$DIR"/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports
+          git commit -m "Own strategy v2: ${{ inputs.symbols }}"
+          for i in 1 2 3 4 5 6 7 8; do git pull --rebase && git push && break; sleep $((RANDOM % 30 + 10)); done

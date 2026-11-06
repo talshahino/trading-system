@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-05T16:45:46+00:00",
- "sample": "2026-11-05",
+ "updated": "2026-11-06T06:28:05+00:00",
+ "sample": "2026-11-06",
  "since": "2026-11-01",
  "backtest": {
   "from": "2025-04-30",
@@ -19,8 +19,8 @@
  "bots": {
   "bot1": {
    "risk_pct": 0.375,
-   "trades": 55,
-   "mean_r": -0.224,
+   "trades": 64,
+   "mean_r": -0.16,
    "combos": [
     {
      "combo": "TV39|1Hour|JP225",
@@ -28,17 +28,10 @@
      "win_pct": 66.7,
      "mean_r": 0.136,
      "sum_r": 0.41,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 1.059,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.14R מול -0.22R של הבוט, יציבות 0.91, 3 עסקאות"
-      }
-     ],
+     "mult": 1.05,
+     "risk_pct": 0.3938,
+     "target": 1.048,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -172,7 +165,7 @@
      "sum_r": -1.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.983,
+     "target": 0.982,
      "recs": [],
      "detail": {
       "profit": {
@@ -293,17 +286,10 @@
      "win_pct": 100.0,
      "mean_r": 0.488,
      "sum_r": 0.49,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 1.029,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.49R מול -0.22R של הבוט, יציבות 0.95, 1 עסקאות"
-      }
-     ],
+     "mult": 1.05,
+     "risk_pct": 0.3938,
+     "target": 1.028,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -411,17 +397,10 @@
      "win_pct": 66.7,
      "mean_r": 1.022,
      "sum_r": 3.07,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 1.071,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +1.02R מול -0.22R של הבוט, יציבות 0.98, 3 עסקאות"
-      }
-     ],
+     "mult": 1.05,
+     "risk_pct": 0.3938,
+     "target": 1.07,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -540,28 +519,21 @@
     },
     {
      "combo": "TV02|15Min|TSLA",
-     "trades": 2,
+     "trades": 3,
      "win_pct": 0.0,
-     "mean_r": -0.96,
-     "sum_r": -1.92,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.961,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.96R מול -0.22R של הבוט, יציבות 0.88, 2 עסקאות"
-      }
-     ],
+     "mean_r": -0.727,
+     "sum_r": -2.18,
+     "mult": 0.95,
+     "risk_pct": 0.3562,
+     "target": 0.94,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
+        "trades": 3,
         "win_pct": 0.0,
-        "mean_r": -0.96,
-        "sum_r": -1.92,
+        "mean_r": -0.727,
+        "sum_r": -2.18,
         "pf": 0.0
        },
        "backtest": {
@@ -573,8 +545,20 @@
        }
       },
       "stability": {
-       "score": 0.88,
-       "demo": null,
+       "score": 0.77,
+       "demo": {
+        "score": 0.0,
+        "without_best_r": -1.92,
+        "max_loss_r": 1.0,
+        "avg_win_r": 0.0,
+        "drawdown_r": 2.18,
+        "sd_r": 0.41,
+        "checks": [
+         0.0,
+         0.0,
+         0.0
+        ]
+       },
        "backtest": {
         "score": 0.88,
         "without_best_r": 39.88,
@@ -592,8 +576,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
-         "mean_r": -0.96
+         "trades": 3,
+         "mean_r": -0.73
         },
         "sell": {
          "trades": 0,
@@ -613,7 +597,7 @@
       },
       "exits": {
        "bt_trades": 252,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.4,
        "reach_pct": 1.2,
        "mfe_of_target_median_pct": 34.0,
@@ -665,17 +649,10 @@
      "win_pct": 0.0,
      "mean_r": -1.007,
      "sum_r": -4.03,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.923,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.9,
-       "label": "סיכון ×0.9",
-       "why": "רווח ממוצע -1.01R מול -0.22R של הבוט, יציבות 0.79, 4 עסקאות"
-      }
-     ],
+     "mult": 0.9,
+     "risk_pct": 0.3375,
+     "target": 0.922,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -812,7 +789,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
+     "target": 1.006,
      "recs": [],
      "detail": {
       "profit": {
@@ -936,45 +913,10 @@
      "win_pct": 100.0,
      "mean_r": 0.955,
      "sum_r": 1.91,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 1.028,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.95R מול -0.22R של הבוט, יציבות 0.57, 2 עסקאות"
-      },
-      {
-       "kind": "tp",
-       "value": 0.7,
-       "bt_gain_r": [
-        0.211,
-        0.115
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.7: בבקטסט +0.21R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      },
-      {
-       "bt_trades": 36,
-       "bt_mean_r": [
-        -0.45,
-        -0.12
-       ],
-       "demo": {
-        "trades": 0,
-        "mean_r": null
-       },
-       "why": "שעות 20:00-24:00: בבקטסט -0.45R ו־-0.12R לעסקה בשני החצאים (36 עסקאות)",
-       "kind": "hours",
-       "value": [
-        20,
-        24
-       ],
-       "label": "לא לסחור 20:00-24:00"
-      }
-     ],
+     "mult": 1.05,
+     "risk_pct": 0.3938,
+     "target": 1.027,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -1093,51 +1035,29 @@
     },
     {
      "combo": "TV11|4Hour|USDJPY",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 2,
+     "win_pct": 50.0,
+     "mean_r": 0.093,
+     "sum_r": 0.19,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
+     "target": 1.033,
      "recs": [
       {
-       "kind": "tp",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.079,
-        0.158
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.6: בבקטסט +0.08R ו־+0.16R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      },
-      {
-       "bt_trades": 35,
-       "bt_mean_r": [
-        -0.42,
-        -0.17
-       ],
-       "demo": {
-        "trades": 0,
-        "mean_r": null
-       },
-       "why": "שעות 12:00-16:00: בבקטסט -0.42R ו־-0.17R לעסקה בשני החצאים (35 עסקאות)",
-       "kind": "hours",
-       "value": [
-        12,
-        16
-       ],
-       "label": "לא לסחור 12:00-16:00"
+       "kind": "mult",
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +0.09R מול -0.16R של הבוט, יציבות 0.95, 2 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 2,
+        "win_pct": 50.0,
+        "mean_r": 0.093,
+        "sum_r": 0.19,
+        "pf": 1.18
        },
        "backtest": {
         "trades": 247,
@@ -1167,8 +1087,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 2,
+         "mean_r": 0.09
         },
         "sell": {
          "trades": 0,
@@ -1188,7 +1108,7 @@
       },
       "exits": {
        "bt_trades": 247,
-       "demo_trades": 0,
+       "demo_trades": 2,
        "near_miss_pct": 0.0,
        "reach_pct": 4.9,
        "mfe_of_target_median_pct": 42.0,
@@ -1254,7 +1174,7 @@
      "sum_r": 0.03,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.02,
+     "target": 1.015,
      "recs": [],
      "detail": {
       "profit": {
@@ -1375,17 +1295,10 @@
      "win_pct": 33.3,
      "mean_r": -0.524,
      "sum_r": -1.57,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.955,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.52R מול -0.22R של הבוט, יציבות 0.83, 3 עסקאות"
-      }
-     ],
+     "mult": 0.95,
+     "risk_pct": 0.3562,
+     "target": 0.943,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -1505,17 +1418,10 @@
      "win_pct": 0.0,
      "mean_r": -0.72,
      "sum_r": -2.88,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.923,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.9,
-       "label": "סיכון ×0.9",
-       "why": "רווח ממוצע -0.72R מול -0.22R של הבוט, יציבות 0.80, 4 עסקאות"
-      }
-     ],
+     "mult": 0.9,
+     "risk_pct": 0.3375,
+     "target": 0.922,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -1649,7 +1555,7 @@
      "sum_r": -0.56,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.987,
+     "target": 0.982,
      "recs": [],
      "detail": {
       "profit": {
@@ -1759,19 +1665,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.8,
-       "bt_gain_r": [
-        0.108,
-        0.052
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.8: בבקטסט +0.11R ו־+0.05R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.006,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -1876,19 +1771,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.5,
-       "bt_gain_r": [
-        0.083,
-        0.089
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.5: בבקטסט +0.08R ו־+0.09R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.006,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -2001,7 +1885,7 @@
      "sum_r": -0.83,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.984,
+     "target": 0.976,
      "recs": [],
      "detail": {
       "profit": {
@@ -2127,19 +2011,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
-     "recs": [
-      {
-       "kind": "sl",
-       "value": 0.75,
-       "bt_gain_r": [
-        0.139,
-        0.067
-       ],
-       "demo_gain_r": null,
-       "why": "סטופ ×0.75: בבקטסט +0.14R ו־+0.07R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.006,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -2247,17 +2120,10 @@
      "win_pct": 66.7,
      "mean_r": 0.355,
      "sum_r": 1.06,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 1.056,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.35R מול -0.22R של הבוט, יציבות 0.80, 3 עסקאות"
-      }
-     ],
+     "mult": 1.05,
+     "risk_pct": 0.3938,
+     "target": 1.055,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -2391,7 +2257,7 @@
      "sum_r": -1.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.983,
+     "target": 0.982,
      "recs": [],
      "detail": {
       "profit": {
@@ -2512,17 +2378,10 @@
      "win_pct": 100.0,
      "mean_r": 1.787,
      "sum_r": 3.57,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 1.043,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +1.79R מול -0.22R של הבוט, יציבות 0.83, 2 עסקאות"
-      }
-     ],
+     "mult": 1.05,
+     "risk_pct": 0.3938,
+     "target": 1.042,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -2644,19 +2503,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.9,
-       "bt_gain_r": [
-        0.059,
-        0.139
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.9: בבקטסט +0.06R ו־+0.14R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.006,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -2781,7 +2629,7 @@
      "sum_r": -0.83,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.983,
+     "target": 0.982,
      "recs": [],
      "detail": {
       "profit": {
@@ -2904,7 +2752,7 @@
      "sum_r": -1.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.983,
+     "target": 0.982,
      "recs": [],
      "detail": {
       "profit": {
@@ -3027,19 +2875,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
-     "recs": [
-      {
-       "kind": "sl",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.091,
-        0.064
-       ],
-       "demo_gain_r": null,
-       "why": "סטופ ×0.6: בבקטסט +0.09R ו־+0.06R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.006,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -3152,37 +2989,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.7,
-       "bt_gain_r": [
-        0.058,
-        0.135
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.7: בבקטסט +0.06R ו־+0.14R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      },
-      {
-       "bt_trades": 24,
-       "bt_mean_r": [
-        -0.16,
-        -0.21
-       ],
-       "demo": {
-        "trades": 0,
-        "mean_r": null
-       },
-       "why": "שעות 08:00-12:00: בבקטסט -0.16R ו־-0.21R לעסקה בשני החצאים (24 עסקאות)",
-       "kind": "hours",
-       "value": [
-        8,
-        12
-       ],
-       "label": "לא לסחור 08:00-12:00"
-      }
-     ],
+     "target": 1.006,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -3307,7 +3115,7 @@
      "sum_r": -1.06,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.983,
+     "target": 0.982,
      "recs": [],
      "detail": {
       "profit": {
@@ -3411,22 +3219,22 @@
     },
     {
      "combo": "TV24|15Min|KO",
-     "trades": 3,
-     "win_pct": 33.3,
-     "mean_r": -0.134,
-     "sum_r": -0.4,
+     "trades": 4,
+     "win_pct": 50.0,
+     "mean_r": -0.044,
+     "sum_r": -0.18,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.014,
+     "target": 1.019,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 3,
-        "win_pct": 33.3,
-        "mean_r": -0.134,
-        "sum_r": -0.4,
-        "pf": 0.77
+        "trades": 4,
+        "win_pct": 50.0,
+        "mean_r": -0.044,
+        "sum_r": -0.18,
+        "pf": 0.9
        },
        "backtest": {
         "trades": 123,
@@ -3437,17 +3245,17 @@
        }
       },
       "stability": {
-       "score": 0.77,
+       "score": 0.75,
        "demo": {
-        "score": 0.33,
-        "without_best_r": -1.75,
+        "score": 0.29,
+        "without_best_r": -1.52,
         "max_loss_r": 1.0,
-        "avg_win_r": 1.35,
+        "avg_win_r": 0.79,
         "drawdown_r": 1.75,
-        "sd_r": 1.29,
+        "sd_r": 1.07,
         "checks": [
          0.0,
-         1.0,
+         0.86,
          0.0
         ]
        },
@@ -3472,8 +3280,8 @@
          "mean_r": 0.3
         },
         "sell": {
-         "trades": 1,
-         "mean_r": -1.0
+         "trades": 2,
+         "mean_r": -0.39
         }
        },
        "backtest": {
@@ -3489,7 +3297,7 @@
       },
       "exits": {
        "bt_trades": 123,
-       "demo_trades": 2,
+       "demo_trades": 3,
        "mfe_median_r": 0.61,
        "mae_winners_p90_r": 0.81
       },
@@ -3534,21 +3342,28 @@
     },
     {
      "combo": "TV37|4Hour|N25",
-     "trades": 1,
+     "trades": 2,
      "win_pct": 100.0,
-     "mean_r": 0.239,
-     "sum_r": 0.24,
+     "mean_r": 0.268,
+     "sum_r": 0.54,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.024,
-     "recs": [],
+     "target": 1.038,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +0.27R מול -0.16R של הבוט, יציבות 0.76, 2 עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
+        "trades": 2,
         "win_pct": 100.0,
-        "mean_r": 0.239,
-        "sum_r": 0.24,
+        "mean_r": 0.268,
+        "sum_r": 0.54,
         "pf": null
        },
        "backtest": {
@@ -3583,8 +3398,8 @@
          "mean_r": 0.24
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.3
         }
        },
        "backtest": {
@@ -3600,7 +3415,7 @@
       },
       "exits": {
        "bt_trades": 84,
-       "demo_trades": 1,
+       "demo_trades": 2,
        "near_miss_pct": 0.0,
        "reach_pct": 2.4,
        "mfe_of_target_median_pct": 22.0,
@@ -3662,7 +3477,7 @@
      "sum_r": -0.04,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.021,
+     "target": 1.012,
      "recs": [],
      "detail": {
       "profit": {
@@ -3785,7 +3600,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
+     "target": 1.006,
      "recs": [],
      "detail": {
       "profit": {
@@ -3907,19 +3722,8 @@
      "sum_r": -1.09,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.983,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.5,
-       "bt_gain_r": [
-        0.078,
-        0.179
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.5: בבקטסט +0.08R ו־+0.18R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 0.982,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -4026,22 +3830,22 @@
     },
     {
      "combo": "TV03|15Min|AAPL",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 0.0,
+     "mean_r": -0.214,
+     "sum_r": -0.21,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
+     "target": 1.001,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 1,
+        "win_pct": 0.0,
+        "mean_r": -0.214,
+        "sum_r": -0.21,
+        "pf": 0.0
        },
        "backtest": {
         "trades": 73,
@@ -4071,8 +3875,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": -0.21
         },
         "sell": {
          "trades": 0,
@@ -4092,7 +3896,7 @@
       },
       "exits": {
        "bt_trades": 73,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 2.7,
        "mfe_of_target_median_pct": 20.0,
@@ -4146,7 +3950,7 @@
      "sum_r": -0.15,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.011,
+     "target": 1.006,
      "recs": [],
      "detail": {
       "profit": {
@@ -4260,19 +4064,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.065,
-        0.271
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.6: בבקטסט +0.07R ו־+0.27R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.006,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -4397,7 +4190,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
+     "target": 1.006,
      "recs": [],
      "detail": {
       "profit": {
@@ -4492,21 +4285,28 @@
     },
     {
      "combo": "TV33|15Min|MSTR",
-     "trades": 1,
+     "trades": 2,
      "win_pct": 0.0,
-     "mean_r": -1.0,
-     "sum_r": -1.0,
+     "mean_r": -1.021,
+     "sum_r": -2.04,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.983,
-     "recs": [],
+     "target": 0.96,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 0.95,
+       "label": "סיכון ×0.95",
+       "why": "רווח ממוצע -1.02R מול -0.16R של הבוט, יציבות 0.92, 2 עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
+        "trades": 2,
         "win_pct": 0.0,
-        "mean_r": -1.0,
-        "sum_r": -1.0,
+        "mean_r": -1.021,
+        "sum_r": -2.04,
         "pf": 0.0
        },
        "backtest": {
@@ -4537,8 +4337,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": -1.04
         },
         "sell": {
          "trades": 1,
@@ -4558,7 +4358,7 @@
       },
       "exits": {
        "bt_trades": 267,
-       "demo_trades": 1,
+       "demo_trades": 2,
        "mfe_median_r": 0.66,
        "mae_winners_p90_r": 0.72
       },
@@ -4603,39 +4403,29 @@
     },
     {
      "combo": "TT45|15Min|CSCO",
-     "trades": 3,
-     "win_pct": 0.0,
-     "mean_r": -0.466,
-     "sum_r": -1.4,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.962,
+     "trades": 4,
+     "win_pct": 25.0,
+     "mean_r": 0.095,
+     "sum_r": 0.38,
+     "mult": 0.95,
+     "risk_pct": 0.3562,
+     "target": 1.038,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.47R מול -0.22R של הבוט, יציבות 0.68, 3 עסקאות"
-      },
-      {
-       "kind": "sl",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.084,
-        0.071
-       ],
-       "demo_gain_r": null,
-       "why": "סטופ ×0.6: בבקטסט +0.08R ו־+0.07R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +0.10R מול -0.16R של הבוט, יציבות 0.72, 4 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 3,
-        "win_pct": 0.0,
-        "mean_r": -0.466,
-        "sum_r": -1.4,
-        "pf": 0.0
+        "trades": 4,
+        "win_pct": 25.0,
+        "mean_r": 0.095,
+        "sum_r": 0.38,
+        "pf": 1.27
        },
        "backtest": {
         "trades": 255,
@@ -4646,18 +4436,18 @@
        }
       },
       "stability": {
-       "score": 0.68,
+       "score": 0.72,
        "demo": {
-        "score": 0.0,
-        "without_best_r": -1.27,
+        "score": 0.4,
+        "without_best_r": -1.4,
         "max_loss_r": 1.01,
-        "avg_win_r": 0.0,
+        "avg_win_r": 1.78,
         "drawdown_r": 1.4,
-        "sd_r": 0.47,
+        "sd_r": 1.19,
         "checks": [
          0.0,
-         0.0,
-         0.0
+         1.0,
+         0.21
         ]
        },
        "backtest": {
@@ -4681,8 +4471,8 @@
          "mean_r": -0.57
         },
         "sell": {
-         "trades": 1,
-         "mean_r": -0.26
+         "trades": 2,
+         "mean_r": 0.76
         }
        },
        "backtest": {
@@ -4698,7 +4488,7 @@
       },
       "exits": {
        "bt_trades": 255,
-       "demo_trades": 3,
+       "demo_trades": 4,
        "near_miss_pct": 0.4,
        "reach_pct": 2.0,
        "mfe_of_target_median_pct": 19.0,
@@ -4746,21 +4536,28 @@
     },
     {
      "combo": "TV55|15Min|AMZN",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 1.111,
+     "sum_r": 1.11,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
-     "recs": [],
+     "target": 1.025,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +1.11R מול -0.16R של הבוט, יציבות 0.85, 1 עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 1.111,
+        "sum_r": 1.11,
         "pf": null
        },
        "backtest": {
@@ -4791,8 +4588,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 1.11
         },
         "sell": {
          "trades": 0,
@@ -4812,7 +4609,7 @@
       },
       "exits": {
        "bt_trades": 147,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.7,
        "reach_pct": 1.4,
        "mfe_of_target_median_pct": 21.0,
@@ -4860,17 +4657,10 @@
      "win_pct": 0.0,
      "mean_r": -0.559,
      "sum_r": -1.12,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.967,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.56R מול -0.22R של הבוט, יציבות 0.92, 2 עסקאות"
-      }
-     ],
+     "mult": 0.95,
+     "risk_pct": 0.3562,
+     "target": 0.96,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -4993,17 +4783,10 @@
      "win_pct": 0.0,
      "mean_r": -0.601,
      "sum_r": -1.2,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.963,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.60R מול -0.22R של הבוט, יציבות 0.91, 2 עסקאות"
-      }
-     ],
+     "mult": 0.95,
+     "risk_pct": 0.3562,
+     "target": 0.96,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -5105,7 +4888,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
+     "target": 1.006,
      "recs": [],
      "detail": {
       "profit": {
@@ -5228,7 +5011,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
+     "target": 1.006,
      "recs": [],
      "detail": {
       "profit": {
@@ -5351,19 +5134,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
-     "recs": [
-      {
-       "kind": "sl",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.469,
-        0.127
-       ],
-       "demo_gain_r": null,
-       "why": "סטופ ×0.6: בבקטסט +0.47R ו־+0.13R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.006,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -5485,7 +5257,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
+     "target": 1.006,
      "recs": [],
      "detail": {
       "profit": {
@@ -5596,7 +5368,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.007,
+     "target": 1.006,
      "recs": [],
      "detail": {
       "profit": {
@@ -5715,8 +5487,8 @@
   },
   "bot2": {
    "risk_pct": 0.44999999999999996,
-   "trades": 12,
-   "mean_r": 0.343,
+   "trades": 15,
+   "mean_r": 0.223,
    "combos": [
     {
      "combo": "TV02|1Hour|US30",
@@ -5846,21 +5618,21 @@
     },
     {
      "combo": "TV13|15Min|TSLA",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.383,
+     "sum_r": 0.38,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.001,
+     "target": 1.01,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.383,
+        "sum_r": 0.38,
         "pf": null
        },
        "backtest": {
@@ -5895,8 +5667,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.38
         }
        },
        "backtest": {
@@ -5912,7 +5684,7 @@
       },
       "exits": {
        "bt_trades": 434,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.81,
        "mae_winners_p90_r": 0.72
       },
@@ -6077,7 +5849,7 @@
      "sum_r": 0.36,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.001,
+     "target": 1.009,
      "recs": [],
      "detail": {
       "profit": {
@@ -6323,7 +6095,7 @@
      "sum_r": 0.72,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.002,
+     "target": 1.015,
      "recs": [],
      "detail": {
       "profit": {
@@ -6450,18 +6222,7 @@
      "mult": 1.0,
      "risk_pct": 0.45,
      "target": 1.022,
-     "recs": [
-      {
-       "kind": "sl",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.103,
-        0.122
-       ],
-       "demo_gain_r": null,
-       "why": "סטופ ×0.6: בבקטסט +0.10R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -6583,7 +6344,7 @@
      "sum_r": 0.33,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 0.998,
+     "target": 1.004,
      "recs": [],
      "detail": {
       "profit": {
@@ -6817,18 +6578,7 @@
      "mult": 1.0,
      "risk_pct": 0.45,
      "target": 1.001,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.9,
-       "bt_gain_r": [
-        0.138,
-        0.088
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.9: בבקטסט +0.14R ו־+0.09R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -7060,7 +6810,7 @@
      "sum_r": 0.43,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.005,
+     "target": 1.011,
      "recs": [],
      "detail": {
       "profit": {
@@ -7288,7 +7038,7 @@
      "sum_r": 1.99,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.019,
+     "target": 1.02,
      "recs": [],
      "detail": {
       "profit": {
@@ -7396,22 +7146,22 @@
     },
     {
      "combo": "TV55|15Min|GME",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 0.0,
+     "mean_r": -1.0,
+     "sum_r": -1.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.001,
+     "target": 0.977,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 1,
+        "win_pct": 0.0,
+        "mean_r": -1.0,
+        "sum_r": -1.0,
+        "pf": 0.0
        },
        "backtest": {
         "trades": 155,
@@ -7441,8 +7191,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": -1.0
         },
         "sell": {
          "trades": 0,
@@ -7462,7 +7212,7 @@
       },
       "exits": {
        "bt_trades": 155,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 0.6,
        "mfe_of_target_median_pct": 23.0,
@@ -7640,26 +7390,7 @@
      "mult": 1.0,
      "risk_pct": 0.45,
      "target": 0.977,
-     "recs": [
-      {
-       "bt_trades": 30,
-       "bt_mean_r": [
-        -0.11,
-        -0.12
-       ],
-       "demo": {
-        "trades": 0,
-        "mean_r": null
-       },
-       "why": "שעות 20:00-24:00: בבקטסט -0.11R ו־-0.12R לעסקה בשני החצאים (30 עסקאות)",
-       "kind": "hours",
-       "value": [
-        20,
-        24
-       ],
-       "label": "לא לסחור 20:00-24:00"
-      }
-     ],
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -7766,22 +7497,22 @@
     },
     {
      "combo": "TT13|15Min|INTC",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 0.0,
+     "mean_r": -0.152,
+     "sum_r": -0.15,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.001,
+     "target": 0.978,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 1,
+        "win_pct": 0.0,
+        "mean_r": -0.152,
+        "sum_r": -0.15,
+        "pf": 0.0
        },
        "backtest": {
         "trades": 218,
@@ -7815,8 +7546,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": -0.15
         }
        },
        "backtest": {
@@ -7832,7 +7563,7 @@
       },
       "exits": {
        "bt_trades": 218,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 0.0,
        "mfe_of_target_median_pct": 19.0,
@@ -8480,17 +8211,10 @@
      "win_pct": 0.0,
      "mean_r": -0.592,
      "sum_r": -1.18,
-     "mult": 1.0,
-     "risk_pct": 0.45,
-     "target": 0.955,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.59R מול +0.34R של הבוט, יציבות 0.91, 2 עסקאות"
-      }
-     ],
+     "mult": 0.95,
+     "risk_pct": 0.4275,
+     "target": 0.956,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -8716,26 +8440,7 @@
      "mult": 1.0,
      "risk_pct": 0.45,
      "target": 1.001,
-     "recs": [
-      {
-       "bt_trades": 67,
-       "bt_mean_r": [
-        -0.49,
-        -0.39
-       ],
-       "demo": {
-        "trades": 0,
-        "mean_r": null
-       },
-       "why": "שעות 16:00-20:00: בבקטסט -0.49R ו־-0.39R לעסקה בשני החצאים (67 עסקאות)",
-       "kind": "hours",
-       "value": [
-        16,
-        20
-       ],
-       "label": "לא לסחור 16:00-20:00"
-      }
-     ],
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -9213,8 +8918,8 @@
   },
   "bot3": {
    "risk_pct": 0.375,
-   "trades": 12,
-   "mean_r": -0.17,
+   "trades": 15,
+   "mean_r": -0.052,
    "combos": [
     {
      "combo": "TV02|15Min|JP225",
@@ -9224,37 +8929,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.053,
-        0.123
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.6: בבקטסט +0.05R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      },
-      {
-       "bt_trades": 100,
-       "bt_mean_r": [
-        -0.17,
-        -0.14
-       ],
-       "demo": {
-        "trades": 0,
-        "mean_r": null
-       },
-       "why": "שעות 20:00-24:00: בבקטסט -0.17R ו־-0.14R לעסקה בשני החצאים (100 עסקאות)",
-       "kind": "hours",
-       "value": [
-        20,
-        24
-       ],
-       "label": "לא לסחור 20:00-24:00"
-      }
-     ],
+     "target": 1.003,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -9373,21 +9049,21 @@
     },
     {
      "combo": "TV21|1Hour|XAUUSD",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.083,
+     "sum_r": 0.08,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.011,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.083,
+        "sum_r": 0.08,
         "pf": null
        },
        "backtest": {
@@ -9418,8 +9094,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.08
         },
         "sell": {
          "trades": 0,
@@ -9439,7 +9115,7 @@
       },
       "exits": {
        "bt_trades": 355,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.65,
        "mae_winners_p90_r": 0.62
       },
@@ -9500,17 +9176,10 @@
      "win_pct": 0.0,
      "mean_r": -1.0,
      "sum_r": -2.0,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.959,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -1.00R מול -0.17R של הבוט, יציבות 0.98, 2 עסקאות"
-      }
-     ],
+     "mult": 0.95,
+     "risk_pct": 0.3562,
+     "target": 0.958,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -9635,27 +9304,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
-     "recs": [
-      {
-       "bt_trades": 23,
-       "bt_mean_r": [
-        -0.31,
-        -0.1
-       ],
-       "demo": {
-        "trades": 0,
-        "mean_r": null
-       },
-       "why": "שעות 00:00-04:00: בבקטסט -0.31R ו־-0.10R לעסקה בשני החצאים (23 עסקאות)",
-       "kind": "hours",
-       "value": [
-        0,
-        4
-       ],
-       "label": "לא לסחור 00:00-04:00"
-      }
-     ],
+     "target": 1.003,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -9774,27 +9424,10 @@
      "win_pct": 100.0,
      "mean_r": 1.885,
      "sum_r": 1.89,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 1.027,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +1.89R מול -0.17R של הבוט, יציבות 0.95, 1 עסקאות"
-      },
-      {
-       "kind": "tp",
-       "value": 0.7,
-       "bt_gain_r": [
-        0.2,
-        0.405
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.7: בבקטסט +0.20R ו־+0.41R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "mult": 1.05,
+     "risk_pct": 0.3938,
+     "target": 1.026,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -9919,7 +9552,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.003,
      "recs": [],
      "detail": {
       "profit": {
@@ -10028,27 +9661,10 @@
      "win_pct": 33.3,
      "mean_r": -0.666,
      "sum_r": -2.0,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.939,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.67R מול -0.17R של הבוט, יציבות 0.81, 3 עסקאות"
-      },
-      {
-       "kind": "tp",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.139,
-        0.052
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.6: בבקטסט +0.14R ו־+0.05R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "mult": 0.95,
+     "risk_pct": 0.3562,
+     "target": 0.938,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -10185,7 +9801,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.003,
      "recs": [],
      "detail": {
       "profit": {
@@ -10299,7 +9915,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.003,
      "recs": [],
      "detail": {
       "profit": {
@@ -10422,19 +10038,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.223,
-        0.087
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.6: בבקטסט +0.22R ו־+0.09R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.003,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -10559,7 +10164,7 @@
      "sum_r": -0.36,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.993,
+     "target": 0.984,
      "recs": [],
      "detail": {
       "profit": {
@@ -10673,19 +10278,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
-     "recs": [
-      {
-       "kind": "sl",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.156,
-        0.057
-       ],
-       "demo_gain_r": null,
-       "why": "סטופ ×0.6: בבקטסט +0.16R ו־+0.06R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.003,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -10795,7 +10389,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.003,
      "recs": [],
      "detail": {
       "profit": {
@@ -10903,21 +10497,21 @@
     },
     {
      "combo": "TV28|15Min|AMZN",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.559,
+     "sum_r": 0.56,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.022,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.559,
+        "sum_r": 0.56,
         "pf": null
        },
        "backtest": {
@@ -10948,8 +10542,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.56
         },
         "sell": {
          "trades": 0,
@@ -10969,7 +10563,7 @@
       },
       "exits": {
        "bt_trades": 148,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 1.4,
        "mfe_of_target_median_pct": 31.0,
@@ -11017,17 +10611,10 @@
      "win_pct": 100.0,
      "mean_r": 0.898,
      "sum_r": 1.8,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 1.042,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.90R מול -0.17R של הבוט, יציבות 0.85, 2 עסקאות"
-      }
-     ],
+     "mult": 1.05,
+     "risk_pct": 0.3938,
+     "target": 1.04,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -11137,7 +10724,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.003,
      "recs": [],
      "detail": {
       "profit": {
@@ -11259,7 +10846,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.003,
      "recs": [],
      "detail": {
       "profit": {
@@ -11377,19 +10964,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.12,
-        0.189
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.6: בבקטסט +0.12R ו־+0.19R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.003,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -11514,7 +11090,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.003,
      "recs": [],
      "detail": {
       "profit": {
@@ -11628,24 +11204,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
-     "recs": [
-      {
-       "bt_trades": 25,
-       "bt_mean_r": [
-        -0.34,
-        -0.2
-       ],
-       "demo": {
-        "trades": 0,
-        "mean_r": null
-       },
-       "why": "המכירות מפסידות: בבקטסט -0.34R ו־-0.20R לעסקה בשני החצאים (25 עסקאות)",
-       "kind": "dir",
-       "value": 1,
-       "label": "רק קנייה"
-      }
-     ],
+     "target": 1.003,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -11766,7 +11326,7 @@
      "sum_r": -0.29,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.996,
+     "target": 0.988,
      "recs": [],
      "detail": {
       "profit": {
@@ -11877,7 +11437,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.003,
      "recs": [],
      "detail": {
       "profit": {
@@ -11987,19 +11547,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
-     "recs": [
-      {
-       "kind": "tp",
-       "value": 0.5,
-       "bt_gain_r": [
-        0.168,
-        0.084
-       ],
-       "demo_gain_r": null,
-       "why": "יעד ×0.5: בבקטסט +0.17R ו־+0.08R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.003,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -12112,7 +11661,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.003,
      "recs": [],
      "detail": {
       "profit": {
@@ -12220,21 +11769,21 @@
     },
     {
      "combo": "SS01|5Min|WMT",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.618,
+     "sum_r": 0.62,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.023,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.618,
+        "sum_r": 0.62,
         "pf": null
        },
        "backtest": {
@@ -12269,8 +11818,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.62
         }
        },
        "backtest": {
@@ -12286,7 +11835,7 @@
       },
       "exits": {
        "bt_trades": 341,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 0.0,
        "mfe_of_target_median_pct": 29.0,
@@ -12334,17 +11883,10 @@
      "win_pct": 0.0,
      "mean_r": -0.541,
      "sum_r": -1.08,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.959,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.54R מול -0.17R של הבוט, יציבות 0.70, 2 עסקאות"
-      }
-     ],
+     "mult": 0.95,
+     "risk_pct": 0.3562,
+     "target": 0.958,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -12453,26 +11995,26 @@
   },
   "bot4": {
    "risk_pct": 0.44999999999999996,
-   "trades": 0,
-   "mean_r": 0.0,
+   "trades": 8,
+   "mean_r": 0.009,
    "combos": [
     {
      "combo": "BK05|15Min|EURUSD",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.803,
+     "sum_r": 0.8,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 1.022,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.803,
+        "sum_r": 0.8,
         "pf": null
        },
        "backtest": {
@@ -12507,8 +12049,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.8
         }
        },
        "backtest": {
@@ -12524,7 +12066,7 @@
       },
       "exits": {
        "bt_trades": 271,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.45,
        "mae_winners_p90_r": 0.71
       },
@@ -12587,7 +12129,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 1.001,
      "recs": [],
      "detail": {
       "profit": {
@@ -12704,21 +12246,21 @@
     },
     {
      "combo": "BK05|1Hour|EURUSD",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.615,
+     "sum_r": 0.62,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 1.02,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.615,
+        "sum_r": 0.62,
         "pf": null
        },
        "backtest": {
@@ -12753,8 +12295,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.62
         }
        },
        "backtest": {
@@ -12770,7 +12312,7 @@
       },
       "exits": {
        "bt_trades": 250,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.41,
        "mae_winners_p90_r": 0.69
       },
@@ -12827,41 +12369,22 @@
     },
     {
      "combo": "GH02|1Hour|XAUUSD",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 0.0,
+     "mean_r": -0.295,
+     "sum_r": -0.29,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
-     "recs": [
-      {
-       "bt_trades": 22,
-       "bt_mean_r": [
-        -0.11,
-        -0.23
-       ],
-       "demo": {
-        "trades": 0,
-        "mean_r": null
-       },
-       "why": "שעות 08:00-12:00: בבקטסט -0.11R ו־-0.23R לעסקה בשני החצאים (22 עסקאות)",
-       "kind": "hours",
-       "value": [
-        8,
-        12
-       ],
-       "label": "לא לסחור 08:00-12:00"
-      }
-     ],
+     "target": 0.982,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 1,
+        "win_pct": 0.0,
+        "mean_r": -0.295,
+        "sum_r": -0.29,
+        "pf": 0.0
        },
        "backtest": {
         "trades": 111,
@@ -12891,8 +12414,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": -0.29
         },
         "sell": {
          "trades": 0,
@@ -12912,7 +12435,7 @@
       },
       "exits": {
        "bt_trades": 111,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.38,
        "mae_winners_p90_r": 0.59
       },
@@ -12969,33 +12492,22 @@
     },
     {
      "combo": "BK05|15Min|INTC",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 0.0,
+     "mean_r": -0.142,
+     "sum_r": -0.14,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
-     "recs": [
-      {
-       "kind": "sl",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.069,
-        0.066
-       ],
-       "demo_gain_r": null,
-       "why": "סטופ ×0.6: בבקטסט +0.07R ו־+0.07R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 0.991,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 1,
+        "win_pct": 0.0,
+        "mean_r": -0.142,
+        "sum_r": -0.14,
+        "pf": 0.0
        },
        "backtest": {
         "trades": 202,
@@ -13029,8 +12541,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": -0.14
         }
        },
        "backtest": {
@@ -13046,7 +12558,7 @@
       },
       "exits": {
        "bt_trades": 202,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.51,
        "mae_winners_p90_r": 0.52
       },
@@ -13091,22 +12603,22 @@
     },
     {
      "combo": "SE02|1Hour|GBPJPY",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 0.0,
+     "mean_r": -1.0,
+     "sum_r": -1.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 0.977,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 1,
+        "win_pct": 0.0,
+        "mean_r": -1.0,
+        "sum_r": -1.0,
+        "pf": 0.0
        },
        "backtest": {
         "trades": 388,
@@ -13136,8 +12648,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": -1.0
         },
         "sell": {
          "trades": 0,
@@ -13157,7 +12669,7 @@
       },
       "exits": {
        "bt_trades": 388,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.66,
        "mae_winners_p90_r": 0.66
       },
@@ -13200,7 +12712,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 1.001,
      "recs": [],
      "detail": {
       "profit": {
@@ -13311,7 +12823,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 1.001,
      "recs": [],
      "detail": {
       "profit": {
@@ -13434,7 +12946,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 1.001,
      "recs": [],
      "detail": {
       "profit": {
@@ -13545,19 +13057,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
-     "recs": [
-      {
-       "kind": "sl",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.082,
-        0.071
-       ],
-       "demo_gain_r": null,
-       "why": "סטופ ×0.6: בבקטסט +0.08R ו־+0.07R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.001,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -13661,22 +13162,22 @@
     },
     {
      "combo": "QC07|15Min|ARM",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 2,
+     "win_pct": 0.0,
+     "mean_r": -0.061,
+     "sum_r": -0.12,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 0.991,
      "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
+        "trades": 2,
+        "win_pct": 0.0,
+        "mean_r": -0.061,
+        "sum_r": -0.12,
+        "pf": 0.0
        },
        "backtest": {
         "trades": 468,
@@ -13710,8 +13211,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 2,
+         "mean_r": -0.06
         }
        },
        "backtest": {
@@ -13727,7 +13228,7 @@
       },
       "exits": {
        "bt_trades": 468,
-       "demo_trades": 0,
+       "demo_trades": 2,
        "mfe_median_r": 0.39,
        "mae_winners_p90_r": 0.49
       },
@@ -13772,32 +13273,21 @@
     },
     {
      "combo": "FR08|5Min|SPCX",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.215,
+     "sum_r": 0.22,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
-     "recs": [
-      {
-       "kind": "sl",
-       "value": 0.6,
-       "bt_gain_r": [
-        0.06,
-        0.063
-       ],
-       "demo_gain_r": null,
-       "why": "סטופ ×0.6: בבקטסט +0.06R ו־+0.06R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.012,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.215,
+        "sum_r": 0.22,
         "pf": null
        },
        "backtest": {
@@ -13832,8 +13322,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.22
         }
        },
        "backtest": {
@@ -13849,7 +13339,7 @@
       },
       "exits": {
        "bt_trades": 164,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.68,
        "mae_winners_p90_r": 0.67
       },
@@ -13900,19 +13390,8 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
-     "recs": [
-      {
-       "kind": "sl",
-       "value": 0.75,
-       "bt_gain_r": [
-        0.11,
-        0.068
-       ],
-       "demo_gain_r": null,
-       "why": "סטופ ×0.75: בבקטסט +0.11R ו־+0.07R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
-      }
-     ],
+     "target": 1.001,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -14034,7 +13513,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 1.001,
      "recs": [],
      "detail": {
       "profit": {
@@ -14157,7 +13636,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 1.001,
      "recs": [],
      "detail": {
       "profit": {
@@ -14268,7 +13747,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 1.001,
      "recs": [],
      "detail": {
       "profit": {
@@ -14375,7 +13854,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.0,
+     "target": 1.001,
      "recs": [],
      "detail": {
       "profit": {

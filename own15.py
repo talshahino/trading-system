@@ -37,7 +37,9 @@ from own_strategy import resample, swings
 from scalp_map import comm_px
 
 # (K, 1h-trend filter, entry: '15m' gap edge / '1m' gap inside the 15m gap, target: '15m' / '1m' nearest swing high)
-VARIANTS = [(2.0, False, '1m', t) for t in ('15p', 'n10', 'n10x')]   # n10: nearest 1m high (10 min each side) >= 0.5 R away; n10x: same without the 1:1 minimum
+# last5: the last 1-minute turning point before the entry (5 minutes each side) beyond it (the user's marks, 06.11.2026);
+# last5x: the same without the 1:1 minimum
+VARIANTS = [(2.0, False, '1m', t) for t in ('15p', 'last5', 'last5x')]
 PIP = {"JPY": 0.01}
 BODY_X = 2.5        # the leg's average body vs the 50 candles before it
 MIN_GAP = 0.33      # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
@@ -193,6 +195,14 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                         if d * (pv - px) > 0 and d * (pv - nxt) >= 0.5 * a15[i]:
                             lv2.append(pv)
                     lv = lv2
+                if tmode in ("last5", "last5x"):
+                    # the last 1-minute swing before the fill (5 minutes each side, confirmed by the fill) beyond the entry:
+                    # for a buy the last swing high above the entry, for a sell the last swing low below it
+                    sw = sh1 if d > 0 else sl1
+                    sw = sw[(sw >= lo_i_q) & (sw + w1 <= fill)] if (lo_i_q := t1.searchsorted(t15[lo_i])) >= 0 else sw
+                    arr = h1 if d > 0 else l1
+                    cand = [i for i in sw if d * (arr[i] - px) > 0]
+                    lv = [arr[cand[-1]]] if cand else []
                 if tmode in ("n10", "n10x"):
                     # the user (06.11.2026, two marked charts): the nearest 1-minute high (10 minutes each side lower)
                     # above the entry, made after the impulse's top and known at the fill, at least half the stop away
@@ -215,7 +225,7 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                     continue
                 target = (min(lv) if d > 0 else max(lv)) - d * tbuf
                 risk = d * (px - stop)
-                if risk <= 0 or (tmode != "n10x" and d * (target - px) < risk) or d * (target - px) <= 0:
+                if risk <= 0 or (tmode not in ("n10x", "last5x") and d * (target - px) < risk) or d * (target - px) <= 0:
                     continue
                 ex_px = ex_q = why = None
                 for q in range(fill, n1):

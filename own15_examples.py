@@ -26,11 +26,16 @@ def main():
     ap.add_argument("--symbols", required=True)
     ap.add_argument("--n", type=int, default=3)
     ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--k", type=float, default=3.0)
+    ap.add_argument("--body", type=float, default=1.5)
+    ap.add_argument("--min-gap", type=float, default=0.0)
     ap.add_argument("--start", default="2024-01-01")
     ap.add_argument("--end", default="")
     a = ap.parse_args()
     end = a.end or (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
     ev, _ = NC.load()
+    O.BODY_X, O.MIN_GAP = a.body, a.min_gap
+    variant = (a.k, False)
     allt, data = [], {}
     for s in [x for x in a.symbols.split(",") if x]:
         try:
@@ -52,7 +57,7 @@ def main():
         blk = NC.blocked(pd.Series(df.index), s, ev, minutes=2).to_numpy()
         noent = np.asarray(noent, bool) | blk
         stop_at = stop_at | np.asarray(nm, bool) | np.r_[blk[1:], False]
-        tr = O.run_symbol(s, df, cost, stop_at, noent, [VARIANT])
+        tr = O.run_symbol(s, df, cost, stop_at, noent, [variant])
         allt += tr
         data[s] = df
         print(s, len(tr), "trades", flush=True)

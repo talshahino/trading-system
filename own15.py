@@ -37,6 +37,8 @@ from scalp_map import comm_px
 
 VARIANTS = [(k, tf) for k in (2.0, 3.0, 4.0) for tf in (True, False)]
 PIP = {"JPY": 0.01}
+BODY_X = 1.5        # the leg's average body vs the 50 candles before it
+MIN_GAP = 0.0       # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
 
 
 def pip_of(s):
@@ -99,7 +101,7 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                 if not (np.isfinite(ty) and ty > 0 and size >= K * ty):
                     continue
                 ab = avgb[lo_i]
-                if not (np.isfinite(ab) and ab > 0 and body[lo_i:pk + 1].mean() >= 1.5 * ab):
+                if not (np.isfinite(ab) and ab > 0 and body[lo_i:pk + 1].mean() >= BODY_X * ab):
                     continue
                 if d > 0 and (h[lo_i:pk + 1].max() > peak or l[lo_i:pk + 1].min() < origin):
                     continue
@@ -109,10 +111,11 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                     continue
                 # the first fair-value gap of the leg (in time)
                 gap = None
+                ar = (h - l)[max(0, lo_i - 30):lo_i].mean() if lo_i > 0 else np.nan
                 for k in range(lo_i + 1, pk):
-                    if d > 0 and l[k + 1] > h[k - 1]:
+                    if d > 0 and l[k + 1] > h[k - 1] and l[k + 1] - h[k - 1] >= MIN_GAP * ar:
                         gap = (l[k + 1], h[k - 1]); break
-                    if d < 0 and h[k + 1] < l[k - 1]:
+                    if d < 0 and h[k + 1] < l[k - 1] and l[k - 1] - h[k + 1] >= MIN_GAP * ar:
                         gap = (h[k + 1], l[k - 1]); break
                 if gap is None:
                     continue

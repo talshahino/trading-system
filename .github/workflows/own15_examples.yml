@@ -9,6 +9,9 @@ on:
       n:
         description: "How many example trades"
         default: "3"
+      extra:
+        description: "Extra flags, e.g. --body 2.5 --min-gap 0.33"
+        default: ""
       symbols:
         description: "Comma separated instruments"
         default: "EURUSD"
@@ -109,7 +112,7 @@ jobs:
           ) &
 
           set -o pipefail
-          python -u own15_examples.py --symbols "${{ inputs.symbols }}" --n "${{ inputs.n }}" --start "${{ inputs.start }}" --end "$END" 2>&1 | tee run.log
+          python -u own15_examples.py --symbols "${{ inputs.symbols }}" --n "${{ inputs.n }}" ${{ inputs.extra }} --start "${{ inputs.start }}" --end "$END" 2>&1 | tee run.log
 
       - name: Save data cache
         if: always()

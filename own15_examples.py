@@ -29,6 +29,8 @@ def main():
     ap.add_argument("--k", type=float, default=3.0)
     ap.add_argument("--body", type=float, default=1.5)
     ap.add_argument("--min-gap", type=float, default=0.0)
+    ap.add_argument("--entry-mode", default="1m")
+    ap.add_argument("--target-mode", default="15p")
     ap.add_argument("--m1-hours", type=float, default=0.0, help="also the 1-minute candles from the leg start to its top + this many hours")
     ap.add_argument("--start", default="2024-01-01")
     ap.add_argument("--end", default="")
@@ -36,7 +38,7 @@ def main():
     end = a.end or (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
     ev, _ = NC.load()
     O.BODY_X, O.MIN_GAP = a.body, a.min_gap
-    variant = (a.k, False)
+    variant = (a.k, False, a.entry_mode, a.target_mode)
     allt, data = [], {}
     for s in [x for x in a.symbols.split(",") if x]:
         try:

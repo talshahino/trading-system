@@ -37,7 +37,7 @@ from own_strategy import resample, swings
 from scalp_map import comm_px
 
 # (K, 1h-trend filter, entry: '15m' gap edge / '1m' gap inside the 15m gap, target: '15m' / '1m' nearest swing high)
-VARIANTS = [(k, False, e, t) for k in (2.0, 3.0) for e in ('15m', '1m') for t in ('15m', '1m')]
+VARIANTS = [(k, False, e, t) for k in (2.0, 3.0) for e in ('15m', '1m') for t in ('15m', '1m', '15p')]
 PIP = {"JPY": 0.01}
 BODY_X = 2.5        # the leg's average body vs the 50 candles before it
 MIN_GAP = 0.33      # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
@@ -177,6 +177,19 @@ def run_symbol(s, df, cost, stop_at, noent, variants):
                 known = [i for i in (sh_idx if d > 0 else sl_idx) if lo_i <= i and i + 2 <= tq]
                 lv = [(SH if d > 0 else SL)[i] for i in known]
                 lv = [x for x in lv if d * (x - px) > 0]
+                if tmode == "15p":
+                    # the user (06.11.2026): the first high the price meets going up after the entry - a real 15m swing
+                    # (the price turned down from it by at least half an ATR), not the impulse's top, not a 1-minute wiggle;
+                    # among the 15m swings since the origin known at the fill, the lowest above the entry
+                    lv2 = []
+                    for i in (sh_idx if d > 0 else sl_idx):
+                        if not (lo_i <= i and i + 2 <= tq):
+                            continue
+                        pv = (SH if d > 0 else SL)[i]
+                        nxt = l[i + 1:i + 3].min() if d > 0 else h[i + 1:i + 3].max()
+                        if d * (pv - px) > 0 and d * (pv - nxt) >= 0.5 * a15[i]:
+                            lv2.append(pv)
+                    lv = lv2
                 if tmode == "1m":
                     # nearest 1-minute swing high (low) above (below) the entry, made after the leg's top, known at the fill
                     q0 = t1.searchsorted(t15[pk])

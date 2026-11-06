@@ -7,7 +7,7 @@ name: Live trade review
 on:
   schedule:
     # every morning 08:00 Israel time (06:00 UTC in winter, 05:00 in summer; GitHub may start it a little late)
-    - cron: "0 5,6 * * *"
+    - cron: "0 5,6,7 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -22,11 +22,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Only at 08:00-09:59 Israel time (the two UTC times cover summer and winter time)
+      - name: Once a day from 08:00 Israel time
         id: gate
         run: |
-          h=$(TZ=Asia/Jerusalem date +%H)
-          if [ "${{ github.event_name }}" != "schedule" ] || [ "$h" = "08" ] || [ "$h" = "09" ]; then echo "go=true" >> "$GITHUB_OUTPUT"; else echo "skip: $h:00 in Israel"; fi
+          # GitHub starts scheduled runs late (or early) at random: a scheduled run goes ahead from 08:00 Israel time on,
+          # once a day - only if today's recommendations are not published yet
+          h=$(TZ=Asia/Jerusalem date +%H); today=$(TZ=Asia/Jerusalem date +%F)
+          done_=$(curl -fsS "https://raw.githubusercontent.com/${{ github.repository }}/main/reports/trade_review/risk.json" | python3 -c "import json,sys; print(json.load(sys.stdin).get('sample',''))" 2>/dev/null || true)
+          if [ "${{ github.event_name }}" != "schedule" ]; then echo "go=true" >> "$GITHUB_OUTPUT"
+          elif [ "$h" -ge 8 ] && [ "$h" -le 11 ] && [ "$done_" != "$today" ]; then echo "go=true" >> "$GITHUB_OUTPUT"
+          else echo "skip: $h:00 in Israel, published sample $done_"; fi
       - uses: actions/checkout@v4
         if: steps.gate.outputs.go == 'true'
         with:

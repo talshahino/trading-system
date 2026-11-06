@@ -29,6 +29,7 @@ def main():
     ap.add_argument("--k", type=float, default=3.0)
     ap.add_argument("--body", type=float, default=1.5)
     ap.add_argument("--min-gap", type=float, default=0.0)
+    ap.add_argument("--m1-hours", type=float, default=0.0, help="also the 1-minute candles from the leg start to its top + this many hours")
     ap.add_argument("--start", default="2024-01-01")
     ap.add_argument("--end", default="")
     a = ap.parse_args()
@@ -70,14 +71,19 @@ def main():
     out = []
     for n_, (_, x) in enumerate(pick.iterrows(), 1):
         m15 = resample(data[x.symbol], "15min")
-        w = m15[(m15.index >= x.leg_start - pd.Timedelta(hours=8)) & (m15.index <= x.exit_time + pd.Timedelta(hours=3))]
+        w = m15[(m15.index >= x.leg_start - pd.Timedelta(hours=8)) & (m15.index <= max(x.exit_time + pd.Timedelta(hours=3), x.leg_top + pd.Timedelta(hours=a.m1_hours or 0)))]
         pip = O.pip_of(x.symbol)
+        m1 = []
+        if a.m1_hours:
+            df1 = data[x.symbol]
+            g = df1[(df1.index >= x.leg_start - pd.Timedelta(hours=1)) & (df1.index <= x.leg_top + pd.Timedelta(hours=a.m1_hours))]
+            m1 = [[int(ti.timestamp()), round(float(r.o), 6), round(float(r.h), 6), round(float(r.l), 6), round(float(r.c), 6)] for ti, r in g.iterrows()]
         out.append({"id": f"T{n_:02d}", "symbol": x.symbol, "dir": int(x.dir), "r": round(float(x.r), 2), "rr": float(x.rr),
                     "reason": x.reason, "entry": float(x.entry), "stop": float(x.stop), "target": float(x.target),
                     "point_c": float(x.target + x.dir * (2 * pip if pip else 0)), "exit": float(x.exit),
                     "time": int(x.time.timestamp()), "exit_time": int(x.exit_time.timestamp()),
                     "leg_start": int(x.leg_start.timestamp()), "leg_top": int(x.leg_top.timestamp()),
-                    "gap_lo": float(x.gap_lo), "gap_hi": float(x.gap_hi), "leg": int(x.leg),
+                    "gap_lo": float(x.gap_lo), "gap_hi": float(x.gap_hi), "leg": int(x.leg), "m1": m1,
                     "m15": [[int(ti.timestamp()), round(float(r.o), 6), round(float(r.h), 6), round(float(r.l), 6), round(float(r.c), 6)]
                             for ti, r in w.iterrows()]})
     config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

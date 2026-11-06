@@ -144,12 +144,12 @@ class Calendar:
         idx = df.index
         start = idx.to_series()
         gap = start.shift(-1) - (start + pd.Timedelta(minutes=1))
-        stop_at = (gap > pd.Timedelta(hours=2)).to_numpy()
+        stop_at = np.array((gap > pd.Timedelta(hours=2)).to_numpy(), dtype=bool)      # a writable copy
         noent = np.zeros(n, bool)
         try:
             ex, ne = CAL.masks(df, name, 1, self.restricted, self.holidays)
-            stop_at |= np.asarray(ex, bool)
-            noent |= np.asarray(ne, bool)
+            stop_at = stop_at | np.asarray(ex, bool)
+            noent = noent | np.asarray(ne, bool)
         except Exception:  # noqa: BLE001
             pass
         for t, ins in self.restricted:

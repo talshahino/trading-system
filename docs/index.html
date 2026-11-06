@@ -1441,7 +1441,10 @@ async function chartPage(tf) {
   if (!mgr || !mgrInfo || a.archived) { msg.textContent = "הגרף נטען מ־MetaTrader דרך מחשב הבוטים, ורק כשהוא מחובר."; return; }
   msg.textContent = "טוען נרות…";
   const o = Math.floor(new Date(t.open_t) / 1000), c = Math.floor(new Date(t.close_t || Date.now()) / 1000), step = TFSEC[tf];
-  const from = o - step * 80, to = Math.min(Math.floor(Date.now() / 1000), c + step * 40);
+  // the strategy's own candle: the signal is decided on the candle before the entry (user, 06.11.2026: show the trade from
+  // where the entry was chosen to ~10 candles after the exit)
+  const sstep = TFSEC[TFMAP[String(t.combo).split("|")[1]]] || step, sig = o - sstep;
+  const from = Math.min(sig, o) - step * 60, to = Math.min(Math.floor(Date.now() / 1000), c + step * 12);
   let j;
   try { const r = await fetch(`${mgr}/bot/${encodeURIComponent(UI.cur)}/candles?symbol=${encodeURIComponent(t.symbol)}&tf=${tf}&from=${from}&to=${to}`, {cache: "no-store"}); j = await r.json(); }
   catch (e) { msg.textContent = "לא הצלחתי להביא נרות מהמחשב. נסה שוב."; return; }
@@ -1462,6 +1465,7 @@ async function chartPage(tf) {
   const snap = sec => { const k = j.bars.findLast ? j.bars.findLast(b => b[0] <= sec) : [...j.bars].reverse().find(b => b[0] <= sec); return (k ? k[0] : j.bars[0][0]) + off; };
   const buy = t.side === "buy";
   const mk = [{time: snap(o), position: buy ? "belowBar" : "aboveBar", color: buy ? "#1E8A4C" : "#D0453A", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}];
+  if (snap(sig) < snap(o)) mk.push({time: snap(sig), position: buy ? "belowBar" : "aboveBar", color: "#5B6470", shape: "circle", text: "אות"});
   if (!isOpen) mk.push({time: snap(c), position: buy ? "aboveBar" : "belowBar", color: "#12161C", shape: buy ? "arrowDown" : "arrowUp", text: "יציאה"});
   ser.setMarkers(mk.sort((a, b) => a.time - b.time));
   if (t.mae) ser.createPriceLine({price: t.mae, color: "#D0453A", lineStyle: 1, lineWidth: 1, title: "MAE"});
@@ -1470,8 +1474,11 @@ async function chartPage(tf) {
   // green box: to the target; without a target: to the best price reached (only if the trade ended in profit)
   const green = tpv || (t.net > 0 ? (t.mfe || t.close_px) : null);
   const draw = () => {
-    const ts = chart.timeScale(), x1 = ts.timeToCoordinate(snap(o)), x2 = isOpen ? box.clientWidth - 60 : ts.timeToCoordinate(snap(c));
-    if (x1 == null || x2 == null) { $("tvOver").innerHTML = ""; return; }
+    // the box stays drawn when its start or end is scrolled out of view: clipped to the chart's edges
+    const ts = chart.timeScale(), vr = ts.getVisibleRange(), W0 = box.clientWidth - 60;
+    const xAt = (sec, edge) => { const x = ts.timeToCoordinate(snap(sec)); if (x != null) return x;
+      return vr && snap(sec) < vr.from ? 0 : vr && snap(sec) > vr.to ? W0 : edge; };
+    const x1 = xAt(o, 0), x2 = isOpen ? W0 : xAt(c, W0);
     const ye = ser.priceToCoordinate(t.open_px), ysl = sl ? ser.priceToCoordinate(sl) : null, ytp = green ? ser.priceToCoordinate(green) : null, yx = ser.priceToCoordinate(t.close_px);
     const w = Math.max(6, x2 - x1), rect = (y1, y2, col) => y1 == null || y2 == null ? "" : `<rect x="${x1}" y="${Math.min(y1, y2)}" width="${w}" height="${Math.abs(y2 - y1)}" fill="${col}"/>`;
     $("tvOver").innerHTML = `<svg width="100%" height="100%">${rect(ye, ytp, "rgba(30,138,76,.18)")}${rect(ye, ysl, "rgba(208,69,58,.18)")}
@@ -1480,8 +1487,7 @@ async function chartPage(tf) {
   };
   chart.timeScale().subscribeVisibleTimeRangeChange(draw);
   new ResizeObserver(() => requestAnimationFrame(draw)).observe(box);
-  const span = Math.max(c - o, step * 10);
-  chart.timeScale().setVisibleRange({from: o + off - span * 0.8, to: Math.min(to, c + span * 0.5) + off});
+  chart.timeScale().setVisibleRange({from: Math.min(sig, o) - step * 4 + off, to: Math.min(to, isOpen ? to : c + step * 10) + off});
   ser.priceScale().applyOptions({autoScale: true});
   TV = {chart};
   setTimeout(draw, 50); setTimeout(draw, 400);

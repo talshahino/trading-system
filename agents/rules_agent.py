@@ -398,6 +398,10 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             if be and target is not None and d * (best - e) >= be[0] * d * (target - e):
                 lvl = e * (1 + d * be[1])
                 stop = max(stop, lvl) if d > 0 else min(stop, lvl)
+            t2 = plan.get("trail2_r")  # no target: from `start` R in profit the stop trails `dist` R behind the best price (test)
+            if t2 and target is None and d * (best - e) >= t2[0] * risk:
+                ts = best - d * t2[1] * risk
+                stop = max(stop, ts) if d > 0 else min(stop, ts)
             ber = plan.get("be_r")     # no target: stop to entry + costs once k R in profit (test, 06.11.2026)
             if ber and target is None and d * (best - e) >= ber * risk:
                 lvl = e * (1 + d * (be[1] if be else 0.0))

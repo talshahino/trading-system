@@ -172,6 +172,13 @@ def _with_be_r(fn, k):
     return g
 
 
+def _with_plan(fn, **kw):
+    def g(df):
+        L, S, plan = fn(df)
+        return L, S, {**plan, **kw}
+    return g
+
+
 def _shifted(fn, k):
     """Null version of a strategy: signals and every per-bar plan array moved k bars later (entries are no
     longer tied to the bars that produced them). Levels move with their signal, so stops/targets stay valid
@@ -223,6 +230,8 @@ def main():
                     help="move the stop to entry + spread/commission once price covered this share of the way to the target (e.g. 0.6)")
     ap.add_argument("--be-r", type=float, default=0.0,
                     help="strategies with no target: stop to entry + spread/commission once this many R in profit (0 = off)")
+    ap.add_argument("--trail-r", default="",
+                    help="strategies with no target: 'start:dist' - from start R in profit, the stop trails dist R behind the best price")
     ap.add_argument("--optimize", default="",
                     help="YYYY-MM-DD: with --combos-file, try a grid of trade-management values per combo, choose on "
                          "--test-from..this date, check on this date..end")
@@ -338,6 +347,8 @@ def main():
                         fn0 = _shifted(fn0, args.null_shift)
                     if args.be_r:
                         fn0 = _with_be_r(fn0, args.be_r)
+                    if args.trail_r:
+                        fn0 = _with_plan(fn0, trail2_r=tuple(float(x) for x in args.trail_r.split(":")))
                     t = R.run(df, fn0 if news_block is None else _blocked(fn0, news_block), cost, breakeven=be, session_exit=sess)
                 except Exception:  # noqa: BLE001 - one broken strategy must not kill the run
                     ERRORS.append(f"{sid} {tf} {s}:\n{traceback.format_exc()}")

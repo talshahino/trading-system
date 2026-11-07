@@ -485,6 +485,9 @@ STRATEGIES.update(MQL5)
 from agents.paper_strategies import PAPERS  # noqa: E402
 
 STRATEGIES.update(PAPERS)
+from agents.swing_strategies import SWING  # noqa: E402
+
+STRATEGIES.update(SWING)
 
 
 def timeframe_ok(sid, tf):

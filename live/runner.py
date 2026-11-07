@@ -68,6 +68,29 @@ def log(msg):
     JOURNAL.append(line)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(line + "\n")
+    if msg.startswith("skip "):
+        note_skip(msg)
+
+
+def note_skip(msg):
+    """Every skipped signal goes into the state file too (07.11.2026, approved by the user: logging only), so the
+    daily demo-vs-backtest check knows why a backtest trade is missing. The same reason for the same combo is
+    kept once per 30 minutes; the newest 300 are published."""
+    try:
+        st = globals().get("STATE")
+        if not isinstance(st, dict):
+            return
+        combo, _, why = msg[5:].partition(": ")
+        now = pd.Timestamp.now(tz="UTC")
+        key = re.sub(r"[0-9.]+", "#", why)
+        sk = st.setdefault("skips", [])
+        for x in reversed(sk[-50:]):
+            if x.get("combo") == combo and x.get("key") == key and now - pd.Timestamp(x["t"]) < pd.Timedelta(minutes=30):
+                return
+        sk.append({"t": now.isoformat(timespec="seconds"), "combo": combo, "why": why[:200], "key": key})
+        del sk[:-300]
+    except Exception:  # noqa: BLE001 - logging must never stop the bot
+        pass
 
 
 SYMMAP = {}          # instrument -> this server's symbol name, when it differs from FTMO's (see live/symbols.py)
@@ -820,6 +843,7 @@ def step(combo, sid, tf, sym, off):
         tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
         loc = pd.Timestamp.now(tz="UTC").tz_convert(tz)
         if loc.hour * 60 + loc.minute >= close_min - 15:
+            note_skip(f"skip {combo}: last 15 minutes of the stock session - no new trades")
             return                                     # no new stock trades in the last 15 minutes
     if (h := holiday_block(sym)):
         log(f"skip {combo}: market closed for {h} (Standard rule)")
@@ -1247,7 +1271,8 @@ def dashboard_state(ai, pos, ds_bal, now):
         "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "combos": MON["combos"],
         "positions": positions_doc(pos), "live_url": TUN.URL["url"],
         "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:],   # the bot's log stays on the computer only
-        "closed": closed_doc()[-500:], "lows": STATE.get("lows", {}), "label": BOT, "withdrawals": withdrawals_doc(),
+        "closed": closed_doc()[-500:], "skips": [{k: v for k, v in x.items() if k != "key"} for x in STATE.get("skips", [])[-300:]],
+        "lows": STATE.get("lows", {}), "label": BOT, "withdrawals": withdrawals_doc(),
         # typical spread per symbol as this broker quotes it (median of what the bot saw): checks the backtest's
         # cost estimate for the shares that have no bid/ask history
         "spreads": {k: {"median": float(np.median(q)), "n": len(q)} for k, q in SPREADS.items() if q},

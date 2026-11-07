@@ -83,6 +83,7 @@ def main():
             upd = upd.tz_localize("UTC")
         until = min(upd, bt_end + pd.Timedelta(hours=1))
         lv = live_closed(s)
+        skips = s.get("skips") or []
         rules = s.get("combo_rules") or {}
         mult = s.get("risk_mult") or {}
         for combo in s.get("combos") or []:
@@ -115,6 +116,10 @@ def main():
                 if m is None:
                     # a trade still open in the backtest at the bot's last update cannot be judged yet
                     row["status"] = "missed" if x["time"] < upd - pd.Timedelta(minutes=10) else "too new"
+                    # why the bot skipped it, when the bot published its skips (state "skips", from 07.11.2026)
+                    near = [k for k in skips if k["combo"] == combo and
+                            -pd.Timedelta(minutes=5) <= pd.Timestamp(k["t"]) - x["time"] <= tol]
+                    row["skip_why"] = near[0]["why"] if near else ""
                 else:
                     used.add(m["id"])
                     row.update({"status": "matched", "live_id": m["id"], "live_time": m["open_t"], "live_entry": m["open_px"],

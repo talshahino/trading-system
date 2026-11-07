@@ -71,6 +71,8 @@ def main():
     bt = load_bt(a.bt)
     bt_end = bt["time"].max()
     out_rows, per_combo = [], []
+    added_f = ROOT / "data" / "portfolio" / "combo_added.json"     # when each combo entered each bot (git history)
+    added = json.loads(added_f.read_text(encoding="utf-8")) if added_f.exists() else {}
     for f in sorted(Path(a.states).glob("bot*_state.json")):
         s = json.loads(f.read_text(encoding="utf-8"))
         bot = str(s.get("bot") or f.stem.replace("_state", ""))
@@ -87,7 +89,10 @@ def main():
             tf = combo.split("|")[1]
             tol = pd.Timedelta(minutes=2 * TF_MIN.get(tf, 60) + 2)
             r = rules.get(combo) or {}
-            b = bt[(bt["combo"] == combo) & (bt["time"] >= start + pd.Timedelta(minutes=2)) & (bt["time"] <= until)].copy()
+            c_start = start
+            if (ad := (added.get(bot.split("_")[0]) or {}).get(combo)):
+                c_start = max(start, pd.Timestamp(ad).tz_convert("UTC"))
+            b = bt[(bt["combo"] == combo) & (bt["time"] >= c_start + pd.Timedelta(minutes=2)) & (bt["time"] <= until)].copy()
             if mult.get(combo, 1) == 0:
                 b = b.iloc[0:0]
             if r.get("dir"):
@@ -120,7 +125,7 @@ def main():
                                 "delay_min": round((m["open_t"] - x["time"]).total_seconds() / 60, 1)})
                 out_rows.append(row)
             for _, m in (l[~l["id"].isin(used)].iterrows() if len(l) else []):
-                if m["open_t"] < start:
+                if m["open_t"] < c_start:
                     continue
                 out_rows.append({"bot": bot, "combo": combo, "dir": int(m["dir"]), "status": "extra", "live_id": m["id"],
                                  "live_time": m["open_t"], "live_entry": m["open_px"],

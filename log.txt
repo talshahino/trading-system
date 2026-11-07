@@ -1,4 +1,4 @@
-run 730 - updated 2026-11-07 14:31:22 UTC
+run 730 - updated 2026-11-07 14:34:23 UTC
 
     EURUSD 1Hour 2026: 5,304 bars
     EURUSD 1Min 2026: 316,931 bars
@@ -80,3 +80,53 @@ run 730 - updated 2026-11-07 14:31:22 UTC
   XAGUSD 1Hour: 22,741 bars
     XPTUSD 1Hour 2026: 5,044 bars
     XPTUSD 1Min 2026: 301,174 bars
+  XPTUSD 1Hour: 22,716 bars
+    COPPER 1Hour 2026: 5,044 bars
+    COPPER 1Min 2026: 300,124 bars
+  COPPER 1Hour: 22,721 bars
+    WTI 1Hour 2026: 5,044 bars
+    WTI 1Min 2026: 301,376 bars
+  WTI 1Hour: 22,732 bars
+    BRENT 1Hour 2026: 4,608 bars
+    BRENT 1Min 2026: 275,442 bars
+  BRENT 1Hour: 20,752 bars
+    NATGAS 1Hour 2026: 5,042 bars
+    NATGAS 1Min 2026: 253,832 bars
+  NATGAS 1Hour: 22,719 bars
+    BTCUSD 1Hour 2026: 7,425 bars
+    BTCUSD 1Min 2026: 444,617 bars
+  BTCUSD 1Hour: 33,575 bars
+    ETHUSD 1Hour 2026: 7,425 bars
+    ETHUSD 1Min 2026: 442,763 bars
+  ETHUSD 1Hour: 33,581 bars
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:53: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, c > hi20, c < lo20, c < lo10, c > hi10, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:53: RuntimeWarning: invalid value encountered in less
+  return _swing(df, c > hi20, c < lo20, c < lo10, c > hi10, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:74: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, (c > s50) & rising & d2 & (c < e10), (c < s50) & falling & u2 & (c > e10), c > ph, c < pl, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:74: RuntimeWarning: invalid value encountered in less
+  return _swing(df, (c > s50) & rising & d2 & (c < e10), (c < s50) & falling & u2 & (c > e10), c > ph, c < pl, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:89: RuntimeWarning: invalid value encountered in greater
+  big = rng > 1.8 * a
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:92: RuntimeWarning: invalid value encountered in less
+  return _swing(df, big & (pos >= 0.75), big & (pos <= 0.25), c < pl, c > ph, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:92: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, big & (pos >= 0.75), big & (pos <= 0.25), c < pl, c > ph, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:103: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, up & (c > s200), dn & (c < s200), dn, up, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:103: RuntimeWarning: invalid value encountered in less
+  return _swing(df, up & (c > s200), dn & (c < s200), dn, up, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:111: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, (c > s200) & (c < m - 2 * sd), (c < s200) & (c > m + 2 * sd), c > m, c < m, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:111: RuntimeWarning: invalid value encountered in less
+  return _swing(df, (c > s200) & (c < m - 2 * sd), (c < s200) & (c > m + 2 * sd), c > m, c < m, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:120: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, (r60 > 0) & (r5 < 0) & (c <= lo5), (r60 < 0) & (r5 > 0) & (c >= hi5), c >= hi5, c <= lo5, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:120: RuntimeWarning: invalid value encountered in less
+  return _swing(df, (r60 > 0) & (r5 < 0) & (c <= lo5), (r60 < 0) & (r5 > 0) & (c >= hi5), c >= hi5, c <= lo5, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:120: RuntimeWarning: invalid value encountered in less_equal
+  return _swing(df, (r60 > 0) & (r5 < 0) & (c <= lo5), (r60 < 0) & (r5 > 0) & (c >= hi5), c >= hi5, c <= lo5, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:120: RuntimeWarning: invalid value encountered in greater_equal
+  return _swing(df, (r60 > 0) & (r5 < 0) & (c <= lo5), (r60 < 0) & (r5 > 0) & (c >= hi5), c >= hi5, c <= lo5, 2.5)
+  SOL/USD 1Hour: 16,101 bars

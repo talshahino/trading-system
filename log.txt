@@ -1,44 +1,5 @@
-run 730 - updated 2026-11-07 14:34:23 UTC
+run 730 - updated 2026-11-07 14:37:24 UTC
 
-    EURUSD 1Hour 2026: 5,304 bars
-    EURUSD 1Min 2026: 316,931 bars
-  EURUSD 1Hour: 23,961 bars
-    GBPUSD 1Hour 2026: 5,304 bars
-    GBPUSD 1Min 2026: 316,775 bars
-  GBPUSD 1Hour: 23,959 bars
-    USDJPY 1Hour 2026: 5,304 bars
-    USDJPY 1Min 2026: 316,991 bars
-  USDJPY 1Hour: 23,961 bars
-    USDCHF 1Hour 2026: 5,304 bars
-    USDCHF 1Min 2026: 316,437 bars
-  USDCHF 1Hour: 23,954 bars
-    USDCAD 1Hour 2026: 5,304 bars
-    USDCAD 1Min 2026: 316,426 bars
-  USDCAD 1Hour: 23,960 bars
-    AUDUSD 1Hour 2026: 5,304 bars
-    AUDUSD 1Min 2026: 316,582 bars
-  AUDUSD 1Hour: 23,960 bars
-    NZDUSD 1Hour 2026: 5,304 bars
-    NZDUSD 1Min 2026: 316,448 bars
-  NZDUSD 1Hour: 23,953 bars
-    EURJPY 1Hour 2026: 5,304 bars
-    EURJPY 1Min 2026: 317,105 bars
-  EURJPY 1Hour: 23,960 bars
-    GBPJPY 1Hour 2026: 5,304 bars
-    GBPJPY 1Min 2026: 316,787 bars
-  GBPJPY 1Hour: 23,959 bars
-    EURGBP 1Hour 2026: 5,304 bars
-    EURGBP 1Min 2026: 316,431 bars
-  EURGBP 1Hour: 23,958 bars
-    US30 1Hour 2026: 5,036 bars
-    US30 1Min 2026: 292,110 bars
-  US30 1Hour: 22,662 bars
-    US100 1Hour 2026: 5,036 bars
-    US100 1Min 2026: 292,295 bars
-  US100 1Hour: 22,662 bars
-    US500 1Hour 2026: 5,036 bars
-    US500 1Min 2026: 291,906 bars
-  US500 1Hour: 22,666 bars
     US2000 1Hour 2026: 5,036 bars
     US2000 1Min 2026: 292,012 bars
   US2000 1Hour: 22,662 bars
@@ -130,3 +91,62 @@ run 730 - updated 2026-11-07 14:34:23 UTC
 /home/runner/work/trading-system/trading-system/agents/swing_strategies.py:120: RuntimeWarning: invalid value encountered in greater_equal
   return _swing(df, (r60 > 0) & (r5 < 0) & (c <= lo5), (r60 < 0) & (r5 > 0) & (c >= hi5), c >= hi5, c <= lo5, 2.5)
   SOL/USD 1Hour: 16,101 bars
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:53: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, c > hi20, c < lo20, c < lo10, c > hi10, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:53: RuntimeWarning: invalid value encountered in less
+  return _swing(df, c > hi20, c < lo20, c < lo10, c > hi10, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:74: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, (c > s50) & rising & d2 & (c < e10), (c < s50) & falling & u2 & (c > e10), c > ph, c < pl, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:74: RuntimeWarning: invalid value encountered in less
+  return _swing(df, (c > s50) & rising & d2 & (c < e10), (c < s50) & falling & u2 & (c > e10), c > ph, c < pl, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:89: RuntimeWarning: invalid value encountered in greater
+  big = rng > 1.8 * a
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:92: RuntimeWarning: invalid value encountered in less
+  return _swing(df, big & (pos >= 0.75), big & (pos <= 0.25), c < pl, c > ph, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:92: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, big & (pos >= 0.75), big & (pos <= 0.25), c < pl, c > ph, 2.0)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:103: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, up & (c > s200), dn & (c < s200), dn, up, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:103: RuntimeWarning: invalid value encountered in less
+  return _swing(df, up & (c > s200), dn & (c < s200), dn, up, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:111: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, (c > s200) & (c < m - 2 * sd), (c < s200) & (c > m + 2 * sd), c > m, c < m, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:111: RuntimeWarning: invalid value encountered in less
+  return _swing(df, (c > s200) & (c < m - 2 * sd), (c < s200) & (c > m + 2 * sd), c > m, c < m, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:120: RuntimeWarning: invalid value encountered in greater
+  return _swing(df, (r60 > 0) & (r5 < 0) & (c <= lo5), (r60 < 0) & (r5 > 0) & (c >= hi5), c >= hi5, c <= lo5, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:120: RuntimeWarning: invalid value encountered in less
+  return _swing(df, (r60 > 0) & (r5 < 0) & (c <= lo5), (r60 < 0) & (r5 > 0) & (c >= hi5), c >= hi5, c <= lo5, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:120: RuntimeWarning: invalid value encountered in less_equal
+  return _swing(df, (r60 > 0) & (r5 < 0) & (c <= lo5), (r60 < 0) & (r5 > 0) & (c >= hi5), c >= hi5, c <= lo5, 2.5)
+/home/runner/work/trading-system/trading-system/agents/swing_strategies.py:120: RuntimeWarning: invalid value encountered in greater_equal
+  return _swing(df, (r60 > 0) & (r5 < 0) & (c <= lo5), (r60 < 0) & (r5 > 0) & (c >= hi5), c >= hi5, c <= lo5, 2.5)
+  XRP/USD 1Hour: 23,982 bars
+    AAPL 1Hour 2026: 1,497 bars
+    AAPL 1Min 2026: 83,269 bars
+  AAPL 1Hour: 6,722 bars
+    AMZN 1Hour 2026: 1,497 bars
+    AMZN 1Min 2026: 83,271 bars
+  AMZN 1Hour: 6,720 bars
+    BA 1Hour 2026: 1,497 bars
+    BA 1Min 2026: 83,242 bars
+  BA 1Hour: 6,722 bars
+    BABA 1Hour 2026: 1,497 bars
+    BABA 1Min 2026: 83,306 bars
+  BABA 1Hour: 6,722 bars
+    BAC 1Hour 2026: 1,497 bars
+    BAC 1Min 2026: 82,122 bars
+  BAC 1Hour: 6,722 bars
+    CSCO 1Hour 2026: 1,497 bars
+    CSCO 1Min 2026: 83,280 bars
+  CSCO 1Hour: 6,722 bars
+    CVX 1Hour 2026: 1,497 bars
+    CVX 1Min 2026: 83,306 bars
+  CVX 1Hour: 6,722 bars
+    DIS 1Hour 2026: 1,496 bars
+    DIS 1Min 2026: 83,133 bars
+  DIS 1Hour: 6,721 bars
+    FDX 1Hour 2026: 1,496 bars
+    FDX 1Min 2026: 80,678 bars
+  FDX 1Hour: 6,721 bars
+    GE 1Hour 2026: 1,497 bars

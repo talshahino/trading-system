@@ -1,42 +1,42 @@
 {
- "updated": "2026-11-07T14:30:15+00:00",
+ "updated": "2026-11-07T14:39:49+00:00",
  "backtest_until": "2026-11-06 20:30:00+00:00",
  "bots": {
   "bot1": {
-   "backtest_trades": 77,
-   "matched": 57,
-   "missed": 20,
-   "extra": 24,
-   "avg_slip_r": 0.035,
-   "avg_delay_min": 7.6,
-   "matched_live_r": -0.22,
-   "matched_bt_r": -0.206,
-   "missed_bt_r_sum": 0.73,
-   "extra_live_r_sum": 5.55
+   "backtest_trades": 101,
+   "matched": 77,
+   "missed": 24,
+   "extra": 4,
+   "avg_slip_r": 0.006,
+   "avg_delay_min": 5.8,
+   "matched_live_r": -0.136,
+   "matched_bt_r": -0.097,
+   "missed_bt_r_sum": 0.94,
+   "extra_live_r_sum": 3.28
   },
   "bot2_5058299955": {
-   "backtest_trades": 21,
-   "matched": 10,
-   "missed": 11,
-   "extra": 9,
-   "avg_slip_r": -0.015,
-   "avg_delay_min": 3.2,
-   "matched_live_r": 0.314,
-   "matched_bt_r": 0.118,
-   "missed_bt_r_sum": -2.22,
-   "extra_live_r_sum": 3.0
+   "backtest_trades": 28,
+   "matched": 15,
+   "missed": 13,
+   "extra": 4,
+   "avg_slip_r": 0.463,
+   "avg_delay_min": 7.2,
+   "matched_live_r": 0.3,
+   "matched_bt_r": 0.334,
+   "missed_bt_r_sum": -1.41,
+   "extra_live_r_sum": 1.63
   },
   "bot3_10013442846": {
-   "backtest_trades": 28,
-   "matched": 11,
-   "missed": 17,
-   "extra": 9,
-   "avg_slip_r": 0.079,
+   "backtest_trades": 31,
+   "matched": 13,
+   "missed": 18,
+   "extra": 7,
+   "avg_slip_r": -0.042,
    "avg_delay_min": 15.4,
-   "matched_live_r": -0.097,
-   "matched_bt_r": -0.395,
-   "missed_bt_r_sum": 4.95,
-   "extra_live_r_sum": 1.57
+   "matched_live_r": -0.005,
+   "matched_bt_r": -0.068,
+   "missed_bt_r_sum": 3.92,
+   "extra_live_r_sum": 0.76
   },
   "bot4_115118875": {
    "backtest_trades": 27,
@@ -52,6 +52,18 @@
   }
  },
  "combos": [
+  {
+   "bot": "bot1",
+   "combo": "TV21|15Min|ASML",
+   "bt": 6,
+   "matched": 0,
+   "missed": 6,
+   "extra": 1,
+   "live_r": 0.0,
+   "bt_r": 0.0,
+   "slip_r": null,
+   "rule_change": ""
+  },
   {
    "bot": "bot3_10013442846",
    "combo": "SS01|5Min|WMT",
@@ -75,54 +87,6 @@
    "bt_r": 0.0,
    "slip_r": null,
    "rule_change": "sl"
-  },
-  {
-   "bot": "bot1",
-   "combo": "TV38|15Min|GOOG",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 5,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
-   "rule_change": ""
-  },
-  {
-   "bot": "bot1",
-   "combo": "TT45|15Min|CSCO",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 4,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
-   "rule_change": "sl"
-  },
-  {
-   "bot": "bot1",
-   "combo": "TV24|15Min|KO",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 4,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
-   "rule_change": ""
-  },
-  {
-   "bot": "bot1",
-   "combo": "TV60|15Min|ARM",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 4,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
-   "rule_change": ""
   },
   {
    "bot": "bot4_115118875",
@@ -173,8 +137,8 @@
    "rule_change": ""
   },
   {
-   "bot": "bot2_5058299955",
-   "combo": "MQ11|4Hour|MSTR",
+   "bot": "bot1",
+   "combo": "YT03|4Hour|RACE",
    "bt": 3,
    "matched": 0,
    "missed": 3,
@@ -182,6 +146,18 @@
    "live_r": 0.0,
    "bt_r": 0.0,
    "slip_r": null,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot2_5058299955",
+   "combo": "TV46|15Min|ASML",
+   "bt": 4,
+   "matched": 1,
+   "missed": 3,
+   "extra": 0,
+   "live_r": 1.12,
+   "bt_r": 1.98,
+   "slip_r": 8.552,
    "rule_change": ""
   },
   {
@@ -210,54 +186,6 @@
   },
   {
    "bot": "bot1",
-   "combo": "IM01|1Hour|JP225",
-   "bt": 3,
-   "matched": 1,
-   "missed": 2,
-   "extra": 0,
-   "live_r": -0.05,
-   "bt_r": -0.07,
-   "slip_r": 0.073,
-   "rule_change": ""
-  },
-  {
-   "bot": "bot1",
-   "combo": "MQ11|4Hour|MSTR",
-   "bt": 3,
-   "matched": 1,
-   "missed": 2,
-   "extra": 0,
-   "live_r": 0.11,
-   "bt_r": 0.19,
-   "slip_r": -0.061,
-   "rule_change": ""
-  },
-  {
-   "bot": "bot1",
-   "combo": "QC02|1Hour|ETHUSD",
-   "bt": 3,
-   "matched": 1,
-   "missed": 2,
-   "extra": 0,
-   "live_r": 0.12,
-   "bt_r": 0.05,
-   "slip_r": 0.024,
-   "rule_change": "sl"
-  },
-  {
-   "bot": "bot1",
-   "combo": "SE02|1Hour|USDJPY",
-   "bt": 5,
-   "matched": 3,
-   "missed": 2,
-   "extra": 0,
-   "live_r": -0.87,
-   "bt_r": -0.77,
-   "slip_r": -0.096,
-   "rule_change": ""
-  },
-  {
-   "bot": "bot1",
    "combo": "TV29|4Hour|US30",
    "bt": 3,
    "matched": 2,
@@ -269,39 +197,27 @@
    "rule_change": ""
   },
   {
-   "bot": "bot1",
-   "combo": "TV33|15Min|MSTR",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 2,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
-   "rule_change": ""
-  },
-  {
    "bot": "bot2_5058299955",
    "combo": "TT13|15Min|INTC",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 2,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
+   "bt": 4,
+   "matched": 2,
+   "missed": 2,
+   "extra": 0,
+   "live_r": -0.42,
+   "bt_r": -0.16,
+   "slip_r": -0.162,
    "rule_change": ""
   },
   {
    "bot": "bot2_5058299955",
    "combo": "TV13|15Min|TSLA",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 2,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
+   "bt": 4,
+   "matched": 2,
+   "missed": 2,
+   "extra": 0,
+   "live_r": 0.68,
+   "bt_r": 1.79,
+   "slip_r": -0.57,
    "rule_change": ""
   },
   {
@@ -414,6 +330,18 @@
   },
   {
    "bot": "bot1",
+   "combo": "TT45|15Min|CSCO",
+   "bt": 5,
+   "matched": 4,
+   "missed": 1,
+   "extra": 0,
+   "live_r": 0.38,
+   "bt_r": 0.24,
+   "slip_r": -0.035,
+   "rule_change": "sl"
+  },
+  {
+   "bot": "bot1",
    "combo": "TT45|1Hour|WTI",
    "bt": 2,
    "matched": 1,
@@ -438,14 +366,26 @@
   },
   {
    "bot": "bot1",
-   "combo": "TV21|15Min|ASML",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 1,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
+   "combo": "TV24|15Min|KO",
+   "bt": 5,
+   "matched": 4,
+   "missed": 1,
+   "extra": 0,
+   "live_r": -0.18,
+   "bt_r": 0.87,
+   "slip_r": -0.145,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot1",
+   "combo": "TV33|15Min|MSTR",
+   "bt": 3,
+   "matched": 2,
+   "missed": 1,
+   "extra": 0,
+   "live_r": -2.04,
+   "bt_r": -2.03,
+   "slip_r": -0.075,
    "rule_change": ""
   },
   {
@@ -462,18 +402,6 @@
   },
   {
    "bot": "bot1",
-   "combo": "TV55|15Min|AMZN",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 1,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
-   "rule_change": ""
-  },
-  {
-   "bot": "bot1",
    "combo": "YT03|1Hour|PFE",
    "bt": 2,
    "matched": 1,
@@ -482,18 +410,6 @@
    "live_r": -1.06,
    "bt_r": -1.03,
    "slip_r": 0.586,
-   "rule_change": ""
-  },
-  {
-   "bot": "bot2_5058299955",
-   "combo": "BK07|1Hour|EURJPY",
-   "bt": 1,
-   "matched": 0,
-   "missed": 1,
-   "extra": 0,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
    "rule_change": ""
   },
   {
@@ -510,7 +426,7 @@
   },
   {
    "bot": "bot2_5058299955",
-   "combo": "QB11|1Hour|USDJPY",
+   "combo": "MQ11|4Hour|MSTR",
    "bt": 1,
    "matched": 0,
    "missed": 1,
@@ -518,18 +434,6 @@
    "live_r": 0.0,
    "bt_r": 0.0,
    "slip_r": null,
-   "rule_change": ""
-  },
-  {
-   "bot": "bot2_5058299955",
-   "combo": "SE02|1Hour|USDJPY",
-   "bt": 4,
-   "matched": 3,
-   "missed": 1,
-   "extra": 0,
-   "live_r": -0.87,
-   "bt_r": -0.77,
-   "slip_r": -0.094,
    "rule_change": ""
   },
   {
@@ -594,18 +498,6 @@
   },
   {
    "bot": "bot2_5058299955",
-   "combo": "TV46|15Min|ASML",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 1,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
-   "rule_change": ""
-  },
-  {
-   "bot": "bot2_5058299955",
    "combo": "TV55|15Min|GME",
    "bt": 0,
    "matched": 0,
@@ -630,23 +522,11 @@
   },
   {
    "bot": "bot3_10013442846",
-   "combo": "TV24|15Min|TSLA",
-   "bt": 0,
+   "combo": "TV50|15Min|ASML",
+   "bt": 1,
    "matched": 0,
-   "missed": 0,
-   "extra": 1,
-   "live_r": 0.0,
-   "bt_r": 0.0,
-   "slip_r": null,
-   "rule_change": ""
-  },
-  {
-   "bot": "bot3_10013442846",
-   "combo": "TV28|15Min|AMZN",
-   "bt": 0,
-   "matched": 0,
-   "missed": 0,
-   "extra": 1,
+   "missed": 1,
+   "extra": 0,
    "live_r": 0.0,
    "bt_r": 0.0,
    "slip_r": null,
@@ -686,6 +566,54 @@
    "live_r": -1.01,
    "bt_r": -1.06,
    "slip_r": -0.061,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot1",
+   "combo": "IM01|1Hour|JP225",
+   "bt": 1,
+   "matched": 1,
+   "missed": 0,
+   "extra": 0,
+   "live_r": -0.05,
+   "bt_r": -0.07,
+   "slip_r": 0.073,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot1",
+   "combo": "MQ11|4Hour|MSTR",
+   "bt": 1,
+   "matched": 1,
+   "missed": 0,
+   "extra": 0,
+   "live_r": 0.11,
+   "bt_r": 0.19,
+   "slip_r": -0.061,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot1",
+   "combo": "QC02|1Hour|ETHUSD",
+   "bt": 1,
+   "matched": 1,
+   "missed": 0,
+   "extra": 0,
+   "live_r": 0.12,
+   "bt_r": 0.05,
+   "slip_r": 0.024,
+   "rule_change": "sl"
+  },
+  {
+   "bot": "bot1",
+   "combo": "SE02|1Hour|USDJPY",
+   "bt": 3,
+   "matched": 3,
+   "missed": 0,
+   "extra": 0,
+   "live_r": -0.87,
+   "bt_r": -0.77,
+   "slip_r": -0.096,
    "rule_change": ""
   },
   {
@@ -846,6 +774,18 @@
   },
   {
    "bot": "bot1",
+   "combo": "TV38|15Min|GOOG",
+   "bt": 5,
+   "matched": 5,
+   "missed": 0,
+   "extra": 0,
+   "live_r": -0.04,
+   "bt_r": 0.02,
+   "slip_r": -0.029,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot1",
    "combo": "TV41|4Hour|NZDUSD",
    "bt": 3,
    "matched": 3,
@@ -854,6 +794,18 @@
    "live_r": -0.48,
    "bt_r": -1.59,
    "slip_r": -0.001,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot1",
+   "combo": "TV55|15Min|AMZN",
+   "bt": 1,
+   "matched": 1,
+   "missed": 0,
+   "extra": 0,
+   "live_r": 1.11,
+   "bt_r": 1.19,
+   "slip_r": -0.053,
    "rule_change": ""
   },
   {
@@ -870,6 +822,18 @@
   },
   {
    "bot": "bot1",
+   "combo": "TV60|15Min|ARM",
+   "bt": 4,
+   "matched": 4,
+   "missed": 0,
+   "extra": 0,
+   "live_r": 3.04,
+   "bt_r": 3.7,
+   "slip_r": -0.122,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot1",
    "combo": "YT03|1Hour|LVMH",
    "bt": 2,
    "matched": 2,
@@ -878,6 +842,18 @@
    "live_r": 0.77,
    "bt_r": 0.61,
    "slip_r": -0.027,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot2_5058299955",
+   "combo": "SE02|1Hour|USDJPY",
+   "bt": 3,
+   "matched": 3,
+   "missed": 0,
+   "extra": 0,
+   "live_r": -0.87,
+   "bt_r": -0.77,
+   "slip_r": -0.094,
    "rule_change": ""
   },
   {
@@ -926,6 +902,30 @@
    "live_r": -0.36,
    "bt_r": -0.43,
    "slip_r": 0.042,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot3_10013442846",
+   "combo": "TV24|15Min|TSLA",
+   "bt": 1,
+   "matched": 1,
+   "missed": 0,
+   "extra": 0,
+   "live_r": 0.25,
+   "bt_r": 0.84,
+   "slip_r": -0.495,
+   "rule_change": ""
+  },
+  {
+   "bot": "bot3_10013442846",
+   "combo": "TV28|15Min|AMZN",
+   "bt": 1,
+   "matched": 1,
+   "missed": 0,
+   "extra": 0,
+   "live_r": 0.56,
+   "bt_r": 1.96,
+   "slip_r": -0.915,
    "rule_change": ""
   },
   {

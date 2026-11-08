@@ -51,6 +51,15 @@ def s_rsi5(df):
     return L, z, {"stop": ("atr", 3.0), "target": None, "exit_long": X}
 
 
+def _per_day(df):
+    """Bars per day, read from the bar spacing (crypto trades 24/7). The engine never sets a time-frame tag
+    on the frame, so the earlier code used 1 bar per day on every time frame (fixed 08.11.2026)."""
+    if len(df) < 3:
+        return 1
+    sec = pd.Series(df.index).diff().dt.total_seconds().median()
+    return max(1, int(round(86400 / sec)))
+
+
 def _utc(df):
     return df.index.tz_convert("UTC")
 
@@ -146,7 +155,7 @@ def s_structure(df):
     the last swing high; stop under the last swing low; target 2 x risk, stop to entry at +1 R. Mirror for shorts."""
     h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
     H1, H2, L1, L2 = _swings(h, l, 5)
-    big = sma(c, 50 * 24 if df.attrs.get("tf") == "1Hour" else 50 * 6)
+    big = sma(c, 50 * _per_day(df))
     prev = np.r_[np.nan, c[:-1]]
     up = (H1 > H2) & (L1 > L2) & (c > big)
     dn = (H1 < H2) & (L1 < L2) & (c < big)
@@ -211,7 +220,7 @@ def s_tsmom(df):
     studies): hold long while the price is above its level 28 days ago, out when it falls under it.
     No stop in the source: a 3 x ATR safety stop."""
     c = df["c"].to_numpy(dtype=float)
-    k = 28 * (6 if df.attrs.get("tf") == "4Hour" else 1)
+    k = 28 * _per_day(df)
     past = np.r_[np.full(k, np.nan), c[:-k]]
     up = c > past
     prev = np.r_[False, up[:-1]]
@@ -222,4 +231,26 @@ def s_tsmom(df):
 CRYPTO.update({
     "CR11": ("Time-series momentum: long while above the price 28 days ago (Liu & Tsyvinski)", s_tsmom, TF),
     "CS11": ("Time-series momentum 28 days, long and short", _long_short(s_tsmom), TF),
+})
+
+
+def _uptrend_only(fn):
+    """Bull-market filter (the user's idea, 08.11.2026), fixed BEFORE any test and not to be tuned: a new buy
+    is taken only while the coin's own close is above its 200-day simple average (the classic long-term
+    trend line). Exits, stops and targets stay exactly as in the original rule; out of the bull phase the
+    bot simply waits."""
+    def g(df):
+        L, S, plan = fn(df)
+        c = df["c"].to_numpy(dtype=float)
+        bull = c > sma(c, 200 * _per_day(df))
+        return np.asarray(L, bool) & bull, S, plan
+    return g
+
+
+CRYPTO.update({
+    "CU01": ("Donchian trend 20, only above the 200-day average", _uptrend_only(_donchian(20)), TF),
+    "CU02": ("Donchian trend 60, only above the 200-day average", _uptrend_only(_donchian(60)), TF),
+    "CU07": ("EMA20 / SMA50 cross, only above the 200-day average", _uptrend_only(s_ema20_sma50), TF),
+    "CU08": ("Bollinger breakout, only above the 200-day average", _uptrend_only(s_bb_breakout), TF),
+    "CU11": ("Time-series momentum 28 days, only above the 200-day average", _uptrend_only(s_tsmom), TF),
 })

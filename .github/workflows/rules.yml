@@ -158,6 +158,7 @@ jobs:
           cp output/report_*.html "$DIR"/
           cp output/trades_*.csv "$DIR"/ 2>/dev/null || true
           cp output/combo_trades_*.csv.gz "$DIR"/ 2>/dev/null || true
+          cp output/all_trades_*.csv.gz "$DIR"/ 2>/dev/null || true
           cp output/optimize_*.json "$DIR"/ 2>/dev/null || true
           cp output/filters_*.json "$DIR"/ 2>/dev/null || true
           git config user.name "github-actions[bot]"

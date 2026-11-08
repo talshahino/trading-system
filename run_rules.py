@@ -46,6 +46,8 @@ SPREADS = {}     # historical 1-minute spread per instrument
 SPREAD_EST = set()   # instruments whose spread is estimated (no bid/ask history)
 NC.CURRENCIES.update(U.CURRENCIES)
 COMBO_TRADES = []
+ALL_TRADES = []      # test mode: every combo's trades, passed or not (08.11.2026: combo_trades keeps only the
+                     # combos that passed, so pooling those files over-states every strategy)
 OPT_RESULTS = []
 # trade-management grid: target (None = strategy's own, "none" = no target), breakeven fraction (0 = off), ATR-stop scale
 OPT_TARGETS = [None, ("R", 1.0), ("R", 1.5), ("R", 2.0), ("R", 3.0), "none"]
@@ -409,6 +411,12 @@ def main():
         tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
         out.to_csv(config.OUTPUT_DIR / f"combo_trades_{tag}.csv.gz", index=False)
         print("saved", len(out), "trades for", out.groupby(["sid", "tf", "symbol"]).ngroups if len(out) else 0, "combos")
+    if ALL_TRADES:
+        cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason",
+                "mfe_r", "mae_r", "passed"]
+        tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
+        pd.concat(ALL_TRADES, ignore_index=True).reindex(columns=cols).to_csv(config.OUTPUT_DIR / f"all_trades_{tag}.csv.gz", index=False)
+        print("saved every combo's trades:", sum(len(x) for x in ALL_TRADES))
     safe_report(results, args)
 
 
@@ -495,6 +503,8 @@ def _per_symbol(sid, tf, parts, split, args):
             passed = any(x["prophet"] and x["prophet"]["verdict"]["verdict"] == "PASS" for x in row["tests"].values())
             if passed and args.test_from:
                 COMBO_TRADES.append(after.assign(sid=sid, tf=tf))
+            if args.test_from:
+                ALL_TRADES.append(after.assign(sid=sid, tf=tf, passed=passed))
             if not args.test_from:
                 SELECTED_AFTER.append(after.assign(combo=f"{sid}|{tf}|{sym}"))
         PER_SYMBOL.append(row)

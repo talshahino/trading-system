@@ -58,10 +58,16 @@ STOCKS.update({
     "SPCX": ("SPCX", None, ["USD"]),
 })
 
+# more FTMO crypto CFDs with Alpaca history: research only, never in the default universe (08.11.2026)
+CRYPTO_MORE = {f"{a}/USD": (f, None, ["USD"]) for a, f in [
+    ("AAVE", "AAVUSD"), ("AVAX", "AVAUSD"), ("BCH", "BCHUSD"), ("DOGE", "DOGEUSD"), ("DOT", "DOTUSD"),
+    ("GRT", "GRTUSD"), ("LINK", "LNKUSD"), ("LTC", "LTCUSD"), ("UNI", "UNIUSD"), ("XTZ", "XTZUSD")]}
 GROUPS = {"fx": FX, "index": INDICES, "metal": METALS, "energy": ENERGY, "crypto": CRYPTO, "stock": STOCKS}
+SYMBOLS = [k for g in GROUPS.values() for k in g]
 ALL = {k: v for g in GROUPS.values() for k, v in g.items()}
-SYMBOLS = list(ALL)
+ALL.update(CRYPTO_MORE)
 CLASS = {k: g for g, d in GROUPS.items() for k in d}
+CLASS.update({k: "crypto" for k in CRYPTO_MORE})
 DUKA = {k: v[1] for k, v in ALL.items() if v[1]}
 CURRENCIES = {k: v[2] for k, v in ALL.items()}
 

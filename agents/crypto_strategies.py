@@ -1,0 +1,119 @@
+"""Crypto strategies from published research and popular posts (research only, 08.11.2026).
+Same contract as agents/rules_agent.py. Long only unless stated (as published).
+
+CR01-CR03 Donchian trend (Zarattini, Pagani & Barbon 2025, "Catching Crypto Trends"; rules as summarised
+          by CXO Advisory): daily close above the highest close of the previous N days -> buy; trailing
+          stop = the midpoint of the highest and lowest close of the last N days, never lowered.
+          The paper averages N = 5..360; here three of its lookbacks on their own: 20, 60, 150.
+CR04      RSI(5) momentum (QuantifiedStrategies, Bitcoin RSI article): RSI(5) crosses above 50 -> buy,
+          crosses back under 50 -> sell. No stop in the source: a 3 x ATR safety stop.
+CR05      Bitcoin intraday seasonality (Quantpedia): buy at 22:00 UTC, sell at 00:00 UTC. 1 hour bars.
+CR06      Bitcoin intraday time-series momentum (Shen, Urquhart & Wang 2022), rule 3: return 22:00 (previous
+          day) -> 14:30 UTC up AND return 21:00 -> 21:30 UTC down -> buy 21:30-22:00; the reverse -> sell
+          short. 15 minute bars. Safety stop 1.5 x ATR.
+CR07      EMA20 / SMA50 cross (popular BTC post): EMA20 crosses above SMA50 -> buy, crosses under -> sell.
+          Safety stop 3 x ATR.
+CR08      Bollinger breakout (QuantifiedStrategies): close above the upper band (20, 2) -> buy, close under
+          the 20 SMA -> sell. Safety stop 3 x ATR.
+"""
+import numpy as np
+import pandas as pd
+
+from agents.rules_agent import ema, sma, rsi
+
+
+def _roll(x, n, f):
+    s = pd.Series(x)
+    return (s.rolling(n).max() if f == "max" else s.rolling(n).min()).to_numpy()
+
+
+def _donchian(n):
+    def s(df):
+        c = df["c"].to_numpy(dtype=float)
+        hi_prev = np.r_[np.nan, _roll(c, n, "max")[:-1]]          # highest close of the previous n days
+        mid = (_roll(c, n, "max") + _roll(c, n, "min")) / 2
+        L = c > hi_prev
+        z = np.zeros(len(c), dtype=bool)
+        return L, z, {"stop": ("trail_line",), "line": mid, "target": None}
+    return s
+
+
+def _cross_up(a, b):
+    return (a > b) & (np.r_[np.nan, a[:-1]] <= np.r_[np.nan, b[:-1]])
+
+
+def s_rsi5(df):
+    c = df["c"].to_numpy(dtype=float)
+    r = rsi(c, 5)
+    L = _cross_up(r, np.full(len(c), 50.0))
+    X = _cross_up(np.full(len(c), 50.0), r)
+    z = np.zeros(len(c), dtype=bool)
+    return L, z, {"stop": ("atr", 3.0), "target": None, "exit_long": X}
+
+
+def _utc(df):
+    return df.index.tz_convert("UTC")
+
+
+def s_btc_22utc(df):
+    t = _utc(df)
+    hm = t.hour * 60 + t.minute
+    L = np.asarray(hm == 21 * 60)                    # the 21:00 bar closes at 22:00 -> buy at 22:00
+    X = np.asarray(hm == 23 * 60)                    # the 23:00 bar closes at 00:00 -> sell at 00:00
+    z = np.zeros(len(df), dtype=bool)
+    return L, z, {"stop": ("atr", 2.0), "target": None, "exit_long": X}
+
+
+def s_intraday_tsmom(df):
+    t = _utc(df)
+    o, c = df["o"].to_numpy(dtype=float), df["c"].to_numpy(dtype=float)
+    hm = np.asarray(t.hour * 60 + t.minute)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    p22 = p1430 = p21 = np.nan
+    for i in range(n):
+        m = hm[i]
+        if m == 22 * 60:
+            p22 = o[i]                               # previous day's 22:00
+        elif m == 14 * 60 + 15:
+            p1430 = c[i]                             # close of the 14:15 bar = 14:30
+        elif m == 21 * 60:
+            p21 = o[i]
+        elif m == 21 * 60 + 15 and np.isfinite(p22) and np.isfinite(p1430) and np.isfinite(p21):
+            r1, r2 = p1430 / p22 - 1, c[i] / p21 - 1   # c[i] = 21:30
+            if r1 > 0 and r2 < 0:
+                L[i] = True
+            elif r1 <= 0 and r2 >= 0:
+                S[i] = True
+            p1430 = p21 = np.nan
+    X = hm == 21 * 60 + 45                           # the 21:45 bar closes at 22:00 -> out at 22:00
+    return L, S, {"stop": ("atr", 1.5), "target": None, "exit_long": X, "exit_short": X}
+
+
+def s_ema20_sma50(df):
+    c = df["c"].to_numpy(dtype=float)
+    e, s = ema(c, 20), sma(c, 50)
+    z = np.zeros(len(c), dtype=bool)
+    return _cross_up(e, s), z, {"stop": ("atr", 3.0), "target": None, "exit_long": _cross_up(s, e)}
+
+
+def s_bb_breakout(df):
+    c = df["c"].to_numpy(dtype=float)
+    m = sma(c, 20)
+    sd = pd.Series(c).rolling(20).std().to_numpy()
+    L = c > m + 2 * sd
+    z = np.zeros(len(c), dtype=bool)
+    return L, z, {"stop": ("atr", 3.0), "target": None, "exit_long": c < m}
+
+
+TF = ["4Hour", "1Day"]
+CRYPTO = {
+    "CR01": ("Donchian trend 20 days, midpoint trailing stop (Zarattini et al. 2025)", _donchian(20), TF),
+    "CR02": ("Donchian trend 60 days, midpoint trailing stop (Zarattini et al. 2025)", _donchian(60), TF),
+    "CR03": ("Donchian trend 150 days, midpoint trailing stop (Zarattini et al. 2025)", _donchian(150), ["1Day"]),
+    "CR04": ("RSI(5) momentum: cross above / below 50 (QuantifiedStrategies)", s_rsi5, TF),
+    "CR05": ("Bitcoin seasonality: long 22:00-00:00 UTC (Quantpedia)", s_btc_22utc, ["1Hour"]),
+    "CR06": ("Bitcoin intraday momentum, last half hour (Shen, Urquhart & Wang)", s_intraday_tsmom, ["15Min"]),
+    "CR07": ("EMA20 / SMA50 cross", s_ema20_sma50, TF),
+    "CR08": ("Bollinger breakout 20/2, exit under the mid band (QuantifiedStrategies)", s_bb_breakout, TF),
+}

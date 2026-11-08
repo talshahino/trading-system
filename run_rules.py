@@ -272,7 +272,8 @@ def main():
         per_sid = {sid: [] for sid in ids}
         universe = U.SYMBOLS if args.market == "ftmo" else SYMBOLS
         if args.symbols:
-            universe = [x for x in universe if x in args.symbols.split(",")]
+            universe = [x for x in list(U.ALL) + SYMBOLS if x in args.symbols.split(",")]   # also research-only names
+            universe = list(dict.fromkeys(universe))
         if combos is not None:
             universe = [x for x in universe if any(c[1] == tf and c[2] == x for c in combos)]
         for i, s in enumerate(["DEMO1", "DEMO2"] if args.demo else universe):

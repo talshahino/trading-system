@@ -204,3 +204,22 @@ CRYPTO.update({
     "CS07": ("EMA20 / SMA50 cross, long and short", _long_short(s_ema20_sma50), TF),
     "CS08": ("Bollinger breakout, long and short", _long_short(s_bb_breakout), TF),
 })
+
+
+def s_tsmom(df):
+    """CR11 time-series momentum (Liu & Tsyvinski 2021, "Risks and Returns of Cryptocurrency"; crypto TSMOM
+    studies): hold long while the price is above its level 28 days ago, out when it falls under it.
+    No stop in the source: a 3 x ATR safety stop."""
+    c = df["c"].to_numpy(dtype=float)
+    k = 28 * (6 if df.attrs.get("tf") == "4Hour" else 1)
+    past = np.r_[np.full(k, np.nan), c[:-k]]
+    up = c > past
+    prev = np.r_[False, up[:-1]]
+    z = np.zeros(len(c), dtype=bool)
+    return up & ~prev, z, {"stop": ("atr", 3.0), "target": None, "exit_long": ~up & prev}
+
+
+CRYPTO.update({
+    "CR11": ("Time-series momentum: long while above the price 28 days ago (Liu & Tsyvinski)", s_tsmom, TF),
+    "CS11": ("Time-series momentum 28 days, long and short", _long_short(s_tsmom), TF),
+})

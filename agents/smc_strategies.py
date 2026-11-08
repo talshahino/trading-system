@@ -135,6 +135,85 @@ def s_rising_wedge(df):
     return z, sig, {"stop": ("level", -st, -st), "target": ("level", -tg, -tg)}
 
 
+def _head_shoulders(h, l, c, a, early=False, k=3, fresh=30):
+    """Head and shoulders top (short). Mirror the prices for the inverse pattern (long).
+    Pattern on the last 3 swing highs LS < H > RS: the head over both shoulders, the shoulders about level
+    (within 35% of the pattern height), the two bottoms between them about level (within 50%); the neckline
+    runs through the two bottoms. early=False: sell on a close under the neckline, stop over the last
+    5 bars' high (the small bounce before the break); early=True: sell as soon as the right shoulder is a
+    confirmed swing high, stop over the right shoulder. Target: the head's height over the neckline,
+    measured down from the neckline."""
+    n = len(c)
+    sig = np.zeros(n, dtype=bool)
+    stop, tgt = np.full(n, np.nan), np.full(n, np.nan)
+    ph, _ = _pivots(h, l, k)
+    known = {p + k: p for p in ph}
+    H, pat, used = [], None, set()
+    for t in range(n):
+        if t in known:
+            H.append(known[t])
+            pat = None
+            if len(H) >= 3:
+                p1, p2, p3 = H[-3:]
+                b1 = p1 + int(np.argmin(l[p1:p2 + 1]))
+                b2 = p2 + int(np.argmin(l[p2:p3 + 1]))
+                ls, hd, rs = h[p1], h[p2], h[p3]
+                neck_head = l[b1] + (l[b2] - l[b1]) / max(1, b2 - b1) * (p2 - b1)
+                height = hd - neck_head
+                if (height > 0 and hd > max(ls, rs) and abs(ls - rs) < 0.35 * height
+                        and abs(l[b1] - l[b2]) < 0.5 * height and min(ls, rs) > max(l[b1], l[b2]) + 0.3 * height
+                        and p2 not in used):
+                    slope = (l[b2] - l[b1]) / max(1, b2 - b1)
+                    pat = (p3, b2, slope, height)
+                    if early and np.isfinite(a[t]):
+                        neck_t = l[b2] + slope * (t - b2)
+                        sig[t] = True
+                        stop[t] = rs + 0.1 * a[t]
+                        tgt[t] = neck_t - height
+                        used.add(p2)
+                        pat = None
+        if early or pat is None or not np.isfinite(a[t]):
+            continue
+        p3, b2, slope, height = pat
+        neck_t = l[b2] + slope * (t - b2)
+        if t - p3 > fresh or c[t] > h[p3]:          # stale, or the right shoulder is taken out
+            pat = None
+            continue
+        if c[t] < neck_t:                            # neckline broken: sell at the next open
+            sig[t] = True
+            stop[t] = h[max(0, t - 5):t + 1].max() + 0.1 * a[t]
+            tgt[t] = neck_t - height
+            used.add(H[-2])
+            pat = None
+    return sig, stop, tgt
+
+
+def _hs_plan(df, early, inverse):
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    z = np.zeros(len(c), dtype=bool)
+    if not inverse:
+        s, st, tg = _head_shoulders(h, l, c, a, early)
+        return z, s, {"stop": ("level", st, st), "target": ("level", tg, tg)}
+    s, st, tg = _head_shoulders(-l, -h, -c, a, early)  # mirrored prices: the inverse pattern becomes a top
+    return s, z, {"stop": ("level", -st, -st), "target": ("level", -tg, -tg)}
+
+
+def s_hs_break(df):
+    return _hs_plan(df, early=False, inverse=False)
+
+
+def s_ihs_break(df):
+    return _hs_plan(df, early=False, inverse=True)
+
+
+def s_hs_early(df):
+    return _hs_plan(df, early=True, inverse=False)
+
+
+# SM04-SM06 (Mr Alexx "PriceAction Analysis" reel, sent by the user 08.11.2026): head and shoulders.
+#   SM04 the second entry: short on a close under the neckline; SM05 the same, inverse pattern, long;
+#   SM06 the first entry: short at the right shoulder. Target: the head's height under the neckline.
 # SM02 / SM03 (Trader Dhana reels, sent by the user 08.11.2026):
 #   falling wedge: 3 lower swing highs and 3 lower swing lows, both lines falling, the resistance steeper
 #   (converging); a close over the resistance line -> buy; stop under the last swing low; target = the
@@ -144,6 +223,12 @@ SMC = {
     "SM02": ("Falling wedge breakout, target the wedge start (Trader Dhana)", s_falling_wedge,
              ["15Min", "1Hour", "4Hour", "1Day"]),
     "SM03": ("Rising wedge breakdown, short, target the wedge start (Trader Dhana)", s_rising_wedge,
+             ["15Min", "1Hour", "4Hour", "1Day"]),
+    "SM04": ("Head and shoulders: short on the neckline break, measured target (Mr Alexx)", s_hs_break,
+             ["15Min", "1Hour", "4Hour", "1Day"]),
+    "SM05": ("Inverse head and shoulders: long on the neckline break, measured target", s_ihs_break,
+             ["15Min", "1Hour", "4Hour", "1Day"]),
+    "SM06": ("Head and shoulders: short at the right shoulder, stop over it (Mr Alexx, first entry)", s_hs_early,
              ["15Min", "1Hour", "4Hour", "1Day"]),
     "SM01": ("Market structure + liquidity sweep + FVG entry, measured-move target (TheTrader's Villa)",
              s_smc_fvg, ["15Min", "1Hour", "4Hour", "1Day"]),

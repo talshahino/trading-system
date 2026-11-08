@@ -106,6 +106,55 @@ def s_bb_breakout(df):
     return L, z, {"stop": ("atr", 3.0), "target": None, "exit_long": c < m}
 
 
+def _macd(c):
+    m = ema(c, 12) - ema(c, 26)
+    return m, ema(m, 9)
+
+
+def s_macd200(df):
+    """CR09 Trading Rush (YouTube, "BEST Bitcoin Trading Strategy EVER with PROOF tested 100 TIMES"):
+    buy when MACD crosses above its signal line under the zero line with the candle above the 200 MA; sell on
+    the mirror. Stop beyond the pullback (lowest low / highest high of the last 10 bars), target 1.5 x risk."""
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    m, s = _macd(c)
+    e = ema(c, 200)
+    L = _cross_up(m, s) & (m < 0) & (c > e)
+    S = _cross_up(s, m) & (m > 0) & (c < e)
+    lo, hi = _roll(l, 10, "min"), _roll(h, 10, "max")
+    return L, S & ~L, {"stop": ("level", lo, hi), "target": ("R", 1.5)}
+
+
+def _swings(h, l, k=5):
+    """Last two confirmed swing highs / lows at every bar (a swing is known k bars after it)."""
+    n = len(h)
+    sh1 = sh2 = sl1 = sl2 = np.nan
+    H1, H2, L1, L2 = (np.full(n, np.nan) for _ in range(4))
+    for t in range(2 * k, n):
+        p = t - k
+        if h[p] == h[p - k:t + 1].max():
+            sh2, sh1 = sh1, h[p]
+        if l[p] == l[p - k:t + 1].min():
+            sl2, sl1 = sl1, l[p]
+        H1[t], H2[t], L1[t], L2[t] = sh1, sh2, sl1, sl2
+    return H1, H2, L1, L2
+
+
+def s_structure(df):
+    """CR10 saya crypto (YouTube, "I EXPOSE my BEST Crypto Trading Strategy", 352K views): trade with the higher
+    time-frame structure; enter when the lower time-frame structure breaks that way. Here on 1 hour bars:
+    the 50-day average sets the big trend; uptrend = higher swing high and higher swing low; buy on a close over
+    the last swing high; stop under the last swing low; target 2 x risk, stop to entry at +1 R. Mirror for shorts."""
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    H1, H2, L1, L2 = _swings(h, l, 5)
+    big = sma(c, 50 * 24 if df.attrs.get("tf") == "1Hour" else 50 * 6)
+    prev = np.r_[np.nan, c[:-1]]
+    up = (H1 > H2) & (L1 > L2) & (c > big)
+    dn = (H1 < H2) & (L1 < L2) & (c < big)
+    L = up & (c > H1) & (prev <= H1)
+    S = dn & (c < L1) & (prev >= L1)
+    return L, S & ~L, {"stop": ("level", L1, H1), "target": ("R", 2.0), "breakeven": (0.5, 0.0)}
+
+
 TF = ["4Hour", "1Day"]
 CRYPTO = {
     "CR01": ("Donchian trend 20 days, midpoint trailing stop (Zarattini et al. 2025)", _donchian(20), TF),
@@ -116,4 +165,8 @@ CRYPTO = {
     "CR06": ("Bitcoin intraday momentum, last half hour (Shen, Urquhart & Wang)", s_intraday_tsmom, ["15Min"]),
     "CR07": ("EMA20 / SMA50 cross", s_ema20_sma50, TF),
     "CR08": ("Bollinger breakout 20/2, exit under the mid band (QuantifiedStrategies)", s_bb_breakout, TF),
+    "CR09": ("MACD cross under/over zero + 200 MA, target 1.5R (Trading Rush, YouTube)", s_macd200,
+             ["15Min", "1Hour", "4Hour"]),
+    "CR10": ("Market structure break with the trend, target 2R (saya crypto, YouTube)", s_structure,
+             ["1Hour", "4Hour"]),
 }

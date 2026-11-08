@@ -170,3 +170,37 @@ CRYPTO = {
     "CR10": ("Market structure break with the trend, target 2R (saya crypto, YouTube)", s_structure,
              ["1Hour", "4Hour"]),
 }
+
+
+def _mirror(df):
+    m = df.copy()
+    m["o"], m["h"], m["l"], m["c"] = -df["o"], -df["l"], -df["h"], -df["c"]
+    return m
+
+
+def _long_short(fn):
+    """The same rules both ways (08.11.2026, the user's request): the short side is the long rule on the
+    mirrored prices. Levels and the trailing line are mirrored back (the Donchian midpoint is the same line)."""
+    def g(df):
+        L, _, p = fn(df)
+        S, _, pm = fn(_mirror(df))
+        S = np.asarray(S, bool) & ~np.asarray(L, bool)
+        plan = dict(p)
+        if p.get("exit_long") is not None:
+            plan["exit_short"] = pm["exit_long"]
+        if p.get("line") is not None:
+            plan["line"] = p["line"]
+        if p["stop"][0] == "level":
+            plan["stop"] = ("level", p["stop"][1], -np.asarray(pm["stop"][1]))
+        return L, S, plan
+    return g
+
+
+CRYPTO.update({
+    "CS01": ("Donchian trend 20, long and short", _long_short(_donchian(20)), TF),
+    "CS02": ("Donchian trend 60, long and short", _long_short(_donchian(60)), TF),
+    "CS03": ("Donchian trend 150, long and short", _long_short(_donchian(150)), ["1Day"]),
+    "CS04": ("RSI(5) momentum, long and short", _long_short(s_rsi5), TF),
+    "CS07": ("EMA20 / SMA50 cross, long and short", _long_short(s_ema20_sma50), TF),
+    "CS08": ("Bollinger breakout, long and short", _long_short(s_bb_breakout), TF),
+})

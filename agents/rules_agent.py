@@ -489,6 +489,11 @@ from agents.swing_strategies import SWING  # noqa: E402
 
 STRATEGIES.update(SWING)
 
+from agents.smc_strategies import SMC  # noqa: E402
+
+STRATEGIES.update(SMC)
+
+
 
 def timeframe_ok(sid, tf):
     """True if the strategy's source allows this timeframe."""

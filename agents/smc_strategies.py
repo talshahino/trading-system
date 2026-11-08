@@ -62,7 +62,89 @@ def s_smc_fvg(df):
     return L, S & ~L, {"stop": ("level", sl, -ss), "target": ("level", tl, -ts)}
 
 
+def _pivots(h, l, k=3):
+    """Swing highs / lows: a bar higher (lower) than the k bars on each side; known only k bars later."""
+    n = len(h)
+    ph, pl = [], []
+    for p in range(k, n - k):
+        if h[p] == h[p - k:p + k + 1].max() and h[p] > h[p - k:p].max():
+            ph.append(p)
+        if l[p] == l[p - k:p + k + 1].min() and l[p] < l[p - k:p].min():
+            pl.append(p)
+    return ph, pl
+
+
+def _falling_wedge(h, l, c, a, k=3, fresh=30):
+    """Falling wedge breakout (long). Mirror the prices for a rising wedge."""
+    n = len(c)
+    sig = np.zeros(n, dtype=bool)
+    stop, tgt = np.full(n, np.nan), np.full(n, np.nan)
+    ph, pl = _pivots(h, l, k)
+    known_h = {p + k: p for p in ph}          # bar at which a pivot becomes known -> the pivot bar
+    known_l = {p + k: p for p in pl}
+    H, Lw = [], []
+    wedge, used = None, set()
+    for t in range(n):
+        new = False
+        if t in known_h:
+            H.append(known_h[t])
+            new = True
+        if t in known_l:
+            Lw.append(known_l[t])
+            new = True
+        if new and len(H) >= 3 and len(Lw) >= 3:
+            h3, l3 = H[-3:], Lw[-3:]
+            wedge = None
+            if (h[h3[0]] > h[h3[1]] > h[h3[2]] and l[l3[0]] > l[l3[1]] > l[l3[2]] and h3[0] < l3[-1]
+                    and (h3[0], h3[2]) not in used):
+                sr = (h[h3[2]] - h[h3[0]]) / (h3[2] - h3[0])      # resistance slope (per bar)
+                ss = (l[l3[2]] - l[l3[0]]) / (l3[2] - l3[0])      # support slope
+                res = lambda x, p=h3[0], s=sr: h[p] + s * (x - p)  # noqa: E731
+                sup = lambda x, p=l3[0], s=ss: l[p] + s * (x - p)  # noqa: E731
+                ok = sr < ss < 0 and abs(h[h3[1]] - res(h3[1])) < 0.75 * a[t] and abs(l[l3[1]] - sup(l3[1])) < 0.75 * a[t]
+                if ok and res(t) - sup(t) < res(h3[0]) - sup(h3[0]):   # converging
+                    wedge = (h3, l3, res, sup)
+        if wedge is None or not np.isfinite(a[t]):
+            continue
+        h3, l3, res, sup = wedge
+        if t - max(h3[-1], l3[-1]) > fresh or c[t] < sup(t) - 0.5 * a[t]:   # stale, or broken the wrong way
+            wedge = None
+            continue
+        if c[t] > res(t):                          # breakout over the resistance line: buy at the next open
+            sig[t] = True
+            stop[t] = min(l[l3[-1]], l[max(0, t - 5):t + 1].min()) - 0.1 * a[t]   # under the last swing low
+            tgt[t] = h[h3[0]]                      # the wedge's starting high
+            used.add((h3[0], h3[2]))
+            wedge = None
+    return sig, stop, tgt
+
+
+def s_falling_wedge(df):
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    sig, st, tg = _falling_wedge(h, l, c, a)
+    z = np.zeros(len(c), dtype=bool)
+    return sig, z, {"stop": ("level", st, st), "target": ("level", tg, tg)}
+
+
+def s_rising_wedge(df):
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    sig, st, tg = _falling_wedge(-l, -h, -c, a)    # mirrored prices: a rising wedge becomes a falling one
+    z = np.zeros(len(c), dtype=bool)
+    return z, sig, {"stop": ("level", -st, -st), "target": ("level", -tg, -tg)}
+
+
+# SM02 / SM03 (Trader Dhana reels, sent by the user 08.11.2026):
+#   falling wedge: 3 lower swing highs and 3 lower swing lows, both lines falling, the resistance steeper
+#   (converging); a close over the resistance line -> buy; stop under the last swing low; target = the
+#   wedge's starting high. Rising wedge = the mirror -> sell short; stop over the last swing high; target =
+#   the wedge's starting low.
 SMC = {
+    "SM02": ("Falling wedge breakout, target the wedge start (Trader Dhana)", s_falling_wedge,
+             ["15Min", "1Hour", "4Hour", "1Day"]),
+    "SM03": ("Rising wedge breakdown, short, target the wedge start (Trader Dhana)", s_rising_wedge,
+             ["15Min", "1Hour", "4Hour", "1Day"]),
     "SM01": ("Market structure + liquidity sweep + FVG entry, measured-move target (TheTrader's Villa)",
              s_smc_fvg, ["15Min", "1Hour", "4Hour", "1Day"]),
 }

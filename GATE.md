@@ -33,3 +33,20 @@ expectation combo makes less than 2.5% of the time.
 Once a month the whole pipeline runs on null strategies (`--null-shift 37`: every signal moved 37 bars
 away from the prices it came from). How many of those "pass" is our luck rate; it is reported next to
 every new result.
+
+## 6. Fair gate and portfolio test (user's approval 08.11.2026, written BEFORE these tests were run)
+The per-combo gate in 1. cannot be passed by a daily or 4-hour strategy whatever its quality (18 months of
+one instrument gives too few trades). Added, not replacing 1.:
+
+A. Family test. A family = one strategy on one time frame, pooled over every instrument it was run on
+   (for each family the run with the most instruments; base rules, no optimised variant). The bar is the
+   expected best t of N families with no edge, N = every family ever tried (695 on 08.11.2026 -> t >= 3.17),
+   on the test window 2025-04-30 .. 2026-10-31, and its average R must be above 0 in both halves of it.
+
+B. Portfolio test (one test, decided now). Selection window 2025-04-30 .. 2025-12-31, test window
+   2026-01-01 .. 2026-10-31 (never used to choose). The portfolio = every family with at least 30 trades and
+   pooled t >= 2.0 in the selection window, equal weight (1 R per trade). It passes when, in the test window,
+   its per-trade t >= 2.0 AND its daily result t >= 2.0. No second try with other thresholds.
+
+Either pass makes a candidate only: it then goes through 3. (one tenth of the risk on the demo, SPRT)
+and enters a bot only with the user's approval.

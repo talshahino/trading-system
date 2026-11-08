@@ -274,8 +274,8 @@ def main():
         if args.symbols:
             universe = [x for x in list(U.ALL) + SYMBOLS if x in args.symbols.split(",")]   # also research-only names
             universe = list(dict.fromkeys(universe))
-        if combos is not None:
-            universe = [x for x in universe if any(c[1] == tf and c[2] == x for c in combos)]
+        if combos is not None:   # every listed name, research-only ones included
+            universe = [x for x in dict.fromkeys(list(U.ALL) + SYMBOLS) if any(c[1] == tf and c[2] == x for c in combos)]
         for i, s in enumerate(["DEMO1", "DEMO2"] if args.demo else universe):
             st = max(args.start, RP.MINUTE_START) if tf.endswith("Min") else args.start
             try:

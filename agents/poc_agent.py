@@ -154,6 +154,18 @@ def bars(symbol, timeframe, start, end):
     cached per year."""
     crypto = "/" in symbol
     duka = symbol in DUKA
+    if timeframe == "1Day":
+        # daily bars from the 1-hour bars, one per New York trading day (17:00 NY roll for 24h markets is
+        # close enough: research only, 08.11.2026); stamped with the day's first hour
+        h1 = bars(symbol, "1Hour", start, end)
+        if h1.empty:
+            return h1
+        key = h1.index.tz_convert("America/New_York").date
+        g = h1.assign(_d=key, _t=h1.index).groupby("_d", sort=True)
+        agg = g.agg(o=("o", "first"), h=("h", "max"), l=("l", "min"), c=("c", "last"), v=("v", "sum"), t=("_t", "first"))
+        agg = agg[agg["v"] > 0].set_index("t")
+        agg.index.name = None
+        return agg[["o", "h", "l", "c", "v"]]
     if timeframe == "4Hour":
         h1 = bars(symbol, "1Hour", start, end)
         if h1.empty:

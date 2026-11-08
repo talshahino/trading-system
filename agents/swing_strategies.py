@@ -33,6 +33,13 @@ def _datr(day, n=14):
 def _swing(df, L, S, XL, XS, k_stop=2.5):
     """Daily signals onto bars, with a daily-ATR stop measured from yesterday's close."""
     date, day, first, last = _days(df)
+    if len(day) == len(df):      # daily bars: a signal at a day's close enters at the next day's open
+        a = _datr(day).to_numpy()
+        c = day["c"].to_numpy()
+        sl, ss = c - k_stop * a, c + k_stop * a
+        L, S = np.asarray(L, dtype=float) > 0, np.asarray(S, dtype=float) > 0
+        return L, S & ~L, {"stop": ("level", sl, ss), "target": None,
+                           "exit_long": np.asarray(XL, dtype=float) > 0, "exit_short": np.asarray(XS, dtype=float) > 0}
     prev = lambda s: _on_bars(date, pd.Series(s, index=day.index).shift(1).astype(float))  # noqa: E731
     enter_l, enter_s = prev(L) > 0, prev(S) > 0
     ex_l, ex_s = prev(XL) > 0, prev(XS) > 0
@@ -148,6 +155,17 @@ def s_momdip(df):
 def _swing2(df, L, S, XL, XS, stop_l, stop_s, tgt_l=None, tgt_s=None, be_r=None):
     """Daily signals onto bars; stops / targets are daily levels known at the signal day's close."""
     date, day, first, last = _days(df)
+    if len(day) == len(df):      # daily bars: no shift, the engine enters / exits at the next day's open
+        prev = lambda s: np.asarray(s, dtype=float)  # noqa: E731
+        first = np.ones(len(df), dtype=bool)
+        L_, S_ = prev(L) > 0, prev(S) > 0
+        plan = {"stop": ("level", prev(stop_l), prev(stop_s)), "target": None,
+                "exit_long": prev(XL) > 0, "exit_short": prev(XS) > 0}
+        if tgt_l is not None:
+            plan["target"] = ("level", prev(tgt_l), prev(tgt_s))
+        if be_r:
+            plan["be_r"] = be_r
+        return L_, S_ & ~L_, plan
     prev = lambda s: _on_bars(date, pd.Series(np.asarray(s, dtype=float), index=day.index).shift(1))  # noqa: E731
     enter_l, enter_s = prev(L) > 0, prev(S) > 0
     ex_l, ex_s = prev(XL) > 0, prev(XS) > 0
@@ -247,21 +265,21 @@ def s_fib(df):
 
 # id: (name, fn, timeframes)
 SWING = {
-    "SW01": ("Donchian 20-day breakout, 10-day exit (Turtles)", s_donchian, ["1Hour", "4Hour"]),
-    "SW02": ("50/200-day golden / death cross", s_golden, ["1Hour", "4Hour"]),
-    "SW03": ("Pullback in a rising 50-day trend, out above yesterday's high", s_pullback, ["1Hour", "4Hour"]),
-    "SW04": ("Keltner daily breakout (EMA20 + 2 ATR)", s_keltner, ["1Hour", "4Hour"]),
-    "SW05": ("Range expansion day continuation (Crabel)", s_expansion, ["1Hour", "4Hour"]),
-    "SW06": ("Daily MACD cross in the 200-day trend", s_macd, ["1Hour", "4Hour"]),
-    "SW07": ("Bollinger daily mean reversion in the 200-day trend", s_bollinger, ["1Hour", "4Hour"]),
-    "SW08": ("Momentum dip: 60-day up, 5-day low", s_momdip, ["1Hour", "4Hour"]),
-    "SW09": ("Connors RSI(2) over the 200-day line, out above the 5-day SMA", s_rsi2, ["1Hour", "4Hour"]),
-    "SW10": ("Connors Double Seven", s_double7, ["1Hour", "4Hour"]),
-    "SW11": ("Turtles System 2: 55-day breakout, 20-day exit, 2N stop", s_turtle55, ["1Hour", "4Hour"]),
+    "SW01": ("Donchian 20-day breakout, 10-day exit (Turtles)", s_donchian, ["1Hour", "4Hour", "1Day"]),
+    "SW02": ("50/200-day golden / death cross", s_golden, ["1Hour", "4Hour", "1Day"]),
+    "SW03": ("Pullback in a rising 50-day trend, out above yesterday's high", s_pullback, ["1Hour", "4Hour", "1Day"]),
+    "SW04": ("Keltner daily breakout (EMA20 + 2 ATR)", s_keltner, ["1Hour", "4Hour", "1Day"]),
+    "SW05": ("Range expansion day continuation (Crabel)", s_expansion, ["1Hour", "4Hour", "1Day"]),
+    "SW06": ("Daily MACD cross in the 200-day trend", s_macd, ["1Hour", "4Hour", "1Day"]),
+    "SW07": ("Bollinger daily mean reversion in the 200-day trend", s_bollinger, ["1Hour", "4Hour", "1Day"]),
+    "SW08": ("Momentum dip: 60-day up, 5-day low", s_momdip, ["1Hour", "4Hour", "1Day"]),
+    "SW09": ("Connors RSI(2) over the 200-day line, out above the 5-day SMA", s_rsi2, ["1Hour", "4Hour", "1Day"]),
+    "SW10": ("Connors Double Seven", s_double7, ["1Hour", "4Hour", "1Day"]),
+    "SW11": ("Turtles System 2: 55-day breakout, 20-day exit, 2N stop", s_turtle55, ["1Hour", "4Hour", "1Day"]),
     "SW12": ("Qullamaggie breakout: tight range, low-of-day stop, breakeven at 1R, out under the 10-day SMA",
-             s_qulla, ["1Hour", "4Hour"]),
-    "SW13": ("Raschke Holy Grail: ADX>30 pullback to the 20-day SMA, target the swing high", s_holygrail, ["1Hour", "4Hour"]),
-    "SW14": ("20-EMA reversion in the 200-day trend, target the swing high", s_ema20rev, ["1Hour", "4Hour"]),
-    "SW15": ("Chandelier trend: 50-day high, 22-day high - 3 ATR trailing exit", s_chandelier, ["1Hour", "4Hour"]),
-    "SW16": ("Fibonacci 50-61.8% pullback, stop under 78.6%, target the swing high", s_fib, ["1Hour", "4Hour"]),
+             s_qulla, ["1Hour", "4Hour", "1Day"]),
+    "SW13": ("Raschke Holy Grail: ADX>30 pullback to the 20-day SMA, target the swing high", s_holygrail, ["1Hour", "4Hour", "1Day"]),
+    "SW14": ("20-EMA reversion in the 200-day trend, target the swing high", s_ema20rev, ["1Hour", "4Hour", "1Day"]),
+    "SW15": ("Chandelier trend: 50-day high, 22-day high - 3 ATR trailing exit", s_chandelier, ["1Hour", "4Hour", "1Day"]),
+    "SW16": ("Fibonacci 50-61.8% pullback, stop under 78.6%, target the swing high", s_fib, ["1Hour", "4Hour", "1Day"]),
 }

@@ -494,6 +494,9 @@ from agents.smc_strategies import SMC  # noqa: E402
 STRATEGIES.update(SMC)
 from agents.crypto_strategies import CRYPTO  # noqa: E402
 
+from agents.research_strategies import RESEARCH  # noqa: E402
+
+STRATEGIES.update(RESEARCH)
 STRATEGIES.update(CRYPTO)
 
 

@@ -50,3 +50,11 @@ B. Portfolio test (one test, decided now). Selection window 2025-04-30 .. 2025-1
 
 Either pass makes a candidate only: it then goes through 3. (one tenth of the risk on the demo, SPRT)
 and enters a bot only with the user's approval.
+
+## 7. Long-history families (08.11.2026, written BEFORE RS01-RS03 were run)
+For monthly and daily strategies (RS01 time-series momentum, RS02 share momentum, RS03 RSI(2) on indices,
+rules in agents/research_strategies.py) 18 months hold too few trades. They are judged as families
+(pooled over their declared universe, EVERY instrument's trades from all_trades_*.csv.gz) on
+2019-01-01 .. 2026-10-31: t >= the expected best t of N families (N = 698 -> 3.17), and average R above 0
+on 2025-04-30 .. 2026-10-31. Rule set: --respect-tf only (the stock session exit would close a monthly
+hold every evening). No second version.

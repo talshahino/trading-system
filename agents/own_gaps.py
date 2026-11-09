@@ -30,6 +30,7 @@ EXPIRY = 24          # hours from the gap's making
 MIN_RR = 1.0
 STOP = "s2"
 DOMINANT = False
+V5_MAX_COST = None   # v5 in the watch bot: skip trades whose spread + commission are more than this share of the risk
 DIAG = None          # a list -> (symbol, gap time, dir, why) for every gap that did not become a trade
 
 
@@ -125,7 +126,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                     why = "gap_broken"; break
             else:
                 if live and q1 >= n1:
-                    out.append({"symbol": s, "variant": variant, "status": "pending", "dir": d, "entry": near, "stop": None,
+                    out.append({"symbol": s, "variant": variant, "status": "pending", "dir": d, "entry": near, "stop": float((l[k - 1] if d > 0 else h[k - 1]) - d * (4 * pip if pip else 0.1 * a15[k])),
                                 "setup_t": t15[arm + 2], "leg": int(arm - k), "leg_start": t15[k - 1], "leg_top": t15[arm],
                                 "gap_lo": min(near, far), "gap_hi": max(near, far)})
                     continue
@@ -158,6 +159,8 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
             risk = d * (px - stop)
             if risk <= 0 or d * (target - px) < MIN_RR * risk:
                 dg(k, d, "rr"); continue
+            if V5_MAX_COST is not None and cost[fill] / risk > V5_MAX_COST:
+                dg(k, d, "cost"); continue
             ex_px = ex_q = rsn = None
             for q in range(fill, n1):
                 if (d > 0 and l1[q] <= stop) or (d < 0 and h1[q] >= stop):

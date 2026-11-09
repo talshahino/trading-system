@@ -59,6 +59,12 @@ SYMBOLS = {"US100": ["US100.cash", "US100"], "US30": ["US30.cash", "US30"], "US5
 EXTRA = {"WTI": ["USOIL.cash", "USOIL", "WTI"], "XAGUSD": ["XAGUSD", "XAG/USD"], "USDCAD": ["USDCAD"], "EURGBP": ["EURGBP"],
          "EU50": ["EU50.cash", "EU50"], "AUS200": ["AUS200.cash", "AUS200"]}
 SYMBOLS.update(EXTRA)
+# v4 (user, 09.11.2026, after marking charts and the backtests): the impulse is the big move (a move smaller than the
+# opposite move before it is a correction), the first gap that stayed open during the move, stop beyond the 3rd swing
+# back, the whole position out at 80% of the way to the target. Best of the grid on these 12 low-cost instruments
+# (+0.11R a trade, positive in both halves, ~0.7 trades a week). Shown as its own track ('v4'), its own summary.
+V4_SYMBOLS = ["XAUUSD", "EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD", "EURJPY", "US100", "US30", "GER40", "US500"]
+V4 = {"BODY_X": 1.8, "DOMINANT": True, "GAP_OPEN": True, "STOP_SW": 3, "TARGET_FRAC": 0.8}
 KEEP = 60                     # closed trades kept in the state (with their candles)
 # virtual demo account (user, 06.11.2026): $100,000 like the other demo accounts, risk per trade as bots 2 and 4,
 # the bots' own daily stop (4.5%, FTMO's limit is 5%) and FTMO's 10% maximum loss
@@ -186,7 +192,7 @@ def bars(df, t0, t1, rule):
 
 
 def tid(x):
-    return f"{x['symbol']}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}"
+    return f"{x['symbol']}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}" + ("|v4" if x.get("v4") else "")
 
 
 def iso(t):
@@ -212,7 +218,7 @@ def main():
         state = {}
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
                   "rules": "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
-                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
+                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול מתוקן (v4, הראשי): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
                            "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
     acc = state.get("vacct") or {"initial": INITIAL, "risk_pct": round(RISK * 100, 3), "ledger": [], "breached": None}
@@ -250,6 +256,17 @@ def main():
                     if tid(x) not in strict:              # a setup both tracks find is the original one
                         x["wide"] = True
                         res.append(x)
+                if name in V4_SYMBOLS:
+                    keep4 = {k_: getattr(CORE, k_) for k_ in V4}
+                    try:
+                        for k_, v_ in V4.items():
+                            setattr(CORE, k_, v_)
+                        for x in CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True):
+                            x["v4"] = True
+                            res.append(x)
+                    finally:
+                        for k_, v_ in keep4.items():
+                            setattr(CORE, k_, v_)
                 cutoff = df.index[-1] - pd.Timedelta(days=2)       # only what happened recently is reported
                 for x in res:
                     if pd.Timestamp(x.get("time") or x.get("setup_t")) < cutoff:
@@ -264,7 +281,7 @@ def main():
                            "setup_t": iso(x.get("setup_t")) or old.get("setup_t"), "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
                            "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide")),
-                           "extra": name in EXTRA}
+                           "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4"))}
                     if x["status"] != "pending" or "m15" not in old or old.get("status") != x["status"]:
                         ls = pd.Timestamp(x["leg_start"])
                         t_in = pd.Timestamp(x.get("time")) if x.get("time") is not None else df.index[-1]
@@ -278,8 +295,8 @@ def main():
                     for f in ("risk_usd", "skipped"):
                         if f in old:
                             rec[f] = old[f]
-                    if rec["extra"] and "risk_usd" not in rec:
-                        rec["skipped"] = "extra"              # data only: never in the virtual account
+                    if (rec["extra"] or rec["v4"]) and "risk_usd" not in rec:
+                        rec["skipped"] = "v4" if rec["v4"] else "extra"   # own summary; not in the old tracks' account
                     if rec["status"] in ("open", "closed") and "risk_usd" not in rec and "skipped" not in rec:
                         bal, day = balance(), prague_day(rec["time"])
                         start = bal - day_pnl(day)
@@ -301,7 +318,7 @@ def main():
                         elif rec["status"] == "open" and rec.get("r_now") is not None:
                             rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
-                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
+                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
                     if prev is None and rec["status"] == "pending":
                         REP.notify(f"סקלפינג (צפייה): {name} מחכה לכניסה", f"{side} · דחף של {rec['leg']} נרות · כניסה בנגיעה ב־{fmt(name, rec['entry'])}\n"
                                    f"סטופ {fmt(name, rec['stop'])} · לא נשלחת פקודה", tags=["eyes"], key=f"wp:{k}", every=86400)
@@ -331,7 +348,8 @@ def main():
         live_ = [t for t in trades.values() if t["status"] in ("pending", "open")]
         cancelled = sorted([t for t in trades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]
         trades = {t["id"]: t for t in closed + live_ + cancelled}
-        core_closed = [t for t in closed if not t.get("extra")]
+        core_closed = [t for t in closed if not t.get("extra") and not t.get("v4")]
+        rs_v4 = [t["r"] for t in closed if t.get("r") is not None and t.get("v4")]
         rs = [t["r"] for t in core_closed if t.get("r") is not None]
         rs_strict = [t["r"] for t in core_closed if t.get("r") is not None and not t.get("wide")]
         rs_wide = [t["r"] for t in core_closed if t.get("r") is not None and t.get("wide")]
@@ -340,10 +358,14 @@ def main():
                       "watch": sorted(trades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
                       "summary": {"closed": len(rs), "sum_r": round(float(np.sum(rs)), 2) if rs else 0.0,
                                   "avg_r": round(float(np.mean(rs)), 3) if rs else None, "win_pct": round(100 * float(np.mean(np.array(rs) > 0)), 1) if rs else None,
-                                  "open": sum(t["status"] == "open" and not t.get("extra") for t in live_),
-                                  "pending": sum(t["status"] == "pending" and not t.get("extra") for t in live_),
+                                  "open": sum(t["status"] == "open" and not t.get("extra") and not t.get("v4") for t in live_),
+                                  "pending": sum(t["status"] == "pending" and not t.get("extra") and not t.get("v4") for t in live_),
                                   "strict": {"closed": len(rs_strict), "sum_r": round(float(np.sum(rs_strict)), 2) if rs_strict else 0.0},
                                   "wide": {"closed": len(rs_wide), "sum_r": round(float(np.sum(rs_wide)), 2) if rs_wide else 0.0},
+                                  "v4": {"closed": len(rs_v4), "sum_r": round(float(np.sum(rs_v4)), 2) if rs_v4 else 0.0,
+                                         "win_pct": round(100 * float(np.mean(np.array(rs_v4) > 0)), 1) if rs_v4 else None,
+                                         "open": sum(t["status"] == "open" and t.get("v4") for t in live_),
+                                         "pending": sum(t["status"] == "pending" and t.get("v4") for t in live_)},
                                   "extra": {"closed": len(rs_extra), "sum_r": round(float(np.sum(rs_extra)), 2) if rs_extra else 0.0,
                                             "symbols": list(EXTRA)}},
                       "instruments": {k: src.broker.get(k) for k in SYMBOLS}, "errors": errors[-5:]})

@@ -16,6 +16,7 @@ BODY_X = 2.5        # the leg's average body vs the 50 candles before it
 # research (user, 09.11.2026, marked charts): DOMINANT - a move smaller than the move before it the other way is a
 # correction, not an impulse; GAP_OPEN - a gap that a 15-minute candle went back into during the move is no gap
 DOMINANT = False
+TARGET_FRAC = 1.0   # research/v4 (user, 09.11.2026): the whole position out at this share of the way to the target
 GAP_OPEN = False
 STOP_SW = 0         # research (user, 09.11.2026): 0 = stop beyond the impulse's start (the bot); n = beyond the n-th swing back
 MIN_GAP = 0.33      # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
@@ -335,6 +336,8 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                 risk = d * (px - stop)
                 if risk <= 0 or (tmode not in ("n10x", "last5x", "structx") and d * (target - px) < risk) or d * (target - px) <= 0:
                     continue
+                if TARGET_FRAC != 1.0:
+                    target = px + TARGET_FRAC * (target - px)
                 ex_px = ex_q = why = None
                 for q in range(fill, n1):
                     if (d > 0 and l1[q] <= stop) or (d < 0 and h1[q] >= stop):

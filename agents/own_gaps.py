@@ -30,6 +30,8 @@ EXPIRY = 24          # hours from the gap's making
 MIN_RR = 1.0
 STOP = "s2"
 DOMINANT = False
+PART_FRAC = 0.0      # v5 in the watch bot: 0.3 out at PART_WAY of the way, the rest to break-even
+PART_WAY = 0.9
 V5_MAX_COST = None   # v5 in the watch bot: skip trades whose spread + commission are more than this share of the risk
 DIAG = None          # a list -> (symbol, gap time, dir, why) for every gap that did not become a trade
 
@@ -162,28 +164,40 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
             if V5_MAX_COST is not None and cost[fill] / risk > V5_MAX_COST:
                 dg(k, d, "cost"); continue
             ex_px = ex_q = rsn = None
+            # PART (user, 10.11.2026, approved): PART_FRAC of the position out at PART_WAY of the way to the target,
+            # the rest's stop to the entry (break-even)
+            lvl = px + PART_WAY * (target - px) if PART_FRAC else None
+            part_r, cur_stop = 0.0, stop
             for q in range(fill, n1):
-                if (d > 0 and l1[q] <= stop) or (d < 0 and h1[q] >= stop):
-                    ex_px, ex_q, rsn = ((min(stop, o1[q]) if d > 0 else max(stop, o1[q])) if q > fill else stop), q, "stop"
+                if (d > 0 and l1[q] <= cur_stop) or (d < 0 and h1[q] >= cur_stop):
+                    ex_px, ex_q = ((min(cur_stop, o1[q]) if d > 0 else max(cur_stop, o1[q])) if q > fill else cur_stop), q
+                    rsn = "breakeven" if cur_stop != stop else "stop"
                     break
                 if q > fill and ((d > 0 and h1[q] >= target) or (d < 0 and l1[q] <= target)):
+                    if lvl is not None and cur_stop == stop:
+                        part_r = PART_FRAC * d * (lvl - px) / risk
                     ex_px, ex_q, rsn = (max(target, o1[q]) if d > 0 else min(target, o1[q])), q, "target"
                     break
                 if q > fill and stop_at[q]:
                     ex_px, ex_q, rsn = c1[q], q, "forced"
                     break
+                if lvl is not None and cur_stop == stop and q > fill and ((d > 0 and h1[q] >= lvl) or (d < 0 and l1[q] <= lvl)):
+                    part_r, cur_stop = PART_FRAC * d * (lvl - px) / risk, px
+            rest = 1.0 - (PART_FRAC if part_r else 0.0)
             rec = {"symbol": s, "variant": variant, "dir": d, "entry": px, "stop": stop, "target": target,
                    "rr": round(d * (target - px) / risk, 2), "cost_r": round(cost[fill] / risk, 3), "time": t1[fill],
                    "leg": int(arm - k), "leg_start": t15[k - 1], "leg_top": t15[arm], "gap_lo": min(near, far), "gap_hi": max(near, far)}
+            if part_r:
+                rec["part"] = round(part_r, 3)
             if ex_q is None:
                 if live:
-                    rec.update(status="open", r_now=round(d * (c1[-1] - px) / risk, 3))
+                    rec.update(status="open", stop_now=cur_stop, r_now=round(part_r + rest * d * (c1[-1] - px) / risk, 3))
                     out.append(rec)
                 continue
             dg(k, d, "traded")
             busy_until = ex_q
             rec.update(status="closed", exit_time=t1[ex_q], exit=ex_px, reason=rsn,
-                       r=round(d * (ex_px - px) / risk - cost[fill] / risk, 4))
+                       r=round(part_r + rest * d * (ex_px - px) / risk - cost[fill] / risk, 4))
             out.append(rec)
     return out
 

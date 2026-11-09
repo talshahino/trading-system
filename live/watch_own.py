@@ -223,7 +223,7 @@ def main():
         state = {}
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
                   "rules": "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
-                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים (v5): כל פער של נר חזק במדדים, כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
+                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים (v5): כל פער של נר חזק במדדים, כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך, 30% יוצאים ב־90% מהדרך והשאר לברייק · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
                            "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
     acc = state.get("vacct") or {"initial": INITIAL, "risk_pct": round(RISK * 100, 3), "ledger": [], "breached": None}
@@ -262,16 +262,17 @@ def main():
                         x["wide"] = True
                         res.append(x)
                 if name in V5_SYMBOLS:
-                    keep5 = (OG.STOP, OG.DOMINANT, OG.V5_MAX_COST)
+                    keep5 = (OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY)
                     try:
-                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST = "gap", False, 0.10
+                        # + 30% out at 90% of the way, the rest to break-even (user approved, 10.11.2026)
+                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY = "gap", False, 0.10, 0.3, 0.9
                         for x in OG.run_gaps(name, df, cst, stop_at, noent, live=True, variant="v5"):
                             if x.get("status") == "pending" and pd.Timestamp(x["setup_t"]) < df.index[-1] - pd.Timedelta(hours=OG.EXPIRY):
                                 continue
                             x["v5"] = True
                             res.append(x)
                     finally:
-                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST = keep5
+                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY = keep5
                 if name in V4_SYMBOLS:
                     keep4 = {k_: getattr(CORE, k_) for k_ in V4}
                     try:
@@ -343,7 +344,7 @@ def main():
                                    f"יעד {fmt(name, rec['target'])} · יחס 1:{rec['rr']}\nפתח את האפליקציה וסמן אם היית לוקח אותה",
                                    tags=["eyes"], key=f"wo:{k}", every=86400)
                     if prev != "closed" and rec["status"] == "closed":
-                        word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה"}.get(rec["reason"], "")
+                        word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה", "breakeven": "בברייק אחרי יציאה חלקית"}.get(rec["reason"], "")
                         usd = f" · {'+' if rec.get('pnl', 0) >= 0 else '−'}${abs(rec.get('pnl', 0)):,.0f} · יתרה ${balance():,.0f}" if rec.get("pnl") is not None else ""
                         REP.notify(f"סקלפינג (צפייה): {name} נסגרה {word}", f"{side} · {'+' if (rec['r'] or 0) >= 0 else ''}{rec['r']:.2f} סיכון{usd} (וירטואלי)",
                                    tags=["eyes"], key=f"wc:{k}", every=86400)
@@ -427,7 +428,7 @@ def main():
                                   "lots": "וירטואלי", "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
                                   "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": None, "mfe": None,
                                   "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
-                                  "reason": {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה"}.get(t.get("reason"), ""),
+                                  "reason": {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה", "breakeven": "ברייק (30% יצאו)"}.get(t.get("reason"), ""),
                                   "pip": pip(t["symbol"])} for t in counted]})
         state["vacct"] = acc
         try:

@@ -62,6 +62,7 @@ PARTIALS = (0.5, 0.75, 1.0)
 # move to break-even; that's the strategy". Level = the nearest 1-minute swing high (5 minutes each side) between the
 # entry and the target, made after the leg started and confirmed by the fill (mirror for sells).
 SWING_FRAC = 0.6
+WAY = (0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)   # share of the way from the entry to the target
 
 
 def swing_level(x, df, nth=1):
@@ -193,6 +194,12 @@ def main():
                         if y is None:
                             y = dict(x, variant=f"{x['variant']}|sw2")
                         rows.append(y)
+                        # user (09.11.2026): optimise - part of the position out at a share of the way to the target,
+                        # stop to break-even (60% out here; other shares are derived from the same path in the analysis)
+                        for w in WAY:
+                            lvw = x["entry"] + w * (x["target"] - x["entry"])
+                            y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lvw, f"pt{w:g}")
+                            rows.append(y if y is not None else dict(x, variant=f"{x['variant']}|pt{w:g}"))
             CORE.BODY_X, CORE.MIN_GAP = keep
         else:
             rows += run_symbol(s, df, cost, stop_at, noent, VARIANTS)

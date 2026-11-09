@@ -20,6 +20,9 @@ on:
       demo:
         type: boolean
         default: false
+      configs:
+        description: "Looser variants to test (own15.py CONFIGS), empty = the normal grid"
+        default: ""
 
 permissions:
   contents: write   # to save the reports back into the repository
@@ -106,7 +109,7 @@ jobs:
           ) &
 
           set -o pipefail
-          python -u own15.py --symbols "${{ inputs.symbols }}" --start "${{ inputs.start }}" --end "$END" 2>&1 | tee run.log
+          python -u own15.py --symbols "${{ inputs.symbols }}" --start "${{ inputs.start }}" --end "$END" --configs "${{ inputs.configs }}" 2>&1 | tee run.log
 
       - name: Save data cache
         if: always()

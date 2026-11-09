@@ -44,11 +44,21 @@ from agents.own_core import VARIANTS, pip_of, resample, swings, comm_px, run_sym
 # structx: the same without the 1:1 minimum
 
 
+# name -> (K impulse size vs typical, BODY_X, MIN_GAP, entry mode); 'base' = exactly the watch bot
+CONFIGS = {"base": (2.0, 2.5, 0.33, "1m"),
+           "k15": (1.5, 2.5, 0.33, "1m"),     # smaller impulses count
+           "b18": (2.0, 1.8, 0.33, "1m"),     # less strong candle bodies
+           "g0": (2.0, 2.5, 0.0, "1m"),       # any gap size
+           "e15": (2.0, 2.5, 0.33, "15m"),    # enter at the 15-minute gap's edge, no 1-minute gap needed
+           "all": (1.5, 1.8, 0.15, "15m")}    # all of them looser together
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--symbols", required=True)
     ap.add_argument("--start", default="2024-01-01")
     ap.add_argument("--end", default="")
+    ap.add_argument("--configs", default="", help="looser variants to test, e.g. base,k15,b18 (see CONFIGS)")
     a = ap.parse_args()
     end = a.end or (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
     tag = a.symbols.replace(",", "_").replace("/", "-")[:60]
@@ -78,7 +88,19 @@ def main():
         blk = NC.blocked(pd.Series(df.index), s, ev, minutes=2).to_numpy()
         noent = np.asarray(noent, bool) | blk
         stop_at = stop_at | np.asarray(nm, bool) | np.r_[blk[1:], False]
-        rows += run_symbol(s, df, cost, stop_at, noent, VARIANTS)
+        if a.configs:
+            # research only (user, 09.11.2026: more trades?): the bot's 'struct' rules with one filter loosened at a time.
+            # own_core's module constants are set for each run and restored after, the bot's file is not changed.
+            keep = (CORE.BODY_X, CORE.MIN_GAP)
+            for name in a.configs.split(","):
+                K, bx, mg, em = CONFIGS[name]
+                CORE.BODY_X, CORE.MIN_GAP = bx, mg
+                for x in run_symbol(s, df, cost, stop_at, noent, [(K, False, em, "struct")]):
+                    x["variant"] = name
+                    rows.append(x)
+            CORE.BODY_X, CORE.MIN_GAP = keep
+        else:
+            rows += run_symbol(s, df, cost, stop_at, noent, VARIANTS)
         print(f"{s}: {sum(1 for x in rows if x['symbol'] == s)} trades (all variants), {time.time() - t0:.0f}s", flush=True)
     config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(rows).to_csv(config.OUTPUT_DIR / f"own15_{tag}.csv.gz", index=False)

@@ -257,6 +257,8 @@ def main():
                     help="strategies with no target: stop to entry + spread/commission once this many R in profit (0 = off)")
     ap.add_argument("--trail-r", default="",
                     help="strategies with no target: 'start:dist' - from start R in profit, the stop trails dist R behind the best price")
+    ap.add_argument("--lock-r", default="",
+                    help="strategies with no target: 'a:b' - once a R in profit, the stop goes to entry + b R (locks b R)")
     ap.add_argument("--optimize", default="",
                     help="YYYY-MM-DD: with --combos-file, try a grid of trade-management values per combo, choose on "
                          "--test-from..this date, check on this date..end")
@@ -373,6 +375,8 @@ def main():
                         fn0 = _shifted(fn0, args.null_shift)
                     if args.be_r:
                         fn0 = _with_be_r(fn0, args.be_r)
+                    if args.lock_r:
+                        fn0 = _with_plan(fn0, lock_r=tuple(float(x) for x in args.lock_r.split(":")))
                     if args.trail_r:
                         fn0 = _with_plan(fn0, trail2_r=tuple(float(x) for x in args.trail_r.split(":")))
                     t = R.run(df, fn0 if news_block is None else _blocked(fn0, news_block), cost, breakeven=be, session_exit=sess)

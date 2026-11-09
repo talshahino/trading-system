@@ -402,6 +402,10 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             if t2 and target is None and d * (best - e) >= t2[0] * risk:
                 ts = best - d * t2[1] * risk
                 stop = max(stop, ts) if d > 0 else min(stop, ts)
+            lk = plan.get("lock_r")    # no target: once `a` R in profit, the stop goes to entry + `b` R (test, 10.11.2026)
+            if lk and target is None and d * (best - e) >= lk[0] * risk:
+                lvl = e + d * lk[1] * risk
+                stop = max(stop, lvl) if d > 0 else min(stop, lvl)
             ber = plan.get("be_r")     # no target: stop to entry + costs once k R in profit (test, 06.11.2026)
             if ber and target is None and d * (best - e) >= ber * risk:
                 lvl = e * (1 + d * (be[1] if be else 0.0))

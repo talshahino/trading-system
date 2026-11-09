@@ -129,6 +129,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
             else:
                 if live and q1 >= n1:
                     out.append({"symbol": s, "variant": variant, "status": "pending", "dir": d, "entry": near, "stop": float((l[k - 1] if d > 0 else h[k - 1]) - d * (4 * pip if pip else 0.1 * a15[k])),
+                                "target": float(peak - d * (2 * pip if pip else 0.05 * a15[k])),
                                 "setup_t": t15[arm + 2], "leg": int(arm - k), "leg_start": t15[k - 1], "leg_top": t15[arm],
                                 "gap_lo": min(near, far), "gap_hi": max(near, far)})
                     continue

@@ -299,14 +299,19 @@ def main():
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
                            "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide")),
                            "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5"))}
-                    if x["status"] != "pending" or "m15" not in old or old.get("status") != x["status"]:
+                    if x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:
+                        rec["chart_v"] = 2
                         ls = pd.Timestamp(x["leg_start"])
                         t_in = pd.Timestamp(x.get("time")) if x.get("time") is not None else df.index[-1]
                         t_out = pd.Timestamp(x["exit_time"]) if x.get("exit_time") is not None else df.index[-1]
                         rec["m15"] = bars(df, ls - pd.Timedelta(hours=6), t_in + pd.Timedelta(hours=1), "15min")
-                        rec["m1"] = bars(df, t_in - pd.Timedelta(minutes=45), t_out + pd.Timedelta(minutes=10), "1min")
+                        # the whole move on the 1-minute chart (user, 10.11.2026): from before the impulse to after the exit,
+                        # at most the last 12 hours of that window
+                        m1_end = t_out + pd.Timedelta(minutes=10)
+                        m1_start = max(min(ls - pd.Timedelta(minutes=30), t_in - pd.Timedelta(minutes=120)), m1_end - pd.Timedelta(hours=12))
+                        rec["m1"] = bars(df, m1_start, m1_end, "1min")
                     else:
-                        rec["m15"], rec["m1"] = old.get("m15"), old.get("m1")
+                        rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), old.get("chart_v")
                     prev = old.get("status")
                     # the virtual account: the risk is fixed when the trade opens, from the balance at that moment
                     for f in ("risk_usd", "skipped"):

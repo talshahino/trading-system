@@ -1831,7 +1831,7 @@ function wbRender(box = $("wbBody")) {
   for (const t of trades) {
     const st = WB_ST[t.status] || [t.status, ""], buy = t.dir > 0, m = WB.marks[t.id] || t.mark || {};
     const money = v => v == null ? "" : ` · <bdi>${v >= 0 ? "+" : "−"}$${Math.abs(v).toLocaleString("en-US", {maximumFractionDigits: 0})}</bdi>`;
-    const res = t.skipped ? `<span class="pill">לא נספרה בחשבון (${t.skipped === "daily" ? "עצירה יומית" : "החשבון נשרף"})</span>`
+    const res = t.skipped ? `<span class="pill">${t.skipped === "v5" || t.skipped === "v4" ? "מסלול נפרד · לא בחשבון הווירטואלי" : t.skipped === "extra" ? "איסוף נתונים · לא בחשבון" : `לא נספרה בחשבון (${t.skipped === "daily" ? "עצירה יומית" : "החשבון נשרף"})`}</span>`
       : t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון${money(t.pnl)}</span>`
       : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון${money(t.pnl_now)}</span>` : `<span class="pill ${st[1]}">${st[0]}</span>`;
     h += `<div class="card wt" data-id="${esc(t.id)}"><div class="hd"><b>${esc(t.symbol)}</b><span class="pill ${buy ? "pos" : "neg"}">${buy ? "קנייה" : "מכירה"}</span>${t.wide ? '<span class="pill">מסלול רחב</span>' : ""}${t.extra ? '<span class="pill">איסוף נתונים</span>' : ""}${t.v4 ? '<span class="pill pos">מתוקן v4</span>' : ""}${t.v5 ? '<span class="pill pos">פערים v5</span>' : ""}${res}</div>
@@ -1862,7 +1862,7 @@ async function wcOpen(id) {
   $("wcPg").classList.add("on");
   $("wcTitle").textContent = `${t.symbol} · ${t.dir > 0 ? "קנייה" : "מכירה"}`;
   $("wcBody").innerHTML = `<div class="mut" style="margin-bottom:6px">גרף 15 דקות: הדחף והכניסה</div><div class="card"><div class="wchart" id="wc15"></div></div>
-    <div class="mut" style="margin-bottom:6px">גרף דקה: העסקה עד 10 דקות אחרי היציאה (ירוק עד היעד, אדום עד הסטופ)</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>`;
+    <div class="mut" style="margin-bottom:6px">גרף דקה: כל המהלך מהדחף ועד אחרי היציאה, עם הכניסה, הסטופ והיעד (ירוק עד היעד, אדום עד הסטופ)</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>`;
   WC.forEach(c => c.remove()); WC = [];
   const LW = await loadTV().catch(() => null);
   if (!LW) { $("wcMsg").textContent = "ספריית הגרפים לא נטענה. בדוק חיבור לאינטרנט."; return; }
@@ -1900,7 +1900,10 @@ async function wcOpen(id) {
     if (t.exit_time) ms.push({time: t1, position: "inBar", color: t.r >= 0 ? "#1E8A4C" : "#D0453A", shape: "square", text: t.reason === "target" ? "יציאה ביעד" : t.reason === "stop" ? "יציאה בסטופ" : "יציאה"});
     B.s.setMarkers(ms);
   }
-  line(B.s, t.entry, "#1E3A5F", "כניסה", 2);
+  line(B.s, t.entry, "#1E3A5F", "כניסה", 2); line(B.s, t.stop, "#D0453A", "סטופ", 2); line(B.s, t.target, "#1E8A4C", "יעד", 2);
+  if (t.gap_lo != null) { line(B.s, t.gap_lo, "#B8862B", "פער", 1); line(B.s, t.gap_hi, "#B8862B", "", 1); }
+  B.s.applyOptions({autoscaleInfoProvider: orig => { const r = orig(); if (!r) return r; const ex = [t.entry, t.stop, t.target].filter(v => v != null);
+    return {priceRange: {minValue: Math.min(r.priceRange.minValue, ...ex), maxValue: Math.max(r.priceRange.maxValue, ...ex)}}; }});
   B.ch.timeScale().fitContent();
 }
 $("wbBack").onclick = () => $("wbPg").classList.remove("on");

@@ -32,12 +32,14 @@ def main():
     ap.add_argument("--entry-mode", default="1m")
     ap.add_argument("--target-mode", default="15p")
     ap.add_argument("--m1-hours", type=float, default=0.0, help="also the 1-minute candles from the leg start to its top + this many hours")
+    ap.add_argument("--v4", action="store_true", help="dominant move + open gap (user, 09.11.2026)")
     ap.add_argument("--start", default="2024-01-01")
     ap.add_argument("--end", default="")
     a = ap.parse_args()
     end = a.end or (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
     ev, _ = NC.load()
     O.CORE.BODY_X, O.CORE.MIN_GAP = a.body, a.min_gap
+    O.CORE.DOMINANT = O.CORE.GAP_OPEN = a.v4
     variant = (a.k, False, a.entry_mode, a.target_mode)
     allt, data = [], {}
     for s in [x for x in a.symbols.split(",") if x]:

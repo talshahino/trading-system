@@ -13,6 +13,10 @@ from agents import rules_agent as R
 VARIANTS = [(2.0, False, '1m', 'grid')]
 PIP = {"JPY": 0.01}
 BODY_X = 2.5        # the leg's average body vs the 50 candles before it
+# research (user, 09.11.2026, marked charts): DOMINANT - a move smaller than the move before it the other way is a
+# correction, not an impulse; GAP_OPEN - a gap that a 15-minute candle went back into during the move is no gap
+DOMINANT = False
+GAP_OPEN = False
 STOP_SW = 0         # research (user, 09.11.2026): 0 = stop beyond the impulse's start (the bot); n = beyond the n-th swing back
 MIN_GAP = 0.33      # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
 
@@ -118,14 +122,29 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                     continue
                 if tfil and trend[pk] != d:
                     continue
+                if DOMINANT:
+                    # the move into the origin: from the most extreme opposite swing in the 30 candles before it
+                    prev = (sh_idx if d > 0 else sl_idx)
+                    prev = prev[(prev >= lo_i - 30) & (prev < lo_i)]
+                    if len(prev):
+                        back = max(d * ((SH if d > 0 else SL)[i] - origin) for i in prev)
+                        if size < back:
+                            continue
                 # the first fair-value gap of the leg (in time)
                 gap = None
                 ar = (h - l)[max(0, lo_i - 30):lo_i].mean() if lo_i > 0 else np.nan
                 for k in range(lo_i + 1, pk):
+                    g_ = None
                     if d > 0 and l[k + 1] > h[k - 1] and l[k + 1] - h[k - 1] >= MIN_GAP * ar:
-                        gap, gk = (l[k + 1], h[k - 1]), k; break
+                        g_ = (l[k + 1], h[k - 1])
                     if d < 0 and h[k + 1] < l[k - 1] and l[k - 1] - h[k + 1] >= MIN_GAP * ar:
-                        gap, gk = (h[k + 1], l[k - 1]), k; break
+                        g_ = (h[k + 1], l[k - 1])
+                    if g_ is None:
+                        continue
+                    if GAP_OPEN and k + 2 <= pk and ((l[k + 2:pk + 1].min() < g_[0]) if d > 0 else (h[k + 2:pk + 1].max() > g_[0])):
+                        continue                                  # went back into it during the move: no gap
+                    gap, gk = g_, k
+                    break
                 if gap is None:
                     continue
                 entry = gap[0]                                   # near edge: touched first on the way back

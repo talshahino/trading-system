@@ -178,8 +178,10 @@ def main():
             keep = (CORE.BODY_X, CORE.MIN_GAP, CORE.STOP_SW)
             for name in a.configs.split(","):
                 base_name, _, sw = name.partition("@s")         # "b18@s3": the stop beyond the 3rd swing back
-                K, bx, mg, em = CONFIGS[base_name]
+                v4 = base_name.endswith("+v4")                   # "+v4": dominant move + open gap (user, 09.11.2026)
+                K, bx, mg, em = CONFIGS[base_name.replace("+v4", "")]
                 CORE.BODY_X, CORE.MIN_GAP, CORE.STOP_SW = bx, mg, int(sw or 0)
+                CORE.DOMINANT = CORE.GAP_OPEN = v4
                 for x in run_symbol(s, df, cost, stop_at, noent, [(K, False, em, "struct")]):
                     x["variant"] = name
                     rows.append(x)
@@ -205,6 +207,7 @@ def main():
                             y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lvw, f"pt{w:g}")
                             rows.append(y if y is not None else dict(x, variant=f"{x['variant']}|pt{w:g}"))
             CORE.BODY_X, CORE.MIN_GAP, CORE.STOP_SW = keep
+            CORE.DOMINANT = CORE.GAP_OPEN = False
         else:
             rows += run_symbol(s, df, cost, stop_at, noent, VARIANTS)
         print(f"{s}: {sum(1 for x in rows if x['symbol'] == s)} trades (all variants), {time.time() - t0:.0f}s", flush=True)

@@ -64,7 +64,7 @@ PARTIALS = (0.5, 0.75, 1.0)
 SWING_FRAC = 0.6
 
 
-def swing_level(x, df):
+def swing_level(x, df, nth=1):
     d, px, tgt = x["dir"], x["entry"], x["target"]
     h1, l1 = df["h"].to_numpy(float), df["l"].to_numpy(float)
     i0 = df.index.get_loc(pd.Timestamp(x["time"]))
@@ -75,9 +75,11 @@ def swing_level(x, df):
     ext = (seg.rolling(2 * w + 1, center=True).max() if d > 0 else seg.rolling(2 * w + 1, center=True).min()).to_numpy()
     lv = [arr[a0 + j] for j in range(len(seg)) if arr[a0 + j] == ext[j] and a0 + j + w <= i0
           and d * (arr[a0 + j] - px) > 0 and d * (tgt - arr[a0 + j]) > 0]
-    if not lv:
+    # nth=2 (user, 09.11.2026: "the next swing after that"): the second distinct swing level on the way
+    lv = sorted(set(lv), reverse=d < 0)
+    if len(lv) < nth:
         return None
-    return min(lv) if d > 0 else max(lv)
+    return lv[nth - 1]
 
 
 def partial_exit(x, df, stop_at, pl, frac=0.5, lvl=None, tag=None):
@@ -185,6 +187,11 @@ def main():
                         y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lv, "sw60") if lv is not None else None
                         if y is None:                       # no swing on the way / target first: the plain trade
                             y = dict(x, variant=f"{x['variant']}|sw60")
+                        rows.append(y)
+                        lv2 = swing_level(x, df, 2)
+                        y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lv2, "sw2") if lv2 is not None else None
+                        if y is None:
+                            y = dict(x, variant=f"{x['variant']}|sw2")
                         rows.append(y)
             CORE.BODY_X, CORE.MIN_GAP = keep
         else:

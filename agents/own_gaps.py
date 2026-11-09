@@ -204,6 +204,7 @@ def set_sw(sw):
 #    the origin (from the highest high of the 30 candles before it); else it is a correction and the gap is dead
 # 4. trades whose spread + commission are more than MAX_COST of the risk are skipped
 MAX_COST = 0.10
+ARM6 = False         # test: the first touch counts only after the move turned (a 15m swing beyond the gap confirmed)
 STOP6 = "gap"        # 'gap' (beyond the gap's base candle), 'origin' (beyond the move's start), 'sN'
 
 
@@ -279,6 +280,11 @@ def run_gaps6(s, df, cost, stop_at, noent, live=False, variant="g6"):
             continue
         if noent[fill]:
             dg(k, d, "news_entry"); continue
+        if ARM6:
+            swk = shi if d > 0 else slo
+            after = swk[(swk > k + 1) & (swk + 2 < n)]
+            if not len(after) or t1[fill] < t15[int(after[0]) + 2] + pd.Timedelta(minutes=15):
+                dg(k, d, "before_turn"); continue
         if DOMINANT and d * (peak - origin) < back:
             dg(k, d, "correction"); continue
         if fill <= busy_until:

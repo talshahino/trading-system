@@ -53,6 +53,57 @@ CONFIGS = {"base": (2.0, 2.5, 0.33, "1m"),
            "all": (1.5, 1.8, 0.15, "15m")}    # all of them looser together
 
 
+# user (09.11.2026): "half profit and stop to break-even" - at +pl x the risk close half, move the stop to the entry,
+# the other half goes on to the same target (or back to the entry). Research only, computed from the same 1-minute path.
+PARTIALS = (0.5, 0.75, 1.0)
+
+
+def partial_exit(x, df, stop_at, pl):
+    if x.get("status") != "closed":
+        return None
+    d, px, stop, tgt = x["dir"], x["entry"], x["stop"], x["target"]
+    risk = d * (px - stop)
+    if risk <= 0:
+        return None
+    h1, l1, o1, c1 = (df[k].to_numpy(float) for k in ("h", "l", "o", "c"))
+    i0 = df.index.get_loc(pd.Timestamp(x["time"]))
+    cost_r = x["cost_r"]
+    lvl = px + d * pl * risk
+    half = None                       # bar where the half was taken
+    for q in range(i0, len(df)):
+        hit_stop = (l1[q] <= stop) if d > 0 else (h1[q] >= stop)
+        if half is None:
+            if hit_stop:                                  # same bar as the level: count the stop (the worse case)
+                ex = (min(stop, o1[q]) if d > 0 else max(stop, o1[q])) if q > i0 else stop
+                r = d * (ex - px) / risk
+                break
+            if q > i0 and stop_at[q]:
+                r = d * (c1[q] - px) / risk
+                break
+            if q > i0 and ((h1[q] >= lvl) if d > 0 else (l1[q] <= lvl)):
+                if d * (tgt - px) <= pl * risk:           # the target comes first: plain trade
+                    return None
+                half, first = q, pl
+            continue
+        if (l1[q] <= px) if d > 0 else (h1[q] >= px):     # back to the entry: the second half at 0
+            r = 0.5 * first + 0.5 * d * ((min(px, o1[q]) if d > 0 else max(px, o1[q])) - px) / risk
+            break
+        if (h1[q] >= tgt) if d > 0 else (l1[q] <= tgt):
+            r = 0.5 * first + 0.5 * d * ((max(tgt, o1[q]) if d > 0 else min(tgt, o1[q])) - px) / risk
+            break
+        if stop_at[q]:
+            r = 0.5 * first + 0.5 * d * (c1[q] - px) / risk
+            break
+    else:
+        return None
+    y = dict(x)
+    y["variant"] = f"{x['variant']}|p{pl:g}"
+    y["exit_time"] = df.index[q]
+    y["reason"] = ("half+" if half is not None else "") + x["reason"]
+    y["r"] = round(r - cost_r, 4)
+    return y
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--symbols", required=True)
@@ -98,6 +149,10 @@ def main():
                 for x in run_symbol(s, df, cost, stop_at, noent, [(K, False, em, "struct")]):
                     x["variant"] = name
                     rows.append(x)
+                    for pl in PARTIALS:
+                        y = partial_exit(x, df, stop_at, pl)
+                        if y is not None:
+                            rows.append(y)
             CORE.BODY_X, CORE.MIN_GAP = keep
         else:
             rows += run_symbol(s, df, cost, stop_at, noent, VARIANTS)

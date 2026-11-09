@@ -194,3 +194,148 @@ def set_sw(sw):
         _SW_CACHE.clear()
         _SW_CACHE[key] = set(int(i) for i in sw)
     return _SW_CACHE[key]
+
+
+# ---------------- v6 (user, 10.11.2026, marked v5 examples) ----------------
+# 1. only the FIRST gap of a move (a move starts at the lowest low since the last confirmed 15m swing high; a staircase
+#    with a turn between the steps gives a new first gap per step)
+# 2. the FIRST touch is the entry (a wick counts) - one shot: after a touch the gap is dead; no waiting for a turn
+# 3. the move must be the big one, checked at the touch: from its origin to the extreme reached so far >= the move into
+#    the origin (from the highest high of the 30 candles before it); else it is a correction and the gap is dead
+# 4. trades whose spread + commission are more than MAX_COST of the risk are skipped
+MAX_COST = 0.10
+STOP6 = "gap"        # 'gap' (beyond the gap's base candle), 'origin' (beyond the move's start), 'sN'
+
+
+def run_gaps6(s, df, cost, stop_at, noent, live=False, variant="g6"):
+    o1, h1, l1, c1 = (df[x].to_numpy(float) for x in "ohlc")
+    t1 = df.index
+    n1 = len(t1)
+    m = CORE.resample(df, "15min")
+    o, h, l, c = (m[x].to_numpy(float) for x in "ohlc")
+    t15 = m.index
+    n = len(c)
+    if n < 100:
+        return []
+    a15 = R.atr(h, l, c, 14)
+    body = np.abs(c - o)
+    avgb = pd.Series(body).rolling(50, min_periods=30).mean().shift(1).to_numpy()
+    avgr = pd.Series(h - l).rolling(30, min_periods=20).mean().shift(1).to_numpy()
+    shi = _swing_levels(h, 2, True)
+    slo = _swing_levels(l, 2, False)
+    pip = CORE.pip_of(s)
+    # qualifying gaps (center candle k): +1 up, -1 down, 0 none
+    g = np.zeros(n, int)
+    for k in range(31, n - 1):
+        for d in (1, -1):
+            ok = (l[k + 1] > h[k - 1]) if d > 0 else (h[k + 1] < l[k - 1])
+            if not ok:
+                continue
+            near, far = (l[k + 1], h[k - 1]) if d > 0 else (h[k + 1], l[k - 1])
+            if d * (c[k] - o[k]) > 0 and np.isfinite(avgb[k]) and body[k] >= GBODY * avgb[k] \
+                    and np.isfinite(avgr[k]) and abs(near - far) >= MIN_GAP * avgr[k]:
+                g[k] = d
+    out = []
+    busy_until = -1
+
+    def dg(k, d, why):
+        if DIAG is not None:
+            DIAG.append({"symbol": s, "gap_t": t15[k], "dir": d, "why": why})
+
+    for k in np.flatnonzero(g):
+        d = int(g[k])
+        near, far = (l[k + 1], h[k - 1]) if d > 0 else (h[k + 1], l[k - 1])
+        # the move's origin: the extreme since the last opposite swing confirmed before the gap
+        opp = shi if d > 0 else slo
+        prev = opp[opp + 2 <= k]
+        a0 = int(prev[-1]) if len(prev) else max(0, k - 30)
+        a0 = max(a0, k - 60)
+        oi = a0 + int(np.argmin(l[a0:k + 1]) if d > 0 else np.argmax(h[a0:k + 1]))
+        if np.any(g[oi + 1:k] == d):
+            dg(k, d, "not_first"); continue
+        origin = l[oi] if d > 0 else h[oi]
+        b0 = max(0, oi - 30)
+        back = (h[b0:oi + 1].max() - origin) if d > 0 else (origin - l[b0:oi + 1].min())
+        q0 = t1.searchsorted(t15[k + 1] + pd.Timedelta(minutes=15))
+        q1 = min(n1, t1.searchsorted(t15[k] + pd.Timedelta(hours=EXPIRY)))
+        if q0 >= q1:
+            continue
+        peak = h[k + 1] if d > 0 else l[k + 1]
+        fill, why = None, "expired"
+        for q in range(q0, q1):
+            if stop_at[q]:
+                why = "break_news"; break
+            if (d > 0 and l1[q] <= near) or (d < 0 and h1[q] >= near):
+                fill = q
+                break
+            peak = max(peak, h1[q]) if d > 0 else min(peak, l1[q])
+        if fill is None:
+            if live and q1 >= n1 and why == "expired":
+                out.append({"symbol": s, "variant": variant, "status": "pending", "dir": d, "entry": near, "stop": None,
+                            "setup_t": t15[k + 1], "leg": int(k - oi), "leg_start": t15[oi], "leg_top": t15[k + 1],
+                            "gap_lo": min(near, far), "gap_hi": max(near, far)})
+            else:
+                dg(k, d, why)
+            continue
+        if noent[fill]:
+            dg(k, d, "news_entry"); continue
+        if DOMINANT and d * (peak - origin) < back:
+            dg(k, d, "correction"); continue
+        if fill <= busy_until:
+            dg(k, d, "busy"); continue
+        px = min(near, o1[fill]) if d > 0 else max(near, o1[fill])
+        buf = 4 * pip if pip else 0.1 * a15[k]
+        tbuf = 2 * pip if pip else 0.05 * a15[k]
+        kq = t15.searchsorted(t1[fill], side="right") - 1
+        if STOP6 == "gap":
+            base = l[k - 1] if d > 0 else h[k - 1]
+        elif STOP6 == "origin":
+            base = origin
+        else:
+            nsw = int(STOP6[1:])
+            lv, last = [], px
+            for i in sorted((slo if d > 0 else shi), reverse=True):
+                if i + 2 > kq:
+                    continue
+                if i < kq - 480:
+                    break
+                v = l[i] if d > 0 else h[i]
+                if d * (last - v) > 0:
+                    lv.append(v); last = v
+                    if len(lv) == nsw:
+                        break
+            if len(lv) < nsw:
+                dg(k, d, "no_swing_stop"); continue
+            base = lv[-1]
+        stop = base - d * buf
+        target = peak - d * tbuf
+        risk = d * (px - stop)
+        if risk <= 0 or d * (target - px) < MIN_RR * risk:
+            dg(k, d, "rr"); continue
+        if cost[fill] / risk > MAX_COST:
+            dg(k, d, "cost"); continue
+        ex_px = ex_q = rsn = None
+        for q in range(fill, n1):
+            if (d > 0 and l1[q] <= stop) or (d < 0 and h1[q] >= stop):
+                ex_px, ex_q, rsn = ((min(stop, o1[q]) if d > 0 else max(stop, o1[q])) if q > fill else stop), q, "stop"
+                break
+            if q > fill and ((d > 0 and h1[q] >= target) or (d < 0 and l1[q] <= target)):
+                ex_px, ex_q, rsn = (max(target, o1[q]) if d > 0 else min(target, o1[q])), q, "target"
+                break
+            if q > fill and stop_at[q]:
+                ex_px, ex_q, rsn = c1[q], q, "forced"
+                break
+        rec = {"symbol": s, "variant": variant, "dir": d, "entry": px, "stop": stop, "target": target,
+               "rr": round(d * (target - px) / risk, 2), "cost_r": round(cost[fill] / risk, 3), "time": t1[fill],
+               "leg": int(k - oi), "leg_start": t15[oi], "leg_top": t15[k + 1], "gap_lo": min(near, far), "gap_hi": max(near, far)}
+        if ex_q is None:
+            if live:
+                rec.update(status="open", r_now=round(d * (c1[-1] - px) / risk, 3))
+                out.append(rec)
+            continue
+        dg(k, d, "traded")
+        busy_until = ex_q
+        rec.update(status="closed", exit_time=t1[ex_q], exit=ex_px, reason=rsn,
+                   r=round(d * (ex_px - px) / risk - cost[fill] / risk, 4))
+        out.append(rec)
+    return out

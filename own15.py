@@ -178,6 +178,22 @@ def main():
             # own_core's module constants are set for each run and restored after, the bot's file is not changed.
             keep = (CORE.BODY_X, CORE.MIN_GAP, CORE.STOP_SW)
             for name in a.configs.split(","):
+                if name.startswith("H"):
+                    # v6 (user, 10.11.2026): first gap of a move, first touch, big move; "H<stop>[d]" e.g. Hgap, Horigind, Hs2d
+                    keepg = (OG.STOP6, OG.DOMINANT)
+                    OG.STOP6, OG.DOMINANT = name[1:].rstrip("d") if name != "Hd" else "gap", name.endswith("d")
+                    try:
+                        gx = OG.run_gaps6(s, df, cost, stop_at, noent, variant=name)
+                    finally:
+                        OG.STOP6, OG.DOMINANT = keepg
+                    for x in gx:
+                        rows.append(x)
+                        if x.get("status") == "closed":
+                            for w in WAY:
+                                lvw = x["entry"] + w * (x["target"] - x["entry"])
+                                y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lvw, f"pt{w:g}")
+                                rows.append(y if y is not None else dict(x, variant=f"{x['variant']}|pt{w:g}"))
+                    continue
                 if name.startswith("G"):
                     # v5 (user, 09.11.2026): every gap of a strong move; "G<stop>[d]" e.g. Gs2, Gs3, Ggap, Gs2d (dominant)
                     keepg = (OG.STOP, OG.DOMINANT)

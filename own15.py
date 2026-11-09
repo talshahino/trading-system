@@ -58,7 +58,29 @@ CONFIGS = {"base": (2.0, 2.5, 0.33, "1m"),
 PARTIALS = (0.5, 0.75, 1.0)
 
 
-def partial_exit(x, df, stop_at, pl):
+# user (09.11.2026, a US30 trade on TradingView): "there was a swing high on the way - take 60% of the money there and
+# move to break-even; that's the strategy". Level = the nearest 1-minute swing high (5 minutes each side) between the
+# entry and the target, made after the leg started and confirmed by the fill (mirror for sells).
+SWING_FRAC = 0.6
+
+
+def swing_level(x, df):
+    d, px, tgt = x["dir"], x["entry"], x["target"]
+    h1, l1 = df["h"].to_numpy(float), df["l"].to_numpy(float)
+    i0 = df.index.get_loc(pd.Timestamp(x["time"]))
+    a0 = df.index.searchsorted(pd.Timestamp(x["leg_start"]))
+    arr = h1 if d > 0 else l1
+    w = 5
+    seg = pd.Series(arr[a0:i0 + 1])
+    ext = (seg.rolling(2 * w + 1, center=True).max() if d > 0 else seg.rolling(2 * w + 1, center=True).min()).to_numpy()
+    lv = [arr[a0 + j] for j in range(len(seg)) if arr[a0 + j] == ext[j] and a0 + j + w <= i0
+          and d * (arr[a0 + j] - px) > 0 and d * (tgt - arr[a0 + j]) > 0]
+    if not lv:
+        return None
+    return min(lv) if d > 0 else max(lv)
+
+
+def partial_exit(x, df, stop_at, pl, frac=0.5, lvl=None, tag=None):
     if x.get("status") != "closed":
         return None
     d, px, stop, tgt = x["dir"], x["entry"], x["stop"], x["target"]
@@ -68,7 +90,10 @@ def partial_exit(x, df, stop_at, pl):
     h1, l1, o1, c1 = (df[k].to_numpy(float) for k in ("h", "l", "o", "c"))
     i0 = df.index.get_loc(pd.Timestamp(x["time"]))
     cost_r = x["cost_r"]
-    lvl = px + d * pl * risk
+    if lvl is None:
+        lvl = px + d * pl * risk
+    else:
+        pl = d * (lvl - px) / risk
     half = None                       # bar where the half was taken
     for q in range(i0, len(df)):
         hit_stop = (l1[q] <= stop) if d > 0 else (h1[q] >= stop)
@@ -86,18 +111,20 @@ def partial_exit(x, df, stop_at, pl):
                 half, first = q, pl
             continue
         if (l1[q] <= px) if d > 0 else (h1[q] >= px):     # back to the entry: the second half at 0
-            r = 0.5 * first + 0.5 * d * ((min(px, o1[q]) if d > 0 else max(px, o1[q])) - px) / risk
+            r = frac * first + (1 - frac) * d * ((min(px, o1[q]) if d > 0 else max(px, o1[q])) - px) / risk
             break
         if (h1[q] >= tgt) if d > 0 else (l1[q] <= tgt):
-            r = 0.5 * first + 0.5 * d * ((max(tgt, o1[q]) if d > 0 else min(tgt, o1[q])) - px) / risk
+            r = frac * first + (1 - frac) * d * ((max(tgt, o1[q]) if d > 0 else min(tgt, o1[q])) - px) / risk
             break
         if stop_at[q]:
-            r = 0.5 * first + 0.5 * d * (c1[q] - px) / risk
+            r = frac * first + (1 - frac) * d * (c1[q] - px) / risk
             break
     else:
         return None
     y = dict(x)
-    y["variant"] = f"{x['variant']}|p{pl:g}"
+    y["variant"] = f"{x['variant']}|{tag or f'p{pl:g}'}"
+    if tag:
+        y["part_px"] = lvl
     y["exit_time"] = df.index[q]
     y["reason"] = ("half+" if half is not None else "") + x["reason"]
     y["r"] = round(r - cost_r, 4)
@@ -153,6 +180,12 @@ def main():
                         y = partial_exit(x, df, stop_at, pl)
                         if y is not None:
                             rows.append(y)
+                    if x.get("status") == "closed":
+                        lv = swing_level(x, df)
+                        y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lv, "sw60") if lv is not None else None
+                        if y is None:                       # no swing on the way / target first: the plain trade
+                            y = dict(x, variant=f"{x['variant']}|sw60")
+                        rows.append(y)
             CORE.BODY_X, CORE.MIN_GAP = keep
         else:
             rows += run_symbol(s, df, cost, stop_at, noent, VARIANTS)

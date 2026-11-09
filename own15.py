@@ -175,10 +175,11 @@ def main():
         if a.configs:
             # research only (user, 09.11.2026: more trades?): the bot's 'struct' rules with one filter loosened at a time.
             # own_core's module constants are set for each run and restored after, the bot's file is not changed.
-            keep = (CORE.BODY_X, CORE.MIN_GAP)
+            keep = (CORE.BODY_X, CORE.MIN_GAP, CORE.STOP_SW)
             for name in a.configs.split(","):
-                K, bx, mg, em = CONFIGS[name]
-                CORE.BODY_X, CORE.MIN_GAP = bx, mg
+                base_name, _, sw = name.partition("@s")         # "b18@s3": the stop beyond the 3rd swing back
+                K, bx, mg, em = CONFIGS[base_name]
+                CORE.BODY_X, CORE.MIN_GAP, CORE.STOP_SW = bx, mg, int(sw or 0)
                 for x in run_symbol(s, df, cost, stop_at, noent, [(K, False, em, "struct")]):
                     x["variant"] = name
                     rows.append(x)
@@ -203,7 +204,7 @@ def main():
                             lvw = x["entry"] + w * (x["target"] - x["entry"])
                             y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lvw, f"pt{w:g}")
                             rows.append(y if y is not None else dict(x, variant=f"{x['variant']}|pt{w:g}"))
-            CORE.BODY_X, CORE.MIN_GAP = keep
+            CORE.BODY_X, CORE.MIN_GAP, CORE.STOP_SW = keep
         else:
             rows += run_symbol(s, df, cost, stop_at, noent, VARIANTS)
         print(f"{s}: {sum(1 for x in rows if x['symbol'] == s)} trades (all variants), {time.time() - t0:.0f}s", flush=True)

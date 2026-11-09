@@ -13,6 +13,7 @@ from agents import rules_agent as R
 VARIANTS = [(2.0, False, '1m', 'grid')]
 PIP = {"JPY": 0.01}
 BODY_X = 2.5        # the leg's average body vs the 50 candles before it
+STOP_SW = 0         # research (user, 09.11.2026): 0 = stop beyond the impulse's start (the bot); n = beyond the n-th swing back
 MIN_GAP = 0.33      # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
 
 
@@ -156,6 +157,22 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                 buf = 4 * pip if pip else 0.1 * a15[pk]
                 tbuf = 2 * pip if pip else 0.05 * a15[pk]
                 stop = origin - d * buf
+                if STOP_SW:
+                    # the n-th swing low back from the impulse's top, each one lower than the one after it (mirror for sells)
+                    lv, last = [], entry
+                    for i in sorted((sl_idx if d > 0 else sh_idx), reverse=True):
+                        if i > pk or i + 2 > conf:
+                            continue
+                        if i < pk - 480:
+                            break
+                        v = (SL if d > 0 else SH)[i]
+                        if d * (last - v) > 0:
+                            lv.append(v); last = v
+                            if len(lv) == STOP_SW:
+                                break
+                    if len(lv) < STOP_SW:
+                        continue
+                    stop = lv[-1] - d * buf
                 used_peaks.add(pk)
                 setups.append((conf, d, pk, lo_i, peak, entry, stop, tbuf, gap, L, tmode))
         for conf, d, pk, lo_i, peak, entry, stop, tbuf, gap, L, tmode in sorted(setups, key=lambda x: x[0]):

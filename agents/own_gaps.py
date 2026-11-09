@@ -207,6 +207,8 @@ def set_sw(sw):
 #    the origin (from the highest high of the 30 candles before it); else it is a correction and the gap is dead
 # 4. trades whose spread + commission are more than MAX_COST of the risk are skipped
 MAX_COST = 0.10
+MOVE_W = 2           # the swing size (candles each side) that ends a move; bigger = small pullbacks inside a move don't
+                     # restart it (user, 10.11.2026: "you did not take the first gap of the move")
 ARM6 = False         # test: the first touch counts only after the move turned (a 15m swing beyond the gap confirmed)
 STOP6 = "gap"        # 'gap' (beyond the gap's base candle), 'origin' (beyond the move's start), 'sN'
 
@@ -227,6 +229,7 @@ def run_gaps6(s, df, cost, stop_at, noent, live=False, variant="g6"):
     avgr = pd.Series(h - l).rolling(30, min_periods=20).mean().shift(1).to_numpy()
     shi = _swing_levels(h, 2, True)
     slo = _swing_levels(l, 2, False)
+    bshi, bslo = _swing_levels(h, MOVE_W, True), _swing_levels(l, MOVE_W, False)
     pip = CORE.pip_of(s)
     # qualifying gaps (center candle k): +1 up, -1 down, 0 none
     g = np.zeros(n, int)
@@ -250,10 +253,10 @@ def run_gaps6(s, df, cost, stop_at, noent, live=False, variant="g6"):
         d = int(g[k])
         near, far = (l[k + 1], h[k - 1]) if d > 0 else (h[k + 1], l[k - 1])
         # the move's origin: the extreme since the last opposite swing confirmed before the gap
-        opp = shi if d > 0 else slo
-        prev = opp[opp + 2 <= k]
+        opp = (shi if d > 0 else slo) if MOVE_W == 2 else (bshi if d > 0 else bslo)
+        prev = opp[opp + MOVE_W <= k]
         a0 = int(prev[-1]) if len(prev) else max(0, k - 30)
-        a0 = max(a0, k - 60)
+        a0 = max(a0, k - 96)
         oi = a0 + int(np.argmin(l[a0:k + 1]) if d > 0 else np.argmax(h[a0:k + 1]))
         if np.any(g[oi + 1:k] == d):
             dg(k, d, "not_first"); continue

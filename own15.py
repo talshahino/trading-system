@@ -180,14 +180,17 @@ def main():
             for name in a.configs.split(","):
                 if name.startswith("H"):
                     # v6 (user, 10.11.2026): first gap of a move, first touch, big move; "H<stop>[d]" e.g. Hgap, Horigind, Hs2d
-                    keepg = (OG.STOP6, OG.DOMINANT, OG.ARM6)
+                    keepg = (OG.STOP6, OG.DOMINANT, OG.ARM6, OG.MOVE_W)
                     OG.ARM6 = name.startswith("HA")                  # "HA...": only after the move turned
                     core = name[2:] if OG.ARM6 else name[1:]
+                    OG.MOVE_W = 2
+                    if core.startswith("W"):                         # "HW6gapd": a move ends only at a 6-each-side swing
+                        OG.MOVE_W = int(core[1]); core = core[2:]
                     OG.STOP6, OG.DOMINANT = core.rstrip("d") or "gap", core.endswith("d")
                     try:
                         gx = OG.run_gaps6(s, df, cost, stop_at, noent, variant=name)
                     finally:
-                        OG.STOP6, OG.DOMINANT, OG.ARM6 = keepg
+                        OG.STOP6, OG.DOMINANT, OG.ARM6, OG.MOVE_W = keepg
                     for x in gx:
                         rows.append(x)
                         if x.get("status") == "closed":

@@ -36,6 +36,7 @@ def main():
     ap.add_argument("--stop-sw", type=int, default=0)
     ap.add_argument("--gaps6", default="", help="v6: first gap, first touch; stop gap / origin / sN")
     ap.add_argument("--dom", action="store_true")
+    ap.add_argument("--move-w", type=int, default=2)
     ap.add_argument("--gaps", default="", help="v5 gap strategy instead, e.g. s2 / s3 / gap (user, 09.11.2026)")
     ap.add_argument("--target-frac", type=float, default=1.0)
     ap.add_argument("--missed", type=int, default=0, help="also N big moves per reason that were NOT traded, with why")
@@ -71,7 +72,7 @@ def main():
         noent = np.asarray(noent, bool) | blk
         stop_at = stop_at | np.asarray(nm, bool) | np.r_[blk[1:], False]
         if a.gaps6:
-            O.OG.STOP6, O.OG.DOMINANT = a.gaps6, a.dom
+            O.OG.STOP6, O.OG.DOMINANT, O.OG.MOVE_W = a.gaps6, a.dom, a.move_w
             tr = [x for x in O.OG.run_gaps6(s, df, cost, stop_at, noent) if x.get("status") == "closed"]
         elif a.gaps:
             O.OG.STOP = a.gaps

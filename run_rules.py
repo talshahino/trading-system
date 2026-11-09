@@ -112,6 +112,7 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args):
             lo, sh, plan = fn(d)
             return np.asarray(lo, bool) & al, np.asarray(sh, bool) & ash, plan
         t = R.run(df, g, cost, breakeven=be, session_exit=sess)
+        t = drop_hole_trades(t, df, s, tf)
         if t.empty:
             continue
         if real:
@@ -143,6 +144,7 @@ def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_bloc
         for sc in OPT_STOP:
             for pb in OPT_ENTRY:
                 t = R.run(df, _variant(fn, tg, sc, pb), cost, breakeven=be, session_exit=sess)
+                t = drop_hole_trades(t, df, s, tf)
                 if t.empty:
                     continue
                 if real:
@@ -164,6 +166,27 @@ def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_bloc
         COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
 VARIANT = [""]
 MISSING = set()   # instruments with no history for a timeframe
+HOLES = {}        # "sym tf" -> data holes found; trades held across one are dropped (09.11.2026: SOL/USD had no
+                  # daily bars 09.2022-09.2024, so a short there was "stopped" two years late at the reopening price)
+HOLE_DAYS = {"crypto": 4.0}   # longest normal pause between bars, calendar days (others: 6 = long weekend + holiday)
+
+
+def drop_hole_trades(t, df, s, tf):
+    """Drop trades whose holding period spans a data hole (a gap far longer than any market pause)."""
+    if t.empty or len(df) < 2:
+        return t
+    lim = pd.Timedelta(days=HOLE_DAYS.get(U.CLASS.get(s), 6.0))
+    idx = df.index
+    gap = idx[1:] - idx[:-1]
+    at = np.flatnonzero(gap > lim)
+    if not len(at):
+        return t
+    HOLES[f"{s} {tf}"] = [f"{idx[i]:%Y-%m-%d}..{idx[i + 1]:%Y-%m-%d}" for i in at]
+    bad = np.zeros(len(t), bool)
+    ti, te = pd.DatetimeIndex(t["time"]), pd.DatetimeIndex(t["exit_time"])
+    for i in at:
+        bad |= (ti <= idx[i]) & (te >= idx[i + 1])
+    return t[~bad]
 NO_TRADES = []   # strategy/timeframe/instrument that produced no trade at all, so nothing to judge
 
 
@@ -356,6 +379,10 @@ def main():
                 except Exception:  # noqa: BLE001 - one broken strategy must not kill the run
                     ERRORS.append(f"{sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue
+                if t.empty:
+                    NO_TRADES.append(f"{sid} {RP.TF_HE[tf]} {s}")
+                    continue
+                t = drop_hole_trades(t, df, s, tf)
                 if t.empty:
                     NO_TRADES.append(f"{sid} {RP.TF_HE[tf]} {s}")
                     continue
@@ -701,7 +728,9 @@ def _data_html():
             "וספרד היסטורי של הדקה שבה נפתחה העסקה (Dukascopy, מחיר קנייה פחות מחיר מכירה).</p>"
             f"<p>ספרד חציוני (ביחידות מחיר): {', '.join(sp) or '—'}</p>"
             f"<p>ספרד משוער (אין היסטוריית קנייה/מכירה): {', '.join(sorted(SPREAD_EST)) or 'אין'}</p>"
-            f"<p>נכסים בלי נתונים: {', '.join(sorted(MISSING)) or 'אין'}</p>")
+            f"<p>נכסים בלי נתונים: {', '.join(sorted(MISSING)) or 'אין'}</p>"
+            f"<p>חורים בנתונים (עסקאות שהוחזקו מעליהם הוסרו): "
+            f"{html.escape('; '.join(f'{k}: ' + ', '.join(v) for k, v in sorted(HOLES.items()))) or 'אין'}</p>")
 
 
 def report(results, args):

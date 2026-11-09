@@ -20,6 +20,11 @@ from agents import ftmo_universe as U
 
 SERVER_TZ = "Europe/Athens"
 EST_SPREAD = {"stock": 0.0003, "crypto": 0.001}   # share of price, only where no bid/ask history
+# FTMO price = our data price x this, where FTMO quotes on another scale. Only "points" swaps need it
+# (spread comes from the same data, commission is a share of value). COPPER: Dukascopy is USD per lb,
+# FTMO XCU/USD is about 100x (checked 09.11.2026 from usdCommission: ~646 vs 6.25 in the data), so the
+# swap was 100x too large before this fix.
+PRICE_SCALE = {"COPPER": 100.0}
 
 
 def _nights(entry, exit_, crypto):
@@ -73,7 +78,7 @@ def apply(t: pd.DataFrame, symbol: str, spread: pd.Series | None) -> pd.DataFram
     if sp["swapType"] == "percentage":
         swap_px = e * sw / 100.0 / 360.0 * nights
     else:
-        swap_px = sw * 10.0 ** (-int(sp["digits"])) * nights
+        swap_px = sw * 10.0 ** (-int(sp["digits"])) * nights / PRICE_SCALE.get(symbol, 1.0)
 
     out = t.copy()
     out["r"] = (t["r"].to_numpy(dtype="float64") - (spread_px + comm_px) / risk + swap_px / risk)

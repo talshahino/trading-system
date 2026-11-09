@@ -1822,6 +1822,7 @@ function wbRender(box = $("wbBody")) {
   h += `<div class="card"><div class="mut" style="margin-bottom:8px">${esc(d.rules || "")}</div>
     <div class="kv"><div><small class="mut">עסקאות שנסגרו</small><b>${sm.closed ?? 0}</b></div><div><small class="mut">סך הכל (בסיכונים)</small><b class="${(sm.sum_r || 0) >= 0 ? "pos" : "neg"}"><bdi>${(sm.sum_r ?? 0).toFixed(2)}</bdi></b></div>
     <div><small class="mut">אחוז הצלחה</small><b>${sm.win_pct == null ? "—" : sm.win_pct + "%"}</b></div><div><small class="mut">פתוחות · מחכות</small><b>${sm.open ?? 0} · ${sm.pending ?? 0}</b></div></div>
+    ${sm.wide ? `<div class="mut">מקורי: ${sm.strict.closed} עסקאות, <bdi>${(+sm.strict.sum_r).toFixed(2)}</bdi> סיכון · מסלול רחב: ${sm.wide.closed} עסקאות, <bdi>${(+sm.wide.sum_r).toFixed(2)}</bdi> סיכון</div>` : ""}
     <div class="mut">עודכן ${wTime(d.updated_utc)} · ללא כסף אמיתי, שום פקודה לא נשלחת לברוקר</div></div>`;
   if (!trades.length) h += '<div class="empty">עוד אין עסקאות. כשהבוט יזהה דחף ופער, הן יופיעו כאן ותקבל התראה.</div>';
   for (const t of trades) {
@@ -1830,7 +1831,7 @@ function wbRender(box = $("wbBody")) {
     const res = t.skipped ? `<span class="pill">לא נספרה בחשבון (${t.skipped === "daily" ? "עצירה יומית" : "החשבון נשרף"})</span>`
       : t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון${money(t.pnl)}</span>`
       : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון${money(t.pnl_now)}</span>` : `<span class="pill ${st[1]}">${st[0]}</span>`;
-    h += `<div class="card wt" data-id="${esc(t.id)}"><div class="hd"><b>${esc(t.symbol)}</b><span class="pill ${buy ? "pos" : "neg"}">${buy ? "קנייה" : "מכירה"}</span>${res}</div>
+    h += `<div class="card wt" data-id="${esc(t.id)}"><div class="hd"><b>${esc(t.symbol)}</b><span class="pill ${buy ? "pos" : "neg"}">${buy ? "קנייה" : "מכירה"}</span>${t.wide ? '<span class="pill">מסלול רחב</span>' : ""}${res}</div>
       <div class="mut">כניסה <bdi>${wPx(t.symbol, t.entry)}</bdi> · סטופ <bdi>${wPx(t.symbol, t.stop)}</bdi> · יעד <bdi>${wPx(t.symbol, t.target)}</bdi>${t.rr ? ` · יחס 1:${t.rr}` : ""}<br>
       ${t.time ? "נכנסה " + wTime(t.time) : "נוצרה " + wTime(t.setup_t)}${t.exit_time ? " · יצאה " + wTime(t.exit_time) : ""} · דחף של ${t.leg || "?"} נרות</div>
       <div class="acts"><button class="btn ghost" data-chart="${esc(t.id)}">גרף העסקה</button>

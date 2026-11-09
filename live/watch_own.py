@@ -43,6 +43,10 @@ LIVE = ROOT / "live"
 STATE_F = LIVE / f"{NAME}_state.json"
 MARKS_F = LIVE / "watch_marks.json"
 VARIANT = (2.0, False, "1m", "struct")
+# wide track (user, 09.11.2026: "I want more trades, it's scalping"): the same rules with a weaker candle-body filter
+# (1.8 instead of 2.5 x the average body) - about 4x the setups in the backtest (3.6 a week on these 16 instruments
+# since 2024, vs 0.9), but they lost a little there (-0.09R a trade vs -0.03R). Shown apart in the app ('wide').
+WIDE_BODY_X = 1.8
 DAYS = 8                      # history kept per instrument (the impulse rules look back up to ~5 days)
 # the instruments where spread + commission are the smallest share of a trade's risk (optimisation, 06.11.2026)
 SYMBOLS = {"US100": ["US100.cash", "US100"], "US30": ["US30.cash", "US30"], "US500": ["US500.cash", "US500"],
@@ -203,7 +207,7 @@ def main():
         state = {}
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
                   "rules": "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
-                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1"})
+                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
     acc = state.get("vacct") or {"initial": INITIAL, "risk_pct": round(RISK * 100, 3), "ledger": [], "breached": None}
 
@@ -227,7 +231,19 @@ def main():
                 if df is None or len(df) < 3000:
                     continue
                 stop_at, noent = cal.masks(df, name)
-                res = CORE.run_symbol(name, df, cost_of(name, df), stop_at, noent, [VARIANT], live=True)
+                cst = cost_of(name, df)
+                res = CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
+                strict = {tid(x) for x in res}
+                keep_bx = CORE.BODY_X
+                try:
+                    CORE.BODY_X = WIDE_BODY_X
+                    wide = CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
+                finally:
+                    CORE.BODY_X = keep_bx
+                for x in wide:
+                    if tid(x) not in strict:              # a setup both tracks find is the original one
+                        x["wide"] = True
+                        res.append(x)
                 cutoff = df.index[-1] - pd.Timedelta(days=2)       # only what happened recently is reported
                 for x in res:
                     if pd.Timestamp(x.get("time") or x.get("setup_t")) < cutoff:
@@ -241,7 +257,7 @@ def main():
                            "leg_start": iso(x["leg_start"]), "leg_top": iso(x["leg_top"]), "gap_lo": float(x["gap_lo"]), "gap_hi": float(x["gap_hi"]),
                            "setup_t": iso(x.get("setup_t")) or old.get("setup_t"), "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
-                           "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark")}
+                           "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide"))}
                     if x["status"] != "pending" or "m15" not in old or old.get("status") != x["status"]:
                         ls = pd.Timestamp(x["leg_start"])
                         t_in = pd.Timestamp(x.get("time")) if x.get("time") is not None else df.index[-1]
@@ -276,7 +292,7 @@ def main():
                         elif rec["status"] == "open" and rec.get("r_now") is not None:
                             rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
-                    side = "קנייה" if rec["dir"] > 0 else "מכירה"
+                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · מסלול רחב" if rec["wide"] else "")
                     if prev is None and rec["status"] == "pending":
                         REP.notify(f"סקלפינג (צפייה): {name} מחכה לכניסה", f"{side} · דחף של {rec['leg']} נרות · כניסה בנגיעה ב־{fmt(name, rec['entry'])}\n"
                                    f"סטופ {fmt(name, rec['stop'])} · לא נשלחת פקודה", tags=["eyes"], key=f"wp:{k}", every=86400)
@@ -307,11 +323,15 @@ def main():
         cancelled = sorted([t for t in trades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]
         trades = {t["id"]: t for t in closed + live_ + cancelled}
         rs = [t["r"] for t in closed if t.get("r") is not None]
+        rs_strict = [t["r"] for t in closed if t.get("r") is not None and not t.get("wide")]
+        rs_wide = [t["r"] for t in closed if t.get("r") is not None and t.get("wide")]
         state.update({"updated_utc": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
                       "watch": sorted(trades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
                       "summary": {"closed": len(rs), "sum_r": round(float(np.sum(rs)), 2) if rs else 0.0,
                                   "avg_r": round(float(np.mean(rs)), 3) if rs else None, "win_pct": round(100 * float(np.mean(np.array(rs) > 0)), 1) if rs else None,
-                                  "open": sum(t["status"] == "open" for t in live_), "pending": sum(t["status"] == "pending" for t in live_)},
+                                  "open": sum(t["status"] == "open" for t in live_), "pending": sum(t["status"] == "pending" for t in live_),
+                                  "strict": {"closed": len(rs_strict), "sum_r": round(float(np.sum(rs_strict)), 2) if rs_strict else 0.0},
+                                  "wide": {"closed": len(rs_wide), "sum_r": round(float(np.sum(rs_wide)), 2) if rs_wide else 0.0}},
                       "instruments": {k: src.broker.get(k) for k in SYMBOLS}, "errors": errors[-5:]})
         bal = balance()
         eq = bal + sum(t.get("pnl_now") or 0 for t in live_ if t["status"] == "open")

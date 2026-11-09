@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-09",
+  "state_updated_utc": "2026-11-09T21:20:23+00:00",
+  "bot_started_utc": "2026-11-06T19:33:55+00:00",
+  "reporting": true,
+  "errors": [],
+  "today": {
+    "opened": 0, "closed": 0, "trades": [],
+    "setups_cancelled": [
+      {"symbol": "JP225", "dir": "long", "setup_utc": "2026-11-09T02:45:00+00:00", "leg": 10, "entry": 58331.0, "note": "limit never filled, cancelled"},
+      {"symbol": "GBPJPY", "dir": "long", "setup_utc": "2026-11-09T10:30:00+00:00", "leg": 8, "entry": 211.678, "note": "limit never filled, cancelled"},
+      {"symbol": "EURJPY", "dir": "long", "setup_utc": "2026-11-09T10:30:00+00:00", "leg": 8, "entry": 176.55, "note": "limit never filled, cancelled"}
+    ]
+  },
+  "vacct": {"balance": 100000.0, "equity": 100000.0, "profit": 0.0, "today": 0.0, "breached": null},
+  "cumulative": {"closed": 0, "sum_r": 0.0, "win_pct": null, "avg_r": null, "setups_total": 3, "setups_cancelled": 3},
+  "calibration": {"status": "no_data", "note": "0 closed trades since start (2026-11-06). 3 setups today, all longs, all cancelled before fill (price ran away from entry). Need ~20 closed trades before evaluating; no backtest run."},
+  "user_marks": {"take_yes": 0, "take_no": 0},
+  "proposed_changes": []
+}

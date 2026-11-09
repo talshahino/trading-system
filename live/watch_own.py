@@ -54,6 +54,11 @@ SYMBOLS = {"US100": ["US100.cash", "US100"], "US30": ["US30.cash", "US30"], "US5
            "UK100": ["UK100.cash", "UK100"], "XAUUSD": ["XAUUSD", "XAU/USD"], "EURUSD": ["EURUSD"], "EURJPY": ["EURJPY"],
            "USDJPY": ["USDJPY"], "GBPUSD": ["GBPUSD"], "GBPJPY": ["GBPJPY"], "USDCHF": ["USDCHF"], "AUDUSD": ["AUDUSD"],
            "NZDUSD": ["NZDUSD"]}
+# data-collection instruments (user, 09.11.2026: "more trades"): all six lost in the backtest (2024-2026, both tracks),
+# so they are followed and reported like the others, marked 'extra', but kept OUT of the virtual account and the summary
+EXTRA = {"WTI": ["USOIL.cash", "USOIL", "WTI"], "XAGUSD": ["XAGUSD", "XAG/USD"], "USDCAD": ["USDCAD"], "EURGBP": ["EURGBP"],
+         "EU50": ["EU50.cash", "EU50"], "AUS200": ["AUS200.cash", "AUS200"]}
+SYMBOLS.update(EXTRA)
 KEEP = 60                     # closed trades kept in the state (with their candles)
 # virtual demo account (user, 06.11.2026): $100,000 like the other demo accounts, risk per trade as bots 2 and 4,
 # the bots' own daily stop (4.5%, FTMO's limit is 5%) and FTMO's 10% maximum loss
@@ -207,7 +212,8 @@ def main():
         state = {}
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
                   "rules": "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
-                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות"})
+                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
+                           "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
     acc = state.get("vacct") or {"initial": INITIAL, "risk_pct": round(RISK * 100, 3), "ledger": [], "breached": None}
 
@@ -257,7 +263,8 @@ def main():
                            "leg_start": iso(x["leg_start"]), "leg_top": iso(x["leg_top"]), "gap_lo": float(x["gap_lo"]), "gap_hi": float(x["gap_hi"]),
                            "setup_t": iso(x.get("setup_t")) or old.get("setup_t"), "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
-                           "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide"))}
+                           "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide")),
+                           "extra": name in EXTRA}
                     if x["status"] != "pending" or "m15" not in old or old.get("status") != x["status"]:
                         ls = pd.Timestamp(x["leg_start"])
                         t_in = pd.Timestamp(x.get("time")) if x.get("time") is not None else df.index[-1]
@@ -271,6 +278,8 @@ def main():
                     for f in ("risk_usd", "skipped"):
                         if f in old:
                             rec[f] = old[f]
+                    if rec["extra"] and "risk_usd" not in rec:
+                        rec["skipped"] = "extra"              # data only: never in the virtual account
                     if rec["status"] in ("open", "closed") and "risk_usd" not in rec and "skipped" not in rec:
                         bal, day = balance(), prague_day(rec["time"])
                         start = bal - day_pnl(day)
@@ -292,7 +301,7 @@ def main():
                         elif rec["status"] == "open" and rec.get("r_now") is not None:
                             rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
-                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · מסלול רחב" if rec["wide"] else "")
+                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
                     if prev is None and rec["status"] == "pending":
                         REP.notify(f"סקלפינג (צפייה): {name} מחכה לכניסה", f"{side} · דחף של {rec['leg']} נרות · כניסה בנגיעה ב־{fmt(name, rec['entry'])}\n"
                                    f"סטופ {fmt(name, rec['stop'])} · לא נשלחת פקודה", tags=["eyes"], key=f"wp:{k}", every=86400)
@@ -322,16 +331,21 @@ def main():
         live_ = [t for t in trades.values() if t["status"] in ("pending", "open")]
         cancelled = sorted([t for t in trades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]
         trades = {t["id"]: t for t in closed + live_ + cancelled}
-        rs = [t["r"] for t in closed if t.get("r") is not None]
-        rs_strict = [t["r"] for t in closed if t.get("r") is not None and not t.get("wide")]
-        rs_wide = [t["r"] for t in closed if t.get("r") is not None and t.get("wide")]
+        core_closed = [t for t in closed if not t.get("extra")]
+        rs = [t["r"] for t in core_closed if t.get("r") is not None]
+        rs_strict = [t["r"] for t in core_closed if t.get("r") is not None and not t.get("wide")]
+        rs_wide = [t["r"] for t in core_closed if t.get("r") is not None and t.get("wide")]
+        rs_extra = [t["r"] for t in closed if t.get("r") is not None and t.get("extra")]
         state.update({"updated_utc": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
                       "watch": sorted(trades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
                       "summary": {"closed": len(rs), "sum_r": round(float(np.sum(rs)), 2) if rs else 0.0,
                                   "avg_r": round(float(np.mean(rs)), 3) if rs else None, "win_pct": round(100 * float(np.mean(np.array(rs) > 0)), 1) if rs else None,
-                                  "open": sum(t["status"] == "open" for t in live_), "pending": sum(t["status"] == "pending" for t in live_),
+                                  "open": sum(t["status"] == "open" and not t.get("extra") for t in live_),
+                                  "pending": sum(t["status"] == "pending" and not t.get("extra") for t in live_),
                                   "strict": {"closed": len(rs_strict), "sum_r": round(float(np.sum(rs_strict)), 2) if rs_strict else 0.0},
-                                  "wide": {"closed": len(rs_wide), "sum_r": round(float(np.sum(rs_wide)), 2) if rs_wide else 0.0}},
+                                  "wide": {"closed": len(rs_wide), "sum_r": round(float(np.sum(rs_wide)), 2) if rs_wide else 0.0},
+                                  "extra": {"closed": len(rs_extra), "sum_r": round(float(np.sum(rs_extra)), 2) if rs_extra else 0.0,
+                                            "symbols": list(EXTRA)}},
                       "instruments": {k: src.broker.get(k) for k in SYMBOLS}, "errors": errors[-5:]})
         bal = balance()
         eq = bal + sum(t.get("pnl_now") or 0 for t in live_ if t["status"] == "open")
@@ -354,7 +368,7 @@ def main():
         counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
         state.update({"account": "וירטואלי", "server": "צפייה בלבד · בלי כסף", "initial": acc["initial"], "risk": RISK,
                       "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
-                      "halted_until": None, "combos": [combo(n) for n in SYMBOLS], "started": acc["started"], "withdrawals": [],
+                      "halted_until": None, "combos": [combo(n) for n in SYMBOLS if n not in EXTRA], "started": acc["started"], "withdrawals": [],
                       "equity_curve": ec, "lows": {},
                       "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                                      "combo": combo(t["symbol"]), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],

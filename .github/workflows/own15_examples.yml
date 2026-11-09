@@ -134,7 +134,7 @@ jobs:
         run: |
           DIR="reports/$(date -u +%F)_own15ex_run${{ github.run_number }}"
           mkdir -p "$DIR"
-          cp output/own15_examples.json "$DIR"/
+          cp output/*.json "$DIR"/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports

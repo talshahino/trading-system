@@ -16,7 +16,8 @@ BODY_X = 2.5        # the leg's average body vs the 50 candles before it
 # research (user, 09.11.2026, marked charts): DOMINANT - a move smaller than the move before it the other way is a
 # correction, not an impulse; GAP_OPEN - a gap that a 15-minute candle went back into during the move is no gap
 DOMINANT = False
-TARGET_FRAC = 1.0   # research/v4 (user, 09.11.2026): the whole position out at this share of the way to the target
+TARGET_FRAC = 1.0
+DIAG = None         # research (user, 09.11.2026: "where do you miss opportunities"): a list -> why each big move was not traded   # research/v4 (user, 09.11.2026): the whole position out at this share of the way to the target
 GAP_OPEN = False
 STOP_SW = 0         # research (user, 09.11.2026): 0 = stop beyond the impulse's start (the bot); n = beyond the n-th swing back
 MIN_GAP = 0.33      # the gap's size vs the average range of the 30 candles before the leg (user: tiny gaps are no gaps)
@@ -113,14 +114,21 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                 size = d * (peak - origin)
                 ty = typ[L][pk]
                 if not (np.isfinite(ty) and ty > 0 and size >= K * ty):
+                    if DIAG is not None and np.isfinite(ty) and ty > 0 and size >= 1.4 * ty:
+                        DIAG.append({"symbol": s, "leg_start": t15[lo_i], "leg_top": t15[pk], "dir": d,
+                                     "size_x": round(float(size / ty), 2), "why": "size_small"})
                     continue
+
+                def dg(why, _pk=pk, _d=d, _lo=lo_i, _sz=size / ty):
+                    if DIAG is not None:
+                        DIAG.append({"symbol": s, "leg_start": t15[_lo], "leg_top": t15[_pk], "dir": _d, "size_x": round(float(_sz), 2), "why": why})
                 ab = avgb[lo_i]
                 if not (np.isfinite(ab) and ab > 0 and body[lo_i:pk + 1].mean() >= BODY_X * ab):
-                    continue
+                    dg("body"); continue
                 if d > 0 and (h[lo_i:pk + 1].max() > peak or l[lo_i:pk + 1].min() < origin):
-                    continue
+                    dg("range"); continue
                 if d < 0 and (l[lo_i:pk + 1].min() < peak or h[lo_i:pk + 1].max() > origin):
-                    continue
+                    dg("range"); continue
                 if tfil and trend[pk] != d:
                     continue
                 if DOMINANT:
@@ -130,7 +138,7 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                     if len(prev):
                         back = max(d * ((SH if d > 0 else SL)[i] - origin) for i in prev)
                         if size < back:
-                            continue
+                            dg("correction"); continue
                 # the first fair-value gap of the leg (in time)
                 gap = None
                 ar = (h - l)[max(0, lo_i - 30):lo_i].mean() if lo_i > 0 else np.nan
@@ -147,7 +155,7 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                     gap, gk = g_, k
                     break
                 if gap is None:
-                    continue
+                    dg("no_gap"); continue
                 entry = gap[0]                                   # near edge: touched first on the way back
                 if emode == "1m":
                     # the user (06.11.2026): inside the 15m gap, the 1-minute gap of the same move; enter at its near edge
@@ -165,7 +173,7 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                         if ov > 0 and hi_ - lo_ > best1:
                             best1, e1 = hi_ - lo_, (hi_ if d > 0 else lo_)
                     if e1 is None:
-                        continue
+                        dg("no_1m_gap"); continue
                     entry = e1
                 if emode in ("gc", "go", "fc", "fo"):
                     # research (user, 09.11.2026): enter deeper, at the body of the candle that leads the move -
@@ -191,28 +199,29 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                             if len(lv) == STOP_SW:
                                 break
                     if len(lv) < STOP_SW:
-                        continue
+                        dg("no_swing_stop"); continue
                     stop = lv[-1] - d * buf
                 used_peaks.add(pk)
-                setups.append((conf, d, pk, lo_i, peak, entry, stop, tbuf, gap, L, tmode))
-        for conf, d, pk, lo_i, peak, entry, stop, tbuf, gap, L, tmode in sorted(setups, key=lambda x: x[0]):
+                setups.append((conf, d, pk, lo_i, peak, entry, stop, tbuf, gap, L, tmode, dg))
+        for conf, d, pk, lo_i, peak, entry, stop, tbuf, gap, L, tmode, dg in sorted(setups, key=lambda x: x[0]):
             if True:
                 # walk the 1-minute bars from the confirmation for 8 hours
                 s0 = t1.searchsorted(t15[conf])
                 if s0 >= n1 or s0 <= busy_until:
-                    continue
+                    dg("busy"); continue
                 s1 = min(n1, t1.searchsorted(t15[conf] + pd.Timedelta(hours=8)))
                 fill = None
+                miss = "expired"
                 for q in range(s0, s1):
                     if stop_at[q]:
-                        break
+                        miss = "break_news"; break
                     if (d > 0 and h1[q] > peak) or (d < 0 and l1[q] < peak):
-                        break                                    # the leg went on: setup gone
+                        miss = "went_on"; break                  # the leg went on: setup gone
                     if (d > 0 and l1[q] <= stop) or (d < 0 and h1[q] >= stop):
-                        break
+                        miss = "stop_first"; break
                     if (d > 0 and l1[q] <= entry) or (d < 0 and h1[q] >= entry):
                         if noent[q]:
-                            break
+                            miss = "news_entry"; break
                         fill = q
                         break
                 else:
@@ -221,6 +230,8 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                                     "setup_t": t15[conf], "expires_t": t15[conf] + pd.Timedelta(hours=8), "leg": int(L),
                                     "leg_start": t15[lo_i], "leg_top": t15[pk], "peak": peak, "gap_lo": min(gap), "gap_hi": max(gap)})
                 if fill is None:
+                    if not (live and s1 >= n1):
+                        dg(miss)
                     continue
                 px = min(entry, o1[fill]) if d > 0 else max(entry, o1[fill])
                 # target: the nearest 15m swing high above the entry known at the fill (after the origin)
@@ -331,11 +342,12 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                         busy_until = min(ends)                              # one setup at a time per instrument
                     continue
                 if not lv:
-                    continue
+                    dg("no_target"); continue
                 target = (min(lv) if d > 0 else max(lv)) - d * tbuf
                 risk = d * (px - stop)
                 if risk <= 0 or (tmode not in ("n10x", "last5x", "structx") and d * (target - px) < risk) or d * (target - px) <= 0:
-                    continue
+                    dg("rr_below_1"); continue
+                dg("traded")
                 if TARGET_FRAC != 1.0:
                     target = px + TARGET_FRAC * (target - px)
                 ex_px = ex_q = why = None

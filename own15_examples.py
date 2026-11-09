@@ -33,6 +33,9 @@ def main():
     ap.add_argument("--target-mode", default="15p")
     ap.add_argument("--m1-hours", type=float, default=0.0, help="also the 1-minute candles from the leg start to its top + this many hours")
     ap.add_argument("--v4", action="store_true", help="dominant move + open gap (user, 09.11.2026)")
+    ap.add_argument("--stop-sw", type=int, default=0)
+    ap.add_argument("--target-frac", type=float, default=1.0)
+    ap.add_argument("--missed", type=int, default=0, help="also N big moves per reason that were NOT traded, with why")
     ap.add_argument("--start", default="2024-01-01")
     ap.add_argument("--end", default="")
     a = ap.parse_args()
@@ -40,6 +43,8 @@ def main():
     ev, _ = NC.load()
     O.CORE.BODY_X, O.CORE.MIN_GAP = a.body, a.min_gap
     O.CORE.DOMINANT = O.CORE.GAP_OPEN = a.v4
+    O.CORE.STOP_SW, O.CORE.TARGET_FRAC = a.stop_sw, a.target_frac
+    O.CORE.DIAG = [] if a.missed else None
     variant = (a.k, False, a.entry_mode, a.target_mode)
     allt, data = [], {}
     for s in [x for x in a.symbols.split(",") if x]:
@@ -92,6 +97,23 @@ def main():
                             for ti, r in w.iterrows()]})
     config.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     (config.OUTPUT_DIR / "own15_examples.json").write_text(json.dumps(out), encoding="utf-8")
+    if a.missed:
+        dg = pd.DataFrame(O.CORE.DIAG).drop_duplicates(["symbol", "leg_top", "dir", "why"])
+        counts = dg.groupby(["why"]).size().sort_values(ascending=False).to_dict()
+        by_sym = dg.groupby(["symbol", "why"]).size().unstack(fill_value=0).to_dict(orient="index")
+        miss = []
+        for why, g in dg[dg.why != "traded"].groupby("why"):
+            for _, x in g.sample(min(a.missed, len(g)), random_state=a.seed).iterrows():
+                df1 = data[x.symbol]
+                m15 = resample(df1, "15min")
+                w = m15[(m15.index >= x.leg_start - pd.Timedelta(hours=8)) & (m15.index <= x.leg_top + pd.Timedelta(hours=10))]
+                miss.append({"why": why, "symbol": x.symbol, "dir": int(x.dir), "size_x": float(x.size_x),
+                             "leg_start": int(x.leg_start.timestamp()), "leg_top": int(x.leg_top.timestamp()),
+                             "m15": [[int(ti.timestamp()), round(float(r.o), 6), round(float(r.h), 6), round(float(r.l), 6), round(float(r.c), 6)]
+                                     for ti, r in w.iterrows()]})
+        (config.OUTPUT_DIR / "own15_missed.json").write_text(json.dumps({"counts": counts, "by_symbol": by_sym, "examples": miss}),
+                                                             encoding="utf-8")
+        print("big moves by reason:", counts)
     print("examples:", len(out), "of", len(t))
 
 

@@ -50,7 +50,10 @@ CONFIGS = {"base": (2.0, 2.5, 0.33, "1m"),
            "b18": (2.0, 1.8, 0.33, "1m"),     # less strong candle bodies
            "g0": (2.0, 2.5, 0.0, "1m"),       # any gap size
            "e15": (2.0, 2.5, 0.33, "15m"),    # enter at the 15-minute gap's edge, no 1-minute gap needed
-           "all": (1.5, 1.8, 0.15, "15m")}    # all of them looser together
+           "all": (1.5, 1.8, 0.15, "15m"),    # all of them looser together
+           # user (09.11.2026): entry at the body of the candle that leads the move (wide track's filters)
+           "wgc": (2.0, 1.8, 0.33, "gc"), "wgo": (2.0, 1.8, 0.33, "go"),   # first gap's impulse candle: close / open
+           "wfc": (2.0, 1.8, 0.33, "fc"), "wfo": (2.0, 1.8, 0.33, "fo")}   # leg's first candle: close / open
 
 
 # user (09.11.2026): "half profit and stop to break-even" - at +pl x the risk close half, move the stop to the entry,

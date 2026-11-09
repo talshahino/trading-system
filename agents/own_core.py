@@ -146,6 +146,13 @@ def run_symbol(s, df, cost, stop_at, noent, variants, live=False):
                     if e1 is None:
                         continue
                     entry = e1
+                if emode in ("gc", "go", "fc", "fo"):
+                    # research (user, 09.11.2026): enter deeper, at the body of the candle that leads the move -
+                    # g = the impulse candle of the first gap, f = the leg's first candle; c = its close, o = its open
+                    kk = gk if emode[0] == "g" else lo_i + 1
+                    entry = c[kk] if emode[1] == "c" else o[kk]
+                    if d * (entry - origin) <= 0:
+                        continue
                 buf = 4 * pip if pip else 0.1 * a15[pk]
                 tbuf = 2 * pip if pip else 0.05 * a15[pk]
                 stop = origin - d * buf

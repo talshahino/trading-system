@@ -34,6 +34,7 @@ def main():
     ap.add_argument("--m1-hours", type=float, default=0.0, help="also the 1-minute candles from the leg start to its top + this many hours")
     ap.add_argument("--v4", action="store_true", help="dominant move + open gap (user, 09.11.2026)")
     ap.add_argument("--stop-sw", type=int, default=0)
+    ap.add_argument("--gaps", default="", help="v5 gap strategy instead, e.g. s2 / s3 / gap (user, 09.11.2026)")
     ap.add_argument("--target-frac", type=float, default=1.0)
     ap.add_argument("--missed", type=int, default=0, help="also N big moves per reason that were NOT traded, with why")
     ap.add_argument("--start", default="2024-01-01")
@@ -67,7 +68,11 @@ def main():
         blk = NC.blocked(pd.Series(df.index), s, ev, minutes=2).to_numpy()
         noent = np.asarray(noent, bool) | blk
         stop_at = stop_at | np.asarray(nm, bool) | np.r_[blk[1:], False]
-        tr = O.run_symbol(s, df, cost, stop_at, noent, [variant])
+        if a.gaps:
+            O.OG.STOP = a.gaps
+            tr = [x for x in O.OG.run_gaps(s, df, cost, stop_at, noent) if x.get("status") == "closed"]
+        else:
+            tr = O.run_symbol(s, df, cost, stop_at, noent, [variant])
         allt += tr
         data[s] = df
         print(s, len(tr), "trades", flush=True)

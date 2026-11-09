@@ -34,6 +34,7 @@ from agents import rules_agent as R
 import run_poc as RP
 import run_rules as RR
 from agents import own_core as CORE
+from agents import own_gaps as OG
 from agents.own_core import VARIANTS, pip_of, resample, swings, comm_px, run_symbol  # noqa: F401
 
 # (K, 1h-trend filter, entry: '15m' gap edge / '1m' gap inside the 15m gap, target: '15m' / '1m' nearest swing high)
@@ -177,6 +178,22 @@ def main():
             # own_core's module constants are set for each run and restored after, the bot's file is not changed.
             keep = (CORE.BODY_X, CORE.MIN_GAP, CORE.STOP_SW)
             for name in a.configs.split(","):
+                if name.startswith("G"):
+                    # v5 (user, 09.11.2026): every gap of a strong move; "G<stop>[d]" e.g. Gs2, Gs3, Ggap, Gs2d (dominant)
+                    keepg = (OG.STOP, OG.DOMINANT)
+                    OG.STOP, OG.DOMINANT = name[1:].rstrip("d"), name.endswith("d")
+                    try:
+                        gx = OG.run_gaps(s, df, cost, stop_at, noent, variant=name)
+                    finally:
+                        OG.STOP, OG.DOMINANT = keepg
+                    for x in gx:
+                        rows.append(x)
+                        if x.get("status") == "closed":
+                            for w in WAY:
+                                lvw = x["entry"] + w * (x["target"] - x["entry"])
+                                y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lvw, f"pt{w:g}")
+                                rows.append(y if y is not None else dict(x, variant=f"{x['variant']}|pt{w:g}"))
+                    continue
                 base_name, _, sw = name.partition("@s")         # "b18@s3": the stop beyond the 3rd swing back
                 v4 = base_name.endswith("+v4")                   # "+v4": dominant move + open gap (user, 09.11.2026)
                 K, bx, mg, em = CONFIGS[base_name.replace("+v4", "")]

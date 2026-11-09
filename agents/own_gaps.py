@@ -1,0 +1,196 @@
+"""The user's strategy, v5: every gap of a strong move is a level (user, 09.11.2026, 24 marked charts).
+
+  gap       a 15-minute fair-value gap (candle k-1's high below candle k+1's low, mirror for sells) made by a strong
+            candle k: its body >= GBODY x the average body of the 50 candles before it, the gap >= MIN_GAP x the
+            average range of the 30 candles before it. A move in steps gives one gap per step, each one a trade.
+  armed     only after the move turned: a 15-minute swing high (2 candles each side) above the gap, made after it.
+            If a 15-minute candle goes back into the gap before that, the gap closed during the move: no gap.
+  wait      the gap is NOT cancelled when the price goes on to new highs (the peak just moves up); it waits up to
+            EXPIRY hours from its making for the price to come back.
+  entry     the first 1-minute touch of the gap's near edge after it is armed, in the gap's direction.
+  gone      a 15-minute candle closes beyond the gap's far edge before the touch, or the expiry.
+  stop      'gap': beyond candle k-1's low (the gap's base); 'sN': beyond the N-th 15m swing low back from the
+            entry, each lower than the one after it; always + 4 pips (instruments without pips 0.1 ATR)
+  target    the move's peak (the highest high between the gap and the touch) minus 2 pips; the trade is taken only
+            when that is at least MIN_RR x the risk
+  dominant  optional: the up-move that made the gap (from the lowest low of the 30 candles before it) must be at
+            least the down-move into that low (from the highest high of the 30 candles before the low)
+Fills and exits walk the 1-minute bars; costs as in own_core. One position at a time per instrument.
+Rows have the same fields as own_core.run_symbol, so own15.py's partial-exit grid applies to them.
+"""
+import numpy as np
+import pandas as pd
+
+from agents import own_core as CORE
+from agents import rules_agent as R
+
+GBODY = 1.5
+MIN_GAP = 0.3
+EXPIRY = 24          # hours from the gap's making
+MIN_RR = 1.0
+STOP = "s2"
+DOMINANT = False
+DIAG = None          # a list -> (symbol, gap time, dir, why) for every gap that did not become a trade
+
+
+def _swing_levels(arr, w=2, high=True):
+    s = pd.Series(arr)
+    ext = (s.rolling(2 * w + 1, center=True).max() if high else s.rolling(2 * w + 1, center=True).min()).to_numpy()
+    return np.flatnonzero(arr == ext)
+
+
+def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
+    o1, h1, l1, c1 = (df[x].to_numpy(float) for x in "ohlc")
+    t1 = df.index
+    n1 = len(t1)
+    m = CORE.resample(df, "15min")
+    o, h, l, c = (m[x].to_numpy(float) for x in "ohlc")
+    t15 = m.index
+    n = len(c)
+    if n < 100:
+        return []
+    a15 = R.atr(h, l, c, 14)
+    body = np.abs(c - o)
+    avgb = pd.Series(body).rolling(50, min_periods=30).mean().shift(1).to_numpy()
+    avgr = pd.Series(h - l).rolling(30, min_periods=20).mean().shift(1).to_numpy()
+    shi = _swing_levels(h, 2, True)          # 15m swing highs (index of the swing candle; known 2 candles later)
+    slo = _swing_levels(l, 2, False)
+    pip = CORE.pip_of(s)
+    out = []
+    busy_until = -1
+
+    def dg(k, d, why):
+        if DIAG is not None:
+            DIAG.append({"symbol": s, "gap_t": t15[k], "dir": d, "why": why})
+
+    for k in range(31, n - 1):
+        for d in (1, -1):
+            if d > 0:
+                if not l[k + 1] > h[k - 1]:
+                    continue
+                near, far = l[k + 1], h[k - 1]
+            else:
+                if not h[k + 1] < l[k - 1]:
+                    continue
+                near, far = h[k + 1], l[k - 1]
+            if not (d * (c[k] - o[k]) > 0 and np.isfinite(avgb[k]) and body[k] >= GBODY * avgb[k]):
+                continue                                            # no strong candle: no force
+            if not (np.isfinite(avgr[k]) and abs(near - far) >= MIN_GAP * avgr[k]):
+                continue
+            if DOMINANT:
+                w0 = max(0, k - 30)
+                if d > 0:
+                    lo_i = w0 + int(np.argmin(l[w0:k + 1])); top = max(h[k:k + 2].max(), h[k])
+                    b0 = max(0, lo_i - 30); back = h[b0:lo_i + 1].max() - l[lo_i] if lo_i > b0 else 0.0
+                    up = top - l[lo_i]
+                else:
+                    lo_i = w0 + int(np.argmax(h[w0:k + 1])); top = min(l[k:k + 2].min(), l[k])
+                    b0 = max(0, lo_i - 30); back = h[lo_i] - l[b0:lo_i + 1].min() if lo_i > b0 else 0.0
+                    up = h[lo_i] - top
+                if up < back:
+                    dg(k, d, "correction"); continue
+            # arm: a swing beyond the gap made after it, with no 15m candle back into the gap before it
+            end = min(n, k + 2 + int(EXPIRY * 4))
+            sw = shi if d > 0 else slo
+            arm = None
+            for j in range(k + 2, end):
+                if (l[j] < near) if d > 0 else (h[j] > near):
+                    break                                           # back into the gap during the move
+                if j in set_sw(sw) and j + 2 < end:
+                    arm = j
+                    break
+            if arm is None:
+                dg(k, d, "closed_in_move" if j < end - 1 else "no_turn"); continue
+            # wait for the touch on the 1-minute bars, from the 15m candle that confirmed the swing
+            q0 = t1.searchsorted(t15[arm + 2] + pd.Timedelta(minutes=15))
+            q1 = min(n1, t1.searchsorted(t15[k] + pd.Timedelta(hours=EXPIRY)))
+            if q0 >= q1:
+                dg(k, d, "expired"); continue
+            if q0 <= busy_until:
+                dg(k, d, "busy"); continue
+            peak = h[k + 1:arm + 1].max() if d > 0 else l[k + 1:arm + 1].min()
+            fill, why = None, "expired"
+            for q in range(q0, q1):
+                if stop_at[q]:
+                    why = "break_news"; break
+                if (d > 0 and h1[q] > peak) or (d < 0 and l1[q] < peak):
+                    peak = h1[q] if d > 0 else l1[q]                # the move went on: the peak moves, keep waiting
+                if (d > 0 and l1[q] <= near) or (d < 0 and h1[q] >= near):
+                    if noent[q]:
+                        why = "news_entry"; break
+                    fill = q
+                    break
+                # gone: a 15-minute close beyond the far edge
+                if t1[q].minute % 15 == 14 and ((d > 0 and c1[q] < far) or (d < 0 and c1[q] > far)):
+                    why = "gap_broken"; break
+            else:
+                if live and q1 >= n1:
+                    out.append({"symbol": s, "variant": variant, "status": "pending", "dir": d, "entry": near, "stop": None,
+                                "setup_t": t15[arm + 2], "leg": int(arm - k), "leg_start": t15[k - 1], "leg_top": t15[arm],
+                                "gap_lo": min(near, far), "gap_hi": max(near, far)})
+                    continue
+            if fill is None:
+                dg(k, d, why); continue
+            px = min(near, o1[fill]) if d > 0 else max(near, o1[fill])
+            buf = 4 * pip if pip else 0.1 * a15[k]
+            tbuf = 2 * pip if pip else 0.05 * a15[k]
+            kq = t15.searchsorted(t1[fill], side="right") - 1
+            if STOP == "gap":
+                base = l[k - 1] if d > 0 else h[k - 1]
+            else:
+                nsw = int(STOP[1:])
+                lv, last = [], px
+                for i in sorted((slo if d > 0 else shi), reverse=True):
+                    if i + 2 > kq:
+                        continue
+                    if i < kq - 480:
+                        break
+                    v = l[i] if d > 0 else h[i]
+                    if d * (last - v) > 0:
+                        lv.append(v); last = v
+                        if len(lv) == nsw:
+                            break
+                if len(lv) < nsw:
+                    dg(k, d, "no_swing_stop"); continue
+                base = lv[-1]
+            stop = base - d * buf
+            target = peak - d * tbuf
+            risk = d * (px - stop)
+            if risk <= 0 or d * (target - px) < MIN_RR * risk:
+                dg(k, d, "rr"); continue
+            ex_px = ex_q = rsn = None
+            for q in range(fill, n1):
+                if (d > 0 and l1[q] <= stop) or (d < 0 and h1[q] >= stop):
+                    ex_px, ex_q, rsn = ((min(stop, o1[q]) if d > 0 else max(stop, o1[q])) if q > fill else stop), q, "stop"
+                    break
+                if q > fill and ((d > 0 and h1[q] >= target) or (d < 0 and l1[q] <= target)):
+                    ex_px, ex_q, rsn = (max(target, o1[q]) if d > 0 else min(target, o1[q])), q, "target"
+                    break
+                if q > fill and stop_at[q]:
+                    ex_px, ex_q, rsn = c1[q], q, "forced"
+                    break
+            rec = {"symbol": s, "variant": variant, "dir": d, "entry": px, "stop": stop, "target": target,
+                   "rr": round(d * (target - px) / risk, 2), "cost_r": round(cost[fill] / risk, 3), "time": t1[fill],
+                   "leg": int(arm - k), "leg_start": t15[k - 1], "leg_top": t15[arm], "gap_lo": min(near, far), "gap_hi": max(near, far)}
+            if ex_q is None:
+                if live:
+                    rec.update(status="open", r_now=round(d * (c1[-1] - px) / risk, 3))
+                    out.append(rec)
+                continue
+            dg(k, d, "traded")
+            busy_until = ex_q
+            rec.update(status="closed", exit_time=t1[ex_q], exit=ex_px, reason=rsn,
+                       r=round(d * (ex_px - px) / risk - cost[fill] / risk, 4))
+            out.append(rec)
+    return out
+
+
+_SW_CACHE = {}
+
+
+def set_sw(sw):
+    key = id(sw)
+    if key not in _SW_CACHE:
+        _SW_CACHE.clear()
+        _SW_CACHE[key] = set(int(i) for i in sw)
+    return _SW_CACHE[key]

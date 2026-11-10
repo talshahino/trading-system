@@ -27,6 +27,7 @@ from agents import rules_agent as R
 GBODY = 1.5
 MIN_GAP = 0.3
 EXPIRY = 24          # hours from the gap's making (on 15m; scales with the timeframe: 96 candles)
+EDGE = "near"        # where in the gap to enter: near (first touch), mid, far (its other side)
 NEST = 0             # 0 = enter at the big gap's edge; N = at the first N-minute gap inside it (two timeframes down)
 TFM = 15             # v5's detection timeframe in minutes (user, 10.11.2026: does it work on 1h / 5m / 1m too?)
 MIN_RR = 1.0
@@ -128,6 +129,10 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                 if e_ is None:
                     dg(k, d, "no_small_gap"); continue
                 near = e_
+            if EDGE == "far":                                   # user, 10.11.2026: enter deeper, at the gap's far edge
+                near = far
+            elif EDGE == "mid":
+                near = (near + far) / 2
             # wait for the touch on the 1-minute bars, from the 15m candle that confirmed the swing
             q0 = t1.searchsorted(t15[arm + 2] + pd.Timedelta(minutes=TFM))
             q1 = min(n1, t1.searchsorted(t15[k] + pd.Timedelta(hours=EXPIRY * TFM / 15)))
@@ -165,6 +170,8 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
             kq = t15.searchsorted(t1[fill], side="right") - 1
             if STOP == "gap":
                 base = l[k - 1] if d > 0 else h[k - 1]
+            elif STOP == "top":                                 # "a bit further": beyond the start of the impulse
+                base = l[max(0, k - 5):k + 1].min() if d > 0 else h[max(0, k - 5):k + 1].max()
             else:
                 nsw = int(STOP[1:])
                 lv, last = [], px

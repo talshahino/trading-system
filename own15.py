@@ -201,16 +201,18 @@ def main():
                     continue
                 if name.startswith("G"):
                     # v5 (user, 09.11.2026): every gap of a strong move; "G<stop>[d]" e.g. Gs2, Gs3, Ggap, Gs2d (dominant)
-                    keepg = (OG.STOP, OG.DOMINANT, OG.TFM, OG.V5_MAX_COST, OG.NEST)
+                    keepg = (OG.STOP, OG.DOMINANT, OG.TFM, OG.V5_MAX_COST, OG.NEST, OG.EDGE)
                     core, _, tf = name[1:].partition("@")          # "Ggap@5": detection on 5-minute candles
                     tf, _, nest = tf.partition("n")                  # "Ggap@60n5": entry at the 5-minute gap inside
                     OG.TFM, OG.NEST = int(tf or 15), int(nest or 0)
                     OG.V5_MAX_COST = 0.10 if tf else None
+                    OG.EDGE = {"f": "far", "m": "mid"}.get(core[-1:], "near") if core[:3] in ("gap", "top") and len(core) == 4 else "near"
+                    core = core[:3] if OG.EDGE != "near" else core      # "Ggapf@1": far edge, "Gtopm@15": mid + stop beyond the impulse
                     OG.STOP, OG.DOMINANT = core.rstrip("d"), core.endswith("d")
                     try:
                         gx = OG.run_gaps(s, df, cost, stop_at, noent, variant=name)
                     finally:
-                        OG.STOP, OG.DOMINANT, OG.TFM, OG.V5_MAX_COST, OG.NEST = keepg
+                        OG.STOP, OG.DOMINANT, OG.TFM, OG.V5_MAX_COST, OG.NEST, OG.EDGE = keepg
                     for x in gx:
                         rows.append(x)
                         if x.get("status") == "closed":

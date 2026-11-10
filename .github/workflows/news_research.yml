@@ -1,0 +1,49 @@
+name: News research
+
+# News-release strategies by event type (news_research.py). Research only.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Check
+        run: python -u news_research.py 2>&1 | tee news.log
+      - name: Save data cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp news.log reports/news_research.log
+          git add reports/news_research.json reports/news_research.csv reports/news_research_trades.csv.gz reports/news_research.log
+          git commit -qm "News research report" || exit 0
+          for i in 1 2 3; do git pull -q --rebase && git push -q && break; done

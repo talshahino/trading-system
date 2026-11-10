@@ -267,6 +267,8 @@ def main():
                          "--test-from..this date, check on this date..end")
     ap.add_argument("--combos-file", default="",
                     help="file with sid|timeframe|symbol lines: run only these and save their trades (no Prophet)")
+    ap.add_argument("--stock-spread-mult", type=float, default=0.0,
+                    help="stocks: spread x this (FTMO's live stock spreads were ~2.4x the history, 10.11.2026)")
     ap.add_argument("--est-spread", type=float, default=0.0,
                     help="spread (share of price) for stocks without bid/ask history (default 0.0003): a stress test")
     ap.add_argument("--null-shift", type=int, default=0,
@@ -277,6 +279,8 @@ def main():
     args = ap.parse_args()
     if args.est_spread:
         C.EST_SPREAD["stock"] = args.est_spread
+    if args.stock_spread_mult:
+        C.EST_SPREAD["stock"] = C.EST_SPREAD["stock"] * args.stock_spread_mult
     global SPLIT, SPLIT_HE
     if args.test_from:
         SPLIT = pd.Timestamp(args.test_from, tz="UTC")
@@ -330,6 +334,8 @@ def main():
                     SPREADS[s] = None
                 if SPREADS[s] is None or len(SPREADS[s]) == 0:
                     SPREAD_EST.add(s)
+                elif args.stock_spread_mult and U.CLASS.get(s) == "stock":
+                    SPREADS[s] = SPREADS[s] * args.stock_spread_mult
             sess = session_mask(df, s, tf) if (args.stock_session_exit and not args.demo) else None
             if args.break_exit and not args.demo:
                 bm = break_mask(df, tf)

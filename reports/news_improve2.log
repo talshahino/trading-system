@@ -1,0 +1,60 @@
+    USDCAD 1Min 2026: 317,977 bars
+    USDCAD 1Min 2026: 317,977 bars
+    EURUSD 1Min 2026: 318,477 bars
+    EURUSD 1Min 2026: 318,477 bars
+    GBPUSD 1Min 2026: 318,321 bars
+    GBPUSD 1Min 2026: 318,321 bars
+    USDJPY 1Min 2026: 318,529 bars
+    USDJPY 1Min 2026: 318,529 bars
+    XAUUSD 1Min 2026: 303,911 bars
+    XAUUSD 1Min 2026: 303,911 bars
+    US100 1Min 2026: 293,690 bars
+    US100 1Min 2026: 293,690 bars
+    US500 1Min 2026: 293,299 bars
+    US500 1Min 2026: 293,299 bars
+    US30 1Min 2026: 293,504 bars
+    US30 1Min 2026: 293,504 bars
+    AUDUSD 1Min 2026: 318,135 bars
+    AUDUSD 1Min 2026: 318,135 bars
+    NZDUSD 1Min 2026: 318,001 bars
+    NZDUSD 1Min 2026: 318,001 bars
+
+=== JOBS BOX: 5848 variants. Best 15 on 2025, with 2026 (unseen)
+                                        var                                          syms  n25  mean25   t25  n26  mean26   t26
+574    box10|tf3|market|atr6|tgboxH|H30|be1         EURUSD,GBPUSD,US100,US30,US500,XAUUSD   17   0.318  7.80   19   0.234  5.67
+570   box10|tf3|market|atr6|tgboxH|H120|be1         EURUSD,GBPUSD,US100,US30,US500,XAUUSD   17   0.318  7.80   19   0.181  2.29
+578    box10|tf3|market|atr6|tgboxH|H60|be1         EURUSD,GBPUSD,US100,US30,US500,XAUUSD   17   0.318  7.80   19   0.213  3.81
+568   box10|tf3|market|atr6|tgboxH|H120|be0         EURUSD,GBPUSD,US100,US30,US500,XAUUSD   17   0.318  7.80   19   0.181  2.29
+572    box10|tf3|market|atr6|tgboxH|H30|be0         EURUSD,GBPUSD,US100,US30,US500,XAUUSD   17   0.318  7.80   19   0.234  5.67
+576    box10|tf3|market|atr6|tgboxH|H60|be0         EURUSD,GBPUSD,US100,US30,US500,XAUUSD   17   0.318  7.80   19   0.213  3.81
+1898  box15|tf3|market|atr6|tgboxH|H120|be1              EURUSD,GBPUSD,US30,USDJPY,XAUUSD   17   0.397  6.62   14   0.117  1.25
+1896  box15|tf3|market|atr6|tgboxH|H120|be0              EURUSD,GBPUSD,US30,USDJPY,XAUUSD   17   0.397  6.62   14   0.117  1.25
+1900   box15|tf3|market|atr6|tgboxH|H30|be0  EURUSD,GBPUSD,US100,US30,US500,USDJPY,XAUUSD   27   0.242  6.20   24   0.202  4.25
+1902   box15|tf3|market|atr6|tgboxH|H30|be1  EURUSD,GBPUSD,US100,US30,US500,USDJPY,XAUUSD   27   0.242  6.20   24   0.202  4.25
+3362   box20|tf3|market|atr6|tgboxH|H30|be0  EURUSD,GBPUSD,US100,US30,US500,USDJPY,XAUUSD   29   0.279  5.74   28   0.182  2.92
+3364   box20|tf3|market|atr6|tgboxH|H30|be1  EURUSD,GBPUSD,US100,US30,US500,USDJPY,XAUUSD   29   0.279  5.74   28   0.182  2.92
+2052   box15|tf3|retest|atr3|tg1.5|H120|be1                   EURUSD,GBPUSD,USDCAD,XAUUSD   19   0.974  5.69   12  -0.519 -1.79
+3504  box20|tf3|market|other|tgboxH|H30|be1  EURUSD,GBPUSD,US100,US30,US500,USDJPY,XAUUSD   29   0.305  5.52   28   0.153  2.47
+3502  box20|tf3|market|other|tgboxH|H30|be0  EURUSD,GBPUSD,US100,US30,US500,USDJPY,XAUUSD   29   0.305  5.52   28   0.153  2.47
+robustness: of the 20 best on 2025, 14 made money in 2026; their 2026 average -0.078R (all variants' 2026 average -0.017R)
+chosen on 2025: box10|tf3|market|atr6|tgboxH|H30|be1 [EURUSD,GBPUSD,US100,US30,US500,XAUUSD] -> 2026: 19 trades, 0.234R, t 5.67
+
+=== RATES SURPRISE: 241 variants. Best 15 on 2025, with 2026 (unseen)
+                             var                  syms  n25  mean25   t25  n26  mean26   t26
+4          D2|agree|atr3|tg2|H60                   all   11   0.315  0.75   16  -0.346 -0.97
+5          D2|agree|atr3|tg2|H60  AUDUSD,NZDUSD,USDCAD   11   0.315  0.75   16  -0.346 -0.97
+137    D3|all|atr3|tgnone|Hclose         NZDUSD,USDCAD    8   1.536  0.73   13   0.531  0.53
+10         D2|agree|atr3|tg3|H60                   all   11   0.370  0.68   16  -0.221 -0.48
+11         D2|agree|atr3|tg3|H60  AUDUSD,NZDUSD,USDCAD   11   0.370  0.68   16  -0.221 -0.48
+46          D2|all|atr3|tg3|H120         NZDUSD,USDCAD    8   0.472  0.67   13   0.002  0.00
+51        D2|all|atr3|tg3|Hclose         NZDUSD,USDCAD    8   0.472  0.67   13   0.120  0.22
+48          D2|all|atr3|tg3|H240         NZDUSD,USDCAD    8   0.472  0.67   13   0.075  0.15
+8         D2|agree|atr3|tg3|H120                   all   11   0.388  0.66   16  -0.221 -0.48
+151      D3|all|atr6|tgnone|H120         NZDUSD,USDCAD    8   0.434  0.64   13   0.688  1.36
+146         D3|all|atr6|tg3|H240         NZDUSD,USDCAD    8   0.408  0.63   13   0.799  1.51
+109  D3|agree|atr6|tgnone|Hclose                   all   10   0.488  0.54   17   0.445  0.94
+216         D5|all|atr6|tg2|H120         NZDUSD,USDCAD    8   0.259  0.54   13   0.539  1.37
+149       D3|all|atr6|tg3|Hclose         NZDUSD,USDCAD    8   0.354  0.54   13   0.821  1.54
+97   D3|agree|atr3|tgnone|Hclose                   all   10   0.922  0.54   17   0.621  0.75
+robustness: of the 20 best on 2025, 11 made money in 2026; their 2026 average +0.144R (all variants' 2026 average +0.168R)
+chosen on 2025: D2|agree|atr3|tg2|H60 [all] -> 2026: 16 trades, -0.346R, t -0.97

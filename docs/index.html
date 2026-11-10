@@ -1050,7 +1050,13 @@ function curveOf(s) {
 
 /* ---------- small sparkline (equity vs. the starting balance) ---------- */
 function spark(s, init) {
-  const pts = curveOf(s).map(p => p[2]);
+  // no trading (weekend, nights with no open trade): a run of unchanged points is shown as a short stub
+  const pts = [];
+  for (const v of curveOf(s).map(p => p[2])) {
+    let n = 0;
+    for (let j = pts.length - 1; j >= 0 && Math.abs(pts[j] - v) < 0.01; j--) n++;
+    if (n < 6) pts.push(v);
+  }
   if (pts.length < 2) return '<div class="lbl" style="text-align:center">הגרף יתמלא בקרוב</div>';
   const W = 200, H = 70, lo = Math.min(init, ...pts), hi = Math.max(init, ...pts), r = (hi - lo) || 1;
   const X = i => (i / (pts.length - 1) * W).toFixed(1), Y = v => (6 + (hi - v) / r * (H - 12)).toFixed(1);

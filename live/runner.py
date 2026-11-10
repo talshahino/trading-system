@@ -638,8 +638,10 @@ def send(req, what):
 # Fills far from the price the size was worked out on (user, 10.11.2026: FR08 SPCX on bot 4 sized 412 shares at
 # ~142.8, filled at 144.84 -> $1,289 at the stop instead of $460). Two guards:
 #  1. the price is read again right before sending, and the size is worked out on that fresh price;
-#  2. each instrument's slippage is remembered (last 20 fills, against us only), and the size is worked out as if
-#     the fill will be the usual bad case (80th percentile) worse - fewer lots, never more.
+#  2. each instrument's slippage is remembered (last 20 fills, against us only). Only for an instrument where a fill
+#     has already put the loss at the stop over the risk (+10%), the size is worked out as if the fill will be the
+#     usual bad case (80th percentile) worse - fewer lots, never more. Other instruments are sized as before
+#     (user, 10.11.2026: "only for instruments that go over the stop amount").
 SLIP_KEEP = 20
 
 
@@ -649,6 +651,8 @@ SLIP_SEED = {"SPCX": [2.80, 2.96, 4.21, 2.01]}
 
 
 def slip_guess(sym):
+    if sym not in SLIP_SEED and sym not in STATE.get("slip_over", {}):
+        return 0.0
     q = [x for x in STATE.get("slip", {}).get(sym, SLIP_SEED.get(sym, [])) if x > 0]
     return float(np.percentile(q, 80)) if len(q) >= 3 else (max(q) if q else 0.0)
 
@@ -733,9 +737,10 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
                 real = 0.0
             if real > risk * 1.1:
                 log(f"{combo}: filled at {fill} (asked {px}) - ${real:,.0f} at the stop, above the risk ${risk:,.0f}")
-                REP.notify(f"{BOT}: החלקה בכניסה", f"{pretty(combo)}\nבוצע ב-{fill:g} במקום {px:g}. בסטופ: ${real:,.0f} (מותר ${risk:,.0f}).\nהבוט ילמד מזה ויקטין את הכמות בכניסות הבאות בנכס הזה.",
+                REP.notify(f"{BOT}: החלקה בכניסה", f"{pretty(combo)}\nבוצע ב-{fill:g} במקום {px:g}. בסטופ: ${real:,.0f} (מותר ${risk:,.0f}).\nמעכשיו הבוט יקטין את הכמות בכניסות הבאות בנכס הזה לפי ההחלקה הרגילה שלו.",
                            priority=4, tags=["warning"], key="slip:" + combo, every=3600)
                 loss = real
+                STATE.setdefault("slip_over", {})[sym] = str(pd.Timestamp.now(tz="UTC"))
         STATE["entry"][combo] = str(entry_time)
         STATE["risk"][str(r.order)] = loss
         save_state()

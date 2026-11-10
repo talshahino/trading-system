@@ -1264,11 +1264,21 @@ function ov(s, a, light) {
         <span><i style="background:#E07A2E"></i>הפסד יומי מקסימלי: <b class="num">${usd(k.dayLim)}</b></span>
         <span><i style="background:#D0453A"></i>הפסד מקסימלי: <b class="num">${usd(k.maxLim)}</b></span></div>
       <div class="row" style="margin-top:10px;justify-content:space-between"><span class="mut">קווי יעדים בגרף</span><label class="sw"><input type="checkbox" id="linesSw" ${UI.lines ? "checked" : ""}><span></span></label></div></div>
-    <div class="h4">הפסדים מותרים</div><div id="ovRest">${rest}</div>`;
+    <div class="h4">הפסדים מותרים</div><div id="ovRest">${rest}</div>${a.name === "news_bot" ? newsHtml(s) : ""}`;
   const unitSeg = () => segment("unitSeg", [["$", "$"], ["%", "%"]], UI.unit, u => { UI.unit = u; unitSeg(); eqChart(s, a); });
   unitSeg();
   $("linesSw").onchange = e => { UI.lines = e.target.checked; eqChart(s, a); };
   eqChart(s, a);
+}
+
+/* bot 7 (economic releases): the three strategies' results and the coming releases */
+function newsHtml(s) {
+  const N = {EV01: "הליכה עם הפרסום", EV02: "נגד הקפיצה", EV03: "פריצת טווח"}, sm = s.summary || {};
+  const rows = Object.keys(N).map(k => { const x = sm[k] || {};
+    return `<div class="li"><span>${N[k]} <span class="mut">${k}</span></span><span class="num">${x.closed || 0} עסקאות · <span class="${(x.sum_r || 0) >= 0 ? "pos" : "neg"}">${(x.sum_r >= 0 ? "+" : "") + (+(x.sum_r || 0)).toFixed(2)}R</span>${x.win_pct != null ? ` · ${x.win_pct}% הצלחה` : ""}</span></div>`; }).join("");
+  const ev = (s.events || []).map(e => `<div class="li"><span>${esc(e.title)} <span class="mut">${esc(e.instrument)}</span></span><span class="num">${new Date(e.t).toLocaleString("he-IL", {...IL, weekday: "short", hour: "2-digit", minute: "2-digit"})}</span></div>`).join("");
+  return `<div class="h4">לפי אסטרטגיה</div><div class="card" style="padding:4px 14px">${rows}</div>
+    <div class="h4">הפרסומים הקרובים</div><div class="card" style="padding:4px 14px">${ev || '<div class="mut" style="padding:10px 0">אין פרסומים בהשפעה גבוהה בשבוע הקרוב</div>'}</div>`;
 }
 
 /* big interactive equity chart: touch / drag to read the value at any moment */

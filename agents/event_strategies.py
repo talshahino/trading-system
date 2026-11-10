@@ -24,11 +24,17 @@ def events_for(sym):
     """Release times (UTC) that concern this instrument: high impact or FTMO-restricted."""
     if sym in _EVENTS:
         return _EVENTS[sym]
-    from agents import ftmo_calendar as CAL
     try:
         items = json.loads(HIST.read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         items = []
+    _EVENTS[sym] = events_from(items, sym)
+    return _EVENTS[sym]
+
+
+def events_from(items, sym):
+    """The same selection from any list of FTMO calendar items (the live news bot passes the calendar it read)."""
+    from agents import ftmo_calendar as CAL
     cur = set(U.CURRENCIES.get(sym, []))
     out = set()
     for i in items:
@@ -37,8 +43,7 @@ def events_for(sym):
         ins = str(i.get("instrument", ""))
         if (i.get("restriction") and CAL.restricted_affects(sym, ins)) or ins in cur:
             out.add(pd.Timestamp(i["date"]).tz_convert("UTC"))
-    _EVENTS[sym] = sorted(out)
-    return _EVENTS[sym]
+    return sorted(out)
 
 
 def _event_bars(df):

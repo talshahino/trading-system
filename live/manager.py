@@ -536,6 +536,25 @@ def start_watch():
     log("started the scalping watch bot (no money)")
 
 
+# bot 7 (user, 10.11.2026): economic releases, virtual (live/news_bot.py), reads bot 1's candles like the watch bot
+NEWS_NAME = "news_bot"
+
+
+def start_news():
+    if running(NEWS_NAME) or not CFG.get("news_bot", True):
+        return
+    src = watch_source()
+    if not src:
+        return
+    env = os.environ.copy()
+    env.update(MANAGED="1", SOURCE_PORT=str(src["port"]), MANAGER_KEY=CFG["local_key"])
+    py = sys.executable.replace("pythonw.exe", "python.exe")
+    PROCS[NEWS_NAME] = subprocess.Popen([py, str(LIVE / "news_bot.py")], cwd=str(ROOT), env=env,
+                                        creationflags=0x08000000 if os.name == "nt" else 0, stdout=subprocess.DEVNULL,
+                                        stderr=open(LIVE / f"{NEWS_NAME}_stderr.log", "a"))
+    log("started bot 7, economic releases (virtual, no money)")
+
+
 def watch_mark(d):
     k = str(d.get("id") or "")
     if not k or len(k) > 80 or not re.fullmatch(r"[A-Za-z0-9./|-]+", k):
@@ -564,6 +583,7 @@ def watchdog():
         try:
             if not WATCH.get("installing"):
                 start_watch()
+                start_news()
             for a in list(accounts()):
                 if a.get("enabled") and not a.get("preparing") and not running(a["name"]):
                     if a.get("started") and time.time() - a["started"] < 120:
@@ -696,6 +716,12 @@ def public_accounts(with_run=True):
                     "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
                     "platform": "צפייה בלבד", "target_pct": 6, "preparing": False, "prepare_error": None, "mt5_hidden": True,
                     "virtual": True})
+    if CFG.get("news_bot", True):
+        out.append({"name": NEWS_NAME, "label": "בוט 7 · פרסומים כלכליים (וירטואלי)", "nickname": "בוט 7 · פרסומים", "bot": NEWS_NAME,
+                    "login": None, "server": "וירטואלי · בלי כסף", "enabled": True, "running": running(NEWS_NAME) if with_run else None,
+                    "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
+                    "platform": "צפייה בלבד", "target_pct": 10, "preparing": False, "prepare_error": None, "mt5_hidden": True,
+                    "virtual": True})
     return out
 
 
@@ -767,6 +793,7 @@ def _install_update():
     # no message here: the user gets one "update installed" when everything runs again (or "update failed")
     names = [a["name"] for a in accounts() if running(a["name"])]
     stop_bot(WATCH_NAME)
+    stop_bot(NEWS_NAME)
     for n in names:
         stop_bot(n)
     for a in accounts():
@@ -1016,7 +1043,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True})
             if path == "/logs":                          # behind the secret code only; never published
                 which = str(d.get("which") or "manager")
-                if which not in ("manager", WATCH_NAME) and not acc_by(which):
+                if which not in ("manager", WATCH_NAME, NEWS_NAME) and not acc_by(which):
                     raise ValueError("אין לוג כזה")
                 f = LIVE / f"{which}.log"
                 lines = f.read_text(encoding="utf-8", errors="replace").splitlines()[-400:] if f.exists() else []

@@ -74,6 +74,10 @@ KEEP = 60                     # closed trades kept in the state (with their cand
 # virtual demo account (user, 06.11.2026): $100,000 like the other demo accounts, risk per trade as bots 2 and 4,
 # the bots' own daily stop (4.5%, FTMO's limit is 5%) and FTMO's 10% maximum loss
 INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.0045, 0.045, 0.10
+# the virtual account, v2 (user, 10.11.2026: "as if it were a real demo account"): a fresh $100,000 from the moment this
+# version starts, only the two gap tracks count, each with its own risk: v5 (15m) 0.4%, the 1-minute track 0.075%.
+# FTMO rules: no new trades after a 4.5% loss in the day, the account burns at a 10% loss from the start.
+ACCT_V, RISK_V5, RISK_V1M = 2, 0.004, 0.00075
 
 
 def log(msg):
@@ -226,7 +230,14 @@ def main():
                            "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים בדקה: אותם כללים בגרף הדקה, המתנה של 96 דקות לנגיעה · מסלול פערים (v5): כל פער של נר חזק במדדים, כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך, 30% יוצאים ב־90% מהדרך והשאר לברייק · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
                            "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
-    acc = state.get("vacct") or {"initial": INITIAL, "risk_pct": round(RISK * 100, 3), "ledger": [], "breached": None}
+    acc = state.get("vacct") or {}
+    if acc.get("v") != ACCT_V:
+        # a new account: nothing that happened before counts
+        acc = {"v": ACCT_V, "initial": INITIAL, "risk_pct": round(RISK_V5 * 100, 3), "risk_v1m_pct": round(RISK_V1M * 100, 4),
+               "ledger": [], "breached": None, "started": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
+        for t in trades.values():
+            for f in ("risk_usd", "skipped", "pnl", "pnl_now"):
+                t.pop(f, None)
 
     def balance():
         return acc["initial"] + sum(x["pnl"] for x in acc["ledger"])
@@ -330,8 +341,11 @@ def main():
                     for f in ("risk_usd", "skipped"):
                         if f in old:
                             rec[f] = old[f]
-                    if (rec["extra"] or rec["v4"] or rec["v5"] or rec["v1m"]) and "risk_usd" not in rec:
-                        rec["skipped"] = "v4" if rec["v4"] else "v5" if rec["v5"] else "v1m" if rec["v1m"] else "extra"   # own summary; not in the old tracks' account
+                    if "risk_usd" not in rec and "skipped" not in rec:
+                        if not (rec["v5"] or rec["v1m"]):
+                            rec["skipped"] = "v4" if rec["v4"] else "extra" if rec["extra"] else "old"   # only the gap tracks count
+                        elif rec["status"] in ("open", "closed") and rec["time"] and rec["time"] < acc["started"]:
+                            rec["skipped"] = "before"                                       # before the account opened
                     if rec["status"] in ("open", "closed") and "risk_usd" not in rec and "skipped" not in rec:
                         bal, day = balance(), prague_day(rec["time"])
                         start = bal - day_pnl(day)
@@ -340,7 +354,7 @@ def main():
                         elif day_pnl(day) <= -DAILY_STOP * start:
                             rec["skipped"] = "daily"
                         else:
-                            rec["risk_usd"] = round(bal * RISK, 2)
+                            rec["risk_usd"] = round(bal * (RISK_V5 if rec["v5"] else RISK_V1M), 2)
                     if rec.get("risk_usd"):
                         if rec["status"] == "closed" and rec.get("r") is not None:
                             rec["pnl"] = round(rec["r"] * rec["risk_usd"], 2)
@@ -431,23 +445,23 @@ def main():
             del ec[:-4000]
         acc.setdefault("started", now_iso)
         pip = lambda n: 0.01 if n.endswith("JPY") else 0.0001 if (len(n) == 6 and n.isalpha()) else 1.0  # noqa: E731
-        combo = lambda n: f"OWN|15Min|{n}"  # noqa: E731
+        combo = lambda n, t=None: f"OWN|{'1Min' if (t or {}).get('v1m') else '15Min'}|{n}"  # noqa: E731
         counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
-        state.update({"account": "וירטואלי", "server": "צפייה בלבד · בלי כסף", "initial": acc["initial"], "risk": RISK,
+        state.update({"account": "וירטואלי · פערים v5 + דקה", "server": "צפייה בלבד · בלי כסף · סיכון 0.4% / 0.075%", "initial": acc["initial"], "risk": RISK_V5,
                       "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
-                      "halted_until": None, "combos": [combo(n) for n in SYMBOLS if n not in EXTRA], "started": acc["started"], "withdrawals": [],
+                      "halted_until": None, "combos": [combo(n) for n in V5_SYMBOLS] + [combo(n, {"v1m": True}) for n in V5_SYMBOLS], "started": acc["started"], "withdrawals": [],
                       "equity_curve": ec, "lows": {},
                       "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
-                                     "combo": combo(t["symbol"]), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
+                                     "combo": combo(t["symbol"], t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
                                      "now": t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
                                      "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
                                      "sl_usd": -(t.get("risk_usd") or 0), "tp_usd": (t.get("risk_usd") or 0) * (t.get("rr") or 0),
                                      "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": pip(t["symbol"]), "free": False,
                                      "mae": None, "mfe": None} for t in live_ if t["status"] == "open" and t.get("risk_usd")],
-                      "trades": [{"time": t["exit_time"], "combo": combo(t["symbol"]), "symbol": t["symbol"],
+                      "trades": [{"time": t["exit_time"], "combo": combo(t["symbol"], t), "symbol": t["symbol"],
                                   "dir": "קנייה" if t["dir"] > 0 else "מכירה", "lots": "וירטואלי", "price": t["exit"], "pnl": t["pnl"],
                                   "why": t.get("reason")} for t in counted],
-                      "closed": [{"id": t["id"], "combo": combo(t["symbol"]), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
+                      "closed": [{"id": t["id"], "combo": combo(t["symbol"], t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
                                   "lots": "וירטואלי", "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
                                   "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": None, "mfe": None,
                                   "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",

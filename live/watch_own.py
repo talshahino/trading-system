@@ -186,8 +186,16 @@ class Calendar:
         return stop_at, np.r_[noent[1:], False]
 
 
+# the real cost (spread + commission, in price) of the gap tracks' instruments: the median of the backtest, which used
+# FTMO's recorded 1-minute spreads. The class estimate below was ~4x too high for the indices (GER40 5.3 vs 1.4 points),
+# so the 10%-of-risk cost filter skipped almost every 1-minute trade (found 10.11.2026)
+REAL_COST = {"GER40": 1.42, "US100": 1.22, "US30": 2.13, "US500": 0.51}
+
+
 def cost_of(name, df):
     c = df["c"].to_numpy(float)
+    if name in REAL_COST:
+        return np.full(len(c), REAL_COST[name])
     cls = U.CLASS.get(name, "fx")
     return c * C.EST_SPREAD.get(cls, 0.0002) + CORE.comm_px(name, c)
 
@@ -322,6 +330,7 @@ def main():
                            "setup_t": iso(x.get("setup_t")) or old.get("setup_t"), "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
                            "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide")),
+                           "why": x.get("why"), "touch_t": iso(x.get("touch_t")),
                            "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m"))}
                     if x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:
                         rec["chart_v"] = 2
@@ -368,6 +377,10 @@ def main():
                             rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
                     side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
+                    if rec["status"] == "cancelled" and rec.get("why") and prev != "cancelled":
+                        why = {"rr": f"היעד קרוב מדי (יחס 1:{rec.get('rr')})", "cost": f"העלות {round(100 * (rec.get('cost_r') or 0))}% מהסיכון"}.get(rec["why"], rec["why"])
+                        REP.notify(f"סקלפינג (צפייה): {name} נגע ולא נכנס", f"{side} · נגיעה ב־{fmt(name, rec['entry'])} · לא נכנס: {why}",
+                                   tags=["eyes"], key=f"wx:{k}", every=86400)
                     if prev is None and rec["status"] == "pending":
                         REP.notify(f"סקלפינג (צפייה): {name} מחכה לכניסה", f"{side} · דחף של {rec['leg']} נרות · כניסה בנגיעה ב־{fmt(name, rec['entry'])}\n"
                                    f"סטופ {fmt(name, rec['stop'])} · לא נשלחת פקודה", tags=["eyes"], key=f"wp:{k}", every=86400)

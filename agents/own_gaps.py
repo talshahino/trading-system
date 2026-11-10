@@ -192,9 +192,21 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
             target = peak - d * tbuf
             risk = d * (px - stop)
             if risk <= 0 or d * (target - px) < MIN_RR * risk:
-                dg(k, d, "rr"); continue
+                dg(k, d, "rr")
+                if live:   # touched but not taken: show it, with the reason (user, 10.11.2026: "why did it not enter?")
+                    out.append({"symbol": s, "variant": variant, "status": "cancelled", "why": "rr", "dir": d, "entry": float(px), "stop": float(stop),
+                                "target": float(target), "setup_t": t15[arm + 2], "touch_t": t1[fill], "leg": int(arm - k), "leg_start": t15[k - 1],
+                                "leg_top": t15[arm], "gap_lo": min(near, far), "gap_hi": max(near, far), "rr": round(d * (target - px) / risk, 2) if risk > 0 else None,
+                                "cost_r": round(cost[fill] / risk, 3) if risk > 0 else None})
+                continue
             if V5_MAX_COST is not None and cost[fill] / risk > V5_MAX_COST:
-                dg(k, d, "cost"); continue
+                dg(k, d, "cost")
+                if live:   # touched but not taken: show it, with the reason (user, 10.11.2026: "why did it not enter?")
+                    out.append({"symbol": s, "variant": variant, "status": "cancelled", "why": "cost", "dir": d, "entry": float(px), "stop": float(stop),
+                                "target": float(target), "setup_t": t15[arm + 2], "touch_t": t1[fill], "leg": int(arm - k), "leg_start": t15[k - 1],
+                                "leg_top": t15[arm], "gap_lo": min(near, far), "gap_hi": max(near, far), "rr": round(d * (target - px) / risk, 2) if risk > 0 else None,
+                                "cost_r": round(cost[fill] / risk, 3) if risk > 0 else None})
+                continue
             ex_px = ex_q = rsn = None
             # PART (user, 10.11.2026, approved): PART_FRAC of the position out at PART_WAY of the way to the target,
             # the rest's stop to the entry (break-even)

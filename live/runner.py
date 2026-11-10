@@ -635,6 +635,33 @@ def send(req, what):
     return r
 
 
+# Fills far from the price the size was worked out on (user, 10.11.2026: FR08 SPCX on bot 4 sized 412 shares at
+# ~142.8, filled at 144.84 -> $1,289 at the stop instead of $460). Two guards:
+#  1. the price is read again right before sending, and the size is worked out on that fresh price;
+#  2. each instrument's slippage is remembered (last 20 fills, against us only), and the size is worked out as if
+#     the fill will be the usual bad case (80th percentile) worse - fewer lots, never more.
+SLIP_KEEP = 20
+
+
+# until a bot has its own fills of an instrument: SPCX's 4 full-size entries on bot 4 filled about $2.0-$4.2 worse
+# than the price their size was worked out on (worked back from lots, stops and the $460 risk; 05.-10.11.2026)
+SLIP_SEED = {"SPCX": [2.80, 2.96, 4.21, 2.01]}
+
+
+def slip_guess(sym):
+    q = [x for x in STATE.get("slip", {}).get(sym, SLIP_SEED.get(sym, [])) if x > 0]
+    return float(np.percentile(q, 80)) if len(q) >= 3 else (max(q) if q else 0.0)
+
+
+def note_slip(sym, d, asked, filled):
+    if not (asked and filled):
+        return
+    x = d * (float(filled) - float(asked))            # > 0 = filled worse than asked
+    q = STATE.setdefault("slip", {}).setdefault(sym, [])
+    q.append(round(x, 6))
+    del q[:-SLIP_KEEP]
+
+
 def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=None):
     risk = ACC.risk_usd * mult if risk is None else risk
     base = ACC.risk_usd * mult
@@ -651,7 +678,20 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
     if rules.get("tp") and tp == tp and tp is not None:
         tp = px + d * rules["tp"] * abs(tp - px)
     sl = round(sl, mt5.symbol_info(name).digits)          # size the trade for the stop exactly as it will be sent
-    lots = lots_for(sym, px, sl, risk)
+    fresh = mt5.symbol_info_tick(name)                  # guard 1: the price right before sending
+    if fresh:
+        px2 = fresh.ask if d > 0 else fresh.bid
+        if px2 and abs(px2 - px) > 0:
+            log(f"{combo}: price moved {px} -> {px2} before sending; sizing on {px2}")
+            px = px2
+    if d * (px - sl) <= 0:
+        log(f"skip {combo}: price {px} already beyond the stop")
+        return
+    slip = slip_guess(sym)                              # guard 2: this instrument's usual bad fill
+    size_px = px + d * slip
+    if slip > 0:
+        log(f"{combo}: sizing as if filled {slip:g} worse ({size_px:g}), from the last fills of {sym}")
+    lots = lots_for(sym, size_px, sl, risk)
     if lots <= 0:
         log(f"skip {combo}: lot size too small")
         return
@@ -660,11 +700,11 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
     # the stop as it will be sent) may never be above the risk set for this bot. Otherwise: no trade + alert.
     sl_r = round(sl, info.digits)
     try:
-        loss = abs(mt5.order_calc_profit(mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, name, lots, px, sl_r) or 0.0)
+        loss = abs(mt5.order_calc_profit(mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, name, lots, size_px, sl_r) or 0.0)
     except Exception:  # noqa: BLE001
         loss = 0.0
     if not loss:
-        loss = lots * abs(px - sl_r) / info.trade_tick_size * info.trade_tick_value
+        loss = lots * abs(size_px - sl_r) / info.trade_tick_size * info.trade_tick_value
     if loss > risk + 0.01:
         log(f"BLOCKED {combo}: {lots} lots would lose ${loss:,.2f} at the stop, above the allowed risk ${risk:,.2f}")
         REP.notify(f"{BOT}: עסקה נחסמה", f"{pretty(combo)}\nבסטופ היא הייתה מפסידה ${loss:,.0f}, יותר מהסיכון המותר (${risk:,.0f}). לא נפתחה.",
@@ -684,6 +724,18 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
                    + (f"\nסיכון מוקטן: קרוב לגבול ההפסד (רגיל ${base:,.0f})" if risk < base - 0.5 else ""),
                    tags=["chart_with_upwards_trend" if d > 0 else "chart_with_downwards_trend"])
     if r is not None:
+        fill = getattr(r, "price", 0) or 0
+        note_slip(sym, d, px, fill)
+        if fill and d * (fill - size_px) > 0:
+            try:
+                real = abs(mt5.order_calc_profit(mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, name, lots, fill, sl_r) or 0.0)
+            except Exception:  # noqa: BLE001
+                real = 0.0
+            if real > risk * 1.1:
+                log(f"{combo}: filled at {fill} (asked {px}) - ${real:,.0f} at the stop, above the risk ${risk:,.0f}")
+                REP.notify(f"{BOT}: החלקה בכניסה", f"{pretty(combo)}\nבוצע ב-{fill:g} במקום {px:g}. בסטופ: ${real:,.0f} (מותר ${risk:,.0f}).\nהבוט ילמד מזה ויקטין את הכמות בכניסות הבאות בנכס הזה.",
+                           priority=4, tags=["warning"], key="slip:" + combo, every=3600)
+                loss = real
         STATE["entry"][combo] = str(entry_time)
         STATE["risk"][str(r.order)] = loss
         save_state()

@@ -197,7 +197,7 @@ def bars(df, t0, t1, rule):
 
 
 def tid(x):
-    return f"{x['symbol']}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}" + ("|v4" if x.get("v4") else "|v5" if x.get("v5") else "")
+    return f"{x['symbol']}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}" + ("|v4" if x.get("v4") else "|v5" if x.get("v5") else "|v1m" if x.get("v1m") else "")
 
 
 def iso(t):
@@ -223,7 +223,7 @@ def main():
         state = {}
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
                   "rules": "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
-                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים (v5): כל פער של נר חזק במדדים, כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך, 30% יוצאים ב־90% מהדרך והשאר לברייק · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
+                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים בדקה: אותם כללים בגרף הדקה, המתנה של 96 דקות לנגיעה · מסלול פערים (v5): כל פער של נר חזק במדדים, כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך, 30% יוצאים ב־90% מהדרך והשאר לברייק · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
                            "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
     acc = state.get("vacct") or {"initial": INITIAL, "risk_pct": round(RISK * 100, 3), "ledger": [], "breached": None}
@@ -273,6 +273,19 @@ def main():
                             res.append(x)
                     finally:
                         OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY = keep5
+                if name in V5_SYMBOLS:
+                    # v5 on 1-minute candles (user, 10.11.2026: "if it is profitable, why not add it"): the same rules,
+                    # gaps found on the 1-minute chart, waiting 96 minutes for the touch
+                    keep1 = (OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM)
+                    try:
+                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM = "gap", False, 0.10, 0.3, 0.9, 1
+                        for x in OG.run_gaps(name, df, cst, stop_at, noent, live=True, variant="v1m"):
+                            if x.get("status") == "pending" and pd.Timestamp(x["setup_t"]) < df.index[-1] - pd.Timedelta(minutes=96):
+                                continue
+                            x["v1m"] = True
+                            res.append(x)
+                    finally:
+                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM = keep1
                 if name in V4_SYMBOLS:
                     keep4 = {k_: getattr(CORE, k_) for k_ in V4}
                     try:
@@ -298,7 +311,7 @@ def main():
                            "setup_t": iso(x.get("setup_t")) or old.get("setup_t"), "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
                            "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide")),
-                           "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5"))}
+                           "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m"))}
                     if x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:
                         rec["chart_v"] = 2
                         ls = pd.Timestamp(x["leg_start"])
@@ -317,8 +330,8 @@ def main():
                     for f in ("risk_usd", "skipped"):
                         if f in old:
                             rec[f] = old[f]
-                    if (rec["extra"] or rec["v4"] or rec["v5"]) and "risk_usd" not in rec:
-                        rec["skipped"] = "v4" if rec["v4"] else "v5" if rec["v5"] else "extra"   # own summary; not in the old tracks' account
+                    if (rec["extra"] or rec["v4"] or rec["v5"] or rec["v1m"]) and "risk_usd" not in rec:
+                        rec["skipped"] = "v4" if rec["v4"] else "v5" if rec["v5"] else "v1m" if rec["v1m"] else "extra"   # own summary; not in the old tracks' account
                     if rec["status"] in ("open", "closed") and "risk_usd" not in rec and "skipped" not in rec:
                         bal, day = balance(), prague_day(rec["time"])
                         start = bal - day_pnl(day)
@@ -340,7 +353,7 @@ def main():
                         elif rec["status"] == "open" and rec.get("r_now") is not None:
                             rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
-                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
+                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
                     if prev is None and rec["status"] == "pending":
                         REP.notify(f"סקלפינג (צפייה): {name} מחכה לכניסה", f"{side} · דחף של {rec['leg']} נרות · כניסה בנגיעה ב־{fmt(name, rec['entry'])}\n"
                                    f"סטופ {fmt(name, rec['stop'])} · לא נשלחת פקודה", tags=["eyes"], key=f"wp:{k}", every=86400)
@@ -370,7 +383,8 @@ def main():
         live_ = [t for t in trades.values() if t["status"] in ("pending", "open")]
         cancelled = sorted([t for t in trades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]
         trades = {t["id"]: t for t in closed + live_ + cancelled}
-        core_closed = [t for t in closed if not t.get("extra") and not t.get("v4") and not t.get("v5")]
+        core_closed = [t for t in closed if not t.get("extra") and not t.get("v4") and not t.get("v5") and not t.get("v1m")]
+        rs_v1m = [t["r"] for t in closed if t.get("r") is not None and t.get("v1m")]
         rs_v5 = [t["r"] for t in closed if t.get("r") is not None and t.get("v5")]
         rs_v4 = [t["r"] for t in closed if t.get("r") is not None and t.get("v4")]
         rs = [t["r"] for t in core_closed if t.get("r") is not None]
@@ -381,10 +395,14 @@ def main():
                       "watch": sorted(trades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
                       "summary": {"closed": len(rs), "sum_r": round(float(np.sum(rs)), 2) if rs else 0.0,
                                   "avg_r": round(float(np.mean(rs)), 3) if rs else None, "win_pct": round(100 * float(np.mean(np.array(rs) > 0)), 1) if rs else None,
-                                  "open": sum(t["status"] == "open" and not t.get("extra") and not t.get("v4") and not t.get("v5") for t in live_),
-                                  "pending": sum(t["status"] == "pending" and not t.get("extra") and not t.get("v4") and not t.get("v5") for t in live_),
+                                  "open": sum(t["status"] == "open" and not any(t.get(k_) for k_ in ("extra", "v4", "v5", "v1m")) for t in live_),
+                                  "pending": sum(t["status"] == "pending" and not any(t.get(k_) for k_ in ("extra", "v4", "v5", "v1m")) for t in live_),
                                   "strict": {"closed": len(rs_strict), "sum_r": round(float(np.sum(rs_strict)), 2) if rs_strict else 0.0},
                                   "wide": {"closed": len(rs_wide), "sum_r": round(float(np.sum(rs_wide)), 2) if rs_wide else 0.0},
+                                  "v1m": {"closed": len(rs_v1m), "sum_r": round(float(np.sum(rs_v1m)), 2) if rs_v1m else 0.0,
+                                          "win_pct": round(100 * float(np.mean(np.array(rs_v1m) > 0)), 1) if rs_v1m else None,
+                                          "open": sum(t["status"] == "open" and t.get("v1m") for t in live_),
+                                          "pending": sum(t["status"] == "pending" and t.get("v1m") for t in live_)},
                                   "v5": {"closed": len(rs_v5), "sum_r": round(float(np.sum(rs_v5)), 2) if rs_v5 else 0.0,
                                          "win_pct": round(100 * float(np.mean(np.array(rs_v5) > 0)), 1) if rs_v5 else None,
                                          "open": sum(t["status"] == "open" and t.get("v5") for t in live_),

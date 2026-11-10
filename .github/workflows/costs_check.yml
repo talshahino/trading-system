@@ -1,0 +1,43 @@
+name: Costs check
+
+# Real costs on the bots' accounts vs the backtests' costs (costs_check.py). Read-only for the bots.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Check
+        run: python -u costs_check.py 2>&1 | tee costs.log
+      - name: Commit report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp costs.log reports/costs_check.log
+          git add reports/costs_check.json reports/costs_check.log
+          git commit -qm "Costs check report" || exit 0
+          for i in 1 2 3; do git pull -q --rebase && git push -q && break; done

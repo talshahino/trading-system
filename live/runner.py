@@ -4,7 +4,7 @@ terminal, with exactly the code that was backtested (agents/rules_agent.py).
 How it decides (every 5 s it checks for newly closed bars):
   1. fetch the combo's bars from MT5, convert to UTC like the backtest (4H = UTC-aligned from 1H),
      append the bar that just opened with open=high=low=close (nothing from the future)
-  2. replay the strategy with the backtest engine (same breakeven at 60%, stocks closed at session end; with close_before_breaks, every position closed before market breaks over 2 hours)
+  2. replay the strategy with the backtest engine (same breakeven at 60%; no-target strategies: entry at 2.5R, +1R at 3R; stocks closed at session end; with close_before_breaks, every position closed before market breaks over 2 hours)
   3. the replay's last trade tells what to do now:
        - a trade entering on the bar that just opened -> open it (same stop and target)
        - our open trade still open in the replay      -> move the stop to the replay's current stop
@@ -250,9 +250,21 @@ def cal_masks(df, sym, tf):
     return CAL.masks(df, sym, TF_MIN[tf], c["restricted"], c["holidays"])
 
 
+# Strategies with no target (user, 10.11.2026): once 2.5R in profit the stop goes to the entry (+ costs), once 3R in
+# profit to entry + 1R. Tested on the 50 live no-target combos (runs 798/809/812/813): last 1.5 years +1,312R vs
+# +1,311R, drawdowns 438R vs 445R, trades that reached 2.5R and still lost 4 instead of 42. Strategies with a target
+# keep the 60%-of-the-way breakeven; the engine applies both only when the trade has no target.
+PROTECT = {"be_r": 2.5, "lock_r": (3.0, 1.0)}
+
+
 def strat(sid, df, sym, tf):
     fn = R.STRATEGIES[sid][1]
-    return CAL.blocked(fn, cal_masks(df, sym, tf)[1]) if CLOSE_BREAKS else fn
+    fn = CAL.blocked(fn, cal_masks(df, sym, tf)[1]) if CLOSE_BREAKS else fn
+
+    def g(d):
+        L, S, plan = fn(d)
+        return L, S, {**plan, **PROTECT}
+    return g
 
 
 def learn_breaks(sym):

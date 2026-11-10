@@ -365,6 +365,9 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 .sk{border-radius:10px;background:linear-gradient(90deg,rgba(127,127,127,.08),rgba(127,127,127,.16),rgba(127,127,127,.08))}
 .allcard{border-radius:16px;padding:10px 14px 12px;margin-top:4px;background:rgba(31,58,95,.07);border:1.5px solid rgba(31,58,95,.22)}
 .allcard b{display:block;font-size:13.5px;color:var(--vps)}
+.eqv{padding:4px 10px;border-radius:10px;transition:background .3s}
+.eqv.up{background:rgba(30,150,80,.16);box-shadow:0 0 12px rgba(30,150,80,.35)}
+.eqv.dn{background:rgba(210,50,50,.14);box-shadow:0 0 12px rgba(210,50,50,.35)}
 </style>
 </head>
 <body>
@@ -1033,7 +1036,7 @@ function calc(s, a) {
   const dayLow = lw.day === today && lw.day_low != null ? Math.min(lw.day_low, eq) : Math.min(eq, ...curve.filter(p => pragueDay(p[0]) === today).map(p => p[2]));
   const allLow = lw.all_low != null ? Math.min(lw.all_low, eq) : Math.min(eq, ...curve.map(p => p[2]));
   const wds = s.withdrawals || [], wd = wds.reduce((x, w) => x + (+w.amount || 0), 0);      // read by the bot from MetaTrader
-  return {init, eq, bal, ds, tot: eq + wd - init, wd, wds, open: eq - bal, today: eq - ds, dayLow, allLow,
+  return {init, eq, bal, ds, tot: eq + wd - init, wd, wds, open: eq - bal, dayClosed: bal - ds, today: eq - ds, dayLow, allLow,
           tgt: (a && a.target_pct) || 10, dayLim: ds - 0.05 * init, maxLim: 0.9 * init};
 }
 function curveOf(s) {
@@ -1068,10 +1071,11 @@ function accCard(a) {
     : a.preparing ? "מכין עותק MetaTrader לחשבון הזה… (כדקה)" : a.running ? "MetaTrader נפתח והבוט מתחבר. הנתונים הראשונים יופיעו תוך דקה־שתיים." : "עוד אין נתונים מהחשבון הזה."}</div></div>`;
   const k = calc(s, a);
   return `<div class="acard" data-acc="${esc(a.name)}">${head}
-    <div class="ab"><div><div class="big ${cls(k.tot)}">${usdBig(k.tot, true)}</div><div class="lbl">רווח/הפסד מהפתיחה · <span class="num ${cls(k.tot)}">${pct(k.tot / k.init * 100)}</span></div>
-      <div class="big ${cls(k.today)}" style="font-size:17px;margin-top:10px">${usdBig(k.today, true)}</div><div class="lbl">היום · <span class="num ${cls(k.today)}">${pct(k.today / k.init * 100)}</span></div></div>
+    <div class="ab"><div><div class="big ${cls(k.tot)}">${usdBig(k.tot, true)}</div><div class="lbl">רווח מצטבר מהפתיחה · <span class="num ${cls(k.tot)}">${pct(k.tot / k.init * 100)}</span></div>
+      <div class="big ${cls(k.open)}" style="font-size:17px;margin-top:10px">${usdBig(k.open, true)}</div><div class="lbl">פתוח (Equity − Balance)</div>
+      <div class="lbl" style="margin-top:6px">רווח יומי סגור · <span class="num ${cls(Math.round(k.dayClosed / k.init * 1e4) / 100 || 0)}">${pct(Math.round(k.dayClosed / k.init * 1e4) / 100 || 0)}</span></div></div>
       <div>${spark(s, k.init)}</div></div>
-    <div class="af"><span><span class="mut">הון</span> <b>${usd(k.eq)}</b></span><span><span class="mut">יתרה</span> <b>${usd(k.bal)}</b></span></div></div>`;
+    <div class="af"><span><span class="mut">Balance</span> <b>${usd(k.bal)}</b></span><span class="eqv ${k.eq > k.bal ? "up" : k.eq < k.bal ? "dn" : ""}"><span class="mut">Equity</span> <b>${usd(k.eq)}</b></span></div></div>`;
 }
 function renderList() {
   const all = accList(), vis = all.filter(a => !a.hidden);

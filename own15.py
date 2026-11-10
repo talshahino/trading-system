@@ -220,7 +220,9 @@ def main():
                                 rows.append(y if y is not None else dict(x, variant=f"{x['variant']}|pt{w:g}"))
                     continue
                 sel = "arm" if name.endswith("~a") else "fill"
-                name = name[:-2] if name.endswith("~a") else name
+                OG.FIRST_ONLY = name.endswith("~f")
+                suf = name[-2:] if name[-2:] in ("~a", "~f") else ""
+                name = name[:-2] if suf else name
                 OG.SEL = sel
                 fut = name.startswith("F")
                 if fut:
@@ -245,7 +247,7 @@ def main():
                     core = core[:3] if OG.EDGE != "near" else core      # "Ggapf@1": far edge, "Gtopm@15": mid + stop beyond the impulse
                     OG.STOP, OG.DOMINANT = core.rstrip("d"), core.endswith("d")
                     try:
-                        gx = OG.run_gaps(s, df, cost, s_at, n_e, variant=("F" if fut else "") + name + ("~a" if sel == "arm" else ""))
+                        gx = OG.run_gaps(s, df, cost, s_at, n_e, variant=("F" if fut else "") + name + suf)
                     finally:
                         OG.STOP, OG.DOMINANT, OG.TFM, OG.V5_MAX_COST, OG.NEST, OG.EDGE = keepg
                     for x in gx:

@@ -50,6 +50,7 @@ def _swing_levels(arr, w=2, high=True):
 # which setups a trade blocks (10.11.2026): "fill" = only touches while it is open; "arm" = also setups that were already
 # waiting when it opened (they are dropped when a trade opens, as the old backtest did, but in the order things happen)
 SEL = "fill"
+FIRST_ONLY = False   # only the oldest gap of a move (one swing turn = one move) can be traded - the user's "first gap"
 
 
 def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
@@ -70,6 +71,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
     slo = _swing_levels(l, 2, False)
     pip = CORE.pip_of(s)
     out = []
+    firsts = set()
 
     def dg(k, d, why):
         if DIAG is not None:
@@ -113,6 +115,10 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                     break
             if arm is None:
                 dg(k, d, "closed_in_move" if j < end - 1 else "no_turn"); continue
+            if FIRST_ONLY:
+                if (d, arm) in firsts:
+                    dg(k, d, "not_first"); continue
+                firsts.add((d, arm))
             if NEST:
                 # entry two timeframes down (user, 10.11.2026): the first gap of the NEST-minute chart, in the same
                 # direction, made during the 3 candles of the big gap and lying inside it; enter at ITS near edge

@@ -1,0 +1,72 @@
+    AUS200 1Min 2026: 258,069 bars
+    AUS200 1Min 2026: 258,069 bars
+    GER40 1Min 2026: 292,187 bars
+    GER40 1Min 2026: 292,187 bars
+    US500 1Min 2026: 293,299 bars
+    US500 1Min 2026: 293,299 bars
+    US100 1Min 2026: 293,690 bars
+    US100 1Min 2026: 293,690 bars
+    US30 1Min 2026: 293,504 bars
+    US30 1Min 2026: 293,504 bars
+    UK100 1Min 2026: 291,681 bars
+    UK100 1Min 2026: 291,681 bars
+
+=== DRIFT: best 12 on 2025 (train), with 2026 (unseen)
+   strat          var filter         syms  n25  mean25   t25  n26  mean26   t26
+1  DRIFT   24h|stop30    all         US30   12   0.230  2.94   14  -0.330 -1.97
+5  DRIFT    6h|stop30    all         US30   12   0.430  2.48   14  -0.348 -1.62
+7  DRIFT    6h|stop60    all         US30   12   0.215  2.48   14  -0.224 -1.71
+3  DRIFT   24h|stop60    all  AUS200,US30   35   0.041  1.16   38  -0.117 -1.69
+2  DRIFT   24h|stop60    all          all   77  -0.013 -0.52   87  -0.103 -2.33
+0  DRIFT   24h|stop30    all          all   77  -0.081 -1.36   87  -0.191 -2.43
+9  DRIFT  open|stop60    all          all   77  -0.049 -1.50   87  -0.149 -2.71
+6  DRIFT    6h|stop60    all          all   77  -0.065 -1.70   87  -0.098 -2.28
+4  DRIFT    6h|stop30    all          all   77  -0.151 -2.02   87  -0.173 -2.18
+8  DRIFT  open|stop30    all          all   77  -0.157 -2.15   87  -0.241 -2.67
+chosen on 2025: 24h|stop30 all US30 -> 2026: 14 trades, -0.33R, t -1.97
+    USDCAD 1Min 2026: 317,977 bars
+    USDCAD 1Min 2026: 317,977 bars
+    EURUSD 1Min 2026: 318,477 bars
+    EURUSD 1Min 2026: 318,477 bars
+    GBPUSD 1Min 2026: 318,321 bars
+    GBPUSD 1Min 2026: 318,321 bars
+    USDJPY 1Min 2026: 318,529 bars
+    USDJPY 1Min 2026: 318,529 bars
+    XAUUSD 1Min 2026: 303,911 bars
+    XAUUSD 1Min 2026: 303,911 bars
+    AUDUSD 1Min 2026: 318,135 bars
+    AUDUSD 1Min 2026: 318,135 bars
+    NZDUSD 1Min 2026: 318,001 bars
+    NZDUSD 1Min 2026: 318,001 bars
+
+=== BOX: best 12 on 2025 (train), with 2026 (unseen)
+    strat                 var filter                                          syms  n25  mean25   t25  n26  mean26   t26
+80    BOX  box15|D3|tg1.5|H60    all                NZDUSD,US100,US30,US500,XAUUSD   40   0.396  2.27   47   0.313  2.17
+33    BOX  box10|D3|tg1.5|H60    all  EURUSD,GBPUSD,NZDUSD,US100,US30,US500,XAUUSD   58   0.316  2.18   70   0.172  1.50
+22    BOX  box10|D2|tg3.0|H60    all                NZDUSD,US100,US30,US500,XAUUSD   42   0.391  1.74   48   0.696  3.01
+39    BOX  box10|D3|tg2.0|H60    all  EURUSD,GBPUSD,NZDUSD,US100,US30,US500,XAUUSD   58   0.272  1.69   70   0.238  1.79
+77    BOX  box15|D3|tg1.5|H30    all                       NZDUSD,US100,US30,US500   31   0.295  1.64   37   0.445  2.95
+123   BOX  box30|D3|tg1.5|H30    all                                   NZDUSD,US30   13   0.471  1.64   17   0.650  4.20
+30    BOX  box10|D3|tg1.5|H30    all  EURUSD,GBPUSD,NZDUSD,US100,US30,US500,XAUUSD   58   0.207  1.58   70   0.232  2.25
+68    BOX  box15|D2|tg3.0|H60    all                NZDUSD,US100,US30,US500,XAUUSD   42   0.339  1.53   47   0.732  3.13
+131   BOX  box30|D3|tg2.0|H60    all                NZDUSD,US100,US30,US500,XAUUSD   40   0.295  1.52   46   0.362  2.24
+100   BOX  box30|D2|tg1.5|H30    all                                 NZDUSD,XAUUSD   15   0.409  1.51   18   0.508  2.94
+126   BOX  box30|D3|tg1.5|H60    all                NZDUSD,US100,US30,US500,XAUUSD   40   0.264  1.49   46   0.352  2.50
+36    BOX  box10|D3|tg2.0|H30    all                    EURUSD,GBPUSD,NZDUSD,US100   31   0.291  1.48   40   0.267  1.85
+chosen on 2025: box15|D3|tg1.5|H60 all NZDUSD,US100,US30,US500,XAUUSD -> 2026: 47 trades, 0.313R, t 2.17
+
+=== SURP: best 12 on 2025 (train), with 2026 (unseen)
+   strat      var filter                  syms  n25  mean25   t25  n26  mean26   t26
+3   SURP  D2|H240  agree                   all   11   0.485  0.74   16   0.949  1.24
+2   SURP  D2|H240    all                   all   12   0.422  0.70   20   0.834  1.31
+1   SURP  D2|H120  agree                   all   11   0.200  0.57   16   0.903  1.36
+0   SURP  D2|H120    all                   all   12   0.136  0.41   20   0.718  1.30
+22  SURP   D5|H60    all                   all   12   0.112  0.36   20   0.040  0.14
+23  SURP   D5|H60    all  AUDUSD,NZDUSD,USDCAD   12   0.112  0.36   20   0.040  0.14
+6   SURP   D2|H60    all                   all   12   0.085  0.35   20   0.300  0.88
+7   SURP   D2|H60  agree                   all   11   0.077  0.30   16   0.483  1.22
+5   SURP   D2|H30  agree                   all   11  -0.007 -0.04   16   0.644  1.31
+13  SURP   D3|H30  agree                   all   10  -0.034 -0.21   17   0.356  0.90
+4   SURP   D2|H30    all                   all   12  -0.047 -0.27   20   0.443  1.07
+11  SURP  D3|H240  agree                   all   10  -0.129 -0.37   17   0.627  0.90
+chosen on 2025: D2|H240 agree all -> 2026: 16 trades, 0.949R, t 1.24

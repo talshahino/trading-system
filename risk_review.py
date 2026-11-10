@@ -334,6 +334,13 @@ def decided_value(dec, kind, combo):
     return ((dec.get(kind) or {}) if kind != "mult" else (dec.get("mult") or {})).get(combo)
 
 
+# strategies that lose once FTMO's real stock spreads are charged (stress test 10.11.2026, runs 814/815)
+try:
+    COST_RM = json.loads(Path("data/portfolio/cost_removals.json").read_text(encoding="utf-8"))
+except Exception:  # noqa: BLE001
+    COST_RM = {}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--states", required=True)
@@ -403,6 +410,8 @@ def main():
                         recs.append({"kind": "mult", "value": m, "label": f"סיכון ×{m:g}",
                                      "why": f"רווח ממוצע {stats[c]['mean_r']:+.2f}R מול {bot_mean:+.2f}R של הבוט, יציבות {s['stability']['score']:.2f}, {stats[c]['n_r']} עסקאות"})
                 recs += detail[c]["recs"]
+            if c in COST_RM and m_now > 0:              # stock strategies that lose at FTMO's real spreads
+                recs = [{"kind": "remove", "value": 0, "label": "להסיר", "why": COST_RM[c]}]
             rm = removal.get(c)
             if rm and rm.get("remove") and m_now > 0:
                 recs = [{"kind": "remove", "value": 0, "label": "להסיר",

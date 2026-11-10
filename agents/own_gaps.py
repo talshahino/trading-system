@@ -27,6 +27,7 @@ from agents import rules_agent as R
 GBODY = 1.5
 MIN_GAP = 0.3
 EXPIRY = 24          # hours from the gap's making (on 15m; scales with the timeframe: 96 candles)
+NEST = 0             # 0 = enter at the big gap's edge; N = at the first N-minute gap inside it (two timeframes down)
 TFM = 15             # v5's detection timeframe in minutes (user, 10.11.2026: does it work on 1h / 5m / 1m too?)
 MIN_RR = 1.0
 STOP = "s2"
@@ -105,6 +106,28 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                     break
             if arm is None:
                 dg(k, d, "closed_in_move" if j < end - 1 else "no_turn"); continue
+            if NEST:
+                # entry two timeframes down (user, 10.11.2026): the first gap of the NEST-minute chart, in the same
+                # direction, made during the 3 candles of the big gap and lying inside it; enter at ITS near edge
+                sub = df[(t1 >= t15[k - 1]) & (t1 < t15[k + 1] + pd.Timedelta(minutes=TFM))]
+                ms = CORE.resample(sub, f"{NEST}min") if NEST > 1 else sub
+                sh_, sl_ = ms["h"].to_numpy(float), ms["l"].to_numpy(float)
+                lo_g, hi_g = min(near, far), max(near, far)
+                e_ = None
+                for jj in range(1, len(ms) - 1):
+                    if d > 0 and sl_[jj + 1] > sh_[jj - 1]:
+                        top, bot = sl_[jj + 1], sh_[jj - 1]
+                    elif d < 0 and sh_[jj + 1] < sl_[jj - 1]:
+                        top, bot = sl_[jj - 1], sh_[jj + 1]
+                    else:
+                        continue
+                    if top <= lo_g or bot >= hi_g:
+                        continue                                    # not inside the big gap
+                    e_ = min(top, hi_g) if d > 0 else max(bot, lo_g)
+                    break
+                if e_ is None:
+                    dg(k, d, "no_small_gap"); continue
+                near = e_
             # wait for the touch on the 1-minute bars, from the 15m candle that confirmed the swing
             q0 = t1.searchsorted(t15[arm + 2] + pd.Timedelta(minutes=TFM))
             q1 = min(n1, t1.searchsorted(t15[k] + pd.Timedelta(hours=EXPIRY * TFM / 15)))

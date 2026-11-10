@@ -219,8 +219,20 @@ def main():
                                 y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lvw, f"pt{w:g}")
                                 rows.append(y if y is not None else dict(x, variant=f"{x['variant']}|pt{w:g}"))
                     continue
+                fut = name.startswith("F")
+                if fut:
+                    # bot 6 (user, 10.11.2026): CME micro futures under FTMO Futures rules - "FGgap@15" = v5 with the
+                    # futures session: no entry 15:45-18:00 New York or on the weekend, everything closed at 16:05
+                    name = name[1:]
+                    et = df.index.tz_convert("America/New_York")
+                    mins = et.hour * 60 + et.minute
+                    wd = et.weekday
+                    shut = ((mins >= 16 * 60 + 5) & (mins < 18 * 60)) | (wd == 5) | ((wd == 6) & (mins < 18 * 60)) | ((wd == 4) & (mins >= 16 * 60 + 5))
+                    late = ((mins >= 15 * 60 + 45) & (mins < 18 * 60)) | shut
+                    f_stop, f_noent = stop_at | np.asarray(shut, bool), noent | np.asarray(late, bool)
                 if name.startswith("G"):
                     # v5 (user, 09.11.2026): every gap of a strong move; "G<stop>[d]" e.g. Gs2, Gs3, Ggap, Gs2d (dominant)
+                    s_at, n_e = (f_stop, f_noent) if fut else (stop_at, noent)
                     keepg = (OG.STOP, OG.DOMINANT, OG.TFM, OG.V5_MAX_COST, OG.NEST, OG.EDGE)
                     core, _, tf = name[1:].partition("@")          # "Ggap@5": detection on 5-minute candles
                     tf, _, nest = tf.partition("n")                  # "Ggap@60n5": entry at the 5-minute gap inside
@@ -230,7 +242,7 @@ def main():
                     core = core[:3] if OG.EDGE != "near" else core      # "Ggapf@1": far edge, "Gtopm@15": mid + stop beyond the impulse
                     OG.STOP, OG.DOMINANT = core.rstrip("d"), core.endswith("d")
                     try:
-                        gx = OG.run_gaps(s, df, cost, stop_at, noent, variant=name)
+                        gx = OG.run_gaps(s, df, cost, s_at, n_e, variant=("F" if fut else "") + name)
                     finally:
                         OG.STOP, OG.DOMINANT, OG.TFM, OG.V5_MAX_COST, OG.NEST, OG.EDGE = keepg
                     for x in gx:
@@ -238,7 +250,7 @@ def main():
                         if x.get("status") == "closed":
                             for w in WAY:
                                 lvw = x["entry"] + w * (x["target"] - x["entry"])
-                                y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lvw, f"pt{w:g}")
+                                y = partial_exit(x, df, s_at, 0, SWING_FRAC, lvw, f"pt{w:g}")
                                 rows.append(y if y is not None else dict(x, variant=f"{x['variant']}|pt{w:g}"))
                     continue
                 base_name, _, sw = name.partition("@s")         # "b18@s3": the stop beyond the 3rd swing back

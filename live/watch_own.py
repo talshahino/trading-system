@@ -69,6 +69,8 @@ V4_SYMBOLS = ["XAUUSD", "EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUS
 # the gap's base, target the move's peak, trades with costs above 10% of the risk skipped. The backtest's best result:
 # the 4 indices, +0.10R a trade, positive in both halves, ~0.9 trades a day per index. Its own track ('v5').
 V5_SYMBOLS = ["US100", "US30", "GER40", "US500"]
+# the 15-minute track also on JP225 (user, 10.11.2026): +0.11R a trade in both halves, ~0.9 a day; not on 1 minute (lost in 2024)
+V5_15_SYMBOLS = V5_SYMBOLS + ["JP225"]
 V4 = {"BODY_X": 1.8, "DOMINANT": True, "GAP_OPEN": True, "STOP_SW": 3, "TARGET_FRAC": 0.8}
 KEEP = 60                     # closed trades kept in the state (with their candles)
 # virtual demo account (user, 06.11.2026): $100,000 like the other demo accounts, risk per trade as bots 2 and 4,
@@ -189,7 +191,7 @@ class Calendar:
 # the real cost (spread + commission, in price) of the gap tracks' instruments: the median of the backtest, which used
 # FTMO's recorded 1-minute spreads. The class estimate below was ~4x too high for the indices (GER40 5.3 vs 1.4 points),
 # so the 10%-of-risk cost filter skipped almost every 1-minute trade (found 10.11.2026)
-REAL_COST = {"GER40": 1.42, "US100": 1.22, "US30": 2.13, "US500": 0.51}
+REAL_COST = {"GER40": 1.42, "US100": 1.22, "US30": 2.13, "US500": 0.51, "JP225": 6.63}
 
 
 def cost_of(name, df):
@@ -235,7 +237,7 @@ def main():
         state = {}
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
                   "rules": "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
-                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים בדקה: אותם כללים בגרף הדקה, המתנה של 96 דקות לנגיעה · מסלול פערים (v5): כל פער של נר חזק במדדים, כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך, 30% יוצאים ב־90% מהדרך והשאר לברייק · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
+                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים בדקה: אותם כללים בגרף הדקה, המתנה של 96 דקות לנגיעה · מסלול פערים (v5): כל פער של נר חזק במדדים (גם JP225), כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך, 30% יוצאים ב־90% מהדרך והשאר לברייק · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
                            "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
     acc = state.get("vacct") or {}
@@ -280,7 +282,7 @@ def main():
                     if tid(x) not in strict:              # a setup both tracks find is the original one
                         x["wide"] = True
                         res.append(x)
-                if name in V5_SYMBOLS:
+                if name in V5_15_SYMBOLS:
                     keep5 = (OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY)
                     try:
                         # + 30% out at 90% of the way, the rest to break-even (user approved, 10.11.2026)
@@ -465,7 +467,7 @@ def main():
         counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
         state.update({"account": "וירטואלי · פערים v5 + דקה", "server": "צפייה בלבד · בלי כסף · סיכון 0.4% / 0.075%", "initial": acc["initial"], "risk": RISK_V5,
                       "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
-                      "halted_until": None, "combos": [combo(n) for n in V5_SYMBOLS] + [combo(n, {"v1m": True}) for n in V5_SYMBOLS], "started": acc["started"], "withdrawals": [],
+                      "halted_until": None, "combos": [combo(n) for n in V5_15_SYMBOLS] + [combo(n, {"v1m": True}) for n in V5_SYMBOLS], "started": acc["started"], "withdrawals": [],
                       "equity_curve": ec, "lows": {},
                       "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                                      "combo": combo(t["symbol"], t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],

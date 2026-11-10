@@ -377,18 +377,21 @@ def main():
                             rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
                     side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
-                    if rec["status"] == "cancelled" and rec.get("why") and prev != "cancelled":
+                    # notifications (user, 10.11.2026: "I'm bombarded"): only trades of the virtual account - opened and closed.
+                    # Waiting setups and touched-but-skipped ones stay in the app, without a push.
+                    quiet = not rec.get("risk_usd")
+                    if False and rec["status"] == "cancelled" and rec.get("why") and prev != "cancelled":
                         why = {"rr": f"היעד קרוב מדי (יחס 1:{rec.get('rr')})", "cost": f"העלות {round(100 * (rec.get('cost_r') or 0))}% מהסיכון"}.get(rec["why"], rec["why"])
                         REP.notify(f"סקלפינג (צפייה): {name} נגע ולא נכנס", f"{side} · נגיעה ב־{fmt(name, rec['entry'])} · לא נכנס: {why}",
                                    tags=["eyes"], key=f"wx:{k}", every=86400)
-                    if prev is None and rec["status"] == "pending":
+                    if False and prev is None and rec["status"] == "pending":
                         REP.notify(f"סקלפינג (צפייה): {name} מחכה לכניסה", f"{side} · דחף של {rec['leg']} נרות · כניסה בנגיעה ב־{fmt(name, rec['entry'])}\n"
                                    f"סטופ {fmt(name, rec['stop'])} · לא נשלחת פקודה", tags=["eyes"], key=f"wp:{k}", every=86400)
-                    if prev in (None, "pending") and rec["status"] in ("open", "closed"):
+                    if not quiet and prev in (None, "pending") and rec["status"] in ("open", "closed"):
                         REP.notify(f"סקלפינג (צפייה): {name} עסקה וירטואלית נפתחה", f"{side} @ {fmt(name, rec['entry'])} · סטופ {fmt(name, rec['stop'])} · "
                                    f"יעד {fmt(name, rec['target'])} · יחס 1:{rec['rr']}\nפתח את האפליקציה וסמן אם היית לוקח אותה",
                                    tags=["eyes"], key=f"wo:{k}", every=86400)
-                    if prev != "closed" and rec["status"] == "closed":
+                    if not quiet and prev != "closed" and rec["status"] == "closed":
                         word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה", "breakeven": "בברייק אחרי יציאה חלקית"}.get(rec["reason"], "")
                         usd = f" · {'+' if rec.get('pnl', 0) >= 0 else '−'}${abs(rec.get('pnl', 0)):,.0f} · יתרה ${balance():,.0f}" if rec.get("pnl") is not None else ""
                         REP.notify(f"סקלפינג (צפייה): {name} נסגרה {word}", f"{side} · {'+' if (rec['r'] or 0) >= 0 else ''}{rec['r']:.2f} סיכון{usd} (וירטואלי)",

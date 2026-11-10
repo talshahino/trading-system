@@ -690,6 +690,12 @@ def public_accounts(with_run=True):
                     "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
                     "platform": "צפייה בלבד", "target_pct": 10, "preparing": False, "prepare_error": None, "mt5_hidden": True,
                     "virtual": True})
+        # bot 6 (user, 10.11.2026): the virtual futures account, computed by the same watch bot (live/fut_account.py)
+        out.append({"name": "watch_fut", "label": "בוט 6 · חוזים עתידיים (וירטואלי)", "nickname": "בוט 6 · חוזים", "bot": "watch_fut",
+                    "login": None, "server": "וירטואלי · FTMO Futures · בלי כסף", "enabled": True, "running": running(WATCH_NAME) if with_run else None,
+                    "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
+                    "platform": "צפייה בלבד", "target_pct": 6, "preparing": False, "prepare_error": None, "mt5_hidden": True,
+                    "virtual": True})
     return out
 
 

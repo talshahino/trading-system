@@ -576,6 +576,10 @@ function render(s, liveOnly = false) {
   if (!s) return;
   const init = s.initial, risk = s.risk;
   $("acct").innerHTML = `<b>${esc(NAMES[s.bot] || s.bot)}</b> · חשבון ${esc(s.account)} · ${(s.combos || []).length} צירופים · סיכון ${(risk * 100).toFixed(3).replace(/\.?0+$/, "")}% לעסקה · עודכן ${il(s.updated_utc)}`;
+  if (s.futures) {   // bot 6: FTMO Futures limits (user, 10.11.2026)
+    const f = s.futures, m = v => "$" + Math.round(v).toLocaleString("en-US");
+    $("acct").innerHTML += `<br>${esc(f.plan)} · רווח ${m(f.profit)} מתוך יעד ${m(f.target)}${f.passed ? " · עבר ✓" : ""} · גבול הפסד נגרר ${m(f.max_loss_level)} (נשאר ${m(f.room_max)}) · מגבלה יומית ${m(f.daily_level)} · היום ${m(f.today)}${f.breached ? ' · <span class="neg">נשרף</span>' : ""}`;
+  }
   if (liveOnly) return;
   // stats view
   const tr = s.trades.slice().sort((a, b) => new Date(a.time) - new Date(b.time));

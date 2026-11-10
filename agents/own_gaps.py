@@ -65,7 +65,6 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
     slo = _swing_levels(l, 2, False)
     pip = CORE.pip_of(s)
     out = []
-    busy_until = -1
 
     def dg(k, d, why):
         if DIAG is not None:
@@ -143,8 +142,6 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
             q1 = min(n1, t1.searchsorted(t15[k] + pd.Timedelta(hours=EXPIRY * TFM / 15)))
             if q0 >= q1:
                 dg(k, d, "expired"); continue
-            if q0 <= busy_until:
-                dg(k, d, "busy"); continue
             peak = h[k + 1:arm + 1].max() if d > 0 else l[k + 1:arm + 1].min()
             fill, why = None, "expired"
             for q in range(q0, q1):
@@ -165,7 +162,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                     out.append({"symbol": s, "variant": variant, "status": "pending", "dir": d, "entry": near, "stop": float((l[k - 1] if d > 0 else h[k - 1]) - d * (4 * pip if pip else 0.1 * a15[k])),
                                 "target": float(peak - d * (2 * pip if pip else 0.05 * a15[k])),
                                 "setup_t": t15[arm + 2], "leg": int(arm - k), "leg_start": t15[k - 1], "leg_top": t15[arm],
-                                "gap_lo": min(near, far), "gap_hi": max(near, far)})
+                                "gap_lo": min(near, far), "gap_hi": max(near, far), "_q": n1})
                     continue
             if fill is None:
                 dg(k, d, why); continue
@@ -227,7 +224,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                     out.append({"symbol": s, "variant": variant, "status": "cancelled", "why": "rr", "dir": d, "entry": float(px), "stop": float(stop),
                                 "target": float(target), "setup_t": t15[arm + 2], "touch_t": t1[fill], "leg": int(arm - k), "leg_start": t15[k - 1],
                                 "leg_top": t15[arm], "gap_lo": min(near, far), "gap_hi": max(near, far), "rr": round(d * (target - px) / risk, 2) if risk > 0 else None,
-                                "cost_r": round(cost[fill] / risk, 3) if risk > 0 else None})
+                                "cost_r": round(cost[fill] / risk, 3) if risk > 0 else None, "_q": fill})
                 continue
             if V5_MAX_COST is not None and cost[fill] / risk > V5_MAX_COST:
                 dg(k, d, "cost")
@@ -235,7 +232,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                     out.append({"symbol": s, "variant": variant, "status": "cancelled", "why": "cost", "dir": d, "entry": float(px), "stop": float(stop),
                                 "target": float(target), "setup_t": t15[arm + 2], "touch_t": t1[fill], "leg": int(arm - k), "leg_start": t15[k - 1],
                                 "leg_top": t15[arm], "gap_lo": min(near, far), "gap_hi": max(near, far), "rr": round(d * (target - px) / risk, 2) if risk > 0 else None,
-                                "cost_r": round(cost[fill] / risk, 3) if risk > 0 else None})
+                                "cost_r": round(cost[fill] / risk, 3) if risk > 0 else None, "_q": fill})
                 continue
             ex_px = ex_q = rsn = None
             # PART (user, 10.11.2026, approved): PART_FRAC of the position out at PART_WAY of the way to the target,
@@ -263,17 +260,37 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                    "leg": int(arm - k), "leg_start": t15[k - 1], "leg_top": t15[arm], "gap_lo": min(near, far), "gap_hi": max(near, far)}
             if part_r:
                 rec["part"] = round(part_r, 3)
+            rec["_fill"], rec["_k"] = fill, k
             if ex_q is None:
-                if live:
-                    rec.update(status="open", stop_now=cur_stop, r_now=round(part_r + rest * d * (c1[-1] - px) / risk, 3))
-                    out.append(rec)
-                continue
-            dg(k, d, "traded")
-            busy_until = ex_q
-            rec.update(status="closed", exit_time=t1[ex_q], exit=ex_px, reason=rsn,
-                       r=round(part_r + rest * d * (ex_px - px) / risk - cost[fill] / risk, 4))
+                rec.update(status="open", stop_now=cur_stop, r_now=round(part_r + rest * d * (c1[-1] - px) / risk, 3), _exq=n1)
+            else:
+                rec.update(status="closed", exit_time=t1[ex_q], exit=ex_px, reason=rsn, _exq=ex_q,
+                           r=round(part_r + rest * d * (ex_px - px) / risk - cost[fill] / risk, 4))
             out.append(rec)
-    return out
+    # one trade at a time, in the order the trades happen (10.11.2026): the first touch is taken, and nothing else
+    # while it is open. (Before, the gaps were taken in the order they formed, so a later touch of an older gap could
+    # replace a trade that had really happened first - impossible live, and live showed overlapping extra trades.)
+    trades = sorted([x for x in out if "_fill" in x], key=lambda x: (x["_fill"], x["_k"]))
+    taken, last = [], -1
+    for x in trades:
+        if x["_fill"] > last:
+            taken.append(x); last = x["_exq"]
+            if x["status"] == "closed":
+                dg(x["_k"], x["dir"], "traded")
+        else:
+            dg(x["_k"], x["dir"], "busy")
+    spans = [(x["_fill"], x["_exq"]) for x in taken]
+    res = []
+    for x in out:
+        if "_fill" in x:
+            if not any(x is y for y in taken):
+                continue
+            if x["status"] == "open" and not live:
+                continue
+        elif any(a_ <= x["_q"] <= b_ for a_, b_ in spans) or (x["status"] == "pending" and last >= n1):
+            continue                                  # touched (or waiting) while a trade was open: never a candidate
+        res.append({k_: v_ for k_, v_ in x.items() if not k_.startswith("_")})
+    return res
 
 
 _SW_CACHE = {}

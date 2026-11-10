@@ -15,7 +15,6 @@ FTMO Futures rules used (ftmo.com, futures trading objectives, read 10.11.2026),
 """
 from __future__ import annotations
 
-import math
 
 import numpy as np
 import pandas as pd
@@ -28,7 +27,7 @@ PLAN = "Pro $100K"
 INITIAL, TARGET, MAX_LOSS, DAILY_LOSS, MAX_MICROS, CONSISTENCY = 100_000.0, 6_000.0, 4_500.0, 1_500.0, 100, 0.5
 RISK_V5, RISK_V1M = 0.004, 0.00075          # share of the balance risked per trade (set from the simulation)
 ROOM_USE = 0.9                              # open risk may use at most 90% of the room left to either limit
-VERSION = 1
+VERSION = 2                 # 2 (10.11.2026): one name per gap - a fresh account
 
 
 def session_masks(df):

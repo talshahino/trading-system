@@ -82,7 +82,8 @@ INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.0045, 0.045, 0.10
 # the virtual account, v2 (user, 10.11.2026: "as if it were a real demo account"): a fresh $100,000 from the moment this
 # version starts, only the two gap tracks count, each with its own risk: v5 (15m) 0.4%, the 1-minute track 0.075%.
 # FTMO rules: no new trades after a 4.5% loss in the day, the account burns at a 10% loss from the start.
-ACCT_V, RISK_V5, RISK_V1M = 2, 0.004, 0.00075
+# v3 (10.11.2026, the review before the user's calibration): a fresh start with the corrected trade selection
+ACCT_V, RISK_V5, RISK_V1M = 3, 0.004, 0.00075
 
 
 def log(msg):
@@ -214,7 +215,59 @@ def bars(df, t0, t1, rule):
 
 
 def tid(x):
-    return f"{x['symbol']}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}" + ("|v4" if x.get("v4") else "|v5" if x.get("v5") else "|v1m" if x.get("v1m") else "")
+    base = f"{x['symbol']}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}" + ("|v4" if x.get("v4") else "|v5" if x.get("v5") else "|v1m" if x.get("v1m") else "")
+    if x.get("v5") or x.get("v1m"):
+        # the gap tracks: several gaps of one move share the move's peak, so the gap's own candle is part of the name
+        # (found 10.11.2026: two trades with one name overwrote each other's risk and notifications)
+        base += "|g" + pd.Timestamp(x["leg_start"]).strftime("%Y%m%d%H%M")
+    return base
+
+
+def gap_id_fix(trades, acc):
+    """Once: the gap-track trades saved under the old name get the new one (tid), the ledger follows."""
+    ren = {}
+    for k, t in list(trades.items()):
+        if (t.get("v5") or t.get("v1m")) and "|g" not in k and t.get("leg_start"):
+            nk = k + "|g" + pd.Timestamp(t["leg_start"]).strftime("%Y%m%d%H%M")
+            t["id"], t["old_id"] = nk, k
+            trades[nk] = trades.pop(k)
+            ren[k] = nk
+    for x in acc.get("ledger") or []:
+        x["id"] = ren.get(x["id"], x["id"])
+    return trades
+
+
+def follow(t, df, stop_at, part=0.3, way=0.9):
+    """An open trade that the strategy run no longer reports (its setup changed with new candles): it is followed to
+    its exit here with the same rules - stop, target, 30% out at 90% of the way and the rest to break-even, forced exit.
+    Returns the fields that changed, or {} while it is still open."""
+    o1, h1, l1, c1 = (df[x].to_numpy(float) for x in "ohlc")
+    d, px, stop, target = t["dir"], t["entry"], t["stop"], t["target"]
+    risk = d * (px - stop)
+    if not t.get("time") or risk <= 0 or target is None:
+        return {}
+    fill = int(df.index.searchsorted(pd.Timestamp(t["time"])))
+    lvl = px + way * (target - px)
+    part_r, cur = 0.0, stop
+    for q in range(fill, len(c1)):
+        ex = rsn = None
+        if (d > 0 and l1[q] <= cur) or (d < 0 and h1[q] >= cur):
+            ex = (min(cur, o1[q]) if d > 0 else max(cur, o1[q])) if q > fill else cur
+            rsn = "breakeven" if cur != stop else "stop"
+        elif q > fill and ((d > 0 and h1[q] >= target) or (d < 0 and l1[q] <= target)):
+            if cur == stop:
+                part_r = part * d * (lvl - px) / risk
+            ex, rsn = (max(target, o1[q]) if d > 0 else min(target, o1[q])), "target"
+        elif q > fill and stop_at[q]:
+            ex, rsn = c1[q], "forced"
+        if ex is not None:
+            rest = 1.0 - (part if part_r else 0.0)
+            return {"status": "closed", "exit_time": iso(df.index[q]), "exit": float(ex), "reason": rsn,
+                    "r": round(part_r + rest * d * (ex - px) / risk - (t.get("cost_r") or 0), 4), "followed": True}
+        if cur == stop and q > fill and ((d > 0 and h1[q] >= lvl) or (d < 0 and l1[q] <= lvl)):
+            part_r, cur = part * d * (lvl - px) / risk, px
+    rest = 1.0 - (part if part_r else 0.0)
+    return {"r_now": round(part_r + rest * d * (c1[-1] - px) / risk, 3), "followed": True}
 
 
 def iso(t):
@@ -250,7 +303,8 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
     for x in found:
         if x["status"] == "cancelled" or pd.Timestamp(x.get("time") or x.get("setup_t")) < cutoff:
             continue
-        k = f"{name}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}|f{x['trk']}"
+        k = (f"{name}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}|f{x['trk']}"
+             f"|g{pd.Timestamp(x['leg_start']).strftime('%Y%m%d%H%M')}")      # the gap's own candle: one name per trade
         fseen.add(k)
         old = ftrades.get(k, {})
         rec = {"id": k, "symbol": name, "contract": contract, "trk": x["trk"], "dir": int(x["dir"]), "status": x["status"],
@@ -258,43 +312,53 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
                "rr": x.get("rr"), "cost_r": x.get("cost_r"), "setup_t": iso(x.get("setup_t")) or old.get("setup_t"),
                "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
                "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
-               "r": x.get("r"), "r_now": x.get("r_now")}
-        for f in ("n", "risk_usd", "skipped", "sent_open", "sent_close"):
-            if f in old:
-                rec[f] = old[f]
-        if rec["status"] in ("open", "closed") and "n" not in rec and "skipped" not in rec:
-            if rec["time"] < fa.a["started"]:
-                rec["skipped"] = "before"
+               "r": x.get("r"), "r_now": x.get("r_now"), "leg_start": iso(x.get("leg_start"))}
+        fut_rec(rec, old, fa, ftrades)
+    for k, t in list(ftrades.items()):        # an open trade the run no longer reports: followed to its exit here
+        if t["symbol"] == name and t["status"] == "open" and k not in fseen:
+            fseen.add(k)
+            fut_rec(dict(t, **follow(t, df, f_stop)), t, fa, ftrades)
+
+
+def fut_rec(rec, old, fa, ftrades):
+    """Bot 6: size a trade when it opens, book it when it closes, one notification each."""
+    name, k, contract = rec["symbol"], rec["id"], rec["contract"]
+    for f in ("n", "risk_usd", "skipped", "sent_open", "sent_close"):
+        if f in old:
+            rec[f] = old[f]
+    if rec["status"] in ("open", "closed") and "n" not in rec and "skipped" not in rec:
+        if rec["time"] < fa.a["started"]:
+            rec["skipped"] = "before"
+        else:
+            opn = [t for t in ftrades.values() if t["status"] == "open" and t.get("n") and t["id"] != k]
+            n, why = fa.size(name, rec["trk"], rec["entry"], rec["stop"], rec["time"], opn)
+            if n:
+                rec["n"], rec["risk_usd"] = n, round(n * FA.per_contract(name, rec["entry"], rec["stop"]), 2)
             else:
-                opn = [t for t in ftrades.values() if t["status"] == "open" and t.get("n") and t["id"] != k]
-                n, why = fa.size(name, rec["trk"], rec["entry"], rec["stop"], rec["time"], opn)
-                if n:
-                    rec["n"], rec["risk_usd"] = n, round(n * FA.per_contract(name, rec["entry"], rec["stop"]), 2)
-                else:
-                    rec["skipped"] = why
-        if rec.get("n"):
-            # notifications (user, 10.11.2026): only bot 6 trades that open and close - each one once, nothing else
-            side = "קנייה" if rec["dir"] > 0 else "מכירה"
-            tf = "15 דק'" if rec["trk"] == "v5" else "דקה"
-            lots = f"{rec['n']} {contract}"
-            if not rec.get("sent_open"):
-                rec["sent_open"] = True
-                if rec["status"] == "open":
-                    REP.notify(f"בוט 6: נפתחה {side} {lots}", f"{name} ({tf}) · כניסה {fmt(name, rec['entry'])} · סטופ {fmt(name, rec['stop'])}"
-                               f"{' · יעד ' + fmt(name, rec['target']) if rec['target'] else ''} · סיכון ${rec['risk_usd']:,.0f}", tags=["eyes"])
-            if rec["status"] == "closed" and rec.get("r") is not None:
-                rec["pnl"] = round(FA.pnl_of(name, rec["n"], rec["entry"], rec["stop"], rec["r"] + (rec.get("cost_r") or 0)), 2)
-                events = fa.close(rec)
-                if not rec.get("sent_close"):
-                    rec["sent_close"] = True
-                    extra = {"breach_max": " · החשבון נשרף (הפסד מקסימלי)", "breach_daily": " · נגע במגבלה היומית, החשבון נשרף",
-                             "passed": " · עבר את ההערכה ✓"}
-                    word = FUT_WORD.get(rec.get("reason"), "")
-                    REP.notify(f"בוט 6: נסגרה {side} {lots} {'+' if rec['pnl'] >= 0 else '-'}${abs(rec['pnl']):,.0f}",
-                               f"{name} ({tf}) · {word} · יתרה ${fa.balance():,.0f}" + "".join(extra[e] for e in events), tags=["eyes"])
-            elif rec["status"] == "open" and rec.get("r_now") is not None:
-                rec["pnl_now"] = round(FA.pnl_of(name, rec["n"], rec["entry"], rec["stop"], rec["r_now"]), 2)
-        ftrades[k] = rec
+                rec["skipped"] = why
+    if rec.get("n"):
+        # notifications (user, 10.11.2026): only bot 6 trades that open and close - each one once, nothing else
+        side = "קנייה" if rec["dir"] > 0 else "מכירה"
+        tf = "15 דק'" if rec["trk"] == "v5" else "דקה"
+        lots = f"{rec['n']} {contract}"
+        if not rec.get("sent_open"):
+            rec["sent_open"] = True
+            if rec["status"] == "open":
+                REP.notify(f"בוט 6: נפתחה {side} {lots}", f"{name} ({tf}) · כניסה {fmt(name, rec['entry'])} · סטופ {fmt(name, rec['stop'])}"
+                           f"{' · יעד ' + fmt(name, rec['target']) if rec['target'] else ''} · סיכון ${rec['risk_usd']:,.0f}", tags=["eyes"])
+        if rec["status"] == "closed" and rec.get("r") is not None:
+            rec["pnl"] = round(FA.pnl_of(name, rec["n"], rec["entry"], rec["stop"], rec["r"] + (rec.get("cost_r") or 0)), 2)
+            events = fa.close(rec)
+            if not rec.get("sent_close"):
+                rec["sent_close"] = True
+                extra = {"breach_max": " · החשבון נשרף (הפסד מקסימלי)", "breach_daily": " · נגע במגבלה היומית, החשבון נשרף",
+                         "passed": " · עבר את ההערכה ✓"}
+                word = FUT_WORD.get(rec.get("reason"), "")
+                REP.notify(f"בוט 6: נסגרה {side} {lots} {'+' if rec['pnl'] >= 0 else '-'}${abs(rec['pnl']):,.0f}",
+                           f"{name} ({tf}) · {word} · יתרה ${fa.balance():,.0f}" + "".join(extra[e] for e in events), tags=["eyes"])
+        elif rec["status"] == "open" and rec.get("r_now") is not None:
+            rec["pnl_now"] = round(FA.pnl_of(name, rec["n"], rec["entry"], rec["stop"], rec["r_now"]), 2)
+    ftrades[k] = rec
 
 
 def fut_state(fa, ftrades, fseen, src):
@@ -373,6 +437,7 @@ def main():
                            "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
     acc = state.get("vacct") or {}
+    trades = gap_id_fix(trades, acc)
     if acc.get("v") != ACCT_V:
         # a new account: nothing that happened before counts
         acc = {"v": ACCT_V, "initial": INITIAL, "risk_pct": round(RISK_V5 * 100, 3), "risk_v1m_pct": round(RISK_V1M * 100, 4),
@@ -538,6 +603,21 @@ def main():
                         usd = f" · {'+' if rec.get('pnl', 0) >= 0 else '−'}${abs(rec.get('pnl', 0)):,.0f} · יתרה ${balance():,.0f}" if rec.get("pnl") is not None else ""
                         REP.notify(f"סקלפינג (צפייה): {name} נסגרה {word}", f"{side} · {'+' if (rec['r'] or 0) >= 0 else ''}{rec['r']:.2f} סיכון{usd} (וירטואלי)",
                                    tags=["eyes"], key=f"wc:{k}", every=86400)
+                for k, t in list(trades.items()):
+                    if t["symbol"] == name and t["status"] == "open" and k not in seen_now and (t.get("v5") or t.get("v1m")):
+                        seen_now.add(k)
+                        t.update(follow(t, df, stop_at))
+                        if t.get("risk_usd"):
+                            if t["status"] == "closed":
+                                t["pnl"] = round(t["r"] * t["risk_usd"], 2)
+                                if not any(x["id"] == k for x in acc["ledger"]):
+                                    acc["ledger"].append({"id": k, "exit_time": t["exit_time"], "pnl": t["pnl"]})
+                                word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה", "breakeven": "בברייק אחרי יציאה חלקית"}.get(t["reason"], "")
+                                REP.notify(f"סקלפינג (צפייה): {name} נסגרה {word}", f"{'+' if t['r'] >= 0 else ''}{t['r']:.2f} סיכון · "
+                                           f"{'+' if t['pnl'] >= 0 else '−'}${abs(t['pnl']):,.0f} · יתרה ${balance():,.0f} (וירטואלי)",
+                                           tags=["eyes"], key=f"wc:{k}", every=86400)
+                            elif t.get("r_now") is not None:
+                                t["pnl_now"] = round(t["r_now"] * t["risk_usd"], 2)
             except Exception:  # noqa: BLE001 - one instrument must not stop the others
                 errors.append(f"{name}: {traceback.format_exc()[-300:]}")
         # a pending setup that no longer appears (cancelled: the leg went on, expired, stop first) is dropped
@@ -546,7 +626,9 @@ def main():
                 t["status"] = "cancelled"
         try:
             marks = json.loads(MARKS_F.read_text(encoding="utf-8"))
+            olds = {t["old_id"]: k for k, t in trades.items() if t.get("old_id")}
             for k, m in marks.items():
+                k = k if k in trades else olds.get(k)
                 if k in trades:
                     trades[k]["mark"] = m
         except Exception:  # noqa: BLE001

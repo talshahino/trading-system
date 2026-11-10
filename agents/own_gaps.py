@@ -47,6 +47,11 @@ def _swing_levels(arr, w=2, high=True):
     return np.flatnonzero(arr == ext)
 
 
+# which setups a trade blocks (10.11.2026): "fill" = only touches while it is open; "arm" = also setups that were already
+# waiting when it opened (they are dropped when a trade opens, as the old backtest did, but in the order things happen)
+SEL = "fill"
+
+
 def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
     o1, h1, l1, c1 = (df[x].to_numpy(float) for x in "ohlc")
     t1 = df.index
@@ -260,7 +265,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                    "leg": int(arm - k), "leg_start": t15[k - 1], "leg_top": t15[arm], "gap_lo": min(near, far), "gap_hi": max(near, far)}
             if part_r:
                 rec["part"] = round(part_r, 3)
-            rec["_fill"], rec["_k"] = fill, k
+            rec["_fill"], rec["_k"], rec["_q0"] = fill, k, q0
             if ex_q is None:
                 rec.update(status="open", stop_now=cur_stop, r_now=round(part_r + rest * d * (c1[-1] - px) / risk, 3), _exq=n1)
             else:
@@ -273,7 +278,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
     trades = sorted([x for x in out if "_fill" in x], key=lambda x: (x["_fill"], x["_k"]))
     taken, last = [], -1
     for x in trades:
-        if x["_fill"] > last:
+        if (x["_q0"] if SEL == "arm" else x["_fill"]) > last:
             taken.append(x); last = x["_exq"]
             if x["status"] == "closed":
                 dg(x["_k"], x["dir"], "traded")

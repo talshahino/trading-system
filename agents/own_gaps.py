@@ -26,7 +26,8 @@ from agents import rules_agent as R
 
 GBODY = 1.5
 MIN_GAP = 0.3
-EXPIRY = 24          # hours from the gap's making
+EXPIRY = 24          # hours from the gap's making (on 15m; scales with the timeframe: 96 candles)
+TFM = 15             # v5's detection timeframe in minutes (user, 10.11.2026: does it work on 1h / 5m / 1m too?)
 MIN_RR = 1.0
 STOP = "s2"
 DOMINANT = False
@@ -46,7 +47,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
     o1, h1, l1, c1 = (df[x].to_numpy(float) for x in "ohlc")
     t1 = df.index
     n1 = len(t1)
-    m = CORE.resample(df, "15min")
+    m = CORE.resample(df, f"{TFM}min")
     o, h, l, c = (m[x].to_numpy(float) for x in "ohlc")
     t15 = m.index
     n = len(c)
@@ -93,7 +94,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                 if up < back:
                     dg(k, d, "correction"); continue
             # arm: a swing beyond the gap made after it, with no 15m candle back into the gap before it
-            end = min(n, k + 2 + int(EXPIRY * 4))
+            end = min(n, k + 2 + int(EXPIRY * 4))  # 96 candles of the detection timeframe
             sw = shi if d > 0 else slo
             arm = None
             for j in range(k + 2, end):
@@ -105,8 +106,8 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
             if arm is None:
                 dg(k, d, "closed_in_move" if j < end - 1 else "no_turn"); continue
             # wait for the touch on the 1-minute bars, from the 15m candle that confirmed the swing
-            q0 = t1.searchsorted(t15[arm + 2] + pd.Timedelta(minutes=15))
-            q1 = min(n1, t1.searchsorted(t15[k] + pd.Timedelta(hours=EXPIRY)))
+            q0 = t1.searchsorted(t15[arm + 2] + pd.Timedelta(minutes=TFM))
+            q1 = min(n1, t1.searchsorted(t15[k] + pd.Timedelta(hours=EXPIRY * TFM / 15)))
             if q0 >= q1:
                 dg(k, d, "expired"); continue
             if q0 <= busy_until:
@@ -124,7 +125,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                     fill = q
                     break
                 # gone: a 15-minute close beyond the far edge
-                if t1[q].minute % 15 == 14 and ((d > 0 and c1[q] < far) or (d < 0 and c1[q] > far)):
+                if (t1[q].hour * 60 + t1[q].minute + 1) % TFM == 0 and ((d > 0 and c1[q] < far) or (d < 0 and c1[q] > far)):
                     why = "gap_broken"; break
             else:
                 if live and q1 >= n1:

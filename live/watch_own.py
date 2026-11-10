@@ -259,7 +259,7 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
                "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
                "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
                "r": x.get("r"), "r_now": x.get("r_now")}
-        for f in ("n", "risk_usd", "skipped"):
+        for f in ("n", "risk_usd", "skipped", "sent_open", "sent_close"):
             if f in old:
                 rec[f] = old[f]
         if rec["status"] in ("open", "closed") and "n" not in rec and "skipped" not in rec:
@@ -273,14 +273,25 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
                 else:
                     rec["skipped"] = why
         if rec.get("n"):
+            # notifications (user, 10.11.2026): only bot 6 trades that open and close - each one once, nothing else
+            side = "קנייה" if rec["dir"] > 0 else "מכירה"
+            tf = "15 דק'" if rec["trk"] == "v5" else "דקה"
+            lots = f"{rec['n']} {contract}"
+            if not rec.get("sent_open"):
+                rec["sent_open"] = True
+                if rec["status"] == "open":
+                    REP.notify(f"בוט 6: נפתחה {side} {lots}", f"{name} ({tf}) · כניסה {fmt(name, rec['entry'])} · סטופ {fmt(name, rec['stop'])}"
+                               f"{' · יעד ' + fmt(name, rec['target']) if rec['target'] else ''} · סיכון ${rec['risk_usd']:,.0f}", tags=["eyes"])
             if rec["status"] == "closed" and rec.get("r") is not None:
                 rec["pnl"] = round(FA.pnl_of(name, rec["n"], rec["entry"], rec["stop"], rec["r"] + (rec.get("cost_r") or 0)), 2)
-                for ev in fa.close(rec):
-                    title, body = {
-                        "breach_max": ("בוט 6 (חוזים): החשבון הווירטואלי נשרף", f"היתרה נגעה בהפסד המקסימלי הנגרר (${FA.MAX_LOSS:,.0f}). לא נפתחות עוד עסקאות."),
-                        "breach_daily": ("בוט 6 (חוזים): נגע במגבלה היומית", f"הפסד של ${FA.DAILY_LOSS:,.0f} ביום. בחשבון Pro זה סוף ההערכה."),
-                        "passed": ("בוט 6 (חוזים): עבר את ההערכה הווירטואלית", f"רווח של ${FA.TARGET:,.0f} עם כלל העקביות. ממשיך כחשבון ממומן וירטואלי.")}[ev]
-                    REP.notify(title, body, tags=["eyes"], key=f"f6:{ev}", every=86400 * 30)
+                events = fa.close(rec)
+                if not rec.get("sent_close"):
+                    rec["sent_close"] = True
+                    extra = {"breach_max": " · החשבון נשרף (הפסד מקסימלי)", "breach_daily": " · נגע במגבלה היומית, החשבון נשרף",
+                             "passed": " · עבר את ההערכה ✓"}
+                    word = FUT_WORD.get(rec.get("reason"), "")
+                    REP.notify(f"בוט 6: נסגרה {side} {lots} {'+' if rec['pnl'] >= 0 else '-'}${abs(rec['pnl']):,.0f}",
+                               f"{name} ({tf}) · {word} · יתרה ${fa.balance():,.0f}" + "".join(extra[e] for e in events), tags=["eyes"])
             elif rec["status"] == "open" and rec.get("r_now") is not None:
                 rec["pnl_now"] = round(FA.pnl_of(name, rec["n"], rec["entry"], rec["stop"], rec["r_now"]), 2)
         ftrades[k] = rec

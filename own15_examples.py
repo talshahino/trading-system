@@ -36,6 +36,7 @@ def main():
     ap.add_argument("--stop-sw", type=int, default=0)
     ap.add_argument("--gaps6", default="", help="v6: first gap, first touch; stop gap / origin / sN")
     ap.add_argument("--dom", action="store_true")
+    ap.add_argument("--v7", default="", help="V7a / V7b / V7d / V7f (user's marks, 10.11.2026)")
     ap.add_argument("--move-w", type=int, default=2)
     ap.add_argument("--gaps", default="", help="v5 gap strategy instead, e.g. s2 / s3 / gap (user, 09.11.2026)")
     ap.add_argument("--target-frac", type=float, default=1.0)
@@ -71,7 +72,11 @@ def main():
         blk = NC.blocked(pd.Series(df.index), s, ev, minutes=2).to_numpy()
         noent = np.asarray(noent, bool) | blk
         stop_at = stop_at | np.asarray(nm, bool) | np.r_[blk[1:], False]
-        if a.gaps6:
+        if a.v7:
+            st_, tg_ = {"V7a": ("m2", "swing1m"), "V7b": ("m3", "swing1m"), "V7d": ("m2", "peak"), "V7f": ("m3", "peak")}[a.v7]
+            O.OG.STOP, O.OG.TARGET6, O.OG.TFM, O.OG.NEST, O.OG.NEST_ANY, O.OG.V5_MAX_COST = st_, tg_, 15, 1, True, 0.10
+            tr = [x for x in O.OG.run_gaps(s, df, cost, stop_at, noent) if x.get("status") == "closed"]
+        elif a.gaps6:
             O.OG.STOP6, O.OG.DOMINANT, O.OG.MOVE_W = a.gaps6, a.dom, a.move_w
             tr = [x for x in O.OG.run_gaps6(s, df, cost, stop_at, noent) if x.get("status") == "closed"]
         elif a.gaps:

@@ -178,6 +178,26 @@ def main():
             # own_core's module constants are set for each run and restored after, the bot's file is not changed.
             keep = (CORE.BODY_X, CORE.MIN_GAP, CORE.STOP_SW)
             for name in a.configs.split(","):
+                if name.startswith("V7"):
+                    # v7 (user's marks on the live charts, 10.11.2026): found on 15 minutes, entered at the impulse's first
+                    # 1-minute gap, stop beyond the 2nd/3rd swing, target the nearest swing after the entry
+                    V7 = {"V7a": ("m2", "swing1m"), "V7b": ("m3", "swing1m"), "V7c": ("s2", "swing1m"), "V7d": ("m2", "peak"),
+                          "V7e": ("gap", "swing1m"), "V7f": ("m3", "peak")}
+                    keepg = (OG.STOP, OG.TARGET6, OG.TFM, OG.NEST, OG.NEST_ANY, OG.V5_MAX_COST, OG.DOMINANT, OG.EDGE)
+                    try:
+                        OG.STOP, OG.TARGET6 = V7[name]
+                        OG.TFM, OG.NEST, OG.NEST_ANY, OG.V5_MAX_COST, OG.DOMINANT, OG.EDGE = 15, 1, True, 0.10, False, "near"
+                        gx = OG.run_gaps(s, df, cost, stop_at, noent, variant=name)
+                    finally:
+                        OG.STOP, OG.TARGET6, OG.TFM, OG.NEST, OG.NEST_ANY, OG.V5_MAX_COST, OG.DOMINANT, OG.EDGE = keepg
+                    for x in gx:
+                        rows.append(x)
+                        if x.get("status") == "closed":
+                            for w in WAY:
+                                lvw = x["entry"] + w * (x["target"] - x["entry"])
+                                y = partial_exit(x, df, stop_at, 0, SWING_FRAC, lvw, f"pt{w:g}")
+                                rows.append(y if y is not None else dict(x, variant=f"{x['variant']}|pt{w:g}"))
+                    continue
                 if name.startswith("H"):
                     # v6 (user, 10.11.2026): first gap of a move, first touch, big move; "H<stop>[d]" e.g. Hgap, Horigind, Hs2d
                     keepg = (OG.STOP6, OG.DOMINANT, OG.ARM6, OG.MOVE_W)

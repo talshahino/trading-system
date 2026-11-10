@@ -28,6 +28,8 @@ GBODY = 1.5
 MIN_GAP = 0.3
 EXPIRY = 24          # hours from the gap's making (on 15m; scales with the timeframe: 96 candles)
 EDGE = "near"        # where in the gap to enter: near (first touch), mid, far (its other side)
+NEST_ANY = False     # v7: the nested entry gap need not lie inside the big gap (the impulse's first small gap)
+TARGET6 = "peak"     # v7: "swing1m" = the nearest 1-minute swing beyond the entry
 NEST = 0             # 0 = enter at the big gap's edge; N = at the first N-minute gap inside it (two timeframes down)
 TFM = 15             # v5's detection timeframe in minutes (user, 10.11.2026: does it work on 1h / 5m / 1m too?)
 MIN_RR = 1.0
@@ -110,7 +112,7 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
             if NEST:
                 # entry two timeframes down (user, 10.11.2026): the first gap of the NEST-minute chart, in the same
                 # direction, made during the 3 candles of the big gap and lying inside it; enter at ITS near edge
-                sub = df[(t1 >= t15[k - 1]) & (t1 < t15[k + 1] + pd.Timedelta(minutes=TFM))]
+                sub = df[(t1 >= t15[max(0, k - (2 if NEST_ANY else 1))]) & (t1 < t15[k + 1] + pd.Timedelta(minutes=TFM))]
                 ms = CORE.resample(sub, f"{NEST}min") if NEST > 1 else sub
                 sh_, sl_ = ms["h"].to_numpy(float), ms["l"].to_numpy(float)
                 lo_g, hi_g = min(near, far), max(near, far)
@@ -122,6 +124,9 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                         top, bot = sl_[jj - 1], sh_[jj + 1]
                     else:
                         continue
+                    if NEST_ANY:                                    # v7: the impulse's first small gap, wherever it is
+                        e_ = top if d > 0 else bot
+                        break
                     if top <= lo_g or bot >= hi_g:
                         continue                                    # not inside the big gap
                     e_ = min(top, hi_g) if d > 0 else max(bot, lo_g)
@@ -168,7 +173,25 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
             buf = 4 * pip if pip else 0.1 * a15[k]
             tbuf = 2 * pip if pip else 0.05 * a15[k]
             kq = t15.searchsorted(t1[fill], side="right") - 1
-            if STOP == "gap":
+            if STOP in ("m2", "m3", "m1"):
+                # v7 (user's marks, 10.11.2026): beyond the 2nd / 3rd swing back on the 1-minute chart
+                nsw = int(STOP[1:])
+                lo1 = max(0, fill - 600)
+                arr = l1[lo1:fill] if d > 0 else h1[lo1:fill]
+                sw1 = _swing_levels(arr, 3, d < 0)
+                lv, last = [], px
+                for i in sorted(sw1, reverse=True):
+                    if i + 3 >= len(arr):
+                        continue
+                    v = arr[i]
+                    if d * (last - v) > 0:
+                        lv.append(v); last = v
+                        if len(lv) == nsw:
+                            break
+                if len(lv) < nsw:
+                    dg(k, d, "no_swing_stop"); continue
+                base = lv[-1]
+            elif STOP == "gap":
                 base = l[k - 1] if d > 0 else h[k - 1]
             elif STOP == "top":                                 # "a bit further": beyond the start of the impulse
                 base = l[max(0, k - 5):k + 1].min() if d > 0 else h[max(0, k - 5):k + 1].max()
@@ -190,6 +213,13 @@ def run_gaps(s, df, cost, stop_at, noent, live=False, variant="gap"):
                 base = lv[-1]
             stop = base - d * buf
             target = peak - d * tbuf
+            if TARGET6 == "swing1m":
+                # v7: the nearest 1-minute swing beyond the entry, made between the impulse and the touch
+                a0 = t1.searchsorted(t15[k - 1])
+                arr = h1[a0:fill] if d > 0 else l1[a0:fill]
+                cand = [arr[i] for i in _swing_levels(arr, 3, d > 0) if i + 3 < len(arr) and d * (arr[i] - px) > 0] if len(arr) > 7 else []
+                if cand:
+                    target = (min(cand) if d > 0 else max(cand)) - d * tbuf
             risk = d * (px - stop)
             if risk <= 0 or d * (target - px) < MIN_RR * risk:
                 dg(k, d, "rr")

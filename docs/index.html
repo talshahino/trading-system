@@ -471,7 +471,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 
 <div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
 <div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>מנהל הבוטים</b></div>
-  <div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
+  <div id="bpDec"></div><div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
 <div class="page" id="wbPg"><div class="ph"><button class="back" id="wbBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>בוט סקלפינג · צפייה</b></div><div id="wbBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="wcPg"><div class="ph"><button class="back" id="wcBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="wcTitle"></b></div><div id="wcBody"></div></div>
@@ -1657,6 +1657,42 @@ const slider = (key, text, all, can) => `<div class="slide ${all ? "all" : ""} $
 // ---------------- ניהול בוטים: strategies, demo record, recommendations backed by numbers (approved one by one) ----------------
 const RISK_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/trade_review/risk.json?t=${Math.floor(Date.now() / 60000)}`;
 const BP = {doc: null, ag: null, bot: null, busy: false, combo: null};
+const DEC_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/decisions.json?t=${Math.floor(Date.now() / 60000)}`;
+let decLocal = (() => { try { return JSON.parse(localStorage.getItem("agDecLocal") || "{}"); } catch (e) { return {}; } })();
+const decSave = () => { try { localStorage.setItem("agDecLocal", JSON.stringify(decLocal)); } catch (e) {} };
+const BOT_HE = b => ({bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3", bot4: "בוט 4", bot5: "בוט 5", bot6: "בוט 6", bot7: "בוט 7"})[b] || b;
+function decItem(x, owner) {
+  const L = decLocal[x.id] || {}, undone = x.undone || L.undo, read = x.read || L.read || undone;
+  const t = new Date(x.at).toLocaleString("he-IL", {day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit"});
+  return `<div class="dec" style="padding:10px 0;border-top:1px solid var(--line,#e5e7eb)">
+    <div class="row" style="justify-content:space-between;gap:8px"><b style="line-height:1.4">${esc(x.title)}</b>${undone ? '<span class="pill neg">בוטלה</span>' : '<span class="pill pos">אושרה</span>'}</div>
+    <div class="mut" style="margin-top:4px;line-height:1.5"><span class="pill">${esc(BOT_HE(x.bot))}</span> ${esc(t)} · ${esc(x.effect || "")}</div>
+    ${x.why ? `<div class="foot" style="margin-top:4px;line-height:1.5">${whyHtml(x.why)}</div>` : ""}
+    ${owner && !undone ? `<div class="acts" style="margin-top:8px"><button class="btn ghost" data-dundo="${esc(x.id)}">בטל</button>${read ? "" : `<button class="btn ghost" data-dread="${esc(x.id)}">קראתי</button>`}</div>` : ""}
+  </div>`;
+}
+function decRender() {
+  const box = $("bpDec"); if (!box) return;
+  const all = (BP.dec && BP.dec.decisions) || [], owner = getRole() !== "viewer";
+  const isRead = x => x.read || x.undone || (decLocal[x.id] || {}).read || (decLocal[x.id] || {}).undo;
+  const unread = all.filter(x => !isRead(x)), rest = all.filter(isRead);
+  box.innerHTML = `<div class="card"><div class="row" style="justify-content:space-between"><b>החלטות המנהל</b><span class="pill">${unread.length} חדשות</span></div>
+    <div class="foot" style="margin-top:6px;line-height:1.55">המנהל מחליט במקומך כל 3 שעות, והדוח מגיע אליך כל בוקר ב־05:00. כל החלטה אפשר לבטל, והבוט חוזר למצב שלפניה. הכלל של הפסד יומי 5% והפסד כולל 10% קבוע ואף אחד לא נוגע בו.</div>
+    ${unread.length ? unread.map(x => decItem(x, owner)).join("") : '<div class="mut" style="margin-top:8px">אין החלטות חדשות.</div>'}
+    ${owner && unread.length > 1 ? `<div class="acts" style="margin-top:10px"><button class="btn" id="decAll">קראתי הכל (${unread.length})</button></div>` : ""}
+    <div class="msg" id="decMsg"></div></div>
+    ${rest.length ? `<details class="card"><summary>ארכיון: ${rest.length} החלטות מ־30 הימים האחרונים</summary>${rest.map(x => decItem(x, owner)).join("")}</details>` : ""}`;
+  const read = async ids => { ids.forEach(i => decLocal[i] = {...(decLocal[i] || {}), read: 1}); decSave(); decRender();
+    try { await act("/agent/read", {ids}); } catch (e) { note("decMsg", e.message, false); } };
+  box.querySelectorAll("[data-dread]").forEach(x => x.onclick = () => read([x.dataset.dread]));
+  const all_ = $("decAll"); if (all_) all_.onclick = () => read(unread.map(x => x.id));
+  box.querySelectorAll("[data-dundo]").forEach(x => x.onclick = async () => {
+    const d = all.find(y => y.id === x.dataset.dundo);
+    if (!(await askYes("לבטל את ההחלטה?", `${d.title}. הבוט יחזור למצב שלפני ההחלטה, והמנהל לא יחליט אותה שוב.`, "כן, בטל"))) return;
+    try { await act("/agent/undo", {id: d.id}); decLocal[d.id] = {...(decLocal[d.id] || {}), undo: 1, read: 1}; decSave(); decRender(); note("decMsg", "ההחלטה בוטלה.", true); }
+    catch (e) { note("decMsg", e.message, false); }
+  });
+}
 const AG_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/manager.json?t=${Math.floor(Date.now() / 60000)}`;
 const AG_ORDER = ["bot1", "bot2", "bot3", "bot4", "bot5", "bot6", "bot7"];
 let agLocal = {}; try { agLocal = JSON.parse(localStorage.getItem("agDec") || "{}"); } catch (e) {}
@@ -1668,7 +1704,7 @@ function agCard(bot, c, owner) {
   const [tn, tc] = TIER[c.tier] || ["", ""], status = agStatus(c), u = c.unseen || {}, tr = c.train || {}, w = c.whole || {};
   const note = (agLocal[c.id] && "note" in agLocal[c.id]) ? agLocal[c.id].note : c.note;
   const li = (k, v) => `<div class="li"><span class="k">${k}</span><span class="v">${v}</span></div>`;
-  const st = status === "approved" ? '<span class="pill pos">אושרה · תיבנה בעדכון הבא של הבוט</span>' : status === "rejected" ? '<span class="pill neg">נדחתה</span>' : "";
+  const st = status === "approved" ? `<span class="pill pos">${c.by === "manager" ? "המנהל אישר" : "אושרה"} · תיבנה בעדכון הבא של הבוט</span>` : status === "rejected" ? '<span class="pill neg">נדחתה</span>' : "";
   return `<div class="card agc" data-ag="${esc(c.id)}">
     <div class="row" style="justify-content:space-between;gap:8px"><b style="line-height:1.4">${esc(c.title)}</b><span class="pill ${tc}">${tn}</span></div>
     <div class="mut" style="margin:6px 0 8px;line-height:1.55">${whyHtml(c.what)}</div>
@@ -1685,7 +1721,7 @@ function agCard(bot, c, owner) {
     ${note ? `<div class="foot" style="margin-top:6px"><b>ההערה שלך:</b> ${esc(note)}</div>` : ""}
     ${c.reply ? `<div class="foot" style="margin-top:4px"><b>תשובה:</b> ${esc(c.reply)}</div>` : ""}
     ${st ? `<div style="margin-top:8px">${st}</div>` : ""}
-    ${owner ? `<div class="acts" style="margin-top:10px">${status === "pending" && (c.tier === "strong" || c.tier === "regular") ? `<button class="btn ok" data-agok="${esc(c.id)}">אשר</button><button class="btn ghost" data-agno="${esc(c.id)}">דחה</button>` : status !== "pending" ? `<button class="btn ghost" data-agundo="${esc(c.id)}">בטל החלטה</button>` : ""}<button class="btn ghost" data-agnote="${esc(c.id)}">הערה</button></div>
+    ${owner ? `<div class="acts" style="margin-top:10px">${status === "pending" && (c.tier === "strong" || c.tier === "regular") ? `<button class="btn ok" data-agok="${esc(c.id)}">אשר</button><button class="btn ghost" data-agno="${esc(c.id)}">דחה</button>` : status !== "pending" ? (c.by === "manager" && c.decision_id ? `<button class="btn ghost" data-agmundo="${esc(c.decision_id)}">בטל</button>` : `<button class="btn ghost" data-agundo="${esc(c.id)}">בטל החלטה</button>`) : ""}<button class="btn ghost" data-agnote="${esc(c.id)}">הערה</button></div>
       <div class="agn" id="agn_${esc(c.id)}" style="display:none;margin-top:8px"><textarea rows="3" style="width:100%;box-sizing:border-box" placeholder="למשל: תבדוק גם על זהב">${esc(note || "")}</textarea>
       <div class="acts" style="margin-top:6px"><button class="btn" data-agsend="${esc(c.id)}">שלח למנהל</button></div></div>` : ""}
   </div>`;
@@ -1738,6 +1774,11 @@ function agBind(bot) {
   });
   $("bpBody").querySelectorAll("[data-agno]").forEach(x => x.onclick = () => send(x.dataset.agno, {decision: "rejected"}, "נדחתה. היא לא תוצע שוב."));
   $("bpBody").querySelectorAll("[data-agundo]").forEach(x => x.onclick = () => send(x.dataset.agundo, {decision: null, clear: true}, "ההחלטה בוטלה."));
+  $("bpBody").querySelectorAll("[data-agmundo]").forEach(x => x.onclick = async () => {
+    if (!(await askYes("לבטל את ההחלטה של המנהל?", "השינוי לא ייבנה בבוט, והמנהל לא יחליט אותו שוב.", "כן, בטל"))) return;
+    try { await act("/agent/undo", {id: x.dataset.agmundo}); decLocal[x.dataset.agmundo] = {undo: 1, read: 1}; decSave(); note("agMsg", "ההחלטה בוטלה.", true); }
+    catch (e) { note("agMsg", e.message, false); }
+  });
   $("bpBody").querySelectorAll("[data-agnote]").forEach(x => x.onclick = () => { const e = $("agn_" + x.dataset.agnote); if (e) e.style.display = e.style.display === "none" ? "block" : "none"; });
   $("bpBody").querySelectorAll("[data-agsend]").forEach(x => x.onclick = () => {
     const t = $("agn_" + x.dataset.agsend).querySelector("textarea").value.trim();
@@ -1759,7 +1800,9 @@ async function botsOpen() {
   if (!BP.doc) $("bpBody").innerHTML = '<div class="empty">טוען…</div>';
   await Promise.all([
     fetch(RISK_URL(), {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => { if (j) BP.doc = j; }).catch(() => {}),
-    fetch(AG_URL(), {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => { if (j) BP.ag = j; }).catch(() => {})]);
+    fetch(AG_URL(), {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => { if (j) BP.ag = j; }).catch(() => {}),
+    fetch(DEC_URL(), {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => { if (j) BP.dec = j; }).catch(() => {})]);
+  decRender();
   if (!BP.doc && !BP.ag) { $("bpBody").innerHTML = '<div class="empty">אין עדיין נתונים. הם מתעדכנים כל לילה.</div>'; return; }
   const bots = bpBots();
   if (!BP.bot || !bots.includes(BP.bot)) BP.bot = bots[0];
@@ -1828,7 +1871,7 @@ function botsRender() {
       <div class="kpi"><small>סיכון הבוט</small><div class="num" style="font-weight:700;margin-top:4px">${pctTxt(b.risk_pct)}</div></div>
       <div class="kpi"><small>עסקאות בדמו</small><div class="num" style="font-weight:700;margin-top:4px">${b.trades}</div></div>
       <div class="kpi"><small>המלצות</small><div class="num" style="font-weight:700;margin-top:4px">${pend.length}</div></div></div>
-      <div class="foot" style="margin-top:10px;line-height:1.55">כל המלצה נשענת על רווחיות ויציבות בדמו, ונבדקת גם על הבקטסט בשני חצאים. הקש על שורה כדי לראות את המספרים. הנתונים וההמלצות מתחדשים כל בוקר ב־08:00 (עודכן ${esc(upd)}). שום דבר לא משתנה בלי אישור.</div>
+      <div class="foot" style="margin-top:10px;line-height:1.55">כל המלצה נשענת על רווחיות ויציבות בדמו, ונבדקת גם על הבקטסט בשני חצאים. הקש על שורה כדי לראות את המספרים. הנתונים וההמלצות מתחדשים כל בוקר ב־08:00 (עודכן ${esc(upd)}). המנהל מחליט על ההמלצות במקומך, ואפשר לבטל כל החלטה בראש העמוד.</div>
       ${owner && pend.length > 1 ? `<div class="row" style="margin-top:10px"><button class="btn ok" id="bpAll">אשר הכל (${pend.length})</button></div>` : ""}
       <div class="msg" id="bpMsg"></div></div>
     <div class="card" style="padding:0"><div class="tw"><table class="rt"><thead><tr><th>אסטרטגיה</th><th>הצלחה</th><th>עסקאות</th><th>סיכון</th><th>המלצה</th></tr></thead><tbody>${tr}</tbody></table></div></div>`;

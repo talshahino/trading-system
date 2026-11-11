@@ -608,27 +608,147 @@ def agent_decide(d):
                    at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
         all_[k] = cur
         AGENT_DEC.write_text(json.dumps(all_, ensure_ascii=False, indent=1), encoding="utf-8")
-    threading.Thread(target=lambda: REP.push_state("agent_decisions", {"cards": all_}), daemon=True).start()
+    agent_publish()
     log(f"agents' card {k}: {dec or 'note'}")
     return cur
 
 
-def agents_notify():
-    """Once a day at most: the manager's new proposals."""
+# the manager decides in the user's place (user, 11.11.2026): its decisions come in reports/agents/decisions.json
+# (agents/autodecide.py); the risk / removal ones are applied here, keeping the value before so "undo" restores it.
+# The app marks decisions read (they leave the list; the archive keeps 30 days) and can undo any of them.
+AGENT_META = LIVE / "agent_meta.json"
+DECISIONS_URL = "https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/decisions.json"
+
+
+def agent_meta():
+    try:
+        m = json.loads(AGENT_META.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        m = {}
+    m.setdefault("read", [])
+    m.setdefault("undo", [])
+    m.setdefault("applied", {})
+    return m
+
+
+def agent_meta_save(m):
+    m["read"], m["undo"] = m["read"][-2000:], m["undo"][-2000:]
+    tmp = AGENT_META.with_suffix(".tmp")
+    tmp.write_text(json.dumps(m, ensure_ascii=False, indent=1), encoding="utf-8")
+    os.replace(tmp, AGENT_META)
+
+
+def agent_publish():
+    """The user's card decisions, read marks and undos -> branch live (the manager agent reads them)."""
+    def go():
+        with AGENT_LOCK:
+            try:
+                cards = json.loads(AGENT_DEC.read_text(encoding="utf-8"))
+            except Exception:  # noqa: BLE001
+                cards = {}
+            m = agent_meta()
+        REP.push_state("agent_decisions", {"cards": cards, "read": m["read"], "undo": m["undo"],
+                                           "applied": sorted(m["applied"])})
+    threading.Thread(target=go, daemon=True).start()
+
+
+def agent_read(d):
+    ids = [str(x) for x in (d.get("ids") or []) if re.fullmatch(r"[0-9a-f]{12}", str(x))][:500]
+    if not ids:
+        raise ValueError("אין החלטות לסמן")
+    with AGENT_LOCK:
+        m = agent_meta()
+        if d.get("unread"):
+            m["read"] = [x for x in m["read"] if x not in ids]
+        else:
+            m["read"] += [x for x in ids if x not in m["read"]]
+        agent_meta_save(m)
+    agent_publish()
+    return len(ids)
+
+
+def agent_undo(d):
+    k = str(d.get("id") or "")
+    if not re.fullmatch(r"[0-9a-f]{12}", k):
+        raise ValueError("החלטה לא מוכרת")
+    with AGENT_LOCK:
+        m = agent_meta()
+        if k not in m["undo"]:
+            m["undo"].append(k)
+        if k not in m["read"]:
+            m["read"].append(k)
+        a = m["applied"].pop(k, None)
+        agent_meta_save(m)
+    if a:                                    # a risk change already applied: put back the value before it
+        risk_change(a["bot"], a["combo"], a["kind"], a.get("prev"))
+        log(f"manager's decision {k} undone by the user: {a['bot']} {a['combo']} {a['kind']} back to {a.get('prev')}")
+    else:
+        log(f"manager's decision {k} undone by the user")
+    agent_publish()
+    return {"undone": k, "restored": bool(a)}
+
+
+def auto_apply():
+    """Every 10 minutes: apply the manager's risk / removal decisions that are not applied and not undone."""
+    time.sleep(90)
     while True:
         try:
-            last = CFG.get("agents_notified") or {}
-            if time.time() - last.get("t", 0) > 20 * 3600:
-                j = requests.get(AGENTS_URL, params={"t": int(time.time() // 600)}, timeout=20).json()
-                new = [x for x in j.get("new", []) if x not in set(last.get("ids", []))]
-                if new:
-                    push("מנהל הבוטים: הצעות חדשות", f"{len(new)} הצעות חדשות מחכות לאישור שלך במנהל הבוטים.", tag="agents")
-                    with LOCK:
-                        CFG["agents_notified"] = {"t": time.time(), "ids": (last.get("ids", []) + new)[-500:]}
-                    save()
+            j = requests.get(DECISIONS_URL, params={"t": int(time.time() // 300)}, timeout=20).json()
+            for x in j.get("decisions", []):
+                a = x.get("action")
+                if x.get("type") != "risk" or x.get("decision") != "approved" or not a:
+                    continue
+                with AGENT_LOCK:
+                    m = agent_meta()
+                    if x["id"] in m["applied"] or x["id"] in m["undo"]:
+                        continue
+                try:
+                    cur = (risk_doc().get(a["bot"], {}).get(a["kind"]) or {}).get(a["combo"])
+                    risk_change(a["bot"], a["combo"], a["kind"], a["value"])
+                except Exception as e:  # noqa: BLE001
+                    log(f"manager's decision {x['id']} not applied: {e}")
+                    cur = "failed"
+                with AGENT_LOCK:
+                    m = agent_meta()
+                    m["applied"][x["id"]] = {"bot": a["bot"], "combo": a["combo"], "kind": a["kind"],
+                                             "prev": None if cur == "failed" else cur, "failed": cur == "failed",
+                                             "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+                    agent_meta_save(m)
+                log(f"manager's decision applied: {a['bot']} {a['combo']} {a['kind']} -> {a['value']}")
+                agent_publish()
         except Exception:  # noqa: BLE001
             pass
-        time.sleep(1800)
+        time.sleep(600)
+
+
+def agents_notify():
+    """Every morning at 05:00 (the computer's clock, Israel): the manager's decisions of the past day, to read and undo
+    in "מנהל הבוטים" (user, 11.11.2026)."""
+    while True:
+        try:
+            lt = time.localtime()
+            today = time.strftime("%Y-%m-%d", lt)
+            if lt.tm_hour == 5 and CFG.get("agents_report_day") != today:
+                j = requests.get(DECISIONS_URL, params={"t": int(time.time() // 300)}, timeout=20).json()
+                since = CFG.get("agents_report_t") or "1970"
+                ds = [x for x in j.get("decisions", []) if x.get("at", "") > since and not x.get("undone")]
+                unread = [x for x in j.get("decisions", []) if not x.get("read") and not x.get("undone")]
+                if ds or unread:
+                    kinds = {}
+                    for x in ds:
+                        k = {"remove": "הסרות", "mult": "שינויי סיכון", "improve": "שיפורים", "new": "אסטרטגיות חדשות",
+                             "info": "בדיקות של התראות"}.get(x.get("kind"), "שינויים")
+                        kinds[k] = kinds.get(k, 0) + 1
+                    body = (" · ".join(f"{v} {k}" for k, v in kinds.items()) or "אין החלטות חדשות") + \
+                           f". {len(unread)} לא נקראו. אפשר לבטל כל החלטה במנהל הבוטים."
+                    push(f"דוח המנהל: {len(ds)} החלטות", body, tag="agents")
+                with LOCK:
+                    CFG["agents_report_day"] = today
+                    CFG["agents_report_t"] = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
+                save()
+        except Exception:  # noqa: BLE001
+            pass
+        time.sleep(300)
 
 
 def watchdog():
@@ -1110,6 +1230,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True, "risk": risk_public()})
             if path == "/agent/decide":
                 return self._send(200, {"ok": True, "card": agent_decide(d)})
+            if path == "/agent/read":
+                return self._send(200, {"ok": True, "n": agent_read(d)})
+            if path == "/agent/undo":
+                return self._send(200, {"ok": True, **agent_undo(d)})
             if path == "/risk/reject":
                 risk_change(d.get("bot"), str(d.get("combo") or ""), str(d.get("kind") or "mult"), reject=d.get("sample") or "")
                 return self._send(200, {"ok": True, "risk": risk_public()})
@@ -1271,6 +1395,7 @@ def main():
             start_bot(a)
     threading.Thread(target=watchdog, daemon=True).start()
     threading.Thread(target=agents_notify, daemon=True).start()
+    threading.Thread(target=auto_apply, daemon=True).start()
     threading.Thread(target=mt5_hider, daemon=True).start()
     threading.Thread(target=algo_keeper, daemon=True).start()
     threading.Thread(target=update_check, daemon=True).start()

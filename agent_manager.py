@@ -23,6 +23,7 @@ from pathlib import Path
 import pandas as pd
 
 from agents import agentkit as K
+from agents import autodecide as AD
 
 OUT = Path("reports/agents/manager.json")
 BOTS = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 · סקלפינג",
@@ -165,6 +166,14 @@ def main():
                      "tested": src.get("tested"), "progress": [src.get("done"), src.get("planned")],
                      "risk_recs": rc.get(RISK_KEYS.get(bot, ""), 0), "pending": len(pend), "cards": cards,
                      "health": health}
+    # the manager decides in the user's place (user, 11.11.2026); the user sees the list at 05:00 and can undo
+    try:
+        dd = AD.decide(bots)
+    except Exception as e:  # noqa: BLE001
+        dd = {"decisions": [], "new": [], "error": str(e)}
+        print("autodecide failed:", e)
+    for b in bots.values():
+        b["pending"] = sum(1 for c in b["cards"] if c["status"] == "pending" and c["tier"] in ("strong", "regular"))
     new = [c["id"] for b in bots.values() for c in b["cards"]
            if c["status"] == "pending" and c["tier"] in ("strong", "regular") and c["first_seen"] == now]
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -179,7 +188,8 @@ def main():
             o = bots[b].setdefault("ops", {})
             o["problems"] = (o.get("problems") or []) + hp
             o["actions"] = (o.get("actions") or []) + [None] * len(hp)
-    OUT.write_text(json.dumps({"updated": now, "new": new, "bots": bots, "ops": op}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    OUT.write_text(json.dumps({"updated": now, "new": new, "bots": bots, "ops": op,
+                                "decisions": {"new": dd.get("new", []), "unread": sum(1 for d in dd["decisions"] if not d.get("read") and not d.get("undone"))}}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     print(f"manager: {sum(b['pending'] for b in bots.values())} proposals waiting, {len(new)} new tonight")
 
 

@@ -512,3 +512,6 @@ def timeframe_ok(sid, tf):
 from agents.scalp_strategies import SCALP  # noqa: E402
 
 STRATEGIES.update(SCALP)
+from agents.scout_strategies import SCOUT  # noqa: E402
+
+STRATEGIES.update(SCOUT)

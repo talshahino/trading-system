@@ -1468,7 +1468,7 @@ def main():
     threading.Thread(target=update_check, daemon=True).start()
     threading.Thread(target=watchdog_secret, daemon=True).start()
     threading.Thread(target=heartbeat, daemon=True).start()
-    # the agents run here now (11.11.2026): continuous layer every 10 minutes, smart layer every 3 hours
+    # the agents run here now (11.11.2026): continuous layer every 10 minutes, smart layer every 4 hours
     threading.Thread(target=AH.loop, args=(log, lambda: CFG.get("agents_host", True)), daemon=True).start()
     while True:
         time.sleep(3600)

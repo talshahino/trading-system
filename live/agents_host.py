@@ -3,7 +3,7 @@
 Runs inside the bots' manager (live/manager.py), in the background, at low priority and without any window, so
 the bots' trading always comes first. Two layers, like the plan:
   continuous layer  every 10 minutes: every bot's health (agents/health.py) + the manager agent (agent_manager.py)
-  smart layer       every 3 hours:   bot 5's agent experiments (agent_bot5.py) for its time budget, then the manager
+  smart layer       every 4 hours:   every bot's smart agent for its time budget (AGENTS below), then the manager
 Everything runs in its own working copy, C:\\trading-agents (never in the bots' own folder), refreshed from GitHub
 (branch main) before every run; the market-data cache stays there between runs, so data is downloaded once.
 The results (reports/agents/, data/agents/) are published to GitHub in one commit, where the app reads them.
@@ -36,8 +36,14 @@ REPO = REP.REPO
 API = f"https://api.github.com/repos/{REPO}"
 PUBLISH = ("reports/agents/", "data/agents/")
 HOST = "reports/agents/host.json"
-LIGHT_EVERY, SMART_EVERY = 10 * 60, 3 * 3600
-SMART_MINUTES = 120                                       # bot 5's budget per smart run (data/agents/plan.json pc_minutes)
+LIGHT_EVERY, SMART_EVERY = 10 * 60, 4 * 3600
+# the smart agents, in this order, with their minutes per smart run (the manager may change them in data/agents/plan.json,
+# "pc": {"bot5": 40, ...}); an agent with nothing left to test ends at once
+AGENTS = [("bot5", ["agent_bot5.py"], 40), ("bot6", ["agent_bot6.py"], 30),
+          ("bot1", ["agent_portfolio.py", "--bot", "bot1"], 15), ("bot2", ["agent_portfolio.py", "--bot", "bot2"], 15),
+          ("bot3", ["agent_portfolio.py", "--bot", "bot3"], 15), ("bot4", ["agent_portfolio.py", "--bot", "bot4"], 15),
+          ("bot7", ["agent_portfolio.py", "--bot", "bot7"], 15),
+          ("bot5-new", ["agent_portfolio.py", "--bot", "bot5"], 5), ("bot6-new", ["agent_portfolio.py", "--bot", "bot6"], 5)]
 HEARTBEAT = 3 * 3600                                      # publish the continuous layer at least this often
 NODE_VER = "v20.18.1"
 _S = {"sha": None, "light": 0.0, "smart": 0.0, "pub": 0.0, "proc": None, "log": print, "err": None}
@@ -227,26 +233,12 @@ def host_doc(st, kind):
     return {"pc": True, "computer": os.environ.get("COMPUTERNAME", "?"), "updated": now,
             "light_at": st.get("light_at"), "smart_at": st.get("smart_at"),
             "every_min": {"light": LIGHT_EVERY // 60, "smart": SMART_EVERY // 60},
-            "smart_minutes": st.get("smart_minutes"), "last_error": st.get("last_error"),
+            "smart_minutes": st.get("smart_minutes"), "agent_errors": st.get("agent_errors") or [],
+            "last_error": st.get("last_error"),
             "errors_in_row": st.get("errors_in_row", 0)}
 
 
-def cycle(st, kind):
-    log = _S["log"]
-    t0 = time.time()
-    refresh(st)
-    before = snapshot()
-    if kind == "smart":
-        try:
-            plan = json.loads((WORK / "data/agents/plan.json").read_text(encoding="utf-8")).get("bot5", {})
-        except Exception:  # noqa: BLE001
-            plan = {}
-        mins = float(plan.get("pc_minutes", SMART_MINUTES))
-        st["smart_minutes"] = mins
-        run(st, ["agent_bot5.py", "--minutes", str(mins)], timeout=int(mins * 60 + 3600), logname="agent_bot5.log")
-    else:
-        run(st, ["-m", "agents.health"], timeout=900, logname="health.log")
-    run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log")
+def _publish_changes(st, before, kind, msg):
     after = snapshot()
     changed = [rel for rel, hsh in after.items() if before.get(rel) != hsh and rel != HOST]
     files = {rel: (WORK / rel).read_bytes() for rel in changed}
@@ -255,17 +247,75 @@ def cycle(st, kind):
         news = {rel: hashlib.sha1(_meaningful(rel, b)).hexdigest() for rel, b in files.items()}
         if all(prev.get(rel) == d for rel, d in news.items()):
             files = {}                                  # nothing new: no commit (the app stays as it is)
-    st["last_error"], st["errors_in_row"] = None, 0
     doc = host_doc(st, kind)
-    if files or kind == "smart" or time.time() - _S["pub"] >= HEARTBEAT:
+    if files or kind != "light" or time.time() - _S["pub"] >= HEARTBEAT:
         files[HOST] = json.dumps(doc, ensure_ascii=False, indent=1).encode("utf-8")
         (WORK / HOST).write_bytes(files[HOST])
-        publish(files, f"Agents on the bots' computer: {'smart layer' if kind == 'smart' else 'health'}")
+        publish(files, msg)
         _S["pub"] = time.time()
         st["pub_digest"] = {**st.get("pub_digest", {}),
                             **{rel: hashlib.sha1(_meaningful(rel, b)).hexdigest() for rel, b in files.items()}}
     _save(st)
-    log(f"agents ({kind}) done in {time.time() - t0:.0f}s, {len(files)} files published")
+    return len(files)
+
+
+def light(st, refresh_first=True):
+    """The continuous layer: every bot's health + the manager agent."""
+    t0 = time.time()
+    if refresh_first:
+        refresh(st)
+    before = snapshot()
+    run(st, ["-m", "agents.health"], timeout=900, logname="health.log")
+    run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log")
+    st["last_error"], st["errors_in_row"] = None, 0
+    n = _publish_changes(st, before, "light", "Agents on the bots' computer: health")
+    _S["light"] = time.time()
+    _S["log"](f"agents (continuous layer) done in {time.time() - t0:.0f}s, {n} files published")
+
+
+def smart(st):
+    """The smart layer: every bot's agent in turn, each published as it ends; the continuous layer keeps its
+    10 minutes in between (between two agents)."""
+    log = _S["log"]
+    t0 = time.time()
+    refresh(st)
+    try:
+        plan = json.loads((WORK / "data/agents/plan.json").read_text(encoding="utf-8")).get("pc", {})
+    except Exception:  # noqa: BLE001
+        plan = {}
+    errs, mins_all = [], {}
+    for name, args, mins in AGENTS:
+        mins = float(plan.get(name, mins))
+        mins_all[name] = mins
+        if mins <= 0:
+            continue
+        if time.time() - _S["light"] >= LIGHT_EVERY:
+            try:
+                light(st, refresh_first=False)
+            except Exception as e:  # noqa: BLE001
+                log(f"continuous layer failed: {e}")
+        before = snapshot()
+        try:
+            run(st, args + ["--minutes", str(mins)], timeout=int(mins * 60 + 3600), logname=f"agent_{name}.log")
+        except Exception as e:  # noqa: BLE001 - one agent's failure does not stop the others
+            errs.append(f"{name}: {e}"[:300])
+            log(f"agent {name} failed: {e}")
+        st["smart_minutes"], st["agent_errors"] = mins_all, errs
+        try:
+            _publish_changes(st, before, "agent", f"Agents on the bots' computer: {name} smart layer")
+        except Exception as e:  # noqa: BLE001
+            log(f"publishing {name} failed: {e}")
+    before = snapshot()
+    run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log")
+    host_doc(st, "smart")                                # stamps smart_at
+    st["last_error"], st["errors_in_row"] = None, 0
+    n = _publish_changes(st, before, "smart", "Agents on the bots' computer: smart layer")
+    _S["light"] = time.time()
+    log(f"agents (smart layer) done in {time.time() - t0:.0f}s, {n} files published, {len(errs)} agents failed")
+
+
+def cycle(st, kind):
+    return smart(st) if kind == "smart" else light(st)
 
 
 def loop(log=print, enabled=lambda: True):
@@ -281,12 +331,13 @@ def loop(log=print, enabled=lambda: True):
                 now = time.time()
                 kind = "smart" if now - _S["smart"] >= SMART_EVERY else "light" if now - _S["light"] >= LIGHT_EVERY else None
                 if kind:
+                    if kind == "smart":
+                        _S["smart"] = time.time()           # every 4 hours from start to start
                     try:
                         cycle(st, kind)
                     finally:
-                        _S["light"] = time.time()
-                        if kind == "smart":
-                            _S["smart"] = time.time()
+                        if kind == "light":
+                            _S["light"] = time.time()
         except Exception as e:  # noqa: BLE001
             st["last_error"] = f"{time.strftime('%d.%m %H:%M')} {e}"[:400]
             st["errors_in_row"] = st.get("errors_in_row", 0) + 1

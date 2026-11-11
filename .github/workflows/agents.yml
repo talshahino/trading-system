@@ -71,8 +71,16 @@ jobs:
           path: cache
           key: poc-cache-${{ github.run_id }}
           restore-keys: poc-cache-
-      - name: Bot 5 agent
-        run: python -u agent_bot5.py ${{ inputs.minutes && format('--minutes {0}', inputs.minutes) || '' }} ${{ inputs.symbols && format('--symbols {0} --no-cards', inputs.symbols) || '' }} 2>&1 | tee agent_bot5.log
+      - name: Bot agents (the bots' computer is down - GitHub stands in)
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: |
+          python -u agent_bot5.py ${{ inputs.minutes && format('--minutes {0}', inputs.minutes) || '' }} ${{ inputs.symbols && format('--symbols {0} --no-cards', inputs.symbols) || '' }} 2>&1 | tee agent_bot5.log
+          if [ -z "${{ inputs.symbols }}" ]; then
+            python -u agent_bot6.py --minutes 25 2>&1 | tee agent_bot6.log || true
+            for b in bot1 bot2 bot3 bot4 bot7; do python -u agent_portfolio.py --bot $b --minutes 20 --where github 2>&1 | tee agent_$b.log || true; done
+          fi
       - name: Manager
         if: always() && !inputs.symbols
         env:
@@ -90,9 +98,60 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p reports/agents
-          if [ -z "${{ inputs.symbols }}" ]; then cp agent_bot5.log agent_manager.log reports/agents/ 2>/dev/null || true; fi
-          git add reports/agents/bot5/exp
+          if [ -z "${{ inputs.symbols }}" ]; then cp agent_*.log reports/agents/ 2>/dev/null || true; fi
+          git add reports/agents/*/exp
           if [ -z "${{ inputs.symbols }}" ]; then git add reports/agents; fi
           git commit -qm "Agents: nightly run" || exit 0
           # generated files only: on a clash keep this run's copy (-X theirs = the commit being replayed)
+          for i in 1 2 3 4; do git pull -q --rebase -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done
+
+  alpaca:
+    # stocks and Alpaca crypto need the Alpaca keys, which only GitHub has: their combos (bots 1-4) are tested here
+    # every night, also while the bots' computer runs everything else (agent_portfolio.py --where github)
+    needs: pc
+    # one bot a night in turn (GitHub's free minutes are limited)
+    if: needs.pc.outputs.run != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-alpaca-${{ github.run_id }}
+          restore-keys: |
+            poc-cache-alpaca-
+            poc-cache-
+      - name: Stock combos of bots 1-4
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: |
+          b="bot$(( $(date -u +%j | sed 's/^0*//') % 4 + 1 ))"
+          python -u agent_portfolio.py --bot $b --minutes 25 --where github 2>&1 | tail -8
+      - name: Save data cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: poc-cache-alpaca-${{ github.run_id }}
+      - name: Commit
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/agents/*/exp reports/agents/*/cards.json
+          git commit -qm "Agents: stock combos (Alpaca)" || exit 0
           for i in 1 2 3 4; do git pull -q --rebase -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

@@ -1,0 +1,295 @@
+{
+ "bot": "bot2",
+ "updated": "2026-11-11T20:51:50+00:00",
+ "cards": [
+  {
+   "bot": "bot2",
+   "kind": "improve",
+   "title": "TV46|15Min|ASML: בלי יעד · כניסה בלימיט 0.5R טוב יותר",
+   "what": "ניהול העסקה לאסטרטגיה TV46|15Min|ASML: בלי יעד · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 46,
+    "eff_n": 46.0,
+    "mean": 0.2626,
+    "t": 0.69,
+    "win": 32.4
+   },
+   "unseen": {
+    "n": 57,
+    "eff_n": 57.0,
+    "mean": 0.0475,
+    "t": 0.23,
+    "win": 42.3
+   },
+   "whole": {
+    "n": 103,
+    "eff_n": 102.8,
+    "mean": 0.1393,
+    "t": 0.68,
+    "win": 38.1
+   },
+   "halves": [
+    0.1769,
+    0.1119
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.18
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.45,
+   "baseline": {
+    "n": 164,
+    "eff_n": 164.0,
+    "mean": 0.155,
+    "t": 1.82,
+    "win": 48.2
+   },
+   "change": {
+    "combo": "TV46|15Min|ASML",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "none|be0.6|stop1|entry0.5"
+   },
+   "detail": {},
+   "made": "2026-11-11T20:51:50+00:00",
+   "id": "c45aa52ec393",
+   "tier": "rejected",
+   "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.05R מול +0.15R)"
+  },
+  {
+   "bot": "bot2",
+   "kind": "improve",
+   "title": "TV02|1Hour|GBPJPY: בלי יעד · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר",
+   "what": "ניהול העסקה לאסטרטגיה TV02|1Hour|GBPJPY: בלי יעד · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 66,
+    "eff_n": 65.9,
+    "mean": 0.4141,
+    "t": 1.77,
+    "win": 46.8
+   },
+   "unseen": {
+    "n": 87,
+    "eff_n": 87.0,
+    "mean": -0.0418,
+    "t": -0.21,
+    "win": 31.1
+   },
+   "whole": {
+    "n": 153,
+    "eff_n": 152.7,
+    "mean": 0.1456,
+    "t": 0.96,
+    "win": 37.5
+   },
+   "halves": [
+    0.3935,
+    -0.0713
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.07
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.45,
+   "baseline": {
+    "n": 111,
+    "eff_n": 111.0,
+    "mean": 0.1649,
+    "t": 1.53,
+    "win": 48.6
+   },
+   "change": {
+    "combo": "TV02|1Hour|GBPJPY",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "none|be0.6|stop0.75|entry0.25"
+   },
+   "detail": {},
+   "made": "2026-11-11T20:51:50+00:00",
+   "id": "73dc50bfc4c2",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)"
+  },
+  {
+   "bot": "bot2",
+   "kind": "improve",
+   "title": "TV02|1Hour|GBPJPY: רק בתנודתיות גבוהה",
+   "what": "סינון מצב שוק לאסטרטגיה TV02|1Hour|GBPJPY: רק בתנודתיות גבוהה. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 48,
+    "eff_n": 48.0,
+    "mean": 0.2157,
+    "t": 1.39,
+    "win": 50.1
+   },
+   "unseen": {
+    "n": 60,
+    "eff_n": 60.0,
+    "mean": 0.0144,
+    "t": 0.1,
+    "win": 43.4
+   },
+   "whole": {
+    "n": 108,
+    "eff_n": 107.8,
+    "mean": 0.1,
+    "t": 0.95,
+    "win": 46.2
+   },
+   "halves": [
+    0.1707,
+    0.0312
+   ],
+   "neighbours": {
+    "values": 6,
+    "share_positive": 0.4
+   },
+   "tested": 6,
+   "cost_r": null,
+   "risk_pct": 0.45,
+   "baseline": {
+    "n": 111,
+    "eff_n": 111.0,
+    "mean": 0.1727,
+    "t": 1.61,
+    "win": 48.6
+   },
+   "change": {
+    "combo": "TV02|1Hour|GBPJPY",
+    "family": "filters",
+    "from": "none",
+    "to": "vol_high"
+   },
+   "detail": {},
+   "made": "2026-11-11T20:51:50+00:00",
+   "id": "549a86956d30",
+   "tier": "rejected",
+   "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.01R מול +0.17R)"
+  },
+  {
+   "bot": "bot2",
+   "kind": "improve",
+   "title": "BK07|1Hour|EURJPY: בלי יעד · סטופ x0.75",
+   "what": "ניהול העסקה לאסטרטגיה BK07|1Hour|EURJPY: בלי יעד · סטופ x0.75. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 47,
+    "eff_n": 47.0,
+    "mean": -0.0166,
+    "t": -0.05,
+    "win": 23.7
+   },
+   "unseen": {
+    "n": 71,
+    "eff_n": 71.0,
+    "mean": 0.5206,
+    "t": 1.5,
+    "win": 38.1
+   },
+   "whole": {
+    "n": 118,
+    "eff_n": 117.8,
+    "mean": 0.3173,
+    "t": 1.26,
+    "win": 32.6
+   },
+   "halves": [
+    0.3998,
+    0.2159
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.11
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.45,
+   "baseline": {
+    "n": 71,
+    "eff_n": 71.0,
+    "mean": 0.3812,
+    "t": 1.36,
+    "win": 40.9
+   },
+   "change": {
+    "combo": "BK07|1Hour|EURJPY",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "none|be0.6|stop0.75|entry0"
+   },
+   "detail": {},
+   "made": "2026-11-11T20:51:50+00:00",
+   "id": "50b37a85cf63",
+   "tier": "regular",
+   "verdict": "חיובי בתקופה שלא נראתה (+0.52R לעסקה, 71.0 עסקאות אפקטיביות, +0.14R מעל המצב הקיים) · נבדקו 72 שילובים, אז חלק מהיתרון עלול להיות מזל"
+  },
+  {
+   "bot": "bot2",
+   "kind": "improve",
+   "title": "BK07|1Hour|EURJPY: רק בשוק בדשדוש (ADX מתחת 20)",
+   "what": "סינון מצב שוק לאסטרטגיה BK07|1Hour|EURJPY: רק בשוק בדשדוש (ADX מתחת 20). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 24,
+    "eff_n": 24.0,
+    "mean": 0.2416,
+    "t": 0.51,
+    "win": 38.2
+   },
+   "unseen": {
+    "n": 53,
+    "eff_n": 53.0,
+    "mean": 0.0159,
+    "t": 0.06,
+    "win": 37.8
+   },
+   "whole": {
+    "n": 77,
+    "eff_n": 76.8,
+    "mean": 0.082,
+    "t": 0.33,
+    "win": 37.9
+   },
+   "halves": [
+    0.3736,
+    -0.2001
+   ],
+   "neighbours": {
+    "values": 7,
+    "share_positive": 0.5
+   },
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.45,
+   "baseline": {
+    "n": 71,
+    "eff_n": 71.0,
+    "mean": 0.3812,
+    "t": 1.36,
+    "win": 40.9
+   },
+   "change": {
+    "combo": "BK07|1Hour|EURJPY",
+    "family": "filters",
+    "from": "none",
+    "to": "adx_range"
+   },
+   "detail": {},
+   "made": "2026-11-11T20:51:50+00:00",
+   "id": "8a7c84787cab",
+   "tier": "rejected",
+   "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.02R מול +0.38R)"
+  }
+ ],
+ "tested": 236,
+ "done": 6,
+ "planned": 58,
+ "run": {
+  "experiments": 6,
+  "left": 44,
+  "new": 0,
+  "where": "pc"
+ }
+}

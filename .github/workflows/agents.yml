@@ -10,14 +10,15 @@ on:
   workflow_dispatch:
     inputs:
       minutes:
-        description: "Time budget for the bot agents' experiments (minutes)"
-        default: "30"
+        description: "Time budget for the bot agents' experiments (minutes); empty = the manager's plan (data/agents/plan.json)"
+        default: ""
       symbols:
         description: "Only these instruments (a parallel experiments-only run); empty = all + cards + manager"
         default: ""
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: agents-${{ inputs.symbols || 'all' }}
@@ -47,9 +48,11 @@ jobs:
           key: poc-cache-${{ github.run_id }}
           restore-keys: poc-cache-
       - name: Bot 5 agent
-        run: python -u agent_bot5.py --minutes "${{ inputs.minutes || '30' }}" ${{ inputs.symbols && format('--symbols {0} --no-cards', inputs.symbols) || '' }} 2>&1 | tee agent_bot5.log
+        run: python -u agent_bot5.py ${{ inputs.minutes && format('--minutes {0}', inputs.minutes) || '' }} ${{ inputs.symbols && format('--symbols {0} --no-cards', inputs.symbols) || '' }} 2>&1 | tee agent_bot5.log
       - name: Manager
         if: always() && !inputs.symbols
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: python -u agent_manager.py 2>&1 | tee agent_manager.log
       - name: Save data cache
         if: always()

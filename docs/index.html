@@ -1697,13 +1697,17 @@ function agentHtml(bot) {
   let head = a.agent
     ? `הסוכן של הבוט פעיל ורץ כל לילה${up ? ` · עודכן ${esc(up)}` : ""}${a.progress && a.progress[1] ? ` · ניסויים: <span class="num">${a.progress[0] || 0}/${a.progress[1]}</span>` : ""}`
     : "הסוכן של הבוט הזה עוד לא פעיל. הוא ייבנה בשלב הבא, אחרי שהסוכן של בוט 5 יוכיח את עצמו.";
+  const op = a.ops || {}, TRn = {v5: "מסלול 15 דקות", v1m: "מסלול הדקה"};
+  const opRows = Object.entries(op.tracks || {}).map(([k, v]) => `<div class="li"><span class="k">${TRn[k] || k}: ניסויים</span><span class="v"><span class="num">${v.done}/${v.done + v.left}</span>${v.left && v.left_minutes != null ? ` <small class="mut">· עוד כ־${v.left_minutes >= 90 ? Math.round(v.left_minutes / 60) + " שעות" : Math.round(v.left_minutes) + " דק'"}</small>` : ""}</span></div>`).join("");
+  const opProb = (op.problems || []).map((p, i) => `<div class="foot" style="margin-top:6px;color:var(--neg,#c0392b)">⚠ ${esc(p)}${op.actions && op.actions[i] ? `<br><span class="mut">המנהל: ${esc(op.actions[i])}</span>` : ""}</div>`).join("");
+  if (a.agent) head += op.running ? ` · <span class="num">${op.running}</span> ריצות פעילות עכשיו` : "";
   const sm = a.summary || {}, TR = {v5: "מסלול 15 דקות", v1m: "מסלול הדקה"};
   const rows = Object.entries(sm).map(([k, v]) => v.status ? `<div class="li"><span class="k">${TR[k] || k}</span><span class="v mut">${esc(v.status)}</span></div>`
     : `<div class="li"><span class="k">${TR[k] || k}${v.erosion && v.erosion.fading ? ' <span class="pill neg">נשחק</span>' : ""}</span><span class="v">בקטסט ${rNum(v.backtest && v.backtest.unseen && v.backtest.unseen.mean)} · בפועל ${v.live ? `${rNum(v.live.mean)} <small class="mut">(${v.live.n})</small>` : "—"}</span></div>`).join("");
   const cards = a.cards || [], open = cards.filter(c => agStatus(c) === "pending" && (c.tier === "strong" || c.tier === "regular"));
   const rest = cards.filter(c => !open.includes(c));
   return `<div class="card"><div class="row" style="justify-content:space-between"><b>הסוכן של ${esc(a.name)}</b><span class="pill">${open.length} הצעות</span></div>
-      <div class="foot" style="margin-top:6px;line-height:1.55">${head}</div>${rows ? `<div class="agl" style="margin-top:8px">${rows}</div>` : ""}
+      <div class="foot" style="margin-top:6px;line-height:1.55">${head}</div>${rows ? `<div class="agl" style="margin-top:8px">${rows}</div>` : ""}${opRows ? `<div class="agl" style="margin-top:6px">${opRows}</div>` : ""}${opProb}
       <div class="foot" style="margin-top:8px;line-height:1.55">כל הצעה עברה בדיקה של הסוכן ואז סינון של המנהל. הצעה <b>חזקה</b> עוברת את הסף המלא, הצעה <b>רגילה</b> חיובית בתקופה שלא נראתה. רווחים משוקללים לפי זמן: עסקאות אחרונות שוקלות יותר.</div>
       <div class="msg" id="agMsg"></div></div>
     ${open.map(c => agCard(bot, c, owner)).join("")}

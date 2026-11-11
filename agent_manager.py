@@ -58,6 +58,61 @@ def risk_counts():
     return out
 
 
+def ops():
+    """The manager's second job (user, 11.11.2026): run the agents at maximum efficiency and solve their problems.
+    Per agent: work done / left, time per experiment, how long the rest takes at tonight's budget, failed or stuck
+    runs (GitHub Actions), and what the manager did or proposes about it."""
+    out = {}
+    try:
+        import agent_bot5 as A5
+        idx = A5.load_index()
+        planned = [(t, k, v, c) for t, k, v, c in A5.variants()]
+        per = {}
+        for trk, knob, val, cfg in planned:
+            for sym in A5.TRACKS[trk]["symbols"]:
+                key = f"{trk}|{A5.vid(cfg)}|{sym}"
+                p_ = per.setdefault(trk, {"done": 0, "left": 0, "secs": []})
+                if key in idx:
+                    p_["done"] += 1
+                    if idx[key].get("secs"):
+                        p_["secs"].append(idx[key]["secs"])
+                else:
+                    p_["left"] += 1
+        budget = float(json.loads(Path("data/agents/plan.json").read_text()).get("bot5", {}).get("minutes", 30)) \
+            if Path("data/agents/plan.json").exists() else 30.0
+        tracks, problems, actions = {}, [], []
+        for trk, p_ in per.items():
+            avg = sum(p_["secs"]) / len(p_["secs"]) if p_["secs"] else None
+            left_min = None if avg is None else round(p_["left"] * avg / 60, 1)
+            nights = None if left_min is None else round(left_min / budget, 1)
+            tracks[trk] = {"done": p_["done"], "left": p_["left"], "sec_per_exp": None if avg is None else round(avg, 1),
+                           "left_minutes": left_min, "nights_at_budget": nights}
+            if nights is not None and nights > 7:
+                problems.append(f"{A5.TRK_NAME.get(trk, trk)}: נשארו {p_['left']} ניסויים, בערך {left_min / 60:.0f} שעות - "
+                                f"{nights:.0f} לילות בתקציב הנוכחי")
+                actions.append(f"{A5.TRK_NAME.get(trk, trk)}: להריץ במקביל לפי מכשיר, או להעביר למחשב הבוטים")
+        try:
+            raw = subprocess.run(["gh", "api", "repos/talshahino/trading-system/actions/workflows/agents.yml/runs?per_page=20",
+                                  "--jq", "[.workflow_runs[]|{n:.run_number,s:.status,c:.conclusion,t:.created_at}]"],
+                                 capture_output=True, text=True, timeout=60).stdout
+            runs = json.loads(raw) if raw.strip() else []
+        except Exception:  # noqa: BLE001
+            runs = []
+        recent = [r for r in runs if pd.Timestamp(r["t"]) > pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=2)]
+        bad = [r for r in recent if r["s"] == "completed" and r["c"] not in ("success", "skipped")]
+        if bad:
+            problems.append(f"{len(bad)} ריצות של הסוכנים נכשלו ביומיים האחרונים (#{', #'.join(str(r['n']) for r in bad)})")
+            actions.append("הסוכן החכם של המנהל יבדוק את הלוג ויריץ מחדש")
+        last = max((pd.Timestamp(v["at"]) for v in idx.values()), default=None)
+        if last is not None and sum(p_["left"] for p_ in per.values()) and pd.Timestamp.now(tz="UTC") - last > pd.Timedelta(hours=36):
+            problems.append("אין ניסויים חדשים כבר יותר מ־36 שעות, למרות שיש עבודה")
+        out["bot5"] = {"tracks": tracks, "budget_minutes": budget, "running": sum(1 for r in recent if r["s"] != "completed"),
+                       "problems": problems, "actions": actions, "last_experiment": None if last is None else last.isoformat()}
+    except Exception as e:  # noqa: BLE001
+        out["bot5"] = {"problems": [f"לא הצלחתי לקרוא את מצב הסוכן ({e})"]}
+    return out
+
+
 def main():
     dec, rep, rc = decisions(), replies(), risk_counts()
     try:
@@ -107,7 +162,11 @@ def main():
     new = [c["id"] for b in bots.values() for c in b["cards"]
            if c["status"] == "pending" and c["tier"] in ("strong", "regular") and c["first_seen"] == now]
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"updated": now, "new": new, "bots": bots}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    op = ops()
+    for b, o in op.items():
+        if b in bots:
+            bots[b]["ops"] = o
+    OUT.write_text(json.dumps({"updated": now, "new": new, "bots": bots, "ops": op}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     print(f"manager: {sum(b['pending'] for b in bots.values())} proposals waiting, {len(new)} new tonight")
 
 

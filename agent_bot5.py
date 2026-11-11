@@ -137,6 +137,14 @@ def load_index():
     return idx
 
 
+def plan():
+    """The manager's instructions to this agent (data/agents/plan.json): order of the tracks, knobs to skip."""
+    try:
+        return json.loads(Path("data/agents/plan.json").read_text(encoding="utf-8")).get(BOT, {})
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 def experiments(budget_s, only_syms=None):
     """Runs what is missing or older than RERUN_DAYS, baseline first, until the time budget ends."""
     EXP.mkdir(parents=True, exist_ok=True)
@@ -153,7 +161,11 @@ def experiments(budget_s, only_syms=None):
                 todo.append((0 if knob == "base" else 1, -age, s, trk, knob, val, cfg, key))
     # baselines first; the 15-minute track before the 1-minute one (one 1-minute run takes ~8 minutes, a v5 run ~6
     # seconds - 11.11.2026), then the oldest; grouped by symbol so its minutes are loaded once
-    todo.sort(key=lambda x: (x[0], x[3] != "v5", x[2], x[1]))
+    pl = plan()
+    order = pl.get("track_order", ["v5", "v1m"])
+    skip = set(pl.get("skip_knobs", []))
+    todo = [x for x in todo if x[4] not in skip]
+    todo.sort(key=lambda x: (x[0], order.index(x[3]) if x[3] in order else 9, x[2], x[1]))
     t0, data, done = time.time(), {}, 0
     for _, _, s, trk, knob, val, cfg, key in todo:
         if time.time() - t0 > budget_s:
@@ -172,7 +184,7 @@ def experiments(budget_s, only_syms=None):
         f = EXP / f"{trk}_{vid(cfg)}_{s}.csv.gz"
         t.to_csv(f, index=False)
         idx[key] = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "trk": trk, "knob": knob, "val": val,
-                    "cfg": cfg, "sym": s, "file": f.name, "n": len(t)}
+                    "cfg": cfg, "sym": s, "file": f.name, "n": len(t), "secs": round(time.time() - ts, 1)}
         (IDX / f.name.replace(".csv.gz", ".json")).write_text(json.dumps(idx[key], default=str))
         done += 1
         print(f"  {trk} {knob}={val} {s}: {len(t)} trades ({time.time() - ts:.0f}s)")
@@ -217,10 +229,12 @@ def health():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--minutes", type=float, default=45)
+    ap.add_argument("--minutes", type=float, default=None, help="default: the manager's budget (data/agents/plan.json)")
     ap.add_argument("--symbols", default="")
     ap.add_argument("--no-cards", action="store_true", help="experiments only (a parallel run for some instruments)")
     a = ap.parse_args()
+    if a.minutes is None:
+        a.minutes = float(plan().get("minutes", 30))
     idx = experiments(a.minutes * 60, set(x for x in a.symbols.split(",") if x) or None)
     if a.no_cards:
         return

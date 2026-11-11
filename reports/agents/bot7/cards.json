@@ -1,0 +1,575 @@
+{
+ "bot": "bot7",
+ "updated": "2026-11-11T21:31:37+00:00",
+ "cards": [
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV01|5Min|EURUSD: יעד 3R · כניסה בלימיט 0.25R טוב יותר",
+   "what": "ניהול העסקה לאסטרטגיה EV01|5Min|EURUSD: יעד 3R · כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 13,
+    "eff_n": 13.0,
+    "mean": 0.2421,
+    "t": 0.6,
+    "win": 54.7
+   },
+   "unseen": {
+    "n": 9,
+    "eff_n": 9.0,
+    "mean": -0.4126,
+    "t": -1.5,
+    "win": 33.5
+   },
+   "whole": {
+    "n": 22,
+    "eff_n": 22.0,
+    "mean": -0.0384,
+    "t": -0.14,
+    "win": 45.6
+   },
+   "halves": [
+    -0.0218,
+    -0.0584
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.44
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.5,
+   "baseline": {
+    "n": 17,
+    "eff_n": 17.0,
+    "mean": -0.1433,
+    "t": -0.81,
+    "win": 41.1
+   },
+   "change": {
+    "combo": "EV01|5Min|EURUSD",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "3R|be0.6|stop1|entry0.25"
+   },
+   "detail": {},
+   "made": "2026-11-11T21:31:36+00:00",
+   "id": "724f7d5bd57f",
+   "tier": "watch",
+   "verdict": "מעט מדי עסקאות בתקופה שלא נראתה - נשמר להמשך"
+  },
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV01|5Min|GBPUSD: יעד 1R · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר",
+   "what": "ניהול העסקה לאסטרטגיה EV01|5Min|GBPUSD: יעד 1R · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 11,
+    "eff_n": 11.0,
+    "mean": 0.1777,
+    "t": 0.6,
+    "win": 55.2
+   },
+   "unseen": {
+    "n": 13,
+    "eff_n": 13.0,
+    "mean": -0.7865,
+    "t": -5.61,
+    "win": 23.0
+   },
+   "whole": {
+    "n": 24,
+    "eff_n": 24.0,
+    "mean": -0.3644,
+    "t": -2.0,
+    "win": 37.1
+   },
+   "halves": [
+    0.1594,
+    -0.853
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.61
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.5,
+   "baseline": {
+    "n": 18,
+    "eff_n": 18.0,
+    "mean": -0.2992,
+    "t": -1.78,
+    "win": 27.8
+   },
+   "change": {
+    "combo": "EV01|5Min|GBPUSD",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "1R|be0.6|stop0.75|entry0.25"
+   },
+   "detail": {},
+   "made": "2026-11-11T21:31:36+00:00",
+   "id": "7444806dcda0",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.79R לעסקה)"
+  },
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV01|5Min|GBPUSD: רק עם המגמה (ממוצע 200)",
+   "what": "סינון מצב שוק לאסטרטגיה EV01|5Min|GBPUSD: רק עם המגמה (ממוצע 200). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 25,
+    "eff_n": 25.0,
+    "mean": 0.1842,
+    "t": 1.15,
+    "win": 64.4
+   },
+   "unseen": {
+    "n": 31,
+    "eff_n": 31.0,
+    "mean": 0.0146,
+    "t": 0.1,
+    "win": 45.2
+   },
+   "whole": {
+    "n": 56,
+    "eff_n": 55.9,
+    "mean": 0.087,
+    "t": 0.81,
+    "win": 53.4
+   },
+   "halves": [
+    0.1178,
+    0.0552
+   ],
+   "neighbours": {
+    "values": 7,
+    "share_positive": 0.67
+   },
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.5,
+   "baseline": {
+    "n": 18,
+    "eff_n": 18.0,
+    "mean": -0.2992,
+    "t": -1.78,
+    "win": 27.8
+   },
+   "change": {
+    "combo": "EV01|5Min|GBPUSD",
+    "family": "filters",
+    "from": "none",
+    "to": "with_trend200"
+   },
+   "detail": {},
+   "made": "2026-11-11T21:31:36+00:00",
+   "id": "a0d6e9bc4f07",
+   "tier": "regular",
+   "verdict": "חיובי בתקופה שלא נראתה (+0.01R לעסקה, 31.0 עסקאות אפקטיביות, +0.31R מעל המצב הקיים)"
+  },
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV01|5Min|AUDUSD: יעד 1.5R · סטופ x1.5",
+   "what": "ניהול העסקה לאסטרטגיה EV01|5Min|AUDUSD: יעד 1.5R · סטופ x1.5. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 23,
+    "eff_n": 23.0,
+    "mean": -0.0815,
+    "t": -0.75,
+    "win": 44.0
+   },
+   "unseen": {
+    "n": 22,
+    "eff_n": 22.0,
+    "mean": -0.1486,
+    "t": -1.11,
+    "win": 36.4
+   },
+   "whole": {
+    "n": 45,
+    "eff_n": 44.9,
+    "mean": -0.1157,
+    "t": -1.34,
+    "win": 40.1
+   },
+   "halves": [
+    -0.0949,
+    -0.1369
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.77
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.5,
+   "baseline": {
+    "n": 22,
+    "eff_n": 22.0,
+    "mean": -0.1906,
+    "t": -1.21,
+    "win": 36.4
+   },
+   "change": {
+    "combo": "EV01|5Min|AUDUSD",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "1.5R|be0.6|stop1.5|entry0"
+   },
+   "detail": {},
+   "made": "2026-11-11T21:31:36+00:00",
+   "id": "81a9b0440191",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.15R לעסקה)"
+  },
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV03|5Min|EURUSD: בלי יעד",
+   "what": "ניהול העסקה לאסטרטגיה EV03|5Min|EURUSD: בלי יעד. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 12,
+    "eff_n": 12.0,
+    "mean": 0.3082,
+    "t": 0.99,
+    "win": 57.7
+   },
+   "unseen": {
+    "n": 16,
+    "eff_n": 16.0,
+    "mean": -0.1196,
+    "t": -0.71,
+    "win": 50.1
+   },
+   "whole": {
+    "n": 28,
+    "eff_n": 27.9,
+    "mean": 0.0556,
+    "t": 0.33,
+    "win": 53.2
+   },
+   "halves": [
+    0.2194,
+    -0.0829
+   ],
+   "neighbours": {
+    "values": 66,
+    "share_positive": 0.66
+   },
+   "tested": 66,
+   "cost_r": null,
+   "risk_pct": 0.5,
+   "baseline": {
+    "n": 16,
+    "eff_n": 16.0,
+    "mean": -0.0632,
+    "t": -0.4,
+    "win": 43.9
+   },
+   "change": {
+    "combo": "EV03|5Min|EURUSD",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "none|be0.6|stop1|entry0"
+   },
+   "detail": {},
+   "made": "2026-11-11T21:31:36+00:00",
+   "id": "cc4e9d08044e",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.12R לעסקה)"
+  },
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV03|5Min|EURUSD: רק עם המגמה (ממוצע 200)",
+   "what": "סינון מצב שוק לאסטרטגיה EV03|5Min|EURUSD: רק עם המגמה (ממוצע 200). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 20,
+    "eff_n": 20.0,
+    "mean": 0.2545,
+    "t": 1.65,
+    "win": 65.0
+   },
+   "unseen": {
+    "n": 27,
+    "eff_n": 27.0,
+    "mean": 0.0682,
+    "t": 0.44,
+    "win": 44.7
+   },
+   "whole": {
+    "n": 47,
+    "eff_n": 46.9,
+    "mean": 0.1431,
+    "t": 1.27,
+    "win": 52.8
+   },
+   "halves": [
+    0.1699,
+    0.1287
+   ],
+   "neighbours": {
+    "values": 7,
+    "share_positive": 0.5
+   },
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.5,
+   "baseline": {
+    "n": 16,
+    "eff_n": 16.0,
+    "mean": -0.0632,
+    "t": -0.4,
+    "win": 43.9
+   },
+   "change": {
+    "combo": "EV03|5Min|EURUSD",
+    "family": "filters",
+    "from": "none",
+    "to": "with_trend200"
+   },
+   "detail": {},
+   "made": "2026-11-11T21:31:36+00:00",
+   "id": "bb9d3267f63e",
+   "tier": "watch",
+   "verdict": "חיובי בתקופה שלא נראתה, אבל רק 27.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך"
+  },
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV03|5Min|GBPUSD: יעד 1R · סטופ x1.5",
+   "what": "ניהול העסקה לאסטרטגיה EV03|5Min|GBPUSD: יעד 1R · סטופ x1.5. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 16,
+    "eff_n": 16.0,
+    "mean": -0.0781,
+    "t": -0.7,
+    "win": 37.3
+   },
+   "unseen": {
+    "n": 16,
+    "eff_n": 16.0,
+    "mean": -0.1451,
+    "t": -1.1,
+    "win": 43.7
+   },
+   "whole": {
+    "n": 32,
+    "eff_n": 31.9,
+    "mean": -0.113,
+    "t": -1.3,
+    "win": 40.7
+   },
+   "halves": [
+    -0.0809,
+    -0.1455
+   ],
+   "neighbours": {
+    "values": 66,
+    "share_positive": 0.55
+   },
+   "tested": 66,
+   "cost_r": null,
+   "risk_pct": 0.5,
+   "baseline": {
+    "n": 16,
+    "eff_n": 16.0,
+    "mean": -0.265,
+    "t": -1.45,
+    "win": 37.5
+   },
+   "change": {
+    "combo": "EV03|5Min|GBPUSD",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "1R|be0.6|stop1.5|entry0"
+   },
+   "detail": {},
+   "made": "2026-11-11T21:31:36+00:00",
+   "id": "384e230f301a",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.15R לעסקה)"
+  },
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV03|5Min|GBPUSD: רק עם המגמה (ממוצע 200)",
+   "what": "סינון מצב שוק לאסטרטגיה EV03|5Min|GBPUSD: רק עם המגמה (ממוצע 200). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 28,
+    "eff_n": 28.0,
+    "mean": 0.0274,
+    "t": 0.22,
+    "win": 50.2
+   },
+   "unseen": {
+    "n": 33,
+    "eff_n": 33.0,
+    "mean": -0.1293,
+    "t": -0.92,
+    "win": 39.5
+   },
+   "whole": {
+    "n": 61,
+    "eff_n": 60.9,
+    "mean": -0.0608,
+    "t": -0.63,
+    "win": 44.2
+   },
+   "halves": [
+    0.0031,
+    -0.1185
+   ],
+   "neighbours": {
+    "values": 7,
+    "share_positive": 0.4
+   },
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.5,
+   "baseline": {
+    "n": 16,
+    "eff_n": 16.0,
+    "mean": -0.265,
+    "t": -1.45,
+    "win": 37.5
+   },
+   "change": {
+    "combo": "EV03|5Min|GBPUSD",
+    "family": "filters",
+    "from": "none",
+    "to": "with_trend200"
+   },
+   "detail": {},
+   "made": "2026-11-11T21:31:36+00:00",
+   "id": "750b0a20fae1",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.13R לעסקה)"
+  },
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV03|5Min|AUDUSD: יעד 1.5R · סטופ x1.5",
+   "what": "ניהול העסקה לאסטרטגיה EV03|5Min|AUDUSD: יעד 1.5R · סטופ x1.5. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 18,
+    "eff_n": 18.0,
+    "mean": -0.2035,
+    "t": -1.5,
+    "win": 33.3
+   },
+   "unseen": {
+    "n": 18,
+    "eff_n": 18.0,
+    "mean": 0.0741,
+    "t": 0.53,
+    "win": 38.6
+   },
+   "whole": {
+    "n": 36,
+    "eff_n": 35.9,
+    "mean": -0.0593,
+    "t": -0.59,
+    "win": 36.1
+   },
+   "halves": [
+    -0.1984,
+    0.0774
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.88
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.5,
+   "baseline": {
+    "n": 18,
+    "eff_n": 18.0,
+    "mean": -0.0748,
+    "t": -0.39,
+    "win": 33.1
+   },
+   "change": {
+    "combo": "EV03|5Min|AUDUSD",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "1.5R|be0.6|stop1.5|entry0"
+   },
+   "detail": {},
+   "made": "2026-11-11T21:31:36+00:00",
+   "id": "bbabc8253070",
+   "tier": "watch",
+   "verdict": "חיובי בתקופה שלא נראתה, אבל רק 18.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך"
+  },
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV03|5Min|AUDUSD: רק עם המגמה (ממוצע 200)",
+   "what": "סינון מצב שוק לאסטרטגיה EV03|5Min|AUDUSD: רק עם המגמה (ממוצע 200). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 29,
+    "eff_n": 29.0,
+    "mean": -0.0998,
+    "t": -0.68,
+    "win": 38.2
+   },
+   "unseen": {
+    "n": 37,
+    "eff_n": 37.0,
+    "mean": -0.0339,
+    "t": -0.26,
+    "win": 45.9
+   },
+   "whole": {
+    "n": 66,
+    "eff_n": 65.8,
+    "mean": -0.0613,
+    "t": -0.63,
+    "win": 42.7
+   },
+   "halves": [
+    -0.0639,
+    -0.063
+   ],
+   "neighbours": {
+    "values": 7,
+    "share_positive": 0.6
+   },
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.5,
+   "baseline": {
+    "n": 18,
+    "eff_n": 18.0,
+    "mean": -0.0748,
+    "t": -0.39,
+    "win": 33.1
+   },
+   "change": {
+    "combo": "EV03|5Min|AUDUSD",
+    "family": "filters",
+    "from": "none",
+    "to": "with_trend200"
+   },
+   "detail": {},
+   "made": "2026-11-11T21:31:36+00:00",
+   "id": "6aab301e84ee",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.03R לעסקה)"
+  }
+ ],
+ "tested": 1200,
+ "done": 32,
+ "planned": 96,
+ "run": {
+  "experiments": 24,
+  "left": 63,
+  "new": 0,
+  "where": "pc"
+ }
+}

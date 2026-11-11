@@ -1,35 +1,4 @@
 {
- "note": "The manager agent's instructions to the bot agents (it changes them to use the agents' time best): minutes = nightly budget on GitHub, track_order = which track's experiments first, skip_knobs = knobs not worth testing now, parallel = run one job per instrument, skip_tracks = whole tracks left out (a track the bot does not trade).",
- "bot5": {
-  "minutes": 30,
-  "track_order": [
-   "v5",
-   "v1m"
-  ],
-  "skip_knobs": [],
-  "parallel": true
- },
- "pc": {
-  "bot5": 40,
-  "bot6": 50,
-  "bot7": 45,
-  "bot1": 35,
-  "bot2": 30,
-  "bot3": 30,
-  "bot4": 30,
-  "bot7-shocks": 15,
-  "bot5-new": 15,
-  "bot6-new": 10
- },
- "pc_note": "מנהל 16.11 לילה: בוט 5 40 דק' (היו 50) - הריצה שלו לקחה 91 דק' מול 50 (הרשת גמורה, רק חיפוש), והסבב של שאר הבוטים חיכה; הסייר הרחב ב־GitHub הופעל (חינם - מאגר ציבורי) כדי לסגור את תורי האסטרטגיות החדשות (בוט 1 8,788, בוט 2 3,776, בוט 3 3,599, בוט 7 3,392, בוט 4 2,773). מנהל 15.11 בוקר: בבוט 6 מסלול הדקה הישן (v1m) יצא מהניסויים - הבוט לא סוחר בו מאז 12.11, הוא מפסיד (‎-0.12R לעסקה עד 2025) וכל ניסוי לקח ~26 דק' (46 נשארו, ~20 שעות מחשב). הזמן חוזר לסוכנים האחרים בסבב. מנהל 15.11 לפנות בוקר: בוט 7 קיבל 45 דק' (היו 30) - יש לו הכי הרבה עבודה שמחכה (36 מתוך 240 ניסויים, והבדיקות של EV04-EV08 ומשפחות SC001/SC070 בתור עד 17.11); בוט 5 50 (היו 60) - הרשת שלו גמורה והוא רק בחיפוש מסביב לטוב ביותר. מנהל 14.11: האסטרטגיות החדשות של הסייר בבוטים 5-6 קיבלו 15 ו־10 דק' (היו 5: בוט 5 בודק 30 שילובים בריצה ו־1,194 מחכים), בוט 1 35 דק' (4,901 שילובים חדשים מחכים, הכי הרבה). מנהל 13.11: בוטים 1-4 קיבלו 30 דק' (היו 20) - הבדיקות שנפסלו ב־12.11 רצות מחדש לאט (בוט 1: 23 מתוך 184) ובלעדיהן הבדיקה של הבוט השלם עיוורת; בוט 5 60 (הרשת שלו נגמרה), זעזועים 15 (אין גרסה שמרוויחה ב־2026).",
- "bot6": {
-  "track_order": [
-   "v5",
-   "v1m"
-  ],
-  "skip_knobs": [],
-  "skip_tracks": [
-   "v1m"
-  ]
- }
+ "note": "The manager agent's instructions to the bot agents (it changes them to use the agents' time best): minutes = nightly budget on GitHub, track_order = which track's experiments first, skip_knobs = knobs not worth testing now, parallel = run one job per instrument.",
+ "bot5": {"minutes": 30, "track_order": ["v5", "v1m"], "skip_knobs": [], "parallel": true}
 }

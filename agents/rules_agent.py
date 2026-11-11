@@ -101,118 +101,6 @@ def supertrend(h, l, c, period=10, mult=3.0):
     return flip > 0, flip < 0
 
 
-
-def supertrend_dir(h, l, c, period=10, mult=3.0):
-    """Supertrend direction per bar (+1 green / -1 red), the same bands as supertrend() (known at the bar's close)."""
-    a = atr(h, l, c, period)
-    mid = (h + l) / 2
-    up, dn = (mid - mult * a).tolist(), (mid + mult * a).tolist()
-    cl = c.tolist()
-    out = [1.0] * len(cl)
-    fu, fd, t = up[0], dn[0], 1.0
-    for i in range(1, len(cl)):
-        nfu = max(up[i], fu) if cl[i - 1] > fu else up[i]
-        nfd = min(dn[i], fd) if cl[i - 1] < fd else dn[i]
-        t = 1.0 if cl[i] > fd else -1.0 if cl[i] < fu else t
-        fu, fd = nfu, nfd
-        out[i] = t
-    return np.asarray(out)
-
-
-# the filters from the user's videos of 14.11.2026 (replies.json "_tasks" tal1411set2 / set3 / set4 / set5,
-# tal1411vwap 2) for bots 1-4, on the combo's own timeframe - ONE function for the backtest (run_rules._regimes) and
-# the live bot (live/runner._regime), so both see exactly the same masks. (ADX14 > 20 of set2 is "adx_trend".)
-VIDEO_REGIMES = ("v_rsi50", "v_st", "v_e50_200", "v_ema5", "v_sma3", "v_fib5", "v_ha", "v_sqzm", "v_sqz", "v_pdbrk")
-# v_fib5 / v_ha: task tal1411set7 (13) / (6), the user's TikTok videos of 14.11.2026 17:37-18:03 - the same two
-# direction filters bots 5 and 6 try on the gap method, here on the combo's own timeframe (bots 1-4 smart agent)
-# v_sqzm / v_sqz / v_pdbrk: task tal1411set7 (12) / (16), 17:51-18:15 - LazyBear's squeeze momentum and yesterday's
-# high / low, as bot 5's sqzm / sqz / pdbrk on the gap (bots 1-4 smart agent, 14.11.2026 late night)
-
-
-def video_regimes(h, l, c, o=None, t=None):
-    """(allow_long, allow_short) per bar, from closed bars only.
-      v_rsi50    RSI14 above 50 = longs only, below = shorts only (set5)
-      v_st       Supertrend 10 / x3 green = longs only, red = shorts only (set3, Quant Tactics)
-      v_e50_200  EMA 50 above EMA 200 = longs only, below = shorts only (tal1411vwap 2 / set5)
-      v_ema5     EMA 9/21/50/100/200 all in order up = no shorts, all in order down = no longs (set4: a strong trend
-                 is traded only its way); otherwise both sides
-      v_sma3     SMA 10 / 20 / 50 in order (fast over middle over slow) = longs only, the reverse = shorts only,
-                 mixed = no entry (set2 (3), the three-averages idea as a trend filter)
-      v_fib5     Fibonacci EMAs 8/13/21/34/55 all in order up = longs only, all in order down = shorts only, otherwise
-                 both sides (set7 (13), Trading Data)
-      v_ha       Heikin Ashi colour of the last closed candle: green = longs only, red = shorts only (set7 (6))
-      v_sqzm     LazyBear's squeeze momentum above 0 = longs only, below = shorts only (set7 (12))
-      v_sqz      the same, and no entry while the squeeze is on (Bollinger 20/2 inside Keltner 20/1.5)
-      v_pdbrk    the close over the last closed UTC day's high = longs only, under its low = shorts only, inside =
-                 both (set7 (16), Daily High & Low; t = the bars' times, without them both sides)"""
-    rs = rsi(c, 14)
-    sd = supertrend_dir(h, l, c, 10, 3.0)
-    e9, e21, e50, e100, e200 = (ema(c, n) for n in (9, 21, 50, 100, 200))
-    up5 = (e9 > e21) & (e21 > e50) & (e50 > e100) & (e100 > e200)
-    dn5 = (e9 < e21) & (e21 < e50) & (e50 < e100) & (e100 < e200)
-    s10, s20, s50 = sma(c, 10), sma(c, 20), sma(c, 50)
-    with np.errstate(invalid="ignore"):
-        u3, d3 = (s10 > s20) & (s20 > s50), (s10 < s20) & (s20 < s50)
-        r_up, r_dn = rs > 50, rs < 50
-    f8, f13, f34, f55 = (ema(c, n) for n in (8, 13, 34, 55))
-    upf = (f8 > f13) & (f13 > e21) & (e21 > f34) & (f34 > f55)
-    dnf = (f8 < f13) & (f13 < e21) & (e21 < f34) & (f34 < f55)
-    o = np.asarray(o, float) if o is not None else np.r_[c[0], c[:-1]]
-    hc = (o + h + l + c) / 4.0
-    ho = pd.Series(np.r_[(o[0] + c[0]) / 2.0, hc[:-1]]).ewm(alpha=0.5, adjust=False).mean().to_numpy() if len(c) else hc
-    sq_mom, sq_on = squeeze_lazybear(h, l, c)
-    with np.errstate(invalid="ignore"):
-        yh, yl = prev_day_hl(t, h, l)
-        over, under = c > yh, c < yl                      # NaN (no closed day yet) = both sides
-    return {"v_rsi50": (r_up, r_dn), "v_st": (sd > 0, sd < 0), "v_e50_200": (e50 > e200, e50 < e200),
-            "v_ema5": (~dn5, ~up5), "v_sma3": (u3, d3), "v_fib5": (~dnf, ~upf), "v_ha": (hc > ho, hc < ho),
-            "v_sqzm": (sq_mom > 0, sq_mom < 0), "v_sqz": ((sq_mom > 0) & ~sq_on, (sq_mom < 0) & ~sq_on),
-            "v_pdbrk": (~under, ~over)}
-
-
-def squeeze_lazybear(h, l, c, n=20, bb=2.0, kc=1.5):
-    """LazyBear's Squeeze Momentum (task tal1411set7 (12)), as agents/tal_gap's sqz / sqzm, on closed bars: the
-    momentum = the n-bar linear regression (its value at the last bar) of close - the middle of (the n-bar high / low
-    middle, SMA n); the squeeze is on while Bollinger n / bb is inside Keltner n / kc x the true range's SMA.
-    Returns (momentum, squeeze_on); NaN momentum before n bars."""
-    h, l, c = (np.asarray(x, float) for x in (h, l, c))
-    if len(c) == 0:
-        return np.zeros(0), np.zeros(0, bool)
-    cs = pd.Series(c)
-    sm = cs.rolling(n, min_periods=n).mean().to_numpy()
-    sd = cs.rolling(n, min_periods=n).std(ddof=0).to_numpy()
-    pc = np.r_[c[0], c[:-1]]
-    tr = np.maximum(h - l, np.maximum(np.abs(h - pc), np.abs(l - pc)))
-    rm = pd.Series(tr).rolling(n, min_periods=n).mean().to_numpy()
-    with np.errstate(invalid="ignore"):
-        on = (sm - bb * sd > sm - kc * rm) & (sm + bb * sd < sm + kc * rm)
-    hh = pd.Series(h).rolling(n, min_periods=n).max().to_numpy()
-    ll = pd.Series(l).rolling(n, min_periods=n).min().to_numpy()
-    y = c - ((hh + ll) / 2 + sm) / 2
-    ok = ~np.isnan(y)
-    y0 = np.where(ok, y, 0.0)
-    sy = np.convolve(y0, np.ones(n))[:len(y0)]
-    sxy = np.convolve(y0, np.arange(n - 1, -1, -1, dtype=float))[:len(y0)]
-    cnt = np.convolve(ok.astype(float), np.ones(n))[:len(y0)]
-    sx, sxx = n * (n - 1) / 2, (n - 1) * n * (2 * n - 1) / 6
-    b = (n * sxy - sx * sy) / (n * sxx - sx * sx)
-    mom = np.where(cnt >= n, (sy - b * sx) / n + b * (n - 1), np.nan)
-    return mom, on
-
-
-def prev_day_hl(t, h, l):
-    """The high / low of the last CLOSED UTC day before each bar's day, from the combo's own bars (task tal1411set7
-    (16), Daily High & Low): NaN without times or before a closed day."""
-    if t is None or len(h) == 0:
-        nan = np.full(len(h), np.nan)
-        return nan, nan
-    ti = pd.DatetimeIndex(t)
-    ti = ti.tz_convert("UTC") if ti.tz is not None else ti
-    d = ti.normalize()
-    g = pd.DataFrame({"d": d, "h": np.asarray(h, float), "l": np.asarray(l, float)}).groupby("d").agg(h=("h", "max"), l=("l", "min"))
-    p = g.shift(1)
-    return p["h"].reindex(d).to_numpy(), p["l"].reindex(d).to_numpy()
-
 # ---------------- strategies (as published) ----------------
 def s_gold_pro(df):
     """TV 'Gold Pro Strategy' (zackseal): EMA50 vs EMA200 trend + price on that side of EMA200,
@@ -404,31 +292,6 @@ STRATEGIES = {
 
 
 # ---------------- engine ----------------
-def swing_pivots(h, l, sw):
-    """(swing highs, swing lows): bar j is a swing low when its low is the lowest of the sw bars on each side (known
-    sw bars later). Mirror for highs."""
-    lo = pd.Series(l).rolling(2 * sw + 1, center=True).min().to_numpy()
-    hi = pd.Series(h).rolling(2 * sw + 1, center=True).max().to_numpy()
-    return h >= hi, l <= lo
-
-
-def swing_stop(piv, h, l, i, sw, e, d, k, merge, back=500):
-    """The k-th swing beyond the entry on the stop's side, counting back from the signal bar i (only swings confirmed by
-    then), each one beyond the one counted before by at least `merge` (small, close swings count as one) - the gap
-    method's count (agents/tal_gap._count_back), for the user's structural stop (16.11.2026, task b5stop1611: "the stop
-    beyond the third swing - the sellers are stronger"). None when there are fewer than k."""
-    ph, pl = piv
-    last, cnt = None, 0
-    for j in range(i - sw, max(-1, i - sw - back), -1):
-        if d > 0 and pl[j] and l[j] < e and (last is None or l[j] <= last - merge):
-            last, cnt = l[j], cnt + 1
-        elif d < 0 and ph[j] and h[j] > e and (last is None or h[j] >= last + merge):
-            last, cnt = h[j], cnt + 1
-        if cnt == k:
-            return float(last)
-    return None
-
-
 def run(df, fn, cost_side, breakeven=None, session_exit=None):
     """Trades for one strategy on one instrument/timeframe (one position at a time).
     breakeven=(fraction of the way to the target, offset as share of price): overrides the
@@ -439,9 +302,6 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
     long_, short, plan = fn(df)
     if breakeven is not None:
         plan = {**plan, "breakeven": breakeven}
-    bw = plan.get("be_way")                 # trade management per strategy (12.11.2026): the breakeven's own point
-    if bw is not None:                      # of the way to the target (0 = no breakeven), the offset stays
-        plan = {**plan, "breakeven": None if float(bw) == 0 else (float(bw), (plan.get("breakeven") or (0, 0.0))[1])}
     if session_exit is not None:
         fe0 = plan.get("force_exit")
         se = np.asarray(session_exit, dtype=bool)
@@ -451,25 +311,10 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
     line = plan.get("line")
     n = len(c)
     sig = np.where(long_, 1, np.where(short, -1, 0))
-    # the morning review's live rules (live/runner.combo_rules, 14.11.2026): measured as the bot trades them -
-    # dir = buy / sell only; hours [a, b) = no new trade when the entry opens in that Israel-time hour block
-    rdir = plan.get("rule_dir")
-    if rdir in (1, -1):
-        sig = np.where(sig == rdir, sig, 0)
-    rh = plan.get("rule_hours")
-    no_entry = None
-    if rh:
-        try:
-            hr = pd.DatetimeIndex(df.index).tz_convert("Asia/Jerusalem").hour.to_numpy()
-            no_entry = (hr >= int(rh[0])) & (hr < int(rh[1]))
-        except (TypeError, ValueError):
-            no_entry = None
-    ssw = plan.get("stop_swing")           # (k, sw, pad): the stop beyond the k-th swing (test only, see swing_stop)
-    piv = swing_pivots(h, l, int(ssw[1])) if ssw else None
     rows, i = [], 0
     while i < n - 2:
         d = sig[i]
-        if d == 0 or not np.isfinite(a[i]) or a[i] <= 0 or (no_entry is not None and no_entry[i + 1]):
+        if d == 0 or not np.isfinite(a[i]) or a[i] <= 0:
             i += 1
             continue
         e_t, e = i + 1, o[i + 1]
@@ -503,22 +348,6 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
                 continue
         else:
             target = e + d * tg[1] * risk
-        # the review's target / stop factors (live/runner.open_trade): the target at f x its distance, then the stop at
-        # f x its distance from the entry (the same dollar risk) - after the strategy's own levels, as the live bot
-        rtp, rsl = plan.get("rule_tp"), plan.get("rule_sl")
-        if rtp and target is not None and 0.3 <= float(rtp) < 1:
-            target = e + float(rtp) * (target - e)
-        if rsl and 0.5 <= float(rsl) < 1:
-            stop = e - float(rsl) * (e - stop)
-            risk = d * (e - stop)
-        if ssw:                                  # the structural stop: the target stays in price as it was
-            sws = swing_stop(piv, h, l, i, int(ssw[1]), e, d, int(ssw[0]), 0.3 * a[i])
-            if sws is not None:
-                stop = sws - d * float(ssw[2]) * a[i]
-                risk = d * (e - stop)
-                if risk < 0.25 * a[i] or (target is not None and d * (target - e) <= 0):
-                    i += 1
-                    continue
         pb = plan.get("entry_pullback")          # variant tests: a limit order k x risk better, valid W bars
         if pb and pb[0] > 0:
             lim = e - d * pb[0] * risk
@@ -528,15 +357,6 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
                     hit = t
                     break
             if hit is None:
-                k = plan.get("emit_pending")     # live only (live/runner.py): k helper bars follow the forming bar
-                if k is not None and e_t + pb[1] >= n - int(k):
-                    # the limit order is still waiting at the end of the data: one row with the order's levels,
-                    # so the bot places / keeps exactly this order (bars_left counts the forming bar too)
-                    rows.append({"time": df.index[e_t], "exit_time": df.index[n - 1], "dir": d, "r": 0.0, "held": 0,
-                                 "entry_px": float(lim), "exit_px": float(lim), "stop_px": float(stop),
-                                 "target_px": float(target) if target is not None else np.nan, "reason": "pending",
-                                 "free_time": pd.NaT, "stop_last": float(stop), "mfe_r": 0.0, "mae_r": 0.0,
-                                 "bars_left": int(e_t + pb[1] - (n - 1 - int(k)))})
                 i += 1
                 continue
             e_t, e = hit, (min(lim, o[hit]) if d > 0 else max(lim, o[hit]))
@@ -546,17 +366,6 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
                 continue
         be = plan.get("breakeven")
         trail = plan.get("trail_atr")
-        # partial exit (12.11.2026): `frac` of the position out at `way` of the way to the target (no target: at `way`
-        # R), the rest's stop to the entry + costs; as the user trades it ("take part, the rest to break-even")
-        part = plan.get("partial")
-        plvl = None
-        if part and 0 < part[0] < 1 and part[1] > 0:
-            plvl = e + d * part[1] * (target - e) if target is not None else e + d * part[1] * risk
-        part_t = None
-        # pyramid (user, 14.11.2026, task tal1411anti): at `at` R in profit `frac` of a position more at that level, and
-        # the stop of the whole position moves so that a stop still loses exactly 1R in all (1R / 0.5: entry - R/3)
-        pyr = plan.get("pyramid")
-        pyr_t, pyr_px = None, None
         best = e
         worst = e
         stop0 = stop
@@ -597,15 +406,6 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             if lk and target is None and d * (best - e) >= lk[0] * risk:
                 lvl = e + d * lk[1] * risk
                 stop = max(stop, lvl) if d > 0 else min(stop, lvl)
-            if plvl is not None and part_t is None and d * (best - plvl) >= 0:
-                part_t = t
-                lvl = e * (1 + d * (be[1] if be else 0.0))
-                stop = max(stop, lvl) if d > 0 else min(stop, lvl)
-            if pyr and pyr_t is None and d * (best - e) >= pyr[0] * risk and t + 1 < n:
-                pyr_t, pyr_px = t, e + d * pyr[0] * risk
-                x = (pyr[1] * pyr[0] - 1.0) / (1.0 + pyr[1])           # the whole position's stop, in R from entry
-                lvl = e + d * x * risk
-                stop = max(stop, lvl) if d > 0 else min(stop, lvl)
             ber = plan.get("be_r")     # no target: stop to entry + costs once k R in profit (test, 06.11.2026)
             if ber and target is None and d * (best - e) >= ber * risk:
                 lvl = e * (1 + d * (be[1] if be else 0.0))
@@ -628,68 +428,8 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             exit_t = min(n - 1, e_t + (plan.get("max_bars") or 10**9) - 1)
             timed = plan.get("max_bars") and e_t + plan["max_bars"] - 1 <= n - 1
             exit_px, reason = c[exit_t], ("יציאת זמן" if timed else "סוף הנתונים")
-        if plvl is not None and part_t is None and reason == "יעד":
-            part_t = exit_t                         # the target bar went through the partial level on its way
-        lad = plan.get("ladder")
-        if lad:
-            # laddered entry (user, 13.11.2026): the same total risk split into len(levels) equal parts - part k a limit
-            # order levels[k] x risk better than the signal's open (0 = at the open), valid W bars; the same stop and
-            # target for all, the trade's management anchored on the signal's open; a part not filled by the time the
-            # position closes (or W bars) is cancelled. A part touched on the bar the target is hit is counted as not
-            # filled, one touched on the stop bar as filled (the worse case both times).
-            levels, W = lad[0], int(lad[1])
-            wk = 1.0 / len(levels)
-            fills = []
-            for k in levels:
-                if k <= 0:
-                    fills.append((e_t, e))
-                    continue
-                lim = e - d * k * risk
-                for t in range(e_t, min(n, e_t + W, exit_t + 1)):
-                    if (d > 0 and l[t] <= lim) or (d < 0 and h[t] >= lim):
-                        if not (t == exit_t and reason == "יעד"):
-                            fills.append((t, min(lim, o[t]) if d > 0 else max(lim, o[t])))
-                        break
-            if not fills:
-                i += 1
-                continue
-            r_mult, inv = 0.0, 0.0
-            for ft, fe in fills:
-                rk = d * (fe - stop0)
-                if rk <= 0:
-                    continue
-                inv += wk / rk
-                if part_t is not None and ft <= part_t:
-                    r_mult += wk * (part[0] * d * (plvl - fe) + (1 - part[0]) * d * (exit_px - fe)) / rk
-                else:
-                    r_mult += wk * d * (exit_px - fe) / rk
-                r_mult -= wk * 2 * cost_side * fe / rk
-            if inv <= 0:
-                i += 1
-                continue
-            ft0 = min(x[0] for x in fills)
-            rows.append({"time": df.index[ft0], "exit_time": df.index[exit_t], "dir": d, "r": float(r_mult),
-                         "part_time": df.index[part_t] if part_t is not None else pd.NaT,
-                         "held": int(exit_t - ft0), "entry_px": float(sum(x[1] for x in fills) / len(fills)),
-                         "exit_px": float(exit_px), "stop_px": float(stop0),
-                         "target_px": float(target) if target is not None else np.nan, "reason": reason,
-                         "free_time": df.index[free_t] if free_t is not None and free_t <= exit_t else pd.NaT,
-                         "stop_last": float(stop), "fills": len(fills),
-                         "cost_risk": float(1.0 / inv),       # costs per part on its own risk (agents/ftmo_costs.apply)
-                         "mfe_r": float(d * (best - e) / risk), "mae_r": float(d * (e - worst) / risk)})
-            i = reverse_at if reverse_at is not None else max(exit_t, i + 1)
-            continue
-        if part_t is not None:
-            r_mult = (part[0] * d * (plvl - e) + (1 - part[0]) * d * (exit_px - e)) / risk - 2 * cost_side * e / risk
-        else:
-            r_mult = d * (exit_px - e) / risk - 2 * cost_side * e / risk
-        extra_cols = {}
-        if pyr_t is not None and exit_t > pyr_t:
-            # the added part: its own result on the original risk, its own costs (agents/ftmo_costs.apply via cost_risk)
-            r_mult += pyr[1] * d * (exit_px - pyr_px) / risk - pyr[1] * 2 * cost_side * pyr_px / risk
-            extra_cols = {"cost_risk": float(risk / (1.0 + pyr[1])), "pyr_time": df.index[pyr_t]}
-        rows.append({**extra_cols, "time": df.index[e_t], "exit_time": df.index[exit_t], "dir": d, "r": float(r_mult),
-                     "part_time": df.index[part_t] if part_t is not None else pd.NaT,
+        r_mult = d * (exit_px - e) / risk - 2 * cost_side * e / risk
+        rows.append({"time": df.index[e_t], "exit_time": df.index[exit_t], "dir": d, "r": float(r_mult),
                      "held": int(exit_t - e_t), "entry_px": float(e), "exit_px": float(exit_px),
                      "stop_px": float(stop0), "target_px": float(target) if target is not None else np.nan,
                      "reason": reason,
@@ -772,10 +512,3 @@ def timeframe_ok(sid, tf):
 from agents.scalp_strategies import SCALP  # noqa: E402
 
 STRATEGIES.update(SCALP)
-from agents.scout_strategies import SCOUT  # noqa: E402
-
-STRATEGIES.update(SCOUT)
-# the index futures' cash-session gap (bot 6's smart agent, 17.11.2026 night, agents/fut_patterns.py)
-from agents.fut_patterns import FUT_PATTERNS  # noqa: E402
-
-STRATEGIES.update(FUT_PATTERNS)

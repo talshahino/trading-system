@@ -36,27 +36,22 @@ from agents import ftmo_costs as C  # noqa: E402
 from agents import ftmo_universe as U  # noqa: E402
 from agents import own_core as CORE  # noqa: E402
 from agents import own_gaps as OG  # noqa: E402
-from agents import scout_fut as SF  # noqa: E402
-from agents import tal_gap as TG  # noqa: E402
 from live import fut_account as FA  # noqa: E402
 from live import reporter as REP  # noqa: E402
 
 NAME = "watch_own"
-LABEL = "בוט 5 - סקאלפינג · צפייה בלבד"
+LABEL = "בוט סקלפינג · צפייה בלבד"
 LIVE = ROOT / "live"
 STATE_F = LIVE / f"{NAME}_state.json"
 MARKS_F = LIVE / "watch_marks.json"
 FUT_NAME = "watch_fut"          # bot 6: the virtual futures account (live/fut_account.py)
 FUT_F = LIVE / f"{FUT_NAME}_state.json"
-SCOUT_NAME = "watch_scout"      # 5ב (17.11.2026): bot 5's scout strategies in their own virtual account
-SCOUT_F = LIVE / f"{SCOUT_NAME}_state.json"
-SACCT_V = 1
 VARIANT = (2.0, False, "1m", "struct")
 # wide track (user, 09.11.2026: "I want more trades, it's scalping"): the same rules with a weaker candle-body filter
 # (1.8 instead of 2.5 x the average body) - about 4x the setups in the backtest (3.6 a week on these 16 instruments
 # since 2024, vs 0.9), but they lost a little there (-0.09R a trade vs -0.03R). Shown apart in the app ('wide').
 WIDE_BODY_X = 1.8
-DAYS = 14                     # history kept per instrument (the 4-hour gaps stay valid 5 days; 12.11.2026)
+DAYS = 8                      # history kept per instrument (the impulse rules look back up to ~5 days)
 # the instruments where spread + commission are the smallest share of a trade's risk (optimisation, 06.11.2026)
 SYMBOLS = {"US100": ["US100.cash", "US100"], "US30": ["US30.cash", "US30"], "US500": ["US500.cash", "US500"],
            "GER40": ["GER40.cash", "GER40"], "FRA40": ["FRA40.cash", "FRA40"], "JP225": ["JP225.cash", "JP225"],
@@ -72,7 +67,6 @@ SYMBOLS.update(EXTRA)
 # opposite move before it is a correction), the first gap that stayed open during the move, stop beyond the 3rd swing
 # back, the whole position out at 80% of the way to the target. Best of the grid on these 12 low-cost instruments
 # (+0.11R a trade, positive in both halves, ~0.7 trades a week). Shown as its own track ('v4'), its own summary.
-OLD_OFF = {"wide", "v5", "v4"}     # 17.11.2026: Tal took these old tracks off bot 5; the data-collection assets stay ("don't remove assets - we test them as we go")
 V4_SYMBOLS = ["XAUUSD", "EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD", "EURJPY", "US100", "US30", "GER40", "US500"]
 # v5 (user, 10.11.2026: "run v5"): every gap of a strong 15m candle, entry on the touch after the move turned, stop beyond
 # the gap's base, target the move's peak, trades with costs above 10% of the risk skipped. The backtest's best result:
@@ -85,302 +79,11 @@ KEEP = 60                     # closed trades kept in the state (with their cand
 # virtual demo account (user, 06.11.2026): $100,000 like the other demo accounts, risk per trade as bots 2 and 4,
 # the bots' own daily stop (4.5%, FTMO's limit is 5%) and FTMO's 10% maximum loss
 INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.0045, 0.045, 0.10
-BOT_MAX_LOSS = 0.09     # the bots' own total limit (data/agents/tal_thinking.md: 4.5% a day, 9% in total)
 # the virtual account, v2 (user, 10.11.2026: "as if it were a real demo account"): a fresh $100,000 from the moment this
 # version starts, only the two gap tracks count, each with its own risk: v5 (15m) 0.4%, the 1-minute track 0.075%.
 # FTMO rules: no new trades after a 4.5% loss in the day, the account burns at a 10% loss from the start.
 # v3 (10.11.2026, the review before the user's calibration): a fresh start with the corrected trade selection
-ACCT_V, RISK_V5, RISK_V1M = 5, 0.004, 0.00075     # 4 (12.11.2026): the user's gap method - a fresh $100K account
-# the user's gap method on bot 5 (agents/tal_gap.py; cards approved by the manager 12.11.2026, each "maybe luck" -> risk
-# x0.7 of the bot's 0.4%). Since then the only tracks of bot 5's virtual account; the old gap tracks (v5 / 1-minute)
-# are still shown but no longer counted.
-TAL5_SYMBOLS = ["US100", "US30", "US500", "GER40", "JP225"]
-TAL5 = {"t15_1": (("15m", "1m", 2), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 48, "PROT": "shock"}),
-        "t1h_15": (("1h", "15m", 1), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 0.5, "EXPIRY": 48, "PROT": "none"}),
-        # 12.11.2026 18:22 (user: yes - the agent's newest search, train and 2026 agree): 4h/1h's new settings
-        # (+0.16R a trade on 2026, 189 trades, was +0.08R) and 4h/15m with the stop to entry at 70% of the way to the
-        # target (be70: +0.175R a trade on 2026, 311 trades, 46% winners)
-        "t4h_1h": (("4h", "1h", 1), {"GBODY": 0.0, "MIN_GAP": 0.0, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"}),
-        "t4h_15": (("4h", "15m", 2), {"GBODY": 0.0, "MIN_GAP": 0.0, "SW": 5, "MIN_RR": 0.0, "EXPIRY": 120, "PROT": "cal15", "EXIT": "be70"}),
-        "t15_5": (("15m", "5m", 1), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"})}
-TAL5_NAME = {"t15_1": "15 דק' / דקה", "t1h_15": "שעה / 15 דק'", "t4h_1h": "4 שעות / שעה", "t15_5": "15 דק' / 5 דק'",
-             "t4h_15": "4 שעות / 15 דק' (סטופ לכניסה ב־70%)"}
-# t15_5 was "15Min" too, like t15_1 - two tracks under one name, so the loss report of 12.11 could not tell them apart
-# (13.11.2026 night): from now "15Min5m"; t15_1 keeps "15Min" (its history)
-TAL5_TF = {"t15_1": "15Min", "t1h_15": "1Hour", "t4h_1h": "4Hour", "t15_5": "15Min5m", "t4h_15": "4Hour15"}
-RISK_TAL5 = 0.004 * 0.7
-# 13.11.2026 (bot 5's smart agent): the tracks above are also settings in live/bots/bot5.json ("tal_tracks": {track:
-# {"pair": [high, low], "cfg": {...}}}, risk per track in "risk"), so an approved card of the gap method is built by
-# agents/builder.py at once, like bot 6. A file that is missing or odd keeps the tracks in the code.
-TAL5_RISK = {}
-# an instrument's own gap track (13.11.2026, agents/tal_wide.py: the method on every FTMO forex pair, the metals, the
-# other indices): "symbols" in its "tal_tracks" entry - {track: [symbol]}; a track without it trades TAL5_SYMBOLS.
-# Such an instrument is added to SYMBOLS (and EXTRA: the old tracks' results on it stay out of their summary).
-TAL5_SYMS = {}
-TAL5_ONE = [False]     # "tal_one_per_side": a track does not enter a symbol / direction another track holds (off until approved)
-TAL5_MAXDIR = [0]      # "tal_max_dir" (13.11.2026): at most K counted trades open in one direction on all the indices together (0 = off until approved)
-TAL5_SCALE = [1.0]      # "tal_risk_scale" (13.11.2026 night): one factor on every gap track's risk (1 until approved)
-TAL5_HOURS_OFF = set()  # "tal_hours_off" (13.11.2026 night): UTC hours of entry where no new counted trade opens (empty until approved)
-# bot 6 (13.11.2026 night, the shared methods with bot 5): the same three rules over bot 6's gap tracks, from the same keys
-# in live/bots/bot6.json - only the gap method's tracks, not the scout strategies (chosen on the gap tracks together)
-TAL6_ONE = [False]
-TAL6_MAXDIR = [0]
-TAL6_HOURS_OFF = set()
-_TAL5_CODE = {k: (p, dict(c)) for k, (p, c) in TAL5.items()}
-
-
-def tal5_name(trk):
-    if scout5_combo(trk):
-        sid_, tf_, _ = scout5_combo(trk).split("|")
-        return f"{sid_} · {TG.TF_HE.get({'1Min': '1m', '5Min': '5m', '15Min': '15m', '1Hour': '1h'}.get(tf_, tf_), tf_)}"
-    if trk in TAL5_NAME:
-        return TAL5_NAME[trk]
-    p = (TAL5.get(trk) or _TAL5_CODE.get(trk) or ((trk, trk),))[0]
-    return f"{TG.TF_HE.get(p[0], p[0])} / {TG.TF_HE.get(p[1], p[1])}"
-
-
-def tal5_tf(trk):
-    if trk in TAL5_TF:
-        return TAL5_TF[trk]
-    p = (TAL5.get(trk) or ((trk, ""),))[0]
-    return f"{TF_COMBO.get(p[0], p[0])}{p[1]}"
-# The settings bots 5 and 6 trade with live in live/bots/bot5.json and bot6.json (12.11.2026: the virtual bots are run
-# as if they were real accounts - an approved change goes in at once, like bots 1-4). Read every cycle; a file that is
-# missing or odd keeps the values above.
-SET5 = {"v5": {"STOP": "gap", "DOMINANT": False, "V5_MAX_COST": 0.10, "PART_FRAC": 0.3, "PART_WAY": 0.9},
-        "v1m": {"STOP": "gap", "DOMINANT": False, "V5_MAX_COST": 0.10, "PART_FRAC": 0.3, "PART_WAY": 0.9, "TFM": 1}}
-_SET = {"m5": None, "m6": None}
-_TAL0 = dict(FA.TAL_TRACKS)          # the tracks in the code; the file's main track is laid over them on every load
-TF_COMBO = {"1m": "1Min", "5m": "5Min", "15m": "15Min", "1h": "1Hour", "4h": "4Hour", "1d": "1Day"}
-# bot 6's scout strategies (13.11.2026, agents/scout_fut.py): "scout" in live/bots/bot6.json - {combo: {"v", "since"}},
-# written by agents/builder.py only from an approved card of bot 6's own test. Empty = none trades.
-SCOUT6 = {}
-# bot 5's scout strategies (14.11.2026, bot 5's smart agent - the manager approved SC042 and SC069 on XAUUSD 15Min, the
-# first scout strategies of bot 5): "scout" in live/bots/bot5.json - {combo "SID|TF|SYM": {"since", "card", "spread"?}},
-# written by agents/builder.py from an approved card of agent_portfolio.py's test (the CFD bots' backtest machine:
-# run_rules with the live rules - break exit, holidays, FTMO's restricted events minute by minute, breakeven at 60% of
-# the way + costs, FTMO's costs). The same functions run here on the live bars (scout5_trades). Risk per trade:
-# "scout:<combo>" in "risk" (the manager's star: x0.7), else "scout", else the bot's 0.4%. Empty = none trades.
-SCOUT5 = {}
-# FTMO's live spread per instrument (bot 1's MetaTrader quotes, sampled once a minute while the market is open): the
-# scout strategies' cost. "spread" in the strategy's entry overrides it; no sample yet -> FTMO's class estimate.
-SPREAD5 = {}
-RISK_SCOUT5 = 0.004
-# a filter on one scout strategy's trades (bot 5's smart agent, 16.11.2026 night, cards 5108e04c49ee / 876520ad763a,
-# agents/b5_night_study.py - the same rule as the test): "filter" in the strategy's entry in live/bots/bot5.json.
-#   noreent = no trade again on the same New York day in the same direction after one of its trades closed at a loss
-#   ema50h  = longs only when the last closed 1-hour close is over the 1-hour EMA50, shorts only under it
-SCOUT5_FILTERS = ("noreent", "ema50h")
-
-
-def scout5_filter(t, x1, way, start=None):
-    """The strategy's trades (rules_agent.run, time order) -> those the filter keeps. x1: the 1-minute bars. Only a
-    trade entered from "start" on (when the filter was built) is dropped: one the bot already holds stays and is
-    followed to its exit (an open trade that leaves the run's list would stay open in the state)."""
-    if not way or t.empty:
-        return t
-    utc = lambda v: (pd.Timestamp(v).tz_localize("UTC") if pd.Timestamp(v).tzinfo is None  # noqa: E731
-                     else pd.Timestamp(v).tz_convert("UTC"))
-    t0 = utc(start) if start else None
-    old = lambda v: t0 is not None and utc(v) < t0  # noqa: E731
-    keep = []
-    if way == "noreent":
-        stopped = {}
-        for i, x in enumerate(t.to_dict("records")):
-            tm = utc(x["time"])
-            key = (tm.tz_convert("America/New_York").date(), int(x["dir"]))
-            if key in stopped and stopped[key] <= tm and not old(tm):
-                continue
-            keep.append(i)
-            if x["reason"] != "סוף הנתונים" and pd.notna(x["r"]) and float(x["r"]) < 0 and pd.notna(x["exit_time"]):
-                ex = utc(x["exit_time"])
-                stopped[key] = min(stopped.get(key, ex), ex)
-        return t.iloc[keep]
-    c = x1["c"]
-    if c.index.tz is None:
-        c = c.tz_localize("UTC")
-    h = c.resample("1h", label="left", closed="left").last().dropna()
-    e50 = h.ewm(span=50, adjust=False).mean()
-    closed = h.index + pd.Timedelta(hours=1)
-    for i, x in enumerate(t.to_dict("records")):
-        j = int(closed.searchsorted(utc(x["time"]), side="right")) - 1
-        if j < 50 or old(x["time"]):                       # too little history (as the test) / held before: stays
-            keep.append(i)
-            continue
-        if bool(h.iloc[j] > e50.iloc[j]) == (int(x["dir"]) > 0):
-            keep.append(i)
-    return t.iloc[keep]
-
-
-def scout5_combo(trk):
-    return str(trk)[3:] if str(trk).startswith("sc:") else None
-
-
-def load_settings():
-    global RISK_V5, RISK_V1M
-    for n, key in (("bot5", "m5"), ("bot6", "m6")):
-        f = ROOT / "live" / "bots" / f"{n}.json"
-        try:
-            m = f.stat().st_mtime
-            if m == _SET[key]:
-                continue
-            d = json.loads(f.read_text(encoding="utf-8"))
-            _SET[key] = m
-        except Exception:  # noqa: BLE001
-            continue
-        try:
-            if n == "bot5":
-                for trk in ("v5", "v1m"):
-                    s = (d.get("tracks") or {}).get(trk) or {}
-                    SET5[trk] = {k: v for k, v in s.items() if hasattr(OG, k)}
-                rk = d.get("risk") or {}
-                RISK_V5 = float(rk.get("v5", RISK_V5)) if 0 <= float(rk.get("v5", RISK_V5)) <= 0.02 else RISK_V5
-                RISK_V1M = float(rk.get("v1m", RISK_V1M)) if 0 <= float(rk.get("v1m", RISK_V1M)) <= 0.02 else RISK_V1M
-                tt = d.get("tal_tracks")
-                if isinstance(tt, dict) and tt:
-                    pairs_ = {(p_[0], p_[1]): tuple(p_) for p_ in TG.PAIRS}
-                    new_ = {}
-                    syms_ = {}
-                    for trk, v in tt.items():
-                        pr = pairs_.get(tuple((v or {}).get("pair") or [])[:2])
-                        cf = (v or {}).get("cfg")
-                        if pr and isinstance(cf, dict) and all(k in cf for k in ("GBODY", "MIN_GAP", "SW", "MIN_RR", "EXPIRY", "PROT")):
-                            sy = (v or {}).get("symbols")
-                            if sy is not None:
-                                sy = [x for x in sy if isinstance(x, str) and x in U.ALL] if isinstance(sy, list) else []
-                                if not sy:
-                                    continue                  # a track for instruments we do not know: not traded
-                                syms_[str(trk)] = sy
-                            new_[str(trk)] = (pr, dict(cf))
-                    if new_:
-                        TAL5.clear()
-                        TAL5.update(new_)
-                        TAL5_SYMS.clear()
-                        TAL5_SYMS.update(syms_)
-                        for sy in {x for v_ in syms_.values() for x in v_}:
-                            if sy not in SYMBOLS:
-                                code_ = U.ALL[sy][0]
-                                cand_ = list(dict.fromkeys([code_.replace("/", ""), code_, sy]))
-                                SYMBOLS[sy] = cand_
-                                EXTRA[sy] = cand_
-                TAL5_ONE[0] = bool(d.get("tal_one_per_side", False))
-                try:
-                    TAL5_MAXDIR[0] = max(0, int(d.get("tal_max_dir", 0) or 0))
-                except (TypeError, ValueError):
-                    TAL5_MAXDIR[0] = 0
-                TAL5_HOURS_OFF.clear()
-                try:
-                    TAL5_HOURS_OFF.update(int(h_) for h_ in (d.get("tal_hours_off") or []) if 0 <= int(h_) <= 23)
-                except (TypeError, ValueError):
-                    TAL5_HOURS_OFF.clear()
-                try:
-                    sc_ = float(d.get("tal_risk_scale", 1.0) or 1.0)
-                    TAL5_SCALE[0] = sc_ if 0.1 <= sc_ <= 1.0 else 1.0
-                except (TypeError, ValueError):
-                    TAL5_SCALE[0] = 1.0
-                TAL5_RISK.clear()
-                for trk in TAL5:
-                    v = rk.get(trk, rk.get("tal"))
-                    if v is not None and 0 <= float(v) <= 0.02:
-                        TAL5_RISK[trk] = float(v)
-                SCOUT5.clear()
-                from agents import rules_agent as R_
-                for combo_, e_ in (d.get("scout") or {}).items():
-                    try:
-                        sid_, tf_, sym_ = str(combo_).split("|")
-                        e_ = e_ or {}
-                        if sid_ in R_.STRATEGIES and tf_ in SF.TF_MIN and sym_ in U.ALL and e_.get("since"):
-                            sp_ = e_.get("spread")
-                            SCOUT5[str(combo_)] = {"sid": sid_, "tf": tf_, "sym": sym_, "since": str(e_["since"]),
-                                                   "spread": float(sp_) if sp_ is not None and float(sp_) > 0 else None,
-                                                   "filter": e_.get("filter") if e_.get("filter") in SCOUT5_FILTERS else None,
-                                                   "filter_from": str(e_.get("filter_from") or e_["since"])}
-                            v = rk.get(f"scout:{combo_}", rk.get("scout", RISK_SCOUT5))
-                            TAL5_RISK[f"sc:{combo_}"] = float(v) if 0 <= float(v) <= 0.02 else RISK_SCOUT5
-                            if sym_ not in SYMBOLS:
-                                code_ = U.ALL[sym_][0]
-                                SYMBOLS[sym_] = list(dict.fromkeys([code_.replace("/", ""), code_, sym_]))
-                    except Exception:  # noqa: BLE001 - an odd entry is skipped, the rest trade
-                        continue
-            else:
-                tal = d.get("tal") or {}
-                if tal.get("pair") and tuple(tal["pair"]) in {tuple(p_) for p_ in TG.PAIRS}:
-                    FA.TAL_PAIR = tuple(tal["pair"])
-                if isinstance(tal.get("cfg"), dict):    # over the code's rules (not the last load's: a key the
-                    FA.TAL_CFG = {**_TAL0["tal"][1], **tal["cfg"]}    # file dropped, e.g. EXIT, is dropped here too)
-                # the pair / rules the builder wrote are what the main track trades (12.11.2026: before this, fut_step
-                # read FA.TAL_TRACKS only, so an approved card changed the file and not the trades). Another track on
-                # the same pair stops taking new trades (its open ones are still followed to their exit).
-                FA.TAL_TRACKS.clear()
-                FA.TAL_TRACKS.update(_TAL0)
-                FA.TAL_TRACKS["tal"] = (FA.TAL_PAIR, dict(FA.TAL_CFG))
-                FA.TAL_NAME["tal"] = f"{TG.TF_HE[FA.TAL_PAIR[0]]} / {TG.TF_HE[FA.TAL_PAIR[1]]}"
-                FA.TAL_COMBO["tal"] = "TAL|" + TF_COMBO.get(FA.TAL_PAIR[0], FA.TAL_PAIR[0])
-                # the other tracks are settings too (13.11.2026, bot 6's smart agent - like bot 5's "tal_tracks"): an
-                # approved card on another pair replaces that track's rules or adds a track, built by agents/builder.py.
-                # The main track stays in "tal" above; a "tal" entry here is ignored. Odd entries keep the code's track.
-                tt = d.get("tal_tracks")
-                if isinstance(tt, dict):
-                    pairs_ = {(p_[0], p_[1]): tuple(p_) for p_ in TG.PAIRS}
-                    for trk_, v_ in tt.items():
-                        pr = pairs_.get(tuple((v_ or {}).get("pair") or [])[:2])
-                        cf = (v_ or {}).get("cfg")
-                        if str(trk_) == "tal" or not pr or not isinstance(cf, dict) \
-                                or not all(k in cf for k in ("GBODY", "MIN_GAP", "SW", "MIN_RR", "EXPIRY", "PROT")):
-                            continue
-                        trk_ = str(trk_)
-                        FA.TAL_TRACKS[trk_] = (pr, dict(cf))
-                        FA.TAL_NAME[trk_] = f"{TG.TF_HE[pr[0]]} / {TG.TF_HE[pr[1]]}"
-                        if trk_ not in FA.TAL_COMBO:
-                            FA.TAL_COMBO[trk_] = f"TAL|{TF_COMBO.get(pr[0], pr[0])}{pr[1]}"
-                        FA.RISK.setdefault(trk_, FA.RISK_TAL)
-                for trk_ in [k_ for k_, (p_, _) in FA.TAL_TRACKS.items() if k_ != "tal" and tuple(p_) == tuple(FA.TAL_PAIR)]:
-                    FA.TAL_TRACKS.pop(trk_)
-                SCOUT6.clear()
-                for combo_, e_ in (d.get("scout") or {}).items():
-                    try:
-                        sid_, tf_, sym_ = str(combo_).split("|")
-                        v_ = (e_ or {}).get("v") or {}
-                        if sym_ in FA.SPEC and tf_ in SF.TF_MIN and all(k_ in v_ for k_ in SF.BASE) and (e_ or {}).get("since"):
-                            SCOUT6[str(combo_)] = {"sid": sid_, "tf": tf_, "sym": sym_, "v": dict(v_), "since": str(e_["since"])}
-                    except Exception:  # noqa: BLE001 - an odd entry is skipped, the rest trade
-                        continue
-                TAL6_ONE[0] = bool(d.get("tal_one_per_side", False))
-                try:
-                    TAL6_MAXDIR[0] = max(0, int(d.get("tal_max_dir", 0) or 0))
-                except (TypeError, ValueError):
-                    TAL6_MAXDIR[0] = 0
-                try:        # one micro up to (14.11.2026 night): 0 = off, at most the bot's own risk
-                    FA.ONE_UP_TO = min(max(0.0, float(d.get("tal_one_micro_up_to", 0) or 0)), FA.ONE_CAP)
-                except (TypeError, ValueError):
-                    FA.ONE_UP_TO = 0.0
-                TAL6_HOURS_OFF.clear()
-                try:
-                    TAL6_HOURS_OFF.update(int(h_) for h_ in (d.get("tal_hours_off") or []) if 0 <= int(h_) <= 23)
-                except (TypeError, ValueError):
-                    TAL6_HOURS_OFF.clear()
-                FA.RISK.setdefault("scout", FA.RISK_TAL)
-                # a scout strategy's own risk (13.11.2026 night, bot 6's smart agent: "maybe luck" - one chosen out of
-                # 96 variants on few trades goes in at a lowered risk, as the manager's star does in bots 1-4):
-                # "scout:<combo>" in "risk", over the scout track's risk; gone from the file -> the track's risk again
-                for trk in [k_ for k_ in FA.RISK if str(k_).startswith("scout:")]:
-                    FA.RISK.pop(trk)
-                for trk, v in (d.get("risk") or {}).items():
-                    if (trk in FA.RISK or trk in FA.TAL_TRACKS or (str(trk).startswith("scout:") and str(trk)[6:] in SCOUT6)) \
-                            and 0 <= float(v) <= 0.02:
-                        FA.RISK[trk] = float(v)
-                FA.RISK_TAL = FA.RISK.get("tal", FA.RISK_TAL)
-            print(f"settings of {n} loaded: {json.dumps(d.get('tracks') or d.get('tal'), default=str)[:300]}")
-        except Exception as e:  # noqa: BLE001
-            print(f"settings of {n} not loaded: {e}")
-
-
-def _set_og(trk):
-    """Put a track's settings on agents/own_gaps.py; returns what to put back after."""
-    keep = {k: getattr(OG, k) for k in SET5[trk]}
-    for k, v in SET5[trk].items():
-        setattr(OG, k, v)
-    return keep
+ACCT_V, RISK_V5, RISK_V1M = 3, 0.004, 0.00075
 
 
 def log(msg):
@@ -412,34 +115,6 @@ class Source:
         a = np.array(b, dtype=float)
         return pd.DataFrame({"o": a[:, 1], "h": a[:, 2], "l": a[:, 3], "c": a[:, 4], "v": 1.0},
                             index=pd.to_datetime(a[:, 0].astype("int64"), unit="s", utc=True))
-
-    def spreads(self, names):
-        """FTMO's live bid / ask (bot 1's MetaTrader, GET /quotes; read-only) -> SPREAD5 samples. The first ask only
-        registers the symbols with the server, which forgets them after 30 seconds (live/runner.QUOTE_WANT) - longer
-        than this loop's minute, so a single ask a minute never got a quote (0 samples on every scout strategy, 14-16.11:
-        FTMO's class estimate, 0.03% of the price - 3.3 pips on EURUSD - was charged on every trade). So: ask, and ask
-        again after a moment, up to 3 times (the server reads MetaTrader 4 times a second between its cycles).
-        Quiet on any failure."""
-        got = set()
-        for k in range(3):
-            try:
-                if k:
-                    time.sleep(1.5)
-                j = requests.get(self.url.rsplit("/", 1)[0] + "/quotes", params={"symbols": ",".join(names)}, timeout=10).json()
-                now = time.time()
-                for n, q in (j.get("quotes") or {}).items():
-                    if n in got:
-                        continue
-                    bid, ask, at = float(q[0]), float(q[1]), float(q[2])
-                    if bid > 0 and ask > bid and now - at < 300 and (ask - bid) / bid < 0.01:     # a fresh, sane quote
-                        s = SPREAD5.setdefault(n, [])
-                        s.append(round(ask - bid, 6))
-                        del s[:-2000]
-                        got.add(n)
-            except Exception:  # noqa: BLE001
-                pass
-            if got >= set(names):
-                break
 
     def resolve(self, name):
         now = time.time()
@@ -480,41 +155,19 @@ class Calendar:
     """FTMO's restricted events (2 minutes either side) and holidays, refreshed every hour."""
 
     def __init__(self):
-        self.t, self.restricted, self.holidays, self.high = 0, [], [], []
+        self.t, self.restricted, self.holidays = 0, [], []
 
     def refresh(self):
         if time.time() - self.t < 3600:
             return
         try:
             now = pd.Timestamp.now(tz="UTC")
-            items = CAL.fetch((now - pd.Timedelta(days=DAYS + 1)).strftime("%Y-%m-%d"), (now + pd.Timedelta(days=2)).strftime("%Y-%m-%d"))
-            self.restricted, self.holidays = CAL.parse(items)
-            # every high-impact release by currency: the gap method's calendar protection (PROT cal15 / cal60), the
-            # same "+-N minutes of a high-impact release of the instrument's currency" as the backtest
-            self.high = [(pd.Timestamp(i["date"]).tz_convert("UTC"), str(i.get("instrument") or i.get("currency") or "").upper())
-                         for i in items if str(i.get("impact") or "").lower() == "high"]
+            self.restricted, self.holidays = CAL.parse(CAL.fetch((now - pd.Timedelta(days=DAYS + 1)).strftime("%Y-%m-%d"),
+                                                                 (now + pd.Timedelta(days=2)).strftime("%Y-%m-%d")))
             self.t = time.time()
         except Exception as e:  # noqa: BLE001
             log(f"FTMO calendar not read ({e}); trying again in 10 minutes")
             self.t = time.time() - 3000
-
-    def cal_masks(self, df, name):
-        """{"cal15": mask, "cal60": mask} on the 1-minute candles: within +-15 / 60 minutes of a high-impact release."""
-        from agents import news_calendar as NC
-        cur = set(NC.CURRENCIES.get(name) or [])
-        ev = np.array(sorted(pd.Timestamp(t).as_unit("ns").value for t, c in self.high if c in cur or any(x in c for x in cur)), dtype=np.int64)
-        t = pd.DatetimeIndex(df.index).as_unit("ns").asi8         # pandas 3 keeps microseconds: compare in ns
-        out = {}
-        for m in (15, 60):
-            w = m * 60 * 10**9
-            if not len(ev):
-                out[f"cal{m}"] = np.zeros(len(t), bool)
-                continue
-            i = np.searchsorted(ev, t)
-            after = np.where(i < len(ev), ev[np.minimum(i, len(ev) - 1)] - t, 10**18)
-            before = np.where(i > 0, t - ev[np.maximum(i - 1, 0)], 10**18)
-            out[f"cal{m}"] = (after <= w) | (before <= w)
-        return out
 
     def masks(self, df, name):
         n = len(df)
@@ -533,24 +186,9 @@ class Calendar:
             if not CAL.restricted_affects(name, ins):
                 continue
             a, b = idx.searchsorted(t - pd.Timedelta(minutes=2)), idx.searchsorted(t + pd.Timedelta(minutes=2), side="right")
-            if a >= n:
-                # the event's window is still ahead of the last bar (bot 6's smart agent, 16.11.2026): before this
-                # a-1 was the LAST bar, so every restricted event of the next 2 days (FOMC minutes 18.11 19:00 UTC on
-                # the US indices) force-closed every open gap trade at the newest minute, again each refresh, and
-                # blocked the entry there - from 16.11 00:00 UTC on bots 5 and 6. The window acts when it arrives.
-                continue
             noent[max(0, a - 1):b] = True                    # no entry from 2 minutes before to 2 after
             if a - 1 >= 0:
                 stop_at[a - 1] = True                         # out 2 minutes before
-        # FTMO's rule (user, 14.11.2026): no position over a market break of 2+ hours - known in advance from the same
-        # weekday a week earlier (tal_gap.pre_break_mask), so every track closes WKND_MIN minutes before the weekend /
-        # a daily close and opens nothing in that window (the break in the data is seen only after it, too late)
-        try:
-            pre = TG.pre_break_mask(pd.DatetimeIndex(idx).as_unit("ns").asi8, TG.WKND_MIN)
-            stop_at = stop_at | pre
-            noent = noent | pre
-        except Exception as e:  # noqa: BLE001 - the masks as before rather than no masks
-            log(f"{name}: the pre-break window not computed ({e})")
         return stop_at, np.r_[noent[1:], False]
 
 
@@ -576,199 +214,7 @@ def bars(df, t0, t1, rule):
             for t, r in x.iterrows()]
 
 
-RULE = {"1m": "1min", "5m": "5min", "15m": "15min", "1h": "1h", "4h": "4h", "1d": "1D"}
-MINS = {"1m": 1, "5m": 5, "15m": 15, "1h": 60, "4h": 240, "1d": 1440}
-
-
-def tal_chart(df, geo, t_in, t_out):
-    """The two charts of a gap-method trade (user, 13.11.2026): the high timeframe from before the impulse to after the
-    entry (the impulse arrow, candles 1-3, the gap box), the low timeframe from the swings that set the stop and the
-    target to after the exit. Returns (high bars, low bars) - at most 120 / 480 candles."""
-    hm, lm = MINS.get(geo["htf"], 15), MINS.get(geo["ltf"], 1)
-    # much more history (user, 17.11.2026: "why only a small part of the chart - show many more candles"): 200 candles
-    # of the high timeframe up to after the entry / now, up to 480 of the low one; the app opens on the latest, scroll back
-    end_h = max(t_in, t_out, pd.Timestamp(geo["c3"])) + pd.Timedelta(minutes=3 * hm)
-    st_h = end_h - pd.Timedelta(minutes=200 * hm)
-    pts = [pd.Timestamp(geo["c1"])] + [pd.Timestamp(geo[k][0]) for k in ("sw_stop", "sw_tgt") if geo.get(k)]
-    end_l = t_out + pd.Timedelta(minutes=10 * lm)
-    st_l = min(min(pts) - pd.Timedelta(minutes=30 * lm), end_l - pd.Timedelta(minutes=360 * lm))
-    st_l = max(st_l, end_l - pd.Timedelta(minutes=480 * lm))
-    return bars(df, st_h, end_h, RULE.get(geo["htf"], "15min")), bars(df, st_l, end_l, RULE.get(geo["ltf"], "1min"))
-
-
-# ---------------- Tal reviews every gap setup before the entry (user, 17.11.2026) ----------------
-# The impulse ended with a gap (the order waits for the correction): a notification "would you enter?" (long vibration;
-# not in the quiet hours). In the app: the high timeframe -> yes / no; yes -> the low timeframe with the position the
-# rules would place (entry, stop, target - each right or wrong; wrong -> his own price). The gap tracks' trades are taken
-# ONLY as he answered: no -> not taken; yes -> the rules, or his levels (TG.custom_trade); no answer -> not taken; a
-# setup that came in his quiet hours -> the rules (no question at night). Every answer stays in live/watch_marks.json:
-# the examples the method learns from (task tal1711review).
-REVIEW_ON = True
-# bot 5's scout strategies built on gaps go through him too (user, 17.11.2026: "all of bot 5's trades based on gaps,
-# all of them, go through me"): SC232 (CHoCH, then the return into the FVG) and SC446 (a breakaway gap + iFVG, the
-# return into the gap). Their signal enters at the next bar's open, so the trade waits for his answer instead: the
-# question at the signal, no answer within REVIEW_SC_WAIT minutes (at least 2 of the strategy's bars) -> not taken;
-# no -> not taken; yes -> in at the first 1-minute open after his answer (or his own entry as a limit for an hour), the
-# strategy's stop / target in price (or his), breakeven at 60% of the way + costs as tested, out before a 2h+ break.
-# In his quiet hours -> the strategy as tested. Counted from the first run of this code (vacct "review_sc_from").
-REVIEW_SC = set()      # 17.11.2026 evening: the scout strategies moved to their own account, as tested - no questions
-REVIEW_SC_WAIT = 15
-
-
-def rv_sc(tal):
-    c = scout5_combo(tal)
-    return bool(c) and c.split("|")[0] in REVIEW_SC
-
-
-def sc_review(x, df, cst, stop_at, sc, trades, acc):
-    """A gap scout trade of bot 5 as Tal answered (see REVIEW_SC)."""
-    since = acc.setdefault("review_sc_from", pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
-    st0 = iso(x.get("setup_t"))
-    if not REVIEW_ON or not st0 or st0 < since or quiet_at(st0):
-        return x
-    mk = (trades.get(tid(x)) or {}).get("mark") or {}
-    x["prop"] = [x["stop"], x["target"]]
-    blank = dict(time=None, exit_time=None, exit=None, r=None, r_now=None, px_now=None, cost_live=None)
-    t0 = pd.Timestamp(x["time"])
-    take = mk.get("take")
-    if take == "no":
-        x.update(blank, status="cancelled", reason="tal_no", why="tal_no")
-        return x
-    if take != "yes":
-        wait = pd.Timedelta(minutes=max(REVIEW_SC_WAIT, 2 * SF.TF_MIN.get(sc["tf"], 15)))
-        if df.index[-1] < t0 + wait:
-            x.update(blank, status="pending", reason=None)
-        else:
-            x.update(blank, status="cancelled", reason="tal_none", why="tal_none")
-        return x
-    d = int(x["dir"])
-    stop = float(mk["stop"]) if mk.get("stop") is not None else float(x["stop"])
-    tg = float(mk["target"]) if mk.get("target") is not None else x.get("target")
-    tg = float(tg) if tg is not None else None
-    idx = df.index
-    o, h, l, c = (df[k].to_numpy(float) for k in ("o", "h", "l", "c"))
-    n = len(idx)
-    start = max(t0, pd.Timestamp(mk.get("at") or t0))
-    q0 = int(idx.searchsorted(start))
-    if q0 >= n:
-        x.update(blank, status="pending", reason=None)
-        return x
-    if mk.get("entry") is not None:
-        ent = float(mk["entry"])
-        q1 = int(idx.searchsorted(start + pd.Timedelta(hours=1)))
-        seg = (l[q0:q1] <= ent) if d > 0 else (h[q0:q1] >= ent)
-        if not seg.any():
-            x.update(blank, status="cancelled" if q1 < n else "pending", reason="expired" if q1 < n else None)
-            return x
-        f = q0 + int(np.argmax(seg))
-        px = min(ent, o[f]) if d > 0 else max(ent, o[f])
-    else:
-        f, px = q0, float(o[q0])
-    risk = d * (px - stop)
-    if risk <= 0 or (tg is not None and d * (tg - px) <= 0):
-        x.update(blank, status="cancelled", reason="levels", why="levels")     # the price already passed his levels
-        return x
-    cost = float(np.asarray(cst, float)[f])
-    sa = np.asarray(stop_at, bool)
-    cur, be, ex, why, q = stop, False, None, None, None
-    for k in range(f, n):
-        if (l[k] <= cur) if d > 0 else (h[k] >= cur):
-            ex = (min(cur, o[k]) if d > 0 else max(cur, o[k])) if k > f else cur
-            why, q = ("breakeven" if be else "stop"), k
-            break
-        if tg is not None and k > f and ((h[k] >= tg) if d > 0 else (l[k] <= tg)):
-            ex, why, q = tg, "target", k
-            break
-        if sa[k]:
-            ex, why, q = float(c[k]), "forced", k
-            break
-        if tg is not None and not be and d * (((h[k] if d > 0 else l[k])) - px) >= 0.6 * d * (tg - px):
-            cur, be = px + d * cost, True
-    cost_r = cost / risk
-    x.update(entry=float(px), stop=stop, target=tg, rr=round(d * (tg - px) / risk, 2) if tg is not None else None,
-             time=idx[f], custom=any(mk.get(k) is not None for k in ("entry", "stop", "target")))
-    if ex is None:
-        x.update(status="open", exit_time=None, exit=None, reason=None, r=None,
-                 r_now=round(d * (c[-1] - px) / risk - cost_r, 3), px_now=float(c[-1]), cost_live=round(cost_r, 4))
-    else:
-        x.update(status="closed", exit_time=idx[q], exit=float(ex), reason=why, r=round(d * (ex - px) / risk - cost_r, 4),
-                 r_now=None, px_now=None, cost_live=None)
-    return x
-
-
-def quiet_at(t):
-    """Was `t` (UTC, ISO) inside the quiet hours (live/notify.json, Israel time, default 21:00-08:00)?"""
-    try:
-        a, b = REP._CFG.get("quiet_from", 21), REP._CFG.get("quiet_to", 8)
-        h = pd.Timestamp(t).tz_convert("Asia/Jerusalem").hour
-        return (h >= a or h < b) if a > b else (a <= h < b)
-    except Exception:  # noqa: BLE001
-        return False
-
-
-def learning5(marks):
-    """What bot 5's agent learned from Tal's marks (user, 17.11.2026: "how many marks did I make, from how many could it
-    learn, from how many did it really learn, and how many more until it understands the method"). His answers
-    (live/watch_marks.json) and his notes (live/trade_notes.json) on the gap method's trades (not the scout ones, not
-    the bot conversation), against the lessons the agent wrote (data/agents/bot5_lessons.json: each lesson names the
-    trades it came from; recorded / tested / built). The estimate: until there are 30 answers on each of the gap
-    tracks and 20 "no" answers (what tells a no from a yes) at the pace of his "no" so far."""
-    own = lambda k: "sc:" not in k and k != "talk"  # noqa: E731
-    try:
-        notes = (json.loads((LIVE / "trade_notes.json").read_text(encoding="utf-8")).get(NAME) or {})
-    except Exception:  # noqa: BLE001
-        notes = {}
-    try:
-        les = json.loads((ROOT / "data" / "agents" / "bot5_lessons.json").read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001
-        les = {}
-    ans = {k: m for k, m in (marks or {}).items() if own(k) and (m or {}).get("take") in ("yes", "no")}
-    nts = {k: v for k, v in notes.items() if own(k) and v}
-    learnable = set(ans) | set(nts)
-    ls = les.get("lessons") or []
-    learned = learnable & {k for x in ls for k in (x.get("from") or [])}
-    built = learnable & {k for x in ls if x.get("status") == "built" for k in (x.get("from") or [])}
-    yes = [m for m in ans.values() if m["take"] == "yes"]
-    nos = sum(1 for m in ans.values() if m["take"] == "no")
-    stop_ok = sum(1 for m in yes if m.get("ok_stop") is not False and m.get("stop") is None)
-    fams = sorted({t.split("@")[0] for t in TAL5})          # the gap tracks (pairs of timeframes), each instrument together
-    per = {}
-    for k in ans:
-        trk = k.split("|")[-1].split("@")[0]
-        if trk in fams:
-            per[trk] = per.get(trk, 0) + 1
-    no_rate = max(nos / len(ans), 0.1) if ans else 0.1
-    rem = max(max(0, 20 - nos) / no_rate, sum(max(0, 30 - per.get(t, 0)) for t in fams))
-    return {"marks": len(ans) + sum(len(v) for v in nts.values()), "answers": len(ans), "yes": len(yes), "no": nos,
-            "notes": sum(len(v) for v in nts.values()), "trades": len(learnable), "learnable": len(learnable),
-            "learned": len(learned), "built": len(built), "unclear": sorted(learnable - learned)[:30],
-            "lessons": [{k: x.get(k) for k in ("id", "text", "status", "task")} | {"n": len(learnable & set(x.get("from") or []))} for x in ls],
-            "stop_agree": round(100 * stop_ok / len(yes)) if yes else None, "take_agree": round(100 * len(yes) / len(ans)) if ans else None,
-            "per_track": per, "estimate": int(round(rem / 10.0) * 10)}
-
-
-def review_push(rec):
-    """-> what happened (kept on the trade: "pushed")."""
-    key = os.environ.get("MANAGER_KEY")
-    if not key:
-        return "no key"
-    side = "קנייה" if rec["dir"] > 0 else "מכירה"
-    try:
-        r = requests.post("http://127.0.0.1:8760/push", timeout=8, headers={"X-Local": key},
-                      json={"title": f"בוט 5: היית נכנס? {rec['symbol']} {side}",
-                            "body": (f"{tal5_name(rec['tal'])} · כניסה בגאפ. הבוט מחכה לתשובה שלך (עד {REVIEW_SC_WAIT} דקות)."
-                                 if scout5_combo(rec["tal"]) else
-                                 f"{tal5_name(rec['tal'])} · דחף עם גאפ, לפני התיקון. פתח וענה לפני שהמחיר חוזר לגאפ."),
-                            "urgent": True, "tag": f"rv:{rec['id']}"[:60], "action": "review", "id": rec["id"]})
-        return str(r.status_code)
-    except Exception as e:  # noqa: BLE001
-        log(f"review push failed: {e}")
-        return "err"
-
-
 def tid(x):
-    if x.get("tal"):
-        return f"{x['symbol']}|{x['tal_key']}|{x['tal']}"
     base = f"{x['symbol']}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}" + ("|v4" if x.get("v4") else "|v5" if x.get("v5") else "|v1m" if x.get("v1m") else "")
     if x.get("v5") or x.get("v1m"):
         # the gap tracks: several gaps of one move share the move's peak, so the gap's own candle is part of the name
@@ -824,311 +270,54 @@ def follow(t, df, stop_at, part=0.3, way=0.9):
     return {"r_now": round(part_r + rest * d * (c1[-1] - px) / risk, 3), "followed": True}
 
 
-def excursion(t, df):
-    """How far a filled trade went for / against it on the 1-minute bars, from the fill to the exit (or now) - user,
-    16.11.2026: "almost every trade was in profit at some point and almost all ended in a loss" (task tal1611gaveback):
-    the mfe / mae fields were always empty. Prices like a real bot's (live/runner.py), and in R of the first stop;
-    mfe_way = the best point as a share of the way to the target. The fill and exit minutes are included whole (within
-    a minute the order is unknown). {} while the bars do not cover the trade."""
-    if df is None or not len(df) or not t.get("time") or t.get("entry") is None or t.get("stop") is None:
-        return {}
-    d, px = t["dir"], t["entry"]
-    risk = d * (px - t["stop"])
-    a = pd.Timestamp(t["time"])
-    if risk <= 0 or a < df.index[0]:
-        return {"mfe_na": True} if risk > 0 else {}
-    w = df.loc[a:pd.Timestamp(t["exit_time"])] if t.get("exit_time") else df.loc[a:]
-    if not len(w):
-        return {}
-    hi, lo = float(w["h"].max()), float(w["l"].min())
-    best, worst = (hi, lo) if d > 0 else (lo, hi)
-    out = {"mfe_px": best, "mae_px": worst, "mfe_r": round(d * (best - px) / risk, 3),
-           "mae_r": round(d * (worst - px) / risk, 3)}
-    way = d * (t["target"] - px) if t.get("target") is not None else 0
-    out["mfe_way"] = round(d * (best - px) / way, 3) if way > 0 else None
-    return out
-
-
-def excursions(rows, src):
-    """excursion() on every open trade (each loop) and once on every closed one. Quiet on any failure."""
-    for t in rows:
-        if t.get("status") not in ("open", "closed") or (t["status"] == "closed" and (t.get("mfe_r") is not None or t.get("mfe_na"))):
-            continue
-        try:
-            t.update(excursion(t, src.df.get(t["symbol"])))
-        except Exception:  # noqa: BLE001
-            pass
-
-
 def iso(t):
     return pd.Timestamp(t).isoformat() if t is not None and not (isinstance(t, float) and np.isnan(t)) else None
 
 
 def fmt(name, p):
-    if p is None:                     # a strategy with no fixed target / stop (17.11.2026: the open notification crashed)
-        return "—"
     return f"{p:.2f}" if not (len(name) == 6 and name.isalpha()) else (f"{p:.3f}" if name.endswith("JPY") else f"{p:.5f}")
 
 
 FUT_WORD = {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה", "breakeven": "ברייק (30% יצאו)"}
 
 
-def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen, calm=None):
-    """Bot 6 (12.11.2026): the user's gap method on 1 hour / 5 minutes (agents/tal_gap.py, card abb187377383) - an
-    impulse on the hour chart, the gap between candle 1 and candle 3 that stayed open, a limit at its middle, the stop
-    2 ticks beyond the 2nd 5-minute swing beyond the entry, the target at the 2nd swing on the other side, no management.
-    With the futures session (no entry from 15:45 New York, everything out at 16:05, nothing over the weekend), sized
-    in micro contracts on the virtual FTMO Futures account. It replaced the scalping bot's old gap tracks."""
+def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
+    """Bot 6: the two gap tracks again, with the futures session (no entry from 15:45 New York, everything out at
+    16:05, nothing over the weekend), sized in micro contracts on the virtual FTMO Futures account."""
     shut, late = FA.session_masks(df)
-    tick = FA.SPEC[name][2]
-    # calm (14.11.2026, bot 6's smart agent): the high-impact calendar masks, as bot 5's gap tracks get them - so a
-    # track with PROT cal15 / cal60 or the news guard NEWSX (the user's task tal1411strad) trades live exactly as tested
-    # (before this bot 6's live Data had no calendar and those rules were silently off). No track uses them today.
-    D = TG.Data(name, df[["o", "h", "l", "c"]], np.full(len(df), tick), np.asarray(stop_at | shut, bool),
-                np.asarray(noent | late, bool), 2 * tick, calm or {})
-    contract = FA.SPEC[name][0]
-    cutoff = (df.index[-1] - pd.Timedelta(days=2)).isoformat()
-    for trk, (pair, cfg) in FA.TAL_TRACKS.items():
-      gcache = {}
-      # FTMO's break rule (the user, 14.11.2026, as bot 5): no waiting gap order over a 2+ hour break (the weekend, a
-      # holiday) - cancelled WKND_MIN minutes before it; the trades were already out at 16:05 New York
-      for x in TG.live_trades(D, pair, TG.ftmo_cfg(cfg), gcache):
-        if x["status"] == "cancelled" and (x.get("time") or x["setup_t"]) < cutoff:
-            continue
-        k = f"{name}|{x['id_key']}" + ("" if trk == "tal" else f"|{trk}")
-        old = ftrades.get(k, {})
-        if x["status"] == "cancelled" and old.get("status") in ("open", "closed"):
-            # a trade already taken stays as it was (the break rule of 14.11.2026 counts from now on): a closed one is
-            # kept, an open one is followed to its stop / target / 16:05 by the loop below (not marked seen)
-            if old["status"] == "closed":
-                fseen.add(k)
-            continue
-        fseen.add(k)
-        rec = {"id": k, "symbol": name, "contract": contract, "trk": trk, "dir": x["dir"], "status": x["status"],
-               "entry": x["entry"], "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,
-               "setup_t": x["setup_t"], "time": x.get("time"), "exit_time": x.get("exit_time"), "exit": x.get("exit"),
-               "reason": x.get("reason"), "r": x.get("r"), "r_now": x.get("r_now"), "gap": x.get("gap"),
-               "geo": x.get("geo") or old.get("geo")}
-        if rec["gap"]:
-            rec["gap_lo"], rec["gap_hi"] = min(rec["gap"]), max(rec["gap"])
-        if rec["geo"] and rec["status"] in ("open", "closed"):
-            # the two charts of the method (user, 13.11.2026)
-            if rec["status"] != "closed" or old.get("chart_v") != 5 or old.get("status") != "closed":
-                t_in = pd.Timestamp(rec["time"]) if rec.get("time") else df.index[-1]
-                t_out = pd.Timestamp(rec["exit_time"]) if rec.get("exit_time") else df.index[-1]
-                rec["m15"], rec["m1"] = tal_chart(df, rec["geo"], t_in, t_out)
-            else:
-                rec["m15"], rec["m1"] = old.get("m15"), old.get("m1")
-            rec["chart_v"] = 5
-        fut_rec(rec, old, fa, ftrades)
-    for combo_, sc in SCOUT6.items():          # the scout strategies approved on bot 6's own test (13.11.2026)
-        if sc["sym"] != name:
-            continue
+    f_stop, f_noent = stop_at | shut, noent | late
+    found = []
+    for trk, tfm, wait in (("v5", 15, pd.Timedelta(hours=OG.EXPIRY)), ("v1m", 1, pd.Timedelta(minutes=96))):
+        keep = (OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM)
         try:
-            fut_scout(name, df, np.asarray(noent, bool) | np.asarray(late, bool), shut, sc, combo_, contract, tick, fa, ftrades, fseen)
-        except Exception:  # noqa: BLE001 - one strategy must not stop the account
-            print(f"bot 6 scout {combo_}: {traceback.format_exc()[-300:]}")
-    o1, h1, l1, c1 = (df[x].to_numpy(float) for x in "ohlc")
-    for k, t in list(ftrades.items()):        # an open trade the run no longer reports: followed to its exit here
-        if t["symbol"] != name or t["status"] != "open" or k in fseen or not t.get("time") or t.get("stop") is None:
+            OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM = "gap", False, 0.10, 0.3, 0.9, tfm
+            for x in OG.run_gaps(name, df, cst, f_stop, f_noent, live=True, variant="f" + trk):
+                if x.get("status") == "pending" and pd.Timestamp(x["setup_t"]) < df.index[-1] - wait:
+                    continue
+                x["trk"] = trk
+                found.append(x)
+        finally:
+            OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM = keep
+    cutoff = df.index[-1] - pd.Timedelta(days=2)
+    contract = FA.SPEC[name][0]
+    for x in found:
+        if x["status"] == "cancelled" or pd.Timestamp(x.get("time") or x.get("setup_t")) < cutoff:
             continue
-        fseen.add(k)
-        d, px, st, tg = t["dir"], t["entry"], t["stop"], t["target"]
-        risk = d * (px - st)
-        f = int(df.index.searchsorted(pd.Timestamp(t["time"])))
-        upd = {"r_now": round(d * (c1[-1] - px) / risk, 3)} if risk > 0 else {}
-        for q in range(f + 1, len(c1)):
-            hit_s = (l1[q] <= st) if d > 0 else (h1[q] >= st)
-            hit_t = tg is not None and ((h1[q] >= tg) if d > 0 else (l1[q] <= tg))
-            if hit_s or hit_t or shut[q]:
-                ex, why = (st, "stop") if hit_s else (tg, "target") if hit_t else (o1[q], "forced")
-                upd = {"status": "closed", "exit": float(ex), "exit_time": df.index[q].isoformat(), "reason": why,
-                       "r": round(d * (ex - px) / risk, 4)}
-                break
-        fut_rec(dict(t, **upd), t, fa, ftrades)
-
-
-def fut_scout(name, df, noent, shut, sc, combo, contract, tick, fa, ftrades, fseen):
-    """One scout strategy on the live 1-minute bars, exactly as agents/scout_fut.py tests it; trades from the day it
-    was built ("since") on. A trade still running at the last bar is open; the account books the closed ones."""
-    _, pv, _ = FA.SPEC[name]
-    cost_px = tick + (FA.COMM + FA.SLIP_TICKS * tick * pv) / pv
-    # the volume column as the test has it (bot 6's smart agent, 17.11.2026 night): agent_bot6.prep keeps it, or 1.0
-    # when the bars have none - without it a scout strategy that reads volume (SC071, the VWAP ones) fails here
-    dfs = df[["o", "h", "l", "c"]].copy()
-    dfs["v"] = df["v"].to_numpy(float) if "v" in df else 1.0
-    t = SF.trades(dfs, name, sc["sid"], sc["tf"], sc["v"], np.asarray(noent, bool), np.asarray(shut, bool), cost_px)
-    if t.empty:
-        return
-    since = pd.Timestamp(sc["since"])
-    for _, x in t.iterrows():
-        tm = pd.Timestamp(x["time"])
-        if tm < since:
-            continue
-        risk = abs(float(x["entry_px"]) - float(x["stop_px"]))
-        r_live = float(x["r"]) + float(x["cost_r"]) - tick / risk     # the spread here; commission + slippage in pnl_of
-        live_now = x["reason"] == "סוף הנתונים"
-        k = f"{name}|{sc['sid']}|{sc['tf']}|{tm.isoformat()}"
+        k = (f"{name}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}|f{x['trk']}"
+             f"|g{pd.Timestamp(x['leg_start']).strftime('%Y%m%d%H%M')}")      # the gap's own candle: one name per trade
         fseen.add(k)
         old = ftrades.get(k, {})
-        tg = None if pd.isna(x["target_px"]) else float(x["target_px"])
-        tfm = SF.TF_MIN.get(sc["tf"], 15)
-        rec = {"id": k, "symbol": name, "contract": contract, "trk": "scout", "combo": combo, "dir": int(x["dir"]),
-               # what the strategy saw (task b5scchart1711, as bot 5): its own timeframe, its rule and the signal candle
-               # (the bar before the entry); no gap / impulse fields on a scout trade
-               "sc": {"sid": sc["sid"], "tf": sc["tf"], "rule": _sc_rule(sc["sid"]),
-                      "sig_t": (tm - pd.Timedelta(minutes=tfm)).isoformat()},
-               "status": "open" if live_now else "closed", "entry": float(x["entry_px"]), "stop": float(x["stop_px"]),
-               "stop_now": float(x["stop_last"]), "target": tg, "rr": round(abs(tg - float(x["entry_px"])) / risk, 2) if tg else None,
-               "cost_r": 0.0, "setup_t": tm.isoformat(), "time": tm.isoformat(),
-               "exit_time": None if live_now else pd.Timestamp(x["exit_time"]).isoformat(),
-               "exit": None if live_now else float(x["exit_px"]), "reason": None if live_now else x["reason"],
-               "r": None if live_now else round(r_live, 4), "r_now": round(r_live, 3) if live_now else None}
-        # the two charts of a scout trade (as bot 5, chart_v 4): the strategy's timeframe from 60 bars before the
-        # entry to 4 after the exit, and 1 minute around the trade; a closed trade keeps the charts it already has
-        if rec["status"] != "closed" or old.get("chart_v") != 6 or old.get("status") != "closed":
-            t_out = pd.Timestamp(rec["exit_time"]) if rec["exit_time"] else df.index[-1]
-            rule_ = f"{tfm}min" if tfm < 60 else "1h"
-            rec["m15"] = bars(df, tm - pd.Timedelta(minutes=150 * tfm), max(tm, t_out) + pd.Timedelta(minutes=4 * tfm), rule_)
-            m1_end = t_out + pd.Timedelta(minutes=10)
-            rec["m1"] = bars(df, max(tm - pd.Timedelta(minutes=max(240, 6 * tfm)), m1_end - pd.Timedelta(hours=12)), m1_end, "1min")
-        else:
-            rec["m15"], rec["m1"] = old.get("m15"), old.get("m1")
-        rec["chart_v"] = 6
+        rec = {"id": k, "symbol": name, "contract": contract, "trk": x["trk"], "dir": int(x["dir"]), "status": x["status"],
+               "entry": float(x["entry"]), "stop": float(x["stop"]), "target": float(x["target"]) if x.get("target") else None,
+               "rr": x.get("rr"), "cost_r": x.get("cost_r"), "setup_t": iso(x.get("setup_t")) or old.get("setup_t"),
+               "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
+               "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
+               "r": x.get("r"), "r_now": x.get("r_now"), "leg_start": iso(x.get("leg_start"))}
         fut_rec(rec, old, fa, ftrades)
-
-
-def _sc_rule(sid):
-    """A scout strategy's rule in a few words (agents/rules_agent.STRATEGIES' description), for its chart."""
-    try:
-        from agents import rules_agent as R
-        return str(R.STRATEGIES[sid][0])[:160]
-    except Exception:  # noqa: BLE001 - a missing description must not stop the trade
-        return ""
-
-
-def spread5(name, px, sc):
-    """The spread a scout strategy of bot 5 pays (price units): the entry's own "spread", else the median of FTMO's live
-    quotes sampled here (at least 20), else FTMO's class estimate (agents/ftmo_costs.apply's default: 0.03% of the price)."""
-    if sc.get("spread"):
-        return float(sc["spread"])
-    s = SPREAD5.get(name) or []
-    if len(s) >= 20:
-        return float(np.median(s))
-    return px * C.EST_SPREAD.get(U.CLASS.get(name), 0.0003)
-
-
-_RR = []
-
-
-def _run_rules():
-    """run_rules.py (news_minute, drop_hole_trades), imported once. Its import adds FTMO's currencies of more indices to
-    agents/news_calendar.CURRENCIES (EU50, SPN35, AUS200, N25, US2000) - the gap tracks' calendar protection here reads
-    that table, so it is put back as it was: importing for the scout strategies changes nothing in the gap tracks."""
-    if not _RR:
-        from agents import news_calendar as NC
-        keep = {k: list(v) if isinstance(v, (list, tuple)) else v for k, v in NC.CURRENCIES.items()}
-        import run_rules as RR
-        NC.CURRENCIES.clear()
-        NC.CURRENCIES.update(keep)
-        _RR.append(RR)
-    return _RR[0]
-
-
-def scout5_trades(name, df, sc, cal):
-    """Bot 5 (14.11.2026): one scout strategy on the live 1-minute bars, exactly as agent_portfolio.py tested it with
-    run_rules.py and the live rules (LIVE_RULES): the strategy's timeframe, no position over a break of 2+ hours (the
-    weekend), the holidays (no entry, out before), no entry from 3 minutes before to 3 after a restricted event of the
-    instrument and out 3 minutes before it (run_rules.news_minute, here with the live calendar and 1-minute bars), the
-    stop to the entry + costs at 60% of the way to the target, FTMO's costs (spread: spread5, commission, swap).
-    Signals only on closed bars (rules_agent.run enters at the next bar's open, the forming bar only exits).
-    Returns the trades from "since" on, in the records' shape of the gap tracks (tal = "sc:<combo>")."""
-    from agents import rules_agent as R
-    RR = _run_rules()
-    tf, tfm = sc["tf"], SF.TF_MIN[sc["tf"]]
-    rule = f"{tfm}min" if tfm < 60 else "1h"
-    x1 = df[["o", "h", "l", "c"]]
-    d = x1.resample(rule, label="left", closed="left").agg({"o": "first", "h": "max", "l": "min", "c": "last"}).dropna()
-    if len(d) < 300:
-        return []
-    d["v"] = df["v"].resample(rule, label="left", closed="left").sum().reindex(d.index).fillna(0.0) if "v" in df else 1.0
-    d.attrs.update(symbol=name, tf=tf)
-    start = d.index.to_series()
-    gap = start.shift(-1) - (start + pd.Timedelta(minutes=tfm))
-    sess = np.asarray((gap > pd.Timedelta(hours=2)).to_numpy(), dtype=bool)
-    ex, ne = CAL.masks(d, name, tfm, cal.restricted, cal.holidays)
-    sess = sess | np.asarray(ex, bool)
-    fn = CAL.blocked(R.STRATEGIES[sc["sid"]][1], np.asarray(ne, bool))
-    px = float(d["c"].median())
-    sp = spread5(name, px, sc)
-    spec = U.spec(name)
-    if spec["commissionType"] == "flat_USD":
-        comm = px * float(spec["commission"]) / (float(spec["contractSize"]) * U.BASE_USD.get(spec["code"].split("/")[0], 1.0))
-    else:
-        comm = px * 2 * float(spec["commission"]) / 100.0
-    t = R.run(d, fn, 0.0, breakeven=(0.6, (sp + comm) / px), session_exit=sess)
-    if t.empty:
-        return []
-    ev = pd.DatetimeIndex(sorted({ts for ts, ins in cal.restricted if CAL.restricted_affects(name, ins)}))
-    if len(ev):
-        t = RR.news_minute(t, d, mb=x1, ev=ev)
-    t = RR.drop_hole_trades(t, d, name, tf)
-    if t.empty:
-        return []
-    t = C.apply(t, name, pd.Series([sp], index=d.index[:1]))
-    t = scout5_filter(t, x1, sc.get("filter"), sc.get("filter_from"))
-    if t.empty:
-        return []
-    since = pd.Timestamp(sc["since"])
-    since = since.tz_localize("UTC") if since.tzinfo is None else since
-    combo = f"{sc['sid']}|{tf}|{name}"
-    out = []
-    for _, x in t.iterrows():
-        tm = pd.Timestamp(x["time"])
-        if tm < since:
-            continue
-        e0, st0 = float(x["entry_px"]), float(x["stop_px"])
-        risk = abs(e0 - st0)
-        if risk <= 0:
-            continue
-        live_now = x["reason"] == "סוף הנתונים"
-        tg = None if pd.isna(x["target_px"]) else float(x["target_px"])
-        why = "target" if x["reason"] == "יעד" else "breakeven" if "איזון" in str(x["reason"]) else \
-            "stop" if "סטופ" in str(x["reason"]) else "forced"
-        out.append({"symbol": name, "dir": int(x["dir"]), "status": "open" if live_now else "closed", "entry": e0,
-                    "stop": st0, "target": tg, "rr": round(abs(tg - e0) / risk, 2) if tg else None, "cost_r": 0.0,
-                    # a scout trade has no gap and no impulse (user, 17.11.2026: "you claim there was a gap - I see
-                    # none"): no gap / impulse fields, but the strategy's own timeframe, rule and signal candle
-                    "leg": None, "leg_start": None, "leg_top": None, "gap_lo": None, "gap_hi": None, "setup_t": tm, "time": tm,
-                    "sc": {"sid": sc["sid"], "tf": tf, "rule": str(R.STRATEGIES[sc["sid"]][0])[:160],
-                           "sig_t": tm - pd.Timedelta(minutes=tfm)},
-                    "exit_time": None if live_now else pd.Timestamp(x["exit_time"]),
-                    "exit": None if live_now else float(x["exit_px"]), "reason": None if live_now else why,
-                    "r": None if live_now else round(float(x["r"]), 4), "r_now": round(float(x["r"]), 3) if live_now else None,
-                    "why": None, "tal": f"sc:{combo}", "tal_key": f"{sc['sid']}|{tf}|{tm.strftime('%Y%m%d%H%M')}", "geo": None,
-                    # the app (user, 16.11.2026: GBPUSD SC326 at -$217 with its stop at -$176): r_now is AFTER the costs
-                    # (spread + commission - 0.23R on a 3-pip stop), so the "now" price made of it sat beyond the stop and
-                    # the stop's dollars were without them. The real last price and the costs in R, for the display only.
-                    "px_now": float(x["exit_px"]) if live_now else None,
-                    # the stop where the management has it now (breakeven / the no-target lock / a trail - rules_agent
-                    # "stop_last"); "stop" stays the original (user, 17.11.2026: the app showed only the first stop)
-                    "stop_now": float(x["stop_last"]) if live_now and "stop_last" in x and pd.notna(x["stop_last"]) else None,
-                    "cost_live": round(float(x["dir"]) * (float(x["exit_px"]) - e0) / risk - float(x["r"]), 4) if live_now else None})
-    return out
-
-
-def tal6_rule(rec, opn):
-    """Bot 6's gap tracks: the approved rules against concentrated risk (agents/tal_gap.portfolio, chosen on 2024-2025).
-    Returns why the trade is not taken, or None."""
-    ts_ = pd.Timestamp(rec["time"])
-    if TAL6_HOURS_OFF and (ts_.tz_convert("UTC") if ts_.tzinfo else ts_.tz_localize("UTC")).hour in TAL6_HOURS_OFF:
-        return "hours"           # an hour the gap tracks lost in together on 2024-2025
-    tal_ = [o for o in opn if o.get("trk") in FA.TAL_TRACKS]
-    if TAL6_ONE[0] and any(o["trk"] != rec["trk"] and o["symbol"] == rec["symbol"] and o["dir"] == rec["dir"] for o in tal_):
-        return "side"            # another gap track already holds this index and direction
-    if TAL6_MAXDIR[0] > 0 and sum(1 for o in tal_ if o["dir"] == rec["dir"]) >= TAL6_MAXDIR[0]:
-        return "dir"             # K gap trades already open in this direction on the indices together
-    return None
+    for k, t in list(ftrades.items()):        # an open trade the run no longer reports: followed to its exit here
+        if t["symbol"] == name and t["status"] == "open" and k not in fseen:
+            fseen.add(k)
+            fut_rec(dict(t, **follow(t, df, f_stop)), t, fa, ftrades)
 
 
 def fut_rec(rec, old, fa, ftrades):
@@ -1142,9 +331,7 @@ def fut_rec(rec, old, fa, ftrades):
             rec["skipped"] = "before"
         else:
             opn = [t for t in ftrades.values() if t["status"] == "open" and t.get("n") and t["id"] != k]
-            why = tal6_rule(rec, opn) if rec["trk"] in FA.TAL_TRACKS else None
-            rk_ = f"scout:{rec.get('combo')}" if rec["trk"] == "scout" and f"scout:{rec.get('combo')}" in FA.RISK else rec["trk"]
-            n, why = (0, why) if why else fa.size(name, rk_, rec["entry"], rec["stop"], rec["time"], opn)
+            n, why = fa.size(name, rec["trk"], rec["entry"], rec["stop"], rec["time"], opn)
             if n:
                 rec["n"], rec["risk_usd"] = n, round(n * FA.per_contract(name, rec["entry"], rec["stop"]), 2)
             else:
@@ -1152,8 +339,7 @@ def fut_rec(rec, old, fa, ftrades):
     if rec.get("n"):
         # notifications (user, 10.11.2026): only bot 6 trades that open and close - each one once, nothing else
         side = "קנייה" if rec["dir"] > 0 else "מכירה"
-        tf = {"v5": "15 דק'", "v1m": "דקה"}.get(rec["trk"]) or (rec.get("combo") if rec["trk"] == "scout" else
-                                                              f"שיטת הגאפ, {FA.TAL_NAME.get(rec['trk'], rec['trk'])}")
+        tf = "15 דק'" if rec["trk"] == "v5" else "דקה"
         lots = f"{rec['n']} {contract}"
         if not rec.get("sent_open"):
             rec["sent_open"] = True
@@ -1185,7 +371,6 @@ def fut_state(fa, ftrades, fseen, src):
     cancelled = sorted([t for t in ftrades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]
     ftrades.clear()
     ftrades.update({t["id"]: t for t in closed + live_ + cancelled})
-    excursions(closed + live_, src)
     now = pd.Timestamp.now(tz="UTC")
     st = fa.status(now)
     bal = st["balance"]
@@ -1196,49 +381,40 @@ def fut_state(fa, ftrades, fseen, src):
         ec.append([now_iso, round(bal, 2), round(eq, 2)])
         del ec[:-4000]
     counted = [t for t in closed if t.get("n") and t.get("pnl") is not None]
-    combo = lambda t: (t["combo"] if t.get("trk") == "scout" and t.get("combo") else  # noqa: E731
-                       f"{FA.TAL_COMBO[t['trk']]}|{t['symbol']}" if t.get("trk") in FA.TAL_COMBO
-                       else f"FUT|{'1Min' if t.get('trk') == 'v1m' else '15Min'}|{t['symbol']}")
+    combo = lambda t: f"FUT|{'1Min' if t.get('trk') == 'v1m' else '15Min'}|{t['symbol']}"  # noqa: E731
     lots = lambda t: f"{t['n']} {t['contract']}"  # noqa: E731
-    ent6 = lambda t: (FA.TAL_TRACKS[t["trk"]][0][1] if t.get("trk") in FA.TAL_TRACKS else None)  # noqa: E731 - the entry chart
     rs5 = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "v5"]
     rs1 = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "v1m"]
-    rst = [t["r"] for t in closed if t.get("r") is not None and t["trk"] in FA.TAL_COMBO]
-    rules = (f"בוט 6 · חוזים עתידיים מיקרו (MNQ, MES, MYM) · שיטת הגאפ של טל (מ־12.11.2026): דחף בגרף הגבוה, הגאפ בין נר 1 לנר 3 "
-             f"שנשאר פתוח, כניסה באמצע הגאפ, סטופ 2 טיקים מעבר לסווינג השני, יעד בסווינג השני בצד השני, בלי ניהול · "
-             f"שני מסלולים: שעה / 5 דק' (תוקף 120 שעות) ו־4 שעות / שעה (תוקף 48 שעות) · "
+    rules = (f"בוט 6 · חוזים עתידיים מיקרו (MNQ, MES, MYM) · אותן שיטות של בוט הסקלפינג: פערים v5 ב־15 דקות ומסלול הדקה · "
              f"חוקי FTMO Futures, {FA.PLAN}: הפסד מקסימלי נגרר ${FA.MAX_LOSS:,.0f} לפי סוף יום, מגבלה יומית ${FA.DAILY_LOSS:,.0f}, "
              f"יעד ${FA.TARGET:,.0f}, היום הטוב ביותר עד {FA.CONSISTENCY:.0%} מהרווח, עד {FA.MAX_MICROS} חוזי מיקרו · "
              f"אין כניסה אחרי 15:45 שעון ניו יורק, הכול נסגר ב־16:05, לא מחזיקים בסוף שבוע · "
-             f"סיכון {FA.RISK_TAL * 100:g}% לעסקה, מעוגל לחוזים שלמים · "
+             f"סיכון {FA.RISK_V5 * 100:g}% לעסקת 15 דקות ו־{FA.RISK_V1M * 100:g}% לעסקת דקה, מעוגל לחוזים שלמים · "
              f"עמלה ${FA.COMM:g} לחוזה הלוך־חזור + טיק החלקה · המחירים מה־CFD של FTMO, לא מהחוזה עצמו")
     return {"bot": FUT_NAME, "label": "בוט 6 · חוזים עתידיים (וירטואלי)", "watch_only": True, "rules": rules,
             "account": f"וירטואלי · חוזים עתידיים · FTMO {FA.PLAN}", "server": "צפייה בלבד · בלי כסף",
-            "initial": fa.a["initial"], "risk": FA.RISK_TAL, "balance": round(bal, 2), "equity": round(eq, 2),
+            "initial": fa.a["initial"], "risk": FA.RISK_V5, "balance": round(bal, 2), "equity": round(eq, 2),
             "day_start": st["day_start"], "halted_until": None, "started": fa.a["started"], "withdrawals": [],
-            "combos": [f"{c}|{n}" for n in FA.SPEC for c in FA.TAL_COMBO.values()] + sorted(SCOUT6), "equity_curve": ec, "lows": {},
+            "combos": [f"FUT|{tf}|{n}" for n in FA.SPEC for tf in ("15Min", "1Min")], "equity_curve": ec, "lows": {},
             "updated_utc": now_iso, "futures": st,
             "summary": {"v5": {"closed": len(rs5), "sum_r": round(float(np.sum(rs5)), 2) if rs5 else 0.0},
                         "v1m": {"closed": len(rs1), "sum_r": round(float(np.sum(rs1)), 2) if rs1 else 0.0},
-                        "tal": {"closed": len(rst), "sum_r": round(float(np.sum(rst)), 2) if rst else 0.0},
                         "skipped": sum(1 for t in closed if t.get("skipped") and t["skipped"] != "before")},
             "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
-                           "combo": combo(t), "entry_tf": ent6(t), "symbol": t["symbol"], "lots": lots(t), "open": t["entry"],
+                           "combo": combo(t), "symbol": t["symbol"], "lots": lots(t), "open": t["entry"],
                            "now": t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
                            "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
                            "sl_usd": -(t.get("risk_usd") or 0), "tp_usd": (t.get("risk_usd") or 0) * (t.get("rr") or 0),
-                           "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": 1.0, "free": False, "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way")}
+                           "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": 1.0, "free": False, "mae": None, "mfe": None}
                           for t in live_ if t["status"] == "open" and t.get("n")],
             "trades": [{"time": t["exit_time"], "combo": combo(t), "symbol": t["symbol"], "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                         "lots": lots(t), "price": t["exit"], "pnl": t["pnl"], "why": t.get("reason")} for t in counted],
-            "closed": [{"id": t["id"], "combo": combo(t), "entry_tf": ent6(t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
+            "closed": [{"id": t["id"], "combo": combo(t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
                         "lots": lots(t), "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
-                        "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way"),
+                        "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": None, "mfe": None,
                         "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
                         "reason": FUT_WORD.get(t.get("reason"), ""), "pip": 1.0} for t in counted],
-            # the charts only on the newest 60 trades (the state stays small for the app)
-            "watch": [t if i < 60 else {k_: v_ for k_, v_ in t.items() if k_ not in ("m15", "m1")} for i, t in
-                      enumerate(sorted(ftrades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True))],
+            "watch": sorted(ftrades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
             "vacct": fa.a}
 
 
@@ -1256,70 +432,28 @@ def main():
     except Exception:  # noqa: BLE001
         state = {}
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
-                  "rules": "מ־12.11.2026 החשבון הווירטואלי סופר רק את שיטת הגאפ של טל: דחף בגרף הגבוה, הגאפ בין נר 1 לנר 3 שנשאר פתוח, "
-                           "כניסה באמצע הגאפ, סטופ 2 נקודות מעבר לסווינג השני, יעד בסווינג השני בצד השני · 5 צמדים: 15 דק'/דקה (עם הגנה מזעזועים), "
-                           "שעה/15 דק', 4 שעות/שעה, 4 שעות/15 דק' (סטופ לנקודת הכניסה כשעברו 70% מהדרך ליעד, בלי כניסה ±15 דק' מפרסום חשוב), 15 דק'/5 דק' · סיכון 0.28% לעסקה (⭐ אולי מזל: x0.7) · מוצגים ולא נספרים: המסלול המקורי (דחף ב־15 דקות), פערים בדקה, ואיסוף נתונים על נפט, כסף, USDCAD, EURGBP ועוד"})
+                  "rules": "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
+                           "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים בדקה: אותם כללים בגרף הדקה, המתנה של 96 דקות לנגיעה · מסלול פערים (v5): כל פער של נר חזק במדדים (גם JP225), כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך, 30% יוצאים ב־90% מהדרך והשאר לברייק · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
+                           "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
-    # bot 5 split (user, 17.11.2026): bot 5 = only his gap method (account reset); the scout strategies trade in their
-    # own virtual account "בוט 5ב" (live/watch_scout_state.json), exactly as they passed the tests, no review questions
-    try:
-        sstate = json.loads(SCOUT_F.read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001
-        sstate = {}
-    for t in (sstate.get("watch") or []):
-        trades.setdefault(t["id"], t)
-    sacc = sstate.get("vacct") or {}
-    if sacc.get("v") != SACCT_V:
-        sacc = {"v": SACCT_V, "initial": INITIAL, "ledger": [], "breached": None,
-                "started": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
-        for t in trades.values():
-            if scout5_combo(t.get("tal")):
-                for f in ("risk_usd", "skipped", "pnl", "pnl_now"):
-                    t.pop(f, None)
     acc = state.get("vacct") or {}
     trades = gap_id_fix(trades, acc)
-    for n_, s_ in (state.get("spreads5") or {}).items():
-        SPREAD5[n_] = [float(v) for v in (s_ or [])][-2000:]
     if acc.get("v") != ACCT_V:
         # a new account: nothing that happened before counts
         acc = {"v": ACCT_V, "initial": INITIAL, "risk_pct": round(RISK_V5 * 100, 3), "risk_v1m_pct": round(RISK_V1M * 100, 4),
                "ledger": [], "breached": None, "started": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
         for t in trades.values():
-            if not scout5_combo(t.get("tal")):
-                for f in ("risk_usd", "skipped", "pnl", "pnl_now"):
-                    t.pop(f, None)
-    cur = [acc]               # the account the trade in hand belongs to: bot 5 (gap method) or 5ב (scout)
+            for f in ("risk_usd", "skipped", "pnl", "pnl_now"):
+                t.pop(f, None)
 
     def balance():
-        a_ = cur[0]
-        return a_["initial"] + sum(x["pnl"] for x in a_["ledger"])
+        return acc["initial"] + sum(x["pnl"] for x in acc["ledger"])
 
     def prague_day(ts):
         return pd.Timestamp(ts).tz_convert("Europe/Prague").strftime("%Y-%m-%d")
 
     def day_pnl(day):
-        return sum(x["pnl"] for x in cur[0]["ledger"] if prague_day(x["exit_time"]) == day)
-
-    def book(k_, exit_time, pnl, risk_usd=0.0):
-        """The ledger follows the trade as it is computed now (bot 5's smart agent, 16.11.2026 - task b6to5news1611):
-        a close booked by a bookkeeping fault (the data hole of 9.11, the FOMC mask of 18.11) used to stay in the
-        ledger for good, even when the next refresh showed the trade still open or closed elsewhere. Returns True
-        when the ledger changed."""
-        for x in cur[0]["ledger"]:
-            if x["id"] == k_:
-                # the same exit with a slightly different cost estimate stays as first booked (a closed trade is closed)
-                if x["exit_time"] == exit_time and abs(float(x["pnl"]) - float(pnl)) <= max(0.005, 0.1 * float(risk_usd or 0)):
-                    return False
-                x["exit_time"], x["pnl"], x["fixed"] = exit_time, pnl, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
-                return True
-        cur[0]["ledger"].append({"id": k_, "exit_time": exit_time, "pnl": pnl})
-        return True
-
-    def unbook(k_):
-        """A trade the ledger holds as closed that is computed again as open / not taken - the close was not real."""
-        n_ = len(cur[0]["ledger"])
-        cur[0]["ledger"][:] = [x for x in cur[0]["ledger"] if x["id"] != k_]
-        return len(cur[0]["ledger"]) != n_
+        return sum(x["pnl"] for x in acc["ledger"] if prague_day(x["exit_time"]) == day)
     try:
         fstate = json.loads(FUT_F.read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
@@ -1328,13 +462,9 @@ def main():
     ftrades = {t["id"]: t for t in (fstate.get("watch") or [])} if (fstate.get("vacct") or {}).get("v") == FA.VERSION else {}
     REP.remember_alerts(LIVE / f"{NAME}_alerts.json")
     last_push = last_fpush = 0
-    last_spush = [0]
     while True:
         t_cycle = time.time()
-        load_settings()
         cal.refresh()
-        if SCOUT5:
-            src.spreads(sorted({v["sym"] for v in SCOUT5.values()}))
         seen_now, errors, fseen = set(), [], set()
         for name in SYMBOLS:
             try:
@@ -1343,54 +473,46 @@ def main():
                     continue
                 stop_at, noent = cal.masks(df, name)
                 cst = cost_of(name, df)
-                # the old tracks taken off (user, 17.11.2026 evening): the wide track, v5, v4; data collection (EXTRA) stays.
-                # Kept: the original 15-minute track and "gaps on 1 minute" (v1m) - shown, not counted.
-                res = [] if (name in EXTRA and "extra" in OLD_OFF) else CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
+                res = CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
                 strict = {tid(x) for x in res}
-                wide = []
                 keep_bx = CORE.BODY_X
                 try:
                     CORE.BODY_X = WIDE_BODY_X
-                    if "wide" not in OLD_OFF:
-                        wide = CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
+                    wide = CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
                 finally:
                     CORE.BODY_X = keep_bx
                 for x in wide:
                     if tid(x) not in strict:              # a setup both tracks find is the original one
                         x["wide"] = True
                         res.append(x)
-                if name in V5_15_SYMBOLS and "v5" not in OLD_OFF:
-                    keep5 = _set_og("v5")    # live/bots/bot5.json (from 10.11.2026: 30% out at 90% of the way, rest to BE)
+                if name in V5_15_SYMBOLS:
+                    keep5 = (OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY)
                     try:
+                        # + 30% out at 90% of the way, the rest to break-even (user approved, 10.11.2026)
+                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY = "gap", False, 0.10, 0.3, 0.9
                         for x in OG.run_gaps(name, df, cst, stop_at, noent, live=True, variant="v5"):
                             if x.get("status") == "pending" and pd.Timestamp(x["setup_t"]) < df.index[-1] - pd.Timedelta(hours=OG.EXPIRY):
                                 continue
                             x["v5"] = True
                             res.append(x)
                     finally:
-                        for k_, v_ in keep5.items():
-                            setattr(OG, k_, v_)
+                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY = keep5
                 if name in V5_SYMBOLS:
                     # v5 on 1-minute candles (user, 10.11.2026: "if it is profitable, why not add it"): the same rules,
                     # gaps found on the 1-minute chart, waiting 96 minutes for the touch
-                    keep1 = _set_og("v1m")
+                    keep1 = (OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM)
                     try:
+                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM = "gap", False, 0.10, 0.3, 0.9, 1
                         for x in OG.run_gaps(name, df, cst, stop_at, noent, live=True, variant="v1m"):
                             if x.get("status") == "pending" and pd.Timestamp(x["setup_t"]) < df.index[-1] - pd.Timedelta(minutes=96):
                                 continue
                             x["v1m"] = True
                             res.append(x)
                     finally:
-                        for k_, v_ in keep1.items():
-                            setattr(OG, k_, v_)
+                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM = keep1
                 if name in FA.SPEC:
-                    try:
-                        calm = cal.cal_masks(df, name)
-                    except Exception as e:  # noqa: BLE001
-                        calm = {}
-                        log(f"bot 6 calendar masks failed for {name}: {e}")
-                    fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen, calm=calm)
-                if name in V4_SYMBOLS and "v4" not in OLD_OFF:
+                    fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen)
+                if name in V4_SYMBOLS:
                     keep4 = {k_: getattr(CORE, k_) for k_ in V4}
                     try:
                         for k_, v_ in V4.items():
@@ -1401,130 +523,23 @@ def main():
                     finally:
                         for k_, v_ in keep4.items():
                             setattr(CORE, k_, v_)
-                if name in TAL5_SYMBOLS or any(name in v_ for v_ in TAL5_SYMS.values()):
-                    D5 = TG.Data(name, df[["o", "h", "l", "c"]], np.asarray(cst, float), np.asarray(stop_at, bool),
-                                 np.asarray(noent, bool), TG.stop_buffer(name), cal.cal_masks(df, name))
-                    for trk, (pair, cfg) in TAL5.items():
-                        if name not in (TAL5_SYMS.get(trk) or TAL5_SYMBOLS):
-                            continue                      # an instrument's own track / the indices' tracks
-                        for x in TG.live_trades(D5, pair, TG.ftmo_cfg(cfg)):   # FTMO: closed / cancelled before a 2h+ break
-                            k_ = f"{name}|{x['id_key']}|{trk}"
-                            mk_ = (trades.get(k_) or {}).get("mark") or {}
-                            if x["status"] == "pending":
-                                try:
-                                    pr_ = TG.propose(D5, pair, TG.ftmo_cfg(cfg), x["dir"], x["entry"])
-                                except Exception:  # noqa: BLE001
-                                    pr_ = None
-                                if pr_:
-                                    x["prop"] = [round(pr_[0], 6), round(pr_[1], 6) if pr_[1] is not None else None]
-                                    # the alternative stop beyond the impulse's start (user, 17.11.2026 16:44-16:50, task
-                                    # b5stopimp1711: "if we enter at this gap, the stop must be at the start of the
-                                    # impulse") - shown in the review as a choice; the trade keeps the rules' stop
-                                    try:
-                                        o_ = float(x["geo"]["imp0"][1]) - x["dir"] * TG.stop_buffer(name)
-                                        if x["dir"] * (float(x["entry"]) - o_) > 0:
-                                            x["prop_imp0"] = round(o_, 6)
-                                    except Exception:  # noqa: BLE001
-                                        pass
-                                    if x.get("geo"):
-                                        x["geo"] = dict(x["geo"], sw_stop=[pd.Timestamp(int(pr_[2]), tz="UTC").isoformat(), pr_[0]] if pr_[2] else None,
-                                                        sw_tgt=[pd.Timestamp(int(pr_[3]), tz="UTC").isoformat(), pr_[1]] if pr_[3] else None)
-                            if mk_.get("take") == "yes" and any(mk_.get(f_) is not None for f_ in ("entry", "stop", "target")):
-                                e_ = float(mk_.get("entry") or x["entry"])
-                                s_ = mk_.get("stop") if mk_.get("stop") is not None else (x.get("stop") or (x.get("prop") or [None, None])[0])
-                                # no target in the question (user, 17.11.2026): his own, else set at the fill by the rules
-                                t_ = mk_.get("target")
-                                if s_ is not None:
-                                    cx_ = TG.custom_trade(D5, TG.ftmo_cfg(cfg), x["dir"], e_, float(s_), float(t_) if t_ is not None else None,
-                                                          pd.Timestamp(x["setup_t"]).value, pair=pair)
-                                    for f_ in ("time", "exit_time", "exit", "reason", "r", "r_now", "rr"):
-                                        x[f_] = cx_.get(f_)
-                                    x.update(status=cx_["status"], entry=cx_.get("entry", e_), stop=cx_.get("stop", float(s_)),
-                                             target=cx_.get("target", t_), custom=True)
-                            g_ = x.get("gap") or [x["entry"], x["entry"]]
-                            res.append({"symbol": name, "dir": x["dir"], "status": x["status"], "entry": x["entry"],
-                                        "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,
-                                        "leg": None, "leg_start": x["setup_t"], "leg_top": x["setup_t"],
-                                        "gap_lo": min(g_), "gap_hi": max(g_), "setup_t": x["setup_t"], "time": x.get("time"),
-                                        "exit_time": x.get("exit_time"), "exit": x.get("exit"), "reason": x.get("reason"),
-                                        "r": x.get("r"), "r_now": x.get("r_now"),
-                                        "why": x.get("reason") if x["status"] == "cancelled" else None,
-                                        "tal": trk, "tal_key": x["id_key"], "geo": x.get("geo"),
-                                        "prop": x.get("prop"), "prop_imp0": x.get("prop_imp0"), "custom": bool(x.get("custom"))})
-                for combo_, sc_ in list(SCOUT5.items()):
-                    if sc_["sym"] != name:
-                        continue
-                    try:
-                        xs_ = scout5_trades(name, df, sc_, cal)
-                        if sc_["sid"] in REVIEW_SC:
-                            xs_ = [sc_review(x, df, cst, stop_at, sc_, trades, acc) for x in xs_]
-                        res.extend(xs_)
-                    except Exception:  # noqa: BLE001 - one strategy must not stop the instrument's other tracks
-                        errors.append(f"{name} {combo_}: {traceback.format_exc()[-300:]}")
                 cutoff = df.index[-1] - pd.Timedelta(days=2)       # only what happened recently is reported
                 for x in res:
-                    # ... but a trade the state holds as open / waiting is always followed to its exit (14.11.2026: a
-                    # gap trade open for 2+ days - the 4-hour and 1-hour tracks, or any trade over the weekend, whose
-                    # exit at Friday's close is known only on Monday - was skipped here and never booked)
-                    if pd.Timestamp(x.get("time") or x.get("setup_t")) < cutoff \
-                            and (trades.get(tid(x)) or {}).get("status") not in ("open", "pending"):
+                    if pd.Timestamp(x.get("time") or x.get("setup_t")) < cutoff:
                         continue
                     k = tid(x)
                     seen_now.add(k)
                     old = trades.get(k, {})
                     rec = {"id": k, "symbol": name, "broker": src.broker.get(name), "dir": int(x["dir"]), "status": x["status"],
-                           "entry": float(x["entry"]), "stop": float(x["stop"]) if x.get("stop") is not None else None,
-                           "target": float(x["target"]) if x.get("target") else None,
-                           "rr": x.get("rr"), "cost_r": x.get("cost_r"), "leg": x.get("leg"), "tal": x.get("tal"), "trk": x.get("tal"),
-                           "leg_start": iso(x.get("leg_start")), "leg_top": iso(x.get("leg_top")),
-                           "gap_lo": float(x["gap_lo"]) if x.get("gap_lo") is not None else None,
-                           "gap_hi": float(x["gap_hi"]) if x.get("gap_hi") is not None else None,
-                           "sc": ({**x["sc"], "sig_t": iso(x["sc"].get("sig_t"))} if x.get("sc") else None),
+                           "entry": float(x["entry"]), "stop": float(x["stop"]), "target": float(x["target"]) if x.get("target") else None,
+                           "rr": x.get("rr"), "cost_r": x.get("cost_r"), "leg": x.get("leg"),
+                           "leg_start": iso(x["leg_start"]), "leg_top": iso(x["leg_top"]), "gap_lo": float(x["gap_lo"]), "gap_hi": float(x["gap_hi"]),
                            "setup_t": iso(x.get("setup_t")) or old.get("setup_t"), "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
                            "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide")),
                            "why": x.get("why"), "touch_t": iso(x.get("touch_t")),
-                           "px_now": x.get("px_now"), "cost_live": x.get("cost_live"), "stop_now": x.get("stop_now"),
-                           "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m")),
-                           "geo": x.get("geo") or old.get("geo"), "prop": x.get("prop"), "prop_imp0": x.get("prop_imp0"),
-                           "custom": bool(x.get("custom")),
-                           "asked": old.get("asked"), "sleep": old.get("sleep"), "pushed": old.get("pushed")}
-                    # the review (17.11.2026): ask once, when the setup first waits for its entry
-                    rev_ = REVIEW_ON and bool(rec.get("tal")) and (
-                        (not scout5_combo(rec["tal"]) and (rec.get("setup_t") or "") >= acc.setdefault("review_from", pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")))
-                        or (rv_sc(rec["tal"]) and (rec.get("setup_t") or "") >= acc.get("review_sc_from", "9")))
-                    if rev_ and rec["status"] == "pending" and not rec["asked"]:
-                        rec["asked"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
-                        if quiet_at(rec["asked"]):
-                            rec["sleep"] = True              # his quiet hours: no question - the rules decide
-                    if rec["geo"] and rec["status"] in ("open", "closed", "pending"):
-                        # gap-method trades: the two charts of the method (high / low timeframe), user 13.11.2026
-                        if x["status"] != "closed" or old.get("chart_v") != 5 or old.get("status") != "closed":
-                            t_in = pd.Timestamp(x["time"]) if x.get("time") else df.index[-1]
-                            t_out = pd.Timestamp(x["exit_time"]) if x.get("exit_time") else df.index[-1]
-                            rec["m15"], rec["m1"] = tal_chart(df, rec["geo"], t_in, t_out)
-                            rec["chart_v"] = 5
-                            if rev_ and rec["status"] == "pending" and rec["asked"] and not rec["sleep"] and not old.get("asked"):
-                                rec["pushed"] = review_push(rec)   # with the charts ready in the state
-                        else:
-                            rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 5
-                    elif rec.get("sc"):
-                        # a scout trade: the upper chart on the strategy's own timeframe (signal candle and entry), the
-                        # lower one on 1 minute from a little before the entry to after the exit (user, 17.11.2026)
-                        if x["status"] != "closed" or old.get("chart_v") != 6 or old.get("status") != "closed":
-                            tfm_ = SF.TF_MIN.get(rec["sc"]["tf"], 15)
-                            t_in = pd.Timestamp(x["time"]) if x.get("time") is not None else df.index[-1]
-                            t_out = pd.Timestamp(x["exit_time"]) if x.get("exit_time") is not None else df.index[-1]
-                            rule_ = f"{tfm_}min" if tfm_ < 60 else "1h"
-                            rec["m15"] = bars(df, t_in - pd.Timedelta(minutes=150 * tfm_), max(t_in, t_out) + pd.Timedelta(minutes=4 * tfm_), rule_)
-                            m1_end = t_out + pd.Timedelta(minutes=10)
-                            rec["m1"] = bars(df, max(t_in - pd.Timedelta(minutes=max(240, 6 * tfm_)), m1_end - pd.Timedelta(hours=12)), m1_end, "1min")
-                            rec["chart_v"] = 6
-                        else:
-                            rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 6
-                        if rev_ and rec["status"] == "pending" and rec["asked"] and not rec["sleep"] and not old.get("asked"):
-                            rec["pushed"] = review_push(rec)   # a gap scout strategy (REVIEW_SC), with its charts ready
-                    elif x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:
+                           "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m"))}
+                    if x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:
                         rec["chart_v"] = 2
                         ls = pd.Timestamp(x["leg_start"])
                         t_in = pd.Timestamp(x.get("time")) if x.get("time") is not None else df.index[-1]
@@ -1538,106 +553,56 @@ def main():
                     else:
                         rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), old.get("chart_v")
                     prev = old.get("status")
-                    sc_ = bool(scout5_combo(rec.get("tal")))
-                    cur[0] = sacc if sc_ else acc
-                    A_ = cur[0]
-                    P5 = "בוט 5ב - סייר" if sc_ else "בוט 5 - סקאלפינג"
                     # the virtual account: the risk is fixed when the trade opens, from the balance at that moment
                     for f in ("risk_usd", "skipped"):
                         if f in old:
                             rec[f] = old[f]
                     if "risk_usd" not in rec and "skipped" not in rec:
-                        if not rec.get("tal"):
-                            # only the user's gap method counts since 12.11.2026 (the old tracks are shown, not counted)
-                            rec["skipped"] = "v4" if rec["v4"] else "extra" if rec["extra"] else "old"
-                        elif rec["status"] in ("open", "closed") and rec["time"] and rec["time"] < A_["started"]:
+                        if not (rec["v5"] or rec["v1m"]):
+                            rec["skipped"] = "v4" if rec["v4"] else "extra" if rec["extra"] else "old"   # only the gap tracks count
+                        elif rec["status"] in ("open", "closed") and rec["time"] and rec["time"] < acc["started"]:
                             rec["skipped"] = "before"                                       # before the account opened
                     if rec["status"] in ("open", "closed") and "risk_usd" not in rec and "skipped" not in rec:
                         bal, day = balance(), prague_day(rec["time"])
                         start = bal - day_pnl(day)
-                        # the gap tracks' own rules (chosen on the gap tracks together) - not on a scout strategy
-                        gap_ = not scout5_combo(rec["tal"])
-                        side_ = gap_ and TAL5_ONE[0] and any(o.get("tal") and not scout5_combo(o.get("tal")) and o.get("tal") != rec["tal"]
-                                                             and o.get("risk_usd") and o.get("status") == "open"
-                                                             and o.get("symbol") == rec["symbol"] and o.get("dir") == rec["dir"]
-                                                             for o in trades.values())
-                        dir_ = gap_ and TAL5_MAXDIR[0] > 0 and sum(1 for o in trades.values() if o.get("tal") and not scout5_combo(o.get("tal"))
-                                                                   and o.get("risk_usd") and o.get("status") == "open"
-                                                                   and o.get("dir") == rec["dir"] and o.get("id", o) != rec.get("id")) >= TAL5_MAXDIR[0]
-                        ts_ = pd.Timestamp(rec["time"])
-                        hour_ = gap_ and bool(TAL5_HOURS_OFF) and (ts_.tz_convert("UTC") if ts_.tzinfo else ts_).hour in TAL5_HOURS_OFF
-                        mk_ = rec.get("mark") or {}
-                        if rev_ and mk_.get("take") == "yes":
-                            hour_ = side_ = dir_ = False     # his yes decides; only the risk limits below still hold
-                        if rev_ and mk_.get("take") == "no":
-                            rec["skipped"] = "tal_no"        # Tal: would not enter
-                        elif rev_ and mk_.get("take") != "yes" and not rec.get("sleep") and rec.get("asked"):
-                            rec["skipped"] = "tal_none"      # asked, no answer before the entry
-                        elif A_.get("breached"):
+                        if acc.get("breached"):
                             rec["skipped"] = "breach"
-                        elif hour_:
-                            rec["skipped"] = "hours"         # an hour the tracks lost in together on 2024-2025
-                        elif side_:
-                            rec["skipped"] = "side"          # another track already holds this symbol and direction
-                        elif dir_:
-                            rec["skipped"] = "dir"           # K trades already open in this direction on the indices
                         elif day_pnl(day) <= -DAILY_STOP * start:
                             rec["skipped"] = "daily"
                         else:
-                            # the red lines hold for the open trades too (bot 5's smart agent, 13.11.2026 evening; the
-                            # manager's task f8643b16aa57: 23 gap tracks x 0.2-0.28% = 5.4% that can be open at once,
-                            # more than the 5% daily line): a new trade risks at most the room left - the day's loss so
-                            # far plus every open trade's full risk stays within the bot's 4.5% a day and 9% in total.
-                            # Near a limit the risk shrinks (Tal: lower gradually, not block); under a quarter of the
-                            # trade's risk left -> not taken.
-                            # tal_risk_scale is the gap tracks' factor; a scout strategy has its own risk
-                            want_ = bal * TAL5_RISK.get(rec["tal"], RISK_TAL5) * (TAL5_SCALE[0] if gap_ else 1.0)
-                            open_ = sum(float(o.get("risk_usd") or 0) for kk_, o in trades.items()
-                                        if kk_ != k and o.get("status") == "open" and o.get("risk_usd")
-                                        and bool(scout5_combo(o.get("tal"))) == sc_)          # the same account's
-                            room_ = min(DAILY_STOP * start + day_pnl(day) - open_,
-                                        bal - open_ - A_["initial"] * (1 - BOT_MAX_LOSS))
-                            if room_ < 0.25 * want_:
-                                rec["skipped"] = "room"
-                            else:
-                                rec["risk_usd"] = round(min(want_, room_), 2)
+                            rec["risk_usd"] = round(bal * (RISK_V5 if rec["v5"] else RISK_V1M), 2)
                     if rec.get("risk_usd"):
                         if rec["status"] == "closed" and rec.get("r") is not None:
                             rec["pnl"] = round(rec["r"] * rec["risk_usd"], 2)
-                            if book(k, rec["exit_time"], rec["pnl"], rec["risk_usd"]):
-                                if balance() <= A_["initial"] * (1 - MAX_LOSS) and not A_.get("breached"):
-                                    A_["breached"] = rec["exit_time"]
-                                    REP.notify(f"{P5}: החשבון הווירטואלי נשרף", f"היתרה ירדה ל־${balance():,.0f} (10% הפסד). לא נפתחות עוד עסקאות וירטואליות.",
+                            if not any(x["id"] == k for x in acc["ledger"]):
+                                acc["ledger"].append({"id": k, "exit_time": rec["exit_time"], "pnl": rec["pnl"]})
+                                if balance() <= acc["initial"] * (1 - MAX_LOSS) and not acc.get("breached"):
+                                    acc["breached"] = rec["exit_time"]
+                                    REP.notify("סקלפינג (צפייה): החשבון הווירטואלי נשרף", f"היתרה ירדה ל־${balance():,.0f} (10% הפסד). לא נפתחות עוד עסקאות וירטואליות.",
                                                tags=["eyes"], key="wbreach", every=86400 * 30)
-                        elif rec["status"] in ("open", "pending", "cancelled"):
-                            if unbook(k):
-                                rec.pop("pnl", None)
-                                log(f"bot 5 ledger: {k} is {rec['status']} again - its earlier close was removed")
-                            if rec["status"] == "open" and rec.get("r_now") is not None:
-                                rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
+                        elif rec["status"] == "open" and rec.get("r_now") is not None:
+                            rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
-                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (f" · אסטרטגיה {tal5_name(rec['tal'])}" if scout5_combo(rec.get("tal")) else
-                                                                      f" · שיטת הגאפ {tal5_name(rec['tal'])}" if rec.get("tal") else " · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
+                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
                     # notifications (user, 10.11.2026: "I'm bombarded"): only trades of the virtual account - opened and closed.
                     # Waiting setups and touched-but-skipped ones stay in the app, without a push.
                     quiet = not rec.get("risk_usd")
                     if False and rec["status"] == "cancelled" and rec.get("why") and prev != "cancelled":
                         why = {"rr": f"היעד קרוב מדי (יחס 1:{rec.get('rr')})", "cost": f"העלות {round(100 * (rec.get('cost_r') or 0))}% מהסיכון"}.get(rec["why"], rec["why"])
-                        REP.notify(f"בוט 5 - סקאלפינג: {name} נגע ולא נכנס", f"{side} · נגיעה ב־{fmt(name, rec['entry'])} · לא נכנס: {why}",
+                        REP.notify(f"סקלפינג (צפייה): {name} נגע ולא נכנס", f"{side} · נגיעה ב־{fmt(name, rec['entry'])} · לא נכנס: {why}",
                                    tags=["eyes"], key=f"wx:{k}", every=86400)
                     if False and prev is None and rec["status"] == "pending":
-                        REP.notify(f"בוט 5 - סקאלפינג: {name} מחכה לכניסה", f"{side} · דחף של {rec['leg']} נרות · כניסה בנגיעה ב־{fmt(name, rec['entry'])}\n"
+                        REP.notify(f"סקלפינג (צפייה): {name} מחכה לכניסה", f"{side} · דחף של {rec['leg']} נרות · כניסה בנגיעה ב־{fmt(name, rec['entry'])}\n"
                                    f"סטופ {fmt(name, rec['stop'])} · לא נשלחת פקודה", tags=["eyes"], key=f"wp:{k}", every=86400)
                     if not quiet and prev in (None, "pending") and rec["status"] in ("open", "closed"):
-                        REP.notify(f"{P5}: {name} עסקה וירטואלית נפתחה", f"{side} @ {fmt(name, rec['entry'])} · סטופ {fmt(name, rec['stop'])} · "
-                                   f"יעד {fmt(name, rec['target'])}" + (f" · יחס 1:{rec['rr']}" if rec.get('rr') else "") + ("" if sc_ else "\nפתח את האפליקציה וסמן אם היית לוקח אותה"),
+                        REP.notify(f"סקלפינג (צפייה): {name} עסקה וירטואלית נפתחה", f"{side} @ {fmt(name, rec['entry'])} · סטופ {fmt(name, rec['stop'])} · "
+                                   f"יעד {fmt(name, rec['target'])} · יחס 1:{rec['rr']}\nפתח את האפליקציה וסמן אם היית לוקח אותה",
                                    tags=["eyes"], key=f"wo:{k}", every=86400)
                     if not quiet and prev != "closed" and rec["status"] == "closed":
                         word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה", "breakeven": "בברייק אחרי יציאה חלקית"}.get(rec["reason"], "")
                         usd = f" · {'+' if rec.get('pnl', 0) >= 0 else '−'}${abs(rec.get('pnl', 0)):,.0f} · יתרה ${balance():,.0f}" if rec.get("pnl") is not None else ""
-                        REP.notify(f"{P5}: {name} נסגרה {word}", f"{side} · {'+' if (rec['r'] or 0) >= 0 else ''}{rec['r']:.2f} סיכון{usd} (וירטואלי)",
+                        REP.notify(f"סקלפינג (צפייה): {name} נסגרה {word}", f"{side} · {'+' if (rec['r'] or 0) >= 0 else ''}{rec['r']:.2f} סיכון{usd} (וירטואלי)",
                                    tags=["eyes"], key=f"wc:{k}", every=86400)
-                cur[0] = acc
                 for k, t in list(trades.items()):
                     if t["symbol"] == name and t["status"] == "open" and k not in seen_now and (t.get("v5") or t.get("v1m")):
                         seen_now.add(k)
@@ -1645,9 +610,10 @@ def main():
                         if t.get("risk_usd"):
                             if t["status"] == "closed":
                                 t["pnl"] = round(t["r"] * t["risk_usd"], 2)
-                                book(k, t["exit_time"], t["pnl"], t["risk_usd"])
+                                if not any(x["id"] == k for x in acc["ledger"]):
+                                    acc["ledger"].append({"id": k, "exit_time": t["exit_time"], "pnl": t["pnl"]})
                                 word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה", "breakeven": "בברייק אחרי יציאה חלקית"}.get(t["reason"], "")
-                                REP.notify(f"בוט 5 - סקאלפינג: {name} נסגרה {word}", f"{'+' if t['r'] >= 0 else ''}{t['r']:.2f} סיכון · "
+                                REP.notify(f"סקלפינג (צפייה): {name} נסגרה {word}", f"{'+' if t['r'] >= 0 else ''}{t['r']:.2f} סיכון · "
                                            f"{'+' if t['pnl'] >= 0 else '−'}${abs(t['pnl']):,.0f} · יתרה ${balance():,.0f} (וירטואלי)",
                                            tags=["eyes"], key=f"wc:{k}", every=86400)
                             elif t.get("r_now") is not None:
@@ -1658,7 +624,6 @@ def main():
         for k, t in list(trades.items()):
             if t["status"] == "pending" and k not in seen_now and t["symbol"] in src.df:
                 t["status"] = "cancelled"
-        marks = {}
         try:
             marks = json.loads(MARKS_F.read_text(encoding="utf-8"))
             olds = {t["old_id"]: k for k, t in trades.items() if t.get("old_id")}
@@ -1668,17 +633,11 @@ def main():
                     trades[k]["mark"] = m
         except Exception:  # noqa: BLE001
             pass
-        try:
-            state["learning"] = learning5(marks)
-        except Exception:  # noqa: BLE001
-            errors.append(f"learning: {traceback.format_exc()[-200:]}")
         closed = sorted([t for t in trades.values() if t["status"] == "closed"], key=lambda t: t["time"] or "")[-KEEP:]
         live_ = [t for t in trades.values() if t["status"] in ("pending", "open")]
         cancelled = sorted([t for t in trades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]
         trades = {t["id"]: t for t in closed + live_ + cancelled}
-        excursions(closed + live_, src)
-        core_closed = [t for t in closed if not t.get("extra") and not t.get("v4") and not t.get("v5") and not t.get("v1m")
-                       and not scout5_combo(t.get("tal"))]
+        core_closed = [t for t in closed if not t.get("extra") and not t.get("v4") and not t.get("v5") and not t.get("v1m")]
         rs_v1m = [t["r"] for t in closed if t.get("r") is not None and t.get("v1m")]
         rs_v5 = [t["r"] for t in closed if t.get("r") is not None and t.get("v5")]
         rs_v4 = [t["r"] for t in closed if t.get("r") is not None and t.get("v4")]
@@ -1687,12 +646,11 @@ def main():
         rs_wide = [t["r"] for t in core_closed if t.get("r") is not None and t.get("wide")]
         rs_extra = [t["r"] for t in closed if t.get("r") is not None and t.get("extra")]
         state.update({"updated_utc": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
-                      "watch": sorted([t for t in trades.values() if not scout5_combo(t.get("tal"))],
-                                      key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
+                      "watch": sorted(trades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
                       "summary": {"closed": len(rs), "sum_r": round(float(np.sum(rs)), 2) if rs else 0.0,
                                   "avg_r": round(float(np.mean(rs)), 3) if rs else None, "win_pct": round(100 * float(np.mean(np.array(rs) > 0)), 1) if rs else None,
-                                  "open": sum(t["status"] == "open" and not any(t.get(k_) for k_ in ("extra", "v4", "v5", "v1m")) and not scout5_combo(t.get("tal")) for t in live_),
-                                  "pending": sum(t["status"] == "pending" and not any(t.get(k_) for k_ in ("extra", "v4", "v5", "v1m")) and not scout5_combo(t.get("tal")) for t in live_),
+                                  "open": sum(t["status"] == "open" and not any(t.get(k_) for k_ in ("extra", "v4", "v5", "v1m")) for t in live_),
+                                  "pending": sum(t["status"] == "pending" and not any(t.get(k_) for k_ in ("extra", "v4", "v5", "v1m")) for t in live_),
                                   "strict": {"closed": len(rs_strict), "sum_r": round(float(np.sum(rs_strict)), 2) if rs_strict else 0.0},
                                   "wide": {"closed": len(rs_wide), "sum_r": round(float(np.sum(rs_wide)), 2) if rs_wide else 0.0},
                                   "v1m": {"closed": len(rs_v1m), "sum_r": round(float(np.sum(rs_v1m)), 2) if rs_v1m else 0.0,
@@ -1709,102 +667,46 @@ def main():
                                          "pending": sum(t["status"] == "pending" and t.get("v4") for t in live_)},
                                   "extra": {"closed": len(rs_extra), "sum_r": round(float(np.sum(rs_extra)), 2) if rs_extra else 0.0,
                                             "symbols": list(EXTRA)}},
-                      "instruments": {k: src.broker.get(k) for k in SYMBOLS}, "errors": errors[-5:],
-                      "spreads5": {n_: s_[-500:] for n_, s_ in SPREAD5.items()},
-                      "scout5": {c_: {"spread": round(spread5(v_["sym"], 1.0, v_), 6) if (v_.get("spread") or len(SPREAD5.get(v_["sym"]) or []) >= 20) else None,
-                                      "samples": len(SPREAD5.get(v_["sym"]) or []), "since": v_["since"]} for c_, v_ in SCOUT5.items()}})
+                      "instruments": {k: src.broker.get(k) for k in SYMBOLS}, "errors": errors[-5:]})
+        bal = balance()
+        eq = bal + sum(t.get("pnl_now") or 0 for t in live_ if t["status"] == "open")
+        today = prague_day(pd.Timestamp.now(tz="UTC"))
+        curve, run = [[None, acc["initial"]]], acc["initial"]
+        for x in sorted(acc["ledger"], key=lambda x: x["exit_time"] or ""):
+            run += x["pnl"]
+            curve.append([x["exit_time"], round(run, 2)])
+        acc.update({"balance": round(bal, 2), "equity": round(eq, 2), "profit": round(bal - acc["initial"], 2),
+                    "today": round(day_pnl(today), 2), "curve": curve[-300:]})
+        # the same fields as a real bot's state, so the app shows this account like the demo accounts
+        now_iso = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+        ec = acc.setdefault("eq_curve", [])
+        if not ec or ec[-1][1] != round(bal, 2) or ec[-1][2] != round(eq, 2) or now_iso[:15] != ec[-1][0][:15]:
+            ec.append([now_iso, round(bal, 2), round(eq, 2)])
+            del ec[:-4000]
+        acc.setdefault("started", now_iso)
         pip = lambda n: 0.01 if n.endswith("JPY") else 0.0001 if (len(n) == 6 and n.isalpha()) else 1.0  # noqa: E731
-        combo = lambda n, t=None: (scout5_combo(t["tal"]) if scout5_combo((t or {}).get("tal"))  # noqa: E731
-                                   else f"TAL|{tal5_tf(t['tal'])}|{n}" if (t or {}).get("tal")
-                                   else f"OWN|{'1Min' if (t or {}).get('v1m') else '15Min'}|{n}")
-        # the timeframe the trade ENTERS on (user, 16.11.2026: the app shows each trade's strategy and entry timeframe -
-        # for the gap tracks the entry chart, not the detection chart the combo name carries)
-        ent = lambda t: (TAL5[t["tal"]][0][1] if (t or {}).get("tal") in TAL5 and not scout5_combo(t["tal"]) else None)  # noqa: E731
-        # the review's own statistics (17.11.2026): his answers and what each kind of trade earned
-        rv_ = [t for t in trades.values() if t.get("asked")]
-        def _rs(ts_):
-            r_ = [t["r"] for t in ts_ if t.get("status") == "closed" and t.get("r") is not None]
-            return {"n": len(ts_), "closed": len(r_), "r": round(sum(r_), 2), "win": round(100 * sum(1 for x in r_ if x > 0) / len(r_)) if r_ else None}
-        mk_of = lambda t: (t.get("mark") or {}).get("take")  # noqa: E731
-        review = {"from": acc.get("review_from"), "asked": len(rv_),
-                  "yes_rules": _rs([t for t in rv_ if mk_of(t) == "yes" and not t.get("custom")]),
-                  "yes_own": _rs([t for t in rv_ if mk_of(t) == "yes" and t.get("custom")]),
-                  "no": _rs([t for t in rv_ if mk_of(t) == "no"]),          # what the rules' trade would have done
-                  "unanswered": _rs([t for t in rv_ if not mk_of(t) and not t.get("sleep")]),
-                  "sleep": _rs([t for t in rv_ if t.get("sleep")])}
-        def acct_view(a_, scout, st_):
-            """The account fields (as a real bot's state, so the app shows it like the demo accounts) of bot 5 (the gap
-            method) or of 5ב (the scout strategies) - each only its own trades."""
-            cur[0] = a_
-            mine = lambda t: bool(scout5_combo(t.get("tal"))) == scout  # noqa: E731
-            live_a = [t for t in live_ if mine(t)]
-            bal = balance()
-            eq = bal + sum(t.get("pnl_now") or 0 for t in live_a if t["status"] == "open")
-            today = prague_day(pd.Timestamp.now(tz="UTC"))
-            curve, run = [[None, a_["initial"]]], a_["initial"]
-            for x in sorted(a_["ledger"], key=lambda x: x["exit_time"] or ""):
-                run += x["pnl"]
-                curve.append([x["exit_time"], round(run, 2)])
-            a_.update({"balance": round(bal, 2), "equity": round(eq, 2), "profit": round(bal - a_["initial"], 2),
-                       "today": round(day_pnl(today), 2), "curve": curve[-300:]})
-            now_iso = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
-            ec = a_.setdefault("eq_curve", [])
-            if not ec or ec[-1][1] != round(bal, 2) or ec[-1][2] != round(eq, 2) or now_iso[:15] != ec[-1][0][:15]:
-                ec.append([now_iso, round(bal, 2), round(eq, 2)])
-                del ec[:-4000]
-            a_.setdefault("started", now_iso)
-            counted = [t for t in closed if mine(t) and t.get("risk_usd") and t.get("pnl") is not None]
-            st_.update({"initial": a_["initial"], "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
-                        "halted_until": None, "started": a_["started"], "withdrawals": [], "equity_curve": ec, "lows": {},
-                        "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
-                                       "combo": combo(t["symbol"], t), "entry_tf": ent(t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
-                                       "now": t.get("px_now") or t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
-                                       "sl": t.get("stop_now") or t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
-                                       # at the stop / target WITH the costs, as the P&L shown next to them (16.11.2026)
-                                       "sl_usd": (round((t.get("risk_usd") or 0) * (t["dir"] * (t["stop_now"] - t["entry"]) / abs(t["entry"] - t["stop"]) - (t.get("cost_live") or 0)), 2)
-                                                  if t.get("stop_now") and t["entry"] != t["stop"] else
-                                                  -round((t.get("risk_usd") or 0) * (1 + (t.get("cost_live") or 0)), 2)),
-                                       "tp_usd": round((t.get("risk_usd") or 0) * ((t.get("rr") or 0) - (t.get("cost_live") or 0)), 2) if t.get("rr") else 0,
-                                       "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": pip(t["symbol"]), "free": False,
-                                       "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way")}
-                                      for t in live_a if t["status"] == "open" and t.get("risk_usd")],
-                        "trades": [{"time": t["exit_time"], "combo": combo(t["symbol"], t), "symbol": t["symbol"],
-                                    "dir": "קנייה" if t["dir"] > 0 else "מכירה", "lots": "וירטואלי", "price": t["exit"], "pnl": t["pnl"],
-                                    "why": t.get("reason")} for t in counted],
-                        "closed": [{"id": t["id"], "combo": combo(t["symbol"], t), "entry_tf": ent(t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
-                                    "lots": "וירטואלי", "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
-                                    "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way"),
-                                    "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
-                                    "reason": {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה", "breakeven": "ברייק (30% יצאו)"}.get(t.get("reason"), ""),
-                                    "pip": pip(t["symbol"])} for t in counted]})
-            cur[0] = acc
-        state.update({"review": review, "account": "וירטואלי · שיטת הגאפ של טל", "server": f"צפייה בלבד · בלי כסף · סיכון {RISK_TAL5 * 100:.2f}% לעסקה", "risk": RISK_TAL5,
-                      "combos": [f"TAL|{tal5_tf(k)}|{n}" for k in TAL5 for n in (TAL5_SYMS.get(k) or TAL5_SYMBOLS)]})
-        acct_view(acc, False, state)
-        # 5ב: the scout strategies' own account and trades (the same shape; the app lists it next to bot 5)
-        rs_sc = [t["r"] for t in closed if t.get("r") is not None and scout5_combo(t.get("tal"))]
-        live_sc = [t for t in live_ if scout5_combo(t.get("tal"))]
-        sstate = {"bot": SCOUT_NAME, "updated_utc": state["updated_utc"], "virtual": True,
-                  "rules": "אסטרטגיות הסייר של בוט 5, בדיוק כמו שעברו את הבדיקות: כל אסטרטגיה בגרף שלה, סטופ ויעד שלה, "
-                           "סטופ לנקודת הכניסה + עלויות ב־60% מהדרך ליעד, עלויות FTMO, הכללים של חשבון FTMO · בלי שאלות",
-                  "watch": sorted([t for t in trades.values() if scout5_combo(t.get("tal"))],
-                                  key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
-                  "summary": {"closed": len(rs_sc), "sum_r": round(float(np.sum(rs_sc)), 2) if rs_sc else 0.0,
-                              "win_pct": round(100 * float(np.mean(np.array(rs_sc) > 0)), 1) if rs_sc else None,
-                              "open": sum(t["status"] == "open" for t in live_sc), "pending": sum(t["status"] == "pending" for t in live_sc)},
-                  "account": "וירטואלי · אסטרטגיות הסייר", "server": "צפייה בלבד · בלי כסף", "risk": RISK_SCOUT5,
-                  "combos": sorted(SCOUT5), "errors": errors[-5:]}
-        acct_view(sacc, True, sstate)
-        sstate["vacct"] = sacc
-        try:
-            SCOUT_F.write_text(json.dumps(sstate, ensure_ascii=False, default=str), encoding="utf-8")
-        except Exception as e:  # noqa: BLE001
-            log(f"scout state not saved: {e}")
-        if time.time() - last_spush[0] > 120:
-            err = REP.push_state(SCOUT_NAME, sstate)
-            if err:
-                log(err)
-            last_spush[0] = time.time()
+        combo = lambda n, t=None: f"OWN|{'1Min' if (t or {}).get('v1m') else '15Min'}|{n}"  # noqa: E731
+        counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
+        state.update({"account": "וירטואלי · פערים v5 + דקה", "server": "צפייה בלבד · בלי כסף · סיכון 0.4% / 0.075%", "initial": acc["initial"], "risk": RISK_V5,
+                      "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
+                      "halted_until": None, "combos": [combo(n) for n in V5_15_SYMBOLS] + [combo(n, {"v1m": True}) for n in V5_SYMBOLS], "started": acc["started"], "withdrawals": [],
+                      "equity_curve": ec, "lows": {},
+                      "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
+                                     "combo": combo(t["symbol"], t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
+                                     "now": t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
+                                     "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
+                                     "sl_usd": -(t.get("risk_usd") or 0), "tp_usd": (t.get("risk_usd") or 0) * (t.get("rr") or 0),
+                                     "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": pip(t["symbol"]), "free": False,
+                                     "mae": None, "mfe": None} for t in live_ if t["status"] == "open" and t.get("risk_usd")],
+                      "trades": [{"time": t["exit_time"], "combo": combo(t["symbol"], t), "symbol": t["symbol"],
+                                  "dir": "קנייה" if t["dir"] > 0 else "מכירה", "lots": "וירטואלי", "price": t["exit"], "pnl": t["pnl"],
+                                  "why": t.get("reason")} for t in counted],
+                      "closed": [{"id": t["id"], "combo": combo(t["symbol"], t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
+                                  "lots": "וירטואלי", "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
+                                  "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": None, "mfe": None,
+                                  "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
+                                  "reason": {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה", "breakeven": "ברייק (30% יצאו)"}.get(t.get("reason"), ""),
+                                  "pip": pip(t["symbol"])} for t in counted]})
         state["vacct"] = acc
         try:
             STATE_F.write_text(json.dumps(state, ensure_ascii=False, default=str), encoding="utf-8")

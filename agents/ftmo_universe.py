@@ -48,43 +48,31 @@ STOCKS.update({
     "ADSGn": ("ADSGn", "adsdeeur", ["EUR"]), "AIRF": ("AIRF", "airfreur", ["EUR"]),
     "ALVG": ("ALVG", "alvdeeur", ["EUR"]), "BAYGn": ("BAYGn", "bayndeeur", ["EUR"]),
     "DBKGn": ("DBKGn", "dbkdeeur", ["EUR"]), "IBE": ("IBE", "ibeeseur", ["EUR"]),
-    "LVMH": ("LVMH", "mcfreur", ["EUR"]),
+    "LVMH": ("LVMH", "mcfreur", ["EUR"]), "RACE": ("RACE", "raceiteur", ["EUR"]),
     "SAN": ("SAN", "saneseur", ["EUR"]), "SIEGn": ("SIEGn", "siedeeur", ["EUR"]),
-    "VOWG_p": ("VOWG_p", "vow3deeur", ["EUR"]),
+    "VOWG_p": ("VOWG_p", "vow3deeur", ["EUR"]), "ASML": ("ASML", "asmlnleur", ["EUR"]),
     "TTE": ("TTE", "fpfreur", ["EUR"]), "BMW": ("BMW", "bmwdeeur", ["EUR"]),
     "MBG": ("MBG", "daideeur", ["EUR"]),
     # not on Dukascopy: Alpaca history
     "MSTR": ("MSTR", None, ["USD"]), "GME": ("GME", None, ["USD"]), "ARM": ("ARM", None, ["USD"]),
     "SPCX": ("SPCX", None, ["USD"]),
-    # FTMO's ASML and RACE are the US listings (profit currency USD, ftmo_symbols_specs.csv; the demo trades them only
-    # in US hours, at ~EUR x 1.11), not Amsterdam / Milan: US session, Alpaca history (12.11.2026 - before, the
-    # backtest ran on the European listing and the bots closed them at the European session end, 16:15 UTC)
-    "ASML": ("ASML", None, ["USD"]), "RACE": ("RACE", None, ["USD"]),
 })
 
 # more FTMO crypto CFDs with Alpaca history: research only, never in the default universe (08.11.2026)
 CRYPTO_MORE = {f"{a}/USD": (f, None, ["USD"]) for a, f in [
     ("AAVE", "AAVUSD"), ("AVAX", "AVAUSD"), ("BCH", "BCHUSD"), ("DOGE", "DOGEUSD"), ("DOT", "DOTUSD"),
     ("GRT", "GRTUSD"), ("LINK", "LNKUSD"), ("LTC", "LTCUSD"), ("UNI", "UNIUSD"), ("XTZ", "XTZUSD")]}
-# the other 18 FTMO forex pairs (user, 13.11.2026: "why doesn't bot 5 use all of FTMO's currency pairs?") - research
-# and bot 5's gap method only, never in the default universe (like CRYPTO_MORE): Dukascopy history, FTMO's specs
-FX_MORE = {f"{a}{b}": (f"{a}/{b}", f"{a}{b}".lower(), [a, b]) for a, b in [
-    ("AUD", "CAD"), ("AUD", "CHF"), ("AUD", "JPY"), ("AUD", "NZD"), ("CAD", "CHF"), ("CAD", "JPY"), ("CHF", "JPY"),
-    ("EUR", "AUD"), ("EUR", "CAD"), ("EUR", "CHF"), ("EUR", "NZD"), ("GBP", "AUD"), ("GBP", "CAD"), ("GBP", "CHF"),
-    ("GBP", "NZD"), ("NZD", "CAD"), ("NZD", "CHF"), ("NZD", "JPY")]}
 GROUPS = {"fx": FX, "index": INDICES, "metal": METALS, "energy": ENERGY, "crypto": CRYPTO, "stock": STOCKS}
 SYMBOLS = [k for g in GROUPS.values() for k in g]
 ALL = {k: v for g in GROUPS.values() for k, v in g.items()}
 ALL.update(CRYPTO_MORE)
-ALL.update(FX_MORE)
 CLASS = {k: g for g, d in GROUPS.items() for k in d}
 CLASS.update({k: "crypto" for k in CRYPTO_MORE})
-CLASS.update({k: "fx" for k in FX_MORE})
 DUKA = {k: v[1] for k, v in ALL.items() if v[1]}
 CURRENCIES = {k: v[2] for k, v in ALL.items()}
 
 # value of 1 unit of the base currency in USD, for the forex $-per-lot commission (rough, stable enough)
-BASE_USD = {"EUR": 1.1, "GBP": 1.3, "USD": 1.0, "AUD": 0.65, "NZD": 0.6, "CAD": 0.72, "CHF": 1.13}   # CAD / CHF: FX_MORE
+BASE_USD = {"EUR": 1.1, "GBP": 1.3, "USD": 1.0, "AUD": 0.65, "NZD": 0.6}
 
 _SPEC_FILE = Path(__file__).resolve().parent.parent / "data" / "ftmo_symbols" / "responses.json"
 _SPECS = None

@@ -68,22 +68,8 @@ def log(msg):
     JOURNAL.append(line)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(line + "\n")
-    if msg.startswith(("skip ", "BLOCKED ", "FAILED open ")):
+    if msg.startswith("skip "):
         note_skip(msg)
-
-
-def _skip_parts(msg):
-    """(combo, why) of a skip line. Besides "skip <combo>: why", an entry that was blocked at the stop check or whose
-    order failed is recorded too (bots 1-4 smart agent, 16.11.2026 morning: bot 1's GH02|1Hour|USDCAD 03:00 entry was
-    taken as a late entry at three restarts and never opened, with no reason anywhere the agents can read)."""
-    if msg.startswith("BLOCKED "):
-        combo, _, why = msg[8:].partition(": ")
-        return combo, "blocked: " + why
-    if msg.startswith("FAILED open "):
-        rest = msg[12:]
-        return rest.split(" ", 1)[0], "order failed: " + rest.rpartition(": ")[2]
-    combo, _, why = msg[5:].partition(": ")
-    return combo, why
 
 
 def note_skip(msg):
@@ -94,7 +80,7 @@ def note_skip(msg):
         st = globals().get("STATE")
         if not isinstance(st, dict):
             return
-        combo, why = _skip_parts(msg)
+        combo, _, why = msg[5:].partition(": ")
         now = pd.Timestamp.now(tz="UTC")
         key = re.sub(r"[0-9.]+", "#", why)
         sk = st.setdefault("skips", [])
@@ -240,7 +226,6 @@ def session_mask(df, sym, tf):
 
 CLOSE_BREAKS = False          # FTMO Standard account: no positions through market breaks over 2 hours
 BREAKS = {}                   # symbol -> {(server weekday, server minute of day)} where such a break starts
-BREAK_LEN = {}                # symbol -> {"weekday-minute": median length in minutes} (reporting only)
 _BREAKS_AT = {}
 
 
@@ -272,96 +257,13 @@ def cal_masks(df, sym, tf):
 PROTECT = {"be_r": 2.5, "lock_r": (3.0, 1.0)}
 
 
-# Approved per-combo changes from the improvement agents' cards (live/bots/<bot>.json "plans"; user, 11-12.11.2026),
-# exactly the variants the agents tested (agent_portfolio.py -> run_rules --optimize / --filters):
-#   target   "none" = no target (the no-target protection above applies) | k = k x the stop distance (the "kR" variants)
-#   stop     x the strategy's stop distance (the same dollar risk: the lots follow the stop)
-#   limit    a limit order k R better than the next open, valid 3 bars (run_rules OPT_ENTRY)
-#   filter   a market-regime filter of run_rules._regimes (the 200 trend, ADX, volatility; EMA 9/20 and Bollinger width
-#            since 14.11.2026)
-PLANS = {}
-LIMIT_BARS = 3
-
-
-def plan_of(combo):
-    p = PLANS.get(combo) or {}
-    out = {}
-    try:
-        if p.get("target") == "none":
-            out["target"] = None
-        elif p.get("target") is not None and 0.5 <= float(p["target"]) <= 5:
-            out["target"] = ("R", float(p["target"]))
-        if p.get("stop") is not None and 0.5 <= float(p["stop"]) <= 2 and float(p["stop"]) != 1.0:
-            out["stop_scale"] = float(p["stop"])
-        if p.get("limit") is not None and 0 < float(p["limit"]) <= 1:
-            out["entry_pullback"] = (float(p["limit"]), LIMIT_BARS)
-            out["emit_pending"] = 1                    # step() adds one flat helper bar after the forming bar
-        if p.get("filter") in REGIMES:
-            out["filter"] = p["filter"]
-        # trade management per strategy (12.11.2026): the breakeven's own point / R, a partial exit
-        if p.get("be_way") is not None and 0 <= float(p["be_way"]) < 1:
-            out["be_way"] = float(p["be_way"])
-        if p.get("be_r") is not None and 0 <= float(p["be_r"]) <= 5:
-            out["be_r"], out["lock_r"] = (float(p["be_r"]) or None), ((3.0, 1.0) if float(p["be_r"]) else None)
-        if p.get("partial") and 0 < float(p["partial"][0]) < 1 and 0 < float(p["partial"][1]) <= 5:
-            out["partial"] = (float(p["partial"][0]), float(p["partial"][1]))
-        # pyramid (14.11.2026, task tal1411anti; bot 2 cards 0b88f2efa8f9 / 15ad6a81fce9): at `at` R in profit `frac`
-        # of a position more, the whole stop moved so a stop still loses 1R in all (rules_agent.run plan "pyramid")
-        if p.get("pyramid") and 0 < float(p["pyramid"][0]) <= 5 and 0 < float(p["pyramid"][1]) <= 1:
-            out["pyramid"] = (float(p["pyramid"][0]), float(p["pyramid"][1]))
-    except (TypeError, ValueError, IndexError):
-        return {}
-    return out
-
-
-def _regime(df, name):
-    """The same masks as run_rules._regimes (known at the bar's close): (allow_long, allow_short)."""
-    h, l, c = (df[x].to_numpy() for x in "hlc")
-    if name == "with_trend200":
-        e200 = R.ema(c, 200)
-        return c > e200, c < e200
-    if name in ("adx_trend", "adx_range"):
-        a = R.adx(h, l, c, 14)
-        m = a > 20 if name == "adx_trend" else a < 20
-        return m, m
-    if name == "ema9_20":                            # the user's filters (14.11.2026), as run_rules._extra_regimes
-        e9, e20 = R.ema(c, 9), R.ema(c, 20)
-        return e9 > e20, e9 < e20
-    if name == "rsi_trend":                          # no buy on RSI < 35 under the 200 average / sell on RSI > 65 over it
-        e200, rs = R.ema(c, 200), R.rsi(c, 14)
-        with np.errstate(invalid="ignore"):
-            return ~((c < e200) & (rs < 35)), ~((c > e200) & (rs > 65))
-    if name in R.VIDEO_REGIMES:                      # the user's video filters (14.11.2026): the same function as run_rules
-        return R.video_regimes(h, l, c, df["o"].to_numpy(), df.index)[name]
-    if name == "bbw_p20":
-        s_ = pd.Series(c)
-        w = (4 * s_.rolling(20).std(ddof=0) / s_.rolling(20).mean()).to_numpy()
-        lo = pd.Series(w).rolling(100, min_periods=50).quantile(0.2).to_numpy()
-        m = np.isfinite(w) & np.isfinite(lo) & (w > lo)
-        return m, m
-    at = R.atr(h, l, c, 14) / c
-    pr = pd.Series(at).rolling(500, min_periods=100).rank(pct=True).to_numpy()
-    m = {"vol_normal": (pr > 0.2) & (pr < 0.9), "vol_high": pr >= 0.5, "vol_low": pr < 0.5}[name]
-    return m, m
-
-
-REGIMES = ("with_trend200", "adx_trend", "adx_range", "vol_normal", "vol_high", "vol_low", "ema9_20", "bbw_p20", "rsi_trend",
-           *R.VIDEO_REGIMES)
-
-
 def strat(sid, df, sym, tf):
     fn = R.STRATEGIES[sid][1]
     fn = CAL.blocked(fn, cal_masks(df, sym, tf)[1]) if CLOSE_BREAKS else fn
-    pl = plan_of(f"{sid}|{tf}|{sym}")
-    flt = pl.pop("filter", None)
 
     def g(d):
         L, S, plan = fn(d)
-        if flt:
-            al, ash = _regime(d, flt)
-            L, S = np.asarray(L, bool) & al, np.asarray(S, bool) & ash
-        # the bots' protection first, then the combo's own built plan (a management card may set its own breakeven)
-        return L, S, {**plan, **PROTECT, **pl}
+        return L, S, {**plan, **PROTECT}
     return g
 
 
@@ -374,21 +276,9 @@ def learn_breaks(sym):
         return BREAKS.get(sym, set())
     t = pd.to_datetime(pd.Series(rates["time"]), unit="s")
     nxt = t.shift(-1)
-    # the break is from the end of the last bar (t + 1 minute) to the next bar - the same as the backtest's
-    # break_mask (next start - (start + bar length)). Measured from the bar's open, MetaQuotes-Demo's daily
-    # 2-hour metals pause (23:00-01:00 server) came out 121 minutes, "over 2 hours", and bots 2-4 closed
-    # XAUUSD / XAGUSD every night for it (bots 1-4 smart agent, 14.11.2026 night 3, task b14brk).
-    gap = nxt - (t + pd.Timedelta(minutes=1))
-    starts = (t + pd.Timedelta(minutes=1))[gap > pd.Timedelta(hours=2)]
+    starts = (t + pd.Timedelta(minutes=1))[(nxt - t) > pd.Timedelta(hours=2)]
     keys = pd.Series([(x.weekday(), (x.hour * 60 + x.minute) // 15 * 15) for x in starts])
     cnt = keys.value_counts()
-    # how long each learned break is (bots 1-4 smart agent, 14.11.2026 night): the live bots close XAUUSD / XAGUSD
-    # every Mon-Thu at 20:45 UTC for a break over 2 hours that the backtest's own bars do not have - the length in
-    # the 1-minute bars goes into the state (live/<bot>_state.json "breaks"), so the agents can check it against
-    # FTMO's trading hours. Reporting only, nothing in the trading changes.
-    lens = (gap[gap > pd.Timedelta(hours=2)].dt.total_seconds() / 60).to_numpy()
-    BREAK_LEN[sym] = {f"{k[0]}-{k[1]}": round(float(np.median([L for kk, L in zip(keys, lens) if kk == k])), 1)
-                      for k, n in cnt.items() if n >= 2}
     return {k for k, n in cnt.items() if n >= 2}
 
 
@@ -540,30 +430,13 @@ def _risk_section():
 
 
 def risk_mult(combo):
-    """The combo's risk multiplier: 1 = the bot's risk; up to 1.5 after an approved change; 0 = no new trades
-    (removal approved); a multiplier so small that the size is under the minimum = the instrument's minimum volume.
-    Unknown or unreadable -> 1, so a missing file never changes anything."""
+    """The combo's risk multiplier: 1 = the bot's risk; 0.5..1.5 after an approved change; 0 = no new trades
+    (removal approved). Unknown or unreadable -> 1, so a missing file never changes anything."""
     try:
         v = float((_risk_section().get("mult") or {}).get(combo, 1.0))
     except (TypeError, ValueError):
         return 1.0
-    return v if 0 <= v <= 3 else 1.0     # 3: only a guard against a broken file; the real ceiling is the whole-bot check
-
-
-def min_lot(sym, entry, sl, d):
-    """A strategy cut under the minimum (no edge left, 13.11.2026): the instrument's minimum volume, when its loss at
-    the stop fits in the bot's normal risk and in the room left to the limits. Returns (lots, loss cap) or (0, 0)."""
-    info = mt5.symbol_info(mt5_name(sym))
-    if info is None or not info.volume_min:
-        return 0.0, 0.0
-    try:
-        loss = abs(mt5.order_calc_profit(mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, info.name, info.volume_min, entry, sl) or 0.0)
-    except Exception:  # noqa: BLE001
-        loss = 0.0
-    if not loss and info.trade_tick_size:
-        loss = info.volume_min * abs(entry - sl) / info.trade_tick_size * info.trade_tick_value
-    cap = ACC.allowed_risk(1.0)
-    return (float(info.volume_min), loss + 0.01) if 0 < loss <= cap else (0.0, 0.0)
+    return v if v == 0 or 0.5 <= v <= 1.5 else 1.0
 
 
 def combo_rules(combo):
@@ -585,13 +458,6 @@ def combo_rules(combo):
             out["vol"] = {k: float(x) for k, x in v.items() if k in ("max_pct", "min_pct")}
     except (TypeError, ValueError):
         pass
-    # 13.11.2026 (bots 1-4 smart agent): a combo with an approved exit plan (target / stop / limit entry in "plans")
-    # trades exactly the variant its card tested; the morning review's stop / target factor came from the strategy's
-    # own exits and stacked on top of the plan (TV56 USDJPY: plan stop x0.75 and review x0.6 = x0.45, a variant
-    # nobody tested). The plan wins for the exits; the review's direction / hours / volatility rules still apply.
-    if any(k in (PLANS.get(combo) or {}) for k in ("target", "stop", "limit")):
-        out.pop("sl", None)
-        out.pop("tp", None)
     return out
 
 
@@ -645,10 +511,6 @@ class Account:
                 except Exception:  # noqa: BLE001
                     loss = None
             tot += loss if loss is not None else max(STATE["risk"].get(str(p.ticket), 0.0), self.risk_usd)
-        held = {p.magic for p in self.positions()}
-        for combo, pk in STATE.get("pending", {}).items():   # a waiting limit order counts as if filled and stopped
-            if MAGICS_BY_COMBO.get(combo) not in held:
-                tot += float(pk.get("risk") or self.risk_usd)
         return tot
 
     def allowed_risk(self, mult=1.0):
@@ -658,68 +520,11 @@ class Account:
         that is left, so the stops can never cross the limit; under 10% of the normal risk the trade is skipped."""
         base = self.risk_usd * mult
         ai = mt5.account_info()
-        # "dd_fit" (bots 1-4 smart agent, 13.11.2026 night; an approved card only, live/bots/<bot>.json): the whole
-        # bot's risk shrinks while the room left to the bot's 9% total limit is smaller than the worst fall of the
-        # bot's own 2026 replay (dd_fit, in % of the account) - risk x room / dd_fit - and is back to normal by itself
-        # once the room is larger again. No fixed step: the number is the bot's own replay.
-        try:
-            fit = float(self.cfg.get("dd_fit") or 0)
-        except (TypeError, ValueError):
-            fit = 0.0
-        if 0.5 <= fit <= 9:
-            room_total = ai.balance - self.initial * (1 - GUARD_TOTAL)
-            base *= min(1.0, max(0.0, room_total / (self.initial * fit / 100)))
         ds = self.day_start_balance()
-        base *= self.brake_mult(ai.balance, ds)
         left = ai.balance - self.open_risk()
         room = min(left - self.initial * (1 - GUARD_TOTAL), left - (ds - self.initial * GUARD_DAILY))
         r = min(base, GRADE_SHARE * room)
         return r if r >= GRADE_MIN * base else 0.0
-
-    def brake_mult(self, balance, ds):
-        """Soft risk brakes (user, 17.11.2026, task tal1711riskmgmt; agents/risk_brakes.py tests them on the whole bot).
-        Only with an approved card in live/bots/<bot>.json, off otherwise; always under the fixed 4.5% / 9% guard:
-          "loss_streak": {"days": 2, "mult": 0.75} - after that many losing days in a row (FTMO's day, the realised
-                         result), new trades take risk x mult until a green day
-          "day_brake":   {"pct": 2.0, "mode": "half"|"stop"} - once today's realised result is -pct% of the account,
-                         new trades take half risk / none until tomorrow"""
-        m = 1.0
-        try:
-            db = self.cfg.get("day_brake") or {}
-            if db and (balance - ds) <= -self.initial * float(db["pct"]) / 100:
-                m *= 0.0 if db.get("mode") == "stop" else 0.5
-            ls = self.cfg.get("loss_streak") or {}
-            if ls and self.losing_days() >= int(ls["days"]):
-                m *= max(0.0, min(1.0, float(ls["mult"])))
-        except (KeyError, TypeError, ValueError):
-            return 1.0
-        return m
-
-    def losing_days(self):
-        """Losing FTMO days in a row before today (days without a closed deal do not count either way), read once
-        a day; 0 when MT5 does not answer (the brake is off rather than wrong)."""
-        today = prague_midnight_utc()
-        if getattr(self, "_streak", None) and self._streak[0] == today:
-            return self._streak[1]
-        n = 0
-        try:
-            deals = mt5.history_deals_get(utc_to_server(today - pd.Timedelta(days=21)), utc_to_server(today))
-            if deals is None:
-                return 0
-            day = {}
-            for d in deals:
-                if d.type in (0, 1):
-                    k = server_ts(d.time).tz_convert("Europe/Prague").date()
-                    day[k] = day.get(k, 0.0) + d.profit + d.commission + d.swap + getattr(d, "fee", 0.0)
-            for k in sorted(day, reverse=True):
-                if day[k] < -1e-9:
-                    n += 1
-                elif day[k] > 1e-9:
-                    break
-        except Exception:  # noqa: BLE001
-            return 0
-        self._streak = (today, n)
-        return n
 
     def guard(self):
         """Emergency stop: floating daily loss reaches 4.5% -> close everything until Prague midnight."""
@@ -740,7 +545,6 @@ class Account:
                        priority=5, tags=["rotating_light"])
             for p in self.positions():
                 close(p, "emergency")
-            pending_guard(pd.Timestamp.now(tz="UTC"), everything=True)
             self._halt_retry = time.time()
             self.halt_until = (pd.Timestamp.now(tz="Europe/Prague").normalize() + pd.DateOffset(days=1)).tz_convert("UTC")
             return True
@@ -795,11 +599,8 @@ def send(req, what):
         return None
     req = {**req, "comment": _comment(req.get("comment", ""))}
     r, err = None, None
-    if req.get("action") in (mt5.TRADE_ACTION_DEAL, mt5.TRADE_ACTION_PENDING):
-        modes = _fill_modes(req["symbol"])
-        if req.get("action") == mt5.TRADE_ACTION_PENDING:     # a waiting limit order: "return" first
-            modes = [mt5.ORDER_FILLING_RETURN] + [m for m in modes if m != mt5.ORDER_FILLING_RETURN]
-        for fill in modes:
+    if req.get("action") == mt5.TRADE_ACTION_DEAL:
+        for fill in _fill_modes(req["symbol"]):
             r = mt5.order_send({**req, "type_filling": fill})
             if r is None:
                 err = mt5.last_error()
@@ -813,9 +614,8 @@ def send(req, what):
     # a market deal that filled only partly (10010) or was accepted for execution (10008) is a live position:
     # treat it as done, so the bot records and manages it (otherwise it would sit on the account unmanaged)
     ok = r is not None and (r.retcode == mt5.TRADE_RETCODE_DONE or
-                            (req.get("action") == mt5.TRADE_ACTION_DEAL and r.retcode in (10008, 10010)) or
-                            (req.get("action") == mt5.TRADE_ACTION_PENDING and r.retcode == 10008))
-    if r is not None and r.retcode in (10008, 10010) and req.get("action") != mt5.TRADE_ACTION_PENDING:
+                            (req.get("action") == mt5.TRADE_ACTION_DEAL and r.retcode in (10008, 10010)))
+    if r is not None and r.retcode in (10008, 10010):
         log(f"{what}: accepted with code {r.retcode} ({r.comment}) - managed as open")
     if not ok:
         MON["last_fail"] = (None, str(err)) if r is None else (r.retcode, r.comment)
@@ -827,13 +627,6 @@ def send(req, what):
             REP.notify(f"{BOT}: המסחר האוטומטי כבוי", "בחלון MetaTrader של החשבון הזה הכפתור Algo Trading כבוי, ולכן "
                        "הבוט לא יכול לפתוח או לסגור עסקאות. הצג את החלון מהאפליקציה ולחץ על Algo Trading (שיהיה ירוק).",
                        priority=5, tags=["warning"], key="algo_off", every=3600)
-        elif r is not None and r.retcode == 10017:
-            # 10017 = trading is disabled on the whole account by the broker (bots 1-4 smart agent, 16.11.2026: bot 1's
-            # FTMO two-week trial from 01.11 - every order since Monday 08:01 UTC came back 'Trade disabled', on
-            # USDJPY and XAUUSD alike, while bots 3-4 opened the same signals). Only the user can open a new account.
-            REP.notify(f"{BOT}: החשבון חסום למסחר", "הברוקר דוחה כל פקודה (Trade disabled) - כנראה תקופת הניסיון של "
-                       "החשבון נגמרה. הבוט ממשיך לעקוב, אבל לא יכול לפתוח עסקאות עד שיחובר חשבון חדש.",
-                       priority=5, tags=["warning"], key="trade_disabled", every=6 * 3600)
         elif r is None or r.retcode not in (10018,):           # 10018 = market closed: not worth a message
             REP.notify(f"{BOT}: פקודה נכשלה", f"{what}\n{('MetaTrader לא ענה', err) if r is None else (r.retcode, r.comment)}",
                        priority=4, tags=["warning"], key="fail:" + what[:20], every=1800)
@@ -898,33 +691,11 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
     if d * (px - sl) <= 0:
         log(f"skip {combo}: price {px} already beyond the stop")
         return
-    # the broker's minimum stop distance (user, 17.11.2026: bot 4 FR08|5Min|SPCX sell @139.4 sl 139.9 came back 10016
-    # 'Invalid stops' - SPCX's spread is dollars wide, the stop sat inside it). A sell's stop is checked against the ask,
-    # a buy's against the bid, at least the symbol's stops level away. Too near -> the stop moves out to that distance
-    # (+ a margin) and the size follows it below: the same dollar risk, fewer lots.
-    try:
-        si, tk = mt5.symbol_info(name), (fresh or tick)
-        ref = tk.bid if d > 0 else tk.ask
-        pt = float(si.point or 0)
-        mind = float(si.trade_stops_level or 0) * pt + max(3 * pt, 0.1 * abs(tk.ask - tk.bid))
-        if ref and d * (ref - sl) < mind:
-            new_sl = round(ref - d * mind, si.digits)
-            log(f"{combo}: stop {sl} too near the price ({ref}, minimum {mind:g}) - moved to {new_sl}, the size follows")
-            REP.notify(f"{BOT}: הסטופ הורחק", f"{pretty(combo)}\nהסטופ {sl:g} היה קרוב מדי למחיר (הברוקר דוחה). הוזז ל־{new_sl:g}, "
-                       "עם פחות יחידות - אותו סיכון בדולרים.", priority=2, tags=["stop"], key="minstop:" + combo, every=3600)
-            sl = new_sl
-    except Exception as e:  # noqa: BLE001
-        log(f"{combo}: minimum stop check failed: {e}")
     slip = slip_guess(sym)                              # guard 2: this instrument's usual bad fill
     size_px = px + d * slip
     if slip > 0:
         log(f"{combo}: sizing as if filled {slip:g} worse ({size_px:g}), from the last fills of {sym}")
     lots = lots_for(sym, size_px, sl, risk)
-    if lots <= 0 and 0 < mult < 1:
-        lots, cap = min_lot(sym, size_px, sl, d)
-        if lots:
-            log(f"{combo}: risk x{mult:g} is under the minimum volume - the minimum {lots} lots")
-            risk = cap
     if lots <= 0:
         log(f"skip {combo}: lot size too small")
         return
@@ -943,27 +714,6 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
         REP.notify(f"{BOT}: עסקה נחסמה", f"{pretty(combo)}\nבסטופ היא הייתה מפסידה ${loss:,.0f}, יותר מהסיכון המותר (${risk:,.0f}). לא נפתחה.",
                    priority=4, tags=["no_entry"], key="block:" + combo, every=3600)
         return
-    # the margin (user, 16.11.2026: bot 3 SS01|5Min|WMT 272 shares ~$35k came back 10019 'No money' - AAPL 236 shares
-    # was open; stocks on this demo need about their whole value as margin). Too big for the free margin: the size
-    # that fits (a smaller risk, never a bigger one), if it is at least a quarter of the trade; otherwise no trade.
-    try:
-        acc = mt5.account_info()
-        free = float(getattr(acc, "margin_free", 0) or 0)
-        need = float(mt5.order_calc_margin(mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, name, lots, px) or 0)
-    except Exception:  # noqa: BLE001
-        free = need = 0.0
-    if need > 0 and free > 0 and need > 0.9 * free:
-        step = info.volume_step or 0.01
-        fit = float(np.floor(lots * 0.9 * free / need / step + 1e-9) * step)
-        fit = round(fit, max(0, len(f"{step:.8f}".rstrip("0").split(".")[1])))
-        if fit < info.volume_min or fit < 0.25 * lots:
-            log(f"skip {combo}: not enough free margin (${need:,.0f} for {lots} lots, ${free:,.0f} free)")
-            REP.notify(f"{BOT}: אין מספיק מרג'ין", f"{pretty(combo)}\nהעסקה צריכה ${need:,.0f} מרג'ין ופנויים רק ${free:,.0f} "
-                       "(עסקאות פתוחות תופסות אותו). לא נפתחה.", priority=3, tags=["no_entry"], key="margin:" + combo, every=3600)
-            return
-        log(f"{combo}: margin ${need:,.0f} for {lots} lots, free ${free:,.0f} - {fit} lots")
-        loss *= fit / lots
-        lots = fit
     req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": name, "volume": lots,
            "type": mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, "price": px,
            "sl": sl_r, "tp": round(tp, info.digits) if tp == tp and tp is not None else 0.0,
@@ -996,129 +746,13 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
         save_state()
 
 
-def place_limit(combo, sym, d, lim, sl, tp, sig, until, risk, mult=1.0, rules=None):
-    """An approved limit entry (plans "limit"): the order the backtest places, at its price, stop and target,
-    sized so that a fill at the limit loses `risk` at the stop. Kept while the backtest's order waits (3 bars)."""
-    rules = rules or {}
-    name = mt5_name(sym)
-    info, tick = mt5.symbol_info(name), mt5.symbol_info_tick(name)
-    if info is None or tick is None:
-        return
-    px = tick.ask if d > 0 else tick.bid
-    if d * (px - lim) <= 0 or d * (lim - sl) <= 0:
-        log(f"skip {combo}: price {px} already at / past the limit {lim:g} - not taken")
-        STATE["entry"][combo] = str(sig)
-        save_state()
-        return
-    if rules.get("sl"):
-        sl = lim - d * rules["sl"] * abs(lim - sl)
-    if rules.get("tp") and tp == tp:
-        tp = lim + d * rules["tp"] * abs(tp - lim)
-    lim, sl = round(lim, info.digits), round(sl, info.digits)
-    lots = lots_for(sym, lim, sl, risk)
-    if lots <= 0 and 0 < mult < 1:
-        lots, cap = min_lot(sym, lim, sl, d)
-        if lots:
-            log(f"{combo}: risk x{mult:g} is under the minimum volume - the minimum {lots} lots")
-            risk = cap
-    if lots <= 0:
-        log(f"skip {combo}: lot size too small")
-        return
-    kind = mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL
-    try:
-        loss = abs(mt5.order_calc_profit(kind, name, lots, lim, sl) or 0.0)
-    except Exception:  # noqa: BLE001
-        loss = 0.0
-    if not loss:
-        loss = lots * abs(lim - sl) / info.trade_tick_size * info.trade_tick_value
-    if loss > risk + 0.01:
-        log(f"BLOCKED {combo}: {lots} lots would lose ${loss:,.2f} at the stop, above the allowed risk ${risk:,.2f}")
-        return
-    req = {"action": mt5.TRADE_ACTION_PENDING, "symbol": name, "volume": lots,
-           "type": mt5.ORDER_TYPE_BUY_LIMIT if d > 0 else mt5.ORDER_TYPE_SELL_LIMIT, "price": lim,
-           "sl": sl, "tp": round(tp, info.digits) if tp == tp and tp is not None else 0.0,
-           "magic": MAGICS_BY_COMBO[combo], "comment": combo[:31], "type_time": mt5.ORDER_TIME_GTC}
-    r = send(req, f"limit {combo} {'buy' if d > 0 else 'sell'} {lots} @ {lim} sl {sl:.5g} tp {tp} until {until:%d.%m %H:%M} UTC")
-    if r is None:
-        return
-    STATE.setdefault("pending", {})[combo] = {"order": int(r.order), "sig": str(sig), "until": str(until), "sym": sym,
-                                              "dir": d, "lim": lim, "risk": loss}
-    STATE["entry"][combo] = str(sig)
-    STATE["risk"][str(r.order)] = loss
-    save_state()
-
-
-def order_alive(pk):
-    return bool(mt5.orders_get(ticket=int(pk["order"])))
-
-
-def cancel_pending(combo, why):
-    """Remove the combo's waiting limit order. True = nothing is waiting any more (and no position came of it)."""
-    pk = STATE.get("pending", {}).get(combo)
-    if not pk:
-        return True
-    if order_alive(pk):
-        if ACC.dry or send({"action": mt5.TRADE_ACTION_REMOVE, "order": int(pk["order"])}, f"cancel limit {combo} ({why})") is None:
-            return False
-    elif any(p.magic == MAGICS_BY_COMBO.get(combo) for p in ACC.positions()):
-        return False                                   # it filled: step() takes the position over
-    STATE["pending"].pop(combo, None)
-    save_state()
-    return True
-
-
-def pending_guard(now, everything=False):
-    """Every loop: a waiting limit order is removed when its 3 bars are over, and before what would block a new
-    entry (a market break or holiday, the last 15 minutes of a stock session, an FTMO restricted event)."""
-    for combo, pk in list(STATE.get("pending", {}).items()):
-        sym = pk["sym"]
-        why = "emergency" if everything else None
-        if why is None and now >= pd.Timestamp(pk["until"]):
-            why = "3 bars over"
-        elif why is None and (break_soon(sym, now) or holiday_block(sym, now)):
-            why = "market break / holiday ahead"
-        elif why is None and news_window(sym, now) == "close":
-            why = "restricted news ahead"
-        elif why is None and U.CLASS.get(sym) == "stock":
-            tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
-            loc = now.tz_convert(tz)
-            if loc.hour * 60 + loc.minute >= close_min - 15:
-                why = "stock session ends"
-        if why:
-            cancel_pending(combo, why)
-
-
-# the replay's exit reasons are Hebrew; MT5 comments keep only ASCII (_comment), so they reached the trade history
-# as blanks (23 of bot 1's first 118 trades) - sent in English instead
-WHY_EN = {"סיגנל יציאה": "exit signal", "סיגנל הפוך": "opposite signal", "סגירה בשעה קבועה": "fixed-time exit",
-          "יציאת זמן": "time exit", "יעד": "target", "סטופ": "stop"}
-
-
 def close(p, why):
-    why = WHY_EN.get(why, why)
     tick = mt5.symbol_info_tick(p.symbol)
     req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": p.symbol, "volume": p.volume, "position": p.ticket,
            "type": mt5.ORDER_TYPE_SELL if p.type == 0 else mt5.ORDER_TYPE_BUY,
            "price": tick.bid if p.type == 0 else tick.ask, "deviation": 20, "magic": p.magic,
            "comment": why[:31], "type_filling": mt5.ORDER_FILLING_IOC}
     return send(req, f"close {p.comment} ({why})")
-
-
-def close_part(p, frac, why="partial exit"):
-    """Close `frac` of an open position (a partial exit), rounded down to the broker's volume step. Nothing when the
-    part or the rest would be under the broker's minimum - then the stop still goes to the entry (the backtest's rest)."""
-    info = mt5.symbol_info(p.symbol)
-    step = info.volume_step or 0.01
-    vol = round(int(p.volume * frac / step) * step, 8)
-    if vol < info.volume_min or p.volume - vol < info.volume_min - 1e-12:
-        log(f"partial {p.comment}: {frac:.0%} of {p.volume} is under the broker's minimum - kept whole")
-        return "min"
-    tick = mt5.symbol_info_tick(p.symbol)
-    req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": p.symbol, "volume": vol, "position": p.ticket,
-           "type": mt5.ORDER_TYPE_SELL if p.type == 0 else mt5.ORDER_TYPE_BUY,
-           "price": tick.bid if p.type == 0 else tick.ask, "deviation": 20, "magic": p.magic,
-           "comment": why[:31], "type_filling": mt5.ORDER_FILLING_IOC}
-    return send(req, f"partial {p.comment} {vol}/{p.volume}") is not None
 
 
 def move_stop(p, new_sl):
@@ -1176,135 +810,6 @@ def stock_session_close(now):
 
 
 DIAG = {}
-LATE_TOL_R = 0.1          # a late entry is taken only while the price is within 0.1R of the backtest's entry (bar open)
-
-
-def bar_first_tick(sym, tf, forming):
-    """When the forming bar really started trading: the first 1-minute bar inside it. A stock's first bar of the
-    session is labelled before the open (14:00 for a 14:30 open) and some feeds start a few minutes late - the
-    backtest's entry is that first trade, so lateness is counted from it, not from the label."""
-    try:
-        rates = mt5.copy_rates_from_pos(mt5_name(sym), mt5.TIMEFRAME_M1, 0, min(TF_MIN[tf], 240) + 5)
-        if rates is None or not len(rates):
-            return None
-        t = server_to_utc(pd.DataFrame(rates)["time"])
-        t = t[(t >= forming) & (t < forming + pd.Timedelta(minutes=TF_MIN[tf]))]
-        return t.min() if len(t) else None
-    except Exception:  # noqa: BLE001
-        return None
-
-
-def late_entry_ok(sym, d, open_px, stop, target, hi, lo):
-    """A late entry (restart, reconnect, late feed): taken only if the trade is still the backtest's trade - the
-    bar has not touched its stop or target yet, and the price now is within LATE_TOL_R of the bar's open (the
-    backtest's entry). Stop and target stay where the backtest put them; the lots follow the real stop distance."""
-    dist = abs(open_px - stop)
-    if not dist or (d > 0 and lo <= stop) or (d < 0 and hi >= stop):
-        return False, "the bar already touched the stop"
-    if target == target and target is not None and ((d > 0 and hi >= target) or (d < 0 and lo <= target)):
-        return False, "the bar already touched the target"
-    tick = mt5.symbol_info_tick(mt5_name(sym))
-    if tick is None:
-        return False, "no price"
-    px = tick.ask if d > 0 else tick.bid
-    off = (px - open_px) * d / dist
-    if abs(off) > LATE_TOL_R:
-        return False, f"price {off:+.2f}R from the backtest's entry"
-    return True, f"price {off:+.2f}R from the backtest's entry"
-
-
-def pyramid_add(combo, sym, pos, t, new_sl, last_closed):
-    """The pyramid of an approved card (plans "pyramid" [at R, fraction]; run_rules.PYRS, rules_agent.run): once the
-    replay's trade reached `at` R on a closed bar (its "pyr_time"), `fraction` of the trade's size more at market, with
-    the trade's moved stop (new_sl, from the replay) and its target. Once per trade. The added size is cut so that both
-    together never lose more at the stop than the trade's own risk (the backtest adds at the level exactly; a live fill
-    farther away gets fewer lots, never more), and nothing is added near the limits, a long break or a stock's close."""
-    pyr = plan_of(combo).get("pyramid")
-    pt = t.get("pyr_time") if hasattr(t, "get") else None
-    if not pyr or pt is None or pd.isna(pt) or pd.Timestamp(pt) > last_closed or len(pos) != 1:
-        return
-    key = STATE["entry"].get(combo, "")
-    done = STATE.setdefault("pyr", {})
-    if done.get(combo) == key:
-        return
-    p = pos[0]
-    d = 1 if p.type == 0 else -1
-
-    def handled(why):
-        done[combo] = key
-        save_state()
-        log(f"pyramid {combo}: {why}")
-
-    now = pd.Timestamp.now(tz="UTC")
-    if break_soon(sym, now) or holiday_block(sym, now):
-        return handled("not added - a market break / holiday ahead")
-    if U.CLASS.get(sym) == "stock":
-        tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
-        loc = now.tz_convert(tz)
-        if loc.hour * 60 + loc.minute >= close_min - 15:
-            return handled("not added - last 15 minutes of the stock session")
-    if ACC.allowed_risk(1.0) <= 0:
-        return handled("not added - too close to the daily 4.5% / total 9% limit")
-    name = p.symbol
-    info, tick = mt5.symbol_info(name), mt5.symbol_info_tick(name)
-    if info is None or tick is None:
-        return                                          # tried again at the next loop
-    px = tick.ask if d > 0 else tick.bid
-    sl = round(float(new_sl), info.digits)
-    if d * (px - sl) <= 0:
-        return handled(f"not added - price {px} already at / past the stop {sl}")
-    kind = mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL
-
-    def loss_at(lots, frm):
-        try:
-            v = mt5.order_calc_profit(kind, name, lots, frm, sl)
-        except Exception:  # noqa: BLE001
-            v = None
-        if v is None:
-            v = -d * (frm - sl) * lots / info.trade_tick_size * info.trade_tick_value if info.trade_tick_size else 0.0
-        return max(0.0, -float(v))
-    risk0 = float(STATE["risk"].get(str(p.ticket)) or ACC.risk_usd * risk_mult(combo))
-    budget = risk0 - loss_at(p.volume, p.price_open)
-    per_lot = loss_at(1.0, px)
-    step_ = info.volume_step or 0.01
-    lots = p.volume * pyr[1]
-    if per_lot > 0:
-        lots = min(lots, budget / per_lot)
-    lots = round(int(lots / step_ + 1e-9) * step_, 8)
-    if lots < (info.volume_min or step_):
-        return handled(f"not added - {lots} lots under the minimum (room at the stop ${budget:,.2f})")
-    req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": name, "volume": lots, "type": kind, "price": px, "sl": sl,
-           "tp": p.tp or 0.0, "deviation": 20, "magic": p.magic, "comment": ("pyr " + combo)[:31],
-           "type_time": mt5.ORDER_TIME_GTC, "type_filling": mt5.ORDER_FILLING_IOC}
-    r = send(req, f"pyramid {combo} {'buy' if d > 0 else 'sell'} {lots} @ {px} sl {sl:.5g}")
-    done[combo] = key
-    if r is not None:
-        STATE.setdefault("pyr_tickets", {})[str(r.order)] = int(p.ticket)
-        keep = sorted(STATE["pyr_tickets"], key=int)[-200:]
-        STATE["pyr_tickets"] = {k: STATE["pyr_tickets"][k] for k in keep}
-        STATE["risk"][str(r.order)] = loss_at(lots, px)
-        if not ACC.dry:
-            REP.notify(f"{BOT}: הוספה לעסקה מנצחת", f"{pretty(combo)}\n+{lots} @ {px:g} · הסטופ של הכול {sl:g}\n"
-                       f"בסטופ: ${loss_at(p.volume, p.price_open) + loss_at(lots, px):,.0f} (סיכון העסקה ${risk0:,.0f})",
-                       tags=["heavy_plus_sign"])
-    save_state()
-
-
-def opposite_same_tf(combo, sym, tf, d):
-    """Another strategy of this bot holding (or waiting with a limit order on) the opposite side of the same instrument
-    on the same timeframe -> its combo, else None. Used only when live/bots/<bot>.json has "opp_same_tf": "skip" (an
-    approved card): the second, opposite trade is not opened (user, 16.11.2026, bot 2 USDJPY 1-hour - SC295 sell and
-    SE02 buy open together, "a bit risky"; agents/conflict_study.py same_tf: skipping it was better on 2025 and 2026)."""
-    for p in ACC.positions():
-        c = combo_of(p.magic)
-        parts = c.split("|")
-        if c != combo and len(parts) == 3 and parts[1] == tf and parts[2] == sym and (1 if p.type == 0 else -1) != d:
-            return c
-    for c, pk in (STATE.get("pending") or {}).items():
-        parts = c.split("|")
-        if c != combo and len(parts) == 3 and parts[1] == tf and parts[2] == sym and int(pk.get("dir") or 0) == -d:
-            return c
-    return None
 
 
 def step(combo, sid, tf, sym, off):
@@ -1328,19 +833,7 @@ def step(combo, sid, tf, sym, off):
     if feed_now - forming >= pd.Timedelta(minutes=TF_MIN[tf]) or now - forming >= pd.Timedelta(minutes=TF_MIN[tf] + 30):
         DIAG[combo]["stale"] = True
         return False    # the newest bar has not appeared yet (just started, or market closed): try again soon
-    # how far behind the wall clock this symbol's own feed is while its market runs (12.11.2026: on bots 3-4 the 5-minute
-    # US shares entered 15 minutes after the backtest, also mid-session - a delayed feed?): published for the agents
-    q = STATE.setdefault("feed_lag", {}).setdefault(sym, [])
-    q.append(DIAG[combo]["feed_lag_min"])
-    del q[:-60]
-    late_tol = pd.Timedelta(minutes=min(5.0, TF_MIN[tf] / 4))
-    started = forming
-    late = feed_now - forming > late_tol
-    if late and (ft := bar_first_tick(sym, tf, forming)) is not None and ft > forming:
-        started = ft                            # e.g. a stock's first bar of the session: its first trade
-        DIAG[combo]["bar_first_tick"] = ft.isoformat()
-        late = feed_now - started > late_tol
-    bar_o, bar_h, bar_l = float(df["o"].iloc[-1]), float(df["h"].iloc[-1]), float(df["l"].iloc[-1])
+    late = feed_now - forming > pd.Timedelta(minutes=min(5.0, TF_MIN[tf] / 4))
     df.iloc[-1, df.columns.get_indexer(["h", "l", "c"])] = df["o"].iloc[-1]
     dummy = df.iloc[[-1]].copy()
     dummy.index = [forming + pd.Timedelta(minutes=TF_MIN[tf])]
@@ -1352,11 +845,6 @@ def step(combo, sid, tf, sym, off):
         IM._CACHE.clear()                       # fresh partner bars every time, never yesterday's
     be = (0.6, be_offset(sym, float(df["c"].iloc[-3])))
     tr = R.run(df, strat(sid, df, sym, tf), 0.0, breakeven=be, session_exit=exit_mask(df, sym, tf))
-    limit = "entry_pullback" in plan_of(combo)
-    pend = tr.iloc[0:0]
-    if len(tr):
-        pend = tr[tr["reason"] == "pending"]
-        tr = tr[tr["reason"] != "pending"]
     if len(tr):
         DIAG[combo]["last_signal"] = f"{tr.iloc[-1]['time']} {'buy' if tr.iloc[-1]['dir'] > 0 else 'sell'} {tr.iloc[-1]['reason']}"
         DIAG[combo]["trades_in_window"] = int(len(tr))
@@ -1366,8 +854,7 @@ def step(combo, sid, tf, sym, off):
         # FTMO restricted event: no position from 3 minutes before to 3 minutes after it.
         # An open one is closed before FTMO's ban starts; a new entry of this bar is dropped.
         if nw == "close" and pos:
-            for q in pos:                                            # the pyramid's added part too
-                close(q, "restricted news ahead (Standard rule)")   # closed for the news: not reopened
+            close(pos[0], "restricted news ahead (Standard rule)")   # closed for the news: not reopened
         new = tr[tr["time"] == forming] if len(tr) else tr
         if len(new) and STATE["entry"].get(combo) != str(new.iloc[-1]["time"]):
             STATE["entry"][combo] = str(new.iloc[-1]["time"])       # a signal inside the window is not taken, not later either
@@ -1377,98 +864,50 @@ def step(combo, sid, tf, sym, off):
         NEWS_RETRY.add(combo)
         return False
     NEWS_RETRY.discard(combo)
-    pk = STATE.get("pending", {}).get(combo)
-    if pk:
-        if pos:
-            # the limit order filled: from the replay's trade of that order on, managed like every other trade
-            m = tr[tr["time"] >= pd.Timestamp(pk["sig"])] if len(tr) else tr
-            if m.empty:
-                return                                 # the fill bar is still forming: the broker's stop / target hold it
-            STATE["entry"][combo] = str(m.iloc[0]["time"])
-            STATE["pending"].pop(combo, None)
-            save_state()
-            log(f"{combo}: limit order {pk['order']} filled - trade of {m.iloc[0]['time']}")
-            if not ACC.dry:
-                REP.notify(f"{BOT}: עסקה נפתחה (לימיט)", f"{pretty(combo)}\n{'קנייה' if pk['dir'] > 0 else 'מכירה'} בלימיט {pk['lim']:g} · הפסד בסטופ ${pk['risk']:,.0f}",
-                           tags=["chart_with_upwards_trend" if pk["dir"] > 0 else "chart_with_downwards_trend"])
-        elif len(pend) and (pend["time"].astype(str) == pk["sig"]).any() and order_alive(pk):
-            return                                     # the order is still waiting, as in the backtest
-        elif not cancel_pending(combo, "the backtest's order is no longer waiting"):
-            return
 
     def stop_now():
         """The stop as the backtest has it after the last CLOSED bar (the helper bars must not move it)."""
         tc = R.run(df.iloc[:-2], strat(sid, df.iloc[:-2], sym, tf), 0.0, breakeven=be, session_exit=exit_mask(df.iloc[:-2], sym, tf))
-        tc = tc[tc["reason"] != "pending"] if len(tc) else tc
         m = tc[tc["time"].astype(str) == STATE["entry"].get(combo, "")] if len(tc) else tc
         return float(m.iloc[-1]["stop_last"]) if len(m) and m.iloc[-1]["reason"] == "סוף הנתונים" else None
 
     if pos:
-        # the pyramid's added part (pyramid_add) is a second position of the same combo: the trade itself is the
-        # other one, and every stop move / close goes to both
-        added = {int(k) for k in (STATE.get("pyr_tickets") or {})}
-        pos = sorted(pos, key=lambda q: (q.ticket in added, q.ticket))
         p = pos[0]
         mine = tr[tr["time"].astype(str) == STATE["entry"].get(combo, "")] if len(tr) else tr
         if mine.empty:
             return                                     # not in the replay (data edge): broker SL/TP manage it
         t = mine.iloc[-1]
         reason = str(t["reason"])
-        part = plan_of(combo).get("partial")
-        pt = t.get("part_time") if hasattr(t, "get") else None
-        if part and pt is not None and not pd.isna(pt) and pd.Timestamp(pt) <= last_closed \
-                and STATE.setdefault("part", {}).get(combo) != STATE["entry"].get(combo, ""):
-            # the backtest took the partial exit on a closed bar: the same here, once per trade
-            if close_part(p, part[0]):                # done, or too small to split (then not tried again)
-                STATE["part"][combo] = STATE["entry"].get(combo, "")
-                save_state()
         if reason == "יעד" or "סטופ" in reason:
             if t["exit_time"] > forming and (sn := stop_now()) is not None:   # only the helper bars "hit" it
-                for q in pos:
-                    move_stop(q, sn)
-                pyramid_add(combo, sym, pos, t, sn, last_closed)
+                move_stop(p, sn)
             elif t["exit_time"] == forming and "פער פתיחה" in reason:
-                for q in pos:
-                    close(q, "stop (gap)")             # the new stop is already past the price: out at market
+                close(p, "stop (gap)")                 # the new stop is already past the price: out at market
             return                                     # real stop/target: the broker closes it at that price
         if reason == "סוף הנתונים" or not (t["exit_time"] <= last_closed or (
                 t["exit_time"] == forming and reason in ("סיגנל יציאה", "סיגנל הפוך"))):
             if (sn := stop_now()) is not None:
-                for q in pos:
-                    move_stop(q, sn)
-                pyramid_add(combo, sym, pos, t, sn, last_closed)
+                move_stop(p, sn)
             return
-        if any(close(q, reason) is None for q in pos):  # exit signal / opposite signal / time / session end
+        if close(p, reason) is None:                   # exit signal / opposite signal / time / session end
             return                                     # the close failed: never open a new trade next to it
         # an opposite signal may open the next trade on this same bar: fall through
-    src = pend if limit else tr                       # limit combos enter only through a waiting limit order
-    if not len(src):
+    if not len(tr):
         return
-    t = src[src["time"] == forming]
+    t = tr[tr["time"] == forming]
     if t.empty:
         return
     t = t.iloc[-1]
     if STATE["entry"].get(combo) == str(t["time"]):
         return                                         # already handled this entry
     if late:
-        # the bar is already older than a quarter of it (max 5 min) after its first trade: a restart, a reconnect
-        # or a late feed. The backtest entered at the bar's open. A limit combo, or a price that moved away from that
-        # open (more than LATE_TOL_R of the stop distance) or a bar that already touched the stop / target, would be
-        # another trade: skipped (and remembered as handled). Otherwise the same trade is still there: taken
-        # (user task 12.11.2026 - restarts after installs had dropped entries; every saved one is recorded).
-        mins = (feed_now - started).total_seconds() / 60
-        ok, why = (False, "limit order combo") if limit else late_entry_ok(
-            sym, int(t["dir"]), bar_o, float(t["stop_px"]), float(t["target_px"]), bar_h, bar_l)
-        if not ok:
-            log(f"skip {combo}: entry signal seen {mins:.1f} min into the bar ({why})")
-            STATE["entry"][combo] = str(t["time"])
-            save_state()
-            return
-        log(f"{combo}: entry signal seen {mins:.1f} min into the bar, {why} - the backtest's trade is still there, entering")
-        le = STATE.setdefault("late_entries", [])
-        le.append({"t": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": combo, "bar": str(t["time"]),
-                   "min": round(mins, 1), "why": why})
-        STATE["late_entries"] = le[-100:]
+        # the bar is already older than a quarter of it (max 5 min): a restart, a reconnect or a late feed.
+        # The backtest entered at the bar's open; entering now at another price changes the stop distance
+        # and every level in R, so this entry is skipped (and remembered as handled).
+        log(f"skip {combo}: entry signal seen {(feed_now - forming).total_seconds() / 60:.1f} min into the bar")
+        STATE["entry"][combo] = str(t["time"])
+        save_state()
+        return
     if U.CLASS.get(sym) == "stock":
         tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
         loc = pd.Timestamp.now(tz="UTC").tz_convert(tz)
@@ -1498,8 +937,6 @@ def step(combo, sid, tf, sym, off):
         v = rules["vol"]
         if sp is not None and (("max_pct" in v and sp > v["max_pct"]) or ("min_pct" in v and sp <= v["min_pct"])):
             why = f"volatility filter: stop {sp:.3f}% of the price (approved by the user)"
-    if not why and ACC.cfg.get("opp_same_tf") == "skip" and (o := opposite_same_tf(combo, sym, tf, int(t["dir"]))):
-        why = f"{o} holds the opposite side of {sym} on the same timeframe (approved bot rule)"
     if why:
         log(f"skip {combo}: {why}")
         STATE["entry"][combo] = str(t["time"])         # handled: this entry is not taken
@@ -1508,10 +945,6 @@ def step(combo, sid, tf, sym, off):
     risk = ACC.allowed_risk(mult)
     if risk <= 0:
         log(f"skip {combo}: too close to the daily 4.5% / total 9% limit")
-        return
-    if limit:
-        until = forming + pd.Timedelta(minutes=TF_MIN[tf] * int(t["bars_left"]))
-        place_limit(combo, sym, int(t["dir"]), float(t["entry_px"]), float(t["stop_px"]), float(t["target_px"]), t["time"], until, risk, mult, rules)
         return
     open_trade(combo, sym, int(t["dir"]), float(t["stop_px"]), float(t["target_px"]), t["time"], risk, mult, rules)
 
@@ -1782,9 +1215,7 @@ def closed_doc(days=60):
             "gross": round(sum(d.profit for d in ds), 2), "swap": round(sum(d.swap for d in ds), 2),
             "comm": round(sum(d.commission + getattr(d, "fee", 0.0) for d in ds), 2),
             "net": round(sum(d.profit + d.swap + d.commission + getattr(d, "fee", 0.0) for d in ds), 2),
-            "why": outs[-1].comment, "reason": REASON.get(outs[-1].reason, ""), "pip": pip_size(o.symbol),
-            # the pyramid's added part of another position (pyramid_add): not a trade of its own
-            **({"pyr_of": STATE["pyr_tickets"][key]} if key in (STATE.get("pyr_tickets") or {}) else {})}
+            "why": outs[-1].comment, "reason": REASON.get(outs[-1].reason, ""), "pip": pip_size(o.symbol)}
     if len(cache) > 3000:
         for k in sorted(cache, key=lambda k: cache[k]["close_t"])[:len(cache) - 3000]:
             cache.pop(k)
@@ -1811,11 +1242,6 @@ CANDLE_TF = {"1m": "M1", "5m": "M5", "15m": "M15", "1h": "H1", "4h": "H4", "1d":
 
 def _candles_now(q):
     sym, tf = q.get("symbol", ""), CANDLE_TF.get(q.get("tf", ""))
-    if tf and mt5.symbol_info(sym) is None:
-        try:                                   # the virtual bots' names (US100 -> this server's name)
-            sym = mt5_name(sym)
-        except Exception:  # noqa: BLE001
-            pass
     if not tf or mt5.symbol_info(sym) is None:
         return {"error": "unknown symbol or timeframe"}
     t0 = pd.Timestamp(int(q["from"]), unit="s", tz="UTC")
@@ -1849,41 +1275,6 @@ def serve_candles():
 
 
 TUN.ROUTES["/candles"] = candles
-
-
-# live prices for the virtual bots' screens (user, 13.11.2026: "see the movement every second"): the app asks for its
-# symbols; MetaTrader is read only in the main loop (4 times a second, refresh_quotes), the web thread returns the cache
-QUOTE_WANT, QUOTE_CACHE = {}, {}
-
-
-def quotes(q):
-    syms = [x for x in str(q.get("symbols", "")).split(",") if x][:30]
-    now = time.time()
-    for s_ in syms:
-        QUOTE_WANT[s_] = now
-    return {"quotes": {s_: QUOTE_CACHE[s_] for s_ in syms if s_ in QUOTE_CACHE}, "t": int(now)}
-
-
-def refresh_quotes():
-    now = time.time()
-    for s_, at in list(QUOTE_WANT.items()):
-        if now - at > 30:                     # nobody looks at it any more
-            QUOTE_WANT.pop(s_, None)
-            QUOTE_CACHE.pop(s_, None)
-            continue
-        try:
-            try:
-                nm = mt5_name(s_)
-            except Exception:  # noqa: BLE001
-                nm = s_
-            t = mt5.symbol_info_tick(nm) or mt5.symbol_info_tick(s_)
-            if t is not None and t.bid:
-                QUOTE_CACHE[s_] = [float(t.bid), float(t.ask), int(list(server_to_utc([int(t.time)]))[0].timestamp())]
-        except Exception:  # noqa: BLE001
-            pass
-
-
-TUN.ROUTES["/quotes"] = quotes
 
 FAIL_HE = {10018: "השוק של הנכס הזה סגור עכשיו", 10027: "המסחר האוטומטי (Algo Trading) כבוי ב־MetaTrader", 10026: "המסחר האוטומטי חסום בשרת",
            10004: "המחיר זז, נסה שוב", 10021: "אין מחיר כרגע", 10030: "סוג הביצוע לא נתמך", 10031: "אין חיבור לשרת", 10017: "המסחר בנכס הזה חסום"}
@@ -1946,19 +1337,14 @@ def dashboard_state(ai, pos, ds_bal, now):
         "bot": MON["name"], "updated_utc": now.isoformat(), "account": ai.login, "server": ai.server,
         "initial": ACC.initial, "risk": MON["cfg"]["risk"], "free_risk_at_breakeven": ACC.free,
         "balance": ai.balance, "equity": ai.equity, "day_start": ds_bal,
-        "trade_allowed": bool(getattr(ai, "trade_allowed", True)),     # the broker's permission for the whole account
         "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "combos": MON["combos"],
         "positions": positions_doc(pos), "live_url": TUN.URL["url"],
         "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:],   # the bot's log stays on the computer only
         "closed": closed_doc()[-500:], "skips": [{k: v for k, v in x.items() if k != "key"} for x in STATE.get("skips", [])[-300:]],
-        "late_entries": STATE.get("late_entries", [])[-100:],    # entries taken late, still the backtest's trade
         "lows": STATE.get("lows", {}), "label": BOT, "withdrawals": withdrawals_doc(),
         # typical spread per symbol as this broker quotes it (median of what the bot saw): checks the backtest's
         # cost estimate for the shares that have no bid/ask history
         "spreads": {k: {"median": float(np.median(q)), "n": len(q)} for k, q in SPREADS.items() if q},
-        "feed_lag": {k: {"median": float(np.median(q)), "max": float(max(q)), "n": len(q)}
-                     for k, q in (STATE.get("feed_lag") or {}).items() if q},
-        "breaks": {k: v for k, v in BREAK_LEN.items() if v},     # learned breaks over 2 hours (server weekday-minute: minutes)
         "app_push": REP.PUSH_STAT, "managed": MANAGED,
         "risk_mult": {c: risk_mult(c) for c in MON["combos"] if risk_mult(c) != 1.0},
         "combo_rules": {c: r for c in MON["combos"] if (r := combo_rules(c))},
@@ -2084,9 +1470,6 @@ def main():
         REP.notify(f"{name}: עסקה בלי שיוך", f"{len(stray)} עסקאות פתוחות עם מספר של הבוט שלא שייך לאף אסטרטגיה: "
                    + ", ".join(f"{p.symbol} #{p.ticket}" for p in stray), priority=4, tags=["warning"])
     ACC = Account(cfg, args.dry_run)
-    PLANS.update({c: p for c, p in (cfg.get("plans") or {}).items() if isinstance(p, dict)})
-    for c in PLANS:
-        log(f"approved plan {c}: {PLANS[c]} -> {plan_of(c)}")
     global CLOSE_BREAKS
     CLOSE_BREAKS = bool(cfg.get("close_before_breaks"))
     if CLOSE_BREAKS:
@@ -2160,7 +1543,6 @@ def main():
                 now = pd.Timestamp.now(tz="UTC")
                 stock_session_close(now)
                 break_close(now)
-                pending_guard(now)
                 for combo, sid, tf, sym in combos:
                     bar_start = now.floor(f"{TF_MIN[tf]}min")
                     if done.get(combo) == bar_start or (now - bar_start).total_seconds() < 3:
@@ -2172,9 +1554,8 @@ def main():
                     handled = True
                     try:
                         handled = step(combo, sid, tf, sym, off) is not False
-                    except Exception as e:  # noqa: BLE001
+                    except Exception:  # noqa: BLE001
                         log(f"error {combo}:\n{traceback.format_exc()}")
-                        note_skip(f"skip {combo}: error {type(e).__name__}: {e}")   # published for the agents
                         REP.notify(f"{BOT}: שגיאה", f"{pretty(combo)}\n{traceback.format_exc()[-300:]}", priority=4,
                                    tags=["warning"], key="err:" + combo, every=3600)
                     if handled:
@@ -2204,7 +1585,6 @@ def main():
                     serve_candles()
                     serve_actions()
                     refresh_live()
-                    refresh_quotes()
             except Exception:  # noqa: BLE001
                 pass
             time.sleep(0.25)

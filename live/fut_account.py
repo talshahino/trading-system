@@ -25,28 +25,9 @@ COMM = 1.50          # $ per micro, round turn (assumed: typical prop-firm cost;
 SLIP_TICKS = 1.0     # one tick lost per trade on average (stop exits, the session close)
 PLAN = "Pro $100K"
 INITIAL, TARGET, MAX_LOSS, DAILY_LOSS, MAX_MICROS, CONSISTENCY = 100_000.0, 6_000.0, 4_500.0, 1_500.0, 100, 0.5
-RISK_V5, RISK_V1M = 0.004, 0.0             # share of the balance risked per trade (set from the simulation)
-# the user's gap method, 1 hour / 5 minutes (card abb187377383, approved 12.11.2026): the only track since then
-RISK_TAL = 0.004
-# the method's tracks (each approved by the manager on its own backtest, 12.11.2026):
-#   tal    1 hour / 5 minutes   card abb187377383  2026 unseen +0.18R / 254 trades
-#   tal4h  4 hours / 1 hour     card 6694a91a9563  2026 unseen +0.07R / 35 trades (user: "maybe there are more pairs")
-# These are the fallback: live/watch_own.py lays live/bots/bot6.json over them on every load ("tal" = the main track,
-# "tal_tracks" = the others, "risk" per track - 13.11.2026), where agents/builder.py builds approved cards at once.
-TAL_TRACKS = {"tal": (("1h", "5m", 2), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"}),
-              "tal4h": (("4h", "1h", 1), {"GBODY": 1.5, "MIN_GAP": 0.6, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 48, "PROT": "none"})}
-TAL_PAIR, TAL_CFG = TAL_TRACKS["tal"]
-TAL_NAME = {"tal": "שעה / 5 דק'", "tal4h": "4 שעות / שעה"}
-TAL_COMBO = {"tal": "TAL|1Hour", "tal4h": "TAL|4Hour"}
-RISK = {"v5": 0.0, "v1m": 0.0, "tal": RISK_TAL, "tal4h": RISK_TAL}   # the old gap tracks are replaced (12.11.2026)
-# the 1-minute track is stopped (card 9a0bc4200f6d, 12.11.2026): it loses in bot 6's world (backtest -0.08R, 2026 -0.04R)
+RISK_V5, RISK_V1M = 0.004, 0.00075          # share of the balance risked per trade (set from the simulation)
 ROOM_USE = 0.9                              # open risk may use at most 90% of the room left to either limit
-# ONE MICRO UP TO (bot 6's smart agent, 14.11.2026 night; "tal_one_micro_up_to" in live/bots/bot6.json, 0 = off): a gap
-# track's trade whose one micro contract risks more than the track's risk is taken with ONE contract when that contract
-# risks at most this share of the balance (never over the bot's own risk, ONE_CAP) and fits the room left - instead of
-# skipped. The same in the whole-bot test (tal_gap.account, lim["contracts"]["one_up_to"]).
-ONE_UP_TO, ONE_CAP = 0.0, 0.004
-VERSION = 3                 # 2 (10.11.2026): one name per gap; 3 (12.11.2026): the user's gap method - a fresh $100K account
+VERSION = 2                 # 2 (10.11.2026): one name per gap - a fresh account
 
 
 def session_masks(df):
@@ -106,20 +87,14 @@ class Account:
     def size(self, symbol, trk, entry, stop, t, open_recs):
         if self.a.get("breached"):
             return 0, "breach"
-        if RISK.get(trk, 0.0) <= 0:
-            return 0, "off"                     # the track is stopped
         day = tday(t)
         bal = self.balance()
         room = min(bal - self.level(day), bal - (self.day_start(day) - DAILY_LOSS))
         room = ROOM_USE * room - sum(r.get("risk_usd") or 0 for r in open_recs)
         per = per_contract(symbol, entry, stop)
-        want = bal * RISK.get(trk, 0.0)
+        want = bal * (RISK_V5 if trk == "v5" else RISK_V1M)
         n = int(min(want, room) // per)
         n = min(n, MAX_MICROS - sum(r.get("n") or 0 for r in open_recs))
-        one = min(float(ONE_UP_TO or 0.0), ONE_CAP)
-        if n < 1 and one > 0 and trk in TAL_TRACKS and room >= per and per <= bal * one \
-                and MAX_MICROS - sum(r.get("n") or 0 for r in open_recs) >= 1:
-            n = 1
         if n < 1:
             return 0, "room" if room < want else "small"
         return n, None
@@ -164,4 +139,4 @@ class Account:
                 "best_day": round(max(days.values()), 2) if days else 0.0,
                 "consistency_ok": bool(profit > 0 and days and max(days.values()) <= CONSISTENCY * profit),
                 "breached": self.a.get("breached"), "passed": self.a.get("passed"),
-                "risk_v5_pct": RISK["v5"] * 100, "risk_v1m_pct": RISK["v1m"] * 100, "risk_tal_pct": RISK_TAL * 100, "max_micros": MAX_MICROS}
+                "risk_v5_pct": RISK_V5 * 100, "risk_v1m_pct": RISK_V1M * 100, "max_micros": MAX_MICROS}

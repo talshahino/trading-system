@@ -85,51 +85,6 @@ def card(bot, kind, title, what, train, unseen, *, whole=None, halves_=None, nei
     return c
 
 
-NEW_MIN_TOTAL = 3.0       # R on 2026: the least a new strategy must add to the total
-
-# A SMOOTHER CURVE (the user, 16.11.2026 20:28, task mgr1611curve: "many small wins every day rather than one big win";
-# data/agents/tal_thinking.md: "a way that clearly smooths the curve on both periods and still earns comes to the
-# manager as a card even if its total is somewhat lower - the manager decides"). Until 17.11.2026 such a card was
-# rejected by the per-trade rule below before the manager could weigh it (bot 6's smart agent, 17.11 night: bot 6's
-# first two curve cards, 7d78b68e5e0c and 22290561222a, both "rejected"). A card whose change says test "curve" carries
-# c["curve"] = {"train": {"live": {...}, "way": {...}}, "unseen": {...}}, each with sum (R), green (% green days),
-# dd (largest fall from the peak, R), worst (worst day, R) and sd (daily spread, R). It passes when on EACH period:
-# more green days (CURVE_GREEN points), a smaller fall, a worst day not worse, at least CURVE_KEEP of today's total -
-# and THE MAIN GOAL (more profit AND less risk): the profit per unit of daily risk (sum / sd) is not lower, so less
-# profit is accepted only together with at least as much less risk (the same rule as "more profit only with less risk").
-CURVE_GREEN = 2.0
-CURVE_KEEP = 0.8
-
-
-def curve_ok(c):
-    """(ok, reason) for a card with a "curve" block (see above); (None, "") when the block is missing / incomplete."""
-    cv = c.get("curve") or {}
-    parts = []
-    for p, he in (("train", "עד 2025"), ("unseen", "2026")):
-        x = cv.get(p) or {}
-        a, b = x.get("way") or {}, x.get("live") or {}
-        if any(d.get(k) is None for d in (a, b) for k in ("sum", "green", "dd", "worst", "sd")):
-            return None, ""
-        ra = a["sum"] / a["sd"] if a["sd"] else None
-        rb = b["sum"] / b["sd"] if b["sd"] else None
-        fails = []
-        if not (a["sum"] > 0 and a["sum"] >= CURVE_KEEP * b["sum"]):
-            fails.append(f"סה\"כ {b['sum']:+.1f}R ← {a['sum']:+.1f}R (פחות מ־{CURVE_KEEP:.0%})")
-        if a["green"] < b["green"] + CURVE_GREEN:
-            fails.append(f"ימים ירוקים {b['green']}% ← {a['green']}%")
-        if not a["dd"] < b["dd"]:
-            fails.append(f"ירידה מהשיא {b['dd']}R ← {a['dd']}R")
-        if a["worst"] < b["worst"]:
-            fails.append(f"היום הגרוע {b['worst']}R ← {a['worst']}R")
-        if ra is None or rb is None or ra < rb:
-            fails.append(f"רווח ליחידת סיכון יומי {rb or 0:.1f} ← {ra or 0:.1f}")
-        if fails:
-            return False, f"{he}: " + ", ".join(fails)
-        parts.append(f"{he}: ימים ירוקים {b['green']}% ← {a['green']}%, ירידה {b['dd']}R ← {a['dd']}R, "
-                     f"רווח ליחידת סיכון {rb:.1f} ← {ra:.1f}")
-    return True, "; ".join(parts)
-
-
 def judge(c):
     """The manager's fixed rules. Returns (tier, reason in Hebrew). Gentle enough that proposals keep coming
     (user, 10.11.2026: 'some will come by luck, they will be lowered later by the live results')."""
@@ -141,47 +96,8 @@ def judge(c):
         return "watch", "מעט מדי עסקאות בתקופה שלא נראתה - נשמר להמשך"
     if u["mean"] <= 0:
         return "rejected", f"הפסיד בתקופה שלא נראתה ({u['mean']:+.2f}R לעסקה)"
-    # THE GOAL (user, 12.11.2026, data/agents/objective.md): chosen only on the period to 2025-12-31, 2026 only shows
-    # the result. A proposal that lost to 2025 and is positive only in 2026 was chosen by 2026 - out of hundreds of
-    # scout strategies some are positive in 2026 by chance (manager, 13.11.2026: 18 of 32 approved new strategies,
-    # e.g. SC002|1Hour|ARM in four bots, -0.09R to 2025 and +0.00R in 2026)
-    t = c.get("train") or {}
-    if t.get("mean") is not None and (t.get("eff_n") or t.get("n") or 0) >= 10 and t["mean"] <= 0:
-        return "rejected", (f"הפסיד בתקופה עד 2025 ({t['mean']:+.2f}R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 "
-                            "ועלול להיות מזל")
-    # the same for a barely positive choosing period: a new strategy must earn its place on the period to 2025 too -
-    # at least NEW_MIN_TOTAL R there, or a clear t >= 1 (manager, 14.11.2026: SC069|15Min|XAUUSD, +0.01R x 107 = +1.2R
-    # to 2025 and t 0.15, was approved into bots 1, 4 and 5 on its 2026 result; SC020|15Min|GBPJPY +0.1R, t 0.01 -
-    # both picked by 2026, against objective.md)
-    tn = (t.get("eff_n") or t.get("n") or 0)
-    if (c["kind"] == "new" and base is None and t.get("mean") is not None and tn >= 10
-            and tn * t["mean"] < NEW_MIN_TOTAL and (t.get("t") or 0) < 1.0):
-        return "watch", (f"עד 2025 בסך הכל רק {tn * t['mean']:+.1f}R (t {t.get('t') or 0:.2f}) - "
-                         f"היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך")
-    # a new strategy must add to the TOTAL: under +3R on the whole of 2026 it only adds risk and a share of the daily
-    # loss limit (manager, 13.11.2026: SC021|5Min|XAUUSD, +0.001R x 188 = +0.2R in 2026, +0.02R to 2025, approved into
-    # bot 5; SC002|1Hour|ARM, +0.2R in 2026, ran in four bots)
-    if c["kind"] == "new" and base is None and (u.get("eff_n") or u.get("n") or 0) * u["mean"] < NEW_MIN_TOTAL:
-        return "watch", (f"ב־2026 בסך הכל רק {(u.get('eff_n') or u.get('n') or 0) * u['mean']:+.1f}R "
-                         f"({u['mean']:+.3f}R לעסקה) - פחות מ־{NEW_MIN_TOTAL:g}R, לא מגדיל את הרווח הכולל. נשמר להמשך")
-    if (c.get("change") or {}).get("test") == "curve" and c.get("curve"):
-        ok, why = curve_ok(c)
-        if ok:
-            return "regular", ("עקומה חלקה יותר בשתי התקופות, והרווח ליחידת סיכון לא יורד (בקשת טל 16.11, "
-                               "הרבה ניצחונות קטנים) - " + why)
-        if ok is False:
-            return "rejected", "העקומה לא חלקה מספיק בשתי התקופות - " + why
     if base is not None and u["mean"] <= base:
         return "rejected", f"לא טוב מהמצב הקיים בתקופה שלא נראתה ({u['mean']:+.2f}R מול {base:+.2f}R)"
-    # more per trade but fewer trades can mean less money in total (a limit entry, a filter): the total on the
-    # unseen period must not fall below today's (manager, 12.11.2026 - bot 1 TV21|15Min|ASML: +0.35R x 73 = +25.7R
-    # was approved over +0.16R x 292 = +46.6R)
-    bn = (c.get("baseline") or {}).get("n")
-    if base is not None and bn and u.get("n"):
-        tot, tot0 = u["n"] * u["mean"], bn * base
-        if tot < tot0:
-            return "watch", (f"יותר רווח לעסקה אבל פחות רווח בסך הכל בתקופה שלא נראתה ({u['n']} עסקאות {tot:+.1f}R"
-                             f" מול {bn} עסקאות {tot0:+.1f}R היום) - נשמר להמשך")
     gain = None if base is None else u["mean"] - base
     if gain is not None and gain < 0.02:
         return "watch", f"טוב מהמצב הקיים רק ב־{gain:+.3f}R לעסקה בתקופה שלא נראתה - קטן מדי, נשמר להמשך"
@@ -202,49 +118,9 @@ def judge(c):
                        + (f", {gain:+.2f}R מעל המצב הקיים" if gain is not None else "") + f"){note}")
 
 
-def json_layout(cards):
-    """indent=1 for a readable file; without the whitespace when the file is big (15.11.2026: bot 2's 25k cards)."""
-    return {"indent": 1} if len(cards) <= 2000 else {"separators": (",", ":")}
-
-
-REJECTED_SHARDS = 4      # cards_rejected_0..3.json - always all four, so no stale shard is ever left behind
-
-
-def rejected_new(c):
-    return c.get("kind") == "new" and c.get("tier") == "rejected"
-
-
 def write_cards(bot, cards, extra=None):
-    """cards.json + the rejected new strategies in REJECTED_SHARDS files by id (manager, 15.11.2026 night: with the
-    scout's pack bot 1 has 45,125 cards - cards.json 36 MB even with the short rejected cards; GitHub refused bot 2's
-    40 MB file (422) and bot 1's 21:40 run was lost, so the app and the GitHub agents saw 14.11 09:01's file).
-    agent_manager / autodecide read every cards*.json, agent_portfolio.families_of reads them too."""
     d = CARDS_DIR / bot
     d.mkdir(parents=True, exist_ok=True)
-    now = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
-    keep = [c for c in cards if not rejected_new(c)]
-    shards = [[] for _ in range(REJECTED_SHARDS)]
-    for c in cards:
-        if rejected_new(c):
-            shards[int(hashlib.sha1(str(c.get("id")).encode()).hexdigest()[:6], 16) % REJECTED_SHARDS].append(c)
-    (d / "cards.json").write_text(json.dumps({"bot": bot, "updated": now, "cards": keep, **(extra or {}),
-                                              "rejected_new_in": f"cards_rejected_0..{REJECTED_SHARDS - 1}.json"},
-                                             ensure_ascii=False, default=str, **json_layout(keep)),
+    (d / "cards.json").write_text(json.dumps({"bot": bot, "updated": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
+                                              "cards": cards, **(extra or {})}, ensure_ascii=False, indent=1, default=str),
                                   encoding="utf-8")
-    for i, sh in enumerate(shards):
-        (d / f"cards_rejected_{i}.json").write_text(json.dumps({"bot": bot, "updated": now, "cards": sh},
-                                                               ensure_ascii=False, default=str, **json_layout(sh)),
-                                                    encoding="utf-8")
-
-
-def read_cards(bot, with_rejected=True):
-    """Every card of the bot's nightly experiments: cards.json + the rejected-new shards (see write_cards)."""
-    d = CARDS_DIR / bot
-    names = ["cards.json"] + ([f"cards_rejected_{i}.json" for i in range(REJECTED_SHARDS)] if with_rejected else [])
-    out = []
-    for nm in names:
-        try:
-            out += json.loads((d / nm).read_text(encoding="utf-8")).get("cards", [])
-        except Exception:  # noqa: BLE001
-            pass
-    return out

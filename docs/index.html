@@ -149,10 +149,6 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .btn.ghost{background:var(--seg);color:var(--ink)}
 .btn.danger{background:var(--neg-soft);color:var(--neg)}
 .btn.ok{background:var(--pos);color:#fff}
-/* the review: the button he pressed stays pressed - right in green, wrong in red (user, 17.11.2026) */
-#rvLv .btn[data-ok].on{background:var(--pos);color:#fff}
-#rvLv .btn[data-bad].on{background:var(--neg,#D0453A);color:#fff}
-#rvBox .btn.picked{outline:3px solid var(--ink);outline-offset:2px}
 .btn:disabled{opacity:.5;cursor:default}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .msg{font-size:13px;margin-top:8px;min-height:18px}
@@ -257,10 +253,6 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .tr .tg{display:grid;grid-template-columns:22px minmax(0,1.25fr) minmax(0,1fr) auto 14px;gap:10px;align-items:center}
 .tr .d{font-size:12.5px;line-height:1.35;font-family:var(--mono);direction:ltr;text-align:right}
 .tr .s{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tbadge{display:inline-block;min-width:20px;padding:1px 7px;margin-inline-start:6px;border-radius:999px;background:#D0453A;color:#fff;font-size:12px;font-weight:700;line-height:18px;text-align:center;vertical-align:middle}
-.brand{position:relative}#brandBadge{position:absolute;top:-4px;inset-inline-start:24px;margin:0}
-#dSubt button[data-n]:not([data-n=""])::after{content:attr(data-n);display:inline-block;min-width:18px;padding:0 6px;margin-inline-start:6px;border-radius:999px;background:#D0453A;color:#fff;font-size:12px;font-weight:700;line-height:18px}
-.tr .s .ss{font-weight:500;font-size:12px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis}
 .tr .pl{font-family:var(--mono);font-weight:700;font-size:15.5px;direction:ltr;unicode-bidi:isolate}
 .arr{width:20px;height:20px}
 .pb{margin:12px 2px 2px;direction:ltr}
@@ -397,7 +389,6 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="subt" id="dSubt" role="tablist"></div>
       <div class="banner" id="dBan"></div>
       <div id="dBody"></div>
-      <div id="dTalk"></div>
     </div>
   </section>
 
@@ -425,8 +416,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="row"><span class="mut">אפשר להתקין את הדשבורד כאפליקציה במסך הבית.</span><button class="btn" id="installBtn">התקן אפליקציה</button></div></div>
     <div class="card"><h3>מחשב הבוטים</h3>
       <div class="row"><i class="dot" id="mDot"></i><span id="mState">מחפש את המנהל…</span></div>
-      <div class="msg mut" id="mVer"></div>
-      <div class="row" id="mBack" style="margin-top:6px"></div><div class="msg" id="mBackMsg"></div></div>
+      <div class="msg mut" id="mVer"></div></div>
     <div class="card" id="updCard" style="display:none"><h3>עדכון</h3>
       <div id="updText" style="margin-bottom:10px"></div>
       <div class="row"><button class="btn ok" id="updBtn">אשר עדכון</button><span class="mut">העסקאות הפתוחות נשארות עם הסטופ והיעד, והבוטים עולים מחדש תוך כדקה.</span></div>
@@ -435,13 +425,11 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div id="autoText" class="mut" style="margin-bottom:10px;line-height:1.55"></div>
       <div class="row" id="autoActs"></div>
       <div class="msg" id="autoMsg"></div></div>
-    <div class="card" id="pushCard"><h3>התראות</h3>
+    <div class="card"><h3>התראות</h3>
       <div class="row"><span class="mut" id="pushState">ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה.</span><button class="btn" id="pushBtn">הפעל התראות</button></div>
       <div class="msg" id="pushMsg"></div></div>
     <div class="card"><h3>מנהל הבוטים</h3>
-      <div class="row"><span class="mut" id="botsHint">ההצעות של הסוכנים לכל בוט אחרי הסינון של המנהל, האסטרטגיות של כל בוט והמלצות הסיכון. שום דבר לא משתנה בלי אישור שלך.</span><button class="btn" id="botsBtn">מנהל הבוטים</button></div>
-      <div class="row" style="margin-top:8px"><span class="mut">בכל יום שבוט מסיים בהפסד: מה הפסיד, למה, ומה עושים כדי שזה לא יחזור.</span><button class="btn ghost" id="lrBtn">דוחות הפסד</button></div>
-      <div class="row" style="margin-top:8px"><span class="mut">ההערות שלך על עסקאות והתשובות של הסוכנים: מה הבינו, מה בדקו ומה שינו.</span><button class="btn ghost" id="convBtn">שיחות עם הסוכנים</button></div></div>
+      <div class="row"><span class="mut" id="botsHint">ההצעות של הסוכנים לכל בוט אחרי הסינון של המנהל, האסטרטגיות של כל בוט והמלצות הסיכון. שום דבר לא משתנה בלי אישור שלך.</span><button class="btn" id="botsBtn">מנהל הבוטים</button></div></div>
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
     <div class="card" id="logCard"><h3>לוגים</h3>
       <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
@@ -487,15 +475,12 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 
 <div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
 <div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>מנהל הבוטים</b></div>
-  <div id="bpTalk"></div><div id="bpDec"></div><div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
-<div class="page" id="decPg"><div class="ph"><button class="back" id="decBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>כל ההחלטות של המנהל</b></div><div id="decBody"></div></div>
-<div class="page" id="convPg"><div class="ph"><button class="back" id="convBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>שיחות עם הסוכנים</b></div><div id="convBody" style="padding:0 14px 40px"></div></div>
-<div class="page" id="lrPg"><div class="ph"><button class="back" id="lrBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>דוחות הפסד</b></div><div id="lrBody" style="padding:0 14px 40px;line-height:1.55"><div class="empty">טוען…</div></div></div>
+  <div id="bpDec"></div><div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
 <div class="page" id="wbPg"><div class="ph"><button class="back" id="wbBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>בוט סקלפינג · צפייה</b></div><div id="wbBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="wcPg"><div class="ph"><button class="back" id="wcBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="wcTitle"></b></div><div id="wcBody"></div></div>
 <div class="page" id="chartPg" style="z-index:36"><div class="ph"><button class="back" id="cpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="cpTitle"></b></div>
-  <div id="cpInfo" style="padding:0 16px"></div><div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div><div id="cpNotes" style="padding:0 16px 24px"></div></div>
+  <div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div></div>
 <div class="ask" id="ask"><div class="box"><h4 id="askT">האם אתה בטוח?</h4><p id="askB"></p><div class="row"><button class="btn danger" id="askYes" style="background:#D0453A;color:#fff">כן, סגור</button><button class="btn ghost" id="askNo">לא</button></div></div></div>
 <div class="pop" id="pop"><div class="box"><h4 id="popT"></h4><p id="popB"></p><button class="btn" id="popOk">הבנתי</button></div></div>
 <nav class="tabs" id="tabs">
@@ -691,72 +676,6 @@ async function livePoll() {
     listBusy = false;
   }
 }
-/* live prices for the virtual bots (5, 6, 7) - user, 13.11.2026: "see the change every second". Their state comes from
-   GitHub every minute or two; the prices come from bot 1's MetaTrader through the manager every second, and the open
-   trades' price, profit and the equity are recomputed from them (risk x the move in R, like the bot itself). */
-const VIRT = ["watch_own", "watch_scout", "watch_fut", "news_bot"];
-let qBusy = false, qT = 0;
-async function getQuotes(syms) {
-  if (!syms.length || !mgr || !mgrInfo) return null;
-  const r = await fetch(`${mgr}/quotes?symbols=${encodeURIComponent(syms.join(","))}`, {cache: "no-store"});
-  if (!r.ok) return null;
-  return (await r.json()).quotes || null;
-}
-async function virtLive() {
-  const accOn = $("v-acc").classList.contains("on"), n = accOn && UI.view === "det" ? UI.cur : null;
-  if (!n || !VIRT.includes(n) || qBusy || Date.now() - qT < 1000) return;
-  const s = found[n], pos = (s && s.positions) || [];
-  if (!pos.length) return;
-  qBusy = true; qT = Date.now();
-  try {
-    const q = await getQuotes([...new Set(pos.map(p => p.symbol))]);
-    if (q && UI.cur === n) {
-      let tot = 0;
-      pos.forEach(p => { const x = q[p.symbol]; if (!x) { tot += p.pnl || 0; return; }
-        const px = p.side === "buy" ? x[0] : x[1], risk = -(p.sl_usd || 0), d = p.open - p.sl;
-        p.now = px; if (risk > 0 && d) p.pnl = Math.round(risk * (px - p.open) / d * 100) / 100; tot += p.pnl || 0; });
-      if (s.balance != null) s.equity = Math.round((s.balance + tot) * 100) / 100;
-      renderDet(true);
-    }
-  } catch (e) {}
-  qBusy = false;
-}
-setInterval(virtLive, 250);
-// the chart of an open virtual trade: its last candle moves with the price
-const LC = {sym: null, side: "buy", charts: []};
-async function chartLive() {
-  if (!LC.sym || !LC.charts.length || qBusy) return;
-  if (!$("wcPg").classList.contains("on") && !$("chartPg").classList.contains("on")) { LC.sym = null; LC.charts = []; return; }
-  qBusy = true;
-  try {
-    const q = await getQuotes([LC.sym]), x = q && q[LC.sym];
-    if (x) { const px = LC.side === "buy" ? x[0] : x[1];
-      LC.charts.forEach(c => { if (!c.last) return; const t = c.last.time, tq = x[2] + c.off, nt = t + c.step;
-        if (tq >= nt) { const k = t + Math.floor((tq - t) / c.step) * c.step; c.last = {time: k, open: px, high: px, low: px, close: px}; }
-        else c.last = {...c.last, high: Math.max(c.last.high, px), low: Math.min(c.last.low, px), close: px};
-        try { c.s.update(c.last); } catch (e) {} }); }
-  } catch (e) {}
-  qBusy = false;
-}
-setInterval(chartLive, 1000);
-const TFK = {60: "1m", 300: "5m", 900: "15m", 3600: "1h", 14400: "4h", 86400: "1d"};
-// a chart follows the price from its last candle to now and on (open and closed trades - user, 13.11.2026): the candles
-// missing since the chart's end come from MetaTrader (bot 1 for the virtual bots, the bot itself for the real ones)
-async function liveChart(sym, side, s, bars, off, stepSec, bot) {
-  if (!bars || !bars.length) return;
-  if (LC.sym !== sym) { LC.sym = sym; LC.charts = []; }
-  LC.side = side;
-  const b = bars[bars.length - 1], c = {s, off, step: stepSec, last: {time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]}};
-  LC.charts.push(c);
-  const tf = TFK[stepSec], src = bot || "bot1";
-  if (!tf || !mgr || !mgrInfo || Date.now() / 1000 - b[0] < stepSec * 2) return;
-  try {
-    const r = await fetch(`${mgr}/bot/${encodeURIComponent(src)}/candles?symbol=${encodeURIComponent(sym)}&tf=${tf}&from=${b[0]}&to=${Math.floor(Date.now() / 1000)}`, {cache: "no-store"});
-    const j = await r.json();
-    (j.bars || []).filter(x => x[0] >= b[0]).forEach(x => { const k = {time: x[0] + off, open: x[1], high: x[2], low: x[3], close: x[4]};
-      try { s.update(k); c.last = k; } catch (e) {} });
-  } catch (e) {}
-}
 function updConn() {
   const on = !!mgrInfo;
   $("lConn").className = "dot " + (on ? "on" : mgr || mgrSeen ? "off" : "");
@@ -844,60 +763,29 @@ async function pairKey() {         // once per device: take the address key, so 
   pairing = false;
 }
 async function act(path, body = {}) {
-  if (!mgr) await findMgr();
   if (!mgr) throw new Error("אין חיבור למחשב הבוטים");
-  const go = () => fetch(mgr + path, {method: "POST", headers: {"Content-Type": "application/json", "X-Pin": getPin()}, body: JSON.stringify(body)});
-  let r;
-  // the computer's address changes when the manager restarts (an update installs - user, 17.11.2026: "Failed to
-  // fetch" at 18:38 after the 18:32 install): find the new address and send again, up to ~40 seconds
-  for (let i = 0; ; i++) {
-    try { r = await go(); break; }
-    catch (e) {
-      if (i >= 3) throw new Error("אין חיבור למחשב הבוטים כרגע (אולי הוא עולה מחדש אחרי עדכון). נסה שוב בעוד דקה.");
-      apiTry = 0; await findMgr(); await new Promise(res => setTimeout(res, 3000 + 7000 * i));
-    }
-  }
+  const r = await fetch(mgr + path, {method: "POST", headers: {"Content-Type": "application/json", "X-Pin": getPin()}, body: JSON.stringify(body)});
   let j = {}; try { j = await r.json(); } catch (e) {}
   if (!r.ok) throw new Error(j.error || ("שגיאה " + r.status));
   return j;
 }
 const note = (id, text, ok) => { $(id).className = "msg " + (ok === true ? "pos" : ok === false ? "neg" : "mut"); $(id).textContent = text; };
-let roleAsked = false, subChecked = false;
-// once per opening: this device's notifications are registered again under its role (owner: every notification;
-// view code: none - user, 12.11.2026), silently (no test notification)
-async function autoSub() {
-  try {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window) || Notification.permission !== "granted") return;
-    const sub = await (await navigator.serviceWorker.ready).pushManager.getSubscription();
-    if (sub) await act("/subscribe", {subscription: sub.toJSON(), quiet: true});
-  } catch (e) {}
-}
+let roleAsked = false;
 function renderMgr() {
   const m = mgrInfo;
   if (m && getPin() && !getRole() && !roleAsked) { roleAsked = true; act("/auth").then(j => setRole(j.role || "owner")).catch(() => {}); }
-  if (m && !subChecked) { subChecked = true; autoSub(); }
   if (m && $("vpinMsg") && !$("vpinMsg").textContent) note("vpinMsg", m.viewer_set ? "יש כרגע קוד צפייה פעיל." : "אין כרגע קוד צפייה.");
   $("mDot").className = "dot " + (m ? "on" : mgr ? "off" : "");
   $("mState").textContent = m ? "המנהל מחובר" : (!mgr && needCode) ? "הקלד את הקוד הסודי למטה כדי להתחבר למחשב." : mgr ? "המנהל לא עונה. בדוק שהמחשב דולק."
     : mgrSeen ? "המנהל פועל, אבל החיבור לאפליקציה עוד לא עלה. מנסה שוב…" : "המנהל עוד לא הותקן במחשב.";
-  $("mVer").textContent = m ? `גרסה ${m.version || "?"} · ${m.push_devices} מכשירים של המנהל מקבלים התראות` : "";
+  $("mVer").textContent = m ? `גרסה ${m.version || "?"} · ${m.push_devices} מכשירים מקבלים התראות` : "";
   $("pushState").textContent = !m ? "ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה." : m.watchdog_push
     ? "פעיל: התראות מהבוטים, וגם התראה אם המחשב כבה או מתנתק."
     : "התראות מהבוטים פעילות. להתראה כשהמחשב כבה צריך להוסיף הרשאה ב־GitHub (פעם אחת).";
   $("updCard").style.display = m && m.update ? "" : "none";
-  if (m && m.update) $("updText").innerHTML = `<b>${esc(m.update.title)}</b> <span class="mut num">${esc(m.update.sha)}</span>`
-    + (m.update.auto ? `<div class="mut" style="margin-top:4px">יותקן לבד ברגע שקט${m.update.waiting_min ? ` (מחכה ${m.update.waiting_min} דק')` : ""}. אפשר להתקין עכשיו.</div>` : "");
-  if (m && m.update) $("updBtn").textContent = m.update.auto ? "התקן עכשיו" : "אשר עדכון";
+  if (m && m.update) $("updText").innerHTML = `<b>${esc(m.update.title)}</b> <span class="mut num">${esc(m.update.sha)}</span>`;
   const au = m && m.auto_update, own = getRole() !== "viewer";
-  // Tal, 15.11.2026: the automatic-updates card and the notifications card only when they need him - the card shows
-  // when automatic updates are paused; going back a version is a small link in the bots' computer card
-  $("autoCard").style.display = au && !au.on ? "" : "none";
-  $("mBack").innerHTML = au && au.on && au.prev && own ? `<button class="btn ghost" id="mBackBtn" style="font-size:.85rem;padding:6px 10px">חזור לגרסה הקודמת (<span class="num">${esc(au.prev)}</span>)</button>` : "";
-  if ($("mBackBtn")) $("mBackBtn").onclick = async () => {
-    if (!(await askYes("לחזור לגרסה הקודמת?", "הבוטים ייעצרו לרגע ויעלו בגרסה הקודמת. העדכונים האוטומטיים יושהו עד שתפעיל אותם שוב.", "כן, חזור"))) return;
-    try { await act("/update/rollback"); note("mBackMsg", "חוזר לגרסה הקודמת. הבוטים עולים מחדש תוך כדקה.", true); } catch (e) { note("mBackMsg", e.message, false); }
-  };
-  try { $("pushCard").style.display = (window.Notification && Notification.permission === "granted" && m && m.push_devices > 0) ? "none" : ""; } catch (e) {}
+  $("autoCard").style.display = au ? "" : "none";
   if (au) {
     const last = au.last || {};
     $("autoText").innerHTML = au.on
@@ -1026,8 +914,8 @@ $("pushBtn").onclick = async () => {
     const key = (await (await fetch(mgr + "/vapid")).json()).key;
     let sub = await reg.pushManager.getSubscription();
     if (!sub) sub = await reg.pushManager.subscribe({userVisibleOnly: true, applicationServerKey: b64u(key)});
-    const j = await act("/subscribe", {subscription: sub.toJSON()});
-    note("pushMsg", j.push ? "ההתראות פעילות. אמורה להגיע עכשיו התראת בדיקה." : "צפייה בלבד: למכשיר הזה לא נשלחות התראות. ההתראות מגיעות רק למנהל.", j.push ? true : undefined);
+    await act("/subscribe", {subscription: sub.toJSON()});
+    note("pushMsg", getPin() ? "ההתראות פעילות. אמורה להגיע עכשיו התראת בדיקה." : "ההתראות פעילות במכשיר הזה (צפייה בלבד).", true);
   } catch (e) { note("pushMsg", e.message, false); }
 };
 let installEvt = null;
@@ -1042,10 +930,6 @@ function drawer(open) {
 }
 $("connBtn").onclick = () => drawer(!$("drawer").classList.contains("on"));
 $("drawerClose").onclick = () => drawer(false);
-// a page opened from the management drawer (bots' manager, conversations, loss reports...) opens in front: the drawer
-// closes by itself (user, 13.11.2026: the page opened behind it)
-{ const mo = new MutationObserver(ms => { if (ms.some(m => m.target.classList.contains("on")) && $("drawer").classList.contains("on")) drawer(false); });
-  document.querySelectorAll(".page").forEach(pg => mo.observe(pg, {attributes: true, attributeFilter: ["class"]})); }
 $("scrim").onclick = () => { drawer(false); panel("addDrawer", false); };
 addEventListener("keydown", e => { if (e.key === "Escape") { drawer(false); panel("addDrawer", false); } });
 
@@ -1216,8 +1100,7 @@ function stateWord(a) { return a.preparing ? ["מכין…", "mid"] : a.archived
 function accCard(a) {
   const s = found[a.name];
   const [w, c] = stateWord(a);
-  const tn = TALKN[a.name] || 0;
-  const head = `<div class="ah"><i class="dot ${c}"></i><span class="an">${esc(nick(a))}</span>${tn ? `<span class="tbadge" title="תשובות חדשות מהסוכן">💬 ${tn}</span>` : ""}<span class="am">${esc(botL(a))}${a.login ? " · #" + String(a.login).slice(-4) : ""} · ${w}</span></div>`;
+  const head = `<div class="ah"><i class="dot ${c}"></i><span class="an">${esc(nick(a))}</span><span class="am">${esc(botL(a))}${a.login ? " · #" + String(a.login).slice(-4) : ""} · ${w}</span></div>`;
   if (!s) return `<div class="acard" data-acc="${esc(a.name)}">${head}<div class="lbl" style="margin-top:10px">${a.prepare_error ? `<span class="neg">ההכנה נכשלה: ${esc(a.prepare_error)}</span>`
     : a.preparing ? "מכין עותק MetaTrader לחשבון הזה… (כדקה)" : a.running ? "MetaTrader נפתח והבוט מתחבר. הנתונים הראשונים יופיעו תוך דקה־שתיים." : "עוד אין נתונים מהחשבון הזה."}</div></div>`;
   const k = calc(s, a);
@@ -1230,11 +1113,7 @@ function accCard(a) {
 }
 function renderList() {
   const all = accList(), vis = all.filter(a => !a.hidden);
-  // the active accounts in the bots' order 1 -> 7, whatever was opened or closed (user, 16.11.2026); two accounts of the
-  // same bot: the newer first
-  const BOTN = a => ({watch_own: 5, watch_scout: 5.5, watch_fut: 6, news_bot: 7})[a.bot || a.name] || +((String(a.bot || a.name).match(/^bot(\d)/) || [])[1] || 99);
-  const act = vis.filter(a => !a.archived).sort((x, y) => BOTN(x) - BOTN(y) || String(y.created || "").localeCompare(String(x.created || ""))),
-    hist = all.filter(a => a.archived), hid = all.filter(a => a.hidden);
+  const act = vis.filter(a => !a.archived), hist = all.filter(a => a.archived), hid = all.filter(a => a.hidden);
   let h = "";
   if (UI.view === "list") {
     h = `<div class="sec">חשבונות פעילים</div>` + (act.length ? act.map(accCard).join("") : '<div class="empty" style="margin-bottom:12px">אין חשבונות פעילים. מוסיפים חשבון בכפתור "הוספת חשבון" למטה.</div>');
@@ -1286,52 +1165,18 @@ function renderDet(light) {
          : a.virtual && s && (a.running || Date.now() - new Date(s.updated_utc) < 6 * 60000)
            ? `<span class="pos">● פעיל</span><span>מתעדכן כל 2 דקות · עודכן ${il(s.updated_utc)}</span>`      // virtual: read from GitHub, not live
          : `<span class="neg">● לא מחובר</span>${s ? `<span>עודכן ${il(s.updated_utc)}</span>` : ""}`);
-  $("dSubt").innerHTML = SUBS.map(([k, l]) => `<button data-s="${k}" aria-selected="${UI.sub === k}" data-n="${k === "ov" ? (TALKN[UI.cur] || "") : ""}">${l}${k === "tr" && s && s.positions && s.positions.length ? `<span class="badge">${s.positions.length}</span>` : ""}</button>`).join("");
+  $("dSubt").innerHTML = SUBS.map(([k, l]) => `<button data-s="${k}" aria-selected="${UI.sub === k}">${l}${k === "tr" && s && s.positions && s.positions.length ? `<span class="badge">${s.positions.length}</span>` : ""}</button>`).join("");
   const ban = $("dBan");
   const age = s ? (Date.now() - new Date(s.updated_utc).getTime()) / 60000 : 0;
   if (s && s.halted_until) { ban.className = "banner on neg"; ban.textContent = "עצירת חירום: ההפסד היומי הגיע ל־4.5%. הבוט סגר הכל ולא ייכנס לעסקאות עד חצות (שעון פראג)."; }
   else if (s && !a.archived && a.enabled !== false && !live && age >= (a.virtual ? 15 : 10)) { ban.className = "banner on warn"; ban.textContent = `החשבון לא מדווח כבר ${age < 120 ? Math.round(age) + " דקות" : (age / 60).toFixed(1) + " שעות"}. ${a.virtual ? "בוט הצפייה קורא נרות מבוט 1: בדוק שהמחשב ובוט 1 פועלים (בסוף שבוע השוק סגור)." : "בדוק שהמחשב ו־MetaTrader פתוחים."}`; }
   else ban.className = "banner";
   if (!s) { $("dBody").innerHTML = '<div class="empty">עוד אין נתונים מהחשבון הזה. הם מופיעים כמה דקות אחרי שהבוט מתחיל לעבוד.</div>'; return; }
-  botTalk(s);
   if (UI.sub === "ov") ov(s, a, light);
   else if (UI.sub === "tr") trades(s, a, light);
   else if (!light && UI.sub === "st") statsTab(s, a);
   else if (!light && UI.sub === "ac") details(s, a);
   else if (!light && UI.sub === "wt") { WB.doc = s; wbRender($("dBody")); }
-}
-/* a conversation with this bot's agent about the bot as a whole (user, 16.11.2026: "bot 5 - almost every trade was in
-   profit at some point and in the end almost all lost"), under the overview; kept like a trade note (id "talk") and
-   answered by the conversation agent as the bot's agent. Outside dBody, so the minute refresh keeps what is typed. */
-function botTalk(s) {
-  const box = $("dTalk");
-  if (!box) return;
-  const show = UI.sub === "ov" && s && getRole() !== "viewer";
-  box.style.display = show ? "" : "none";
-  if (!show || box.dataset.bot === UI.cur) return;
-  box.dataset.bot = UI.cur;
-  // bot 5: Tal's review of the gap setups (17.11.2026) - his answers and what each kind earned
-  const rv = s && s.review, rl = (k, l) => { const x = rv[k] || {}; return x.n ? `<tr><td>${l}</td><td>${x.n}</td><td>${x.closed}</td><td class="${x.r >= 0 ? "pos" : "neg"}">${x.r >= 0 ? "+" : ""}${x.r}R</td><td>${x.win == null ? "—" : x.win + "%"}</td></tr>` : ""; };
-  const rvHtml = rv && rv.asked ? `<div class="h4" style="margin-top:18px">הסקירה שלך לפני כניסה</div><div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th></th><th>זיהויים</th><th>נסגרו</th><th>R</th><th>הצלחה</th></tr>
-      ${rl("yes_rules", "כן, לפי הכללים")}${rl("yes_own", "כן, עם התיקונים שלך")}${rl("no", "לא (מה שהכללים היו עושים)")}${rl("sleep", "שעות שינה, לפי הכללים")}${rl("unanswered", "לא נענו")}</table></div></div>` : "";
-  // bot 5: what its agent learned from his marks (user, 17.11.2026: "I want to know that it understands")
-  const L = s && s.learning, ST = {recorded: ["נרשם, נבדק בקרוב", ""], tested: ["נבדק על ההיסטוריה", "warn"], built: ["נכנס לבוט", "pos"]};
-  const lnHtml = L ? `<div class="h4" style="margin-top:18px">מה הסוכן למד מהסימונים שלך</div><div class="card">
-      <div class="kv"><div><small class="mut">סימונים בסך הכול</small><b>${L.marks}</b><small class="mut">${L.answers} תשובות כן/לא · ${L.notes} הערות</small></div>
-      <div><small class="mut">עסקאות שאפשר ללמוד מהן</small><b>${L.learnable}</b></div>
-      <div><small class="mut">למד מהן והפיק לקח</small><b class="pos">${L.learned}</b><small class="mut">${L.built} כבר נכנסו לבוט</small></div>
-      <div><small class="mut">עוד כמה סימונים עד שיבין</small><b>~${L.estimate}</b></div></div>
-      <div class="mut" style="margin-top:8px">כמה הוא מסכים איתך היום: על הסטופ ב־<b>${L.stop_agree ?? "—"}%</b> מהתשובות, על כן/לא ב־<b>${L.take_agree ?? "—"}%</b>. הוא יבין את השיטה כשיסכים איתך ב־80% ומעלה, וכשיהיו 30 תשובות לכל צמד גרפים ו־20 תשובות "לא" (מהן לומדים מה מבדיל לא מכן).${L.unclear && L.unclear.length ? ` עוד לא הפיק לקח מ־${L.unclear.length} עסקאות (תשובה בלי הסבר).` : ""}</div>
-      ${(L.lessons || []).map(x => `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line,#E6E9EE)"><span class="pill ${(ST[x.status] || ["", ""])[1]}">${(ST[x.status] || [x.status])[0]}</span> <span class="mut">מ־${x.n} עסקאות</span><div style="margin-top:4px">${esc(x.text || "")}</div></div>`).join("")}</div>` : "";
-  // bot 7: what its trades taught so far - by strategy, by the release's direction (17.11.2026)
-  const LN = s && s.learn, gt = (o, h) => { const e = Object.entries(o || {}); return e.length ? `<tr><th colspan="4">${h}</th></tr>` + e.map(([k, g]) => `<tr><td>${esc(k)}</td><td>${g.n}</td><td class="${g.r >= 0 ? "pos" : "neg"}">${g.r >= 0 ? "+" : ""}${g.r}R</td><td>${Math.round(100 * g.win / g.n)}%</td></tr>`).join("") : ""; };
-  const l7Html = LN && LN.n ? `<div class="h4" style="margin-top:18px">מה הבוט למד מהעסקאות (${LN.n} עסקאות)</div><div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th></th><th>עסקאות</th><th>R</th><th>הצלחה</th></tr>
-      ${gt(LN.by_kind, "לפי סוג")}${gt(LN.by_way, "פרסום: העסקה מול הכיוון שלו")}${gt(LN.by_verdict, "הנתון מול הצפי")}${gt(LN.by_sid, "לפי אסטרטגיה")}</table></div></div>` : "";
-  box.innerHTML = rvHtml + lnHtml + l7Html + `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
-      <textarea id="btTxt" rows="3" placeholder="דבר או כתוב לסוכן על הבוט כולו: מה ראית היום, מה מפריע לך, מה לבדוק…"></textarea>
-      <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="btMic">🎙 הקלטה</button><button class="btn" id="btSave">שלח לסוכן</button></div>
-      <div class="msg mut" id="btMsg"></div><div id="btList"></div></div>`;
-  tradeNotes({id: "talk"}, "bt", UI.cur);
 }
 $("dSubt").onclick = e => { const b = e.target.closest("[data-s]"); if (b) { if (UI.sub === "ov") SNAP.ov = $("dBody").innerHTML.replace(/\sid="[^"]*"/g, ""); UI.sub = b.dataset.s; $("dBody").innerHTML = ""; renderDet();
   setTimeout(() => SUBS.forEach(([k]) => { if (k !== UI.sub) snapTab(k); }), 400); } };
@@ -1533,9 +1378,6 @@ function bar(p) {
   const per = Math.abs(px - en) > 1e-9 ? p.pnl / ((px - en) * dir) : null;
   const slUsd = p.sl_usd ?? (p.sl && per ? per * (p.sl - en) * dir : null), tpUsd = tp ? (p.tp_usd ?? (per ? per * (tp - en) * dir : null)) : null;
   const usdL = v => v == null ? "—" : usd(v, true);
-  // prices as the instrument shows them (user, 17.11.2026: "SL 3869.871594880547"): the entry's decimals, at least 2 under 1000
-  const dpE = (String(en).split(".")[1] || "").length, dp = Math.min(5, Math.max(dpE, en >= 1000 ? 2 : en >= 10 ? 3 : 5));
-  const fp = v => v == null || v === "" || !isFinite(+v) ? v : (+(+v).toFixed(dp)).toString();
   return `<div class="pb"><div class="trk">
       <div class="seg-l" style="left:0;width:${(fe * 100).toFixed(2)}%;background:rgba(208,69,58,.14)"></div>
       <div class="seg-r" style="left:${(fe * 100).toFixed(2)}%;right:0;background:rgba(30,138,76,.14)"></div>
@@ -1544,42 +1386,13 @@ function bar(p) {
       <div class="ent" style="left:${(fe * 100).toFixed(2)}%"></div>
       <div class="cur" style="left:${(fc * 100).toFixed(2)}%;background:${u >= 0 ? "#1E8A4C" : "#D0453A"}"></div></div>
     <div class="lab" style="height:20px"><span class="m" style="left:${Math.max(12, Math.min(88, fe * 100)).toFixed(2)}%;top:3px">${en}</span></div>
-    <div class="lab" style="height:36px"><span style="left:0;top:0;line-height:1.35"><span class="neg">SL ${fp(sl0) || "—"}${p.sl && Math.abs(p.sl - sl0) > 1e-9 ? ` → ${fp(p.sl)}` : ""}</span><br><b class="${slUsd != null && slUsd >= 0 ? "pos" : "neg"}">${usdL(slUsd)}</b></span>
-      <span class="r pos" style="top:0;line-height:1.35;text-align:right">TP ${fp(tp) || "—"}<br><b>${tp ? usdL(tpUsd) : "—"}</b></span></div>
+    <div class="lab" style="height:36px"><span style="left:0;top:0;line-height:1.35"><span class="neg">SL ${sl0 || "—"}${p.sl && Math.abs(p.sl - sl0) > 1e-9 ? ` → ${p.sl}` : ""}</span><br><b class="${slUsd != null && slUsd >= 0 ? "pos" : "neg"}">${usdL(slUsd)}</b></span>
+      <span class="r pos" style="top:0;line-height:1.35;text-align:right">TP ${tp || "—"}<br><b>${tp ? usdL(tpUsd) : "—"}</b></span></div>
     <div class="way">${way}${be ? ' · <span class="pos">הסטופ בנקודת איזון ומעלה</span>' : ""}</div></div>`;
 }
-/* the strategy and the timeframe the trade ENTERED on, under the instrument (user, 16.11.2026). Bots 5-6 send entry_tf
-   for the gap tracks (their combo name carries the detection chart); everyone else's combo is "strategy|timeframe|instrument" */
-const STRAT_HE = {TAL: "שיטת הגאפ", OWN: "השיטה שלך", FUT: "השיטה שלך"};
-/* bot 7 (user, 17.11.2026): what each trade is about - the release (time, currency, title, forecast / actual, the
-   direction it pointed and whether the trade went that way), a shock, or a strategy with a release only nearby */
-function infoLine(f) {
-  if (!f || !f.kind) return "";
-  if (f.kind === "shock") return `<div class="ss">⚡ זעזוע ${esc(f.shock_dir || "")} ב־${esc((f.shock_t || "").slice(6))}, העסקה נגדו</div>`;
-  if (!f.rel_t) return "";
-  const it = (f.items || [])[0] || {};
-  return `<div class="ss">${f.kind === "other" ? "פרסום קרוב: " : "📰 "}${esc(f.rel_t.slice(6))} ${esc(it.cur || "")} ${esc(it.title || "")}${f.expect ? ` · צפוי: ${esc(f.expect)} · ${f.matched ? "העסקה איתו" : "העסקה נגדו"}` : it.actual ? ` · ${esc(it.verdict || "")}` : ""}</div>`;
-}
-function infoCard(f) {
-  if (!f || !f.kind) return "";
-  if (f.kind === "shock") return `<div class="card" style="margin:8px 0">⚡ ${esc(f.text || "")}</div>`;
-  if (!f.rel_t) return f.kind === "other" ? "" : `<div class="card" style="margin:8px 0">${esc(f.text || "")}</div>`;
-  const rows = (f.items || []).map(x => `<tr><td>${esc(x.cur)} ${esc(x.title)}${x.impact === "high" ? " 🔴" : ""}</td><td class="num">${esc(x.actual || "—")}</td><td class="num">${esc(x.forecast || "—")}</td><td class="num">${esc(x.previous || "—")}</td><td>${esc(x.verdict || "")}</td></tr>`).join("");
-  return `<div class="card" style="margin:8px 0"><div style="margin-bottom:6px"><b>${f.kind === "other" ? "פרסום קרוב (לא הסיבה לעסקה)" : "העסקה יצאה מהפרסום"}</b> · ${esc(f.rel_t)}</div>
-    <div class="tw"><table class="rt"><tr><th>פרסום</th><th>בפועל</th><th>צפי</th><th>קודם</th><th></th></tr>${rows}</table></div>
-    ${f.expect ? `<div style="margin-top:6px">הכיוון שהפרסום הצביע: <b>${esc(f.expect)}</b> · העסקה <b class="${f.matched ? "pos" : "neg"}">${f.matched ? "עם הכיוון" : "נגד הכיוון"}</b></div>` : (f.items || []).some(x => x.g) ? `<div class="mut" style="margin-top:6px">לנכס הזה אין כיוון חד מהפרסום (מדד: נתון טוב יכול גם להעלות וגם להוריד).</div>` : `<div class="mut" style="margin-top:6px">התוצאה בפועל עוד לא ידועה.</div>`}</div>`;
-}
-function stratLine(x) {
-  const p = String((x && x.combo) || "").split("|");
-  if (p.length < 3) return "";
-  // short: 1m / 5m / 15m / 1H / 4H (user, 16.11.2026)
-  const sh = v => !v ? "" : String(v).replace(/^(\d+)Min$/, "$1m").replace(/^(\d+)Hour$/, "$1H").replace(/^(\d+)Day$/, "$1D").replace(/^(\d+)h$/, "$1H").replace(/^(\d+)d$/, "$1D");
-  const tf = sh(x.entry_tf || (p[0] === "TAL" ? (p[1].match(/^\d+(?:Min|Hour)(\d+[mh])$/) || [])[1] : p[1]));
-  return `<div class="ss">${esc(STRAT_HE[p[0]] || p[0])}${tf ? " · " + esc(tf) : ""}</div>` + infoLine(x.info);   // "SC326 · 5m" (user, 16.11.2026)
-}
-const trRow = (side, t, sym, pl, key, extra = "", x = null) => `<div class="tr" data-t="${esc(key)}"><div class="tg">${side === "buy" ? ICON.up : ICON.down}
+const trRow = (side, t, sym, pl, key, extra = "") => `<div class="tr" data-t="${esc(key)}"><div class="tg">${side === "buy" ? ICON.up : ICON.down}
   <div class="d">${t ? dOnly(t) + "<br>" + tOnly(t) : "—"}</div>
-  <div class="s"><bdi>${esc(sym)}</bdi>${stratLine(x)}</div><div class="pl ${cls(pl)}">${usd(pl, true)}</div><span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></div>${extra}</div>`;
+  <div class="s"><bdi>${esc(sym)}</bdi></div><div class="pl ${cls(pl)}">${usd(pl, true)}</div><span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></div>${extra}</div>`;
 const TH = '<div class="th"><span></span><span>פתיחה</span><span>נכס</span><span>רווח/הפסד</span><span></span></div>';
 function filtered(s) {
   const f = UI.filt, q = f.q.trim().toLowerCase(), now = Date.now();
@@ -1590,7 +1403,7 @@ function filtered(s) {
 }
 function trades(s, a, light) {
   const can = viaMgr(UI.cur) && !a.archived, ps = s.positions || [];
-  const open = ps.map(p => `<div class="tcard">${trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p), p)}
+  const open = ps.map(p => `<div class="tcard">${trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p))}
     ${p.ticket ? `<div class="tfoot">${slider("t:" + p.ticket, `גרור לסגירת העסקה ב־${esc(p.symbol)}`, false, can)}</div>` : ""}</div>`).join("");
   const openH = `<div class="h4">עסקאות פעילות <span class="badge">${ps.length}</span></div>
     <div class="tcards">${open || '<div class="empty">אין עסקאות פעילות כרגע.</div>'}</div>
@@ -1605,7 +1418,7 @@ function trades(s, a, light) {
     <div class="tl" id="trClosed"></div>`;
   const draw = () => {
     const list = filtered(s);
-    $("trClosed").innerHTML = TH + (list.length ? list.slice(0, 300).map(c => trRow(c.side, c.open_t || c.close_t, c.symbol, c.net, "c" + c.id, "", c)).join("") : '<div class="empty" style="border-radius:0">אין עסקאות סגורות שמתאימות.</div>');
+    $("trClosed").innerHTML = TH + (list.length ? list.slice(0, 300).map(c => trRow(c.side, c.open_t || c.close_t, c.symbol, c.net, "c" + c.id)).join("") : '<div class="empty" style="border-radius:0">אין עסקאות סגורות שמתאימות.</div>');
     $("tfb").classList.toggle("on", UI.filt.day !== "all" || UI.filt.side !== "all" || UI.filt.res !== "all");
   };
   const segs = () => {
@@ -1648,7 +1461,7 @@ function tradePage(x, isOpen) {
       <div><div class="k">פיפס</div><div class="v num ${cls(pips || 0)}">${pf(pips)}</div></div>
       <div><div class="k">משך</div><div class="v num">${t.open_t ? dur(t.open_t, t.close_t || new Date()) : "—"}</div></div>
       <div><div class="k">אסטרטגיה</div><div class="v"><bdi>${esc(c.s)}</bdi> · ${esc(c.t)}</div></div></div>
-    <button class="vbtn" id="vChart">הצג גרף · הערה לסוכן</button>
+    <button class="vbtn" id="vChart">הצג גרף</button>
     <div class="h4">$ מחיר</div><div class="lst">${li("סוג", t.side === "buy" ? "קנייה" : "מכירה", t.side === "buy" ? "pos" : "neg")}${li("פתיחה", `<span class="num">${t.open_px ?? "—"}</span>`)}${li(isOpen ? "מחיר נוכחי" : "סגירה", `<span class="num">${t.close_px ?? "—"}</span>`)}</div>
     <div class="h4">🛡 הגנת עסקה</div><div class="lst">${li("SL", `<span class="num">${sl || "—"}</span>`)}${t.sl && sl && Math.abs(t.sl - sl) > 1e-9 ? li("SL אחרון (אחרי הזזה)", `<span class="num">${t.sl}</span>`) : ""}
       ${li("SL פיפס", `<span class="num">${sl && t.open_px != null ? pf((sl - t.open_px) * dir / pip) : "—"}</span>`)}${li("TP", `<span class="num">${tp || "—"}</span>`)}
@@ -1660,151 +1473,7 @@ function tradePage(x, isOpen) {
   $("vChart").onclick = () => chartPage();
   $("tradePg").classList.add("on"); $("tradePg").scrollTop = 0;
 }
-$("tpBack").onclick = () => { $("tradePg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } };
-
-/* the user's note on a trade (13.11.2026): spoken (the phone's speech-to-text, Hebrew) or typed, kept by the manager
-   with the trade and read by the agent of the bot that made it */
-const TN = {rec: null, voice: false};
-/* the conversation on a trade (13.11.2026): Tal's notes (kept by the manager) and the agents' answers
-   (data/agents/trade_replies.json, written by the conversation agent every half hour and the bots' agents) */
-const REPLIES_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/data/agents/trade_replies.json?t=${Math.floor(Date.now() / 60000)}`;
-const NOTES_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/trade_notes_state.json?t=${Math.floor(Date.now() / 60000)}`;
-let REP_DOC = null, REP_T = 0, NOTES_DOC = null;
-async function repliesDoc(force) {
-  if (!REP_DOC || force || Date.now() - REP_T > 60000) { try { REP_DOC = await (await fetch(force ? REPLIES_URL().replace(/t=\d+/, "t=" + Date.now()) : REPLIES_URL(), {cache: "no-store"})).json(); REP_T = Date.now(); } catch (e) { REP_DOC = REP_DOC || {bots: {}}; } }
-  return REP_DOC;
-}
-const seenGet = () => { try { return JSON.parse(localStorage.getItem("seenReplies") || "{}"); } catch (e) { return {}; } };
-const seenAdd = keys => { try { const o = seenGet(); keys.forEach(k => o[k] = 1); localStorage.setItem("seenReplies", JSON.stringify(o)); } catch (e) {} };
-async function threadHtml(bot, id, notes) {
-  const rd = await repliesDoc(), reps = ((rd.bots || {})[bot] || {})[id] || [];
-  const items = [...(notes || []).map(n => ({...n, who: "tal"})), ...reps.map(r => ({...r, who: "agent"}))].sort((a, b) => String(a.at).localeCompare(String(b.at)));
-  seenAdd(reps.map(r => `${bot}|${id}|${r.at}`)); convBadge();
-  const waiting = (notes || []).some(n => !reps.some(r => r.re === n.at));
-  return items.map(n => n.who === "tal"
-    ? `<div style="margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--sunk)"><div class="mut" style="font-size:12px">${n.voice ? "🎙 " : ""}טל · ${dtF(n.at)}</div><div style="white-space:pre-wrap">${esc(n.text)}</div></div>`
-    : `<div style="margin-top:8px;padding:8px 10px;border-radius:10px;border:1px solid var(--line,#E6E9EE)"><div class="mut" style="font-size:12px">🤖 ${bot === "manager" ? "המנהל" : "הסוכן של הבוט"} · ${dtF(n.at)}</div><div style="white-space:pre-wrap">${esc(n.text)}</div>${n.did ? `<div class="mut" style="font-size:12px;margin-top:4px">${esc(n.did)}</div>` : ""}</div>`).join("")
-    + (waiting ? `<div class="mut" style="margin-top:8px;font-size:13px">⏳ ${bot === "manager" ? "המנהל" : "הסוכן"} יענה בתוך שעה בערך</div>` : "");
-}
-// "שיחות עם הסוכנים": every conversation, newest first, with the number of answers not seen yet on the button
-async function convData() {
-  const rd = await repliesDoc();
-  try { NOTES_DOC = await (await fetch(NOTES_URL(), {cache: "no-store"})).json(); } catch (e) { NOTES_DOC = NOTES_DOC || {bots: {}}; }
-  const th = {}, seen = seenGet();
-  for (const [bot, tr] of Object.entries((NOTES_DOC && NOTES_DOC.bots) || {})) for (const [id, ns] of Object.entries(tr)) (th[bot + "|" + id] ||= {bot, id, notes: [], reps: []}).notes = ns;
-  for (const [bot, tr] of Object.entries(rd.bots || {})) for (const [id, rs] of Object.entries(tr)) (th[bot + "|" + id] ||= {bot, id, notes: [], reps: []}).reps = rs;
-  const list = Object.values(th).map(x => ({...x, last: [...x.notes, ...x.reps].map(y => y.at).sort().pop() || "",
-    unseen: x.reps.filter(r => !seen[`${x.bot}|${x.id}|${r.at}`]).length})).sort((a, b) => b.last.localeCompare(a.last));
-  return list;
-}
-/* new answers in the running conversations (user, 16.11.2026: "no notification, but a sign"): the manager's on the logo
-   and on the "מנהל הבוטים" button, each bot's on its card in the accounts list and on its "מבט על" tab. Seen = shown in
-   the conversation once. */
-let TALKN = {};
-async function talkBadges() {
-  try {
-    const rd = await repliesDoc(), seen = seenGet(), n = {};
-    for (const [bot, tr] of Object.entries(rd.bots || {})) {
-      const k = (tr.talk || []).filter(r => !seen[`${bot}|talk|${r.at}`]).length;
-      if (k) n[bot] = k;
-    }
-    const changed = JSON.stringify(n) !== JSON.stringify(TALKN); TALKN = n;
-    const m = n.manager || 0;
-    if ($("botsBtn")) $("botsBtn").textContent = m ? `מנהל הבוטים (${m} חדשות)` : "מנהל הבוטים";
-    let lb = $("brandBadge");
-    if (!lb && $("brandBtn")) { lb = document.createElement("span"); lb.id = "brandBadge"; lb.className = "tbadge"; $("brandBtn").appendChild(lb); }
-    if (lb) { lb.textContent = m; lb.style.display = m ? "" : "none"; }
-    if (changed) { if (UI.view === "list") renderList(); else if (UI.view === "det") { const b = document.querySelector('#dSubt [data-s="ov"]'); if (b) b.dataset.n = TALKN[UI.cur] || ""; } }
-  } catch (e) {}
-}
-async function convBadge() {
-  talkBadges();
-  try { const l = await convData(), n = l.reduce((a, x) => a + x.unseen, 0); if ($("convBtn")) $("convBtn").textContent = n ? `שיחות עם הסוכנים (${n} חדשות)` : "שיחות עם הסוכנים"; } catch (e) {}
-}
-const BOTNAME = n => ({watch_own: "בוט 5", watch_scout: "בוט 5ב", watch_fut: "בוט 6", news_bot: "בוט 7", manager: "המנהל"})[n] || (n.match(/^bot(\d)/) ? "בוט " + n.match(/^bot(\d)/)[1] : n);
-async function convOpen() {
-  $("convPg").classList.add("on"); $("convBody").innerHTML = '<div class="empty">טוען…</div>';
-  const l = await convData();
-  if (!l.length) { $("convBody").innerHTML = '<div class="empty">עוד אין שיחות. בעמוד הגרף של כל עסקה אפשר להקליט הערה לסוכן.</div>'; return; }
-  $("convBody").innerHTML = l.map((x, i) => { const tr = (x.notes[0] || {}).trade || {}, last = [...x.notes, ...x.reps].sort((a, b) => String(a.at).localeCompare(String(b.at))).pop() || {};
-    return `<div class="card" style="margin:10px 0;cursor:pointer" data-cv="${i}"><div class="row"><b>${x.bot === "manager" ? "🎙 שיחה עם המנהל" : x.id === "talk" ? `🎙 שיחה עם הסוכן · ${esc(BOTNAME(x.bot))}` : `${esc(BOTNAME(x.bot))} · <bdi>${esc(tr.symbol || "")}</bdi> ${tr.side === "buy" ? "קנייה" : tr.side === "sell" ? "מכירה" : ""}`}</b>
-      ${x.unseen ? `<span class="pill pos">${x.unseen} חדשות</span>` : x.notes.some(n => !x.reps.some(r => r.re === n.at)) ? '<span class="pill">ממתין לתשובה</span>' : ""}</div>
-      <div class="mut" style="margin-top:4px;white-space:pre-wrap;max-height:3.6em;overflow:hidden">${last.re ? "🤖 " : "טל: "}${esc(last.text || "")}</div><div class="convD" id="convD${i}"></div></div>`; }).join("");
-  document.querySelectorAll("#convBody .card").forEach(el => el.onclick = async e => {
-    if (e.target.closest("button")) return;
-    const x = l[+el.dataset.cv], box = $("convD" + el.dataset.cv);
-    if (box.innerHTML) { box.innerHTML = ""; return; }
-    box.innerHTML = (await threadHtml(x.bot, x.id, x.notes)) + `<button class="btn ghost" style="margin-top:8px" data-open="1">${x.bot === "manager" ? "פתח את השיחה עם המנהל ›" : x.id === "talk" ? "פתח את הבוט ›" : "פתח את הגרף של העסקה ›"}</button>`;
-    box.querySelector("[data-open]").onclick = () => convChart(x);
-    convData().then(ll => { const n = ll.reduce((a, y) => a + y.unseen, 0); if ($("convBtn")) $("convBtn").textContent = n ? `שיחות עם הסוכנים (${n} חדשות)` : "שיחות עם הסוכנים"; });
-  });
-}
-function convChart(x) {
-  if (x.bot === "manager") return botsOpen();
-  if (x.id === "talk") { $("convPg").classList.remove("on"); return openAcc(x.bot); }
-  const d = found[x.bot];
-  if (d && d.watch && d.watch.find(w => w.id === x.id && w.m15)) { WB.doc = d; return wcOpen(x.id); }
-  const c = d && ((d.closed || []).find(t => String(t.id) === x.id) || null), o = d && ((d.positions || []).find(t => String(t.ticket) === x.id) || null);
-  if (c || o) { UI.cur = x.bot; tradePage(c || o, !c); return chartPage(); }
-  alert("העסקה כבר לא מופיעה ברשימות של הבוט, אבל השיחה שמורה כאן.");
-}
-const notesHtml = p => getRole() === "viewer" ? "" : `<div class="h4">🎙 הערה לסוכן של הבוט</div><div class="card wt">
-      <textarea id="${p}Txt" rows="3" placeholder="לחץ על המיקרופון ודבר, או כתוב: הייתי לוקח / לא לוקח, איפה התפספס, הייתי יוצא מוקדם, חלקיות כאן…"></textarea>
-      <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="${p}Mic">🎙 הקלטה</button><button class="btn" id="${p}Save">שמור הערה</button></div>
-      <div class="msg mut" id="${p}Msg"></div><div id="${p}List"></div></div>`;
-// a watch record (bots 5-6) as the trade the note is about
-const recTrade = r => ({id: r.id, symbol: r.symbol, combo: r.combo || r.tal || r.trk, side: r.dir > 0 ? "buy" : "sell", open_t: r.time, close_t: r.exit_time,
-  open_px: r.entry, close_px: r.exit, sl0: r.stop, tp: r.target, reason: r.reason, net: r.pnl});
-function tradeNotes(t, p = "tn", botName) {
-  if (!$(p + "Txt")) return;
-  if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; }
-  const bot = botName || UI.cur, id = String(t.id || t.ticket || ""), txt = $(p + "Txt"), msg = $(p + "Msg");
-  let mine = (((NOTES_DOC || {}).bots || {})[bot] || {})[id] || [];
-  const show = ns => { if (ns) mine = ns; threadHtml(bot, id, mine).then(h => {
-    const L = $(p + "List"); if (!L) return;
-    L.innerHTML = h;
-    // a running conversation (manager / bot): the last 4 messages; the earlier ones behind a button (user, 16.11.2026)
-    const items = [...L.children].filter(el => !el.classList.contains("mut"));
-    if (id === "talk" && items.length > 4) {
-      items.slice(0, -4).forEach(el => el.style.display = "none");
-      const b = document.createElement("button"); b.className = "btn ghost"; b.style.marginTop = "8px";
-      b.textContent = `הצג את כל השיחה (${items.length} הודעות)`;
-      b.onclick = () => { items.forEach(el => el.style.display = ""); b.remove(); };
-      L.prepend(b);
-    }
-  }); };
-  show(null);
-  // always the newest copy (user, 16.11.2026: the conversation with the manager looked deleted - an older copy of the
-  // notes file, read earlier for the conversations' badge, had no note yet); the longer list wins
-  const take = ns => { if (Array.isArray(ns) && ns.length >= mine.length) show(ns); };
-  fetch(NOTES_URL().replace(/t=\d+/, "t=" + Date.now()), {cache: "no-store"}).then(r => r.json())
-    .then(j => { NOTES_DOC = j; take(((j.bots || {})[bot] || {})[id] || []); }).catch(() => {});
-  if (mgr && mgrInfo) act("/trade/notes", {bot, id}).then(j => take(j.notes)).catch(() => {});
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  $(p + "Mic").onclick = () => {
-    if (TN.rec) { try { TN.rec.stop(); } catch (e) {} return; }
-    if (!SR) { msg.textContent = "הדפדפן הזה לא תומך בהקלטה. אפשר ללחוץ על המיקרופון במקלדת של הטלפון ולדבר."; txt.focus(); return; }
-    const r = new SR(); r.lang = "he-IL"; r.continuous = true; r.interimResults = true;
-    const before = txt.value ? txt.value.trim() + " " : "";
-    let fin = "";
-    r.onresult = e => { let inter = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const x = e.results[i];
-      if (x.isFinal) fin += x[0].transcript + " "; else inter += x[0].transcript; } txt.value = before + fin + inter; };
-    r.onerror = e => { msg.textContent = e.error === "not-allowed" ? "צריך לאשר גישה למיקרופון." : "ההקלטה נעצרה."; };
-    r.onend = () => { TN.rec = null; $(p + "Mic").textContent = "🎙 הקלטה"; };
-    TN.rec = r; TN.voice = true; r.start(); $(p + "Mic").textContent = "⏹ עצור"; msg.textContent = "מקליט… דבר עכשיו";
-  };
-  $(p + "Save").onclick = async () => {
-    if (TN.rec) { try { TN.rec.stop(); } catch (e) {} }
-    const text = txt.value.trim();
-    if (!text) { msg.textContent = "ההערה ריקה."; return; }
-    if (!mgr || !mgrInfo) { msg.textContent = "המנהל לא מחובר עכשיו, אז ההערה לא נשמרה. נסה שוב בעוד רגע."; return; }
-    try {
-      const j = await act("/trade/note", {bot, id, text, voice: TN.voice, symbol: t.symbol, combo: t.combo, side: t.side, open_t: t.open_t,
-        close_t: t.close_t, open_px: t.open_px, close_px: t.close_px, sl: t.sl0 || t.sl, tp: t.tp || t.tp0, net: t.net, reason: t.reason || t.why});
-      txt.value = ""; TN.voice = false; msg.textContent = bot === "manager" ? "נשלח. המנהל יענה בתוך שעה בערך." : id === "talk" ? "נשלח. הסוכן של הבוט יענה בתוך שעה בערך." : "נשמר. הסוכן של הבוט יקרא את ההערה בריצה הבאה שלו."; show(j.notes);
-    } catch (e) { msg.textContent = "לא נשמר: " + (e.message || e); }
-  };
-}
+$("tpBack").onclick = () => $("tradePg").classList.remove("on");
 
 /* the trade on a candle chart (TradingView's free library) with a position box like TradingView's tool */
 let TV = null, tvLib = null;
@@ -1823,13 +1492,9 @@ function defaultTf(t) {
 async function chartPage(tf) {
   const {t, isOpen} = TP;
   if (UI.cur === "watch_own" && found.watch_own) { WB.doc = found.watch_own; return wcOpen(String(t.id || t.ticket)); }
-  { const wd = found[UI.cur], wid = String(t.id || t.ticket);       // bot 6: the gap method's two charts (13.11.2026)
-    if (wd && wd.watch && wd.watch.find(x => x.id === wid && x.m15)) { WB.doc = wd; return wcOpen(wid); } }
   tf = tf || defaultTf(t);
   $("chartPg").classList.add("on");
   $("cpTitle").textContent = `${t.symbol} · ${t.side === "buy" ? "קנייה" : "מכירה"}`;
-  $("cpInfo").innerHTML = infoCard(t.info);
-  if ($("cpNotes").dataset.id !== String(t.id || t.ticket)) { $("cpNotes").innerHTML = notesHtml("cn"); $("cpNotes").dataset.id = String(t.id || t.ticket); tradeNotes(t, "cn"); }
   segment("tfSeg", Object.keys(TFSEC).map(k => [k, TFLBL[k]]), tf, k => chartPage(k));
   $("tfSeg").className = "tfs";
   const box = $("tvBox"), msg = $("cpMsg");
@@ -1859,8 +1524,6 @@ async function chartPage(tf) {
     autoscaleInfoProvider: orig => { const r = orig(); if (!r) return r; const ex = [t.open_px, t.sl0 || t.sl, t.tp || t.tp0, t.close_px].filter(v => v);
       return {priceRange: {minValue: Math.min(r.priceRange.minValue, ...ex), maxValue: Math.max(r.priceRange.maxValue, ...ex)}}; }});
   ser.setData(j.bars.map(b => ({time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]})));
-  LC.sym = null; LC.charts = [];
-  liveChart(t.symbol, t.side, ser, j.bars, off, step, UI.cur);
   const snap = sec => { const k = j.bars.findLast ? j.bars.findLast(b => b[0] <= sec) : [...j.bars].reverse().find(b => b[0] <= sec); return (k ? k[0] : j.bars[0][0]) + off; };
   const buy = t.side === "buy";
   const mk = [{time: snap(o), position: buy ? "belowBar" : "aboveBar", color: buy ? "#1E8A4C" : "#D0453A", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}];
@@ -2018,51 +1681,19 @@ const BP = {doc: null, ag: null, bot: null, busy: false, combo: null};
 const DEC_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/decisions.json?t=${Math.floor(Date.now() / 60000)}`;
 let decLocal = (() => { try { return JSON.parse(localStorage.getItem("agDecLocal") || "{}"); } catch (e) { return {}; } })();
 const decSave = () => { try { localStorage.setItem("agDecLocal", JSON.stringify(decLocal)); } catch (e) {} };
-const BOT_HE = b => ({bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3", bot4: "בוט 4", bot5: "בוט 5 - סקאלפינג", bot6: "בוט 6", bot7: "בוט 7"})[b] || b;
+const BOT_HE = b => ({bot1: "בוט 1", bot2: "בוט 2", bot3: "בוט 3", bot4: "בוט 4", bot5: "בוט 5", bot6: "בוט 6", bot7: "בוט 7"})[b] || b;
 function decItem(x, owner) {
   const L = decLocal[x.id] || {}, undone = x.undone || L.undo, read = x.read || L.read || undone;
   const t = new Date(x.at).toLocaleString("he-IL", {day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit"});
   return `<div class="dec" style="padding:10px 0;border-top:1px solid var(--line,#e5e7eb)">
-    <div class="row" style="justify-content:space-between;gap:8px"><b style="line-height:1.4">${esc(x.title)}</b>${undone ? '<span class="pill neg">בוטלה</span>' : x.decision === "withdrawn" ? '<span class="pill neg">המנהל חזר בו</span>' : x.decision === "reverted" ? '<span class="pill neg">הוחזר לאחור</span>' : x.decision === "declined" ? '<span class="pill neg">לא אושרה</span>' : '<span class="pill pos">אושרה</span>'}</div>
+    <div class="row" style="justify-content:space-between;gap:8px"><b style="line-height:1.4">${esc(x.title)}</b>${undone ? '<span class="pill neg">בוטלה</span>' : '<span class="pill pos">אושרה</span>'}</div>
     <div class="mut" style="margin-top:4px;line-height:1.5"><span class="pill">${esc(BOT_HE(x.bot))}</span> ${esc(t)} · ${esc(x.effect || "")}</div>
     ${x.why ? `<div class="foot" style="margin-top:4px;line-height:1.5">${whyHtml(x.why)}</div>` : ""}
-    ${owner && !undone ? `<div class="acts" style="margin-top:8px">${x.decision === "withdrawn" ? "" : `<button class="btn ghost" data-dundo="${esc(x.id)}">בטל</button>`}${read ? "" : `<button class="btn ghost" data-dread="${esc(x.id)}">קראתי</button>`}</div>` : ""}
+    ${owner && !undone ? `<div class="acts" style="margin-top:8px"><button class="btn ghost" data-dundo="${esc(x.id)}">בטל</button>${read ? "" : `<button class="btn ghost" data-dread="${esc(x.id)}">קראתי</button>`}</div>` : ""}
   </div>`;
 }
-/* the manager's decisions (user, 16.11.2026): under the conversation only the IMPORTANT ones not read yet - a strategy
-   removed or cut to nothing, risk changes, resets, stop changes, something reverted or taken back; everything else
-   (additions, small risk steps, "for information") on its own page behind a button */
-const decImportant = x => ["remove", "reset", "sl"].includes(x.kind) || ["reverted", "withdrawn"].includes(x.decision)
-  || (x.kind === "mult" && x.action && +x.action.value === 0)
-  || (x.kind === "risk" && !/\|/.test(x.title || ""));          // the whole bot's risk; one strategy's risk step is routine
 function decRender() {
   const box = $("bpDec"); if (!box) return;
-  const all = (BP.dec && BP.dec.decisions) || [], owner = getRole() !== "viewer";
-  const isRead = x => x.read || x.undone || (decLocal[x.id] || {}).read || (decLocal[x.id] || {}).undo;
-  const imp = all.filter(x => !isRead(x) && decImportant(x) && Date.now() - new Date(x.at) < 7 * 864e5)      // the last week
-    .sort((a, b) => String(b.at).localeCompare(String(a.at))), unread = all.filter(x => !isRead(x));
-  box.innerHTML = `<div class="card"><div class="row" style="justify-content:space-between"><b>החלטות חשובות של המנהל</b><span class="pill">${imp.length}</span></div>
-    ${imp.length ? imp.slice(0, 5).map(x => decItem(x, owner)).join("") : '<div class="mut" style="margin-top:8px">אין החלטות שדורשות את תשומת ליבך.</div>'}
-    ${imp.length > 5 ? `<div class="mut" style="margin-top:6px">ועוד ${imp.length - 5} בדף כל ההחלטות</div>` : ""}
-    <button class="btn ghost" id="decAllBtn" style="width:100%;margin-top:10px">כל ההחלטות${unread.length ? ` (${unread.length} חדשות)` : ""} ›</button>
-    <div class="msg" id="decMsgS"></div></div>`;
-  $("decAllBtn").onclick = () => { $("decPg").classList.add("on"); decRenderAll(); };
-  decWire(box, all, "decMsgS");
-}
-function decWire(box, all, msgId) {
-  const read = async ids => { ids.forEach(i => decLocal[i] = {...(decLocal[i] || {}), read: 1}); decSave(); decRender(); if ($("decPg").classList.contains("on")) decRenderAll();
-    try { await act("/agent/read", {ids}); } catch (e) { note(msgId, e.message, false); } };
-  box.querySelectorAll("[data-dread]").forEach(x => x.onclick = () => read([x.dataset.dread]));
-  box.querySelectorAll("[data-dundo]").forEach(x => x.onclick = async () => {
-    const d = all.find(y => y.id === x.dataset.dundo);
-    if (!(await askYes("לבטל את ההחלטה?", `${d.title}. הבוט יחזור למצב שלפני ההחלטה, והמנהל לא יחליט אותה שוב.`, "כן, בטל"))) return;
-    try { await act("/agent/undo", {id: d.id}); decLocal[d.id] = {...(decLocal[d.id] || {}), undo: 1, read: 1}; decSave(); decRender(); if ($("decPg").classList.contains("on")) decRenderAll(); note(msgId, "ההחלטה בוטלה.", true); }
-    catch (e) { note(msgId, e.message, false); }
-  });
-  return read;
-}
-function decRenderAll() {
-  const box = $("decBody"); if (!box) return;
   const all = (BP.dec && BP.dec.decisions) || [], owner = getRole() !== "viewer";
   const isRead = x => x.read || x.undone || (decLocal[x.id] || {}).read || (decLocal[x.id] || {}).undo;
   const unread = all.filter(x => !isRead(x)), rest = all.filter(isRead);
@@ -2072,8 +1703,16 @@ function decRenderAll() {
     ${owner && unread.length > 1 ? `<div class="acts" style="margin-top:10px"><button class="btn" id="decAll">קראתי הכל (${unread.length})</button></div>` : ""}
     <div class="msg" id="decMsg"></div></div>
     ${rest.length ? `<details class="card"><summary>ארכיון: ${rest.length} החלטות מ־30 הימים האחרונים</summary>${rest.map(x => decItem(x, owner)).join("")}</details>` : ""}`;
-  const read = decWire(box, all, "decMsg");
+  const read = async ids => { ids.forEach(i => decLocal[i] = {...(decLocal[i] || {}), read: 1}); decSave(); decRender();
+    try { await act("/agent/read", {ids}); } catch (e) { note("decMsg", e.message, false); } };
+  box.querySelectorAll("[data-dread]").forEach(x => x.onclick = () => read([x.dataset.dread]));
   const all_ = $("decAll"); if (all_) all_.onclick = () => read(unread.map(x => x.id));
+  box.querySelectorAll("[data-dundo]").forEach(x => x.onclick = async () => {
+    const d = all.find(y => y.id === x.dataset.dundo);
+    if (!(await askYes("לבטל את ההחלטה?", `${d.title}. הבוט יחזור למצב שלפני ההחלטה, והמנהל לא יחליט אותה שוב.`, "כן, בטל"))) return;
+    try { await act("/agent/undo", {id: d.id}); decLocal[d.id] = {...(decLocal[d.id] || {}), undo: 1, read: 1}; decSave(); decRender(); note("decMsg", "ההחלטה בוטלה.", true); }
+    catch (e) { note("decMsg", e.message, false); }
+  });
 }
 const AG_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/manager.json?t=${Math.floor(Date.now() / 60000)}`;
 const AG_ORDER = ["bot1", "bot2", "bot3", "bot4", "bot5", "bot6", "bot7"];
@@ -2177,20 +1816,8 @@ function bpDecided(bot) {
   return r[bot] || {};
 }
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-/* a conversation with the manager itself (user, 16.11.2026): spoken or typed, about anything across all the bots - how
-   to work, what matters, what to change everywhere. Kept like a trade note (bot "manager", id "talk"); the conversation
-   agent answers as the manager and the manager learns from it (data/agents/tal_thinking.md, tasks for the agents). */
-function mgrTalk() {
-  if (getRole() === "viewer" || !$("bpTalk")) return;
-  $("bpTalk").innerHTML = `<div class="h4">🎙 שיחה עם המנהל</div><div class="card wt">
-      <textarea id="mgTxt" rows="3" placeholder="דבר או כתוב למנהל על כל מה שרוחבי לכל הבוטים: איך לעבוד, מה חשוב לך, מה לשנות בכולם…"></textarea>
-      <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="mgMic">🎙 הקלטה</button><button class="btn" id="mgSave">שלח למנהל</button></div>
-      <div class="msg mut" id="mgMsg"></div><div id="mgList"></div></div>`;
-  tradeNotes({id: "talk"}, "mg", "manager");
-}
 async function botsOpen() {
   $("botsPg").classList.add("on");
-  mgrTalk();
   if (!BP.doc) $("bpBody").innerHTML = '<div class="empty">טוען…</div>';
   await Promise.all([
     fetch(RISK_URL(), {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => { if (j) BP.doc = j; }).catch(() => {}),
@@ -2250,10 +1877,9 @@ function botsRender() {
     if (!r.pend.length) return (r.recs.length ? '<span class="mut">נדחה היום</span>' : '<span class="mut">—</span>')
       + (r.mult === 0 && owner ? `<div class="acts"><button class="btn ghost" data-back="${esc(r.combo)}">החזר</button></div>` : "");
     const first = r.pend[0];
-    // the manager decides these in the user's place (agents/autodecide.py): what is still here is what it chose NOT to
-    // apply (fix first, too few live trades, the strategy's risk set by its own edge...) - shown, not asked (16.11.2026)
-    return `<span class="mut">${recLine(first, b.risk_pct)}</span>` + (r.pend.length > 1 ? `<br><small class="mut">ועוד ${r.pend.length - 1}</small>` : "")
-      + `<br><small class="mut">המנהל השאיר כמו שהוא</small>`;
+    return recLine(first, b.risk_pct) + (r.pend.length > 1 ? `<br><small class="mut">ועוד ${r.pend.length - 1}</small>` : "")
+      + (owner ? (r.pend.length === 1 ? `<div class="acts"><button class="btn ok" data-ok="${esc(r.combo)}">אשר</button><button class="btn ghost" data-no="${esc(r.combo)}">דחה</button></div>`
+        : `<div class="acts"><button class="btn" data-open="${esc(r.combo)}">פרטים</button></div>`) : "");
   };
   const tr = rows.map(r => { const p = parts(r.combo); const ap = Object.entries(r.applied).map(([k, v]) => appliedTxt(k, v)).join(" · ");
     return `<tr class="${r.pend.length ? "has" : ""}" data-row="${esc(r.combo)}"><td class="cb"><b>${esc(p.y)}</b><small>${esc(p.s)} · ${esc(p.t)}</small>${ap ? `<small class="vps" style="display:block;color:var(--vps)">${esc(ap)}</small>` : ""}</td>
@@ -2265,9 +1891,9 @@ function botsRender() {
     <div class="card"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
       <div class="kpi"><small>סיכון הבוט</small><div class="num" style="font-weight:700;margin-top:4px">${pctTxt(b.risk_pct)}</div></div>
       <div class="kpi"><small>עסקאות בדמו</small><div class="num" style="font-weight:700;margin-top:4px">${b.trades}</div></div>
-      <div class="kpi"><small>המלצות שלא הוחלו</small><div class="num" style="font-weight:700;margin-top:4px">${pend.length}</div></div></div>
-      <div class="foot" style="margin-top:10px;line-height:1.55">כל המלצה נשענת על רווחיות ויציבות בדמו, ונבדקת גם על הבקטסט בשני חצאים. הקש על שורה כדי לראות את המספרים. הנתונים וההמלצות מתחדשים כל בוקר ב־08:00 (עודכן ${esc(upd)}).</div>
-      <div class="foot" style="margin-top:6px;line-height:1.55">אין צורך לאשר כאן: המנהל כבר החליט על כל ההמלצות. מה שמופיע בטור "המלצה" הוא מה שהוא בחר לא להחיל (קודם מתקנים, מעט עסקאות חיות, או שהסיכון כבר נקבע לפי היתרון של האסטרטגיה). כל החלטה שלו מופיעה ב"כל ההחלטות" ואפשר לבטל אותה שם.</div>
+      <div class="kpi"><small>המלצות</small><div class="num" style="font-weight:700;margin-top:4px">${pend.length}</div></div></div>
+      <div class="foot" style="margin-top:10px;line-height:1.55">כל המלצה נשענת על רווחיות ויציבות בדמו, ונבדקת גם על הבקטסט בשני חצאים. הקש על שורה כדי לראות את המספרים. הנתונים וההמלצות מתחדשים כל בוקר ב־08:00 (עודכן ${esc(upd)}). המנהל מחליט על ההמלצות במקומך, ואפשר לבטל כל החלטה בראש העמוד.</div>
+      ${owner && pend.length > 1 ? `<div class="row" style="margin-top:10px"><button class="btn ok" id="bpAll">אשר הכל (${pend.length})</button></div>` : ""}
       <div class="msg" id="bpMsg"></div></div>
     <div class="card" style="padding:0"><div class="tw"><table class="rt"><thead><tr><th>אסטרטגיה</th><th>הצלחה</th><th>עסקאות</th><th>סיכון</th><th>המלצה</th></tr></thead><tbody>${tr}</tbody></table></div></div>`;
   $("bpBody").insertAdjacentHTML("afterbegin", agentHtml(bot)); agBind(bot);
@@ -2299,7 +1925,7 @@ function detailRender() {
   const ex = d.exits || {}, dir = d.direction || {}, hr = d.hours || {}, mk = d.market || {}, tg = d.together;
   const recHtml = r.recs.length ? r.recs.map((q, i) => `<div class="li" style="align-items:flex-start"><div style="min-width:0"><b>${recLine(q, b.risk_pct)}</b>
       <div class="mut" style="font-size:12.5px;margin-top:4px;line-height:1.5">${whyHtml(q.why)}</div></div>
-      <div><span class="mut">${q.rejected ? "נדחה היום" : "המנהל השאיר כמו שהוא"}</span></div></div>`).join("")
+      <div>${q.rejected ? '<span class="mut">נדחה היום</span>' : owner ? `<div class="acts" style="margin:0"><button class="btn ok" data-dok="${i}">אשר</button><button class="btn ghost" data-dno="${i}">דחה</button></div>` : ""}</div></div>`).join("")
     : '<div class="li"><span class="mut">אין כרגע המלצה. האסטרטגיה עובדת כמו שהיא.</span></div>';
   const applied = Object.entries(r.applied);
   const chk = (ok, txt) => `<div class="li"><span class="k">${txt}</span><span class="v">${ok == null ? "—" : ok >= 0.99 ? '<span class="pos">✓</span>' : ok <= 0.01 ? '<span class="neg">✗</span>' : `<span class="warn num">${ok}</span>`}</span></div>`;
@@ -2346,10 +1972,7 @@ async function askYes(title, body, yes) {
 $("botsBtn").onclick = () => botsOpen();
 
 /* scalping watch bot (no money): virtual trades of the user's impulse strategy, the user marks each one */
-// his answers are kept on this phone too, until the bots' state shows them (published every few minutes): an answer
-// given just before closing the app is still seen when it opens again (user, 17.11.2026)
-const WB = {doc: null, marks: (() => { try { return JSON.parse(localStorage.getItem("wb_marks") || "{}"); } catch (e) { return {}; } })()};
-setInterval(() => { try { localStorage.setItem("wb_marks", JSON.stringify(Object.fromEntries(Object.entries(WB.marks).filter(([, m]) => m && m.at && Date.now() - Date.parse(m.at) < 3 * 864e5)))); } catch (e) {} }, 2000);
+const WB = {doc: null, marks: {}};
 const WB_ST = {pending: ["מחכה לנגיעה בפער", ""], open: ["עסקה וירטואלית פתוחה", "warn"], closed: ["נסגרה", ""], cancelled: ["בוטלה", ""]};
 const wDec = s => /^(US\d|GER\d|UK\d|JP\d|FRA\d|EU\d)/.test(s) || s.startsWith("XA") ? 2 : s.endsWith("JPY") ? 3 : 5;
 const wPx = (s, p) => p == null ? "—" : Number(p).toFixed(wDec(s));
@@ -2366,8 +1989,7 @@ function wbRender(box = $("wbBody")) {
   const d = WB.doc;
   if (!d) { box.innerHTML = '<div class="empty">הבוט עוד לא דיווח. הוא מתחיל לעבוד אחרי אישור העדכון, כשבוט 1 פועל והשוק פתוח.</div>'; return; }
   const sm = d.summary || {}, owner = getRole() !== "viewer";
-  // the "סימונים" tab (dBody): only the gap method's trades - each one marked the same way (user, 17.11.2026)
-  const trades = (d.watch || []).filter(t => t.status !== "cancelled" && (box.id === "wbBody" || t.geo));
+  const trades = (d.watch || []).filter(t => t.status !== "cancelled");
   const ac = d.vacct || null, usd = v => (v < 0 ? "−" : "") + "$" + Math.abs(v).toLocaleString("en-US", {maximumFractionDigits: 0});
   let curveSvg = "";
   if (ac && ac.curve && ac.curve.length > 1) {
@@ -2384,8 +2006,7 @@ function wbRender(box = $("wbBody")) {
     <div><small class="mut">רווח מתחילת הדרך</small><b class="${ac.profit >= 0 ? "pos" : "neg"}"><bdi>${usd(ac.profit)}</bdi> (<bdi>${(100 * ac.profit / ac.initial).toFixed(2)}%</bdi>)</b></div>
     <div><small class="mut">היום</small><b class="${ac.today >= 0 ? "pos" : "neg"}"><bdi>${usd(ac.today)}</bdi></b></div></div>
     ${curveSvg}<div class="mut">סיכון לעסקה ${ac.risk_pct}% מהיתרה · עצירה יומית ב־4.5% · נשרף ב־10%, כמו חשבונות הדמו</div></div>` : "";
-  // the "סימונים" tab of bot 5 (dBody): only the trades to mark, no rules / summary card (user, 17.11.2026)
-  if (box.id === "wbBody") h += `<div class="card"><div class="mut" style="margin-bottom:8px">${esc(d.rules || "")}</div>
+  h += `<div class="card"><div class="mut" style="margin-bottom:8px">${esc(d.rules || "")}</div>
     <div class="kv"><div><small class="mut">עסקאות שנסגרו</small><b>${sm.closed ?? 0}</b></div><div><small class="mut">סך הכל (בסיכונים)</small><b class="${(sm.sum_r || 0) >= 0 ? "pos" : "neg"}"><bdi>${(sm.sum_r ?? 0).toFixed(2)}</bdi></b></div>
     <div><small class="mut">אחוז הצלחה</small><b>${sm.win_pct == null ? "—" : sm.win_pct + "%"}</b></div><div><small class="mut">פתוחות · מחכות</small><b>${sm.open ?? 0} · ${sm.pending ?? 0}</b></div></div>
     ${sm.wide ? `<div class="mut">מקורי: ${sm.strict.closed} עסקאות, <bdi>${(+sm.strict.sum_r).toFixed(2)}</bdi> סיכון · מסלול רחב: ${sm.wide.closed} עסקאות, <bdi>${(+sm.wide.sum_r).toFixed(2)}</bdi> סיכון</div>` : ""}
@@ -2398,13 +2019,8 @@ function wbRender(box = $("wbBody")) {
   for (const t of trades) {
     const st = WB_ST[t.status] || [t.status, ""], buy = t.dir > 0, m = WB.marks[t.id] || t.mark || {};
     const money = v => v == null ? "" : ` · <bdi>${v >= 0 ? "+" : "−"}$${Math.abs(v).toLocaleString("en-US", {maximumFractionDigits: 0})}</bdi>`;
-    // a trade not counted in the account still shows how it went (user, 17.11.2026: the trades before the new account
-    // opened - "at least show whether they succeeded, counted or not")
-    const how = t.status === "closed" && t.r != null ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "הצליחה · ביעד" : t.reason === "stop" ? "נכשלה · בסטופ" : t.reason === "breakeven" ? "בנקודת הכניסה" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון</span>`
-      : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון</span>` : "";
-    const res = t.skipped ? how + `<span class="pill">${t.skipped === "old" || t.skipped === "v4" ? "מסלול ישן · לא בחשבון הווירטואלי" : t.skipped === "before" ? "לפני פתיחת החשבון" : t.skipped === "v5" || t.skipped === "v1m" ? "מסלול נפרד · לא בחשבון הווירטואלי" : t.skipped === "extra" ? "איסוף נתונים · לא בחשבון" : `לא נספרה בחשבון (${{daily: "עצירה יומית", room: "אין מקום במגבלה עם העסקאות הפתוחות", side: "מסלול אחר כבר באותו כיוון", dir: "תקרת עסקאות באותו כיוון", hours: "שעה חסומה", breach: "החשבון נשרף", tal_no: "ענית: לא", tal_none: "לא ענית בזמן"}[t.skipped] || t.skipped})`}</span>`
-      : t.status === "cancelled" && TALWHY[t.why] ? `<span class="pill">${TALWHY[t.why]}</span>`
-      : t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : t.reason === "breakeven" ? "בנקודת הכניסה" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון${money(t.pnl)}</span>`
+    const res = t.skipped ? `<span class="pill">${t.skipped === "old" || t.skipped === "v4" ? "מסלול ישן · לא בחשבון הווירטואלי" : t.skipped === "before" ? "לפני פתיחת החשבון" : t.skipped === "v5" || t.skipped === "v1m" ? "מסלול נפרד · לא בחשבון הווירטואלי" : t.skipped === "extra" ? "איסוף נתונים · לא בחשבון" : `לא נספרה בחשבון (${t.skipped === "daily" ? "עצירה יומית" : "החשבון נשרף"})`}</span>`
+      : t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון${money(t.pnl)}</span>`
       : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון${money(t.pnl_now)}</span>` : `<span class="pill ${st[1]}">${st[0]}</span>`;
     h += `<div class="card wt" data-id="${esc(t.id)}"><div class="hd"><b>${esc(t.symbol)}</b><span class="pill ${buy ? "pos" : "neg"}">${buy ? "קנייה" : "מכירה"}</span>${t.wide ? '<span class="pill">מסלול רחב</span>' : ""}${t.extra ? '<span class="pill">איסוף נתונים</span>' : ""}${t.v4 ? '<span class="pill pos">מתוקן v4</span>' : ""}${t.v5 ? '<span class="pill pos">פערים v5</span>' : ""}${t.v1m ? '<span class="pill pos">פערים בדקה</span>' : ""}${res}</div>
       <div class="mut">כניסה <bdi>${wPx(t.symbol, t.entry)}</bdi> · סטופ <bdi>${wPx(t.symbol, t.stop)}</bdi> · יעד <bdi>${wPx(t.symbol, t.target)}</bdi>${t.rr ? ` · יחס 1:${t.rr}` : ""}<br>
@@ -2431,13 +2047,10 @@ let WC = [];
 async function wcOpen(id) {
   const t = ((WB.doc && WB.doc.watch) || []).find(x => x.id === id);
   if (!t) return;
-  if (t.geo && t.m15) return wcTal(t);
-  if (t.sc || t.trk === "scout" || String(t.tal || "").startsWith("sc:")) return wcScout(t);
   $("wcPg").classList.add("on");
   $("wcTitle").textContent = `${t.symbol} · ${t.dir > 0 ? "קנייה" : "מכירה"}`;
   $("wcBody").innerHTML = `<div class="mut" style="margin-bottom:6px">גרף 15 דקות: הדחף והכניסה</div><div class="card"><div class="wchart" id="wc15"></div></div>
-    <div class="mut" style="margin-bottom:6px">גרף דקה: כל המהלך מהדחף ועד אחרי היציאה, עם הכניסה, הסטופ והיעד (ירוק עד היעד, אדום עד הסטופ)</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>${notesHtml("wn")}`;
-  tradeNotes(recTrade(t), "wn", (WB.doc && WB.doc.bot) || UI.cur);
+    <div class="mut" style="margin-bottom:6px">גרף דקה: כל המהלך מהדחף ועד אחרי היציאה, עם הכניסה, הסטופ והיעד (ירוק עד היעד, אדום עד הסטופ)</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>`;
   WC.forEach(c => c.remove()); WC = [];
   const LW = await loadTV().catch(() => null);
   if (!LW) { $("wcMsg").textContent = "ספריית הגרפים לא נטענה. בדוק חיבור לאינטרנט."; return; }
@@ -2463,8 +2076,6 @@ async function wcOpen(id) {
   A.ch.timeScale().fitContent();
   // 1 minute: the rest of the trade, with the position box
   const B = mk($("wc1"), t.m1);
-  LC.sym = null; LC.charts = [];
-  liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, 900); liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, 60);
   if (t.time && B.bars.length) {
     const t0 = snap(B.bars, tin), last = B.bars[B.bars.length - 1][0] + off, t1 = t.exit_time ? snap(B.bars, Date.parse(t.exit_time) / 1000) : last, pts = [];
     for (const b of B.bars) { const x = b[0] + off; if (x >= t0 && x <= t1) pts.push(x); }
@@ -2483,368 +2094,9 @@ async function wcOpen(id) {
     return {priceRange: {minValue: Math.min(r.priceRange.minValue, ...ex), maxValue: Math.max(r.priceRange.maxValue, ...ex)}}; }});
   B.ch.timeScale().fitContent();
 }
-/* a scout-strategy trade (user, 17.11.2026: "you claim there was a gap - I see none"): only what the strategy saw -
-   its own timeframe, the signal candle before the entry, its rule in a few words; no gap and no impulse */
-const SCTF = {"1Min": ["דקה", 60], "5Min": ["5 דק'", 300], "15Min": ["15 דק'", 900], "30Min": ["30 דק'", 1800], "1Hour": ["שעה", 3600], "4Hour": ["4 שעות", 14400]};
-async function wcScout(t) {
-  const combo = String(t.tal || "").startsWith("sc:") ? String(t.tal).slice(3) : (t.combo || ""), parts = combo.split("|");
-  const sc = t.sc || {}, sid = sc.sid || parts[0] || "", tf = sc.tf || parts[1] || "15Min", tfh = (SCTF[tf] || [tf, 900])[0], tfs = (SCTF[tf] || [tf, 900])[1];
-  const buy = t.dir > 0, dec = wDec(t.symbol);
-  $("wcPg").classList.add("on");
-  $("wcTitle").textContent = `${t.symbol} · ${buy ? "קנייה" : "מכירה"} · ${sid}`;
-  const RS = {target: "יעד", stop: "סטופ", breakeven: "סטופ בנקודת הכניסה", forced: "סגירה לפי הכלל"};
-  const why = [`<b>אסטרטגיית סייר ${esc(sid)}</b> בגרף ${tfh}${sc.rule ? `: <bdi>${esc(sc.rule)}</bdi>` : ""}.`,
-    `האות בנר שנסגר לפני הכניסה (מסומן "אות"), כניסה בפתיחת הנר הבא${t.entry != null ? `: <bdi>${(+t.entry).toFixed(dec)}</bdi>` : ""}.`,
-    t.stop != null ? `סטופ: <bdi>${(+t.stop).toFixed(dec)}</bdi>${t.target != null ? ` · יעד: <bdi>${(+t.target).toFixed(dec)}</bdi>` : " · בלי יעד קבוע"}.` : "",
-    t.exit_time ? `יציאה: ${RS[t.reason] || esc(t.reason || "")}${t.r != null ? ` (${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}R)` : ""}.` : (t.status === "open" ? "העסקה פתוחה." : "")].filter(Boolean);
-  $("wcBody").innerHTML = `<div id="rvBox"></div><div class="card" style="margin-bottom:10px">${why.map(x => `<p style="margin:3px 0">${x}</p>`).join("")}</div>
-    <div class="mut" style="margin-bottom:6px">גרף ${tfh} (גרף האסטרטגיה): נר האות והכניסה</div><div class="card"><div class="wchart" id="wc15"></div></div>
-    <div class="mut" style="margin-bottom:6px">גרף דקה: הכניסה, הסטופ והיעד עד היציאה (ירוק עד היעד, אדום עד הסטופ)</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>${notesHtml("wn")}`;
-  tradeNotes(recTrade(t), "wn", (WB.doc && WB.doc.bot) || UI.cur);
-  if (t.asked || (t.mark && t.mark.take)) rvPanel(t, dec);       // a gap scout strategy waiting for Tal (17.11.2026)
-  WC.forEach(c => c.remove()); WC = [];
-  if (!t.m15) { $("wcMsg").textContent = "אין עדיין נרות לגרף של העסקה הזו."; return; }
-  const LW = await loadTV().catch(() => null);
-  if (!LW) { $("wcMsg").textContent = "ספריית הגרפים לא נטענה. בדוק חיבור לאינטרנט."; return; }
-  const sec = v => Math.floor(Date.parse(v) / 1000), off = ilOff(sec(t.time || t.setup_t));
-  const ex = [t.entry, t.stop, t.target].filter(v => v != null);
-  const mk = (el, bars) => {
-    const ch = LW.createChart(el, {layout: {background: {color: "#fff"}, textColor: "#5B6470", fontFamily: "Instrument Sans, Heebo, sans-serif"},
-      grid: {vertLines: {color: "#EEF1F4"}, horzLines: {color: "#EEF1F4"}}, rightPriceScale: {borderColor: "#E6E9EE"},
-      timeScale: {borderColor: "#E6E9EE", timeVisible: true, secondsVisible: false}, crosshair: {mode: 0}, autoSize: true});
-    const s = ch.addCandlestickSeries({upColor: "#1E8A4C", downColor: "#D0453A", borderVisible: false, wickUpColor: "#1E8A4C", wickDownColor: "#D0453A",
-      priceFormat: {type: "price", precision: dec, minMove: Math.pow(10, -dec)},
-      autoscaleInfoProvider: orig => { const r = orig(); if (!r) return r;
-        return {priceRange: {minValue: Math.min(r.priceRange.minValue, ...ex), maxValue: Math.max(r.priceRange.maxValue, ...ex)}}; }});
-    s.setData((bars || []).map(b => ({time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]})));
-    WC.push(ch); return {ch, s, bars: bars || []};
-  };
-  const snap = (bars, v) => { let k = bars[0] ? bars[0][0] : v; for (const b of bars) { if (b[0] <= v) k = b[0]; else break; } return k + off; };
-  const line = (s, p, c, title, st = 0) => p != null && s.createPriceLine({price: p, color: c, lineWidth: st ? 1 : 2, lineStyle: st, axisLabelVisible: true, title});
-  const tin = t.time ? sec(t.time) : null, tout = t.exit_time ? sec(t.exit_time) : null, sig = sc.sig_t ? sec(sc.sig_t) : (tin ? tin - tfs : null);
-  // the strategy's timeframe: the signal candle and the entry
-  const A = mk($("wc15"), t.m15);
-  rvPickWire(A, dec, $("wc15"));
-  line(A.s, t.entry, "#1E3A5F", "כניסה", 2); line(A.s, t.stop, "#D0453A", "סטופ", 2); line(A.s, t.target, "#1E8A4C", "יעד", 2);
-  const ma = [];
-  if (sig != null) ma.push({time: snap(A.bars, sig), position: buy ? "belowBar" : "aboveBar", color: "#B8862B", shape: "circle", text: "אות"});
-  if (tin) ma.push({time: snap(A.bars, tin), position: buy ? "belowBar" : "aboveBar", color: "#12161C", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"});
-  if (tout) ma.push({time: snap(A.bars, tout), position: "inBar", color: t.r >= 0 ? "#1E8A4C" : "#D0453A", shape: "square", text: "יציאה"});
-  A.s.setMarkers(ma.sort((a, b) => a.time - b.time));
-  showRecent(A, sig, 80);
-  LC.sym = null; LC.charts = [];
-  liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, tfs);
-  // 1 minute: the trade itself, with the position box
-  const B = mk($("wc1"), t.m1);
-  rvPickWire(B, dec, $("wc1"));
-  liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, 60);
-  if (tin && B.bars.length) {
-    const t0 = snap(B.bars, tin), last = B.bars[B.bars.length - 1][0] + off, t1 = tout ? snap(B.bars, tout) : last, pts = [];
-    for (const b of B.bars) { const x = b[0] + off; if (x >= t0 && x <= t1) pts.push(x); }
-    const box = (val, good) => { if (val == null || t.entry == null) return; const c = good ? "rgba(30,138,76,.22)" : "rgba(208,69,58,.22)", l = good ? "#1E8A4C" : "#D0453A";
-      const s = B.ch.addBaselineSeries({baseValue: {type: "price", price: t.entry}, lineWidth: 2, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
-        topLineColor: l, bottomLineColor: l, topFillColor1: c, topFillColor2: c, bottomFillColor1: c, bottomFillColor2: c});
-      s.setData(pts.map(x => ({time: x, value: val}))); };
-    box(t.target, true); box(t.stop, false);
-    const ms = [{time: t0, position: buy ? "belowBar" : "aboveBar", color: "#12161C", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}];
-    if (tout) ms.push({time: t1, position: "inBar", color: t.r >= 0 ? "#1E8A4C" : "#D0453A", shape: "square", text: RS[t.reason] ? "יציאה · " + RS[t.reason] : "יציאה"});
-    B.s.setMarkers(ms);
-  }
-  line(B.s, t.entry, "#12161C", "כניסה", 2); line(B.s, t.stop, "#D0453A", "סטופ", 2); line(B.s, t.target, "#1E8A4C", "יעד", 2);
-  showRecent(B, tin ? tin - 1800 : null, 150);
-}
-/* a trade of Tal's gap method (13.11.2026): the high timeframe - the impulse arrow, candles 1 and 3 and the gap box that
-   comes out of them; the low timeframe - the same box, the entry, and the stop / target lines starting at the swings
-   that set them, the position box to the exit, and why */
-const TFHE = {"1m": "דקה", "5m": "5 דק'", "15m": "15 דק'", "1h": "שעה", "4h": "4 שעות", "1d": "יום"};
-/* Tal reviews every gap setup of bot 5 before the entry (17.11.2026): step 1 - the high timeframe, "would you
-   enter?"; yes -> step 2 - the low timeframe with the position the rules would place: entry, stop, target, each right
-   or wrong (wrong -> his own price). The bot takes the trade only as he answered (live/watch_own.py). */
-// the review: a level marked wrong is DRAGGED on the chart, then "אשר מיקום" (user, 17.11.2026: "not just a touch -
-// drag the stop, then a button that this is the place"). While dragging the chart does not scroll; a touch anywhere on
-// it brings the line to the finger, moving the finger moves it.
-const RVP = {key: null, lines: {}, charts: [], dec: 2, P: null, v: null, off: null};
-function rvPickWire(P, dec, el) {
-  P.el = el;
-  RVP.charts = RVP.charts.filter(C => WC.includes(C.ch)).concat([P]); RVP.dec = dec;
-}
-function rvLine(k, v) {                  // the orange line of his level, on both charts
-  const tl = {entry: "הכניסה שלך", stop: "הסטופ שלך", target: "היעד שלך"}[k];
-  const live = RVP.charts.filter(C => WC.includes(C.ch));
-  const have = (RVP.lines[k] || []).filter(([C]) => live.includes(C));
-  if (have.length === live.length && have.length) { for (const [, ln] of have) ln.applyOptions({price: v}); return; }
-  for (const [C, ln] of (RVP.lines[k] || [])) try { C.s.removePriceLine(ln); } catch (e) {}
-  RVP.lines[k] = live.map(C => [C, C.s.createPriceLine({price: v, color: "#C8922E", lineWidth: 3, lineStyle: 0, axisLabelVisible: true, title: tl})]);
-}
-function rvDragEnd(save) {
-  const P = RVP.P, k = RVP.key;
-  if (P) {
-    P.ch.applyOptions({handleScroll: true, handleScale: true});
-    if (RVP.off) RVP.off();
-    P.el.style.touchAction = "";
-  }
-  const bar = $("rvDragBar"); if (bar) bar.remove();
-  if (save && k && RVP.v != null) {
-    const inp = $("rv_" + k); if (inp) inp.value = (+RVP.v).toFixed(RVP.dec);
-    note("rvMsg", `נקבע: ${(+RVP.v).toFixed(RVP.dec)} (הקו הכתום). עכשיו "אשר".`, true);
-    const bx = $("rvBox"); if (bx) setTimeout(() => bx.scrollIntoView({behavior: "smooth", block: "start"}), 200);
-  } else if (k) {
-    for (const [C, ln] of (RVP.lines[k] || [])) try { C.s.removePriceLine(ln); } catch (e) {}
-    RVP.lines[k] = [];
-  }
-  RVP.key = RVP.P = RVP.off = null;
-}
-function rvDragStart(k, start) {
-  if (RVP.key) rvDragEnd(false);
-  const live = RVP.charts.filter(C => WC.includes(C.ch));
-  const lt = $("wcLtf"), ltfOn = lt && lt.style.display !== "none";
-  const P = live.find(C => C.el && C.el.id === (ltfOn ? "wc1" : "wc15")) || live[0];
-  if (!P) return;
-  RVP.key = k; RVP.P = P; RVP.v = start != null ? +start : null;
-  P.ch.applyOptions({handleScroll: false, handleScale: false});
-  P.el.style.touchAction = "none";
-  if (RVP.v != null) rvLine(k, RVP.v);
-  const lb = {entry: "הכניסה", stop: "הסטופ", target: "היעד"}[k];
-  const bar = document.createElement("div"); bar.id = "rvDragBar";
-  bar.style.cssText = "position:fixed;left:12px;right:12px;bottom:16px;z-index:9999;background:#fff;border:2px solid #C8922E;border-radius:16px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);direction:rtl";
-  const txt = () => `גרור את קו ${lb} בגרף למקום הנכון${RVP.v != null ? `: <b><bdi>${(+RVP.v).toFixed(RVP.dec)}</bdi></b>` : ""}`;
-  bar.innerHTML = `<div id="rvDragTxt" style="margin-bottom:10px">${txt()}</div><div class="row" style="gap:8px"><button class="btn ok" id="rvDragOk" style="flex:1">אשר מיקום</button><button class="btn ghost" id="rvDragNo">ביטול</button></div>`;
-  document.body.appendChild(bar);
-  $("rvDragOk").onclick = () => { if (RVP.v == null) return; rvDragEnd(true); };
-  $("rvDragNo").onclick = () => rvDragEnd(false);
-  let down = false;
-  const at = e => {
-    const r = P.el.getBoundingClientRect(), y = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
-    const v = P.s.coordinateToPrice(y); if (v == null || !(v > 0)) return;
-    RVP.v = +(+v).toFixed(RVP.dec); rvLine(k, RVP.v); $("rvDragTxt").innerHTML = txt();
-  };
-  const dn = e => { down = true; at(e); e.preventDefault(); e.stopPropagation(); };
-  const mv = e => { if (!down) return; at(e); e.preventDefault(); e.stopPropagation(); };
-  const up = () => { down = false; };
-  const opt = {capture: true, passive: false};
-  P.el.addEventListener("pointerdown", dn, opt); P.el.addEventListener("pointermove", mv, opt);
-  window.addEventListener("pointerup", up, true); window.addEventListener("pointercancel", up, true);
-  RVP.off = () => { P.el.removeEventListener("pointerdown", dn, opt); P.el.removeEventListener("pointermove", mv, opt);
-    window.removeEventListener("pointerup", up, true); window.removeEventListener("pointercancel", up, true); };
-  setTimeout(() => P.el.scrollIntoView({behavior: "smooth", block: "center"}), 250);
-}
-function rvToast(msg) {
-  const d = document.createElement("div");
-  d.textContent = msg;
-  d.style.cssText = "position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1E8A4C;color:#fff;padding:12px 20px;border-radius:14px;font-weight:700;font-size:16px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.25);direction:rtl";
-  document.body.appendChild(d); setTimeout(() => d.remove(), 2600);
-}
-// the charts hold a long history now (user, 17.11.2026: "show many more candles"): open on the latest n candles (and
-// anything that must be seen, from tFirst), the rest by scrolling back / pinching
-function showRecent(P, tFirst, n) {
-  const bs = P.bars || [], len = bs.length;
-  if (len <= n) { P.ch.timeScale().fitContent(); return; }
-  let from = len - n;
-  if (tFirst != null && isFinite(tFirst)) { let i = bs.findIndex(b => b[0] >= tFirst); if (i >= 0) from = Math.min(from, Math.max(0, i - 8)); }
-  P.ch.timeScale().setVisibleLogicalRange({from, to: len + 3});
-}
-const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא ענית בזמן", levels: "לא נכנסה · המחיר כבר עבר את הרמות"};
-const rvNeeded = t => t && t.status === "pending" && t.tal && t.asked && !t.sleep;
-function rvPanel(t, dec) {
-  const box = $("rvBox"); if (!box) return;
-  const m = WB.marks[t.id] || t.mark || {}, buy = t.dir > 0, owner = getRole() !== "viewer";
-  const showLtf = on => { const el = $("wcLtf"); if (el) el.style.display = on ? "" : "none"; };
-  if (!owner) { box.innerHTML = ""; showLtf(true); return; }
-  if (t.status !== "pending" && (m.take || t.sc)) {
-    box.innerHTML = m.take ? `<div class="card" style="margin-bottom:10px">ענית: <b>${m.take === "yes" ? "הייתי נכנס" + (m.entry || m.stop || m.target ? " (עם התיקונים שלך)" : "") : "לא הייתי נכנס"}</b></div>` : "";
-    showLtf(true); return;
-  }
-  const past = t.status !== "pending";        // a trade already in / out: the same marking, to learn from (17.11.2026)
-  const done = m.take ? `<div class="mut" style="margin-top:8px">ענית: <b>${m.take === "yes" ? "כן" : "לא"}</b>. אפשר לשנות עד שהמחיר מגיע לכניסה.</div>` : "";
-  box.innerHTML = `<div class="card" style="margin-bottom:10px;border:2px solid #C8922E">
-      <b style="font-size:17px">היית נכנס?</b>
-      <div class="mut" style="margin:4px 0 10px">${t.sc ? `אסטרטגיית ${esc(t.sc.sid || "")} מצאה ${buy ? "קנייה" : "מכירה"} בגאפ (גרף ${(SCTF[t.sc.tf] || [t.sc.tf])[0]}). הבוט מחכה לך: אם תאשר, הכניסה תהיה במחיר של רגע האישור. בלי תשובה תוך כ־15 דקות, לא נכנסים.` : `דחף ${buy ? "עולה" : "יורד"} עם גאפ בגרף ${TFHE[(t.geo || {}).htf] || ""}, לפני התיקון. ${past ? "סמן: זה דחף וזיהוי נכון?" : "הבוט ייכנס רק לפי מה שתענה."}`}</div>
-      <div class="row" style="gap:8px"><button class="btn ok" id="rvYes">כן</button><button class="btn ghost" id="rvNo">לא</button></div>${done}
-      <div id="rvLv"></div><div class="msg" id="rvMsg"></div></div>`;
-  showLtf(m.take === "yes");
-  const send = async body => {
-    try { const j = await act("/watch/mark", {id: t.id, ...body}); WB.marks[t.id] = j.mark || body; note("rvMsg", body.take === "no" ? "נשמר: לא נכנסים." : "נשמר: הבוט ייכנס לפי מה שסימנת.", true);
-      // saved -> a short confirmation and back to the marks screen (user, 17.11.2026)
-      rvToast(body.take === "no" ? "נקלט ✓ לא נכנסים" : "נקלט ✓ הבוט ייכנס לפי מה שסימנת");
-      setTimeout(() => { if ($("wcPg").classList.contains("on")) $("wcBack").click(); try { if (UI.sub === "wt" && $("dBody")) wbRender($("dBody")); } catch (e) {} }, 700); }
-    catch (e) { note("rvMsg", e.message, false); }
-  };
-  $("rvNo").onclick = () => { $("rvNo").classList.add("picked"); $("rvYes").classList.remove("picked"); send({take: "no"}); };
-  $("rvYes").onclick = () => {
-    $("rvYes").classList.add("picked"); $("rvNo").classList.remove("picked");
-    showLtf(true);
-    // the gap method: the entry is always the gap's middle - only the stop is his to check (user, 17.11.2026)
-    const lv = t.sc ? [["entry", "כניסה", t.entry], ["stop", "סטופ", t.stop], ["target", "יעד", t.target]] : [["stop", "סטופ", t.stop]];
-    $("rvLv").innerHTML = (t.sc ? "" : `<div class="mut" style="margin:12px 0 0">היעד ייקבע ברגע הכניסה: הסווינג השני ${buy ? "מעל" : "מתחת ל"}מחיר הכניסה.</div>`) + `<div class="mut" style="margin:12px 0 6px">${t.sc ? "" : `כניסה באמצע הגאפ: <b><bdi>${t.entry != null ? (+t.entry).toFixed(dec) : "—"}</bdi></b>. `}${t.sc ? "הפוזיציה" : "הסטופ"} לפי הכללים (בגרף ${t.sc ? "הדקה" : TFHE[(t.geo || {}).ltf] || ""} למטה). ${t.sc ? "מה נכון?" : "נכון?"}</div>` + lv.map(([k, l, v]) =>
-      `<div class="row" style="gap:6px;align-items:center;margin-top:6px"><b style="min-width:52px">${l}</b><bdi style="min-width:90px">${v != null ? (+v).toFixed(dec) : "—"}</bdi>
-        <button class="btn ghost" data-ok="${k}" aria-pressed="true">נכון</button><button class="btn ghost" data-bad="${k}">לא נכון</button>
-        <input type="number" step="any" inputmode="decimal" id="rv_${k}" value="${v != null ? (+v).toFixed(dec) : ""}" style="display:none;width:110px"></div>`).join("")
-      + `<button class="btn ok" id="rvSend" style="width:100%;margin-top:12px">אשר</button>`;
-    const ok = {entry: true, stop: true, target: true};   // no target row for the gap method: always the rules' at the fill
-    $("rvLv").querySelectorAll("[data-ok]").forEach(b => b.onclick = () => { if (RVP.key === b.dataset.ok) rvDragEnd(false); ok[b.dataset.ok] = true; $("rv_" + b.dataset.ok).style.display = "none"; b.classList.add("on"); b.nextElementSibling.classList.remove("on"); });
-    $("rvLv").querySelectorAll("[data-bad]").forEach(b => b.addEventListener("click", () => {   // wrong -> touch the chart where it should be
-      const k = b.dataset.bad, lb = {entry: "הכניסה", stop: "הסטופ", target: "היעד"}[k];
-      const cur = parseFloat($("rv_" + k).value);
-      note("rvMsg", `גרור את קו ${lb} בגרף, ואז "אשר מיקום". אפשר גם להקליד.`, true);
-      rvDragStart(k, cur > 0 ? cur : null);
-    }));
-    $("rvLv").querySelectorAll("[data-bad]").forEach(b => b.onclick = () => { ok[b.dataset.bad] = false; $("rv_" + b.dataset.bad).style.display = ""; b.classList.add("on"); b.previousElementSibling.classList.remove("on"); });
-    $("rvSend").onclick = () => {
-      const body = {take: "yes", ok_entry: ok.entry, ok_stop: ok.stop, ok_target: ok.target};
-      for (const k of lv.map(x => x[0])) if (!ok[k]) { const v = parseFloat($("rv_" + k).value); if (!(v > 0)) return note("rvMsg", "חסר מחיר", false); body[k] = v; }
-      const e_ = body.entry ?? t.entry, s_ = body.stop ?? t.stop, g_ = body.target ?? t.target;
-      if (s_ != null && (buy ? s_ >= e_ : s_ <= e_)) return note("rvMsg", `הסטופ צריך להיות ${buy ? "מתחת" : "מעל"} לכניסה`, false);
-      if (g_ != null && (buy ? g_ <= e_ : g_ >= e_)) return note("rvMsg", `היעד צריך להיות ${buy ? "מעל" : "מתחת"} לכניסה`, false);
-      send(body);
-    };
-  };
-}
-async function openReview(id) {
-  for (let i = 0; i < 20 && !(found.watch_own && (found.watch_own.watch || []).some(x => x.id === id)); i++) await new Promise(r => setTimeout(r, 1000));
-  const d = found.watch_own; if (!d) return;
-  WB.doc = d;
-  const t = (d.watch || []).find(x => x.id === id);
-  if (t) wcTal(t);
-}
-async function wcTal(t) {
-  // the rules' stop while waiting; no target before the entry (user, 17.11.2026: it is set when the trade fills)
-  if (t.status === "pending" && t.prop && t.stop == null) t = {...t, stop: t.prop[0], target: null};
-  const g = t.geo, buy = t.dir > 0, dec = wDec(t.symbol);
-  $("wcPg").classList.add("on");
-  $("wcTitle").textContent = `${t.symbol} · ${buy ? "קנייה" : "מכירה"} · שיטת הגאפ`;
-  const RS = {target: "יעד", stop: "סטופ", be: "סטופ בנקודת הכניסה", shut: "סגירת סשן", session: "סוף סשן"};
-  const why = [`<b>${buy ? "קנייה" : "מכירה"}</b>: דחף ${buy ? "עולה" : "יורד"} בגרף ${TFHE[g.htf] || g.htf} (החץ), ונוצר גאפ בין נר 1 לנר 3 שנשאר פתוח (המלבן).`,
-    `כניסה באמצע הגאפ בגרף ${TFHE[g.ltf] || g.ltf}${t.entry != null ? `: <bdi>${(+t.entry).toFixed(dec)}</bdi>` : ""}.`,
-    g.sw_stop ? `סטופ מעבר לסווינג השני ${buy ? "מתחת" : "מעל"} לכניסה (<bdi>${(+g.sw_stop[1]).toFixed(dec)}</bdi>)${t.stop != null ? `: <bdi>${(+t.stop).toFixed(dec)}</bdi>` : ""}.` : "",
-    (t.status === "pending" && t.prop_imp0 != null) ? `חלופה: סטופ בתחילת הדחף <bdi>${(+t.prop_imp0).toFixed(dec)}</bdi> - אם זה הסטופ הנכון, סמן את הסטופ כלא נכון והזז אותו לשם.` : "",
-    g.sw_tgt ? `יעד בסווינג השני ${buy ? "מעל" : "מתחת"} לכניסה${t.target != null ? `: <bdi>${(+t.target).toFixed(dec)}</bdi>` : ""}.` : "",
-    t.exit_time ? `יציאה: ${RS[t.reason] || esc(t.reason || "")}${t.r != null ? ` (${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}R)` : ""}.` : (t.status === "open" ? "העסקה פתוחה." : "")].filter(Boolean);
-  $("wcBody").innerHTML = `<div id="rvBox"></div><div class="card" style="margin-bottom:10px">${why.map(x => `<p style="margin:3px 0">${x}</p>`).join("")}</div>
-    <div class="mut" style="margin-bottom:6px">גרף ${TFHE[g.htf] || g.htf} (זיהוי): הדחף, נר 1 ונר 3, והגאפ שיוצא מהם</div><div class="card"><div class="wchart" id="wc15"></div></div>
-    <div id="wcLtf"><div class="mut" style="margin-bottom:6px">גרף ${TFHE[g.ltf] || g.ltf} (כניסה): הגאפ, הכניסה, הסטופ והיעד מהסווינגים שקבעו אותם, עד היציאה</div><div class="card"><div class="wchart small" id="wc1"></div></div></div><div class="msg mut" id="wcMsg"></div>${notesHtml("wn")}`;
-  rvPanel(t, dec);
-  tradeNotes(recTrade(t), "wn", (WB.doc && WB.doc.bot) || UI.cur);
-  WC.forEach(c => c.remove()); WC = [];
-  const LW = await loadTV().catch(() => null);
-  if (!LW) { $("wcMsg").textContent = "ספריית הגרפים לא נטענה. בדוק חיבור לאינטרנט."; return; }
-  const sec = v => Math.floor(Date.parse(v) / 1000), off = ilOff(sec(t.time || t.setup_t));
-  const mk = (el, bars, ex) => {
-    const ch = LW.createChart(el, {layout: {background: {color: "#fff"}, textColor: "#5B6470", fontFamily: "Instrument Sans, Heebo, sans-serif"},
-      grid: {vertLines: {color: "#EEF1F4"}, horzLines: {color: "#EEF1F4"}}, rightPriceScale: {borderColor: "#E6E9EE"},
-      timeScale: {borderColor: "#E6E9EE", timeVisible: true, secondsVisible: false}, crosshair: {mode: 0}, autoSize: true});
-    const s = ch.addCandlestickSeries({upColor: "#1E8A4C", downColor: "#D0453A", borderVisible: false, wickUpColor: "#1E8A4C", wickDownColor: "#D0453A",
-      priceFormat: {type: "price", precision: dec, minMove: Math.pow(10, -dec)},
-      autoscaleInfoProvider: orig => { const r = orig(); if (!r) return r; const e = ex.filter(v => v != null);
-        return {priceRange: {minValue: Math.min(r.priceRange.minValue, ...e), maxValue: Math.max(r.priceRange.maxValue, ...e)}}; }});
-    s.setData((bars || []).map(b => ({time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]})));
-    WC.push(ch); return {ch, s, bars: bars || []};
-  };
-  const snap = (bars, v) => { let k = bars[0] ? bars[0][0] : v; for (const b of bars) { if (b[0] <= v) k = b[0]; else break; } return k + off; };
-  const times = (bars, a, b) => bars.map(x => x[0] + off).filter(x => x >= a && x <= b);
-  const band = (P, a, b, lo, hi, col, edge) => {          // a filled box between two prices from time a to time b
-    const ts = times(P.bars, a, b); if (ts.length < 1 || lo == null || hi == null) return;
-    const s = P.ch.addBaselineSeries({baseValue: {type: "price", price: lo}, lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
-      topLineColor: edge, bottomLineColor: edge, topFillColor1: col, topFillColor2: col, bottomFillColor1: col, bottomFillColor2: col});
-    s.setData(ts.map(x => ({time: x, value: hi})));
-  };
-  const seg = (P, a, pa, b, pb, col, w = 2, st = 0) => {   // a line from (a, pa) to (b, pb)
-    const ta = snap(P.bars, a), tb = snap(P.bars, b); if (tb <= ta) return;
-    const s = P.ch.addLineSeries({color: col, lineWidth: w, lineStyle: st, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false});
-    s.setData([{time: ta, value: pa}, {time: tb, value: pb}]);
-  };
-  const tin = t.time ? sec(t.time) : null, tout = t.exit_time ? sec(t.exit_time) : null, c1 = sec(g.c1), c3 = sec(g.c3);
-  const lo = t.gap_lo, hi = t.gap_hi, gapCol = "rgba(184,134,43,.22)";
-  // the high timeframe
-  const A = mk($("wc15"), t.m15, [lo, hi, g.imp0[1], g.imp1[1]]);
-  rvPickWire(A, dec, $("wc15"));
-  const aEnd = A.bars.length ? A.bars[A.bars.length - 1][0] + off : c3 + off;
-  const gEnd = tin ? Math.max(snap(A.bars, tin), snap(A.bars, c3)) : aEnd;
-  band(A, snap(A.bars, c1), gEnd, lo, hi, gapCol, "#B8862B");
-  if (lo != null && hi != null) seg(A, c1, (lo + hi) / 2, gEnd - off, (lo + hi) / 2, "#B8862B", 1, 2);   // the gap's middle = the entry
-  seg(A, sec(g.imp0[0]), g.imp0[1], sec(g.imp1[0]), g.imp1[1], "#1E3A5F", 3);
-  A.s.setMarkers([
-    {time: snap(A.bars, sec(g.imp1[0])), position: buy ? "aboveBar" : "belowBar", color: "#1E3A5F", shape: buy ? "arrowUp" : "arrowDown", text: "דחף"},
-    {time: snap(A.bars, c1), position: buy ? "belowBar" : "aboveBar", color: "#B8862B", shape: "circle", text: "1"},
-    {time: snap(A.bars, c3), position: buy ? "belowBar" : "aboveBar", color: "#B8862B", shape: "circle", text: "3"},
-    ...(tin ? [{time: snap(A.bars, tin), position: buy ? "belowBar" : "aboveBar", color: "#12161C", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}] : [])
-  ].sort((a, b) => a.time - b.time));
-  showRecent(A, sec(g.imp0[0]), 80);
-  const MS = {"1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400};
-  LC.sym = null; LC.charts = [];
-  const isLive = true;
-  if (isLive) liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, MS[g.htf] || 900);
-  // the low timeframe
-  const B = mk($("wc1"), t.m1, [lo, hi, t.entry, t.stop, t.target]);
-  rvPickWire(B, dec, $("wc1"));
-  const bEnd = B.bars.length ? B.bars[B.bars.length - 1][0] + off : null;
-  const t0 = tin ? snap(B.bars, tin) : bEnd, t1 = tout ? snap(B.bars, tout) : bEnd;
-  band(B, B.bars.length ? B.bars[0][0] + off : t0, t0, lo, hi, gapCol, "#B8862B");
-  if (tin && t.entry != null) {
-    if (t.target != null) band(B, t0, t1, Math.min(t.entry, t.target), Math.max(t.entry, t.target), "rgba(30,138,76,.20)", "#1E8A4C");
-    if (t.stop != null) band(B, t0, t1, Math.min(t.entry, t.stop), Math.max(t.entry, t.stop), "rgba(208,69,58,.20)", "#D0453A");
-  }
-  const ms = [];
-  if (g.sw_stop && t.stop != null) { seg(B, sec(g.sw_stop[0]), t.stop, tout || (bEnd - off), t.stop, "#D0453A", 2);
-    ms.push({time: snap(B.bars, sec(g.sw_stop[0])), position: buy ? "belowBar" : "aboveBar", color: "#D0453A", shape: "circle", text: "סווינג 2 · סטופ"}); }
-  if (g.sw_tgt && t.target != null) { seg(B, sec(g.sw_tgt[0]), t.target, tout || (bEnd - off), t.target, "#1E8A4C", 2);
-    ms.push({time: snap(B.bars, sec(g.sw_tgt[0])), position: buy ? "aboveBar" : "belowBar", color: "#1E8A4C", shape: "circle", text: "סווינג 2 · יעד"}); }
-  if (tin) ms.push({time: t0, position: buy ? "belowBar" : "aboveBar", color: "#12161C", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"});
-  if (tout) ms.push({time: t1, position: "inBar", color: t.r >= 0 ? "#1E8A4C" : "#D0453A", shape: "square", text: RS[t.reason] ? "יציאה · " + RS[t.reason] : "יציאה"});
-  B.s.setMarkers(ms.sort((a, b) => a.time - b.time));
-  if (t.entry != null) B.s.createPriceLine({price: t.entry, color: "#12161C", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "כניסה"});
-  showRecent(B, Math.min(...[g.sw_stop, g.sw_tgt].filter(Boolean).map(x => sec(x[0])), c1), 150);
-  if (isLive) liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, MS[g.ltf] || 60);
-}
 $("wbBack").onclick = () => $("wbPg").classList.remove("on");
-$("wcBack").onclick = () => { if (RVP.key) rvDragEnd(false); $("wcPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } WC.forEach(c => c.remove()); WC = []; };
-$("decBack").onclick = () => $("decPg").classList.remove("on");
-$("bpBack").onclick = () => { $("botsPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } };
-// "how Tal thinks" (data/agents/tal_thinking.md): what the manager and the agents read before every decision
-// daily loss reports (agents/loss_review.py): every losing day of every bot - what lost, why, what is done about it
-const LR = p => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/losses/${p}?t=${Math.floor(Date.now() / 60000)}`;
-$("lrBack").onclick = () => $("lrPg").classList.remove("on");
-$("convBtn").onclick = () => convOpen();
-$("convBack").onclick = () => $("convPg").classList.remove("on");
-setTimeout(convBadge, 3000); setInterval(convBadge, 5 * 60000);
-$("lrBtn").onclick = async () => {
-  $("lrPg").classList.add("on");
-  try {
-    const idx = await (await fetch(LR("index.json"))).json();
-    const rs = (idx.reports || []).slice(0, 60);
-    if (!rs.length) { $("lrBody").innerHTML = '<div class="empty">עוד אין ימי הפסד</div>'; return; }
-    $("lrBody").innerHTML = rs.map((r, i) => `<div class="card" style="margin:10px 0;cursor:pointer" data-i="${i}">
-      <div class="row"><b>${esc(r.bot)} · ${esc(r.day)}</b><span class="pill neg">${r.pnl_pct >= 0 ? "+" : ""}${Number(r.pnl_pct).toFixed(2)}%</span></div>
-      <div class="mut" style="margin-top:4px">${esc(r.headline)}</div>
-      ${r.status ? `<div style="margin-top:4px"><span class="pill ${r.open ? "neg" : "pos"}">${esc(r.status)}</span>${r.month_pct ? ` <span class="mut">שיפור צפוי: ${r.month_pct > 0 ? "+" : ""}${r.month_pct}% בחודש</span>` : ""}</div>` : ""}<div class="lrD" id="lrD${i}"></div></div>`).join("");
-    document.querySelectorAll("#lrBody .card").forEach(el => el.onclick = async () => {
-      const r = rs[+el.dataset.i], box = $("lrD" + el.dataset.i);
-      if (box.innerHTML) { box.innerHTML = ""; return; }
-      const d = await (await fetch(LR(`${r.bot}/${r.day}.json`))).json();
-      // the bot agent's conclusions (its nightly run answers the loss task in data/agents/replies.json)
-      let ans = "";
-      try {
-        const rp = await (await fetch(`https://raw.githubusercontent.com/talshahino/trading-system/main/data/agents/replies.json?t=${Math.floor(Date.now() / 60000)}`)).json();
-        const tk = (rp._tasks || []).find(x => x.from === "loss_review" && x.report === `reports/agents/losses/${r.bot}/${r.day}.json`);
-        const s = tk && (tk.status || {})[r.bot];
-        ans = s && s.text ? `<h4 style="margin:10px 0 4px">מסקנות הסוכן של הבוט</h4><p style="margin:4px 0;white-space:pre-wrap">${esc(s.text)}</p><p class="mut">${esc(s.state === "done" ? "טופל" : "בטיפול")} · ${esc((s.at || "").slice(0, 16).replace("T", " "))}</p>`
-            : `<h4 style="margin:10px 0 4px">מסקנות הסוכן של הבוט</h4><p class="mut">עוד לא - הסוכן של הבוט חוקר בריצת הלילה (02:47-03:47), והמסקנות יופיעו כאן.</p>`;
-      } catch (e) { ans = ""; }
-      const tr = d.trend || {}, l7 = tr.last7 || {}, p7 = tr.prev7 || {};
-      box.innerHTML = `<div style="margin-top:8px">${(d.summary || []).map(s => `<p style="margin:4px 0">${esc(s)}</p>`).join("")}</div>
-        <p style="margin:6px 0" class="mut">רווח גולמי ${Number(d.gross_profit).toLocaleString()}$ · הפסד גולמי ${Number(d.gross_loss).toLocaleString()}$ · מקדם רווח ${d.profit_factor ?? "-"} · עלויות ${Number(d.costs).toLocaleString()}$</p>
-        <h4 style="margin:10px 0 4px">העסקאות שהפסידו</h4>
-        <div style="overflow-x:auto"><table style="width:100%;font-size:13px;border-collapse:collapse"><tr><th align="right">אסטרטגיה</th><th>כיוון</th><th>R</th><th>$</th><th>MFE</th><th align="right">סיבה</th></tr>
-        ${(d.losers || []).map(x => `<tr style="border-top:1px solid var(--line,#ddd)"><td>${esc(x.combo)}${x.recurring ? " ↻" : ""}</td><td align="center">${esc(x.side)}</td><td align="center">${x.r}</td><td align="center">${Math.round(x.net).toLocaleString()}</td><td align="center">${x.mfe_r ?? "-"}</td><td>${esc(x.cause_he)}</td></tr>`).join("")}</table></div>
-        ${d.plan ? `<h4 style="margin:10px 0 4px">תכנית השיפור (המנהל אחראי)</h4>
-        <p style="margin:4px 0"><b>${esc(d.plan.status)}</b>${d.plan.total_month_pct ? ` · כל התיקונים יחד: ${d.plan.total_month_pct > 0 ? "+" : ""}${d.plan.total_month_pct}% מהחשבון בחודש (לפי הבדיקה על 2026)` : ""}</p>
-        <p class="mut" style="margin:4px 0;font-size:12px">אסטרטגיה בלי תיקון: סיכון = היתרון שלה עכשיו ÷ היתרון שאושר. היתרון עכשיו משלב את הבדיקה של 2026 ואת החי, כל אחד לפי כמה אפשר לסמוך עליו - הכול מהמספרים של הנכס עצמו. אין יתרון ← כמות מינימלית עד תיקון.</p>
-        <ul style="margin:0;padding-inline-start:18px">${(d.plan.rows || []).map(x => `<li style="margin:4px 0"><b>${esc(x.combo)}</b> (${esc(x.cause)}): ${x.fixes.length ? x.fixes.map(f => esc(f.what) + (f.effect_month_pct != null ? ` → ${f.effect_month_pct > 0 ? "+" : ""}${f.effect_month_pct}% בחודש` : "")).join("; ") : (x.open ? `<span class="neg">עוד אין תיקון - הסוכן חייב להביא אחד.${x.edge_mult != null ? (x.edge_mult < 0.01 ? " אין לה יתרון - אם אין תיקון יומיים אחרי הדוח, תיסחר בכמות המינימלית" : ` אם אין תיקון יומיים אחרי הדוח, הסיכון יורד ל־×${x.edge_mult} (כמו היתרון שלה)`) : ""}</span>${x.edge_parts ? `<div class="mut" style="font-size:12px">${x.edge_parts.map(esc).join(" · ")}</div>` : ""}` : '<span class="mut">נסגרה בגלל כלל (חדשות / סוף מסחר) - נבדק בבדיקת הכללים</span>')}</li>`).join("")}</ul>` : ""}
-        <h4 style="margin:10px 0 4px">מה עושים</h4><ol style="margin:0;padding-inline-start:18px">${(d.actions || []).map(a => `<li style="margin:4px 0">${esc(a.task)}</li>`).join("")}</ol>
-        ${ans}
-        <p class="mut" style="margin-top:8px">מגמה: ${l7.loss_days ?? 0} ימי הפסד בשבוע האחרון (ממוצע ${l7.avg_loss_pct ?? 0}%), מול ${p7.loss_days ?? 0} בשבוע שלפני (${p7.avg_loss_pct ?? 0}%)${tr.improving === true ? " - ההפסדים קטנים" : tr.improving === false ? " - ההפסדים לא קטנים" : ""}.</p>`;
-    });
-  } catch (e) { $("lrBody").innerHTML = '<div class="empty">לא נטען, נסה שוב</div>'; }
-};
+$("wcBack").onclick = () => { $("wcPg").classList.remove("on"); WC.forEach(c => c.remove()); WC = []; };
+$("bpBack").onclick = () => $("botsPg").classList.remove("on");
 $("bdBack").onclick = () => { $("bdPg").classList.remove("on"); BP.combo = null; };
 
 function ask(title, body) {
@@ -2879,72 +2131,7 @@ document.addEventListener("pointerdown", ev => {
 $("pop").onclick = e => { if (e.target.id === "pop" || e.target.id === "popOk") $("pop").classList.remove("on"); };
 
 addEventListener("resize", () => { if ($("eqc") && found[UI.cur]) eqChart(found[UI.cur], accBy(UI.cur)); });
-tick(); setInterval(tick, 60000);
-try {   // a review notification (bot 5's gap setups, 17.11.2026): from the link or from the open app
-  const rq = new URLSearchParams(location.search).get("review");
-  if (rq) { history.replaceState(history.state, "", location.pathname); openReview(rq); }
-  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener("message", e => { if (e.data && e.data.review) openReview(e.data.review); });
-} catch (e) {} talkBadges(); setInterval(() => { if (!document.hidden) repliesDoc(true).then(talkBadges); }, 20000);     // every 20 seconds (user, 16.11.2026)
-document.addEventListener("visibilitychange", () => { if (!document.hidden) repliesDoc(true).then(talkBadges); });   // and at once when the app comes back setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
-
-/* the phone's back button (user, 16.11.2026): one screen back inside the app each time, and only the accounts list
-   leaves it. Inside an account: any tab -> its overview -> the accounts list. Overall statistics / news / management ->
-   the accounts list. A message box, a page (trade, chart, report...) or a side panel closes first.
-   Android Chrome skips history entries added without a tap, so one entry per open layer is added right after a tap
-   (never inside the back event itself), and extra entries are dropped when a layer was closed with an in-app arrow. */
-(function () {
-  const isOn = id => $(id) && $(id).classList.contains("on");
-  const tab = () => (document.querySelector('#tabs button[aria-selected="true"]') || {}).dataset?.v || "v-acc";
-  const toAccounts = () => {
-    const b = document.querySelector('#tabs button[data-v="v-acc"]');
-    if (tab() !== "v-acc" && b) b.click(); else { UI.view = "list"; showAcc(); scrollTo(0, 0); }
-  };
-  function depth() {
-    let n = ["pop", "ask", "logSheet"].filter(isOn).length + document.querySelectorAll(".page.on").length
-      + (isOn("addDrawer") ? 1 : 0) + (isOn("drawer") ? 1 : 0);
-    if (tab() !== "v-acc") return n + 1;
-    if (UI.view === "det") return n + (UI.sub && UI.sub !== "ov" ? 2 : 1);
-    return n + (UI.view && UI.view !== "list" ? 1 : 0);
-  }
-  function step() {
-    if (isOn("pop")) { $("pop").classList.remove("on"); return true; }
-    if (isOn("ask")) { $("askNo") ? $("askNo").click() : $("ask").classList.remove("on"); return true; }
-    if (isOn("logSheet")) { $("logSheet").classList.remove("on"); return true; }
-    const pages = [...document.querySelectorAll(".page.on")];
-    if (pages.length) {
-      const z = el => +getComputedStyle(el).zIndex || 0;
-      const top = pages.reduce((a, b) => (z(b) >= z(a) ? b : a));
-      const b = top.querySelector(".ph .back");
-      if (b) b.click(); else top.classList.remove("on");
-      return true;
-    }
-    if (isOn("addDrawer")) { panel("addDrawer", false); return true; }
-    if (isOn("drawer")) { drawer(false); if (tab() !== "v-acc" || UI.view !== "list") toAccounts(); return true; }
-    if (tab() !== "v-acc") { toAccounts(); return true; }
-    if (UI.view === "det") {
-      const ov = document.querySelector('#dSubt [data-s="ov"]');
-      if (UI.sub && UI.sub !== "ov" && ov) { ov.click(); scrollTo(0, 0); return true; }
-      UI.view = "list"; showAcc(); scrollTo(0, 0); return true;
-    }
-    if (UI.view && UI.view !== "list") { UI.view = "list"; showAcc(); scrollTo(0, 0); return true; }
-    return false;
-  }
-  let armed = 0, skip = 0;
-  function sync() {                       // right after a tap: one history entry per open layer
-    const d = depth();
-    if (armed < d) { while (armed < d) { history.pushState({tt: armed + 1}, ""); armed++; } }
-    else if (armed > d) { skip++; history.go(d - armed); armed = d; }
-  }
-  try {
-    history.replaceState({tt: 0}, "");
-    for (const ev of ["click", "touchend"]) document.addEventListener(ev, () => setTimeout(sync, 0), true);
-    addEventListener("popstate", () => {
-      if (skip) { skip--; return; }
-      armed = Math.max(0, armed - 1);
-      try { step(); } catch (e) { /* the arrows still work */ }
-    });
-  } catch (e) { /* no history API: the back arrows still work */ }
-})();
+tick(); setInterval(tick, 60000); setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
 </script>
 </body>
 </html>

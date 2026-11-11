@@ -1,0 +1,1315 @@
+{
+ "note": "every strategy already in the library (agents/*_strategies.py); the scout skips duplicates",
+ "strategies": [
+  {
+   "id": "TV01",
+   "name": "Gold Pro Strategy (zackseal)",
+   "doc": "TV 'Gold Pro Strategy' (zackseal): EMA50 vs EMA200 trend + price on that side of EMA200,"
+  },
+  {
+   "id": "TV02",
+   "name": "AsliGold DCH10 breakout",
+   "doc": "TV 'AsliGold XAUUSD DCH10 Trend Breakout': close crosses above the previous 10-bar high,"
+  },
+  {
+   "id": "TV03",
+   "name": "Golden Master v1 (EMA200 + MACD)",
+   "doc": "TV 'Golden Master Strategy v1': close above EMA200, MACD(12,26,9) crosses above signal"
+  },
+  {
+   "id": "TV04",
+   "name": "Golden Edge Pro (MACD hist + volume)",
+   "doc": "TV 'Golden Edge Pro': MACD(16,26,9) histogram crosses above 0, EMA6(vol) > EMA8(vol),"
+  },
+  {
+   "id": "TV05",
+   "name": "control Scalper (UT Bot + ADX/RSI)",
+   "doc": "TV 'control Scalper': UT Bot signals (key 1, ATR 10 - common defaults, not published),"
+  },
+  {
+   "id": "TV06",
+   "name": "Supertrend 10/3",
+   "doc": "TV classic 'Supertrend Strategy' (ATR 10, factor 3): long on an up flip, short on a down"
+  },
+  {
+   "id": "TV07",
+   "name": "London breakout (Asian range)",
+   "doc": "London breakout (classic forex): the Asian range is 00:00-07:00 UTC. From 07:00 to"
+  },
+  {
+   "id": "TV08",
+   "name": "Bollinger + RSI mean reversion",
+   "doc": "Bollinger mean reversion: close below the lower band (20, 2) with RSI(14) < 30 buys,"
+  },
+  {
+   "id": "TV09",
+   "name": "Connors RSI(2)",
+   "doc": "Connors RSI(2): above SMA200 buy when RSI(2) < 10, exit when close > SMA5; below"
+  },
+  {
+   "id": "TV10",
+   "name": "ICT Fair Value Gap",
+   "doc": "ICT Fair Value Gap: a bullish gap = low of bar i above high of bar i-2 after a strong"
+  },
+  {
+   "id": "TV11",
+   "name": "Liquidity sweep of previous day",
+   "doc": "Liquidity sweep reversal (SMC): price trades beyond the previous day's high/low and the"
+  },
+  {
+   "id": "TV12",
+   "name": "Daily pivot bounce S1/R1",
+   "doc": "Daily floor pivots: P = (H+L+C)/3 of the previous day, S1 = 2P-H, R1 = 2P-L. Price"
+  },
+  {
+   "id": "TT01",
+   "name": "First 4H candle false breakout (TikTok)",
+   "doc": "TT01 First 4H candle false breakout (@tradingdata2). New York time. Range = high/low"
+  },
+  {
+   "id": "TT02",
+   "name": "Type 1 dealing range 25% + FVG (TikTok)",
+   "doc": "TT02 Type 1 dealing range (@ali_khanict). False breakout below a 20-bar consolidation"
+  },
+  {
+   "id": "TT03",
+   "name": "ICT sweep+POI+IFVG+CISD (TikTok)",
+   "doc": "TT03 Sweep + HTF POI + IFVG + CISD (@alawadtrd). All four, in order (short shown,"
+  },
+  {
+   "id": "TT04",
+   "name": "Cup and handle breakout (TikTok)",
+   "doc": "TT04 Cup and handle (@smart.forex.pips). Edge = a swing high (5 bars each side). Price"
+  },
+  {
+   "id": "TT11",
+   "name": "NY 9:30 opening range breakout 15m, 2.5R (TikTok)",
+   "doc": "TT11 NY opening-range breakout, 15 minutes (@_itskinglouis, NAS100). Mark the high/low"
+  },
+  {
+   "id": "TT12",
+   "name": "Fibonacci golden zone pullback 5m (TikTok)",
+   "doc": "TT12 Fibonacci golden zone pullback, 5 minutes (@il.gufo.notturno). Trend up when price"
+  },
+  {
+   "id": "TT13",
+   "name": "Opening range break and retest 5m (TikTok)",
+   "doc": "TT13 Opening range breakout and retest, 5 minutes (@thecrypteller, also @cyforex2)."
+  },
+  {
+   "id": "TT16",
+   "name": "Previous NY session high/low fade, 4R (TikTok)",
+   "doc": "TT16 Previous New York session high/low fade (@forextristan, US30). Mark yesterday's"
+  },
+  {
+   "id": "TT19",
+   "name": "15m candle range sweep on 1m (TikTok)",
+   "doc": "TT19 15-minute candle range sweep, executed on 1 minute (@protradingschool0). Range ="
+  },
+  {
+   "id": "TT35",
+   "name": "London 1H opening candle sweep + FVG (TikTok)",
+   "doc": "TT35 London opening 1-hour candle range (@wesleytfxc, @primeswingtrader). Range = the"
+  },
+  {
+   "id": "TT36",
+   "name": "London Twilight Model 2AM range (TikTok)",
+   "doc": "TT36 'London Twilight Model' (@massimotsr, 5 videos). Range = the 2:00 AM New York 1-hour"
+  },
+  {
+   "id": "TT39",
+   "name": "ICT Silver Bullet 10-11 NY (TikTok)",
+   "doc": "TT39 ICT Silver Bullet (@blosefx, @fluxchart, @the.trading.geek1). Only 10:00-11:00 NY."
+  },
+  {
+   "id": "TT40",
+   "name": "Opening range + VWAP filter, 1:3 (TikTok)",
+   "doc": "TT40 Opening range + VWAP (@horiizonfx, gold). Range 15:00-15:30 Paris = 09:00-09:30 NY."
+  },
+  {
+   "id": "TT41",
+   "name": "NY 8AM 15m candle break and retest, 1:3 (TikTok)",
+   "doc": "TT41 New York 8:00 AM 15-minute candle break and retest (@rp_profits). Zone = the 08:00"
+  },
+  {
+   "id": "TT45",
+   "name": "EMA 9/21 crossover 1H, 1:2 (TikTok)",
+   "doc": "TT45 EMA 9/21 crossover on 1 hour (@whitehattraders27). Bullish cross buys, bearish cross"
+  },
+  {
+   "id": "TT56",
+   "name": "Break and retest of swing level, 2:1 (TikTok)",
+   "doc": "TT56 Break and retest of a swing level (@user1239509627, @tarzantrader, @realnolanivey,"
+  },
+  {
+   "id": "YT01",
+   "name": "Opening range false-breakout fade, 2R (YouTube)",
+   "doc": "YT01 Opening-range false-breakout fade (YouTube 5a8mNmb9VzM, NQ/ES). Range = the first"
+  },
+  {
+   "id": "YT03",
+   "name": "Supply/demand zone first retest (YouTube)",
+   "doc": "YT03 Supply/demand zone, first retest (YouTube LpeThhwHiGA). Impulse = 3 same-direction"
+  },
+  {
+   "id": "TV13",
+   "name": "Turtle System 1 (20/10 breakout)",
+   "doc": "Turtle System 1 (Dennis/Faith): close above the 20-bar high buys, below the 20-bar low"
+  },
+  {
+   "id": "TV14",
+   "name": "Turtle System 2 (55/20 breakout)",
+   "doc": "Turtle System 2: 55-bar breakout entries, stop 2N, exit on the opposite 20-bar breakout."
+  },
+  {
+   "id": "TV15",
+   "name": "Keltner channel breakout + ATR trail",
+   "doc": "Keltner channel breakout (Chester Keltner / Linda Raschke version): close above"
+  },
+  {
+   "id": "TV16",
+   "name": "Golden cross 50/200 + ATR trail",
+   "doc": "50/200 moving-average trend (golden/death cross): SMA50 crossing above SMA200 buys,"
+  },
+  {
+   "id": "TV17",
+   "name": "Bollinger squeeze breakout",
+   "doc": "Bollinger squeeze breakout (John Bollinger): band width (20, 2) at its lowest of the last"
+  },
+  {
+   "id": "TV18",
+   "name": "Inside-bar breakout, 2R",
+   "doc": "Inside-bar breakout: bar i-1 is inside bar i-2 (the mother bar); a close above the mother"
+  },
+  {
+   "id": "TV19",
+   "name": "RSI trend pullback (EMA50/200), 3R",
+   "doc": "Trend pullback with RSI (Andrew Cardwell style): uptrend when EMA50 > EMA200; RSI(14)"
+  },
+  {
+   "id": "TV20",
+   "name": "Ichimoku TK cross above/below cloud",
+   "doc": "Ichimoku (Hosoda, 9/26/52): Tenkan crosses above Kijun while price is above the cloud ->"
+  },
+  {
+   "id": "TV21",
+   "name": "Parabolic SAR + EMA200",
+   "doc": "Parabolic SAR (Wilder, 0.02/0.2) with EMA200 filter: SAR flips below price while price is"
+  },
+  {
+   "id": "TV22",
+   "name": "MACD zero-line cross + EMA200, 2R",
+   "doc": "MACD (12/26/9) zero-line trend: MACD line crosses above zero with price above EMA200 ->"
+  },
+  {
+   "id": "TV23",
+   "name": "Triple EMA 8/21/55 pullback, 2R",
+   "doc": "Triple EMA 8/21/55 stack: EMAs aligned (8>21>55), price dips to the 21 EMA and closes back"
+  },
+  {
+   "id": "TV24",
+   "name": "ADX>25 DI cross + ATR trail",
+   "doc": "ADX/DI (Wilder): +DI crosses above -DI with ADX(14) > 25 -> buy (mirror). Stop 2 ATR,"
+  },
+  {
+   "id": "TV25",
+   "name": "Heikin-Ashi trend + EMA50",
+   "doc": "Heikin-Ashi trend: first green HA candle with no lower wick, above EMA50 -> buy (mirror:"
+  },
+  {
+   "id": "TV26",
+   "name": "NR7 breakout, 2R",
+   "doc": "NR7 breakout (Toby Crabel): the bar with the narrowest range of the last 7; a close above"
+  },
+  {
+   "id": "TV27",
+   "name": "Previous-day high/low breakout, 2R",
+   "doc": "Previous-day high/low breakout: first close above yesterday's high buys, below"
+  },
+  {
+   "id": "TV28",
+   "name": "Stochastic pullback in trend, 2R",
+   "doc": "Stochastic pullback in trend (Lane, 14/3/3): uptrend (close > EMA200), %K crosses above %D"
+  },
+  {
+   "id": "TV29",
+   "name": "Z-score mean reversion",
+   "doc": "Z-score mean reversion: z = (close - SMA20) / stdev20. z < -2 buys, z > 2 sells; exit"
+  },
+  {
+   "id": "TV30",
+   "name": "IBS mean reversion (long only)",
+   "doc": "Internal Bar Strength (index mean reversion): IBS = (close - low) / (high - low)."
+  },
+  {
+   "id": "TV31",
+   "name": "Engulfing at 20-bar extreme, 2R",
+   "doc": "Engulfing at a swing extreme: bullish engulfing whose low is the lowest of 20 bars ->"
+  },
+  {
+   "id": "TV32",
+   "name": "Previous-week high/low breakout, 2R",
+   "doc": "Previous-week high/low breakout: first close above last week's high buys, below last"
+  },
+  {
+   "id": "TV33",
+   "name": "Keltner fade to the mean",
+   "doc": "Keltner fade: a close back inside EMA20 +/- 2.5 ATR after closing outside -> fade toward"
+  },
+  {
+   "id": "TV34",
+   "name": "Hull MA 55 turn + EMA200, 2R",
+   "doc": "Hull moving average (Alan Hull, 55) turning up with price above EMA200 -> buy (mirror)."
+  },
+  {
+   "id": "TV35",
+   "name": "Williams %R pullback in trend, 2R",
+   "doc": "Williams %R (14) pullback in trend: close > EMA100 and %R rises back above -80 -> buy"
+  },
+  {
+   "id": "TV36",
+   "name": "EMA20 bounce in strong trend, 2R",
+   "doc": "EMA20 bounce in a strong trend: EMA20 > EMA50 and both rising, the bar touches EMA20 and"
+  },
+  {
+   "id": "TV37",
+   "name": "Three-bar reversal at 20-bar extreme, 2R",
+   "doc": "Three-bar reversal at a 20-bar extreme: bar i-1 makes the lowest low of 20 bars and bar i"
+  },
+  {
+   "id": "TV38",
+   "name": "Donchian 10 fade + RSI(2) (Connors)",
+   "doc": "Donchian extreme fade (Connors style): close at a new 10-bar low with RSI(2) < 5 and"
+  },
+  {
+   "id": "TV39",
+   "name": "Chandelier exit trend (LeBeau)",
+   "doc": "Chandelier exit trend (Chuck LeBeau): long line = 22-bar highest high - 3 ATR22, short"
+  },
+  {
+   "id": "TV40",
+   "name": "ROC(20) momentum + rising ADX",
+   "doc": "ROC momentum with ADX: ROC(20) crosses above 0 while ADX(14) > 20 and rising -> buy"
+  },
+  {
+   "id": "TV41",
+   "name": "Aroon 25 cross, 2R",
+   "doc": "Aroon (Chande, 25): Aroon Up crosses above Aroon Down with Aroon Up > 70 -> buy (mirror)."
+  },
+  {
+   "id": "TV42",
+   "name": "CCI(20) +/-100 trend",
+   "doc": "CCI(20) trend (Lambert): CCI crosses above +100 buys, below -100 sells; exit when CCI"
+  },
+  {
+   "id": "TV43",
+   "name": "Donchian 20 + ADX>25",
+   "doc": "Donchian 20 breakout filtered by ADX(14) > 25. Stop 2 ATR, exit on the opposite"
+  },
+  {
+   "id": "TV44",
+   "name": "Pin bar at 20-bar extreme, 2R",
+   "doc": "Pin bar at a 20-bar extreme: lower wick >= 2/3 of the range and the low is the 20-bar low"
+  },
+  {
+   "id": "TV45",
+   "name": "Vortex 14 cross + ATR trail",
+   "doc": "Vortex indicator (Botes/Siepman, 14): VI+ crosses above VI- buys (mirror). Stop 2 ATR,"
+  },
+  {
+   "id": "TV46",
+   "name": "TRIX 15/9 cross + EMA200, 2R",
+   "doc": "TRIX (Hutson, 15) crosses its 9-signal: above buys (mirror), only with price on the same"
+  },
+  {
+   "id": "TV47",
+   "name": "Elder impulse system",
+   "doc": "Elder impulse system: EMA13 rising and MACD histogram rising = green bar; the first green"
+  },
+  {
+   "id": "TV48",
+   "name": "Turn-of-month long, 2R",
+   "doc": "Turn-of-month (Ariel 1987; Lakonishok & Smidt): long indices from the last 2 trading days"
+  },
+  {
+   "id": "TV49",
+   "name": "TV04 Golden Edge, target 1.5R (variant)",
+   "doc": ""
+  },
+  {
+   "id": "TV50",
+   "name": "TV04 Golden Edge, target 3R (variant)",
+   "doc": ""
+  },
+  {
+   "id": "TV51",
+   "name": "TV14 Turtle 55/20 + 3R target (variant)",
+   "doc": "Variant of s_turtle_55 with target 3.0R. Turtle System 2: 55-bar breakout entries, stop 2N, exit on the opposite 20-bar breakout."
+  },
+  {
+   "id": "TV52",
+   "name": "TV25 Heikin-Ashi + 2R target (variant)",
+   "doc": "Variant of s_heikin_ashi with target 2.0R. Heikin-Ashi trend: first green HA candle with no lower wick, above EMA50 -> buy (mirror:"
+  },
+  {
+   "id": "TV53",
+   "name": "TV25 Heikin-Ashi + 3R target (variant)",
+   "doc": "Variant of s_heikin_ashi with target 3.0R. Heikin-Ashi trend: first green HA candle with no lower wick, above EMA50 -> buy (mirror:"
+  },
+  {
+   "id": "TV54",
+   "name": "TV28 Stochastic pullback, 1.5R (variant)",
+   "doc": "Variant of s_stoch_pullback with target 1.5R. Stochastic pullback in trend (Lane, 14/3/3): uptrend (close > EMA200), %K crosses above %D"
+  },
+  {
+   "id": "TV55",
+   "name": "TV28 Stochastic pullback, 3R (variant)",
+   "doc": "Variant of s_stoch_pullback with target 3.0R. Stochastic pullback in trend (Lane, 14/3/3): uptrend (close > EMA200), %K crosses above %D"
+  },
+  {
+   "id": "TV56",
+   "name": "ATR envelope fade to SMA20",
+   "doc": "Moving-average envelope fade: close below SMA20 x (1 - 2.5 x ATR%) ... implemented as"
+  },
+  {
+   "id": "TV57",
+   "name": "Double bottom/top neckline break",
+   "doc": "Double bottom/top neckline break: two swing lows (5-bar pivots) within 0.5 ATR of each"
+  },
+  {
+   "id": "TV58",
+   "name": "KST cross + EMA200, 2R",
+   "doc": "Know Sure Thing (Pring): KST crosses its 9-SMA signal -> trade in that direction, with price"
+  },
+  {
+   "id": "TV59",
+   "name": "Bollinger band walk (trend)",
+   "doc": "Bollinger band walk (trend): two consecutive closes above the upper band (20, 2) buy, two"
+  },
+  {
+   "id": "TV60",
+   "name": "RSI 50 cross with EMA200 trend, 2R",
+   "doc": "RSI(14) crossing 50 in the direction of the EMA200 trend: up-cross above 50 with close >"
+  },
+  {
+   "id": "TV61",
+   "name": "Volatility expansion bar continuation, 2R",
+   "doc": "Volatility expansion bar continuation: a bar with range > 2 x ATR14 closing in its top"
+  },
+  {
+   "id": "TV62",
+   "name": "EMA ribbon 10-60 stack + ATR trail",
+   "doc": "EMA ribbon (10/20/30/40/50/60): the first bar on which all six are stacked in order buys"
+  },
+  {
+   "id": "SS01",
+   "name": "NY 15-min opening-range breakout",
+   "doc": "New York 15-minute opening-range breakout (9:30-9:45 NY), entries until 12:00 NY,"
+  },
+  {
+   "id": "SS02",
+   "name": "NY 30-min opening-range breakout",
+   "doc": "New York 30-minute opening-range breakout (9:30-10:00 NY), entries until 12:30 NY,"
+  },
+  {
+   "id": "SS03",
+   "name": "London 30-min opening-range breakout",
+   "doc": "London 30-minute opening-range breakout (8:00-8:30 London), entries until 11:00 London,"
+  },
+  {
+   "id": "SS04",
+   "name": "Asian-session Bollinger fade",
+   "doc": "Asian-session range fade (forex): 22:00-06:00 UTC, a close outside the 20-bar Bollinger"
+  },
+  {
+   "id": "SS05",
+   "name": "VWAP 2-sd reversion + RSI(2)",
+   "doc": "VWAP 2-sd reversion: a close 2 standard deviations below the session VWAP with RSI(2) < 10"
+  },
+  {
+   "id": "SS06",
+   "name": "VWAP trend pullback",
+   "doc": "VWAP trend pullback: in an uptrend (close > EMA50 and EMA50 rising) the bar dips to the"
+  },
+  {
+   "id": "SS07",
+   "name": "Previous-day high/low false breakout",
+   "doc": "Previous-day high/low false breakout: price trades above yesterday's high but the bar"
+  },
+  {
+   "id": "SS08",
+   "name": "Opening-gap fill",
+   "doc": "Opening-gap fill (indices and stocks): the first bar of the UTC day opens more than"
+  },
+  {
+   "id": "SS09",
+   "name": "Connors Double 7s",
+   "doc": "Connors 'Double 7s': above the 200 SMA, a close at a 7-bar low buys; exit at a close at a"
+  },
+  {
+   "id": "SS10",
+   "name": "Connors cumulative RSI(2)",
+   "doc": "Connors cumulative RSI: above the 200 SMA, RSI(2) of the last 2 bars summed < 35 buys;"
+  },
+  {
+   "id": "SS11",
+   "name": "Raschke Holy Grail (ADX + EMA20 pullback)",
+   "doc": "Raschke 'Holy Grail': ADX(14) > 30 and rising, price pulls back to the 20 EMA; the first"
+  },
+  {
+   "id": "SS12",
+   "name": "Raschke 80-20 reversal",
+   "doc": "Raschke 80-20: the previous bar opened in the top 20% of its range and closed in the"
+  },
+  {
+   "id": "SS13",
+   "name": "Raschke Turtle Soup",
+   "doc": "Raschke 'Turtle Soup': a new 20-bar low whose previous 20-bar low is at least 4 bars old,"
+  },
+  {
+   "id": "SS14",
+   "name": "Volatility contraction breakout",
+   "doc": "Volatility contraction breakout (Crabel-style): ATR(5) below 60% of ATR(50), then a close"
+  },
+  {
+   "id": "SS15",
+   "name": "Connors 3-bar pullback",
+   "doc": "Connors 3-bar pullback: above the 200 SMA, three lower highs and lower lows in a row"
+  },
+  {
+   "id": "SE01",
+   "name": "Overnight drift long (NY close -> 09:00)",
+   "doc": "Overnight drift: most of the indices' long-run gain has come between the close and the next"
+  },
+  {
+   "id": "SE02",
+   "name": "NY session long (10:00 -> 16:00)",
+   "doc": "The opposite slice: buy at 10:00 New York (after the opening half hour), sell at 16:00."
+  },
+  {
+   "id": "SE03",
+   "name": "Turnaround Tuesday (Monday down -> buy)",
+   "doc": "Turnaround Tuesday: if Monday closed below Friday's close, buy at Monday's 16:00 close and sell"
+  },
+  {
+   "id": "SE04",
+   "name": "Adaptive hour-of-day (60-day t-stat)",
+   "doc": "Adaptive hour-of-day: for the coming hour, look at the same hour on the previous 60 days. If its"
+  },
+  {
+   "id": "SE05",
+   "name": "Adaptive day-of-week (26-week t-stat)",
+   "doc": "Adaptive day-of-week: for the coming New York day, look at the same weekday over the previous 26"
+  },
+  {
+   "id": "SE06",
+   "name": "Pre-FOMC drift (day before -> 13:00)",
+   "doc": "Pre-FOMC drift (Lucca & Moench 2015): shares rise in the 24 hours before a Fed rate decision."
+  },
+  {
+   "id": "SE07",
+   "name": "Pre-holiday effect (US market holidays)",
+   "doc": "Pre-holiday effect (Ariel 1990): the trading day before a US market holiday tends to be strong."
+  },
+  {
+   "id": "IM01",
+   "name": "Spread reversion vs partner (pairs, one leg)",
+   "doc": "Spread reversion (pairs logic, one leg): spread = log(price) - beta x log(partner price), beta"
+  },
+  {
+   "id": "IM02",
+   "name": "Lead-lag catch-up after partner's big bar",
+   "doc": "Lead-lag catch-up: the partner just made a big move (bar return over 1.5 standard deviations)"
+  },
+  {
+   "id": "IM03",
+   "name": "Relative strength vs partner (ratio EMA50 cross)",
+   "doc": "Relative strength against the partner: the ratio price / partner crosses above its 50-bar EMA"
+  },
+  {
+   "id": "MO01",
+   "name": "12-week momentum, top/bottom 20% of its class (weekly)",
+   "doc": "12-week momentum inside its class (currencies, indices, metals, energy, crypto, shares): the top"
+  },
+  {
+   "id": "MO02",
+   "name": "Risk-adjusted 12-week momentum, top/bottom 10 of all (weekly)",
+   "doc": "Risk-adjusted 12-week momentum across the whole universe (return / volatility of weekly returns):"
+  },
+  {
+   "id": "MO03",
+   "name": "1-week reversal, losers buy / winners sell, in class (weekly)",
+   "doc": "Short-term reversal inside its class: last week's biggest losers (bottom 20%) buy, biggest winners"
+  },
+  {
+   "id": "EV01",
+   "name": "Release momentum: follow the first 10 minutes, 2R",
+   "doc": "Follow the release: if the first 10 minutes after it moved more than 1.5 ATR (5-minute ATR before"
+  },
+  {
+   "id": "EV02",
+   "name": "Release fade: spike that already gives back, target pre-release price",
+   "doc": "Fade an overreaction: the first 5 minutes jumped more than 2.5 ATR and the next 5 minutes already"
+  },
+  {
+   "id": "EV03",
+   "name": "Post-release 15-minute range breakout, 1.5R",
+   "doc": "Post-release range breakout: the first 15 minutes after the release set a range; the first close"
+  },
+  {
+   "id": "GP01",
+   "name": "Gap and go after a reopening (>1.5 ATR), 2R",
+   "doc": "Gap and go: the market reopens more than 1.5 ATR away from the last close and the first bar"
+  },
+  {
+   "id": "GP02",
+   "name": "Weekend gap fill toward Friday's close",
+   "doc": "Weekend gap fill (currencies, metals, energy, indices): the Sunday/Monday reopening is more than"
+  },
+  {
+   "id": "GP03",
+   "name": "Failed gap fade toward the last close",
+   "doc": "Failed gap: the market reopens more than 1.5 ATR away but the first bar closes back beyond its"
+  },
+  {
+   "id": "HB01",
+   "name": "All-time high/low breakout and retest, 3R",
+   "doc": "All-time-high breakout and retest: a close above the highest high of all earlier data (at least"
+  },
+  {
+   "id": "HB02",
+   "name": "All-time high/low breakout, ATR trail",
+   "doc": "Straight all-time-high breakout (52-week-high effect, George & Hwang 2004): a close above the"
+  },
+  {
+   "id": "QP01",
+   "name": "Market intraday momentum: first half hour -> last half hour (Quantpedia)",
+   "doc": "Market intraday momentum: the return from yesterday's close to 10:00 New York predicts the last"
+  },
+  {
+   "id": "QP02",
+   "name": "Time-series momentum, 3-month sign, weekly (Quantpedia)",
+   "doc": "Time-series momentum: the sign of the instrument's own 63-trading-day return decides the week's"
+  },
+  {
+   "id": "QP03",
+   "name": "Option-expiration week long (Quantpedia)",
+   "doc": "Option-expiration week: long from Monday to Friday of the week with the month's third Friday"
+  },
+  {
+   "id": "QP04",
+   "name": "Lunar cycle: new moon long / full moon short (Quantpedia)",
+   "doc": "Lunar cycle: buy on each day's first bar during the new-moon half of the cycle (moon age under"
+  },
+  {
+   "id": "QP05",
+   "name": "London 4pm fix reversal (Quantpedia)",
+   "doc": "London 4pm fix reversal (currencies and gold/silver): the move from 15:00 to 16:00 London into the"
+  },
+  {
+   "id": "BK01",
+   "name": "ConnorsRSI pullback (Connors & Alvarez)",
+   "doc": "ConnorsRSI pullback: in an uptrend (close > 200-day SMA) a ConnorsRSI(3,2,100) under 10 buys the"
+  },
+  {
+   "id": "BK02",
+   "name": "R3 strategy (Connors & Alvarez)",
+   "doc": "R3: above the 200-day SMA, RSI(2) falls three days in a row, the first day under 60 and the last"
+  },
+  {
+   "id": "BK03",
+   "name": "Multiple days down/up (Connors & Alvarez)",
+   "doc": "Multiple days down: above the 200-day SMA and below the 5-day SMA, with 4 of the last 5 days"
+  },
+  {
+   "id": "BK04",
+   "name": "Oops! failed gap through yesterday's low/high (L. Williams)",
+   "doc": "Larry Williams' Oops!: the day opens below yesterday's low (a gap down) and then trades back up"
+  },
+  {
+   "id": "BK05",
+   "name": "Volatility breakout 0.6 x yesterday's range (L. Williams)",
+   "doc": "Larry Williams' volatility breakout: a close above today's open + 0.6 x yesterday's range buys,"
+  },
+  {
+   "id": "BK06",
+   "name": "Buy-on-gap model (E. Chan)",
+   "doc": "Ernest Chan's buy-on-gap: the day opens more than one standard deviation (90-day close-to-close)"
+  },
+  {
+   "id": "BK07",
+   "name": "Opening-range breakout after an NR4 day (T. Crabel)",
+   "doc": "Toby Crabel's opening-range breakout on an NR4 day: if yesterday had the narrowest range of the"
+  },
+  {
+   "id": "GH01",
+   "name": "OTT trend tracker, ADX>60 exit (freqtrade)",
+   "doc": "OTT: VIDYA (VAR) crosses above the Optimized Trend Tracker -> long (the source never takes its"
+  },
+  {
+   "id": "GH02",
+   "name": "Three Supertrends agree (freqtrade)",
+   "doc": "All three 'buy' Supertrends (8x4, 9x7, 8x1) up -> long; exit when the 'sell' Supertrend 18x3 is"
+  },
+  {
+   "id": "GH03",
+   "name": "HLHB: RSI10 50-cross + EMA5/10 + ADX (freqtrade)",
+   "doc": "HLHB: on the same bar RSI(10) of (open+close)/2 crosses above 50, EMA5 crosses above EMA10 and"
+  },
+  {
+   "id": "GH04",
+   "name": "TD Sequential setup 9, perfected (freqtrade)",
+   "doc": "TD Sequential buy setup: the 9th straight close below the close 4 bars earlier, 'perfected' (the"
+  },
+  {
+   "id": "GH05",
+   "name": "CofiBit stochastic cross under 25 (freqtrade)",
+   "doc": "CofiBit: open under the EMA5 of the lows, fast stochastic K crosses above D with both under 25,"
+  },
+  {
+   "id": "GH06",
+   "name": "Volatility System, 3h move > 2 ATR, stop-and-reverse (freqtrade)",
+   "doc": "Volatility System: on 3-hour bars, a close-to-close move bigger than 2 x ATR(14) of the 3-hour"
+  },
+  {
+   "id": "GH07",
+   "name": "Strategy002: RSI + stoch + BB + hammer, SAR exit (freqtrade)",
+   "doc": "Strategy002: RSI(14) < 30, slow stochastic K < 20, close under the lower Bollinger band (20, 2)"
+  },
+  {
+   "id": "GH08",
+   "name": "Dual Thrust (jesse)",
+   "doc": "Dual Thrust: range = max(HC - LL, HH - LC) over the last 21 bars; long when the close is above"
+  },
+  {
+   "id": "GH09",
+   "name": "Squeeze Momentum release (LazyBear)",
+   "doc": "Squeeze Momentum: the Bollinger band (21, 1.5 x stdev - LazyBear's own quirk) was inside the"
+  },
+  {
+   "id": "GH10",
+   "name": "Momentum Ignition: ROC breaks its 1-sigma band (backtrader)",
+   "doc": "Momentum Ignition: price above its 30-bar average and the 7-bar rate of change breaks one"
+  },
+  {
+   "id": "GH11",
+   "name": "Ornstein-Uhlenbeck z-score reversion (backtrader)",
+   "doc": "Ornstein-Uhlenbeck mean reversion: fit dX = a + b X over the last 30 log prices; z = distance of"
+  },
+  {
+   "id": "GH12",
+   "name": "EMA7-KAMA30 thrust beyond its band (backtrader)",
+   "doc": "Relative momentum acceleration: thrust = (EMA7 - KAMA30) / KAMA30; thrust above the upper"
+  },
+  {
+   "id": "GH13",
+   "name": "Ichimoku 7/14/30 with Chikou check (backtrader)",
+   "doc": "Ichimoku 7/14/30: close above both cloud spans (drawn 14 bars ahead), Tenkan above Kijun and the"
+  },
+  {
+   "id": "GH14",
+   "name": "Kalman trend slope, daily (QuanterLab)",
+   "doc": "Kalman local-linear-trend filter on the log of the daily close (QuanterLab study): slope > 0 at"
+  },
+  {
+   "id": "GH15",
+   "name": "MMM: under the 3-bar low average in an uptrend (jesse)",
+   "doc": "MMM: close above its 30-bar average and below the 3-bar average of the lows -> long; out when"
+  },
+  {
+   "id": "QC01",
+   "name": "Dynamic Breakout II, adaptive lookback (QuantConnect)",
+   "doc": "Dynamic Breakout II (daily): the lookback N (20..60) grows/shrinks with the change of 30-day"
+  },
+  {
+   "id": "QC02",
+   "name": "Dual Thrust, 4-day range from today's open, always in (QuantConnect)",
+   "doc": "Dual Thrust (QuantConnect library): range = max(HH - LC, HC - LL) of the last 4 completed days;"
+  },
+  {
+   "id": "QC03",
+   "name": "Dual Thrust on 30-minute bars, 5-day exit (Lean alpha)",
+   "doc": "Dual Thrust intraday (Lean alpha): on 30-minute bars, range = max(HH - LC, HC - LL) of the last 20"
+  },
+  {
+   "id": "QC04",
+   "name": "Hodrick-Prescott trend turn, daily (QuantConnect)",
+   "doc": "Hodrick-Prescott trend momentum (QuantConnect library): every day, the HP trend (lambda 100) using"
+  },
+  {
+   "id": "QC05",
+   "name": "Intraday FX reversal vs SMA5, NY 10-15 (Lean alpha)",
+   "doc": "Intraday reversal (Lean alpha, currencies): on hourly bars closing 10:00-15:00 New York, below"
+  },
+  {
+   "id": "QC06",
+   "name": "Lunch-break mean reversion, 1 hour hold (Lean alpha)",
+   "doc": "Lunch-break mean reversion (Lean alpha): at 12:00 New York, if the price is below the previous"
+  },
+  {
+   "id": "QC07",
+   "name": "Noise-area intraday momentum (Zarattini et al.)",
+   "doc": "Noise-area momentum (Zarattini, Aziz & Barbon; QuantConnect version), US session: for every"
+  },
+  {
+   "id": "QC08",
+   "name": "Displaced SMA15 ribbon, daily (Lean example)",
+   "doc": "Displaced SMA ribbon (Lean example), daily: SMA15 delayed by 5, 10, ... 30 days all in rising order"
+  },
+  {
+   "id": "QC09",
+   "name": "MACD trend with tolerance, daily (Lean example)",
+   "doc": "MACD trend (Lean example), daily: (MACD - signal) / EMA12 above +0.0025 -> long, below -0.0025"
+  },
+  {
+   "id": "QC10",
+   "name": "RSI14 < 30 on 5m inside a 15m MACD uptrend (QC docs)",
+   "doc": "5-minute RSI(14) under 30 while the last completed 15-minute MACD histogram is positive -> long;"
+  },
+  {
+   "id": "QC11",
+   "name": "Hammer / inverted hammer, 1.5 ATR stop, 2R (QC docs)",
+   "doc": "Hammer or inverted hammer (Lean / TA-Lib candle definitions) on 5-minute bars -> long. Source"
+  },
+  {
+   "id": "QC12",
+   "name": "Three rising candles with acceleration, 2R (QC docs)",
+   "doc": "Three rising candles, the third closing more than 2 bodies above the second's close -> long."
+  },
+  {
+   "id": "QC13",
+   "name": "Always-in EMA200 fade (QC docs)",
+   "doc": "Always-in fade of the 200-bar EMA (QuantConnect docs, EURUSD 5m): at or below the EMA -> long,"
+  },
+  {
+   "id": "QC14",
+   "name": "ADX / volatility regime switch: EMA trend vs RSI fade (QC forum)",
+   "doc": "Regime switch (QuantConnect forum template): trend regime (ATR or stdev over 0.2% of price and"
+  },
+  {
+   "id": "FR01",
+   "name": "IBS < 0.3 under the 10-day-high band, daily (r/algotrading)",
+   "doc": "Daily: close below (10-day highest high - 2.5 x 25-day average range) and IBS < 0.3 -> long next"
+  },
+  {
+   "id": "FR02",
+   "name": "RSI(5) above 70 momentum hold (r/algotrading)",
+   "doc": "RSI(5) crosses above 70 -> long, held while it stays above 70 (out on the first close under 70)."
+  },
+  {
+   "id": "FR03",
+   "name": "Lower-high lower-low day, next-day breakout, out at close (r/algotrading)",
+   "doc": "A day with a lower high AND a lower low than the day before -> the next day, the first close"
+  },
+  {
+   "id": "FR04",
+   "name": "Four lower highs, next-day breakout, out at close (r/algotrading)",
+   "doc": "Four lower daily highs in a row -> the next day, the first close above the last high buys; out at"
+  },
+  {
+   "id": "FR05",
+   "name": "10-hour range breakout against the EMA200, 1.5x range (r/algotrading)",
+   "doc": "Hourly: the range of the last 10 completed bars; 08:00-14:00 New York, a close above its high"
+  },
+  {
+   "id": "FR06",
+   "name": "Triple Supertrend + StochRSI + EMA200, 1.5R (YouTube; failed on reddit)",
+   "doc": "Close above the EMA200, Stochastic RSI %K crosses up out of 20 and at least 2 of 3 Supertrends"
+  },
+  {
+   "id": "FR07",
+   "name": "3 Ducks: SMA60 on 4H, 1H and 15m (BabyPips)",
+   "doc": "3 Ducks: the 4-hour and 1-hour closes above their SMA60 and the 15-minute close crossing above its"
+  },
+  {
+   "id": "FR08",
+   "name": "Kathy Lien 5-minute Momo: EMA20 + MACD flip (BabyPips)",
+   "doc": "5-minute Momo: price was under the EMA20; a close above EMA20 + 1 ATR (her 10 pips) with the MACD"
+  },
+  {
+   "id": "FR09",
+   "name": "NickB 4H swing-point break (BabyPips)",
+   "doc": "4-hour swing points (a high above the 4 bars on each side, confirmed 4 bars later): a close above"
+  },
+  {
+   "id": "FR10",
+   "name": "Vegas tunnel EMA144/169 + EMA12 (Forex Factory)",
+   "doc": "Vegas tunnel: the hourly close crosses above the EMA144/169 tunnel with EMA12 also above it ->"
+  },
+  {
+   "id": "FR11",
+   "name": "Raschke Anti stochastic hook, 4-bar exit (Forex Factory)",
+   "doc": "Raschke's Anti (stochastic 7-4-10): %D rising 4 bars, %K fell 3 bars toward it and now turns up"
+  },
+  {
+   "id": "FR12",
+   "name": "M15 LowBuyHighSell (ProRealCode; reported failing)",
+   "doc": "15-minute, 08:00-21:00 Paris time: a close under the lowest low of the last 3 days buys (once a"
+  },
+  {
+   "id": "FR13",
+   "name": "Hourly Camarilla H2/L2 breakout (BabyPips; reported failing)",
+   "doc": "Camarilla levels from the previous hour: 07:00-16:00 London, the first 5-minute close above H2"
+  },
+  {
+   "id": "QB01",
+   "name": "Bullish reversal day + RSI(5)<35, 20-day hold (Quantified Strategies)",
+   "doc": "Daily: a lower low but a higher close than yesterday, with RSI(5) under 35 -> long; held 20 days."
+  },
+  {
+   "id": "QB02",
+   "name": "Bearish engulfing bought, out above the prior high (Quantified Strategies)",
+   "doc": "Daily bearish engulfing -> buy at the close (next day's first bar); out on the first close above"
+  },
+  {
+   "id": "QB03",
+   "name": "Bearish three-line strike, upward breakout (Bulkowski)",
+   "doc": "Bearish three-line strike (3 black candles, lower lows, then a white one closing above the first"
+  },
+  {
+   "id": "QB04",
+   "name": "Bullish three-line strike, downward breakout (Bulkowski)",
+   "doc": "Bullish three-line strike -> short on the first close below the pattern low within 10 days (mirror)."
+  },
+  {
+   "id": "QB05",
+   "name": "Morning / evening star breakout (Bulkowski)",
+   "doc": "Morning star -> long on a close above the pattern high; evening star -> short below its low."
+  },
+  {
+   "id": "QB06",
+   "name": "Two black gapping candles breakout (Bulkowski)",
+   "doc": "Two black gapping candles after a decline -> trade the breakout either way (pattern height target)."
+  },
+  {
+   "id": "QB07",
+   "name": "Head-and-shoulders bottom / top, 0.71 measure rule (Bulkowski)",
+   "doc": "Head-and-shoulders bottom (top mirror) on daily swing points (strength 5): head lowest, shoulders"
+  },
+  {
+   "id": "QB08",
+   "name": "Three rising valleys / falling peaks (Bulkowski)",
+   "doc": "Three rising valleys (swing lows, strength 5, each above the last; spans and depths within 2:1):"
+  },
+  {
+   "id": "QB09",
+   "name": "Rectangle breakout, 0.78 / 0.54 targets (Bulkowski)",
+   "doc": "Rectangle over the last 40 days: top = median of the swing highs (strength 3), bottom = median of"
+  },
+  {
+   "id": "QB10",
+   "name": "Kaufman Adaptive Moving Average + std filter (Kaufman)",
+   "doc": "AMA(10,2,30); filter = 0.1 x std of the AMA's 20 last changes. Long when the AMA has risen more"
+  },
+  {
+   "id": "QB11",
+   "name": "Pivot-break top / bottom reversal, 8R (Crabel / Wyckoff)",
+   "doc": "A pivot low (5 higher lows each side) is broken; within 5 bars a bar closes above the 2 prior"
+  },
+  {
+   "id": "QB12",
+   "name": "Modified Hikkake, 20-bar hold (Chapman)",
+   "doc": "Inside bar, then a bar closing below the inside bar's close (a false break down) -> long on the"
+  },
+  {
+   "id": "QB13",
+   "name": "Hidden Smash Day, 3-day hold (L. Williams)",
+   "doc": "Daily: an up close that sits in the bottom 25% of the day's range, in an up-trend (close above"
+  },
+  {
+   "id": "QB14",
+   "name": "65sma-3cc trend following (Chande)",
+   "doc": "Daily: three closes in a row above the 65-day SMA -> long (reverse a short); three below ->"
+  },
+  {
+   "id": "QB15",
+   "name": "Three black crows, upward breakout only (Bulkowski)",
+   "doc": "Three black crows in an up-trend -> long on an upward breakout only (Bulkowski: only up breakouts pay)."
+  },
+  {
+   "id": "MQ01",
+   "name": "2MOMEMA momentum cross in an EMA regime (geraked EA)",
+   "doc": "Momentum(10) crosses up through 100 while, on each of the last 9 bars, Momentum(34) > 100 and"
+  },
+  {
+   "id": "MQ02",
+   "name": "2MAAOS Andean Oscillator + SMA50/200 (geraked EA)",
+   "doc": "Andean bull line crosses above its signal, bull > bear, SMA50 > SMA200, price not deeper than"
+  },
+  {
+   "id": "MQ03",
+   "name": "3MAF fractal pullback into EMA 60/350/600 (geraked EA)",
+   "doc": "EMA60 > EMA350 > EMA600, the bar dipped under EMA60 but stayed above EMA600, and a down fractal"
+  },
+  {
+   "id": "MQ04",
+   "name": "CEZLSMA Chandelier on Heikin Ashi + ZLSMA (geraked EA)",
+   "doc": "Chandelier Exit (ATR 1, x0.75) on Heikin Ashi flips up and the HA close is above ZLSMA(50) ->"
+  },
+  {
+   "id": "MQ05",
+   "name": "DHLAOS Andean cross after a prior-day range excursion (geraked EA)",
+   "doc": "Andean bull line crosses above its signal for the first time since the bull line overtook the"
+  },
+  {
+   "id": "MQ06",
+   "name": "2MACDSTO Stochastic with opposing MACDs (geraked EA)",
+   "doc": "MACD(34,144) > 0 (up) while MACD(13,21) < 0 (pullback), and Stochastic(7,3,3) %K crosses above"
+  },
+  {
+   "id": "MQ07",
+   "name": "Hughes AO3B Awesome Oscillator pullback stop entry (EA)",
+   "doc": "London 07:30-17:30: Awesome Oscillator > 0 and two bearish bars, the second closing under the"
+  },
+  {
+   "id": "MQ08",
+   "name": "Tolman Envelopes(800,2%) reversion (EA)",
+   "doc": "The bar opens above the lower envelope (SMA800 - 2%) and trades below it, while the lowest low"
+  },
+  {
+   "id": "MQ09",
+   "name": "First Move: fade the first 15-pip pullback, London (EA)",
+   "doc": "London 05:00-13:00: the session high so far (from the second bar after 05:00); the first bar"
+  },
+  {
+   "id": "MQ10",
+   "name": "Keltner pullback trader, 2-window concurrence (EA)",
+   "doc": "Both now and 30 bars ago: price at or below the 30-bar range midpoint, and the EMA30 of the"
+  },
+  {
+   "id": "MQ11",
+   "name": "Heiken Ashi Naive, inverted (EarnForex EA)",
+   "doc": "Inverted Heiken Ashi Naive: a bearish HA candle with no upper wick and a body bigger than the"
+  },
+  {
+   "id": "MQ12",
+   "name": "2ndSkies 08:00 London pivot straddle (EA)",
+   "doc": "Pivots of the 24 hours to 08:00 London. If 08:00 opens between S1 and R1: the first close above"
+  },
+  {
+   "id": "MQ13",
+   "name": "Pin bar trader with ATR trail (EA)",
+   "doc": "Bullish pin: nose > 60% of the range, body < 40%, the body inside the prior bar's range and the"
+  },
+  {
+   "id": "AP01",
+   "name": "Tokyo-fix W: long USD into the 09:55 fix, short after (Krohn et al., JF 2024)",
+   "doc": "Every trading day: long USD from 17:05 New York (just after the rollover) to the 09:55 Tokyo"
+  },
+  {
+   "id": "AP02",
+   "name": "Long USD into the 14:15 ECB fix (Krohn et al.; Breedon & Ranaldo)",
+   "doc": "Monday-Friday: long USD from 02:00 New York to the 14:15 Berlin ECB fix. Stop 1 daily ATR."
+  },
+  {
+   "id": "AP03",
+   "name": "Gotobi days on USDJPY (arXiv 2023)",
+   "doc": "USDJPY on Gotobi days (Tuesday-Friday): long 03:00 -> 09:55 Tokyo; then short to 12:00 Tokyo"
+  },
+  {
+   "id": "AP04",
+   "name": "FOMC-cycle even weeks long (Cieslak et al., JF 2019)",
+   "doc": "US trading days counted from each FOMC decision (day 0): long in the \"even weeks\" -1..3, 9..13,"
+  },
+  {
+   "id": "AP05",
+   "name": "Drift before the jobs report / ISM (Hu et al., JFE 2022)",
+   "doc": "US indices: long from the 16:00 New York close before the jobs report (first Friday, 08:30) and"
+  },
+  {
+   "id": "AP06",
+   "name": "Reversal after an extreme 1-hour move, US shares (Zawadowski et al.)",
+   "doc": "Large US shares, 09:35-15:00 New York: a move of 4%+ within 10-60 minutes that is also 8x the"
+  },
+  {
+   "id": "AP07",
+   "name": "FX contrarian the morning after an abnormal day (Caporale & Plastun)",
+   "doc": "FX: after an abnormal server day (open-to-close beyond mean +/- 2 sd of the last 30 days) fade it"
+  },
+  {
+   "id": "AP08",
+   "name": "Oil momentum the morning after an abnormal day (Caporale & Plastun)",
+   "doc": "Oil: after an abnormal server day, follow it from the next day's first bar; longs out at 09:00"
+  },
+  {
+   "id": "AP09",
+   "name": "Following FX price jumps, Lee-Mykland test (Ficura 2019)",
+   "doc": "Lee-Mykland jump test on log returns (bipower variation over K bars, n = bars per day); a jump up"
+  },
+  {
+   "id": "AP10",
+   "name": "Gold short in the COMEX day session (Blose et al. 2018)",
+   "doc": "Gold: short at 08:20 New York, cover at 13:30 New York (the COMEX day session), Monday-Friday."
+  },
+  {
+   "id": "AP11",
+   "name": "Bitcoin long 21:00-23:00 UTC (Quantpedia)",
+   "doc": "Bitcoin (and ether as a check): long 21:00 -> 23:00 UTC every day. Stop 0.5 daily ATR."
+  },
+  {
+   "id": "AP12",
+   "name": "Return since the last close -> last half hour (Baltussen et al., JFE 2021)",
+   "doc": "Index cash close T: at T-30 minutes, the return since the previous day's T decides - up buys,"
+  },
+  {
+   "id": "SW01",
+   "name": "Donchian 20-day breakout, 10-day exit (Turtles)",
+   "doc": ""
+  },
+  {
+   "id": "SW02",
+   "name": "50/200-day golden / death cross",
+   "doc": ""
+  },
+  {
+   "id": "SW03",
+   "name": "Pullback in a rising 50-day trend, out above yesterday's high",
+   "doc": ""
+  },
+  {
+   "id": "SW04",
+   "name": "Keltner daily breakout (EMA20 + 2 ATR)",
+   "doc": ""
+  },
+  {
+   "id": "SW05",
+   "name": "Range expansion day continuation (Crabel)",
+   "doc": ""
+  },
+  {
+   "id": "SW06",
+   "name": "Daily MACD cross in the 200-day trend",
+   "doc": ""
+  },
+  {
+   "id": "SW07",
+   "name": "Bollinger daily mean reversion in the 200-day trend",
+   "doc": ""
+  },
+  {
+   "id": "SW08",
+   "name": "Momentum dip: 60-day up, 5-day low",
+   "doc": ""
+  },
+  {
+   "id": "SW09",
+   "name": "Connors RSI(2) over the 200-day line, out above the 5-day SMA",
+   "doc": ""
+  },
+  {
+   "id": "SW10",
+   "name": "Connors Double Seven",
+   "doc": ""
+  },
+  {
+   "id": "SW11",
+   "name": "Turtles System 2: 55-day breakout, 20-day exit, 2N stop",
+   "doc": ""
+  },
+  {
+   "id": "SW12",
+   "name": "Qullamaggie breakout: tight range, low-of-day stop, breakeven at 1R, out under the 10-day SMA",
+   "doc": ""
+  },
+  {
+   "id": "SW13",
+   "name": "Raschke Holy Grail: ADX>30 pullback to the 20-day SMA, target the swing high",
+   "doc": ""
+  },
+  {
+   "id": "SW14",
+   "name": "20-EMA reversion in the 200-day trend, target the swing high",
+   "doc": ""
+  },
+  {
+   "id": "SW15",
+   "name": "Chandelier trend: 50-day high, 22-day high - 3 ATR trailing exit",
+   "doc": ""
+  },
+  {
+   "id": "SW16",
+   "name": "Fibonacci 50-61.8% pullback, stop under 78.6%, target the swing high",
+   "doc": ""
+  },
+  {
+   "id": "SM02",
+   "name": "Falling wedge breakout, target the wedge start (Trader Dhana)",
+   "doc": ""
+  },
+  {
+   "id": "SM03",
+   "name": "Rising wedge breakdown, short, target the wedge start (Trader Dhana)",
+   "doc": ""
+  },
+  {
+   "id": "SM04",
+   "name": "Head and shoulders: short on the neckline break, measured target (Mr Alexx)",
+   "doc": ""
+  },
+  {
+   "id": "SM05",
+   "name": "Inverse head and shoulders: long on the neckline break, measured target",
+   "doc": ""
+  },
+  {
+   "id": "SM06",
+   "name": "Head and shoulders: short at the right shoulder, stop over it (Mr Alexx, first entry)",
+   "doc": ""
+  },
+  {
+   "id": "SM01",
+   "name": "Market structure + liquidity sweep + FVG entry, measured-move target (TheTrader's Villa)",
+   "doc": ""
+  },
+  {
+   "id": "RS01",
+   "name": "Time-series momentum 12 months, monthly (Moskowitz, Ooi & Pedersen 2012)",
+   "doc": ""
+  },
+  {
+   "id": "RS02",
+   "name": "Share momentum 12-1 months, top 10, monthly (Jegadeesh & Titman 1993)",
+   "doc": ""
+  },
+  {
+   "id": "RS03",
+   "name": "RSI(2) pullback on indices above the 200-day average (Connors & Alvarez 2008)",
+   "doc": ""
+  },
+  {
+   "id": "CR01",
+   "name": "Donchian trend 20 days, midpoint trailing stop (Zarattini et al. 2025)",
+   "doc": ""
+  },
+  {
+   "id": "CR02",
+   "name": "Donchian trend 60 days, midpoint trailing stop (Zarattini et al. 2025)",
+   "doc": ""
+  },
+  {
+   "id": "CR03",
+   "name": "Donchian trend 150 days, midpoint trailing stop (Zarattini et al. 2025)",
+   "doc": ""
+  },
+  {
+   "id": "CR04",
+   "name": "RSI(5) momentum: cross above / below 50 (QuantifiedStrategies)",
+   "doc": ""
+  },
+  {
+   "id": "CR05",
+   "name": "Bitcoin seasonality: long 22:00-00:00 UTC (Quantpedia)",
+   "doc": ""
+  },
+  {
+   "id": "CR06",
+   "name": "Bitcoin intraday momentum, last half hour (Shen, Urquhart & Wang)",
+   "doc": ""
+  },
+  {
+   "id": "CR07",
+   "name": "EMA20 / SMA50 cross",
+   "doc": ""
+  },
+  {
+   "id": "CR08",
+   "name": "Bollinger breakout 20/2, exit under the mid band (QuantifiedStrategies)",
+   "doc": ""
+  },
+  {
+   "id": "CR09",
+   "name": "MACD cross under/over zero + 200 MA, target 1.5R (Trading Rush, YouTube)",
+   "doc": "CR09 Trading Rush (YouTube, \"BEST Bitcoin Trading Strategy EVER with PROOF tested 100 TIMES\"):"
+  },
+  {
+   "id": "CR10",
+   "name": "Market structure break with the trend, target 2R (saya crypto, YouTube)",
+   "doc": "CR10 saya crypto (YouTube, \"I EXPOSE my BEST Crypto Trading Strategy\", 352K views): trade with the higher"
+  },
+  {
+   "id": "CS01",
+   "name": "Donchian trend 20, long and short",
+   "doc": ""
+  },
+  {
+   "id": "CS02",
+   "name": "Donchian trend 60, long and short",
+   "doc": ""
+  },
+  {
+   "id": "CS03",
+   "name": "Donchian trend 150, long and short",
+   "doc": ""
+  },
+  {
+   "id": "CS04",
+   "name": "RSI(5) momentum, long and short",
+   "doc": ""
+  },
+  {
+   "id": "CS07",
+   "name": "EMA20 / SMA50 cross, long and short",
+   "doc": ""
+  },
+  {
+   "id": "CS08",
+   "name": "Bollinger breakout, long and short",
+   "doc": ""
+  },
+  {
+   "id": "CR11",
+   "name": "Time-series momentum: long while above the price 28 days ago (Liu & Tsyvinski)",
+   "doc": "CR11 time-series momentum (Liu & Tsyvinski 2021, \"Risks and Returns of Cryptocurrency\"; crypto TSMOM"
+  },
+  {
+   "id": "CS11",
+   "name": "Time-series momentum 28 days, long and short",
+   "doc": ""
+  },
+  {
+   "id": "CU01",
+   "name": "Donchian trend 20, only above the 200-day average",
+   "doc": ""
+  },
+  {
+   "id": "CU02",
+   "name": "Donchian trend 60, only above the 200-day average",
+   "doc": ""
+  },
+  {
+   "id": "CU07",
+   "name": "EMA20 / SMA50 cross, only above the 200-day average",
+   "doc": ""
+  },
+  {
+   "id": "CU08",
+   "name": "Bollinger breakout, only above the 200-day average",
+   "doc": ""
+  },
+  {
+   "id": "CU11",
+   "name": "Time-series momentum 28 days, only above the 200-day average",
+   "doc": ""
+  },
+  {
+   "id": "SC01",
+   "name": "Keltner breakout with RSI 50 cross, 1-minute scalp",
+   "doc": ""
+  },
+  {
+   "id": "SC02",
+   "name": "VWAP trend pullback, New York hours, 1-minute scalp",
+   "doc": ""
+  },
+  {
+   "id": "SC03",
+   "name": "5-minute EMA trend, 1-minute EMA9 re-entry scalp",
+   "doc": ""
+  },
+  {
+   "id": "SC04",
+   "name": "EMA 9/21 cross with EMA50 slope and active ATR, 1-minute scalp",
+   "doc": ""
+  }
+ ]
+}

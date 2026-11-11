@@ -941,7 +941,11 @@ def update_check():
             if UPD.local() is None:
                 UPD.VERSION.write_text(sha)
             elif sha != UPD.local() and UPDATE["sha"] != sha:
-                if not UPD.touches_bot(UPD.local(), sha):
+                if UPDATE["sha"] and UPDATE["sha"] != UPD.local() and not UPD.touches_bot(UPDATE["sha"], sha):
+                    # only reports / data since the waiting version (e.g. the agents publishing every few minutes):
+                    # the newer one is installed, but the 10-minute wait is not started again
+                    UPDATE.update(sha=sha)
+                elif not UPD.touches_bot(UPD.local(), sha):
                     UPD.VERSION.write_text(sha)
                 else:
                     UPDATE.update(sha=sha, title=title, seen=time.time())

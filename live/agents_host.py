@@ -45,6 +45,7 @@ AGENTS = [("bot5", ["agent_bot5.py"], 40), ("bot6", ["agent_bot6.py"], 30),
           ("bot7", ["agent_portfolio.py", "--bot", "bot7"], 15),
           ("bot5-new", ["agent_portfolio.py", "--bot", "bot5"], 5), ("bot6-new", ["agent_portfolio.py", "--bot", "bot6"], 5)]
 HEARTBEAT = 3 * 3600                                      # publish the continuous layer at least this often
+LIGHT_PUBLISH = 30 * 60                                   # ... and at most this often, unless the manager decided something
 NODE_VER = "v20.18.1"
 _S = {"sha": None, "light": 0.0, "smart": 0.0, "pub": 0.0, "proc": None, "log": print, "err": None}
 STATE = WORK / "host_state.json"
@@ -245,8 +246,9 @@ def _publish_changes(st, before, kind, msg):
     if kind == "light" and time.time() - _S["pub"] < HEARTBEAT:
         prev = st.get("pub_digest", {})
         news = {rel: hashlib.sha1(_meaningful(rel, b)).hexdigest() for rel, b in files.items()}
-        if all(prev.get(rel) == d for rel, d in news.items()):
-            files = {}                                  # nothing new: no commit (the app stays as it is)
+        decided = any(prev.get(rel) != d for rel, d in news.items() if rel.endswith("decisions.json"))
+        if all(prev.get(rel) == d for rel, d in news.items()) or (time.time() - _S["pub"] < LIGHT_PUBLISH and not decided):
+            files = {}                                  # nothing new (or published less than 30 minutes ago): no commit
     doc = host_doc(st, kind)
     if files or kind != "light" or time.time() - _S["pub"] >= HEARTBEAT:
         files[HOST] = json.dumps(doc, ensure_ascii=False, indent=1).encode("utf-8")

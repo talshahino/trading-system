@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-11T19:18:18+00:00",
+ "updated": "2026-11-11T19:18:27+00:00",
  "light_at": "2026-11-11T19:13:31+00:00",
  "smart_at": "2026-11-11T17:24:26+00:00",
  "every_min": {
@@ -12,12 +12,14 @@
   "bot5": 40.0,
   "bot6": 30.0,
   "bot1": 15.0,
-  "bot2": 15.0
+  "bot2": 15.0,
+  "bot3": 15.0
  },
  "agent_errors": [
   "bot6: agent_bot6.py: 1 ·   File \"C:\\trading-agents\\agent_bot6.py\", line 26, in <module> |     from live import fut_account as FA | ModuleNotFoundError: No module named 'live'",
   "bot1: agent_portfolio.py: 1 ·     return io.open(self, mode, buffering, encoding, errors, newline) |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\trading-agents\\\\live\\\\bots\\\\bot1.json'",
-  "bot2: agent_portfolio.py: 1 ·     return io.open(self, mode, buffering, encoding, errors, newline) |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\trading-agents\\\\live\\\\bots\\\\bot2.json'"
+  "bot2: agent_portfolio.py: 1 ·     return io.open(self, mode, buffering, encoding, errors, newline) |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\trading-agents\\\\live\\\\bots\\\\bot2.json'",
+  "bot3: agent_portfolio.py: 1 ·     return io.open(self, mode, buffering, encoding, errors, newline) |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | FileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\trading-agents\\\\live\\\\bots\\\\bot3.json'"
  ],
  "last_error": null,
  "errors_in_row": 0

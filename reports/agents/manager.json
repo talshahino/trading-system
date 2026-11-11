@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-11T20:52:28+00:00",
+ "updated": "2026-11-11T21:05:51+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -322,16 +322,16 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-11T20:52:15+00:00",
-    "state_updated": "2026-11-11T20:50:44+00:00",
-    "minutes_since_state": 2,
-    "balance": 99469.81,
-    "equity": 100010.61,
-    "day_pct": -0.01,
-    "total_pct": 0.01,
-    "trades": 115,
-    "mean_r": -0.021,
-    "sum_r": -2.44,
+    "updated": "2026-11-11T21:05:38+00:00",
+    "state_updated": "2026-11-11T21:02:50+00:00",
+    "minutes_since_state": 3,
+    "balance": 99605.21,
+    "equity": 100027.84,
+    "day_pct": 0.0,
+    "total_pct": 0.03,
+    "trades": 116,
+    "mean_r": -0.018,
+    "sum_r": -2.08,
     "bt_mean_r": 0.193,
     "flagged": 0,
     "combos": [
@@ -372,18 +372,6 @@
       "flags": []
      },
      {
-      "combo": "SE02|1Hour|USDJPY",
-      "n": 5,
-      "mean": -0.306,
-      "sum": -1.53,
-      "win": 40.0,
-      "streak": 0,
-      "bt_mean": 0.137,
-      "bt_n": 385,
-      "z": -1.05,
-      "flags": []
-     },
-     {
       "combo": "TV08|15Min|NVDA",
       "n": 5,
       "mean": -0.351,
@@ -405,6 +393,18 @@
       "bt_mean": 0.169,
       "bt_n": 252,
       "z": -0.9,
+      "flags": []
+     },
+     {
+      "combo": "SE02|1Hour|USDJPY",
+      "n": 6,
+      "mean": -0.194,
+      "sum": -1.16,
+      "win": 50.0,
+      "streak": 0,
+      "bt_mean": 0.137,
+      "bt_n": 385,
+      "z": -0.86,
       "flags": []
      },
      {
@@ -1127,29 +1127,29 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-11T20:52:15+00:00",
-    "state_updated": "2026-11-11T20:50:59+00:00",
-    "minutes_since_state": 1,
-    "balance": 110758.72,
-    "equity": 110904.63,
-    "day_pct": 0.2,
-    "total_pct": 10.9,
-    "trades": 36,
-    "mean_r": 0.565,
-    "sum_r": 20.34,
+    "updated": "2026-11-11T21:05:38+00:00",
+    "state_updated": "2026-11-11T21:03:09+00:00",
+    "minutes_since_state": 2,
+    "balance": 110932.75,
+    "equity": 110932.75,
+    "day_pct": 0.23,
+    "total_pct": 10.93,
+    "trades": 37,
+    "mean_r": 0.561,
+    "sum_r": 20.75,
     "bt_mean_r": 0.208,
     "flagged": 0,
     "combos": [
      {
       "combo": "SE02|1Hour|USDJPY",
-      "n": 5,
-      "mean": -0.274,
-      "sum": -1.37,
-      "win": 40.0,
+      "n": 6,
+      "mean": -0.16,
+      "sum": -0.96,
+      "win": 50.0,
       "streak": 0,
       "bt_mean": 0.137,
       "bt_n": 385,
-      "z": -0.98,
+      "z": -0.77,
       "flags": []
      },
      {
@@ -1375,22 +1375,567 @@
   "bot3": {
    "name": "בוט 3",
    "agent": true,
-   "updated": null,
+   "updated": "2026-11-11T21:05:19+00:00",
    "summary": null,
-   "tested": null,
+   "tested": 387,
    "progress": [
-    null,
-    null
+    9,
+    52
    ],
    "risk_recs": 5,
    "pending": 0,
-   "cards": [],
+   "cards": [
+    {
+     "bot": "bot3",
+     "kind": "improve",
+     "title": "TV50|15Min|ASML: רק עם המגמה (ממוצע 200)",
+     "what": "סינון מצב שוק לאסטרטגיה TV50|15Min|ASML: רק עם המגמה (ממוצע 200). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 53,
+      "eff_n": 52.9,
+      "mean": 0.3189,
+      "t": 1.6,
+      "win": 50.7
+     },
+     "unseen": {
+      "n": 70,
+      "eff_n": 70.0,
+      "mean": 0.181,
+      "t": 1.21,
+      "win": 50.0
+     },
+     "whole": {
+      "n": 123,
+      "eff_n": 122.7,
+      "mean": 0.2376,
+      "t": 1.96,
+      "win": 50.3
+     },
+     "halves": [
+      0.2785,
+      0.2088
+     ],
+     "neighbours": {
+      "values": 7,
+      "share_positive": 0.5
+     },
+     "tested": 7,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": {
+      "n": 107,
+      "eff_n": 107.0,
+      "mean": 0.0979,
+      "t": 0.81,
+      "win": 43.9
+     },
+     "change": {
+      "combo": "TV50|15Min|ASML",
+      "family": "filters",
+      "from": "none",
+      "to": "with_trend200"
+     },
+     "detail": {},
+     "made": "2026-11-11T21:05:19+00:00",
+     "id": "cbe4a6d7e7c2",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.18R לעסקה, 70.0 עסקאות אפקטיביות, +0.08R מעל המצב הקיים)",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-11T21:05:51+00:00",
+     "by": "manager",
+     "decided": "2026-11-11T21:05:51+00:00",
+     "decision_id": "265c6a21614c"
+    },
+    {
+     "bot": "bot3",
+     "kind": "info",
+     "title": "TV17|15Min|AAPL: היתרון נשחק",
+     "what": "בחצי השנה האחרונה -0.05R לעסקה, לעומת +0.23R בשנה וחצי שלפני",
+     "train": {
+      "n": 53,
+      "eff_n": 53.0,
+      "mean": 0.1491,
+      "t": 0.89,
+      "win": 37.8
+     },
+     "unseen": {
+      "n": 61,
+      "eff_n": 61.0,
+      "mean": 0.1314,
+      "t": 0.95,
+      "win": 45.8
+     },
+     "whole": {
+      "n": 114,
+      "eff_n": 113.8,
+      "mean": 0.1393,
+      "t": 1.3,
+      "win": 42.2
+     },
+     "halves": [
+      0.1635,
+      0.1249
+     ],
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": {
+      "combo": "TV17|15Min|AAPL",
+      "kind": "review"
+     },
+     "detail": {
+      "erosion": {
+       "recent_n": 34,
+       "recent_mean": -0.0526,
+       "before_n": 80,
+       "before_mean": 0.2278,
+       "slope_per_year": -0.2716,
+       "fading": true
+      }
+     },
+     "made": "2026-11-11T21:05:19+00:00",
+     "id": "75fc001def99",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-11T21:05:51+00:00",
+     "by": "manager",
+     "decided": "2026-11-11T21:05:51+00:00",
+     "decision_id": "f429539a5eb9"
+    },
+    {
+     "bot": "bot3",
+     "kind": "improve",
+     "title": "TV37|4Hour|FRA40: בלי יעד · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה TV37|4Hour|FRA40: בלי יעד · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 16,
+      "eff_n": 16.0,
+      "mean": 0.6121,
+      "t": 0.94,
+      "win": 44.1
+     },
+     "unseen": {
+      "n": 28,
+      "eff_n": 28.0,
+      "mean": 0.225,
+      "t": 0.56,
+      "win": 43.0
+     },
+     "whole": {
+      "n": 44,
+      "eff_n": 43.9,
+      "mean": 0.3599,
+      "t": 1.03,
+      "win": 43.4
+     },
+     "halves": [
+      0.2913,
+      0.4251
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.59
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": {
+      "n": 50,
+      "eff_n": 50.0,
+      "mean": 0.1375,
+      "t": 1.13,
+      "win": 48.1
+     },
+     "change": {
+      "combo": "TV37|4Hour|FRA40",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "none|be0.6|stop0.75|entry0.5"
+     },
+     "detail": {},
+     "made": "2026-11-11T21:05:19+00:00",
+     "id": "804a5c8334aa",
+     "tier": "watch",
+     "verdict": "חיובי בתקופה שלא נראתה, אבל רק 28.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-11T21:05:51+00:00"
+    },
+    {
+     "bot": "bot3",
+     "kind": "improve",
+     "title": "TV28|15Min|AMZN: רק בתנודתיות נמוכה",
+     "what": "סינון מצב שוק לאסטרטגיה TV28|15Min|AMZN: רק בתנודתיות נמוכה. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 43,
+      "eff_n": 43.0,
+      "mean": -0.0158,
+      "t": -0.13,
+      "win": 51.5
+     },
+     "unseen": {
+      "n": 52,
+      "eff_n": 52.0,
+      "mean": 0.09,
+      "t": 0.69,
+      "win": 55.9
+     },
+     "whole": {
+      "n": 95,
+      "eff_n": 94.8,
+      "mean": 0.0444,
+      "t": 0.49,
+      "win": 54.0
+     },
+     "halves": [
+      -0.0482,
+      0.1246
+     ],
+     "neighbours": {
+      "values": 7,
+      "share_positive": 0.5
+     },
+     "tested": 7,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": {
+      "n": 89,
+      "eff_n": 89.0,
+      "mean": 0.1951,
+      "t": 1.77,
+      "win": 57.4
+     },
+     "change": {
+      "combo": "TV28|15Min|AMZN",
+      "family": "filters",
+      "from": "none",
+      "to": "vol_low"
+     },
+     "detail": {},
+     "made": "2026-11-11T21:05:19+00:00",
+     "id": "1fcc9d44fd93",
+     "tier": "rejected",
+     "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.09R מול +0.20R)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-11T21:05:51+00:00"
+    },
+    {
+     "bot": "bot3",
+     "kind": "improve",
+     "title": "TV50|15Min|ASML: בלי יעד · כניסה בלימיט 0.25R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה TV50|15Min|ASML: בלי יעד · כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 58,
+      "eff_n": 57.9,
+      "mean": 0.4103,
+      "t": 1.13,
+      "win": 32.2
+     },
+     "unseen": {
+      "n": 80,
+      "eff_n": 80.0,
+      "mean": 0.0787,
+      "t": 0.47,
+      "win": 42.5
+     },
+     "whole": {
+      "n": 138,
+      "eff_n": 137.7,
+      "mean": 0.2115,
+      "t": 1.18,
+      "win": 38.3
+     },
+     "halves": [
+      0.3228,
+      0.1374
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.06
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": {
+      "n": 107,
+      "eff_n": 107.0,
+      "mean": 0.0979,
+      "t": 0.81,
+      "win": 43.9
+     },
+     "change": {
+      "combo": "TV50|15Min|ASML",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "none|be0.6|stop1|entry0.25"
+     },
+     "detail": {},
+     "made": "2026-11-11T21:05:19+00:00",
+     "id": "4640a1c1e8d8",
+     "tier": "rejected",
+     "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.08R מול +0.10R)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-11T21:05:51+00:00"
+    },
+    {
+     "bot": "bot3",
+     "kind": "improve",
+     "title": "TV17|15Min|AAPL: רק בשוק במגמה (ADX מעל 20)",
+     "what": "סינון מצב שוק לאסטרטגיה TV17|15Min|AAPL: רק בשוק במגמה (ADX מעל 20). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 35,
+      "eff_n": 35.0,
+      "mean": 0.3235,
+      "t": 1.48,
+      "win": 43.0
+     },
+     "unseen": {
+      "n": 46,
+      "eff_n": 46.0,
+      "mean": 0.0212,
+      "t": 0.13,
+      "win": 39.1
+     },
+     "whole": {
+      "n": 81,
+      "eff_n": 80.8,
+      "mean": 0.1457,
+      "t": 1.11,
+      "win": 40.7
+     },
+     "halves": [
+      0.2467,
+      0.0632
+     ],
+     "neighbours": {
+      "values": 7,
+      "share_positive": 0.5
+     },
+     "tested": 7,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": {
+      "n": 61,
+      "eff_n": 61.0,
+      "mean": 0.1314,
+      "t": 0.95,
+      "win": 45.8
+     },
+     "change": {
+      "combo": "TV17|15Min|AAPL",
+      "family": "filters",
+      "from": "none",
+      "to": "adx_trend"
+     },
+     "detail": {},
+     "made": "2026-11-11T21:05:19+00:00",
+     "id": "0422336dadc4",
+     "tier": "rejected",
+     "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.02R מול +0.13R)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-11T21:05:51+00:00"
+    },
+    {
+     "bot": "bot3",
+     "kind": "improve",
+     "title": "TV17|15Min|AAPL: בלי יעד · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה TV17|15Min|AAPL: בלי יעד · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 47,
+      "eff_n": 47.0,
+      "mean": 0.2776,
+      "t": 0.72,
+      "win": 32.2
+     },
+     "unseen": {
+      "n": 53,
+      "eff_n": 53.0,
+      "mean": -0.0504,
+      "t": -0.21,
+      "win": 34.0
+     },
+     "whole": {
+      "n": 100,
+      "eff_n": 99.8,
+      "mean": 0.0969,
+      "t": 0.44,
+      "win": 33.2
+     },
+     "halves": [
+      0.1793,
+      0.0206
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.06
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": {
+      "n": 61,
+      "eff_n": 61.0,
+      "mean": 0.1314,
+      "t": 0.95,
+      "win": 45.8
+     },
+     "change": {
+      "combo": "TV17|15Min|AAPL",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "none|be0.6|stop0.75|entry0.5"
+     },
+     "detail": {},
+     "made": "2026-11-11T21:05:19+00:00",
+     "id": "85f1f37845d1",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.05R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-11T21:05:51+00:00"
+    },
+    {
+     "bot": "bot3",
+     "kind": "improve",
+     "title": "SS11|5Min|AIRF: בלי יעד · סטופ x1.5 · כניסה בלימיט 0.25R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה SS11|5Min|AIRF: בלי יעד · סטופ x1.5 · כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 11,
+      "eff_n": 11.0,
+      "mean": 1.2451,
+      "t": 1.54,
+      "win": 63.8
+     },
+     "unseen": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": -0.4259,
+      "t": -1.6,
+      "win": 28.7
+     },
+     "whole": {
+      "n": 25,
+      "eff_n": 24.9,
+      "mean": 0.2757,
+      "t": 0.67,
+      "win": 43.5
+     },
+     "halves": [
+      1.0532,
+      -0.3806
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.41
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": {
+      "n": 37,
+      "eff_n": 37.0,
+      "mean": 0.0613,
+      "t": 0.33,
+      "win": 43.1
+     },
+     "change": {
+      "combo": "SS11|5Min|AIRF",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "none|be0.6|stop1.5|entry0.25"
+     },
+     "detail": {},
+     "made": "2026-11-11T21:05:19+00:00",
+     "id": "ebfc6607b084",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.43R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-11T21:05:51+00:00"
+    },
+    {
+     "bot": "bot3",
+     "kind": "improve",
+     "title": "TV28|15Min|AMZN: יעד 2R · סטופ x1.25 · כניסה בלימיט 0.5R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה TV28|15Min|AMZN: יעד 2R · סטופ x1.25 · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 25,
+      "eff_n": 25.0,
+      "mean": 0.3492,
+      "t": 0.9,
+      "win": 48.6
+     },
+     "unseen": {
+      "n": 25,
+      "eff_n": 25.0,
+      "mean": -0.5141,
+      "t": -2.32,
+      "win": 28.1
+     },
+     "whole": {
+      "n": 50,
+      "eff_n": 49.9,
+      "mean": -0.1006,
+      "t": -0.44,
+      "win": 37.9
+     },
+     "halves": [
+      0.3359,
+      -0.5152
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.08
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": {
+      "n": 88,
+      "eff_n": 88.0,
+      "mean": 0.1984,
+      "t": 1.79,
+      "win": 58.0
+     },
+     "change": {
+      "combo": "TV28|15Min|AMZN",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "2R|be0.6|stop1.25|entry0.5"
+     },
+     "detail": {},
+     "made": "2026-11-11T21:05:19+00:00",
+     "id": "88afa664c51b",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.51R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-11T21:05:51+00:00"
+    }
+   ],
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-11T20:52:15+00:00",
-    "state_updated": "2026-11-11T20:50:37+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-11T21:05:38+00:00",
+    "state_updated": "2026-11-11T21:02:39+00:00",
+    "minutes_since_state": 3,
     "balance": 100264.17,
     "equity": 100264.17,
     "day_pct": 0.7,
@@ -1589,31 +2134,19 @@
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-11T20:52:15+00:00",
-    "state_updated": "2026-11-11T20:51:31+00:00",
-    "minutes_since_state": 1,
-    "balance": 100657.44,
-    "equity": 102785.01,
+    "updated": "2026-11-11T21:05:38+00:00",
+    "state_updated": "2026-11-11T21:03:41+00:00",
+    "minutes_since_state": 2,
+    "balance": 100967.1,
+    "equity": 102787.84,
     "day_pct": 2.28,
     "total_pct": 2.79,
-    "trades": 29,
-    "mean_r": 0.048,
-    "sum_r": 1.4,
+    "trades": 30,
+    "mean_r": 0.07,
+    "sum_r": 2.09,
     "bt_mean_r": 0.132,
     "flagged": 0,
     "combos": [
-     {
-      "combo": "SE02|1Hour|GBPJPY",
-      "n": 4,
-      "mean": -0.351,
-      "sum": -1.4,
-      "win": 25.0,
-      "streak": 1,
-      "bt_mean": 0.071,
-      "bt_n": 388,
-      "z": -0.92,
-      "flags": []
-     },
      {
       "combo": "QP02|1Hour|XAGUSD",
       "n": 2,
@@ -1636,6 +2169,18 @@
       "bt_mean": 0.199,
       "bt_n": 164,
       "z": -0.66,
+      "flags": []
+     },
+     {
+      "combo": "SE02|1Hour|GBPJPY",
+      "n": 5,
+      "mean": -0.142,
+      "sum": -0.71,
+      "win": 40.0,
+      "streak": 0,
+      "bt_mean": 0.071,
+      "bt_n": 388,
+      "z": -0.52,
       "flags": []
      },
      {
@@ -2473,41 +3018,41 @@
    "health": {
     "bot": "bot5",
     "name": "בוט 5 · סקלפינג",
-    "updated": "2026-11-11T20:52:15+00:00",
-    "state_updated": "2026-11-11T20:50:15+00:00",
+    "updated": "2026-11-11T21:05:38+00:00",
+    "state_updated": "2026-11-11T21:03:17+00:00",
     "minutes_since_state": 2,
-    "balance": 97834.61,
-    "equity": 97971.04,
-    "day_pct": -1.63,
-    "total_pct": -2.03,
-    "trades": 57,
-    "mean_r": -0.276,
-    "sum_r": -15.73,
+    "balance": 97990.06,
+    "equity": 98070.35,
+    "day_pct": -1.53,
+    "total_pct": -1.93,
+    "trades": 60,
+    "mean_r": -0.227,
+    "sum_r": -13.61,
     "bt_mean_r": -0.035,
     "flagged": 0,
     "combos": [
      {
       "combo": "OWN|1Min|US30",
-      "n": 16,
-      "mean": -0.552,
-      "sum": -8.83,
-      "win": 25.0,
-      "streak": 1,
+      "n": 18,
+      "mean": -0.458,
+      "sum": -8.25,
+      "win": 27.8,
+      "streak": 0,
       "bt_mean": -0.0588,
       "bt_n": 16989,
-      "z": -1.97,
+      "z": -1.62,
       "flags": []
      },
      {
       "combo": "OWN|1Min|US500",
-      "n": 3,
-      "mean": -1.079,
-      "sum": -3.24,
-      "win": 0.0,
-      "streak": 3,
+      "n": 4,
+      "mean": -0.423,
+      "sum": -1.69,
+      "win": 25.0,
+      "streak": 0,
       "bt_mean": -0.0588,
       "bt_n": 16989,
-      "z": -1.77,
+      "z": -0.56,
       "flags": []
      },
      {
@@ -2662,16 +3207,16 @@
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-11T20:52:15+00:00",
-    "state_updated": "2026-11-11T20:50:19+00:00",
+    "updated": "2026-11-11T21:05:38+00:00",
+    "state_updated": "2026-11-11T21:03:21+00:00",
     "minutes_since_state": 2,
-    "balance": 98683.34,
-    "equity": 98749.67,
-    "day_pct": -1.0,
-    "total_pct": -1.25,
-    "trades": 40,
-    "mean_r": -0.409,
-    "sum_r": -16.38,
+    "balance": 98708.33,
+    "equity": 98680.34,
+    "day_pct": -1.07,
+    "total_pct": -1.32,
+    "trades": 42,
+    "mean_r": -0.378,
+    "sum_r": -15.88,
     "bt_mean_r": null,
     "flagged": 0,
     "combos": [
@@ -2701,11 +3246,11 @@
      },
      {
       "combo": "FUT|1Min|US30",
-      "n": 15,
-      "mean": -0.517,
-      "sum": -7.75,
-      "win": 26.7,
-      "streak": 1,
+      "n": 16,
+      "mean": -0.55,
+      "sum": -8.8,
+      "win": 25.0,
+      "streak": 2,
       "bt_mean": null,
       "bt_n": null,
       "z": null,
@@ -2713,11 +3258,11 @@
      },
      {
       "combo": "FUT|1Min|US500",
-      "n": 2,
-      "mean": -1.074,
-      "sum": -2.15,
-      "win": 0.0,
-      "streak": 2,
+      "n": 3,
+      "mean": -0.201,
+      "sum": -0.6,
+      "win": 33.3,
+      "streak": 0,
       "bt_mean": null,
       "bt_n": null,
       "z": null,
@@ -2924,9 +3469,9 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-11T20:52:15+00:00",
-    "state_updated": "2026-11-11T20:50:09+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-11T21:05:38+00:00",
+    "state_updated": "2026-11-11T21:05:08+00:00",
+    "minutes_since_state": 1,
     "balance": 100000.0,
     "equity": 100000.0,
     "day_pct": 0.0,
@@ -2968,8 +3513,9 @@
  },
  "decisions": {
   "new": [
-   "29d1facb762a"
+   "265c6a21614c",
+   "f429539a5eb9"
   ],
-  "unread": 8
+  "unread": 10
  }
 }

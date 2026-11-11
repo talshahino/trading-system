@@ -30,7 +30,7 @@ OUT = Path("reports/agents/manager.json")
 BOTS = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 · סקלפינג",
         "bot6": "בוט 6 · חוזים עתידיים", "bot7": "בוט 7 · פרסומים כלכליים"}
 RISK_KEYS = {"bot1": "bot1", "bot2": "bot2", "bot3": "bot3", "bot4": "bot4"}
-AGENT_ON = {"bot5"}                     # bots whose agent already runs (stage 1: bot 5; the others follow)
+AGENT_ON = set(BOTS)                    # every bot has its smart agent (11.11.2026: bot 5 first, then all)
 
 
 def decisions():
@@ -127,6 +127,8 @@ def main():
         g = K.CARDS_DIR / bot / "cards_smart.json"
         smart = json.loads(g.read_text(encoding="utf-8")).get("cards", []) if g.exists() else []
         # cards_health.json = the cheap layer every bot has (agents/health.py, every few hours): live vs backtest
+        nf = K.CARDS_DIR / bot / "cards_new.json"         # bots 5-6: the scout's strategies (agent_portfolio --new-only)
+        smart += json.loads(nf.read_text(encoding="utf-8")).get("cards", []) if nf.exists() else []
         hf = K.CARDS_DIR / bot / "cards_health.json"
         smart += json.loads(hf.read_text(encoding="utf-8")).get("cards", []) if hf.exists() else []
         hh = K.CARDS_DIR / bot / "health.json"
@@ -147,12 +149,14 @@ def main():
         best = {}
         for c in cards:
             if c["tier"] in ("strong", "regular") and c["kind"] == "improve":
-                k = (c["change"] or {}).get("track"), (c["change"] or {}).get("knob")
+                ch = c["change"] or {}
+                k = ch.get("track") or ch.get("combo"), ch.get("knob") or ch.get("family")
                 if k not in best or (c["unseen"]["mean"] or 0) > (best[k]["unseen"]["mean"] or 0):
                     best[k] = c
         for c in cards:
             if c["tier"] in ("strong", "regular") and c["kind"] == "improve":
-                k = (c["change"] or {}).get("track"), (c["change"] or {}).get("knob")
+                ch = c["change"] or {}
+                k = ch.get("track") or ch.get("combo"), ch.get("knob") or ch.get("family")
                 if best[k] is not c:
                     c["tier"], c["verdict"] = "watch", "יש הצעה טובה יותר לאותו שינוי"
         order = {"strong": 0, "regular": 1, "watch": 2, "rejected": 3}

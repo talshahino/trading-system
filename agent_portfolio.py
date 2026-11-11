@@ -36,7 +36,6 @@ from pathlib import Path
 import pandas as pd
 
 from agents import agentkit as K
-from agents import exp_pack as XP
 from agents import ftmo_universe as U
 from agents import repo_io as RIO
 
@@ -45,43 +44,10 @@ TEST_FROM, SPLIT = "2025-04-30", "2026-01-01"
 T_SPLIT = pd.Timestamp(SPLIT, tz="UTC")
 START = "2024-01-01"
 RERUN_DAYS = 14
-BOT_NOW = {}
-FAMILIES = ("exits", "filters", "manage", "fib", "ladder", "pyr")   # manage (12.11.2026): breakeven point x partial exit per strategy;
-# fib (12.11.2026, user's standing task): the same at the Fibonacci levels of the way to the target - built as "manage"
-# ladder (13.11.2026, user's standing task): the entry split into 2-4 limit orders with the same total risk, stop and
-# target (run_rules --manage-grid ladder); the live bots need runner code for it, built when a card is approved
-# pyr (14.11.2026, user's task tal1411anti): add to a winning trade (half a position at +1R, ...) with the whole stop
-# moved so a stop still loses exactly 1R (run_rules --manage-grid pyr); bots 1-4 only (PYR_BOTS), runner code on approval
-# FTMO's real stock spreads: ~2.4x the history (measured on the demo 10.11.2026, run_rules --stock-spread-mult). Until
-# 13.11.2026 the experiments ran without it, so every stock combo's exits / filters / manage / fib / new results were
-# measured with too-cheap costs (the 10.11 stress test: SS01 WMT +15.6R -> -4.0R) - those results are run again (COSTS).
-# And FTMO's restricted events minute by minute (13.11.2026, run_rules --news-minute): the live bots close a position 3
-# minutes before an event on its instrument; the experiments held it through the release (bot 2 QB11 USDJPY 9.11:
-# +7.7R in the backtest, +2.8R on the demo) - results of the instruments the events touch are run again too.
-STOCK_SPREAD_MULT = 2.4
-COSTS = f"stock-x{STOCK_SPREAD_MULT}+news-minute"
-# no new stock trade in the last 15 minutes of the session, as the live bots (13.11.2026, run_rules.stock_late_mask);
-# results stored before carry no stamp - the whole-bot check drops those entries when it reads them (portfolio_check)
-STOCK_ENTRY = "live15"
-LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--news-minute", "--breakeven", "0.6",
-              "--stock-spread-mult", str(STOCK_SPREAD_MULT)]
-_NEWS_HIT = {}
-
-
-def news_touched(sym):
-    """Does any FTMO restricted event touch this instrument (fx pairs of the currency, US indices, oil, gold, DXY)?"""
-    if sym not in _NEWS_HIT:
-        try:
-            from agents import ftmo_calendar as CAL
-            if "ins" not in _NEWS_HIT:
-                h = json.loads((ROOT / "data" / "ftmo_calendar" / "history.json").read_text(encoding="utf-8"))
-                _NEWS_HIT["ins"] = {ins for _, ins in CAL.parse(h)[0]}
-            _NEWS_HIT[sym] = any(CAL.restricted_affects(sym, i) for i in _NEWS_HIT["ins"])
-        except Exception:  # noqa: BLE001
-            _NEWS_HIT[sym] = False
-    return _NEWS_HIT[sym]
+FAMILIES = ("exits", "filters")
+LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--breakeven", "0.6"]
 NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot7": "בוט 7 · פרסומים כלכליים",
-         "bot5": "בוט 5 - סקאלפינג", "bot6": "בוט 6 · חוזים עתידיים"}
+         "bot5": "בוט 5 · סקלפינג", "bot6": "בוט 6 · חוזים עתידיים"}
 RISK = {"bot7": 0.5, "bot5": 0.4, "bot6": 0.4}
 # bots 5-6 have their own experiment agents (agent_bot5.py / agent_bot6.py); here only the scout's strategies, on
 # their instruments: the scalping bot's low-spread list (user, 09.11.2026) and the three index futures
@@ -89,60 +55,7 @@ NEW_ONLY = {"bot5": ["XAUUSD", "EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD",
             "bot6": ["US100", "US500", "US30"]}                         # % per trade where the bot has no json (bot 7: the virtual account)
 FILTER_HE = {"with_trend200": "רק עם המגמה (ממוצע 200)", "adx_trend": "רק בשוק במגמה (ADX מעל 20)",
              "adx_range": "רק בשוק בדשדוש (ADX מתחת 20)", "vol_normal": "רק בתנודתיות רגילה",
-             "vol_high": "רק בתנודתיות גבוהה", "vol_low": "רק בתנודתיות נמוכה", "none": "בלי סינון",
-             "ema9_20": "רק בכיוון EMA 9/20", "bbw_p20": "לא ברוחב בולינגר נמוך (מתחת לאחוזון 20)",
-             "rsi_trend": "לא נגד המגמה לפי RSI (לא קונים ב־RSI מתחת 35 מתחת לממוצע 200, לא מוכרים מעל 65 מעליו)",
-             "v_rsi50": "רק בכיוון RSI 50 (מעל = קניות, מתחת = מכירות)", "v_st": "רק בכיוון סופרטרנד 10/3",
-             "v_e50_200": "רק בכיוון EMA 50 מול 200", "v_ema5": "לא נגד מגמה חזקה (5 ממוצעים 9/21/50/100/200 בסדר)",
-             "v_sma3": "רק כש־3 ממוצעים 10/20/50 בסדר, בכיוון שלהם",
-             "chop_trend": "רק כשהשוק לא מדשדש (מדד Choppiness מתחת 50)",
-             "chop_range": "רק כשהשוק מדשדש (מדד Choppiness 50 ומעלה)"}
-# bots whose filter tests also try the user's EMA 9/20 and Bollinger-width filters (task tal1411ema, 14.11.2026):
-# live/news_bot.regime knows them for bot 7, live/runner._regime for bots 1-4 (since 14.11.2026)
-FILTERS_EXTRA = {"bot1", "bot2", "bot3", "bot4", "bot7"}
-# ... and the RSI-against-the-trend filter (task tal1411rsi, 14.11.2026): live/runner._regime knows it (bots 1-4)
-FILTERS_RSI = {"bot1", "bot2", "bot3", "bot4", "bot7"}   # bot 7: live/news_bot.regime (14.11.2026)
-# ... and the filters of the user's videos (tasks tal1411set2-set5, 14.11.2026): rules_agent.video_regimes, the same in
-# run_rules and live/runner._regime - bots 1-4 only (live/news_bot does not know them)
-FILTERS_VIDEO = {"bot1", "bot2", "bot3", "bot4"}
-FILTERS_VIDEO_V = 2   # 2 = with v_fib5 / v_ha (task tal1411set7, 14.11.2026 night): every filters result again
-# 3 = with v_sqzm / v_sqz / v_pdbrk (task tal1411set7 (12) / (16), 14.11.2026 late night) - v2 never ran (the
-# bots' computer's agents silent since 14:18 UTC), so nothing measured is thrown away
-FILTERS_VIDEO_V = 3
-
-
-def explain_manage(v):
-    """be0.6|part0.3@0.5 -> Hebrew; ber2.5 = no-target strategies (R in profit)."""
-    b, pa = v.split("|")
-    tgt = b.startswith("be") and not b.startswith("ber")
-    x = float(b[2:] if tgt else b[3:])
-    out = ["בלי נקודת איזון" if x == 0 else (f"איזון ב־{x * 100:g}% מהדרך ליעד" if tgt else f"איזון ב־{x:g}R רווח")]
-    if pa != "part0":
-        fr, w = pa[4:].split("@")
-        out.append(f"{float(fr) * 100:g}% יוצאים " + (f"ב־{float(w) * 100:g}% מהדרך" if tgt else f"ב־{float(w):g}R") + " והשאר לאיזון")
-    return " · ".join(out)
-
-
-def explain_ladder(v):
-    """lad0,0.25,0.5 -> Hebrew."""
-    lv = [float(x) for x in v[3:].split(",")] if v != "lad0" else [0.0]
-    if lv == [0.0]:
-        return "כניסה אחת בפתיחה"
-    parts = ["בפתיחה" if x == 0 else f"בנסיגה של {x:g}R" for x in lv]
-    return f"כניסה מדורגת ב־{len(lv)} חלקים שווים ({', '.join(parts)}), אותו סיכון כולל, סטופ ויעד; חלק שלא התמלא תוך 3 נרות מתבטל"
-
-
-PYR_BOTS = {"bot1", "bot2", "bot3", "bot4", "bot7"}   # bot 7: live/news_bot.plan_keys "pyramid" (14.11.2026)
-
-
-def explain_pyr(v):
-    """pyr1@0.5 -> Hebrew."""
-    if v == "pyr0":
-        return "בלי הוספה לעסקה"
-    at, fr = v[3:].split("@")
-    x = (float(fr) * float(at) - 1) / (1 + float(fr))
-    return (f"ב־{float(at):g}R רווח מוסיפים {float(fr):g} פוזיציה, והסטופ של הכול זז ל־{x:+.2f}R כך שסטופ מפסיד בדיוק 1R "
-            f"(בלי הגדלה אחרי הפסד)")
+             "vol_high": "רק בתנודתיות גבוהה", "vol_low": "רק בתנודתיות נמוכה", "none": "בלי סינון"}
 
 
 def explain_exit(v):
@@ -158,78 +71,14 @@ def explain_exit(v):
 
 
 # ---------- the bot ----------
-def bot_combos(bot, with_off=False):
+def bot_combos(bot):
     if bot in NEW_ONLY:
         return []
     if bot == "bot7":
         s = RIO.live_json("live/news_bot_state.json")
-        cs = list(s.get("combos") or [f"{e}|5Min|{n}" for e in ("EV01", "EV02", "EV03") for n in ("US100", "US500", "US30")])
-        # a removed combo (card kind "remove": plans "off_from", e.g. EV01 from 14.11.2026, card d51b540869aa) trades no
-        # more - no experiments on it (13.11.2026 night: EV01's 16 instruments would take the ladder / Fibonacci queue)
-        try:
-            pl = json.loads((ROOT / "live" / "bots" / "bot7.json").read_text(encoding="utf-8")).get("plans") or {}
-        except Exception:  # noqa: BLE001
-            pl = {}
-        return [c for c in cs if not (pl.get(c) or {}).get("off_from")]
+        return list(s.get("combos") or [f"{e}|5Min|{n}" for e in ("EV01", "EV02", "EV03") for n in ("US100", "US500", "US30")])
     j = json.loads((ROOT / "live" / "bots" / f"{bot}.json").read_text(encoding="utf-8"))
-    # a combo whose instrument the bot's server cannot trade never runs (bots 2-3 on MetaQuotes-Demo, 15.11.2026):
-    # no experiments, no improve cards, and its instrument is not one of the bot's for new strategies
-    try:
-        from agents import portfolio_check as PC
-        off = set() if with_off else PC.off_server(bot, j)
-    except Exception:  # noqa: BLE001
-        off = set()
-    return [c for c in j["combos"] if c not in off]
-
-
-def base_variant(bot, combo, fam, doc=None):
-    """The variant the combo trades now (manage: the bots' default when no card changed it)."""
-    fam = "manage" if fam == "fib" else fam
-    v = built_variant(bot, combo, fam)
-    if fam in ("ladder", "pyr"):
-        return v
-    if v is None and fam == "manage":
-        ht = (doc or {}).get("has_target")
-        if ht is None and doc:
-            ht = any(k.startswith("be") and not k.startswith("ber") for k in (doc.get("variants") or {}))
-        v = "be0.6|part0" if ht else "ber2.5|part0"
-    return v
-
-
-def built_variant(bot, combo, fam):
-    """The variant a combo trades now: an approved card built into live/bots/<bot>.json "plans" (12.11.2026),
-    else the strategy's own (exits) / no filter. New cards are measured against this one."""
-    try:
-        p = (json.loads((ROOT / "live" / "bots" / f"{bot}.json").read_text(encoding="utf-8")).get("plans") or {}).get(combo) or {}
-    except Exception:  # noqa: BLE001
-        p = {}
-    if fam == "filters":
-        return p.get("filter") or "none"
-    if fam == "ladder":
-        return "lad" + ",".join(f"{float(x):g}" for x in p["ladder"]) if p.get("ladder") else "lad0"
-    if fam == "pyr":
-        # the built pyramid (bots 2 / 4 since 14.11.2026; before, always "pyr0" - new pyramid cards were measured
-        # against no adding although the bot adds)
-        py = p.get("pyramid")
-        return f"pyr{float(py[0]):g}@{float(py[1]):g}" if py and len(py) == 2 else "pyr0"
-    if fam in ("manage", "fib"):
-        nt = (p.get("target") == "none")
-        if p.get("be_way") is None and p.get("be_r") is None and not p.get("partial"):
-            return None                                 # the default: with a target be0.6, without ber2.5 (known after the run)
-        be = p.get("be_r", 2.5) if nt or p.get("be_r") is not None else p.get("be_way", 0.6)
-        pa = p.get("partial")
-        b = f"ber{float(be):g}" if (nt or p.get("be_r") is not None) else f"be{float(be):g}"
-        return f"{b}|part{'0' if not pa else f'{float(pa[0]):g}@{float(pa[1]):g}'}"
-    if not any(k in p for k in ("target", "stop", "limit")):
-        return "own|be0.6|stop1|entry0"
-    tg = p.get("target")
-    try:
-        tg = "own" if tg is None else ("none" if tg == "none" else f"{float(tg):g}R")
-        return f"{tg}|be0.6|stop{float(p.get('stop', 1)):g}|entry{float(p.get('limit', 0)):g}"
-    except (TypeError, ValueError):
-        # a release strategy's own words, not an exits grid value (bot 7, 15.11.2026: EV04's "stop": "opp" - the
-        # stop at the other order - stopped the whole-bot check of bot 7 with a ValueError): no exits variant
-        return None
+    return list(j["combos"])
 
 
 def bot_risk(bot):
@@ -252,15 +101,13 @@ def runs_here(sym, where):
         return True
     if where == "pc":
         return not needs_alpaca(sym) or bool(os.environ.get("ALPACA_API_KEY_ID"))
-    return (needs_alpaca(sym) and not pc_active(alpaca=True)) or not pc_active()
+    return needs_alpaca(sym) or not pc_active()
 
 
-def pc_active(alpaca=False):
-    """The bots' computer runs the agents (and, with alpaca=True, also has the Alpaca keys)."""
+def pc_active():
     try:
         h = json.loads((ROOT / "reports/agents/host.json").read_text(encoding="utf-8"))
-        on = (pd.Timestamp.now(tz="UTC") - pd.Timestamp(h.get("smart_at") or "1970-01-01T00:00:00Z")) < pd.Timedelta(hours=8)
-        return on and (h.get("alpaca") is True if alpaca else True)
+        return (pd.Timestamp.now(tz="UTC") - pd.Timestamp(h.get("smart_at") or "1970-01-01T00:00:00Z")) < pd.Timedelta(hours=8)
     except Exception:  # noqa: BLE001
         return False
 
@@ -268,21 +115,6 @@ def pc_active(alpaca=False):
 # ---------- experiments ----------
 def key_of(combo):
     return hashlib.sha1(combo.encode()).hexdigest()[:10]
-
-
-# instruments whose history source changed: results made before are of another market and are run again
-# (12.11.2026: FTMO's ASML and RACE are the US listings, agents/ftmo_universe.py)
-SOURCE_SINCE = {"ASML": "2026-11-12T16:00:00+00:00", "RACE": "2026-11-12T16:00:00+00:00"}   # after the fix is installed on the bots' computer
-
-
-def stale_source(doc):
-    if not doc:
-        return False
-    sym = str(doc.get("combo") or "").split("|")[-1]
-    if sym in SOURCE_SINCE and str(doc.get("at") or "") < SOURCE_SINCE[sym]:
-        return True
-    # measured before FTMO's real stock spreads / the restricted events were part of the experiments (13.11.2026)
-    return doc.get("costs") != COSTS and (U.CLASS.get(sym) == "stock" or news_touched(sym))
 
 
 class Store:
@@ -295,22 +127,13 @@ class Store:
 
     def get(self, fam, combo):
         p = self.path(fam, combo)
-        if fam == "new":                     # the scout's results: a single file or the pack (agents/exp_pack.py)
-            d = XP.read(self.dir, p.name)
-        else:
-            d = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
-        return None if stale_source(d) else d
+        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
 
     def put(self, fam, combo, doc):
-        doc = {**doc, "costs": COSTS, "stock_entry": STOCK_ENTRY}
         self.path(fam, combo).write_text(json.dumps(doc, ensure_ascii=False, default=str), encoding="utf-8")
 
     def age_days(self, fam, combo):
-        if fam == "new":                     # only the time / costs are needed: the pack's index, no shard read
-            d = XP.read_meta(self.dir, self.path(fam, combo).name)
-            d = None if stale_source(d) else d
-        else:
-            d = self.get(fam, combo)
+        d = self.get(fam, combo)
         return 999 if not d else (pd.Timestamp.now(tz="UTC") - pd.Timestamp(d["at"])).days
 
 
@@ -324,46 +147,7 @@ def variant_stats(t):
     tr, un = t[t["time"] < T_SPLIT], t[t["time"] >= T_SPLIT]
     return {"train": _wst(tr["r"].to_numpy(float), tr["time"]), "unseen": _wst(un["r"].to_numpy(float), un["time"]),
             "whole": _wst(t["r"].to_numpy(float), t["time"]), "halves": K.halves(t["time"], t["r"]),
-            "erosion": K.erosion(t["time"], t["r"]) if len(t) >= 20 else None,
-            # how the trades ended (target / stop / breakeven / exit signal / session...) per period (12.11.2026, user's
-            # question on QB11's 8R target: how often is it really reached)
-            "exit_mix": {"train": _mix(tr), "unseen": _mix(un)}}
-
-
-def _mix(t):
-    if t is None or t.empty or "reason" not in t:
-        return {}
-    rs = t["reason"].fillna("?").astype(str)
-    be = rs.str.contains("סטופ") & (t["r"].abs() < 0.15)              # a stop at the entry = breakeven
-    rs = rs.where(~be, "איזון")
-    return {k: int(v) for k, v in rs.value_counts().items()}
-
-
-def tr_ok(d):
-    """The stored 2026 trades are there and in real minutes (before 12.11.2026 noon they were stored 1000x too coarse:
-    pandas 3 keeps times in microseconds, and those files must be run again)."""
-    tr = d.get("tr")
-    if not isinstance(tr, dict):
-        return False
-    rows = [x for v in tr.values() for x in (v or [])[:1]]
-    return all(x[0] > 20_000_000 for x in rows)          # 2008 onwards in minutes since 1970
-
-
-def trades_2026(t, train=False):
-    """Compact 2026 trades: [entry minute, exit minute, direction, R] (minutes since 1970, UTC).
-    train=True: the choosing period's trades instead (30.04.2025-31.12.2025), so that whole-bot rules (e.g. a trade
-    against an open position on the same instrument, agents/portfolio_check.side_conflicts) are chosen on 2025 and
-    only shown on 2026, like every other proposal (13.11.2026)."""
-    if t is None or t.empty:
-        return []
-    tt = pd.to_datetime(t["time"], utc=True, format="ISO8601")
-    t = t[(tt >= pd.Timestamp(TEST_FROM, tz="UTC")) & (tt < T_SPLIT)] if train else t[tt >= T_SPLIT]
-    # minutes from the time itself, not from the storage unit: pandas 3 keeps these times in microseconds, so the old
-    # "int64 // 60e9" gave 1000-minute steps and the whole-bot replay put all of 2026 into ~20 days of 1970 (12.11.2026)
-    ep, mn = pd.Timestamp("1970-01-01", tz="UTC"), pd.Timedelta(minutes=1)
-    a = (pd.to_datetime(t["time"], utc=True, format="ISO8601") - ep) // mn
-    b = (pd.to_datetime(t["exit_time"].fillna(t["time"]), utc=True, format="ISO8601") - ep) // mn
-    return [[int(x), int(y), int(d), round(float(r), 3)] for x, y, d, r in zip(a, b, t["dir"].fillna(0), t["r"])]
+            "erosion": K.erosion(t["time"], t["r"]) if len(t) >= 20 else None}
 
 
 def run_rules(combos, fam, budget_min, extra=None):
@@ -371,8 +155,7 @@ def run_rules(combos, fam, budget_min, extra=None):
     out_dir = ROOT / "output"
     sym = combos[0].split("|")[2]
     tag = sym.replace(",", "_").replace("/", "-")[:60]
-    for f in (out_dir / f"combo_trades_{tag}.csv.gz", out_dir / f"optimize_{tag}.json", out_dir / f"filters_{tag}.json",
-              out_dir / f"manage_{tag}.json"):
+    for f in (out_dir / f"combo_trades_{tag}.csv.gz", out_dir / f"optimize_{tag}.json", out_dir / f"filters_{tag}.json"):
         f.unlink(missing_ok=True)
     cf = out_dir / f"agent_combos_{tag}.txt"
     out_dir.mkdir(exist_ok=True)
@@ -384,19 +167,6 @@ def run_rules(combos, fam, budget_min, extra=None):
         cmd += ["--optimize", SPLIT]
     elif fam == "filters":
         cmd += ["--filters", SPLIT]
-        if BOT_NOW.get("bot") in FILTERS_EXTRA:
-            cmd += ["--filters-extra"]               # the user's EMA 9/20 + Bollinger-width filters (14.11.2026)
-        if BOT_NOW.get("bot") in FILTERS_RSI:
-            cmd += ["--filters-rsi"]                 # the user's RSI-against-the-trend filter (14.11.2026)
-        if BOT_NOW.get("bot") in FILTERS_VIDEO:
-            cmd += ["--filters-video"]               # the filters of the user's videos (14.11.2026)
-    elif fam in ("manage", "fib", "ladder", "pyr"):
-        cmd += ["--manage", SPLIT] + (["--manage-grid", fam] if fam in ("fib", "ladder", "pyr") else [])
-    if fam in ("exits", "filters", "manage", "fib", "ladder", "pyr"):
-        bf = plans_file(BOT_NOW.get("bot"), out_dir)
-        if bf is not None:
-            cmd += ["--plans-file", str(bf)]          # on top of what the bot trades now (exits / filters too: 13.11.2026;
-            #                                           the morning review's live rules too: 14.11.2026)
     env = dict(os.environ, MAX_RUN_MINUTES=str(max(5, int(budget_min))))
     r = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace",
                        timeout=int(budget_min * 60 + 900))
@@ -409,192 +179,29 @@ def run_rules(combos, fam, budget_min, extra=None):
         nd = [x for x in (r.stdout or "").splitlines() if "NO DATA" in x]
         raise RuntimeError(f"no market data: {nd[0].strip()[:200] if nd else sym}")
     rows = {}
-    jf = out_dir / f"{ {'exits': 'optimize', 'filters': 'filters', 'manage': 'manage', 'fib': 'manage', 'ladder': 'manage', 'pyr': 'manage'}.get(fam, 'x') }_{tag}.json"
+    jf = out_dir / f"{'optimize' if fam == 'exits' else 'filters'}_{tag}.json"
     if fam in FAMILIES and jf.exists():
         rows = {x["combo"]: x for x in json.loads(jf.read_text(encoding="utf-8"))}
     return t, rows
 
 
-def legacy_tr(d):
-    """Trades stored before the minutes fix (12.11.2026): their times are in 1000-minute steps (2026 ~ 29,500)."""
-    return any(tr and tr[0][0] < 10_000_000 for tr in (d.get("tr") or {}).values())
-
-
-def fixing(bot):
-    """The bot's strategies its agent must try to fix first (data/agents/fix_attempts.json, status trying): run first."""
-    try:
-        fa = json.loads((ROOT / "data/agents/fix_attempts.json").read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001
-        return set()
-    return {k.split("|", 1)[1] for k, v in fa.items() if k.startswith(bot + "|") and (v or {}).get("status") == "trying"}
-
-
-def loss_priority(bot):
-    """The tests the daily loss review asks for first (data/agents/priority.json, agents/loss_review.py)."""
-    try:
-        return json.loads((ROOT / "data" / "agents" / "priority.json").read_text(encoding="utf-8")).get(bot) or {}
-    except Exception:  # noqa: BLE001
-        return {}
-
-
-def plan_now(bot, combo):
-    """The combo's built plan in live/bots/<bot>.json (exits / filter / management), without the card ids, and the
-    morning review's live rules on it ("rules": target / stop factor, hours, direction - live/runner.combo_rules): the
-    experiments run on top of both (run_rules.py --plans-file), so a result measured on another plan is stale."""
-    try:
-        p = (json.loads((ROOT / "live" / "bots" / f"{bot}.json").read_text(encoding="utf-8")).get("plans") or {}).get(combo) or {}
-    except Exception:  # noqa: BLE001
-        p = {}
-    out = {k: v for k, v in sorted(p.items()) if k != "card" and not k.endswith("_card")}
-    r = live_rules(bot).get(combo)
-    if r:
-        out["rules"] = r
-    return out
-
-
-_LIVE_RULES = {}
-RULE_KINDS = ("tp", "sl", "hours", "dir")
-
-
-def live_rules(bot):
-    """{combo: {tp, sl, hours, dir}} - the morning review's rules the live bot applies on top of its plans (branch live,
-    live/manager_state.json "risk", the same source as the risk multipliers). 14.11.2026: the experiments ran without
-    them, so for 14 strategies of bots 1-4 they measured a version that does not trade (bot 1: TV02 INTC stop x0.6,
-    TT45 WTI target x0.7, ...) and the whole-bot replay counted trades the bot never takes. Read once per run."""
-    if bot in _LIVE_RULES:
-        return _LIVE_RULES[bot]
-    out = {}
-    if bot in ("bot1", "bot2", "bot3", "bot4"):
-        try:
-            from agents import repo_io as RIO
-            sec = ((RIO.live_json("live/manager_state.json").get("risk") or {}).get(bot) or {})
-            for k in RULE_KINDS:
-                for combo, v in (sec.get(k) or {}).items():
-                    if v is not None and v != [] and v != {}:
-                        out.setdefault(combo, {})[k] = v
-        except Exception:  # noqa: BLE001
-            out = {}
-    _LIVE_RULES[bot] = out
-    return out
-
-
-def plans_file(bot, out_dir):
-    """live/bots/<bot>.json's plans with the live rules merged in ("rules" per combo), for run_rules --plans-file."""
-    bf = ROOT / "live" / "bots" / f"{bot}.json"
-    if not bf.exists():
-        return None
-    try:
-        plans = json.loads(bf.read_text(encoding="utf-8")).get("plans") or {}
-    except Exception:  # noqa: BLE001
-        return bf
-    rules = live_rules(bot)
-    if not rules:
-        return bf
-    merged = {c: dict(p) for c, p in plans.items()}
-    for c, r in rules.items():
-        merged.setdefault(c, {})["rules"] = r
-    f = out_dir / f"plans_{bot}.json"
-    f.write_text(json.dumps({"plans": merged}, ensure_ascii=False), encoding="utf-8")
-    return f
-
-
-def replay_family(plan):
-    """The experiment family whose trades the whole-bot check takes for a strategy (portfolio_check.current_trades)."""
-    if plan.get("ladder"):
-        return "ladder"
-    if plan.get("filter"):
-        return "filters"
-    if any(k in plan for k in ("be_way", "be_r", "partial")):
-        return "manage"
-    return "exits"
-
-
 def experiments(bot, budget_s, where):
     st = Store(bot)
     todo = []
-    fixing_ = fixing(bot)
-    try:
-        from agents import rules_agent as R
-        known = set(R.STRATEGIES)
-    except Exception:  # noqa: BLE001
-        known = None
     for combo in bot_combos(bot):
         sym = combo.split("|")[2]
         if not runs_here(sym, where):
             continue
-        if known is not None and combo.split("|")[0] not in known:
-            # a strategy the backtest machine does not know (bot 7, 16.11.2026: EV04 straddle, EV08 surprise, SH01
-            # shocks - each has its own study in agents/news_*.py / shocks.py): run_rules loads a year of minute bars
-            # and returns no variants, ~36 s per family per instrument (7 empty EV04 exits runs on 16.11 04:37-04:41)
-            continue
-        prio = (loss_priority(bot).get(combo) or {})
-        pl = plan_now(bot, combo)
         for fam in FAMILIES:
-            if fam == "pyr" and bot not in PYR_BOTS:
-                continue
             age = st.age_days(fam, combo)
-            d = st.get(fam, combo) or {}
-            if d.get("variants") and age < RERUN_DAYS and (d.get("plan") or {}) != pl:
-                # the bot's plan for this strategy changed since this experiment (13.11.2026: TV58 USDCAD bot 3 - a
-                # filter card measured on the old exits): run again on top of what runs now, before the regular re-runs
-                todo.append((0.5, fam, -age, sym, combo))
-                continue
-            # the loss day the review asked about ("why": "2026-11-12: ..."): a result measured after that day, with
-            # today's costs (Store.get drops stale ones), already answers it (13.11.2026: the reports were written again
-            # in a new format at 04:46 with a new "at", and every strategy tested that night with the real costs was
-            # queued once more ahead of the ones never tested - TV11 USDJPY, TV41 NZDUSD, TV10 US100 waited)
-            loss_day = max((str(w)[:10] for w in (prio.get("why") or [])), default=str(prio.get("at") or "")[:10])
-            if fam in (prio.get("families") or []) and str(d.get("at") or "")[:10] <= loss_day:
-                # the daily loss review asked for this test (agents/loss_review.py): first, before anything else
-                todo.append((-1, fam, -age, sym, combo))
-                continue
-            if (fam == replay_family(pl) and d.get("variants") and age >= 0.25 and age < RERUN_DAYS
-                    and base_variant(bot, combo, fam, d) not in (d.get("tr") or {})
-                    and base_variant(bot, combo, fam, d) in ({g.get("variant") for g in (d.get("grid") or [])}
-                                                             | set(d.get("variants") or {}))):
-                # the whole-bot check reads this family, and the variant the bot trades now has no stored trades
-                # (bots 1-4 smart agent, 14.11.2026 evening: 8 of the 35 strategies missing from bots 1-4's 2026 replay
-                # had a result, but not for what they trade - a filter that was not the run's pick, or a result stored
-                # before the card was built; they waited up to 14 days). Again, with the never-run ones.
-                todo.append((0, fam, -age, sym, combo))
-                continue
-            if fam == "filters" and d.get("variants") and ((bot in FILTERS_EXTRA and not d.get("filters_extra"))
-                                                          or (bot in FILTERS_RSI and not d.get("filters_rsi"))
-                                                          or (bot in FILTERS_VIDEO and (d.get("filters_video") or 0) < FILTERS_VIDEO_V)):
-                # measured before the user's EMA 9/20 + Bollinger-width filters (task tal1411ema, 14.11.2026): again
-                todo.append((1, fam, -age, sym, combo))
-                continue
-            if age >= RERUN_DAYS or (d.get("variants") and not tr_ok(d)):    # (12.11.2026: trades for the whole-bot check)
-                pr = 0 if age == 999 or combo in fixing_ else 1
-                if pr == 0 and combo not in fixing_ and fam != replay_family(pl):
-                    # the whole-bot check reads one family per strategy (its built filter / management, else the
-                    # exits): that one first for every strategy, the other families after (13.11.2026: bot 1's 2026
-                    # replay saw 8 of 46 strategies - every re-run went through all families, one instrument at a time)
-                    pr = 0.8
-                if fam in ("fib", "ladder", "pyr") and combo not in fixing_:
-                    pr = 1.5                     # (the ladder too: a new family for every strategy, 13.11.2026)                     # the Fibonacci grid after the re-runs the whole-bot check waits for
-                todo.append((pr, fam, -age, sym, combo))
-            elif d.get("variants") and legacy_tr(d):                         # trades stored in 1000-minute steps
-                todo.append((2, fam, -age, sym, combo))
-    # a 1-minute strategy runs in its own group, after the instrument's other ones (manager, 13.11.2026 night: bots 2-4
-    # put SC001|1Min|JP225 / USDCAD in one exits run with the instrument's 15Min-4Hour strategies; the 1-minute one
-    # needs more than the run's minutes on ~1M bars, so the whole group ran out of time every run since 31.10 and
-    # TT16 JP225, TV02 JP225, IM03 / QC04 / SC002 USDCAD never got their exits tested)
-    one_min = lambda c: c.split("|")[1] == "1Min"                      # noqa: E731
-    # never-run first, one instrument's combos together. Inside one priority the instrument whose oldest result is the
-    # oldest goes first, not the alphabet (bots 1-4 smart agent, 14.11.2026: bot 1's loss-review list fills every run's
-    # minutes, sorted A-Z, so USDJPY / WTI / XAUUSD / XAGUSD / XPTUSD were never reached - SE02 and TV11 USDJPY, TV20
-    # XAUUSD, TT45 WTI, 18 of bot 1's 46 strategies, had no result at all, while ARM / ASML / ETHUSD ran again daily)
-    oldest = {}
-    for x in todo:
-        oldest[(x[0], x[3])] = min(oldest.get((x[0], x[3]), 0), x[2])
-    # (a 1-minute strategy still goes after the tier's other ones - one such run can take a whole run's minutes)
-    todo.sort(key=lambda x: (x[0], one_min(x[4]), oldest[(x[0], x[3])], x[3], x[1], x[2]))
+            if age >= RERUN_DAYS:
+                todo.append((0 if age == 999 else 1, fam, -age, sym, combo))
+    todo.sort(key=lambda x: (x[0], x[3], x[1], x[2]))          # never-run first, one instrument's combos together
     t0, done = time.time(), 0
     groups = {}
     for x in todo:
-        groups.setdefault((x[3], x[1], x[4] if one_min(x[4]) else ""), []).append(x[4])
-    for (sym, fam, _one), combos in groups.items():
+        groups.setdefault((x[3], x[1]), []).append(x[4])
+    for (sym, fam), combos in groups.items():
         left = budget_s - (time.time() - t0)
         if left < 120:
             break
@@ -602,202 +209,27 @@ def experiments(bot, budget_s, where):
         try:
             t, rows = run_rules(combos, fam, left / 60)
         except Exception as e:  # noqa: BLE001
-            if "Time budget reached" in str(e) and left < 0.6 * budget_s:
-                # the run's own minutes ran out on its last group (13.11.2026: JP225 / USDCAD in bots 2-4 every run):
-                # not a failure - nothing is stored, so the group keeps its place and runs first next time
-                print(f"  {sym} {fam}: stopped for time ({left / 60:.0f} min were left), first next run")
-                break
             print(f"  {sym} {fam}: failed - {str(e)[-300:]}")
-            # a combo that cannot run is retried tomorrow; a 1-minute one that ran out of a whole run's minutes alone
-            # in 3 days (it would take most of every run and still not finish - manager, 13.11.2026 night)
-            wait = 3 if (_one and "Time budget reached" in str(e)) else 1
-            for c in combos:
-                st.put(fam, c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - wait)).isoformat(),
+            for c in combos:                                          # a combo that cannot run is retried tomorrow
+                st.put(fam, c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - 1)).isoformat(),
                                 "combo": c, "error": str(e)[-300:]})
             continue
         for c in combos:
             sid, tf, s = c.split("|")
             tc = t[(t["sid"] == sid) & (t["tf"] == tf) & (t["symbol"] == s)]
             doc = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": fam,
-                   "secs": round((time.time() - ts) / max(1, len(combos)), 1), "variants": {}, "plan": plan_now(bot, c)}
+                   "secs": round((time.time() - ts) / max(1, len(combos)), 1), "variants": {}}
             for v, g in tc.groupby("variant") if "variant" in tc else []:
                 doc["variants"][v] = variant_stats(g)
-            # the 2026 trades of the variants a card can come from (the one in the bot now, the default and the five
-            # best on the choosing period), for the whole-bot check (agents/portfolio_check.py)
-            doc["has_target"] = (rows.get(c) or {}).get("has_target")
-            keep = {base_variant(bot, c, fam, doc), {"exits": "own|be0.6|stop1|entry0", "filters": "none"}.get(fam, base_variant(bot, c, fam, doc))}
-            keep |= set(sorted((v for v, x in doc["variants"].items() if (x["train"].get("eff_n") or 0) >= 10),
-                               key=lambda v: -(doc["variants"][v]["train"]["mean"] or -9))[:5])
-            # ... and the five with the most TOTAL R on the choosing period (manager, 14.11.2026: the cards pick the
-            # variant by total R - objective.md - but only the best five by R a trade kept their trades, so the card's
-            # own variant often had none, the whole-bot check returned "unknown" and every improve card in bots 1-4
-            # since 13.11 went in without it)
-            keep |= set(sorted((v for v, x in doc["variants"].items() if (x["train"].get("eff_n") or 0) >= 10
-                                and x["train"].get("mean") is not None),
-                               key=lambda v: -(doc["variants"][v]["train"]["eff_n"] or 0) * doc["variants"][v]["train"]["mean"])[:5])
-            doc["tr"] = {v: trades_2026(tc[tc["variant"] == v]) for v in keep if "variant" in tc and v in doc["variants"]}
-            # the choosing period's trades of the variant in the bot now (whole-bot rules chosen on 2025, 13.11.2026)
-            b0 = base_variant(bot, c, fam, doc)
-            if "variant" in tc and b0 in doc["variants"]:
-                doc["tr25"] = {b0: trades_2026(tc[tc["variant"] == b0], train=True)}
             # the machine's own unweighted stats of every variant (the filters keep only two variants' trades)
             doc["grid"] = [{"variant": x["variant"], "train": x["train"], "valid": x["valid"]}
                            for x in (rows.get(c) or {}).get("all", [])]
-            if fam == "filters" and bot in FILTERS_EXTRA:
-                doc["filters_extra"] = 1
-            if fam == "filters" and bot in FILTERS_RSI:
-                doc["filters_rsi"] = 1
-            if fam == "filters" and bot in FILTERS_VIDEO:
-                doc["filters_video"] = FILTERS_VIDEO_V
             st.put(fam, c, doc)
             done += 1
         print(f"  {sym} {fam}: {len(combos)} combos ({time.time() - ts:.0f}s)")
     left = len(todo) - done
     print(f"experiments: {done} run, {left} left for the next runs")
     return done, left
-
-
-# ---------- a scout strategy's whole family (manager's task mgr1411fam, 14.11.2026) ----------
-# SC001|1Min|JP225 was picked as one instrument out of a family that loses to 2025 (all its instruments together about
-# -3,900R to 2025, -6,700R in 2026; JP225 alone t 0.21). The fix has to be chosen on the FAMILY: every filter
-# (trend 200, ADX, volatility, EMA 9/20, Bollinger width, RSI against the trend) on each of bot 7's instruments of
-# SC001, one instrument per run on the bots' computer; family_report sums each filter over the instruments on
-# 30.04-31.12.2025 (the choice) and shows 2026 - a filter that turns the family positive on 2025 and holds on 2026 is
-# a fix for JP225 too; none -> the attempt failed and the risk card is allowed.
-FAMILY = {"SC001|1Min": ["JP225", "US100", "GER40", "US500", "US30", "UK100", "XAUUSD", "EURUSD", "GBPUSD", "USDJPY",
-                         "AUDUSD", "NZDUSD", "USDCHF", "USDCAD", "EURJPY", "GBPJPY"],
-          # the manager's task mgr1411fam2 (14.11.2026, deadline 17.11): SC070|5Min|JP225 runs in bot 7 at t 0.06 to 2025
-          # out of a family that loses (5Min GER40 -0.57R a trade in 2026) - a filter chosen on the whole family
-          "SC070|5Min": ["JP225", "GER40", "US100", "US500", "US30", "UK100", "XAUUSD"],
-          # the manager's task mgr1411thin (14.11.2026, deadline 18.11): SC086|4Hour|JP225 runs in bot 7 on +2.5R to 2025
-          # (t 0.82); of its 3 tested instruments GER40 / XAUUSD lose in 2026 (-2.0R / -4.6R) - a filter chosen on the
-          # whole family (4-hour runs are quick: all 7 instruments fit one round)
-          "SC086|4Hour": ["JP225", "GER40", "XAUUSD", "US100", "US500", "US30", "UK100"]}
-FAMILY_DAYS = 10
-
-
-# named by the manager although its own t to 2025 is over 1 (task mgr1411thin, 14.11.2026, deadline 18.11): SC097|1Hour|
-# JP225 in bot 3 is the best of 12 SC097 pairs that lost -414R together to 2025 (on 1Hour: FRA40 0, XAGUSD -23R, XAUUSD -22R)
-FAMILY_NAMED = {"bot3": ("SC097|1Hour|JP225",)}
-
-
-def families_of(bot):
-    """bots 1-4 (manager's tasks mgr1411fam / mgr1411fam2, 14.11.2026): every scout strategy the bot runs that was
-    picked as one instrument out of a family that loses to 2025 (the rule of agents/autodecide._family_pick: >= 4 pairs
-    tested, the pooled result to 2025 below 0, its own t below 1) - SC010|15Min|ARM in bots 1-4, SC006|4Hour|EURJPY and
-    SC094|1Hour|XAGUSD in bot 4. The family = the strategy on the same timeframe on every instrument the bot tested."""
-    if bot == "bot7":     # the quick 4-hour family first, so the 1-minute one cannot leave it without minutes
-        return dict(sorted(FAMILY.items(), key=lambda kv: kv[0].split("|")[1] in ("1Min", "5Min")))
-    # bot 5 (its smart agent, 14.11.2026, the manager's task mgr1411fam2 - SC071|15Min|US30, 4 indices to 2025 -16R):
-    # its scout strategies are "scout" in live/bots/bot5.json and its new-strategy cards are cards_new.json
-    try:
-        if bot == "bot5":
-            cards = json.loads((K.CARDS_DIR / bot / "cards_new.json").read_text(encoding="utf-8")).get("cards", [])
-        else:                            # cards.json + the rejected-new shards (agentkit.write_cards, 15.11.2026)
-            cards = K.read_cards(bot)
-    except Exception:  # noqa: BLE001
-        return {}
-    new = [c for c in cards if c.get("kind") == "new" and str((c.get("change") or {}).get("combo") or "").count("|") == 2]
-    out = {}
-    if bot == "bot5":
-        try:
-            running = list((json.loads((ROOT / "live" / "bots" / "bot5.json").read_text(encoding="utf-8")).get("scout") or []))
-        except Exception:  # noqa: BLE001
-            running = []
-    else:
-        running = bot_combos(bot)
-    for combo in running:
-        sid, tf, sym = combo.split("|")
-        if not sid.startswith("SC"):
-            continue
-        fam = [c for c in new if c["change"]["combo"].startswith(f"{sid}|{tf}|")]
-        own = next((c for c in fam if c["change"]["combo"] == combo), None)
-        tr = [c.get("train") or {} for c in fam]
-        pooled = sum(float(x.get("n") or 0) * float(x.get("mean") or 0) for x in tr)
-        own_t = ((own or {}).get("train") or {}).get("t")
-        if tf == "1Min":                 # SC001 1-minute: bot 7's family test already covers it (16 instruments)
-            continue
-        caught = len(fam) >= 4 and pooled < 0 and (own_t is None or own_t < 1 or combo in FAMILY_NAMED.get(bot, ()))
-        # the approval rule's family (agents/autodecide._family_pick: every timeframe, the t bar grows with the family)
-        # catches more (manager, 14.11.2026 night: SC071|15Min|WMT went into bot 4 at 10:58 with t 1.53 - 15Min alone
-        # +12R to 2025, but SC071 on its 10 pairs -102R, bar 1.65 - and this same-timeframe test never queued it)
-        if not caught and own is not None:
-            try:
-                from agents import autodecide as AD
-                caught = AD._family_pick(new, own) is not None
-            except Exception:  # noqa: BLE001
-                pass
-        if caught and fam:
-            syms = [sym] + sorted({c["change"]["combo"].split("|")[2] for c in fam} - {sym})
-            out[f"{sid}|{tf}"] = syms
-    # the ones the manager named first (SC010 in bots 1-4, then bot 4's SC006 / SC094), then the rest (SC002)
-    # bots 1-4 smart agent, 17.11.2026 evening: the manager's deadline families (tasks mgr1411wmt / mgr1411thin, due
-    # 18.11) next - bot 4's SC071|15Min and SC002|1Hour, bot 2's SC043 / SC044|4Hour had 0 instruments after 3 days,
-    # waiting behind SC002|4Hour (bot 4) / SC002|1Hour (bot 2), which were sorted ahead of them by size only
-    first = ("SC010|15Min", "SC006|4Hour", "SC094|1Hour", "SC071|15Min", "SC043|4Hour", "SC044|4Hour", "SC002|1Hour")
-    return dict(sorted(out.items(), key=lambda kv: (first.index(kv[0]) if kv[0] in first else 9, len(kv[1]))))
-
-
-def family_fix(bot, budget_s, one=False):
-    st, t0, done = Store(bot), time.time(), 0
-    for base, syms in families_of(bot).items():
-        for sym in syms:
-            c = f"{base}|{sym}"
-            if st.age_days("family", c) < FAMILY_DAYS and (st.get("family", c) or {}).get("all_filters"):
-                continue                 # (before 14.11.2026 midday only the per-instrument pick was kept: run again)
-            left = budget_s - (time.time() - t0)
-            if left < 300:
-                return done
-            ts = time.time()
-            try:
-                t, rows = run_rules([c], "filters", left / 60, extra=["--filters-all-trades"])
-            except Exception as e:  # noqa: BLE001
-                print(f"  family {c}: failed - {str(e)[-300:]}")
-                if "Time budget reached" in str(e):
-                    return done
-                st.put("family", c, {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "error": str(e)[-300:]})
-                continue
-            sid, tf, s_ = c.split("|")
-            tc = t[(t["sid"] == sid) & (t["tf"] == tf) & (t["symbol"] == s_)].copy()
-            tc["time"] = pd.to_datetime(tc["time"], utc=True, format="ISO8601")
-            doc = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": "family",
-                   "secs": round(time.time() - ts, 1), "sums": {}, "all_filters": True}
-            for v, g in tc.groupby("variant") if "variant" in tc else []:
-                tr = g[(g["time"] >= pd.Timestamp(TEST_FROM, tz="UTC")) & (g["time"] < T_SPLIT)]
-                un = g[g["time"] >= T_SPLIT]
-                doc["sums"][v] = {"train_n": int(len(tr)), "train_r": round(float(tr["r"].sum()), 2),
-                                  "unseen_n": int(len(un)), "unseen_r": round(float(un["r"].sum()), 2)}
-            st.put("family", c, doc)
-            done += 1
-            print(f"  family {c}: {len(doc['sums'])} filters ({time.time() - ts:.0f}s)")
-            # (a 15-minute to 4-hour family runs all its instruments in one round - SC086|4Hour, 14.11.2026)
-            if one and base.split("|")[1] in ("1Min", "5Min"):   # one instrument per family per round (14.11.2026: SC070's 5-minute runs are quick and
-                break          # its deadline is 17.11 - it must not wait behind SC001's 16 one-minute instruments)
-    return done
-
-
-def family_report(bot):
-    st, out = Store(bot), {}
-    for base, syms in families_of(bot).items():
-        agg, have = {}, []
-        for sym in syms:
-            d = st.get("family", f"{base}|{sym}") or {}
-            if not d.get("sums") or not d.get("all_filters"):
-                continue
-            have.append(sym)
-            for v, x in d["sums"].items():
-                a = agg.setdefault(v, {"train_n": 0, "train_r": 0.0, "unseen_n": 0, "unseen_r": 0.0, "positive_train": 0})
-                for k in ("train_n", "train_r", "unseen_n", "unseen_r"):
-                    a[k] += x[k]
-                a["positive_train"] += int(x["train_r"] > 0)
-        rank = sorted(agg.items(), key=lambda kv: -kv[1]["train_r"])
-        out[base] = {"instruments": have, "missing": [s_ for s_ in syms if s_ not in have],
-                     "none": agg.get("none"), "best": rank[0] if rank else None,
-                     "filters": {v: {k: round(x, 2) if isinstance(x, float) else x for k, x in a.items()} for v, a in rank}}
-    (ROOT / "reports" / "agents" / bot / "family_fix.json").write_text(
-        json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "split": SPLIT, "test_from": TEST_FROM,
-                    "families": out}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
-    return out
 
 
 # ---------- new strategies from the scout ----------
@@ -808,210 +240,47 @@ def inbox():
         return []
 
 
-POOL_BOTS = ("bot1", "bot2", "bot3", "bot4", "bot7")
-
-
-def pool():
-    """The pool (user, 14.11.2026: "every bot gets the strategies that pass into the pool and can use them - and
-    checks whether it can use them"): every strategy some bot trades now, with the timeframes it trades on, offered to
-    every other bot exactly like a new scout strategy - on all of that bot's instruments, by the same test (live rules,
-    FTMO costs, chosen to 2025, shown on 2026). Only strategies of the rules library (the news events of bot 7 run on
-    their own engine)."""
-    try:
-        from agents import rules_agent as R
-        known = set(R.STRATEGIES)
-    except Exception:  # noqa: BLE001
-        known = None
-    try:                                  # (after rules_agent: event_strategies imports it back)
-        from agents.event_strategies import EVENTS
-        ev_ids = set(EVENTS)
-    except Exception:  # noqa: BLE001
-        ev_ids = set()
-    tfs, who = {}, {}
-    for b in POOL_BOTS:
-        try:
-            cs = bot_combos(b, with_off=True)   # the pool keeps what passed, also where the server lacks the instrument
-        except Exception:  # noqa: BLE001
-            continue
-        for c in cs:
-            sid, tf, _ = (c.split("|") + ["", ""])[:3]
-            if known is not None and sid not in known:
-                continue
-            # bot 7's news strategies (EV01-EV03 are in the rules library too) never go to bots 1-6: a funded account
-            # forbids trading around restricted news (user, 14.11.2026, data/agents/tal_thinking.md "shared pool")
-            if sid.startswith("EV") or sid in ev_ids:
-                continue
-            tfs.setdefault(sid, set()).add(tf)
-            who.setdefault(sid, set()).add(b)
-    return [{"id": sid, "timeframes": sorted(tfs[sid]), "name": f"pool: {sid} (live in {', '.join(sorted(who[sid]))})",
-             "source": "pool", "pool_of": sorted(who[sid])} for sid in sorted(tfs)]
-
-
-def to_test():
-    """The scout's new strategies, then the pool's (a strategy in both is tested once, as the scout's)."""
-    sc = inbox()
-    ids = {s_.get("id") for s_ in sc}
-    return sc + [s_ for s_ in pool() if s_["id"] not in ids]
-
-
 def bot_symbols(bot):
     return NEW_ONLY.get(bot) or sorted({c.split("|")[2] for c in bot_combos(bot)})
 
 
-def can_test(bot, s_):
-    """Every bot's agent tests every new strategy the scout brings - whether it fits the bot is the test's answer, not
-    the scout's guess (user, 12.11.2026; the scout's "bots" field is only a hint). The one limit is technical: the
-    scalping bots (5-6) trade 1-15 minute charts, so a strategy whose source states only longer timeframes has nothing
-    to run there."""
-    # 14.11.2026 (user: every bot gets every strategy and checks whether it can use it): a strategy stated only on
-    # longer charts is tested on the scalping bots too, on their 15-minute chart (tfs_for) - the test decides.
-    return True
-
-
-def tfs_for(bot, s_, default=None):
-    tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or (default or ["1Hour"])
-    if bot in NEW_ONLY:
-        tfs = [x for x in tfs if x in ("1Min", "5Min", "15Min")] or ["15Min"]          # scalping bots: short charts
-    return tfs
-
-
-def untested_new(bot, where):
-    st = Store(bot)
-    own = set(bot_combos(bot))
-    for s_ in to_test():
-        if not s_.get("id") or not can_test(bot, s_):
-            continue
-        tfs = tfs_for(bot, s_)
-        for sym in bot_symbols(bot):
-            if runs_here(sym, where) and any(f"{s_['id']}|{tf}|{sym}" not in own and
-                                             st.age_days("new", f"{s_['id']}|{tf}|{sym}") >= RERUN_DAYS for tf in tfs):
-                return True
-    return False
-
-
-NEW_BATCH = 30                         # combos of one instrument in one backtest run (its bars are loaded once)
-
-
-def _new_caps(bot):
-    """Per-instrument batch sizes cut after a batch timed out (reports/agents/<bot>/new_batch.json)."""
-    try:
-        return json.loads((ROOT / "reports" / "agents" / bot / "new_batch.json").read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001
-        return {}
-
-
-def _save_new_caps(bot, caps):
-    p = ROOT / "reports" / "agents" / bot / "new_batch.json"
-    p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(caps, indent=1), encoding="utf-8")
-
-
 def test_new(bot, budget_s, where, symbols=None, timeframes=None):
-    """Every scout strategy, on the bot's instruments and the timeframes its source states, once (re-run after RERUN_DAYS).
-    The due combos of one instrument go into one backtest run, several strategies together (manager, 12.11.2026: one
-    run per strategy x instrument loaded the same bars again each time - ~20 of ~1,000 due combos a day per bot)."""
+    """Every scout strategy addressed to this bot, on the bot's instruments, once (re-run after RERUN_DAYS)."""
     st = Store(bot)
     t0, done = time.time(), 0
     syms = symbols or bot_symbols(bot)
-    queue = []                                                   # (sym, strategy, combos), in the scout's order
-    own = set(bot_combos(bot))                                   # what the bot trades already is not "new" to it
-    for s_ in to_test():
-        if not s_.get("id") or not can_test(bot, s_):
+    for s_ in inbox():
+        if bot not in (s_.get("bots") or []) or not s_.get("id"):
             continue
         sid = s_["id"]
-        tfs = tfs_for(bot, s_, timeframes)
-        # on ALL the bot's instruments, not only the markets the source names (user: test everything, each strategy
-        # where it wins)
-        mk = set(s_.get("markets") or [])
-        for sym in [x for x in syms if runs_here(x, where)]:
-            combos = [f"{sid}|{tf}|{sym}" for tf in tfs if f"{sid}|{tf}|{sym}" not in own]
-            if combos and any(st.age_days("new", c) >= RERUN_DAYS for c in combos):
-                fresh = any(st.age_days("new", c) >= 999 for c in combos)
-                queue.append((sym, s_, combos, (0 if fresh else 1,                          # never tested before a re-run
-                                                0 if not mk or U.CLASS.get(sym) in mk else 1)))  # the source's markets first
-    # 13.11.2026 (bots 1-4 smart agent): in the scout's order, strategy by strategy on all the bot's instruments, the
-    # 30-combo batches of one instrument took SC001-SC028 every time - by 13.11 bots 1-4 had tested nothing after SC028
-    # (82 strategies, ~1,250-3,650 combos waiting in each bot) and SC001 would come back for its 14-day re-run first.
-    # Now: never-tested combos before re-runs, the markets the source names before the others, and among those the
-    # strategies tested on the fewest of the bot's instruments first - so every new strategy gets its first fair test
-    # within a run or two. Nothing is skipped: the rest follows in the same order in the next runs.
-    cover = {}
-    for s_ in to_test():
-        if s_.get("id"):
-            cover[s_["id"]] = sum(1 for sym in syms for tf in tfs_for(bot, s_)
-                                  if st.age_days("new", f"{s_['id']}|{tf}|{sym}") < 999)
-    queue.sort(key=lambda q: (q[3][0], q[3][1], cover.get(q[1]["id"], 0)))     # stable: the scout's order within
-    queue = [q[:3] for q in queue]
-
-    def store(t, s_, combos):
-        n = 0
-        for c in combos:
-            sid_, tf, s = c.split("|")
-            tc = t[(t["sid"] == sid_) & (t["tf"] == tf) & (t["symbol"] == s)]
-            st.put("new", c, {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": "new",
-                              "tr": {"new": trades_2026(tc)} if len(tc) else {},
-                              "tr25": {"new": trades_2026(tc, train=True)} if len(tc) else {},
-                              "scout": {k: s_.get(k) for k in ("name", "source", "url", "added", "pool_of")},
-                              "stats": variant_stats(tc) if len(tc) else None})
-            n += 1
-        return n
-
-    def failed(combos, e):
-        for c in combos:
-            st.put("new", c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - 1)).isoformat(),
-                              "combo": c, "error": str(e)[-300:]})
-
-    caps = _new_caps(bot)
-    while queue:
-        left = budget_s - (time.time() - t0)
-        if left < 120:
-            print(f"new strategies: stopped for time, {done} tested, {sum(len(q[2]) for q in queue)} combos left")
-            return done
-        sym = queue[0][0]
-        cap = int(caps.get(sym, NEW_BATCH))
-        batch, n = [], 0
-        for q in list(queue):
-            if q[0] == sym and (n == 0 or n + len(q[2]) <= cap):
-                batch.append(q)
-                n += len(q[2])
-                queue.remove(q)
-        try:
-            t, _ = run_rules([c for q in batch for c in q[2]], "new", left / 60)
-            for _, s_, combos in batch:
-                done += store(t, s_, combos)
-        except Exception as e:  # noqa: BLE001
-            # 14.11.2026 (manager): a 30-combo batch on the metals (XAGUSD / XAUUSD / XPTUSD, with 1-minute combos) did
-            # not finish inside the run's time - run_rules stopped on its time budget, no trades file, every strategy
-            # put back, nothing stored - so bots 2-4 tested 0 new combos run after run, the same batch first every
-            # time. Now a timed-out batch halves that instrument's batch size (kept for the next runs) and goes back
-            # first in the queue; a single combo that still times out is marked failed and retried in a day.
-            if "Time budget reached" in str(e) or "timed out" in str(e).lower():
-                if left < 480:                       # little time was left anyway: not the batch's fault
-                    queue[0:0] = batch
-                    print(f"new strategies: stopped for time, {done} tested, {sum(len(q[2]) for q in queue)} combos left")
-                    return done
-                if n > 1:
-                    caps[sym] = max(1, n // 2)
-                    _save_new_caps(bot, caps)
-                    print(f"new strategies: {sym} batch of {n} timed out, now {caps[sym]}")
-                    queue[0:0] = batch
-                else:
-                    failed(batch[0][2], e)
+        tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or (timeframes or ["1Hour"])
+        if bot in NEW_ONLY:
+            tfs = [x for x in tfs if x in ("1Min", "5Min", "15Min")]          # scalping bots: short timeframes only
+        mine = [x for x in syms if runs_here(x, where)]
+        if s_.get("markets"):
+            mine = [x for x in mine if U.CLASS.get(x) in s_["markets"]] or mine
+        for sym in mine:
+            combos = [f"{sid}|{tf}|{sym}" for tf in tfs]
+            if all(st.age_days("new", c) < RERUN_DAYS for c in combos):
                 continue
-            if len(batch) == 1 or "no market data" in str(e):
-                for q in batch:
-                    failed(q[2], e)
+            left = budget_s - (time.time() - t0)
+            if left < 120:
+                print(f"new strategies: stopped for time, {done} tested")
+                return done
+            try:
+                t, _ = run_rules(combos, "new", left / 60)
+            except Exception as e:  # noqa: BLE001
+                for c in combos:
+                    st.put("new", c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - 1)).isoformat(),
+                                      "combo": c, "error": str(e)[-300:]})
                 continue
-            # one strategy may have broken the whole run: each one alone, so the others still get their result
-            for _, s_, combos in batch:
-                if budget_s - (time.time() - t0) < 120:
-                    queue.insert(0, (sym, s_, combos))
-                    continue
-                try:
-                    t, _ = run_rules(combos, "new", (budget_s - (time.time() - t0)) / 60)
-                    done += store(t, s_, combos)
-                except Exception as e1:  # noqa: BLE001
-                    failed(combos, e1)
+            for c in combos:
+                sid_, tf, s = c.split("|")
+                tc = t[(t["sid"] == sid_) & (t["tf"] == tf) & (t["symbol"] == s)]
+                st.put("new", c, {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": "new",
+                                  "scout": {k: s_.get(k) for k in ("name", "source", "url", "added")},
+                                  "stats": variant_stats(tc) if len(tc) else None})
+                done += 1
     print(f"new strategies: {done} combos tested")
     return done
 
@@ -1026,7 +295,7 @@ def cards_for(bot):
             d = st.get(fam, combo)
             if not d or not d.get("variants"):
                 continue
-            base_key = base_variant(bot, combo, fam, d)
+            base_key = "own|be0.6|stop1|entry0" if fam == "exits" else "none"
             vs = d["variants"]
             base = vs.get(base_key)
             if not base:
@@ -1041,38 +310,25 @@ def cards_for(bot):
             cand = [(v, x) for v, x in vs.items() if v != base_key and (x["train"].get("eff_n") or 0) >= 10]
             if not cand:
                 continue
-            # THE GOAL (user, 12.11.2026, data/agents/objective.md): the variant with the most TOTAL R on the choosing
-            # period (trades x R a trade), not the most R a trade (13.11.2026: TV58|1Hour|USDCAD bot 3 got a limit-entry
-            # variant with 28 trades over the bot's version with more trades and more R in all)
-            def _tot(x):
-                return (x.get("eff_n") or 0) * x["mean"] if x.get("mean") is not None else -9e9
-            v, best = max(cand, key=lambda vx: _tot(vx[1]["train"]))
-            base_tot = _tot(base["train"]) if base["train"].get("mean") is not None else 0.0
-            if _tot(best["train"]) <= max(0.0, base_tot):
+            v, best = max(cand, key=lambda vx: vx[1]["train"]["mean"] if vx[1]["train"]["mean"] is not None else -9)
+            if (best["train"]["mean"] or -9) <= (base["train"]["mean"] or 0):
                 continue
             grid = d.get("grid") or []
             bval = next((g["valid"]["avg"] for g in grid if g["variant"] == base_key), None)
             others = [g for g in grid if g["variant"] != base_key and g["valid"]["n"] >= 5]
             share = (round(sum(1 for g in others if g["valid"]["avg"] > (bval or 0)) / len(others), 2) if others and bval is not None else None)
-            what = (explain_exit(v) if fam == "exits" else explain_manage(v) if fam in ("manage", "fib")
-                    else explain_ladder(v) if fam == "ladder" else explain_pyr(v) if fam == "pyr" else FILTER_HE.get(v, v))
+            what = explain_exit(v) if fam == "exits" else FILTER_HE.get(v, v)
             cards.append(K.card(
                 bot, "improve", f"{combo}: {what}",
-                f"{ {'exits': 'יעד / סטופ / כניסה', 'manage': 'ניהול העסקה (נקודת איזון / יציאה חלקית)', 'fib': 'ניהול העסקה ברמות פיבונאצ׳י (נקודת איזון / יציאה חלקית)', 'ladder': 'כניסה מדורגת', 'pyr': 'הוספה לעסקה מנצחת (פירמידה)'}.get(fam, 'סינון מצב שוק') } לאסטרטגיה {combo}: {what}. "
+                f"{'ניהול העסקה' if fam == 'exits' else 'סינון מצב שוק'} לאסטרטגיה {combo}: {what}. "
                 f"נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
                 best["train"], best["unseen"], whole=best["whole"], halves_=best["halves"],
                 neighbours={"values": len(grid) or len(vs), "share_positive": share},
                 tested=len(grid) or len(vs), risk_pct=risk, baseline=base["unseen"],
-                detail={"exp_at": d.get("at"), **({"needs_code": "live/runner.py: כמה הוראות לימיט לאסטרטגיה אחת - נבנה "
-                                                   "כשהכרטיס מאושר"} if fam == "ladder" else
-                                                  {"needs_code": "live/runner.py: הוספה לעסקה פתוחה והזזת הסטופ של "
-                                                   "הכול - נבנה כשהכרטיס מאושר"} if fam == "pyr" else {})},
-                change={"combo": combo, "family": "manage" if fam == "fib" else fam, "from": base_key, "to": v,
-                        **({"src": "fib"} if fam == "fib" else {})}))
+                change={"combo": combo, "family": fam, "from": base_key, "to": v}))
     # the scout's strategies
-    for _, d in XP.iter_docs(st.dir):           # single files and the pack (agents/exp_pack.py)
-        if stale_source(d):
-            continue
+    for f in sorted(st.dir.glob("new_*.json")):
+        d = json.loads(f.read_text(encoding="utf-8"))
         s = d.get("stats")
         if not s:
             continue
@@ -1086,15 +342,6 @@ def cards_for(bot):
             detail={"scout": sc}, change={"combo": d["combo"], "kind": "add"}))
     for c in cards:
         c["tier"], c["verdict"] = K.judge(c)
-        # 15.11.2026 (manager): since the scout's pack is read here (agents/exp_pack.py) bot 2 got 25,609 "new" cards
-        # (22,588 rejected) - cards.json 40 MB and manager.json 58 MB, which GitHub refused, so the app and the nightly
-        # agents saw the old file. A rejected new strategy keeps its numbers (the family tests sum them) and its id
-        # (made from the change), only the long texts go.
-        if c["kind"] == "new" and c["tier"] == "rejected":
-            sc = (c.get("detail") or {}).get("scout") or {}
-            c["title"] = f"אסטרטגיה חדשה: {(c.get('change') or {}).get('combo')}"
-            c["what"] = ""
-            c["detail"] = {"scout": {k: sc.get(k) for k in ("source", "pool_of", "added") if sc.get(k)}}
     return cards, tested
 
 
@@ -1105,130 +352,10 @@ def main():
     ap.add_argument("--where", default="pc", choices=["pc", "github", "all"])
     ap.add_argument("--no-cards", action="store_true")
     a = ap.parse_args()
-    BOT_NOW["bot"] = a.bot
     budget = a.minutes * 60
     t0 = time.time()
-    if a.bot == "bot7" and a.where in ("pc", "all"):
-        # bot 7's fix study (agents/news_fix.py): the three strategies pooled over all instruments, split by release
-        # type / instrument / exits - at most once every 3 days, in its own process, up to half the budget
-        try:
-            from agents import news_fix as NF
-            if NF.stale():
-                mins = max(8.0, a.minutes / 2)
-                subprocess.run([sys.executable, "-m", "agents.news_fix", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
-        except Exception as e:  # noqa: BLE001 - the study's failure never stops the experiments
-            print(f"bot7 fix study failed: {e}")
-        # the market-regime filters (ADX, Choppiness, volatility, trend) on EV02 / EV03 pooled over the 16 instruments
-        # and on SH01 per instrument, on top of what the bot trades now (the user's task tal1411indstrat, 14.11.2026,
-        # agents/news_regime.py): one variant per filter, so quick - a sixth of the budget, before the straddle
-        try:
-            from agents import news_regime as NRG
-            if NRG.stale():
-                mins = max(5.0, a.minutes / 6)
-                subprocess.run([sys.executable, "-m", "agents.news_regime", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
-        except Exception as e:  # noqa: BLE001
-            print(f"bot7 regime study failed: {e}")
-        # EV04, the straddle before a release (the user's task tal1411strad, 14.11.2026, agents/news_straddle.py): a
-        # third of the budget, BEFORE the entry study (the user's priority, 14.11.2026), gold first
-        try:
-            from agents import news_straddle as NS
-            if NS.stale():
-                mins = max(6.0, a.minutes / 3)
-                subprocess.run([sys.executable, "-m", "agents.news_straddle", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
-        except Exception as e:  # noqa: BLE001
-            print(f"bot7 straddle study failed: {e}")
-        # EV04 on the high-impact releases that are NOT restricted (bot 7 smart agent, 17.11.2026 evening: the live
-        # bot traded them untested until then - US Retail Sales 17.11, 6 of 7 lost; agents/news_straddle_extra.py):
-        # a sixth of the budget, weekly
-        try:
-            from agents import news_straddle_extra as NSX
-            if NSX.stale():
-                mins = max(5.0, a.minutes / 6)
-                subprocess.run([sys.executable, "-m", "agents.news_straddle_extra", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
-        except Exception as e:  # noqa: BLE001
-            print(f"bot7 straddle extra study failed: {e}")
-        # EV05, fading the release spike early (the user's task tal1411fade, 14.11.2026, agents/news_fade.py): a
-        # quarter of the budget, right after the straddle, gold first
-        try:
-            from agents import news_fade as NFD
-            if NFD.stale():
-                mins = max(6.0, a.minutes / 4)
-                subprocess.run([sys.executable, "-m", "agents.news_fade", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
-        except Exception as e:  # noqa: BLE001
-            print(f"bot7 fade study failed: {e}")
-        # EV06 (retests of the broken levels, the user's task tal1411fade 09:17) and EV07 (absorption after the release,
-        # tal1411of), agents/news_retest.py: in the straddle's / fade's slot once both are complete - the round's time
-        # does not grow (14.11.2026)
-        try:
-            from agents import news_retest as NRT
-            if NRT.stale() and not NS.stale() and not NFD.stale():
-                mins = max(6.0, a.minutes / 3)
-                subprocess.run([sys.executable, "-m", "agents.news_retest", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
-        except Exception as e:  # noqa: BLE001
-            print(f"bot7 retest study failed: {e}")
-        # SC001's whole family (the manager's task mgr1411fam, deadline 16.11.2026): one instrument's filter test per
-        # round (up to 20 minutes), then the sum per filter over the family
-        try:
-            BOT_NOW["bot"] = a.bot
-            family_fix(a.bot, max(20 * 60, budget / 4), one=True)   # a 1-minute filter run: ~15 minutes
-            family_report(a.bot)
-        except Exception as e:  # noqa: BLE001
-            print(f"bot7 family fix failed: {e}")
-        # fix attempt 6 for EV01 (13.11.2026): the entry's minute after the release, the spike size, the side and the
-        # surprise (agents/news_entry.py), up to a third of the budget, once the fix study is complete
-        try:
-            from agents import news_entry as NE
-            if NE.stale() and not NF.stale():
-                # half the budget (14.11.2026: the user's rule - fix the losers first; EV03's attempt 5 was 9/16 after
-                # a whole round and attempt 6, the box before the release, waits behind it)
-                mins = max(6.0, a.minutes / 2)
-                subprocess.run([sys.executable, "-m", "agents.news_entry", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
-        except Exception as e:  # noqa: BLE001
-            print(f"bot7 entry study failed: {e}")
-        # EV08, the release's surprise by its direction (the user's task, 14.11.2026, item 41 - Dewonggo: jobless claims
-        # worse than expected = buy BTC / indices / gold), agents/news_surprise.py: first FTMO's whole calendar with the
-        # US numbers (the history the other studies use has none), then the study; a third of the budget once the
-        # entry study is complete (it is not stale for 3 days after it finished)
-        try:
-            from agents import news_surprise as NSU
-            if NSU.stale() and not NE.stale():
-                mins = max(6.0, a.minutes / 3)
-                subprocess.run([sys.executable, "-m", "agents.news_surprise", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
-        except Exception as e:  # noqa: BLE001
-            print(f"bot7 surprise study failed: {e}")
-        # the trades of bot 7's own strategies for the whole-bot check (agents/bot7_trades.py, 15.11.2026: 46 of 55
-        # combos were unknown there): from the studies' caches every round, so they follow the built plans
-        import importlib
-        from agents import bot7_trades as BT7
-        for mod in ("news_regime", "news_straddle", "news_surprise"):
-            try:
-                m_ = importlib.import_module(f"agents.{mod}")
-                BT7.safe(lambda m_=m_: m_.export(m_._cached_rows()))
-            except Exception as e:  # noqa: BLE001
-                print(f"bot7 trades export ({mod}) failed: {e}")
-    if a.bot in ("bot1", "bot2", "bot3", "bot4", "bot5") and a.where in ("pc", "all"):
-        # the scout strategies picked out of a losing family (the manager's tasks mgr1411fam / mgr1411fam2, deadline
-        # 16-17.11.2026): one instrument's filter test per round (a fifth of the budget, at least 10 minutes), then the
-        # sum per filter over the family -> reports/agents/<bot>/family_fix.json
-        try:
-            if families_of(a.bot):
-                family_fix(a.bot, max(10 * 60, budget / 5))
-                family_report(a.bot)
-        except Exception as e:  # noqa: BLE001
-            print(f"{a.bot} family fix failed: {e}")
-    # the scout's strategies first, with up to a third of the time, while some are still untested (12.11.2026: with
-    # 0.8 of the budget for the experiments, the leftover was under the 2-minute minimum and they never ran)
-    first = test_new(a.bot, budget / 3, a.where) if untested_new(a.bot, a.where) else 0
-    done, left = experiments(a.bot, budget - (time.time() - t0), a.where)
-    new = first + test_new(a.bot, budget - (time.time() - t0), a.where)
+    done, left = experiments(a.bot, budget * 0.8, a.where)
+    new = test_new(a.bot, budget - (time.time() - t0), a.where)
     if a.no_cards:
         return
     cards, tested = cards_for(a.bot)
@@ -1236,8 +363,7 @@ def main():
         d = K.CARDS_DIR / a.bot
         d.mkdir(parents=True, exist_ok=True)
         (d / "cards_new.json").write_text(json.dumps({"bot": a.bot, "updated": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
-                                                      "cards": cards}, ensure_ascii=False, default=str,
-                                                     **K.json_layout(cards)), encoding="utf-8")
+                                                      "cards": cards}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
         print(json.dumps({"bot": a.bot, "new_cards": len(cards)}, ensure_ascii=False))
         return
     combos = bot_combos(a.bot)

@@ -12,18 +12,21 @@ on:
       minutes:
         description: "Time budget for the bot agents' experiments (minutes)"
         default: "30"
+      symbols:
+        description: "Only these instruments (a parallel experiments-only run); empty = all + cards + manager"
+        default: ""
 
 permissions:
   contents: write
 
 concurrency:
-  group: agents
+  group: agents-${{ inputs.symbols || 'all' }}
   cancel-in-progress: false
 
 jobs:
   agents:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 355
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,9 +47,9 @@ jobs:
           key: poc-cache-${{ github.run_id }}
           restore-keys: poc-cache-
       - name: Bot 5 agent
-        run: python -u agent_bot5.py --minutes "${{ inputs.minutes || '30' }}" 2>&1 | tee agent_bot5.log
+        run: python -u agent_bot5.py --minutes "${{ inputs.minutes || '30' }}" ${{ inputs.symbols && format('--symbols {0} --no-cards', inputs.symbols) || '' }} 2>&1 | tee agent_bot5.log
       - name: Manager
-        if: always()
+        if: always() && !inputs.symbols
         run: python -u agent_manager.py 2>&1 | tee agent_manager.log
       - name: Save data cache
         if: always()
@@ -60,7 +63,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           mkdir -p reports/agents
-          cp agent_bot5.log agent_manager.log reports/agents/ 2>/dev/null || true
-          git add reports/agents
+          if [ -z "${{ inputs.symbols }}" ]; then cp agent_bot5.log agent_manager.log reports/agents/ 2>/dev/null || true; fi
+          git add reports/agents/bot5/exp
+          if [ -z "${{ inputs.symbols }}" ]; then git add reports/agents; fi
           git commit -qm "Agents: nightly run" || exit 0
           for i in 1 2 3; do git pull -q --rebase && git push -q && break; done

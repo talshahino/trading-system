@@ -122,11 +122,25 @@ def run_one(s, data, cfg):
     return pd.DataFrame([{"time": x["time"], "r": x["r"], "cost_r": x.get("cost_r")} for x in rows if x.get("status") == "closed"])
 
 
+IDX = EXP / "idx"          # one small file per experiment: several runs (one per instrument) can work in parallel
+
+
+def load_index():
+    IDX.mkdir(parents=True, exist_ok=True)
+    idx = {}
+    old = EXP / "index.json"                                  # the first nights' single index
+    if old.exists():
+        idx.update(json.loads(old.read_text()))
+    for f in IDX.glob("*.json"):
+        v = json.loads(f.read_text())
+        idx[f"{v['trk']}|{vid(v['cfg'])}|{v['sym']}"] = v
+    return idx
+
+
 def experiments(budget_s, only_syms=None):
     """Runs what is missing or older than RERUN_DAYS, baseline first, until the time budget ends."""
     EXP.mkdir(parents=True, exist_ok=True)
-    idx_f = EXP / "index.json"
-    idx = json.loads(idx_f.read_text()) if idx_f.exists() else {}
+    idx = load_index()
     end = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
     todo = []
     for trk, knob, val, cfg in variants():
@@ -159,9 +173,9 @@ def experiments(budget_s, only_syms=None):
         t.to_csv(f, index=False)
         idx[key] = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "trk": trk, "knob": knob, "val": val,
                     "cfg": cfg, "sym": s, "file": f.name, "n": len(t)}
+        (IDX / f.name.replace(".csv.gz", ".json")).write_text(json.dumps(idx[key], default=str))
         done += 1
         print(f"  {trk} {knob}={val} {s}: {len(t)} trades ({time.time() - ts:.0f}s)")
-    idx_f.write_text(json.dumps(idx, indent=1, default=str))
     print(f"experiments: {done} run, {len(todo) - done} left for the next nights")
     return idx
 
@@ -205,8 +219,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--minutes", type=float, default=45)
     ap.add_argument("--symbols", default="")
+    ap.add_argument("--no-cards", action="store_true", help="experiments only (a parallel run for some instruments)")
     a = ap.parse_args()
     idx = experiments(a.minutes * 60, set(x for x in a.symbols.split(",") if x) or None)
+    if a.no_cards:
+        return
+    idx = load_index()
     live = health()
     cards, summary = [], {}
     tested = 0

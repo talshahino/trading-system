@@ -1,0 +1,47 @@
+name: Bots health
+
+# The cheap layer of every bot agent (user, 11.11.2026 "תשתית לכל"): every 3 hours each bot's live trades are
+# compared with its backtest (agents/health.py), the findings go to the manager as cards, and the manager
+# re-judges everything (agent_manager.py). No backtests here - about a minute. Moves to the bots' computer
+# (every few minutes) once the computer runs the agents.
+
+on:
+  schedule:
+    - cron: "37 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: health
+  cancel-in-progress: false
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Health of every bot
+        run: python -u -m agents.health
+      - name: Manager
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -u agent_manager.py
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/agents/*/health.json reports/agents/*/cards_health.json reports/agents/manager.json
+          git commit -qm "Bots health" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

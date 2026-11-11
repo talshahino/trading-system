@@ -70,4 +70,5 @@ jobs:
           git add reports/agents/bot5/exp
           if [ -z "${{ inputs.symbols }}" ]; then git add reports/agents; fi
           git commit -qm "Agents: nightly run" || exit 0
-          for i in 1 2 3; do git pull -q --rebase && git push -q && break; done
+          # generated files only: on a clash keep this run's copy (-X theirs = the commit being replayed)
+          for i in 1 2 3 4; do git pull -q --rebase -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

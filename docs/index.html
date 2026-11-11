@@ -1696,7 +1696,7 @@ function agentHtml(bot) {
   const up = a.updated ? new Date(a.updated).toLocaleString("he-IL", {day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit"}) : null;
   let head = a.agent
     ? `הסוכן של הבוט פעיל ורץ כל לילה${up ? ` · עודכן ${esc(up)}` : ""}${a.progress && a.progress[1] ? ` · ניסויים: <span class="num">${a.progress[0] || 0}/${a.progress[1]}</span>` : ""}`
-    : "הסוכן של הבוט הזה עוד לא פעיל. הוא ייבנה בשלב הבא, אחרי שהסוכן של בוט 5 יוכיח את עצמו.";
+    : "השכבה הבסיסית של הסוכן פעילה: כל 3 שעות היא משווה את העסקאות בפועל לבדיקה על נתוני העבר. הניסויים והשכבה החכמה יופעלו אחרי שמחשב הבוטים יחובר.";
   const op = a.ops || {}, TRn = {v5: "מסלול 15 דקות", v1m: "מסלול הדקה"};
   const opRows = Object.entries(op.tracks || {}).map(([k, v]) => `<div class="li"><span class="k">${TRn[k] || k}: ניסויים</span><span class="v"><span class="num">${v.done}/${v.done + v.left}</span>${v.left && v.left_minutes != null ? ` <small class="mut">· עוד כ־${v.left_minutes >= 90 ? Math.round(v.left_minutes / 60) + " שעות" : Math.round(v.left_minutes) + " דק'"}</small>` : ""}</span></div>`).join("");
   const opProb = (op.problems || []).map((p, i) => `<div class="foot" style="margin-top:6px;color:var(--neg,#c0392b)">⚠ ${esc(p)}${op.actions && op.actions[i] ? `<br><span class="mut">המנהל: ${esc(op.actions[i])}</span>` : ""}</div>`).join("");
@@ -1704,10 +1704,17 @@ function agentHtml(bot) {
   const sm = a.summary || {}, TR = {v5: "מסלול 15 דקות", v1m: "מסלול הדקה"};
   const rows = Object.entries(sm).map(([k, v]) => v.status ? `<div class="li"><span class="k">${TR[k] || k}</span><span class="v mut">${esc(v.status)}</span></div>`
     : `<div class="li"><span class="k">${TR[k] || k}${v.erosion && v.erosion.fading ? ' <span class="pill neg">נשחק</span>' : ""}</span><span class="v">בקטסט ${rNum(v.backtest && v.backtest.unseen && v.backtest.unseen.mean)} · בפועל ${v.live ? `${rNum(v.live.mean)} <small class="mut">(${v.live.n})</small>` : "—"}</span></div>`).join("");
+  const hl = a.health || {}, hc = (hl.combos || []);
+  const hFlag = {worse: "גרוע מהבדיקה", streak: "רצף הפסדים"};
+  const hTop = hc.filter(c => c.flags && c.flags.length).concat(hc.filter(c => !(c.flags && c.flags.length) && c.z != null && c.z <= -1)).slice(0, 6);
+  const hRows = hl.trades != null ? `<div class="li"><span class="k">${hl.trades} עסקאות: בפועל${hl.bt_mean_r != null ? " · בבדיקה" : ""}</span><span class="v">${rNum(hl.mean_r)}${hl.bt_mean_r != null ? ` · ${rNum(hl.bt_mean_r)}` : ""}</span></div>`
+    + (hl.day_pct != null ? `<div class="li"><span class="k">היום · מההתחלה <small class="mut">(מגבלה 5% · 10%)</small></span><span class="v"><span class="num">${hl.day_pct > 0 ? "+" : ""}${hl.day_pct}%</span> · <span class="num">${hl.total_pct > 0 ? "+" : ""}${hl.total_pct}%</span></span></div>` : "")
+    + (hTop.length ? `<div class="li"><span class="k mut">הכי חלשות מול הבדיקה</span><span class="v mut">בפועל · בבדיקה</span></div>` : "") + hTop.map(c => `<div class="li"><span class="k">${esc(c.combo)} <small class="mut">(${c.n})</small>${(c.flags || []).map(f => ` <span class="pill neg">${hFlag[f] || f}</span>`).join("")}</span><span class="v">${rNum(c.mean)}${c.bt_mean != null ? ` · ${rNum(c.bt_mean)}` : ""}</span></div>`).join("") : "";
+  const hUp = hl.updated ? new Date(hl.updated).toLocaleString("he-IL", {day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit"}) : null;
   const cards = a.cards || [], open = cards.filter(c => agStatus(c) === "pending" && (c.tier === "strong" || c.tier === "regular"));
   const rest = cards.filter(c => !open.includes(c));
   return `<div class="card"><div class="row" style="justify-content:space-between"><b>הסוכן של ${esc(a.name)}</b><span class="pill">${open.length} הצעות</span></div>
-      <div class="foot" style="margin-top:6px;line-height:1.55">${head}</div>${rows ? `<div class="agl" style="margin-top:8px">${rows}</div>` : ""}${opRows ? `<div class="agl" style="margin-top:6px">${opRows}</div>` : ""}${opProb}
+      <div class="foot" style="margin-top:6px;line-height:1.55">${head}</div>${rows ? `<div class="agl" style="margin-top:8px">${rows}</div>` : ""}${opRows ? `<div class="agl" style="margin-top:6px">${opRows}</div>` : ""}${hRows ? `<div class="foot" style="margin-top:8px"><b>בריאות הבוט</b>${hUp ? ` <small class="mut">· נבדק ${esc(hUp)}</small>` : ""}</div><div class="agl" style="margin-top:4px">${hRows}</div>` : ""}${opProb}
       <div class="foot" style="margin-top:8px;line-height:1.55">כל הצעה עברה בדיקה של הסוכן ואז סינון של המנהל. הצעה <b>חזקה</b> עוברת את הסף המלא, הצעה <b>רגילה</b> חיובית בתקופה שלא נראתה. רווחים משוקללים לפי זמן: עסקאות אחרונות שוקלות יותר.</div>
       <div class="msg" id="agMsg"></div></div>
     ${open.map(c => agCard(bot, c, owner)).join("")}

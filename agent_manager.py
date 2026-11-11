@@ -129,6 +129,11 @@ def main():
         src = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
         g = K.CARDS_DIR / bot / "cards_smart.json"
         smart = json.loads(g.read_text(encoding="utf-8")).get("cards", []) if g.exists() else []
+        # cards_health.json = the cheap layer every bot has (agents/health.py, every few hours): live vs backtest
+        hf = K.CARDS_DIR / bot / "cards_health.json"
+        smart += json.loads(hf.read_text(encoding="utf-8")).get("cards", []) if hf.exists() else []
+        hh = K.CARDS_DIR / bot / "health.json"
+        health = json.loads(hh.read_text(encoding="utf-8")) if hh.exists() else None
         cards = []
         for c in src.get("cards", []) + smart:
             c = dict(c)
@@ -158,7 +163,8 @@ def main():
         pend = [c for c in cards if c["status"] == "pending" and c["tier"] in ("strong", "regular")]
         bots[bot] = {"name": name, "agent": bot in AGENT_ON, "updated": src.get("updated"), "summary": src.get("summary"),
                      "tested": src.get("tested"), "progress": [src.get("done"), src.get("planned")],
-                     "risk_recs": rc.get(RISK_KEYS.get(bot, ""), 0), "pending": len(pend), "cards": cards}
+                     "risk_recs": rc.get(RISK_KEYS.get(bot, ""), 0), "pending": len(pend), "cards": cards,
+                     "health": health}
     new = [c["id"] for b in bots.values() for c in b["cards"]
            if c["status"] == "pending" and c["tier"] in ("strong", "regular") and c["first_seen"] == now]
     OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -166,6 +172,13 @@ def main():
     for b, o in op.items():
         if b in bots:
             bots[b]["ops"] = o
+    # the health layer's problems are the manager's problems too (stale bot, limits, a bot far below its backtest)
+    for b, x in bots.items():
+        hp = (x.get("health") or {}).get("problems") or []
+        if hp:
+            o = bots[b].setdefault("ops", {})
+            o["problems"] = (o.get("problems") or []) + hp
+            o["actions"] = (o.get("actions") or []) + [None] * len(hp)
     OUT.write_text(json.dumps({"updated": now, "new": new, "bots": bots, "ops": op}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     print(f"manager: {sum(b['pending'] for b in bots.values())} proposals waiting, {len(new)} new tonight")
 

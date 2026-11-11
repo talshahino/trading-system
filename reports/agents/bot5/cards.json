@@ -1,0 +1,100 @@
+{
+ "bot": "bot5",
+ "updated": "2026-11-11T07:24:16+00:00",
+ "cards": [],
+ "summary": {
+  "v5": {
+   "backtest": {
+    "train": {
+     "n": 2582,
+     "eff_n": 2510.0,
+     "mean": -0.0195,
+     "t": -0.71,
+     "win": 40.7
+    },
+    "unseen": {
+     "n": 1385,
+     "eff_n": 1384.7,
+     "mean": -0.0004,
+     "t": -0.01,
+     "win": 38.1
+    },
+    "whole": {
+     "n": 3967,
+     "eff_n": 3851.7,
+     "mean": -0.0117,
+     "t": -0.52,
+     "win": 39.6
+    },
+    "halves": [
+     -0.0279,
+     -0.0034
+    ],
+    "cost_r": 0.041
+   },
+   "live": {
+    "n": 2,
+    "eff_n": 2.0,
+    "mean": -1.0213,
+    "t": -288.87,
+    "win": 0.0
+   },
+   "erosion": {
+    "recent_n": 802,
+    "recent_mean": 0.0123,
+    "before_n": 2123,
+    "before_mean": -0.0094,
+    "slope_per_year": 0.0242,
+    "fading": false
+   }
+  },
+  "v1m": {
+   "backtest": {
+    "train": {
+     "n": 8636,
+     "eff_n": 8453.1,
+     "mean": -0.0801,
+     "t": -5.45,
+     "win": 38.4
+    },
+    "unseen": {
+     "n": 8353,
+     "eff_n": 8351.5,
+     "mean": -0.0409,
+     "t": -2.59,
+     "win": 38.5
+    },
+    "whole": {
+     "n": 16989,
+     "eff_n": 16669.2,
+     "mean": -0.0588,
+     "t": -5.42,
+     "win": 38.5
+    },
+    "halves": [
+     -0.0777,
+     -0.0462
+    ],
+    "cost_r": 0.065
+   },
+   "live": {
+    "n": 58,
+    "eff_n": 58.0,
+    "mean": -0.3664,
+    "t": -2.41,
+    "win": 27.6
+   },
+   "erosion": {
+    "recent_n": 5181,
+    "recent_mean": -0.0403,
+    "before_n": 9295,
+    "before_mean": -0.0635,
+    "slope_per_year": 0.0301,
+    "fading": false
+   }
+  }
+ },
+ "tested": 0,
+ "done": 9,
+ "planned": 199
+}

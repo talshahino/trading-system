@@ -421,6 +421,10 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div id="updText" style="margin-bottom:10px"></div>
       <div class="row"><button class="btn ok" id="updBtn">אשר עדכון</button><span class="mut">העסקאות הפתוחות נשארות עם הסטופ והיעד, והבוטים עולים מחדש תוך כדקה.</span></div>
       <div class="msg" id="updMsg"></div></div>
+    <div class="card" id="autoCard" style="display:none"><h3>עדכונים אוטומטיים</h3>
+      <div id="autoText" class="mut" style="margin-bottom:10px;line-height:1.55"></div>
+      <div class="row" id="autoActs"></div>
+      <div class="msg" id="autoMsg"></div></div>
     <div class="card"><h3>התראות</h3>
       <div class="row"><span class="mut" id="pushState">ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה.</span><button class="btn" id="pushBtn">הפעל התראות</button></div>
       <div class="msg" id="pushMsg"></div></div>
@@ -780,6 +784,23 @@ function renderMgr() {
     : "התראות מהבוטים פעילות. להתראה כשהמחשב כבה צריך להוסיף הרשאה ב־GitHub (פעם אחת).";
   $("updCard").style.display = m && m.update ? "" : "none";
   if (m && m.update) $("updText").innerHTML = `<b>${esc(m.update.title)}</b> <span class="mut num">${esc(m.update.sha)}</span>`;
+  const au = m && m.auto_update, own = getRole() !== "viewer";
+  $("autoCard").style.display = au ? "" : "none";
+  if (au) {
+    const last = au.last || {};
+    $("autoText").innerHTML = au.on
+      ? `המנהל מתקין את עדכוני הבוטים לבד, 10 דקות אחרי שהם מגיעים.${au.pending ? ` עדכון בדרך: <span class="num">${esc(au.pending)}</span>.` : ""}${last.sha ? `<br>אחרון: ${esc(last.title || "")} <span class="num">${esc(String(last.sha).slice(0, 7))}</span>` : ""}`
+      : "העדכונים האוטומטיים מושהים. עדכון חדש מחכה לאישור שלך בכרטיס העדכון.";
+    $("autoActs").innerHTML = !own ? "" : (au.on ? (au.prev ? `<button class="btn ghost" id="autoBack">חזור לגרסה הקודמת (<span class="num">${esc(au.prev)}</span>)</button>` : "")
+      : `<button class="btn ok" id="autoOn">הפעל עדכונים אוטומטיים</button>`);
+    if ($("autoBack")) $("autoBack").onclick = async () => {
+      if (!(await askYes("לחזור לגרסה הקודמת?", "הבוטים ייעצרו לרגע ויעלו בגרסה הקודמת. העדכונים האוטומטיים יושהו עד שתפעיל אותם שוב.", "כן, חזור"))) return;
+      try { await act("/update/rollback"); note("autoMsg", "חוזר לגרסה הקודמת. הבוטים עולים מחדש תוך כדקה.", true); } catch (e) { note("autoMsg", e.message, false); }
+    };
+    if ($("autoOn")) $("autoOn").onclick = async () => {
+      try { await act("/update/auto", {on: true}); note("autoMsg", "העדכונים האוטומטיים פועלים שוב.", true); setTimeout(mgrRefresh, 1500); } catch (e) { note("autoMsg", e.message, false); }
+    };
+  }
   $("accs").innerHTML = m && m.accounts.length ? m.accounts.map(a => `<div class="acc"><i class="dot ${a.running ? "on" : a.enabled ? "mid" : ""}"></i>
       <span class="nm">${esc(a.label)}</span><span class="pill ${a.running ? "pos" : ""}">${a.archived ? "סגור" : a.running ? "פועל" : a.enabled ? "עולה…" : "עצור"}</span>
       ${a.server ? `<span class="mut">${esc(a.server)}</span>` : ""}

@@ -733,12 +733,15 @@ def agents_notify():
                 since = CFG.get("agents_report_t") or "1970"
                 ds = [x for x in j.get("decisions", []) if x.get("at", "") > since and not x.get("undone")]
                 unread = [x for x in j.get("decisions", []) if not x.get("read") and not x.get("undone")]
-                if ds or unread:
+                if ds or unread or [u for u in CFG.get("auto_updates") or [] if u.get("at", "") > since]:
                     kinds = {}
                     for x in ds:
                         k = {"remove": "הסרות", "mult": "שינויי סיכון", "improve": "שיפורים", "new": "אסטרטגיות חדשות",
                              "info": "בדיקות של התראות"}.get(x.get("kind"), "שינויים")
                         kinds[k] = kinds.get(k, 0) + 1
+                    ups = [u for u in CFG.get("auto_updates") or [] if u.get("at", "") > since]
+                    if ups:
+                        kinds["עדכוני בוטים שהותקנו"] = len(ups)
                     body = (" · ".join(f"{v} {k}" for k, v in kinds.items()) or "אין החלטות חדשות") + \
                            f". {len(unread)} לא נקראו. אפשר לבטל כל החלטה במנהל הבוטים."
                     push(f"דוח המנהל: {len(ds)} החלטות", body, tag="agents")
@@ -921,6 +924,15 @@ def hide_account(name, hidden):
 UPDATE = {"sha": None, "title": None, "checked": 0}
 
 
+AUTO_SETTLE = 600          # a new version installs by itself once it has been the latest for 10 minutes
+
+
+def auto_update_on():
+    """User, 11.11.2026: the manager installs the bots' updates by itself too. The user can go back to the previous
+    version from the app, which also pauses the automatic installs until he turns them on again."""
+    return CFG.get("auto_update", True) and not CFG.get("auto_update_paused")
+
+
 def update_check():
     while True:
         try:
@@ -931,11 +943,24 @@ def update_check():
                 if not UPD.touches_bot(UPD.local(), sha):
                     UPD.VERSION.write_text(sha)
                 else:
-                    # every new waiting version is announced (same tag: it replaces the earlier notice on the
-                    # phone), and an approval counts only for the exact version it was given for
-                    UPDATE.update(sha=sha, title=title)
+                    UPDATE.update(sha=sha, title=title, seen=time.time())
                     log(f"update available: {sha[:7]} {title}")
-                    push("יש עדכון לבוטים", title, action="approve_update", tag="update", extra={"sha": sha[:7]})
+                    if not auto_update_on():
+                        # every new waiting version is announced (same tag: it replaces the earlier notice on the
+                        # phone), and an approval counts only for the exact version it was given for
+                        push("יש עדכון לבוטים", title, action="approve_update", tag="update", extra={"sha": sha[:7]})
+            if (UPDATE["sha"] and UPDATE["sha"] != UPD.local() and auto_update_on()
+                    and time.time() - UPDATE.get("seen", 0) >= AUTO_SETTLE and not INSTALL_LOCK.locked()
+                    and UPDATE.get("tried") != UPDATE["sha"]):            # a failed version is not retried by itself
+                UPDATE["tried"] = UPDATE["sha"]
+                with LOCK:
+                    CFG["prev_version"] = UPD.local()
+                    CFG.setdefault("auto_updates", []).append({"sha": UPDATE["sha"], "prev": UPD.local(), "title": UPDATE["title"],
+                                                               "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
+                    CFG["auto_updates"] = CFG["auto_updates"][-60:]
+                save()
+                log(f"installing update {UPDATE['sha'][:7]} by itself (the manager decides the updates too)")
+                threading.Thread(target=install_update, daemon=True).start()
             UPDATE["checked"] = time.time()
         except Exception as e:  # noqa: BLE001
             log(f"update check failed: {e}")
@@ -955,6 +980,33 @@ def install_update():
         _install_update()
     finally:
         INSTALL_LOCK.release()
+
+
+def update_rollback():
+    """Back to the version before the last install; automatic installs pause until the user turns them on again."""
+    prev = CFG.get("prev_version")
+    if not prev:
+        raise ValueError("אין גרסה קודמת לחזור אליה")
+    if INSTALL_LOCK.locked():
+        raise ValueError("התקנה כבר רצה. נסה שוב בעוד דקה.")
+    with LOCK:
+        CFG["auto_update_paused"] = True
+        CFG["rolled_back_from"] = UPD.local()
+    save()
+    UPDATE.update(sha=prev, title="חזרה לגרסה הקודמת", seen=time.time())
+    log(f"rolling back to {prev[:7]} (user); automatic updates paused")
+    threading.Thread(target=install_update, daemon=True).start()
+    return prev[:7]
+
+
+def update_auto(on):
+    with LOCK:
+        CFG["auto_update_paused"] = not bool(on)
+    save()
+    log(f"automatic updates {'on' if on else 'paused'} (user)")
+    if not on and UPDATE["sha"] and UPDATE["sha"] != UPD.local():
+        push("יש עדכון לבוטים", UPDATE["title"] or "", action="approve_update", tag="update", extra={"sha": UPDATE["sha"][:7]})
+    return auto_update_on()
 
 
 def _install_update():
@@ -1019,7 +1071,10 @@ class Handler(BaseHTTPRequestHandler):
         parts = path.strip("/").split("/")
         if path in ("", "/status"):
             return self._send(200, {"ok": True, "accounts": public_accounts(), "version": (UPD.local() or "")[:7],
-                                    "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"]} if UPDATE["sha"] else None,
+                                    "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"]} if UPDATE["sha"] and not auto_update_on() and UPDATE["sha"] != UPD.local() else None,
+                                    "auto_update": {"on": auto_update_on(), "prev": (CFG.get("prev_version") or "")[:7],
+                                                    "pending": (UPDATE["sha"] or "")[:7] if UPDATE["sha"] and UPDATE["sha"] != UPD.local() else None,
+                                                    "last": (CFG.get("auto_updates") or [{}])[-1]},
                                     "pin_set": bool(CFG.get("pin_hash")), "viewer_set": bool(CFG.get("viewer_hash")), "push_devices": len(CFG.get("subs", [])),
                                     "watchdog_push": WATCH["ok"],
                                     "risk": risk_public()})
@@ -1230,6 +1285,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True, "risk": risk_public()})
             if path == "/agent/decide":
                 return self._send(200, {"ok": True, "card": agent_decide(d)})
+            if path == "/update/rollback":
+                return self._send(200, {"ok": True, "to": update_rollback()})
+            if path == "/update/auto":
+                return self._send(200, {"ok": True, "on": update_auto(d.get("on"))})
             if path == "/agent/read":
                 return self._send(200, {"ok": True, "n": agent_read(d)})
             if path == "/agent/undo":
@@ -1327,6 +1386,8 @@ def push_manager_state():
              "accounts": public_accounts(with_run=False),
              "subs": CFG.get("subs", []), "push_log": list(PUSH_LOG),
              "risk": risk_public(),
+             "auto_update": {"on": auto_update_on(), "prev": CFG.get("prev_version"), "rolled_back_from": CFG.get("rolled_back_from"),
+                             "installs": (CFG.get("auto_updates") or [])[-10:]},
              "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
     err = REP.push_state("manager", state)
     if err:
@@ -1385,7 +1446,11 @@ def main():
     TUN.tunnel(PORT, log, on_url, "manager")
     if CFG.pop("updated_to", None):
         save()
-        push("העדכון הותקן", f"הכל רץ בגרסה {(UPD.local() or '?')[:7]}.")
+        last = (CFG.get("auto_updates") or [{}])[-1]
+        if last.get("sha") == UPD.local():
+            push("המנהל התקין עדכון", f"{last.get('title') or ''} · גרסה {(UPD.local() or '?')[:7]}. אפשר לחזור לגרסה הקודמת בלשונית ניהול.")
+        else:
+            push("העדכון הותקן", f"הכל רץ בגרסה {(UPD.local() or '?')[:7]}.")
     for a in accounts():
         if a.get("preparing"):                    # the manager stopped while copying MetaTrader: finish it
             threading.Thread(target=_prepare_and_start, args=(a, Path(CFG.get("mt5_template") or r"C:\MT5_bot1"),

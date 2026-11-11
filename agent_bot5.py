@@ -137,7 +137,9 @@ def experiments(budget_s, only_syms=None):
             age = (pd.Timestamp.now(tz="UTC") - pd.Timestamp(idx[key]["at"])).days if key in idx else 999
             if age >= RERUN_DAYS:
                 todo.append((0 if knob == "base" else 1, -age, s, trk, knob, val, cfg, key))
-    todo.sort(key=lambda x: (x[0], x[2], x[1]))                    # baselines, then the oldest; grouped by symbol
+    # baselines first; the 15-minute track before the 1-minute one (one 1-minute run takes ~8 minutes, a v5 run ~6
+    # seconds - 11.11.2026), then the oldest; grouped by symbol so its minutes are loaded once
+    todo.sort(key=lambda x: (x[0], x[3] != "v5", x[2], x[1]))
     t0, data, done = time.time(), {}, 0
     for _, _, s, trk, knob, val, cfg, key in todo:
         if time.time() - t0 > budget_s:
@@ -215,6 +217,13 @@ def main():
             continue
         base = stats(base_t)
         summary[trk] = {"backtest": base, "live": live.get(trk), "erosion": K.erosion(base_t["time"], base_t["r"])}
+        lv = live.get(trk)
+        if lv and lv.get("eff_n", 0) >= 30 and lv["mean"] is not None and lv["mean"] < (base["whole"]["mean"] or 0) - 0.2:
+            cards.append(K.card(BOT, "risk", f"{TRK_NAME[trk]}: בפועל גרוע בהרבה מהבדיקה",
+                                f"בחשבון הווירטואלי {lv['n']} עסקאות, {lv['mean']:+.2f}R לעסקה, לעומת {base['whole']['mean']:+.2f}R בבדיקה "
+                                f"על נתוני העבר. כדאי לבדוק אם משהו בביצוע שונה מהבדיקה, או להוריד את הסיכון של המסלול.",
+                                base["train"], base["unseen"], whole=base["whole"], halves_=base["halves"],
+                                detail={"live": lv}, change={"track": trk, "kind": "review"}))
         if summary[trk]["erosion"]["fading"]:
             e = summary[trk]["erosion"]
             cards.append(K.card(BOT, "info", f"{TRK_NAME[trk]}: היתרון נשחק",

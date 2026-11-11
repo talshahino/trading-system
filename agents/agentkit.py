@@ -40,7 +40,7 @@ def wstats(r, w=None):
     m = float(np.sum(w * r) / w.sum())
     eff = float(w.sum() ** 2 / np.sum(w ** 2))
     var = float(np.sum(w * (r - m) ** 2) / w.sum())
-    t = m / math.sqrt(var) * math.sqrt(eff) if var > 0 and eff > 1 else None
+    t = m / math.sqrt(var) * math.sqrt(eff) if var > 0 and eff >= 5 else None
     return {"n": int(len(r)), "eff_n": round(eff, 1), "mean": round(m, 4), "t": None if t is None else round(t, 2),
             "win": round(float(np.sum(w * (r > 0)) / w.sum()) * 100, 1)}
 

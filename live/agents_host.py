@@ -37,6 +37,7 @@ API = f"https://api.github.com/repos/{REPO}"
 PUBLISH = ("reports/agents/", "data/agents/")
 HOST = "reports/agents/host.json"
 LIGHT_EVERY, SMART_EVERY = 10 * 60, 4 * 3600
+AGENTS_REV = 2                                            # raise it: the agents' next smart run starts 15 minutes after the install
 # the smart agents, in this order, with their minutes per smart run (the manager may change them in data/agents/plan.json,
 # "pc": {"bot5": 40, ...}); an agent with nothing left to test ends at once
 AGENTS = [("bot5", ["agent_bot5.py"], 40), ("bot6", ["agent_bot6.py"], 30),
@@ -90,7 +91,7 @@ def refresh(st):
     top = z.namelist()[0].split("/")[0]
     for info in z.infolist():
         rel = info.filename[len(top) + 1:]
-        if not rel or info.is_dir() or rel.startswith(("live/", "docs/", "mt5/", "dashboard/")):
+        if not rel or info.is_dir() or rel.startswith(("docs/", "mt5/", "dashboard/")):   # live/: the bots' settings
             continue
         dest = WORK / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
@@ -327,7 +328,7 @@ def loop(log=print, enabled=lambda: True):
     st = _load()
     kill_orphan(st)
     _S["smart"] = _ts(st.get("smart_at")) or (time.time() - SMART_EVERY + 15 * 60)   # first time: health first
-    names = [a[0] for a in AGENTS]
+    names = [a[0] for a in AGENTS] + [AGENTS_REV]
     if st.get("agents_set") != names:                # new agents installed: their first smart run in 15 minutes
         _S["smart"] = min(_S["smart"], time.time() - SMART_EVERY + 15 * 60)
         st["agents_set"] = names

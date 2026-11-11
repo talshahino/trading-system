@@ -1,0 +1,66 @@
+name: Agents
+
+# The improvement agents (plan "סוכני שיפור וסוכן מנהל", 11.11.2026): every night the bot agents run their
+# experiments within a time budget (GitHub minutes are limited until the bots' computer runs them), then the
+# manager judges the cards. Writes reports/agents/. Nothing in the bots changes: proposals wait for the user.
+
+on:
+  schedule:
+    - cron: "17 1 * * *"
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "Time budget for the bot agents' experiments (minutes)"
+        default: "30"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agents
+  cancel-in-progress: false
+
+jobs:
+  agents:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Bot 5 agent
+        run: python -u agent_bot5.py --minutes "${{ inputs.minutes || '30' }}" 2>&1 | tee agent_bot5.log
+      - name: Manager
+        if: always()
+        run: python -u agent_manager.py 2>&1 | tee agent_manager.log
+      - name: Save data cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+      - name: Commit
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p reports/agents
+          cp agent_bot5.log agent_manager.log reports/agents/ 2>/dev/null || true
+          git add reports/agents
+          git commit -qm "Agents: nightly run" || exit 0
+          for i in 1 2 3; do git pull -q --rebase && git push -q && break; done

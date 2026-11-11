@@ -578,6 +578,59 @@ def watch_mark(d):
     return marks.get(k)
 
 
+# the agents' manager ("מנהל הבוטים", 11.11.2026): the user's decisions and notes on the agents' cards, kept here and
+# copied to branch live (live/agent_decisions_state.json) where the nightly agents read them; and once a day a
+# notification when the manager has new proposals (reports/agents/manager.json)
+AGENT_DEC = LIVE / "agent_decisions.json"
+AGENT_LOCK = threading.Lock()
+AGENTS_URL = "https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/manager.json"
+
+
+def agent_decide(d):
+    k = str(d.get("id") or "")
+    if not re.fullmatch(r"[0-9a-f]{12}", k):
+        raise ValueError("הצעה לא מוכרת")
+    dec = d.get("decision")
+    if dec not in ("approved", "rejected", None):
+        raise ValueError("החלטה לא מוכרת")
+    note = str(d.get("note") or "")[:1000]
+    with AGENT_LOCK:
+        try:
+            all_ = json.loads(AGENT_DEC.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            all_ = {}
+        cur = all_.get(k, {})
+        if dec is not None or d.get("clear"):
+            cur["decision"] = dec
+        if "note" in d:
+            cur["note"] = note or None
+        cur.update(bot=str(d.get("bot") or cur.get("bot") or "")[:20], title=str(d.get("title") or cur.get("title") or "")[:200],
+                   at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
+        all_[k] = cur
+        AGENT_DEC.write_text(json.dumps(all_, ensure_ascii=False, indent=1), encoding="utf-8")
+    threading.Thread(target=lambda: REP.push_state("agent_decisions", {"cards": all_}), daemon=True).start()
+    log(f"agents' card {k}: {dec or 'note'}")
+    return cur
+
+
+def agents_notify():
+    """Once a day at most: the manager's new proposals."""
+    while True:
+        try:
+            last = CFG.get("agents_notified") or {}
+            if time.time() - last.get("t", 0) > 20 * 3600:
+                j = requests.get(AGENTS_URL, params={"t": int(time.time() // 600)}, timeout=20).json()
+                new = [x for x in j.get("new", []) if x not in set(last.get("ids", []))]
+                if new:
+                    push("מנהל הבוטים: הצעות חדשות", f"{len(new)} הצעות חדשות מחכות לאישור שלך במנהל הבוטים.", tag="agents")
+                    with LOCK:
+                        CFG["agents_notified"] = {"t": time.time(), "ids": (last.get("ids", []) + new)[-500:]}
+                    save()
+        except Exception:  # noqa: BLE001
+            pass
+        time.sleep(1800)
+
+
 def watchdog():
     while True:
         try:
@@ -1055,6 +1108,8 @@ class Handler(BaseHTTPRequestHandler):
                 kind = str(d.get("kind") or "mult")
                 risk_change(d.get("bot"), str(d.get("combo") or ""), kind, d.get("value", d.get("mult")))
                 return self._send(200, {"ok": True, "risk": risk_public()})
+            if path == "/agent/decide":
+                return self._send(200, {"ok": True, "card": agent_decide(d)})
             if path == "/risk/reject":
                 risk_change(d.get("bot"), str(d.get("combo") or ""), str(d.get("kind") or "mult"), reject=d.get("sample") or "")
                 return self._send(200, {"ok": True, "risk": risk_public()})
@@ -1215,6 +1270,7 @@ def main():
             free_port(a)
             start_bot(a)
     threading.Thread(target=watchdog, daemon=True).start()
+    threading.Thread(target=agents_notify, daemon=True).start()
     threading.Thread(target=mt5_hider, daemon=True).start()
     threading.Thread(target=algo_keeper, daemon=True).start()
     threading.Thread(target=update_check, daemon=True).start()

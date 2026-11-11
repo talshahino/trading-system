@@ -282,6 +282,9 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .page .ph{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .page .ph b{font-size:20px;font-weight:800}
 #botsPg{z-index:50}
+#bpSeg{overflow-x:auto;flex-wrap:nowrap}#bpSeg button{flex:0 0 auto}
+.agl .li,.agc .li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:4px 0;border-bottom:1px solid var(--line, rgba(0,0,0,.06))}
+.agl .li .k,.agc .li .k{color:var(--mut, #6b7280);font-size:13px}.agl .li .v,.agc .li .v{text-align:left;white-space:nowrap}
 #bdPg{z-index:52}
 #wbPg{z-index:53}#wcPg{z-index:54}
 .wt{display:grid;gap:8px}.wt .hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px}.wt .hd b{font-size:16px}
@@ -421,8 +424,8 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
     <div class="card"><h3>התראות</h3>
       <div class="row"><span class="mut" id="pushState">ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה.</span><button class="btn" id="pushBtn">הפעל התראות</button></div>
       <div class="msg" id="pushMsg"></div></div>
-    <div class="card"><h3>ניהול בוטים</h3>
-      <div class="row"><span class="mut" id="botsHint">האסטרטגיות של כל בוט, התוצאות שלהן בדמו והמלצות לשינוי סיכון.</span><button class="btn" id="botsBtn">ניהול בוטים</button></div></div>
+    <div class="card"><h3>מנהל הבוטים</h3>
+      <div class="row"><span class="mut" id="botsHint">ההצעות של הסוכנים לכל בוט אחרי הסינון של המנהל, האסטרטגיות של כל בוט והמלצות הסיכון. שום דבר לא משתנה בלי אישור שלך.</span><button class="btn" id="botsBtn">מנהל הבוטים</button></div></div>
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
     <div class="card" id="logCard"><h3>לוגים</h3>
       <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
@@ -467,7 +470,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
   <pre id="logText"></pre></div></div>
 
 <div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
-<div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>ניהול בוטים</b></div>
+<div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>מנהל הבוטים</b></div>
   <div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
 <div class="page" id="wbPg"><div class="ph"><button class="back" id="wbBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>בוט סקלפינג · צפייה</b></div><div id="wbBody"><div class="empty">טוען…</div></div></div>
@@ -1653,7 +1656,83 @@ const ARROW_L = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stro
 const slider = (key, text, all, can) => `<div class="slide ${all ? "all" : ""} ${can ? "" : "off"}" data-slide="${key}"><span>${text}</span><div class="rail"><div class="fill"></div></div><div class="knob">${ARROW_L}</div></div>`;
 // ---------------- ניהול בוטים: strategies, demo record, recommendations backed by numbers (approved one by one) ----------------
 const RISK_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/trade_review/risk.json?t=${Math.floor(Date.now() / 60000)}`;
-const BP = {doc: null, bot: null, busy: false, combo: null};
+const BP = {doc: null, ag: null, bot: null, busy: false, combo: null};
+const AG_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/manager.json?t=${Math.floor(Date.now() / 60000)}`;
+const AG_ORDER = ["bot1", "bot2", "bot3", "bot4", "bot5", "bot6", "bot7"];
+let agLocal = {}; try { agLocal = JSON.parse(localStorage.getItem("agDec") || "{}"); } catch (e) {}
+const agSave = () => { try { localStorage.setItem("agDec", JSON.stringify(agLocal)); } catch (e) {} };
+const TIER = {strong: ["חזקה", "pos"], regular: ["רגילה", ""], watch: ["במעקב", "mut"], rejected: ["נדחתה", "neg"]};
+function agStatus(c) { const l = agLocal[c.id]; return l && l.decision !== undefined ? (l.decision || "pending") : c.status; }
+function agNum(st) { return st && st.mean != null ? rTxt(st.mean) : "—"; }
+function agCard(bot, c, owner) {
+  const [tn, tc] = TIER[c.tier] || ["", ""], status = agStatus(c), u = c.unseen || {}, tr = c.train || {}, w = c.whole || {};
+  const note = (agLocal[c.id] && "note" in agLocal[c.id]) ? agLocal[c.id].note : c.note;
+  const li = (k, v) => `<div class="li"><span class="k">${k}</span><span class="v">${v}</span></div>`;
+  const st = status === "approved" ? '<span class="pill pos">אושרה · תיבנה בעדכון הבא של הבוט</span>' : status === "rejected" ? '<span class="pill neg">נדחתה</span>' : "";
+  return `<div class="card agc" data-ag="${esc(c.id)}">
+    <div class="row" style="justify-content:space-between;gap:8px"><b style="line-height:1.4">${esc(c.title)}</b><span class="pill ${tc}">${tn}</span></div>
+    <div class="mut" style="margin:6px 0 8px;line-height:1.55">${whyHtml(c.what)}</div>
+    ${c.kind === "info" ? "" : `<div style="padding:2px 0">
+      ${li("רווח לעסקה, תקופת הבחירה", `${rNum(tr.mean)} <small class="mut">(${tr.n || 0} עסקאות)</small>`)}
+      ${li("רווח לעסקה, תקופה שלא נראתה", `${rNum(u.mean)} <small class="mut">(${u.n || 0} עסקאות${u.eff_n != null ? `, ${u.eff_n} אפקטיביות` : ""})</small>`)}
+      ${c.baseline ? li("המצב הקיים, אותה תקופה", rNum(c.baseline.mean)) : ""}
+      ${w.t != null ? li("מבחן מובהקות (כל התקופה, משוקלל לפי זמן)", `<span class="num">${w.t}</span>`) : ""}
+      ${c.halves ? li("שני החצאים", `${rNum(c.halves[0])} · ${rNum(c.halves[1])}`) : ""}
+      ${c.neighbours ? li("שילובים קרובים שמחזיקים", `<span class="num">${Math.round((c.neighbours.share_positive || 0) * 100)}%</span>`) : ""}
+      ${c.cost_r != null ? li("עלות לעסקה (FTMO)", `<span class="num">${(+c.cost_r).toFixed(2)}R</span>`) : ""}
+      ${c.risk_pct != null ? li("סיכון לעסקה", `<span class="num">${pctTxt(c.risk_pct)}</span>`) : ""}</div>`}
+    <div class="foot" style="margin-top:8px;line-height:1.55"><b>המנהל:</b> ${whyHtml(c.verdict)}</div>
+    ${note ? `<div class="foot" style="margin-top:6px"><b>ההערה שלך:</b> ${esc(note)}</div>` : ""}
+    ${c.reply ? `<div class="foot" style="margin-top:4px"><b>תשובה:</b> ${esc(c.reply)}</div>` : ""}
+    ${st ? `<div style="margin-top:8px">${st}</div>` : ""}
+    ${owner ? `<div class="acts" style="margin-top:10px">${status === "pending" && (c.tier === "strong" || c.tier === "regular") ? `<button class="btn ok" data-agok="${esc(c.id)}">אשר</button><button class="btn ghost" data-agno="${esc(c.id)}">דחה</button>` : status !== "pending" ? `<button class="btn ghost" data-agundo="${esc(c.id)}">בטל החלטה</button>` : ""}<button class="btn ghost" data-agnote="${esc(c.id)}">הערה</button></div>
+      <div class="agn" id="agn_${esc(c.id)}" style="display:none;margin-top:8px"><textarea rows="3" style="width:100%;box-sizing:border-box" placeholder="למשל: תבדוק גם על זהב">${esc(note || "")}</textarea>
+      <div class="acts" style="margin-top:6px"><button class="btn" data-agsend="${esc(c.id)}">שלח למנהל</button></div></div>` : ""}
+  </div>`;
+}
+function agentHtml(bot) {
+  const a = BP.ag && BP.ag.bots && BP.ag.bots[bot], owner = getRole() !== "viewer";
+  if (!a) return "";
+  const up = a.updated ? new Date(a.updated).toLocaleString("he-IL", {day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit"}) : null;
+  let head = a.agent
+    ? `הסוכן של הבוט פעיל ורץ כל לילה${up ? ` · עודכן ${esc(up)}` : ""}${a.progress && a.progress[1] ? ` · ניסויים: <span class="num">${a.progress[0] || 0}/${a.progress[1]}</span>` : ""}`
+    : "הסוכן של הבוט הזה עוד לא פעיל. הוא ייבנה בשלב הבא, אחרי שהסוכן של בוט 5 יוכיח את עצמו.";
+  const sm = a.summary || {}, TR = {v5: "מסלול 15 דקות", v1m: "מסלול הדקה"};
+  const rows = Object.entries(sm).map(([k, v]) => v.status ? `<div class="li"><span class="k">${TR[k] || k}</span><span class="v mut">${esc(v.status)}</span></div>`
+    : `<div class="li"><span class="k">${TR[k] || k}${v.erosion && v.erosion.fading ? ' <span class="pill neg">נשחק</span>' : ""}</span><span class="v">בקטסט ${rNum(v.backtest && v.backtest.unseen && v.backtest.unseen.mean)} · בפועל ${v.live ? `${rNum(v.live.mean)} <small class="mut">(${v.live.n})</small>` : "—"}</span></div>`).join("");
+  const cards = a.cards || [], open = cards.filter(c => agStatus(c) === "pending" && (c.tier === "strong" || c.tier === "regular"));
+  const rest = cards.filter(c => !open.includes(c));
+  return `<div class="card"><div class="row" style="justify-content:space-between"><b>הסוכן של ${esc(a.name)}</b><span class="pill">${open.length} הצעות</span></div>
+      <div class="foot" style="margin-top:6px;line-height:1.55">${head}</div>${rows ? `<div class="agl" style="margin-top:8px">${rows}</div>` : ""}
+      <div class="foot" style="margin-top:8px;line-height:1.55">כל הצעה עברה בדיקה של הסוכן ואז סינון של המנהל. הצעה <b>חזקה</b> עוברת את הסף המלא, הצעה <b>רגילה</b> חיובית בתקופה שלא נראתה. רווחים משוקללים לפי זמן: עסקאות אחרונות שוקלות יותר.</div>
+      <div class="msg" id="agMsg"></div></div>
+    ${open.map(c => agCard(bot, c, owner)).join("")}
+    ${rest.length ? `<details class="card"><summary>עוד ${rest.length} הצעות (במעקב, נדחו או הוחלטו)</summary>${rest.map(c => agCard(bot, c, owner)).join("")}</details>` : ""}
+    ${BP.doc && BP.doc.bots && BP.doc.bots[bot] ? '<div class="h4">האסטרטגיות והמלצות הסיכון</div>' : ""}`;
+}
+function agBind(bot) {
+  const a = BP.ag && BP.ag.bots && BP.ag.bots[bot]; if (!a) return;
+  const byId = id => (a.cards || []).find(c => c.id === id);
+  const send = async (id, body, label) => {
+    const c = byId(id);
+    try { await act("/agent/decide", {id, bot, title: c ? c.title : "", ...body});
+      agLocal[id] = {...(agLocal[id] || {}), ...("decision" in body ? {decision: body.decision} : {}), ...("note" in body ? {note: body.note} : {})}; agSave();
+      botsRender(); note("agMsg", label, true);
+    } catch (e) { note("agMsg", e.message, false); }
+  };
+  $("bpBody").querySelectorAll("[data-agok]").forEach(x => x.onclick = async () => {
+    const c = byId(x.dataset.agok);
+    if (!(await askYes("לאשר את ההצעה?", `${c.title}. אחרי האישור השינוי ייבנה בבוט ויגיע אליך כעדכון רגיל לאישור עם הקוד.`, "כן, אשר"))) return;
+    send(c.id, {decision: "approved"}, "אושרה. השינוי ייבנה בבוט ויגיע אליך כעדכון לאישור.");
+  });
+  $("bpBody").querySelectorAll("[data-agno]").forEach(x => x.onclick = () => send(x.dataset.agno, {decision: "rejected"}, "נדחתה. היא לא תוצע שוב."));
+  $("bpBody").querySelectorAll("[data-agundo]").forEach(x => x.onclick = () => send(x.dataset.agundo, {decision: null, clear: true}, "ההחלטה בוטלה."));
+  $("bpBody").querySelectorAll("[data-agnote]").forEach(x => x.onclick = () => { const e = $("agn_" + x.dataset.agnote); if (e) e.style.display = e.style.display === "none" ? "block" : "none"; });
+  $("bpBody").querySelectorAll("[data-agsend]").forEach(x => x.onclick = () => {
+    const t = $("agn_" + x.dataset.agsend).querySelector("textarea").value.trim();
+    send(x.dataset.agsend, {note: t}, t ? "ההערה נשלחה. המנהל יענה בריצה הבאה." : "ההערה נמחקה.");
+  });
+}
 const pctTxt = v => v == null ? "—" : (+v).toLocaleString("he-IL", {maximumFractionDigits: 3}) + "%";
 const rTxt = v => v == null ? "—" : (v > 0 ? "+" : "") + (+v).toFixed(2) + "R";
 const rNum = v => `<span class="num">${rTxt(v)}</span>`;
@@ -1667,11 +1746,17 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 async function botsOpen() {
   $("botsPg").classList.add("on");
   if (!BP.doc) $("bpBody").innerHTML = '<div class="empty">טוען…</div>';
-  try { const r = await fetch(RISK_URL(), {cache: "no-store"}); if (r.ok) BP.doc = await r.json(); } catch (e) {}
-  if (!BP.doc) { $("bpBody").innerHTML = '<div class="empty">אין עדיין נתונים. הם מתעדכנים כל ערב.</div>'; return; }
-  const bots = Object.keys(BP.doc.bots);
+  await Promise.all([
+    fetch(RISK_URL(), {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => { if (j) BP.doc = j; }).catch(() => {}),
+    fetch(AG_URL(), {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => { if (j) BP.ag = j; }).catch(() => {})]);
+  if (!BP.doc && !BP.ag) { $("bpBody").innerHTML = '<div class="empty">אין עדיין נתונים. הם מתעדכנים כל לילה.</div>'; return; }
+  const bots = bpBots();
   if (!BP.bot || !bots.includes(BP.bot)) BP.bot = bots[0];
   botsRender();
+}
+function bpBots() {
+  const s = new Set([...Object.keys((BP.doc && BP.doc.bots) || {}), ...Object.keys((BP.ag && BP.ag.bots) || {})]);
+  return [...s].sort((a, b) => (AG_ORDER.indexOf(a) + 99) % 99 - (AG_ORDER.indexOf(b) + 99) % 99 || a.localeCompare(b));
 }
 function bpRows(bot) {
   const b = BP.doc.bots[bot], dec = bpDecided(bot), base = b.risk_pct, rej = dec.rejected || {};
@@ -1706,10 +1791,12 @@ async function bpRun(list, label, msgId) {
 }
 const recCall = (bot, combo, r) => ["/risk/set", {bot, combo, kind: r.kind === "remove" ? "mult" : r.kind, value: r.value}];
 function botsRender() {
-  const bot = BP.bot, b = BP.doc.bots[bot], rows = bpRows(bot), owner = getRole() !== "viewer";
-  const bots = Object.keys(BP.doc.bots);
-  $("bpSeg").innerHTML = bots.map(x => `<button data-b="${esc(x)}" aria-selected="${x === bot}">בוט ${esc(x.replace(/^bot/, ""))}</button>`).join("");
+  const bot = BP.bot, bots = bpBots();
+  $("bpSeg").innerHTML = bots.map(x => { const n = BP.ag && BP.ag.bots && BP.ag.bots[x] ? BP.ag.bots[x].pending : 0;
+    return `<button data-b="${esc(x)}" aria-selected="${x === bot}">בוט ${esc(x.replace(/^bot/, ""))}${n ? ` <span class="num">(${n})</span>` : ""}</button>`; }).join("");
   $("bpSeg").querySelectorAll("button").forEach(x => x.onclick = () => { BP.bot = x.dataset.b; botsRender(); });
+  if (!BP.doc || !BP.doc.bots || !BP.doc.bots[bot]) { $("bpBody").innerHTML = agentHtml(bot) || '<div class="empty">אין עדיין נתונים לבוט הזה.</div>'; agBind(bot); return; }
+  const b = BP.doc.bots[bot], rows = bpRows(bot), owner = getRole() !== "viewer";
   const pend = rows.flatMap(r => r.pend.map(x => [r, x]));
   const cell = r => {
     if (!r.pend.length) return (r.recs.length ? '<span class="mut">נדחה היום</span>' : '<span class="mut">—</span>')
@@ -1734,6 +1821,7 @@ function botsRender() {
       ${owner && pend.length > 1 ? `<div class="row" style="margin-top:10px"><button class="btn ok" id="bpAll">אשר הכל (${pend.length})</button></div>` : ""}
       <div class="msg" id="bpMsg"></div></div>
     <div class="card" style="padding:0"><div class="tw"><table class="rt"><thead><tr><th>אסטרטגיה</th><th>הצלחה</th><th>עסקאות</th><th>סיכון</th><th>המלצה</th></tr></thead><tbody>${tr}</tbody></table></div></div>`;
+  $("bpBody").insertAdjacentHTML("afterbegin", agentHtml(bot)); agBind(bot);
   const byC = c => rows.find(r => r.combo === c);
   $("bpBody").querySelectorAll("tr[data-row]").forEach(x => x.onclick = e => { if (!e.target.closest("button")) detailOpen(x.dataset.row); });
   $("bpBody").querySelectorAll("[data-open]").forEach(x => x.onclick = () => detailOpen(x.dataset.open));

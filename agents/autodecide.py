@@ -34,11 +34,8 @@ KIND_HE = {"mult": "סיכון", "remove": "הסרה", "dir": "כיוון", "tp"
 
 
 def _git_show(path):
-    try:
-        raw = subprocess.run(["git", "show", f"origin/live:{path}"], cwd=ROOT, capture_output=True, text=True).stdout
-        return json.loads(raw) if raw.strip() else {}
-    except Exception:  # noqa: BLE001
-        return {}
+    from agents import repo_io as RIO
+    return RIO.live_json(path)
 
 
 def user_rules():

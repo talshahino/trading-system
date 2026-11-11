@@ -19,7 +19,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  pc:
+    # the bots' computer runs the agents now (live/agents_host.py): skip while it is active, take over if it stops
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.c.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: reports/agents
+      - id: c
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, datetime as d
+          ev = "${{ github.event_name }}"
+          try:
+              h = json.load(open("reports/agents/host.json"))
+              t = d.datetime.fromisoformat(h.get("updated") or "1970-01-01T00:00:00+00:00")
+              age = (d.datetime.now(d.timezone.utc) - t).total_seconds() / 3600
+          except Exception:
+              age = 999
+          print("run=" + ("true" if ev == "workflow_dispatch" or age > 4 else "false"))
+          PY
   health:
+    needs: pc
+    if: needs.pc.outputs.run == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

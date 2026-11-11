@@ -29,6 +29,7 @@ import pandas as pd
 
 import own15 as O15
 from agents import agentkit as K
+from agents import repo_io as RIO
 from agents import own_gaps as OG
 
 BOT = "bot5"
@@ -212,10 +213,8 @@ def stats(t):
 
 def health():
     """The bot's own virtual trades (branch live) per track."""
-    try:
-        subprocess.run(["git", "fetch", "-q", "origin", "live"], check=False)
-        s = json.loads(subprocess.run(["git", "show", "origin/live:live/watch_own_state.json"], capture_output=True, text=True).stdout)
-    except Exception:  # noqa: BLE001
+    s = RIO.live_json("live/watch_own_state.json")
+    if not s:
         return {}
     out = {}
     for t in s.get("watch", []) + s.get("trades_all", []):

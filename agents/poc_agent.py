@@ -88,7 +88,7 @@ def _duka_year(symbol, timeframe, y, end, price="bid"):
     import tempfile
     tmp = tempfile.mkdtemp()
     to = min(pd.Timestamp(f"{y}-12-31"), pd.Timestamp(end)).strftime("%Y-%m-%d")
-    cmd = ["npx", "--yes", "dukascopy-node@1.51.1", "-i", DUKA[symbol], "-from", f"{y}-01-01", "-to", to,
+    cmd = [shutil.which("npx") or "npx", "--yes", "dukascopy-node@1.51.1", "-i", DUKA[symbol], "-from", f"{y}-01-01", "-to", to,
            "-t", DUKA_TF[timeframe], "-p", price, "-v", "-vu", "units", "-f", "csv", "-dir", tmp, "-s",
            "-r", "3", "-bs", "5", "-bp", "500", "--cache", "--cache-path", str(config.CACHE_DIR / "duka_raw")]
     chrome = os.environ.get("CHROME_PATH") or shutil.which("google-chrome") or shutil.which("chromium")

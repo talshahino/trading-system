@@ -46,6 +46,7 @@ import requests  # noqa: E402
 from live import reporter as REP  # noqa: E402
 from live import tunnel as TUN  # noqa: E402
 from live import updater as UPD  # noqa: E402
+from live import agents_host as AH  # noqa: E402
 
 LIVE = ROOT / "live"
 CFG_FILE = LIVE / "manager.json"
@@ -1388,6 +1389,7 @@ def push_manager_state():
              "risk": risk_public(),
              "auto_update": {"on": auto_update_on(), "prev": CFG.get("prev_version"), "rolled_back_from": CFG.get("rolled_back_from"),
                              "installs": (CFG.get("auto_updates") or [])[-10:]},
+             "agents_host": AH.status() if CFG.get("agents_host", True) else {"on": False},
              "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
     err = REP.push_state("manager", state)
     if err:
@@ -1466,6 +1468,8 @@ def main():
     threading.Thread(target=update_check, daemon=True).start()
     threading.Thread(target=watchdog_secret, daemon=True).start()
     threading.Thread(target=heartbeat, daemon=True).start()
+    # the agents run here now (11.11.2026): continuous layer every 10 minutes, smart layer every 3 hours
+    threading.Thread(target=AH.loop, args=(log, lambda: CFG.get("agents_host", True)), daemon=True).start()
     while True:
         time.sleep(3600)
 

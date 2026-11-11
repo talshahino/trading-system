@@ -40,19 +40,12 @@ DAY_WARN, TOTAL_WARN, STALE_MIN = -3.0, -7.0, 45
 def live_states():
     """{file name: state dict} from origin/live (falls back to a local live/ folder)."""
     out = {}
-    try:
-        subprocess.run(["git", "fetch", "-q", "origin", "+refs/heads/live:refs/remotes/origin/live"], cwd=ROOT, check=False)
-        names = subprocess.run(["git", "ls-tree", "--name-only", "origin/live", "live/"], cwd=ROOT,
-                               capture_output=True, text=True).stdout.split()
-        for n in names:
-            if n.endswith("_state.json"):
-                raw = subprocess.run(["git", "show", f"origin/live:{n}"], cwd=ROOT, capture_output=True, text=True).stdout
-                try:
-                    out[Path(n).name] = json.loads(raw)
-                except Exception:  # noqa: BLE001
-                    pass
-    except Exception:  # noqa: BLE001
-        pass
+    from agents import repo_io as RIO
+    for n in RIO.live_names("live"):
+        if n.endswith("_state.json"):
+            s = RIO.live_json(n)
+            if s:
+                out[Path(n).name] = s
     if not out:
         for f in (ROOT / "live").glob("*_state.json"):
             try:

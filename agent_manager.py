@@ -24,6 +24,7 @@ import pandas as pd
 
 from agents import agentkit as K
 from agents import autodecide as AD
+from agents import repo_io as RIO
 
 OUT = Path("reports/agents/manager.json")
 BOTS = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 · סקלפינג",
@@ -33,12 +34,7 @@ AGENT_ON = {"bot5"}                     # bots whose agent already runs (stage 1
 
 
 def decisions():
-    try:
-        subprocess.run(["git", "fetch", "-q", "origin", "live"], check=False)
-        raw = subprocess.run(["git", "show", "origin/live:live/agent_decisions_state.json"], capture_output=True, text=True).stdout
-        return json.loads(raw).get("cards", {}) if raw else {}
-    except Exception:  # noqa: BLE001
-        return {}
+    return RIO.live_json("live/agent_decisions_state.json").get("cards", {})
 
 
 def replies():

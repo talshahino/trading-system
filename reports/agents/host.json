@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-11T19:17:51+00:00",
+ "updated": "2026-11-11T19:18:01+00:00",
  "light_at": "2026-11-11T19:13:31+00:00",
  "smart_at": "2026-11-11T17:24:26+00:00",
  "every_min": {
@@ -9,9 +9,12 @@
   "smart": 240
  },
  "smart_minutes": {
-  "bot5": 40.0
+  "bot5": 40.0,
+  "bot6": 30.0
  },
- "agent_errors": [],
+ "agent_errors": [
+  "bot6: agent_bot6.py: 1 ·   File \"C:\\trading-agents\\agent_bot6.py\", line 26, in <module> |     from live import fut_account as FA | ModuleNotFoundError: No module named 'live'"
+ ],
  "last_error": null,
  "errors_in_row": 0
 }

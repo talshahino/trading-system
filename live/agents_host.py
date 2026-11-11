@@ -325,6 +325,11 @@ def loop(log=print, enabled=lambda: True):
     st = _load()
     kill_orphan(st)
     _S["smart"] = _ts(st.get("smart_at")) or (time.time() - SMART_EVERY + 15 * 60)   # first time: health first
+    names = [a[0] for a in AGENTS]
+    if st.get("agents_set") != names:                # new agents installed: their first smart run in 15 minutes
+        _S["smart"] = min(_S["smart"], time.time() - SMART_EVERY + 15 * 60)
+        st["agents_set"] = names
+        _save(st)
     while True:
         try:
             if enabled():

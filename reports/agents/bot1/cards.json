@@ -1,0 +1,295 @@
+{
+ "bot": "bot1",
+ "updated": "2026-11-11T20:36:25+00:00",
+ "cards": [
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV21|15Min|ASML: בלי יעד · סטופ x1.25 · כניסה בלימיט 0.5R טוב יותר",
+   "what": "ניהול העסקה לאסטרטגיה TV21|15Min|ASML: בלי יעד · סטופ x1.25 · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 43,
+    "eff_n": 43.0,
+    "mean": 0.1939,
+    "t": 0.77,
+    "win": 39.8
+   },
+   "unseen": {
+    "n": 73,
+    "eff_n": 73.0,
+    "mean": 0.352,
+    "t": 0.94,
+    "win": 25.9
+   },
+   "whole": {
+    "n": 116,
+    "eff_n": 115.8,
+    "mean": 0.2964,
+    "t": 1.16,
+    "win": 30.8
+   },
+   "halves": [
+    0.1223,
+    0.4581
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.18
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 292,
+    "eff_n": 291.9,
+    "mean": 0.1596,
+    "t": 1.89,
+    "win": 45.8
+   },
+   "change": {
+    "combo": "TV21|15Min|ASML",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "none|be0.6|stop1.25|entry0.5"
+   },
+   "detail": {},
+   "made": "2026-11-11T20:36:25+00:00",
+   "id": "eb3e3e8c550e",
+   "tier": "regular",
+   "verdict": "חיובי בתקופה שלא נראתה (+0.35R לעסקה, 73.0 עסקאות אפקטיביות, +0.19R מעל המצב הקיים) · נבדקו 72 שילובים, אז חלק מהיתרון עלול להיות מזל"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV03|15Min|AAPL: יעד 1.5R · סטופ x0.75",
+   "what": "ניהול העסקה לאסטרטגיה TV03|15Min|AAPL: יעד 1.5R · סטופ x0.75. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 34,
+    "eff_n": 34.0,
+    "mean": 0.2168,
+    "t": 1.04,
+    "win": 58.6
+   },
+   "unseen": {
+    "n": 41,
+    "eff_n": 41.0,
+    "mean": 0.1104,
+    "t": 0.74,
+    "win": 43.8
+   },
+   "whole": {
+    "n": 75,
+    "eff_n": 74.8,
+    "mean": 0.1562,
+    "t": 1.26,
+    "win": 50.2
+   },
+   "halves": [
+    0.2367,
+    0.0835
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.17
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 41,
+    "eff_n": 41.0,
+    "mean": 0.2651,
+    "t": 1.52,
+    "win": 48.6
+   },
+   "change": {
+    "combo": "TV03|15Min|AAPL",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "1.5R|be0.6|stop0.75|entry0"
+   },
+   "detail": {},
+   "made": "2026-11-11T20:36:25+00:00",
+   "id": "af365bd57e67",
+   "tier": "rejected",
+   "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.11R מול +0.27R)"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV03|15Min|AAPL: רק בתנודתיות נמוכה",
+   "what": "סינון מצב שוק לאסטרטגיה TV03|15Min|AAPL: רק בתנודתיות נמוכה. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 28,
+    "eff_n": 28.0,
+    "mean": 0.0008,
+    "t": 0.0,
+    "win": 46.6
+   },
+   "unseen": {
+    "n": 25,
+    "eff_n": 25.0,
+    "mean": 0.4837,
+    "t": 2.21,
+    "win": 59.9
+   },
+   "whole": {
+    "n": 53,
+    "eff_n": 52.9,
+    "mean": 0.2397,
+    "t": 1.54,
+    "win": 53.1
+   },
+   "halves": [
+    -0.0701,
+    0.5119
+   ],
+   "neighbours": {
+    "values": 7,
+    "share_positive": 0.5
+   },
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 41,
+    "eff_n": 41.0,
+    "mean": 0.2651,
+    "t": 1.52,
+    "win": 48.6
+   },
+   "change": {
+    "combo": "TV03|15Min|AAPL",
+    "family": "filters",
+    "from": "none",
+    "to": "vol_low"
+   },
+   "detail": {},
+   "made": "2026-11-11T20:36:25+00:00",
+   "id": "a8f9b8942cb2",
+   "tier": "watch",
+   "verdict": "חיובי בתקופה שלא נראתה, אבל רק 25.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV55|15Min|AMZN: יעד 2R · סטופ x1.25 · כניסה בלימיט 0.5R טוב יותר",
+   "what": "ניהול העסקה לאסטרטגיה TV55|15Min|AMZN: יעד 2R · סטופ x1.25 · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 25,
+    "eff_n": 25.0,
+    "mean": 0.3492,
+    "t": 0.9,
+    "win": 48.6
+   },
+   "unseen": {
+    "n": 25,
+    "eff_n": 25.0,
+    "mean": -0.5141,
+    "t": -2.32,
+    "win": 28.1
+   },
+   "whole": {
+    "n": 50,
+    "eff_n": 49.9,
+    "mean": -0.1006,
+    "t": -0.44,
+    "win": 37.9
+   },
+   "halves": [
+    0.3359,
+    -0.5152
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.08
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 87,
+    "eff_n": 87.0,
+    "mean": 0.1986,
+    "t": 1.76,
+    "win": 58.8
+   },
+   "change": {
+    "combo": "TV55|15Min|AMZN",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "2R|be0.6|stop1.25|entry0.5"
+   },
+   "detail": {},
+   "made": "2026-11-11T20:36:25+00:00",
+   "id": "1c6256ce89e1",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.51R לעסקה)"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV55|15Min|AMZN: רק בתנודתיות גבוהה",
+   "what": "סינון מצב שוק לאסטרטגיה TV55|15Min|AMZN: רק בתנודתיות גבוהה. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 23,
+    "eff_n": 23.0,
+    "mean": 0.0754,
+    "t": 0.27,
+    "win": 39.3
+   },
+   "unseen": {
+    "n": 43,
+    "eff_n": 43.0,
+    "mean": 0.2051,
+    "t": 1.36,
+    "win": 60.5
+   },
+   "whole": {
+    "n": 66,
+    "eff_n": 65.9,
+    "mean": 0.1618,
+    "t": 1.18,
+    "win": 53.4
+   },
+   "halves": [
+    0.1079,
+    0.207
+   ],
+   "neighbours": {
+    "values": 7,
+    "share_positive": 0.5
+   },
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 88,
+    "eff_n": 88.0,
+    "mean": 0.1952,
+    "t": 1.75,
+    "win": 58.1
+   },
+   "change": {
+    "combo": "TV55|15Min|AMZN",
+    "family": "filters",
+    "from": "none",
+    "to": "vol_high"
+   },
+   "detail": {},
+   "made": "2026-11-11T20:36:25+00:00",
+   "id": "44d6642bcc07",
+   "tier": "watch",
+   "verdict": "טוב מהמצב הקיים רק ב־+0.010R לעסקה בתקופה שלא נראתה - קטן מדי, נשמר להמשך"
+  }
+ ],
+ "tested": 230,
+ "done": 5,
+ "planned": 90,
+ "run": {
+  "experiments": 5,
+  "left": 77,
+  "new": 0,
+  "where": "pc"
+ }
+}

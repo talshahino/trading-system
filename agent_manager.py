@@ -68,10 +68,14 @@ def main():
     now = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
     bots = {}
     for bot, name in BOTS.items():
+        # cards.json = the nightly experiments; cards_smart.json = the bot agent's own discoveries and ideas (its
+        # nightly Claude session: patterns, news reactions, the scout's strategies, the user's notes)
         f = K.CARDS_DIR / bot / "cards.json"
         src = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+        g = K.CARDS_DIR / bot / "cards_smart.json"
+        smart = json.loads(g.read_text(encoding="utf-8")).get("cards", []) if g.exists() else []
         cards = []
-        for c in src.get("cards", []):
+        for c in src.get("cards", []) + smart:
             c = dict(c)
             c["tier"], c["verdict"] = K.judge(c)            # the manager's own judgement is the one shown
             d = dec.get(c["id"]) or {}

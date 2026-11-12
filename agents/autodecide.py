@@ -73,6 +73,23 @@ def load():
         return {"decisions": []}
 
 
+FIX_FILE = ROOT / "data/agents/fix_attempts.json"
+
+
+def fix_attempts():
+    """{"bot|combo-or-track": {"status": "trying" | "failed" | "fixed", "tried": [...], "at": ...}} - written by the
+    bot agents when they try to repair a losing strategy (user, 12.11.2026: first fix, only then cut)."""
+    try:
+        return json.loads(FIX_FILE.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _target(c):
+    ch = c.get("change") or {}
+    return str(ch.get("combo") or ch.get("track") or "")
+
+
 def _cuts(c):
     """A card that only cuts: removes a strategy, stops a track or lowers a risk."""
     ch = c.get("change") or {}
@@ -99,6 +116,14 @@ def decide(bots, now=None):
     cur_risk = (_git_show("live/manager_state.json").get("risk") or {})
     never = {(x["bot"], x["combo"], x["kind"]) for x in rules.get("never", [])}
     fix_not_cut = set(rules.get("fix_not_cut", []))
+    # THE RULE (user, 12.11.2026): "first fix and improve the strategies; only if that fails, lower the risk or remove".
+    # A cut is approved only after the bot's agent tried to fix that strategy and failed (data/agents/fix_attempts.json)
+    fixes = fix_attempts()
+    fix_first = rules.get("fix_first", True)
+
+    def fix_failed(bot, target):
+        x = fixes.get(f"{bot}|{target}") or fixes.get(f"{bot}|*")
+        return bool(x) and x.get("status") == "failed"
     # an undone recommendation is not made again for 30 days, even when a later sample brings it back
     never |= {(d["bot"], d.get("combo"), d["kind"]) for d in old.values() if d["id"] in uundo and d["type"] == "risk"}
     # the watch (agents/watch.py) took it back: like an undo, not made again (unless the user undid the revert)
@@ -141,6 +166,10 @@ def decide(bots, now=None):
                 continue
             if did in uundo:
                 c["status"], c["verdict"] = "rejected", c["verdict"] + " · בוטל על ידך"
+                continue
+            if fix_first and _cuts(c) and bot not in fix_not_cut and not fix_failed(bot, _target(c)):
+                c["status"], c["verdict"] = "watch", (c["verdict"] + " · קודם מתקנים: הסוכן של הבוט צריך לנסות לתקן את האסטרטגיה, "
+                                                     "ורק אם לא יצליח - הפחתה או הסרה")
                 continue
             if bot in fix_not_cut and _cuts(c):
                 # the user (12.11.2026, bot 7): "not to lower or remove - to fix, to improve the strategies, to find
@@ -221,6 +250,8 @@ def decide(bots, now=None):
                 did = _did("risk", bot, combo, kind, json.dumps(val), sample)
                 if did in uundo:
                     continue
+                if fix_first and (kind == "remove" or (kind == "mult" and float(val) < mult)) and not fix_failed(bot, combo):
+                    continue                                          # first fix (user, 12.11.2026); cut only after that failed
                 if kind == "mult" and bot in NO_RISK_DOWN and float(val) < mult:
                     continue                                          # user: never lower bot 3's risk
                 if kind == "mult" and (c.get("trades") or 0) < MIN_TRADES_MULT:

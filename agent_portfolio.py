@@ -260,6 +260,18 @@ def bot_symbols(bot):
     return NEW_ONLY.get(bot) or sorted({c.split("|")[2] for c in bot_combos(bot)})
 
 
+def untested_new(bot, where):
+    st = Store(bot)
+    for s_ in inbox():
+        if bot not in (s_.get("bots") or []) or not s_.get("id"):
+            continue
+        tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or ["1Hour"]
+        for sym in bot_symbols(bot):
+            if runs_here(sym, where) and any(st.age_days("new", f"{s_['id']}|{tf}|{sym}") >= RERUN_DAYS for tf in tfs):
+                return True
+    return False
+
+
 def test_new(bot, budget_s, where, symbols=None, timeframes=None):
     """Every scout strategy addressed to this bot, on the bot's instruments, once (re-run after RERUN_DAYS)."""
     st = Store(bot)
@@ -370,8 +382,11 @@ def main():
     a = ap.parse_args()
     budget = a.minutes * 60
     t0 = time.time()
-    done, left = experiments(a.bot, budget * 0.8, a.where)
-    new = test_new(a.bot, budget - (time.time() - t0), a.where)
+    # the scout's strategies first, with up to a third of the time, while some are still untested (12.11.2026: with
+    # 0.8 of the budget for the experiments, the leftover was under the 2-minute minimum and they never ran)
+    first = test_new(a.bot, budget / 3, a.where) if untested_new(a.bot, a.where) else 0
+    done, left = experiments(a.bot, budget - (time.time() - t0), a.where)
+    new = first + test_new(a.bot, budget - (time.time() - t0), a.where)
     if a.no_cards:
         return
     cards, tested = cards_for(a.bot)

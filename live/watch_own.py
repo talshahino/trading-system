@@ -343,13 +343,15 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
                 np.asarray(noent | late, bool), 2 * tick, {})
     contract = FA.SPEC[name][0]
     cutoff = (df.index[-1] - pd.Timedelta(days=2)).isoformat()
-    for x in TG.live_trades(D, FA.TAL_PAIR, FA.TAL_CFG):
+    for trk, (pair, cfg) in FA.TAL_TRACKS.items():
+      gcache = {}
+      for x in TG.live_trades(D, pair, cfg, gcache):
         if x["status"] == "cancelled" and (x.get("time") or x["setup_t"]) < cutoff:
             continue
-        k = f"{name}|{x['id_key']}"
+        k = f"{name}|{x['id_key']}" + ("" if trk == "tal" else f"|{trk}")
         fseen.add(k)
         old = ftrades.get(k, {})
-        rec = {"id": k, "symbol": name, "contract": contract, "trk": "tal", "dir": x["dir"], "status": x["status"],
+        rec = {"id": k, "symbol": name, "contract": contract, "trk": trk, "dir": x["dir"], "status": x["status"],
                "entry": x["entry"], "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,
                "setup_t": x["setup_t"], "time": x.get("time"), "exit_time": x.get("exit_time"), "exit": x.get("exit"),
                "reason": x.get("reason"), "r": x.get("r"), "r_now": x.get("r_now"), "gap": x.get("gap")}
@@ -393,7 +395,7 @@ def fut_rec(rec, old, fa, ftrades):
     if rec.get("n"):
         # notifications (user, 10.11.2026): only bot 6 trades that open and close - each one once, nothing else
         side = "קנייה" if rec["dir"] > 0 else "מכירה"
-        tf = {"v5": "15 דק'", "v1m": "דקה", "tal": "שיטת הגאפ, שעה / 5 דק'"}.get(rec["trk"], rec["trk"])
+        tf = {"v5": "15 דק'", "v1m": "דקה"}.get(rec["trk"]) or f"שיטת הגאפ, {FA.TAL_NAME.get(rec['trk'], rec['trk'])}"
         lots = f"{rec['n']} {contract}"
         if not rec.get("sent_open"):
             rec["sent_open"] = True
@@ -435,15 +437,15 @@ def fut_state(fa, ftrades, fseen, src):
         ec.append([now_iso, round(bal, 2), round(eq, 2)])
         del ec[:-4000]
     counted = [t for t in closed if t.get("n") and t.get("pnl") is not None]
-    combo = lambda t: (f"TAL|1Hour|{t['symbol']}" if t.get("trk") == "tal"  # noqa: E731
+    combo = lambda t: (f"{FA.TAL_COMBO[t['trk']]}|{t['symbol']}" if t.get("trk") in FA.TAL_COMBO  # noqa: E731
                        else f"FUT|{'1Min' if t.get('trk') == 'v1m' else '15Min'}|{t['symbol']}")
     lots = lambda t: f"{t['n']} {t['contract']}"  # noqa: E731
     rs5 = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "v5"]
     rs1 = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "v1m"]
-    rst = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "tal"]
-    rules = (f"בוט 6 · חוזים עתידיים מיקרו (MNQ, MES, MYM) · שיטת הגאפ של טל (מ־12.11.2026): דחף בגרף השעה, הגאפ בין נר 1 לנר 3 "
-             f"שנשאר פתוח, כניסה באמצע הגאפ, סטופ 2 טיקים מעבר לסווינג השני של 5 דקות, יעד בסווינג השני בצד השני, בלי ניהול, "
-             f"תוקף 120 שעות · "
+    rst = [t["r"] for t in closed if t.get("r") is not None and t["trk"] in FA.TAL_COMBO]
+    rules = (f"בוט 6 · חוזים עתידיים מיקרו (MNQ, MES, MYM) · שיטת הגאפ של טל (מ־12.11.2026): דחף בגרף הגבוה, הגאפ בין נר 1 לנר 3 "
+             f"שנשאר פתוח, כניסה באמצע הגאפ, סטופ 2 טיקים מעבר לסווינג השני, יעד בסווינג השני בצד השני, בלי ניהול · "
+             f"שני מסלולים: שעה / 5 דק' (תוקף 120 שעות) ו־4 שעות / שעה (תוקף 48 שעות) · "
              f"חוקי FTMO Futures, {FA.PLAN}: הפסד מקסימלי נגרר ${FA.MAX_LOSS:,.0f} לפי סוף יום, מגבלה יומית ${FA.DAILY_LOSS:,.0f}, "
              f"יעד ${FA.TARGET:,.0f}, היום הטוב ביותר עד {FA.CONSISTENCY:.0%} מהרווח, עד {FA.MAX_MICROS} חוזי מיקרו · "
              f"אין כניסה אחרי 15:45 שעון ניו יורק, הכול נסגר ב־16:05, לא מחזיקים בסוף שבוע · "
@@ -453,7 +455,7 @@ def fut_state(fa, ftrades, fseen, src):
             "account": f"וירטואלי · חוזים עתידיים · FTMO {FA.PLAN}", "server": "צפייה בלבד · בלי כסף",
             "initial": fa.a["initial"], "risk": FA.RISK_TAL, "balance": round(bal, 2), "equity": round(eq, 2),
             "day_start": st["day_start"], "halted_until": None, "started": fa.a["started"], "withdrawals": [],
-            "combos": [f"TAL|1Hour|{n}" for n in FA.SPEC], "equity_curve": ec, "lows": {},
+            "combos": [f"{c}|{n}" for n in FA.SPEC for c in FA.TAL_COMBO.values()], "equity_curve": ec, "lows": {},
             "updated_utc": now_iso, "futures": st,
             "summary": {"v5": {"closed": len(rs5), "sum_r": round(float(np.sum(rs5)), 2) if rs5 else 0.0},
                         "v1m": {"closed": len(rs1), "sum_r": round(float(np.sum(rs1)), 2) if rs1 else 0.0},

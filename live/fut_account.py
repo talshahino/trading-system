@@ -28,9 +28,15 @@ INITIAL, TARGET, MAX_LOSS, DAILY_LOSS, MAX_MICROS, CONSISTENCY = 100_000.0, 6_00
 RISK_V5, RISK_V1M = 0.004, 0.0             # share of the balance risked per trade (set from the simulation)
 # the user's gap method, 1 hour / 5 minutes (card abb187377383, approved 12.11.2026): the only track since then
 RISK_TAL = 0.004
-TAL_PAIR = ("1h", "5m", 2)
-TAL_CFG = {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"}
-RISK = {"v5": 0.0, "v1m": 0.0, "tal": RISK_TAL}     # the old gap tracks are replaced by the method (12.11.2026)
+# the method's tracks (each approved by the manager on its own backtest, 12.11.2026):
+#   tal    1 hour / 5 minutes   card abb187377383  2026 unseen +0.18R / 254 trades
+#   tal4h  4 hours / 1 hour     card 6694a91a9563  2026 unseen +0.07R / 35 trades (user: "maybe there are more pairs")
+TAL_TRACKS = {"tal": (("1h", "5m", 2), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"}),
+              "tal4h": (("4h", "1h", 1), {"GBODY": 1.5, "MIN_GAP": 0.6, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 48, "PROT": "none"})}
+TAL_PAIR, TAL_CFG = TAL_TRACKS["tal"]
+TAL_NAME = {"tal": "שעה / 5 דק'", "tal4h": "4 שעות / שעה"}
+TAL_COMBO = {"tal": "TAL|1Hour", "tal4h": "TAL|4Hour"}
+RISK = {"v5": 0.0, "v1m": 0.0, "tal": RISK_TAL, "tal4h": RISK_TAL}   # the old gap tracks are replaced (12.11.2026)
 # the 1-minute track is stopped (card 9a0bc4200f6d, 12.11.2026): it loses in bot 6's world (backtest -0.08R, 2026 -0.04R)
 ROOM_USE = 0.9                              # open risk may use at most 90% of the room left to either limit
 VERSION = 3                 # 2 (10.11.2026): one name per gap; 3 (12.11.2026): the user's gap method - a fresh $100K account

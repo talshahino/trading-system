@@ -47,7 +47,13 @@ RERUN_DAYS = 14
 BOT_NOW = {}
 FAMILIES = ("exits", "filters", "manage", "fib")   # manage (12.11.2026): breakeven point x partial exit per strategy;
 # fib (12.11.2026, user's standing task): the same at the Fibonacci levels of the way to the target - built as "manage"
-LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--breakeven", "0.6"]
+# FTMO's real stock spreads: ~2.4x the history (measured on the demo 10.11.2026, run_rules --stock-spread-mult). Until
+# 13.11.2026 the experiments ran without it, so every stock combo's exits / filters / manage / fib / new results were
+# measured with too-cheap costs (the 10.11 stress test: SS01 WMT +15.6R -> -4.0R) - those results are run again (COSTS).
+STOCK_SPREAD_MULT = 2.4
+COSTS = f"stock-x{STOCK_SPREAD_MULT}"
+LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--breakeven", "0.6",
+              "--stock-spread-mult", str(STOCK_SPREAD_MULT)]
 NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot7": "בוט 7 · פרסומים כלכליים",
          "bot5": "בוט 5 - סקאלפינג", "bot6": "בוט 6 · חוזים עתידיים"}
 RISK = {"bot7": 0.5, "bot5": 0.4, "bot6": 0.4}
@@ -175,8 +181,13 @@ SOURCE_SINCE = {"ASML": "2026-11-12T16:00:00+00:00", "RACE": "2026-11-12T16:00:0
 
 
 def stale_source(doc):
-    sym = str((doc or {}).get("combo") or "").split("|")[-1]
-    return sym in SOURCE_SINCE and str(doc.get("at") or "") < SOURCE_SINCE[sym]
+    if not doc:
+        return False
+    sym = str(doc.get("combo") or "").split("|")[-1]
+    if sym in SOURCE_SINCE and str(doc.get("at") or "") < SOURCE_SINCE[sym]:
+        return True
+    # a stock measured before FTMO's real stock spreads were charged in the experiments (13.11.2026)
+    return U.CLASS.get(sym) == "stock" and doc.get("costs") != COSTS
 
 
 class Store:
@@ -193,6 +204,7 @@ class Store:
         return None if stale_source(d) else d
 
     def put(self, fam, combo, doc):
+        doc = {**doc, "costs": COSTS}
         self.path(fam, combo).write_text(json.dumps(doc, ensure_ascii=False, default=str), encoding="utf-8")
 
     def age_days(self, fam, combo):

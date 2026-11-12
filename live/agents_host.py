@@ -261,6 +261,58 @@ def run(st, args, timeout, logname, track=True):
 
 
 # ---------- publishing (one commit through the GitHub API, the computer has no git) ----------
+REPLIES = "data/agents/replies.json"
+
+
+def _later(a, b):
+    """b over a, unless a is a dict with a newer 'at' (an answer written on main after this copy)."""
+    if isinstance(a, dict) and isinstance(b, dict) and str(a.get("at") or "") > str(b.get("at") or ""):
+        return a
+    return b
+
+
+def merge_replies(main_b, own_b):
+    """replies.json is written both here and on main (the user's tasks, the nightly agents' answers): the whole file
+    from this copy erased the user's new tasks (12.11.2026: three of his tasks lost in one health commit). Main is
+    the base; this copy adds its tasks / answers / status, never removes."""
+    m, o = json.loads(main_b.decode("utf-8")), json.loads(own_b.decode("utf-8"))
+    out = dict(m)
+    for k, v in o.items():
+        if k != "_tasks":
+            out[k] = _later(m[k], v) if k in m else v
+    key = lambda t: str(t.get("task", ""))[:200]  # noqa: E731
+    mine = {key(t): t for t in o.get("_tasks") or [] if isinstance(t, dict)}
+    tasks, seen = [], set()
+    for t in m.get("_tasks") or []:
+        if not isinstance(t, dict):
+            continue
+        k, t = key(t), dict(t)
+        seen.add(k)
+        if k in mine:
+            for f in ("status", "done"):
+                a, b = t.get(f) or {}, mine[k].get(f) or {}
+                if isinstance(a, dict) and isinstance(b, dict) and (a or b):
+                    t[f] = {**a, **{bk: _later(a[bk], bv) if bk in a else bv for bk, bv in b.items()}}
+        tasks.append(t)
+    tasks += [t for k, t in mine.items() if k not in seen]
+    out["_tasks"] = tasks
+    return json.dumps(out, ensure_ascii=False, indent=1).encode("utf-8")
+
+
+def _main_file(h, sha, rel):
+    r = requests.get(f"{API}/contents/{rel}", headers=h, params={"ref": sha}, timeout=60)
+    if r.status_code == 404:
+        return None
+    r.raise_for_status()
+    j = r.json()
+    if j.get("content") and j.get("encoding") == "base64":
+        return base64.b64decode(j["content"])
+    raw = requests.get(f"{API}/contents/{rel}", headers={**h, "Accept": "application/vnd.github.raw"},
+                       params={"ref": sha}, timeout=60)
+    raw.raise_for_status()
+    return raw.content
+
+
 def publish(files, message):
     """files: {path: bytes}. One commit on main; when main moved meanwhile, again on the new main (these files
     are generated here, so this run's copy wins)."""
@@ -277,6 +329,16 @@ def publish(files, message):
         head = requests.get(f"{API}/git/ref/heads/main", headers=h, timeout=30)
         head.raise_for_status()
         hsha = head.json()["object"]["sha"]
+        if REPLIES in files:                          # merged into main's replies.json, never over it
+            try:
+                mb = _main_file(h, hsha, REPLIES)
+                data = merge_replies(mb, files[REPLIES]) if mb else files[REPLIES]
+                r = requests.post(f"{API}/git/blobs", headers=h, timeout=120,
+                                  json={"content": base64.b64encode(data).decode(), "encoding": "base64"})
+                r.raise_for_status()
+                blobs[REPLIES] = r.json()["sha"]
+            except Exception:  # noqa: BLE001  - unreadable: leave main's file as it is this time
+                blobs.pop(REPLIES, None)
         base_tree = requests.get(f"{API}/git/commits/{hsha}", headers=h, timeout=30).json()["tree"]["sha"]
         tree = requests.post(f"{API}/git/trees", headers=h, timeout=60, json={
             "base_tree": base_tree,

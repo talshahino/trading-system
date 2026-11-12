@@ -753,6 +753,447 @@
     "bot6"
    ],
    "rules": "as SC039 / stop under 0.786 / target the previous high (0) - the alternatives the user asked to test"
+  },
+  {
+   "id": "SC041",
+   "name": "Fluid Money: Asian-session high/low break in its last quarter, 0.6/1.0 ATR, 15m",
+   "source": "TradingView (idea, Remytrades)",
+   "url": "https://jp.tradingview.com/chart/GBPCAD/wA9RBF1f-NEW-FLUID-MONEY-ASIAN-SESSION-BREAKOUT-STRATEGY-15-Min-chart",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m only / in the last quarter of the Asian box, break of the session high (buy) or low (sell) / stop 5-7 pips (ours 0.6 ATR) / target max 20 pips, 10 recommended (ours 1.0 ATR)"
+  },
+  {
+   "id": "SC042",
+   "name": "EMA 9/21 cross + RSI 50-70 filter, swing stop, 2R",
+   "source": "TradingView (idea, Cryptobingbong)",
+   "url": "https://de.tradingview.com/chart/BTCUSD/LaOKROTs-Day-Trading-Strategy-Using-EMA-Crossovers-RSI-for-Crypto",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m/15m / EMA9 crosses EMA21 with RSI14 50-70 (long) or under 50 (short) / stop beyond the recent swing / target 2:1 (1.5:1 also named)"
+  },
+  {
+   "id": "SC043",
+   "name": "15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
+   "source": "BabyPips forum",
+   "url": "https://forums.babypips.com/t/scalping-15mdblebol/73264",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "15M (also 30M-D) / BB20 + BB25: a candle pokes outside, a reversal candle closes past the previous body and back inside / stop beyond the outermost wick / target the middle band"
+  },
+  {
+   "id": "SC044",
+   "name": "RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
+   "source": "Tradingpedia",
+   "url": "https://www.tradingpedia.com/forex-trading-strategies/squeezing-pips-from-ranging-markets-via-rsi/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "daily (example 4H) / RSI back above 30 on a bullish bar (below 70 on a bearish bar) / stop several pips beyond the swing / half out at 0.5R, rest to break-even, out on RSI 70 back-cross (short: RSI oversold)"
+  },
+  {
+   "id": "SC045",
+   "name": "RSI(3) + Full Stochastic 6/3/3 cross over/under SMA150, exit at the opposite extreme",
+   "source": "Tradingpedia",
+   "url": "https://www.tradingpedia.com/forex-trading-strategies/combining-rsi-full-stochastic-oscillator-and-sma",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "daily best (example 1H) / above SMA150, RSI3 oversold, Full Stoch 6/3/3 bullish cross while oversold (mirror) / stop 5-10 pips beyond the swing / exit when the Stochastic reaches the opposite extreme"
+  },
+  {
+   "id": "SC046",
+   "name": "Supertrend 10/3 + Stochastic RSI cross from 20/80, stop at the line, 2R",
+   "source": "The Right Trader",
+   "url": "https://therighttrader.com/learn/indicator-strategies/supertrend-and-stochastic-rsi-strategy",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "daily swing, 15m day variant / Supertrend 10/3 below the close + StochRSI 14,14,3,3 %K crosses %D from <=20 (mirror from >=80) / stop at the Supertrend value / target 2R; out on a flip or a cross back"
+  },
+  {
+   "id": "SC047",
+   "name": "1-minute VWAP + EMA 9/21 pullback-bar break, 1.5R or VWAP exit",
+   "source": "The Right Trader",
+   "url": "https://therighttrader.com/learn/trading-strategies/one-minute-scalping",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "stock",
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m with 5m bias / 5m close above VWAP, EMA9 > EMA21, pullback to EMA9 without a close under VWAP, buy the break of the pullback bar's high / stop at the pullback low, skip if > 0.3% / target 1.5R or a 1m close back through VWAP; flat before the close"
+  },
+  {
+   "id": "SC048",
+   "name": "SuperTrade ST1: Supertrend flip above EMA200, 1 ATR stop, 4 ATR target, long",
+   "source": "TradingView (SupertradeOfficial)",
+   "url": "https://www.tradingview.com/script/AyY3vB17-SuperTrade-ST1-Strategy/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "any, 1H/4H/D more reliable / long only: Supertrend flips bullish, close above the line and above EMA200 / stop 1 ATR / target 4 ATR"
+  },
+  {
+   "id": "SC049",
+   "name": "ETH Signal: Supertrend 12/2.76 + RSI 12, 4 ATR stop, 2 / 2.237 ATR target, 15m",
+   "source": "TradingView (ltphau99)",
+   "url": "https://vn.tradingview.com/script/TWCnbkiX/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m ETHUSDT / Supertrend 12/2.76 buy with RSI12 < 70 (sell with RSI > 30) / stop 4 x ATR12 / target 2 x ATR12 long, 2.237 x ATR12 short"
+  },
+  {
+   "id": "SC050",
+   "name": "EMA50 + MACD histogram + RSI 50-70 / 30-50, 1 ATR stop, 2 ATR target, 15m",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/489634",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m / above EMA50 + MACD histogram > 0 + RSI 50-70 (mirror below, RSI 30-50) / stop 1 ATR / target 2 ATR"
+  },
+  {
+   "id": "SC051",
+   "name": "Engulfing / hammer + same-bar MACD cross, 1.5 ATR stop, 2 ATR target, 15m",
+   "source": "FMZ (dev.to)",
+   "url": "https://dev.to/fmzquant/multi-level-trend-momentum-trading-strategy-with-atr-risk-management-system-36",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "metal",
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m / bullish engulfing or hammer + MACD 12/26/9 cross up on the same bar (mirror: bearish engulfing / shooting star + cross down) / stop 1.5 x ATR14 / target 2 x ATR14"
+  },
+  {
+   "id": "SC052",
+   "name": "Three-Step 9:30 range: 5m-candle range, 1m FVG break, first-close stop, 2R",
+   "source": "TradingView (nicolasnourgt)",
+   "url": "https://www.tradingview.com/script/uX2xBOFa-Three-Step-9-30-Range-Scalping/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m, 9:30-10:30 NY / range = first 5m candle after 9:30; FVG with a candle closing outside the range (BREAK) / stop at the first candle that closed outside / target 2:1"
+  },
+  {
+   "id": "SC053",
+   "name": "Macketings 1m: EMA 80/90 band over 340/500 + SMA325, 0.2% stop, 2.5% target",
+   "source": "TradingView (Macketing1337)",
+   "url": "https://www.tradingview.com/script/UDNlq5ow-Macketings-1min-Scalping/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "index",
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m / EMA 80/90 over 340/500, EMA340 > EMA500, above SMA325; retest of the 80/90 band then a breakout / stop 0.2% / target 2.5%; at 0.3% profit lock 0.2%; out on EMA 80/90 x 340 or 340 x 500"
+  },
+  {
+   "id": "SC054",
+   "name": "CCI + EMA10 crossing EMA21/50, 12-point stop, 2.5R, M5+",
+   "source": "RoboForex",
+   "url": "https://roboforex.com/blog/education/trading-with-scalping-forex-strategy-cci-ema/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "M5 and higher / EMA10 crosses up through EMA21 and EMA50 with CCI > 0 (mirror) / stop 10-15 points or behind the nearest pivot (ours 2.5 ATR) / target 2-3 x the stop (ours 2.5R)"
+  },
+  {
+   "id": "SC055",
+   "name": "EMA21 + CCI20 zero agreement, swing stop, exit on the cross back, 15m",
+   "source": "The Right Trader",
+   "url": "https://therighttrader.com/learn/indicator-strategies/ema-and-cci-strategy",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "daily, 15m day variant / close above EMA21 and CCI20 >= 0 (the second becoming true) (mirror) / stop beyond the pullback swing / out on a close back through EMA21 or CCI back through 0, or the session close"
+  },
+  {
+   "id": "SC056",
+   "name": "CCI12 > 80 & RSI15 > 75 two bars (CCI < -95 & RSI < 30), 125/60 pips, 1H",
+   "source": "StockSharp (API example 2998)",
+   "url": "https://doc.stocksharp.com/en/api-examples/2998_Basic_CCI_RSI",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H / CCI12 > 80 and RSI15 > 75 on two closed candles -> long; CCI < -95 and RSI < 30 -> short / stop 125 pips (ours 10 ATR) / target 60 pips (ours 5 ATR)"
+  },
+  {
+   "id": "SC057",
+   "name": "M15 EMA20/50 pullback + RSI 50 + engulfing / pin bar, swing stop, 2R, London-NY",
+   "source": "XS",
+   "url": "https://www.xs.com/en/blog/scalping-strategy/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx",
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M15, London/NY / above EMA20 and EMA50, pullback to EMA20, RSI > 50, bullish engulfing or pin bar (mirror) / stop 2-3 pips beyond the swing / target next S/R, 1:1.5-1:2 (ours 2R)"
+  },
+  {
+   "id": "SC058",
+   "name": "NY 09:30-10:00 range breakout, half at 2R + break-even, rest 3R, one a day",
+   "source": "MQL5 blog (Volume Strike EA)",
+   "url": "https://www.mql5.com/en/blogs/post/779066",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M1/M5/M15 / break of the 09:30-10:00 NY range high (long) or low (short), one trade a day / stop at the opposite side / half at 2R with the rest to break-even, rest at 3R"
+  },
+  {
+   "id": "SC059",
+   "name": "Bollinger middle + MACD signal state, 3-bar stop, exit when either flips, 5m",
+   "source": "The Right Trader",
+   "url": "https://therighttrader.com/learn/indicator-strategies/bollinger-bands-and-macd-strategy",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "daily, 5m day variant / first close above the BB20 middle with MACD above its signal (mirror) / stop at the 3-bar low, skip if wider than the mid-to-upper gap / out when either condition flips, or the session close"
+  },
+  {
+   "id": "SC060",
+   "name": "BTC 15m: rising SMA200, SMA5 crosses the BB 21 midline, fractal stop, out under the midline",
+   "source": "TradingView (idea, Michael_Harding)",
+   "url": "https://my.tradingview.com/chart/BTCUSD/sqalin4E-Scalping-Strategy-for-Trading-BTCUSD-on-15min",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m / above a rising SMA200, SMA5 crosses above the BB midline (21), bullish candle; long only / stop on the fractal below / out on a close under the 21 MA"
+  },
+  {
+   "id": "SC061",
+   "name": "Gold 1h: under the BB(15) top and over the 53-bar high, 2.9 / 5.8 ATR(9), long",
+   "source": "ProRealCode",
+   "url": "https://www.prorealcode.com/topic/gold-1h-intraday-bollinger-breakout-with-atr-targets-pf-1-26/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1h / long only: close under the upper BB(15) and above the 53-bar high / stop 2.9 x ATR9 / target 5.8 x ATR9"
+  },
+  {
+   "id": "SC062",
+   "name": "XAU 55-MA high/low channel break + Heikin-Ashi colour, previous-candle stop, 1.5R",
+   "source": "TradingView (idea, warsam)",
+   "url": "https://in.tradingview.com/chart/XAUUSD/ecSOGHlP-XAU-USD-Scalping-Strategy",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M1/M5 / break above the 55-MA of highs with a green Heikin-Ashi candle (below the 55-MA of lows with a red one) / stop beyond the previous candle / target 1:1.5"
+  },
+  {
+   "id": "SC063",
+   "name": "ES 5-minute ORB, stop the other edge, target half the range, range <= 0.55%, no Tuesdays",
+   "source": "Edgeful (blog)",
+   "url": "https://www.edgeful.com/blog/posts/5-minute-opening-range-breakout-es-strategy",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m range 09:30-09:35 ET on ES / break above (long) or below (short), skip ranges > 0.55% and Tuesdays / stop at the opposite edge / target 50% of the range beyond the breakout"
   }
  ]
 }

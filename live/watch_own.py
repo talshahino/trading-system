@@ -84,7 +84,18 @@ INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.0045, 0.045, 0.10
 # version starts, only the two gap tracks count, each with its own risk: v5 (15m) 0.4%, the 1-minute track 0.075%.
 # FTMO rules: no new trades after a 4.5% loss in the day, the account burns at a 10% loss from the start.
 # v3 (10.11.2026, the review before the user's calibration): a fresh start with the corrected trade selection
-ACCT_V, RISK_V5, RISK_V1M = 3, 0.004, 0.00075
+ACCT_V, RISK_V5, RISK_V1M = 4, 0.004, 0.00075     # 4 (12.11.2026): the user's gap method - a fresh $100K account
+# the user's gap method on bot 5 (agents/tal_gap.py; cards approved by the manager 12.11.2026, each "maybe luck" -> risk
+# x0.7 of the bot's 0.4%). Since then the only tracks of bot 5's virtual account; the old gap tracks (v5 / 1-minute)
+# are still shown but no longer counted.
+TAL5_SYMBOLS = ["US100", "US30", "US500", "GER40", "JP225"]
+TAL5 = {"t15_1": (("15m", "1m", 2), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 48, "PROT": "shock"}),
+        "t1h_15": (("1h", "15m", 1), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 0.5, "EXPIRY": 48, "PROT": "none"}),
+        "t4h_1h": (("4h", "1h", 1), {"GBODY": 1.5, "MIN_GAP": 0.6, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 48, "PROT": "none"}),
+        "t15_5": (("15m", "5m", 1), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"})}
+TAL5_NAME = {"t15_1": "15 דק' / דקה", "t1h_15": "שעה / 15 דק'", "t4h_1h": "4 שעות / שעה", "t15_5": "15 דק' / 5 דק'"}
+TAL5_TF = {"t15_1": "15Min", "t1h_15": "1Hour", "t4h_1h": "4Hour", "t15_5": "15Min"}
+RISK_TAL5 = 0.004 * 0.7
 # The settings bots 5 and 6 trade with live in live/bots/bot5.json and bot6.json (12.11.2026: the virtual bots are run
 # as if they were real accounts - an approved change goes in at once, like bots 1-4). Read every cycle; a file that is
 # missing or odd keeps the values above.
@@ -265,6 +276,8 @@ def bars(df, t0, t1, rule):
 
 
 def tid(x):
+    if x.get("tal"):
+        return f"{x['symbol']}|{x['tal_key']}|{x['tal']}"
     base = f"{x['symbol']}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}" + ("|v4" if x.get("v4") else "|v5" if x.get("v5") else "|v1m" if x.get("v1m") else "")
     if x.get("v5") or x.get("v1m"):
         # the gap tracks: several gaps of one move share the move's peak, so the gap's own candle is part of the name
@@ -493,7 +506,10 @@ def main():
     except Exception:  # noqa: BLE001
         state = {}
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
-                  "rules": "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
+                  "rules": "מ־12.11.2026 החשבון הווירטואלי סופר רק את שיטת הגאפ של טל: דחף בגרף הגבוה, הגאפ בין נר 1 לנר 3 שנשאר פתוח, "
+                           "כניסה באמצע הגאפ, סטופ 2 נקודות מעבר לסווינג השני, יעד בסווינג השני בצד השני · 4 צמדים: 15 דק'/דקה (עם הגנה מזעזועים), "
+                           "שעה/15 דק', 4 שעות/שעה, 15 דק'/5 דק' · סיכון 0.28% לעסקה (⭐ אולי מזל: x0.7) · המסלולים הישנים מוצגים ולא נספרים: "
+                           "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
                            "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים בדקה: אותם כללים בגרף הדקה, המתנה של 96 דקות לנגיעה · מסלול פערים (v5): כל פער של נר חזק במדדים (גם JP225), כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך, 30% יוצאים ב־90% מהדרך והשאר לברייק · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
                            "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
@@ -584,6 +600,20 @@ def main():
                     finally:
                         for k_, v_ in keep4.items():
                             setattr(CORE, k_, v_)
+                if name in TAL5_SYMBOLS:
+                    D5 = TG.Data(name, df[["o", "h", "l", "c"]], np.asarray(cst, float), np.asarray(stop_at, bool),
+                                 np.asarray(noent, bool), 2.0, {})
+                    for trk, (pair, cfg) in TAL5.items():
+                        for x in TG.live_trades(D5, pair, cfg):
+                            g_ = x.get("gap") or [x["entry"], x["entry"]]
+                            res.append({"symbol": name, "dir": x["dir"], "status": x["status"], "entry": x["entry"],
+                                        "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,
+                                        "leg": None, "leg_start": x["setup_t"], "leg_top": x["setup_t"],
+                                        "gap_lo": min(g_), "gap_hi": max(g_), "setup_t": x["setup_t"], "time": x.get("time"),
+                                        "exit_time": x.get("exit_time"), "exit": x.get("exit"), "reason": x.get("reason"),
+                                        "r": x.get("r"), "r_now": x.get("r_now"),
+                                        "why": x.get("reason") if x["status"] == "cancelled" else None,
+                                        "tal": trk, "tal_key": x["id_key"]})
                 cutoff = df.index[-1] - pd.Timedelta(days=2)       # only what happened recently is reported
                 for x in res:
                     if pd.Timestamp(x.get("time") or x.get("setup_t")) < cutoff:
@@ -592,8 +622,9 @@ def main():
                     seen_now.add(k)
                     old = trades.get(k, {})
                     rec = {"id": k, "symbol": name, "broker": src.broker.get(name), "dir": int(x["dir"]), "status": x["status"],
-                           "entry": float(x["entry"]), "stop": float(x["stop"]), "target": float(x["target"]) if x.get("target") else None,
-                           "rr": x.get("rr"), "cost_r": x.get("cost_r"), "leg": x.get("leg"),
+                           "entry": float(x["entry"]), "stop": float(x["stop"]) if x.get("stop") is not None else None,
+                           "target": float(x["target"]) if x.get("target") else None,
+                           "rr": x.get("rr"), "cost_r": x.get("cost_r"), "leg": x.get("leg"), "tal": x.get("tal"), "trk": x.get("tal"),
                            "leg_start": iso(x["leg_start"]), "leg_top": iso(x["leg_top"]), "gap_lo": float(x["gap_lo"]), "gap_hi": float(x["gap_hi"]),
                            "setup_t": iso(x.get("setup_t")) or old.get("setup_t"), "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
@@ -619,8 +650,9 @@ def main():
                         if f in old:
                             rec[f] = old[f]
                     if "risk_usd" not in rec and "skipped" not in rec:
-                        if not (rec["v5"] or rec["v1m"]):
-                            rec["skipped"] = "v4" if rec["v4"] else "extra" if rec["extra"] else "old"   # only the gap tracks count
+                        if not rec.get("tal"):
+                            # only the user's gap method counts since 12.11.2026 (the old tracks are shown, not counted)
+                            rec["skipped"] = "v4" if rec["v4"] else "extra" if rec["extra"] else "old"
                         elif rec["status"] in ("open", "closed") and rec["time"] and rec["time"] < acc["started"]:
                             rec["skipped"] = "before"                                       # before the account opened
                     if rec["status"] in ("open", "closed") and "risk_usd" not in rec and "skipped" not in rec:
@@ -631,7 +663,7 @@ def main():
                         elif day_pnl(day) <= -DAILY_STOP * start:
                             rec["skipped"] = "daily"
                         else:
-                            rec["risk_usd"] = round(bal * (RISK_V5 if rec["v5"] else RISK_V1M), 2)
+                            rec["risk_usd"] = round(bal * RISK_TAL5, 2)
                     if rec.get("risk_usd"):
                         if rec["status"] == "closed" and rec.get("r") is not None:
                             rec["pnl"] = round(rec["r"] * rec["risk_usd"], 2)
@@ -644,7 +676,7 @@ def main():
                         elif rec["status"] == "open" and rec.get("r_now") is not None:
                             rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
-                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (" · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
+                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (f" · שיטת הגאפ {TAL5_NAME[rec['tal']]}" if rec.get("tal") else " · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
                     # notifications (user, 10.11.2026: "I'm bombarded"): only trades of the virtual account - opened and closed.
                     # Waiting setups and touched-but-skipped ones stay in the app, without a push.
                     quiet = not rec.get("risk_usd")
@@ -746,11 +778,12 @@ def main():
             del ec[:-4000]
         acc.setdefault("started", now_iso)
         pip = lambda n: 0.01 if n.endswith("JPY") else 0.0001 if (len(n) == 6 and n.isalpha()) else 1.0  # noqa: E731
-        combo = lambda n, t=None: f"OWN|{'1Min' if (t or {}).get('v1m') else '15Min'}|{n}"  # noqa: E731
+        combo = lambda n, t=None: (f"TAL|{TAL5_TF[t['tal']]}|{n}" if (t or {}).get("tal")  # noqa: E731
+                                   else f"OWN|{'1Min' if (t or {}).get('v1m') else '15Min'}|{n}")
         counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
-        state.update({"account": "וירטואלי · פערים v5 + דקה", "server": "צפייה בלבד · בלי כסף · סיכון 0.4% / 0.075%", "initial": acc["initial"], "risk": RISK_V5,
+        state.update({"account": "וירטואלי · שיטת הגאפ של טל", "server": f"צפייה בלבד · בלי כסף · סיכון {RISK_TAL5 * 100:.2f}% לעסקה", "initial": acc["initial"], "risk": RISK_TAL5,
                       "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
-                      "halted_until": None, "combos": [combo(n) for n in V5_15_SYMBOLS] + [combo(n, {"v1m": True}) for n in V5_SYMBOLS], "started": acc["started"], "withdrawals": [],
+                      "halted_until": None, "combos": [f"TAL|{TAL5_TF[k]}|{n}" for k in TAL5 for n in TAL5_SYMBOLS], "started": acc["started"], "withdrawals": [],
                       "equity_curve": ec, "lows": {},
                       "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                                      "combo": combo(t["symbol"], t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],

@@ -7,7 +7,7 @@ name: Live trade review
 on:
   schedule:
     # every morning 08:00 Israel time (06:00 UTC in winter, 05:00 in summer; GitHub may start it a little late)
-    - cron: "0 5,6,7 * * *"
+    - cron: "0 5,6,7,9,12,15 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -30,7 +30,9 @@ jobs:
           h=$(TZ=Asia/Jerusalem date +%H); today=$(TZ=Asia/Jerusalem date +%F)
           done_=$(curl -fsS "https://raw.githubusercontent.com/${{ github.repository }}/main/reports/trade_review/risk.json" | python3 -c "import json,sys; print(json.load(sys.stdin).get('sample',''))" 2>/dev/null || true)
           if [ "${{ github.event_name }}" != "schedule" ]; then echo "go=true" >> "$GITHUB_OUTPUT"
-          elif [ "$h" -ge 8 ] && [ "$h" -le 11 ] && [ "$done_" != "$today" ]; then echo "go=true" >> "$GITHUB_OUTPUT"
+          # (12.11.2026: GitHub started the 05-07 UTC runs at 14:00-17:00 Israel time, so 09-11.11 were never published -
+          # any hour from 08:00 to 23:00 counts now, still once a day)
+          elif [ "$h" -ge 8 ] && [ "$h" -le 23 ] && [ "$done_" != "$today" ]; then echo "go=true" >> "$GITHUB_OUTPUT"
           else echo "skip: $h:00 in Israel, published sample $done_"; fi
       - uses: actions/checkout@v4
         if: steps.gate.outputs.go == 'true'

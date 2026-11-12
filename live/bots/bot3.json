@@ -31,7 +31,11 @@
   "SS07|15Min|NVDA",
   "SS11|5Min|AIRF",
   "SS01|5Min|WMT",
-  "SS06|4Hour|MSTR"
+  "SS06|4Hour|MSTR",
+  "SC002|1Hour|INTC",
+  "SC002|1Hour|AMZN",
+  "SC002|4Hour|AIRF",
+  "SC002|4Hour|FRA40"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 01.11.2026: +7 session/classic combos (SS*), approved by the user; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -39,6 +43,16 @@
   "TV50|15Min|ASML": {
    "filter": "with_trend200",
    "card": "cbe4a6d7e7c2"
+  },
+  "TV15|1Hour|INTC": {
+   "filter": "with_trend200",
+   "filter_card": "cad455a12aa0"
   }
+ },
+ "added": {
+  "SC002|1Hour|INTC": "26f0c0414e65",
+  "SC002|1Hour|AMZN": "a5536ad52e6d",
+  "SC002|4Hour|AIRF": "d41a482ae332",
+  "SC002|4Hour|FRA40": "c235c32591eb"
  }
 }

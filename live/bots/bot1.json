@@ -50,7 +50,8 @@
   "FR03|15Min|GBPUSD",
   "QC02|1Hour|ETHUSD",
   "MQ11|4Hour|MSTR",
-  "MQ02|1Hour|XAUUSD"
+  "MQ02|1Hour|XAUUSD",
+  "SC002|1Hour|AMZN"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added SE02|1Hour|USDJPY and IM01|1Hour|JP225 (new families, backtest with the bot), approved by the user; 04.11.2026: added FR03|15Min|GBPUSD, QC02|1Hour|ETHUSD (GitHub/QuantConnect/forum families, both halves better with the bot), approved by the user; 04.11.2026 (evening): added MQ11|4Hour|MSTR, MQ02|1Hour|XAUUSD (new pool: papers/books/MQL5 EAs; both halves better, Monte Carlo checked), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -60,6 +61,19 @@
    "stop": 1.25,
    "limit": 0.5,
    "card": "eb3e3e8c550e"
+  },
+  "TV17|1Hour|DXY": {
+   "target": "none",
+   "limit": 0.25,
+   "card": "f11ebf176d48"
+  },
+  "TV15|4Hour|ETHUSD": {
+   "target": "none",
+   "stop": 0.75,
+   "card": "f9efb9f63b31"
   }
+ },
+ "added": {
+  "SC002|1Hour|AMZN": "4c8684fbc68b"
  }
 }

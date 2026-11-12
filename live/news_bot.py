@@ -40,6 +40,7 @@ from agents import event_strategies as E  # noqa: E402
 from agents import ftmo_calendar as CAL  # noqa: E402
 from agents import ftmo_costs as C  # noqa: E402
 from agents import ftmo_universe as U  # noqa: E402
+from agents import scout_strategies as SCS  # noqa: E402
 from live import reporter as REP  # noqa: E402
 
 NAME = "news_bot"
@@ -59,6 +60,37 @@ INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.005, 0.045, 0.10
 ACCT_V = 1
 KEEP = 300
 PLANS_F = LIVE / "bots" / "bot7.json"   # approved cards, built (agent_portfolio.built_variant reads the same "plans")
+
+
+def extras():
+    """Approved non-EV strategies of bot 7 (cards of kind "new", e.g. "SC001|1Min|JP225", card 4110f9b04911):
+    the combos in live/bots/bot7.json whose strategy is a scout one, on 1- or 5-minute candles -> [(sid, tf, name)]."""
+    try:
+        cs = json.loads(PLANS_F.read_text(encoding="utf-8")).get("combos") or []
+    except Exception:  # noqa: BLE001
+        return []
+    out = []
+    for c in cs:
+        try:
+            sid, tf, name = c.split("|")
+        except ValueError:
+            continue
+        if sid in SCS.SCOUT and tf in ("1Min", "5Min") and name in SYMBOLS:
+            out.append((sid, tf, name))
+    return out
+
+
+def sname(sid):
+    return NAMES.get(sid) or SCS.SCOUT.get(sid, (sid,))[0].split(" (")[0]
+
+
+def risk_mult(pl, combo):
+    """A card's lowered / raised risk for one combo ("risk_mult" in its plan, e.g. 0.7 for "maybe luck"): 0.5..1.5."""
+    try:
+        v = float((pl.get(combo) or {}).get("risk_mult", 1.0))
+    except (TypeError, ValueError):
+        return 1.0
+    return v if 0.5 <= v <= 1.5 else 1.0
 
 
 def plans():
@@ -245,20 +277,26 @@ def event_of(name, t):
     return f"{k.tz_convert('Asia/Jerusalem').strftime('%d.%m %H:%M')} " + (" + ".join(names[:2]) if names else "פרסום")
 
 
-def trades_of(name, d5, spread_now):
-    """Every trade of the three strategies on this instrument in the candles held, net of FTMO costs (r in R)."""
+def trades_of(name, d5, spread_now, d1=None, extra=()):
+    """Every trade of the three release strategies (and the approved extra ones) on this instrument in the candles
+    held, net of FTMO costs (r in R)."""
     out = []
-    sp = pd.Series([spread_now], index=[d5.index[0]]) if spread_now else None
     pl = plans()
-    for sid in STRATS:
-        p_ = pl.get(f"{sid}|5Min|{name}") or {}
-        fn = filtered(E.EVENTS[sid][1], p_.get("filter"), plan_keys(p_))
-        px = float(d5["c"].iloc[-1])
+    jobs = [(sid, "5Min", E.EVENTS[sid][1]) for sid in STRATS]
+    jobs += [(sid, tf, SCS.SCOUT[sid][1]) for sid, tf, n in extra if n == name and (tf == "5Min" or d1 is not None)]
+    for sid, tf, fn0 in jobs:
+        d = d5 if tf == "5Min" else d1
+        if d is None or len(d) < 50:
+            continue
+        sp = pd.Series([spread_now], index=[d.index[0]]) if spread_now else None
+        p_ = pl.get(f"{sid}|{tf}|{name}") or {}
+        fn = filtered(fn0, p_.get("filter"), plan_keys(p_))
+        px = float(d["c"].iloc[-1])
         spec = U.spec(name)
         comm = (px * float(spec["commission"]) / (float(spec["contractSize"]) * U.BASE_USD.get(spec["code"].split("/")[0], 1.0))
                 if spec["commissionType"] == "flat_USD" else px * 2 * float(spec["commission"]) / 100.0)
         be = (0.6, ((spread_now or 0.0) + comm) / px)
-        t = R.run(d5, fn, 0.0, breakeven=be)
+        t = R.run(d, fn, 0.0, breakeven=be)
         if t is None or not len(t):
             continue
         net = C.apply(t, name, sp)
@@ -270,7 +308,7 @@ def trades_of(name, d5, spread_now):
             r_gross = float(x["r"])
             if open_:                                           # still open: r at the last close, costs included
                 r_gross = float(x["dir"]) * (px - float(x["entry_px"])) / risk if risk > 0 else 0.0
-            out.append({"id": f"{sid}|{name}|{pd.Timestamp(x['time']).strftime('%Y%m%d%H%M')}", "sid": sid, "symbol": name,
+            out.append({"id": f"{sid}|{name}|{pd.Timestamp(x['time']).strftime('%Y%m%d%H%M')}", "sid": sid, "tf": tf, "symbol": name,
                         "time": pd.Timestamp(x["time"]).isoformat(), "dir": int(x["dir"]), "entry": float(x["entry_px"]),
                         "stop": float(x["stop_px"]), "target": None if x["target_px"] != x["target_px"] else float(x["target_px"]),
                         "status": "open" if open_ else "closed", "exit_time": None if open_ else pd.Timestamp(x["exit_time"]).isoformat(),
@@ -333,7 +371,7 @@ def book(acc, t, notify):
         return False
     led = acc.a["ledger"]
     side = "קנייה" if t["dir"] > 0 else "מכירה"
-    nm = f"{NAMES[t['sid']]} ({t['sid']}) · {t['symbol']}"
+    nm = f"{sname(t['sid'])} ({t['sid']}) · {t['symbol']}"
     if t["id"] not in led:
         bal = acc.balance()
         day = israel_day(pd.Timestamp.now(tz="UTC"))
@@ -341,7 +379,8 @@ def book(acc, t, notify):
         if acc.a.get("dead") or bal <= INITIAL * (1 - MAX_LOSS) or bal <= stop_day:
             led[t["id"]] = {"skipped": "loss limit", "pnl": None, "closed_day": day}
             return True
-        led[t["id"]] = {"risk_usd": round(bal * RISK, 2), "pnl": None, "closed_day": "9999"}
+        m = risk_mult(plans(), f"{t['sid']}|{t.get('tf', '5Min')}|{t['symbol']}")
+        led[t["id"]] = {"risk_usd": round(bal * RISK * m, 2), "pnl": None, "closed_day": "9999"}
         if notify:
             REP.notify(f"בוט 7: נפתחה {side}", f"{nm}\nכניסה {t['entry']:.5g} · סטופ {t['stop']:.5g}"
                        + (f" · יעד {t['target']:.5g}" if t["target"] else "") + f" · סיכון ${led[t['id']]['risk_usd']:,.0f} (וירטואלי)",
@@ -375,20 +414,25 @@ def state_of(acc, trades, cal, src):
     if not ec or ec[-1][1] != round(bal, 2) or ec[-1][2] != round(eq, 2) or ni[:15] != ec[-1][0][:15]:
         ec.append([ni, round(bal, 2), round(eq, 2)])
         del ec[:-4000]
-    combo = lambda t: f"{t['sid']}|5Min|{t['symbol']}"  # noqa: E731
+    combo = lambda t: f"{t['sid']}|{t.get('tf', '5Min')}|{t['symbol']}"  # noqa: E731
+    ex = extras()
+    sids = STRATS + sorted({s for s, _, _ in ex} - set(STRATS))
     side = lambda t: "buy" if t["dir"] > 0 else "sell"  # noqa: E731
-    by = {s: [led[t["id"]]["r"] for t in closed if t["sid"] == s] for s in STRATS}
+    by = {s: [led[t["id"]]["r"] for t in closed if t["sid"] == s] for s in sids}
     rules = ("בוט 7 · פרסומים כלכליים · חשבון וירטואלי, בלי כסף · שלוש אסטרטגיות על כל פרסום בהשפעה גבוהה בלוח של FTMO: "
              "EV01 הליכה עם 10 הדקות הראשונות (תנועה מעל 1.5 ATR, יעד 2R, עד שעה) · "
              "EV02 נגד קפיצה של מעל 2.5 ATR שכבר מחזירה שליש (יעד: המחיר שלפני הפרסום, עד שעה וחצי) · "
              "EV03 פריצת הטווח של 15 הדקות הראשונות (יעד 1.5R, עד שעתיים) · נרות 5 דקות · כניסה 10 דקות ומעלה אחרי הפרסום · "
              f"סטופ לנקודת הכניסה ב־60% מהדרך ליעד · סיכון {RISK * 100:g}% מהיתרה לעסקה · עלויות FTMO אמיתיות · "
              f"עצירה יומית {DAILY_STOP * 100:g}%, הפסד מקסימלי {MAX_LOSS * 100:g}% · "
-             f"{len(SYMBOLS)} נכסים: {', '.join(SYMBOLS)}")
+             f"{len(SYMBOLS)} נכסים: {', '.join(SYMBOLS)}"
+             + "".join(f" · נוספה (כרטיס מאושר): {s} {sname(s)} על {n}, נרות {'דקה' if tf == '1Min' else '5 דקות'}"
+                       f" (סיכון ×{risk_mult(plans(), f'{s}|{tf}|{n}'):g})" for s, tf, n in ex))
     return {"bot": NAME, "label": LABEL, "watch_only": True, "rules": rules, "account": "וירטואלי · פרסומים כלכליים",
             "server": "צפייה בלבד · בלי כסף", "initial": acc.a["initial"], "risk": RISK, "balance": round(bal, 2),
             "equity": round(eq, 2), "day_start": round(acc.day_start(israel_day(now)), 2), "halted_until": None,
-            "started": acc.a["started"], "withdrawals": [], "combos": [f"{s}|5Min|{n}" for s in STRATS for n in SYMBOLS],
+            "started": acc.a["started"], "withdrawals": [],
+            "combos": [f"{s}|5Min|{n}" for s in STRATS for n in SYMBOLS] + [f"{s}|{tf}|{n}" for s, tf, n in ex],
             "equity_curve": ec, "lows": {}, "updated_utc": ni,
             "summary": {s: {"closed": len(v), "sum_r": round(float(np.sum(v)), 2) if v else 0.0,
                             "win_pct": round(100 * float(np.mean(np.array(v) > 0)), 1) if v else None} for s, v in by.items()},
@@ -433,7 +477,7 @@ def main():
             acc = reset_check(acc)
             cal.refresh()
             sp = spreads()
-            seen = {}
+            seen, ex = {}, extras()
             for name in SYMBOLS:
                 try:
                     d1 = src.update(name)
@@ -444,7 +488,8 @@ def main():
                     continue
                 d5 = five(d1)
                 d5.attrs.update(symbol=name, tf="5Min")
-                for t in trades_of(name, d5, sp.get(name)):
+                d1.attrs.update(symbol=name, tf="1Min")
+                for t in trades_of(name, d5, sp.get(name), d1, ex):
                     seen[t["id"]] = t
             for k, t in seen.items():
                 old = trades.get(k)

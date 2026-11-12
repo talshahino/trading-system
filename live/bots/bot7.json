@@ -50,12 +50,18 @@
   "EV03|5Min|USDCHF",
   "EV03|5Min|NZDUSD",
   "EV03|5Min|EURJPY",
-  "EV03|5Min|GBPJPY"
+  "EV03|5Min|GBPJPY",
+  "SC001|1Min|JP225"
  ],
  "plans": {
   "EV01|5Min|GBPUSD": {
    "filter": "with_trend200",
    "card": "a0d6e9bc4f07"
+  },
+  "SC001|1Min|JP225": {
+   "card": "4110f9b04911",
+   "risk_mult": 0.7,
+   "why": "⭐ אולי מזל: נכנס בסיכון x0.7"
   }
  }
 }

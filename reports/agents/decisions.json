@@ -1,7 +1,69 @@
 {
- "updated": "2026-11-12T19:38:52+00:00",
- "new": [],
+ "updated": "2026-11-12T19:50:10+00:00",
+ "new": [
+  "5a34fe93c86e",
+  "652c15a1ef52",
+  "d0ae995c5449"
+ ],
  "decisions": [
+  {
+   "id": "5a34fe93c86e",
+   "bot": "bot2",
+   "type": "card",
+   "card": "0501511ed584",
+   "kind": "info",
+   "tier": "regular",
+   "title": "TV56|4Hour|USDJPY: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-12T19:50:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "652c15a1ef52",
+   "bot": "bot2",
+   "type": "card",
+   "card": "ed4d21725322",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC001|1Min|JP225 · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.02R לעסקה, 1371.8 עסקאות אפקטיביות) · בלי בדיקת בוט שלם עדיין (העסקאות של חלק מהאסטרטגיות עוד לא נשמרו) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "at": "2026-11-12T19:50:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "d0ae995c5449",
+   "bot": "bot2",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC001|1Min|JP225",
+   "title": "SC001|1Min|JP225: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.02R לעסקה, 1371.8 עסקאות אפקטיביות) · בלי בדיקת בוט שלם עדיין (העסקאות של חלק מהאסטרטגיות עוד לא נשמרו) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "652c15a1ef52",
+   "star": true,
+   "action": {
+    "bot": "bot2",
+    "combo": "SC001|1Min|JP225",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-12T19:50:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "b544255149f2",
    "bot": "bot1",

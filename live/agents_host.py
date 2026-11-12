@@ -36,7 +36,7 @@ REPO = REP.REPO
 API = f"https://api.github.com/repos/{REPO}"
 PUBLISH = ("reports/agents/", "data/agents/", "live/bots/")    # live/bots: approved cards built (agents/builder.py)
 HOST = "reports/agents/host.json"
-LIGHT_EVERY, SMART_EVERY = 10 * 60, 4 * 3600
+LIGHT_EVERY, SMART_EVERY = 10 * 60, 1 * 3600     # smart every hour (user, 12.11.2026: when there is work - work, no waiting)
 AGENTS_REV = 2                                            # raise it: the agents' next smart run starts 15 minutes after the install
 # the smart agents, in this order, with their minutes per smart run (the manager may change them in data/agents/plan.json,
 # "pc": {"bot5": 40, ...}); an agent with nothing left to test ends at once

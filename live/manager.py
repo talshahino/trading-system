@@ -266,6 +266,8 @@ def _risk_value(kind, v):
     """Checks one approved value; None = back to the bot's normal behaviour for that kind."""
     try:
         if kind == "mult":
+            if v is None:                    # "the value before" was the bot's normal risk (no multiplier)
+                return None
             m = round(float(v), 2)
             if m == 0 or 0.5 <= m <= 1.5:
                 return None if m == 1.0 else m
@@ -748,13 +750,43 @@ def auto_apply():
                     with AGENT_LOCK:
                         m = agent_meta()
                         done = x["id"] in m.setdefault("reverted", {}) or x["id"] in m["undo"]
+                        ok_ids = m.setdefault("revert_ok", [])
+                        # a take-back recorded before 12.11.2026 whose risk change failed (prev None): repaired once
+                        stuck = done and x["id"] in m["reverted"] and x["id"] not in ok_ids and x["id"] not in m["undo"]
                         b = None if done else m["applied"].pop(x["of"], None)
                         if not done:
                             m["reverted"][x["id"]] = x["of"]
                             agent_meta_save(m)
                     if b and not b.get("failed"):
-                        risk_change(b["bot"], b["combo"], b["kind"], b.get("prev"))
-                        log(f"manager's decision {x['of']} reverted by the watch: {b['bot']} {b['combo']} {b['kind']} back to {b.get('prev')}")
+                        try:
+                            risk_change(b["bot"], b["combo"], b["kind"], b.get("prev"))
+                        except Exception as e:  # noqa: BLE001
+                            log(f"take-back {x['id']} not applied: {e}")
+                            with AGENT_LOCK:              # keep it for the next round instead of losing it
+                                m = agent_meta()
+                                m["applied"][x["of"]] = b
+                                m.setdefault("reverted", {}).pop(x["id"], None)
+                                agent_meta_save(m)
+                            continue
+                        log(f"manager's decision {x['of']} reverted: {b['bot']} {b['combo']} {b['kind']} back to {b.get('prev')}")
+                        stuck = True
+                    elif stuck:
+                        o = next((y for y in j.get("decisions", []) if y.get("id") == x["of"]), None)
+                        a0 = (o or {}).get("action")
+                        try:
+                            if a0:
+                                cur = (risk_doc().get(a0["bot"], {}).get(a0["kind"]) or {}).get(a0["combo"])
+                                if cur == _risk_value(a0["kind"], a0["value"]):     # still at the cut value
+                                    risk_change(a0["bot"], a0["combo"], a0["kind"], a0.get("prev"))
+                                    log(f"take-back {x['id']} repaired: {a0['bot']} {a0['combo']} {a0['kind']} back to {a0.get('prev')}")
+                        except Exception as e:  # noqa: BLE001
+                            log(f"take-back {x['id']} not repaired: {e}")
+                    if stuck:
+                        with AGENT_LOCK:
+                            m = agent_meta()
+                            m.setdefault("revert_ok", []).append(x["id"])
+                            m["revert_ok"] = m["revert_ok"][-2000:]
+                            agent_meta_save(m)
                         agent_publish()
                     continue
                 if x.get("type") != "risk" or x.get("decision") != "approved" or not a:
@@ -762,20 +794,33 @@ def auto_apply():
                 with AGENT_LOCK:
                     m = agent_meta()
                     rev = {of: rid for rid, of in (m.get("reverted") or {}).items()}
-                    if x["id"] in m["applied"] or x["id"] in m["undo"] or (x["id"] in rev and rev[x["id"]] not in m["undo"]):
+                    rec = m["applied"].get(x["id"])
+                    # a decision that failed because its strategy was not in the bot yet (the builder adds a new
+                    # strategy minutes after its card is decided) is tried again every round, for up to 3 days;
+                    # one that failed for another reason (e.g. an invalid value) is not
+                    retry = bool(rec and rec.get("failed") and (rec.get("err") in (None, "missing"))
+                                 and rec.get("tries", 1) < 432)
+                    if (rec and not retry) or x["id"] in m["undo"] or (x["id"] in rev and rev[x["id"]] not in m["undo"]):
                         continue                     # applied, undone, or taken back by the watch (unless you undid that)
+                err = None
                 try:
                     cur = (risk_doc().get(a["bot"], {}).get(a["kind"]) or {}).get(a["combo"])
                     risk_change(a["bot"], a["combo"], a["kind"], a["value"])
                 except Exception as e:  # noqa: BLE001
-                    log(f"manager's decision {x['id']} not applied: {e}")
+                    if not retry:
+                        log(f"manager's decision {x['id']} not applied: {e}")
+                    err = "missing" if "לא נמצאת" in str(e) else "invalid"
                     cur = "failed"
                 with AGENT_LOCK:
                     m = agent_meta()
                     m["applied"][x["id"]] = {"bot": a["bot"], "combo": a["combo"], "kind": a["kind"],
                                              "prev": None if cur == "failed" else cur, "failed": cur == "failed",
                                              "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+                    if err:
+                        m["applied"][x["id"]].update(err=err, tries=(rec or {}).get("tries", 0) + 1 if retry else 1)
                     agent_meta_save(m)
+                if err:
+                    continue
                 log(f"manager's decision applied: {a['bot']} {a['combo']} {a['kind']} -> {a['value']}")
                 agent_publish()
             AUTO_APPLY["err"] = None

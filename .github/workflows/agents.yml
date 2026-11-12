@@ -103,10 +103,12 @@ jobs:
           mkdir -p reports/agents
           if [ -z "${{ inputs.symbols }}" ]; then cp agent_*.log reports/agents/ 2>/dev/null || true; fi
           git add reports/agents/*/exp
-          if [ -z "${{ inputs.symbols }}" ]; then git add reports/agents; fi
+          # the gap method writes its results to data/agents/strategies (12.11.2026: left unstaged, the pull failed and the run's work was lost)
+          if [ -z "${{ inputs.symbols }}" ]; then git add reports/agents data/agents/strategies; fi
           git commit -qm "Agents: nightly run" || exit 0
-          # generated files only: on a clash keep this run's copy (-X theirs = the commit being replayed)
-          for i in 1 2 3 4; do git pull -q --rebase -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done
+          # generated files only: on a clash keep this run's copy (-X theirs = the commit being replayed);
+          # anything else the run left changed is put aside (--autostash) so it never blocks the push
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done
 
   alpaca:
     # stocks and Alpaca crypto need the Alpaca keys, which only GitHub has: their combos (bots 1-4) are tested here
@@ -158,4 +160,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports/agents/*/exp reports/agents/*/cards.json
           git commit -qm "Agents: stock combos (Alpaca)" || exit 0
-          for i in 1 2 3 4; do git pull -q --rebase -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

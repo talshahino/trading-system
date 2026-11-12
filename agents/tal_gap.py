@@ -49,7 +49,9 @@ KNOBS = {"GBODY": [0.0, 1.0, 2.0], "MIN_GAP": [0.0, 0.6], "SW": [2, 5], "MIN_RR"
          # trade management (user, 12.11.2026: "partial exit? stop to break-even? the smart agent should optimise it"):
          # beW = the stop to the entry once the price went W of the way to the target; pF_W = F of the trade out at W of
          # the way, the rest's stop to the entry. Not in BASE (the base stays "none"), so earlier runs keep their names.
-         "EXIT": ["be50", "be70", "p30_50", "p50_50", "p50_70", "p70_70"]}
+         # Fibonacci levels of the way (user, 12.11.2026, every bot): 3 digits = per mille (be618 = 61.8% of the way)
+         "EXIT": ["be50", "be70", "p30_50", "p50_50", "p50_70", "p70_70",
+                  "be382", "be618", "be786", "be886", "p50_382", "p50_618", "p33_618", "p50_786"]}
 NAMES = {"GBODY": "עוצמת הדחף (גוף הנר האמצעי מול הממוצע)", "MIN_GAP": "גודל גאפ מינימלי (מול הטווח הממוצע)",
          "SW": "סווינג בטיים פריים הנמוך (נרות מכל צד)", "MIN_RR": "יחס מינימלי יעד/סטופ", "EXPIRY": "תוקף הגאפ (שעות)",
          "PROT": "הגנה מהודעות וזעזועים", "EXIT": "ניהול העסקה: יציאה חלקית / סטופ לנקודת הכניסה"}
@@ -202,10 +204,11 @@ def exit_mode(cfg):
     m = cfg.get("EXIT", "none")
     if m == "none":
         return None
+    way = lambda x: int(x) / (1000 if len(x) == 3 else 100)   # noqa: E731 - "618" = 61.8%, "70" = 70%
     if m.startswith("be"):
-        return 0.0, int(m[2:]) / 100
+        return 0.0, way(m[2:])
     f, w = m[1:].split("_")
-    return int(f) / 100, int(w) / 100
+    return int(f) / 100, way(w)
 
 
 def simulate(D, pair, cfg, gcache):
@@ -462,8 +465,12 @@ def search(symbols, load, out_dir, idx, idx_dir, budget_s):
             if sc is None:
                 break
             st["tried"].append(vid(nb))
-            if sc > st["score"]:
-                st["best"], st["score"], st["tried"] = nb, sc, []     # better: search around it from now on
+            # better by more than the drift of the time weights (they move with the clock, so the same trades scored
+            # minutes later score a hair higher: 13.11.2026 the search swung between two equal versions for ever);
+            # the version it leaves counts as tried, so it never swings back
+            if sc > st["score"] + 1e-3 + 1e-3 * abs(st["score"]):
+                old = vid(st["best"])
+                st["best"], st["score"], st["tried"] = nb, sc, [old]   # better: search around it from now on
                 print(f"  tal_gap search {pair_name(p)}: better total {sc:.1f}R with {nb}")
             moved = True
             logf.write_text(json.dumps(log, default=str))

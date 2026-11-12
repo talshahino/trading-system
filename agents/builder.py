@@ -6,7 +6,7 @@ exactly a setting is built here at once, on the bots' computer, right after the 
   bots 1-4, 7   exits / filters cards -> live/bots/<bot>.json "plans" (target, stop, limit entry, market filter - the
                 variant the agent tested, run by live/runner.py / live/news_bot.py as is)
   bots 1-4      a scout strategy approved for the bot -> added to the bot's combos at the bot's risk
-An undo in the app takes it out again at the next run. Bot 5's gap-method tracks ("tal_tracks", 13.11.2026) are settings too.
+An undo in the app takes it out again at the next run. Bots 5 and 6's gap-method tracks ("tal_tracks", 13.11.2026) are settings too.
 What is code (bot 7 new methods, new rules in the method itself) stays for the bot's nightly agent; information cards have nothing to build.
 The bots' computer installs the changed live/bots/*.json about 10 minutes later (the bots restart, open trades stay).
 Every build / revert is written in data/agents/replies.json under the card ("built": "auto"), so the nightly agents
@@ -83,8 +83,8 @@ def buildable(c):
         hi, lo = ch["pair"].split("/")
         from agents import tal_gap as TG
         pr = next((list(p) for p in TG.PAIRS if p[0] == hi and p[1] == lo), None)
-        if pr:
-            return {"bot": bot, "combo": f"TAL|{ch['pair']}", "family": "tal", "pair": pr, "cfg": ch["cfg"]}
+        if pr:   # the main track's pair -> "tal"; another pair -> "tal_tracks" (13.11.2026), decided in apply()
+            return {"bot": bot, "combo": f"TAL|{ch['pair']}", "family": "tal6", "pair": pr, "cfg": ch["cfg"]}
     return None
 
 
@@ -121,7 +121,7 @@ def describe(b):
         return "שיטת הגאפ: מסלול לא נכנס למכשיר ולכיוון שמסלול אחר כבר מחזיק" if b["to"] else "שיטת הגאפ: בלי הכלל נגד סיכון כפול"
     if b["family"] == "tal5":
         return f"שיטת הגאפ, מסלול {b['pair'][0]} / {b['pair'][1]}: " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())
-    if b["family"] == "tal":
+    if b["family"] in ("tal", "tal6"):
         return f"שיטת הגאפ: {b['pair'][0]} / {b['pair'][1]}, " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())
     if b["family"] == "add":
         return f"נוספה לבוט: {b['combo']}, בסיכון של הבוט"
@@ -137,6 +137,24 @@ def describe(b):
 
 
 def apply(cfg, b, card_id):
+    if b["family"] == "tal6":
+        # bot 6 (13.11.2026): a card on the main track's pair changes "tal"; on a pair another track runs, that track's
+        # rules in "tal_tracks"; on a new pair, a new track at the tracks' risk (tal_gap.cards lets a new pair through
+        # only when it earned on 2024-2025 and on 2026 - it must add to the bot as a whole)
+        main = list((cfg.get("tal") or {}).get("pair") or [])[:2]
+        if main == list(b["pair"])[:2] or not main:
+            return apply(cfg, dict(b, family="tal"), card_id)
+        rk = cfg.setdefault("risk", {})
+        tt = cfg.setdefault("tal_tracks", {})
+        if not any(list(v.get("pair") or [])[:2] == list(b["pair"])[:2] for v in tt.values()):
+            trk = "t" + b["pair"][0].rstrip("m") + "_" + b["pair"][1].rstrip("m")
+            others = [float(v) for k, v in rk.items() if k == "tal" or k in tt]
+            cfg.setdefault("changes", {})[card_id] = {"family": "tal5", "track": trk, "before": "__none__",
+                                                      "risk_before": rk.get(trk, "__none__")}
+            tt[trk] = {"pair": list(b["pair"]), "cfg": dict(b["cfg"])}
+            rk[trk] = min(others) if others else 0.004     # the tracks' risk now (a new pair is not stronger)
+            return
+        return apply(cfg, dict(b, family="tal5", pair=list(b["pair"])[:2]), card_id)
     if b["family"] == "flag":
         cfg.setdefault("changes", {})[card_id] = {"family": "flag", "key": b["key"], "before": cfg.get(b["key"], "__none__")}
         cfg[b["key"]] = b["to"]
@@ -151,7 +169,7 @@ def apply(cfg, b, card_id):
         cfg.setdefault("changes", {})[card_id] = {"family": "tal5", "track": trk,
                                                   "before": "__none__" if new_trk else json.loads(json.dumps(tt[trk])),
                                                   "risk_before": rk.get(trk, "__none__")}
-        tt[trk] = {"pair": list(b["pair"]), "cfg": dict(b["cfg"])}
+        tt[trk] = {"pair": list(tt[trk]["pair"]) if not new_trk and tt[trk].get("pair") else list(b["pair"]), "cfg": dict(b["cfg"])}
         if new_trk:
             others = [float(v) for k, v in rk.items() if k in tt and k != trk]
             rk[trk] = min(others) if others else 0.004      # the gap tracks' risk now (a new pair is not stronger)
@@ -268,18 +286,20 @@ def run(now=None):
                 r.update(text="הוחזר לאחור - הוצא מהבוט אוטומטית", at=at, by="builder", reverted=at)
                 r.pop("built", None)
                 did.append(f"{b}: reverted {cid}")
-    # bot 6 trades ONE pair of timeframes of the user's gap method: of the approved ones only the strongest goes in
+    # bot 6: one configuration per pair of timeframes of the user's gap method - of the approved cards on the same pair
+    # only the strongest goes in (13.11.2026: every pair is its own track, like bot 5; before, one pair for the bot)
     def _score(cid):
         u = (cards.get(cid) or {}).get("unseen") or {}
         return (u.get("mean") or -9) * math.sqrt(max(1.0, u.get("eff_n") or 1))
-    tal = [cid for cid in approved if cid in cards and cid not in undone_cards
-           and ((buildable(cards[cid]) or {}).get("family") == "tal")]
-    best_tal = max(tal, key=_score) if tal else None
+    tal = [cid for cid in approved if cid in cards and cid not in undone_cards and not (replies.get(cid) or {}).get("built")
+           and ((buildable(cards[cid]) or {}).get("family") == "tal6")]
     for cid in tal:
-        if cid != best_tal and not (replies.get(cid) or {}).get("built"):
-            replies[cid] = {"text": "לא נבנה: בוט 6 סוחר בזוג טיים פריים אחד של שיטת הגאפ, ונשאר הזוג שהצליח יותר בבדיקה",
+        pr = buildable(cards[cid])["pair"][:2]
+        same = [x for x in tal if buildable(cards[x])["pair"][:2] == pr]
+        if cid != max(same, key=_score):
+            replies[cid] = {"text": "לא נבנה: אושר כרטיס חזק יותר על אותו זוג טיים פריים של שיטת הגאפ, והוא נבנה",
                             "at": at, "by": "builder", "built": "skipped"}
-            did.append(f"bot6: {cid} skipped (one pair)")
+            did.append(f"bot6: {cid} skipped (a stronger card on the same pair)")
     # 2) approved, not built yet -> into the bot
     for cid in approved:
         c = cards.get(cid)

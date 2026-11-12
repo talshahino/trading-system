@@ -31,6 +31,8 @@ RISK_TAL = 0.004
 # the method's tracks (each approved by the manager on its own backtest, 12.11.2026):
 #   tal    1 hour / 5 minutes   card abb187377383  2026 unseen +0.18R / 254 trades
 #   tal4h  4 hours / 1 hour     card 6694a91a9563  2026 unseen +0.07R / 35 trades (user: "maybe there are more pairs")
+# These are the fallback: live/watch_own.py lays live/bots/bot6.json over them on every load ("tal" = the main track,
+# "tal_tracks" = the others, "risk" per track - 13.11.2026), where agents/builder.py builds approved cards at once.
 TAL_TRACKS = {"tal": (("1h", "5m", 2), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"}),
               "tal4h": (("4h", "1h", 1), {"GBODY": 1.5, "MIN_GAP": 0.6, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 48, "PROT": "none"})}
 TAL_PAIR, TAL_CFG = TAL_TRACKS["tal"]

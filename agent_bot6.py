@@ -112,12 +112,84 @@ def tal_load(s):
     return TG.Data(s, df, cost, shut, late, 2 * tick, cal)
 
 
+def live_tracks():
+    """What bot 6 trades now: {track: (pair name, cfg)} - the main track ("tal") and the others ("tal_tracks", the
+    code's tracks where the file has none), as live/watch_own.py reads them."""
+    out = {k: (f"{p[0]}/{p[1]}", dict(c)) for k, (p, c) in FA.TAL_TRACKS.items()}
+    try:
+        s6 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8"))
+        tal = s6.get("tal") or {}
+        if tal.get("pair") and isinstance(tal.get("cfg"), dict):
+            out["tal"] = (f"{tal['pair'][0]}/{tal['pair'][1]}", {**FA.TAL_CFG, **tal["cfg"]})
+        for k, v in (s6.get("tal_tracks") or {}).items():
+            if k != "tal" and (v or {}).get("pair") and isinstance(v.get("cfg"), dict):
+                out[k] = (f"{v['pair'][0]}/{v['pair'][1]}", dict(v["cfg"]))
+    except Exception as e:  # noqa: BLE001
+        print(f"bot6.json not read: {e}")
+    main = out.get("tal", (None,))[0]
+    return {k: v for k, v in out.items() if k == "tal" or v[0] != main}
+
+
+def shared(idx, budget_s):
+    """Shared methods (user, 11.11.2026): what bot 5's agent chose for each pair of the gap method, and what bot 5 trades
+    now, run on bot 6's own world too - as 'search' rows, so they compete on bot 6's train period like any other version
+    (never chosen on 2026)."""
+    try:
+        doc = json.loads(TG.RESULTS.read_text(encoding="utf-8"))
+        s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return 0
+    want = [(pn, (x.get("chosen") or {}).get("cfg")) for pn, x in ((doc.get("bot5") or {}).get("pairs") or {}).items()]
+    want += [(f"{v['pair'][0]}/{v['pair'][1]}", v.get("cfg")) for v in (s5.get("tal_tracks") or {}).values()]
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    t0, done, data, gcs = time.time(), 0, {}, {}
+    idx_dir = TAL_DIR / "idx"
+    idx_dir.mkdir(parents=True, exist_ok=True)
+    for pn, cfg in want:
+        if pn not in pairs or not isinstance(cfg, dict) or not all(k in cfg for k in TG.BASE):
+            continue
+        p, cfg = pairs[pn], TG._norm(dict(cfg))
+        for sym in WORLD["symbols"]:
+            key = f"{p[0]}_{p[1]}_{TG.vid(cfg)}_{sym}"
+            if key in idx or time.time() - t0 > budget_s:
+                continue
+            if sym not in data:
+                try:
+                    data[sym] = tal_load(sym)
+                except Exception:  # noqa: BLE001
+                    data[sym] = None
+            if data[sym] is None:
+                continue
+            t = TG.simulate(data[sym], p, cfg, gcs.setdefault((sym, p[0]), {}))
+            f = TAL_DIR / f"{key}.csv.gz"
+            t.to_csv(f, index=False)
+            idx[key] = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": p[2],
+                        "knob": "search", "val": TG.vid(cfg), "cfg": cfg, "sym": sym, "file": f.name, "n": len(t), "from": "bot5"}
+            (idx_dir / f"{key}.json").write_text(json.dumps(idx[key], default=str))
+            done += 1
+            print(f"  tal_gap bot 5's {pn} on bot 6's world {sym}: {len(t)} trades")
+    return done
+
+
 def tal(budget_s):
-    idx, left = TG.run("bot6", WORLD["symbols"], tal_load, TAL_DIR, budget_s)
+    t0 = time.time()
+    idx, left = TG.run("bot6", WORLD["symbols"], tal_load, TAL_DIR, budget_s * 0.8)
+    shared(idx, budget_s - (time.time() - t0))
     pairs, answers = TG.summarize(idx, WORLD["symbols"], TAL_DIR)
     planned = len(TG.PAIRS) * len(TG.variants()) * len(WORLD["symbols"])
     doc = TG.write_results("bot6", pairs, answers, WORLD, [planned - left, planned])
-    return TG.cards("bot6", pairs, doc.get("bot5"), "בוט 5", risk_pct=FA.RISK_V5 * 100)
+    run = live_tracks()
+    try:            # the bot as a whole, the way the account takes its tracks (information - kept in the results)
+        pf = TG.portfolio(idx, WORLD["symbols"], TAL_DIR, run)
+        if pf:
+            doc["bot6"]["portfolio"] = pf
+            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print(f"tal_gap portfolio failed: {e}")
+    # a card on a pair bot 6 already trades carries what runs as its baseline (approved only if 2026 is better per
+    # trade AND in total); a new pair must have earned on 2024-2025 and on 2026 (it must add to the bot as a whole)
+    return TG.cards("bot6", pairs, doc.get("bot5"), "בוט 5", risk_pct=FA.RISK_TAL * 100,
+                    live={pn: c for pn, c in run.values()})
 
 
 def main():

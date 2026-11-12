@@ -173,8 +173,8 @@ def load_settings():
                 tal = d.get("tal") or {}
                 if tal.get("pair") and tuple(tal["pair"]) in {tuple(p_) for p_ in TG.PAIRS}:
                     FA.TAL_PAIR = tuple(tal["pair"])
-                if isinstance(tal.get("cfg"), dict):
-                    FA.TAL_CFG = {**FA.TAL_CFG, **tal["cfg"]}
+                if isinstance(tal.get("cfg"), dict):    # over the code's rules (not the last load's: a key the
+                    FA.TAL_CFG = {**_TAL0["tal"][1], **tal["cfg"]}    # file dropped, e.g. EXIT, is dropped here too)
                 # the pair / rules the builder wrote are what the main track trades (12.11.2026: before this, fut_step
                 # read FA.TAL_TRACKS only, so an approved card changed the file and not the trades). Another track on
                 # the same pair stops taking new trades (its open ones are still followed to their exit).
@@ -183,10 +183,28 @@ def load_settings():
                 FA.TAL_TRACKS["tal"] = (FA.TAL_PAIR, dict(FA.TAL_CFG))
                 FA.TAL_NAME["tal"] = f"{TG.TF_HE[FA.TAL_PAIR[0]]} / {TG.TF_HE[FA.TAL_PAIR[1]]}"
                 FA.TAL_COMBO["tal"] = "TAL|" + TF_COMBO.get(FA.TAL_PAIR[0], FA.TAL_PAIR[0])
+                # the other tracks are settings too (13.11.2026, bot 6's smart agent - like bot 5's "tal_tracks"): an
+                # approved card on another pair replaces that track's rules or adds a track, built by agents/builder.py.
+                # The main track stays in "tal" above; a "tal" entry here is ignored. Odd entries keep the code's track.
+                tt = d.get("tal_tracks")
+                if isinstance(tt, dict):
+                    pairs_ = {(p_[0], p_[1]): tuple(p_) for p_ in TG.PAIRS}
+                    for trk_, v_ in tt.items():
+                        pr = pairs_.get(tuple((v_ or {}).get("pair") or [])[:2])
+                        cf = (v_ or {}).get("cfg")
+                        if str(trk_) == "tal" or not pr or not isinstance(cf, dict) \
+                                or not all(k in cf for k in ("GBODY", "MIN_GAP", "SW", "MIN_RR", "EXPIRY", "PROT")):
+                            continue
+                        trk_ = str(trk_)
+                        FA.TAL_TRACKS[trk_] = (pr, dict(cf))
+                        FA.TAL_NAME[trk_] = f"{TG.TF_HE[pr[0]]} / {TG.TF_HE[pr[1]]}"
+                        if trk_ not in FA.TAL_COMBO:
+                            FA.TAL_COMBO[trk_] = f"TAL|{TF_COMBO.get(pr[0], pr[0])}{pr[1]}"
+                        FA.RISK.setdefault(trk_, FA.RISK_TAL)
                 for trk_ in [k_ for k_, (p_, _) in FA.TAL_TRACKS.items() if k_ != "tal" and tuple(p_) == tuple(FA.TAL_PAIR)]:
                     FA.TAL_TRACKS.pop(trk_)
                 for trk, v in (d.get("risk") or {}).items():
-                    if trk in FA.RISK and 0 <= float(v) <= 0.02:
+                    if (trk in FA.RISK or trk in FA.TAL_TRACKS) and 0 <= float(v) <= 0.02:
                         FA.RISK[trk] = float(v)
                 FA.RISK_TAL = FA.RISK.get("tal", FA.RISK_TAL)
             print(f"settings of {n} loaded: {json.dumps(d.get('tracks') or d.get('tal'), default=str)[:300]}")

@@ -135,6 +135,16 @@ def key_of(combo):
     return hashlib.sha1(combo.encode()).hexdigest()[:10]
 
 
+# instruments whose history source changed: results made before are of another market and are run again
+# (12.11.2026: FTMO's ASML and RACE are the US listings, agents/ftmo_universe.py)
+SOURCE_SINCE = {"ASML": "2026-11-12T16:00:00+00:00", "RACE": "2026-11-12T16:00:00+00:00"}   # after the fix is installed on the bots' computer
+
+
+def stale_source(doc):
+    sym = str((doc or {}).get("combo") or "").split("|")[-1]
+    return sym in SOURCE_SINCE and str(doc.get("at") or "") < SOURCE_SINCE[sym]
+
+
 class Store:
     def __init__(self, bot):
         self.dir = ROOT / "reports" / "agents" / bot / "exp"
@@ -145,7 +155,8 @@ class Store:
 
     def get(self, fam, combo):
         p = self.path(fam, combo)
-        return json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+        d = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+        return None if stale_source(d) else d
 
     def put(self, fam, combo, doc):
         self.path(fam, combo).write_text(json.dumps(doc, ensure_ascii=False, default=str), encoding="utf-8")
@@ -173,8 +184,11 @@ def trades_2026(t):
     if t is None or t.empty:
         return []
     t = t[pd.to_datetime(t["time"], utc=True, format="ISO8601") >= T_SPLIT]
-    a = pd.to_datetime(t["time"], utc=True, format="ISO8601").astype("int64") // 60_000_000_000
-    b = pd.to_datetime(t["exit_time"].fillna(t["time"]), utc=True, format="ISO8601").astype("int64") // 60_000_000_000
+    # minutes from the time itself, not from the storage unit: pandas 3 keeps these times in microseconds, so the old
+    # "int64 // 60e9" gave 1000-minute steps and the whole-bot replay put all of 2026 into ~20 days of 1970 (12.11.2026)
+    ep, mn = pd.Timestamp("1970-01-01", tz="UTC"), pd.Timedelta(minutes=1)
+    a = (pd.to_datetime(t["time"], utc=True, format="ISO8601") - ep) // mn
+    b = (pd.to_datetime(t["exit_time"].fillna(t["time"]), utc=True, format="ISO8601") - ep) // mn
     return [[int(x), int(y), int(d), round(float(r), 3)] for x, y, d, r in zip(a, b, t["dir"].fillna(0), t["r"])]
 
 
@@ -213,9 +227,24 @@ def run_rules(combos, fam, budget_min, extra=None):
     return t, rows
 
 
+def legacy_tr(d):
+    """Trades stored before the minutes fix (12.11.2026): their times are in 1000-minute steps (2026 ~ 29,500)."""
+    return any(tr and tr[0][0] < 10_000_000 for tr in (d.get("tr") or {}).values())
+
+
+def fixing(bot):
+    """The bot's strategies its agent must try to fix first (data/agents/fix_attempts.json, status trying): run first."""
+    try:
+        fa = json.loads((ROOT / "data/agents/fix_attempts.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return set()
+    return {k.split("|", 1)[1] for k, v in fa.items() if k.startswith(bot + "|") and (v or {}).get("status") == "trying"}
+
+
 def experiments(bot, budget_s, where):
     st = Store(bot)
     todo = []
+    fixing_ = fixing(bot)
     for combo in bot_combos(bot):
         sym = combo.split("|")[2]
         if not runs_here(sym, where):
@@ -224,7 +253,9 @@ def experiments(bot, budget_s, where):
             age = st.age_days(fam, combo)
             d = st.get(fam, combo) or {}
             if age >= RERUN_DAYS or (d.get("variants") and "tr" not in d):    # (12.11.2026: trades for the whole-bot check)
-                todo.append((0 if age == 999 else 1, fam, -age, sym, combo))
+                todo.append((0 if age == 999 or combo in fixing_ else 1, fam, -age, sym, combo))
+            elif d.get("variants") and legacy_tr(d):                         # trades stored in 1000-minute steps
+                todo.append((2, fam, -age, sym, combo))
     todo.sort(key=lambda x: (x[0], x[3], x[1], x[2]))          # never-run first, one instrument's combos together
     t0, done = time.time(), 0
     groups = {}
@@ -386,6 +417,8 @@ def cards_for(bot):
     # the scout's strategies
     for f in sorted(st.dir.glob("new_*.json")):
         d = json.loads(f.read_text(encoding="utf-8"))
+        if stale_source(d):
+            continue
         s = d.get("stats")
         if not s:
             continue

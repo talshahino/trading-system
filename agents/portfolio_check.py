@@ -59,7 +59,9 @@ def mults(bot):
 
 
 def exp(bot, fam, combo):
-    return _read(ROOT / "reports" / "agents" / bot / "exp" / f"{fam}_{combo.replace('|', '_').replace('/', '-')}.json")
+    from agent_portfolio import stale_source
+    d = _read(ROOT / "reports" / "agents" / bot / "exp" / f"{fam}_{combo.replace('|', '_').replace('/', '-')}.json")
+    return None if stale_source(d) else d
 
 
 def current_trades(bot, combo, cfg):
@@ -84,10 +86,18 @@ def trades_of_card(bot, card):
     return combo, (d.get("tr") or {}).get(ch.get("to"))
 
 
+def _minutes(tr):
+    """Trades stored before the minutes fix (12.11.2026) are in 1000-minute steps (2026 ~ 29,500 instead of ~29.5
+    million): put them at the middle of their step until the agents re-run them (agent_portfolio.legacy_tr)."""
+    if tr and tr[0][0] < 10_000_000:
+        return [[a * 1000 + 500, b * 1000 + 500, d, r] for a, b, d, r in tr]
+    return tr
+
+
 def replay(book, risk):
     """book: {combo: (trades, multiplier)} -> account numbers in % of the opening balance."""
     rows = [(a, b, d, r * risk * 100 * m, risk * 100 * m) for combo, (tr, m) in book.items() if tr and m > 0
-            for a, b, d, r in tr]
+            for a, b, d, r in _minutes(tr)]
     if not rows:
         return {"trades": 0, "total": 0.0, "worst_day": 0.0, "max_dd": 0.0, "near_days": 0, "max_open": 0.0, "max_side": 0.0}
     t = pd.DataFrame(rows, columns=["a", "b", "d", "pnl", "risk"])

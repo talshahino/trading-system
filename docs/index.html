@@ -2129,6 +2129,15 @@ $("lrBtn").onclick = async () => {
       const r = rs[+el.dataset.i], box = $("lrD" + el.dataset.i);
       if (box.innerHTML) { box.innerHTML = ""; return; }
       const d = await (await fetch(LR(`${r.bot}/${r.day}.json`))).json();
+      // the bot agent's conclusions (its nightly run answers the loss task in data/agents/replies.json)
+      let ans = "";
+      try {
+        const rp = await (await fetch(`https://raw.githubusercontent.com/talshahino/trading-system/main/data/agents/replies.json?t=${Math.floor(Date.now() / 60000)}`)).json();
+        const tk = (rp._tasks || []).find(x => x.from === "loss_review" && x.report === `reports/agents/losses/${r.bot}/${r.day}.json`);
+        const s = tk && (tk.status || {})[r.bot];
+        ans = s && s.text ? `<h4 style="margin:10px 0 4px">מסקנות הסוכן של הבוט</h4><p style="margin:4px 0;white-space:pre-wrap">${esc(s.text)}</p><p class="mut">${esc(s.state === "done" ? "טופל" : "בטיפול")} · ${esc((s.at || "").slice(0, 16).replace("T", " "))}</p>`
+            : `<h4 style="margin:10px 0 4px">מסקנות הסוכן של הבוט</h4><p class="mut">עוד לא - הסוכן של הבוט חוקר בריצת הלילה (02:47-03:47), והמסקנות יופיעו כאן.</p>`;
+      } catch (e) { ans = ""; }
       const tr = d.trend || {}, l7 = tr.last7 || {}, p7 = tr.prev7 || {};
       box.innerHTML = `<div style="margin-top:8px">${(d.summary || []).map(s => `<p style="margin:4px 0">${esc(s)}</p>`).join("")}</div>
         <p style="margin:6px 0" class="mut">רווח גולמי ${Number(d.gross_profit).toLocaleString()}$ · הפסד גולמי ${Number(d.gross_loss).toLocaleString()}$ · מקדם רווח ${d.profit_factor ?? "-"} · עלויות ${Number(d.costs).toLocaleString()}$</p>
@@ -2136,6 +2145,7 @@ $("lrBtn").onclick = async () => {
         <div style="overflow-x:auto"><table style="width:100%;font-size:13px;border-collapse:collapse"><tr><th align="right">אסטרטגיה</th><th>כיוון</th><th>R</th><th>$</th><th>MFE</th><th align="right">סיבה</th></tr>
         ${(d.losers || []).map(x => `<tr style="border-top:1px solid var(--line,#ddd)"><td>${esc(x.combo)}${x.recurring ? " ↻" : ""}</td><td align="center">${esc(x.side)}</td><td align="center">${x.r}</td><td align="center">${Math.round(x.net).toLocaleString()}</td><td align="center">${x.mfe_r ?? "-"}</td><td>${esc(x.cause_he)}</td></tr>`).join("")}</table></div>
         <h4 style="margin:10px 0 4px">מה עושים</h4><ol style="margin:0;padding-inline-start:18px">${(d.actions || []).map(a => `<li style="margin:4px 0">${esc(a.task)}</li>`).join("")}</ol>
+        ${ans}
         <p class="mut" style="margin-top:8px">מגמה: ${l7.loss_days ?? 0} ימי הפסד בשבוע האחרון (ממוצע ${l7.avg_loss_pct ?? 0}%), מול ${p7.loss_days ?? 0} בשבוע שלפני (${p7.avg_loss_pct ?? 0}%)${tr.improving === true ? " - ההפסדים קטנים" : tr.improving === false ? " - ההפסדים לא קטנים" : ""}.</p>`;
     });
   } catch (e) { $("lrBody").innerHTML = '<div class="empty">לא נטען, נסה שוב</div>'; }

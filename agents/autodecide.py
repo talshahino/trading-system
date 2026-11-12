@@ -50,6 +50,13 @@ STAR_MULT = 0.7                                 # "maybe luck": the lowered risk
 STAR_GAIN, STAR_N = 0.10, 100                   # ... when the gain is under 0.10R a trade, or under 100 trades shown
 
 
+def _total(s):
+    """The period's total R (time-weighted trades x R a trade), or None."""
+    if not s or s.get("mean") is None:
+        return None
+    return float(s.get("eff_n") or s.get("n") or 0) * float(s["mean"])
+
+
 def maybe_luck(c):
     u, b = c.get("unseen") or {}, c.get("baseline") or {}
     if u.get("mean") is None:
@@ -195,6 +202,16 @@ def decide(bots, now=None):
                     "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה")
             why, star, mult, whole = c["verdict"], False, None, None
             is_new = did not in old
+            tot_new, tot_base = _total(c.get("unseen")), _total(c.get("baseline"))
+            if is_new and c["kind"] == "improve" and tot_new is not None and tot_base is not None and tot_new <= tot_base:
+                # THE GOAL (user, 12.11.2026, data/agents/objective.md): the TOTAL profit, not R per trade - a change
+                # goes in only if its 2026 total beats what runs now (12.11: a built change earned more a trade, but
+                # fewer trades made less in all - it had to be taken back)
+                why = f"ב־2026 בסך הכל {tot_new:+.1f}R מול {tot_base:+.1f}R היום - לא מגדיל את הרווח הכולל"
+                add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
+                     "title": c["title"], "decision": "declined", "why": why, "effect": "לא ייבנה בבוט"})
+                c["status"], c["by"], c["verdict"] = "rejected", "manager", c["verdict"] + " · " + why
+                continue
             if is_new and c["kind"] in ("improve", "new"):
                 # the whole bot with and without it, on 2026 (agents/portfolio_check.py; user, 12.11.2026)
                 try:

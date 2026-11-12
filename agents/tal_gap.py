@@ -376,6 +376,29 @@ def _cfg_runs(p, cfg, symbols, idx):
     return [v for v in idx.values() if v["pair"] == pair_name(p) and v["cfg"] == cfg and v["sym"] in symbols]
 
 
+def _norm(c):
+    if c.get("EXIT") == "none":
+        c.pop("EXIT")                                   # "none" is the base: the same configuration, the same name
+    return c
+
+
+def _neighbours(best, keys):
+    """One knob moved (every knob, every value), then two knobs moved together."""
+    vals = {k: KNOBS[k] + [BASE.get(k, "none")] for k in keys}
+    for k in keys:
+        for v in vals[k]:
+            yield _norm(dict(best, **{k: v}))
+    for i, k1 in enumerate(keys):
+        for k2 in keys[i + 1:]:
+            for v1 in vals[k1]:
+                if v1 == best.get(k1, "none"):
+                    continue
+                for v2 in vals[k2]:
+                    if v2 == best.get(k2, "none"):
+                        continue
+                    yield _norm(dict(best, **{k1: v1, k2: v2}))
+
+
 def search(symbols, load, out_dir, idx, idx_dir, budget_s):
     out_dir = Path(out_dir)
     t0, done = time.time(), 0
@@ -425,17 +448,13 @@ def search(symbols, load, out_dir, idx, idx_dir, budget_s):
                 if sc is None:
                     break
                 st["score"] = sc
-            # the next untried neighbour of the best: one knob moved, round robin
+            # the next untried neighbour of the best: one knob moved, round robin; once every one-knob neighbour was
+            # tried, two knobs moved together (manager, 12.11.2026: the one-knob search reached a local best on
+            # pairs and stopped - the user: no agent stops searching)
             nb = None
-            for k in keys:
-                for v in KNOBS[k] + [BASE.get(k, "none")]:
-                    c = dict(st["best"], **{k: v})
-                    if c.get("EXIT") == "none":
-                        c.pop("EXIT")                   # "none" is the base: the same configuration, the same name
-                    if c != st["best"] and vid(c) not in st["tried"]:
-                        nb = c
-                        break
-                if nb:
+            for c in _neighbours(st["best"], keys):
+                if c != st["best"] and vid(c) not in st["tried"]:
+                    nb = c
                     break
             if nb is None:
                 continue                               # a local best: every neighbour tried

@@ -299,6 +299,7 @@ def host_doc(st, kind):
             "light_at": st.get("light_at"), "smart_at": st.get("smart_at"),
             "every_min": {"light": LIGHT_EVERY // 60, "smart": SMART_EVERY // 60},
             "smart_minutes": st.get("smart_minutes"), "agent_errors": st.get("agent_errors") or [],
+            "agent_last": st.get("agent_last") or {},
             "box_pub": box_pub(), "alpaca": bool(secrets()),
             "last_error": st.get("last_error"),
             "errors_in_row": st.get("errors_in_row", 0)}
@@ -375,11 +376,22 @@ def _smart(st, log, t0):
     except Exception:  # noqa: BLE001
         plan = {}
     errs, mins_all = [], {}
-    for name, args, mins in AGENTS:
+    # the agent that waited longest goes first (manager, 12.11.2026: every code install restarts the manager, which
+    # stopped the round in bot 5's 120 minutes and started it again from bot 5 - 8 installs in one day and bots 1-4,
+    # 6 and 7 got no turn for 5+ hours). Each agent is stamped when it starts, so a stopped round goes on with the
+    # agents that did not get their turn.
+    if "agent_last" not in st:                # first time: bot 5 ran again and again on 12.11 - the others first
+        now_s = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
+        st["agent_last"] = {"bot5": now_s, "bot5-new": now_s}
+    last = st["agent_last"]
+    order = sorted(AGENTS, key=lambda a: _ts(last.get(a[0])) or 0.0)
+    for name, args, mins in order:
         mins = float(plan.get(name, mins))
         mins_all[name] = mins
         if mins <= 0:
             continue
+        last[name] = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
+        _save(st)
         before = snapshot()
         try:
             run(st, args + ["--minutes", str(mins)], timeout=int(mins * 60 + 3600), logname=f"agent_{name}.log")

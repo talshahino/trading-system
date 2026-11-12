@@ -1,7 +1,51 @@
 {
- "updated": "2026-11-12T20:25:28+00:00",
- "new": [],
+ "updated": "2026-11-12T20:37:16+00:00",
+ "new": [
+  "705b7d669cca",
+  "58dda0dadcaa"
+ ],
  "decisions": [
+  {
+   "id": "705b7d669cca",
+   "bot": "bot4",
+   "type": "card",
+   "card": "be59b1334605",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC001|1Min|USDCAD · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.03R לעסקה, 91.0 עסקאות אפקטיביות) · בלי בדיקת בוט שלם עדיין (העסקאות של חלק מהאסטרטגיות עוד לא נשמרו) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "at": "2026-11-12T20:37:16+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "58dda0dadcaa",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC001|1Min|USDCAD",
+   "title": "SC001|1Min|USDCAD: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.03R לעסקה, 91.0 עסקאות אפקטיביות) · בלי בדיקת בוט שלם עדיין (העסקאות של חלק מהאסטרטגיות עוד לא נשמרו) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "705b7d669cca",
+   "star": true,
+   "action": {
+    "bot": "bot4",
+    "combo": "SC001|1Min|USDCAD",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-12T20:37:16+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "c6d1f0245570",
    "bot": "bot3",

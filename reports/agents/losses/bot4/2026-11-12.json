@@ -1,0 +1,235 @@
+{
+ "bot": "bot4",
+ "day": "2026-11-12",
+ "at": "2026-11-12T23:02:11+00:00",
+ "summary": [
+  "בוט 4 · 2026-11-12: -849$ (-0.84% מיתרת הפתיחה 100,967$), 8 עסקאות - 2 רווח, 6 הפסד. ניצול המגבלה היומית: 19% ממגבלת הבוט (4.5%), 17% ממגבלת FTMO (5%).",
+  "מול הבדיקה: -3.61R ביום מול +1.37R צפוי (פיזור ±3.14R) - יום רע רגיל, בתוך הרעש הסטטיסטי.",
+  "גורמי ההפסד: הפסד רגיל של האסטרטגיה 2, ניהול העסקה 2, כניסה / כיוון 1, סגירה בגלל כלל 1.",
+  "ההפסד הגדול: FR01|1Hour|EURUSD (-450$, 26.2% מההפסדים).",
+  "ריכוז: 3 הפסדים יחד בקנייה של fx (-1,195$).",
+  "חוזר: FR08|5Min|SPCX, SE02|1Hour|GBPJPY - הפסד ב־3 ימים ומעלה בחודש האחרון. דפוס, לא מזל."
+ ],
+ "pnl": -848.74,
+ "pnl_pct": -0.841,
+ "open_balance": 100967.1,
+ "limit_used": {
+  "bot": 18.7,
+  "ftmo": 16.8
+ },
+ "trades": 8,
+ "winners": 2,
+ "losers_n": 6,
+ "gross_profit": 869.87,
+ "gross_loss": 1718.61,
+ "profit_factor": 0.51,
+ "costs": 0.34,
+ "day_r": -3.61,
+ "expected_r": 1.37,
+ "expected_sd": 3.14,
+ "z": -1.58,
+ "normal": true,
+ "causes": {
+  "normal": 2,
+  "management": 2,
+  "entry": 1,
+  "rules": 1
+ },
+ "correlated": [
+  {
+   "class": "fx",
+   "side": "קנייה",
+   "trades": 3,
+   "loss": -1195.39
+  }
+ ],
+ "top_loser": "FR01|1Hour|EURUSD",
+ "top_share": 26.2,
+ "recurring": [
+  "FR08|5Min|SPCX",
+  "SE02|1Hour|GBPJPY"
+ ],
+ "recurring_causes": [
+  "entry"
+ ],
+ "losers": [
+  {
+   "combo": "FR01|1Hour|EURUSD",
+   "side": "קנייה",
+   "open_t": "2026-11-12T06:00:08+00:00",
+   "close_t": "2026-11-12T15:20:04+00:00",
+   "entry": 1.10822,
+   "exit": 1.10579,
+   "stop": 1.10579,
+   "target": 1.11548,
+   "r": -1.0,
+   "net": -449.55,
+   "costs": 0.0,
+   "mfe_r": 0.84,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 1.10579]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "FR01|1Hour|GBPUSD",
+   "side": "קנייה",
+   "open_t": "2026-11-12T06:00:13+00:00",
+   "close_t": "2026-11-12T15:14:55+00:00",
+   "entry": 1.32608,
+   "exit": 1.32403,
+   "stop": 1.32403,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -448.95,
+   "costs": 0.0,
+   "mfe_r": 0.91,
+   "mae_r": 0.98,
+   "exit_reason": "[sl 1.32403]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "SE02|1Hour|GBPJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-12T15:00:14+00:00",
+   "close_t": "2026-11-12T15:42:03+00:00",
+   "entry": 211.786,
+   "exit": 211.463,
+   "stop": 211.463,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -296.89,
+   "costs": 0.0,
+   "mfe_r": 0.03,
+   "mae_r": 0.99,
+   "exit_reason": "[sl 211.463]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": true
+  },
+  {
+   "combo": "BK05|15Min|INTC",
+   "side": "קנייה",
+   "open_t": "2026-11-12T16:15:03+00:00",
+   "close_t": "2026-11-12T20:45:03+00:00",
+   "entry": 62.46,
+   "exit": 61.44,
+   "stop": 60.75,
+   "target": 0.0,
+   "r": -0.596,
+   "net": -282.54,
+   "costs": 0.0,
+   "mfe_r": 0.17,
+   "mae_r": 0.71,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "FR08|5Min|SPCX",
+   "side": "קנייה",
+   "open_t": "2026-11-12T16:25:07+00:00",
+   "close_t": "2026-11-12T16:33:09+00:00",
+   "entry": 143.49,
+   "exit": 142.74,
+   "stop": 142.74,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -231.0,
+   "costs": 0.0,
+   "mfe_r": 1.12,
+   "mae_r": 0.09,
+   "exit_reason": "[sl 142.74]",
+   "cause": "management",
+   "cause_he": "ניהול העסקה",
+   "recurring": true
+  },
+  {
+   "combo": "FR08|5Min|SPCX",
+   "side": "מכירה",
+   "open_t": "2026-11-12T15:50:04+00:00",
+   "close_t": "2026-11-12T15:50:09+00:00",
+   "entry": 142.6,
+   "exit": 142.71,
+   "stop": 142.71,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -9.68,
+   "costs": 0.0,
+   "mfe_r": 14.27,
+   "mae_r": -13.82,
+   "exit_reason": "[sl 142.71]",
+   "cause": "management",
+   "cause_he": "ניהול העסקה",
+   "recurring": true
+  }
+ ],
+ "actions": [
+  {
+   "combo": "SE02|1Hour|GBPJPY",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "SE02|1Hour|GBPJPY: נעצר בלי לזוז לטובה (MFE 0.03R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "BK05|15Min|INTC",
+   "cause": "rules",
+   "priority": [],
+   "task": "BK05|15Min|INTC: נסגר בגלל כלל (session end) ב־-0.596R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "FR08|5Min|SPCX",
+   "cause": "management",
+   "priority": [
+    "manage"
+   ],
+   "task": "FR08|5Min|SPCX: היה ב־1.12R רווח ונסגר ב־-1.0R. לבדוק נקודת איזון מוקדמת יותר / יציאה חלקית / יעד קרוב יותר, ולהציע כרטיס."
+  },
+  {
+   "combo": "FR08|5Min|SPCX",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "FR08|5Min|SPCX: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  },
+  {
+   "combo": "SE02|1Hour|GBPJPY",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "SE02|1Hour|GBPJPY: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  },
+  {
+   "combo": null,
+   "cause": "correlated",
+   "priority": [],
+   "task": "3 הפסדים יחד בקנייה של fx (-1,195$): להציע תקרה לחשיפה לאותו צד באותו סוג נכס, לבדוק בבדיקת הבוט השלם."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 2,
+   "avg_loss_pct": -0.451,
+   "worst_pct": -0.841
+  },
+  "prev7": {
+   "loss_days": 1,
+   "avg_loss_pct": -0.466,
+   "worst_pct": -0.466
+  },
+  "improving": false
+ }
+}

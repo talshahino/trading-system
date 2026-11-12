@@ -1,0 +1,183 @@
+{
+ "bot": "bot2",
+ "day": "2026-11-12",
+ "at": "2026-11-12T23:02:10+00:00",
+ "summary": [
+  "בוט 2 · 2026-11-12: -818$ (-0.74% מיתרת הפתיחה 110,933$), 6 עסקאות - 1 רווח, 5 הפסד. ניצול המגבלה היומית: 16% ממגבלת הבוט (4.5%), 15% ממגבלת FTMO (5%).",
+  "מול הבדיקה: -1.59R ביום מול +0.94R צפוי (פיזור ±4.22R) - יום רע רגיל, בתוך הרעש הסטטיסטי.",
+  "גורמי ההפסד: סגירה בגלל כלל 3, הפסד רגיל של האסטרטגיה 2.",
+  "ההפסד הגדול: QB11|1Hour|USDJPY (-450$, 31.2% מההפסדים).",
+  "ריכוז: 3 הפסדים יחד בקנייה של stock (-565$)."
+ ],
+ "pnl": -818.09,
+ "pnl_pct": -0.737,
+ "open_balance": 110932.75,
+ "limit_used": {
+  "bot": 16.4,
+  "ftmo": 14.7
+ },
+ "trades": 6,
+ "winners": 1,
+ "losers_n": 5,
+ "gross_profit": 623.0,
+ "gross_loss": 1441.09,
+ "profit_factor": 0.43,
+ "costs": 0.0,
+ "day_r": -1.59,
+ "expected_r": 0.94,
+ "expected_sd": 4.22,
+ "z": -0.6,
+ "normal": true,
+ "causes": {
+  "rules": 3,
+  "normal": 2
+ },
+ "correlated": [
+  {
+   "class": "stock",
+   "side": "קנייה",
+   "trades": 3,
+   "loss": -564.55
+  }
+ ],
+ "top_loser": "QB11|1Hour|USDJPY",
+ "top_share": 31.2,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "QB11|1Hour|USDJPY",
+   "side": "מכירה",
+   "open_t": "2026-11-12T11:00:05+00:00",
+   "close_t": "2026-11-12T11:42:59+00:00",
+   "entry": 159.615,
+   "exit": 159.713,
+   "stop": 159.713,
+   "target": 158.822,
+   "r": -1.0,
+   "net": -449.77,
+   "costs": 0.0,
+   "mfe_r": 0.5,
+   "mae_r": 0.89,
+   "exit_reason": "[sl 159.713]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "SE02|1Hour|USDJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-12T15:00:06+00:00",
+   "close_t": "2026-11-12T16:43:25+00:00",
+   "entry": 159.868,
+   "exit": 159.609,
+   "stop": 159.609,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -426.77,
+   "costs": 0.0,
+   "mfe_r": 0.68,
+   "mae_r": 1.08,
+   "exit_reason": "[sl 159.609]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "MQ11|4Hour|MSTR",
+   "side": "קנייה",
+   "open_t": "2026-11-12T16:15:46+00:00",
+   "close_t": "2026-11-12T20:45:02+00:00",
+   "entry": 118.78,
+   "exit": 115.4,
+   "stop": 112.65,
+   "target": 0.0,
+   "r": -0.551,
+   "net": -331.24,
+   "costs": 0.0,
+   "mfe_r": 0.14,
+   "mae_r": 0.65,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "TV36|1Hour|QCOM",
+   "side": "קנייה",
+   "open_t": "2026-11-12T15:16:10+00:00",
+   "close_t": "2026-11-12T20:45:02+00:00",
+   "entry": 179.44,
+   "exit": 177.06,
+   "stop": 173.54,
+   "target": 193.21,
+   "r": -0.403,
+   "net": -195.16,
+   "costs": 0.0,
+   "mfe_r": 0.65,
+   "mae_r": 0.54,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "TV13|15Min|TSLA",
+   "side": "קנייה",
+   "open_t": "2026-11-12T20:30:04+00:00",
+   "close_t": "2026-11-12T20:45:02+00:00",
+   "entry": 397.8,
+   "exit": 397.45,
+   "stop": 389.45,
+   "target": 0.0,
+   "r": -0.042,
+   "net": -38.15,
+   "costs": 0.0,
+   "mfe_r": 0.23,
+   "mae_r": 0.55,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "MQ11|4Hour|MSTR",
+   "cause": "rules",
+   "priority": [],
+   "task": "MQ11|4Hour|MSTR: נסגר בגלל כלל (session end) ב־-0.551R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "TV36|1Hour|QCOM",
+   "cause": "rules",
+   "priority": [],
+   "task": "TV36|1Hour|QCOM: נסגר בגלל כלל (session end) ב־-0.403R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "TV13|15Min|TSLA",
+   "cause": "rules",
+   "priority": [],
+   "task": "TV13|15Min|TSLA: נסגר בגלל כלל (session end) ב־-0.042R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": null,
+   "cause": "correlated",
+   "priority": [],
+   "task": "3 הפסדים יחד בקנייה של stock (-565$): להציע תקרה לחשיפה לאותו צד באותו סוג נכס, לבדוק בבדיקת הבוט השלם."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 1,
+   "avg_loss_pct": -0.737,
+   "worst_pct": -0.737
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ }
+}

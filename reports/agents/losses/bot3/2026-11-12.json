@@ -1,0 +1,80 @@
+{
+ "bot": "bot3",
+ "day": "2026-11-12",
+ "at": "2026-11-12T23:02:11+00:00",
+ "summary": [
+  "בוט 3 · 2026-11-12: -20$ (-0.02% מיתרת הפתיחה 100,264$), 2 עסקאות - 1 רווח, 1 הפסד. ניצול המגבלה היומית: 0% ממגבלת הבוט (4.5%), 0% ממגבלת FTMO (5%).",
+  "מול הבדיקה: -0.06R ביום מול +0.19R צפוי (פיזור ±1.29R) - יום רע רגיל, בתוך הרעש הסטטיסטי.",
+  "גורמי ההפסד: סגירה בגלל כלל 1.",
+  "ההפסד הגדול: SS06|4Hour|MSTR (-23$, 100% מההפסדים)."
+ ],
+ "pnl": -20.4,
+ "pnl_pct": -0.02,
+ "open_balance": 100264.17,
+ "limit_used": {
+  "bot": 0.5,
+  "ftmo": 0.4
+ },
+ "trades": 2,
+ "winners": 1,
+ "losers_n": 1,
+ "gross_profit": 2.64,
+ "gross_loss": 23.04,
+ "profit_factor": 0.11,
+ "costs": 0.0,
+ "day_r": -0.06,
+ "expected_r": 0.19,
+ "expected_sd": 1.29,
+ "z": -0.2,
+ "normal": true,
+ "causes": {
+  "rules": 1
+ },
+ "correlated": [],
+ "top_loser": "SS06|4Hour|MSTR",
+ "top_share": 100.0,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "SS06|4Hour|MSTR",
+   "side": "מכירה",
+   "open_t": "2026-11-12T20:42:10+00:00",
+   "close_t": "2026-11-12T20:45:00+00:00",
+   "entry": 114.94,
+   "exit": 115.42,
+   "stop": 122.41,
+   "target": 101.17,
+   "r": -0.064,
+   "net": -23.04,
+   "costs": 0.0,
+   "mfe_r": -0.02,
+   "mae_r": 0.03,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "SS06|4Hour|MSTR",
+   "cause": "rules",
+   "priority": [],
+   "task": "SS06|4Hour|MSTR: נסגר בגלל כלל (session end) ב־-0.064R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 2,
+   "avg_loss_pct": -0.503,
+   "worst_pct": -0.987
+  },
+  "prev7": {
+   "loss_days": 1,
+   "avg_loss_pct": -0.084,
+   "worst_pct": -0.084
+  },
+  "improving": false
+ }
+}

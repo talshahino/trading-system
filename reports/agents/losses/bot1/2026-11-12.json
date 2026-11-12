@@ -1,0 +1,498 @@
+{
+ "bot": "bot1",
+ "day": "2026-11-12",
+ "at": "2026-11-12T23:02:10+00:00",
+ "summary": [
+  "בוט 1 · 2026-11-12: -2,928$ (-2.94% מיתרת הפתיחה 99,605$), 19 עסקאות - 3 רווח, 16 הפסד. ניצול המגבלה היומית: 65% ממגבלת הבוט (4.5%), 59% ממגבלת FTMO (5%).",
+  "מול הבדיקה: -10.69R ביום מול +1.92R צפוי (פיזור ±5.51R) - חריג: הרבה מתחת למה שהבדיקה מאפשרת.",
+  "גורמי ההפסד: כניסה / כיוון 5, הפסד רגיל של האסטרטגיה 5, סגירה בגלל כלל 5, ביצוע (החלקה / פער / עלויות) 1.",
+  "ההפסד הגדול: TV11|4Hour|AUDUSD (-867$, 24.2% מההפסדים).",
+  "ריכוז: 5 הפסדים יחד בקנייה של fx (-1,987$); 5 הפסדים יחד בקנייה של stock (-411$).",
+  "חוזר: SE02|1Hour|USDJPY, TT45|1Hour|GBPJPY, TV39|1Hour|JP225 - הפסד ב־3 ימים ומעלה בחודש האחרון. דפוס, לא מזל."
+ ],
+ "pnl": -2927.51,
+ "pnl_pct": -2.939,
+ "open_balance": 99605.21,
+ "limit_used": {
+  "bot": 65.3,
+  "ftmo": 58.8
+ },
+ "trades": 19,
+ "winners": 3,
+ "losers_n": 16,
+ "gross_profit": 650.93,
+ "gross_loss": 3578.44,
+ "profit_factor": 0.18,
+ "costs": 89.44,
+ "day_r": -10.69,
+ "expected_r": 1.92,
+ "expected_sd": 5.51,
+ "z": -2.29,
+ "normal": false,
+ "causes": {
+  "entry": 5,
+  "normal": 5,
+  "rules": 5,
+  "execution": 1
+ },
+ "correlated": [
+  {
+   "class": "fx",
+   "side": "קנייה",
+   "trades": 5,
+   "loss": -1987.46
+  },
+  {
+   "class": "stock",
+   "side": "קנייה",
+   "trades": 5,
+   "loss": -410.95
+  }
+ ],
+ "top_loser": "TV11|4Hour|AUDUSD",
+ "top_share": 24.2,
+ "recurring": [
+  "SE02|1Hour|USDJPY",
+  "TT45|1Hour|GBPJPY",
+  "TV39|1Hour|JP225"
+ ],
+ "recurring_causes": [
+  "entry",
+  "normal"
+ ],
+ "losers": [
+  {
+   "combo": "TV11|4Hour|AUDUSD",
+   "side": "קנייה",
+   "open_t": "2026-11-12T00:00:05+00:00",
+   "close_t": "2026-11-12T00:42:21+00:00",
+   "entry": 0.68445,
+   "exit": 0.68369,
+   "stop": 0.68371,
+   "target": 0.68533,
+   "r": -1.095,
+   "net": -448.74,
+   "costs": 27.7,
+   "mfe_r": 0.16,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 0.68371]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TV11|4Hour|AUDUSD",
+   "side": "קנייה",
+   "open_t": "2026-11-12T04:00:05+00:00",
+   "close_t": "2026-11-12T05:28:58+00:00",
+   "entry": 0.68469,
+   "exit": 0.68324,
+   "stop": 0.68326,
+   "target": 0.68668,
+   "r": -1.049,
+   "net": -418.51,
+   "costs": 13.96,
+   "mfe_r": 0.02,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 0.68326]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TV11|4Hour|USDJPY",
+   "side": "מכירה",
+   "open_t": "2026-11-12T08:00:07+00:00",
+   "close_t": "2026-11-12T15:25:25+00:00",
+   "entry": 159.709,
+   "exit": 159.988,
+   "stop": 159.981,
+   "target": 159.374,
+   "r": -1.055,
+   "net": -397.34,
+   "costs": 11.0,
+   "mfe_r": 0.63,
+   "mae_r": 0.99,
+   "exit_reason": "[sl 159.981]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "TV41|4Hour|NZDUSD",
+   "side": "קנייה",
+   "open_t": "2026-11-11T12:00:07+00:00",
+   "close_t": "2026-11-12T07:23:43+00:00",
+   "entry": 0.55871,
+   "exit": 0.55469,
+   "stop": 0.55469,
+   "target": 0.56648,
+   "r": -1.045,
+   "net": -390.85,
+   "costs": 16.99,
+   "mfe_r": 0.02,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 0.55469]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "SE02|1Hour|USDJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-12T15:00:11+00:00",
+   "close_t": "2026-11-12T16:43:25+00:00",
+   "entry": 159.876,
+   "exit": 159.612,
+   "stop": 159.608,
+   "target": 0.0,
+   "r": -1.015,
+   "net": -373.99,
+   "costs": 10.9,
+   "mfe_r": 0.61,
+   "mae_r": 1.03,
+   "exit_reason": "[sl 159.608]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": true
+  },
+  {
+   "combo": "TT45|15Min|CSCO",
+   "side": "מכירה",
+   "open_t": "2026-11-12T15:00:08+00:00",
+   "close_t": "2026-11-12T16:00:26+00:00",
+   "entry": 100.99,
+   "exit": 101.75,
+   "stop": 101.75,
+   "target": 98.33,
+   "r": -1.005,
+   "net": -357.58,
+   "costs": 1.9,
+   "mfe_r": 0.8,
+   "mae_r": 0.96,
+   "exit_reason": "[sl 101.75]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "TT45|1Hour|GBPJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-09T10:00:07+00:00",
+   "close_t": "2026-11-12T16:43:25+00:00",
+   "entry": 212.072,
+   "exit": 211.3,
+   "stop": 211.313,
+   "target": 213.509,
+   "r": -1.003,
+   "net": -355.37,
+   "costs": -5.13,
+   "mfe_r": 0.75,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 211.313]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": true
+  },
+  {
+   "combo": "TT45|1Hour|WTI",
+   "side": "מכירה",
+   "open_t": "2026-11-12T00:00:09+00:00",
+   "close_t": "2026-11-12T16:57:02+00:00",
+   "entry": 86.382,
+   "exit": 87.62,
+   "stop": 88.872,
+   "target": 82.878,
+   "r": -0.497,
+   "net": -186.94,
+   "costs": 0.0,
+   "mfe_r": 0.39,
+   "mae_r": 0.62,
+   "exit_reason": "restricted news ahead Stand",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "TV60|15Min|ARM",
+   "side": "קנייה",
+   "open_t": "2026-11-12T15:45:06+00:00",
+   "close_t": "2026-11-12T20:45:01+00:00",
+   "entry": 200.62,
+   "exit": 198.44,
+   "stop": 195.5,
+   "target": 208.55,
+   "r": -0.427,
+   "net": -175.04,
+   "costs": 0.64,
+   "mfe_r": 0.76,
+   "mae_r": 0.67,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "TV39|1Hour|JP225",
+   "side": "מכירה",
+   "open_t": "2026-11-12T05:00:07+00:00",
+   "close_t": "2026-11-12T15:58:08+00:00",
+   "entry": 61060.5,
+   "exit": 61385.5,
+   "stop": 62064.37,
+   "target": 0.0,
+   "r": -0.324,
+   "net": -122.0,
+   "costs": 0.0,
+   "mfe_r": 0.64,
+   "mae_r": 0.27,
+   "exit_reason": "[sl 61383.92]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": true
+  },
+  {
+   "combo": "TV21|15Min|ASML",
+   "side": "קנייה",
+   "open_t": "2026-11-12T16:00:18+00:00",
+   "close_t": "2026-11-12T19:16:02+00:00",
+   "entry": 1528.99,
+   "exit": 1498.45,
+   "stop": 1498.45,
+   "target": 0.0,
+   "r": -1.002,
+   "net": -91.8,
+   "costs": 0.18,
+   "mfe_r": 0.06,
+   "mae_r": 0.98,
+   "exit_reason": "[sl 1498.45]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "MQ11|4Hour|MSTR",
+   "side": "קנייה",
+   "open_t": "2026-11-12T16:00:01+00:00",
+   "close_t": "2026-11-12T20:45:02+00:00",
+   "entry": 117.56,
+   "exit": 115.33,
+   "stop": 112.46,
+   "target": 0.0,
+   "r": -0.438,
+   "net": -84.92,
+   "costs": 0.18,
+   "mfe_r": 0.33,
+   "mae_r": 0.58,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "TV11|4Hour|USDJPY",
+   "side": "מכירה",
+   "open_t": "2026-11-12T16:00:21+00:00",
+   "close_t": "2026-11-12T16:40:32+00:00",
+   "entry": 159.909,
+   "exit": 160.026,
+   "stop": 160.017,
+   "target": 159.756,
+   "r": -1.157,
+   "net": -60.55,
+   "costs": 3.86,
+   "mfe_r": 0.09,
+   "mae_r": 0.83,
+   "exit_reason": "[sl 160.017]",
+   "cause": "execution",
+   "cause_he": "ביצוע (החלקה / פער / עלויות)",
+   "recurring": false
+  },
+  {
+   "combo": "TV10|1Hour|US100",
+   "side": "קנייה",
+   "open_t": "2026-11-12T18:00:08+00:00",
+   "close_t": "2026-11-12T18:51:59+00:00",
+   "entry": 28421.43,
+   "exit": 28285.78,
+   "stop": 28286.01,
+   "target": 28694.22,
+   "r": -1.002,
+   "net": -55.62,
+   "costs": 0.0,
+   "mfe_r": 0.03,
+   "mae_r": 0.67,
+   "exit_reason": "[sl 28286.01]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TV55|15Min|AMZN",
+   "side": "קנייה",
+   "open_t": "2026-11-12T20:30:04+00:00",
+   "close_t": "2026-11-12T20:45:02+00:00",
+   "entry": 268.14,
+   "exit": 267.42,
+   "stop": 266.51,
+   "target": 272.47,
+   "r": -0.448,
+   "net": -54.8,
+   "costs": 0.8,
+   "mfe_r": -0.06,
+   "mae_r": 0.46,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "TV33|15Min|MSTR",
+   "side": "קנייה",
+   "open_t": "2026-11-12T15:45:10+00:00",
+   "close_t": "2026-11-12T20:45:02+00:00",
+   "entry": 115.36,
+   "exit": 115.33,
+   "stop": 112.63,
+   "target": 0.0,
+   "r": -0.013,
+   "net": -4.39,
+   "costs": 0.58,
+   "mfe_r": 1.41,
+   "mae_r": 0.28,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TV11|4Hour|AUDUSD",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV11|4Hour|AUDUSD: נעצר בלי לזוז לטובה (MFE 0.16R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV41|4Hour|NZDUSD",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV41|4Hour|NZDUSD: נעצר בלי לזוז לטובה (MFE 0.02R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TT45|1Hour|WTI",
+   "cause": "rules",
+   "priority": [],
+   "task": "TT45|1Hour|WTI: נסגר בגלל כלל (restricted news ahead Stand) ב־-0.497R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "TV60|15Min|ARM",
+   "cause": "rules",
+   "priority": [],
+   "task": "TV60|15Min|ARM: נסגר בגלל כלל (session end) ב־-0.427R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "TV21|15Min|ASML",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV21|15Min|ASML: נעצר בלי לזוז לטובה (MFE 0.06R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "MQ11|4Hour|MSTR",
+   "cause": "rules",
+   "priority": [],
+   "task": "MQ11|4Hour|MSTR: נסגר בגלל כלל (session end) ב־-0.438R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "TV11|4Hour|USDJPY",
+   "cause": "execution",
+   "priority": [],
+   "task": "TV11|4Hour|USDJPY: הפסד -1.157R - יותר מהסיכון המתוכנן. לבדוק החלקה, מרווח ברגע הסגירה ופער מעבר לסטופ, ולתקן בקוד או בגודל הפוזיציה."
+  },
+  {
+   "combo": "TV10|1Hour|US100",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV10|1Hour|US100: נעצר בלי לזוז לטובה (MFE 0.03R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV55|15Min|AMZN",
+   "cause": "rules",
+   "priority": [],
+   "task": "TV55|15Min|AMZN: נסגר בגלל כלל (session end) ב־-0.448R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "TV33|15Min|MSTR",
+   "cause": "rules",
+   "priority": [],
+   "task": "TV33|15Min|MSTR: נסגר בגלל כלל (session end) ב־-0.013R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "SE02|1Hour|USDJPY",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "SE02|1Hour|USDJPY: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  },
+  {
+   "combo": "TT45|1Hour|GBPJPY",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "TT45|1Hour|GBPJPY: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  },
+  {
+   "combo": "TV39|1Hour|JP225",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "TV39|1Hour|JP225: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  },
+  {
+   "combo": null,
+   "cause": "correlated",
+   "priority": [],
+   "task": "5 הפסדים יחד בקנייה של fx (-1,987$): להציע תקרה לחשיפה לאותו צד באותו סוג נכס, לבדוק בבדיקת הבוט השלם."
+  },
+  {
+   "combo": null,
+   "cause": "abnormal",
+   "priority": [],
+   "task": "יום חריג (-2.94%): הרבה מתחת למה שהבדיקה מאפשרת. לבדוק קודם תקלה בקוד או בנתונים (פער בין החי לבדיקה), לפני שינוי באסטרטגיות."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 3,
+   "avg_loss_pct": -1.171,
+   "worst_pct": -2.939
+  },
+  "prev7": {
+   "loss_days": 1,
+   "avg_loss_pct": -0.269,
+   "worst_pct": -0.269
+  },
+  "improving": false
+ }
+}

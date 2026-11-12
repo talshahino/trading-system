@@ -1,0 +1,164 @@
+{
+ "bot": "bot5",
+ "day": "2026-11-12",
+ "at": "2026-11-12T23:02:11+00:00",
+ "summary": [
+  "בוט 5 - סקאלפינג · 2026-11-12: -1,427$ (-1.46% מיתרת הפתיחה 97,429$), 5 עסקאות - 0 רווח, 5 הפסד. ניצול המגבלה היומית: 33% ממגבלת הבוט (4.5%), 29% ממגבלת FTMO (5%).",
+  "מול הבדיקה: -5.00R ביום מול -0.06R צפוי (פיזור ±2.68R) - יום רע רגיל, בתוך הרעש הסטטיסטי.",
+  "גורמי ההפסד: הפסד רגיל של האסטרטגיה 5.",
+  "ההפסד הגדול: TAL|5Min1m|JP225 (-570$, 40% מההפסדים).",
+  "ריכוז: 5 הפסדים יחד במכירה של index (-1,427$)."
+ ],
+ "pnl": -1427.26,
+ "pnl_pct": -1.465,
+ "open_balance": 97429.17,
+ "limit_used": {
+  "bot": 32.6,
+  "ftmo": 29.3
+ },
+ "trades": 5,
+ "winners": 0,
+ "losers_n": 5,
+ "gross_profit": 0.0,
+ "gross_loss": 1427.26,
+ "profit_factor": 0.0,
+ "costs": 0.0,
+ "day_r": -5.0,
+ "expected_r": -0.06,
+ "expected_sd": 2.68,
+ "z": -1.84,
+ "normal": true,
+ "causes": {
+  "normal": 5
+ },
+ "correlated": [
+  {
+   "class": "index",
+   "side": "מכירה",
+   "trades": 5,
+   "loss": -1427.26
+  }
+ ],
+ "top_loser": "TAL|5Min1m|JP225",
+ "top_share": 40.0,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "TAL|15Min|US500",
+   "side": "מכירה",
+   "open_t": "2026-11-12T16:07:00+00:00",
+   "close_t": "2026-11-12T16:19:00+00:00",
+   "entry": 7636.75,
+   "exit": 7648.85,
+   "stop": 7648.85,
+   "target": 7599.35,
+   "r": -1.0,
+   "net": -289.29,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "TAL|5Min1m|JP225",
+   "side": "מכירה",
+   "open_t": "2026-11-12T14:41:00+00:00",
+   "close_t": "2026-11-12T15:35:00+00:00",
+   "entry": 61008.0,
+   "exit": 61137.5,
+   "stop": 61137.5,
+   "target": 60535.5,
+   "r": -1.0,
+   "net": -288.45,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "TAL|5Min1m|US500",
+   "side": "מכירה",
+   "open_t": "2026-11-12T16:07:00+00:00",
+   "close_t": "2026-11-12T16:19:00+00:00",
+   "entry": 7635.0,
+   "exit": 7648.85,
+   "stop": 7648.85,
+   "target": 7588.15,
+   "r": -1.0,
+   "net": -285.33,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "TAL|5Min1m|US500",
+   "side": "מכירה",
+   "open_t": "2026-11-12T14:52:00+00:00",
+   "close_t": "2026-11-12T16:00:00+00:00",
+   "entry": 7606.84,
+   "exit": 7629.55,
+   "stop": 7629.55,
+   "target": 7558.15,
+   "r": -1.0,
+   "net": -282.2,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "TAL|5Min1m|JP225",
+   "side": "מכירה",
+   "open_t": "2026-11-12T16:00:00+00:00",
+   "close_t": "2026-11-12T16:08:00+00:00",
+   "entry": 61441.75,
+   "exit": 61657.5,
+   "stop": 61657.5,
+   "target": 61008.5,
+   "r": -1.0,
+   "net": -281.99,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": null,
+   "cause": "correlated",
+   "priority": [],
+   "task": "5 הפסדים יחד במכירה של index (-1,427$): להציע תקרה לחשיפה לאותו צד באותו סוג נכס, לבדוק בבדיקת הבוט השלם."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 1,
+   "avg_loss_pct": -1.465,
+   "worst_pct": -1.465
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ }
+}

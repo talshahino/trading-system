@@ -1,6 +1,6 @@
 {
  "bot": "bot6",
- "updated": "2026-11-12T11:41:08+00:00",
+ "updated": "2026-11-12T18:49:11+00:00",
  "cards": [
   {
    "bot": "bot6",
@@ -51,7 +51,7 @@
      "added": "2026-11-12"
     }
    },
-   "made": "2026-11-12T11:41:08+00:00",
+   "made": "2026-11-12T18:49:11+00:00",
    "id": "e07a79f5be76",
    "tier": "rejected",
    "verdict": "הפסיד בתקופה שלא נראתה (-0.03R לעסקה)"
@@ -105,7 +105,7 @@
      "added": "2026-11-12"
     }
    },
-   "made": "2026-11-12T11:41:08+00:00",
+   "made": "2026-11-12T18:49:11+00:00",
    "id": "1455399685d4",
    "tier": "rejected",
    "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)"
@@ -159,7 +159,7 @@
      "added": "2026-11-12"
     }
    },
-   "made": "2026-11-12T11:41:08+00:00",
+   "made": "2026-11-12T18:49:11+00:00",
    "id": "fbbaa96c849b",
    "tier": "rejected",
    "verdict": "הפסיד בתקופה שלא נראתה (-0.06R לעסקה)"
@@ -213,10 +213,64 @@
      "added": "2026-11-12"
     }
    },
-   "made": "2026-11-12T11:41:08+00:00",
+   "made": "2026-11-12T18:49:11+00:00",
    "id": "668f866c7985",
    "tier": "rejected",
    "verdict": "הפסיד בתקופה שלא נראתה (-0.09R לעסקה)"
+  },
+  {
+   "bot": "bot6",
+   "kind": "new",
+   "title": "אסטרטגיה חדשה: SC003|1Min|US30 · Pavan CPR: cross above top CPR, stop at pivot, long only",
+   "what": "הסייר הביא אותה (TradingView (StockSharp port, 1-minute)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+   "train": {
+    "n": 309,
+    "eff_n": 308.7,
+    "mean": -0.5069,
+    "t": -3.62,
+    "win": 20.9
+   },
+   "unseen": {
+    "n": 421,
+    "eff_n": 420.9,
+    "mean": -0.3014,
+    "t": -2.63,
+    "win": 28.7
+   },
+   "whole": {
+    "n": 730,
+    "eff_n": 728.5,
+    "mean": -0.3844,
+    "t": -4.32,
+    "win": 25.5
+   },
+   "halves": [
+    -0.5057,
+    -0.277
+   ],
+   "neighbours": {
+    "share_positive": null
+   },
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": 0.4,
+   "baseline": null,
+   "change": {
+    "combo": "SC003|1Min|US30",
+    "kind": "add"
+   },
+   "detail": {
+    "scout": {
+     "name": "Pavan CPR: cross above top CPR, stop at pivot, long only",
+     "source": "TradingView (StockSharp port, 1-minute)",
+     "url": "https://www.tradingview.com/script/C8spW2jl-Pavan-CPR-Strategy",
+     "added": "2026-11-12"
+    }
+   },
+   "made": "2026-11-12T18:49:11+00:00",
+   "id": "74d6ab192808",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.30R לעסקה)"
   },
   {
    "bot": "bot6",
@@ -267,10 +321,280 @@
      "added": "2026-11-12"
     }
    },
-   "made": "2026-11-12T11:41:08+00:00",
+   "made": "2026-11-12T18:49:11+00:00",
    "id": "5121705de577",
    "tier": "rejected",
    "verdict": "הפסיד בתקופה שלא נראתה (-0.12R לעסקה)"
+  },
+  {
+   "bot": "bot6",
+   "kind": "new",
+   "title": "אסטרטגיה חדשה: SC004|5Min|US100 · NFP straddle of the 4-hour pre-release range, target = range",
+   "what": "הסייר הביא אותה (BrokerXplorer (article)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+   "train": {
+    "n": 17,
+    "eff_n": 17.0,
+    "mean": -0.2111,
+    "t": -1.38,
+    "win": 53.0
+   },
+   "unseen": {
+    "n": 22,
+    "eff_n": 22.0,
+    "mean": -0.2059,
+    "t": -1.5,
+    "win": 50.1
+   },
+   "whole": {
+    "n": 39,
+    "eff_n": 38.9,
+    "mean": -0.208,
+    "t": -2.03,
+    "win": 51.3
+   },
+   "halves": [
+    -0.2316,
+    -0.191
+   ],
+   "neighbours": {
+    "share_positive": null
+   },
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": 0.4,
+   "baseline": null,
+   "change": {
+    "combo": "SC004|5Min|US100",
+    "kind": "add"
+   },
+   "detail": {
+    "scout": {
+     "name": "NFP straddle of the 4-hour pre-release range, target = range",
+     "source": "BrokerXplorer (article)",
+     "url": "https://www.brokerxplorer.com/article/day-trading-strategy-on-nfp-release-2878",
+     "added": "2026-11-12"
+    }
+   },
+   "made": "2026-11-12T18:49:11+00:00",
+   "id": "816bbb180de6",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.21R לעסקה)"
+  },
+  {
+   "bot": "bot6",
+   "kind": "new",
+   "title": "אסטרטגיה חדשה: SC004|5Min|US30 · NFP straddle of the 4-hour pre-release range, target = range",
+   "what": "הסייר הביא אותה (BrokerXplorer (article)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+   "train": {
+    "n": 18,
+    "eff_n": 18.0,
+    "mean": 0.0331,
+    "t": 0.24,
+    "win": 56.3
+   },
+   "unseen": {
+    "n": 23,
+    "eff_n": 23.0,
+    "mean": -0.1073,
+    "t": -0.85,
+    "win": 52.2
+   },
+   "whole": {
+    "n": 41,
+    "eff_n": 40.9,
+    "mean": -0.0486,
+    "t": -0.52,
+    "win": 53.9
+   },
+   "halves": [
+    -0.0252,
+    -0.0724
+   ],
+   "neighbours": {
+    "share_positive": null
+   },
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": 0.4,
+   "baseline": null,
+   "change": {
+    "combo": "SC004|5Min|US30",
+    "kind": "add"
+   },
+   "detail": {
+    "scout": {
+     "name": "NFP straddle of the 4-hour pre-release range, target = range",
+     "source": "BrokerXplorer (article)",
+     "url": "https://www.brokerxplorer.com/article/day-trading-strategy-on-nfp-release-2878",
+     "added": "2026-11-12"
+    }
+   },
+   "made": "2026-11-12T18:49:11+00:00",
+   "id": "98cc6cd55b1d",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.11R לעסקה)"
+  },
+  {
+   "bot": "bot6",
+   "kind": "new",
+   "title": "אסטרטגיה חדשה: SC004|5Min|US500 · NFP straddle of the 4-hour pre-release range, target = range",
+   "what": "הסייר הביא אותה (BrokerXplorer (article)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+   "train": {
+    "n": 13,
+    "eff_n": 13.0,
+    "mean": -0.1508,
+    "t": -0.76,
+    "win": 54.6
+   },
+   "unseen": {
+    "n": 19,
+    "eff_n": 19.0,
+    "mean": -0.0191,
+    "t": -0.17,
+    "win": 52.6
+   },
+   "whole": {
+    "n": 32,
+    "eff_n": 31.9,
+    "mean": -0.07,
+    "t": -0.67,
+    "win": 53.4
+   },
+   "halves": [
+    -0.1144,
+    -0.0347
+   ],
+   "neighbours": {
+    "share_positive": null
+   },
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": 0.4,
+   "baseline": null,
+   "change": {
+    "combo": "SC004|5Min|US500",
+    "kind": "add"
+   },
+   "detail": {
+    "scout": {
+     "name": "NFP straddle of the 4-hour pre-release range, target = range",
+     "source": "BrokerXplorer (article)",
+     "url": "https://www.brokerxplorer.com/article/day-trading-strategy-on-nfp-release-2878",
+     "added": "2026-11-12"
+    }
+   },
+   "made": "2026-11-12T18:49:11+00:00",
+   "id": "6ac99f5d8d14",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.02R לעסקה)"
+  },
+  {
+   "bot": "bot6",
+   "kind": "new",
+   "title": "אסטרטגיה חדשה: SC005|15Min|US100 · NFP V-shaped reversal candle after the release, 1:3",
+   "what": "הסייר הביא אותה (FOREX.com Trading Academy). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+   "train": {
+    "n": 16,
+    "eff_n": 16.0,
+    "mean": -0.191,
+    "t": -0.54,
+    "win": 25.2
+   },
+   "unseen": {
+    "n": 26,
+    "eff_n": 26.0,
+    "mean": 0.3397,
+    "t": 1.12,
+    "win": 49.9
+   },
+   "whole": {
+    "n": 42,
+    "eff_n": 41.9,
+    "mean": 0.1473,
+    "t": 0.63,
+    "win": 40.9
+   },
+   "halves": [
+    -0.0868,
+    0.3568
+   ],
+   "neighbours": {
+    "share_positive": null
+   },
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": 0.4,
+   "baseline": null,
+   "change": {
+    "combo": "SC005|15Min|US100",
+    "kind": "add"
+   },
+   "detail": {
+    "scout": {
+     "name": "NFP V-shaped reversal candle after the release, 1:3",
+     "source": "FOREX.com Trading Academy",
+     "url": "https://forex.com/en/trading-academy/courses/advanced-trading-strategies/non-farm-payrolls-v-shaped-reversal",
+     "added": "2026-11-12"
+    }
+   },
+   "made": "2026-11-12T18:49:11+00:00",
+   "id": "0763a0a02ca2",
+   "tier": "watch",
+   "verdict": "חיובי בתקופה שלא נראתה, אבל רק 26.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך"
+  },
+  {
+   "bot": "bot6",
+   "kind": "new",
+   "title": "אסטרטגיה חדשה: SC005|5Min|US100 · NFP V-shaped reversal candle after the release, 1:3",
+   "what": "הסייר הביא אותה (FOREX.com Trading Academy). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+   "train": {
+    "n": 27,
+    "eff_n": 27.0,
+    "mean": -0.3425,
+    "t": -1.38,
+    "win": 22.8
+   },
+   "unseen": {
+    "n": 32,
+    "eff_n": 32.0,
+    "mean": 0.5049,
+    "t": 1.66,
+    "win": 56.2
+   },
+   "whole": {
+    "n": 59,
+    "eff_n": 58.9,
+    "mean": 0.1355,
+    "t": 0.65,
+    "win": 41.7
+   },
+   "halves": [
+    -0.4033,
+    0.6092
+   ],
+   "neighbours": {
+    "share_positive": null
+   },
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": 0.4,
+   "baseline": null,
+   "change": {
+    "combo": "SC005|5Min|US100",
+    "kind": "add"
+   },
+   "detail": {
+    "scout": {
+     "name": "NFP V-shaped reversal candle after the release, 1:3",
+     "source": "FOREX.com Trading Academy",
+     "url": "https://forex.com/en/trading-academy/courses/advanced-trading-strategies/non-farm-payrolls-v-shaped-reversal",
+     "added": "2026-11-12"
+    }
+   },
+   "made": "2026-11-12T18:49:11+00:00",
+   "id": "1ae50519f6f2",
+   "tier": "regular",
+   "verdict": "חיובי בתקופה שלא נראתה (+0.50R לעסקה, 32.0 עסקאות אפקטיביות)"
   }
  ]
 }

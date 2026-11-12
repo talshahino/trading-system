@@ -58,6 +58,42 @@ END = "סוף הנתונים"            # rules_agent's reason for a trade stil
 INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.005, 0.045, 0.10
 ACCT_V = 1
 KEEP = 300
+PLANS_F = LIVE / "bots" / "bot7.json"   # approved cards, built (agent_portfolio.built_variant reads the same "plans")
+
+
+def plans():
+    """Per combo ("EV01|5Min|GBPUSD"): {"filter": "with_trend200"} - market-regime filters from approved cards."""
+    try:
+        return json.loads(PLANS_F.read_text(encoding="utf-8")).get("plans") or {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def regime(d, name):
+    """The same masks as run_rules._regimes, known at the bar's close: (allow_long, allow_short)."""
+    h, l, c = (d[x].to_numpy() for x in "hlc")
+    if name == "with_trend200":
+        e = R.ema(c, 200)
+        return c > e, c < e
+    if name in ("adx_trend", "adx_range"):
+        a = R.adx(h, l, c, 14)
+        m = a > 20 if name == "adx_trend" else a < 20
+        return m, m
+    at = R.atr(h, l, c, 14) / c
+    pr = pd.Series(at).rolling(500, min_periods=100).rank(pct=True).to_numpy()
+    m = {"vol_normal": (pr > 0.2) & (pr < 0.9), "vol_high": pr >= 0.5, "vol_low": pr < 0.5}[name]
+    return m, m
+
+
+def filtered(fn, flt):
+    if not flt:
+        return fn
+
+    def g(d):
+        L, S, plan = fn(d)
+        al, ash = regime(d, flt)
+        return np.asarray(L, bool) & al, np.asarray(S, bool) & ash, plan
+    return g
 
 
 def log(msg):
@@ -166,8 +202,9 @@ def trades_of(name, d5, spread_now):
     """Every trade of the three strategies on this instrument in the candles held, net of FTMO costs (r in R)."""
     out = []
     sp = pd.Series([spread_now], index=[d5.index[0]]) if spread_now else None
+    pl = plans()
     for sid in STRATS:
-        fn = E.EVENTS[sid][1]
+        fn = filtered(E.EVENTS[sid][1], (pl.get(f"{sid}|5Min|{name}") or {}).get("filter"))
         px = float(d5["c"].iloc[-1])
         spec = U.spec(name)
         comm = (px * float(spec["commission"]) / (float(spec["contractSize"]) * U.BASE_USD.get(spec["code"].split("/")[0], 1.0))

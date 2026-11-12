@@ -22,7 +22,13 @@
   "GH04|1Hour|EURJPY",
   "QC04|4Hour|USDCAD",
   "SE01|1Hour|CSCO",
-  "SE01|1Hour|WMT"
+  "SE01|1Hour|WMT",
+  "SC002|4Hour|USDCAD",
+  "SC002|1Hour|USDCAD",
+  "SC002|1Hour|EURUSD",
+  "SC002|1Hour|INTC",
+  "SC002|4Hour|GBPUSD",
+  "SC002|1Hour|ARM"
  ],
  "note": "04.11.2026: built from the new families' combos that passed the first test (GitHub, QuantConnect, forums, books, seasonality, inter-market, Quantpedia), chosen on 2025 and checked on 2026 and by reshuffling; MetaQuotes-demo instruments only (FX, metals, US shares); risk 0.45% chosen by the user; FTMO Standard rule: closed before market breaks over 2 hours; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -35,12 +41,26 @@
   "BK05|1Hour|EURUSD": {
    "target": 1,
    "limit": 0.5,
-   "card": "f111fc5d12da"
+   "card": "f111fc5d12da",
+   "filter": "adx_range",
+   "filter_card": "77b7731e53c8"
   },
   "FR01|1Hour|EURUSD": {
    "target": 3,
    "stop": 0.75,
    "card": "99e5c02815c4"
+  },
+  "SE02|1Hour|GBPJPY": {
+   "filter": "vol_normal",
+   "filter_card": "ac5c11074021"
   }
+ },
+ "added": {
+  "SC002|4Hour|USDCAD": "7732f6ea7833",
+  "SC002|1Hour|USDCAD": "3de5321a7fa2",
+  "SC002|1Hour|EURUSD": "ade0b4666951",
+  "SC002|1Hour|INTC": "c87a40ce05e2",
+  "SC002|4Hour|GBPUSD": "5059ecbe75b4",
+  "SC002|1Hour|ARM": "3aabdca7f1a3"
  }
 }

@@ -9,6 +9,7 @@ The definition of a shock is the agent's (user: "the agent decides what a shock 
            rollover / reopen 16:55-18:20 New York, US cash open / close, Xetra open / close, NYMEX settlement - v2,
            12.11.2026), and every shock from 10 minutes before to 60 after an
            important (high impact or FTMO-restricted) release of a currency the instrument moves on
+           (120 after a rates decision: the press conference comes 30 minutes later - v3)
 Why so: a ratio to the instrument's own recent median adapts to every instrument and regime (a 0.1% minute is a
 shock on EURUSD at 3am and noise on BTC); the median ignores the shock itself; the floor keeps it to moves
 someone would call news. K is chosen from the data below (the study's best K on 2025) and reported.
@@ -83,9 +84,13 @@ def near_release(t, sym, rel):
         ix, titles = rel.get(cur, (None, None))
         if ix is None or not len(ix):
             continue
-        k = ix.searchsorted(t - pd.Timedelta(minutes=60))
-        if k < len(ix) and ix[k] <= t + pd.Timedelta(minutes=10):
-            return f"{titles[k]} ({cur}, {ix[k].strftime('%Y-%m-%d %H:%M')} UTC)"
+        k = ix.searchsorted(t - pd.Timedelta(minutes=120))
+        for j in range(k, len(ix)):
+            if ix[j] > t + pd.Timedelta(minutes=10):
+                break
+            rates = any(w in titles[j].lower() for w in ("rate", "fomc", "monetary", "policy", "statement", "press"))
+            if ix[j] >= t - pd.Timedelta(minutes=120 if rates else 60):   # a rates decision: its press conference too
+                return f"{titles[j]} ({cur}, {ix[j].strftime('%Y-%m-%d %H:%M')} UTC)"
     return None
 
 

@@ -896,7 +896,14 @@ def pending_guard(now, everything=False):
             cancel_pending(combo, why)
 
 
+# the replay's exit reasons are Hebrew; MT5 comments keep only ASCII (_comment), so they reached the trade history
+# as blanks (23 of bot 1's first 118 trades) - sent in English instead
+WHY_EN = {"סיגנל יציאה": "exit signal", "סיגנל הפוך": "opposite signal", "סגירה בשעה קבועה": "fixed-time exit",
+          "יציאת זמן": "time exit", "יעד": "target", "סטופ": "stop"}
+
+
 def close(p, why):
+    why = WHY_EN.get(why, why)
     tick = mt5.symbol_info_tick(p.symbol)
     req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": p.symbol, "volume": p.volume, "position": p.ticket,
            "type": mt5.ORDER_TYPE_SELL if p.type == 0 else mt5.ORDER_TYPE_BUY,

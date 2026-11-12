@@ -77,6 +77,8 @@ def watched(decisions, undo, replies, cards):
         if d.get("decision") != "approved" or d["id"] in undo or d["id"] in reverted or d.get("undone"):
             continue
         if d.get("type") == "risk":
+            if d.get("card_decision") or d.get("star_step"):
+                continue                                  # the risk of a card's change: followed with the card
             a = d.get("action") or {}
             if not a.get("combo") or a.get("kind") != "mult" or not a.get("value"):
                 continue                                  # a removal stops the combo: nothing to watch
@@ -87,12 +89,81 @@ def watched(decisions, undo, replies, cards):
             if not r.get("built") or d.get("kind") == "info":
                 continue                                  # not in the bot (yet), or not a change at all
             # the card itself may have been replaced since (a new test) - then its combo from the title
-            combo = ((c or {}).get("change") or {}).get("combo") or (d["title"].split(":")[0].strip() if d["title"].count("|") >= 2 else None)
-            if not combo or combo.count("|") != 2:
+            b = BLD.buildable({**c, "bot": d["bot"]}) if c else None
+            if b and b["family"] in TRACKS:
+                combo = TRACKS[b["family"]](b)               # bots 5-6: all the trades of the changed track
+            else:
+                combo = ((c or {}).get("change") or {}).get("combo") or (d["title"].split(":")[0].strip() if d["title"].count("|") >= 2 else None)
+            if not combo or (combo.count("|") != 2 and not combo.startswith("re:")):
                 continue
             e = expected_card(c) if c else None
             out.append((d, d["bot"], combo, r.get("at") or d["at"], e or expected_combo(d["bot"], combo)))
     return out
+
+
+# bots 5-6: which live trades a settings change touches (agents/health.py names them OWN|15Min|.., OWN|1Min|.., TAL|1Hour|..)
+TRACKS = {"track": lambda b: "re:^OWN\\|" + ("1Min" if b["track"] == "v1m" else "15Min") + "\\|",
+          "risk": lambda b: ("re:^TAL\\|" if b["track"] == "tal" else "re:^(OWN|FUT)\\|" + ("1Min" if b["track"] == "v1m" else "15Min") + "\\|"),
+          "tal": lambda b: "re:^TAL\\|"}
+
+
+RISK_BOTS = ("bot1", "bot2", "bot3", "bot4")
+STAR_N, STAR_LAST = 20, 40       # trades: the first look, and the last
+
+
+def _mult_now(decisions, did, undo):
+    """The multiplier the card's combo trades with now, from the star / whole-bot risk decisions of that card."""
+    steps = [x for x in decisions if (x.get("card_decision") == did or x.get("star_of") == did)
+             and x.get("decision") == "approved" and x["id"] not in undo and x.get("action")]
+    steps.sort(key=lambda x: x["at"])
+    return (steps[-1]["action"]["value"], steps[0]["action"].get("prev")) if steps else (None, None)
+
+
+def star_steps(d, c, combo, r, e, w, decisions, have, at, adds):
+    """The "maybe luck" star (user, 12.11.2026): a small edge on few trades goes in at a lowered risk; once enough live
+    trades are in, back to the full risk when it keeps winning, lower when it doesn't, out when it still loses."""
+    from agents import autodecide as AD
+    star = d.get("star") or (c is not None and AD.maybe_luck(c))
+    if not star:
+        return None
+    w["star"] = True
+    m, prev = _mult_now(decisions, d["id"], set())
+    base = prev if prev is not None else 1.0
+
+    def step(kind, value, title, why, before=None):
+        sid = _did(kind, d["id"])
+        if sid in have:
+            return
+        value = max(0.5, value)          # the bots read 0.5-1.5 only (live/runner.py risk_mult)
+        have.add(sid)
+        adds.append({"id": sid, "bot": d["bot"], "type": "risk", "kind": "mult", "combo": combo, "title": title,
+                     "decision": "approved", "why": why, "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "star_of": d["id"],
+                     "star_step": kind, "action": {"bot": d["bot"], "combo": combo, "kind": "mult", "value": round(value, 2),
+                                                   "prev": m if before is None else before}, "at": at, "by": "manager", "read": False, "undone": False})
+    if m is None:          # approved before the star existed: it gets the star's lowered risk now
+        from agents import portfolio_check as PC
+        cur = float(PC.mults(d["bot"]).get(combo, 1.0) or 1.0)
+        step("staron", cur * AD.STAR_MULT, f"⭐ {combo}: סיכון ×{cur * AD.STAR_MULT:.2f} (אולי מזל)",
+             "שיפור קטן על מעט עסקאות - נכנס בסיכון מופחת עד שיוכח שאינו מזל", before=None if cur == 1.0 else cur)
+        w.pop("done", None)
+        return None
+    n = len(r)
+    mean = float(np.mean(r)) if n else None
+    exp_m = (e or {}).get("mean") or 0.0
+    w.pop("done", None)                               # a star stays in the watch until its own end
+    w["why"] = f"⭐ במעקב מוקפד: {n} עסקאות (בדיקה ב־{STAR_N}, אחרונה ב־{STAR_LAST})"
+    if n >= STAR_N and mean is not None and mean >= max(0.0, 0.5 * exp_m):
+        if m < base:
+            step("staroff", base, f"{combo}: הכוכבית ירדה - חוזר לסיכון ×{base:g}",
+                 f"{n} עסקאות מאז השינוי, {mean:+.2f}R לעסקה (צפוי {exp_m:+.2f}R) - זה לא מזל")
+        w.update(done=at, why="הכוכבית ירדה: חזר לסיכון הרגיל")
+        return None
+    if n >= STAR_LAST and mean is not None and mean < 0:
+        return f"⭐ אחרי {n} עסקאות עדיין מפסיד ({mean:+.2f}R לעסקה מול {exp_m:+.2f}R צפוי) - זה היה מזל"
+    if n >= STAR_N and mean is not None and mean < 0.5 * exp_m and m > 0.5:
+        step("stardown", 0.5, f"⭐ {combo}: סיכון יורד ל־×0.5",
+             f"{n} עסקאות מאז השינוי, {mean:+.2f}R לעסקה מול {exp_m:+.2f}R צפוי - נשאר בכוכבית ובסיכון נמוך יותר")
+    return None
 
 
 def judge(r, e):
@@ -130,7 +201,7 @@ def run(now=None):
     prev = {w["decision"]: w for w in _read(OUT, {}).get("watch", [])}
     states = H.live_states()
     trades = {}
-    rows, reverts = [], []
+    rows, reverts, adds = [], [], []
     have = {x["id"] for x in decisions}
     for d, bot, combo, since, e in watched(decisions, undo, replies, cards):
         old = prev.get(d["id"]) or {}
@@ -144,7 +215,9 @@ def run(now=None):
             st = H.state_of(bot, states)
             trades[bot] = H.trades(st, bot) if st else pd.DataFrame(columns=["combo", "time", "r"])
         t = trades[bot]
-        t = t[(t["combo"] == combo) & (t["time"] >= pd.Timestamp(since))] if not t.empty else t
+        if not t.empty:
+            hit = t["combo"].str.match(combo[3:]) if combo.startswith("re:") else (t["combo"] == combo)
+            t = t[hit & (t["time"] >= pd.Timestamp(since))]
         r = t["r"].to_numpy(float) if not t.empty else np.array([])
         bad, info = judge(r, e)
         age = (now - pd.Timestamp(since)).days
@@ -155,7 +228,16 @@ def run(now=None):
             w.update(reverted=at, why=bad)
         elif len(r) >= DONE_N or age >= DONE_DAYS:
             w.update(done=at, why=f"עבר את המעקב: {len(r)} עסקאות ב־{age} ימים בלי סימן רע")
+        if not bad and d.get("type") == "card" and bot in RISK_BOTS and "|" in combo and not combo.startswith("re:"):
+            luck = star_steps(d, cards.get(d.get("card")), combo, r, e, w, decisions, have, at, adds)
+            if luck:
+                reverts.append((d, luck, info))
+                w.update(reverted=at, why=luck)
         rows.append(w)
+    for x in adds:
+        decisions.insert(0, x)
+        doc["new"] = list(doc.get("new") or []) + [x["id"]]
+        print(f"star: {x['title']}")
     for d, bad, info in reverts:
         decisions.insert(0, {"id": _did("revert", d["id"]), "bot": d["bot"], "type": "revert", "of": d["id"],
                              "kind": d.get("kind"), "title": "המנהל החזיר לאחור: " + d["title"], "decision": "reverted",
@@ -165,7 +247,7 @@ def run(now=None):
                              "at": at, "by": "manager", "read": False, "undone": False})
         doc["new"] = list(doc.get("new") or []) + [_did("revert", d["id"])]
         print(f"reverted {d['id']} {d['bot']}: {d['title']} - {bad}")
-    if reverts:
+    if reverts or adds:
         doc["decisions"] = decisions
         DEC.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     OUT.write_text(json.dumps({"updated": at, "rules": {"z": Z_BAD, "min_n": MIN_N, "streak_p": STREAK_P, "deep_r": DEEP_R,

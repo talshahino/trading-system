@@ -168,6 +168,16 @@ def variant_stats(t):
             "erosion": K.erosion(t["time"], t["r"]) if len(t) >= 20 else None}
 
 
+def trades_2026(t):
+    """Compact 2026 trades: [entry minute, exit minute, direction, R] (minutes since 1970, UTC)."""
+    if t is None or t.empty:
+        return []
+    t = t[pd.to_datetime(t["time"], utc=True, format="ISO8601") >= T_SPLIT]
+    a = pd.to_datetime(t["time"], utc=True, format="ISO8601").astype("int64") // 60_000_000_000
+    b = pd.to_datetime(t["exit_time"].fillna(t["time"]), utc=True, format="ISO8601").astype("int64") // 60_000_000_000
+    return [[int(x), int(y), int(d), round(float(r), 3)] for x, y, d, r in zip(a, b, t["dir"].fillna(0), t["r"])]
+
+
 def run_rules(combos, fam, budget_min, extra=None):
     """One run of the backtest machine for a few combos of one instrument; returns its trades (all variants)."""
     out_dir = ROOT / "output"
@@ -212,7 +222,8 @@ def experiments(bot, budget_s, where):
             continue
         for fam in FAMILIES:
             age = st.age_days(fam, combo)
-            if age >= RERUN_DAYS:
+            d = st.get(fam, combo) or {}
+            if age >= RERUN_DAYS or (d.get("variants") and "tr" not in d):    # (12.11.2026: trades for the whole-bot check)
                 todo.append((0 if age == 999 else 1, fam, -age, sym, combo))
     todo.sort(key=lambda x: (x[0], x[3], x[1], x[2]))          # never-run first, one instrument's combos together
     t0, done = time.time(), 0
@@ -239,6 +250,12 @@ def experiments(bot, budget_s, where):
                    "secs": round((time.time() - ts) / max(1, len(combos)), 1), "variants": {}}
             for v, g in tc.groupby("variant") if "variant" in tc else []:
                 doc["variants"][v] = variant_stats(g)
+            # the 2026 trades of the variants a card can come from (the one in the bot now, the default and the five
+            # best on the choosing period), for the whole-bot check (agents/portfolio_check.py)
+            keep = {built_variant(bot, c, fam), "own|be0.6|stop1|entry0" if fam == "exits" else "none"}
+            keep |= set(sorted((v for v, x in doc["variants"].items() if (x["train"].get("eff_n") or 0) >= 10),
+                               key=lambda v: -(doc["variants"][v]["train"]["mean"] or -9))[:5])
+            doc["tr"] = {v: trades_2026(tc[tc["variant"] == v]) for v in keep if "variant" in tc and v in doc["variants"]}
             # the machine's own unweighted stats of every variant (the filters keep only two variants' trades)
             doc["grid"] = [{"variant": x["variant"], "train": x["train"], "valid": x["valid"]}
                            for x in (rows.get(c) or {}).get("all", [])]
@@ -308,6 +325,7 @@ def test_new(bot, budget_s, where, symbols=None, timeframes=None):
                 sid_, tf, s = c.split("|")
                 tc = t[(t["sid"] == sid_) & (t["tf"] == tf) & (t["symbol"] == s)]
                 st.put("new", c, {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": "new",
+                                  "tr": {"new": trades_2026(tc)} if len(tc) else {},
                                   "scout": {k: s_.get(k) for k in ("name", "source", "url", "added")},
                                   "stats": variant_stats(tc) if len(tc) else None})
                 done += 1

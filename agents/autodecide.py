@@ -10,7 +10,7 @@ decides it by fixed rules, writing each decision to reports/agents/decisions.jso
                   live/manager.py (auto_apply), which keeps the value before, so "undo" puts it back:
                     remove, tp, sl, dir, hours, vol -> approved (they passed the bot agent's both-halves tests)
                     a risk multiplier change -> approved from 5 live trades of that strategy; fewer -> waits
-                    lowering bot 3's risk -> never (user); the user's own earlier "no" -> never (data/agents/user_rules.json)
+                    the user's own earlier "no" -> never (data/agents/user_rules.json)
 Never decided here: the fixed loss limits (daily 5%, total 10%) - no card or recommendation can touch them.
 The user's own decision always wins: an undone decision is not made again for the same recommendation.
 """
@@ -29,7 +29,7 @@ ROOT = K.ROOT
 OUT = K.CARDS_DIR / "decisions.json"
 KEEP_DAYS = 30
 MIN_TRADES_MULT = 5
-NO_RISK_DOWN = {"bot3"}
+NO_RISK_DOWN = set()                   # (until 12.11.2026 bot 3; now the user: bot 3 works like the other bots)
 KIND_HE = {"mult": "סיכון", "remove": "הסרה", "dir": "כיוון", "tp": "יעד", "sl": "סטופ", "hours": "שעות", "vol": "תנודתיות"}
 
 
@@ -43,6 +43,19 @@ def user_rules():
         return json.loads((ROOT / "data/agents/user_rules.json").read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         return {}
+
+
+RISK_BOTS = ("bot1", "bot2", "bot3", "bot4")   # risk per strategy is applied on the bots' computer (live/risk.json)
+STAR_MULT = 0.7                                 # "maybe luck": the lowered risk a small edge goes in with
+STAR_GAIN, STAR_N = 0.10, 100                   # ... when the gain is under 0.10R a trade, or under 100 trades shown
+
+
+def maybe_luck(c):
+    u, b = c.get("unseen") or {}, c.get("baseline") or {}
+    if u.get("mean") is None:
+        return False
+    gain = u["mean"] - (b.get("mean") or 0.0) if c.get("kind") == "improve" and b else u["mean"]
+    return gain < STAR_GAIN or (u.get("eff_n") or 0) < STAR_N
 
 
 def _did(*parts):
@@ -70,6 +83,7 @@ def decide(bots, now=None):
     user = _git_show("live/agent_decisions_state.json")
     ucards, uread, uundo = user.get("cards", {}) or {}, set(user.get("read", []) or []), set(user.get("undo", []) or [])
     rules = user_rules()
+    cur_risk = (_git_show("live/manager_state.json").get("risk") or {})
     never = {(x["bot"], x["combo"], x["kind"]) for x in rules.get("never", [])}
     # an undone recommendation is not made again for 30 days, even when a later sample brings it back
     never |= {(d["bot"], d.get("combo"), d["kind"]) for d in old.values() if d["id"] in uundo and d["type"] == "risk"}
@@ -115,12 +129,51 @@ def decide(bots, now=None):
                 c["status"], c["verdict"] = "rejected", c["verdict"] + " · בוטל על ידך"
                 continue
             from agents import builder as BLD
+            buildable = BLD.buildable({**c, "bot": bot})
             what = ("לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב" if c["kind"] == "info" else
-                    "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות" if BLD.buildable({**c, "bot": bot}) else
+                    "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות" if buildable else
                     "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה")
+            why, star, mult, whole = c["verdict"], False, None, None
+            is_new = did not in old
+            if is_new and c["kind"] in ("improve", "new"):
+                # the whole bot with and without it, on 2026 (agents/portfolio_check.py; user, 12.11.2026)
+                try:
+                    from agents import portfolio_check as PC
+                    whole = PC.check(bot, c)
+                except Exception as e:  # noqa: BLE001
+                    whole, why = None, why + f" · בדיקת הבוט השלם נכשלה ({str(e)[:80]})"
+                if whole is not None and not whole["ok"]:
+                    add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
+                         "title": c["title"], "decision": "declined", "why": whole["why"], "effect": "לא ייבנה בבוט",
+                         "whole_bot": {k: whole[k] for k in ("before", "after")}})
+                    c["status"], c["by"], c["verdict"] = "rejected", "manager", c["verdict"] + " · " + whole["why"]
+                    continue
+                if whole is not None:
+                    why += " · " + whole["why"]
+                    mult = whole.get("mult")
+                elif bot in RISK_BOTS:
+                    why += " · בלי בדיקת בוט שלם עדיין (העסקאות של חלק מהאסטרטגיות עוד לא נשמרו)"
+                # "maybe luck" (user, 12.11.2026): a small edge on few trades goes in at a lowered risk with a star,
+                # and the watch decides later: back to the full risk when it keeps winning, lower when it doesn't
+                star = maybe_luck(c)
+                if star:
+                    mult = min(mult or 1.0, STAR_MULT)
+                    why += f" · ⭐ אולי מזל: נכנס בסיכון ×{mult:g} ובמעקב מוקפד"
             d = add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
-                     "title": c["title"], "decision": "approved", "why": c["verdict"], "effect": what})
+                     "title": ("⭐ " if star else "") + c["title"], "decision": "approved", "why": why, "effect": what,
+                     "star": star, **({"whole_bot": {k: whole[k] for k in ("before", "after")}} if whole else {})})
             c["status"], c["by"], c["decided"], c["decision_id"] = "approved", "manager", d["at"], did
+            combo = (c.get("change") or {}).get("combo")
+            if not is_new or not (mult and mult < 1 and buildable and bot in RISK_BOTS and combo):
+                continue
+            # the lowered risk of the new change, applied by the bots' computer like any risk decision; undone or
+            # taken back together with the card (live/manager.py auto_apply)
+            cur_m = float(((cur_risk.get(bot) or {}).get("mult") or {}).get(combo, 1.0))
+            add({"id": _did("cardrisk", c["id"]), "bot": bot, "type": "risk", "kind": "mult", "combo": combo,
+                 "title": f"{combo}: סיכון ×{mult:g}" + (" (⭐ אולי מזל)" if star else " (בדיקת הבוט השלם)"),
+                 "decision": "approved", "why": why, "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "card_decision": did,
+                 "star": star, "action": {"bot": bot, "combo": combo, "kind": "mult", "value": round(mult * cur_m, 2),
+                                          "prev": None if cur_m == 1.0 else cur_m}})
     # 2) the bot agents' risk / removal recommendations (bots 1-4)
     try:
         risk = json.loads((ROOT / "reports/trade_review/risk.json").read_text(encoding="utf-8"))

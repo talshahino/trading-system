@@ -1,10 +1,30 @@
 {
  "_": "The user's own standing decisions that the manager never overrides (user, 10-11.11.2026).",
  "never": [
-  {"bot": "bot1", "combo": "TV24|15Min|KO", "kind": "remove", "why": "המשתמש: לא להסיר את שלוש האסטרטגיות שרצות בבוט 1"},
-  {"bot": "bot1", "combo": "TV38|15Min|GOOG", "kind": "remove", "why": "המשתמש: לא להסיר את שלוש האסטרטגיות שרצות בבוט 1"},
-  {"bot": "bot1", "combo": "TT45|15Min|CSCO", "kind": "remove", "why": "המשתמש: לא להסיר את שלוש האסטרטגיות שרצות בבוט 1"}
+  {
+   "bot": "bot1",
+   "combo": "TV24|15Min|KO",
+   "kind": "remove",
+   "why": "המשתמש: לא להסיר את שלוש האסטרטגיות שרצות בבוט 1"
+  },
+  {
+   "bot": "bot1",
+   "combo": "TV38|15Min|GOOG",
+   "kind": "remove",
+   "why": "המשתמש: לא להסיר את שלוש האסטרטגיות שרצות בבוט 1"
+  },
+  {
+   "bot": "bot1",
+   "combo": "TT45|15Min|CSCO",
+   "kind": "remove",
+   "why": "המשתמש: לא להסיר את שלוש האסטרטגיות שרצות בבוט 1"
+  }
  ],
- "no_risk_down": ["bot3"],
- "limits": {"daily_loss_pct": 5, "total_loss_pct": 10, "fixed": true}
+ "no_risk_down": [],
+ "limits": {
+  "daily_loss_pct": 5,
+  "total_loss_pct": 10,
+  "fixed": true
+ },
+ "no_risk_down_note": "12.11.2026: בוט 3 עובד כמו שאר הבוטים, כולל הורדת סיכון (בעבר: לא להוריד את הסיכון של בוט 3)"
 }

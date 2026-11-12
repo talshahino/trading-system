@@ -695,8 +695,33 @@ def auto_apply():
     while True:
         try:
             j = requests.get(DECISIONS_URL, params={"t": int(time.time() // 300)}, timeout=20).json()
+            # the risk that came with a card (the star's lowered risk, the whole-bot check's): when the card is
+            # undone by you or taken back by the watch, its risk goes back to the value before it too
+            with AGENT_LOCK:
+                m0 = agent_meta()
+            gone = set(m0["undo"]) | {x["of"] for x in j.get("decisions", []) if x.get("decision") == "reverted"
+                                      and x.get("of") and x["id"] not in m0["undo"]}
+            linked = {}
+            for x in j.get("decisions", []):
+                link = x.get("card_decision") or x.get("star_of")
+                if link and link in gone and x["id"] in m0["applied"]:
+                    linked.setdefault(link, []).append(x)
+            for link, xs in linked.items():
+                with AGENT_LOCK:
+                    m = agent_meta()
+                    recs = [m["applied"].pop(x["id"]) for x in sorted(xs, key=lambda x: x["at"]) if x["id"] in m["applied"]]
+                    for x in xs:
+                        m.setdefault("reverted", {})[x["id"] + ":linked"] = x["id"]
+                    agent_meta_save(m)
+                ok = [r_ for r_ in recs if not r_.get("failed")]
+                if ok:
+                    risk_change(ok[0]["bot"], ok[0]["combo"], ok[0]["kind"], ok[0].get("prev"))
+                    log(f"risk of card decision {link} back to {ok[0].get('prev')} ({ok[0]['bot']} {ok[0]['combo']})")
+                    agent_publish()
             for x in j.get("decisions", []):
                 a = x.get("action")
+                if (x.get("card_decision") or x.get("star_of")) in gone:
+                    continue                         # its card is undone / taken back: not applied
                 if x.get("decision") == "reverted" and x.get("of"):
                     # the watch took an applied risk change back (agents/watch.py): the value before returns
                     with AGENT_LOCK:

@@ -32,7 +32,7 @@ STATE_PREFIX = {"bot1": "bot1", "bot2": "bot2_", "bot3": "bot3_", "bot4": "bot4_
                 "bot6": "watch_fut", "bot7": "news_bot"}
 NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 · סקלפינג",
          "bot6": "בוט 6 · חוזים עתידיים", "bot7": "בוט 7 · פרסומים כלכליים"}
-NO_RISK_DOWN = {"bot3"}            # user: don't lower bot 3's risk - its alerts never suggest it
+NO_RISK_DOWN = set()                # 12.11.2026: bot 3 works like the other bots (lowering its risk too)
 MIN_N, Z_BAD, STREAK_P, STREAK_MIN = 8, -2.0, 0.02, 4
 DAY_WARN, TOTAL_WARN, STALE_MIN = -3.0, -7.0, 45
 

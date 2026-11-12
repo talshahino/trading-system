@@ -85,6 +85,55 @@ INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.0045, 0.045, 0.10
 # FTMO rules: no new trades after a 4.5% loss in the day, the account burns at a 10% loss from the start.
 # v3 (10.11.2026, the review before the user's calibration): a fresh start with the corrected trade selection
 ACCT_V, RISK_V5, RISK_V1M = 3, 0.004, 0.00075
+# The settings bots 5 and 6 trade with live in live/bots/bot5.json and bot6.json (12.11.2026: the virtual bots are run
+# as if they were real accounts - an approved change goes in at once, like bots 1-4). Read every cycle; a file that is
+# missing or odd keeps the values above.
+SET5 = {"v5": {"STOP": "gap", "DOMINANT": False, "V5_MAX_COST": 0.10, "PART_FRAC": 0.3, "PART_WAY": 0.9},
+        "v1m": {"STOP": "gap", "DOMINANT": False, "V5_MAX_COST": 0.10, "PART_FRAC": 0.3, "PART_WAY": 0.9, "TFM": 1}}
+_SET = {"m5": None, "m6": None}
+
+
+def load_settings():
+    global RISK_V5, RISK_V1M
+    for n, key in (("bot5", "m5"), ("bot6", "m6")):
+        f = ROOT / "live" / "bots" / f"{n}.json"
+        try:
+            m = f.stat().st_mtime
+            if m == _SET[key]:
+                continue
+            d = json.loads(f.read_text(encoding="utf-8"))
+            _SET[key] = m
+        except Exception:  # noqa: BLE001
+            continue
+        try:
+            if n == "bot5":
+                for trk in ("v5", "v1m"):
+                    s = (d.get("tracks") or {}).get(trk) or {}
+                    SET5[trk] = {k: v for k, v in s.items() if hasattr(OG, k)}
+                rk = d.get("risk") or {}
+                RISK_V5 = float(rk.get("v5", RISK_V5)) if 0 <= float(rk.get("v5", RISK_V5)) <= 0.02 else RISK_V5
+                RISK_V1M = float(rk.get("v1m", RISK_V1M)) if 0 <= float(rk.get("v1m", RISK_V1M)) <= 0.02 else RISK_V1M
+            else:
+                tal = d.get("tal") or {}
+                if tal.get("pair") and tuple(tal["pair"]) in {tuple(p_) for p_ in TG.PAIRS}:
+                    FA.TAL_PAIR = tuple(tal["pair"])
+                if isinstance(tal.get("cfg"), dict):
+                    FA.TAL_CFG = {**FA.TAL_CFG, **tal["cfg"]}
+                for trk, v in (d.get("risk") or {}).items():
+                    if trk in FA.RISK and 0 <= float(v) <= 0.02:
+                        FA.RISK[trk] = float(v)
+                FA.RISK_TAL = FA.RISK.get("tal", FA.RISK_TAL)
+            print(f"settings of {n} loaded: {json.dumps(d.get('tracks') or d.get('tal'), default=str)[:300]}")
+        except Exception as e:  # noqa: BLE001
+            print(f"settings of {n} not loaded: {e}")
+
+
+def _set_og(trk):
+    """Put a track's settings on agents/own_gaps.py; returns what to put back after."""
+    keep = {k: getattr(OG, k) for k in SET5[trk]}
+    for k, v in SET5[trk].items():
+        setattr(OG, k, v)
+    return keep
 
 
 def log(msg):
@@ -474,6 +523,7 @@ def main():
     last_push = last_fpush = 0
     while True:
         t_cycle = time.time()
+        load_settings()
         cal.refresh()
         seen_now, errors, fseen = set(), [], set()
         for name in SYMBOLS:
@@ -496,30 +546,29 @@ def main():
                         x["wide"] = True
                         res.append(x)
                 if name in V5_15_SYMBOLS:
-                    keep5 = (OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY)
+                    keep5 = _set_og("v5")    # live/bots/bot5.json (from 10.11.2026: 30% out at 90% of the way, rest to BE)
                     try:
-                        # + 30% out at 90% of the way, the rest to break-even (user approved, 10.11.2026)
-                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY = "gap", False, 0.10, 0.3, 0.9
                         for x in OG.run_gaps(name, df, cst, stop_at, noent, live=True, variant="v5"):
                             if x.get("status") == "pending" and pd.Timestamp(x["setup_t"]) < df.index[-1] - pd.Timedelta(hours=OG.EXPIRY):
                                 continue
                             x["v5"] = True
                             res.append(x)
                     finally:
-                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY = keep5
+                        for k_, v_ in keep5.items():
+                            setattr(OG, k_, v_)
                 if name in V5_SYMBOLS:
                     # v5 on 1-minute candles (user, 10.11.2026: "if it is profitable, why not add it"): the same rules,
                     # gaps found on the 1-minute chart, waiting 96 minutes for the touch
-                    keep1 = (OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM)
+                    keep1 = _set_og("v1m")
                     try:
-                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM = "gap", False, 0.10, 0.3, 0.9, 1
                         for x in OG.run_gaps(name, df, cst, stop_at, noent, live=True, variant="v1m"):
                             if x.get("status") == "pending" and pd.Timestamp(x["setup_t"]) < df.index[-1] - pd.Timedelta(minutes=96):
                                 continue
                             x["v1m"] = True
                             res.append(x)
                     finally:
-                        OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM = keep1
+                        for k_, v_ in keep1.items():
+                            setattr(OG, k_, v_)
                 if name in FA.SPEC:
                     fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen)
                 if name in V4_SYMBOLS:

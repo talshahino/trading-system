@@ -1,0 +1,27 @@
+{
+ "name": "bot5",
+ "label": "בוט 5 · סקלפינג (וירטואלי)",
+ "note": "virtual bot (live/watch_own.py). The settings it trades with; the builder (agents/builder.py) writes the manager's approved cards here and the bot reads them within a minute. 'tracks' = the gap tracks' rules (agents/own_gaps.py knobs), 'risk' = share of the balance per trade.",
+ "tracks": {
+  "v5": {
+   "STOP": "gap",
+   "DOMINANT": false,
+   "V5_MAX_COST": 0.1,
+   "PART_FRAC": 0.3,
+   "PART_WAY": 0.9
+  },
+  "v1m": {
+   "STOP": "gap",
+   "DOMINANT": false,
+   "V5_MAX_COST": 0.1,
+   "PART_FRAC": 0.3,
+   "PART_WAY": 0.9,
+   "TFM": 1
+  }
+ },
+ "risk": {
+  "v5": 0.004,
+  "v1m": 0.00075
+ },
+ "changes": {}
+}

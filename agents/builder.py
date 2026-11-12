@@ -17,6 +17,7 @@ don't build it twice.
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 import pandas as pd
@@ -27,6 +28,10 @@ ROOT = Path(__file__).resolve().parent.parent
 BOTS = ROOT / "live" / "bots"
 PLAN_BOTS = ("bot1", "bot2", "bot3", "bot4", "bot7")
 ADD_BOTS = ("bot1", "bot2", "bot3", "bot4")
+SET_BOTS = ("bot5", "bot6")          # virtual bots run as real accounts (12.11.2026): settings files, built at once
+ALL_BOTS = PLAN_BOTS + SET_BOTS
+TRACK_KNOBS = {"STOP", "DOMINANT", "V5_MAX_COST", "PART_FRAC", "PART_WAY", "TFM", "EDGE", "NEST", "MIN_RR", "GBODY",
+               "MIN_GAP", "EXPIRY", "FIRST_ONLY"}
 
 
 def _read(p, default):
@@ -55,6 +60,21 @@ def buildable(c):
         return {"bot": bot, "combo": ch["combo"], "family": ch["family"], "to": ch["to"]}
     if c.get("kind") == "new" and bot in ADD_BOTS and ch.get("combo") and ch.get("kind") == "add":
         return {"bot": bot, "combo": ch["combo"], "family": "add"}
+    # bots 5-6: a gap track's rule, a track's risk, the user's gap method's timeframes / rules (bot 6 trades it)
+    if bot == "bot5" and c.get("kind") == "improve" and ch.get("track") in ("v5", "v1m") \
+            and str(ch.get("knob", "")).split("@")[0] in TRACK_KNOBS and "to" in ch:
+        return {"bot": bot, "combo": f"OWN|{ch['track']}", "family": "track", "track": ch["track"],
+                "knob": str(ch["knob"]).split("@")[0], "to": ch["to"]}
+    if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") and str(ch.get("knob", "")).startswith("RISK") \
+            and ch.get("to") is not None:
+        return {"bot": bot, "combo": f"{'OWN' if bot == 'bot5' else 'FUT'}|{ch['track']}", "family": "risk",
+                "track": ch["track"], "to": float(ch["to"])}
+    if bot == "bot6" and c.get("kind") in ("new", "improve") and ch.get("method") == "tal_gap" and ch.get("pair") and ch.get("cfg"):
+        hi, lo = ch["pair"].split("/")
+        from agents import tal_gap as TG
+        pr = next((list(p) for p in TG.PAIRS if p[0] == hi and p[1] == lo), None)
+        if pr:
+            return {"bot": bot, "combo": f"TAL|{ch['pair']}", "family": "tal", "pair": pr, "cfg": ch["cfg"]}
     return None
 
 
@@ -73,6 +93,12 @@ def exit_plan(v):
 
 
 def describe(b):
+    if b["family"] == "track":
+        return f"מסלול {b['track']}: {b['knob']} = {b['to']}"
+    if b["family"] == "risk":
+        return f"מסלול {b['track']}: סיכון {b['to'] * 100:g}% לעסקה"
+    if b["family"] == "tal":
+        return f"שיטת הגאפ: {b['pair'][0]} / {b['pair'][1]}, " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())
     if b["family"] == "add":
         return f"נוספה לבוט: {b['combo']}, בסיכון של הבוט"
     if b["family"] == "filters":
@@ -84,6 +110,22 @@ def describe(b):
 
 
 def apply(cfg, b, card_id):
+    if b["family"] in ("track", "risk", "tal"):
+        # the value before is kept with the card, so an undo / a revert puts it back exactly
+        ch = cfg.setdefault("changes", {})
+        if b["family"] == "track":
+            tr = cfg.setdefault("tracks", {}).setdefault(b["track"], {})
+            ch[card_id] = {"family": "track", "track": b["track"], "knob": b["knob"], "before": tr.get(b["knob"], "__none__")}
+            tr[b["knob"]] = b["to"]
+        elif b["family"] == "risk":
+            rk = cfg.setdefault("risk", {})
+            ch[card_id] = {"family": "risk", "track": b["track"], "before": rk.get(b["track"], "__none__")}
+            rk[b["track"]] = b["to"]
+        else:
+            tal = cfg.setdefault("tal", {})
+            ch[card_id] = {"family": "tal", "before": json.loads(json.dumps(tal))}
+            tal.update(pair=b["pair"], cfg=b["cfg"])
+        return
     plans = cfg.setdefault("plans", {})
     if b["family"] == "add":
         if b["combo"] not in cfg["combos"]:
@@ -107,6 +149,17 @@ def apply(cfg, b, card_id):
 def revert(cfg, card_id):
     """Take a card's change out of a bot (undone in the app). True when something changed."""
     done = False
+    c = (cfg.get("changes") or {}).pop(card_id, None)
+    if c:
+        if c["family"] == "track":
+            tr = cfg.setdefault("tracks", {}).setdefault(c["track"], {})
+            tr.pop(c["knob"], None) if c["before"] == "__none__" else tr.__setitem__(c["knob"], c["before"])
+        elif c["family"] == "risk":
+            rk = cfg.setdefault("risk", {})
+            rk.pop(c["track"], None) if c["before"] == "__none__" else rk.__setitem__(c["track"], c["before"])
+        else:
+            cfg["tal"] = c["before"]
+        return True
     for combo, cid in list((cfg.get("added") or {}).items()):
         if cid == card_id:
             cfg["combos"] = [c for c in cfg["combos"] if c != combo]
@@ -133,7 +186,7 @@ def run(now=None):
     undo, ucards = set(user.get("undo") or []), user.get("cards") or {}
     replies = _read(ROOT / "data" / "agents" / "replies.json", {})
     cards = all_cards()
-    cfgs = {b: _read(BOTS / f"{b}.json", None) for b in PLAN_BOTS}
+    cfgs = {b: _read(BOTS / f"{b}.json", None) for b in ALL_BOTS}
     touched, did = set(), []
     # the user's own approvals in the app count too (he decided a card himself)
     approved = {d["card"]: d for d in dec if d.get("type") == "card" and d.get("decision") == "approved" and d["id"] not in undo}
@@ -153,6 +206,18 @@ def run(now=None):
                 r.update(text="הוחזר לאחור - הוצא מהבוט אוטומטית", at=at, by="builder", reverted=at)
                 r.pop("built", None)
                 did.append(f"{b}: reverted {cid}")
+    # bot 6 trades ONE pair of timeframes of the user's gap method: of the approved ones only the strongest goes in
+    def _score(cid):
+        u = (cards.get(cid) or {}).get("unseen") or {}
+        return (u.get("mean") or -9) * math.sqrt(max(1.0, u.get("eff_n") or 1))
+    tal = [cid for cid in approved if cid in cards and cid not in undone_cards
+           and ((buildable(cards[cid]) or {}).get("family") == "tal")]
+    best_tal = max(tal, key=_score) if tal else None
+    for cid in tal:
+        if cid != best_tal and not (replies.get(cid) or {}).get("built"):
+            replies[cid] = {"text": "לא נבנה: בוט 6 סוחר בזוג טיים פריים אחד של שיטת הגאפ, ונשאר הזוג שהצליח יותר בבדיקה",
+                            "at": at, "by": "builder", "built": "skipped"}
+            did.append(f"bot6: {cid} skipped (one pair)")
     # 2) approved, not built yet -> into the bot
     for cid in approved:
         c = cards.get(cid)

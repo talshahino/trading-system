@@ -1,0 +1,26 @@
+{
+ "name": "bot6",
+ "label": "בוט 6 · חוזים עתידיים (וירטואלי)",
+ "note": "virtual bot (live/watch_own.py fut_step + live/fut_account.py). 'tal' = the user's gap method as bot 6 trades it (pair = higher / lower timeframe / steps, cfg = agents/tal_gap.py rules), 'risk' = share of the balance per trade per track. Written by the builder from approved cards.",
+ "tal": {
+  "pair": [
+   "1h",
+   "5m",
+   2
+  ],
+  "cfg": {
+   "GBODY": 1.5,
+   "MIN_GAP": 0.3,
+   "SW": 3,
+   "MIN_RR": 1.0,
+   "EXPIRY": 120,
+   "PROT": "none"
+  }
+ },
+ "risk": {
+  "v5": 0.0,
+  "v1m": 0.0,
+  "tal": 0.004
+ },
+ "changes": {}
+}

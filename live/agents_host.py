@@ -365,6 +365,7 @@ def smart(st):
         except Exception as e:  # noqa: BLE001
             log(f"publishing {name} failed: {e}")
     before = snapshot()
+    run(st, ["-m", "agents.portfolio_check"], timeout=600, logname="portfolio_check.log")   # the whole bots, as they are
     run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log")
     run(st, ["-m", "agents.builder"], timeout=300, logname="builder.log")
     host_doc(st, "smart")                                # stamps smart_at

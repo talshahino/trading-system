@@ -253,9 +253,12 @@ def trades_of(name, d5, spread_now):
     return out
 
 
+RESET_F = LIVE / "news_bot_reset.json"   # the manager's reset decision (live/manager.py auto_apply, agents/reset_rule.py)
+
+
 class Account:
     def __init__(self, a):
-        if not a or a.get("v") != ACCT_V:
+        if not a or (a.get("v") or 0) < ACCT_V:
             a = {"v": ACCT_V, "initial": INITIAL, "started": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
                  "ledger": {}, "eq_curve": [], "dead": False}
         self.a = a
@@ -265,6 +268,31 @@ class Account:
 
     def day_start(self, day):
         return self.a["initial"] + sum(x["pnl"] for x in self.a["ledger"].values() if x.get("pnl") is not None and x["closed_day"] < day)
+
+
+def reset_check(acc):
+    """The manager decided bot 7's account starts again from $100,000 (user, 12.11.2026). The account before is kept
+    (vacct "past"); undo brings it back with every trade booked since."""
+    try:
+        r = json.loads(RESET_F.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return acc
+    want, a = int(r.get("v") or 0), acc.a
+    now = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+    if r.get("undo"):
+        if a.get("reset_id") == r.get("id") and a.get("past"):
+            prev = dict(a["past"][-1])
+            prev["ledger"] = {**(prev.get("ledger") or {}), **(a.get("ledger") or {})}
+            prev["past"], prev["restored_at"] = a["past"][:-1], now
+            log(f"the manager's reset undone: account {prev.get('v')} is back with {len(prev['ledger'])} trades")
+            return Account(prev)
+        return acc
+    if want > int(a.get("v") or 0):
+        old = {k: v for k, v in a.items() if k != "past"}
+        log(f"the manager reset the account: {a.get('v')} -> {want} ({r.get('why') or ''})")
+        return Account({"v": want, "initial": INITIAL, "started": now, "ledger": {}, "eq_curve": [], "dead": False,
+                        "reset_id": r.get("id"), "reset_why": r.get("why"), "past": (a.get("past") or [])[-2:] + [old]})
+    return acc
 
 
 def israel_day(ts):
@@ -353,7 +381,7 @@ def state_of(acc, trades, cal, src):
                         "gross": led[t["id"]]["pnl"], "swap": 0, "comm": 0, "net": led[t["id"]]["pnl"],
                         "why": t["reason"] + (f" · אחרי {t['event']}" if t.get("event") else ""), "event": t.get("event"),
                         "reason": "", "pip": 1.0} for t in closed],
-            "vacct": {k: v for k, v in acc.a.items() if k != "eq_curve"}}
+            "vacct": {k: v for k, v in acc.a.items() if k not in ("eq_curve", "past")}}
 
 
 def main():
@@ -375,6 +403,7 @@ def main():
     log(f"news bot started (account from {acc.a['started']})")
     while True:
         try:
+            acc = reset_check(acc)
             cal.refresh()
             sp = spreads()
             seen = {}

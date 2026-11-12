@@ -620,6 +620,7 @@ def agent_decide(d):
 # (agents/autodecide.py); the risk / removal ones are applied here, keeping the value before so "undo" restores it.
 # The app marks decisions read (they leave the list; the archive keeps 30 days) and can undo any of them.
 AGENT_META = LIVE / "agent_meta.json"
+RESET7_F = LIVE / "news_bot_reset.json"      # bot 7's account reset, read by live/news_bot.py
 DECISIONS_URL = "https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/decisions.json"
 
 
@@ -682,7 +683,16 @@ def agent_undo(d):
             m["read"].append(k)
         a = m["applied"].pop(k, None)
         agent_meta_save(m)
-    if a:                                    # a risk change already applied: put back the value before it
+    if a and a.get("kind") == "reset":       # bot 7's reset undone: the account before comes back, with every trade since
+        try:
+            r = json.loads(RESET7_F.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            r = {}
+        if r.get("id") == k:
+            r["undo"] = True
+            RESET7_F.write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
+        log(f"manager's decision {k} undone by the user: bot 7's account before the reset comes back")
+    elif a:                                  # a risk change already applied: put back the value before it
         risk_change(a["bot"], a["combo"], a["kind"], a.get("prev"))
         log(f"manager's decision {k} undone by the user: {a['bot']} {a['combo']} {a['kind']} back to {a.get('prev')}")
     else:
@@ -788,6 +798,21 @@ def auto_apply():
                             m["revert_ok"] = m["revert_ok"][-2000:]
                             agent_meta_save(m)
                         agent_publish()
+                    continue
+                if x.get("type") == "reset" and x.get("decision") == "approved" and a and a.get("kind") == "reset":
+                    # bot 7's account starts again (agents/reset_rule.py; user, 12.11.2026): live/news_bot.py does it
+                    with AGENT_LOCK:
+                        m = agent_meta()
+                        if x["id"] in m["applied"] or x["id"] in m["undo"]:
+                            continue
+                        RESET7_F.write_text(json.dumps({"v": int(a["v"]), "id": x["id"], "why": x.get("why"),
+                                                        "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())},
+                                                       ensure_ascii=False), encoding="utf-8")
+                        m["applied"][x["id"]] = {"bot": a["bot"], "combo": None, "kind": "reset", "v": int(a["v"]),
+                                                 "prev": None, "failed": False, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+                        agent_meta_save(m)
+                    log(f"manager's decision {x['id']}: bot 7's account starts again (account {a['v']})")
+                    agent_publish()
                     continue
                 if x.get("type") != "risk" or x.get("decision") != "approved" or not a:
                     continue

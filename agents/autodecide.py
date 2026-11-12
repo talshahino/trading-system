@@ -280,6 +280,13 @@ def decide(bots, now=None):
                      "title": f"{combo}: {r.get('label') or KIND_HE.get(kind, kind)}", "decision": "approved",
                      "why": r.get("why") or "", "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
                      "action": {"bot": bot, "combo": combo, "kind": set_kind, "value": set_val, "prev": None if prev == 1.0 and set_kind == "mult" else prev}})
+    # 3) bot 7's account reset (user, 12.11.2026): the manager decides it on a material change of bot 7's strategies,
+    # stops resetting by itself after two stable weeks (then it asks), and archives the trades first (agents/reset_rule.py)
+    try:
+        from agents import reset_rule as RR
+        RR.check(add, _did, _git_show, now, ucards, rules.get("bot7_reset_ok", []))
+    except Exception as e:  # noqa: BLE001
+        print(f"bot 7 reset rule failed: {e}")
     # keep 30 days; read / undone marks come from the app (through the bots' computer)
     cutoff = now - pd.Timedelta(days=KEEP_DAYS)
     keep = [d for d in old.values() if pd.Timestamp(d["at"]) >= cutoff]

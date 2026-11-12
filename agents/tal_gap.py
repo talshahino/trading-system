@@ -44,7 +44,7 @@ PAIRS = [("15m", "1m", 2), ("1h", "5m", 2), ("4h", "15m", 2), ("1d", "1h", 2),
          ("5m", "1m", 1), ("15m", "5m", 1), ("1h", "15m", 1), ("4h", "1h", 1), ("1d", "4h", 1),
          ("1h", "1m", 3), ("4h", "5m", 3), ("1d", "15m", 3)]
 BASE = {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 48, "PROT": "none"}
-KNOBS = {"GBODY": [1.0, 2.0], "MIN_GAP": [0.0, 0.6], "SW": [2, 5], "MIN_RR": [0.5, 1.5, 2.0],
+KNOBS = {"GBODY": [0.0, 1.0, 2.0], "MIN_GAP": [0.0, 0.6], "SW": [2, 5], "MIN_RR": [0.0, 0.5, 1.5, 2.0],
          "EXPIRY": [8, 24, 120], "PROT": ["cal15", "cal60", "shock", "cal15shock"],
          # trade management (user, 12.11.2026: "partial exit? stop to break-even? the smart agent should optimise it"):
          # beW = the stop to the entry once the price went W of the way to the target; pF_W = F of the trade out at W of
@@ -346,8 +346,112 @@ def run(bot, symbols, load, out_dir, budget_s, end=None):
         (idx_dir / f"{key}.json").write_text(json.dumps(idx[key], default=str))
         done += 1
         print(f"  tal_gap {pair_name(p)} {knob}={val} {s}: {len(t)} trades ({time.time() - ts:.1f}s)")
-    print(f"tal_gap: {done} run, {len(todo) - done} left")
-    return idx, len(todo) - done
+    left = len(todo) - done
+    if left == 0 and time.time() - t0 < budget_s:
+        done += search(symbols, load, out_dir, idx, idx_dir, budget_s - (time.time() - t0))
+    print(f"tal_gap: {done} run, {left} left")
+    return idx, left
+
+
+# ---------------------------------------------------------------- the never-ending search (user, 12.11.2026)
+# "the agents optimise every strategy, timeframe and partial profit, every time trying to raise the profit, all the
+# time - even if it means entering every trade with a gap; what matters is more profit". So once the planned grid is
+# done, every run keeps searching: from the best configuration of a pair (by the TOTAL profit on the train period -
+# more trades that each earn a little beat few that earn a lot), it tries one neighbour after another (one knob moved,
+# combinations included) and keeps going from whichever earns more. The unseen period is never used to choose - it
+# only shows the result, so the search cannot fit 2026.
+SEARCH_LOG = "search.json"
+
+
+def score(t):
+    """Total time-weighted R on the train period (what the search maximises)."""
+    tr = t[pd.to_datetime(t["time"], utc=True, format="ISO8601") < SPLIT]
+    if len(tr) < 30:
+        return -1e9
+    w = K.weights(tr["time"])
+    return float(np.sum(w * tr["r"].to_numpy(float)))
+
+
+def _cfg_runs(p, cfg, symbols, idx):
+    return [v for v in idx.values() if v["pair"] == pair_name(p) and v["cfg"] == cfg and v["sym"] in symbols]
+
+
+def search(symbols, load, out_dir, idx, idx_dir, budget_s):
+    out_dir = Path(out_dir)
+    t0, done = time.time(), 0
+    logf = out_dir / SEARCH_LOG
+    try:
+        log = json.loads(logf.read_text())
+    except Exception:  # noqa: BLE001
+        log = {}
+    data, gcs = {}, {}
+
+    def total(p, cfg):
+        """Runs what is missing for (pair, cfg) on every instrument; returns the train total, or None (out of time)."""
+        nonlocal done
+        frames = []
+        for s in symbols:
+            key = f"{p[0]}_{p[1]}_{vid(cfg)}_{s}"
+            if key not in idx:
+                if time.time() - t0 > budget_s:
+                    return None
+                if s not in data:
+                    try:
+                        data[s] = load(s)
+                    except Exception:  # noqa: BLE001
+                        data[s] = None
+                if data[s] is None:
+                    continue
+                ts = time.time()
+                t = simulate(data[s], p, cfg, gcs.setdefault((s, p[0]), {}))
+                f = out_dir / f"{key}.csv.gz"
+                t.to_csv(f, index=False)
+                idx[key] = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pair_name(p), "gap": p[2],
+                            "knob": "search", "val": vid(cfg), "cfg": cfg, "sym": s, "file": f.name, "n": len(t),
+                            "secs": round(time.time() - ts, 1)}
+                (idx_dir / f"{key}.json").write_text(json.dumps(idx[key], default=str))
+                done += 1
+            frames.append(pd.read_csv(out_dir / idx[key]["file"]))
+        t = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["time", "r"])
+        return score(t)
+
+    keys = list(KNOBS)
+    while time.time() - t0 < budget_s:
+        moved = False
+        for p in PAIRS:
+            st = log.setdefault(pair_name(p), {"best": dict(BASE), "score": None, "tried": []})
+            if st["score"] is None:
+                sc = total(p, st["best"])
+                if sc is None:
+                    break
+                st["score"] = sc
+            # the next untried neighbour of the best: one knob moved, round robin
+            nb = None
+            for k in keys:
+                for v in KNOBS[k] + [BASE.get(k, "none")]:
+                    c = dict(st["best"], **{k: v})
+                    if c.get("EXIT") == "none":
+                        c.pop("EXIT")                   # "none" is the base: the same configuration, the same name
+                    if c != st["best"] and vid(c) not in st["tried"]:
+                        nb = c
+                        break
+                if nb:
+                    break
+            if nb is None:
+                continue                               # a local best: every neighbour tried
+            sc = total(p, nb)
+            if sc is None:
+                break
+            st["tried"].append(vid(nb))
+            if sc > st["score"]:
+                st["best"], st["score"], st["tried"] = nb, sc, []     # better: search around it from now on
+                print(f"  tal_gap search {pair_name(p)}: better total {sc:.1f}R with {nb}")
+            moved = True
+            logf.write_text(json.dumps(log, default=str))
+        if not moved:
+            break
+    logf.write_text(json.dumps(log, default=str))
+    return done
 
 
 def _stats(t):
@@ -379,18 +483,26 @@ def summarize(idx, symbols, out_dir):
             if t is None:
                 continue
             rows.append({"knob": knob, "val": val, "cfg": cfg, **_stats(t)})
+        seen = {vid(r["cfg"]) for r in rows}
+        for v in idx.values():                          # the never-ending search's configurations
+            if v.get("knob") == "search" and v["pair"] == pair_name(p) and vid(v["cfg"]) not in seen:
+                t = trades(p, v["cfg"])
+                seen.add(vid(v["cfg"]))
+                if t is not None:
+                    rows.append({"knob": "search", "val": vid(v["cfg"]), "cfg": v["cfg"], **_stats(t)})
         if not rows:
             continue
         base = next((r for r in rows if r["knob"] == "base"), None)
         ok = [r for r in rows if (r["train"]["eff_n"] or 0) >= K.MIN_EFF_N and r["train"]["mean"] is not None]
-        chosen = max(ok, key=lambda r: r["train"]["mean"]) if ok else None
+        # by the TOTAL profit on the train period (user, 12.11.2026: "what matters is more profit")
+        chosen = max(ok, key=lambda r: r["train"]["mean"] * r["train"]["eff_n"]) if ok else None
         prot = {r["val"] if r["knob"] == "PROT" else "none": {"train": r["train"]["mean"], "unseen": r["unseen"]["mean"],
                                                              "n": r["whole"]["n"]}
                 for r in rows if r["knob"] in ("PROT", "base")}
-        pairs[pair_name(p)] = {"gap": p[2], "name": f"{TF_HE[p[0]]} / {TF_HE[p[1]]}", "done": len(rows),
-                               "planned": len(variants()), "base": base, "chosen": chosen, "protection": prot,
+        pairs[pair_name(p)] = {"gap": p[2], "name": f"{TF_HE[p[0]]} / {TF_HE[p[1]]}", "done": min(len(rows), len(variants())),
+                               "planned": len(variants()), "searched": sum(1 for r in rows if r["knob"] == "search"), "base": base, "chosen": chosen, "protection": prot,
                                "variants": [{k: r[k] for k in ("knob", "val", "train", "unseen", "whole")} for r in rows]}
-        if base and len(rows) == len(variants()):
+        if base and len([r for r in rows if r["knob"] != "search"]) == len(variants()):
             for knob in KNOBS:
                 lst = [r for r in rows if r["knob"] == knob] + [dict(base, val=BASE.get(knob, "none"))]
                 lst = [r for r in lst if r["train"]["mean"] is not None]
@@ -438,10 +550,12 @@ def cards(bot, pairs, other=None, other_name="בוט 5", risk_pct=None):
         cfg = ch["cfg"]
         same = f" · ב{other_name}: {om:+.2f}R בתקופה שלא נראתה ({ob.get('knob')}={ob.get('val')})" if om is not None \
             else f" · ב{other_name}: עוד לא נבדק"
-        knob = "הבסיס" if ch["knob"] == "base" else "" if ch["knob"] == "PROT" else f"{NAMES[ch['knob']]} = {ch['val']}"
+        knob = ("הבסיס" if ch["knob"] == "base" else "" if ch["knob"] == "PROT" else "חיפוש: " + ", ".join(f"{k}={v}" for k, v in cfg.items())
+                if ch["knob"] == "search" else f"{NAMES[ch['knob']]} = {ch['val']}")
         what = (f"שיטת הגאפ של טל, {x['name']} (פער {x['gap']} דרגות): {knob + ', ' if knob else ''}{PROT_HE.get(cfg['PROT'])}. "
                 f"נבחר על 2024-2025, מוצג על 2026: {u['mean']:+.2f}R לעסקה, {u['n']} עסקאות, {u['win']}% הצלחה, "
                 f"{ch['target_pct']}% הגיעו ליעד, יחס חציוני {ch['rr']}, עלות {ch['cost_r']}R{same}")
+        what += f" · סה\"כ על 2026: {u['mean'] * u['n']:+.1f}R"
         c = K.card(bot, "new", f"שיטת הגאפ של טל · {x['name']}", what, ch["train"], u, whole=ch["whole"],
                    halves_=ch["halves"], cost_r=ch["cost_r"], tested=len(PAIRS) * len(variants()), risk_pct=risk_pct,
                    neighbours={"values": [v["val"] for v in x["variants"] if v["knob"] == ch["knob"]],
@@ -468,24 +582,44 @@ def live_trades(D, pair, cfg, gcache=None):
         return []
     exp_ns = int(cfg["EXPIRY"] * 3600 * 1e9)
     ts = lambda q: pd.Timestamp(int(ns[q]), tz="UTC").isoformat()   # noqa: E731
-    out, busy = [], -1
-    for d, mid, near, far, made, armed in sorted(g, key=lambda x: x[5]):
+    prot = cfg.get("PROT", "none")
+    calk = "cal60" if prot == "cal60" else "cal15" if prot in ("cal15", "cal15shock") else None
+    shock = prot in ("shock", "cal15shock")
+    out, cands = [], []
+    # pass 1: every gap -> pending / cancelled, or a candidate fill (exactly simulate()'s checks, protection included)
+    for d, mid, near, far, made, armed in g:
         key = f"tal|{int(d)}|g{pd.Timestamp(made, tz='UTC').strftime('%Y%m%d%H%M')}"
         base = {"id_key": key, "dir": int(d), "setup_t": pd.Timestamp(armed, tz="UTC").isoformat(), "gap": [float(far), float(near)]}
         q0 = int(np.searchsorted(ns, armed))
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))
         if q0 >= n1:
-            continue                                     # armed in the future of the data (should not happen)
+            continue
         seg = (l1[q0:q1] <= mid) if d > 0 else (h1[q0:q1] >= mid)
+        if calk and calk in D.cal and D.cal_start[calk][q1 - 1] - (D.cal_start[calk][q0 - 1] if q0 else 0) > 0 and not seg.any():
+            out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="news"))
+            continue
+        if shock and not seg.any():
+            cs = D.cs_dn if d > 0 else D.cs_up
+            if cs[q1 - 1] - (cs[q0 - 1] if q0 else 0) > 0:
+                out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="shock"))
+                continue
         if not seg.any():
             expired = armed + exp_ns <= ns[-1]
             out.append(dict(base, status="cancelled" if expired else "pending", entry=float(mid), stop=None, target=None,
                             reason="expired" if expired else None))
             continue
         f = q0 + int(np.argmax(seg))
-        if f < busy or D.late[f]:
-            out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None,
-                            reason="busy" if f < busy else "session"))
+        why = None
+        if D.late[f]:
+            why = "session"
+        elif calk and calk in D.cal and (D.cal[calk][f] or D.cal_start[calk][f] - (D.cal_start[calk][q0 - 1] if q0 else 0) > 0):
+            why = "news"
+        elif shock:
+            cs = D.cs_dn if d > 0 else D.cs_up
+            if cs[f] - (cs[q0 - 1] if q0 else 0) > 0 or D.recent_shock[f] or ((l1[f] < far) if d > 0 else (h1[f] > far)):
+                why = "shock"
+        if why:
+            out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason=why))
             continue
         px = min(mid, o1[f]) if d > 0 else max(mid, o1[f])
         sw_st, sw_tg = (lo_sw, hi_sw) if d > 0 else (hi_sw, lo_sw)
@@ -499,6 +633,13 @@ def live_trades(D, pair, cfg, gcache=None):
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
             out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="rr"))
             continue
+        cands.append((f, d, px, stop, t2, risk, base))
+    # pass 2: in the order of the fills, one trade at a time per instrument (as simulate())
+    busy = -1
+    for f, d, px, stop, t2, risk, base in sorted(cands, key=lambda x: x[0]):
+        if f < busy:
+            out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="busy"))
+            continue
         cost_r = float(D.cost[f]) / risk
         hs, ls = h1[f:], l1[f:]
         st = (ls <= stop) if d > 0 else (hs >= stop)
@@ -511,20 +652,40 @@ def live_trades(D, pair, cfg, gcache=None):
         i_tg = int(np.argmax(tg)) if tg.any() else big
         i_sh = int(np.argmax(sh)) if sh.any() else big
         i = min(i_st, i_tg, i_sh)
+        em, part_r, frac, moved = exit_mode(cfg), 0.0, 0.0, False
+        if em is not None:                               # the same management as simulate()
+            frac, way = em
+            lvl = px + way * (t2 - px)
+            lv = (hs >= lvl) if d > 0 else (ls <= lvl)
+            lv[0] = False
+            i_lv = int(np.argmax(lv)) if lv.any() else big
+            if i_lv < i:
+                part_r, moved = frac * way * d * (t2 - px) / risk, True
+                be = (ls[i_lv + 1:] <= px) if d > 0 else (hs[i_lv + 1:] >= px)
+                i_be = i_lv + 1 + int(np.argmax(be)) if be.any() else big
+                if i_be <= i:
+                    i, i_st = i_be, i_be
         rec = dict(base, entry=float(px), stop=float(stop), target=float(t2), rr=round(d * (t2 - px) / risk, 2),
-                   cost_r=0.0, time=ts(f))
+                   cost_r=0.0, time=ts(f), part=round(frac, 2) if moved else None)
+        if moved:
+            rec["stop_now"] = float(px)                   # the rest's stop is at the entry
         if i >= big:
-            rec.update(status="open", r_now=round(d * (c1[-1] - px) / risk - cost_r, 3))
+            rest_now = d * (c1[-1] - px) / risk
+            rec.update(status="open", r_now=round((part_r + (1 - frac) * rest_now if moved else rest_now) - cost_r, 3))
             busy = n1
         else:
             q = f + i
-            if i == i_st:
+            if i == i_st and moved:
+                ex, why = ((min(px, o1[q]) if d > 0 else max(px, o1[q])) if i else px), "breakeven"
+            elif i == i_st:
                 ex, why = ((min(stop, o1[q]) if d > 0 else max(stop, o1[q])) if i else stop), "stop"
             elif i == i_tg:
                 ex, why = (max(t2, o1[q]) if d > 0 else min(t2, o1[q])), "target"
             else:
                 ex, why = o1[q], "forced"
-            rec.update(status="closed", exit=float(ex), exit_time=ts(q), reason=why, r=round(d * (ex - px) / risk - cost_r, 4))
+            rest = d * (ex - px) / risk
+            rec.update(status="closed", exit=float(ex), exit_time=ts(q), reason=why,
+                       r=round((part_r + (1 - frac) * rest if moved else rest) - cost_r, 4))
             busy = q + 1
         out.append(rec)
     return out

@@ -1057,7 +1057,11 @@ def update_check():
                 elif not UPD.touches_bot(UPD.local(), sha):
                     UPD.VERSION.write_text(sha)
                 else:
-                    UPDATE.update(sha=sha, title=title, seen=time.time())
+                    # a newer code version while one is already waiting: the newer one is installed, and the wait
+                    # keeps counting from the FIRST waiting version (12.11.2026: agents pushing every few minutes kept
+                    # restarting the 10 minutes and an update waited 45 minutes)
+                    waiting = UPDATE["sha"] and UPDATE["sha"] != UPD.local() and UPDATE.get("seen")
+                    UPDATE.update(sha=sha, title=title, seen=UPDATE["seen"] if waiting else time.time())
                     log(f"update available: {sha[:7]} {title}")
                     if not auto_update_on():
                         # every new waiting version is announced (same tag: it replaces the earlier notice on the

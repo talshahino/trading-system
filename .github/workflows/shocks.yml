@@ -1,0 +1,52 @@
+name: Shocks (bot 7)
+
+# Shocks without a calendar release: detection, the 30-day log and the strategy study (agents/shocks.py).
+# Normally runs on the bots' computer (live/agents_host.py); this is the fallback / first run.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Run
+        run: |
+          git fetch -q origin +refs/heads/live:refs/remotes/origin/live || true
+          python -u agents/shocks.py --minutes 200 2>&1 | tee shocks.log
+      - name: Save data cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp shocks.log reports/agents/bot7/shocks.log
+          git add data/agents/shocks_scan.json reports/agents/bot7/shocks_study.json reports/agents/bot7/shocks.log
+          git commit -qm "Bot 7: shocks scan and study" || exit 0
+          for i in 1 2 3; do git pull -q --rebase -X theirs && git push -q && break; done

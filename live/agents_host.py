@@ -43,7 +43,7 @@ AGENTS_REV = 2                                            # raise it: the agents
 AGENTS = [("bot5", ["agent_bot5.py"], 40), ("bot6", ["agent_bot6.py"], 30),
           ("bot1", ["agent_portfolio.py", "--bot", "bot1"], 15), ("bot2", ["agent_portfolio.py", "--bot", "bot2"], 15),
           ("bot3", ["agent_portfolio.py", "--bot", "bot3"], 15), ("bot4", ["agent_portfolio.py", "--bot", "bot4"], 15),
-          ("bot7", ["agent_portfolio.py", "--bot", "bot7"], 15),
+          ("bot7", ["agent_portfolio.py", "--bot", "bot7"], 15), ("bot7-shocks", ["agents/shocks.py"], 25),
           ("bot5-new", ["agent_portfolio.py", "--bot", "bot5"], 5), ("bot6-new", ["agent_portfolio.py", "--bot", "bot6"], 5)]
 HEARTBEAT = 3 * 3600                                      # publish the continuous layer at least this often
 LIGHT_PUBLISH = 30 * 60                                   # ... and at most this often, unless the manager decided something

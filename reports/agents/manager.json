@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-12T01:30:25+00:00",
+ "updated": "2026-11-12T01:33:21+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -1056,13 +1056,13 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-12T01:30:13+00:00",
-    "state_updated": "2026-11-12T01:28:26+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-12T01:01:50+00:00",
+    "state_updated": "2026-11-12T01:01:41+00:00",
+    "minutes_since_state": 0,
     "balance": 99379.09,
-    "equity": 99526.2,
-    "day_pct": -0.08,
-    "total_pct": -0.47,
+    "equity": 99385.71,
+    "day_pct": -0.22,
+    "total_pct": -0.61,
     "trades": 118,
     "mean_r": -0.022,
     "sum_r": -2.6,
@@ -2081,13 +2081,13 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-12T01:30:13+00:00",
-    "state_updated": "2026-11-12T01:28:33+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-12T01:01:50+00:00",
+    "state_updated": "2026-11-12T01:01:35+00:00",
+    "minutes_since_state": 0,
     "balance": 110932.75,
-    "equity": 110718.75,
-    "day_pct": -0.19,
-    "total_pct": 10.72,
+    "equity": 110630.75,
+    "day_pct": -0.27,
+    "total_pct": 10.63,
     "trades": 37,
     "mean_r": 0.561,
     "sum_r": 20.75,
@@ -2925,9 +2925,9 @@
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-12T01:30:13+00:00",
-    "state_updated": "2026-11-12T01:28:36+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-12T01:01:50+00:00",
+    "state_updated": "2026-11-12T01:00:55+00:00",
+    "minutes_since_state": 1,
     "balance": 100264.17,
     "equity": 100264.17,
     "day_pct": 0.0,
@@ -3963,13 +3963,13 @@
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-12T01:30:13+00:00",
-    "state_updated": "2026-11-12T01:28:39+00:00",
+    "updated": "2026-11-12T01:01:50+00:00",
+    "state_updated": "2026-11-12T01:00:13+00:00",
     "minutes_since_state": 2,
     "balance": 101556.17,
-    "equity": 102392.85,
-    "day_pct": 1.41,
-    "total_pct": 2.39,
+    "equity": 102366.35,
+    "day_pct": 1.39,
+    "total_pct": 2.37,
     "trades": 31,
     "mean_r": 0.11,
     "sum_r": 3.41,
@@ -4216,6 +4216,43 @@
    "risk_recs": 0,
    "pending": 0,
    "cards": [
+    {
+     "bot": "bot5",
+     "kind": "info",
+     "title": "שיטת הגאפ של טל: החוקים המדויקים והבדיקה שרצה",
+     "what": "החוקים כפי שהסוכן קורא אותם: בגבוה - דחף מסווינג לסווינג (2 נרות מכל צד), גאפ בין נר 1 לנר 3 עם וויקים שהאמצע שלו לא נגעו בו עד סוף הדחף. הפקודה נכנסת כשסוף הדחף ידוע (2 נרות אחרי השיא), באמצע הגאפ; מבוטלת כשנר בגבוה נסגר מעבר לכל המלבן או אחרי התוקף. בנמוך: סטופ 2 נקודות מעבר לסווינג השני שמעבר לכניסה (סופרים אחורה בזמן, סווינגים צמודים = אחד), יעד בסווינג השני בצד השני. בלי ניהול. הגנה: אין כניסה ±30 דק' מפרסום חשוב (הפקודה מושהית), נר 5 דק' חריג (פי 3 מהממוצע) נגד הכיוון מבטל את הגאפים, וכניסה רק בתיקון רגוע. עלויות FTMO אמיתיות כולל סוואפ. 12 זוגות × 20 גרסאות × 5 מדדים, נבחר על 2024-2025 ומוצג על 2026. הבדיקה רצה במחשב הבוטים; כרטיס לכל זוג יגיע כשתסתיים.",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": {
+      "kind": "review",
+      "scope": "tal_gap",
+      "next": "results"
+     },
+     "detail": {
+      "code": "agents/tal_gap.py",
+      "results": "data/agents/strategies/tal_gap_results.json",
+      "pairs": 12,
+      "configs": 20
+     },
+     "made": "2026-11-12T01:33:20+00:00",
+     "id": "d5f88f59e9ea",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T01:33:21+00:00",
+     "by": "manager",
+     "decided": "2026-11-12T01:33:21+00:00",
+     "decision_id": "15df531b290c"
+    },
     {
      "bot": "bot5",
      "kind": "improve",
@@ -4787,13 +4824,13 @@
    "health": {
     "bot": "bot5",
     "name": "בוט 5 · סקלפינג",
-    "updated": "2026-11-12T01:30:13+00:00",
-    "state_updated": "2026-11-12T01:28:23+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-12T01:01:50+00:00",
+    "state_updated": "2026-11-12T01:01:20+00:00",
+    "minutes_since_state": 1,
     "balance": 96935.74,
-    "equity": 96921.13,
-    "day_pct": -1.09,
-    "total_pct": -3.08,
+    "equity": 96971.0,
+    "day_pct": -1.04,
+    "total_pct": -3.03,
     "trades": 59,
     "mean_r": -0.084,
     "sum_r": -4.98,
@@ -4930,8 +4967,12 @@
     },
     "budget_minutes": 30.0,
     "running": 0,
-    "problems": [],
-    "actions": [],
+    "problems": [
+     "1 ריצות של הסוכנים נכשלו ביומיים האחרונים (#2)"
+    ],
+    "actions": [
+     "הסוכן החכם של המנהל יבדוק את הלוג ויריץ מחדש"
+    ],
     "last_experiment": "2026-11-11T11:01:01+00:00"
    }
   },
@@ -5103,13 +5144,13 @@
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-12T01:30:13+00:00",
-    "state_updated": "2026-11-12T01:28:27+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-12T01:01:50+00:00",
+    "state_updated": "2026-11-12T01:01:24+00:00",
+    "minutes_since_state": 0,
     "balance": 98435.07,
-    "equity": 98418.58,
-    "day_pct": -0.28,
-    "total_pct": -1.58,
+    "equity": 98456.09,
+    "day_pct": -0.24,
+    "total_pct": -1.54,
     "trades": 47,
     "mean_r": -0.43,
     "sum_r": -20.21,
@@ -5800,8 +5841,8 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-12T01:30:13+00:00",
-    "state_updated": "2026-11-12T01:28:09+00:00",
+    "updated": "2026-11-12T01:01:50+00:00",
+    "state_updated": "2026-11-12T01:00:09+00:00",
     "minutes_since_state": 2,
     "balance": 100000.0,
     "equity": 100000.0,
@@ -5837,13 +5878,20 @@
    },
    "budget_minutes": 30.0,
    "running": 0,
-   "problems": [],
-   "actions": [],
+   "problems": [
+    "1 ריצות של הסוכנים נכשלו ביומיים האחרונים (#2)"
+   ],
+   "actions": [
+    "הסוכן החכם של המנהל יבדוק את הלוג ויריץ מחדש"
+   ],
    "last_experiment": "2026-11-11T11:01:01+00:00"
   }
  },
  "decisions": {
-  "new": [],
-  "unread": 38
+  "new": [
+   "15df531b290c",
+   "28520d9a619e"
+  ],
+  "unread": 34
  }
 }

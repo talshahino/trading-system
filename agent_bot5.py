@@ -31,6 +31,7 @@ import own15 as O15
 from agents import agentkit as K
 from agents import repo_io as RIO
 from agents import own_gaps as OG
+from agents import tal_gap as TG
 
 BOT = "bot5"
 OUT = Path("reports/agents/bot5")
@@ -64,6 +65,7 @@ NAMES = {"PART_FRAC": "חלק שיוצא ברווח", "PART_WAY": "איפה יו
          "MIN_GAP": "גודל פער מינימלי", "EXPIRY": "תוקף הפער (שעות)", "FIRST_ONLY": "רק הפער הראשון של מהלך",
          "TFM": "טיים פריים לזיהוי (דקות)"}
 TRK_NAME = {"v5": "מסלול 15 דקות (v5)", "v1m": "מסלול הדקה"}
+TAL_SYMBOLS = ["US100", "US30", "US500", "GER40", "JP225"]     # Tal's gap method: bot 5's instruments
 
 
 def vid(cfg):
@@ -234,7 +236,17 @@ def main():
     a = ap.parse_args()
     if a.minutes is None:
         a.minutes = float(plan().get("minutes", 30))
-    idx = experiments(a.minutes * 60, set(x for x in a.symbols.split(",") if x) or None)
+    t_start = time.time()
+    only = set(x for x in a.symbols.split(",") if x) or None
+    idx = experiments(a.minutes * 60, only)
+    # Tal's gap method (user, 11.11.2026; data/agents/strategies/tal_gap.md): the rest of the budget
+    tal_syms = [x for x in TAL_SYMBOLS if not only or x in only]
+    tal_left = a.minutes * 60 - (time.time() - t_start)
+    if tal_left > 60:
+        try:
+            TG.experiments(BOT, tal_syms, tal_left)
+        except Exception as e:  # noqa: BLE001
+            print("tal gap experiments failed:", e)
     if a.no_cards:
         return
     idx = load_index()
@@ -284,10 +296,17 @@ def main():
                 neighbours={"values": [x[0] for x in lst], "share_positive": round(len(pos) / len(lst), 2)},
                 tested=len(variants()), risk_pct=T["risk_pct"], baseline=base["unseen"],
                 change={"track": trk, "knob": knob, "from": T["base"][knob], "to": val}))
+    tal = {}
+    try:
+        tal = TG.summarize(BOT, TAL_SYMBOLS)
+        cards += TG.cards(BOT, tal)
+    except Exception as e:  # noqa: BLE001
+        print("tal gap summary failed:", e)
     for c in cards:
         c["tier"], c["verdict"] = K.judge(c)
     K.write_cards(BOT, cards, {"summary": summary, "tested": tested,
-                               "done": sum(1 for v in idx.values()), "planned": sum(len(TRACKS[t]["symbols"]) for t, *_ in variants())})
+                               "done": sum(1 for v in idx.values()), "planned": sum(len(TRACKS[t]["symbols"]) for t, *_ in variants()),
+                               "tal": {"done": tal.get("done"), "planned": tal.get("planned")}})
     print(json.dumps({"cards": len(cards), "summary": {k: {kk: vv for kk, vv in v.items() if kk != "backtest"} for k, v in summary.items()}},
                      ensure_ascii=False, default=str)[:3000])
 

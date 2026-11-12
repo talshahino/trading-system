@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-12T10:29:12+00:00",
+ "updated": "2026-11-12T10:44:43+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -3537,13 +3537,13 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-12T10:28:59+00:00",
-    "state_updated": "2026-11-12T10:27:09+00:00",
+    "updated": "2026-11-12T10:44:30+00:00",
+    "state_updated": "2026-11-12T10:42:19+00:00",
     "minutes_since_state": 2,
     "balance": 98566.56,
-    "equity": 98992.28,
-    "day_pct": -0.62,
-    "total_pct": -1.01,
+    "equity": 99040.48,
+    "day_pct": -0.57,
+    "total_pct": -0.96,
     "trades": 120,
     "mean_r": -0.039,
     "sum_r": -4.69,
@@ -6754,13 +6754,13 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-12T10:28:59+00:00",
-    "state_updated": "2026-11-12T10:28:00+00:00",
+    "updated": "2026-11-12T10:44:30+00:00",
+    "state_updated": "2026-11-12T10:43:12+00:00",
     "minutes_since_state": 1,
     "balance": 110932.75,
-    "equity": 110896.3,
-    "day_pct": -0.03,
-    "total_pct": 10.9,
+    "equity": 110830.61,
+    "day_pct": -0.09,
+    "total_pct": 10.83,
     "trades": 37,
     "mean_r": 0.561,
     "sum_r": 20.75,
@@ -7069,7 +7069,7 @@
      "verdict": "חיובי בתקופה שלא נראתה (+0.51R לעסקה, 31.0 עסקאות אפקטיביות, +0.27R מעל המצב הקיים) · נבדקו 72 שילובים, אז חלק מהיתרון עלול להיות מזל",
      "status": "approved",
      "note": null,
-     "reply": null,
+     "reply": "נבנה אוטומטית בבוט 3: TV12|4Hour|ARM: יעד 2R, סטופ x0.75, כניסה בלימיט 0.5R טוב יותר. יותקן במחשב הבוטים תוך כ־10 דקות.",
      "first_seen": "2026-11-12T10:29:12+00:00",
      "by": "manager",
      "decided": "2026-11-12T10:29:12+00:00",
@@ -7254,7 +7254,7 @@
      "verdict": "חיובי בתקופה שלא נראתה (+0.08R לעסקה, 41.0 עסקאות אפקטיביות, +0.04R מעל המצב הקיים)",
      "status": "approved",
      "note": null,
-     "reply": null,
+     "reply": "נבנה אוטומטית בבוט 3: TV60|4Hour|SPN35: סינון מצב שוק adx_range. יותקן במחשב הבוטים תוך כ־10 דקות.",
      "first_seen": "2026-11-12T10:29:12+00:00",
      "by": "manager",
      "decided": "2026-11-12T10:29:12+00:00",
@@ -7317,7 +7317,7 @@
      "verdict": "חיובי בתקופה שלא נראתה (+0.07R לעסקה, 45.0 עסקאות אפקטיביות, +0.04R מעל המצב הקיים)",
      "status": "approved",
      "note": null,
-     "reply": null,
+     "reply": "נבנה אוטומטית בבוט 3: SC002|1Hour|AMZN: סינון מצב שוק vol_normal. יותקן במחשב הבוטים תוך כ־10 דקות.",
      "first_seen": "2026-11-12T10:29:12+00:00",
      "by": "manager",
      "decided": "2026-11-12T10:29:12+00:00",
@@ -7721,7 +7721,7 @@
      "verdict": "חיובי בתקופה שלא נראתה (+0.00R לעסקה, 61.0 עסקאות אפקטיביות)",
      "status": "approved",
      "note": null,
-     "reply": null,
+     "reply": "נבנה אוטומטית בבוט 3: נוספה לבוט: SC002|1Hour|ARM, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
      "first_seen": "2026-11-12T10:29:12+00:00",
      "by": "manager",
      "decided": "2026-11-12T10:29:12+00:00",
@@ -10806,9 +10806,9 @@
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-12T10:28:59+00:00",
-    "state_updated": "2026-11-12T10:26:35+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-12T10:44:30+00:00",
+    "state_updated": "2026-11-12T10:41:40+00:00",
+    "minutes_since_state": 3,
     "balance": 100264.17,
     "equity": 100264.17,
     "day_pct": 0.0,
@@ -10994,11 +10994,11 @@
   "bot4": {
    "name": "בוט 4",
    "agent": true,
-   "updated": "2026-11-11T21:18:09+00:00",
+   "updated": "2026-11-12T10:43:56+00:00",
    "summary": null,
-   "tested": 374,
+   "tested": 1110,
    "progress": [
-    7,
+    26,
     34
    ],
    "risk_recs": 6,
@@ -11006,72 +11006,192 @@
    "cards": [
     {
      "bot": "bot4",
-     "kind": "improve",
-     "title": "BK05|1Hour|EURUSD: יעד 1R · כניסה בלימיט 0.5R טוב יותר",
-     "what": "ניהול העסקה לאסטרטגיה BK05|1Hour|EURUSD: יעד 1R · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|4Hour|USDCAD · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 38,
-      "eff_n": 38.0,
-      "mean": 0.3274,
-      "t": 1.43,
-      "win": 50.4
+      "n": 32,
+      "eff_n": 32.0,
+      "mean": -0.1413,
+      "t": -0.82,
+      "win": 37.4
      },
      "unseen": {
-      "n": 48,
-      "eff_n": 48.0,
-      "mean": 0.2893,
-      "t": 1.3,
-      "win": 43.8
+      "n": 41,
+      "eff_n": 41.0,
+      "mean": 0.3892,
+      "t": 2.2,
+      "win": 56.2
      },
      "whole": {
-      "n": 86,
-      "eff_n": 85.8,
-      "mean": 0.3054,
-      "t": 1.9,
-      "win": 46.6
+      "n": 73,
+      "eff_n": 72.8,
+      "mean": 0.1673,
+      "t": 1.3,
+      "win": 48.3
      },
      "halves": [
-      0.3379,
-      0.2672
+      -0.0155,
+      0.3283
      ],
      "neighbours": {
-      "values": 72,
-      "share_positive": 0.54
+      "share_positive": null
      },
-     "tested": 72,
+     "tested": 1,
      "cost_r": null,
      "risk_pct": 0.45,
-     "baseline": {
-      "n": 149,
-      "eff_n": 149.0,
-      "mean": 0.0197,
-      "t": 0.25,
-      "win": 46.9
-     },
+     "baseline": null,
      "change": {
-      "combo": "BK05|1Hour|EURUSD",
-      "family": "exits",
-      "from": "own|be0.6|stop1|entry0",
-      "to": "1R|be0.6|stop1|entry0.5"
+      "combo": "SC002|4Hour|USDCAD",
+      "kind": "add"
      },
-     "detail": {},
-     "made": "2026-11-11T21:18:09+00:00",
-     "id": "f111fc5d12da",
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "7732f6ea7833",
      "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.29R לעסקה, 48.0 עסקאות אפקטיביות, +0.27R מעל המצב הקיים) · נבדקו 72 שילובים, אז חלק מהיתרון עלול להיות מזל",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.39R לעסקה, 41.0 עסקאות אפקטיביות)",
      "status": "approved",
      "note": null,
-     "reply": "נבנה בבוט 4: BK05|1Hour|EURUSD יעד 1R, כניסה בלימיט 0.5R טוב יותר (3 נרות).",
-     "first_seen": "2026-11-11T21:18:38+00:00",
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
      "by": "manager",
-     "decided": "2026-11-11T21:18:38+00:00",
-     "decision_id": "a72f0b866ab2"
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "4e89839b9afb"
     },
     {
      "bot": "bot4",
-     "kind": "improve",
-     "title": "FR01|1Hour|EURUSD: יעד 3R · סטופ x0.75",
-     "what": "ניהול העסקה לאסטרטגיה FR01|1Hour|EURUSD: יעד 3R · סטופ x0.75. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "kind": "info",
+     "title": "FR01|1Hour|GBPUSD: היתרון נשחק",
+     "what": "בחצי השנה האחרונה +0.05R לעסקה, לעומת +0.55R בשנה וחצי שלפני",
+     "train": {
+      "n": 17,
+      "eff_n": 17.0,
+      "mean": 0.4803,
+      "t": 1.39,
+      "win": 58.9
+     },
+     "unseen": {
+      "n": 23,
+      "eff_n": 23.0,
+      "mean": 0.2716,
+      "t": 1.11,
+      "win": 56.3
+     },
+     "whole": {
+      "n": 40,
+      "eff_n": 39.9,
+      "mean": 0.3561,
+      "t": 1.75,
+      "win": 57.4
+     },
+     "halves": [
+      0.5397,
+      0.1835
+     ],
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": {
+      "combo": "FR01|1Hour|GBPUSD",
+      "kind": "review"
+     },
+     "detail": {
+      "erosion": {
+       "recent_n": 15,
+       "recent_mean": 0.0491,
+       "before_n": 25,
+       "before_mean": 0.5491,
+       "slope_per_year": -0.3697,
+       "fading": true
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "2f11a38eb125",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
+     "by": "manager",
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "484ed317cca1"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|USDCAD · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 78,
+      "eff_n": 77.9,
+      "mean": -0.1417,
+      "t": -0.89,
+      "win": 32.1
+     },
+     "unseen": {
+      "n": 100,
+      "eff_n": 100.0,
+      "mean": 0.2228,
+      "t": 1.49,
+      "win": 43.9
+     },
+     "whole": {
+      "n": 178,
+      "eff_n": 177.6,
+      "mean": 0.0701,
+      "t": 0.63,
+      "win": 39.0
+     },
+     "halves": [
+      -0.0391,
+      0.1694
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|1Hour|USDCAD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "3de5321a7fa2",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.22R לעסקה, 100.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
+     "by": "manager",
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "0a37bcd385ae"
+    },
+    {
+     "bot": "bot4",
+     "kind": "info",
+     "title": "FR01|1Hour|EURUSD: היתרון נשחק",
+     "what": "בחצי השנה האחרונה +0.01R לעסקה, לעומת +0.69R בשנה וחצי שלפני",
      "train": {
       "n": 10,
       "eff_n": 10.0,
@@ -11097,101 +11217,223 @@
       0.5862,
       0.1734
      ],
-     "neighbours": {
-      "values": 72,
-      "share_positive": 0.29
-     },
-     "tested": 72,
+     "neighbours": null,
+     "tested": 1,
      "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": {
-      "n": 33,
-      "eff_n": 33.0,
-      "mean": -0.0044,
-      "t": -0.02,
-      "win": 51.6
-     },
+     "risk_pct": null,
+     "baseline": null,
      "change": {
       "combo": "FR01|1Hour|EURUSD",
-      "family": "exits",
-      "from": "own|be0.6|stop1|entry0",
-      "to": "3R|be0.6|stop0.75|entry0"
+      "kind": "review"
      },
-     "detail": {},
-     "made": "2026-11-11T21:18:09+00:00",
-     "id": "99e5c02815c4",
+     "detail": {
+      "erosion": {
+       "recent_n": 20,
+       "recent_mean": 0.0108,
+       "before_n": 24,
+       "before_mean": 0.6873,
+       "slope_per_year": -1.179,
+       "fading": true
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "098532490d6d",
      "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.16R לעסקה, 34.0 עסקאות אפקטיביות, +0.17R מעל המצב הקיים) · נבדקו 72 שילובים, אז חלק מהיתרון עלול להיות מזל",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
      "status": "approved",
      "note": null,
-     "reply": "נבנה בבוט 4: FR01|1Hour|EURUSD יעד 3R, סטופ x0.75 (אותו סיכון בדולרים).",
+     "reply": "נבדק: השינוי שאושר (יעד 3R + סטופ x0.75) נבנה; בחצי השנה האחרונה +0.01R מול -0.11R. עדיין חלש - ממשיכים לעקוב.",
      "first_seen": "2026-11-11T21:18:38+00:00",
      "by": "manager",
      "decided": "2026-11-11T21:18:38+00:00",
-     "decision_id": "a3968361fd11"
+     "decision_id": "5314bd60feda"
     },
     {
      "bot": "bot4",
      "kind": "improve",
-     "title": "BK05|15Min|EURUSD: בלי יעד · כניסה בלימיט 0.25R טוב יותר",
-     "what": "ניהול העסקה לאסטרטגיה BK05|15Min|EURUSD: בלי יעד · כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "title": "SE02|1Hour|GBPJPY: רק בתנודתיות רגילה",
+     "what": "סינון מצב שוק לאסטרטגיה SE02|1Hour|GBPJPY: רק בתנודתיות רגילה. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
      "train": {
-      "n": 53,
-      "eff_n": 53.0,
-      "mean": 0.3465,
-      "t": 1.04,
-      "win": 39.7
+      "n": 123,
+      "eff_n": 122.9,
+      "mean": 0.1034,
+      "t": 1.41,
+      "win": 53.7
      },
      "unseen": {
-      "n": 64,
-      "eff_n": 64.0,
-      "mean": 0.1189,
-      "t": 0.64,
-      "win": 43.8
+      "n": 157,
+      "eff_n": 157.0,
+      "mean": 0.1304,
+      "t": 1.61,
+      "win": 56.7
      },
      "whole": {
-      "n": 117,
-      "eff_n": 116.8,
-      "mean": 0.2178,
-      "t": 1.21,
-      "win": 42.0
+      "n": 280,
+      "eff_n": 279.4,
+      "mean": 0.1191,
+      "t": 2.12,
+      "win": 55.5
      },
      "halves": [
-      0.3182,
-      0.1235
+      0.1033,
+      0.1338
      ],
      "neighbours": {
-      "values": 72,
-      "share_positive": 0.32
+      "values": 7,
+      "share_positive": 0.5
      },
-     "tested": 72,
+     "tested": 7,
      "cost_r": null,
      "risk_pct": 0.45,
      "baseline": {
-      "n": 158,
-      "eff_n": 158.0,
-      "mean": 0.0376,
-      "t": 0.49,
-      "win": 46.2
+      "n": 224,
+      "eff_n": 224.0,
+      "mean": 0.0704,
+      "t": 1.09,
+      "win": 53.2
      },
      "change": {
-      "combo": "BK05|15Min|EURUSD",
-      "family": "exits",
-      "from": "own|be0.6|stop1|entry0",
-      "to": "none|be0.6|stop1|entry0.25"
+      "combo": "SE02|1Hour|GBPJPY",
+      "family": "filters",
+      "from": "none",
+      "to": "vol_normal"
      },
      "detail": {},
-     "made": "2026-11-11T21:18:09+00:00",
-     "id": "607634fdbf9a",
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "ac5c11074021",
      "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.12R לעסקה, 64.0 עסקאות אפקטיביות, +0.08R מעל המצב הקיים) · נבדקו 72 שילובים, אז חלק מהיתרון עלול להיות מזל",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.13R לעסקה, 157.0 עסקאות אפקטיביות, +0.06R מעל המצב הקיים)",
      "status": "approved",
      "note": null,
-     "reply": "נבנה בבוט 4: BK05|15Min|EURUSD בלי יעד, כניסה בלימיט 0.25R טוב יותר (3 נרות).",
-     "first_seen": "2026-11-11T21:18:38+00:00",
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
      "by": "manager",
-     "decided": "2026-11-11T21:18:38+00:00",
-     "decision_id": "d2e6f0af8fb9"
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "0e99a3686143"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "BK05|1Hour|EURUSD: רק בשוק בדשדוש (ADX מתחת 20)",
+     "what": "סינון מצב שוק לאסטרטגיה BK05|1Hour|EURUSD: רק בשוק בדשדוש (ADX מתחת 20). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 46,
+      "eff_n": 45.9,
+      "mean": 0.3087,
+      "t": 1.22,
+      "win": 47.6
+     },
+     "unseen": {
+      "n": 55,
+      "eff_n": 55.0,
+      "mean": 0.1204,
+      "t": 0.71,
+      "win": 43.6
+     },
+     "whole": {
+      "n": 101,
+      "eff_n": 100.7,
+      "mean": 0.2021,
+      "t": 1.37,
+      "win": 45.3
+     },
+     "halves": [
+      0.3105,
+      0.1097
+     ],
+     "neighbours": {
+      "values": 7,
+      "share_positive": 0.5
+     },
+     "tested": 7,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 150,
+      "eff_n": 150.0,
+      "mean": 0.0192,
+      "t": 0.25,
+      "win": 46.6
+     },
+     "change": {
+      "combo": "BK05|1Hour|EURUSD",
+      "family": "filters",
+      "from": "none",
+      "to": "adx_range"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "77b7731e53c8",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.12R לעסקה, 55.0 עסקאות אפקטיביות, +0.10R מעל המצב הקיים)",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
+     "by": "manager",
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "ba0900b48812"
+    },
+    {
+     "bot": "bot4",
+     "kind": "info",
+     "title": "QC04|4Hour|USDCAD: היתרון נשחק",
+     "what": "בחצי השנה האחרונה -0.02R לעסקה, לעומת +0.17R בשנה וחצי שלפני",
+     "train": {
+      "n": 43,
+      "eff_n": 43.0,
+      "mean": 0.1134,
+      "t": 0.88,
+      "win": 51.0
+     },
+     "unseen": {
+      "n": 38,
+      "eff_n": 38.0,
+      "mean": 0.1146,
+      "t": 0.78,
+      "win": 49.9
+     },
+     "whole": {
+      "n": 81,
+      "eff_n": 80.8,
+      "mean": 0.114,
+      "t": 1.17,
+      "win": 50.5
+     },
+     "halves": [
+      0.0658,
+      0.1691
+     ],
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": {
+      "combo": "QC04|4Hour|USDCAD",
+      "kind": "review"
+     },
+     "detail": {
+      "erosion": {
+       "recent_n": 21,
+       "recent_mean": -0.0166,
+       "before_n": 60,
+       "before_mean": 0.1653,
+       "slope_per_year": -0.2302,
+       "fading": true
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "7827b0bcb75a",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
+     "by": "manager",
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "a77a092b7535"
     },
     {
      "bot": "bot4",
@@ -11280,7 +11522,7 @@
        "fading": true
       }
      },
-     "made": "2026-11-11T21:18:09+00:00",
+     "made": "2026-11-12T10:43:56+00:00",
      "id": "58af515b7b50",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -11356,125 +11598,186 @@
     },
     {
      "bot": "bot4",
-     "kind": "info",
-     "title": "BK05|15Min|EURUSD: היתרון נשחק",
-     "what": "בחצי השנה האחרונה -0.04R לעסקה, לעומת +0.12R בשנה וחצי שלפני",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|EURUSD · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 119,
-      "eff_n": 118.9,
-      "mean": 0.1128,
-      "t": 0.9,
-      "win": 42.1
+      "n": 77,
+      "eff_n": 76.9,
+      "mean": -0.1623,
+      "t": -1.11,
+      "win": 30.1
      },
      "unseen": {
-      "n": 158,
-      "eff_n": 158.0,
-      "mean": 0.0376,
-      "t": 0.49,
-      "win": 46.2
+      "n": 88,
+      "eff_n": 88.0,
+      "mean": 0.0981,
+      "t": 0.65,
+      "win": 38.5
      },
      "whole": {
-      "n": 277,
-      "eff_n": 276.4,
-      "mean": 0.0684,
-      "t": 0.99,
-      "win": 44.5
+      "n": 165,
+      "eff_n": 164.6,
+      "mean": -0.0179,
+      "t": -0.17,
+      "win": 34.8
      },
      "halves": [
-      0.1189,
-      0.0219
+      -0.1041,
+      0.0534
      ],
-     "neighbours": null,
+     "neighbours": {
+      "share_positive": null
+     },
      "tested": 1,
      "cost_r": null,
-     "risk_pct": null,
+     "risk_pct": 0.45,
      "baseline": null,
      "change": {
-      "combo": "BK05|15Min|EURUSD",
-      "kind": "review"
+      "combo": "SC002|1Hour|EURUSD",
+      "kind": "add"
      },
      "detail": {
-      "erosion": {
-       "recent_n": 90,
-       "recent_mean": -0.0395,
-       "before_n": 187,
-       "before_mean": 0.123,
-       "slope_per_year": -0.0917,
-       "fading": true
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
       }
      },
-     "made": "2026-11-11T21:18:09+00:00",
-     "id": "3a5a9d1e08a0",
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "ade0b4666951",
      "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.10R לעסקה, 88.0 עסקאות אפקטיביות)",
      "status": "approved",
      "note": null,
-     "reply": "נבדק: השינוי שאושר (בלי יעד + לימיט 0.25R) נבנה, ובחצי השנה האחרונה הוא +0.24R לעסקה מול -0.04R היום.",
-     "first_seen": "2026-11-11T21:18:38+00:00",
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
      "by": "manager",
-     "decided": "2026-11-11T21:18:38+00:00",
-     "decision_id": "07f09c6a1845"
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "8bd2224059bd"
     },
     {
      "bot": "bot4",
-     "kind": "info",
-     "title": "BK05|1Hour|EURUSD: היתרון נשחק",
-     "what": "בחצי השנה האחרונה -0.01R לעסקה, לעומת +0.11R בשנה וחצי שלפני",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|INTC · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 107,
-      "eff_n": 106.9,
-      "mean": 0.1326,
-      "t": 1.05,
-      "win": 43.0
+      "n": 42,
+      "eff_n": 42.0,
+      "mean": 0.0883,
+      "t": 0.8,
+      "win": 52.8
      },
      "unseen": {
-      "n": 149,
-      "eff_n": 149.0,
-      "mean": 0.0197,
-      "t": 0.25,
-      "win": 46.9
+      "n": 76,
+      "eff_n": 76.0,
+      "mean": 0.0808,
+      "t": 1.49,
+      "win": 52.7
      },
      "whole": {
-      "n": 256,
-      "eff_n": 255.4,
-      "mean": 0.0646,
-      "t": 0.93,
-      "win": 45.4
+      "n": 118,
+      "eff_n": 117.8,
+      "mean": 0.0834,
+      "t": 1.6,
+      "win": 52.7
      },
      "halves": [
-      0.1284,
-      0.0058
+      0.0515,
+      0.114
      ],
-     "neighbours": null,
+     "neighbours": {
+      "share_positive": null
+     },
      "tested": 1,
      "cost_r": null,
-     "risk_pct": null,
+     "risk_pct": 0.45,
      "baseline": null,
      "change": {
-      "combo": "BK05|1Hour|EURUSD",
-      "kind": "review"
+      "combo": "SC002|1Hour|INTC",
+      "kind": "add"
      },
      "detail": {
-      "erosion": {
-       "recent_n": 86,
-       "recent_mean": -0.0101,
-       "before_n": 170,
-       "before_mean": 0.1062,
-       "slope_per_year": -0.1184,
-       "fading": true
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
       }
      },
-     "made": "2026-11-11T21:18:09+00:00",
-     "id": "f6925c9a0aa5",
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "c87a40ce05e2",
      "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.08R לעסקה, 76.0 עסקאות אפקטיביות)",
      "status": "approved",
      "note": null,
-     "reply": "נבדק: השינוי שאושר (יעד 1R + לימיט 0.5R) נבנה, ובחצי השנה האחרונה הוא +0.24R לעסקה מול -0.01R היום.",
-     "first_seen": "2026-11-11T21:18:38+00:00",
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
      "by": "manager",
-     "decided": "2026-11-11T21:18:38+00:00",
-     "decision_id": "0bace02b4dca"
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "b3f106d6434f"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|4Hour|GBPUSD · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 33,
+      "eff_n": 33.0,
+      "mean": -0.1489,
+      "t": -0.8,
+      "win": 36.2
+     },
+     "unseen": {
+      "n": 35,
+      "eff_n": 35.0,
+      "mean": 0.0478,
+      "t": 0.29,
+      "win": 42.7
+     },
+     "whole": {
+      "n": 68,
+      "eff_n": 67.9,
+      "mean": -0.0437,
+      "t": -0.35,
+      "win": 39.7
+     },
+     "halves": [
+      -0.1719,
+      0.0786
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|4Hour|GBPUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "5059ecbe75b4",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 35.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
+     "by": "manager",
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "6887e8f41a92"
     },
     {
      "bot": "bot4",
@@ -11525,7 +11828,7 @@
        "fading": true
       }
      },
-     "made": "2026-11-11T21:18:09+00:00",
+     "made": "2026-11-12T10:43:56+00:00",
      "id": "29a666c2f635",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -11602,32 +11905,32 @@
     {
      "bot": "bot4",
      "kind": "info",
-     "title": "FR01|1Hour|EURUSD: היתרון נשחק",
-     "what": "בחצי השנה האחרונה -0.11R לעסקה, לעומת +0.52R בשנה וחצי שלפני",
+     "title": "GH02|1Hour|USDJPY: היתרון נשחק",
+     "what": "בחצי השנה האחרונה -0.07R לעסקה, לעומת +0.21R בשנה וחצי שלפני",
      "train": {
-      "n": 10,
-      "eff_n": 10.0,
-      "mean": 1.0018,
-      "t": 2.49,
-      "win": 69.7
+      "n": 38,
+      "eff_n": 38.0,
+      "mean": 0.2769,
+      "t": 1.34,
+      "win": 47.0
      },
      "unseen": {
-      "n": 33,
-      "eff_n": 33.0,
-      "mean": -0.0044,
-      "t": -0.02,
-      "win": 51.6
+      "n": 70,
+      "eff_n": 70.0,
+      "mean": 0.0032,
+      "t": 0.02,
+      "win": 35.7
      },
      "whole": {
-      "n": 43,
-      "eff_n": 42.9,
-      "mean": 0.2171,
-      "t": 1.21,
-      "win": 55.5
+      "n": 108,
+      "eff_n": 107.8,
+      "mean": 0.0943,
+      "t": 0.84,
+      "win": 39.4
      },
      "halves": [
-      0.4649,
-      0.0066
+      0.2738,
+      -0.0673
      ],
      "neighbours": null,
      "tested": 1,
@@ -11635,30 +11938,1333 @@
      "risk_pct": null,
      "baseline": null,
      "change": {
-      "combo": "FR01|1Hour|EURUSD",
+      "combo": "GH02|1Hour|USDJPY",
       "kind": "review"
      },
      "detail": {
       "erosion": {
-       "recent_n": 20,
-       "recent_mean": -0.1072,
-       "before_n": 23,
-       "before_mean": 0.5239,
-       "slope_per_year": -0.9876,
+       "recent_n": 41,
+       "recent_mean": -0.0688,
+       "before_n": 67,
+       "before_mean": 0.2086,
+       "slope_per_year": -0.446,
        "fading": true
       }
      },
-     "made": "2026-11-11T21:18:09+00:00",
-     "id": "098532490d6d",
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "6b77acc545f1",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
      "status": "approved",
      "note": null,
-     "reply": "נבדק: השינוי שאושר (יעד 3R + סטופ x0.75) נבנה; בחצי השנה האחרונה +0.01R מול -0.11R. עדיין חלש - ממשיכים לעקוב.",
-     "first_seen": "2026-11-11T21:18:38+00:00",
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
      "by": "manager",
-     "decided": "2026-11-11T21:18:38+00:00",
-     "decision_id": "5314bd60feda"
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "cf5ad3d9398e"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|ARM · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 55,
+      "eff_n": 54.9,
+      "mean": -0.0929,
+      "t": -1.94,
+      "win": 34.8
+     },
+     "unseen": {
+      "n": 61,
+      "eff_n": 61.0,
+      "mean": 0.0026,
+      "t": 0.06,
+      "win": 42.8
+     },
+     "whole": {
+      "n": 116,
+      "eff_n": 115.8,
+      "mean": -0.0409,
+      "t": -1.24,
+      "win": 39.2
+     },
+     "halves": [
+      -0.1034,
+      0.0155
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|1Hour|ARM",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "3aabdca7f1a3",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.00R לעסקה, 61.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00",
+     "by": "manager",
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "a4fd9fefe4be"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "IM03|4Hour|USDCAD: יעד 3R · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה IM03|4Hour|USDCAD: יעד 3R · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 19,
+      "eff_n": 19.0,
+      "mean": 0.634,
+      "t": 0.9,
+      "win": 26.7
+     },
+     "unseen": {
+      "n": 16,
+      "eff_n": 16.0,
+      "mean": 1.2677,
+      "t": 1.61,
+      "win": 37.6
+     },
+     "whole": {
+      "n": 35,
+      "eff_n": 34.9,
+      "mean": 0.9361,
+      "t": 1.78,
+      "win": 31.9
+     },
+     "halves": [
+      0.4546,
+      1.3267
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.77
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 30,
+      "eff_n": 30.0,
+      "mean": 0.2544,
+      "t": 1.12,
+      "win": 39.9
+     },
+     "change": {
+      "combo": "IM03|4Hour|USDCAD",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "3R|be0.6|stop0.75|entry0.5"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "bcaefd8573fc",
+     "tier": "watch",
+     "verdict": "חיובי בתקופה שלא נראתה, אבל רק 16.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "BK05|15Min|INTC: יעד 1R · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה BK05|15Min|INTC: יעד 1R · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 29,
+      "eff_n": 29.0,
+      "mean": 0.6354,
+      "t": 2.24,
+      "win": 41.4
+     },
+     "unseen": {
+      "n": 26,
+      "eff_n": 26.0,
+      "mean": 0.4868,
+      "t": 1.7,
+      "win": 50.0
+     },
+     "whole": {
+      "n": 55,
+      "eff_n": 54.9,
+      "mean": 0.5622,
+      "t": 2.78,
+      "win": 45.6
+     },
+     "halves": [
+      0.6772,
+      0.4499
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.68
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 115,
+      "eff_n": 115.0,
+      "mean": 0.1399,
+      "t": 2.44,
+      "win": 58.2
+     },
+     "change": {
+      "combo": "BK05|15Min|INTC",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "1R|be0.6|stop0.75|entry0.5"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "c31e255e5e29",
+     "tier": "watch",
+     "verdict": "יותר רווח לעסקה אבל פחות רווח בסך הכל בתקופה שלא נראתה (26 עסקאות +12.7R מול 115 עסקאות +16.1R היום) - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "GH09|1Hour|USDJPY: יעד 1R · כניסה בלימיט 0.5R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה GH09|1Hour|USDJPY: יעד 1R · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 13,
+      "eff_n": 13.0,
+      "mean": 0.2981,
+      "t": 1.34,
+      "win": 53.3
+     },
+     "unseen": {
+      "n": 20,
+      "eff_n": 20.0,
+      "mean": 0.3691,
+      "t": 1.39,
+      "win": 45.0
+     },
+     "whole": {
+      "n": 33,
+      "eff_n": 32.9,
+      "mean": 0.3426,
+      "t": 1.86,
+      "win": 48.1
+     },
+     "halves": [
+      0.2897,
+      0.3943
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.75
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 88,
+      "eff_n": 88.0,
+      "mean": 0.1101,
+      "t": 1.34,
+      "win": 42.1
+     },
+     "change": {
+      "combo": "GH09|1Hour|USDJPY",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "1R|be0.6|stop1|entry0.5"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "399bc2483575",
+     "tier": "watch",
+     "verdict": "יותר רווח לעסקה אבל פחות רווח בסך הכל בתקופה שלא נראתה (20 עסקאות +7.4R מול 88 עסקאות +9.7R היום) - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "BK05|15Min|INTC: רק בתנודתיות רגילה",
+     "what": "סינון מצב שוק לאסטרטגיה BK05|15Min|INTC: רק בתנודתיות רגילה. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 60,
+      "eff_n": 59.9,
+      "mean": 0.2315,
+      "t": 1.72,
+      "win": 51.8
+     },
+     "unseen": {
+      "n": 75,
+      "eff_n": 75.0,
+      "mean": 0.1616,
+      "t": 2.19,
+      "win": 57.3
+     },
+     "whole": {
+      "n": 135,
+      "eff_n": 134.7,
+      "mean": 0.1913,
+      "t": 2.66,
+      "win": 54.9
+     },
+     "halves": [
+      0.2133,
+      0.169
+     ],
+     "neighbours": {
+      "values": 7,
+      "share_positive": 0.5
+     },
+     "tested": 7,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 115,
+      "eff_n": 115.0,
+      "mean": 0.1399,
+      "t": 2.44,
+      "win": 58.2
+     },
+     "change": {
+      "combo": "BK05|15Min|INTC",
+      "family": "filters",
+      "from": "none",
+      "to": "vol_normal"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "2192683bc1d5",
+     "tier": "watch",
+     "verdict": "יותר רווח לעסקה אבל פחות רווח בסך הכל בתקופה שלא נראתה (75 עסקאות +12.1R מול 115 עסקאות +16.1R היום) - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "GH02|1Hour|USDJPY: יעד 2R · כניסה בלימיט 0.5R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה GH02|1Hour|USDJPY: יעד 2R · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 10,
+      "eff_n": 10.0,
+      "mean": 1.6067,
+      "t": 1.89,
+      "win": 49.5
+     },
+     "unseen": {
+      "n": 25,
+      "eff_n": 25.0,
+      "mean": 0.1026,
+      "t": 0.32,
+      "win": 48.1
+     },
+     "whole": {
+      "n": 35,
+      "eff_n": 34.9,
+      "mean": 0.5048,
+      "t": 1.45,
+      "win": 48.5
+     },
+     "halves": [
+      0.8755,
+      0.2133
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.39
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 70,
+      "eff_n": 70.0,
+      "mean": 0.0032,
+      "t": 0.02,
+      "win": 35.7
+     },
+     "change": {
+      "combo": "GH02|1Hour|USDJPY",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "2R|be0.6|stop1|entry0.5"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "4c6af58ad312",
+     "tier": "watch",
+     "verdict": "חיובי בתקופה שלא נראתה, אבל רק 25.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "BK05|15Min|EURUSD: רק בתנודתיות נמוכה",
+     "what": "סינון מצב שוק לאסטרטגיה BK05|15Min|EURUSD: רק בתנודתיות נמוכה. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 33,
+      "eff_n": 33.0,
+      "mean": 0.833,
+      "t": 2.21,
+      "win": 63.9
+     },
+     "unseen": {
+      "n": 47,
+      "eff_n": 47.0,
+      "mean": 0.1025,
+      "t": 0.66,
+      "win": 44.6
+     },
+     "whole": {
+      "n": 80,
+      "eff_n": 79.8,
+      "mean": 0.3888,
+      "t": 2.13,
+      "win": 52.2
+     },
+     "halves": [
+      0.7445,
+      0.0597
+     ],
+     "neighbours": {
+      "values": 7,
+      "share_positive": 0.33
+     },
+     "tested": 7,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 160,
+      "eff_n": 160.0,
+      "mean": 0.0312,
+      "t": 0.41,
+      "win": 46.2
+     },
+     "change": {
+      "combo": "BK05|15Min|EURUSD",
+      "family": "filters",
+      "from": "none",
+      "to": "vol_low"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "a1ce3484692b",
+     "tier": "watch",
+     "verdict": "יותר רווח לעסקה אבל פחות רווח בסך הכל בתקופה שלא נראתה (47 עסקאות +4.8R מול 160 עסקאות +5.0R היום) - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|4Hour|SPCX · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 11,
+      "eff_n": 11.0,
+      "mean": 0.3434,
+      "t": 0.68,
+      "win": 27.1
+     },
+     "unseen": {
+      "n": 9,
+      "eff_n": 9.0,
+      "mean": 0.0322,
+      "t": 0.48,
+      "win": 66.7
+     },
+     "whole": {
+      "n": 20,
+      "eff_n": 19.9,
+      "mean": 0.1955,
+      "t": 0.71,
+      "win": 45.9
+     },
+     "halves": [
+      0.3824,
+      0.0138
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|4Hour|SPCX",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "4ad255bb76be",
+     "tier": "watch",
+     "verdict": "מעט מדי עסקאות בתקופה שלא נראתה - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "FR01|1Hour|GBPUSD: יעד 3R · כניסה בלימיט 0.25R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה FR01|1Hour|GBPUSD: יעד 3R · כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 10,
+      "eff_n": 10.0,
+      "mean": 0.8843,
+      "t": 1.56,
+      "win": 59.6
+     },
+     "unseen": {
+      "n": 11,
+      "eff_n": 11.0,
+      "mean": 0.2363,
+      "t": 0.43,
+      "win": 36.3
+     },
+     "whole": {
+      "n": 21,
+      "eff_n": 21.0,
+      "mean": 0.5306,
+      "t": 1.32,
+      "win": 46.9
+     },
+     "halves": [
+      0.8955,
+      0.2356
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.13
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 23,
+      "eff_n": 23.0,
+      "mean": 0.2716,
+      "t": 1.11,
+      "win": 56.3
+     },
+     "change": {
+      "combo": "FR01|1Hour|GBPUSD",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "3R|be0.6|stop1|entry0.25"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "5e258042a979",
+     "tier": "rejected",
+     "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.24R מול +0.27R)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "IM03|4Hour|USDCAD: רק בתנודתיות רגילה",
+     "what": "סינון מצב שוק לאסטרטגיה IM03|4Hour|USDCAD: רק בתנודתיות רגילה. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 22,
+      "eff_n": 22.0,
+      "mean": 0.3465,
+      "t": 1.42,
+      "win": 63.8
+     },
+     "unseen": {
+      "n": 21,
+      "eff_n": 21.0,
+      "mean": 0.1257,
+      "t": 0.6,
+      "win": 38.0
+     },
+     "whole": {
+      "n": 43,
+      "eff_n": 42.9,
+      "mean": 0.2352,
+      "t": 1.45,
+      "win": 50.8
+     },
+     "halves": [
+      0.3519,
+      0.1187
+     ],
+     "neighbours": {
+      "values": 7,
+      "share_positive": 0.17
+     },
+     "tested": 7,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 31,
+      "eff_n": 31.0,
+      "mean": 0.221,
+      "t": 1.0,
+      "win": 38.6
+     },
+     "change": {
+      "combo": "IM03|4Hour|USDCAD",
+      "family": "filters",
+      "from": "none",
+      "to": "vol_normal"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "9da69c669874",
+     "tier": "rejected",
+     "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.13R מול +0.22R)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "QC04|4Hour|USDCAD: יעד 3R · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה QC04|4Hour|USDCAD: יעד 3R · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 30,
+      "eff_n": 30.0,
+      "mean": 0.623,
+      "t": 1.89,
+      "win": 46.5
+     },
+     "unseen": {
+      "n": 26,
+      "eff_n": 26.0,
+      "mean": 0.0901,
+      "t": 0.38,
+      "win": 46.0
+     },
+     "whole": {
+      "n": 56,
+      "eff_n": 55.9,
+      "mean": 0.3648,
+      "t": 1.74,
+      "win": 46.2
+     },
+     "halves": [
+      0.6147,
+      0.1501
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.46
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 38,
+      "eff_n": 38.0,
+      "mean": 0.1146,
+      "t": 0.78,
+      "win": 49.9
+     },
+     "change": {
+      "combo": "QC04|4Hour|USDCAD",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "3R|be0.6|stop0.75|entry0.25"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "f7c42c261f12",
+     "tier": "rejected",
+     "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.09R מול +0.11R)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "FR08|5Min|SPCX: יעד 1.5R · סטופ x0.75",
+     "what": "ניהול העסקה לאסטרטגיה FR08|5Min|SPCX: יעד 1.5R · סטופ x0.75. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 23,
+      "eff_n": 23.0,
+      "mean": 0.1736,
+      "t": 0.65,
+      "win": 31.0
+     },
+     "unseen": {
+      "n": 188,
+      "eff_n": 188.0,
+      "mean": 0.0547,
+      "t": 0.71,
+      "win": 49.5
+     },
+     "whole": {
+      "n": 211,
+      "eff_n": 210.8,
+      "mean": 0.0667,
+      "t": 0.89,
+      "win": 47.6
+     },
+     "halves": [
+      0.1863,
+      -0.0506
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.13
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 152,
+      "eff_n": 152.0,
+      "mean": 0.2205,
+      "t": 1.87,
+      "win": 44.1
+     },
+     "change": {
+      "combo": "FR08|5Min|SPCX",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "1.5R|be0.6|stop0.75|entry0"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "a2c64fca92af",
+     "tier": "rejected",
+     "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.05R מול +0.22R)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|4Hour|INTC · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 19,
+      "eff_n": 19.0,
+      "mean": -0.0537,
+      "t": -1.22,
+      "win": 41.9
+     },
+     "unseen": {
+      "n": 31,
+      "eff_n": 31.0,
+      "mean": -0.0081,
+      "t": -0.27,
+      "win": 48.3
+     },
+     "whole": {
+      "n": 50,
+      "eff_n": 49.9,
+      "mean": -0.0247,
+      "t": -0.97,
+      "win": 46.0
+     },
+     "halves": [
+      -0.0409,
+      -0.0092
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|4Hour|INTC",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "fe5efd581b65",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "QC07|15Min|ARM: יעד 2R · סטופ x1.25 · כניסה בלימיט 0.5R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה QC07|15Min|ARM: יעד 2R · סטופ x1.25 · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 57,
+      "eff_n": 56.9,
+      "mean": 0.1176,
+      "t": 0.61,
+      "win": 49.5
+     },
+     "unseen": {
+      "n": 103,
+      "eff_n": 103.0,
+      "mean": -0.013,
+      "t": -0.07,
+      "win": 32.0
+     },
+     "whole": {
+      "n": 160,
+      "eff_n": 159.7,
+      "mean": 0.031,
+      "t": 0.22,
+      "win": 37.9
+     },
+     "halves": [
+      -0.0392,
+      0.1008
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.11
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 294,
+      "eff_n": 293.9,
+      "mean": 0.0467,
+      "t": 1.06,
+      "win": 40.4
+     },
+     "change": {
+      "combo": "QC07|15Min|ARM",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "2R|be0.6|stop1.25|entry0.5"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "93022e0ba974",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|USDJPY · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 90,
+      "eff_n": 89.9,
+      "mean": -0.0786,
+      "t": -0.58,
+      "win": 34.4
+     },
+     "unseen": {
+      "n": 98,
+      "eff_n": 98.0,
+      "mean": -0.0208,
+      "t": -0.15,
+      "win": 37.8
+     },
+     "whole": {
+      "n": 188,
+      "eff_n": 187.6,
+      "mean": -0.0473,
+      "t": -0.49,
+      "win": 36.2
+     },
+     "halves": [
+      -0.0696,
+      -0.0264
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|1Hour|USDJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "298f83df92c3",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.02R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|4Hour|ARM · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 22,
+      "eff_n": 22.0,
+      "mean": -0.0676,
+      "t": -1.3,
+      "win": 32.0
+     },
+     "unseen": {
+      "n": 21,
+      "eff_n": 21.0,
+      "mean": -0.0221,
+      "t": -0.61,
+      "win": 52.6
+     },
+     "whole": {
+      "n": 43,
+      "eff_n": 42.9,
+      "mean": -0.0445,
+      "t": -1.39,
+      "win": 42.5
+     },
+     "halves": [
+      -0.0722,
+      -0.0217
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|4Hour|ARM",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "622643628041",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.02R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|4Hour|EURUSD · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 34,
+      "eff_n": 34.0,
+      "mean": -0.2932,
+      "t": -2.76,
+      "win": 29.5
+     },
+     "unseen": {
+      "n": 41,
+      "eff_n": 41.0,
+      "mean": -0.0253,
+      "t": -0.17,
+      "win": 51.1
+     },
+     "whole": {
+      "n": 75,
+      "eff_n": 74.8,
+      "mean": -0.1413,
+      "t": -1.45,
+      "win": 41.8
+     },
+     "halves": [
+      -0.19,
+      -0.0987
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|4Hour|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "beec87f9742f",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.03R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|GBPJPY · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 74,
+      "eff_n": 73.9,
+      "mean": -0.3611,
+      "t": -2.93,
+      "win": 29.9
+     },
+     "unseen": {
+      "n": 97,
+      "eff_n": 97.0,
+      "mean": -0.0403,
+      "t": -0.28,
+      "win": 35.0
+     },
+     "whole": {
+      "n": 171,
+      "eff_n": 170.6,
+      "mean": -0.1728,
+      "t": -1.75,
+      "win": 32.9
+     },
+     "halves": [
+      -0.3517,
+      -0.0104
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|1Hour|GBPJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "52fcbc6b716a",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "improve",
+     "title": "SE02|1Hour|GBPJPY: יעד 1.5R · סטופ x1.25 · כניסה בלימיט 0.25R טוב יותר",
+     "what": "ניהול העסקה לאסטרטגיה SE02|1Hour|GBPJPY: יעד 1.5R · סטופ x1.25 · כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+     "train": {
+      "n": 115,
+      "eff_n": 114.9,
+      "mean": 0.1244,
+      "t": 1.56,
+      "win": 56.5
+     },
+     "unseen": {
+      "n": 134,
+      "eff_n": 134.0,
+      "mean": -0.0654,
+      "t": -0.81,
+      "win": 44.0
+     },
+     "whole": {
+      "n": 249,
+      "eff_n": 248.5,
+      "mean": 0.0187,
+      "t": 0.33,
+      "win": 49.5
+     },
+     "halves": [
+      0.1271,
+      -0.0804
+     ],
+     "neighbours": {
+      "values": 72,
+      "share_positive": 0.04
+     },
+     "tested": 72,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": {
+      "n": 223,
+      "eff_n": 223.0,
+      "mean": 0.0755,
+      "t": 1.17,
+      "win": 53.4
+     },
+     "change": {
+      "combo": "SE02|1Hour|GBPJPY",
+      "family": "exits",
+      "from": "own|be0.6|stop1|entry0",
+      "to": "1.5R|be0.6|stop1.25|entry0.25"
+     },
+     "detail": {},
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "6d28b7bf9e16",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|SPCX · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 18,
+      "eff_n": 18.0,
+      "mean": 0.2158,
+      "t": 0.71,
+      "win": 33.2
+     },
+     "unseen": {
+      "n": 29,
+      "eff_n": 29.0,
+      "mean": -0.0661,
+      "t": -0.73,
+      "win": 58.5
+     },
+     "whole": {
+      "n": 47,
+      "eff_n": 46.9,
+      "mean": 0.0357,
+      "t": 0.28,
+      "win": 49.4
+     },
+     "halves": [
+      0.2255,
+      -0.1382
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|1Hour|SPCX",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "3b34a3051d06",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|CSCO · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 54,
+      "eff_n": 53.9,
+      "mean": -0.0644,
+      "t": -1.08,
+      "win": 46.2
+     },
+     "unseen": {
+      "n": 69,
+      "eff_n": 69.0,
+      "mean": -0.0692,
+      "t": -1.37,
+      "win": 44.9
+     },
+     "whole": {
+      "n": 123,
+      "eff_n": 122.7,
+      "mean": -0.0672,
+      "t": -1.74,
+      "win": 45.5
+     },
+     "halves": [
+      -0.0528,
+      -0.0802
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|1Hour|CSCO",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "eba2ac2c5963",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|4Hour|CSCO · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 15,
+      "eff_n": 15.0,
+      "mean": -0.0154,
+      "t": -0.14,
+      "win": 33.6
+     },
+     "unseen": {
+      "n": 22,
+      "eff_n": 22.0,
+      "mean": -0.0772,
+      "t": -1.46,
+      "win": 49.8
+     },
+     "whole": {
+      "n": 37,
+      "eff_n": 36.9,
+      "mean": -0.0532,
+      "t": -0.97,
+      "win": 43.5
+     },
+     "halves": [
+      -0.0154,
+      -0.0863
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|4Hour|CSCO",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "966c12eefb59",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.08R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
     },
     {
      "bot": "bot4",
@@ -11711,7 +13317,7 @@
       "to": "adx_trend"
      },
      "detail": {},
-     "made": "2026-11-11T21:18:09+00:00",
+     "made": "2026-11-12T10:43:56+00:00",
      "id": "f70ce2f8dcbb",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.09R לעסקה)",
@@ -11771,7 +13377,7 @@
       "to": "2R|be0.6|stop1.25|entry0.5"
      },
      "detail": {},
-     "made": "2026-11-11T21:18:09+00:00",
+     "made": "2026-11-12T10:43:56+00:00",
      "id": "8a6589982d82",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.16R לעסקה)",
@@ -11779,6 +13385,238 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-11T21:18:38+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|EURJPY · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 75,
+      "eff_n": 74.9,
+      "mean": -0.1248,
+      "t": -0.86,
+      "win": 37.3
+     },
+     "unseen": {
+      "n": 97,
+      "eff_n": 97.0,
+      "mean": -0.1598,
+      "t": -1.18,
+      "win": 31.8
+     },
+     "whole": {
+      "n": 172,
+      "eff_n": 171.6,
+      "mean": -0.1452,
+      "t": -1.46,
+      "win": 34.1
+     },
+     "halves": [
+      -0.0682,
+      -0.2214
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|1Hour|EURJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "4d69420d6c37",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.16R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|4Hour|USDJPY · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 24,
+      "eff_n": 24.0,
+      "mean": 0.1081,
+      "t": 0.44,
+      "win": 50.5
+     },
+     "unseen": {
+      "n": 47,
+      "eff_n": 47.0,
+      "mean": -0.1712,
+      "t": -1.14,
+      "win": 29.8
+     },
+     "whole": {
+      "n": 71,
+      "eff_n": 70.9,
+      "mean": -0.0818,
+      "t": -0.63,
+      "win": 36.4
+     },
+     "halves": [
+      0.0571,
+      -0.2121
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|4Hour|USDJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "8b61e8e12545",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.17R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|4Hour|EURJPY · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 28,
+      "eff_n": 28.0,
+      "mean": 0.0112,
+      "t": 0.08,
+      "win": 50.4
+     },
+     "unseen": {
+      "n": 31,
+      "eff_n": 31.0,
+      "mean": -0.1812,
+      "t": -1.09,
+      "win": 42.0
+     },
+     "whole": {
+      "n": 59,
+      "eff_n": 58.9,
+      "mean": -0.094,
+      "t": -0.83,
+      "win": 45.8
+     },
+     "halves": [
+      -0.0299,
+      -0.1544
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|4Hour|EURJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "6217ac2b10ec",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.18R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|GBPUSD · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 77,
+      "eff_n": 76.9,
+      "mean": -0.0978,
+      "t": -0.65,
+      "win": 32.6
+     },
+     "unseen": {
+      "n": 101,
+      "eff_n": 101.0,
+      "mean": -0.194,
+      "t": -1.54,
+      "win": 33.7
+     },
+     "whole": {
+      "n": 178,
+      "eff_n": 177.6,
+      "mean": -0.1544,
+      "t": -1.6,
+      "win": 33.2
+     },
+     "halves": [
+      -0.1163,
+      -0.1934
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|1Hour|GBPUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "62fe61d1dc1c",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.19R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
     },
     {
      "bot": "bot4",
@@ -11831,7 +13669,7 @@
       "to": "2R|be0.6|stop0.75|entry0.5"
      },
      "detail": {},
-     "made": "2026-11-11T21:18:09+00:00",
+     "made": "2026-11-12T10:43:56+00:00",
      "id": "200fe8a63788",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.20R לעסקה)",
@@ -11839,18 +13677,76 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-11T21:18:38+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|4Hour|GBPJPY · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 28,
+      "eff_n": 28.0,
+      "mean": -0.2983,
+      "t": -2.45,
+      "win": 32.6
+     },
+     "unseen": {
+      "n": 36,
+      "eff_n": 36.0,
+      "mean": -0.416,
+      "t": -3.14,
+      "win": 19.5
+     },
+     "whole": {
+      "n": 64,
+      "eff_n": 63.9,
+      "mean": -0.3669,
+      "t": -3.97,
+      "win": 25.0
+     },
+     "halves": [
+      -0.3758,
+      -0.3606
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|4Hour|GBPJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T10:43:56+00:00",
+     "id": "9784e2b5f01a",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.42R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T10:44:43+00:00"
     }
    ],
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-12T10:28:59+00:00",
-    "state_updated": "2026-11-12T10:29:02+00:00",
+    "updated": "2026-11-12T10:44:30+00:00",
+    "state_updated": "2026-11-12T10:44:19+00:00",
     "minutes_since_state": 0,
     "balance": 101556.17,
-    "equity": 103056.29,
-    "day_pct": 2.07,
-    "total_pct": 3.06,
+    "equity": 103036.03,
+    "day_pct": 2.05,
+    "total_pct": 3.04,
     "trades": 31,
     "mean_r": 0.11,
     "sum_r": 3.41,
@@ -13240,13 +15136,13 @@
    "health": {
     "bot": "bot5",
     "name": "בוט 5 · סקלפינג",
-    "updated": "2026-11-12T10:28:59+00:00",
-    "state_updated": "2026-11-12T10:28:54+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-12T10:44:30+00:00",
+    "state_updated": "2026-11-12T10:42:55+00:00",
+    "minutes_since_state": 2,
     "balance": 96903.55,
-    "equity": 96651.79,
-    "day_pct": -1.37,
-    "total_pct": -3.35,
+    "equity": 96385.49,
+    "day_pct": -1.64,
+    "total_pct": -3.61,
     "trades": 60,
     "mean_r": -0.061,
     "sum_r": -3.65,
@@ -14290,9 +16186,9 @@
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-12T10:28:59+00:00",
-    "state_updated": "2026-11-12T10:28:57+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-12T10:44:30+00:00",
+    "state_updated": "2026-11-12T10:42:59+00:00",
+    "minutes_since_state": 2,
     "balance": 100000.0,
     "equity": 100000.0,
     "day_pct": 0.0,
@@ -15152,9 +17048,9 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-12T10:28:59+00:00",
-    "state_updated": "2026-11-12T10:26:09+00:00",
-    "minutes_since_state": 3,
+    "updated": "2026-11-12T10:44:30+00:00",
+    "state_updated": "2026-11-12T10:44:09+00:00",
+    "minutes_since_state": 0,
     "balance": 98746.26,
     "equity": 98746.26,
     "day_pct": -1.25,
@@ -15245,15 +17141,25 @@
  },
  "decisions": {
   "new": [
-   "e51a9c8fcc79",
-   "5e9a1e4bf7b0",
-   "315dcf1da4ab",
-   "ab6ae2e47fdb",
-   "af1ead62d325",
-   "4a2605f55ae8",
-   "f7bdb5b4fb02",
-   "c4c323c1c3aa"
+   "4e89839b9afb",
+   "814d37fc7b00",
+   "484ed317cca1",
+   "0a37bcd385ae",
+   "0e99a3686143",
+   "c6c7522b5f3f",
+   "ba0900b48812",
+   "7f04ea200e25",
+   "a77a092b7535",
+   "8bd2224059bd",
+   "8b2710cbbcaf",
+   "b3f106d6434f",
+   "516297096f71",
+   "6887e8f41a92",
+   "f57e90d3b91f",
+   "cf5ad3d9398e",
+   "a4fd9fefe4be",
+   "f8a37bb88c32"
   ],
-  "unread": 49
+  "unread": 67
  }
 }

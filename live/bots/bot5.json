@@ -26,9 +26,120 @@
   "t1h_15": 0.0028,
   "t4h_1h": 0.0028,
   "t4h_15": 0.0028,
-  "t15_5": 0.0028
+  "t15_5": 0.0028,
+  "t5_1": 0.0028,
+  "t4h_5": 0.0028
  },
- "changes": {},
+ "changes": {
+  "a0a49a4ffc34": {
+   "family": "tal5",
+   "track": "t4h_15",
+   "before": {
+    "pair": [
+     "4h",
+     "15m"
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 5,
+     "MIN_RR": 0.0,
+     "EXPIRY": 120,
+     "PROT": "cal15",
+     "EXIT": "be70"
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "15fa509f8a20": {
+   "family": "tal5",
+   "track": "t4h_1h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h"
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 3,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "none"
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "190b111bf6b0": {
+   "family": "tal5",
+   "track": "t15_1",
+   "before": {
+    "pair": [
+     "15m",
+     "1m"
+    ],
+    "cfg": {
+     "GBODY": 1.5,
+     "MIN_GAP": 0.3,
+     "SW": 3,
+     "MIN_RR": 1.0,
+     "EXPIRY": 48,
+     "PROT": "shock"
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "519cdee6a70b": {
+   "family": "tal5",
+   "track": "t5_1",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "e5581726fe3b": {
+   "family": "tal5",
+   "track": "t1h_15",
+   "before": {
+    "pair": [
+     "1h",
+     "15m"
+    ],
+    "cfg": {
+     "GBODY": 1.5,
+     "MIN_GAP": 0.3,
+     "SW": 3,
+     "MIN_RR": 0.5,
+     "EXPIRY": 48,
+     "PROT": "none"
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "a87d69a6a9df": {
+   "family": "tal5",
+   "track": "t15_5",
+   "before": {
+    "pair": [
+     "15m",
+     "5m"
+    ],
+    "cfg": {
+     "GBODY": 1.5,
+     "MIN_GAP": 0.3,
+     "SW": 3,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "none"
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "9d2bc1c2a1a4": {
+   "family": "tal5",
+   "track": "t4h_5",
+   "before": "__none__",
+   "risk_before": "__none__"
+  }
+ },
  "tal_tracks": {
   "t15_1": {
    "pair": [
@@ -38,9 +149,9 @@
    "cfg": {
     "GBODY": 1.5,
     "MIN_GAP": 0.3,
-    "SW": 3,
-    "MIN_RR": 1.0,
-    "EXPIRY": 48,
+    "SW": 2,
+    "MIN_RR": 1.5,
+    "EXPIRY": 120,
     "PROT": "shock"
    }
   },
@@ -50,12 +161,12 @@
     "15m"
    ],
    "cfg": {
-    "GBODY": 1.5,
+    "GBODY": 1.0,
     "MIN_GAP": 0.3,
-    "SW": 3,
-    "MIN_RR": 0.5,
+    "SW": 5,
+    "MIN_RR": 1.5,
     "EXPIRY": 48,
-    "PROT": "none"
+    "PROT": "cal60"
    }
   },
   "t4h_1h": {
@@ -93,12 +204,42 @@
     "5m"
    ],
    "cfg": {
-    "GBODY": 1.5,
-    "MIN_GAP": 0.3,
+    "GBODY": 2.0,
+    "MIN_GAP": 0.6,
     "SW": 3,
-    "MIN_RR": 1.0,
-    "EXPIRY": 120,
+    "MIN_RR": 2.0,
+    "EXPIRY": 8,
     "PROT": "none"
+   }
+  },
+  "t5_1": {
+   "pair": [
+    "5m",
+    "1m"
+   ],
+   "cfg": {
+    "GBODY": 2.0,
+    "MIN_GAP": 0.6,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 24,
+    "PROT": "shock",
+    "EXIT": "be70"
+   }
+  },
+  "t4h_5": {
+   "pair": [
+    "4h",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 0.0,
+    "MIN_GAP": 0.0,
+    "SW": 5,
+    "MIN_RR": 0.5,
+    "EXPIRY": 120,
+    "PROT": "none",
+    "EXIT": "be70"
    }
   }
  }

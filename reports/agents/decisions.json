@@ -1,15 +1,146 @@
 {
- "updated": "2026-11-12T01:03:47+00:00",
+ "updated": "2026-11-12T01:18:59+00:00",
  "new": [
-  "d01e3300881e",
-  "60a8b72f7853",
-  "03146d2213c3",
-  "ccc2835a9246",
-  "5a2f9e4729a0",
-  "8d73d67601e5",
-  "4c8e1fd39cfd"
+  "ef81f8a7a67a",
+  "3f5c434a526c",
+  "519147526481",
+  "99b95924325c",
+  "65ee384ab71c",
+  "28520d9a619e"
  ],
  "decisions": [
+  {
+   "id": "ef81f8a7a67a",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV39|1Hour|JP225",
+   "title": "TV39|1Hour|JP225: סיכון ×1",
+   "decision": "approved",
+   "why": "רווח ממוצע +0.06R מול -0.01R של הבוט, יציבות 0.82, 8 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "TV39|1Hour|JP225",
+    "kind": "mult",
+    "value": 1.0,
+    "prev": 1.05
+   },
+   "at": "2026-11-12T01:18:59+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "3f5c434a526c",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV60|15Min|ARM",
+   "title": "TV60|15Min|ARM: סיכון ×1.1",
+   "decision": "approved",
+   "why": "רווח ממוצע +0.67R מול -0.01R של הבוט, יציבות 0.97, 6 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "TV60|15Min|ARM",
+    "kind": "mult",
+    "value": 1.1,
+    "prev": 1.05
+   },
+   "at": "2026-11-12T01:18:59+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "519147526481",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV08|15Min|NVDA",
+   "title": "TV08|15Min|NVDA: סיכון ×0.9",
+   "decision": "approved",
+   "why": "רווח ממוצע -0.35R מול -0.01R של הבוט, יציבות 0.75, 5 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "TV08|15Min|NVDA",
+    "kind": "mult",
+    "value": 0.9,
+    "prev": 0.95
+   },
+   "at": "2026-11-12T01:18:59+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "99b95924325c",
+   "bot": "bot2",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SE02|1Hour|USDJPY",
+   "title": "SE02|1Hour|USDJPY: סיכון ×0.9",
+   "decision": "approved",
+   "why": "רווח ממוצע -0.16R מול +0.56R של הבוט, יציבות 0.72, 6 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot2",
+    "combo": "SE02|1Hour|USDJPY",
+    "kind": "mult",
+    "value": 0.9,
+    "prev": 0.95
+   },
+   "at": "2026-11-12T01:18:59+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "65ee384ab71c",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SE02|1Hour|GBPJPY",
+   "title": "SE02|1Hour|GBPJPY: סיכון ×0.95",
+   "decision": "approved",
+   "why": "רווח ממוצע -0.14R מול +0.11R של הבוט, יציבות 0.77, 5 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot4",
+    "combo": "SE02|1Hour|GBPJPY",
+    "kind": "mult",
+    "value": 0.95,
+    "prev": null
+   },
+   "at": "2026-11-12T01:18:59+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "28520d9a619e",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "FR08|5Min|SPCX",
+   "title": "FR08|5Min|SPCX: סיכון ×0.9",
+   "decision": "approved",
+   "why": "רווח ממוצע -0.22R מול +0.11R של הבוט, יציבות 0.75, 5 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot4",
+    "combo": "FR08|5Min|SPCX",
+    "kind": "mult",
+    "value": 0.9,
+    "prev": null
+   },
+   "at": "2026-11-12T01:18:59+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "d01e3300881e",
    "bot": "bot1",

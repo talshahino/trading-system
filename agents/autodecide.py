@@ -225,6 +225,18 @@ def decide(bots, now=None):
                          "whole_bot": {k: whole[k] for k in ("before", "after")}})
                     c["status"], c["by"], c["verdict"] = "rejected", "manager", c["verdict"] + " · " + whole["why"]
                     continue
+                ncombo = (c.get("change") or {}).get("combo")
+                if whole is None and c["kind"] == "new" and ncombo:
+                    # one new strategy in one bot until its whole-bot check (manager, 12.11.2026: SC001|1Min|JP225, a thin
+                    # +0.02R a trade, was approved in bots 7, 2 and 3 within 90 minutes from the same backtest - three
+                    # accounts on one unproven edge). Another bot takes it when its own whole-bot check shows more profit.
+                    others = sorted({o["bot"] for o in old.values() if o.get("type") == "card" and o.get("kind") == "new"
+                                     and o.get("decision") == "approved" and o["bot"] != bot and o["id"] not in uundo
+                                     and ncombo in (o.get("title") or "")})
+                    if others:
+                        c["status"], c["verdict"] = "watch", (c["verdict"] + f" · כבר רץ ב{', '.join('בוט ' + o[3:] for o in others)} - נכנס גם לבוט הזה "
+                                                              "רק כשבדיקת הבוט השלם תראה שהוא מגדיל את הרווח הכולל")
+                        continue
                 if whole is not None:
                     why += " · " + whole["why"]
                     mult = whole.get("mult")

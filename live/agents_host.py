@@ -232,6 +232,53 @@ def kill_orphan(st):
     _save(st)
 
 
+def _alive(pid):
+    """Is this pid still a running python (Windows: tasklist; never os.kill - on Windows it terminates)?"""
+    if not pid:
+        return False
+    if os.name != "nt":
+        try:
+            os.kill(int(pid), 0)
+            return True
+        except Exception:  # noqa: BLE001
+            return False
+    try:
+        out = subprocess.run(["tasklist", "/FI", f"PID eq {int(pid)}", "/NH", "/FO", "CSV"], capture_output=True,
+                             text=True, timeout=30, creationflags=_flags()).stdout.lower()
+    except Exception:  # noqa: BLE001
+        return False
+    return "python" in out
+
+
+def adopt_orphan(st):
+    """A smart agent left running by a restart (every code install restarts the manager; its child processes live on)
+    is waited for and then published - not killed (manager, 12.11.2026: 8+ installs a day killed bot 5's and bot 6's
+    gap runs half-way, 18:50 / 18:58 UTC, so their results stopped updating). Past its own timeout it is stopped."""
+    pid, r = st.get("pid"), st.get("run") or {}
+    if not (pid and r.get("name") and time.time() - float(r.get("at", 0)) < float(r.get("timeout", 0)) and _alive(pid)):
+        st.pop("run", None)
+        return kill_orphan(st)
+    name, log = r["name"], _S["log"]
+    log(f"agent {name} (pid {pid}) still runs after the restart: waiting for it")
+    _S["smart_running"] = True
+    try:
+        while _alive(pid) and time.time() - float(r["at"]) < float(r["timeout"]):
+            time.sleep(30)
+        if _alive(pid):
+            kill_orphan(st)
+        st.pop("pid", None)
+        st.setdefault("agent_tail", {})[name] = _tail(f"agent_{name}.log") + ["(continued across a manager restart)"]
+        try:
+            _publish_changes(st, r.get("before") or {}, "agent", f"Agents on the bots' computer: {name} smart layer")
+        except Exception as e:  # noqa: BLE001
+            log(f"publishing {name} failed: {e}")
+            st["agent_errors"] = (st.get("agent_errors") or []) + [f"{name}: publishing failed: {e}"[:300]]
+    finally:
+        st.pop("run", None)
+        _save(st)
+        _S["smart_running"] = False
+
+
 def run(st, args, timeout, logname, track=True):
     env = dict(os.environ, PYTHONUTF8="1", PYTHONIOENCODING="utf-8", PYTHONUNBUFFERED="1",
                TS_TOKEN_FILE=str(ROOT / "live" / "github_token.txt"))
@@ -460,6 +507,8 @@ def _smart(st, log, t0):
         last[name] = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
         _save(st)
         before = snapshot()
+        # kept so that a restart in the middle can wait for this agent and publish it (adopt_orphan)
+        st["run"] = {"name": name, "at": time.time(), "timeout": int(mins * 60 + 3600), "before": before}
         try:
             run(st, args + ["--minutes", str(mins)], timeout=int(mins * 60 + 3600), logname=f"agent_{name}.log")
         except Exception as e:  # noqa: BLE001 - one agent's failure does not stop the others
@@ -468,6 +517,7 @@ def _smart(st, log, t0):
         # what the agent printed about its own failures (manager, 12.11.2026: bot 6's gap search ended without results
         # and without an error - an exception caught and printed inside the agent is invisible from here otherwise)
         st.setdefault("agent_tail", {})[name] = _tail(f"agent_{name}.log")
+        st.pop("run", None)
         st["smart_minutes"], st["agent_errors"] = mins_all, errs
         try:
             _publish_changes(st, before, "agent", f"Agents on the bots' computer: {name} smart layer")
@@ -502,7 +552,11 @@ def loop(log=print, enabled=lambda: True):
     _S["log"] = log
     time.sleep(90)                                   # let the bots start first
     st = _load()
-    kill_orphan(st)
+    orphan = bool(st.get("pid") and st.get("run"))
+    if orphan:
+        _S["smart_running"] = True                   # the continuous layer: no refresh under the running agent
+    else:
+        kill_orphan(st)
     _S["smart"] = _ts(st.get("smart_at")) or (time.time() - SMART_EVERY + 15 * 60)   # first time: health first
     names = [a[0] for a in AGENTS] + [AGENTS_REV]
     if st.get("agents_set") != names:                # new agents installed: their first smart run in 15 minutes
@@ -510,6 +564,12 @@ def loop(log=print, enabled=lambda: True):
         st["agents_set"] = names
         _save(st)
     threading.Thread(target=light_loop, args=(st, enabled), daemon=True).start()
+    if orphan:
+        try:
+            adopt_orphan(st)
+        except Exception as e:  # noqa: BLE001
+            _S["smart_running"] = False
+            log(f"waiting for the left-over agent failed: {e}")
     while True:
         try:
             if enabled():

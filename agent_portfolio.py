@@ -410,11 +410,17 @@ def untested_new(bot, where):
     return False
 
 
+NEW_BATCH = 30                         # combos of one instrument in one backtest run (its bars are loaded once)
+
+
 def test_new(bot, budget_s, where, symbols=None, timeframes=None):
-    """Every scout strategy, on the bot's instruments and the timeframes its source states, once (re-run after RERUN_DAYS)."""
+    """Every scout strategy, on the bot's instruments and the timeframes its source states, once (re-run after RERUN_DAYS).
+    The due combos of one instrument go into one backtest run, several strategies together (manager, 12.11.2026: one
+    run per strategy x instrument loaded the same bars again each time - ~20 of ~1,000 due combos a day per bot)."""
     st = Store(bot)
     t0, done = time.time(), 0
     syms = symbols or bot_symbols(bot)
+    queue = []                                                   # (sym, strategy, combos), in the scout's order
     for s_ in inbox():
         if not s_.get("id") or not can_test(bot, s_):
             continue
@@ -422,32 +428,61 @@ def test_new(bot, budget_s, where, symbols=None, timeframes=None):
         tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or (timeframes or ["1Hour"])
         if bot in NEW_ONLY:
             tfs = [x for x in tfs if x in ("1Min", "5Min", "15Min")]          # scalping bots: short timeframes only
-        mine = [x for x in syms if runs_here(x, where)]
         # on ALL the bot's instruments, not only the markets the source names (user: test everything, each strategy
         # where it wins)
-        for sym in mine:
+        for sym in [x for x in syms if runs_here(x, where)]:
             combos = [f"{sid}|{tf}|{sym}" for tf in tfs]
-            if all(st.age_days("new", c) < RERUN_DAYS for c in combos):
+            if any(st.age_days("new", c) >= RERUN_DAYS for c in combos):
+                queue.append((sym, s_, combos))
+
+    def store(t, s_, combos):
+        n = 0
+        for c in combos:
+            sid_, tf, s = c.split("|")
+            tc = t[(t["sid"] == sid_) & (t["tf"] == tf) & (t["symbol"] == s)]
+            st.put("new", c, {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": "new",
+                              "tr": {"new": trades_2026(tc)} if len(tc) else {},
+                              "scout": {k: s_.get(k) for k in ("name", "source", "url", "added")},
+                              "stats": variant_stats(tc) if len(tc) else None})
+            n += 1
+        return n
+
+    def failed(combos, e):
+        for c in combos:
+            st.put("new", c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - 1)).isoformat(),
+                              "combo": c, "error": str(e)[-300:]})
+
+    while queue:
+        left = budget_s - (time.time() - t0)
+        if left < 120:
+            print(f"new strategies: stopped for time, {done} tested, {sum(len(q[2]) for q in queue)} combos left")
+            return done
+        sym = queue[0][0]
+        batch, n = [], 0
+        for q in list(queue):
+            if q[0] == sym and (n == 0 or n + len(q[2]) <= NEW_BATCH):
+                batch.append(q)
+                n += len(q[2])
+                queue.remove(q)
+        try:
+            t, _ = run_rules([c for q in batch for c in q[2]], "new", left / 60)
+            for _, s_, combos in batch:
+                done += store(t, s_, combos)
+        except Exception as e:  # noqa: BLE001
+            if len(batch) == 1 or "no market data" in str(e):
+                for q in batch:
+                    failed(q[2], e)
                 continue
-            left = budget_s - (time.time() - t0)
-            if left < 120:
-                print(f"new strategies: stopped for time, {done} tested")
-                return done
-            try:
-                t, _ = run_rules(combos, "new", left / 60)
-            except Exception as e:  # noqa: BLE001
-                for c in combos:
-                    st.put("new", c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - 1)).isoformat(),
-                                      "combo": c, "error": str(e)[-300:]})
-                continue
-            for c in combos:
-                sid_, tf, s = c.split("|")
-                tc = t[(t["sid"] == sid_) & (t["tf"] == tf) & (t["symbol"] == s)]
-                st.put("new", c, {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": "new",
-                                  "tr": {"new": trades_2026(tc)} if len(tc) else {},
-                                  "scout": {k: s_.get(k) for k in ("name", "source", "url", "added")},
-                                  "stats": variant_stats(tc) if len(tc) else None})
-                done += 1
+            # one strategy may have broken the whole run: each one alone, so the others still get their result
+            for _, s_, combos in batch:
+                if budget_s - (time.time() - t0) < 120:
+                    queue.insert(0, (sym, s_, combos))
+                    continue
+                try:
+                    t, _ = run_rules(combos, "new", (budget_s - (time.time() - t0)) / 60)
+                    done += store(t, s_, combos)
+                except Exception as e1:  # noqa: BLE001
+                    failed(combos, e1)
     print(f"new strategies: {done} combos tested")
     return done
 

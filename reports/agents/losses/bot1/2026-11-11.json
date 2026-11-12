@@ -1,0 +1,119 @@
+{
+ "bot": "bot1",
+ "day": "2026-11-11",
+ "at": "2026-11-12T18:06:23+00:00",
+ "summary": [
+  "בוט 1 · 2026-11-11: -418$ (-0.42% מיתרת הפתיחה 100,023$), 4 עסקאות - 2 רווח, 2 הפסד. ניצול המגבלה היומית: 9% ממגבלת הבוט (4.5%), 8% ממגבלת FTMO (5%).",
+  "מול הבדיקה: -1.03R ביום מול +0.72R צפוי (פיזור ±3.12R) - יום רע רגיל, בתוך הרעש הסטטיסטי.",
+  "גורמי ההפסד: כניסה / כיוון 1, הפסד רגיל של האסטרטגיה 1.",
+  "ההפסד הגדול: YT03|4Hour|GBPUSD (-389$, 50% מההפסדים).",
+  "חוזר: TV39|1Hour|JP225 - הפסד ב־3 ימים ומעלה בחודש האחרון. דפוס, לא מזל."
+ ],
+ "pnl": -417.78,
+ "pnl_pct": -0.418,
+ "open_balance": 100023.07,
+ "limit_used": {
+  "bot": 9.3,
+  "ftmo": 8.4
+ },
+ "trades": 4,
+ "winners": 2,
+ "losers_n": 2,
+ "gross_profit": 358.81,
+ "gross_loss": 776.59,
+ "profit_factor": 0.46,
+ "costs": 37.07,
+ "day_r": -1.03,
+ "expected_r": 0.72,
+ "expected_sd": 3.12,
+ "z": -0.56,
+ "normal": true,
+ "causes": {
+  "entry": 1,
+  "normal": 1
+ },
+ "correlated": [],
+ "top_loser": "YT03|4Hour|GBPUSD",
+ "top_share": 50.0,
+ "recurring": [
+  "TV39|1Hour|JP225"
+ ],
+ "recurring_causes": [
+  "entry",
+  "normal"
+ ],
+ "losers": [
+  {
+   "combo": "YT03|4Hour|GBPUSD",
+   "side": "קנייה",
+   "open_t": "2026-11-10T16:00:10+00:00",
+   "close_t": "2026-11-11T13:49:51+00:00",
+   "entry": 1.33349,
+   "exit": 1.32927,
+   "stop": 1.32928,
+   "target": 1.34863,
+   "r": -1.026,
+   "net": -388.67,
+   "costs": 8.87,
+   "mfe_r": 0.49,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 1.32928]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "TV39|1Hour|JP225",
+   "side": "מכירה",
+   "open_t": "2026-11-10T14:00:08+00:00",
+   "close_t": "2026-11-11T00:49:27+00:00",
+   "entry": 59727.5,
+   "exit": 60750.0,
+   "stop": 60771.45,
+   "target": 0.0,
+   "r": -0.983,
+   "net": -387.92,
+   "costs": 1.44,
+   "mfe_r": 0.07,
+   "mae_r": 0.98,
+   "exit_reason": "[sl 60746.02]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": true
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TV39|1Hour|JP225",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV39|1Hour|JP225: נעצר בלי לזוז לטובה (MFE 0.07R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV39|1Hour|JP225",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "TV39|1Hour|JP225: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 3,
+   "avg_loss_pct": -0.281,
+   "worst_pct": -0.418
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ }
+}

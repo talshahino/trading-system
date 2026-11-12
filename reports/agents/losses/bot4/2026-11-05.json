@@ -1,0 +1,187 @@
+{
+ "bot": "bot4",
+ "day": "2026-11-05",
+ "at": "2026-11-12T18:06:23+00:00",
+ "summary": [
+  "בוט 4 · 2026-11-05: -466$ (-0.47% מיתרת הפתיחה 100,000$), 6 עסקאות - 1 רווח, 5 הפסד. ניצול המגבלה היומית: 10% ממגבלת הבוט (4.5%), 9% ממגבלת FTMO (5%).",
+  "מול הבדיקה: -1.34R ביום מול +0.56R צפוי (פיזור ±2.36R) - יום רע רגיל, בתוך הרעש הסטטיסטי.",
+  "גורמי ההפסד: הפסד רגיל של האסטרטגיה 2, סגירה בגלל כלל 2, כניסה / כיוון 1.",
+  "ההפסד הגדול: SE02|1Hour|GBPJPY (-443$, 63.1% מההפסדים).",
+  "ריכוז: 3 הפסדים יחד במכירה של stock (-127$)."
+ ],
+ "pnl": -465.91,
+ "pnl_pct": -0.466,
+ "open_balance": 100000.0,
+ "limit_used": {
+  "bot": 10.4,
+  "ftmo": 9.3
+ },
+ "trades": 6,
+ "winners": 1,
+ "losers_n": 5,
+ "gross_profit": 236.08,
+ "gross_loss": 701.99,
+ "profit_factor": 0.34,
+ "costs": 0.0,
+ "day_r": -1.34,
+ "expected_r": 0.56,
+ "expected_sd": 2.36,
+ "z": -0.81,
+ "normal": true,
+ "causes": {
+  "normal": 2,
+  "rules": 2,
+  "entry": 1
+ },
+ "correlated": [
+  {
+   "class": "stock",
+   "side": "מכירה",
+   "trades": 3,
+   "loss": -127.04
+  }
+ ],
+ "top_loser": "SE02|1Hour|GBPJPY",
+ "top_share": 63.1,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "SE02|1Hour|GBPJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-05T15:00:13+00:00",
+   "close_t": "2026-11-05T18:07:40+00:00",
+   "entry": 212.87,
+   "exit": 212.42,
+   "stop": 212.42,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -442.65,
+   "costs": 0.0,
+   "mfe_r": 0.41,
+   "mae_r": 0.99,
+   "exit_reason": "[sl 212.420]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "GH02|1Hour|XAUUSD",
+   "side": "קנייה",
+   "open_t": "2026-11-05T17:00:12+00:00",
+   "close_t": "2026-11-05T20:45:00+00:00",
+   "entry": 4123.81,
+   "exit": 4101.76,
+   "stop": 4048.99,
+   "target": 0.0,
+   "r": -0.295,
+   "net": -132.3,
+   "costs": 0.0,
+   "mfe_r": 0.02,
+   "mae_r": 0.38,
+   "exit_reason": "market break ahead Standard",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "BK05|15Min|INTC",
+   "side": "מכירה",
+   "open_t": "2026-11-05T15:15:05+00:00",
+   "close_t": "2026-11-05T20:45:00+00:00",
+   "entry": 53.52,
+   "exit": 53.94,
+   "stop": 56.47,
+   "target": 0.0,
+   "r": -0.142,
+   "net": -70.14,
+   "costs": 0.0,
+   "mfe_r": 0.37,
+   "mae_r": 0.82,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "QC07|15Min|ARM",
+   "side": "מכירה",
+   "open_t": "2026-11-05T17:45:06+00:00",
+   "close_t": "2026-11-05T18:45:04+00:00",
+   "entry": 167.89,
+   "exit": 168.79,
+   "stop": 179.81,
+   "target": 0.0,
+   "r": -0.076,
+   "net": -36.0,
+   "costs": 0.0,
+   "mfe_r": 0.08,
+   "mae_r": 0.17,
+   "exit_reason": " ",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "QC07|15Min|ARM",
+   "side": "מכירה",
+   "open_t": "2026-11-05T15:45:07+00:00",
+   "close_t": "2026-11-05T16:45:08+00:00",
+   "entry": 168.84,
+   "exit": 169.39,
+   "stop": 180.44,
+   "target": 0.0,
+   "r": -0.047,
+   "net": -20.9,
+   "costs": 0.0,
+   "mfe_r": 0.4,
+   "mae_r": 0.23,
+   "exit_reason": " ",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "GH02|1Hour|XAUUSD",
+   "cause": "rules",
+   "priority": [],
+   "task": "GH02|1Hour|XAUUSD: נסגר בגלל כלל (market break ahead Standard) ב־-0.295R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "BK05|15Min|INTC",
+   "cause": "rules",
+   "priority": [],
+   "task": "BK05|15Min|INTC: נסגר בגלל כלל (session end) ב־-0.142R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "QC07|15Min|ARM",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "QC07|15Min|ARM: נעצר בלי לזוז לטובה (MFE 0.08R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": null,
+   "cause": "correlated",
+   "priority": [],
+   "task": "3 הפסדים יחד במכירה של stock (-127$): להציע תקרה לחשיפה לאותו צד באותו סוג נכס, לבדוק בבדיקת הבוט השלם."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 1,
+   "avg_loss_pct": -0.466,
+   "worst_pct": -0.466
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ }
+}

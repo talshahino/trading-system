@@ -1,0 +1,111 @@
+{
+ "bot": "bot3",
+ "day": "2026-11-05",
+ "at": "2026-11-12T18:06:23+00:00",
+ "summary": [
+  "בוט 3 · 2026-11-05: -84$ (-0.08% מיתרת הפתיחה 99,897$), 5 עסקאות - 3 רווח, 2 הפסד. ניצול המגבלה היומית: 2% ממגבלת הבוט (4.5%), 2% ממגבלת FTMO (5%).",
+  "מול הבדיקה: -0.74R ביום מול +0.47R צפוי (פיזור ±2.55R) - יום רע רגיל, בתוך הרעש הסטטיסטי.",
+  "גורמי ההפסד: כניסה / כיוון 2.",
+  "ההפסד הגדול: TV58|1Hour|USDCAD (-374$, 50% מההפסדים)."
+ ],
+ "pnl": -83.77,
+ "pnl_pct": -0.084,
+ "open_balance": 99897.43,
+ "limit_used": {
+  "bot": 1.9,
+  "ftmo": 1.7
+ },
+ "trades": 5,
+ "winners": 3,
+ "losers_n": 2,
+ "gross_profit": 663.81,
+ "gross_loss": 747.58,
+ "profit_factor": 0.89,
+ "costs": 0.0,
+ "day_r": -0.74,
+ "expected_r": 0.47,
+ "expected_sd": 2.55,
+ "z": -0.47,
+ "normal": true,
+ "causes": {
+  "entry": 2
+ },
+ "correlated": [],
+ "top_loser": "TV58|1Hour|USDCAD",
+ "top_share": 50.0,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "TV58|1Hour|USDCAD",
+   "side": "מכירה",
+   "open_t": "2026-11-05T07:00:14+00:00",
+   "close_t": "2026-11-05T12:30:25+00:00",
+   "entry": 1.3944,
+   "exit": 1.3969,
+   "stop": 1.3969,
+   "target": 1.38958,
+   "r": -1.0,
+   "net": -374.04,
+   "costs": 0.0,
+   "mfe_r": 0.05,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 1.39690]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TV41|1Hour|USDJPY",
+   "side": "מכירה",
+   "open_t": "2026-11-05T07:00:07+00:00",
+   "close_t": "2026-11-05T09:27:27+00:00",
+   "entry": 157.89,
+   "exit": 158.295,
+   "stop": 158.295,
+   "target": 157.128,
+   "r": -1.0,
+   "net": -373.54,
+   "costs": 0.0,
+   "mfe_r": 0.02,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 158.295]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TV58|1Hour|USDCAD",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV58|1Hour|USDCAD: נעצר בלי לזוז לטובה (MFE 0.05R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV41|1Hour|USDJPY",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV41|1Hour|USDJPY: נעצר בלי לזוז לטובה (MFE 0.02R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 1,
+   "avg_loss_pct": -0.084,
+   "worst_pct": -0.084
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ }
+}

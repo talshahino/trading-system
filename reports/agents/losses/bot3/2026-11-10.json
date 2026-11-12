@@ -1,0 +1,162 @@
+{
+ "bot": "bot3",
+ "day": "2026-11-10",
+ "at": "2026-11-12T18:06:23+00:00",
+ "summary": [
+  "בוט 3 · 2026-11-10: -993$ (-0.99% מיתרת הפתיחה 100,555$), 4 עסקאות - 0 רווח, 4 הפסד. ניצול המגבלה היומית: 22% ממגבלת הבוט (4.5%), 20% ממגבלת FTMO (5%).",
+  "מול הבדיקה: -2.76R ביום מול +0.41R צפוי (פיזור ±2.10R) - יום רע רגיל, בתוך הרעש הסטטיסטי.",
+  "גורמי ההפסד: סגירה בגלל כלל 2, כניסה / כיוון 2.",
+  "ההפסד הגדול: SS07|15Min|NVDA (-392$, 39.5% מההפסדים)."
+ ],
+ "pnl": -992.61,
+ "pnl_pct": -0.987,
+ "open_balance": 100555.28,
+ "limit_used": {
+  "bot": 21.9,
+  "ftmo": 19.7
+ },
+ "trades": 4,
+ "winners": 0,
+ "losers_n": 4,
+ "gross_profit": 0.0,
+ "gross_loss": 992.61,
+ "profit_factor": 0.0,
+ "costs": 0.54,
+ "day_r": -2.76,
+ "expected_r": 0.41,
+ "expected_sd": 2.1,
+ "z": -1.51,
+ "normal": true,
+ "causes": {
+  "rules": 2,
+  "entry": 2
+ },
+ "correlated": [],
+ "top_loser": "SS07|15Min|NVDA",
+ "top_share": 39.5,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "SS07|15Min|NVDA",
+   "side": "קנייה",
+   "open_t": "2026-11-10T15:15:06+00:00",
+   "close_t": "2026-11-10T15:44:15+00:00",
+   "entry": 173.26,
+   "exit": 170.22,
+   "stop": 170.22,
+   "target": 174.1,
+   "r": -1.0,
+   "net": -392.16,
+   "costs": 0.0,
+   "mfe_r": 0.13,
+   "mae_r": 0.61,
+   "exit_reason": "[sl 170.22]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "SS01|5Min|WMT",
+   "side": "מכירה",
+   "open_t": "2026-11-10T15:10:06+00:00",
+   "close_t": "2026-11-10T17:35:17+00:00",
+   "entry": 124.76,
+   "exit": 126.24,
+   "stop": 126.24,
+   "target": 121.5,
+   "r": -1.0,
+   "net": -346.32,
+   "costs": 0.0,
+   "mfe_r": 0.11,
+   "mae_r": 0.97,
+   "exit_reason": "[sl 126.24]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TV41|1Hour|USDJPY",
+   "side": "מכירה",
+   "open_t": "2026-11-09T11:00:07+00:00",
+   "close_t": "2026-11-10T13:27:03+00:00",
+   "entry": 157.969,
+   "exit": 158.193,
+   "stop": 158.363,
+   "target": 157.22,
+   "r": -0.57,
+   "net": -203.03,
+   "costs": 0.54,
+   "mfe_r": 0.76,
+   "mae_r": 0.72,
+   "exit_reason": "restricted news ahead Stand",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "TV24|15Min|TSLA",
+   "side": "מכירה",
+   "open_t": "2026-11-10T15:00:05+00:00",
+   "close_t": "2026-11-10T20:45:00+00:00",
+   "entry": 376.79,
+   "exit": 377.49,
+   "stop": 380.41,
+   "target": 0.0,
+   "r": -0.193,
+   "net": -51.1,
+   "costs": 0.0,
+   "mfe_r": 0.79,
+   "mae_r": 0.72,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "SS07|15Min|NVDA",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "SS07|15Min|NVDA: נעצר בלי לזוז לטובה (MFE 0.13R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "SS01|5Min|WMT",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "SS01|5Min|WMT: נעצר בלי לזוז לטובה (MFE 0.11R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV41|1Hour|USDJPY",
+   "cause": "rules",
+   "priority": [],
+   "task": "TV41|1Hour|USDJPY: נסגר בגלל כלל (restricted news ahead Stand) ב־-0.57R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "TV24|15Min|TSLA",
+   "cause": "rules",
+   "priority": [],
+   "task": "TV24|15Min|TSLA: נסגר בגלל כלל (session end) ב־-0.193R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 2,
+   "avg_loss_pct": -0.535,
+   "worst_pct": -0.987
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ }
+}

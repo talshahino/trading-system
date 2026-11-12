@@ -1,0 +1,150 @@
+{
+ "bot": "bot1",
+ "day": "2026-11-09",
+ "at": "2026-11-12T18:06:23+00:00",
+ "summary": [
+  "בוט 1 · 2026-11-09: -151$ (-0.16% מיתרת הפתיחה 97,184$), 11 עסקאות - 7 רווח, 4 הפסד. ניצול המגבלה היומית: 3% ממגבלת הבוט (4.5%), 3% ממגבלת FTMO (5%).",
+  "מול הבדיקה: -0.74R ביום מול +1.28R צפוי (פיזור ±3.66R) - יום רע רגיל, בתוך הרעש הסטטיסטי.",
+  "גורמי ההפסד: כניסה / כיוון 2, הפסד רגיל של האסטרטגיה 2.",
+  "ההפסד הגדול: TV11|4Hour|USDJPY (-409$, 43% מההפסדים)."
+ ],
+ "pnl": -150.97,
+ "pnl_pct": -0.155,
+ "open_balance": 97183.76,
+ "limit_used": {
+  "bot": 3.5,
+  "ftmo": 3.1
+ },
+ "trades": 11,
+ "winners": 7,
+ "losers_n": 4,
+ "gross_profit": 800.18,
+ "gross_loss": 951.15,
+ "profit_factor": 0.84,
+ "costs": 23.03,
+ "day_r": -0.74,
+ "expected_r": 1.28,
+ "expected_sd": 3.66,
+ "z": -0.55,
+ "normal": true,
+ "causes": {
+  "entry": 2,
+  "normal": 2
+ },
+ "correlated": [],
+ "top_loser": "TV11|4Hour|USDJPY",
+ "top_share": 43.0,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "TV11|4Hour|USDJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-09T04:00:06+00:00",
+   "close_t": "2026-11-09T07:15:56+00:00",
+   "entry": 158.287,
+   "exit": 158.08,
+   "stop": 158.086,
+   "target": 158.517,
+   "r": -1.069,
+   "net": -409.23,
+   "costs": 14.96,
+   "mfe_r": 0.22,
+   "mae_r": 0.97,
+   "exit_reason": "[sl 158.086]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TT45|1Hour|WTI",
+   "side": "מכירה",
+   "open_t": "2026-11-09T00:00:18+00:00",
+   "close_t": "2026-11-09T03:09:22+00:00",
+   "entry": 90.675,
+   "exit": 91.689,
+   "stop": 91.666,
+   "target": 89.318,
+   "r": -1.023,
+   "net": -387.35,
+   "costs": 0.0,
+   "mfe_r": 0.22,
+   "mae_r": 1.01,
+   "exit_reason": "[sl 91.666]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "SE02|1Hour|USDJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-09T15:00:13+00:00",
+   "close_t": "2026-11-09T19:38:26+00:00",
+   "entry": 158.093,
+   "exit": 157.814,
+   "stop": 157.815,
+   "target": 0.0,
+   "r": -1.032,
+   "net": -131.78,
+   "costs": 3.6,
+   "mfe_r": 0.34,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 157.815]",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  },
+  {
+   "combo": "TV39|1Hour|JP225",
+   "side": "קנייה",
+   "open_t": "2026-11-09T01:00:05+00:00",
+   "close_t": "2026-11-09T07:00:06+00:00",
+   "entry": 58828.5,
+   "exit": 58731.0,
+   "stop": 57134.85,
+   "target": 0.0,
+   "r": -0.058,
+   "net": -22.79,
+   "costs": 0.0,
+   "mfe_r": 0.37,
+   "mae_r": 0.13,
+   "exit_reason": "stop gap",
+   "cause": "normal",
+   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TV11|4Hour|USDJPY",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV11|4Hour|USDJPY: נעצר בלי לזוז לטובה (MFE 0.22R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TT45|1Hour|WTI",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TT45|1Hour|WTI: נעצר בלי לזוז לטובה (MFE 0.22R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 2,
+   "avg_loss_pct": -0.212,
+   "worst_pct": -0.269
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ }
+}

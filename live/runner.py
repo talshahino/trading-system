@@ -1050,6 +1050,11 @@ def step(combo, sid, tf, sym, off):
     if feed_now - forming >= pd.Timedelta(minutes=TF_MIN[tf]) or now - forming >= pd.Timedelta(minutes=TF_MIN[tf] + 30):
         DIAG[combo]["stale"] = True
         return False    # the newest bar has not appeared yet (just started, or market closed): try again soon
+    # how far behind the wall clock this symbol's own feed is while its market runs (12.11.2026: on bots 3-4 the 5-minute
+    # US shares entered 15 minutes after the backtest, also mid-session - a delayed feed?): published for the agents
+    q = STATE.setdefault("feed_lag", {}).setdefault(sym, [])
+    q.append(DIAG[combo]["feed_lag_min"])
+    del q[:-60]
     late_tol = pd.Timedelta(minutes=min(5.0, TF_MIN[tf] / 4))
     started = forming
     late = feed_now - forming > late_tol
@@ -1618,6 +1623,8 @@ def dashboard_state(ai, pos, ds_bal, now):
         # typical spread per symbol as this broker quotes it (median of what the bot saw): checks the backtest's
         # cost estimate for the shares that have no bid/ask history
         "spreads": {k: {"median": float(np.median(q)), "n": len(q)} for k, q in SPREADS.items() if q},
+        "feed_lag": {k: {"median": float(np.median(q)), "max": float(max(q)), "n": len(q)}
+                     for k, q in (STATE.get("feed_lag") or {}).items() if q},
         "app_push": REP.PUSH_STAT, "managed": MANAGED,
         "risk_mult": {c: risk_mult(c) for c in MON["combos"] if risk_mult(c) != 1.0},
         "combo_rules": {c: r for c in MON["combos"] if (r := combo_rules(c))},

@@ -102,6 +102,8 @@ RISK_TAL5 = 0.004 * 0.7
 SET5 = {"v5": {"STOP": "gap", "DOMINANT": False, "V5_MAX_COST": 0.10, "PART_FRAC": 0.3, "PART_WAY": 0.9},
         "v1m": {"STOP": "gap", "DOMINANT": False, "V5_MAX_COST": 0.10, "PART_FRAC": 0.3, "PART_WAY": 0.9, "TFM": 1}}
 _SET = {"m5": None, "m6": None}
+_TAL0 = dict(FA.TAL_TRACKS)          # the tracks in the code; the file's main track is laid over them on every load
+TF_COMBO = {"1m": "1Min", "5m": "5Min", "15m": "15Min", "1h": "1Hour", "4h": "4Hour", "1d": "1Day"}
 
 
 def load_settings():
@@ -130,6 +132,16 @@ def load_settings():
                     FA.TAL_PAIR = tuple(tal["pair"])
                 if isinstance(tal.get("cfg"), dict):
                     FA.TAL_CFG = {**FA.TAL_CFG, **tal["cfg"]}
+                # the pair / rules the builder wrote are what the main track trades (12.11.2026: before this, fut_step
+                # read FA.TAL_TRACKS only, so an approved card changed the file and not the trades). Another track on
+                # the same pair stops taking new trades (its open ones are still followed to their exit).
+                FA.TAL_TRACKS.clear()
+                FA.TAL_TRACKS.update(_TAL0)
+                FA.TAL_TRACKS["tal"] = (FA.TAL_PAIR, dict(FA.TAL_CFG))
+                FA.TAL_NAME["tal"] = f"{TG.TF_HE[FA.TAL_PAIR[0]]} / {TG.TF_HE[FA.TAL_PAIR[1]]}"
+                FA.TAL_COMBO["tal"] = "TAL|" + TF_COMBO.get(FA.TAL_PAIR[0], FA.TAL_PAIR[0])
+                for trk_ in [k_ for k_, (p_, _) in FA.TAL_TRACKS.items() if k_ != "tal" and tuple(p_) == tuple(FA.TAL_PAIR)]:
+                    FA.TAL_TRACKS.pop(trk_)
                 for trk, v in (d.get("risk") or {}).items():
                     if trk in FA.RISK and 0 <= float(v) <= 0.02:
                         FA.RISK[trk] = float(v)

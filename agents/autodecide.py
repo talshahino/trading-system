@@ -145,6 +145,18 @@ def decide(bots, now=None):
                  if isinstance(v, dict) and v.get("built")}
     except Exception:  # noqa: BLE001
         built = set()
+    # the user's own "bring them back" (12.11.2026: "first fix - bring back what was cut and try to make money with it"):
+    # data/agents/user_reverts.json lists cut decisions to take back; the bots' computer restores the value before
+    try:
+        for rid in json.loads((ROOT / "data/agents/user_reverts.json").read_text(encoding="utf-8")).get("ids", []):
+            o = old.get(rid)
+            if o and o.get("decision") == "approved" and o.get("type") == "risk":
+                add({"id": _did("userrevert", rid), "bot": o["bot"], "type": "risk", "kind": o["kind"], "combo": o.get("combo"),
+                     "title": "חוזר לבוט: " + o["title"], "decision": "reverted", "of": rid,
+                     "why": "טל: קודם מתקנים ומטייבים - ההפחתה / ההסרה בוטלה, והסוכן של הבוט ינסה להרוויח איתה",
+                     "effect": "הסיכון חוזר לערך שלפני ההחלטה, תוך כ־10 דקות"})
+    except FileNotFoundError:
+        pass
     # 1) the agents' cards (all bots)
     for bot, b in bots.items():
         for c in b.get("cards", []):

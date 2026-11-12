@@ -51,10 +51,15 @@ KNOBS = {"GBODY": [0.0, 1.0, 2.0], "MIN_GAP": [0.0, 0.6], "SW": [2, 5], "MIN_RR"
          # the way, the rest's stop to the entry. Not in BASE (the base stays "none"), so earlier runs keep their names.
          # Fibonacci levels of the way (user, 12.11.2026, every bot): 3 digits = per mille (be618 = 61.8% of the way)
          "EXIT": ["be50", "be70", "p30_50", "p50_50", "p50_70", "p70_70",
-                  "be382", "be618", "be786", "be886", "p50_382", "p50_618", "p33_618", "p50_786"]}
+                  "be382", "be618", "be786", "be886", "p50_382", "p50_618", "p33_618", "p50_786"],
+         # one loss per impulse (bot 6's smart agent, 13.11.2026, from bot 6's live record: on 5.11 three US30 longs from
+         # gaps of the same 1-hour impulse were stopped one after another, -3R, and two US500 longs of another, -2R):
+         # after a stop, the impulse's other gaps in that direction are cancelled. Not in BASE (off), like EXIT.
+         "IMP1": [True]}
 NAMES = {"GBODY": "עוצמת הדחף (גוף הנר האמצעי מול הממוצע)", "MIN_GAP": "גודל גאפ מינימלי (מול הטווח הממוצע)",
          "SW": "סווינג בטיים פריים הנמוך (נרות מכל צד)", "MIN_RR": "יחס מינימלי יעד/סטופ", "EXPIRY": "תוקף הגאפ (שעות)",
-         "PROT": "הגנה מהודעות וזעזועים", "EXIT": "ניהול העסקה: יציאה חלקית / סטופ לנקודת הכניסה"}
+         "PROT": "הגנה מהודעות וזעזועים", "EXIT": "ניהול העסקה: יציאה חלקית / סטופ לנקודת הכניסה",
+         "IMP1": "אחרי סטופ - בלי עוד כניסות מאותו דחף"}
 PROT_HE = {"none": "בלי הגנה", "cal15": "יומן ±15 דק'", "cal60": "יומן ±60 דק'", "shock": "זעזועים",
            "cal15shock": "יומן ±15 דק' + זעזועים"}
 SPLIT = pd.Timestamp("2026-01-01", tz="UTC")
@@ -252,11 +257,11 @@ def simulate(D, pair, cfg, gcache):
         risk = d * (px - stop)
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
             continue
-        cands.append((f, d, px, stop, t2, risk))
+        cands.append((f, d, px, stop, t2, risk, armed))
     cands.sort()
-    rows, busy = [], -1
-    for f, d, px, stop, tgt, risk in cands:
-        if f < busy:
+    rows, busy, dead, imp1 = [], -1, set(), cfg.get("IMP1") is True
+    for f, d, px, stop, tgt, risk, armed in cands:
+        if f < busy or (imp1 and (armed, d) in dead):
             continue
         for span in (4 * 1440, 40 * 1440):              # most trades end within a day; the rest within weeks
             e = min(n1, f + span)
@@ -299,6 +304,8 @@ def simulate(D, pair, cfg, gcache):
             ex, why = o1[q], "session"
         if part_r and why == "stop" and stop == px:
             why = "breakeven"
+        if why == "stop":
+            dead.add((armed, d))                          # IMP1: the impulse's other gaps are cancelled
         cost_r = D.cost[f] / risk
         r_rest = d * (ex - px) / risk
         r_all = (part_r + (1 - frac) * r_rest) if part_r else r_rest
@@ -380,8 +387,9 @@ def _cfg_runs(p, cfg, symbols, idx):
 
 
 def _norm(c):
-    if c.get("EXIT") == "none":
-        c.pop("EXIT")                                   # "none" is the base: the same configuration, the same name
+    for k in ("EXIT", "IMP1"):
+        if c.get(k) == "none":
+            c.pop(k)                                    # "none" is the base: the same configuration, the same name
     return c
 
 
@@ -763,10 +771,14 @@ def live_trades(D, pair, cfg, gcache=None):
             continue
         cands.append((f, d, px, stop, t2, risk, base))
     # pass 2: in the order of the fills, one trade at a time per instrument (as simulate())
-    busy = -1
-    for f, d, px, stop, t2, risk, base in sorted(cands, key=lambda x: x[0]):
+    busy, dead, imp1 = -1, set(), cfg.get("IMP1") is True
+    # the same order as simulate() (two gaps filled in the same minute: the same one is taken - backtest = live)
+    for f, d, px, stop, t2, risk, base in sorted(cands, key=lambda x: x[:6]):
         if f < busy:
             out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="busy"))
+            continue
+        if imp1 and (base["setup_t"], d) in dead:      # IMP1: a gap of this impulse was already stopped
+            out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="impulse"))
             continue
         cost_r = float(D.cost[f]) / risk
         hs, ls = h1[f:], l1[f:]
@@ -812,6 +824,8 @@ def live_trades(D, pair, cfg, gcache=None):
             else:
                 ex, why = o1[q], "forced"
             rest = d * (ex - px) / risk
+            if why == "stop":
+                dead.add((base["setup_t"], d))
             rec.update(status="closed", exit=float(ex), exit_time=ts(q), reason=why,
                        r=round((part_r + (1 - frac) * rest if moved else rest) - cost_r, 4))
             busy = q + 1

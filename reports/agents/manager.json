@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-12T11:03:59+00:00",
+ "updated": "2026-11-12T11:42:02+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -3537,13 +3537,13 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-12T11:03:47+00:00",
-    "state_updated": "2026-11-12T11:03:30+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-12T11:33:18+00:00",
+    "state_updated": "2026-11-12T11:30:52+00:00",
+    "minutes_since_state": 2,
     "balance": 98566.56,
-    "equity": 99112.72,
-    "day_pct": -0.49,
-    "total_pct": -0.89,
+    "equity": 99026.46,
+    "day_pct": -0.58,
+    "total_pct": -0.97,
     "trades": 120,
     "mean_r": -0.039,
     "sum_r": -4.69,
@@ -6754,13 +6754,13 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-12T11:03:47+00:00",
-    "state_updated": "2026-11-12T11:01:27+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-12T11:33:18+00:00",
+    "state_updated": "2026-11-12T11:32:01+00:00",
+    "minutes_since_state": 1,
     "balance": 110932.75,
-    "equity": 110943.33,
-    "day_pct": 0.01,
-    "total_pct": 10.94,
+    "equity": 110601.02,
+    "day_pct": -0.3,
+    "total_pct": 10.6,
     "trades": 37,
     "mean_r": 0.561,
     "sum_r": 20.75,
@@ -10806,9 +10806,9 @@
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-12T11:03:47+00:00",
-    "state_updated": "2026-11-12T11:02:50+00:00",
-    "minutes_since_state": 1,
+    "updated": "2026-11-12T11:33:18+00:00",
+    "state_updated": "2026-11-12T11:33:03+00:00",
+    "minutes_since_state": 0,
     "balance": 100264.17,
     "equity": 100264.17,
     "day_pct": 0.0,
@@ -13740,13 +13740,13 @@
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-12T11:03:47+00:00",
-    "state_updated": "2026-11-12T11:02:37+00:00",
-    "minutes_since_state": 1,
+    "updated": "2026-11-12T11:33:18+00:00",
+    "state_updated": "2026-11-12T11:33:05+00:00",
+    "minutes_since_state": 0,
     "balance": 101556.17,
-    "equity": 102983.13,
-    "day_pct": 2.0,
-    "total_pct": 2.98,
+    "equity": 102773.23,
+    "day_pct": 1.79,
+    "total_pct": 2.77,
     "trades": 31,
     "mean_r": 0.11,
     "sum_r": 3.41,
@@ -14757,6 +14757,64 @@
     },
     {
      "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC001|1Min|XAUUSD · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 532,
+      "eff_n": 531.3,
+      "mean": -0.0503,
+      "t": -0.93,
+      "win": 36.6
+     },
+     "unseen": {
+      "n": 1181,
+      "eff_n": 1180.8,
+      "mean": -0.0134,
+      "t": -0.36,
+      "win": 38.6
+     },
+     "whole": {
+      "n": 1713,
+      "eff_n": 1710.2,
+      "mean": -0.0243,
+      "t": -0.8,
+      "win": 38.0
+     },
+     "halves": [
+      -0.0032,
+      -0.0461
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC001|1Min|XAUUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T11:37:14+00:00",
+     "id": "f5857c94a60e",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T11:42:02+00:00"
+    },
+    {
+     "bot": "bot5",
      "kind": "improve",
      "title": "מסלול 15 דקות (v5): איפה יוצא החלק (מהדרך ליעד) 0.9 ← 0.7",
      "what": "לשנות את 'איפה יוצא החלק (מהדרך ליעד)' מ־0.9 ל־0.7. נבחר על 2024-2025 בלבד, ומוצג על 2026 שלא נראתה.",
@@ -15008,6 +15066,64 @@
     },
     {
      "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC001|1Min|GBPUSD · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 111,
+      "eff_n": 110.9,
+      "mean": -0.1693,
+      "t": -1.72,
+      "win": 36.1
+     },
+     "unseen": {
+      "n": 116,
+      "eff_n": 116.0,
+      "mean": -0.0446,
+      "t": -0.45,
+      "win": 40.5
+     },
+     "whole": {
+      "n": 227,
+      "eff_n": 226.5,
+      "mean": -0.103,
+      "t": -1.48,
+      "win": 38.5
+     },
+     "halves": [
+      -0.173,
+      -0.0387
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC001|1Min|GBPUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T11:37:14+00:00",
+     "id": "95da19622dac",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T11:42:02+00:00"
+    },
+    {
+     "bot": "bot5",
      "kind": "improve",
      "title": "מסלול הדקה: תוקף הפער (שעות) 24 ← 8",
      "what": "לשנות את 'תוקף הפער (שעות)' מ־24 ל־8. נבחר על 2024-2025 בלבד, ומוצג על 2026 שלא נראתה.",
@@ -15131,17 +15247,75 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-11T12:00:17+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC001|1Min|EURUSD · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 105,
+      "eff_n": 104.9,
+      "mean": -0.1712,
+      "t": -1.8,
+      "win": 34.5
+     },
+     "unseen": {
+      "n": 109,
+      "eff_n": 109.0,
+      "mean": -0.0701,
+      "t": -0.71,
+      "win": 44.8
+     },
+     "whole": {
+      "n": 214,
+      "eff_n": 213.4,
+      "mean": -0.1175,
+      "t": -1.71,
+      "win": 40.0
+     },
+     "halves": [
+      -0.1499,
+      -0.0887
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC001|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T11:37:14+00:00",
+     "id": "283b7e9c75b2",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T11:42:02+00:00"
     }
    ],
    "health": {
     "bot": "bot5",
     "name": "בוט 5 · סקלפינג",
-    "updated": "2026-11-12T11:03:47+00:00",
-    "state_updated": "2026-11-12T11:02:57+00:00",
-    "minutes_since_state": 1,
-    "balance": 96353.71,
-    "equity": 96210.36,
-    "day_pct": -1.82,
+    "updated": "2026-11-12T11:33:18+00:00",
+    "state_updated": "2026-11-12T11:32:57+00:00",
+    "minutes_since_state": 0,
+    "balance": 96275.18,
+    "equity": 96214.74,
+    "day_pct": -1.81,
     "total_pct": -3.79,
     "trades": 60,
     "mean_r": -0.06,
@@ -15163,14 +15337,14 @@
      },
      {
       "combo": "OWN|1Min|US30",
-      "n": 17,
-      "mean": -0.213,
-      "sum": -3.62,
-      "win": 35.3,
+      "n": 16,
+      "mean": -0.159,
+      "sum": -2.54,
+      "win": 37.5,
       "streak": 0,
       "bt_mean": -0.0588,
       "bt_n": 16989,
-      "z": -0.53,
+      "z": -0.33,
       "flags": []
      },
      {
@@ -15187,14 +15361,14 @@
      },
      {
       "combo": "OWN|1Min|GER40",
-      "n": 9,
-      "mean": 0.138,
-      "sum": 1.24,
-      "win": 44.4,
-      "streak": 3,
+      "n": 10,
+      "mean": 0.016,
+      "sum": 0.16,
+      "win": 40.0,
+      "streak": 4,
       "bt_mean": -0.0588,
       "bt_n": 16989,
-      "z": 0.4,
+      "z": 0.16,
       "flags": []
      },
      {
@@ -15786,6 +15960,64 @@
     },
     {
      "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC001|1Min|US100 · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 371,
+      "eff_n": 370.5,
+      "mean": 0.0348,
+      "t": 0.54,
+      "win": 40.2
+     },
+     "unseen": {
+      "n": 747,
+      "eff_n": 746.9,
+      "mean": -0.0266,
+      "t": -0.57,
+      "win": 41.8
+     },
+     "whole": {
+      "n": 1118,
+      "eff_n": 1115.8,
+      "mean": -0.0073,
+      "t": -0.2,
+      "win": 41.3
+     },
+     "halves": [
+      -0.0299,
+      0.0144
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC001|1Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T11:41:08+00:00",
+     "id": "e07a79f5be76",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.03R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T11:42:02+00:00"
+    },
+    {
+     "bot": "bot6",
      "kind": "improve",
      "title": "חוזים · מסלול 15 דקות (v5): יחס סיכוי/סיכון מינימלי 1.0 ← 2.0",
      "what": "לשנות את 'יחס סיכוי/סיכון מינימלי' מ־1.0 ל־2.0. נבחר על 2024-2025 בלבד, ומוצג על 2026 שלא נראתה.",
@@ -16116,6 +16348,122 @@
     },
     {
      "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC001|1Min|US500 · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 259,
+      "eff_n": 258.7,
+      "mean": -0.053,
+      "t": -0.73,
+      "win": 33.8
+     },
+     "unseen": {
+      "n": 374,
+      "eff_n": 373.9,
+      "mean": -0.0648,
+      "t": -1.05,
+      "win": 34.6
+     },
+     "whole": {
+      "n": 633,
+      "eff_n": 631.6,
+      "mean": -0.0602,
+      "t": -1.28,
+      "win": 34.3
+     },
+     "halves": [
+      -0.0738,
+      -0.0494
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC001|1Min|US500",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T11:41:08+00:00",
+     "id": "fbbaa96c849b",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.06R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T11:42:02+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC001|1Min|US30 · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 246,
+      "eff_n": 245.7,
+      "mean": -0.0705,
+      "t": -0.96,
+      "win": 37.2
+     },
+     "unseen": {
+      "n": 387,
+      "eff_n": 386.9,
+      "mean": -0.0717,
+      "t": -1.18,
+      "win": 39.6
+     },
+     "whole": {
+      "n": 633,
+      "eff_n": 631.6,
+      "mean": -0.0713,
+      "t": -1.51,
+      "win": 38.7
+     },
+     "halves": [
+      -0.099,
+      -0.0484
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC001|1Min|US30",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T11:41:08+00:00",
+     "id": "1455399685d4",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T11:42:02+00:00"
+    },
+    {
+     "bot": "bot6",
      "kind": "improve",
      "title": "חוזים · מסלול 15 דקות (v5): איפה יוצא החלק (מהדרך ליעד) 0.9 ← 0.7",
      "what": "לשנות את 'איפה יוצא החלק (מהדרך ליעד)' מ־0.9 ל־0.7. נבחר על 2024-2025 בלבד, ומוצג על 2026 שלא נראתה. · בבוט 5 אותו שינוי: rejected, -0.02R בתקופה שלא נראתה",
@@ -16181,14 +16529,130 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-12T03:33:31+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC003|1Min|US100 · Pavan CPR: cross above top CPR, stop at pivot, long only",
+     "what": "הסייר הביא אותה (TradingView (StockSharp port, 1-minute)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 277,
+      "eff_n": 276.7,
+      "mean": -0.2786,
+      "t": -1.76,
+      "win": 25.6
+     },
+     "unseen": {
+      "n": 318,
+      "eff_n": 317.9,
+      "mean": -0.0904,
+      "t": -0.78,
+      "win": 36.2
+     },
+     "whole": {
+      "n": 595,
+      "eff_n": 593.5,
+      "mean": -0.1739,
+      "t": -1.81,
+      "win": 31.5
+     },
+     "halves": [
+      -0.2491,
+      -0.114
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC003|1Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Pavan CPR: cross above top CPR, stop at pivot, long only",
+       "source": "TradingView (StockSharp port, 1-minute)",
+       "url": "https://www.tradingview.com/script/C8spW2jl-Pavan-CPR-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T11:41:08+00:00",
+     "id": "668f866c7985",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.09R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T11:42:02+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC003|1Min|US500 · Pavan CPR: cross above top CPR, stop at pivot, long only",
+     "what": "הסייר הביא אותה (TradingView (StockSharp port, 1-minute)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 341,
+      "eff_n": 340.7,
+      "mean": -0.3575,
+      "t": -3.04,
+      "win": 23.7
+     },
+     "unseen": {
+      "n": 348,
+      "eff_n": 347.9,
+      "mean": -0.1187,
+      "t": -0.91,
+      "win": 30.2
+     },
+     "whole": {
+      "n": 689,
+      "eff_n": 687.5,
+      "mean": -0.2321,
+      "t": -2.63,
+      "win": 27.1
+     },
+     "halves": [
+      -0.3695,
+      -0.109
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC003|1Min|US500",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Pavan CPR: cross above top CPR, stop at pivot, long only",
+       "source": "TradingView (StockSharp port, 1-minute)",
+       "url": "https://www.tradingview.com/script/C8spW2jl-Pavan-CPR-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T11:41:08+00:00",
+     "id": "5121705de577",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.12R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T11:42:02+00:00"
     }
    ],
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-12T11:03:47+00:00",
-    "state_updated": "2026-11-12T11:03:01+00:00",
-    "minutes_since_state": 1,
+    "updated": "2026-11-12T11:33:18+00:00",
+    "state_updated": "2026-11-12T11:33:01+00:00",
+    "minutes_since_state": 0,
     "balance": 100000.0,
     "equity": 100000.0,
     "day_pct": 0.0,
@@ -17395,9 +17859,9 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-12T11:03:47+00:00",
-    "state_updated": "2026-11-12T11:02:09+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-12T11:33:18+00:00",
+    "state_updated": "2026-11-12T11:32:08+00:00",
+    "minutes_since_state": 1,
     "balance": 98746.26,
     "equity": 98746.26,
     "day_pct": -1.25,

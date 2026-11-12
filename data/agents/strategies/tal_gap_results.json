@@ -1,0 +1,62 @@
+{
+ "note": "שיטת הגאפ של טל (tal_gap.md) - תוצאות לכל בוט בעולם שלו. נבחר על התקופה עד 31.12.2025, מוצג על 2026 שלא נראתה, משוקלל לפי זמן. R לעסקה אחרי עלויות.",
+ "bot6": {
+  "updated": "2026-11-12T01:37:53+00:00",
+  "world": {
+   "symbols": [
+    "US100",
+    "US500",
+    "US30"
+   ],
+   "contracts": "MNQ / MES / MYM (micro)",
+   "costs": "tick spread + $1.5 commission + 1 tick slippage per contract",
+   "sessions": "FTMO Futures: closed 16:05-18:00 New York and weekends (forced exit), no new entry from 15:45",
+   "stop_buffer": "2 ticks",
+   "split": "train to 2025-12-31, unseen 2026"
+  },
+  "base": {
+   "GBODY": 1.5,
+   "MIN_GAP": 0.3,
+   "SW": 3,
+   "MIN_RR": 1.0,
+   "EXPIRY": 48,
+   "PROT": "none"
+  },
+  "knobs": {
+   "GBODY": [
+    1.0,
+    2.0
+   ],
+   "MIN_GAP": [
+    0.0,
+    0.6
+   ],
+   "SW": [
+    2,
+    5
+   ],
+   "MIN_RR": [
+    0.5,
+    1.5,
+    2.0
+   ],
+   "EXPIRY": [
+    8,
+    24,
+    120
+   ],
+   "PROT": [
+    "cal15",
+    "cal60",
+    "shock",
+    "cal15shock"
+   ]
+  },
+  "progress": [
+   0,
+   612
+  ],
+  "answers": {},
+  "pairs": {}
+ }
+}

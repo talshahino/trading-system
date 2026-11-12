@@ -1,6 +1,6 @@
 {
  "bot": "bot1",
- "updated": "2026-11-11T20:36:25+00:00",
+ "updated": "2026-11-12T00:50:26+00:00",
  "cards": [
   {
    "bot": "bot1",
@@ -53,10 +53,400 @@
     "to": "none|be0.6|stop1.25|entry0.5"
    },
    "detail": {},
-   "made": "2026-11-11T20:36:25+00:00",
+   "made": "2026-11-12T00:50:26+00:00",
    "id": "eb3e3e8c550e",
    "tier": "regular",
    "verdict": "חיובי בתקופה שלא נראתה (+0.35R לעסקה, 73.0 עסקאות אפקטיביות, +0.19R מעל המצב הקיים) · נבדקו 72 שילובים, אז חלק מהיתרון עלול להיות מזל"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV21|15Min|ASML: רק בשוק בדשדוש (ADX מתחת 20)",
+   "what": "סינון מצב שוק לאסטרטגיה TV21|15Min|ASML: רק בשוק בדשדוש (ADX מתחת 20). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 73,
+    "eff_n": 72.9,
+    "mean": 0.1954,
+    "t": 1.4,
+    "win": 43.8
+   },
+   "unseen": {
+    "n": 89,
+    "eff_n": 89.0,
+    "mean": 0.204,
+    "t": 1.21,
+    "win": 46.0
+   },
+   "whole": {
+    "n": 162,
+    "eff_n": 161.7,
+    "mean": 0.2003,
+    "t": 1.78,
+    "win": 45.1
+   },
+   "halves": [
+    0.2066,
+    0.1909
+   ],
+   "neighbours": {
+    "values": 7,
+    "share_positive": 0.5
+   },
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 293,
+    "eff_n": 292.9,
+    "mean": 0.1616,
+    "t": 1.92,
+    "win": 46.0
+   },
+   "change": {
+    "combo": "TV21|15Min|ASML",
+    "family": "filters",
+    "from": "none",
+    "to": "adx_range"
+   },
+   "detail": {},
+   "made": "2026-11-12T00:50:26+00:00",
+   "id": "014752823ace",
+   "tier": "regular",
+   "verdict": "חיובי בתקופה שלא נראתה (+0.20R לעסקה, 89.0 עסקאות אפקטיביות, +0.04R מעל המצב הקיים)"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV11|4Hour|AUDUSD: יעד 2R · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר",
+   "what": "ניהול העסקה לאסטרטגיה TV11|4Hour|AUDUSD: יעד 2R · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 113,
+    "eff_n": 112.9,
+    "mean": 0.2908,
+    "t": 1.03,
+    "win": 24.8
+   },
+   "unseen": {
+    "n": 156,
+    "eff_n": 156.0,
+    "mean": -0.1294,
+    "t": -0.72,
+    "win": 25.7
+   },
+   "whole": {
+    "n": 269,
+    "eff_n": 268.5,
+    "mean": 0.0393,
+    "t": 0.25,
+    "win": 25.3
+   },
+   "halves": [
+    0.1633,
+    -0.0682
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.55
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 174,
+    "eff_n": 174.0,
+    "mean": 0.0103,
+    "t": 0.1,
+    "win": 36.7
+   },
+   "change": {
+    "combo": "TV11|4Hour|AUDUSD",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "2R|be0.6|stop0.75|entry0.5"
+   },
+   "detail": {},
+   "made": "2026-11-12T00:50:26+00:00",
+   "id": "4632e25c7d26",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.13R לעסקה)"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV11|4Hour|AUDUSD: רק עם המגמה (ממוצע 200)",
+   "what": "סינון מצב שוק לאסטרטגיה TV11|4Hour|AUDUSD: רק עם המגמה (ממוצע 200). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 80,
+    "eff_n": 79.9,
+    "mean": 0.002,
+    "t": 0.01,
+    "win": 31.2
+   },
+   "unseen": {
+    "n": 97,
+    "eff_n": 97.0,
+    "mean": -0.009,
+    "t": -0.07,
+    "win": 37.1
+   },
+   "whole": {
+    "n": 177,
+    "eff_n": 176.6,
+    "mean": -0.0043,
+    "t": -0.04,
+    "win": 34.6
+   },
+   "halves": [
+    -0.0332,
+    0.0219
+   ],
+   "neighbours": {
+    "values": 7,
+    "share_positive": 0.33
+   },
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 174,
+    "eff_n": 174.0,
+    "mean": 0.0103,
+    "t": 0.1,
+    "win": 36.7
+   },
+   "change": {
+    "combo": "TV11|4Hour|AUDUSD",
+    "family": "filters",
+    "from": "none",
+    "to": "with_trend200"
+   },
+   "detail": {},
+   "made": "2026-11-12T00:50:26+00:00",
+   "id": "8ee554afb251",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV17|1Hour|DXY: בלי יעד · כניסה בלימיט 0.25R טוב יותר",
+   "what": "ניהול העסקה לאסטרטגיה TV17|1Hour|DXY: בלי יעד · כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 25,
+    "eff_n": 25.0,
+    "mean": 0.5184,
+    "t": 1.8,
+    "win": 59.5
+   },
+   "unseen": {
+    "n": 36,
+    "eff_n": 36.0,
+    "mean": 0.3887,
+    "t": 1.17,
+    "win": 47.2
+   },
+   "whole": {
+    "n": 61,
+    "eff_n": 60.9,
+    "mean": 0.4393,
+    "t": 1.91,
+    "win": 52.0
+   },
+   "halves": [
+    0.5778,
+    0.3285
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.14
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 39,
+    "eff_n": 39.0,
+    "mean": 0.3078,
+    "t": 1.29,
+    "win": 56.2
+   },
+   "change": {
+    "combo": "TV17|1Hour|DXY",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "none|be0.6|stop1|entry0.25"
+   },
+   "detail": {},
+   "made": "2026-11-12T00:50:26+00:00",
+   "id": "f11ebf176d48",
+   "tier": "regular",
+   "verdict": "חיובי בתקופה שלא נראתה (+0.39R לעסקה, 36.0 עסקאות אפקטיביות, +0.08R מעל המצב הקיים) · נבדקו 72 שילובים, אז חלק מהיתרון עלול להיות מזל"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV17|1Hour|DXY: רק בתנודתיות נמוכה",
+   "what": "סינון מצב שוק לאסטרטגיה TV17|1Hour|DXY: רק בתנודתיות נמוכה. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 26,
+    "eff_n": 26.0,
+    "mean": 0.1826,
+    "t": 0.9,
+    "win": 57.3
+   },
+   "unseen": {
+    "n": 27,
+    "eff_n": 27.0,
+    "mean": 0.4058,
+    "t": 1.31,
+    "win": 62.8
+   },
+   "whole": {
+    "n": 53,
+    "eff_n": 52.9,
+    "mean": 0.3011,
+    "t": 1.59,
+    "win": 60.2
+   },
+   "halves": [
+    0.1898,
+    0.4065
+   ],
+   "neighbours": {
+    "values": 7,
+    "share_positive": 0.33
+   },
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 41,
+    "eff_n": 41.0,
+    "mean": 0.3055,
+    "t": 1.34,
+    "win": 58.4
+   },
+   "change": {
+    "combo": "TV17|1Hour|DXY",
+    "family": "filters",
+    "from": "none",
+    "to": "vol_low"
+   },
+   "detail": {},
+   "made": "2026-11-12T00:50:26+00:00",
+   "id": "2d06ad86ee7c",
+   "tier": "watch",
+   "verdict": "חיובי בתקופה שלא נראתה, אבל רק 27.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך"
+  },
+  {
+   "bot": "bot1",
+   "kind": "info",
+   "title": "TV15|4Hour|ETHUSD: היתרון נשחק",
+   "what": "בחצי השנה האחרונה +0.21R לעסקה, לעומת +0.35R בשנה וחצי שלפני",
+   "train": {
+    "n": 30,
+    "eff_n": 30.0,
+    "mean": 0.6807,
+    "t": 1.36,
+    "win": 42.9
+   },
+   "unseen": {
+    "n": 39,
+    "eff_n": 39.0,
+    "mean": 0.0065,
+    "t": 0.02,
+    "win": 30.8
+   },
+   "whole": {
+    "n": 69,
+    "eff_n": 68.9,
+    "mean": 0.2869,
+    "t": 1.05,
+    "win": 35.8
+   },
+   "halves": [
+    0.6136,
+    0.0164
+   ],
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "TV15|4Hour|ETHUSD",
+    "kind": "review"
+   },
+   "detail": {
+    "erosion": {
+     "recent_n": 20,
+     "recent_mean": 0.2136,
+     "before_n": 49,
+     "before_mean": 0.3503,
+     "slope_per_year": -1.1086,
+     "fading": true
+    }
+   },
+   "made": "2026-11-12T00:50:26+00:00",
+   "id": "d065b970d665",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TV15|4Hour|ETHUSD: בלי יעד · סטופ x0.75",
+   "what": "ניהול העסקה לאסטרטגיה TV15|4Hour|ETHUSD: בלי יעד · סטופ x0.75. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 31,
+    "eff_n": 31.0,
+    "mean": 0.9236,
+    "t": 1.44,
+    "win": 41.6
+   },
+   "unseen": {
+    "n": 41,
+    "eff_n": 41.0,
+    "mean": 0.0417,
+    "t": 0.12,
+    "win": 29.3
+   },
+   "whole": {
+    "n": 72,
+    "eff_n": 71.9,
+    "mean": 0.4045,
+    "t": 1.19,
+    "win": 34.3
+   },
+   "halves": [
+    1.0688,
+    -0.2014
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.14
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 39,
+    "eff_n": 39.0,
+    "mean": 0.0065,
+    "t": 0.02,
+    "win": 30.8
+   },
+   "change": {
+    "combo": "TV15|4Hour|ETHUSD",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "none|be0.6|stop0.75|entry0"
+   },
+   "detail": {},
+   "made": "2026-11-12T00:50:26+00:00",
+   "id": "f9efb9f63b31",
+   "tier": "regular",
+   "verdict": "חיובי בתקופה שלא נראתה (+0.04R לעסקה, 41.0 עסקאות אפקטיביות, +0.04R מעל המצב הקיים) · נבדקו 72 שילובים, אז חלק מהיתרון עלול להיות מזל"
   },
   {
    "bot": "bot1",
@@ -109,7 +499,7 @@
     "to": "1.5R|be0.6|stop0.75|entry0"
    },
    "detail": {},
-   "made": "2026-11-11T20:36:25+00:00",
+   "made": "2026-11-12T00:50:26+00:00",
    "id": "af365bd57e67",
    "tier": "rejected",
    "verdict": "לא טוב מהמצב הקיים בתקופה שלא נראתה (+0.11R מול +0.27R)"
@@ -165,10 +555,66 @@
     "to": "vol_low"
    },
    "detail": {},
-   "made": "2026-11-11T20:36:25+00:00",
+   "made": "2026-11-12T00:50:26+00:00",
    "id": "a8f9b8942cb2",
    "tier": "watch",
    "verdict": "חיובי בתקופה שלא נראתה, אבל רק 25.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "TT45|15Min|CSCO: יעד 1.5R · סטופ x1.5 · כניסה בלימיט 0.5R טוב יותר",
+   "what": "ניהול העסקה לאסטרטגיה TT45|15Min|CSCO: יעד 1.5R · סטופ x1.5 · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 11,
+    "eff_n": 11.0,
+    "mean": 0.2019,
+    "t": 0.58,
+    "win": 63.1
+   },
+   "unseen": {
+    "n": 20,
+    "eff_n": 20.0,
+    "mean": -0.1533,
+    "t": -0.63,
+    "win": 34.8
+   },
+   "whole": {
+    "n": 31,
+    "eff_n": 30.9,
+    "mean": -0.0344,
+    "t": -0.17,
+    "win": 44.3
+   },
+   "halves": [
+    0.3343,
+    -0.3542
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.17
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 143,
+    "eff_n": 143.0,
+    "mean": 0.014,
+    "t": 0.22,
+    "win": 46.8
+   },
+   "change": {
+    "combo": "TT45|15Min|CSCO",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "1.5R|be0.6|stop1.5|entry0.5"
+   },
+   "detail": {},
+   "made": "2026-11-12T00:50:26+00:00",
+   "id": "14772f29fd04",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.15R לעסקה)"
   },
   {
    "bot": "bot1",
@@ -221,7 +667,7 @@
     "to": "2R|be0.6|stop1.25|entry0.5"
    },
    "detail": {},
-   "made": "2026-11-11T20:36:25+00:00",
+   "made": "2026-11-12T00:50:26+00:00",
    "id": "1c6256ce89e1",
    "tier": "rejected",
    "verdict": "הפסיד בתקופה שלא נראתה (-0.51R לעסקה)"
@@ -277,18 +723,128 @@
     "to": "vol_high"
    },
    "detail": {},
-   "made": "2026-11-11T20:36:25+00:00",
+   "made": "2026-11-12T00:50:26+00:00",
    "id": "44d6642bcc07",
    "tier": "watch",
    "verdict": "טוב מהמצב הקיים רק ב־+0.010R לעסקה בתקופה שלא נראתה - קטן מדי, נשמר להמשך"
+  },
+  {
+   "bot": "bot1",
+   "kind": "info",
+   "title": "QC02|1Hour|ETHUSD: היתרון נשחק",
+   "what": "בחצי השנה האחרונה +0.15R לעסקה, לעומת +0.31R בשנה וחצי שלפני",
+   "train": {
+    "n": 43,
+    "eff_n": 43.0,
+    "mean": 0.3523,
+    "t": 0.63,
+    "win": 25.9
+   },
+   "unseen": {
+    "n": 55,
+    "eff_n": 55.0,
+    "mean": 0.1613,
+    "t": 0.35,
+    "win": 27.1
+   },
+   "whole": {
+    "n": 98,
+    "eff_n": 97.8,
+    "mean": 0.241,
+    "t": 0.68,
+    "win": 26.6
+   },
+   "halves": [
+    0.6139,
+    -0.1083
+   ],
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "QC02|1Hour|ETHUSD",
+    "kind": "review"
+   },
+   "detail": {
+    "erosion": {
+     "recent_n": 35,
+     "recent_mean": 0.151,
+     "before_n": 63,
+     "before_mean": 0.3093,
+     "slope_per_year": -0.5217,
+     "fading": true
+    }
+   },
+   "made": "2026-11-12T00:50:26+00:00",
+   "id": "a5b3fbf8f3de",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "QC02|1Hour|ETHUSD: בלי יעד · כניסה בלימיט 0.5R טוב יותר",
+   "what": "ניהול העסקה לאסטרטגיה QC02|1Hour|ETHUSD: בלי יעד · כניסה בלימיט 0.5R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
+   "train": {
+    "n": 15,
+    "eff_n": 15.0,
+    "mean": 2.1357,
+    "t": 0.81,
+    "win": 27.4
+   },
+   "unseen": {
+    "n": 18,
+    "eff_n": 18.0,
+    "mean": -0.4719,
+    "t": -0.73,
+    "win": 11.0
+   },
+   "whole": {
+    "n": 33,
+    "eff_n": 32.9,
+    "mean": 0.6474,
+    "t": 0.52,
+    "win": 18.1
+   },
+   "halves": [
+    1.908,
+    -0.4152
+   ],
+   "neighbours": {
+    "values": 72,
+    "share_positive": 0.17
+   },
+   "tested": 72,
+   "cost_r": null,
+   "risk_pct": 0.375,
+   "baseline": {
+    "n": 55,
+    "eff_n": 55.0,
+    "mean": 0.1613,
+    "t": 0.35,
+    "win": 27.1
+   },
+   "change": {
+    "combo": "QC02|1Hour|ETHUSD",
+    "family": "exits",
+    "from": "own|be0.6|stop1|entry0",
+    "to": "none|be0.6|stop1|entry0.5"
+   },
+   "detail": {},
+   "made": "2026-11-12T00:50:26+00:00",
+   "id": "865b4ffad804",
+   "tier": "rejected",
+   "verdict": "הפסיד בתקופה שלא נראתה (-0.47R לעסקה)"
   }
  ],
- "tested": 230,
- "done": 5,
+ "tested": 618,
+ "done": 14,
  "planned": 90,
  "run": {
-  "experiments": 5,
-  "left": 77,
+  "experiments": 9,
+  "left": 68,
   "new": 0,
   "where": "pc"
  }

@@ -1086,11 +1086,36 @@ def auto_update_on():
     return CFG.get("auto_update", True) and not CFG.get("auto_update_paused")
 
 
+def install_quiet(now=None):
+    """An install stops and restarts the bots (about half a minute). Not when a bar opens (user task 12.11.2026:
+    installs at 16:00 / 16:56 dropped 1-hour and 15-minute entries): only from 1 to 3.5 minutes after a 5-minute
+    open (the last open was already handled, the bots are back before the next one), and never in the first
+    10 minutes of the US or the European stock session (first trades of the day)."""
+    import datetime as _dt
+    from zoneinfo import ZoneInfo
+    now = now or _dt.datetime.now(_dt.timezone.utc)
+    sec = (now.minute % 5) * 60 + now.second
+    if not 60 <= sec < 210:
+        return False
+    for tz, open_min in (("America/New_York", 9 * 60 + 30), ("Europe/Berlin", 9 * 60)):
+        loc = now.astimezone(ZoneInfo(tz))
+        if loc.weekday() < 5 and 0 <= loc.hour * 60 + loc.minute - open_min < 10:
+            return False
+    return True
+
+
 def update_check():
     while True:
+        nap = 300
         try:
-            sha, title = UPD.remote()
-            if UPD.local() is None:
+            # GitHub is asked every 5 minutes; the quick looks while an install waits for a quiet moment do not ask it
+            fresh = time.time() - UPDATE.get("remote_at", 0) >= 290
+            sha, title = UPD.remote() if fresh else (UPDATE.get("remote_sha"), None)
+            if fresh:
+                UPDATE.update(remote_at=time.time(), remote_sha=sha)
+            if not sha:
+                pass
+            elif UPD.local() is None:
                 UPD.VERSION.write_text(sha)
             elif sha != UPD.local() and UPDATE["sha"] != sha:
                 if UPDATE["sha"] and UPDATE["sha"] != UPD.local() and not UPD.touches_bot(UPDATE["sha"], sha):
@@ -1112,6 +1137,13 @@ def update_check():
                         push("יש עדכון לבוטים", title, action="approve_update", tag="update", extra={"sha": sha[:7]})
             if (UPDATE["sha"] and UPDATE["sha"] != UPD.local() and auto_update_on()
                     and time.time() - UPDATE.get("seen", 0) >= AUTO_SETTLE and not INSTALL_LOCK.locked()
+                    and UPDATE.get("tried") != UPDATE["sha"] and not install_quiet()):
+                nap = 15                                                  # due, but a bar opens: look again soon
+                if UPDATE.get("quiet_wait") != UPDATE["sha"]:
+                    UPDATE["quiet_wait"] = UPDATE["sha"]
+                    log(f"update {UPDATE['sha'][:7]} waits for a quiet moment (no bar opening, not a session's first minutes)")
+            elif (UPDATE["sha"] and UPDATE["sha"] != UPD.local() and auto_update_on()
+                    and time.time() - UPDATE.get("seen", 0) >= AUTO_SETTLE and not INSTALL_LOCK.locked()
                     and UPDATE.get("tried") != UPDATE["sha"]):            # a failed version is not retried by itself
                 UPDATE["tried"] = UPDATE["sha"]
                 with LOCK:
@@ -1125,7 +1157,7 @@ def update_check():
             UPDATE["checked"] = time.time()
         except Exception as e:  # noqa: BLE001
             log(f"update check failed: {e}")
-        time.sleep(300)
+        time.sleep(nap)
 
 
 INSTALL_LOCK = threading.Lock()

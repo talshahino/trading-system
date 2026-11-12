@@ -992,6 +992,41 @@ def stock_session_close(now):
 
 
 DIAG = {}
+LATE_TOL_R = 0.1          # a late entry is taken only while the price is within 0.1R of the backtest's entry (bar open)
+
+
+def bar_first_tick(sym, tf, forming):
+    """When the forming bar really started trading: the first 1-minute bar inside it. A stock's first bar of the
+    session is labelled before the open (14:00 for a 14:30 open) and some feeds start a few minutes late - the
+    backtest's entry is that first trade, so lateness is counted from it, not from the label."""
+    try:
+        rates = mt5.copy_rates_from_pos(mt5_name(sym), mt5.TIMEFRAME_M1, 0, min(TF_MIN[tf], 240) + 5)
+        if rates is None or not len(rates):
+            return None
+        t = server_to_utc(pd.DataFrame(rates)["time"])
+        t = t[(t >= forming) & (t < forming + pd.Timedelta(minutes=TF_MIN[tf]))]
+        return t.min() if len(t) else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def late_entry_ok(sym, d, open_px, stop, target, hi, lo):
+    """A late entry (restart, reconnect, late feed): taken only if the trade is still the backtest's trade - the
+    bar has not touched its stop or target yet, and the price now is within LATE_TOL_R of the bar's open (the
+    backtest's entry). Stop and target stay where the backtest put them; the lots follow the real stop distance."""
+    dist = abs(open_px - stop)
+    if not dist or (d > 0 and lo <= stop) or (d < 0 and hi >= stop):
+        return False, "the bar already touched the stop"
+    if target == target and target is not None and ((d > 0 and hi >= target) or (d < 0 and lo <= target)):
+        return False, "the bar already touched the target"
+    tick = mt5.symbol_info_tick(mt5_name(sym))
+    if tick is None:
+        return False, "no price"
+    px = tick.ask if d > 0 else tick.bid
+    off = (px - open_px) * d / dist
+    if abs(off) > LATE_TOL_R:
+        return False, f"price {off:+.2f}R from the backtest's entry"
+    return True, f"price {off:+.2f}R from the backtest's entry"
 
 
 def step(combo, sid, tf, sym, off):
@@ -1015,7 +1050,14 @@ def step(combo, sid, tf, sym, off):
     if feed_now - forming >= pd.Timedelta(minutes=TF_MIN[tf]) or now - forming >= pd.Timedelta(minutes=TF_MIN[tf] + 30):
         DIAG[combo]["stale"] = True
         return False    # the newest bar has not appeared yet (just started, or market closed): try again soon
-    late = feed_now - forming > pd.Timedelta(minutes=min(5.0, TF_MIN[tf] / 4))
+    late_tol = pd.Timedelta(minutes=min(5.0, TF_MIN[tf] / 4))
+    started = forming
+    late = feed_now - forming > late_tol
+    if late and (ft := bar_first_tick(sym, tf, forming)) is not None and ft > forming:
+        started = ft                            # e.g. a stock's first bar of the session: its first trade
+        DIAG[combo]["bar_first_tick"] = ft.isoformat()
+        late = feed_now - started > late_tol
+    bar_o, bar_h, bar_l = float(df["o"].iloc[-1]), float(df["h"].iloc[-1]), float(df["l"].iloc[-1])
     df.iloc[-1, df.columns.get_indexer(["h", "l", "c"])] = df["o"].iloc[-1]
     dummy = df.iloc[[-1]].copy()
     dummy.index = [forming + pd.Timedelta(minutes=TF_MIN[tf])]
@@ -1116,13 +1158,24 @@ def step(combo, sid, tf, sym, off):
     if STATE["entry"].get(combo) == str(t["time"]):
         return                                         # already handled this entry
     if late:
-        # the bar is already older than a quarter of it (max 5 min): a restart, a reconnect or a late feed.
-        # The backtest entered at the bar's open; entering now at another price changes the stop distance
-        # and every level in R, so this entry is skipped (and remembered as handled).
-        log(f"skip {combo}: entry signal seen {(feed_now - forming).total_seconds() / 60:.1f} min into the bar")
-        STATE["entry"][combo] = str(t["time"])
-        save_state()
-        return
+        # the bar is already older than a quarter of it (max 5 min) after its first trade: a restart, a reconnect
+        # or a late feed. The backtest entered at the bar's open. A limit combo, or a price that moved away from that
+        # open (more than LATE_TOL_R of the stop distance) or a bar that already touched the stop / target, would be
+        # another trade: skipped (and remembered as handled). Otherwise the same trade is still there: taken
+        # (user task 12.11.2026 - restarts after installs had dropped entries; every saved one is recorded).
+        mins = (feed_now - started).total_seconds() / 60
+        ok, why = (False, "limit order combo") if limit else late_entry_ok(
+            sym, int(t["dir"]), bar_o, float(t["stop_px"]), float(t["target_px"]), bar_h, bar_l)
+        if not ok:
+            log(f"skip {combo}: entry signal seen {mins:.1f} min into the bar ({why})")
+            STATE["entry"][combo] = str(t["time"])
+            save_state()
+            return
+        log(f"{combo}: entry signal seen {mins:.1f} min into the bar, {why} - the backtest's trade is still there, entering")
+        le = STATE.setdefault("late_entries", [])
+        le.append({"t": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": combo, "bar": str(t["time"]),
+                   "min": round(mins, 1), "why": why})
+        STATE["late_entries"] = le[-100:]
     if U.CLASS.get(sym) == "stock":
         tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
         loc = pd.Timestamp.now(tz="UTC").tz_convert(tz)
@@ -1560,6 +1613,7 @@ def dashboard_state(ai, pos, ds_bal, now):
         "positions": positions_doc(pos), "live_url": TUN.URL["url"],
         "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:],   # the bot's log stays on the computer only
         "closed": closed_doc()[-500:], "skips": [{k: v for k, v in x.items() if k != "key"} for x in STATE.get("skips", [])[-300:]],
+        "late_entries": STATE.get("late_entries", [])[-100:],    # entries taken late, still the backtest's trade
         "lows": STATE.get("lows", {}), "label": BOT, "withdrawals": withdrawals_doc(),
         # typical spread per symbol as this broker quotes it (median of what the bot saw): checks the backtest's
         # cost estimate for the shares that have no bid/ask history

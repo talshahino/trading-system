@@ -45,7 +45,8 @@ T_SPLIT = pd.Timestamp(SPLIT, tz="UTC")
 START = "2024-01-01"
 RERUN_DAYS = 14
 BOT_NOW = {}
-FAMILIES = ("exits", "filters", "manage")      # manage (12.11.2026): breakeven point x partial exit per strategy
+FAMILIES = ("exits", "filters", "manage", "fib")   # manage (12.11.2026): breakeven point x partial exit per strategy;
+# fib (12.11.2026, user's standing task): the same at the Fibonacci levels of the way to the target - built as "manage"
 LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--breakeven", "0.6"]
 NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot7": "בוט 7 · פרסומים כלכליים",
          "bot5": "בוט 5 - סקאלפינג", "bot6": "בוט 6 · חוזים עתידיים"}
@@ -96,6 +97,7 @@ def bot_combos(bot):
 
 def base_variant(bot, combo, fam, doc=None):
     """The variant the combo trades now (manage: the bots' default when no card changed it)."""
+    fam = "manage" if fam == "fib" else fam
     v = built_variant(bot, combo, fam)
     if v is None and fam == "manage":
         ht = (doc or {}).get("has_target")
@@ -114,7 +116,7 @@ def built_variant(bot, combo, fam):
         p = {}
     if fam == "filters":
         return p.get("filter") or "none"
-    if fam == "manage":
+    if fam in ("manage", "fib"):
         nt = (p.get("target") == "none")
         if p.get("be_way") is None and p.get("be_r") is None and not p.get("partial"):
             return None                                 # the default: with a target be0.6, without ber2.5 (known after the run)
@@ -252,8 +254,8 @@ def run_rules(combos, fam, budget_min, extra=None):
         cmd += ["--optimize", SPLIT]
     elif fam == "filters":
         cmd += ["--filters", SPLIT]
-    elif fam == "manage":
-        cmd += ["--manage", SPLIT]
+    elif fam in ("manage", "fib"):
+        cmd += ["--manage", SPLIT] + (["--manage-grid", "fib"] if fam == "fib" else [])
         bf = ROOT / "live" / "bots" / f"{BOT_NOW.get('bot')}.json"
         if bf.exists():
             cmd += ["--plans-file", str(bf)]          # on top of the exits the bot trades now
@@ -269,7 +271,7 @@ def run_rules(combos, fam, budget_min, extra=None):
         nd = [x for x in (r.stdout or "").splitlines() if "NO DATA" in x]
         raise RuntimeError(f"no market data: {nd[0].strip()[:200] if nd else sym}")
     rows = {}
-    jf = out_dir / f"{ {'exits': 'optimize', 'filters': 'filters', 'manage': 'manage'}.get(fam, 'x') }_{tag}.json"
+    jf = out_dir / f"{ {'exits': 'optimize', 'filters': 'filters', 'manage': 'manage', 'fib': 'manage'}.get(fam, 'x') }_{tag}.json"
     if fam in FAMILIES and jf.exists():
         rows = {x["combo"]: x for x in json.loads(jf.read_text(encoding="utf-8"))}
     return t, rows
@@ -467,15 +469,16 @@ def cards_for(bot):
             bval = next((g["valid"]["avg"] for g in grid if g["variant"] == base_key), None)
             others = [g for g in grid if g["variant"] != base_key and g["valid"]["n"] >= 5]
             share = (round(sum(1 for g in others if g["valid"]["avg"] > (bval or 0)) / len(others), 2) if others and bval is not None else None)
-            what = explain_exit(v) if fam == "exits" else explain_manage(v) if fam == "manage" else FILTER_HE.get(v, v)
+            what = explain_exit(v) if fam == "exits" else explain_manage(v) if fam in ("manage", "fib") else FILTER_HE.get(v, v)
             cards.append(K.card(
                 bot, "improve", f"{combo}: {what}",
-                f"{ {'exits': 'יעד / סטופ / כניסה', 'manage': 'ניהול העסקה (נקודת איזון / יציאה חלקית)'}.get(fam, 'סינון מצב שוק') } לאסטרטגיה {combo}: {what}. "
+                f"{ {'exits': 'יעד / סטופ / כניסה', 'manage': 'ניהול העסקה (נקודת איזון / יציאה חלקית)', 'fib': 'ניהול העסקה ברמות פיבונאצ׳י (נקודת איזון / יציאה חלקית)'}.get(fam, 'סינון מצב שוק') } לאסטרטגיה {combo}: {what}. "
                 f"נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
                 best["train"], best["unseen"], whole=best["whole"], halves_=best["halves"],
                 neighbours={"values": len(grid) or len(vs), "share_positive": share},
                 tested=len(grid) or len(vs), risk_pct=risk, baseline=base["unseen"],
-                change={"combo": combo, "family": fam, "from": base_key, "to": v}))
+                change={"combo": combo, "family": "manage" if fam == "fib" else fam, "from": base_key, "to": v,
+                        **({"src": "fib"} if fam == "fib" else {})}))
     # the scout's strategies
     for f in sorted(st.dir.glob("new_*.json")):
         d = json.loads(f.read_text(encoding="utf-8"))

@@ -78,8 +78,12 @@ def current_trades(bot, combo, cfg):
         d = exp(bot, "filters", combo) or {}
         return (d.get("tr") or {}).get(p["filter"])
     if any(k in p for k in ("be_way", "be_r", "partial")):       # a built management card: its own trades
-        d = exp(bot, "manage", combo) or {}
-        return (d.get("tr") or {}).get(built_variant(bot, combo, "manage"))
+        v = built_variant(bot, combo, "manage")
+        for fam in ("manage", "fib"):                               # a Fibonacci card is built as "manage"
+            tr = ((exp(bot, fam, combo) or {}).get("tr") or {}).get(v)
+            if tr:
+                return tr
+        return None
     d = exp(bot, "exits", combo) or {}
     return (d.get("tr") or {}).get(built_variant(bot, combo, "exits"))
 
@@ -90,7 +94,7 @@ def trades_of_card(bot, card):
     if card.get("kind") == "new":
         d = exp(bot, "new", combo) or {}
         return combo, (d.get("tr") or {}).get("new")
-    fam = ch.get("family")
+    fam = ch.get("src") or ch.get("family")                         # src "fib": built as "manage", stored as fib
     d = exp(bot, fam, combo) or {}
     return combo, (d.get("tr") or {}).get(ch.get("to"))
 

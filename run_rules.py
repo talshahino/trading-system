@@ -139,6 +139,11 @@ MAN_BE = [0.4, 0.5, 0.6, 0.7, 0.8]                      # with a target: breakev
 MAN_BE_R = [1.5, 2.0, 2.5, 3.0]                         # no target: breakeven once this many R in profit
 MAN_PART = [None, (0.3, 0.5), (0.3, 0.7), (0.5, 0.5), (0.5, 0.7)]      # with a target: (share out, way)
 MAN_PART_R = [None, (0.3, 1.0), (0.5, 1.0), (0.3, 2.0), (0.5, 2.0)]    # no target: (share out, at R)
+# Fibonacci levels of the way from the entry to the target (user, 12.11.2026 - standing task for every bot): the stop to
+# entry at each level, a part out (25% / 33% / 50%) at one level and the rest to breakeven / the target, two levels
+# (a part out at 38.2%, breakeven at 61.8%). --manage-grid fib; strategies with no target have no way to measure.
+FIB_BE = [0.236, 0.382, 0.5, 0.618, 0.786, 0.886]
+FIB_PART = [None] + [(sh, lv) for sh in (0.25, 0.33, 0.5) for lv in (0.382, 0.618, 0.786)]
 PLANS = {}                                              # --plans-file: combo -> the bot's built plan (live/bots/<bot>.json)
 
 
@@ -177,8 +182,17 @@ def manage_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
     flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
     regime = _regimes(df).get(flt) if flt else None
     rows, keep = [], {}
-    for bv in (MAN_BE if has_target else MAN_BE_R):
-        for part in (MAN_PART if has_target else MAN_PART_R):
+    be_list, part_list = (MAN_BE, MAN_PART) if has_target else (MAN_BE_R, MAN_PART_R)
+    if getattr(args, "manage_grid", "std") == "fib":
+        if not has_target:
+            return
+        # the combo as the bot trades it now stays in the grid (the card's baseline): its own breakeven / partial
+        own_be = float(pk.get("be_way", 0.6))
+        own_part = tuple(pk["partial"]) if pk.get("partial") else None
+        be_list = sorted(set(FIB_BE) | {own_be})
+        part_list = FIB_PART + ([own_part] if own_part and own_part not in FIB_PART else [])
+    for bv in be_list:
+        for part in part_list:
             extra = {**pk, **({"be_way": bv} if has_target else {"be_r": bv or None, "lock_r": (3.0, 1.0) if bv else None})}
             if part is not None:
                 extra["partial"] = part
@@ -345,6 +359,8 @@ def main():
     ap.add_argument("--manage", default="",
                     help="YYYY-MM-DD: with --combos-file, try breakeven points x partial exits per combo (on top of its "
                          "--plans-file plan), choose on --test-from..this date, check on this date..end")
+    ap.add_argument("--manage-grid", default="std", choices=["std", "fib"],
+                    help="--manage values: std (40-80%% of the way, 30/50%% out) or fib (Fibonacci levels of the way)")
     ap.add_argument("--plans-file", default="",
                     help="a bot's live/bots/<bot>.json: its built per-combo plans are the base of --manage")
     ap.add_argument("--filters", default="",

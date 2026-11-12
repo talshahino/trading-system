@@ -1,4 +1,117 @@
 {
  "note": "The scout agent's new strategies (agents/scout_strategies.py). bots: which bots' agents test it (bot1-bot4 portfolios, bot5/bot6 scalping 1-15 minutes, bot7 economic releases); timeframes: what the source states; markets: fx, index, metal, energy, crypto, stock (empty = all of the bot's).",
- "strategies": []
+ "strategies": [
+  {
+   "id": "SC001",
+   "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+   "source": "TradingView",
+   "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m chart: long when price crosses above EMA20 and close > EMA200 of 5m closes (short mirror) / stop 0.5% from entry / target 2x stop (1%)"
+  },
+  {
+   "id": "SC002",
+   "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+   "source": "RoboForex blog",
+   "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "M30/H1/H4: Alligator 13/8/5 (shift 8/5/3) awake up, price above it, close above last up-fractal that does not touch the Alligator (short mirror) / stop at last down-fractal / target 1:3"
+  },
+  {
+   "id": "SC003",
+   "name": "Pavan CPR: cross above top CPR, stop at pivot, long only",
+   "source": "TradingView (StockSharp port, 1-minute)",
+   "url": "https://www.tradingview.com/script/C8spW2jl-Pavan-CPR-Strategy",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m intraday: previous close below TC=(prevH+prevL)/2 and close above it, long only / stop at pivot (H+L+C)/3 / target 50 points (ours: 0.2% of price)"
+  },
+  {
+   "id": "SC004",
+   "name": "NFP straddle of the 4-hour pre-release range, target = range",
+   "source": "BrokerXplorer (article)",
+   "url": "https://www.brokerxplorer.com/article/day-trading-strategy-on-nfp-release-2878",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot7"
+   ],
+   "rules": "5m: 30 min before NFP take 4h high/low, buy stop 5-10 pips above high, sell stop 5-10 pips below low (ours: 1 ATR) / stop = the opposite order / target = entry +/- the range"
+  },
+  {
+   "id": "SC005",
+   "name": "NFP V-shaped reversal candle after the release, 1:3",
+   "source": "FOREX.com Trading Academy",
+   "url": "https://forex.com/en/trading-academy/courses/advanced-trading-strategies/non-farm-payrolls-v-shaped-reversal",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot7"
+   ],
+   "rules": "5m/15m: skip the release spike, enter on a reversal candle (hammer) against the first move / tight stop beyond the recent low (high) / target 1:3"
+  },
+  {
+   "id": "SC006",
+   "name": "Stochastic Hash 16/7/3 cross at 25/70, 3.18R",
+   "source": "TradingView (Hash Capital Research)",
+   "url": "https://www.tradingview.com/script/A5WfhJfe-Stochastic-Hash-Strat-Hash-Capital-Research/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "energy",
+    "metal",
+    "fx",
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "4H+: slow stoch 16/7/3, long when K crosses up D below 25, short when K crosses down D above 70 / stop 2.2% (ours: 1.2 ATR) / target 7% (3.18R), exit at the opposite extreme"
+  }
+ ]
 }

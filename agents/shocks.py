@@ -5,8 +5,9 @@ The definition of a shock is the agent's (user: "the agent decides what a shock 
   shock    at the close of minute t: the 1-minute body |c - o| >= K x base, or the 3-minute move (c[t] - o[t-2])
            >= 1.5 K x base; and at least the class floor in percent (so a quiet Asian hour cannot make one);
            the first minute that fires starts the shock, the next 30 minutes are the same shock
-  skipped  the 15 minutes after a break of 30+ minutes (session opens are gaps, not shocks), 20:55-22:15 UTC
-           (rollover: the bid jumps with the spread), and every shock from 10 minutes before to 60 after an
+  skipped  the 15 minutes after a break of 30+ minutes (or 30 flat minutes), the market's clock (SESSIONS: daily
+           rollover / reopen 16:55-18:20 New York, US cash open / close, Xetra open / close, NYMEX settlement - v2,
+           12.11.2026), and every shock from 10 minutes before to 60 after an
            important (high impact or FTMO-restricted) release of a currency the instrument moves on
 Why so: a ratio to the instrument's own recent median adapts to every instrument and regime (a 0.1% minute is a
 shock on EURUSD at 3am and noise on BTC); the median ignores the shock itself; the floor keeps it to moves
@@ -88,6 +89,26 @@ def near_release(t, sym, rel):
     return None
 
 
+# scheduled minutes that move markets every day without news (local exchange time, DST-proof): daily rollover /
+# futures reopen, cash opens and closes, settlement. Shocks there are the market's clock, not news (night of 12.11.2026:
+# the first scan's US30 "shocks" were mostly the 09:30 New York open, GER40's the 09:00 Xetra open).
+SESSIONS = {"*": [("America/New_York", "16:55", "18:20")],
+            "US100": [("America/New_York", "09:28", "09:45"), ("America/New_York", "15:58", "16:16")],
+            "GER40": [("Europe/Berlin", "08:58", "09:15"), ("Europe/Berlin", "17:28", "17:40")],
+            "WTI": [("America/New_York", "14:27", "14:33")]}
+SESSIONS["US500"] = SESSIONS["US30"] = SESSIONS["US100"]
+
+
+def session_minute(idx, sym):
+    out = np.zeros(len(idx), bool)
+    for tz, a, b in SESSIONS["*"] + SESSIONS.get(sym, []):
+        loc = idx.tz_convert(tz)
+        m = loc.hour * 60 + loc.minute
+        lo, hi = (int(x[:2]) * 60 + int(x[3:]) for x in (a, b))
+        out |= (m >= lo) & (m <= hi)
+    return out
+
+
 def detect(d, sym, k_mult, rel):
     """Shock minutes of one instrument for one K. Returns a list of dicts (index position, direction, size)."""
     o, h, l, c = (d[x].to_numpy(float) for x in "ohlc")
@@ -96,9 +117,10 @@ def detect(d, sym, k_mult, rel):
     base = rng.where(rng > 0).rolling(1440, min_periods=300).median().shift(1).to_numpy()
     gap = np.r_[np.inf, np.diff(idx.asi8) / 6e10]                 # minutes since the previous candle
     since_break = np.full(len(c), 1e9)
-    last = -1e9
+    last, flat = -1e9, 0
     for i in range(len(c)):
-        if gap[i] > 30:
+        flat = flat + 1 if h[i] - l[i] <= 0 else 0
+        if gap[i] > 30 or flat >= 30:                          # a break, or a market that sat still 30 minutes
             last = i
         since_break[i] = i - last
     body = c - o
@@ -107,7 +129,7 @@ def detect(d, sym, k_mult, rel):
     floor = FLOOR[sym] / 100 * c
     fire1 = (np.abs(body) >= k_mult * base) & (np.abs(body) >= floor)
     fire3 = (np.abs(m3) >= 1.5 * k_mult * base) & (np.abs(m3) >= 1.5 * floor)
-    ok = np.isfinite(base) & (base > 0) & (since_break > 15) & ~((mins >= 20 * 60 + 55) & (mins <= 22 * 60 + 15))
+    ok = np.isfinite(base) & (base > 0) & (since_break > 15) & ~session_minute(idx, sym)
     cand = np.flatnonzero((fire1 | fire3) & ok)
     out, nxt = [], -1
     for i in cand:

@@ -132,6 +132,86 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args):
         COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
 
 
+# trade management per strategy (user, 12.11.2026: "every strategy moves its stop to break-even at some point, the
+# timing tuned per strategy" + partial exits): on top of the combo's exits as the bot trades it now (--plans-file)
+# never without a breakeven: every strategy moves its stop to the entry at some point (user, 09.11.2026) - only WHEN
+MAN_BE = [0.4, 0.5, 0.6, 0.7, 0.8]                      # with a target: breakeven at this share of the way
+MAN_BE_R = [1.5, 2.0, 2.5, 3.0]                         # no target: breakeven once this many R in profit
+MAN_PART = [None, (0.3, 0.5), (0.3, 0.7), (0.5, 0.5), (0.5, 0.7)]      # with a target: (share out, way)
+MAN_PART_R = [None, (0.3, 1.0), (0.5, 1.0), (0.3, 2.0), (0.5, 2.0)]    # no target: (share out, at R)
+PLANS = {}                                              # --plans-file: combo -> the bot's built plan (live/bots/<bot>.json)
+
+
+def plan_keys(p):
+    """The bot's built plan in the engine's words (the same as live/runner.py plan_of)."""
+    out = {}
+    if p.get("target") == "none":
+        out["target"] = None
+    elif p.get("target") is not None:
+        out["target"] = ("R", float(p["target"]))
+    if p.get("stop") is not None and float(p["stop"]) != 1.0:
+        out["stop_scale"] = float(p["stop"])
+    if p.get("limit"):
+        out["entry_pullback"] = (float(p["limit"]), 3)
+    for k in ("be_way", "be_r"):
+        if p.get(k) is not None:
+            out[k] = float(p[k])
+    if p.get("partial"):
+        out["partial"] = tuple(float(x) for x in p["partial"])
+    return out
+
+
+def man_key(has_target, be, part):
+    b = (f"be{be:g}" if has_target else f"ber{be:g}")
+    return f"{b}|part{'0' if part is None else f'{part[0]:g}@{part[1]:g}'}"
+
+
+def manage_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """Every breakeven point x partial exit of one combo, on top of its exits as the bot trades it now."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
+    t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
+    pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
+    plan0 = {**fn(df)[2], **pk}
+    has_target = plan0.get("target") is not None
+    flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    regime = _regimes(df).get(flt) if flt else None
+    rows, keep = [], {}
+    for bv in (MAN_BE if has_target else MAN_BE_R):
+        for part in (MAN_PART if has_target else MAN_PART_R):
+            extra = {**pk, **({"be_way": bv} if has_target else {"be_r": bv or None, "lock_r": (3.0, 1.0) if bv else None})}
+            if part is not None:
+                extra["partial"] = part
+
+            def g(d, extra=extra):
+                lo, sh, plan = fn(d)
+                if regime is not None:
+                    lo, sh = np.asarray(lo, bool) & regime[0], np.asarray(sh, bool) & regime[1]
+                return lo, sh, {**plan, **{k: v for k, v in extra.items() if v is not None},
+                                **({"be_r": None, "lock_r": None} if not has_target and not bv else {})}
+            t = R.run(df, g, cost, breakeven=be, session_exit=sess)
+            t = drop_hole_trades(t, df, s, tf)
+            if t.empty:
+                continue
+            if real:
+                t = C.apply(t, s, SPREADS.get(s))
+            if events is not None:
+                t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
+            tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
+            key = man_key(has_target, bv, part)
+            rows.append({"variant": key, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
+            keep[key] = t[t["time"] >= t0]
+    if not rows:
+        return
+    base_key = man_key(has_target, 0.6 if has_target else 2.5, None)
+    ok = [x for x in rows if x["train"]["n"] >= 20]
+    best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
+    base = next((x for x in rows if x["variant"] == base_key), None)
+    OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows, "has_target": has_target})
+    for k in set(keep):
+        COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
+
+
 def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
     """Every grid variant of one combo (target x stop distance x entry): stats on the training window and
     on the later window. All variants' trades are kept for improve.py, which decides."""
@@ -262,6 +342,11 @@ def main():
     ap.add_argument("--optimize", default="",
                     help="YYYY-MM-DD: with --combos-file, try a grid of trade-management values per combo, choose on "
                          "--test-from..this date, check on this date..end")
+    ap.add_argument("--manage", default="",
+                    help="YYYY-MM-DD: with --combos-file, try breakeven points x partial exits per combo (on top of its "
+                         "--plans-file plan), choose on --test-from..this date, check on this date..end")
+    ap.add_argument("--plans-file", default="",
+                    help="a bot's live/bots/<bot>.json: its built per-combo plans are the base of --manage")
     ap.add_argument("--filters", default="",
                     help="YYYY-MM-DD: with --combos-file, try market-regime filters per combo, choose on "
                          "--test-from..this date, check on this date..end")
@@ -277,6 +362,12 @@ def main():
     ap.add_argument("--test-from", default="",
                     help="YYYY-MM-DD: judge every (strategy, timeframe, instrument) directly from this date, no earlier selection period")
     args = ap.parse_args()
+    if args.plans_file:
+        import json as _json
+        try:
+            PLANS.update(_json.loads(Path(args.plans_file).read_text(encoding="utf-8")).get("plans") or {})
+        except Exception as e:  # noqa: BLE001
+            print(f"plans file not read: {e}")
     if args.est_spread:
         C.EST_SPREAD["stock"] = args.est_spread
     if args.stock_spread_mult:
@@ -363,6 +454,12 @@ def main():
                     continue
                 if args.respect_tf and not R.timeframe_ok(sid, tf):
                     continue
+                if args.manage:
+                    try:
+                        manage_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
+                    except Exception:  # noqa: BLE001
+                        ERRORS.append(f"manage {sid} {tf} {s}:\n{traceback.format_exc()}")
+                    continue
                 if args.filters:
                     try:
                         filter_combo(df, sid, tf, s, cost, sess, be, real, events, args)
@@ -434,6 +531,11 @@ def main():
         import json as _json
         (config.OUTPUT_DIR / f"filters_{tag}.json").write_text(_json.dumps(OPT_RESULTS, ensure_ascii=False, indent=1), encoding="utf-8")
         print("filtered", len(OPT_RESULTS), "combos")
+    if args.manage:
+        tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
+        import json as _json
+        (config.OUTPUT_DIR / f"manage_{tag}.json").write_text(_json.dumps(OPT_RESULTS, ensure_ascii=False, indent=1), encoding="utf-8")
+        print("managed", len(OPT_RESULTS), "combos")
     if args.optimize:
         tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
         import json as _json
@@ -442,7 +544,7 @@ def main():
     if combos is not None or (args.test_from and COMBO_TRADES):
         cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason", "free_time",
                 "mfe_r", "mae_r"]
-        if args.optimize or args.filters:
+        if args.optimize or args.filters or args.manage:
             cols = cols + ["variant"]
         out = pd.concat(COMBO_TRADES, ignore_index=True).reindex(columns=cols) if COMBO_TRADES else pd.DataFrame(columns=cols)
         tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]

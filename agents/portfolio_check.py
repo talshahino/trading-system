@@ -77,6 +77,9 @@ def current_trades(bot, combo, cfg):
     if p.get("filter"):
         d = exp(bot, "filters", combo) or {}
         return (d.get("tr") or {}).get(p["filter"])
+    if any(k in p for k in ("be_way", "be_r", "partial")):       # a built management card: its own trades
+        d = exp(bot, "manage", combo) or {}
+        return (d.get("tr") or {}).get(built_variant(bot, combo, "manage"))
     d = exp(bot, "exits", combo) or {}
     return (d.get("tr") or {}).get(built_variant(bot, combo, "exits"))
 

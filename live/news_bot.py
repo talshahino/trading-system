@@ -85,14 +85,40 @@ def regime(d, name):
     return m, m
 
 
-def filtered(fn, flt):
-    if not flt:
+def plan_keys(p):
+    """A built plan in the engine's words (as run_rules.plan_keys / live/runner.py plan_of): target, stop distance,
+    limit entry, the breakeven point, partial exit. (Until 12.11.2026 only the filter was applied here.)"""
+    out = {}
+    try:
+        if p.get("target") == "none":
+            out["target"] = None
+        elif p.get("target") is not None and 0.5 <= float(p["target"]) <= 5:
+            out["target"] = ("R", float(p["target"]))
+        if p.get("stop") is not None and 0.5 <= float(p["stop"]) <= 2 and float(p["stop"]) != 1.0:
+            out["stop_scale"] = float(p["stop"])
+        if p.get("limit") is not None and 0 < float(p["limit"]) <= 1:
+            out["entry_pullback"] = (float(p["limit"]), 3)
+        if p.get("be_way") is not None and 0 <= float(p["be_way"]) < 1:
+            out["be_way"] = float(p["be_way"])
+        if p.get("be_r") is not None and 0 <= float(p["be_r"]) <= 5:
+            out["be_r"], out["lock_r"] = (float(p["be_r"]) or None), ((3.0, 1.0) if float(p["be_r"]) else None)
+        if p.get("partial") and 0 < float(p["partial"][0]) < 1 and 0 < float(p["partial"][1]) <= 5:
+            out["partial"] = (float(p["partial"][0]), float(p["partial"][1]))
+    except (TypeError, ValueError, IndexError):
+        return {}
+    return out
+
+
+def filtered(fn, flt, pk=None):
+    if not flt and not pk:
         return fn
 
     def g(d):
         L, S, plan = fn(d)
-        al, ash = regime(d, flt)
-        return np.asarray(L, bool) & al, np.asarray(S, bool) & ash, plan
+        if flt:
+            al, ash = regime(d, flt)
+            L, S = np.asarray(L, bool) & al, np.asarray(S, bool) & ash
+        return L, S, ({**plan, **pk} if pk else plan)
     return g
 
 
@@ -225,7 +251,8 @@ def trades_of(name, d5, spread_now):
     sp = pd.Series([spread_now], index=[d5.index[0]]) if spread_now else None
     pl = plans()
     for sid in STRATS:
-        fn = filtered(E.EVENTS[sid][1], (pl.get(f"{sid}|5Min|{name}") or {}).get("filter"))
+        p_ = pl.get(f"{sid}|5Min|{name}") or {}
+        fn = filtered(E.EVENTS[sid][1], p_.get("filter"), plan_keys(p_))
         px = float(d5["c"].iloc[-1])
         spec = U.spec(name)
         comm = (px * float(spec["commission"]) / (float(spec["contractSize"]) * U.BASE_USD.get(spec["code"].split("/")[0], 1.0))

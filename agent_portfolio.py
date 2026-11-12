@@ -44,7 +44,8 @@ TEST_FROM, SPLIT = "2025-04-30", "2026-01-01"
 T_SPLIT = pd.Timestamp(SPLIT, tz="UTC")
 START = "2024-01-01"
 RERUN_DAYS = 14
-FAMILIES = ("exits", "filters")
+BOT_NOW = {}
+FAMILIES = ("exits", "filters", "manage")      # manage (12.11.2026): breakeven point x partial exit per strategy
 LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--breakeven", "0.6"]
 NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot7": "בוט 7 · פרסומים כלכליים",
          "bot5": "בוט 5 - סקאלפינג", "bot6": "בוט 6 · חוזים עתידיים"}
@@ -56,6 +57,18 @@ NEW_ONLY = {"bot5": ["XAUUSD", "EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD",
 FILTER_HE = {"with_trend200": "רק עם המגמה (ממוצע 200)", "adx_trend": "רק בשוק במגמה (ADX מעל 20)",
              "adx_range": "רק בשוק בדשדוש (ADX מתחת 20)", "vol_normal": "רק בתנודתיות רגילה",
              "vol_high": "רק בתנודתיות גבוהה", "vol_low": "רק בתנודתיות נמוכה", "none": "בלי סינון"}
+
+
+def explain_manage(v):
+    """be0.6|part0.3@0.5 -> Hebrew; ber2.5 = no-target strategies (R in profit)."""
+    b, pa = v.split("|")
+    tgt = b.startswith("be") and not b.startswith("ber")
+    x = float(b[2:] if tgt else b[3:])
+    out = ["בלי נקודת איזון" if x == 0 else (f"איזון ב־{x * 100:g}% מהדרך ליעד" if tgt else f"איזון ב־{x:g}R רווח")]
+    if pa != "part0":
+        fr, w = pa[4:].split("@")
+        out.append(f"{float(fr) * 100:g}% יוצאים " + (f"ב־{float(w) * 100:g}% מהדרך" if tgt else f"ב־{float(w):g}R") + " והשאר לאיזון")
+    return " · ".join(out)
 
 
 def explain_exit(v):
@@ -81,6 +94,17 @@ def bot_combos(bot):
     return list(j["combos"])
 
 
+def base_variant(bot, combo, fam, doc=None):
+    """The variant the combo trades now (manage: the bots' default when no card changed it)."""
+    v = built_variant(bot, combo, fam)
+    if v is None and fam == "manage":
+        ht = (doc or {}).get("has_target")
+        if ht is None and doc:
+            ht = any(k.startswith("be") and not k.startswith("ber") for k in (doc.get("variants") or {}))
+        v = "be0.6|part0" if ht else "ber2.5|part0"
+    return v
+
+
 def built_variant(bot, combo, fam):
     """The variant a combo trades now: an approved card built into live/bots/<bot>.json "plans" (12.11.2026),
     else the strategy's own (exits) / no filter. New cards are measured against this one."""
@@ -90,6 +114,14 @@ def built_variant(bot, combo, fam):
         p = {}
     if fam == "filters":
         return p.get("filter") or "none"
+    if fam == "manage":
+        nt = (p.get("target") == "none")
+        if p.get("be_way") is None and p.get("be_r") is None and not p.get("partial"):
+            return None                                 # the default: with a target be0.6, without ber2.5 (known after the run)
+        be = p.get("be_r", 2.5) if nt or p.get("be_r") is not None else p.get("be_way", 0.6)
+        pa = p.get("partial")
+        b = f"ber{float(be):g}" if (nt or p.get("be_r") is not None) else f"be{float(be):g}"
+        return f"{b}|part{'0' if not pa else f'{float(pa[0]):g}@{float(pa[1]):g}'}"
     if not any(k in p for k in ("target", "stop", "limit")):
         return "own|be0.6|stop1|entry0"
     tg = p.get("target")
@@ -207,7 +239,8 @@ def run_rules(combos, fam, budget_min, extra=None):
     out_dir = ROOT / "output"
     sym = combos[0].split("|")[2]
     tag = sym.replace(",", "_").replace("/", "-")[:60]
-    for f in (out_dir / f"combo_trades_{tag}.csv.gz", out_dir / f"optimize_{tag}.json", out_dir / f"filters_{tag}.json"):
+    for f in (out_dir / f"combo_trades_{tag}.csv.gz", out_dir / f"optimize_{tag}.json", out_dir / f"filters_{tag}.json",
+              out_dir / f"manage_{tag}.json"):
         f.unlink(missing_ok=True)
     cf = out_dir / f"agent_combos_{tag}.txt"
     out_dir.mkdir(exist_ok=True)
@@ -219,6 +252,11 @@ def run_rules(combos, fam, budget_min, extra=None):
         cmd += ["--optimize", SPLIT]
     elif fam == "filters":
         cmd += ["--filters", SPLIT]
+    elif fam == "manage":
+        cmd += ["--manage", SPLIT]
+        bf = ROOT / "live" / "bots" / f"{BOT_NOW.get('bot')}.json"
+        if bf.exists():
+            cmd += ["--plans-file", str(bf)]          # on top of the exits the bot trades now
     env = dict(os.environ, MAX_RUN_MINUTES=str(max(5, int(budget_min))))
     r = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace",
                        timeout=int(budget_min * 60 + 900))
@@ -231,7 +269,7 @@ def run_rules(combos, fam, budget_min, extra=None):
         nd = [x for x in (r.stdout or "").splitlines() if "NO DATA" in x]
         raise RuntimeError(f"no market data: {nd[0].strip()[:200] if nd else sym}")
     rows = {}
-    jf = out_dir / f"{'optimize' if fam == 'exits' else 'filters'}_{tag}.json"
+    jf = out_dir / f"{ {'exits': 'optimize', 'filters': 'filters', 'manage': 'manage'}.get(fam, 'x') }_{tag}.json"
     if fam in FAMILIES and jf.exists():
         rows = {x["combo"]: x for x in json.loads(jf.read_text(encoding="utf-8"))}
     return t, rows
@@ -293,7 +331,8 @@ def experiments(bot, budget_s, where):
                 doc["variants"][v] = variant_stats(g)
             # the 2026 trades of the variants a card can come from (the one in the bot now, the default and the five
             # best on the choosing period), for the whole-bot check (agents/portfolio_check.py)
-            keep = {built_variant(bot, c, fam), "own|be0.6|stop1|entry0" if fam == "exits" else "none"}
+            doc["has_target"] = (rows.get(c) or {}).get("has_target")
+            keep = {base_variant(bot, c, fam, doc), {"exits": "own|be0.6|stop1|entry0", "filters": "none"}.get(fam, base_variant(bot, c, fam, doc))}
             keep |= set(sorted((v for v, x in doc["variants"].items() if (x["train"].get("eff_n") or 0) >= 10),
                                key=lambda v: -(doc["variants"][v]["train"]["mean"] or -9))[:5])
             doc["tr"] = {v: trades_2026(tc[tc["variant"] == v]) for v in keep if "variant" in tc and v in doc["variants"]}
@@ -393,7 +432,7 @@ def cards_for(bot):
             d = st.get(fam, combo)
             if not d or not d.get("variants"):
                 continue
-            base_key = built_variant(bot, combo, fam)
+            base_key = base_variant(bot, combo, fam, d)
             vs = d["variants"]
             base = vs.get(base_key)
             if not base:
@@ -415,10 +454,10 @@ def cards_for(bot):
             bval = next((g["valid"]["avg"] for g in grid if g["variant"] == base_key), None)
             others = [g for g in grid if g["variant"] != base_key and g["valid"]["n"] >= 5]
             share = (round(sum(1 for g in others if g["valid"]["avg"] > (bval or 0)) / len(others), 2) if others and bval is not None else None)
-            what = explain_exit(v) if fam == "exits" else FILTER_HE.get(v, v)
+            what = explain_exit(v) if fam == "exits" else explain_manage(v) if fam == "manage" else FILTER_HE.get(v, v)
             cards.append(K.card(
                 bot, "improve", f"{combo}: {what}",
-                f"{'ניהול העסקה' if fam == 'exits' else 'סינון מצב שוק'} לאסטרטגיה {combo}: {what}. "
+                f"{ {'exits': 'יעד / סטופ / כניסה', 'manage': 'ניהול העסקה (נקודת איזון / יציאה חלקית)'}.get(fam, 'סינון מצב שוק') } לאסטרטגיה {combo}: {what}. "
                 f"נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
                 best["train"], best["unseen"], whole=best["whole"], halves_=best["halves"],
                 neighbours={"values": len(grid) or len(vs), "share_positive": share},
@@ -452,6 +491,7 @@ def main():
     ap.add_argument("--where", default="pc", choices=["pc", "github", "all"])
     ap.add_argument("--no-cards", action="store_true")
     a = ap.parse_args()
+    BOT_NOW["bot"] = a.bot
     budget = a.minutes * 60
     t0 = time.time()
     if a.bot == "bot7" and a.where in ("pc", "all"):

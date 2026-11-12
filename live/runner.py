@@ -282,7 +282,14 @@ def plan_of(combo):
             out["emit_pending"] = 1                    # step() adds one flat helper bar after the forming bar
         if p.get("filter") in REGIMES:
             out["filter"] = p["filter"]
-    except (TypeError, ValueError):
+        # trade management per strategy (12.11.2026): the breakeven's own point / R, a partial exit
+        if p.get("be_way") is not None and 0 <= float(p["be_way"]) < 1:
+            out["be_way"] = float(p["be_way"])
+        if p.get("be_r") is not None and 0 <= float(p["be_r"]) <= 5:
+            out["be_r"], out["lock_r"] = (float(p["be_r"]) or None), ((3.0, 1.0) if float(p["be_r"]) else None)
+        if p.get("partial") and 0 < float(p["partial"][0]) < 1 and 0 < float(p["partial"][1]) <= 5:
+            out["partial"] = (float(p["partial"][0]), float(p["partial"][1]))
+    except (TypeError, ValueError, IndexError):
         return {}
     return out
 
@@ -317,7 +324,8 @@ def strat(sid, df, sym, tf):
         if flt:
             al, ash = _regime(d, flt)
             L, S = np.asarray(L, bool) & al, np.asarray(S, bool) & ash
-        return L, S, {**plan, **pl, **PROTECT}
+        # the bots' protection first, then the combo's own built plan (a management card may set its own breakeven)
+        return L, S, {**plan, **PROTECT, **pl}
     return g
 
 
@@ -912,6 +920,23 @@ def close(p, why):
     return send(req, f"close {p.comment} ({why})")
 
 
+def close_part(p, frac, why="partial exit"):
+    """Close `frac` of an open position (a partial exit), rounded down to the broker's volume step. Nothing when the
+    part or the rest would be under the broker's minimum - then the stop still goes to the entry (the backtest's rest)."""
+    info = mt5.symbol_info(p.symbol)
+    step = info.volume_step or 0.01
+    vol = round(int(p.volume * frac / step) * step, 8)
+    if vol < info.volume_min or p.volume - vol < info.volume_min - 1e-12:
+        log(f"partial {p.comment}: {frac:.0%} of {p.volume} is under the broker's minimum - kept whole")
+        return "min"
+    tick = mt5.symbol_info_tick(p.symbol)
+    req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": p.symbol, "volume": vol, "position": p.ticket,
+           "type": mt5.ORDER_TYPE_SELL if p.type == 0 else mt5.ORDER_TYPE_BUY,
+           "price": tick.bid if p.type == 0 else tick.ask, "deviation": 20, "magic": p.magic,
+           "comment": why[:31], "type_filling": mt5.ORDER_FILLING_IOC}
+    return send(req, f"partial {p.comment} {vol}/{p.volume}") is not None
+
+
 def move_stop(p, new_sl):
     info = mt5.symbol_info(p.symbol)
     new_sl = round(new_sl, info.digits)
@@ -1059,6 +1084,14 @@ def step(combo, sid, tf, sym, off):
             return                                     # not in the replay (data edge): broker SL/TP manage it
         t = mine.iloc[-1]
         reason = str(t["reason"])
+        part = plan_of(combo).get("partial")
+        pt = t.get("part_time") if hasattr(t, "get") else None
+        if part and pt is not None and not pd.isna(pt) and pd.Timestamp(pt) <= last_closed \
+                and STATE.setdefault("part", {}).get(combo) != STATE["entry"].get(combo, ""):
+            # the backtest took the partial exit on a closed bar: the same here, once per trade
+            if close_part(p, part[0]):                # done, or too small to split (then not tried again)
+                STATE["part"][combo] = STATE["entry"].get(combo, "")
+                save_state()
         if reason == "יעד" or "סטופ" in reason:
             if t["exit_time"] > forming and (sn := stop_now()) is not None:   # only the helper bars "hit" it
                 move_stop(p, sn)

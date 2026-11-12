@@ -56,7 +56,7 @@ def all_cards():
 def buildable(c):
     """What a card changes, when it is exactly a setting (else None)."""
     ch, bot = c.get("change") or {}, c.get("bot")
-    if c.get("kind") == "improve" and bot in PLAN_BOTS and ch.get("combo") and ch.get("family") in ("exits", "filters") and ch.get("to"):
+    if c.get("kind") == "improve" and bot in PLAN_BOTS and ch.get("combo") and ch.get("family") in ("exits", "filters", "manage") and ch.get("to"):
         return {"bot": bot, "combo": ch["combo"], "family": ch["family"], "to": ch["to"]}
     if c.get("kind") == "new" and bot in ADD_BOTS and ch.get("combo") and ch.get("kind") == "add":
         return {"bot": bot, "combo": ch["combo"], "family": "add"}
@@ -92,6 +92,16 @@ def exit_plan(v):
     return p
 
 
+def manage_plan(v):
+    """be0.6|part0.3@0.5 / ber2.5|part0 -> the plan keys live/runner.py and live/news_bot.py read."""
+    b, pa = v.split("|")
+    out = {"be_r": float(b[3:])} if b.startswith("ber") else {"be_way": float(b[2:])}
+    if pa != "part0":
+        fr, w = pa[4:].split("@")
+        out["partial"] = [float(fr), float(w)]
+    return out
+
+
 def describe(b):
     if b["family"] == "track":
         return f"מסלול {b['track']}: {b['knob']} = {b['to']}"
@@ -103,6 +113,9 @@ def describe(b):
         return f"נוספה לבוט: {b['combo']}, בסיכון של הבוט"
     if b["family"] == "filters":
         return f"{b['combo']}: סינון מצב שוק {b['to']}"
+    if b["family"] == "manage":
+        from agent_portfolio import explain_manage
+        return f"{b['combo']}: {explain_manage(b['to'])}"
     p = exit_plan(b["to"])
     parts = [("בלי יעד" if p.get("target") == "none" else f"יעד {p['target']:g}R") if "target" in p else None,
              f"סטופ x{p['stop']:g}" if "stop" in p else None, f"כניסה בלימיט {p['limit']:g}R טוב יותר" if "limit" in p else None]
@@ -133,6 +146,12 @@ def apply(cfg, b, card_id):
         cfg.setdefault("added", {})[b["combo"]] = card_id
         return
     p = plans.setdefault(b["combo"], {})
+    if b["family"] == "manage":
+        for k in ("be_way", "be_r", "partial"):
+            p.pop(k, None)
+        p.update(manage_plan(b["to"]))
+        p["manage_card"] = card_id
+        return
     if b["family"] == "filters":
         if b["to"] == "none":
             p.pop("filter", None)
@@ -170,11 +189,15 @@ def revert(cfg, card_id):
             for k in ("target", "stop", "limit", "card"):
                 p.pop(k, None)
             done = True
+        if p.get("manage_card") == card_id:
+            for k in ("be_way", "be_r", "partial", "manage_card"):
+                p.pop(k, None)
+            done = True
         if p.get("filter_card") == card_id:
             p.pop("filter", None)
             p.pop("filter_card", None)
             done = True
-        if not {k for k in p if k not in ("card", "filter_card")}:
+        if not {k for k in p if k not in ("card", "filter_card", "manage_card")}:
             cfg["plans"].pop(combo)
     return done
 

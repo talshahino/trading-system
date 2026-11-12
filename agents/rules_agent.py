@@ -302,6 +302,9 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
     long_, short, plan = fn(df)
     if breakeven is not None:
         plan = {**plan, "breakeven": breakeven}
+    bw = plan.get("be_way")                 # trade management per strategy (12.11.2026): the breakeven's own point
+    if bw is not None:                      # of the way to the target (0 = no breakeven), the offset stays
+        plan = {**plan, "breakeven": None if float(bw) == 0 else (float(bw), (plan.get("breakeven") or (0, 0.0))[1])}
     if session_exit is not None:
         fe0 = plan.get("force_exit")
         se = np.asarray(session_exit, dtype=bool)
@@ -375,6 +378,13 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
                 continue
         be = plan.get("breakeven")
         trail = plan.get("trail_atr")
+        # partial exit (12.11.2026): `frac` of the position out at `way` of the way to the target (no target: at `way`
+        # R), the rest's stop to the entry + costs; as the user trades it ("take part, the rest to break-even")
+        part = plan.get("partial")
+        plvl = None
+        if part and 0 < part[0] < 1 and part[1] > 0:
+            plvl = e + d * part[1] * (target - e) if target is not None else e + d * part[1] * risk
+        part_t = None
         best = e
         worst = e
         stop0 = stop
@@ -415,6 +425,10 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             if lk and target is None and d * (best - e) >= lk[0] * risk:
                 lvl = e + d * lk[1] * risk
                 stop = max(stop, lvl) if d > 0 else min(stop, lvl)
+            if plvl is not None and part_t is None and d * (best - plvl) >= 0:
+                part_t = t
+                lvl = e * (1 + d * (be[1] if be else 0.0))
+                stop = max(stop, lvl) if d > 0 else min(stop, lvl)
             ber = plan.get("be_r")     # no target: stop to entry + costs once k R in profit (test, 06.11.2026)
             if ber and target is None and d * (best - e) >= ber * risk:
                 lvl = e * (1 + d * (be[1] if be else 0.0))
@@ -437,8 +451,14 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             exit_t = min(n - 1, e_t + (plan.get("max_bars") or 10**9) - 1)
             timed = plan.get("max_bars") and e_t + plan["max_bars"] - 1 <= n - 1
             exit_px, reason = c[exit_t], ("יציאת זמן" if timed else "סוף הנתונים")
-        r_mult = d * (exit_px - e) / risk - 2 * cost_side * e / risk
+        if plvl is not None and part_t is None and reason == "יעד":
+            part_t = exit_t                         # the target bar went through the partial level on its way
+        if part_t is not None:
+            r_mult = (part[0] * d * (plvl - e) + (1 - part[0]) * d * (exit_px - e)) / risk - 2 * cost_side * e / risk
+        else:
+            r_mult = d * (exit_px - e) / risk - 2 * cost_side * e / risk
         rows.append({"time": df.index[e_t], "exit_time": df.index[exit_t], "dir": d, "r": float(r_mult),
+                     "part_time": df.index[part_t] if part_t is not None else pd.NaT,
                      "held": int(exit_t - e_t), "entry_px": float(e), "exit_px": float(exit_px),
                      "stop_px": float(stop0), "target_px": float(target) if target is not None else np.nan,
                      "reason": reason,

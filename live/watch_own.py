@@ -106,6 +106,7 @@ RISK_TAL5 = 0.004 * 0.7
 # agents/builder.py at once, like bot 6. A file that is missing or odd keeps the tracks in the code.
 TAL5_RISK = {}
 TAL5_ONE = [False]     # "tal_one_per_side": a track does not enter a symbol / direction another track holds (off until approved)
+TAL5_MAXDIR = [0]      # "tal_max_dir" (13.11.2026): at most K counted trades open in one direction on all the indices together (0 = off until approved)
 _TAL5_CODE = {k: (p, dict(c)) for k, (p, c) in TAL5.items()}
 
 
@@ -164,6 +165,10 @@ def load_settings():
                         TAL5.clear()
                         TAL5.update(new_)
                 TAL5_ONE[0] = bool(d.get("tal_one_per_side", False))
+                try:
+                    TAL5_MAXDIR[0] = max(0, int(d.get("tal_max_dir", 0) or 0))
+                except (TypeError, ValueError):
+                    TAL5_MAXDIR[0] = 0
                 TAL5_RISK.clear()
                 for trk in TAL5:
                     v = rk.get(trk, rk.get("tal"))
@@ -756,10 +761,15 @@ def main():
                         side_ = TAL5_ONE[0] and any(o.get("tal") and o.get("tal") != rec["tal"] and o.get("risk_usd")
                                                     and o.get("status") == "open" and o.get("symbol") == rec["symbol"]
                                                     and o.get("dir") == rec["dir"] for o in trades.values())
+                        dir_ = TAL5_MAXDIR[0] > 0 and sum(1 for o in trades.values() if o.get("tal") and o.get("risk_usd")
+                                                          and o.get("status") == "open" and o.get("dir") == rec["dir"]
+                                                          and o.get("id", o) != rec.get("id")) >= TAL5_MAXDIR[0]
                         if acc.get("breached"):
                             rec["skipped"] = "breach"
                         elif side_:
                             rec["skipped"] = "side"          # another track already holds this symbol and direction
+                        elif dir_:
+                            rec["skipped"] = "dir"           # K trades already open in this direction on the indices
                         elif day_pnl(day) <= -DAILY_STOP * start:
                             rec["skipped"] = "daily"
                         else:

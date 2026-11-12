@@ -67,6 +67,9 @@ def buildable(c):
                 "knob": str(ch["knob"]).split("@")[0], "to": ch["to"]}
     if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "ONE_PER_SIDE":
         return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_one_per_side", "to": bool(ch.get("to"))}
+    if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "MAX_DIR" \
+            and isinstance(ch.get("to"), int) and 0 <= ch["to"] <= 10:
+        return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_max_dir", "to": int(ch["to"])}
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") and str(ch.get("knob", "")).startswith("RISK") \
             and ch.get("to") is not None:
         return {"bot": bot, "combo": f"{'OWN' if bot == 'bot5' else 'FUT'}|{ch['track']}", "family": "risk",
@@ -118,6 +121,8 @@ def describe(b):
     if b["family"] == "risk":
         return f"מסלול {b['track']}: סיכון {b['to'] * 100:g}% לעסקה"
     if b["family"] == "flag":
+        if b["key"] == "tal_max_dir":
+            return f"שיטת הגאפ: לכל היותר {b['to']} עסקאות פתוחות באותו כיוון בכל המדדים יחד" if b["to"] else "שיטת הגאפ: בלי תקרה לכיוון"
         return "שיטת הגאפ: מסלול לא נכנס למכשיר ולכיוון שמסלול אחר כבר מחזיק" if b["to"] else "שיטת הגאפ: בלי הכלל נגד סיכון כפול"
     if b["family"] == "tal5":
         return f"שיטת הגאפ, מסלול {b['pair'][0]} / {b['pair'][1]}: " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())
@@ -292,14 +297,16 @@ def run(now=None):
         u = (cards.get(cid) or {}).get("unseen") or {}
         return (u.get("mean") or -9) * math.sqrt(max(1.0, u.get("eff_n") or 1))
     tal = [cid for cid in approved if cid in cards and cid not in undone_cards and not (replies.get(cid) or {}).get("built")
-           and ((buildable(cards[cid]) or {}).get("family") == "tal6")]
+           and ((buildable(cards[cid]) or {}).get("family") in ("tal6", "tal5"))]
+    # bot 5 too (13.11.2026): on 12.11 two approved cards on 15m/1m were built one over the other, the later one won
     for cid in tal:
-        pr = buildable(cards[cid])["pair"][:2]
-        same = [x for x in tal if buildable(cards[x])["pair"][:2] == pr]
+        bb = buildable(cards[cid])
+        pr = (bb["bot"], bb["pair"][:2])
+        same = [x for x in tal if (buildable(cards[x])["bot"], buildable(cards[x])["pair"][:2]) == pr]
         if cid != max(same, key=_score):
             replies[cid] = {"text": "לא נבנה: אושר כרטיס חזק יותר על אותו זוג טיים פריים של שיטת הגאפ, והוא נבנה",
                             "at": at, "by": "builder", "built": "skipped"}
-            did.append(f"bot6: {cid} skipped (a stronger card on the same pair)")
+            did.append(f"{bb['bot']}: {cid} skipped (a stronger card on the same pair)")
     # 2) approved, not built yet -> into the bot
     for cid in approved:
         c = cards.get(cid)

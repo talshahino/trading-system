@@ -662,6 +662,20 @@ def portfolio(idx, symbols, out_dir, live):
         if keep[-1]:
             held[k].append(x.out)
     t["solo"] = keep
+    # one direction across all the bot's indices (bot 5's smart agent, 13.11.2026): the indices move together - on
+    # 12.11 between 14:41 and 16:19 UTC nine shorts of four tracks on US500 / US100 / JP225 were stopped one after the
+    # other (-2.6% in under two hours, more than half of the 4.5% daily limit). The rule: at most K trades open in the
+    # same direction on all the instruments together; a trade beyond them is not taken.
+    caps = {}
+    for cap in (1, 2, 3):
+        keep, opened = [], {1: [], -1: []}
+        for x in t.itertuples():
+            d_ = int(x.dir)
+            opened[d_] = [e for e in opened[d_] if e > x.time]
+            keep.append(len(opened[d_]) < cap)
+            if keep[-1]:
+                opened[d_].append(x.out)
+        caps[cap] = keep
 
     def stats(d):
         out = {}
@@ -678,6 +692,7 @@ def portfolio(idx, symbols, out_dir, live):
         return out
     doubled = t[~t["solo"]]
     return {"tracks": {k: v[0] for k, v in live.items()}, "now": stats(t), "one_per_side": stats(t[t["solo"]]),
+            "max_dir": {str(c): stats(t[pd.Series(k_, index=t.index)]) for c, k_ in caps.items()},
             "doubled": {"n": int(len(doubled)), "r": round(float(doubled["r"].sum()), 1),
                         "unseen_n": int((doubled["time"] >= SPLIT).sum()),
                         "unseen_r": round(float(doubled.loc[doubled["time"] >= SPLIT, "r"].sum()), 1)},
@@ -685,21 +700,38 @@ def portfolio(idx, symbols, out_dir, live):
 
 
 def portfolio_card(bot, pf, risk_pct):
-    """A card for the rule against doubled risk, only when it lowers the risk without lowering 2026's total."""
-    a, b = pf["now"], pf["one_per_side"]
-    if not a.get("unseen") or not b.get("unseen") or not a.get("train"):
+    """A card for one rule against concentrated risk - one track per symbol and direction, or at most K trades open in
+    one direction on all the indices together (13.11.2026). The rule is CHOSEN on 2024-2025 only (the lowest deepest
+    fall among those that keep >= 95% of the time-weighted total), then shown on 2026: a card only when it lowers the
+    risk on both periods without lowering 2026's total."""
+    a = pf["now"]
+    if not a.get("unseen") or not a.get("train"):
         return None
-    au, bu, at, bt = a["unseen"], b["unseen"], a["train"], b["train"]
-    better_risk = bu["max_fall"] <= au["max_fall"] and bu["worst_day"] >= au["worst_day"] and bt["max_fall"] <= at["max_fall"]
-    if not better_risk or bu["total"] < au["total"] or bt["total_w"] < at["total_w"] * 0.95:
+    rules = [("side", pf.get("one_per_side") or {})] + [(f"dir{c}", v) for c, v in sorted((pf.get("max_dir") or {}).items())]
+    at, au = a["train"], a["unseen"]
+    ok = [(nm, r) for nm, r in rules if r.get("train") and r.get("unseen") and r["train"]["total_w"] >= at["total_w"] * 0.95
+          and r["train"]["max_fall"] <= at["max_fall"] and r["train"]["worst_day"] >= at["worst_day"]]
+    if not ok:
         return None
-    what = (f"כל מסלולי שיטת הגאפ יחד, כמו שהחשבון לוקח אותם: היום מסלול שני נכנס גם כשמסלול אחר כבר מחזיק את אותו מכשיר "
-            f"באותו כיוון (12.11: 15/דקה ו־15/5 לקחו את אותה מכירה ב־US500 ושתיהן נעצרו). הכלל: מסלול לא נכנס למכשיר ולכיוון "
-            f"שמסלול אחר כבר מחזיק. 2026: סה\"כ {au['total']:+.1f}R ← {bu['total']:+.1f}R, היום הגרוע {au['worst_day']:+.1f}R ← "
-            f"{bu['worst_day']:+.1f}R, הירידה הגדולה {au['max_fall']:.1f}R ← {bu['max_fall']:.1f}R. 2024-2025: ירידה {at['max_fall']:.1f}R ← "
-            f"{bt['max_fall']:.1f}R. עסקאות כפולות שיורדות: {pf['doubled']['n']} ({pf['doubled']['r']:+.1f}R).")
-    return K.card(bot, "risk", "שיטת הגאפ: בלי סיכון כפול על אותו רעיון", what, None, None, tested=1, risk_pct=risk_pct,
-                  detail=pf, change={"track": "tal_all", "knob": "ONE_PER_SIDE", "from": False, "to": True})
+    nm, b = min(ok, key=lambda x: (x[1]["train"]["max_fall"], -x[1]["train"]["total_w"]))
+    bu, bt = b["unseen"], b["train"]
+    if bu["max_fall"] > au["max_fall"] or bu["worst_day"] < au["worst_day"] or bu["total"] < au["total"]:
+        return None
+    if nm == "side":
+        rule = "מסלול לא נכנס למכשיר ולכיוון שמסלול אחר כבר מחזיק"
+        change = {"track": "tal_all", "knob": "ONE_PER_SIDE", "from": False, "to": True}
+        title = "שיטת הגאפ: בלי סיכון כפול על אותו רעיון"
+    else:
+        k = int(nm[3:])
+        rule = f"לכל היותר {k} עסקאות פתוחות באותו כיוון בכל המדדים יחד (המדדים זזים יחד)"
+        change = {"track": "tal_all", "knob": "MAX_DIR", "from": 0, "to": k}
+        title = f"שיטת הגאפ: עד {k} עסקאות באותו כיוון בכל המדדים"
+    what = (f"כל מסלולי שיטת הגאפ יחד, כמו שהחשבון לוקח אותם. 12.11: 9 מכירות של 4 מסלולים ב־US500 / US100 / JP225 נעצרו "
+            f"תוך פחות משעתיים (-2.6%). הכלל: {rule}. נבחר על 2024-2025, מוצג על 2026. "
+            f"2026: סה\"כ {au['total']:+.1f}R ← {bu['total']:+.1f}R, היום הגרוע {au['worst_day']:+.1f}R ← {bu['worst_day']:+.1f}R, "
+            f"הירידה הגדולה {au['max_fall']:.1f}R ← {bu['max_fall']:.1f}R. 2024-2025: ירידה {at['max_fall']:.1f}R ← "
+            f"{bt['max_fall']:.1f}R, סה\"כ משוקלל {at['total_w']:+.1f}R ← {bt['total_w']:+.1f}R.")
+    return K.card(bot, "risk", title, what, None, None, tested=len(rules), risk_pct=risk_pct, detail=pf, change=change)
 
 
 # ---------------------------------------------------------------- live (12.11.2026): the same rules on the running bot

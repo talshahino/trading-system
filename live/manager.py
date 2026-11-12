@@ -689,12 +689,33 @@ def agent_undo(d):
     return {"undone": k, "restored": bool(a)}
 
 
+AUTO_APPLY = {"at": None, "n": 0, "err": None, "src": None}
+
+
+def _decisions():
+    """The manager agent's decisions: the agents' own copy on this computer first (C:\\trading-agents writes them,
+    no waiting for GitHub), GitHub's raw file when that copy is missing or older than an hour."""
+    f = AH.WORK / "reports" / "agents" / "decisions.json"
+    try:
+        if f.exists() and time.time() - f.stat().st_mtime < 3600:
+            j = json.loads(f.read_text(encoding="utf-8"))
+            AUTO_APPLY["src"] = "local"
+            return j
+    except Exception as e:  # noqa: BLE001
+        log(f"local decisions unreadable: {e}")
+    r = requests.get(DECISIONS_URL, params={"t": int(time.time() // 300)}, timeout=20)
+    r.raise_for_status()
+    AUTO_APPLY["src"] = "github"
+    return r.json()
+
+
 def auto_apply():
     """Every 10 minutes: apply the manager's risk / removal decisions that are not applied and not undone."""
     time.sleep(90)
     while True:
         try:
-            j = requests.get(DECISIONS_URL, params={"t": int(time.time() // 300)}, timeout=20).json()
+            j = _decisions()
+            AUTO_APPLY.update(at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), n=len(j.get("decisions", [])))
             # the risk that came with a card (the star's lowered risk, the whole-bot check's): when the card is
             # undone by you or taken back by the watch, its risk goes back to the value before it too
             with AGENT_LOCK:
@@ -757,8 +778,11 @@ def auto_apply():
                     agent_meta_save(m)
                 log(f"manager's decision applied: {a['bot']} {a['combo']} {a['kind']} -> {a['value']}")
                 agent_publish()
-        except Exception:  # noqa: BLE001
-            pass
+            AUTO_APPLY["err"] = None
+        except Exception as e:  # noqa: BLE001
+            # never silent again (12.11.2026: the user's revert of 10 decisions waited for hours with no trace)
+            AUTO_APPLY["err"] = f"{type(e).__name__}: {e}"[:300]
+            log(f"auto_apply failed: {AUTO_APPLY['err']}")
         time.sleep(600)
 
 
@@ -1434,6 +1458,7 @@ def push_manager_state():
              "auto_update": {"on": auto_update_on(), "prev": CFG.get("prev_version"), "rolled_back_from": CFG.get("rolled_back_from"),
                              "installs": (CFG.get("auto_updates") or [])[-10:]},
              "agents_host": AH.status() if CFG.get("agents_host", True) else {"on": False},
+             "auto_apply": dict(AUTO_APPLY),
              "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
     err = REP.push_state("manager", state)
     if err:

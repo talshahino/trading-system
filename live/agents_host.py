@@ -48,7 +48,14 @@ AGENTS = [("bot5", ["agent_bot5.py"], 40), ("bot6", ["agent_bot6.py"], 30),
 HEARTBEAT = 3 * 3600                                      # publish the continuous layer at least this often
 LIGHT_PUBLISH = 30 * 60                                   # ... and at most this often, unless the manager decided something
 NODE_VER = "v20.18.1"
-_S = {"sha": None, "light": 0.0, "smart": 0.0, "pub": 0.0, "proc": None, "log": print, "err": None}
+_S = {"sha": None, "light": 0.0, "smart": 0.0, "pub": 0.0, "proc": None, "log": print, "err": None, "smart_running": False}
+import threading  # noqa: E402
+_LOCK, _REFRESH = threading.RLock(), threading.Lock()
+# what the continuous layer writes - while a smart agent runs, only these are published by it (the agent's own files
+# are published by the smart layer when the agent ends, never half-written)
+import re  # noqa: E402
+LIGHT_OWN = re.compile(r"^(reports/agents/(manager\.json|decisions\.json|watch\.json|manager_log\.json|[^/]+/(health|cards_health)\.json)"
+                       r"|data/agents/replies\.json|live/bots/)")
 STATE = WORK / "host_state.json"
 
 
@@ -70,7 +77,16 @@ def _load():
 
 def _save(st):
     WORK.mkdir(parents=True, exist_ok=True)
-    STATE.write_text(json.dumps(st, ensure_ascii=False, indent=1), encoding="utf-8")
+    with _LOCK:
+        for _ in range(5):                    # the continuous layer's thread may change it at the same moment
+            try:
+                txt = json.dumps(st, ensure_ascii=False, indent=1)
+                break
+            except RuntimeError:
+                time.sleep(0.05)
+        else:
+            return
+        STATE.write_text(txt, encoding="utf-8")
 
 
 # ---------- the working copy ----------
@@ -212,7 +228,7 @@ def kill_orphan(st):
     _save(st)
 
 
-def run(st, args, timeout, logname):
+def run(st, args, timeout, logname, track=True):
     env = dict(os.environ, PYTHONUTF8="1", PYTHONIOENCODING="utf-8", PYTHONUNBUFFERED="1",
                TS_TOKEN_FILE=str(ROOT / "live" / "github_token.txt"))
     tok = REP.token()
@@ -227,16 +243,18 @@ def run(st, args, timeout, logname):
     with open(logs / logname, "w", encoding="utf-8") as lf:
         p = subprocess.Popen([_py(), "-u"] + args, cwd=WORK, env=env, stdout=lf, stderr=subprocess.STDOUT,
                              creationflags=_flags())
-        st["pid"] = p.pid
-        _save(st)
+        if track:                             # (the smart agents; a restart stops a left-over one)
+            st["pid"] = p.pid
+            _save(st)
         try:
             rc = p.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
             subprocess.run(["taskkill", "/PID", str(p.pid), "/T", "/F"], capture_output=True, creationflags=_flags()) \
                 if os.name == "nt" else p.kill()
             rc = "timeout"
-    st.pop("pid", None)
-    _save(st)
+    if track:
+        st.pop("pid", None)
+        _save(st)
     if rc != 0:
         tail = (logs / logname).read_text(encoding="utf-8", errors="replace").strip().splitlines()[-3:]
         raise RuntimeError(f"{' '.join(args[:1])}: {rc} · {' | '.join(tail)[-300:]}")
@@ -286,9 +304,10 @@ def host_doc(st, kind):
             "errors_in_row": st.get("errors_in_row", 0)}
 
 
-def _publish_changes(st, before, kind, msg):
+def _publish_changes(st, before, kind, msg, only=None):
     after = snapshot()
-    changed = [rel for rel, hsh in after.items() if before.get(rel) != hsh and rel != HOST]
+    changed = [rel for rel, hsh in after.items() if before.get(rel) != hsh and rel != HOST
+               and (only is None or only.match(rel))]
     files = {rel: (WORK / rel).read_bytes() for rel in changed}
     if any(r.startswith("live/bots/") for r in files):
         try:
@@ -318,26 +337,39 @@ def _publish_changes(st, before, kind, msg):
 def light(st, refresh_first=True):
     """The continuous layer: every bot's health + the manager agent."""
     t0 = time.time()
-    if refresh_first:
-        refresh(st)
+    busy = _S["smart_running"]                # a smart agent is running: no refresh under it, publish only own files
+    if refresh_first and not busy:
+        with _REFRESH:
+            refresh(st)
     before = snapshot()
-    run(st, ["-m", "agents.health"], timeout=900, logname="health.log")
-    run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log")
-    run(st, ["-m", "agents.builder"], timeout=300, logname="builder.log")    # the decisions into the bots, at once
-    run(st, ["-m", "agents.watch"], timeout=300, logname="watch.log")        # every change followed, bad ones back
-    run(st, ["-m", "agents.builder"], timeout=300, logname="builder2.log")   # a reverted card out of the bot now
+    kw = {"track": False}
+    run(st, ["-m", "agents.health"], timeout=900, logname="health.log", **kw)
+    run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log", **kw)
+    run(st, ["-m", "agents.builder"], timeout=300, logname="builder.log", **kw)    # the decisions into the bots, at once
+    run(st, ["-m", "agents.watch"], timeout=300, logname="watch.log", **kw)        # every change followed, bad ones back
+    run(st, ["-m", "agents.builder"], timeout=300, logname="builder2.log", **kw)   # a reverted card out of the bot now
     st["last_error"], st["errors_in_row"] = None, 0
-    n = _publish_changes(st, before, "light", "Agents on the bots' computer: health")
+    n = _publish_changes(st, before, "light", "Agents on the bots' computer: health", only=LIGHT_OWN if busy else None)
     _S["light"] = time.time()
     _S["log"](f"agents (continuous layer) done in {time.time() - t0:.0f}s, {n} files published")
 
 
 def smart(st):
-    """The smart layer: every bot's agent in turn, each published as it ends; the continuous layer keeps its
-    10 minutes in between (between two agents)."""
+    """The smart layer: every bot's agent in turn, each published as it ends. The continuous layer runs in its own
+    thread meanwhile, every 10 minutes, and never waits for an agent (12.11.2026: a 2-hour agent run held health,
+    the manager, the builder and the watch back for 2 hours)."""
     log = _S["log"]
     t0 = time.time()
-    refresh(st)
+    with _REFRESH:
+        refresh(st)
+        _S["smart_running"] = True
+    try:
+        return _smart(st, log, t0)
+    finally:
+        _S["smart_running"] = False
+
+
+def _smart(st, log, t0):
     try:
         plan = json.loads((WORK / "data/agents/plan.json").read_text(encoding="utf-8")).get("pc", {})
     except Exception:  # noqa: BLE001
@@ -348,11 +380,6 @@ def smart(st):
         mins_all[name] = mins
         if mins <= 0:
             continue
-        if time.time() - _S["light"] >= LIGHT_EVERY:
-            try:
-                light(st, refresh_first=False)
-            except Exception as e:  # noqa: BLE001
-                log(f"continuous layer failed: {e}")
         before = snapshot()
         try:
             run(st, args + ["--minutes", str(mins)], timeout=int(mins * 60 + 3600), logname=f"agent_{name}.log")
@@ -366,12 +393,9 @@ def smart(st):
             log(f"publishing {name} failed: {e}")
     before = snapshot()
     run(st, ["-m", "agents.portfolio_check"], timeout=600, logname="portfolio_check.log")   # the whole bots, as they are
-    run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log")
-    run(st, ["-m", "agents.builder"], timeout=300, logname="builder.log")
-    host_doc(st, "smart")                                # stamps smart_at
+    host_doc(st, "smart")                                # stamps smart_at (the manager / builder: the continuous layer)
     st["last_error"], st["errors_in_row"] = None, 0
     n = _publish_changes(st, before, "smart", "Agents on the bots' computer: smart layer")
-    _S["light"] = time.time()
     log(f"agents (smart layer) done in {time.time() - t0:.0f}s, {n} files published, {len(errs)} agents failed")
 
 
@@ -391,11 +415,12 @@ def loop(log=print, enabled=lambda: True):
         _S["smart"] = min(_S["smart"], time.time() - SMART_EVERY + 15 * 60)
         st["agents_set"] = names
         _save(st)
+    threading.Thread(target=light_loop, args=(st, enabled), daemon=True).start()
     while True:
         try:
             if enabled():
                 now = time.time()
-                kind = "smart" if now - _S["smart"] >= SMART_EVERY else "light" if now - _S["light"] >= LIGHT_EVERY else None
+                kind = "smart" if now - _S["smart"] >= SMART_EVERY else None
                 if kind:
                     if kind == "smart":
                         _S["smart"] = time.time()           # every 4 hours from start to start
@@ -417,6 +442,24 @@ def loop(log=print, enabled=lambda: True):
                 except Exception:  # noqa: BLE001
                     pass
         time.sleep(30)
+
+
+def light_loop(st, enabled):
+    """The continuous layer, every 10 minutes, in its own thread (never waits for a smart agent)."""
+    log = _S["log"]
+    while True:
+        try:
+            if enabled() and time.time() - _S["light"] >= LIGHT_EVERY:
+                try:
+                    light(st)
+                finally:
+                    _S["light"] = time.time()
+        except Exception as e:  # noqa: BLE001
+            st["last_error"] = f"{time.strftime('%d.%m %H:%M')} {e}"[:400]
+            st["errors_in_row"] = st.get("errors_in_row", 0) + 1
+            _save(st)
+            log(f"continuous layer failed: {e}\n{traceback.format_exc()[-600:]}")
+        time.sleep(20)
 
 
 def _ts(s):

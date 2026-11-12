@@ -61,7 +61,13 @@ def mults(bot):
 def exp(bot, fam, combo):
     from agent_portfolio import stale_source
     d = _read(ROOT / "reports" / "agents" / bot / "exp" / f"{fam}_{combo.replace('|', '_').replace('/', '-')}.json")
-    return None if stale_source(d) else d
+    if stale_source(d):
+        return None
+    if d and d.get("tr"):
+        from agent_portfolio import tr_ok
+        if not tr_ok(d):          # trades stored in the old, 1000x too coarse minutes: unknown until run again
+            d = {**d, "tr": {}}
+    return d
 
 
 def current_trades(bot, combo, cfg):

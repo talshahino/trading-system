@@ -179,6 +179,16 @@ def variant_stats(t):
             "erosion": K.erosion(t["time"], t["r"]) if len(t) >= 20 else None}
 
 
+def tr_ok(d):
+    """The stored 2026 trades are there and in real minutes (before 12.11.2026 noon they were stored 1000x too coarse:
+    pandas 3 keeps times in microseconds, and those files must be run again)."""
+    tr = d.get("tr")
+    if not isinstance(tr, dict):
+        return False
+    rows = [x for v in tr.values() for x in (v or [])[:1]]
+    return all(x[0] > 20_000_000 for x in rows)          # 2008 onwards in minutes since 1970
+
+
 def trades_2026(t):
     """Compact 2026 trades: [entry minute, exit minute, direction, R] (minutes since 1970, UTC)."""
     if t is None or t.empty:
@@ -252,7 +262,7 @@ def experiments(bot, budget_s, where):
         for fam in FAMILIES:
             age = st.age_days(fam, combo)
             d = st.get(fam, combo) or {}
-            if age >= RERUN_DAYS or (d.get("variants") and "tr" not in d):    # (12.11.2026: trades for the whole-bot check)
+            if age >= RERUN_DAYS or (d.get("variants") and not tr_ok(d)):    # (12.11.2026: trades for the whole-bot check)
                 todo.append((0 if age == 999 or combo in fixing_ else 1, fam, -age, sym, combo))
             elif d.get("variants") and legacy_tr(d):                         # trades stored in 1000-minute steps
                 todo.append((2, fam, -age, sym, combo))

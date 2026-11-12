@@ -6,8 +6,8 @@ exactly a setting is built here at once, on the bots' computer, right after the 
   bots 1-4, 7   exits / filters cards -> live/bots/<bot>.json "plans" (target, stop, limit entry, market filter - the
                 variant the agent tested, run by live/runner.py / live/news_bot.py as is)
   bots 1-4      a scout strategy approved for the bot -> added to the bot's combos at the bot's risk
-An undo in the app takes it out again at the next run. What is code (bots 5-6 knobs, bot 7 new methods) stays for the
-bot's nightly agent; information cards have nothing to build.
+An undo in the app takes it out again at the next run. Bot 5's gap-method tracks ("tal_tracks", 13.11.2026) are settings too.
+What is code (bot 7 new methods, new rules in the method itself) stays for the bot's nightly agent; information cards have nothing to build.
 The bots' computer installs the changed live/bots/*.json about 10 minutes later (the bots restart, open trades stay).
 Every build / revert is written in data/agents/replies.json under the card ("built": "auto"), so the nightly agents
 don't build it twice.
@@ -65,10 +65,20 @@ def buildable(c):
             and str(ch.get("knob", "")).split("@")[0] in TRACK_KNOBS and "to" in ch:
         return {"bot": bot, "combo": f"OWN|{ch['track']}", "family": "track", "track": ch["track"],
                 "knob": str(ch["knob"]).split("@")[0], "to": ch["to"]}
+    if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "ONE_PER_SIDE":
+        return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_one_per_side", "to": bool(ch.get("to"))}
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") and str(ch.get("knob", "")).startswith("RISK") \
             and ch.get("to") is not None:
         return {"bot": bot, "combo": f"{'OWN' if bot == 'bot5' else 'FUT'}|{ch['track']}", "family": "risk",
                 "track": ch["track"], "to": float(ch["to"])}
+    # bot 5 (13.11.2026): the gap method's tracks are settings too ("tal_tracks" in live/bots/bot5.json) - a card on a
+    # pair that already runs replaces that track's rules, a card on a new pair adds a track at the gap tracks' risk
+    if bot == "bot5" and c.get("kind") in ("new", "improve") and ch.get("method") == "tal_gap" and ch.get("pair") \
+            and isinstance(ch.get("cfg"), dict):
+        hi, lo = ch["pair"].split("/")
+        from agents import tal_gap as TG
+        if any(p[0] == hi and p[1] == lo for p in TG.PAIRS):
+            return {"bot": bot, "combo": f"TAL|{ch['pair']}", "family": "tal5", "pair": [hi, lo], "cfg": ch["cfg"]}
     if bot == "bot6" and c.get("kind") in ("new", "improve") and ch.get("method") == "tal_gap" and ch.get("pair") and ch.get("cfg"):
         hi, lo = ch["pair"].split("/")
         from agents import tal_gap as TG
@@ -107,6 +117,10 @@ def describe(b):
         return f"מסלול {b['track']}: {b['knob']} = {b['to']}"
     if b["family"] == "risk":
         return f"מסלול {b['track']}: סיכון {b['to'] * 100:g}% לעסקה"
+    if b["family"] == "flag":
+        return "שיטת הגאפ: מסלול לא נכנס למכשיר ולכיוון שמסלול אחר כבר מחזיק" if b["to"] else "שיטת הגאפ: בלי הכלל נגד סיכון כפול"
+    if b["family"] == "tal5":
+        return f"שיטת הגאפ, מסלול {b['pair'][0]} / {b['pair'][1]}: " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())
     if b["family"] == "tal":
         return f"שיטת הגאפ: {b['pair'][0]} / {b['pair'][1]}, " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())
     if b["family"] == "add":
@@ -123,6 +137,25 @@ def describe(b):
 
 
 def apply(cfg, b, card_id):
+    if b["family"] == "flag":
+        cfg.setdefault("changes", {})[card_id] = {"family": "flag", "key": b["key"], "before": cfg.get(b["key"], "__none__")}
+        cfg[b["key"]] = b["to"]
+        return
+    if b["family"] == "tal5":
+        tt = cfg.setdefault("tal_tracks", {})
+        trk = next((k for k, v in tt.items() if list(v.get("pair") or [])[:2] == b["pair"]), None)
+        new_trk = trk is None
+        if new_trk:
+            trk = "t" + b["pair"][0].rstrip("m") + "_" + b["pair"][1].rstrip("m")
+        rk = cfg.setdefault("risk", {})
+        cfg.setdefault("changes", {})[card_id] = {"family": "tal5", "track": trk,
+                                                  "before": "__none__" if new_trk else json.loads(json.dumps(tt[trk])),
+                                                  "risk_before": rk.get(trk, "__none__")}
+        tt[trk] = {"pair": list(b["pair"]), "cfg": dict(b["cfg"])}
+        if new_trk:
+            others = [float(v) for k, v in rk.items() if k in tt and k != trk]
+            rk[trk] = min(others) if others else 0.004      # the gap tracks' risk now (a new pair is not stronger)
+        return
     if b["family"] in ("track", "risk", "tal"):
         # the value before is kept with the card, so an undo / a revert puts it back exactly
         ch = cfg.setdefault("changes", {})
@@ -176,6 +209,12 @@ def revert(cfg, card_id):
         elif c["family"] == "risk":
             rk = cfg.setdefault("risk", {})
             rk.pop(c["track"], None) if c["before"] == "__none__" else rk.__setitem__(c["track"], c["before"])
+        elif c["family"] == "flag":
+            cfg.pop(c["key"], None) if c["before"] == "__none__" else cfg.__setitem__(c["key"], c["before"])
+        elif c["family"] == "tal5":
+            tt, rk = cfg.setdefault("tal_tracks", {}), cfg.setdefault("risk", {})
+            tt.pop(c["track"], None) if c["before"] == "__none__" else tt.__setitem__(c["track"], c["before"])
+            rk.pop(c["track"], None) if c.get("risk_before") == "__none__" else rk.__setitem__(c["track"], c["risk_before"])
         else:
             cfg["tal"] = c["before"]
         return True

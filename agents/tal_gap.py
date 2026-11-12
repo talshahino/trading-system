@@ -551,9 +551,27 @@ def write_results(bot, pairs, answers, world, progress):
     return doc
 
 
-def cards(bot, pairs, other=None, other_name="בוט 5", risk_pct=None):
-    """A 'new' card per pair whose train-chosen variant made money on the unseen period."""
+def _find(x, cfg):
+    """The row of a pair's results that is exactly this configuration (a one-knob variant, the base or a searched one)."""
+    want = vid(_norm(dict(cfg)))
+    for v in x.get("variants") or []:
+        if v["knob"] == "search":
+            if v["val"] == want:
+                return v
+            continue
+        c = dict(BASE) if v["knob"] == "base" else dict(BASE, **{v["knob"]: v["val"]})
+        if vid(_norm(c)) == want:
+            return v
+    return None
+
+
+def cards(bot, pairs, other=None, other_name="בוט 5", risk_pct=None, live=None):
+    """A 'new' card per pair whose train-chosen variant made money on the unseen period. live = {pair: cfg} of the
+    tracks the bot trades now (13.11.2026): such a pair's card is an 'improve' card with what runs now as its baseline,
+    so the manager approves it only if 2026 is better per trade AND in total (agentkit.judge); no card when the chosen
+    configuration is already the one running."""
     out = []
+    live = live or {}
     for pn, x in pairs.items():
         ch = x.get("chosen")
         if not ch or x["done"] < x["planned"]:
@@ -561,6 +579,15 @@ def cards(bot, pairs, other=None, other_name="בוט 5", risk_pct=None):
         u = ch["unseen"]
         if u["mean"] is None or u["mean"] <= 0:
             continue
+        cur, base_row = live.get(pn), None
+        # a new pair must add to the bot as a whole, not only risk (tal_thinking.md principle 11; 13.11.2026: 5m/1m lost
+        # on the train period in every version, 4h/5m earned +0.007R a trade on 2026 - both were approved and add nothing)
+        if live and cur is None and ((ch["train"].get("mean") or 0) <= 0 or (u.get("t") or 0) < 1.0):
+            continue
+        if cur is not None:
+            if vid(_norm(dict(cur))) == vid(_norm(dict(ch["cfg"]))):
+                continue
+            base_row = _find(x, cur)
         try:
             ob = ((other or {}).get("pairs") or {}).get(pn, {}).get("chosen") or {}
             om = (ob.get("unseen") or {}).get("mean")
@@ -575,7 +602,12 @@ def cards(bot, pairs, other=None, other_name="בוט 5", risk_pct=None):
                 f"נבחר על 2024-2025, מוצג על 2026: {u['mean']:+.2f}R לעסקה, {u['n']} עסקאות, {u['win']}% הצלחה, "
                 f"{ch['target_pct']}% הגיעו ליעד, יחס חציוני {ch['rr']}, עלות {ch['cost_r']}R{same}")
         what += f" · סה\"כ על 2026: {u['mean'] * u['n']:+.1f}R"
-        c = K.card(bot, "new", f"שיטת הגאפ של טל · {x['name']}", what, ch["train"], u, whole=ch["whole"],
+        if cur is not None:
+            bu = (base_row or {}).get("unseen") or {}
+            what += (f" · מה שרץ היום בזוג הזה: {bu['mean']:+.2f}R לעסקה, {bu['n']} עסקאות, סה\"כ {bu['mean'] * bu['n']:+.1f}R על 2026"
+                     if bu.get("mean") is not None else " · מה שרץ היום בזוג הזה עוד לא נבדק באותה בדיקה")
+        c = K.card(bot, "new" if cur is None else "improve", f"שיטת הגאפ של טל · {x['name']}", what, ch["train"], u, whole=ch["whole"],
+                   baseline=None if cur is None else ((base_row or {}).get("unseen") or {"mean": None, "n": 0}),
                    halves_=ch["halves"], cost_r=ch["cost_r"], tested=len(PAIRS) * len(variants()), risk_pct=risk_pct,
                    neighbours={"values": [v["val"] for v in x["variants"] if v["knob"] == ch["knob"]],
                                "share_positive": round(np.mean([(v["unseen"]["mean"] or -1) > 0 for v in x["variants"]]), 2)},
@@ -583,6 +615,76 @@ def cards(bot, pairs, other=None, other_name="בוט 5", risk_pct=None):
                    change={"method": "tal_gap", "pair": pn, "cfg": cfg, "track": f"tal_gap|{pn}", "knob": "cfg"})
         out.append(c)
     return out
+
+
+# ---------------------------------------------------------------- the bot as a whole (13.11.2026)
+def portfolio(idx, symbols, out_dir, live):
+    """All the tracks the bot runs together (live = {track: (pair_name, cfg)}), the way the account takes them: the
+    total time-weighted R, the worst day and the deepest fall (in R of one trade), on 2024-2025 and on 2026 - and the
+    same with one rule against doubled risk: a track does not enter a symbol in a direction another track already holds
+    (12.11.2026: t15_1 and t15_5 took the same US500 short at 15:51, both stopped - one idea, twice the loss).
+    Returns None while a track's runs are missing."""
+    out_dir, rows = Path(out_dir), []
+    for trk, (pn, cfg) in live.items():
+        fs = [v for v in idx.values() if v["pair"] == pn and _norm(dict(v["cfg"])) == _norm(dict(cfg)) and v["sym"] in symbols]
+        if {v["sym"] for v in fs} != set(symbols):
+            return None
+        for v in fs:
+            t = pd.read_csv(out_dir / v["file"])
+            t["trk"], t["sym"] = trk, v["sym"]
+            rows.append(t)
+    if not rows:
+        return None
+    t = pd.concat(rows, ignore_index=True)
+    t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
+    t["out"] = t["time"] + pd.to_timedelta(t["mins"].fillna(0).astype(float) + 1, unit="min")
+    t = t.sort_values(["time", "trk"]).reset_index(drop=True)
+    keep, held = [], {}
+    for i, x in enumerate(t.itertuples()):
+        k = (x.sym, int(x.dir))
+        held[k] = [e for e in held.get(k, []) if e > x.time]
+        keep.append(not held[k])
+        if keep[-1]:
+            held[k].append(x.out)
+    t["solo"] = keep
+
+    def stats(d):
+        out = {}
+        for name, part in (("train", d[d["time"] < SPLIT]), ("unseen", d[d["time"] >= SPLIT])):
+            if part.empty:
+                out[name] = None
+                continue
+            w = K.weights(part["time"])
+            day = part.groupby(part["time"].dt.strftime("%Y-%m-%d"))["r"].sum()
+            cum = part["r"].cumsum()
+            out[name] = {"n": int(len(part)), "total_w": round(float(np.sum(w * part["r"].to_numpy(float))), 1),
+                         "total": round(float(part["r"].sum()), 1), "worst_day": round(float(day.min()), 2),
+                         "days_below_3r": int((day <= -3).sum()), "max_fall": round(float((cum.cummax() - cum).max()), 1)}
+        return out
+    doubled = t[~t["solo"]]
+    return {"tracks": {k: v[0] for k, v in live.items()}, "now": stats(t), "one_per_side": stats(t[t["solo"]]),
+            "doubled": {"n": int(len(doubled)), "r": round(float(doubled["r"].sum()), 1),
+                        "unseen_n": int((doubled["time"] >= SPLIT).sum()),
+                        "unseen_r": round(float(doubled.loc[doubled["time"] >= SPLIT, "r"].sum()), 1)},
+            "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
+
+
+def portfolio_card(bot, pf, risk_pct):
+    """A card for the rule against doubled risk, only when it lowers the risk without lowering 2026's total."""
+    a, b = pf["now"], pf["one_per_side"]
+    if not a.get("unseen") or not b.get("unseen") or not a.get("train"):
+        return None
+    au, bu, at, bt = a["unseen"], b["unseen"], a["train"], b["train"]
+    better_risk = bu["max_fall"] <= au["max_fall"] and bu["worst_day"] >= au["worst_day"] and bt["max_fall"] <= at["max_fall"]
+    if not better_risk or bu["total"] < au["total"] or bt["total_w"] < at["total_w"] * 0.95:
+        return None
+    what = (f"כל מסלולי שיטת הגאפ יחד, כמו שהחשבון לוקח אותם: היום מסלול שני נכנס גם כשמסלול אחר כבר מחזיק את אותו מכשיר "
+            f"באותו כיוון (12.11: 15/דקה ו־15/5 לקחו את אותה מכירה ב־US500 ושתיהן נעצרו). הכלל: מסלול לא נכנס למכשיר ולכיוון "
+            f"שמסלול אחר כבר מחזיק. 2026: סה\"כ {au['total']:+.1f}R ← {bu['total']:+.1f}R, היום הגרוע {au['worst_day']:+.1f}R ← "
+            f"{bu['worst_day']:+.1f}R, הירידה הגדולה {au['max_fall']:.1f}R ← {bu['max_fall']:.1f}R. 2024-2025: ירידה {at['max_fall']:.1f}R ← "
+            f"{bt['max_fall']:.1f}R. עסקאות כפולות שיורדות: {pf['doubled']['n']} ({pf['doubled']['r']:+.1f}R).")
+    return K.card(bot, "risk", "שיטת הגאפ: בלי סיכון כפול על אותו רעיון", what, None, None, tested=1, risk_pct=risk_pct,
+                  detail=pf, change={"track": "tal_all", "knob": "ONE_PER_SIDE", "from": False, "to": True})
 
 
 # ---------------------------------------------------------------- live (12.11.2026): the same rules on the running bot

@@ -326,8 +326,21 @@ def main():
         pairs, answers = TG.summarize(tidx, TAL_SYMBOLS, TAL_DIR)
         planned = len(TG.PAIRS) * len(TG.variants()) * len(TAL_SYMBOLS)
         doc = TG.write_results(BOT, pairs, answers, TAL_WORLD, [len(tidx), planned])
-        cards += TG.cards(BOT, pairs, doc.get("bot6"), "בוט 6", risk_pct=0.4)
+        # what bot 5 trades now (live/bots/bot5.json "tal_tracks", 13.11.2026): a card on a running pair carries it as
+        # the baseline, so a version that earns less on 2026 in total is not approved over it
+        s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
+        live5 = {f"{v['pair'][0]}/{v['pair'][1]}": v["cfg"] for v in (s5.get("tal_tracks") or {}).values()}
+        rk5 = [float(s5["risk"][k]) for k in (s5.get("tal_tracks") or {}) if k in (s5.get("risk") or {})]
+        cards += TG.cards(BOT, pairs, doc.get("bot6"), "בוט 6", risk_pct=round(min(rk5) * 100, 3) if rk5 else 0.4, live=live5)
         tal = {"done": len(tidx), "planned": planned}
+        pf = TG.portfolio(tidx, TAL_SYMBOLS, TAL_DIR, {k: (f"{v['pair'][0]}/{v['pair'][1]}", v["cfg"])
+                                                       for k, v in (s5.get("tal_tracks") or {}).items()})
+        if pf:
+            doc["bot5"]["portfolio"] = pf
+            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            pc = TG.portfolio_card(BOT, pf, round(min(rk5) * 100, 3) if rk5 else 0.4)
+            if pc:
+                cards.append(pc)
     except Exception as e:  # noqa: BLE001
         print("tal gap summary failed:", e)
     for c in cards:

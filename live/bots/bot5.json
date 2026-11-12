@@ -1,7 +1,7 @@
 {
  "name": "bot5",
  "label": "בוט 5 - סקאלפינג (וירטואלי)",
- "note": "virtual bot (live/watch_own.py). The settings it trades with; the builder (agents/builder.py) writes the manager's approved cards here and the bot reads them within a minute. 'tracks' = the gap tracks' rules (agents/own_gaps.py knobs), 'risk' = share of the balance per trade.",
+ "note": "virtual bot (live/watch_own.py). The settings it trades with; the builder (agents/builder.py) writes the manager's approved cards here and the bot reads them within a minute. 'tracks' = the gap tracks' rules (agents/own_gaps.py knobs), 'risk' = share of the balance per trade. 'tal_tracks' (13.11.2026) = the user's gap method's tracks the virtual account counts: {track: {pair: [high, low], cfg}}, risk per track in 'risk'.",
  "tracks": {
   "v5": {
    "STOP": "gap",
@@ -21,7 +21,85 @@
  },
  "risk": {
   "v5": 0.004,
-  "v1m": 0.00075
+  "v1m": 0.00075,
+  "t15_1": 0.0028,
+  "t1h_15": 0.0028,
+  "t4h_1h": 0.0028,
+  "t4h_15": 0.0028,
+  "t15_5": 0.0028
  },
- "changes": {}
+ "changes": {},
+ "tal_tracks": {
+  "t15_1": {
+   "pair": [
+    "15m",
+    "1m"
+   ],
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 1.0,
+    "EXPIRY": 48,
+    "PROT": "shock"
+   }
+  },
+  "t1h_15": {
+   "pair": [
+    "1h",
+    "15m"
+   ],
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 0.5,
+    "EXPIRY": 48,
+    "PROT": "none"
+   }
+  },
+  "t4h_1h": {
+   "pair": [
+    "4h",
+    "1h"
+   ],
+   "cfg": {
+    "GBODY": 0.0,
+    "MIN_GAP": 0.0,
+    "SW": 3,
+    "MIN_RR": 1.0,
+    "EXPIRY": 120,
+    "PROT": "none"
+   }
+  },
+  "t4h_15": {
+   "pair": [
+    "4h",
+    "15m"
+   ],
+   "cfg": {
+    "GBODY": 0.0,
+    "MIN_GAP": 0.0,
+    "SW": 5,
+    "MIN_RR": 0.0,
+    "EXPIRY": 120,
+    "PROT": "cal15",
+    "EXIT": "be70"
+   }
+  },
+  "t15_5": {
+   "pair": [
+    "15m",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 1.0,
+    "EXPIRY": 120,
+    "PROT": "none"
+   }
+  }
+ }
 }

@@ -101,6 +101,26 @@ TAL5_NAME = {"t15_1": "15 דק' / דקה", "t1h_15": "שעה / 15 דק'", "t4h_1
              "t4h_15": "4 שעות / 15 דק' (סטופ לכניסה ב־70%)"}
 TAL5_TF = {"t15_1": "15Min", "t1h_15": "1Hour", "t4h_1h": "4Hour", "t15_5": "15Min", "t4h_15": "4Hour15"}
 RISK_TAL5 = 0.004 * 0.7
+# 13.11.2026 (bot 5's smart agent): the tracks above are also settings in live/bots/bot5.json ("tal_tracks": {track:
+# {"pair": [high, low], "cfg": {...}}}, risk per track in "risk"), so an approved card of the gap method is built by
+# agents/builder.py at once, like bot 6. A file that is missing or odd keeps the tracks in the code.
+TAL5_RISK = {}
+TAL5_ONE = [False]     # "tal_one_per_side": a track does not enter a symbol / direction another track holds (off until approved)
+_TAL5_CODE = {k: (p, dict(c)) for k, (p, c) in TAL5.items()}
+
+
+def tal5_name(trk):
+    if trk in TAL5_NAME:
+        return TAL5_NAME[trk]
+    p = (TAL5.get(trk) or _TAL5_CODE.get(trk) or ((trk, trk),))[0]
+    return f"{TG.TF_HE.get(p[0], p[0])} / {TG.TF_HE.get(p[1], p[1])}"
+
+
+def tal5_tf(trk):
+    if trk in TAL5_TF:
+        return TAL5_TF[trk]
+    p = (TAL5.get(trk) or ((trk, ""),))[0]
+    return f"{TF_COMBO.get(p[0], p[0])}{p[1]}"
 # The settings bots 5 and 6 trade with live in live/bots/bot5.json and bot6.json (12.11.2026: the virtual bots are run
 # as if they were real accounts - an approved change goes in at once, like bots 1-4). Read every cycle; a file that is
 # missing or odd keeps the values above.
@@ -131,6 +151,24 @@ def load_settings():
                 rk = d.get("risk") or {}
                 RISK_V5 = float(rk.get("v5", RISK_V5)) if 0 <= float(rk.get("v5", RISK_V5)) <= 0.02 else RISK_V5
                 RISK_V1M = float(rk.get("v1m", RISK_V1M)) if 0 <= float(rk.get("v1m", RISK_V1M)) <= 0.02 else RISK_V1M
+                tt = d.get("tal_tracks")
+                if isinstance(tt, dict) and tt:
+                    pairs_ = {(p_[0], p_[1]): tuple(p_) for p_ in TG.PAIRS}
+                    new_ = {}
+                    for trk, v in tt.items():
+                        pr = pairs_.get(tuple((v or {}).get("pair") or [])[:2])
+                        cf = (v or {}).get("cfg")
+                        if pr and isinstance(cf, dict) and all(k in cf for k in ("GBODY", "MIN_GAP", "SW", "MIN_RR", "EXPIRY", "PROT")):
+                            new_[str(trk)] = (pr, dict(cf))
+                    if new_:
+                        TAL5.clear()
+                        TAL5.update(new_)
+                TAL5_ONE[0] = bool(d.get("tal_one_per_side", False))
+                TAL5_RISK.clear()
+                for trk in TAL5:
+                    v = rk.get(trk, rk.get("tal"))
+                    if v is not None and 0 <= float(v) <= 0.02:
+                        TAL5_RISK[trk] = float(v)
             else:
                 tal = d.get("tal") or {}
                 if tal.get("pair") and tuple(tal["pair"]) in {tuple(p_) for p_ in TG.PAIRS}:
@@ -697,12 +735,17 @@ def main():
                     if rec["status"] in ("open", "closed") and "risk_usd" not in rec and "skipped" not in rec:
                         bal, day = balance(), prague_day(rec["time"])
                         start = bal - day_pnl(day)
+                        side_ = TAL5_ONE[0] and any(o.get("tal") and o.get("tal") != rec["tal"] and o.get("risk_usd")
+                                                    and o.get("status") == "open" and o.get("symbol") == rec["symbol"]
+                                                    and o.get("dir") == rec["dir"] for o in trades.values())
                         if acc.get("breached"):
                             rec["skipped"] = "breach"
+                        elif side_:
+                            rec["skipped"] = "side"          # another track already holds this symbol and direction
                         elif day_pnl(day) <= -DAILY_STOP * start:
                             rec["skipped"] = "daily"
                         else:
-                            rec["risk_usd"] = round(bal * RISK_TAL5, 2)
+                            rec["risk_usd"] = round(bal * TAL5_RISK.get(rec["tal"], RISK_TAL5), 2)
                     if rec.get("risk_usd"):
                         if rec["status"] == "closed" and rec.get("r") is not None:
                             rec["pnl"] = round(rec["r"] * rec["risk_usd"], 2)
@@ -715,7 +758,7 @@ def main():
                         elif rec["status"] == "open" and rec.get("r_now") is not None:
                             rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
-                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (f" · שיטת הגאפ {TAL5_NAME[rec['tal']]}" if rec.get("tal") else " · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
+                    side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (f" · שיטת הגאפ {tal5_name(rec['tal'])}" if rec.get("tal") else " · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
                     # notifications (user, 10.11.2026: "I'm bombarded"): only trades of the virtual account - opened and closed.
                     # Waiting setups and touched-but-skipped ones stay in the app, without a push.
                     quiet = not rec.get("risk_usd")
@@ -817,12 +860,12 @@ def main():
             del ec[:-4000]
         acc.setdefault("started", now_iso)
         pip = lambda n: 0.01 if n.endswith("JPY") else 0.0001 if (len(n) == 6 and n.isalpha()) else 1.0  # noqa: E731
-        combo = lambda n, t=None: (f"TAL|{TAL5_TF[t['tal']]}|{n}" if (t or {}).get("tal")  # noqa: E731
+        combo = lambda n, t=None: (f"TAL|{tal5_tf(t['tal'])}|{n}" if (t or {}).get("tal")  # noqa: E731
                                    else f"OWN|{'1Min' if (t or {}).get('v1m') else '15Min'}|{n}")
         counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
         state.update({"account": "וירטואלי · שיטת הגאפ של טל", "server": f"צפייה בלבד · בלי כסף · סיכון {RISK_TAL5 * 100:.2f}% לעסקה", "initial": acc["initial"], "risk": RISK_TAL5,
                       "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
-                      "halted_until": None, "combos": [f"TAL|{TAL5_TF[k]}|{n}" for k in TAL5 for n in TAL5_SYMBOLS], "started": acc["started"], "withdrawals": [],
+                      "halted_until": None, "combos": [f"TAL|{tal5_tf(k)}|{n}" for k in TAL5 for n in TAL5_SYMBOLS], "started": acc["started"], "withdrawals": [],
                       "equity_curve": ec, "lows": {},
                       "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                                      "combo": combo(t["symbol"], t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],

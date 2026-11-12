@@ -1,0 +1,147 @@
+{
+ "bot": "bot4",
+ "updated": "2026-11-12T01:03:29+00:00",
+ "cards": [
+  {
+   "bot": "bot4",
+   "kind": "info",
+   "title": "GH04|1Hour|EURJPY: נשחק ואין תיקון הוגן",
+   "what": "ב־2026 +0.02R לעסקה על 52 עסקאות, בחצי השנה האחרונה -0.12R (32). אף וריאנט שנבחר על 2025 לא מתקן (הטובים בחצי השנה האחרונה הם בכניסה בלימיט עם 11 עסקאות - מזל). בדמו עסקה אחת -1R. המלצה: להשאיר ולעקוב; אם הבדיקה היומית תמליץ להסיר - זה יקרה מעצמו.",
+   "train": {
+    "n": 38,
+    "eff_n": 38.0,
+    "mean": 0.192,
+    "t": 1.14,
+    "win": 58.2
+   },
+   "unseen": {
+    "n": 52,
+    "eff_n": 52.0,
+    "mean": 0.0157,
+    "t": 0.1,
+    "win": 46.0
+   },
+   "whole": {
+    "n": 90,
+    "eff_n": 89.8,
+    "mean": 0.0866,
+    "t": 0.75,
+    "win": 50.9
+   },
+   "halves": [
+    0.1188,
+    0.0611
+   ],
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "kind": "review",
+    "combo": "GH04|1Hour|EURJPY",
+    "next": "follow"
+   },
+   "detail": {
+    "erosion": {
+     "recent_n": 32,
+     "recent_mean": -0.1186,
+     "before_n": 58,
+     "before_mean": 0.205,
+     "slope_per_year": -0.2667,
+     "fading": true
+    }
+   },
+   "made": "2026-11-12T01:03:29+00:00",
+   "id": "21f9396db80b",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
+  {
+   "bot": "bot4",
+   "kind": "info",
+   "title": "SE01|1Hour|CSCO: נשחק אבל עדיין חיובי",
+   "what": "חצי השנה האחרונה -0.00R על 125 עסקאות, לפני זה +0.24R; 2026 כולה עדיין +0.11R (215), מבחן 3.32. אף וריאנט שנבחר על 2025 לא טוב ממנה ב־2026. המלצה: להשאיר; עדיין בלי עסקאות בדמו.",
+   "train": {
+    "n": 163,
+    "eff_n": 162.8,
+    "mean": 0.2191,
+    "t": 3.27,
+    "win": 59.4
+   },
+   "unseen": {
+    "n": 215,
+    "eff_n": 215.0,
+    "mean": 0.1095,
+    "t": 1.72,
+    "win": 55.3
+   },
+   "whole": {
+    "n": 378,
+    "eff_n": 377.2,
+    "mean": 0.1545,
+    "t": 3.32,
+    "win": 57.0
+   },
+   "halves": [
+    0.2234,
+    0.0927
+   ],
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "kind": "review",
+    "combo": "SE01|1Hour|CSCO",
+    "next": "follow"
+   },
+   "detail": {
+    "erosion": {
+     "recent_n": 125,
+     "recent_mean": -0.002,
+     "before_n": 253,
+     "before_mean": 0.2371,
+     "slope_per_year": -0.2073,
+     "fading": true
+    }
+   },
+   "made": "2026-11-12T01:03:29+00:00",
+   "id": "f8fc02f855d4",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
+  {
+   "bot": "bot4",
+   "kind": "info",
+   "title": "בוט 4: קרוב לבדיקה; 3 שינויים נבנו",
+   "what": "31 עסקאות: +0.11R לעסקה מול +0.13R בבדיקה. החריגה: FR08|5Min|SPCX -2.9R בעסקה אחת (החלקה - כבר מטופל בגודל העסקה). נבנו הלילה: BK05|15Min|EURUSD בלי יעד + לימיט 0.25R, BK05|1Hour|EURUSD יעד 1R + לימיט 0.5R, FR01|1Hour|EURUSD יעד 3R + סטופ x0.75. שלושתם גם עונים על 'היתרון נשחק': בחצי השנה האחרונה +0.24R, +0.24R, +0.01R לעסקה מול -0.04R, -0.01R, -0.11R היום.",
+   "train": null,
+   "unseen": {
+    "n": 31,
+    "eff_n": 31.0,
+    "mean": 0.1116,
+    "t": 0.66,
+    "win": 58.1
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "kind": "review",
+    "scope": "bot4",
+    "next": "follow"
+   },
+   "detail": {},
+   "made": "2026-11-12T01:03:29+00:00",
+   "id": "37fc01d7e3ea",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  }
+ ]
+}

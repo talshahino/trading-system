@@ -26,9 +26,14 @@ SLIP_TICKS = 1.0     # one tick lost per trade on average (stop exits, the sessi
 PLAN = "Pro $100K"
 INITIAL, TARGET, MAX_LOSS, DAILY_LOSS, MAX_MICROS, CONSISTENCY = 100_000.0, 6_000.0, 4_500.0, 1_500.0, 100, 0.5
 RISK_V5, RISK_V1M = 0.004, 0.0             # share of the balance risked per trade (set from the simulation)
+# the user's gap method, 1 hour / 5 minutes (card abb187377383, approved 12.11.2026): the only track since then
+RISK_TAL = 0.004
+TAL_PAIR = ("1h", "5m", 2)
+TAL_CFG = {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"}
+RISK = {"v5": 0.0, "v1m": 0.0, "tal": RISK_TAL}     # the old gap tracks are replaced by the method (12.11.2026)
 # the 1-minute track is stopped (card 9a0bc4200f6d, 12.11.2026): it loses in bot 6's world (backtest -0.08R, 2026 -0.04R)
 ROOM_USE = 0.9                              # open risk may use at most 90% of the room left to either limit
-VERSION = 2                 # 2 (10.11.2026): one name per gap - a fresh account
+VERSION = 3                 # 2 (10.11.2026): one name per gap; 3 (12.11.2026): the user's gap method - a fresh $100K account
 
 
 def session_masks(df):
@@ -88,14 +93,14 @@ class Account:
     def size(self, symbol, trk, entry, stop, t, open_recs):
         if self.a.get("breached"):
             return 0, "breach"
-        if (RISK_V5 if trk == "v5" else RISK_V1M) <= 0:
+        if RISK.get(trk, 0.0) <= 0:
             return 0, "off"                     # the track is stopped
         day = tday(t)
         bal = self.balance()
         room = min(bal - self.level(day), bal - (self.day_start(day) - DAILY_LOSS))
         room = ROOM_USE * room - sum(r.get("risk_usd") or 0 for r in open_recs)
         per = per_contract(symbol, entry, stop)
-        want = bal * (RISK_V5 if trk == "v5" else RISK_V1M)
+        want = bal * RISK.get(trk, 0.0)
         n = int(min(want, room) // per)
         n = min(n, MAX_MICROS - sum(r.get("n") or 0 for r in open_recs))
         if n < 1:
@@ -142,4 +147,4 @@ class Account:
                 "best_day": round(max(days.values()), 2) if days else 0.0,
                 "consistency_ok": bool(profit > 0 and days and max(days.values()) <= CONSISTENCY * profit),
                 "breached": self.a.get("breached"), "passed": self.a.get("passed"),
-                "risk_v5_pct": RISK_V5 * 100, "risk_v1m_pct": RISK_V1M * 100, "max_micros": MAX_MICROS}
+                "risk_v5_pct": RISK["v5"] * 100, "risk_v1m_pct": RISK["v1m"] * 100, "risk_tal_pct": RISK_TAL * 100, "max_micros": MAX_MICROS}

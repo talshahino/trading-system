@@ -416,3 +416,81 @@ def cards(bot, pairs, other=None, other_name="בוט 5", risk_pct=None):
                    change={"method": "tal_gap", "pair": pn, "cfg": cfg, "track": f"tal_gap|{pn}", "knob": "cfg"})
         out.append(c)
     return out
+
+
+# ---------------------------------------------------------------- live (12.11.2026): the same rules on the running bot
+def live_trades(D, pair, cfg, gcache=None):
+    """The method on the live 1-minute history in D (the last days): every gap of the high timeframe that is armed,
+    with its state now - pending (waiting for the touch, within EXPIRY), open, closed, or cancelled (expired /
+    no valid stop or target / below MIN_RR). Same rules as simulate(); one trade at a time per instrument.
+    Returns dicts: id_key, dir, status, entry, stop, target, rr, setup_t, time, exit_time, exit, reason, r, r_now."""
+    gcache = {} if gcache is None else gcache
+    htf, ltf, _ = pair
+    g = gaps(D, htf, cfg["GBODY"], cfg["MIN_GAP"], gcache)
+    hi_sw, lo_sw = D.swings(ltf, cfg["SW"])
+    ns, o1, h1, l1, c1 = D.ns, D.o1, D.h1, D.l1, D.c1
+    n1 = len(ns)
+    if not n1:
+        return []
+    exp_ns = int(cfg["EXPIRY"] * 3600 * 1e9)
+    ts = lambda q: pd.Timestamp(int(ns[q]), tz="UTC").isoformat()   # noqa: E731
+    out, busy = [], -1
+    for d, mid, near, far, made, armed in sorted(g, key=lambda x: x[5]):
+        key = f"tal|{int(d)}|g{pd.Timestamp(made, tz='UTC').strftime('%Y%m%d%H%M')}"
+        base = {"id_key": key, "dir": int(d), "setup_t": pd.Timestamp(armed, tz="UTC").isoformat(), "gap": [float(far), float(near)]}
+        q0 = int(np.searchsorted(ns, armed))
+        q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))
+        if q0 >= n1:
+            continue                                     # armed in the future of the data (should not happen)
+        seg = (l1[q0:q1] <= mid) if d > 0 else (h1[q0:q1] >= mid)
+        if not seg.any():
+            expired = armed + exp_ns <= ns[-1]
+            out.append(dict(base, status="cancelled" if expired else "pending", entry=float(mid), stop=None, target=None,
+                            reason="expired" if expired else None))
+            continue
+        f = q0 + int(np.argmax(seg))
+        if f < busy or D.late[f]:
+            out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None,
+                            reason="busy" if f < busy else "session"))
+            continue
+        px = min(mid, o1[f]) if d > 0 else max(mid, o1[f])
+        sw_st, sw_tg = (lo_sw, hi_sw) if d > 0 else (hi_sw, lo_sw)
+        s2 = _count_back(*sw_st, ns[f], px, d, -d)
+        t2 = _count_back(*sw_tg, ns[f], px, d, d)
+        if s2 is None or t2 is None:
+            out.append(dict(base, status="cancelled", entry=float(px), stop=None, target=None, reason="no swings"))
+            continue
+        stop = s2 - d * D.buf
+        risk = d * (px - stop)
+        if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
+            out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="rr"))
+            continue
+        cost_r = float(D.cost[f]) / risk
+        hs, ls = h1[f:], l1[f:]
+        st = (ls <= stop) if d > 0 else (hs >= stop)
+        tg = (hs >= t2) if d > 0 else (ls <= t2)
+        tg[0] = False
+        sh = D.shut[f:].copy()
+        sh[0] = False
+        big = n1 - f + 1
+        i_st = int(np.argmax(st)) if st.any() else big
+        i_tg = int(np.argmax(tg)) if tg.any() else big
+        i_sh = int(np.argmax(sh)) if sh.any() else big
+        i = min(i_st, i_tg, i_sh)
+        rec = dict(base, entry=float(px), stop=float(stop), target=float(t2), rr=round(d * (t2 - px) / risk, 2),
+                   cost_r=0.0, time=ts(f))
+        if i >= big:
+            rec.update(status="open", r_now=round(d * (c1[-1] - px) / risk - cost_r, 3))
+            busy = n1
+        else:
+            q = f + i
+            if i == i_st:
+                ex, why = ((min(stop, o1[q]) if d > 0 else max(stop, o1[q])) if i else stop), "stop"
+            elif i == i_tg:
+                ex, why = (max(t2, o1[q]) if d > 0 else min(t2, o1[q])), "target"
+            else:
+                ex, why = o1[q], "forced"
+            rec.update(status="closed", exit=float(ex), exit_time=ts(q), reason=why, r=round(d * (ex - px) / risk - cost_r, 4))
+            busy = q + 1
+        out.append(rec)
+    return out

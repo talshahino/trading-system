@@ -36,6 +36,7 @@ from agents import ftmo_costs as C  # noqa: E402
 from agents import ftmo_universe as U  # noqa: E402
 from agents import own_core as CORE  # noqa: E402
 from agents import own_gaps as OG  # noqa: E402
+from agents import tal_gap as TG  # noqa: E402
 from live import fut_account as FA  # noqa: E402
 from live import reporter as REP  # noqa: E402
 
@@ -282,42 +283,46 @@ FUT_WORD = {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפו
 
 
 def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
-    """Bot 6: the two gap tracks again, with the futures session (no entry from 15:45 New York, everything out at
-    16:05, nothing over the weekend), sized in micro contracts on the virtual FTMO Futures account."""
+    """Bot 6 (12.11.2026): the user's gap method on 1 hour / 5 minutes (agents/tal_gap.py, card abb187377383) - an
+    impulse on the hour chart, the gap between candle 1 and candle 3 that stayed open, a limit at its middle, the stop
+    2 ticks beyond the 2nd 5-minute swing beyond the entry, the target at the 2nd swing on the other side, no management.
+    With the futures session (no entry from 15:45 New York, everything out at 16:05, nothing over the weekend), sized
+    in micro contracts on the virtual FTMO Futures account. It replaced the scalping bot's old gap tracks."""
     shut, late = FA.session_masks(df)
-    f_stop, f_noent = stop_at | shut, noent | late
-    found = []
-    for trk, tfm, wait in (("v5", 15, pd.Timedelta(hours=OG.EXPIRY)), ("v1m", 1, pd.Timedelta(minutes=96))):
-        keep = (OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM)
-        try:
-            OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM = "gap", False, 0.10, 0.3, 0.9, tfm
-            for x in OG.run_gaps(name, df, cst, f_stop, f_noent, live=True, variant="f" + trk):
-                if x.get("status") == "pending" and pd.Timestamp(x["setup_t"]) < df.index[-1] - wait:
-                    continue
-                x["trk"] = trk
-                found.append(x)
-        finally:
-            OG.STOP, OG.DOMINANT, OG.V5_MAX_COST, OG.PART_FRAC, OG.PART_WAY, OG.TFM = keep
-    cutoff = df.index[-1] - pd.Timedelta(days=2)
+    tick = FA.SPEC[name][2]
+    D = TG.Data(name, df[["o", "h", "l", "c"]], np.full(len(df), tick), np.asarray(stop_at | shut, bool),
+                np.asarray(noent | late, bool), 2 * tick, {})
     contract = FA.SPEC[name][0]
-    for x in found:
-        if x["status"] == "cancelled" or pd.Timestamp(x.get("time") or x.get("setup_t")) < cutoff:
+    cutoff = (df.index[-1] - pd.Timedelta(days=2)).isoformat()
+    for x in TG.live_trades(D, FA.TAL_PAIR, FA.TAL_CFG):
+        if x["status"] == "cancelled" and (x.get("time") or x["setup_t"]) < cutoff:
             continue
-        k = (f"{name}|{pd.Timestamp(x['leg_top']).strftime('%Y%m%d%H%M')}|{int(x['dir'])}|f{x['trk']}"
-             f"|g{pd.Timestamp(x['leg_start']).strftime('%Y%m%d%H%M')}")      # the gap's own candle: one name per trade
+        k = f"{name}|{x['id_key']}"
         fseen.add(k)
         old = ftrades.get(k, {})
-        rec = {"id": k, "symbol": name, "contract": contract, "trk": x["trk"], "dir": int(x["dir"]), "status": x["status"],
-               "entry": float(x["entry"]), "stop": float(x["stop"]), "target": float(x["target"]) if x.get("target") else None,
-               "rr": x.get("rr"), "cost_r": x.get("cost_r"), "setup_t": iso(x.get("setup_t")) or old.get("setup_t"),
-               "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
-               "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
-               "r": x.get("r"), "r_now": x.get("r_now"), "leg_start": iso(x.get("leg_start"))}
+        rec = {"id": k, "symbol": name, "contract": contract, "trk": "tal", "dir": x["dir"], "status": x["status"],
+               "entry": x["entry"], "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,
+               "setup_t": x["setup_t"], "time": x.get("time"), "exit_time": x.get("exit_time"), "exit": x.get("exit"),
+               "reason": x.get("reason"), "r": x.get("r"), "r_now": x.get("r_now"), "gap": x.get("gap")}
         fut_rec(rec, old, fa, ftrades)
+    o1, h1, l1, c1 = (df[x].to_numpy(float) for x in "ohlc")
     for k, t in list(ftrades.items()):        # an open trade the run no longer reports: followed to its exit here
-        if t["symbol"] == name and t["status"] == "open" and k not in fseen:
-            fseen.add(k)
-            fut_rec(dict(t, **follow(t, df, f_stop)), t, fa, ftrades)
+        if t["symbol"] != name or t["status"] != "open" or k in fseen or not t.get("time") or t.get("stop") is None:
+            continue
+        fseen.add(k)
+        d, px, st, tg = t["dir"], t["entry"], t["stop"], t["target"]
+        risk = d * (px - st)
+        f = int(df.index.searchsorted(pd.Timestamp(t["time"])))
+        upd = {"r_now": round(d * (c1[-1] - px) / risk, 3)} if risk > 0 else {}
+        for q in range(f + 1, len(c1)):
+            hit_s = (l1[q] <= st) if d > 0 else (h1[q] >= st)
+            hit_t = tg is not None and ((h1[q] >= tg) if d > 0 else (l1[q] <= tg))
+            if hit_s or hit_t or shut[q]:
+                ex, why = (st, "stop") if hit_s else (tg, "target") if hit_t else (o1[q], "forced")
+                upd = {"status": "closed", "exit": float(ex), "exit_time": df.index[q].isoformat(), "reason": why,
+                       "r": round(d * (ex - px) / risk, 4)}
+                break
+        fut_rec(dict(t, **upd), t, fa, ftrades)
 
 
 def fut_rec(rec, old, fa, ftrades):
@@ -339,7 +344,7 @@ def fut_rec(rec, old, fa, ftrades):
     if rec.get("n"):
         # notifications (user, 10.11.2026): only bot 6 trades that open and close - each one once, nothing else
         side = "קנייה" if rec["dir"] > 0 else "מכירה"
-        tf = "15 דק'" if rec["trk"] == "v5" else "דקה"
+        tf = {"v5": "15 דק'", "v1m": "דקה", "tal": "שיטת הגאפ, שעה / 5 דק'"}.get(rec["trk"], rec["trk"])
         lots = f"{rec['n']} {contract}"
         if not rec.get("sent_open"):
             rec["sent_open"] = True
@@ -381,24 +386,29 @@ def fut_state(fa, ftrades, fseen, src):
         ec.append([now_iso, round(bal, 2), round(eq, 2)])
         del ec[:-4000]
     counted = [t for t in closed if t.get("n") and t.get("pnl") is not None]
-    combo = lambda t: f"FUT|{'1Min' if t.get('trk') == 'v1m' else '15Min'}|{t['symbol']}"  # noqa: E731
+    combo = lambda t: (f"TAL|1Hour|{t['symbol']}" if t.get("trk") == "tal"  # noqa: E731
+                       else f"FUT|{'1Min' if t.get('trk') == 'v1m' else '15Min'}|{t['symbol']}")
     lots = lambda t: f"{t['n']} {t['contract']}"  # noqa: E731
     rs5 = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "v5"]
     rs1 = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "v1m"]
-    rules = (f"בוט 6 · חוזים עתידיים מיקרו (MNQ, MES, MYM) · אותן שיטות של בוט הסקלפינג: פערים v5 ב־15 דקות ומסלול הדקה · "
+    rst = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "tal"]
+    rules = (f"בוט 6 · חוזים עתידיים מיקרו (MNQ, MES, MYM) · שיטת הגאפ של טל (מ־12.11.2026): דחף בגרף השעה, הגאפ בין נר 1 לנר 3 "
+             f"שנשאר פתוח, כניסה באמצע הגאפ, סטופ 2 טיקים מעבר לסווינג השני של 5 דקות, יעד בסווינג השני בצד השני, בלי ניהול, "
+             f"תוקף 120 שעות · "
              f"חוקי FTMO Futures, {FA.PLAN}: הפסד מקסימלי נגרר ${FA.MAX_LOSS:,.0f} לפי סוף יום, מגבלה יומית ${FA.DAILY_LOSS:,.0f}, "
              f"יעד ${FA.TARGET:,.0f}, היום הטוב ביותר עד {FA.CONSISTENCY:.0%} מהרווח, עד {FA.MAX_MICROS} חוזי מיקרו · "
              f"אין כניסה אחרי 15:45 שעון ניו יורק, הכול נסגר ב־16:05, לא מחזיקים בסוף שבוע · "
-             f"סיכון {FA.RISK_V5 * 100:g}% לעסקת 15 דקות ו־{FA.RISK_V1M * 100:g}% לעסקת דקה, מעוגל לחוזים שלמים · "
+             f"סיכון {FA.RISK_TAL * 100:g}% לעסקה, מעוגל לחוזים שלמים · "
              f"עמלה ${FA.COMM:g} לחוזה הלוך־חזור + טיק החלקה · המחירים מה־CFD של FTMO, לא מהחוזה עצמו")
     return {"bot": FUT_NAME, "label": "בוט 6 · חוזים עתידיים (וירטואלי)", "watch_only": True, "rules": rules,
             "account": f"וירטואלי · חוזים עתידיים · FTMO {FA.PLAN}", "server": "צפייה בלבד · בלי כסף",
-            "initial": fa.a["initial"], "risk": FA.RISK_V5, "balance": round(bal, 2), "equity": round(eq, 2),
+            "initial": fa.a["initial"], "risk": FA.RISK_TAL, "balance": round(bal, 2), "equity": round(eq, 2),
             "day_start": st["day_start"], "halted_until": None, "started": fa.a["started"], "withdrawals": [],
-            "combos": [f"FUT|{tf}|{n}" for n in FA.SPEC for tf in ("15Min", "1Min")], "equity_curve": ec, "lows": {},
+            "combos": [f"TAL|1Hour|{n}" for n in FA.SPEC], "equity_curve": ec, "lows": {},
             "updated_utc": now_iso, "futures": st,
             "summary": {"v5": {"closed": len(rs5), "sum_r": round(float(np.sum(rs5)), 2) if rs5 else 0.0},
                         "v1m": {"closed": len(rs1), "sum_r": round(float(np.sum(rs1)), 2) if rs1 else 0.0},
+                        "tal": {"closed": len(rst), "sum_r": round(float(np.sum(rst)), 2) if rst else 0.0},
                         "skipped": sum(1 for t in closed if t.get("skipped") and t["skipped"] != "before")},
             "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                            "combo": combo(t), "symbol": t["symbol"], "lots": lots(t), "open": t["entry"],

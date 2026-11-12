@@ -70,7 +70,8 @@ def watch_trades(state, bot):
             continue
         trk = w.get("trk") or (w["id"].split("|")[3] if w.get("id", "").count("|") >= 3 else "")
         tf = "1Min" if str(trk).endswith("1m") else "15Min"
-        rows.append({"id": w["id"], "combo": f"{pre}|{tf}|{w['symbol']}", "time": w.get("time"),
+        combo = f"TAL|1Hour|{w['symbol']}" if trk == "tal" else f"{pre}|{tf}|{w['symbol']}"   # the user's gap method
+        rows.append({"id": w["id"], "combo": combo, "time": w.get("time"),
                      "close": w.get("exit_time") or w.get("time"), "r": float(w["r"]), "net": None})
     return rows
 

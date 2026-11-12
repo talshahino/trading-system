@@ -274,6 +274,43 @@ def stats(x, now):
     return K.wstats(x["r"].to_numpy(), w)
 
 
+MIN_SYM_N = 12                     # per-instrument selection: trades a variant needs on 2025 on that instrument
+
+
+def per_symbol(df, now, keys):
+    """Fix attempt 13.11.2026: pooled over the 10 instruments no variant holds in 2026 - maybe each instrument wants
+    its own (oil fades war headlines, BTC runs on). Per instrument: the variant with the most total R on 2025 (12+
+    trades), shown on 2026; robustness = of its 10 best on 2025, how many made money in 2026; and the book of every
+    instrument whose pick made money on 2025 (the objective: total R, data/agents/objective.md)."""
+    out, book_tr, book_un = {}, [], []
+    for sym, x in df.groupby("sym"):
+        tr_, un_ = x[x["t"] < SPLIT], x[x["t"] >= SPLIT]
+        g = tr_.groupby(keys)["r"].agg(["sum", "count"])
+        g = g[g["count"] >= MIN_SYM_N].sort_values("sum", ascending=False)
+        if g.empty:
+            continue
+        ug = un_.groupby(keys)["r"].agg(["sum", "count"])
+        top = [(k, float(v["sum"]), int(v["count"])) for k, v in g.head(10).iterrows()]
+        k0 = top[0][0]
+        y_tr = tr_[(tr_[keys] == pd.Series(k0, index=keys)).all(axis=1)]
+        y_un = un_[(un_[keys] == pd.Series(k0, index=keys)).all(axis=1)]
+        out[sym] = {**dict(zip(keys, [float(v) if isinstance(v, (np.floating, float)) else v for v in k0])),
+                    "train": {**stats(y_tr, now), "sum": round(float(y_tr["r"].sum()), 2)},
+                    "unseen": ({**stats(y_un, now), "sum": round(float(y_un["r"].sum()), 2)} if len(y_un) else None),
+                    "top10_positive_unseen": int(sum(1 for k, _, _ in top if k in ug.index and ug.loc[k, "sum"] > 0)),
+                    "top10_unseen_sum_mean": round(float(np.mean([ug.loc[k, "sum"] if k in ug.index else 0.0 for k, _, _ in top])), 2)}
+        if top[0][1] > 0:
+            book_tr.append(y_tr)
+            book_un.append(y_un)
+    book = None
+    if book_tr:
+        a, b = pd.concat(book_tr), pd.concat(book_un)
+        book = {"instruments": sorted(k for k, v in out.items() if v["train"]["sum"] > 0),
+                "train": {**stats(a, now), "sum": round(float(a["r"].sum()), 2)},
+                "unseen": ({**stats(b, now), "sum": round(float(b["r"].sum()), 2)} if len(b) else None)}
+    return out, book
+
+
 def study(df, causes, now):
     keys = ["K", "strat", "D", "p", "H", "tg"]
     tr, un = df[df["t"] < SPLIT], df[df["t"] >= SPLIT]
@@ -297,14 +334,20 @@ def study(df, causes, now):
             per_strat[s] = c[0]
     by_cat = {}
     if causes:
+        # per strategy, its best variant on 2025 only (until 13.11.2026 every variant was pooled: n = shocks x variants)
         df = df.assign(cat=[causes.get((r.sym, r.t.strftime("%Y%m%d%H%M"))) for r in df.itertuples()])
-        for (cat, strat), x in df.dropna(subset=["cat"]).groupby(["cat", "strat"]):
-            by_cat.setdefault(cat, {})[strat] = {"n": int(len(x)), "mean": round(float(x["r"].mean()), 3)}
+        for s_, b_ in per_strat.items():
+            m = (df[keys[1:]] == pd.Series([b_[k] for k in keys[1:]], index=keys[1:])).all(axis=1) & (df["K"] == b_["K"])
+            for cat, x in df[m].dropna(subset=["cat"]).groupby("cat"):
+                by_cat.setdefault(cat, {})[s_] = {"n": int(len(x)), "mean": round(float(x["r"].mean()), 3),
+                                                   "sum": round(float(x["r"].sum()), 2)}
+    per_sym, book = per_symbol(df, now, keys)
     per_k = {}
     for kk, x in df[(df["strat"] == "CONT")].groupby("K"):
         per_k[str(kk)] = {"shocks_train": int(x[x["t"] < SPLIT].drop_duplicates(["sym", "t"]).shape[0]),
                           "shocks_unseen": int(x[x["t"] >= SPLIT].drop_duplicates(["sym", "t"]).shape[0])}
-    return {"tested": len(rows), "best": best, "per_strategy": per_strat, "top": ok[:15], "per_K": per_k, "by_category": by_cat}
+    return {"tested": len(rows), "best": best, "per_strategy": per_strat, "top": ok[:15], "per_K": per_k, "by_category": by_cat,
+            "per_symbol": per_sym, "book": book}
 
 
 def main():
@@ -360,6 +403,8 @@ def main():
     if res.get("best"):
         b = res["best"]
         print("best on 2025:", {k: b[k] for k in ("K", "strat", "D", "p", "H", "tg")}, "train", b["train"], "unseen", b["unseen"])
+    if res.get("book"):
+        print("per-instrument book (chosen on 2025):", res["book"])
 
 
 if __name__ == "__main__":

@@ -50,7 +50,7 @@ ALL_TRADES = []      # test mode: every combo's trades, passed or not (08.11.202
                      # combos that passed, so pooling those files over-states every strategy)
 OPT_RESULTS = []
 # trade-management grid: target (None = strategy's own, "none" = no target), breakeven fraction (0 = off), ATR-stop scale
-OPT_TARGETS = [None, ("R", 1.0), ("R", 1.5), ("R", 2.0), ("R", 3.0), "none"]
+OPT_TARGETS = [None, ("R", 1.0), ("R", 1.5), ("R", 2.0), ("R", 3.0), ("R", 4.0), ("R", 5.0), "none"]   # 4 / 5R: 12.11.2026 (QB11's 8R)
 OPT_BE = [None]                 # None = the run's own --breakeven (the bots' rule)
 OPT_STOP = [0.75, 1.0, 1.25, 1.5]
 OPT_ENTRY = [0.0, 0.25, 0.5]     # limit order this many R better than the next open, valid 3 bars
@@ -137,7 +137,7 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args):
 # never without a breakeven: every strategy moves its stop to the entry at some point (user, 09.11.2026) - only WHEN
 MAN_BE = [0.4, 0.5, 0.6, 0.7, 0.8]                      # with a target: breakeven at this share of the way
 MAN_BE_R = [1.5, 2.0, 2.5, 3.0]                         # no target: breakeven once this many R in profit
-MAN_PART = [None, (0.3, 0.5), (0.3, 0.7), (0.5, 0.5), (0.5, 0.7)]      # with a target: (share out, way)
+MAN_PART = [None, (0.5, 0.25), (0.3, 0.5), (0.3, 0.7), (0.5, 0.5), (0.5, 0.7)]   # with a target: (share out, way); half at a quarter: 12.11.2026
 MAN_PART_R = [None, (0.3, 1.0), (0.5, 1.0), (0.3, 2.0), (0.5, 2.0)]    # no target: (share out, at R)
 # Fibonacci levels of the way from the entry to the target (user, 12.11.2026 - standing task for every bot): the stop to
 # entry at each level, a part out (25% / 33% / 50%) at one level and the rest to breakeven / the target, two levels

@@ -210,7 +210,19 @@ def variant_stats(t):
     tr, un = t[t["time"] < T_SPLIT], t[t["time"] >= T_SPLIT]
     return {"train": _wst(tr["r"].to_numpy(float), tr["time"]), "unseen": _wst(un["r"].to_numpy(float), un["time"]),
             "whole": _wst(t["r"].to_numpy(float), t["time"]), "halves": K.halves(t["time"], t["r"]),
-            "erosion": K.erosion(t["time"], t["r"]) if len(t) >= 20 else None}
+            "erosion": K.erosion(t["time"], t["r"]) if len(t) >= 20 else None,
+            # how the trades ended (target / stop / breakeven / exit signal / session...) per period (12.11.2026, user's
+            # question on QB11's 8R target: how often is it really reached)
+            "exit_mix": {"train": _mix(tr), "unseen": _mix(un)}}
+
+
+def _mix(t):
+    if t is None or t.empty or "reason" not in t:
+        return {}
+    rs = t["reason"].fillna("?").astype(str)
+    be = rs.str.contains("סטופ") & (t["r"].abs() < 0.15)              # a stop at the entry = breakeven
+    rs = rs.where(~be, "איזון")
+    return {k: int(v) for k, v in rs.value_counts().items()}
 
 
 def tr_ok(d):
@@ -316,7 +328,10 @@ def experiments(bot, budget_s, where):
                 todo.append((-1, fam, -age, sym, combo))
                 continue
             if age >= RERUN_DAYS or (d.get("variants") and not tr_ok(d)):    # (12.11.2026: trades for the whole-bot check)
-                todo.append((0 if age == 999 or combo in fixing_ else 1, fam, -age, sym, combo))
+                pr = 0 if age == 999 or combo in fixing_ else 1
+                if fam == "fib" and combo not in fixing_:
+                    pr = 1.5                     # the Fibonacci grid after the re-runs the whole-bot check waits for
+                todo.append((pr, fam, -age, sym, combo))
             elif d.get("variants") and legacy_tr(d):                         # trades stored in 1000-minute steps
                 todo.append((2, fam, -age, sym, combo))
     todo.sort(key=lambda x: (x[0], x[3], x[1], x[2]))          # never-run first, one instrument's combos together

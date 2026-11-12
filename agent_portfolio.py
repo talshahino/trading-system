@@ -117,13 +117,15 @@ def runs_here(sym, where):
         return True
     if where == "pc":
         return not needs_alpaca(sym) or bool(os.environ.get("ALPACA_API_KEY_ID"))
-    return needs_alpaca(sym) or not pc_active()
+    return (needs_alpaca(sym) and not pc_active(alpaca=True)) or not pc_active()
 
 
-def pc_active():
+def pc_active(alpaca=False):
+    """The bots' computer runs the agents (and, with alpaca=True, also has the Alpaca keys)."""
     try:
         h = json.loads((ROOT / "reports/agents/host.json").read_text(encoding="utf-8"))
-        return (pd.Timestamp.now(tz="UTC") - pd.Timestamp(h.get("smart_at") or "1970-01-01T00:00:00Z")) < pd.Timedelta(hours=8)
+        on = (pd.Timestamp.now(tz="UTC") - pd.Timestamp(h.get("smart_at") or "1970-01-01T00:00:00Z")) < pd.Timedelta(hours=8)
+        return on and (h.get("alpaca") is True if alpaca else True)
     except Exception:  # noqa: BLE001
         return False
 

@@ -110,8 +110,10 @@ def decide(bots, now=None):
             if did in uundo:
                 c["status"], c["verdict"] = "rejected", c["verdict"] + " · בוטל על ידך"
                 continue
-            what = ("הסוכן של הבוט יבדוק ויציע תיקון" if c["kind"] == "info" else
-                    "הסוכן של הבוט יבנה את השינוי בבוט")
+            from agents import builder as BLD
+            what = ("לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב" if c["kind"] == "info" else
+                    "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות" if BLD.buildable({**c, "bot": bot}) else
+                    "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה")
             d = add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
                      "title": c["title"], "decision": "approved", "why": c["verdict"], "effect": what})
             c["status"], c["by"], c["decided"], c["decision_id"] = "approved", "manager", d["at"], did

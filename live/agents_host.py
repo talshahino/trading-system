@@ -34,7 +34,7 @@ ROOT = Path(__file__).resolve().parent.parent              # C:\trading-system (
 WORK = Path(os.environ.get("TS_AGENTS_DIR") or (ROOT.parent / "trading-agents"))
 REPO = REP.REPO
 API = f"https://api.github.com/repos/{REPO}"
-PUBLISH = ("reports/agents/", "data/agents/")
+PUBLISH = ("reports/agents/", "data/agents/", "live/bots/")    # live/bots: approved cards built (agents/builder.py)
 HOST = "reports/agents/host.json"
 LIGHT_EVERY, SMART_EVERY = 10 * 60, 4 * 3600
 AGENTS_REV = 2                                            # raise it: the agents' next smart run starts 15 minutes after the install
@@ -153,6 +153,50 @@ def _meaningful(rel, data):
     return json.dumps(j, sort_keys=True, default=str).encode()
 
 
+# ---------- the data keys (user, 12.11.2026: stocks on the computer too) ----------
+# Only GitHub has the Alpaca keys. The computer makes a key pair once (the private half never leaves C:\trading-agents\keys)
+# and shows the public half in host.json; the workflow pc_keys.yml seals the keys for it into data/agents/pc_secrets.sealed,
+# which only this computer can open. They are kept in memory and given only to the agents' own processes.
+SEALED = "data/agents/pc_secrets.sealed"
+_BOX = {}
+
+
+def box_key():
+    if "priv" not in _BOX:
+        from nacl.public import PrivateKey
+        f = WORK / "keys" / "pc_box.key"
+        if f.exists():
+            k = PrivateKey(base64.b64decode(f.read_text().strip()))
+        else:
+            f.parent.mkdir(parents=True, exist_ok=True)
+            k = PrivateKey.generate()
+            f.write_text(base64.b64encode(bytes(k)).decode())
+        _BOX["priv"] = k
+    return _BOX["priv"]
+
+
+def box_pub():
+    try:
+        return base64.b64encode(bytes(box_key().public_key)).decode()
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def secrets():
+    f = WORK / SEALED
+    try:
+        if not f.exists():
+            return {}
+        from nacl.public import SealedBox
+        d = json.loads(f.read_text(encoding="utf-8"))
+        if d.get("for") != box_pub():
+            return {}
+        raw = SealedBox(box_key()).decrypt(base64.b64decode(d["sealed"]))
+        return {k: v for k, v in json.loads(raw).items() if k.startswith("ALPACA_") and v}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 # ---------- running ----------
 def _flags():
     if os.name != "nt":
@@ -174,6 +218,7 @@ def run(st, args, timeout, logname):
     tok = REP.token()
     if tok:
         env["GH_TOKEN"] = tok
+    env.update(secrets())
     node = ensure_node()
     if node:
         env["PATH"] = node + os.pathsep + env.get("PATH", "")
@@ -236,6 +281,7 @@ def host_doc(st, kind):
             "light_at": st.get("light_at"), "smart_at": st.get("smart_at"),
             "every_min": {"light": LIGHT_EVERY // 60, "smart": SMART_EVERY // 60},
             "smart_minutes": st.get("smart_minutes"), "agent_errors": st.get("agent_errors") or [],
+            "box_pub": box_pub(), "alpaca": bool(secrets()),
             "last_error": st.get("last_error"),
             "errors_in_row": st.get("errors_in_row", 0)}
 
@@ -244,10 +290,17 @@ def _publish_changes(st, before, kind, msg):
     after = snapshot()
     changed = [rel for rel, hsh in after.items() if before.get(rel) != hsh and rel != HOST]
     files = {rel: (WORK / rel).read_bytes() for rel in changed}
+    if any(r.startswith("live/bots/") for r in files):
+        try:
+            moved = main_sha() != st.get("sha")
+        except Exception:  # noqa: BLE001
+            moved = True
+        if moved:          # main changed since this copy (e.g. a nightly agent edited a bot): build again on the new one
+            files = {r: v for r, v in files.items() if not r.startswith("live/bots/") and r != "data/agents/replies.json"}
     if kind == "light" and time.time() - _S["pub"] < HEARTBEAT:
         prev = st.get("pub_digest", {})
         news = {rel: hashlib.sha1(_meaningful(rel, b)).hexdigest() for rel, b in files.items()}
-        decided = any(prev.get(rel) != d for rel, d in news.items() if rel.endswith("decisions.json"))
+        decided = any(prev.get(rel) != d for rel, d in news.items() if rel.endswith("decisions.json") or rel.startswith("live/bots/"))
         if all(prev.get(rel) == d for rel, d in news.items()) or (time.time() - _S["pub"] < LIGHT_PUBLISH and not decided):
             files = {}                                  # nothing new (or published less than 30 minutes ago): no commit
     doc = host_doc(st, kind)
@@ -270,6 +323,7 @@ def light(st, refresh_first=True):
     before = snapshot()
     run(st, ["-m", "agents.health"], timeout=900, logname="health.log")
     run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log")
+    run(st, ["-m", "agents.builder"], timeout=300, logname="builder.log")    # the decisions into the bots, at once
     st["last_error"], st["errors_in_row"] = None, 0
     n = _publish_changes(st, before, "light", "Agents on the bots' computer: health")
     _S["light"] = time.time()
@@ -310,6 +364,7 @@ def smart(st):
             log(f"publishing {name} failed: {e}")
     before = snapshot()
     run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log")
+    run(st, ["-m", "agents.builder"], timeout=300, logname="builder.log")
     host_doc(st, "smart")                                # stamps smart_at
     st["last_error"], st["errors_in_row"] = None, 0
     n = _publish_changes(st, before, "smart", "Agents on the bots' computer: smart layer")

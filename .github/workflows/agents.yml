@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       run: ${{ steps.c.outputs.run }}
+      pc_alpaca: ${{ steps.c.outputs.pc_alpaca }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,6 +40,7 @@ jobs:
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json, datetime as d
           ev = "${{ github.event_name }}"
+          h = {}
           try:
               h = json.load(open("reports/agents/host.json"))
               t = d.datetime.fromisoformat(h.get("smart_at") or "1970-01-01T00:00:00+00:00")
@@ -46,6 +48,7 @@ jobs:
           except Exception:
               age = 999
           print("run=" + ("true" if ev == "workflow_dispatch" or age > 8 else "false"))
+          print("pc_alpaca=" + ("true" if age <= 8 and h.get("alpaca") is True else "false"))
           PY
   agents:
     needs: pc
@@ -110,7 +113,8 @@ jobs:
     # every night, also while the bots' computer runs everything else (agent_portfolio.py --where github)
     needs: pc
     # one bot a night in turn (GitHub's free minutes are limited)
-    if: needs.pc.outputs.run != 'true'
+    # (not needed once the bots' computer has the keys too - pc_keys.yml)
+    if: needs.pc.outputs.run != 'true' && needs.pc.outputs.pc_alpaca != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:

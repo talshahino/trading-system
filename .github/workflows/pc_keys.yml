@@ -1,0 +1,50 @@
+name: Keys for the bots' computer
+# Seals the Alpaca keys for the bots' computer (user, 12.11.2026: stocks are tested there too). The computer shows its
+# public key in reports/agents/host.json ("box_pub"); only its private key, which never leaves it, can open the result.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 1"     # once a week: a new computer / new key gets them by itself
+permissions:
+  contents: write
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Seal
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: |
+          pip install -q pynacl
+          python3 - <<'PY'
+          import base64, json, os, sys
+          from nacl.public import PublicKey, SealedBox
+          h = json.load(open("reports/agents/host.json"))
+          pub = h.get("box_pub")
+          if not pub:
+              sys.exit("the bots' computer has not published its key yet")
+          try:
+              old = json.load(open("data/agents/pc_secrets.sealed"))
+          except Exception:
+              old = {}
+          if old.get("for") == pub and h.get("alpaca"):
+              print("already sealed for this computer"); sys.exit(0)
+          keys = {k: os.environ[k] for k in ("ALPACA_API_KEY_ID", "ALPACA_API_SECRET_KEY") if os.environ.get(k)}
+          if len(keys) != 2:
+              sys.exit("the Alpaca secrets are missing in GitHub")
+          box = SealedBox(PublicKey(base64.b64decode(pub)))
+          doc = {"for": pub, "note": "Alpaca keys sealed for the bots' computer only (pc_keys.yml); unreadable anywhere else",
+                 "sealed": base64.b64encode(box.encrypt(json.dumps(keys).encode())).decode()}
+          json.dump(doc, open("data/agents/pc_secrets.sealed", "w"), indent=1)
+          print("sealed")
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/agents/pc_secrets.sealed
+          git commit -qm "Keys sealed for the bots' computer" || exit 0
+          for i in 1 2 3; do git pull -q --rebase && git push -q && break; sleep 5; done

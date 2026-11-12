@@ -96,6 +96,14 @@ def judge(c):
         return "watch", "מעט מדי עסקאות בתקופה שלא נראתה - נשמר להמשך"
     if u["mean"] <= 0:
         return "rejected", f"הפסיד בתקופה שלא נראתה ({u['mean']:+.2f}R לעסקה)"
+    # THE GOAL (user, 12.11.2026, data/agents/objective.md): chosen only on the period to 2025-12-31, 2026 only shows
+    # the result. A proposal that lost to 2025 and is positive only in 2026 was chosen by 2026 - out of hundreds of
+    # scout strategies some are positive in 2026 by chance (manager, 13.11.2026: 18 of 32 approved new strategies,
+    # e.g. SC002|1Hour|ARM in four bots, -0.09R to 2025 and +0.00R in 2026)
+    t = c.get("train") or {}
+    if t.get("mean") is not None and (t.get("eff_n") or t.get("n") or 0) >= 10 and t["mean"] <= 0:
+        return "rejected", (f"הפסיד בתקופה עד 2025 ({t['mean']:+.2f}R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 "
+                            "ועלול להיות מזל")
     if base is not None and u["mean"] <= base:
         return "rejected", f"לא טוב מהמצב הקיים בתקופה שלא נראתה ({u['mean']:+.2f}R מול {base:+.2f}R)"
     # more per trade but fewer trades can mean less money in total (a limit entry, a filter): the total on the

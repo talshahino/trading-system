@@ -7,6 +7,7 @@ exactly a setting is built here at once, on the bots' computer, right after the 
                 variant the agent tested, run by live/runner.py / live/news_bot.py as is)
   bots 1-4      a scout strategy approved for the bot -> added to the bot's combos at the bot's risk
 An undo in the app takes it out again at the next run. Bots 5 and 6's gap-method tracks ("tal_tracks", 13.11.2026) are settings too.
+Bot 6's scout strategies that passed bot 6's own test (agent_bot6.scout_world) go into "scout" in live/bots/bot6.json (13.11.2026).
 What is code (bot 7 new methods, new rules in the method itself) stays for the bot's nightly agent; information cards have nothing to build.
 The bots' computer installs the changed live/bots/*.json about 10 minutes later (the bots restart, open trades stay).
 Every build / revert is written in data/agents/replies.json under the card ("built": "auto"), so the nightly agents
@@ -88,6 +89,12 @@ def buildable(c):
         pr = next((list(p) for p in TG.PAIRS if p[0] == hi and p[1] == lo), None)
         if pr:   # the main track's pair -> "tal"; another pair -> "tal_tracks" (13.11.2026), decided in apply()
             return {"bot": bot, "combo": f"TAL|{ch['pair']}", "family": "tal6", "pair": pr, "cfg": ch["cfg"]}
+    # bot 6 (13.11.2026): a scout strategy that passed bot 6's own test (agent_bot6.scout_world: micro-futures costs,
+    # FTMO Futures sessions, chosen on 2024-2025) -> "scout" in live/bots/bot6.json, traded by live/watch_own.py.
+    # Never from the CFD test's card (change {"kind": "add"}): that one is tested on bot 6's world first.
+    if bot == "bot6" and c.get("kind") in ("new", "improve") and ch.get("family") == "scout_fut" \
+            and str(ch.get("combo", "")).count("|") == 2 and isinstance(ch.get("v"), dict):
+        return {"bot": bot, "combo": ch["combo"], "family": "scout6", "v": ch["v"]}
     return None
 
 
@@ -130,6 +137,9 @@ def describe(b):
         return f"שיטת הגאפ: {b['pair'][0]} / {b['pair'][1]}, " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())
     if b["family"] == "add":
         return f"נוספה לבוט: {b['combo']}, בסיכון של הבוט"
+    if b["family"] == "scout6":
+        from agents import scout_fut as SF
+        return f"נוספה לבוט 6: {b['combo']} ({SF.he(b['v'])}), בסיכון של הבוט"
     if b["family"] == "filters":
         return f"{b['combo']}: סינון מצב שוק {b['to']}"
     if b["family"] == "manage":
@@ -142,6 +152,13 @@ def describe(b):
 
 
 def apply(cfg, b, card_id):
+    if b["family"] == "scout6":
+        sc = cfg.setdefault("scout", {})
+        cfg.setdefault("changes", {})[card_id] = {"family": "scout6", "combo": b["combo"],
+                                                  "before": json.loads(json.dumps(sc.get(b["combo"], "__none__")))}
+        sc[b["combo"]] = {"v": dict(b["v"]), "since": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "card": card_id}
+        cfg.setdefault("risk", {}).setdefault("scout", 0.004)     # the bot's risk (principle 8)
+        return
     if b["family"] == "tal6":
         # bot 6 (13.11.2026): a card on the main track's pair changes "tal"; on a pair another track runs, that track's
         # rules in "tal_tracks"; on a new pair, a new track at the tracks' risk (tal_gap.cards lets a new pair through
@@ -234,6 +251,9 @@ def revert(cfg, card_id):
             rk.pop(c["track"], None) if c["before"] == "__none__" else rk.__setitem__(c["track"], c["before"])
         elif c["family"] == "flag":
             cfg.pop(c["key"], None) if c["before"] == "__none__" else cfg.__setitem__(c["key"], c["before"])
+        elif c["family"] == "scout6":
+            sc = cfg.setdefault("scout", {})
+            sc.pop(c["combo"], None) if c["before"] == "__none__" else sc.__setitem__(c["combo"], c["before"])
         elif c["family"] == "tal5":
             tt, rk = cfg.setdefault("tal_tracks", {}), cfg.setdefault("risk", {})
             tt.pop(c["track"], None) if c["before"] == "__none__" else tt.__setitem__(c["track"], c["before"])

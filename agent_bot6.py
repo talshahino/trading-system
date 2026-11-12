@@ -192,6 +192,168 @@ def tal(budget_s):
                     live={pn: c for pn, c in run.values()})
 
 
+SCOUT_DIR = A.OUT / "scout_fut"
+SCOUT_SHARE = 0.25              # of each run's minutes (13.11.2026: the approved scout strategies, on bot 6's world)
+SCOUT_RERUN_DAYS = 14
+
+
+def _approved_scout():
+    """The scout strategies the manager approved for bot 6 on the CFD test (change {"combo", "kind": "add"}), not undone,
+    plus every bot 6 combo with a fix task (data/agents/fix_attempts.json) - each is tested on bot 6's world here."""
+    out = {}
+    try:
+        dec = json.loads(Path("reports/agents/decisions.json").read_text(encoding="utf-8")).get("decisions", [])
+        cards = {}
+        for f in A.OUT.glob("cards*.json"):
+            for c in json.loads(f.read_text(encoding="utf-8")).get("cards", []):
+                cards[c.get("id")] = c
+        undone = set(RIO.live_json("live/agent_decisions_state.json").get("undo") or [])
+        for d in dec:
+            c = cards.get(d.get("card")) or {}
+            ch = c.get("change") or {}
+            if d.get("bot") == "bot6" and d.get("decision") == "approved" and d.get("id") not in undone \
+                    and ch.get("kind") == "add" and str(ch.get("combo", "")).count("|") == 2:
+                out[ch["combo"]] = d.get("card")
+        fx = json.loads(Path("data/agents/fix_attempts.json").read_text(encoding="utf-8"))
+        for k in fx:
+            if k.startswith("bot6|") and k.count("|") == 3:
+                out.setdefault(k.split("|", 1)[1], None)
+    except Exception as e:  # noqa: BLE001
+        print(f"scout_fut: approved list not read: {e}")
+    return out
+
+
+def scout_world(budget_s):
+    """Every approved scout strategy on bot 6's own world (agents/scout_fut.py): 96 variants each, chosen on
+    2024-2025, shown on 2026. Writes reports/agents/bot6/scout_fut.json, the fix attempts, and returns cards."""
+    from agents import scout_fut as SF
+    t0 = time.time()
+    SCOUT_DIR.mkdir(parents=True, exist_ok=True)
+    fres = A.OUT / "scout_fut.json"
+    try:
+        res = json.loads(fres.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        res = {}
+    combos = _approved_scout()
+    end = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+    data = {}
+    now = pd.Timestamp.now(tz="UTC")
+    for combo, card_id in combos.items():
+        sid, tf, sym = combo.split("|")
+        old = res.get(combo) or {}
+        if old.get("at") and (now - pd.Timestamp(old["at"])).days < SCOUT_RERUN_DAYS and old.get("done"):
+            continue
+        if sym not in FA.SPEC or tf not in SF.TF_MIN or time.time() - t0 > budget_s:
+            continue
+        if sym not in data:
+            try:
+                p = prep(sym, end)
+                if p is None:
+                    data[sym] = None
+                else:
+                    df, _, _, noent = p
+                    shut, _ = FA.session_masks(df)
+                    _, pv, tick = FA.SPEC[sym]
+                    data[sym] = (df, noent, shut, tick + (FA.COMM + FA.SLIP_TICKS * tick * pv) / pv)
+            except Exception as e:  # noqa: BLE001
+                print(f"scout_fut {sym}: no data ({e})")
+                data[sym] = None
+        if data[sym] is None:
+            continue
+        df, noent, shut, cost_px = data[sym]
+        rows = dict(old.get("variants") or {})
+        for v in SF.variants():
+            k = SF.vid(v)
+            if k in rows:
+                continue
+            if time.time() - t0 > budget_s:
+                break
+            try:
+                t = SF.trades(df, sym, sid, tf, v, noent, shut, cost_px)
+            except Exception as e:  # noqa: BLE001
+                rows[k] = {"v": v, "error": str(e)[:200]}
+                continue
+            if not t.empty:     # a trade whose one micro contract risks more than the bot's risk is never taken live
+                _, pv_, tick_ = FA.SPEC[sym]
+                per = (t["entry_px"] - t["stop_px"]).abs() * pv_ + FA.COMM + FA.SLIP_TICKS * tick_ * pv_
+                t = t[per <= FA.INITIAL * FA.RISK_TAL]
+            if t.empty:
+                rows[k] = {"v": v, "train": K.wstats([]), "unseen": K.wstats([])}
+                continue
+            tt = pd.to_datetime(t["time"], utc=True)
+            tr, un = t[tt < A.SPLIT], t[tt >= A.SPLIT]
+            rows[k] = {"v": v, "train": K.wstats(tr["r"], K.weights(tr["time"])) if len(tr) else K.wstats([]),
+                       "unseen": K.wstats(un["r"], K.weights(un["time"])) if len(un) else K.wstats([]),
+                       "unseen_sum": round(float(un["r"].sum()), 2), "cost_r": round(float(t["cost_r"].median()), 3),
+                       "halves": K.halves(tr["time"], tr["r"]) if len(tr) else [None, None]}
+            if k == SF.vid(SF.BASE):
+                t.to_csv(SCOUT_DIR / f"{combo.replace('|', '_')}_base.csv.gz", index=False)
+        done = all(SF.vid(v) in rows for v in SF.variants())
+        ok = [x for x in rows.values() if (x.get("train") or {}).get("mean") is not None and (x["train"].get("eff_n") or 0) >= 20]
+        best = max((x for x in ok if x["train"]["mean"] > 0), key=lambda x: x["train"]["mean"] * np.sqrt(x["train"]["eff_n"]),
+                   default=None)
+        res[combo] = {"at": now.isoformat(timespec="seconds"), "card": card_id, "done": done, "variants": rows,
+                      "base": rows.get(SF.vid(SF.BASE)), "chosen": best,
+                      "share_positive_train": round(sum(1 for x in ok if x["train"]["mean"] > 0) / len(ok), 2) if ok else None}
+        print(f"  scout_fut {combo}: {len(rows)} variants, chosen {SF.vid(best['v']) if best else None}")
+    fres.write_text(json.dumps(res, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    return scout_cards(res)
+
+
+def scout_cards(res):
+    """A strategy that earns on bot 6's world in 2024-2025 with a variant chosen there (and stays positive on 2026) ->
+    a 'new' card the builder builds into live/bots/bot6.json "scout"; none -> the fix attempt failed (an info card)."""
+    from agents import scout_fut as SF
+    cards, fx_f = [], Path("data/agents/fix_attempts.json")
+    try:
+        fx = json.loads(fx_f.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        fx = {}
+    try:
+        b5 = {(c.get("change") or {}).get("combo"): c for c in json.loads(Path("reports/agents/bot5/cards_new.json").read_text(encoding="utf-8")).get("cards", [])}
+    except Exception:  # noqa: BLE001
+        b5 = {}
+    today = pd.Timestamp.now(tz="UTC").strftime("%Y-%m-%d")
+    for combo, x in res.items():
+        if not x.get("done"):
+            continue
+        ch, base = x.get("chosen"), x.get("base") or {}
+        c5 = b5.get(combo)
+        s5 = (f" · בבוט 5 (CFD): {(c5.get('unseen') or {}).get('mean') or 0:+.2f}R ב־2026, {c5.get('tier')}" if c5
+              else " · בבוט 5 לא נבדקה על המדד הזה")
+        bt, bu = base.get("train") or {}, base.get("unseen") or {}
+        fmt = lambda s: f"{s.get('mean') or 0:+.2f}R על {s.get('n', 0)} עסקאות"  # noqa: E731
+        win = ch and (ch["unseen"].get("mean") or 0) > 0
+        key = f"bot6|{combo}"
+        if key in fx or not win:
+            e = fx.setdefault(key, {"status": "trying", "tried": [], "at": today})
+            e["tried"] = [t for t in e.get("tried", []) if t.get("what") != "bot6_world"] + [{
+                "what": "bot6_world", "at": today, "variants": len(x["variants"]),
+                "chosen": SF.vid(ch["v"]) if ch else None, "train": (ch or {}).get("train"), "unseen": (ch or {}).get("unseen")}]
+            e["status"], e["at"] = ("fixed" if win else "failed"), today
+        if win:
+            v = ch["v"]
+            cards.append(K.card("bot6", "new", f"אסטרטגיה חדשה בעולם של בוט 6: {combo} · {SF.he(v)}",
+                                f"נבדקה על החוזים (עלויות מיקרו, שעות FTMO Futures, בלי כניסה סביב הודעות, איזון לפי הכלל), "
+                                f"{len(x['variants'])} גרסאות. נבחרה על 2024-2025 בלבד: {fmt(ch['train'])}; ב־2026 (לא נראתה): "
+                                f"{fmt(ch['unseen'])}. כמו במקור: עד 2025 {fmt(bt)}, ב־2026 {fmt(bu)}. "
+                                f"עלות {ch.get('cost_r')}R לעסקה. בסיכון של הבוט (0.4%).{s5}",
+                                ch["train"], ch["unseen"], halves_=ch.get("halves"), tested=len(x["variants"]),
+                                neighbours={"share_positive": x.get("share_positive_train")}, cost_r=ch.get("cost_r"),
+                                risk_pct=FA.RISK_TAL * 100, change={"family": "scout_fut", "combo": combo, "v": v},
+                                detail={"world": "bot6", "approved_cfd_card": x.get("card"), "base": base, "bot5": (c5 or {}).get("unseen")}))
+        else:
+            cards.append(K.card("bot6", "info", f"{combo} בעולם של בוט 6: אין גרסה שמרוויחה גם עד 2025 וגם ב־2026",
+                                f"{len(x['variants'])} גרסאות (יעד, סטופ, בלי יציאה בזמן, איזון) על החוזים בשעות FTMO Futures. "
+                                f"כמו במקור: עד 2025 {fmt(bt)}, ב־2026 {fmt(bu)}. "
+                                + (f"הטובה עד 2025 ({SF.he(ch['v'])}): {fmt(ch['train'])}, אבל ב־2026 {fmt(ch['unseen'])}. " if ch else "אף גרסה לא הרוויחה עד 2025. ")
+                                + f"ניסיון התיקון נכשל (fix_attempts: failed) - לא נבנית בבוט 6.{s5}",
+                                None, None, tested=len(x["variants"]),
+                                detail={"world": "bot6", "approved_cfd_card": x.get("card"), "base": base, "chosen": ch}))
+    fx_f.write_text(json.dumps(fx, ensure_ascii=False, indent=1), encoding="utf-8")
+    return cards
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--minutes", type=float, default=None)
@@ -202,6 +364,11 @@ def main():
         tcards = tal(TAL_SHARE * mins * 60)
     except Exception as e:  # noqa: BLE001 - the user's method must not stop the nightly experiments
         print(f"tal_gap failed: {e}")
+    scards = []
+    try:            # the scout strategies approved for bot 6, on bot 6's own world (13.11.2026)
+        scards = scout_world(SCOUT_SHARE * mins * 60)
+    except Exception as e:  # noqa: BLE001
+        print(f"scout_fut failed: {e}")
     rest = max(1.0, mins - (time.time() - t0) / 60)
     argv = [x for i, x in enumerate(sys.argv) if x != "--minutes" and (i == 0 or sys.argv[i - 1] != "--minutes")]
     sys.argv = argv + ["--minutes", f"{rest:.1f}"]
@@ -210,9 +377,10 @@ def main():
     if not f.exists():
         return
     d = json.loads(f.read_text(encoding="utf-8"))
-    for c in tcards:
+    for c in tcards + scards:
         c["tier"], c["verdict"] = K.judge(c)
-    d["cards"] = [c for c in d.get("cards", []) if (c.get("change") or {}).get("method") != "tal_gap"] + tcards
+    d["cards"] = [c for c in d.get("cards", []) if (c.get("change") or {}).get("method") != "tal_gap"
+                  and (c.get("change") or {}).get("family") != "scout_fut" and (c.get("detail") or {}).get("world") != "bot6"] + tcards + scards
     view = bot5_view()
     for c in d.get("cards", []):
         ch = c.get("change") or {}

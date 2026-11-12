@@ -36,6 +36,7 @@ from agents import ftmo_costs as C  # noqa: E402
 from agents import ftmo_universe as U  # noqa: E402
 from agents import own_core as CORE  # noqa: E402
 from agents import own_gaps as OG  # noqa: E402
+from agents import scout_fut as SF  # noqa: E402
 from agents import tal_gap as TG  # noqa: E402
 from live import fut_account as FA  # noqa: E402
 from live import reporter as REP  # noqa: E402
@@ -130,6 +131,9 @@ SET5 = {"v5": {"STOP": "gap", "DOMINANT": False, "V5_MAX_COST": 0.10, "PART_FRAC
 _SET = {"m5": None, "m6": None}
 _TAL0 = dict(FA.TAL_TRACKS)          # the tracks in the code; the file's main track is laid over them on every load
 TF_COMBO = {"1m": "1Min", "5m": "5Min", "15m": "15Min", "1h": "1Hour", "4h": "4Hour", "1d": "1Day"}
+# bot 6's scout strategies (13.11.2026, agents/scout_fut.py): "scout" in live/bots/bot6.json - {combo: {"v", "since"}},
+# written by agents/builder.py only from an approved card of bot 6's own test. Empty = none trades.
+SCOUT6 = {}
 
 
 def load_settings():
@@ -208,6 +212,16 @@ def load_settings():
                         FA.RISK.setdefault(trk_, FA.RISK_TAL)
                 for trk_ in [k_ for k_, (p_, _) in FA.TAL_TRACKS.items() if k_ != "tal" and tuple(p_) == tuple(FA.TAL_PAIR)]:
                     FA.TAL_TRACKS.pop(trk_)
+                SCOUT6.clear()
+                for combo_, e_ in (d.get("scout") or {}).items():
+                    try:
+                        sid_, tf_, sym_ = str(combo_).split("|")
+                        v_ = (e_ or {}).get("v") or {}
+                        if sym_ in FA.SPEC and tf_ in SF.TF_MIN and all(k_ in v_ for k_ in SF.BASE) and (e_ or {}).get("since"):
+                            SCOUT6[str(combo_)] = {"sid": sid_, "tf": tf_, "sym": sym_, "v": dict(v_), "since": str(e_["since"])}
+                    except Exception:  # noqa: BLE001 - an odd entry is skipped, the rest trade
+                        continue
+                FA.RISK.setdefault("scout", FA.RISK_TAL)
                 for trk, v in (d.get("risk") or {}).items():
                     if (trk in FA.RISK or trk in FA.TAL_TRACKS) and 0 <= float(v) <= 0.02:
                         FA.RISK[trk] = float(v)
@@ -469,6 +483,13 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
                "setup_t": x["setup_t"], "time": x.get("time"), "exit_time": x.get("exit_time"), "exit": x.get("exit"),
                "reason": x.get("reason"), "r": x.get("r"), "r_now": x.get("r_now"), "gap": x.get("gap")}
         fut_rec(rec, old, fa, ftrades)
+    for combo_, sc in SCOUT6.items():          # the scout strategies approved on bot 6's own test (13.11.2026)
+        if sc["sym"] != name:
+            continue
+        try:
+            fut_scout(name, df, np.asarray(noent, bool) | np.asarray(late, bool), shut, sc, combo_, contract, tick, fa, ftrades, fseen)
+        except Exception:  # noqa: BLE001 - one strategy must not stop the account
+            print(f"bot 6 scout {combo_}: {traceback.format_exc()[-300:]}")
     o1, h1, l1, c1 = (df[x].to_numpy(float) for x in "ohlc")
     for k, t in list(ftrades.items()):        # an open trade the run no longer reports: followed to its exit here
         if t["symbol"] != name or t["status"] != "open" or k in fseen or not t.get("time") or t.get("stop") is None:
@@ -487,6 +508,36 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
                        "r": round(d * (ex - px) / risk, 4)}
                 break
         fut_rec(dict(t, **upd), t, fa, ftrades)
+
+
+def fut_scout(name, df, noent, shut, sc, combo, contract, tick, fa, ftrades, fseen):
+    """One scout strategy on the live 1-minute bars, exactly as agents/scout_fut.py tests it; trades from the day it
+    was built ("since") on. A trade still running at the last bar is open; the account books the closed ones."""
+    _, pv, _ = FA.SPEC[name]
+    cost_px = tick + (FA.COMM + FA.SLIP_TICKS * tick * pv) / pv
+    t = SF.trades(df[["o", "h", "l", "c"]], name, sc["sid"], sc["tf"], sc["v"], np.asarray(noent, bool), np.asarray(shut, bool), cost_px)
+    if t.empty:
+        return
+    since = pd.Timestamp(sc["since"])
+    for _, x in t.iterrows():
+        tm = pd.Timestamp(x["time"])
+        if tm < since:
+            continue
+        risk = abs(float(x["entry_px"]) - float(x["stop_px"]))
+        r_live = float(x["r"]) + float(x["cost_r"]) - tick / risk     # the spread here; commission + slippage in pnl_of
+        live_now = x["reason"] == "סוף הנתונים"
+        k = f"{name}|{sc['sid']}|{sc['tf']}|{tm.isoformat()}"
+        fseen.add(k)
+        old = ftrades.get(k, {})
+        tg = None if pd.isna(x["target_px"]) else float(x["target_px"])
+        rec = {"id": k, "symbol": name, "contract": contract, "trk": "scout", "combo": combo, "dir": int(x["dir"]),
+               "status": "open" if live_now else "closed", "entry": float(x["entry_px"]), "stop": float(x["stop_px"]),
+               "stop_now": float(x["stop_last"]), "target": tg, "rr": round(abs(tg - float(x["entry_px"])) / risk, 2) if tg else None,
+               "cost_r": 0.0, "setup_t": tm.isoformat(), "time": tm.isoformat(),
+               "exit_time": None if live_now else pd.Timestamp(x["exit_time"]).isoformat(),
+               "exit": None if live_now else float(x["exit_px"]), "reason": None if live_now else x["reason"],
+               "r": None if live_now else round(r_live, 4), "r_now": round(r_live, 3) if live_now else None}
+        fut_rec(rec, old, fa, ftrades)
 
 
 def fut_rec(rec, old, fa, ftrades):
@@ -508,7 +559,8 @@ def fut_rec(rec, old, fa, ftrades):
     if rec.get("n"):
         # notifications (user, 10.11.2026): only bot 6 trades that open and close - each one once, nothing else
         side = "קנייה" if rec["dir"] > 0 else "מכירה"
-        tf = {"v5": "15 דק'", "v1m": "דקה"}.get(rec["trk"]) or f"שיטת הגאפ, {FA.TAL_NAME.get(rec['trk'], rec['trk'])}"
+        tf = {"v5": "15 דק'", "v1m": "דקה"}.get(rec["trk"]) or (rec.get("combo") if rec["trk"] == "scout" else
+                                                              f"שיטת הגאפ, {FA.TAL_NAME.get(rec['trk'], rec['trk'])}")
         lots = f"{rec['n']} {contract}"
         if not rec.get("sent_open"):
             rec["sent_open"] = True
@@ -550,7 +602,8 @@ def fut_state(fa, ftrades, fseen, src):
         ec.append([now_iso, round(bal, 2), round(eq, 2)])
         del ec[:-4000]
     counted = [t for t in closed if t.get("n") and t.get("pnl") is not None]
-    combo = lambda t: (f"{FA.TAL_COMBO[t['trk']]}|{t['symbol']}" if t.get("trk") in FA.TAL_COMBO  # noqa: E731
+    combo = lambda t: (t["combo"] if t.get("trk") == "scout" and t.get("combo") else  # noqa: E731
+                       f"{FA.TAL_COMBO[t['trk']]}|{t['symbol']}" if t.get("trk") in FA.TAL_COMBO
                        else f"FUT|{'1Min' if t.get('trk') == 'v1m' else '15Min'}|{t['symbol']}")
     lots = lambda t: f"{t['n']} {t['contract']}"  # noqa: E731
     rs5 = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "v5"]
@@ -568,7 +621,7 @@ def fut_state(fa, ftrades, fseen, src):
             "account": f"וירטואלי · חוזים עתידיים · FTMO {FA.PLAN}", "server": "צפייה בלבד · בלי כסף",
             "initial": fa.a["initial"], "risk": FA.RISK_TAL, "balance": round(bal, 2), "equity": round(eq, 2),
             "day_start": st["day_start"], "halted_until": None, "started": fa.a["started"], "withdrawals": [],
-            "combos": [f"{c}|{n}" for n in FA.SPEC for c in FA.TAL_COMBO.values()], "equity_curve": ec, "lows": {},
+            "combos": [f"{c}|{n}" for n in FA.SPEC for c in FA.TAL_COMBO.values()] + sorted(SCOUT6), "equity_curve": ec, "lows": {},
             "updated_utc": now_iso, "futures": st,
             "summary": {"v5": {"closed": len(rs5), "sum_r": round(float(np.sum(rs5)), 2) if rs5 else 0.0},
                         "v1m": {"closed": len(rs1), "sum_r": round(float(np.sum(rs1)), 2) if rs1 else 0.0},

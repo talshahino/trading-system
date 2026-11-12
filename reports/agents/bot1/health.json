@@ -1,16 +1,16 @@
 {
  "bot": "bot1",
  "name": "בוט 1",
- "updated": "2026-11-12T15:21:37+00:00",
- "state_updated": "2026-11-12T15:20:19+00:00",
- "minutes_since_state": 1,
- "balance": 98559.92,
- "equity": 98905.92,
- "day_pct": -0.7,
- "total_pct": -1.09,
- "trades": 120,
- "mean_r": -0.039,
- "sum_r": -4.69,
+ "updated": "2026-11-12T16:05:49+00:00",
+ "state_updated": "2026-11-12T16:03:08+00:00",
+ "minutes_since_state": 3,
+ "balance": 97686.73,
+ "equity": 98644.39,
+ "day_pct": -0.96,
+ "total_pct": -1.36,
+ "trades": 123,
+ "mean_r": -0.058,
+ "sum_r": -7.08,
  "bt_mean_r": 0.193,
  "flagged": 0,
  "combos": [
@@ -48,6 +48,18 @@
    "bt_mean": 0.156,
    "bt_n": 194,
    "z": -1.11,
+   "flags": []
+  },
+  {
+   "combo": "TV11|4Hour|USDJPY",
+   "n": 5,
+   "mean": -0.541,
+   "sum": -2.7,
+   "win": 20.0,
+   "streak": 3,
+   "bt_mean": 0.076,
+   "bt_n": 247,
+   "z": -1.1,
    "flags": []
   },
   {
@@ -111,15 +123,15 @@
    "flags": []
   },
   {
-   "combo": "TV11|4Hour|USDJPY",
-   "n": 4,
-   "mean": -0.412,
-   "sum": -1.65,
-   "win": 25.0,
+   "combo": "TT45|15Min|CSCO",
+   "n": 7,
+   "mean": -0.142,
+   "sum": -0.99,
+   "win": 28.6,
    "streak": 2,
-   "bt_mean": 0.076,
-   "bt_n": 247,
-   "z": -0.78,
+   "bt_mean": 0.052,
+   "bt_n": 255,
+   "z": -0.68,
    "flags": []
   },
   {
@@ -195,6 +207,18 @@
    "flags": []
   },
   {
+   "combo": "TV39|1Hour|JP225",
+   "n": 9,
+   "mean": 0.014,
+   "sum": 0.13,
+   "win": 44.4,
+   "streak": 1,
+   "bt_mean": 0.184,
+   "bt_n": 499,
+   "z": -0.25,
+   "flags": []
+  },
+  {
    "combo": "TV38|15Min|GOOG",
    "n": 7,
    "mean": 0.015,
@@ -216,30 +240,6 @@
    "bt_mean": 0.122,
    "bt_n": 495,
    "z": -0.19,
-   "flags": []
-  },
-  {
-   "combo": "TV39|1Hour|JP225",
-   "n": 8,
-   "mean": 0.056,
-   "sum": 0.45,
-   "win": 50.0,
-   "streak": 0,
-   "bt_mean": 0.184,
-   "bt_n": 499,
-   "z": -0.18,
-   "flags": []
-  },
-  {
-   "combo": "TT45|15Min|CSCO",
-   "n": 6,
-   "mean": 0.002,
-   "sum": 0.01,
-   "win": 33.3,
-   "streak": 1,
-   "bt_mean": 0.052,
-   "bt_n": 255,
-   "z": -0.16,
    "flags": []
   },
   {
@@ -483,5 +483,7 @@
    "flags": []
   }
  ],
- "problems": []
+ "problems": [
+  "כל הבוט: -0.06R לעסקה בפועל מול +0.14R בבדיקה (123 עסקאות)"
+ ]
 }

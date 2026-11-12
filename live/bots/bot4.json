@@ -24,6 +24,23 @@
   "SE01|1Hour|CSCO",
   "SE01|1Hour|WMT"
  ],
- "note": "04.11.2026: built from the new families' combos that passed the first test (GitHub, QuantConnect, forums, books, seasonality, inter-market, Quantpedia), chosen on 2025 and checked on 2026 and by reshuffling; MetaQuotes-demo instruments only (FX, metals, US shares); risk 0.45% chosen by the user; FTMO Standard rule: closed before market breaks over 2 hours",
- "close_before_breaks": true
+ "note": "04.11.2026: built from the new families' combos that passed the first test (GitHub, QuantConnect, forums, books, seasonality, inter-market, Quantpedia), chosen on 2025 and checked on 2026 and by reshuffling; MetaQuotes-demo instruments only (FX, metals, US shares); risk 0.45% chosen by the user; FTMO Standard rule: closed before market breaks over 2 hours; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
+ "close_before_breaks": true,
+ "plans": {
+  "BK05|15Min|EURUSD": {
+   "target": "none",
+   "limit": 0.25,
+   "card": "607634fdbf9a"
+  },
+  "BK05|1Hour|EURUSD": {
+   "target": 1,
+   "limit": 0.5,
+   "card": "f111fc5d12da"
+  },
+  "FR01|1Hour|EURUSD": {
+   "target": 3,
+   "stop": 0.75,
+   "card": "99e5c02815c4"
+  }
+ }
 }

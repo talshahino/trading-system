@@ -693,10 +693,22 @@ def portfolio(idx, symbols, out_dir, live):
     doubled = t[~t["solo"]]
     return {"tracks": {k: v[0] for k, v in live.items()}, "now": stats(t), "one_per_side": stats(t[t["solo"]]),
             "max_dir": {str(c): stats(t[pd.Series(k_, index=t.index)]) for c, k_ in caps.items()},
+            # R by the hour of entry (UTC) and by weekday, all tracks together (13.11.2026: material for a time filter
+            # chosen on 2024-2025 by the smart agent - the losses of 12.11 were all between 14:41 and 16:19 UTC)
+            "by_hour": _by(t, t["time"].dt.hour), "by_weekday": _by(t, t["time"].dt.weekday),
             "doubled": {"n": int(len(doubled)), "r": round(float(doubled["r"].sum()), 1),
                         "unseen_n": int((doubled["time"] >= SPLIT).sum()),
                         "unseen_r": round(float(doubled.loc[doubled["time"] >= SPLIT, "r"].sum()), 1)},
             "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
+
+
+def _by(t, key):
+    out = {}
+    for k_, part in t.groupby(key):
+        tr, un = part[part["time"] < SPLIT], part[part["time"] >= SPLIT]
+        out[str(k_)] = {"train_n": int(len(tr)), "train_mean": round(float(tr["r"].mean()), 3) if len(tr) else None,
+                        "unseen_n": int(len(un)), "unseen_mean": round(float(un["r"].mean()), 3) if len(un) else None}
+    return out
 
 
 def portfolio_card(bot, pf, risk_pct):

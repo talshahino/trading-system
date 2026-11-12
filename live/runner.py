@@ -257,13 +257,67 @@ def cal_masks(df, sym, tf):
 PROTECT = {"be_r": 2.5, "lock_r": (3.0, 1.0)}
 
 
+# Approved per-combo changes from the improvement agents' cards (live/bots/<bot>.json "plans"; user, 11-12.11.2026),
+# exactly the variants the agents tested (agent_portfolio.py -> run_rules --optimize / --filters):
+#   target   "none" = no target (the no-target protection above applies) | k = k x the stop distance (the "kR" variants)
+#   stop     x the strategy's stop distance (the same dollar risk: the lots follow the stop)
+#   limit    a limit order k R better than the next open, valid 3 bars (run_rules OPT_ENTRY)
+#   filter   a market-regime filter of run_rules._regimes (only with the 200 trend, ADX, volatility)
+PLANS = {}
+LIMIT_BARS = 3
+
+
+def plan_of(combo):
+    p = PLANS.get(combo) or {}
+    out = {}
+    try:
+        if p.get("target") == "none":
+            out["target"] = None
+        elif p.get("target") is not None and 0.5 <= float(p["target"]) <= 5:
+            out["target"] = ("R", float(p["target"]))
+        if p.get("stop") is not None and 0.5 <= float(p["stop"]) <= 2 and float(p["stop"]) != 1.0:
+            out["stop_scale"] = float(p["stop"])
+        if p.get("limit") is not None and 0 < float(p["limit"]) <= 1:
+            out["entry_pullback"] = (float(p["limit"]), LIMIT_BARS)
+            out["emit_pending"] = 1                    # step() adds one flat helper bar after the forming bar
+        if p.get("filter") in REGIMES:
+            out["filter"] = p["filter"]
+    except (TypeError, ValueError):
+        return {}
+    return out
+
+
+def _regime(df, name):
+    """The same masks as run_rules._regimes (known at the bar's close): (allow_long, allow_short)."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    if name == "with_trend200":
+        e200 = R.ema(c, 200)
+        return c > e200, c < e200
+    if name in ("adx_trend", "adx_range"):
+        a = R.adx(h, l, c, 14)
+        m = a > 20 if name == "adx_trend" else a < 20
+        return m, m
+    at = R.atr(h, l, c, 14) / c
+    pr = pd.Series(at).rolling(500, min_periods=100).rank(pct=True).to_numpy()
+    m = {"vol_normal": (pr > 0.2) & (pr < 0.9), "vol_high": pr >= 0.5, "vol_low": pr < 0.5}[name]
+    return m, m
+
+
+REGIMES = ("with_trend200", "adx_trend", "adx_range", "vol_normal", "vol_high", "vol_low")
+
+
 def strat(sid, df, sym, tf):
     fn = R.STRATEGIES[sid][1]
     fn = CAL.blocked(fn, cal_masks(df, sym, tf)[1]) if CLOSE_BREAKS else fn
+    pl = plan_of(f"{sid}|{tf}|{sym}")
+    flt = pl.pop("filter", None)
 
     def g(d):
         L, S, plan = fn(d)
-        return L, S, {**plan, **PROTECT}
+        if flt:
+            al, ash = _regime(d, flt)
+            L, S = np.asarray(L, bool) & al, np.asarray(S, bool) & ash
+        return L, S, {**plan, **pl, **PROTECT}
     return g
 
 
@@ -511,6 +565,10 @@ class Account:
                 except Exception:  # noqa: BLE001
                     loss = None
             tot += loss if loss is not None else max(STATE["risk"].get(str(p.ticket), 0.0), self.risk_usd)
+        held = {p.magic for p in self.positions()}
+        for combo, pk in STATE.get("pending", {}).items():   # a waiting limit order counts as if filled and stopped
+            if MAGICS_BY_COMBO.get(combo) not in held:
+                tot += float(pk.get("risk") or self.risk_usd)
         return tot
 
     def allowed_risk(self, mult=1.0):
@@ -545,6 +603,7 @@ class Account:
                        priority=5, tags=["rotating_light"])
             for p in self.positions():
                 close(p, "emergency")
+            pending_guard(pd.Timestamp.now(tz="UTC"), everything=True)
             self._halt_retry = time.time()
             self.halt_until = (pd.Timestamp.now(tz="Europe/Prague").normalize() + pd.DateOffset(days=1)).tz_convert("UTC")
             return True
@@ -599,8 +658,11 @@ def send(req, what):
         return None
     req = {**req, "comment": _comment(req.get("comment", ""))}
     r, err = None, None
-    if req.get("action") == mt5.TRADE_ACTION_DEAL:
-        for fill in _fill_modes(req["symbol"]):
+    if req.get("action") in (mt5.TRADE_ACTION_DEAL, mt5.TRADE_ACTION_PENDING):
+        modes = _fill_modes(req["symbol"])
+        if req.get("action") == mt5.TRADE_ACTION_PENDING:     # a waiting limit order: "return" first
+            modes = [mt5.ORDER_FILLING_RETURN] + [m for m in modes if m != mt5.ORDER_FILLING_RETURN]
+        for fill in modes:
             r = mt5.order_send({**req, "type_filling": fill})
             if r is None:
                 err = mt5.last_error()
@@ -614,8 +676,9 @@ def send(req, what):
     # a market deal that filled only partly (10010) or was accepted for execution (10008) is a live position:
     # treat it as done, so the bot records and manages it (otherwise it would sit on the account unmanaged)
     ok = r is not None and (r.retcode == mt5.TRADE_RETCODE_DONE or
-                            (req.get("action") == mt5.TRADE_ACTION_DEAL and r.retcode in (10008, 10010)))
-    if r is not None and r.retcode in (10008, 10010):
+                            (req.get("action") == mt5.TRADE_ACTION_DEAL and r.retcode in (10008, 10010)) or
+                            (req.get("action") == mt5.TRADE_ACTION_PENDING and r.retcode == 10008))
+    if r is not None and r.retcode in (10008, 10010) and req.get("action") != mt5.TRADE_ACTION_PENDING:
         log(f"{what}: accepted with code {r.retcode} ({r.comment}) - managed as open")
     if not ok:
         MON["last_fail"] = (None, str(err)) if r is None else (r.retcode, r.comment)
@@ -746,6 +809,93 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
         save_state()
 
 
+def place_limit(combo, sym, d, lim, sl, tp, sig, until, risk, mult=1.0, rules=None):
+    """An approved limit entry (plans "limit"): the order the backtest places, at its price, stop and target,
+    sized so that a fill at the limit loses `risk` at the stop. Kept while the backtest's order waits (3 bars)."""
+    rules = rules or {}
+    name = mt5_name(sym)
+    info, tick = mt5.symbol_info(name), mt5.symbol_info_tick(name)
+    if info is None or tick is None:
+        return
+    px = tick.ask if d > 0 else tick.bid
+    if d * (px - lim) <= 0 or d * (lim - sl) <= 0:
+        log(f"skip {combo}: price {px} already at / past the limit {lim:g} - not taken")
+        STATE["entry"][combo] = str(sig)
+        save_state()
+        return
+    if rules.get("sl"):
+        sl = lim - d * rules["sl"] * abs(lim - sl)
+    if rules.get("tp") and tp == tp:
+        tp = lim + d * rules["tp"] * abs(tp - lim)
+    lim, sl = round(lim, info.digits), round(sl, info.digits)
+    lots = lots_for(sym, lim, sl, risk)
+    if lots <= 0:
+        log(f"skip {combo}: lot size too small")
+        return
+    kind = mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL
+    try:
+        loss = abs(mt5.order_calc_profit(kind, name, lots, lim, sl) or 0.0)
+    except Exception:  # noqa: BLE001
+        loss = 0.0
+    if not loss:
+        loss = lots * abs(lim - sl) / info.trade_tick_size * info.trade_tick_value
+    if loss > risk + 0.01:
+        log(f"BLOCKED {combo}: {lots} lots would lose ${loss:,.2f} at the stop, above the allowed risk ${risk:,.2f}")
+        return
+    req = {"action": mt5.TRADE_ACTION_PENDING, "symbol": name, "volume": lots,
+           "type": mt5.ORDER_TYPE_BUY_LIMIT if d > 0 else mt5.ORDER_TYPE_SELL_LIMIT, "price": lim,
+           "sl": sl, "tp": round(tp, info.digits) if tp == tp and tp is not None else 0.0,
+           "magic": MAGICS_BY_COMBO[combo], "comment": combo[:31], "type_time": mt5.ORDER_TIME_GTC}
+    r = send(req, f"limit {combo} {'buy' if d > 0 else 'sell'} {lots} @ {lim} sl {sl:.5g} tp {tp} until {until:%d.%m %H:%M} UTC")
+    if r is None:
+        return
+    STATE.setdefault("pending", {})[combo] = {"order": int(r.order), "sig": str(sig), "until": str(until), "sym": sym,
+                                              "dir": d, "lim": lim, "risk": loss}
+    STATE["entry"][combo] = str(sig)
+    STATE["risk"][str(r.order)] = loss
+    save_state()
+
+
+def order_alive(pk):
+    return bool(mt5.orders_get(ticket=int(pk["order"])))
+
+
+def cancel_pending(combo, why):
+    """Remove the combo's waiting limit order. True = nothing is waiting any more (and no position came of it)."""
+    pk = STATE.get("pending", {}).get(combo)
+    if not pk:
+        return True
+    if order_alive(pk):
+        if ACC.dry or send({"action": mt5.TRADE_ACTION_REMOVE, "order": int(pk["order"])}, f"cancel limit {combo} ({why})") is None:
+            return False
+    elif any(p.magic == MAGICS_BY_COMBO.get(combo) for p in ACC.positions()):
+        return False                                   # it filled: step() takes the position over
+    STATE["pending"].pop(combo, None)
+    save_state()
+    return True
+
+
+def pending_guard(now, everything=False):
+    """Every loop: a waiting limit order is removed when its 3 bars are over, and before what would block a new
+    entry (a market break or holiday, the last 15 minutes of a stock session, an FTMO restricted event)."""
+    for combo, pk in list(STATE.get("pending", {}).items()):
+        sym = pk["sym"]
+        why = "emergency" if everything else None
+        if why is None and now >= pd.Timestamp(pk["until"]):
+            why = "3 bars over"
+        elif why is None and (break_soon(sym, now) or holiday_block(sym, now)):
+            why = "market break / holiday ahead"
+        elif why is None and news_window(sym, now) == "close":
+            why = "restricted news ahead"
+        elif why is None and U.CLASS.get(sym) == "stock":
+            tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
+            loc = now.tz_convert(tz)
+            if loc.hour * 60 + loc.minute >= close_min - 15:
+                why = "stock session ends"
+        if why:
+            cancel_pending(combo, why)
+
+
 def close(p, why):
     tick = mt5.symbol_info_tick(p.symbol)
     req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": p.symbol, "volume": p.volume, "position": p.ticket,
@@ -845,6 +995,11 @@ def step(combo, sid, tf, sym, off):
         IM._CACHE.clear()                       # fresh partner bars every time, never yesterday's
     be = (0.6, be_offset(sym, float(df["c"].iloc[-3])))
     tr = R.run(df, strat(sid, df, sym, tf), 0.0, breakeven=be, session_exit=exit_mask(df, sym, tf))
+    limit = "entry_pullback" in plan_of(combo)
+    pend = tr.iloc[0:0]
+    if len(tr):
+        pend = tr[tr["reason"] == "pending"]
+        tr = tr[tr["reason"] != "pending"]
     if len(tr):
         DIAG[combo]["last_signal"] = f"{tr.iloc[-1]['time']} {'buy' if tr.iloc[-1]['dir'] > 0 else 'sell'} {tr.iloc[-1]['reason']}"
         DIAG[combo]["trades_in_window"] = int(len(tr))
@@ -864,10 +1019,29 @@ def step(combo, sid, tf, sym, off):
         NEWS_RETRY.add(combo)
         return False
     NEWS_RETRY.discard(combo)
+    pk = STATE.get("pending", {}).get(combo)
+    if pk:
+        if pos:
+            # the limit order filled: from the replay's trade of that order on, managed like every other trade
+            m = tr[tr["time"] >= pd.Timestamp(pk["sig"])] if len(tr) else tr
+            if m.empty:
+                return                                 # the fill bar is still forming: the broker's stop / target hold it
+            STATE["entry"][combo] = str(m.iloc[0]["time"])
+            STATE["pending"].pop(combo, None)
+            save_state()
+            log(f"{combo}: limit order {pk['order']} filled - trade of {m.iloc[0]['time']}")
+            if not ACC.dry:
+                REP.notify(f"{BOT}: עסקה נפתחה (לימיט)", f"{pretty(combo)}\n{'קנייה' if pk['dir'] > 0 else 'מכירה'} בלימיט {pk['lim']:g} · הפסד בסטופ ${pk['risk']:,.0f}",
+                           tags=["chart_with_upwards_trend" if pk["dir"] > 0 else "chart_with_downwards_trend"])
+        elif len(pend) and (pend["time"].astype(str) == pk["sig"]).any() and order_alive(pk):
+            return                                     # the order is still waiting, as in the backtest
+        elif not cancel_pending(combo, "the backtest's order is no longer waiting"):
+            return
 
     def stop_now():
         """The stop as the backtest has it after the last CLOSED bar (the helper bars must not move it)."""
         tc = R.run(df.iloc[:-2], strat(sid, df.iloc[:-2], sym, tf), 0.0, breakeven=be, session_exit=exit_mask(df.iloc[:-2], sym, tf))
+        tc = tc[tc["reason"] != "pending"] if len(tc) else tc
         m = tc[tc["time"].astype(str) == STATE["entry"].get(combo, "")] if len(tc) else tc
         return float(m.iloc[-1]["stop_last"]) if len(m) and m.iloc[-1]["reason"] == "סוף הנתונים" else None
 
@@ -892,9 +1066,10 @@ def step(combo, sid, tf, sym, off):
         if close(p, reason) is None:                   # exit signal / opposite signal / time / session end
             return                                     # the close failed: never open a new trade next to it
         # an opposite signal may open the next trade on this same bar: fall through
-    if not len(tr):
+    src = pend if limit else tr                       # limit combos enter only through a waiting limit order
+    if not len(src):
         return
-    t = tr[tr["time"] == forming]
+    t = src[src["time"] == forming]
     if t.empty:
         return
     t = t.iloc[-1]
@@ -945,6 +1120,10 @@ def step(combo, sid, tf, sym, off):
     risk = ACC.allowed_risk(mult)
     if risk <= 0:
         log(f"skip {combo}: too close to the daily 4.5% / total 9% limit")
+        return
+    if limit:
+        until = forming + pd.Timedelta(minutes=TF_MIN[tf] * int(t["bars_left"]))
+        place_limit(combo, sym, int(t["dir"]), float(t["entry_px"]), float(t["stop_px"]), float(t["target_px"]), t["time"], until, risk, mult, rules)
         return
     open_trade(combo, sym, int(t["dir"]), float(t["stop_px"]), float(t["target_px"]), t["time"], risk, mult, rules)
 
@@ -1470,6 +1649,9 @@ def main():
         REP.notify(f"{name}: עסקה בלי שיוך", f"{len(stray)} עסקאות פתוחות עם מספר של הבוט שלא שייך לאף אסטרטגיה: "
                    + ", ".join(f"{p.symbol} #{p.ticket}" for p in stray), priority=4, tags=["warning"])
     ACC = Account(cfg, args.dry_run)
+    PLANS.update({c: p for c, p in (cfg.get("plans") or {}).items() if isinstance(p, dict)})
+    for c in PLANS:
+        log(f"approved plan {c}: {PLANS[c]} -> {plan_of(c)}")
     global CLOSE_BREAKS
     CLOSE_BREAKS = bool(cfg.get("close_before_breaks"))
     if CLOSE_BREAKS:
@@ -1543,6 +1725,7 @@ def main():
                 now = pd.Timestamp.now(tz="UTC")
                 stock_session_close(now)
                 break_close(now)
+                pending_guard(now)
                 for combo, sid, tf, sym in combos:
                     bar_start = now.floor(f"{TF_MIN[tf]}min")
                     if done.get(combo) == bar_start or (now - bar_start).total_seconds() < 3:

@@ -357,6 +357,15 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
                     hit = t
                     break
             if hit is None:
+                k = plan.get("emit_pending")     # live only (live/runner.py): k helper bars follow the forming bar
+                if k is not None and e_t + pb[1] >= n - int(k):
+                    # the limit order is still waiting at the end of the data: one row with the order's levels,
+                    # so the bot places / keeps exactly this order (bars_left counts the forming bar too)
+                    rows.append({"time": df.index[e_t], "exit_time": df.index[n - 1], "dir": d, "r": 0.0, "held": 0,
+                                 "entry_px": float(lim), "exit_px": float(lim), "stop_px": float(stop),
+                                 "target_px": float(target) if target is not None else np.nan, "reason": "pending",
+                                 "free_time": pd.NaT, "stop_last": float(stop), "mfe_r": 0.0, "mae_r": 0.0,
+                                 "bars_left": int(e_t + pb[1] - (n - 1 - int(k)))})
                 i += 1
                 continue
             e_t, e = hit, (min(lim, o[hit]) if d > 0 else max(lim, o[hit]))

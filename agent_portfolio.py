@@ -81,6 +81,22 @@ def bot_combos(bot):
     return list(j["combos"])
 
 
+def built_variant(bot, combo, fam):
+    """The variant a combo trades now: an approved card built into live/bots/<bot>.json "plans" (12.11.2026),
+    else the strategy's own (exits) / no filter. New cards are measured against this one."""
+    try:
+        p = (json.loads((ROOT / "live" / "bots" / f"{bot}.json").read_text(encoding="utf-8")).get("plans") or {}).get(combo) or {}
+    except Exception:  # noqa: BLE001
+        p = {}
+    if fam == "filters":
+        return p.get("filter") or "none"
+    if not any(k in p for k in ("target", "stop", "limit")):
+        return "own|be0.6|stop1|entry0"
+    tg = p.get("target")
+    tg = "own" if tg is None else ("none" if tg == "none" else f"{float(tg):g}R")
+    return f"{tg}|be0.6|stop{float(p.get('stop', 1)):g}|entry{float(p.get('limit', 0)):g}"
+
+
 def bot_risk(bot):
     if bot in RISK:
         return RISK[bot]
@@ -295,7 +311,7 @@ def cards_for(bot):
             d = st.get(fam, combo)
             if not d or not d.get("variants"):
                 continue
-            base_key = "own|be0.6|stop1|entry0" if fam == "exits" else "none"
+            base_key = built_variant(bot, combo, fam)
             vs = d["variants"]
             base = vs.get(base_key)
             if not base:

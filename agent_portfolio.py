@@ -279,10 +279,19 @@ def bot_symbols(bot):
     return NEW_ONLY.get(bot) or sorted({c.split("|")[2] for c in bot_combos(bot)})
 
 
+def can_test(bot, s_):
+    """Every bot's agent tests every new strategy the scout brings - whether it fits the bot is the test's answer, not
+    the scout's guess (user, 12.11.2026; the scout's "bots" field is only a hint). The one limit is technical: the
+    scalping bots (5-6) trade 1-15 minute charts, so a strategy whose source states only longer timeframes has nothing
+    to run there."""
+    tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or ["1Hour"]
+    return bot not in NEW_ONLY or any(x in ("1Min", "5Min", "15Min") for x in tfs)
+
+
 def untested_new(bot, where):
     st = Store(bot)
     for s_ in inbox():
-        if bot not in (s_.get("bots") or []) or not s_.get("id"):
+        if not s_.get("id") or not can_test(bot, s_):
             continue
         tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or ["1Hour"]
         for sym in bot_symbols(bot):
@@ -292,20 +301,20 @@ def untested_new(bot, where):
 
 
 def test_new(bot, budget_s, where, symbols=None, timeframes=None):
-    """Every scout strategy addressed to this bot, on the bot's instruments, once (re-run after RERUN_DAYS)."""
+    """Every scout strategy, on the bot's instruments and the timeframes its source states, once (re-run after RERUN_DAYS)."""
     st = Store(bot)
     t0, done = time.time(), 0
     syms = symbols or bot_symbols(bot)
     for s_ in inbox():
-        if bot not in (s_.get("bots") or []) or not s_.get("id"):
+        if not s_.get("id") or not can_test(bot, s_):
             continue
         sid = s_["id"]
         tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or (timeframes or ["1Hour"])
         if bot in NEW_ONLY:
             tfs = [x for x in tfs if x in ("1Min", "5Min", "15Min")]          # scalping bots: short timeframes only
         mine = [x for x in syms if runs_here(x, where)]
-        if s_.get("markets"):
-            mine = [x for x in mine if U.CLASS.get(x) in s_["markets"]] or mine
+        # on ALL the bot's instruments, not only the markets the source names (user: test everything, each strategy
+        # where it wins)
         for sym in mine:
             combos = [f"{sid}|{tf}|{sym}" for tf in tfs]
             if all(st.age_days("new", c) < RERUN_DAYS for c in combos):

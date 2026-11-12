@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-12T19:12:24+00:00",
+ "updated": "2026-11-12T19:27:11+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -791,7 +791,7 @@
      "bot": "bot1",
      "kind": "info",
      "title": "הבוט כולו גרוע מהבדיקה",
-     "what": "128 עסקאות בפועל, -0.09R לעסקה, מול +0.14R בבדיקה על נתוני העבר של אותן אסטרטגיות (סטייה של 2.6 סטיות תקן). אישור: הסוכן של הבוט יבדוק אם הבעיה בעלויות, בביצוע או בשוק, ויציע תיקון.",
+     "what": "129 עסקאות בפועל, -0.10R לעסקה, מול +0.14R בבדיקה על נתוני העבר של אותן אסטרטגיות (סטייה של 2.7 סטיות תקן). אישור: הסוכן של הבוט יבדוק אם הבעיה בעלויות, בביצוע או בשוק, ויציע תיקון.",
      "train": null,
      "unseen": null,
      "whole": null,
@@ -806,7 +806,7 @@
       "week": "2026-W46"
      },
      "detail": {},
-     "made": "2026-11-12T19:12:21+00:00",
+     "made": "2026-11-12T19:27:08+00:00",
      "id": "7d4268d77f15",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -3766,16 +3766,16 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-12T19:12:07+00:00",
-    "state_updated": "2026-11-12T19:09:15+00:00",
+    "updated": "2026-11-12T19:26:57+00:00",
+    "state_updated": "2026-11-12T19:24:08+00:00",
     "minutes_since_state": 3,
-    "balance": 96663.49,
-    "equity": 97375.65,
-    "day_pct": -2.24,
-    "total_pct": -2.62,
-    "trades": 128,
-    "mean_r": -0.092,
-    "sum_r": -11.75,
+    "balance": 96571.78,
+    "equity": 97410.3,
+    "day_pct": -2.2,
+    "total_pct": -2.59,
+    "trades": 129,
+    "mean_r": -0.099,
+    "sum_r": -12.75,
     "bt_mean_r": 0.193,
     "flagged": 0,
     "combos": [
@@ -3912,6 +3912,18 @@
       "flags": []
      },
      {
+      "combo": "TV21|15Min|ASML",
+      "n": 3,
+      "mean": -0.368,
+      "sum": -1.1,
+      "win": 33.3,
+      "streak": 2,
+      "bt_mean": 0.122,
+      "bt_n": 495,
+      "z": -0.66,
+      "flags": []
+     },
+     {
       "combo": "TV20|1Hour|XAUUSD",
       "n": 2,
       "mean": -0.547,
@@ -4005,18 +4017,6 @@
       "bt_mean": 0.059,
       "bt_n": 224,
       "z": -0.2,
-      "flags": []
-     },
-     {
-      "combo": "TV21|15Min|ASML",
-      "n": 2,
-      "mean": -0.051,
-      "sum": -0.1,
-      "win": 50.0,
-      "streak": 1,
-      "bt_mean": 0.122,
-      "bt_n": 495,
-      "z": -0.19,
       "flags": []
      },
      {
@@ -4249,12 +4249,12 @@
      }
     ],
     "problems": [
-     "כל הבוט: -0.09R לעסקה בפועל מול +0.14R בבדיקה (128 עסקאות)"
+     "כל הבוט: -0.10R לעסקה בפועל מול +0.14R בבדיקה (129 עסקאות)"
     ]
    },
    "ops": {
     "problems": [
-     "כל הבוט: -0.09R לעסקה בפועל מול +0.14R בבדיקה (128 עסקאות)"
+     "כל הבוט: -0.10R לעסקה בפועל מול +0.14R בבדיקה (129 עסקאות)"
     ],
     "actions": [
      null
@@ -7199,13 +7199,13 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-12T19:12:07+00:00",
-    "state_updated": "2026-11-12T19:09:20+00:00",
+    "updated": "2026-11-12T19:26:57+00:00",
+    "state_updated": "2026-11-12T19:24:13+00:00",
     "minutes_since_state": 3,
     "balance": 110056.21,
-    "equity": 109866.85,
-    "day_pct": -0.96,
-    "total_pct": 9.87,
+    "equity": 109920.95,
+    "day_pct": -0.91,
+    "total_pct": 9.92,
     "trades": 39,
     "mean_r": 0.481,
     "sum_r": 18.75,
@@ -11896,8 +11896,8 @@
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-12T19:12:07+00:00",
-    "state_updated": "2026-11-12T19:09:24+00:00",
+    "updated": "2026-11-12T19:26:57+00:00",
+    "state_updated": "2026-11-12T19:24:17+00:00",
     "minutes_since_state": 3,
     "balance": 100264.17,
     "equity": 100264.17,
@@ -15087,13 +15087,13 @@
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-12T19:12:07+00:00",
-    "state_updated": "2026-11-12T19:09:27+00:00",
+    "updated": "2026-11-12T19:26:57+00:00",
+    "state_updated": "2026-11-12T19:24:21+00:00",
     "minutes_since_state": 3,
     "balance": 100120.1,
-    "equity": 101358.77,
-    "day_pct": 0.39,
-    "total_pct": 1.36,
+    "equity": 101285.27,
+    "day_pct": 0.32,
+    "total_pct": 1.29,
     "trades": 36,
     "mean_r": -0.044,
     "sum_r": -1.59,
@@ -17319,7 +17319,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T11:37:14+00:00",
+     "made": "2026-11-12T19:16:28+00:00",
      "id": "f5857c94a60e",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)",
@@ -17582,6 +17582,64 @@
     {
      "bot": "bot5",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC001|1Min|USDCHF · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 101,
+      "eff_n": 100.9,
+      "mean": -0.0776,
+      "t": -0.71,
+      "win": 40.8
+     },
+     "unseen": {
+      "n": 132,
+      "eff_n": 132.0,
+      "mean": -0.0358,
+      "t": -0.36,
+      "win": 40.9
+     },
+     "whole": {
+      "n": 233,
+      "eff_n": 232.5,
+      "mean": -0.0531,
+      "t": -0.72,
+      "win": 40.9
+     },
+     "halves": [
+      -0.0476,
+      -0.0633
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC001|1Min|USDCHF",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T19:16:28+00:00",
+     "id": "a9d95e98cbf3",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T19:27:11+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC001|1Min|GBPUSD · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
      "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -17628,7 +17686,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T11:37:14+00:00",
+     "made": "2026-11-12T19:16:28+00:00",
      "id": "95da19622dac",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
@@ -17766,6 +17824,64 @@
     {
      "bot": "bot5",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC001|1Min|USDJPY · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 139,
+      "eff_n": 138.8,
+      "mean": 0.1589,
+      "t": 1.6,
+      "win": 41.7
+     },
+     "unseen": {
+      "n": 142,
+      "eff_n": 142.0,
+      "mean": -0.054,
+      "t": -0.57,
+      "win": 39.4
+     },
+     "whole": {
+      "n": 281,
+      "eff_n": 280.3,
+      "mean": 0.0466,
+      "t": 0.68,
+      "win": 40.5
+     },
+     "halves": [
+      0.1606,
+      -0.0546
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC001|1Min|USDJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-12T19:16:28+00:00",
+     "id": "6e961d549842",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.05R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-12T19:27:11+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC001|1Min|EURUSD · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
      "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -17812,7 +17928,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T11:37:14+00:00",
+     "made": "2026-11-12T19:16:28+00:00",
      "id": "283b7e9c75b2",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
@@ -17825,13 +17941,13 @@
    "health": {
     "bot": "bot5",
     "name": "בוט 5 - סקאלפינג",
-    "updated": "2026-11-12T19:12:07+00:00",
-    "state_updated": "2026-11-12T19:10:42+00:00",
+    "updated": "2026-11-12T19:26:57+00:00",
+    "state_updated": "2026-11-12T19:25:35+00:00",
     "minutes_since_state": 1,
     "balance": 97429.17,
-    "equity": 97632.85,
-    "day_pct": -2.37,
-    "total_pct": -2.37,
+    "equity": 97624.25,
+    "day_pct": -2.38,
+    "total_pct": -2.38,
     "trades": 5,
     "mean_r": -1.037,
     "sum_r": -5.18,
@@ -19493,8 +19609,8 @@
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-12T19:12:07+00:00",
-    "state_updated": "2026-11-12T19:10:46+00:00",
+    "updated": "2026-11-12T19:26:57+00:00",
+    "state_updated": "2026-11-12T19:25:40+00:00",
     "minutes_since_state": 1,
     "balance": 100465.48,
     "equity": 100465.48,
@@ -21430,68 +21546,19 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-12T19:12:07+00:00",
-    "state_updated": "2026-11-12T19:12:09+00:00",
-    "minutes_since_state": 0,
-    "balance": 98746.26,
-    "equity": 98746.26,
-    "day_pct": -1.25,
-    "total_pct": -1.25,
-    "trades": 4,
-    "mean_r": -0.524,
-    "sum_r": -2.1,
+    "updated": "2026-11-12T19:26:57+00:00",
+    "state_updated": "2026-11-12T19:24:30+00:00",
+    "minutes_since_state": 2,
+    "balance": 100000.0,
+    "equity": 100000.0,
+    "day_pct": 0.0,
+    "total_pct": 0.0,
+    "trades": 0,
+    "mean_r": null,
+    "sum_r": null,
     "bt_mean_r": null,
     "flagged": 0,
-    "combos": [
-     {
-      "combo": "EV01|5Min|GBPJPY",
-      "n": 1,
-      "mean": -0.26,
-      "sum": -0.26,
-      "win": 0.0,
-      "streak": 1,
-      "bt_mean": null,
-      "bt_n": null,
-      "z": null,
-      "flags": []
-     },
-     {
-      "combo": "EV03|5Min|GBPJPY",
-      "n": 1,
-      "mean": -1.0,
-      "sum": -1.0,
-      "win": 0.0,
-      "streak": 1,
-      "bt_mean": null,
-      "bt_n": null,
-      "z": null,
-      "flags": []
-     },
-     {
-      "combo": "EV03|5Min|GBPUSD",
-      "n": 1,
-      "mean": 0.163,
-      "sum": 0.16,
-      "win": 100.0,
-      "streak": 0,
-      "bt_mean": null,
-      "bt_n": null,
-      "z": null,
-      "flags": []
-     },
-     {
-      "combo": "EV03|5Min|UK100",
-      "n": 1,
-      "mean": -1.0,
-      "sum": -1.0,
-      "win": 0.0,
-      "streak": 1,
-      "bt_mean": null,
-      "bt_n": null,
-      "z": null,
-      "flags": []
-     }
-    ],
+    "combos": [],
     "problems": []
    }
   }
@@ -21534,19 +21601,7 @@
   }
  },
  "decisions": {
-  "new": [
-   "b544255149f2",
-   "6a72a8770a57",
-   "61ce7d457757",
-   "9d985ef46bda",
-   "9b5b87515664",
-   "7281bc832378",
-   "01a322c114be",
-   "a68aa556a688",
-   "f42a6e407ec3",
-   "8a678a997aae",
-   "06c4447e30c7"
-  ],
+  "new": [],
   "unread": 134
  }
 }

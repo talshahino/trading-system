@@ -18,6 +18,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -150,8 +151,11 @@ def snapshot():
         base = WORK / d
         if base.exists():
             for f in base.rglob("*"):
-                if f.is_file():
-                    out[f.relative_to(WORK).as_posix()] = hashlib.sha1(f.read_bytes()).hexdigest()
+                rel = f.relative_to(WORK).as_posix()
+                # the gap method's run cache (reports/agents/bot5|bot6/tal: thousands of csv.gz) is the computer's own,
+                # never published (manager, 12.11.2026: a first run on bot 6 made ~900 of them - one commit of 900 blobs)
+                if f.is_file() and "/tal/" not in rel:
+                    out[rel] = hashlib.sha1(f.read_bytes()).hexdigest()
     return out
 
 
@@ -361,7 +365,7 @@ def host_doc(st, kind):
             "light_at": st.get("light_at"), "smart_at": st.get("smart_at"),
             "every_min": {"light": LIGHT_EVERY // 60, "smart": SMART_EVERY // 60},
             "smart_minutes": st.get("smart_minutes"), "agent_errors": st.get("agent_errors") or [],
-            "agent_last": st.get("agent_last") or {},
+            "agent_last": st.get("agent_last") or {}, "agent_tail": st.get("agent_tail") or {},
             "box_pub": box_pub(), "alpaca": bool(secrets()),
             "last_error": st.get("last_error"),
             "errors_in_row": st.get("errors_in_row", 0)}
@@ -461,17 +465,32 @@ def _smart(st, log, t0):
         except Exception as e:  # noqa: BLE001 - one agent's failure does not stop the others
             errs.append(f"{name}: {e}"[:300])
             log(f"agent {name} failed: {e}")
+        # what the agent printed about its own failures (manager, 12.11.2026: bot 6's gap search ended without results
+        # and without an error - an exception caught and printed inside the agent is invisible from here otherwise)
+        st.setdefault("agent_tail", {})[name] = _tail(f"agent_{name}.log")
         st["smart_minutes"], st["agent_errors"] = mins_all, errs
         try:
             _publish_changes(st, before, "agent", f"Agents on the bots' computer: {name} smart layer")
         except Exception as e:  # noqa: BLE001
             log(f"publishing {name} failed: {e}")
+            errs.append(f"{name}: publishing failed: {e}"[:300])     # shown in host.json on the next publish
+            st["agent_errors"] = errs
     before = snapshot()
     run(st, ["-m", "agents.portfolio_check"], timeout=600, logname="portfolio_check.log")   # the whole bots, as they are
     host_doc(st, "smart")                                # stamps smart_at (the manager / builder: the continuous layer)
     st["last_error"], st["errors_in_row"] = None, 0
     n = _publish_changes(st, before, "smart", "Agents on the bots' computer: smart layer")
     log(f"agents (smart layer) done in {time.time() - t0:.0f}s, {n} files published, {len(errs)} agents failed")
+
+
+def _tail(logname):
+    """The agent log's lines about failures (at most 6) and its last 2 lines, for host.json."""
+    try:
+        lines = (WORK / "logs" / logname).read_text(encoding="utf-8", errors="replace").strip().splitlines()
+    except Exception:  # noqa: BLE001
+        return []
+    bad = [x for x in lines if re.search(r"failed|Error|Traceback|no data", x)]
+    return [x[:240] for x in bad[-6:] + lines[-2:]]
 
 
 def cycle(st, kind):

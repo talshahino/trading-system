@@ -55,6 +55,14 @@ def risk_counts():
     return out
 
 
+def _ops_slot(out, b):
+    """out[b] with problems / actions of the same length (the app shows actions[i] under problems[i])."""
+    o = out.setdefault(b, {})
+    o.setdefault("problems", [])
+    o["actions"] = (list(o.get("actions") or []) + [None] * len(o["problems"]))[:len(o["problems"])]
+    return o
+
+
 def ops():
     """The manager's second job (user, 11.11.2026): run the agents at maximum efficiency and solve their problems.
     Per agent: work done / left, time per experiment, how long the rest takes at tonight's budget, failed or stuck
@@ -109,6 +117,28 @@ def ops():
                        "problems": problems, "actions": actions, "last_experiment": None if last is None else last.isoformat()}
     except Exception as e:  # noqa: BLE001
         out["bot5"] = {"problems": [f"לא הצלחתי לקרוא את מצב הסוכן ({e})"]}
+    # the bots' computer: an agent that ran but whose gap-method section did not change, and what its log says about
+    # failures (manager, 12.11.2026: bot 6 ran at 16:43 and its section stayed at 02:50 with no error anywhere)
+    try:
+        h = json.loads(Path("reports/agents/host.json").read_text(encoding="utf-8"))
+        res = json.loads(Path("data/agents/strategies/tal_gap_results.json").read_text(encoding="utf-8"))
+        last, tails = h.get("agent_last") or {}, h.get("agent_tail") or {}
+        for b in ("bot5", "bot6"):
+            ran, upd = last.get(b), (res.get(b) or {}).get("updated")
+            if ran and upd and pd.Timestamp(ran) - pd.Timestamp(upd) > pd.Timedelta(hours=2):
+                o = _ops_slot(out, b)
+                o["problems"].append(
+                    f"שיטת הגאפ: הסוכן רץ ב־{pd.Timestamp(ran):%d.%m %H:%M} UTC, והתוצאות לא התעדכנו מאז "
+                    f"{pd.Timestamp(upd):%d.%m %H:%M}")
+                o["actions"].append("הסוכן החכם של המנהל יבדוק את agent_tail ב־host.json ויתקן")
+        for b, lines in tails.items():
+            bad = [x for x in lines if "failed" in x or "Traceback" in x or "Error" in x]
+            if bad:
+                o = _ops_slot(out, b.replace("-new", ""))
+                o["problems"].append(f"בלוג של הסוכן ({b}): {bad[-1][:160]}")
+                o["actions"].append(None)
+    except Exception:  # noqa: BLE001
+        pass
     return out
 
 

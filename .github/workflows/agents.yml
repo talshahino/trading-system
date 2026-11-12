@@ -43,7 +43,9 @@ jobs:
           h = {}
           try:
               h = json.load(open("reports/agents/host.json"))
-              t = d.datetime.fromisoformat(h.get("smart_at") or "1970-01-01T00:00:00+00:00")
+              # the computer is active while its agents start (a long round stamps smart_at only at its end)
+              ts = [h.get("smart_at")] + list((h.get("agent_last") or {}).values())
+              t = max(d.datetime.fromisoformat(x) for x in ts if x) if any(ts) else d.datetime(1970, 1, 1, tzinfo=d.timezone.utc)
               age = (d.datetime.now(d.timezone.utc) - t).total_seconds() / 3600
           except Exception:
               age = 999

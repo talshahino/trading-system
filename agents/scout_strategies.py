@@ -1091,6 +1091,169 @@ def s_xs_gold_5m_pullback(df):
     return long_, short & ~long_, {"stop": ("level", stl, sts), "target": ("R", 2.0)}
 
 
+# ---------------- helpers added 2026-11-12 (fourth scout run: the user's Facebook reels) ----------------
+def _zigzag_snapshots(h, l, k):
+    """Alternating swing pivots (k bars each side), each known k bars after it. Returns, for every bar t, the
+    list of pivots confirmed by t as (index, price, +1 high / -1 low); consecutive same-type pivots keep the
+    more extreme one."""
+    n = len(h)
+    piv, snaps = [], []
+    for t in range(n):
+        j = t - k
+        if j - k >= 0:
+            wh, wl = h[j - k:t + 1], l[j - k:t + 1]
+            for typ, val, ok in ((1, h[j], h[j] == wh.max()), (-1, l[j], l[j] == wl.min())):
+                if not ok:
+                    continue
+                if piv and piv[-1][2] == typ:
+                    if (typ == 1 and val > piv[-1][1]) or (typ == -1 and val < piv[-1][1]):
+                        piv[-1] = (j, val, typ)
+                else:
+                    piv.append((j, val, typ))
+        snaps.append(len(piv))
+    return piv, snaps
+
+
+def _butterfly(df, k=3, tol=0.05, target="A"):
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    n = len(c)
+    piv, snaps = _zigzag_snapshots(h, l, k)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    st_l, st_s = np.full(n, np.nan), np.full(n, np.nan)
+    tg_l, tg_s = np.full(n, np.nan), np.full(n, np.nan)
+    lo_r = lambda x: x * (1 - tol)  # noqa: E731
+    hi_r = lambda x: x * (1 + tol)  # noqa: E731
+    for t in range(1, n):
+        m = snaps[t]
+        for end in (m, m - 1):              # the pattern may be the last 4 pivots, or the 4 before a minor swing
+            if end < 4:
+                continue
+            (xi, X, xt), (ai, A, _), (bi, B, _), (ci, C, ct) = piv[end - 4:end]
+            if ct != -xt:
+                continue
+            s = xt                           # +1: X high (bearish, sell at D); -1: X low (bullish, buy at D)
+            XA = s * (X - A)
+            AB = s * (B - A)
+            BC = s * (B - C)
+            if XA <= 0 or AB <= 0 or BC <= 0:
+                continue
+            if not (lo_r(0.786) <= AB / XA <= hi_r(0.786) and lo_r(0.382) <= BC / AB <= hi_r(0.886)):
+                continue
+            D = A + s * 1.27 * XA
+            CD = s * (D - C)
+            if not (lo_r(1.618) <= CD / BC <= hi_r(2.24)):
+                continue
+            Dt = D - s * tol * XA            # the D zone starts tol x XA before the exact 1.27 level
+            seg = h[ci + 1:t] if s > 0 else l[ci + 1:t]
+            if s > 0:
+                if h[t] < Dt or (len(seg) and seg.max() >= Dt):
+                    continue
+                stop = A + 1.414 * XA
+                tgt = A if target == "A" else D - 0.618 * (D - A)
+                if c[t] < stop and tgt < c[t]:
+                    short[t], st_s[t], tg_s[t] = True, stop, tgt
+            else:
+                if l[t] > Dt or (len(seg) and seg.min() <= Dt):
+                    continue
+                stop = A - 1.414 * XA
+                tgt = A if target == "A" else D + 0.618 * (A - D)
+                if c[t] > stop and tgt > c[t]:
+                    long_[t], st_l[t], tg_l[t] = True, stop, tgt
+            break
+    return long_, short & ~long_, {"stop": ("level", st_l, st_s), "target": ("level", tg_l, tg_s)}
+
+
+# ---------------- SC037 / SC038 Butterfly harmonic pattern (Trader Dhana, Facebook reel) ----------------
+def s_butterfly_target_a(df):
+    """Butterfly harmonic pattern (Trader Dhana, Facebook reel sent by the user; rules written down by the user
+    12.11.2026), intraday 15m/30m: five swing points X-A-B-C-D. AB = 0.786 retracement of XA, BC = 0.382-0.886 of
+    AB, CD = 1.618-2.24 of BC, D = 1.27 extension of XA (beyond X). Bearish: X high, A low, D a new high above X
+    -> sell at D; bullish mirror -> buy at D. Stop a little beyond D (ours: the 1.414 XA extension); target the A
+    level. Ours: 2-bar swings, +/-5% tolerance on every ratio, entry at the close of the first bar that reaches the
+    D zone (the 1.27 level minus 5% of XA)."""
+    return _butterfly(df, k=2, tol=0.05, target="A")
+
+
+def s_butterfly_target_618(df):
+    """SC037 Butterfly with the alternative target the user asked to test: the 0.618 retracement of AD (instead of
+    the A level). Everything else as SC037."""
+    return _butterfly(df, k=2, tol=0.05, target="618")
+
+
+def _tl_fib(df, k=3, stop_fib=0.618, target="proj"):
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    n = len(c)
+    a = atr(h, l, c, 14)
+    piv, snaps = _zigzag_snapshots(h, l, k)
+    long_, short = np.zeros(n, bool), np.zeros(n, bool)
+    st_l, st_s = np.full(n, np.nan), np.full(n, np.nan)
+    tg_l, tg_s = np.full(n, np.nan), np.full(n, np.nan)
+    setup = None    # dict(s, i1, p1, i2, p2, top, broken, key)
+    used = set()
+    for t in range(1, n):
+        m = snaps[t]
+        if m >= 4:
+            (i1, p1, t1), (_, q1, _), (i2, p2, _), (_, q2, _) = piv[m - 4:m]
+            s = -t1                          # L,H,L,H -> s = +1 (uptrend); H,L,H,L -> s = -1
+            key = (i1, i2)
+            if s * (p2 - p1) > 0 and s * (q2 - q1) > 0 and key not in used and \
+                    (setup is None or setup["key"] != key):
+                setup = {"s": s, "i1": i1, "p1": p1, "i2": i2, "p2": p2, "top": q2, "broken": False, "key": key}
+        if setup is None:
+            continue
+        s, p1 = setup["s"], setup["p1"]
+        line = setup["p2"] + (setup["p2"] - p1) / (setup["i2"] - setup["i1"]) * (t - setup["i2"])
+        if not setup["broken"]:
+            ext = h[t] if s > 0 else l[t]
+            if s * (ext - setup["top"]) > 0:
+                setup["top"] = ext          # the impulse is still extending
+            if s * (c[t] - line) < 0:
+                setup["broken"] = True      # the trendline under the lows (over the highs) breaks
+            continue
+        top = setup["top"]
+        R = s * (top - p1)
+        if R <= 0:
+            setup = None
+            continue
+        z50, z618 = top - s * 0.5 * R, top - s * 0.618 * R
+        z786 = top - s * 0.786 * R
+        if s * (c[t] - z786) < 0 or (t - setup["i2"]) > 300:
+            used.add(setup["key"])          # gone through the zone, or too old
+            setup = None
+            continue
+        touch = (l[t] <= z50) if s > 0 else (h[t] >= z50)
+        if touch and s * (c[t] - z618) >= 0:
+            stop = top - s * stop_fib * R - s * 0.25 * a[t]
+            tgt = c[t] + s * R if target == "proj" else top
+            if s > 0:
+                long_[t], st_l[t], tg_l[t] = True, stop, tgt
+            else:
+                short[t], st_s[t], tg_s[t] = True, stop, tgt
+            used.add(setup["key"])
+            setup = None
+    return long_, short & ~long_, {"stop": ("level", st_l, st_s), "target": ("level", tg_l, tg_s)}
+
+
+# ---------------- SC039 / SC040 Trendline break + Fibonacci 0.5-0.618 (Trade Master, Facebook reel) ----------------
+def s_tl_break_fib(df):
+    """'Trendline break + Fibonacci retracement' (Trade Master, Facebook reel 'Beginner to pro day 26', sent by the
+    user; rules written down by the user 12.11.2026): an uptrend with breaks of structure (each high above the last)
+    and a rising trendline under the lows; price breaks the trendline down (the liquidity under it is taken);
+    Fibonacci on the whole impulse from the low at the start of the trend (1) to the high (0); buy in the 0.5-0.618
+    zone. Stop a little under 0.618; target = the length of the whole impulse projected up from the entry. Bearish
+    mirror (downtrend, line over the highs breaks up, sell 0.5-0.618). Ours: 3-bar swings; trend = the last two swing
+    lows and highs both rising; trendline through those two lows; entry at the close of the first bar touching 0.5
+    that is still above 0.618; stop = 0.618 - 0.25 ATR(14); the setup dies on a close beyond 0.786 or after 300
+    bars. The source names no timeframe - the user asked for 15 minutes to 4 hours."""
+    return _tl_fib(df, k=3, stop_fib=0.618, target="proj")
+
+
+def s_tl_break_fib_786(df):
+    """SC039 with the alternatives the user asked to test: stop under the 0.786 level (- 0.25 ATR) and the nearer
+    target = the impulse high (0). Everything else as SC039."""
+    return _tl_fib(df, k=3, stop_fib=0.786, target="top")
+
+
 # id: (name, fn, timeframes the source states)
 SCOUT = {
     "SC001": ("RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute (TradingView)", s_rv_ema20_scalp, ["1Min"]),
@@ -1129,4 +1292,8 @@ SCOUT = {
     "SC034": ("ATR Trend + RSI<40 pullback over a rising EMA200, 1.5/3 ATR, long (TradingView)", s_tv_atr_trend_rsi_pullback, ["15Min", "1Hour"]),
     "SC035": ("EMA 50/100 cross + pullback + Stochastic 20/80, swing stop, 10-pip target, 1-minute (The5ers)", s_5ers_ema50_100_stoch_1m, ["1Min"]),
     "SC036": ("Gold 5m: 4H EMA200 trend, EMA50 pullback + engulfing/hammer + RSI 40, 2R, 13-17 GMT (XS)", s_xs_gold_5m_pullback, ["5Min"]),
+    "SC037": ("Butterfly harmonic X-A-B-C-D, sell/buy at the 1.27 XA extension, target A (Trader Dhana, Facebook)", s_butterfly_target_a, ["15Min"]),
+    "SC038": ("Butterfly harmonic, target 0.618 of AD (Trader Dhana, Facebook; user's variant)", s_butterfly_target_618, ["15Min"]),
+    "SC039": ("Trendline break + Fibonacci 0.5-0.618 entry, stop under 0.618, impulse-length target (Trade Master, Facebook)", s_tl_break_fib, ["15Min", "1Hour", "4Hour"]),
+    "SC040": ("Trendline break + Fibonacci 0.5-0.618, stop under 0.786, target the impulse high (Trade Master; user's variant)", s_tl_break_fib_786, ["15Min", "1Hour", "4Hour"]),
 }

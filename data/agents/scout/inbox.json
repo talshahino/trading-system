@@ -669,6 +669,90 @@
     "bot6"
    ],
    "rules": "5m XAUUSD: above 4H EMA200, pullback to EMA50, hammer/engulfing, RSI back above 40, MACD cross - at least 3 confirmations, 13-17 GMT (short mirror) / stop 5-10 pips beyond the swing (ours 0.2 ATR) / target >= 2:1"
+  },
+  {
+   "id": "SC037",
+   "name": "Butterfly harmonic X-A-B-C-D, entry at the 1.27 XA extension, target A",
+   "source": "Facebook (Trader Dhana reel, sent by the user)",
+   "url": "https://www.facebook.com/share/r/1EHGBR2mGC/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m/30m intraday: AB=0.786 XA, BC=0.382-0.886 AB, CD=1.618-2.24 BC, D=1.27 XA extension beyond X; bearish X high -> sell at D (bullish mirror) / stop a little beyond D (ours 1.414 XA) / target the A level"
+  },
+  {
+   "id": "SC038",
+   "name": "Butterfly harmonic, target 0.618 of AD (user's variant)",
+   "source": "Facebook (Trader Dhana reel, sent by the user)",
+   "url": "https://www.facebook.com/share/r/1EHGBR2mGC/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "as SC037 / stop 1.414 XA / target the 0.618 retracement of AD (alternative target the user asked to test)"
+  },
+  {
+   "id": "SC039",
+   "name": "Trendline break + Fibonacci 0.5-0.618 entry, stop under 0.618, impulse-length target",
+   "source": "Facebook (Trade Master reel 'Beginner to pro day 26', sent by the user)",
+   "url": "https://www.facebook.com/share/r/1FZsdEazW3/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "uptrend with BOS + rising trendline under the lows; close breaks the line; Fib of the whole impulse (low=1, high=0); buy in 0.5-0.618 (bearish mirror) / stop a little under 0.618 / target = impulse length projected from the entry; timeframe not stated - user: test 15m-4H"
+  },
+  {
+   "id": "SC040",
+   "name": "Trendline break + Fibonacci 0.5-0.618, stop under 0.786, target the impulse high (user's variant)",
+   "source": "Facebook (Trade Master reel, sent by the user)",
+   "url": "https://www.facebook.com/share/r/1FZsdEazW3/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "as SC039 / stop under 0.786 / target the previous high (0) - the alternatives the user asked to test"
   }
  ]
 }

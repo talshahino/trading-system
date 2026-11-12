@@ -341,6 +341,10 @@ def main():
     ap.add_argument("--news-exit", action="store_true",
                     help="FTMO calendar holidays (data/ftmo_calendar/history.json) close the affected markets for the day; "
                          "restricted events are applied minute by minute later (bots_compare.py --news)")
+    ap.add_argument("--news-minute", action="store_true",
+                    help="FTMO restricted events minute by minute on every trade, like the live bots (13.11.2026): a position "
+                         "open 3 minutes before an event on its instrument is closed then at the 1-minute price, a signal "
+                         "inside the window (3 minutes before to 3 after) is not taken")
     ap.add_argument("--break-exit", action="store_true",
                     help="FTMO Standard account: close every position before any market break longer than 2 hours (weekends too)")
     ap.add_argument("--stock-session-exit", action="store_true",
@@ -378,6 +382,10 @@ def main():
     ap.add_argument("--test-from", default="",
                     help="YYYY-MM-DD: judge every (strategy, timeframe, instrument) directly from this date, no earlier selection period")
     args = ap.parse_args()
+    if args.news_minute and not args.demo:
+        NEWS_MIN["on"] = True
+        NEWS_MIN["start"], NEWS_MIN["end"] = args.start, args.end
+        R.run = _news_run(R.run)
     if args.plans_file:
         import json as _json
         try:
@@ -588,6 +596,115 @@ def news_masks(df, s, tf):
     if _CAL_HIST is None:
         _CAL_HIST = CAL.parse(json.load(open(Path(__file__).parent / "data" / "ftmo_calendar" / "history.json", encoding="utf-8")))
     return CAL.masks(df, s, RP.TF_MIN[tf], *_CAL_HIST)
+
+
+# ---- FTMO restricted events, minute by minute (13.11.2026) ----
+# The live bots close every position 3 minutes before a restricted event on its instrument and take no entry from 3
+# minutes before to 3 after (live/runner.py, "restricted news ahead Standard"). The bar engine did not: a trade held
+# through the release kept the move the release made (bot 2 QB11 USDJPY 9.11: the backtest +7.7R at the 8R target,
+# the demo closed at 13:27 UTC before the US CPI at +2.8R; in 2026 13 of QB11's 124 trades were open over an event and
+# made +21.5R of its +20.4R, TV58 USDCAD 9 of 37 made +29.9R of +23.9R).
+NEWS_MIN = {"on": False}
+_MIN1 = {}
+
+
+def _minute_bars(s):
+    if s not in _MIN1:
+        try:
+            _MIN1[s] = P.bars(s, "1Min", NEWS_MIN["start"], NEWS_MIN["end"])
+        except config.TimeBudgetReached:
+            raise
+        except Exception as e:  # noqa: BLE001
+            print(f"  news: no 1-minute bars for {s} ({str(e)[-120:]}) - restricted events not applied")
+            _MIN1[s] = None
+    return _MIN1[s]
+
+
+def _news_events(s):
+    global _CAL_HIST
+    from agents import ftmo_calendar as CAL
+    if _CAL_HIST is None:
+        _CAL_HIST = CAL.parse(json.load(open(Path(__file__).parent / "data" / "ftmo_calendar" / "history.json", encoding="utf-8")))
+    return pd.DatetimeIndex(sorted({t for t, ins in _CAL_HIST[0] if CAL.restricted_affects(s, ins)}))
+
+
+def news_minute(t, df, mb=None, ev=None):
+    """The trades of one run with the live rule for restricted events applied. Each trade's exit happened somewhere in its
+    exit bar; when the window start (event - 3 min) falls inside that bar, the 1-minute path decides whether the stop or
+    the target came first. A trade that took a partial exit before the window is left as it is (its split is not known
+    here - rare). mb / ev: 1-minute bars and event times (tests); else loaded."""
+    if t is None or t.empty:
+        return t
+    s, tf = df.attrs.get("symbol"), df.attrs.get("tf")
+    if not s or not tf:
+        return t
+    ev = _news_events(s) if ev is None else ev
+    if not len(ev):
+        return t
+    mb = _minute_bars(s) if mb is None else mb
+    if mb is None or mb.empty:
+        return t
+    bar = pd.Timedelta(minutes=RP.TF_MIN[tf])
+    win_a, win_b = ev - pd.Timedelta(minutes=3), ev + pd.Timedelta(minutes=3)
+    mi, mo, mh, ml = mb.index, mb["o"].to_numpy(float), mb["h"].to_numpy(float), mb["l"].to_numpy(float)
+    keep, rows = [], t.to_dict("records")
+    for r in rows:
+        t0 = pd.Timestamp(r["time"])
+        k = win_a.searchsorted(t0 - pd.Timedelta(minutes=6))          # first window that can touch the trade
+        if k < len(ev) and win_a[k] <= t0 <= win_b[k]:
+            continue                                                  # signal inside the window: not taken
+        x0 = pd.Timestamp(r["exit_time"])
+        j = win_a.searchsorted(t0, side="right")                      # first window starting after the entry
+        if j >= len(ev) or win_a[j] >= x0 + bar:
+            keep.append(r)
+            continue
+        a = win_a[j]
+        if a > x0:                                                    # the window starts inside the exit bar:
+            i0, i1 = mi.searchsorted(x0), mi.searchsorted(a)          # did the exit come before it?
+            if i1 > i0:
+                d, st, tg = r["dir"], r.get("stop_last", r["stop_px"]), r.get("target_px")
+                lo, hi = ml[i0:i1].min(), mh[i0:i1].max()
+                hit_stop = (lo <= st) if d > 0 else (hi >= st)
+                hit_tg = tg == tg and tg is not None and ((hi >= tg) if d > 0 else (lo <= tg))
+                if hit_stop or hit_tg or r.get("reason") in ("סיגנל יציאה", "סיגנל הפוך"):
+                    keep.append(r)
+                    continue
+        pt = r.get("part_time")
+        if pt is not None and pt == pt and pd.Timestamp(pt) <= a:
+            keep.append(r)
+            continue
+        i = mi.searchsorted(a)
+        if i >= len(mi) or mi[i] - a > pd.Timedelta(minutes=30):
+            keep.append(r)
+            continue
+        e0, st0, d = r["entry_px"], r["stop_px"], r["dir"]
+        risk = abs(e0 - st0)
+        if risk <= 0:
+            keep.append(r)
+            continue
+        cost_px = (d * (r["exit_px"] - e0) / risk - r["r"]) * risk      # the run's costs, in price, kept
+        px = float(mo[i])
+        r["exit_time"], r["exit_px"], r["reason"] = a, px, "נסגרה לפני הודעה מוגבלת"
+        r["r"] = d * (px - e0) / risk - cost_px / risk
+        r["held"] = int(max(0, (a - t0) / bar))
+        ft = r.get("free_time")
+        if ft is not None and ft == ft and pd.Timestamp(ft) > a:
+            r["free_time"] = pd.NaT
+        keep.append(r)
+    return pd.DataFrame(keep, columns=t.columns)
+
+
+def _news_run(orig):
+    def run(df, fn, cost_side, breakeven=None, session_exit=None):
+        t = orig(df, fn, cost_side, breakeven=breakeven, session_exit=session_exit)
+        try:
+            return news_minute(t, df)
+        except config.TimeBudgetReached:
+            raise
+        except Exception:  # noqa: BLE001
+            ERRORS.append(f"news minute {df.attrs.get('symbol')}:\n{traceback.format_exc()}")
+            return t
+    return run
 
 
 def _blocked(fn, noent):

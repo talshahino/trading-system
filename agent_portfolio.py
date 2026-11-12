@@ -50,10 +50,28 @@ FAMILIES = ("exits", "filters", "manage", "fib")   # manage (12.11.2026): breake
 # FTMO's real stock spreads: ~2.4x the history (measured on the demo 10.11.2026, run_rules --stock-spread-mult). Until
 # 13.11.2026 the experiments ran without it, so every stock combo's exits / filters / manage / fib / new results were
 # measured with too-cheap costs (the 10.11 stress test: SS01 WMT +15.6R -> -4.0R) - those results are run again (COSTS).
+# And FTMO's restricted events minute by minute (13.11.2026, run_rules --news-minute): the live bots close a position 3
+# minutes before an event on its instrument; the experiments held it through the release (bot 2 QB11 USDJPY 9.11:
+# +7.7R in the backtest, +2.8R on the demo) - results of the instruments the events touch are run again too.
 STOCK_SPREAD_MULT = 2.4
-COSTS = f"stock-x{STOCK_SPREAD_MULT}"
-LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--breakeven", "0.6",
+COSTS = f"stock-x{STOCK_SPREAD_MULT}+news-minute"
+LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--news-minute", "--breakeven", "0.6",
               "--stock-spread-mult", str(STOCK_SPREAD_MULT)]
+_NEWS_HIT = {}
+
+
+def news_touched(sym):
+    """Does any FTMO restricted event touch this instrument (fx pairs of the currency, US indices, oil, gold, DXY)?"""
+    if sym not in _NEWS_HIT:
+        try:
+            from agents import ftmo_calendar as CAL
+            if "ins" not in _NEWS_HIT:
+                h = json.loads((ROOT / "data" / "ftmo_calendar" / "history.json").read_text(encoding="utf-8"))
+                _NEWS_HIT["ins"] = {ins for _, ins in CAL.parse(h)[0]}
+            _NEWS_HIT[sym] = any(CAL.restricted_affects(sym, i) for i in _NEWS_HIT["ins"])
+        except Exception:  # noqa: BLE001
+            _NEWS_HIT[sym] = False
+    return _NEWS_HIT[sym]
 NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot7": "בוט 7 · פרסומים כלכליים",
          "bot5": "בוט 5 - סקאלפינג", "bot6": "בוט 6 · חוזים עתידיים"}
 RISK = {"bot7": 0.5, "bot5": 0.4, "bot6": 0.4}
@@ -186,8 +204,8 @@ def stale_source(doc):
     sym = str(doc.get("combo") or "").split("|")[-1]
     if sym in SOURCE_SINCE and str(doc.get("at") or "") < SOURCE_SINCE[sym]:
         return True
-    # a stock measured before FTMO's real stock spreads were charged in the experiments (13.11.2026)
-    return U.CLASS.get(sym) == "stock" and doc.get("costs") != COSTS
+    # measured before FTMO's real stock spreads / the restricted events were part of the experiments (13.11.2026)
+    return doc.get("costs") != COSTS and (U.CLASS.get(sym) == "stock" or news_touched(sym))
 
 
 class Store:

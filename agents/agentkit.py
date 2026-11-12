@@ -98,6 +98,15 @@ def judge(c):
         return "rejected", f"הפסיד בתקופה שלא נראתה ({u['mean']:+.2f}R לעסקה)"
     if base is not None and u["mean"] <= base:
         return "rejected", f"לא טוב מהמצב הקיים בתקופה שלא נראתה ({u['mean']:+.2f}R מול {base:+.2f}R)"
+    # more per trade but fewer trades can mean less money in total (a limit entry, a filter): the total on the
+    # unseen period must not fall below today's (manager, 12.11.2026 - bot 1 TV21|15Min|ASML: +0.35R x 73 = +25.7R
+    # was approved over +0.16R x 292 = +46.6R)
+    bn = (c.get("baseline") or {}).get("n")
+    if base is not None and bn and u.get("n"):
+        tot, tot0 = u["n"] * u["mean"], bn * base
+        if tot < tot0:
+            return "watch", (f"יותר רווח לעסקה אבל פחות רווח בסך הכל בתקופה שלא נראתה ({u['n']} עסקאות {tot:+.1f}R"
+                             f" מול {bn} עסקאות {tot0:+.1f}R היום) - נשמר להמשך")
     gain = None if base is None else u["mean"] - base
     if gain is not None and gain < 0.02:
         return "watch", f"טוב מהמצב הקיים רק ב־{gain:+.3f}R לעסקה בתקופה שלא נראתה - קטן מדי, נשמר להמשך"

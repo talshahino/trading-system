@@ -1686,10 +1686,10 @@ function decItem(x, owner) {
   const L = decLocal[x.id] || {}, undone = x.undone || L.undo, read = x.read || L.read || undone;
   const t = new Date(x.at).toLocaleString("he-IL", {day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit"});
   return `<div class="dec" style="padding:10px 0;border-top:1px solid var(--line,#e5e7eb)">
-    <div class="row" style="justify-content:space-between;gap:8px"><b style="line-height:1.4">${esc(x.title)}</b>${undone ? '<span class="pill neg">בוטלה</span>' : '<span class="pill pos">אושרה</span>'}</div>
+    <div class="row" style="justify-content:space-between;gap:8px"><b style="line-height:1.4">${esc(x.title)}</b>${undone ? '<span class="pill neg">בוטלה</span>' : x.decision === "withdrawn" ? '<span class="pill neg">המנהל חזר בו</span>' : '<span class="pill pos">אושרה</span>'}</div>
     <div class="mut" style="margin-top:4px;line-height:1.5"><span class="pill">${esc(BOT_HE(x.bot))}</span> ${esc(t)} · ${esc(x.effect || "")}</div>
     ${x.why ? `<div class="foot" style="margin-top:4px;line-height:1.5">${whyHtml(x.why)}</div>` : ""}
-    ${owner && !undone ? `<div class="acts" style="margin-top:8px"><button class="btn ghost" data-dundo="${esc(x.id)}">בטל</button>${read ? "" : `<button class="btn ghost" data-dread="${esc(x.id)}">קראתי</button>`}</div>` : ""}
+    ${owner && !undone ? `<div class="acts" style="margin-top:8px">${x.decision === "withdrawn" ? "" : `<button class="btn ghost" data-dundo="${esc(x.id)}">בטל</button>`}${read ? "" : `<button class="btn ghost" data-dread="${esc(x.id)}">קראתי</button>`}</div>` : ""}
   </div>`;
 }
 function decRender() {

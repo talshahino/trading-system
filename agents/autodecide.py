@@ -83,14 +83,30 @@ def decide(bots, now=None):
         new.append(d)
         return d
 
+    try:
+        built = {k for k, v in json.loads((ROOT / "data/agents/replies.json").read_text(encoding="utf-8")).items()
+                 if isinstance(v, dict) and v.get("built")}
+    except Exception:  # noqa: BLE001
+        built = set()
     # 1) the agents' cards (all bots)
     for bot, b in bots.items():
         for c in b.get("cards", []):
             if (ucards.get(c["id"]) or {}).get("decision"):           # the user decided it himself
                 continue
-            if c["tier"] not in ("strong", "regular"):
-                continue
             did = _did("card", c["id"])
+            prev = old.get(did)
+            if c["tier"] not in ("strong", "regular"):
+                # approved earlier, judged lower now (a stricter rule): not built yet -> withdrawn, never built;
+                # already built -> stays approved (the bot agent proposes a revert card if it hurts)
+                if prev and prev.get("decision") == "approved" and did not in uundo:
+                    if c["id"] in built or c["kind"] != "improve":
+                        c["status"], c["by"], c["decided"], c["decision_id"] = "approved", "manager", prev["at"], did
+                    else:
+                        prev.update(decision="withdrawn", withdrawn_at=at)
+                        add({"id": _did("withdraw", c["id"]), "bot": bot, "type": "card", "card": c["id"],
+                             "kind": c["kind"], "tier": c["tier"], "title": "המנהל חזר בו: " + c["title"],
+                             "decision": "withdrawn", "why": c["verdict"], "effect": "לא ייבנה בבוט", "of": did})
+                continue
             if did in uundo:
                 c["status"], c["verdict"] = "rejected", c["verdict"] + " · בוטל על ידך"
                 continue

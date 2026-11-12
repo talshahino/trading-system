@@ -96,7 +96,9 @@ def ops():
         except Exception:  # noqa: BLE001
             runs = []
         recent = [r for r in runs if pd.Timestamp(r["t"]) > pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=2)]
-        bad = [r for r in recent if r["s"] == "completed" and r["c"] not in ("success", "skipped")]
+        # a failure that a later successful run already replaced is not a problem any more (manager, 12.11.2026)
+        ok_after = max((r["n"] for r in recent if r["c"] == "success"), default=0)
+        bad = [r for r in recent if r["s"] == "completed" and r["c"] not in ("success", "skipped") and r["n"] > ok_after]
         if bad:
             problems.append(f"{len(bad)} ריצות של הסוכנים נכשלו ביומיים האחרונים (#{', #'.join(str(r['n']) for r in bad)})")
             actions.append("הסוכן החכם של המנהל יבדוק את הלוג ויריץ מחדש")

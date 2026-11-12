@@ -45,10 +45,14 @@ PAIRS = [("15m", "1m", 2), ("1h", "5m", 2), ("4h", "15m", 2), ("1d", "1h", 2),
          ("1h", "1m", 3), ("4h", "5m", 3), ("1d", "15m", 3)]
 BASE = {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 48, "PROT": "none"}
 KNOBS = {"GBODY": [1.0, 2.0], "MIN_GAP": [0.0, 0.6], "SW": [2, 5], "MIN_RR": [0.5, 1.5, 2.0],
-         "EXPIRY": [8, 24, 120], "PROT": ["cal15", "cal60", "shock", "cal15shock"]}
+         "EXPIRY": [8, 24, 120], "PROT": ["cal15", "cal60", "shock", "cal15shock"],
+         # trade management (user, 12.11.2026: "partial exit? stop to break-even? the smart agent should optimise it"):
+         # beW = the stop to the entry once the price went W of the way to the target; pF_W = F of the trade out at W of
+         # the way, the rest's stop to the entry. Not in BASE (the base stays "none"), so earlier runs keep their names.
+         "EXIT": ["be50", "be70", "p30_50", "p50_50", "p50_70", "p70_70"]}
 NAMES = {"GBODY": "עוצמת הדחף (גוף הנר האמצעי מול הממוצע)", "MIN_GAP": "גודל גאפ מינימלי (מול הטווח הממוצע)",
          "SW": "סווינג בטיים פריים הנמוך (נרות מכל צד)", "MIN_RR": "יחס מינימלי יעד/סטופ", "EXPIRY": "תוקף הגאפ (שעות)",
-         "PROT": "הגנה מהודעות וזעזועים"}
+         "PROT": "הגנה מהודעות וזעזועים", "EXIT": "ניהול העסקה: יציאה חלקית / סטופ לנקודת הכניסה"}
 PROT_HE = {"none": "בלי הגנה", "cal15": "יומן ±15 דק'", "cal60": "יומן ±60 דק'", "shock": "זעזועים",
            "cal15shock": "יומן ±15 דק' + זעזועים"}
 SPLIT = pd.Timestamp("2026-01-01", tz="UTC")
@@ -67,7 +71,7 @@ def variants():
     out = [("base", None, dict(BASE))]
     for k, vals in KNOBS.items():
         for v in vals:
-            if BASE[k] != v:
+            if BASE.get(k, "none") != v:
                 out.append((k, v, dict(BASE, **{k: v})))
     return out
 
@@ -193,6 +197,17 @@ def _count_back(conf, val, atr, t_ns, px, d, side):
     return None
 
 
+def exit_mode(cfg):
+    """(fraction out, way to the target) for the EXIT knob; (0, way) = only the stop to the entry; None = no management."""
+    m = cfg.get("EXIT", "none")
+    if m == "none":
+        return None
+    if m.startswith("be"):
+        return 0.0, int(m[2:]) / 100
+    f, w = m[1:].split("_")
+    return int(f) / 100, int(w) / 100
+
+
 def simulate(D, pair, cfg, gcache):
     htf, ltf, _ = pair
     g = gaps(D, htf, cfg["GBODY"], cfg["MIN_GAP"], gcache)
@@ -257,6 +272,21 @@ def simulate(D, pair, cfg, gcache):
                 break
         if i >= big:
             break                                        # still open at the data's end
+        em = exit_mode(cfg)
+        part_r, frac = 0.0, 0.0
+        if em is not None:
+            frac, way = em
+            lvl = px + way * (tgt - px)
+            lv = (hs >= lvl) if d > 0 else (ls <= lvl)
+            lv[0] = False
+            i_lv = int(np.argmax(lv)) if lv.any() else big
+            if i_lv < i:                                  # the level came first: part out, the rest's stop to the entry
+                part_r = frac * way * d * (tgt - px) / risk
+                be = (ls[i_lv + 1:] <= px) if d > 0 else (hs[i_lv + 1:] >= px)
+                i_be = i_lv + 1 + int(np.argmax(be)) if be.any() else big
+                if i_be <= i:                             # same minute as the stop / target: the entry first (careful)
+                    i, i_st = i_be, i_be
+                    stop = px                             # the rest leaves at the entry (or the bar's open if worse)
         q = f + i
         if i == i_st:
             ex, why = ((min(stop, o1[q]) if d > 0 else max(stop, o1[q])) if i else stop), "stop"
@@ -264,8 +294,12 @@ def simulate(D, pair, cfg, gcache):
             ex, why = (max(tgt, o1[q]) if d > 0 else min(tgt, o1[q])), "target"
         else:
             ex, why = o1[q], "session"
+        if part_r and why == "stop" and stop == px:
+            why = "breakeven"
         cost_r = D.cost[f] / risk
-        rows.append({"time": pd.Timestamp(ns[f], tz="UTC").isoformat(), "dir": d, "r": round(d * (ex - px) / risk - cost_r, 4),
+        r_rest = d * (ex - px) / risk
+        r_all = (part_r + (1 - frac) * r_rest) if part_r else r_rest
+        rows.append({"time": pd.Timestamp(ns[f], tz="UTC").isoformat(), "dir": d, "r": round(r_all - cost_r, 4),
                      "cost_r": round(cost_r, 4), "rr": round(d * (tgt - px) / risk, 2), "why": why, "mins": i})
         busy = q + 1
     return pd.DataFrame(rows, columns=["time", "dir", "r", "cost_r", "rr", "why", "mins"])
@@ -358,7 +392,7 @@ def summarize(idx, symbols, out_dir):
                                "variants": [{k: r[k] for k in ("knob", "val", "train", "unseen", "whole")} for r in rows]}
         if base and len(rows) == len(variants()):
             for knob in KNOBS:
-                lst = [r for r in rows if r["knob"] == knob] + [dict(base, val=BASE[knob])]
+                lst = [r for r in rows if r["knob"] == knob] + [dict(base, val=BASE.get(knob, "none"))]
                 lst = [r for r in lst if r["train"]["mean"] is not None]
                 if lst:
                     b = max(lst, key=lambda r: r["train"]["mean"])

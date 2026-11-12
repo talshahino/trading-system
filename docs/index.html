@@ -429,7 +429,8 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="row"><span class="mut" id="pushState">ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה.</span><button class="btn" id="pushBtn">הפעל התראות</button></div>
       <div class="msg" id="pushMsg"></div></div>
     <div class="card"><h3>מנהל הבוטים</h3>
-      <div class="row"><span class="mut" id="botsHint">ההצעות של הסוכנים לכל בוט אחרי הסינון של המנהל, האסטרטגיות של כל בוט והמלצות הסיכון. שום דבר לא משתנה בלי אישור שלך.</span><button class="btn" id="botsBtn">מנהל הבוטים</button></div></div>
+      <div class="row"><span class="mut" id="botsHint">ההצעות של הסוכנים לכל בוט אחרי הסינון של המנהל, האסטרטגיות של כל בוט והמלצות הסיכון. שום דבר לא משתנה בלי אישור שלך.</span><button class="btn" id="botsBtn">מנהל הבוטים</button></div>
+      <div class="row" style="margin-top:8px"><span class="mut">מה המנהל והסוכנים יודעים על הדרך שבה אתה חושב: המטרה, העקרונות וכל ההחלטות שלך.</span><button class="btn ghost" id="ttBtn">איך טל חושב</button></div></div>
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
     <div class="card" id="logCard"><h3>לוגים</h3>
       <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
@@ -476,6 +477,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 <div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
 <div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>מנהל הבוטים</b></div>
   <div id="bpDec"></div><div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
+<div class="page" id="ttPg"><div class="ph"><button class="back" id="ttBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>איך טל חושב</b></div><div id="ttBody" style="padding:0 16px 40px;line-height:1.6"><div class="empty">טוען…</div></div></div>
 <div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
 <div class="page" id="wbPg"><div class="ph"><button class="back" id="wbBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>בוט סקלפינג · צפייה</b></div><div id="wbBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="wcPg"><div class="ph"><button class="back" id="wcBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="wcTitle"></b></div><div id="wcBody"></div></div>
@@ -2097,6 +2099,28 @@ async function wcOpen(id) {
 $("wbBack").onclick = () => $("wbPg").classList.remove("on");
 $("wcBack").onclick = () => { $("wcPg").classList.remove("on"); WC.forEach(c => c.remove()); WC = []; };
 $("bpBack").onclick = () => $("botsPg").classList.remove("on");
+// "how Tal thinks" (data/agents/tal_thinking.md): what the manager and the agents read before every decision
+$("ttBack").onclick = () => $("ttPg").classList.remove("on");
+$("ttBtn").onclick = async () => {
+  $("ttPg").classList.add("on");
+  try {
+    const md = await (await fetch(`https://raw.githubusercontent.com/talshahino/trading-system/main/data/agents/tal_thinking.md?t=${Math.floor(Date.now() / 60000)}`)).text();
+    const inl = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+    let html = "", list = "";
+    const flush = () => { if (list) { html += `<${list}>` + html_items.join("") + `</${list}>`; list = ""; html_items = []; } };
+    let html_items = [];
+    for (const line of md.split("\n")) {
+      const m = line.match(/^(\d+)\. (.*)$/), b = line.match(/^- (.*)$/);
+      if (m || b) { const k = m ? "ol" : "ul"; if (list && list !== k) flush(); list = k; html_items.push(`<li style="margin:6px 0">${inl((m ? m[2] : b[1]))}</li>`); continue; }
+      flush();
+      if (line.startsWith("## ")) html += `<h3 style="margin:18px 0 6px">${inl(line.slice(3))}</h3>`;
+      else if (line.startsWith("# ")) html += `<h2 style="margin:12px 0 6px">${inl(line.slice(2))}</h2>`;
+      else if (line.trim()) html += `<p style="margin:6px 0">${inl(line)}</p>`;
+    }
+    flush();
+    $("ttBody").innerHTML = html;
+  } catch (e) { $("ttBody").innerHTML = '<div class="empty">לא נטען, נסה שוב</div>'; }
+};
 $("bdBack").onclick = () => { $("bdPg").classList.remove("on"); BP.combo = null; };
 
 function ask(title, body) {

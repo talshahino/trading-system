@@ -36,7 +36,8 @@
   "SC002|1Hour|AMZN",
   "SC002|4Hour|AIRF",
   "SC002|4Hour|FRA40",
-  "SC002|1Hour|ARM"
+  "SC002|1Hour|ARM",
+  "SC001|1Min|JP225"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 01.11.2026: +7 session/classic combos (SS*), approved by the user; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -62,6 +63,16 @@
   "SC002|1Hour|AMZN": {
    "filter": "vol_normal",
    "filter_card": "ecf74af41135"
+  },
+  "TV58|1Hour|USDCAD": {
+   "target": 4.0,
+   "stop": 1.25,
+   "limit": 0.5,
+   "card": "5d8573e3f41d"
+  },
+  "TV41|1Hour|USDJPY": {
+   "be_way": 0.786,
+   "manage_card": "ee9c89bb5ff6"
   }
  },
  "added": {
@@ -69,6 +80,7 @@
   "SC002|1Hour|AMZN": "a5536ad52e6d",
   "SC002|4Hour|AIRF": "d41a482ae332",
   "SC002|4Hour|FRA40": "c235c32591eb",
-  "SC002|1Hour|ARM": "85f56f420a38"
+  "SC002|1Hour|ARM": "85f56f420a38",
+  "SC001|1Min|JP225": "37b1f7426e51"
  }
 }

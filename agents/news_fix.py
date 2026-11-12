@@ -9,13 +9,17 @@ of every instrument are pooled and split by what can explain a loss:
   surprise       the trade's direction with / against actual-vs-forecast (diagnostic only: FTMO's live 'actual' can be
                  blank, info card 285679fa716f)
 and the exits are varied: target (own / 1 / 1.5 / 2 / 3R / none) x stop (x0.5 / x0.75 / x1) x time exit (own / half /
-double), with the live bot's management (breakeven at 60% of the way + costs) and FTMO's costs (Dukascopy's spread at
+double) x entry (at once / a limit 0.25R or 0.5R better, the first pullback, valid 3 bars - 13.11.2026: exits and
+release cells alone did not fix EV01/EV03), with the live bot's management (breakeven at 60% of the way + costs) and FTMO's costs (Dukascopy's spread at
 the entry minute - news spreads are wide, and that is in it - and FTMO commission, agents/ftmo_costs.py).
 
 Fair method: chosen on 30.04.2025-31.12.2025 only (the release cells kept = those that made money in that period with
 4+ trades; the exit variant = the most total R in that period), shown on 2026 (never seen while choosing),
 time-weighted (agents/agentkit.py). Robustness: of the 20 best variants on 2025, how many made money in 2026.
 The objective (data/agents/objective.md) is the TOTAL R, so every result carries its sum, not only the mean.
+
+Each instrument's rows are cached (cache/news_fix/<sym>.json, GRID version), so a run cut by its time budget
+resumes with the instruments still missing instead of starting over (12.11.2026: 13 of 16 every time).
 
 Output: reports/agents/bot7/fix_study.json (the nightly smart agent turns it into cards). Runs on the bots' computer
 inside bot 7's portfolio agent (agent_portfolio.py --bot bot7), at most once every 3 days.
@@ -52,6 +56,9 @@ STRATS = ("EV01", "EV02", "EV03")
 TARGETS = ("own", 1.0, 1.5, 2.0, 3.0, "none")
 STOPS = (1.0, 0.75, 0.5)
 HOLDS = ("own", 0.5, 2.0)
+LIMITS = (0.0, 0.25, 0.5)        # entry on the first pullback: a limit k x risk better than the signal's close, 3 bars
+GRID = 2                         # cache version: bump when the variants or the costs change
+CACHE = ROOT / "cache" / "news_fix"
 PRIO = ("rates", "infl", "jobs", "gdp", "oil", "other")
 MIN_CELL_N = 4
 STALE_DAYS = 3
@@ -124,7 +131,7 @@ def tag(sym, t, rel, evs):
     return {"cat": best[1], "own": bool(mine), "surp": s, "cur": best[0], "title": best[3], "rel": k}
 
 
-def variant_fn(fn, tg, st, hd):
+def variant_fn(fn, tg, st, hd, lim=0.0):
     def g(d):
         L, S, plan = fn(d)
         p = dict(plan)
@@ -136,12 +143,26 @@ def variant_fn(fn, tg, st, hd):
             p["stop_scale"] = float(st)
         if hd != "own":
             p["max_bars"] = max(2, int(round((plan.get("max_bars") or 12) * float(hd))))
+        if lim:
+            p["entry_pullback"] = (float(lim), 3)
         return L, S, p
     return g
 
 
-def vkey(tg, st, hd):
-    return f"t{tg}|s{st:g}|h{hd}"
+def vkey(tg, st, hd, lim=0.0):
+    return f"t{tg}|s{st:g}|h{hd}" + (f"|l{lim:g}" if lim else "")
+
+
+def grid():
+    """54 exit variants at once, and the same targets x stops with the two limit entries (own time exit): 90."""
+    g = [(tg, st, hd, 0.0) for tg, st, hd in itertools.product(TARGETS, STOPS, HOLDS)]
+    return g + [(tg, st, "own", lim) for lim in LIMITS if lim for tg, st in itertools.product(TARGETS, STOPS)]
+
+
+def session(t):
+    """The release's session by its UTC hour: asia (<7), europe (7-12), us (12+)."""
+    h = pd.Timestamp(t).hour
+    return "asia" if h < 7 else ("europe" if h < 12 else "us")
 
 
 def trades_sym(sym, rel):
@@ -161,8 +182,8 @@ def trades_sym(sym, rel):
     rows = []
     for sid in STRATS:
         base = E.EVENTS[sid][1]
-        for tg, st, hd in itertools.product(TARGETS, STOPS, HOLDS):
-            fn = variant_fn(base, tg, st, hd)
+        for tg, st, hd, lim in grid():
+            fn = variant_fn(base, tg, st, hd, lim)
             px = float(d5["c"].median())
             comm = (px * float(spec["commission"]) / (float(spec["contractSize"]) * U.BASE_USD.get(spec["code"].split("/")[0], 1.0))
                     if spec["commissionType"] == "flat_USD" else px * 2 * float(spec["commission"]) / 100.0)
@@ -182,7 +203,7 @@ def trades_sym(sym, rel):
                 if g is None:
                     continue
                 agree = None if g["surp"] is None else int(np.sign(g["surp"]) == np.sign(x.dir))
-                rows.append({"sid": sid, "v": vkey(tg, st, hd), "sym": sym, "cls": U.CLASS.get(sym, "?"), "t": tt.isoformat(),
+                rows.append({"sid": sid, "v": vkey(tg, st, hd, lim), "sym": sym, "cls": U.CLASS.get(sym, "?"), "t": tt.isoformat(),
                              "dir": int(x.dir), "r": float(x.r), "cat": g["cat"], "own": g["own"], "agree": agree,
                              "rel": g["rel"].isoformat(), "title": g["title"]})
     return rows
@@ -228,6 +249,12 @@ def study(df):
         res["by_own"] = {str(k): {"train": _w(y[y.train]), "unseen": _w(y[~y.train])} for k, y in b.groupby("own")}
         res["by_surprise"] = {str(k): {"train": _w(y[y.train]), "unseen": _w(y[~y.train])}
                               for k, y in b.assign(agree=b["agree"].fillna(-1)).groupby("agree")}
+        res["by_session"] = {k: {"train": _w(y[y.train]), "unseen": _w(y[~y.train])}
+                             for k, y in b.assign(ses=b["rel"].map(session)).groupby("ses")}
+        lim = x.assign(lim=x["v"].str.extract(r"\|l([\d.]+)$")[0].fillna("0"))
+        res["by_limit"] = {k: {"train": _w(y[y.train & (y["v"].str.startswith("town|s1|"))]),
+                               "unseen": _w(y[~y.train & (y["v"].str.startswith("town|s1|"))])}
+                           for k, y in lim[lim["v"].str.match(r"^town\|s1\|hown")].groupby("lim")}
         res["by_symbol"] = {k: {"train": _w(y[y.train]), "unseen": _w(y[~y.train])} for k, y in b.groupby("sym")}
         cand = []
         for v, y in x.groupby("v"):
@@ -270,12 +297,25 @@ def main(argv=None):
     t_end = time.time() + a.minutes * 60
     rel = releases()
     rows, done = [], []
+    CACHE.mkdir(parents=True, exist_ok=True)
     for sym in SYMBOLS:
+        f = CACHE / f"{sym}.json"
+        try:
+            c = json.loads(f.read_text(encoding="utf-8"))
+            if c.get("grid") == GRID and pd.Timestamp.now(tz="UTC") - pd.Timestamp(c["at"]) < pd.Timedelta(days=STALE_DAYS):
+                rows += c["rows"]
+                done.append(sym)
+                print(f"{sym}: from the cache ({len(c['rows'])} rows)", flush=True)
+                continue
+        except Exception:  # noqa: BLE001
+            pass
         if time.time() > t_end and done:
             print(f"time budget reached after {done}")
-            break
+            continue
         try:
-            rows += trades_sym(sym, rel)
+            r_ = trades_sym(sym, rel)
+            rows += r_
+            f.write_text(json.dumps({"grid": GRID, "at": pd.Timestamp.now(tz="UTC").isoformat(), "rows": r_}), encoding="utf-8")
             done.append(sym)
             print(f"{sym}: {len(rows)} rows so far", flush=True)
         except Exception as e:  # noqa: BLE001 - one instrument without data does not stop the study

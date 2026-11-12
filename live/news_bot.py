@@ -173,6 +173,13 @@ class Calendar:
             self.items = CAL.fetch((now - pd.Timedelta(days=DAYS + 1)).strftime("%Y-%m-%d"), (now + pd.Timedelta(days=7)).strftime("%Y-%m-%d"))
             for s in SYMBOLS:
                 E._EVENTS[s] = E.events_from(self.items, s)
+            titles = {}
+            for i in self.items:                          # the release names, to show which release a trade followed
+                if i.get("impact") == "high" or i.get("restriction"):
+                    k = pd.Timestamp(i["date"]).tz_convert("UTC")
+                    titles.setdefault(k, []).append(f"{i.get('instrument', '')} {i.get('title', '')}".strip())
+            EVENT_TITLES.clear()
+            EVENT_TITLES.update(titles)
             self.t = time.time()
         except Exception as e:  # noqa: BLE001
             log(f"FTMO calendar not read ({e}); trying again in 10 minutes")
@@ -196,6 +203,20 @@ def spreads():
         return {k: float(v["median"] if isinstance(v, dict) else np.median(v)) for k, v in s.items() if v}
     except Exception:  # noqa: BLE001
         return {}
+
+
+EVENT_TITLES = {}            # release time -> names (from the calendar the bot read)
+
+
+def event_of(name, t):
+    """The release a trade followed: the latest of the instrument's releases before its entry (within 3 hours)."""
+    t = pd.Timestamp(t)
+    ts = [x for x in E._EVENTS.get(name, []) if x <= t and t - x <= pd.Timedelta(hours=3)]
+    if not ts:
+        return None
+    k = max(ts)
+    names = [n for n in EVENT_TITLES.get(k, [])]
+    return f"{k.tz_convert('Asia/Jerusalem').strftime('%d.%m %H:%M')} " + (" + ".join(names[:2]) if names else "פרסום")
 
 
 def trades_of(name, d5, spread_now):
@@ -227,7 +248,8 @@ def trades_of(name, d5, spread_now):
                         "stop": float(x["stop_px"]), "target": None if x["target_px"] != x["target_px"] else float(x["target_px"]),
                         "status": "open" if open_ else "closed", "exit_time": None if open_ else pd.Timestamp(x["exit_time"]).isoformat(),
                         "exit": None if open_ else float(x["exit_px"]), "r": round(r_gross - cost_r, 4),
-                        "reason": "" if open_ else str(x["reason"])})
+                        "reason": "" if open_ else str(x["reason"]),
+                        "event": event_of(name, x["time"])})
     return out
 
 
@@ -321,13 +343,15 @@ def state_of(acc, trades, cal, src):
                            "now": t["entry"] + t["dir"] * (t["r"]) * abs(t["entry"] - t["stop"]),
                            "sl": t["stop"], "tp": t["target"] or 0.0, "sl0": t["stop"], "tp0": t["target"] or 0.0,
                            "sl_usd": -led[t["id"]]["risk_usd"], "tp_usd": None, "pnl": pnl_now(t), "since": t["time"],
-                           "pip": 1.0, "free": False, "mae": None, "mfe": None} for t in opened],
+                           "pip": 1.0, "free": False, "mae": None, "mfe": None, "event": t.get("event")} for t in opened],
             "trades": [{"time": t["exit_time"], "combo": combo(t), "symbol": t["symbol"], "dir": "קנייה" if t["dir"] > 0 else "מכירה",
-                        "lots": "וירטואלי", "price": t["exit"], "pnl": led[t["id"]]["pnl"], "why": t["reason"]} for t in closed],
+                        "lots": "וירטואלי", "price": t["exit"], "pnl": led[t["id"]]["pnl"],
+                        "why": t["reason"] + (f" · אחרי {t['event']}" if t.get("event") else "")} for t in closed],
             "closed": [{"id": t["id"], "combo": combo(t), "symbol": t["symbol"], "side": side(t), "lots": "וירטואלי",
                         "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
                         "sl0": t["stop"], "tp0": t["target"] or 0, "sl": t["stop"], "tp": t["target"] or 0, "mae": None, "mfe": None,
-                        "gross": led[t["id"]]["pnl"], "swap": 0, "comm": 0, "net": led[t["id"]]["pnl"], "why": t["reason"],
+                        "gross": led[t["id"]]["pnl"], "swap": 0, "comm": 0, "net": led[t["id"]]["pnl"],
+                        "why": t["reason"] + (f" · אחרי {t['event']}" if t.get("event") else ""), "event": t.get("event"),
                         "reason": "", "pip": 1.0} for t in closed],
             "vacct": {k: v for k, v in acc.a.items() if k != "eq_curve"}}
 

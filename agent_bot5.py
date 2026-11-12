@@ -262,7 +262,9 @@ def main():
     # Tal's gap method (user, 11.11.2026; data/agents/strategies/tal_gap.md): the rest of the budget
     tal_syms = [x for x in TAL_SYMBOLS if not only or x in only]
     tal_left = a.minutes * 60 - (time.time() - t_start)
-    if tal_left > 60:
+    # only bot 5's own run: bot 6 imports this module (BOT = "bot6") and runs the method on its own world first -
+    # without this guard bot 5's world was written into bot 6's results (12.11.2026)
+    if tal_left > 60 and BOT == "bot5":
         try:
             TG.run(BOT, tal_syms, tal_load, TAL_DIR, tal_left)
         except Exception as e:  # noqa: BLE001
@@ -318,6 +320,8 @@ def main():
                 change={"track": trk, "knob": knob, "from": T["base"][knob], "to": val}))
     tal = {}
     try:
+        if BOT != "bot5":
+            raise RuntimeError("bot 6 runs the method itself (agent_bot6.tal)")
         tidx = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")}
         pairs, answers = TG.summarize(tidx, TAL_SYMBOLS, TAL_DIR)
         planned = len(TG.PAIRS) * len(TG.variants()) * len(TAL_SYMBOLS)

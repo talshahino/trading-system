@@ -73,6 +73,19 @@ def load():
         return {"decisions": []}
 
 
+def _cuts(c):
+    """A card that only cuts: removes a strategy, stops a track or lowers a risk."""
+    ch = c.get("change") or {}
+    if c.get("kind") == "remove":
+        return True
+    if c.get("kind") == "risk":
+        try:
+            return float(ch.get("to", ch.get("value", 1))) < float(ch.get("from", 1))
+        except (TypeError, ValueError):
+            return True
+    return False
+
+
 def decide(bots, now=None):
     """bots: manager.json bots (cards already judged). Changes card statuses in place for what it decides.
     Returns the decisions document."""
@@ -85,6 +98,7 @@ def decide(bots, now=None):
     rules = user_rules()
     cur_risk = (_git_show("live/manager_state.json").get("risk") or {})
     never = {(x["bot"], x["combo"], x["kind"]) for x in rules.get("never", [])}
+    fix_not_cut = set(rules.get("fix_not_cut", []))
     # an undone recommendation is not made again for 30 days, even when a later sample brings it back
     never |= {(d["bot"], d.get("combo"), d["kind"]) for d in old.values() if d["id"] in uundo and d["type"] == "risk"}
     # the watch (agents/watch.py) took it back: like an undo, not made again (unless the user undid the revert)
@@ -127,6 +141,11 @@ def decide(bots, now=None):
                 continue
             if did in uundo:
                 c["status"], c["verdict"] = "rejected", c["verdict"] + " · בוטל על ידך"
+                continue
+            if bot in fix_not_cut and _cuts(c):
+                # the user (12.11.2026, bot 7): "not to lower or remove - to fix, to improve the strategies, to find
+                # the way to make money" - a card that only cuts is not approved; the bot agent must bring a fix
+                c["status"], c["verdict"] = "rejected", c["verdict"] + " · טל: בבוט הזה לא מורידים ולא מסירים - מתקנים"
                 continue
             from agents import builder as BLD
             buildable = BLD.buildable({**c, "bot": bot})

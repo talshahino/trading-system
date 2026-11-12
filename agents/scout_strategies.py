@@ -685,6 +685,412 @@ def s_prc_jump(df):
                                    "target": ("level", c + 7 * a20, c - 7 * a20)}
 
 
+# ---------------- helpers added 2026-11-12 (third scout run) ----------------
+def _sh(x, k=1):
+    x = np.asarray(x, dtype=float)
+    return np.concatenate([np.full(k, np.nan), x[:-k]]) if k > 0 else x
+
+
+def _wma(x, n):
+    w = np.arange(1, n + 1, dtype=float)
+    return _s(x).rolling(n).apply(lambda v: np.dot(v, w) / w.sum(), raw=True).to_numpy()
+
+
+def _hma(x, n):
+    return _wma(2 * _wma(x, n // 2) - _wma(x, n), int(np.sqrt(n)))
+
+
+def _bb(c, n=20, k=2.0):
+    m = sma(c, n)
+    sd = _s(c).rolling(n).std(ddof=0).to_numpy()
+    return m - k * sd, m, m + k * sd
+
+
+def _cci(h, l, c, n=20):
+    tp = (h + l + c) / 3
+    m = sma(tp, n)
+    md = _s(tp).rolling(n).apply(lambda v: np.mean(np.abs(v - v.mean())), raw=True).to_numpy()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return (tp - m) / (0.015 * md)
+
+
+def _di(h, l, c, n=14):
+    up = np.diff(h, prepend=h[0])
+    dn = -np.diff(l, prepend=l[0])
+    pdm = np.where((up > dn) & (up > 0), up, 0.0)
+    ndm = np.where((dn > up) & (dn > 0), dn, 0.0)
+    a = atr(h, l, c, n)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return 100 * rma(pdm, n) / a, 100 * rma(ndm, n) / a
+
+
+def _linreg_end(x, n):
+    """Value of the n-bar least-squares line at its last bar (Pine linreg(x, n, 0))."""
+    t = np.arange(n, dtype=float)
+    tm = t.mean()
+    den = ((t - tm) ** 2).sum()
+
+    def f(v):
+        b = ((t - tm) * (v - v.mean())).sum() / den
+        return v.mean() + b * (n - 1 - tm)
+    return _s(x).rolling(n).apply(f, raw=True).to_numpy()
+
+
+def _engulf(o, c):
+    po, pc = _sh(o), _sh(c)
+    bull = (c > o) & (pc < po) & (c >= po) & (o <= pc)
+    bear = (c < o) & (pc > po) & (c <= po) & (o >= pc)
+    return bull, bear
+
+
+# ---------------- SC022 Simple 5 EMA high/low scalp (BabyPips forum) ----------------
+def s_bp_5ema_hl_scalp(df):
+    """BabyPips forum 'Simple 5 EMA High/Low Scalping Strategy', 5-minute, any pair (EUR/USD preferred): a 5 EMA
+    of the highs and a 5 EMA of the lows. A candle that opens below the 5 EMA (low) -> buy, one that opens above the
+    5 EMA high -> sell. Stop 8 pips, target 5 pips; trade the hour after the London open and the hour after the
+    New York open. Ours: the next candle opens where this one closes, so the signal is a close crossing below the
+    EMA-low (above the EMA-high). Translation: EUR/USD 5-minute ATR(14) ~4.5 pips -> stop 1.8 ATR, target 1.1 ATR."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    eh, el = ema(h, 5), ema(l, 5)
+    lon, _, _, _, _ = _local(df, "Europe/London")
+    ny, _, _, _, _ = _local(df, "America/New_York")
+    win = ((lon >= 8) & (lon < 9)) | ((ny >= 8) & (ny < 9))
+    long_ = cross_down(c, el) & win
+    short = cross_up(c, eh) & win
+    return long_, short & ~long_, {"stop": ("atr", 1.8), "target": ("atr", 1.1)}
+
+
+# ---------------- SC023 Keltner Scalping Trading System, 1-minute (BabyPips forum) ----------------
+def s_bp_keltner_scalp_1m(df):
+    """BabyPips forum 'Keltner Scalping Trading System', EUR/USD 1-minute: SMA89, Keltner channel around a 22-period
+    average, MACD(5,34,5), EMA445, Stochastic Momentum (5,3). Long: price above / testing the SMA89, price inside
+    the Keltner channel, MACD(5,34) below zero, stochastic momentum near/below -40, and the MACD line turning up
+    through its 5-period average -> buy the next open (short mirror). Stop 1 pip outside the channel, at most 12
+    pips; target 6-12 pips. Ours: Keltner = EMA22 +/- 1.5 ATR(22) (the multiplier is not stated); the stochastic
+    momentum 'approaching or below -40' = full stochastic (5,3,3) under 35 in the last 3 bars (over 65 for shorts); translation from EUR/USD 1-minute
+    ATR(14) ~1.3 pips: 1 pip = 0.75 ATR, 12-pip cap = 9 ATR, target 9 pips (the middle of 6-12) = 7 ATR."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 14)
+    s89 = sma(c, 89)
+    mid = ema(c, 22)
+    ka = atr(h, l, c, 22)
+    ku, kl = mid + 1.5 * ka, mid - 1.5 * ka
+    m, sig, _ = macd(c, 5, 34, 5)
+    sig5 = sma(m, 5)
+    k, _ = _stoch(h, l, c, 5, 3, 3)
+    k_lo = _s(k).rolling(3).min().to_numpy() < 35    # 'approaching or below' the zone in the last 3 bars
+    k_hi = _s(k).rolling(3).max().to_numpy() > 65
+    long_ = ((c > s89) | (l <= s89)) & (c >= kl) & (c <= ku) & (m < 0) & k_lo & cross_up(m, sig5)
+    short = ((c < s89) | (h >= s89)) & (c >= kl) & (c <= ku) & (m > 0) & k_hi & cross_down(m, sig5)
+    stop_l = np.maximum(kl - 0.75 * a, c - 9 * a)
+    stop_s = np.minimum(ku + 0.75 * a, c + 9 * a)
+    return long_, short & ~long_, {"stop": ("level", stop_l, stop_s), "target": ("atr", 7.0)}
+
+
+# ---------------- SC024 EURUSD 5 min TEMA / CCI (ProRealCode forum) ----------------
+def s_prc_eurusd_tema_cci(df):
+    """ProRealCode forum 'EURUSD 5 min trading strategy' (victormork): long when TEMA(21) > average(300),
+    Bollinger band width(50) > 0.003 and CCI(20) crosses over -110; short when TEMA(21) < average(300), band width
+    > 0.003 and CCI crosses under 160. Only 07:00-22:00, no weekend. Stop 25 pips; exits: long out when CCI crosses
+    over 210, short out when CCI crosses under -210 (no fixed target). Ours: platform time = Paris; band width =
+    (upper - lower) / middle of BB(50, 2); translation: EUR/USD 5-minute ATR(14) ~4.5 pips -> 25 pips = 5.5 ATR."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    e1 = ema(c, 21)
+    e2 = ema(e1, 21)
+    tema = 3 * e1 - 3 * e2 + ema(e2, 21)
+    s300 = sma(c, 300)
+    lo, mi, up = _bb(c, 50, 2.0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        bw = (up - lo) / mi
+    cci = _cci(h, l, c, 20)
+    hr, _, wd, _, _ = _local(df, "Europe/Paris")
+    t_ok = (hr >= 7) & (hr < 22) & (wd < 5)
+    long_ = (tema > s300) & (bw > 0.003) & cross_up(cci, np.full(len(c), -110.0)) & t_ok
+    short = (tema < s300) & (bw > 0.003) & cross_down(cci, np.full(len(c), 160.0)) & t_ok
+    return long_, short & ~long_, {"stop": ("atr", 5.5), "target": None,
+                                   "exit_long": cross_up(cci, np.full(len(c), 210.0)),
+                                   "exit_short": cross_down(cci, np.full(len(c), -210.0))}
+
+
+# ---------------- SC025 Bollinger + RSI + Stochastic scalp, 5-minute (Forex Tester) ----------------
+def s_fxt_bb_rsi_stoch(df):
+    """Forex Tester blog 'Bollinger Bands RSI Stochastic scalping strategy', 5-minute, major pairs: BB(20, 2),
+    RSI(14), Stochastic(5,3,3). Long at the close of the candle where price is below the lower band, RSI < 30 and
+    stochastic < 20 (short: above the upper band, RSI > 70, stochastic > 80). Stop 10 pips beyond the piercing
+    candle's extreme, target 20 pips; also out on the first close beyond the middle band. Translation: EUR/USD
+    5-minute ATR(14) ~4.5 pips -> stop = candle low - 2.2 ATR, target 4.4 ATR."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 14)
+    lo, mi, up = _bb(c, 20, 2.0)
+    r = rsi(c, 14)
+    k, _ = _stoch(h, l, c, 5, 3, 3)
+    long_ = (l < lo) & (r < 30) & (k < 20)
+    short = (h > up) & (r > 70) & (k > 80)
+    return long_, short & ~long_, {"stop": ("level", l - 2.2 * a, h + 2.2 * a),
+                                   "target": ("level", c + 4.4 * a, c - 4.4 * a),
+                                   "exit_long": c > mi, "exit_short": c < mi}
+
+
+# ---------------- SC026 Admiral Keltner scalping, M15 (Admirals blog) ----------------
+def s_admiral_keltner_m15(df):
+    """Admirals blog 'Scalping with the Admiral Keltner indicator', M15 only (EUR/USD, GBP/USD, USD/CHF,
+    USD/JPY): two Keltner channels (50, 10, 2.75) and (50, 10, 3.75) and Stochastic (14,7,3). Long: a candle goes
+    below either lower band and closes back inside the channel while the stochastic crosses upward far from 80
+    (ideally near 20). Short mirror. Stop 8 pips + spread beyond the setup candle; target the middle line, at least
+    10 pips. Ours: middle = EMA50, bands = middle +/- 2.75 ATR(10) (the inner band is the one price has to pierce);
+    'far from 80' = %K under 50 (over 50 for shorts). Translation: EUR/USD 15-minute ATR(14) ~7 pips -> stop =
+    candle low - 1.1 ATR, minimum target 1.4 ATR. The move of the stop to breakeven at the middle line is not
+    modelled (the middle line is the target)."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 14)
+    mid = ema(c, 50)
+    a10 = atr(h, l, c, 10)
+    up, lo = mid + 2.75 * a10, mid - 2.75 * a10
+    k, d = _stoch(h, l, c, 14, 7, 3)
+    long_ = (l < lo) & (c > lo) & (c < mid) & cross_up(k, d) & (k < 50)
+    short = (h > up) & (c < up) & (c > mid) & cross_down(k, d) & (k > 50)
+    tl = np.maximum(mid, c + 1.4 * a)
+    ts = np.minimum(mid, c - 1.4 * a)
+    return long_, short & ~long_, {"stop": ("level", l - 1.1 * a, h + 1.1 * a), "target": ("level", tl, ts)}
+
+
+# ---------------- SC027 Meta Scalper / simple range scalper (forexop) ----------------
+def s_forexop_range_scalper(df):
+    """forexop 'Meta Scalper - a simple low risk scalping strategy', M1/M5, any market, best in ranges: Bollinger
+    bands set to hold ~95% of the highs/lows. Long when a bar touches the lower band and the next bar starts to
+    retrace back toward the centre (short mirror at the upper band). Stop no more than half the band width; target
+    about 5% of the band width. Ours: BB(20, 2) (~95% of a normal spread; the source gives no period); 'retrace' =
+    an up close back above the lower band right after the touching bar. Already in band-width units, so no pip
+    translation."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    o = _open(df)
+    lo, mi, up = _bb(c, 20, 2.0)
+    w = up - lo
+    long_ = (_sh(l) <= _sh(lo)) & (c > lo) & (c > o)
+    short = (_sh(h) >= _sh(up)) & (c < up) & (c < o)
+    return long_, short & ~long_, {"stop": ("level", c - w / 2, c + w / 2),
+                                   "target": ("level", c + 0.05 * w, c - 0.05 * w)}
+
+
+# ---------------- SC028 Intraday DAX first 5-minute bar (ProRealCode) ----------------
+def s_prc_dax_first_bar(df):
+    """ProRealCode 'Intraday DAX strategy mini-1EUR, timeframe 5 min' (Raul Vg): at 09:05 Frankfurt, if the first
+    5-minute bar of the session (09:00-09:05) closed more than 1 point above its open -> buy, otherwise sell.
+    Stop 5 points, target 10 points, flat at 17:30. Ours: the signal is that bar's close; the order-size
+    martingale is not modelled. Translation: DAX 5-minute ATR(14) ~8 points when published (2017, DAX ~11,500) ->
+    1 point = 0.12 ATR, stop 0.6 ATR, target 1.25 ATR."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    o = _open(df)
+    a = atr(h, l, c, 14)
+    hs, he, wd, _, _ = _local(df, "Europe/Berlin")
+    first = (np.abs(hs - 9.0) < 1e-6) & (wd < 5)
+    up = c > o + 0.12 * a
+    long_ = first & up
+    short = first & ~up
+    return long_, short & ~long_, {"stop": ("atr", 0.6), "target": ("atr", 1.25), "force_exit": hs >= 17.5}
+
+
+# ---------------- SC029 Hull Suite + DI cross, 1-minute (Axiory) ----------------
+def s_axiory_hull_di_1m(df):
+    """Axiory 'One Minute Strategies' #1, 1-minute: Hull Suite (default HMA 55) and the +DI/-DI lines of ADX.
+    Buy when +DI crosses above -DI while the Hull Suite is green (sell on the mirror). Stop slightly below the
+    recent swing low (above the swing high), target 1:1 (1-1.5x the stop). Ours: green = HMA(55) above its value
+    2 bars ago (the Hull Suite colouring); swing = last confirmed 2-bar swing, else the 10-bar extreme; 'slightly'
+    = 0.1 ATR; target 1R."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 14)
+    hm = _hma(c, 55)
+    green = hm > _sh(hm, 2)
+    red = hm < _sh(hm, 2)
+    pdi, ndi = _di(h, l, c, 14)
+    sh_, sl_ = _swings(h, l, 2)
+    ll, hh = _s(l).rolling(10).min().to_numpy(), _s(h).rolling(10).max().to_numpy()
+    st_l = np.where(sl_ < c, sl_, ll) - 0.1 * a
+    st_s = np.where(sh_ > c, sh_, hh) + 0.1 * a
+    long_ = cross_up(pdi, ndi) & green
+    short = cross_down(pdi, ndi) & red
+    return long_, short & ~long_, {"stop": ("level", st_l, st_s), "target": ("R", 1.0)}
+
+
+# ---------------- SC030 Alpha S/R Channel, gold 5m with a 15m EMA channel (TradingView) ----------------
+def s_alpha_sr_channel(df):
+    """TradingView 'Alpha S/R Channel Strategy' (Awab_Hassan, XAUUSD): a channel around the higher-timeframe EMA
+    (15m EMA36, width 0.35% of price), entries on 5m. Long: the candle opens inside the channel and is a bullish
+    engulfing (body 0.098%-0.55% of price), price above the 5m EMA36 and the 15m EMA, RSI(14) not above 70,
+    Bollinger width not below 0.002, squeeze momentum value below 0. Short mirror. Stop at the channel band minus a
+    buffer (500 ticks = $0.50 on gold), target 1:3; no entries 16:45-19:05 New York, out at 17:00 New York, no
+    Friday. Ours: body-only engulfing mode; buffer = 0.02% of price (gold ~$2,500); squeeze = LazyBear linreg
+    momentum (20); the pin-bar combo, the 2nd trade and the trade counter are not modelled."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    o = _open(df)
+    he_ = _htf(df, "15min", lambda g: ema(g["c"].to_numpy(), 36))
+    e_ltf = ema(c, 36)
+    up_ch, lo_ch = he_ * (1 + 0.00175), he_ * (1 - 0.00175)
+    inside = (o >= lo_ch) & (o <= up_ch)
+    bull, bear = _engulf(o, c)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        body = np.abs(c - o) / c * 100
+        lo, mi, up = _bb(c, 20, 2.0)
+        bw = (up - lo) / mi
+    size_ok = (body >= 0.098) & (body <= 0.55)
+    r = rsi(c, 14)
+    hh, ll = _s(h).rolling(20).max().to_numpy(), _s(l).rolling(20).min().to_numpy()
+    mom = _linreg_end(c - ((hh + ll) / 2 + sma(c, 20)) / 2, 20)
+    hs, _, wd, _, _ = _local(df, "America/New_York")
+    t_ok = ~((hs >= 16.75) & (hs < 19.0833)) & (wd != 4)
+    long_ = inside & bull & size_ok & (c > e_ltf) & (c > he_) & (r <= 70) & (bw >= 0.002) & (mom < 0) & t_ok
+    short = inside & bear & size_ok & (c < e_ltf) & (c < he_) & (r >= 30) & (bw >= 0.002) & (mom > 0) & t_ok
+    return long_, short & ~long_, {"stop": ("level", lo_ch * (1 - 0.0002), up_ch * (1 + 0.0002)),
+                                   "target": ("R", 3.0), "force_exit": (hs >= 17) & (hs < 18)}
+
+
+# ---------------- SC031 freqtrade EMA_RSIStrategy, 5m long (GitHub) ----------------
+def s_ft_ema_rsi(df):
+    """GitHub freqtrade 'EMA_RSIStrategy' (gksdud6330, crypto, 5m with a 1h trend): long when 1h EMA50 >= 0.995 x
+    1h EMA200, EMA20 > EMA50, close > EMA50, 40 < RSI(14) < 70, ADX(14) > 18 and volume > 0.8 x its 20-bar mean.
+    Exit when the 1h trend fails, EMA20 < EMA50, RSI < 35 or close < EMA50. Stoploss -7%, ROI 4.5% (3% after 60
+    min, 1.5% after 180 min, 0 after 360 min). Ours: target 4.5%, time exit after 360 minutes; the falling ROI
+    steps and the 1.2%/3.5% trailing stop are not modelled. Percentages, so no pip translation."""
+    h, l, c, v = (df[x].to_numpy() for x in "hlcv")
+    e20, e50 = ema(c, 20), ema(c, 50)
+    tr1h = _htf(df, "60min", lambda g: (ema(g["c"].to_numpy(), 50) >= 0.995 * ema(g["c"].to_numpy(), 200))
+                .astype(float)) > 0.5
+    r = rsi(c, 14)
+    ax = adx(h, l, c, 14)
+    vm = sma(v, 20)
+    long_ = tr1h & (e20 > e50) & (c > e50) & (r > 40) & (r < 70) & (ax > 18) & (v > 0.8 * vm)
+    ext = ~tr1h | (e20 < e50) | (r < 35) | (c < e50)
+    mb = max(1, int(round(360 / max(_bar_minutes(df), 1.0))))
+    return long_, np.zeros(len(c), bool), {"stop": ("level", c * 0.93, c * 1.07),
+                                           "target": ("level", c * 1.045, c * 0.955),
+                                           "max_bars": mb, "exit_long": ext}
+
+
+# ---------------- SC032 London-open central pivot, 15-minute (TradingView) ----------------
+def s_tv_london_pivot_15m(df):
+    """TradingView idea 'EURUSD 15M Pivot Point day trading strategy': trade only the London open, 08:00 GMT.
+    After the first 15 minutes, buy if price is above the daily central pivot (sell if below). Stop 5-10 pips
+    beyond the pivot; TP1 at the first level, TP2 at the second (R1/R2 for buys, S1/S2 for sells); trail the stop
+    to the pivot at R2. Ours: signal at the close of the bar ending 08:15 UTC; pivots of the previous UTC day;
+    target R2 / S2 (TP2); the 'too close to S1' skip has no number and is left out. Translation: EUR/USD
+    15-minute ATR(14) ~7.5 pips -> stop = pivot -/+ 1 ATR."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 14)
+    ph, pl, pc = _prev_day(df)
+    p = (ph + pl + pc) / 3
+    r2, s2 = p + (ph - pl), p - (ph - pl)
+    _, he, _, _, _ = _local(df, "UTC")
+    at = np.abs(he - 8.25) < 1e-6
+    long_ = at & (c > p) & (r2 > c)
+    short = at & (c < p) & (s2 < c)
+    return long_, short & ~long_, {"stop": ("level", p - a, p + a), "target": ("level", r2, s2)}
+
+
+# ---------------- SC033 Crypto 1H EMA50 trend + EMA21 pullback, 24-bar target (TradingView) ----------------
+def s_tv_crypto_1h_strict_rr(df):
+    """TradingView 'Crypto 1H [Universal - Strict + R:R]' (ObiWan-Satoshi), 1-hour: trend = price above a rising
+    EMA50; after price touches EMA21 the script waits at most 3 bars for a valid signal candle (body >= 0.15% of
+    price). Stop at the lowest low of the last 5 bars minus a small ATR buffer; target the highest high of the last
+    24 bars; the trade is skipped unless the target is at least 2x the stop. London and New York sessions only.
+    Shorts mirror. Ours: signal candle = a close back above EMA21 in the trade direction; buffer = 0.2 ATR(14);
+    sessions = 07:00-21:00 UTC."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    o = _open(df)
+    a = atr(h, l, c, 14)
+    e50, e21 = ema(c, 50), ema(c, 21)
+    touch_l = _s((l <= e21).astype(float)).rolling(4).max().to_numpy() > 0
+    touch_s = _s((h >= e21).astype(float)).rolling(4).max().to_numpy() > 0
+    with np.errstate(divide="ignore", invalid="ignore"):
+        body = np.abs(c - o) / c * 100
+    stl = _s(l).rolling(5).min().to_numpy() - 0.2 * a
+    sts = _s(h).rolling(5).max().to_numpy() + 0.2 * a
+    tgl = _sh(_s(h).rolling(24).max().to_numpy())
+    tgs = _sh(_s(l).rolling(24).min().to_numpy())
+    hs, _, _, _, _ = _local(df, "UTC")
+    sess = (hs >= 7) & (hs < 21)
+    long_ = (c > e50) & (e50 > _sh(e50)) & touch_l & (c > o) & (c > e21) & (body >= 0.15) & \
+        (tgl - c >= 2 * (c - stl)) & sess
+    short = (c < e50) & (e50 < _sh(e50)) & touch_s & (c < o) & (c < e21) & (body >= 0.15) & \
+        (c - tgs >= 2 * (sts - c)) & sess
+    return long_, short & ~long_, {"stop": ("level", stl, sts), "target": ("level", tgl, tgs)}
+
+
+# ---------------- SC034 ATR Trend + RSI pullback, long (TradingView) ----------------
+def s_tv_atr_trend_rsi_pullback(df):
+    """TradingView 'ATR Trend + RSI Pullback Strategy [Profit-Focused]', long only, tested on 15m/30m/1H (BTCUSD,
+    NAS100, ETHUSD): price above a rising EMA200, RSI dips below 40 and ATR is above a minimum threshold -> buy.
+    Stop 1.5 ATR, target 3 ATR; optional exit when RSI > 70. Ours: RSI(14) crossing under 40 (the first bar of the
+    dip), ATR(14) above half of its 100-bar average (the threshold value is not stated)."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 14)
+    e200 = ema(c, 200)
+    r = rsi(c, 14)
+    long_ = (c > e200) & (e200 > _sh(e200)) & cross_down(r, np.full(len(c), 40.0)) & (a > 0.5 * sma(a, 100))
+    return long_, np.zeros(len(c), bool), {"stop": ("atr", 1.5), "target": ("atr", 3.0), "exit_long": r > 70}
+
+
+# ---------------- SC035 EMA 50/100 + Stochastic, 1-minute (The5ers) ----------------
+def s_5ers_ema50_100_stoch_1m(df):
+    """The5ers blog '1 Minute Scalping Strategy' (EUR/USD, GBP/USD): long when the 50 EMA has crossed above the
+    100 EMA, price pulls back toward the EMAs and the stochastic rises above 20; short when the 50 EMA is below
+    the 100 EMA and the stochastic falls below 80. Stop just beyond the latest swing low / high; target 8-12 pips.
+    Ours: the cross within the last 60 bars, pullback = a low at/under EMA50 in the last 5 bars, stochastic
+    (14,3,3) %K crossing 20 / 80; swing = last confirmed 3-bar swing (else the 10-bar extreme) -/+ 0.1 ATR.
+    Translation: EUR/USD 1-minute ATR(14) ~1.5 pips -> target 10 pips = 6.5 ATR."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    a = atr(h, l, c, 14)
+    e50, e100 = ema(c, 50), ema(c, 100)
+    xup = _s(cross_up(e50, e100).astype(float)).rolling(60).max().to_numpy() > 0
+    pull = _s((l <= e50).astype(float)).rolling(5).max().to_numpy() > 0
+    k, _ = _stoch(h, l, c, 14, 3, 3)
+    sh_, sl_ = _swings(h, l, 3)
+    ll, hh = _s(l).rolling(10).min().to_numpy(), _s(h).rolling(10).max().to_numpy()
+    st_l = np.where(sl_ < c, sl_, ll) - 0.1 * a
+    st_s = np.where(sh_ > c, sh_, hh) + 0.1 * a
+    long_ = (e50 > e100) & xup & pull & cross_up(k, np.full(len(c), 20.0))
+    short = (e50 < e100) & cross_down(k, np.full(len(c), 80.0))
+    return long_, short & ~long_, {"stop": ("level", st_l, st_s), "target": ("atr", 6.5)}
+
+
+# ---------------- SC036 Gold 5m pullback to EMA50 with 4H EMA200 trend (XS blog) ----------------
+def s_xs_gold_5m_pullback(df):
+    """XS.com blog 'Gold (XAUUSD) scalping trading strategy 2026', 5-minute (preferred): trend from the 200 EMA on
+    the 4-hour chart; long on a pullback to the 50 EMA with a bullish candle (hammer or bullish engulfing) and RSI
+    bouncing from oversold back above 40 (MACD as extra confirmation, at least three confirmations); short
+    mirror (bearish candle, RSI back under 60). Stop 5-10 pips beyond the recent swing, target at least 2:1;
+    London-New York overlap 13:00-17:00 GMT. Ours: the 4H trend is required plus at least 2 of: EMA50 touch with a
+    close back beyond it, engulfing or hammer, RSI(14) back over 40 after being under it in the last 5 bars, MACD
+    (12,26,9) bullish cross in the last 3 bars (= three confirmations), on an up candle; translation: 7.5
+    gold pips ($0.75) at 5-minute ATR(14) ~$3.5 -> 0.2 ATR beyond the 5-bar extreme; target 2R."""
+    h, l, c = (df[x].to_numpy() for x in "hlc")
+    o = _open(df)
+    a = atr(h, l, c, 14)
+    e50 = ema(c, 50)
+    t4 = _htf(df, "240min", lambda g: g["c"].to_numpy() - ema(g["c"].to_numpy(), 200))
+    bull, bear = _engulf(o, c)
+    rng = np.where(h - l > 0, h - l, np.nan)
+    with np.errstate(invalid="ignore"):
+        hammer = (np.minimum(o, c) - l) >= 0.6 * rng
+        star = (h - np.maximum(o, c)) >= 0.6 * rng
+    r = rsi(c, 14)
+    was_lo = _s((r < 40).astype(float)).rolling(5).max().to_numpy() > 0
+    was_hi = _s((r > 60).astype(float)).rolling(5).max().to_numpy() > 0
+    hs, _, _, _, _ = _local(df, "UTC")
+    sess = (hs >= 13) & (hs < 17)
+    stl = _s(l).rolling(5).min().to_numpy() - 0.2 * a
+    sts = _s(h).rolling(5).max().to_numpy() + 0.2 * a
+    m, sg, _ = macd(c)
+    mx_up = _s(cross_up(m, sg).astype(float)).rolling(3).max().to_numpy() > 0
+    mx_dn = _s(cross_down(m, sg).astype(float)).rolling(3).max().to_numpy() > 0
+    n_l = ((l <= e50) & (c > e50)).astype(int) + (bull | (hammer & (c >= o))).astype(int) + \
+        ((r > 40) & was_lo).astype(int) + mx_up.astype(int)
+    n_s = ((h >= e50) & (c < e50)).astype(int) + (bear | (star & (c <= o))).astype(int) + \
+        ((r < 60) & was_hi).astype(int) + mx_dn.astype(int)
+    long_ = (t4 > 0) & sess & (n_l >= 2) & (c > o)
+    short = (t4 < 0) & sess & (n_s >= 2) & (c < o)
+    return long_, short & ~long_, {"stop": ("level", stl, sts), "target": ("R", 2.0)}
+
+
 # id: (name, fn, timeframes the source states)
 SCOUT = {
     "SC001": ("RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute (TradingView)", s_rv_ema20_scalp, ["1Min"]),
@@ -708,4 +1114,19 @@ SCOUT = {
     "SC019": ("freqtrade RSI_BB: 1-SD lower band long, 3-SD upper band short (GitHub)", s_ft_rsi_bb, ["15Min"]),
     "SC020": ("DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long (ProRealCode)", s_prc_dax_false_break, ["15Min"]),
     "SC021": ("Jump: 16-bar mid +/- 2 ATR stop entry with 60m/30m filters, 5-minute (ProRealCode)", s_prc_jump, ["5Min"]),
+    "SC022": ("5 EMA high/low fade scalp, 8-pip stop, 5-pip target, London/NY open hour (BabyPips)", s_bp_5ema_hl_scalp, ["5Min"]),
+    "SC023": ("Keltner scalp: SMA89 + MACD 5/34/5 turn + stochastic, 1-minute (BabyPips)", s_bp_keltner_scalp_1m, ["1Min"]),
+    "SC024": ("EURUSD 5m TEMA21 vs SMA300 + BB width + CCI -110/160, CCI 210 exit (ProRealCode)", s_prc_eurusd_tema_cci, ["5Min"]),
+    "SC025": ("Bollinger + RSI 30/70 + Stochastic 5/3/3 scalp, mid-band exit, 5-minute (Forex Tester)", s_fxt_bb_rsi_stoch, ["5Min"]),
+    "SC026": ("Admiral Keltner 50/10/2.75 re-entry + Stochastic 14/7/3, target the middle, M15 (Admirals)", s_admiral_keltner_m15, ["15Min"]),
+    "SC027": ("Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target (forexop)", s_forexop_range_scalper, ["1Min", "5Min"]),
+    "SC028": ("DAX first 5-minute bar direction at 09:05, 5/10 points, flat 17:30 (ProRealCode)", s_prc_dax_first_bar, ["5Min"]),
+    "SC029": ("Hull Suite 55 + DI cross, swing stop, 1:1, 1-minute (Axiory)", s_axiory_hull_di_1m, ["1Min"]),
+    "SC030": ("Alpha S/R: engulfing inside the 15m EMA36 channel, channel stop, 1:3, gold 5m (TradingView)", s_alpha_sr_channel, ["5Min"]),
+    "SC031": ("freqtrade EMA_RSIStrategy: 1h trend + EMA20/50 + RSI 40-70 + ADX, -7%/4.5% (GitHub)", s_ft_ema_rsi, ["5Min"]),
+    "SC032": ("London 08:15 GMT side of the central pivot, stop past the pivot, target R2/S2 (TradingView)", s_tv_london_pivot_15m, ["15Min"]),
+    "SC033": ("Crypto 1H: EMA50 trend + EMA21 touch, 5-bar stop, 24-bar target, min 2R (TradingView)", s_tv_crypto_1h_strict_rr, ["1Hour"]),
+    "SC034": ("ATR Trend + RSI<40 pullback over a rising EMA200, 1.5/3 ATR, long (TradingView)", s_tv_atr_trend_rsi_pullback, ["15Min", "1Hour"]),
+    "SC035": ("EMA 50/100 cross + pullback + Stochastic 20/80, swing stop, 10-pip target, 1-minute (The5ers)", s_5ers_ema50_100_stoch_1m, ["1Min"]),
+    "SC036": ("Gold 5m: 4H EMA200 trend, EMA50 pullback + engulfing/hammer + RSI 40, 2R, 13-17 GMT (XS)", s_xs_gold_5m_pullback, ["5Min"]),
 }

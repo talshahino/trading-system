@@ -380,6 +380,295 @@
     "bot6"
    ],
    "rules": "5m NASDAQ: buy stop at mid(16-bar high/low)+2ATR15 if close>close[24], 60m close>SMA300, 30m ADX>=20, not Friday (short mirror, ADX<=20, not Tuesday, low volatility) / stop 8 ATR20 / target 7 ATR20"
+  },
+  {
+   "id": "SC022",
+   "name": "5 EMA high/low fade scalp, 8-pip stop, 5-pip target, London/NY open hour",
+   "source": "BabyPips forum",
+   "url": "https://forums.babypips.com/t/simple-5-ema-high-low-scalping-strategy/39154",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m: candle opens below the 5 EMA (lows) -> buy, opens above the 5 EMA high -> sell, hour after London/NY open / stop 8 pips (ours 1.8 ATR) / target 5 pips (ours 1.1 ATR)"
+  },
+  {
+   "id": "SC023",
+   "name": "Keltner scalp: SMA89 + MACD 5/34/5 turn + stochastic, 1-minute",
+   "source": "BabyPips forum",
+   "url": "https://forums.babypips.com/t/keltner-scalping-trading-system/692523",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m EUR/USD: price above/testing SMA89, inside Keltner(22), MACD(5,34,5) below zero, stoch momentum near -40, MACD turns up through its 5-MA (short mirror) / stop 1 pip outside the channel, max 12 pips / target 6-12 pips"
+  },
+  {
+   "id": "SC024",
+   "name": "EURUSD 5m TEMA21 vs SMA300 + BB width + CCI -110/160, CCI 210 exit",
+   "source": "ProRealCode forum",
+   "url": "https://www.prorealcode.com/topic/eurusd-5-min",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m 07-22h no weekend: TEMA21>SMA300, BBwidth(50)>0.003, CCI20 crosses over -110 (short: TEMA<SMA, CCI under 160) / stop 25 pips (ours 5.5 ATR) / exit CCI over 210 (short under -210)"
+  },
+  {
+   "id": "SC025",
+   "name": "Bollinger + RSI 30/70 + Stochastic 5/3/3 scalp, mid-band exit, 5-minute",
+   "source": "Forex Tester blog",
+   "url": "https://forextester.com/blog/bollinger-bands-rsi-stochastic-scalping-strategy/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m: below lower BB(20,2) + RSI14<30 + stoch(5,3,3)<20 -> buy at the close (short mirror 70/80) / stop 10 pips beyond the candle (ours 2.2 ATR) / target 20 pips (ours 4.4 ATR), or out on a close past the middle band"
+  },
+  {
+   "id": "SC026",
+   "name": "Admiral Keltner 50/10/2.75 re-entry + Stochastic 14/7/3, target the middle, M15",
+   "source": "Admirals blog",
+   "url": "https://admiralmarkets.com/analytics/traders-blog/scalping-with-admiral-keltner-indicator",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "M15: candle pierces a Keltner band (50,10,2.75/3.75) and closes back inside, stochastic(14,7,3) crossing up away from 80 (short mirror) / stop 8 pips + spread beyond the candle (ours 1.1 ATR) / target the middle line, min 10 pips (ours 1.4 ATR)"
+  },
+  {
+   "id": "SC027",
+   "name": "Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
+   "source": "forexop",
+   "url": "https://forexop.com/strategy/simple-range-scalper/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M1/M5: bar touches the lower Bollinger band (~95% envelope) and the next bar retraces inside -> buy (short mirror) / stop <= half the band width / target ~5% of the band width"
+  },
+  {
+   "id": "SC028",
+   "name": "DAX first 5-minute bar direction at 09:05, 5/10 points, flat 17:30",
+   "source": "ProRealCode",
+   "url": "https://www.prorealcode.com/prorealtime-trading-strategies/intraday-dax-strategy-mini-1e-timeframe-5-min",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m DAX: the 09:00-09:05 bar closes >1 point above its open -> buy at 09:05, otherwise sell / stop 5 points (ours 0.6 ATR) / target 10 points (ours 1.25 ATR), flat 17:30"
+  },
+  {
+   "id": "SC029",
+   "name": "Hull Suite 55 + DI cross, swing stop, 1:1, 1-minute",
+   "source": "Axiory",
+   "url": "https://axiory.com/trading-resources/strategies/one-minute-strategy",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m: +DI crosses above -DI while the Hull Suite is green -> buy (mirror) / stop slightly beyond the recent swing / target 1:1 (1-1.5x the stop)"
+  },
+  {
+   "id": "SC030",
+   "name": "Alpha S/R: engulfing inside the 15m EMA36 channel, channel stop, 1:3, gold 5m",
+   "source": "TradingView",
+   "url": "https://www.tradingview.com/script/mikVFwAu-Alpha-S-R-Channel-Strategy/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m XAUUSD: open inside the 15m EMA36 +/-0.175% channel, bullish engulfing, above 5m/15m EMAs, RSI<=70, BB width>=0.002, squeeze<0 (short mirror) / stop channel band - $0.50 / target 1:3, out 17:00 NY, no Friday"
+  },
+  {
+   "id": "SC031",
+   "name": "freqtrade EMA_RSIStrategy: 1h trend + EMA20/50 + RSI 40-70 + ADX, -7%/4.5%",
+   "source": "GitHub",
+   "url": "https://raw.githubusercontent.com/gksdud6330/crytpo-auto-trading-bot/e754e3c873b4845c56f7fb752748330c48cd6369/freqtrade-bot/user_data/strategies/EMA_RSIStrategy.py",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "5m long: 1h EMA50>=0.995xEMA200, EMA20>EMA50, close>EMA50, 40<RSI<70, ADX>18, volume>0.8x avg / stoploss -7% / ROI 4.5% falling to 0 at 360 min; exit on trend/EMA/RSI<35 failure"
+  },
+  {
+   "id": "SC032",
+   "name": "London 08:15 GMT side of the central pivot, stop past the pivot, target R2/S2",
+   "source": "TradingView",
+   "url": "https://de.tradingview.com/chart/EURUSD/VUveNusS-EURUSD-15M-PIVOT-POINT-DAY-TRADING-STRATEGY",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "15m EUR/USD: London open 08:00 GMT, after the first 15 minutes buy if above the central pivot (sell below) / stop 5-10 pips past the pivot (ours 1 ATR) / TP1 R1, TP2 R2 (ours R2/S2)"
+  },
+  {
+   "id": "SC033",
+   "name": "Crypto 1H: EMA50 trend + EMA21 touch, 5-bar stop, 24-bar target, min 2R",
+   "source": "TradingView",
+   "url": "https://www.tradingview.com/script/eKD9Xxl1-Crypto-1H-Universal-Strict-R-R/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H: price above rising EMA50, touch of EMA21, signal candle (body>=0.15%) within 3 bars, London/NY (short mirror) / stop 5-bar low - ATR buffer / target 24-bar high, only if >= 2R"
+  },
+  {
+   "id": "SC034",
+   "name": "ATR Trend + RSI<40 pullback over a rising EMA200, 1.5/3 ATR, long",
+   "source": "TradingView",
+   "url": "https://in.tradingview.com/script/9JyXE791-ATR-Trend-RSI-Pullback-Strategy-Profit-Focused",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "crypto",
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m/30m/1H long: price above a rising EMA200, RSI dips under 40, ATR above a minimum / stop 1.5 ATR / target 3 ATR, optional exit RSI>70"
+  },
+  {
+   "id": "SC035",
+   "name": "EMA 50/100 cross + pullback + Stochastic 20/80, swing stop, 10-pip target, 1-minute",
+   "source": "The5ers blog",
+   "url": "https://the5ers.com/1-minute-scalping-trading/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m EUR/USD, GBP/USD: EMA50 crossed above EMA100, pullback to the EMAs, stochastic rises above 20 (short: EMA50<EMA100, stoch falls below 80) / stop beyond the latest swing / target 8-12 pips (ours 6.5 ATR)"
+  },
+  {
+   "id": "SC036",
+   "name": "Gold 5m: 4H EMA200 trend, EMA50 pullback + engulfing/hammer + RSI 40, 2R, 13-17 GMT",
+   "source": "XS.com blog",
+   "url": "https://www.xs.com/en/blog/gold-scalping-trading-strategy/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m XAUUSD: above 4H EMA200, pullback to EMA50, hammer/engulfing, RSI back above 40, MACD cross - at least 3 confirmations, 13-17 GMT (short mirror) / stop 5-10 pips beyond the swing (ours 0.2 ATR) / target >= 2:1"
   }
  ]
 }

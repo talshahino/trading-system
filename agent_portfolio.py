@@ -444,6 +444,17 @@ def main():
     a = ap.parse_args()
     budget = a.minutes * 60
     t0 = time.time()
+    if a.bot == "bot7" and a.where in ("pc", "all"):
+        # bot 7's fix study (agents/news_fix.py): the three strategies pooled over all instruments, split by release
+        # type / instrument / exits - at most once every 3 days, in its own process, up to half the budget
+        try:
+            from agents import news_fix as NF
+            if NF.stale():
+                mins = max(8.0, a.minutes / 2)
+                subprocess.run([sys.executable, "-m", "agents.news_fix", "--minutes", str(mins)], cwd=str(ROOT),
+                               timeout=int(mins * 60 + 1800))
+        except Exception as e:  # noqa: BLE001 - the study's failure never stops the experiments
+            print(f"bot7 fix study failed: {e}")
     # the scout's strategies first, with up to a third of the time, while some are still untested (12.11.2026: with
     # 0.8 of the budget for the experiments, the leftover was under the 2-minute minimum and they never ran)
     first = test_new(a.bot, budget / 3, a.where) if untested_new(a.bot, a.where) else 0

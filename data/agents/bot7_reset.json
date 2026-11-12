@@ -1,5 +1,5 @@
 {
- "fp": "e202c282f6bf",
+ "fp": "8ec9ba9f819e",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -49,19 +49,31 @@
    "EV03|5Min|USDCAD",
    "EV03|5Min|USDCHF",
    "EV03|5Min|USDJPY",
-   "EV03|5Min|XAUUSD"
+   "EV03|5Min|XAUUSD",
+   "SC001|1Min|JP225"
   ],
   "plans": {
    "EV01|5Min|GBPUSD": {
     "filter": "with_trend200"
+   },
+   "SC001|1Min|JP225": {
+    "risk_mult": 0.7
    }
   },
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-10T19:49:27+00:00",
- "account_v": 1,
- "resets": [],
+ "last_reset": "2026-11-12T19:05:57+00:00",
+ "account_v": 2,
+ "resets": [
+  {
+   "v": 2,
+   "at": "2026-11-12T19:05:57+00:00",
+   "what": "נוספו 1 אסטרטגיות/מכשירים · כלל השתנה ב־SC001|1Min|JP225",
+   "archive": "data/agents/bot7_archive/account_v1.json",
+   "id": "c11b70cdbb2a"
+  }
+ ],
  "stable": false,
  "proposed": null
 }

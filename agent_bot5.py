@@ -112,6 +112,26 @@ def prep(s, end):
     return df, cost, stop_at, noent
 
 
+# Tal's gap method on bot 5's world (12.11.2026: the engine's API is the one bot 6 uses - TG.run / summarize /
+# write_results / cards; the old TG.experiments call failed every night, so bot 5 had no results)
+TAL_DIR = OUT / "tal"
+TAL_WORLD = {"symbols": TAL_SYMBOLS, "costs": "FTMO's recorded 1-minute spread + commission",
+             "sessions": "FTMO Standard: market breaks and session ends closed, news masks", "stop_buffer": "2 points",
+             "split": "train to 2025-12-31, unseen 2026"}
+
+
+def tal_load(s):
+    end = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+    data = prep(s, end)
+    if data is None:
+        return None
+    df, cost, stop_at, noent = data
+    ev, _ = O15.NC.load()
+    times = pd.Series(df.index)
+    cal = {f"cal{m}": O15.NC.blocked(times, s, ev, minutes=m).to_numpy() for m in (15, 60)}
+    return TG.Data(s, df, cost, stop_at, noent, 2.0, cal)
+
+
 def run_one(s, data, cfg):
     df, cost, stop_at, noent = data
     keep = {k: getattr(OG, k) for k in cfg}
@@ -244,7 +264,7 @@ def main():
     tal_left = a.minutes * 60 - (time.time() - t_start)
     if tal_left > 60:
         try:
-            TG.experiments(BOT, tal_syms, tal_left)
+            TG.run(BOT, tal_syms, tal_load, TAL_DIR, tal_left)
         except Exception as e:  # noqa: BLE001
             print("tal gap experiments failed:", e)
     if a.no_cards:
@@ -298,8 +318,12 @@ def main():
                 change={"track": trk, "knob": knob, "from": T["base"][knob], "to": val}))
     tal = {}
     try:
-        tal = TG.summarize(BOT, TAL_SYMBOLS)
-        cards += TG.cards(BOT, tal)
+        tidx = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")}
+        pairs, answers = TG.summarize(tidx, TAL_SYMBOLS, TAL_DIR)
+        planned = len(TG.PAIRS) * len(TG.variants()) * len(TAL_SYMBOLS)
+        doc = TG.write_results(BOT, pairs, answers, TAL_WORLD, [len(tidx), planned])
+        cards += TG.cards(BOT, pairs, doc.get("bot6"), "בוט 6", risk_pct=0.4)
+        tal = {"done": len(tidx), "planned": planned}
     except Exception as e:  # noqa: BLE001
         print("tal gap summary failed:", e)
     for c in cards:

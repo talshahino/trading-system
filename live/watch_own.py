@@ -52,7 +52,7 @@ VARIANT = (2.0, False, "1m", "struct")
 # (1.8 instead of 2.5 x the average body) - about 4x the setups in the backtest (3.6 a week on these 16 instruments
 # since 2024, vs 0.9), but they lost a little there (-0.09R a trade vs -0.03R). Shown apart in the app ('wide').
 WIDE_BODY_X = 1.8
-DAYS = 8                      # history kept per instrument (the impulse rules look back up to ~5 days)
+DAYS = 14                     # history kept per instrument (the 4-hour gaps stay valid 5 days; 12.11.2026)
 # the instruments where spread + commission are the smallest share of a trade's risk (optimisation, 06.11.2026)
 SYMBOLS = {"US100": ["US100.cash", "US100"], "US30": ["US30.cash", "US30"], "US500": ["US500.cash", "US500"],
            "GER40": ["GER40.cash", "GER40"], "FRA40": ["FRA40.cash", "FRA40"], "JP225": ["JP225.cash", "JP225"],
@@ -91,10 +91,15 @@ ACCT_V, RISK_V5, RISK_V1M = 4, 0.004, 0.00075     # 4 (12.11.2026): the user's g
 TAL5_SYMBOLS = ["US100", "US30", "US500", "GER40", "JP225"]
 TAL5 = {"t15_1": (("15m", "1m", 2), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 48, "PROT": "shock"}),
         "t1h_15": (("1h", "15m", 1), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 0.5, "EXPIRY": 48, "PROT": "none"}),
-        "t4h_1h": (("4h", "1h", 1), {"GBODY": 1.5, "MIN_GAP": 0.6, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 48, "PROT": "none"}),
+        # 12.11.2026 18:22 (user: yes - the agent's newest search, train and 2026 agree): 4h/1h's new settings
+        # (+0.16R a trade on 2026, 189 trades, was +0.08R) and 4h/15m with the stop to entry at 70% of the way to the
+        # target (be70: +0.175R a trade on 2026, 311 trades, 46% winners)
+        "t4h_1h": (("4h", "1h", 1), {"GBODY": 0.0, "MIN_GAP": 0.0, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"}),
+        "t4h_15": (("4h", "15m", 2), {"GBODY": 0.0, "MIN_GAP": 0.0, "SW": 5, "MIN_RR": 0.0, "EXPIRY": 120, "PROT": "cal15", "EXIT": "be70"}),
         "t15_5": (("15m", "5m", 1), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"})}
-TAL5_NAME = {"t15_1": "15 דק' / דקה", "t1h_15": "שעה / 15 דק'", "t4h_1h": "4 שעות / שעה", "t15_5": "15 דק' / 5 דק'"}
-TAL5_TF = {"t15_1": "15Min", "t1h_15": "1Hour", "t4h_1h": "4Hour", "t15_5": "15Min"}
+TAL5_NAME = {"t15_1": "15 דק' / דקה", "t1h_15": "שעה / 15 דק'", "t4h_1h": "4 שעות / שעה", "t15_5": "15 דק' / 5 דק'",
+             "t4h_15": "4 שעות / 15 דק' (סטופ לכניסה ב־70%)"}
+TAL5_TF = {"t15_1": "15Min", "t1h_15": "1Hour", "t4h_1h": "4Hour", "t15_5": "15Min", "t4h_15": "4Hour15"}
 RISK_TAL5 = 0.004 * 0.7
 # The settings bots 5 and 6 trade with live in live/bots/bot5.json and bot6.json (12.11.2026: the virtual bots are run
 # as if they were real accounts - an approved change goes in at once, like bots 1-4). Read every cycle; a file that is
@@ -228,19 +233,41 @@ class Calendar:
     """FTMO's restricted events (2 minutes either side) and holidays, refreshed every hour."""
 
     def __init__(self):
-        self.t, self.restricted, self.holidays = 0, [], []
+        self.t, self.restricted, self.holidays, self.high = 0, [], [], []
 
     def refresh(self):
         if time.time() - self.t < 3600:
             return
         try:
             now = pd.Timestamp.now(tz="UTC")
-            self.restricted, self.holidays = CAL.parse(CAL.fetch((now - pd.Timedelta(days=DAYS + 1)).strftime("%Y-%m-%d"),
-                                                                 (now + pd.Timedelta(days=2)).strftime("%Y-%m-%d")))
+            items = CAL.fetch((now - pd.Timedelta(days=DAYS + 1)).strftime("%Y-%m-%d"), (now + pd.Timedelta(days=2)).strftime("%Y-%m-%d"))
+            self.restricted, self.holidays = CAL.parse(items)
+            # every high-impact release by currency: the gap method's calendar protection (PROT cal15 / cal60), the
+            # same "+-N minutes of a high-impact release of the instrument's currency" as the backtest
+            self.high = [(pd.Timestamp(i["date"]).tz_convert("UTC"), str(i.get("instrument") or i.get("currency") or "").upper())
+                         for i in items if str(i.get("impact") or "").lower() == "high"]
             self.t = time.time()
         except Exception as e:  # noqa: BLE001
             log(f"FTMO calendar not read ({e}); trying again in 10 minutes")
             self.t = time.time() - 3000
+
+    def cal_masks(self, df, name):
+        """{"cal15": mask, "cal60": mask} on the 1-minute candles: within +-15 / 60 minutes of a high-impact release."""
+        from agents import news_calendar as NC
+        cur = set(NC.CURRENCIES.get(name) or [])
+        ev = np.array(sorted(pd.Timestamp(t).as_unit("ns").value for t, c in self.high if c in cur or any(x in c for x in cur)), dtype=np.int64)
+        t = pd.DatetimeIndex(df.index).as_unit("ns").asi8         # pandas 3 keeps microseconds: compare in ns
+        out = {}
+        for m in (15, 60):
+            w = m * 60 * 10**9
+            if not len(ev):
+                out[f"cal{m}"] = np.zeros(len(t), bool)
+                continue
+            i = np.searchsorted(ev, t)
+            after = np.where(i < len(ev), ev[np.minimum(i, len(ev) - 1)] - t, 10**18)
+            before = np.where(i > 0, t - ev[np.maximum(i - 1, 0)], 10**18)
+            out[f"cal{m}"] = (after <= w) | (before <= w)
+        return out
 
     def masks(self, df, name):
         n = len(df)
@@ -519,8 +546,8 @@ def main():
         state = {}
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
                   "rules": "מ־12.11.2026 החשבון הווירטואלי סופר רק את שיטת הגאפ של טל: דחף בגרף הגבוה, הגאפ בין נר 1 לנר 3 שנשאר פתוח, "
-                           "כניסה באמצע הגאפ, סטופ 2 נקודות מעבר לסווינג השני, יעד בסווינג השני בצד השני · 4 צמדים: 15 דק'/דקה (עם הגנה מזעזועים), "
-                           "שעה/15 דק', 4 שעות/שעה, 15 דק'/5 דק' · סיכון 0.28% לעסקה (⭐ אולי מזל: x0.7) · המסלולים הישנים מוצגים ולא נספרים: "
+                           "כניסה באמצע הגאפ, סטופ 2 נקודות מעבר לסווינג השני, יעד בסווינג השני בצד השני · 5 צמדים: 15 דק'/דקה (עם הגנה מזעזועים), "
+                           "שעה/15 דק', 4 שעות/שעה, 4 שעות/15 דק' (סטופ לנקודת הכניסה כשעברו 70% מהדרך ליעד, בלי כניסה ±15 דק' מפרסום חשוב), 15 דק'/5 דק' · סיכון 0.28% לעסקה (⭐ אולי מזל: x0.7) · המסלולים הישנים מוצגים ולא נספרים: "
                            "דחף ב־15 דקות · כניסה בפער הדקתי בתוך הפער הראשון של המהלך · סטופ 4 פיפס מעבר לתחילת הדחף · "
                            "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים בדקה: אותם כללים בגרף הדקה, המתנה של 96 דקות לנגיעה · מסלול פערים (v5): כל פער של נר חזק במדדים (גם JP225), כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך, 30% יוצאים ב־90% מהדרך והשאר לברייק · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
                            "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
@@ -614,7 +641,7 @@ def main():
                             setattr(CORE, k_, v_)
                 if name in TAL5_SYMBOLS:
                     D5 = TG.Data(name, df[["o", "h", "l", "c"]], np.asarray(cst, float), np.asarray(stop_at, bool),
-                                 np.asarray(noent, bool), 2.0, {})
+                                 np.asarray(noent, bool), 2.0, cal.cal_masks(df, name))
                     for trk, (pair, cfg) in TAL5.items():
                         for x in TG.live_trades(D5, pair, cfg):
                             g_ = x.get("gap") or [x["entry"], x["entry"]]

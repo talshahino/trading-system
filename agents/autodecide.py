@@ -73,6 +73,10 @@ def decide(bots, now=None):
     never = {(x["bot"], x["combo"], x["kind"]) for x in rules.get("never", [])}
     # an undone recommendation is not made again for 30 days, even when a later sample brings it back
     never |= {(d["bot"], d.get("combo"), d["kind"]) for d in old.values() if d["id"] in uundo and d["type"] == "risk"}
+    # the watch (agents/watch.py) took it back: like an undo, not made again (unless the user undid the revert)
+    reverted = {d["of"] for d in old.values() if d.get("decision") == "reverted" and d["id"] not in uundo}
+    never |= {(d["bot"], d.get("combo"), d["kind"]) for d in old.values() if d["id"] in reverted and d["type"] == "risk"}
+    uundo = uundo | reverted
     new = []
 
     def add(d):

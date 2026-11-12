@@ -697,12 +697,27 @@ def auto_apply():
             j = requests.get(DECISIONS_URL, params={"t": int(time.time() // 300)}, timeout=20).json()
             for x in j.get("decisions", []):
                 a = x.get("action")
+                if x.get("decision") == "reverted" and x.get("of"):
+                    # the watch took an applied risk change back (agents/watch.py): the value before returns
+                    with AGENT_LOCK:
+                        m = agent_meta()
+                        done = x["id"] in m.setdefault("reverted", {}) or x["id"] in m["undo"]
+                        b = None if done else m["applied"].pop(x["of"], None)
+                        if not done:
+                            m["reverted"][x["id"]] = x["of"]
+                            agent_meta_save(m)
+                    if b and not b.get("failed"):
+                        risk_change(b["bot"], b["combo"], b["kind"], b.get("prev"))
+                        log(f"manager's decision {x['of']} reverted by the watch: {b['bot']} {b['combo']} {b['kind']} back to {b.get('prev')}")
+                        agent_publish()
+                    continue
                 if x.get("type") != "risk" or x.get("decision") != "approved" or not a:
                     continue
                 with AGENT_LOCK:
                     m = agent_meta()
-                    if x["id"] in m["applied"] or x["id"] in m["undo"]:
-                        continue
+                    rev = {of: rid for rid, of in (m.get("reverted") or {}).items()}
+                    if x["id"] in m["applied"] or x["id"] in m["undo"] or (x["id"] in rev and rev[x["id"]] not in m["undo"]):
+                        continue                     # applied, undone, or taken back by the watch (unless you undid that)
                 try:
                     cur = (risk_doc().get(a["bot"], {}).get(a["kind"]) or {}).get(a["combo"])
                     risk_change(a["bot"], a["combo"], a["kind"], a["value"])

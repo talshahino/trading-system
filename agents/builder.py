@@ -140,7 +140,9 @@ def run(now=None):
     for cid, u in ucards.items():
         if (u or {}).get("decision") == "approved" and cid not in approved:
             approved[cid] = {"card": cid, "id": cid}
-    undone_cards = {d["card"] for d in dec if d.get("type") == "card" and d["id"] in undo}
+    reverted = {d["of"] for d in dec if d.get("decision") == "reverted" and d["id"] not in undo}
+    approved = {k: v for k, v in approved.items() if v.get("id") not in reverted}
+    undone_cards = {d["card"] for d in dec if d.get("type") == "card" and (d["id"] in undo or d["id"] in reverted)}
     undone_cards |= {cid for cid, u in ucards.items() if (u or {}).get("decision") == "rejected"}
     # 1) undone -> out of the bot
     for cid in undone_cards:
@@ -148,7 +150,8 @@ def run(now=None):
             if cfg and revert(cfg, cid):
                 touched.add(b)
                 r = replies.setdefault(cid, {})
-                r.update(text="בוטל על ידך - הוצא מהבוט אוטומטית", at=at, by="builder", reverted=at)
+                r.update(text="הוחזר לאחור - הוצא מהבוט אוטומטית", at=at, by="builder", reverted=at)
+                r.pop("built", None)
                 did.append(f"{b}: reverted {cid}")
     # 2) approved, not built yet -> into the bot
     for cid in approved:

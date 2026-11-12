@@ -324,6 +324,8 @@ def light(st, refresh_first=True):
     run(st, ["-m", "agents.health"], timeout=900, logname="health.log")
     run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log")
     run(st, ["-m", "agents.builder"], timeout=300, logname="builder.log")    # the decisions into the bots, at once
+    run(st, ["-m", "agents.watch"], timeout=300, logname="watch.log")        # every change followed, bad ones back
+    run(st, ["-m", "agents.builder"], timeout=300, logname="builder2.log")   # a reverted card out of the bot now
     st["last_error"], st["errors_in_row"] = None, 0
     n = _publish_changes(st, before, "light", "Agents on the bots' computer: health")
     _S["light"] = time.time()

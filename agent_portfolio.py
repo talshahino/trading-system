@@ -289,6 +289,14 @@ def fixing(bot):
     return {k.split("|", 1)[1] for k, v in fa.items() if k.startswith(bot + "|") and (v or {}).get("status") == "trying"}
 
 
+def loss_priority(bot):
+    """The tests the daily loss review asks for first (data/agents/priority.json, agents/loss_review.py)."""
+    try:
+        return json.loads((ROOT / "data" / "agents" / "priority.json").read_text(encoding="utf-8")).get(bot) or {}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
 def experiments(bot, budget_s, where):
     st = Store(bot)
     todo = []
@@ -297,9 +305,14 @@ def experiments(bot, budget_s, where):
         sym = combo.split("|")[2]
         if not runs_here(sym, where):
             continue
+        prio = (loss_priority(bot).get(combo) or {})
         for fam in FAMILIES:
             age = st.age_days(fam, combo)
             d = st.get(fam, combo) or {}
+            if fam in (prio.get("families") or []) and str(d.get("at") or "") < str(prio.get("at") or ""):
+                # the daily loss review asked for this test (agents/loss_review.py): first, before anything else
+                todo.append((-1, fam, -age, sym, combo))
+                continue
             if age >= RERUN_DAYS or (d.get("variants") and not tr_ok(d)):    # (12.11.2026: trades for the whole-bot check)
                 todo.append((0 if age == 999 or combo in fixing_ else 1, fam, -age, sym, combo))
             elif d.get("variants") and legacy_tr(d):                         # trades stored in 1000-minute steps

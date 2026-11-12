@@ -54,8 +54,8 @@ _LOCK, _REFRESH = threading.RLock(), threading.Lock()
 # what the continuous layer writes - while a smart agent runs, only these are published by it (the agent's own files
 # are published by the smart layer when the agent ends, never half-written)
 import re  # noqa: E402
-LIGHT_OWN = re.compile(r"^(reports/agents/(manager\.json|decisions\.json|watch\.json|manager_log\.json|[^/]+/(health|cards_health)\.json)"
-                       r"|data/agents/replies\.json|live/bots/)")
+LIGHT_OWN = re.compile(r"^(reports/agents/(manager\.json|decisions\.json|watch\.json|manager_log\.json|losses/.*|[^/]+/(health|cards_health)\.json)"
+                       r"|data/agents/(replies|priority)\.json|live/bots/)")
 STATE = WORK / "host_state.json"
 
 
@@ -348,6 +348,7 @@ def light(st, refresh_first=True):
     run(st, ["agent_manager.py"], timeout=1200, logname="agent_manager.log", **kw)
     run(st, ["-m", "agents.builder"], timeout=300, logname="builder.log", **kw)    # the decisions into the bots, at once
     run(st, ["-m", "agents.watch"], timeout=300, logname="watch.log", **kw)        # every change followed, bad ones back
+    run(st, ["-m", "agents.loss_review"], timeout=300, logname="loss_review.log", **kw)   # every loss day: a report + tasks
     run(st, ["-m", "agents.builder"], timeout=300, logname="builder2.log", **kw)   # a reverted card out of the bot now
     st["last_error"], st["errors_in_row"] = None, 0
     n = _publish_changes(st, before, "light", "Agents on the bots' computer: health", only=LIGHT_OWN if busy else None)

@@ -430,7 +430,8 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="msg" id="pushMsg"></div></div>
     <div class="card"><h3>מנהל הבוטים</h3>
       <div class="row"><span class="mut" id="botsHint">ההצעות של הסוכנים לכל בוט אחרי הסינון של המנהל, האסטרטגיות של כל בוט והמלצות הסיכון. שום דבר לא משתנה בלי אישור שלך.</span><button class="btn" id="botsBtn">מנהל הבוטים</button></div>
-      <div class="row" style="margin-top:8px"><span class="mut">מה המנהל והסוכנים יודעים על הדרך שבה אתה חושב: המטרה, העקרונות וכל ההחלטות שלך.</span><button class="btn ghost" id="ttBtn">איך טל חושב</button></div></div>
+      <div class="row" style="margin-top:8px"><span class="mut">מה המנהל והסוכנים יודעים על הדרך שבה אתה חושב: המטרה, העקרונות וכל ההחלטות שלך.</span><button class="btn ghost" id="ttBtn">איך טל חושב</button></div>
+      <div class="row" style="margin-top:8px"><span class="mut">בכל יום שבוט מסיים בהפסד: מה הפסיד, למה, ומה עושים כדי שזה לא יחזור.</span><button class="btn ghost" id="lrBtn">דוחות הפסד</button></div></div>
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
     <div class="card" id="logCard"><h3>לוגים</h3>
       <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
@@ -478,6 +479,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 <div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>מנהל הבוטים</b></div>
   <div id="bpDec"></div><div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="ttPg"><div class="ph"><button class="back" id="ttBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>איך טל חושב</b></div><div id="ttBody" style="padding:0 16px 40px;line-height:1.6"><div class="empty">טוען…</div></div></div>
+<div class="page" id="lrPg"><div class="ph"><button class="back" id="lrBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>דוחות הפסד</b></div><div id="lrBody" style="padding:0 14px 40px;line-height:1.55"><div class="empty">טוען…</div></div></div>
 <div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
 <div class="page" id="wbPg"><div class="ph"><button class="back" id="wbBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>בוט סקלפינג · צפייה</b></div><div id="wbBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="wcPg"><div class="ph"><button class="back" id="wcBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="wcTitle"></b></div><div id="wcBody"></div></div>
@@ -2111,6 +2113,33 @@ $("wcBack").onclick = () => { $("wcPg").classList.remove("on"); WC.forEach(c => 
 $("bpBack").onclick = () => $("botsPg").classList.remove("on");
 // "how Tal thinks" (data/agents/tal_thinking.md): what the manager and the agents read before every decision
 $("ttBack").onclick = () => $("ttPg").classList.remove("on");
+// daily loss reports (agents/loss_review.py): every losing day of every bot - what lost, why, what is done about it
+const LR = p => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/losses/${p}?t=${Math.floor(Date.now() / 60000)}`;
+$("lrBack").onclick = () => $("lrPg").classList.remove("on");
+$("lrBtn").onclick = async () => {
+  $("lrPg").classList.add("on");
+  try {
+    const idx = await (await fetch(LR("index.json"))).json();
+    const rs = (idx.reports || []).slice(0, 60);
+    if (!rs.length) { $("lrBody").innerHTML = '<div class="empty">עוד אין ימי הפסד</div>'; return; }
+    $("lrBody").innerHTML = rs.map((r, i) => `<div class="card" style="margin:10px 0;cursor:pointer" data-i="${i}">
+      <div class="row"><b>${esc(r.bot)} · ${esc(r.day)}</b><span class="pill ${r.normal ? "" : "neg"}">${r.pnl_pct >= 0 ? "+" : ""}${Number(r.pnl_pct).toFixed(2)}% · ${r.normal ? "יום רע רגיל" : "חריג"}</span></div>
+      <div class="mut" style="margin-top:4px">${esc(r.headline)}</div><div class="lrD" id="lrD${i}"></div></div>`).join("");
+    document.querySelectorAll("#lrBody .card").forEach(el => el.onclick = async () => {
+      const r = rs[+el.dataset.i], box = $("lrD" + el.dataset.i);
+      if (box.innerHTML) { box.innerHTML = ""; return; }
+      const d = await (await fetch(LR(`${r.bot}/${r.day}.json`))).json();
+      const tr = d.trend || {}, l7 = tr.last7 || {}, p7 = tr.prev7 || {};
+      box.innerHTML = `<div style="margin-top:8px">${(d.summary || []).map(s => `<p style="margin:4px 0">${esc(s)}</p>`).join("")}</div>
+        <p style="margin:6px 0" class="mut">רווח גולמי ${Number(d.gross_profit).toLocaleString()}$ · הפסד גולמי ${Number(d.gross_loss).toLocaleString()}$ · מקדם רווח ${d.profit_factor ?? "-"} · עלויות ${Number(d.costs).toLocaleString()}$</p>
+        <h4 style="margin:10px 0 4px">העסקאות שהפסידו</h4>
+        <div style="overflow-x:auto"><table style="width:100%;font-size:13px;border-collapse:collapse"><tr><th align="right">אסטרטגיה</th><th>כיוון</th><th>R</th><th>$</th><th>MFE</th><th align="right">סיבה</th></tr>
+        ${(d.losers || []).map(x => `<tr style="border-top:1px solid var(--line,#ddd)"><td>${esc(x.combo)}${x.recurring ? " ↻" : ""}</td><td align="center">${esc(x.side)}</td><td align="center">${x.r}</td><td align="center">${Math.round(x.net).toLocaleString()}</td><td align="center">${x.mfe_r ?? "-"}</td><td>${esc(x.cause_he)}</td></tr>`).join("")}</table></div>
+        <h4 style="margin:10px 0 4px">מה עושים</h4><ol style="margin:0;padding-inline-start:18px">${(d.actions || []).map(a => `<li style="margin:4px 0">${esc(a.task)}</li>`).join("")}</ol>
+        <p class="mut" style="margin-top:8px">מגמה: ${l7.loss_days ?? 0} ימי הפסד בשבוע האחרון (ממוצע ${l7.avg_loss_pct ?? 0}%), מול ${p7.loss_days ?? 0} בשבוע שלפני (${p7.avg_loss_pct ?? 0}%)${tr.improving === true ? " - ההפסדים קטנים" : tr.improving === false ? " - ההפסדים לא קטנים" : ""}.</p>`;
+    });
+  } catch (e) { $("lrBody").innerHTML = '<div class="empty">לא נטען, נסה שוב</div>'; }
+};
 $("ttBtn").onclick = async () => {
   $("ttPg").classList.add("on");
   try {

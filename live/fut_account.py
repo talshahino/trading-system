@@ -25,7 +25,8 @@ COMM = 1.50          # $ per micro, round turn (assumed: typical prop-firm cost;
 SLIP_TICKS = 1.0     # one tick lost per trade on average (stop exits, the session close)
 PLAN = "Pro $100K"
 INITIAL, TARGET, MAX_LOSS, DAILY_LOSS, MAX_MICROS, CONSISTENCY = 100_000.0, 6_000.0, 4_500.0, 1_500.0, 100, 0.5
-RISK_V5, RISK_V1M = 0.004, 0.00075          # share of the balance risked per trade (set from the simulation)
+RISK_V5, RISK_V1M = 0.004, 0.0             # share of the balance risked per trade (set from the simulation)
+# the 1-minute track is stopped (card 9a0bc4200f6d, 12.11.2026): it loses in bot 6's world (backtest -0.08R, 2026 -0.04R)
 ROOM_USE = 0.9                              # open risk may use at most 90% of the room left to either limit
 VERSION = 2                 # 2 (10.11.2026): one name per gap - a fresh account
 
@@ -87,6 +88,8 @@ class Account:
     def size(self, symbol, trk, entry, stop, t, open_recs):
         if self.a.get("breached"):
             return 0, "breach"
+        if (RISK_V5 if trk == "v5" else RISK_V1M) <= 0:
+            return 0, "off"                     # the track is stopped
         day = tday(t)
         bal = self.balance()
         room = min(bal - self.level(day), bal - (self.day_start(day) - DAILY_LOSS))

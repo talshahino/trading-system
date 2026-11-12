@@ -47,7 +47,7 @@ RERUN_DAYS = 14
 FAMILIES = ("exits", "filters")
 LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--breakeven", "0.6"]
 NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot7": "בוט 7 · פרסומים כלכליים",
-         "bot5": "בוט 5 · סקלפינג", "bot6": "בוט 6 · חוזים עתידיים"}
+         "bot5": "בוט 5 - סקאלפינג", "bot6": "בוט 6 · חוזים עתידיים"}
 RISK = {"bot7": 0.5, "bot5": 0.4, "bot6": 0.4}
 # bots 5-6 have their own experiment agents (agent_bot5.py / agent_bot6.py); here only the scout's strategies, on
 # their instruments: the scalping bot's low-spread list (user, 09.11.2026) and the three index futures

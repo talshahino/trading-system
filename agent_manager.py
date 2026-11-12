@@ -27,7 +27,7 @@ from agents import autodecide as AD
 from agents import repo_io as RIO
 
 OUT = Path("reports/agents/manager.json")
-BOTS = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 · סקלפינג",
+BOTS = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 - סקאלפינג",
         "bot6": "בוט 6 · חוזים עתידיים", "bot7": "בוט 7 · פרסומים כלכליים"}
 RISK_KEYS = {"bot1": "bot1", "bot2": "bot2", "bot3": "bot3", "bot4": "bot4"}
 AGENT_ON = set(BOTS)                    # every bot has its smart agent (11.11.2026: bot 5 first, then all)

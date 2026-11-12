@@ -772,15 +772,25 @@ async function act(path, body = {}) {
   return j;
 }
 const note = (id, text, ok) => { $(id).className = "msg " + (ok === true ? "pos" : ok === false ? "neg" : "mut"); $(id).textContent = text; };
-let roleAsked = false;
+let roleAsked = false, subChecked = false;
+// once per opening: this device's notifications are registered again under its role (owner: every notification;
+// view code: none - user, 12.11.2026), silently (no test notification)
+async function autoSub() {
+  try {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window) || Notification.permission !== "granted") return;
+    const sub = await (await navigator.serviceWorker.ready).pushManager.getSubscription();
+    if (sub) await act("/subscribe", {subscription: sub.toJSON(), quiet: true});
+  } catch (e) {}
+}
 function renderMgr() {
   const m = mgrInfo;
   if (m && getPin() && !getRole() && !roleAsked) { roleAsked = true; act("/auth").then(j => setRole(j.role || "owner")).catch(() => {}); }
+  if (m && !subChecked) { subChecked = true; autoSub(); }
   if (m && $("vpinMsg") && !$("vpinMsg").textContent) note("vpinMsg", m.viewer_set ? "יש כרגע קוד צפייה פעיל." : "אין כרגע קוד צפייה.");
   $("mDot").className = "dot " + (m ? "on" : mgr ? "off" : "");
   $("mState").textContent = m ? "המנהל מחובר" : (!mgr && needCode) ? "הקלד את הקוד הסודי למטה כדי להתחבר למחשב." : mgr ? "המנהל לא עונה. בדוק שהמחשב דולק."
     : mgrSeen ? "המנהל פועל, אבל החיבור לאפליקציה עוד לא עלה. מנסה שוב…" : "המנהל עוד לא הותקן במחשב.";
-  $("mVer").textContent = m ? `גרסה ${m.version || "?"} · ${m.push_devices} מכשירים מקבלים התראות` : "";
+  $("mVer").textContent = m ? `גרסה ${m.version || "?"} · ${m.push_devices} מכשירים של המנהל מקבלים התראות` : "";
   $("pushState").textContent = !m ? "ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה." : m.watchdog_push
     ? "פעיל: התראות מהבוטים, וגם התראה אם המחשב כבה או מתנתק."
     : "התראות מהבוטים פעילות. להתראה כשהמחשב כבה צריך להוסיף הרשאה ב־GitHub (פעם אחת).";
@@ -916,8 +926,8 @@ $("pushBtn").onclick = async () => {
     const key = (await (await fetch(mgr + "/vapid")).json()).key;
     let sub = await reg.pushManager.getSubscription();
     if (!sub) sub = await reg.pushManager.subscribe({userVisibleOnly: true, applicationServerKey: b64u(key)});
-    await act("/subscribe", {subscription: sub.toJSON()});
-    note("pushMsg", getPin() ? "ההתראות פעילות. אמורה להגיע עכשיו התראת בדיקה." : "ההתראות פעילות במכשיר הזה (צפייה בלבד).", true);
+    const j = await act("/subscribe", {subscription: sub.toJSON()});
+    note("pushMsg", j.push ? "ההתראות פעילות. אמורה להגיע עכשיו התראת בדיקה." : "צפייה בלבד: למכשיר הזה לא נשלחות התראות. ההתראות מגיעות רק למנהל.", j.push ? true : undefined);
   } catch (e) { note("pushMsg", e.message, false); }
 };
 let installEvt = null;

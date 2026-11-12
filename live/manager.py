@@ -212,8 +212,10 @@ def _kind(title):
 
 
 def push(title, body, urgent=False, action=None, tag=None, extra=None):
-    """Notification to every phone/computer that turned notifications on in the app."""
-    subs = list(CFG.get("subs", []))
+    """Notification to the owner's phones/computers that turned notifications on in the app. Devices that came in with
+    the view code (or none) get nothing (user, 12.11.2026: "מי שעושה צפייה שלא יקפצו לו התראות, אצלי כמנהל שיקפצו")."""
+    owner = set(CFG.get("owner_subs") or [])
+    subs = [s for s in CFG.get("subs", []) if s.get("endpoint") in owner]
     if not subs:
         return
     try:
@@ -244,7 +246,23 @@ def push(title, body, urgent=False, action=None, tag=None, extra=None):
     if dead:
         with LOCK:
             CFG["subs"] = [s for s in CFG["subs"] if s not in dead]
+            gone = {s.get("endpoint") for s in dead}
+            CFG["owner_subs"] = [e for e in (CFG.get("owner_subs") or []) if e not in gone]
         save()
+
+
+def _sub_role(sub, role):
+    """A device's notifications: the owner's get every notification, a viewer's none (kept only to know it)."""
+    ep = sub["endpoint"]
+    with LOCK:
+        CFG["subs"] = [s for s in CFG.get("subs", []) if s.get("endpoint") != ep] + [sub]
+        CFG["subs"] = CFG["subs"][-30:]
+        own = [e for e in (CFG.get("owner_subs") or []) if e != ep]
+        CFG["owner_subs"] = own + [ep] if role == "owner" else own
+        live = {s.get("endpoint") for s in CFG["subs"]}
+        CFG["owner_subs"] = [e for e in CFG["owner_subs"] if e in live]
+    save()
+    threading.Thread(target=push_manager_state, daemon=True).start()
 
 
 # ---------------- per-combo risk ("ניהול בוטים" in the app) ----------------
@@ -1218,7 +1236,7 @@ class Handler(BaseHTTPRequestHandler):
                                     "auto_update": {"on": auto_update_on(), "prev": (CFG.get("prev_version") or "")[:7],
                                                     "pending": (UPDATE["sha"] or "")[:7] if UPDATE["sha"] and UPDATE["sha"] != UPD.local() else None,
                                                     "last": (CFG.get("auto_updates") or [{}])[-1]},
-                                    "pin_set": bool(CFG.get("pin_hash")), "viewer_set": bool(CFG.get("viewer_hash")), "push_devices": len(CFG.get("subs", [])),
+                                    "pin_set": bool(CFG.get("pin_hash")), "viewer_set": bool(CFG.get("viewer_hash")), "push_devices": len(CFG.get("owner_subs") or []),
                                     "watchdog_push": WATCH["ok"],
                                     "risk": risk_public()})
         if path == "/vapid":
@@ -1252,14 +1270,8 @@ class Handler(BaseHTTPRequestHandler):
             sub = d.get("subscription")
             if not sub or "endpoint" not in sub or len(json.dumps(sub)) > 2000 or not push_endpoint_ok(sub["endpoint"]):
                 return self._send(400, {"error": "no subscription"})
-            with LOCK:
-                if sub not in CFG["subs"]:
-                    if len(CFG["subs"]) >= 20:
-                        return self._send(429, {"error": "יותר מדי מכשירים מקבלים התראות"})
-                    CFG["subs"].append(sub)
-            save()
-            threading.Thread(target=push_manager_state, daemon=True).start()
-            return self._send(200, {"ok": True})
+            _sub_role(sub, "viewer")
+            return self._send(200, {"ok": True, "role": "viewer", "push": False})
         pin = self.headers.get("X-Pin") or d.get("pin")
         client = self.headers.get("CF-Connecting-IP") or self.client_address[0]
         role = check_codes(pin, client)
@@ -1279,8 +1291,13 @@ class Handler(BaseHTTPRequestHandler):
         if role == "viewer":
             if path == "/auth":
                 return self._send(200, {"ok": True, "role": "viewer"})
-            if path != "/subscribe":
-                return self._send(403, {"error": "קוד צפייה: אפשר לראות בלבד, בלי פעולות"})
+            if path == "/subscribe":
+                sub = d.get("subscription")
+                if not sub or "endpoint" not in sub or len(json.dumps(sub)) > 2000 or not push_endpoint_ok(sub["endpoint"]):
+                    return self._send(400, {"error": "no subscription"})
+                _sub_role(sub, "viewer")
+                return self._send(200, {"ok": True, "role": "viewer", "push": False})
+            return self._send(403, {"error": "קוד צפייה: אפשר לראות בלבד, בלי פעולות"})
         try:
             if path == "/auth":
                 return self._send(200, {"ok": True, "role": "owner"})
@@ -1319,13 +1336,11 @@ class Handler(BaseHTTPRequestHandler):
                 sub = d.get("subscription")
                 if not sub or "endpoint" not in sub or not push_endpoint_ok(sub["endpoint"]):
                     raise ValueError("no subscription")
-                with LOCK:
-                    if sub not in CFG["subs"]:
-                        CFG["subs"].append(sub)
-                save()
-                push("התראות פעילות", "מעכשיו ההתראות של הבוטים יגיעו לאפליקציה הזו.")
-                threading.Thread(target=push_manager_state, daemon=True).start()
-                return self._send(200, {"ok": True})
+                was = sub["endpoint"] in set(CFG.get("owner_subs") or [])
+                _sub_role(sub, "owner")
+                if not (d.get("quiet") and was):
+                    push("התראות פעילות", "מעכשיו ההתראות של הבוטים יגיעו לאפליקציה הזו.")
+                return self._send(200, {"ok": True, "role": "owner", "push": True})
             if path == "/accounts/add":
                 a = add_account(d)
                 return self._send(200, {"ok": True, "name": a["name"]})

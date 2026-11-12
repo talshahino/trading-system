@@ -48,14 +48,18 @@ STOCKS.update({
     "ADSGn": ("ADSGn", "adsdeeur", ["EUR"]), "AIRF": ("AIRF", "airfreur", ["EUR"]),
     "ALVG": ("ALVG", "alvdeeur", ["EUR"]), "BAYGn": ("BAYGn", "bayndeeur", ["EUR"]),
     "DBKGn": ("DBKGn", "dbkdeeur", ["EUR"]), "IBE": ("IBE", "ibeeseur", ["EUR"]),
-    "LVMH": ("LVMH", "mcfreur", ["EUR"]), "RACE": ("RACE", "raceiteur", ["EUR"]),
+    "LVMH": ("LVMH", "mcfreur", ["EUR"]),
     "SAN": ("SAN", "saneseur", ["EUR"]), "SIEGn": ("SIEGn", "siedeeur", ["EUR"]),
-    "VOWG_p": ("VOWG_p", "vow3deeur", ["EUR"]), "ASML": ("ASML", "asmlnleur", ["EUR"]),
+    "VOWG_p": ("VOWG_p", "vow3deeur", ["EUR"]),
     "TTE": ("TTE", "fpfreur", ["EUR"]), "BMW": ("BMW", "bmwdeeur", ["EUR"]),
     "MBG": ("MBG", "daideeur", ["EUR"]),
     # not on Dukascopy: Alpaca history
     "MSTR": ("MSTR", None, ["USD"]), "GME": ("GME", None, ["USD"]), "ARM": ("ARM", None, ["USD"]),
     "SPCX": ("SPCX", None, ["USD"]),
+    # FTMO's ASML and RACE are the US listings (profit currency USD, ftmo_symbols_specs.csv; the demo trades them only
+    # in US hours, at ~EUR x 1.11), not Amsterdam / Milan: US session, Alpaca history (12.11.2026 - before, the
+    # backtest ran on the European listing and the bots closed them at the European session end, 16:15 UTC)
+    "ASML": ("ASML", None, ["USD"]), "RACE": ("RACE", None, ["USD"]),
 })
 
 # more FTMO crypto CFDs with Alpaca history: research only, never in the default universe (08.11.2026)

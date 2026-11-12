@@ -112,6 +112,274 @@
     "bot4"
    ],
    "rules": "4H+: slow stoch 16/7/3, long when K crosses up D below 25, short when K crosses down D above 70 / stop 2.2% (ours: 1.2 ATR) / target 7% (3.18R), exit at the opposite extreme"
+  },
+  {
+   "id": "SC007",
+   "name": "Cowabunga: 4H trend + 15m EMA5/10, RSI9, stoch, MACD, 1R, out 16:00 NY",
+   "source": "BabyPips",
+   "url": "https://www.babypips.com/trading/cowabunga-system",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m with 4H trend: EMA5 crosses EMA10, RSI9>50, stoch(10,3,3) rising not overbought, MACD hist turning up (short mirror) / stop at recent swing low / target round number or same pips as risk (ours 1R), close at 16:00 ET"
+  },
+  {
+   "id": "SC008",
+   "name": "EMA 5/13 cross + VWAP + ADX>20, stop at the cross, 2R",
+   "source": "TradingView",
+   "url": "https://www.tradingview.com/script/UEFr9IXn-EMA-Crossover-Strategy-15M/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m: EMA5 crosses EMA13, long above VWAP / short below, ADX>20 / stop at the EMA intersection / target RR 2"
+  },
+  {
+   "id": "SC009",
+   "name": "Pivot liquidity sweep + momentum candle + EMA200, 1:2",
+   "source": "TradingView",
+   "url": "https://in.tradingview.com/script/6dpq9Hjc-Gold-15m-Trend-S-R-Liquidity-Sweep-RR-1-2",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m XAUUSD: break below last pivot low then close back above, momentum candle, above EMA200 (short mirror) / stop slightly beyond the pivot + ATR buffer / target 1:2"
+  },
+  {
+   "id": "SC010",
+   "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+   "source": "FX Replay",
+   "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m London/NY killzones: EMA 50/100/200 aligned, sell-side liquidity sweep then a confirming up close (short mirror) / stop at the sweep level / target 2R"
+  },
+  {
+   "id": "SC011",
+   "name": "NY first 5m candle break, 1m FVG retest + engulfing, 3R",
+   "source": "YouTube (Casper SMC)",
+   "url": "https://www.youtube.com/watch?v=8v-Z5oyKVG0",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m: break of the 9:30 ET first 5m candle high with an FVG, price digs into the FVG, engulfing close above the retest body (short mirror) / stop one tick below the dig candles / target 3:1"
+  },
+  {
+   "id": "SC012",
+   "name": "CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
+   "source": "FXNX blog",
+   "url": "https://fxnx.com/en/blog/cpi-volatility-avwap-reversion-strategy",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot7"
+   ],
+   "rules": "CPI, 5m/15m: AVWAP anchored at the release candle, wait 5-10 min, after the spike enter on a pin bar/engulfing at the AVWAP retest against the spike / stop just beyond the spike extreme / target 1:1.5-1:2 (ours 1:2)"
+  },
+  {
+   "id": "SC013",
+   "name": "Doji sandwich continuation, stop at the doji, stochastic exit",
+   "source": "TradingView (idea)",
+   "url": "https://www.tradingview.com/chart/GBPJPY/DNzTo7jc-GBPJPY-4H-DOJI-SANDWICH-STRATEGY-CONTINUATION-OR-REVERSAL/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "4H: large candle, doji, large candle same direction -> enter at the 4th candle open / stop beyond the doji / exit when stochastic overbought (oversold for shorts)"
+  },
+  {
+   "id": "SC014",
+   "name": "VWAP cross + MACD flip, exit on the MACD cross back, 1-minute",
+   "source": "FXOpen blog",
+   "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m: close through VWAP with MACD(12,26,9) crossing its signal the same way within 4-5 candles / stop beyond the recent swing / take profit when MACD crosses back"
+  },
+  {
+   "id": "SC015",
+   "name": "ALMA 21 + Stochastic 21/1/3 cross of 20/80, 1-minute",
+   "source": "FXOpen blog",
+   "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m: close above ALMA(21,0.85,6) with stoch(21,1,3) crossing above 20 (short: below ALMA, cross below 80) / stop beyond nearest swing / take profit at the opposite stochastic zone"
+  },
+  {
+   "id": "SC016",
+   "name": "RSI(4) 80/20 + Bollinger touch, target the opposite band, 1-minute",
+   "source": "FXOpen blog",
+   "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m: RSI(4) back above 20 with price at/through the lower BB(20,2) (short mirror at 80/upper) / stop beyond swing or outside the band / target the opposite band or RSI opposite zone"
+  },
+  {
+   "id": "SC017",
+   "name": "freqtrade ScalpingSimple: RSI<30 over SMA5, 0.5% stop, 1% target",
+   "source": "GitHub (freqtrade strategy listing)",
+   "url": "https://fts.naif.one/strategies/scalping-simple",
+   "added": "2026-11-12",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m long: RSI14<30, close>SMA5, up bar / stoploss -0.5% / ROI 1% (falling to 0.1% by 30 min), exit RSI>70 or SMA5 under SMA10"
+  },
+  {
+   "id": "SC018",
+   "name": "freqtrade MeanReversionScalper: BB + RSI + volume spike, out at mid band",
+   "source": "GitHub (freqtrade strategy listing)",
+   "url": "https://fts.naif.one/strategies/mean-reversion-scalper",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m long: close<=BB(20,2) lower, RSI14<30, volume>1.5x avg, BB width>0.5%, 1h EMA50 not falling >0.3% / stoploss -0.8% / ROI 0.6%, exit at the middle band"
+  },
+  {
+   "id": "SC019",
+   "name": "freqtrade RSI_BB: 1-SD lower band long, 3-SD upper band short",
+   "source": "GitHub (freqtrade strategy listing)",
+   "url": "https://fts.naif.one/strategies/rsi-bb-pneumann1980",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m futures: long close<BB(20,1SD) lower; short RSI>56 and close>BB(20,3SD) upper; each exits on the other's signal / stoploss -10% / ROI 85%"
+  },
+  {
+   "id": "SC020",
+   "name": "DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+   "source": "ProRealCode",
+   "url": "https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m DAX long: previous bar a new 20-bar low, high under prior 20-bar high, up close, bar range < half the 20-bar range, close above SuperTrend(1.5,18) / stop 80 points (ours 4.5 ATR) / target 150 points (ours 8.4 ATR)"
+  },
+  {
+   "id": "SC021",
+   "name": "Jump: 16-bar mid +/- 2 ATR stop entry with 60m/30m filters, 5-minute",
+   "source": "ProRealCode (forum)",
+   "url": "https://www.prorealcode.com/topic/jump-a-5-min-strategy/",
+   "added": "2026-11-12",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m NASDAQ: buy stop at mid(16-bar high/low)+2ATR15 if close>close[24], 60m close>SMA300, 30m ADX>=20, not Friday (short mirror, ADX<=20, not Tuesday, low volatility) / stop 8 ATR20 / target 7 ATR20"
   }
  ]
 }

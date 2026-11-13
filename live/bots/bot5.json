@@ -289,6 +289,45 @@
    "track": "t5_1@N25",
    "before": "__none__",
    "risk_before": "__none__"
+  },
+  "e7a99870749f": {
+   "family": "tal5",
+   "track": "t15_5",
+   "before": {
+    "pair": [
+     "15m",
+     "5m"
+    ],
+    "cfg": {
+     "GBODY": 2.0,
+     "MIN_GAP": 0.6,
+     "SW": 3,
+     "MIN_RR": 2.0,
+     "EXPIRY": 8,
+     "PROT": "none"
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "d329b33206ae": {
+   "family": "tal5",
+   "track": "t5_1",
+   "before": {
+    "pair": [
+     "5m",
+     "1m"
+    ],
+    "cfg": {
+     "GBODY": 2.0,
+     "MIN_GAP": 0.6,
+     "SW": 3,
+     "MIN_RR": 2.0,
+     "EXPIRY": 24,
+     "PROT": "shock",
+     "EXIT": "be70"
+    }
+   },
+   "risk_before": 0.0
   }
  },
  "tal_tracks": {
@@ -363,7 +402,9 @@
     "SW": 3,
     "MIN_RR": 2.0,
     "EXPIRY": 8,
-    "PROT": "none"
+    "PROT": "none",
+    "EXIT": "be886",
+    "TREND": "day"
    }
   },
   "t5_1": {
@@ -378,7 +419,9 @@
     "MIN_RR": 2.0,
     "EXPIRY": 24,
     "PROT": "shock",
-    "EXIT": "be70"
+    "EXIT": "be70",
+    "IMP1": true,
+    "TREND": "day"
    }
   },
   "t4h_5": {

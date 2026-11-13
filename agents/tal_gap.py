@@ -790,7 +790,17 @@ def cards(bot, pairs, other=None, other_name="בוט 5", risk_pct=None, live=Non
 DAY_LIM, ALL_LIM = 4.5, 9.0          # the bot's own limits (% of the account; FTMO's 5% / 10% stay above them)
 
 
-def account(part, risk_pct):
+def _lim(lim):
+    """The account's limits: bot 5 by default (4.5% a day, 9% from the start, the full room); bot 6 passes its own
+    (FTMO Futures, live/fut_account.py: a day loss of DAILY_LOSS, a trailing maximum loss from the best end-of-day
+    balance that stops rising at the start, ROOM_USE of the room, the futures' trading day from 18:00 New York, and a
+    day that passes the daily loss fails the account - FTMO's hard daily limit)."""
+    d = {"day": DAY_LIM, "all": ALL_LIM, "trail": False, "use": 1.0, "dayf": None, "day_hard": False}
+    d.update(lim or {})
+    return d
+
+
+def account(part, risk_pct, lim=None):
     """The account the way the virtual bot keeps it (live/watch_own.py), in % of the starting balance (no compounding -
     careful): each trade risks its track's % (risk_pct = {track: %}); a result counts when the trade closes ("out").
     After the day's closed loss reaches DAY_LIM no new trade opens that day; and (13.11.2026 evening, the live rule of
@@ -801,6 +811,9 @@ def account(part, risk_pct):
     the largest open risk at once (and the days it passed DAY_LIM before this rule), and when the account stopped."""
     if part.empty:
         return None
+    L = _lim(lim)
+    day_lim, all_lim, use_k = float(L["day"]), float(L["all"]), float(L["use"])
+    dayf = L["dayf"] or (lambda x: x.strftime("%Y-%m-%d"))
     part = part.sort_values("time")
     rk = part["trk"].map(risk_pct).fillna(0).to_numpy(float)
     rr = part["r"].to_numpy(float)
@@ -810,18 +823,29 @@ def account(part, risk_pct):
     day_real, stopped_days, cut, skipped = {}, set(), 0, 0
     opened = []                       # (out, risk %, pnl %) of the trades taken and not booked yet
     raw_open, raw_peak, raw_days = [], 0.0, set()
+    eod = {"day": None, "eq": 0.0, "peak": 0.0}     # the trailing level (bot 6): the best end-of-day balance so far
+
+    def roll(d_):
+        if eod["day"] is not None and d_ != eod["day"]:
+            eod["peak"] = max(eod["peak"], eod["eq"])
+        eod["day"] = d_
+
+    def level():
+        return min(eod["peak"] - all_lim, 0.0) if L["trail"] else -all_lim
 
     def book(upto):
         nonlocal eq, peak, fall, low, dead
         for o in sorted([o for o in opened if o[0] <= upto], key=lambda o: o[0]):
             opened.remove(o)
-            d_ = o[0].strftime("%Y-%m-%d")
+            d_ = dayf(o[0])
+            roll(d_)
             day_real[d_] = day_real.get(d_, 0.0) + o[2]
             eq += o[2]
+            eod["eq"] = eq
             peak = max(peak, eq)
             fall = max(fall, peak - eq)
             low = min(low, eq)
-            if eq <= -ALL_LIM and dead is None:
+            if (eq <= level() or (L["day_hard"] and day_real[d_] <= -day_lim - 1e-9)) and dead is None:
                 dead = o[0].isoformat()
 
     for r_, w_, t_, o_ in zip(rr, rk, times, outs):
@@ -830,17 +854,18 @@ def account(part, risk_pct):
         raw_open = [x for x in raw_open if x[0] > t_] + [(o_, w_)]
         ro = sum(x[1] for x in raw_open)
         raw_peak = max(raw_peak, ro)
-        if ro > DAY_LIM:
-            raw_days.add(t_.strftime("%Y-%m-%d"))
+        if ro > day_lim:
+            raw_days.add(dayf(t_))
         if dead is not None or w_ <= 0:
             continue
-        d_ = t_.strftime("%Y-%m-%d")
+        d_ = dayf(t_)
+        roll(d_)
         dreal = day_real.get(d_, 0.0)
-        if dreal <= -DAY_LIM:
+        if dreal <= -use_k * day_lim:
             stopped_days.add(d_)
             continue
         open_ = sum(o[1] for o in opened)
-        room = min(DAY_LIM + dreal - open_, ALL_LIM + eq - open_)
+        room = use_k * min(day_lim + dreal, eq - level()) - open_
         if room < 0.25 * w_:
             skipped += 1
             continue
@@ -857,27 +882,29 @@ def account(part, risk_pct):
 MARGIN = 0.8          # the train period must stay within 80% of the bot's limits (a fall <= 7.2%, a day >= -3.6%)
 
 
-def risk_scale(t, risk_pct):
+def risk_scale(t, risk_pct, lim=None):
     """One factor on every track's risk, CHOSEN on 2024-2025 only: the largest (steps of 0.05, at least 0.2) with which
     the train period's deepest fall and worst day stay inside MARGIN of the bot's limits - then shown on 2026.
     A fall is measured from the peak: an account may start on any day, the worst one included."""
     tr, un = t[t["time"] < SPLIT], t[t["time"] >= SPLIT]
-    a = account(tr, risk_pct)
+    L = _lim(lim)
+    a = account(tr, risk_pct, lim)
     if not a:
         return {"chosen": 1.0, "fits": True, "rows": {}}
-    lim = [1.0]
+    ks = [1.0]
     if a["max_fall_pct"] > 0:
-        lim.append(MARGIN * ALL_LIM / a["max_fall_pct"])
+        ks.append(MARGIN * L["all"] / a["max_fall_pct"])
     if a["worst_day_pct"] < 0:
-        lim.append(MARGIN * DAY_LIM / -a["worst_day_pct"])
-    k = max(0.2, np.floor(min(lim) * 20) / 20)
+        ks.append(MARGIN * L["day"] / -a["worst_day_pct"])
+    k = max(0.2, np.floor(min(ks) * 20) / 20)
     rk = {x: v * k for x, v in risk_pct.items()}
-    b = account(tr, rk)
-    fits = b["max_fall_pct"] <= MARGIN * ALL_LIM + 1e-9 and b["worst_day_pct"] >= -MARGIN * DAY_LIM - 1e-9
-    return {"chosen": round(float(k), 2), "fits": bool(fits), "rows": {str(round(float(k), 2)): {"train": b, "unseen": account(un, rk)}}}
+    b = account(tr, rk, lim)
+    fits = b["max_fall_pct"] <= MARGIN * L["all"] + 1e-9 and b["worst_day_pct"] >= -MARGIN * L["day"] - 1e-9
+    return {"chosen": round(float(k), 2), "fits": bool(fits), "limits": {"day": L["day"], "all": L["all"], "trail": L["trail"], "use": L["use"]},
+            "rows": {str(round(float(k), 2)): {"train": b, "unseen": account(un, rk, lim)}}}
 
 
-def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None):
+def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None, lim=None):
     """All the tracks the bot runs together (live = {track: (pair_name, cfg)}), the way the account takes them: the
     total time-weighted R, the worst day and the deepest fall (in R of one trade), on 2024-2025 and on 2026 - and the
     same with one rule against doubled risk: a track does not enter a symbol in a direction another track already holds
@@ -970,8 +997,8 @@ def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None):
     if risk:
         rk = {k: float(v) * 100 for k, v in risk.items() if k in live}
         acct = {"risk_pct": rk,
-                "now": {"train": account(t[t["time"] < SPLIT], rk), "unseen": account(t[t["time"] >= SPLIT], rk)},
-                "scale": risk_scale(t, rk)}
+                "now": {"train": account(t[t["time"] < SPLIT], rk, lim), "unseen": account(t[t["time"] >= SPLIT], rk, lim)},
+                "scale": risk_scale(t, rk, lim)}
     return {"account": acct, "tracks": {k: v[0] + (f" {','.join(v[2])}" if len(v) > 2 and v[2] else "") for k, v in live.items()},
             "same_dir_max": same, "now": stats(t), "one_per_side": stats(t[t["solo"]]),
             "max_dir": {str(c): stats(t[pd.Series(k_, index=t.index)]) for c, k_ in caps.items()},

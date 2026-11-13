@@ -424,6 +424,16 @@ def filt_cards(idx):
     return out, res
 
 
+def fut_lim():
+    """Bot 6's own account limits for the whole-bot test, exactly as live/fut_account.py keeps the account (13.11.2026
+    night, bot 5's task b5to6room1311): FTMO Futures - a day's loss of DAILY_LOSS, a trailing maximum loss MAX_LOSS
+    under the best end-of-day balance (it stops rising at the start), ROOM_USE of the room left with every open trade's
+    full risk inside it, the futures' trading day from 18:00 New York; a day past the daily loss fails the account.
+    Before this the test used bot 5's 4.5% / 9% - three times the daily room bot 6 really has."""
+    return {"day": FA.DAILY_LOSS / FA.INITIAL * 100, "all": FA.MAX_LOSS / FA.INITIAL * 100, "trail": True,
+            "use": FA.ROOM_USE, "day_hard": True, "dayf": FA.tday}
+
+
 def scale_cards(pf, rk):
     """Bot 5's account-in-% rule (13.11.2026 night), shared: one factor on every gap track's risk, chosen on 2024-2025
     so the account stays within 80% of the bot's limits (tal_gap.risk_scale). Bot 6 keeps a risk per track in
@@ -431,19 +441,24 @@ def scale_cards(pf, rk):
     a = (pf or {}).get("account") or {}
     sc = a.get("scale") or {}
     k = sc.get("chosen", 1.0)
+    lm = sc.get("limits") or {}
     if not sc or k >= 1.0 or str(k) not in (sc.get("rows") or {}):
         return []
     nt, nu = a["now"]["train"] or {}, a["now"]["unseen"] or {}
     bt, bu = sc["rows"][str(k)].get("train") or {}, sc["rows"][str(k)].get("unseen") or {}
     line = lambda x: (f"סה\"כ {x.get('total_pct', 0):+.1f}%, היום הגרוע {x.get('worst_day_pct', 0):+.1f}%, "  # noqa: E731
-                      f"הירידה הגדולה {x.get('max_fall_pct', 0):.1f}%")
+                      f"הירידה הגדולה {x.get('max_fall_pct', 0):.1f}%, עסקאות שדולגו / הוקטנו בגלל המקום "
+                      f"{x.get('room_skipped', 0)} / {x.get('room_cut', 0)}" + (f", החשבון נכשל ב־{str(x['stopped'])[:10]}"
+                                                                              if x.get("stopped") else ""))
     out = []
     for trk, r in rk.items():
         to = round(float(r) * k, 5)
         out.append(K.card("bot6", "risk", f"שיטת הגאפ בבוט 6, מסלול {trk}: סיכון {float(r) * 100:g}% ← {to * 100:g}% (× {k})",
-                          f"כל מסלולי שיטת הגאפ של בוט 6 יחד, בסיכון האמיתי של כל מסלול ועם המגבלות של הבוט (4.5% ביום, "
-                          f"9% בסך הכל). היום: 2024-2025: {line(nt)}; 2026: {line(nu)}. הכלל של בוט 5 (משותף): המקדם הגדול "
-                          f"ביותר שבו 2024-2025 נשאר ב־80% מהמגבלות (ירידה ≤ 7.2%, יום ≥ -3.6%), נבחר רק על 2024-2025 → × {k}. "
+                          f"כל מסלולי שיטת הגאפ של בוט 6 יחד, בסיכון האמיתי של כל מסלול ועם המגבלות של החשבון כמו בחי "
+                          f"(FTMO Futures: {lm.get('day', 1.5):g}% ביום, {lm.get('all', 4.5):g}% מתחת לשיא של סוף יום, "
+                          f"עסקה חדשה רק בתוך 90% מהמקום שנשאר כולל הסיכון של העסקאות הפתוחות). היום: 2024-2025: {line(nt)}; "
+                          f"2026: {line(nu)}. הכלל של בוט 5 (משותף): המקדם הגדול ביותר שבו 2024-2025 נשאר ב־80% מהמגבלות "
+                          f"(ירידה ≤ {0.8 * lm.get('all', 4.5):.1f}%, יום ≥ -{0.8 * lm.get('day', 1.5):.1f}%), נבחר רק על 2024-2025 → × {k}. "
                           f"עם המקדם: 2024-2025: {line(bt)}; 2026 (לא נראתה): {line(bu)}. אסטרטגיות הסייר (0.28% כל אחת) "
                           f"מעל זה - לא בחישוב. בבוט 5 אותו כלל נתן × 0.5 (2026: ירידה 21% ← 10.5%).",
                           None, None, tested=1, risk_pct=round(to * 100, 4), detail={"world": "bot6", "account": a},
@@ -479,7 +494,7 @@ def tal(budget_s):
         # the account in % with each track's real risk (bot 5's rule, 13.11.2026 night, shared): the bot's limits
         # in % - not in R - and one factor on the tracks' risk chosen on 2024-2025 (scale_cards)
         pf = TG.portfolio(idx, WORLD["symbols"], TAL_DIR, counted, hour_min_n=30,
-                          risk={k: float(rk.get(k, FA.RISK_TAL)) for k in counted})
+                          risk={k: float(rk.get(k, FA.RISK_TAL)) for k in counted}, lim=fut_lim())
         if pf:
             try:
                 pcards += scale_cards(pf, {k: float(rk.get(k, FA.RISK_TAL)) for k in counted})

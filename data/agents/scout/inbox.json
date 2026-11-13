@@ -1485,6 +1485,308 @@
     "bot6"
    ],
    "rules": "M15 Nasdaq / close above KC(20, 2.6) then buy stop at the daily high reference + 0.1 ATR30, valid 46 bars (short mirror) / stop 2.5 x ATR17 / target 1.5% from entry / time exit 30 bars, Friday exit 19:00"
+  },
+  {
+   "id": "SC079",
+   "name": "Range Filter + RSI 50 + ADX 25, 1 ATR stop, 3R, out under ADX 25, 5m",
+   "source": "TradingView (script)",
+   "url": "https://www.tradingview.com/script/wfySsp6T-Range-Filter-Buy-and-Sell-5min/",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2"
+   ],
+   "rules": "5m / price above the Range Filter, upward counter > 0, RSI > 50, ADX > 25, supportive ATR (short mirror) / stop 1 ATR / target 3R; out when ADX < 25"
+  },
+  {
+   "id": "SC080",
+   "name": "BVK: EMA 9/21 cross + MACD cross within 5 bars + RSI 50-70, swing stop, 1.5R, 5m",
+   "source": "TradingView (script)",
+   "url": "https://www.tradingview.com/script/LBgeSQ3m-5-Min-EMA-MACD-RSI-Scalping-MACD-5-Candles-Confirm-BVK/",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx",
+    "index",
+    "crypto",
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m / EMA9 crosses EMA21 + MACD 12/26/9 crosses its signal + RSI 50-70 (30-50 short), at candle close / stop past the recent swing (or 0.3-0.5%) / target 1.5-2x risk"
+  },
+  {
+   "id": "SC081",
+   "name": "EMA 9/21 cross over EMA50 + RSI 40-70 / 30-60, 0.5% stop, 1% target, 15m",
+   "source": "FMZ (also dev.to)",
+   "url": "https://dev.to/fmzquant/multi-ema-crossover-with-rsi-momentum-adaptive-scalping-strategy-epf",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1"
+   ],
+   "rules": "15m / EMA9 crosses above EMA21, close > EMA50, 40 < RSI14 < 70 (short: cross down, close < EMA50, 30 < RSI < 60) / stop 0.5% / target 1.0%"
+  },
+  {
+   "id": "SC082",
+   "name": "Close over the SMA21 of highs + VWAP + EMA50 + RSI 60, SMA21-low stop, 1.5R, 5m",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/490515",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m / close above SMA21 of highs, above VWAP, above EMA50, RSI > 60 (short mirror with SMA21 of lows, RSI < 40) / stop = close beyond the opposite SMA21 band / target 1.5 x risk"
+  },
+  {
+   "id": "SC083",
+   "name": "EMA 9/21 cross + RSI 50, 0.5% / 1%, 09:15-15:30 IST, 1H",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/495031",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H / EMA9 crosses EMA21 with RSI > 50 (< 50 short), 09:15-15:30 Asian time / stop 0.5% / target 1.0%"
+  },
+  {
+   "id": "SC084",
+   "name": "RSI < 40 while EMA9 > EMA21 (RSI > 60 under), 0.5% / 1%, 15m",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/502510",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1"
+   ],
+   "rules": "15m / RSI14 < 40 while EMA9 > EMA21 (short RSI > 60 while EMA9 < EMA21) / stop 0.5% / target 1%"
+  },
+  {
+   "id": "SC085",
+   "name": "Perfect order EMA45/SMA90/SMA180 + Trend Magic flip, SMA90 stop, 1.5R, 5m",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/468328",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m / EMA45 > SMA90 > SMA180 and Trend Magic changes colour (bearish mirror) / stop at SMA90 / target 1.5 x risk"
+  },
+  {
+   "id": "SC086",
+   "name": "Exp TrendMagic CCI 50 median + ATR 5 colour switch, 3.5 / 7 ATR, 4H",
+   "source": "StockSharp (port of MT5 EA)",
+   "url": "https://doc.stocksharp.com/en/api-examples/3746_Exp_TrendMagic",
+   "added": "2026-11-13",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "4H / TrendMagic (CCI 50 median, ATR 5) colour switch on signal bar 1, reverses on the opposite switch / stop 1000 points / target 2000 points"
+  },
+  {
+   "id": "SC087",
+   "name": "OneHrStocTrader: BB width band + Stochastic 5/3/5 turn at hours 4 / 0, 95 / 200 pips, H1",
+   "source": "StockSharp (port of MT4 EA)",
+   "url": "https://doc.stocksharp.com/en/api-examples/3222_OneHrStocTrader",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "H1 / BB(20,2) spread 56-158 pips; long at hour 4 when %K(5,3,5) < 36 and rising, short at hour 0 when %K > 70 and falling / stop 95 pips / target 200 pips"
+  },
+  {
+   "id": "SC088",
+   "name": "Williams AO 11/40 zero cross + AC 3 bars + RSI 20, BB width filter, 60 / 90 pips, H1",
+   "source": "StockSharp (port of MT4 EA)",
+   "url": "https://doc.stocksharp.com/en/api-examples/3288_Williams_AO_AC",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "H1 / BB spread 40-210 points, RSI20 > 46, AO crosses above 0, AC > 0 three bars and rising, 00-20h (short mirror, RSI < 40) / stop 60 points / target 90 points"
+  },
+  {
+   "id": "SC089",
+   "name": "EMA 12/26 cross over EMA55 + RSI 35-65 + MACD rising, 0.5% / 1%, 5m",
+   "source": "StockSharp (Designer gallery)",
+   "url": "https://doc.stocksharp.com/en/designer-gallery/Scalping_Ema_Rsi_Macd",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m / EMA12 crosses EMA26, close beyond EMA55, RSI 35-65, MACD line rising (falling short) / stop 0.5% / target 1%"
+  },
+  {
+   "id": "SC090",
+   "name": "First EMA50 pullback after the EMA50/SMA200 cross, swing-break entry, fib 161.8 target, H1",
+   "source": "Forex Factory (Metalsmine thread)",
+   "url": "https://www.metalsmine.com/thread/1235842-first-pullback-after-crossover",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx",
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "H1 / after EMA50-SMA200 cross, first touch of EMA50 (no close beyond SMA200), buy stop at fib 100 / stop beyond fib 0 / target fib 161.8"
+  },
+  {
+   "id": "SC091",
+   "name": "Heiken Ashi 2 candles + ADX 22 / DI + Stochastic 5/3/3 direction, 12.5 / 12.5 pips, M5",
+   "source": "RoboForex blog",
+   "url": "https://roboforex.com/blog/education/heiken-ashi-adx-stochastic-trading-strategy/",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M5 / two rising HA candles above the HA middle, ADX > 22 with +DI > -DI, Stochastic 5/3/3 rising (short mirror, ADX < 22 as written) / stop 10-15 points / target 10-15 points"
+  },
+  {
+   "id": "SC092",
+   "name": "Donchian 20 upper-band crawl, buy the middle-band pullback, lower-band stop, out end of day, 15m",
+   "source": "TradingView (idea, Tradingstrategyguides)",
+   "url": "https://www.tradingview.com/chart/USDJPY/EJ9Vn4uY-USDJPY-15M-DONCHIAN-CHANNEL-STRATEGY/",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2"
+   ],
+   "rules": "15m / price crawls the upper Donchian(20) band, buy the pullback to the middle band (reverse for sells) / stop below the lower band / exit end of day or break of the lower band"
+  },
+  {
+   "id": "SC093",
+   "name": "LV-HP: daily candle colour + Donchian 20 touch, opposite band target, 1:1, 16-20 GMT, M1",
+   "source": "ForTraders",
+   "url": "https://fortraders.org/en/trading-strategies/scalping-strategies/lv-hp-scalping-system-forex-strategy.html",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M1, 16:00-20:00 GMT / daily candle green + touch of the lower Donchian band = buy (red + upper = sell) / stop = same distance as the target (1:1) / target the opposite band"
+  },
+  {
+   "id": "SC094",
+   "name": "MTF Ichimoku: over the cloud and the Kijun on 4H and 1H, 2% / 4%, 12-bar cooldown",
+   "source": "TradingView (script)",
+   "url": "https://www.tradingview.com/script/X6ittL1X-MTF-Ichimoku-Strategy-4H-1H-Gus81/",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H + 4H / price above the cloud and the Kijun-sen on both (below for shorts) / stop 2% / target 4%; 12-bar cooldown"
   }
  ]
 }

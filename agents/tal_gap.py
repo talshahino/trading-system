@@ -275,6 +275,10 @@ def exit_mode(cfg):
 # commission as a share of the risk - and the quiet hours. MAXC = skip a trade whose cost is more than this share of
 # its risk; SESS = only entries in these UTC hours ("ln" London 07-16, "ny" 12-20, "lnny" 07-20). Off unless set.
 SESS_H = {"ln": (7, 16), "ny": (12, 20), "lnny": (7, 20)}
+# the index futures' own clock (bot 6's smart agent, 13.11.2026 night), in New York time so summer / winter time do not
+# move it - minutes from midnight New York: rth = the cash session 09:30-16:00, nyam = its first two hours 09:30-11:30
+# (the open's move), xopen = every hour but the open's first half hour 09:30-10:00 (its noise). Off unless set.
+SESS_NY = {"rth": [(570, 960)], "nyam": [(570, 690)], "xopen": [(0, 570), (600, 1440)]}
 
 
 def filt_ok(cfg, cost, risk, t_ns):
@@ -282,6 +286,11 @@ def filt_ok(cfg, cost, risk, t_ns):
     if mc and cost / risk > float(mc):
         return False
     se = cfg.get("SESS")
+    if se and se in SESS_NY:
+        t = pd.Timestamp(int(t_ns), tz="UTC").tz_convert("America/New_York")
+        m = t.hour * 60 + t.minute
+        if not any(a <= m < b for a, b in SESS_NY[se]):
+            return False
     if se and se in SESS_H:
         h = pd.Timestamp(int(t_ns), tz="UTC").hour
         a, b = SESS_H[se]

@@ -291,6 +291,139 @@ def trend_cards(idx, b5_res=None):
     return out, res
 
 
+# FILTERS on what runs (bot 6's smart agent, 13.11.2026 night) - shared with bot 5, plus the futures' own clock:
+#   MAXC   bot 5's cost filter (13.11.2026, tal_pool_gh): skip a trade whose cost is more than this share of its risk.
+#          Micro futures pay a fixed commission per contract, so on the short pairs (5m/1m, 15m/5m) a tight stop can
+#          cost a big share of 1R - the same thing that killed forex in bot 5.
+#   SESS   bot 5's London / New York hours (lnny, ny) and the futures' own (tal_gap.SESS_NY, New York time): rth = the
+#          cash session, nyam = its first two hours (the open's move), xopen = everything but the open's first half hour.
+#   EXIT   tp30 - the user's idea (13.11.2026: "take 100% of the profit at 30% of the way to the target"), tested in
+#          bot 5 on the wide set; here on bot 6's running tracks.
+# Each on every running track with exactly its rules, head to head; chosen on 2024-2025 only (the time-weighted total);
+# an 'improve' card only when the chosen one is also better on 2026 in total AND per trade and its worst day of 2026
+# is not worse (more profit, no more risk) - so the builder builds it at once.
+FILT6 = (("MAXC", 0.1), ("MAXC", 0.2), ("MAXC", 0.3), ("SESS", "lnny"), ("SESS", "ny"), ("SESS", "rth"),
+         ("SESS", "nyam"), ("SESS", "xopen"), ("EXIT", "tp30"))
+FILT_HE = {"MAXC": lambda v: f"בלי עסקה שהעלות שלה מעל {int(v * 100)}% מהסיכון (MAXC {v})",
+           "SESS": lambda v: {"lnny": "רק בשעות לונדון + ניו יורק (07-20 UTC)", "ny": "רק בשעות ניו יורק (12-20 UTC)",
+                              "rth": "רק בשעות המסחר של ניו יורק 09:30-16:00", "nyam": "רק בשעתיים הראשונות של ניו יורק 09:30-11:30",
+                              "xopen": "בלי חצי השעה הראשונה של ניו יורק 09:30-10:00"}[v] + f" (SESS {v})",
+           "EXIT": lambda v: "כל העסקה יוצאת ב־30% מהדרך ליעד (tp30, הרעיון של טל)"}
+
+
+def _filt_variants(cfg):
+    c0 = TG._norm(dict(cfg))
+    return c0, [(k, v, TG._norm(dict(c0, **{k: v}))) for k, v in FILT6 if c0.get(k) != v]
+
+
+def filt_runs(idx, budget_s):
+    """Every running track's own rules, alone and with each FILT6 variant, on bot 6's three indices - 'search' rows in
+    the gap method's index (from "bot6_filt"), resumed where the last run stopped."""
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    idx_dir = TAL_DIR / "idx"
+    idx_dir.mkdir(parents=True, exist_ok=True)
+    want = []
+    for pn, cfg in live_tracks().values():
+        if pn in pairs:
+            c0, vs = _filt_variants(cfg)
+            want += [(pn, c0)] + [(pn, c) for _, _, c in vs]
+    t0, done = time.time(), 0
+    for sym in WORLD["symbols"]:
+        todo = [(pn, c) for pn, c in want if f"{pairs[pn][0]}_{pairs[pn][1]}_{TG.vid(c)}_{sym}" not in idx]
+        if not todo or time.time() - t0 > budget_s:
+            continue
+        try:
+            D = tal_load(sym)
+        except Exception as e:  # noqa: BLE001
+            print(f"tal filt {sym}: no data ({e})")
+            continue
+        if D is None:
+            continue
+        gcs = {}
+        for pn, c in todo:
+            if time.time() - t0 > budget_s:
+                break
+            p = pairs[pn]
+            key = f"{p[0]}_{p[1]}_{TG.vid(c)}_{sym}"
+            t = TG.simulate(D, p, c, gcs.setdefault(p[0], {}))
+            f = TAL_DIR / f"{key}.csv.gz"
+            t.to_csv(f, index=False)
+            idx[key] = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": p[2],
+                        "knob": "search", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f.name, "n": len(t),
+                        "from": "bot6_filt"}
+            (idx_dir / f"{key}.json").write_text(json.dumps(idx[key], default=str))
+            done += 1
+    print(f"tal filt (bot 6): {done} run")
+    return done
+
+
+def _bot5_pool():
+    """What bot 5's agent chose for the indices with MAXC / SESS / TREND (its pooled group test, 13.11.2026), per pair."""
+    try:
+        d = json.loads(Path("reports/agents/bot5/cards_pool.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
+    out = {}
+    for c in d.get("cards", []):
+        ch = c.get("change") or {}
+        if ch.get("pair") and isinstance(ch.get("cfg"), dict) and ch["pair"] not in out:
+            m = (c.get("unseen") or {}).get("mean")
+            f = ", ".join(f"{k} {ch['cfg'][k]}" for k in ("MAXC", "SESS", "TREND", "EXIT") if ch["cfg"].get(k)) or "בלי מסננים"
+            out[ch["pair"]] = f"במדדים של בוט 5 (הגדרת קבוצה): {f}" + (f", 2026 {m:+.2f}R לעסקה" if m is not None else "")
+    return out
+
+
+def filt_cards(idx):
+    """Per running track: each FILT6 variant against its rules alone; chosen on 2024-2025; a card only if 2026 is better
+    in total, per trade and on the worst day. Returns (cards, results)."""
+    out, res = [], {}
+    rk = {**FA.RISK}
+    try:
+        rk.update(json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8")).get("risk") or {})
+    except Exception:  # noqa: BLE001
+        pass
+    b5 = _bot5_pool()
+    for trk, (pn, cfg) in live_tracks().items():
+        c0, vs = _filt_variants(cfg)
+        base = _t6(idx, pn, c0)
+        if base is None:
+            continue
+        row, best = {"live": _day_stats(base)}, None
+        for k, v, c in vs:
+            t = _t6(idx, pn, c)
+            if t is None:
+                continue
+            row[f"{k}={v}"] = _day_stats(t)
+            if row[f"{k}={v}"]["train_w"] > row["live"]["train_w"] and (best is None or row[f"{k}={v}"]["train_w"] > row[best[0]]["train_w"]):
+                best = (f"{k}={v}", k, v, c, t)           # chosen on the train period only
+        res[trk] = row
+        if len(row) < len(vs) + 1 or not best or row["live"]["train_w"] <= -1e8:
+            continue                                     # not every variant ran yet / none better on 2024-2025 / too few
+        name, k, v, c, t = best
+        lv, x = row["live"], row[name]
+        if not ((x["mean_unseen"] or 0) > 0 and x["unseen"] > lv["unseen"] and (x["mean_unseen"] or -9) >= (lv["mean_unseen"] or -9)
+                and (x["worst_day_unseen"] or -99) >= (lv["worst_day_unseen"] or -99)):
+            continue
+        st, bs = TG._stats(t), TG._stats(base)
+        hi, lo = pn.split("/")
+        r_ = float(rk.get(trk, FA.RISK_TAL))
+        better = sum(1 for q in row if q != "live" and row[q]["train_w"] > lv["train_w"])
+        out.append(K.card("bot6", "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: {FILT_HE[k](v)}",
+                          f"המסלול {trk} עם הכללים שרצים, ועוד: {FILT_HE[k](v)}. נבחר על 2024-2025 בלבד מתוך {len(vs)} מסננים "
+                          f"({better} מהם טובים מהיום ב־2024-2025; סה\"כ משוקלל {lv['train_w']:+.1f}R ← {x['train_w']:+.1f}R). "
+                          f"2026 (לא נראתה): סה\"כ {lv['unseen']:+.1f}R ← {x['unseen']:+.1f}R, {x['n_unseen']} עסקאות, "
+                          f"{x['mean_unseen']:+.2f}R לעסקה (היום {lv['mean_unseen']:+.2f}R על {lv['n_unseen']}), היום הגרוע "
+                          f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. בבוט 5: "
+                          f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}.",
+                          st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
+                          tested=len(vs), risk_pct=round(r_ * 100, 3), baseline=bs["unseen"],
+                          neighbours={"values": [q for q in row if q != "live"], "share_positive": round(float(np.mean(
+                              [row[q]["unseen"] > lv["unseen"] for q in row if q != "live"])), 2)},
+                          detail={"world": "bot6", "filters": row, "bot5": b5.get(pn)},
+                          change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
+    return out, res
+
+
 def scale_cards(pf, rk):
     """Bot 5's account-in-% rule (13.11.2026 night), shared: one factor on every gap track's risk, chosen on 2024-2025
     so the account stays within 80% of the bot's limits (tal_gap.risk_scale). Bot 6 keeps a risk per track in
@@ -325,6 +458,10 @@ def tal(budget_s):
         trend_runs(idx0, budget_s * 0.25)           # TREND against exactly what runs, first (13.11.2026)
     except Exception as e:  # noqa: BLE001
         print(f"tal trend failed: {e}")
+    try:
+        filt_runs(idx0, budget_s * 0.25)            # bot 5's cost / hours filters + the futures' clock + tp30 (13.11 night)
+    except Exception as e:  # noqa: BLE001
+        print(f"tal filt failed: {e}")
     idx, left = TG.run("bot6", WORLD["symbols"], tal_load, TAL_DIR, budget_s * 0.8 - (time.time() - t0))
     shared(idx, budget_s - (time.time() - t0))
     pairs, answers = TG.summarize(idx, WORLD["symbols"], TAL_DIR)
@@ -370,6 +507,15 @@ def tal(budget_s):
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     except Exception as e:  # noqa: BLE001
         print(f"tal_gap trend cards failed: {e}")
+    try:            # the filters on what runs, head to head (13.11.2026 night)
+        fc, fres = filt_cards(idx)
+        pcards += fc
+        if fres:
+            doc["bot6"]["filt_fix"] = fres
+            doc["bot6"]["filt_bot5"] = _bot5_pool()
+            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print(f"tal_gap filt cards failed: {e}")
     # a card on a pair bot 6 already trades carries what runs as its baseline (approved only if 2026 is better per
     # trade AND in total); a new pair must have earned on 2024-2025 and on 2026 (it must add to the bot as a whole)
     return TG.cards("bot6", pairs, doc.get("bot5"), "בוט 5", risk_pct=FA.RISK_TAL * 100,

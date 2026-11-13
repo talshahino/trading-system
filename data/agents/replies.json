@@ -563,6 +563,16 @@
    "report": "reports/agents/losses/bot3/2026-11-03.json",
    "task": "[דוח הפסד 2026-11-03, -360$ / -0.36%] עבור על הדוח ועל כל פעולה בו: מצא את הסיבה האמיתית לכל הפסד (לא רק הקטגוריה), בדוק את התיקון בבדיקה ההוגנת, ושלח כרטיס. ענה כאן: הסיבה, התיקון, ומה השתנה. הפעולות: TV12|4Hour|ARM: נסגר בגלל כלל (session end) ב־-0.359R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר. | SS06|4Hour|MSTR: נסגר בגלל כלל (session end) ב־-0.082R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר.",
    "status": {}
+  },
+  {
+   "at": "2026-11-13",
+   "bots": [
+    "bot5"
+   ],
+   "by": "טל (דרך Claude)",
+   "priority": "high",
+   "task": "טל, 13.11.2026: 'בבוט 5 למה לא משתמשים בכל צמדי המטבעות ב־FTMO?' - שיטת הגאפ של טל נבדקה ורצה רק על 5 מדדים (TAL_SYMBOLS ב־agent_bot5.py ו־TAL5_SYMBOLS ב־live/watch_own.py), אף שטל פיתח אותה על זהב ו־EURUSD. לבדוק עכשיו את כל 28 צמדי המטבעות של FTMO (data/ftmo_symbols/ftmo_symbols_specs.csv, assetClass Forex: AUDCAD AUDCHF AUDJPY AUDNZD AUDUSD CADCHF CADJPY CHFJPY EURAUD EURCAD EURCHF EURGBP EURJPY EURNZD EURUSD GBPAUD GBPCAD GBPCHF GBPJPY GBPNZD GBPUSD NZDCAD NZDCHF NZDJPY NZDUSD USDCAD USDCHF USDJPY), וגם מתכות (XAUUSD, XAGUSD) ושאר מדדי ה־Cash של FTMO (UK100, FRA40, EU50, AUS200, ...). נתוני דקה + הספרד האמיתי של FTMO + עמלה; אם חסרים נתוני דקה למכשיר - להוריד (כמו המכשירים הקיימים) או לרשום שחסר. אותם זוגות טיים פריים ואותו חיפוש רציף (כולל EXIT ופיבונאצ'י), בחירה עד 31.12.2025, הצגה על 2026, לכל מכשיר בנפרד ולכל זוג. מה שמרוויח בשתי התקופות - כרטיס למנהל עם change שמוסיף את המכשיר/הזוג ל־TAL5 (ומיפוי השם ב־SYMBOLS של live/watch_own.py). בלי איפוס חשבון (אותה שיטה).",
+   "status": {}
   }
  ],
  "eb3e3e8c550e": {

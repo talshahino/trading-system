@@ -12,6 +12,7 @@ the release's surprise, the spike size):
   surprise   all trades / only when the side agrees with actual-vs-forecast for the instrument (FX and gold only:
              an index has no fixed direction for a strong number) / only without a usable surprise
   entry      at once / a limit 0.5R better (the first pullback, valid 3 bars)
+  cap        at most 1 / 2 / 3 trades per release, or no cap (attempt 7, 13.11.2026: one PPI = 8 stops)
   target     2R / 3R; stop beyond the window's other end; out after an hour (the live bot's breakeven at 60%)
 Costs: FTMO's spread at the entry minute (Dukascopy) and commission (agents/ftmo_costs.py), as agents/news_fix.py.
 Fair method: chosen on 30.04.2025-31.12.2025 by total R, shown on 2026, time-weighted (agents/agentkit.py);
@@ -54,6 +55,7 @@ SIDES = (1, -1)                   # +1 with the move, -1 against it
 LIMITS = (0.0, 0.5)
 TARGETS = (2.0, 3.0)
 SURPRISE = ("all", "agree", "none")
+CAPS = (0, 1, 2, 3)               # most trades per release (0 = no cap) - fix attempt 7
 TOP = 10
 STALE_DAYS = 3
 
@@ -138,25 +140,39 @@ def trades_sym(sym, rel):
     return rows
 
 
+def capped(z, cap):
+    """Fix attempt 7 (13.11.2026): at most `cap` trades per release. Live on 13.11 one US PPI release opened 8 EV01
+    longs at minute 10 (EURUSD, GBPUSD, AUDUSD, NZDUSD, US30, US100, US500 ...) and all 8 hit the stop together
+    (-9.3R): the instruments are one bet on the dollar, not 8. The kept trades are the first by entry time, then by
+    the fixed instrument order of the bot (NF.SYMBOLS) - never by result."""
+    if not cap or z.empty:
+        return z
+    order = {s_: i for i, s_ in enumerate(NF.SYMBOLS)}
+    z = z.assign(_o=z["sym"].map(order).fillna(99)).sort_values(["rel", "t", "_o"])
+    return z[z.groupby("rel").cumcount() < cap].drop(columns="_o")
+
+
 def study(df):
     df = df.assign(train=pd.to_datetime(df["t"], utc=True) < NF.SPLIT)
     cand = []
     for v, y in df.groupby("v"):
         for sf in SURPRISE:
-            z = y if sf == "all" else (y[y["agree"] == 1] if sf == "agree" else y[y["agree"].isna()])
-            tr, un = z[z.train], z[~z.train]
-            cand.append({"v": f"{v}|s{sf}", "train": NF._w(tr), "unseen": NF._w(un)})
+            z0 = y if sf == "all" else (y[y["agree"] == 1] if sf == "agree" else y[y["agree"].isna()])
+            for cap in CAPS:
+                z = capped(z0, cap)
+                tr, un = z[z.train], z[~z.train]
+                cand.append({"v": f"{v}|s{sf}" + (f"|c{cap}" if cap else ""), "train": NF._w(tr), "unseen": NF._w(un)})
     cand.sort(key=lambda c: -c["train"]["sum"])
     top = cand[:TOP]
     base = next((c for c in cand if c["v"] == "m10|k1.5|with|l0|t2|sall"), None)   # EV01 as it trades now
     by = {}
     for key, pat in (("window", r"^m(\d+)\|"), ("spike", r"\|k([\d.]+)\|"), ("side", r"\|(with|fade)\|"),
-                     ("surprise", r"\|s(\w+)$")):
+                     ("surprise", r"\|s([a-z]+)"), ("cap", r"(?:\|c(\d+))?$")):
         g = {}
         for c in cand:
             m = re.search(pat, c["v"])
             if m:
-                g.setdefault(m.group(1), []).append(c)
+                g.setdefault(m.group(1) or "0", []).append(c)
         # the median variant of each value (not the best: a whole family of variants either holds or not)
         by[key] = {k_: {"variants": len(cs), "train_median_sum": round(float(np.median([c["train"]["sum"] for c in cs])), 2),
                         "unseen_median_sum": round(float(np.median([c["unseen"]["sum"] for c in cs])), 2),

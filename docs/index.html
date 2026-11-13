@@ -430,7 +430,6 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="msg" id="pushMsg"></div></div>
     <div class="card"><h3>מנהל הבוטים</h3>
       <div class="row"><span class="mut" id="botsHint">ההצעות של הסוכנים לכל בוט אחרי הסינון של המנהל, האסטרטגיות של כל בוט והמלצות הסיכון. שום דבר לא משתנה בלי אישור שלך.</span><button class="btn" id="botsBtn">מנהל הבוטים</button></div>
-      <div class="row" style="margin-top:8px"><span class="mut">מה המנהל והסוכנים יודעים על הדרך שבה אתה חושב: המטרה, העקרונות וכל ההחלטות שלך.</span><button class="btn ghost" id="ttBtn">איך טל חושב</button></div>
       <div class="row" style="margin-top:8px"><span class="mut">בכל יום שבוט מסיים בהפסד: מה הפסיד, למה, ומה עושים כדי שזה לא יחזור.</span><button class="btn ghost" id="lrBtn">דוחות הפסד</button></div></div>
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
     <div class="card" id="logCard"><h3>לוגים</h3>
@@ -478,7 +477,6 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 <div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
 <div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>מנהל הבוטים</b></div>
   <div id="bpDec"></div><div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
-<div class="page" id="ttPg"><div class="ph"><button class="back" id="ttBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>איך טל חושב</b></div><div id="ttBody" style="padding:0 16px 40px;line-height:1.6"><div class="empty">טוען…</div></div></div>
 <div class="page" id="lrPg"><div class="ph"><button class="back" id="lrBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>דוחות הפסד</b></div><div id="lrBody" style="padding:0 14px 40px;line-height:1.55"><div class="empty">טוען…</div></div></div>
 <div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
 <div class="page" id="wbPg"><div class="ph"><button class="back" id="wbBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>בוט סקלפינג · צפייה</b></div><div id="wbBody"><div class="empty">טוען…</div></div></div>
@@ -2112,7 +2110,6 @@ $("wbBack").onclick = () => $("wbPg").classList.remove("on");
 $("wcBack").onclick = () => { $("wcPg").classList.remove("on"); WC.forEach(c => c.remove()); WC = []; };
 $("bpBack").onclick = () => $("botsPg").classList.remove("on");
 // "how Tal thinks" (data/agents/tal_thinking.md): what the manager and the agents read before every decision
-$("ttBack").onclick = () => $("ttPg").classList.remove("on");
 // daily loss reports (agents/loss_review.py): every losing day of every bot - what lost, why, what is done about it
 const LR = p => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/losses/${p}?t=${Math.floor(Date.now() / 60000)}`;
 $("lrBack").onclick = () => $("lrPg").classList.remove("on");
@@ -2153,26 +2150,6 @@ $("lrBtn").onclick = async () => {
         <p class="mut" style="margin-top:8px">מגמה: ${l7.loss_days ?? 0} ימי הפסד בשבוע האחרון (ממוצע ${l7.avg_loss_pct ?? 0}%), מול ${p7.loss_days ?? 0} בשבוע שלפני (${p7.avg_loss_pct ?? 0}%)${tr.improving === true ? " - ההפסדים קטנים" : tr.improving === false ? " - ההפסדים לא קטנים" : ""}.</p>`;
     });
   } catch (e) { $("lrBody").innerHTML = '<div class="empty">לא נטען, נסה שוב</div>'; }
-};
-$("ttBtn").onclick = async () => {
-  $("ttPg").classList.add("on");
-  try {
-    const md = await (await fetch(`https://raw.githubusercontent.com/talshahino/trading-system/main/data/agents/tal_thinking.md?t=${Math.floor(Date.now() / 60000)}`)).text();
-    const inl = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
-    let html = "", list = "";
-    const flush = () => { if (list) { html += `<${list}>` + html_items.join("") + `</${list}>`; list = ""; html_items = []; } };
-    let html_items = [];
-    for (const line of md.split("\n")) {
-      const m = line.match(/^(\d+)\. (.*)$/), b = line.match(/^- (.*)$/);
-      if (m || b) { const k = m ? "ol" : "ul"; if (list && list !== k) flush(); list = k; html_items.push(`<li style="margin:6px 0">${inl((m ? m[2] : b[1]))}</li>`); continue; }
-      flush();
-      if (line.startsWith("## ")) html += `<h3 style="margin:18px 0 6px">${inl(line.slice(3))}</h3>`;
-      else if (line.startsWith("# ")) html += `<h2 style="margin:12px 0 6px">${inl(line.slice(2))}</h2>`;
-      else if (line.trim()) html += `<p style="margin:6px 0">${inl(line)}</p>`;
-    }
-    flush();
-    $("ttBody").innerHTML = html;
-  } catch (e) { $("ttBody").innerHTML = '<div class="empty">לא נטען, נסה שוב</div>'; }
 };
 $("bdBack").onclick = () => { $("bdPg").classList.remove("on"); BP.combo = null; };
 

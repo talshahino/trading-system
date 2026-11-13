@@ -610,6 +610,17 @@ class Account:
         that is left, so the stops can never cross the limit; under 10% of the normal risk the trade is skipped."""
         base = self.risk_usd * mult
         ai = mt5.account_info()
+        # "dd_fit" (bots 1-4 smart agent, 13.11.2026 night; an approved card only, live/bots/<bot>.json): the whole
+        # bot's risk shrinks while the room left to the bot's 9% total limit is smaller than the worst fall of the
+        # bot's own 2026 replay (dd_fit, in % of the account) - risk x room / dd_fit - and is back to normal by itself
+        # once the room is larger again. No fixed step: the number is the bot's own replay.
+        try:
+            fit = float(self.cfg.get("dd_fit") or 0)
+        except (TypeError, ValueError):
+            fit = 0.0
+        if 0.5 <= fit <= 9:
+            room_total = ai.balance - self.initial * (1 - GUARD_TOTAL)
+            base *= min(1.0, max(0.0, room_total / (self.initial * fit / 100)))
         ds = self.day_start_balance()
         left = ai.balance - self.open_risk()
         room = min(left - self.initial * (1 - GUARD_TOTAL), left - (ds - self.initial * GUARD_DAILY))

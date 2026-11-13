@@ -81,6 +81,11 @@ def buildable(c):
     if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "RISK_SCALE" \
             and isinstance(ch.get("to"), (int, float)) and 0.1 <= float(ch["to"]) <= 1.0:
         return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_risk_scale", "to": round(float(ch["to"]), 3)}
+    # bots 1-4 (13.11.2026 night, bots 1-4 smart agent): the whole bot's risk sized into the room left to its 9% limit
+    # by the worst fall of its own 2026 replay - "dd_fit" in live/bots/<bot>.json, read by live/runner.py allowed_risk
+    if bot in ADD_BOTS and c.get("kind") == "risk" and ch.get("kind") == "dd_fit" \
+            and isinstance(ch.get("to"), (int, float)) and 0.5 <= float(ch["to"]) <= 9:
+        return {"bot": bot, "combo": "BOT|all", "family": "flag", "key": "dd_fit", "to": round(float(ch["to"]), 2)}
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") and str(ch.get("knob", "")).startswith("RISK") \
             and ch.get("to") is not None:
         return {"bot": bot, "combo": f"{'OWN' if bot == 'bot5' else 'FUT'}|{ch['track']}", "family": "risk",
@@ -152,6 +157,9 @@ def describe(b):
             return f"שיטת הגאפ: לכל היותר {b['to']} עסקאות פתוחות באותו כיוון בכל המדדים יחד" if b["to"] else "שיטת הגאפ: בלי תקרה לכיוון"
         if b["key"] == "tal_risk_scale":
             return f"שיטת הגאפ: הסיכון של כל המסלולים × {b['to']:g}"
+        if b["key"] == "dd_fit":
+            return (f"הסיכון של כל הבוט קטן כשנשאר עד המגבלה (9%) פחות מ־{b['to']:g}% (הירידה הגרועה בבדיקת הבוט על 2026), "
+                    "וחוזר לרגיל לבד")
         if b["key"] == "tal_hours_off":
             return ("שיטת הגאפ: בלי כניסות בשעות " + ", ".join(f"{x:02d}:00" for x in b["to"]) + " (UTC)") if b["to"] else "שיטת הגאפ: בלי מסנן שעות"
         return "שיטת הגאפ: מסלול לא נכנס למכשיר ולכיוון שמסלול אחר כבר מחזיק" if b["to"] else "שיטת הגאפ: בלי הכלל נגד סיכון כפול"

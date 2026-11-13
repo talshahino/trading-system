@@ -309,6 +309,8 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
                 continue
             if d.get("type") == "risk" and a.get("kind") == "mult" and a.get("value") and float(a["value"]) >= 1:
                 continue                     # a risk raise is not a fix of a loss
+            if d.get("loss_report"):
+                continue                     # the manager's own cut for a missing fix is not the fix itself
             eff = card_effect(card, months, bot_risk_pct, a.get("value") if a.get("kind") == "mult" else None) if card else None
             what = d["title"]
             if d.get("type") == "risk" and a.get("kind") == "mult":
@@ -335,32 +337,118 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
             "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון" if not opened else f"פתוח: {len(opened)} אסטרטגיות בלי תיקון עדיין"}
 
 
-def enforce(rep, plan, decisions, have_ids, at):
+LEVEL_MULT = {1: 0.85, 2: 0.7, 3: 0.5, 4: 0.35, 5: 0.25}   # the failure level -> risk (user, 13.11.2026: "by the level of failure")
+LEVEL_HE = {1: "קל", 2: "בינוני", 3: "חמור", 4: "חמור מאוד", 5: "כישלון מלא"}
+
+
+def failure_level(bot, combo, rep, idx):
+    """How badly the strategy fails, 1-5, from four things - each with its reason in plain words:
+    its 2026 result as it trades now (the fair test), how often it lost in live trading in the last 30 days,
+    how big today's loss was against the planned risk, and how long it is already without a fix."""
+    from agents import portfolio_check as PC
+    pts, why = 0, []
+    tr = None
+    try:
+        tr = PC.current_trades(bot, combo, PC.bot_cfg(bot))
+    except Exception:  # noqa: BLE001
+        tr = None
+    if tr:
+        rs = [x[3] for x in tr]
+        mean = sum(rs) / len(rs)
+        if mean < -0.1:
+            pts += 3; why.append(f"מפסידה גם בבדיקה של 2026 ({mean:+.2f}R לעסקה, {len(rs)} עסקאות)")
+        elif mean < 0:
+            pts += 2; why.append(f"כמעט אפס בבדיקה של 2026 ({mean:+.2f}R לעסקה)")
+        elif mean < 0.1:
+            pts += 1; why.append(f"רווח קטן בבדיקה של 2026 ({mean:+.2f}R לעסקה)")
+        else:
+            why.append(f"מרוויחה בבדיקה של 2026 ({mean:+.2f}R לעסקה) - הבעיה בחי, לא בשיטה")
+    else:
+        pts += 1; why.append("אין לה עדיין בדיקה של 2026 כפי שהיא סוחרת עכשיו")
+    day0 = pd.Timestamp(rep["day"])
+    days = 0
+    for r in idx.get("reports", []):
+        if r["bot"] != bot or not (0 <= (day0 - pd.Timestamp(r["day"])).days <= 30):
+            continue
+        d = _read(OUT / bot / f"{r['day']}.json", {}) or {}
+        if any(x.get("combo") == combo for x in d.get("losers", [])):
+            days += 1
+    if days >= 5:
+        pts += 2; why.append(f"הפסידה ב־{days} ימים בחודש האחרון")
+    elif days >= 3:
+        pts += 1; why.append(f"הפסידה ב־{days} ימים בחודש האחרון")
+    worst = min([x["r"] for x in rep.get("losers", []) if x["combo"] == combo] or [0])
+    if worst <= -1.3:
+        pts += 1; why.append(f"ההפסד היום {worst:.1f}R - יותר מהסיכון המתוכנן")
+    late = (pd.Timestamp.now(tz=TZ).date() - day0.date()).days - 2
+    if late >= 3:
+        pts += 1; why.append(f"כבר {late + 2} ימים בלי תיקון")
+    return max(1, min(5, pts)), why
+
+
+def enforce(rep, plan, decisions, have_ids, at, idx=None):
     """The manager owns it (user, 13.11.2026: "the manager takes the improvement into his hands"): a losing strategy
-    still without a fix 2 days after its report goes down to x0.7 risk until a fix is found ("first fix, and only
-    if there is none, lower the risk") - bots 1-4, where risk per strategy is applied on the bots' computer."""
+    still without a fix 2 days after its report goes down in risk BY ITS FAILURE LEVEL (not a fixed cut, user 13.11):
+    level 1 x0.85 ... level 5 x0.25, until a fix is found ("first fix, and only if there is none, lower the risk").
+    The level is computed again every run - if it grows, the risk goes down more. Bots 1-4, where risk per strategy is
+    applied on the bots' computer."""
     out = []
     if rep["bot"] not in ("bot1", "bot2", "bot3", "bot4") or rep["day"] < ENFORCE_FROM:
         return out
-    if (pd.Timestamp.now(tz=TZ).date() - pd.Timestamp(rep["day"]).date()).days < 2:
-        return out
+    levels = {}
+    for row in plan["rows"]:
+        if row["open"]:
+            row["level"], row["level_why"] = failure_level(rep["bot"], row["combo"], rep, idx or {})
+            row["level_he"], row["level_mult"] = LEVEL_HE[row["level"]], LEVEL_MULT[row["level"]]
+            levels[row["combo"]] = (row["level"], row["level_why"])
     from agents import portfolio_check as PC
     mm = PC.mults(rep["bot"])
+    gone = {x.get("of") for x in decisions if x.get("decision") == "reverted"}
+    # a fix was found: the manager's cut comes back (the fix decides the strategy's risk from now on)
+    for row in plan["rows"]:
+        if row["open"] or not row["fixes"]:
+            continue
+        cuts = [d for d in decisions if d.get("loss_report") == f"{rep['bot']}/{rep['day']}" and d.get("type") == "risk"
+                and (d.get("action") or {}).get("combo") == row["combo"] and d.get("decision") == "approved" and d["id"] not in gone]
+        if not cuts:
+            continue
+        first = min(cuts, key=lambda d: d["at"])
+        back = float(first["action"].get("prev") or 1.0)
+        did = hashlib.sha1(f"lossback|{rep['bot']}|{row['combo']}|{rep['day']}".encode()).hexdigest()[:12]
+        cur = float(mm.get(row["combo"], 1.0) or 1.0)
+        if did in have_ids or back <= cur:
+            continue
+        out.append({"id": did, "bot": rep["bot"], "type": "risk", "kind": "mult", "combo": row["combo"],
+                    "title": f"{row['combo']}: סיכון חוזר ל־×{back} - נמצא תיקון אחרי דוח ההפסד של {rep['day']}",
+                    "decision": "approved", "by": "manager", "read": False, "undone": False, "at": at,
+                    "why": "המנהל: ההורדה הייתה רק עד שיימצא תיקון. נמצא: " + "; ".join(f["what"] for f in row["fixes"] if f.get("what")),
+                    "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_back": f"{rep['bot']}/{rep['day']}",
+                    "action": {"bot": rep["bot"], "combo": row["combo"], "kind": "mult", "value": back, "prev": cur}})
+        have_ids.add(did)
+    if (pd.Timestamp.now(tz=TZ).date() - pd.Timestamp(rep["day"]).date()).days < 2:
+        return out
     for c in plan["open"]:
-        did = hashlib.sha1(f"lossrisk|{rep['bot']}|{c}".encode()).hexdigest()[:12]
+        lvl, why = levels[c]
+        did = hashlib.sha1(f"lossrisk|{rep['bot']}|{c}|{lvl}".encode()).hexdigest()[:12]
         if did in have_ids:
             continue
         cur = float(mm.get(c, 1.0) or 1.0)
-        val = max(0.5, round(cur * 0.7, 2))
+        # from the risk before the manager's own cuts, so a higher level replaces a lower one instead of stacking
+        base = cur
+        for d in decisions:
+            if d.get("type") == "risk" and (d.get("action") or {}).get("combo") == c and d["id"] not in gone \
+                    and d.get("loss_report") and (d.get("action") or {}).get("prev") is not None:
+                base = max(base, float(d["action"]["prev"]))
+        val = round(base * LEVEL_MULT[lvl], 2)
         if val >= cur:
             continue
         out.append({"id": did, "bot": rep["bot"], "type": "risk", "kind": "mult", "combo": c,
-                    "title": f"{c}: סיכון ×{val} - אין תיקון יומיים אחרי דוח ההפסד של {rep['day']}",
+                    "title": f"{c}: סיכון ×{val} - כישלון {LEVEL_HE[lvl]} (רמה {lvl} מתוך 5), אין תיקון אחרי דוח ההפסד של {rep['day']}",
                     "decision": "approved", "by": "manager", "read": False, "undone": False, "at": at,
-                    "why": "המנהל: האסטרטגיה הפסידה, ואחרי שני לילות אין לה תיקון שעבר את הבדיקה. קודם תיקון - ואם אין, "
-                           "מורידים סיכון עד שיימצא. כשיימצא תיקון, הסיכון יחזור.",
-                    "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_report": f"{rep['bot']}/{rep['day']}",
-                    "action": {"bot": rep["bot"], "combo": c, "kind": "mult", "value": val, "prev": None if cur == 1.0 else cur}})
+                    "why": "המנהל: אין תיקון שעבר את הבדיקה, אז הסיכון יורד לפי רמת הכישלון: " + "; ".join(why)
+                           + f". רמה {lvl} ← סיכון ×{LEVEL_MULT[lvl]}. כשיימצא תיקון - הסיכון חוזר. אם המצב מחמיר - יורד עוד.",
+                    "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_report": f"{rep['bot']}/{rep['day']}", "level": lvl,
+                    "action": {"bot": rep["bot"], "combo": c, "kind": "mult", "value": val, "prev": cur}})
         have_ids.add(did)
     return out
 
@@ -391,7 +479,7 @@ def follow_up(idx):
         risk_pct = float(cfg.get("risk") or 0.004) * 100 if not isinstance(cfg.get("risk"), dict) else 0.4
         plan = improvement_plan(rep, decisions, cards, replies, undo, risk_pct)
         rep["plan"] = plan
-        adds += enforce(rep, plan, decisions, have, at)
+        adds += enforce(rep, plan, decisions, have, at, idx)
         _write(f, rep)
         r["status"], r["open"], r["month_pct"] = plan["status"], len(plan["open"]), plan["total_month_pct"]
         # an answer without a fix is not an answer: the task goes back to the bot's agent

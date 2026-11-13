@@ -17,6 +17,7 @@ Writes reports/agents/manager.json (the app's "מנהל הבוטים").
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -148,6 +149,23 @@ def ops():
                     f"שיטת הגאפ: הסוכן רץ ב־{pd.Timestamp(ran):%d.%m %H:%M} UTC, והתוצאות לא התעדכנו מאז "
                     f"{pd.Timestamp(upd):%d.%m %H:%M}")
                 o["actions"].append("הסוכן החכם של המנהל יבדוק את agent_tail ב־host.json ויתקן")
+        # an agent that failed, or ended far inside its minutes while it still has work (manager, 13.11.2026: bot 2 ran
+        # 2 of its 30 minutes at 05:28 and published nothing; the round's error list was gone after the next install)
+        for x in h.get("agent_errors_24h") or []:
+            name = str(x.get("err", "")).split(":")[0]
+            o = _ops_slot(out, name.replace("-new", "") or "pc")
+            o["problems"].append(f"הסוכן {name} נכשל ב־{str(x.get('at', ''))[11:16]} UTC: {str(x.get('err', ''))[len(name) + 2:][:140]}")
+            o["actions"].append("הסוכן החכם של המנהל יבדוק את הלוג ויתקן")
+        for b, r in (h.get("agent_runs") or {}).items():
+            if r.get("adopted") or not r.get("budget_sec") or r.get("err"):
+                continue
+            tail = " ".join(tails.get(b) or [])
+            idle = re.search(r"\b0 left\b|nothing left|nothing to test", tail)
+            if r.get("sec", 0) < 0.15 * r["budget_sec"] and not idle and re.search(r"[1-9]\d* (combos )?left", tail):
+                o = _ops_slot(out, b.replace("-new", ""))
+                o["problems"].append(f"הסוכן {b} רץ רק {r['sec'] // 60} מתוך {r['budget_sec'] // 60} דקות "
+                                     f"(התחיל {str(r.get('at', ''))[11:16]} UTC) למרות שיש לו עבודה")
+                o["actions"].append("הסוכן החכם של המנהל יבדוק למה הסוכן נגמר מוקדם")
         for b, lines in tails.items():
             bad = [x for x in lines if "failed" in x or "Traceback" in x or "Error" in x]
             if bad:

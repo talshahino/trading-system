@@ -224,6 +224,25 @@ def _flags():
     return 0x08000000 | 0x00004000          # CREATE_NO_WINDOW | BELOW_NORMAL_PRIORITY_CLASS
 
 
+def _turn_back(st, r):
+    """A run that a restart cut short (its process was gone after the restart, well inside its minutes) gets its turn
+    back: its start stamp returns to the one before, so it goes first in the next round (manager, 13.11.2026: bot 2
+    started 05:28, an install restarted the manager, bot 2 had 2 of its 30 minutes and then waited a whole round)."""
+    name = (r or {}).get("name")
+    if not name or not r.get("at"):
+        return
+    budget = max(60.0, float(r.get("timeout", 3600)) - 3600)
+    if time.time() - float(r["at"]) < 0.5 * budget:
+        last = st.setdefault("agent_last", {})
+        if r.get("prev_last"):
+            last[name] = r["prev_last"]
+        else:
+            last.pop(name, None)
+        st.setdefault("agent_runs", {})[name] = {"at": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(float(r["at"]))),
+                                                 "sec": int(time.time() - float(r["at"])), "budget_sec": int(budget),
+                                                 "ok": None, "err": "cut short by a restart - turn given back"}
+
+
 def kill_orphan(st):
     """A run left over from before the manager restarted (e.g. after an update) is stopped first."""
     pid = st.pop("pid", None)
@@ -256,6 +275,7 @@ def adopt_orphan(st):
     gap runs half-way, 18:50 / 18:58 UTC, so their results stopped updating). Past its own timeout it is stopped."""
     pid, r = st.get("pid"), st.get("run") or {}
     if not (pid and r.get("name") and time.time() - float(r.get("at", 0)) < float(r.get("timeout", 0)) and _alive(pid)):
+        _turn_back(st, r)
         st.pop("run", None)
         return kill_orphan(st)
     name, log = r["name"], _S["log"]
@@ -268,6 +288,10 @@ def adopt_orphan(st):
             kill_orphan(st)
         st.pop("pid", None)
         st.setdefault("agent_tail", {})[name] = _tail(f"agent_{name}.log") + ["(continued across a manager restart)"]
+        t_r = float(r.get("at", 0))
+        st.setdefault("agent_runs", {})[name] = {"at": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t_r)),
+                                                 "sec": int(time.time() - t_r), "budget_sec": int(r.get("timeout", 3600)) - 3600,
+                                                 "ok": None, "err": None, "adopted": True}
         try:
             _publish_changes(st, r.get("before") or {}, "agent", f"Agents on the bots' computer: {name} smart layer")
         except Exception as e:  # noqa: BLE001
@@ -413,6 +437,7 @@ def host_doc(st, kind):
             "every_min": {"light": LIGHT_EVERY // 60, "smart": SMART_EVERY // 60},
             "smart_minutes": st.get("smart_minutes"), "agent_errors": st.get("agent_errors") or [],
             "agent_last": st.get("agent_last") or {}, "agent_tail": st.get("agent_tail") or {},
+            "agent_runs": st.get("agent_runs") or {}, "agent_errors_24h": st.get("agent_errors_24h") or [],
             "box_pub": box_pub(), "alpaca": bool(secrets()),
             "last_error": st.get("last_error"),
             "errors_in_row": st.get("errors_in_row", 0)}
@@ -504,16 +529,28 @@ def _smart(st, log, t0):
         mins_all[name] = mins
         if mins <= 0:
             continue
+        prev_last = last.get(name)
         last[name] = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
         _save(st)
         before = snapshot()
         # kept so that a restart in the middle can wait for this agent and publish it (adopt_orphan)
-        st["run"] = {"name": name, "at": time.time(), "timeout": int(mins * 60 + 3600), "before": before}
+        st["run"] = {"name": name, "at": time.time(), "timeout": int(mins * 60 + 3600), "before": before,
+                     "prev_last": prev_last}
+        t_a, err = time.time(), None
         try:
             run(st, args + ["--minutes", str(mins)], timeout=int(mins * 60 + 3600), logname=f"agent_{name}.log")
         except Exception as e:  # noqa: BLE001 - one agent's failure does not stop the others
-            errs.append(f"{name}: {e}"[:300])
+            err = f"{name}: {e}"[:300]
+            errs.append(err)
             log(f"agent {name} failed: {e}")
+        # every agent's last run, kept across rounds (manager, 13.11.2026: bot 2 ran 2 of its 30 minutes at 05:28 and
+        # published nothing; agent_errors only holds the current round, and every code install starts a new round,
+        # so a failure was gone from host.json before anyone saw it)
+        st.setdefault("agent_runs", {})[name] = {"at": last[name], "sec": int(time.time() - t_a), "budget_sec": int(mins * 60),
+                                                 "ok": err is None, "err": err}
+        if err:
+            hist = [x for x in st.get("agent_errors_24h") or [] if time.time() - (_ts(x.get("at")) or 0.0) < 86400]
+            st["agent_errors_24h"] = (hist + [{"at": last[name], "err": err}])[-20:]
         # what the agent printed about its own failures (manager, 12.11.2026: bot 6's gap search ended without results
         # and without an error - an exception caught and printed inside the agent is invisible from here otherwise)
         st.setdefault("agent_tail", {})[name] = _tail(f"agent_{name}.log")

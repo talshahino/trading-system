@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-13T13:03:36+00:00",
+ "updated": "2026-11-13T13:35:08+00:00",
  "light_at": "2026-11-13T11:18:09+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -10,7 +10,8 @@
  },
  "smart_minutes": {
   "bot4": 30.0,
-  "bot7": 30.0
+  "bot7": 30.0,
+  "bot7-shocks": 15.0
  },
  "agent_errors": [],
  "agent_last": {
@@ -22,7 +23,7 @@
   "bot3": "2026-11-13T10:51:23+00:00",
   "bot4": "2026-11-13T11:29:26+00:00",
   "bot7": "2026-11-13T12:22:58+00:00",
-  "bot7-shocks": "2026-11-13T06:50:10+00:00",
+  "bot7-shocks": "2026-11-13T13:05:56+00:00",
   "bot6-new": "2026-11-13T07:09:45+00:00"
  },
  "agent_tail": {
@@ -48,8 +49,8 @@
    "{\"bot\": \"bot4\", \"cards\": 278, \"tiers\": {\"rejected\": 229, \"watch\": 38, \"regular\": 11}, \"done\": 47, \"planned\": 96}"
   ],
   "bot7-shocks": [
-   "best on 2025: {'K': 6, 'strat': 'CONT', 'D': 1, 'p': 0.5, 'H': 60, 'tg': 0.0} train {'n': 684, 'eff_n': 683.2, 'mean': 0.1514, 't': 1.56, 'win': 29.2} unseen {'n': 1273, 'eff_n': 1272.8, 'mean': -0.1115, 't': -1.78, 'win': 26.2}",
-   "per-instrument book (chosen on 2025): {'instruments': ['EURUSD', 'GBPUSD', 'GER40', 'US100', 'US30', 'US500', 'USDJPY', 'WTI', 'XAUUSD'], 'train': {'n': 567, 'eff_n': 566.3, 'mean': 0.4047, 't': 3.45, 'win': 36.5, 'sum': 234.64}, 'unseen': "
+   "walk-forward book inside 2025 (fade): ['GER40', 'US100'] train {'n': 94, 'eff_n': 93.9, 'mean': 0.5177, 't': 1.9, 'win': 38.3, 'sum': 48.82} unseen {'n': 145, 'eff_n': 145.0, 'mean': 0.1565, 't': 0.81, 'win': 33.9, 'sum': 21.94}",
+   "walk-forward book inside 2025 (cont): ['US500', 'XAUUSD'] train {'n': 135, 'eff_n': 134.8, 'mean': 0.5629, 't': 2.28, 'win': 35.7, 'sum': 76.15} unseen {'n': 298, 'eff_n': 298.0, 'mean': -0.1849, 't': -1.49, 'win': 24.5, 'sum': -55.61}"
   ],
   "bot6-new": [
    "new strategies: stopped for time, 0 tested, 216 combos left",
@@ -121,11 +122,18 @@
    "budget_sec": 1800,
    "ok": true,
    "err": null
+  },
+  "bot7-shocks": {
+   "at": "2026-11-13T13:05:56+00:00",
+   "sec": 1066,
+   "budget_sec": 900,
+   "ok": true,
+   "err": null
   }
  },
  "agent_errors_24h": [],
  "box_pub": "UT9R6umHmW2BY3ghrGz5Lt7nM5l7jNp88LK8mtnz9VQ=",
  "alpaca": true,
- "last_error": "13.11 14:58 agent_manager.py: 1 · y=lambda c: (c[\"status\"] != \"pending\", order.get(c[\"tier\"], 9), -(c[\"unseen\"] or {}).get(\"mean\", 0) if c.get(\"unseen\") else 0)) |                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | TypeError: bad operand type for unary -: 'NoneType'",
- "errors_in_row": 9
+ "last_error": "13.11 15:32 agent_manager.py: 1 · y=lambda c: (c[\"status\"] != \"pending\", order.get(c[\"tier\"], 9), -(c[\"unseen\"] or {}).get(\"mean\", 0) if c.get(\"unseen\") else 0)) |                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | TypeError: bad operand type for unary -: 'NoneType'",
+ "errors_in_row": 12
 }

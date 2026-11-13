@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-13T06:50:48+00:00",
+ "updated": "2026-11-13T13:06:38+00:00",
  "instruments": [
   "EURUSD",
   "GBPUSD",
@@ -290,7 +290,7 @@
    "unseen": {
     "n": 1280,
     "eff_n": 1279.8,
-    "mean": -0.0397,
+    "mean": -0.0396,
     "t": -1.06,
     "win": 39.6
    },
@@ -365,7 +365,7 @@
    "whole": {
     "n": 1664,
     "eff_n": 1660.1,
-    "mean": -0.0685,
+    "mean": -0.0686,
     "t": -2.35,
     "win": 39.8
    },
@@ -703,9 +703,9 @@
  "by_category": {
   "geopolitics": {
    "CONT": {
-    "n": 13,
-    "mean": -1.085,
-    "sum": -14.1
+    "n": 14,
+    "mean": -1.044,
+    "sum": -14.62
    },
    "PULL": {
     "n": 3,
@@ -720,9 +720,14 @@
   },
   "macro": {
    "CONT": {
+    "n": 2,
+    "mean": -0.966,
+    "sum": -1.93
+   },
+   "FADE": {
     "n": 1,
-    "mean": -1.044,
-    "sum": -1.04
+    "mean": 0.338,
+    "sum": 0.34
    }
   },
   "market": {
@@ -734,19 +739,19 @@
   },
   "unknown": {
    "CONT": {
-    "n": 11,
-    "mean": 0.204,
-    "sum": 2.25
+    "n": 12,
+    "mean": 0.089,
+    "sum": 1.07
    },
    "PULL": {
-    "n": 3,
-    "mean": -0.604,
-    "sum": -1.81
+    "n": 4,
+    "mean": -0.277,
+    "sum": -1.11
    },
    "FADE": {
-    "n": 4,
-    "mean": 0.2,
-    "sum": 0.8
+    "n": 5,
+    "mean": 0.112,
+    "sum": 0.56
    }
   }
  },
@@ -1013,6 +1018,736 @@
    "t": -1.76,
    "win": 28.4,
    "sum": -120.38
+  }
+ },
+ "book_wf": {
+  "all": {
+   "strats": "all",
+   "per_symbol": {
+    "EURUSD": {
+     "in": false,
+     "pick_a": {
+      "K": "8",
+      "strat": "CONT",
+      "D": "2",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 18.7,
+     "b_sum": -6.47,
+     "pick": {
+      "K": "8",
+      "strat": "CONT",
+      "D": "2",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 12.22,
+     "unseen_sum": -9.81,
+     "unseen_n": 39
+    },
+    "GBPUSD": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 16.81,
+     "b_sum": -2.07,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 14.74,
+     "unseen_sum": 3.4,
+     "unseen_n": 65
+    },
+    "GER40": {
+     "in": true,
+     "pick_a": {
+      "K": "10",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "15",
+      "tg": 0.0
+     },
+     "a_sum": 5.66,
+     "b_sum": 2.41,
+     "pick": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "3",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 10.59,
+     "unseen_sum": -4.48,
+     "unseen_n": 68
+    },
+    "US100": {
+     "in": true,
+     "pick_a": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 20.82,
+     "b_sum": 17.41,
+     "pick": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 38.23,
+     "unseen_sum": 26.42,
+     "unseen_n": 77
+    },
+    "US30": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "FADE",
+      "D": "2",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 19.71,
+     "b_sum": -12.57,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 14.87,
+     "unseen_sum": -25.91,
+     "unseen_n": 112
+    },
+    "US500": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "FADE",
+      "D": "2",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 21.21,
+     "b_sum": -14.6,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 31.49,
+     "unseen_sum": -23.19,
+     "unseen_n": 108
+    },
+    "USDJPY": {
+     "in": false,
+     "pick_a": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 32.22,
+     "b_sum": -17.99,
+     "pick": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "15",
+      "tg": 0.0
+     },
+     "train_sum": 17.22,
+     "unseen_sum": -1.0,
+     "unseen_n": 110
+    },
+    "WTI": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 74.81,
+     "b_sum": -24.18,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 50.62,
+     "unseen_sum": -53.39,
+     "unseen_n": 295
+    },
+    "XAUUSD": {
+     "in": true,
+     "pick_a": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "3",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 15.22,
+     "b_sum": 19.96,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "2",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 44.65,
+     "unseen_sum": -32.42,
+     "unseen_n": 190
+    }
+   },
+   "instruments": [
+    "GER40",
+    "US100",
+    "XAUUSD"
+   ],
+   "train": {
+    "n": 171,
+    "eff_n": 170.8,
+    "mean": 0.547,
+    "t": 2.7,
+    "win": 38.6,
+    "sum": 93.47
+   },
+   "unseen": {
+    "n": 335,
+    "eff_n": 334.9,
+    "mean": -0.0281,
+    "t": -0.22,
+    "win": 28.7,
+    "sum": -10.48
+   }
+  },
+  "fade": {
+   "strats": [
+    "FADE"
+   ],
+   "per_symbol": {
+    "EURUSD": {
+     "in": false,
+     "pick_a": {
+      "K": "10",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "15",
+      "tg": 0.0
+     },
+     "a_sum": 7.88,
+     "b_sum": -2.64,
+     "pick": {
+      "K": "10",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "15",
+      "tg": 0.0
+     },
+     "train_sum": 5.24,
+     "unseen_sum": -6.01,
+     "unseen_n": 37
+    },
+    "GBPUSD": {
+     "in": false,
+     "pick_a": {
+      "K": "12",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 9.46,
+     "b_sum": -1.35,
+     "pick": {
+      "K": "12",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 8.11,
+     "unseen_sum": -18.02,
+     "unseen_n": 23
+    },
+    "GER40": {
+     "in": true,
+     "pick_a": {
+      "K": "10",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "15",
+      "tg": 0.0
+     },
+     "a_sum": 5.66,
+     "b_sum": 2.41,
+     "pick": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "3",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 10.59,
+     "unseen_sum": -4.48,
+     "unseen_n": 68
+    },
+    "US100": {
+     "in": true,
+     "pick_a": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 20.82,
+     "b_sum": 17.41,
+     "pick": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 38.23,
+     "unseen_sum": 26.42,
+     "unseen_n": 77
+    },
+    "US30": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "FADE",
+      "D": "2",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 19.71,
+     "b_sum": -12.57,
+     "pick": {
+      "K": "10",
+      "strat": "FADE",
+      "D": "2",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 12.09,
+     "unseen_sum": 10.42,
+     "unseen_n": 46
+    },
+    "US500": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "FADE",
+      "D": "2",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 21.21,
+     "b_sum": -14.6,
+     "pick": {
+      "K": "6",
+      "strat": "FADE",
+      "D": "2",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 6.61,
+     "unseen_sum": -30.96,
+     "unseen_n": 82
+    },
+    "USDJPY": {
+     "in": false,
+     "pick_a": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 32.22,
+     "b_sum": -17.99,
+     "pick": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "15",
+      "tg": 0.0
+     },
+     "train_sum": 17.22,
+     "unseen_sum": -1.0,
+     "unseen_n": 110
+    },
+    "WTI": {
+     "in": false,
+     "pick_a": {
+      "K": "12",
+      "strat": "FADE",
+      "D": "3",
+      "p": 0.25,
+      "H": "15",
+      "tg": 0.0
+     },
+     "a_sum": -1.62,
+     "b_sum": -2.1,
+     "pick": {
+      "K": "12",
+      "strat": "FADE",
+      "D": "3",
+      "p": 0.25,
+      "H": "15",
+      "tg": 0.0
+     },
+     "train_sum": -3.72,
+     "unseen_sum": 2.46,
+     "unseen_n": 44
+    },
+    "XAUUSD": {
+     "in": false,
+     "pick_a": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "15",
+      "tg": 0.0
+     },
+     "a_sum": 7.24,
+     "b_sum": -4.65,
+     "pick": {
+      "K": "8",
+      "strat": "FADE",
+      "D": "1",
+      "p": 0.25,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 6.9,
+     "unseen_sum": 2.87,
+     "unseen_n": 87
+    }
+   },
+   "instruments": [
+    "GER40",
+    "US100"
+   ],
+   "train": {
+    "n": 94,
+    "eff_n": 93.9,
+    "mean": 0.5177,
+    "t": 1.9,
+    "win": 38.3,
+    "sum": 48.82
+   },
+   "unseen": {
+    "n": 145,
+    "eff_n": 145.0,
+    "mean": 0.1565,
+    "t": 0.81,
+    "win": 33.9,
+    "sum": 21.94
+   }
+  },
+  "cont": {
+   "strats": [
+    "CONT"
+   ],
+   "per_symbol": {
+    "EURUSD": {
+     "in": false,
+     "pick_a": {
+      "K": "8",
+      "strat": "CONT",
+      "D": "2",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 18.7,
+     "b_sum": -6.47,
+     "pick": {
+      "K": "8",
+      "strat": "CONT",
+      "D": "2",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 12.22,
+     "unseen_sum": -9.81,
+     "unseen_n": 39
+    },
+    "GBPUSD": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 16.81,
+     "b_sum": -2.07,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 14.74,
+     "unseen_sum": 3.4,
+     "unseen_n": 65
+    },
+    "GER40": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "5",
+      "tg": 2.0
+     },
+     "a_sum": 5.59,
+     "b_sum": -5.47,
+     "pick": {
+      "K": "10",
+      "strat": "CONT",
+      "D": "2",
+      "p": 0.5,
+      "H": "5",
+      "tg": 0.0
+     },
+     "train_sum": 1.88,
+     "unseen_sum": -15.46,
+     "unseen_n": 48
+    },
+    "US100": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "3",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 11.69,
+     "b_sum": -5.38,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "2",
+      "p": 0.5,
+      "H": "5",
+      "tg": 2.0
+     },
+     "train_sum": 12.65,
+     "unseen_sum": -4.12,
+     "unseen_n": 121
+    },
+    "US30": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 16.52,
+     "b_sum": -1.65,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 14.87,
+     "unseen_sum": -25.91,
+     "unseen_n": 112
+    },
+    "US500": {
+     "in": true,
+     "pick_a": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 19.43,
+     "b_sum": 12.06,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 31.49,
+     "unseen_sum": -23.19,
+     "unseen_n": 108
+    },
+    "USDJPY": {
+     "in": false,
+     "pick_a": {
+      "K": "12",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 9.7,
+     "b_sum": -5.66,
+     "pick": {
+      "K": "12",
+      "strat": "CONT",
+      "D": "2",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 9.62,
+     "unseen_sum": 10.03,
+     "unseen_n": 57
+    },
+    "WTI": {
+     "in": false,
+     "pick_a": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 74.81,
+     "b_sum": -24.18,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "1",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 50.62,
+     "unseen_sum": -53.39,
+     "unseen_n": 295
+    },
+    "XAUUSD": {
+     "in": true,
+     "pick_a": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "3",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "a_sum": 15.22,
+     "b_sum": 19.96,
+     "pick": {
+      "K": "6",
+      "strat": "CONT",
+      "D": "2",
+      "p": 0.5,
+      "H": "60",
+      "tg": 0.0
+     },
+     "train_sum": 44.65,
+     "unseen_sum": -32.42,
+     "unseen_n": 190
+    }
+   },
+   "instruments": [
+    "US500",
+    "XAUUSD"
+   ],
+   "train": {
+    "n": 135,
+    "eff_n": 134.8,
+    "mean": 0.5629,
+    "t": 2.28,
+    "win": 35.7,
+    "sum": 76.15
+   },
+   "unseen": {
+    "n": 298,
+    "eff_n": 298.0,
+    "mean": -0.1849,
+    "t": -1.49,
+    "win": 24.5,
+    "sum": -55.61
+   }
   }
  }
 }

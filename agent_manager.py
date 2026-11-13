@@ -198,6 +198,14 @@ def main():
         smart += json.loads(nf.read_text(encoding="utf-8")).get("cards", []) if nf.exists() else []
         hf = K.CARDS_DIR / bot / "cards_health.json"
         smart += json.loads(hf.read_text(encoding="utf-8")).get("cards", []) if hf.exists() else []
+        # any other card file of the bot (bot 5's GitHub tests of 13.11.2026: cards_pool.json, cards_wide*.json)
+        for xf in sorted((K.CARDS_DIR / bot).glob("cards_*.json")):
+            if xf.name in ("cards_smart.json", "cards_new.json", "cards_health.json"):
+                continue
+            try:
+                smart += json.loads(xf.read_text(encoding="utf-8")).get("cards", [])
+            except Exception:  # noqa: BLE001
+                pass
         hh = K.CARDS_DIR / bot / "health.json"
         health = json.loads(hh.read_text(encoding="utf-8")) if hh.exists() else None
         cards = []

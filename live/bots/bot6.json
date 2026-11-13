@@ -38,7 +38,8 @@
   "v5": 0.0,
   "v1m": 0.0,
   "tal": 0.004,
-  "tal4h": 0.004
+  "tal4h": 0.004,
+  "scout": 0.004
  },
  "changes": {
   "abb187377383": {
@@ -58,6 +59,53 @@
      "PROT": "none"
     }
    }
+  },
+  "f02478f826fa": {
+   "family": "scout6",
+   "combo": "SC005|5Min|US100",
+   "before": "__none__"
+  },
+  "cefeafe4d4d1": {
+   "family": "scout6",
+   "combo": "SC005|5Min|US500",
+   "before": "__none__"
+  },
+  "3434f4433c75": {
+   "family": "scout6",
+   "combo": "SC020|15Min|US500",
+   "before": "__none__"
+  }
+ },
+ "scout": {
+  "SC005|5Min|US100": {
+   "v": {
+    "target": 1.0,
+    "stop": 0.75,
+    "time": "own",
+    "be": true
+   },
+   "since": "2026-11-13T00:13:28+00:00",
+   "card": "f02478f826fa"
+  },
+  "SC005|5Min|US500": {
+   "v": {
+    "target": 2.0,
+    "stop": 0.75,
+    "time": "own",
+    "be": true
+   },
+   "since": "2026-11-13T00:13:28+00:00",
+   "card": "cefeafe4d4d1"
+  },
+  "SC020|15Min|US500": {
+   "v": {
+    "target": "none",
+    "stop": 0.75,
+    "time": "own",
+    "be": true
+   },
+   "since": "2026-11-13T00:13:28+00:00",
+   "card": "3434f4433c75"
   }
  }
 }

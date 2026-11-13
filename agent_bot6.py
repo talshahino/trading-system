@@ -214,6 +214,17 @@ SCOUT_SHARE = 0.25              # of each run's minutes (13.11.2026: the approve
 SCOUT_RERUN_DAYS = 14
 
 
+# DISCOVER (bot 6's smart agent, 13.11.2026 night): the scout's strategies built for the index futures' New York session
+# (the cash open 09:30, its first candles / range, VWAP, the daily pivot) - none was approved for bot 6 on the CFD test,
+# so none was ever run on bot 6's own world. Same fair test as the approved ones (96 variants, chosen on 2024-2025,
+# shown on 2026); one that passes is a 'new' card like any other, one that does not is only recorded here (it is not
+# a fix attempt: the bot never traded it). Newest first; the run resumes where the last one stopped.
+DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC058", ("5Min", "15Min", "1Min")), ("SC063", ("5Min",)),
+                                                 ("SC011", ("1Min",)), ("SC052", ("1Min",)), ("SC003", ("1Min",)),
+                                                 ("SC047", ("1Min",)), ("SC021", ("5Min",)), ("SC028", ("5Min",)))
+            for tf in tfs for sym in ("US100", "US500", "US30")]
+
+
 def _approved_scout():
     """The scout strategies the manager approved for bot 6 on the CFD test (change {"combo", "kind": "add"}), not undone,
     plus every bot 6 combo with a fix task (data/agents/fix_attempts.json) - each is tested on bot 6's world here."""
@@ -237,6 +248,8 @@ def _approved_scout():
                 out.setdefault(k.split("|", 1)[1], None)
     except Exception as e:  # noqa: BLE001
         print(f"scout_fut: approved list not read: {e}")
+    for combo in DISCOVER:
+        out.setdefault(combo, "discover")
     return out
 
 
@@ -342,7 +355,10 @@ def scout_cards(res):
         fmt = lambda s: f"{s.get('mean') or 0:+.2f}R על {s.get('n', 0)} עסקאות"  # noqa: E731
         win = ch and (ch["unseen"].get("mean") or 0) > 0
         key = f"bot6|{combo}"
-        if key in fx or not win:
+        disc = x.get("card") == "discover"
+        if disc and not win:
+            continue            # never traded by the bot: nothing to fix, no card (the result stays in scout_fut.json)
+        if not disc and (key in fx or not win):
             e = fx.setdefault(key, {"status": "trying", "tried": [], "at": today})
             e["tried"] = [t for t in e.get("tried", []) if t.get("what") != "bot6_world"] + [{
                 "what": "bot6_world", "at": today, "variants": len(x["variants"]),

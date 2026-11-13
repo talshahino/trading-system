@@ -1,0 +1,86 @@
+name: Tal gap wide (bot 5, now)
+
+# Tal's gap method on every FTMO forex pair, the metals and the other indices, in parallel NOW (user, 13.11.2026:
+# "I want it in today's trading"): agents/tal_wide_gh.py. The bots' computer runs the same test a slice at a time.
+
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "minutes of tests per machine"
+        default: "120"
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 175
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        symbols: ["XAUUSD,EURUSD", "AUDCAD,AUDCHF", "AUDJPY,AUDNZD", "AUDUSD,CADCHF", "CADJPY,CHFJPY", "EURAUD,EURCAD", "EURCHF,EURGBP", "EURJPY,EURNZD", "GBPAUD,GBPCAD", "GBPCHF,GBPJPY", "GBPNZD,GBPUSD", "NZDCAD,NZDCHF", "NZDJPY,NZDUSD", "USDCAD,USDCHF", "USDJPY,XAGUSD", "XPTUSD,UK100", "FRA40,EU50", "AUS200,HK50", "N25,SPN35", "US2000"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Run
+        run: python -u -m agents.tal_wide_gh run --symbols "${{ matrix.symbols }}" --minutes ${{ inputs.minutes }} --out wide_out 2>&1 | tee run.log
+      - name: Name
+        id: n
+        run: echo "n=$(echo '${{ matrix.symbols }}' | tr ',' '_')" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wide-${{ steps.n.outputs.n }}
+          path: |
+            wide_out
+            run.log
+          retention-days: 5
+  merge:
+    needs: run
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          path: parts
+          pattern: wide-*
+      - name: Merge, results and cards
+        run: python -u -m agents.tal_wide_gh merge --parts parts --out wide_merged 2>&1 | tee merge.log
+      - name: Manager
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -u agent_manager.py 2>&1 | tail -20
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/agents/strategies/tal_gap_results.json reports/agents || true
+          git commit -qm "Bot 5: Tal's gap method on every FTMO forex pair, metals, other indices (GitHub, tal_wide_gh)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

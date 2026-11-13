@@ -251,6 +251,10 @@ NOTE_TESTS = [
     # the fast charts (13.11, GER40 t15_5): half out at half the way, the rest's stop to the entry. "ask": the user
     # asked for it again after "no change" (13.11 17:49, on bot 6: "I want it anyway on the fast charts") - so the card
     # goes to the manager with the request and the numbers whatever they show (tal_thinking.md), and the manager decides
+    # the loss report of 12.11 (manager reopened 13.11 18:38: a tested fix in every family) - the stop family on t15_1,
+    # whose US500 short of 12.11 16:07 was stopped by the rally: the same wider stop beyond the swing
+    {"id": "t15_1_spad", "track": "t15_1", "knob": "SPAD", "vals": [0.0005, 0.001, 0.002],
+     "he": "סטופ רחב יותר מעבר לסווינג (% מהמחיר)"},
     {"id": "t15_5_p5050", "track": "t15_5", "knob": "EXIT", "vals": ["p50_50"], "he": "50% החוצה ב־50% מהדרך + סטופ לכניסה", "ask": True},
     {"id": "t5_1_p5050", "track": "t5_1", "knob": "EXIT", "vals": ["p50_50"], "he": "50% החוצה ב־50% מהדרך + סטופ לכניסה", "ask": True},
     # bot 5's smart agent, 13.11.2026 night, from the live record: 3 of the day's 5 losses were filled within 40 minutes
@@ -259,7 +263,12 @@ NOTE_TESTS = [
     {"id": "t15_5_xopen", "track": "t15_5", "knob": "SESS", "vals": ["xopen"], "he": "בלי כניסות ב־09:30-10:00 ניו יורק"},
     {"id": "t15_1_xopen", "track": "t15_1", "knob": "SESS", "vals": ["xopen"], "he": "בלי כניסות ב־09:30-10:00 ניו יורק"},
     {"id": "t4h_5_xopen", "track": "t4h_5", "knob": "SESS", "vals": ["xopen"], "he": "בלי כניסות ב־09:30-10:00 ניו יורק"},
-]
+] + [
+    # laddered entries across the gap's box (user, 13.11.2026, the task in replies.json "_tasks"): the same total risk,
+    # stop and target, 2-4 levels (tal_gap.LADDERS; "3m" = more in the middle) - on every index track that runs
+    {"id": f"{trk}_ladder", "track": trk, "knob": "LADDER", "vals": ["2", "3", "3m", "4"],
+     "he": "כניסה מדורגת לאורך הגאפ, אותו סיכון כולל"}
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
 
 
 def _note_cfgs():
@@ -379,6 +388,107 @@ def note_cards(tidx):
             detail={"note_test": row, "worth_month_pct": worth},
             change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
     return out, res
+
+
+# a shared exit (user, 13.11.2026, the task in replies.json "_tasks"): close every open trade at once when their total
+# reaches a target - tested on the whole bot as it runs (every track with risk > 0, the index tracks and the
+# instruments' own, each at its real risk x tal_risk_scale), tal_gap.shared_test. The trades' minute paths are the
+# computer's own cache (tal/shared, unpublished), one file per instrument, so a run that stops goes on next time.
+SHARED_DIR = TAL_DIR / "shared"
+
+
+def _shared_live():
+    try:
+        s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return None, {}, {}
+    rk, sc = s5.get("risk") or {}, float(s5.get("tal_risk_scale", 1.0) or 1.0)
+    live = {k: (f"{v['pair'][0]}/{v['pair'][1]}", TG._norm(dict(v["cfg"])), list(v.get("symbols") or TAL_SYMBOLS))
+            for k, v in (s5.get("tal_tracks") or {}).items() if float(rk.get(k, 0.0028) or 0) > 0}
+    risk = {k: float(rk.get(k, 0.0028)) * sc * 100 for k in live}
+    h = hashlib.sha1(json.dumps({k: [v[0], v[1], v[2]] for k, v in sorted(live.items())}, sort_keys=True,
+                                default=str).encode()).hexdigest()[:10]
+    return h, live, risk
+
+
+def shared_runs(budget_s):
+    import pickle
+    h, live, _ = _shared_live()
+    if not live:
+        return 0
+    SHARED_DIR.mkdir(parents=True, exist_ok=True)
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    syms = sorted({sy for v in live.values() for sy in v[2]})
+    t0, done = time.time(), 0
+    for sym in syms:
+        f = SHARED_DIR / f"{h}_{sym}.pkl"
+        if f.exists() or time.time() - t0 > budget_s:
+            continue
+        D, gc = tal_load(sym), {}
+        if D is None:
+            print(f"tal shared exit {sym}: no data")
+            continue
+        rows = []
+        for trk, (pn, cfg, ss) in live.items():
+            if sym not in ss or pn not in pairs:
+                continue
+            keep = []
+            t = TG.simulate(D, pairs[pn], cfg, gc.setdefault(pn.split("/")[0], {}), keep=keep)
+            for (tt, vv), x, k in zip(TG.trade_paths(D, keep), t.itertuples(), keep):
+                rows.append({"trk": trk, "sym": sym, "time": x.time, "r": float(x.r), "mins": int(x.mins), "t": tt, "v": vv})
+        f.write_bytes(pickle.dumps(rows))
+        done += 1
+    print(f"tal shared exit: {done} instruments run")
+    return done
+
+
+def shared_cards():
+    """(cards, results) once every instrument's paths are there."""
+    import pickle
+    h, live, risk = _shared_live()
+    if not live:
+        return [], {"state": "no tracks"}
+    syms = sorted({sy for v in live.values() for sy in v[2]})
+    miss = [sy for sy in syms if not (SHARED_DIR / f"{h}_{sy}.pkl").exists()]
+    if miss:
+        return [], {"state": "running", "missing": miss}
+    rows = []
+    for sy in syms:
+        rows += pickle.loads((SHARED_DIR / f"{h}_{sy}.pkl").read_bytes())
+    if not rows:
+        return [], {"state": "no trades"}
+    t = pd.DataFrame([{k: v for k, v in r.items() if k not in ("t", "v")} for r in rows])
+    t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
+    t["out"] = t["time"] + pd.to_timedelta(t["mins"].astype(float) + 1, unit="min")
+    order = np.argsort(t["time"].to_numpy(), kind="stable")
+    t = t.iloc[order].reset_index(drop=True)
+    items = [{"t": rows[i]["t"], "v": rows[i]["v"], "r": rows[i]["r"]} for i in order]
+    res = TG.shared_test(t, items, risk)
+    res.update(state="done", tracks=len(live), instruments=len(syms), n=int(len(t)))
+    if not res["better"]:
+        return [], res
+    k = res["chosen"]
+    a, b = res["rows"]["now"], res["rows"][k]
+    mode, rest = ("r", k[1:]) if k.startswith("r") else ("pct", k[3:])
+    x, m = rest.split("_m")
+    what = f"+{x}R מהסיכון הפתוח" if mode == "r" else f"+{x}% מהחשבון"
+    ws = t["trk"].map(risk).fillna(0).to_numpy(float) / 100
+    u = t.copy()
+    u["r"] = [r_ for r_, _ in TG.shared_exit([dict(it, w=w_) for it, w_ in zip(items, ws)], mode, float(x), int(m))]
+    st, bs = stats(u), stats(t)
+    card = K.card(
+        BOT, "improve", f"יציאה משותפת: לסגור את כל העסקאות הפתוחות כשהרווח המשותף מגיע ל־{what} (לפחות {m} פתוחות)",
+        f"הבקשה של טל מ־13.11. נבדק על הבוט כולו כפי שהוא ({len(live)} מסלולים, {len(syms)} מכשירים, הסיכון האמיתי), כל עסקה "
+        f"שומרת על הסטופ והיעד שלה. נבחר על 2024-2025 (סה\"כ {a['train']['total_pct']:+.1f}% ← {b['train']['total_pct']:+.1f}%, "
+        f"ירידה {a['train']['max_fall_pct']:.1f}% ← {b['train']['max_fall_pct']:.1f}%). 2026 (לא נראתה): סה\"כ "
+        f"{a['unseen']['total_pct']:+.1f}% ← {b['unseen']['total_pct']:+.1f}%, היום הגרוע {a['unseen']['worst_day_pct']:+.2f}% ← "
+        f"{b['unseen']['worst_day_pct']:+.2f}%, ירידה {a['unseen']['max_fall_pct']:.1f}% ← {b['unseen']['max_fall_pct']:.1f}%. "
+        f"נסגרו מוקדם {b['closed_early_unseen']} עסקאות ב־2026. צריך קוד בבוט החי (נבנה אחרי אישור).",
+        st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], baseline=bs["unseen"],
+        tested=len(TG.SHARED_VARIANTS), risk_pct=round(max(risk.values()), 3) if risk else None,
+        detail={"shared_exit": res},
+        change={"track": "tal_all", "knob": "SHARED_EXIT", "to": {"mode": mode, "x": float(x), "min_open": int(m)}, "code": True})
+    return [card], res
 
 
 def _risk_view(t):
@@ -717,6 +827,10 @@ def main():
         except Exception as e:  # noqa: BLE001
             print("tal note runs failed:", e)
         try:
+            shared_runs(tal_left * 0.15)            # the shared exit on the whole bot (user, 13.11.2026)
+        except Exception as e:  # noqa: BLE001
+            print("tal shared exit runs failed:", e)
+        try:
             stab_runs(tal_left * 0.1)               # stability: the low-MIN_RR tracks with MIN_RR 0.5 / 1.0 (13.11.2026 night)
         except Exception as e:  # noqa: BLE001
             print("tal stability runs failed:", e)
@@ -871,6 +985,13 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             except Exception as e:  # noqa: BLE001
                 print("tal note tests failed:", e)
+            try:
+                xcards, xres = shared_cards()
+                cards += xcards
+                doc["bot5"]["shared_exit"] = xres
+                TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            except Exception as e:  # noqa: BLE001
+                print("tal shared exit failed:", e)
             sc_card = TG.scale_card(BOT, pf_all or pf, cur_sc)
             if sc_card:
                 cards.append(sc_card)

@@ -62,12 +62,16 @@ KNOBS = {"GBODY": [0.0, 1.0, 2.0], "MIN_GAP": [0.0, 0.6], "SW": [2, 5], "MIN_RR"
          # (UTC) and only shorts below it; up20 = only in the direction of the next timeframe up (at most 4 hours)
          # against its 20-candle EMA. Off by default (not in BASE), like EXIT / IMP1. Both work on the live bot's
          # 14 days of minutes (live_trades applies the same rule).
-         "TREND": ["day", "up20"]}
+         "TREND": ["day", "up20"],
+         # laddered entries across the gap's box, the same total risk (user, 13.11.2026; LADDERS above simulate). Off
+         # by default (not in BASE), like EXIT / IMP1 / TREND; the live bot runs the same levels (live_trades).
+         "LADDER": ["2", "3", "3m", "4"]}
 NAMES = {"GBODY": "עוצמת הדחף (גוף הנר האמצעי מול הממוצע)", "MIN_GAP": "גודל גאפ מינימלי (מול הטווח הממוצע)",
          "SW": "סווינג בטיים פריים הנמוך (נרות מכל צד)", "MIN_RR": "יחס מינימלי יעד/סטופ", "EXPIRY": "תוקף הגאפ (שעות)",
          "PROT": "הגנה מהודעות וזעזועים", "EXIT": "ניהול העסקה: יציאה חלקית / סטופ לנקודת הכניסה",
          "IMP1": "אחרי סטופ - בלי עוד כניסות מאותו דחף",
-         "TREND": "רק בכיוון התמונה הגדולה (פתיחת היום / טיים פריים מעל)"}
+         "TREND": "רק בכיוון התמונה הגדולה (פתיחת היום / טיים פריים מעל)",
+         "LADDER": "כניסה מדורגת לאורך הגאפ (אותו סיכון כולל)"}
 UP = {"1m": "5m", "5m": "15m", "15m": "1h", "1h": "4h", "4h": "4h", "1d": "4h"}   # TREND up20: the timeframe above (<= 4h)
 PROT_HE = {"none": "בלי הגנה", "cal15": "יומן ±15 דק'", "cal60": "יומן ±60 דק'", "shock": "זעזועים",
            "cal15shock": "יומן ±15 דק' + זעזועים"}
@@ -336,7 +340,129 @@ def tp_way(cfg):
     return int(m[2:]) / 100 if m.startswith("tp") else None
 
 
-def simulate(D, pair, cfg, gcache):
+# laddered entries (user, 13.11.2026: "instead of one entry in the middle of the gap - several small entries across the
+# gap's box, the same total risk, the same stop and target"). LADDER = the levels as a share of the box from its near
+# edge (0, the side the price reaches first) to its far edge (1), and each level's share of the track's risk; a level
+# beyond the stop is dropped and the shares of the rest scale up to the whole risk. The trade starts at the first
+# level's touch; the stop, the target, MIN_RR and the filters are those of the middle of the gap (the trade of
+# LADDER none), so only the fills differ. A deeper level fills only while the trade runs and before the management
+# level (EXIT) is reached - then the waiting levels are cancelled; each filled level has its own size (its share of
+# the risk over its own distance to the stop), its own part out and its own stop to ITS entry. Each fill pays its own
+# spread + commission (FTMO's real cost per unit, so the total cost is the same per unit traded). Off unless set.
+LADDERS = {"2": ([0.25, 0.75], [0.5, 0.5]), "2n": ([0.0, 0.5], [0.5, 0.5]),
+           "3": ([0.0, 0.5, 1.0], [1 / 3, 1 / 3, 1 / 3]), "3m": ([0.0, 0.5, 1.0], [0.25, 0.5, 0.25]),
+           "4": ([0.0, 1 / 3, 2 / 3, 1.0], [0.25, 0.25, 0.25, 0.25]), "4m": ([0.0, 1 / 3, 2 / 3, 1.0], [0.2, 0.3, 0.3, 0.2])}
+
+
+def ladder_of(cfg):
+    m = cfg.get("LADDER")
+    return LADDERS.get(str(m)) if m and m != "none" else None
+
+
+def ladder_legs(lad, d, near, far, stop, risk_ref):
+    """[(price, share of the risk)] of the levels on the right side of the stop (at least a tenth of the middle's
+    distance from it), the shares scaled up to 1; [] when none is left."""
+    legs = [(near + x * (far - near), w) for x, w in zip(*lad)]
+    legs = [(p, w) for p, w in legs if d * (p - stop) >= 0.1 * risk_ref]
+    tot = sum(w for _, w in legs)
+    return [(p, w / tot) for p, w in legs] if tot > 0 else []
+
+
+def ladder_trade(D, f, d, legs, stop, tgt, ref, cfg, e):
+    """One laddered trade from its first fill at bar f, looked at up to bar e (exclusive). The whole trade ends at the
+    first stop / target / forced close (the same bars as the single entry); each level's result in R of the track's
+    whole risk. Returns None while it is still open at e when e is the data's end handled by the caller - the dict has
+    end (bar offset of the last exit, or None if open), r (closed) / r_now (open), why, entry (the filled levels'
+    average price, by share), filled, cost_r, moved (a part was taken / the stops moved)."""
+    ns, o1, h1, l1, c1 = D.ns, D.o1, D.h1, D.l1, D.c1
+    hs, ls = h1[f:e], l1[f:e]
+    big = e - f + 1
+    st = (ls <= stop) if d > 0 else (hs >= stop)
+    tg = (hs >= tgt) if d > 0 else (ls <= tgt)
+    tg[0] = False
+    sh = D.shut[f:e].copy()
+    sh[0] = False
+    i_st = int(np.argmax(st)) if st.any() else big
+    i_tg = int(np.argmax(tg)) if tg.any() else big
+    i_sh = int(np.argmax(sh)) if sh.any() else big
+    i = min(i_st, i_tg, i_sh)
+    em = exit_mode(cfg)
+    i_lv, lvl, frac = big, None, 0.0
+    if em is not None:
+        frac, way = em
+        lvl = ref + way * (tgt - ref)
+        lv = (hs >= lvl) if d > 0 else (ls <= lvl)
+        lv[0] = False
+        i_lv = int(np.argmax(lv)) if lv.any() else big
+        if i_lv >= i:
+            i_lv = big
+    out = {"r": 0.0, "r_now": 0.0, "cost_r": 0.0, "filled": 0, "end": 0, "open": False, "moved": i_lv < big,
+           "why": None, "entry": 0.0, "whys": []}
+    wsum = 0.0
+    for j, (lp, w) in enumerate(legs):
+        if j == 0:
+            fi = 0
+        else:
+            hit = (ls <= lp) if d > 0 else (hs >= lp)
+            if not hit.any():
+                continue
+            fi = int(np.argmax(hit))
+            # a level fills while the trade runs: before the management level, and before the end - on the stop's bar
+            # it fills (the price went through it to the stop: careful), on the target's / a forced close's not
+            if fi >= i_lv or fi > i or (fi == i and i != i_st) or D.late[f + fi]:
+                continue
+        q = f + fi
+        px = (min(lp, o1[q]) if d > 0 else max(lp, o1[q])) if fi else (min(lp, o1[f]) if d > 0 else max(lp, o1[f]))
+        risk = d * (px - stop)
+        if risk <= 0:
+            continue
+        cost = float(D.cost[q]) / risk
+        part, ie, why = 0.0, i, None
+        if i_lv < big and fi < i_lv:
+            part = frac * d * (lvl - px) / risk
+            be = (ls[i_lv + 1:] <= px) if d > 0 else (hs[i_lv + 1:] >= px)
+            i_be = i_lv + 1 + int(np.argmax(be)) if be.any() else big
+            if i_be <= i:
+                ie, why = i_be, "breakeven"
+                ex = min(px, o1[f + ie]) if d > 0 else max(px, o1[f + ie])
+        keep = 1 - frac if part else 1.0
+        if why is None:
+            if i >= big:
+                out["open"] = True
+                out["r_now"] += w * (part + keep * d * (c1[e - 1] - px) / risk - cost)
+                out["filled"] += 1
+                out["entry"] += w * px
+                wsum += w
+                out["cost_r"] += w * cost
+                continue
+            qx = f + i
+            if i == i_st:
+                ex, why = ((min(stop, o1[qx]) if d > 0 else max(stop, o1[qx])) if i else stop), "stop"
+            elif i == i_tg:
+                ex, why = (max(tgt, o1[qx]) if d > 0 else min(tgt, o1[qx])), "target"
+            else:
+                ex, why = o1[qx], "session"
+        r_leg = w * (part + keep * d * (ex - px) / risk - cost)
+        out["r"] += r_leg
+        out["r_now"] += r_leg
+        out["filled"] += 1
+        out["entry"] += w * px
+        wsum += w
+        out["cost_r"] += w * cost
+        out["end"] = max(out["end"], ie)
+        out["whys"].append(why)
+    if not wsum:
+        return None
+    out["entry"] /= wsum
+    w_ = out["whys"]
+    out["why"] = None if out["open"] else ("breakeven" if w_ and all(x == "breakeven" for x in w_) else
+                                           next((x for x in w_ if x != "breakeven"), "breakeven"))
+    if out["open"]:
+        out["end"] = None
+    return out
+
+
+def simulate(D, pair, cfg, gcache, keep=None):
     htf, ltf, _ = pair
     g = gaps(D, htf, cfg["GBODY"], cfg["MIN_GAP"], gcache)
     hi_sw, lo_sw = D.swings(ltf, cfg["SW"])
@@ -347,13 +473,15 @@ def simulate(D, pair, cfg, gcache):
     calk = "cal60" if prot == "cal60" else "cal15" if prot in ("cal15", "cal15shock") else None
     shock = prot in ("shock", "cal15shock")
     trend = D.trend(htf, cfg.get("TREND", "none"))
+    lad = ladder_of(cfg)
     cands = []
     for d, mid, near, far, made, armed in g:
         q0 = int(np.searchsorted(ns, armed))
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))      # from the impulse's end (the order's placing)
         if q0 >= q1:
             continue
-        seg = (l1[q0:q1] <= mid) if d > 0 else (h1[q0:q1] >= mid)
+        lv0 = (near + lad[0][0] * (far - near)) if lad else mid       # LADDER: the first level's touch starts the trade
+        seg = (l1[q0:q1] <= lv0) if d > 0 else (h1[q0:q1] >= lv0)
         if not seg.any():
             continue
         f = q0 + int(np.argmax(seg))
@@ -370,7 +498,7 @@ def simulate(D, pair, cfg, gcache):
                 continue                                 # a shock against the gap while it waited: cancelled
             if D.recent_shock[f] or ((l1[f] < far) if d > 0 else (h1[f] > far)):
                 continue                                 # not a calm correction
-        px = min(mid, o1[f]) if d > 0 else max(mid, o1[f])
+        px = (min(mid, o1[f]) if d > 0 else max(mid, o1[f])) if not lad else mid   # LADDER: the middle's geometry
         sw_st, sw_tg = (lo_sw, hi_sw) if d > 0 else (hi_sw, lo_sw)
         s2 = _count_back(*sw_st, ns[f], px, d, -d)
         t2 = _count_back(*sw_tg, ns[f], px, d, d)
@@ -384,11 +512,31 @@ def simulate(D, pair, cfg, gcache):
             continue
         if tp_way(cfg):
             t2 = px + tp_way(cfg) * (t2 - px)
-        cands.append((f, d, px, stop, t2, risk, armed))
-    cands.sort()
+        legs = ladder_legs(lad, d, near, far, stop, risk) if lad else None
+        if lad and not legs:
+            continue
+        cands.append((f, d, px, stop, t2, risk, armed, legs))
+    cands.sort(key=lambda x: x[:7])
     rows, busy, dead, imp1 = [], -1, set(), cfg.get("IMP1") is True
-    for f, d, px, stop, tgt, risk, armed in cands:
+    for f, d, px, stop, tgt, risk, armed, legs in cands:
         if f < busy or (imp1 and (armed, d) in dead):
+            continue
+        if legs:
+            for span in (4 * 1440, 40 * 1440):
+                e = min(n1, f + span)
+                lt = ladder_trade(D, f, d, legs, stop, tgt, px, cfg, e)
+                if lt is None or not lt["open"] or e >= n1:
+                    break
+            if lt is None:
+                continue
+            if lt["open"]:
+                break                                    # still open at the data's end
+            if lt["why"] == "stop":
+                dead.add((armed, d))
+            rows.append({"time": pd.Timestamp(ns[f], tz="UTC").isoformat(), "dir": d, "r": round(lt["r"], 4),
+                         "cost_r": round(lt["cost_r"], 4), "rr": round(d * (tgt - px) / risk, 2), "why": lt["why"],
+                         "mins": lt["end"]})
+            busy = f + lt["end"] + 1
             continue
         for span in (4 * 1440, 40 * 1440):              # most trades end within a day; the rest within weeks
             e = min(n1, f + span)
@@ -438,6 +586,9 @@ def simulate(D, pair, cfg, gcache):
         r_all = (part_r + (1 - frac) * r_rest) if part_r else r_rest
         rows.append({"time": pd.Timestamp(ns[f], tz="UTC").isoformat(), "dir": d, "r": round(r_all - cost_r, 4),
                      "cost_r": round(cost_r, 4), "rr": round(d * (tgt - px) / risk, 2), "why": why, "mins": i})
+        if keep is not None:                              # the trade's path (shared_exit): where it was each minute
+            keep.append({"f": int(f), "q": int(q), "d": int(d), "px": float(px), "risk": float(risk), "cost": float(cost_r),
+                         "lv": int(f + i_lv) if part_r else None, "part": float(part_r), "frac": float(frac)})
         busy = q + 1
     return pd.DataFrame(rows, columns=["time", "dir", "r", "cost_r", "rr", "why", "mins"])
 
@@ -514,7 +665,7 @@ def _cfg_runs(p, cfg, symbols, idx):
 
 
 def _norm(c):
-    for k in ("EXIT", "IMP1", "TREND"):
+    for k in ("EXIT", "IMP1", "TREND", "LADDER"):
         if c.get(k) == "none":
             c.pop(k)                                    # "none" is the base: the same configuration, the same name
     return c
@@ -1055,6 +1206,119 @@ def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None, lim=None):
             "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
 
 
+# ---------------------------------------------------------------- a shared exit (user, 13.11.2026, an idea from a video)
+# "When several trades are open together - close all of them at once when the open trades' total profit reaches a
+# target." Tested on the bot as it is: every track at its real risk, the same entries, each trade keeps its own stop and
+# target; each minute the open trades are marked at the minute's close (net of their cost), and when their total
+# reaches the target - in R of the open risk, or in % of the account - with at least MIN open, all of them close at
+# that close. Careful: a track that was closed early by it does not take the next trade sooner (the entries stay the
+# same), so the test cannot show more trades than the bot as it is.
+SHARED_VARIANTS = [("r", x, m) for x in (0.5, 1.0, 1.5, 2.0) for m in (2, 3)] + \
+                  [("pct", x, 2) for x in (0.25, 0.5, 1.0)]
+
+
+def trade_paths(D, keep):
+    """Per trade of simulate(..., keep=[]): the minutes' times and the open result in R (net of its cost) each minute
+    before its own exit."""
+    out = []
+    for k in keep:
+        f, q = k["f"], k["q"]
+        if q <= f:
+            out.append((D.ns[f:f], np.zeros(0)))
+            continue
+        v = k["d"] * (D.c1[f:q] - k["px"]) / k["risk"]
+        if k["lv"] is not None and k["lv"] < q:
+            j = k["lv"] - f
+            v[j:] = k["part"] + (1 - k["frac"]) * v[j:]
+        out.append((D.ns[f:q], (v - k["cost"]).astype(np.float32)))
+    return out
+
+
+def shared_exit(items, mode, x, min_open):
+    """items: [{"w": risk as a share of the account, "t": minute times (ns), "v": open R each minute, "r": the trade's
+    own result}] -> [(r, closed early at ns or None)] in the same order."""
+    ts = [it["t"] for it in items if len(it["t"])]
+    if not ts:
+        return [(it["r"], None) for it in items]
+    G = np.unique(np.concatenate(ts))
+    n = len(G)
+    P, W, N = np.zeros(n), np.zeros(n), np.zeros(n, np.int32)
+    span = []
+    for it in items:
+        if not len(it["t"]):
+            span.append(None)
+            continue
+        a = int(np.searchsorted(G, it["t"][0]))
+        b = int(np.searchsorted(G, it["t"][-1], side="right"))
+        vg = it["v"][np.searchsorted(it["t"], G[a:b], side="right") - 1].astype(float)
+        P[a:b] += it["w"] * vg
+        W[a:b] += it["w"]
+        N[a:b] += 1
+        span.append((a, b, vg))
+
+    def cond(lo, hi):
+        if mode == "r":
+            return (N[lo:hi] >= min_open) & (P[lo:hi] >= x * W[lo:hi] - 1e-12)
+        return (N[lo:hi] >= min_open) & (P[lo:hi] * 100 >= x - 1e-12)
+    C = cond(0, n)
+    A = np.array([s_[0] if s_ else -1 for s_ in span])
+    B = np.array([s_[1] if s_ else -1 for s_ in span])
+    closed = np.zeros(len(items), bool)
+    res = [(it["r"], None) for it in items]
+    pos = 0
+    while pos < n:
+        k = int(np.argmax(C[pos:]))
+        if not C[pos + k]:
+            break
+        t0 = pos + k
+        hit = np.where((A <= t0) & (B > t0) & ~closed)[0]
+        hi = t0 + 1
+        for j in hit:
+            a, b, vg = span[j]
+            res[j] = (float(vg[t0 - a]), int(G[t0]))
+            closed[j] = True
+            if b > t0 + 1:
+                P[t0 + 1:b] -= items[j]["w"] * vg[t0 + 1 - a:]
+                W[t0 + 1:b] -= items[j]["w"]
+                N[t0 + 1:b] -= 1
+                hi = max(hi, b)
+        C[t0 + 1:hi] = cond(t0 + 1, hi)
+        pos = t0 + 1
+    return res
+
+
+def shared_test(t, items, risk_pct, lim=None):
+    """t: the bot's trades (time, out, r, trk) in the order of items. The account (account()) as it is and with each
+    SHARED_VARIANTS, on 2024-2025 and on 2026; chosen on 2024-2025 only: the most total % whose deepest fall is not
+    deeper than the bot's as it is (more profit, not more risk)."""
+    t = t.copy().reset_index(drop=True)
+    rows = {"now": {"train": account(t[t["time"] < SPLIT], risk_pct, lim), "unseen": account(t[t["time"] >= SPLIT], risk_pct, lim)}}
+    ws = t["trk"].map(risk_pct).fillna(0).to_numpy(float) / 100
+    for mode, x, m in SHARED_VARIANTS:
+        its = [dict(it, w=w_) for it, w_ in zip(items, ws)]
+        res = shared_exit(its, mode, x, m)
+        u = t.copy()
+        u["r"] = [r_ for r_, _ in res]
+        early = [e_ for _, e_ in res]
+        u["out"] = [pd.Timestamp(e_, tz="UTC") + pd.Timedelta(minutes=1) if e_ is not None else o_ for e_, o_ in zip(early, t["out"])]
+        key = f"{mode}{x}_m{m}"
+        rows[key] = {"train": account(u[u["time"] < SPLIT], risk_pct, lim), "unseen": account(u[u["time"] >= SPLIT], risk_pct, lim),
+                     "closed_early": int(sum(e_ is not None for e_ in early)),
+                     "closed_early_unseen": int(sum(e_ is not None for e_, tt in zip(early, t["time"]) if tt >= SPLIT))}
+    now = rows["now"]["train"]
+    best = None
+    for k_, v_ in rows.items():
+        if k_ == "now" or not v_["train"] or not now:
+            continue
+        if v_["train"]["max_fall_pct"] <= now["max_fall_pct"] + 1e-9 and v_["train"]["total_pct"] > now["total_pct"] \
+                and (best is None or v_["train"]["total_pct"] > rows[best]["train"]["total_pct"]):
+            best = k_
+    better = bool(best and rows[best]["unseen"] and rows["now"]["unseen"]
+                  and rows[best]["unseen"]["total_pct"] > rows["now"]["unseen"]["total_pct"]
+                  and rows[best]["unseen"]["worst_day_pct"] >= rows["now"]["unseen"]["worst_day_pct"])
+    return {"rows": rows, "chosen": best, "better": better, "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
+
+
 def _by(t, key):
     out = {}
     for k_, part in t.groupby(key):
@@ -1165,6 +1429,7 @@ def live_trades(D, pair, cfg, gcache=None):
     calk = "cal60" if prot == "cal60" else "cal15" if prot in ("cal15", "cal15shock") else None
     shock = prot in ("shock", "cal15shock")
     trend = D.trend(htf, cfg.get("TREND", "none"))
+    lad = ladder_of(cfg)
     out, cands = [], []
     # pass 1: every gap -> pending / cancelled, or a candidate fill (exactly simulate()'s checks, protection included)
     geo = gcache.get((htf, cfg["GBODY"], cfg["MIN_GAP"], "geo")) or []
@@ -1180,7 +1445,8 @@ def live_trades(D, pair, cfg, gcache=None):
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))
         if q0 >= n1:
             continue
-        seg = (l1[q0:q1] <= mid) if d > 0 else (h1[q0:q1] >= mid)
+        lv0 = (near + lad[0][0] * (far - near)) if lad else mid       # LADDER: the first level's touch (as simulate)
+        seg = (l1[q0:q1] <= lv0) if d > 0 else (h1[q0:q1] >= lv0)
         if calk and calk in D.cal and D.cal_start[calk][q1 - 1] - (D.cal_start[calk][q0 - 1] if q0 else 0) > 0 and not seg.any():
             out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="news"))
             continue
@@ -1209,7 +1475,7 @@ def live_trades(D, pair, cfg, gcache=None):
         if why:
             out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason=why))
             continue
-        px = min(mid, o1[f]) if d > 0 else max(mid, o1[f])
+        px = (min(mid, o1[f]) if d > 0 else max(mid, o1[f])) if not lad else mid
         sw_st, sw_tg = (lo_sw, hi_sw) if d > 0 else (hi_sw, lo_sw)
         s2 = _count_back(*sw_st, ns[f], px, d, -d)
         t2 = _count_back(*sw_tg, ns[f], px, d, d)
@@ -1232,6 +1498,11 @@ def live_trades(D, pair, cfg, gcache=None):
             continue
         if tp_way(cfg):
             t2 = px + tp_way(cfg) * (t2 - px)
+        legs = ladder_legs(lad, d, near, far, stop, risk) if lad else None
+        if lad and not legs:
+            out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="rr"))
+            continue
+        base = dict(base, legs=[[float(p_), round(float(w_), 4)] for p_, w_ in legs]) if legs else base
         cands.append((f, d, px, stop, t2, risk, base))
     # pass 2: in the order of the fills, one trade at a time per instrument (as simulate())
     busy, dead, imp1 = -1, set(), cfg.get("IMP1") is True
@@ -1242,6 +1513,26 @@ def live_trades(D, pair, cfg, gcache=None):
             continue
         if imp1 and (base["setup_t"], d) in dead:      # IMP1: a gap of this impulse was already stopped
             out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="impulse"))
+            continue
+        if base.get("legs"):                             # LADDER: the same levels and fills as simulate()
+            lt = ladder_trade(D, f, d, [tuple(x) for x in base["legs"]], stop, t2, px, cfg, n1)
+            if lt is None:
+                continue
+            rec = dict(base, entry=float(lt["entry"]), stop=float(stop), target=float(t2), rr=round(d * (t2 - px) / risk, 2),
+                       cost_r=0.0, time=ts(f), part=None, filled=lt["filled"])
+            if lt["moved"]:
+                rec["stop_now"] = float(lt["entry"])
+            if lt["open"]:
+                rec.update(status="open", r_now=round(lt["r_now"], 3))
+                busy = n1
+            else:
+                q = f + lt["end"]
+                rec.update(status="closed", exit=float(lt["entry"] if lt["why"] == "breakeven" else (stop if lt["why"] == "stop" else t2 if lt["why"] == "target" else o1[q])),
+                           exit_time=ts(q), reason=lt["why"] if lt["why"] != "session" else "forced", r=round(lt["r"], 4))
+                if lt["why"] == "stop":
+                    dead.add((base["setup_t"], d))
+                busy = q + 1
+            out.append(rec)
             continue
         cost_r = float(D.cost[f]) / risk
         hs, ls = h1[f:], l1[f:]

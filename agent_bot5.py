@@ -163,6 +163,113 @@ def trend_runs(budget_s):
     return done
 
 
+STAB_RR = (0.5, 1.0)
+
+
+def stab_runs(budget_s):
+    """Stability (bot 5's smart agent, 13.11.2026 night; Tal 5.11: "many small wins and one big loss = not stable"):
+    a running track with a low minimum target / stop (live 12.11: t4h_15 took US100 / US500 at 0.22-0.28 - a win
+    +0.22R, a loss -1R) with MIN_RR raised to 0.5 / 1.0, on the five indices - the same rules otherwise, saved in the
+    gap method's index like trend_runs()."""
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    idx_dir = TAL_DIR / "idx"
+    idx_dir.mkdir(parents=True, exist_ok=True)
+    have = {f.stem for f in idx_dir.glob("*.json")}
+    t0, done = time.time(), 0
+    want = [(pn, TG._norm(dict(cfg, MIN_RR=x))) for pn, cfg, _ in _live_tracks().values()
+            for x in STAB_RR if float(cfg.get("MIN_RR", 0) or 0) < x]
+    for sym in TAL_SYMBOLS:
+        todo = [(pn, c) for pn, c in want if f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}" not in have]
+        if not todo or time.time() - t0 > budget_s:
+            continue
+        D, gc = tal_load(sym), {}
+        if D is None:
+            continue
+        for pn, c in todo:
+            key = f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}"
+            t = TG.simulate(D, pairs[pn], c, gc.setdefault(pn.split("/")[0], {}))
+            t.to_csv(TAL_DIR / f"{key}.csv.gz", index=False)
+            (idx_dir / f"{key}.json").write_text(json.dumps(
+                {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": pairs[pn][2],
+                 "knob": "search", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f"{key}.csv.gz", "n": len(t)}, default=str))
+            done += 1
+    print(f"tal stability: {done} run")
+    return done
+
+
+def _risk_view(t):
+    """Per period: the total R (time-weighted on 2024-2025), the deepest fall and the worst day in R, and the total
+    per unit of deepest fall - profit and risk together (the main goal: more profit AND less risk)."""
+    out = {}
+    for nm, part in (("train", t[t["time"] < SPLIT]), ("unseen", t[t["time"] >= SPLIT])):
+        part = part.sort_values("time")
+        if len(part) < 20:
+            out[nm] = None
+            continue
+        tot = TG.score(part) if nm == "train" else float(part["r"].sum())
+        cum = part["r"].cumsum()
+        fall = float((cum.cummax() - cum).max())
+        day = part.groupby(part["time"].dt.strftime("%Y-%m-%d"))["r"].sum()
+        out[nm] = {"n": int(len(part)), "total": round(tot, 1), "max_fall": round(fall, 1),
+                   "worst_day": round(float(day.min()), 2), "per_fall": round(tot / max(fall, 1.0), 3),
+                   "small_wins": round(float(((part["r"] > 0) & (part["r"] < 0.5)).mean()) * 100, 1)}
+    return out
+
+
+def stab_cards(tidx):
+    """Per running track with a low MIN_RR: the version CHOSEN on 2024-2025 by total per deepest fall (profit and risk
+    together), an 'improve' card only when on 2026 (unseen) it is better per deepest fall, its worst day is not worse
+    and its average R per trade is not lower. Returns (cards, results)."""
+    out, res = [], {}
+    for trk, (pn, cfg, rk) in _live_tracks().items():
+        vs = [x for x in STAB_RR if float(cfg.get("MIN_RR", 0) or 0) < x]
+        if not vs:
+            continue
+        base = _trades(tidx, pn, cfg)
+        if base is None:
+            continue
+        bv = _risk_view(base)
+        row = {"now": {"MIN_RR": cfg.get("MIN_RR"), **bv}}
+        best = None
+        for x in vs:
+            c = TG._norm(dict(cfg, MIN_RR=x))
+            t = _trades(tidx, pn, c)
+            if t is None:
+                continue
+            v = _risk_view(t)
+            row[str(x)] = v
+            if v["train"] and bv["train"] and v["train"]["per_fall"] > bv["train"]["per_fall"] \
+                    and (best is None or v["train"]["per_fall"] > best[1]["train"]["per_fall"]):
+                best = (x, v, c, t)                       # chosen on 2024-2025 only
+        res[trk] = row
+        if not best or not bv["unseen"] or not best[1]["unseen"]:
+            continue
+        x, v, c, t = best
+        u, bu = v["unseen"], bv["unseen"]
+        st, bs = TG._stats(t), TG._stats(base)
+        if u["per_fall"] <= bu["per_fall"] or u["worst_day"] < bu["worst_day"] \
+                or (st["unseen"]["mean"] or -9) < (bs["unseen"]["mean"] or 0):
+            continue
+        hi, lo = pn.split("/")
+        tr, btr = v["train"], bv["train"]
+        out.append(K.card(
+            BOT, "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: יחס מינימלי {cfg.get('MIN_RR')} ← {x} (יציבות)",
+            f"המסלול {trk} עם הכללים שרצים, רק עם יחס מינימלי יעד/סטופ {x} במקום {cfg.get('MIN_RR')}. בחי, 12.11: עסקאות ביחס "
+            f"0.22-0.28 (רווח +0.2R מול הפסד -1R) - טל, 5.11: הרבה רווחים קטנים והפסד גדול אחד זה לא יציב. נבחר על 2024-2025 "
+            f"לפי רווח לכל R של ירידה מהשיא ({btr['per_fall']:.2f} ← {tr['per_fall']:.2f}; סה\"כ משוקלל {btr['total']:+.1f}R ← "
+            f"{tr['total']:+.1f}R, ירידה {btr['max_fall']:.1f}R ← {tr['max_fall']:.1f}R). 2026 (לא נראתה): סה\"כ {bu['total']:+.1f}R ← "
+            f"{u['total']:+.1f}R, ירידה {bu['max_fall']:.1f}R ← {u['max_fall']:.1f}R, היום הגרוע {bu['worst_day']:+.1f}R ← "
+            f"{u['worst_day']:+.1f}R, {st['unseen']['mean']:+.2f}R לעסקה (היום {bs['unseen']['mean']:+.2f}R), "
+            f"רווחים קטנים מ־0.5R: {bu['small_wins']}% ← {u['small_wins']}% מהעסקאות.",
+            st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
+            tested=len(vs), risk_pct=round(rk * 100, 3), baseline=bs["unseen"],
+            neighbours={"values": list(vs), "share_positive": round(float(np.mean(
+                [bool((row.get(str(y)) or {}).get("unseen")) and row[str(y)]["unseen"]["per_fall"] > bu["per_fall"] for y in vs])), 2)},
+            detail={"stability": row},
+            change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
+    return out, res
+
+
 def _trades(tidx, pn, cfg):
     fs = [v for v in tidx.values() if v["pair"] == pn and TG._norm(dict(v["cfg"])) == cfg and v["sym"] in TAL_SYMBOLS]
     if {v["sym"] for v in fs} != set(TAL_SYMBOLS):
@@ -417,6 +524,10 @@ def main():
             trend_runs(tal_left * 0.25)             # the fix of the 12.11 loss against exactly what runs, first
         except Exception as e:  # noqa: BLE001
             print("tal trend runs failed:", e)
+        try:
+            stab_runs(tal_left * 0.1)               # stability: the low-MIN_RR tracks with MIN_RR 0.5 / 1.0 (13.11.2026 night)
+        except Exception as e:  # noqa: BLE001
+            print("tal stability runs failed:", e)
         tal_left = a.minutes * 60 - (time.time() - t_start)
         try:
             TW.run(tal_load, TAL_WIDE_DIR, tal_left * 0.5, wide_chosen())
@@ -536,6 +647,13 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             except Exception as e:  # noqa: BLE001
                 print("tal trend fix failed:", e)
+            try:
+                scards, sres = stab_cards(tidx)
+                cards += scards
+                doc["bot5"]["stability"] = sres
+                TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            except Exception as e:  # noqa: BLE001
+                print("tal stability failed:", e)
             sc_card = TG.scale_card(BOT, pf, cur_sc)
             if sc_card:
                 cards.append(sc_card)

@@ -499,7 +499,7 @@ def risk_mult(combo):
         v = float((_risk_section().get("mult") or {}).get(combo, 1.0))
     except (TypeError, ValueError):
         return 1.0
-    return v if 0 <= v <= 1.5 else 1.0
+    return v if 0 <= v <= 3 else 1.0     # 3: only a guard against a broken file; the real ceiling is the whole-bot check
 
 
 def min_lot(sym, entry, sl, d):

@@ -420,7 +420,7 @@ def test_of(bot, combo):
     return [x[3] for x in tr], (st.get("train") or {}).get("mean")
 
 
-def edge_now(bot, combo, live):
+def edge_now(bot, combo, live, up=False):
     """(multiplier, parts in plain words, m0, m) - None multiplier when there is no 2026 test yet."""
     rs, train = test_of(bot, combo)
     if not rs:
@@ -439,7 +439,7 @@ def edge_now(bot, combo, live):
              f"היתרון עכשיו: {m:+.2f}R לעסקה"]
     if m0 <= 0 or m <= 0:
         return MIN_LOT, parts + ["אין יתרון - נסחרת בכמות המינימלית עד שיימצא תיקון"], round(m0, 3), round(m, 3)
-    mult = min(1.0, m / m0)
+    mult = m / m0 if up else min(1.0, m / m0)
     return round(mult, 2), parts + [f"סיכון = {m:+.2f} ÷ {m0:+.2f} = ×{mult:.2f}"], round(m0, 3), round(m, 3)
 
 
@@ -675,6 +675,11 @@ def run():
         follow_up(idx)
     except Exception as e:  # noqa: BLE001
         print(f"follow-up failed: {e}")
+    try:
+        from agents import edge_risk
+        edge_risk.run(states)
+    except Exception as e:  # noqa: BLE001
+        print(f"edge risk failed: {e}")
     idx["updated"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
     _write(OUT / "index.json", idx)
     print(f"loss review: {len(new)} new reports")

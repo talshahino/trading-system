@@ -150,6 +150,46 @@ def detect(d, sym, k_mult, rel):
     return out
 
 
+
+def releases_from(items):
+    """releases() from calendar items already read (bot 7 live: its own FTMO calendar, no files)."""
+    out = {}
+    for i in items or []:
+        if i.get("impact") != "high" and not i.get("restriction"):
+            continue
+        ins = str(i.get("instrument", ""))
+        cur = "Crude Oil" if ins.startswith("Crude") else ins.split(" ")[0]
+        out.setdefault(cur, {})[pd.Timestamp(i["date"]).tz_convert("UTC")] = i.get("title", "")
+    return {k: (pd.DatetimeIndex(sorted(v)), [v[t] for t in sorted(v)]) for k, v in out.items()}
+
+
+def live_fade(sym, k_mult=8, D=1, H=60, rel=None):
+    """SH01 for the engine (agents/rules_agent.run) on 1-minute candles - card 42c723b87f92 (13.11.2026): against a
+    shock (detect(), version 1) entered at the open D minutes after the shock minute, stop 25% of the shock beyond its
+    extreme, out after H minutes, no target - exactly trades() FADE with tg 0. rel: a callable returning releases()
+    (read when the strategy runs, so the bot's hourly calendar refresh is used)."""
+    def fn(df):
+        o, h, l, c = (df[x].to_numpy(float) for x in "ohlc")
+        n, idx = len(c), df.index
+        long_, short = np.zeros(n, bool), np.zeros(n, bool)
+        sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+        r_ = rel() if callable(rel) else (rel or {})
+        for s_ in detect(df, sym, k_mult, r_):
+            i, dr, mv = s_["i"], s_["dir"], s_["move"]
+            ke = i + D
+            if ke >= n or (idx[ke] - idx[i]) > pd.Timedelta(minutes=D + 2):
+                continue
+            ext = h[i - 2:i + 1].max() if dr > 0 else l[i - 2:i + 1].min()
+            stop = ext + dr * 0.25 * mv
+            if dr * (stop - o[ke]) <= 0.15 * mv:
+                continue
+            if dr > 0:
+                short[ke - 1], sl_s[ke - 1] = True, stop
+            else:
+                long_[ke - 1], sl_l[ke - 1] = True, stop
+        return long_, short, {"stop": ("level", sl_l, sl_s), "target": None, "max_bars": int(H)}
+    return fn
+
 def _cost_r(sym, sp, t, e_px, stop, dr):
     tt = pd.DataFrame({"r": [0.0], "entry_px": [e_px], "stop_px": [stop], "dir": [dr], "time": [t], "exit_time": [t]})
     x = C.apply(tt, sym, sp)

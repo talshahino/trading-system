@@ -9,6 +9,8 @@ read-only, nothing is ever sent to a broker), builds 5-minute candles and runs e
   EV01 release momentum  - the first 10 minutes moved > 1.5 ATR: follow them, stop beyond them, target 2R, max 1 hour
   EV02 release fade      - a spike > 2.5 ATR already giving back a third: against it, target the pre-release price
   EV03 range breakout    - the first 15 minutes' range, the first close outside it within the hour, target 1.5R
+  SH01 shock fade (card 42c723b87f92, 13.11.2026) - a 1-minute shock without a release (agents/shocks.py detect, K=8):
+                         against it D minutes later, stop 25% of the shock beyond its extreme, out after 60 minutes
 Releases: FTMO's own economic calendar, high impact or FTMO-restricted, concerning the instrument (read every hour).
 Entries are 10+ minutes after the release, so FTMO's restricted window (3 minutes either side) is never touched.
 Trade management as the live bots: one position per strategy and instrument, breakeven at 60% of the way to the
@@ -41,6 +43,7 @@ from agents import ftmo_calendar as CAL  # noqa: E402
 from agents import ftmo_costs as C  # noqa: E402
 from agents import ftmo_universe as U  # noqa: E402
 from agents import scout_strategies as SCS  # noqa: E402
+from agents import shocks as SH  # noqa: E402
 from live import reporter as REP  # noqa: E402
 
 NAME = "news_bot"
@@ -54,7 +57,9 @@ SYMBOLS = {"US100": ["US100.cash", "US100"], "US500": ["US500.cash", "US500"], "
            "AUDUSD": ["AUDUSD"], "USDCAD": ["USDCAD"], "USDCHF": ["USDCHF"], "NZDUSD": ["NZDUSD"], "EURJPY": ["EURJPY"],
            "GBPJPY": ["GBPJPY"]}
 STRATS = ["EV01", "EV02", "EV03"]
-NAMES = {"EV01": "הליכה עם הפרסום", "EV02": "נגד הקפיצה", "EV03": "פריצת טווח"}
+NAMES = {"EV01": "הליכה עם הפרסום", "EV02": "נגד הקפיצה", "EV03": "פריצת טווח", "SH01": "נגד הזעזוע (בלי פרסום)"}
+SHOCK = {"SH01"}                # shock strategies on 1-minute candles (agents/shocks.py live_fade; card 42c723b87f92)
+REL = {}                       # important releases by currency, from the calendar the bot read (shocks near them are skipped)
 END = "סוף הנתונים"            # rules_agent's reason for a trade still open at the last candle
 INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.005, 0.045, 0.10
 ACCT_V = 1
@@ -75,7 +80,7 @@ def extras():
             sid, tf, name = c.split("|")
         except ValueError:
             continue
-        if sid in SCS.SCOUT and tf in ("1Min", "5Min") and name in SYMBOLS:
+        if (sid in SCS.SCOUT and tf in ("1Min", "5Min") or sid in SHOCK and tf == "1Min") and name in SYMBOLS:
             out.append((sid, tf, name))
     return out
 
@@ -238,6 +243,8 @@ class Calendar:
                     titles.setdefault(k, []).append(f"{i.get('instrument', '')} {i.get('title', '')}".strip())
             EVENT_TITLES.clear()
             EVENT_TITLES.update(titles)
+            REL.clear()
+            REL.update(SH.releases_from(self.items))
             self.t = time.time()
         except Exception as e:  # noqa: BLE001
             log(f"FTMO calendar not read ({e}); trying again in 10 minutes")
@@ -277,13 +284,24 @@ def event_of(name, t):
     return f"{k.tz_convert('Asia/Jerusalem').strftime('%d.%m %H:%M')} " + (" + ".join(names[:2]) if names else "פרסום")
 
 
+def shock_fn(sid, name, p):
+    """SH01 (card 42c723b87f92): against a shock without a release - K, D (minutes after the shock), H (minutes held)
+    from the approved plan in live/bots/bot7.json."""
+    try:
+        k, dd, hh = int(p.get("K", 8)), int(p.get("D", 1)), int(p.get("H", 60))
+    except (TypeError, ValueError):
+        k, dd, hh = 8, 1, 60
+    return SH.live_fade(name, k, dd, hh, rel=lambda: REL)
+
+
 def trades_of(name, d5, spread_now, d1=None, extra=()):
     """Every trade of the three release strategies (and the approved extra ones) on this instrument in the candles
     held, net of FTMO costs (r in R)."""
     out = []
     pl = plans()
     jobs = [(sid, "5Min", E.EVENTS[sid][1]) for sid in STRATS]
-    jobs += [(sid, tf, SCS.SCOUT[sid][1]) for sid, tf, n in extra if n == name and (tf == "5Min" or d1 is not None)]
+    jobs += [(sid, tf, shock_fn(sid, name, pl.get(f"{sid}|{tf}|{name}") or {}) if sid in SHOCK else SCS.SCOUT[sid][1])
+             for sid, tf, n in extra if n == name and (tf == "5Min" or d1 is not None)]
     for sid, tf, fn0 in jobs:
         d = d5 if tf == "5Min" else d1
         if d is None or len(d) < 50:

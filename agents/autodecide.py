@@ -177,8 +177,9 @@ def decide(bots, now=None):
                 if prev and prev.get("decision") == "approved" and did not in uundo:
                     # a new strategy not built yet is withdrawn too (13.11.2026: SC021|5Min|XAUUSD for bot 5 was approved
                     # at 00:25, the +3R rule judged it 'watch' at 00:29, and it stayed "approved - to be built" because
-                    # only improvement cards were ever withdrawn)
-                    if c["id"] in built or c["kind"] not in ("improve", "new"):
+                    # only improvement cards were ever withdrawn). Only bot 5's: bot 6's approved scout strategies are
+                    # its fix attempts on its own world (agent_bot6._approved_scout), they stay approved while tested.
+                    if c["id"] in built or (c["kind"] != "improve" and not (c["kind"] == "new" and bot == "bot5")):
                         c["status"], c["by"], c["decided"], c["decision_id"] = "approved", "manager", prev["at"], did
                     else:
                         prev.update(decision="withdrawn", withdrawn_at=at)

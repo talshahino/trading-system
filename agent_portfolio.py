@@ -370,7 +370,12 @@ def experiments(bot, budget_s, where):
                 # filter card measured on the old exits): run again on top of what runs now, before the regular re-runs
                 todo.append((0.5, fam, -age, sym, combo))
                 continue
-            if fam in (prio.get("families") or []) and str(d.get("at") or "") < str(prio.get("at") or ""):
+            # the loss day the review asked about ("why": "2026-11-12: ..."): a result measured after that day, with
+            # today's costs (Store.get drops stale ones), already answers it (13.11.2026: the reports were written again
+            # in a new format at 04:46 with a new "at", and every strategy tested that night with the real costs was
+            # queued once more ahead of the ones never tested - TV11 USDJPY, TV41 NZDUSD, TV10 US100 waited)
+            loss_day = max((str(w)[:10] for w in (prio.get("why") or [])), default=str(prio.get("at") or "")[:10])
+            if fam in (prio.get("families") or []) and str(d.get("at") or "")[:10] <= loss_day:
                 # the daily loss review asked for this test (agents/loss_review.py): first, before anything else
                 todo.append((-1, fam, -age, sym, combo))
                 continue

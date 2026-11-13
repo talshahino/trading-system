@@ -435,6 +435,113 @@ def study(df, causes, now):
             "per_symbol": per_sym, "book": book, "book_wf": book_wf}
 
 
+# ---- SH01 fix attempt (13.11.2026 night, bot 7 smart agent) --------------------------------------------------------
+# The rule (user, 12.11.2026): a losing strategy is first fixed. SH01 on GER40 (card 42c723b87f92: K8, D3, stop 25%
+# beyond the extreme, out after 60 min) lost in the 2026 backtest: 68 trades -4.5R (2025: +10.6R). US100 held
+# (+26.4R). A wider fade grid per instrument: K, entry minute D, stop size p (share of the shock beyond its extreme),
+# hold H, a target (give-back of tg of the shock), the hour (cash session / outside it) and the shock's direction.
+# Chosen on 30.04-31.12.2025 only (the most total R, 12+ trades), shown on 2026; robustness = of its 10 best on 2025,
+# how many made money on 2026, plus a walk-forward inside 2025 (pick on 30.04-31.08, check on 01.09-31.12).
+SH01_SYMS = {"US100": {"K": 8, "D": 1, "p": 0.25, "H": 60, "tg": 0.0},
+             "GER40": {"K": 8, "D": 3, "p": 0.25, "H": 60, "tg": 0.0}}
+CASH = {"US100": ("America/New_York", "09:30", "16:00"), "GER40": ("Europe/Berlin", "09:00", "17:30")}
+FIX_OUT = ROOT / "reports" / "agents" / "bot7" / "sh01_fix.json"
+
+
+def _in_cash(t, sym):
+    tz, a, b = CASH[sym]
+    loc = t.tz_convert(tz)
+    m = loc.hour * 60 + loc.minute
+    return (int(a[:2]) * 60 + int(a[3:])) <= m < (int(b[:2]) * 60 + int(b[3:])) and loc.weekday() < 5
+
+
+def fade_grid(d, sp, sym, shocks, k_mult):
+    """Fade trades of one instrument for one K over the wider grid (same walk and FTMO costs as trades())."""
+    o, h, l, c = (d[x].to_numpy(float) for x in "ohlc")
+    idx, n = d.index, len(d)
+    rows = []
+    for s in shocks:
+        i, dr, mv = s["i"], s["dir"], s["move"]
+        if i + 241 >= n:
+            continue
+        ext = h[i - 2:i + 1].max() if dr > 0 else l[i - 2:i + 1].min()
+        base = {"sym": sym, "t": idx[i], "K": k_mult, "up": int(dr > 0), "cash": int(_in_cash(idx[i], sym))}
+        for D in (1, 2, 3, 5):
+            ke = i + D
+            if ke >= n or (idx[ke] - idx[i]) > pd.Timedelta(minutes=D + 2):
+                continue
+            e = o[ke]
+            for p in (0.25, 0.5, 1.0):
+                stop = ext + dr * p * mv
+                if dr * (stop - e) <= 0.15 * mv:
+                    continue
+                cr = _cost_r(sym, sp, idx[ke], e, stop, -dr)
+                for H in (15, 30, 60, 120):
+                    for tg in (0.0, 0.5, 1.0):
+                        tgt = None if not tg else c[i] - dr * tg * mv
+                        if tgt is not None and dr * (e - tgt) <= 0:
+                            continue
+                        rows.append({**base, "D": D, "p": p, "H": H, "tg": tg,
+                                     "r": _walk(o, h, l, c, ke, min(ke + H, n), -dr, e, stop, tgt) - cr})
+    return rows
+
+
+def fix_sh01(rows, now):
+    """Per SH01 instrument: today's version vs the best on 2025 over K x D x p x H x tg x hour x direction."""
+    if not rows:
+        return {}
+    df = pd.DataFrame(rows)
+    keys = ["K", "D", "p", "H", "tg", "hours", "side"]
+    parts = []
+    for hours, mh in (("all", None), ("cash", 1), ("off", 0)):
+        for side, ms in (("all", None), ("up", 1), ("down", 0)):
+            x = df
+            if mh is not None:
+                x = x[x["cash"] == mh]
+            if ms is not None:
+                x = x[x["up"] == ms]
+            parts.append(x.assign(hours=hours, side=side))
+    df = pd.concat(parts, ignore_index=True)
+    out = {}
+    for sym, x in df.groupby("sym"):
+        tr_, un_ = x[x["t"] < SPLIT], x[x["t"] >= SPLIT]
+        g = tr_.groupby(keys)["r"].agg(["sum", "count"])
+        g = g[g["count"] >= MIN_SYM_N].sort_values("sum", ascending=False)
+        ug = un_.groupby(keys)["r"].agg(["sum", "count"])
+        if g.empty:
+            continue
+
+        def show(k):
+            m_tr = (tr_[keys] == pd.Series(k, index=keys)).all(axis=1)
+            m_un = (un_[keys] == pd.Series(k, index=keys)).all(axis=1)
+            a, b = tr_[m_tr], un_[m_un]
+            return {"v": dict(zip(keys, [float(v) if isinstance(v, (np.floating, float)) else (int(v) if isinstance(v, (np.integer,)) else v) for v in k])),
+                    "train": {**stats(a, now), "sum": round(float(a["r"].sum()), 2)} if len(a) else None,
+                    "unseen": {**stats(b, now), "sum": round(float(b["r"].sum()), 2)} if len(b) else None}
+        cur = SH01_SYMS.get(sym, {})
+        k_cur = (cur.get("K"), cur.get("D"), cur.get("p"), cur.get("H"), cur.get("tg"), "all", "all")
+        top = list(g.head(10).index)
+        a_, b_ = tr_[tr_["t"] < MID], tr_[tr_["t"] >= MID]
+        ga = a_.groupby(keys)["r"].agg(["sum", "count"])
+        ga = ga[ga["count"] >= MIN_SYM_N // 2].sort_values("sum", ascending=False)
+        wf = None
+        if not ga.empty:
+            ka = ga.index[0]
+            wf = {"pick_a": show(ka)["v"], "a_sum": round(float(ga.iloc[0]["sum"]), 2),
+                  "b_sum": round(float(b_[(b_[keys] == pd.Series(ka, index=keys)).all(axis=1)]["r"].sum()), 2)}
+        by = {}
+        for col in ("hours", "side", "D", "p", "H", "tg", "K"):
+            for v, y in g.reset_index().groupby(col):
+                u = [float(ug.loc[k, "sum"]) if k in ug.index else 0.0 for k in y[keys].itertuples(index=False, name=None)]
+                by.setdefault(col, {})[str(v)] = {"variants": int(len(y)), "train_median_sum": round(float(y["sum"].median()), 2),
+                                                  "unseen_median_sum": round(float(np.median(u)), 2),
+                                                  "unseen_positive": int(sum(1 for z in u if z > 0))}
+        out[sym] = {"current": show(k_cur) if cur else None, "best": show(top[0]), "top": [show(k) for k in top],
+                    "top10_positive_unseen": int(sum(1 for k in top if k in ug.index and ug.loc[k, "sum"] > 0)),
+                    "walk_forward_2025": wf, "by": by, "tested": int(len(g))}
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--minutes", type=float, default=30)
@@ -451,7 +558,7 @@ def main():
                     causes[(leg["sym"], pd.Timestamp(leg["t_signal"]).strftime("%Y%m%d%H%M"))] = e["category"]
     except Exception:  # noqa: BLE001
         pass
-    all_rows, recent, done = [], [], []
+    all_rows, recent, done, fix_rows = [], [], [], []
     for sym in INSTR:
         if time.time() > t_end and done:
             print(f"time budget reached after {done}")
@@ -470,6 +577,8 @@ def main():
         for kk in KS:
             sh = [s for s in detect(d, sym, kk, rel) if d.index[s["i"]] >= START]
             all_rows += trades(d, sp, sym, sh, kk)
+            if sym in SH01_SYMS:                                    # SH01 fix attempt (13.11.2026)
+                fix_rows += fade_grid(d, sp, sym, sh, kk)
             if kk == 8:                                            # the log's definition (version 1)
                 recent += [describe(d, sp, sym, s) for s in sh if d.index[s["i"]] >= now - pd.Timedelta(days=a.days)]
             print(f"{sym} K={kk}: {len(sh)} shocks")
@@ -484,6 +593,14 @@ def main():
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"updated": now.isoformat(timespec="seconds"), "instruments": done, "train": [str(START.date()), "2025-12-31"],
                                "unseen": ["2026-01-01", str(now.date())], **res}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    if fix_rows:
+        fx = fix_sh01(fix_rows, now)
+        FIX_OUT.write_text(json.dumps({"updated": now.isoformat(timespec="seconds"), "train": [str(START.date()), "2025-12-31"],
+                                       "unseen": ["2026-01-01", str(now.date())], "symbols": fx}, ensure_ascii=False, indent=1,
+                                      default=str), encoding="utf-8")
+        for k_, v_ in fx.items():
+            print(f"SH01 fix {k_}: current", (v_.get("current") or {}).get("unseen"), "best on 2025", v_["best"]["v"],
+                  v_["best"]["train"], v_["best"]["unseen"], "top10 positive in 2026:", v_["top10_positive_unseen"])
     print(f"{len(groups)} shock events in the last {a.days} days; {res.get('tested')} variants tested")
     if res.get("best"):
         b = res["best"]

@@ -106,7 +106,15 @@ def ops():
         recent = [r for r in runs if pd.Timestamp(r["t"]) > pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=2)]
         # a failure that a later successful run already replaced is not a problem any more (manager, 12.11.2026)
         ok_after = max((r["n"] for r in recent if r["c"] == "success"), default=0)
-        bad = [r for r in recent if r["s"] == "completed" and r["c"] not in ("success", "skipped") and r["n"] > ok_after]
+        # ... nor one that the bots' computer replaced: since 12.11 the agents run there, and the GitHub run is only the
+        # fallback (manager, 13.11.2026: run #9 of 12.11 08:23 - a commit clash - was shown as a problem a day later)
+        try:
+            pc_last = max((pd.Timestamp(v) for v in (json.loads(Path("reports/agents/host.json").read_text(encoding="utf-8"))
+                                                     .get("agent_last") or {}).values()), default=None)
+        except Exception:  # noqa: BLE001
+            pc_last = None
+        bad = [r for r in recent if r["s"] == "completed" and r["c"] not in ("success", "skipped") and r["n"] > ok_after
+               and not (pc_last is not None and pc_last > pd.Timestamp(r["t"]) + pd.Timedelta(hours=6))]
         if bad:
             problems.append(f"{len(bad)} ריצות של הסוכנים נכשלו ביומיים האחרונים (#{', #'.join(str(r['n']) for r in bad)})")
             actions.append("הסוכן החכם של המנהל יבדוק את הלוג ויריץ מחדש")
@@ -123,8 +131,17 @@ def ops():
         h = json.loads(Path("reports/agents/host.json").read_text(encoding="utf-8"))
         res = json.loads(Path("data/agents/strategies/tal_gap_results.json").read_text(encoding="utf-8"))
         last, tails = h.get("agent_last") or {}, h.get("agent_tail") or {}
+        try:
+            pcm = (json.loads(Path("data/agents/plan.json").read_text(encoding="utf-8")).get("pc") or {})
+        except Exception:  # noqa: BLE001
+            pcm = {}
+        now = pd.Timestamp.now(tz="UTC")
         for b in ("bot5", "bot6"):
             ran, upd = last.get(b), (res.get(b) or {}).get("updated")
+            # agent_last is stamped when the agent STARTS: one still inside its minutes (+ the host's hour of grace)
+            # has not written yet (manager, 13.11.2026: bot 6 started 03:42 and was flagged at 04:02 while running)
+            if ran and now - pd.Timestamp(ran) < pd.Timedelta(minutes=float(pcm.get(b, 60)) + 60):
+                continue
             if ran and upd and pd.Timestamp(ran) - pd.Timestamp(upd) > pd.Timedelta(hours=2):
                 o = _ops_slot(out, b)
                 o["problems"].append(
@@ -136,7 +153,7 @@ def ops():
             if bad:
                 o = _ops_slot(out, b.replace("-new", ""))
                 o["problems"].append(f"בלוג של הסוכן ({b}): {bad[-1][:160]}")
-                o["actions"].append(None)
+                o["actions"].append("הסוכן החכם של המנהל יבדוק את השורה ויתקן אם זו תקלה")
     except Exception:  # noqa: BLE001
         pass
     return out

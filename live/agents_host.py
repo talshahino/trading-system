@@ -56,7 +56,7 @@ _LOCK, _REFRESH = threading.RLock(), threading.Lock()
 # are published by the smart layer when the agent ends, never half-written)
 import re  # noqa: E402
 LIGHT_OWN = re.compile(r"^(reports/agents/(manager\.json|decisions\.json|watch\.json|manager_log\.json|losses/.*|[^/]+/(health|cards_health)\.json)"
-                       r"|data/agents/(replies|priority)\.json|live/bots/)")
+                       r"|data/agents/(replies|priority|bot7_reset)\.json|data/agents/bot7_archive/|live/bots/)")
 STATE = WORK / "host_state.json"
 
 

@@ -41,6 +41,26 @@ def _sha(b):
     return hashlib.sha1(b).hexdigest()[:12]
 
 
+# not material (the rule above): a risk multiplier and its card are left out of a strategy's plan (manager, 13.11.2026:
+# EV01 at risk x0.5 was written into live/bots/bot7.json plans and counted as a rule change)
+NOT_RULE = ("card", "why", "note", "at", "risk_mult", "risk_card")
+
+
+def _plans(plans):
+    out = {}
+    for k, v in sorted((plans or {}).items()):
+        r = {a: b for a, b in (v or {}).items() if a not in NOT_RULE}
+        if r:
+            out[k] = r
+    return out
+
+
+def _norm_parts(parts):
+    q = dict(parts or {})
+    q["plans"] = _plans(q.get("plans"))
+    return q
+
+
 def fingerprint():
     """What bot 7 trades and by which rules - risk multipliers, texts and card ids left out."""
     parts = {}
@@ -49,8 +69,7 @@ def fingerprint():
     except Exception:  # noqa: BLE001
         d = {}
     parts["combos"] = sorted(d.get("combos") or [])
-    parts["plans"] = {k: {a: b for a, b in (v or {}).items() if a not in ("card", "why", "note", "at")}
-                      for k, v in sorted((d.get("plans") or {}).items())}
+    parts["plans"] = _plans(d.get("plans"))
     for f in CODE:
         p = ROOT / f
         parts[f] = _sha(p.read_bytes()) if p.exists() else None
@@ -121,10 +140,19 @@ def check(add, did, live_json, now, ucards=None, approved=()):
     if p and (p["id"] in set(approved) or ((ucards or {}).get(p["id"]) or {}).get("decision") == "approved"):
         _reset(add, did, st, live, cur_v, now, p["fp"], p["what"], "טל אישר את בקשת המנהל לאפס")
         st["proposed"] = None
+    # the state behind the live account (manager, 13.11.2026): the bots' computer reset the account to v3 at 03:48, but
+    # its state file did not reach main, and every install brings main's copy back - the rule would reset once more.
+    # A live account newer than the state is the baseline: the change that made it was already reset for.
+    started = va.get("started")
+    if cur_v > int(st.get("account_v") or 1) and started and pd.Timestamp(started) > pd.Timestamp(st["last_reset"]):
+        st["account_v"], st["last_reset"], st["fp"], st["parts"] = cur_v, started, fp, parts
+        st["proposed"] = None
     days = (now - pd.Timestamp(st["last_reset"])).total_seconds() / 86400
     st["stable"] = days >= STABLE_DAYS
+    if fp != st["fp"] and _norm_parts(st.get("parts")) == _norm_parts(parts):
+        st["fp"], st["parts"] = fp, parts            # only what is not material changed (or the fingerprint's own rule)
     if fp != st["fp"]:
-        what = _what_changed(st.get("parts") or {}, parts)
+        what = _what_changed(_norm_parts(st.get("parts")), _norm_parts(parts))
         if not st["stable"]:
             _reset(add, did, st, live, cur_v, now, fp, what,
                    f"שינוי מהותי בסגנון האסטרטגיה ({what}), והבוט עוד לא יציב ({days:.0f} ימים מהאיפוס האחרון, פחות מ־{STABLE_DAYS})")

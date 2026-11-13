@@ -1,5 +1,5 @@
 {
- "fp": "8ec9ba9f819e",
+ "fp": "b24e22fc54f5",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -56,15 +56,76 @@
    "EV01|5Min|GBPUSD": {
     "filter": "with_trend200"
    },
-   "SC001|1Min|JP225": {
-    "risk_mult": 0.7
+   "EV03|5Min|AUDUSD": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|EURJPY": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|EURUSD": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|GBPJPY": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|GBPUSD": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|GER40": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|JP225": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|NZDUSD": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|UK100": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|US100": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|US30": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|US500": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|USDCAD": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|USDCHF": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|USDJPY": {
+    "target": 3.0,
+    "limit": 0.5
+   },
+   "EV03|5Min|XAUUSD": {
+    "target": 3.0,
+    "limit": 0.5
    }
   },
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-12T19:05:57+00:00",
- "account_v": 2,
+ "last_reset": "2026-11-13T03:51:05+00:00",
+ "account_v": 3,
  "resets": [
   {
    "v": 2,

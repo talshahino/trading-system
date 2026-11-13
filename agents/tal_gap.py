@@ -410,6 +410,42 @@ def _neighbours(best, keys):
                     yield _norm(dict(best, **{k1: v1, k2: v2}))
 
 
+# beyond the grid (manager, 13.11.2026: on 13.11 every one of the 12 pairs of bot 5 reached a best whose 450 one- and
+# two-knob neighbours were all tried - "1758 run, 0 left" - and the search stood still; the user: no agent stops).
+# The best sits at the grid's edge on most pairs (EXPIRY 120, MIN_RR 2.0, SW 5), so the numbers go further, and
+# in-between values are tried; then random three-knob moves around the best (seeded by the best, so a run that is
+# stopped goes on with the same order). Only numeric knobs widen - the live bot reads them as numbers.
+WIDE = {"GBODY": [0.5, 2.5, 3.0], "MIN_GAP": [0.15, 0.45, 1.0], "SW": [1, 4, 8, 12],
+        "MIN_RR": [0.25, 0.75, 1.25, 2.5, 3.0, 4.0], "EXPIRY": [4, 72, 240, 480]}
+RANDOM_MOVES = 3000
+
+
+def _moves(best, keys):
+    """The grid's neighbours, then one / two knobs moved to the wider values, then random three-knob moves."""
+    yield from _neighbours(best, keys)
+    allv = {k: KNOBS[k] + [BASE.get(k, "none")] + WIDE.get(k, []) for k in keys}
+    wk = [k for k in keys if k in WIDE]
+    for k in wk:
+        for v in WIDE[k]:
+            yield _norm(dict(best, **{k: v}))
+    for i, k1 in enumerate(wk):
+        for k2 in keys:
+            if k2 == k1 or (k2 in wk and keys.index(k2) < i):
+                continue
+            for v1 in WIDE[k1]:
+                for v2 in allv[k2]:
+                    if v2 == best.get(k2, "none"):
+                        continue
+                    yield _norm(dict(best, **{k1: v1, k2: v2}))
+    import random
+    rng = random.Random(vid(best))
+    for _ in range(RANDOM_MOVES):
+        c = dict(best)
+        for k in rng.sample(keys, 3):
+            c[k] = rng.choice(allv[k])
+        yield _norm(c)
+
+
 def search(symbols, load, out_dir, idx, idx_dir, budget_s):
     out_dir = Path(out_dir)
     t0, done = time.time(), 0
@@ -463,8 +499,9 @@ def search(symbols, load, out_dir, idx, idx_dir, budget_s):
             # tried, two knobs moved together (manager, 12.11.2026: the one-knob search reached a local best on
             # pairs and stopped - the user: no agent stops searching)
             nb = None
-            for c in _neighbours(st["best"], keys):
-                if c != st["best"] and vid(c) not in st["tried"]:
+            tried = set(st["tried"])
+            for c in _moves(st["best"], keys):
+                if c != st["best"] and vid(c) not in tried:
                     nb = c
                     break
             if nb is None:
@@ -560,7 +597,8 @@ def search_status(out_dir):
     out = {}
     for pn, st in log.items():
         best = st.get("best") or {}
-        left = sum(1 for c in _neighbours(best, list(KNOBS)) if c != best and vid(c) not in st.get("tried", []))
+        tried = set(st.get("tried", []))
+        left = len({vid(c) for c in _moves(best, list(KNOBS)) if c != best and vid(c) not in tried})
         out[pn] = {"score": None if st.get("score") is None else round(float(st["score"]), 2),
                    "changes": {k: v for k, v in best.items() if BASE.get(k, "none") != v},
                    "tried": len(st.get("tried", [])), "left": left}

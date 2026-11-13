@@ -1,0 +1,287 @@
+{
+ "bot": "bot2",
+ "day": "2026-11-13",
+ "at": "2026-11-13T23:13:42+00:00",
+ "summary": [
+  "מה קרה: בוט 2 הפסיד 1,005$ ב־2026-11-13 (-0.91% מהחשבון). 8 עסקאות: 4 הרוויחו 293$, 4 הפסידו 1,299$.",
+  "מול הצפי: הבדיקה צפתה ליום כזה +1.3R (+667$). בפועל -2.5R. הפער: -3.9R (-1,908$) - צריך לסגור אותו.",
+  "למה: 2 עסקאות נעצרו בלי לזוז לטובה בכלל - הבעיה בכניסה או בכיוון; 1 עסקאות נעצרו בסטופ אחרי תנועה קטנה לטובה; 1 עסקאות נסגרו בגלל כלל (חדשות / סוף מסחר / הפסקת שוק).",
+  "ההפסד הגדול ביותר: TV56|4Hour|USDJPY, 449$ (34.6% מכל ההפסד)."
+ ],
+ "pnl": -1005.24,
+ "pnl_pct": -0.913,
+ "open_balance": 110114.66,
+ "limit_used": {
+  "bot": 20.3,
+  "ftmo": 18.3
+ },
+ "trades": 8,
+ "winners": 4,
+ "losers_n": 4,
+ "gross_profit": 293.28,
+ "gross_loss": 1298.52,
+ "profit_factor": 0.23,
+ "costs": 2.65,
+ "day_r": -2.5,
+ "expected_r": 1.35,
+ "expected_sd": 4.51,
+ "z": -0.85,
+ "normal": true,
+ "causes": {
+  "entry": 2,
+  "normal": 1,
+  "rules": 1
+ },
+ "correlated": [],
+ "top_loser": "TV56|4Hour|USDJPY",
+ "top_share": 34.6,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "TV56|4Hour|USDJPY",
+   "side": "מכירה",
+   "open_t": "2026-11-12T20:00:07+00:00",
+   "close_t": "2026-11-13T06:15:26+00:00",
+   "entry": 159.826,
+   "exit": 160.168,
+   "stop": 160.168,
+   "target": 0.0,
+   "r": -1.002,
+   "net": -449.19,
+   "costs": 0.79,
+   "mfe_r": 0.09,
+   "mae_r": 0.99,
+   "exit_reason": "[sl 160.168]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "QB11|1Hour|USDJPY",
+   "side": "מכירה",
+   "open_t": "2026-11-12T17:00:05+00:00",
+   "close_t": "2026-11-13T06:05:47+00:00",
+   "entry": 159.601,
+   "exit": 160.055,
+   "stop": 160.055,
+   "target": 155.946,
+   "r": -1.001,
+   "net": -448.76,
+   "costs": 0.59,
+   "mfe_r": 0.03,
+   "mae_r": 0.99,
+   "exit_reason": "[sl 160.055]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "SE02|1Hour|USDJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-13T15:00:04+00:00",
+   "close_t": "2026-11-13T18:12:42+00:00",
+   "entry": 159.821,
+   "exit": 159.575,
+   "stop": 159.575,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -302.15,
+   "costs": 0.0,
+   "mfe_r": 0.57,
+   "mae_r": 0.99,
+   "exit_reason": "[sl 159.575]",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TV13|15Min|TSLA",
+   "side": "מכירה",
+   "open_t": "2026-11-13T15:30:04+00:00",
+   "close_t": "2026-11-13T20:45:03+00:00",
+   "entry": 387.68,
+   "exit": 390.34,
+   "stop": 395.46,
+   "target": 0.0,
+   "r": -0.342,
+   "net": -98.42,
+   "costs": 0.0,
+   "mfe_r": 0.21,
+   "mae_r": 0.59,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TV56|4Hour|USDJPY",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV56|4Hour|USDJPY: נעצר בלי לזוז לטובה (MFE 0.09R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "QB11|1Hour|USDJPY",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "QB11|1Hour|USDJPY: נעצר בלי לזוז לטובה (MFE 0.03R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV13|15Min|TSLA",
+   "cause": "rules",
+   "priority": [],
+   "task": "TV13|15Min|TSLA: נסגר בגלל כלל (session end) ב־-0.342R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 2,
+   "avg_loss_pct": -0.825,
+   "worst_pct": -0.913
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "TV56|4Hour|USDJPY",
+    "cause": "כניסה / כיוון",
+    "fixes": [
+     {
+      "what": "סיכון ×0.7",
+      "decision": "ac0c4e97b992",
+      "at": "2026-11-13T12:24:13+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.7
+     }
+    ],
+    "open": false,
+    "cut_only": true,
+    "edge_mult": null,
+    "edge_parts": [
+     "עוד אין בדיקה של 2026 כפי שהיא סוחרת עכשיו - היא ראשונה בתור לבדיקה, ועד אז הסיכון לא נוגע"
+    ],
+    "edge0": null,
+    "edge": null
+   },
+   {
+    "combo": "QB11|1Hour|USDJPY",
+    "cause": "כניסה / כיוון",
+    "fixes": [
+     {
+      "what": "QB11|1Hour|USDJPY: סיכון ×1 ← ×0.5 (בלי ההודעות כמעט אין רווח, והסיכון גדול)",
+      "decision": "7b679b0135a9",
+      "at": "2026-11-13T04:59:21+00:00",
+      "effect_month_pct": -0.05,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.5",
+      "decision": "4e82b0259e93",
+      "at": "2026-11-13T04:59:21+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.5
+     }
+    ],
+    "open": false,
+    "cut_only": true,
+    "edge_mult": 0.88,
+    "edge_parts": [
+     "בבדיקה של 2026: +0.02R לעסקה (121 עסקאות), בתקופת הבחירה -0.01R",
+     "בחי: -0.03R לעסקה (5 עסקאות)",
+     "הבדיקה שווה 96% מהמשקל, החי 4%",
+     "היתרון עכשיו: +0.01R לעסקה",
+     "סיכון = +0.01 ÷ +0.02 = ×0.88"
+    ],
+    "edge0": 0.015,
+    "edge": 0.013
+   },
+   {
+    "combo": "SE02|1Hour|USDJPY",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [
+     {
+      "what": "SE02|1Hour|USDJPY: סיכון ×0.85 ← ×0.67 - לפי היתרון שלה",
+      "decision": "2c70a9f7325b",
+      "at": "2026-11-13T07:29:29+00:00",
+      "effect_month_pct": -0.26,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.67",
+      "decision": "f5602cc9395d",
+      "at": "2026-11-13T07:29:29+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.85,
+      "value": 0.67
+     },
+     {
+      "what": "סיכון ×0.85",
+      "decision": "7d997fcf629a",
+      "at": "2026-11-13T05:45:53+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.67,
+      "value": 0.85
+     },
+     {
+      "what": "SE02|1Hour|USDJPY: סיכון ×0.95 ← ×0.85 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.13)",
+      "decision": "691db1305730",
+      "at": "2026-11-13T05:31:47+00:00",
+      "effect_month_pct": null,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.85",
+      "decision": "3b36a4630de4",
+      "at": "2026-11-13T05:31:47+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.85
+     }
+    ],
+    "open": false,
+    "cut_only": false
+   },
+   {
+    "combo": "TV13|15Min|TSLA",
+    "cause": "סגירה בגלל כלל",
+    "fixes": [],
+    "open": false,
+    "cut_only": false
+   }
+  ],
+  "open": [],
+  "cut_only": [
+   "TV56|4Hour|USDJPY",
+   "QB11|1Hour|USDJPY"
+  ],
+  "total_month_pct": -0.31,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+ }
+}

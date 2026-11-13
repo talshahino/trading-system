@@ -1,0 +1,144 @@
+{
+ "bot": "bot6",
+ "day": "2026-11-13",
+ "at": "2026-11-13T23:13:43+00:00",
+ "summary": [
+  "מה קרה: בוט 6 · חוזים הפסיד 141$ ב־2026-11-13 (-0.14% מהחשבון). 4 עסקאות: 1 הרוויחו 670$, 3 הפסידו 812$.",
+  "מול הצפי: לאסטרטגיות של היום אין עדיין צפי מהבדיקה.",
+  "למה: 2 עסקאות נעצרו בסטופ אחרי תנועה קטנה לטובה; 1 עסקאות נסגרו בגלל כלל (חדשות / סוף מסחר / הפסקת שוק).",
+  "ההפסד הגדול ביותר: TAL|5Min1m|US30, 429$ (52.9% מכל ההפסד)."
+ ],
+ "pnl": -141.07,
+ "pnl_pct": -0.14,
+ "open_balance": 100465.48,
+ "limit_used": {
+  "bot": 3.1,
+  "ftmo": 2.8
+ },
+ "trades": 4,
+ "winners": 1,
+ "losers_n": 3,
+ "gross_profit": 670.47,
+ "gross_loss": 811.54,
+ "profit_factor": 0.83,
+ "costs": 0.0,
+ "day_r": -0.07,
+ "expected_r": null,
+ "expected_sd": null,
+ "z": null,
+ "normal": true,
+ "causes": {
+  "normal": 2,
+  "rules": 1
+ },
+ "correlated": [],
+ "top_loser": "TAL|5Min1m|US30",
+ "top_share": 52.9,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "TAL|5Min1m|US30",
+   "side": "קנייה",
+   "open_t": "2026-11-13T20:25:00+00:00",
+   "close_t": "2026-11-13T20:40:00+00:00",
+   "entry": 52282.375,
+   "exit": 52254.85,
+   "stop": 52254.85,
+   "target": 52348.95,
+   "r": -1.0,
+   "net": -406.55,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TAL|5Min1m|US500",
+   "side": "מכירה",
+   "open_t": "2026-11-13T09:01:00+00:00",
+   "close_t": "2026-11-13T09:15:00+00:00",
+   "entry": 7585.9,
+   "exit": 7592.75,
+   "stop": 7592.75,
+   "target": 7558.15,
+   "r": -1.0,
+   "net": -382.5,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TAL|5Min1m|US30",
+   "side": "קנייה",
+   "open_t": "2026-11-13T14:37:00+00:00",
+   "close_t": "2026-11-13T14:45:00+00:00",
+   "entry": 52381.11,
+   "exit": 52381.11,
+   "stop": 52304.86,
+   "target": 52534.26,
+   "r": 0.0,
+   "net": -22.49,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "breakeven",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TAL|5Min1m|US30",
+   "cause": "rules",
+   "priority": [],
+   "task": "TAL|5Min1m|US30: נסגר בגלל כלל (breakeven) ב־0.0R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 1,
+   "avg_loss_pct": -0.14,
+   "worst_pct": -0.14
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "TAL|5Min1m|US30",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true,
+    "cut_only": false
+   },
+   {
+    "combo": "TAL|5Min1m|US500",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true,
+    "cut_only": false
+   }
+  ],
+  "open": [
+   "TAL|5Min1m|US30",
+   "TAL|5Min1m|US500"
+  ],
+  "cut_only": [],
+  "total_month_pct": 0.0,
+  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין"
+ }
+}

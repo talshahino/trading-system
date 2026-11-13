@@ -127,15 +127,27 @@
    {
     "combo": "TV39|1Hour|JP225",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true
+    "fixes": [
+     {
+      "what": "TV39|1Hour|JP225: סיכון ×1.05 ← ×0.96 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.12)",
+      "decision": "e5b1ee64f049",
+      "at": "2026-11-13T05:03:56+00:00",
+      "effect_month_pct": -0.22
+     },
+     {
+      "what": "סיכון ×0.96",
+      "decision": "ba4def196de3",
+      "at": "2026-11-13T05:03:56+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false
    }
   ],
   "open": [
-   "YT03|4Hour|GBPUSD",
-   "TV39|1Hour|JP225"
+   "YT03|4Hour|GBPUSD"
   ],
-  "total_month_pct": 0.0,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין"
+  "total_month_pct": -0.22,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
  }
 }

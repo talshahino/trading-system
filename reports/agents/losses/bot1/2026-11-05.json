@@ -418,6 +418,15 @@
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
      {
+      "what": "סיכון ×0.64",
+      "decision": "a2edfba8577c",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.86,
+      "value": 0.64
+     },
+     {
       "what": "TT45|1Hour|GBPJPY: סיכון ×0.95 ← ×0.86 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.11)",
       "decision": "5d7f4cbe045b",
       "at": "2026-11-13T05:31:47+00:00",
@@ -565,6 +574,15 @@
     "cause": "כניסה / כיוון",
     "fixes": [
      {
+      "what": "סיכון ×0.88",
+      "decision": "1324894f56bb",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.96,
+      "value": 0.88
+     },
+     {
       "what": "TV39|1Hour|JP225: סיכון ×1.05 ← ×0.96 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.12)",
       "decision": "e5b1ee64f049",
       "at": "2026-11-13T05:31:47+00:00",
@@ -589,16 +607,36 @@
    {
     "combo": "TV41|4Hour|NZDUSD",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.18",
+      "decision": "be24f40b7e0e",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.18
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV10|1Hour|US100",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.001",
+      "decision": "4a7b1ee9712e",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.9,
+      "value": 0.001
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV02|15Min|TSLA",
@@ -626,16 +664,16 @@
    }
   ],
   "open": [
-   "TV08|15Min|NVDA",
-   "TV41|4Hour|NZDUSD",
-   "TV10|1Hour|US100"
+   "TV08|15Min|NVDA"
   ],
   "cut_only": [
    "TT45|1Hour|GBPJPY",
    "SE02|1Hour|USDJPY",
-   "TV39|1Hour|JP225"
+   "TV39|1Hour|JP225",
+   "TV41|4Hour|NZDUSD",
+   "TV10|1Hour|US100"
   ],
   "total_month_pct": 0.35,
-  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

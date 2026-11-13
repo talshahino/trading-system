@@ -308,9 +308,19 @@
    {
     "combo": "TV24|15Min|KO",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.91",
+      "decision": "385703c47f3d",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.91
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV20|1Hour|XAUUSD",
@@ -376,13 +386,14 @@
   ],
   "open": [
    "YT03|1Hour|PFE",
-   "TV24|15Min|KO",
    "TV20|1Hour|XAUUSD",
    "TV62|1Hour|USDCAD",
    "TV38|15Min|GOOG"
   ],
-  "cut_only": [],
+  "cut_only": [
+   "TV24|15Min|KO"
+  ],
   "total_month_pct": 0.3,
-  "status": "פתוח: 5 אסטרטגיות בלי תיקון עדיין"
+  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

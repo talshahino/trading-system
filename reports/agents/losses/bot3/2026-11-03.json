@@ -129,6 +129,15 @@
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
      {
+      "what": "סיכון ×0.48",
+      "decision": "261344d4b16c",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.7,
+      "value": 0.48
+     },
+     {
       "what": "סיכון ×0.7",
       "decision": "509c08fb1608",
       "at": "2026-11-12T20:13:39+00:00",
@@ -146,6 +155,15 @@
     "cause": "סגירה בגלל כלל",
     "fixes": [
      {
+      "what": "סיכון ×0.64",
+      "decision": "0921fa35b8e9",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.7,
+      "value": 0.64
+     },
+     {
       "what": "סיכון ×0.7",
       "decision": "5e9a1e4bf7b0",
       "at": "2026-11-12T10:29:12+00:00",
@@ -161,17 +179,28 @@
    {
     "combo": "SS06|4Hour|MSTR",
     "cause": "סגירה בגלל כלל",
-    "fixes": [],
+    "fixes": [
+     {
+      "what": "סיכון ×0.1",
+      "decision": "035886d9b122",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.1
+     }
+    ],
     "open": false,
-    "cut_only": false
+    "cut_only": true
    }
   ],
   "open": [],
   "cut_only": [
    "TV58|1Hour|USDCAD",
-   "TV12|4Hour|ARM"
+   "TV12|4Hour|ARM",
+   "SS06|4Hour|MSTR"
   ],
   "total_month_pct": 0.0,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

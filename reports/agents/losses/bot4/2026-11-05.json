@@ -191,6 +191,15 @@
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
      {
+      "what": "סיכון ×0.53",
+      "decision": "50416d3d5a58",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.66,
+      "value": 0.53
+     },
+     {
       "what": "סיכון ×0.66",
       "decision": "c6c7522b5f3f",
       "at": "2026-11-12T10:44:44+00:00",
@@ -249,20 +258,29 @@
    {
     "combo": "QC07|15Min|ARM",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.95",
+      "decision": "924da004d3bb",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.95
+     }
+    ],
+    "open": false,
+    "cut_only": true
    }
   ],
-  "open": [
-   "QC07|15Min|ARM"
-  ],
+  "open": [],
   "cut_only": [
    "SE02|1Hour|GBPJPY",
    "GH02|1Hour|XAUUSD",
-   "BK05|15Min|INTC"
+   "BK05|15Min|INTC",
+   "QC07|15Min|ARM"
   ],
   "total_month_pct": 0.32,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 4 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

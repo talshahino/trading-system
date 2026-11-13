@@ -390,9 +390,19 @@
    {
     "combo": "TV10|1Hour|US100",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.001",
+      "decision": "4a7b1ee9712e",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.9,
+      "value": 0.001
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TT45|15Min|CSCO",
@@ -568,14 +578,14 @@
   ],
   "open": [
    "TV62|1Hour|USDCAD",
-   "TV10|1Hour|US100",
    "TV38|15Min|GOOG",
    "TV14|4Hour|XPTUSD"
   ],
   "cut_only": [
+   "TV10|1Hour|US100",
    "SE02|1Hour|USDJPY"
   ],
   "total_month_pct": 0.57,
-  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

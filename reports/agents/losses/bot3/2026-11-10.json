@@ -251,17 +251,28 @@
    {
     "combo": "TV24|15Min|TSLA",
     "cause": "סגירה בגלל כלל",
-    "fixes": [],
+    "fixes": [
+     {
+      "what": "סיכון ×0.97",
+      "decision": "091060e6d03c",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.97
+     }
+    ],
     "open": false,
-    "cut_only": false
+    "cut_only": true
    }
   ],
   "open": [],
   "cut_only": [
    "SS01|5Min|WMT",
-   "TV41|1Hour|USDJPY"
+   "TV41|1Hour|USDJPY",
+   "TV24|15Min|TSLA"
   ],
   "total_month_pct": 0.03,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

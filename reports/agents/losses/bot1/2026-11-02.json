@@ -199,9 +199,19 @@
    {
     "combo": "TV10|1Hour|US100",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.001",
+      "decision": "4a7b1ee9712e",
+      "at": "2026-11-13T22:11:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.9,
+      "value": 0.001
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV02|15Min|TSLA",
@@ -237,11 +247,12 @@
   ],
   "open": [
    "TT56|1Hour|XOM",
-   "TV10|1Hour|US100",
    "TV62|1Hour|USDCAD"
   ],
-  "cut_only": [],
+  "cut_only": [
+   "TV10|1Hour|US100"
+  ],
   "total_month_pct": 0.6,
-  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין"
+  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

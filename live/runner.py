@@ -537,6 +537,13 @@ def combo_rules(combo):
             out["vol"] = {k: float(x) for k, x in v.items() if k in ("max_pct", "min_pct")}
     except (TypeError, ValueError):
         pass
+    # 13.11.2026 (bots 1-4 smart agent): a combo with an approved exit plan (target / stop / limit entry in "plans")
+    # trades exactly the variant its card tested; the morning review's stop / target factor came from the strategy's
+    # own exits and stacked on top of the plan (TV56 USDJPY: plan stop x0.75 and review x0.6 = x0.45, a variant
+    # nobody tested). The plan wins for the exits; the review's direction / hours / volatility rules still apply.
+    if any(k in (PLANS.get(combo) or {}) for k in ("target", "stop", "limit")):
+        out.pop("sl", None)
+        out.pop("tp", None)
     return out
 
 

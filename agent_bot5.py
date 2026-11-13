@@ -248,9 +248,11 @@ NOTE_TESTS = [
     # away) stayed open and came back - "a slightly wider stop would have kept us in?"
     {"id": "t4h_5_spad", "track": "t4h_5", "knob": "SPAD", "vals": [0.001, 0.002, 0.004],
      "he": "סטופ רחב יותר מעבר לסווינג (% מהמחיר)"},
-    # the fast charts (13.11, GER40 t15_5): half out at half the way, the rest's stop to the entry
-    {"id": "t15_5_p5050", "track": "t15_5", "knob": "EXIT", "vals": ["p50_50"], "he": "50% החוצה ב־50% מהדרך + סטופ לכניסה"},
-    {"id": "t5_1_p5050", "track": "t5_1", "knob": "EXIT", "vals": ["p50_50"], "he": "50% החוצה ב־50% מהדרך + סטופ לכניסה"},
+    # the fast charts (13.11, GER40 t15_5): half out at half the way, the rest's stop to the entry. "ask": the user
+    # asked for it again after "no change" (13.11 17:49, on bot 6: "I want it anyway on the fast charts") - so the card
+    # goes to the manager with the request and the numbers whatever they show (tal_thinking.md), and the manager decides
+    {"id": "t15_5_p5050", "track": "t15_5", "knob": "EXIT", "vals": ["p50_50"], "he": "50% החוצה ב־50% מהדרך + סטופ לכניסה", "ask": True},
+    {"id": "t5_1_p5050", "track": "t5_1", "knob": "EXIT", "vals": ["p50_50"], "he": "50% החוצה ב־50% מהדרך + סטופ לכניסה", "ask": True},
     # bot 5's smart agent, 13.11.2026 night, from the live record: 3 of the day's 5 losses were filled within 40 minutes
     # of New York's open (14:30 UTC: t15_5 US500 / JP225 14:37-14:38, t4h_5 US500 15:10) - the open's first half hour
     # off (tal_gap.SESS_NY "xopen", as bot 6 tests on the futures)
@@ -342,9 +344,16 @@ def note_cards(tidx):
                    and best[1]["unseen"]["worst_day"] >= bv["unseen"]["worst_day"])
         row["chosen"], row["better"] = (best[0] if best else None), win
         res[T["id"]] = row
-        if not win:
+        if not win and T.get("ask") and vs:
+            x, c = vs[0]
+            t = _trades(tidx, pn, c)
+            v = _risk_view(t)
+            if not (v["train"] and v["unseen"] and bv["train"] and bv["unseen"]):
+                continue
+        elif not win:
             continue
-        x, v, c, t = best
+        else:
+            x, v, c, t = best
         st = TG._stats(t)
         u, bu, tr, btr = v["unseen"], bv["unseen"], v["train"], bv["train"]
         months = max(1.0, (pd.Timestamp.now(tz="UTC") - SPLIT).days / 30.4)
@@ -357,7 +366,9 @@ def note_cards(tidx):
         hi, lo = pn.split("/")
         out.append(K.card(
             BOT, "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: {T['he']} ({x}) - מההערה של טל",
-            f"מההערה של טל על עסקה במסלול {T['track']}. הכללים שרצים, רק {T['knob']} = {x}. נבחר על 2024-2025 (סה\"כ משוקלל "
+            ("בקשה של טל (13.11: 'אני רוצה שבכל זאת' בגרפים המהירים) - " + ("עדיף בשתי התקופות. " if win else "לא עדיף בשתי התקופות, ההחלטה אצל המנהל. ")
+             if T.get("ask") else "") +
+            f"מההערה של טל על עסקה במסלול {T['track']}. הכללים שרצים, רק {T['knob']} = {x}. 2024-2025 (סה\"כ משוקלל "
             f"{btr['total']:+.1f}R ← {tr['total']:+.1f}R), 2026 (לא נראתה): סה\"כ {bu['total']:+.1f}R ← {u['total']:+.1f}R, "
             f"היום הגרוע {bu['worst_day']:+.1f}R ← {u['worst_day']:+.1f}R, ירידה {bu['max_fall']:.1f}R ← {u['max_fall']:.1f}R, "
             f"{u['n']} עסקאות. שווי: {worth:+.2f}% מהחשבון בחודש בסיכון של המסלול.",

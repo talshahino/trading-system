@@ -18,6 +18,14 @@ Costs: FTMO's spread at the entry minute (Dukascopy) and commission (agents/ftmo
 Fair method: chosen on 30.04.2025-31.12.2025 by total R, shown on 2026, time-weighted (agents/agentkit.py);
 robustness: of the 10 best on 2025, how many made money in 2026.
 
+EV03 (fix attempt 5, 13.11.2026 night): the same timing question for the range breakout. EV03's loss in 2026 is all
+in US releases and its built version (pullback 0.5R, target 3R) only stops the loss (+0.2R). Varied here:
+  range      the first 10 / 15 / 20 / 30 minutes after the release set the range (the live bot: 15)
+  side       the first 5-minute close outside it within the next hour: with the break, or against it (fade:
+             stop beyond the break bar's extreme + 0.1 ATR)
+  entry      at once / a limit 0.5R better (3 bars)    target 1.5R / 2R / 3R    surprise and cap as above
+Kept in its own cache (cache/news_entry/<sym>_ev03.json) and its own result ("study_ev03"), so EV01's rows stay.
+
 Output: reports/agents/bot7/entry_study.json. Cached per instrument (cache/news_entry/<sym>.json), resumes after a
 time budget cut. Runs on the bots' computer inside agent_portfolio.py --bot bot7, after the fix study.
   python -m agents.news_entry [--minutes 10]
@@ -58,6 +66,9 @@ SURPRISE = ("all", "agree", "none")
 CAPS = (0, 1, 2, 3)               # most trades per release (0 = no cap) - fix attempt 7
 TOP = 10
 STALE_DAYS = 3
+BOX_VERSION = 1
+BOX_TARGETS = (1.5, 2.0, 3.0)
+BOX_BASE = "b15|with|l0.5|t3|sall"     # EV03 as it trades now (card 340e3e2fcd30)
 
 
 def strat(w, k, side):
@@ -84,6 +95,46 @@ def strat(w, k, side):
     return fn
 
 
+def strat_box(w, side):
+    """EV03 with a variable range: the first `w` 5-minute bars after the release; the first close outside it in the
+    next 12 bars enters with the break (side +1, stop the range's other end) or against it (side -1, stop beyond
+    the break bar's extreme + 0.1 ATR)."""
+    def fn(df):
+        h, l, c = (df[x].to_numpy() for x in "hlc")
+        a = atr(h, l, c, 14)
+        n = len(c)
+        long_, short = np.zeros(n, bool), np.zeros(n, bool)
+        sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+        for k0 in E._event_bars(df):
+            k2 = k0 + w - 1
+            if k2 + 13 >= n or k0 < 20 or df.index[k2] - df.index[k0] != pd.Timedelta(minutes=5 * (w - 1)):
+                continue
+            ref = a[k0 - 1]
+            if not np.isfinite(ref) or ref <= 0:
+                continue
+            hi, lo = h[k0:k2 + 1].max(), l[k0:k2 + 1].min()
+            for k in range(k2 + 1, k2 + 13):
+                up, dn = c[k] > hi, c[k] < lo
+                if not (up or dn):
+                    continue
+                d = (1 if up else -1) * side
+                if d > 0:
+                    long_[k], sl_l[k] = True, lo if side > 0 else l[k] - 0.1 * ref
+                else:
+                    short[k], sl_s[k] = True, hi if side > 0 else h[k] + 0.1 * ref
+                break
+        return long_, short, {"stop": ("level", sl_l, sl_s), "target": ("R", 1.5), "max_bars": 24}
+    return fn
+
+
+def grid_box():
+    return list(itertools.product(WINDOWS, SIDES, LIMITS, BOX_TARGETS))
+
+
+def vkey_box(w, side, lim, tg):
+    return f"b{5 * w}|{'with' if side > 0 else 'fade'}|l{lim:g}|t{tg:g}"
+
+
 def grid():
     return list(itertools.product(WINDOWS, SPIKES, SIDES, LIMITS, TARGETS))
 
@@ -92,7 +143,7 @@ def vkey(w, k, side, lim, tg):
     return f"m{5 * w}|k{k:g}|{'with' if side > 0 else 'fade'}|l{lim:g}|t{tg:g}"
 
 
-def trades_sym(sym, rel):
+def trades_sym(sym, rel, family="EV01"):
     d1 = P.bars(sym, "1Min", NF.LOAD_FROM, pd.Timestamp.now(tz="UTC").strftime("%Y-%m-%d"))
     if d1 is None or d1.empty:
         return []
@@ -111,8 +162,11 @@ def trades_sym(sym, rel):
             if spec["commissionType"] == "flat_USD" else px * 2 * float(spec["commission"]) / 100.0)
     spm = float(sp.median()) if sp is not None and len(sp) else 0.0
     rows = []
-    for w, k, side, lim, tg in grid():
-        base = strat(w, k, side)
+    if family == "EV03":
+        variants = [(vkey_box(w, side, lim, tg), strat_box(w, side), lim, tg) for w, side, lim, tg in grid_box()]
+    else:
+        variants = [(vkey(w, k, side, lim, tg), strat(w, k, side), lim, tg) for w, k, side, lim, tg in grid()]
+    for vk, base, lim, tg in variants:
 
         def fn(d, base=base, lim=lim, tg=tg):
             L, S, p = base(d)
@@ -135,7 +189,7 @@ def trades_sym(sym, rel):
             if g is None:
                 continue
             agree = None if g["surp"] is None else int(np.sign(g["surp"]) == np.sign(x.dir))
-            rows.append({"v": vkey(w, k, side, lim, tg), "sym": sym, "cls": U.CLASS.get(sym, "?"), "t": tt.isoformat(),
+            rows.append({"v": vk, "sym": sym, "cls": U.CLASS.get(sym, "?"), "t": tt.isoformat(),
                          "dir": int(x.dir), "r": float(x.r), "cat": g["cat"], "agree": agree, "rel": g["rel"].isoformat()})
     return rows
 
@@ -152,7 +206,7 @@ def capped(z, cap):
     return z[z.groupby("rel").cumcount() < cap].drop(columns="_o")
 
 
-def study(df):
+def study(df, base_key="m10|k1.5|with|l0|t2|sall"):
     df = df.assign(train=pd.to_datetime(df["t"], utc=True) < NF.SPLIT)
     cand = []
     for v, y in df.groupby("v"):
@@ -164,9 +218,9 @@ def study(df):
                 cand.append({"v": f"{v}|s{sf}" + (f"|c{cap}" if cap else ""), "train": NF._w(tr), "unseen": NF._w(un)})
     cand.sort(key=lambda c: -c["train"]["sum"])
     top = cand[:TOP]
-    base = next((c for c in cand if c["v"] == "m10|k1.5|with|l0|t2|sall"), None)   # EV01 as it trades now
+    base = next((c for c in cand if c["v"] == base_key), None)   # the strategy as it trades now
     by = {}
-    for key, pat in (("window", r"^m(\d+)\|"), ("spike", r"\|k([\d.]+)\|"), ("side", r"\|(with|fade)\|"),
+    for key, pat in (("window", r"^[mb](\d+)\|"), ("spike", r"\|k([\d.]+)\|"), ("side", r"\|(with|fade)\|"),
                      ("surprise", r"\|s([a-z]+)"), ("cap", r"(?:\|c(\d+))?$")):
         g = {}
         for c in cand:
@@ -188,9 +242,36 @@ def stale():
     try:
         j = json.loads(OUT.read_text(encoding="utf-8"))
         return (pd.Timestamp.now(tz="UTC") - pd.Timestamp(j["at"]) > pd.Timedelta(days=STALE_DAYS) or j.get("partial")
-                or j.get("version") != VERSION)
+                or j.get("version") != VERSION or j.get("partial_ev03", True) or j.get("box_version") != BOX_VERSION)
     except Exception:  # noqa: BLE001
         return True
+
+
+def _family(fam, ver, suffix, rel, t_end):
+    """Rows of one family over all instruments, per-instrument cache, resumes after a time budget cut."""
+    rows, done = [], []
+    for sym in NF.SYMBOLS:
+        f = CACHE / f"{sym}{suffix}.json"
+        try:
+            c = json.loads(f.read_text(encoding="utf-8"))
+            if c.get("version") == ver and pd.Timestamp.now(tz="UTC") - pd.Timestamp(c["at"]) < pd.Timedelta(days=STALE_DAYS):
+                rows += c["rows"]
+                done.append(sym)
+                continue
+        except Exception:  # noqa: BLE001
+            pass
+        if time.time() > t_end:
+            print(f"{fam}: time budget reached after {done}")
+            continue
+        try:
+            r_ = trades_sym(sym, rel, fam)
+            rows += r_
+            f.write_text(json.dumps({"version": ver, "at": pd.Timestamp.now(tz="UTC").isoformat(), "rows": r_}), encoding="utf-8")
+            done.append(sym)
+            print(f"{fam} {sym}: {len(rows)} rows so far", flush=True)
+        except Exception as e:  # noqa: BLE001 - one instrument without data does not stop the study
+            print(f"{fam} {sym}: failed ({e})")
+    return rows, done
 
 
 def main(argv=None):
@@ -203,38 +284,26 @@ def main(argv=None):
         return
     t_end = time.time() + a.minutes * 60
     rel = NF.releases()
-    rows, done = [], []
     CACHE.mkdir(parents=True, exist_ok=True)
-    for sym in NF.SYMBOLS:
-        f = CACHE / f"{sym}.json"
-        try:
-            c = json.loads(f.read_text(encoding="utf-8"))
-            if c.get("version") == VERSION and pd.Timestamp.now(tz="UTC") - pd.Timestamp(c["at"]) < pd.Timedelta(days=STALE_DAYS):
-                rows += c["rows"]
-                done.append(sym)
-                continue
-        except Exception:  # noqa: BLE001
-            pass
-        if time.time() > t_end and done:
-            print(f"time budget reached after {done}")
-            continue
-        try:
-            r_ = trades_sym(sym, rel)
-            rows += r_
-            f.write_text(json.dumps({"version": VERSION, "at": pd.Timestamp.now(tz="UTC").isoformat(), "rows": r_}), encoding="utf-8")
-            done.append(sym)
-            print(f"{sym}: {len(rows)} rows so far", flush=True)
-        except Exception as e:  # noqa: BLE001 - one instrument without data does not stop the study
-            print(f"{sym}: failed ({e})")
+    rows, done = _family("EV01", VERSION, "", rel, t_end)
+    if not done:                      # always make progress on EV01 first (it was the first in the queue)
+        rows, done = _family("EV01", VERSION, "", rel, time.time() + a.minutes * 60)
+    rows_b, done_b = _family("EV03", BOX_VERSION, "_ev03", rel, t_end)
     df = pd.DataFrame(rows)
     res = study(df) if len(df) else {}
+    df_b = pd.DataFrame(rows_b)
+    res_b = study(df_b, BOX_BASE) if len(df_b) else {}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "version": VERSION,
+                               "box_version": BOX_VERSION,
                                "symbols": done, "partial": len(done) < len(NF.SYMBOLS), "rows": int(len(df)),
-                               "split": str(NF.SPLIT.date()), "test_from": str(NF.TEST_FROM.date()), "study": res},
+                               "symbols_ev03": done_b, "partial_ev03": len(done_b) < len(NF.SYMBOLS), "rows_ev03": int(len(df_b)),
+                               "split": str(NF.SPLIT.date()), "test_from": str(NF.TEST_FROM.date()), "study": res,
+                               "study_ev03": res_b},
                               ensure_ascii=False, indent=1, default=str), encoding="utf-8")
-    if res:
-        print(json.dumps({"base": res["baseline"], "best": res["best"], "robust": res["robust"]}, ensure_ascii=False, default=str))
+    for name, r_ in (("EV01", res), ("EV03", res_b)):
+        if r_:
+            print(name, json.dumps({"base": r_["baseline"], "best": r_["best"], "robust": r_["robust"]}, ensure_ascii=False, default=str))
 
 
 if __name__ == "__main__":

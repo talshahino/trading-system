@@ -2097,6 +2097,265 @@
     "bot6"
    ],
    "rules": "5m, long only / up-trend (12-bar high rising), RMI(20,5) >= 55 and rising, MACD > signal with positive histogram, low touched the lower BB(20) 2-10 bars ago, two higher closes, SAR under price / stoploss -8.5% / minimal_roi 15% -> 2.5% after 5 min -> 1.5% after 10 min"
+  },
+  {
+   "id": "SC111",
+   "name": "Tricolor M1: EMA 63/102/165 stack + Stochastic 30/6/18 under 10 + 15/3/9 crossing 20, 5 / 10 pips",
+   "source": "ForTraders",
+   "url": "https://fortraders.org/en/learn/mql/tricolor-scalping-strategy-m1.html",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M1, European session: EMA63 > EMA102 > EMA165, Stochastic(30,6,18) entered below 10, Stochastic(15,3,9) crosses 20 upward -> buy (mirror -> sell) / stop 5 points + spread / target 10 points + spread"
+  },
+  {
+   "id": "SC112",
+   "name": "ADX(14) crossing its MA9 + MACD 5/25/9 zero side, 30 / 60 pips, opposite-signal exit, M15",
+   "source": "ForTraders",
+   "url": "https://fortraders.org/?p=560743",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "M15 EUR/USD: ADX(14) crosses above its MA(9); MACD(5,25,9) positive -> buy, negative -> sell / stop 30 points / target 60 points; opposite signal closes"
+  },
+  {
+   "id": "SC113",
+   "name": "10 points: MACD 13/26/9 histogram side + Stochastic 5/3/3 back over 20 / under 80, local-extreme stop, 10 pips, M1",
+   "source": "Engineer the Forex (Google Sites)",
+   "url": "https://sites.google.com/view/engineer-the-forex/scalping-system-10-points",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M1: MACD(13,26,9) histogram > 0 and Stochastic(5,3,3) rises back above 20 -> buy; histogram < 0 and stochastic falls back under 80 -> sell / stop 1 point beyond the nearest local low/high / target 10 points"
+  },
+  {
+   "id": "SC114",
+   "name": "Ranger: Parabolic SAR 0.04/0.1 + Stochastic 5/5/5 cross under 25 / over 75, local stop <= 20 pips, 2.5R, M15",
+   "source": "Trading Guide (GitBook)",
+   "url": "https://trading-guide-1.gitbook.io/trading-guide/strategies/ranger",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "M15+: Stochastic(5,5,5) lines cross below 25 and turn up with Parabolic SAR(0.04,0.1) under price -> buy next open (mirror over 75 -> sell) / stop at the latest local low/high, max 20 points / target 2-3x the stop; also out when the stochastic reaches the opposite zone"
+  },
+  {
+   "id": "SC115",
+   "name": "PinkFlint news straddle: +/-20 pips from the price 5 min before, stop 30, target 5 pips, M5",
+   "source": "ForTraders",
+   "url": "https://fortraders.org/en/trading-strategies/scalping-strategies/pinkflint-scalping-trading-strategy-two-approaches-to-scalping.html",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot7"
+   ],
+   "rules": "M5, news: 5 minutes before the release buy stop and sell stop 20 points from price / stop 30 points / take profit +5 points (break-even after +5)"
+  },
+  {
+   "id": "SC116",
+   "name": "Stochastic 14/3/3 %K>%D (<=80) + MACD over signal, 3-bar stop, exit when either fails, 15m",
+   "source": "The Right Trader",
+   "url": "https://therighttrader.com/learn/indicator-strategies/stochastic-and-macd-strategy",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "stock",
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "daily / 15m: first close with slow %K > %D, %K <= 80 and MACD(12,26,9) > signal -> long (mirror, %K >= 20 -> short) / stop beyond the lowest low (highest high) of the entry bar and the 2 before / exit on the first close where either condition fails, or session close"
+  },
+  {
+   "id": "SC117",
+   "name": "EMA ribbon 2-15 crossing ribbon 44-74, M1 12 / 6 pips, M5 18 / 16 pips",
+   "source": "Engineer the Forex (Google Sites)",
+   "url": "https://sites.google.com/view/engineer-the-forex/scalping-strategy-with-ema",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M1/M5 majors: EMA 2..15 (pink) crosses the EMA 44..74 (green) -> trade in the cross direction / stop M1 12 points, M5 18 points / target M1 5-7 points, M5 12-20 points"
+  },
+  {
+   "id": "SC118",
+   "name": "RSI(7) back over 20 / under 80, entry-candle stop, out at RSI 50, 1-minute",
+   "source": "FXOpen",
+   "url": "https://fxopen.com/blog/en/ultra-fast-scalping-strategies-in-forex/",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m: RSI(7) dips below 20 and moves back above -> buy; above 80 and back below -> sell / stop a few pips beyond the entry candle or swing / take profit as RSI approaches 50 or at S/R"
+  },
+  {
+   "id": "SC119",
+   "name": "Stochastic 14/3/3 cross under 20 / over 80, swing stop, out at the opposite extreme, 1-minute",
+   "source": "FXOpen",
+   "url": "https://fxopen.com/blog/en/ultra-fast-scalping-strategies-in-forex/",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m: %K crosses above %D with both below 20 -> buy; below %D with both above 80 -> sell / stop a few pips away or beyond the swing / take profit when the stochastic reaches the opposite extreme"
+  },
+  {
+   "id": "SC120",
+   "name": "5m EMA20 pullback + Stochastic RSI turn from 20 on the VWAP side, swing stop, 1.25R, 08-12 NY",
+   "source": "XS.com",
+   "url": "https://www.xs.com/en/blog/5-minute-scalping-strategy",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx",
+    "crypto",
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m, 08:00-12:00 EST: above VWAP, price above the 20 EMA pulls back to it, a bullish candle closes back above with Stochastic RSI turning up from below 20 -> buy (sells below VWAP) / stop just below the recent swing low / target 1:1-1:1.5 (5-10 pips); exit on a clear close on the other side of the EMA"
+  },
+  {
+   "id": "SC121",
+   "name": "MA Crossover ADX: EMA39 rising 2 bars + ADX33 > 22 + DI, 40 / 90 pips, H1",
+   "source": "StockSharp (MetaTrader EA port)",
+   "url": "https://doc.stocksharp.com/en/api-examples/3305_MA_Crossover_ADX",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "H1: EMA(39) rising over the last 2 steps, previous close above the previous EMA, ADX(33) > 22, +DI > -DI -> buy (mirror -> sell); opposite conditions close / stop 400 points / target 900 points"
+  },
+  {
+   "id": "SC122",
+   "name": "MA Price Cross: close crosses SMA160, 20 / 60 pips (1:3), 01-22",
+   "source": "StockSharp (MQL4 EA by JBlanked)",
+   "url": "https://doc.stocksharp.com/en/api-examples/3610_MAPriceCross",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min",
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1m (doc table) / 1h (code): close crosses the 160 MA upward -> buy, downward -> sell, entries 01:00-22:00 / stop 200 points / target 600 points"
+  },
+  {
+   "id": "SC123",
+   "name": "Connors S&P: over MA20 + RSI(3) < 30, break of the prior high within 2 bars, prior-bar-range stop, BE at 1R",
+   "source": "TradingMarkets (Larry Connors)",
+   "url": "https://tradingmarkets.com/?p=664837",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "20-minute bars (5/10/15 also): above the 20 MA with RSI(3) < 30 -> buy 1 tick over the previous bar's high on the next 2 bars only (mirror for shorts) / risk no more than the previous bar's size / half off at 1R, stop to break-even, trail the rest"
   }
  ]
 }

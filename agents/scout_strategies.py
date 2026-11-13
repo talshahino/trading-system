@@ -2997,6 +2997,298 @@ def s_ft_hacklemore(df):
                                   "exit_long": dnt & (rf < 50)}
 
 
+# ---------------- pip -> ATR translation used by SC111-SC123 ----------------
+_EU_ATR_PIPS = ((1.5, 1.5), (5.0, 3.0), (15.0, 5.5), (60.0, 11.0), (240.0, 22.0))
+
+
+def _pips_atr(df, pips):
+    """Fixed EUR/USD pips -> ATR(14) multiples of this bar's timeframe. Typical EUR/USD ATR(14): 1m ~1.5 pips,
+    5m ~3, 15m ~5.5, 1h ~11, 4h ~22 (the nearest timeframe at or above the bar is used)."""
+    bm = _bar_minutes(df)
+    ref = _EU_ATR_PIPS[-1][1]
+    for mins, p in _EU_ATR_PIPS:
+        if bm <= mins + 1e-9:
+            ref = p
+            break
+    return float(pips) / ref
+
+
+# ---------------- SC111 Tricolor M1 (ForTraders) ----------------
+def s_fort_tricolor_m1(df):
+    """ForTraders 'Tricolor - Scalping Strategy for M1' (EUR/USD, GBP/USD, European session): EMA63 > EMA102 >
+    EMA165, the slow Stochastic (30,6,18) has gone below 10 and the fast Stochastic (15,3,9) crosses 20 upward ->
+    buy right after the cross; mirror (EMA63 < 102 < 165, slow stochastic above 90, fast crosses 80 down) -> sell.
+    Stop 5 points + spread, target 10 points + spread; EMAs crossed / mixed -> no trade.
+    Ours: 'has gone below 10' = within the last 40 bars; European session 06:00-17:00 UTC; points read as pips:
+    5 pips ~ 3.3 ATR(14) of 1-minute EUR/USD, target 2R (10 pips)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    e1, e2, e3 = ema(c, 63), ema(c, 102), ema(c, 165)
+    ks, _ = _stoch(h, l, c, 30, 6, 18)
+    kf, _ = _stoch(h, l, c, 15, 3, 9)
+    hs = _local(df, "UTC")[0]
+    sess = (hs >= 6.0) & (hs < 17.0)
+    lo_seen = _since(ks < 10, 40) | (ks < 10)
+    hi_seen = _since(ks > 90, 40) | (ks > 90)
+    L = sess & (e1 > e2) & (e2 > e3) & lo_seen & cross_up(kf, np.full(len(c), 20.0))
+    S = sess & (e1 < e2) & (e2 < e3) & hi_seen & cross_down(kf, np.full(len(c), 80.0))
+    return L, S & ~L, {"stop": ("atr", _pips_atr(df, 5)), "target": ("R", 2.0)}
+
+
+# ---------------- SC112 ADX crossing its MA9 + MACD sign (ForTraders) ----------------
+def s_fort_adx_ma_macd(df):
+    """ForTraders 'Forex Strategy Using ADX and MACD Indicators' (M15, EUR/USD): the ADX(14) line crosses its
+    9-period moving average from below; MACD (5,25,9) above zero -> buy, below zero -> sell. Stop 30 points,
+    target 60 points; an opposite signal closes the trade. Ours: MA = SMA9 of the ADX, MACD = its main line;
+    points read as pips: 30 pips ~ 5.5 ATR(14) of 15-minute EUR/USD, target 2R; exit on the opposite signal."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    ax = adx(h, l, c, 14)
+    am = sma(np.nan_to_num(ax, nan=0.0), 9)
+    m, _, _ = macd(c, 5, 25, 9)
+    trig = cross_up(ax, am)
+    L = trig & (m > 0)
+    S = trig & (m < 0)
+    return L, S & ~L, {"stop": ("atr", _pips_atr(df, 30)), "target": ("R", 2.0), "exit_long": S, "exit_short": L}
+
+
+# ---------------- SC113 '10 points' MACD + Stochastic M1 (Engineer the Forex) ----------------
+def s_etf_10points_m1(df):
+    """Engineer the Forex 'Scalping system 10 points' (M1, medium/high-volatility majors, European and American
+    sessions): MACD (13,26,9) histogram above zero and the Stochastic (5,3,3) comes back above 20 after a dip
+    under it -> buy; histogram below zero and the stochastic falls back under 80 -> sell. Stop one point beyond the
+    nearest local low / high, target 10 points. Ours: local low / high = 5-bar extreme -0.2 / +0.2 ATR; sessions
+    07:00-20:00 UTC; 10 points read as 10 pips ~ 6.5 ATR(14) of 1-minute EUR/USD."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    _, _, hist = macd(c, 13, 26, 9)
+    k, _ = _stoch(h, l, c, 5, 3, 3)
+    hs = _local(df, "UTC")[0]
+    sess = (hs >= 7.0) & (hs < 20.0)
+    L = sess & (hist > 0) & cross_up(k, np.full(len(c), 20.0))
+    S = sess & (hist < 0) & cross_down(k, np.full(len(c), 80.0))
+    lo5 = _s(l).rolling(5).min().to_numpy() - 0.2 * a
+    hi5 = _s(h).rolling(5).max().to_numpy() + 0.2 * a
+    t = _pips_atr(df, 10) * a
+    return L, S & ~L, {"stop": ("level", lo5, hi5), "target": ("level", c + t, c - t)}
+
+
+# ---------------- SC114 Ranger: Parabolic SAR + Stochastic 5/5/5 (Trading Guide) ----------------
+def s_tg_ranger_sar_stoch(df):
+    """Trading Guide (GitBook) 'Ranger', M15 and above: Parabolic SAR (0.04, 0.1) below price and the Stochastic
+    (5,5,5) lines cross in the zone below 25 and turn up -> buy at the next candle's open; SAR above price and the
+    lines turn down from above 75 -> sell. Stop at the latest local low / high, no more than 20 points; target 2-3x
+    the stop; also out when the stochastic reaches the opposite zone (75 / 25).
+    Ours: the stochastic cross in the zone may come up to 3 bars before the SAR side agrees; local low / high = 5-bar extreme; the 20-point cap read as 20 pips ~ 3.6 ATR(14) of 15-minute EUR/USD
+    (a wider stop -> no trade); target 2.5R."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    sar, _ = _psar(h, l, 0.04, 0.1)
+    k, d = _stoch(h, l, c, 5, 5, 5)
+    lo5 = _s(l).rolling(5).min().to_numpy()
+    hi5 = _s(h).rolling(5).max().to_numpy()
+    cap = _pips_atr(df, 20) * a
+    xu = cross_up(k, d) & (_sh(k) < 25) & (_sh(d) < 25)
+    xd = cross_down(k, d) & (_sh(k) > 75) & (_sh(d) > 75)
+    L = _onset((sar < c) & (xu | _since(xu, 3)) & (k > _sh(k))) & (c - lo5 <= cap) & (c > lo5)
+    S = _onset((sar > c) & (xd | _since(xd, 3)) & (k < _sh(k))) & (hi5 - c <= cap) & (hi5 > c)
+    return L, S & ~L, {"stop": ("level", lo5, hi5), "target": ("R", 2.5), "exit_long": k > 75, "exit_short": k < 25}
+
+
+# ---------------- SC115 PinkFlint news straddle, 5-point target (ForTraders) ----------------
+def s_fort_pinkflint_news(df):
+    """ForTraders 'PinkFlint Scalping Trading Strategy', news approach (M5 chart; EUR/USD, GBP/USD, AUD/USD,
+    EUR/JPY, USD/CAD, NZD/USD): 5 minutes before the release place a buy stop and a sell stop 20 points from the
+    price; stop 30 points, take the profit at +5 points (break-even after +5).
+    Ours: reference = the close 5 minutes before the release; pips -> ATR(14) of
+    5-minute EUR/USD before the release (~3 pips): offset 6.7 ATR, stop 10 ATR, target 5/30 of the stop.
+    The pending orders: the first bar whose high / low reaches a level within 3 hours fills it (entry next open).
+    Releases: FTMO high-impact calendar for the symbol (else 08:30 New York weekdays)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    n = len(c)
+    a = atr(h, l, c, 14)
+    bm = _bar_minutes(df)
+    pre, win = max(1, int(round(5 / bm))), max(1, int(round(180 / bm)))
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    for k0 in _release_bars(df):
+        ks = k0 - pre
+        if ks < 20 or k0 >= n:
+            continue
+        ref, u = c[ks], a[ks - 1] * _pips_atr(df, 1)  # one pip in price, from the pre-release ATR
+        if not np.isfinite(u) or u <= 0:
+            continue
+        up, dn = ref + 20 * u, ref - 20 * u
+        for i in range(ks + 1, min(n, k0 + win)):
+            if h[i] >= up and l[i] > dn:
+                L[i], sl_l[i] = True, max(c[i], up) - 30 * u
+                break
+            if l[i] <= dn and h[i] < up:
+                S[i], sl_s[i] = True, min(c[i], dn) + 30 * u
+                break
+            if h[i] >= up and l[i] <= dn:
+                break
+    return L, S, {"stop": ("level", sl_l, sl_s), "target": ("R", 5.0 / 30.0)}
+
+
+# ---------------- SC116 Stochastic + MACD agreement, state exit (The Right Trader) ----------------
+def s_trt_stoch_macd_state(df):
+    """The Right Trader 'Stochastic and MACD Strategy: When Both Tools Agree' (daily swing; 15-minute day-trade
+    variant): slow Stochastic (14,3,3) %K above %D with %K at or under 80, and the MACD (12,26,9) line above its
+    signal - on the first close where all three hold -> long; mirror (%K under %D, %K at or over 20, MACD under
+    signal) -> short. Stop beyond the lowest low / highest high of the entry bar and the two before it. Exit on the
+    first close where either condition fails (the 80 / 20 caps block entries only), or at the session close.
+    Ours: session close = end of the UTC day for the intraday variant."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    k, d = _stoch(h, l, c, 14, 3, 3)
+    m, sg, _ = macd(c, 12, 26, 9)
+    up_state = (k > d) & (m > sg)
+    dn_state = (k < d) & (m < sg)
+    L = _onset(up_state & (k <= 80))
+    S = _onset(dn_state & (k >= 20))
+    lo3 = _s(l).rolling(3).min().to_numpy()
+    hi3 = _s(h).rolling(3).max().to_numpy()
+    hs = _local(df, "UTC")[0]
+    bm = _bar_minutes(df)
+    eod = hs >= 24.0 - bm / 60.0 - 1e-9
+    return L, S & ~L, {"stop": ("level", lo3, hi3), "target": None, "exit_long": ~up_state, "exit_short": ~dn_state,
+                       "force_exit": eod}
+
+
+# ---------------- SC117 EMA ribbon 2-15 vs 44-74 scalp (Engineer the Forex) ----------------
+def s_etf_ema_ribbon_scalp(df):
+    """Engineer the Forex 'Scalping strategy with EMA' (M1 recommended, also M5; EUR/USD, GBP/USD, AUD/USD,
+    USD/CAD): pink ribbon = EMA 2..15, blue = EMA 17..41 (odd), green = EMA 44..74 (step 3). The pink ribbon crosses
+    the green one -> trade in the direction of the cross. M1: stop 12 points, target 5-7 points; M5: stop 18,
+    target 12-20. Adding on touches of the blue/green line is not modelled.
+    Ours: ribbon = the mean of its EMAs; points read as pips; 1-minute: stop 12 pips ~ 8 ATR, target 6 pips
+    (0.5R); 5-minute and slower: stop 18 pips ~ 6 ATR(5m), target 16 pips (0.89R)."""
+    c = df["c"].to_numpy(float)
+    pink = np.mean([ema(c, p) for p in range(2, 16)], axis=0)
+    green = np.mean([ema(c, p) for p in range(44, 75, 3)], axis=0)
+    L = cross_up(pink, green)
+    S = cross_down(pink, green)
+    if _bar_minutes(df) <= 1.5:
+        stop, tr = _pips_atr(df, 12), 6.0 / 12.0
+    else:
+        stop, tr = _pips_atr(df, 18), 16.0 / 18.0
+    return L, S & ~L, {"stop": ("atr", stop), "target": ("R", tr)}
+
+
+# ---------------- SC118 RSI(7) extremes 20/80, out at RSI 50 (FXOpen) ----------------
+def s_fxo_rsi7_extremes(df):
+    """FXOpen 'Ultra-Fast Scalping Strategies in Forex' #2 RSI Extremes (1-minute): RSI(7) dips below 20 and
+    moves back above -> buy; rises above 80 and falls back below -> sell. Stop a few pips beyond the entry candle;
+    take the profit as the RSI approaches 50. Ours: stop = the signal candle's low / high -/+ 2 pips (~1.3 ATR of
+    1-minute EUR/USD); exit when the RSI reaches 50 (48 / 52 = 'approaches')."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    r = rsi(c, 7)
+    L = cross_up(r, np.full(len(c), 20.0))
+    S = cross_down(r, np.full(len(c), 80.0))
+    off = _pips_atr(df, 2) * a
+    return L, S & ~L, {"stop": ("level", l - off, h + off), "target": None, "exit_long": r >= 48, "exit_short": r <= 52}
+
+
+# ---------------- SC119 Stochastic 14/3/3 quick signal, out at the opposite extreme (FXOpen) ----------------
+def s_fxo_stoch_quick(df):
+    """FXOpen 'Ultra-Fast Scalping Strategies in Forex' #3 Stochastic Quick Signal (1-minute): %K crosses above %D
+    with both under 20 -> buy; %K crosses below %D with both over 80 -> sell. Stop a few pips away / beyond the
+    swing; take the profit when the stochastic reaches the opposite extreme. Ours: stop = 5-bar swing -/+ 2 pips
+    (~1.3 ATR of 1-minute EUR/USD); exit when %K reaches 80 (long) / 20 (short); divergence exit not modelled."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    k, d = _stoch(h, l, c, 14, 3, 3)
+    L = cross_up(k, d) & (k < 20) & (d < 20)
+    S = cross_down(k, d) & (k > 80) & (d > 80)
+    off = _pips_atr(df, 2) * a
+    lo5 = _s(l).rolling(5).min().to_numpy() - off
+    hi5 = _s(h).rolling(5).max().to_numpy() + off
+    return L, S & ~L, {"stop": ("level", lo5, hi5), "target": None, "exit_long": k >= 80, "exit_short": k <= 20}
+
+
+# ---------------- SC120 5m EMA20 pullback + Stochastic RSI + VWAP side (XS) ----------------
+def s_xs_5m_ema20_stochrsi_vwap(df):
+    """XS '5-minute Scalping Strategy' (Maki Miyai; forex, crypto, indices): trade the VWAP side (above -> buys,
+    below -> sells); price holds above the 20 EMA, pulls back toward it, and a bullish candle closes back above it
+    with the Stochastic RSI turning up from below 20 -> buy (mirror -> sell). Stop just beyond the recent swing,
+    target 1:1 to 1:1.5; out at once on a clear close on the other side of the EMA; trade 08:00-12:00 New York.
+    Ours: pullback = a low at / under the EMA20 in the last 3 bars after 3 closes above it before that; StochRSI
+    (14,14,3,3) %K crosses %D with %D under 20 within the last 5 bars; swing = 5-bar low / high; target 1.25R;
+    'clear close' = a close beyond the EMA by 0.25 ATR."""
+    o, h, l, c = _open(df), *(df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    e = ema(c, 20)
+    vw = _day_vwap_local(df, "America/New_York")
+    k, d = _stochrsi(c)
+    st_up = _since(cross_up(k, d) & (d < 20), 5) | (cross_up(k, d) & (d < 20))
+    st_dn = _since(cross_down(k, d) & (d > 80), 5) | (cross_down(k, d) & (d > 80))
+    hs = _local(df, "America/New_York")[0]
+    sess = (hs >= 8.0) & (hs < 12.0)
+    above_before = (_sh(c, 4) > _sh(e, 4)) & (_sh(c, 5) > _sh(e, 5)) & (_sh(c, 6) > _sh(e, 6))
+    below_before = (_sh(c, 4) < _sh(e, 4)) & (_sh(c, 5) < _sh(e, 5)) & (_sh(c, 6) < _sh(e, 6))
+    touch_dn = _since(l <= e, 3) | (l <= e)
+    touch_up = _since(h >= e, 3) | (h >= e)
+    L = sess & (c > vw) & above_before & touch_dn & (c > e) & (c > o) & st_up
+    S = sess & (c < vw) & below_before & touch_up & (c < e) & (c < o) & st_dn
+    lo5 = _s(l).rolling(5).min().to_numpy()
+    hi5 = _s(h).rolling(5).max().to_numpy()
+    return L, S & ~L, {"stop": ("level", lo5, hi5), "target": ("R", 1.25),
+                       "exit_long": c < e - 0.25 * a, "exit_short": c > e + 0.25 * a}
+
+
+# ---------------- SC121 MA Crossover ADX: rising EMA39 + ADX33 > 22 + DI (StockSharp / MQL) ----------------
+def s_ss_ema39_adx33(df):
+    """StockSharp 'MA Crossover ADX Strategy' (port of the MetaTrader EA MA_Crossover_ADX), 1-hour default: EMA39
+    rising on the last two steps, the previous close above the previous EMA, ADX(33) > 22 and +DI > -DI -> buy;
+    mirror -> sell; the opposite conditions close the trade. Stop 400 points, target 900 points.
+    Ours: the documented rules (the sample code differs); 400 / 900 points on a 5-digit EUR/USD = 40 / 90 pips ->
+    stop 40 pips ~ 3.6 ATR(14) of 1-hour EUR/USD, target 2.25R; entry only on the first bar of the condition."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    e = ema(c, 39)
+    ax = adx(h, l, c, 33)
+    pdi, mdi = _di(h, l, c, 33)
+    up = (e - _sh(e) > 0) & (_sh(e) - _sh(e, 2) > 0) & (_sh(c) > _sh(e)) & (ax > 22) & (pdi > mdi)
+    dn = (e - _sh(e) < 0) & (_sh(e) - _sh(e, 2) < 0) & (_sh(c) < _sh(e)) & (ax > 22) & (pdi < mdi)
+    L, S = _onset(up), _onset(dn)
+    return L, S & ~L, {"stop": ("atr", _pips_atr(df, 40)), "target": ("R", 2.25), "exit_long": dn, "exit_short": up}
+
+
+# ---------------- SC122 MA Price Cross 160, 1:3 (StockSharp / JBlanked) ----------------
+def s_ss_ma160_price_cross(df):
+    """StockSharp 'MA Price Cross Strategy' (from the MQL4 EA by JBlanked, 2023): the close crosses the 160-period
+    moving average upward -> buy, downward -> sell (an opposite position is flattened first); stop 200 points,
+    target 600 points; entries only 01:00-22:00. Ours: SMA160 on closes (the documented type); 200 / 600 points =
+    20 / 60 pips on a 5-digit EUR/USD -> stop in ATR(14) of the bar's timeframe, target 3R; window in UTC."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    m = sma(c, 160)
+    hs = _local(df, "UTC")[0]
+    win = (hs >= 1.0) & (hs < 22.0)
+    L = win & cross_up(c, m)
+    S = win & cross_down(c, m)
+    return L, S & ~L, {"stop": ("atr", _pips_atr(df, 20)), "target": ("R", 3.0), "exit_long": S, "exit_short": L}
+
+
+# ---------------- SC123 Connors S&P momentum day trade: MA20 + RSI(3) pullback (TradingMarkets) ----------------
+def s_connors_ma20_rsi3_intraday(df):
+    """Larry Connors, TradingMarkets 'Three Indicators I Combine To Find Great Intraday Entry Points In The S&P'
+    (20-minute bars; 5, 10 or 15-minute also; S&P futures, also bonds, currencies): bars above the 20-period MA and
+    RSI(3) under 30 -> buy one tick above the previous bar's high on the next two bars only; mirror (below the MA,
+    RSI(3) over 70, sell one tick under the previous low). Risk no more than the previous bar's size; exit: half
+    off at 1R, stop to break-even, trail the rest.
+    Ours: the buy stop = a close above the previous bar's high within the two bars after the setup bar (filled at
+    the next open); stop = signal close minus the previous bar's range; break-even at 1R, target 2R (the trailed
+    half approximated)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    m = sma(c, 20)
+    r = rsi(c, 3)
+    set_l = (c > m) & (r < 30)
+    set_s = (c < m) & (r > 70)
+    L = _since(set_l, 2) & (c > _sh(h)) & (c > m)
+    S = _since(set_s, 2) & (c < _sh(l)) & (c < m)
+    rng = _sh(h) - _sh(l)
+    L, S = _onset(L), _onset(S) & ~L
+    return L, S, {"stop": ("level", c - rng, c + rng), "target": ("R", 2.0), "breakeven": (0.5, 0.0)}
+
+
 SCOUT = {
     "SC001": ("RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute (TradingView)", s_rv_ema20_scalp, ["1Min"]),
     "SC002": ("Alligator + Fractals breakout, fractal stop, 1:3 (RoboForex)", s_alligator_fractal, ["1Hour", "4Hour"]),
@@ -3108,4 +3400,17 @@ SCOUT = {
     "SC108": ("News fade: release spike + reversal candle, wick break, stop the spike, target the pre-release close, 15-min exit, 5m (JournalPlus)", s_jp_news_fade_reversal, ["5Min"]),
     "SC109": ("CPI 08:30-09:00 ET range breakout, stop at the midpoint, target the prior day's high / low (DayTradingToolkit)", s_dtt_cpi_range_break, ["5Min"]),
     "SC110": ("freqtrade Hacklemore: RMI + MACD + SAR + lower-BB touch 2-10 bars ago, -8.5% / 1.5%, 5m (GitHub)", s_ft_hacklemore, ["5Min"]),
+    "SC111": ("Tricolor M1: EMA 63/102/165 stack + Stochastic 30/6/18 under 10 + 15/3/9 crossing 20, 5 / 10 pips (ForTraders)", s_fort_tricolor_m1, ["1Min"]),
+    "SC112": ("ADX(14) crossing its MA9 + MACD 5/25/9 zero side, 30 / 60 pips, opposite-signal exit, M15 (ForTraders)", s_fort_adx_ma_macd, ["15Min"]),
+    "SC113": ("10 points: MACD 13/26/9 histogram side + Stochastic 5/3/3 back over 20 / under 80, local-extreme stop, 10 pips, M1 (Engineer the Forex)", s_etf_10points_m1, ["1Min"]),
+    "SC114": ("Ranger: Parabolic SAR 0.04/0.1 + Stochastic 5/5/5 cross under 25 / over 75, local stop <= 20 pips, 2.5R, M15 (Trading Guide)", s_tg_ranger_sar_stoch, ["15Min"]),
+    "SC115": ("PinkFlint news straddle: +/-20 pips from the price 5 min before, stop 30, target 5 pips, M5 (ForTraders)", s_fort_pinkflint_news, ["5Min"]),
+    "SC116": ("Stochastic 14/3/3 %K>%D (<=80) + MACD over signal, 3-bar stop, exit when either fails, 15m (The Right Trader)", s_trt_stoch_macd_state, ["15Min"]),
+    "SC117": ("EMA ribbon 2-15 crossing ribbon 44-74, M1 12 / 6 pips, M5 18 / 16 pips (Engineer the Forex)", s_etf_ema_ribbon_scalp, ["1Min", "5Min"]),
+    "SC118": ("RSI(7) back over 20 / under 80, entry-candle stop, out at RSI 50, 1-minute (FXOpen)", s_fxo_rsi7_extremes, ["1Min"]),
+    "SC119": ("Stochastic 14/3/3 cross under 20 / over 80, swing stop, out at the opposite extreme, 1-minute (FXOpen)", s_fxo_stoch_quick, ["1Min"]),
+    "SC120": ("5m EMA20 pullback + Stochastic RSI turn from 20 on the VWAP side, swing stop, 1.25R, 08-12 NY (XS)", s_xs_5m_ema20_stochrsi_vwap, ["5Min"]),
+    "SC121": ("MA Crossover ADX: EMA39 rising 2 bars + ADX33 > 22 + DI, 40 / 90 pips, H1 (StockSharp)", s_ss_ema39_adx33, ["1Hour"]),
+    "SC122": ("MA Price Cross: close crosses SMA160, 20 / 60 pips (1:3), 01-22 (StockSharp / JBlanked)", s_ss_ma160_price_cross, ["1Min", "1Hour"]),
+    "SC123": ("Connors S&P: over MA20 + RSI(3) < 30, break of the prior high within 2 bars, prior-bar-range stop, BE at 1R (TradingMarkets)", s_connors_ma20_rsi3_intraday, ["5Min", "15Min"]),
 }

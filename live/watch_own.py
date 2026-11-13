@@ -81,6 +81,7 @@ KEEP = 60                     # closed trades kept in the state (with their cand
 # virtual demo account (user, 06.11.2026): $100,000 like the other demo accounts, risk per trade as bots 2 and 4,
 # the bots' own daily stop (4.5%, FTMO's limit is 5%) and FTMO's 10% maximum loss
 INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.0045, 0.045, 0.10
+BOT_MAX_LOSS = 0.09     # the bots' own total limit (data/agents/tal_thinking.md: 4.5% a day, 9% in total)
 # the virtual account, v2 (user, 10.11.2026: "as if it were a real demo account"): a fresh $100,000 from the moment this
 # version starts, only the two gap tracks count, each with its own risk: v5 (15m) 0.4%, the 1-minute track 0.075%.
 # FTMO rules: no new trades after a 4.5% loss in the day, the account burns at a 10% loss from the start.
@@ -902,7 +903,21 @@ def main():
                         elif day_pnl(day) <= -DAILY_STOP * start:
                             rec["skipped"] = "daily"
                         else:
-                            rec["risk_usd"] = round(bal * TAL5_RISK.get(rec["tal"], RISK_TAL5) * TAL5_SCALE[0], 2)
+                            # the red lines hold for the open trades too (bot 5's smart agent, 13.11.2026 evening; the
+                            # manager's task f8643b16aa57: 23 gap tracks x 0.2-0.28% = 5.4% that can be open at once,
+                            # more than the 5% daily line): a new trade risks at most the room left - the day's loss so
+                            # far plus every open trade's full risk stays within the bot's 4.5% a day and 9% in total.
+                            # Near a limit the risk shrinks (Tal: lower gradually, not block); under a quarter of the
+                            # trade's risk left -> not taken.
+                            want_ = bal * TAL5_RISK.get(rec["tal"], RISK_TAL5) * TAL5_SCALE[0]
+                            open_ = sum(float(o.get("risk_usd") or 0) for kk_, o in trades.items()
+                                        if kk_ != k and o.get("status") == "open" and o.get("risk_usd"))
+                            room_ = min(DAILY_STOP * start + day_pnl(day) - open_,
+                                        bal - open_ - acc["initial"] * (1 - BOT_MAX_LOSS))
+                            if room_ < 0.25 * want_:
+                                rec["skipped"] = "room"
+                            else:
+                                rec["risk_usd"] = round(min(want_, room_), 2)
                     if rec.get("risk_usd"):
                         if rec["status"] == "closed" and rec.get("r") is not None:
                             rec["pnl"] = round(rec["r"] * rec["risk_usd"], 2)

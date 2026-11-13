@@ -1587,6 +1587,41 @@ def serve_candles():
 
 TUN.ROUTES["/candles"] = candles
 
+
+# live prices for the virtual bots' screens (user, 13.11.2026: "see the movement every second"): the app asks for its
+# symbols; MetaTrader is read only in the main loop (4 times a second, refresh_quotes), the web thread returns the cache
+QUOTE_WANT, QUOTE_CACHE = {}, {}
+
+
+def quotes(q):
+    syms = [x for x in str(q.get("symbols", "")).split(",") if x][:30]
+    now = time.time()
+    for s_ in syms:
+        QUOTE_WANT[s_] = now
+    return {"quotes": {s_: QUOTE_CACHE[s_] for s_ in syms if s_ in QUOTE_CACHE}, "t": int(now)}
+
+
+def refresh_quotes():
+    now = time.time()
+    for s_, at in list(QUOTE_WANT.items()):
+        if now - at > 30:                     # nobody looks at it any more
+            QUOTE_WANT.pop(s_, None)
+            QUOTE_CACHE.pop(s_, None)
+            continue
+        try:
+            try:
+                nm = mt5_name(s_)
+            except Exception:  # noqa: BLE001
+                nm = s_
+            t = mt5.symbol_info_tick(nm) or mt5.symbol_info_tick(s_)
+            if t is not None and t.bid:
+                QUOTE_CACHE[s_] = [float(t.bid), float(t.ask), int(list(server_to_utc([int(t.time)]))[0].timestamp())]
+        except Exception:  # noqa: BLE001
+            pass
+
+
+TUN.ROUTES["/quotes"] = quotes
+
 FAIL_HE = {10018: "השוק של הנכס הזה סגור עכשיו", 10027: "המסחר האוטומטי (Algo Trading) כבוי ב־MetaTrader", 10026: "המסחר האוטומטי חסום בשרת",
            10004: "המחיר זז, נסה שוב", 10021: "אין מחיר כרגע", 10030: "סוג הביצוע לא נתמך", 10031: "אין חיבור לשרת", 10017: "המסחר בנכס הזה חסום"}
 
@@ -1903,6 +1938,7 @@ def main():
                     serve_candles()
                     serve_actions()
                     refresh_live()
+                    refresh_quotes()
             except Exception:  # noqa: BLE001
                 pass
             time.sleep(0.25)

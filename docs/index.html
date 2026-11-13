@@ -678,6 +678,61 @@ async function livePoll() {
     listBusy = false;
   }
 }
+/* live prices for the virtual bots (5, 6, 7) - user, 13.11.2026: "see the change every second". Their state comes from
+   GitHub every minute or two; the prices come from bot 1's MetaTrader through the manager every second, and the open
+   trades' price, profit and the equity are recomputed from them (risk x the move in R, like the bot itself). */
+const VIRT = ["watch_own", "watch_fut", "news_bot"];
+let qBusy = false, qT = 0;
+async function getQuotes(syms) {
+  if (!syms.length || !mgr || !mgrInfo) return null;
+  const r = await fetch(`${mgr}/quotes?symbols=${encodeURIComponent(syms.join(","))}`, {cache: "no-store"});
+  if (!r.ok) return null;
+  return (await r.json()).quotes || null;
+}
+async function virtLive() {
+  const accOn = $("v-acc").classList.contains("on"), n = accOn && UI.view === "det" ? UI.cur : null;
+  if (!n || !VIRT.includes(n) || qBusy || Date.now() - qT < 1000) return;
+  const s = found[n], pos = (s && s.positions) || [];
+  if (!pos.length) return;
+  qBusy = true; qT = Date.now();
+  try {
+    const q = await getQuotes([...new Set(pos.map(p => p.symbol))]);
+    if (q && UI.cur === n) {
+      let tot = 0;
+      pos.forEach(p => { const x = q[p.symbol]; if (!x) { tot += p.pnl || 0; return; }
+        const px = p.side === "buy" ? x[0] : x[1], risk = -(p.sl_usd || 0), d = p.open - p.sl;
+        p.now = px; if (risk > 0 && d) p.pnl = Math.round(risk * (px - p.open) / d * 100) / 100; tot += p.pnl || 0; });
+      if (s.balance != null) s.equity = Math.round((s.balance + tot) * 100) / 100;
+      renderDet(true);
+    }
+  } catch (e) {}
+  qBusy = false;
+}
+setInterval(virtLive, 250);
+// the chart of an open virtual trade: its last candle moves with the price
+const LC = {sym: null, side: "buy", charts: []};
+async function chartLive() {
+  if (!LC.sym || !LC.charts.length || qBusy) return;
+  if (!$("wcPg").classList.contains("on") && !$("chartPg").classList.contains("on")) { LC.sym = null; LC.charts = []; return; }
+  qBusy = true;
+  try {
+    const q = await getQuotes([LC.sym]), x = q && q[LC.sym];
+    if (x) { const px = LC.side === "buy" ? x[0] : x[1];
+      LC.charts.forEach(c => { if (!c.last) return; const t = c.last.time, tq = x[2] + c.off, nt = t + c.step;
+        if (tq >= nt) { const k = t + Math.floor((tq - t) / c.step) * c.step; c.last = {time: k, open: px, high: px, low: px, close: px}; }
+        else c.last = {...c.last, high: Math.max(c.last.high, px), low: Math.min(c.last.low, px), close: px};
+        try { c.s.update(c.last); } catch (e) {} }); }
+  } catch (e) {}
+  qBusy = false;
+}
+setInterval(chartLive, 1000);
+function liveChart(sym, side, s, bars, off, stepSec) {
+  if (!bars || !bars.length) return;
+  const b = bars[bars.length - 1];
+  if (LC.sym !== sym) { LC.sym = sym; LC.charts = []; }
+  LC.side = side;
+  LC.charts.push({s, off, step: stepSec, last: {time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]}});
+}
 function updConn() {
   const on = !!mgrInfo;
   $("lConn").className = "dot " + (on ? "on" : mgr || mgrSeen ? "off" : "");
@@ -1582,6 +1637,8 @@ async function chartPage(tf) {
     autoscaleInfoProvider: orig => { const r = orig(); if (!r) return r; const ex = [t.open_px, t.sl0 || t.sl, t.tp || t.tp0, t.close_px].filter(v => v);
       return {priceRange: {minValue: Math.min(r.priceRange.minValue, ...ex), maxValue: Math.max(r.priceRange.maxValue, ...ex)}}; }});
   ser.setData(j.bars.map(b => ({time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]})));
+  LC.sym = null; LC.charts = [];
+  if (isOpen) liveChart(t.symbol, t.side, ser, j.bars, off, step);
   const snap = sec => { const k = j.bars.findLast ? j.bars.findLast(b => b[0] <= sec) : [...j.bars].reverse().find(b => b[0] <= sec); return (k ? k[0] : j.bars[0][0]) + off; };
   const buy = t.side === "buy";
   const mk = [{time: snap(o), position: buy ? "belowBar" : "aboveBar", color: buy ? "#1E8A4C" : "#D0453A", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}];
@@ -2136,6 +2193,8 @@ async function wcOpen(id) {
   A.ch.timeScale().fitContent();
   // 1 minute: the rest of the trade, with the position box
   const B = mk($("wc1"), t.m1);
+  LC.sym = null; LC.charts = [];
+  if (t.status === "open" || t.status === "pending") { liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, 900); liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, 60); }
   if (t.time && B.bars.length) {
     const t0 = snap(B.bars, tin), last = B.bars[B.bars.length - 1][0] + off, t1 = t.exit_time ? snap(B.bars, Date.parse(t.exit_time) / 1000) : last, pts = [];
     for (const b of B.bars) { const x = b[0] + off; if (x >= t0 && x <= t1) pts.push(x); }
@@ -2214,6 +2273,10 @@ async function wcTal(t) {
     ...(tin ? [{time: snap(A.bars, tin), position: buy ? "belowBar" : "aboveBar", color: "#12161C", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}] : [])
   ].sort((a, b) => a.time - b.time));
   A.ch.timeScale().fitContent();
+  const MS = {"1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400};
+  LC.sym = null; LC.charts = [];
+  const isLive = t.status === "open" || (t.status === "pending");
+  if (isLive) liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, MS[g.htf] || 900);
   // the low timeframe
   const B = mk($("wc1"), t.m1, [lo, hi, t.entry, t.stop, t.target]);
   const bEnd = B.bars.length ? B.bars[B.bars.length - 1][0] + off : null;
@@ -2233,6 +2296,7 @@ async function wcTal(t) {
   B.s.setMarkers(ms.sort((a, b) => a.time - b.time));
   if (t.entry != null) B.s.createPriceLine({price: t.entry, color: "#12161C", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "כניסה"});
   B.ch.timeScale().fitContent();
+  if (isLive) liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, MS[g.ltf] || 60);
 }
 $("wbBack").onclick = () => $("wbPg").classList.remove("on");
 $("wcBack").onclick = () => { $("wcPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } WC.forEach(c => c.remove()); WC = []; };

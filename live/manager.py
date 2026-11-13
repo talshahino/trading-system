@@ -1307,6 +1307,16 @@ class Handler(BaseHTTPRequestHandler):
                                     "risk": risk_public()})
         if path == "/vapid":
             return self._send(200, {"key": vapid_public()})
+        if path == "/quotes":
+            # live prices for the virtual bots (5, 6, 7) from bot 1's MetaTrader, read every second by the app
+            src = watch_source()
+            if not src:
+                return self._send(503, {"error": "bot 1 not running"})
+            try:
+                r = requests.get(f"http://127.0.0.1:{src['port']}/quotes?" + self.path.partition("?")[2], timeout=4)
+                return self._send(r.status_code, r.json())
+            except Exception:  # noqa: BLE001
+                return self._send(503, {"error": "bot 1 not answering"})
         if len(parts) == 3 and parts[0] == "bot" and parts[2] in ("live", "state", "candles"):
             port = bot_port(parts[1])
             if not port:

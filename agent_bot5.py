@@ -116,7 +116,7 @@ def prep(s, end):
 # Tal's gap method on bot 5's world (12.11.2026: the engine's API is the one bot 6 uses - TG.run / summarize /
 # write_results / cards; the old TG.experiments call failed every night, so bot 5 had no results)
 TAL_DIR = OUT / "tal"
-TAL_WIDE_DIR = OUT / "tal_wide"      # the method on every FTMO forex pair, the metals, the other indices (13.11.2026)
+TAL_WIDE_DIR = TAL_DIR / "wide"      # under tal/: the bots computer keeps its run cache unpublished (agents_host.snapshot); the method on every FTMO forex pair, the metals, the other indices (13.11.2026)
 
 
 TREND_MODES = ("day", "up20")

@@ -1010,6 +1010,10 @@ function drawer(open) {
 }
 $("connBtn").onclick = () => drawer(!$("drawer").classList.contains("on"));
 $("drawerClose").onclick = () => drawer(false);
+// a page opened from the management drawer (bots' manager, conversations, loss reports...) opens in front: the drawer
+// closes by itself (user, 13.11.2026: the page opened behind it)
+{ const mo = new MutationObserver(ms => { if (ms.some(m => m.target.classList.contains("on")) && $("drawer").classList.contains("on")) drawer(false); });
+  document.querySelectorAll(".page").forEach(pg => mo.observe(pg, {attributes: true, attributeFilter: ["class"]})); }
 $("scrim").onclick = () => { drawer(false); panel("addDrawer", false); };
 addEventListener("keydown", e => { if (e.key === "Escape") { drawer(false); panel("addDrawer", false); } });
 

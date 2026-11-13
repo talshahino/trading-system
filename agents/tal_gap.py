@@ -159,6 +159,18 @@ class Data:
             if mode == "day":
                 day0 = pd.Series(self.o1, index=self.t1).groupby(self.t1.floor("1D")).transform("first").to_numpy(float)
                 s = np.sign(prev - day0)
+            elif mode == "rth":
+                # bot 6's smart agent (13.11.2026): the index futures' own bigger picture - from the New York cash open
+                # (09:30) to 18:00 New York, the side of the price against that day's 09:30 open; the rest of the
+                # futures day falls back to "day". Not in KNOBS (bot 6 tests it on its running tracks only).
+                ny = self.t1.tz_convert("America/New_York")
+                mins = np.asarray(ny.hour * 60 + ny.minute)
+                rth = (mins >= 570) & (mins < 1080)
+                day = ny.normalize()
+                day0 = pd.Series(self.o1, index=self.t1).groupby(self.t1.floor("1D")).transform("first").to_numpy(float)
+                o930 = pd.Series(np.where(rth, self.o1, np.nan)).groupby(np.asarray(day)).transform("first").to_numpy(float)
+                ref = np.where(rth & ~np.isnan(o930), o930, day0)
+                s = np.sign(prev - ref)
             else:
                 up = UP.get(htf, "4h")
                 ts, o, h, l, c, _ = self.tf(up)

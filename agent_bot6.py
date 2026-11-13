@@ -171,9 +171,161 @@ def shared(idx, budget_s):
     return done
 
 
+# TREND on what runs (bot 6's smart agent, 13.11.2026): bot 5's fix of its 12.11 loss (day = only in the direction of the
+# UTC day's open, up20 = the timeframe above against its 20-candle EMA), shared, plus the futures' own picture (rth =
+# against the New York cash open 09:30, agents/tal_gap.Data.trend) - each on bot 6's running tracks with exactly their
+# rules, so the fix is measured head to head against what trades (the search tries TREND only around its own best).
+TREND6 = ("day", "up20", "rth")
+
+
+def _t6(idx, pn, cfg):
+    cfg = TG._norm(dict(cfg))
+    fs = [v for v in idx.values() if v["pair"] == pn and TG._norm(dict(v["cfg"])) == cfg and v["sym"] in WORLD["symbols"]]
+    if {v["sym"] for v in fs} != set(WORLD["symbols"]):
+        return None
+    t = pd.concat([pd.read_csv(TAL_DIR / v["file"]) for v in fs], ignore_index=True)
+    t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
+    return t
+
+
+def trend_runs(idx, budget_s):
+    """Every running track's own rules, alone and with TREND = day / up20 / rth, on bot 6's three indices - saved in the
+    gap method's index as 'search' rows (from "bot6_trend"), like shared()."""
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    idx_dir = TAL_DIR / "idx"
+    idx_dir.mkdir(parents=True, exist_ok=True)
+    want = []
+    for pn, cfg in live_tracks().values():
+        if pn in pairs:
+            c0 = TG._norm({k: v for k, v in cfg.items() if k != "TREND"})
+            want += [(pn, c0)] + [(pn, TG._norm(dict(c0, TREND=m))) for m in TREND6]
+    t0, done = time.time(), 0
+    for sym in WORLD["symbols"]:
+        todo = [(pn, c) for pn, c in want if f"{pairs[pn][0]}_{pairs[pn][1]}_{TG.vid(c)}_{sym}" not in idx]
+        if not todo or time.time() - t0 > budget_s:
+            continue
+        try:
+            D = tal_load(sym)
+        except Exception as e:  # noqa: BLE001
+            print(f"tal trend {sym}: no data ({e})")
+            continue
+        if D is None:
+            continue
+        gcs = {}
+        for pn, c in todo:
+            if time.time() - t0 > budget_s:
+                break
+            p = pairs[pn]
+            key = f"{p[0]}_{p[1]}_{TG.vid(c)}_{sym}"
+            t = TG.simulate(D, p, c, gcs.setdefault(p[0], {}))
+            f = TAL_DIR / f"{key}.csv.gz"
+            t.to_csv(f, index=False)
+            idx[key] = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": p[2],
+                        "knob": "search", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f.name, "n": len(t),
+                        "from": "bot6_trend"}
+            (idx_dir / f"{key}.json").write_text(json.dumps(idx[key], default=str))
+            done += 1
+    print(f"tal trend (bot 6): {done} run")
+    return done
+
+
+def _day_stats(t):
+    tr, un = t[t["time"] < A.SPLIT], t[t["time"] >= A.SPLIT]
+    wd = lambda x: round(float(x.groupby(x["time"].dt.strftime("%Y-%m-%d"))["r"].sum().min()), 2) if len(x) else None  # noqa: E731
+    return {"train_w": round(TG.score(t), 1), "unseen": round(float(un["r"].sum()), 1), "n_unseen": int(len(un)),
+            "mean_unseen": round(float(un["r"].mean()), 3) if len(un) else None,
+            "worst_day_train": wd(tr), "worst_day_unseen": wd(un)}
+
+
+def trend_cards(idx, b5_res=None):
+    """Per running track: TREND (day / up20 / rth) against its rules alone. CHOSEN on 2024-2025 (the time-weighted
+    total, the search's score); an 'improve' card only when the chosen mode is also better on 2026 in total AND per
+    trade and its worst day of 2026 is not worse (principle: more profit, no more risk). Returns (cards, results)."""
+    out, res = [], {}
+    rk = {**FA.RISK}
+    try:
+        rk.update(json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8")).get("risk") or {})
+    except Exception:  # noqa: BLE001
+        pass
+    b5 = "; ".join(f"{k}: מה שרץ {v.get('live', {}).get('train_w')}R/{v.get('live', {}).get('unseen')}R, " + ", ".join(
+        f"{m} {(v.get(m) or {}).get('train_w', '-')}R/{(v.get(m) or {}).get('unseen', '-')}R" for m in ("day", "up20"))
+        for k, v in (b5_res or {}).items()) or "TREND לא שיפר בשתי התקופות באף מסלול שנבדק (15 דק'/דקה: לא עדיף ב־2024-2025)"
+    for trk, (pn, cfg) in live_tracks().items():
+        c0 = TG._norm({k: v for k, v in cfg.items() if k != "TREND"})
+        base = _t6(idx, pn, c0)
+        if base is None:
+            continue
+        row = {"live": _day_stats(base)}
+        best = None
+        for m in TREND6:
+            c = TG._norm(dict(c0, TREND=m))
+            t = _t6(idx, pn, c)
+            if t is None:
+                continue
+            row[m] = _day_stats(t)
+            if row[m]["train_w"] > row["live"]["train_w"] and (best is None or row[m]["train_w"] > row[best[0]]["train_w"]):
+                best = (m, c, t)                         # chosen on the train period only
+        res[trk] = row
+        if len(row) < len(TREND6) + 1 or not best:
+            continue
+        m, c, t = best
+        lv, x = row["live"], row[m]
+        if not (x["unseen"] > lv["unseen"] and (x["mean_unseen"] or -9) >= (lv["mean_unseen"] or -9)
+                and (x["worst_day_unseen"] or -99) >= (lv["worst_day_unseen"] or -99)):
+            continue
+        st, bs = TG._stats(t), TG._stats(base)
+        hi, lo = pn.split("/")
+        mh = {"day": "פתיחת היום", "up20": "הטיים פריים שמעל מול ממוצע 20", "rth": "פתיחת ניו יורק 09:30"}[m]
+        out.append(K.card("bot6", "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: רק בכיוון {mh} ({m})",
+                          f"המסלול {trk} עם הכללים שרצים, ועוד מסנן TREND={m}. נבחר על 2024-2025 בלבד (סה\"כ משוקלל "
+                          f"{lv['train_w']:+.1f}R ← {x['train_w']:+.1f}R, מתוך day / up20 / rth); 2026 (לא נראתה): סה\"כ "
+                          f"{lv['unseen']:+.1f}R ← {x['unseen']:+.1f}R, {x['n_unseen']} עסקאות, {x['mean_unseen']:+.2f}R לעסקה "
+                          f"(היום {lv['mean_unseen']:+.2f}R על {lv['n_unseen']}), היום הגרוע {lv['worst_day_unseen']}R ← "
+                          f"{x['worst_day_unseen']}R. בסיכון {float(rk.get(trk, FA.RISK_TAL)) * 100:g}%. בבוט 5: {b5}.",
+                          st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
+                          tested=len(TREND6), risk_pct=round(float(rk.get(trk, FA.RISK_TAL)) * 100, 3), baseline=bs["unseen"],
+                          neighbours={"values": list(TREND6), "share_positive": round(float(np.mean(
+                              [(row.get(q) or {}).get("unseen", -1e9) > lv["unseen"] for q in TREND6])), 2)},
+                          detail={"world": "bot6", "trend": row, "bot5": b5_res},
+                          change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
+    return out, res
+
+
+def scale_cards(pf, rk):
+    """Bot 5's account-in-% rule (13.11.2026 night), shared: one factor on every gap track's risk, chosen on 2024-2025
+    so the account stays within 80% of the bot's limits (tal_gap.risk_scale). Bot 6 keeps a risk per track in
+    live/bots/bot6.json, so the factor is one 'risk' card per track (the builder builds each at once)."""
+    a = (pf or {}).get("account") or {}
+    sc = a.get("scale") or {}
+    k = sc.get("chosen", 1.0)
+    if not sc or k >= 1.0 or str(k) not in (sc.get("rows") or {}):
+        return []
+    nt, nu = a["now"]["train"] or {}, a["now"]["unseen"] or {}
+    bt, bu = sc["rows"][str(k)].get("train") or {}, sc["rows"][str(k)].get("unseen") or {}
+    line = lambda x: (f"סה\"כ {x.get('total_pct', 0):+.1f}%, היום הגרוע {x.get('worst_day_pct', 0):+.1f}%, "  # noqa: E731
+                      f"הירידה הגדולה {x.get('max_fall_pct', 0):.1f}%")
+    out = []
+    for trk, r in rk.items():
+        to = round(float(r) * k, 5)
+        out.append(K.card("bot6", "risk", f"שיטת הגאפ בבוט 6, מסלול {trk}: סיכון {float(r) * 100:g}% ← {to * 100:g}% (× {k})",
+                          f"כל מסלולי שיטת הגאפ של בוט 6 יחד, בסיכון האמיתי של כל מסלול ועם המגבלות של הבוט (4.5% ביום, "
+                          f"9% בסך הכל). היום: 2024-2025: {line(nt)}; 2026: {line(nu)}. הכלל של בוט 5 (משותף): המקדם הגדול "
+                          f"ביותר שבו 2024-2025 נשאר ב־80% מהמגבלות (ירידה ≤ 7.2%, יום ≥ -3.6%), נבחר רק על 2024-2025 → × {k}. "
+                          f"עם המקדם: 2024-2025: {line(bt)}; 2026 (לא נראתה): {line(bu)}. אסטרטגיות הסייר (0.28% כל אחת) "
+                          f"מעל זה - לא בחישוב. בבוט 5 אותו כלל נתן × 0.5 (2026: ירידה 21% ← 10.5%).",
+                          None, None, tested=1, risk_pct=round(to * 100, 4), detail={"world": "bot6", "account": a},
+                          change={"track": trk, "knob": f"RISK_{trk}", "from": float(r), "to": to}))
+    return out
+
+
 def tal(budget_s):
     t0 = time.time()
-    idx, left = TG.run("bot6", WORLD["symbols"], tal_load, TAL_DIR, budget_s * 0.8)
+    idx0 = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")} if (TAL_DIR / "idx").exists() else {}
+    try:
+        trend_runs(idx0, budget_s * 0.25)           # TREND against exactly what runs, first (13.11.2026)
+    except Exception as e:  # noqa: BLE001
+        print(f"tal trend failed: {e}")
+    idx, left = TG.run("bot6", WORLD["symbols"], tal_load, TAL_DIR, budget_s * 0.8 - (time.time() - t0))
     shared(idx, budget_s - (time.time() - t0))
     pairs, answers = TG.summarize(idx, WORLD["symbols"], TAL_DIR)
     planned = len(TG.PAIRS) * len(TG.variants()) * len(WORLD["symbols"])
@@ -187,8 +339,15 @@ def tal(budget_s):
         # the hour filter and the direction cap are bot 5's methods (13.11.2026), shared: chosen on 2024-2025 only.
         # Bot 6 has ~600 gap trades to 2025 against bot 5's ~5,000, so an hour needs 30 trades here (100 there),
         # with the same t <= -1.5
-        pf = TG.portfolio(idx, WORLD["symbols"], TAL_DIR, counted, hour_min_n=30)
+        # the account in % with each track's real risk (bot 5's rule, 13.11.2026 night, shared): the bot's limits
+        # in % - not in R - and one factor on the tracks' risk chosen on 2024-2025 (scale_cards)
+        pf = TG.portfolio(idx, WORLD["symbols"], TAL_DIR, counted, hour_min_n=30,
+                          risk={k: float(rk.get(k, FA.RISK_TAL)) for k in counted})
         if pf:
+            try:
+                pcards += scale_cards(pf, {k: float(rk.get(k, FA.RISK_TAL)) for k in counted})
+            except Exception as e:  # noqa: BLE001
+                print(f"tal_gap scale failed: {e}")
             doc["bot6"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             pf5 = (doc.get("bot5") or {}).get("portfolio") or {}
@@ -203,6 +362,14 @@ def tal(budget_s):
                 pcards.append(pc)
     except Exception as e:  # noqa: BLE001
         print(f"tal_gap portfolio failed: {e}")
+    try:            # TREND on what runs, head to head (13.11.2026)
+        tc, tres = trend_cards(idx, (doc.get("bot5") or {}).get("trend_fix"))
+        pcards += tc
+        if tres:
+            doc["bot6"]["trend_fix"] = tres
+            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print(f"tal_gap trend cards failed: {e}")
     # a card on a pair bot 6 already trades carries what runs as its baseline (approved only if 2026 is better per
     # trade AND in total); a new pair must have earned on 2024-2025 and on 2026 (it must add to the bot as a whole)
     return TG.cards("bot6", pairs, doc.get("bot5"), "בוט 5", risk_pct=FA.RISK_TAL * 100,
@@ -219,9 +386,14 @@ SCOUT_RERUN_DAYS = 14
 # so none was ever run on bot 6's own world. Same fair test as the approved ones (96 variants, chosen on 2024-2025,
 # shown on 2026); one that passes is a 'new' card like any other, one that does not is only recorded here (it is not
 # a fix attempt: the bot never traded it). Newest first; the run resumes where the last one stopped.
+# 13.11.2026 morning: the scout's index strategies of 13.11 join - the session-open ones first (SC073 the first 5-minute
+# bar's breakout, SC077 the 15-minute opening range with a tight stop, SC078 the NQ Keltner pulse), then the
+# Bollinger / Keltner ones (SC068, SC070, SC071). SC058: no variant earned on 2024-2025 and on 2026, on any index.
 DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC058", ("5Min", "15Min", "1Min")), ("SC063", ("5Min",)),
+                                                 ("SC073", ("5Min",)), ("SC077", ("5Min", "1Min")), ("SC078", ("15Min",)),
                                                  ("SC011", ("1Min",)), ("SC052", ("1Min",)), ("SC003", ("1Min",)),
-                                                 ("SC047", ("1Min",)), ("SC021", ("5Min",)), ("SC028", ("5Min",)))
+                                                 ("SC047", ("1Min",)), ("SC021", ("5Min",)), ("SC028", ("5Min",)),
+                                                 ("SC068", ("5Min",)), ("SC070", ("5Min", "15Min")), ("SC071", ("5Min", "15Min")))
             for tf in tfs for sym in ("US100", "US500", "US30")]
 
 

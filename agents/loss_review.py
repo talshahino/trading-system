@@ -277,7 +277,8 @@ def card_effect(card, months, bot_risk_pct, mult=None):
         return None
     per_month = (u.get("n") or 0) / months * (card.get("risk_pct") or bot_risk_pct)
     k = card.get("kind")
-    if k == "improve":
+    if k == "improve" or (k == "risk" and (card.get("change") or {}).get("kind") in ("tp", "sl", "hours", "dir", "vol")):
+        # a live rule changed / taken back (13.11.2026) is worth its own test's gain, like an improvement
         return round(((u["mean"] or 0) - (b.get("mean") or 0)) * per_month, 2)
     if k == "new":
         return round((u["mean"] or 0) * per_month, 2)
@@ -334,6 +335,8 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
             what = d["title"]
             if d.get("type") == "risk" and a.get("kind") == "mult":
                 what = f"סיכון ×{a.get('value')}" + (" (הוסרה)" if not a.get("value") else "")
+            elif d.get("type") == "risk" and d.get("kind") in ("tp", "sl", "hours", "dir", "vol"):
+                what = d["title"]                # a live rule changed / taken back (a bot agent's card)
             elif d.get("type") == "risk":
                 what = "הוסרה מהבוט"
             fixes.append({"what": what, "decision": d["id"], "at": d["at"], "effect_month_pct": eff})

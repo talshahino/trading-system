@@ -130,11 +130,40 @@ def _risk_card(c, bot):
     return v if 0.5 <= v <= 1.5 else None
 
 
+RULE_KINDS = ("tp", "sl", "hours", "dir", "vol")
+
+
+def _rule_card(c, bot):
+    """A bots 1-4 agent's card on one of a strategy's live rules (risk_review's tp / sl / hours / dir / vol,
+    change {"combo", "kind": <rule>, "from", "to"}; "to" None = the rule is taken back, the strategy trades as tested).
+    Returns (kind, value) - applied on the bots' computer like a risk card (live/manager.py risk_change) - else None.
+    13.11.2026: such a card (bot 1 TT45|15Min|CSCO: the stop x0.6 of 07.11, worse than the strategy's own stop in the
+    fair test on both periods) had no way in - it was judged a cut and then waited for nothing."""
+    ch = c.get("change") or {}
+    if c.get("kind") != "risk" or bot not in RISK_BOTS or not ch.get("combo") or ch.get("kind") not in RULE_KINDS:
+        return None
+    v, k = ch.get("to"), ch["kind"]
+    if v is None:
+        return k, None
+    try:
+        if k == "dir" and int(v) in (1, -1):
+            return k, int(v)
+        if k in ("tp", "sl") and (0.3 if k == "tp" else 0.5) <= float(v) < 1:
+            return k, round(float(v), 2)
+        if k == "hours" and len(v) == 2 and 0 <= int(v[0]) < int(v[1]) <= 24:
+            return k, [int(v[0]), int(v[1])]
+    except (TypeError, ValueError):
+        return None
+    return None
+
+
 def _cuts(c):
     """A card that only cuts: removes a strategy, stops a track or lowers a risk."""
     ch = c.get("change") or {}
     if c.get("kind") == "remove":
         return True
+    if c.get("kind") == "risk" and ch.get("kind") in RULE_KINDS:
+        return False                         # a live rule changed / taken back is a fix, not a cut
     if c.get("kind") == "risk":
         try:
             return float(ch.get("to", ch.get("value", 1))) < float(ch.get("from", 1))
@@ -282,9 +311,10 @@ def decide(bots, now=None):
             from agents import builder as BLD
             buildable = BLD.buildable({**c, "bot": bot})
             risk_card = _risk_card(c, bot)
+            rule_card = _rule_card(c, bot)
             what = ("לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב" if c["kind"] == "info" else
                     "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות" if buildable else
-                    "יוחל במחשב הבוטים תוך כ־10 דקות" if risk_card else
+                    "יוחל במחשב הבוטים תוך כ־10 דקות" if risk_card or rule_card else
                     "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה")
             why, star, mult, whole = c["verdict"], False, None, None
             is_new = did not in old
@@ -339,6 +369,15 @@ def decide(bots, now=None):
                      "star": star, **({"whole_bot": {k: whole[k] for k in ("before", "after")}} if whole else {})})
             c["status"], c["by"], c["decided"], c["decision_id"] = "approved", "manager", d["at"], did
             combo = (c.get("change") or {}).get("combo")
+            if is_new and rule_card:
+                rk, rv = rule_card
+                cur_v = ((cur_risk.get(bot) or {}).get(rk) or {}).get(combo)
+                if not _same(cur_v, rv):
+                    add({"id": _did("cardrule", c["id"]), "bot": bot, "type": "risk", "kind": rk, "combo": combo,
+                         "title": c["title"], "decision": "approved", "why": why, "smart_rule": True,
+                         "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "card_decision": did,
+                         "action": {"bot": bot, "combo": combo, "kind": rk, "value": rv, "prev": cur_v}})
+                continue
             if is_new and risk_card:
                 # a bot agent's risk card for one strategy of bots 1-4 (change {"combo", "kind": "mult", "from", "to"}):
                 # applied by the bots' computer like the star's risk, linked to the card - an undo of the card brings
@@ -375,6 +414,10 @@ def decide(bots, now=None):
         risk = {}
     cur = (_git_show("live/manager_state.json").get("risk") or {})
     sample = risk.get("sample")
+    # a rule a bot agent's card changed or took back (above) is not brought back by the morning review for 30 days
+    smart_rules = {(d["bot"], d.get("combo"), d["kind"]) for d in list(old.values()) + new
+                   if d.get("type") == "risk" and d.get("smart_rule") and d.get("decision") == "approved"
+                   and d.get("card_decision") not in uundo}
     for bot, x in (risk.get("bots") or {}).items():
         dec = cur.get(bot, {})
         rej = dec.get("rejected", {}) or {}
@@ -391,7 +434,7 @@ def decide(bots, now=None):
                     continue
                 if kind != "remove" and rej.get(f"{kind}:{combo}") == sample:
                     continue                                          # the user declined it in this sample
-                if (bot, combo, kind) in never:
+                if (bot, combo, kind) in never or (bot, combo, kind) in smart_rules:
                     continue
                 did = _did("risk", bot, combo, kind, json.dumps(val), sample)
                 if did in uundo:

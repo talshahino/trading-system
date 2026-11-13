@@ -319,15 +319,6 @@
     "cause": "סגירה בגלל כלל",
     "fixes": [
      {
-      "what": "⭐ BK05|15Min|INTC: בלי יעד · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר",
-      "decision": "3beacb30d678",
-      "at": "2026-11-13T12:24:13+00:00",
-      "effect_month_pct": 0.72,
-      "cut": false,
-      "prev": null,
-      "value": null
-     },
-     {
       "what": "סיכון ×0.7",
       "decision": "8620a79a71e7",
       "at": "2026-11-13T12:24:13+00:00",
@@ -338,7 +329,13 @@
      }
     ],
     "open": false,
-    "cut_only": false
+    "cut_only": true,
+    "edge_mult": null,
+    "edge_parts": [
+     "עוד אין בדיקה של 2026 כפי שהיא סוחרת עכשיו - היא ראשונה בתור לבדיקה, ועד אז הסיכון לא נוגע"
+    ],
+    "edge0": null,
+    "edge": null
    },
    {
     "combo": "FR08|5Min|SPCX",
@@ -372,9 +369,10 @@
   ],
   "cut_only": [
    "FR01|1Hour|EURUSD",
-   "SE02|1Hour|GBPJPY"
+   "SE02|1Hour|GBPJPY",
+   "BK05|15Min|INTC"
   ],
-  "total_month_pct": 1.04,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.32,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

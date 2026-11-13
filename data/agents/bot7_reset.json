@@ -1,5 +1,5 @@
 {
- "fp": "8a495f25ce7a",
+ "fp": "9e9b4607cf22",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -55,8 +55,86 @@
    "SH01|1Min|US100"
   ],
   "plans": {
+   "EV01|5Min|AUDUSD": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|EURJPY": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|EURUSD": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|GBPJPY": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
    "EV01|5Min|GBPUSD": {
-    "filter": "with_trend200"
+    "filter": "with_trend200",
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|GER40": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|JP225": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|NZDUSD": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|UK100": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|US100": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|US30": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|US500": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|USDCAD": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|USDCHF": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|USDJPY": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
+   },
+   "EV01|5Min|XAUUSD": {
+    "off_from": "2026-11-14T00:00:00+00:00",
+    "off_card": "d51b540869aa",
+    "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
    },
    "EV03|5Min|AUDUSD": {
     "target": 3.0,
@@ -136,8 +214,8 @@
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-13T15:35:49+00:00",
- "account_v": 4,
+ "last_reset": "2026-11-13T21:18:38+00:00",
+ "account_v": 5,
  "resets": [
   {
    "v": 2,
@@ -159,6 +237,13 @@
    "what": "נוספו 2 אסטרטגיות/מכשירים · כלל השתנה ב־SH01|1Min|GER40, SH01|1Min|US100",
    "archive": "data/agents/bot7_archive/account_v3.json",
    "id": "0578ef4731ab"
+  },
+  {
+   "v": 5,
+   "at": "2026-11-13T21:18:38+00:00",
+   "what": "כלל השתנה ב־EV01|5Min|AUDUSD, EV01|5Min|EURJPY, EV01|5Min|EURUSD, EV01|5Min|GBPJPY",
+   "archive": "data/agents/bot7_archive/account_v4.json",
+   "id": "f78ed559edad"
   }
  ],
  "stable": false,

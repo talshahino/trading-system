@@ -1,6 +1,6 @@
 {
  "bot": "bot2",
- "updated": "2026-11-13T16:53:09+00:00",
+ "updated": "2026-11-13T20:57:00+00:00",
  "cards": [
   {
    "bot": "bot2",
@@ -386,6 +386,135 @@
    },
    "made": "2026-11-13T02:58:04+00:00",
    "id": "ca4bb2a8a0e8"
+  },
+  {
+   "bot": "bot2",
+   "kind": "info",
+   "title": "בוט 2 הלילה: תקרה לאותו מטבע מורידה רווח, כניסה מדורגת בבדיקה",
+   "what": "ההפסדים ב־USDJPY (SE02, QB11): SE02 זהה לבדיקה עסקה מול עסקה (4-13.11). תקרה לאותו מטבע באותו כיוון, הבוט השלם: 2025: היום +43.1%, תקרה 1× +40.7%, 1.5× +41.9%, 2× +43.1%, חצי סיכון לשנייה +42.0%. 2026: היום +83.5% (ירידה 7.10%), תקרה 1× +65.7% (8.18%), 1.5× +74.1%, 2× +78.0%, חצי סיכון +70.4% (8.52%). כאן הכי גרוע - הרבה עסקאות מט\"ח מרוויחות יחד. לא מוצע. הבוט +8.9%, בחי +0.35R לעסקה מול +0.21R בבדיקה. הירידה הגרועה בבדיקה של 2026 (22 מ־34 אסטרטגיות) 7.10%, אבל עד מגבלת ההפסד הכולל נשארו 17.9% - אין צורך בהורדת סיכון. כניסה מדורגת (המשימה של טל): נוספה לבדיקות של כל אסטרטגיה בבוט - 2-4 חלקים שווים (בפתיחה ובנסיגה של 0.25/0.33/0.5/0.67/0.75R), אותו סיכון כולל, סטופ ויעד, עלויות FTMO לכל חלק. רץ במחשב הבוטים בסבבים הבאים; כרטיס רק אם עדיף בשתי התקופות.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "kind": "review",
+    "topic": "night_1311_bot2"
+   },
+   "detail": {
+    "currency_exposure": {
+     "train": {
+      "combos": 15,
+      "missing": 19,
+      "trades": 832,
+      "fx_trades": 128,
+      "now": {
+       "trades": 832,
+       "total": 43.14,
+       "worst_day": -2.06,
+       "max_dd": 5.4,
+       "near_days": 0,
+       "max_open": 3.6,
+       "max_side": 3.15
+      },
+      "cap1": {
+       "trades": 808,
+       "total": 40.74,
+       "worst_day": -2.06,
+       "max_dd": 4.9,
+       "near_days": 0,
+       "max_open": 3.6,
+       "max_side": 3.15
+      },
+      "cap1.5": {
+       "trades": 832,
+       "total": 41.92,
+       "worst_day": -2.06,
+       "max_dd": 5.15,
+       "near_days": 0,
+       "max_open": 3.6,
+       "max_side": 3.15
+      },
+      "cap2": {
+       "trades": 832,
+       "total": 43.14,
+       "worst_day": -2.06,
+       "max_dd": 5.4,
+       "near_days": 0,
+       "max_open": 3.6,
+       "max_side": 3.15
+      },
+      "half2nd": {
+       "trades": 832,
+       "total": 42.0,
+       "worst_day": -2.06,
+       "max_dd": 5.15,
+       "near_days": 0,
+       "max_open": 3.6,
+       "max_side": 3.15
+      }
+     },
+     "unseen": {
+      "combos": 22,
+      "missing": 12,
+      "trades": 1852,
+      "fx_trades": 686,
+      "now": {
+       "trades": 1852,
+       "total": 83.54,
+       "worst_day": -2.42,
+       "max_dd": 7.1,
+       "near_days": 0,
+       "max_open": 4.41,
+       "max_side": 3.65
+      },
+      "cap1": {
+       "trades": 1683,
+       "total": 65.73,
+       "worst_day": -2.42,
+       "max_dd": 8.18,
+       "near_days": 0,
+       "max_open": 3.89,
+       "max_side": 3.24
+      },
+      "cap1.5": {
+       "trades": 1803,
+       "total": 74.13,
+       "worst_day": -2.42,
+       "max_dd": 7.05,
+       "near_days": 0,
+       "max_open": 4.34,
+       "max_side": 3.35
+      },
+      "cap2": {
+       "trades": 1835,
+       "total": 77.99,
+       "worst_day": -2.42,
+       "max_dd": 7.0,
+       "near_days": 0,
+       "max_open": 4.41,
+       "max_side": 3.65
+      },
+      "half2nd": {
+       "trades": 1852,
+       "total": 70.36,
+       "worst_day": -2.42,
+       "max_dd": 8.52,
+       "near_days": 0,
+       "max_open": 4.41,
+       "max_side": 3.65
+      }
+     }
+    }
+   },
+   "made": "2026-11-13T20:57:00+00:00",
+   "id": "f49addc3c624",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
   }
  ]
 }

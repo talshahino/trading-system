@@ -1,6 +1,6 @@
 {
  "bot": "bot4",
- "updated": "2026-11-13T16:53:09+00:00",
+ "updated": "2026-11-13T20:57:00+00:00",
  "cards": [
   {
    "bot": "bot4",
@@ -251,6 +251,196 @@
    },
    "made": "2026-11-13T05:03:47+00:00",
    "id": "9ded7e973d1e"
+  },
+  {
+   "bot": "bot4",
+   "kind": "risk",
+   "title": "בוט 4: הסיכון של כל הבוט לפי המקום שנשאר עד המגבלה (כמו בוט 1) - היום בלי שינוי, נכנס רק מתחת ל־97,220$",
+   "what": "אותו כלל שאושר לבוט 1: סיכון = 0.45% × (מה שנשאר עד 9% ÷ 6.22%, הירידה הגרועה של הבוט ב־2026), לעולם לא יותר מ־0.45%. היתרה 98,811$, נשארו 7.81% - היום הסיכון לא משתנה. בבדיקה של 2026 מהיתרה של היום: 147.7% בלי הכלל, 147.4% איתו (נמוך 95.97%). אבל אם הבוט יורד ל־93,000$ (כמו בוט 1 השבוע), אותה שנה בלי הכלל נוגעת במגבלה (90.1%) ונעצרת, ועם הכלל מסיימת ב־137.2% ולא נוגעת (נמוך 92.21%). ביטוח כמעט בחינם: עולה כ־0.3% ב־2026 מהיתרה של היום.",
+   "train": null,
+   "unseen": null,
+   "whole": {
+    "n": 1309,
+    "total_pct": 48.89,
+    "max_dd": 6.22,
+    "worst_day": -2.17
+   },
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": 0.45,
+   "baseline": null,
+   "change": {
+    "kind": "dd_fit",
+    "from": null,
+    "to": 6.22,
+    "rule": "risk x min(1, room_left_to_9% / dd_fit)"
+   },
+   "detail": {
+    "account_fit": true,
+    "balance": 98811.47,
+    "room_pct": 7.81,
+    "replay_combos": 13,
+    "bot_combos": 24,
+    "stress_from_balance": {
+     "now": {
+      "end": 147.7,
+      "low": 95.92,
+      "hit_limit": false
+     },
+     "dd_fit": {
+      "end": 147.43,
+      "low": 95.97,
+      "hit_limit": false
+     }
+    },
+    "stress_from_93": {
+     "now": {
+      "end": 91.0,
+      "low": 90.11,
+      "hit_limit": true
+     },
+     "dd_fit": {
+      "end": 137.24,
+      "low": 92.21,
+      "hit_limit": false
+     }
+    }
+   },
+   "made": "2026-11-13T20:57:00+00:00",
+   "id": "9e3614328c20",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
+  {
+   "bot": "bot4",
+   "kind": "info",
+   "title": "בוט 4 הלילה: FR01 EURUSD + GBPUSD יחד - תקרה למטבע מורידה רווח, כניסה מדורגת בבדיקה",
+   "what": "FR01 נכנסת ב־06:00 ב־EURUSD וב־GBPUSD באותו כיוון (4 סטופים ב־12-13.11). תקרה לאותו מטבע באותו כיוון, הבוט השלם: 2025: היום +2.8%, תקרה 1× +1.3%, 1.5× +2.4%, 2× +2.8%, חצי סיכון לשנייה +1.3%. 2026: היום +48.9% (ירידה 6.22%), תקרה 1× +42.1% (7.01%), 1.5× +45.2%, 2× +47.8%, חצי סיכון +45.2% (6.33%). התקרה חוסכת קצת ביום הגרוע אבל מורידה את הרווח בשתי התקופות ולא מקטינה את הירידה ב־2026 - לא מוצע. FR01 בשני הנכסים בראש התור לבדיקת יציאות ומסננים. כניסה מדורגת (המשימה של טל): נוספה לבדיקות של כל אסטרטגיה בבוט - 2-4 חלקים שווים (בפתיחה ובנסיגה של 0.25/0.33/0.5/0.67/0.75R), אותו סיכון כולל, סטופ ויעד, עלויות FTMO לכל חלק. רץ במחשב הבוטים בסבבים הבאים; כרטיס רק אם עדיף בשתי התקופות.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "kind": "review",
+    "topic": "night_1311_bot4"
+   },
+   "detail": {
+    "currency_exposure": {
+     "train": {
+      "combos": 5,
+      "missing": 19,
+      "trades": 148,
+      "fx_trades": 106,
+      "now": {
+       "trades": 148,
+       "total": 2.76,
+       "worst_day": -0.79,
+       "max_dd": 2.32,
+       "near_days": 0,
+       "max_open": 1.4,
+       "max_side": 1.08
+      },
+      "cap1": {
+       "trades": 141,
+       "total": 1.31,
+       "worst_day": -0.55,
+       "max_dd": 2.09,
+       "near_days": 0,
+       "max_open": 1.08,
+       "max_side": 0.77
+      },
+      "cap1.5": {
+       "trades": 148,
+       "total": 2.35,
+       "worst_day": -0.69,
+       "max_dd": 2.23,
+       "near_days": 0,
+       "max_open": 1.4,
+       "max_side": 1.08
+      },
+      "cap2": {
+       "trades": 148,
+       "total": 2.76,
+       "worst_day": -0.79,
+       "max_dd": 2.32,
+       "near_days": 0,
+       "max_open": 1.4,
+       "max_side": 1.08
+      },
+      "half2nd": {
+       "trades": 148,
+       "total": 1.31,
+       "worst_day": -0.55,
+       "max_dd": 1.94,
+       "near_days": 0,
+       "max_open": 1.4,
+       "max_side": 1.08
+      }
+     },
+     "unseen": {
+      "combos": 13,
+      "missing": 11,
+      "trades": 1309,
+      "fx_trades": 582,
+      "now": {
+       "trades": 1309,
+       "total": 48.89,
+       "worst_day": -2.17,
+       "max_dd": 6.22,
+       "near_days": 0,
+       "max_open": 3.36,
+       "max_side": 2.73
+      },
+      "cap1": {
+       "trades": 1231,
+       "total": 42.13,
+       "worst_day": -1.84,
+       "max_dd": 7.01,
+       "near_days": 0,
+       "max_open": 2.74,
+       "max_side": 2.41
+      },
+      "cap1.5": {
+       "trades": 1288,
+       "total": 45.24,
+       "worst_day": -2.07,
+       "max_dd": 6.42,
+       "near_days": 0,
+       "max_open": 3.36,
+       "max_side": 2.73
+      },
+      "cap2": {
+       "trades": 1307,
+       "total": 47.82,
+       "worst_day": -2.17,
+       "max_dd": 6.3,
+       "near_days": 0,
+       "max_open": 3.36,
+       "max_side": 2.73
+      },
+      "half2nd": {
+       "trades": 1309,
+       "total": 45.23,
+       "worst_day": -1.85,
+       "max_dd": 6.33,
+       "near_days": 0,
+       "max_open": 3.36,
+       "max_side": 2.73
+      }
+     }
+    }
+   },
+   "made": "2026-11-13T20:57:00+00:00",
+   "id": "b70bfeb2450d",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
   }
  ]
 }

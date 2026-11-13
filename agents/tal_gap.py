@@ -214,7 +214,7 @@ def gaps(D, htf, gbody, min_gap, cache):
     for i in range(2, n - 2):
         s_hi[i] = h[i] >= h[i - 2:i + 3].max()
         s_lo[i] = l[i] <= l[i - 2:i + 3].min()
-    out = []
+    out, geo = [], []
     for k in range(1, n - 1):
         if not (np.isfinite(avgb[k]) and body[k] >= gbody * avgb[k]):
             continue
@@ -239,7 +239,13 @@ def gaps(D, htf, gbody, min_gap, cache):
         if arm is None:
             continue
         out.append((d, mid, near, far, int(ts[k + 1] + step), int(ts[arm + 2] + step)))   # made, armed (ns)
+        # the chart of the trade (user, 13.11.2026): where the impulse started, its top, and candles 1-3 of the gap
+        a0 = max(0, k - 6)
+        i0 = a0 + int(np.argmin(l[a0:k + 1]) if d > 0 else np.argmax(h[a0:k + 1]))
+        geo.append({"c1": int(ts[k - 1]), "c3": int(ts[k + 1]), "imp0": [int(ts[i0]), float(l[i0] if d > 0 else h[i0])],
+                    "imp1": [int(ts[arm]), float(h[arm] if d > 0 else l[arm])]})
     cache[key] = out
+    cache[key + ("geo",)] = geo
     return out
 
 
@@ -255,6 +261,22 @@ def _count_back(conf, val, atr, t_ns, px, d, side):
             last = v
             if len(got) == 2:
                 return v
+        j -= 1
+    return None
+
+
+def _count_back_t(conf, val, atr, t_ns, px, d, side, step_ns, w):
+    """_count_back's swing and the time of its candle (confirmed w candles after it): for the trade's chart."""
+    j = int(np.searchsorted(conf, t_ns, side="right")) - 1
+    got, last = [], px
+    lo = max(-1, j - 400)
+    while j > lo:
+        v = val[j]
+        if side * (v - last) > 0 and (not got or side * (v - last) >= MERGE_ATR * atr[j]):
+            got.append(v)
+            last = v
+            if len(got) == 2:
+                return int(conf[j] - (w + 1) * step_ns)
         j -= 1
     return None
 
@@ -1124,9 +1146,15 @@ def live_trades(D, pair, cfg, gcache=None):
     trend = D.trend(htf, cfg.get("TREND", "none"))
     out, cands = [], []
     # pass 1: every gap -> pending / cancelled, or a candidate fill (exactly simulate()'s checks, protection included)
-    for d, mid, near, far, made, armed in g:
+    geo = gcache.get((htf, cfg["GBODY"], cfg["MIN_GAP"], "geo")) or []
+    iso_ = lambda v: pd.Timestamp(int(v), tz="UTC").isoformat()   # noqa: E731
+    for gi, (d, mid, near, far, made, armed) in enumerate(g):
         key = f"tal|{int(d)}|g{pd.Timestamp(made, tz='UTC').strftime('%Y%m%d%H%M')}"
         base = {"id_key": key, "dir": int(d), "setup_t": pd.Timestamp(armed, tz="UTC").isoformat(), "gap": [float(far), float(near)]}
+        if gi < len(geo):
+            ge = geo[gi]
+            base["geo"] = {"htf": htf, "ltf": ltf, "c1": iso_(ge["c1"]), "c3": iso_(ge["c3"]),
+                           "imp0": [iso_(ge["imp0"][0]), ge["imp0"][1]], "imp1": [iso_(ge["imp1"][0]), ge["imp1"][1]]}
         q0 = int(np.searchsorted(ns, armed))
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))
         if q0 >= n1:
@@ -1167,6 +1195,12 @@ def live_trades(D, pair, cfg, gcache=None):
         if s2 is None or t2 is None:
             out.append(dict(base, status="cancelled", entry=float(px), stop=None, target=None, reason="no swings"))
             continue
+        if "geo" in base:
+            st_ns, w_ = TF[ltf] * 60_000_000_000, cfg["SW"]
+            ts_s = _count_back_t(*sw_st, ns[f], px, d, -d, st_ns, w_)
+            ts_t = _count_back_t(*sw_tg, ns[f], px, d, d, st_ns, w_)
+            base = dict(base, geo=dict(base["geo"], sw_stop=[iso_(ts_s), float(s2)] if ts_s else None,
+                                       sw_tgt=[iso_(ts_t), float(t2)] if ts_t else None))
         stop = s2 - d * D.buf
         risk = d * (px - stop)
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:

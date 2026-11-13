@@ -1474,6 +1474,10 @@ function tradePage(x, isOpen) {
       <div><div class="k">משך</div><div class="v num">${t.open_t ? dur(t.open_t, t.close_t || new Date()) : "—"}</div></div>
       <div><div class="k">אסטרטגיה</div><div class="v"><bdi>${esc(c.s)}</bdi> · ${esc(c.t)}</div></div></div>
     <button class="vbtn" id="vChart">הצג גרף</button>
+    ${getRole() === "viewer" ? "" : `<div class="h4">🎙 הערה לסוכן של הבוט</div><div class="card wt">
+      <textarea id="tnTxt" rows="3" placeholder="לחץ על המיקרופון ודבר, או כתוב: הייתי לוקח / לא לוקח, איפה התפספס, הייתי יוצא מוקדם, חלקיות כאן…"></textarea>
+      <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="tnMic">🎙 הקלטה</button><button class="btn" id="tnSave">שמור הערה</button></div>
+      <div class="msg mut" id="tnMsg"></div><div id="tnList"></div></div>`}
     <div class="h4">$ מחיר</div><div class="lst">${li("סוג", t.side === "buy" ? "קנייה" : "מכירה", t.side === "buy" ? "pos" : "neg")}${li("פתיחה", `<span class="num">${t.open_px ?? "—"}</span>`)}${li(isOpen ? "מחיר נוכחי" : "סגירה", `<span class="num">${t.close_px ?? "—"}</span>`)}</div>
     <div class="h4">🛡 הגנת עסקה</div><div class="lst">${li("SL", `<span class="num">${sl || "—"}</span>`)}${t.sl && sl && Math.abs(t.sl - sl) > 1e-9 ? li("SL אחרון (אחרי הזזה)", `<span class="num">${t.sl}</span>`) : ""}
       ${li("SL פיפס", `<span class="num">${sl && t.open_px != null ? pf((sl - t.open_px) * dir / pip) : "—"}</span>`)}${li("TP", `<span class="num">${tp || "—"}</span>`)}
@@ -1483,9 +1487,44 @@ function tradePage(x, isOpen) {
       ${!isOpen && t.why ? li("סיבת סגירה", esc(t.reason === "sl" ? "סטופ" : t.reason === "tp" ? "יעד (TP)" : t.why)) : ""}</div>
     <div class="h4">◷ זמן</div><div class="lst">${li("פתיחה", `<span class="num">${t.open_t ? dtF(t.open_t) : "—"}</span>`)}${li("סגירה", `<span class="num">${t.close_t ? dtF(t.close_t) : "עדיין פתוחה"}</span>`)}</div>`;
   $("vChart").onclick = () => chartPage();
+  if ($("tnTxt")) tradeNotes(t);
   $("tradePg").classList.add("on"); $("tradePg").scrollTop = 0;
 }
-$("tpBack").onclick = () => $("tradePg").classList.remove("on");
+$("tpBack").onclick = () => { $("tradePg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } };
+
+/* the user's note on a trade (13.11.2026): spoken (the phone's speech-to-text, Hebrew) or typed, kept by the manager
+   with the trade and read by the agent of the bot that made it */
+const TN = {rec: null, voice: false};
+function tradeNotes(t) {
+  const bot = UI.cur, id = String(t.id || t.ticket || ""), txt = $("tnTxt"), msg = $("tnMsg");
+  const show = ns => { $("tnList").innerHTML = (ns || []).slice().reverse().map(n => `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line,#E6E9EE)">
+      <div style="white-space:pre-wrap">${esc(n.text)}</div><div class="mut" style="font-size:12px">${n.voice ? "🎙 " : ""}${dtF(n.at)}</div></div>`).join(""); };
+  if (mgr && mgrInfo) act("/trade/notes", {bot, id}).then(j => show(j.notes)).catch(() => {});
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  $("tnMic").onclick = () => {
+    if (TN.rec) { try { TN.rec.stop(); } catch (e) {} return; }
+    if (!SR) { msg.textContent = "הדפדפן הזה לא תומך בהקלטה. אפשר ללחוץ על המיקרופון במקלדת של הטלפון ולדבר."; txt.focus(); return; }
+    const r = new SR(); r.lang = "he-IL"; r.continuous = true; r.interimResults = true;
+    const before = txt.value ? txt.value.trim() + " " : "";
+    let fin = "";
+    r.onresult = e => { let inter = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const x = e.results[i];
+      if (x.isFinal) fin += x[0].transcript + " "; else inter += x[0].transcript; } txt.value = before + fin + inter; };
+    r.onerror = e => { msg.textContent = e.error === "not-allowed" ? "צריך לאשר גישה למיקרופון." : "ההקלטה נעצרה."; };
+    r.onend = () => { TN.rec = null; $("tnMic").textContent = "🎙 הקלטה"; };
+    TN.rec = r; TN.voice = true; r.start(); $("tnMic").textContent = "⏹ עצור"; msg.textContent = "מקליט… דבר עכשיו";
+  };
+  $("tnSave").onclick = async () => {
+    if (TN.rec) { try { TN.rec.stop(); } catch (e) {} }
+    const text = txt.value.trim();
+    if (!text) { msg.textContent = "ההערה ריקה."; return; }
+    if (!mgr || !mgrInfo) { msg.textContent = "המנהל לא מחובר עכשיו, אז ההערה לא נשמרה. נסה שוב בעוד רגע."; return; }
+    try {
+      const j = await act("/trade/note", {bot, id, text, voice: TN.voice, symbol: t.symbol, combo: t.combo, side: t.side, open_t: t.open_t,
+        close_t: t.close_t, open_px: t.open_px, close_px: t.close_px, sl: t.sl0 || t.sl, tp: t.tp || t.tp0, net: t.net, reason: t.reason || t.why});
+      txt.value = ""; TN.voice = false; msg.textContent = "נשמר. הסוכן של הבוט יקרא את ההערה בריצה הבאה שלו."; show(j.notes);
+    } catch (e) { msg.textContent = "לא נשמר: " + (e.message || e); }
+  };
+}
 
 /* the trade on a candle chart (TradingView's free library) with a position box like TradingView's tool */
 let TV = null, tvLib = null;
@@ -1504,6 +1543,8 @@ function defaultTf(t) {
 async function chartPage(tf) {
   const {t, isOpen} = TP;
   if (UI.cur === "watch_own" && found.watch_own) { WB.doc = found.watch_own; return wcOpen(String(t.id || t.ticket)); }
+  { const wd = found[UI.cur], wid = String(t.id || t.ticket);       // bot 6: the gap method's two charts (13.11.2026)
+    if (wd && wd.watch && wd.watch.find(x => x.id === wid && x.m15)) { WB.doc = wd; return wcOpen(wid); } }
   tf = tf || defaultTf(t);
   $("chartPg").classList.add("on");
   $("cpTitle").textContent = `${t.symbol} · ${t.side === "buy" ? "קנייה" : "מכירה"}`;
@@ -2059,6 +2100,7 @@ let WC = [];
 async function wcOpen(id) {
   const t = ((WB.doc && WB.doc.watch) || []).find(x => x.id === id);
   if (!t) return;
+  if (t.geo && t.m15) return wcTal(t);
   $("wcPg").classList.add("on");
   $("wcTitle").textContent = `${t.symbol} · ${t.dir > 0 ? "קנייה" : "מכירה"}`;
   $("wcBody").innerHTML = `<div class="mut" style="margin-bottom:6px">גרף 15 דקות: הדחף והכניסה</div><div class="card"><div class="wchart" id="wc15"></div></div>
@@ -2104,6 +2146,85 @@ async function wcOpen(id) {
   if (t.gap_lo != null) { line(B.s, t.gap_lo, "#B8862B", "פער", 1); line(B.s, t.gap_hi, "#B8862B", "", 1); }
   B.s.applyOptions({autoscaleInfoProvider: orig => { const r = orig(); if (!r) return r; const ex = [t.entry, t.stop, t.target].filter(v => v != null);
     return {priceRange: {minValue: Math.min(r.priceRange.minValue, ...ex), maxValue: Math.max(r.priceRange.maxValue, ...ex)}}; }});
+  B.ch.timeScale().fitContent();
+}
+/* a trade of Tal's gap method (13.11.2026): the high timeframe - the impulse arrow, candles 1 and 3 and the gap box that
+   comes out of them; the low timeframe - the same box, the entry, and the stop / target lines starting at the swings
+   that set them, the position box to the exit, and why */
+const TFHE = {"1m": "דקה", "5m": "5 דק'", "15m": "15 דק'", "1h": "שעה", "4h": "4 שעות", "1d": "יום"};
+async function wcTal(t) {
+  const g = t.geo, buy = t.dir > 0, dec = wDec(t.symbol);
+  $("wcPg").classList.add("on");
+  $("wcTitle").textContent = `${t.symbol} · ${buy ? "קנייה" : "מכירה"} · שיטת הגאפ`;
+  const RS = {target: "יעד", stop: "סטופ", be: "סטופ בנקודת הכניסה", shut: "סגירת סשן", session: "סוף סשן"};
+  const why = [`<b>${buy ? "קנייה" : "מכירה"}</b>: דחף ${buy ? "עולה" : "יורד"} בגרף ${TFHE[g.htf] || g.htf} (החץ), ונוצר גאפ בין נר 1 לנר 3 שנשאר פתוח (המלבן).`,
+    `כניסה באמצע הגאפ בגרף ${TFHE[g.ltf] || g.ltf}${t.entry != null ? `: <bdi>${(+t.entry).toFixed(dec)}</bdi>` : ""}.`,
+    g.sw_stop ? `סטופ מעבר לסווינג השני ${buy ? "מתחת" : "מעל"} לכניסה (<bdi>${(+g.sw_stop[1]).toFixed(dec)}</bdi>)${t.stop != null ? `: <bdi>${(+t.stop).toFixed(dec)}</bdi>` : ""}.` : "",
+    g.sw_tgt ? `יעד בסווינג השני ${buy ? "מעל" : "מתחת"} לכניסה${t.target != null ? `: <bdi>${(+t.target).toFixed(dec)}</bdi>` : ""}.` : "",
+    t.exit_time ? `יציאה: ${RS[t.reason] || esc(t.reason || "")}${t.r != null ? ` (${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}R)` : ""}.` : (t.status === "open" ? "העסקה פתוחה." : "")].filter(Boolean);
+  $("wcBody").innerHTML = `<div class="card" style="margin-bottom:10px">${why.map(x => `<p style="margin:3px 0">${x}</p>`).join("")}</div>
+    <div class="mut" style="margin-bottom:6px">גרף ${TFHE[g.htf] || g.htf} (זיהוי): הדחף, נר 1 ונר 3, והגאפ שיוצא מהם</div><div class="card"><div class="wchart" id="wc15"></div></div>
+    <div class="mut" style="margin-bottom:6px">גרף ${TFHE[g.ltf] || g.ltf} (כניסה): הגאפ, הכניסה, הסטופ והיעד מהסווינגים שקבעו אותם, עד היציאה</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>`;
+  WC.forEach(c => c.remove()); WC = [];
+  const LW = await loadTV().catch(() => null);
+  if (!LW) { $("wcMsg").textContent = "ספריית הגרפים לא נטענה. בדוק חיבור לאינטרנט."; return; }
+  const sec = v => Math.floor(Date.parse(v) / 1000), off = ilOff(sec(t.time || t.setup_t));
+  const mk = (el, bars, ex) => {
+    const ch = LW.createChart(el, {layout: {background: {color: "#fff"}, textColor: "#5B6470", fontFamily: "Instrument Sans, Heebo, sans-serif"},
+      grid: {vertLines: {color: "#EEF1F4"}, horzLines: {color: "#EEF1F4"}}, rightPriceScale: {borderColor: "#E6E9EE"},
+      timeScale: {borderColor: "#E6E9EE", timeVisible: true, secondsVisible: false}, crosshair: {mode: 0}, autoSize: true});
+    const s = ch.addCandlestickSeries({upColor: "#1E8A4C", downColor: "#D0453A", borderVisible: false, wickUpColor: "#1E8A4C", wickDownColor: "#D0453A",
+      priceFormat: {type: "price", precision: dec, minMove: Math.pow(10, -dec)},
+      autoscaleInfoProvider: orig => { const r = orig(); if (!r) return r; const e = ex.filter(v => v != null);
+        return {priceRange: {minValue: Math.min(r.priceRange.minValue, ...e), maxValue: Math.max(r.priceRange.maxValue, ...e)}}; }});
+    s.setData((bars || []).map(b => ({time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]})));
+    WC.push(ch); return {ch, s, bars: bars || []};
+  };
+  const snap = (bars, v) => { let k = bars[0] ? bars[0][0] : v; for (const b of bars) { if (b[0] <= v) k = b[0]; else break; } return k + off; };
+  const times = (bars, a, b) => bars.map(x => x[0] + off).filter(x => x >= a && x <= b);
+  const band = (P, a, b, lo, hi, col, edge) => {          // a filled box between two prices from time a to time b
+    const ts = times(P.bars, a, b); if (ts.length < 1 || lo == null || hi == null) return;
+    const s = P.ch.addBaselineSeries({baseValue: {type: "price", price: lo}, lineWidth: 1, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
+      topLineColor: edge, bottomLineColor: edge, topFillColor1: col, topFillColor2: col, bottomFillColor1: col, bottomFillColor2: col});
+    s.setData(ts.map(x => ({time: x, value: hi})));
+  };
+  const seg = (P, a, pa, b, pb, col, w = 2, st = 0) => {   // a line from (a, pa) to (b, pb)
+    const ta = snap(P.bars, a), tb = snap(P.bars, b); if (tb <= ta) return;
+    const s = P.ch.addLineSeries({color: col, lineWidth: w, lineStyle: st, priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false});
+    s.setData([{time: ta, value: pa}, {time: tb, value: pb}]);
+  };
+  const tin = t.time ? sec(t.time) : null, tout = t.exit_time ? sec(t.exit_time) : null, c1 = sec(g.c1), c3 = sec(g.c3);
+  const lo = t.gap_lo, hi = t.gap_hi, gapCol = "rgba(184,134,43,.22)";
+  // the high timeframe
+  const A = mk($("wc15"), t.m15, [lo, hi, g.imp0[1], g.imp1[1]]);
+  const aEnd = A.bars.length ? A.bars[A.bars.length - 1][0] + off : c3 + off;
+  band(A, snap(A.bars, c1), tin ? Math.max(snap(A.bars, tin), snap(A.bars, c3)) : aEnd, lo, hi, gapCol, "#B8862B");
+  seg(A, sec(g.imp0[0]), g.imp0[1], sec(g.imp1[0]), g.imp1[1], "#1E3A5F", 3);
+  A.s.setMarkers([
+    {time: snap(A.bars, sec(g.imp1[0])), position: buy ? "aboveBar" : "belowBar", color: "#1E3A5F", shape: buy ? "arrowUp" : "arrowDown", text: "דחף"},
+    {time: snap(A.bars, c1), position: buy ? "belowBar" : "aboveBar", color: "#B8862B", shape: "circle", text: "1"},
+    {time: snap(A.bars, c3), position: buy ? "belowBar" : "aboveBar", color: "#B8862B", shape: "circle", text: "3"},
+    ...(tin ? [{time: snap(A.bars, tin), position: buy ? "belowBar" : "aboveBar", color: "#12161C", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}] : [])
+  ].sort((a, b) => a.time - b.time));
+  A.ch.timeScale().fitContent();
+  // the low timeframe
+  const B = mk($("wc1"), t.m1, [lo, hi, t.entry, t.stop, t.target]);
+  const bEnd = B.bars.length ? B.bars[B.bars.length - 1][0] + off : null;
+  const t0 = tin ? snap(B.bars, tin) : bEnd, t1 = tout ? snap(B.bars, tout) : bEnd;
+  band(B, B.bars.length ? B.bars[0][0] + off : t0, t0, lo, hi, gapCol, "#B8862B");
+  if (tin && t.entry != null) {
+    if (t.target != null) band(B, t0, t1, Math.min(t.entry, t.target), Math.max(t.entry, t.target), "rgba(30,138,76,.20)", "#1E8A4C");
+    if (t.stop != null) band(B, t0, t1, Math.min(t.entry, t.stop), Math.max(t.entry, t.stop), "rgba(208,69,58,.20)", "#D0453A");
+  }
+  const ms = [];
+  if (g.sw_stop && t.stop != null) { seg(B, sec(g.sw_stop[0]), t.stop, tout || (bEnd - off), t.stop, "#D0453A", 2);
+    ms.push({time: snap(B.bars, sec(g.sw_stop[0])), position: buy ? "belowBar" : "aboveBar", color: "#D0453A", shape: "circle", text: "סווינג 2 · סטופ"}); }
+  if (g.sw_tgt && t.target != null) { seg(B, sec(g.sw_tgt[0]), t.target, tout || (bEnd - off), t.target, "#1E8A4C", 2);
+    ms.push({time: snap(B.bars, sec(g.sw_tgt[0])), position: buy ? "aboveBar" : "belowBar", color: "#1E8A4C", shape: "circle", text: "סווינג 2 · יעד"}); }
+  if (tin) ms.push({time: t0, position: buy ? "belowBar" : "aboveBar", color: "#12161C", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"});
+  if (tout) ms.push({time: t1, position: "inBar", color: t.r >= 0 ? "#1E8A4C" : "#D0453A", shape: "square", text: RS[t.reason] ? "יציאה · " + RS[t.reason] : "יציאה"});
+  B.s.setMarkers(ms.sort((a, b) => a.time - b.time));
+  if (t.entry != null) B.s.createPriceLine({price: t.entry, color: "#12161C", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "כניסה"});
   B.ch.timeScale().fitContent();
 }
 $("wbBack").onclick = () => $("wbPg").classList.remove("on");

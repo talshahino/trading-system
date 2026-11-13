@@ -444,6 +444,23 @@ def bars(df, t0, t1, rule):
             for t, r in x.iterrows()]
 
 
+RULE = {"1m": "1min", "5m": "5min", "15m": "15min", "1h": "1h", "4h": "4h", "1d": "1D"}
+MINS = {"1m": 1, "5m": 5, "15m": 15, "1h": 60, "4h": 240, "1d": 1440}
+
+
+def tal_chart(df, geo, t_in, t_out):
+    """The two charts of a gap-method trade (user, 13.11.2026): the high timeframe from before the impulse to after the
+    entry (the impulse arrow, candles 1-3, the gap box), the low timeframe from the swings that set the stop and the
+    target to after the exit. Returns (high bars, low bars) - at most 120 / 480 candles."""
+    hm, lm = MINS.get(geo["htf"], 15), MINS.get(geo["ltf"], 1)
+    end_h = max(t_in, pd.Timestamp(geo["c3"])) + pd.Timedelta(minutes=3 * hm)
+    st_h = max(pd.Timestamp(geo["imp0"][0]) - pd.Timedelta(minutes=6 * hm), end_h - pd.Timedelta(minutes=120 * hm))
+    pts = [pd.Timestamp(geo["c1"])] + [pd.Timestamp(geo[k][0]) for k in ("sw_stop", "sw_tgt") if geo.get(k)]
+    end_l = t_out + pd.Timedelta(minutes=10 * lm)
+    st_l = max(min(pts) - pd.Timedelta(minutes=5 * lm), end_l - pd.Timedelta(minutes=480 * lm))
+    return bars(df, st_h, end_h, RULE.get(geo["htf"], "15min")), bars(df, st_l, end_l, RULE.get(geo["ltf"], "1min"))
+
+
 def tid(x):
     if x.get("tal"):
         return f"{x['symbol']}|{x['tal_key']}|{x['tal']}"
@@ -536,7 +553,19 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
         rec = {"id": k, "symbol": name, "contract": contract, "trk": trk, "dir": x["dir"], "status": x["status"],
                "entry": x["entry"], "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,
                "setup_t": x["setup_t"], "time": x.get("time"), "exit_time": x.get("exit_time"), "exit": x.get("exit"),
-               "reason": x.get("reason"), "r": x.get("r"), "r_now": x.get("r_now"), "gap": x.get("gap")}
+               "reason": x.get("reason"), "r": x.get("r"), "r_now": x.get("r_now"), "gap": x.get("gap"),
+               "geo": x.get("geo") or old.get("geo")}
+        if rec["gap"]:
+            rec["gap_lo"], rec["gap_hi"] = min(rec["gap"]), max(rec["gap"])
+        if rec["geo"] and rec["status"] in ("open", "closed"):
+            # the two charts of the method (user, 13.11.2026)
+            if rec["status"] != "closed" or old.get("chart_v") != 3 or old.get("status") != "closed":
+                t_in = pd.Timestamp(rec["time"]) if rec.get("time") else df.index[-1]
+                t_out = pd.Timestamp(rec["exit_time"]) if rec.get("exit_time") else df.index[-1]
+                rec["m15"], rec["m1"] = tal_chart(df, rec["geo"], t_in, t_out)
+            else:
+                rec["m15"], rec["m1"] = old.get("m15"), old.get("m1")
+            rec["chart_v"] = 3
         fut_rec(rec, old, fa, ftrades)
     for combo_, sc in SCOUT6.items():          # the scout strategies approved on bot 6's own test (13.11.2026)
         if sc["sym"] != name:
@@ -712,7 +741,9 @@ def fut_state(fa, ftrades, fseen, src):
                         "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": None, "mfe": None,
                         "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
                         "reason": FUT_WORD.get(t.get("reason"), ""), "pip": 1.0} for t in counted],
-            "watch": sorted(ftrades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
+            # the charts only on the newest 60 trades (the state stays small for the app)
+            "watch": [t if i < 60 else {k_: v_ for k_, v_ in t.items() if k_ not in ("m15", "m1")} for i, t in
+                      enumerate(sorted(ftrades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True))],
             "vacct": fa.a}
 
 
@@ -839,7 +870,7 @@ def main():
                                         "exit_time": x.get("exit_time"), "exit": x.get("exit"), "reason": x.get("reason"),
                                         "r": x.get("r"), "r_now": x.get("r_now"),
                                         "why": x.get("reason") if x["status"] == "cancelled" else None,
-                                        "tal": trk, "tal_key": x["id_key"]})
+                                        "tal": trk, "tal_key": x["id_key"], "geo": x.get("geo")})
                 cutoff = df.index[-1] - pd.Timedelta(days=2)       # only what happened recently is reported
                 for x in res:
                     if pd.Timestamp(x.get("time") or x.get("setup_t")) < cutoff:
@@ -856,8 +887,18 @@ def main():
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
                            "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide")),
                            "why": x.get("why"), "touch_t": iso(x.get("touch_t")),
-                           "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m"))}
-                    if x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:
+                           "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m")),
+                           "geo": x.get("geo") or old.get("geo")}
+                    if rec["geo"] and rec["status"] in ("open", "closed"):
+                        # gap-method trades: the two charts of the method (high / low timeframe), user 13.11.2026
+                        if x["status"] != "closed" or old.get("chart_v") != 3 or old.get("status") != "closed":
+                            t_in = pd.Timestamp(x["time"]) if x.get("time") else df.index[-1]
+                            t_out = pd.Timestamp(x["exit_time"]) if x.get("exit_time") else df.index[-1]
+                            rec["m15"], rec["m1"] = tal_chart(df, rec["geo"], t_in, t_out)
+                            rec["chart_v"] = 3
+                        else:
+                            rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 3
+                    elif x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:
                         rec["chart_v"] = 2
                         ls = pd.Timestamp(x["leg_start"])
                         t_in = pd.Timestamp(x.get("time")) if x.get("time") is not None else df.index[-1]

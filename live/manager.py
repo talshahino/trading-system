@@ -601,6 +601,38 @@ def watch_mark(d):
     return marks.get(k)
 
 
+# the user's notes on any trade of any bot (13.11.2026, spoken or typed in the app's trade page): "would I take it",
+# "the stop is too tight", "out earlier", "take a part here"... kept here and copied to branch live
+# (live/trade_notes_state.json), where the agent of the bot that made the trade reads them and learns from them.
+NOTES_FILE = LIVE / "trade_notes.json"
+NOTES_LOCK = threading.Lock()
+
+
+def trade_note(d, save=True):
+    bot, k = str(d.get("bot") or ""), str(d.get("id") or "")
+    if not bot or len(bot) > 60 or not re.fullmatch(r"[A-Za-z0-9_.-]+", bot) or not k or len(k) > 120:
+        raise ValueError("עסקה לא מוכרת")
+    with NOTES_LOCK:
+        try:
+            doc = json.loads(NOTES_FILE.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            doc = {}
+        lst = doc.setdefault(bot, {}).setdefault(k, [])
+        if save:
+            txt = str(d.get("text") or "").strip()[:2000]
+            if not txt:
+                raise ValueError("ההערה ריקה")
+            info = {f: d.get(f) for f in ("symbol", "combo", "side", "open_t", "close_t", "open_px", "close_px", "sl", "tp", "net", "reason")
+                    if d.get(f) is not None}
+            lst.append({"text": txt, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "voice": bool(d.get("voice")), "trade": info})
+            tmp = NOTES_FILE.with_suffix(".tmp")
+            tmp.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+            tmp.replace(NOTES_FILE)
+            threading.Thread(target=lambda: REP.push_state("trade_notes", {"updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                                                                          "bots": doc}), daemon=True).start()
+        return list(lst)
+
+
 # the agents' manager ("מנהל הבוטים", 11.11.2026): the user's decisions and notes on the agents' cards, kept here and
 # copied to branch live (live/agent_decisions_state.json) where the nightly agents read them; and once a day a
 # notification when the manager has new proposals (reports/agents/manager.json)
@@ -1471,6 +1503,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True, "lines": lines})
             if path == "/watch/mark":
                 return self._send(200, {"ok": True, "mark": watch_mark(d)})
+            if path == "/trade/note":
+                return self._send(200, {"ok": True, "notes": trade_note(d)})
+            if path == "/trade/notes":
+                return self._send(200, {"ok": True, "notes": trade_note(d, save=False)})
             if path == "/risk/set":
                 kind = str(d.get("kind") or "mult")
                 risk_change(d.get("bot"), str(d.get("combo") or ""), kind, d.get("value", d.get("mult")))

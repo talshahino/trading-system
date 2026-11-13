@@ -49,6 +49,9 @@ def apply(t: pd.DataFrame, symbol: str, spread: pd.Series | None) -> pd.DataFram
     cls = U.CLASS[symbol]
     e = t["entry_px"].to_numpy(dtype="float64")
     risk = np.abs(e - t["stop_px"].to_numpy(dtype="float64"))
+    if "cost_risk" in t:            # a laddered entry: every part pays its costs on its own risk (rules_agent.run)
+        cr = t["cost_risk"].to_numpy(dtype="float64")
+        risk = np.where(np.isfinite(cr) & (cr > 0), cr, risk)
     risk = np.where(risk > 0, risk, np.nan)
     d = t["dir"].to_numpy()
 

@@ -45,8 +45,10 @@ T_SPLIT = pd.Timestamp(SPLIT, tz="UTC")
 START = "2024-01-01"
 RERUN_DAYS = 14
 BOT_NOW = {}
-FAMILIES = ("exits", "filters", "manage", "fib")   # manage (12.11.2026): breakeven point x partial exit per strategy;
+FAMILIES = ("exits", "filters", "manage", "fib", "ladder")   # manage (12.11.2026): breakeven point x partial exit per strategy;
 # fib (12.11.2026, user's standing task): the same at the Fibonacci levels of the way to the target - built as "manage"
+# ladder (13.11.2026, user's standing task): the entry split into 2-4 limit orders with the same total risk, stop and
+# target (run_rules --manage-grid ladder); the live bots need runner code for it, built when a card is approved
 # FTMO's real stock spreads: ~2.4x the history (measured on the demo 10.11.2026, run_rules --stock-spread-mult). Until
 # 13.11.2026 the experiments ran without it, so every stock combo's exits / filters / manage / fib / new results were
 # measured with too-cheap costs (the 10.11 stress test: SS01 WMT +15.6R -> -4.0R) - those results are run again (COSTS).
@@ -99,6 +101,15 @@ def explain_manage(v):
     return " · ".join(out)
 
 
+def explain_ladder(v):
+    """lad0,0.25,0.5 -> Hebrew."""
+    lv = [float(x) for x in v[3:].split(",")] if v != "lad0" else [0.0]
+    if lv == [0.0]:
+        return "כניסה אחת בפתיחה"
+    parts = ["בפתיחה" if x == 0 else f"בנסיגה של {x:g}R" for x in lv]
+    return f"כניסה מדורגת ב־{len(lv)} חלקים שווים ({', '.join(parts)}), אותו סיכון כולל, סטופ ויעד; חלק שלא התמלא תוך 3 נרות מתבטל"
+
+
 def explain_exit(v):
     tg, _, st, en = v.split("|")
     out = []
@@ -126,6 +137,8 @@ def base_variant(bot, combo, fam, doc=None):
     """The variant the combo trades now (manage: the bots' default when no card changed it)."""
     fam = "manage" if fam == "fib" else fam
     v = built_variant(bot, combo, fam)
+    if fam == "ladder":
+        return v
     if v is None and fam == "manage":
         ht = (doc or {}).get("has_target")
         if ht is None and doc:
@@ -143,6 +156,8 @@ def built_variant(bot, combo, fam):
         p = {}
     if fam == "filters":
         return p.get("filter") or "none"
+    if fam == "ladder":
+        return "lad" + ",".join(f"{float(x):g}" for x in p["ladder"]) if p.get("ladder") else "lad0"
     if fam in ("manage", "fib"):
         nt = (p.get("target") == "none")
         if p.get("be_way") is None and p.get("be_r") is None and not p.get("partial"):
@@ -303,9 +318,9 @@ def run_rules(combos, fam, budget_min, extra=None):
         cmd += ["--optimize", SPLIT]
     elif fam == "filters":
         cmd += ["--filters", SPLIT]
-    elif fam in ("manage", "fib"):
-        cmd += ["--manage", SPLIT] + (["--manage-grid", "fib"] if fam == "fib" else [])
-    if fam in ("exits", "filters", "manage", "fib"):
+    elif fam in ("manage", "fib", "ladder"):
+        cmd += ["--manage", SPLIT] + (["--manage-grid", fam] if fam in ("fib", "ladder") else [])
+    if fam in ("exits", "filters", "manage", "fib", "ladder"):
         bf = ROOT / "live" / "bots" / f"{BOT_NOW.get('bot')}.json"
         if bf.exists():
             cmd += ["--plans-file", str(bf)]          # on top of what the bot trades now (exits / filters too: 13.11.2026)
@@ -321,7 +336,7 @@ def run_rules(combos, fam, budget_min, extra=None):
         nd = [x for x in (r.stdout or "").splitlines() if "NO DATA" in x]
         raise RuntimeError(f"no market data: {nd[0].strip()[:200] if nd else sym}")
     rows = {}
-    jf = out_dir / f"{ {'exits': 'optimize', 'filters': 'filters', 'manage': 'manage', 'fib': 'manage'}.get(fam, 'x') }_{tag}.json"
+    jf = out_dir / f"{ {'exits': 'optimize', 'filters': 'filters', 'manage': 'manage', 'fib': 'manage', 'ladder': 'manage'}.get(fam, 'x') }_{tag}.json"
     if fam in FAMILIES and jf.exists():
         rows = {x["combo"]: x for x in json.loads(jf.read_text(encoding="utf-8"))}
     return t, rows
@@ -361,6 +376,8 @@ def plan_now(bot, combo):
 
 def replay_family(plan):
     """The experiment family whose trades the whole-bot check takes for a strategy (portfolio_check.current_trades)."""
+    if plan.get("ladder"):
+        return "ladder"
     if plan.get("filter"):
         return "filters"
     if any(k in plan for k in ("be_way", "be_r", "partial")):
@@ -402,8 +419,8 @@ def experiments(bot, budget_s, where):
                     # exits): that one first for every strategy, the other families after (13.11.2026: bot 1's 2026
                     # replay saw 8 of 46 strategies - every re-run went through all families, one instrument at a time)
                     pr = 0.8
-                if fam == "fib" and combo not in fixing_:
-                    pr = 1.5                     # the Fibonacci grid after the re-runs the whole-bot check waits for
+                if fam in ("fib", "ladder") and combo not in fixing_:
+                    pr = 1.5                     # (the ladder too: a new family for every strategy, 13.11.2026)                     # the Fibonacci grid after the re-runs the whole-bot check waits for
                 todo.append((pr, fam, -age, sym, combo))
             elif d.get("variants") and legacy_tr(d):                         # trades stored in 1000-minute steps
                 todo.append((2, fam, -age, sym, combo))
@@ -632,14 +649,17 @@ def cards_for(bot):
             bval = next((g["valid"]["avg"] for g in grid if g["variant"] == base_key), None)
             others = [g for g in grid if g["variant"] != base_key and g["valid"]["n"] >= 5]
             share = (round(sum(1 for g in others if g["valid"]["avg"] > (bval or 0)) / len(others), 2) if others and bval is not None else None)
-            what = explain_exit(v) if fam == "exits" else explain_manage(v) if fam in ("manage", "fib") else FILTER_HE.get(v, v)
+            what = (explain_exit(v) if fam == "exits" else explain_manage(v) if fam in ("manage", "fib")
+                    else explain_ladder(v) if fam == "ladder" else FILTER_HE.get(v, v))
             cards.append(K.card(
                 bot, "improve", f"{combo}: {what}",
-                f"{ {'exits': 'יעד / סטופ / כניסה', 'manage': 'ניהול העסקה (נקודת איזון / יציאה חלקית)', 'fib': 'ניהול העסקה ברמות פיבונאצ׳י (נקודת איזון / יציאה חלקית)'}.get(fam, 'סינון מצב שוק') } לאסטרטגיה {combo}: {what}. "
+                f"{ {'exits': 'יעד / סטופ / כניסה', 'manage': 'ניהול העסקה (נקודת איזון / יציאה חלקית)', 'fib': 'ניהול העסקה ברמות פיבונאצ׳י (נקודת איזון / יציאה חלקית)', 'ladder': 'כניסה מדורגת'}.get(fam, 'סינון מצב שוק') } לאסטרטגיה {combo}: {what}. "
                 f"נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
                 best["train"], best["unseen"], whole=best["whole"], halves_=best["halves"],
                 neighbours={"values": len(grid) or len(vs), "share_positive": share},
-                tested=len(grid) or len(vs), risk_pct=risk, baseline=base["unseen"], detail={"exp_at": d.get("at")},
+                tested=len(grid) or len(vs), risk_pct=risk, baseline=base["unseen"],
+                detail={"exp_at": d.get("at"), **({"needs_code": "live/runner.py: כמה הוראות לימיט לאסטרטגיה אחת - נבנה "
+                                                   "כשהכרטיס מאושר"} if fam == "ladder" else {})},
                 change={"combo": combo, "family": "manage" if fam == "fib" else fam, "from": base_key, "to": v,
                         **({"src": "fib"} if fam == "fib" else {})}))
     # the scout's strategies

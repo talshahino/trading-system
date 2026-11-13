@@ -168,7 +168,63 @@ def plan_keys(p):
             out[k] = float(p[k])
     if p.get("partial"):
         out["partial"] = tuple(float(x) for x in p["partial"])
+    if p.get("ladder"):
+        out["ladder"] = (tuple(float(x) for x in p["ladder"]), int(p.get("ladder_bars") or LADDER_BARS))
     return out
+
+
+# laddered entries (user, 13.11.2026, standing task of the bot 1-4 agents): the same total risk split into equal parts,
+# part k a limit order k x risk better than the signal's open (0 = at the open), valid LADDER_BARS bars, the same stop
+# and target (rules_agent.run, plan "ladder"). "lad0" = one entry at the open, as the bots trade now.
+LADDER_BARS = 3
+LADDERS = {"lad0,0.5": (0.0, 0.5), "lad0,0.25,0.5": (0.0, 0.25, 0.5), "lad0,0.33,0.67": (0.0, 0.33, 0.67),
+           "lad0,0.25,0.5,0.75": (0.0, 0.25, 0.5, 0.75), "lad0.25,0.5": (0.25, 0.5)}
+
+
+def lad_key(levels):
+    return "lad" + ",".join(f"{float(x):g}" for x in levels) if levels else "lad0"
+
+
+def ladder_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """Every laddered entry of one combo, on top of its plan as the bot trades it now (exits, filter, management)."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
+    t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
+    pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
+    if pk.get("entry_pullback"):
+        return                                   # a built limit entry is already one ladder step
+    plan0 = {**fn(df)[2], **pk}
+    flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    regime = _regimes(df).get(flt) if flt else None
+    rows, keep = [], {}
+    for key, lv in [("lad0", None)] + list(LADDERS.items()):
+        extra = {**pk, **({"ladder": (lv, LADDER_BARS)} if lv else {})}
+
+        def g(d, extra=extra):
+            lo, sh, plan = fn(d)
+            if regime is not None:
+                lo, sh = np.asarray(lo, bool) & regime[0], np.asarray(sh, bool) & regime[1]
+            return lo, sh, {**plan, **extra}
+        t = R.run(df, g, cost, breakeven=be, session_exit=sess)
+        t = drop_hole_trades(t, df, s, tf)
+        if t.empty:
+            continue
+        if real:
+            t = C.apply(t, s, SPREADS.get(s))
+        if events is not None:
+            t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
+        tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
+        rows.append({"variant": key, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
+        keep[key] = t[t["time"] >= t0]
+    if not rows:
+        return
+    ok = [x for x in rows if x["train"]["n"] >= 20]
+    best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
+    base = next((x for x in rows if x["variant"] == "lad0"), None)
+    OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows,
+                        "has_target": plan0.get("target") is not None})
+    for k in set(keep):
+        COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
 
 
 def man_key(has_target, be, part):
@@ -378,8 +434,9 @@ def main():
     ap.add_argument("--manage", default="",
                     help="YYYY-MM-DD: with --combos-file, try breakeven points x partial exits per combo (on top of its "
                          "--plans-file plan), choose on --test-from..this date, check on this date..end")
-    ap.add_argument("--manage-grid", default="std", choices=["std", "fib"],
-                    help="--manage values: std (40-80%% of the way, 30/50%% out) or fib (Fibonacci levels of the way)")
+    ap.add_argument("--manage-grid", default="std", choices=["std", "fib", "ladder"],
+                    help="--manage values: std (40-80%% of the way, 30/50%% out), fib (Fibonacci levels of the way) or "
+                         "ladder (the entry split into 2-4 limit orders, same total risk)")
     ap.add_argument("--plans-file", default="",
                     help="a bot's live/bots/<bot>.json: its built per-combo plans are the base of --manage")
     ap.add_argument("--filters", default="",
@@ -498,6 +555,12 @@ def main():
                 if combos is not None and (sid, tf, s) not in combos:
                     continue
                 if args.respect_tf and not R.timeframe_ok(sid, tf):
+                    continue
+                if args.manage and args.manage_grid == "ladder":
+                    try:
+                        ladder_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
+                    except Exception:  # noqa: BLE001
+                        ERRORS.append(f"ladder {sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue
                 if args.manage:
                     try:

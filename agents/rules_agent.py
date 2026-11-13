@@ -453,6 +453,55 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             exit_px, reason = c[exit_t], ("יציאת זמן" if timed else "סוף הנתונים")
         if plvl is not None and part_t is None and reason == "יעד":
             part_t = exit_t                         # the target bar went through the partial level on its way
+        lad = plan.get("ladder")
+        if lad:
+            # laddered entry (user, 13.11.2026): the same total risk split into len(levels) equal parts - part k a limit
+            # order levels[k] x risk better than the signal's open (0 = at the open), valid W bars; the same stop and
+            # target for all, the trade's management anchored on the signal's open; a part not filled by the time the
+            # position closes (or W bars) is cancelled. A part touched on the bar the target is hit is counted as not
+            # filled, one touched on the stop bar as filled (the worse case both times).
+            levels, W = lad[0], int(lad[1])
+            wk = 1.0 / len(levels)
+            fills = []
+            for k in levels:
+                if k <= 0:
+                    fills.append((e_t, e))
+                    continue
+                lim = e - d * k * risk
+                for t in range(e_t, min(n, e_t + W, exit_t + 1)):
+                    if (d > 0 and l[t] <= lim) or (d < 0 and h[t] >= lim):
+                        if not (t == exit_t and reason == "יעד"):
+                            fills.append((t, min(lim, o[t]) if d > 0 else max(lim, o[t])))
+                        break
+            if not fills:
+                i += 1
+                continue
+            r_mult, inv = 0.0, 0.0
+            for ft, fe in fills:
+                rk = d * (fe - stop0)
+                if rk <= 0:
+                    continue
+                inv += wk / rk
+                if part_t is not None and ft <= part_t:
+                    r_mult += wk * (part[0] * d * (plvl - fe) + (1 - part[0]) * d * (exit_px - fe)) / rk
+                else:
+                    r_mult += wk * d * (exit_px - fe) / rk
+                r_mult -= wk * 2 * cost_side * fe / rk
+            if inv <= 0:
+                i += 1
+                continue
+            ft0 = min(x[0] for x in fills)
+            rows.append({"time": df.index[ft0], "exit_time": df.index[exit_t], "dir": d, "r": float(r_mult),
+                         "part_time": df.index[part_t] if part_t is not None else pd.NaT,
+                         "held": int(exit_t - ft0), "entry_px": float(sum(x[1] for x in fills) / len(fills)),
+                         "exit_px": float(exit_px), "stop_px": float(stop0),
+                         "target_px": float(target) if target is not None else np.nan, "reason": reason,
+                         "free_time": df.index[free_t] if free_t is not None and free_t <= exit_t else pd.NaT,
+                         "stop_last": float(stop), "fills": len(fills),
+                         "cost_risk": float(1.0 / inv),       # costs per part on its own risk (agents/ftmo_costs.apply)
+                         "mfe_r": float(d * (best - e) / risk), "mae_r": float(d * (e - worst) / risk)})
+            i = reverse_at if reverse_at is not None else max(exit_t, i + 1)
+            continue
         if part_t is not None:
             r_mult = (part[0] * d * (plvl - e) + (1 - part[0]) * d * (exit_px - e)) / risk - 2 * cost_side * e / risk
         else:

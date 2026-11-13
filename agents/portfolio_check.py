@@ -94,6 +94,9 @@ def current_trades(bot, combo, cfg, key="tr"):
     key "tr25": the choosing period's trades (30.04.2025-31.12.2025) instead, where the agents stored them."""
     from agent_portfolio import built_variant
     p = (cfg.get("plans") or {}).get(combo) or {}
+    if p.get("ladder"):                                          # a built laddered entry (13.11.2026): its own trades
+        d = exp(bot, "ladder", combo) or {}
+        return live_entries(combo, d, (d.get(key) or {}).get(built_variant(bot, combo, "ladder")))
     if p.get("filter"):
         d = exp(bot, "filters", combo) or {}
         return live_entries(combo, d, (d.get(key) or {}).get(p["filter"]))
@@ -263,6 +266,68 @@ def side_conflicts(bot, cfg=None):
     return out
 
 
+def legs(sym, d):
+    """The currencies a trade is long (+1) / short (-1): EURUSD buy = +EUR -USD, XAUUSD / XAGUSD buy = -USD, DXY buy =
+    +USD. Indices, stocks, energy and crypto carry no currency leg here (manager task 13.11.2026: the same currency in
+    the same direction - USDJPY in several strategies of bots 1-2, EURUSD and GBPUSD together at 06:00 in bot 4)."""
+    from agents import ftmo_universe as U
+    cl, cc = U.CLASS.get(sym), U.CURRENCIES.get(sym) or []
+    if cl == "fx" and len(cc) == 2:
+        return [(cc[0], d), (cc[1], -d)]
+    if cl == "metal" and cc == ["USD"]:
+        return [("USD", -d)]
+    if sym == "DXY":
+        return [("USD", d)]
+    return []
+
+
+CCY_RULES = {"cap1": ("cap", 1.0), "cap1.5": ("cap", 1.5), "cap2": ("cap", 2.0), "half2nd": ("half", None)}
+
+
+def currency_rule(rows, mm, rule):
+    """rows: (entry, exit, dir, R, combo) in time order -> {combo: ([trades], mult)} with the rule applied.
+    cap k: a new trade's risk is cut so the open risk on any currency in that direction stays <= k x one trade's risk
+           (nothing left -> no trade); half2nd: a trade that adds to an open currency exposure in the same direction
+           goes in at half its risk. The open exposure counts every open trade's own multiplier."""
+    kind, k = CCY_RULES[rule]
+    held, out = [], {}                          # held: (exit, [(ccy, sign)], mult)
+    for a, b, d, r, c in rows:
+        held = [h for h in held if h[0] > a]
+        m = float(mm.get(c, 1.0))
+        lg = legs(c.split("|")[2], d)
+        if lg:
+            exp_ = max((sum(h[2] for h in held if (ccy, s) in h[1]) for ccy, s in lg), default=0.0)
+            if kind == "cap":
+                m = min(m, max(0.0, k - exp_))
+            elif exp_ > 0:
+                m *= 0.5
+        if m <= 1e-9:
+            continue
+        held.append((b, lg, m))
+        out.setdefault(c, ([], m))
+        out[c][0].append([a, b, d, r * m / float(mm.get(c, 1.0) or 1.0)])   # R scaled so replay's own mult stays
+    return {c: (tr, float(mm.get(c, 1.0))) for c, (tr, _) in out.items()}
+
+
+def currency_exposure(bot, cfg=None):
+    """The manager's task of 13.11.2026 (bots 1, 2, 4): a cap on the open risk in one currency and one direction, or a
+    second trade in the same currency and direction at half risk - the whole bot replayed per period, 'train'
+    (30.04.2025-31.12.2025, chooses) and 'unseen' (2026, only shows), by the TOTAL and the fall from the peak."""
+    cfg = cfg or bot_cfg(bot)
+    risk, mm = bot_risk(bot, cfg), mults(bot)
+    out = {}
+    for per, key in (("train", "tr25"), ("unseen", "tr")):
+        book, missing = book_now(bot, cfg, key)
+        rows = sorted((a, b, d, r, c) for c, (tr, m) in book.items() if tr and m > 0 for a, b, d, r in _minutes(tr))
+        fx = sum(1 for x in rows if legs(x[4].split("|")[2], x[2]))
+        res = {"combos": len(book), "missing": len(missing), "trades": len(rows), "fx_trades": fx,
+               "now": replay(book, risk)}
+        for rule in CCY_RULES:
+            res[rule] = replay(currency_rule(rows, mm, rule), risk) if rows else res["now"]
+        out[per] = res
+    return out
+
+
 def daily_pnl(book, risk):
     """The account's profit per FTMO day in % of the opening balance (the same booking as replay())."""
     rows = [(b, r * risk * 100 * m) for combo, (tr, m) in book.items() if tr and m > 0 for a, b, d, r in _minutes(tr)]
@@ -329,8 +394,13 @@ def daily(now=None):
                       **({"balance": round(bal, 2), "from_balance": fit_stress(days, bal, fit)} if bal else {})}
         except Exception as e:  # noqa: BLE001
             stress = {"error": str(e)[-200:]}
+        try:
+            ccy = currency_exposure(bot, cfg)
+        except Exception as e:  # noqa: BLE001
+            ccy = {"error": str(e)[-200:]}
         out.write_text(json.dumps({"updated": at, "bot": bot, "replay_2026": r, "combos": len(book), "missing": missing,
-                                   "warnings": warn, "side_conflicts": conf, "dd_fit_stress": stress},
+                                   "warnings": warn, "side_conflicts": conf, "dd_fit_stress": stress,
+                                   "currency_exposure": ccy},
                                   ensure_ascii=False, indent=1), encoding="utf-8")
         print(bot, r, f"missing {len(missing)}", warn)
 

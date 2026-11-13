@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-13T22:55:06+00:00",
+ "updated": "2026-11-13T22:58:02+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -1234,7 +1234,7 @@
       "week": "2026-W46"
      },
      "detail": {},
-     "made": "2026-11-13T22:24:44+00:00",
+     "made": "2026-11-13T22:52:45+00:00",
      "id": "7d4268d77f15",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -19437,13 +19437,13 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-13T22:24:33+00:00",
-    "state_updated": "2026-11-13T22:22:18+00:00",
+    "updated": "2026-11-13T22:52:32+00:00",
+    "state_updated": "2026-11-13T22:50:05+00:00",
     "minutes_since_state": 2,
     "balance": 95786.73,
-    "equity": 96792.74,
-    "day_pct": 0.12,
-    "total_pct": -3.21,
+    "equity": 96768.76,
+    "day_pct": 0.1,
+    "total_pct": -3.23,
     "trades": 154,
     "mean_r": -0.102,
     "sum_r": -15.71,
@@ -34683,8 +34683,8 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-13T22:24:33+00:00",
-    "state_updated": "2026-11-13T22:22:10+00:00",
+    "updated": "2026-11-13T22:52:32+00:00",
+    "state_updated": "2026-11-13T22:50:11+00:00",
     "minutes_since_state": 2,
     "balance": 109109.42,
     "equity": 109109.42,
@@ -56688,9 +56688,9 @@
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-13T22:24:33+00:00",
-    "state_updated": "2026-11-13T22:21:56+00:00",
-    "minutes_since_state": 3,
+    "updated": "2026-11-13T22:52:32+00:00",
+    "state_updated": "2026-11-13T22:50:16+00:00",
+    "minutes_since_state": 2,
     "balance": 100011.58,
     "equity": 100011.58,
     "day_pct": -0.23,
@@ -78948,8 +78948,8 @@
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-13T22:24:33+00:00",
-    "state_updated": "2026-11-13T22:22:26+00:00",
+    "updated": "2026-11-13T22:52:32+00:00",
+    "state_updated": "2026-11-13T22:50:17+00:00",
     "minutes_since_state": 2,
     "balance": 100085.36,
     "equity": 100085.36,
@@ -88808,9 +88808,9 @@
    "health": {
     "bot": "bot5",
     "name": "בוט 5 - סקאלפינג",
-    "updated": "2026-11-13T22:24:33+00:00",
-    "state_updated": "2026-11-13T22:22:32+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-13T22:52:32+00:00",
+    "state_updated": "2026-11-13T22:45:32+00:00",
+    "minutes_since_state": 7,
     "balance": 97560.95,
     "equity": 98098.86,
     "day_pct": 0.69,
@@ -99507,9 +99507,9 @@
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-13T22:24:33+00:00",
-    "state_updated": "2026-11-13T22:22:36+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-13T22:52:32+00:00",
+    "state_updated": "2026-11-13T22:45:36+00:00",
+    "minutes_since_state": 7,
     "balance": 100324.41,
     "equity": 100324.41,
     "day_pct": -0.14,
@@ -100219,6 +100219,38 @@
      "by": "manager",
      "decided": "2026-11-13T19:12:05+00:00",
      "decision_id": "5abcd3c09976"
+    },
+    {
+     "bot": "bot7",
+     "kind": "info",
+     "title": "בוט 7: SH01 על GER40 מפסיד בבדיקה - נבנתה בדיקת תיקון",
+     "what": "SH01 (נגד הזעזוע) על GER40: ב־2026 68 עסקאות, -4.5R (ב־2025 +10.6R); על US100 +26.4R. לפי הכלל - קודם מתקנים: נבנתה רשת לכל מכשיר (כניסה דקה 1-5, סטופ 0.25-1.0 מהזעזוע, החזקה 15-120 דקות, יעד, שעות מסחר, כיוון), נבחר על 2025 ומוצג על 2026. רצה בסבב הבא של מחשב הבוטים. EV01 שהוסר יצא מתור הבדיקות; EV03 - חצי מהבדיקה, ממתין. כניסה מדורגת נבדקת גם כאן.",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": {
+      "combo": "bot7|*",
+      "note": "info only",
+      "night": "2026-11-14m"
+     },
+     "detail": {},
+     "made": "2026-11-13T22:58:00+00:00",
+     "id": "95fe51fb3e6f",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T22:58:02+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T22:58:02+00:00",
+     "decision_id": "6adaac49e2a0"
     },
     {
      "bot": "bot7",
@@ -118098,9 +118130,9 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-13T22:24:33+00:00",
-    "state_updated": "2026-11-13T22:24:09+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-13T22:52:32+00:00",
+    "state_updated": "2026-11-13T22:50:28+00:00",
+    "minutes_since_state": 2,
     "balance": 100000.0,
     "equity": 100000.0,
     "day_pct": 0.0,
@@ -118142,12 +118174,8 @@
  },
  "decisions": {
   "new": [
-   "136324e30888",
-   "2d9eab8a01c8",
-   "ee5aff535d94",
-   "9f86377a67ef",
-   "40c36d1d7714"
+   "6adaac49e2a0"
   ],
-  "unread": 175
+  "unread": 176
  }
 }

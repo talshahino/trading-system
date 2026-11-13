@@ -194,34 +194,44 @@
       "what": "סיכון ×0.66",
       "decision": "c6c7522b5f3f",
       "at": "2026-11-12T10:44:44+00:00",
-      "effect_month_pct": null
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.66
      }
     ],
-    "open": false
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "GH02|1Hour|XAUUSD",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "BK05|15Min|INTC",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "QC07|15Min|ARM",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    }
   ],
   "open": [
    "QC07|15Min|ARM"
   ],
+  "cut_only": [
+   "SE02|1Hour|GBPJPY"
+  ],
   "total_month_pct": 0.0,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

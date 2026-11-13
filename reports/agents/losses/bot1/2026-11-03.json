@@ -302,43 +302,50 @@
     "combo": "YT03|1Hour|PFE",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TV24|15Min|KO",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TV20|1Hour|XAUUSD",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TV62|1Hour|USDCAD",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TV60|15Min|ARM",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "TV38|15Min|GOOG",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "YT03|1Hour|LVMH",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "TT45|15Min|CSCO",
@@ -348,16 +355,23 @@
       "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
       "decision": "137acbe329fb",
       "at": "2026-11-13T05:00:07+00:00",
-      "effect_month_pct": 0.3
+      "effect_month_pct": 0.3,
+      "cut": false,
+      "prev": null,
+      "value": null
      },
      {
       "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
       "decision": "9a80426643c0",
       "at": "2026-11-13T05:00:07+00:00",
-      "effect_month_pct": null
+      "effect_month_pct": null,
+      "cut": false,
+      "prev": null,
+      "value": null
      }
     ],
-    "open": false
+    "open": false,
+    "cut_only": false
    }
   ],
   "open": [
@@ -367,6 +381,7 @@
    "TV62|1Hour|USDCAD",
    "TV38|15Min|GOOG"
   ],
+  "cut_only": [],
   "total_month_pct": 0.3,
   "status": "פתוח: 5 אסטרטגיות בלי תיקון עדיין"
  }

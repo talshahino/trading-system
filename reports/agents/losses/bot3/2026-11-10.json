@@ -169,22 +169,30 @@
       "what": "SS07|15Min|NVDA: סיכון ×1 ← ×0.5 (מפסידה ב־2026 במחירים האמיתיים)",
       "decision": "748cf67395f0",
       "at": "2026-11-13T05:00:07+00:00",
-      "effect_month_pct": 0.07
+      "effect_month_pct": 0.07,
+      "cut": true,
+      "prev": null,
+      "value": null
      },
      {
       "what": "סיכון ×0.5",
       "decision": "cf599e9da7c2",
       "at": "2026-11-13T05:00:07+00:00",
-      "effect_month_pct": null
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.5
      }
     ],
-    "open": false
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "SS01|5Min|WMT",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TV41|1Hour|USDJPY",
@@ -194,22 +202,31 @@
       "what": "סיכון ×0.7",
       "decision": "796d202fd7d6",
       "at": "2026-11-12T20:13:39+00:00",
-      "effect_month_pct": null
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.7
      }
     ],
-    "open": false
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV24|15Min|TSLA",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false
+    "open": false,
+    "cut_only": false
    }
   ],
   "open": [
    "SS01|5Min|WMT"
   ],
+  "cut_only": [
+   "SS07|15Min|NVDA",
+   "TV41|1Hour|USDJPY"
+  ],
   "total_month_pct": 0.07,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

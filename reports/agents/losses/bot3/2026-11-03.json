@@ -132,22 +132,32 @@
       "what": "⭐ TV58|1Hour|USDCAD: יעד 1.5R · סטופ x1.25 · כניסה בלימיט 0.5R טוב יותר",
       "decision": "454d16e24d47",
       "at": "2026-11-13T01:36:03+00:00",
-      "effect_month_pct": 0.57
+      "effect_month_pct": 0.57,
+      "cut": false,
+      "prev": null,
+      "value": null
      },
      {
       "what": "⭐ TV58|1Hour|USDCAD: רק בתנודתיות נמוכה",
       "decision": "260a50c68234",
       "at": "2026-11-13T01:36:03+00:00",
-      "effect_month_pct": 0.23
+      "effect_month_pct": 0.23,
+      "cut": false,
+      "prev": null,
+      "value": null
      },
      {
       "what": "סיכון ×0.7",
       "decision": "509c08fb1608",
       "at": "2026-11-12T20:13:39+00:00",
-      "effect_month_pct": null
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.7
      }
     ],
-    "open": false
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "TV12|4Hour|ARM",
@@ -157,20 +167,28 @@
       "what": "סיכון ×0.7",
       "decision": "5e9a1e4bf7b0",
       "at": "2026-11-12T10:29:12+00:00",
-      "effect_month_pct": null
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.7
      }
     ],
-    "open": false
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "SS06|4Hour|MSTR",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false
+    "open": false,
+    "cut_only": false
    }
   ],
   "open": [],
+  "cut_only": [
+   "TV12|4Hour|ARM"
+  ],
   "total_month_pct": 0.8,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

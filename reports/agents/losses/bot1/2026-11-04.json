@@ -384,13 +384,15 @@
     "combo": "TV62|1Hour|USDCAD",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TV10|1Hour|US100",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TT45|15Min|CSCO",
@@ -400,40 +402,51 @@
       "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
       "decision": "137acbe329fb",
       "at": "2026-11-13T05:00:07+00:00",
-      "effect_month_pct": 0.3
+      "effect_month_pct": 0.3,
+      "cut": false,
+      "prev": null,
+      "value": null
      },
      {
       "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
       "decision": "9a80426643c0",
       "at": "2026-11-13T05:00:07+00:00",
-      "effect_month_pct": null
+      "effect_month_pct": null,
+      "cut": false,
+      "prev": null,
+      "value": null
      }
     ],
-    "open": false
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "TV38|15Min|GOOG",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TV29|4Hour|US30",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TV14|4Hour|XPTUSD",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TV33|15Min|MSTR",
     "cause": "כניסה / כיוון",
     "fixes": [],
-    "open": true
+    "open": true,
+    "cut_only": false
    },
    {
     "combo": "TV17|1Hour|DXY",
@@ -443,16 +456,23 @@
       "what": "סיכון ×0.7",
       "decision": "8c0cd23c0c95",
       "at": "2026-11-12T06:49:56+00:00",
-      "effect_month_pct": null
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.7
      },
      {
       "what": "TV17|1Hour|DXY: בלי יעד · כניסה בלימיט 0.25R טוב יותר",
       "decision": "2bf56c03b8b4",
       "at": "2026-11-12T00:50:58+00:00",
-      "effect_month_pct": null
+      "effect_month_pct": null,
+      "cut": false,
+      "prev": null,
+      "value": null
      }
     ],
-    "open": false
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "SE02|1Hour|USDJPY",
@@ -462,16 +482,23 @@
       "what": "SE02|1Hour|USDJPY: סיכון ×0.95 ← ×0.79 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.23)",
       "decision": "107f16c55aef",
       "at": "2026-11-13T05:03:56+00:00",
-      "effect_month_pct": -0.19
+      "effect_month_pct": -0.19,
+      "cut": true,
+      "prev": null,
+      "value": null
      },
      {
       "what": "סיכון ×0.79",
       "decision": "37480e091e6f",
       "at": "2026-11-13T05:03:56+00:00",
-      "effect_month_pct": null
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.79
      }
     ],
-    "open": false
+    "open": false,
+    "cut_only": true
    }
   ],
   "open": [
@@ -482,7 +509,10 @@
    "TV14|4Hour|XPTUSD",
    "TV33|15Min|MSTR"
   ],
+  "cut_only": [
+   "SE02|1Hour|USDJPY"
+  ],
   "total_month_pct": 0.11,
-  "status": "פתוח: 6 אסטרטגיות בלי תיקון עדיין"
+  "status": "פתוח: 6 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

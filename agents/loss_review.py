@@ -346,7 +346,10 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
                 what = d["title"]                # a live rule changed / taken back (a bot agent's card)
             elif d.get("type") == "risk":
                 what = "הוסרה מהבוט"
-            fixes.append({"what": what, "decision": d["id"], "at": d["at"], "effect_month_pct": eff})
+            cut = (d.get("type") == "risk" and a.get("kind") == "mult" and a.get("value") is not None and 0 < float(a["value"]) < 1) \
+                or (card.get("kind") == "risk" and 0 < float((card.get("change") or {}).get("to") or (card.get("change") or {}).get("value") or 0) < 1)
+            fixes.append({"what": what, "decision": d["id"], "at": d["at"], "effect_month_pct": eff, "cut": bool(cut),
+                          "prev": a.get("prev") if cut else None, "value": a.get("value") if cut else None})
             total += eff or 0
         # changes made in the bot itself (a nightly agent's built card, a removal) count too
         cfg = _read(ROOT / "live" / "bots" / f"{rep['bot']}.json", {}) or {}
@@ -375,10 +378,15 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
                 eff = card_effect(card, months, bot_risk_pct)
                 fixes.append({"what": card.get("title"), "decision": None, "card": cid, "at": r_.get("at"), "effect_month_pct": eff})
                 total += eff or 0
-        rows.append({"combo": c, "cause": x["cause_he"], "fixes": fixes, "open": not fixes and x["cause"] != "rules"})
+        # only a risk cut, no real fix: the size of the cut follows the strategy's own edge (enforce)
+        rows.append({"combo": c, "cause": x["cause_he"], "fixes": fixes, "open": not fixes and x["cause"] != "rules",
+                     "cut_only": bool(fixes) and all(f.get("cut") for f in fixes)})
     opened = [r["combo"] for r in rows if r["open"]]
-    return {"rows": rows, "open": opened, "total_month_pct": round(total, 2),
-            "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון" if not opened else f"פתוח: {len(opened)} אסטרטגיות בלי תיקון עדיין"}
+    cut = [r["combo"] for r in rows if r["cut_only"]]
+    st = "סגור - לכל אסטרטגיה שהפסידה יש תיקון" if not opened else f"פתוח: {len(opened)} אסטרטגיות בלי תיקון עדיין"
+    if cut:
+        st += f" · {len(cut)} רק עם הורדת סיכון - עדיין מחפשים תיקון"
+    return {"rows": rows, "open": opened, "cut_only": cut, "total_month_pct": round(total, 2), "status": st}
 
 
 # The risk of a losing strategy without a fix - from its own numbers only, nothing fixed (user, 13.11.2026):
@@ -448,7 +456,7 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
     st = (live or {}).get(rep["bot"])
     lt = trade_rows(st) if st else pd.DataFrame()
     for row in plan["rows"]:
-        if row["open"]:
+        if row["open"] or row.get("cut_only"):
             lr = [float(x) for x in lt[lt["combo"] == row["combo"]]["r"]] if len(lt) else []
             mult, parts, m0, m = edge_now(rep["bot"], row["combo"], lr)
             row["edge_mult"], row["edge_parts"], row["edge0"], row["edge"] = mult, parts, m0, m
@@ -476,6 +484,30 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
                     "why": "המנהל: ההורדה הייתה רק עד שיימצא תיקון. נמצא: " + "; ".join(f["what"] for f in row["fixes"] if f.get("what")),
                     "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_back": f"{rep['bot']}/{rep['day']}",
                     "action": {"bot": rep["bot"], "combo": row["combo"], "kind": "mult", "value": back, "prev": cur}})
+        have_ids.add(did)
+    # a cut the bot's agent made after its fixes failed: its size is the strategy's own edge, not a guess
+    for row in plan["rows"]:
+        if not row.get("cut_only") or row["combo"] not in levels or levels[row["combo"]][0] is None:
+            continue
+        c, (fm, parts) = row["combo"], levels[row["combo"]]
+        # the cut in force: the latest approved one (the bots' computer applies it within minutes)
+        last = max((f for f in row["fixes"] if f.get("value") is not None), key=lambda f: f.get("at") or "", default=None)
+        cur = float(last["value"]) if last else float(mm.get(c, 1.0) or 1.0)
+        base = max([float(f["prev"]) for f in row["fixes"] if f.get("prev") is not None] or [1.0])
+        val = MIN_LOT if fm == MIN_LOT else round(base * fm, 2)
+        if val > cur - 0.01:          # only deeper: a cut made for another reason (e.g. no profit without the news) stays
+            continue
+        did = hashlib.sha1(f"losscut|{rep['bot']}|{c}|{val}".encode()).hexdigest()[:12]
+        if did in have_ids:
+            continue
+        out.append({"id": did, "bot": rep["bot"], "type": "risk", "kind": "mult", "combo": c,
+                    "title": f"{c}: " + ("כמות מינימלית - אין יתרון" if val == MIN_LOT else f"סיכון ×{val} לפי היתרון שלה")
+                             + f" (במקום ×{cur:g}), דוח ההפסד של {rep['day']}",
+                    "decision": "approved", "by": "manager", "read": False, "undone": False, "at": at,
+                    "why": "המנהל: התיקונים נכשלו והסיכון הורד - גודל ההורדה נקבע מהיתרון של האסטרטגיה עצמה: " + "; ".join(parts)
+                           + ". כשיימצא תיקון - הסיכון חוזר; כל עסקה בחי מעדכנת את החישוב.",
+                    "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_report": f"{rep['bot']}/{rep['day']}",
+                    "action": {"bot": rep["bot"], "combo": c, "kind": "mult", "value": val, "prev": cur}})
         have_ids.add(did)
     if (pd.Timestamp.now(tz=TZ).date() - pd.Timestamp(rep["day"]).date()).days < 2:
         return out

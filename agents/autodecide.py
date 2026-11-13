@@ -124,9 +124,14 @@ def _risk_card(c, bot):
     if c.get("kind") != "risk" or bot not in RISK_BOTS or not ch.get("combo") or ch.get("kind") != "mult":
         return None
     try:
-        v = round(float(ch.get("to")), 2)
+        v = float(ch.get("to"))
     except (TypeError, ValueError):
         return None
+    if abs(v - 0.001) < 1e-9:
+        # the instrument's minimum lot (agents/loss_review.MIN_LOT): no edge left, live data keeps coming (user,
+        # 13.11.2026) - until then such a card was approved and never applied (rounded to 0.0, outside 0.5-1.5)
+        return 0.001
+    v = round(v, 2)
     return v if 0.5 <= v <= 1.5 else None
 
 

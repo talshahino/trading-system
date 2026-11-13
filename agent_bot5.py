@@ -335,14 +335,21 @@ def main():
         rk5 = [float(s5["risk"][k]) for k in (s5.get("tal_tracks") or {}) if k in (s5.get("risk") or {})]
         cards += TG.cards(BOT, pairs, doc.get("bot6"), "בוט 6", risk_pct=round(min(rk5) * 100, 3) if rk5 else 0.4, live=live5)
         tal = {"done": len(tidx), "planned": planned}
+        # only the tracks the account counts: a track at risk 0 (t5_1, out since 12.11 night) still runs and is shown,
+        # but its trades are not the account's - counted here they made the cap / doubled-risk test look worse or better
+        # than the bot is (13.11.2026)
+        rkd = s5.get("risk") or {}
         pf = TG.portfolio(tidx, TAL_SYMBOLS, TAL_DIR, {k: (f"{v['pair'][0]}/{v['pair'][1]}", v["cfg"])
-                                                       for k, v in (s5.get("tal_tracks") or {}).items()})
+                                                       for k, v in (s5.get("tal_tracks") or {}).items()
+                                                       if float(rkd.get(k, 0.0028) or 0) > 0})
         if pf:
             doc["bot5"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
-            pc = TG.portfolio_card(BOT, pf, round(min(rk5) * 100, 3) if rk5 else 0.4)
-            if pc:
-                cards.append(pc)
+            rk_live = [x for x in rk5 if x > 0]
+            for pc in (TG.portfolio_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4),
+                       TG.hours_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4)):
+                if pc:
+                    cards.append(pc)
     except StopIteration:
         pass
     except Exception as e:  # noqa: BLE001

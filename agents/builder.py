@@ -71,6 +71,10 @@ def buildable(c):
     if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "MAX_DIR" \
             and isinstance(ch.get("to"), int) and 0 <= ch["to"] <= 10:
         return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_max_dir", "to": int(ch["to"])}
+    # the hour filter (13.11.2026): the UTC hours where the gap tracks enter no new trade
+    if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "HOURS_OFF" \
+            and isinstance(ch.get("to"), list) and all(isinstance(x, int) and 0 <= x <= 23 for x in ch["to"]) and len(ch["to"]) <= 12:
+        return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_hours_off", "to": sorted(set(ch["to"]))}
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") and str(ch.get("knob", "")).startswith("RISK") \
             and ch.get("to") is not None:
         return {"bot": bot, "combo": f"{'OWN' if bot == 'bot5' else 'FUT'}|{ch['track']}", "family": "risk",
@@ -130,6 +134,8 @@ def describe(b):
     if b["family"] == "flag":
         if b["key"] == "tal_max_dir":
             return f"שיטת הגאפ: לכל היותר {b['to']} עסקאות פתוחות באותו כיוון בכל המדדים יחד" if b["to"] else "שיטת הגאפ: בלי תקרה לכיוון"
+        if b["key"] == "tal_hours_off":
+            return ("שיטת הגאפ: בלי כניסות בשעות " + ", ".join(f"{x:02d}:00" for x in b["to"]) + " (UTC)") if b["to"] else "שיטת הגאפ: בלי מסנן שעות"
         return "שיטת הגאפ: מסלול לא נכנס למכשיר ולכיוון שמסלול אחר כבר מחזיק" if b["to"] else "שיטת הגאפ: בלי הכלל נגד סיכון כפול"
     if b["family"] == "tal5":
         return f"שיטת הגאפ, מסלול {b['pair'][0]} / {b['pair'][1]}: " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())

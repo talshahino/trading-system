@@ -710,8 +710,21 @@ def portfolio(idx, symbols, out_dir, live):
                          "days_below_3r": int((day <= -3).sum()), "max_fall": round(float((cum.cummax() - cum).max()), 1)}
         return out
     doubled = t[~t["solo"]]
+    # an hour filter (bot 5's smart agent, 13.11.2026 night): the UTC hours of entry where all the tracks together LOST
+    # on 2024-2025 (time-weighted mean < 0, t <= -1.5, at least 100 trades) - chosen on that period only - and the
+    # account without them on both periods. 2026 only shows the result.
+    tr_ = t[t["time"] < SPLIT]
+    hrs = []
+    for h_, part in tr_.groupby(tr_["time"].dt.hour):
+        if len(part) < 100:
+            continue
+        ws_ = K.wstats(part["r"].to_numpy(float), K.weights(part["time"]))
+        if ws_["mean"] is not None and ws_["mean"] < 0 and (ws_["t"] or 0) <= -1.5:
+            hrs.append(int(h_))
+    hours_off = {"hours": hrs, **(stats(t[~t["time"].dt.hour.isin(hrs)]) if hrs else {})}
     return {"tracks": {k: v[0] for k, v in live.items()}, "now": stats(t), "one_per_side": stats(t[t["solo"]]),
             "max_dir": {str(c): stats(t[pd.Series(k_, index=t.index)]) for c, k_ in caps.items()},
+            "hours_off": hours_off,
             # R by the hour of entry (UTC) and by weekday, all tracks together (13.11.2026: material for a time filter
             # chosen on 2024-2025 by the smart agent - the losses of 12.11 were all between 14:41 and 16:19 UTC)
             "by_hour": _by(t, t["time"].dt.hour), "by_weekday": _by(t, t["time"].dt.weekday),
@@ -763,6 +776,24 @@ def portfolio_card(bot, pf, risk_pct):
             f"הירידה הגדולה {au['max_fall']:.1f}R ← {bu['max_fall']:.1f}R. 2024-2025: ירידה {at['max_fall']:.1f}R ← "
             f"{bt['max_fall']:.1f}R, סה\"כ משוקלל {at['total_w']:+.1f}R ← {bt['total_w']:+.1f}R.")
     return K.card(bot, "risk", title, what, None, None, tested=len(rules), risk_pct=risk_pct, detail=pf, change=change)
+
+
+def hours_card(bot, pf, risk_pct):
+    """A card for the hour filter of portfolio() (13.11.2026): the hours are chosen on 2024-2025 only; a card only when,
+    without them, 2026's total does not fall and its deepest fall and worst day are not worse."""
+    a, h = pf.get("now") or {}, pf.get("hours_off") or {}
+    if not h.get("hours") or not a.get("unseen") or not h.get("unseen") or not h.get("train"):
+        return None
+    au, bu, at, bt = a["unseen"], h["unseen"], a["train"], h["train"]
+    if bu["total"] < au["total"] or bu["max_fall"] > au["max_fall"] or bu["worst_day"] < au["worst_day"]:
+        return None
+    hs = ", ".join(f"{x:02d}:00" for x in h["hours"])
+    what = (f"כל מסלולי שיטת הגאפ יחד. בשעות {hs} (UTC) כל המסלולים יחד הפסידו ב־2024-2025 (נבחר רק על התקופה הזאת). "
+            f"הכלל: לא נכנסים בשעות האלה. 2026 (לא נראתה): סה\"כ {au['total']:+.1f}R ← {bu['total']:+.1f}R, "
+            f"היום הגרוע {au['worst_day']:+.1f}R ← {bu['worst_day']:+.1f}R, הירידה הגדולה {au['max_fall']:.1f}R ← "
+            f"{bu['max_fall']:.1f}R, עסקאות {au['n']} ← {bu['n']}. 2024-2025: ירידה {at['max_fall']:.1f}R ← {bt['max_fall']:.1f}R.")
+    return K.card(bot, "risk", "שיטת הגאפ: בלי כניסות בשעות שהפסידו", what, None, None, tested=24, risk_pct=risk_pct,
+                  detail={"hours_off": h, "now": a}, change={"track": "tal_all", "knob": "HOURS_OFF", "from": [], "to": h["hours"]})
 
 
 # ---------------------------------------------------------------- live (12.11.2026): the same rules on the running bot

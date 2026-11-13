@@ -108,6 +108,7 @@ RISK_TAL5 = 0.004 * 0.7
 TAL5_RISK = {}
 TAL5_ONE = [False]     # "tal_one_per_side": a track does not enter a symbol / direction another track holds (off until approved)
 TAL5_MAXDIR = [0]      # "tal_max_dir" (13.11.2026): at most K counted trades open in one direction on all the indices together (0 = off until approved)
+TAL5_HOURS_OFF = set()  # "tal_hours_off" (13.11.2026 night): UTC hours of entry where no new counted trade opens (empty until approved)
 _TAL5_CODE = {k: (p, dict(c)) for k, (p, c) in TAL5.items()}
 
 
@@ -173,6 +174,11 @@ def load_settings():
                     TAL5_MAXDIR[0] = max(0, int(d.get("tal_max_dir", 0) or 0))
                 except (TypeError, ValueError):
                     TAL5_MAXDIR[0] = 0
+                TAL5_HOURS_OFF.clear()
+                try:
+                    TAL5_HOURS_OFF.update(int(h_) for h_ in (d.get("tal_hours_off") or []) if 0 <= int(h_) <= 23)
+                except (TypeError, ValueError):
+                    TAL5_HOURS_OFF.clear()
                 TAL5_RISK.clear()
                 for trk in TAL5:
                     v = rk.get(trk, rk.get("tal"))
@@ -817,8 +823,12 @@ def main():
                         dir_ = TAL5_MAXDIR[0] > 0 and sum(1 for o in trades.values() if o.get("tal") and o.get("risk_usd")
                                                           and o.get("status") == "open" and o.get("dir") == rec["dir"]
                                                           and o.get("id", o) != rec.get("id")) >= TAL5_MAXDIR[0]
+                        ts_ = pd.Timestamp(rec["time"])
+                        hour_ = bool(TAL5_HOURS_OFF) and (ts_.tz_convert("UTC") if ts_.tzinfo else ts_).hour in TAL5_HOURS_OFF
                         if acc.get("breached"):
                             rec["skipped"] = "breach"
+                        elif hour_:
+                            rec["skipped"] = "hours"         # an hour the tracks lost in together on 2024-2025
                         elif side_:
                             rec["skipped"] = "side"          # another track already holds this symbol and direction
                         elif dir_:

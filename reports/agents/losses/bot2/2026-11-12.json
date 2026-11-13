@@ -189,7 +189,7 @@
      {
       "what": "QB11|1Hour|USDJPY: סיכון ×1 ← ×0.5 (בלי ההודעות כמעט אין רווח, והסיכון גדול)",
       "decision": "7b679b0135a9",
-      "at": "2026-11-13T05:00:07+00:00",
+      "at": "2026-11-13T04:59:21+00:00",
       "effect_month_pct": -0.05,
       "cut": true,
       "prev": null,
@@ -198,7 +198,7 @@
      {
       "what": "סיכון ×0.5",
       "decision": "4e82b0259e93",
-      "at": "2026-11-13T05:00:07+00:00",
+      "at": "2026-11-13T04:59:21+00:00",
       "effect_month_pct": null,
       "cut": true,
       "prev": null,
@@ -221,28 +221,9 @@
    {
     "combo": "SE02|1Hour|USDJPY",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [
-     {
-      "what": "SE02|1Hour|USDJPY: סיכון ×0.95 ← ×0.85 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.13)",
-      "decision": "691db1305730",
-      "at": "2026-11-13T05:03:56+00:00",
-      "effect_month_pct": -0.14,
-      "cut": true,
-      "prev": null,
-      "value": null
-     },
-     {
-      "what": "סיכון ×0.85",
-      "decision": "3b36a4630de4",
-      "at": "2026-11-13T05:03:56+00:00",
-      "effect_month_pct": null,
-      "cut": true,
-      "prev": 0.95,
-      "value": 0.85
-     }
-    ],
-    "open": false,
-    "cut_only": true,
+    "fixes": [],
+    "open": true,
+    "cut_only": false,
     "edge_mult": 0.71,
     "edge_parts": [
      "בבדיקה של 2026: +0.15R לעסקה (219 עסקאות), בתקופת הבחירה +0.05R",
@@ -276,12 +257,13 @@
     "cut_only": false
    }
   ],
-  "open": [],
-  "cut_only": [
-   "QB11|1Hour|USDJPY",
+  "open": [
    "SE02|1Hour|USDJPY"
   ],
-  "total_month_pct": -0.19,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "cut_only": [
+   "QB11|1Hour|USDJPY"
+  ],
+  "total_month_pct": -0.05,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

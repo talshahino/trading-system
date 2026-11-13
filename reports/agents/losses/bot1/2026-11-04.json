@@ -401,7 +401,7 @@
      {
       "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
       "decision": "137acbe329fb",
-      "at": "2026-11-13T05:00:07+00:00",
+      "at": "2026-11-13T05:04:12+00:00",
       "effect_month_pct": 0.3,
       "cut": false,
       "prev": null,
@@ -410,7 +410,7 @@
      {
       "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
       "decision": "9a80426643c0",
-      "at": "2026-11-13T05:00:07+00:00",
+      "at": "2026-11-13T05:04:12+00:00",
       "effect_month_pct": null,
       "cut": false,
       "prev": null,
@@ -477,28 +477,9 @@
    {
     "combo": "SE02|1Hour|USDJPY",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [
-     {
-      "what": "SE02|1Hour|USDJPY: סיכון ×0.95 ← ×0.79 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.23)",
-      "decision": "107f16c55aef",
-      "at": "2026-11-13T05:03:56+00:00",
-      "effect_month_pct": -0.19,
-      "cut": true,
-      "prev": null,
-      "value": null
-     },
-     {
-      "what": "סיכון ×0.79",
-      "decision": "37480e091e6f",
-      "at": "2026-11-13T05:03:56+00:00",
-      "effect_month_pct": null,
-      "cut": true,
-      "prev": 0.95,
-      "value": 0.79
-     }
-    ],
-    "open": false,
-    "cut_only": true
+    "fixes": [],
+    "open": true,
+    "cut_only": false
    }
   ],
   "open": [
@@ -507,12 +488,11 @@
    "TV38|15Min|GOOG",
    "TV29|4Hour|US30",
    "TV14|4Hour|XPTUSD",
-   "TV33|15Min|MSTR"
-  ],
-  "cut_only": [
+   "TV33|15Min|MSTR",
    "SE02|1Hour|USDJPY"
   ],
-  "total_month_pct": 0.11,
-  "status": "פתוח: 6 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "cut_only": [],
+  "total_month_pct": 0.3,
+  "status": "פתוח: 7 אסטרטגיות בלי תיקון עדיין"
  }
 }

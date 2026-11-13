@@ -141,27 +141,8 @@
    {
     "combo": "FR08|5Min|SPCX",
     "cause": "כניסה / כיוון",
-    "fixes": [
-     {
-      "what": "FR08|5Min|SPCX: הסטופ ×0.6 ← ×0.75 (הגרסה שנבדקה בבדיקה ההוגנת)",
-      "decision": "06db36e1c1ed",
-      "at": "2026-11-13T05:03:56+00:00",
-      "effect_month_pct": 0.32,
-      "cut": true,
-      "prev": null,
-      "value": null
-     },
-     {
-      "what": "FR08|5Min|SPCX: הסטופ ×0.6 ← ×0.75 (הגרסה שנבדקה בבדיקה ההוגנת)",
-      "decision": "bb20271c86ba",
-      "at": "2026-11-13T05:03:56+00:00",
-      "effect_month_pct": null,
-      "cut": false,
-      "prev": null,
-      "value": null
-     }
-    ],
-    "open": false,
+    "fixes": [],
+    "open": true,
     "cut_only": false
    },
    {
@@ -182,11 +163,13 @@
     "cut_only": true
    }
   ],
-  "open": [],
+  "open": [
+   "FR08|5Min|SPCX"
+  ],
   "cut_only": [
    "SE02|1Hour|GBPJPY"
   ],
-  "total_month_pct": 0.32,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.0,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

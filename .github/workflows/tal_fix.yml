@@ -1,0 +1,59 @@
+name: Tal gap fix (bot 5)
+
+# A fast, fair test of the fixes for one of bot 5's gap tracks after a loss report (agents/tal_fix_run.py, user
+# 13.11.2026: every losing track gets a tested fix, built at once). Normally the bots' computer; this is for "now".
+
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: "bot 5's gap track (live/bots/bot5.json tal_tracks)"
+        default: "t15_1"
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Run
+        run: python -u -m agents.tal_fix_run --track ${{ inputs.track }} 2>&1 | tee tal_fix.log
+      - name: Manager
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -u agent_manager.py 2>&1 | tail -20
+      - name: Save data cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+      - name: Commit
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/agents data/agents/fix_attempts.json data/agents/replies.json || true
+          git commit -qm "Bot 5: the fair test of the fixes for gap track ${{ inputs.track }} (tal_fix_run)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

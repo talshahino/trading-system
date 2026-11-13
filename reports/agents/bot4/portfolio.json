@@ -1,33 +1,85 @@
 {
- "updated": "2026-11-12T11:41:54+00:00",
+ "updated": "2026-11-13T06:53:41+00:00",
  "bot": "bot4",
  "replay_2026": {
-  "trades": 787,
-  "total": 37.07,
-  "worst_day": 0.0,
-  "max_dd": 0.0,
+  "trades": 1194,
+  "total": 38.24,
+  "worst_day": -1.86,
+  "max_dd": 7.96,
   "near_days": 0,
-  "max_open": 2.25,
-  "max_side": 2.25
+  "max_open": 2.73,
+  "max_side": 2.73
  },
- "combos": 7,
+ "combos": 10,
  "missing": [
-  "BK05|15Min|EURUSD",
+  "GH02|1Hour|USDJPY",
   "BK05|1Hour|EURUSD",
-  "GH02|1Hour|XAUUSD",
-  "SE02|1Hour|GBPJPY",
-  "FR01|1Hour|EURUSD",
+  "BK05|15Min|INTC",
+  "GH09|1Hour|USDJPY",
   "QP02|1Hour|XAGUSD",
   "FR01|1Hour|GBPUSD",
-  "GH04|1Hour|EURJPY",
-  "SE01|1Hour|CSCO",
+  "IM03|4Hour|USDCAD",
+  "QC04|4Hour|USDCAD",
   "SE01|1Hour|WMT",
   "SC002|4Hour|USDCAD",
   "SC002|1Hour|USDCAD",
-  "SC002|1Hour|EURUSD",
   "SC002|1Hour|INTC",
   "SC002|4Hour|GBPUSD",
-  "SC002|1Hour|ARM"
+  "SC001|1Min|USDCAD"
  ],
- "warnings": []
+ "warnings": [
+  "ירידה מהשיא 7.96% - קרוב למגבלה הכוללת של הבוט (9%)"
+ ],
+ "side_conflicts": {
+  "train": {
+   "combos": 0,
+   "missing": 24,
+   "skipped": 0,
+   "skipped_r": 0,
+   "skipped_mean": null,
+   "before": {
+    "trades": 0,
+    "total": 0.0,
+    "worst_day": 0.0,
+    "max_dd": 0.0,
+    "near_days": 0,
+    "max_open": 0.0,
+    "max_side": 0.0
+   },
+   "after": {
+    "trades": 0,
+    "total": 0.0,
+    "worst_day": 0.0,
+    "max_dd": 0.0,
+    "near_days": 0,
+    "max_open": 0.0,
+    "max_side": 0.0
+   }
+  },
+  "unseen": {
+   "combos": 10,
+   "missing": 14,
+   "skipped": 43,
+   "skipped_r": -8.5,
+   "skipped_mean": -0.198,
+   "before": {
+    "trades": 1194,
+    "total": 38.24,
+    "worst_day": -1.86,
+    "max_dd": 7.96,
+    "near_days": 0,
+    "max_open": 2.73,
+    "max_side": 2.73
+   },
+   "after": {
+    "trades": 1151,
+    "total": 41.01,
+    "worst_day": -1.86,
+    "max_dd": 8.89,
+    "near_days": 0,
+    "max_open": 2.73,
+    "max_side": 2.73
+   }
+  }
+ }
 }

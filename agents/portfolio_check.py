@@ -70,22 +70,23 @@ def exp(bot, fam, combo):
     return d
 
 
-def current_trades(bot, combo, cfg):
-    """The combo's 2026 trades as it trades now (its built exit plan, or its built filter), None when not stored."""
+def current_trades(bot, combo, cfg, key="tr"):
+    """The combo's 2026 trades as it trades now (its built exit plan, or its built filter), None when not stored.
+    key "tr25": the choosing period's trades (30.04.2025-31.12.2025) instead, where the agents stored them."""
     from agent_portfolio import built_variant
     p = (cfg.get("plans") or {}).get(combo) or {}
     if p.get("filter"):
         d = exp(bot, "filters", combo) or {}
-        return (d.get("tr") or {}).get(p["filter"])
+        return (d.get(key) or {}).get(p["filter"])
     if any(k in p for k in ("be_way", "be_r", "partial")):       # a built management card: its own trades
         v = built_variant(bot, combo, "manage")
         for fam in ("manage", "fib"):                               # a Fibonacci card is built as "manage"
-            tr = ((exp(bot, fam, combo) or {}).get("tr") or {}).get(v)
+            tr = ((exp(bot, fam, combo) or {}).get(key) or {}).get(v)
             if tr:
                 return tr
         return None
     d = exp(bot, "exits", combo) or {}
-    return (d.get("tr") or {}).get(built_variant(bot, combo, "exits"))
+    return (d.get(key) or {}).get(built_variant(bot, combo, "exits"))
 
 
 def trades_of_card(bot, card):
@@ -132,13 +133,13 @@ def replay(book, risk):
             "max_dd": round(dd, 2), "near_days": int((daily <= -NEAR).sum()), "max_open": round(mo, 2), "max_side": round(ms, 2)}
 
 
-def book_now(bot, cfg=None):
+def book_now(bot, cfg=None, key="tr"):
     cfg = cfg or bot_cfg(bot)
     mm = mults(bot)
     combos = cfg.get("combos") or []
     book, missing = {}, []
     for c in combos:
-        tr = current_trades(bot, c, cfg)
+        tr = current_trades(bot, c, cfg, key)
         if tr is None:
             missing.append(c)
             continue
@@ -186,6 +187,40 @@ def check(bot, card):
                    f"ירידה {before['max_dd']:.2f}% → {after['max_dd']:.2f}%) גם בסיכון מוקטן"}
 
 
+def side_conflicts(bot, cfg=None):
+    """A pattern in the bots' own trades (13.11.2026): a trade opened while ANOTHER strategy of the same bot holds the
+    opposite side of the same instrument. On the demo (bot 1, USDJPY 12.11: SE02 buy and TV11 sell both stopped within
+    the hour) and in the 2026 replay of bots 1-4 these lost (-0.09R a trade, 172 trades) while trades in the same
+    direction (+0.29R) and alone (+0.09R) won. The rule under test: skip a new trade against an open opposite position
+    on the same instrument in the same bot. Per period - 'train' (30.04.2025-31.12.2025, chooses) and 'unseen' (2026,
+    only shows) - the trades the rule would skip (n, R sum, R a trade) and the whole bot with and without them.
+    Nothing changes in the bot here: a card goes up only when the skipped trades lose in both periods."""
+    cfg = cfg or bot_cfg(bot)
+    risk = bot_risk(bot, cfg)
+    out = {}
+    for per, key in (("train", "tr25"), ("unseen", "tr")):
+        book, missing = book_now(bot, cfg, key)
+        rows = sorted((a, b, d, r, c) for c, (tr, m) in book.items() if tr and m > 0 for a, b, d, r in _minutes(tr))
+        held, skip = [], set()                     # held: (exit, instrument, direction, combo) of trades taken
+        for i, (a, b, d, r, c) in enumerate(rows):
+            sym = c.split("|")[2]
+            held = [h for h in held if h[0] > a]
+            if any(h[1] == sym and h[2] != d and h[3] != c for h in held):
+                skip.add(i)
+                continue
+            held.append((b, sym, d, c))
+        sk = [rows[i][3] for i in skip]
+        keep = {}
+        for i, (a, b, d, r, c) in enumerate(rows):
+            if i not in skip:
+                keep.setdefault(c, ([], float(mults(bot).get(c, 1.0))))[0].append([a, b, d, r])
+        before = replay(book, risk)
+        out[per] = {"combos": len(book), "missing": len(missing), "skipped": len(sk), "skipped_r": round(sum(sk), 2),
+                    "skipped_mean": round(sum(sk) / len(sk), 3) if sk else None, "before": before,
+                    "after": replay(keep, risk) if rows else before}
+    return out
+
+
 def daily(now=None):
     """The bot as it is now, every day: reports/agents/<bot>/portfolio.json (+ a warning when near the limits)."""
     at = (now or pd.Timestamp.now(tz="UTC")).isoformat(timespec="seconds")
@@ -204,8 +239,12 @@ def daily(now=None):
             warn.append(f"עד {r['max_open']:.2f}% סיכון פתוח בבת אחת")
         out = ROOT / "reports" / "agents" / bot / "portfolio.json"
         out.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            conf = side_conflicts(bot, cfg)
+        except Exception as e:  # noqa: BLE001
+            conf = {"error": str(e)[-200:]}
         out.write_text(json.dumps({"updated": at, "bot": bot, "replay_2026": r, "combos": len(book), "missing": missing,
-                                   "warnings": warn}, ensure_ascii=False, indent=1), encoding="utf-8")
+                                   "warnings": warn, "side_conflicts": conf}, ensure_ascii=False, indent=1), encoding="utf-8")
         print(bot, r, f"missing {len(missing)}", warn)
 
 

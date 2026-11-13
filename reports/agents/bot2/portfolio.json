@@ -1,42 +1,94 @@
 {
- "updated": "2026-11-12T11:41:54+00:00",
+ "updated": "2026-11-13T06:53:41+00:00",
  "bot": "bot2",
  "replay_2026": {
-  "trades": 527,
-  "total": 21.11,
-  "worst_day": 0.0,
-  "max_dd": 0.0,
+  "trades": 722,
+  "total": 41.03,
+  "worst_day": -1.71,
+  "max_dd": 4.82,
   "near_days": 0,
-  "max_open": 2.11,
-  "max_side": 1.35
+  "max_open": 1.96,
+  "max_side": 1.96
  },
  "combos": 7,
  "missing": [
   "TV02|1Hour|US30",
   "TV13|15Min|TSLA",
-  "TV46|15Min|ASML",
   "TV20|1Hour|XAGUSD",
   "TV13|4Hour|USDCAD",
-  "TV02|1Hour|GBPJPY",
-  "TV56|4Hour|USDJPY",
   "TV06|4Hour|XAUUSD",
   "YT03|1Hour|NVDA",
   "TT16|4Hour|JP225",
   "TV56|4Hour|US2000",
+  "TV36|4Hour|SIEGn",
   "TV02|1Hour|WMT",
+  "TV55|15Min|GME",
   "TV33|4Hour|US100",
   "TV36|1Hour|QCOM",
+  "TT13|15Min|INTC",
   "TV37|4Hour|GBPUSD",
   "TT45|4Hour|XRP/USD",
   "TV47|4Hour|WTI",
   "TT56|1Hour|PLTR",
-  "BK07|1Hour|EURJPY",
-  "SE02|1Hour|USDJPY",
   "FR03|15Min|GBPUSD",
   "GH08|1Hour|USDCAD",
-  "QB11|1Hour|USDJPY",
+  "MQ11|4Hour|MSTR",
   "MQ02|1Hour|XAUUSD",
-  "SC002|1Hour|ARM"
+  "SC002|1Hour|INTC",
+  "SC002|4Hour|GBPUSD",
+  "SC001|1Min|JP225"
  ],
- "warnings": []
+ "warnings": [],
+ "side_conflicts": {
+  "train": {
+   "combos": 0,
+   "missing": 32,
+   "skipped": 0,
+   "skipped_r": 0,
+   "skipped_mean": null,
+   "before": {
+    "trades": 0,
+    "total": 0.0,
+    "worst_day": 0.0,
+    "max_dd": 0.0,
+    "near_days": 0,
+    "max_open": 0.0,
+    "max_side": 0.0
+   },
+   "after": {
+    "trades": 0,
+    "total": 0.0,
+    "worst_day": 0.0,
+    "max_dd": 0.0,
+    "near_days": 0,
+    "max_open": 0.0,
+    "max_side": 0.0
+   }
+  },
+  "unseen": {
+   "combos": 7,
+   "missing": 25,
+   "skipped": 58,
+   "skipped_r": 9.63,
+   "skipped_mean": 0.166,
+   "before": {
+    "trades": 722,
+    "total": 41.03,
+    "worst_day": -1.71,
+    "max_dd": 4.82,
+    "near_days": 0,
+    "max_open": 1.96,
+    "max_side": 1.96
+   },
+   "after": {
+    "trades": 664,
+    "total": 38.03,
+    "worst_day": -1.44,
+    "max_dd": 4.21,
+    "near_days": 0,
+    "max_open": 1.96,
+    "max_side": 1.96
+   }
+  }
+ }
 }

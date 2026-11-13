@@ -1,27 +1,27 @@
 {
- "updated": "2026-11-12T11:41:54+00:00",
+ "updated": "2026-11-13T06:53:41+00:00",
  "bot": "bot1",
  "replay_2026": {
-  "trades": 790,
-  "total": 62.74,
-  "worst_day": 0.0,
-  "max_dd": 0.0,
+  "trades": 1017,
+  "total": 39.84,
+  "worst_day": -2.22,
+  "max_dd": 6.86,
   "near_days": 0,
-  "max_open": 1.91,
-  "max_side": 1.43
+  "max_open": 2.61,
+  "max_side": 2.43
  },
- "combos": 7,
+ "combos": 8,
  "missing": [
   "TV20|1Hour|XAUUSD",
-  "TV21|15Min|ASML",
+  "TV60|15Min|ARM",
   "TV02|15Min|TSLA",
   "TV10|1Hour|US100",
   "TV03|1Hour|XAGUSD",
-  "TV11|4Hour|AUDUSD",
   "TV11|4Hour|USDJPY",
   "TV56|1Hour|US2000",
   "TV08|15Min|NVDA",
   "TV62|1Hour|USDCAD",
+  "TT56|1Hour|GME",
   "TT41|1Hour|USDCHF",
   "TT12|15Min|PLTR",
   "TV41|4Hour|NZDUSD",
@@ -31,12 +31,11 @@
   "TV29|4Hour|US500",
   "YT03|4Hour|GBPUSD",
   "TV17|1Hour|DXY",
-  "TV15|4Hour|ETHUSD",
   "TV02|1Hour|INTC",
   "TT45|1Hour|WTI",
   "YT03|1Hour|PFE",
+  "TV24|15Min|KO",
   "TV37|4Hour|N25",
-  "TV38|15Min|GOOG",
   "TV31|4Hour|EU50",
   "TT56|1Hour|XOM",
   "TV03|15Min|AAPL",
@@ -44,14 +43,65 @@
   "TV55|4Hour|NATGAS",
   "YT03|4Hour|RACE",
   "TV33|15Min|MSTR",
-  "TT45|15Min|CSCO",
-  "TT45|1Hour|GBPJPY",
+  "TV55|15Min|AMZN",
   "SE02|1Hour|USDJPY",
   "FR03|15Min|GBPUSD",
-  "QC02|1Hour|ETHUSD",
   "MQ11|4Hour|MSTR",
   "MQ02|1Hour|XAUUSD",
-  "SC002|1Hour|ARM"
+  "SC002|1Hour|AMZN",
+  "SC010|15Min|ARM"
  ],
- "warnings": []
+ "warnings": [],
+ "side_conflicts": {
+  "train": {
+   "combos": 0,
+   "missing": 46,
+   "skipped": 0,
+   "skipped_r": 0,
+   "skipped_mean": null,
+   "before": {
+    "trades": 0,
+    "total": 0.0,
+    "worst_day": 0.0,
+    "max_dd": 0.0,
+    "near_days": 0,
+    "max_open": 0.0,
+    "max_side": 0.0
+   },
+   "after": {
+    "trades": 0,
+    "total": 0.0,
+    "worst_day": 0.0,
+    "max_dd": 0.0,
+    "near_days": 0,
+    "max_open": 0.0,
+    "max_side": 0.0
+   }
+  },
+  "unseen": {
+   "combos": 8,
+   "missing": 38,
+   "skipped": 51,
+   "skipped_r": -9.04,
+   "skipped_mean": -0.177,
+   "before": {
+    "trades": 1017,
+    "total": 39.84,
+    "worst_day": -2.22,
+    "max_dd": 6.86,
+    "near_days": 0,
+    "max_open": 2.61,
+    "max_side": 2.43
+   },
+   "after": {
+    "trades": 966,
+    "total": 43.1,
+    "worst_day": -2.22,
+    "max_dd": 5.54,
+    "near_days": 0,
+    "max_open": 2.61,
+    "max_side": 2.43
+   }
+  }
+ }
 }

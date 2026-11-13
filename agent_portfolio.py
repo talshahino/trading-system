@@ -265,11 +265,15 @@ def tr_ok(d):
     return all(x[0] > 20_000_000 for x in rows)          # 2008 onwards in minutes since 1970
 
 
-def trades_2026(t):
-    """Compact 2026 trades: [entry minute, exit minute, direction, R] (minutes since 1970, UTC)."""
+def trades_2026(t, train=False):
+    """Compact 2026 trades: [entry minute, exit minute, direction, R] (minutes since 1970, UTC).
+    train=True: the choosing period's trades instead (30.04.2025-31.12.2025), so that whole-bot rules (e.g. a trade
+    against an open position on the same instrument, agents/portfolio_check.side_conflicts) are chosen on 2025 and
+    only shown on 2026, like every other proposal (13.11.2026)."""
     if t is None or t.empty:
         return []
-    t = t[pd.to_datetime(t["time"], utc=True, format="ISO8601") >= T_SPLIT]
+    tt = pd.to_datetime(t["time"], utc=True, format="ISO8601")
+    t = t[(tt >= pd.Timestamp(TEST_FROM, tz="UTC")) & (tt < T_SPLIT)] if train else t[tt >= T_SPLIT]
     # minutes from the time itself, not from the storage unit: pandas 3 keeps these times in microseconds, so the old
     # "int64 // 60e9" gave 1000-minute steps and the whole-bot replay put all of 2026 into ~20 days of 1970 (12.11.2026)
     ep, mn = pd.Timestamp("1970-01-01", tz="UTC"), pd.Timedelta(minutes=1)
@@ -418,6 +422,10 @@ def experiments(bot, budget_s, where):
             keep |= set(sorted((v for v, x in doc["variants"].items() if (x["train"].get("eff_n") or 0) >= 10),
                                key=lambda v: -(doc["variants"][v]["train"]["mean"] or -9))[:5])
             doc["tr"] = {v: trades_2026(tc[tc["variant"] == v]) for v in keep if "variant" in tc and v in doc["variants"]}
+            # the choosing period's trades of the variant in the bot now (whole-bot rules chosen on 2025, 13.11.2026)
+            b0 = base_variant(bot, c, fam, doc)
+            if "variant" in tc and b0 in doc["variants"]:
+                doc["tr25"] = {b0: trades_2026(tc[tc["variant"] == b0], train=True)}
             # the machine's own unweighted stats of every variant (the filters keep only two variants' trades)
             doc["grid"] = [{"variant": x["variant"], "train": x["train"], "valid": x["valid"]}
                            for x in (rows.get(c) or {}).get("all", [])]
@@ -494,6 +502,7 @@ def test_new(bot, budget_s, where, symbols=None, timeframes=None):
             tc = t[(t["sid"] == sid_) & (t["tf"] == tf) & (t["symbol"] == s)]
             st.put("new", c, {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": "new",
                               "tr": {"new": trades_2026(tc)} if len(tc) else {},
+                              "tr25": {"new": trades_2026(tc, train=True)} if len(tc) else {},
                               "scout": {k: s_.get(k) for k in ("name", "source", "url", "added")},
                               "stats": variant_stats(tc) if len(tc) else None})
             n += 1

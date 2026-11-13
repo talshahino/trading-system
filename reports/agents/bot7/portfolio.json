@@ -1,30 +1,30 @@
 {
- "updated": "2026-11-12T11:41:54+00:00",
+ "updated": "2026-11-13T06:53:41+00:00",
  "bot": "bot7",
  "replay_2026": {
-  "trades": 60,
-  "total": -1.4,
-  "worst_day": -1.4,
-  "max_dd": 1.4,
+  "trades": 24,
+  "total": -2.07,
+  "worst_day": -0.68,
+  "max_dd": 2.45,
   "near_days": 0,
   "max_open": 0.5,
   "max_side": 0.5
  },
- "combos": 5,
+ "combos": 4,
  "missing": [
   "EV01|5Min|US100",
   "EV01|5Min|US500",
   "EV01|5Min|US30",
   "EV01|5Min|GER40",
+  "EV01|5Min|UK100",
   "EV01|5Min|JP225",
   "EV01|5Min|XAUUSD",
   "EV01|5Min|EURUSD",
   "EV01|5Min|GBPUSD",
   "EV01|5Min|USDJPY",
-  "EV01|5Min|AUDUSD",
   "EV01|5Min|USDCAD",
   "EV01|5Min|USDCHF",
-  "EV01|5Min|EURJPY",
+  "EV01|5Min|NZDUSD",
   "EV01|5Min|GBPJPY",
   "EV02|5Min|US100",
   "EV02|5Min|US500",
@@ -36,15 +36,15 @@
   "EV02|5Min|EURUSD",
   "EV02|5Min|GBPUSD",
   "EV02|5Min|USDJPY",
-  "EV02|5Min|AUDUSD",
   "EV02|5Min|USDCAD",
   "EV02|5Min|USDCHF",
-  "EV02|5Min|EURJPY",
+  "EV02|5Min|NZDUSD",
   "EV02|5Min|GBPJPY",
   "EV03|5Min|US100",
   "EV03|5Min|US500",
   "EV03|5Min|US30",
   "EV03|5Min|GER40",
+  "EV03|5Min|UK100",
   "EV03|5Min|JP225",
   "EV03|5Min|XAUUSD",
   "EV03|5Min|EURUSD",
@@ -53,8 +53,62 @@
   "EV03|5Min|AUDUSD",
   "EV03|5Min|USDCAD",
   "EV03|5Min|USDCHF",
+  "EV03|5Min|NZDUSD",
   "EV03|5Min|EURJPY",
-  "EV03|5Min|GBPJPY"
+  "EV03|5Min|GBPJPY",
+  "SC001|1Min|JP225"
  ],
- "warnings": []
+ "warnings": [],
+ "side_conflicts": {
+  "train": {
+   "combos": 0,
+   "missing": 49,
+   "skipped": 0,
+   "skipped_r": 0,
+   "skipped_mean": null,
+   "before": {
+    "trades": 0,
+    "total": 0.0,
+    "worst_day": 0.0,
+    "max_dd": 0.0,
+    "near_days": 0,
+    "max_open": 0.0,
+    "max_side": 0.0
+   },
+   "after": {
+    "trades": 0,
+    "total": 0.0,
+    "worst_day": 0.0,
+    "max_dd": 0.0,
+    "near_days": 0,
+    "max_open": 0.0,
+    "max_side": 0.0
+   }
+  },
+  "unseen": {
+   "combos": 4,
+   "missing": 45,
+   "skipped": 0,
+   "skipped_r": 0,
+   "skipped_mean": null,
+   "before": {
+    "trades": 24,
+    "total": -2.07,
+    "worst_day": -0.68,
+    "max_dd": 2.45,
+    "near_days": 0,
+    "max_open": 0.5,
+    "max_side": 0.5
+   },
+   "after": {
+    "trades": 24,
+    "total": -2.07,
+    "worst_day": -0.68,
+    "max_dd": 2.45,
+    "near_days": 0,
+    "max_open": 0.5,
+    "max_side": 0.5
+   }
+  }
+ }
 }

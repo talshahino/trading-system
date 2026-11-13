@@ -65,6 +65,27 @@ def maybe_luck(c):
     return gain < STAR_GAIN or (u.get("eff_n") or 0) < STAR_N
 
 
+def tried_and_failed(bot, combo):
+    """bots 1-4 / 7: the exits, filters and trade-management tests of the strategy have run (reports/agents/<bot>/exp)
+    and no improvement card for it is strong or regular now."""
+    if not combo or combo.count("|") != 2:
+        return False
+    ex = ROOT / "reports" / "agents" / bot / "exp"
+    key = combo.replace("|", "_").replace("/", "-")
+    ran = [f for f in ("exits", "filters", "manage") if (ex / f"{f}_{key}.json").exists()]
+    if len(ran) < 2:                          # not tried enough yet (the manage family is new - two families are enough)
+        return False
+    for f in (ROOT / "reports" / "agents" / bot).glob("cards*.json"):
+        try:
+            cs = json.loads(f.read_text(encoding="utf-8")).get("cards", [])
+        except Exception:  # noqa: BLE001
+            continue
+        for c in cs:
+            if c.get("kind") == "improve" and (c.get("change") or {}).get("combo") == combo and c.get("tier") in ("strong", "regular"):
+                return False
+    return True
+
+
 def _did(*parts):
     return hashlib.sha1("|".join(map(str, parts)).encode()).hexdigest()[:12]
 
@@ -142,7 +163,11 @@ def decide(bots, now=None):
 
     def fix_failed(bot, target):
         x = fixes.get(f"{bot}|{target}") or fixes.get(f"{bot}|*")
-        return bool(x) and x.get("status") == "failed"
+        if bool(x) and x.get("status") == "failed":
+            return True
+        # the experiments themselves are the attempt (13.11.2026: the agents tested and failed but did not record it,
+        # and the manager waited forever): every family ran on the strategy and none brought an approvable fix
+        return tried_and_failed(bot, target)
     # an undone recommendation is not made again for 30 days, even when a later sample brings it back
     never |= {(d["bot"], d.get("combo"), d["kind"]) for d in old.values() if d["id"] in uundo and d["type"] == "risk"}
     # the watch (agents/watch.py) took it back: like an undo, not made again (unless the user undid the revert)

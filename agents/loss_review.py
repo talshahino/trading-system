@@ -55,11 +55,11 @@ TASKS = ROOT / "data" / "agents" / "replies.json"
 PRIO = ROOT / "data" / "agents" / "priority.json"
 TZ = "Europe/Prague"                     # FTMO's day
 BOT_DAILY, FTMO_DAILY = 4.5, 5.0
-BACK_DAYS = 7                            # days reviewed back (first run, or a computer that was off)
+BACK_DAYS = 14                           # days reviewed back (first run, or a computer that was off)
 NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 - סקאלפינג",
          "bot6": "בוט 6 · חוזים", "bot7": "בוט 7 · פרסומים"}
 CAUSE_HE = {"entry": "כניסה / כיוון", "management": "ניהול העסקה", "execution": "ביצוע (החלקה / פער / עלויות)",
-            "rules": "סגירה בגלל כלל", "time": "יציאת זמן", "normal": "הפסד רגיל של האסטרטגיה"}
+            "rules": "סגירה בגלל כלל", "time": "יציאת זמן", "normal": "סטופ אחרי תנועה קטנה לטובה"}
 RULE_WORDS = ("news", "restricted", "session", "break", "weekend", "holiday", "חדשות", "סשן", "הפסקה", "סוף שבוע", "חג",
               "סגירה בשעה קבועה")
 
@@ -199,21 +199,26 @@ def review(bot, state, day, t, history, exp):
                "cause_he": CAUSE_HE[x.cause], "recurring": rec_combo.get(x.combo, 0) >= 3}
               for x in los.sort_values("net").itertuples()]
     actions = plan_actions(bot, day, losers, corr, recurring, normal, pct)
+    r_usd = bal0 * float(state.get("risk") or 0.004)            # 1R in dollars (the bot's risk per trade)
+    CAUSE_PLAIN = {"entry": "נעצרו בלי לזוז לטובה בכלל - הבעיה בכניסה או בכיוון",
+                   "management": "היו ברווח ונגמרו בהפסד - הבעיה בניהול העסקה",
+                   "execution": "הפסידו יותר מהסיכון המתוכנן - הבעיה בביצוע (החלקה / פער / עלויות)",
+                   "rules": "נסגרו בגלל כלל (חדשות / סוף מסחר / הפסקת שוק)",
+                   "time": "נסגרו לפי זמן בהפסד", "normal": "נעצרו בסטופ אחרי תנועה קטנה לטובה"}
     lines = [
-        f"{NAMES.get(bot, bot)} · {day}: {net:+,.0f}$ ({pct:+.2f}% מיתרת הפתיחה {bal0:,.0f}$), "
-        f"{len(d)} עסקאות - {len(win)} רווח, {len(los)} הפסד. ניצול המגבלה היומית: {abs(min(0, pct)) / BOT_DAILY * 100:.0f}% "
-        f"ממגבלת הבוט (4.5%), {abs(min(0, pct)) / FTMO_DAILY * 100:.0f}% ממגבלת FTMO (5%).",
-        (f"מול הבדיקה: {float(d['r'].sum()):+.2f}R ביום מול {em:+.2f}R צפוי (פיזור ±{esd:.2f}R) - "
-         + ("יום רע רגיל, בתוך הרעש הסטטיסטי." if normal else "חריג: הרבה מתחת למה שהבדיקה מאפשרת.")) if esd else
-        "אין לבדיקה צפי לאסטרטגיות של היום - אי אפשר לומר אם זה רגיל.",
-        f"גורמי ההפסד: " + ", ".join(f"{CAUSE_HE[k]} {v}" for k, v in sorted(causes.items(), key=lambda kv: -kv[1])) + ".",
+        f"מה קרה: {NAMES.get(bot, bot)} הפסיד {abs(net):,.0f}$ ב־{day} ({pct:+.2f}% מהחשבון). "
+        f"{len(d)} עסקאות: {len(win)} הרוויחו {gp:,.0f}$, {len(los)} הפסידו {gl:,.0f}$.",
+        (f"מול הצפי: הבדיקה צפתה ליום כזה {em:+.1f}R ({em * r_usd:+,.0f}$). בפועל {float(d['r'].sum()):+.1f}R. "
+         f"הפער: {float(d['r'].sum()) - em:+.1f}R ({(float(d['r'].sum()) - em) * r_usd:+,.0f}$) - צריך לסגור אותו.") if esd else
+        "מול הצפי: לאסטרטגיות של היום אין עדיין צפי מהבדיקה.",
+        "למה: " + "; ".join(f"{v} עסקאות {CAUSE_PLAIN[k]}" for k, v in sorted(causes.items(), key=lambda kv: -kv[1])) + ".",
     ]
     if top:
-        lines.append(f"ההפסד הגדול: {top} ({by_combo.iloc[0]:,.0f}$, {top_share:g}% מההפסדים).")
+        lines.append(f"ההפסד הגדול ביותר: {top}, {abs(by_combo.iloc[0]):,.0f}$ ({top_share:g}% מכל ההפסד).")
     if corr:
-        lines.append("ריכוז: " + "; ".join(f"{c['trades']} הפסדים יחד ב{c['side']} של {c['class']} ({c['loss']:,.0f}$)" for c in corr) + ".")
+        lines.append("הפסדים שבאו יחד: " + "; ".join(f"{c['trades']} עסקאות {c['side']} ב{c['class']} ({abs(c['loss']):,.0f}$)" for c in corr) + ".")
     if recurring:
-        lines.append("חוזר: " + ", ".join(recurring) + " - הפסד ב־3 ימים ומעלה בחודש האחרון. דפוס, לא מזל.")
+        lines.append("חוזרות על עצמן: " + ", ".join(recurring) + " - הפסידו ב־3 ימים או יותר בחודש האחרון.")
     return {"bot": bot, "day": day, "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
             "summary": lines, "pnl": round(net, 2), "pnl_pct": round(pct, 3), "open_balance": round(bal0, 2),
             "limit_used": {"bot": round(abs(min(0, pct)) / BOT_DAILY * 100, 1), "ftmo": round(abs(min(0, pct)) / FTMO_DAILY * 100, 1)},
@@ -254,7 +259,7 @@ def plan_actions(bot, day, losers, corr, recurring, normal, pct):
                      "task": f"{g['trades']} הפסדים יחד ב{g['side']} של {g['class']} ({g['loss']:,.0f}$): להציע תקרה לחשיפה לאותו צד באותו סוג נכס, לבדוק בבדיקת הבוט השלם."})
     if not normal:
         acts.append({"combo": None, "cause": "abnormal", "priority": [],
-                     "task": f"יום חריג ({pct:+.2f}%): הרבה מתחת למה שהבדיקה מאפשרת. לבדוק קודם תקלה בקוד או בנתונים (פער בין החי לבדיקה), לפני שינוי באסטרטגיות."})
+                     "task": f"היום ({pct:+.2f}%) רחוק מאוד מהצפי של הבדיקה: לבדוק קודם תקלה בקוד או בנתונים (פער בין החי לבדיקה), ואז לתקן את האסטרטגיות."})
     seen, out = set(), []
     for a in acts:
         k = (a["combo"], a["cause"])
@@ -262,6 +267,154 @@ def plan_actions(bot, day, losers, corr, recurring, normal, pct):
             seen.add(k)
             out.append(a)
     return out
+
+
+def card_effect(card, months, bot_risk_pct, mult=None):
+    """% of the account a month the change is worth, from the card's own test on the unseen 2026 data:
+    improve - (new mean - old mean); new - the new strategy's mean; remove / risk down - the losses no longer taken."""
+    u, b = card.get("unseen") or {}, card.get("baseline") or {}
+    if u.get("mean") is None:
+        return None
+    per_month = (u.get("n") or 0) / months * (card.get("risk_pct") or bot_risk_pct)
+    k = card.get("kind")
+    if k == "improve":
+        return round(((u["mean"] or 0) - (b.get("mean") or 0)) * per_month, 2)
+    if k == "new":
+        return round((u["mean"] or 0) * per_month, 2)
+    if k in ("remove", "risk"):
+        m = mult if mult is not None else ((card.get("change") or {}).get("value") if k == "risk" else 0)
+        m = 0 if m is None else float(m)
+        return round(-(u["mean"] or 0) * (1 - m) * per_month, 2)
+    return None
+
+
+def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
+    """For every losing strategy of the report: the changes made since (approved, not undone / reverted), each with
+    what it is worth in % of the account a month (from its own test on 2026), and what is still open."""
+    day0 = pd.Timestamp(rep["day"]).tz_localize(TZ).tz_convert("UTC")
+    gone = {x.get("of") for x in decisions if x.get("decision") == "reverted"} | set(undo)
+    months = max(1.0, (pd.Timestamp.now(tz="UTC") - pd.Timestamp("2026-01-01", tz="UTC")).days / 30.4)
+    rows, total = [], 0.0
+    for x in rep.get("losers", []):
+        c = x["combo"]
+        if any(r["combo"] == c for r in rows):
+            continue
+        fixes = []
+        for d in decisions:
+            if d.get("decision") != "approved" or d["id"] in gone or pd.Timestamp(d["at"]) < day0 or d.get("kind") == "info":
+                continue
+            a, card = d.get("action") or {}, cards.get(d.get("card")) or {}
+            dc = a.get("combo") or (card.get("change") or {}).get("combo") or (d["title"].split(":")[0].strip() if d["title"].count("|") >= 2 else None)
+            if dc != c:
+                continue
+            if d.get("type") == "risk" and a.get("kind") == "mult" and a.get("value") and float(a["value"]) >= 1:
+                continue                     # a risk raise is not a fix of a loss
+            eff = card_effect(card, months, bot_risk_pct, a.get("value") if a.get("kind") == "mult" else None) if card else None
+            what = d["title"]
+            if d.get("type") == "risk" and a.get("kind") == "mult":
+                what = f"סיכון ×{a.get('value')}" + (" (הוסרה)" if not a.get("value") else "")
+            elif d.get("type") == "risk":
+                what = "הוסרה מהבוט"
+            fixes.append({"what": what, "decision": d["id"], "at": d["at"], "effect_month_pct": eff})
+            total += eff or 0
+        # changes made in the bot itself (a nightly agent's built card, a removal) count too
+        cfg = _read(ROOT / "live" / "bots" / f"{rep['bot']}.json", {}) or {}
+        if cfg.get("combos") is not None and c not in cfg["combos"] and not any(("הוסרה" in (f["what"] or "")) or ("להסיר" in (f["what"] or "")) for f in fixes):
+            fixes.append({"what": "הוסרה מהבוט", "decision": None, "at": None, "effect_month_pct": None})
+        for cid, card in cards.items():
+            r_ = replies.get(cid) or {}
+            if (card.get("change") or {}).get("combo") == c and r_.get("built") and r_.get("built") != "skipped" \
+                    and str(r_.get("at") or "") >= rep["day"] and not any(f.get("card") == cid for f in fixes) \
+                    and not any(f["decision"] and (next((d for d in decisions if d["id"] == f["decision"]), {}) or {}).get("card") == cid for f in fixes):
+                eff = card_effect(card, months, bot_risk_pct)
+                fixes.append({"what": card.get("title"), "decision": None, "card": cid, "at": r_.get("at"), "effect_month_pct": eff})
+                total += eff or 0
+        rows.append({"combo": c, "cause": x["cause_he"], "fixes": fixes, "open": not fixes and x["cause"] != "rules"})
+    opened = [r["combo"] for r in rows if r["open"]]
+    return {"rows": rows, "open": opened, "total_month_pct": round(total, 2),
+            "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון" if not opened else f"פתוח: {len(opened)} אסטרטגיות בלי תיקון עדיין"}
+
+
+def enforce(rep, plan, decisions, have_ids, at):
+    """The manager owns it (user, 13.11.2026: "the manager takes the improvement into his hands"): a losing strategy
+    still without a fix 2 days after its report goes down to x0.7 risk until a fix is found ("first fix, and only
+    if there is none, lower the risk") - bots 1-4, where risk per strategy is applied on the bots' computer."""
+    out = []
+    if rep["bot"] not in ("bot1", "bot2", "bot3", "bot4") or rep["day"] < ENFORCE_FROM:
+        return out
+    if (pd.Timestamp.now(tz=TZ).date() - pd.Timestamp(rep["day"]).date()).days < 2:
+        return out
+    from agents import portfolio_check as PC
+    mm = PC.mults(rep["bot"])
+    for c in plan["open"]:
+        did = hashlib.sha1(f"lossrisk|{rep['bot']}|{c}".encode()).hexdigest()[:12]
+        if did in have_ids:
+            continue
+        cur = float(mm.get(c, 1.0) or 1.0)
+        val = max(0.5, round(cur * 0.7, 2))
+        if val >= cur:
+            continue
+        out.append({"id": did, "bot": rep["bot"], "type": "risk", "kind": "mult", "combo": c,
+                    "title": f"{c}: סיכון ×{val} - אין תיקון יומיים אחרי דוח ההפסד של {rep['day']}",
+                    "decision": "approved", "by": "manager", "read": False, "undone": False, "at": at,
+                    "why": "המנהל: האסטרטגיה הפסידה, ואחרי שני לילות אין לה תיקון שעבר את הבדיקה. קודם תיקון - ואם אין, "
+                           "מורידים סיכון עד שיימצא. כשיימצא תיקון, הסיכון יחזור.",
+                    "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_report": f"{rep['bot']}/{rep['day']}",
+                    "action": {"bot": rep["bot"], "combo": c, "kind": "mult", "value": val, "prev": None if cur == 1.0 else cur}})
+        have_ids.add(did)
+    return out
+
+
+def follow_up(idx):
+    """Every run, for the reports of the last 21 days: the improvement plan, the manager's enforcement, and a task
+    sent back to the bot's agent when it answered without a fix."""
+    from agents import builder as BLD
+    from agents import repo_io as RIO
+    dpath = ROOT / "reports" / "agents" / "decisions.json"
+    ddoc = _read(dpath, {"decisions": []})
+    decisions = ddoc.get("decisions", [])
+    user = RIO.live_json("live/agent_decisions_state.json")
+    undo = set(user.get("undo") or [])
+    cards = BLD.all_cards()
+    replies = _read(TASKS, {})
+    have = {x["id"] for x in decisions}
+    at = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+    adds, changed_tasks = [], False
+    for r in idx["reports"]:
+        if (pd.Timestamp.now(tz=TZ).date() - pd.Timestamp(r["day"]).date()).days > 21:
+            continue
+        f = OUT / r["bot"] / f"{r['day']}.json"
+        rep = _read(f, None)
+        if not rep:
+            continue
+        cfg = _read(ROOT / "live" / "bots" / f"{r['bot']}.json", {}) or {}
+        risk_pct = float(cfg.get("risk") or 0.004) * 100 if not isinstance(cfg.get("risk"), dict) else 0.4
+        plan = improvement_plan(rep, decisions, cards, replies, undo, risk_pct)
+        rep["plan"] = plan
+        adds += enforce(rep, plan, decisions, have, at)
+        _write(f, rep)
+        r["status"], r["open"], r["month_pct"] = plan["status"], len(plan["open"]), plan["total_month_pct"]
+        # an answer without a fix is not an answer: the task goes back to the bot's agent
+        for tk in replies.get("_tasks", []):
+            if tk.get("from") != "loss_review" or tk.get("report") != f"reports/agents/losses/{r['bot']}/{r['day']}.json":
+                continue
+            s = (tk.get("status") or {}).get(r["bot"]) or {}
+            if plan["open"] and s.get("state") == "done":
+                s["state"] = "reopened"
+                s["text"] = (s.get("text") or "") + (f"\nהמנהל ({at[:16].replace('T', ' ')}): לא התקבל. 'אין באג' ו'יום רגיל' אינם תשובה - "
+                             f"לכל אסטרטגיה שהפסידה צריך תיקון שנבדק (יעד / סטופ / כניסה / מסנן / ניהול עסקה / שעות / כיוון), "
+                             f"או הוכחה שכל המשפחות נבדקו ונכשלו - ואז הסיכון יורד. עדיין פתוח: {', '.join(plan['open'])}.")
+                tk.setdefault("status", {})[r["bot"]] = s
+                changed_tasks = True
+    if adds:
+        ddoc["decisions"] = adds + decisions
+        ddoc["new"] = list(ddoc.get("new") or []) + [x["id"] for x in adds]
+        _write(dpath, ddoc)
+        for x in adds:
+            print("enforced:", x["title"])
+    if changed_tasks:
+        _write(TASKS, replies)
+    return adds
 
 
 def trend(bot, reports):
@@ -300,9 +453,15 @@ def send_tasks(rep):
     _write(PRIO, pr)
 
 
+ENFORCE_FROM = "2026-11-12"   # the manager's enforcement: reports from the day the loss review started
+FORMAT = 2          # 13.11.2026: plain words, no "normal day", the improvement plan - older reports are written again
+
+
 def run():
     states = H.live_states()
     idx = _read(OUT / "index.json", {"reports": []})
+    if idx.get("format") != FORMAT:
+        idx = {"reports": [], "format": FORMAT}
     have = {(r["bot"], r["day"]) for r in idx["reports"]}
     today = pd.Timestamp.now(tz=TZ).date()
     new = []
@@ -326,14 +485,17 @@ def run():
             _write(OUT / bot / f"{day}.json", rep)
             send_tasks(rep)
             idx["reports"].append({"bot": bot, "day": day, "pnl": rep["pnl"], "pnl_pct": rep["pnl_pct"],
-                                   "normal": rep["normal"], "headline": rep["summary"][0], "actions": len(rep["actions"])})
+                                   "headline": rep["summary"][0], "actions": len(rep["actions"])})
             have.add((bot, day))
             new.append(rep)
             print(f"{bot} {day}: {rep['pnl']:+.0f}$ ({rep['pnl_pct']:+.2f}%), {len(rep['actions'])} actions")
-    if new:
-        idx["reports"] = sorted(idx["reports"], key=lambda r: (r["day"], r["bot"]), reverse=True)[:400]
-        idx["updated"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
-        _write(OUT / "index.json", idx)
+    idx["reports"] = sorted(idx["reports"], key=lambda r: (r["day"], r["bot"]), reverse=True)[:400]
+    try:
+        follow_up(idx)
+    except Exception as e:  # noqa: BLE001
+        print(f"follow-up failed: {e}")
+    idx["updated"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+    _write(OUT / "index.json", idx)
     print(f"loss review: {len(new)} new reports")
     return new
 

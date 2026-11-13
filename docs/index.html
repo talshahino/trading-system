@@ -2123,8 +2123,9 @@ $("lrBtn").onclick = async () => {
     const rs = (idx.reports || []).slice(0, 60);
     if (!rs.length) { $("lrBody").innerHTML = '<div class="empty">עוד אין ימי הפסד</div>'; return; }
     $("lrBody").innerHTML = rs.map((r, i) => `<div class="card" style="margin:10px 0;cursor:pointer" data-i="${i}">
-      <div class="row"><b>${esc(r.bot)} · ${esc(r.day)}</b><span class="pill ${r.normal ? "" : "neg"}">${r.pnl_pct >= 0 ? "+" : ""}${Number(r.pnl_pct).toFixed(2)}% · ${r.normal ? "יום רע רגיל" : "חריג"}</span></div>
-      <div class="mut" style="margin-top:4px">${esc(r.headline)}</div><div class="lrD" id="lrD${i}"></div></div>`).join("");
+      <div class="row"><b>${esc(r.bot)} · ${esc(r.day)}</b><span class="pill neg">${r.pnl_pct >= 0 ? "+" : ""}${Number(r.pnl_pct).toFixed(2)}%</span></div>
+      <div class="mut" style="margin-top:4px">${esc(r.headline)}</div>
+      ${r.status ? `<div style="margin-top:4px"><span class="pill ${r.open ? "neg" : "pos"}">${esc(r.status)}</span>${r.month_pct ? ` <span class="mut">שיפור צפוי: ${r.month_pct > 0 ? "+" : ""}${r.month_pct}% בחודש</span>` : ""}</div>` : ""}<div class="lrD" id="lrD${i}"></div></div>`).join("");
     document.querySelectorAll("#lrBody .card").forEach(el => el.onclick = async () => {
       const r = rs[+el.dataset.i], box = $("lrD" + el.dataset.i);
       if (box.innerHTML) { box.innerHTML = ""; return; }
@@ -2144,6 +2145,9 @@ $("lrBtn").onclick = async () => {
         <h4 style="margin:10px 0 4px">העסקאות שהפסידו</h4>
         <div style="overflow-x:auto"><table style="width:100%;font-size:13px;border-collapse:collapse"><tr><th align="right">אסטרטגיה</th><th>כיוון</th><th>R</th><th>$</th><th>MFE</th><th align="right">סיבה</th></tr>
         ${(d.losers || []).map(x => `<tr style="border-top:1px solid var(--line,#ddd)"><td>${esc(x.combo)}${x.recurring ? " ↻" : ""}</td><td align="center">${esc(x.side)}</td><td align="center">${x.r}</td><td align="center">${Math.round(x.net).toLocaleString()}</td><td align="center">${x.mfe_r ?? "-"}</td><td>${esc(x.cause_he)}</td></tr>`).join("")}</table></div>
+        ${d.plan ? `<h4 style="margin:10px 0 4px">תכנית השיפור (המנהל אחראי)</h4>
+        <p style="margin:4px 0"><b>${esc(d.plan.status)}</b>${d.plan.total_month_pct ? ` · כל התיקונים יחד: ${d.plan.total_month_pct > 0 ? "+" : ""}${d.plan.total_month_pct}% מהחשבון בחודש (לפי הבדיקה על 2026)` : ""}</p>
+        <ul style="margin:0;padding-inline-start:18px">${(d.plan.rows || []).map(x => `<li style="margin:4px 0"><b>${esc(x.combo)}</b> (${esc(x.cause)}): ${x.fixes.length ? x.fixes.map(f => esc(f.what) + (f.effect_month_pct != null ? ` → ${f.effect_month_pct > 0 ? "+" : ""}${f.effect_month_pct}% בחודש` : "")).join("; ") : (x.open ? '<span class="neg">עוד אין תיקון - הסוכן חייב להביא אחד. אם אין תיקון יומיים אחרי הדוח, המנהל מוריד לה סיכון ל־×0.7</span>' : '<span class="mut">נסגרה בגלל כלל (חדשות / סוף מסחר) - נבדק בבדיקת הכללים</span>')}</li>`).join("")}</ul>` : ""}
         <h4 style="margin:10px 0 4px">מה עושים</h4><ol style="margin:0;padding-inline-start:18px">${(d.actions || []).map(a => `<li style="margin:4px 0">${esc(a.task)}</li>`).join("")}</ol>
         ${ans}
         <p class="mut" style="margin-top:8px">מגמה: ${l7.loss_days ?? 0} ימי הפסד בשבוע האחרון (ממוצע ${l7.avg_loss_pct ?? 0}%), מול ${p7.loss_days ?? 0} בשבוע שלפני (${p7.avg_loss_pct ?? 0}%)${tr.improving === true ? " - ההפסדים קטנים" : tr.improving === false ? " - ההפסדים לא קטנים" : ""}.</p>`;

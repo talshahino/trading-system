@@ -1194,6 +1194,297 @@
     "bot6"
    ],
    "rules": "5m range 09:30-09:35 ET on ES / break above (long) or below (short), skip ranges > 0.55% and Tuesdays / stop at the opposite edge / target 50% of the range beyond the breakout"
+  },
+  {
+   "id": "SC064",
+   "name": "Double Bollinger 20/1 + 50/1 with RSI 50, entry-candle stop, out back under the fast band",
+   "source": "TradingView (script, tweakerID)",
+   "url": "https://www.tradingview.com/script/Gs8sbyyZ-Double-Bollinger-Strategy/",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m/5m / RSI14 > 50, a close above BB(20,1) top, then a close above BB(50,1) top (short mirror under the bottoms, RSI < 50) / stop under the entry candle's low (over its high) / no target: out on a close back under the fast band's top (short: above its bottom)"
+  },
+  {
+   "id": "SC065",
+   "name": "EMA 5/20 cross near the lower/middle band + MACD histogram, 7-pip support stop, 5m",
+   "source": "FXOpen (blog)",
+   "url": "https://fxopen.com/blog/en/three-working-5-minute-trading-strategies",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m / EMA5 crosses above EMA20, price near the lower or middle BB(20,2), MACD 12/26/9 histogram > 0 (mirror) / stop 7 pips beyond the closest support/resistance (ours: 10-bar low/high +/- 1.5 ATR) / close when the histogram makes its new high (ours: first downturn)"
+  },
+  {
+   "id": "SC066",
+   "name": "EMA 10/21/50: pullback to the 10/21 midpoint, 5-pip stop, 10-pip target, London-NY, 5m",
+   "source": "IndicatorVault (blog)",
+   "url": "https://blog.indicatorvault.com/?p=1363",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m EUR/USD / rising EMA50 + higher highs, price retraces to the midpoint of EMA10 and EMA21 (mirror), after the London or NY open / stop 5 pips (ours 1.1 ATR) / target 10 pips (ours 2.2 ATR)"
+  },
+  {
+   "id": "SC067",
+   "name": "SMA50 angle + ADX13 > 25 + 21-EMA pullback, 6-pip stop, break-even, 12.5-pip target, 5m",
+   "source": "BabyPips (forum)",
+   "url": "https://forums.babypips.com/t/5-minute-intraday-trading-system/697557",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m EUR/USD, GBP/USD, USD/JPY, EUR/JPY / SMA50 angle outside the no-trade zone, ADX13 > 25 with +DI > -DI, pullback through EMA10 to EMA21 and the next candle pulls away (mirror) / stop 6 pips, break-even after 6 / target 10-15 pips (ours 1.3 / 2.8 ATR)"
+  },
+  {
+   "id": "SC068",
+   "name": "5m Bollinger squeeze breakout with VWAP slope, middle-band stop, 2R, 60-minute exit",
+   "source": "DayTradingToolkit (article)",
+   "url": "https://daytradingtoolkit.com/strategies/bollinger-band-squeeze-strategy",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "stock",
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m / BB(20,2) width at its ~100-bar low, close above the upper band on above-average volume over a rising VWAP (short mirror) / stop at the middle band / half at 2R, rest trailed (ours: 2R), out if 2R not reached in 60 minutes"
+  },
+  {
+   "id": "SC069",
+   "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+   "source": "NYC Servers (blog)",
+   "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot6"
+   ],
+   "rules": "M15/M30 XAUUSD / Asian range 00:00-07:00 GMT, between 12:00 and 16:00 GMT a close above its high (buy) or below its low (sell) / stop at the opposite end of the range / target 1.5x-2x the range width (ours 1.5x)"
+  },
+  {
+   "id": "SC070",
+   "name": "Keltner 20/2 breakout held, first 20-EMA touch, swing/1 ATR stop, 2 ATR target, long",
+   "source": "JournalPlus (article)",
+   "url": "https://journalplus.co/strategies/keltner-channel-strategy",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m/15m SPY, QQQ, ES / close above KC (EMA20 +/- 2 ATR14) held one bar, then the first bar touching EMA20 with a smaller range or lower volume, above the higher timeframe's EMA20, long / stop the tighter of the swing low and 1 ATR / target 2 ATR / flat before the last 15 minutes"
+  },
+  {
+   "id": "SC071",
+   "name": "Keltner lower band + hammer/engulfing on light volume, 0.25 ATR wick stop, to the EMA20",
+   "source": "JournalPlus (article)",
+   "url": "https://journalplus.co/strategies/keltner-channel-strategy",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m/15m / touch of the lower KC (EMA20 - 2 ATR14) with a hammer or bullish engulfing on below-average volume, long / stop 0.25 ATR beyond the wick / target the 20 EMA / flat before the last 15 minutes"
+  },
+  {
+   "id": "SC072",
+   "name": "Oil: first test of yesterday's high/low + 3-candle gap, formation stop, opposite level target",
+   "source": "Purple Trading (blog)",
+   "url": "https://www.purple-trading.com/trading-oil-intraday-price-action-strategy/",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "energy"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "H1 levels (previous days' highs/lows), 5m/15m entry / first test of support + bullish 3-candle gap -> buy at the gap's upper edge (mirror at resistance) / stop below the low formation / target the session high/low or the H1 level reached (ours: yesterday's opposite extreme)"
+  },
+  {
+   "id": "SC073",
+   "name": "First 5-minute bar breakout, 0.15-0.8% bar, stop the other end, target the bar height",
+   "source": "The Right Trader",
+   "url": "https://therighttrader.com/learn/trading-strategies/five-minute-scalping",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "stock",
+    "index",
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m / first 5-minute bar of the session, height 0.15%-0.8% of price (ours 0.6-3.2 ATR), close above its high (long) / below its low (short) / stop the bar's other end / target entry +/- the bar height / out on a close back inside, flat at the close"
+  },
+  {
+   "id": "SC074",
+   "name": "BB 20/2 inside KC 20/2 release past both middles, squeeze-range stop, out under a middle",
+   "source": "The Right Trader",
+   "url": "https://therighttrader.com/learn/indicator-strategies/bollinger-bands-and-keltner-channels-strategy",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "stock",
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot6"
+   ],
+   "rules": "daily swing, 15m day variant / squeeze = BB(20,2) inside KC(EMA20 +/- 2 ATR20); release bar closes above both middles (long) or below both (short) / stop one tick beyond the squeeze low/high / no fixed target: out on a close under either middle (short: over), day variant flat at the close"
+  },
+  {
+   "id": "SC075",
+   "name": "CL initial balance 09-10 ET breakout + retest, swing stop, target IB high + IB range",
+   "source": "NexusFi (article)",
+   "url": "https://nexusfi.com/a/strategies/crude-oil-cl-trading-strategies",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "energy"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m CL / IB 09:00-10:00 ET, a close above the IB high then a pullback holding it on a close, long; IB > 80 ticks skipped / stop below the pullback swing low + 10 ticks (ours 0.55 ATR) / TP1 IB high + IB range"
+  },
+  {
+   "id": "SC076",
+   "name": "EIA Wednesday fade back into the 09:00-10:15 ET range, spike stop, range-mid target",
+   "source": "NexusFi (article)",
+   "url": "https://nexusfi.com/a/strategies/crude-oil-cl-trading-strategies",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "energy"
+   ],
+   "bots": [
+    "bot7",
+    "bot5"
+   ],
+   "rules": "EIA Wednesdays 10:30 ET, 5m / pre-report range 09:00-10:15 ET, spike beyond it, close back inside or a 5m reversal close -> fade; stand aside 10:15-10:45 / stop beyond the spike extreme + 10-15 ticks (ours 0.7 ATR) / TP1 VWAP, TP2 range midpoint (ours: midpoint), out if VWAP not reclaimed in 30 min"
+  },
+  {
+   "id": "SC077",
+   "name": "15-minute ORB without chasing, stop just inside the broken edge, OR-width target",
+   "source": "NexusFi (article)",
+   "url": "https://nexusfi.com/a/strategies/breakout-trading-strategies",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "index",
+    "energy"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "ES/NQ 15-minute opening range from 09:30 ET, 1m (5m stronger) close beyond ORH/ORL, skip if more than 0.5 x ATR(5) past the edge / stop 1-2 ticks beyond the breakout level (ES 1-2 points, ours 0.3 ATR) / target the OR width as a measured move"
+  },
+  {
+   "id": "SC078",
+   "name": "NQ Keltner Pulse: KC 20/2.6 close, stop entry past yesterday's extreme, 2.5 ATR / 1.5%, M15",
+   "source": "MQL5 (Market EA description)",
+   "url": "https://www.mql5.com/en/market/product/176901",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot6"
+   ],
+   "rules": "M15 Nasdaq / close above KC(20, 2.6) then buy stop at the daily high reference + 0.1 ATR30, valid 46 bars (short mirror) / stop 2.5 x ATR17 / target 1.5% from entry / time exit 30 bars, Friday exit 19:00"
   }
  ]
 }

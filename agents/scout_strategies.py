@@ -1745,6 +1745,399 @@ def s_edgeful_orb5_half(df):
 
 
 
+# ======================= scout night 2026-11-13: SC064-SC078 =======================
+def _day_vwap_local(df, tz):
+    """VWAP from the start of the local day in `tz` (no volume -> equal weights)."""
+    h, l, c, v = (df[x].to_numpy(dtype=float) for x in "hlcv")
+    tp = (h + l + c) / 3
+    v = np.where(v > 0, v, 1.0)
+    day = pd.Series(df.index.tz_convert(tz).date).to_numpy()
+    return pd.Series(tp * v).groupby(day).cumsum().to_numpy() / pd.Series(v).groupby(day).cumsum().to_numpy()
+
+
+def _hammer(o, h, l, c):
+    body = np.abs(c - o)
+    lw = np.minimum(o, c) - l
+    uw = h - np.maximum(o, c)
+    return (lw >= 2 * body) & (uw <= np.maximum(body, 1e-12)) & (h > l)
+
+
+def _since(mask, n):
+    """True if `mask` was True on any of the previous n bars (not this one)."""
+    return pd.Series(np.asarray(mask, dtype=float)).shift(1).rolling(n, min_periods=1).max().fillna(0).to_numpy() > 0
+
+
+# ---------------- SC064 Double Bollinger 20/1 + 50/1 + RSI 50 (TradingView, tweakerID) ----------------
+def s_tv_double_bollinger(df):
+    """TradingView 'Double Bollinger Strategy' (tweakerID, from a Bitcoin book), recommended 1-minute or 5-minute:
+    fast BB(20, 1 SD), slow BB(50, 1 SD), RSI(14). Long: RSI > 50, a candle closes above the fast band's top, then
+    a later candle closes above the slow band's top (price above both) -> buy; short mirror under the bottoms with
+    RSI < 50. Stop under the entry candle's low (over its high); no fixed target - out when a candle closes back
+    below the fast band's top (short: back above the fast band's bottom). Ours: the 'earlier' fast-band close is
+    looked for in the previous 10 bars; the signal is the first close above the slow top."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    flo, _, fup = _bb(c, 20, 1.0)
+    slo, _, sup = _bb(c, 50, 1.0)
+    r = rsi(c, 14)
+    long_ = (r > 50) & cross_up(c, sup) & (c > fup) & _since(c > fup, 10)
+    short = (r < 50) & cross_down(c, slo) & (c < flo) & _since(c < flo, 10)
+    return long_, short & ~long_, {"stop": ("level", l, h), "target": None,
+                                   "exit_long": c < fup, "exit_short": c > flo}
+
+
+# ---------------- SC065 EMA 5/20 cross + Bollinger + MACD histogram, 5-minute (FXOpen) ----------------
+def s_fxo_ema520_bb_macd(df):
+    """FXOpen 'Three working 5-minute strategies' - #3 EMA, MACD and Bollinger Bands, 5-minute forex: EMA5 crosses
+    above EMA20, price near the lower or the middle Bollinger band (20, 2), MACD(12,26,9) histogram above zero ->
+    buy (mirror: upper/middle band, histogram below zero). Stop 7 pips beyond the closest support (resistance);
+    close when the MACD histogram makes its new high (short: new low).
+    Ours: 'near the lower or middle band' = close at or under the middle band + a quarter of the half-width (short
+    mirror); support = lowest low of the last 10 bars; 7 pips on a major's 5-minute ATR(14) (~4.5 pips) -> 1.5 ATR
+    beyond it; the 'new high' exit = the first bar the histogram turns down from its high."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    e5, e20 = ema(c, 5), ema(c, 20)
+    lo, mid, up = _bb(c, 20, 2.0)
+    _, _, hist = macd(c, 12, 26, 9)
+    a = atr(h, l, c, 14)
+    long_ = cross_up(e5, e20) & (c <= mid + 0.25 * (up - mid)) & (c >= lo - 0.25 * (up - mid)) & (hist > 0)
+    short = cross_down(e5, e20) & (c >= mid - 0.25 * (mid - lo)) & (c <= up + 0.25 * (mid - lo)) & (hist < 0)
+    sup = _s(l).rolling(10).min().to_numpy() - 1.5 * a
+    res = _s(h).rolling(10).max().to_numpy() + 1.5 * a
+    ph = _sh(hist)
+    return long_, short & ~long_, {"stop": ("level", sup, res), "target": None,
+                                   "exit_long": (hist < ph) & (ph > 0), "exit_short": (hist > ph) & (ph < 0)}
+
+
+# ---------------- SC066 EMA 10/21/50 midpoint pullback, 5/10 pips, 5-minute (IndicatorVault) ----------------
+def s_iv_ema1021_mid_5m(df):
+    """IndicatorVault 'The 5 Minute Scalping System', 5-minute EUR/USD (others possible): EMA10, EMA21, EMA50;
+    uptrend = rising EMA50 and higher highs -> buy when price retraces to the midpoint between EMA10 and EMA21
+    (downtrend mirror). Stop 5 pips (+spread), target 10 pips (+spread); after the London or New York open, not the
+    Asian session. Ours: rising = EMA50 above its value 5 bars ago, higher highs = EMA10 > EMA21; the touch = the
+    bar's low reaches the midpoint and it closes above it; window 08:00 London to 17:00 New York.
+    Translation: EUR/USD 5-minute ATR(14) ~4.5 pips -> stop 1.1 ATR, target 2.2 ATR."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    e10, e21, e50 = ema(c, 10), ema(c, 21), ema(c, 50)
+    mid = (e10 + e21) / 2
+    lon, _, _, _, _ = _local(df, "Europe/London")
+    ny, _, _, _, _ = _local(df, "America/New_York")
+    win = (lon >= 8) & (ny < 17)
+    up = (e50 > _sh(e50, 5)) & (e10 > e21)
+    dn = (e50 < _sh(e50, 5)) & (e10 < e21)
+    long_ = up & (l <= mid) & (c > mid) & win
+    short = dn & (h >= mid) & (c < mid) & win
+    return long_, short & ~long_, {"stop": ("atr", 1.1), "target": ("atr", 2.2)}
+
+
+# ---------------- SC067 5-minute intraday: SMA50 angle + ADX 13 + 21-EMA pullback (BabyPips) ----------------
+def s_bp_5m_sma_angle(df):
+    """BabyPips forum '5 Minute Intraday Trading System' (EUR/USD, GBP/USD, USD/JPY, EUR/JPY), 5-minute: EMA10,
+    EMA21, SMA50 with a steep angle (21-EMA of the SMAangle outside the +/-0.1 no-trade zone), ADX(13) above 25 with
+    +DI over -DI; price pulls back through the 10 EMA to the 21 EMA and the next candle pulls away from it -> buy
+    (mirror). Stop 6 pips, break-even after 6 pips, target 10-15 pips.
+    Ours: the SMAangle = the 1-bar change of SMA50 in ATR(14) units, smoothed by a 21 EMA, beyond +/-0.1; the
+    pullback = previous low at/under the 21 EMA, this bar closes above it and above the previous close.
+    Translation: 5-minute ATR(14) of these pairs ~4.5 pips -> stop 1.3 ATR, target 12.5 pips = 2.8 ATR,
+    break-even at 6/12.5 ~ 0.5 of the way to the target."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    e10, e21, s50 = ema(c, 10), ema(c, 21), sma(c, 50)
+    a = atr(h, l, c, 14)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ang = ema(np.nan_to_num((s50 - _sh(s50)) / a), 21)
+    ax = adx(h, l, c, 13)
+    pdi, ndi = _di(h, l, c, 13)
+    pc, pl, ph = _sh(c), _sh(l), _sh(h)
+    pe = _sh(e21)
+    long_ = (ang > 0.1) & (ax > 25) & (pdi > ndi) & (e10 > e21) & (pl <= pe) & (c > e21) & (c > pc)
+    short = (ang < -0.1) & (ax > 25) & (ndi > pdi) & (e10 < e21) & (ph >= pe) & (c < e21) & (c < pc)
+    return long_, short & ~long_, {"stop": ("atr", 1.3), "target": ("atr", 2.8), "breakeven": (0.5, 0.0)}
+
+
+# ---------------- SC068 5-minute Bollinger squeeze + VWAP, middle-band stop, 2R, 60-minute stop (DayTradingToolkit) ----
+def s_dtt_bb_squeeze_vwap(df):
+    """DayTradingToolkit 'The Bollinger Band Squeeze Strategy', 5-minute chart, liquid US stocks / ETFs / index
+    futures: BB(20, 2), band width (upper-lower)/middle at its lowest in ~100 bars = squeeze; a 5-minute close above
+    the upper band on above-average volume, long only above a rising VWAP (short: close below the lower band under a
+    falling VWAP) -> enter past that candle. Stop at the middle band; half at 2R, rest trailed; out if 2R is not
+    reached within 60 minutes. Ours: the squeeze within the last 10 bars; volume at/above its 20-bar average;
+    VWAP from 00:00 New York; target 2R on the whole position, time exit after 60 minutes of bars; the
+    're-enters the bands within 3 bars' invalidation is not modelled."""
+    h, l, c, v = (df[x].to_numpy(float) for x in "hlcv")
+    lo, mid, up = _bb(c, 20, 2.0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        w = (up - lo) / mid
+    sq = w <= _s(w).rolling(100).min().to_numpy() + 1e-12
+    recent = _s(sq.astype(float)).rolling(10, min_periods=1).max().to_numpy() > 0
+    vw = _day_vwap_local(df, "America/New_York")
+    vol_ok = v >= sma(v, 20)
+    long_ = recent & cross_up(c, up) & vol_ok & (c > vw) & (vw > _sh(vw))
+    short = recent & cross_down(c, lo) & vol_ok & (c < vw) & (vw < _sh(vw))
+    mb = max(1, int(round(60 / max(_bar_minutes(df), 1.0))))
+    return long_, short & ~long_, {"stop": ("level", mid, mid), "target": ("R", 2.0), "max_bars": mb}
+
+
+# ---------------- SC069 Gold: Asian range broken in the 12-16 GMT window, 1.5x range target (NYC Servers) ----------------
+def s_nycs_gold_asian_ny(df):
+    """NYC Servers 'Gold (XAUUSD) trading strategy' #5 session breakout, M15/M30: Asian range 00:00-07:00 GMT;
+    trade window 12:00-16:00 GMT; a candle closes above the Asian high -> buy, below the Asian low -> sell. Stop at
+    the opposite end of the range, target 1.5x to 2x the range width. Ours: target 1.5x the width beyond the
+    broken edge; first break of the day only; the 200-pip cap for an 'exceptionally wide' range is not modelled."""
+    c = df["c"].to_numpy(float)
+    hi, lo, hs, _, _, day = _range_levels(df, "UTC", 0.0, 7.0)
+    ok = np.isfinite(hi) & (hs >= 12.0) & (hs < 16.0)
+    L = ok & (c > hi)
+    S = ok & (c < lo) & ~L
+    first = _first_per_day(L | S, day)
+    w = hi - lo
+    return L & first, S & first, {"stop": ("level", lo, hi), "target": ("level", hi + 1.5 * w, lo - 1.5 * w)}
+
+
+# ---------------- SC070 Keltner trend pullback to the 20 EMA, 2 ATR target (JournalPlus) ----------------
+def _htf_above_ema20(df):
+    bm = _bar_minutes(df)
+    rule = f"{int(max(1, round(4 * bm)))}min"
+    return _htf(df, rule, lambda g: (g["c"].to_numpy(float) > ema(g["c"].to_numpy(float), 20)).astype(float)) > 0.5
+
+
+def s_jp_keltner_pullback(df):
+    """JournalPlus 'Keltner Channel Strategy' entry 1 (trend pullback), 5-minute / 15-minute (SPY, QQQ, ES): KC =
+    EMA20 +/- 2 x ATR(14). Price closes above the upper band and holds at least one bar; the first later bar that
+    touches the 20 EMA, confirmed by a smaller bar range or declining volume, -> buy. Stop below the prior swing low or 1 ATR
+    below entry, whichever is tighter; target 2 ATR above entry; long only above the 20 EMA of the next higher
+    timeframe; flat before the last 15 minutes of the session. Short side not stated (long only).
+    Ours: the breakout = two closes above the band in a row within the last 30 bars; 'smaller range' = not larger
+    than the previous bar's; swing low = lowest low of 5 bars; higher timeframe = 4x the bar; session close 16:00
+    New York."""
+    h, l, c, v = (df[x].to_numpy(float) for x in "hlcv")
+    m = ema(c, 20)
+    a = atr(h, l, c, 14)
+    out = c > m + 2 * a
+    held = out & (np.nan_to_num(_sh(out.astype(float))) > 0)
+    n = len(c)
+    long_ = np.zeros(n, bool)
+    armed, since = False, 0
+    rng = h - l
+    for i in range(1, n):
+        if held[i]:
+            armed, since = True, 0
+            continue
+        since += 1
+        if armed and since > 30:
+            armed = False
+        if armed and l[i] <= m[i]:
+            if rng[i] <= rng[i - 1] or v[i] < v[i - 1]:
+                long_[i] = True
+            armed = False
+    long_ &= _htf_above_ema20(df)
+    ny, _, _, _, _ = _local(df, "America/New_York")
+    stop = np.maximum(_s(l).rolling(5).min().to_numpy(), c - a)
+    return long_, np.zeros(n, bool), {"stop": ("level", stop, stop), "target": ("level", c + 2 * a, c - 2 * a),
+                                      "force_exit": (ny >= 15.75) & (ny < 16.0)}
+
+
+# ---------------- SC071 Keltner lower-band reversal candle on light volume, to the 20 EMA (JournalPlus) ----------------
+def s_jp_keltner_reversal(df):
+    """JournalPlus 'Keltner Channel Strategy' entry 2 (mean reversion), 5-minute / 15-minute: price touches the
+    lower band (EMA20 - 2 x ATR14) with a hammer or a bullish engulfing on volume below its 20-bar average -> buy at
+    the candle's close. Stop 0.25 ATR beyond the wick that tagged the band; target the 20 EMA. Long only (short not
+    stated), flat before the last 15 minutes. Ours: volume at/under the average (equal volume counts); session
+    close 16:00 New York. Not applied: the page's 'above the higher timeframe's 20 EMA before any long' - a
+    lower-band tag almost never sits above it, so with it this entry would have no trades (the bots can add it)."""
+    o = _open(df)
+    h, l, c, v = (df[x].to_numpy(float) for x in "hlcv")
+    m = ema(c, 20)
+    a = atr(h, l, c, 14)
+    bull, _ = _engulf(o, c)
+    pat = _hammer(o, h, l, c) | bull
+    long_ = (l <= m - 2 * a) & pat & (c < m) & (v <= sma(v, 20))
+    ny, _, _, _, _ = _local(df, "America/New_York")
+    st = l - 0.25 * a
+    return long_, np.zeros(len(c), bool), {"stop": ("level", st, st), "target": ("level", m, m),
+                                           "force_exit": (ny >= 15.75) & (ny < 16.0)}
+
+
+# ---------------- SC072 Oil: first test of yesterday's high/low + 3-candle gap (Purple Trading) ----------------
+def s_purple_oil_level_gap(df):
+    """Purple Trading 'Trading oil intraday - price action strategy' (WTI / Brent), H1 levels with 5-minute or
+    15-minute entries: levels = previous days' highs and lows, only the first test counts; at support, a bullish
+    3-candle gap (candle 1's high below candle 3's low) confirms the bounce -> buy at the gap's upper edge; short
+    mirror at resistance. Stop below the low formation (above the high one); target the session high/low or the H1
+    level reached. Ours: levels = yesterday's high/low (UTC day); the first touch of the day, the gap within the
+    next 6 bars; entry at that close; stop = the lowest low since the touch (highest high); target = the opposite
+    level (yesterday's high for a long, low for a short)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    pdh, pdl, _ = _prev_day(df)
+    day = pd.Series(df.index.tz_convert("UTC").date).to_numpy()
+    tl = np.nan_to_num(l <= pdl).astype(bool)
+    th = np.nan_to_num(h >= pdh).astype(bool)
+    ft_l = _first_per_day(tl, day)
+    ft_h = _first_per_day(th, day)
+    gap_up = l > _sh(h, 2)
+    gap_dn = h < _sh(l, 2)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    stL, stS = np.full(n, np.nan), np.full(n, np.nan)
+    kl = ks = -10**9
+    for i in range(n):
+        if ft_l[i]:
+            kl = i
+        if ft_h[i]:
+            ks = i
+        if 0 < i - kl <= 6 and gap_up[i] and day[i] == day[kl] and c[i] < pdh[i]:
+            L[i] = True
+            stL[i] = l[kl:i + 1].min()
+            kl = -10**9
+        if 0 < i - ks <= 6 and gap_dn[i] and day[i] == day[ks] and c[i] > pdl[i]:
+            S[i] = True
+            stS[i] = h[ks:i + 1].max()
+            ks = -10**9
+    S &= ~L
+    return L, S, {"stop": ("level", stL, stS), "target": ("level", pdh, pdl)}
+
+
+# ---------------- SC073 First 5-minute bar breakout, measured-move target (The Right Trader) ----------------
+def s_trt_first_bar_orb(df):
+    """The Right Trader 'Five Minute Scalping' (liquid stocks, index futures, major pairs), 5-minute: range = the
+    session's first 5-minute bar, its height between 0.15% and 0.8% of price; a 5-minute close above its high ->
+    long, below its low -> short. Stop at the bar's other end; target the bar's height beyond entry; out early if
+    a bar closes back inside the opening bar; flat at the session close. Ours: session = New York 09:30-16:00;
+    one trade a day. Translation: the 0.15%-0.8% band (an ES/SPY first 5-minute bar averages ~0.25% ~ 1 ATR) ->
+    height between 0.6 and 3.2 x ATR(14) of the bars, so it works on every instrument."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    hi, lo, hs, _, _, day = _range_levels(df, "America/New_York", 9.5, 9.5 + 5 / 60)
+    a = atr(h, l, c, 14)
+    a_or = pd.Series(np.where((hs >= 9.5 - 1e-9) & (hs < 9.5 + 5 / 60 - 1e-9), a, np.nan)).groupby(day).transform("last").to_numpy()
+    rng = hi - lo
+    ok = np.isfinite(hi) & (hs < 15.75) & (rng >= 0.6 * a_or) & (rng <= 3.2 * a_or)
+    L = ok & (c > hi)
+    S = ok & (c < lo) & ~L
+    first = _first_per_day(L | S, day)
+    return L & first, S & first, {"stop": ("level", lo, hi), "target": ("level", c + rng, c - rng),
+                                  "exit_long": c < hi, "exit_short": c > lo,
+                                  "force_exit": hs >= 16.0 - _bar_minutes(df) / 60.0 - 1e-9}
+
+
+# ---------------- SC074 Bollinger-Keltner squeeze release past both middles (The Right Trader) ----------------
+def s_trt_bb_kc_release(df):
+    """The Right Trader 'Bollinger Bands and Keltner Channels Strategy' (daily swing; 15-minute day variant, same
+    settings): BB(20, 2) around SMA20 (population SD), KC = EMA20 +/- 2 x ATR(20) (Wilder). Squeeze = BB inside KC
+    on a closed bar; release = squeeze on the previous bar, off now. Long when the release closes above both middles
+    (SMA20 and EMA20), short below both. Stop one tick beyond the squeeze's low (high), including the last inside
+    bar; no fixed target - out on a close under either middle (short: over either); day variant flat at the
+    session close (ours: 16:00 New York)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    blo, bmid, bup = _bb(c, 20, 2.0)
+    km = ema(c, 20)
+    a = atr(h, l, c, 20)
+    sq = np.nan_to_num((bup < km + 2 * a) & (blo > km - 2 * a)).astype(bool)
+    rel = _sh(sq.astype(float)) > 0.5
+    rel = rel & ~sq
+    run = np.cumsum(~sq)
+    gid = np.where(sq, run, -1)
+    lo_run = pd.Series(np.where(sq, l, np.nan)).groupby(gid).cummin().to_numpy()
+    hi_run = pd.Series(np.where(sq, h, np.nan)).groupby(gid).cummax().to_numpy()
+    sq_lo, sq_hi = _sh(lo_run), _sh(hi_run)
+    L = rel & (c > bmid) & (c > km)
+    S = rel & (c < bmid) & (c < km) & ~L
+    ny, _, _, _, _ = _local(df, "America/New_York")
+    return L, S, {"stop": ("level", sq_lo, sq_hi), "target": None,
+                  "exit_long": (c < bmid) | (c < km), "exit_short": (c > bmid) | (c > km),
+                  "force_exit": (ny >= 16.0 - _bar_minutes(df) / 60.0 - 1e-9) & (ny < 16.0)}
+
+
+# ---------------- SC075 Crude oil initial-balance breakout and retest, target IB high + IB range (NexusFi) ----------------
+def s_nfi_cl_ib_retest(df):
+    """NexusFi 'Crude Oil (CL) Trading Strategies' #3 initial balance breakout with retest, 5-minute: IB = 09:00-10:00
+    ET; a 5-minute close above the IB high, then a pullback that holds the IB high on a close (or the first bar
+    testing it and closing bullish) -> buy. Stop below the pullback swing low + 10 ticks; TP1 = IB high + the IB
+    range (runner trailed on the 15-minute EMA21 - not modelled); IB wider than 80 ticks is less valid (skipped).
+    Long side only (short not specified). Translation: CL 5-minute ATR(14) ~ 18 ticks -> 10 ticks = 0.55 ATR,
+    80 ticks = 4.5 ATR; swing low = lowest low of the last 3 bars; one trade a day, entries until 14:30 ET."""
+    o = _open(df)
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    hi, lo, hs, _, _, day = _range_levels(df, "America/New_York", 9.0, 10.0)
+    a = atr(h, l, c, 14)
+    a_ib = pd.Series(np.where((hs >= 9.0) & (hs < 10.0), a, np.nan)).groupby(day).transform("last").to_numpy()
+    ok = np.isfinite(hi) & ((hi - lo) <= 4.5 * a_ib) & (hs < 14.5)
+    brk = np.nan_to_num(ok & (c > hi)).astype(bool)
+    broke_before = pd.Series(brk.astype(int)).groupby(day).cumsum().to_numpy() - brk.astype(int) > 0
+    L = ok & broke_before & (l <= hi) & (c > hi) & (c > o)
+    L = L & _first_per_day(L, day)
+    st = _s(l).rolling(3).min().to_numpy() - 0.55 * a
+    rng = hi - lo
+    return L, np.zeros(len(c), bool), {"stop": ("level", st, st), "target": ("level", hi + rng, lo - rng)}
+
+
+# ---------------- SC076 EIA inventory fade back into the 09:00-10:15 range (NexusFi) ----------------
+def s_nfi_eia_fade(df):
+    """NexusFi 'Crude Oil (CL) Trading Strategies' #2 EIA inventory fade (Wednesdays 10:30 ET), 5-minute
+    confirmation: pre-report range 09:00-10:15 ET; after the release spike beyond the range stalls, a 5-minute close
+    back inside the range -> fade it (spike up = short, spike down = long). Stand aside 10:15-10:45 ET; stop beyond
+    the spike extreme + 10-15 ticks; TP1 VWAP, TP2 the range midpoint; out if VWAP is not reclaimed within 30
+    minutes. Ours: 'confirmed reversal' = a candle closing past the previous bar's extreme against the spike; entries 10:45-14:30 ET (the CL pit close) on Wednesdays, one per side a day; target = the range midpoint; 30-minute time
+    exit. Translation: CL 5-minute ATR(14) ~ 18 ticks -> 12 ticks = 0.7 ATR beyond the spike."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    hi, lo, hs, _, wd, day = _range_levels(df, "America/New_York", 9.0, 10.25)
+    a = atr(h, l, c, 14)
+    post = (hs >= 10.5) & (wd == 2)
+    sp_hi = pd.Series(np.where(post, h, np.nan)).groupby(day).cummax().to_numpy()
+    sp_lo = pd.Series(np.where(post, l, np.nan)).groupby(day).cummin().to_numpy()
+    win = (wd == 2) & (hs >= 10.75) & (hs < 14.5) & np.isfinite(hi)
+    o = _open(df)
+    rev_dn = (c < o) & (c < _sh(l))
+    rev_up = (c > o) & (c > _sh(h))
+    S = win & (sp_hi > hi) & ((c < hi) | rev_dn) & (c > lo)
+    L = win & (sp_lo < lo) & ((c > lo) | rev_up) & (c < hi)
+    L = _first_per_day(L, day)
+    S = _first_per_day(S, day) & ~L
+    mid = (hi + lo) / 2
+    mb = max(1, int(round(30 / max(_bar_minutes(df), 1.0))))
+    return L, S, {"stop": ("level", sp_lo - 0.7 * a, sp_hi + 0.7 * a), "target": ("level", mid, mid), "max_bars": mb}
+
+
+# ---------------- SC077 15-minute ORB, tight stop past the level, OR-width target (NexusFi) ----------------
+def s_nfi_orb15_tight(df):
+    """NexusFi 'Breakout Trading Strategies' #1 opening range breakout (ES / NQ; 15-minute opening range from 09:30
+    ET): a 1-minute close beyond the range high/low, a 5-minute close being the stronger confirmation; skip it when
+    price is more than half the 5-period ATR past the edge (no chasing). Stop 1-2 ticks beyond the breakout level
+    (ES: 1-2 points); target the OR width as a measured move. Ours: a close beyond the edge within 0.5 x ATR(5); one
+    trade a day, entries until 12:00 ET; the 50%-at-1R partial, break-even after 0.8R and the 15-30 minute time
+    exit are not modelled. Translation: ES 1.5 points ~ 0.3 x ATR(14) of 5-minute bars -> stop 0.3 ATR inside the
+    broken edge."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    hi, lo, hs, _, _, day = _range_levels(df, "America/New_York", 9.5, 9.75)
+    a5, a14 = atr(h, l, c, 5), atr(h, l, c, 14)
+    ok = np.isfinite(hi) & (hs < 12.0)
+    L = ok & (c > hi) & (c - hi <= 0.5 * a5)
+    S = ok & (c < lo) & (lo - c <= 0.5 * a5) & ~L
+    first = _first_per_day((ok & (c > hi)) | (ok & (c < lo)), day)
+    L, S = L & first, S & first
+    w = hi - lo
+    return L, S, {"stop": ("level", hi - 0.3 * a14, lo + 0.3 * a14), "target": ("level", hi + w, lo - w)}
+
+
+# ---------------- SC078 NQ Keltner Pulse: KC(20, 2.6) close + stop past yesterday's extreme (MQL5 Market) ----------------
+def s_mq_nq_keltner_pulse(df):
+    """MQL5 Market 'NQ Keltner Pulse M15 Strategy' (Nasdaq, M15): setup = a close above the upper Keltner Channel
+    (20, 2.6); buy stop at the daily high reference + 0.1 x ATR(30), the order valid 46 bars (short mirror: close
+    under the lower band, sell stop at the daily low - 0.1 ATR). Stop 2.5 x ATR(17), target 1.5% from entry, time
+    exit after 30 bars, Friday exit 19:00. Ours: KC = EMA20 +/- 2.6 x ATR(20); daily reference = yesterday's
+    high/low (UTC day); the stop order = a close through that level within 46 bars of the setup; Friday 19:00 UTC;
+    the 100-point trailing stop (from 1.8 ATR in profit) is not modelled."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    m = ema(c, 20)
+    a20, a30 = atr(h, l, c, 20), atr(h, l, c, 30)
+    up_set = _s((c > m + 2.6 * a20).astype(float)).rolling(46, min_periods=1).max().to_numpy() > 0
+    dn_set = _s((c < m - 2.6 * a20).astype(float)).rolling(46, min_periods=1).max().to_numpy() > 0
+    pdh, pdl, _ = _prev_day(df)
+    L = up_set & cross_up(c, pdh + 0.1 * a30)
+    S = dn_set & cross_down(c, pdl - 0.1 * a30) & ~L
+    a17 = atr(h, l, c, 17)
+    hs, _, wd, _, _ = _local(df, "UTC")
+    return L, S, {"stop": ("level", c - 2.5 * a17, c + 2.5 * a17), "target": ("level", c * 1.015, c * 0.985),
+                  "max_bars": 30, "force_exit": (wd == 4) & (hs >= 19.0)}
+
+
 SCOUT = {
     "SC001": ("RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute (TradingView)", s_rv_ema20_scalp, ["1Min"]),
     "SC002": ("Alligator + Fractals breakout, fractal stop, 1:3 (RoboForex)", s_alligator_fractal, ["1Hour", "4Hour"]),
@@ -1809,4 +2202,19 @@ SCOUT = {
     "SC061": ("Gold 1h: under the BB(15) top and over the 53-bar high, 2.9 / 5.8 ATR(9), long (ProRealCode)", s_prc_gold_bb_53, ["1Hour"]),
     "SC062": ("XAU 55-MA high/low channel break + Heikin-Ashi colour, previous-candle stop, 1.5R (TradingView)", s_xau_ma55_ha, ["1Min", "5Min"]),
     "SC063": ("ES 5-minute ORB, stop the other edge, target half the range, range <= 0.55%, no Tuesdays (Edgeful)", s_edgeful_orb5_half, ["5Min"]),
+    "SC064": ("Double Bollinger 20/1 + 50/1 with RSI 50, entry-candle stop, out back under the fast band (TradingView)", s_tv_double_bollinger, ["1Min", "5Min"]),
+    "SC065": ("EMA 5/20 cross near the lower/middle band + MACD histogram, 7-pip support stop, 5m (FXOpen)", s_fxo_ema520_bb_macd, ["5Min"]),
+    "SC066": ("EMA 10/21/50: pullback to the 10/21 midpoint, 5-pip stop, 10-pip target, London-NY, 5m (IndicatorVault)", s_iv_ema1021_mid_5m, ["5Min"]),
+    "SC067": ("SMA50 angle + ADX13 > 25 + 21-EMA pullback, 6-pip stop, break-even, 12.5-pip target, 5m (BabyPips)", s_bp_5m_sma_angle, ["5Min"]),
+    "SC068": ("5m Bollinger squeeze breakout with VWAP slope, middle-band stop, 2R, 60-minute exit (DayTradingToolkit)", s_dtt_bb_squeeze_vwap, ["5Min"]),
+    "SC069": ("Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target (NYC Servers)", s_nycs_gold_asian_ny, ["15Min"]),
+    "SC070": ("Keltner 20/2 breakout held, first 20-EMA touch, swing/1 ATR stop, 2 ATR target, long (JournalPlus)", s_jp_keltner_pullback, ["5Min", "15Min"]),
+    "SC071": ("Keltner lower band + hammer/engulfing on light volume, 0.25 ATR wick stop, to the EMA20 (JournalPlus)", s_jp_keltner_reversal, ["5Min", "15Min"]),
+    "SC072": ("Oil: first test of yesterday's high/low + 3-candle gap, formation stop, opposite level target (Purple Trading)", s_purple_oil_level_gap, ["5Min", "15Min"]),
+    "SC073": ("First 5-minute bar breakout, 0.15-0.8% bar, stop the other end, target the bar height (The Right Trader)", s_trt_first_bar_orb, ["5Min"]),
+    "SC074": ("BB 20/2 inside KC 20/2 release past both middles, squeeze-range stop, out under a middle (The Right Trader)", s_trt_bb_kc_release, ["15Min"]),
+    "SC075": ("CL initial balance 09-10 ET breakout + retest, swing stop, target IB high + IB range (NexusFi)", s_nfi_cl_ib_retest, ["5Min"]),
+    "SC076": ("EIA Wednesday fade back into the 09:00-10:15 ET range, spike stop, range-mid target (NexusFi)", s_nfi_eia_fade, ["5Min"]),
+    "SC077": ("15-minute ORB without chasing, stop just inside the broken edge, OR-width target (NexusFi)", s_nfi_orb15_tight, ["1Min", "5Min"]),
+    "SC078": ("NQ Keltner Pulse: KC 20/2.6 close, stop entry past yesterday's extreme, 2.5 ATR / 1.5%, M15 (MQL5)", s_mq_nq_keltner_pulse, ["15Min"]),
 }

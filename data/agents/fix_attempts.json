@@ -233,21 +233,86 @@
   "verdict": "נכשל: אין גרסה שמרוויחה עד 2025 על מספר עסקאות של ממש. כרטיס הסרה למנהל."
  },
  "bot6|SC005|5Min|US100": {
-  "status": "trying",
-  "tried": [],
-  "at": "2026-11-13",
+  "status": "fixed",
+  "tried": [
+   {
+    "what": "bot6_world",
+    "at": "2026-11-12",
+    "variants": 96,
+    "chosen": "t1R_s0.75_time_be",
+    "train": {
+     "n": 29,
+     "eff_n": 29.0,
+     "mean": 0.0776,
+     "t": 0.42,
+     "win": 48.5
+    },
+    "unseen": {
+     "n": 31,
+     "eff_n": 31.0,
+     "mean": 0.2873,
+     "t": 1.55,
+     "win": 67.7
+    }
+   }
+  ],
+  "at": "2026-11-12",
   "why": "המנהל: נבחרה לפי 2026 (הפסידה עד 2025) - לנסות גרסה שמרוויחה עד 2025 לפני הוצאה"
  },
  "bot6|SC005|5Min|US500": {
-  "status": "trying",
-  "tried": [],
-  "at": "2026-11-13",
+  "status": "fixed",
+  "tried": [
+   {
+    "what": "bot6_world",
+    "at": "2026-11-12",
+    "variants": 96,
+    "chosen": "t2R_s0.75_time_be",
+    "train": {
+     "n": 25,
+     "eff_n": 25.0,
+     "mean": 0.1608,
+     "t": 0.6,
+     "win": 51.7
+    },
+    "unseen": {
+     "n": 32,
+     "eff_n": 32.0,
+     "mean": 0.2533,
+     "t": 1.07,
+     "win": 59.3
+    }
+   }
+  ],
+  "at": "2026-11-12",
   "why": "המנהל: נבחרה לפי 2026 (הפסידה עד 2025) - לנסות גרסה שמרוויחה עד 2025 לפני הוצאה"
  },
  "bot6|SC032|15Min|US500": {
-  "status": "trying",
-  "tried": [],
-  "at": "2026-11-13",
+  "status": "failed",
+  "tried": [
+   {
+    "what": "bot6_world",
+    "at": "2026-11-12",
+    "variants": 96,
+    "chosen": null,
+    "train": null,
+    "unseen": null
+   }
+  ],
+  "at": "2026-11-12",
   "why": "המנהל: נבחרה לפי 2026 (הפסידה עד 2025) - לנסות גרסה שמרוויחה עד 2025 לפני הוצאה"
+ },
+ "bot6|SC019|15Min|US500": {
+  "status": "failed",
+  "tried": [
+   {
+    "what": "bot6_world",
+    "at": "2026-11-12",
+    "variants": 96,
+    "chosen": null,
+    "train": null,
+    "unseen": null
+   }
+  ],
+  "at": "2026-11-12"
  }
 }

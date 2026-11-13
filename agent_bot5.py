@@ -339,15 +339,19 @@ def main():
         # but its trades are not the account's - counted here they made the cap / doubled-risk test look worse or better
         # than the bot is (13.11.2026)
         rkd = s5.get("risk") or {}
+        # each track's real risk (times the scale that runs, "tal_risk_scale"): the account in % with the bot's limits
+        cur_sc = float(s5.get("tal_risk_scale", 1.0) or 1.0)
         pf = TG.portfolio(tidx, TAL_SYMBOLS, TAL_DIR, {k: (f"{v['pair'][0]}/{v['pair'][1]}", v["cfg"])
                                                        for k, v in (s5.get("tal_tracks") or {}).items()
-                                                       if float(rkd.get(k, 0.0028) or 0) > 0})
+                                                       if float(rkd.get(k, 0.0028) or 0) > 0},
+                          risk={k: float(rkd.get(k, 0.0028)) * cur_sc for k in (s5.get("tal_tracks") or {})})
         if pf:
             doc["bot5"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             rk_live = [x for x in rk5 if x > 0]
             for pc in (TG.portfolio_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4),
-                       TG.hours_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4)):
+                       TG.hours_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4),
+                       TG.scale_card(BOT, pf, cur_sc)):
                 if pc:
                     cards.append(pc)
     except StopIteration:

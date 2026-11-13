@@ -76,6 +76,11 @@ def buildable(c):
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "HOURS_OFF" \
             and isinstance(ch.get("to"), list) and all(isinstance(x, int) and 0 <= x <= 23 for x in ch["to"]) and len(ch["to"]) <= 12:
         return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_hours_off", "to": sorted(set(ch["to"]))}
+    # one factor on every gap track's risk (13.11.2026 night, tal_gap.scale_card: chosen on 2024-2025 so the account
+    # stays two thirds inside the bot's limits) - "tal_risk_scale" in live/bots/bot5.json, read by live/watch_own.py
+    if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "RISK_SCALE" \
+            and isinstance(ch.get("to"), (int, float)) and 0.1 <= float(ch["to"]) <= 1.0:
+        return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_risk_scale", "to": round(float(ch["to"]), 3)}
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") and str(ch.get("knob", "")).startswith("RISK") \
             and ch.get("to") is not None:
         return {"bot": bot, "combo": f"{'OWN' if bot == 'bot5' else 'FUT'}|{ch['track']}", "family": "risk",
@@ -135,6 +140,8 @@ def describe(b):
     if b["family"] == "flag":
         if b["key"] == "tal_max_dir":
             return f"שיטת הגאפ: לכל היותר {b['to']} עסקאות פתוחות באותו כיוון בכל המדדים יחד" if b["to"] else "שיטת הגאפ: בלי תקרה לכיוון"
+        if b["key"] == "tal_risk_scale":
+            return f"שיטת הגאפ: הסיכון של כל המסלולים × {b['to']:g}"
         if b["key"] == "tal_hours_off":
             return ("שיטת הגאפ: בלי כניסות בשעות " + ", ".join(f"{x:02d}:00" for x in b["to"]) + " (UTC)") if b["to"] else "שיטת הגאפ: בלי מסנן שעות"
         return "שיטת הגאפ: מסלול לא נכנס למכשיר ולכיוון שמסלול אחר כבר מחזיק" if b["to"] else "שיטת הגאפ: בלי הכלל נגד סיכון כפול"

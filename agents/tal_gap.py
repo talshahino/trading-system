@@ -55,11 +55,20 @@ KNOBS = {"GBODY": [0.0, 1.0, 2.0], "MIN_GAP": [0.0, 0.6], "SW": [2, 5], "MIN_RR"
          # one loss per impulse (bot 6's smart agent, 13.11.2026, from bot 6's live record: on 5.11 three US30 longs from
          # gaps of the same 1-hour impulse were stopped one after another, -3R, and two US500 longs of another, -2R):
          # after a stop, the impulse's other gaps in that direction are cancelled. Not in BASE (off), like EXIT.
-         "IMP1": [True]}
+         "IMP1": [True],
+         # the direction of the bigger picture (bot 5's smart agent, 13.11.2026 night, from the loss of 12.11: nine
+         # index shorts were stopped one after the other while the indices rose all afternoon - each short was in its
+         # own impulse's direction but against the day's). day = only longs while the price is above the day's open
+         # (UTC) and only shorts below it; up20 = only in the direction of the next timeframe up (at most 4 hours)
+         # against its 20-candle EMA. Off by default (not in BASE), like EXIT / IMP1. Both work on the live bot's
+         # 14 days of minutes (live_trades applies the same rule).
+         "TREND": ["day", "up20"]}
 NAMES = {"GBODY": "עוצמת הדחף (גוף הנר האמצעי מול הממוצע)", "MIN_GAP": "גודל גאפ מינימלי (מול הטווח הממוצע)",
          "SW": "סווינג בטיים פריים הנמוך (נרות מכל צד)", "MIN_RR": "יחס מינימלי יעד/סטופ", "EXPIRY": "תוקף הגאפ (שעות)",
          "PROT": "הגנה מהודעות וזעזועים", "EXIT": "ניהול העסקה: יציאה חלקית / סטופ לנקודת הכניסה",
-         "IMP1": "אחרי סטופ - בלי עוד כניסות מאותו דחף"}
+         "IMP1": "אחרי סטופ - בלי עוד כניסות מאותו דחף",
+         "TREND": "רק בכיוון התמונה הגדולה (פתיחת היום / טיים פריים מעל)"}
+UP = {"1m": "5m", "5m": "15m", "15m": "1h", "1h": "4h", "4h": "4h", "1d": "4h"}   # TREND up20: the timeframe above (<= 4h)
 PROT_HE = {"none": "בלי הגנה", "cal15": "יומן ±15 דק'", "cal60": "יומן ±60 דק'", "shock": "זעזועים",
            "cal15shock": "יומן ±15 דק' + זעזועים"}
 SPLIT = pd.Timestamp("2026-01-01", tz="UTC")
@@ -125,6 +134,28 @@ class Data:
             atr = pd.Series(tr).ewm(alpha=1 / 14, adjust=False).mean().to_numpy()
             self.bars[name] = (m.index.as_unit("ns").asi8, o, h, l, c, atr)
         return self.bars[name]
+
+    def trend(self, htf, mode):
+        """TREND: per 1-minute bar, +1 / -1 / 0 = the side the bigger picture allows (known before the bar opens), or
+        None when off. day: the previous minute's close against the UTC day's first open; up20: the last CLOSED candle
+        of the timeframe above HTF against its 20-candle EMA."""
+        if not mode or mode == "none":
+            return None
+        key = ("trend", htf, mode)
+        if key not in self.sw:
+            prev = np.r_[self.c1[0], self.c1[:-1]]
+            if mode == "day":
+                day0 = pd.Series(self.o1, index=self.t1).groupby(self.t1.floor("1D")).transform("first").to_numpy(float)
+                s = np.sign(prev - day0)
+            else:
+                up = UP.get(htf, "4h")
+                ts, o, h, l, c, _ = self.tf(up)
+                ema = pd.Series(c).ewm(span=int(mode[2:]), adjust=False).mean().to_numpy()
+                j = np.searchsorted(ts, self.ns - TF[up] * 60_000_000_000, side="right") - 1
+                jj = np.maximum(j, 0)
+                s = np.where(j >= 0, np.sign(c[jj] - ema[jj]), 0)
+            self.sw[key] = np.nan_to_num(s).astype(np.int8)
+        return self.sw[key]
 
     def swings(self, name, w):
         """LTF swing highs / lows: (confirm time ns [end of the confirming candle], value, atr at the swing)."""
@@ -226,6 +257,7 @@ def simulate(D, pair, cfg, gcache):
     prot = cfg["PROT"]
     calk = "cal60" if prot == "cal60" else "cal15" if prot in ("cal15", "cal15shock") else None
     shock = prot in ("shock", "cal15shock")
+    trend = D.trend(htf, cfg.get("TREND", "none"))
     cands = []
     for d, mid, near, far, made, armed in g:
         q0 = int(np.searchsorted(ns, armed))
@@ -238,6 +270,8 @@ def simulate(D, pair, cfg, gcache):
         f = q0 + int(np.argmax(seg))
         if D.late[f]:
             continue                                     # the world's no-entry time (session)
+        if trend is not None and trend[f] != d:
+            continue                                     # TREND: against the bigger picture
         if calk:
             if D.cal[calk][f] or D.cal_start[calk][f] - (D.cal_start[calk][q0 - 1] if q0 else 0) > 0:
                 continue                                 # a release window: no entry, the waiting order was cancelled
@@ -387,7 +421,7 @@ def _cfg_runs(p, cfg, symbols, idx):
 
 
 def _norm(c):
-    for k in ("EXIT", "IMP1"):
+    for k in ("EXIT", "IMP1", "TREND"):
         if c.get(k) == "none":
             c.pop(k)                                    # "none" is the base: the same configuration, the same name
     return c
@@ -690,7 +724,62 @@ def cards(bot, pairs, other=None, other_name="בוט 5", risk_pct=None, live=Non
 
 
 # ---------------------------------------------------------------- the bot as a whole (13.11.2026)
-def portfolio(idx, symbols, out_dir, live, hour_min_n=100):
+DAY_LIM, ALL_LIM = 4.5, 9.0          # the bot's own limits (% of the account; FTMO's 5% / 10% stay above them)
+
+
+def account(part, risk_pct):
+    """The account the way the virtual bot keeps it, in % of the starting balance (no compounding - careful): each
+    trade risks its track's % (risk_pct = {track: %}); after the day's loss reaches DAY_LIM no new trade opens that
+    day; once the fall from the start reaches ALL_LIM the account stops. Returns total, worst day, deepest fall from
+    the peak, the fall from the start, days the daily limit stopped trading, and when the account stopped (or None)."""
+    if part.empty:
+        return None
+    rp = part["r"].to_numpy(float) * part["trk"].map(risk_pct).fillna(0).to_numpy(float)
+    days = part["time"].dt.strftime("%Y-%m-%d").to_numpy()
+    eq, peak, fall, low, day, dsum, stopped_days, dead, worst = 0.0, 0.0, 0.0, 0.0, None, 0.0, set(), None, 0.0
+    for r_, d_, t_ in zip(rp, days, part["time"]):
+        if d_ != day:
+            day, dsum = d_, 0.0
+        if dsum <= -DAY_LIM:
+            stopped_days.add(d_)
+            continue
+        dsum += r_
+        eq += r_
+        worst = min(worst, dsum)
+        peak = max(peak, eq)
+        fall = max(fall, peak - eq)
+        low = min(low, eq)
+        if eq <= -ALL_LIM:
+            dead = t_.isoformat()
+            break
+    return {"total_pct": round(float(eq), 2), "worst_day_pct": round(float(worst), 2), "max_fall_pct": round(float(fall), 2),
+            "low_pct": round(float(low), 2), "daily_stops": len(stopped_days), "stopped": dead}
+
+
+MARGIN = 0.8          # the train period must stay within 80% of the bot's limits (a fall <= 7.2%, a day >= -3.6%)
+
+
+def risk_scale(t, risk_pct):
+    """One factor on every track's risk, CHOSEN on 2024-2025 only: the largest (steps of 0.05, at least 0.2) with which
+    the train period's deepest fall and worst day stay inside MARGIN of the bot's limits - then shown on 2026.
+    A fall is measured from the peak: an account may start on any day, the worst one included."""
+    tr, un = t[t["time"] < SPLIT], t[t["time"] >= SPLIT]
+    a = account(tr, risk_pct)
+    if not a:
+        return {"chosen": 1.0, "fits": True, "rows": {}}
+    lim = [1.0]
+    if a["max_fall_pct"] > 0:
+        lim.append(MARGIN * ALL_LIM / a["max_fall_pct"])
+    if a["worst_day_pct"] < 0:
+        lim.append(MARGIN * DAY_LIM / -a["worst_day_pct"])
+    k = max(0.2, np.floor(min(lim) * 20) / 20)
+    rk = {x: v * k for x, v in risk_pct.items()}
+    b = account(tr, rk)
+    fits = b["max_fall_pct"] <= MARGIN * ALL_LIM + 1e-9 and b["worst_day_pct"] >= -MARGIN * DAY_LIM - 1e-9
+    return {"chosen": round(float(k), 2), "fits": bool(fits), "rows": {str(round(float(k), 2)): {"train": b, "unseen": account(un, rk)}}}
+
+
+def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None):
     """All the tracks the bot runs together (live = {track: (pair_name, cfg)}), the way the account takes them: the
     total time-weighted R, the worst day and the deepest fall (in R of one trade), on 2024-2025 and on 2026 - and the
     same with one rule against doubled risk: a track does not enter a symbol in a direction another track already holds
@@ -760,7 +849,15 @@ def portfolio(idx, symbols, out_dir, live, hour_min_n=100):
         if ws_["mean"] is not None and ws_["mean"] < 0 and (ws_["t"] or 0) <= -1.5:
             hrs.append(int(h_))
     hours_off = {"hours": hrs, **(stats(t[~t["time"].dt.hour.isin(hrs)]) if hrs else {})}
-    return {"tracks": {k: v[0] for k, v in live.items()}, "now": stats(t), "one_per_side": stats(t[t["solo"]]),
+    # the account in % with each track's real risk (13.11.2026 night): R totals hide that the tracks risk different
+    # shares, and that the account has limits - a deepest fall of 75R at 0.28% a trade is 21%, beyond the 10% line
+    acct = None
+    if risk:
+        rk = {k: float(v) * 100 for k, v in risk.items() if k in live}
+        acct = {"risk_pct": rk,
+                "now": {"train": account(t[t["time"] < SPLIT], rk), "unseen": account(t[t["time"] >= SPLIT], rk)},
+                "scale": risk_scale(t, rk)}
+    return {"account": acct, "tracks": {k: v[0] for k, v in live.items()}, "now": stats(t), "one_per_side": stats(t[t["solo"]]),
             "max_dir": {str(c): stats(t[pd.Series(k_, index=t.index)]) for c, k_ in caps.items()},
             "hours_off": hours_off,
             # R by the hour of entry (UTC) and by weekday, all tracks together (13.11.2026: material for a time filter
@@ -816,6 +913,34 @@ def portfolio_card(bot, pf, risk_pct):
     return K.card(bot, "risk", title, what, None, None, tested=len(rules), risk_pct=risk_pct, detail=pf, change=change)
 
 
+def scale_card(bot, pf, cur=1.0):
+    """A card for risk_scale(): when the factor chosen on 2024-2025 is below 1 - every gap track's risk times it
+    (change {"track": "tal_all", "knob": "RISK_SCALE"}). The bot as a whole first (principle 11): the profit in % falls
+    with the factor, the risk of touching the limits falls more."""
+    a = (pf or {}).get("account") or {}
+    sc = a.get("scale") or {}
+    if not sc or sc.get("chosen", 1.0) >= 1.0:
+        return None
+    k = sc["chosen"]
+    now, new = a["now"], sc["rows"][str(k)]
+    nt, nu, bt, bu = now["train"], now["unseen"], new["train"], new["unseen"]
+    if not (nt and nu and bt and bu):
+        return None
+
+    def line(x):
+        return (f"סה\"כ {x['total_pct']:+.1f}%, היום הגרוע {x['worst_day_pct']:+.1f}%, הירידה הגדולה {x['max_fall_pct']:.1f}%"
+                + (f", נעצר ב־{x['stopped'][:10]}" if x.get("stopped") else "") + f", ימים שנעצרו במגבלה היומית {x['daily_stops']}")
+    what = (f"כל מסלולי שיטת הגאפ יחד, בסיכון האמיתי של כל מסלול ועם המגבלות של הבוט (4.5% ביום, 9% בסך הכל). "
+            f"היום: 2024-2025: {line(nt)}. 2026: {line(nu)}. "
+            f"הכלל: כל הסיכונים × {k} - המקדם הגדול ביותר שבו 2024-2025 נשאר ב־80% מהמגבלות (יום ≥ -3.6%, ירידה מהשיא ≤ 7.2%), "
+            f"נבחר רק על התקופה הזאת. עם המקדם: 2024-2025: {line(bt)}. 2026 (לא נראתה): {line(bu)}."
+            + ("" if sc.get("fits") else " גם במקדם 0.2 2024-2025 לא נכנס במגבלות - צריך גם תיקון במסלולים עצמם."))
+    to = round(float(cur) * k, 3)            # the risks given are already times the scale that runs (cur)
+    return K.card(bot, "risk", f"שיטת הגאפ: סיכון כל המסלולים × {k}", what, None, None, tested=1,
+                  risk_pct=round(min(a["risk_pct"].values()) * k, 3) if a.get("risk_pct") else None,
+                  detail={"account": a}, change={"track": "tal_all", "knob": "RISK_SCALE", "from": cur, "to": to})
+
+
 def hours_card(bot, pf, risk_pct):
     """A card for the hour filter of portfolio() (13.11.2026): the hours are chosen on 2024-2025 only; a card only when,
     without them, 2026's total does not fall and its deepest fall and worst day are not worse."""
@@ -853,6 +978,7 @@ def live_trades(D, pair, cfg, gcache=None):
     prot = cfg.get("PROT", "none")
     calk = "cal60" if prot == "cal60" else "cal15" if prot in ("cal15", "cal15shock") else None
     shock = prot in ("shock", "cal15shock")
+    trend = D.trend(htf, cfg.get("TREND", "none"))
     out, cands = [], []
     # pass 1: every gap -> pending / cancelled, or a candidate fill (exactly simulate()'s checks, protection included)
     for d, mid, near, far, made, armed in g:
@@ -880,6 +1006,8 @@ def live_trades(D, pair, cfg, gcache=None):
         why = None
         if D.late[f]:
             why = "session"
+        elif trend is not None and trend[f] != d:
+            why = "trend"
         elif calk and calk in D.cal and (D.cal[calk][f] or D.cal_start[calk][f] - (D.cal_start[calk][q0 - 1] if q0 else 0) > 0):
             why = "news"
         elif shock:

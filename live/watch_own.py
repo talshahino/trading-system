@@ -100,7 +100,9 @@ TAL5 = {"t15_1": (("15m", "1m", 2), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN
         "t15_5": (("15m", "5m", 1), {"GBODY": 1.5, "MIN_GAP": 0.3, "SW": 3, "MIN_RR": 1.0, "EXPIRY": 120, "PROT": "none"})}
 TAL5_NAME = {"t15_1": "15 דק' / דקה", "t1h_15": "שעה / 15 דק'", "t4h_1h": "4 שעות / שעה", "t15_5": "15 דק' / 5 דק'",
              "t4h_15": "4 שעות / 15 דק' (סטופ לכניסה ב־70%)"}
-TAL5_TF = {"t15_1": "15Min", "t1h_15": "1Hour", "t4h_1h": "4Hour", "t15_5": "15Min", "t4h_15": "4Hour15"}
+# t15_5 was "15Min" too, like t15_1 - two tracks under one name, so the loss report of 12.11 could not tell them apart
+# (13.11.2026 night): from now "15Min5m"; t15_1 keeps "15Min" (its history)
+TAL5_TF = {"t15_1": "15Min", "t1h_15": "1Hour", "t4h_1h": "4Hour", "t15_5": "15Min5m", "t4h_15": "4Hour15"}
 RISK_TAL5 = 0.004 * 0.7
 # 13.11.2026 (bot 5's smart agent): the tracks above are also settings in live/bots/bot5.json ("tal_tracks": {track:
 # {"pair": [high, low], "cfg": {...}}}, risk per track in "risk"), so an approved card of the gap method is built by
@@ -108,6 +110,7 @@ RISK_TAL5 = 0.004 * 0.7
 TAL5_RISK = {}
 TAL5_ONE = [False]     # "tal_one_per_side": a track does not enter a symbol / direction another track holds (off until approved)
 TAL5_MAXDIR = [0]      # "tal_max_dir" (13.11.2026): at most K counted trades open in one direction on all the indices together (0 = off until approved)
+TAL5_SCALE = [1.0]      # "tal_risk_scale" (13.11.2026 night): one factor on every gap track's risk (1 until approved)
 TAL5_HOURS_OFF = set()  # "tal_hours_off" (13.11.2026 night): UTC hours of entry where no new counted trade opens (empty until approved)
 # bot 6 (13.11.2026 night, the shared methods with bot 5): the same three rules over bot 6's gap tracks, from the same keys
 # in live/bots/bot6.json - only the gap method's tracks, not the scout strategies (chosen on the gap tracks together)
@@ -184,6 +187,11 @@ def load_settings():
                     TAL5_HOURS_OFF.update(int(h_) for h_ in (d.get("tal_hours_off") or []) if 0 <= int(h_) <= 23)
                 except (TypeError, ValueError):
                     TAL5_HOURS_OFF.clear()
+                try:
+                    sc_ = float(d.get("tal_risk_scale", 1.0) or 1.0)
+                    TAL5_SCALE[0] = sc_ if 0.1 <= sc_ <= 1.0 else 1.0
+                except (TypeError, ValueError):
+                    TAL5_SCALE[0] = 1.0
                 TAL5_RISK.clear()
                 for trk in TAL5:
                     v = rk.get(trk, rk.get("tal"))
@@ -873,7 +881,7 @@ def main():
                         elif day_pnl(day) <= -DAILY_STOP * start:
                             rec["skipped"] = "daily"
                         else:
-                            rec["risk_usd"] = round(bal * TAL5_RISK.get(rec["tal"], RISK_TAL5), 2)
+                            rec["risk_usd"] = round(bal * TAL5_RISK.get(rec["tal"], RISK_TAL5) * TAL5_SCALE[0], 2)
                     if rec.get("risk_usd"):
                         if rec["status"] == "closed" and rec.get("r") is not None:
                             rec["pnl"] = round(rec["r"] * rec["risk_usd"], 2)

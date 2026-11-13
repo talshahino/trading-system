@@ -288,6 +288,25 @@ def card_effect(card, months, bot_risk_pct, mult=None):
     return None
 
 
+# bot 5's gap tracks as the virtual account names them (live/watch_own.py TAL5_TF / tal5_tf): TAL|<name>|<symbol>
+_TAL5_FIXED = {"t15_1": "15Min", "t1h_15": "1Hour", "t4h_1h": "4Hour", "t15_5": "15Min5m", "t4h_15": "4Hour15"}
+_TF_COMBO = {"1m": "1Min", "5m": "5Min", "15m": "15Min", "1h": "1Hour", "4h": "4Hour", "1d": "1Day"}
+
+
+def tal5_track(bot, combo, cfg):
+    """(track, "high/low") of a bot 5 gap-method combo, or None (13.11.2026 night: the loss report of 12.11 kept
+    TAL|5Min1m|.. "open" although 5m/1m was out at risk 0 since that night, and kept TAL|15Min|.. open although its
+    track's rules were rebuilt - the combo names were never matched to the tracks)."""
+    if bot != "bot5" or not str(combo).startswith("TAL|"):
+        return None
+    mid = combo.split("|")[1]
+    for trk, v in (cfg.get("tal_tracks") or {}).items():
+        pr = list(v.get("pair") or [])[:2]
+        if len(pr) == 2 and (_TAL5_FIXED.get(trk) or f"{_TF_COMBO.get(pr[0], pr[0])}{pr[1]}") == mid:
+            return trk, f"{pr[0]}/{pr[1]}"
+    return None
+
+
 def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
     """For every losing strategy of the report: the changes made since (approved, not undone / reverted), each with
     what it is worth in % of the account a month (from its own test on 2026), and what is still open."""
@@ -323,6 +342,21 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
         cfg = _read(ROOT / "live" / "bots" / f"{rep['bot']}.json", {}) or {}
         if cfg.get("combos") is not None and c not in cfg["combos"] and not any(("הוסרה" in (f["what"] or "")) or ("להסיר" in (f["what"] or "")) for f in fixes):
             fixes.append({"what": "הוסרה מהבוט", "decision": None, "at": None, "effect_month_pct": None})
+        tt = tal5_track(rep["bot"], c, cfg)
+        if tt:
+            trk, pn = tt
+            rv = (cfg.get("risk") or {}).get(trk)
+            if rv is not None and float(rv) == 0 and not any("הוסרה" in (f["what"] or "") for f in fixes):
+                fixes.append({"what": f"הוסרה מהבוט (מסלול {pn}, סיכון 0)", "decision": None, "at": None, "effect_month_pct": None})
+            # a built card on this track (its rules, its risk) or on all the gap tracks together (tal_all), after the day
+            for cid, card in cards.items():
+                ch, r_ = card.get("change") or {}, replies.get(cid) or {}
+                mine = (ch.get("method") == "tal_gap" and ch.get("pair") == pn) or ch.get("track") in (trk, "tal_all")
+                if mine and r_.get("built") and r_.get("built") != "skipped" and str(r_.get("at") or "") >= rep["day"] \
+                        and cid not in undo and not any(f.get("card") == cid for f in fixes):
+                    eff = card_effect(card, months, bot_risk_pct)
+                    fixes.append({"what": card.get("title"), "decision": None, "card": cid, "at": r_.get("at"), "effect_month_pct": eff})
+                    total += eff or 0
         for cid, card in cards.items():
             r_ = replies.get(cid) or {}
             if (card.get("change") or {}).get("combo") == c and r_.get("built") and r_.get("built") != "skipped" \

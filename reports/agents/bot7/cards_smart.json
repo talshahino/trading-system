@@ -1,6 +1,6 @@
 {
  "bot": "bot7",
- "updated": "2026-11-13T18:57:29+00:00",
+ "updated": "2026-11-13T20:56:51+00:00",
  "cards": [
   {
    "bot": "bot7",
@@ -552,6 +552,132 @@
    },
    "made": "2026-11-13T18:57:29+00:00",
    "id": "b5af48e28d84"
+  },
+  {
+   "bot": "bot7",
+   "kind": "remove",
+   "title": "EV01 (הליכה עם הפרסום): להוריד מהבוט - שבעה ניסיונות תיקון נכשלו",
+   "what": "EV01 מפסיד בשתי התקופות בגרסה שבבוט: 2025 261 עסקאות -19.6R, 2026 347 עסקאות -30.0R (כבר בחצי סיכון). ניסינו: יציאות, סוגי פרסום, מכשירים, מסנני שוק, כניסה בתיקון, ברייק לפי פיבונאצ'י, ועכשיו תזמון הכניסה (1,152 גרסאות). הטובה ב־2025 (20 דקות, תיקון 0.5R, יעד 3R, עד 3 לפרסום): 2025 +28.1R, 2026 -1.3R - עוצרת את ההפסד אבל לא מרוויחה. הסרה = +30R בשנה על 2026 לעומת היום. הגרסה של 20 הדקות נשארת במעקב בבדיקה; אם תרוויח בשתי התקופות - כרטיס שמחזיר.",
+   "train": {
+    "n": 261,
+    "eff_n": 260.7,
+    "mean": -0.0743,
+    "t": -1.36,
+    "win": 46.4,
+    "sum": -19.55
+   },
+   "unseen": {
+    "n": 347,
+    "eff_n": 346.9,
+    "mean": -0.0848,
+    "t": -1.86,
+    "win": 42.7,
+    "sum": -29.98
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1152,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": {
+    "n": 347,
+    "eff_n": 346.9,
+    "mean": -0.0848,
+    "t": -1.86,
+    "win": 42.7,
+    "sum": -29.98
+   },
+   "change": {
+    "combo": "EV01|5Min|*",
+    "action": "remove",
+    "combos": [
+     "EV01|5Min|US100",
+     "EV01|5Min|US500",
+     "EV01|5Min|US30",
+     "EV01|5Min|GER40",
+     "EV01|5Min|UK100",
+     "EV01|5Min|JP225",
+     "EV01|5Min|XAUUSD",
+     "EV01|5Min|EURUSD",
+     "EV01|5Min|GBPUSD",
+     "EV01|5Min|USDJPY",
+     "EV01|5Min|AUDUSD",
+     "EV01|5Min|USDCAD",
+     "EV01|5Min|USDCHF",
+     "EV01|5Min|NZDUSD",
+     "EV01|5Min|EURJPY",
+     "EV01|5Min|GBPJPY"
+    ],
+    "why": "fix_attempts status failed (7 attempts)"
+   },
+   "detail": {
+    "best_2025": {
+     "v": "m20|k1.5|with|l0.5|t3|sall|c3",
+     "train": {
+      "n": 49,
+      "eff_n": 48.9,
+      "mean": 0.6015,
+      "t": 1.69,
+      "win": 39.1,
+      "sum": 28.14
+     },
+     "unseen": {
+      "n": 64,
+      "eff_n": 64.0,
+      "mean": -0.0211,
+      "t": -0.09,
+      "win": 34.4,
+      "sum": -1.34
+     }
+    },
+    "robust": {
+     "top_positive_unseen": 5,
+     "top": 10,
+     "top_better_than_base": 8
+    },
+    "source": "reports/agents/bot7/entry_study.json",
+    "fix_key": "bot7|EV01|5Min|*"
+   },
+   "made": "2026-11-13T20:56:51+00:00",
+   "id": "d51b540869aa"
+  },
+  {
+   "bot": "bot7",
+   "kind": "info",
+   "title": "בוט 7: EV01 להסרה, EV03 עוד חצי בדיקה, SC001 בלי יתרון אבל בלי הפסד",
+   "what": "תזמון הכניסה לא הציל את EV01 (הטובה ב־2025: 2026 -1.3R) - כרטיס הסרה. EV03: 9 מתוך 16 מכשירים, הטובה +1.3R ב־2026 - מחכים לשאר. SC001 JP225: 5 סטופים בחי, בבדיקה ~0 בשתי התקופות; היציאות לא משפרות, הבא - מסננים. זעזועים: אין סריקה חדשה מאז 13:06.",
+   "train": {
+    "n": 261,
+    "eff_n": 260.7,
+    "mean": -0.0743,
+    "t": -1.36,
+    "win": 46.4,
+    "sum": -19.55
+   },
+   "unseen": {
+    "n": 347,
+    "eff_n": 346.9,
+    "mean": -0.0848,
+    "t": -1.86,
+    "win": 42.7,
+    "sum": -29.98
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot7|*",
+    "note": "info only",
+    "night": "2026-11-14n"
+   },
+   "detail": {},
+   "made": "2026-11-13T20:56:51+00:00",
+   "id": "530fedcb50fd"
   }
  ]
 }

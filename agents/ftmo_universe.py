@@ -66,11 +66,12 @@ STOCKS.update({
 CRYPTO_MORE = {f"{a}/USD": (f, None, ["USD"]) for a, f in [
     ("AAVE", "AAVUSD"), ("AVAX", "AVAUSD"), ("BCH", "BCHUSD"), ("DOGE", "DOGEUSD"), ("DOT", "DOTUSD"),
     ("GRT", "GRTUSD"), ("LINK", "LNKUSD"), ("LTC", "LTCUSD"), ("UNI", "UNIUSD"), ("XTZ", "XTZUSD")]}
-# the other FTMO forex pairs (user, 13.11.2026: "why does bot 5 not use every currency pair on FTMO?"): research and
-# bot 5's gap method only - like CRYPTO_MORE, never in the default universe, so the other bots' tests do not change
-_FX_MORE = ["AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "CADCHF", "CADJPY", "CHFJPY", "EURAUD", "EURCAD", "EURCHF",
-            "EURNZD", "GBPAUD", "GBPCAD", "GBPCHF", "GBPNZD", "NZDCAD", "NZDCHF", "NZDJPY"]
-FX_MORE = {s: (f"{s[:3]}/{s[3:]}", s.lower(), [s[:3], s[3:]]) for s in _FX_MORE}
+# the other 18 FTMO forex pairs (user, 13.11.2026: "why doesn't bot 5 use all of FTMO's currency pairs?") - research
+# and bot 5's gap method only, never in the default universe (like CRYPTO_MORE): Dukascopy history, FTMO's specs
+FX_MORE = {f"{a}{b}": (f"{a}/{b}", f"{a}{b}".lower(), [a, b]) for a, b in [
+    ("AUD", "CAD"), ("AUD", "CHF"), ("AUD", "JPY"), ("AUD", "NZD"), ("CAD", "CHF"), ("CAD", "JPY"), ("CHF", "JPY"),
+    ("EUR", "AUD"), ("EUR", "CAD"), ("EUR", "CHF"), ("EUR", "NZD"), ("GBP", "AUD"), ("GBP", "CAD"), ("GBP", "CHF"),
+    ("GBP", "NZD"), ("NZD", "CAD"), ("NZD", "CHF"), ("NZD", "JPY")]}
 GROUPS = {"fx": FX, "index": INDICES, "metal": METALS, "energy": ENERGY, "crypto": CRYPTO, "stock": STOCKS}
 SYMBOLS = [k for g in GROUPS.values() for k in g]
 ALL = {k: v for g in GROUPS.values() for k, v in g.items()}
@@ -83,7 +84,7 @@ DUKA = {k: v[1] for k, v in ALL.items() if v[1]}
 CURRENCIES = {k: v[2] for k, v in ALL.items()}
 
 # value of 1 unit of the base currency in USD, for the forex $-per-lot commission (rough, stable enough)
-BASE_USD = {"EUR": 1.1, "GBP": 1.3, "USD": 1.0, "AUD": 0.65, "NZD": 0.6, "CAD": 0.72, "CHF": 1.12}
+BASE_USD = {"EUR": 1.1, "GBP": 1.3, "USD": 1.0, "AUD": 0.65, "NZD": 0.6, "CAD": 0.72, "CHF": 1.13}   # CAD / CHF: FX_MORE
 
 _SPEC_FILE = Path(__file__).resolve().parent.parent / "data" / "ftmo_symbols" / "responses.json"
 _SPECS = None

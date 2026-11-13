@@ -85,11 +85,10 @@ def load():
     return pd.concat([df, extra], ignore_index=True).sort_values("time"), real_end
 
 
-def blocked(times, symbol, events, minutes=5, currencies=None):
+def blocked(times, symbol, events, minutes=5):
     """Boolean mask: which timestamps fall within +-minutes of a high-impact release for one of
-    the instrument's currencies. currencies: for an instrument not in CURRENCIES (bot 5's gap method on the other
-    FTMO forex pairs / indices, 13.11.2026 - the caller passes ftmo_universe's; the default list is unchanged)."""
-    cur = CURRENCIES.get(symbol) or currencies
+    the instrument's currencies."""
+    cur = CURRENCIES.get(symbol)
     if not cur or events is None or events.empty:
         return pd.Series(False, index=times.index)
     ev = events[events["currency"].isin(cur)]["time"].sort_values().to_numpy()

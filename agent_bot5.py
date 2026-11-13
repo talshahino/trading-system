@@ -29,7 +29,6 @@ import pandas as pd
 
 import own15 as O15
 from agents import agentkit as K
-from agents import ftmo_universe as U
 from agents import repo_io as RIO
 from agents import own_gaps as OG
 from agents import tal_gap as TG
@@ -108,7 +107,7 @@ def prep(s, end):
         stop_at = stop_at | np.asarray(sm, bool)
     ev, _ = O15.NC.load()
     nm, noent = O15.RR.news_masks(df, s, "1Min")
-    blk = O15.NC.blocked(pd.Series(df.index), s, ev, minutes=2, currencies=U.CURRENCIES.get(s)).to_numpy()
+    blk = O15.NC.blocked(pd.Series(df.index), s, ev, minutes=2).to_numpy()
     noent = np.asarray(noent, bool) | blk
     stop_at = stop_at | np.asarray(nm, bool) | np.r_[blk[1:], False]
     return df, cost, stop_at, noent
@@ -275,188 +274,8 @@ def tal_load(s):
     df, cost, stop_at, noent = data
     ev, _ = O15.NC.load()
     times = pd.Series(df.index)
-    cal = {f"cal{m}": O15.NC.blocked(times, s, ev, minutes=m, currencies=U.CURRENCIES.get(s)).to_numpy() for m in (15, 60)}
-    return TG.Data(s, df, cost, stop_at, noent, 2.0, cal)
-
-
-# ---------------------------------------------------------------- the rest of FTMO (user, 13.11.2026)
-# "why does bot 5 not use every currency pair on FTMO?" - the method was tested only on the 5 indices, though the user
-# built it on gold and EURUSD. Every FTMO forex pair (28), the two metals and the other cash indices, each on its own:
-# its own grid on every pair of timeframes (the same 34 versions, management and Fibonacci exits included), chosen on
-# its own period to 2025-12-31 and shown on 2026. Its own folder under tal/ (the bots' computer's cache, never published),
-# so an instrument's choice never sees another's trades. Every instrument's grid first, then its own search.
-TAL_X = [s for s in list(U.FX) + list(U.FX_MORE) + ["XAUUSD", "XAGUSD", "UK100", "FRA40", "EU50", "AUS200", "HK50",
-                                                     "SPN35", "N25", "US2000"] if s not in TAL_SYMBOLS]
-TAL_X_DIR = TAL_DIR / "x"
-TAL_X_SHARE = 0.7          # of the gap method's minutes while the indices' search only refines (13.11.2026: 0 left)
-
-
-def tal_x(budget_s):
-    t0 = time.time()
-    left = {}
-    for s in TAL_X:                                     # 1) every instrument's grid
-        rest = budget_s - (time.time() - t0)
-        if rest < 60:
-            break
-        try:
-            _, left[s] = TG.run(BOT, [s], tal_load, TAL_X_DIR / s, rest, search_ok=False)
-        except Exception as e:  # noqa: BLE001
-            print(f"tal_x {s} failed: {e}")
-    done = [s for s in TAL_X if left.get(s) == 0]
-    # 2) the search, the same minutes for each instrument whose grid is done (they take turns night after night)
-    if len(done) == len(TAL_X):
-        k0 = int(time.time() // 3600) % len(done)
-        for s in done[k0:] + done[:k0]:
-            rest = budget_s - (time.time() - t0)
-            if rest < 120:
-                break
-            try:
-                TG.run(BOT, [s], tal_load, TAL_X_DIR / s, min(rest, max(300.0, rest / 4)))
-            except Exception as e:  # noqa: BLE001
-                print(f"tal_x search {s} failed: {e}")
-    print(f"tal_x: {len(done)} of {len(TAL_X)} instruments' grids done")
-
-
-def _slim(r):
-    return None if not r else {k: r.get(k) for k in ("knob", "val", "cfg", "train", "unseen", "whole", "halves", "cost_r",
-                                                       "target_pct", "rr")}
-
-
-def tal_x_summary():
-    """Per instrument and pair of timeframes: the base and the version chosen on 2024-2025, shown on 2026."""
-    out = {}
-    for s in TAL_X:
-        d = TAL_X_DIR / s
-        tidx = {f.stem: json.loads(f.read_text()) for f in (d / "idx").glob("*.json")} if (d / "idx").exists() else {}
-        if not tidx:
-            out[s] = {"status": "missing", "runs": 0}
-            continue
-        try:
-            pairs, _ = TG.summarize(tidx, [s], d)
-        except Exception as e:  # noqa: BLE001
-            out[s] = {"status": f"error: {e}"[:200], "runs": len(tidx)}
-            continue
-        out[s] = {"status": "ok", "runs": len(tidx), "planned": len(TG.PAIRS) * len(TG.variants()),
-                  "pairs": {pn: {"name": x["name"], "done": x["done"], "planned": x["planned"], "searched": x["searched"],
-                                 "base": _slim(x.get("base")), "chosen": _slim(x.get("chosen"))} for pn, x in pairs.items()}}
-    return out
-
-
-def tal_x_cards(ux, risk_pct, live_syms):
-    """A 'new' card per instrument and pair whose version chosen on 2024-2025 earned on both periods: positive to 2025,
-    positive on 2026 with t >= 1, and at least the manager's +3R on 2026 in total (agentkit.NEW_MIN_TOTAL) - a new
-    track must add to the bot as a whole (principle 11). The best pair per instrument only: two pairs on the same
-    instrument are mostly the same trades (12.11.2026, the US500 short taken twice)."""
-    out = []
-    for s, x in ux.items():
-        if s in live_syms:
-            continue
-        best = None
-        for pn, v in (x.get("pairs") or {}).items():
-            ch = v.get("chosen")
-            if not ch or v["done"] < v["planned"]:
-                continue
-            tr, un = ch["train"] or {}, ch["unseen"] or {}
-            if (tr.get("mean") or 0) <= 0 or (tr.get("eff_n") or 0) < K.MIN_EFF_N or (un.get("mean") or 0) <= 0 \
-                    or (un.get("t") or 0) < 1.0 or (un.get("mean") or 0) * (un.get("n") or 0) < K.NEW_MIN_TOTAL:
-                continue
-            if best is None or un["mean"] * un["n"] > best[1]["unseen"]["mean"] * best[1]["unseen"]["n"]:
-                best = (pn, ch, v)
-        if not best:
-            continue
-        pn, ch, v = best
-        tr, un, cfg = ch["train"], ch["unseen"], ch["cfg"]
-        knob = "הבסיס" if ch["knob"] == "base" else ", ".join(f"{k}={vv}" for k, vv in cfg.items() if TG.BASE.get(k, "none") != vv)
-        what = (f"שיטת הגאפ של טל על {s} (לא נבדקה עליו עד היום), {v['name']}: {knob or 'הבסיס'}. "
-                f"נבחר על 2024-2025 בלבד ({tr['mean']:+.2f}R לעסקה, {tr['n']} עסקאות), מוצג על 2026: {un['mean']:+.2f}R לעסקה, "
-                f"{un['n']} עסקאות, {un['win']}% הצלחה, סה\"כ {un['mean'] * un['n']:+.1f}R. עלות FTMO {ch['cost_r']}R לעסקה. "
-                f"מסלול חדש שסופר רק את {s}, בסיכון של מסלולי הגאפ.")
-        out.append(K.card(BOT, "new", f"שיטת הגאפ של טל · {s} · {v['name']}", what, tr, un, whole=ch["whole"],
-                          halves_=ch["halves"], cost_r=ch["cost_r"], tested=len(TG.PAIRS) * len(TG.variants()), risk_pct=risk_pct,
-                          detail={"symbol": s, "pair": pn, "base": (v.get("base") or {}).get("unseen")},
-                          change={"method": "tal_gap", "pair": pn, "cfg": cfg, "symbol": s,
-                                  "track": f"tal_gap|{pn}|{s}", "knob": "cfg"}))
-    return out
-
-
-REVIEW_MIN_N = 15          # trades on 2026 on the instrument before what runs there is judged
-
-
-def symbol_review(tidx, s5, risk_pct):
-    """Each counted track on each of its instruments alone (the loss reports name a strategy as track + instrument, e.g.
-    TAL|15Min|US500 - 13.11.2026). Where what runs loses on that instrument in 2024-2025 AND in 2026: first a fix - the
-    version of the same pair that earns most on that instrument to 2025 (every run of the grid and the search), shown on
-    2026; it must earn on both periods and beat what runs on 2026 in total -> a card that trades it there with its own
-    rules. No fix -> the instrument leaves the track (its open trades followed to the exit). Returns (cards, attempts)."""
-    cards_, att = [], {}
-    rk = s5.get("risk") or {}
-    for trk, v in (s5.get("tal_tracks") or {}).items():
-        own = isinstance(v.get("symbols"), list) and len(v["symbols"]) == 1 and trk.endswith("_" + v["symbols"][0])
-        if float(rk.get(trk, 0) or 0) <= 0 or own:
-            continue                                   # out of the account, or already an instrument's own track
-        pn = f"{v['pair'][0]}/{v['pair'][1]}"
-        syms = v.get("symbols") if isinstance(v.get("symbols"), list) else TAL_SYMBOLS
-        for s in syms:
-            runs = [x for x in tidx.values() if x["pair"] == pn and x["sym"] == s]
-            cur = next((x for x in runs if TG.vid(TG._norm(dict(x["cfg"]))) == TG.vid(TG._norm(dict(v["cfg"])))), None)
-            if not cur:
-                continue
-            st = lambda x: TG._stats(_rd(x))  # noqa: E731
-            c = st(cur)
-            ct, cu = c["train"], c["unseen"]
-            if (ct.get("mean") or 0) >= 0 or (cu.get("mean") or 0) >= 0 or (cu.get("n") or 0) < REVIEW_MIN_N:
-                continue
-            best, bs = None, None
-            for x in runs:
-                t = _rd(x)
-                sc = TG.score(t)
-                if best is None or sc > bs:
-                    best, bs = x, sc
-            b = TG._stats(_rd(best))
-            bt, bu = b["train"], b["unseen"]
-            key = f"bot5|TAL|{_combo_tf(trk, v['pair'])}|{s}"          # the account's combo name (live/watch_own.tal5_tf)
-            base = f"{trk} על {s}: מה שרץ {ct['mean']:+.2f}R לעסקה ב־2024-2025 ({ct['n']}), {cu['mean']:+.2f}R ב־2026 ({cu['n']})"
-            ok = ((bt.get("mean") or 0) > 0 and (bt.get("eff_n") or 0) >= K.MIN_EFF_N and (bu.get("mean") or 0) > 0
-                  and (bu["mean"] * bu["n"]) > (cu["mean"] * cu["n"]))
-            tried = (f"{len(runs)} גרסאות של {pn} על {s} לבד (כל הגריד והחיפוש: דחף, גאפ, סווינג, יחס, תוקף, הגנה, "
-                     f"ניהול ופיבונאצ'י); הטובה עד 2025: {bt['mean']:+.2f}R ({bt['n']}), ב־2026 {bu['mean']:+.2f}R ({bu['n']})")
-            # two tracks share a combo name (t15_1 and t15_5 are both TAL|15Min|...): one entry, fixed if either is
-            prev = att.get(key) or {"status": "failed", "tried": []}
-            att[key] = {"status": "fixed" if ok or prev["status"] == "fixed" else "failed",
-                        "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "by": "bot5 smart agent",
-                        "tried": prev["tried"] + [base + ". " + tried]}
-            if ok:
-                cards_.append(K.card(BOT, "improve", f"שיטת הגאפ · {s} במסלול {pn}: חוקים משלו",
-                                     base + f". התיקון: {s} נסחר במסלול הזה בחוקים משלו - " + ", ".join(
-                                         f"{k}={vv}" for k, vv in best["cfg"].items()) + f". נבחר על 2024-2025 בלבד, מוצג על 2026. {tried}.",
-                                     bt, bu, whole=b["whole"], halves_=b["halves"], cost_r=b["cost_r"], tested=len(runs),
-                                     risk_pct=round(float(rk.get(trk)) * 100, 3), baseline=cu,
-                                     detail={"track": trk, "symbol": s},
-                                     change={"method": "tal_gap", "pair": pn, "cfg": best["cfg"], "symbol": s, "from_track": trk,
-                                             "track": f"tal_gap|{pn}|{s}", "knob": "cfg"}))
-            else:
-                cards_.append(K.card(BOT, "risk", f"שיטת הגאפ · {s} יוצא מהמסלול {pn}",
-                                     base + f" - מפסיד בשתי התקופות. ניסיון התיקון נכשל: {tried}. לכן {s} יוצא מהמסלול הזה "
-                                     f"(שאר המכשירים נשארים; עסקה פתוחה נשארת עד היציאה). אם גרסה תרוויח עליו - כרטיס חדש.",
-                                     ct, cu, whole=c["whole"], halves_=c["halves"], cost_r=c["cost_r"], tested=len(runs),
-                                     risk_pct=0.0, detail={"track": trk, "symbol": s},
-                                     change={"method": "tal_gap", "pair": pn, "symbol": s, "from_track": trk,
-                                             "track": trk, "knob": "SYMBOLS"}))
-    return cards_, att
-
-
-_TAL5_TF = {"t15_1": "15Min", "t1h_15": "1Hour", "t4h_1h": "4Hour", "t15_5": "15Min", "t4h_15": "4Hour15"}
-_TFC = {"1m": "1Min", "5m": "5Min", "15m": "15Min", "1h": "1Hour", "4h": "4Hour", "1d": "1Day"}
-
-
-def _combo_tf(trk, pair):
-    return _TAL5_TF.get(trk) or f"{_TFC.get(pair[0], pair[0])}{pair[1]}"
-
-
-def _rd(x):
-    t = pd.read_csv(TAL_DIR / x["file"])
-    t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
-    return t
+    cal = {f"cal{m}": O15.NC.blocked(times, s, ev, minutes=m).to_numpy() for m in (15, 60)}
+    return TG.Data(s, df, cost, stop_at, noent, TG.stop_buffer(s), cal)   # 2 points on an index, 2 pips elsewhere
 
 
 def run_one(s, data, cfg):
@@ -605,16 +424,8 @@ def main():
             print("tal wide experiments failed:", e)
         tal_left = a.minutes * 60 - (time.time() - t_start)
     if tal_left > 60 and BOT == "bot5":
-        # the rest of FTMO first while its grids are not done (13.11.2026: the indices' search stood at 0 left on all
-        # 12 pairs and only refines), then the indices
-        x_s = tal_left * TAL_X_SHARE if not only else 0
-        if x_s > 60:
-            try:
-                tal_x(x_s)
-            except Exception as e:  # noqa: BLE001
-                print("tal_x failed:", e)
         try:
-            TG.run(BOT, tal_syms, tal_load, TAL_DIR, a.minutes * 60 - (time.time() - t_start))
+            TG.run(BOT, tal_syms, tal_load, TAL_DIR, tal_left)
         except Exception as e:  # noqa: BLE001
             print("tal gap experiments failed:", e)
     if a.no_cards:
@@ -715,37 +526,19 @@ def main():
             doc["bot5"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             rk_live = [x for x in rk5 if x > 0]
-            for pc in (TG.portfolio_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4),
-                       TG.hours_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4)):
-                if pc:
-                    cards.append(pc)
-        # each track on each instrument alone (the loss reports' strategies), and the rest of FTMO (13.11.2026)
-        rk_pos = sorted(x for x in rk5 if x > 0)
-        rk_mid = round(rk_pos[len(rk_pos) // 2] * 100, 3) if rk_pos else 0.28
-        try:
-            sc_, att_ = symbol_review(tidx, s5, rk_mid)
-            cards += sc_
-            if att_:
-                fa_f = Path("data/agents/fix_attempts.json")
-                fa = json.loads(fa_f.read_text(encoding="utf-8")) if fa_f.exists() else {}
-                fa.update(att_)
-                fa_f.write_text(json.dumps(fa, ensure_ascii=False, indent=1), encoding="utf-8")
-        except Exception as e:  # noqa: BLE001
-            print("symbol review failed:", e)
-        try:
-            ux = tal_x_summary()
-            doc = json.loads(TG.RESULTS.read_text(encoding="utf-8"))
-            doc["bot5"]["universe"] = {"updated": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
-                                       "symbols": ux, "note": "כל מכשיר לבד: נבחר על 2024-2025, מוצג על 2026, עלויות FTMO"}
-            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
-            live_x = {x for v in (s5.get("tal_tracks") or {}).values() if isinstance(v.get("symbols"), list)
-                      for x in v["symbols"] if x not in TAL_SYMBOLS}
-            cards += tal_x_cards(ux, rk_mid, live_x)
-            tal["universe"] = {"instruments": len(TAL_X), "grids_done": sum(
-                1 for x in ux.values() if x.get("pairs") and all(p["done"] >= p["planned"] for p in x["pairs"].values())
-                and len(x["pairs"]) == len(TG.PAIRS))}
-        except Exception as e:  # noqa: BLE001
-            print("tal_x summary failed:", e)
+            rule_cards = [pc for pc in (TG.portfolio_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4),
+                                        TG.hours_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4)) if pc]
+            cards += rule_cards
+            try:
+                tcards, tres = trend_fix(tidx, pf, rule_cards)
+                cards += tcards
+                doc["bot5"]["trend_fix"] = tres
+                TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            except Exception as e:  # noqa: BLE001
+                print("tal trend fix failed:", e)
+            sc_card = TG.scale_card(BOT, pf, cur_sc)
+            if sc_card:
+                cards.append(sc_card)
     except StopIteration:
         pass
     except Exception as e:  # noqa: BLE001
@@ -754,7 +547,7 @@ def main():
         c["tier"], c["verdict"] = K.judge(c)
     K.write_cards(BOT, cards, {"summary": summary, "tested": tested,
                                "done": sum(1 for v in idx.values()), "planned": sum(len(TRACKS[t]["symbols"]) for t, *_ in variants()),
-                               "tal": {"done": tal.get("done"), "planned": tal.get("planned"), "universe": tal.get("universe")}})
+                               "tal": {"done": tal.get("done"), "planned": tal.get("planned")}})
     print(json.dumps({"cards": len(cards), "summary": {k: {kk: vv for kk, vv in v.items() if kk != "backtest"} for k, v in summary.items()}},
                      ensure_ascii=False, default=str)[:3000])
 

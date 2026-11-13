@@ -482,7 +482,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 <div class="page" id="wbPg"><div class="ph"><button class="back" id="wbBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>בוט סקלפינג · צפייה</b></div><div id="wbBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="wcPg"><div class="ph"><button class="back" id="wcBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="wcTitle"></b></div><div id="wcBody"></div></div>
 <div class="page" id="chartPg" style="z-index:36"><div class="ph"><button class="back" id="cpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="cpTitle"></b></div>
-  <div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div></div>
+  <div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div><div id="cpNotes" style="padding:0 16px 24px"></div></div>
 <div class="ask" id="ask"><div class="box"><h4 id="askT">האם אתה בטוח?</h4><p id="askB"></p><div class="row"><button class="btn danger" id="askYes" style="background:#D0453A;color:#fff">כן, סגור</button><button class="btn ghost" id="askNo">לא</button></div></div></div>
 <div class="pop" id="pop"><div class="box"><h4 id="popT"></h4><p id="popB"></p><button class="btn" id="popOk">הבנתי</button></div></div>
 <nav class="tabs" id="tabs">
@@ -1473,11 +1473,7 @@ function tradePage(x, isOpen) {
       <div><div class="k">פיפס</div><div class="v num ${cls(pips || 0)}">${pf(pips)}</div></div>
       <div><div class="k">משך</div><div class="v num">${t.open_t ? dur(t.open_t, t.close_t || new Date()) : "—"}</div></div>
       <div><div class="k">אסטרטגיה</div><div class="v"><bdi>${esc(c.s)}</bdi> · ${esc(c.t)}</div></div></div>
-    <button class="vbtn" id="vChart">הצג גרף</button>
-    ${getRole() === "viewer" ? "" : `<div class="h4">🎙 הערה לסוכן של הבוט</div><div class="card wt">
-      <textarea id="tnTxt" rows="3" placeholder="לחץ על המיקרופון ודבר, או כתוב: הייתי לוקח / לא לוקח, איפה התפספס, הייתי יוצא מוקדם, חלקיות כאן…"></textarea>
-      <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="tnMic">🎙 הקלטה</button><button class="btn" id="tnSave">שמור הערה</button></div>
-      <div class="msg mut" id="tnMsg"></div><div id="tnList"></div></div>`}
+    <button class="vbtn" id="vChart">הצג גרף · הערה לסוכן</button>
     <div class="h4">$ מחיר</div><div class="lst">${li("סוג", t.side === "buy" ? "קנייה" : "מכירה", t.side === "buy" ? "pos" : "neg")}${li("פתיחה", `<span class="num">${t.open_px ?? "—"}</span>`)}${li(isOpen ? "מחיר נוכחי" : "סגירה", `<span class="num">${t.close_px ?? "—"}</span>`)}</div>
     <div class="h4">🛡 הגנת עסקה</div><div class="lst">${li("SL", `<span class="num">${sl || "—"}</span>`)}${t.sl && sl && Math.abs(t.sl - sl) > 1e-9 ? li("SL אחרון (אחרי הזזה)", `<span class="num">${t.sl}</span>`) : ""}
       ${li("SL פיפס", `<span class="num">${sl && t.open_px != null ? pf((sl - t.open_px) * dir / pip) : "—"}</span>`)}${li("TP", `<span class="num">${tp || "—"}</span>`)}
@@ -1487,7 +1483,6 @@ function tradePage(x, isOpen) {
       ${!isOpen && t.why ? li("סיבת סגירה", esc(t.reason === "sl" ? "סטופ" : t.reason === "tp" ? "יעד (TP)" : t.why)) : ""}</div>
     <div class="h4">◷ זמן</div><div class="lst">${li("פתיחה", `<span class="num">${t.open_t ? dtF(t.open_t) : "—"}</span>`)}${li("סגירה", `<span class="num">${t.close_t ? dtF(t.close_t) : "עדיין פתוחה"}</span>`)}</div>`;
   $("vChart").onclick = () => chartPage();
-  if ($("tnTxt")) tradeNotes(t);
   $("tradePg").classList.add("on"); $("tradePg").scrollTop = 0;
 }
 $("tpBack").onclick = () => { $("tradePg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } };
@@ -1495,13 +1490,22 @@ $("tpBack").onclick = () => { $("tradePg").classList.remove("on"); if (TN.rec) {
 /* the user's note on a trade (13.11.2026): spoken (the phone's speech-to-text, Hebrew) or typed, kept by the manager
    with the trade and read by the agent of the bot that made it */
 const TN = {rec: null, voice: false};
-function tradeNotes(t) {
-  const bot = UI.cur, id = String(t.id || t.ticket || ""), txt = $("tnTxt"), msg = $("tnMsg");
-  const show = ns => { $("tnList").innerHTML = (ns || []).slice().reverse().map(n => `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line,#E6E9EE)">
+const notesHtml = p => getRole() === "viewer" ? "" : `<div class="h4">🎙 הערה לסוכן של הבוט</div><div class="card wt">
+      <textarea id="${p}Txt" rows="3" placeholder="לחץ על המיקרופון ודבר, או כתוב: הייתי לוקח / לא לוקח, איפה התפספס, הייתי יוצא מוקדם, חלקיות כאן…"></textarea>
+      <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="${p}Mic">🎙 הקלטה</button><button class="btn" id="${p}Save">שמור הערה</button></div>
+      <div class="msg mut" id="${p}Msg"></div><div id="${p}List"></div></div>`;
+// a watch record (bots 5-6) as the trade the note is about
+const recTrade = r => ({id: r.id, symbol: r.symbol, combo: r.combo || r.tal || r.trk, side: r.dir > 0 ? "buy" : "sell", open_t: r.time, close_t: r.exit_time,
+  open_px: r.entry, close_px: r.exit, sl0: r.stop, tp: r.target, reason: r.reason, net: r.pnl});
+function tradeNotes(t, p = "tn", botName) {
+  if (!$(p + "Txt")) return;
+  if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; }
+  const bot = botName || UI.cur, id = String(t.id || t.ticket || ""), txt = $(p + "Txt"), msg = $(p + "Msg");
+  const show = ns => { $(p + "List").innerHTML = (ns || []).slice().reverse().map(n => `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line,#E6E9EE)">
       <div style="white-space:pre-wrap">${esc(n.text)}</div><div class="mut" style="font-size:12px">${n.voice ? "🎙 " : ""}${dtF(n.at)}</div></div>`).join(""); };
   if (mgr && mgrInfo) act("/trade/notes", {bot, id}).then(j => show(j.notes)).catch(() => {});
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  $("tnMic").onclick = () => {
+  $(p + "Mic").onclick = () => {
     if (TN.rec) { try { TN.rec.stop(); } catch (e) {} return; }
     if (!SR) { msg.textContent = "הדפדפן הזה לא תומך בהקלטה. אפשר ללחוץ על המיקרופון במקלדת של הטלפון ולדבר."; txt.focus(); return; }
     const r = new SR(); r.lang = "he-IL"; r.continuous = true; r.interimResults = true;
@@ -1510,10 +1514,10 @@ function tradeNotes(t) {
     r.onresult = e => { let inter = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const x = e.results[i];
       if (x.isFinal) fin += x[0].transcript + " "; else inter += x[0].transcript; } txt.value = before + fin + inter; };
     r.onerror = e => { msg.textContent = e.error === "not-allowed" ? "צריך לאשר גישה למיקרופון." : "ההקלטה נעצרה."; };
-    r.onend = () => { TN.rec = null; $("tnMic").textContent = "🎙 הקלטה"; };
-    TN.rec = r; TN.voice = true; r.start(); $("tnMic").textContent = "⏹ עצור"; msg.textContent = "מקליט… דבר עכשיו";
+    r.onend = () => { TN.rec = null; $(p + "Mic").textContent = "🎙 הקלטה"; };
+    TN.rec = r; TN.voice = true; r.start(); $(p + "Mic").textContent = "⏹ עצור"; msg.textContent = "מקליט… דבר עכשיו";
   };
-  $("tnSave").onclick = async () => {
+  $(p + "Save").onclick = async () => {
     if (TN.rec) { try { TN.rec.stop(); } catch (e) {} }
     const text = txt.value.trim();
     if (!text) { msg.textContent = "ההערה ריקה."; return; }
@@ -1548,6 +1552,7 @@ async function chartPage(tf) {
   tf = tf || defaultTf(t);
   $("chartPg").classList.add("on");
   $("cpTitle").textContent = `${t.symbol} · ${t.side === "buy" ? "קנייה" : "מכירה"}`;
+  if ($("cpNotes").dataset.id !== String(t.id || t.ticket)) { $("cpNotes").innerHTML = notesHtml("cn"); $("cpNotes").dataset.id = String(t.id || t.ticket); tradeNotes(t, "cn"); }
   segment("tfSeg", Object.keys(TFSEC).map(k => [k, TFLBL[k]]), tf, k => chartPage(k));
   $("tfSeg").className = "tfs";
   const box = $("tvBox"), msg = $("cpMsg");
@@ -2104,7 +2109,8 @@ async function wcOpen(id) {
   $("wcPg").classList.add("on");
   $("wcTitle").textContent = `${t.symbol} · ${t.dir > 0 ? "קנייה" : "מכירה"}`;
   $("wcBody").innerHTML = `<div class="mut" style="margin-bottom:6px">גרף 15 דקות: הדחף והכניסה</div><div class="card"><div class="wchart" id="wc15"></div></div>
-    <div class="mut" style="margin-bottom:6px">גרף דקה: כל המהלך מהדחף ועד אחרי היציאה, עם הכניסה, הסטופ והיעד (ירוק עד היעד, אדום עד הסטופ)</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>`;
+    <div class="mut" style="margin-bottom:6px">גרף דקה: כל המהלך מהדחף ועד אחרי היציאה, עם הכניסה, הסטופ והיעד (ירוק עד היעד, אדום עד הסטופ)</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>${notesHtml("wn")}`;
+  tradeNotes(recTrade(t), "wn", (WB.doc && WB.doc.bot) || UI.cur);
   WC.forEach(c => c.remove()); WC = [];
   const LW = await loadTV().catch(() => null);
   if (!LW) { $("wcMsg").textContent = "ספריית הגרפים לא נטענה. בדוק חיבור לאינטרנט."; return; }
@@ -2164,7 +2170,8 @@ async function wcTal(t) {
     t.exit_time ? `יציאה: ${RS[t.reason] || esc(t.reason || "")}${t.r != null ? ` (${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}R)` : ""}.` : (t.status === "open" ? "העסקה פתוחה." : "")].filter(Boolean);
   $("wcBody").innerHTML = `<div class="card" style="margin-bottom:10px">${why.map(x => `<p style="margin:3px 0">${x}</p>`).join("")}</div>
     <div class="mut" style="margin-bottom:6px">גרף ${TFHE[g.htf] || g.htf} (זיהוי): הדחף, נר 1 ונר 3, והגאפ שיוצא מהם</div><div class="card"><div class="wchart" id="wc15"></div></div>
-    <div class="mut" style="margin-bottom:6px">גרף ${TFHE[g.ltf] || g.ltf} (כניסה): הגאפ, הכניסה, הסטופ והיעד מהסווינגים שקבעו אותם, עד היציאה</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>`;
+    <div class="mut" style="margin-bottom:6px">גרף ${TFHE[g.ltf] || g.ltf} (כניסה): הגאפ, הכניסה, הסטופ והיעד מהסווינגים שקבעו אותם, עד היציאה</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>${notesHtml("wn")}`;
+  tradeNotes(recTrade(t), "wn", (WB.doc && WB.doc.bot) || UI.cur);
   WC.forEach(c => c.remove()); WC = [];
   const LW = await loadTV().catch(() => null);
   if (!LW) { $("wcMsg").textContent = "ספריית הגרפים לא נטענה. בדוק חיבור לאינטרנט."; return; }
@@ -2228,7 +2235,7 @@ async function wcTal(t) {
   B.ch.timeScale().fitContent();
 }
 $("wbBack").onclick = () => $("wbPg").classList.remove("on");
-$("wcBack").onclick = () => { $("wcPg").classList.remove("on"); WC.forEach(c => c.remove()); WC = []; };
+$("wcBack").onclick = () => { $("wcPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } WC.forEach(c => c.remove()); WC = []; };
 $("bpBack").onclick = () => $("botsPg").classList.remove("on");
 // "how Tal thinks" (data/agents/tal_thinking.md): what the manager and the agents read before every decision
 // daily loss reports (agents/loss_review.py): every losing day of every bot - what lost, why, what is done about it

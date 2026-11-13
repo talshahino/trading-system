@@ -108,6 +108,10 @@ RISK_TAL5 = 0.004 * 0.7
 # {"pair": [high, low], "cfg": {...}}}, risk per track in "risk"), so an approved card of the gap method is built by
 # agents/builder.py at once, like bot 6. A file that is missing or odd keeps the tracks in the code.
 TAL5_RISK = {}
+# an instrument's own gap track (13.11.2026, agents/tal_wide.py: the method on every FTMO forex pair, the metals, the
+# other indices): "symbols" in its "tal_tracks" entry - {track: [symbol]}; a track without it trades TAL5_SYMBOLS.
+# Such an instrument is added to SYMBOLS (and EXTRA: the old tracks' results on it stay out of their summary).
+TAL5_SYMS = {}
 TAL5_ONE = [False]     # "tal_one_per_side": a track does not enter a symbol / direction another track holds (off until approved)
 TAL5_MAXDIR = [0]      # "tal_max_dir" (13.11.2026): at most K counted trades open in one direction on all the indices together (0 = off until approved)
 TAL5_SCALE = [1.0]      # "tal_risk_scale" (13.11.2026 night): one factor on every gap track's risk (1 until approved)
@@ -169,14 +173,29 @@ def load_settings():
                 if isinstance(tt, dict) and tt:
                     pairs_ = {(p_[0], p_[1]): tuple(p_) for p_ in TG.PAIRS}
                     new_ = {}
+                    syms_ = {}
                     for trk, v in tt.items():
                         pr = pairs_.get(tuple((v or {}).get("pair") or [])[:2])
                         cf = (v or {}).get("cfg")
                         if pr and isinstance(cf, dict) and all(k in cf for k in ("GBODY", "MIN_GAP", "SW", "MIN_RR", "EXPIRY", "PROT")):
+                            sy = (v or {}).get("symbols")
+                            if sy is not None:
+                                sy = [x for x in sy if isinstance(x, str) and x in U.ALL] if isinstance(sy, list) else []
+                                if not sy:
+                                    continue                  # a track for instruments we do not know: not traded
+                                syms_[str(trk)] = sy
                             new_[str(trk)] = (pr, dict(cf))
                     if new_:
                         TAL5.clear()
                         TAL5.update(new_)
+                        TAL5_SYMS.clear()
+                        TAL5_SYMS.update(syms_)
+                        for sy in {x for v_ in syms_.values() for x in v_}:
+                            if sy not in SYMBOLS:
+                                code_ = U.ALL[sy][0]
+                                cand_ = list(dict.fromkeys([code_.replace("/", ""), code_, sy]))
+                                SYMBOLS[sy] = cand_
+                                EXTRA[sy] = cand_
                 TAL5_ONE[0] = bool(d.get("tal_one_per_side", False))
                 try:
                     TAL5_MAXDIR[0] = max(0, int(d.get("tal_max_dir", 0) or 0))
@@ -804,10 +823,12 @@ def main():
                     finally:
                         for k_, v_ in keep4.items():
                             setattr(CORE, k_, v_)
-                if name in TAL5_SYMBOLS:
+                if name in TAL5_SYMBOLS or any(name in v_ for v_ in TAL5_SYMS.values()):
                     D5 = TG.Data(name, df[["o", "h", "l", "c"]], np.asarray(cst, float), np.asarray(stop_at, bool),
-                                 np.asarray(noent, bool), 2.0, cal.cal_masks(df, name))
+                                 np.asarray(noent, bool), TG.stop_buffer(name), cal.cal_masks(df, name))
                     for trk, (pair, cfg) in TAL5.items():
+                        if name not in (TAL5_SYMS.get(trk) or TAL5_SYMBOLS):
+                            continue                      # an instrument's own track / the indices' tracks
                         for x in TG.live_trades(D5, pair, cfg):
                             g_ = x.get("gap") or [x["entry"], x["entry"]]
                             res.append({"symbol": name, "dir": x["dir"], "status": x["status"], "entry": x["entry"],
@@ -1001,7 +1022,7 @@ def main():
         counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
         state.update({"account": "וירטואלי · שיטת הגאפ של טל", "server": f"צפייה בלבד · בלי כסף · סיכון {RISK_TAL5 * 100:.2f}% לעסקה", "initial": acc["initial"], "risk": RISK_TAL5,
                       "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
-                      "halted_until": None, "combos": [f"TAL|{tal5_tf(k)}|{n}" for k in TAL5 for n in TAL5_SYMBOLS], "started": acc["started"], "withdrawals": [],
+                      "halted_until": None, "combos": [f"TAL|{tal5_tf(k)}|{n}" for k in TAL5 for n in (TAL5_SYMS.get(k) or TAL5_SYMBOLS)], "started": acc["started"], "withdrawals": [],
                       "equity_curve": ec, "lows": {},
                       "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                                      "combo": combo(t["symbol"], t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],

@@ -25,6 +25,10 @@ CURRENCIES = {"EURUSD": ["EUR", "USD"], "GBPUSD": ["GBP", "USD"], "USDJPY": ["US
               "WTI": ["USD", "CAD"], "US30": ["USD"], "US100": ["USD"], "US500": ["USD"],
               "GER40": ["EUR"], "UK100": ["GBP"], "JP225": ["JPY"], "BRENT": ["USD"], "NATGAS": ["USD"],
               "COPPER": ["USD", "CNY"], "BTCUSD": ["USD"], "ETHUSD": ["USD"]}
+# the other forex pairs of bot 5's gap method (13.11.2026): their two currencies (only names not listed above)
+from agents.ftmo_universe import FX_MORE as _FXM  # noqa: E402
+for _k, _v in _FXM.items():
+    CURRENCIES.setdefault(_k, list(_v[2]))
 
 
 def _download():

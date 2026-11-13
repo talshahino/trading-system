@@ -79,6 +79,18 @@ RERUN_DAYS = 14
 RESULTS = Path("data/agents/strategies/tal_gap_results.json")
 
 
+def stop_buffer(sym):
+    """The stop's 2 pips / points beyond the 2nd swing (tal_gap.md): an index 2 points (as since 11.11); forex, metals
+    and the dollar index 2 pips - 10 x FTMO's last digit (EURUSD 0.0002, USDJPY 0.02, gold 0.2, silver 0.02)."""
+    try:
+        from agents import ftmo_universe as U
+        if U.CLASS.get(sym) == "index" and sym != "DXY":
+            return 2.0
+        return 2 * 10.0 ** -(int(U.spec(sym)["digits"]) - 1)
+    except Exception:  # noqa: BLE001 - an unknown name: the indices' rule
+        return 2.0
+
+
 def pair_name(p):
     return f"{p[0]}/{p[1]}"
 

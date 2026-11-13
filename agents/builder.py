@@ -93,6 +93,16 @@ def buildable(c):
         from agents import tal_gap as TG
         if any(p[0] == hi and p[1] == lo for p in TG.PAIRS):
             return {"bot": bot, "combo": f"TAL|{ch['pair']}", "family": "tal5", "pair": [hi, lo], "cfg": ch["cfg"]}
+    # bot 5 (13.11.2026, agents/tal_wide.py): the gap method on one more instrument (a forex pair, a metal, another
+    # index) - its own track, only for that instrument
+    if bot == "bot5" and c.get("kind") in ("new", "improve") and ch.get("method") == "tal_gap_sym" and ch.get("pair") \
+            and ch.get("sym") and isinstance(ch.get("cfg"), dict):
+        hi, lo = ch["pair"].split("/")
+        from agents import tal_gap as TG
+        from agents import ftmo_universe as U
+        if any(p[0] == hi and p[1] == lo for p in TG.PAIRS) and ch["sym"] in U.ALL:
+            return {"bot": bot, "combo": f"TAL|{ch['pair']}|{ch['sym']}", "family": "tal5sym", "pair": [hi, lo],
+                    "sym": ch["sym"], "cfg": ch["cfg"]}
     if bot == "bot6" and c.get("kind") in ("new", "improve") and ch.get("method") == "tal_gap" and ch.get("pair") and ch.get("cfg"):
         hi, lo = ch["pair"].split("/")
         from agents import tal_gap as TG
@@ -145,6 +155,8 @@ def describe(b):
         if b["key"] == "tal_hours_off":
             return ("שיטת הגאפ: בלי כניסות בשעות " + ", ".join(f"{x:02d}:00" for x in b["to"]) + " (UTC)") if b["to"] else "שיטת הגאפ: בלי מסנן שעות"
         return "שיטת הגאפ: מסלול לא נכנס למכשיר ולכיוון שמסלול אחר כבר מחזיק" if b["to"] else "שיטת הגאפ: בלי הכלל נגד סיכון כפול"
+    if b["family"] == "tal5sym":
+        return f"שיטת הגאפ על {b['sym']}, מסלול {b['pair'][0]} / {b['pair'][1]}: " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())
     if b["family"] == "tal5":
         return f"שיטת הגאפ, מסלול {b['pair'][0]} / {b['pair'][1]}: " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())
     if b["family"] in ("tal", "tal6"):
@@ -197,9 +209,23 @@ def apply(cfg, b, card_id):
         cfg.setdefault("changes", {})[card_id] = {"family": "flag", "key": b["key"], "before": cfg.get(b["key"], "__none__")}
         cfg[b["key"]] = b["to"]
         return
+    if b["family"] == "tal5sym":
+        tt, rk = cfg.setdefault("tal_tracks", {}), cfg.setdefault("risk", {})
+        trk = "t" + b["pair"][0].rstrip("m") + "_" + b["pair"][1].rstrip("m") + "@" + b["sym"]
+        new_trk = trk not in tt
+        cfg.setdefault("changes", {})[card_id] = {"family": "tal5", "track": trk,
+                                                  "before": "__none__" if new_trk else json.loads(json.dumps(tt[trk])),
+                                                  "risk_before": rk.get(trk, "__none__")}
+        tt[trk] = {"pair": list(b["pair"]), "cfg": dict(b["cfg"]), "symbols": [b["sym"]]}
+        if new_trk:
+            # the gap tracks' usual risk now (the most common one: a track cut to half is not the bot's risk -
+            # principle 8, a new strategy enters at the bot's risk)
+            others = [round(float(v), 6) for k, v in rk.items() if k in tt and k != trk and float(v or 0) > 0]
+            rk[trk] = max(set(others), key=lambda x: (others.count(x), x)) if others else 0.0028
+        return
     if b["family"] == "tal5":
         tt = cfg.setdefault("tal_tracks", {})
-        trk = next((k for k, v in tt.items() if list(v.get("pair") or [])[:2] == b["pair"]), None)
+        trk = next((k for k, v in tt.items() if list(v.get("pair") or [])[:2] == b["pair"] and not v.get("symbols")), None)
         new_trk = trk is None
         if new_trk:
             trk = "t" + b["pair"][0].rstrip("m") + "_" + b["pair"][1].rstrip("m")

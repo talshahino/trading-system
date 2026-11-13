@@ -32,7 +32,6 @@ from agents import agentkit as K
 from agents import repo_io as RIO
 from agents import own_gaps as OG
 from agents import tal_gap as TG
-from agents import tal_wide as TW
 
 BOT = "bot5"
 OUT = Path("reports/agents/bot5")
@@ -116,7 +115,6 @@ def prep(s, end):
 # Tal's gap method on bot 5's world (12.11.2026: the engine's API is the one bot 6 uses - TG.run / summarize /
 # write_results / cards; the old TG.experiments call failed every night, so bot 5 had no results)
 TAL_DIR = OUT / "tal"
-TAL_WIDE_DIR = OUT / "tal_wide"      # the method on every FTMO forex pair, the metals, the other indices (13.11.2026)
 
 
 TREND_MODES = ("day", "up20")
@@ -241,29 +239,6 @@ def trend_fix(tidx, pf, rule_cards):
                               "tried": ["נמצא תיקון במסלולים / בכללי הבוט השלם - כרטיס"]}
     FIX_FILE.write_text(json.dumps(fx, ensure_ascii=False, indent=1), encoding="utf-8")
     return out, res
-
-
-def wide_chosen():
-    """{pair: [the indices' chosen cfg, the cfg bot 5 runs on that pair]} - phase 1 of agents/tal_wide.py."""
-    out = {}
-    try:
-        doc = json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot5") or {}
-        for pn, x in (doc.get("pairs") or {}).items():
-            if (x.get("chosen") or {}).get("cfg"):
-                out.setdefault(pn, []).append(x["chosen"]["cfg"])
-    except Exception:  # noqa: BLE001
-        pass
-    try:
-        s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
-        for v in (s5.get("tal_tracks") or {}).values():
-            if not v.get("symbols"):
-                out.setdefault(f"{v['pair'][0]}/{v['pair'][1]}", []).append(v["cfg"])
-    except Exception:  # noqa: BLE001
-        pass
-    return out
-TAL_WORLD = {"symbols": TAL_SYMBOLS, "costs": "FTMO's recorded 1-minute spread + commission",
-             "sessions": "FTMO Standard: market breaks and session ends closed, news masks", "stop_buffer": "2 points",
-             "split": "train to 2025-12-31, unseen 2026"}
 
 
 def tal_load(s):
@@ -411,17 +386,10 @@ def main():
     # only bot 5's own run: bot 6 imports this module (BOT = "bot6") and runs the method on its own world first -
     # without this guard bot 5's world was written into bot 6's results (12.11.2026)
     if tal_left > 60 and BOT == "bot5" and not only:
-        # the user's task of 13.11.2026 (high priority): the method on every FTMO forex pair, metals, other indices -
-        # half of what is left, the indices' never-ending search the rest
         try:
             trend_runs(tal_left * 0.25)             # the fix of the 12.11 loss against exactly what runs, first
         except Exception as e:  # noqa: BLE001
             print("tal trend runs failed:", e)
-        tal_left = a.minutes * 60 - (time.time() - t_start)
-        try:
-            TW.run(tal_load, TAL_WIDE_DIR, tal_left * 0.5, wide_chosen())
-        except Exception as e:  # noqa: BLE001
-            print("tal wide experiments failed:", e)
         tal_left = a.minutes * 60 - (time.time() - t_start)
     if tal_left > 60 and BOT == "bot5":
         try:
@@ -490,7 +458,7 @@ def main():
         # what bot 5 trades now (live/bots/bot5.json "tal_tracks", 13.11.2026): a card on a running pair carries it as
         # the baseline, so a version that earns less on 2026 in total is not approved over it
         s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
-        # an instrument's own track ("symbols", agents/tal_wide.py) is not the indices' track of that pair
+        # an instrument's own track ("symbols", agent_bot5.tal_x) is not the indices' track of that pair
         live5 = {f"{v['pair'][0]}/{v['pair'][1]}": v["cfg"] for v in (s5.get("tal_tracks") or {}).values() if not v.get("symbols")}
         rk5 = [float(s5["risk"][k]) for k in (s5.get("tal_tracks") or {}) if k in (s5.get("risk") or {})]
         cards += TG.cards(BOT, pairs, doc.get("bot6"), "בוט 6", risk_pct=round(min(rk5) * 100, 3) if rk5 else 0.4, live=live5)
@@ -505,23 +473,6 @@ def main():
                                                        for k, v in (s5.get("tal_tracks") or {}).items()
                                                        if float(rkd.get(k, 0.0028) or 0) > 0 and not v.get("symbols")},
                           risk={k: float(rkd.get(k, 0.0028)) * cur_sc for k in (s5.get("tal_tracks") or {})})
-        # every FTMO forex pair, metals, the other indices (agents/tal_wide.py): per instrument and pair
-        try:
-            widx = {f.stem: json.loads(f.read_text()) for f in (TAL_WIDE_DIR / "idx").glob("*.json")}
-            if widx:
-                summ = TW.summarize(widx, TAL_WIDE_DIR)
-                try:
-                    wst = json.loads((TAL_WIDE_DIR / TW.STATUS).read_text())
-                except Exception:  # noqa: BLE001
-                    wst = {}
-                doc["bot5"]["wide"] = {"status": wst, "table": TW.table(summ), "pairs": summ}
-                live_sym = {(sy, f"{v['pair'][0]}/{v['pair'][1]}") for v in (s5.get("tal_tracks") or {}).values()
-                            for sy in (v.get("symbols") or [])}
-                rk_ = [float(s5["risk"][k]) for k in (s5.get("tal_tracks") or {}) if float((s5.get("risk") or {}).get(k, 0) or 0) > 0]
-                cards += TW.cards(BOT, summ, round(min(rk_) * 100, 3) if rk_ else 0.28, len(widx), live_sym)
-                TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
-        except Exception as e:  # noqa: BLE001
-            print("tal wide summary failed:", e)
         if pf:
             doc["bot5"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")

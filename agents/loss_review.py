@@ -308,7 +308,7 @@ def tal5_track(bot, combo, cfg):
     for trk, v in (cfg.get("tal_tracks") or {}).items():
         pr = list(v.get("pair") or [])[:2]
         if v.get("symbols") and sym not in v["symbols"]:
-            continue                                     # an instrument's own track (agents/tal_wide.py)
+            continue                                     # an instrument's own track (agent_bot5.tal_x)
         if len(pr) == 2 and (_TAL5_FIXED.get(trk) or f"{_TF_COMBO.get(pr[0], pr[0])}{pr[1]}") == mid:
             return trk, f"{pr[0]}/{pr[1]}"
     return None

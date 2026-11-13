@@ -187,6 +187,28 @@ def check(bot, card):
                    f"ירידה {before['max_dd']:.2f}% → {after['max_dd']:.2f}%) גם בסיכון מוקטן"}
 
 
+def cut_hurts(bot, combo, cur, val):
+    """The bot as a whole comes first (user, 12.11.2026): a risk cut that leaves the whole bot replayed on 2026 riskier
+    (deeper fall, worse day or more days near the limit) is no risk cut - the strategy's trades offset the others' bad
+    days (13.11.2026: FR01 EURUSD bot 4 at the minimum lot -> the bot's fall on 2026 9.34% instead of 7.96%, beyond the
+    bot's 9%). Hebrew reason when it hurts, else None (also None when the strategy has no stored 2026 trades)."""
+    try:
+        cfg = bot_cfg(bot)
+        book, _ = book_now(bot, cfg)
+        if combo not in book or val >= cur:
+            return None
+        risk = bot_risk(bot, cfg)
+        tr = book[combo][0]
+        before = replay({**book, combo: (tr, cur)}, risk)
+        after = replay({**book, combo: (tr, val)}, risk)
+    except Exception:  # noqa: BLE001
+        return None
+    if riskier(after, before):
+        return (f"בבוט השלם על 2026 ההורדה מוסיפה סיכון (ירידה מהשיא {before['max_dd']:.2f}% → {after['max_dd']:.2f}%, "
+                f"יום גרוע {before['worst_day']:.2f}% → {after['worst_day']:.2f}%) - העסקאות שלה מקזזות ימים רעים של אחרות")
+    return None
+
+
 def side_conflicts(bot, cfg=None):
     """A pattern in the bots' own trades (13.11.2026): a trade opened while ANOTHER strategy of the same bot holds the
     opposite side of the same instrument. On the demo (bot 1, USDJPY 12.11: SE02 buy and TV11 sell both stopped within

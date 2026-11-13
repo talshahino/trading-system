@@ -127,6 +127,11 @@ def run(states=None, force=False):
                     e["at"] = at
                     _write(ROOT / "data" / "agents" / "priority.json", pr)
                 continue
+            if target < cur and (hurt := PC.cut_hurts(bot, c, cur, target)):
+                # the whole bot first (user, 12.11.2026): a cut that leaves the bot riskier on 2026 is held
+                out["combos"][c] = {"base": base, "now": cur, "target": target, "edge0": m0, "edge": m, "parts": parts,
+                                    "held": hurt}
+                continue
             out["combos"][c] = {"base": base, "now": cur, "target": target, "edge0": m0, "edge": m, "parts": parts}
             if abs(target - cur) < 0.01:
                 mine[c] = {"base": base, "last": cur}

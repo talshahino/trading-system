@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import subprocess
 from pathlib import Path
 
@@ -63,6 +64,19 @@ def maybe_luck(c):
         return False
     gain = u["mean"] - (b.get("mean") or 0.0) if c.get("kind") == "improve" and b else u["mean"]
     return gain < STAR_GAIN or (u.get("eff_n") or 0) < STAR_N
+
+
+def star_floor(c, cur_m):
+    """The lowest "maybe luck" risk that still keeps the strategy's 2026 total at least what runs now (THE GOAL, user,
+    12.11.2026: the total, not R a trade). Manager, 13.11.2026 night: TV29 US30 (+17.0R vs +14.8R in 2026) and TV33 MSTR
+    (+16.5R vs +14.6R) in bot 1 went in at x0.7 - 0.7 x 17.0 = 11.9R, less than the 14.8R x1.05 they made before the
+    change; the discount turned a bigger total into a smaller one. None when it does not apply."""
+    if c.get("kind") != "improve":
+        return None
+    tn, tb = _total(c.get("unseen")), _total(c.get("baseline"))
+    if not tn or not tb or tn <= 0 or tb <= 0:
+        return None
+    return min(cur_m, math.ceil(cur_m * tb / tn * 100) / 100)
 
 
 def tried_and_failed(bot, combo):
@@ -368,6 +382,10 @@ def decide(bots, now=None):
                 star = maybe_luck(c)
                 if star:
                     mult = min(mult or 1.0, STAR_MULT)
+                    scombo = (c.get("change") or {}).get("combo")
+                    fl = star_floor(c, float(((cur_risk.get(bot) or {}).get("mult") or {}).get(scombo, 1.0))) if scombo else None
+                    if fl is not None and fl > mult and not (whole and whole.get("mult") and whole["mult"] < 1):
+                        mult = fl                # not below what keeps the 2026 total at least what runs now
                     why += f" · ⭐ אולי מזל: נכנס בסיכון ×{mult:g} ובמעקב מוקפד"
             d = add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
                      "title": ("⭐ " if star else "") + c["title"], "decision": "approved", "why": why, "effect": what,
@@ -412,6 +430,32 @@ def decide(bots, now=None):
                  "decision": "approved", "why": why, "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "card_decision": did,
                  "star": star, "action": {"bot": bot, "combo": combo, "kind": "mult", "value": value,
                                           "prev": None if cur_m == 1.0 else cur_m}})
+    # 1b) a "maybe luck" risk already applied under the total floor (star_floor, manager 13.11.2026 night) is raised to
+    # the floor once, linked to its card like the star's own risk (an undo of the card brings the value before back)
+    cards_by_id = {c["id"]: c for b in bots.values() for c in b.get("cards", [])}
+    for o in list(old.values()):
+        a = o.get("action") or {}
+        if not (o.get("type") == "risk" and o.get("star") and o.get("decision") == "approved" and a.get("kind") == "mult"
+                and o.get("card_decision") and o["id"] not in uundo and o["card_decision"] not in uundo):
+            continue
+        cd = old.get(o["card_decision"]) or {}
+        c = cards_by_id.get(cd.get("card"))
+        if not c or cd.get("decision") != "approved":
+            continue
+        cur_v = ((cur_risk.get(o["bot"]) or {}).get("mult") or {}).get(a["combo"])
+        if cur_v is None or abs(float(cur_v) - float(a["value"])) > 1e-9:
+            continue                                            # changed since (by the watch, a later card or the user)
+        fl = star_floor(c, float(a.get("prev") or 1.0))
+        if fl is None or fl <= float(a["value"]) + 1e-9:
+            continue
+        add({"id": _did("starfloor", o["id"]), "bot": o["bot"], "type": "risk", "kind": "mult", "combo": a["combo"],
+             "title": f"{a['combo']}: סיכון ×{fl:g} במקום ×{float(a['value']):g}",
+             "decision": "approved", "card_decision": o["card_decision"], "star": True,
+             "why": (f"ב־2026 השינוי הרוויח {_total(c.get('unseen')):+.1f}R מול {_total(c.get('baseline')):+.1f}R לפניו, אבל "
+                     f"בסיכון ×{float(a['value']):g} הסך הכולל יוצא נמוך ממה שהיה. ×{fl:g} הוא הסיכון הנמוך ביותר ששומר "
+                     "על הסך הכולל של היום - ועדיין זהיר כי אולי מזל"),
+             "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+             "action": {"bot": o["bot"], "combo": a["combo"], "kind": "mult", "value": fl, "prev": float(a["value"])}})
     # 2) the bot agents' risk / removal recommendations (bots 1-4)
     try:
         risk = json.loads((ROOT / "reports/trade_review/risk.json").read_text(encoding="utf-8"))

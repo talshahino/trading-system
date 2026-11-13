@@ -518,6 +518,13 @@ def _smart(st, log, t0):
         # and without an error - an exception caught and printed inside the agent is invisible from here otherwise)
         st.setdefault("agent_tail", {})[name] = _tail(f"agent_{name}.log")
         st.pop("run", None)
+        # the daily whole-bot replay also inside a round (manager, 13.11.2026: every code install restarts the manager,
+        # the round never reached its end and reports/agents/<bot>/portfolio.json stayed from 12.11 11:41 for 19 hours)
+        if time.time() - (_ts(st.get("portfolio_at")) or 0.0) >= 3 * 3600:
+            try:
+                _portfolio_check(st)
+            except Exception as e:  # noqa: BLE001
+                log(f"portfolio check failed: {e}")
         st["smart_minutes"], st["agent_errors"] = mins_all, errs
         try:
             _publish_changes(st, before, "agent", f"Agents on the bots' computer: {name} smart layer")
@@ -526,11 +533,17 @@ def _smart(st, log, t0):
             errs.append(f"{name}: publishing failed: {e}"[:300])     # shown in host.json on the next publish
             st["agent_errors"] = errs
     before = snapshot()
-    run(st, ["-m", "agents.portfolio_check"], timeout=600, logname="portfolio_check.log")   # the whole bots, as they are
+    _portfolio_check(st)                                 # the whole bots, as they are
     host_doc(st, "smart")                                # stamps smart_at (the manager / builder: the continuous layer)
     st["last_error"], st["errors_in_row"] = None, 0
     n = _publish_changes(st, before, "smart", "Agents on the bots' computer: smart layer")
     log(f"agents (smart layer) done in {time.time() - t0:.0f}s, {n} files published, {len(errs)} agents failed")
+
+
+def _portfolio_check(st):
+    run(st, ["-m", "agents.portfolio_check"], timeout=600, logname="portfolio_check.log")
+    st["portfolio_at"] = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
+    _save(st)
 
 
 def _tail(logname):

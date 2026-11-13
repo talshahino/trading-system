@@ -164,8 +164,21 @@
    {
     "combo": "SS07|15Min|NVDA",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true
+    "fixes": [
+     {
+      "what": "SS07|15Min|NVDA: סיכון ×1 ← ×0.5 (מפסידה ב־2026 במחירים האמיתיים)",
+      "decision": "748cf67395f0",
+      "at": "2026-11-13T04:59:21+00:00",
+      "effect_month_pct": 0.13
+     },
+     {
+      "what": "סיכון ×0.5",
+      "decision": "cf599e9da7c2",
+      "at": "2026-11-13T04:59:21+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false
    },
    {
     "combo": "SS01|5Min|WMT",
@@ -194,10 +207,9 @@
    }
   ],
   "open": [
-   "SS07|15Min|NVDA",
    "SS01|5Min|WMT"
   ],
-  "total_month_pct": 0.0,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין"
+  "total_month_pct": 0.13,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
  }
 }

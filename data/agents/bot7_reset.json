@@ -1,5 +1,5 @@
 {
- "fp": "042966a0b5af",
+ "fp": "b24e22fc54f5",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -53,138 +53,72 @@
    "SC001|1Min|JP225"
   ],
   "plans": {
-   "EV01|5Min|AUDUSD": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|EURJPY": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|EURUSD": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|GBPJPY": {
-    "risk_mult": 0.5
-   },
    "EV01|5Min|GBPUSD": {
-    "filter": "with_trend200",
-    "risk_mult": 0.5,
-    "risk_card": "450d85248b30"
-   },
-   "EV01|5Min|GER40": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|JP225": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|NZDUSD": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|UK100": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|US100": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|US30": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|US500": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|USDCAD": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|USDCHF": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|USDJPY": {
-    "risk_mult": 0.5
-   },
-   "EV01|5Min|XAUUSD": {
-    "risk_mult": 0.5
+    "filter": "with_trend200"
    },
    "EV03|5Min|AUDUSD": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|EURJPY": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|EURUSD": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|GBPJPY": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|GBPUSD": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|GER40": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|JP225": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|NZDUSD": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|UK100": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|US100": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|US30": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|US500": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|USDCAD": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|USDCHF": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|USDJPY": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
+    "limit": 0.5
    },
    "EV03|5Min|XAUUSD": {
     "target": 3.0,
-    "limit": 0.5,
-    "risk_mult": 0.7
-   },
-   "SC001|1Min|JP225": {
-    "risk_mult": 0.7
+    "limit": 0.5
    }
   },
   "agents/event_strategies.py": "9c84dab149ee",

@@ -312,9 +312,19 @@ FILT_HE = {"MAXC": lambda v: f"בלי עסקה שהעלות שלה מעל {int(v
                               "p50_50": "חצי החוצה בחצי הדרך ליעד וסטופ לכניסה (p50_50, הבקשה של טל)"}.get(v, f"EXIT {v}")}
 
 
-def _filt_variants(cfg):
+# LADDERED ENTRIES (the user's task of 13.11.2026, shared with bot 5 - tal_gap.LADDERS, the same in simulate and in
+# live_trades, which bot 6's account trades): 2 / 3 / 3m / 4 entries across the gap's box with the same total risk,
+# stop and target, the commission paid per entry. A group of its own, so the answer to the user's task is per ladder
+# and not hidden behind a filter that happened to be better on 2024-2025.
+LAD6 = (("LADDER", "2"), ("LADDER", "3"), ("LADDER", "3m"), ("LADDER", "4"))
+FILT_HE["LADDER"] = lambda v: {"2": "כניסה מדורגת: 2 כניסות לאורך הגאפ", "3": "כניסה מדורגת: 3 כניסות לאורך הגאפ",
+                               "3m": "כניסה מדורגת: 3 כניסות, יותר באמצע", "4": "כניסה מדורגת: 4 כניסות לאורך הגאפ"
+                               }.get(str(v), f"LADDER {v}") + f" (LADDER {v}, אותו סיכון כולל)"
+
+
+def _filt_variants(cfg, group=FILT6):
     c0 = TG._norm(dict(cfg))
-    return c0, [(k, v, TG._norm(dict(c0, **{k: v}))) for k, v in FILT6 if c0.get(k) != v]
+    return c0, [(k, v, TG._norm(dict(c0, **{k: v}))) for k, v in group if c0.get(k) != v]
 
 
 def filt_runs(idx, budget_s):
@@ -326,7 +336,7 @@ def filt_runs(idx, budget_s):
     want = []
     for pn, cfg in live_tracks().values():
         if pn in pairs:
-            c0, vs = _filt_variants(cfg)
+            c0, vs = _filt_variants(cfg, FILT6 + LAD6)
             want += [(pn, c0)] + [(pn, c) for _, _, c in vs]
     t0, done = time.time(), 0
     for sym in WORLD["symbols"]:
@@ -374,9 +384,9 @@ def _bot5_pool():
     return out
 
 
-def filt_cards(idx):
-    """Per running track: each FILT6 variant against its rules alone; chosen on 2024-2025; a card only if 2026 is better
-    in total, per trade and on the worst day. Returns (cards, results)."""
+def filt_cards(idx, group=FILT6):
+    """Per running track: each variant of the group (FILT6 / LAD6) against its rules alone; chosen on 2024-2025; a card
+    only if 2026 is better in total, per trade and on the worst day. Returns (cards, results)."""
     out, res = [], {}
     rk = {**FA.RISK}
     try:
@@ -385,7 +395,7 @@ def filt_cards(idx):
         pass
     b5 = _bot5_pool()
     for trk, (pn, cfg) in live_tracks().items():
-        c0, vs = _filt_variants(cfg)
+        c0, vs = _filt_variants(cfg, group)
         base = _t6(idx, pn, c0)
         if base is None:
             continue
@@ -415,7 +425,7 @@ def filt_cards(idx):
                           f"2026 (לא נראתה): סה\"כ {lv['unseen']:+.1f}R ← {x['unseen']:+.1f}R, {x['n_unseen']} עסקאות, "
                           f"{x['mean_unseen']:+.2f}R לעסקה (היום {lv['mean_unseen']:+.2f}R על {lv['n_unseen']}), היום הגרוע "
                           f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. בבוט 5: "
-                          f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}.",
+                          + (_b5_ladder() if k == "LADDER" else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
                           tested=len(vs), risk_pct=round(r_ * 100, 3), baseline=bs["unseen"],
                           neighbours={"values": [q for q in row if q != "live"], "share_positive": round(float(np.mean(
@@ -472,6 +482,131 @@ def ask_cards(idx):
                           detail={"world": "bot6", "by": "טל (הערה על עסקה, פעמיים, 13.11)", "ask": res[trk]},
                           change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
     return out, res
+
+
+def _b5_ladder():
+    """What bot 5's agent found for the laddered entries (its LADDER cards, 13.11.2026)."""
+    try:
+        cs = [c for nm in ("cards.json", "cards_notes.json", "cards_smart.json") if Path(f"reports/agents/bot5/{nm}").exists()
+              for c in json.loads(Path(f"reports/agents/bot5/{nm}").read_text(encoding="utf-8")).get("cards", [])
+              if "LADDER" in json.dumps(c.get("change") or {}) and c.get("kind") == "improve"]
+    except Exception:  # noqa: BLE001
+        cs = []
+    if not cs:
+        return "הכניסה המדורגת נבדקת על 6 המסלולים שלו, עוד אין כרטיס שיפור."
+    return "; ".join(f"{c['title'][:70]} ({(c.get('unseen') or {}).get('mean', 0):+.2f}R לעסקה ב־2026)" for c in cs[:3]) + "."
+
+
+# THE SHARED EXIT (the user's task of 13.11.2026, shared with bot 5 - tal_gap.trade_paths / shared_exit / shared_test):
+# bot 6 as it trades now (every gap track at risk > 0, its own risk, the same entries, each trade keeps its own stop and
+# target), every open trade closed at once when the open trades together reach the target (+0.5..2R of the open risk,
+# or +0.25..1% of the account, at least 2-3 open), against the bot as it is - with bot 6's own account (FTMO Futures:
+# 1.5% a day, 4.5% trailing, fut_lim). Chosen on 2024-2025 (more total %, no deeper fall), shown on 2026.
+SHARED6_DIR = TAL_DIR / "shared"
+
+
+def _shared6_live():
+    import hashlib
+    rk = {**FA.RISK}
+    try:
+        rk.update(json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8")).get("risk") or {})
+    except Exception:  # noqa: BLE001
+        pass
+    live = {k: (pn, TG._norm(dict(c))) for k, (pn, c) in live_tracks().items() if float(rk.get(k, FA.RISK_TAL) or 0) > 0}
+    risk = {k: float(rk.get(k, FA.RISK_TAL)) * 100 for k in live}
+    h = hashlib.sha1(json.dumps({k: [v[0], v[1], risk[k]] for k, v in sorted(live.items())}, sort_keys=True,
+                                default=str).encode()).hexdigest()[:10]
+    return h, live, risk
+
+
+def shared6_runs(budget_s):
+    import pickle
+    h, live, _ = _shared6_live()
+    if not live:
+        return 0
+    SHARED6_DIR.mkdir(parents=True, exist_ok=True)
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    t0, done = time.time(), 0
+    for sym in WORLD["symbols"]:
+        f = SHARED6_DIR / f"{h}_{sym}.pkl"
+        if f.exists() or time.time() - t0 > budget_s:
+            continue
+        D, gc = tal_load(sym), {}
+        if D is None:
+            print(f"tal shared exit (bot 6) {sym}: no data")
+            continue
+        rows = []
+        for trk, (pn, cfg) in live.items():
+            if pn not in pairs:
+                continue
+            keep = []
+            t = TG.simulate(D, pairs[pn], cfg, gc.setdefault(pn.split("/")[0], {}), keep=keep)
+            if len(keep) != len(t):                      # a laddered track keeps no path - the test would be wrong
+                print(f"tal shared exit (bot 6) {trk}: no minute paths ({len(keep)} of {len(t)})")
+                continue
+            for (tt, vv), x in zip(TG.trade_paths(D, keep), t.itertuples()):
+                rows.append({"trk": trk, "sym": sym, "time": x.time, "r": float(x.r), "mins": int(x.mins), "t": tt, "v": vv})
+        f.write_bytes(pickle.dumps(rows))
+        done += 1
+    print(f"tal shared exit (bot 6): {done} instruments run")
+    return done
+
+
+def shared6_cards():
+    """(cards, results) once the three indices' paths are there."""
+    import pickle
+    h, live, risk = _shared6_live()
+    if not live:
+        return [], {"state": "no tracks"}
+    miss = [sy for sy in WORLD["symbols"] if not (SHARED6_DIR / f"{h}_{sy}.pkl").exists()]
+    if miss:
+        return [], {"state": "running", "missing": miss}
+    rows = []
+    for sy in WORLD["symbols"]:
+        rows += pickle.loads((SHARED6_DIR / f"{h}_{sy}.pkl").read_bytes())
+    if not rows:
+        return [], {"state": "no trades"}
+    t = pd.DataFrame([{k: v for k, v in r.items() if k not in ("t", "v")} for r in rows])
+    t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
+    t["out"] = t["time"] + pd.to_timedelta(t["mins"].astype(float) + 1, unit="min")
+    order = np.argsort(t["time"].to_numpy(), kind="stable")
+    t = t.iloc[order].reset_index(drop=True)
+    items = [{"t": rows[i]["t"], "v": rows[i]["v"], "r": rows[i]["r"]} for i in order]
+    res = TG.shared_test(t, items, risk, lim=fut_lim())
+    res.update(state="done", tracks=len(live), instruments=len(WORLD["symbols"]), n=int(len(t)))
+    try:            # what bot 5's agent found (its shared-exit result in tal_gap_results.json or its card)
+        b5 = ((json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot5") or {}).get("shared_exit") or {})
+        b5t = ("בבוט 5: " + (f"נבחר {b5.get('chosen')}, " if b5.get("chosen") else "אף יעד לא עדיף ב־2024-2025, ")
+               + ("עדיף גם ב־2026" if b5.get("better") else "לא עדיף ב־2026")) if b5.get("state") == "done" else "בבוט 5 הבדיקה עוד רצה"
+    except Exception:  # noqa: BLE001
+        b5t = "בבוט 5 הבדיקה עוד רצה"
+    res["bot5"] = b5t
+    if not res["better"]:
+        return [], res
+    k = res["chosen"]
+    a, b = res["rows"]["now"], res["rows"][k]
+    mode, rest = ("r", k[1:]) if k.startswith("r") else ("pct", k[3:])
+    x, m = rest.split("_m")
+    what = f"+{x}R מהסיכון הפתוח" if mode == "r" else f"+{x}% מהחשבון"
+    ws = t["trk"].map(risk).fillna(0).to_numpy(float) / 100
+    u = t.copy()
+    u["r"] = [r_ for r_, _ in TG.shared_exit([dict(it, w=w_) for it, w_ in zip(items, ws)], mode, float(x), int(m))]
+    u["cost_r"], t["cost_r"] = 0.0, 0.0
+    st, bs = A.stats(u), A.stats(t)
+    card = K.card(
+        "bot6", "improve", f"בוט 6 · יציאה משותפת: לסגור את כל העסקאות הפתוחות ב־{what} (לפחות {m} פתוחות)",
+        f"הבקשה של טל מ־13.11. נבדק על בוט 6 כפי שהוא ({len(live)} מסלולים של שיטת הגאפ, 3 המדדים, הסיכון האמיתי, "
+        f"חשבון FTMO Futures: 1.5% ביום, 4.5% מהשיא), כל עסקה שומרת על הסטופ והיעד שלה. נבחר על 2024-2025 מתוך "
+        f"{len(TG.SHARED_VARIANTS)} יעדים (סה\"כ {a['train']['total_pct']:+.1f}% ← {b['train']['total_pct']:+.1f}%, ירידה "
+        f"{a['train']['max_fall_pct']:.1f}% ← {b['train']['max_fall_pct']:.1f}%). 2026 (לא נראתה): סה\"כ {a['unseen']['total_pct']:+.1f}% ← "
+        f"{b['unseen']['total_pct']:+.1f}%, היום הגרוע {a['unseen']['worst_day_pct']:+.2f}% ← {b['unseen']['worst_day_pct']:+.2f}%, "
+        f"ירידה {a['unseen']['max_fall_pct']:.1f}% ← {b['unseen']['max_fall_pct']:.1f}%. נסגרו מוקדם {b['closed_early_unseen']} "
+        f"עסקאות ב־2026. {b5t}. צריך קוד בבוט החי (live/watch_own.py, נבנה אחרי אישור).",
+        st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], baseline=bs["unseen"],
+        tested=len(TG.SHARED_VARIANTS), risk_pct=round(max(risk.values()), 3) if risk else None,
+        detail={"world": "bot6", "shared_exit": res},
+        change={"track": "tal_all", "knob": "SHARED_EXIT", "to": {"mode": mode, "x": float(x), "min_open": int(m)}, "code": True})
+    return [card], res
 
 
 def fut_lim():
@@ -594,6 +729,22 @@ def tal(budget_s):
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     except Exception as e:  # noqa: BLE001
         print(f"tal_gap filt cards failed: {e}")
+    try:            # laddered entries on what runs, head to head (the user's task, 13.11.2026)
+        lc, lres = filt_cards(idx, LAD6)
+        pcards += lc
+        if lres:
+            doc["bot6"]["ladder_fix"] = lres
+            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print(f"tal_gap ladder cards failed: {e}")
+    try:            # the shared exit on the whole bot (the user's task, 13.11.2026)
+        shared6_runs(budget_s * 0.3)
+        sc_, sres = shared6_cards()
+        pcards += sc_
+        doc["bot6"]["shared_exit"] = sres
+        TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print(f"tal_gap shared exit failed: {e}")
     try:            # the user's explicit request on the fast charts, head to head with full numbers (13.11.2026 night)
         ac, ares = ask_cards(idx)
         pcards += ac

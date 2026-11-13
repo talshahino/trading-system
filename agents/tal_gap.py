@@ -271,6 +271,25 @@ def exit_mode(cfg):
     return int(f) / 100, way(w)
 
 
+# (user, 13.11.2026: "find a way to pass most of them"): what kills the method on forex is the cost - spread +
+# commission as a share of the risk - and the quiet hours. MAXC = skip a trade whose cost is more than this share of
+# its risk; SESS = only entries in these UTC hours ("ln" London 07-16, "ny" 12-20, "lnny" 07-20). Off unless set.
+SESS_H = {"ln": (7, 16), "ny": (12, 20), "lnny": (7, 20)}
+
+
+def filt_ok(cfg, cost, risk, t_ns):
+    mc = cfg.get("MAXC")
+    if mc and cost / risk > float(mc):
+        return False
+    se = cfg.get("SESS")
+    if se and se in SESS_H:
+        h = pd.Timestamp(int(t_ns), tz="UTC").hour
+        a, b = SESS_H[se]
+        if not (a <= h < b):
+            return False
+    return True
+
+
 def tp_way(cfg):
     """EXIT "tp30" (user, 13.11.2026: "take 100% of the profit at 30% of the way to the target"): the target moves to
     30% of the way; None for every other EXIT."""
@@ -321,6 +340,8 @@ def simulate(D, pair, cfg, gcache):
         stop = s2 - d * D.buf
         risk = d * (px - stop)
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
+            continue
+        if not filt_ok(cfg, D.cost[f], risk, ns[f]):
             continue
         if tp_way(cfg):
             t2 = px + tp_way(cfg) * (t2 - px)
@@ -1061,6 +1082,9 @@ def live_trades(D, pair, cfg, gcache=None):
         risk = d * (px - stop)
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
             out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="rr"))
+            continue
+        if not filt_ok(cfg, D.cost[f], risk, ns[f]):
+            out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="filter"))
             continue
         if tp_way(cfg):
             t2 = px + tp_way(cfg) * (t2 - px)

@@ -86,8 +86,8 @@ def watched(decisions, undo, replies, cards):
         elif d.get("type") == "card":
             c = cards.get(d.get("card"))
             r = replies.get(d.get("card")) or {}
-            if not r.get("built") or d.get("kind") == "info":
-                continue                                  # not in the bot (yet), or not a change at all
+            if not r.get("built") or d.get("kind") in ("info", "remove"):
+                continue                                  # not in the bot (yet), not a change at all, or a removal
             # the card itself may have been replaced since (a new test) - then its combo from the title
             b = BLD.buildable({**c, "bot": d["bot"]}) if c else None
             if b and b["family"] in TRACKS:
@@ -123,6 +123,9 @@ def star_steps(d, c, combo, r, e, w, decisions, have, at, adds):
     """The "maybe luck" star (user, 12.11.2026): a small edge on few trades goes in at a lowered risk; once enough live
     trades are in, back to the full risk when it keeps winning, lower when it doesn't, out when it still loses."""
     from agents import autodecide as AD
+    if d.get("kind") not in ("new", "improve"):
+        return None                       # only a new strategy or an improvement can be "maybe luck" (13.11.2026:
+                                          # removal cards of SC002 ARM / FRA40 got a star's risk x0.49)
     star = d.get("star") or (c is not None and AD.maybe_luck(c))
     if not star:
         return None
@@ -234,6 +237,13 @@ def run(now=None):
                 reverts.append((d, luck, info))
                 w.update(reverted=at, why=luck)
         rows.append(w)
+    # a star step made on a card that is not a new strategy / improvement (a removal, 12.11.2026) is taken back
+    kind_of = {x["id"]: x.get("kind") for x in decisions}
+    for x in decisions:
+        if (x.get("star_of") and x.get("decision") == "approved" and x["id"] not in undo and not x.get("undone")
+                and kind_of.get(x["star_of"]) not in ("new", "improve") and _did("revert", x["id"]) not in have):
+            have.add(_did("revert", x["id"]))
+            reverts.append((x, "טעות בכלל של הכוכבית: היא הופעלה על כרטיס הסרה, לא על שיפור או אסטרטגיה חדשה", {}))
     for x in adds:
         decisions.insert(0, x)
         doc["new"] = list(doc.get("new") or []) + [x["id"]]

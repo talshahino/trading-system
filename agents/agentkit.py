@@ -85,6 +85,9 @@ def card(bot, kind, title, what, train, unseen, *, whole=None, halves_=None, nei
     return c
 
 
+NEW_MIN_TOTAL = 3.0       # R on 2026: the least a new strategy must add to the total
+
+
 def judge(c):
     """The manager's fixed rules. Returns (tier, reason in Hebrew). Gentle enough that proposals keep coming
     (user, 10.11.2026: 'some will come by luck, they will be lowered later by the live results')."""
@@ -104,6 +107,12 @@ def judge(c):
     if t.get("mean") is not None and (t.get("eff_n") or t.get("n") or 0) >= 10 and t["mean"] <= 0:
         return "rejected", (f"הפסיד בתקופה עד 2025 ({t['mean']:+.2f}R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 "
                             "ועלול להיות מזל")
+    # a new strategy must add to the TOTAL: under +3R on the whole of 2026 it only adds risk and a share of the daily
+    # loss limit (manager, 13.11.2026: SC021|5Min|XAUUSD, +0.001R x 188 = +0.2R in 2026, +0.02R to 2025, approved into
+    # bot 5; SC002|1Hour|ARM, +0.2R in 2026, ran in four bots)
+    if c["kind"] == "new" and base is None and (u.get("eff_n") or u.get("n") or 0) * u["mean"] < NEW_MIN_TOTAL:
+        return "watch", (f"ב־2026 בסך הכל רק {(u.get('eff_n') or u.get('n') or 0) * u['mean']:+.1f}R "
+                         f"({u['mean']:+.3f}R לעסקה) - פחות מ־{NEW_MIN_TOTAL:g}R, לא מגדיל את הרווח הכולל. נשמר להמשך")
     if base is not None and u["mean"] <= base:
         return "rejected", f"לא טוב מהמצב הקיים בתקופה שלא נראתה ({u['mean']:+.2f}R מול {base:+.2f}R)"
     # more per trade but fewer trades can mean less money in total (a limit entry, a filter): the total on the

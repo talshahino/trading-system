@@ -177,7 +177,7 @@ def tal(budget_s):
     shared(idx, budget_s - (time.time() - t0))
     pairs, answers = TG.summarize(idx, WORLD["symbols"], TAL_DIR)
     planned = len(TG.PAIRS) * len(TG.variants()) * len(WORLD["symbols"])
-    doc = TG.write_results("bot6", pairs, answers, WORLD, [planned - left, planned])
+    doc = TG.write_results("bot6", pairs, answers, WORLD, [planned - left, planned], out_dir=TAL_DIR)
     run = live_tracks()
     try:            # the bot as a whole, the way the account takes its tracks (information - kept in the results)
         pf = TG.portfolio(idx, WORLD["symbols"], TAL_DIR, run)

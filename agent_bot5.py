@@ -321,11 +321,13 @@ def main():
     tal = {}
     try:
         if BOT != "bot5":
-            raise RuntimeError("bot 6 runs the method itself (agent_bot6.tal)")
+            # bot 6 runs the gap method itself (agent_bot6.tal) - not an error, so nothing is printed as "failed"
+            # (manager 13.11.2026: the ops view showed it as a failure every night)
+            raise StopIteration
         tidx = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")}
         pairs, answers = TG.summarize(tidx, TAL_SYMBOLS, TAL_DIR)
         planned = len(TG.PAIRS) * len(TG.variants()) * len(TAL_SYMBOLS)
-        doc = TG.write_results(BOT, pairs, answers, TAL_WORLD, [len(tidx), planned])
+        doc = TG.write_results(BOT, pairs, answers, TAL_WORLD, [len(tidx), planned], out_dir=TAL_DIR)
         # what bot 5 trades now (live/bots/bot5.json "tal_tracks", 13.11.2026): a card on a running pair carries it as
         # the baseline, so a version that earns less on 2026 in total is not approved over it
         s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
@@ -341,6 +343,8 @@ def main():
             pc = TG.portfolio_card(BOT, pf, round(min(rk5) * 100, 3) if rk5 else 0.4)
             if pc:
                 cards.append(pc)
+    except StopIteration:
+        pass
     except Exception as e:  # noqa: BLE001
         print("tal gap summary failed:", e)
     for c in cards:

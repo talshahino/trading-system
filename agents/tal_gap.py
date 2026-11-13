@@ -550,7 +550,24 @@ def summarize(idx, symbols, out_dir):
     return pairs, answers
 
 
-def write_results(bot, pairs, answers, world, progress):
+def search_status(out_dir):
+    """Per pair: the search's best total (train), its configuration's changes from the base, neighbours tried / left -
+    so the manager sees from the repo whether the search still moves (13.11.2026: search.json stays on the computer)."""
+    try:
+        log = json.loads((Path(out_dir) / SEARCH_LOG).read_text())
+    except Exception:  # noqa: BLE001
+        return None
+    out = {}
+    for pn, st in log.items():
+        best = st.get("best") or {}
+        left = sum(1 for c in _neighbours(best, list(KNOBS)) if c != best and vid(c) not in st.get("tried", []))
+        out[pn] = {"score": None if st.get("score") is None else round(float(st["score"]), 2),
+                   "changes": {k: v for k, v in best.items() if BASE.get(k, "none") != v},
+                   "tried": len(st.get("tried", [])), "left": left}
+    return out
+
+
+def write_results(bot, pairs, answers, world, progress, out_dir=None):
     """This bot's section of data/agents/strategies/tal_gap_results.json, next to the other bot's (read just before
     writing, so the other agent's section is kept)."""
     try:
@@ -561,6 +578,8 @@ def write_results(bot, pairs, answers, world, progress):
                    "שלא נראתה, משוקלל לפי זמן. R לעסקה אחרי עלויות.")
     doc[bot] = {"updated": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "world": world, "base": BASE,
                 "knobs": KNOBS, "progress": progress, "answers": answers, "pairs": pairs}
+    if out_dir is not None:
+        doc[bot]["search"] = search_status(out_dir)
     RESULTS.parent.mkdir(parents=True, exist_ok=True)
     RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     return doc

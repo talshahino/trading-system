@@ -929,6 +929,16 @@ def agents_notify():
                     ups = [u for u in CFG.get("auto_updates") or [] if u.get("at", "") > since]
                     if ups:
                         kinds["עדכוני בוטים שהותקנו"] = len(ups)
+                    # the agents' answers to Tal's notes on trades since the last report (13.11.2026): one line, no
+                    # notification per answer - they are read in "שיחות עם הסוכנים" and next to each trade's chart
+                    nrep = 0
+                    try:
+                        rd = json.loads((AH.WORK / "data" / "agents" / "trade_replies.json").read_text(encoding="utf-8"))
+                        nrep = sum(1 for tr in (rd.get("bots") or {}).values() for rs in tr.values() for r in rs if str(r.get("at", "")) > since)
+                    except Exception:  # noqa: BLE001
+                        pass
+                    if nrep:
+                        kinds["תשובות של הסוכנים להערות שלך"] = nrep
                     body = (" · ".join(f"{v} {k}" for k, v in kinds.items()) or "אין החלטות חדשות") + \
                            f". {len(unread)} לא נקראו. אפשר לבטל כל החלטה במנהל הבוטים."
                     push(f"דוח המנהל: {len(ds)} החלטות", body, tag="agents")

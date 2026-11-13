@@ -430,7 +430,8 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="msg" id="pushMsg"></div></div>
     <div class="card"><h3>מנהל הבוטים</h3>
       <div class="row"><span class="mut" id="botsHint">ההצעות של הסוכנים לכל בוט אחרי הסינון של המנהל, האסטרטגיות של כל בוט והמלצות הסיכון. שום דבר לא משתנה בלי אישור שלך.</span><button class="btn" id="botsBtn">מנהל הבוטים</button></div>
-      <div class="row" style="margin-top:8px"><span class="mut">בכל יום שבוט מסיים בהפסד: מה הפסיד, למה, ומה עושים כדי שזה לא יחזור.</span><button class="btn ghost" id="lrBtn">דוחות הפסד</button></div></div>
+      <div class="row" style="margin-top:8px"><span class="mut">בכל יום שבוט מסיים בהפסד: מה הפסיד, למה, ומה עושים כדי שזה לא יחזור.</span><button class="btn ghost" id="lrBtn">דוחות הפסד</button></div>
+      <div class="row" style="margin-top:8px"><span class="mut">ההערות שלך על עסקאות והתשובות של הסוכנים: מה הבינו, מה בדקו ומה שינו.</span><button class="btn ghost" id="convBtn">שיחות עם הסוכנים</button></div></div>
     <div class="card"><h3>חשבונות ובוטים</h3><div id="accs"><div class="empty">ממתין למנהל…</div></div><div class="msg" id="accMsg"></div></div>
     <div class="card" id="logCard"><h3>לוגים</h3>
       <div class="row" id="logBtns"><button class="btn ghost" data-log="manager">לוג המנהל</button></div>
@@ -477,6 +478,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 <div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
 <div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>מנהל הבוטים</b></div>
   <div id="bpDec"></div><div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
+<div class="page" id="convPg"><div class="ph"><button class="back" id="convBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>שיחות עם הסוכנים</b></div><div id="convBody" style="padding:0 14px 40px"></div></div>
 <div class="page" id="lrPg"><div class="ph"><button class="back" id="lrBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>דוחות הפסד</b></div><div id="lrBody" style="padding:0 14px 40px;line-height:1.55"><div class="empty">טוען…</div></div></div>
 <div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
 <div class="page" id="wbPg"><div class="ph"><button class="back" id="wbBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>בוט סקלפינג · צפייה</b></div><div id="wbBody"><div class="empty">טוען…</div></div></div>
@@ -1556,6 +1558,66 @@ $("tpBack").onclick = () => { $("tradePg").classList.remove("on"); if (TN.rec) {
 /* the user's note on a trade (13.11.2026): spoken (the phone's speech-to-text, Hebrew) or typed, kept by the manager
    with the trade and read by the agent of the bot that made it */
 const TN = {rec: null, voice: false};
+/* the conversation on a trade (13.11.2026): Tal's notes (kept by the manager) and the agents' answers
+   (data/agents/trade_replies.json, written by the conversation agent every half hour and the bots' agents) */
+const REPLIES_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/data/agents/trade_replies.json?t=${Math.floor(Date.now() / 60000)}`;
+const NOTES_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/trade_notes_state.json?t=${Math.floor(Date.now() / 60000)}`;
+let REP_DOC = null, REP_T = 0, NOTES_DOC = null;
+async function repliesDoc(force) {
+  if (!REP_DOC || force || Date.now() - REP_T > 60000) { try { REP_DOC = await (await fetch(REPLIES_URL(), {cache: "no-store"})).json(); REP_T = Date.now(); } catch (e) { REP_DOC = REP_DOC || {bots: {}}; } }
+  return REP_DOC;
+}
+const seenGet = () => { try { return JSON.parse(localStorage.getItem("seenReplies") || "{}"); } catch (e) { return {}; } };
+const seenAdd = keys => { try { const o = seenGet(); keys.forEach(k => o[k] = 1); localStorage.setItem("seenReplies", JSON.stringify(o)); } catch (e) {} };
+async function threadHtml(bot, id, notes) {
+  const rd = await repliesDoc(), reps = ((rd.bots || {})[bot] || {})[id] || [];
+  const items = [...(notes || []).map(n => ({...n, who: "tal"})), ...reps.map(r => ({...r, who: "agent"}))].sort((a, b) => String(a.at).localeCompare(String(b.at)));
+  seenAdd(reps.map(r => `${bot}|${id}|${r.at}`)); convBadge();
+  const waiting = (notes || []).some(n => !reps.some(r => r.re === n.at));
+  return items.map(n => n.who === "tal"
+    ? `<div style="margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--sunk)"><div class="mut" style="font-size:12px">${n.voice ? "🎙 " : ""}טל · ${dtF(n.at)}</div><div style="white-space:pre-wrap">${esc(n.text)}</div></div>`
+    : `<div style="margin-top:8px;padding:8px 10px;border-radius:10px;border:1px solid var(--line,#E6E9EE)"><div class="mut" style="font-size:12px">🤖 הסוכן של הבוט · ${dtF(n.at)}</div><div style="white-space:pre-wrap">${esc(n.text)}</div>${n.did ? `<div class="mut" style="font-size:12px;margin-top:4px">${esc(n.did)}</div>` : ""}</div>`).join("")
+    + (waiting ? `<div class="mut" style="margin-top:8px;font-size:13px">⏳ הסוכן יענה בתוך חצי שעה בערך</div>` : "");
+}
+// "שיחות עם הסוכנים": every conversation, newest first, with the number of answers not seen yet on the button
+async function convData() {
+  const rd = await repliesDoc();
+  try { NOTES_DOC = await (await fetch(NOTES_URL(), {cache: "no-store"})).json(); } catch (e) { NOTES_DOC = NOTES_DOC || {bots: {}}; }
+  const th = {}, seen = seenGet();
+  for (const [bot, tr] of Object.entries((NOTES_DOC && NOTES_DOC.bots) || {})) for (const [id, ns] of Object.entries(tr)) (th[bot + "|" + id] ||= {bot, id, notes: [], reps: []}).notes = ns;
+  for (const [bot, tr] of Object.entries(rd.bots || {})) for (const [id, rs] of Object.entries(tr)) (th[bot + "|" + id] ||= {bot, id, notes: [], reps: []}).reps = rs;
+  const list = Object.values(th).map(x => ({...x, last: [...x.notes, ...x.reps].map(y => y.at).sort().pop() || "",
+    unseen: x.reps.filter(r => !seen[`${x.bot}|${x.id}|${r.at}`]).length})).sort((a, b) => b.last.localeCompare(a.last));
+  return list;
+}
+async function convBadge() {
+  try { const l = await convData(), n = l.reduce((a, x) => a + x.unseen, 0); if ($("convBtn")) $("convBtn").textContent = n ? `שיחות עם הסוכנים (${n} חדשות)` : "שיחות עם הסוכנים"; } catch (e) {}
+}
+const BOTNAME = n => ({watch_own: "בוט 5", watch_fut: "בוט 6", news_bot: "בוט 7"})[n] || (n.match(/^bot(\d)/) ? "בוט " + n.match(/^bot(\d)/)[1] : n);
+async function convOpen() {
+  $("convPg").classList.add("on"); $("convBody").innerHTML = '<div class="empty">טוען…</div>';
+  const l = await convData();
+  if (!l.length) { $("convBody").innerHTML = '<div class="empty">עוד אין שיחות. בעמוד הגרף של כל עסקה אפשר להקליט הערה לסוכן.</div>'; return; }
+  $("convBody").innerHTML = l.map((x, i) => { const tr = (x.notes[0] || {}).trade || {}, last = [...x.notes, ...x.reps].sort((a, b) => String(a.at).localeCompare(String(b.at))).pop() || {};
+    return `<div class="card" style="margin:10px 0;cursor:pointer" data-cv="${i}"><div class="row"><b>${esc(BOTNAME(x.bot))} · <bdi>${esc(tr.symbol || "")}</bdi> ${tr.side === "buy" ? "קנייה" : tr.side === "sell" ? "מכירה" : ""}</b>
+      ${x.unseen ? `<span class="pill pos">${x.unseen} חדשות</span>` : x.notes.some(n => !x.reps.some(r => r.re === n.at)) ? '<span class="pill">ממתין לתשובה</span>' : ""}</div>
+      <div class="mut" style="margin-top:4px;white-space:pre-wrap;max-height:3.6em;overflow:hidden">${last.re ? "🤖 " : "טל: "}${esc(last.text || "")}</div><div class="convD" id="convD${i}"></div></div>`; }).join("");
+  document.querySelectorAll("#convBody .card").forEach(el => el.onclick = async e => {
+    if (e.target.closest("button")) return;
+    const x = l[+el.dataset.cv], box = $("convD" + el.dataset.cv);
+    if (box.innerHTML) { box.innerHTML = ""; return; }
+    box.innerHTML = (await threadHtml(x.bot, x.id, x.notes)) + `<button class="btn ghost" style="margin-top:8px" data-open="1">פתח את הגרף של העסקה ›</button>`;
+    box.querySelector("[data-open]").onclick = () => convChart(x);
+    convData().then(ll => { const n = ll.reduce((a, y) => a + y.unseen, 0); if ($("convBtn")) $("convBtn").textContent = n ? `שיחות עם הסוכנים (${n} חדשות)` : "שיחות עם הסוכנים"; });
+  });
+}
+function convChart(x) {
+  const d = found[x.bot];
+  if (d && d.watch && d.watch.find(w => w.id === x.id && w.m15)) { WB.doc = d; return wcOpen(x.id); }
+  const c = d && ((d.closed || []).find(t => String(t.id) === x.id) || null), o = d && ((d.positions || []).find(t => String(t.ticket) === x.id) || null);
+  if (c || o) { UI.cur = x.bot; tradePage(c || o, !c); return chartPage(); }
+  alert("העסקה כבר לא מופיעה ברשימות של הבוט, אבל השיחה שמורה כאן.");
+}
 const notesHtml = p => getRole() === "viewer" ? "" : `<div class="h4">🎙 הערה לסוכן של הבוט</div><div class="card wt">
       <textarea id="${p}Txt" rows="3" placeholder="לחץ על המיקרופון ודבר, או כתוב: הייתי לוקח / לא לוקח, איפה התפספס, הייתי יוצא מוקדם, חלקיות כאן…"></textarea>
       <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="${p}Mic">🎙 הקלטה</button><button class="btn" id="${p}Save">שמור הערה</button></div>
@@ -1567,8 +1629,10 @@ function tradeNotes(t, p = "tn", botName) {
   if (!$(p + "Txt")) return;
   if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; }
   const bot = botName || UI.cur, id = String(t.id || t.ticket || ""), txt = $(p + "Txt"), msg = $(p + "Msg");
-  const show = ns => { $(p + "List").innerHTML = (ns || []).slice().reverse().map(n => `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line,#E6E9EE)">
-      <div style="white-space:pre-wrap">${esc(n.text)}</div><div class="mut" style="font-size:12px">${n.voice ? "🎙 " : ""}${dtF(n.at)}</div></div>`).join(""); };
+  let mine = (((NOTES_DOC || {}).bots || {})[bot] || {})[id] || [];
+  const show = ns => { if (ns) mine = ns; threadHtml(bot, id, mine).then(h => { if ($(p + "List")) $(p + "List").innerHTML = h; }); };
+  show(null);
+  if (!NOTES_DOC) fetch(NOTES_URL(), {cache: "no-store"}).then(r => r.json()).then(j => { NOTES_DOC = j; if (!mine.length) show(((j.bots || {})[bot] || {})[id] || []); }).catch(() => {});
   if (mgr && mgrInfo) act("/trade/notes", {bot, id}).then(j => show(j.notes)).catch(() => {});
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   $(p + "Mic").onclick = () => {
@@ -2316,6 +2380,9 @@ $("bpBack").onclick = () => $("botsPg").classList.remove("on");
 // daily loss reports (agents/loss_review.py): every losing day of every bot - what lost, why, what is done about it
 const LR = p => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/losses/${p}?t=${Math.floor(Date.now() / 60000)}`;
 $("lrBack").onclick = () => $("lrPg").classList.remove("on");
+$("convBtn").onclick = () => convOpen();
+$("convBack").onclick = () => $("convPg").classList.remove("on");
+setTimeout(convBadge, 3000); setInterval(convBadge, 5 * 60000);
 $("lrBtn").onclick = async () => {
   $("lrPg").classList.add("on");
   try {

@@ -240,6 +240,136 @@ def stab_runs(budget_s):
     return done
 
 
+# the user's notes on live trades (13.11.2026, data/agents/replies.json "_tasks"): each idea tested on exactly the
+# track's rules as they run (live/bots/bot5.json, even a track at risk 0), on the five indices, one knob moved -
+# chosen on 2024-2025 (the time-weighted total), shown on 2026 (unseen), a fixed risk per trade
+NOTE_TESTS = [
+    # t4h_5, 13.11 15:21: US500 stopped 0.37% under the entry in a sharp drop, US100 from the same impulse (stop 1.3%
+    # away) stayed open and came back - "a slightly wider stop would have kept us in?"
+    {"id": "t4h_5_spad", "track": "t4h_5", "knob": "SPAD", "vals": [0.001, 0.002, 0.004],
+     "he": "סטופ רחב יותר מעבר לסווינג (% מהמחיר)"},
+    # the fast charts (13.11, GER40 t15_5): half out at half the way, the rest's stop to the entry
+    {"id": "t15_5_p5050", "track": "t15_5", "knob": "EXIT", "vals": ["p50_50"], "he": "50% החוצה ב־50% מהדרך + סטופ לכניסה"},
+    {"id": "t5_1_p5050", "track": "t5_1", "knob": "EXIT", "vals": ["p50_50"], "he": "50% החוצה ב־50% מהדרך + סטופ לכניסה"},
+    # bot 5's smart agent, 13.11.2026 night, from the live record: 3 of the day's 5 losses were filled within 40 minutes
+    # of New York's open (14:30 UTC: t15_5 US500 / JP225 14:37-14:38, t4h_5 US500 15:10) - the open's first half hour
+    # off (tal_gap.SESS_NY "xopen", as bot 6 tests on the futures)
+    {"id": "t15_5_xopen", "track": "t15_5", "knob": "SESS", "vals": ["xopen"], "he": "בלי כניסות ב־09:30-10:00 ניו יורק"},
+    {"id": "t15_1_xopen", "track": "t15_1", "knob": "SESS", "vals": ["xopen"], "he": "בלי כניסות ב־09:30-10:00 ניו יורק"},
+    {"id": "t4h_5_xopen", "track": "t4h_5", "knob": "SESS", "vals": ["xopen"], "he": "בלי כניסות ב־09:30-10:00 ניו יורק"},
+]
+
+
+def _note_cfgs():
+    """[(test, pair name, cfg now, [(val, cfg)])] from the tracks as they run."""
+    try:
+        s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return []
+    tt, out = s5.get("tal_tracks") or {}, []
+    for T in NOTE_TESTS:
+        v = tt.get(T["track"])
+        if not v or v.get("symbols"):
+            continue
+        now = TG._norm(dict(v["cfg"]))
+        out.append((T, f"{v['pair'][0]}/{v['pair'][1]}", now,
+                    [(x, TG._norm(dict(now, **{T["knob"]: x}))) for x in T["vals"] if now.get(T["knob"]) != x]))
+    return out
+
+
+def note_runs(budget_s):
+    """The runs of NOTE_TESTS (the track's rules now and each value), saved in the gap method's index like trend_runs()."""
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    idx_dir = TAL_DIR / "idx"
+    idx_dir.mkdir(parents=True, exist_ok=True)
+    have = {f.stem for f in idx_dir.glob("*.json")}
+    want = []
+    for T, pn, now, vs in _note_cfgs():
+        if pn in pairs:
+            want += [(pn, now)] + [(pn, c) for _, c in vs]
+    t0, done = time.time(), 0
+    for sym in TAL_SYMBOLS:
+        todo = [(pn, c) for pn, c in want if f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}" not in have]
+        if not todo or time.time() - t0 > budget_s:
+            continue
+        D, gc = tal_load(sym), {}
+        if D is None:
+            continue
+        for pn, c in todo:
+            key = f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}"
+            if key in have:
+                continue
+            t = TG.simulate(D, pairs[pn], c, gc.setdefault(pn.split("/")[0], {}))
+            t.to_csv(TAL_DIR / f"{key}.csv.gz", index=False)
+            (idx_dir / f"{key}.json").write_text(json.dumps(
+                {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": pairs[pn][2],
+                 "knob": "note", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f"{key}.csv.gz", "n": len(t)}, default=str))
+            have.add(key)
+            done += 1
+    print(f"tal note tests: {done} run")
+    return done
+
+
+def note_cards(tidx):
+    """Per NOTE_TESTS entry: the value CHOSEN on 2024-2025 (time-weighted total R), an 'improve' card only when it beats
+    the rules that run on 2024-2025 AND on 2026 in total, and its worst day on 2026 is not worse (the main goal: more
+    profit, not more risk). Returns (cards, results) - the results go to tal_gap_results.json (bot5.notes) for the
+    trade conversation and bot 6's agent."""
+    out, res = [], {}
+    for T, pn, now, vs in _note_cfgs():
+        base = _trades(tidx, pn, now)
+        if base is None:
+            res[T["id"]] = {"state": "running"}
+            continue
+        bv, bs = _risk_view(base), TG._stats(base)
+        row = {"track": T["track"], "pair": pn, "knob": T["knob"], "now": {"val": now.get(T["knob"]), **bv}}
+        best = None
+        for x, c in vs:
+            t = _trades(tidx, pn, c)
+            if t is None:
+                continue
+            v = _risk_view(t)
+            row[str(x)] = v
+            if v["train"] and bv["train"] and v["train"]["total"] > bv["train"]["total"] \
+                    and (best is None or v["train"]["total"] > best[1]["train"]["total"]):
+                best = (x, v, c, t)                      # chosen on 2024-2025 only
+        if len(row) - 4 < len(vs):
+            row["state"] = "running"
+            res[T["id"]] = row
+            continue
+        row["state"] = "done"
+        win = bool(best and bv["unseen"] and best[1]["unseen"] and best[1]["unseen"]["total"] > bv["unseen"]["total"]
+                   and best[1]["unseen"]["worst_day"] >= bv["unseen"]["worst_day"])
+        row["chosen"], row["better"] = (best[0] if best else None), win
+        res[T["id"]] = row
+        if not win:
+            continue
+        x, v, c, t = best
+        st = TG._stats(t)
+        u, bu, tr, btr = v["unseen"], bv["unseen"], v["train"], bv["train"]
+        months = max(1.0, (pd.Timestamp.now(tz="UTC") - SPLIT).days / 30.4)
+        try:
+            s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
+            rk = float((s5.get("risk") or {}).get(T["track"], 0.0028) or 0)     # a track at risk 0 (t5_1) is worth 0 now
+        except Exception:  # noqa: BLE001
+            rk = 0.0028
+        worth = round((u["total"] - bu["total"]) / months * rk * 100, 3)
+        hi, lo = pn.split("/")
+        out.append(K.card(
+            BOT, "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: {T['he']} ({x}) - מההערה של טל",
+            f"מההערה של טל על עסקה במסלול {T['track']}. הכללים שרצים, רק {T['knob']} = {x}. נבחר על 2024-2025 (סה\"כ משוקלל "
+            f"{btr['total']:+.1f}R ← {tr['total']:+.1f}R), 2026 (לא נראתה): סה\"כ {bu['total']:+.1f}R ← {u['total']:+.1f}R, "
+            f"היום הגרוע {bu['worst_day']:+.1f}R ← {u['worst_day']:+.1f}R, ירידה {bu['max_fall']:.1f}R ← {u['max_fall']:.1f}R, "
+            f"{u['n']} עסקאות. שווי: {worth:+.2f}% מהחשבון בחודש בסיכון של המסלול.",
+            st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
+            tested=len(vs), risk_pct=round(rk * 100, 3), baseline=bs["unseen"],
+            neighbours={"values": [y for y, _ in vs], "share_positive": round(float(np.mean(
+                [bool((row.get(str(y)) or {}).get("unseen")) and row[str(y)]["unseen"]["total"] > bu["total"] for y, _ in vs])), 2)},
+            detail={"note_test": row, "worth_month_pct": worth},
+            change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
+    return out, res
+
+
 def _risk_view(t):
     """Per period: the total R (time-weighted on 2024-2025), the deepest fall and the worst day in R, and the total
     per unit of deepest fall - profit and risk together (the main goal: more profit AND less risk)."""
@@ -572,6 +702,10 @@ def main():
         except Exception as e:  # noqa: BLE001
             print("tal trend runs failed:", e)
         try:
+            note_runs(tal_left * 0.2)               # the user's notes on live trades (13.11.2026): wider stop, half at half
+        except Exception as e:  # noqa: BLE001
+            print("tal note runs failed:", e)
+        try:
             stab_runs(tal_left * 0.1)               # stability: the low-MIN_RR tracks with MIN_RR 0.5 / 1.0 (13.11.2026 night)
         except Exception as e:  # noqa: BLE001
             print("tal stability runs failed:", e)
@@ -719,6 +853,13 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             except Exception as e:  # noqa: BLE001
                 print("tal stability failed:", e)
+            try:
+                ncards, nres = note_cards(tidx)
+                cards += ncards
+                doc["bot5"]["notes"] = nres
+                TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            except Exception as e:  # noqa: BLE001
+                print("tal note tests failed:", e)
             sc_card = TG.scale_card(BOT, pf_all or pf, cur_sc)
             if sc_card:
                 cards.append(sc_card)

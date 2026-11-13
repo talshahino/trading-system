@@ -321,6 +321,14 @@ def filt_ok(cfg, cost, risk, t_ns):
     return True
 
 
+def stop_pad(cfg, px):
+    """SPAD (the user's note on a trade, 13.11.2026: "maybe a slightly wider stop in such a sharp drop would have kept
+    us in"): extra room beyond the 2nd swing as a share of the entry price (0.002 = 0.2%), on top of the 2 points /
+    pips. Off unless set (0 / absent = the rules as before, the same configuration names)."""
+    x = cfg.get("SPAD")
+    return float(x) * abs(float(px)) if x else 0.0
+
+
 def tp_way(cfg):
     """EXIT "tp30" (user, 13.11.2026: "take 100% of the profit at 30% of the way to the target"): the target moves to
     30% of the way; None for every other EXIT."""
@@ -368,7 +376,7 @@ def simulate(D, pair, cfg, gcache):
         t2 = _count_back(*sw_tg, ns[f], px, d, d)
         if s2 is None or t2 is None:
             continue
-        stop = s2 - d * D.buf
+        stop = s2 - d * (D.buf + stop_pad(cfg, px))
         risk = d * (px - stop)
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
             continue
@@ -1201,7 +1209,7 @@ def live_trades(D, pair, cfg, gcache=None):
             ts_t = _count_back_t(*sw_tg, ns[f], px, d, d, st_ns, w_)
             base = dict(base, geo=dict(base["geo"], sw_stop=[iso_(ts_s), float(s2)] if ts_s else None,
                                        sw_tgt=[iso_(ts_t), float(t2)] if ts_t else None))
-        stop = s2 - d * D.buf
+        stop = s2 - d * (D.buf + stop_pad(cfg, px))
         risk = d * (px - stop)
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
             out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="rr"))

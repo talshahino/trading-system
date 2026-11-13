@@ -206,8 +206,18 @@
    {
     "combo": "TV02|15Min|TSLA",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "TV02|15Min|TSLA: בלי יעד · סטופ x0.75",
+      "decision": "9099c0ab4ef9",
+      "at": "2026-11-13T17:46:02+00:00",
+      "effect_month_pct": 0.6,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
@@ -228,11 +238,10 @@
   "open": [
    "TT56|1Hour|XOM",
    "TV10|1Hour|US100",
-   "TV02|15Min|TSLA",
    "TV62|1Hour|USDCAD"
   ],
   "cut_only": [],
-  "total_month_pct": 0.0,
-  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין"
+  "total_month_pct": 0.6,
+  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין"
  }
 }

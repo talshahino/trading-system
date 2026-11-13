@@ -430,8 +430,27 @@
    {
     "combo": "TV29|4Hour|US30",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "⭐ TV29|4Hour|US30: יעד 1R · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר",
+      "decision": "f1197fec0552",
+      "at": "2026-11-13T17:46:02+00:00",
+      "effect_month_pct": 0.16,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "068baa04be38",
+      "at": "2026-11-13T17:46:02+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.05,
+      "value": 0.7
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
@@ -444,8 +463,27 @@
    {
     "combo": "TV33|15Min|MSTR",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "⭐ TV33|15Min|MSTR: יעד 1.5R · סטופ x1.25 · כניסה בלימיט 0.25R טוב יותר",
+      "decision": "3a7314091ee8",
+      "at": "2026-11-13T17:46:02+00:00",
+      "effect_month_pct": 0.3,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "4301ad611372",
+      "at": "2026-11-13T17:46:02+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.7
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
@@ -514,14 +552,12 @@
    "TV62|1Hour|USDCAD",
    "TV10|1Hour|US100",
    "TV38|15Min|GOOG",
-   "TV29|4Hour|US30",
-   "TV14|4Hour|XPTUSD",
-   "TV33|15Min|MSTR"
+   "TV14|4Hour|XPTUSD"
   ],
   "cut_only": [
    "SE02|1Hour|USDJPY"
   ],
-  "total_month_pct": 0.11,
-  "status": "פתוח: 6 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.57,
+  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

@@ -521,8 +521,27 @@
    {
     "combo": "TV33|15Min|MSTR",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "⭐ TV33|15Min|MSTR: יעד 1.5R · סטופ x1.25 · כניסה בלימיט 0.25R טוב יותר",
+      "decision": "3a7314091ee8",
+      "at": "2026-11-13T17:46:02+00:00",
+      "effect_month_pct": 0.3,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "4301ad611372",
+      "at": "2026-11-13T17:46:02+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.7
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
@@ -575,7 +594,17 @@
    {
     "combo": "TV02|15Min|TSLA",
     "cause": "סגירה בגלל כלל",
-    "fixes": [],
+    "fixes": [
+     {
+      "what": "TV02|15Min|TSLA: בלי יעד · סטופ x0.75",
+      "decision": "9099c0ab4ef9",
+      "at": "2026-11-13T17:46:02+00:00",
+      "effect_month_pct": 0.6,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
+    ],
     "open": false,
     "cut_only": false
    },
@@ -588,7 +617,6 @@
    }
   ],
   "open": [
-   "TV33|15Min|MSTR",
    "TV08|15Min|NVDA",
    "TV41|4Hour|NZDUSD",
    "TV10|1Hour|US100"
@@ -598,7 +626,7 @@
    "SE02|1Hour|USDJPY",
    "TV39|1Hour|JP225"
   ],
-  "total_month_pct": -0.55,
-  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.35,
+  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

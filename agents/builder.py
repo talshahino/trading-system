@@ -222,6 +222,10 @@ def apply(cfg, b, card_id):
             # principle 8, a new strategy enters at the bot's risk)
             others = [round(float(v), 6) for k, v in rk.items() if k in tt and k != trk and float(v or 0) > 0]
             rk[trk] = max(set(others), key=lambda x: (others.count(x), x)) if others else 0.0028
+            if b.get("star"):
+                # the manager's star ("maybe luck", principle 9) is a risk x0.7, as in bots 1-4 and 6 (13.11.2026
+                # evening, bot 5's smart agent: five starred t5_1@... tracks were built at the full 0.28%)
+                rk[trk] = round(float(rk[trk]) * 0.7, 6)
         return
     if b["family"] == "tal5":
         tt = cfg.setdefault("tal_tracks", {})
@@ -401,7 +405,7 @@ def run(now=None):
         cfg = cfgs[b["bot"]]
         if b["family"] == "add" and b["combo"].split("|")[0] not in _strategy_ids():
             continue                                     # the strategy's code is not installed yet
-        if b["family"] == "scout6" and (approved.get(cid) or {}).get("star"):
+        if b["family"] in ("scout6", "tal5sym") and (approved.get(cid) or {}).get("star"):
             b = dict(b, star=True)
         apply(cfg, b, cid)
         touched.add(b["bot"])
@@ -420,6 +424,24 @@ def run(now=None):
             r = replies.setdefault(cid, {})
             r["star"] = "⭐ סיכון " + f"{cfg6['risk']['scout:' + b['combo']] * 100:g}" + "% (אולי מזל) - " + at
             did.append(f"bot6: star {cid} {b['combo']} -> {cfg6['risk'][f'scout:' + b['combo']]}")
+    # bot 5: a starred instrument track of the gap method built before the star counted (13.11.2026) gets x0.7 now, once
+    cfg5 = cfgs.get("bot5")
+    for cid, d in approved.items():
+        if not cfg5 or not d.get("star") or cid in undone_cards or d.get("bot") != "bot5" or cid not in cards:
+            continue
+        b = buildable(cards[cid])
+        r = replies.get(cid) or {}
+        if not b or b["family"] != "tal5sym" or r.get("built") != "auto" or r.get("star"):
+            continue
+        trk = "t" + b["pair"][0].rstrip("m") + "_" + b["pair"][1].rstrip("m") + "@" + b["sym"]
+        ch5 = (cfg5.get("changes") or {}).get(cid) or {}
+        rk5 = cfg5.get("risk") or {}
+        if ch5.get("track") != trk or ch5.get("before") != "__none__" or trk not in rk5:
+            continue
+        rk5[trk] = round(float(rk5[trk]) * 0.7, 6)
+        touched.add("bot5")
+        replies[cid] = dict(r, star="⭐ סיכון " + f"{rk5[trk] * 100:g}" + "% (אולי מזל) - " + at)
+        did.append(f"bot5: star {cid} {trk} -> {rk5[trk]}")
     for b in touched:
         _write(BOTS / f"{b}.json", cfgs[b])
     if did:

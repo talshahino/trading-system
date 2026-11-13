@@ -652,7 +652,7 @@ def cards(bot, pairs, other=None, other_name="בוט 5", risk_pct=None, live=Non
 
 
 # ---------------------------------------------------------------- the bot as a whole (13.11.2026)
-def portfolio(idx, symbols, out_dir, live):
+def portfolio(idx, symbols, out_dir, live, hour_min_n=100):
     """All the tracks the bot runs together (live = {track: (pair_name, cfg)}), the way the account takes them: the
     total time-weighted R, the worst day and the deepest fall (in R of one trade), on 2024-2025 and on 2026 - and the
     same with one rule against doubled risk: a track does not enter a symbol in a direction another track already holds
@@ -716,7 +716,7 @@ def portfolio(idx, symbols, out_dir, live):
     tr_ = t[t["time"] < SPLIT]
     hrs = []
     for h_, part in tr_.groupby(tr_["time"].dt.hour):
-        if len(part) < 100:
+        if len(part) < hour_min_n:      # bot 6 runs far fewer gap trades (2 tracks, 3 indices): it passes 30
             continue
         ws_ = K.wstats(part["r"].to_numpy(float), K.weights(part["time"]))
         if ws_["mean"] is not None and ws_["mean"] < 0 and (ws_["t"] or 0) <= -1.5:

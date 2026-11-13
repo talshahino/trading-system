@@ -179,17 +179,34 @@ def tal(budget_s):
     planned = len(TG.PAIRS) * len(TG.variants()) * len(WORLD["symbols"])
     doc = TG.write_results("bot6", pairs, answers, WORLD, [planned - left, planned], out_dir=TAL_DIR)
     run = live_tracks()
-    try:            # the bot as a whole, the way the account takes its tracks (information - kept in the results)
-        pf = TG.portfolio(idx, WORLD["symbols"], TAL_DIR, run)
+    pcards = []
+    try:            # the bot as a whole, the way the account takes its tracks (only tracks at risk > 0, as bot 5)
+        rk = {**FA.RISK, **(json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json")
+                                       .read_text(encoding="utf-8")).get("risk") or {})}
+        counted = {k: v for k, v in run.items() if float(rk.get(k, FA.RISK_TAL) or 0) > 0}
+        # the hour filter and the direction cap are bot 5's methods (13.11.2026), shared: chosen on 2024-2025 only.
+        # Bot 6 has ~600 gap trades to 2025 against bot 5's ~5,000, so an hour needs 30 trades here (100 there),
+        # with the same t <= -1.5
+        pf = TG.portfolio(idx, WORLD["symbols"], TAL_DIR, counted, hour_min_n=30)
         if pf:
             doc["bot6"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            pf5 = (doc.get("bot5") or {}).get("portfolio") or {}
+            for pc in (TG.portfolio_card("bot6", pf, FA.RISK_TAL * 100), TG.hours_card("bot6", pf, FA.RISK_TAL * 100)):
+                if not pc:
+                    continue
+                h5 = (pf5.get("hours_off") or {}).get("hours")
+                pc["what"] += (" · בבוט 5: " + (("שעות " + ", ".join(f"{x:02d}" for x in h5)) if h5 else
+                                                "אין שעה שהפסידה מספיק" if "hours_off" in pf5 else "עוד לא נבדק")
+                               if pc["change"]["knob"] == "HOURS_OFF" else " · בבוט 5 אותו כלל נבדק על המסלולים שלו")
+                pc["detail"]["bot5"] = {k: pf5.get(k) for k in ("hours_off", "max_dir", "one_per_side")}
+                pcards.append(pc)
     except Exception as e:  # noqa: BLE001
         print(f"tal_gap portfolio failed: {e}")
     # a card on a pair bot 6 already trades carries what runs as its baseline (approved only if 2026 is better per
     # trade AND in total); a new pair must have earned on 2024-2025 and on 2026 (it must add to the bot as a whole)
     return TG.cards("bot6", pairs, doc.get("bot5"), "בוט 5", risk_pct=FA.RISK_TAL * 100,
-                    live={pn: c for pn, c in run.values()})
+                    live={pn: c for pn, c in run.values()}) + pcards
 
 
 SCOUT_DIR = A.OUT / "scout_fut"
@@ -380,6 +397,7 @@ def main():
     for c in tcards + scards:
         c["tier"], c["verdict"] = K.judge(c)
     d["cards"] = [c for c in d.get("cards", []) if (c.get("change") or {}).get("method") != "tal_gap"
+                  and (c.get("change") or {}).get("track") != "tal_all"
                   and (c.get("change") or {}).get("family") != "scout_fut" and (c.get("detail") or {}).get("world") != "bot6"] + tcards + scards
     view = bot5_view()
     for c in d.get("cards", []):

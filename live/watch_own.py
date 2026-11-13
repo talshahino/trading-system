@@ -109,6 +109,11 @@ TAL5_RISK = {}
 TAL5_ONE = [False]     # "tal_one_per_side": a track does not enter a symbol / direction another track holds (off until approved)
 TAL5_MAXDIR = [0]      # "tal_max_dir" (13.11.2026): at most K counted trades open in one direction on all the indices together (0 = off until approved)
 TAL5_HOURS_OFF = set()  # "tal_hours_off" (13.11.2026 night): UTC hours of entry where no new counted trade opens (empty until approved)
+# bot 6 (13.11.2026 night, the shared methods with bot 5): the same three rules over bot 6's gap tracks, from the same keys
+# in live/bots/bot6.json - only the gap method's tracks, not the scout strategies (chosen on the gap tracks together)
+TAL6_ONE = [False]
+TAL6_MAXDIR = [0]
+TAL6_HOURS_OFF = set()
 _TAL5_CODE = {k: (p, dict(c)) for k, (p, c) in TAL5.items()}
 
 
@@ -227,9 +232,25 @@ def load_settings():
                             SCOUT6[str(combo_)] = {"sid": sid_, "tf": tf_, "sym": sym_, "v": dict(v_), "since": str(e_["since"])}
                     except Exception:  # noqa: BLE001 - an odd entry is skipped, the rest trade
                         continue
+                TAL6_ONE[0] = bool(d.get("tal_one_per_side", False))
+                try:
+                    TAL6_MAXDIR[0] = max(0, int(d.get("tal_max_dir", 0) or 0))
+                except (TypeError, ValueError):
+                    TAL6_MAXDIR[0] = 0
+                TAL6_HOURS_OFF.clear()
+                try:
+                    TAL6_HOURS_OFF.update(int(h_) for h_ in (d.get("tal_hours_off") or []) if 0 <= int(h_) <= 23)
+                except (TypeError, ValueError):
+                    TAL6_HOURS_OFF.clear()
                 FA.RISK.setdefault("scout", FA.RISK_TAL)
+                # a scout strategy's own risk (13.11.2026 night, bot 6's smart agent: "maybe luck" - one chosen out of
+                # 96 variants on few trades goes in at a lowered risk, as the manager's star does in bots 1-4):
+                # "scout:<combo>" in "risk", over the scout track's risk; gone from the file -> the track's risk again
+                for trk in [k_ for k_ in FA.RISK if str(k_).startswith("scout:")]:
+                    FA.RISK.pop(trk)
                 for trk, v in (d.get("risk") or {}).items():
-                    if (trk in FA.RISK or trk in FA.TAL_TRACKS) and 0 <= float(v) <= 0.02:
+                    if (trk in FA.RISK or trk in FA.TAL_TRACKS or (str(trk).startswith("scout:") and str(trk)[6:] in SCOUT6)) \
+                            and 0 <= float(v) <= 0.02:
                         FA.RISK[trk] = float(v)
                 FA.RISK_TAL = FA.RISK.get("tal", FA.RISK_TAL)
             print(f"settings of {n} loaded: {json.dumps(d.get('tracks') or d.get('tal'), default=str)[:300]}")
@@ -546,6 +567,20 @@ def fut_scout(name, df, noent, shut, sc, combo, contract, tick, fa, ftrades, fse
         fut_rec(rec, old, fa, ftrades)
 
 
+def tal6_rule(rec, opn):
+    """Bot 6's gap tracks: the approved rules against concentrated risk (agents/tal_gap.portfolio, chosen on 2024-2025).
+    Returns why the trade is not taken, or None."""
+    ts_ = pd.Timestamp(rec["time"])
+    if TAL6_HOURS_OFF and (ts_.tz_convert("UTC") if ts_.tzinfo else ts_.tz_localize("UTC")).hour in TAL6_HOURS_OFF:
+        return "hours"           # an hour the gap tracks lost in together on 2024-2025
+    tal_ = [o for o in opn if o.get("trk") in FA.TAL_TRACKS]
+    if TAL6_ONE[0] and any(o["trk"] != rec["trk"] and o["symbol"] == rec["symbol"] and o["dir"] == rec["dir"] for o in tal_):
+        return "side"            # another gap track already holds this index and direction
+    if TAL6_MAXDIR[0] > 0 and sum(1 for o in tal_ if o["dir"] == rec["dir"]) >= TAL6_MAXDIR[0]:
+        return "dir"             # K gap trades already open in this direction on the indices together
+    return None
+
+
 def fut_rec(rec, old, fa, ftrades):
     """Bot 6: size a trade when it opens, book it when it closes, one notification each."""
     name, k, contract = rec["symbol"], rec["id"], rec["contract"]
@@ -557,7 +592,9 @@ def fut_rec(rec, old, fa, ftrades):
             rec["skipped"] = "before"
         else:
             opn = [t for t in ftrades.values() if t["status"] == "open" and t.get("n") and t["id"] != k]
-            n, why = fa.size(name, rec["trk"], rec["entry"], rec["stop"], rec["time"], opn)
+            why = tal6_rule(rec, opn) if rec["trk"] in FA.TAL_TRACKS else None
+            rk_ = f"scout:{rec.get('combo')}" if rec["trk"] == "scout" and f"scout:{rec.get('combo')}" in FA.RISK else rec["trk"]
+            n, why = (0, why) if why else fa.size(name, rk_, rec["entry"], rec["stop"], rec["time"], opn)
             if n:
                 rec["n"], rec["risk_usd"] = n, round(n * FA.per_contract(name, rec["entry"], rec["stop"]), 2)
             else:

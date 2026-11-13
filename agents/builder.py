@@ -66,13 +66,14 @@ def buildable(c):
             and str(ch.get("knob", "")).split("@")[0] in TRACK_KNOBS and "to" in ch:
         return {"bot": bot, "combo": f"OWN|{ch['track']}", "family": "track", "track": ch["track"],
                 "knob": str(ch["knob"]).split("@")[0], "to": ch["to"]}
-    if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "ONE_PER_SIDE":
+    if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "ONE_PER_SIDE":
         return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_one_per_side", "to": bool(ch.get("to"))}
-    if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "MAX_DIR" \
+    if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "MAX_DIR" \
             and isinstance(ch.get("to"), int) and 0 <= ch["to"] <= 10:
         return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_max_dir", "to": int(ch["to"])}
-    # the hour filter (13.11.2026): the UTC hours where the gap tracks enter no new trade
-    if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "HOURS_OFF" \
+    # the hour filter (13.11.2026): the UTC hours where the gap tracks enter no new trade (bots 5 and 6 - the shared
+    # methods: bot 6's smart agent, 13.11.2026 night; bot 6 reads the same keys in live/bots/bot6.json)
+    if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "HOURS_OFF" \
             and isinstance(ch.get("to"), list) and all(isinstance(x, int) and 0 <= x <= 23 for x in ch["to"]) and len(ch["to"]) <= 12:
         return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_hours_off", "to": sorted(set(ch["to"]))}
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") and str(ch.get("knob", "")).startswith("RISK") \

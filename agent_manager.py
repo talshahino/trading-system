@@ -240,7 +240,7 @@ def main():
                 if best[k] is not c:
                     c["tier"], c["verdict"] = "watch", "יש הצעה טובה יותר לאותו שינוי"
         order = {"strong": 0, "regular": 1, "watch": 2, "rejected": 3}
-        cards.sort(key=lambda c: (c["status"] != "pending", order.get(c["tier"], 9), -(c["unseen"] or {}).get("mean", 0) if c.get("unseen") else 0))
+        cards.sort(key=lambda c: (c["status"] != "pending", order.get(c["tier"], 9), -((c.get("unseen") or {}).get("mean") or 0)))
         pend = [c for c in cards if c["status"] == "pending" and c["tier"] in ("strong", "regular")]
         bots[bot] = {"name": name, "agent": bot in AGENT_ON, "updated": src.get("updated"), "summary": src.get("summary"),
                      "tested": src.get("tested"), "progress": [src.get("done"), src.get("planned")],

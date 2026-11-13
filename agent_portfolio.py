@@ -420,8 +420,13 @@ def experiments(bot, budget_s, where):
         try:
             t, rows = run_rules(combos, fam, left / 60)
         except Exception as e:  # noqa: BLE001
+            if "Time budget reached" in str(e) and left < 0.6 * budget_s:
+                # the run's own minutes ran out on its last group (13.11.2026: JP225 / USDCAD in bots 2-4 every run):
+                # not a failure - nothing is stored, so the group keeps its place and runs first next time
+                print(f"  {sym} {fam}: stopped for time ({left / 60:.0f} min were left), first next run")
+                break
             print(f"  {sym} {fam}: failed - {str(e)[-300:]}")
-            for c in combos:                                          # a combo that cannot run is retried tomorrow
+            for c in combos:                                         # a combo that cannot run is retried tomorrow
                 st.put(fam, c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - 1)).isoformat(),
                                 "combo": c, "error": str(e)[-300:]})
             continue

@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-13T09:51:52+00:00",
+ "updated": "2026-11-13T09:55:04+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -594,7 +594,7 @@
       "week": "2026-W46"
      },
      "detail": {},
-     "made": "2026-11-13T09:16:27+00:00",
+     "made": "2026-11-13T09:55:01+00:00",
      "id": "7d4268d77f15",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -10908,13 +10908,13 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-13T09:16:15+00:00",
-    "state_updated": "2026-11-13T09:14:14+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-13T09:54:49+00:00",
+    "state_updated": "2026-11-13T09:53:32+00:00",
+    "minutes_since_state": 1,
     "balance": 95679.15,
-    "equity": 96647.45,
-    "day_pct": -0.03,
-    "total_pct": -3.35,
+    "equity": 96691.68,
+    "day_pct": 0.02,
+    "total_pct": -3.31,
     "trades": 138,
     "mean_r": -0.111,
     "sum_r": -15.38,
@@ -15472,13 +15472,13 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-13T09:16:15+00:00",
-    "state_updated": "2026-11-13T09:14:20+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-13T09:54:49+00:00",
+    "state_updated": "2026-11-13T09:54:10+00:00",
+    "minutes_since_state": 1,
     "balance": 109216.71,
-    "equity": 109124.9,
-    "day_pct": -0.9,
-    "total_pct": 9.12,
+    "equity": 109178.63,
+    "day_pct": -0.85,
+    "total_pct": 9.18,
     "trades": 45,
     "mean_r": 0.381,
     "sum_r": 17.15,
@@ -25617,11 +25617,11 @@
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-13T09:16:15+00:00",
-    "state_updated": "2026-11-13T09:14:24+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-13T09:54:49+00:00",
+    "state_updated": "2026-11-13T09:54:01+00:00",
+    "minutes_since_state": 1,
     "balance": 99862.77,
-    "equity": 99959.7,
+    "equity": 99958.93,
     "day_pct": -0.28,
     "total_pct": -0.04,
     "trades": 30,
@@ -35526,13 +35526,13 @@
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-13T09:16:15+00:00",
-    "state_updated": "2026-11-13T09:14:28+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-13T09:54:49+00:00",
+    "state_updated": "2026-11-13T09:53:43+00:00",
+    "minutes_since_state": 1,
     "balance": 100118.36,
-    "equity": 101433.46,
-    "day_pct": 1.31,
-    "total_pct": 1.43,
+    "equity": 101298.22,
+    "day_pct": 1.18,
+    "total_pct": 1.3,
     "trades": 38,
     "mean_r": -0.04,
     "sum_r": -1.51,
@@ -35805,627 +35805,6 @@
    "cards": [
     {
      "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · US30 · שעה / 5 דק' (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על US30, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. US30 עצמו: 2024-2025 +0.73R (34), 2026 +0.50R (18). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 248,
-      "eff_n": 241.1,
-      "mean": 0.2536,
-      "t": 2.13,
-      "win": 38.9
-     },
-     "unseen": {
-      "n": 146,
-      "eff_n": 146.0,
-      "mean": 0.1381,
-      "t": 0.65,
-      "win": 30.2
-     },
-     "whole": {
-      "n": 394,
-      "eff_n": 382.0,
-      "mean": 0.2036,
-      "t": 1.81,
-      "win": 35.2
-     },
-     "halves": [
-      0.2277,
-      0.1714
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.75
-     },
-     "tested": 24,
-     "cost_r": 0.033,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "US30",
-      "pair": "1h/5m",
-      "cfg": {
-       "GBODY": 1.0,
-       "MIN_GAP": 0.3,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 120,
-       "PROT": "none",
-       "EXIT": "be786",
-       "MAXC": 0.2,
-       "TREND": "day"
-      },
-      "track": "tal_gap|1h/5m|US30",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:44+00:00",
-     "id": "f29b045bdbf4",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "c8b398f20878"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · N25 · שעה / 5 דק' (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על N25, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. N25 עצמו: 2024-2025 +1.33R (9), 2026 -0.63R (2). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 248,
-      "eff_n": 241.1,
-      "mean": 0.2536,
-      "t": 2.13,
-      "win": 38.9
-     },
-     "unseen": {
-      "n": 146,
-      "eff_n": 146.0,
-      "mean": 0.1381,
-      "t": 0.65,
-      "win": 30.2
-     },
-     "whole": {
-      "n": 394,
-      "eff_n": 382.0,
-      "mean": 0.2036,
-      "t": 1.81,
-      "win": 35.2
-     },
-     "halves": [
-      0.2277,
-      0.1714
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.75
-     },
-     "tested": 24,
-     "cost_r": 0.101,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "N25",
-      "pair": "1h/5m",
-      "cfg": {
-       "GBODY": 1.0,
-       "MIN_GAP": 0.3,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 120,
-       "PROT": "none",
-       "EXIT": "be786",
-       "MAXC": 0.2,
-       "TREND": "day"
-      },
-      "track": "tal_gap|1h/5m|N25",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:44+00:00",
-     "id": "357f4ecf1ca9",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "3c5d9dae8704"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · AUS200 · שעה / 5 דק' (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על AUS200, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. AUS200 עצמו: 2024-2025 +0.21R (15), 2026 -0.20R (10). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 248,
-      "eff_n": 241.1,
-      "mean": 0.2536,
-      "t": 2.13,
-      "win": 38.9
-     },
-     "unseen": {
-      "n": 146,
-      "eff_n": 146.0,
-      "mean": 0.1381,
-      "t": 0.65,
-      "win": 30.2
-     },
-     "whole": {
-      "n": 394,
-      "eff_n": 382.0,
-      "mean": 0.2036,
-      "t": 1.81,
-      "win": 35.2
-     },
-     "halves": [
-      0.2277,
-      0.1714
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.75
-     },
-     "tested": 24,
-     "cost_r": 0.109,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "AUS200",
-      "pair": "1h/5m",
-      "cfg": {
-       "GBODY": 1.0,
-       "MIN_GAP": 0.3,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 120,
-       "PROT": "none",
-       "EXIT": "be786",
-       "MAXC": 0.2,
-       "TREND": "day"
-      },
-      "track": "tal_gap|1h/5m|AUS200",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:44+00:00",
-     "id": "96cfc9c65f53",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "cc9858edfe52"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · US100 · שעה / 5 דק' (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על US100, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. US100 עצמו: 2024-2025 +0.35R (30), 2026 +1.28R (18). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 248,
-      "eff_n": 241.1,
-      "mean": 0.2536,
-      "t": 2.13,
-      "win": 38.9
-     },
-     "unseen": {
-      "n": 146,
-      "eff_n": 146.0,
-      "mean": 0.1381,
-      "t": 0.65,
-      "win": 30.2
-     },
-     "whole": {
-      "n": 394,
-      "eff_n": 382.0,
-      "mean": 0.2036,
-      "t": 1.81,
-      "win": 35.2
-     },
-     "halves": [
-      0.2277,
-      0.1714
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.75
-     },
-     "tested": 24,
-     "cost_r": 0.045,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "US100",
-      "pair": "1h/5m",
-      "cfg": {
-       "GBODY": 1.0,
-       "MIN_GAP": 0.3,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 120,
-       "PROT": "none",
-       "EXIT": "be786",
-       "MAXC": 0.2,
-       "TREND": "day"
-      },
-      "track": "tal_gap|1h/5m|US100",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:44+00:00",
-     "id": "d6133952a5d6",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "dcccb178eba1"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · SPN35 · שעה / 5 דק' (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על SPN35, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. SPN35 עצמו: 2024-2025 +0.08R (10), 2026 -0.59R (11). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 248,
-      "eff_n": 241.1,
-      "mean": 0.2536,
-      "t": 2.13,
-      "win": 38.9
-     },
-     "unseen": {
-      "n": 146,
-      "eff_n": 146.0,
-      "mean": 0.1381,
-      "t": 0.65,
-      "win": 30.2
-     },
-     "whole": {
-      "n": 394,
-      "eff_n": 382.0,
-      "mean": 0.2036,
-      "t": 1.81,
-      "win": 35.2
-     },
-     "halves": [
-      0.2277,
-      0.1714
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.75
-     },
-     "tested": 24,
-     "cost_r": 0.118,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "SPN35",
-      "pair": "1h/5m",
-      "cfg": {
-       "GBODY": 1.0,
-       "MIN_GAP": 0.3,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 120,
-       "PROT": "none",
-       "EXIT": "be786",
-       "MAXC": 0.2,
-       "TREND": "day"
-      },
-      "track": "tal_gap|1h/5m|SPN35",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:44+00:00",
-     "id": "d3f9e358dd40",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "0c8ceb11677d"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · US500 · שעה / 5 דק' (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על US500, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. US500 עצמו: 2024-2025 +0.31R (25), 2026 -0.30R (15). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 248,
-      "eff_n": 241.1,
-      "mean": 0.2536,
-      "t": 2.13,
-      "win": 38.9
-     },
-     "unseen": {
-      "n": 146,
-      "eff_n": 146.0,
-      "mean": 0.1381,
-      "t": 0.65,
-      "win": 30.2
-     },
-     "whole": {
-      "n": 394,
-      "eff_n": 382.0,
-      "mean": 0.2036,
-      "t": 1.81,
-      "win": 35.2
-     },
-     "halves": [
-      0.2277,
-      0.1714
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.75
-     },
-     "tested": 24,
-     "cost_r": 0.05,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "US500",
-      "pair": "1h/5m",
-      "cfg": {
-       "GBODY": 1.0,
-       "MIN_GAP": 0.3,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 120,
-       "PROT": "none",
-       "EXIT": "be786",
-       "MAXC": 0.2,
-       "TREND": "day"
-      },
-      "track": "tal_gap|1h/5m|US500",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:44+00:00",
-     "id": "b511d0699af8",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "350573984d52"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · EU50 · שעה / 5 דק' (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על EU50, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. EU50 עצמו: 2024-2025 +0.72R (11), 2026 +0.69R (6). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 248,
-      "eff_n": 241.1,
-      "mean": 0.2536,
-      "t": 2.13,
-      "win": 38.9
-     },
-     "unseen": {
-      "n": 146,
-      "eff_n": 146.0,
-      "mean": 0.1381,
-      "t": 0.65,
-      "win": 30.2
-     },
-     "whole": {
-      "n": 394,
-      "eff_n": 382.0,
-      "mean": 0.2036,
-      "t": 1.81,
-      "win": 35.2
-     },
-     "halves": [
-      0.2277,
-      0.1714
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.75
-     },
-     "tested": 24,
-     "cost_r": 0.144,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "EU50",
-      "pair": "1h/5m",
-      "cfg": {
-       "GBODY": 1.0,
-       "MIN_GAP": 0.3,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 120,
-       "PROT": "none",
-       "EXIT": "be786",
-       "MAXC": 0.2,
-       "TREND": "day"
-      },
-      "track": "tal_gap|1h/5m|EU50",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:44+00:00",
-     "id": "92155775d910",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "5506662e639a"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · US2000 · שעה / 5 דק' (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על US2000, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. US2000 עצמו: 2024-2025 +0.06R (24), 2026 -0.44R (8). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 248,
-      "eff_n": 241.1,
-      "mean": 0.2536,
-      "t": 2.13,
-      "win": 38.9
-     },
-     "unseen": {
-      "n": 146,
-      "eff_n": 146.0,
-      "mean": 0.1381,
-      "t": 0.65,
-      "win": 30.2
-     },
-     "whole": {
-      "n": 394,
-      "eff_n": 382.0,
-      "mean": 0.2036,
-      "t": 1.81,
-      "win": 35.2
-     },
-     "halves": [
-      0.2277,
-      0.1714
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.75
-     },
-     "tested": 24,
-     "cost_r": 0.042,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "US2000",
-      "pair": "1h/5m",
-      "cfg": {
-       "GBODY": 1.0,
-       "MIN_GAP": 0.3,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 120,
-       "PROT": "none",
-       "EXIT": "be786",
-       "MAXC": 0.2,
-       "TREND": "day"
-      },
-      "track": "tal_gap|1h/5m|US2000",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:44+00:00",
-     "id": "ee8a812c88e4",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "a332c5f39015"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · JP225 · שעה / 5 דק' (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על JP225, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. JP225 עצמו: 2024-2025 +0.36R (19), 2026 +0.33R (9). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 248,
-      "eff_n": 241.1,
-      "mean": 0.2536,
-      "t": 2.13,
-      "win": 38.9
-     },
-     "unseen": {
-      "n": 146,
-      "eff_n": 146.0,
-      "mean": 0.1381,
-      "t": 0.65,
-      "win": 30.2
-     },
-     "whole": {
-      "n": 394,
-      "eff_n": 382.0,
-      "mean": 0.2036,
-      "t": 1.81,
-      "win": 35.2
-     },
-     "halves": [
-      0.2277,
-      0.1714
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.75
-     },
-     "tested": 24,
-     "cost_r": 0.05,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "JP225",
-      "pair": "1h/5m",
-      "cfg": {
-       "GBODY": 1.0,
-       "MIN_GAP": 0.3,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 120,
-       "PROT": "none",
-       "EXIT": "be786",
-       "MAXC": 0.2,
-       "TREND": "day"
-      },
-      "track": "tal_gap|1h/5m|JP225",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:44+00:00",
-     "id": "7fb3e08251dc",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "669321ebd659"
-    },
-    {
-     "bot": "bot5",
      "kind": "risk",
      "title": "15 דק' / דקה: סיכון 0.28% ← 0.196% - אין תיקון שעובר את הבדיקה ההוגנת",
      "what": "15 דק' / דקה הפסיד ב־12.11 (US500, מכירה מגאפ בן 20 שעות, נגד היום). התיקון נבדק בבדיקה ההוגנת (tal_fix_run, עלויות FTMO, 5 המדדים): 16 גרסאות - תוקף הגאפ 8/12/16/24/48 שעות, TREND (כיוון היום / הטיים פריים שמעל), ברייק ב־50/70/38.2/61.8%, חצי ב־61.8%, ושילובים - מול הכללים שרצים (+78.3R משוקלל ב־2024-2025, +20.7R ב־2026 על 267 עסקאות). אף גרסה לא עדיפה ב־2024-2025: הטובה שם (תוקף 24 שעות) +77.0R / +19.2R. ניהול העסקה (ברייק ב־38.2%) טוב בהרבה ב־2026 (+45.3R) אבל גרוע ב־2024-2025 (+33.2R) - לבחור אותו זה לבחור לפי 2026. לפי הכלל של טל: אין תיקון → סיכון ×0.7 (0.28% ← 0.196%) עד שיימצא. המסלול עדיין רווחי בשתי התקופות, לכן לא יוצא. המחיר: כ־0.17% מהחשבון בחודש מהרווח שלו; מה שיורד: היום הגרוע שלו ב־2026 -1.7% ← -1.2%, הירידה הגדולה 7.7% ← 5.4%. החיפוש הרציף ממשיך; תיקון שיעבור - הסיכון חוזר.",
@@ -36480,356 +35859,6 @@
      "by": "manager",
      "decided": "2026-11-13T05:31:47+00:00",
      "decision_id": "cf178b4774f7"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · EU50 · 5 דק' / דקה (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על EU50, 5 דק' / דקה, בהגדרה אחת לכל המדדים: GBODY=2.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be786, IMP1=True, MAXC=0.1, SESS=lnny. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.14R לעסקה, 535 עסקאות), ומוצגת על 2026 על כולם: +0.05R לעסקה, 357 עסקאות, 29.8% הצלחה. EU50 עצמו: 2024-2025 +1.15R (2), 2026 +0.54R (2). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 535,
-      "eff_n": 521.2,
-      "mean": 0.1379,
-      "t": 1.84,
-      "win": 31.8
-     },
-     "unseen": {
-      "n": 357,
-      "eff_n": 356.9,
-      "mean": 0.0543,
-      "t": 0.61,
-      "win": 29.8
-     },
-     "whole": {
-      "n": 892,
-      "eff_n": 869.8,
-      "mean": 0.0999,
-      "t": 1.73,
-      "win": 30.9
-     },
-     "halves": [
-      0.147,
-      0.0609
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.56
-     },
-     "tested": 36,
-     "cost_r": 0.069,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "EU50",
-      "pair": "5m/1m",
-      "cfg": {
-       "GBODY": 2.0,
-       "MIN_GAP": 0.6,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 24,
-       "PROT": "shock",
-       "EXIT": "be786",
-       "IMP1": true,
-       "MAXC": 0.1,
-       "SESS": "lnny"
-      },
-      "track": "tal_gap|5m/1m|EU50",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:46+00:00",
-     "id": "092e977a8be5",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 356.9 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "8e6ba5cdaef2"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · UK100 · 5 דק' / דקה (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על UK100, 5 דק' / דקה, בהגדרה אחת לכל המדדים: GBODY=2.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be786, IMP1=True, MAXC=0.1, SESS=lnny. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.14R לעסקה, 535 עסקאות), ומוצגת על 2026 על כולם: +0.05R לעסקה, 357 עסקאות, 29.8% הצלחה. UK100 עצמו: 2024-2025 +0.08R (33), 2026 -0.02R (26). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 535,
-      "eff_n": 521.2,
-      "mean": 0.1379,
-      "t": 1.84,
-      "win": 31.8
-     },
-     "unseen": {
-      "n": 357,
-      "eff_n": 356.9,
-      "mean": 0.0543,
-      "t": 0.61,
-      "win": 29.8
-     },
-     "whole": {
-      "n": 892,
-      "eff_n": 869.8,
-      "mean": 0.0999,
-      "t": 1.73,
-      "win": 30.9
-     },
-     "halves": [
-      0.147,
-      0.0609
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.56
-     },
-     "tested": 36,
-     "cost_r": 0.068,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "UK100",
-      "pair": "5m/1m",
-      "cfg": {
-       "GBODY": 2.0,
-       "MIN_GAP": 0.6,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 24,
-       "PROT": "shock",
-       "EXIT": "be786",
-       "IMP1": true,
-       "MAXC": 0.1,
-       "SESS": "lnny"
-      },
-      "track": "tal_gap|5m/1m|UK100",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:46+00:00",
-     "id": "077ebcfa8a3c",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 356.9 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "be37d5527c02"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · SPN35 · 5 דק' / דקה (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על SPN35, 5 דק' / דקה, בהגדרה אחת לכל המדדים: GBODY=2.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be786, IMP1=True, MAXC=0.1, SESS=lnny. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.14R לעסקה, 535 עסקאות), ומוצגת על 2026 על כולם: +0.05R לעסקה, 357 עסקאות, 29.8% הצלחה. SPN35 עצמו: 2024-2025 +1.67R (1), 2026 -1.06R (1). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 535,
-      "eff_n": 521.2,
-      "mean": 0.1379,
-      "t": 1.84,
-      "win": 31.8
-     },
-     "unseen": {
-      "n": 357,
-      "eff_n": 356.9,
-      "mean": 0.0543,
-      "t": 0.61,
-      "win": 29.8
-     },
-     "whole": {
-      "n": 892,
-      "eff_n": 869.8,
-      "mean": 0.0999,
-      "t": 1.73,
-      "win": 30.9
-     },
-     "halves": [
-      0.147,
-      0.0609
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.56
-     },
-     "tested": 36,
-     "cost_r": 0.071,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "SPN35",
-      "pair": "5m/1m",
-      "cfg": {
-       "GBODY": 2.0,
-       "MIN_GAP": 0.6,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 24,
-       "PROT": "shock",
-       "EXIT": "be786",
-       "IMP1": true,
-       "MAXC": 0.1,
-       "SESS": "lnny"
-      },
-      "track": "tal_gap|5m/1m|SPN35",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:46+00:00",
-     "id": "ff06127c8930",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 356.9 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "6c3a1b42ee6c"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · AUS200 · 5 דק' / דקה (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על AUS200, 5 דק' / דקה, בהגדרה אחת לכל המדדים: GBODY=2.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be786, IMP1=True, MAXC=0.1, SESS=lnny. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.14R לעסקה, 535 עסקאות), ומוצגת על 2026 על כולם: +0.05R לעסקה, 357 עסקאות, 29.8% הצלחה. AUS200 עצמו: 2024-2025 +1.42R (1), 2026 +0.00R (0). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 535,
-      "eff_n": 521.2,
-      "mean": 0.1379,
-      "t": 1.84,
-      "win": 31.8
-     },
-     "unseen": {
-      "n": 357,
-      "eff_n": 356.9,
-      "mean": 0.0543,
-      "t": 0.61,
-      "win": 29.8
-     },
-     "whole": {
-      "n": 892,
-      "eff_n": 869.8,
-      "mean": 0.0999,
-      "t": 1.73,
-      "win": 30.9
-     },
-     "halves": [
-      0.147,
-      0.0609
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.56
-     },
-     "tested": 36,
-     "cost_r": 0.082,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "AUS200",
-      "pair": "5m/1m",
-      "cfg": {
-       "GBODY": 2.0,
-       "MIN_GAP": 0.6,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 24,
-       "PROT": "shock",
-       "EXIT": "be786",
-       "IMP1": true,
-       "MAXC": 0.1,
-       "SESS": "lnny"
-      },
-      "track": "tal_gap|5m/1m|AUS200",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:46+00:00",
-     "id": "700edfc16448",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 356.9 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "0b57a0168270"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "שיטת הגאפ של טל · N25 · 5 דק' / דקה (הגדרת קבוצה)",
-     "what": "שיטת הגאפ של טל על N25, 5 דק' / דקה, בהגדרה אחת לכל המדדים: GBODY=2.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be786, IMP1=True, MAXC=0.1, SESS=lnny. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.14R לעסקה, 535 עסקאות), ומוצגת על 2026 על כולם: +0.05R לעסקה, 357 עסקאות, 29.8% הצלחה. N25 עצמו: 2024-2025 +0.36R (5), 2026 +1.83R (2). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
-     "train": {
-      "n": 535,
-      "eff_n": 521.2,
-      "mean": 0.1379,
-      "t": 1.84,
-      "win": 31.8
-     },
-     "unseen": {
-      "n": 357,
-      "eff_n": 356.9,
-      "mean": 0.0543,
-      "t": 0.61,
-      "win": 29.8
-     },
-     "whole": {
-      "n": 892,
-      "eff_n": 869.8,
-      "mean": 0.0999,
-      "t": 1.73,
-      "win": 30.9
-     },
-     "halves": [
-      0.147,
-      0.0609
-     ],
-     "neighbours": {
-      "values": [],
-      "share_positive": 0.56
-     },
-     "tested": 36,
-     "cost_r": 0.077,
-     "risk_pct": 0.14,
-     "baseline": null,
-     "change": {
-      "method": "tal_gap_sym",
-      "sym": "N25",
-      "pair": "5m/1m",
-      "cfg": {
-       "GBODY": 2.0,
-       "MIN_GAP": 0.6,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 24,
-       "PROT": "shock",
-       "EXIT": "be786",
-       "IMP1": true,
-       "MAXC": 0.1,
-       "SESS": "lnny"
-      },
-      "track": "tal_gap|5m/1m|N25",
-      "knob": "cfg"
-     },
-     "detail": {},
-     "made": "2026-11-13T09:11:46+00:00",
-     "id": "3a36a86f7f61",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 356.9 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T09:51:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T09:51:52+00:00",
-     "decision_id": "ddd13bc934e3"
     },
     {
      "bot": "bot5",
@@ -41685,29 +40714,29 @@
    "health": {
     "bot": "bot5",
     "name": "בוט 5 - סקאלפינג",
-    "updated": "2026-11-13T09:16:15+00:00",
-    "state_updated": "2026-11-13T09:15:41+00:00",
-    "minutes_since_state": 1,
-    "balance": 98035.52,
-    "equity": 98720.41,
-    "day_pct": 1.33,
+    "updated": "2026-11-13T09:54:49+00:00",
+    "state_updated": "2026-11-13T09:52:43+00:00",
+    "minutes_since_state": 2,
+    "balance": 98353.93,
+    "equity": 98720.07,
+    "day_pct": 1.32,
     "total_pct": -1.28,
-    "trades": 7,
-    "mean_r": -0.573,
-    "sum_r": -4.01,
+    "trades": 10,
+    "mean_r": -0.349,
+    "sum_r": -3.49,
     "bt_mean_r": -0.035,
     "flagged": 0,
     "combos": [
      {
       "combo": "OWN|15Min|US500",
-      "n": 3,
-      "mean": -1.034,
-      "sum": -3.1,
+      "n": 4,
+      "mean": -1.041,
+      "sum": -4.16,
       "win": 0.0,
-      "streak": 3,
+      "streak": 4,
       "bt_mean": -0.0117,
       "bt_n": 3967,
-      "z": -1.77,
+      "z": -2.06,
       "flags": []
      },
      {
@@ -41720,6 +40749,18 @@
       "bt_mean": -0.0117,
       "bt_n": 3967,
       "z": 0.05,
+      "flags": []
+     },
+     {
+      "combo": "OWN|15Min|GER40",
+      "n": 2,
+      "mean": 0.793,
+      "sum": 1.59,
+      "win": 100.0,
+      "streak": 0,
+      "bt_mean": -0.0117,
+      "bt_n": 3967,
+      "z": 1.14,
       "flags": []
      },
      {
@@ -45002,9 +44043,9 @@
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-13T09:16:15+00:00",
-    "state_updated": "2026-11-13T09:15:47+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-13T09:54:49+00:00",
+    "state_updated": "2026-11-13T09:52:48+00:00",
+    "minutes_since_state": 2,
     "balance": 100465.48,
     "equity": 100465.48,
     "day_pct": 0.0,
@@ -54444,13 +53485,13 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-13T09:16:15+00:00",
-    "state_updated": "2026-11-13T09:14:36+00:00",
+    "updated": "2026-11-13T09:54:49+00:00",
+    "state_updated": "2026-11-13T09:53:09+00:00",
     "minutes_since_state": 2,
     "balance": 100000.0,
-    "equity": 100096.08,
-    "day_pct": 0.1,
-    "total_pct": 0.1,
+    "equity": 99989.33,
+    "day_pct": -0.01,
+    "total_pct": -0.01,
     "trades": 0,
     "mean_r": null,
     "sum_r": null,
@@ -54491,22 +53532,7 @@
   }
  },
  "decisions": {
-  "new": [
-   "c8b398f20878",
-   "3c5d9dae8704",
-   "cc9858edfe52",
-   "dcccb178eba1",
-   "0c8ceb11677d",
-   "350573984d52",
-   "5506662e639a",
-   "a332c5f39015",
-   "669321ebd659",
-   "8e6ba5cdaef2",
-   "be37d5527c02",
-   "6c3a1b42ee6c",
-   "0b57a0168270",
-   "ddd13bc934e3"
-  ],
-  "unread": 73
+  "new": [],
+  "unread": 59
  }
 }

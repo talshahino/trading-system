@@ -28,7 +28,21 @@
   "t4h_15": 0.0028,
   "t15_5": 0.0028,
   "t5_1": 0.0,
-  "t4h_5": 0.0014
+  "t4h_5": 0.0014,
+  "t1h_5@US30": 0.0028,
+  "t1h_5@N25": 0.0028,
+  "t1h_5@AUS200": 0.0028,
+  "t1h_5@US100": 0.0028,
+  "t1h_5@SPN35": 0.0028,
+  "t1h_5@US500": 0.0028,
+  "t1h_5@EU50": 0.0028,
+  "t1h_5@US2000": 0.0028,
+  "t1h_5@JP225": 0.0028,
+  "t5_1@EU50": 0.0028,
+  "t5_1@UK100": 0.0028,
+  "t5_1@SPN35": 0.0028,
+  "t5_1@AUS200": 0.0028,
+  "t5_1@N25": 0.0028
  },
  "changes": {
   "a0a49a4ffc34": {
@@ -191,6 +205,90 @@
    "family": "risk",
    "track": "t15_1",
    "before": 0.0028
+  },
+  "f29b045bdbf4": {
+   "family": "tal5",
+   "track": "t1h_5@US30",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "357f4ecf1ca9": {
+   "family": "tal5",
+   "track": "t1h_5@N25",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "96cfc9c65f53": {
+   "family": "tal5",
+   "track": "t1h_5@AUS200",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "d6133952a5d6": {
+   "family": "tal5",
+   "track": "t1h_5@US100",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "d3f9e358dd40": {
+   "family": "tal5",
+   "track": "t1h_5@SPN35",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "b511d0699af8": {
+   "family": "tal5",
+   "track": "t1h_5@US500",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "92155775d910": {
+   "family": "tal5",
+   "track": "t1h_5@EU50",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "ee8a812c88e4": {
+   "family": "tal5",
+   "track": "t1h_5@US2000",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "7fb3e08251dc": {
+   "family": "tal5",
+   "track": "t1h_5@JP225",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "092e977a8be5": {
+   "family": "tal5",
+   "track": "t5_1@EU50",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "077ebcfa8a3c": {
+   "family": "tal5",
+   "track": "t5_1@UK100",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "ff06127c8930": {
+   "family": "tal5",
+   "track": "t5_1@SPN35",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "700edfc16448": {
+   "family": "tal5",
+   "track": "t5_1@AUS200",
+   "before": "__none__",
+   "risk_before": "__none__"
+  },
+  "3a36a86f7f61": {
+   "family": "tal5",
+   "track": "t5_1@N25",
+   "before": "__none__",
+   "risk_before": "__none__"
   }
  },
  "tal_tracks": {
@@ -297,6 +395,291 @@
     "PROT": "none",
     "EXIT": "be70"
    }
+  },
+  "t1h_5@US30": {
+   "pair": [
+    "1h",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 1.0,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "none",
+    "EXIT": "be786",
+    "MAXC": 0.2,
+    "TREND": "day"
+   },
+   "symbols": [
+    "US30"
+   ]
+  },
+  "t1h_5@N25": {
+   "pair": [
+    "1h",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 1.0,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "none",
+    "EXIT": "be786",
+    "MAXC": 0.2,
+    "TREND": "day"
+   },
+   "symbols": [
+    "N25"
+   ]
+  },
+  "t1h_5@AUS200": {
+   "pair": [
+    "1h",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 1.0,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "none",
+    "EXIT": "be786",
+    "MAXC": 0.2,
+    "TREND": "day"
+   },
+   "symbols": [
+    "AUS200"
+   ]
+  },
+  "t1h_5@US100": {
+   "pair": [
+    "1h",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 1.0,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "none",
+    "EXIT": "be786",
+    "MAXC": 0.2,
+    "TREND": "day"
+   },
+   "symbols": [
+    "US100"
+   ]
+  },
+  "t1h_5@SPN35": {
+   "pair": [
+    "1h",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 1.0,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "none",
+    "EXIT": "be786",
+    "MAXC": 0.2,
+    "TREND": "day"
+   },
+   "symbols": [
+    "SPN35"
+   ]
+  },
+  "t1h_5@US500": {
+   "pair": [
+    "1h",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 1.0,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "none",
+    "EXIT": "be786",
+    "MAXC": 0.2,
+    "TREND": "day"
+   },
+   "symbols": [
+    "US500"
+   ]
+  },
+  "t1h_5@EU50": {
+   "pair": [
+    "1h",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 1.0,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "none",
+    "EXIT": "be786",
+    "MAXC": 0.2,
+    "TREND": "day"
+   },
+   "symbols": [
+    "EU50"
+   ]
+  },
+  "t1h_5@US2000": {
+   "pair": [
+    "1h",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 1.0,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "none",
+    "EXIT": "be786",
+    "MAXC": 0.2,
+    "TREND": "day"
+   },
+   "symbols": [
+    "US2000"
+   ]
+  },
+  "t1h_5@JP225": {
+   "pair": [
+    "1h",
+    "5m"
+   ],
+   "cfg": {
+    "GBODY": 1.0,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "none",
+    "EXIT": "be786",
+    "MAXC": 0.2,
+    "TREND": "day"
+   },
+   "symbols": [
+    "JP225"
+   ]
+  },
+  "t5_1@EU50": {
+   "pair": [
+    "5m",
+    "1m"
+   ],
+   "cfg": {
+    "GBODY": 2.0,
+    "MIN_GAP": 0.6,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 24,
+    "PROT": "shock",
+    "EXIT": "be786",
+    "IMP1": true,
+    "MAXC": 0.1,
+    "SESS": "lnny"
+   },
+   "symbols": [
+    "EU50"
+   ]
+  },
+  "t5_1@UK100": {
+   "pair": [
+    "5m",
+    "1m"
+   ],
+   "cfg": {
+    "GBODY": 2.0,
+    "MIN_GAP": 0.6,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 24,
+    "PROT": "shock",
+    "EXIT": "be786",
+    "IMP1": true,
+    "MAXC": 0.1,
+    "SESS": "lnny"
+   },
+   "symbols": [
+    "UK100"
+   ]
+  },
+  "t5_1@SPN35": {
+   "pair": [
+    "5m",
+    "1m"
+   ],
+   "cfg": {
+    "GBODY": 2.0,
+    "MIN_GAP": 0.6,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 24,
+    "PROT": "shock",
+    "EXIT": "be786",
+    "IMP1": true,
+    "MAXC": 0.1,
+    "SESS": "lnny"
+   },
+   "symbols": [
+    "SPN35"
+   ]
+  },
+  "t5_1@AUS200": {
+   "pair": [
+    "5m",
+    "1m"
+   ],
+   "cfg": {
+    "GBODY": 2.0,
+    "MIN_GAP": 0.6,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 24,
+    "PROT": "shock",
+    "EXIT": "be786",
+    "IMP1": true,
+    "MAXC": 0.1,
+    "SESS": "lnny"
+   },
+   "symbols": [
+    "AUS200"
+   ]
+  },
+  "t5_1@N25": {
+   "pair": [
+    "5m",
+    "1m"
+   ],
+   "cfg": {
+    "GBODY": 2.0,
+    "MIN_GAP": 0.6,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 24,
+    "PROT": "shock",
+    "EXIT": "be786",
+    "IMP1": true,
+    "MAXC": 0.1,
+    "SESS": "lnny"
+   },
+   "symbols": [
+    "N25"
+   ]
   }
  }
 }

@@ -128,7 +128,14 @@ def bot_combos(bot):
         return []
     if bot == "bot7":
         s = RIO.live_json("live/news_bot_state.json")
-        return list(s.get("combos") or [f"{e}|5Min|{n}" for e in ("EV01", "EV02", "EV03") for n in ("US100", "US500", "US30")])
+        cs = list(s.get("combos") or [f"{e}|5Min|{n}" for e in ("EV01", "EV02", "EV03") for n in ("US100", "US500", "US30")])
+        # a removed combo (card kind "remove": plans "off_from", e.g. EV01 from 14.11.2026, card d51b540869aa) trades no
+        # more - no experiments on it (13.11.2026 night: EV01's 16 instruments would take the ladder / Fibonacci queue)
+        try:
+            pl = json.loads((ROOT / "live" / "bots" / "bot7.json").read_text(encoding="utf-8")).get("plans") or {}
+        except Exception:  # noqa: BLE001
+            pl = {}
+        return [c for c in cs if not (pl.get(c) or {}).get("off_from")]
     j = json.loads((ROOT / "live" / "bots" / f"{bot}.json").read_text(encoding="utf-8"))
     return list(j["combos"])
 

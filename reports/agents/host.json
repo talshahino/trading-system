@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-13T13:52:12+00:00",
+ "updated": "2026-11-13T15:31:34+00:00",
  "light_at": "2026-11-13T11:18:09+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -12,11 +12,12 @@
   "bot4": 30.0,
   "bot7": 30.0,
   "bot7-shocks": 15.0,
-  "bot6-new": 5.0
+  "bot6-new": 5.0,
+  "bot5": 60.0
  },
  "agent_errors": [],
  "agent_last": {
-  "bot5": "2026-11-13T07:18:22+00:00",
+  "bot5": "2026-11-13T13:53:17+00:00",
   "bot5-new": "2026-11-13T10:00:12+00:00",
   "bot6": "2026-11-13T08:51:27+00:00",
   "bot1": "2026-11-13T10:08:38+00:00",
@@ -58,8 +59,8 @@
    "{\"bot\": \"bot6\", \"new_cards\": 60}"
   ],
   "bot5": [
-   "tal_gap: 1758 run, 0 left",
-   "{\"cards\": 13, \"summary\": {\"v5\": {\"live\": {\"n\": 5, \"eff_n\": 5.0, \"mean\": -0.3118, \"t\": null, \"win\": 40.0}, \"erosion\": {\"recent_n\": 791, \"recent_mean\": 0.0107, \"before_n\": 2123, \"before_mean\": -0.011, \"slope_per_year\": 0.0242, \"fading\": false",
+   "tal_gap: 1379 run, 0 left",
+   "{\"cards\": 15, \"summary\": {\"v5\": {\"live\": {\"n\": 5, \"eff_n\": 5.0, \"mean\": -0.7239, \"t\": null, \"win\": 20.0}, \"erosion\": {\"recent_n\": 789, \"recent_mean\": 0.0133, \"before_n\": 2123, \"before_mean\": -0.0131, \"slope_per_year\": 0.0242, \"fading\": fals",
    "(continued across a manager restart)"
   ],
   "bot6": [
@@ -136,11 +137,19 @@
    "budget_sec": 300,
    "ok": true,
    "err": null
+  },
+  "bot5": {
+   "at": "2026-11-13T13:54:11+00:00",
+   "sec": 5802,
+   "budget_sec": 3600,
+   "ok": null,
+   "err": null,
+   "adopted": true
   }
  },
  "agent_errors_24h": [],
  "box_pub": "UT9R6umHmW2BY3ghrGz5Lt7nM5l7jNp88LK8mtnz9VQ=",
  "alpaca": true,
- "last_error": "13.11 15:43 agent_manager.py: 1 · y=lambda c: (c[\"status\"] != \"pending\", order.get(c[\"tier\"], 9), -(c[\"unseen\"] or {}).get(\"mean\", 0) if c.get(\"unseen\") else 0)) |                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | TypeError: bad operand type for unary -: 'NoneType'",
- "errors_in_row": 13
+ "last_error": "13.11 17:24 agent_manager.py: 1 · y=lambda c: (c[\"status\"] != \"pending\", order.get(c[\"tier\"], 9), -(c[\"unseen\"] or {}).get(\"mean\", 0) if c.get(\"unseen\") else 0)) |                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ | TypeError: bad operand type for unary -: 'NoneType'",
+ "errors_in_row": 22
 }

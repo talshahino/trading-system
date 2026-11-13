@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-13T02:59:00+00:00",
+ "updated": "2026-11-13T03:00:16+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -17241,7 +17241,7 @@
      "verdict": "חיובי בתקופה שלא נראתה (+0.29R לעסקה, 80.0 עסקאות אפקטיביות)",
      "status": "approved",
      "note": null,
-     "reply": null,
+     "reply": "נבנה אוטומטית בבוט 4: נוספה לבוט: SC006|4Hour|EURJPY, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
      "first_seen": "2026-11-13T01:48:52+00:00",
      "by": "manager",
      "decided": "2026-11-13T01:48:52+00:00",
@@ -23993,10 +23993,10 @@
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
      "status": "approved",
      "note": null,
-     "reply": null,
+     "reply": "נבנה אוטומטית בבוט 5: מסלול t4h_5: סיכון 0.14% לעסקה. יותקן במחשב הבוטים תוך כ־10 דקות.",
      "first_seen": "2026-11-13T02:30:50+00:00",
      "by": "manager",
-     "decided": "2026-11-13T02:30:50+00:00",
+     "decided": "2026-11-13T02:36:47+00:00",
      "decision_id": "e5dc3aa0d7b7"
     },
     {
@@ -24037,7 +24037,7 @@
      "reply": null,
      "first_seen": "2026-11-13T02:30:50+00:00",
      "by": "manager",
-     "decided": "2026-11-13T02:30:50+00:00",
+     "decided": "2026-11-13T02:36:47+00:00",
      "decision_id": "16888a874bf0"
     },
     {
@@ -29351,7 +29351,7 @@
      "reply": null,
      "first_seen": "2026-11-13T02:39:52+00:00",
      "by": "manager",
-     "decided": "2026-11-13T02:39:52+00:00",
+     "decided": "2026-11-13T03:00:16+00:00",
      "decision_id": "931d95afe36b"
     },
     {
@@ -29521,7 +29521,7 @@
      "reply": null,
      "first_seen": "2026-11-13T02:38:10+00:00",
      "by": "manager",
-     "decided": "2026-11-13T02:38:10+00:00",
+     "decided": "2026-11-13T03:00:16+00:00",
      "decision_id": "b53213a1b723"
     },
     {
@@ -29551,66 +29551,8 @@
      "reply": null,
      "first_seen": "2026-11-13T02:38:10+00:00",
      "by": "manager",
-     "decided": "2026-11-13T02:38:10+00:00",
+     "decided": "2026-11-13T03:00:16+00:00",
      "decision_id": "c833e5312db1"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC005|15Min|US500 · NFP V-shaped reversal candle after the release, 1:3",
-     "what": "הסייר הביא אותה (FOREX.com Trading Academy). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 21,
-      "eff_n": 21.0,
-      "mean": 0.0655,
-      "t": 0.2,
-      "win": 38.1
-     },
-     "unseen": {
-      "n": 26,
-      "eff_n": 26.0,
-      "mean": 0.4198,
-      "t": 1.32,
-      "win": 42.3
-     },
-     "whole": {
-      "n": 47,
-      "eff_n": 46.9,
-      "mean": 0.2685,
-      "t": 1.17,
-      "win": 40.5
-     },
-     "halves": [
-      0.1887,
-      0.3324
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC005|15Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "NFP V-shaped reversal candle after the release, 1:3",
-       "source": "FOREX.com Trading Academy",
-       "url": "https://forex.com/en/trading-academy/courses/advanced-trading-strategies/non-farm-payrolls-v-shaped-reversal",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "c79211464886",
-     "tier": "watch",
-     "verdict": "חיובי בתקופה שלא נראתה, אבל רק 26.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
     },
     {
      "bot": "bot6",
@@ -30004,93 +29946,32 @@
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC020|15Min|US500 · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
-     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 54,
-      "eff_n": 54.0,
-      "mean": 0.21,
-      "t": 1.34,
-      "win": 48.0
-     },
-     "unseen": {
-      "n": 55,
-      "eff_n": 55.0,
-      "mean": 0.0313,
-      "t": 0.21,
-      "win": 36.4
-     },
-     "whole": {
-      "n": 109,
-      "eff_n": 108.8,
-      "mean": 0.1165,
-      "t": 1.06,
-      "win": 41.9
-     },
-     "halves": [
-      0.2166,
-      0.032
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC020|15Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
-       "source": "ProRealCode",
-       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "6ae874a35e9b",
-     "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +1.7R (+0.031R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
-     "status": "approved",
-     "note": null,
-     "reply": "נבדקה בעולם של בוט 6 ועברה: בלי יעד, סטופ x0.75 - עד 2025 +0.20R על 203, ב־2026 +0.10R על 64. נבנתה (כרטיס 3434f4433c75). עם הכוכבית של המנהל: 0.28% (כרטיס c96d82035ab3).",
-     "first_seen": "2026-11-12T21:23:06+00:00",
-     "by": "manager",
-     "decided": "2026-11-12T21:23:07+00:00",
-     "decision_id": "cd52f03662dd"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC019|15Min|US500 · freqtrade RSI_BB: 1-SD lower band long, 3-SD upper band short",
+     "title": "אסטרטגיה חדשה: SC019|15Min|US100 · freqtrade RSI_BB: 1-SD lower band long, 3-SD upper band short",
      "what": "הסייר הביא אותה (GitHub (freqtrade strategy listing)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 208,
-      "eff_n": 207.8,
-      "mean": 0.0038,
-      "t": 0.99,
-      "win": 61.6
+      "n": 217,
+      "eff_n": 216.8,
+      "mean": 0.0063,
+      "t": 1.42,
+      "win": 59.5
      },
      "unseen": {
-      "n": 258,
-      "eff_n": 257.9,
-      "mean": 0.0019,
-      "t": 0.42,
-      "win": 62.4
+      "n": 273,
+      "eff_n": 272.9,
+      "mean": 0.0024,
+      "t": 0.41,
+      "win": 62.3
      },
      "whole": {
-      "n": 466,
-      "eff_n": 464.9,
-      "mean": 0.0027,
-      "t": 0.89,
-      "win": 62.1
+      "n": 490,
+      "eff_n": 488.9,
+      "mean": 0.0041,
+      "t": 1.06,
+      "win": 61.1
      },
      "halves": [
-      0.0043,
-      0.0013
+      0.0058,
+      0.0024
      ],
      "neighbours": {
       "share_positive": null
@@ -30100,7 +29981,7 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC019|15Min|US500",
+      "combo": "SC019|15Min|US100",
       "kind": "add"
      },
      "detail": {
@@ -30111,17 +29992,14 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "d89e35b349ab",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "6bd371596cab",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.5R (+0.002R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
-     "status": "approved",
+     "verdict": "ב־2026 בסך הכל רק +0.7R (+0.002R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "status": "pending",
      "note": null,
-     "reply": "נבדקה בעולם של בוט 6: אף גרסה לא עברה (גם בגלל הסטופ של 10% שגדול מסיכון הבוט לחוזה אחד). fix_attempts: failed - לא נבנית.",
-     "first_seen": "2026-11-12T21:23:06+00:00",
-     "by": "manager",
-     "decided": "2026-11-12T21:23:07+00:00",
-     "decision_id": "69e3d1aa1dc9"
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
@@ -30172,7 +30050,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
+     "made": "2026-11-13T02:56:46+00:00",
      "id": "1ae50519f6f2",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה עד 2025 (-0.34R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
@@ -30183,67 +30061,6 @@
      "by": "manager",
      "decided": "2026-11-12T18:52:55+00:00",
      "decision_id": "035e246b3e56"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC005|5Min|US500 · NFP V-shaped reversal candle after the release, 1:3",
-     "what": "הסייר הביא אותה (FOREX.com Trading Academy). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 23,
-      "eff_n": 23.0,
-      "mean": -0.3457,
-      "t": -1.24,
-      "win": 30.0
-     },
-     "unseen": {
-      "n": 33,
-      "eff_n": 33.0,
-      "mean": 0.4812,
-      "t": 1.49,
-      "win": 45.3
-     },
-     "whole": {
-      "n": 56,
-      "eff_n": 55.9,
-      "mean": 0.1588,
-      "t": 0.69,
-      "win": 39.3
-     },
-     "halves": [
-      -0.1505,
-      0.4471
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC005|5Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "NFP V-shaped reversal candle after the release, 1:3",
-       "source": "FOREX.com Trading Academy",
-       "url": "https://forex.com/en/trading-academy/courses/advanced-trading-strategies/non-farm-payrolls-v-shaped-reversal",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "e19653a9f5ca",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה עד 2025 (-0.35R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
-     "status": "approved",
-     "note": null,
-     "reply": "תשובה למשימה: נמצאה גרסה. בעולם של בוט 6: יעד 2R, סטופ x0.75 - עד 2025 +0.16R על 25, ב־2026 +0.25R על 32 (+8.1R). נבנתה בבוט 6 (כרטיס cefeafe4d4d1). רק 8% מהגרסאות הרוויחו עד 2025 - בגלל זה הכוכבית של המנהל: סיכון 0.28% (כרטיס c96d82035ab3).",
-     "first_seen": "2026-11-12T21:23:06+00:00",
-     "by": "manager",
-     "decided": "2026-11-12T21:23:07+00:00",
-     "decision_id": "f05032f0d4f4"
     },
     {
      "bot": "bot6",
@@ -30294,7 +30111,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
+     "made": "2026-11-13T02:56:46+00:00",
      "id": "0763a0a02ca2",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה עד 2025 (-0.19R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
@@ -30306,32 +30123,32 @@
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC032|15Min|US500 · London 08:15 GMT side of the central pivot, stop past the pivot, target R2/S2",
-     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "title": "אסטרטגיה חדשה: SC012|5Min|US100 · CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
+     "what": "הסייר הביא אותה (FXNX blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 135,
-      "eff_n": 134.9,
-      "mean": -0.0746,
-      "t": -0.54,
-      "win": 31.1
+      "n": 19,
+      "eff_n": 19.0,
+      "mean": -0.0056,
+      "t": -0.02,
+      "win": 41.8
      },
      "unseen": {
-      "n": 178,
-      "eff_n": 178.0,
-      "mean": 0.1003,
-      "t": 0.69,
-      "win": 39.5
+      "n": 28,
+      "eff_n": 28.0,
+      "mean": 0.3353,
+      "t": 1.38,
+      "win": 57.0
      },
      "whole": {
-      "n": 313,
-      "eff_n": 312.3,
-      "mean": 0.0284,
-      "t": 0.28,
-      "win": 36.0
+      "n": 47,
+      "eff_n": 46.9,
+      "mean": 0.2052,
+      "t": 1.14,
+      "win": 51.2
      },
      "halves": [
-      -0.139,
-      0.1843
+      0.2188,
+      0.1914
      ],
      "neighbours": {
       "share_positive": null
@@ -30341,116 +30158,55 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC032|15Min|US500",
+      "combo": "SC012|5Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "London 08:15 GMT side of the central pivot, stop past the pivot, target R2/S2",
-       "source": "TradingView",
-       "url": "https://de.tradingview.com/chart/EURUSD/VUveNusS-EURUSD-15M-PIVOT-POINT-DAY-TRADING-STRATEGY",
+       "name": "CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
+       "source": "FXNX blog",
+       "url": "https://fxnx.com/en/blog/cpi-volatility-avwap-reversion-strategy",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "e38cb4aa26d1",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "38b92c45e10c",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה עד 2025 (-0.07R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
-     "status": "approved",
-     "note": null,
-     "reply": "תשובה למשימה: אין גרסה. בעולם של בוט 6 אף אחת מ־96 הגרסאות לא הרוויחה עד 2025. fix_attempts: failed - לא נבנית בבוט 6, אפשר להוציא.",
-     "first_seen": "2026-11-12T21:23:06+00:00",
-     "by": "manager",
-     "decided": "2026-11-12T21:23:07+00:00",
-     "decision_id": "1e8f9e5689bb"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC031|5Min|US500 · freqtrade EMA_RSIStrategy: 1h trend + EMA20/50 + RSI 40-70 + ADX, -7%/4.5%",
-     "what": "הסייר הביא אותה (GitHub). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 698,
-      "eff_n": 697.3,
-      "mean": -0.0007,
-      "t": -0.66,
-      "win": 26.8
-     },
-     "unseen": {
-      "n": 825,
-      "eff_n": 824.8,
-      "mean": -0.0005,
-      "t": -0.54,
-      "win": 25.9
-     },
-     "whole": {
-      "n": 1523,
-      "eff_n": 1519.4,
-      "mean": -0.0006,
-      "t": -0.83,
-      "win": 26.3
-     },
-     "halves": [
-      -0.0004,
-      -0.0007
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC031|5Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "freqtrade EMA_RSIStrategy: 1h trend + EMA20/50 + RSI 40-70 + ADX, -7%/4.5%",
-       "source": "GitHub",
-       "url": "https://raw.githubusercontent.com/gksdud6330/crytpo-auto-trading-bot/e754e3c873b4845c56f7fb752748330c48cd6369/freqtrade-bot/user_data/strategies/EMA_RSIStrategy.py",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "55bab0fe5e85",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.00R לעסקה)",
+     "verdict": "הפסיד בתקופה עד 2025 (-0.01R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC024|5Min|US500 · EURUSD 5m TEMA21 vs SMA300 + BB width + CCI -110/160, CCI 210 exit",
-     "what": "הסייר הביא אותה (ProRealCode forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "title": "אסטרטגיה חדשה: SC030|5Min|US100 · Alpha S/R: engulfing inside the 15m EMA36 channel, channel stop, 1:3, gold 5m",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 183,
-      "eff_n": 182.8,
-      "mean": -0.1658,
-      "t": -2.8,
-      "win": 45.5
+      "n": 33,
+      "eff_n": 33.0,
+      "mean": -0.1185,
+      "t": -0.44,
+      "win": 20.9
      },
      "unseen": {
-      "n": 293,
-      "eff_n": 292.9,
-      "mean": -0.009,
-      "t": -0.19,
-      "win": 56.3
+      "n": 78,
+      "eff_n": 78.0,
+      "mean": 0.1564,
+      "t": 0.83,
+      "win": 39.7
      },
      "whole": {
-      "n": 476,
-      "eff_n": 474.9,
-      "mean": -0.0661,
-      "t": -1.76,
-      "win": 52.4
+      "n": 111,
+      "eff_n": 110.8,
+      "mean": 0.0794,
+      "t": 0.51,
+      "win": 34.4
      },
      "halves": [
-      -0.1069,
-      -0.033
+      0.2182,
+      -0.0546
      ],
      "neighbours": {
       "share_positive": null
@@ -30460,7 +30216,123 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC024|5Min|US500",
+      "combo": "SC030|5Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alpha S/R: engulfing inside the 15m EMA36 channel, channel stop, 1:3, gold 5m",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/mikVFwAu-Alpha-S-R-Channel-Strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "c31717235766",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה עד 2025 (-0.12R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC021|5Min|US100 · Jump: 16-bar mid +/- 2 ATR stop entry with 60m/30m filters, 5-minute",
+     "what": "הסייר הביא אותה (ProRealCode (forum)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 177,
+      "eff_n": 176.8,
+      "mean": -0.0092,
+      "t": -0.15,
+      "win": 50.0
+     },
+     "unseen": {
+      "n": 199,
+      "eff_n": 199.0,
+      "mean": 0.0855,
+      "t": 1.57,
+      "win": 62.8
+     },
+     "whole": {
+      "n": 376,
+      "eff_n": 375.1,
+      "mean": 0.043,
+      "t": 1.07,
+      "win": 57.1
+     },
+     "halves": [
+      -0.0218,
+      0.1037
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC021|5Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Jump: 16-bar mid +/- 2 ATR stop entry with 60m/30m filters, 5-minute",
+       "source": "ProRealCode (forum)",
+       "url": "https://www.prorealcode.com/topic/jump-a-5-min-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "353f642781b0",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה עד 2025 (-0.01R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC024|5Min|US100 · EURUSD 5m TEMA21 vs SMA300 + BB width + CCI -110/160, CCI 210 exit",
+     "what": "הסייר הביא אותה (ProRealCode forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 236,
+      "eff_n": 235.7,
+      "mean": -0.1308,
+      "t": -2.66,
+      "win": 50.6
+     },
+     "unseen": {
+      "n": 407,
+      "eff_n": 406.9,
+      "mean": 0.0281,
+      "t": 0.67,
+      "win": 56.8
+     },
+     "whole": {
+      "n": 643,
+      "eff_n": 641.6,
+      "mean": -0.0271,
+      "t": -0.84,
+      "win": 54.6
+     },
+     "halves": [
+      -0.1174,
+      0.0533
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC024|5Min|US100",
       "kind": "add"
      },
      "detail": {
@@ -30471,44 +30343,44 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "fa6dc60f8452",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "728da928696b",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)",
+     "verdict": "הפסיד בתקופה עד 2025 (-0.13R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC017|1Min|US500 · freqtrade ScalpingSimple: RSI<30 over SMA5, 0.5% stop, 1% target",
-     "what": "הסייר הביא אותה (GitHub (freqtrade strategy listing)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "title": "אסטרטגיה חדשה: SC012|15Min|US100 · CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
+     "what": "הסייר הביא אותה (FXNX blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 249,
-      "eff_n": 248.7,
-      "mean": -0.0066,
-      "t": -0.71,
-      "win": 28.0
+      "n": 16,
+      "eff_n": 16.0,
+      "mean": -0.5364,
+      "t": -2.53,
+      "win": 19.0
      },
      "unseen": {
-      "n": 399,
-      "eff_n": 398.9,
-      "mean": -0.0127,
-      "t": -1.93,
-      "win": 27.1
+      "n": 20,
+      "eff_n": 20.0,
+      "mean": 0.014,
+      "t": 0.06,
+      "win": 39.9
      },
      "whole": {
-      "n": 648,
-      "eff_n": 646.5,
-      "mean": -0.0105,
-      "t": -1.94,
-      "win": 27.4
+      "n": 36,
+      "eff_n": 35.9,
+      "mean": -0.2197,
+      "t": -1.33,
+      "win": 31.0
      },
      "halves": [
-      -0.0128,
-      -0.0079
+      -0.4187,
+      -0.0428
      ],
      "neighbours": {
       "share_positive": null
@@ -30518,7 +30390,297 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC017|1Min|US500",
+      "combo": "SC012|15Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
+       "source": "FXNX blog",
+       "url": "https://fxnx.com/en/blog/cpi-volatility-avwap-reversion-strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "071be458e80c",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה עד 2025 (-0.54R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC020|15Min|US100 · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 53,
+      "eff_n": 52.9,
+      "mean": -0.075,
+      "t": -0.51,
+      "win": 41.3
+     },
+     "unseen": {
+      "n": 53,
+      "eff_n": 53.0,
+      "mean": 0.0052,
+      "t": 0.03,
+      "win": 37.6
+     },
+     "whole": {
+      "n": 106,
+      "eff_n": 105.8,
+      "mean": -0.0333,
+      "t": -0.31,
+      "win": 39.4
+     },
+     "halves": [
+      -0.0667,
+      0.0057
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC020|15Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+       "source": "ProRealCode",
+       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "57ce6338f0b9",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה עד 2025 (-0.07R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC028|5Min|US100 · DAX first 5-minute bar direction at 09:05, 5/10 points, flat 17:30",
+     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 166,
+      "eff_n": 165.8,
+      "mean": -0.3799,
+      "t": -3.26,
+      "win": 29.7
+     },
+     "unseen": {
+      "n": 217,
+      "eff_n": 217.0,
+      "mean": 0.0003,
+      "t": 0.0,
+      "win": 41.4
+     },
+     "whole": {
+      "n": 383,
+      "eff_n": 382.2,
+      "mean": -0.1568,
+      "t": -2.04,
+      "win": 36.6
+     },
+     "halves": [
+      -0.3245,
+      -0.0094
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC028|5Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "DAX first 5-minute bar direction at 09:05, 5/10 points, flat 17:30",
+       "source": "ProRealCode",
+       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/intraday-dax-strategy-mini-1e-timeframe-5-min",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "dc6b58bf97f7",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה עד 2025 (-0.38R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC011|1Min|US100 · NY first 5m candle break, 1m FVG retest + engulfing, 3R",
+     "what": "הסייר הביא אותה (YouTube (Casper SMC)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 118,
+      "eff_n": 117.9,
+      "mean": -0.0942,
+      "t": -0.66,
+      "win": 28.1
+     },
+     "unseen": {
+      "n": 164,
+      "eff_n": 164.0,
+      "mean": -0.0038,
+      "t": -0.03,
+      "win": 31.7
+     },
+     "whole": {
+      "n": 282,
+      "eff_n": 281.4,
+      "mean": -0.0398,
+      "t": -0.41,
+      "win": 30.3
+     },
+     "halves": [
+      -0.0439,
+      -0.038
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC011|1Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "NY first 5m candle break, 1m FVG retest + engulfing, 3R",
+       "source": "YouTube (Casper SMC)",
+       "url": "https://www.youtube.com/watch?v=8v-Z5oyKVG0",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "de942361a1a3",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.00R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC010|15Min|US100 · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 121,
+      "eff_n": 120.9,
+      "mean": -0.1339,
+      "t": -1.19,
+      "win": 32.5
+     },
+     "unseen": {
+      "n": 160,
+      "eff_n": 160.0,
+      "mean": -0.0149,
+      "t": -0.15,
+      "win": 40.0
+     },
+     "whole": {
+      "n": 281,
+      "eff_n": 280.4,
+      "mean": -0.0637,
+      "t": -0.84,
+      "win": 36.9
+     },
+     "halves": [
+      -0.1311,
+      -0.0036
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC010|15Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+       "source": "FX Replay",
+       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "842b8b77bc24",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC017|1Min|US100 · freqtrade ScalpingSimple: RSI<30 over SMA5, 0.5% stop, 1% target",
+     "what": "הסייר הביא אותה (GitHub (freqtrade strategy listing)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 255,
+      "eff_n": 254.7,
+      "mean": -0.0101,
+      "t": -0.96,
+      "win": 30.4
+     },
+     "unseen": {
+      "n": 373,
+      "eff_n": 372.9,
+      "mean": -0.0158,
+      "t": -1.47,
+      "win": 27.6
+     },
+     "whole": {
+      "n": 628,
+      "eff_n": 626.6,
+      "mean": -0.0136,
+      "t": -1.76,
+      "win": 28.7
+     },
+     "halves": [
+      -0.0102,
+      -0.0174
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC017|1Min|US100",
       "kind": "add"
      },
      "detail": {
@@ -30529,44 +30691,44 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "4551a3c603fc",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "8fd88d18b1b7",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.02R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC004|5Min|US500 · NFP straddle of the 4-hour pre-release range, target = range",
-     "what": "הסייר הביא אותה (BrokerXplorer (article)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "title": "אסטרטגיה חדשה: SC025|5Min|US100 · Bollinger + RSI 30/70 + Stochastic 5/3/3 scalp, mid-band exit, 5-minute",
+     "what": "הסייר הביא אותה (Forex Tester blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 13,
-      "eff_n": 13.0,
-      "mean": -0.1508,
-      "t": -0.76,
-      "win": 54.6
+      "n": 891,
+      "eff_n": 890.1,
+      "mean": -0.0561,
+      "t": -1.88,
+      "win": 53.9
      },
      "unseen": {
-      "n": 19,
-      "eff_n": 19.0,
-      "mean": -0.0191,
-      "t": -0.17,
-      "win": 52.6
-     },
-     "whole": {
-      "n": 32,
-      "eff_n": 31.9,
-      "mean": -0.07,
-      "t": -0.67,
+      "n": 1137,
+      "eff_n": 1136.8,
+      "mean": -0.0245,
+      "t": -0.9,
       "win": 53.4
      },
+     "whole": {
+      "n": 2028,
+      "eff_n": 2023.7,
+      "mean": -0.0378,
+      "t": -1.87,
+      "win": 53.6
+     },
      "halves": [
-      -0.1144,
-      -0.0347
+      -0.0709,
+      -0.0077
      ],
      "neighbours": {
       "share_positive": null
@@ -30576,25 +30738,83 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC004|5Min|US500",
+      "combo": "SC025|5Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "NFP straddle of the 4-hour pre-release range, target = range",
-       "source": "BrokerXplorer (article)",
-       "url": "https://www.brokerxplorer.com/article/day-trading-strategy-on-nfp-release-2878",
+       "name": "Bollinger + RSI 30/70 + Stochastic 5/3/3 scalp, mid-band exit, 5-minute",
+       "source": "Forex Tester blog",
+       "url": "https://forextester.com/blog/bollinger-bands-rsi-stochastic-scalping-strategy/",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "6ac99f5d8d14",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "f440b2d6522b",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.02R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T18:52:55+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC007|15Min|US100 · Cowabunga: 4H trend + 15m EMA5/10, RSI9, stoch, MACD, 1R, out 16:00 NY",
+     "what": "הסייר הביא אותה (BabyPips). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 241,
+      "eff_n": 240.8,
+      "mean": -0.0334,
+      "t": -0.63,
+      "win": 48.0
+     },
+     "unseen": {
+      "n": 295,
+      "eff_n": 294.9,
+      "mean": -0.0281,
+      "t": -0.52,
+      "win": 56.0
+     },
+     "whole": {
+      "n": 536,
+      "eff_n": 534.8,
+      "mean": -0.0304,
+      "t": -0.79,
+      "win": 52.5
+     },
+     "halves": [
+      -0.0294,
+      -0.0344
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC007|15Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Cowabunga: 4H trend + 15m EMA5/10, RSI9, stoch, MACD, 1R, out 16:00 NY",
+       "source": "BabyPips",
+       "url": "https://www.babypips.com/trading/cowabunga-system",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "8dd91e72f366",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.03R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
@@ -30602,29 +30822,29 @@
      "title": "אסטרטגיה חדשה: SC001|1Min|US100 · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
      "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 371,
-      "eff_n": 370.5,
-      "mean": 0.0348,
-      "t": 0.54,
-      "win": 40.2
+      "n": 362,
+      "eff_n": 361.5,
+      "mean": 0.0126,
+      "t": 0.2,
+      "win": 40.6
      },
      "unseen": {
-      "n": 747,
-      "eff_n": 746.9,
-      "mean": -0.0266,
-      "t": -0.57,
+      "n": 742,
+      "eff_n": 741.9,
+      "mean": -0.0292,
+      "t": -0.64,
       "win": 41.8
      },
      "whole": {
-      "n": 1118,
-      "eff_n": 1115.8,
-      "mean": -0.0073,
-      "t": -0.2,
-      "win": 41.3
+      "n": 1104,
+      "eff_n": 1101.8,
+      "mean": -0.0162,
+      "t": -0.44,
+      "win": 41.4
      },
      "halves": [
-      -0.0299,
-      0.0144
+      -0.0545,
+      0.02
      ],
      "neighbours": {
       "share_positive": null
@@ -30645,7 +30865,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
+     "made": "2026-11-13T02:56:46+00:00",
      "id": "e07a79f5be76",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.03R לעסקה)",
@@ -30657,32 +30877,32 @@
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC018|5Min|US500 · freqtrade MeanReversionScalper: BB + RSI + volume spike, out at mid band",
-     "what": "הסייר הביא אותה (GitHub (freqtrade strategy listing)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "title": "אסטרטגיה חדשה: SC022|5Min|US100 · 5 EMA high/low fade scalp, 8-pip stop, 5-pip target, London/NY open hour",
+     "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 85,
-      "eff_n": 84.9,
-      "mean": 0.0902,
-      "t": 1.99,
-      "win": 74.3
+      "n": 708,
+      "eff_n": 707.3,
+      "mean": -0.0997,
+      "t": -3.86,
+      "win": 54.1
      },
      "unseen": {
-      "n": 68,
-      "eff_n": 68.0,
-      "mean": -0.036,
-      "t": -0.67,
-      "win": 55.9
+      "n": 905,
+      "eff_n": 904.8,
+      "mean": -0.0306,
+      "t": -1.38,
+      "win": 64.7
      },
      "whole": {
-      "n": 153,
-      "eff_n": 152.6,
-      "mean": 0.0315,
-      "t": 0.9,
-      "win": 65.7
+      "n": 1613,
+      "eff_n": 1609.5,
+      "mean": -0.0595,
+      "t": -3.53,
+      "win": 60.3
      },
      "halves": [
-      0.0816,
-      -0.0136
+      -0.0897,
+      -0.0331
      ],
      "neighbours": {
       "share_positive": null
@@ -30692,25 +30912,25 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC018|5Min|US500",
+      "combo": "SC022|5Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "freqtrade MeanReversionScalper: BB + RSI + volume spike, out at mid band",
-       "source": "GitHub (freqtrade strategy listing)",
-       "url": "https://fts.naif.one/strategies/mean-reversion-scalper",
+       "name": "5 EMA high/low fade scalp, 8-pip stop, 5-pip target, London/NY open hour",
+       "source": "BabyPips forum",
+       "url": "https://forums.babypips.com/t/simple-5-ema-high-low-scalping-strategy/39154",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "60aa16e28674",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "f77ad7526060",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.03R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
@@ -30778,64 +30998,6 @@
     },
     {
      "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC025|5Min|US500 · Bollinger + RSI 30/70 + Stochastic 5/3/3 scalp, mid-band exit, 5-minute",
-     "what": "הסייר הביא אותה (Forex Tester blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 858,
-      "eff_n": 857.1,
-      "mean": -0.0723,
-      "t": -2.3,
-      "win": 51.8
-     },
-     "unseen": {
-      "n": 1067,
-      "eff_n": 1066.8,
-      "mean": -0.039,
-      "t": -1.41,
-      "win": 53.9
-     },
-     "whole": {
-      "n": 1925,
-      "eff_n": 1920.8,
-      "mean": -0.0532,
-      "t": -2.56,
-      "win": 53.0
-     },
-     "halves": [
-      -0.0797,
-      -0.0298
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC025|5Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Bollinger + RSI 30/70 + Stochastic 5/3/3 scalp, mid-band exit, 5-minute",
-       "source": "Forex Tester blog",
-       "url": "https://forextester.com/blog/bollinger-bands-rsi-stochastic-scalping-strategy/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "7eb537bb8963",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
      "kind": "improve",
      "title": "חוזים · מסלול 15 דקות (v5): טיים פריים לזיהוי (דקות) 15 ← 60",
      "what": "לשנות את 'טיים פריים לזיהוי (דקות)' מ־15 ל־60. נבחר על 2024-2025 בלבד, ומוצג על 2026 שלא נראתה.",
@@ -30896,64 +31058,6 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-12T03:33:31+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC012|5Min|US500 · CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
-     "what": "הסייר הביא אותה (FXNX blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 18,
-      "eff_n": 18.0,
-      "mean": 0.3237,
-      "t": 0.99,
-      "win": 54.8
-     },
-     "unseen": {
-      "n": 28,
-      "eff_n": 28.0,
-      "mean": -0.0423,
-      "t": -0.2,
-      "win": 46.4
-     },
-     "whole": {
-      "n": 46,
-      "eff_n": 45.9,
-      "mean": 0.0936,
-      "t": 0.52,
-      "win": 49.5
-     },
-     "halves": [
-      0.3724,
-      -0.1509
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC012|5Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
-       "source": "FXNX blog",
-       "url": "https://fxnx.com/en/blog/cpi-volatility-avwap-reversion-strategy",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "40262f9b4c47",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
     },
     {
      "bot": "bot6",
@@ -31025,32 +31129,32 @@
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC034|15Min|US500 · ATR Trend + RSI<40 pullback over a rising EMA200, 1.5/3 ATR, long",
+     "title": "אסטרטגיה חדשה: SC008|15Min|US100 · EMA 5/13 cross + VWAP + ADX>20, stop at the cross, 2R",
      "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 168,
-      "eff_n": 167.8,
-      "mean": -0.0046,
-      "t": -0.05,
-      "win": 36.9
+      "n": 395,
+      "eff_n": 394.6,
+      "mean": -0.041,
+      "t": -0.58,
+      "win": 36.7
      },
      "unseen": {
-      "n": 151,
-      "eff_n": 151.0,
-      "mean": -0.0465,
-      "t": -0.45,
-      "win": 35.2
+      "n": 434,
+      "eff_n": 433.9,
+      "mean": -0.0477,
+      "t": -0.76,
+      "win": 41.7
      },
      "whole": {
-      "n": 319,
-      "eff_n": 318.2,
-      "mean": -0.0253,
-      "t": -0.35,
-      "win": 36.0
+      "n": 829,
+      "eff_n": 827.2,
+      "mean": -0.0446,
+      "t": -0.95,
+      "win": 39.4
      },
      "halves": [
-      0.0605,
-      -0.1084
+      -0.0326,
+      -0.0598
      ],
      "neighbours": {
       "share_positive": null
@@ -31060,25 +31164,25 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC034|15Min|US500",
+      "combo": "SC008|15Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "ATR Trend + RSI<40 pullback over a rising EMA200, 1.5/3 ATR, long",
+       "name": "EMA 5/13 cross + VWAP + ADX>20, stop at the cross, 2R",
        "source": "TradingView",
-       "url": "https://in.tradingview.com/script/9JyXE791-ATR-Trend-RSI-Pullback-Strategy-Profit-Focused",
+       "url": "https://www.tradingview.com/script/UEFr9IXn-EMA-Crossover-Strategy-15M/",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "b1c57c62770c",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "817a6adaa820",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.05R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
@@ -31151,32 +31255,32 @@
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC021|5Min|US500 · Jump: 16-bar mid +/- 2 ATR stop entry with 60m/30m filters, 5-minute",
-     "what": "הסייר הביא אותה (ProRealCode (forum)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "title": "אסטרטגיה חדשה: SC014|1Min|US100 · VWAP cross + MACD flip, exit on the MACD cross back, 1-minute",
+     "what": "הסייר הביא אותה (FXOpen blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 172,
-      "eff_n": 171.8,
-      "mean": -0.0813,
-      "t": -1.38,
-      "win": 41.2
+      "n": 1390,
+      "eff_n": 1388.5,
+      "mean": -0.2066,
+      "t": -6.17,
+      "win": 31.6
      },
      "unseen": {
-      "n": 199,
-      "eff_n": 199.0,
-      "mean": -0.0595,
-      "t": -1.04,
-      "win": 48.3
+      "n": 1716,
+      "eff_n": 1715.7,
+      "mean": -0.0546,
+      "t": -1.98,
+      "win": 35.4
      },
      "whole": {
-      "n": 371,
-      "eff_n": 370.1,
-      "mean": -0.0691,
-      "t": -1.68,
-      "win": 45.2
+      "n": 3106,
+      "eff_n": 3099.0,
+      "mean": -0.1195,
+      "t": -5.59,
+      "win": 33.8
      },
      "halves": [
-      -0.0721,
-      -0.0657
+      -0.2087,
+      -0.0388
      ],
      "neighbours": {
       "share_positive": null
@@ -31186,25 +31290,25 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC021|5Min|US500",
+      "combo": "SC014|1Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "Jump: 16-bar mid +/- 2 ATR stop entry with 60m/30m filters, 5-minute",
-       "source": "ProRealCode (forum)",
-       "url": "https://www.prorealcode.com/topic/jump-a-5-min-strategy/",
+       "name": "VWAP cross + MACD flip, exit on the MACD cross back, 1-minute",
+       "source": "FXOpen blog",
+       "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "6c884c9c1c37",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "194cff7823dc",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.06R לעסקה)",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.05R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
@@ -31277,32 +31381,32 @@
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC001|1Min|US500 · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
-     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "title": "אסטרטגיה חדשה: SC018|5Min|US100 · freqtrade MeanReversionScalper: BB + RSI + volume spike, out at mid band",
+     "what": "הסייר הביא אותה (GitHub (freqtrade strategy listing)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 259,
-      "eff_n": 258.7,
-      "mean": -0.053,
-      "t": -0.73,
-      "win": 33.8
+      "n": 60,
+      "eff_n": 59.9,
+      "mean": -0.0736,
+      "t": -1.1,
+      "win": 62.1
      },
      "unseen": {
-      "n": 374,
-      "eff_n": 373.9,
-      "mean": -0.0648,
-      "t": -1.05,
-      "win": 34.6
+      "n": 84,
+      "eff_n": 84.0,
+      "mean": -0.0639,
+      "t": -1.04,
+      "win": 57.3
      },
      "whole": {
-      "n": 633,
-      "eff_n": 631.6,
-      "mean": -0.0602,
-      "t": -1.28,
-      "win": 34.3
+      "n": 144,
+      "eff_n": 143.8,
+      "mean": -0.0678,
+      "t": -1.49,
+      "win": 59.2
      },
      "halves": [
-      -0.0738,
-      -0.0494
+      -0.0977,
+      -0.0421
      ],
      "neighbours": {
       "share_positive": null
@@ -31312,55 +31416,55 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC001|1Min|US500",
+      "combo": "SC018|5Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
-       "source": "TradingView",
-       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "name": "freqtrade MeanReversionScalper: BB + RSI + volume spike, out at mid band",
+       "source": "GitHub (freqtrade strategy listing)",
+       "url": "https://fts.naif.one/strategies/mean-reversion-scalper",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "fbbaa96c849b",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "83ff23a9053c",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.06R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T11:42:02+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC001|1Min|US30 · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+     "title": "אסטרטגיה חדשה: SC009|15Min|US100 · Pivot liquidity sweep + momentum candle + EMA200, 1:2",
      "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 246,
-      "eff_n": 245.7,
-      "mean": -0.0705,
-      "t": -0.96,
-      "win": 37.2
+      "n": 178,
+      "eff_n": 177.8,
+      "mean": -0.0058,
+      "t": -0.06,
+      "win": 35.6
      },
      "unseen": {
-      "n": 387,
-      "eff_n": 386.9,
-      "mean": -0.0717,
-      "t": -1.18,
-      "win": 39.6
+      "n": 239,
+      "eff_n": 239.0,
+      "mean": -0.0745,
+      "t": -0.91,
+      "win": 40.6
      },
      "whole": {
-      "n": 633,
-      "eff_n": 631.6,
-      "mean": -0.0713,
-      "t": -1.51,
-      "win": 38.7
+      "n": 417,
+      "eff_n": 416.0,
+      "mean": -0.0467,
+      "t": -0.75,
+      "win": 38.6
      },
      "halves": [
-      -0.099,
-      -0.0484
+      -0.061,
+      -0.0318
      ],
      "neighbours": {
       "share_positive": null
@@ -31370,55 +31474,55 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC001|1Min|US30",
+      "combo": "SC009|15Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+       "name": "Pivot liquidity sweep + momentum candle + EMA200, 1:2",
        "source": "TradingView",
-       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "url": "https://in.tradingview.com/script/6dpq9Hjc-Gold-15m-Trend-S-R-Liquidity-Sweep-RR-1-2",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "1455399685d4",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "f1b423daec3a",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T11:42:02+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC030|5Min|US500 · Alpha S/R: engulfing inside the 15m EMA36 channel, channel stop, 1:3, gold 5m",
-     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "title": "אסטרטגיה חדשה: SC027|5Min|US100 · Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
+     "what": "הסייר הביא אותה (forexop). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 21,
-      "eff_n": 21.0,
-      "mean": 0.0794,
-      "t": 0.22,
-      "win": 28.6
+      "n": 4005,
+      "eff_n": 4000.8,
+      "mean": -0.1283,
+      "t": -16.3,
+      "win": 39.2
      },
      "unseen": {
-      "n": 40,
-      "eff_n": 40.0,
-      "mean": -0.0722,
-      "t": -0.3,
-      "win": 27.7
+      "n": 5299,
+      "eff_n": 5298.0,
+      "mean": -0.0755,
+      "t": -11.46,
+      "win": 53.2
      },
      "whole": {
-      "n": 61,
-      "eff_n": 60.9,
-      "mean": -0.0226,
-      "t": -0.11,
-      "win": 28.0
+      "n": 9304,
+      "eff_n": 9283.8,
+      "mean": -0.0972,
+      "t": -19.19,
+      "win": 47.5
      },
      "halves": [
-      -0.2187,
-      0.1673
+      -0.1239,
+      -0.0734
      ],
      "neighbours": {
       "share_positive": null
@@ -31428,25 +31532,83 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC030|5Min|US500",
+      "combo": "SC027|5Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "Alpha S/R: engulfing inside the 15m EMA36 channel, channel stop, 1:3, gold 5m",
-       "source": "TradingView",
-       "url": "https://www.tradingview.com/script/mikVFwAu-Alpha-S-R-Channel-Strategy/",
+       "name": "Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
+       "source": "forexop",
+       "url": "https://forexop.com/strategy/simple-range-scalper/",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "872edd6d66b4",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "94b63a03c130",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.08R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC015|1Min|US100 · ALMA 21 + Stochastic 21/1/3 cross of 20/80, 1-minute",
+     "what": "הסייר הביא אותה (FXOpen blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 9346,
+      "eff_n": 9336.6,
+      "mean": -0.2871,
+      "t": -22.51,
+      "win": 43.8
+     },
+     "unseen": {
+      "n": 12346,
+      "eff_n": 12343.6,
+      "mean": -0.078,
+      "t": -7.3,
+      "win": 47.7
+     },
+     "whole": {
+      "n": 21692,
+      "eff_n": 21644.9,
+      "mean": -0.1638,
+      "t": -19.93,
+      "win": 46.1
+     },
+     "halves": [
+      -0.2614,
+      -0.0769
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC015|1Min|US100",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "ALMA 21 + Stochastic 21/1/3 cross of 20/80, 1-minute",
+       "source": "FXOpen blog",
+       "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "c09bc0ea5b23",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.08R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
@@ -31519,90 +31681,32 @@
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC007|15Min|US500 · Cowabunga: 4H trend + 15m EMA5/10, RSI9, stoch, MACD, 1R, out 16:00 NY",
-     "what": "הסייר הביא אותה (BabyPips). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 238,
-      "eff_n": 237.8,
-      "mean": -0.0373,
-      "t": -0.68,
-      "win": 50.0
-     },
-     "unseen": {
-      "n": 309,
-      "eff_n": 308.9,
-      "mean": -0.0855,
-      "t": -1.87,
-      "win": 50.2
-     },
-     "whole": {
-      "n": 547,
-      "eff_n": 545.9,
-      "mean": -0.0654,
-      "t": -1.86,
-      "win": 50.1
-     },
-     "halves": [
-      -0.0576,
-      -0.073
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC007|15Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Cowabunga: 4H trend + 15m EMA5/10, RSI9, stoch, MACD, 1R, out 16:00 NY",
-       "source": "BabyPips",
-       "url": "https://www.babypips.com/trading/cowabunga-system",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "2da35a1c420b",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.09R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC022|5Min|US500 · 5 EMA high/low fade scalp, 8-pip stop, 5-pip target, London/NY open hour",
+     "title": "אסטרטגיה חדשה: SC023|1Min|US100 · Keltner scalp: SMA89 + MACD 5/34/5 turn + stochastic, 1-minute",
      "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 712,
-      "eff_n": 711.3,
-      "mean": -0.139,
-      "t": -5.44,
-      "win": 49.3
+      "n": 5142,
+      "eff_n": 5136.8,
+      "mean": -0.3235,
+      "t": -11.25,
+      "win": 20.6
      },
      "unseen": {
-      "n": 915,
-      "eff_n": 914.8,
-      "mean": -0.0865,
-      "t": -3.91,
-      "win": 49.3
+      "n": 7064,
+      "eff_n": 7062.6,
+      "mean": -0.0969,
+      "t": -3.82,
+      "win": 25.8
      },
      "whole": {
-      "n": 1627,
-      "eff_n": 1623.5,
-      "mean": -0.1084,
-      "t": -6.47,
-      "win": 49.3
+      "n": 12206,
+      "eff_n": 12180.0,
+      "mean": -0.1879,
+      "t": -9.84,
+      "win": 23.7
      },
      "halves": [
-      -0.1274,
-      -0.0901
+      -0.3065,
+      -0.0814
      ],
      "neighbours": {
       "share_positive": null
@@ -31612,25 +31716,25 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC022|5Min|US500",
+      "combo": "SC023|1Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "5 EMA high/low fade scalp, 8-pip stop, 5-pip target, London/NY open hour",
+       "name": "Keltner scalp: SMA89 + MACD 5/34/5 turn + stochastic, 1-minute",
        "source": "BabyPips forum",
-       "url": "https://forums.babypips.com/t/simple-5-ema-high-low-scalping-strategy/39154",
+       "url": "https://forums.babypips.com/t/keltner-scalping-trading-system/692523",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "d92d68979782",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "01155f76ac90",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.09R לעסקה)",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.10R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
@@ -31638,29 +31742,29 @@
      "title": "אסטרטגיה חדשה: SC003|1Min|US100 · Pavan CPR: cross above top CPR, stop at pivot, long only",
      "what": "הסייר הביא אותה (TradingView (StockSharp port, 1-minute)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 277,
-      "eff_n": 276.7,
-      "mean": -0.2786,
-      "t": -1.76,
-      "win": 25.6
+      "n": 276,
+      "eff_n": 275.7,
+      "mean": -0.2782,
+      "t": -1.75,
+      "win": 25.4
      },
      "unseen": {
-      "n": 318,
-      "eff_n": 317.9,
-      "mean": -0.0904,
-      "t": -0.78,
-      "win": 36.2
+      "n": 324,
+      "eff_n": 323.9,
+      "mean": -0.1,
+      "t": -0.88,
+      "win": 36.5
      },
      "whole": {
-      "n": 595,
-      "eff_n": 593.5,
-      "mean": -0.1739,
-      "t": -1.81,
-      "win": 31.5
+      "n": 600,
+      "eff_n": 598.5,
+      "mean": -0.1781,
+      "t": -1.87,
+      "win": 31.6
      },
      "halves": [
-      -0.2491,
-      -0.114
+      -0.2321,
+      -0.139
      ],
      "neighbours": {
       "share_positive": null
@@ -31681,10 +31785,10 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
+     "made": "2026-11-13T02:56:46+00:00",
      "id": "668f866c7985",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.09R לעסקה)",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.10R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -31693,32 +31797,32 @@
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC011|1Min|US500 · NY first 5m candle break, 1m FVG retest + engulfing, 3R",
-     "what": "הסייר הביא אותה (YouTube (Casper SMC)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "title": "אסטרטגיה חדשה: SC029|1Min|US100 · Hull Suite 55 + DI cross, swing stop, 1:1, 1-minute",
+     "what": "הסייר הביא אותה (Axiory). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 125,
-      "eff_n": 124.9,
-      "mean": 0.0555,
-      "t": 0.37,
-      "win": 39.4
+      "n": 4815,
+      "eff_n": 4810.0,
+      "mean": -0.2642,
+      "t": -18.94,
+      "win": 45.3
      },
      "unseen": {
-      "n": 166,
-      "eff_n": 166.0,
-      "mean": -0.091,
-      "t": -0.72,
-      "win": 33.7
+      "n": 6469,
+      "eff_n": 6467.7,
+      "mean": -0.1058,
+      "t": -9.53,
+      "win": 56.4
      },
      "whole": {
-      "n": 291,
-      "eff_n": 290.4,
-      "mean": -0.031,
-      "t": -0.32,
-      "win": 36.1
+      "n": 11284,
+      "eff_n": 11259.7,
+      "mean": -0.1702,
+      "t": -19.49,
+      "win": 51.9
      },
      "halves": [
-      0.0458,
-      -0.105
+      -0.2493,
+      -0.1001
      ],
      "neighbours": {
       "share_positive": null
@@ -31728,229 +31832,55 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC011|1Min|US500",
+      "combo": "SC029|1Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "NY first 5m candle break, 1m FVG retest + engulfing, 3R",
-       "source": "YouTube (Casper SMC)",
-       "url": "https://www.youtube.com/watch?v=8v-Z5oyKVG0",
+       "name": "Hull Suite 55 + DI cross, swing stop, 1:1, 1-minute",
+       "source": "Axiory",
+       "url": "https://axiory.com/trading-resources/strategies/one-minute-strategy",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "603160243e33",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.09R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC004|5Min|US30 · NFP straddle of the 4-hour pre-release range, target = range",
-     "what": "הסייר הביא אותה (BrokerXplorer (article)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 18,
-      "eff_n": 18.0,
-      "mean": 0.0331,
-      "t": 0.24,
-      "win": 56.3
-     },
-     "unseen": {
-      "n": 23,
-      "eff_n": 23.0,
-      "mean": -0.1073,
-      "t": -0.85,
-      "win": 52.2
-     },
-     "whole": {
-      "n": 41,
-      "eff_n": 40.9,
-      "mean": -0.0486,
-      "t": -0.52,
-      "win": 53.9
-     },
-     "halves": [
-      -0.0252,
-      -0.0724
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC004|5Min|US30",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "NFP straddle of the 4-hour pre-release range, target = range",
-       "source": "BrokerXplorer (article)",
-       "url": "https://www.brokerxplorer.com/article/day-trading-strategy-on-nfp-release-2878",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "98cc6cd55b1d",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "80a5aae13e79",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.11R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T18:52:55+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC003|1Min|US500 · Pavan CPR: cross above top CPR, stop at pivot, long only",
-     "what": "הסייר הביא אותה (TradingView (StockSharp port, 1-minute)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 341,
-      "eff_n": 340.7,
-      "mean": -0.3575,
-      "t": -3.04,
-      "win": 23.7
-     },
-     "unseen": {
-      "n": 348,
-      "eff_n": 347.9,
-      "mean": -0.1187,
-      "t": -0.91,
-      "win": 30.2
-     },
-     "whole": {
-      "n": 689,
-      "eff_n": 687.5,
-      "mean": -0.2321,
-      "t": -2.63,
-      "win": 27.1
-     },
-     "halves": [
-      -0.3695,
-      -0.109
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC003|1Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Pavan CPR: cross above top CPR, stop at pivot, long only",
-       "source": "TradingView (StockSharp port, 1-minute)",
-       "url": "https://www.tradingview.com/script/C8spW2jl-Pavan-CPR-Strategy",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "5121705de577",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.12R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T11:42:02+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC008|15Min|US500 · EMA 5/13 cross + VWAP + ADX>20, stop at the cross, 2R",
-     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 410,
-      "eff_n": 409.6,
-      "mean": -0.092,
-      "t": -1.31,
-      "win": 38.3
-     },
-     "unseen": {
-      "n": 428,
-      "eff_n": 427.9,
-      "mean": -0.1289,
-      "t": -2.06,
-      "win": 36.3
-     },
-     "whole": {
-      "n": 838,
-      "eff_n": 836.1,
-      "mean": -0.1116,
-      "t": -2.38,
-      "win": 37.2
-     },
-     "halves": [
-      -0.0891,
-      -0.1344
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC008|15Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "EMA 5/13 cross + VWAP + ADX>20, stop at the cross, 2R",
-       "source": "TradingView",
-       "url": "https://www.tradingview.com/script/UEFr9IXn-EMA-Crossover-Strategy-15M/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "e2995c514790",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.13R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC027|5Min|US500 · Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
+     "title": "אסטרטגיה חדשה: SC027|1Min|US100 · Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
      "what": "הסייר הביא אותה (forexop). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 3877,
-      "eff_n": 3873.0,
-      "mean": -0.1719,
-      "t": -21.64,
-      "win": 34.5
+      "n": 18827,
+      "eff_n": 18807.4,
+      "mean": -0.2718,
+      "t": -68.78,
+      "win": 30.6
      },
      "unseen": {
-      "n": 5217,
-      "eff_n": 5216.0,
-      "mean": -0.1349,
-      "t": -20.31,
-      "win": 39.3
+      "n": 25100,
+      "eff_n": 25095.1,
+      "mean": -0.1088,
+      "t": -37.77,
+      "win": 48.1
      },
      "whole": {
-      "n": 9094,
-      "eff_n": 9074.1,
-      "mean": -0.1499,
-      "t": -29.38,
-      "win": 37.4
+      "n": 43927,
+      "eff_n": 43831.5,
+      "mean": -0.1754,
+      "t": -73.5,
+      "win": 41.0
      },
      "halves": [
-      -0.1731,
-      -0.1281
+      -0.2519,
+      -0.1077
      ],
      "neighbours": {
       "share_positive": null
@@ -31960,7 +31890,7 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC027|5Min|US500",
+      "combo": "SC027|1Min|US100",
       "kind": "add"
      },
      "detail": {
@@ -31971,44 +31901,44 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "347a5b448ccc",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "49d5bd906ced",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.13R לעסקה)",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.11R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC026|15Min|US500 · Admiral Keltner 50/10/2.75 re-entry + Stochastic 14/7/3, target the middle, M15",
+     "title": "אסטרטגיה חדשה: SC026|15Min|US100 · Admiral Keltner 50/10/2.75 re-entry + Stochastic 14/7/3, target the middle, M15",
      "what": "הסייר הביא אותה (Admirals blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 142,
-      "eff_n": 141.8,
-      "mean": -0.1187,
-      "t": -1.61,
-      "win": 47.9
+      "n": 161,
+      "eff_n": 160.8,
+      "mean": -0.1115,
+      "t": -1.48,
+      "win": 44.1
      },
      "unseen": {
-      "n": 207,
-      "eff_n": 207.0,
-      "mean": -0.1364,
-      "t": -2.34,
-      "win": 44.6
+      "n": 224,
+      "eff_n": 224.0,
+      "mean": -0.1131,
+      "t": -1.93,
+      "win": 52.7
      },
      "whole": {
-      "n": 349,
-      "eff_n": 348.3,
-      "mean": -0.1296,
-      "t": -2.83,
-      "win": 45.9
+      "n": 385,
+      "eff_n": 384.2,
+      "mean": -0.1125,
+      "t": -2.42,
+      "win": 49.3
      },
      "halves": [
-      -0.1235,
-      -0.1358
+      -0.1215,
+      -0.1033
      ],
      "neighbours": {
       "share_positive": null
@@ -32018,7 +31948,7 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC026|15Min|US500",
+      "combo": "SC026|15Min|US100",
       "kind": "add"
      },
      "detail": {
@@ -32029,44 +31959,44 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "9a9488a083f2",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "128a4e4bb8eb",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.14R לעסקה)",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.11R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC010|15Min|US500 · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
-     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "title": "אסטרטגיה חדשה: SC016|1Min|US100 · RSI(4) 80/20 + Bollinger touch, target the opposite band, 1-minute",
+     "what": "הסייר הביא אותה (FXOpen blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
-      "n": 126,
-      "eff_n": 125.9,
-      "mean": -0.1769,
-      "t": -1.59,
-      "win": 32.8
+      "n": 10380,
+      "eff_n": 10369.3,
+      "mean": -0.4089,
+      "t": -23.71,
+      "win": 32.0
      },
      "unseen": {
-      "n": 177,
-      "eff_n": 177.0,
-      "mean": -0.1686,
-      "t": -1.74,
-      "win": 33.3
+      "n": 13793,
+      "eff_n": 13790.3,
+      "mean": -0.1489,
+      "t": -9.77,
+      "win": 33.9
      },
      "whole": {
-      "n": 303,
-      "eff_n": 302.3,
-      "mean": -0.1718,
-      "t": -2.34,
+      "n": 24173,
+      "eff_n": 24121.2,
+      "mean": -0.2553,
+      "t": -22.27,
       "win": 33.1
      },
      "halves": [
-      -0.1492,
-      -0.2003
+      -0.3814,
+      -0.1433
      ],
      "neighbours": {
       "share_positive": null
@@ -32076,25 +32006,25 @@
      "risk_pct": 0.4,
      "baseline": null,
      "change": {
-      "combo": "SC010|15Min|US500",
+      "combo": "SC016|1Min|US100",
       "kind": "add"
      },
      "detail": {
       "scout": {
-       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
-       "source": "FX Replay",
-       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
+       "name": "RSI(4) 80/20 + Bollinger touch, target the opposite band, 1-minute",
+       "source": "FXOpen blog",
+       "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "d2af18126c12",
+     "made": "2026-11-13T02:56:46+00:00",
+     "id": "4f14aac89bb0",
      "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.17R לעסקה)",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.15R לעסקה)",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot6",
@@ -32145,7 +32075,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-12T21:13:25+00:00",
+     "made": "2026-11-13T02:56:46+00:00",
      "id": "816bbb180de6",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.21R לעסקה)",
@@ -32153,586 +32083,6 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-12T18:52:55+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC012|15Min|US500 · CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
-     "what": "הסייר הביא אותה (FXNX blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 13,
-      "eff_n": 13.0,
-      "mean": 0.0872,
-      "t": 0.28,
-      "win": 54.2
-     },
-     "unseen": {
-      "n": 21,
-      "eff_n": 21.0,
-      "mean": -0.2066,
-      "t": -0.99,
-      "win": 33.0
-     },
-     "whole": {
-      "n": 34,
-      "eff_n": 33.9,
-      "mean": -0.0998,
-      "t": -0.57,
-      "win": 40.7
-     },
-     "halves": [
-      0.2335,
-      -0.4167
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC012|15Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
-       "source": "FXNX blog",
-       "url": "https://fxnx.com/en/blog/cpi-volatility-avwap-reversion-strategy",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "4a265a07459e",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.21R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC014|1Min|US500 · VWAP cross + MACD flip, exit on the MACD cross back, 1-minute",
-     "what": "הסייר הביא אותה (FXOpen blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 1456,
-      "eff_n": 1454.4,
-      "mean": -0.201,
-      "t": -5.74,
-      "win": 29.5
-     },
-     "unseen": {
-      "n": 1798,
-      "eff_n": 1797.7,
-      "mean": -0.2091,
-      "t": -7.48,
-      "win": 31.4
-     },
-     "whole": {
-      "n": 3254,
-      "eff_n": 3246.8,
-      "mean": -0.2057,
-      "t": -9.37,
-      "win": 30.6
-     },
-     "halves": [
-      -0.2071,
-      -0.2036
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC014|1Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "VWAP cross + MACD flip, exit on the MACD cross back, 1-minute",
-       "source": "FXOpen blog",
-       "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "4dc1a00749dd",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.21R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC009|15Min|US500 · Pivot liquidity sweep + momentum candle + EMA200, 1:2",
-     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 183,
-      "eff_n": 182.8,
-      "mean": 0.0977,
-      "t": 0.98,
-      "win": 44.3
-     },
-     "unseen": {
-      "n": 255,
-      "eff_n": 254.9,
-      "mean": -0.2207,
-      "t": -2.85,
-      "win": 31.5
-     },
-     "whole": {
-      "n": 438,
-      "eff_n": 437.0,
-      "mean": -0.0942,
-      "t": -1.53,
-      "win": 36.6
-     },
-     "halves": [
-      -0.025,
-      -0.1549
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC009|15Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Pivot liquidity sweep + momentum candle + EMA200, 1:2",
-       "source": "TradingView",
-       "url": "https://in.tradingview.com/script/6dpq9Hjc-Gold-15m-Trend-S-R-Liquidity-Sweep-RR-1-2",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "7f83f383100d",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.22R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC027|1Min|US500 · Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
-     "what": "הסייר הביא אותה (forexop). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 15014,
-      "eff_n": 14997.7,
-      "mean": -0.3096,
-      "t": -63.59,
-      "win": 25.5
-     },
-     "unseen": {
-      "n": 22120,
-      "eff_n": 22115.8,
-      "mean": -0.2314,
-      "t": -67.39,
-      "win": 28.8
-     },
-     "whole": {
-      "n": 37134,
-      "eff_n": 37053.8,
-      "mean": -0.2615,
-      "t": -92.1,
-      "win": 27.5
-     },
-     "halves": [
-      -0.3085,
-      -0.2169
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC027|1Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
-       "source": "forexop",
-       "url": "https://forexop.com/strategy/simple-range-scalper/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "60fed36b17ee",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.23R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC023|1Min|US500 · Keltner scalp: SMA89 + MACD 5/34/5 turn + stochastic, 1-minute",
-     "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 5320,
-      "eff_n": 5314.6,
-      "mean": -0.3874,
-      "t": -12.99,
-      "win": 21.2
-     },
-     "unseen": {
-      "n": 7125,
-      "eff_n": 7123.6,
-      "mean": -0.2428,
-      "t": -9.46,
-      "win": 23.3
-     },
-     "whole": {
-      "n": 12445,
-      "eff_n": 12418.6,
-      "mean": -0.3017,
-      "t": -15.49,
-      "win": 22.4
-     },
-     "halves": [
-      -0.39,
-      -0.2184
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC023|1Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Keltner scalp: SMA89 + MACD 5/34/5 turn + stochastic, 1-minute",
-       "source": "BabyPips forum",
-       "url": "https://forums.babypips.com/t/keltner-scalping-trading-system/692523",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "2926e3314a4a",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.24R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC029|1Min|US500 · Hull Suite 55 + DI cross, swing stop, 1:1, 1-minute",
-     "what": "הסייר הביא אותה (Axiory). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 5053,
-      "eff_n": 5047.7,
-      "mean": -0.3771,
-      "t": -27.94,
-      "win": 39.8
-     },
-     "unseen": {
-      "n": 6448,
-      "eff_n": 6446.7,
-      "mean": -0.2522,
-      "t": -21.38,
-      "win": 46.0
-     },
-     "whole": {
-      "n": 11501,
-      "eff_n": 11476.3,
-      "mean": -0.3046,
-      "t": -34.2,
-      "win": 43.4
-     },
-     "halves": [
-      -0.3706,
-      -0.243
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC029|1Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Hull Suite 55 + DI cross, swing stop, 1:1, 1-minute",
-       "source": "Axiory",
-       "url": "https://axiory.com/trading-resources/strategies/one-minute-strategy",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "37c72b36a6f9",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.25R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC015|1Min|US500 · ALMA 21 + Stochastic 21/1/3 cross of 20/80, 1-minute",
-     "what": "הסייר הביא אותה (FXOpen blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 9399,
-      "eff_n": 9389.5,
-      "mean": -0.3627,
-      "t": -26.34,
-      "win": 42.7
-     },
-     "unseen": {
-      "n": 12243,
-      "eff_n": 12240.6,
-      "mean": -0.2619,
-      "t": -23.13,
-      "win": 44.9
-     },
-     "whole": {
-      "n": 21642,
-      "eff_n": 21595.6,
-      "mean": -0.3037,
-      "t": -34.64,
-      "win": 44.0
-     },
-     "halves": [
-      -0.3589,
-      -0.2506
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC015|1Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "ALMA 21 + Stochastic 21/1/3 cross of 20/80, 1-minute",
-       "source": "FXOpen blog",
-       "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "1248e14d56de",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.26R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC003|1Min|US30 · Pavan CPR: cross above top CPR, stop at pivot, long only",
-     "what": "הסייר הביא אותה (TradingView (StockSharp port, 1-minute)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 309,
-      "eff_n": 308.7,
-      "mean": -0.5069,
-      "t": -3.62,
-      "win": 20.9
-     },
-     "unseen": {
-      "n": 421,
-      "eff_n": 420.9,
-      "mean": -0.3014,
-      "t": -2.63,
-      "win": 28.7
-     },
-     "whole": {
-      "n": 730,
-      "eff_n": 728.5,
-      "mean": -0.3844,
-      "t": -4.32,
-      "win": 25.5
-     },
-     "halves": [
-      -0.5057,
-      -0.277
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC003|1Min|US30",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Pavan CPR: cross above top CPR, stop at pivot, long only",
-       "source": "TradingView (StockSharp port, 1-minute)",
-       "url": "https://www.tradingview.com/script/C8spW2jl-Pavan-CPR-Strategy",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "74d6ab192808",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.30R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T18:52:55+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC016|1Min|US500 · RSI(4) 80/20 + Bollinger touch, target the opposite band, 1-minute",
-     "what": "הסייר הביא אותה (FXOpen blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 9861,
-      "eff_n": 9850.5,
-      "mean": -0.514,
-      "t": -28.58,
-      "win": 31.5
-     },
-     "unseen": {
-      "n": 13460,
-      "eff_n": 13457.4,
-      "mean": -0.4102,
-      "t": -26.94,
-      "win": 31.5
-     },
-     "whole": {
-      "n": 23321,
-      "eff_n": 23270.9,
-      "mean": -0.452,
-      "t": -38.85,
-      "win": 31.5
-     },
-     "halves": [
-      -0.5176,
-      -0.3884
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC016|1Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "RSI(4) 80/20 + Bollinger touch, target the opposite band, 1-minute",
-       "source": "FXOpen blog",
-       "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:25+00:00",
-     "id": "bde5beace0c8",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.41R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC028|5Min|US500 · DAX first 5-minute bar direction at 09:05, 5/10 points, flat 17:30",
-     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 166,
-      "eff_n": 165.8,
-      "mean": -0.501,
-      "t": -4.69,
-      "win": 25.3
-     },
-     "unseen": {
-      "n": 216,
-      "eff_n": 216.0,
-      "mean": -0.4425,
-      "t": -4.96,
-      "win": 25.5
-     },
-     "whole": {
-      "n": 382,
-      "eff_n": 381.2,
-      "mean": -0.4668,
-      "t": -6.81,
-      "win": 25.4
-     },
-     "halves": [
-      -0.5402,
-      -0.3989
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC028|5Min|US500",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "DAX first 5-minute bar direction at 09:05, 5/10 points, flat 17:30",
-       "source": "ProRealCode",
-       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/intraday-dax-strategy-mini-1e-timeframe-5-min",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-12T21:13:26+00:00",
-     "id": "3f041a3d9d9f",
-     "tier": "rejected",
-     "verdict": "הפסיד בתקופה שלא נראתה (-0.44R לעסקה)",
-     "status": "pending",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-12T21:23:06+00:00"
     }
    ],
    "health": {
@@ -32909,103 +32259,283 @@
     },
     {
      "bot": "bot7",
-     "kind": "info",
-     "title": "בוט 7: שני כרטיסים מחכים לעסקאות, תיקון EV01/EV03 בתור, זעזועים לפי מכשיר",
-     "what": "סבב 13.11: אין כרטיס מאושר שלא נבנה. שני הכרטיסים של אתמול (EV02 יעד 2R וסטופ x0.75, ופריצת המלבן בפרסומי תעסוקה) חיוביים בשתי התקופות, אבל המנהל שם אותם במעקב: 13 ו־19 עסקאות ב־2026, צריך 30. בוט 7 וירטואלי - אם תרצה לאסוף עליהם עסקאות כבר עכשיו, אפשר לאשר אותם ידנית. EV01 / EV03: הניסיון השלישי (כניסה בתיקון הראשון, 90 גרסאות, ופירוק לפי שעת הפרסום) נבדק בקוד ומחכה לסבב של מחשב הבוטים - הסבב האחרון רץ לפני שהקוד הגיע. אין הצעת הפחתה עד שייכשל. זעזועים: אין זעזועים חדשים בלי פרסום ב־10-12.11. כל 208 הדרכים לנצל זעזוע, יחד על 10 מכשירים, לא מחזיקות ב־2026 (הטובה ב־2025 +0.13R, ב־2026 -0.15R). הניסיון הבא (מהסבב הבא של מחשב הבוטים): דרך נפרדת לכל מכשיר, נבחרת לפי הרווח הכולל ב־2025 בלבד - אולי הנפט רוצה נגד הזעזוע והביטקוין המשך.",
+     "kind": "improve",
+     "title": "EV03 (פריצת טווח): כניסה בתיקון של 0.5R ויעד 3R בכל המכשירים",
+     "what": "הניסיון הרביעי לתקן את EV03 (מחשב הבוטים 13.11, 16 מכשירים, 90 גרסאות, עלויות FTMO אמיתיות בדקת הפרסום). היום EV03 נכנס מיד בפריצה: ב־2025 160 עסקאות -3.3R, ב־2026 207 עסקאות -38.4R. הגרסה עם הכי הרבה רווח כולל ב־2025: מחכים לתיקון של 0.5R (פקודה ממתינה ל־3 נרות) ויעד 3R. ב־2025 30 עסקאות +5.6R; ב־2026 שלא נראתה 42 עסקאות +0.2R. כלומר: עוצר הפסד של 38R, אבל עוד לא מרוויח (כמעט 0). למה זה עובד: רוב הפריצות אחרי פרסום חוזרות - מי שנכנס מיד קונה בשיא. זהירות: נבדקה נקודה אחת; הסבב הבא של מחשב הבוטים בודק את 10 השכנות שלה (GRID 3).",
      "train": {
-      "n": 124,
-      "eff_n": 123.9,
-      "mean": 0.0592,
-      "t": 0.75,
-      "win": 51.1,
-      "sum": 6.67
+      "n": 30,
+      "eff_n": 30.0,
+      "mean": 0.1875,
+      "t": 0.51,
+      "win": 40.3,
+      "sum": 5.64
      },
      "unseen": {
-      "n": 157,
-      "eff_n": 157.0,
-      "mean": -0.1299,
-      "t": -2.0,
-      "win": 40.8,
-      "sum": -20.77
+      "n": 42,
+      "eff_n": 42.0,
+      "mean": 0.0003,
+      "t": 0.0,
+      "win": 30.9,
+      "sum": 0.19
      },
      "whole": null,
      "halves": null,
      "neighbours": null,
-     "tested": 208,
+     "tested": 90,
+     "cost_r": null,
+     "risk_pct": 0.5,
+     "baseline": {
+      "n": 207,
+      "eff_n": 207.0,
+      "mean": -0.1862,
+      "t": -3.32,
+      "win": 42.0,
+      "sum": -38.44
+     },
+     "change": {
+      "combo": "EV03|5Min|*",
+      "combos": [
+       "EV03|5Min|US100",
+       "EV03|5Min|US500",
+       "EV03|5Min|US30",
+       "EV03|5Min|GER40",
+       "EV03|5Min|UK100",
+       "EV03|5Min|JP225",
+       "EV03|5Min|XAUUSD",
+       "EV03|5Min|EURUSD",
+       "EV03|5Min|GBPUSD",
+       "EV03|5Min|USDJPY",
+       "EV03|5Min|AUDUSD",
+       "EV03|5Min|USDCAD",
+       "EV03|5Min|USDCHF",
+       "EV03|5Min|NZDUSD",
+       "EV03|5Min|EURJPY",
+       "EV03|5Min|GBPJPY"
+      ],
+      "plan": {
+       "target": 3.0,
+       "limit": 0.5
+      },
+      "variant": "t3.0|s1|hown|l0.5",
+      "source": "agents/news_fix.py GRID 2 -> reports/agents/bot7/fix_study.json (2026-11-13T02:02)"
+     },
+     "detail": {
+      "baseline_train": {
+       "n": 160,
+       "eff_n": 159.8,
+       "mean": -0.0228,
+       "t": -0.37,
+       "win": 47.4,
+       "sum": -3.32
+      },
+      "same_limit_own_target": {
+       "train": {
+        "n": 30,
+        "eff_n": 30.0,
+        "mean": 0.1375,
+        "t": 0.42,
+        "win": 43.5,
+        "sum": 4.14
+       },
+       "unseen": {
+        "n": 42,
+        "eff_n": 42.0,
+        "mean": -0.0272,
+        "t": -0.1,
+        "win": 38.1,
+        "sum": -1.06
+       }
+      },
+      "study_symbols": 16,
+      "exp_at": "2026-11-13T02:02:14+00:00"
+     },
+     "made": "2026-11-13T02:59:30+00:00",
+     "id": "340e3e2fcd30",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.00R לעסקה, 42.0 עסקאות אפקטיביות, +0.19R מעל המצב הקיים) · נבדקו 90 שילובים, אז חלק מהיתרון עלול להיות מזל",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T03:00:16+00:00",
+     "decision_id": "9c5589bb263c"
+    },
+    {
+     "bot": "bot7",
+     "kind": "info",
+     "title": "בוט 7: EV01 לחצי סיכון, תיקון ל־EV03 ול־EV02, פיבונאצ'י בבדיקה",
+     "what": "סבב 13.11 (לילה): אין כרטיס מאושר שלא נבנה. הניסיון השלישי (כניסה בתיקון ושעת הפרסום) רץ על 16 מכשירים. EV01: נכשל גם הוא - חצי סיכון (כרטיס). EV03: כניסה בתיקון של 0.5R ויעד 3R עוצרת את ההפסד (2026: מ־-38R ל־+0.2R) - כרטיס. EV02: כניסה בתיקון של 0.25R ויעד 3R (2026: +9.2R מול +1.9R היום, מעט עסקאות) - מחליף את הכרטיס של אתמול. בסבב הבא של מחשב הבוטים: נקודת הברייק לפי פיבונאצ'י (38.2%-78.6%) ובדיקת השכנות של התיקון ל־EV03. זעזועים: אין חדשים בלי פרסום מ־9.11; הבדיקה לפי מכשיר עוד לא חזרה ממחשב הבוטים. היום 15:30 (ישראל): מדד המחירים ליצרן בארה\"ב.",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 1,
      "cost_r": null,
      "risk_pct": null,
      "baseline": null,
      "change": {
       "combo": "bot7|*",
-      "note": "info only"
+      "note": "info only",
+      "night": "2026-11-13b"
      },
      "detail": {
-      "night": "2026-11-13",
-      "waiting": [
-       "bb02d34c1cdc",
-       "faee9efdd86f"
-      ],
-      "ev03_unseen_sum": -34.61,
-      "shocks": "agents/shocks.py per_symbol + book (13.11.2026)"
+      "night": "2026-11-13b"
      },
-     "made": "2026-11-12T23:00:33+00:00",
-     "id": "490423b22784",
+     "made": "2026-11-13T02:59:30+00:00",
+     "id": "ceb0eab951ad",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
      "status": "approved",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T23:14:13+00:00",
+     "first_seen": "2026-11-13T03:00:16+00:00",
      "by": "manager",
-     "decided": "2026-11-12T23:14:14+00:00",
-     "decision_id": "e30fe8de9036"
+     "decided": "2026-11-13T03:00:16+00:00",
+     "decision_id": "3d50521641db"
+    },
+    {
+     "bot": "bot7",
+     "kind": "risk",
+     "title": "EV01 (הליכה עם הפרסום): סיכון x0.5 - חמישה ניסיונות תיקון נכשלו",
+     "what": "EV01 מרוויח ב־2025 (148 עסקאות +9.3R) ומפסיד ב־2026 (184 עסקאות -24.9R). ניסינו לתקן קודם: יציאות לכל מכשיר, מסנני שוק, סוג פרסום x סוג מכשיר, כניסה בתיקון (0.25R / 0.5R) ושעת הפרסום - 0 מ־20 הגרסאות הטובות ב־2025 הרוויחו ב־2026, והגרסה הטובה ב־2025 (+30.0R) הפסידה ב־2026 -31.3R. הסיבה: השוק התהפך - למשל פרסומי תעסוקה על המדדים: ב־2025 87% הצלחה (+9.7R), ב־2026 18% (-10.6R). ההצעה: חצי סיכון (המינימום בקוד), לא הסרה - ממשיכים לאסוף עסקאות ולבדוק (גם פיבונאצ'י בסבב הבא). ב־2026 זה היה חוסך כ־12R.",
+     "train": {
+      "n": 148,
+      "eff_n": 147.8,
+      "mean": 0.0673,
+      "t": 0.94,
+      "win": 53.6,
+      "sum": 9.3
+     },
+     "unseen": {
+      "n": 184,
+      "eff_n": 184.0,
+      "mean": -0.1329,
+      "t": -2.24,
+      "win": 39.7,
+      "sum": -24.89
+     },
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 90,
+     "cost_r": null,
+     "risk_pct": 0.25,
+     "baseline": null,
+     "change": {
+      "combo": "EV01|5Min|*",
+      "combos": [
+       "EV01|5Min|US100",
+       "EV01|5Min|US500",
+       "EV01|5Min|US30",
+       "EV01|5Min|GER40",
+       "EV01|5Min|UK100",
+       "EV01|5Min|JP225",
+       "EV01|5Min|XAUUSD",
+       "EV01|5Min|EURUSD",
+       "EV01|5Min|GBPUSD",
+       "EV01|5Min|USDJPY",
+       "EV01|5Min|AUDUSD",
+       "EV01|5Min|USDCAD",
+       "EV01|5Min|USDCHF",
+       "EV01|5Min|NZDUSD",
+       "EV01|5Min|EURJPY",
+       "EV01|5Min|GBPJPY"
+      ],
+      "from": 1.0,
+      "to": 0.5,
+      "plan": {
+       "risk_mult": 0.5
+      },
+      "source": "agents/news_fix.py GRID 2 -> reports/agents/bot7/fix_study.json (2026-11-13T02:02)"
+     },
+     "detail": {
+      "fix_attempts": "bot7|EV01|5Min|*",
+      "best_on_2025": {
+       "v": "t2.0|s0.5|hown|l0.5",
+       "cells": [
+        [
+         "gdp",
+         "fx"
+        ],
+        [
+         "jobs",
+         "fx"
+        ],
+        [
+         "jobs",
+         "index"
+        ]
+       ],
+       "train": {
+        "n": 25,
+        "eff_n": 25.0,
+        "mean": 1.1864,
+        "t": 2.54,
+        "win": 55.7,
+        "sum": 30.0
+       },
+       "unseen": {
+        "n": 36,
+        "eff_n": 36.0,
+        "mean": -0.8733,
+        "t": -4.2,
+        "win": 16.6,
+        "sum": -31.31
+       }
+      },
+      "exp_at": "2026-11-13T02:02:14+00:00"
+     },
+     "made": "2026-11-13T02:59:30+00:00",
+     "id": "450d85248b30",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T03:00:16+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T03:00:16+00:00",
+     "decision_id": "029775b2c90a"
     },
     {
      "bot": "bot7",
      "kind": "improve",
-     "title": "EV02 (נגד הקפיצה): יעד 2R וסטופ x0.75 בכל המכשירים",
-     "what": "בדיקה מאוחדת של 13 מכשירים (מחשב הבוטים, עלויות FTMO אמיתיות בדקת הפרסום): היום EV02 מכוון למחיר שלפני הפרסום עם הסטופ שלו. סטופ קרוב יותר (x0.75) ויעד קבוע של 2R: ב־2025 (שעליה נבחר) 16 עסקאות +7.2R (היום 11 עסקאות +4.5R); ב־2026 שלא נראתה 13 עסקאות +9.7R (היום 12 עסקאות +1.3R). כל 20 הגרסאות הטובות ב־2025 הרוויחו גם ב־2026. זהירות: מעט עסקאות (פרסום שמזנק מעל 2.5 ATR נדיר) - בוט 7 וירטואלי, בדיוק המקום לאסוף אותן.",
+     "title": "EV02 (נגד הקפיצה): כניסה בתיקון של 0.25R ויעד 3R בכל המכשירים",
+     "what": "מחליף את הכרטיס של אתמול (2R וסטופ x0.75) - אותה בדיקה, עכשיו על כל 16 המכשירים. היום: ב־2025 14 עסקאות +6.5R, ב־2026 14 עסקאות +1.9R. הגרסה עם הכי הרבה רווח כולל ב־2025: כניסה בתיקון של 0.25R ויעד 3R - ב־2025 14 עסקאות +17.9R, ב־2026 שלא נראתה 8 עסקאות +9.2R. כל 20 הגרסאות הטובות ב־2025 הרוויחו גם ב־2026. זהירות: מעט מאוד עסקאות (קפיצה מעל 2.5 ATR נדירה) - בוט 7 וירטואלי, המקום לאסוף אותן.",
      "train": {
-      "n": 16,
-      "eff_n": 16.0,
-      "mean": 0.437,
-      "t": 1.4,
-      "win": 49.5,
-      "sum": 7.15
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 1.2497,
+      "t": 2.6,
+      "win": 70.9,
+      "sum": 17.91
      },
      "unseen": {
-      "n": 13,
-      "eff_n": 13.0,
-      "mean": 0.7526,
-      "t": 3.6,
-      "win": 84.8,
-      "sum": 9.68
+      "n": 8,
+      "eff_n": 8.0,
+      "mean": 1.1603,
+      "t": 4.27,
+      "win": 100.0,
+      "sum": 9.24
      },
-     "whole": {
-      "n": 29,
-      "eff_n": 29.0,
-      "mean": 0.58,
-      "t": null,
-      "win": null
-     },
-     "halves": [
-      0.437,
-      0.7526
-     ],
+     "whole": null,
+     "halves": null,
      "neighbours": {
       "values": 20,
       "share_positive": 1.0
      },
-     "tested": 54,
+     "tested": 90,
      "cost_r": null,
      "risk_pct": 0.5,
      "baseline": {
-      "n": 12,
-      "eff_n": 12.0,
-      "mean": 0.1059,
-      "t": 2.21,
-      "win": 91.7,
-      "sum": 1.27
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.1359,
+      "t": 2.99,
+      "win": 92.9,
+      "sum": 1.9
      },
      "change": {
       "combo": "EV02|5Min|*",
@@ -33028,36 +32558,32 @@
        "EV02|5Min|GBPJPY"
       ],
       "plan": {
-       "target": 2.0,
-       "stop": 0.75
+       "target": 3.0,
+       "limit": 0.25
       },
-      "variant": "t2.0|s0.75|hown",
-      "source": "agents/news_fix.py -> reports/agents/bot7/fix_study.json"
+      "variant": "t3.0|s1|hown|l0.25",
+      "source": "agents/news_fix.py GRID 2 -> reports/agents/bot7/fix_study.json (2026-11-13T02:02)"
      },
      "detail": {
       "baseline_train": {
-       "n": 11,
-       "eff_n": 11.0,
-       "mean": 0.3972,
-       "t": 1.67,
-       "win": 63.3,
-       "sum": 4.47
+       "n": 14,
+       "eff_n": 14.0,
+       "mean": 0.4568,
+       "t": 2.24,
+       "win": 63.8,
+       "sum": 6.54
       },
-      "study_symbols": 13,
-      "missing": [
-       "NZDUSD",
-       "EURJPY",
-       "GBPJPY"
-      ]
+      "replaces": "bb02d34c1cdc",
+      "exp_at": "2026-11-13T02:02:14+00:00"
      },
-     "made": "2026-11-12T19:05:51+00:00",
-     "id": "bb02d34c1cdc",
+     "made": "2026-11-13T02:59:30+00:00",
+     "id": "69734cf85b3e",
      "tier": "watch",
-     "verdict": "חיובי בתקופה שלא נראתה, אבל רק 13.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך",
+     "verdict": "מעט מדי עסקאות בתקופה שלא נראתה - נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-12T19:05:57+00:00"
+     "first_seen": "2026-11-13T03:00:16+00:00"
     },
     {
      "bot": "bot7",
@@ -38707,22 +38233,13 @@
  },
  "decisions": {
   "new": [
-   "a8ce7cc30737",
-   "7e3673a85373",
-   "f87f3970322a",
-   "0688a633997b",
-   "434d22f2c5ce",
-   "7b679b0135a9",
-   "4e82b0259e93",
-   "52e65d42f871",
-   "665d4055bf2d",
-   "df5548cbd025",
-   "069f378019d0",
-   "748cf67395f0",
-   "cf599e9da7c2",
-   "042bf5283066",
-   "823732d8c2e7"
+   "931d95afe36b",
+   "b53213a1b723",
+   "c833e5312db1",
+   "9c5589bb263c",
+   "3d50521641db",
+   "029775b2c90a"
   ],
-  "unread": 215
+  "unread": 202
  }
 }

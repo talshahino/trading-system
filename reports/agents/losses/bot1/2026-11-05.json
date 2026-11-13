@@ -1,13 +1,14 @@
 {
  "bot": "bot1",
  "day": "2026-11-05",
- "at": "2026-11-12T18:06:23+00:00",
+ "at": "2026-11-13T04:46:44+00:00",
  "summary": [
-  "בוט 1 · 2026-11-05: -259$ (-0.27% מיתרת הפתיחה 96,290$), 21 עסקאות - 9 רווח, 12 הפסד. ניצול המגבלה היומית: 6% ממגבלת הבוט (4.5%), 5% ממגבלת FTMO (5%).",
-  "מול הבדיקה: -0.81R ביום מול +2.76R צפוי (פיזור ±5.58R) - יום רע רגיל, בתוך הרעש הסטטיסטי.",
-  "גורמי ההפסד: כניסה / כיוון 8, סגירה בגלל כלל 3, הפסד רגיל של האסטרטגיה 1.",
-  "ההפסד הגדול: TV08|15Min|NVDA (-582$, 17.6% מההפסדים).",
-  "ריכוז: 3 הפסדים יחד בקנייה של fx (-1,162$); 5 הפסדים יחד בקנייה של stock (-1,141$)."
+  "מה קרה: בוט 1 הפסיד 259$ ב־2026-11-05 (-0.27% מהחשבון). 21 עסקאות: 9 הרוויחו 3,057$, 12 הפסידו 3,316$.",
+  "מול הצפי: הבדיקה צפתה ליום כזה +2.8R (+996$). בפועל -0.8R. הפער: -3.6R (-1,287$) - צריך לסגור אותו.",
+  "למה: 8 עסקאות נעצרו בלי לזוז לטובה בכלל - הבעיה בכניסה או בכיוון; 3 עסקאות נסגרו בגלל כלל (חדשות / סוף מסחר / הפסקת שוק); 1 עסקאות נעצרו בסטופ אחרי תנועה קטנה לטובה.",
+  "ההפסד הגדול ביותר: TV08|15Min|NVDA, 582$ (17.6% מכל ההפסד).",
+  "הפסדים שבאו יחד: 3 עסקאות קנייה בfx (1,162$); 5 עסקאות קנייה בstock (1,141$).",
+  "חוזרות על עצמן: TV02|15Min|TSLA, TV10|1Hour|US100 - הפסידו ב־3 ימים או יותר בחודש האחרון."
  ],
  "pnl": -259.11,
  "pnl_pct": -0.269,
@@ -49,8 +50,15 @@
  ],
  "top_loser": "TV08|15Min|NVDA",
  "top_share": 17.6,
- "recurring": [],
- "recurring_causes": [],
+ "recurring": [
+  "TV02|15Min|TSLA",
+  "TV10|1Hour|US100"
+ ],
+ "recurring_causes": [
+  "entry",
+  "normal",
+  "rules"
+ ],
  "losers": [
   {
    "combo": "TT45|1Hour|GBPJPY",
@@ -68,7 +76,7 @@
    "mae_r": 1.0,
    "exit_reason": "[sl 212.907]",
    "cause": "normal",
-   "cause_he": "הפסד רגיל של האסטרטגיה",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
    "recurring": false
   },
   {
@@ -221,7 +229,7 @@
    "exit_reason": "[sl 28304.70]",
    "cause": "entry",
    "cause_he": "כניסה / כיוון",
-   "recurring": false
+   "recurring": true
   },
   {
    "combo": "TV02|15Min|TSLA",
@@ -240,7 +248,7 @@
    "exit_reason": "session end",
    "cause": "rules",
    "cause_he": "סגירה בגלל כלל",
-   "recurring": false
+   "recurring": true
   },
   {
    "combo": "TV03|15Min|AAPL",
@@ -364,6 +372,26 @@
    "task": "TT45|1Hour|GBPJPY: נסגר בגלל כלל (restricted news ahead Stand) ב־-0.128R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
   },
   {
+   "combo": "TV02|15Min|TSLA",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "TV02|15Min|TSLA: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  },
+  {
+   "combo": "TV10|1Hour|US100",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "TV10|1Hour|US100: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  },
+  {
    "combo": null,
    "cause": "correlated",
    "priority": [],
@@ -372,15 +400,103 @@
  ],
  "trend": {
   "last7": {
-   "loss_days": 1,
-   "avg_loss_pct": -0.269,
-   "worst_pct": -0.269
-  },
-  "prev7": {
    "loss_days": 0,
    "avg_loss_pct": 0.0,
    "worst_pct": 0.0
   },
-  "improving": null
+  "prev7": {
+   "loss_days": 4,
+   "avg_loss_pct": -1.004,
+   "worst_pct": -1.984
+  },
+  "improving": true
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "TT45|1Hour|GBPJPY",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV15|4Hour|ETHUSD",
+    "cause": "כניסה / כיוון",
+    "fixes": [
+     {
+      "what": "סיכון ×0.7",
+      "decision": "88ecf7aaa22d",
+      "at": "2026-11-12T06:49:56+00:00",
+      "effect_month_pct": null
+     },
+     {
+      "what": "TV15|4Hour|ETHUSD: בלי יעד · סטופ x0.75",
+      "decision": "2d0f59ad5a76",
+      "at": "2026-11-12T00:50:58+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false
+   },
+   {
+    "combo": "SE02|1Hour|USDJPY",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV33|15Min|MSTR",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV08|15Min|NVDA",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV39|1Hour|JP225",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV41|4Hour|NZDUSD",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV10|1Hour|US100",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV02|15Min|TSLA",
+    "cause": "סגירה בגלל כלל",
+    "fixes": [],
+    "open": false
+   },
+   {
+    "combo": "TV03|15Min|AAPL",
+    "cause": "סגירה בגלל כלל",
+    "fixes": [],
+    "open": false
+   }
+  ],
+  "open": [
+   "TT45|1Hour|GBPJPY",
+   "SE02|1Hour|USDJPY",
+   "TV33|15Min|MSTR",
+   "TV08|15Min|NVDA",
+   "TV39|1Hour|JP225",
+   "TV41|4Hour|NZDUSD",
+   "TV10|1Hour|US100"
+  ],
+  "total_month_pct": 0.0,
+  "status": "פתוח: 7 אסטרטגיות בלי תיקון עדיין"
  }
 }

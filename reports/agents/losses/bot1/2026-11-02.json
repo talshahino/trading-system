@@ -1,0 +1,232 @@
+{
+ "bot": "bot1",
+ "day": "2026-11-02",
+ "at": "2026-11-13T04:46:44+00:00",
+ "summary": [
+  "מה קרה: בוט 1 הפסיד 677$ ב־2026-11-02 (-0.68% מהחשבון). 11 עסקאות: 5 הרוויחו 1,191$, 6 הפסידו 1,867$.",
+  "מול הצפי: הבדיקה צפתה ליום כזה +1.5R (+563$). בפועל -1.9R. הפער: -3.4R (-1,272$) - צריך לסגור אותו.",
+  "למה: 5 עסקאות נעצרו בסטופ אחרי תנועה קטנה לטובה; 1 עסקאות נסגרו בגלל כלל (חדשות / סוף מסחר / הפסקת שוק).",
+  "ההפסד הגדול ביותר: TV02|15Min|TSLA, 691$ (37% מכל ההפסד).",
+  "הפסדים שבאו יחד: 3 עסקאות קנייה בstock (903$)."
+ ],
+ "pnl": -676.55,
+ "pnl_pct": -0.677,
+ "open_balance": 100000.0,
+ "limit_used": {
+  "bot": 15.0,
+  "ftmo": 13.5
+ },
+ "trades": 11,
+ "winners": 5,
+ "losers_n": 6,
+ "gross_profit": 1190.57,
+ "gross_loss": 1867.12,
+ "profit_factor": 0.64,
+ "costs": 36.86,
+ "day_r": -1.89,
+ "expected_r": 1.5,
+ "expected_sd": 3.72,
+ "z": -0.91,
+ "normal": true,
+ "causes": {
+  "normal": 5,
+  "rules": 1
+ },
+ "correlated": [
+  {
+   "class": "stock",
+   "side": "קנייה",
+   "trades": 3,
+   "loss": -903.19
+  }
+ ],
+ "top_loser": "TV02|15Min|TSLA",
+ "top_share": 37.0,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "TT56|1Hour|XOM",
+   "side": "מכירה",
+   "open_t": "2026-11-02T20:00:06+00:00",
+   "close_t": "2026-11-02T20:43:09+00:00",
+   "entry": 180.79,
+   "exit": 181.27,
+   "stop": 181.23,
+   "target": 179.45,
+   "r": -1.107,
+   "net": -411.23,
+   "costs": 6.11,
+   "mfe_r": NaN,
+   "mae_r": NaN,
+   "exit_reason": "[sl 181.23]",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TV10|1Hour|US100",
+   "side": "קנייה",
+   "open_t": "2026-11-02T18:00:13+00:00",
+   "close_t": "2026-11-02T19:18:30+00:00",
+   "entry": 28404.43,
+   "exit": 28242.88,
+   "stop": 28242.63,
+   "target": 28778.27,
+   "r": -0.998,
+   "net": -374.8,
+   "costs": 0.0,
+   "mfe_r": NaN,
+   "mae_r": NaN,
+   "exit_reason": "[sl 28242.63]",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TV02|15Min|TSLA",
+   "side": "קנייה",
+   "open_t": "2026-11-02T14:45:04+00:00",
+   "close_t": "2026-11-02T14:51:34+00:00",
+   "entry": 404.0,
+   "exit": 397.97,
+   "stop": 398.0,
+   "target": 416.12,
+   "r": -1.008,
+   "net": -350.67,
+   "costs": 0.93,
+   "mfe_r": NaN,
+   "mae_r": NaN,
+   "exit_reason": "[sl 398.00]",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TV02|15Min|TSLA",
+   "side": "קנייה",
+   "open_t": "2026-11-02T15:30:08+00:00",
+   "close_t": "2026-11-02T19:36:53+00:00",
+   "entry": 411.19,
+   "exit": 403.81,
+   "stop": 403.13,
+   "target": 425.59,
+   "r": -0.918,
+   "net": -340.23,
+   "costs": 0.75,
+   "mfe_r": NaN,
+   "mae_r": NaN,
+   "exit_reason": "[sl 403.13]",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TT56|1Hour|GME",
+   "side": "קנייה",
+   "open_t": "2026-11-02T17:04:20+00:00",
+   "close_t": "2026-11-02T20:45:02+00:00",
+   "entry": 24.34,
+   "exit": 24.1,
+   "stop": 23.91,
+   "target": 25.1,
+   "r": -0.56,
+   "net": -212.29,
+   "costs": 0.85,
+   "mfe_r": NaN,
+   "mae_r": NaN,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "TV62|1Hour|USDCAD",
+   "side": "מכירה",
+   "open_t": "2026-11-02T16:00:10+00:00",
+   "close_t": "2026-11-02T18:00:14+00:00",
+   "entry": 1.39641,
+   "exit": 1.39772,
+   "stop": 1.39934,
+   "target": 0.0,
+   "r": -0.471,
+   "net": -177.9,
+   "costs": 8.96,
+   "mfe_r": NaN,
+   "mae_r": NaN,
+   "exit_reason": "סיגנל יציאה",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TT56|1Hour|GME",
+   "cause": "rules",
+   "priority": [],
+   "task": "TT56|1Hour|GME: נסגר בגלל כלל (session end) ב־-0.56R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": null,
+   "cause": "correlated",
+   "priority": [],
+   "task": "3 הפסדים יחד בקנייה של stock (-903$): להציע תקרה לחשיפה לאותו צד באותו סוג נכס, לבדוק בבדיקת הבוט השלם."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "prev7": {
+   "loss_days": 1,
+   "avg_loss_pct": -0.677,
+   "worst_pct": -0.677
+  },
+  "improving": true
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "TT56|1Hour|XOM",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV10|1Hour|US100",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV02|15Min|TSLA",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TT56|1Hour|GME",
+    "cause": "סגירה בגלל כלל",
+    "fixes": [],
+    "open": false
+   },
+   {
+    "combo": "TV62|1Hour|USDCAD",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true
+   }
+  ],
+  "open": [
+   "TT56|1Hour|XOM",
+   "TV10|1Hour|US100",
+   "TV02|15Min|TSLA",
+   "TV62|1Hour|USDCAD"
+  ],
+  "total_month_pct": 0.0,
+  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין"
+ }
+}

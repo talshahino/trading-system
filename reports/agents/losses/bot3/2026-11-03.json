@@ -1,0 +1,176 @@
+{
+ "bot": "bot3",
+ "day": "2026-11-03",
+ "at": "2026-11-13T04:46:44+00:00",
+ "summary": [
+  "מה קרה: בוט 3 הפסיד 360$ ב־2026-11-03 (-0.36% מהחשבון). 4 עסקאות: 1 הרוויחו 169$, 3 הפסידו 529$.",
+  "מול הצפי: הבדיקה צפתה ליום כזה +0.4R (+141$). בפועל -0.8R. הפער: -1.2R (-438$) - צריך לסגור אותו.",
+  "למה: 2 עסקאות נסגרו בגלל כלל (חדשות / סוף מסחר / הפסקת שוק); 1 עסקאות נעצרו בסטופ אחרי תנועה קטנה לטובה.",
+  "ההפסד הגדול ביותר: TV58|1Hour|USDCAD, 374$ (70.7% מכל ההפסד)."
+ ],
+ "pnl": -359.93,
+ "pnl_pct": -0.359,
+ "open_balance": 100243.77,
+ "limit_used": {
+  "bot": 8.0,
+  "ftmo": 7.2
+ },
+ "trades": 4,
+ "winners": 1,
+ "losers_n": 3,
+ "gross_profit": 169.32,
+ "gross_loss": 529.25,
+ "profit_factor": 0.32,
+ "costs": 0.0,
+ "day_r": -0.79,
+ "expected_r": 0.38,
+ "expected_sd": 1.86,
+ "z": -0.63,
+ "normal": true,
+ "causes": {
+  "rules": 2,
+  "normal": 1
+ },
+ "correlated": [],
+ "top_loser": "TV58|1Hour|USDCAD",
+ "top_share": 70.7,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "TV58|1Hour|USDCAD",
+   "side": "מכירה",
+   "open_t": "2026-11-03T07:00:08+00:00",
+   "close_t": "2026-11-03T14:40:06+00:00",
+   "entry": 1.397,
+   "exit": 1.3992,
+   "stop": 1.3992,
+   "target": 1.39285,
+   "r": -1.0,
+   "net": -374.21,
+   "costs": 0.0,
+   "mfe_r": 0.9,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 1.39920]",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TV12|4Hour|ARM",
+   "side": "מכירה",
+   "open_t": "2026-11-03T20:15:24+00:00",
+   "close_t": "2026-11-03T20:45:03+00:00",
+   "entry": 200.84,
+   "exit": 202.6,
+   "stop": 205.74,
+   "target": 199.97,
+   "r": -0.359,
+   "net": -124.96,
+   "costs": 0.0,
+   "mfe_r": 0.08,
+   "mae_r": 0.39,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "SS06|4Hour|MSTR",
+   "side": "מכירה",
+   "open_t": "2026-11-03T20:15:26+00:00",
+   "close_t": "2026-11-03T20:45:03+00:00",
+   "entry": 134.78,
+   "exit": 135.42,
+   "stop": 142.61,
+   "target": 119.09,
+   "r": -0.082,
+   "net": -30.08,
+   "costs": 0.0,
+   "mfe_r": 0.01,
+   "mae_r": 0.12,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TV12|4Hour|ARM",
+   "cause": "rules",
+   "priority": [],
+   "task": "TV12|4Hour|ARM: נסגר בגלל כלל (session end) ב־-0.359R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "SS06|4Hour|MSTR",
+   "cause": "rules",
+   "priority": [],
+   "task": "SS06|4Hour|MSTR: נסגר בגלל כלל (session end) ב־-0.082R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "prev7": {
+   "loss_days": 1,
+   "avg_loss_pct": -0.359,
+   "worst_pct": -0.359
+  },
+  "improving": true
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "TV58|1Hour|USDCAD",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [
+     {
+      "what": "⭐ TV58|1Hour|USDCAD: יעד 1.5R · סטופ x1.25 · כניסה בלימיט 0.5R טוב יותר",
+      "decision": "454d16e24d47",
+      "at": "2026-11-13T01:36:03+00:00",
+      "effect_month_pct": 0.57
+     },
+     {
+      "what": "⭐ TV58|1Hour|USDCAD: רק בתנודתיות נמוכה",
+      "decision": "260a50c68234",
+      "at": "2026-11-13T01:36:03+00:00",
+      "effect_month_pct": 0.23
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "509c08fb1608",
+      "at": "2026-11-12T20:13:39+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false
+   },
+   {
+    "combo": "TV12|4Hour|ARM",
+    "cause": "סגירה בגלל כלל",
+    "fixes": [
+     {
+      "what": "סיכון ×0.7",
+      "decision": "5e9a1e4bf7b0",
+      "at": "2026-11-12T10:29:12+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false
+   },
+   {
+    "combo": "SS06|4Hour|MSTR",
+    "cause": "סגירה בגלל כלל",
+    "fixes": [],
+    "open": false
+   }
+  ],
+  "open": [],
+  "total_month_pct": 0.8,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון"
+ }
+}

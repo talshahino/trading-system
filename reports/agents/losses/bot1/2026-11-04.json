@@ -1,0 +1,464 @@
+{
+ "bot": "bot1",
+ "day": "2026-11-04",
+ "at": "2026-11-13T04:46:44+00:00",
+ "summary": [
+  "מה קרה: בוט 1 הפסיד 1,058$ ב־2026-11-04 (-1.09% מהחשבון). 19 עסקאות: 7 הרוויחו 2,619$, 12 הפסידו 3,677$.",
+  "מול הצפי: הבדיקה צפתה ליום כזה +2.2R (+809$). בפועל -2.9R. הפער: -5.1R (-1,877$) - צריך לסגור אותו.",
+  "למה: 7 עסקאות נעצרו בלי לזוז לטובה בכלל - הבעיה בכניסה או בכיוון; 4 עסקאות נעצרו בסטופ אחרי תנועה קטנה לטובה; 1 עסקאות נסגרו בגלל כלל (חדשות / סוף מסחר / הפסקת שוק).",
+  "ההפסד הגדול ביותר: TV10|1Hour|US100, 757$ (20.6% מכל ההפסד).",
+  "הפסדים שבאו יחד: 4 עסקאות מכירה בindex (1,446$); 3 עסקאות מכירה בstock (818$).",
+  "חוזרות על עצמן: TV62|1Hour|USDCAD - הפסידו ב־3 ימים או יותר בחודש האחרון."
+ ],
+ "pnl": -1057.7,
+ "pnl_pct": -1.086,
+ "open_balance": 97353.19,
+ "limit_used": {
+  "bot": 24.1,
+  "ftmo": 21.7
+ },
+ "trades": 19,
+ "winners": 7,
+ "losers_n": 12,
+ "gross_profit": 2619.35,
+ "gross_loss": 3677.05,
+ "profit_factor": 0.71,
+ "costs": 42.9,
+ "day_r": -2.92,
+ "expected_r": 2.22,
+ "expected_sd": 5.01,
+ "z": -1.03,
+ "normal": true,
+ "causes": {
+  "entry": 7,
+  "normal": 4,
+  "rules": 1
+ },
+ "correlated": [
+  {
+   "class": "index",
+   "side": "מכירה",
+   "trades": 4,
+   "loss": -1445.88
+  },
+  {
+   "class": "stock",
+   "side": "מכירה",
+   "trades": 3,
+   "loss": -817.92
+  }
+ ],
+ "top_loser": "TV10|1Hour|US100",
+ "top_share": 20.6,
+ "recurring": [
+  "TV62|1Hour|USDCAD"
+ ],
+ "recurring_causes": [
+  "normal",
+  "rules"
+ ],
+ "losers": [
+  {
+   "combo": "TV62|1Hour|USDCAD",
+   "side": "קנייה",
+   "open_t": "2026-11-04T00:00:12+00:00",
+   "close_t": "2026-11-04T01:05:24+00:00",
+   "entry": 1.40051,
+   "exit": 1.39816,
+   "stop": 1.39817,
+   "target": 0.0,
+   "r": -1.034,
+   "net": -392.09,
+   "costs": 11.26,
+   "mfe_r": 0.02,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 1.39817]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": true
+  },
+  {
+   "combo": "TV10|1Hour|US100",
+   "side": "מכירה",
+   "open_t": "2026-11-04T05:00:13+00:00",
+   "close_t": "2026-11-04T05:10:16+00:00",
+   "entry": 27813.13,
+   "exit": 27933.08,
+   "stop": 27930.84,
+   "target": 27569.02,
+   "r": -1.019,
+   "net": -385.04,
+   "costs": 0.0,
+   "mfe_r": 0.15,
+   "mae_r": 0.94,
+   "exit_reason": "[sl 27930.84]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TT45|15Min|CSCO",
+   "side": "קנייה",
+   "open_t": "2026-11-04T14:45:10+00:00",
+   "close_t": "2026-11-04T16:14:22+00:00",
+   "entry": 104.13,
+   "exit": 102.5,
+   "stop": 102.51,
+   "target": 106.95,
+   "r": -1.009,
+   "net": -382.39,
+   "costs": 0.97,
+   "mfe_r": 0.53,
+   "mae_r": 1.01,
+   "exit_reason": "[sl 102.51]",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TV38|15Min|GOOG",
+   "side": "מכירה",
+   "open_t": "2026-11-04T14:45:07+00:00",
+   "close_t": "2026-11-04T15:00:31+00:00",
+   "entry": 287.57,
+   "exit": 291.82,
+   "stop": 291.82,
+   "target": 0.0,
+   "r": -1.003,
+   "net": -375.02,
+   "costs": 1.02,
+   "mfe_r": 0.11,
+   "mae_r": 0.85,
+   "exit_reason": "[sl 291.82]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TV29|4Hour|US30",
+   "side": "מכירה",
+   "open_t": "2026-11-04T12:00:16+00:00",
+   "close_t": "2026-11-04T20:21:15+00:00",
+   "entry": 52638.06,
+   "exit": 53400.2,
+   "stop": 53394.71,
+   "target": 0.0,
+   "r": -1.007,
+   "net": -373.45,
+   "costs": 0.0,
+   "mfe_r": 0.14,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 53394.71]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TV10|1Hour|US100",
+   "side": "מכירה",
+   "open_t": "2026-11-04T06:00:04+00:00",
+   "close_t": "2026-11-04T08:08:53+00:00",
+   "entry": 28030.73,
+   "exit": 28193.18,
+   "stop": 28191.91,
+   "target": 27711.07,
+   "r": -1.008,
+   "net": -372.01,
+   "costs": 0.0,
+   "mfe_r": 0.16,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 28191.91]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TV14|4Hour|XPTUSD",
+   "side": "מכירה",
+   "open_t": "2026-11-04T04:00:13+00:00",
+   "close_t": "2026-11-04T05:35:52+00:00",
+   "entry": 1391.87,
+   "exit": 1435.79,
+   "stop": 1435.79,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -351.52,
+   "costs": 0.16,
+   "mfe_r": -0.16,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 1435.79]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TV33|15Min|MSTR",
+   "side": "מכירה",
+   "open_t": "2026-11-04T15:45:05+00:00",
+   "close_t": "2026-11-04T16:11:33+00:00",
+   "entry": 142.41,
+   "exit": 145.56,
+   "stop": 145.56,
+   "target": 0.0,
+   "r": -1.002,
+   "net": -343.98,
+   "costs": 0.63,
+   "mfe_r": 0.08,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 145.56]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "TV17|1Hour|DXY",
+   "side": "מכירה",
+   "open_t": "2026-11-04T02:00:09+00:00",
+   "close_t": "2026-11-04T07:13:30+00:00",
+   "entry": 101.368,
+   "exit": 101.582,
+   "stop": 101.626,
+   "target": 0.0,
+   "r": -0.835,
+   "net": -315.38,
+   "costs": 2.08,
+   "mfe_r": 0.48,
+   "mae_r": 0.78,
+   "exit_reason": "[sl 101.571]",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TV62|1Hour|USDCAD",
+   "side": "מכירה",
+   "open_t": "2026-11-04T08:00:12+00:00",
+   "close_t": "2026-11-04T16:56:34+00:00",
+   "entry": 1.39584,
+   "exit": 1.39748,
+   "stop": 1.399,
+   "target": 0.0,
+   "r": -0.541,
+   "net": -205.71,
+   "costs": 8.36,
+   "mfe_r": 0.9,
+   "mae_r": 0.51,
+   "exit_reason": "[sl 1.39746]",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": true
+  },
+  {
+   "combo": "TT45|15Min|CSCO",
+   "side": "מכירה",
+   "open_t": "2026-11-04T16:15:04+00:00",
+   "close_t": "2026-11-04T20:45:03+00:00",
+   "entry": 102.59,
+   "exit": 103.22,
+   "stop": 104.99,
+   "target": 97.79,
+   "r": -0.264,
+   "net": -98.92,
+   "costs": 0.64,
+   "mfe_r": 0.3,
+   "mae_r": 0.37,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "SE02|1Hour|USDJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-04T15:00:10+00:00",
+   "close_t": "2026-11-04T21:00:03+00:00",
+   "entry": 158.523,
+   "exit": 158.443,
+   "stop": 158.115,
+   "target": 0.0,
+   "r": -0.215,
+   "net": -81.54,
+   "costs": 7.3,
+   "mfe_r": 0.36,
+   "mae_r": 0.87,
+   "exit_reason": "  ",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TV62|1Hour|USDCAD",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV62|1Hour|USDCAD: נעצר בלי לזוז לטובה (MFE 0.02R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV10|1Hour|US100",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV10|1Hour|US100: נעצר בלי לזוז לטובה (MFE 0.15R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV38|15Min|GOOG",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV38|15Min|GOOG: נעצר בלי לזוז לטובה (MFE 0.11R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV29|4Hour|US30",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV29|4Hour|US30: נעצר בלי לזוז לטובה (MFE 0.14R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV14|4Hour|XPTUSD",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV14|4Hour|XPTUSD: נעצר בלי לזוז לטובה (MFE -0.16R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TV33|15Min|MSTR",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV33|15Min|MSTR: נעצר בלי לזוז לטובה (MFE 0.08R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "TT45|15Min|CSCO",
+   "cause": "rules",
+   "priority": [],
+   "task": "TT45|15Min|CSCO: נסגר בגלל כלל (session end) ב־-0.264R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "TV62|1Hour|USDCAD",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "TV62|1Hour|USDCAD: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  },
+  {
+   "combo": null,
+   "cause": "correlated",
+   "priority": [],
+   "task": "4 הפסדים יחד במכירה של index (-1,446$): להציע תקרה לחשיפה לאותו צד באותו סוג נכס, לבדוק בבדיקת הבוט השלם."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "prev7": {
+   "loss_days": 3,
+   "avg_loss_pct": -1.249,
+   "worst_pct": -1.984
+  },
+  "improving": true
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "TV62|1Hour|USDCAD",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV10|1Hour|US100",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TT45|15Min|CSCO",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV38|15Min|GOOG",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV29|4Hour|US30",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV14|4Hour|XPTUSD",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV33|15Min|MSTR",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true
+   },
+   {
+    "combo": "TV17|1Hour|DXY",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [
+     {
+      "what": "סיכון ×0.7",
+      "decision": "8c0cd23c0c95",
+      "at": "2026-11-12T06:49:56+00:00",
+      "effect_month_pct": null
+     },
+     {
+      "what": "TV17|1Hour|DXY: בלי יעד · כניסה בלימיט 0.25R טוב יותר",
+      "decision": "2bf56c03b8b4",
+      "at": "2026-11-12T00:50:58+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false
+   },
+   {
+    "combo": "SE02|1Hour|USDJPY",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true
+   }
+  ],
+  "open": [
+   "TV62|1Hour|USDCAD",
+   "TV10|1Hour|US100",
+   "TT45|15Min|CSCO",
+   "TV38|15Min|GOOG",
+   "TV29|4Hour|US30",
+   "TV14|4Hour|XPTUSD",
+   "TV33|15Min|MSTR",
+   "SE02|1Hour|USDJPY"
+  ],
+  "total_month_pct": 0.0,
+  "status": "פתוח: 8 אסטרטגיות בלי תיקון עדיין"
+ }
+}

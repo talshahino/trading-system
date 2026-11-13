@@ -77,6 +77,7 @@ MERGE_ATR = 0.3
 CALM_MIN = 5
 RERUN_DAYS = 14
 RESULTS = Path("data/agents/strategies/tal_gap_results.json")
+BOT5_SYMBOLS = ["US100", "US30", "US500", "GER40", "JP225"]   # a bot 5 track's instruments when it names none (live/watch_own.py TAL5_SYMBOLS)
 
 
 def stop_buffer(sym):
@@ -362,9 +363,10 @@ def simulate(D, pair, cfg, gcache):
 
 
 # ---------------------------------------------------------------- the nightly run, cached per (pair, variant, instrument)
-def run(bot, symbols, load, out_dir, budget_s, end=None):
+def run(bot, symbols, load, out_dir, budget_s, end=None, search_ok=True):
     """load(symbol) -> Data or None. Runs what is missing or older than RERUN_DAYS until the budget ends.
-    Returns the index of the runs."""
+    Returns the index of the runs. search_ok=False: the planned grid only (bot 5's other instruments, 13.11.2026 -
+    every instrument's grid first, then the search)."""
     out_dir = Path(out_dir)
     idx_dir = out_dir / "idx"
     idx_dir.mkdir(parents=True, exist_ok=True)
@@ -403,7 +405,7 @@ def run(bot, symbols, load, out_dir, budget_s, end=None):
         done += 1
         print(f"  tal_gap {pair_name(p)} {knob}={val} {s}: {len(t)} trades ({time.time() - ts:.1f}s)")
     left = len(todo) - done
-    if left == 0 and time.time() - t0 < budget_s:
+    if left == 0 and search_ok and time.time() - t0 < budget_s:
         done += search(symbols, load, out_dir, idx, idx_dir, budget_s - (time.time() - t0))
     print(f"tal_gap: {done} run, {left} left")
     return idx, left

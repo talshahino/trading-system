@@ -108,10 +108,13 @@ RISK_TAL5 = 0.004 * 0.7
 # {"pair": [high, low], "cfg": {...}}}, risk per track in "risk"), so an approved card of the gap method is built by
 # agents/builder.py at once, like bot 6. A file that is missing or odd keeps the tracks in the code.
 TAL5_RISK = {}
-# an instrument's own gap track (13.11.2026, agents/tal_wide.py: the method on every FTMO forex pair, the metals, the
-# other indices): "symbols" in its "tal_tracks" entry - {track: [symbol]}; a track without it trades TAL5_SYMBOLS.
-# Such an instrument is added to SYMBOLS (and EXTRA: the old tracks' results on it stay out of their summary).
-TAL5_SYMS = {}
+# the instruments of each track (user, 13.11.2026: "why does bot 5 not use every currency pair on FTMO?"): "symbols" in a
+# track of "tal_tracks" = the instruments it counts in the account (default TAL5_SYMBOLS), "watch" = the instruments it
+# runs on and shows (default: its "symbols"; a symbol taken out of a track stays in "watch" so its open trades are
+# followed to their exit, and only new entries there are not counted). An instrument that is not in SYMBOLS (another
+# FTMO forex pair, metal or index) is fetched for the gap method only - none of the old tracks runs on it.
+TAL5_SYMS = {}         # track -> (run on, counted)
+TAL_ONLY = set()       # instruments fetched for the gap method only
 TAL5_ONE = [False]     # "tal_one_per_side": a track does not enter a symbol / direction another track holds (off until approved)
 TAL5_MAXDIR = [0]      # "tal_max_dir" (13.11.2026): at most K counted trades open in one direction on all the indices together (0 = off until approved)
 TAL5_SCALE = [1.0]      # "tal_risk_scale" (13.11.2026 night): one factor on every gap track's risk (1 until approved)
@@ -189,13 +192,24 @@ def load_settings():
                         TAL5.clear()
                         TAL5.update(new_)
                         TAL5_SYMS.clear()
-                        TAL5_SYMS.update(syms_)
-                        for sy in {x for v_ in syms_.values() for x in v_}:
-                            if sy not in SYMBOLS:
-                                code_ = U.ALL[sy][0]
-                                cand_ = list(dict.fromkeys([code_.replace("/", ""), code_, sy]))
-                                SYMBOLS[sy] = cand_
-                                EXTRA[sy] = cand_
+                        for x in list(TAL_ONLY):                 # a track taken out: its instrument is not fetched any more
+                            if not any(x in ((tt.get(k) or {}).get("watch") or []) + ((tt.get(k) or {}).get("symbols") or [])
+                                       for k in new_ if isinstance((tt.get(k) or {}).get("symbols", []), list)):
+                                SYMBOLS.pop(x, None)
+                                TAL_ONLY.discard(x)
+                        for trk in new_:
+                            v = tt.get(trk) or {}
+                            cnt_ = v.get("symbols")
+                            cnt_ = [str(x) for x in cnt_] if isinstance(cnt_, list) else list(TAL5_SYMBOLS)
+                            run_ = v.get("watch")
+                            run_ = [str(x) for x in run_] if isinstance(run_, list) else list(cnt_)
+                            run_ += [x for x in cnt_ if x not in run_]
+                            TAL5_SYMS[trk] = (run_, cnt_)
+                            for x in run_:
+                                if x not in SYMBOLS and x in U.ALL:
+                                    # FTMO's name for it on the bots' feed: an index "X.cash", a pair / metal as it is
+                                    SYMBOLS[x] = [U.ALL[x][0], x] if U.ALL[x][0].endswith(".cash") else [x, U.ALL[x][0]]
+                                    TAL_ONLY.add(x)
                 TAL5_ONE[0] = bool(d.get("tal_one_per_side", False))
                 try:
                     TAL5_MAXDIR[0] = max(0, int(d.get("tal_max_dir", 0) or 0))
@@ -383,7 +397,7 @@ class Calendar:
     def cal_masks(self, df, name):
         """{"cal15": mask, "cal60": mask} on the 1-minute candles: within +-15 / 60 minutes of a high-impact release."""
         from agents import news_calendar as NC
-        cur = set(NC.CURRENCIES.get(name) or [])
+        cur = set(NC.CURRENCIES.get(name) or U.CURRENCIES.get(name) or [])   # FTMO's other pairs / indices (13.11.2026)
         ev = np.array(sorted(pd.Timestamp(t).as_unit("ns").value for t, c in self.high if c in cur or any(x in c for x in cur)), dtype=np.int64)
         t = pd.DatetimeIndex(df.index).as_unit("ns").asi8         # pandas 3 keeps microseconds: compare in ns
         out = {}
@@ -774,12 +788,13 @@ def main():
                     continue
                 stop_at, noent = cal.masks(df, name)
                 cst = cost_of(name, df)
-                res = CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
+                tal_only = name in TAL_ONLY
+                res = [] if tal_only else CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
                 strict = {tid(x) for x in res}
                 keep_bx = CORE.BODY_X
                 try:
                     CORE.BODY_X = WIDE_BODY_X
-                    wide = CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
+                    wide = [] if tal_only else CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
                 finally:
                     CORE.BODY_X = keep_bx
                 for x in wide:
@@ -823,12 +838,12 @@ def main():
                     finally:
                         for k_, v_ in keep4.items():
                             setattr(CORE, k_, v_)
-                if name in TAL5_SYMBOLS or any(name in v_ for v_ in TAL5_SYMS.values()):
+                if name in TAL5_SYMBOLS or any(name in v_[0] for v_ in TAL5_SYMS.values()):
                     D5 = TG.Data(name, df[["o", "h", "l", "c"]], np.asarray(cst, float), np.asarray(stop_at, bool),
                                  np.asarray(noent, bool), TG.stop_buffer(name), cal.cal_masks(df, name))
                     for trk, (pair, cfg) in TAL5.items():
-                        if name not in (TAL5_SYMS.get(trk) or TAL5_SYMBOLS):
-                            continue                      # an instrument's own track / the indices' tracks
+                        if name not in (TAL5_SYMS.get(trk) or (TAL5_SYMBOLS,))[0]:
+                            continue
                         for x in TG.live_trades(D5, pair, cfg):
                             g_ = x.get("gap") or [x["entry"], x["entry"]]
                             res.append({"symbol": name, "dir": x["dir"], "status": x["status"], "entry": x["entry"],
@@ -891,8 +906,11 @@ def main():
                                                           and o.get("id", o) != rec.get("id")) >= TAL5_MAXDIR[0]
                         ts_ = pd.Timestamp(rec["time"])
                         hour_ = bool(TAL5_HOURS_OFF) and (ts_.tz_convert("UTC") if ts_.tzinfo else ts_).hour in TAL5_HOURS_OFF
+                        sym_ = rec["symbol"] not in (TAL5_SYMS.get(rec["tal"]) or (None, TAL5_SYMBOLS))[1]
                         if acc.get("breached"):
                             rec["skipped"] = "breach"
+                        elif sym_:
+                            rec["skipped"] = "symbol"        # the track no longer counts this instrument (an approved card)
                         elif hour_:
                             rec["skipped"] = "hours"         # an hour the tracks lost in together on 2024-2025
                         elif side_:
@@ -1022,7 +1040,7 @@ def main():
         counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
         state.update({"account": "וירטואלי · שיטת הגאפ של טל", "server": f"צפייה בלבד · בלי כסף · סיכון {RISK_TAL5 * 100:.2f}% לעסקה", "initial": acc["initial"], "risk": RISK_TAL5,
                       "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
-                      "halted_until": None, "combos": [f"TAL|{tal5_tf(k)}|{n}" for k in TAL5 for n in (TAL5_SYMS.get(k) or TAL5_SYMBOLS)], "started": acc["started"], "withdrawals": [],
+                      "halted_until": None, "combos": [f"TAL|{tal5_tf(k)}|{n}" for k in TAL5 for n in (TAL5_SYMS.get(k) or (None, TAL5_SYMBOLS))[1]], "started": acc["started"], "withdrawals": [],
                       "equity_curve": ec, "lows": {},
                       "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                                      "combo": combo(t["symbol"], t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],

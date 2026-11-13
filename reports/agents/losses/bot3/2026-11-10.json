@@ -166,11 +166,29 @@
     "cause": "כניסה / כיוון",
     "fixes": [
      {
+      "what": "SS07|15Min|NVDA: סיכון ×0.5 ← כמות מינימלית (אין יתרון) - לפי היתרון שלה",
+      "decision": "f0ba8405cc0c",
+      "at": "2026-11-13T07:29:29+00:00",
+      "effect_month_pct": 0.07,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.001",
+      "decision": "fe32abf6e2fc",
+      "at": "2026-11-13T07:29:29+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.5,
+      "value": 0.001
+     },
+     {
       "what": "SS07|15Min|NVDA: סיכון ×1 ← ×0.5 (מפסידה ב־2026 במחירים האמיתיים)",
       "decision": "748cf67395f0",
       "at": "2026-11-13T04:59:21+00:00",
-      "effect_month_pct": 0.07,
-      "cut": true,
+      "effect_month_pct": null,
+      "cut": false,
       "prev": null,
       "value": null
      },
@@ -185,14 +203,33 @@
      }
     ],
     "open": false,
-    "cut_only": true
+    "cut_only": false
    },
    {
     "combo": "SS01|5Min|WMT",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "SS01|5Min|WMT: סיכון ×1 ← ×0.8 - לפי היתרון שלה",
+      "decision": "b1cd181a4f63",
+      "at": "2026-11-13T07:29:29+00:00",
+      "effect_month_pct": -0.04,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.8",
+      "decision": "814c3e72e8b3",
+      "at": "2026-11-13T07:29:29+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.8
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV41|1Hour|USDJPY",
@@ -219,14 +256,12 @@
     "cut_only": false
    }
   ],
-  "open": [
-   "SS01|5Min|WMT"
-  ],
+  "open": [],
   "cut_only": [
-   "SS07|15Min|NVDA",
+   "SS01|5Min|WMT",
    "TV41|1Hour|USDJPY"
   ],
-  "total_month_pct": 0.07,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.03,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

@@ -206,9 +206,28 @@
    {
     "combo": "GH02|1Hour|XAUUSD",
     "cause": "סגירה בגלל כלל",
-    "fixes": [],
+    "fixes": [
+     {
+      "what": "GH02|1Hour|XAUUSD: סיכון ×1 ← כמות מינימלית (אין יתרון) - לפי היתרון שלה",
+      "decision": "a98ddb775d09",
+      "at": "2026-11-13T07:29:29+00:00",
+      "effect_month_pct": 0.32,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.001",
+      "decision": "36ded8f71c55",
+      "at": "2026-11-13T07:29:29+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.001
+     }
+    ],
     "open": false,
-    "cut_only": false
+    "cut_only": true
    },
    {
     "combo": "BK05|15Min|INTC",
@@ -229,9 +248,10 @@
    "QC07|15Min|ARM"
   ],
   "cut_only": [
-   "SE02|1Hour|GBPJPY"
+   "SE02|1Hour|GBPJPY",
+   "GH02|1Hour|XAUUSD"
   ],
-  "total_month_pct": 0.0,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.32,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

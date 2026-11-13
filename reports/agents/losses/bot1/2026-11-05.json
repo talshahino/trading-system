@@ -416,9 +416,28 @@
    {
     "combo": "TT45|1Hour|GBPJPY",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "TT45|1Hour|GBPJPY: סיכון ×0.95 ← ×0.86 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.11)",
+      "decision": "5d7f4cbe045b",
+      "at": "2026-11-13T05:14:57+00:00",
+      "effect_month_pct": -0.08,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.86",
+      "decision": "b452938092ea",
+      "at": "2026-11-13T05:14:57+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.86
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV15|4Hour|ETHUSD",
@@ -449,9 +468,28 @@
    {
     "combo": "SE02|1Hour|USDJPY",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "SE02|1Hour|USDJPY: סיכון ×0.95 ← ×0.79 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.23)",
+      "decision": "107f16c55aef",
+      "at": "2026-11-13T05:14:57+00:00",
+      "effect_month_pct": -0.19,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.79",
+      "decision": "37480e091e6f",
+      "at": "2026-11-13T05:14:57+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.79
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV33|15Min|MSTR",
@@ -470,9 +508,28 @@
    {
     "combo": "TV39|1Hour|JP225",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "TV39|1Hour|JP225: סיכון ×1.05 ← ×0.96 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.12)",
+      "decision": "e5b1ee64f049",
+      "at": "2026-11-13T05:14:57+00:00",
+      "effect_month_pct": -0.22,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.96",
+      "decision": "ba4def196de3",
+      "at": "2026-11-13T05:14:57+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.05,
+      "value": 0.96
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV41|4Hour|NZDUSD",
@@ -504,16 +561,17 @@
    }
   ],
   "open": [
-   "TT45|1Hour|GBPJPY",
-   "SE02|1Hour|USDJPY",
    "TV33|15Min|MSTR",
    "TV08|15Min|NVDA",
-   "TV39|1Hour|JP225",
    "TV41|4Hour|NZDUSD",
    "TV10|1Hour|US100"
   ],
-  "cut_only": [],
-  "total_month_pct": 0.0,
-  "status": "פתוח: 7 אסטרטגיות בלי תיקון עדיין"
+  "cut_only": [
+   "TT45|1Hour|GBPJPY",
+   "SE02|1Hour|USDJPY",
+   "TV39|1Hour|JP225"
+  ],
+  "total_month_pct": -0.49,
+  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

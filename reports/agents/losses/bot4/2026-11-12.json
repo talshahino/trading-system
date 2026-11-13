@@ -307,30 +307,38 @@
    {
     "combo": "FR08|5Min|SPCX",
     "cause": "ניהול העסקה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
-    "edge_mult": 0.8,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.16R לעסקה (154 עסקאות), בתקופת הבחירה +0.10R",
-     "בחי: -0.44R לעסקה (7 עסקאות)",
-     "הבדיקה שווה 95% מהמשקל, החי 5%",
-     "היתרון עכשיו: +0.13R לעסקה",
-     "סיכון = +0.13 ÷ +0.16 = ×0.80"
+    "fixes": [
+     {
+      "what": "FR08|5Min|SPCX: הסטופ ×0.6 ← ×0.75 (הגרסה שנבדקה בבדיקה ההוגנת)",
+      "decision": "06db36e1c1ed",
+      "at": "2026-11-13T05:14:57+00:00",
+      "effect_month_pct": 0.32,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "FR08|5Min|SPCX: הסטופ ×0.6 ← ×0.75 (הגרסה שנבדקה בבדיקה ההוגנת)",
+      "decision": "bb20271c86ba",
+      "at": "2026-11-13T05:14:57+00:00",
+      "effect_month_pct": null,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
     ],
-    "edge0": 0.159,
-    "edge": 0.126
+    "open": false,
+    "cut_only": false
    }
   ],
   "open": [
-   "FR01|1Hour|GBPUSD",
-   "FR08|5Min|SPCX"
+   "FR01|1Hour|GBPUSD"
   ],
   "cut_only": [
    "FR01|1Hour|EURUSD",
    "SE02|1Hour|GBPJPY"
   ],
-  "total_month_pct": 0.0,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.32,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

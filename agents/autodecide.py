@@ -97,6 +97,18 @@ def _target(c):
     return str(ch.get("combo") or ch.get("track") or "")
 
 
+def _risk_card(c, bot):
+    """The multiplier a bots 1-4 risk card sets for one strategy (0.5-1.5, what live/runner.py reads), else None."""
+    ch = c.get("change") or {}
+    if c.get("kind") != "risk" or bot not in RISK_BOTS or not ch.get("combo") or ch.get("kind") != "mult":
+        return None
+    try:
+        v = round(float(ch.get("to")), 2)
+    except (TypeError, ValueError):
+        return None
+    return v if 0.5 <= v <= 1.5 else None
+
+
 def _cuts(c):
     """A card that only cuts: removes a strategy, stops a track or lowers a risk."""
     ch = c.get("change") or {}
@@ -244,8 +256,10 @@ def decide(bots, now=None):
                 continue
             from agents import builder as BLD
             buildable = BLD.buildable({**c, "bot": bot})
+            risk_card = _risk_card(c, bot)
             what = ("לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב" if c["kind"] == "info" else
                     "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות" if buildable else
+                    "יוחל במחשב הבוטים תוך כ־10 דקות" if risk_card else
                     "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה")
             why, star, mult, whole = c["verdict"], False, None, None
             is_new = did not in old
@@ -300,6 +314,19 @@ def decide(bots, now=None):
                      "star": star, **({"whole_bot": {k: whole[k] for k in ("before", "after")}} if whole else {})})
             c["status"], c["by"], c["decided"], c["decision_id"] = "approved", "manager", d["at"], did
             combo = (c.get("change") or {}).get("combo")
+            if is_new and risk_card:
+                # a bot agent's risk card for one strategy of bots 1-4 (change {"combo", "kind": "mult", "from", "to"}):
+                # applied by the bots' computer like the star's risk, linked to the card - an undo of the card brings
+                # the value before back (live/manager.py auto_apply). Until 13.11.2026 such a card was approved and
+                # then waited for a nightly session that had no way to apply it.
+                cur_m = float(((cur_risk.get(bot) or {}).get("mult") or {}).get(combo, 1.0))
+                if abs(risk_card - cur_m) > 1e-9:
+                    add({"id": _did("cardrisk", c["id"]), "bot": bot, "type": "risk", "kind": "mult", "combo": combo,
+                         "title": f"{combo}: סיכון ×{risk_card:g}", "decision": "approved", "why": why,
+                         "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "card_decision": did,
+                         "action": {"bot": bot, "combo": combo, "kind": "mult", "value": risk_card,
+                                    "prev": None if cur_m == 1.0 else cur_m}})
+                continue
             if not is_new or not (mult and mult < 1 and buildable and bot in RISK_BOTS and combo):
                 continue
             # the lowered risk of the new change, applied by the bots' computer like any risk decision; undone or

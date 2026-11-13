@@ -1787,6 +1787,316 @@
     "bot4"
    ],
    "rules": "1H + 4H / price above the cloud and the Kijun-sen on both (below for shorts) / stop 2% / target 4%; 12-bar cooldown"
+  },
+  {
+   "id": "SC095",
+   "name": "Trader DNA 5-8-13 EMA cross + Parabolic SAR, swing stop, 3R, 1H",
+   "source": "YouTube (Trader DNA) via Medium",
+   "url": "https://medium.com/quant-factory/backtesting-popular-strategies-from-youtube-2-90ec397bca29",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H / long: EMA8 crosses above EMA13 with EMA5 above both and the PSAR under the candle (short mirror) / stop recent swing low (high) / target 3R"
+  },
+  {
+   "id": "SC096",
+   "name": "Trade Pro 50 EMA wick rejection over the 200 EMA, 1 ATR stop, 1.5R, 15m",
+   "source": "YouTube (Trade Pro) via Medium",
+   "url": "https://medium.com/quant-factory/backtesting-popular-youtube-strategies-4-4afcc120b916",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m / long: price above the 200 MA, a low wick through the 50 MA and the next candle above it (short mirror) / stop 1 x ATR(14) / target 1.5R"
+  },
+  {
+   "id": "SC097",
+   "name": "Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR",
+   "source": "TradingView (script)",
+   "url": "https://www.tradingview.com/script/OQGzolcI-Keltner-Channel-Strategy/",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [
+    "metal",
+    "index",
+    "energy"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "15m / 1H / 4H / long: cross below the lower Keltner band, or EMA9 crosses above EMA21 with price above EMA50 (short mirror) / stop 1.5 x ATR / target 2 x ATR"
+  },
+  {
+   "id": "SC098",
+   "name": "Williams %R Zone Scalper: -80 / -20 cross + Choppiness < 38.2 + volume, 1.5 / 2 ATR, 5m",
+   "source": "TradingView (script)",
+   "url": "https://my.tradingview.com/script/TJuVmOfk-Williams-R-Zone-Scalper-v1-0-BullByte",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto",
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m / long: Williams %R(14) crosses above -80 with Choppiness(12) < 38.2 and volume over its 50-bar average (short: crosses below -20) / stop 1.5 x ATR(14) / target 2 x ATR(14)"
+  },
+  {
+   "id": "SC099",
+   "name": "Dynamic R:R BTC: EMA 20/50 cross + EMA200 + RSI 60/40, swing stop, 2R, 15m",
+   "source": "TradingView (script)",
+   "url": "https://in.tradingview.com/script/Jqfl93NC-Dynamic-R-R-Strategy-BTC-Optimized",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "15m / long: EMA20 crosses above EMA50, price above EMA200, RSI > 60 (short: below, RSI < 40) / stop last swing low (high) or ATR / targets 1R, 2R, 3R"
+  },
+  {
+   "id": "SC100",
+   "name": "GoldScalper Pro v8: EMA 8/21/55 + MACD cross + RSI 50-68 + ADX 20, 1 / 5 ATR, break-even, 5m",
+   "source": "TradingView (script)",
+   "url": "https://tw.tradingview.com/script/Q2PxJ3RB",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m (15m compatible) / long: EMA8 > EMA21 > EMA55 rising, MACD golden cross, RSI 50-68, ADX >= 20, bullish candle; no entries 00-06 KST (short mirror, RSI 32-50) / stop 1 x ATR / TP1 2 x ATR half + break-even, TP2 5 x ATR, out on the opposite EMA8/21 cross"
+  },
+  {
+   "id": "SC101",
+   "name": "Happy Hunter: LHLL / HHHL bar, stop entry past Bar1, 1.3 / 1.9 ATR(120), 1H",
+   "source": "BabyPips",
+   "url": "https://www.babypips.com/trading/updated-happy-hunter-price-action-trading-system-variant2-20180308",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H / long: signal bar with a lower high and lower low than Bar1 and under the 4 lows before -> buy stop at Bar1 high, 12h expiry (2h if the bar range >= 1.5 ATRH) (short mirror) / stop 1.3 x ATR(120) / target 1.9 x ATR(120), then trail"
+  },
+  {
+   "id": "SC102",
+   "name": "XAUUSD EMA50/200 trend + pullback to EMA50 with RSI < 30 turning, swing stop, 2R",
+   "source": "Blog (pyroco)",
+   "url": "https://pyroco.blogspot.com/2025/06/simple-xauusd-scalping-strategy.html",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m / 5m / long: EMA50 above EMA200, pullback near EMA50, RSI(14) under 30 then rising (short mirror over 70) / stop recent swing low (high) / target 1.5R or 2R"
+  },
+  {
+   "id": "SC103",
+   "name": "Gold Time Precise Model: Asian range break in London's first 3 hours + big-candle patterns, 20 pips, 15m",
+   "source": "Forex Factory / EnergyExch",
+   "url": "https://www.energyexch.com/thread/post/14806308",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m / within 3 hours of the London open after a break of the Asian high/low: big bull candle, bear consolidation, bull engulfing - or two big bull candles after an Asian-high break (short mirror) / stop beyond the first candle of the setup / target +20 pips (or half at +10 and trail)"
+  },
+  {
+   "id": "SC104",
+   "name": "US30 Parabolic SAR flip + close beyond the last opposite dot, EMA100, 25 / 50 pips, 1m",
+   "source": "Forex Factory / EnergyExch",
+   "url": "https://www.energyexch.com/thread/post/14071042",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m, after 13:00 London / long: price above EMA100, SAR flips to buy, a close above the last sell-SAR dot -> enter next candle (short mirror) / stop 25 pips / target 50 pips, break-even at 30-40"
+  },
+  {
+   "id": "SC105",
+   "name": "WHS Z-Score: re-cross of -2 / +2 with the 100 MA slope, target the 20 MA, 20-bar exit, 15m",
+   "source": "WH SelfInvest",
+   "url": "https://www.whselfinvest.de/en-de/trading-platform/free-trading-strategies/tradingsystem/95-z-score-day-trading",
+   "added": "2026-11-13",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "15m / long: 100 MA rising, Z-Score(20) falls under -2.0 and rises back above (short mirror over +2.0 with the MA falling) / stop entry candle low (high) or ATR / target the 20 MA, out after 20 candles"
+  },
+  {
+   "id": "SC106",
+   "name": "Pieper Histo Breakout: HVR < 0.5 + inside / narrow-range bar, close beyond within 4 bars, 2R, 1H",
+   "source": "WH SelfInvest (David Pieper)",
+   "url": "https://www.whselfinvest.de/en-de/trading-platform/free-trading-strategies/tradingsystem/83-david-pieper-histo-breakout-strategy",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "hourly (also daily / weekly) / HVR < 0.5 and an inside or narrow-range signal candle; long on a close above its high within 4 candles (short below its low) / stop the other end of the signal candle / target 2R, break-even at 1R"
+  },
+  {
+   "id": "SC107",
+   "name": "News 1m: impulse candle, entry after the 3-minute correction, stop past it, target the impulse extreme",
+   "source": "TradingView (idea)",
+   "url": "https://de.tradingview.com/chart/EURUSD/zyEw4igu-RIGHT-WAY-TO-TRADE-NEWS-1m-chart",
+   "added": "2026-11-13",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot7"
+   ],
+   "rules": "1m / after the news impulse candle wait for the 3-5 minute correction and enter in the impulse direction after the 3rd-4th minute close / stop beyond the entry extreme / target a newly formed extreme"
+  },
+  {
+   "id": "SC108",
+   "name": "News fade: release spike + reversal candle, wick break, stop the spike, target the pre-release close, 15-min exit, 5m",
+   "source": "JournalPlus",
+   "url": "https://journalplus.co/strategies/news-fade-strategy",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot7"
+   ],
+   "rules": "5m (macro) / first candle after the release closes as a reversal (shooting star / engulfing / inside-bar rejection) on 3-5x volume; enter on the break of its opposite wick / stop beyond the spike extreme / T1 VWAP, T2 prior close (gap fill); exit if nothing within 15 minutes"
+  },
+  {
+   "id": "SC109",
+   "name": "CPI 08:30-09:00 ET range breakout, stop at the midpoint, target the prior day's high / low",
+   "source": "DayTradingToolkit",
+   "url": "https://daytradingtoolkit.com/strategies/traders-playbook-cpi-report",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot7"
+   ],
+   "rules": "08:30 ET release, no trades until 09:00; trade the breakout of the 08:30-09:00 range / stop just beyond the range midpoint / target a prior-day key level"
+  },
+  {
+   "id": "SC110",
+   "name": "freqtrade Hacklemore: RMI + MACD + SAR + lower-BB touch 2-10 bars ago, -8.5% / 1.5%, 5m",
+   "source": "GitHub (freqtrade)",
+   "url": "https://fts.naif.one/strategies/hacklemore",
+   "added": "2026-11-13",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m, long only / up-trend (12-bar high rising), RMI(20,5) >= 55 and rising, MACD > signal with positive histogram, low touched the lower BB(20) 2-10 bars ago, two higher closes, SAR under price / stoploss -8.5% / minimal_roi 15% -> 2.5% after 5 min -> 1.5% after 10 min"
   }
  ]
 }

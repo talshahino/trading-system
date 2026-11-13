@@ -2514,6 +2514,489 @@ def s_tv_mtf_ichimoku(df):
     (sl, ss), (tl, ts) = _pct_levels(c, 2.0, 4.0)
     return L, S, {"stop": ("level", sl, ss), "target": ("level", tl, ts)}
 
+
+# ---------------- helpers added 2026-11-13 (fourth scout run) ----------------
+def _psar(h, l, step=0.02, mx=0.2):
+    """Wilder's Parabolic SAR (TradingView defaults 0.02 / 0.02 / 0.2). Returns the SAR value and the trend (+1 / -1)
+    of every bar (the SAR printed on bar i is computed from bars up to i-1)."""
+    n = len(h)
+    sar, tr = np.full(n, np.nan), np.zeros(n)
+    if n < 3:
+        return sar, tr
+    up = h[1] >= h[0]
+    ep = h[1] if up else l[1]
+    s = l[0] if up else h[0]
+    af = step
+    for i in range(1, n):
+        s = s + af * (ep - s)
+        if up:
+            s = min(s, l[i - 1], l[i - 2] if i > 1 else l[i - 1])
+            if l[i] < s:
+                up, s, ep, af = False, ep, l[i], step
+            elif h[i] > ep:
+                ep, af = h[i], min(mx, af + step)
+        else:
+            s = max(s, h[i - 1], h[i - 2] if i > 1 else h[i - 1])
+            if h[i] > s:
+                up, s, ep, af = True, ep, h[i], step
+            elif l[i] < ep:
+                ep, af = l[i], min(mx, af + step)
+        sar[i], tr[i] = s, 1 if up else -1
+    return sar, tr
+
+
+def _rmi(c, n=20, mom=5):
+    """Relative Momentum Index: RSI computed on close - close[mom] (freqtrade technical.RMI, EMA smoothing)."""
+    d = c - _sh(c, mom)
+    d = np.nan_to_num(d)
+    up, dn = ema(np.clip(d, 0, None), n), ema(np.clip(-d, 0, None), n)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.where(up + dn > 0, 100 * up / (up + dn), 50.0)
+
+
+def _vol_ok(v, n, mult=1.0):
+    """Volume above mult x its n-bar average; a feed without real volume (constant) passes."""
+    v = np.asarray(v, dtype=float)
+    vm = _sh(sma(v, n))
+    flat = _s(v).rolling(n).std(ddof=0).to_numpy() == 0
+    return (v > mult * vm) | flat
+
+
+def _shb(x, k=1):
+    """Boolean mask shifted k bars (False where unknown)."""
+    return np.nan_to_num(_sh(np.asarray(x, dtype=float), k)) > 0
+
+
+def _bars_since(mask):
+    """Bars since `mask` was last True (0 on a True bar, large before the first)."""
+    m = np.asarray(mask, dtype=bool)
+    idx = np.where(m, np.arange(len(m)), -10**9)
+    last = np.maximum.accumulate(idx)
+    return np.arange(len(m)) - last
+
+
+# ---------------- SC095 Trader DNA 5-8-13 EMA + Parabolic SAR, swing stop, 3R, 1H (Medium / YouTube) ----------------
+def s_tdna_ema5813_psar(df):
+    """YouTube (Trader DNA) '5-8-13 EMA + Parabolic SAR', as written up and backtested on BTC 1H in the Medium
+    series 'Backtesting popular strategies from YouTube #2': long when the 8 EMA crosses above the 13 EMA with the
+    5 EMA above both (the 5 EMA crossed within the last two candles) and the Parabolic SAR under the candle; short
+    on the mirror. Stop at the recent swing low (high), target 3x the risk. Ours: PSAR 0.02/0.2 (not stated), the
+    'recent swing' = lowest low / highest high of the last 10 bars (lookback not stated)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    e5, e8, e13 = ema(c, 5), ema(c, 8), ema(c, 13)
+    sar, tr = _psar(h, l)
+    L = cross_up(e8, e13) & (e5 > e8) & (tr > 0)
+    S = cross_down(e8, e13) & (e5 < e8) & (tr < 0) & ~L
+    return L, S, {"stop": ("lowest", 10), "target": ("R", 3.0)}
+
+
+# ---------------- SC096 Trade Pro 50 EMA wick rejection over the 200 EMA, 1 ATR stop, 1.5R, 15m (Medium / YouTube) ----------------
+def s_tp_ema50_wick_reject(df):
+    """YouTube (Trade Pro) '50 EMA' strategy as backtested on EURUSD 15M in the Medium series 'Backtesting popular
+    YouTube strategies #4': price above the 200 MA, a candle's low wick pokes below the 50 MA (closing back above
+    it) and the next candle stays above -> buy; the mirror under the 200 MA with an upper wick through the 50 MA ->
+    sell. Stop 1 x ATR(14), target 1.5 x the risk. Ours: EMAs (the title says EMA), periods on the chart's bars."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    e50, e200 = ema(c, 50), ema(c, 200)
+    wl = (_sh(l) < _sh(e50)) & (_sh(c) > _sh(e50))
+    wh = (_sh(h) > _sh(e50)) & (_sh(c) < _sh(e50))
+    L = wl & (c > e50) & (c > e200)
+    S = wh & (c < e50) & (c < e200) & ~L
+    return L, S, {"stop": ("atr", 1.0), "target": ("R", 1.5)}
+
+
+# ---------------- SC097 Keltner reversal + EMA 9/21/50 trend, 1.5 / 2 ATR (TradingView) ----------------
+def s_tv_keltner_ema_dual(df):
+    """TradingView 'Keltner Channel Strategy' (adkhomepros, 2025; gold, NQ, CL; 15m / 1H / 4H). Two entries:
+    reversal - long when price crosses below the lower Keltner band, short when it crosses above the upper band;
+    trend - long when EMA9 crosses above EMA21 with price above EMA50, short on the mirror. Stop 1.5 x ATR, target
+    2 x ATR. Ours: Keltner EMA20 +/- 2 x ATR(10) (the TradingView defaults; lengths not stated); the extra signal
+    exits (mid-band cross back, opposite EMA cross) are left to the fixed stop / target."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    mid = ema(c, 20)
+    a = atr(h, l, c, 10)
+    up, dn = mid + 2 * a, mid - 2 * a
+    e9, e21, e50 = ema(c, 9), ema(c, 21), ema(c, 50)
+    L = cross_down(c, dn) | (cross_up(e9, e21) & (c > e50))
+    S = (cross_up(c, up) | (cross_down(e9, e21) & (c < e50))) & ~L
+    return L, S, {"stop": ("atr", 1.5), "target": ("atr", 2.0)}
+
+
+# ---------------- SC098 Williams %R Zone Scalper: -80 / -20 cross + EMA20 + Choppiness < 38.2 + volume, 5m (TradingView) ----------------
+def s_tv_wr_zone_scalper(df):
+    """TradingView 'Williams R Zone Scalper v1.0 [BullByte]' (2025, defaults for 5-minute BTC): long when Williams %R(14)
+    crosses above -80, short when it crosses below -20, with the default filters: trend EMA20 (price on the trade's
+    side), Choppiness Index(12) < 38.2 (trending), volume above its 50-bar average. Stop 1.5 x ATR(14), target 2 x
+    ATR(14) (the script's ATR SL/TP inputs). Ours: the script does not say which side of the EMA20 a trade needs,
+    so the trend-MA filter is left out (a %R cross out of -80 sits under a 20 EMA almost always); a feed without
+    real volume skips the volume filter."""
+    h, l, c, v = (df[x].to_numpy(float) for x in "hlcv")
+    hh, ll = _s(h).rolling(14).max().to_numpy(), _s(l).rolling(14).min().to_numpy()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        wr = -100 * (hh - c) / (hh - ll)
+    pc = _sh(c)
+    tr1 = np.fmax(h - l, np.fmax(np.abs(h - pc), np.abs(l - pc)))
+    h12, l12 = _s(h).rolling(12).max().to_numpy(), _s(l).rolling(12).min().to_numpy()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        chop = 100 * np.log10(_s(tr1).rolling(12).sum().to_numpy() / (h12 - l12)) / np.log10(12)
+    ok = (chop < 38.2) & _vol_ok(v, 50)
+    L = cross_up(wr, -80) & ok
+    S = cross_down(wr, -20) & ok & ~L
+    return L, S, {"stop": ("atr", 1.5), "target": ("atr", 2.0)}
+
+
+# ---------------- SC099 Dynamic R:R BTC: EMA 20/50 cross + EMA200 + RSI 60/40, swing stop, 2R, 15m (TradingView) ----------------
+def s_tv_dynamic_rr_btc(df):
+    """TradingView 'Dynamic R:R Strategy - BTC Optimized' (wojtek_s730ir, 15-minute Bitcoin): long when EMA20 crosses
+    above EMA50 with price above EMA200 and RSI above 60; short when EMA20 crosses below EMA50 under EMA200 with RSI
+    below 40. Stop at the last swing low / high (or ATR), targets 1R / 2R / 3R. Ours: RSI(14); swing = last
+    confirmed 3-bar pivot; one target at 2R (the middle of the three)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    e20, e50, e200 = ema(c, 20), ema(c, 50), ema(c, 200)
+    r = rsi(c, 14)
+    sh_, sl_ = _swings(h, l, 3)
+    L = cross_up(e20, e50) & (c > e200) & (r > 60)
+    S = cross_down(e20, e50) & (c < e200) & (r < 40) & ~L
+    return L, S, {"stop": ("level", sl_, sh_), "target": ("R", 2.0)}
+
+
+# ---------------- SC100 XAUUSD GoldScalper Pro v8: EMA 8/21/55 + MACD cross + RSI 50-68 + ADX 20, 1 / 5 ATR, 5m (TradingView) ----------------
+def s_tv_goldscalper_v8(df):
+    """TradingView 'XAUUSD GoldScalper Pro v8+Session' (EMA + MACD + asymmetric R:R, 5-minute gold): long when EMA8 >
+    EMA21 > EMA55, EMA55 higher than 10 bars ago, MACD golden cross, RSI 50-68, ADX >= 20 and a bullish candle; short
+    on the mirror (RSI 32-50). Stop 1 x ATR, TP1 2 x ATR (half, then stop to entry), TP2 5 x ATR; out on the
+    opposite EMA8/21 cross; no new entries 00:00-06:00 Seoul time. Ours: MACD 12/26/9, RSI(14), ADX(14), ATR(14);
+    the zero-line filter (side not stated) is left out; the half at 2 ATR is modelled as the stop to break-even
+    once 40% of the way to the 5-ATR target."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    o = _open(df)
+    e8, e21, e55 = ema(c, 8), ema(c, 21), ema(c, 55)
+    m, sg, _ = macd(c)
+    r, ax = rsi(c, 14), adx(h, l, c, 14)
+    hs, _, _, _, _ = _local(df, "Asia/Seoul")
+    ok = ~(hs < 6) & (ax >= 20)
+    L = ok & (e8 > e21) & (e21 > e55) & (e55 > _sh(e55, 10)) & cross_up(m, sg) & (r >= 50) & (r <= 68) & (c > o)
+    S = ok & (e8 < e21) & (e21 < e55) & (e55 < _sh(e55, 10)) & cross_down(m, sg) & (r >= 32) & (r <= 50) & (c < o) & ~L
+    return L, S, {"stop": ("atr", 1.0), "target": ("atr", 5.0), "breakeven": (0.4, 0.0),
+                  "exit_long": cross_down(e8, e21), "exit_short": cross_up(e8, e21)}
+
+
+# ---------------- SC101 Happy Hunter: LHLL / HHHL reversal bar, stop entry past Bar1, 1.3 / 1.9 ATR(120), 1H (BabyPips) ----------------
+def s_bp_happy_hunter(df):
+    """BabyPips 'Happy Hunter Price Action Trading System' (Type 1, 1-hour chart, GBPNZD): the signal bar (SBar) makes a
+    lower high and a lower low than the bar before it (Bar1) and its low is below the lows of the four candles before
+    it -> buy stop at Bar1's high (+1 pip), cancelled after 12 hours (2 hours when Bar1 high - SBar low >= 1.5 x
+    ATRH); short on the mirror (HHHL, sell stop at Bar1's low). ATRH = ATR(120). Stop entry -/+ 1.3 x ATRH, target
+    level entry +/- 1.9 x ATRH (the system trails from there). Ours: the 1-pip filter and spread dropped; the
+    signal is the bar whose high touches the buy-stop level (entry next open); the trailing after the target is not
+    modelled."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    n = len(c)
+    a = atr(h, l, c, 120)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    lvl_l, lvl_s = np.full(n, np.nan), np.full(n, np.nan)
+    pend = None
+    for i in range(5, n):
+        if pend is not None:
+            d, lv, exp = pend
+            if i > exp:
+                pend = None
+            elif d > 0 and h[i] >= lv:
+                L[i], lvl_l[i], pend = True, lv, None
+            elif d < 0 and l[i] <= lv:
+                S[i], lvl_s[i], pend = True, lv, None
+        if not np.isfinite(a[i]):
+            continue
+        if h[i] < h[i - 1] and l[i] < l[i - 1] and l[i] < l[i - 5:i - 1].min():
+            w = 2 if (h[i - 1] - l[i]) >= 1.5 * a[i] else 12
+            pend = (1, h[i - 1], i + w)
+        elif h[i] > h[i - 1] and l[i] > l[i - 1] and h[i] > h[i - 5:i - 1].max():
+            w = 2 if (h[i] - l[i - 1]) >= 1.5 * a[i] else 12
+            pend = (-1, l[i - 1], i + w)
+    lv = np.where(L, lvl_l, lvl_s)
+    return L, S, {"stop": ("level", lv - 1.3 * a, lv + 1.3 * a), "target": ("level", lv + 1.9 * a, lv - 1.9 * a)}
+
+
+# ---------------- SC102 Simple XAUUSD scalp: EMA50/200 trend, pullback to EMA50 with RSI < 30 turning, swing stop, 2R (blog) ----------------
+def s_pyro_xau_ema_rsi(df):
+    """Blog 'Simple XAUUSD Scalping Strategy (Indicators)' (pyroco, 2025; 1-minute or 5-minute gold): after EMA50
+    crosses above EMA200, price pulls back near EMA50 and RSI(14) drops below 30; buy when RSI starts rising (or a
+    bullish candle). Short on the mirror (EMA50 under EMA200, RSI above 70, turning down). Stop under the recent swing
+    low (over the swing high), target 1.5x or 2x the stop. Ours: 'near' = a low within 1 ATR(14) of EMA50 in the last
+    5 bars (not defined), RSI under 30 in the last 5 bars and rising now; swing = last confirmed 3-bar pivot; 2R."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    e50, e200 = ema(c, 50), ema(c, 200)
+    a = atr(h, l, c, 14)
+    r = rsi(c, 14)
+    sh_, sl_ = _swings(h, l, 3)
+    near_l = _s((np.abs(l - e50) <= a).astype(float)).rolling(5, min_periods=1).max().to_numpy() > 0
+    near_h = _s((np.abs(h - e50) <= a).astype(float)).rolling(5, min_periods=1).max().to_numpy() > 0
+    L = (e50 > e200) & near_l & _since(r < 30, 5) & (r > _sh(r))
+    S = (e50 < e200) & near_h & _since(r > 70, 5) & (r < _sh(r)) & ~L
+    return L, S, {"stop": ("level", sl_, sh_), "target": ("R", 2.0)}
+
+
+# ---------------- SC103 Gold Time Precise Model: Asian range break in London's first 3 hours + big-candle patterns, 15m (EnergyExch) ----------------
+def s_ee_gold_asian_patterns(df):
+    """Forex Factory / EnergyExch 'Simple Gold Scalping Module: Time Precise Model' (XAUUSD, 15-minute): Asian session
+    range up to the London open (13:00 Bangladesh = 07:00 UTC); trade only if price breaks the Asian high or low in
+    the first 3 hours of London. Long: after the break, a big bull candle, small bear consolidation, then a bull
+    candle engulfing the bear (after a break of either side: 'manipulation' or 'continuation'), or after a break of
+    the Asian high two consecutive big bull candles; short on the mirror. Stop beyond the first candle of the setup;
+    take profit +20 pips (or half at +10 and trail). Ours: Asian range 00:00-07:00 UTC, window 07:00-10:00 UTC; 'big'
+    candle = body >= 1 x ATR(14) (not defined); 20 pips of gold = 0.5 x the 15m ATR (gold's 15m ATR was ~40 pips)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    o = _open(df)
+    a = atr(h, l, c, 14)
+    hs, _, _, _, day = _local(df, "UTC")
+    asia = hs < 7
+    g = pd.DataFrame({"d": day, "h": np.where(asia, h, np.nan), "l": np.where(asia, l, np.nan)})
+    ah = g.groupby("d")["h"].transform("max").to_numpy()
+    al = g.groupby("d")["l"].transform("min").to_numpy()
+    win = (hs >= 7) & (hs < 10)
+    hw = pd.Series(np.where(hs >= 7, h, np.nan)).groupby(day).cummax().to_numpy()
+    lw = pd.Series(np.where(hs >= 7, l, np.nan)).groupby(day).cummin().to_numpy()
+    bh, bl = hw > ah, lw < al
+    body = c - o
+    bigbull, bigbear = body >= a, -body >= a
+    bull, bear = body > 0, body < 0
+    eng_bull, eng_bear = _engulf(o, c)
+    pat_l = _shb(bigbull, 2) & _shb(bear) & eng_bull
+    pat_s = _shb(bigbear, 2) & _shb(bull) & eng_bear
+    two_l = bigbull & _shb(bigbull)
+    two_s = bigbear & _shb(bigbear)
+    L = win & (((bh | bl) & pat_l) | (bh & two_l))
+    S = win & (((bh | bl) & pat_s) | (bl & two_s)) & ~L
+    first_l = np.where(pat_l, _sh(l, 2), _sh(l))
+    first_h = np.where(pat_s, _sh(h, 2), _sh(h))
+    return L, S, {"stop": ("level", first_l, first_h), "target": ("atr", 0.5)}
+
+
+# ---------------- SC104 US30 Parabolic SAR flip + close beyond the last opposite dot, EMA100, 1m (EnergyExch) ----------------
+def s_ee_us30_psar_ema100(df):
+    """Forex Factory / EnergyExch 'Parabolic SAR + EMA100' (US30, 1-minute): price above EMA100; when the SAR flips to
+    buy, mark the last sell-SAR dot; when a candle closes above that line, enter on the next candle (short: under
+    EMA100, SAR flips to sell, close below the last buy dot). Only after 13:00 London time (after the 13:30 news).
+    Stop 25 pips, target 50 pips, break-even at 30-40 pips. Ours: PSAR 0.02/0.2; window 13:00-21:00 London; 25 / 50
+    US30 points = 2 / 4 x the 1-minute ATR(14) (US30's 1m ATR ~12 points); break-even at 70% of the target."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    n = len(c)
+    e100 = ema(c, 100)
+    sar, tr = _psar(h, l)
+    hs, _, _, _, _ = _local(df, "Europe/London")
+    win = (hs >= 13) & (hs < 21)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    lvl, d = np.nan, 0
+    for i in range(2, n):
+        if tr[i] != tr[i - 1] and tr[i] != 0:
+            d, lvl = int(tr[i]), sar[i - 1]
+        if d > 0 and tr[i] > 0 and np.isfinite(lvl) and c[i] > lvl:
+            if win[i] and c[i] > e100[i]:
+                L[i] = True
+            d = 0
+        elif d < 0 and tr[i] < 0 and np.isfinite(lvl) and c[i] < lvl:
+            if win[i] and c[i] < e100[i]:
+                S[i] = True
+            d = 0
+    return L, S, {"stop": ("atr", 2.0), "target": ("atr", 4.0), "breakeven": (0.7, 0.0)}
+
+
+# ---------------- SC105 WHS Z-Score: re-cross of -2 / +2 with the 100 MA's slope, target the 20 MA, 20-bar exit, 15m (WH SelfInvest) ----------------
+def s_whs_zscore_trend(df):
+    """WH SelfInvest 'Day trading with Z-Score averages' (15-minute, all markets): long when the 100 MA is rising and the
+    Z-Score (deviation from the 20-period average in standard deviations) falls below -2.0 and rises back above it;
+    short when the 100 MA is falling and the Z-Score rises above +2.0 and falls back below. Target the 20 MA, stop the
+    low (high) of the entry candle (or ATR), out after 20 candles (five hours). Ours: SMAs, slope = MA100 above (below)
+    its value one bar ago; the 20 MA target is the level at the signal."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    m = sma(c, 20)
+    sd = _s(c).rolling(20).std(ddof=0).to_numpy()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        z = (c - m) / sd
+    m100 = sma(c, 100)
+    L = (m100 > _sh(m100)) & cross_up(z, -2.0)
+    S = (m100 < _sh(m100)) & cross_down(z, 2.0) & ~L
+    return L, S, {"stop": ("level", l, h), "target": ("level", m, m), "max_bars": 20}
+
+
+# ---------------- SC106 Pieper Histo Breakout: HVR < 0.5 + inside / narrow-range bar, close beyond within 4 bars, 2R, 1H (WH SelfInvest) ----------------
+def s_whs_histo_breakout(df):
+    """WH SelfInvest 'Histo Breakout' (David Pieper, Traders' Magazine; weekly, daily and hourly charts): with the Historic
+    Volatility Ratio below 0.5, a signal candle is an inside candle (body within the previous candle's range) or a narrow
+    range candle (range smaller than each of the three before); long when price closes above the signal candle's high
+    within four candles, short when it closes below its low. Stop the other end of the signal candle, target 2 x the
+    risk, break-even once the profit reaches 1R. Ours: HVR = 6-bar / 100-bar historical volatility of log returns
+    (Pieper's usual 6/100; lookbacks not stated); break-even at half way to the 2R target."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    o = _open(df)
+    n = len(c)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        lr = np.log(c / _sh(c))
+    hvr = _s(lr).rolling(6).std().to_numpy() / _s(lr).rolling(100).std().to_numpy()
+    rng = h - l
+    inside = (np.maximum(o, c) <= _sh(h)) & (np.minimum(o, c) >= _sh(l))
+    nr = (rng < _sh(rng, 1)) & (rng < _sh(rng, 2)) & (rng < _sh(rng, 3))
+    sig = (hvr < 0.5) & (inside | nr)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    stl, sts = np.full(n, np.nan), np.full(n, np.nan)
+    k = -1
+    for i in range(1, n):
+        if k >= 0 and i - k <= 4:
+            if c[i] > h[k]:
+                L[i], stl[i], k = True, l[k], -1
+            elif c[i] < l[k]:
+                S[i], sts[i], k = True, h[k], -1
+        if sig[i]:
+            k = i
+    return L, S, {"stop": ("level", stl, sts), "target": ("R", 2.0), "breakeven": (0.5, 0.0)}
+
+
+# ---------------- SC107 News 1m: impulse candle, enter after the 3-4 minute correction, stop past it, target the impulse extreme (TradingView) ----------------
+def s_tv_news_impulse_correction(df):
+    """TradingView idea 'RIGHT WAY TO TRADE NEWS (1m chart)' (Marenno, EURUSD): on the 1-minute chart wait for the
+    news impulse candle, then the short correction (usually 3-5 minutes); enter in the impulse direction after the
+    3rd-4th minute's close; stop beyond the correction's extreme; target a new extreme. Ours: the impulse = the
+    release bar (agents/event_strategies calendar; weekdays 08:30 New York without a symbol) with a body >= 0.5 x
+    ATR(14); entry at the close of the 3rd or 4th bar after it (the first that qualifies) when that close is back
+    against the impulse (a correction) while no close of the correction gave back the whole impulse candle; stop
+    beyond the correction's extreme; target = the impulse's extreme (the new extreme starts there)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    o = _open(df)
+    n = len(c)
+    a = atr(h, l, c, 14)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    st, tg = np.full(n, np.nan), np.full(n, np.nan)
+    for k in _release_bars(df):
+        if k < 1 or not np.isfinite(a[k - 1]):
+            continue
+        body = c[k] - o[k]
+        for j in (k + 3, k + 4):
+            if j >= n:
+                break
+            if body >= 0.5 * a[k - 1] and c[j] < c[k] and c[k + 1:j + 1].min() > o[k]:
+                L[j], st[j], tg[j] = True, l[k + 1:j + 1].min(), h[k:j + 1].max()
+                break
+            if -body >= 0.5 * a[k - 1] and c[j] > c[k] and c[k + 1:j + 1].max() < o[k]:
+                S[j], st[j], tg[j] = True, h[k + 1:j + 1].max(), l[k:j + 1].min()
+                break
+    return L, S, {"stop": ("level", st, st), "target": ("level", tg, tg)}
+
+
+# ---------------- SC108 News fade: release spike + reversal candle, break of its wick, stop the spike, target the pre-release close, 15-min exit, 5m (JournalPlus) ----------------
+def s_jp_news_fade_reversal(df):
+    """JournalPlus 'News Fade Trading Strategy' (macro releases NFP / CPI / FOMC on the 5-minute chart): the first candle
+    after the release closes as a reversal pattern (shooting star / bearish engulfing / inside-bar rejection after a
+    spike up; hammer / bullish engulfing after a spike down) on volume 3-5x its 20-bar average; enter on the break of
+    the reversal candle's opposite wick; stop beyond the spike's extreme; T1 VWAP / nearby level, T2 the prior close
+    (gap fill); exit at market if nothing happens within 15 minutes. Ours: the release bar (event calendar) is the
+    spike (close beyond the pre-release close, volume 3x its 20-bar average when real volume exists); the next bar is
+    the reversal candle: engulfing the spike's body, a shooting star / hammer (wick >= 2x body, close in the far
+    third) or an inside bar closing against the spike; the close beyond its opposite end within the next 3 bars is
+    the entry; the structural-level check is left out; target = the pre-release close; max 3 bars (15 minutes)."""
+    h, l, c, v = (df[x].to_numpy(float) for x in "hlcv")
+    o = _open(df)
+    n = len(c)
+    vm = _sh(sma(v, 20))
+    flat = _s(v).rolling(20).std(ddof=0).to_numpy() == 0
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    st, tg = np.full(n, np.nan), np.full(n, np.nan)
+    for k in _release_bars(df):
+        if k < 1 or k + 1 >= n:
+            continue
+        if not (flat[k] or v[k] >= 3 * vm[k]):
+            continue
+        pre, r_ = c[k - 1], k + 1
+        if r_ + 1 >= n:
+            continue
+        body, rng = c[r_] - o[r_], h[r_] - l[r_]
+        uw, lw = h[r_] - max(o[r_], c[r_]), min(o[r_], c[r_]) - l[r_]
+        inside = h[r_] <= h[k] and l[r_] >= l[k]
+        if c[k] > pre:      # spike up -> look for a bearish reversal candle
+            rev = body < 0 and (c[r_] <= min(o[k], c[k]) or inside
+                                or (rng > 0 and uw >= 2 * abs(body) and c[r_] - l[r_] <= rng / 3))
+            d = -1 if rev else 0
+        elif c[k] < pre:
+            rev = body > 0 and (c[r_] >= max(o[k], c[k]) or inside
+                                or (rng > 0 and lw >= 2 * abs(body) and h[r_] - c[r_] <= rng / 3))
+            d = 1 if rev else 0
+        else:
+            d = 0
+        if d == 0:
+            continue
+        for j in range(r_ + 1, min(n, r_ + 4)):
+            if d < 0 and c[j] < l[r_]:
+                S[j], st[j], tg[j] = True, h[k:j + 1].max(), pre
+                break
+            if d > 0 and c[j] > h[r_]:
+                L[j], st[j], tg[j] = True, l[k:j + 1].min(), pre
+                break
+    return L, S, {"stop": ("level", st, st), "target": ("level", tg, tg), "max_bars": 3}
+
+
+# ---------------- SC109 CPI 08:30-09:00 ET range breakout, stop over the midpoint, target the prior day's level, 5m (DayTradingToolkit) ----------------
+def s_dtt_cpi_range_break(df):
+    """DayTradingToolkit 'The Trader's Playbook: How to Day Trade the CPI Report' (QQQ / SPY): flat into the 08:30 ET
+    release, no trades 08:30-09:00, mark that half hour's high and low; trade the breakout of that range; stop just
+    beyond the range midpoint; primary target a prior-day key level (support for a short, resistance for a long).
+    Ours: 08:30 ET releases from the event calendar (weekdays 08:30 without a symbol), the first close beyond the
+    range until 12:00 ET, one trade per release; target = the previous UTC day's low (short) / high (long); the
+    source gives no chart interval for the entry (the range is clock-defined) - run on 5-minute bars."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    n = len(c)
+    ph, pl, _ = _prev_day(df)
+    ny = df.index.tz_convert("America/New_York")
+    hr = ny.hour.to_numpy() + ny.minute.to_numpy() / 60.0
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    mid = np.full(n, np.nan)
+    for k in _release_bars(df):
+        if abs(hr[k] - 8.5) > 0.01:
+            continue
+        j0 = k
+        while j0 < n and hr[j0] < 9.0 and ny[j0].date() == ny[k].date():
+            j0 += 1
+        if j0 >= n or j0 == k:
+            continue
+        rh, rl = h[k:j0].max(), l[k:j0].min()
+        md = (rh + rl) / 2
+        for j in range(j0, n):
+            if ny[j].date() != ny[k].date() or hr[j] >= 12.0:
+                break
+            if c[j] > rh:
+                L[j], mid[j] = True, md
+                break
+            if c[j] < rl:
+                S[j], mid[j] = True, md
+                break
+    return L, S, {"stop": ("level", mid, mid), "target": ("level", ph, pl)}
+
+
+# ---------------- SC110 freqtrade Hacklemore: RMI + MACD + SAR + BB-low breakout 2-10 bars ago, -8.5% / ROI 1.5%, 5m (GitHub) ----------------
+def s_ft_hacklemore(df):
+    """freqtrade 'Hacklemore' (5-minute crypto, long only): buy when the 12-bar high rose in the last 3 bars (up-trend),
+    RMI(20, 5) >= 55 and at or above its 3-bar average, MACD above its signal with a positive histogram, the low touched
+    the lower Bollinger band(20) 2-10 bars ago, two higher closes in a row, the SAR under the last two closes and volume
+    under 30x its 24-bar average. Stoploss -8.5%; minimal_roi 15% at once, 2.5% after 5 minutes, 1.5% after 10
+    minutes. Ours: the ROI table as a 1.5% target (it applies from the third 5-minute bar); the loss-cutting sell
+    signal (down-trend + RMI(9,3) < 50 while losing) as exit_long."""
+    h, l, c, v = (df[x].to_numpy(float) for x in "hlcv")
+    n = len(c)
+    rs, rf = _rmi(c, 20, 5), _rmi(c, 9, 3)
+    m, sg, hist = macd(c)
+    mx, mn = _s(h).rolling(12).max().to_numpy(), _s(l).rolling(12).min().to_numpy()
+    upt = _s((mx > _sh(mx)).astype(float)).rolling(3, min_periods=1).sum().to_numpy() > 0
+    dnt = _s((mn < _sh(mn)).astype(float)).rolling(3, min_periods=1).sum().to_numpy() > 0
+    bl, _, _ = _bb(c, 20, 2.0)
+    since = _bars_since(l <= bl)
+    sar, tr = _psar(h, l)
+    vm = _sh(_s(v).rolling(24).mean().to_numpy())
+    L = (upt & (rs >= 55) & (hist > 0) & (since >= 2) & (since <= 10) & (v < vm * 30) & (m > sg)
+         & (rs >= _s(rs).rolling(3).mean().to_numpy()) & (c > _sh(c)) & (_sh(c) > _sh(c, 2))
+         & (sar < c) & (_sh(sar) < _sh(c)))
+    (sl_, _), (tl, _) = _pct_levels(c, 8.5, 1.5)
+    return L, np.zeros(n, bool), {"stop": ("level", sl_, sl_), "target": ("level", tl, tl),
+                                  "exit_long": dnt & (rf < 50)}
+
+
 SCOUT = {
     "SC001": ("RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute (TradingView)", s_rv_ema20_scalp, ["1Min"]),
     "SC002": ("Alligator + Fractals breakout, fractal stop, 1:3 (RoboForex)", s_alligator_fractal, ["1Hour", "4Hour"]),
@@ -2609,4 +3092,20 @@ SCOUT = {
     "SC092": ("Donchian 20 upper-band crawl, buy the middle-band pullback, lower-band stop, out end of day, 15m (TradingView)", s_tsg_donchian_mid_pullback, ["15Min"]),
     "SC093": ("LV-HP: daily candle colour + Donchian 20 touch, opposite band target, 1:1, 16-20 GMT, M1 (ForTraders)", s_ft_lvhp_donchian_m1, ["1Min"]),
     "SC094": ("MTF Ichimoku: over the cloud and the Kijun on 4H and 1H, 2% / 4%, 12-bar cooldown (TradingView)", s_tv_mtf_ichimoku, ["1Hour"]),
+    "SC095": ("Trader DNA 5-8-13 EMA cross + Parabolic SAR, swing stop, 3R, 1H (YouTube via Medium)", s_tdna_ema5813_psar, ["1Hour"]),
+    "SC096": ("Trade Pro 50 EMA wick rejection over the 200 EMA, 1 ATR stop, 1.5R, 15m (YouTube via Medium)", s_tp_ema50_wick_reject, ["15Min"]),
+    "SC097": ("Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR (TradingView)", s_tv_keltner_ema_dual, ["15Min", "1Hour", "4Hour"]),
+    "SC098": ("Williams %R Zone Scalper: -80 / -20 cross + EMA20 + Choppiness < 38.2 + volume, 1.5 / 2 ATR, 5m (TradingView)", s_tv_wr_zone_scalper, ["5Min"]),
+    "SC099": ("Dynamic R:R BTC: EMA 20/50 cross + EMA200 + RSI 60/40, swing stop, 2R, 15m (TradingView)", s_tv_dynamic_rr_btc, ["15Min"]),
+    "SC100": ("GoldScalper Pro v8: EMA 8/21/55 + MACD cross + RSI 50-68 + ADX 20, 1 / 5 ATR, break-even, 5m (TradingView)", s_tv_goldscalper_v8, ["5Min", "15Min"]),
+    "SC101": ("Happy Hunter: LHLL / HHHL bar, stop entry past Bar1, 1.3 / 1.9 ATR(120), 1H (BabyPips)", s_bp_happy_hunter, ["1Hour"]),
+    "SC102": ("XAUUSD EMA50/200 trend + pullback to EMA50 with RSI < 30 turning, swing stop, 2R (blog)", s_pyro_xau_ema_rsi, ["1Min", "5Min"]),
+    "SC103": ("Gold Time Precise Model: Asian range break in London's first 3 hours + big-candle patterns, 20 pips, 15m (EnergyExch)", s_ee_gold_asian_patterns, ["15Min"]),
+    "SC104": ("US30 Parabolic SAR flip + close beyond the last opposite dot, EMA100, 25 / 50 pips, after 13:00 London, 1m (EnergyExch)", s_ee_us30_psar_ema100, ["1Min"]),
+    "SC105": ("WHS Z-Score: re-cross of -2 / +2 with the 100 MA slope, target the 20 MA, 20-bar exit, 15m (WH SelfInvest)", s_whs_zscore_trend, ["15Min"]),
+    "SC106": ("Pieper Histo Breakout: HVR < 0.5 + inside / narrow-range bar, close beyond within 4 bars, 2R, 1H (WH SelfInvest)", s_whs_histo_breakout, ["1Hour"]),
+    "SC107": ("News 1m: impulse candle, entry after the 3-minute correction, stop past it, target the impulse extreme (TradingView)", s_tv_news_impulse_correction, ["1Min"]),
+    "SC108": ("News fade: release spike + reversal candle, wick break, stop the spike, target the pre-release close, 15-min exit, 5m (JournalPlus)", s_jp_news_fade_reversal, ["5Min"]),
+    "SC109": ("CPI 08:30-09:00 ET range breakout, stop at the midpoint, target the prior day's high / low (DayTradingToolkit)", s_dtt_cpi_range_break, ["5Min"]),
+    "SC110": ("freqtrade Hacklemore: RMI + MACD + SAR + lower-BB touch 2-10 bars ago, -8.5% / 1.5%, 5m (GitHub)", s_ft_hacklemore, ["5Min"]),
 }

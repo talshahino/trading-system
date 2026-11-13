@@ -9,6 +9,8 @@ read-only, nothing is ever sent to a broker), builds 5-minute candles and runs e
   EV01 release momentum  - the first 10 minutes moved > 1.5 ATR: follow them, stop beyond them, target 2R, max 1 hour
   EV02 release fade      - a spike > 2.5 ATR already giving back a third: against it, target the pre-release price
   EV03 range breakout    - the first 15 minutes' range, the first close outside it within the hour, target 1.5R
+  EV01 removed from 14.11.2026 (card d51b540869aa): plans "off_from" - no new trade after that time; the trades
+  before it stay in the ledger.
   SH01 shock fade (card 42c723b87f92, 13.11.2026) - a 1-minute shock without a release (agents/shocks.py detect, K=8):
                          against it D minutes later, stop 25% of the shock beyond its extreme, out after 60 minutes
 Releases: FTMO's own economic calendar, high impact or FTMO-restricted, concerning the instrument (read every hour).
@@ -318,8 +320,13 @@ def trades_of(name, d5, spread_now, d1=None, extra=()):
         if t is None or not len(t):
             continue
         net = C.apply(t, name, sp)
+        off = pd.Timestamp(p_["off_from"]) if p_.get("off_from") else None   # a removed combo (card kind "remove")
         for k in range(len(t)):
             x, n_ = t.iloc[k], net.iloc[k]
+            if off is not None:
+                t0 = pd.Timestamp(x["time"])
+                if (t0.tz_localize("UTC") if t0.tzinfo is None else t0) >= off:
+                    continue
             open_ = x["reason"] == END
             risk = abs(float(x["entry_px"]) - float(x["stop_px"]))
             cost_r = float(n_["spread_px"] + n_["comm_px"] - n_["swap_px"]) / risk if risk > 0 else 0.0

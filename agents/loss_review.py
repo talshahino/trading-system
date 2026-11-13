@@ -371,59 +371,54 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
             "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון" if not opened else f"פתוח: {len(opened)} אסטרטגיות בלי תיקון עדיין"}
 
 
-LEVEL_MULT = {1: 0.85, 2: 0.7, 3: 0.5, 4: 0.35, 5: 0.25}   # the failure level -> risk (user, 13.11.2026: "by the level of failure")
-LEVEL_HE = {1: "קל", 2: "בינוני", 3: "חמור", 4: "חמור מאוד", 5: "כישלון מלא"}
+# The failure score and the risk cut - one linear formula, no fixed steps (user, 13.11.2026):
+#   F = 0.40*test + 0.25*often + 0.15*size + 0.20*late          (each part 0..1, so F is 0..1)
+#     test  = clip((0.2 - m) / 0.4)   m = 2026 mean R per trade as it trades now: +0.2R -> 0, -0.2R -> 1 (no test: 0.5)
+#     often = clip(d / 8)             d = live loss days of the strategy in the last 30 days: 8 days -> 1
+#     size  = clip((L - 0.5) / 1.5)   L = today's loss in R: 0.5R -> 0, 2R -> 1
+#     late  = clip(w / 10)            w = days without a fix after the 2 days of grace: 10 days -> 1
+#   risk = 1 - 0.75 * F                 F 0 -> x1 (no cut), F 1 -> x0.25 (the floor; removing is a separate decision)
+W_TEST, W_OFTEN, W_SIZE, W_LATE, CUT_MAX = 0.40, 0.25, 0.15, 0.20, 0.75
 
 
-def failure_level(bot, combo, rep, idx):
-    """How badly the strategy fails, 1-5, from four things - each with its reason in plain words:
-    its 2026 result as it trades now (the fair test), how often it lost in live trading in the last 30 days,
-    how big today's loss was against the planned risk, and how long it is already without a fix."""
+def _clip(x):
+    return max(0.0, min(1.0, float(x)))
+
+
+def failure_score(bot, combo, rep, idx):
+    """F (0..1), the risk multiplier it gives, and every part in plain words."""
     from agents import portfolio_check as PC
-    pts, why = 0, []
-    tr = None
     try:
         tr = PC.current_trades(bot, combo, PC.bot_cfg(bot))
     except Exception:  # noqa: BLE001
         tr = None
     if tr:
-        rs = [x[3] for x in tr]
-        mean = sum(rs) / len(rs)
-        if mean < -0.1:
-            pts += 3; why.append(f"מפסידה גם בבדיקה של 2026 ({mean:+.2f}R לעסקה, {len(rs)} עסקאות)")
-        elif mean < 0:
-            pts += 2; why.append(f"כמעט אפס בבדיקה של 2026 ({mean:+.2f}R לעסקה)")
-        elif mean < 0.1:
-            pts += 1; why.append(f"רווח קטן בבדיקה של 2026 ({mean:+.2f}R לעסקה)")
-        else:
-            why.append(f"מרוויחה בבדיקה של 2026 ({mean:+.2f}R לעסקה) - הבעיה בחי, לא בשיטה")
+        m = sum(x[3] for x in tr) / len(tr)
+        test, t_he = _clip((0.2 - m) / 0.4), f"בדיקה 2026: {m:+.2f}R לעסקה ({len(tr)} עסקאות)"
     else:
-        pts += 1; why.append("אין לה עדיין בדיקה של 2026 כפי שהיא סוחרת עכשיו")
+        test, t_he = 0.5, "בדיקה 2026: עוד אין (נחשב חצי)"
     day0 = pd.Timestamp(rep["day"])
-    days = 0
+    d = 0
     for r in idx.get("reports", []):
-        if r["bot"] != bot or not (0 <= (day0 - pd.Timestamp(r["day"])).days <= 30):
-            continue
-        d = _read(OUT / bot / f"{r['day']}.json", {}) or {}
-        if any(x.get("combo") == combo for x in d.get("losers", [])):
-            days += 1
-    if days >= 5:
-        pts += 2; why.append(f"הפסידה ב־{days} ימים בחודש האחרון")
-    elif days >= 3:
-        pts += 1; why.append(f"הפסידה ב־{days} ימים בחודש האחרון")
-    worst = min([x["r"] for x in rep.get("losers", []) if x["combo"] == combo] or [0])
-    if worst <= -1.3:
-        pts += 1; why.append(f"ההפסד היום {worst:.1f}R - יותר מהסיכון המתוכנן")
-    late = (pd.Timestamp.now(tz=TZ).date() - day0.date()).days - 2
-    if late >= 3:
-        pts += 1; why.append(f"כבר {late + 2} ימים בלי תיקון")
-    return max(1, min(5, pts)), why
+        if r["bot"] == bot and 0 <= (day0 - pd.Timestamp(r["day"])).days <= 30:
+            doc = _read(OUT / bot / f"{r['day']}.json", {}) or {}
+            d += any(x.get("combo") == combo for x in doc.get("losers", []))
+    often = _clip(d / 8)
+    loss_r = -sum(x["r"] for x in rep.get("losers", []) if x["combo"] == combo)
+    size = _clip((loss_r - 0.5) / 1.5)
+    w = max(0, (pd.Timestamp.now(tz=TZ).date() - day0.date()).days - 2)
+    late = _clip(w / 10)
+    F = W_TEST * test + W_OFTEN * often + W_SIZE * size + W_LATE * late
+    mult = round(1 - CUT_MAX * F, 2)
+    parts = [f"{t_he} → {test:.2f}", f"ימי הפסד בחודש: {d} → {often:.2f}", f"ההפסד היום: {loss_r:.1f}R → {size:.2f}",
+             f"ימים בלי תיקון: {w} → {late:.2f}"]
+    return round(F, 3), mult, parts
 
 
 def enforce(rep, plan, decisions, have_ids, at, idx=None):
     """The manager owns it (user, 13.11.2026: "the manager takes the improvement into his hands"): a losing strategy
-    still without a fix 2 days after its report goes down in risk BY ITS FAILURE LEVEL (not a fixed cut, user 13.11):
-    level 1 x0.85 ... level 5 x0.25, until a fix is found ("first fix, and only if there is none, lower the risk").
+    still without a fix 2 days after its report goes down in risk by the linear failure formula above (user 13.11),
+    until a fix is found ("first fix, and only if there is none, lower the risk").
     The level is computed again every run - if it grows, the risk goes down more. Bots 1-4, where risk per strategy is
     applied on the bots' computer."""
     out = []
@@ -432,9 +427,8 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None):
     levels = {}
     for row in plan["rows"]:
         if row["open"]:
-            row["level"], row["level_why"] = failure_level(rep["bot"], row["combo"], rep, idx or {})
-            row["level_he"], row["level_mult"] = LEVEL_HE[row["level"]], LEVEL_MULT[row["level"]]
-            levels[row["combo"]] = (row["level"], row["level_why"])
+            row["fail"], row["fail_mult"], row["fail_parts"] = failure_score(rep["bot"], row["combo"], rep, idx or {})
+            levels[row["combo"]] = (row["fail"], row["fail_mult"], row["fail_parts"])
     from agents import portfolio_check as PC
     mm = PC.mults(rep["bot"])
     gone = {x.get("of") for x in decisions if x.get("decision") == "reverted"}
@@ -462,8 +456,8 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None):
     if (pd.Timestamp.now(tz=TZ).date() - pd.Timestamp(rep["day"]).date()).days < 2:
         return out
     for c in plan["open"]:
-        lvl, why = levels[c]
-        did = hashlib.sha1(f"lossrisk|{rep['bot']}|{c}|{lvl}".encode()).hexdigest()[:12]
+        F, fm, parts = levels[c]
+        did = hashlib.sha1(f"lossrisk|{rep['bot']}|{c}|{fm}".encode()).hexdigest()[:12]
         if did in have_ids:
             continue
         cur = float(mm.get(c, 1.0) or 1.0)
@@ -473,15 +467,16 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None):
             if d.get("type") == "risk" and (d.get("action") or {}).get("combo") == c and d["id"] not in gone \
                     and d.get("loss_report") and (d.get("action") or {}).get("prev") is not None:
                 base = max(base, float(d["action"]["prev"]))
-        val = round(base * LEVEL_MULT[lvl], 2)
-        if val >= cur:
+        val = round(base * fm, 2)
+        if val >= cur - 0.02:                     # the formula moves daily; a change under 0.02 is not worth a decision
             continue
         out.append({"id": did, "bot": rep["bot"], "type": "risk", "kind": "mult", "combo": c,
-                    "title": f"{c}: סיכון ×{val} - כישלון {LEVEL_HE[lvl]} (רמה {lvl} מתוך 5), אין תיקון אחרי דוח ההפסד של {rep['day']}",
+                    "title": f"{c}: סיכון ×{val} - ציון כישלון {F:.2f}, אין תיקון אחרי דוח ההפסד של {rep['day']}",
                     "decision": "approved", "by": "manager", "read": False, "undone": False, "at": at,
-                    "why": "המנהל: אין תיקון שעבר את הבדיקה, אז הסיכון יורד לפי רמת הכישלון: " + "; ".join(why)
-                           + f". רמה {lvl} ← סיכון ×{LEVEL_MULT[lvl]}. כשיימצא תיקון - הסיכון חוזר. אם המצב מחמיר - יורד עוד.",
-                    "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_report": f"{rep['bot']}/{rep['day']}", "level": lvl,
+                    "why": "המנהל: אין תיקון שעבר את הבדיקה, אז הסיכון יורד לפי ציון הכישלון. "
+                           "ציון = 0.40×בדיקה + 0.25×תדירות + 0.15×גודל + 0.20×זמן: " + "; ".join(parts)
+                           + f" ← ציון {F:.2f}. סיכון = 1 − 0.75×ציון = ×{fm}. כשיימצא תיקון - הסיכון חוזר; אם מחמיר - יורד עוד.",
+                    "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_report": f"{rep['bot']}/{rep['day']}", "fail": F,
                     "action": {"bot": rep["bot"], "combo": c, "kind": "mult", "value": val, "prev": cur}})
         have_ids.add(did)
     return out

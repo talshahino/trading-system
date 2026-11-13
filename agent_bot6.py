@@ -303,11 +303,13 @@ def trend_cards(idx, b5_res=None):
 # an 'improve' card only when the chosen one is also better on 2026 in total AND per trade and its worst day of 2026
 # is not worse (more profit, no more risk) - so the builder builds it at once.
 FILT6 = (("MAXC", 0.1), ("MAXC", 0.2), ("MAXC", 0.3), ("SESS", "lnny"), ("SESS", "ny"), ("SESS", "rth"),
-         ("SESS", "nyam"), ("SESS", "xopen"), ("EXIT", "tp30"), ("EXIT", "p50_50"))
+         ("SESS", "nyam"), ("SESS", "xopen"), ("SESS", "xreopen"), ("SESS", "xlate"), ("EXIT", "tp30"), ("EXIT", "p50_50"))
 FILT_HE = {"MAXC": lambda v: f"בלי עסקה שהעלות שלה מעל {int(v * 100)}% מהסיכון (MAXC {v})",
            "SESS": lambda v: {"lnny": "רק בשעות לונדון + ניו יורק (07-20 UTC)", "ny": "רק בשעות ניו יורק (12-20 UTC)",
                               "rth": "רק בשעות המסחר של ניו יורק 09:30-16:00", "nyam": "רק בשעתיים הראשונות של ניו יורק 09:30-11:30",
-                              "xopen": "בלי חצי השעה הראשונה של ניו יורק 09:30-10:00"}[v] + f" (SESS {v})",
+                              "xopen": "בלי חצי השעה הראשונה של ניו יורק 09:30-10:00",
+                              "xreopen": "בלי כניסה בשעה הראשונה אחרי ההפסקה היומית 18:00-19:00 ניו יורק",
+                              "xlate": "בלי כניסה ב־45 הדקות האחרונות 15:00-15:45 ניו יורק"}[v] + f" (SESS {v})",
            "EXIT": lambda v: {"tp30": "כל העסקה יוצאת ב־30% מהדרך ליעד (tp30, הרעיון של טל)",
                               "p50_50": "חצי החוצה בחצי הדרך ליעד וסטופ לכניסה (p50_50, הבקשה של טל)"}.get(v, f"EXIT {v}")}
 
@@ -772,7 +774,9 @@ SCOUT_RERUN_DAYS = 14
 # 13.11.2026 morning: the scout's index strategies of 13.11 join - the session-open ones first (SC073 the first 5-minute
 # bar's breakout, SC077 the 15-minute opening range with a tight stop, SC078 the NQ Keltner pulse), then the
 # Bollinger / Keltner ones (SC068, SC070, SC071). SC058: no variant earned on 2024-2025 and on 2026, on any index.
-DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC058", ("5Min", "15Min", "1Min")), ("SC063", ("5Min",)),
+# 13.11.2026 late night: SC104 (the scout's US30 1-minute Parabolic SAR flip after 13:00 London, 25 / 50 points,
+# marked for bots 5-6) first - built for the Dow on one minute, the bot's own instrument and the fastest track.
+DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC104", ("1Min",)), ("SC058", ("5Min", "15Min", "1Min")), ("SC063", ("5Min",)),
                                                  ("SC073", ("5Min",)), ("SC077", ("5Min", "1Min")), ("SC078", ("15Min",)),
                                                  ("SC011", ("1Min",)), ("SC052", ("1Min",)), ("SC003", ("1Min",)),
                                                  ("SC047", ("1Min",)), ("SC021", ("5Min",)), ("SC028", ("5Min",)),
@@ -970,6 +974,17 @@ def main():
     d["cards"] = [c for c in d.get("cards", []) if (c.get("change") or {}).get("method") != "tal_gap"
                   and (c.get("change") or {}).get("track") != "tal_all"
                   and (c.get("change") or {}).get("family") != "scout_fut" and (c.get("detail") or {}).get("world") != "bot6"] + tcards + scards
+    # one card per id (bot 6's smart agent, 13.11.2026 late night): the same change from two tests (the search's best
+    # pair version and the head-to-head filter test, both "t5_1 + MAXC 0.2") has the same id, and the manager approved
+    # the first copy and then withdrew it for the second, lower-tier copy (38531db8b5eb, 13.11 16:50) - the change
+    # was never built. Keep the copy with the better tier (the first among equals).
+    rank = {"strong": 0, "regular": 1, "watch": 2, "rejected": 3}
+    best = {}
+    for i, c in enumerate(d["cards"]):
+        k = c.get("id")
+        if k not in best or rank.get(c.get("tier"), 4) < rank.get(d["cards"][best[k]].get("tier"), 4):
+            best[k] = i
+    d["cards"] = [c for i, c in enumerate(d["cards"]) if best.get(c.get("id")) == i]
     view = bot5_view()
     for c in d.get("cards", []):
         ch = c.get("change") or {}

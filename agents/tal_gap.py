@@ -304,7 +304,13 @@ SESS_H = {"ln": (7, 16), "ny": (12, 20), "lnny": (7, 20)}
 # the index futures' own clock (bot 6's smart agent, 13.11.2026 night), in New York time so summer / winter time do not
 # move it - minutes from midnight New York: rth = the cash session 09:30-16:00, nyam = its first two hours 09:30-11:30
 # (the open's move), xopen = every hour but the open's first half hour 09:30-10:00 (its noise). Off unless set.
-SESS_NY = {"rth": [(570, 960)], "nyam": [(570, 690)], "xopen": [(0, 570), (600, 1440)]}
+SESS_NY = {"rth": [(570, 960)], "nyam": [(570, 690)], "xopen": [(0, 570), (600, 1440)],
+           # (bot 6's smart agent, 13.11.2026 late night, from bot 6's numbers) xreopen = no entry in the first hour
+           # after the daily halt, 18:00-19:00 New York (the gap tracks' trades in 23:00 UTC lost in both periods,
+           # -0.19R / -0.37R a trade, while 22:00 UTC earned); xlate = no entry in the last 45 minutes before the
+           # 15:45 cutoff, 15:00-15:45 (on 13.11 a 5m/1m long at 15:25 was stopped at 15:40, -1R) - little time left
+           # before the forced exit at 16:05 and the close's own swings
+           "xreopen": [(0, 1080), (1140, 1440)], "xlate": [(0, 900), (945, 1440)]}
 
 
 def filt_ok(cfg, cost, risk, t_ns):

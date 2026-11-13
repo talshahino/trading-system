@@ -1553,6 +1553,11 @@ CANDLE_TF = {"1m": "M1", "5m": "M5", "15m": "M15", "1h": "H1", "4h": "H4", "1d":
 
 def _candles_now(q):
     sym, tf = q.get("symbol", ""), CANDLE_TF.get(q.get("tf", ""))
+    if tf and mt5.symbol_info(sym) is None:
+        try:                                   # the virtual bots' names (US100 -> this server's name)
+            sym = mt5_name(sym)
+        except Exception:  # noqa: BLE001
+            pass
     if not tf or mt5.symbol_info(sym) is None:
         return {"error": "unknown symbol or timeframe"}
     t0 = pd.Timestamp(int(q["from"]), unit="s", tz="UTC")

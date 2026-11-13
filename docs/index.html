@@ -726,12 +726,23 @@ async function chartLive() {
   qBusy = false;
 }
 setInterval(chartLive, 1000);
-function liveChart(sym, side, s, bars, off, stepSec) {
+const TFK = {60: "1m", 300: "5m", 900: "15m", 3600: "1h", 14400: "4h", 86400: "1d"};
+// a chart follows the price from its last candle to now and on (open and closed trades - user, 13.11.2026): the candles
+// missing since the chart's end come from MetaTrader (bot 1 for the virtual bots, the bot itself for the real ones)
+async function liveChart(sym, side, s, bars, off, stepSec, bot) {
   if (!bars || !bars.length) return;
-  const b = bars[bars.length - 1];
   if (LC.sym !== sym) { LC.sym = sym; LC.charts = []; }
   LC.side = side;
-  LC.charts.push({s, off, step: stepSec, last: {time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]}});
+  const b = bars[bars.length - 1], c = {s, off, step: stepSec, last: {time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]}};
+  LC.charts.push(c);
+  const tf = TFK[stepSec], src = bot || "bot1";
+  if (!tf || !mgr || !mgrInfo || Date.now() / 1000 - b[0] < stepSec * 2) return;
+  try {
+    const r = await fetch(`${mgr}/bot/${encodeURIComponent(src)}/candles?symbol=${encodeURIComponent(sym)}&tf=${tf}&from=${b[0]}&to=${Math.floor(Date.now() / 1000)}`, {cache: "no-store"});
+    const j = await r.json();
+    (j.bars || []).filter(x => x[0] >= b[0]).forEach(x => { const k = {time: x[0] + off, open: x[1], high: x[2], low: x[3], close: x[4]};
+      try { s.update(k); c.last = k; } catch (e) {} });
+  } catch (e) {}
 }
 function updConn() {
   const on = !!mgrInfo;
@@ -1638,7 +1649,7 @@ async function chartPage(tf) {
       return {priceRange: {minValue: Math.min(r.priceRange.minValue, ...ex), maxValue: Math.max(r.priceRange.maxValue, ...ex)}}; }});
   ser.setData(j.bars.map(b => ({time: b[0] + off, open: b[1], high: b[2], low: b[3], close: b[4]})));
   LC.sym = null; LC.charts = [];
-  if (isOpen) liveChart(t.symbol, t.side, ser, j.bars, off, step);
+  liveChart(t.symbol, t.side, ser, j.bars, off, step, UI.cur);
   const snap = sec => { const k = j.bars.findLast ? j.bars.findLast(b => b[0] <= sec) : [...j.bars].reverse().find(b => b[0] <= sec); return (k ? k[0] : j.bars[0][0]) + off; };
   const buy = t.side === "buy";
   const mk = [{time: snap(o), position: buy ? "belowBar" : "aboveBar", color: buy ? "#1E8A4C" : "#D0453A", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}];
@@ -2194,7 +2205,7 @@ async function wcOpen(id) {
   // 1 minute: the rest of the trade, with the position box
   const B = mk($("wc1"), t.m1);
   LC.sym = null; LC.charts = [];
-  if (t.status === "open" || t.status === "pending") { liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, 900); liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, 60); }
+  liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, 900); liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, 60);
   if (t.time && B.bars.length) {
     const t0 = snap(B.bars, tin), last = B.bars[B.bars.length - 1][0] + off, t1 = t.exit_time ? snap(B.bars, Date.parse(t.exit_time) / 1000) : last, pts = [];
     for (const b of B.bars) { const x = b[0] + off; if (x >= t0 && x <= t1) pts.push(x); }
@@ -2275,7 +2286,7 @@ async function wcTal(t) {
   A.ch.timeScale().fitContent();
   const MS = {"1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400};
   LC.sym = null; LC.charts = [];
-  const isLive = t.status === "open" || (t.status === "pending");
+  const isLive = true;
   if (isLive) liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, MS[g.htf] || 900);
   // the low timeframe
   const B = mk($("wc1"), t.m1, [lo, hi, t.entry, t.stop, t.target]);

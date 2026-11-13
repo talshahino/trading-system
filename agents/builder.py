@@ -165,6 +165,8 @@ def apply(cfg, b, card_id):
                                                   "before": json.loads(json.dumps(sc.get(b["combo"], "__none__")))}
         sc[b["combo"]] = {"v": dict(b["v"]), "since": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "card": card_id}
         cfg.setdefault("risk", {}).setdefault("scout", 0.004)     # the bot's risk (principle 8)
+        if b.get("star"):
+            star6(cfg, b["combo"], card_id)
         return
     if b["family"] == "tal6":
         # bot 6 (13.11.2026): a card on the main track's pair changes "tal"; on a pair another track runs, that track's
@@ -245,6 +247,23 @@ def apply(cfg, b, card_id):
         p["card"] = card_id
 
 
+STAR6 = 0.7          # agents/autodecide.STAR_MULT: the manager's "maybe luck" discount
+
+
+def star6(cfg, combo, card_id):
+    """Bot 6 (13.11.2026 night): the manager's star on a scout strategy is a lowered risk of its own - "scout:<combo>"
+    in "risk" (live/watch_own.py) - as the star is a x0.7 risk in bots 1-4. Before this, bot 6 took starred strategies
+    at the full 0.4% (SC005 on US100 / US500 and SC020, 13.11.2026). Taken out with the card."""
+    rk = cfg.setdefault("risk", {})
+    key = f"scout:{combo}"
+    ch = cfg.setdefault("changes", {}).setdefault(card_id, {"family": "scout6", "combo": combo, "before": "__none__"})
+    if ch.get("star_risk_before") is not None or key in rk:
+        return False
+    ch["star_risk_before"] = rk.get(key, "__none__")
+    rk[key] = round(float(rk.get("scout", 0.004)) * STAR6, 6)
+    return True
+
+
 def revert(cfg, card_id):
     """Take a card's change out of a bot (undone in the app). True when something changed."""
     done = False
@@ -261,6 +280,10 @@ def revert(cfg, card_id):
         elif c["family"] == "scout6":
             sc = cfg.setdefault("scout", {})
             sc.pop(c["combo"], None) if c["before"] == "__none__" else sc.__setitem__(c["combo"], c["before"])
+            if c.get("star_risk_before") is not None:
+                rk = cfg.setdefault("risk", {})
+                k_ = f"scout:{c['combo']}"
+                rk.pop(k_, None) if c["star_risk_before"] == "__none__" else rk.__setitem__(k_, c["star_risk_before"])
         elif c["family"] == "tal5":
             tt, rk = cfg.setdefault("tal_tracks", {}), cfg.setdefault("risk", {})
             tt.pop(c["track"], None) if c["before"] == "__none__" else tt.__setitem__(c["track"], c["before"])
@@ -345,11 +368,25 @@ def run(now=None):
         cfg = cfgs[b["bot"]]
         if b["family"] == "add" and b["combo"].split("|")[0] not in _strategy_ids():
             continue                                     # the strategy's code is not installed yet
+        if b["family"] == "scout6" and (approved.get(cid) or {}).get("star"):
+            b = dict(b, star=True)
         apply(cfg, b, cid)
         touched.add(b["bot"])
         replies[cid] = {"text": f"נבנה אוטומטית ב{_he(b['bot'])}: {describe(b)}. יותקן במחשב הבוטים תוך כ־10 דקות.",
                         "at": at, "by": "builder", "built": "auto"}
         did.append(f"{b['bot']}: built {cid} {describe(b)}")
+    # bot 6: a starred scout strategy built before the star had a risk of its own there (13.11.2026) gets it now, once
+    cfg6 = cfgs.get("bot6")
+    for cid, d in approved.items():
+        if not cfg6 or not d.get("star") or cid in undone_cards or d.get("bot") != "bot6":
+            continue
+        b = buildable(cards.get(cid) or {}) if cid in cards else None
+        if b and b["family"] == "scout6" and ((cfg6.get("scout") or {}).get(b["combo"]) or {}).get("card") == cid \
+                and star6(cfg6, b["combo"], cid):
+            touched.add("bot6")
+            r = replies.setdefault(cid, {})
+            r["star"] = "⭐ סיכון " + f"{cfg6['risk']['scout:' + b['combo']] * 100:g}" + "% (אולי מזל) - " + at
+            did.append(f"bot6: star {cid} {b['combo']} -> {cfg6['risk'][f'scout:' + b['combo']]}")
     for b in touched:
         _write(BOTS / f"{b}.json", cfgs[b])
     if did:

@@ -1,0 +1,433 @@
+{
+ "track": "t15_1",
+ "pair": "15m/1m",
+ "at": "2026-11-13T05:14:56+00:00",
+ "risk": 0.0028,
+ "months_2026": 10.4,
+ "now": {
+  "family": "now",
+  "cfg": {
+   "GBODY": 1.5,
+   "MIN_GAP": 0.3,
+   "SW": 3,
+   "MIN_RR": 2.0,
+   "EXPIRY": 120,
+   "PROT": "shock",
+   "IMP1": true
+  },
+  "train_w": 78.34,
+  "unseen_total": 20.68,
+  "unseen_worst_day": -6.19,
+  "unseen_max_fall": 27.55,
+  "train": {
+   "n": 558,
+   "eff_n": 540.4,
+   "mean": 0.1864,
+   "t": 2.31,
+   "win": 35.3
+  },
+  "unseen": {
+   "n": 267,
+   "eff_n": 266.9,
+   "mean": 0.0778,
+   "t": 0.69,
+   "win": 30.0
+  },
+  "whole": {
+   "n": 825,
+   "eff_n": 796.9,
+   "mean": 0.1446,
+   "t": 2.19,
+   "win": 33.3
+  },
+  "halves": [
+   0.1158,
+   0.1722
+  ],
+  "cost_r": 0.107,
+  "target_pct": 30.5,
+  "rr": 2.65
+ },
+ "chosen": {
+  "family": "EXPIRY",
+  "cfg": {
+   "GBODY": 1.5,
+   "MIN_GAP": 0.3,
+   "SW": 3,
+   "MIN_RR": 2.0,
+   "EXPIRY": 24,
+   "PROT": "shock",
+   "IMP1": true
+  },
+  "train_w": 77.02,
+  "unseen_total": 19.19,
+  "unseen_worst_day": -6.19,
+  "unseen_max_fall": 26.54,
+  "train": {
+   "n": 552,
+   "eff_n": 534.6,
+   "mean": 0.1853,
+   "t": 2.28,
+   "win": 35.3
+  },
+  "unseen": {
+   "n": 263,
+   "eff_n": 262.9,
+   "mean": 0.0737,
+   "t": 0.65,
+   "win": 30.1
+  },
+  "whole": {
+   "n": 815,
+   "eff_n": 787.2,
+   "mean": 0.1425,
+   "t": 2.15,
+   "win": 33.3
+  },
+  "halves": [
+   0.1116,
+   0.1732
+  ],
+  "cost_r": 0.107,
+  "target_pct": 30.6,
+  "rr": 2.65
+ },
+ "fixed": false,
+ "worth_month_pct": 0.0,
+ "rows": [
+  {
+   "family": "now",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "shock",
+    "IMP1": true
+   },
+   "train_w": 78.34,
+   "unseen_total": 20.68,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 27.55,
+   "train_mean": 0.1864,
+   "unseen_mean": 0.0778,
+   "unseen_n": 267
+  },
+  {
+   "family": "EXPIRY",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 8,
+    "PROT": "shock",
+    "IMP1": true
+   },
+   "train_w": 53.09,
+   "unseen_total": 21.57,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 29.62,
+   "train_mean": 0.1349,
+   "unseen_mean": 0.0881,
+   "unseen_n": 247
+  },
+  {
+   "family": "EXPIRY",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 12,
+    "PROT": "shock",
+    "IMP1": true
+   },
+   "train_w": 64.42,
+   "unseen_total": 24.5,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 26.54,
+   "train_mean": 0.1587,
+   "unseen_mean": 0.0957,
+   "unseen_n": 258
+  },
+  {
+   "family": "EXPIRY",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 16,
+    "PROT": "shock",
+    "IMP1": true
+   },
+   "train_w": 75.71,
+   "unseen_total": 21.29,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 26.54,
+   "train_mean": 0.1833,
+   "unseen_mean": 0.0825,
+   "unseen_n": 261
+  },
+  {
+   "family": "EXPIRY",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 24,
+    "PROT": "shock",
+    "IMP1": true
+   },
+   "train_w": 77.02,
+   "unseen_total": 19.19,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 26.54,
+   "train_mean": 0.1853,
+   "unseen_mean": 0.0737,
+   "unseen_n": 263
+  },
+  {
+   "family": "EXPIRY",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 48,
+    "PROT": "shock",
+    "IMP1": true
+   },
+   "train_w": 76.05,
+   "unseen_total": 19.19,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 26.54,
+   "train_mean": 0.1825,
+   "unseen_mean": 0.0737,
+   "unseen_n": 263
+  },
+  {
+   "family": "TREND",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "shock",
+    "IMP1": true,
+    "TREND": "day"
+   },
+   "train_w": 29.62,
+   "unseen_total": 19.28,
+   "unseen_worst_day": -4.38,
+   "unseen_max_fall": 25.97,
+   "train_mean": 0.1127,
+   "unseen_mean": 0.1204,
+   "unseen_n": 163
+  },
+  {
+   "family": "TREND",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "shock",
+    "IMP1": true,
+    "TREND": "up20"
+   },
+   "train_w": 30.71,
+   "unseen_total": 36.74,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 15.44,
+   "train_mean": 0.0956,
+   "unseen_mean": 0.1899,
+   "unseen_n": 195
+  },
+  {
+   "family": "EXIT",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "shock",
+    "IMP1": true,
+    "EXIT": "be50"
+   },
+   "train_w": 40.82,
+   "unseen_total": 34.09,
+   "unseen_worst_day": -5.19,
+   "unseen_max_fall": 14.07,
+   "train_mean": 0.0965,
+   "unseen_mean": 0.1266,
+   "unseen_n": 269
+  },
+  {
+   "family": "EXIT",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "shock",
+    "IMP1": true,
+    "EXIT": "be70"
+   },
+   "train_w": 58.32,
+   "unseen_total": 33.62,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 23.55,
+   "train_mean": 0.1382,
+   "unseen_mean": 0.1259,
+   "unseen_n": 269
+  },
+  {
+   "family": "EXIT",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "shock",
+    "IMP1": true,
+    "EXIT": "be382"
+   },
+   "train_w": 33.24,
+   "unseen_total": 45.34,
+   "unseen_worst_day": -4.19,
+   "unseen_max_fall": 11.5,
+   "train_mean": 0.0787,
+   "unseen_mean": 0.1681,
+   "unseen_n": 270
+  },
+  {
+   "family": "EXIT",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "shock",
+    "IMP1": true,
+    "EXIT": "be618"
+   },
+   "train_w": 57.32,
+   "unseen_total": 38.83,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 19.55,
+   "train_mean": 0.1358,
+   "unseen_mean": 0.1453,
+   "unseen_n": 269
+  },
+  {
+   "family": "EXIT",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 120,
+    "PROT": "shock",
+    "IMP1": true,
+    "EXIT": "p50_618"
+   },
+   "train_w": 53.89,
+   "unseen_total": 29.27,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 19.18,
+   "train_mean": 0.1271,
+   "unseen_mean": 0.1096,
+   "unseen_n": 270
+  },
+  {
+   "family": "EXPIRY+TREND",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 16,
+    "PROT": "shock",
+    "IMP1": true,
+    "TREND": "day"
+   },
+   "train_w": 26.76,
+   "unseen_total": 21.33,
+   "unseen_worst_day": -4.38,
+   "unseen_max_fall": 24.95,
+   "train_mean": 0.1021,
+   "unseen_mean": 0.1349,
+   "unseen_n": 161
+  },
+  {
+   "family": "EXPIRY+TREND",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 16,
+    "PROT": "shock",
+    "IMP1": true,
+    "TREND": "up20"
+   },
+   "train_w": 26.84,
+   "unseen_total": 39.88,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 14.34,
+   "train_mean": 0.0842,
+   "unseen_mean": 0.2094,
+   "unseen_n": 192
+  },
+  {
+   "family": "EXPIRY+TREND",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 24,
+    "PROT": "shock",
+    "IMP1": true,
+    "TREND": "day"
+   },
+   "train_w": 26.76,
+   "unseen_total": 21.33,
+   "unseen_worst_day": -4.38,
+   "unseen_max_fall": 24.95,
+   "train_mean": 0.1021,
+   "unseen_mean": 0.1349,
+   "unseen_n": 161
+  },
+  {
+   "family": "EXPIRY+TREND",
+   "cfg": {
+    "GBODY": 1.5,
+    "MIN_GAP": 0.3,
+    "SW": 3,
+    "MIN_RR": 2.0,
+    "EXPIRY": 24,
+    "PROT": "shock",
+    "IMP1": true,
+    "TREND": "up20"
+   },
+   "train_w": 26.84,
+   "unseen_total": 39.88,
+   "unseen_worst_day": -6.19,
+   "unseen_max_fall": 14.34,
+   "train_mean": 0.0842,
+   "unseen_mean": 0.2094,
+   "unseen_n": 192
+  }
+ ]
+}

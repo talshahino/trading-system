@@ -283,9 +283,13 @@ def card_effect(card, months, bot_risk_pct, mult=None):
     if k == "new":
         return round((u["mean"] or 0) * per_month, 2)
     if k in ("remove", "risk"):
-        m = mult if mult is not None else ((card.get("change") or {}).get("value") if k == "risk" else 0)
+        # the risk a strategy no longer takes: from the multiplier before to the new one (13.11.2026: a cut x0.95 ->
+        # x0.86 on a card's {"from", "to"} was counted as a removal, -2.45% a month for TV39 JP225 instead of -0.2%)
+        ch = card.get("change") or {}
+        m = mult if mult is not None else (ch.get("to", ch.get("value")) if k == "risk" else 0)
         m = 0 if m is None else float(m)
-        return round(-(u["mean"] or 0) * (1 - m) * per_month, 2)
+        m0 = float(ch.get("from") or 1.0) if k == "risk" else 1.0
+        return round(-(u["mean"] or 0) * (m0 - m) * per_month, 2)
     return None
 
 
@@ -323,7 +327,8 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
             continue
         fixes = []
         for d in decisions:
-            if d.get("decision") != "approved" or d["id"] in gone or pd.Timestamp(d["at"]) < day0 or d.get("kind") == "info":
+            if d.get("decision") != "approved" or d["id"] in gone or pd.Timestamp(d["at"]) < day0 or d.get("kind") == "info" \
+                    or d.get("bot") != rep["bot"]:          # another bot's decision on the same strategy is not this bot's fix
                 continue
             a, card = d.get("action") or {}, cards.get(d.get("card")) or {}
             dc = a.get("combo") or (card.get("change") or {}).get("combo") or (d["title"].split(":")[0].strip() if d["title"].count("|") >= 2 else None)

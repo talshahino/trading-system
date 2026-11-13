@@ -262,13 +262,20 @@ def _count_back(conf, val, atr, t_ns, px, d, side):
 def exit_mode(cfg):
     """(fraction out, way to the target) for the EXIT knob; (0, way) = only the stop to the entry; None = no management."""
     m = cfg.get("EXIT", "none")
-    if m == "none":
+    if m == "none" or m.startswith("tp"):                 # "tp30": the whole position out at 30% (tp_way), no management
         return None
     way = lambda x: int(x) / (1000 if len(x) == 3 else 100)   # noqa: E731 - "618" = 61.8%, "70" = 70%
     if m.startswith("be"):
         return 0.0, way(m[2:])
     f, w = m[1:].split("_")
     return int(f) / 100, way(w)
+
+
+def tp_way(cfg):
+    """EXIT "tp30" (user, 13.11.2026: "take 100% of the profit at 30% of the way to the target"): the target moves to
+    30% of the way; None for every other EXIT."""
+    m = cfg.get("EXIT", "none")
+    return int(m[2:]) / 100 if m.startswith("tp") else None
 
 
 def simulate(D, pair, cfg, gcache):
@@ -315,6 +322,8 @@ def simulate(D, pair, cfg, gcache):
         risk = d * (px - stop)
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
             continue
+        if tp_way(cfg):
+            t2 = px + tp_way(cfg) * (t2 - px)
         cands.append((f, d, px, stop, t2, risk, armed))
     cands.sort()
     rows, busy, dead, imp1 = [], -1, set(), cfg.get("IMP1") is True
@@ -1053,6 +1062,8 @@ def live_trades(D, pair, cfg, gcache=None):
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
             out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="rr"))
             continue
+        if tp_way(cfg):
+            t2 = px + tp_way(cfg) * (t2 - px)
         cands.append((f, d, px, stop, t2, risk, base))
     # pass 2: in the order of the fills, one trade at a time per instrument (as simulate())
     busy, dead, imp1 = -1, set(), cfg.get("IMP1") is True

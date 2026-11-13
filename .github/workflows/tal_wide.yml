@@ -9,6 +9,12 @@ on:
       minutes:
         description: "minutes of tests per machine"
         default: "120"
+      exit:
+        description: "one EXIT on every variant (e.g. tp30), empty = the full test"
+        default: ""
+      key:
+        description: "results key (wide / wide_tp30)"
+        default: "wide"
 
 permissions:
   contents: write
@@ -21,7 +27,7 @@ jobs:
       fail-fast: false
       max-parallel: 20
       matrix:
-        symbols: ["XAUUSD,EURUSD", "AUDCAD,AUDCHF", "AUDJPY,AUDNZD", "AUDUSD,CADCHF", "CADJPY,CHFJPY", "EURAUD,EURCAD", "EURCHF,EURGBP", "EURJPY,EURNZD", "GBPAUD,GBPCAD", "GBPCHF,GBPJPY", "GBPNZD,GBPUSD", "NZDCAD,NZDCHF", "NZDJPY,NZDUSD", "USDCAD,USDCHF", "USDJPY,XAGUSD", "XPTUSD,UK100", "FRA40,EU50", "AUS200,HK50", "N25,SPN35", "US2000"]
+        symbols: ["US100,US30", "US500,GER40,JP225", "XAUUSD,EURUSD", "AUDCAD,AUDCHF", "AUDJPY,AUDNZD", "AUDUSD,CADCHF", "CADJPY,CHFJPY", "EURAUD,EURCAD", "EURCHF,EURGBP", "EURJPY,EURNZD", "GBPAUD,GBPCAD", "GBPCHF,GBPJPY", "GBPNZD,GBPUSD", "NZDCAD,NZDCHF", "NZDJPY,NZDUSD", "USDCAD,USDCHF", "USDJPY,XAGUSD", "XPTUSD,UK100", "FRA40,EU50", "AUS200,HK50", "N25,SPN35", "US2000"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -40,7 +46,7 @@ jobs:
           key: poc-cache-${{ github.run_id }}
           restore-keys: poc-cache-
       - name: Run
-        run: python -u -m agents.tal_wide_gh run --symbols "${{ matrix.symbols }}" --minutes ${{ inputs.minutes }} --out wide_out 2>&1 | tee run.log
+        run: python -u -m agents.tal_wide_gh run --symbols "${{ matrix.symbols }}" --minutes ${{ inputs.minutes }} --out wide_out --exit "${{ inputs.exit }}" 2>&1 | tee run.log
       - name: Name
         id: n
         run: echo "n=$(echo '${{ matrix.symbols }}' | tr ',' '_')" >> "$GITHUB_OUTPUT"
@@ -72,7 +78,7 @@ jobs:
           path: parts
           pattern: wide-*
       - name: Merge, results and cards
-        run: python -u -m agents.tal_wide_gh merge --parts parts --out wide_merged 2>&1 | tee merge.log
+        run: python -u -m agents.tal_wide_gh merge --parts parts --out wide_merged --key "${{ inputs.key }}" 2>&1 | tee merge.log
       - name: Manager
         env:
           GH_TOKEN: ${{ github.token }}

@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-13T09:55:04+00:00",
+ "updated": "2026-11-13T10:12:58+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -594,7 +594,7 @@
       "week": "2026-W46"
      },
      "detail": {},
-     "made": "2026-11-13T09:55:01+00:00",
+     "made": "2026-11-13T10:12:55+00:00",
      "id": "7d4268d77f15",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -10908,13 +10908,13 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-13T09:54:49+00:00",
-    "state_updated": "2026-11-13T09:53:32+00:00",
-    "minutes_since_state": 1,
+    "updated": "2026-11-13T10:12:43+00:00",
+    "state_updated": "2026-11-13T10:12:33+00:00",
+    "minutes_since_state": 0,
     "balance": 95679.15,
-    "equity": 96691.68,
-    "day_pct": 0.02,
-    "total_pct": -3.31,
+    "equity": 96591.18,
+    "day_pct": -0.09,
+    "total_pct": -3.41,
     "trades": 138,
     "mean_r": -0.111,
     "sum_r": -15.38,
@@ -15472,13 +15472,13 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-13T09:54:49+00:00",
-    "state_updated": "2026-11-13T09:54:10+00:00",
-    "minutes_since_state": 1,
+    "updated": "2026-11-13T10:12:43+00:00",
+    "state_updated": "2026-11-13T10:12:37+00:00",
+    "minutes_since_state": 0,
     "balance": 109216.71,
-    "equity": 109178.63,
-    "day_pct": -0.85,
-    "total_pct": 9.18,
+    "equity": 109188.34,
+    "day_pct": -0.84,
+    "total_pct": 9.19,
     "trades": 45,
     "mean_r": 0.381,
     "sum_r": 17.15,
@@ -25617,13 +25617,13 @@
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-13T09:54:49+00:00",
-    "state_updated": "2026-11-13T09:54:01+00:00",
-    "minutes_since_state": 1,
+    "updated": "2026-11-13T10:12:43+00:00",
+    "state_updated": "2026-11-13T10:12:39+00:00",
+    "minutes_since_state": 0,
     "balance": 99862.77,
-    "equity": 99958.93,
-    "day_pct": -0.28,
-    "total_pct": -0.04,
+    "equity": 99949.71,
+    "day_pct": -0.29,
+    "total_pct": -0.05,
     "trades": 30,
     "mean_r": 0.022,
     "sum_r": 0.66,
@@ -35526,13 +35526,13 @@
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-13T09:54:49+00:00",
-    "state_updated": "2026-11-13T09:53:43+00:00",
-    "minutes_since_state": 1,
+    "updated": "2026-11-13T10:12:43+00:00",
+    "state_updated": "2026-11-13T10:12:42+00:00",
+    "minutes_since_state": 0,
     "balance": 100118.36,
-    "equity": 101298.22,
-    "day_pct": 1.18,
-    "total_pct": 1.3,
+    "equity": 101282.56,
+    "day_pct": 1.16,
+    "total_pct": 1.28,
     "trades": 38,
     "mean_r": -0.04,
     "sum_r": -1.51,
@@ -35805,6 +35805,627 @@
    "cards": [
     {
      "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · US30 · שעה / 5 דק' (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על US30, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. US30 עצמו: 2024-2025 +0.73R (34), 2026 +0.50R (18). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 248,
+      "eff_n": 241.1,
+      "mean": 0.2536,
+      "t": 2.13,
+      "win": 38.9
+     },
+     "unseen": {
+      "n": 146,
+      "eff_n": 146.0,
+      "mean": 0.1381,
+      "t": 0.65,
+      "win": 30.2
+     },
+     "whole": {
+      "n": 394,
+      "eff_n": 382.0,
+      "mean": 0.2036,
+      "t": 1.81,
+      "win": 35.2
+     },
+     "halves": [
+      0.2277,
+      0.1714
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.75
+     },
+     "tested": 24,
+     "cost_r": 0.033,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "US30",
+      "pair": "1h/5m",
+      "cfg": {
+       "GBODY": 1.0,
+       "MIN_GAP": 0.3,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 120,
+       "PROT": "none",
+       "EXIT": "be786",
+       "MAXC": 0.2,
+       "TREND": "day"
+      },
+      "track": "tal_gap|1h/5m|US30",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:44+00:00",
+     "id": "f29b045bdbf4",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על US30, מסלול 1h / 5m: GBODY 1.0, MIN_GAP 0.3, SW 3, MIN_RR 2.0, EXPIRY 120, PROT none, EXIT be786, MAXC 0.2, TREND day. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "c8b398f20878"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · N25 · שעה / 5 דק' (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על N25, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. N25 עצמו: 2024-2025 +1.33R (9), 2026 -0.63R (2). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 248,
+      "eff_n": 241.1,
+      "mean": 0.2536,
+      "t": 2.13,
+      "win": 38.9
+     },
+     "unseen": {
+      "n": 146,
+      "eff_n": 146.0,
+      "mean": 0.1381,
+      "t": 0.65,
+      "win": 30.2
+     },
+     "whole": {
+      "n": 394,
+      "eff_n": 382.0,
+      "mean": 0.2036,
+      "t": 1.81,
+      "win": 35.2
+     },
+     "halves": [
+      0.2277,
+      0.1714
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.75
+     },
+     "tested": 24,
+     "cost_r": 0.101,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "N25",
+      "pair": "1h/5m",
+      "cfg": {
+       "GBODY": 1.0,
+       "MIN_GAP": 0.3,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 120,
+       "PROT": "none",
+       "EXIT": "be786",
+       "MAXC": 0.2,
+       "TREND": "day"
+      },
+      "track": "tal_gap|1h/5m|N25",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:44+00:00",
+     "id": "357f4ecf1ca9",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על N25, מסלול 1h / 5m: GBODY 1.0, MIN_GAP 0.3, SW 3, MIN_RR 2.0, EXPIRY 120, PROT none, EXIT be786, MAXC 0.2, TREND day. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "3c5d9dae8704"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · AUS200 · שעה / 5 דק' (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על AUS200, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. AUS200 עצמו: 2024-2025 +0.21R (15), 2026 -0.20R (10). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 248,
+      "eff_n": 241.1,
+      "mean": 0.2536,
+      "t": 2.13,
+      "win": 38.9
+     },
+     "unseen": {
+      "n": 146,
+      "eff_n": 146.0,
+      "mean": 0.1381,
+      "t": 0.65,
+      "win": 30.2
+     },
+     "whole": {
+      "n": 394,
+      "eff_n": 382.0,
+      "mean": 0.2036,
+      "t": 1.81,
+      "win": 35.2
+     },
+     "halves": [
+      0.2277,
+      0.1714
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.75
+     },
+     "tested": 24,
+     "cost_r": 0.109,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "AUS200",
+      "pair": "1h/5m",
+      "cfg": {
+       "GBODY": 1.0,
+       "MIN_GAP": 0.3,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 120,
+       "PROT": "none",
+       "EXIT": "be786",
+       "MAXC": 0.2,
+       "TREND": "day"
+      },
+      "track": "tal_gap|1h/5m|AUS200",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:44+00:00",
+     "id": "96cfc9c65f53",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על AUS200, מסלול 1h / 5m: GBODY 1.0, MIN_GAP 0.3, SW 3, MIN_RR 2.0, EXPIRY 120, PROT none, EXIT be786, MAXC 0.2, TREND day. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "cc9858edfe52"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · US100 · שעה / 5 דק' (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על US100, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. US100 עצמו: 2024-2025 +0.35R (30), 2026 +1.28R (18). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 248,
+      "eff_n": 241.1,
+      "mean": 0.2536,
+      "t": 2.13,
+      "win": 38.9
+     },
+     "unseen": {
+      "n": 146,
+      "eff_n": 146.0,
+      "mean": 0.1381,
+      "t": 0.65,
+      "win": 30.2
+     },
+     "whole": {
+      "n": 394,
+      "eff_n": 382.0,
+      "mean": 0.2036,
+      "t": 1.81,
+      "win": 35.2
+     },
+     "halves": [
+      0.2277,
+      0.1714
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.75
+     },
+     "tested": 24,
+     "cost_r": 0.045,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "US100",
+      "pair": "1h/5m",
+      "cfg": {
+       "GBODY": 1.0,
+       "MIN_GAP": 0.3,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 120,
+       "PROT": "none",
+       "EXIT": "be786",
+       "MAXC": 0.2,
+       "TREND": "day"
+      },
+      "track": "tal_gap|1h/5m|US100",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:44+00:00",
+     "id": "d6133952a5d6",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על US100, מסלול 1h / 5m: GBODY 1.0, MIN_GAP 0.3, SW 3, MIN_RR 2.0, EXPIRY 120, PROT none, EXIT be786, MAXC 0.2, TREND day. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "dcccb178eba1"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · SPN35 · שעה / 5 דק' (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על SPN35, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. SPN35 עצמו: 2024-2025 +0.08R (10), 2026 -0.59R (11). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 248,
+      "eff_n": 241.1,
+      "mean": 0.2536,
+      "t": 2.13,
+      "win": 38.9
+     },
+     "unseen": {
+      "n": 146,
+      "eff_n": 146.0,
+      "mean": 0.1381,
+      "t": 0.65,
+      "win": 30.2
+     },
+     "whole": {
+      "n": 394,
+      "eff_n": 382.0,
+      "mean": 0.2036,
+      "t": 1.81,
+      "win": 35.2
+     },
+     "halves": [
+      0.2277,
+      0.1714
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.75
+     },
+     "tested": 24,
+     "cost_r": 0.118,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "SPN35",
+      "pair": "1h/5m",
+      "cfg": {
+       "GBODY": 1.0,
+       "MIN_GAP": 0.3,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 120,
+       "PROT": "none",
+       "EXIT": "be786",
+       "MAXC": 0.2,
+       "TREND": "day"
+      },
+      "track": "tal_gap|1h/5m|SPN35",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:44+00:00",
+     "id": "d3f9e358dd40",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על SPN35, מסלול 1h / 5m: GBODY 1.0, MIN_GAP 0.3, SW 3, MIN_RR 2.0, EXPIRY 120, PROT none, EXIT be786, MAXC 0.2, TREND day. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "0c8ceb11677d"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · US500 · שעה / 5 דק' (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על US500, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. US500 עצמו: 2024-2025 +0.31R (25), 2026 -0.30R (15). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 248,
+      "eff_n": 241.1,
+      "mean": 0.2536,
+      "t": 2.13,
+      "win": 38.9
+     },
+     "unseen": {
+      "n": 146,
+      "eff_n": 146.0,
+      "mean": 0.1381,
+      "t": 0.65,
+      "win": 30.2
+     },
+     "whole": {
+      "n": 394,
+      "eff_n": 382.0,
+      "mean": 0.2036,
+      "t": 1.81,
+      "win": 35.2
+     },
+     "halves": [
+      0.2277,
+      0.1714
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.75
+     },
+     "tested": 24,
+     "cost_r": 0.05,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "US500",
+      "pair": "1h/5m",
+      "cfg": {
+       "GBODY": 1.0,
+       "MIN_GAP": 0.3,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 120,
+       "PROT": "none",
+       "EXIT": "be786",
+       "MAXC": 0.2,
+       "TREND": "day"
+      },
+      "track": "tal_gap|1h/5m|US500",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:44+00:00",
+     "id": "b511d0699af8",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על US500, מסלול 1h / 5m: GBODY 1.0, MIN_GAP 0.3, SW 3, MIN_RR 2.0, EXPIRY 120, PROT none, EXIT be786, MAXC 0.2, TREND day. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "350573984d52"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · EU50 · שעה / 5 דק' (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על EU50, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. EU50 עצמו: 2024-2025 +0.72R (11), 2026 +0.69R (6). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 248,
+      "eff_n": 241.1,
+      "mean": 0.2536,
+      "t": 2.13,
+      "win": 38.9
+     },
+     "unseen": {
+      "n": 146,
+      "eff_n": 146.0,
+      "mean": 0.1381,
+      "t": 0.65,
+      "win": 30.2
+     },
+     "whole": {
+      "n": 394,
+      "eff_n": 382.0,
+      "mean": 0.2036,
+      "t": 1.81,
+      "win": 35.2
+     },
+     "halves": [
+      0.2277,
+      0.1714
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.75
+     },
+     "tested": 24,
+     "cost_r": 0.144,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "EU50",
+      "pair": "1h/5m",
+      "cfg": {
+       "GBODY": 1.0,
+       "MIN_GAP": 0.3,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 120,
+       "PROT": "none",
+       "EXIT": "be786",
+       "MAXC": 0.2,
+       "TREND": "day"
+      },
+      "track": "tal_gap|1h/5m|EU50",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:44+00:00",
+     "id": "92155775d910",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על EU50, מסלול 1h / 5m: GBODY 1.0, MIN_GAP 0.3, SW 3, MIN_RR 2.0, EXPIRY 120, PROT none, EXIT be786, MAXC 0.2, TREND day. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "5506662e639a"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · US2000 · שעה / 5 דק' (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על US2000, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. US2000 עצמו: 2024-2025 +0.06R (24), 2026 -0.44R (8). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 248,
+      "eff_n": 241.1,
+      "mean": 0.2536,
+      "t": 2.13,
+      "win": 38.9
+     },
+     "unseen": {
+      "n": 146,
+      "eff_n": 146.0,
+      "mean": 0.1381,
+      "t": 0.65,
+      "win": 30.2
+     },
+     "whole": {
+      "n": 394,
+      "eff_n": 382.0,
+      "mean": 0.2036,
+      "t": 1.81,
+      "win": 35.2
+     },
+     "halves": [
+      0.2277,
+      0.1714
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.75
+     },
+     "tested": 24,
+     "cost_r": 0.042,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "US2000",
+      "pair": "1h/5m",
+      "cfg": {
+       "GBODY": 1.0,
+       "MIN_GAP": 0.3,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 120,
+       "PROT": "none",
+       "EXIT": "be786",
+       "MAXC": 0.2,
+       "TREND": "day"
+      },
+      "track": "tal_gap|1h/5m|US2000",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:44+00:00",
+     "id": "ee8a812c88e4",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על US2000, מסלול 1h / 5m: GBODY 1.0, MIN_GAP 0.3, SW 3, MIN_RR 2.0, EXPIRY 120, PROT none, EXIT be786, MAXC 0.2, TREND day. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "a332c5f39015"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · JP225 · שעה / 5 דק' (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על JP225, שעה / 5 דק', בהגדרה אחת לכל המדדים: GBODY=1.0, MIN_GAP=0.3, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, MAXC=0.2, TREND=day. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.25R לעסקה, 248 עסקאות), ומוצגת על 2026 על כולם: +0.14R לעסקה, 146 עסקאות, 30.2% הצלחה. JP225 עצמו: 2024-2025 +0.36R (19), 2026 +0.33R (9). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 248,
+      "eff_n": 241.1,
+      "mean": 0.2536,
+      "t": 2.13,
+      "win": 38.9
+     },
+     "unseen": {
+      "n": 146,
+      "eff_n": 146.0,
+      "mean": 0.1381,
+      "t": 0.65,
+      "win": 30.2
+     },
+     "whole": {
+      "n": 394,
+      "eff_n": 382.0,
+      "mean": 0.2036,
+      "t": 1.81,
+      "win": 35.2
+     },
+     "halves": [
+      0.2277,
+      0.1714
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.75
+     },
+     "tested": 24,
+     "cost_r": 0.05,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "JP225",
+      "pair": "1h/5m",
+      "cfg": {
+       "GBODY": 1.0,
+       "MIN_GAP": 0.3,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 120,
+       "PROT": "none",
+       "EXIT": "be786",
+       "MAXC": 0.2,
+       "TREND": "day"
+      },
+      "track": "tal_gap|1h/5m|JP225",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:44+00:00",
+     "id": "7fb3e08251dc",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 146.0 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על JP225, מסלול 1h / 5m: GBODY 1.0, MIN_GAP 0.3, SW 3, MIN_RR 2.0, EXPIRY 120, PROT none, EXIT be786, MAXC 0.2, TREND day. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "669321ebd659"
+    },
+    {
+     "bot": "bot5",
      "kind": "risk",
      "title": "15 דק' / דקה: סיכון 0.28% ← 0.196% - אין תיקון שעובר את הבדיקה ההוגנת",
      "what": "15 דק' / דקה הפסיד ב־12.11 (US500, מכירה מגאפ בן 20 שעות, נגד היום). התיקון נבדק בבדיקה ההוגנת (tal_fix_run, עלויות FTMO, 5 המדדים): 16 גרסאות - תוקף הגאפ 8/12/16/24/48 שעות, TREND (כיוון היום / הטיים פריים שמעל), ברייק ב־50/70/38.2/61.8%, חצי ב־61.8%, ושילובים - מול הכללים שרצים (+78.3R משוקלל ב־2024-2025, +20.7R ב־2026 על 267 עסקאות). אף גרסה לא עדיפה ב־2024-2025: הטובה שם (תוקף 24 שעות) +77.0R / +19.2R. ניהול העסקה (ברייק ב־38.2%) טוב בהרבה ב־2026 (+45.3R) אבל גרוע ב־2024-2025 (+33.2R) - לבחור אותו זה לבחור לפי 2026. לפי הכלל של טל: אין תיקון → סיכון ×0.7 (0.28% ← 0.196%) עד שיימצא. המסלול עדיין רווחי בשתי התקופות, לכן לא יוצא. המחיר: כ־0.17% מהחשבון בחודש מהרווח שלו; מה שיורד: היום הגרוע שלו ב־2026 -1.7% ← -1.2%, הירידה הגדולה 7.7% ← 5.4%. החיפוש הרציף ממשיך; תיקון שיעבור - הסיכון חוזר.",
@@ -35859,6 +36480,356 @@
      "by": "manager",
      "decided": "2026-11-13T05:31:47+00:00",
      "decision_id": "cf178b4774f7"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · EU50 · 5 דק' / דקה (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על EU50, 5 דק' / דקה, בהגדרה אחת לכל המדדים: GBODY=2.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be786, IMP1=True, MAXC=0.1, SESS=lnny. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.14R לעסקה, 535 עסקאות), ומוצגת על 2026 על כולם: +0.05R לעסקה, 357 עסקאות, 29.8% הצלחה. EU50 עצמו: 2024-2025 +1.15R (2), 2026 +0.54R (2). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 535,
+      "eff_n": 521.2,
+      "mean": 0.1379,
+      "t": 1.84,
+      "win": 31.8
+     },
+     "unseen": {
+      "n": 357,
+      "eff_n": 356.9,
+      "mean": 0.0543,
+      "t": 0.61,
+      "win": 29.8
+     },
+     "whole": {
+      "n": 892,
+      "eff_n": 869.8,
+      "mean": 0.0999,
+      "t": 1.73,
+      "win": 30.9
+     },
+     "halves": [
+      0.147,
+      0.0609
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.56
+     },
+     "tested": 36,
+     "cost_r": 0.069,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "EU50",
+      "pair": "5m/1m",
+      "cfg": {
+       "GBODY": 2.0,
+       "MIN_GAP": 0.6,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 24,
+       "PROT": "shock",
+       "EXIT": "be786",
+       "IMP1": true,
+       "MAXC": 0.1,
+       "SESS": "lnny"
+      },
+      "track": "tal_gap|5m/1m|EU50",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:46+00:00",
+     "id": "092e977a8be5",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 356.9 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על EU50, מסלול 5m / 1m: GBODY 2.0, MIN_GAP 0.6, SW 3, MIN_RR 2.0, EXPIRY 24, PROT shock, EXIT be786, IMP1 True, MAXC 0.1, SESS lnny. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "8e6ba5cdaef2"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · UK100 · 5 דק' / דקה (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על UK100, 5 דק' / דקה, בהגדרה אחת לכל המדדים: GBODY=2.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be786, IMP1=True, MAXC=0.1, SESS=lnny. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.14R לעסקה, 535 עסקאות), ומוצגת על 2026 על כולם: +0.05R לעסקה, 357 עסקאות, 29.8% הצלחה. UK100 עצמו: 2024-2025 +0.08R (33), 2026 -0.02R (26). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 535,
+      "eff_n": 521.2,
+      "mean": 0.1379,
+      "t": 1.84,
+      "win": 31.8
+     },
+     "unseen": {
+      "n": 357,
+      "eff_n": 356.9,
+      "mean": 0.0543,
+      "t": 0.61,
+      "win": 29.8
+     },
+     "whole": {
+      "n": 892,
+      "eff_n": 869.8,
+      "mean": 0.0999,
+      "t": 1.73,
+      "win": 30.9
+     },
+     "halves": [
+      0.147,
+      0.0609
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.56
+     },
+     "tested": 36,
+     "cost_r": 0.068,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "UK100",
+      "pair": "5m/1m",
+      "cfg": {
+       "GBODY": 2.0,
+       "MIN_GAP": 0.6,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 24,
+       "PROT": "shock",
+       "EXIT": "be786",
+       "IMP1": true,
+       "MAXC": 0.1,
+       "SESS": "lnny"
+      },
+      "track": "tal_gap|5m/1m|UK100",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:46+00:00",
+     "id": "077ebcfa8a3c",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 356.9 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על UK100, מסלול 5m / 1m: GBODY 2.0, MIN_GAP 0.6, SW 3, MIN_RR 2.0, EXPIRY 24, PROT shock, EXIT be786, IMP1 True, MAXC 0.1, SESS lnny. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "be37d5527c02"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · SPN35 · 5 דק' / דקה (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על SPN35, 5 דק' / דקה, בהגדרה אחת לכל המדדים: GBODY=2.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be786, IMP1=True, MAXC=0.1, SESS=lnny. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.14R לעסקה, 535 עסקאות), ומוצגת על 2026 על כולם: +0.05R לעסקה, 357 עסקאות, 29.8% הצלחה. SPN35 עצמו: 2024-2025 +1.67R (1), 2026 -1.06R (1). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 535,
+      "eff_n": 521.2,
+      "mean": 0.1379,
+      "t": 1.84,
+      "win": 31.8
+     },
+     "unseen": {
+      "n": 357,
+      "eff_n": 356.9,
+      "mean": 0.0543,
+      "t": 0.61,
+      "win": 29.8
+     },
+     "whole": {
+      "n": 892,
+      "eff_n": 869.8,
+      "mean": 0.0999,
+      "t": 1.73,
+      "win": 30.9
+     },
+     "halves": [
+      0.147,
+      0.0609
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.56
+     },
+     "tested": 36,
+     "cost_r": 0.071,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "SPN35",
+      "pair": "5m/1m",
+      "cfg": {
+       "GBODY": 2.0,
+       "MIN_GAP": 0.6,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 24,
+       "PROT": "shock",
+       "EXIT": "be786",
+       "IMP1": true,
+       "MAXC": 0.1,
+       "SESS": "lnny"
+      },
+      "track": "tal_gap|5m/1m|SPN35",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:46+00:00",
+     "id": "ff06127c8930",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 356.9 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על SPN35, מסלול 5m / 1m: GBODY 2.0, MIN_GAP 0.6, SW 3, MIN_RR 2.0, EXPIRY 24, PROT shock, EXIT be786, IMP1 True, MAXC 0.1, SESS lnny. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "6c3a1b42ee6c"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · AUS200 · 5 דק' / דקה (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על AUS200, 5 דק' / דקה, בהגדרה אחת לכל המדדים: GBODY=2.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be786, IMP1=True, MAXC=0.1, SESS=lnny. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.14R לעסקה, 535 עסקאות), ומוצגת על 2026 על כולם: +0.05R לעסקה, 357 עסקאות, 29.8% הצלחה. AUS200 עצמו: 2024-2025 +1.42R (1), 2026 +0.00R (0). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 535,
+      "eff_n": 521.2,
+      "mean": 0.1379,
+      "t": 1.84,
+      "win": 31.8
+     },
+     "unseen": {
+      "n": 357,
+      "eff_n": 356.9,
+      "mean": 0.0543,
+      "t": 0.61,
+      "win": 29.8
+     },
+     "whole": {
+      "n": 892,
+      "eff_n": 869.8,
+      "mean": 0.0999,
+      "t": 1.73,
+      "win": 30.9
+     },
+     "halves": [
+      0.147,
+      0.0609
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.56
+     },
+     "tested": 36,
+     "cost_r": 0.082,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "AUS200",
+      "pair": "5m/1m",
+      "cfg": {
+       "GBODY": 2.0,
+       "MIN_GAP": 0.6,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 24,
+       "PROT": "shock",
+       "EXIT": "be786",
+       "IMP1": true,
+       "MAXC": 0.1,
+       "SESS": "lnny"
+      },
+      "track": "tal_gap|5m/1m|AUS200",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:46+00:00",
+     "id": "700edfc16448",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 356.9 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על AUS200, מסלול 5m / 1m: GBODY 2.0, MIN_GAP 0.6, SW 3, MIN_RR 2.0, EXPIRY 24, PROT shock, EXIT be786, IMP1 True, MAXC 0.1, SESS lnny. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "0b57a0168270"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · N25 · 5 דק' / דקה (הגדרת קבוצה)",
+     "what": "שיטת הגאפ של טל על N25, 5 דק' / דקה, בהגדרה אחת לכל המדדים: GBODY=2.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be786, IMP1=True, MAXC=0.1, SESS=lnny. נבחרה על כל המדדים יחד, 2024-2025 בלבד (+0.14R לעסקה, 535 עסקאות), ומוצגת על 2026 על כולם: +0.05R לעסקה, 357 עסקאות, 29.8% הצלחה. N25 עצמו: 2024-2025 +0.36R (5), 2026 +1.83R (2). מסלול חדש רק למכשיר הזה, בסיכון של מסלולי הגאפ.",
+     "train": {
+      "n": 535,
+      "eff_n": 521.2,
+      "mean": 0.1379,
+      "t": 1.84,
+      "win": 31.8
+     },
+     "unseen": {
+      "n": 357,
+      "eff_n": 356.9,
+      "mean": 0.0543,
+      "t": 0.61,
+      "win": 29.8
+     },
+     "whole": {
+      "n": 892,
+      "eff_n": 869.8,
+      "mean": 0.0999,
+      "t": 1.73,
+      "win": 30.9
+     },
+     "halves": [
+      0.147,
+      0.0609
+     ],
+     "neighbours": {
+      "values": [],
+      "share_positive": 0.56
+     },
+     "tested": 36,
+     "cost_r": 0.077,
+     "risk_pct": 0.14,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap_sym",
+      "sym": "N25",
+      "pair": "5m/1m",
+      "cfg": {
+       "GBODY": 2.0,
+       "MIN_GAP": 0.6,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 24,
+       "PROT": "shock",
+       "EXIT": "be786",
+       "IMP1": true,
+       "MAXC": 0.1,
+       "SESS": "lnny"
+      },
+      "track": "tal_gap|5m/1m|N25",
+      "knob": "cfg"
+     },
+     "detail": {},
+     "made": "2026-11-13T09:11:46+00:00",
+     "id": "3a36a86f7f61",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 356.9 עסקאות אפקטיביות)",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: שיטת הגאפ על N25, מסלול 5m / 1m: GBODY 2.0, MIN_GAP 0.6, SW 3, MIN_RR 2.0, EXPIRY 24, PROT shock, EXIT be786, IMP1 True, MAXC 0.1, SESS lnny. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "ddd13bc934e3"
     },
     {
      "bot": "bot5",
@@ -35969,6 +36940,64 @@
     {
      "bot": "bot5",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC012|15Min|EURUSD · CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
+     "what": "הסייר הביא אותה (FXNX blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.3007,
+      "t": 0.98,
+      "win": 57.2
+     },
+     "unseen": {
+      "n": 22,
+      "eff_n": 22.0,
+      "mean": 0.396,
+      "t": 1.92,
+      "win": 68.2
+     },
+     "whole": {
+      "n": 36,
+      "eff_n": 35.9,
+      "mean": 0.3609,
+      "t": 2.09,
+      "win": 64.2
+     },
+     "halves": [
+      0.4415,
+      0.2805
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC012|15Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
+       "source": "FXNX blog",
+       "url": "https://fxnx.com/en/blog/cpi-volatility-avwap-reversion-strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "5fb6007782d9",
+     "tier": "watch",
+     "verdict": "חיובי בתקופה שלא נראתה, אבל רק 22.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC005|15Min|XAUUSD · NFP V-shaped reversal candle after the release, 1:3",
      "what": "הסייר הביא אותה (FOREX.com Trading Academy). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -36015,7 +37044,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "5d910c7bcc89",
      "tier": "watch",
      "verdict": "חיובי בתקופה שלא נראתה, אבל רק 22.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך",
@@ -36652,7 +37681,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "c925956f55c5",
      "tier": "watch",
      "verdict": "ב־2026 בסך הכל רק +0.8R (+0.042R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
@@ -37390,7 +38419,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "4c4fad98e2c2",
      "tier": "watch",
      "verdict": "ב־2026 בסך הכל רק +0.2R (+0.001R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
@@ -37398,6 +38427,180 @@
      "note": null,
      "reply": "לא נבנה: ב־2026 כולה רק +0.2R (+0.001R לעסקה), ולפי כלל המנהל מ־00:29 (אסטרטגיה חדשה צריכה להוסיף לפחות +3R) היא רק מוסיפה סיכון ולוקחת חלק מהמגבלה היומית. תוקן גם שכרטיס חדש שלא נבנה יוצא כשהכלל מחמיר. אם היא תשתפר - כרטיס חדש.",
      "first_seen": "2026-11-13T00:25:55+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC018|5Min|EURUSD · freqtrade MeanReversionScalper: BB + RSI + volume spike, out at mid band",
+     "what": "הסייר הביא אותה (GitHub (freqtrade strategy listing)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 15,
+      "eff_n": 15.0,
+      "mean": -0.0194,
+      "t": -0.37,
+      "win": 46.4
+     },
+     "unseen": {
+      "n": 9,
+      "eff_n": 9.0,
+      "mean": -0.1213,
+      "t": -1.23,
+      "win": 32.7
+     },
+     "whole": {
+      "n": 24,
+      "eff_n": 23.9,
+      "mean": -0.0599,
+      "t": -1.18,
+      "win": 41.0
+     },
+     "halves": [
+      0.001,
+      -0.1137
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC018|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "freqtrade MeanReversionScalper: BB + RSI + volume spike, out at mid band",
+       "source": "GitHub (freqtrade strategy listing)",
+       "url": "https://fts.naif.one/strategies/mean-reversion-scalper",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "2d9dccdcd245",
+     "tier": "watch",
+     "verdict": "מעט מדי עסקאות בתקופה שלא נראתה - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC030|5Min|EURUSD · Alpha S/R: engulfing inside the 15m EMA36 channel, channel stop, 1:3, gold 5m",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": -0.1447,
+      "t": null,
+      "win": 49.0
+     },
+     "unseen": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": -0.7082,
+      "t": null,
+      "win": 0.0
+     },
+     "whole": {
+      "n": 4,
+      "eff_n": 4.0,
+      "mean": -0.4406,
+      "t": null,
+      "win": 23.3
+     },
+     "halves": [
+      -0.1276,
+      -0.7062
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC030|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alpha S/R: engulfing inside the 15m EMA36 channel, channel stop, 1:3, gold 5m",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/mikVFwAu-Alpha-S-R-Channel-Strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "290676950da2",
+     "tier": "watch",
+     "verdict": "מעט מדי עסקאות בתקופה שלא נראתה - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC012|5Min|EURUSD · CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
+     "what": "הסייר הביא אותה (FXNX blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 22,
+      "eff_n": 22.0,
+      "mean": -0.1117,
+      "t": -0.54,
+      "win": 41.6
+     },
+     "unseen": {
+      "n": 26,
+      "eff_n": 26.0,
+      "mean": 0.2466,
+      "t": 1.06,
+      "win": 53.9
+     },
+     "whole": {
+      "n": 48,
+      "eff_n": 47.9,
+      "mean": 0.0901,
+      "t": 0.56,
+      "win": 48.5
+     },
+     "halves": [
+      0.0572,
+      0.1068
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC012|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "CPI anchored-VWAP retest after the spike, confirmation candle, 1:2",
+       "source": "FXNX blog",
+       "url": "https://fxnx.com/en/blog/cpi-volatility-avwap-reversion-strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "8e4bacb7ee19",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה עד 2025 (-0.11R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     },
     {
      "bot": "bot5",
@@ -37448,7 +38651,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "273193cb20af",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה עד 2025 (-0.03R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
@@ -38092,7 +39295,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "2bb616abc66e",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה עד 2025 (-0.01R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 ועלול להיות מזל",
@@ -38822,6 +40025,64 @@
     },
     {
      "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC019|15Min|EURUSD · freqtrade RSI_BB: 1-SD lower band long, 3-SD upper band short",
+     "what": "הסייר הביא אותה (GitHub (freqtrade strategy listing)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 248,
+      "eff_n": 247.7,
+      "mean": -0.0005,
+      "t": -0.31,
+      "win": 57.6
+     },
+     "unseen": {
+      "n": 274,
+      "eff_n": 273.9,
+      "mean": -0.0007,
+      "t": -0.44,
+      "win": 54.0
+     },
+     "whole": {
+      "n": 522,
+      "eff_n": 520.8,
+      "mean": -0.0006,
+      "t": -0.54,
+      "win": 55.7
+     },
+     "halves": [
+      -0.0009,
+      -0.0003
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC019|15Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "freqtrade RSI_BB: 1-SD lower band long, 3-SD upper band short",
+       "source": "GitHub (freqtrade strategy listing)",
+       "url": "https://fts.naif.one/strategies/rsi-bb-pneumann1980",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "a57404d3892d",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.00R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
      "kind": "improve",
      "title": "מסלול 15 דקות (v5): תוקף הפער (שעות) 24 ← 8",
      "what": "לשנות את 'תוקף הפער (שעות)' מ־24 ל־8. נבחר על 2024-2025 בלבד, ומוצג על 2026 שלא נראתה.",
@@ -38886,6 +40147,64 @@
     {
      "bot": "bot5",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC005|5Min|EURUSD · NFP V-shaped reversal candle after the release, 1:3",
+     "what": "הסייר הביא אותה (FOREX.com Trading Academy). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 23,
+      "eff_n": 23.0,
+      "mean": 0.1154,
+      "t": 0.36,
+      "win": 43.4
+     },
+     "unseen": {
+      "n": 31,
+      "eff_n": 31.0,
+      "mean": -0.0074,
+      "t": -0.02,
+      "win": 35.4
+     },
+     "whole": {
+      "n": 54,
+      "eff_n": 53.9,
+      "mean": 0.0423,
+      "t": 0.19,
+      "win": 38.6
+     },
+     "halves": [
+      -0.0684,
+      0.1604
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC005|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "NFP V-shaped reversal candle after the release, 1:3",
+       "source": "FOREX.com Trading Academy",
+       "url": "https://forex.com/en/trading-academy/courses/advanced-trading-strategies/non-farm-payrolls-v-shaped-reversal",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "44475f4fd63b",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC019|15Min|XAUUSD · freqtrade RSI_BB: 1-SD lower band long, 3-SD upper band short",
      "what": "הסייר הביא אותה (GitHub (freqtrade strategy listing)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -38932,7 +40251,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "dbddd9cdd3c7",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)",
@@ -38990,7 +40309,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "8e87283fcc9a",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.01R לעסקה)",
@@ -39065,6 +40384,64 @@
     {
      "bot": "bot5",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC017|1Min|EURUSD · freqtrade ScalpingSimple: RSI<30 over SMA5, 0.5% stop, 1% target",
+     "what": "הסייר הביא אותה (GitHub (freqtrade strategy listing)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 305,
+      "eff_n": 304.7,
+      "mean": -0.0154,
+      "t": -5.01,
+      "win": 22.5
+     },
+     "unseen": {
+      "n": 428,
+      "eff_n": 427.9,
+      "mean": -0.019,
+      "t": -8.53,
+      "win": 19.9
+     },
+     "whole": {
+      "n": 733,
+      "eff_n": 731.5,
+      "mean": -0.0176,
+      "t": -9.65,
+      "win": 20.9
+     },
+     "halves": [
+      -0.0158,
+      -0.0191
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC017|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "freqtrade ScalpingSimple: RSI<30 over SMA5, 0.5% stop, 1% target",
+       "source": "GitHub (freqtrade strategy listing)",
+       "url": "https://fts.naif.one/strategies/scalping-simple",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "2fbcb166aca6",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.02R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC001|1Min|XAUUSD · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
      "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -39111,7 +40488,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "f5857c94a60e",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.02R לעסקה)",
@@ -39231,7 +40608,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "88b05d533470",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.02R לעסקה)",
@@ -39289,7 +40666,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "93dcac099308",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.03R לעסקה)",
@@ -39347,7 +40724,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "a18530df60e9",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.03R לעסקה)",
@@ -39531,7 +40908,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "4df19d5336da",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
@@ -39539,6 +40916,180 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T00:25:55+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC005|15Min|EURUSD · NFP V-shaped reversal candle after the release, 1:3",
+     "what": "הסייר הביא אותה (FOREX.com Trading Academy). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 16,
+      "eff_n": 16.0,
+      "mean": 0.0178,
+      "t": 0.06,
+      "win": 56.1
+     },
+     "unseen": {
+      "n": 29,
+      "eff_n": 29.0,
+      "mean": -0.0415,
+      "t": -0.16,
+      "win": 41.4
+     },
+     "whole": {
+      "n": 45,
+      "eff_n": 44.9,
+      "mean": -0.0216,
+      "t": -0.11,
+      "win": 46.4
+     },
+     "halves": [
+      -0.0906,
+      0.054
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC005|15Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "NFP V-shaped reversal candle after the release, 1:3",
+       "source": "FOREX.com Trading Academy",
+       "url": "https://forex.com/en/trading-academy/courses/advanced-trading-strategies/non-farm-payrolls-v-shaped-reversal",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "42f6cd8f0d10",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC007|15Min|EURUSD · Cowabunga: 4H trend + 15m EMA5/10, RSI9, stoch, MACD, 1R, out 16:00 NY",
+     "what": "הסייר הביא אותה (BabyPips). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 256,
+      "eff_n": 255.7,
+      "mean": 0.0268,
+      "t": 0.53,
+      "win": 56.4
+     },
+     "unseen": {
+      "n": 311,
+      "eff_n": 310.9,
+      "mean": -0.046,
+      "t": -1.03,
+      "win": 54.3
+     },
+     "whole": {
+      "n": 567,
+      "eff_n": 565.8,
+      "mean": -0.0146,
+      "t": -0.43,
+      "win": 55.2
+     },
+     "halves": [
+      0.0173,
+      -0.0443
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC007|15Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Cowabunga: 4H trend + 15m EMA5/10, RSI9, stoch, MACD, 1R, out 16:00 NY",
+       "source": "BabyPips",
+       "url": "https://www.babypips.com/trading/cowabunga-system",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "47b1bb553d04",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.05R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC024|5Min|EURUSD · EURUSD 5m TEMA21 vs SMA300 + BB width + CCI -110/160, CCI 210 exit",
+     "what": "הסייר הביא אותה (ProRealCode forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 99,
+      "eff_n": 98.9,
+      "mean": 0.031,
+      "t": 0.45,
+      "win": 56.5
+     },
+     "unseen": {
+      "n": 97,
+      "eff_n": 97.0,
+      "mean": -0.0465,
+      "t": -0.71,
+      "win": 52.5
+     },
+     "whole": {
+      "n": 196,
+      "eff_n": 195.5,
+      "mean": -0.0092,
+      "t": -0.19,
+      "win": 54.4
+     },
+     "halves": [
+      0.0339,
+      -0.0458
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC024|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "EURUSD 5m TEMA21 vs SMA300 + BB width + CCI -110/160, CCI 210 exit",
+       "source": "ProRealCode forum",
+       "url": "https://www.prorealcode.com/topic/eurusd-5-min",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "f9dfcdb8c47f",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.05R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     },
     {
      "bot": "bot5",
@@ -39669,6 +41220,122 @@
     {
      "bot": "bot5",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC010|15Min|EURUSD · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 143,
+      "eff_n": 142.9,
+      "mean": -0.1056,
+      "t": -1.0,
+      "win": 38.4
+     },
+     "unseen": {
+      "n": 155,
+      "eff_n": 155.0,
+      "mean": -0.0516,
+      "t": -0.49,
+      "win": 42.6
+     },
+     "whole": {
+      "n": 298,
+      "eff_n": 297.3,
+      "mean": -0.0764,
+      "t": -1.03,
+      "win": 40.7
+     },
+     "halves": [
+      -0.1061,
+      -0.0469
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC010|15Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+       "source": "FX Replay",
+       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "9cbd16ad46b7",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.05R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC025|5Min|EURUSD · Bollinger + RSI 30/70 + Stochastic 5/3/3 scalp, mid-band exit, 5-minute",
+     "what": "הסייר הביא אותה (Forex Tester blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 902,
+      "eff_n": 901.1,
+      "mean": -0.0979,
+      "t": -3.31,
+      "win": 53.1
+     },
+     "unseen": {
+      "n": 1161,
+      "eff_n": 1160.8,
+      "mean": -0.0563,
+      "t": -2.09,
+      "win": 55.6
+     },
+     "whole": {
+      "n": 2063,
+      "eff_n": 2058.5,
+      "mean": -0.0736,
+      "t": -3.69,
+      "win": 54.5
+     },
+     "halves": [
+      -0.0922,
+      -0.0567
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC025|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Bollinger + RSI 30/70 + Stochastic 5/3/3 scalp, mid-band exit, 5-minute",
+       "source": "Forex Tester blog",
+       "url": "https://forextester.com/blog/bollinger-bands-rsi-stochastic-scalping-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "7eeefe966f95",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.06R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC025|5Min|XAUUSD · Bollinger + RSI 30/70 + Stochastic 5/3/3 scalp, mid-band exit, 5-minute",
      "what": "הסייר הביא אותה (Forex Tester blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -39715,7 +41382,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "4752163d0e18",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
@@ -39773,7 +41440,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "b2d1a211e816",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
@@ -39781,6 +41448,64 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T00:25:55+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC021|5Min|EURUSD · Jump: 16-bar mid +/- 2 ATR stop entry with 60m/30m filters, 5-minute",
+     "what": "הסייר הביא אותה (ProRealCode (forum)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 176,
+      "eff_n": 175.8,
+      "mean": -0.056,
+      "t": -0.96,
+      "win": 49.6
+     },
+     "unseen": {
+      "n": 201,
+      "eff_n": 201.0,
+      "mean": -0.0711,
+      "t": -1.31,
+      "win": 51.7
+     },
+     "whole": {
+      "n": 377,
+      "eff_n": 376.2,
+      "mean": -0.0643,
+      "t": -1.62,
+      "win": 50.7
+     },
+     "halves": [
+      -0.031,
+      -0.0939
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC021|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Jump: 16-bar mid +/- 2 ATR stop entry with 60m/30m filters, 5-minute",
+       "source": "ProRealCode (forum)",
+       "url": "https://www.prorealcode.com/topic/jump-a-5-min-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "6aabd967d1d2",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.07R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     },
     {
      "bot": "bot5",
@@ -39831,7 +41556,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "996db93b03f7",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.08R לעסקה)",
@@ -39839,6 +41564,122 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T00:25:55+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC022|5Min|EURUSD · 5 EMA high/low fade scalp, 8-pip stop, 5-pip target, London/NY open hour",
+     "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 742,
+      "eff_n": 741.2,
+      "mean": -0.1089,
+      "t": -4.32,
+      "win": 53.7
+     },
+     "unseen": {
+      "n": 967,
+      "eff_n": 966.8,
+      "mean": -0.1105,
+      "t": -5.24,
+      "win": 57.0
+     },
+     "whole": {
+      "n": 1709,
+      "eff_n": 1705.3,
+      "mean": -0.1099,
+      "t": -6.78,
+      "win": 55.7
+     },
+     "halves": [
+      -0.0938,
+      -0.1241
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC022|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "5 EMA high/low fade scalp, 8-pip stop, 5-pip target, London/NY open hour",
+       "source": "BabyPips forum",
+       "url": "https://forums.babypips.com/t/simple-5-ema-high-low-scalping-strategy/39154",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "37b2b5dff44e",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.11R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC001|1Min|EURUSD · RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 96,
+      "eff_n": 95.9,
+      "mean": -0.1605,
+      "t": -1.7,
+      "win": 37.7
+     },
+     "unseen": {
+      "n": 94,
+      "eff_n": 94.0,
+      "mean": -0.1164,
+      "t": -1.14,
+      "win": 39.2
+     },
+     "whole": {
+      "n": 190,
+      "eff_n": 189.5,
+      "mean": -0.1377,
+      "t": -1.98,
+      "win": 38.5
+     },
+     "halves": [
+      -0.1645,
+      -0.1113
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC001|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/dmaDXmJ9-RV-5-Min-Scalping-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "283b7e9c75b2",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.12R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     },
     {
      "bot": "bot5",
@@ -39889,7 +41730,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "7a8b2a89836d",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.13R לעסקה)",
@@ -39897,6 +41738,64 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T00:25:55+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC004|5Min|EURUSD · NFP straddle of the 4-hour pre-release range, target = range",
+     "what": "הסייר הביא אותה (BrokerXplorer (article)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 19,
+      "eff_n": 19.0,
+      "mean": -0.0687,
+      "t": -0.65,
+      "win": 42.4
+     },
+     "unseen": {
+      "n": 24,
+      "eff_n": 24.0,
+      "mean": -0.1374,
+      "t": -1.26,
+      "win": 45.7
+     },
+     "whole": {
+      "n": 43,
+      "eff_n": 42.9,
+      "mean": -0.1085,
+      "t": -1.41,
+      "win": 44.3
+     },
+     "halves": [
+      -0.1123,
+      -0.103
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC004|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "NFP straddle of the 4-hour pre-release range, target = range",
+       "source": "BrokerXplorer (article)",
+       "url": "https://www.brokerxplorer.com/article/day-trading-strategy-on-nfp-release-2878",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "c98a7c0119e0",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.14R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     },
     {
      "bot": "bot5",
@@ -39947,7 +41846,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "690ee05f5767",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.14R לעסקה)",
@@ -40005,7 +41904,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "ac41e06b3bbf",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.15R לעסקה)",
@@ -40063,7 +41962,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "33a0d4984e05",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.20R לעסקה)",
@@ -40071,6 +41970,64 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T00:25:55+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC026|15Min|EURUSD · Admiral Keltner 50/10/2.75 re-entry + Stochastic 14/7/3, target the middle, M15",
+     "what": "הסייר הביא אותה (Admirals blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 193,
+      "eff_n": 192.8,
+      "mean": -0.0256,
+      "t": -0.38,
+      "win": 50.9
+     },
+     "unseen": {
+      "n": 247,
+      "eff_n": 247.0,
+      "mean": -0.2091,
+      "t": -3.82,
+      "win": 46.1
+     },
+     "whole": {
+      "n": 440,
+      "eff_n": 439.0,
+      "mean": -0.1324,
+      "t": -3.08,
+      "win": 48.1
+     },
+     "halves": [
+      -0.0467,
+      -0.2105
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC026|15Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Admiral Keltner 50/10/2.75 re-entry + Stochastic 14/7/3, target the middle, M15",
+       "source": "Admirals blog",
+       "url": "https://admiralmarkets.com/analytics/traders-blog/scalping-with-admiral-keltner-indicator",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "df944378d98f",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.21R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     },
     {
      "bot": "bot5",
@@ -40121,7 +42078,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "db746d065ac6",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.23R לעסקה)",
@@ -40179,7 +42136,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "ae98b77bc2ea",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.25R לעסקה)",
@@ -40237,7 +42194,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "25ea4510e994",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.25R לעסקה)",
@@ -40245,6 +42202,122 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T00:25:55+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC009|15Min|EURUSD · Pivot liquidity sweep + momentum candle + EMA200, 1:2",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 217,
+      "eff_n": 216.8,
+      "mean": -0.1672,
+      "t": -1.94,
+      "win": 37.0
+     },
+     "unseen": {
+      "n": 272,
+      "eff_n": 271.9,
+      "mean": -0.2547,
+      "t": -3.29,
+      "win": 35.6
+     },
+     "whole": {
+      "n": 489,
+      "eff_n": 487.9,
+      "mean": -0.2176,
+      "t": -3.77,
+      "win": 36.2
+     },
+     "halves": [
+      -0.169,
+      -0.2635
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC009|15Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Pivot liquidity sweep + momentum candle + EMA200, 1:2",
+       "source": "TradingView",
+       "url": "https://in.tradingview.com/script/6dpq9Hjc-Gold-15m-Trend-S-R-Liquidity-Sweep-RR-1-2",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "c4f93c524b4e",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.25R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC027|5Min|EURUSD · Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
+     "what": "הסייר הביא אותה (forexop). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 4385,
+      "eff_n": 4380.4,
+      "mean": -0.2023,
+      "t": -27.5,
+      "win": 31.6
+     },
+     "unseen": {
+      "n": 5581,
+      "eff_n": 5579.9,
+      "mean": -0.2615,
+      "t": -33.25,
+      "win": 30.6
+     },
+     "whole": {
+      "n": 9966,
+      "eff_n": 9943.9,
+      "mean": -0.2366,
+      "t": -43.04,
+      "win": 31.0
+     },
+     "halves": [
+      -0.2039,
+      -0.2658
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC027|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
+       "source": "forexop",
+       "url": "https://forexop.com/strategy/simple-range-scalper/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "850a8da12bfd",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.26R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     },
     {
      "bot": "bot5",
@@ -40295,7 +42368,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "4cf00c64be0e",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.27R לעסקה)",
@@ -40353,7 +42426,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "f9c8ae62547a",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.27R לעסקה)",
@@ -40411,7 +42484,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "5d53f069b423",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.27R לעסקה)",
@@ -40469,7 +42542,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "85a27ec9c541",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.27R לעסקה)",
@@ -40527,7 +42600,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "bbdccb2bcd27",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.29R לעסקה)",
@@ -40585,7 +42658,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "1b2f557a40d5",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.34R לעסקה)",
@@ -40593,6 +42666,122 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T00:25:55+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC008|15Min|EURUSD · EMA 5/13 cross + VWAP + ADX>20, stop at the cross, 2R",
+     "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 341,
+      "eff_n": 340.6,
+      "mean": -0.1948,
+      "t": -2.63,
+      "win": 36.5
+     },
+     "unseen": {
+      "n": 438,
+      "eff_n": 437.9,
+      "mean": -0.3442,
+      "t": -5.34,
+      "win": 35.9
+     },
+     "whole": {
+      "n": 779,
+      "eff_n": 777.2,
+      "mean": -0.2819,
+      "t": -5.78,
+      "win": 36.1
+     },
+     "halves": [
+      -0.2281,
+      -0.3306
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC008|15Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "EMA 5/13 cross + VWAP + ADX>20, stop at the cross, 2R",
+       "source": "TradingView",
+       "url": "https://www.tradingview.com/script/UEFr9IXn-EMA-Crossover-Strategy-15M/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "c4e7ce2469fb",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.34R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC011|1Min|EURUSD · NY first 5m candle break, 1m FVG retest + engulfing, 3R",
+     "what": "הסייר הביא אותה (YouTube (Casper SMC)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 133,
+      "eff_n": 132.9,
+      "mean": -0.1354,
+      "t": -0.92,
+      "win": 32.4
+     },
+     "unseen": {
+      "n": 187,
+      "eff_n": 187.0,
+      "mean": -0.3854,
+      "t": -3.4,
+      "win": 28.9
+     },
+     "whole": {
+      "n": 320,
+      "eff_n": 319.3,
+      "mean": -0.2865,
+      "t": -3.18,
+      "win": 30.3
+     },
+     "halves": [
+      -0.1837,
+      -0.3782
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC011|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "NY first 5m candle break, 1m FVG retest + engulfing, 3R",
+       "source": "YouTube (Casper SMC)",
+       "url": "https://www.youtube.com/watch?v=8v-Z5oyKVG0",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "c2c4d4a9dac1",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.39R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     },
     {
      "bot": "bot5",
@@ -40643,7 +42832,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:56+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "921e37c815ff",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.40R לעסקה)",
@@ -40651,6 +42840,64 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T00:25:55+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC020|15Min|EURUSD · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 30,
+      "eff_n": 30.0,
+      "mean": -0.0438,
+      "t": -0.23,
+      "win": 39.8
+     },
+     "unseen": {
+      "n": 43,
+      "eff_n": 43.0,
+      "mean": -0.405,
+      "t": -2.79,
+      "win": 23.3
+     },
+     "whole": {
+      "n": 73,
+      "eff_n": 72.9,
+      "mean": -0.263,
+      "t": -2.23,
+      "win": 29.7
+     },
+     "halves": [
+      -0.1009,
+      -0.407
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC020|15Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+       "source": "ProRealCode",
+       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "6e45fe2f835a",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.41R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     },
     {
      "bot": "bot5",
@@ -40701,7 +42948,7 @@
        "added": "2026-11-12"
       }
      },
-     "made": "2026-11-13T05:02:57+00:00",
+     "made": "2026-11-13T10:06:02+00:00",
      "id": "01754dc31817",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.45R לעסקה)",
@@ -40709,18 +42956,482 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T00:25:55+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC014|1Min|EURUSD · VWAP cross + MACD flip, exit on the MACD cross back, 1-minute",
+     "what": "הסייר הביא אותה (FXOpen blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 1462,
+      "eff_n": 1460.5,
+      "mean": -0.4074,
+      "t": -9.79,
+      "win": 26.8
+     },
+     "unseen": {
+      "n": 1924,
+      "eff_n": 1923.6,
+      "mean": -0.462,
+      "t": -15.3,
+      "win": 25.5
+     },
+     "whole": {
+      "n": 3386,
+      "eff_n": 3379.0,
+      "mean": -0.4395,
+      "t": -17.74,
+      "win": 26.0
+     },
+     "halves": [
+      -0.412,
+      -0.4613
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC014|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "VWAP cross + MACD flip, exit on the MACD cross back, 1-minute",
+       "source": "FXOpen blog",
+       "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "ebee63cee398",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.46R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC003|1Min|EURUSD · Pavan CPR: cross above top CPR, stop at pivot, long only",
+     "what": "הסייר הביא אותה (TradingView (StockSharp port, 1-minute)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 260,
+      "eff_n": 259.7,
+      "mean": -0.2987,
+      "t": -1.0,
+      "win": 15.3
+     },
+     "unseen": {
+      "n": 374,
+      "eff_n": 373.9,
+      "mean": -0.4745,
+      "t": -2.2,
+      "win": 14.6
+     },
+     "whole": {
+      "n": 634,
+      "eff_n": 632.6,
+      "mean": -0.4059,
+      "t": -2.3,
+      "win": 14.9
+     },
+     "halves": [
+      -0.3904,
+      -0.4105
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC003|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Pavan CPR: cross above top CPR, stop at pivot, long only",
+       "source": "TradingView (StockSharp port, 1-minute)",
+       "url": "https://www.tradingview.com/script/C8spW2jl-Pavan-CPR-Strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "1071aa531193",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.47R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC027|1Min|EURUSD · Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
+     "what": "הסייר הביא אותה (forexop). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 17836,
+      "eff_n": 17817.5,
+      "mean": -0.4766,
+      "t": -74.6,
+      "win": 15.9
+     },
+     "unseen": {
+      "n": 22908,
+      "eff_n": 22903.5,
+      "mean": -0.5116,
+      "t": -82.52,
+      "win": 15.5
+     },
+     "whole": {
+      "n": 40744,
+      "eff_n": 40653.7,
+      "mean": -0.497,
+      "t": -110.88,
+      "win": 15.7
+     },
+     "halves": [
+      -0.4692,
+      -0.5211
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC027|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Meta Scalper: Bollinger touch and retrace, half-width stop, 5% width target",
+       "source": "forexop",
+       "url": "https://forexop.com/strategy/simple-range-scalper/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "53abf94f3c8e",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.51R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC028|5Min|EURUSD · DAX first 5-minute bar direction at 09:05, 5/10 points, flat 17:30",
+     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 173,
+      "eff_n": 172.8,
+      "mean": -0.4492,
+      "t": -4.44,
+      "win": 30.1
+     },
+     "unseen": {
+      "n": 224,
+      "eff_n": 224.0,
+      "mean": -0.5602,
+      "t": -6.67,
+      "win": 32.1
+     },
+     "whole": {
+      "n": 397,
+      "eff_n": 396.1,
+      "mean": -0.5141,
+      "t": -7.94,
+      "win": 31.3
+     },
+     "halves": [
+      -0.4629,
+      -0.5572
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC028|5Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "DAX first 5-minute bar direction at 09:05, 5/10 points, flat 17:30",
+       "source": "ProRealCode",
+       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/intraday-dax-strategy-mini-1e-timeframe-5-min",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "4da4434398f1",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.56R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC023|1Min|EURUSD · Keltner scalp: SMA89 + MACD 5/34/5 turn + stochastic, 1-minute",
+     "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 6437,
+      "eff_n": 6430.5,
+      "mean": -0.4968,
+      "t": -17.99,
+      "win": 23.9
+     },
+     "unseen": {
+      "n": 8070,
+      "eff_n": 8068.4,
+      "mean": -0.5874,
+      "t": -23.97,
+      "win": 25.0
+     },
+     "whole": {
+      "n": 14507,
+      "eff_n": 14475.2,
+      "mean": -0.5491,
+      "t": -29.92,
+      "win": 24.6
+     },
+     "halves": [
+      -0.4986,
+      -0.5941
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC023|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Keltner scalp: SMA89 + MACD 5/34/5 turn + stochastic, 1-minute",
+       "source": "BabyPips forum",
+       "url": "https://forums.babypips.com/t/keltner-scalping-trading-system/692523",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "fde4c2d39321",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.59R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC029|1Min|EURUSD · Hull Suite 55 + DI cross, swing stop, 1:1, 1-minute",
+     "what": "הסייר הביא אותה (Axiory). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 5754,
+      "eff_n": 5747.9,
+      "mean": -0.5427,
+      "t": -33.13,
+      "win": 39.3
+     },
+     "unseen": {
+      "n": 7348,
+      "eff_n": 7346.5,
+      "mean": -0.6247,
+      "t": -38.7,
+      "win": 40.6
+     },
+     "whole": {
+      "n": 13102,
+      "eff_n": 13073.1,
+      "mean": -0.5903,
+      "t": -50.87,
+      "win": 40.0
+     },
+     "halves": [
+      -0.5469,
+      -0.6279
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC029|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Hull Suite 55 + DI cross, swing stop, 1:1, 1-minute",
+       "source": "Axiory",
+       "url": "https://axiory.com/trading-resources/strategies/one-minute-strategy",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "9cd709852ab3",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.62R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC015|1Min|EURUSD · ALMA 21 + Stochastic 21/1/3 cross of 20/80, 1-minute",
+     "what": "הסייר הביא אותה (FXOpen blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 11173,
+      "eff_n": 11161.4,
+      "mean": -0.6064,
+      "t": -40.05,
+      "win": 39.9
+     },
+     "unseen": {
+      "n": 14356,
+      "eff_n": 14353.1,
+      "mean": -0.6953,
+      "t": -48.13,
+      "win": 37.8
+     },
+     "whole": {
+      "n": 25529,
+      "eff_n": 25473.4,
+      "mean": -0.6582,
+      "t": -62.61,
+      "win": 38.7
+     },
+     "halves": [
+      -0.6001,
+      -0.7089
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC015|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "ALMA 21 + Stochastic 21/1/3 cross of 20/80, 1-minute",
+       "source": "FXOpen blog",
+       "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "eae39ef29982",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.70R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC016|1Min|EURUSD · RSI(4) 80/20 + Bollinger touch, target the opposite band, 1-minute",
+     "what": "הסייר הביא אותה (FXOpen blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 10905,
+      "eff_n": 10893.8,
+      "mean": -0.8367,
+      "t": -41.89,
+      "win": 29.3
+     },
+     "unseen": {
+      "n": 14056,
+      "eff_n": 14053.2,
+      "mean": -0.9268,
+      "t": -51.5,
+      "win": 29.8
+     },
+     "whole": {
+      "n": 24961,
+      "eff_n": 24906.0,
+      "mean": -0.8893,
+      "t": -66.39,
+      "win": 29.6
+     },
+     "halves": [
+      -0.8252,
+      -0.9451
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC016|1Min|EURUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RSI(4) 80/20 + Bollinger touch, target the opposite band, 1-minute",
+       "source": "FXOpen blog",
+       "url": "https://fxopen.com/blog/en/1-minute-scalping-trading-strategies-with-examples/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-13T10:06:02+00:00",
+     "id": "67f3f4fc7acb",
+     "tier": "rejected",
+     "verdict": "הפסיד בתקופה שלא נראתה (-0.93R לעסקה)",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     }
    ],
    "health": {
     "bot": "bot5",
     "name": "בוט 5 - סקאלפינג",
-    "updated": "2026-11-13T09:54:49+00:00",
-    "state_updated": "2026-11-13T09:52:43+00:00",
+    "updated": "2026-11-13T10:12:43+00:00",
+    "state_updated": "2026-11-13T10:11:04+00:00",
     "minutes_since_state": 2,
     "balance": 98353.93,
-    "equity": 98720.07,
-    "day_pct": 1.32,
-    "total_pct": -1.28,
+    "equity": 98628.05,
+    "day_pct": 1.23,
+    "total_pct": -1.37,
     "trades": 10,
     "mean_r": -0.349,
     "sum_r": -3.49,
@@ -40809,13 +43520,13 @@
   "bot6": {
    "name": "בוט 6 · חוזים עתידיים",
    "agent": true,
-   "updated": "2026-11-13T04:54:31+00:00",
+   "updated": "2026-11-13T09:57:16+00:00",
    "summary": {
     "v5": {
      "backtest": {
       "train": {
        "n": 1199,
-       "eff_n": 1165.4,
+       "eff_n": 1165.3,
        "mean": -0.0339,
        "t": -0.89,
        "win": 41.9
@@ -40830,7 +43541,7 @@
       "whole": {
        "n": 1898,
        "eff_n": 1843.0,
-       "mean": -0.0506,
+       "mean": -0.0505,
        "t": -1.66,
        "win": 40.0
       },
@@ -40860,7 +43571,7 @@
      "backtest": {
       "train": {
        "n": 5104,
-       "eff_n": 4994.9,
+       "eff_n": 4994.8,
        "mean": -0.1179,
        "t": -6.36,
        "win": 37.6
@@ -40874,7 +43585,7 @@
       },
       "whole": {
        "n": 9245,
-       "eff_n": 9047.9,
+       "eff_n": 9047.7,
        "mean": -0.0764,
        "t": -5.36,
        "win": 38.4
@@ -40887,10 +43598,10 @@
      },
      "live": null,
      "erosion": {
-      "recent_n": 2606,
-      "recent_mean": -0.0414,
-      "before_n": 5017,
-      "before_mean": -0.092,
+      "recent_n": 2600,
+      "recent_mean": -0.0422,
+      "before_n": 5023,
+      "before_mean": -0.0915,
       "slope_per_year": 0.0426,
       "fading": false
      }
@@ -40898,7 +43609,7 @@
    },
    "tested": 22,
    "progress": [
-    81,
+    82,
     132
    ],
    "risk_recs": 0,
@@ -40978,7 +43689,7 @@
       },
       "bot5": null
      },
-     "made": "2026-11-13T04:29:39+00:00",
+     "made": "2026-11-13T09:32:40+00:00",
      "id": "f02478f826fa",
      "tier": "regular",
      "verdict": "חיובי בתקופה שלא נראתה (+0.29R לעסקה, 31.0 עסקאות אפקטיביות) · נבדקו 96 שילובים, אז חלק מהיתרון עלול להיות מזל",
@@ -41064,7 +43775,7 @@
       },
       "bot5": null
      },
-     "made": "2026-11-13T04:29:39+00:00",
+     "made": "2026-11-13T09:32:40+00:00",
      "id": "cefeafe4d4d1",
      "tier": "regular",
      "verdict": "חיובי בתקופה שלא נראתה (+0.25R לעסקה, 32.0 עסקאות אפקטיביות) · נבדקו 96 שילובים, אז חלק מהיתרון עלול להיות מזל",
@@ -41075,6 +43786,596 @@
      "by": "manager",
      "decided": "2026-11-13T00:13:21+00:00",
      "decision_id": "6d9d0a053ac3"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · 15 דק' / 5 דק'",
+     "what": "שיטת הגאפ של טל, 15 דק' / 5 דק' (פער 1 דרגות): חיפוש: GBODY=0.0, MIN_GAP=0.6, SW=3, MIN_RR=2.0, EXPIRY=120, PROT=none, EXIT=be786, TREND=day, בלי הגנה. נבחר על 2024-2025, מוצג על 2026: +0.14R לעסקה, 187 עסקאות, 36.9% הצלחה, 21.2% הגיעו ליעד, יחס חציוני 2.93, עלות 0.071R · בבוט 5: +0.02R בתקופה שלא נראתה (search=7bee88d93d) · סה\"כ על 2026: +25.4R · בבוט 5 אותו שינוי: rejected, +0.02R בתקופה שלא נראתה",
+     "train": {
+      "n": 425,
+      "eff_n": 411.7,
+      "mean": 0.172,
+      "t": 1.65,
+      "win": 31.2
+     },
+     "unseen": {
+      "n": 187,
+      "eff_n": 187.0,
+      "mean": 0.1356,
+      "t": 1.07,
+      "win": 36.9
+     },
+     "whole": {
+      "n": 612,
+      "eff_n": 591.0,
+      "mean": 0.1587,
+      "t": 1.95,
+      "win": 33.2
+     },
+     "halves": [
+      0.1553,
+      0.1912
+     ],
+     "neighbours": {
+      "values": [
+       "019a9e3511",
+       "02ae772fa0",
+       "02cbf104f6",
+       "0397ca2888",
+       "04e90e15b2",
+       "066c3926d2",
+       "07578f5fdb",
+       "07e8b2ce9f",
+       "087045df59",
+       "0891fb191e",
+       "098a7d6b52",
+       "09b079bccb",
+       "0a6c2b8eb2",
+       "0b4b921ccc",
+       "0b66664bbf",
+       "0b6b78036f",
+       "0d11731f62",
+       "0d4440d6f0",
+       "0e670db4bd",
+       "0f59740fc0",
+       "10c42945bc",
+       "11253f3308",
+       "118baac7ee",
+       "121323e6aa",
+       "128bb72601",
+       "129dd2c80a",
+       "12a612969f",
+       "1338d009f5",
+       "138ca9b279",
+       "1398c95ff7",
+       "14057093f7",
+       "14107264f6",
+       "148fc2ee92",
+       "15200efe89",
+       "1566797ad4",
+       "171a934680",
+       "1878db7f7a",
+       "189100e9da",
+       "18a961935e",
+       "191d150340",
+       "19d7df3130",
+       "1a14d273cd",
+       "1bf34160f6",
+       "1c03b8f880",
+       "1c44ddf3b5",
+       "1cbc6ca407",
+       "1cc1e4b222",
+       "1d4b1f4d88",
+       "1d9c86f53d",
+       "1e2887877b",
+       "1f3b87da4c",
+       "1f4b3f6644",
+       "21b67b9f04",
+       "21bb07a243",
+       "22708d4471",
+       "2317c0a5d6",
+       "23690f3555",
+       "23c590ba05",
+       "240b002cc9",
+       "24cf0b7427",
+       "24e144ff72",
+       "26ec41134a",
+       "27fcfc4026",
+       "2837bd3a54",
+       "289767885b",
+       "28c9bb5d48",
+       "29893a91ac",
+       "2a2499dfcf",
+       "2be47fed39",
+       "2c1d2b3a48",
+       "2cf1cc2da7",
+       "2d7bd3f81c",
+       "2de8f8c543",
+       "2e3948c1b9",
+       "2e86bac7cf",
+       "2e9b6ffb1d",
+       "2eb14a4cee",
+       "2ed5691ac2",
+       "30acfa9669",
+       "312f26e1f4",
+       "318fd32d24",
+       "32656a006f",
+       "330320d65a",
+       "3305e3847f",
+       "330d68cfe8",
+       "3469c96954",
+       "34c5596934",
+       "35fa0acc71",
+       "3655e3526c",
+       "36c2214930",
+       "3715e777ce",
+       "372014e958",
+       "375233735a",
+       "37b9c87483",
+       "37ed124a4c",
+       "38467dc093",
+       "38b1ea657d",
+       "3a946d4b35",
+       "3a980a9260",
+       "3ae05151fe",
+       "3b6f6f55d5",
+       "3cc9818cfd",
+       "3dd3528bbf",
+       "3e6a0f2c0a",
+       "3e886962cc",
+       "3ebd6ff6ad",
+       "3fc5598a93",
+       "4062459c02",
+       "40884c945f",
+       "40fdef70e3",
+       "41936f51e5",
+       "4236ac581f",
+       "42efc661fb",
+       "4319b71343",
+       "4338789926",
+       "4584665068",
+       "45e2632a91",
+       "45f92b017c",
+       "45fa84381e",
+       "46e8d3e1e2",
+       "4731701318",
+       "478842b9a5",
+       "478f1eb232",
+       "480eb55df4",
+       "483d28241a",
+       "484690bae0",
+       "4926d9bca1",
+       "4956daff84",
+       "49787693ad",
+       "49e7ce1010",
+       "4a369a1be5",
+       "4aac43e781",
+       "4ae15a1c03",
+       "4b13a01b0e",
+       "4bb09bca37",
+       "4c479138cb",
+       "4c76ab6b12",
+       "4cb5927f93",
+       "4d498283b8",
+       "4e81fe5434",
+       "4eeee63412",
+       "4f6db11b65",
+       "4f76bcc23c",
+       "4facc422df",
+       "50932b088a",
+       "509b7d4e46",
+       "50cee2cc00",
+       "511cff43fe",
+       "53873fb41d",
+       "544ce33b0d",
+       "55121d8a5c",
+       "552080e24a",
+       "55ac5af893",
+       "55af16c081",
+       "57385de07e",
+       "57e30667b7",
+       "58f51f24c4",
+       "59d7c9b186",
+       "59dd5653bb",
+       "5a02a01c4a",
+       "5a82275976",
+       "5a9861892e",
+       "5adb6f73bd",
+       "5bc968807a",
+       "5cb43864b0",
+       "5cb8aa3fa8",
+       "5d69b5dd2f",
+       "5df1a8f51f",
+       "5e8f3d3c87",
+       "5fdab6a556",
+       "60488b2346",
+       "62eca3f427",
+       "6369d90d21",
+       "63f6d429d9",
+       "64074fc71d",
+       "648e447d88",
+       "65b51e06e0",
+       "668946cb0f",
+       "66b638a03c",
+       "678db3579d",
+       "69d19fa174",
+       "6a368e5c64",
+       "6a3e96fd79",
+       "6a66ee4ff5",
+       "6ba6430bcb",
+       "6bba87a379",
+       "6bc2108bac",
+       "6c027cbf96",
+       "6c75bd340f",
+       "6ce961f1b0",
+       "6d586da5ef",
+       "6d6d3b35a2",
+       "6e78a3de35",
+       "737c05cf51",
+       "739d373f9f",
+       "73db1db135",
+       "7507680af3",
+       "750e0680a5",
+       "759aa003d9",
+       "75bb418db3",
+       "75ecc1dfef",
+       "76f4e16bdc",
+       "771ac0169e",
+       "77225b0b73",
+       "778b507a84",
+       "779791ac02",
+       "77c9d59c39",
+       "77d7c541f4",
+       "78be49c872",
+       "79b899ebe6",
+       "7b81dbdf0e",
+       "7bee88d93d",
+       "7c6be6f20b",
+       "7c93afb16d",
+       "7caf8cdca3",
+       "7ccf9d61a5",
+       "7dcf2015bf",
+       "7e1ac486cd",
+       "7e3d843bb1",
+       "7e4e66f4f8",
+       "7e5bc4ea7e",
+       "7ea4700e55",
+       "7ee5a0a9e7",
+       "82595c6a07",
+       "829d9cce62",
+       "82a613710b",
+       "834abda90a",
+       "834b259a99",
+       "850219257f",
+       "8525a85e2a",
+       "8606ed2da6",
+       "876907cdbe",
+       "87a4d13e5e",
+       "882cc820cc",
+       "883d75f438",
+       "889539aa2a",
+       "8b29294924",
+       "8b33996d03",
+       "8bdef69a93",
+       "8c5295d3a0",
+       "8e15fd2f68",
+       "8e79a7a72f",
+       "8e8e7e2ebb",
+       "8ebabd667d",
+       "8ecf28b406",
+       "8f6153e504",
+       "8fe0f01e03",
+       "903af9e7a4",
+       "90708dc0d2",
+       "911e1cdacb",
+       "916d763e35",
+       "9216f2def5",
+       "9228f02121",
+       "926271e5a4",
+       "92edd2e85d",
+       "92fac30358",
+       "93ccc873c5",
+       "9455d350bb",
+       "94b047545a",
+       "95585422ba",
+       "9581d68706",
+       "95cc370bef",
+       "962ace0e24",
+       "96d2bb58b5",
+       "97894a8d01",
+       "97908a5b06",
+       "979ab2135d",
+       "97a7cdbae0",
+       "97d295828d",
+       "983699f7be",
+       "99414eedf0",
+       "9993d4ca88",
+       "99c5559b29",
+       "99cfe5a758",
+       "9a89abb157",
+       "9b5207e0aa",
+       "9c37f80c78",
+       "9d2145b779",
+       "9d782cf7a0",
+       "9ef1400253",
+       "9f2564b1c9",
+       "9f2cf61f98",
+       "a035697354",
+       "a0a5269235",
+       "a0add51091",
+       "a132a6b2ab",
+       "a193e1d5b9",
+       "a20a350f35",
+       "a2df971863",
+       "a33e1b3076",
+       "a37fa2b91a",
+       "a3a483cf0a",
+       "a3a7ece95e",
+       "a458eaa91d",
+       "a4fab4fc65",
+       "a5b7c39d46",
+       "a693060a0e",
+       "a726a3d2d2",
+       "a7c4b0da44",
+       "a83d03f520",
+       "a99290dae5",
+       "aa50811789",
+       "aa8630f55e",
+       "aaf66b3eb7",
+       "ab9c0c03dd",
+       "ac20de2345",
+       "acd0ce7f10",
+       "ad29f100f4",
+       "ad966e64bc",
+       "addd183424",
+       "ae027f12f3",
+       "af41a1b661",
+       "af7cecdc26",
+       "af7e1a9461",
+       "b0805c8753",
+       "b124dd7ed4",
+       "b2df09b738",
+       "b2e8762f61",
+       "b33f518d44",
+       "b386ce9f5a",
+       "b3b0b58223",
+       "b3ec75c880",
+       "b524beb545",
+       "b5859c6a0d",
+       "b5ff6ce0b2",
+       "b66ed8f1b2",
+       "b6abc9b905",
+       "b6f40cffca",
+       "b7212213b3",
+       "b7b597ef0a",
+       "b7be0c10a5",
+       "ba8192a8eb",
+       "bace289717",
+       "bb559bd591",
+       "bb8a1dd91f",
+       "bbb64f6a47",
+       "bbbef9c837",
+       "bbcf7d576b",
+       "bbd8245296",
+       "bc81f57046",
+       "bcda28b556",
+       "bce49b6c7f",
+       "bde4360488",
+       "be486e7bd4",
+       "be5be8839d",
+       "beffb78310",
+       "bf164c2830",
+       "bfbcd2ebf2",
+       "bff83bfd0e",
+       "c09c52dbf3",
+       "c14e281066",
+       "c153bf3e98",
+       "c17fe0173c",
+       "c1c949beab",
+       "c251c2588c",
+       "c2c3fc0ece",
+       "c2d913acc3",
+       "c46242d805",
+       "c52b08f45a",
+       "c5e9119c18",
+       "c60a6f3473",
+       "c7075e9b2f",
+       "c783b4cb7b",
+       "c79b1da647",
+       "c84a4e6c17",
+       "c904dfe8a3",
+       "c9c391530d",
+       "c9e6d4e1c0",
+       "c9fb90deaf",
+       "ca8fbe0225",
+       "cab5071497",
+       "cabc4b3a5b",
+       "cb9f9bf84f",
+       "cbc180d606",
+       "cd7fcef093",
+       "cdebb7be4b",
+       "ce5cca3d50",
+       "ce8bc22f79",
+       "cea61837e7",
+       "cf541a35e0",
+       "cf68446070",
+       "cf74fb2325",
+       "cff5b98bf4",
+       "d01376e7a3",
+       "d0286c4665",
+       "d0ff296292",
+       "d150c9076f",
+       "d18f9fe5f8",
+       "d1ccb9d229",
+       "d1f458995a",
+       "d234fbf76f",
+       "d2d6920543",
+       "d4b2ad3e00",
+       "d50b7666fe",
+       "d6832b771b",
+       "d6cb24ed43",
+       "d721344e0d",
+       "d7456cf05f",
+       "d7c912fbdf",
+       "d97620e1ee",
+       "d980ce20d9",
+       "db316b23cf",
+       "dbb1f98ff7",
+       "dbea5b04cd",
+       "dd67626da5",
+       "dd8a0fbad2",
+       "ddbe7dc38d",
+       "ddfb5d218d",
+       "df7b2613cd",
+       "e08896d73d",
+       "e0ef78100d",
+       "e1caea3c56",
+       "e21d463905",
+       "e27d47c467",
+       "e32198d9de",
+       "e358e77eac",
+       "e44525a19b",
+       "e5e7f84ce0",
+       "e64a995e10",
+       "e66cd36de2",
+       "e6b52427ac",
+       "e6e8d2cff7",
+       "e714f8e74f",
+       "e7807ae1a7",
+       "e7ed317b6e",
+       "ea8d68867c",
+       "eace450411",
+       "ed939f45d4",
+       "edcd7673f7",
+       "ee0497b998",
+       "f004278d4f",
+       "f0a8a86100",
+       "f1403e4899",
+       "f26d6c0727",
+       "f2e17e685f",
+       "f334151e73",
+       "f518a04bad",
+       "f6d2c00d2b",
+       "f7b2eab380",
+       "f7c2528a7a",
+       "f874911560",
+       "f8a255ae1b",
+       "f8c6a44e8a",
+       "fb254212c0",
+       "fb6f2b4707",
+       "fbeebc9bf7",
+       "fc040db5fe",
+       "fc646b075c",
+       "fc66c1aec3",
+       "fd1a34c2c0",
+       "fd682484a0",
+       "fdaf0750da",
+       "fe63b9d2da",
+       "fed7324e3c",
+       "ff832ba0e7",
+       "ff9343eab9",
+       "93d1e1f143",
+       "acedea24da",
+       "9d062b3f14",
+       "fa2550cbdc",
+       "0b42de1b57",
+       "c2fd8e836b",
+       "eb1c7ea862",
+       "4cb39f6b47",
+       "dd6ab06225",
+       "d45872f3ad",
+       "f698acf6ba",
+       "6c4a214d89",
+       "b54c9eb10e",
+       "7d3934fdf4",
+       "ad0ea19d65",
+       "fc122b85cf",
+       "f09a3cfa8b",
+       "b35435263b",
+       "fe35b99802",
+       "1cdd34b7e5",
+       "2dd0004602"
+      ],
+      "share_positive": 0.1
+     },
+     "tested": 432,
+     "cost_r": 0.071,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap",
+      "pair": "15m/5m",
+      "cfg": {
+       "GBODY": 0.0,
+       "MIN_GAP": 0.6,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 120,
+       "PROT": "none",
+       "EXIT": "be786",
+       "TREND": "day"
+      },
+      "track": "tal_gap|15m/5m",
+      "knob": "cfg"
+     },
+     "detail": {
+      "other_bot": {
+       "name": "בוט 5",
+       "unseen": 0.0175,
+       "cfg": {
+        "GBODY": 2.0,
+        "MIN_GAP": 0.6,
+        "SW": 3,
+        "MIN_RR": 2.0,
+        "EXPIRY": 8,
+        "PROT": "none",
+        "EXIT": "be886"
+       }
+      },
+      "protection": {
+       "none": {
+        "train": -0.0774,
+        "unseen": -0.0174,
+        "n": 2899
+       },
+       "cal15": {
+        "train": -0.1131,
+        "unseen": -0.0097,
+        "n": 2606
+       },
+       "cal60": {
+        "train": -0.1241,
+        "unseen": -0.0099,
+        "n": 2566
+       },
+       "shock": {
+        "train": -0.0652,
+        "unseen": -0.0142,
+        "n": 1623
+       },
+       "cal15shock": {
+        "train": -0.0704,
+        "unseen": -0.01,
+        "n": 1558
+       }
+      },
+      "bot5": {
+       "tier": "rejected",
+       "unseen": 0.0175
+      }
+     },
+     "made": "2026-11-13T09:20:09+00:00",
+     "id": "70ec01b414c4",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 187.0 עסקאות אפקטיביות) · נבדקו 432 שילובים, אז חלק מהיתרון עלול להיות מזל",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "b369f7e31ec7"
     },
     {
      "bot": "bot6",
@@ -41150,7 +44451,7 @@
       },
       "bot5": null
      },
-     "made": "2026-11-13T04:29:39+00:00",
+     "made": "2026-11-13T09:32:40+00:00",
      "id": "3434f4433c75",
      "tier": "regular",
      "verdict": "חיובי בתקופה שלא נראתה (+0.10R לעסקה, 64.0 עסקאות אפקטיביות) · נבדקו 96 שילובים, אז חלק מהיתרון עלול להיות מזל",
@@ -41161,6 +44462,829 @@
      "by": "manager",
      "decided": "2026-11-13T00:13:21+00:00",
      "decision_id": "dc0780ee3d99"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "שיטת הגאפ של טל · 5 דק' / דקה",
+     "what": "שיטת הגאפ של טל, 5 דק' / דקה (פער 1 דרגות): חיפוש: GBODY=2.0, MIN_GAP=0.0, SW=3, MIN_RR=2.0, EXPIRY=24, PROT=shock, EXIT=be382, IMP1=True, TREND=up20, זעזועים. נבחר על 2024-2025, מוצג על 2026: +0.10R לעסקה, 312 עסקאות, 23.7% הצלחה, 21.9% הגיעו ליעד, יחס חציוני 2.58, עלות 0.151R · בבוט 5: +0.04R בתקופה שלא נראתה (search=eaa3bdfdbc) · סה\"כ על 2026: +31.0R · בבוט 5 אותו שינוי: watch, +0.04R בתקופה שלא נראתה",
+     "train": {
+      "n": 741,
+      "eff_n": 718.3,
+      "mean": 0.0311,
+      "t": 0.51,
+      "win": 24.2
+     },
+     "unseen": {
+      "n": 312,
+      "eff_n": 311.9,
+      "mean": 0.0992,
+      "t": 1.14,
+      "win": 23.7
+     },
+     "whole": {
+      "n": 1053,
+      "eff_n": 1018.0,
+      "mean": 0.0552,
+      "t": 1.1,
+      "win": 24.0
+     },
+     "halves": [
+      -0.0316,
+      0.0928
+     ],
+     "neighbours": {
+      "values": [
+       "013f4d6360",
+       "01484f33a0",
+       "014c67aa6c",
+       "014d8d4748",
+       "016f0bda96",
+       "01a7f071aa",
+       "01ed934051",
+       "020bd5c5e2",
+       "021b72df37",
+       "02987d6997",
+       "0340df89c7",
+       "0389b9c7cf",
+       "03b9caa513",
+       "03d1c73cb8",
+       "0452120e19",
+       "0578901147",
+       "05b2d61300",
+       "05cb02aacc",
+       "0664d1430e",
+       "06916fe6e6",
+       "072e5b1138",
+       "07ecf9be33",
+       "08096eb5d2",
+       "08844f9ddd",
+       "0a15d02b2b",
+       "0b26c68876",
+       "0baf95e3bf",
+       "0bfcede859",
+       "0da2a53741",
+       "0dc67c7fe5",
+       "0e0da73df1",
+       "102db206fa",
+       "10aa99a1a7",
+       "11439c6d96",
+       "11a5ad6056",
+       "11ad0fa6c5",
+       "11ec9eaf27",
+       "1204bc8904",
+       "12151028c6",
+       "1291439130",
+       "1349967ad3",
+       "139b55c0a4",
+       "13b768a9ae",
+       "13e5ee90a7",
+       "14057093f7",
+       "14913ae966",
+       "14d185dc84",
+       "14f4d6ae31",
+       "15541b5239",
+       "164058f449",
+       "17d2299461",
+       "187df0c8ce",
+       "189100e9da",
+       "1996be40c3",
+       "1a0e99d254",
+       "1ad1916cd7",
+       "1b3df9fc18",
+       "1b9c4b9f64",
+       "1bf1881241",
+       "1cbcb8b8b3",
+       "1cfa91594b",
+       "1d46ee2497",
+       "1d4b1f4d88",
+       "1df8bfe454",
+       "1dfb6de53c",
+       "1dfd8fa76c",
+       "1eddfb6ad9",
+       "1fcde66f33",
+       "22508a9392",
+       "22d8a9cb8f",
+       "232e18ea54",
+       "23345a06d8",
+       "23b7215987",
+       "23bed157f5",
+       "23ee6beb3b",
+       "2407f0445a",
+       "2426c8033f",
+       "24548cff42",
+       "252975f4ff",
+       "25f75baff2",
+       "261191aa70",
+       "26de74e754",
+       "271a2e25d0",
+       "27c3d939f6",
+       "27cefff998",
+       "28137929d1",
+       "2837bd3a54",
+       "288a0bedef",
+       "2892aac346",
+       "28faeb6c82",
+       "2a9c7f69a9",
+       "2c069e9445",
+       "2c27af1d33",
+       "2c393246ef",
+       "2ce5e242da",
+       "2e582bafdf",
+       "2e8898ee34",
+       "2f6c06073a",
+       "30b43881a4",
+       "310a6cf734",
+       "31ad00b07c",
+       "31c07b4dac",
+       "31d6aefcd1",
+       "3224bd5ee3",
+       "328efeffb5",
+       "3316e36c35",
+       "331f97a097",
+       "3386417613",
+       "34b05d3c91",
+       "34be0d1383",
+       "34d827577c",
+       "352866c348",
+       "372014e958",
+       "37822f01a9",
+       "378d385a51",
+       "390b397f4e",
+       "3a041c81cb",
+       "3a05179fc3",
+       "3a62d7b5f6",
+       "3a6bfcfc72",
+       "3a980a9260",
+       "3b18b3924d",
+       "3b3af98ec7",
+       "3b48126395",
+       "3b57b1a233",
+       "3c09f75e78",
+       "3c196bb4d2",
+       "3c279d7fd2",
+       "3c89519d4d",
+       "3d07b731ae",
+       "3e81ebfc09",
+       "3f2aba5e36",
+       "3fa8275797",
+       "4088301827",
+       "40b342c010",
+       "40d69a457e",
+       "414a4a79c3",
+       "42849cca53",
+       "434ce2d83a",
+       "4482fc3861",
+       "44c766a05f",
+       "44e62d8dc7",
+       "461ac57a21",
+       "46e0c055f8",
+       "478842b9a5",
+       "48785d6a35",
+       "48f1529644",
+       "4a5175c28b",
+       "4abde11ef3",
+       "4adaf192d3",
+       "4b30997df5",
+       "4b76247a85",
+       "4b9bcc950b",
+       "4bb8652870",
+       "4bca9b5229",
+       "4bdab03891",
+       "4c734855b7",
+       "4cb5927f93",
+       "4d46c3f217",
+       "4ec35c0479",
+       "4ef145f8aa",
+       "4f2ef0c5a8",
+       "4fecc69408",
+       "4ff5fb01f5",
+       "500b3123ea",
+       "501b807bf4",
+       "5136547544",
+       "517c4df73b",
+       "51e975fd8f",
+       "54e7bd4a1c",
+       "54f779ebb2",
+       "550619b128",
+       "551fefe817",
+       "55a9926d51",
+       "5621f58d04",
+       "564fb41ce1",
+       "56b204270b",
+       "56d6871c58",
+       "56e245a879",
+       "57d19aee0e",
+       "5800c34671",
+       "5850c0e8db",
+       "5a14d52a4f",
+       "5a46334ec9",
+       "5a76b02274",
+       "5b7814accd",
+       "5c5e874919",
+       "5c79157845",
+       "5ca077c9a5",
+       "5d9c4e11b1",
+       "5d9da308ec",
+       "5dbe697f00",
+       "5e0f43cce9",
+       "5f9effc28f",
+       "5fc74b9f39",
+       "60488b2346",
+       "60f7e481e3",
+       "6104e42e40",
+       "612aba99c1",
+       "61880447b6",
+       "624e8e46e7",
+       "62a0603a2c",
+       "62b1cbcf50",
+       "62c1bf7e6d",
+       "634c83710c",
+       "63517cd3b6",
+       "63b1aaa1a6",
+       "63d4ff1e66",
+       "646d13c113",
+       "6483af9ed1",
+       "64966f4bfd",
+       "652fed4dbd",
+       "65d71c90dd",
+       "65f846bef6",
+       "664227de53",
+       "66dd17b9db",
+       "66feca3a95",
+       "67509ca587",
+       "6763856f17",
+       "678cef283b",
+       "67aab4faf2",
+       "68da120dff",
+       "68ed4d0c44",
+       "68f3be46ed",
+       "6af3a9c082",
+       "6b0587ae9f",
+       "6b24b977af",
+       "6b28073019",
+       "6c90dd80f6",
+       "6c92a55271",
+       "6ce961f1b0",
+       "6db965d879",
+       "6e9da03a3f",
+       "6ec6cca349",
+       "6f3e10d10c",
+       "6fe14f4c35",
+       "7035ac9c3d",
+       "706e7430cf",
+       "707a1df8a9",
+       "7085850bf7",
+       "721737d719",
+       "7217b26683",
+       "722b6d40ea",
+       "723e12ab99",
+       "733d37425e",
+       "74e1974848",
+       "7507680af3",
+       "7519de1355",
+       "7556a2d103",
+       "7621b2d59e",
+       "763aed2237",
+       "774d398ea0",
+       "77ac382ea0",
+       "7918d72ab0",
+       "7a4d9ed352",
+       "7aa7429704",
+       "7b5e3b6f9c",
+       "7be6510055",
+       "7c56ea1611",
+       "7caf8cdca3",
+       "7e11fd9269",
+       "7ec4518303",
+       "7ec71b4295",
+       "7ece2ff32b",
+       "7f6fb4003c",
+       "7f76d2dd27",
+       "801206d32a",
+       "80127ffa4b",
+       "818378f61a",
+       "81cc9322d0",
+       "81e1695c51",
+       "82595c6a07",
+       "829d9cce62",
+       "82a613710b",
+       "82e8e16f0c",
+       "8350853498",
+       "83a2d0ae9b",
+       "842df22a0d",
+       "848a7ad971",
+       "848d305dd9",
+       "851f6ad23c",
+       "8597f0716a",
+       "85a49d3117",
+       "87471ec9ac",
+       "874d3a8c83",
+       "875d23a788",
+       "87c4897fb3",
+       "87d7a0381e",
+       "87e926504d",
+       "87ef259f4f",
+       "881309bc68",
+       "8817890ae1",
+       "895c5ee8ed",
+       "895d1371db",
+       "8a1a51a6a5",
+       "8ac6029d30",
+       "8b7da67641",
+       "8d1f87d9a6",
+       "8d35aabc35",
+       "8ebabd667d",
+       "8ef5c9a37c",
+       "9107de9959",
+       "926d88f427",
+       "9485d81cac",
+       "9559aa2206",
+       "95707df324",
+       "95826d0064",
+       "96b9f9eb9f",
+       "975df027b0",
+       "98aa7acc7e",
+       "98cf806992",
+       "996993511e",
+       "996e1cb5bc",
+       "9a31deffc2",
+       "9a79774915",
+       "9a8390b38c",
+       "9ae78e3a2d",
+       "9b2d349767",
+       "9b6d1f02fc",
+       "9c556ff75b",
+       "9dcda6a3f3",
+       "9e07798b0e",
+       "9e3aa4a918",
+       "9e9095c8de",
+       "9eb991895b",
+       "9fda44414b",
+       "a04b6c5dd5",
+       "a0a6b44f77",
+       "a1055a14f7",
+       "a150ecffb0",
+       "a15f9950ab",
+       "a1d0dfc7b0",
+       "a1d8d69fe5",
+       "a1f83f52a6",
+       "a20a350f35",
+       "a256e136ef",
+       "a25f44c538",
+       "a263bcfb86",
+       "a356d7cf5c",
+       "a383598a11",
+       "a4e9cbed54",
+       "a4fab4fc65",
+       "a59075a102",
+       "a5c6cc5331",
+       "a64c4086da",
+       "a6b1a05bfa",
+       "a726a3d2d2",
+       "a72d6b6b5f",
+       "a773737691",
+       "a78c7dc510",
+       "a89e3feba7",
+       "a91c74feb6",
+       "aa402d6ef8",
+       "aad4035373",
+       "abfbb63d82",
+       "ad332e79fc",
+       "ad63c19c79",
+       "ada0d7a415",
+       "ae063ddb60",
+       "ae7725c413",
+       "ae95fba875",
+       "b0745c760c",
+       "b076311712",
+       "b0805c8753",
+       "b1aa6769b7",
+       "b1b1c27bb3",
+       "b1b6a545a0",
+       "b2f7657792",
+       "b452212cc4",
+       "b58d11f7cc",
+       "b5e3746a10",
+       "b640aeede1",
+       "b66ed8f1b2",
+       "b674ac0409",
+       "b6a019f93c",
+       "b773e4fc9b",
+       "b9883d683e",
+       "ba29da94e0",
+       "ba419dbe25",
+       "bacecfeeb9",
+       "bbbfc7fd9e",
+       "bbca59cf24",
+       "bcceb3e1d7",
+       "bcd475bd3f",
+       "bce49b6c7f",
+       "bcff84b9fd",
+       "bd87f118ca",
+       "be5be8839d",
+       "be6984143a",
+       "be915e5ed1",
+       "be9e78820a",
+       "bed7b0e26b",
+       "bf0ca7c763",
+       "bf7a25cdfc",
+       "bfba31778d",
+       "c06533eb74",
+       "c0736692c3",
+       "c140a4b283",
+       "c149b9b1ae",
+       "c1a6fa36cb",
+       "c26a8b8391",
+       "c2dcc2256e",
+       "c444c0e213",
+       "c5ac8db826",
+       "c678eca939",
+       "c8984ab6b8",
+       "c9b068685a",
+       "ca88da8d8a",
+       "caff2445d7",
+       "cb1d325092",
+       "cb4333ec5e",
+       "cca8f4a6eb",
+       "ccc0df5d6e",
+       "cd61809234",
+       "cd6c2fa7dd",
+       "cdd8c27675",
+       "cf0c62b055",
+       "cf21e98e96",
+       "cfe53b35ee",
+       "cff5b98bf4",
+       "d0286c4665",
+       "d0b45768d3",
+       "d182084103",
+       "d21f1ae996",
+       "d22891d3e2",
+       "d28a749434",
+       "d2b8203da3",
+       "d2d664e923",
+       "d37c9f6157",
+       "d43f823ee3",
+       "d46f812bc9",
+       "d471abeb71",
+       "d52f96b76f",
+       "d536cc7f6e",
+       "d63e40f27a",
+       "d6ce4b1ea6",
+       "d73fec6e84",
+       "d784ef3e35",
+       "d7addeeb40",
+       "d8066f219c",
+       "d8672d2cb7",
+       "d8ce3286d1",
+       "d95d5f46e9",
+       "da46222863",
+       "db6f1538ac",
+       "dbfb3689de",
+       "dcef962768",
+       "dd4ae9bfcb",
+       "dd8ef66619",
+       "dd9acc4aee",
+       "ddae9c4e7a",
+       "df84abee33",
+       "df90a86bbc",
+       "dfd59c468b",
+       "e019ec3fb1",
+       "e02157cf0b",
+       "e07dba675f",
+       "e0fd7b9a36",
+       "e29abd5699",
+       "e3590e3a4f",
+       "e3b63c8e77",
+       "e3bb7ec375",
+       "e45e8da12e",
+       "e529aa70bf",
+       "e5774dedb9",
+       "e5a33a578c",
+       "e81df021ee",
+       "e83a8f1904",
+       "e88d3c9fad",
+       "e8ac8f564d",
+       "e8b8b029fa",
+       "e8cab790b9",
+       "e9b3dfde23",
+       "ea23660f7a",
+       "ea7d9fd99b",
+       "eaa3bdfdbc",
+       "eb0d0540c5",
+       "eb0ed99783",
+       "eb2c8f44c1",
+       "eb3e468c11",
+       "ebcd7e7704",
+       "ec5b646a37",
+       "eda807c299",
+       "ee2292c7b2",
+       "efd89c9d99",
+       "f061d2351e",
+       "f0c82b33ea",
+       "f1093aa74e",
+       "f17d4b1f4d",
+       "f1acb5f35c",
+       "f1d2710d25",
+       "f1d4929b67",
+       "f21ba74d59",
+       "f22921d4c9",
+       "f245b591bd",
+       "f29804ecde",
+       "f322f7a81e",
+       "f387bfea7c",
+       "f3d81c2250",
+       "f40f56de12",
+       "f46dd91e03",
+       "f518a04bad",
+       "f51d192898",
+       "f58105be2d",
+       "f598872cbd",
+       "f5a5f6b951",
+       "f5d68264cf",
+       "f62522a49b",
+       "f690b8024f",
+       "f6b10a980e",
+       "f8183a9a09",
+       "f8eceec900",
+       "f9c7743b5e",
+       "f9c7a925ed",
+       "fad3bf84e8",
+       "fb4add7319",
+       "fbd83e9f9a",
+       "fbf8bba9cf",
+       "fc2a74e4e5",
+       "fc4cd94941",
+       "fc8ce1e7ca",
+       "fca72bc7cb",
+       "fd533209af",
+       "fdb3699ebc",
+       "ff74b01c23",
+       "fffa0dccff",
+       "3d66a02d6c",
+       "edbe8f0ad5",
+       "1c62f74bf5",
+       "dc4a1d98b5",
+       "da0f8a35f0",
+       "e6176d5063",
+       "925ac589c5",
+       "fd90a23faa",
+       "ac60fb69b1",
+       "2cf9f96745",
+       "943903b668",
+       "ac5cf1905f",
+       "80d2bea5c0",
+       "a7fe7f98c4",
+       "23e4de5536",
+       "3c5c4732aa",
+       "b7d6aefbfc",
+       "83d69eb9e6",
+       "8bc44b7ba4",
+       "704dc76cda",
+       "913014b74c",
+       "dde6114d1f"
+      ],
+      "share_positive": 0.36
+     },
+     "tested": 432,
+     "cost_r": 0.151,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "method": "tal_gap",
+      "pair": "5m/1m",
+      "cfg": {
+       "GBODY": 2.0,
+       "MIN_GAP": 0.0,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 24,
+       "PROT": "shock",
+       "EXIT": "be382",
+       "IMP1": true,
+       "TREND": "up20"
+      },
+      "track": "tal_gap|5m/1m",
+      "knob": "cfg"
+     },
+     "detail": {
+      "other_bot": {
+       "name": "בוט 5",
+       "unseen": 0.0381,
+       "cfg": {
+        "GBODY": 2.0,
+        "MIN_GAP": 0.6,
+        "SW": 3,
+        "MIN_RR": 2.0,
+        "EXPIRY": 24,
+        "PROT": "shock",
+        "EXIT": "be786",
+        "IMP1": true
+       }
+      },
+      "protection": {
+       "none": {
+        "train": -0.1806,
+        "unseen": -0.1121,
+        "n": 10103
+       },
+       "cal15": {
+        "train": -0.1975,
+        "unseen": -0.1081,
+        "n": 9453
+       },
+       "cal60": {
+        "train": -0.1963,
+        "unseen": -0.1114,
+        "n": 9227
+       },
+       "shock": {
+        "train": -0.1226,
+        "unseen": -0.0651,
+        "n": 6161
+       },
+       "cal15shock": {
+        "train": -0.1339,
+        "unseen": -0.0667,
+        "n": 5990
+       }
+      },
+      "bot5": {
+       "tier": "watch",
+       "unseen": 0.0381
+      }
+     },
+     "made": "2026-11-13T09:20:09+00:00",
+     "id": "4e4b0542d487",
+     "tier": "regular",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.10R לעסקה, 311.9 עסקאות אפקטיביות) · נבדקו 432 שילובים, אז חלק מהיתרון עלול להיות מזל",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T10:12:58+00:00",
+     "decision_id": "bdf2c66050b4"
+    },
+    {
+     "bot": "bot6",
+     "kind": "risk",
+     "title": "שיטת הגאפ בבוט 6, מסלול tal: סיכון 0.4% ← 0.38% (× 0.95)",
+     "what": "כל מסלולי שיטת הגאפ של בוט 6 יחד, בסיכון האמיתי של כל מסלול ועם המגבלות של הבוט (4.5% ביום, 9% בסך הכל). היום: 2024-2025: סה\"כ +28.4%, היום הגרוע -1.8%, הירידה הגדולה 7.3%; 2026: סה\"כ +19.2%, היום הגרוע -1.9%, הירידה הגדולה 7.4%. הכלל של בוט 5 (משותף): המקדם הגדול ביותר שבו 2024-2025 נשאר ב־80% מהמגבלות (ירידה ≤ 7.2%, יום ≥ -3.6%), נבחר רק על 2024-2025 → × 0.95. עם המקדם: 2024-2025: סה\"כ +27.0%, היום הגרוע -1.7%, הירידה הגדולה 7.0%; 2026 (לא נראתה): סה\"כ +18.2%, היום הגרוע -1.8%, הירידה הגדולה 7.1%. אסטרטגיות הסייר (0.28% כל אחת) מעל זה - לא בחישוב. בבוט 5 אותו כלל נתן × 0.5 (2026: ירידה 21% ← 10.5%).",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.38,
+     "baseline": null,
+     "change": {
+      "track": "tal",
+      "knob": "RISK_tal",
+      "from": 0.004,
+      "to": 0.0038
+     },
+     "detail": {
+      "world": "bot6",
+      "account": {
+       "risk_pct": {
+        "tal": 0.4,
+        "tal4h": 0.4
+       },
+       "now": {
+        "train": {
+         "total_pct": 28.45,
+         "worst_day_pct": -1.83,
+         "max_fall_pct": 7.35,
+         "low_pct": -3.28,
+         "daily_stops": 0,
+         "stopped": null
+        },
+        "unseen": {
+         "total_pct": 19.17,
+         "worst_day_pct": -1.87,
+         "max_fall_pct": 7.43,
+         "low_pct": -2.08,
+         "daily_stops": 0,
+         "stopped": null
+        }
+       },
+       "scale": {
+        "chosen": 0.95,
+        "fits": true,
+        "rows": {
+         "0.95": {
+          "train": {
+           "total_pct": 27.03,
+           "worst_day_pct": -1.74,
+           "max_fall_pct": 6.98,
+           "low_pct": -3.12,
+           "daily_stops": 0,
+           "stopped": null
+          },
+          "unseen": {
+           "total_pct": 18.21,
+           "worst_day_pct": -1.78,
+           "max_fall_pct": 7.06,
+           "low_pct": -1.98,
+           "daily_stops": 0,
+           "stopped": null
+          }
+         }
+        }
+       }
+      }
+     },
+     "made": "2026-11-13T09:20:06+00:00",
+     "id": "ab55bb9d45ab",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט · קודם מתקנים: הסוכן של הבוט צריך לנסות לתקן את האסטרטגיה, ורק אם לא יצליח - הפחתה או הסרה",
+     "status": "watch",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "risk",
+     "title": "שיטת הגאפ בבוט 6, מסלול tal4h: סיכון 0.4% ← 0.38% (× 0.95)",
+     "what": "כל מסלולי שיטת הגאפ של בוט 6 יחד, בסיכון האמיתי של כל מסלול ועם המגבלות של הבוט (4.5% ביום, 9% בסך הכל). היום: 2024-2025: סה\"כ +28.4%, היום הגרוע -1.8%, הירידה הגדולה 7.3%; 2026: סה\"כ +19.2%, היום הגרוע -1.9%, הירידה הגדולה 7.4%. הכלל של בוט 5 (משותף): המקדם הגדול ביותר שבו 2024-2025 נשאר ב־80% מהמגבלות (ירידה ≤ 7.2%, יום ≥ -3.6%), נבחר רק על 2024-2025 → × 0.95. עם המקדם: 2024-2025: סה\"כ +27.0%, היום הגרוע -1.7%, הירידה הגדולה 7.0%; 2026 (לא נראתה): סה\"כ +18.2%, היום הגרוע -1.8%, הירידה הגדולה 7.1%. אסטרטגיות הסייר (0.28% כל אחת) מעל זה - לא בחישוב. בבוט 5 אותו כלל נתן × 0.5 (2026: ירידה 21% ← 10.5%).",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.38,
+     "baseline": null,
+     "change": {
+      "track": "tal4h",
+      "knob": "RISK_tal4h",
+      "from": 0.004,
+      "to": 0.0038
+     },
+     "detail": {
+      "world": "bot6",
+      "account": {
+       "risk_pct": {
+        "tal": 0.4,
+        "tal4h": 0.4
+       },
+       "now": {
+        "train": {
+         "total_pct": 28.45,
+         "worst_day_pct": -1.83,
+         "max_fall_pct": 7.35,
+         "low_pct": -3.28,
+         "daily_stops": 0,
+         "stopped": null
+        },
+        "unseen": {
+         "total_pct": 19.17,
+         "worst_day_pct": -1.87,
+         "max_fall_pct": 7.43,
+         "low_pct": -2.08,
+         "daily_stops": 0,
+         "stopped": null
+        }
+       },
+       "scale": {
+        "chosen": 0.95,
+        "fits": true,
+        "rows": {
+         "0.95": {
+          "train": {
+           "total_pct": 27.03,
+           "worst_day_pct": -1.74,
+           "max_fall_pct": 6.98,
+           "low_pct": -3.12,
+           "daily_stops": 0,
+           "stopped": null
+          },
+          "unseen": {
+           "total_pct": 18.21,
+           "worst_day_pct": -1.78,
+           "max_fall_pct": 7.06,
+           "low_pct": -1.98,
+           "daily_stops": 0,
+           "stopped": null
+          }
+         }
+        }
+       }
+      }
+     },
+     "made": "2026-11-13T09:20:06+00:00",
+     "id": "abcd9dec1722",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט · קודם מתקנים: הסוכן של הבוט צריך לנסות לתקן את האסטרטגיה, ורק אם לא יצליח - הפחתה או הסרה",
+     "status": "watch",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:12:58+00:00"
     },
     {
      "bot": "bot6",
@@ -41210,7 +45334,7 @@
       },
       "chosen": null
      },
-     "made": "2026-11-13T04:29:39+00:00",
+     "made": "2026-11-13T09:32:40+00:00",
      "id": "24a699d13577",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -41264,7 +45388,7 @@
       },
       "chosen": null
      },
-     "made": "2026-11-13T04:29:39+00:00",
+     "made": "2026-11-13T09:32:40+00:00",
      "id": "2d87e847345a",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -41356,7 +45480,7 @@
      "train": {
       "n": 458,
       "eff_n": 443.5,
-      "mean": 0.1544,
+      "mean": 0.1545,
       "t": 2.15,
       "win": 41.5
      },
@@ -41380,74 +45504,124 @@
      ],
      "neighbours": {
       "values": [
+       "0020d18e8d",
+       "02756e708d",
        "02b4caeed2",
        "0316f795d0",
+       "036d55157f",
        "0429992090",
        "0556571f78",
+       "058b2945d8",
        "06086728f6",
+       "061006315e",
        "06b3f0933b",
+       "06ef7f31d4",
        "07b41f08cc",
        "0c771d5cd4",
        "0ca5204f23",
        "0d4c3a9f83",
+       "0d59318b2c",
+       "0e9a137984",
        "0ec2337f14",
        "0ed46a0508",
        "0faecea491",
        "1035dc2d72",
+       "10851e9c4d",
+       "10eeb08629",
+       "11c3318caa",
+       "1605be6f58",
+       "16a11ef0a0",
        "16e9f45fe3",
        "171a934680",
+       "1727bc8545",
+       "1780f4b077",
        "179e02c462",
+       "17a0c103bf",
        "17c9a3beff",
+       "17cb6f4224",
        "182dfc2504",
        "18a7107c0d",
        "18a9b7124f",
        "19146acefa",
        "192736f0d7",
+       "1974bded27",
        "1a14d273cd",
+       "1a72b6f15f",
+       "1aea4dcf6f",
        "1b572afdf2",
        "1d38baaba5",
        "1d38d91d19",
        "1d4b1f4d88",
+       "1df88fd6f4",
        "1e92a43716",
        "1ed2f5deb6",
        "1ef0d41e56",
        "20215f1d3b",
        "2123b3c747",
+       "21c85112e4",
        "2326ddc1d0",
+       "23ad21fd96",
        "2473cab3fb",
        "24c70e322e",
+       "269d5fbe13",
        "270a018764",
        "272c2b94f3",
        "27f5552eb7",
        "28437c58fa",
+       "295dcd4c7a",
        "29a1c4f16f",
+       "29f7a13288",
        "2b93cf363b",
        "2c1082a0c6",
+       "2cec4199ab",
        "2d11b45547",
+       "2e25e2f9c5",
+       "2e7cf9743f",
        "2f5e551352",
+       "308cb34471",
        "30f39725bd",
+       "32eb94018d",
        "331fc91f93",
+       "332dd3ed7f",
        "33b231024b",
        "33fbd26ab6",
+       "34b61afc1f",
        "3506c225fc",
+       "354d9347d4",
        "365bac0c24",
+       "3750cd100c",
        "37e5a7b649",
+       "37f47b0062",
        "380886bb53",
        "381767b16d",
+       "38bad9bf5e",
+       "38df5aee0a",
+       "39042676d6",
        "3916362ebc",
        "39d3954238",
+       "3a3f625d44",
+       "3a70176f13",
        "3a980a9260",
+       "3b80eb1d58",
        "3cfbb7690e",
        "3d120cc701",
+       "3d95e814ca",
+       "3e33d2f51a",
        "3e5571ae9d",
        "3e9de97129",
+       "3f41b4c674",
+       "3f78967a8e",
        "3fa043f052",
        "3feb29e0cb",
        "40832d5f0e",
+       "40debf80dd",
+       "410af82dfd",
        "4279b880c8",
        "42a45feb1e",
        "43725693aa",
        "43b7464769",
+       "43c24eaf79",
+       "43e7d88cde",
        "449e002419",
        "4540a072e1",
        "45840b195f",
@@ -41455,12 +45629,16 @@
        "4627c5b88d",
        "463980e3e9",
        "46a52274b2",
+       "46acc00265",
+       "46ee4e93e3",
        "47ef32142d",
        "47f86c3941",
+       "48043908e4",
        "484690bae0",
        "4855b5912c",
        "491bb5bb9d",
        "49f206f441",
+       "4b57ab1a6b",
        "4cc787de71",
        "4e5991baf3",
        "4e92b1a513",
@@ -41469,49 +45647,76 @@
        "4f68ba7598",
        "4f6db11b65",
        "5059f68d72",
+       "50622d652d",
+       "50e1971b24",
        "510f2c7b13",
+       "5116f503dd",
+       "513003c40c",
+       "51a20708ba",
        "53d6fa11b1",
+       "54a1a38549",
+       "54cd61c09c",
        "5539ac8eb3",
        "558d622845",
        "55ac5af893",
        "55c1203ecd",
+       "55e4e486fb",
        "55e793c709",
        "5a322df2e7",
        "5a85991e12",
+       "5bb5b61325",
        "5cde3ccf7f",
+       "5d5c7b0449",
+       "5db46cb322",
        "5e186e135a",
        "5e363cb4ab",
        "5fb4a2848d",
        "6027fe9008",
        "60a69a727f",
        "60fe73b162",
+       "6168d14c21",
        "61c71265d7",
        "61cda5d821",
+       "62365bc5fc",
+       "631855652c",
+       "644b1e788e",
        "64848ad67e",
+       "64dcf07778",
+       "6570450410",
        "657ffb09c1",
        "664c7879bd",
        "66d94ed501",
        "67348506b9",
        "67840af10f",
+       "67ae548cec",
        "67d96df132",
+       "6888413144",
+       "6893387666",
        "693c8c7208",
+       "6a76d4c2dd",
+       "6c12e5df21",
        "6ce961f1b0",
        "6e8d0e8079",
        "6f80bb3747",
+       "6fca5a5fd6",
        "6fe6939b77",
        "6ff6238759",
        "70444b5ccc",
        "707d35ffe1",
        "70b3017d1c",
        "70c17ba875",
+       "7125c4b336",
+       "712641914f",
        "718f24746f",
        "71e107c5c0",
        "7329eeaf5c",
        "7438fe8211",
        "74b22319a6",
+       "74d2bc652e",
        "74e872afa7",
        "7507680af3",
        "751b0058cf",
+       "755a9ee00c",
        "7590b9f144",
        "76dc357969",
        "771e933704",
@@ -41519,6 +45724,7 @@
        "77c9d59c39",
        "78015aded3",
        "798ce02d0c",
+       "79e004ed26",
        "7a021af061",
        "7adccb0e3d",
        "7bbbe0b389",
@@ -41526,13 +45732,18 @@
        "7d6e8d1545",
        "7e5b5756b6",
        "7e99c0dc07",
+       "7f40796472",
        "804cd6b41e",
+       "80a0151519",
+       "81541bab34",
        "818f9a307c",
        "81d2c33d8f",
+       "825fc9db1b",
        "8283166917",
        "82e396740a",
        "83cc087d16",
        "8469a1511f",
+       "8613af659e",
        "86435e6185",
        "864ab08288",
        "86e8f89d56",
@@ -41540,289 +45751,227 @@
        "87487934c8",
        "87985ffcc1",
        "87df4cccc9",
+       "8817392810",
        "8854a87c2a",
+       "88f0138193",
        "89fdb0f7f8",
        "8a6389ceb4",
        "8a7e260374",
+       "8b0a316f6d",
        "8bb2b02e8d",
        "8c070f335e",
        "8c5295d3a0",
        "8d0bc33faa",
+       "8d7a105d80",
+       "8e3a1ef509",
        "8ebabd667d",
+       "8efb673b29",
+       "8f336035a4",
        "90d6787c8e",
        "9159453703",
+       "91b383fcbf",
        "92a1b07481",
        "92ebb9c775",
+       "93084fc4ba",
        "93d4ec3cd5",
        "93e0d4b571",
        "94f83c2780",
        "954e4d32c6",
        "959587876c",
        "95fb7d225d",
+       "95ff22cc95",
        "965bc49cb0",
        "967137c48a",
        "96b215804d",
+       "96bd991874",
+       "9797ced005",
        "985a07a7c6",
        "99a3dc0139",
+       "9b21a13bd2",
        "9c210f3ec4",
        "9c313bcba3",
+       "9cad30a59f",
+       "9d9159801a",
+       "9dce1634f5",
        "9df93afbf3",
        "9f4a7d93b5",
        "9fdace9ba1",
+       "a0c409afdf",
+       "a0efaec8c1",
        "a15d648136",
+       "a1781a43d3",
        "a181668182",
+       "a323f76276",
        "a401ceef45",
+       "a41c10fc6d",
        "a4ddf95a5a",
        "a5c6cc5331",
+       "a6a9726ec2",
+       "a6cdb3ab45",
        "a7c06de8a6",
+       "a8cd0ef399",
        "a90f1b7a0b",
        "a988e8ebe2",
+       "aa12dfb236",
        "aa77e68463",
        "aaa2138652",
        "abb4631838",
+       "acc140d0b6",
        "acd17502aa",
+       "ad1c3e4a56",
        "ad2ee94cc0",
+       "ad840f4161",
+       "aecbb1dc24",
        "aeda3d7fc8",
+       "af1750a49d",
        "b0027738ea",
        "b0d8daf365",
+       "b15f36cdc9",
+       "b17749c226",
+       "b238eb9e21",
        "b2e3ee3fed",
        "b3596ea585",
        "b4a6b6b91f",
        "b59a66748b",
+       "b5a4807035",
+       "b6ebaa8afe",
        "b9cb8d455b",
        "b9fce60183",
+       "bbc1996840",
        "bbd8245296",
        "bd1b55bcd6",
+       "be66e27fb3",
        "be9983d411",
        "bf97e00cf3",
        "c202b2098d",
+       "c35415911d",
        "c36a7f422c",
        "c4d66a2500",
+       "c59509766c",
        "c5f5f31ee8",
        "c689f41384",
+       "c6b1ea1a1f",
        "c6e649977b",
        "c7cc7b7cfd",
+       "c7f7e576b4",
+       "c80c562e80",
+       "c823d3b6a2",
        "c86ca5d4bb",
        "c8f24dfa86",
+       "c978e2c474",
+       "ca3efb152a",
        "cb5a714a38",
        "cc5bcb5009",
+       "cd2619537f",
+       "ce4069ba1f",
        "ceeaf14740",
        "cf723cfe78",
+       "cfe0cce57a",
        "d06980e87b",
        "d1a338f9cb",
+       "d1c3c93745",
        "d31051f821",
        "d38d30fc48",
+       "d3db3fd6f3",
        "d4969d4676",
+       "d52ddb7476",
+       "d57863a3c9",
        "d762dd83e3",
        "d7a0b68921",
        "d7c612ba71",
        "d853e78a0f",
        "d95d5f46e9",
        "da1fe7d105",
+       "da9af0929a",
+       "db3489eceb",
        "db5994a00b",
+       "dd6aeaf5e7",
        "dd8ef66619",
        "ddbe7dc38d",
+       "ddc7f9d583",
+       "de05810a4c",
        "de5edd3934",
+       "deef19a374",
+       "dff12e5850",
        "e02237da9d",
        "e28de975be",
        "e307bb65a5",
+       "e3d859816d",
        "e3f669b48c",
        "e451ef547d",
+       "e4528895cc",
        "e4d1ecc1ce",
        "e57571bc10",
+       "e581ac6ab2",
        "e59c7cdf0d",
        "e6140905dd",
        "e6ecf41356",
+       "e81a10bcd4",
+       "e82fde82e0",
        "e87350ff88",
        "e8a66317d7",
        "e8eb48cdde",
        "e914e7ba87",
        "e99a65cc90",
+       "e9b237ff35",
        "eaf1837677",
        "ec60f3b519",
        "ee62a19a5d",
+       "efc077d99c",
        "f009a97efd",
        "f0eee3284f",
+       "f193c0f698",
+       "f19fe78b2a",
        "f1c200213e",
+       "f26ecd1a8c",
        "f387352468",
        "f3a462a9eb",
        "f509eeeedf",
        "f6e5cf0201",
        "f7462a81cb",
+       "f77b03008d",
        "f7a47bcd9e",
        "f7f63fd7e1",
        "f84b8a9eac",
+       "f8d5fb1f75",
        "f9897a69bd",
+       "f9e36b11b1",
+       "fa1631372d",
+       "fbcbb95545",
        "fc18c90961",
        "fc54ff7b9b",
+       "fd88e94b18",
+       "fdf8bb9d09",
        "feb2b53b4a",
        "fed7324e3c",
        "ffafd1e2e0",
-       "55e4e486fb",
-       "32eb94018d",
-       "af1750a49d",
-       "2e7cf9743f",
-       "f26ecd1a8c",
-       "269d5fbe13",
-       "80a0151519",
-       "91b383fcbf",
-       "058b2945d8",
-       "9dce1634f5",
-       "fa1631372d",
-       "dd6aeaf5e7",
-       "8efb673b29",
-       "c978e2c474",
-       "c823d3b6a2",
-       "11c3318caa",
-       "5d5c7b0449",
-       "f8d5fb1f75",
-       "3a3f625d44",
-       "ddc7f9d583",
-       "10eeb08629",
-       "c6b1ea1a1f",
-       "10851e9c4d",
-       "1727bc8545",
-       "38bad9bf5e",
-       "6570450410",
-       "34b61afc1f",
-       "036d55157f",
-       "aecbb1dc24",
-       "8e3a1ef509",
-       "29f7a13288",
-       "825fc9db1b",
-       "7f40796472",
-       "9d9159801a",
-       "21c85112e4",
-       "a6cdb3ab45",
-       "1aea4dcf6f",
-       "1605be6f58",
-       "e82fde82e0",
-       "a0c409afdf",
-       "54a1a38549",
-       "1974bded27",
-       "f9e36b11b1",
-       "2cec4199ab",
-       "8d7a105d80",
-       "96bd991874",
-       "acc140d0b6",
-       "38df5aee0a",
-       "410af82dfd",
-       "db3489eceb",
-       "295dcd4c7a",
-       "deef19a374",
-       "644b1e788e",
-       "c59509766c",
-       "ad1c3e4a56",
-       "17cb6f4224",
-       "cd2619537f",
-       "5bb5b61325",
-       "8613af659e",
-       "02756e708d",
-       "a41c10fc6d",
-       "7125c4b336",
-       "ce4069ba1f",
-       "d52ddb7476",
-       "354d9347d4",
-       "64dcf07778",
-       "06ef7f31d4",
-       "a6a9726ec2",
-       "e581ac6ab2",
-       "40debf80dd",
-       "de05810a4c",
-       "8817392810",
-       "c80c562e80",
-       "3d95e814ca",
-       "d3db3fd6f3",
-       "0d59318b2c",
-       "d57863a3c9",
-       "b15f36cdc9",
-       "43e7d88cde",
-       "e81a10bcd4",
-       "fd88e94b18",
-       "f19fe78b2a",
-       "9cad30a59f",
-       "d1c3c93745",
-       "5db46cb322",
-       "48043908e4",
-       "3b80eb1d58",
-       "50622d652d",
-       "e4528895cc",
-       "308cb34471",
-       "2e25e2f9c5",
-       "712641914f",
        "ffd8a4f246",
-       "9797ced005",
-       "f77b03008d",
-       "ca3efb152a",
-       "b17749c226",
-       "62365bc5fc",
-       "3a70176f13",
-       "b238eb9e21",
-       "5116f503dd",
-       "efc077d99c",
-       "bbc1996840",
-       "c35415911d",
-       "81541bab34",
-       "6c12e5df21",
-       "6888413144",
-       "23ad21fd96",
-       "6168d14c21",
-       "a8cd0ef399",
-       "46acc00265",
-       "39042676d6",
-       "6893387666",
-       "c7f7e576b4",
-       "6fca5a5fd6",
-       "88f0138193",
-       "0020d18e8d",
-       "3750cd100c",
-       "b5a4807035",
-       "f193c0f698",
-       "37f47b0062",
-       "1df88fd6f4",
-       "3f78967a8e",
-       "513003c40c",
-       "a0efaec8c1",
-       "755a9ee00c",
-       "631855652c",
-       "aa12dfb236",
-       "3e33d2f51a",
-       "8f336035a4",
-       "cfe0cce57a",
-       "1780f4b077",
-       "061006315e",
-       "4b57ab1a6b",
-       "ad840f4161",
-       "be66e27fb3",
-       "0e9a137984",
-       "da9af0929a",
-       "67ae548cec",
-       "e9b237ff35",
-       "51a20708ba",
-       "b6ebaa8afe",
-       "54cd61c09c",
-       "46ee4e93e3",
-       "74d2bc652e",
-       "a323f76276",
-       "e3d859816d",
-       "16a11ef0a0",
-       "fbcbb95545",
-       "3f41b4c674",
-       "1a72b6f15f",
-       "6a76d4c2dd",
-       "79e004ed26",
-       "dff12e5850",
-       "95ff22cc95",
-       "332dd3ed7f",
-       "17a0c103bf",
-       "a1781a43d3",
-       "93084fc4ba",
-       "8b0a316f6d",
-       "fdf8bb9d09"
+       "52c455f776",
+       "7ff2bac730",
+       "72f476163d",
+       "7f3951690e",
+       "21544715f0",
+       "ddb9484d58",
+       "6f355c7718",
+       "33058e8d62",
+       "3810b23de9",
+       "becda98f8f",
+       "7126ffb148",
+       "7aea71d5e7",
+       "75755c46ff",
+       "4ca2a62742",
+       "30c0766d6c",
+       "abad1d1679",
+       "802047d6af",
+       "b243b2f8f6",
+       "a674c59168",
+       "16c7bb3aba",
+       "e559b0a608",
+       "ed91062dfc"
       ],
       "share_positive": 0.89
      },
-     "tested": 408,
+     "tested": 432,
      "cost_r": 0.036,
      "risk_pct": 0.4,
      "baseline": {
@@ -41889,7 +46038,7 @@
        }
       }
      },
-     "made": "2026-11-13T04:14:37+00:00",
+     "made": "2026-11-13T09:20:09+00:00",
      "id": "2673ea94a848",
      "tier": "watch",
      "verdict": "יותר רווח לעסקה אבל פחות רווח בסך הכל בתקופה שלא נראתה (204 עסקאות +44.1R מול 254 עסקאות +45.3R היום) - נשמר להמשך",
@@ -42942,7 +47091,7 @@
       "to": 2.0
      },
      "detail": {},
-     "made": "2026-11-13T04:54:31+00:00",
+     "made": "2026-11-13T09:57:16+00:00",
      "id": "d7dd482525da",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
@@ -43005,7 +47154,7 @@
       "to": 60
      },
      "detail": {},
-     "made": "2026-11-13T04:54:31+00:00",
+     "made": "2026-11-13T09:57:16+00:00",
      "id": "143fdccdeb39",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.04R לעסקה)",
@@ -43021,7 +47170,7 @@
      "what": "לשנות את 'רק הפער הראשון של מהלך' מ־False ל־True. נבחר על 2024-2025 בלבד, ומוצג על 2026 שלא נראתה. · בבוט 5 אותו שינוי: rejected, -0.02R בתקופה שלא נראתה",
      "train": {
       "n": 1034,
-      "eff_n": 1004.6,
+      "eff_n": 1004.5,
       "mean": -0.0236,
       "t": -0.55,
       "win": 40.8
@@ -43035,7 +47184,7 @@
      },
      "whole": {
       "n": 1636,
-      "eff_n": 1587.9,
+      "eff_n": 1587.8,
       "mean": -0.033,
       "t": -0.96,
       "win": 39.8
@@ -43072,7 +47221,7 @@
        "unseen": -0.0235
       }
      },
-     "made": "2026-11-13T04:54:31+00:00",
+     "made": "2026-11-13T09:57:16+00:00",
      "id": "d2d47cbed721",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.05R לעסקה)",
@@ -43146,7 +47295,7 @@
      "what": "לשנות את 'תוקף הפער (שעות)' מ־24 ל־8. נבחר על 2024-2025 בלבד, ומוצג על 2026 שלא נראתה. · בבוט 5 אותו שינוי: rejected, -0.00R בתקופה שלא נראתה",
      "train": {
       "n": 1078,
-      "eff_n": 1048.2,
+      "eff_n": 1048.1,
       "mean": -0.0232,
       "t": -0.58,
       "win": 42.3
@@ -43198,7 +47347,7 @@
        "unseen": -0.0034
       }
      },
-     "made": "2026-11-13T04:54:31+00:00",
+     "made": "2026-11-13T09:57:16+00:00",
      "id": "4816a944b955",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.05R לעסקה)",
@@ -43324,7 +47473,7 @@
        "unseen": 0.0089
       }
      },
-     "made": "2026-11-13T04:54:31+00:00",
+     "made": "2026-11-13T09:57:16+00:00",
      "id": "3035f067b4b6",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.06R לעסקה)",
@@ -43586,7 +47735,7 @@
      },
      "whole": {
       "n": 1911,
-      "eff_n": 1855.8,
+      "eff_n": 1855.7,
       "mean": -0.0516,
       "t": -1.81,
       "win": 44.4
@@ -43624,7 +47773,7 @@
        "unseen": -0.018
       }
      },
-     "made": "2026-11-13T04:54:31+00:00",
+     "made": "2026-11-13T09:57:16+00:00",
      "id": "02dcf09db90a",
      "tier": "rejected",
      "verdict": "הפסיד בתקופה שלא נראתה (-0.08R לעסקה)",
@@ -44043,8 +48192,8 @@
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-13T09:54:49+00:00",
-    "state_updated": "2026-11-13T09:52:48+00:00",
+    "updated": "2026-11-13T10:12:43+00:00",
+    "state_updated": "2026-11-13T10:11:09+00:00",
     "minutes_since_state": 2,
     "balance": 100465.48,
     "equity": 100465.48,
@@ -53485,13 +57634,13 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-13T09:54:49+00:00",
-    "state_updated": "2026-11-13T09:53:09+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-13T10:12:43+00:00",
+    "state_updated": "2026-11-13T10:12:09+00:00",
+    "minutes_since_state": 1,
     "balance": 100000.0,
-    "equity": 99989.33,
-    "day_pct": -0.01,
-    "total_pct": -0.01,
+    "equity": 99921.88,
+    "day_pct": -0.08,
+    "total_pct": -0.08,
     "trades": 0,
     "mean_r": null,
     "sum_r": null,
@@ -53532,7 +57681,24 @@
   }
  },
  "decisions": {
-  "new": [],
-  "unread": 59
+  "new": [
+   "c8b398f20878",
+   "3c5d9dae8704",
+   "cc9858edfe52",
+   "dcccb178eba1",
+   "0c8ceb11677d",
+   "350573984d52",
+   "5506662e639a",
+   "a332c5f39015",
+   "669321ebd659",
+   "8e6ba5cdaef2",
+   "be37d5527c02",
+   "6c3a1b42ee6c",
+   "0b57a0168270",
+   "ddd13bc934e3",
+   "b369f7e31ec7",
+   "bdf2c66050b4"
+  ],
+  "unread": 75
  }
 }

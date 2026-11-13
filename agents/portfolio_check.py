@@ -263,6 +263,42 @@ def side_conflicts(bot, cfg=None):
     return out
 
 
+def daily_pnl(book, risk):
+    """The account's profit per FTMO day in % of the opening balance (the same booking as replay())."""
+    rows = [(b, r * risk * 100 * m) for combo, (tr, m) in book.items() if tr and m > 0 for a, b, d, r in _minutes(tr)]
+    if not rows:
+        return []
+    t = pd.DataFrame(rows, columns=["b", "pnl"])
+    day = pd.to_datetime(t["b"], unit="m", utc=True).dt.tz_convert("Europe/Prague").dt.date
+    return [float(x) for x in t.groupby(day)["pnl"].sum().sort_index().to_numpy()]
+
+
+def fit_stress(days, start, fit, limit=100 * (1 - 0.09)):
+    """The 2026 days replayed in order from an account at <start> % (bots 1-4 smart agent, 13.11.2026 night): as the bot
+    trades now, and with "dd_fit" (live/runner.py: risk x min(1, room left to the 9% limit / fit), set at the start of
+    every day). The account stops at the limit (the bot's own guard). End, lowest point and whether the limit was hit."""
+    out = {}
+    for name, use in (("now", False), ("dd_fit", True)):
+        eq, low, hit = start, start, False
+        for p in days:
+            f = min(1.0, max(0.0, (eq - limit) / fit)) if use and fit > 0 else 1.0
+            eq += p * f
+            low = min(low, eq)
+            if eq <= limit:
+                hit, eq = True, limit
+                break
+        out[name] = {"end": round(float(eq), 2), "low": round(float(low), 2), "hit_limit": bool(hit)}
+    return out
+
+
+def _balance_pct(bot, cfg):
+    h = _read(ROOT / "reports" / "agents" / bot / "health.json", {}) or {}
+    try:
+        return float(h["balance"]) / float(cfg.get("initial") or 100000) * 100
+    except (KeyError, TypeError, ValueError, ZeroDivisionError):
+        return None
+
+
 def daily(now=None):
     """The bot as it is now, every day: reports/agents/<bot>/portfolio.json (+ a warning when near the limits)."""
     at = (now or pd.Timestamp.now(tz="UTC")).isoformat(timespec="seconds")
@@ -285,8 +321,17 @@ def daily(now=None):
             conf = side_conflicts(bot, cfg)
         except Exception as e:  # noqa: BLE001
             conf = {"error": str(e)[-200:]}
+        # the whole-bot risk rule "dd_fit" stress-tested: 2026 replayed from today's balance and from the start
+        try:
+            days, fit = daily_pnl(book, bot_risk(bot, cfg)), float(cfg.get("dd_fit") or r["max_dd"] or 0)
+            bal = _balance_pct(bot, cfg)
+            stress = {"fit": fit, "from_100": fit_stress(days, 100.0, fit),
+                      **({"balance": round(bal, 2), "from_balance": fit_stress(days, bal, fit)} if bal else {})}
+        except Exception as e:  # noqa: BLE001
+            stress = {"error": str(e)[-200:]}
         out.write_text(json.dumps({"updated": at, "bot": bot, "replay_2026": r, "combos": len(book), "missing": missing,
-                                   "warnings": warn, "side_conflicts": conf}, ensure_ascii=False, indent=1), encoding="utf-8")
+                                   "warnings": warn, "side_conflicts": conf, "dd_fit_stress": stress},
+                                  ensure_ascii=False, indent=1), encoding="utf-8")
         print(bot, r, f"missing {len(missing)}", warn)
 
 

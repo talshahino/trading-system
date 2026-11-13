@@ -183,6 +183,12 @@ def _cuts(c):
         return True
     if c.get("kind") == "risk" and ch.get("kind") in RULE_KINDS:
         return False                         # a live rule changed / taken back is a fix, not a cut
+    if c.get("kind") == "risk" and ((c.get("detail") or {}).get("account_fit") or ch.get("knob") == "RISK_SCALE"):
+        # the whole bot sized into its own fixed limits (tal_gap.risk_scale, chosen on 2024-2025; bot 6's smart agent,
+        # 13.11.2026 night): not a cut of a losing strategy - the gap tracks earn in R, but at today's risk the account
+        # falls past its limits in the test (bot 6: FTMO Futures 1.5% a day / 4.5% trailing, failed in January 2026).
+        # Fixing the strategies cannot fix the account's size, so "fix first" does not hold it (red line: the limits)
+        return False
     if c.get("kind") == "risk":
         try:
             return float(ch.get("to", ch.get("value", 1))) < float(ch.get("from", 1))

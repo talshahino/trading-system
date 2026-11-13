@@ -910,10 +910,11 @@ def account(part, risk_pct, lim=None):
 
 
 MARGIN = 0.8          # the train period must stay within 80% of the bot's limits (a fall <= 7.2%, a day >= -3.6%)
+SCALE_FLOOR = 0.1     # the smallest factor (the builder takes 0.1-1.0 for bot 5's "tal_risk_scale")
 
 
 def risk_scale(t, risk_pct, lim=None):
-    """One factor on every track's risk, CHOSEN on 2024-2025 only: the largest (steps of 0.05, at least 0.2) with which
+    """One factor on every track's risk, CHOSEN on 2024-2025 only: the largest (steps of 0.05, at least SCALE_FLOOR) with which
     the train period's deepest fall and worst day stay inside MARGIN of the bot's limits - then shown on 2026.
     A fall is measured from the peak: an account may start on any day, the worst one included."""
     tr, un = t[t["time"] < SPLIT], t[t["time"] >= SPLIT]
@@ -926,10 +927,22 @@ def risk_scale(t, risk_pct, lim=None):
         ks.append(MARGIN * L["all"] / a["max_fall_pct"])
     if a["worst_day_pct"] < 0:
         ks.append(MARGIN * L["day"] / -a["worst_day_pct"])
-    k = max(0.2, np.floor(min(ks) * 20) / 20)
-    rk = {x: v * k for x, v in risk_pct.items()}
-    b = account(tr, rk, lim)
-    fits = b["max_fall_pct"] <= MARGIN * L["all"] + 1e-9 and b["worst_day_pct"] >= -MARGIN * L["day"] - 1e-9
+    k = max(SCALE_FLOOR, np.floor(min(ks) * 20) / 20)
+
+    def _fits(b_):
+        return (b_["max_fall_pct"] <= MARGIN * L["all"] + 1e-9 and b_["worst_day_pct"] >= -MARGIN * L["day"] - 1e-9
+                and not b_["stopped"])
+    # an account that failed (or was stuck at its limit, skipping trades) shows a fall no deeper than the limit itself,
+    # so the factor from that fall is too big (bot 6, 13.11.2026: x 0.8 chosen, "fits": false, and with it the account
+    # still fell to its limit in 2026). Step down by 0.05 until the train period really fits (bot 6's smart agent,
+    # 13.11.2026 night) - a factor that fits at once (bot 5) does not change.
+    while True:
+        rk = {x: v * k for x, v in risk_pct.items()}
+        b = account(tr, rk, lim)
+        fits = _fits(b)
+        if fits or k <= SCALE_FLOOR + 1e-9:
+            break
+        k = max(SCALE_FLOOR, round(k - 0.05, 2))
     return {"chosen": round(float(k), 2), "fits": bool(fits), "limits": {"day": L["day"], "all": L["all"], "trail": L["trail"], "use": L["use"]},
             "rows": {str(round(float(k), 2)): {"train": b, "unseen": account(un, rk, lim)}}}
 

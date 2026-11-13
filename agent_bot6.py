@@ -303,12 +303,13 @@ def trend_cards(idx, b5_res=None):
 # an 'improve' card only when the chosen one is also better on 2026 in total AND per trade and its worst day of 2026
 # is not worse (more profit, no more risk) - so the builder builds it at once.
 FILT6 = (("MAXC", 0.1), ("MAXC", 0.2), ("MAXC", 0.3), ("SESS", "lnny"), ("SESS", "ny"), ("SESS", "rth"),
-         ("SESS", "nyam"), ("SESS", "xopen"), ("EXIT", "tp30"))
+         ("SESS", "nyam"), ("SESS", "xopen"), ("EXIT", "tp30"), ("EXIT", "p50_50"))
 FILT_HE = {"MAXC": lambda v: f"בלי עסקה שהעלות שלה מעל {int(v * 100)}% מהסיכון (MAXC {v})",
            "SESS": lambda v: {"lnny": "רק בשעות לונדון + ניו יורק (07-20 UTC)", "ny": "רק בשעות ניו יורק (12-20 UTC)",
                               "rth": "רק בשעות המסחר של ניו יורק 09:30-16:00", "nyam": "רק בשעתיים הראשונות של ניו יורק 09:30-11:30",
                               "xopen": "בלי חצי השעה הראשונה של ניו יורק 09:30-10:00"}[v] + f" (SESS {v})",
-           "EXIT": lambda v: "כל העסקה יוצאת ב־30% מהדרך ליעד (tp30, הרעיון של טל)"}
+           "EXIT": lambda v: {"tp30": "כל העסקה יוצאת ב־30% מהדרך ליעד (tp30, הרעיון של טל)",
+                              "p50_50": "חצי החוצה בחצי הדרך ליעד וסטופ לכניסה (p50_50, הבקשה של טל)"}.get(v, f"EXIT {v}")}
 
 
 def _filt_variants(cfg):
@@ -424,6 +425,55 @@ def filt_cards(idx):
     return out, res
 
 
+# THE USER'S EXPLICIT REQUEST (13.11.2026, twice, notes on a t5_1 US30 trade - "I want it nevertheless"): on the fast
+# charts (5m/1m, 15m/5m) take half out at half the way to the target and move the stop to the entry (EXIT p50_50).
+# data/agents/tal_thinking.md: a request repeated after 'no change' is a conscious risk preference - no arguing again,
+# a card to the manager with the exact numbers and the manager decides. So unlike filt_cards (a card only for the best
+# on 2024-2025), every fast running track gets its head-to-head card with full stats, better or worse, and the
+# manager's fixed rules judge it (kept / rejected with the numbers the user sees).
+ASK6 = {"EXIT": "p50_50"}
+ASK_PAIRS = ("5m/1m", "15m/5m")
+
+
+def ask_cards(idx):
+    out, res = [], {}
+    rk = {**FA.RISK}
+    try:
+        rk.update(json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8")).get("risk") or {})
+    except Exception:  # noqa: BLE001
+        pass
+    for trk, (pn, cfg) in live_tracks().items():
+        if pn not in ASK_PAIRS:
+            continue
+        c0 = TG._norm(dict(cfg))
+        c = TG._norm(dict(c0, **ASK6))
+        if c == c0:
+            continue
+        base, t = _t6(idx, pn, c0), _t6(idx, pn, c)
+        if base is None or t is None:
+            continue
+        lv, x = _day_stats(base), _day_stats(t)
+        res[trk] = {"live": lv, "p50_50": x, "exit_now": c0.get("EXIT", "none")}
+        st, bs = TG._stats(t), TG._stats(base)
+        hi, lo = pn.split("/")
+        r_ = float(rk.get(trk, FA.RISK_TAL))
+        mt = lambda s_: f"{s_['mean']:+.3f}R" if s_ and s_.get("mean") is not None else "-"  # noqa: E731
+        out.append(K.card("bot6", "improve", f"בוט 6 · {TG.TF_HE[hi]} / {TG.TF_HE[lo]} ({trk}): חצי החוצה בחצי הדרך וסטופ לכניסה (הבקשה של טל)",
+                          f"טל ביקש פעמיים (13.11, עסקת US30 במסלול t5_1): בגרפים המהירים - ב־50% מהדרך ליעד יוצאים בחצי "
+                          f"ומעבירים סטופ לכניסה. נבדק על ההגדרות המדויקות של המסלול {trk} (יציאה היום: {c0.get('EXIT', 'none')}), "
+                          f"3 המדדים בעולם של בוט 6. 2024-2025: סה\"כ משוקלל {lv['train_w']:+.1f}R ← {x['train_w']:+.1f}R, "
+                          f"לעסקה {mt(bs['train'])} ← {mt(st['train'])}, היום הגרוע {lv['worst_day_train']}R ← {x['worst_day_train']}R. "
+                          f"2026 (לא נראתה): סה\"כ {lv['unseen']:+.1f}R ← {x['unseen']:+.1f}R, {x['n_unseen']} עסקאות, "
+                          f"לעסקה {mt(bs['unseen'])} ← {mt(st['unseen'])}, היום הגרוע {lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. "
+                          f"בסיכון {r_ * 100:g}%. ההחלטה למנהל לפי הכללים שלו (טל: בקשה מודעת לניהול סיכון). "
+                          f"בבוט 5 אותה בקשה נבדקת על t15_5 ו־t5_1 (agents/tal_fix_run).",
+                          st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
+                          tested=1, risk_pct=round(r_ * 100, 3), baseline=bs["unseen"],
+                          detail={"world": "bot6", "by": "טל (הערה על עסקה, פעמיים, 13.11)", "ask": res[trk]},
+                          change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
+    return out, res
+
+
 def fut_lim():
     """Bot 6's own account limits for the whole-bot test, exactly as live/fut_account.py keeps the account (13.11.2026
     night, bot 5's task b5to6room1311): FTMO Futures - a day's loss of DAILY_LOSS, a trailing maximum loss MAX_LOSS
@@ -450,6 +500,13 @@ def scale_cards(pf, rk):
                       f"הירידה הגדולה {x.get('max_fall_pct', 0):.1f}%, עסקאות שדולגו / הוקטנו בגלל המקום "
                       f"{x.get('room_skipped', 0)} / {x.get('room_cut', 0)}" + (f", החשבון נכשל ב־{str(x['stopped'])[:10]}"
                                                                               if x.get("stopped") else ""))
+    try:            # what bot 5's agent found with the same rule (its RISK_SCALE card)
+        b5 = next((c for c in json.loads(Path("reports/agents/bot5/cards.json").read_text(encoding="utf-8")).get("cards", [])
+                   if (c.get("change") or {}).get("knob") == "RISK_SCALE"), None)
+        b5t = f"בבוט 5 אותו כלל נתן × {b5['change']['to']} (כרטיס {b5['id']})" if b5 else "בבוט 5 אין כרגע כרטיס מקדם"
+    except Exception:  # noqa: BLE001
+        b5t = "בבוט 5 אותו כלל נבדק על המסלולים שלו"
+    fail = bool(nt.get("stopped") or nu.get("stopped") or nu.get("total_pct", 0) <= -0.9 * lm.get("all", 4.5))
     out = []
     for trk, r in rk.items():
         to = round(float(r) * k, 5)
@@ -460,8 +517,14 @@ def scale_cards(pf, rk):
                           f"2026: {line(nu)}. הכלל של בוט 5 (משותף): המקדם הגדול ביותר שבו 2024-2025 נשאר ב־80% מהמגבלות "
                           f"(ירידה ≤ {0.8 * lm.get('all', 4.5):.1f}%, יום ≥ -{0.8 * lm.get('day', 1.5):.1f}%), נבחר רק על 2024-2025 → × {k}. "
                           f"עם המקדם: 2024-2025: {line(bt)}; 2026 (לא נראתה): {line(bu)}. אסטרטגיות הסייר (0.28% כל אחת) "
-                          f"מעל זה - לא בחישוב. בבוט 5 אותו כלל נתן × 0.5 (2026: ירידה 21% ← 10.5%).",
-                          None, None, tested=1, risk_pct=round(to * 100, 4), detail={"world": "bot6", "account": a},
+                          f"מעל זה - לא בחישוב. " + ("" if sc.get("fits") else "גם במקדם הזה 2024-2025 לא נכנס ב־80% מהמגבלות - "
+                          "צריך גם פחות מסלולים או מסלולים חזקים יותר. ") + "חוזה מיקרו אחד הוא המינימום: עסקה שחוזה אחד שלה "
+                          f"מסכן יותר מ־{to * 100:g}% מהחשבון לא נלקחת (בעיקר שעה / 5 דק' על US30 עם סטופ רחב), אז הרווח בחי "
+                          f"יהיה קצת מתחת לבדיקה. {b5t}.",
+                          None, None, tested=1, risk_pct=round(to * 100, 4),
+                          # account_fit (13.11.2026 night): the risk the account's own fixed limits allow, not a cut of a
+                          # losing strategy - agents/autodecide does not hold it for "fix first"
+                          detail={"world": "bot6", "account": a, "account_fit": True, "account_fails_now": fail},
                           change={"track": trk, "knob": f"RISK_{trk}", "from": float(r), "to": to}))
     return out
 
@@ -531,6 +594,14 @@ def tal(budget_s):
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     except Exception as e:  # noqa: BLE001
         print(f"tal_gap filt cards failed: {e}")
+    try:            # the user's explicit request on the fast charts, head to head with full numbers (13.11.2026 night)
+        ac, ares = ask_cards(idx)
+        pcards += ac
+        if ares:
+            doc["bot6"]["ask_p50_50"] = ares
+            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print(f"tal_gap ask cards failed: {e}")
     # a card on a pair bot 6 already trades carries what runs as its baseline (approved only if 2026 is better per
     # trade AND in total); a new pair must have earned on 2024-2025 and on 2026 (it must add to the bot as a whole)
     return TG.cards("bot6", pairs, doc.get("bot5"), "בוט 5", risk_pct=FA.RISK_TAL * 100,

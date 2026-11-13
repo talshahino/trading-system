@@ -211,6 +211,11 @@ def apply(cfg, b, card_id):
                                                       "risk_before": rk.get(trk, "__none__")}
             tt[trk] = {"pair": list(b["pair"]), "cfg": dict(b["cfg"])}
             rk[trk] = min(others) if others else 0.004     # the tracks' risk now (a new pair is not stronger)
+            if b.get("star"):
+                # the manager's star ("maybe luck", principle 9) is a risk x0.7 (bot 6's smart agent, 13.11.2026 late
+                # night: the starred 5m/1m track, card 4e4b0542d487, was built at the full 0.4% - its -1R on 13.11
+                # 20:40 cost 0.4% of the account instead of 0.28%)
+                rk[trk] = round(float(rk[trk]) * STAR6, 6)
             return
         return apply(cfg, dict(b, family="tal5", pair=list(b["pair"])[:2]), card_id)
     if b["family"] == "flag":
@@ -413,7 +418,7 @@ def run(now=None):
         cfg = cfgs[b["bot"]]
         if b["family"] == "add" and b["combo"].split("|")[0] not in _strategy_ids():
             continue                                     # the strategy's code is not installed yet
-        if b["family"] in ("scout6", "tal5sym") and (approved.get(cid) or {}).get("star"):
+        if b["family"] in ("scout6", "tal5sym", "tal6") and (approved.get(cid) or {}).get("star"):
             b = dict(b, star=True)
         apply(cfg, b, cid)
         touched.add(b["bot"])
@@ -432,6 +437,25 @@ def run(now=None):
             r = replies.setdefault(cid, {})
             r["star"] = "⭐ סיכון " + f"{cfg6['risk']['scout:' + b['combo']] * 100:g}" + "% (אולי מזל) - " + at
             did.append(f"bot6: star {cid} {b['combo']} -> {cfg6['risk'][f'scout:' + b['combo']]}")
+    # bot 6: a starred new track of the gap method built before the star counted (13.11.2026: t5_1 at 0.4%) gets x0.7
+    # now, once - only a track this card added (before "__none__") and still at the risk it was built with
+    for cid, d in approved.items():
+        if not cfg6 or not d.get("star") or cid in undone_cards or d.get("bot") != "bot6":
+            continue
+        # the card itself may be gone from cards.json (each run rewrites it) - the bot's own record of the change counts
+        r = replies.get(cid) or {}
+        if r.get("built") != "auto" or r.get("star"):
+            continue
+        ch6 = (cfg6.get("changes") or {}).get(cid) or {}
+        rk6 = cfg6.get("risk") or {}
+        trk = ch6.get("track")
+        if ch6.get("family") != "tal5" or ch6.get("before") != "__none__" or not trk or trk not in rk6 \
+                or trk not in (cfg6.get("tal_tracks") or {}):
+            continue
+        rk6[trk] = round(float(rk6[trk]) * STAR6, 6)
+        touched.add("bot6")
+        replies[cid] = dict(r, star="⭐ סיכון " + f"{rk6[trk] * 100:g}" + "% (אולי מזל) - " + at)
+        did.append(f"bot6: star {cid} {trk} -> {rk6[trk]}")
     # bot 5: a starred instrument track of the gap method built before the star counted (13.11.2026) gets x0.7 now, once
     cfg5 = cfgs.get("bot5")
     for cid, d in approved.items():

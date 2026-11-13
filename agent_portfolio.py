@@ -520,10 +520,26 @@ def test_new(bot, budget_s, where, symbols=None, timeframes=None):
             tfs = [x for x in tfs if x in ("1Min", "5Min", "15Min")]          # scalping bots: short timeframes only
         # on ALL the bot's instruments, not only the markets the source names (user: test everything, each strategy
         # where it wins)
+        mk = set(s_.get("markets") or [])
         for sym in [x for x in syms if runs_here(x, where)]:
             combos = [f"{sid}|{tf}|{sym}" for tf in tfs]
             if any(st.age_days("new", c) >= RERUN_DAYS for c in combos):
-                queue.append((sym, s_, combos))
+                fresh = any(st.age_days("new", c) >= 999 for c in combos)
+                queue.append((sym, s_, combos, (0 if fresh else 1,                          # never tested before a re-run
+                                                0 if not mk or U.CLASS.get(sym) in mk else 1)))  # the source's markets first
+    # 13.11.2026 (bots 1-4 smart agent): in the scout's order, strategy by strategy on all the bot's instruments, the
+    # 30-combo batches of one instrument took SC001-SC028 every time - by 13.11 bots 1-4 had tested nothing after SC028
+    # (82 strategies, ~1,250-3,650 combos waiting in each bot) and SC001 would come back for its 14-day re-run first.
+    # Now: never-tested combos before re-runs, the markets the source names before the others, and among those the
+    # strategies tested on the fewest of the bot's instruments first - so every new strategy gets its first fair test
+    # within a run or two. Nothing is skipped: the rest follows in the same order in the next runs.
+    cover = {}
+    for s_ in inbox():
+        if s_.get("id"):
+            cover[s_["id"]] = sum(1 for sym in syms for tf in (s_.get("timeframes") or ["1Hour"])
+                                  if st.age_days("new", f"{s_['id']}|{tf}|{sym}") < 999)
+    queue.sort(key=lambda q: (q[3][0], q[3][1], cover.get(q[1]["id"], 0)))     # stable: the scout's order within
+    queue = [q[:3] for q in queue]
 
     def store(t, s_, combos):
         n = 0

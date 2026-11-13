@@ -55,6 +55,9 @@ FAMILIES = ("exits", "filters", "manage", "fib")   # manage (12.11.2026): breake
 # +7.7R in the backtest, +2.8R on the demo) - results of the instruments the events touch are run again too.
 STOCK_SPREAD_MULT = 2.4
 COSTS = f"stock-x{STOCK_SPREAD_MULT}+news-minute"
+# no new stock trade in the last 15 minutes of the session, as the live bots (13.11.2026, run_rules.stock_late_mask);
+# results stored before carry no stamp - the whole-bot check drops those entries when it reads them (portfolio_check)
+STOCK_ENTRY = "live15"
 LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--news-minute", "--breakeven", "0.6",
               "--stock-spread-mult", str(STOCK_SPREAD_MULT)]
 _NEWS_HIT = {}
@@ -222,7 +225,7 @@ class Store:
         return None if stale_source(d) else d
 
     def put(self, fam, combo, doc):
-        doc = {**doc, "costs": COSTS}
+        doc = {**doc, "costs": COSTS, "stock_entry": STOCK_ENTRY}
         self.path(fam, combo).write_text(json.dumps(doc, ensure_ascii=False, default=str), encoding="utf-8")
 
     def age_days(self, fam, combo):

@@ -70,6 +70,25 @@ def exp(bot, fam, combo):
     return d
 
 
+LATE_MIN = 15             # live/runner.py: no new stock trade in the last 15 minutes of the session
+
+
+def live_entries(combo, doc, tr):
+    """A stock combo's trades as the live bot would take them: the experiments stored before 13.11.2026 (no
+    "stock_entry" stamp) still hold entries in the last 15 minutes of the session, which the live bots skip."""
+    if not tr or (doc or {}).get("stock_entry"):
+        return tr
+    from agents import ftmo_universe as U
+    sym = combo.split("|")[-1]
+    if U.CLASS.get(sym) != "stock":
+        return tr
+    tz, close_min = ("America/New_York", 16 * 60) if "USD" in U.CURRENCIES[sym] else ("Europe/Berlin", 17 * 60 + 30)
+    tr = _minutes(tr)
+    loc = pd.to_datetime([x[0] for x in tr], unit="m", utc=True).tz_convert(tz)
+    keep = (loc.hour * 60 + loc.minute) < close_min - LATE_MIN
+    return [x for x, k in zip(tr, keep) if k]
+
+
 def current_trades(bot, combo, cfg, key="tr"):
     """The combo's 2026 trades as it trades now (its built exit plan, or its built filter), None when not stored.
     key "tr25": the choosing period's trades (30.04.2025-31.12.2025) instead, where the agents stored them."""
@@ -77,16 +96,17 @@ def current_trades(bot, combo, cfg, key="tr"):
     p = (cfg.get("plans") or {}).get(combo) or {}
     if p.get("filter"):
         d = exp(bot, "filters", combo) or {}
-        return (d.get(key) or {}).get(p["filter"])
+        return live_entries(combo, d, (d.get(key) or {}).get(p["filter"]))
     if any(k in p for k in ("be_way", "be_r", "partial")):       # a built management card: its own trades
         v = built_variant(bot, combo, "manage")
         for fam in ("manage", "fib"):                               # a Fibonacci card is built as "manage"
-            tr = ((exp(bot, fam, combo) or {}).get(key) or {}).get(v)
+            d = exp(bot, fam, combo) or {}
+            tr = (d.get(key) or {}).get(v)
             if tr:
-                return tr
+                return live_entries(combo, d, tr)
         return None
     d = exp(bot, "exits", combo) or {}
-    return (d.get(key) or {}).get(built_variant(bot, combo, "exits"))
+    return live_entries(combo, d, (d.get(key) or {}).get(built_variant(bot, combo, "exits")))
 
 
 def trades_of_card(bot, card):
@@ -94,10 +114,10 @@ def trades_of_card(bot, card):
     combo = ch.get("combo")
     if card.get("kind") == "new":
         d = exp(bot, "new", combo) or {}
-        return combo, (d.get("tr") or {}).get("new")
+        return combo, live_entries(combo, d, (d.get("tr") or {}).get("new"))
     fam = ch.get("src") or ch.get("family")                         # src "fib": built as "manage", stored as fib
     d = exp(bot, fam, combo) or {}
-    return combo, (d.get("tr") or {}).get(ch.get("to"))
+    return combo, live_entries(combo, d, (d.get("tr") or {}).get(ch.get("to")))
 
 
 def _minutes(tr):

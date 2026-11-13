@@ -474,6 +474,12 @@ def main():
             if args.news_exit and not args.demo:
                 nm, news_block = news_masks(df, s, tf)
                 sess = nm if sess is None else (np.asarray(sess, dtype=bool) | nm)
+            if args.stock_session_exit and not args.demo and U.CLASS.get(s) == "stock":
+                # the live bots open no stock trade in the last 15 minutes of the session (live/runner.py), the
+                # backtest did: entries at 15:45 / 15:50 / 15:55 New York held to the 16:00 close - in bots 1-4's
+                # stock combos 2025-2026: 192 trades, -0.13R each in 2026 (13.11.2026) - blocked here the same way
+                late = stock_late_mask(df, s)
+                news_block = late if news_block is None else (np.asarray(news_block, dtype=bool) | late)
             be = None
             if args.breakeven:
                 px = float(df["c"].median())
@@ -747,6 +753,14 @@ def session_mask(df, s, tf):
     day = pd.Series(loc.normalize(), index=df.index)
     last = (day != day.shift(-1)).to_numpy()
     return (mins >= close_min - 15) | last
+
+
+def stock_late_mask(df, s):
+    """Stocks: True on the bars that open in the last 15 minutes of the exchange session - the live bots take no new
+    stock trade then (live/runner.py, 'last 15 minutes of the stock session')."""
+    tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[s] else SESSION["EU"]
+    loc = df.index.tz_convert(tz)
+    return np.asarray(loc.hour * 60 + loc.minute >= close_min - 15, dtype=bool)
 
 
 def safe_report(results, args):

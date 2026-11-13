@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-13T07:08:25+00:00",
+ "updated": "2026-11-13T10:55:57+00:00",
  "bot": "bot7",
  "replay_2026": {
   "trades": 46,
@@ -55,5 +55,57 @@
   "EV03|5Min|GBPJPY",
   "SC001|1Min|JP225"
  ],
- "warnings": []
+ "warnings": [],
+ "side_conflicts": {
+  "train": {
+   "combos": 0,
+   "missing": 49,
+   "skipped": 0,
+   "skipped_r": 0,
+   "skipped_mean": null,
+   "before": {
+    "trades": 0,
+    "total": 0.0,
+    "worst_day": 0.0,
+    "max_dd": 0.0,
+    "near_days": 0,
+    "max_open": 0.0,
+    "max_side": 0.0
+   },
+   "after": {
+    "trades": 0,
+    "total": 0.0,
+    "worst_day": 0.0,
+    "max_dd": 0.0,
+    "near_days": 0,
+    "max_open": 0.0,
+    "max_side": 0.0
+   }
+  },
+  "unseen": {
+   "combos": 7,
+   "missing": 42,
+   "skipped": 0,
+   "skipped_r": 0,
+   "skipped_mean": null,
+   "before": {
+    "trades": 46,
+    "total": -3.07,
+    "worst_day": -1.07,
+    "max_dd": 3.38,
+    "near_days": 0,
+    "max_open": 1.5,
+    "max_side": 1.5
+   },
+   "after": {
+    "trades": 46,
+    "total": -3.07,
+    "worst_day": -1.07,
+    "max_dd": 3.38,
+    "near_days": 0,
+    "max_open": 1.5,
+    "max_side": 1.5
+   }
+  }
+ }
 }

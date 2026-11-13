@@ -539,127 +539,97 @@
       "what": "TV11|4Hour|AUDUSD: להסיר (מפסידה בשתי התקופות, התיקון נכשל)",
       "decision": "f87f3970322a",
       "at": "2026-11-13T04:59:21+00:00",
-      "effect_month_pct": 0.07,
-      "cut": false,
-      "prev": null,
-      "value": null
+      "effect_month_pct": 0.07
      }
     ],
-    "open": false,
-    "cut_only": false
+    "open": false
    },
    {
     "combo": "TV11|4Hour|USDJPY",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [],
     "open": true,
-    "cut_only": false,
-    "edge_mult": null,
-    "edge_parts": [
-     "עוד אין בדיקה של 2026 כפי שהיא סוחרת עכשיו - היא ראשונה בתור לבדיקה, ועד אז הסיכון לא נוגע"
+    "level": 1,
+    "level_why": [
+     "אין לה עדיין בדיקה של 2026 כפי שהיא סוחרת עכשיו"
     ],
-    "edge0": null,
-    "edge": null
+    "level_he": "קל",
+    "level_mult": 0.85
    },
    {
     "combo": "TV41|4Hour|NZDUSD",
     "cause": "כניסה / כיוון",
     "fixes": [],
     "open": true,
-    "cut_only": false,
-    "edge_mult": null,
-    "edge_parts": [
-     "עוד אין בדיקה של 2026 כפי שהיא סוחרת עכשיו - היא ראשונה בתור לבדיקה, ועד אז הסיכון לא נוגע"
+    "level": 1,
+    "level_why": [
+     "אין לה עדיין בדיקה של 2026 כפי שהיא סוחרת עכשיו"
     ],
-    "edge0": null,
-    "edge": null
+    "level_he": "קל",
+    "level_mult": 0.85
    },
    {
     "combo": "SE02|1Hour|USDJPY",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [],
     "open": true,
-    "cut_only": false,
-    "edge_mult": null,
-    "edge_parts": [
-     "עוד אין בדיקה של 2026 כפי שהיא סוחרת עכשיו - היא ראשונה בתור לבדיקה, ועד אז הסיכון לא נוגע"
+    "level": 2,
+    "level_why": [
+     "אין לה עדיין בדיקה של 2026 כפי שהיא סוחרת עכשיו",
+     "הפסידה ב־4 ימים בחודש האחרון"
     ],
-    "edge0": null,
-    "edge": null
+    "level_he": "בינוני",
+    "level_mult": 0.7
    },
    {
     "combo": "TT45|15Min|CSCO",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [
-     {
-      "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
-      "decision": "137acbe329fb",
-      "at": "2026-11-13T05:04:12+00:00",
-      "effect_month_pct": 0.3,
-      "cut": false,
-      "prev": null,
-      "value": null
-     },
-     {
-      "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
-      "decision": "9a80426643c0",
-      "at": "2026-11-13T05:04:12+00:00",
-      "effect_month_pct": null,
-      "cut": false,
-      "prev": null,
-      "value": null
-     }
+    "fixes": [],
+    "open": true,
+    "level": 3,
+    "level_why": [
+     "כמעט אפס בבדיקה של 2026 (-0.06R לעסקה)",
+     "הפסידה ב־3 ימים בחודש האחרון"
     ],
-    "open": false,
-    "cut_only": false
+    "level_he": "חמור",
+    "level_mult": 0.5
    },
    {
     "combo": "TT45|1Hour|GBPJPY",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [],
     "open": true,
-    "cut_only": false,
-    "edge_mult": 0.74,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.26R לעסקה (91 עסקאות), בתקופת הבחירה -0.02R",
-     "בחי: -0.05R לעסקה (4 עסקאות)",
-     "הבדיקה שווה 79% מהמשקל, החי 21%",
-     "היתרון עכשיו: +0.19R לעסקה",
-     "סיכון = +0.19 ÷ +0.26 = ×0.74"
+    "level": 1,
+    "level_why": [
+     "מרוויחה בבדיקה של 2026 (+0.26R לעסקה) - הבעיה בחי, לא בשיטה"
     ],
-    "edge0": 0.256,
-    "edge": 0.19
+    "level_he": "קל",
+    "level_mult": 0.85
    },
    {
     "combo": "TT45|1Hour|WTI",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false,
-    "cut_only": false
+    "open": false
    },
    {
     "combo": "TV60|15Min|ARM",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false,
-    "cut_only": false
+    "open": false
    },
    {
     "combo": "TV39|1Hour|JP225",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [],
     "open": true,
-    "cut_only": false,
-    "edge_mult": 0.93,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.23R לעסקה (292 עסקאות), בתקופת הבחירה +0.10R",
-     "בחי: -0.04R לעסקה (10 עסקאות)",
-     "הבדיקה שווה 94% מהמשקל, החי 6%",
-     "היתרון עכשיו: +0.22R לעסקה",
-     "סיכון = +0.22 ÷ +0.23 = ×0.93"
+    "level": 1,
+    "level_why": [
+     "מרוויחה בבדיקה של 2026 (+0.23R לעסקה) - הבעיה בחי, לא בשיטה",
+     "הפסידה ב־4 ימים בחודש האחרון"
     ],
-    "edge0": 0.234,
-    "edge": 0.217
+    "level_he": "קל",
+    "level_mult": 0.85
    },
    {
     "combo": "TV21|15Min|ASML",
@@ -669,81 +639,59 @@
       "what": "TV21|15Min|ASML: סיכון ×1.05 ← ×0.5 (מפסידה ב־2026 במחירים האמיתיים)",
       "decision": "0688a633997b",
       "at": "2026-11-13T04:59:21+00:00",
-      "effect_month_pct": 0.21,
-      "cut": true,
-      "prev": null,
-      "value": null
+      "effect_month_pct": 0.37
      },
      {
       "what": "סיכון ×0.5",
       "decision": "434d22f2c5ce",
       "at": "2026-11-13T04:59:21+00:00",
-      "effect_month_pct": null,
-      "cut": true,
-      "prev": 1.05,
-      "value": 0.5
+      "effect_month_pct": null
      }
     ],
-    "open": false,
-    "cut_only": true,
-    "edge_mult": 0.001,
-    "edge_parts": [
-     "בבדיקה של 2026: -0.06R לעסקה (187 עסקאות), בתקופת הבחירה +0.08R",
-     "בחי: -0.37R לעסקה (3 עסקאות)",
-     "הבדיקה שווה 87% מהמשקל, החי 13%",
-     "היתרון עכשיו: -0.10R לעסקה",
-     "אין יתרון - נסחרת בכמות המינימלית עד שיימצא תיקון"
-    ],
-    "edge0": -0.056,
-    "edge": -0.095
+    "open": false
    },
    {
     "combo": "MQ11|4Hour|MSTR",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false,
-    "cut_only": false
+    "open": false
    },
    {
     "combo": "TV10|1Hour|US100",
     "cause": "כניסה / כיוון",
     "fixes": [],
     "open": true,
-    "cut_only": false,
-    "edge_mult": null,
-    "edge_parts": [
-     "עוד אין בדיקה של 2026 כפי שהיא סוחרת עכשיו - היא ראשונה בתור לבדיקה, ועד אז הסיכון לא נוגע"
+    "level": 2,
+    "level_why": [
+     "אין לה עדיין בדיקה של 2026 כפי שהיא סוחרת עכשיו",
+     "הפסידה ב־4 ימים בחודש האחרון"
     ],
-    "edge0": null,
-    "edge": null
+    "level_he": "בינוני",
+    "level_mult": 0.7
    },
    {
     "combo": "TV55|15Min|AMZN",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false,
-    "cut_only": false
+    "open": false
    },
    {
     "combo": "TV33|15Min|MSTR",
     "cause": "סגירה בגלל כלל",
     "fixes": [],
-    "open": false,
-    "cut_only": false
+    "open": false
    }
   ],
   "open": [
    "TV11|4Hour|USDJPY",
    "TV41|4Hour|NZDUSD",
    "SE02|1Hour|USDJPY",
+   "TT45|15Min|CSCO",
    "TT45|1Hour|GBPJPY",
    "TV39|1Hour|JP225",
    "TV10|1Hour|US100"
   ],
-  "cut_only": [
-   "TV21|15Min|ASML"
-  ],
-  "total_month_pct": 0.58,
-  "status": "פתוח: 6 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.44,
+  "status": "פתוח: 7 אסטרטגיות בלי תיקון עדיין"
  }
 }

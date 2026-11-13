@@ -1,0 +1,342 @@
+{
+ "at": "2026-11-13T12:41:28+00:00",
+ "version": 1,
+ "symbols": [
+  "US100",
+  "US500",
+  "US30",
+  "GER40",
+  "UK100",
+  "JP225",
+  "XAUUSD",
+  "EURUSD",
+  "GBPUSD",
+  "USDJPY",
+  "AUDUSD",
+  "USDCAD"
+ ],
+ "partial": true,
+ "rows": 31403,
+ "split": "2026-01-01",
+ "test_from": "2025-04-30",
+ "study": {
+  "baseline": {
+   "v": "m10|k1.5|with|l0|t2|sall",
+   "train": {
+    "n": 197,
+    "eff_n": 196.8,
+    "mean": -0.0637,
+    "t": -1.0,
+    "win": 45.8,
+    "sum": -12.94
+   },
+   "unseen": {
+    "n": 267,
+    "eff_n": 266.9,
+    "mean": -0.1214,
+    "t": -2.35,
+    "win": 41.2,
+    "sum": -32.77
+   }
+  },
+  "best": {
+   "v": "m20|k1.5|with|l0.5|t3|snone",
+   "train": {
+    "n": 49,
+    "eff_n": 48.9,
+    "mean": 0.4584,
+    "t": 1.35,
+    "win": 33.0,
+    "sum": 21.16
+   },
+   "unseen": {
+    "n": 61,
+    "eff_n": 61.0,
+    "mean": -0.0445,
+    "t": -0.21,
+    "win": 34.4,
+    "sum": -2.74
+   }
+  },
+  "top": [
+   {
+    "v": "m20|k1.5|with|l0.5|t3|snone",
+    "train": {
+     "n": 49,
+     "eff_n": 48.9,
+     "mean": 0.4584,
+     "t": 1.35,
+     "win": 33.0,
+     "sum": 21.16
+    },
+    "unseen": {
+     "n": 61,
+     "eff_n": 61.0,
+     "mean": -0.0445,
+     "t": -0.21,
+     "win": 34.4,
+     "sum": -2.74
+    }
+   },
+   {
+    "v": "m20|k1.5|with|l0.5|t3|sall",
+    "train": {
+     "n": 52,
+     "eff_n": 51.9,
+     "mean": 0.3963,
+     "t": 1.22,
+     "win": 33.0,
+     "sum": 19.17
+    },
+    "unseen": {
+     "n": 66,
+     "eff_n": 66.0,
+     "mean": -0.1165,
+     "t": -0.59,
+     "win": 33.3,
+     "sum": -7.68
+    }
+   },
+   {
+    "v": "m15|k2.5|with|l0.5|t3|snone",
+    "train": {
+     "n": 27,
+     "eff_n": 27.0,
+     "mean": 0.7164,
+     "t": 1.48,
+     "win": 40.6,
+     "sum": 19.12
+    },
+    "unseen": {
+     "n": 39,
+     "eff_n": 39.0,
+     "mean": -0.1099,
+     "t": -0.57,
+     "win": 38.7,
+     "sum": -4.51
+    }
+   },
+   {
+    "v": "m30|k2.5|with|l0.5|t3|snone",
+    "train": {
+     "n": 33,
+     "eff_n": 33.0,
+     "mean": 0.6208,
+     "t": 1.29,
+     "win": 33.9,
+     "sum": 19.09
+    },
+    "unseen": {
+     "n": 38,
+     "eff_n": 38.0,
+     "mean": 0.3655,
+     "t": 1.32,
+     "win": 44.8,
+     "sum": 13.69
+    }
+   },
+   {
+    "v": "m30|k2.5|with|l0.5|t3|sall",
+    "train": {
+     "n": 35,
+     "eff_n": 35.0,
+     "mean": 0.5627,
+     "t": 1.23,
+     "win": 34.9,
+     "sum": 18.29
+    },
+    "unseen": {
+     "n": 41,
+     "eff_n": 41.0,
+     "mean": 0.3352,
+     "t": 1.29,
+     "win": 46.4,
+     "sum": 13.55
+    }
+   },
+   {
+    "v": "m15|k2.5|with|l0.5|t3|sall",
+    "train": {
+     "n": 29,
+     "eff_n": 29.0,
+     "mean": 0.623,
+     "t": 1.36,
+     "win": 41.1,
+     "sum": 17.83
+    },
+    "unseen": {
+     "n": 42,
+     "eff_n": 42.0,
+     "mean": -0.1043,
+     "t": -0.55,
+     "win": 38.3,
+     "sum": -4.64
+    }
+   },
+   {
+    "v": "m20|k1.5|with|l0.5|t2|snone",
+    "train": {
+     "n": 49,
+     "eff_n": 48.9,
+     "mean": 0.3744,
+     "t": 1.26,
+     "win": 35.1,
+     "sum": 17.15
+    },
+    "unseen": {
+     "n": 61,
+     "eff_n": 61.0,
+     "mean": -0.0346,
+     "t": -0.18,
+     "win": 36.0,
+     "sum": -2.06
+    }
+   },
+   {
+    "v": "m20|k0.75|with|l0.5|t3|sall",
+    "train": {
+     "n": 72,
+     "eff_n": 71.9,
+     "mean": 0.2468,
+     "t": 0.95,
+     "win": 32.2,
+     "sum": 16.52
+    },
+    "unseen": {
+     "n": 105,
+     "eff_n": 105.0,
+     "mean": 0.2132,
+     "t": 1.0,
+     "win": 36.1,
+     "sum": 22.86
+    }
+   },
+   {
+    "v": "m30|k1.5|with|l0.5|t3|snone",
+    "train": {
+     "n": 50,
+     "eff_n": 49.9,
+     "mean": 0.3638,
+     "t": 1.0,
+     "win": 30.7,
+     "sum": 16.02
+    },
+    "unseen": {
+     "n": 62,
+     "eff_n": 62.0,
+     "mean": 0.0154,
+     "t": 0.08,
+     "win": 35.5,
+     "sum": 0.71
+    }
+   },
+   {
+    "v": "m20|k1.5|with|l0.5|t2|sall",
+    "train": {
+     "n": 52,
+     "eff_n": 51.9,
+     "mean": 0.317,
+     "t": 1.12,
+     "win": 35.0,
+     "sum": 15.16
+    },
+    "unseen": {
+     "n": 66,
+     "eff_n": 66.0,
+     "mean": -0.1073,
+     "t": -0.59,
+     "win": 34.8,
+     "sum": -7.0
+    }
+   }
+  ],
+  "robust": {
+   "top_positive_unseen": 4,
+   "top": 10,
+   "top_better_than_base": 10
+  },
+  "by": {
+   "window": {
+    "20": {
+     "variants": 72,
+     "train_median_sum": -1.73,
+     "unseen_median_sum": -3.78,
+     "unseen_positive": 15
+    },
+    "15": {
+     "variants": 72,
+     "train_median_sum": -1.84,
+     "unseen_median_sum": -3.72,
+     "unseen_positive": 17
+    },
+    "30": {
+     "variants": 72,
+     "train_median_sum": -6.5,
+     "unseen_median_sum": -7.54,
+     "unseen_positive": 16
+    },
+    "10": {
+     "variants": 72,
+     "train_median_sum": -5.64,
+     "unseen_median_sum": -34.28,
+     "unseen_positive": 12
+    }
+   },
+   "spike": {
+    "1.5": {
+     "variants": 96,
+     "train_median_sum": -5.3,
+     "unseen_median_sum": -14.35,
+     "unseen_positive": 15
+    },
+    "2.5": {
+     "variants": 96,
+     "train_median_sum": -1.58,
+     "unseen_median_sum": -4.11,
+     "unseen_positive": 23
+    },
+    "0.75": {
+     "variants": 96,
+     "train_median_sum": -8.09,
+     "unseen_median_sum": -8.31,
+     "unseen_positive": 22
+    }
+   },
+   "side": {
+    "with": {
+     "variants": 144,
+     "train_median_sum": -3.96,
+     "unseen_median_sum": -3.79,
+     "unseen_positive": 36
+    },
+    "fade": {
+     "variants": 144,
+     "train_median_sum": -5.84,
+     "unseen_median_sum": -22.09,
+     "unseen_positive": 24
+    }
+   },
+   "surprise": {
+    "none": {
+     "variants": 96,
+     "train_median_sum": -8.39,
+     "unseen_median_sum": -22.91,
+     "unseen_positive": 18
+    },
+    "all": {
+     "variants": 96,
+     "train_median_sum": -15.78,
+     "unseen_median_sum": -24.52,
+     "unseen_positive": 18
+    },
+    "agree": {
+     "variants": 96,
+     "train_median_sum": -1.29,
+     "unseen_median_sum": -0.14,
+     "unseen_positive": 24
+    }
+   }
+  },
+  "tested": 288
+ }
+}

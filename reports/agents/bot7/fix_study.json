@@ -1,5 +1,6 @@
 {
- "at": "2026-11-13T02:02:14+00:00",
+ "at": "2026-11-13T12:31:07+00:00",
+ "grid": 3,
  "symbols": [
   "US100",
   "US500",
@@ -19,7 +20,7 @@
   "GBPJPY"
  ],
  "partial": false,
- "rows": 52462,
+ "rows": 67087,
  "split": "2026-01-01",
  "test_from": "2025-04-30",
  "study": {
@@ -47,7 +48,7 @@
      "train": {
       "n": 6,
       "eff_n": 6.0,
-      "mean": 0.0643,
+      "mean": 0.0644,
       "t": 0.15,
       "win": 34.0,
       "sum": 0.31
@@ -91,7 +92,7 @@
      "unseen": {
       "n": 17,
       "eff_n": 17.0,
-      "mean": -0.2406,
+      "mean": -0.2405,
       "t": -1.37,
       "win": 41.4,
       "sum": -4.2
@@ -349,7 +350,7 @@
      "unseen": {
       "n": 165,
       "eff_n": 165.0,
-      "mean": -0.1339,
+      "mean": -0.1338,
       "t": -2.15,
       "win": 38.2,
       "sum": -22.56
@@ -409,6 +410,98 @@
       "t": -0.82,
       "win": 33.9,
       "sum": -10.7
+     }
+    }
+   },
+   "by_fib_be": {
+    "0": {
+     "train": {
+      "n": 148,
+      "eff_n": 147.8,
+      "mean": 0.0584,
+      "t": 0.79,
+      "win": 53.6,
+      "sum": 7.92
+     },
+     "unseen": {
+      "n": 184,
+      "eff_n": 184.0,
+      "mean": -0.139,
+      "t": -2.33,
+      "win": 38.6,
+      "sum": -26.0
+     }
+    },
+    "0.382": {
+     "train": {
+      "n": 148,
+      "eff_n": 147.8,
+      "mean": 0.015,
+      "t": 0.22,
+      "win": 50.4,
+      "sum": 1.55
+     },
+     "unseen": {
+      "n": 184,
+      "eff_n": 184.0,
+      "mean": -0.1556,
+      "t": -2.76,
+      "win": 37.5,
+      "sum": -29.07
+     }
+    },
+    "0.5": {
+     "train": {
+      "n": 148,
+      "eff_n": 147.8,
+      "mean": 0.0579,
+      "t": 0.82,
+      "win": 52.3,
+      "sum": 7.86
+     },
+     "unseen": {
+      "n": 184,
+      "eff_n": 184.0,
+      "mean": -0.1524,
+      "t": -2.63,
+      "win": 38.6,
+      "sum": -28.45
+     }
+    },
+    "0.618": {
+     "train": {
+      "n": 148,
+      "eff_n": 147.8,
+      "mean": 0.0599,
+      "t": 0.83,
+      "win": 53.6,
+      "sum": 8.19
+     },
+     "unseen": {
+      "n": 184,
+      "eff_n": 184.0,
+      "mean": -0.14,
+      "t": -2.35,
+      "win": 38.6,
+      "sum": -26.19
+     }
+    },
+    "0.786": {
+     "train": {
+      "n": 148,
+      "eff_n": 147.8,
+      "mean": 0.0527,
+      "t": 0.73,
+      "win": 53.6,
+      "sum": 7.11
+     },
+     "unseen": {
+      "n": 184,
+      "eff_n": 184.0,
+      "mean": -0.1408,
+      "t": -2.36,
+      "win": 38.6,
+      "sum": -26.34
      }
     }
    },
@@ -552,7 +645,7 @@
       "n": 6,
       "eff_n": 6.0,
       "mean": -0.1438,
-      "t": -0.48,
+      "t": -0.47,
       "win": 50.2,
       "sum": -0.92
      }
@@ -587,7 +680,7 @@
      "unseen": {
       "n": 10,
       "eff_n": 10.0,
-      "mean": -0.5631,
+      "mean": -0.563,
       "t": -2.31,
       "win": 20.4,
       "sum": -5.7
@@ -641,7 +734,7 @@
      "unseen": {
       "n": 14,
       "eff_n": 14.0,
-      "mean": 0.3533,
+      "mean": 0.3534,
       "t": 1.39,
       "win": 71.5,
       "sum": 4.9
@@ -685,23 +778,101 @@
     }
    },
    "exits_only": {
-    "v": "t2.0|s1|hown",
+    "v": "t1.5|s1|hown|b0.786",
     "train": {
      "n": 148,
      "eff_n": 147.8,
-     "mean": 0.0673,
-     "t": 0.94,
-     "win": 53.6,
-     "sum": 9.3
+     "mean": 0.0786,
+     "t": 1.13,
+     "win": 54.9,
+     "sum": 11.07
     },
     "unseen": {
      "n": 184,
      "eff_n": 184.0,
-     "mean": -0.1329,
-     "t": -2.24,
-     "win": 39.7,
-     "sum": -24.89
+     "mean": -0.1333,
+     "t": -2.31,
+     "win": 40.2,
+     "sum": -24.9
     }
+   },
+   "exits_top": [
+    {
+     "v": "t1.5|s1|hown|b0.786",
+     "train_sum": 11.07,
+     "train_n": 148,
+     "unseen_sum": -24.9,
+     "unseen_n": 184
+    },
+    {
+     "v": "t2.0|s1|hown",
+     "train_sum": 9.3,
+     "train_n": 148,
+     "unseen_sum": -24.89,
+     "unseen_n": 184
+    },
+    {
+     "v": "town|s1|hown",
+     "train_sum": 9.3,
+     "train_n": 148,
+     "unseen_sum": -24.89,
+     "unseen_n": 184
+    },
+    {
+     "v": "t1.5|s1|hown|b0",
+     "train_sum": 8.87,
+     "train_n": 148,
+     "unseen_sum": -26.2,
+     "unseen_n": 184
+    },
+    {
+     "v": "t2.0|s1|hown|b0.618",
+     "train_sum": 8.19,
+     "train_n": 148,
+     "unseen_sum": -26.19,
+     "unseen_n": 184
+    },
+    {
+     "v": "town|s1|hown|b0.618",
+     "train_sum": 8.19,
+     "train_n": 148,
+     "unseen_sum": -26.19,
+     "unseen_n": 184
+    },
+    {
+     "v": "t2.0|s1|hown|b0",
+     "train_sum": 7.92,
+     "train_n": 148,
+     "unseen_sum": -26.0,
+     "unseen_n": 184
+    },
+    {
+     "v": "town|s1|hown|b0",
+     "train_sum": 7.92,
+     "train_n": 148,
+     "unseen_sum": -26.0,
+     "unseen_n": 184
+    },
+    {
+     "v": "t2.0|s1|hown|b0.5",
+     "train_sum": 7.86,
+     "train_n": 148,
+     "unseen_sum": -28.45,
+     "unseen_n": 184
+    },
+    {
+     "v": "town|s1|hown|b0.5",
+     "train_sum": 7.86,
+     "train_n": 148,
+     "unseen_sum": -28.45,
+     "unseen_n": 184
+    }
+   ],
+   "exits_robust": {
+    "top_positive_unseen": 0,
+    "top": 10,
+    "base_unseen_sum": -24.89,
+    "top_better_than_base": 0
    },
    "cells_only": {
     "v": "town|s1|hown",
@@ -781,7 +952,7 @@
     "top20_positive_unseen": 0,
     "top20_mean_unseen_sum": -27.66
    },
-   "tested": 90
+   "tested": 110
   },
   "EV02": {
    "baseline": {
@@ -1085,7 +1256,7 @@
      "train": {
       "n": 6,
       "eff_n": 6.0,
-      "mean": 1.47,
+      "mean": 1.4699,
       "t": 1.68,
       "win": 66.0,
       "sum": 9.09
@@ -1097,6 +1268,98 @@
       "t": null,
       "win": null,
       "sum": 0.0
+     }
+    }
+   },
+   "by_fib_be": {
+    "0": {
+     "train": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.5444,
+      "t": 2.61,
+      "win": 85.4,
+      "sum": 7.75
+     },
+     "unseen": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.284,
+      "t": 7.45,
+      "win": 100.0,
+      "sum": 3.98
+     }
+    },
+    "0.382": {
+     "train": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.4162,
+      "t": 2.02,
+      "win": 56.7,
+      "sum": 5.96
+     },
+     "unseen": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.0503,
+      "t": 1.2,
+      "win": 78.8,
+      "sum": 0.68
+     }
+    },
+    "0.5": {
+     "train": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.4568,
+      "t": 2.24,
+      "win": 63.8,
+      "sum": 6.54
+     },
+     "unseen": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.0578,
+      "t": 1.5,
+      "win": 78.8,
+      "sum": 0.79
+     }
+    },
+    "0.618": {
+     "train": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.4568,
+      "t": 2.24,
+      "win": 63.8,
+      "sum": 6.54
+     },
+     "unseen": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.1669,
+      "t": 3.41,
+      "win": 92.9,
+      "sum": 2.34
+     }
+    },
+    "0.786": {
+     "train": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.51,
+      "t": 2.68,
+      "win": 71.3,
+      "sum": 7.25
+     },
+     "unseen": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.194,
+      "t": 3.85,
+      "win": 92.9,
+      "sum": 2.71
      }
     }
    },
@@ -1213,7 +1476,7 @@
      "train": {
       "n": 1,
       "eff_n": 1.0,
-      "mean": -0.0379,
+      "mean": -0.0378,
       "t": null,
       "win": 0.0,
       "sum": -0.04
@@ -1349,11 +1612,89 @@
     "unseen": {
      "n": 8,
      "eff_n": 8.0,
-     "mean": 1.1603,
+     "mean": 1.1604,
      "t": 4.27,
      "win": 100.0,
      "sum": 9.24
     }
+   },
+   "exits_top": [
+    {
+     "v": "t3.0|s1|hown|l0.25",
+     "train_sum": 17.91,
+     "train_n": 14,
+     "unseen_sum": 9.24,
+     "unseen_n": 8
+    },
+    {
+     "v": "t3.0|s1|hown|l0.5",
+     "train_sum": 17.25,
+     "train_n": 9,
+     "unseen_sum": 0.0,
+     "unseen_n": 0
+    },
+    {
+     "v": "t2.0|s1|hown|l0.5",
+     "train_sum": 16.96,
+     "train_n": 9,
+     "unseen_sum": 0.0,
+     "unseen_n": 0
+    },
+    {
+     "v": "t2.0|s1|hown|l0.25",
+     "train_sum": 16.38,
+     "train_n": 14,
+     "unseen_sum": 9.18,
+     "unseen_n": 8
+    },
+    {
+     "v": "t3.0|s0.75|hown|l0.5",
+     "train_sum": 15.78,
+     "train_n": 12,
+     "unseen_sum": 6.17,
+     "unseen_n": 1
+    },
+    {
+     "v": "t1.5|s1|hown|l0.5",
+     "train_sum": 15.33,
+     "train_n": 9,
+     "unseen_sum": 0.0,
+     "unseen_n": 0
+    },
+    {
+     "v": "tnone|s1|hown|l0.25",
+     "train_sum": 15.28,
+     "train_n": 14,
+     "unseen_sum": 9.24,
+     "unseen_n": 8
+    },
+    {
+     "v": "t1.5|s1|hown|l0.25",
+     "train_sum": 14.5,
+     "train_n": 14,
+     "unseen_sum": 8.51,
+     "unseen_n": 8
+    },
+    {
+     "v": "tnone|s1|hown|l0.5",
+     "train_sum": 13.72,
+     "train_n": 9,
+     "unseen_sum": 0.0,
+     "unseen_n": 0
+    },
+    {
+     "v": "tnone|s0.75|hown|l0.5",
+     "train_sum": 13.07,
+     "train_n": 12,
+     "unseen_sum": 6.17,
+     "unseen_n": 1
+    }
+   ],
+   "exits_robust": {
+    "top_positive_unseen": 6,
+    "top": 10,
+    "base_unseen_sum": 1.9,
+    "top_better_than_base": 6
    },
    "cells_only": {
     "v": "town|s1|hown",
@@ -1399,7 +1740,7 @@
     "train": {
      "n": 13,
      "eff_n": 13.0,
-     "mean": 1.4296,
+     "mean": 1.4295,
      "t": 2.96,
      "win": 76.4,
      "sum": 18.99
@@ -1407,7 +1748,7 @@
     "unseen": {
      "n": 8,
      "eff_n": 8.0,
-     "mean": 1.1603,
+     "mean": 1.1604,
      "t": 4.27,
      "win": 100.0,
      "sum": 9.24
@@ -1415,9 +1756,9 @@
    },
    "robust": {
     "top20_positive_unseen": 20,
-    "top20_mean_unseen_sum": 8.72
+    "top20_mean_unseen_sum": 8.89
    },
-   "tested": 90
+   "tested": 110
   },
   "EV03": {
    "baseline": {
@@ -1443,7 +1784,7 @@
      "train": {
       "n": 5,
       "eff_n": 5.0,
-      "mean": -0.0852,
+      "mean": -0.0851,
       "t": null,
       "win": 61.0,
       "sum": -0.49
@@ -1515,7 +1856,7 @@
      "train": {
       "n": 13,
       "eff_n": 13.0,
-      "mean": 0.5188,
+      "mean": 0.5189,
       "t": 2.22,
       "win": 77.5,
       "sum": 6.67
@@ -1595,7 +1936,7 @@
      "unseen": {
       "n": 2,
       "eff_n": 2.0,
-      "mean": -0.3034,
+      "mean": -0.3035,
       "t": null,
       "win": 49.3,
       "sum": -0.59
@@ -1689,7 +2030,7 @@
      "unseen": {
       "n": 191,
       "eff_n": 191.0,
-      "mean": -0.2047,
+      "mean": -0.2048,
       "t": -3.51,
       "win": 40.8,
       "sum": -39.02
@@ -1844,6 +2185,98 @@
      }
     }
    },
+   "by_fib_be": {
+    "0": {
+     "train": {
+      "n": 160,
+      "eff_n": 159.8,
+      "mean": -0.0208,
+      "t": -0.33,
+      "win": 46.8,
+      "sum": -3.02
+     },
+     "unseen": {
+      "n": 207,
+      "eff_n": 207.0,
+      "mean": -0.221,
+      "t": -3.8,
+      "win": 37.7,
+      "sum": -45.63
+     }
+    },
+    "0.382": {
+     "train": {
+      "n": 160,
+      "eff_n": 159.8,
+      "mean": -0.0322,
+      "t": -0.54,
+      "win": 46.7,
+      "sum": -4.72
+     },
+     "unseen": {
+      "n": 207,
+      "eff_n": 207.0,
+      "mean": -0.1616,
+      "t": -3.22,
+      "win": 46.9,
+      "sum": -33.35
+     }
+    },
+    "0.5": {
+     "train": {
+      "n": 160,
+      "eff_n": 159.8,
+      "mean": -0.0291,
+      "t": -0.47,
+      "win": 46.1,
+      "sum": -4.26
+     },
+     "unseen": {
+      "n": 207,
+      "eff_n": 207.0,
+      "mean": -0.1846,
+      "t": -3.4,
+      "win": 43.9,
+      "sum": -38.1
+     }
+    },
+    "0.618": {
+     "train": {
+      "n": 160,
+      "eff_n": 159.8,
+      "mean": -0.0228,
+      "t": -0.37,
+      "win": 47.4,
+      "sum": -3.32
+     },
+     "unseen": {
+      "n": 207,
+      "eff_n": 207.0,
+      "mean": -0.1869,
+      "t": -3.33,
+      "win": 41.5,
+      "sum": -38.6
+     }
+    },
+    "0.786": {
+     "train": {
+      "n": 160,
+      "eff_n": 159.8,
+      "mean": -0.0291,
+      "t": -0.46,
+      "win": 46.8,
+      "sum": -4.36
+     },
+     "unseen": {
+      "n": 207,
+      "eff_n": 207.0,
+      "mean": -0.1938,
+      "t": -3.39,
+      "win": 40.1,
+      "sum": -40.01
+     }
+    }
+   },
    "by_symbol": {
     "AUDUSD": {
      "train": {
@@ -1867,7 +2300,7 @@
      "train": {
       "n": 2,
       "eff_n": 2.0,
-      "mean": 0.164,
+      "mean": 0.1639,
       "t": null,
       "win": 49.4,
       "sum": 0.36
@@ -1875,7 +2308,7 @@
      "unseen": {
       "n": 3,
       "eff_n": 3.0,
-      "mean": -0.69,
+      "mean": -0.6899,
       "t": null,
       "win": 33.5,
       "sum": -2.08
@@ -1885,7 +2318,7 @@
      "train": {
       "n": 12,
       "eff_n": 12.0,
-      "mean": 0.1923,
+      "mean": 0.1922,
       "t": 0.8,
       "win": 57.7,
       "sum": 2.5
@@ -1903,7 +2336,7 @@
      "train": {
       "n": 5,
       "eff_n": 5.0,
-      "mean": -0.29,
+      "mean": -0.2901,
       "t": null,
       "win": 19.5,
       "sum": -1.41
@@ -1921,7 +2354,7 @@
      "train": {
       "n": 16,
       "eff_n": 16.0,
-      "mean": -0.1288,
+      "mean": -0.1287,
       "t": -0.78,
       "win": 37.3,
       "sum": -2.08
@@ -2001,7 +2434,7 @@
      "unseen": {
       "n": 17,
       "eff_n": 17.0,
-      "mean": -0.3381,
+      "mean": -0.338,
       "t": -1.43,
       "win": 35.5,
       "sum": -5.82
@@ -2037,8 +2470,8 @@
      "unseen": {
       "n": 15,
       "eff_n": 15.0,
-      "mean": -0.5227,
-      "t": -2.27,
+      "mean": -0.5226,
+      "t": -2.26,
       "win": 26.9,
       "sum": -7.91
      }
@@ -2073,7 +2506,7 @@
      "unseen": {
       "n": 17,
       "eff_n": 17.0,
-      "mean": 0.1008,
+      "mean": 0.1007,
       "t": 0.51,
       "win": 58.7,
       "sum": 1.78
@@ -2134,6 +2567,84 @@
      "win": 30.9,
      "sum": 0.19
     }
+   },
+   "exits_top": [
+    {
+     "v": "t3.0|s1|hown|l0.5",
+     "train_sum": 5.64,
+     "train_n": 30,
+     "unseen_sum": 0.19,
+     "unseen_n": 42
+    },
+    {
+     "v": "tnone|s1|hown|l0.5",
+     "train_sum": 5.64,
+     "train_n": 30,
+     "unseen_sum": 4.35,
+     "unseen_n": 42
+    },
+    {
+     "v": "t3.0|s1|hown|l0.25",
+     "train_sum": 5.32,
+     "train_n": 68,
+     "unseen_sum": -19.1,
+     "unseen_n": 99
+    },
+    {
+     "v": "tnone|s1|hown|l0.25",
+     "train_sum": 5.03,
+     "train_n": 68,
+     "unseen_sum": -17.71,
+     "unseen_n": 99
+    },
+    {
+     "v": "t3.0|s1|hown|b0",
+     "train_sum": 4.44,
+     "train_n": 160,
+     "unseen_sum": -46.75,
+     "unseen_n": 207
+    },
+    {
+     "v": "t3.0|s1|hown|b0.618",
+     "train_sum": 4.44,
+     "train_n": 160,
+     "unseen_sum": -47.36,
+     "unseen_n": 207
+    },
+    {
+     "v": "t3.0|s1|hown|b0.786",
+     "train_sum": 4.44,
+     "train_n": 160,
+     "unseen_sum": -46.87,
+     "unseen_n": 207
+    },
+    {
+     "v": "t2.0|s1|hown|l0.5",
+     "train_sum": 4.21,
+     "train_n": 30,
+     "unseen_sum": -0.57,
+     "unseen_n": 42
+    },
+    {
+     "v": "t1.5|s1|hown|l0.5",
+     "train_sum": 4.14,
+     "train_n": 30,
+     "unseen_sum": -1.06,
+     "unseen_n": 42
+    },
+    {
+     "v": "town|s1|hown|l0.5",
+     "train_sum": 4.14,
+     "train_n": 30,
+     "unseen_sum": -1.06,
+     "unseen_n": 42
+    }
+   ],
+   "exits_robust": {
+    "top_positive_unseen": 2,
+    "top": 10,
+    "base_unseen_sum": -38.44,
+    "top_better_than_base": 7
    },
    "cells_only": {
     "v": "town|s1|hown",
@@ -2199,9 +2710,9 @@
    },
    "robust": {
     "top20_positive_unseen": 0,
-    "top20_mean_unseen_sum": -22.71
+    "top20_mean_unseen_sum": -22.24
    },
-   "tested": 90
+   "tested": 110
   }
  }
 }

@@ -57,7 +57,12 @@ TARGETS = ("own", 1.0, 1.5, 2.0, 3.0, "none")
 STOPS = (1.0, 0.75, 0.5)
 HOLDS = ("own", 0.5, 2.0)
 LIMITS = (0.0, 0.25, 0.5)        # entry on the first pullback: a limit k x risk better than the signal's close, 3 bars
-GRID = 2                         # cache version: bump when the variants or the costs change
+# the user's Fibonacci task (12.11.2026): the breakeven at a Fibonacci share of the way to the target instead of the
+# live bot's 60% (0 = no breakeven); with the own stop / time exit and the at-once entry, on these targets (GRID 3)
+FIB_BE = (0.0, 0.382, 0.5, 0.618, 0.786)
+FIB_TARGETS = ("own", 1.5, 2.0, 3.0)
+GRID = 3                         # cache version: bump when the variants or the costs change
+EXITS_TOP = 10                   # robustness of the exits-only pick: of its 10 best on 2025, how many made money in 2026
 CACHE = ROOT / "cache" / "news_fix"
 PRIO = ("rates", "infl", "jobs", "gdp", "oil", "other")
 MIN_CELL_N = 4
@@ -131,7 +136,7 @@ def tag(sym, t, rel, evs):
     return {"cat": best[1], "own": bool(mine), "surp": s, "cur": best[0], "title": best[3], "rel": k}
 
 
-def variant_fn(fn, tg, st, hd, lim=0.0):
+def variant_fn(fn, tg, st, hd, lim=0.0, bw=None):
     def g(d):
         L, S, plan = fn(d)
         p = dict(plan)
@@ -145,18 +150,22 @@ def variant_fn(fn, tg, st, hd, lim=0.0):
             p["max_bars"] = max(2, int(round((plan.get("max_bars") or 12) * float(hd))))
         if lim:
             p["entry_pullback"] = (float(lim), 3)
+        if bw is not None:
+            p["be_way"] = float(bw)               # rules_agent.run: the breakeven's own point of the way (0 = none)
         return L, S, p
     return g
 
 
-def vkey(tg, st, hd, lim=0.0):
-    return f"t{tg}|s{st:g}|h{hd}" + (f"|l{lim:g}" if lim else "")
+def vkey(tg, st, hd, lim=0.0, bw=None):
+    return f"t{tg}|s{st:g}|h{hd}" + (f"|l{lim:g}" if lim else "") + (f"|b{bw:g}" if bw is not None else "")
 
 
 def grid():
-    """54 exit variants at once, and the same targets x stops with the two limit entries (own time exit): 90."""
-    g = [(tg, st, hd, 0.0) for tg, st, hd in itertools.product(TARGETS, STOPS, HOLDS)]
-    return g + [(tg, st, "own", lim) for lim in LIMITS if lim for tg, st in itertools.product(TARGETS, STOPS)]
+    """54 exit variants at once, the same targets x stops with the two limit entries (own time exit): 90; and the
+    Fibonacci breakeven points on 4 targets (own stop / time exit, at-once entry): 20 more - 110."""
+    g = [(tg, st, hd, 0.0, None) for tg, st, hd in itertools.product(TARGETS, STOPS, HOLDS)]
+    g += [(tg, st, "own", lim, None) for lim in LIMITS if lim for tg, st in itertools.product(TARGETS, STOPS)]
+    return g + [(tg, 1.0, "own", 0.0, bw) for tg, bw in itertools.product(FIB_TARGETS, FIB_BE)]
 
 
 def session(t):
@@ -182,8 +191,8 @@ def trades_sym(sym, rel):
     rows = []
     for sid in STRATS:
         base = E.EVENTS[sid][1]
-        for tg, st, hd, lim in grid():
-            fn = variant_fn(base, tg, st, hd, lim)
+        for tg, st, hd, lim, bw in grid():
+            fn = variant_fn(base, tg, st, hd, lim, bw)
             px = float(d5["c"].median())
             comm = (px * float(spec["commission"]) / (float(spec["contractSize"]) * U.BASE_USD.get(spec["code"].split("/")[0], 1.0))
                     if spec["commissionType"] == "flat_USD" else px * 2 * float(spec["commission"]) / 100.0)
@@ -203,7 +212,7 @@ def trades_sym(sym, rel):
                 if g is None:
                     continue
                 agree = None if g["surp"] is None else int(np.sign(g["surp"]) == np.sign(x.dir))
-                rows.append({"sid": sid, "v": vkey(tg, st, hd, lim), "sym": sym, "cls": U.CLASS.get(sym, "?"), "t": tt.isoformat(),
+                rows.append({"sid": sid, "v": vkey(tg, st, hd, lim, bw), "sym": sym, "cls": U.CLASS.get(sym, "?"), "t": tt.isoformat(),
                              "dir": int(x.dir), "r": float(x.r), "cat": g["cat"], "own": g["own"], "agree": agree,
                              "rel": g["rel"].isoformat(), "title": g["title"]})
     return rows
@@ -254,7 +263,11 @@ def study(df):
         lim = x.assign(lim=x["v"].str.extract(r"\|l([\d.]+)$")[0].fillna("0"))
         res["by_limit"] = {k: {"train": _w(y[y.train & (y["v"].str.startswith("town|s1|"))]),
                                "unseen": _w(y[~y.train & (y["v"].str.startswith("town|s1|"))])}
-                           for k, y in lim[lim["v"].str.match(r"^town\|s1\|hown")].groupby("lim")}
+                           for k, y in lim[lim["v"].str.match(r"^town\|s1\|hown(\|l[\d.]+)?$")].groupby("lim")}
+        # the Fibonacci breakeven on the own target (the live bot: 60% of the way)
+        fib = x[x["v"].str.match(r"^town\|s1\|hown\|b[\d.]+$")]
+        res["by_fib_be"] = {k: {"train": _w(y[y.train]), "unseen": _w(y[~y.train])}
+                            for k, y in fib.assign(bw=fib["v"].str.extract(r"\|b([\d.]+)$")[0]).groupby("bw")}
         res["by_symbol"] = {k: {"train": _w(y[y.train]), "unseen": _w(y[~y.train])} for k, y in b.groupby("sym")}
         cand = []
         for v, y in x.groupby("v"):
@@ -267,6 +280,15 @@ def study(df):
         by_cells = sorted(cand, key=lambda c: -c["train"]["sum"])
         bc = next(c for c in cand if c["v"] == base_v) if any(c["v"] == base_v for c in cand) else None
         res["exits_only"] = {"v": by_all[0]["v"], "train": by_all[0]["train_all"], "unseen": by_all[0]["unseen_all"]}
+        # is the exits-only pick a lone lucky point? its 10 best neighbours on 2025, shown on 2026 (13.11.2026: EV03's
+        # pick, limit 0.5R + 3R, turned -38R into +0.2R in 2026 - kept only if its neighbours hold too)
+        et = by_all[:EXITS_TOP]
+        res["exits_top"] = [{"v": c["v"], "train_sum": c["train_all"]["sum"], "train_n": c["train_all"]["n"],
+                             "unseen_sum": c["unseen_all"]["sum"], "unseen_n": c["unseen_all"]["n"]} for c in et]
+        res["exits_robust"] = {"top_positive_unseen": int(sum(1 for c in et if (c["unseen_all"]["sum"] or 0) > 0)),
+                               "top": len(et), "base_unseen_sum": res["baseline"]["unseen"]["sum"],
+                               "top_better_than_base": int(sum(1 for c in et if (c["unseen_all"]["sum"] or 0)
+                                                               > (res["baseline"]["unseen"]["sum"] or 0)))}
         if bc:
             res["cells_only"] = {"v": base_v, "cells": bc["cells"], "train": bc["train"], "unseen": bc["unseen"]}
         res["best"] = {k: by_cells[0][k] for k in ("v", "cells", "train", "unseen")}
@@ -281,7 +303,8 @@ def study(df):
 def stale():
     try:
         j = json.loads(OUT.read_text(encoding="utf-8"))
-        return pd.Timestamp.now(tz="UTC") - pd.Timestamp(j["at"]) > pd.Timedelta(days=STALE_DAYS) or j.get("partial")
+        return (pd.Timestamp.now(tz="UTC") - pd.Timestamp(j["at"]) > pd.Timedelta(days=STALE_DAYS) or j.get("partial")
+                or j.get("grid") != GRID)
     except Exception:  # noqa: BLE001
         return True
 
@@ -323,10 +346,17 @@ def main(argv=None):
     df = pd.DataFrame(rows)
     res = study(df) if len(df) else {}
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "symbols": done,
-                               "partial": len(done) < len(SYMBOLS), "rows": int(len(df)), "split": str(SPLIT.date()),
-                               "test_from": str(TEST_FROM.date()), "study": res}, ensure_ascii=False, indent=1, default=str),
-                   encoding="utf-8")
+    partial = len(done) < len(SYMBOLS)
+    doc = json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "grid": GRID, "symbols": done,
+                      "partial": partial, "rows": int(len(df)), "split": str(SPLIT.date()),
+                      "test_from": str(TEST_FROM.date()), "study": res}, ensure_ascii=False, indent=1, default=str)
+    # a partial run of a new grid never overwrites the last complete study (13.11.2026: the cards are made from it);
+    # it is kept beside it, and the next runs go on from the cache until every instrument is in
+    try:
+        prev_complete = not json.loads(OUT.read_text(encoding="utf-8")).get("partial")
+    except Exception:  # noqa: BLE001
+        prev_complete = False
+    (OUT.with_name("fix_study_partial.json") if partial and prev_complete else OUT).write_text(doc, encoding="utf-8")
     print(json.dumps({s: {"base_unseen": r["baseline"]["unseen"]["sum"], "best_unseen": r["best"]["unseen"]["sum"]}
                       for s, r in res.items()}))
 

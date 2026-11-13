@@ -241,6 +241,40 @@ def _turn_back(st, r):
         st.setdefault("agent_runs", {})[name] = {"at": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(float(r["at"]))),
                                                  "sec": int(time.time() - float(r["at"])), "budget_sec": int(budget),
                                                  "ok": None, "err": "cut short by a restart - turn given back"}
+        return True
+    return False
+
+
+def _publish_lost(st, r):
+    """A run that ended (or was stopped) while the manager was down, past half its minutes: what it wrote is published
+    before the next refresh writes main's copy over it (manager, 13.11.2026: bot 5's run of 07:18 UTC ended during the
+    08:25 install - no commit, no error, its gap results were overwritten at 08:51 and the search looked stuck)."""
+    name = (r or {}).get("name")
+    if not name or not r.get("at"):
+        return
+    t_r = float(r["at"])
+    st.setdefault("agent_tail", {})[name] = _tail(f"agent_{name}.log") + ["(ended while the manager restarted)"]
+    st.setdefault("agent_runs", {})[name] = {"at": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime(t_r)),
+                                             "sec": None, "budget_sec": int(r.get("timeout", 3600)) - 3600,
+                                             "ok": None, "err": "ended while the manager restarted - published after"}
+    after = snapshot()
+    before = r.get("before") or {}
+    bad = set()
+    for rel, hsh in after.items():                    # a file cut half-way by a stop is not published
+        if before.get(rel) != hsh and rel.endswith(".json"):
+            try:
+                json.loads((WORK / rel).read_text(encoding="utf-8"))
+            except Exception:  # noqa: BLE001
+                bad.add(rel)
+    only = re.compile("^(?!" + "|".join(re.escape(b) + "$" for b in bad) + ")") if bad else None
+    try:
+        _publish_changes(st, before, "agent", f"Agents on the bots' computer: {name} smart layer (ended in a restart)",
+                         only=only)
+    except Exception as e:  # noqa: BLE001
+        _S["log"](f"publishing {name} after the restart failed: {e}")
+        hist = [x for x in st.get("agent_errors_24h") or [] if time.time() - (_ts(x.get("at")) or 0.0) < 86400]
+        st["agent_errors_24h"] = (hist + [{"at": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
+                                           "err": f"{name}: publishing after a restart failed: {e}"[:300]}])[-20:]
 
 
 def kill_orphan(st):
@@ -275,7 +309,12 @@ def adopt_orphan(st):
     gap runs half-way, 18:50 / 18:58 UTC, so their results stopped updating). Past its own timeout it is stopped."""
     pid, r = st.get("pid"), st.get("run") or {}
     if not (pid and r.get("name") and time.time() - float(r.get("at", 0)) < float(r.get("timeout", 0)) and _alive(pid)):
-        _turn_back(st, r)
+        gone = bool(pid and r.get("name") and not _alive(pid))
+        if not _turn_back(st, r) and gone:
+            try:
+                _publish_lost(st, r)
+            except Exception as e:  # noqa: BLE001
+                _S["log"](f"publishing the ended agent failed: {e}")
         st.pop("run", None)
         return kill_orphan(st)
     name, log = r["name"], _S["log"]

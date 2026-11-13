@@ -163,6 +163,49 @@ def trend_runs(budget_s):
     return done
 
 
+def sym_runs(budget_s):
+    """The instrument tracks (13.11.2026 evening, the manager's task f8643b16aa57): every track in "tal_tracks" with
+    "symbols" and a risk > 0 (t1h_5@US30, t5_1@EU50, ... - chosen by agents/tal_pool_gh.py on GitHub) run with exactly
+    its rules on its instrument here, saved in the gap method's index - so the whole-bot test (TG.portfolio) takes
+    them together with the index tracks, as the account does."""
+    try:
+        s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return 0
+    rk = s5.get("risk") or {}
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    idx_dir = TAL_DIR / "idx"
+    idx_dir.mkdir(parents=True, exist_ok=True)
+    have = {f.stem for f in idx_dir.glob("*.json")}
+    want = {}
+    for k, v in (s5.get("tal_tracks") or {}).items():
+        pn = f"{v['pair'][0]}/{v['pair'][1]}"
+        if not v.get("symbols") or float(rk.get(k, 0) or 0) <= 0 or pn not in pairs:
+            continue
+        c = TG._norm(dict(v["cfg"]))
+        for sym in v["symbols"]:
+            if f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}" not in have:
+                want.setdefault(sym, []).append((pn, c))
+    t0, done = time.time(), 0
+    for sym, todo in want.items():
+        if time.time() - t0 > budget_s:
+            break
+        D, gc = tal_load(sym), {}
+        if D is None:
+            print(f"tal instrument tracks {sym}: no data")
+            continue
+        for pn, c in todo:
+            key = f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}"
+            t = TG.simulate(D, pairs[pn], c, gc.setdefault(pn.split("/")[0], {}))
+            t.to_csv(TAL_DIR / f"{key}.csv.gz", index=False)
+            (idx_dir / f"{key}.json").write_text(json.dumps(
+                {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": pairs[pn][2],
+                 "knob": "track", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f"{key}.csv.gz", "n": len(t)}, default=str))
+            done += 1
+    print(f"tal instrument tracks: {done} run, {sum(len(v) for v in want.values()) - done} left")
+    return done
+
+
 STAB_RR = (0.5, 1.0)
 
 
@@ -521,6 +564,10 @@ def main():
         # the user's task of 13.11.2026 (high priority): the method on every FTMO forex pair, metals, other indices -
         # half of what is left, the indices' never-ending search the rest
         try:
+            sym_runs(tal_left * 0.3)                # the instrument tracks, so the whole bot is tested together (first)
+        except Exception as e:  # noqa: BLE001
+            print("tal instrument track runs failed:", e)
+        try:
             trend_runs(tal_left * 0.25)             # the fix of the 12.11 loss against exactly what runs, first
         except Exception as e:  # noqa: BLE001
             print("tal trend runs failed:", e)
@@ -633,12 +680,30 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
         except Exception as e:  # noqa: BLE001
             print("tal wide summary failed:", e)
+        # the whole bot (13.11.2026 evening, the manager's task f8643b16aa57): the index tracks AND the instruments' own
+        # tracks together, each at its real risk - the rule cards and the risk factor are chosen on this one when
+        # every track's runs are there (sym_runs); until then on the index tracks as before
+        try:
+            live_all = {k: (f"{v['pair'][0]}/{v['pair'][1]}", v["cfg"]) + ((list(v["symbols"]),) if v.get("symbols") else ())
+                        for k, v in (s5.get("tal_tracks") or {}).items() if float(rkd.get(k, 0.0028) or 0) > 0}
+            tidx_all = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")}
+            pf_all = TG.portfolio(tidx_all, TAL_SYMBOLS, TAL_DIR, live_all,
+                                  risk={k: float(rkd.get(k, 0.0028)) * cur_sc for k in (s5.get("tal_tracks") or {})})
+        except Exception as e:  # noqa: BLE001
+            print("tal whole bot failed:", e)
+            pf_all = None
+        if pf_all:
+            doc["bot5"]["portfolio_all"] = pf_all
+            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        else:
+            print("tal whole bot: an instrument track's runs are missing - the index tracks only")
         if pf:
             doc["bot5"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             rk_live = [x for x in rk5 if x > 0]
-            rule_cards = [pc for pc in (TG.portfolio_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4),
-                                        TG.hours_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4)) if pc]
+            pfc = pf_all or pf
+            rule_cards = [pc for pc in (TG.portfolio_card(BOT, pfc, round(min(rk_live) * 100, 3) if rk_live else 0.4),
+                                        TG.hours_card(BOT, pfc, round(min(rk_live) * 100, 3) if rk_live else 0.4)) if pc]
             cards += rule_cards
             try:
                 tcards, tres = trend_fix(tidx, pf, rule_cards)
@@ -654,7 +719,7 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             except Exception as e:  # noqa: BLE001
                 print("tal stability failed:", e)
-            sc_card = TG.scale_card(BOT, pf, cur_sc)
+            sc_card = TG.scale_card(BOT, pf_all or pf, cur_sc)
             if sc_card:
                 cards.append(sc_card)
     except StopIteration:

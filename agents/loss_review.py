@@ -466,7 +466,9 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
     gone = {x.get("of") for x in decisions if x.get("decision") == "reverted"}
     # a fix was found: the manager's cut comes back (the fix decides the strategy's risk from now on)
     for row in plan["rows"]:
-        if row["open"] or not row["fixes"]:
+        # only risk cuts are no fix (13.11.2026: TV21 ASML bot 1, SE02 USDJPY bot 2, FR01 EURUSD bot 4 were put back
+        # to their agent's earlier cut x0.5 / x0.85 / x0.7 minutes after the edge cut, "a fix was found" being that cut)
+        if row["open"] or not row["fixes"] or row.get("cut_only"):
             continue
         cuts = [d for d in decisions if d.get("loss_report") == f"{rep['bot']}/{rep['day']}" and d.get("type") == "risk"
                 and (d.get("action") or {}).get("combo") == row["combo"] and d.get("decision") == "approved" and d["id"] not in gone]

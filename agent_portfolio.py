@@ -407,12 +407,17 @@ def experiments(bot, budget_s, where):
                 todo.append((pr, fam, -age, sym, combo))
             elif d.get("variants") and legacy_tr(d):                         # trades stored in 1000-minute steps
                 todo.append((2, fam, -age, sym, combo))
-    todo.sort(key=lambda x: (x[0], x[3], x[1], x[2]))          # never-run first, one instrument's combos together
+    # a 1-minute strategy runs in its own group, after the instrument's other ones (manager, 13.11.2026 night: bots 2-4
+    # put SC001|1Min|JP225 / USDCAD in one exits run with the instrument's 15Min-4Hour strategies; the 1-minute one
+    # needs more than the run's minutes on ~1M bars, so the whole group ran out of time every run since 31.10 and
+    # TT16 JP225, TV02 JP225, IM03 / QC04 / SC002 USDCAD never got their exits tested)
+    one_min = lambda c: c.split("|")[1] == "1Min"                      # noqa: E731
+    todo.sort(key=lambda x: (x[0], x[3], x[1], one_min(x[4]), x[2]))  # never-run first, one instrument's combos together
     t0, done = time.time(), 0
     groups = {}
     for x in todo:
-        groups.setdefault((x[3], x[1]), []).append(x[4])
-    for (sym, fam), combos in groups.items():
+        groups.setdefault((x[3], x[1], x[4] if one_min(x[4]) else ""), []).append(x[4])
+    for (sym, fam, _one), combos in groups.items():
         left = budget_s - (time.time() - t0)
         if left < 120:
             break
@@ -426,8 +431,11 @@ def experiments(bot, budget_s, where):
                 print(f"  {sym} {fam}: stopped for time ({left / 60:.0f} min were left), first next run")
                 break
             print(f"  {sym} {fam}: failed - {str(e)[-300:]}")
-            for c in combos:                                         # a combo that cannot run is retried tomorrow
-                st.put(fam, c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - 1)).isoformat(),
+            # a combo that cannot run is retried tomorrow; a 1-minute one that ran out of a whole run's minutes alone
+            # in 3 days (it would take most of every run and still not finish - manager, 13.11.2026 night)
+            wait = 3 if (_one and "Time budget reached" in str(e)) else 1
+            for c in combos:
+                st.put(fam, c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - wait)).isoformat(),
                                 "combo": c, "error": str(e)[-300:]})
             continue
         for c in combos:

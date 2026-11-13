@@ -359,6 +359,15 @@ def plan_now(bot, combo):
     return {k: v for k, v in sorted(p.items()) if k != "card" and not k.endswith("_card")}
 
 
+def replay_family(plan):
+    """The experiment family whose trades the whole-bot check takes for a strategy (portfolio_check.current_trades)."""
+    if plan.get("filter"):
+        return "filters"
+    if any(k in plan for k in ("be_way", "be_r", "partial")):
+        return "manage"
+    return "exits"
+
+
 def experiments(bot, budget_s, where):
     st = Store(bot)
     todo = []
@@ -388,6 +397,11 @@ def experiments(bot, budget_s, where):
                 continue
             if age >= RERUN_DAYS or (d.get("variants") and not tr_ok(d)):    # (12.11.2026: trades for the whole-bot check)
                 pr = 0 if age == 999 or combo in fixing_ else 1
+                if pr == 0 and combo not in fixing_ and fam != replay_family(pl):
+                    # the whole-bot check reads one family per strategy (its built filter / management, else the
+                    # exits): that one first for every strategy, the other families after (13.11.2026: bot 1's 2026
+                    # replay saw 8 of 46 strategies - every re-run went through all families, one instrument at a time)
+                    pr = 0.8
                 if fam == "fib" and combo not in fixing_:
                     pr = 1.5                     # the Fibonacci grid after the re-runs the whole-bot check waits for
                 todo.append((pr, fam, -age, sym, combo))

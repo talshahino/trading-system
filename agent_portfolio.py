@@ -298,9 +298,10 @@ def run_rules(combos, fam, budget_min, extra=None):
         cmd += ["--filters", SPLIT]
     elif fam in ("manage", "fib"):
         cmd += ["--manage", SPLIT] + (["--manage-grid", "fib"] if fam == "fib" else [])
+    if fam in ("exits", "filters", "manage", "fib"):
         bf = ROOT / "live" / "bots" / f"{BOT_NOW.get('bot')}.json"
         if bf.exists():
-            cmd += ["--plans-file", str(bf)]          # on top of the exits the bot trades now
+            cmd += ["--plans-file", str(bf)]          # on top of what the bot trades now (exits / filters too: 13.11.2026)
     env = dict(os.environ, MAX_RUN_MINUTES=str(max(5, int(budget_min))))
     r = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace",
                        timeout=int(budget_min * 60 + 900))
@@ -341,6 +342,16 @@ def loss_priority(bot):
         return {}
 
 
+def plan_now(bot, combo):
+    """The combo's built plan in live/bots/<bot>.json (exits / filter / management), without the card ids: the
+    experiments run on top of it (run_rules.py --plans-file), so a result measured on another plan is stale."""
+    try:
+        p = (json.loads((ROOT / "live" / "bots" / f"{bot}.json").read_text(encoding="utf-8")).get("plans") or {}).get(combo) or {}
+    except Exception:  # noqa: BLE001
+        p = {}
+    return {k: v for k, v in sorted(p.items()) if k != "card" and not k.endswith("_card")}
+
+
 def experiments(bot, budget_s, where):
     st = Store(bot)
     todo = []
@@ -350,9 +361,15 @@ def experiments(bot, budget_s, where):
         if not runs_here(sym, where):
             continue
         prio = (loss_priority(bot).get(combo) or {})
+        pl = plan_now(bot, combo)
         for fam in FAMILIES:
             age = st.age_days(fam, combo)
             d = st.get(fam, combo) or {}
+            if d.get("variants") and age < RERUN_DAYS and (d.get("plan") or {}) != pl:
+                # the bot's plan for this strategy changed since this experiment (13.11.2026: TV58 USDCAD bot 3 - a
+                # filter card measured on the old exits): run again on top of what runs now, before the regular re-runs
+                todo.append((0.5, fam, -age, sym, combo))
+                continue
             if fam in (prio.get("families") or []) and str(d.get("at") or "") < str(prio.get("at") or ""):
                 # the daily loss review asked for this test (agents/loss_review.py): first, before anything else
                 todo.append((-1, fam, -age, sym, combo))
@@ -386,7 +403,7 @@ def experiments(bot, budget_s, where):
             sid, tf, s = c.split("|")
             tc = t[(t["sid"] == sid) & (t["tf"] == tf) & (t["symbol"] == s)]
             doc = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": fam,
-                   "secs": round((time.time() - ts) / max(1, len(combos)), 1), "variants": {}}
+                   "secs": round((time.time() - ts) / max(1, len(combos)), 1), "variants": {}, "plan": plan_now(bot, c)}
             for v, g in tc.groupby("variant") if "variant" in tc else []:
                 doc["variants"][v] = variant_stats(g)
             # the 2026 trades of the variants a card can come from (the one in the bot now, the default and the five
@@ -542,8 +559,14 @@ def cards_for(bot):
             cand = [(v, x) for v, x in vs.items() if v != base_key and (x["train"].get("eff_n") or 0) >= 10]
             if not cand:
                 continue
-            v, best = max(cand, key=lambda vx: vx[1]["train"]["mean"] if vx[1]["train"]["mean"] is not None else -9)
-            if (best["train"]["mean"] or -9) <= (base["train"]["mean"] or 0):
+            # THE GOAL (user, 12.11.2026, data/agents/objective.md): the variant with the most TOTAL R on the choosing
+            # period (trades x R a trade), not the most R a trade (13.11.2026: TV58|1Hour|USDCAD bot 3 got a limit-entry
+            # variant with 28 trades over the bot's version with more trades and more R in all)
+            def _tot(x):
+                return (x.get("eff_n") or 0) * x["mean"] if x.get("mean") is not None else -9e9
+            v, best = max(cand, key=lambda vx: _tot(vx[1]["train"]))
+            base_tot = _tot(base["train"]) if base["train"].get("mean") is not None else 0.0
+            if _tot(best["train"]) <= max(0.0, base_tot):
                 continue
             grid = d.get("grid") or []
             bval = next((g["valid"]["avg"] for g in grid if g["variant"] == base_key), None)
@@ -556,7 +579,7 @@ def cards_for(bot):
                 f"נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
                 best["train"], best["unseen"], whole=best["whole"], halves_=best["halves"],
                 neighbours={"values": len(grid) or len(vs), "share_positive": share},
-                tested=len(grid) or len(vs), risk_pct=risk, baseline=base["unseen"],
+                tested=len(grid) or len(vs), risk_pct=risk, baseline=base["unseen"], detail={"exp_at": d.get("at")},
                 change={"combo": combo, "family": "manage" if fam == "fib" else fam, "from": base_key, "to": v,
                         **({"src": "fib"} if fam == "fib" else {})}))
     # the scout's strategies

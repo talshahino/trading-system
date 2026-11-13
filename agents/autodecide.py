@@ -164,6 +164,38 @@ def decide(bots, now=None):
                      "effect": "הסיכון חוזר לערך שלפני ההחלטה, תוך כ־10 דקות"})
     except FileNotFoundError:
         pass
+    # ONE change per strategy at a time (13.11.2026: TV58|1Hour|USDCAD bot 3 got a new exit plan and a market filter
+    # approved in the same minute, each tested alone against the old version - the pair never tested together, and the
+    # exit plan replaced one built 5 hours before). Of the new improvement cards of one strategy, only the one with the
+    # most total R on the choosing period (to 2025) goes in now; the others wait for the next experiment, run on top of the built one.
+    # A card whose experiment ran before a change on its strategy was built is stale the same way: it waits.
+    try:
+        reps = json.loads((ROOT / "data/agents/replies.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        reps = {}
+    built_at = {}                                               # (bot, combo) -> the last time a change was built
+    for bot, b in bots.items():
+        for c in b.get("cards", []):
+            r = reps.get(c["id"]) if isinstance(reps.get(c["id"]), dict) else {}
+            combo = (c.get("change") or {}).get("combo")
+            if r.get("built") and combo and c.get("kind") == "improve":
+                k = (bot, combo)
+                built_at[k] = max(built_at.get(k, ""), str(r.get("at") or ""))
+    for o in old.values():                                      # cards built before that left the cards list
+        if o.get("type") == "card" and o.get("kind") == "improve" and o.get("decision") == "approved" \
+                and (reps.get(o.get("card")) or {}).get("built") and o["title"].count("|") >= 2:
+            k = (o["bot"], o["title"].lstrip("⭐ ").split(":")[0].strip())
+            built_at[k] = max(built_at.get(k, ""), str((reps.get(o.get("card")) or {}).get("at") or ""))
+    best_now = {}                                               # (bot, combo) -> the new card with the most total gain
+    for bot, b in bots.items():
+        for c in b.get("cards", []):
+            combo = (c.get("change") or {}).get("combo")
+            if c.get("kind") != "improve" or c.get("tier") not in ("strong", "regular") or not combo \
+                    or _did("card", c["id"]) in old or (ucards.get(c["id"]) or {}).get("decision"):
+                continue
+            gain = _total(c.get("train")) or 0.0                # chosen on the period to 2025 (objective.md)
+            if (bot, combo) not in best_now or gain > best_now[(bot, combo)][1]:
+                best_now[(bot, combo)] = (c["id"], gain)
     # 1) the agents' cards (all bots)
     for bot, b in bots.items():
         for c in b.get("cards", []):
@@ -190,6 +222,17 @@ def decide(bots, now=None):
             if did in uundo:
                 c["status"], c["verdict"] = "rejected", c["verdict"] + " · בוטל על ידך"
                 continue
+            ccombo = (c.get("change") or {}).get("combo")
+            if did not in old and c["kind"] == "improve" and ccombo:
+                if best_now.get((bot, ccombo), (c["id"],))[0] != c["id"]:
+                    c["status"], c["verdict"] = "watch", (c["verdict"] + " · מחכה: שינוי אחר באסטרטגיה הזו נכנס עכשיו - "
+                                                         "ייבדק שוב מעליו בניסוי הבא")
+                    continue
+                exp_at = str((c.get("detail") or {}).get("exp_at") or c.get("made") or "")
+                if exp_at and built_at.get((bot, ccombo), "") > exp_at:
+                    c["status"], c["verdict"] = "watch", (c["verdict"] + " · מחכה: שינוי אחר באסטרטגיה הזו נבנה אחרי הניסוי - "
+                                                         "ייבדק שוב מעליו בניסוי הבא")
+                    continue
             if fix_first and _cuts(c) and bot not in fix_not_cut and not fix_failed(bot, _target(c)):
                 c["status"], c["verdict"] = "watch", (c["verdict"] + " · קודם מתקנים: הסוכן של הבוט צריך לנסות לתקן את האסטרטגיה, "
                                                      "ורק אם לא יצליח - הפחתה או הסרה")

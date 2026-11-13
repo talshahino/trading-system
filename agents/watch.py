@@ -146,6 +146,11 @@ def star_steps(d, c, combo, r, e, w, decisions, have, at, adds):
     if m is None:          # approved before the star existed: it gets the star's lowered risk now
         from agents import portfolio_check as PC
         cur = float(PC.mults(d["bot"]).get(combo, 1.0) or 1.0)
+        if cur <= AD.STAR_MULT + 1e-9:
+            # one "maybe luck" discount per strategy, not one per card (13.11.2026: two improvement cards of
+            # TV58|1Hour|USDCAD bot 3, already at x0.7 from an earlier star, each took it to x0.49 -> 0.5)
+            w.pop("done", None)
+            return None
         step("staron", cur * AD.STAR_MULT, f"⭐ {combo}: סיכון ×{cur * AD.STAR_MULT:.2f} (אולי מזל)",
              "שיפור קטן על מעט עסקאות - נכנס בסיכון מופחת עד שיוכח שאינו מזל", before=None if cur == 1.0 else cur)
         w.pop("done", None)
@@ -239,11 +244,20 @@ def run(now=None):
         rows.append(w)
     # a star step made on a card that is not a new strategy / improvement (a removal, 12.11.2026) is taken back
     kind_of = {x["id"]: x.get("kind") for x in decisions}
+    from agents import autodecide as AD
     for x in decisions:
-        if (x.get("star_of") and x.get("decision") == "approved" and x["id"] not in undo and not x.get("undone")
-                and kind_of.get(x["star_of"]) not in ("new", "improve") and _did("revert", x["id"]) not in have):
+        if not (x.get("star_of") and x.get("decision") == "approved" and x["id"] not in undo and not x.get("undone")
+                and _did("revert", x["id"]) not in have):
+            continue
+        if kind_of.get(x["star_of"]) not in ("new", "improve"):
             have.add(_did("revert", x["id"]))
             reverts.append((x, "טעות בכלל של הכוכבית: היא הופעלה על כרטיס הסרה, לא על שיפור או אסטרטגיה חדשה", {}))
+        elif x.get("star_step") == "staron" and (x.get("action") or {}).get("prev") is not None \
+                and float(x["action"]["prev"]) <= AD.STAR_MULT + 1e-9:
+            # a second star discount on a strategy already at the star's risk (13.11.2026, TV58 USDCAD bot 3)
+            have.add(_did("revert", x["id"]))
+            reverts.append((x, f"טעות בכלל של הכוכבית: האסטרטגיה כבר הייתה בסיכון ×{float(x['action']['prev']):g} מכוכבית קודמת - "
+                               "הנחה אחת לאסטרטגיה, לא אחת לכל כרטיס", {}))
     for x in adds:
         decisions.insert(0, x)
         doc["new"] = list(doc.get("new") or []) + [x["id"]]

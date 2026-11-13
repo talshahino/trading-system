@@ -177,13 +177,18 @@ def main():
                 c["reply"] = "קיבלתי. הסוכן של הבוט יבדוק את ההערה בריצה הבאה ויענה כאן."
             c["first_seen"] = first_seen.get(c["id"]) or now
             cards.append(c)
-        # across the bot: one proposal per thing changed (same track + knob) - the best on the unseen period
+        # across the bot: one proposal per thing changed (same track + knob) - the one with the most total R on the
+        # choosing period (13.11.2026, data/agents/objective.md: chosen to 2025 only and by the total, not by the R a
+        # trade on 2026 as before)
+        def _tot(c):
+            t = c.get("train") or {}
+            return (t.get("eff_n") or t.get("n") or 0) * t["mean"] if t.get("mean") is not None else -9e9
         best = {}
         for c in cards:
             if c["tier"] in ("strong", "regular") and c["kind"] == "improve":
                 ch = c["change"] or {}
                 k = ch.get("track") or ch.get("combo"), ch.get("knob") or ch.get("family")
-                if k not in best or (c["unseen"]["mean"] or 0) > (best[k]["unseen"]["mean"] or 0):
+                if k not in best or _tot(c) > _tot(best[k]):
                     best[k] = c
         for c in cards:
             if c["tier"] in ("strong", "regular") and c["kind"] == "improve":

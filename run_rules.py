@@ -101,16 +101,21 @@ def _regimes(df):
     }
 
 
-def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args):
-    """Each regime filter on one combo: choose on the training window, check on the later window."""
-    fn = R.STRATEGIES[sid][1]
+def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """Each regime filter on one combo: choose on the training window, check on the later window - on top of the
+    exits / trade management the bot trades now (--plans-file), like manage_combo (13.11.2026: the filters were tested
+    on the strategy's own exits, so a filter card's baseline was not what runs - TV58|1Hour|USDCAD bot 3 got a filter
+    and a new exit plan built together, the pair never tested)."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
     t0, t1 = SPLIT, pd.Timestamp(args.filters, tz="UTC")
+    pk = {k: v for k, v in plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {}).items()}
     regimes = _regimes(df)
     rows, keep = [], {}
     for name, (al, ash) in regimes.items():
         def g(d, al=al, ash=ash):
             lo, sh, plan = fn(d)
-            return np.asarray(lo, bool) & al, np.asarray(sh, bool) & ash, plan
+            return np.asarray(lo, bool) & al, np.asarray(sh, bool) & ash, {**plan, **pk}
         t = R.run(df, g, cost, breakeven=be, session_exit=sess)
         t = drop_hole_trades(t, df, s, tf)
         if t.empty:
@@ -230,7 +235,17 @@ def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_bloc
     """Every grid variant of one combo (target x stop distance x entry): stats on the training window and
     on the later window. All variants' trades are kept for improve.py, which decides."""
     fn0 = R.STRATEGIES[sid][1]
-    fn = fn0 if news_block is None else _blocked(fn0, news_block)
+    fn1 = fn0 if news_block is None else _blocked(fn0, news_block)
+    # the market-regime filter the bot trades now (--plans-file, 13.11.2026), so the exit grid is measured on the
+    # entries that really run
+    flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    regime = _regimes(df).get(flt) if flt else None
+
+    def fn(d):
+        lo, sh, plan = fn1(d)
+        if regime is not None:
+            lo, sh = np.asarray(lo, bool) & regime[0], np.asarray(sh, bool) & regime[1]
+        return lo, sh, plan
     t0, t1 = SPLIT, pd.Timestamp(args.optimize, tz="UTC")
     rows, keep = [], {}
     bf = be[0] if be else 0.0
@@ -486,7 +501,7 @@ def main():
                     continue
                 if args.filters:
                     try:
-                        filter_combo(df, sid, tf, s, cost, sess, be, real, events, args)
+                        filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
                     except Exception:  # noqa: BLE001
                         ERRORS.append(f"filters {sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue

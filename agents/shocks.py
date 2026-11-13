@@ -311,6 +311,49 @@ def per_symbol(df, now, keys):
     return out, book
 
 
+MID = pd.Timestamp("2025-09-01", tz="UTC")   # inside the training period: pick on 30.04-31.08, check on 01.09-31.12
+
+
+def book_walk_forward(df, now, keys, strats=None):
+    """Fix attempt 13.11.2026 (afternoon): the per-instrument book chosen on 2025 lost in 2026 (+234.6R / -120.4R);
+    only US100's fade held - but keeping an instrument because it held in 2026 is choosing on 2026. Fair filter,
+    using 2025 only: an instrument enters when its pick on 30.04-31.08.2025 (6+ trades) also made money on
+    01.09-31.12.2025, and its 2025 pick (as per_symbol) made money on 2025. strats: only these strategies
+    (e.g. ("FADE",)). The book is shown on 2026."""
+    x0 = df if not strats else df[df["strat"].isin(strats)]
+    picked, tr_all, un_all = {}, [], []
+    for sym, x in x0.groupby("sym"):
+        tr_, un_ = x[x["t"] < SPLIT], x[x["t"] >= SPLIT]
+        a, b = tr_[tr_["t"] < MID], tr_[tr_["t"] >= MID]
+        ga = a.groupby(keys)["r"].agg(["sum", "count"])
+        ga = ga[ga["count"] >= MIN_SYM_N // 2].sort_values("sum", ascending=False)
+        g = tr_.groupby(keys)["r"].agg(["sum", "count"])
+        g = g[g["count"] >= MIN_SYM_N].sort_values("sum", ascending=False)
+        if ga.empty or g.empty:
+            continue
+        ka = ga.index[0]
+        b_sum = float(b[(b[keys] == pd.Series(ka, index=keys)).all(axis=1)]["r"].sum())
+        k0 = g.index[0]
+        ok = ga.iloc[0]["sum"] > 0 and b_sum > 0 and g.iloc[0]["sum"] > 0
+        y_tr = tr_[(tr_[keys] == pd.Series(k0, index=keys)).all(axis=1)]
+        y_un = un_[(un_[keys] == pd.Series(k0, index=keys)).all(axis=1)]
+        picked[sym] = {"in": bool(ok), "pick_a": dict(zip(keys, [float(v) if isinstance(v, (np.floating, float)) else v for v in ka])),
+                       "a_sum": round(float(ga.iloc[0]["sum"]), 2), "b_sum": round(b_sum, 2),
+                       "pick": dict(zip(keys, [float(v) if isinstance(v, (np.floating, float)) else v for v in k0])),
+                       "train_sum": round(float(y_tr["r"].sum()), 2), "unseen_sum": round(float(y_un["r"].sum()), 2),
+                       "unseen_n": int(len(y_un))}
+        if ok:
+            tr_all.append(y_tr)
+            un_all.append(y_un)
+    res = {"strats": list(strats) if strats else "all", "per_symbol": picked,
+           "instruments": sorted(k for k, v in picked.items() if v["in"])}
+    if tr_all:
+        a, b = pd.concat(tr_all), pd.concat(un_all)
+        res["train"] = {**stats(a, now), "sum": round(float(a["r"].sum()), 2)}
+        res["unseen"] = {**stats(b, now), "sum": round(float(b["r"].sum()), 2)} if len(b) else None
+    return res
+
+
 def study(df, causes, now):
     keys = ["K", "strat", "D", "p", "H", "tg"]
     tr, un = df[df["t"] < SPLIT], df[df["t"] >= SPLIT]
@@ -342,12 +385,14 @@ def study(df, causes, now):
                 by_cat.setdefault(cat, {})[s_] = {"n": int(len(x)), "mean": round(float(x["r"].mean()), 3),
                                                    "sum": round(float(x["r"].sum()), 2)}
     per_sym, book = per_symbol(df, now, keys)
+    book_wf = {"all": book_walk_forward(df, now, keys), "fade": book_walk_forward(df, now, keys, ("FADE",)),
+               "cont": book_walk_forward(df, now, keys, ("CONT",))}
     per_k = {}
     for kk, x in df[(df["strat"] == "CONT")].groupby("K"):
         per_k[str(kk)] = {"shocks_train": int(x[x["t"] < SPLIT].drop_duplicates(["sym", "t"]).shape[0]),
                           "shocks_unseen": int(x[x["t"] >= SPLIT].drop_duplicates(["sym", "t"]).shape[0])}
     return {"tested": len(rows), "best": best, "per_strategy": per_strat, "top": ok[:15], "per_K": per_k, "by_category": by_cat,
-            "per_symbol": per_sym, "book": book}
+            "per_symbol": per_sym, "book": book, "book_wf": book_wf}
 
 
 def main():
@@ -405,6 +450,8 @@ def main():
         print("best on 2025:", {k: b[k] for k in ("K", "strat", "D", "p", "H", "tg")}, "train", b["train"], "unseen", b["unseen"])
     if res.get("book"):
         print("per-instrument book (chosen on 2025):", res["book"])
+    for k_, v_ in (res.get("book_wf") or {}).items():
+        print(f"walk-forward book inside 2025 ({k_}):", v_.get("instruments"), "train", v_.get("train"), "unseen", v_.get("unseen"))
 
 
 if __name__ == "__main__":

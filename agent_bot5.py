@@ -119,6 +119,130 @@ TAL_DIR = OUT / "tal"
 TAL_WIDE_DIR = OUT / "tal_wide"      # the method on every FTMO forex pair, the metals, the other indices (13.11.2026)
 
 
+TREND_MODES = ("day", "up20")
+FIX_FILE = Path("data/agents/fix_attempts.json")
+
+
+def _live_tracks():
+    """{track: (pair_name, cfg, risk)} - the index tracks bot 5 counts now (risk > 0, no 'symbols')."""
+    try:
+        s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
+    rk = s5.get("risk") or {}
+    return {k: (f"{v['pair'][0]}/{v['pair'][1]}", TG._norm(dict(v["cfg"])), float(rk.get(k, 0.0028) or 0))
+            for k, v in (s5.get("tal_tracks") or {}).items() if not v.get("symbols") and float(rk.get(k, 0.0028) or 0) > 0}
+
+
+def trend_runs(budget_s):
+    """The fix tried for the loss of 12.11 (13.11.2026 night): every running track's own rules with TREND = day / up20,
+    on the five indices - so the fix is tested against exactly what runs (the search tries TREND only around its own
+    best). Saved in the gap method's index like a search configuration (tal_gap.summarize shows them)."""
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    idx_dir = TAL_DIR / "idx"
+    idx_dir.mkdir(parents=True, exist_ok=True)
+    have = {f.stem for f in idx_dir.glob("*.json")}
+    t0, done = time.time(), 0
+    want = [(pn, TG._norm(dict(cfg, TREND=m))) for pn, cfg, _ in _live_tracks().values() for m in TREND_MODES]
+    for sym in TAL_SYMBOLS:
+        todo = [(pn, c) for pn, c in want if f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}" not in have]
+        if not todo or time.time() - t0 > budget_s:
+            continue
+        D, gc = tal_load(sym), {}
+        if D is None:
+            continue
+        for pn, c in todo:
+            key = f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}"
+            t = TG.simulate(D, pairs[pn], c, gc.setdefault(pn.split("/")[0], {}))
+            t.to_csv(TAL_DIR / f"{key}.csv.gz", index=False)
+            (idx_dir / f"{key}.json").write_text(json.dumps(
+                {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": pairs[pn][2],
+                 "knob": "search", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f"{key}.csv.gz", "n": len(t)}, default=str))
+            done += 1
+    print(f"tal trend fix: {done} run")
+    return done
+
+
+def _trades(tidx, pn, cfg):
+    fs = [v for v in tidx.values() if v["pair"] == pn and TG._norm(dict(v["cfg"])) == cfg and v["sym"] in TAL_SYMBOLS]
+    if {v["sym"] for v in fs} != set(TAL_SYMBOLS):
+        return None
+    t = pd.concat([pd.read_csv(TAL_DIR / v["file"]) for v in fs], ignore_index=True)
+    t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
+    return t
+
+
+def trend_fix(tidx, pf, rule_cards):
+    """Per running track: its rules with TREND against the rules alone - chosen on 2024-2025 (the time-weighted total),
+    shown on 2026 (the total). An 'improve' card where TREND is better on both; data/agents/fix_attempts.json updated
+    from the result (the manager approves a risk cut only after the fixes failed - user, 12.11.2026)."""
+    out, res, pending = [], {}, False
+    for trk, (pn, cfg, rk) in _live_tracks().items():
+        base = _trades(tidx, pn, cfg)
+        if base is None:
+            pending = True
+            continue
+        b_tr, b_un = TG.score(base), float(base.loc[base["time"] >= SPLIT, "r"].sum())
+        row = {"live": {"train_w": round(b_tr, 1), "unseen": round(b_un, 1)}}
+        best = None
+        for m in TREND_MODES:
+            c = TG._norm(dict(cfg, TREND=m))
+            t = _trades(tidx, pn, c)
+            if t is None:
+                pending = True
+                continue
+            tr, un = TG.score(t), float(t.loc[t["time"] >= SPLIT, "r"].sum())
+            row[m] = {"train_w": round(tr, 1), "unseen": round(un, 1), "n": int(len(t))}
+            if tr > b_tr and (best is None or tr > best[1]):
+                best = (m, tr, un, c, t)                 # chosen on the train period only
+        res[trk] = row
+        if best and best[2] > b_un:
+            m, tr, un, c, t = best
+            st, bs = TG._stats(t), TG._stats(base)
+            hi, lo = pn.split("/")
+            out.append(K.card(BOT, "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: רק בכיוון התמונה הגדולה ({m})",
+                              f"המסלול {trk} עם הכללים שרצים היום, ועוד מסנן TREND={m} ({TG.NAMES['TREND']}). מהפסד 12.11: מכירות "
+                              f"במדדים שעלו כל אחר הצהריים. נבחר על 2024-2025 (סה\"כ משוקלל {b_tr:+.1f}R ← {tr:+.1f}R), מוצג על 2026: "
+                              f"סה\"כ {b_un:+.1f}R ← {un:+.1f}R, {st['unseen']['n']} עסקאות, {st['unseen']['mean']:+.2f}R לעסקה "
+                              f"(היום {bs['unseen']['mean']:+.2f}R על {bs['unseen']['n']}).",
+                              st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
+                              tested=len(TREND_MODES), risk_pct=round(rk * 100, 3), baseline=bs["unseen"],
+                              neighbours={"values": list(TREND_MODES), "share_positive": round(np.mean(
+                                  [(row.get(x) or {}).get("unseen", -1e9) > b_un for x in TREND_MODES]), 2)},
+                              change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
+    if pending:
+        return out, res
+    try:
+        fx = json.loads(FIX_FILE.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        fx = {}
+    at = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+    fixed = {c["change"]["pair"] for c in out}
+    for trk, (pn, _, _) in _live_tracks().items():
+        k = f"bot5|{trk}"
+        if k not in fx:
+            continue                                     # only a track that has a fix record (a loss / a weak track)
+        line = f"{at[:10]}: TREND (day / up20) על הכללים שרצים: " + ", ".join(
+            f"{m} {res[trk].get(m, {}).get('train_w', '-')}R/{res[trk].get(m, {}).get('unseen', '-')}R" for m in TREND_MODES) + \
+            f" מול {res[trk]['live']['train_w']}R/{res[trk]['live']['unseen']}R (2024-2025 משוקלל / 2026)"
+        if line not in fx[k].get("tried", []):
+            fx[k].setdefault("tried", []).append(line)
+        if pn in fixed:
+            fx[k].update(status="fixed", at=at)
+        elif fx[k].get("status") == "trying":
+            fx[k].update(status="failed", at=at)
+    # the bot as a whole: the caps / the one-per-side rule / the hour filter (portfolio) and TREND on every track
+    if pf and not rule_cards and not out:
+        fx["bot5|tal_all"] = {"status": "failed", "at": at, "by": "bot5 agent", "tried": [
+            "תקרות על הבוט השלם (מסלול אחד לכל כיוון ומכשיר, עד 1/2/3 באותו כיוון בכל המדדים, מסנן שעות) - אף אחת לא מורידה "
+            "את הסיכון בשתי התקופות בלי להוריד את הרווח של 2026", "TREND (day / up20) על כל המסלולים שרצים - לא משפר בשתי התקופות"]}
+    elif out or rule_cards:
+        fx["bot5|tal_all"] = {"status": "fixed" if out else "trying", "at": at, "by": "bot5 agent",
+                              "tried": ["נמצא תיקון במסלולים / בכללי הבוט השלם - כרטיס"]}
+    FIX_FILE.write_text(json.dumps(fx, ensure_ascii=False, indent=1), encoding="utf-8")
+    return out, res
+
+
 def wide_chosen():
     """{pair: [the indices' chosen cfg, the cfg bot 5 runs on that pair]} - phase 1 of agents/tal_wide.py."""
     out = {}
@@ -290,6 +414,11 @@ def main():
         # the user's task of 13.11.2026 (high priority): the method on every FTMO forex pair, metals, other indices -
         # half of what is left, the indices' never-ending search the rest
         try:
+            trend_runs(tal_left * 0.25)             # the fix of the 12.11 loss against exactly what runs, first
+        except Exception as e:  # noqa: BLE001
+            print("tal trend runs failed:", e)
+        tal_left = a.minutes * 60 - (time.time() - t_start)
+        try:
             TW.run(tal_load, TAL_WIDE_DIR, tal_left * 0.5, wide_chosen())
         except Exception as e:  # noqa: BLE001
             print("tal wide experiments failed:", e)
@@ -397,11 +526,19 @@ def main():
             doc["bot5"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             rk_live = [x for x in rk5 if x > 0]
-            for pc in (TG.portfolio_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4),
-                       TG.hours_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4),
-                       TG.scale_card(BOT, pf, cur_sc)):
-                if pc:
-                    cards.append(pc)
+            rule_cards = [pc for pc in (TG.portfolio_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4),
+                                        TG.hours_card(BOT, pf, round(min(rk_live) * 100, 3) if rk_live else 0.4)) if pc]
+            cards += rule_cards
+            try:
+                tcards, tres = trend_fix(tidx, pf, rule_cards)
+                cards += tcards
+                doc["bot5"]["trend_fix"] = tres
+                TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            except Exception as e:  # noqa: BLE001
+                print("tal trend fix failed:", e)
+            sc_card = TG.scale_card(BOT, pf, cur_sc)
+            if sc_card:
+                cards.append(sc_card)
     except StopIteration:
         pass
     except Exception as e:  # noqa: BLE001

@@ -1,5 +1,5 @@
 {
- "fp": "b24e22fc54f5",
+ "fp": "8a495f25ce7a",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -50,7 +50,9 @@
    "EV03|5Min|USDCHF",
    "EV03|5Min|USDJPY",
    "EV03|5Min|XAUUSD",
-   "SC001|1Min|JP225"
+   "SC001|1Min|JP225",
+   "SH01|1Min|GER40",
+   "SH01|1Min|US100"
   ],
   "plans": {
    "EV01|5Min|GBPUSD": {
@@ -119,13 +121,23 @@
    "EV03|5Min|XAUUSD": {
     "target": 3.0,
     "limit": 0.5
+   },
+   "SH01|1Min|GER40": {
+    "K": 8,
+    "D": 3,
+    "H": 60
+   },
+   "SH01|1Min|US100": {
+    "K": 8,
+    "D": 1,
+    "H": 60
    }
   },
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-13T03:48:28+00:00",
- "account_v": 3,
+ "last_reset": "2026-11-13T15:35:49+00:00",
+ "account_v": 4,
  "resets": [
   {
    "v": 2,
@@ -140,6 +152,13 @@
    "what": "כלל השתנה ב־EV01|5Min|AUDUSD, EV01|5Min|EURJPY, EV01|5Min|EURUSD, EV01|5Min|GBPJPY",
    "archive": "data/agents/bot7_archive/account_v2.json",
    "id": "213c463d3f3e"
+  },
+  {
+   "v": 4,
+   "at": "2026-11-13T15:35:49+00:00",
+   "what": "נוספו 2 אסטרטגיות/מכשירים · כלל השתנה ב־SH01|1Min|GER40, SH01|1Min|US100",
+   "archive": "data/agents/bot7_archive/account_v3.json",
+   "id": "0578ef4731ab"
   }
  ],
  "stable": false,

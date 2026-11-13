@@ -492,13 +492,30 @@ def _risk_section():
 
 
 def risk_mult(combo):
-    """The combo's risk multiplier: 1 = the bot's risk; 0.5..1.5 after an approved change; 0 = no new trades
-    (removal approved). Unknown or unreadable -> 1, so a missing file never changes anything."""
+    """The combo's risk multiplier: 1 = the bot's risk; up to 1.5 after an approved change; 0 = no new trades
+    (removal approved); a multiplier so small that the size is under the minimum = the instrument's minimum volume.
+    Unknown or unreadable -> 1, so a missing file never changes anything."""
     try:
         v = float((_risk_section().get("mult") or {}).get(combo, 1.0))
     except (TypeError, ValueError):
         return 1.0
-    return v if v == 0 or 0.5 <= v <= 1.5 else 1.0
+    return v if 0 <= v <= 1.5 else 1.0
+
+
+def min_lot(sym, entry, sl, d):
+    """A strategy cut under the minimum (no edge left, 13.11.2026): the instrument's minimum volume, when its loss at
+    the stop fits in the bot's normal risk and in the room left to the limits. Returns (lots, loss cap) or (0, 0)."""
+    info = mt5.symbol_info(mt5_name(sym))
+    if info is None or not info.volume_min:
+        return 0.0, 0.0
+    try:
+        loss = abs(mt5.order_calc_profit(mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, info.name, info.volume_min, entry, sl) or 0.0)
+    except Exception:  # noqa: BLE001
+        loss = 0.0
+    if not loss and info.trade_tick_size:
+        loss = info.volume_min * abs(entry - sl) / info.trade_tick_size * info.trade_tick_value
+    cap = ACC.allowed_risk(1.0)
+    return (float(info.volume_min), loss + 0.01) if 0 < loss <= cap else (0.0, 0.0)
 
 
 def combo_rules(combo):
@@ -767,6 +784,11 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
     if slip > 0:
         log(f"{combo}: sizing as if filled {slip:g} worse ({size_px:g}), from the last fills of {sym}")
     lots = lots_for(sym, size_px, sl, risk)
+    if lots <= 0 and 0 < mult < 1:
+        lots, cap = min_lot(sym, size_px, sl, d)
+        if lots:
+            log(f"{combo}: risk x{mult:g} is under the minimum volume - the minimum {lots} lots")
+            risk = cap
     if lots <= 0:
         log(f"skip {combo}: lot size too small")
         return
@@ -837,6 +859,11 @@ def place_limit(combo, sym, d, lim, sl, tp, sig, until, risk, mult=1.0, rules=No
         tp = lim + d * rules["tp"] * abs(tp - lim)
     lim, sl = round(lim, info.digits), round(sl, info.digits)
     lots = lots_for(sym, lim, sl, risk)
+    if lots <= 0 and 0 < mult < 1:
+        lots, cap = min_lot(sym, lim, sl, d)
+        if lots:
+            log(f"{combo}: risk x{mult:g} is under the minimum volume - the minimum {lots} lots")
+            risk = cap
     if lots <= 0:
         log(f"skip {combo}: lot size too small")
         return

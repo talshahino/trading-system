@@ -286,8 +286,10 @@ def _risk_value(kind, v):
         if kind == "mult":
             if v is None:                    # "the value before" was the bot's normal risk (no multiplier)
                 return None
-            m = round(float(v), 2)
-            if m == 0 or 0.5 <= m <= 1.5:
+            m = round(float(v), 3)
+            # 0 = no new trades; 0.001 = the instrument's minimum volume (a strategy with no edge left, 13.11.2026);
+            # any value up to 1.5 - a cut by the strategy's own edge can go under 0.5
+            if m == 0 or 0 < m <= 1.5:
                 return None if m == 1.0 else m
         elif v is None:
             return None

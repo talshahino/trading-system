@@ -51,7 +51,7 @@ LIGHT_PUBLISH = 30 * 60                                   # ... and at most this
 NODE_VER = "v20.18.1"
 _S = {"sha": None, "light": 0.0, "smart": 0.0, "pub": 0.0, "proc": None, "log": print, "err": None, "smart_running": False}
 import threading  # noqa: E402
-_LOCK, _REFRESH = threading.RLock(), threading.Lock()
+_LOCK, _REFRESH, _LIGHT = threading.RLock(), threading.Lock(), threading.Lock()
 # what the continuous layer writes - while a smart agent runs, only these are published by it (the agent's own files
 # are published by the smart layer when the agent ends, never half-written)
 import re  # noqa: E402
@@ -514,6 +514,11 @@ def _publish_changes(st, before, kind, msg, only=None):
 
 def light(st, refresh_first=True):
     """The continuous layer: every bot's health + the manager agent."""
+    with _LIGHT:                              # the smart round's refresh between agents waits for this cycle to end
+        return _light(st, refresh_first)
+
+
+def _light(st, refresh_first=True):
     t0 = time.time()
     busy = _S["smart_running"]                # a smart agent is running: no refresh under it, publish only own files
     if refresh_first and not busy:
@@ -568,6 +573,15 @@ def _smart(st, log, t0):
         mins_all[name] = mins
         if mins <= 0:
             continue
+        # the newest main before every agent (manager, 13.11.2026: the round refreshed only at its start and the
+        # continuous layer does not refresh under a running agent - a 6-hour round kept the old agent_manager.py, which
+        # failed every 10 minutes from 11:18 to 14:16 UTC although the fix was on main since 12:25). Between agents
+        # nothing of the round is unpublished; the continuous layer's cycle is waited for.
+        try:
+            with _LIGHT, _REFRESH:
+                refresh(st)
+        except Exception as e:  # noqa: BLE001
+            log(f"refresh before {name} failed: {e}")
         prev_last = last.get(name)
         last[name] = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
         _save(st)

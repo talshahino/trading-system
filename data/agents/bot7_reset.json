@@ -1,5 +1,5 @@
 {
- "fp": "b24e22fc54f5",
+ "fp": "042966a0b5af",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -53,78 +53,144 @@
    "SC001|1Min|JP225"
   ],
   "plans": {
+   "EV01|5Min|AUDUSD": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|EURJPY": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|EURUSD": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|GBPJPY": {
+    "risk_mult": 0.5
+   },
    "EV01|5Min|GBPUSD": {
-    "filter": "with_trend200"
+    "filter": "with_trend200",
+    "risk_mult": 0.5,
+    "risk_card": "450d85248b30"
+   },
+   "EV01|5Min|GER40": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|JP225": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|NZDUSD": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|UK100": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|US100": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|US30": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|US500": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|USDCAD": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|USDCHF": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|USDJPY": {
+    "risk_mult": 0.5
+   },
+   "EV01|5Min|XAUUSD": {
+    "risk_mult": 0.5
    },
    "EV03|5Min|AUDUSD": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|EURJPY": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|EURUSD": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|GBPJPY": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|GBPUSD": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|GER40": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|JP225": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|NZDUSD": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|UK100": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|US100": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|US30": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|US500": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|USDCAD": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|USDCHF": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|USDJPY": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
    },
    "EV03|5Min|XAUUSD": {
     "target": 3.0,
-    "limit": 0.5
+    "limit": 0.5,
+    "risk_mult": 0.7
+   },
+   "SC001|1Min|JP225": {
+    "risk_mult": 0.7
    }
   },
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-13T03:51:05+00:00",
+ "last_reset": "2026-11-13T03:48:28+00:00",
  "account_v": 3,
  "resets": [
   {
@@ -133,6 +199,13 @@
    "what": "נוספו 1 אסטרטגיות/מכשירים · כלל השתנה ב־SC001|1Min|JP225",
    "archive": "data/agents/bot7_archive/account_v1.json",
    "id": "c11b70cdbb2a"
+  },
+  {
+   "v": 3,
+   "at": "2026-11-13T03:48:28+00:00",
+   "what": "כלל השתנה ב־EV01|5Min|AUDUSD, EV01|5Min|EURJPY, EV01|5Min|EURUSD, EV01|5Min|GBPJPY",
+   "archive": "data/agents/bot7_archive/account_v2.json",
+   "id": "213c463d3f3e"
   }
  ],
  "stable": false,

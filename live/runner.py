@@ -317,7 +317,7 @@ def _regime(df, name):
         with np.errstate(invalid="ignore"):
             return ~((c < e200) & (rs < 35)), ~((c > e200) & (rs > 65))
     if name in R.VIDEO_REGIMES:                      # the user's video filters (14.11.2026): the same function as run_rules
-        return R.video_regimes(h, l, c, df["o"].to_numpy())[name]
+        return R.video_regimes(h, l, c, df["o"].to_numpy(), df.index)[name]
     if name == "bbw_p20":
         s_ = pd.Series(c)
         w = (4 * s_.rolling(20).std(ddof=0) / s_.rolling(20).mean()).to_numpy()

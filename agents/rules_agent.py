@@ -122,12 +122,14 @@ def supertrend_dir(h, l, c, period=10, mult=3.0):
 # the filters from the user's videos of 14.11.2026 (replies.json "_tasks" tal1411set2 / set3 / set4 / set5,
 # tal1411vwap 2) for bots 1-4, on the combo's own timeframe - ONE function for the backtest (run_rules._regimes) and
 # the live bot (live/runner._regime), so both see exactly the same masks. (ADX14 > 20 of set2 is "adx_trend".)
-VIDEO_REGIMES = ("v_rsi50", "v_st", "v_e50_200", "v_ema5", "v_sma3", "v_fib5", "v_ha")
+VIDEO_REGIMES = ("v_rsi50", "v_st", "v_e50_200", "v_ema5", "v_sma3", "v_fib5", "v_ha", "v_sqzm", "v_sqz", "v_pdbrk")
 # v_fib5 / v_ha: task tal1411set7 (13) / (6), the user's TikTok videos of 14.11.2026 17:37-18:03 - the same two
 # direction filters bots 5 and 6 try on the gap method, here on the combo's own timeframe (bots 1-4 smart agent)
+# v_sqzm / v_sqz / v_pdbrk: task tal1411set7 (12) / (16), 17:51-18:15 - LazyBear's squeeze momentum and yesterday's
+# high / low, as bot 5's sqzm / sqz / pdbrk on the gap (bots 1-4 smart agent, 14.11.2026 late night)
 
 
-def video_regimes(h, l, c, o=None):
+def video_regimes(h, l, c, o=None, t=None):
     """(allow_long, allow_short) per bar, from closed bars only.
       v_rsi50    RSI14 above 50 = longs only, below = shorts only (set5)
       v_st       Supertrend 10 / x3 green = longs only, red = shorts only (set3, Quant Tactics)
@@ -138,7 +140,11 @@ def video_regimes(h, l, c, o=None):
                  mixed = no entry (set2 (3), the three-averages idea as a trend filter)
       v_fib5     Fibonacci EMAs 8/13/21/34/55 all in order up = longs only, all in order down = shorts only, otherwise
                  both sides (set7 (13), Trading Data)
-      v_ha       Heikin Ashi colour of the last closed candle: green = longs only, red = shorts only (set7 (6))"""
+      v_ha       Heikin Ashi colour of the last closed candle: green = longs only, red = shorts only (set7 (6))
+      v_sqzm     LazyBear's squeeze momentum above 0 = longs only, below = shorts only (set7 (12))
+      v_sqz      the same, and no entry while the squeeze is on (Bollinger 20/2 inside Keltner 20/1.5)
+      v_pdbrk    the close over the last closed UTC day's high = longs only, under its low = shorts only, inside =
+                 both (set7 (16), Daily High & Low; t = the bars' times, without them both sides)"""
     rs = rsi(c, 14)
     sd = supertrend_dir(h, l, c, 10, 3.0)
     e9, e21, e50, e100, e200 = (ema(c, n) for n in (9, 21, 50, 100, 200))
@@ -154,8 +160,58 @@ def video_regimes(h, l, c, o=None):
     o = np.asarray(o, float) if o is not None else np.r_[c[0], c[:-1]]
     hc = (o + h + l + c) / 4.0
     ho = pd.Series(np.r_[(o[0] + c[0]) / 2.0, hc[:-1]]).ewm(alpha=0.5, adjust=False).mean().to_numpy() if len(c) else hc
+    sq_mom, sq_on = squeeze_lazybear(h, l, c)
+    with np.errstate(invalid="ignore"):
+        yh, yl = prev_day_hl(t, h, l)
+        over, under = c > yh, c < yl                      # NaN (no closed day yet) = both sides
     return {"v_rsi50": (r_up, r_dn), "v_st": (sd > 0, sd < 0), "v_e50_200": (e50 > e200, e50 < e200),
-            "v_ema5": (~dn5, ~up5), "v_sma3": (u3, d3), "v_fib5": (~dnf, ~upf), "v_ha": (hc > ho, hc < ho)}
+            "v_ema5": (~dn5, ~up5), "v_sma3": (u3, d3), "v_fib5": (~dnf, ~upf), "v_ha": (hc > ho, hc < ho),
+            "v_sqzm": (sq_mom > 0, sq_mom < 0), "v_sqz": ((sq_mom > 0) & ~sq_on, (sq_mom < 0) & ~sq_on),
+            "v_pdbrk": (~under, ~over)}
+
+
+def squeeze_lazybear(h, l, c, n=20, bb=2.0, kc=1.5):
+    """LazyBear's Squeeze Momentum (task tal1411set7 (12)), as agents/tal_gap's sqz / sqzm, on closed bars: the
+    momentum = the n-bar linear regression (its value at the last bar) of close - the middle of (the n-bar high / low
+    middle, SMA n); the squeeze is on while Bollinger n / bb is inside Keltner n / kc x the true range's SMA.
+    Returns (momentum, squeeze_on); NaN momentum before n bars."""
+    h, l, c = (np.asarray(x, float) for x in (h, l, c))
+    if len(c) == 0:
+        return np.zeros(0), np.zeros(0, bool)
+    cs = pd.Series(c)
+    sm = cs.rolling(n, min_periods=n).mean().to_numpy()
+    sd = cs.rolling(n, min_periods=n).std(ddof=0).to_numpy()
+    pc = np.r_[c[0], c[:-1]]
+    tr = np.maximum(h - l, np.maximum(np.abs(h - pc), np.abs(l - pc)))
+    rm = pd.Series(tr).rolling(n, min_periods=n).mean().to_numpy()
+    with np.errstate(invalid="ignore"):
+        on = (sm - bb * sd > sm - kc * rm) & (sm + bb * sd < sm + kc * rm)
+    hh = pd.Series(h).rolling(n, min_periods=n).max().to_numpy()
+    ll = pd.Series(l).rolling(n, min_periods=n).min().to_numpy()
+    y = c - ((hh + ll) / 2 + sm) / 2
+    ok = ~np.isnan(y)
+    y0 = np.where(ok, y, 0.0)
+    sy = np.convolve(y0, np.ones(n))[:len(y0)]
+    sxy = np.convolve(y0, np.arange(n - 1, -1, -1, dtype=float))[:len(y0)]
+    cnt = np.convolve(ok.astype(float), np.ones(n))[:len(y0)]
+    sx, sxx = n * (n - 1) / 2, (n - 1) * n * (2 * n - 1) / 6
+    b = (n * sxy - sx * sy) / (n * sxx - sx * sx)
+    mom = np.where(cnt >= n, (sy - b * sx) / n + b * (n - 1), np.nan)
+    return mom, on
+
+
+def prev_day_hl(t, h, l):
+    """The high / low of the last CLOSED UTC day before each bar's day, from the combo's own bars (task tal1411set7
+    (16), Daily High & Low): NaN without times or before a closed day."""
+    if t is None or len(h) == 0:
+        nan = np.full(len(h), np.nan)
+        return nan, nan
+    ti = pd.DatetimeIndex(t)
+    ti = ti.tz_convert("UTC") if ti.tz is not None else ti
+    d = ti.normalize()
+    g = pd.DataFrame({"d": d, "h": np.asarray(h, float), "l": np.asarray(l, float)}).groupby("d").agg(h=("h", "max"), l=("l", "min"))
+    p = g.shift(1)
+    return p["h"].reindex(d).to_numpy(), p["l"].reindex(d).to_numpy()
 
 # ---------------- strategies (as published) ----------------
 def s_gold_pro(df):

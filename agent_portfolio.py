@@ -106,6 +106,9 @@ FILTERS_RSI = {"bot1", "bot2", "bot3", "bot4", "bot7"}   # bot 7: live/news_bot.
 # run_rules and live/runner._regime - bots 1-4 only (live/news_bot does not know them)
 FILTERS_VIDEO = {"bot1", "bot2", "bot3", "bot4"}
 FILTERS_VIDEO_V = 2   # 2 = with v_fib5 / v_ha (task tal1411set7, 14.11.2026 night): every filters result again
+# 3 = with v_sqzm / v_sqz / v_pdbrk (task tal1411set7 (12) / (16), 14.11.2026 late night) - v2 never ran (the
+# bots' computer's agents silent since 14:18 UTC), so nothing measured is thrown away
+FILTERS_VIDEO_V = 3
 
 
 def explain_manage(v):

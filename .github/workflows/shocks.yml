@@ -15,6 +15,15 @@ on:
       fade_minutes:
         description: "Minutes for the release-spike fade study EV05 (agents/news_fade.py, task tal1411fade); 0 = skip"
         default: "0"
+      straddle_minutes:
+        description: "Minutes for the EV04 straddle study (agents/news_straddle.py, task tal1411strad); 0 = skip"
+        default: "0"
+      retest_minutes:
+        description: "Minutes for the EV06 / EV07 retest + absorption study (agents/news_retest.py); 0 = skip"
+        default: "0"
+      surprise_minutes:
+        description: "Minutes for the EV08 release-surprise study (agents/news_surprise.py); 0 = skip"
+        default: "0"
 
 permissions:
   contents: write
@@ -54,6 +63,16 @@ jobs:
           if [ "${{ inputs.fade_minutes || '0' }}" != "0" ]; then
             python -u -m agents.news_fade --minutes ${{ inputs.fade_minutes }} 2>&1 | tee fade.log || true
           fi
+          # EV04 / EV06-07 / EV08 (15.11.2026: the bots' computer's round reached bot 7 only once in 12 hours)
+          if [ "${{ inputs.straddle_minutes || '0' }}" != "0" ]; then
+            python -u -m agents.news_straddle --minutes ${{ inputs.straddle_minutes }} 2>&1 | tee straddle.log || true
+          fi
+          if [ "${{ inputs.retest_minutes || '0' }}" != "0" ]; then
+            python -u -m agents.news_retest --minutes ${{ inputs.retest_minutes }} 2>&1 | tee retest.log || true
+          fi
+          if [ "${{ inputs.surprise_minutes || '0' }}" != "0" ]; then
+            python -u -m agents.news_surprise --minutes ${{ inputs.surprise_minutes }} 2>&1 | tee surprise.log || true
+          fi
       - name: Save data cache
         if: always()
         uses: actions/cache/save@v4
@@ -67,8 +86,9 @@ jobs:
           cp shocks.log reports/agents/bot7/shocks.log
           cp regime.log reports/agents/bot7/regime.log 2>/dev/null || true
           cp fade.log reports/agents/bot7/fade.log 2>/dev/null || true
+          for x in straddle retest surprise; do cp $x.log reports/agents/bot7/$x.log 2>/dev/null || true; done
           # sh01_fix.json / regime_study.json: the fix attempts' results (left out before 14.11.2026 - only in the log)
           git add data/agents/shocks_scan.json reports/agents/bot7/shocks_study.json reports/agents/bot7/shocks.log
-          for f in reports/agents/bot7/sh01_fix.json reports/agents/bot7/regime_study.json reports/agents/bot7/regime.log reports/agents/bot7/fade_study.json reports/agents/bot7/fade.log; do [ -f "$f" ] && git add "$f"; done; true
+          for f in reports/agents/bot7/sh01_fix.json reports/agents/bot7/regime_study.json reports/agents/bot7/regime.log reports/agents/bot7/fade_study.json reports/agents/bot7/fade.log reports/agents/bot7/straddle_study.json reports/agents/bot7/straddle.log reports/agents/bot7/retest_study.json reports/agents/bot7/retest.log reports/agents/bot7/surprise_study.json reports/agents/bot7/surprise.log reports/agents/bot7/calendar_full.json; do [ -f "$f" ] && git add "$f"; done; true
           git commit -qm "Bot 7: shocks scan and study" || exit 0
           for i in 1 2 3; do git pull -q --rebase -X theirs && git push -q && break; done

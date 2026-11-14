@@ -99,7 +99,7 @@ def main_sha():
 
 SKIP_TOP = ("docs/", "mt5/", "dashboard/")      # never needed in the working copy (live/: the bots' settings)
 INDEX = WORK / "tree_index.json"
-BLOB_MAX = 300                                    # more changed files than this: one zip instead of a request each
+BLOB_MAX = 1500                                   # more changed files than this: one zip instead of a request each (the pack: ~230 shards)
 
 
 def _skip(rel):

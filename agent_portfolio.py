@@ -36,6 +36,7 @@ from pathlib import Path
 import pandas as pd
 
 from agents import agentkit as K
+from agents import exp_pack as XP
 from agents import ftmo_universe as U
 from agents import repo_io as RIO
 
@@ -276,7 +277,10 @@ class Store:
 
     def get(self, fam, combo):
         p = self.path(fam, combo)
-        d = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
+        if fam == "new":                     # the scout's results: a single file or the pack (agents/exp_pack.py)
+            d = XP.read(self.dir, p.name)
+        else:
+            d = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
         return None if stale_source(d) else d
 
     def put(self, fam, combo, doc):
@@ -284,7 +288,11 @@ class Store:
         self.path(fam, combo).write_text(json.dumps(doc, ensure_ascii=False, default=str), encoding="utf-8")
 
     def age_days(self, fam, combo):
-        d = self.get(fam, combo)
+        if fam == "new":                     # only the time / costs are needed: the pack's index, no shard read
+            d = XP.read_meta(self.dir, self.path(fam, combo).name)
+            d = None if stale_source(d) else d
+        else:
+            d = self.get(fam, combo)
         return 999 if not d else (pd.Timestamp.now(tz="UTC") - pd.Timestamp(d["at"])).days
 
 
@@ -1029,8 +1037,7 @@ def cards_for(bot):
                 change={"combo": combo, "family": "manage" if fam == "fib" else fam, "from": base_key, "to": v,
                         **({"src": "fib"} if fam == "fib" else {})}))
     # the scout's strategies
-    for f in sorted(st.dir.glob("new_*.json")):
-        d = json.loads(f.read_text(encoding="utf-8"))
+    for _, d in XP.iter_docs(st.dir):           # single files and the pack (agents/exp_pack.py)
         if stale_source(d):
             continue
         s = d.get("stats")

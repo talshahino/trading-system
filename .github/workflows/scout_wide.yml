@@ -79,7 +79,7 @@ jobs:
     needs: run
     if: always()
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
@@ -98,6 +98,11 @@ jobs:
         run: |
           for d in parts/*/; do [ -d "$d/reports" ] && cp -r "$d/reports/." reports/; done
           git status --porcelain reports/agents | wc -l
+      - name: Pack
+        # the per-combo files into a few compressed shards per bot (agents/exp_pack.py; manager, 14.11.2026: 85
+        # thousand single files, 2.8 GB, stopped the bots' computer's agents from refreshing main for hours)
+        run: |
+          for b in bot1 bot2 bot3 bot4 bot5 bot6 bot7; do python -m agents.exp_pack pack --bot $b & done; wait
       - name: Manager
         env:
           GH_TOKEN: ${{ github.token }}

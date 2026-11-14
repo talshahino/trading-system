@@ -60,7 +60,12 @@ def mults(bot):
 
 def exp(bot, fam, combo):
     from agent_portfolio import stale_source
-    d = _read(ROOT / "reports" / "agents" / bot / "exp" / f"{fam}_{combo.replace('|', '_').replace('/', '-')}.json")
+    f = ROOT / "reports" / "agents" / bot / "exp" / f"{fam}_{combo.replace('|', '_').replace('/', '-')}.json"
+    if fam == "new":                         # the scout's results: a single file or the pack (agents/exp_pack.py)
+        from agents import exp_pack as XP
+        d = XP.read(f.parent, f.name)
+    else:
+        d = _read(f)
     if stale_source(d):
         return None
     if d and d.get("tr"):

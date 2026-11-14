@@ -510,7 +510,17 @@ def book(acc, t, notify):
             led[t["id"]] = {"skipped": "loss limit", "pnl": None, "closed_day": day}
             return True
         m = risk_mult(plans(), f"{t['sid']}|{t.get('tf', '5Min')}|{t['symbol']}")
-        led[t["id"]] = {"risk_usd": round(bal * RISK * m, 2), "pnl": None, "closed_day": "9999"}
+        # the fixed rule (user, 14.11.2026: "the daily and total limits are fixed and can never change - if such risk
+        # opens, it is not OK"): every open trade counts as if it hit its stop, and a new one risks at most the room
+        # left to the bot's own 4.5% day / 9% total lines - so the open stops can never cross FTMO's 5% / 10%
+        # (the same guard as bots 1-6: live/runner.py allowed_risk, live/watch_own.py, live/fut_account.py)
+        open_ = sum(float(x.get("risk_usd") or 0) for x in led.values() if x.get("pnl") is None and "skipped" not in x)
+        room = min(bal - stop_day, bal - INITIAL * (1 - 0.09)) - open_
+        want = bal * RISK * m
+        if room < 0.25 * want:
+            led[t["id"]] = {"skipped": "room", "pnl": None, "closed_day": day}
+            return True
+        led[t["id"]] = {"risk_usd": round(min(want, room), 2), "pnl": None, "closed_day": "9999"}
         if notify:
             REP.notify(f"בוט 7: נפתחה {side}", f"{nm}\nכניסה {t['entry']:.5g} · סטופ {t['stop']:.5g}"
                        + (f" · יעד {t['target']:.5g}" if t["target"] else "") + f" · סיכון ${led[t['id']]['risk_usd']:,.0f} (וירטואלי)",

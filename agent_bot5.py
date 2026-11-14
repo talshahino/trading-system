@@ -339,7 +339,15 @@ NOTE_TESTS += [
          "he": "רק בכיוון ההטיה היומית (סגירה מעל / מתחת ליום הקודם, גריפה = הצד ההפוך)"},
         {"id": f"{trk}_swp2", "track": trk, "knob": "SWP", "vals": list(TG.SWP2_VALS), "src": "tal1411gapplus",
          "he": "גאפ אחרי גריפה עם דחייה (הנר סוגר בחזרה בפנים) או גריפת שפלים / שיאים שווים"})]
-NOTE_SRC = {"tal1411gapplus": "משימה של טל מ־14.11 (שיטות קרובות לגאפ: Silver Bullet, איכות נר 3, גאפ אחרי גריפה).",
+NOTE_TESTS += [
+    # the user's videos of 14.11.2026 17:37-18:03 (task tal1411set7 (6) / (13)), on the gap method as it runs - one TREND
+    # value each, from closed candles only (tal_gap.Data.trend, the same on the live bot): fib5 = EMA 8/13/21/34/55 of
+    # 15 minutes in order; ha / ha2 = Heikin Ashi of the high timeframe (the colour / two in a row, no wick against)
+    {"id": f"{trk}_set7", "track": trk, "knob": "TREND", "vals": ["fib5", "ha", "ha2"], "src": "tal1411set7",
+     "he": "רק בכיוון ממוצעי פיבונאצ'י (8/13/21/34/55) או נרות הייקין אשי"}
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
+NOTE_SRC = {"tal1411set7": "משימה של טל מ־14.11 (ממוצעי פיבונאצ'י והייקין אשי מהסרטונים).",
+            "tal1411gapplus": "משימה של טל מ־14.11 (שיטות קרובות לגאפ: Silver Bullet, איכות נר 3, גאפ אחרי גריפה).",
             "tal1411set6": "משימה של טל מ־14.11 (פרמיה / דיסקאונט ופיבוט יומי מהסרטונים).",
             "tal1411vid": "משימות של טל מ־14.11 (מסנני הסרטונים: RSI במגמה, ADX, סופרטרנד, EMA 50/200, סדר הממוצעים).",
             "tal1411wkend": "משימה של טל מ־14.11 (כלל FTMO: בלי עסקה פתוחה בהפסקה של שעתיים ומעלה).",

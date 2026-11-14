@@ -254,6 +254,30 @@ class Data:
                 # close) / 3 of the previous UTC day - the price above P = longs only, below = shorts only
                 ts, o, h, l, c, _ = self.tf("1d")
                 s = np.sign(prev - self._closed("1d", (h + l + c) / 3))
+            elif mode == "fib5":
+                # Fibonacci EMAs (the user's video of 14.11.2026 17:51-18:03, task tal1411set7 (13), Trading Data): EMA
+                # 8/13/21/34/55 of the CLOSED 15-minute candles all in order = only that side; else both (2)
+                ts, o, h, l, c, _ = self.tf("15m")
+                e = [pd.Series(c).ewm(span=n_, adjust=False).mean().to_numpy() for n_ in (8, 13, 21, 34, 55)]
+                upk = np.all([e[i] > e[i + 1] for i in range(4)], axis=0)
+                dnk = np.all([e[i] < e[i + 1] for i in range(4)], axis=0)
+                s = np.nan_to_num(self._closed("15m", np.where(upk, 1, np.where(dnk, -1, 2))), nan=2.0)
+            elif mode in ("ha", "ha2"):
+                # Heikin Ashi (task tal1411set7 (6), 14.11.2026) of the CLOSED candles of the high timeframe: ha = the
+                # last candle's colour (green = longs only, red = shorts only); ha2 = the last two the same colour and
+                # the last one without a wick against it (the video's entry signal) = that side, else no entry (0)
+                ts, o, h, l, c, _ = self.tf(htf)
+                hc = (o + h + l + c) / 4
+                ho = pd.Series(np.r_[(o[0] + c[0]) / 2, hc[:-1]]).ewm(alpha=0.5, adjust=False).mean().to_numpy()
+                hh, hl = np.maximum(h, np.maximum(ho, hc)), np.minimum(l, np.minimum(ho, hc))
+                col = np.sign(hc - ho)
+                if mode == "ha":
+                    b = col
+                else:
+                    tol = 1e-9 * np.abs(hc)
+                    clean = np.where(col > 0, np.minimum(ho, hc) - hl <= tol, hh - np.maximum(ho, hc) <= tol)
+                    b = np.where((col == np.r_[0, col[:-1]]) & clean, col, 0)
+                s = self._closed(htf, b.astype(float))
             elif mode == "dbias":
                 # Daily Bias (the user's video of 14.11.2026 14:26, task tal1411gapplus (a)), from the last CLOSED UTC
                 # day against the day before it: a close over the previous high = longs only; under the previous low

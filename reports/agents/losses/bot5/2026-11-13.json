@@ -1,0 +1,144 @@
+{
+ "bot": "bot5",
+ "day": "2026-11-13",
+ "at": "2026-11-14T07:03:59+00:00",
+ "summary": [
+  "מה קרה: בוט 5 - סקאלפינג הפסיד 108$ ב־2026-11-13 (-0.11% מהחשבון). 6 עסקאות: 3 הרוויחו 448$, 3 הפסידו 556$.",
+  "מול הצפי: הבדיקה צפתה ליום כזה -0.1R (-19$). בפועל -0.9R. הפער: -0.8R (-231$) - צריך לסגור אותו.",
+  "למה: 3 עסקאות נעצרו בסטופ אחרי תנועה קטנה לטובה.",
+  "ההפסד הגדול ביותר: TAL|15Min|US30, 209$ (37.6% מכל ההפסד)."
+ ],
+ "pnl": -107.97,
+ "pnl_pct": -0.111,
+ "open_balance": 97429.17,
+ "limit_used": {
+  "bot": 2.5,
+  "ftmo": 2.2
+ },
+ "trades": 6,
+ "winners": 3,
+ "losers_n": 3,
+ "gross_profit": 448.03,
+ "gross_loss": 556.0,
+ "profit_factor": 0.81,
+ "costs": 0.0,
+ "day_r": -0.92,
+ "expected_r": -0.07,
+ "expected_sd": 2.94,
+ "z": -0.29,
+ "normal": true,
+ "causes": {
+  "normal": 3
+ },
+ "correlated": [],
+ "top_loser": "TAL|15Min|US30",
+ "top_share": 37.6,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "TAL|15Min|US30",
+   "side": "קנייה",
+   "open_t": "2026-11-13T11:21:00+00:00",
+   "close_t": "2026-11-13T11:27:00+00:00",
+   "entry": 52354.81,
+   "exit": 52329.96,
+   "stop": 52329.96,
+   "target": 52409.96,
+   "r": -1.0,
+   "net": -209.29,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TAL|15Min|US500",
+   "side": "מכירה",
+   "open_t": "2026-11-13T13:25:00+00:00",
+   "close_t": "2026-11-13T13:30:00+00:00",
+   "entry": 7620.575,
+   "exit": 7626.9,
+   "stop": 7626.9,
+   "target": 7604.2,
+   "r": -1.0,
+   "net": -207.86,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "TAL|4Hour5m|US500",
+   "side": "קנייה",
+   "open_t": "2026-11-13T15:10:00+00:00",
+   "close_t": "2026-11-13T15:21:00+00:00",
+   "entry": 7527.825,
+   "exit": 7500.25,
+   "stop": 7500.25,
+   "target": 7646.95,
+   "r": -1.0,
+   "net": -138.85,
+   "costs": 0.0,
+   "mfe_r": null,
+   "mae_r": null,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  }
+ ],
+ "actions": [],
+ "trend": {
+  "last7": {
+   "loss_days": 2,
+   "avg_loss_pct": -0.788,
+   "worst_pct": -1.465
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "TAL|15Min|US30",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true,
+    "cut_only": false
+   },
+   {
+    "combo": "TAL|15Min|US500",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true,
+    "cut_only": false
+   },
+   {
+    "combo": "TAL|4Hour5m|US500",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true,
+    "cut_only": false
+   }
+  ],
+  "open": [
+   "TAL|15Min|US30",
+   "TAL|15Min|US500",
+   "TAL|4Hour5m|US500"
+  ],
+  "cut_only": [],
+  "total_month_pct": 0.0,
+  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין"
+ }
+}

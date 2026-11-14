@@ -666,7 +666,17 @@ def families_of(bot):
         own_t = ((own or {}).get("train") or {}).get("t")
         if tf == "1Min":                 # SC001 1-minute: bot 7's family test already covers it (16 instruments)
             continue
-        if len(fam) >= 4 and pooled < 0 and (own_t is None or own_t < 1 or combo in FAMILY_NAMED.get(bot, ())):
+        caught = len(fam) >= 4 and pooled < 0 and (own_t is None or own_t < 1 or combo in FAMILY_NAMED.get(bot, ()))
+        # the approval rule's family (agents/autodecide._family_pick: every timeframe, the t bar grows with the family)
+        # catches more (manager, 14.11.2026 night: SC071|15Min|WMT went into bot 4 at 10:58 with t 1.53 - 15Min alone
+        # +12R to 2025, but SC071 on its 10 pairs -102R, bar 1.65 - and this same-timeframe test never queued it)
+        if not caught and own is not None:
+            try:
+                from agents import autodecide as AD
+                caught = AD._family_pick(new, own) is not None
+            except Exception:  # noqa: BLE001
+                pass
+        if caught and fam:
             syms = [sym] + sorted({c["change"]["combo"].split("|")[2] for c in fam} - {sym})
             out[f"{sid}|{tf}"] = syms
     # the ones the manager named first (SC010 in bots 1-4, then bot 4's SC006 / SC094), then the rest (SC002)

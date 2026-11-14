@@ -42,7 +42,10 @@
   "t5_1@UK100": 0.00196,
   "t5_1@SPN35": 0.00196,
   "t5_1@AUS200": 0.00196,
-  "t5_1@N25": 0.00196
+  "t5_1@N25": 0.00196,
+  "scout": 0.004,
+  "scout:SC042|15Min|XAUUSD": 0.0028,
+  "scout:SC069|15Min|XAUUSD": 0.0028
  },
  "changes": {
   "a0a49a4ffc34": {
@@ -333,6 +336,18 @@
    "family": "flag",
    "key": "tal_risk_scale",
    "before": "__none__"
+  },
+  "fb11e02eda66": {
+   "family": "scout5",
+   "combo": "SC042|15Min|XAUUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "ed7fb7e31c85": {
+   "family": "scout5",
+   "combo": "SC069|15Min|XAUUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
   }
  },
  "tal_tracks": {
@@ -730,5 +745,15 @@
    ]
   }
  },
- "tal_risk_scale": 0.55
+ "tal_risk_scale": 0.55,
+ "scout": {
+  "SC042|15Min|XAUUSD": {
+   "since": "2026-11-14T02:19:22+00:00",
+   "card": "fb11e02eda66"
+  },
+  "SC069|15Min|XAUUSD": {
+   "since": "2026-11-14T02:19:22+00:00",
+   "card": "ed7fb7e31c85"
+  }
+ }
 }

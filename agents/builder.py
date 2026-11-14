@@ -117,6 +117,15 @@ def buildable(c):
     # bot 6 (13.11.2026): a scout strategy that passed bot 6's own test (agent_bot6.scout_world: micro-futures costs,
     # FTMO Futures sessions, chosen on 2024-2025) -> "scout" in live/bots/bot6.json, traded by live/watch_own.py.
     # Never from the CFD test's card (change {"kind": "add"}): that one is tested on bot 6's world first.
+    # bot 5 (14.11.2026, bot 5's smart agent): a scout strategy approved on agent_portfolio.py's test (the CFD bots'
+    # machine with the live rules, bot 5's instruments, 1-15 minute charts) -> "scout" in live/bots/bot5.json, traded by
+    # live/watch_own.py scout5_trades with the same functions. Only a strategy whose code is installed.
+    if bot == "bot5" and c.get("kind") in ("new", "improve") and ch.get("kind") == "add" \
+            and str(ch.get("combo", "")).count("|") == 2:
+        sid, tf, sym = ch["combo"].split("|")
+        from agents import ftmo_universe as U
+        if tf in ("1Min", "5Min", "15Min", "1Hour") and sym in U.ALL and sid in _strategy_ids():
+            return {"bot": bot, "combo": ch["combo"], "family": "scout5"}
     if bot == "bot6" and c.get("kind") in ("new", "improve") and ch.get("family") == "scout_fut" \
             and str(ch.get("combo", "")).count("|") == 2 and isinstance(ch.get("v"), dict):
         return {"bot": bot, "combo": ch["combo"], "family": "scout6", "v": ch["v"]}
@@ -171,6 +180,8 @@ def describe(b):
         return f"שיטת הגאפ: {b['pair'][0]} / {b['pair'][1]}, " + ", ".join(f"{k} {v}" for k, v in b["cfg"].items())
     if b["family"] == "add":
         return f"נוספה לבוט: {b['combo']}, בסיכון של הבוט"
+    if b["family"] == "scout5":
+        return f"נוספה לבוט 5: {b['combo']}, בסיכון של הבוט" + (" ×0.7 (⭐ אולי מזל)" if b.get("star") else "")
     if b["family"] == "scout6":
         from agents import scout_fut as SF
         return f"נוספה לבוט 6: {b['combo']} ({SF.he(b['v'])}), בסיכון של הבוט"
@@ -186,6 +197,15 @@ def describe(b):
 
 
 def apply(cfg, b, card_id):
+    if b["family"] == "scout5":
+        sc = cfg.setdefault("scout", {})
+        cfg.setdefault("changes", {})[card_id] = {"family": "scout5", "combo": b["combo"],
+                                                  "before": json.loads(json.dumps(sc.get(b["combo"], "__none__")))}
+        sc[b["combo"]] = {"since": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "card": card_id}
+        cfg.setdefault("risk", {}).setdefault("scout", 0.004)     # the bot's risk (principle 8)
+        if b.get("star"):
+            star6(cfg, b["combo"], card_id)                        # "scout:<combo>" = x0.7, as in bot 6
+        return
     if b["family"] == "scout6":
         sc = cfg.setdefault("scout", {})
         cfg.setdefault("changes", {})[card_id] = {"family": "scout6", "combo": b["combo"],
@@ -327,7 +347,7 @@ def revert(cfg, card_id):
             rk.pop(c["track"], None) if c["before"] == "__none__" else rk.__setitem__(c["track"], c["before"])
         elif c["family"] == "flag":
             cfg.pop(c["key"], None) if c["before"] == "__none__" else cfg.__setitem__(c["key"], c["before"])
-        elif c["family"] == "scout6":
+        elif c["family"] in ("scout6", "scout5"):
             sc = cfg.setdefault("scout", {})
             sc.pop(c["combo"], None) if c["before"] == "__none__" else sc.__setitem__(c["combo"], c["before"])
             if c.get("star_risk_before") is not None:
@@ -418,7 +438,7 @@ def run(now=None):
         cfg = cfgs[b["bot"]]
         if b["family"] == "add" and b["combo"].split("|")[0] not in _strategy_ids():
             continue                                     # the strategy's code is not installed yet
-        if b["family"] in ("scout6", "tal5sym", "tal6") and (approved.get(cid) or {}).get("star"):
+        if b["family"] in ("scout6", "scout5", "tal5sym", "tal6") and (approved.get(cid) or {}).get("star"):
             b = dict(b, star=True)
         apply(cfg, b, cid)
         touched.add(b["bot"])

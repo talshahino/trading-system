@@ -226,6 +226,7 @@ def session_mask(df, sym, tf):
 
 CLOSE_BREAKS = False          # FTMO Standard account: no positions through market breaks over 2 hours
 BREAKS = {}                   # symbol -> {(server weekday, server minute of day)} where such a break starts
+BREAK_LEN = {}                # symbol -> {"weekday-minute": median length in minutes} (reporting only)
 _BREAKS_AT = {}
 
 
@@ -362,6 +363,13 @@ def learn_breaks(sym):
     starts = (t + pd.Timedelta(minutes=1))[(nxt - t) > pd.Timedelta(hours=2)]
     keys = pd.Series([(x.weekday(), (x.hour * 60 + x.minute) // 15 * 15) for x in starts])
     cnt = keys.value_counts()
+    # how long each learned break is (bots 1-4 smart agent, 14.11.2026 night): the live bots close XAUUSD / XAGUSD
+    # every Mon-Thu at 20:45 UTC for a break over 2 hours that the backtest's own bars do not have - the length in
+    # the 1-minute bars goes into the state (live/<bot>_state.json "breaks"), so the agents can check it against
+    # FTMO's trading hours. Reporting only, nothing in the trading changes.
+    lens = ((nxt - t)[(nxt - t) > pd.Timedelta(hours=2)].dt.total_seconds() / 60).to_numpy()
+    BREAK_LEN[sym] = {f"{k[0]}-{k[1]}": round(float(np.median([L for kk, L in zip(keys, lens) if kk == k])), 1)
+                      for k, n in cnt.items() if n >= 2}
     return {k for k, n in cnt.items() if n >= 2}
 
 
@@ -1820,6 +1828,7 @@ def dashboard_state(ai, pos, ds_bal, now):
         "spreads": {k: {"median": float(np.median(q)), "n": len(q)} for k, q in SPREADS.items() if q},
         "feed_lag": {k: {"median": float(np.median(q)), "max": float(max(q)), "n": len(q)}
                      for k, q in (STATE.get("feed_lag") or {}).items() if q},
+        "breaks": {k: v for k, v in BREAK_LEN.items() if v},     # learned breaks over 2 hours (server weekday-minute: minutes)
         "app_push": REP.PUSH_STAT, "managed": MANAGED,
         "risk_mult": {c: risk_mult(c) for c in MON["combos"] if risk_mult(c) != 1.0},
         "combo_rules": {c: r for c in MON["combos"] if (r := combo_rules(c))},

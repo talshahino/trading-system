@@ -3289,6 +3289,599 @@ def s_connors_ma20_rsi3_intraday(df):
     return L, S, {"stop": ("level", c - rng, c + rng), "target": ("R", 2.0), "breakeven": (0.5, 0.0)}
 
 
+
+# ======================= scout night 2026-11-14: SC124-SC149 =======================
+def _tema(x, n):
+    e1 = ema(x, n)
+    e2 = ema(e1, n)
+    return 3 * e1 - 3 * e2 + ema(e2, n)
+
+
+def _stoch_carry(x, n):
+    """100 * (x - lowest(x, n)) / range, carrying the last valid value forward when the range is 0 (Pine STC style)."""
+    s = _s(x)
+    lo, hi = s.rolling(n).min(), s.rolling(n).max()
+    rng = hi - lo
+    raw = (100 * (s - lo) / rng.where(rng > 0)).ffill().fillna(50.0)
+    return raw.to_numpy()
+
+
+def _stc_ema(c, fast, slow, cycle):
+    """Schaff Trend Cycle, EMA-3 smoothed version (FMZ 435160)."""
+    m = ema(c, fast) - ema(c, slow)
+    d = ema(_stoch_carry(m, cycle), 3)
+    return np.clip(ema(_stoch_carry(d, cycle), 3), 0, 100)
+
+
+def _stc_half(c, length, fast, slow):
+    """Schaff Trend Cycle, classic 0.5 factor smoothing (FMZ 429472)."""
+    m = ema(c, fast) - ema(c, slow)
+    s1 = _stoch_carry(m, length)
+    d = np.empty(len(c))
+    for i in range(len(c)):
+        d[i] = s1[i] if i == 0 else d[i - 1] + 0.5 * (s1[i] - d[i - 1])
+    s2 = _stoch_carry(d, length)
+    out = np.empty(len(c))
+    for i in range(len(c)):
+        out[i] = s2[i] if i == 0 else out[i - 1] + 0.5 * (s2[i] - out[i - 1])
+    return out
+
+
+def _ut_trail(c, a, mult):
+    """UT-Bot ATR trailing stop line and the regime (+1 after a close crosses above it, -1 below, 0 before any)."""
+    n = len(c)
+    t = np.zeros(n)
+    pos = np.zeros(n)
+    nl = mult * np.nan_to_num(a)
+    for i in range(n):
+        if i == 0:
+            t[i] = c[i] - nl[i]
+            continue
+        p = t[i - 1]
+        if c[i] > p and c[i - 1] > p:
+            t[i] = max(p, c[i] - nl[i])
+        elif c[i] < p and c[i - 1] < p:
+            t[i] = min(p, c[i] + nl[i])
+        else:
+            t[i] = c[i] - nl[i] if c[i] > p else c[i] + nl[i]
+        if c[i - 1] < p and c[i] > t[i]:
+            pos[i] = 1
+        elif c[i - 1] > p and c[i] < t[i]:
+            pos[i] = -1
+        else:
+            pos[i] = pos[i - 1]
+    return t, pos
+
+
+def _mfi(h, l, c, v, n):
+    tp = (h + l + c) / 3
+    mf = tp * np.where(v > 0, v, 1.0)
+    dtp = np.diff(tp, prepend=tp[0])
+    pos = _s(np.where(dtp > 0, mf, 0.0)).rolling(n).sum().to_numpy()
+    neg = _s(np.where(dtp < 0, mf, 0.0)).rolling(n).sum().to_numpy()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.where(pos + neg > 0, 100 * pos / (pos + neg), 50.0)
+
+
+def _wpr(h, l, c, n):
+    hh, ll = _s(h).rolling(n).max().to_numpy(), _s(l).rolling(n).min().to_numpy()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        return np.where(hh > ll, -100 * (hh - c) / (hh - ll), -50.0)
+
+
+def _kalman_hull(x, gain=10000.0):
+    """FMZ 427921 'Kalman' smoothing of a line (dk*sqrt(gain/10000*2), velocity gain/10000)."""
+    x = np.nan_to_num(np.asarray(x, dtype=float), nan=np.nan)
+    kf = np.full(len(x), np.nan)
+    velo = 0.0
+    g = gain / 10000.0
+    for i in range(len(x)):
+        if not np.isfinite(x[i]):
+            continue
+        prev = kf[i - 1] if i > 0 and np.isfinite(kf[i - 1]) else x[i]
+        dk = x[i] - prev
+        smooth = prev + dk * np.sqrt(g * 2)
+        velo = velo + g * dk
+        kf[i] = smooth + velo
+    return kf
+
+
+def _wavetrend(h, l, c, n1=10, n2=21):
+    ap = (h + l + c) / 3
+    esa = ema(ap, n1)
+    d = ema(np.abs(ap - esa), n1)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ci = np.nan_to_num((ap - esa) / (0.015 * d))
+    wt1 = ema(ci, n2)
+    return wt1, sma(wt1, 4)
+
+
+def _mid(h, l, n):
+    return (_s(h).rolling(n).max().to_numpy() + _s(l).rolling(n).min().to_numpy()) / 2
+
+
+def _alligator(h, l, jaw=(13, 8), teeth=(8, 5), lips=(5, 3)):
+    """Williams Alligator: SMMA of the median price, each line shifted forward (value at t = SMMA[t - shift])."""
+    md = (h + l) / 2
+    return [_sh(rma(md, n), s) for n, s in (jaw, teeth, lips)]
+
+
+def _rvi(o, h, l, c, n=10):
+    co, hl = c - o, h - l
+    num = (co + 2 * _sh(co, 1) + 2 * _sh(co, 2) + _sh(co, 3)) / 6
+    den = (hl + 2 * _sh(hl, 1) + 2 * _sh(hl, 2) + _sh(hl, 3)) / 6
+    with np.errstate(divide="ignore", invalid="ignore"):
+        r = sma(num, n) / sma(den, n)
+    sig = (r + 2 * _sh(r, 1) + 2 * _sh(r, 2) + _sh(r, 3)) / 6
+    return r, sig
+
+
+def _at_local_time(df, x, tz, hour, minute=0):
+    """Value of x on the bar that STARTS at hour:minute local time, on every bar of that local day from then on."""
+    st = df.index.tz_convert(tz)
+    day = pd.Series(st.date).to_numpy()
+    hit = (st.hour == hour) & (st.minute == minute)
+    v = pd.Series(np.where(hit, np.asarray(x, dtype=float), np.nan))
+    return v.groupby(day).ffill().to_numpy(), day
+
+
+# ---------------- SC124 STC 23/50/10 + EMA35/EMA200 (FMZ) ----------------
+def s_fmz_stc_ema35_200(df):
+    """FMZ 435160 'Schaff Trend Cycle with Double Moving Average Crossover' (BTC_USDT perpetual, 3-hour backtest):
+    STC = EMA3 of a 10-bar stochastic of EMA3 of a 10-bar stochastic of MACD(23, 50). Long when STC crosses above
+    25 with EMA35 > EMA200 and close > EMA35; short when STC crosses below 75 with EMA35 < EMA200 and close < EMA35.
+    Stop and target 400 ticks each (1:1); an opposite signal reverses. Translation (ours): the tick size is not
+    stated, so the equal 1:1 stop / target becomes 1 ATR(14) each; 3-hour -> listed as 4Hour (nearest allowed)."""
+    c = df["c"].to_numpy(float)
+    stc = _stc_ema(c, 23, 50, 10)
+    e35, e200 = ema(c, 35), ema(c, 200)
+    L = cross_up(stc, 25) & (e35 > e200) & (c > e35)
+    S = cross_down(stc, 75) & (e35 < e200) & (c < e35)
+    return L, S & ~L, {"stop": ("atr", 1.0), "target": ("R", 1.0), "opposite": True}
+
+
+# ---------------- SC125 STC turn + UT ATR trail regime + SMA200 (FMZ) ----------------
+def s_fmz_stc_ut_sma200(df):
+    """FMZ 429472 'STC MA ATR Integrated Trend Trading' (BTC_USDT, 4-hour): STC(12, 26, 50) with 0.5 smoothing; a
+    UT-Bot trailing stop of 3.5 x ATR(5) sets the regime (+1 after a close crosses above it, -1 below). Long on
+    the first bar the STC turns up, regime not -1, close >= SMA200; short on the first bar the STC turns down,
+    regime -1, close < SMA200. Stop = the trailing-stop line at entry (fixed), target = entry +/- 2 x ATR(5);
+    a long is closed when the regime turns -1 (short when +1). As published - no pip translation needed."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a5 = atr(h, l, c, 5)
+    t, pos = _ut_trail(c, a5, 3.5)
+    stc = _stc_half(c, 12, 26, 50)
+    up = stc > _sh(stc)
+    dn = stc < _sh(stc)
+    lt = up & ~(_sh(up.astype(float)) > 0)
+    st = dn & ~(_sh(dn.astype(float)) > 0)
+    s200 = sma(c, 200)
+    L = (pos != -1) & lt & (c >= s200)
+    S = (pos == -1) & st & (c < s200)
+    return L, S & ~L, {"stop": ("level", t, t), "target": ("level", c + 2 * a5, c - 2 * a5),
+                       "exit_long": pos == -1, "exit_short": pos == 1}
+
+
+# ---------------- SC126 Kijun 20 cross with a strong close + 1.5 ATR stop (FMZ) ----------------
+def s_fmz_kijun20_wpr1(df):
+    """FMZ 426847 'ATR Stop Loss Ichimoku Kijun Breakout' (15-minute, written for FX): Kijun = mid of the 20-bar
+    high/low; long when a bar opens below the Kijun and closes above it in the top 25% of its range (Williams %R(1)
+    >= -25), short on the mirror (%R(1) <= -75). Stop 1.5 x ATR(14), target 15 pips, out when the close crosses
+    back over the Kijun. Translation: a major's 15-minute ATR(14) is ~9 pips -> 15 pips ~ 1.6 ATR. %R(1) is taken
+    over the bar's true range (high / low extended to the previous close)."""
+    o, h, l, c = _open(df), df["h"].to_numpy(float), df["l"].to_numpy(float), df["c"].to_numpy(float)
+    kj = _mid(h, l, 20)
+    pc = _sh(c)
+    th, tl = np.fmax(h, pc), np.fmin(l, pc)   # ours: %R(1) over the true range (a gap from the last close counts)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        wr = np.where(th > tl, -100 * (th - c) / (th - tl), -50.0)
+    L = (o < kj) & (c > kj) & (wr >= -25)
+    S = (o > kj) & (c < kj) & (wr <= -75)
+    return L, S & ~L, {"stop": ("atr", 1.5), "target": ("atr", 1.6), "exit_long": c < kj, "exit_short": c > kj}
+
+
+# ---------------- SC127 Kijun 20 loopback, 1-hour (FMZ) ----------------
+def s_fmz_kijun20_loopback(df):
+    """FMZ 431282 'Kijun Loopback' (same author as 426847, 1-hour): a bar that opens below the 20-bar Kijun and
+    closes above it -> long (mirror short), no %R filter. Stop 1.5 x ATR(14), target 10 pips, out when the close
+    crosses back over the Kijun. Translation: a major's 1-hour ATR(14) is ~13 pips -> 10 pips ~ 0.8 ATR."""
+    o, h, l, c = _open(df), df["h"].to_numpy(float), df["l"].to_numpy(float), df["c"].to_numpy(float)
+    kj = _mid(h, l, 20)
+    L = (o < kj) & (c > kj)
+    S = (o > kj) & (c < kj)
+    return L, S & ~L, {"stop": ("atr", 1.5), "target": ("atr", 0.8), "exit_long": c < kj, "exit_short": c > kj}
+
+
+# ---------------- SC128 Kalman Hull cross + WaveTrend cross (FMZ) ----------------
+def s_fmz_kalman_hull_wt(df):
+    """FMZ 427921 'Hull Moving Average and WT Cross' (BTC_USDT, 1-hour): two Hull lines - HMA(hl2, 24) smoothed
+    by WMA 5 and a 3-WMA Hull of the close (4 / 6 / 12, WMA 12) - each Kalman-smoothed (gain 10000); WaveTrend
+    10/21 (wt2 = SMA4 of wt1). Long when the fast Hull crosses above the slow one AND wt1 crosses above wt2 on the
+    same bar, short on the mirror. Stop 5%, target 10% from entry; an opposite signal closes. As published."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    hl2 = (h + l) / 2
+    hma = _wma(2 * _wma(hl2, 12) - _wma(hl2, 24), 5)
+    hma3 = _wma(3 * _wma(c, 4) - _wma(c, 6) - _wma(c, 12), 12)
+    a, b = _kalman_hull(hma), _kalman_hull(hma3)
+    wt1, wt2 = _wavetrend(h, l, c)
+    L = cross_up(b, a) & cross_up(wt1, wt2)
+    S = cross_up(a, b) & cross_down(wt1, wt2)
+    (sl, ss), (tl, ts) = _pct_levels(c, 5.0, 10.0)
+    return L, S & ~L, {"stop": ("level", sl, ss), "target": ("level", tl, ts), "opposite": True}
+
+
+# ---------------- SC129 MFI(3) momentum bar, 5-minute (FMZ) ----------------
+def s_fmz_mfi3_5m(df):
+    """FMZ 439748 'Money Flow Index 5 Minute Strategy' (BTC_USDT, 5-minute): previous bar's MFI(3) = 100, this bar
+    bullish with a body > 50% of its range and close > SMA80 -> long; previous MFI(3) = 0, bearish body > 50%,
+    close < SMA80 -> short. Stop = the low of today's 00:00 UTC bar - 3% (short: its high + 3%), target 2.2R.
+    As published (percentages); the optional stop modes / trailing / 60-minute exit are off by default."""
+    o, h, l, c, v = _open(df), *(df[x].to_numpy(float) for x in "hlcv")
+    m = _sh(_mfi(h, l, c, v, 3))
+    s80 = sma(c, 80)
+    body = np.abs(c - o) > 0.5 * (h - l)
+    L = (m >= 99.999) & (c > o) & body & (c > s80)
+    S = (m <= 0.001) & (c < o) & body & (c < s80)
+    day = pd.Series(df.index.tz_convert("UTC").date).to_numpy()
+    l0 = pd.Series(l).groupby(day).transform("first").to_numpy()
+    h0 = pd.Series(h).groupby(day).transform("first").to_numpy()
+    return L, S & ~L, {"stop": ("level", l0 * 0.97, h0 * 1.03), "target": ("R", 2.2)}
+
+
+# ---------------- SC130 Asian 19:00-01:00 range fade (FMZ) ----------------
+def s_fmz_asian_range_fade(df):
+    """FMZ 446567 'Asian Session High/Low Breakout' (BTC_USDT, 1-hour; the code FADES the break): range = high / low
+    of the 19:00-01:00 UTC bars; from 04:00 (session end + 3 h) until the next session, a close under the Asian low
+    -> long, over the Asian high -> short, one trade per session. Stop and target 300 ticks each (1:1). Translation:
+    the tick size is not stated -> 1 ATR(14) each; the levels are fixed at entry (the code's drifting exit is a bug)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    ts = df.index.tz_convert("UTC")
+    hr = ts.hour.to_numpy()
+    key = pd.Series((ts - pd.Timedelta(hours=19)).date).to_numpy()
+    inr = (hr >= 19) | (hr < 1)
+    hi = pd.Series(np.where(inr, h, np.nan)).groupby(key).transform("max").to_numpy()
+    lo = pd.Series(np.where(inr, l, np.nan)).groupby(key).transform("min").to_numpy()
+    win = (hr >= 4) & (hr < 19)
+    L0 = win & (c < lo)
+    S0 = win & (c > hi)
+    first = _first_per_day(L0 | S0, key)
+    return L0 & first, S0 & first & ~L0, {"stop": ("atr", 1.0), "target": ("R", 1.0)}
+
+
+# ---------------- SC131 Sproule EMA100 (BabyPips) ----------------
+def s_bp_sproule_ema100(df):
+    """BabyPips forum 'The Sproule System' (1-hour, FX): long when price is above EMA100 and the previous bar's low
+    is above it too (short: below, previous high below). Stop = the EMA100, moved to its new value every hour
+    (trailing on the EMA); target 100 pips. Ours: entry on the first bar the condition becomes true.
+    Translation: a major's 1-hour ATR(14) is ~13 pips -> 100 pips ~ 8 ATR."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    e = ema(c, 100)
+    L = _onset((c > e) & (_sh(l) > _sh(e)))
+    S = _onset((c < e) & (_sh(h) < _sh(e)))
+    return L, S & ~L, {"stop": ("trail_line",), "line": e, "target": ("atr", 8.0)}
+
+
+# ---------------- SC132 EURUSD SMA5/SMA100 cross confirmed, 150 / 300 pips (BabyPips) ----------------
+def s_bp_sma5_100_150pips(df):
+    """BabyPips forum 'Potential 150 pips ... swing trading system' (EURUSD, 4-hour and daily): SMA5 crosses above
+    SMA100, wait one more candle and buy if SMA5 is still above (short mirror). Stop 150 pips, target 300 pips,
+    nothing else. Translation: EURUSD 4-hour ATR(14) is ~30 pips -> stop 5 ATR, target 2R (10 ATR)."""
+    c = df["c"].to_numpy(float)
+    s5, s100 = sma(c, 5), sma(c, 100)
+    L = (_sh(cross_up(s5, s100).astype(float)) > 0) & (s5 > s100)
+    S = (_sh(cross_down(s5, s100).astype(float)) > 0) & (s5 < s100)
+    return L, S & ~L, {"stop": ("atr", 5.0), "target": ("R", 2.0)}
+
+
+# ---------------- SC133 Richbugger EMA60 median 4H + 1H (BabyPips) ----------------
+def s_bp_richbugger(df):
+    """BabyPips forum 'The Richbugger System' (4-hour and 1-hour, example GBPJPY): EMA60 of the median price on
+    the 4-hour and the 1-hour chart. Long when price is at least 20 pips above the 4-hour EMA and above the 1-hour
+    EMA (short mirror, never short above the 4H EMA). Stop 30 pips, then trailed on the 1-hour EMA; out when
+    price crosses back through the 1-hour EMA; no fixed target. Differs from FR07 (3 Ducks SMA60 x3): EMA of
+    HL/2, a 20-pip buffer, 30-pip stop and the 1H-EMA exit. Translation: GBPJPY 1-hour ATR(14) ~20 pips ->
+    buffer 1.0 ATR, stop 1.5 ATR; the trail on the EMA = the exit on a close back through it."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    f = lambda g: ema(((g["h"] + g["l"]) / 2).to_numpy(), 60)  # noqa: E731
+    e4, e1 = _htf(df, "4h", f), _htf(df, "1h", f)
+    L = _onset((c > e4 + a) & (c > e1))
+    S = _onset((c < e4 - a) & (c < e1))
+    return L, S & ~L, {"stop": ("atr", 1.5), "target": None, "exit_long": c < e1, "exit_short": c > e1}
+
+
+# ---------------- SC134 Centred 227-bar close extreme breakout, EURUSD 1H (ProRealCode) ----------------
+def s_prc_fractal113_breakout(df):
+    """ProRealCode 'Fractal breakout intraday strategy EURUSD 1H': level = close[113] when it is the highest
+    (lowest) close of the 227-bar window centred on it (confirmed 113 bars later), held until the next one. Long
+    when the close crosses over the high level, short under the low level, entries 10:00-23:00 platform time
+    (CET). Stop = the 20-bar Donchian low (high) of the previous bar; a 5-point trailing stop on closes once 5
+    points in profit; target 30 points. Translation: EURUSD 1-hour ATR(14) ~13 pips -> target 30 pips ~ 2.3 ATR,
+    the 5-pip trail ~ 0.4 ATR, starting after 0.4 ATR of profit."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    cs = _s(c)
+    c113 = cs.shift(113).to_numpy()
+    hil = _s(np.where(c113 >= cs.rolling(227).max().to_numpy() - 1e-12, c113, np.nan)).ffill().to_numpy()
+    lol = _s(np.where(c113 <= cs.rolling(227).min().to_numpy() + 1e-12, c113, np.nan)).ffill().to_numpy()
+    hs, _, _, _, _ = _local(df, "Europe/Paris")
+    win = (hs >= 10) & (hs < 23)
+    L = cross_up(c, hil) & win
+    S = cross_down(c, lol) & win
+    dl = _sh(_s(l).rolling(20).min().to_numpy())
+    dh = _sh(_s(h).rolling(20).max().to_numpy())
+    return L, S & ~L, {"stop": ("level", dl, dh), "target": ("atr", 2.3), "trail_atr": 0.4,
+                       "trail_after_px": 0.4 * a}
+
+
+# ---------------- SC135 DAX 3 same-colour bars at 12:00 / 16:00 (ProRealCode) ----------------
+def s_prc_dax_3bars_hour(df):
+    """ProRealCode '3 bars patterns DAX intraday trading 1 hour' (DAX, 1-hour, CET): on the bar closing at 12:00,
+    if it and the two before it all closed up -> buy; on the bar closing at 16:00, three down bars -> sell short.
+    Stop 30 points, target 45 points, flat at 21:00. Translation: DAX 1-hour ATR(14) ~50 points -> stop 0.6 ATR,
+    target 1.5R."""
+    o, c = _open(df), df["c"].to_numpy(float)
+    _, he, _, _, _ = _local(df, "Europe/Berlin")
+    up, dn = c > o, c < o
+    up3 = up & (_sh(up.astype(float)) > 0) & (_sh(up.astype(float), 2) > 0)
+    dn3 = dn & (_sh(dn.astype(float)) > 0) & (_sh(dn.astype(float), 2) > 0)
+    L = up3 & (np.abs(he - 12) < 1e-6)
+    S = dn3 & (np.abs(he - 16) < 1e-6)
+    return L, S & ~L, {"stop": ("atr", 0.6), "target": ("R", 1.5), "force_exit": he >= 21 - 1e-9}
+
+
+# ---------------- SC136 20/200 pips open-difference at 18:00 GMT (MQL5) ----------------
+def s_mql5_20_200_pips(df):
+    """MQL5 CodeBase 214 '20/200 pips' (EURUSD H1): at the start of the 18:00 GMT bar, if Open[2] - Open[7] (the
+    16:00 and 11:00 bar opens) > 7 pips -> buy, < -7 pips -> sell (direction as in the StockSharp port's text);
+    one trade a day, target 20 pips, stop 200 pips. Translation: EURUSD 1-hour ATR(14) ~13 pips -> 7 pips ~ 0.5,
+    20 pips ~ 1.5, 200 pips ~ 15 ATR of the 1-hour bars. Ours: the signal is the bar that ends at 18:00 UTC."""
+    o = _open(df)
+    a1 = _htf(df, "1h", lambda g: atr(g["h"].to_numpy(), g["l"].to_numpy(), g["c"].to_numpy(), 14))
+    o16, _ = _at_local_time(df, o, "UTC", 16)
+    o11, _ = _at_local_time(df, o, "UTC", 11)
+    _, he, _, _, _ = _local(df, "UTC")
+    at = np.abs(he - 18) < 1e-6
+    dlt = o16 - o11
+    c = df["c"].to_numpy(float)
+    L = at & (dlt > 0.5 * a1)
+    S = at & (dlt < -0.5 * a1)
+    return L, S & ~L, {"stop": ("level", c - 15 * a1, c + 15 * a1), "target": ("level", c + 1.5 * a1, c - 1.5 * a1)}
+
+
+# ---------------- SC137 freqtrade BinHV45 (GitHub) ----------------
+def s_ft_binhv45(df):
+    """freqtrade BinHV45 (berlinguyinca; fork TheoBrigitte), 1-minute crypto, long only: BB 40 / 2 sample SD;
+    bbdelta = mid - lower > 0.8% of close, |close - close[1]| > 1.75% of close, close - low < 0.25 x bbdelta,
+    close < the previous lower band and close <= close[1] -> buy. Stop -5%, target +1.25% (ROI). As published."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    mid = sma(c, 40)
+    lower = mid - 2 * _s(c).rolling(40).std(ddof=1).to_numpy()
+    bbd = np.abs(mid - lower)
+    cd = np.abs(c - _sh(c))
+    tail = np.abs(c - l)
+    L = (_sh(lower) > 0) & (bbd > 0.008 * c) & (cd > 0.0175 * c) & (tail < 0.25 * bbd) & (c < _sh(lower)) & (c <= _sh(c))
+    (sl, ss), (tl, ts) = _pct_levels(c, 5.0, 1.25)
+    return L, np.zeros(len(c), bool), {"stop": ("level", sl, ss), "target": ("level", tl, ts)}
+
+
+# ---------------- SC138 DAX Reversal Catcher M30 (ProRealCode) ----------------
+def s_prc_dax_reversal_catcher(df):
+    """ProRealCode 'DAX Reversal Catcher M30' (ThibauldR, DAX 30-minute, long only): the previous bar's low under
+    its BB(20, 1.5) lower band, this bar closes inside the bands, makes a higher high and higher low and closes over
+    the previous high, TEMA21 > TEMA50, and the close crosses over the session VWAP -> buy. Stop = the previous
+    bar's low; out when the close is above the upper band, or TEMA21 crosses under TEMA50, or at 15:00 CET.
+    The source's 30-minute chart is not an allowed timeframe -> listed as 15Min and 1Hour."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    lo, _, up = _bb(c, 20, 1.5)
+    t21, t50 = _tema(c, 21), _tema(c, 50)
+    vw = _day_vwap_local(df, "Europe/Berlin")
+    _, he, _, _, _ = _local(df, "Europe/Berlin")
+    L = ((_sh(l) < _sh(lo)) & (c > lo) & (c < up) & (l > _sh(l)) & (h > _sh(h)) & (c > _sh(h)) & (t21 > t50)
+         & cross_up(c, vw) & (he < 15))
+    return L, np.zeros(len(c), bool), {"stop": ("level", _sh(l), _sh(h)), "target": None,
+                                       "exit_long": (c > up) | cross_down(t21, t50), "force_exit": he >= 15 - 1e-9}
+
+
+# ---------------- SC139 DAX H4 trend: over SMA200 + MACD > 0, 1% / 3% (ProRealCode) ----------------
+def s_prc_dax_h4_sma200_macd(df):
+    """ProRealCode 'Day trading DAX with the trend' (DAX, 4-hour): close > SMA200 and MACD(12, 26) main line > 0,
+    from 09:00 -> buy (the code also shorts on the mirror). A state, not a cross: any qualifying bar while flat.
+    Stop 1%, target 3%, flat at 21:00 CET. Differs from TV22 (MACD zero cross + EMA200, 2R) in the state entry,
+    the SMA, the 1% / 3% and the 21:00 flat. As published (percentages)."""
+    c = df["c"].to_numpy(float)
+    m = ema(c, 12) - ema(c, 26)
+    s200 = sma(c, 200)
+    hs, he, _, _, _ = _local(df, "Europe/Berlin")
+    tm = (hs >= 9) & (he < 21)
+    L = tm & (c > s200) & (m > 0)
+    S = tm & (c < s200) & (m < 0)
+    (sl, ss), (tl, ts) = _pct_levels(c, 1.0, 3.0)
+    return L, S & ~L, {"stop": ("level", sl, ss), "target": ("level", tl, ts), "force_exit": he >= 21 - 1e-9}
+
+
+# ---------------- SC140 MACD(5,13,1) overnight change, entry at the 08:00 open (investing.co.uk) ----------------
+def s_inv_macd5131_overnight(df):
+    """investing.co.uk 'MACD 4 hour trading strategy' (FX, 4-hour): MACD(5, 13, 1) on the 04:00 candle minus its
+    value on the previous day's 20:00 candle; >= +50 (5-digit points) -> long at the 08:00 open, <= -50 -> short.
+    Two positions, stop 30 pips each, targets 30 and 45 pips; at +30 pips half out and the stop to break-even.
+    Translation: 50 points = 0.0005 ~ 0.15 ATR(14) of a major's 4-hour bar (~30 pips); stop 30 pips ~ 1 ATR;
+    the two targets -> one target at 1.5R with break-even at 1R (2/3 of the way). Times taken as UTC."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    m = ema(c, 5) - ema(c, 13)
+    st = df.index.tz_convert("UTC")
+    day = pd.Series(st.date)
+    at20 = (st.hour == 20) & (st.minute == 0)
+    v20 = pd.Series(np.where(at20, m, np.nan)).groupby(day.to_numpy()).max().shift(1)  # the previous day's 20:00
+    A = day.map(v20).to_numpy(dtype=float)
+    # the bar that ends at 08:00 (4-hour bar opening 04:00, or the last lower-timeframe bar before 08:00)
+    _, he, _, _, _ = _local(df, "UTC")
+    sig = np.abs(he - 8) < 1e-6
+    dlt = m - A
+    L = sig & (dlt >= 0.15 * a)
+    S = sig & (dlt <= -0.15 * a)
+    return L, S & ~L, {"stop": ("atr", 1.0), "target": ("R", 1.5), "breakeven": (0.667, 0.0)}
+
+
+# ---------------- SC141 SMA48 + ATR(7) crossing its 30-bar average, USDJPY H4 (Forex Tester) ----------------
+def s_ftb_sma48_atr_cross(df):
+    """Forex Tester blog 'List of strategies 3' (USD/JPY, 4-hour): price above SMA48 and ATR(7) crosses above its
+    30-period average -> buy at the next bar; price below SMA48 and ATR crosses its average from above -> sell.
+    Stop at least 25 points, break-even at 25-30 points, target 100-120 points, out on a reverse signal.
+    Translation (points read as pips): USDJPY 4-hour ATR(14) ~35 pips -> stop 0.7 ATR, target 110 pips ~ 3.1 ATR,
+    break-even at 27.5 pips ~ 0.25 of the way to the target."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    s48 = sma(c, 48)
+    a7 = atr(h, l, c, 7)
+    am = sma(a7, 30)
+    L = (c > s48) & cross_up(a7, am)
+    S = (c < s48) & cross_down(a7, am)
+    return L, S & ~L, {"stop": ("atr", 0.7), "target": ("atr", 3.1), "breakeven": (0.25, 0.0), "opposite": True}
+
+
+# ---------------- SC142 SSMA90 + CCI(12) hook + WPR(11) + ATR filter (Forex Tester) ----------------
+def s_ftb_ssma90_cci_wpr(df):
+    """Forex Tester blog 'List of strategies 3' (FX, 5-minute to 1-hour): price above the smoothed MA(90), WPR(11)
+    under -85, CCI(12) turning up after a low under -100, ATR(14) > 0.002 -> buy at the signal close; mirror sell
+    (WPR over -15, CCI turning down from over +100). Stop 10-15 points, target at least 50 points, out on a reverse
+    signal. Translation (points read as pips, a major's 15-minute ATR ~8 pips): stop 12.5 pips ~ 1.5 ATR, target
+    50 pips ~ 6 ATR; the fixed ATR > 0.002 filter -> ATR(14) above its 100-bar average."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    ss = rma(c, 90)
+    cc = _cci(h, l, c, 12)
+    w = _wpr(h, l, c, 11)
+    act = a > sma(a, 100)
+    c1, c2 = _sh(cc), _sh(cc, 2)
+    L = (c > ss) & (w < -85) & (c1 < -100) & (cc > c1) & (c2 > c1) & act
+    S = (c < ss) & (w > -15) & (c1 > 100) & (cc < c1) & (c2 < c1) & act
+    return L, S & ~L, {"stop": ("atr", 1.5), "target": ("atr", 6.0), "opposite": True}
+
+
+# ---------------- SC143 RVI(10) cross + rising RSI and StdDev (Forex Tester) ----------------
+def s_ftb_rvi_rsi_std(df):
+    """Forex Tester blog 'List of strategies 4' (majors, 1-hour or higher): RVI(10) crosses above its signal line
+    while RSI(14) and StdDev(20) are both higher than on the previous bar -> buy at the next open; mirror sell.
+    Stop at least 35 points, break-even after 30 points, target 100 points, out on a reverse signal.
+    Translation (points read as pips, a major's 1-hour ATR ~13 pips): stop 2.7 ATR, target 7.7 ATR, break-even at
+    0.3 of the way."""
+    o, h, l, c = _open(df), df["h"].to_numpy(float), df["l"].to_numpy(float), df["c"].to_numpy(float)
+    r, sg = _rvi(o, h, l, c, 10)
+    rs = rsi(c, 14)
+    sd = _s(c).rolling(20).std(ddof=0).to_numpy()
+    L = cross_up(r, sg) & (rs > _sh(rs)) & (sd > _sh(sd))
+    S = cross_down(r, sg) & (rs < _sh(rs)) & (sd < _sh(sd))
+    return L, S & ~L, {"stop": ("atr", 2.7), "target": ("atr", 7.7), "breakeven": (0.3, 0.0), "opposite": True}
+
+
+# ---------------- SC144 Ichimoku cloud + two Alligators + CCI(50) + Stochastic (Forex Tester) ----------------
+def s_ftb_ichi_two_alligators(df):
+    """Forex Tester blog 'List of strategies 4' (USD/JPY and yen crosses, 1-hour or higher): a candle closes above
+    the Kumo (9/26/52) and above every line of Alligator(13,8,5) and Alligator(39,24,15), CCI(50) > +50 and
+    Stochastic(14,3,3) > 50 -> buy at the next candle; mirror sell. Stop 35-50 points, break-even after 30, target
+    100-150; out at market when a candle closes beyond any Alligator line against the trade. Translation (pips,
+    USDJPY 1-hour ATR ~15 pips): stop 42.5 pips ~ 2.8 ATR, target 125 pips ~ 3R, break-even at 0.24 of the way."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    tk, kj = _mid(h, l, 9), _mid(h, l, 26)
+    sa, sb = _sh((tk + kj) / 2, 26), _sh(_mid(h, l, 52), 26)
+    top, bot = np.fmax(sa, sb), np.fmin(sa, sb)
+    lines = _alligator(h, l) + _alligator(h, l, (39, 24), (24, 15), (15, 9))
+    lmax, lmin = np.max(np.vstack(lines), axis=0), np.min(np.vstack(lines), axis=0)
+    cc = _cci(h, l, c, 50)
+    k, _ = _stoch(h, l, c, 14, 3, 3)
+    L = _onset((c > top) & (c > lmax) & (cc > 50) & (k > 50))
+    S = _onset((c < bot) & (c < lmin) & (cc < -50) & (k < 50))
+    return L, S & ~L, {"stop": ("atr", 2.8), "target": ("R", 3.0), "breakeven": (0.24, 0.0),
+                       "exit_long": c < lmax, "exit_short": c > lmin}
+
+
+# ---------------- SC145 SMA233 high / low channel breakout ladder (Forex Tester) ----------------
+def s_ftb_sma233_channel(df):
+    """Forex Tester blog 'List of strategies 3' (FX, 30-minute or higher): channel U = SMA233 of the highs, L =
+    SMA233 of the lows; a break above U that closes above U + 15 points -> buy, below L - 15 -> sell. Targets a
+    ladder at U + 89 / 144 / 233 / 362; stop 'the first level on the back side of the tunnel' (read: U itself).
+    Translation (points read as pips, a major's 30-minute ATR ~7 pips): buffer 15 pips ~ 2 ATR; the first ladder
+    target 89 pips ~ 12.7 ATR beyond the channel line (ours: one target, the first rung)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    U, D = sma(h, 233), sma(l, 233)
+    L = _onset(c > U + 2 * a)
+    S = _onset(c < D - 2 * a)
+    return L, S & ~L, {"stop": ("level", U, D), "target": ("level", U + 12.7 * a, D - 12.7 * a)}
+
+
+# ---------------- SC146 DAX 08:00-09:05 CET range breakout + EMA50 bias, 2R (Admirals) ----------------
+def s_adm_dax_orb_0905_ema50(df):
+    """Admirals traders' blog 'DAX 30 open range breakout strategy' (DAX, 5-minute): range = high / low of
+    08:00-09:05 CET; a break of the range in the direction of the 5-minute EMA50 (long only above it, short only
+    below) -> enter; stop the other side of the range, target 2R. Ours: first break of the day, until 17:30 CET.
+    Differs from SS03 / SC028 in the 08:00-09:05 window and the EMA50 bias."""
+    c = df["c"].to_numpy(float)
+    hi, lo, hs, _, _, day = _range_levels(df, "Europe/Berlin", 8.0, 9.0 + 5 / 60)
+    e50 = ema(c, 50)
+    tm = hs < 17.5
+    L0 = tm & (c > hi) & (c > e50)
+    S0 = tm & (c < lo) & (c < e50)
+    first = _first_per_day(L0 | S0, day)
+    return L0 & first, S0 & first & ~L0, {"stop": ("level", lo, hi), "target": ("R", 2.0)}
+
+
+# ---------------- SC147 Warrior Trading pullback: green ramp, 9-EMA / VWAP dip, first new high ----------------
+def s_wt_ramp_pullback_9ema(df):
+    """Warrior Trading 'Pull back trading strategy' (strong US stocks, 5-minute): a ramp of at least 5 green candles
+    in a row, then a pullback to the 9-EMA or VWAP; buy the first 5-minute candle that makes a new high (over the
+    previous candle's high). Stop = the low of the pullback; target = the high of the day (sell into the high-of-
+    day squeeze). Ours: ramp within the last 12 bars, the EMA9 / VWAP touch within the last 3, pullback low = the
+    3-bar low, high of day = before this bar. Long only."""
+    o, h, l, c = _open(df), df["h"].to_numpy(float), df["l"].to_numpy(float), df["c"].to_numpy(float)
+    g = (c > o).astype(int)
+    run = pd.Series(g).groupby((g == 0).cumsum()).cumsum().to_numpy()
+    ramp = _since(run >= 5, 12)
+    e9 = ema(c, 9)
+    vw = _day_vwap_local(df, "America/New_York")
+    touch = _since(l <= np.fmax(e9, vw), 3) | (l <= np.fmax(e9, vw))
+    day = pd.Series(df.index.tz_convert("America/New_York").date).to_numpy()
+    hod = _sh(pd.Series(h).groupby(day).cummax().to_numpy())
+    pl = _s(l).rolling(3).min().to_numpy()
+    L = ramp & touch & (c > _sh(h)) & ~(run >= 5) & (c < hod)
+    L = _onset(L)
+    return L, np.zeros(len(c), bool), {"stop": ("level", pl, pl), "target": ("level", hod, hod)}
+
+
+# ---------------- SC148 EMA50 cross, 1 ADR stop, 2 ADR target (HowToTrade) ----------------
+def s_htt_ema50_adr(df):
+    """HowToTrade 'Average Daily Range (ADR)' method (EUR/USD example; M15, M30, H1): price crosses above EMA50
+    -> buy, below -> sell; stop = 1 x ADR from entry, target = 2 x ADR. ADR = the 14-day average of the daily
+    high - low (period not stated; 14 is the common default), from completed days. The 'avoid an hour around major
+    news' filter is not modelled."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    day = pd.Series(df.index.tz_convert("UTC").date)
+    g = pd.DataFrame({"d": day, "h": h, "l": l}).groupby("d").agg(h=("h", "max"), l=("l", "min"))
+    adr = (g["h"] - g["l"]).rolling(14).mean().shift(1)
+    A = day.map(adr).to_numpy(dtype=float)
+    e50 = ema(c, 50)
+    L = cross_up(c, e50)
+    S = cross_down(c, e50)
+    return L, S & ~L, {"stop": ("level", c - A, c + A), "target": ("level", c + 2 * A, c - 2 * A)}
+
+
+# ---------------- SC149 EIA 10:15-10:30 ET box breakout, midpoint stop (DayTradingToolkit) ----------------
+def s_dtt_eia_box_break(df):
+    """DayTradingToolkit 'Trader's playbook: EIA oil report' (CL / USO): box = high / low of 10:15-10:30 ET on EIA
+    Wednesdays; wait 30 seconds after 10:30, then a break above the box -> long, below -> short. Stop = the box
+    midpoint (never moved further away), target 2:1. Ours: first close beyond the box from 10:30 until 12:00 ET on
+    Wednesdays (the report day); on 1-minute bars the 10:30 bar closes after the 30-second wait."""
+    c = df["c"].to_numpy(float)
+    hi, lo, hs, _, wd, day = _range_levels(df, "America/New_York", 10.25, 10.5)
+    mid = (hi + lo) / 2
+    tm = (wd == 2) & (hs >= 10.5) & (hs < 12)
+    L0 = tm & (c > hi)
+    S0 = tm & (c < lo)
+    first = _first_per_day(L0 | S0, day)
+    return L0 & first, S0 & first & ~L0, {"stop": ("level", mid, mid), "target": ("R", 2.0)}
+
+
 SCOUT = {
     "SC001": ("RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute (TradingView)", s_rv_ema20_scalp, ["1Min"]),
     "SC002": ("Alligator + Fractals breakout, fractal stop, 1:3 (RoboForex)", s_alligator_fractal, ["1Hour", "4Hour"]),
@@ -3413,4 +4006,30 @@ SCOUT = {
     "SC121": ("MA Crossover ADX: EMA39 rising 2 bars + ADX33 > 22 + DI, 40 / 90 pips, H1 (StockSharp)", s_ss_ema39_adx33, ["1Hour"]),
     "SC122": ("MA Price Cross: close crosses SMA160, 20 / 60 pips (1:3), 01-22 (StockSharp / JBlanked)", s_ss_ma160_price_cross, ["1Min", "1Hour"]),
     "SC123": ("Connors S&P: over MA20 + RSI(3) < 30, break of the prior high within 2 bars, prior-bar-range stop, BE at 1R (TradingMarkets)", s_connors_ma20_rsi3_intraday, ["5Min", "15Min"]),
+    "SC124": ("STC 23/50/10 cross of 25/75 + EMA35/EMA200 trend, 1:1, opposite reverses (FMZ)", s_fmz_stc_ema35_200, ["4Hour"]),
+    "SC125": ("STC(12,26,50) turn + UT ATR(5)x3.5 trail regime + SMA200, trail stop, 2 ATR(5) target (FMZ)", s_fmz_stc_ut_sma200, ["4Hour"]),
+    "SC126": ("Kijun 20 cross bar closing in its top / bottom 25%, 1.5 ATR stop, 15 pips, Kijun exit, 15m (FMZ)", s_fmz_kijun20_wpr1, ["15Min"]),
+    "SC127": ("Kijun 20 loopback: open under / close over the Kijun, 1.5 ATR stop, 10 pips, Kijun exit, 1H (FMZ)", s_fmz_kijun20_loopback, ["1Hour"]),
+    "SC128": ("Kalman-smoothed Hull cross + WaveTrend 10/21 cross on the same bar, 5% / 10%, 1H (FMZ)", s_fmz_kalman_hull_wt, ["1Hour"]),
+    "SC129": ("MFI(3) = 100 / 0 + momentum body over / under SMA80, 00:00-bar stop -3%, 2.2R, 5m (FMZ)", s_fmz_mfi3_5m, ["5Min"]),
+    "SC130": ("Asian 19:00-01:00 UTC range fade from 04:00, one per session, 1:1, 1H (FMZ)", s_fmz_asian_range_fade, ["1Hour"]),
+    "SC131": ("Sproule: price and previous bar on one side of EMA100, EMA trailing stop, 100 pips, 1H (BabyPips)", s_bp_sproule_ema100, ["1Hour"]),
+    "SC132": ("EURUSD SMA5/SMA100 cross confirmed one candle later, 150 / 300 pips, 4H (BabyPips)", s_bp_sma5_100_150pips, ["4Hour"]),
+    "SC133": ("Richbugger: 20 pips past the 4H EMA60(HL2) and over the 1H EMA60, 30-pip stop, 1H-EMA exit (BabyPips)", s_bp_richbugger, ["1Hour"]),
+    "SC134": ("Centred 227-bar close extreme breakout, Donchian-20 stop, 5-pip trail, 30 pips, 10-23 CET, EURUSD 1H (ProRealCode)", s_prc_fractal113_breakout, ["1Hour"]),
+    "SC135": ("DAX 3 up bars closing 12:00 long / 3 down bars 16:00 short, 30 / 45 points, flat 21:00, 1H (ProRealCode)", s_prc_dax_3bars_hour, ["1Hour"]),
+    "SC136": ("20/200 pips: Open[2]-Open[7] > 7 pips at 18:00 GMT, 20-pip target, 200-pip stop, EURUSD H1 (MQL5)", s_mql5_20_200_pips, ["1Hour"]),
+    "SC137": ("freqtrade BinHV45: BB40 lower-band capitulation bar, -5% / +1.25%, 1m, long (GitHub)", s_ft_binhv45, ["1Min"]),
+    "SC138": ("DAX Reversal Catcher: BB 1.5 lower poke + higher bar + TEMA21>50 + VWAP cross, upper-band exit, 15:00 flat (ProRealCode)", s_prc_dax_reversal_catcher, ["15Min", "1Hour"]),
+    "SC139": ("DAX trend: over SMA200 + MACD > 0 state from 09:00, 1% / 3%, flat 21:00, H4 (ProRealCode)", s_prc_dax_h4_sma200_macd, ["4Hour"]),
+    "SC140": ("MACD(5,13,1) change 20:00 -> 04:00 >= 50 points, entry at the 08:00 open, 30 / 30+45 pips, BE, 4H (investing.co.uk)", s_inv_macd5131_overnight, ["4Hour"]),
+    "SC141": ("SMA48 side + ATR(7) crossing its 30-bar average, 25 / 110 points, BE, USDJPY H4 (Forex Tester)", s_ftb_sma48_atr_cross, ["4Hour"]),
+    "SC142": ("SSMA90 + WPR(11) < -85 + CCI(12) hook from under -100 + ATR filter, 12.5 / 50 points (Forex Tester)", s_ftb_ssma90_cci_wpr, ["5Min", "15Min", "1Hour"]),
+    "SC143": ("RVI(10) signal cross + rising RSI(14) and StdDev(20), 35 / 100 points, BE at 30, H1 (Forex Tester)", s_ftb_rvi_rsi_std, ["1Hour", "4Hour"]),
+    "SC144": ("Close beyond the Kumo and two Alligators + CCI50 > 50 + Stoch > 50, Alligator exit, yen pairs H1 (Forex Tester)", s_ftb_ichi_two_alligators, ["1Hour", "4Hour"]),
+    "SC145": ("SMA233 high / low channel close beyond +15 points, stop at the channel, first ladder target +89 (Forex Tester)", s_ftb_sma233_channel, ["1Hour", "4Hour"]),
+    "SC146": ("DAX 08:00-09:05 CET range breakout with the EMA50 bias, range stop, 2R, 5m (Admirals)", s_adm_dax_orb_0905_ema50, ["5Min"]),
+    "SC147": ("Warrior pullback: 5+ green ramp, dip to EMA9 / VWAP, first new-high candle, pullback-low stop, HOD target, 5m (Warrior Trading)", s_wt_ramp_pullback_9ema, ["5Min"]),
+    "SC148": ("EMA50 cross, stop 1 x ADR(14), target 2 x ADR (HowToTrade)", s_htt_ema50_adr, ["15Min", "1Hour"]),
+    "SC149": ("EIA Wednesday 10:15-10:30 ET box breakout after 10:30, midpoint stop, 2R (DayTradingToolkit)", s_dtt_eia_box_break, ["1Min", "5Min"]),
 }

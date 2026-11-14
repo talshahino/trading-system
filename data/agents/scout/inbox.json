@@ -2356,6 +2356,530 @@
     "bot4"
    ],
    "rules": "20-minute bars (5/10/15 also): above the 20 MA with RSI(3) < 30 -> buy 1 tick over the previous bar's high on the next 2 bars only (mirror for shorts) / risk no more than the previous bar's size / half off at 1R, stop to break-even, trail the rest"
+  },
+  {
+   "id": "SC124",
+   "name": "STC 23/50/10 cross of 25/75 + EMA35/EMA200 trend, 1:1, opposite reverses",
+   "source": "FMZ (strategy square / fmzquant GitHub)",
+   "url": "https://www.fmz.com/strategy/435160",
+   "added": "2026-11-14",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "3h: STC(23/50/10) crosses above 25 with EMA35 > EMA200 and close > EMA35 -> long (mirror: below 75) / stop 400 ticks / target 400 ticks, opposite signal reverses"
+  },
+  {
+   "id": "SC125",
+   "name": "STC(12,26,50) turn + UT ATR(5)x3.5 trail regime + SMA200, trail stop, 2 ATR(5) target",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/429472",
+   "added": "2026-11-14",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "4h: first STC(12,26,50) up-turn, UT ATR(5)x3.5 regime not bearish, close >= SMA200 -> long (mirror) / stop = the trailing-stop line at entry / target entry +/- 2 x ATR(5), exit when the regime flips"
+  },
+  {
+   "id": "SC126",
+   "name": "Kijun 20 cross bar closing in its top / bottom 25%, 1.5 ATR stop, 15 pips, Kijun exit, 15m",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/426847",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx",
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2"
+   ],
+   "rules": "15m: open under / close over Kijun(20) with %R(1) >= -25 -> long (mirror <= -75) / stop 1.5 x ATR(14) / target 15 pips; exit on a close back across the Kijun"
+  },
+  {
+   "id": "SC127",
+   "name": "Kijun 20 loopback: open under / close over the Kijun, 1.5 ATR stop, 10 pips, Kijun exit, 1H",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/431282",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1h: open under / close over Kijun(20) -> long (mirror) / stop 1.5 x ATR(14) / target 10 pips; exit on a close back across the Kijun"
+  },
+  {
+   "id": "SC128",
+   "name": "Kalman-smoothed Hull cross + WaveTrend 10/21 cross on the same bar, 5% / 10%, 1H",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/427921",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1h: Kalman-smoothed Hull lines cross and WaveTrend 10/21 crosses the same way on the same bar / stop 5% / target 10%, opposite signal closes"
+  },
+  {
+   "id": "SC129",
+   "name": "MFI(3) = 100 / 0 + momentum body over / under SMA80, 00:00-bar stop -3%, 2.2R, 5m",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/439748",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m: previous MFI(3) = 100, bullish bar with body > 50% of range, close > SMA80 -> long (mirror MFI 0) / stop the 00:00 UTC bar's low - 3% (high + 3%) / target 2.2R"
+  },
+  {
+   "id": "SC130",
+   "name": "Asian 19:00-01:00 UTC range fade from 04:00, one per session, 1:1, 1H",
+   "source": "FMZ",
+   "url": "https://www.fmz.com/strategy/446567",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1h: 19:00-01:00 range; from 04:00 a close under the Asian low -> long, over the high -> short, one per session / stop 300 ticks / target 300 ticks"
+  },
+  {
+   "id": "SC131",
+   "name": "Sproule: price and previous bar on one side of EMA100, EMA trailing stop, 100 pips, 1H",
+   "source": "BabyPips forum",
+   "url": "https://forums.babypips.com/t/the-sproule-system/41955",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1h: price above EMA100 and previous low above it -> long (mirror) / stop at the EMA100, moved every hour / target 100 pips"
+  },
+  {
+   "id": "SC132",
+   "name": "EURUSD SMA5/SMA100 cross confirmed one candle later, 150 / 300 pips, 4H",
+   "source": "BabyPips forum",
+   "url": "https://forums.babypips.com/t/potential-150-pips-consistently-winning-is-the-only-thing-swing-trading-system/59880",
+   "added": "2026-11-14",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "4h / daily EURUSD: SMA5 crosses SMA100, one more candle confirms -> enter / stop 150 pips / target 300 pips"
+  },
+  {
+   "id": "SC133",
+   "name": "Richbugger: 20 pips past the 4H EMA60(HL2) and over the 1H EMA60, 30-pip stop, 1H-EMA exit",
+   "source": "BabyPips forum",
+   "url": "https://forums.babypips.com/t/the-richbugger-system/42968",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "4h + 1h: price >= 20 pips past the 4H EMA60 (median price) and beyond the 1H EMA60 -> enter / stop 30 pips, then trailed on the 1H EMA / exit on a cross back through the 1H EMA"
+  },
+  {
+   "id": "SC134",
+   "name": "Centred 227-bar close extreme breakout, Donchian-20 stop, 5-pip trail, 30 pips, 10-23 CET, EURUSD 1H",
+   "source": "ProRealCode",
+   "url": "https://www.prorealcode.com/prorealtime-trading-strategies/fractal-breakout-intraday-strategy-eurusd-1h",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "EURUSD 1h: close crosses the last centred 227-bar close extreme, 10:00-23:00 / stop 20-bar Donchian low (high), 5-point close trail / target 30 points"
+  },
+  {
+   "id": "SC135",
+   "name": "DAX 3 up bars closing 12:00 long / 3 down bars 16:00 short, 30 / 45 points, flat 21:00, 1H",
+   "source": "ProRealCode",
+   "url": "https://www.prorealcode.com/prorealtime-trading-strategies/3-bars-patterns-dax-intraday-trading-1-hour/?pnum=1",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "DAX 1h: 3 up bars ending at 12:00 -> buy, 3 down bars ending at 16:00 -> sell / stop 30 points / target 45 points, flat 21:00"
+  },
+  {
+   "id": "SC136",
+   "name": "20/200 pips: Open[2]-Open[7] > 7 pips at 18:00 GMT, 20-pip target, 200-pip stop, EURUSD H1",
+   "source": "MQL5 CodeBase",
+   "url": "https://mql5.com/en/code/214",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "EURUSD H1: at 18:00 GMT, Open[2] - Open[7] beyond 7 pips -> trade with it, one a day / stop 200 pips / target 20 pips"
+  },
+  {
+   "id": "SC137",
+   "name": "freqtrade BinHV45: BB40 lower-band capitulation bar, -5% / +1.25%, 1m, long",
+   "source": "GitHub (freqtrade BinHV45)",
+   "url": "https://raw.githubusercontent.com/TheoBrigitte/freqtrade/499685ee4850d6ecc5b09dc666ec4ee72769ebb5/strategies/BinHV45/BinHV45_stash.py",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m long: BB40/2 width > 0.8%, 1-bar move > 1.75%, tail < 0.25 x width, close under the previous lower band -> buy / stop -5% / target +1.25%"
+  },
+  {
+   "id": "SC138",
+   "name": "DAX Reversal Catcher: BB 1.5 lower poke + higher bar + TEMA21>50 + VWAP cross, upper-band exit, 15:00 flat",
+   "source": "ProRealCode",
+   "url": "https://prorealcode.com/prorealtime-trading-strategies/dax-reversal-catcher-m30",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2"
+   ],
+   "rules": "DAX 30m long: previous low under BB(20,1.5), higher high / low closing over the prior high, TEMA21 > TEMA50, close crosses VWAP -> buy / stop the previous low / exit over the upper band, TEMA cross down or 15:00 CET"
+  },
+  {
+   "id": "SC139",
+   "name": "DAX trend: over SMA200 + MACD > 0 state from 09:00, 1% / 3%, flat 21:00, H4",
+   "source": "ProRealCode",
+   "url": "https://prorealcode.com/prorealtime-trading-strategies/day-trading-dax-trend",
+   "added": "2026-11-14",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "DAX 4h: close > SMA200 and MACD > 0 from 09:00 -> buy (mirror short) / stop 1% / target 3%, flat 21:00"
+  },
+  {
+   "id": "SC140",
+   "name": "MACD(5,13,1) change 20:00 -> 04:00 >= 50 points, entry at the 08:00 open, 30 / 30+45 pips, BE, 4H",
+   "source": "investing.co.uk",
+   "url": "https://www.investing.co.uk/macd-4-hour-trading-strategy",
+   "added": "2026-11-14",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "4h: MACD(5,13,1) on the 04:00 candle minus the previous 20:00 candle >= +50 -> long at the 08:00 open (<= -50 short) / stop 30 pips / targets 30 and 45 pips, half out and break-even at +30"
+  },
+  {
+   "id": "SC141",
+   "name": "SMA48 side + ATR(7) crossing its 30-bar average, 25 / 110 points, BE, USDJPY H4",
+   "source": "Forex Tester blog",
+   "url": "https://forextester.com/blog/list-of-strategies-3",
+   "added": "2026-11-14",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "USDJPY 4h: above SMA48 and ATR(7) crosses up its 30-MA -> buy (below + cross down -> sell) / stop >= 25 points, break-even at 25-30 / target 100-120 points, reverse-signal exit"
+  },
+  {
+   "id": "SC142",
+   "name": "SSMA90 + WPR(11) < -85 + CCI(12) hook from under -100 + ATR filter, 12.5 / 50 points",
+   "source": "Forex Tester blog",
+   "url": "https://forextester.com/blog/list-of-strategies-3",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2"
+   ],
+   "rules": "M5-H1: above SSMA90, WPR(11) < -85, CCI(12) turns up from under -100, ATR(14) > 0.002 -> buy (mirror) / stop 10-15 points / target >= 50 points, reverse-signal exit"
+  },
+  {
+   "id": "SC143",
+   "name": "RVI(10) signal cross + rising RSI(14) and StdDev(20), 35 / 100 points, BE at 30, H1",
+   "source": "Forex Tester blog",
+   "url": "https://forextester.com/blog/list-of-strategies-4",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "H1+: RVI(10) crosses its signal with RSI(14) and StdDev(20) rising -> buy next open (mirror) / stop >= 35 points, break-even after 30 / target 100 points"
+  },
+  {
+   "id": "SC144",
+   "name": "Close beyond the Kumo and two Alligators + CCI50 > 50 + Stoch > 50, Alligator exit, yen pairs H1",
+   "source": "Forex Tester blog",
+   "url": "https://forextester.com/blog/list-of-strategies-4",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "H1+ yen pairs: close above the Kumo and both Alligators (13/8/5, 39/24/15), CCI(50) > 50, Stoch(14,3,3) > 50 -> buy next candle (mirror) / stop 35-50 points, BE after 30 / target 100-150; exit on a close beyond an Alligator line"
+  },
+  {
+   "id": "SC145",
+   "name": "SMA233 high / low channel close beyond +15 points, stop at the channel, first ladder target +89",
+   "source": "Forex Tester blog",
+   "url": "https://forextester.com/blog/list-of-strategies-3",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "M30+: close above SMA233(high) + 15 points -> buy (below SMA233(low) - 15 -> sell) / stop at the channel line / targets +89, +144, +233, +362 points"
+  },
+  {
+   "id": "SC146",
+   "name": "DAX 08:00-09:05 CET range breakout with the EMA50 bias, range stop, 2R, 5m",
+   "source": "Admirals traders' blog",
+   "url": "https://admiralmarkets.com/analytics/traders-blog/dax-30-open-range-breakout-strategy",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "DAX 5m: break of the 08:00-09:05 CET range in the EMA50 direction / stop the other side of the range / target 2R"
+  },
+  {
+   "id": "SC147",
+   "name": "Warrior pullback: 5+ green ramp, dip to EMA9 / VWAP, first new-high candle, pullback-low stop, HOD target, 5m",
+   "source": "Warrior Trading",
+   "url": "https://www.warriortrading.com/pull-back-trading-strategy/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m stocks: 5+ green candle ramp, pullback to the 9-EMA or VWAP, first candle making a new high -> buy / stop the pullback low / target the high of day"
+  },
+  {
+   "id": "SC148",
+   "name": "EMA50 cross, stop 1 x ADR(14), target 2 x ADR",
+   "source": "HowToTrade",
+   "url": "https://howtotrade.com/indicators/average-daily-range-adr/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "fx",
+    "stock",
+    "energy"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M15 / M30 / H1: price crosses EMA50 -> trade its way / stop 1 x ADR / target 2 x ADR"
+  },
+  {
+   "id": "SC149",
+   "name": "EIA Wednesday 10:15-10:30 ET box breakout after 10:30, midpoint stop, 2R",
+   "source": "DayTradingToolkit",
+   "url": "https://daytradingtoolkit.com/strategies/traders-playbook-eia-oil-report",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "energy"
+   ],
+   "bots": [
+    "bot7",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "CL on EIA Wednesdays: box = 10:15-10:30 ET high / low, wait 30 s after 10:30, break of the box -> enter / stop the box midpoint / target 2:1 or 3:1"
   }
  ]
 }

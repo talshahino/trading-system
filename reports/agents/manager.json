@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-14T22:25:42+00:00",
+ "updated": "2026-11-14T22:26:05+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -1568,7 +1568,7 @@
       "week": "2026-W46"
      },
      "detail": {},
-     "made": "2026-11-14T21:58:35+00:00",
+     "made": "2026-11-14T22:26:01+00:00",
      "id": "7d4268d77f15",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -31495,9 +31495,9 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-14T21:58:22+00:00",
-    "state_updated": "2026-11-14T21:58:11+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:22:56+00:00",
+    "minutes_since_state": 3,
     "balance": 96946.87,
     "equity": 96946.87,
     "day_pct": 1.21,
@@ -51887,9 +51887,9 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-14T21:58:22+00:00",
-    "state_updated": "2026-11-14T21:57:51+00:00",
-    "minutes_since_state": 1,
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:06+00:00",
+    "minutes_since_state": 3,
     "balance": 109109.42,
     "equity": 109109.42,
     "day_pct": 0.0,
@@ -85895,9 +85895,9 @@
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-14T21:58:22+00:00",
-    "state_updated": "2026-11-14T21:57:57+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:11+00:00",
+    "minutes_since_state": 3,
     "balance": 100011.58,
     "equity": 100011.58,
     "day_pct": 0.0,
@@ -125394,9 +125394,9 @@
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-14T21:58:22+00:00",
-    "state_updated": "2026-11-14T21:58:02+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:14+00:00",
+    "minutes_since_state": 3,
     "balance": 100085.36,
     "equity": 100085.36,
     "day_pct": 0.0,
@@ -131563,94 +131563,6 @@
      "by": "manager",
      "decided": "2026-11-14T20:34:45+00:00",
      "decision_id": "143a209feb04"
-    },
-    {
-     "bot": "bot5",
-     "kind": "info",
-     "title": "בוט 5: כלל הסיכון הקבוע - בגאפ ובסייר אף עסקה לא הוקטנה; הסייר לבד ירד 10.1% מהשיא ב־2026, הבוט כולו בבדיקה",
-     "what": "• כלל הסיכון הקבוע (משימה של טל מ־14.11): בבוט החי כל עסקה פתוחה כבר נספרת עד הסטופ, ועסקה חדשה מקבלת רק את המקום שנשאר עד 4.5% ביום ו־9% מההתחלה. גם הבדיקה של מסלולי הגאפ יחד עושה את אותו הדבר: ב־2026 אף עסקה לא הוקטנה ולא דולגה, הסיכון הפתוח הגבוה 2.45%.\n• מה שחסר בבדיקה: 11 אסטרטגיות הסייר שבבוט 5 (5 בזהב, 2 ב־US30, US100, 2 בפאונד-דולר, יורו-דולר). חושבו עכשיו לבד, באותו כלל: 0 הוקטנו, 0 דולגו (מתוך 1339 ב־2026), סיכון פתוח גבוה 2.08%, היום הגרוע -1.93%.\n• נקודה לסיכון: ב־2026 הסייר לבד ירד 10.14% מהשיא (יולי-ספטמבר, בעיקר 5 אסטרטגיות הזהב יחד ‎-4.9%, ו־US30 / US100 ‎-5.7%), אבל אף פעם לא מתחת לפתיחה (הנמוך -1.1%). במאי-דצמבר 2025 הירידה 4.89%. נבדק תיקון לחפיפה (עסקה אחת לכל מכשיר וכיוון / עד 2 / עד 1-2 למכשיר): נבחר על 2025 - אף אחד לא עדיף, אז אין כרטיס.\n• נבנה: הבדיקה של הבוט כולו - מסלולי הגאפ כמו שהם רצים בחי (עם כלל FTMO) + כל אסטרטגיות הסייר, כל אחת בסיכון שלה. רצה בסבב הבא במחשב, עם כרטיס מידע ומספר מלא.\n• גם נבנה (משימה מבוט 6): REARM - הוראת גאפ שבוטלה לפני הפסקה חוזרת בפתיחה. נבדק על 6 המסלולים, לבד וגם עם BRKH. הבוט הווירטואלי כבר מחזיר הוראה כזאת לבד, אין מה לבנות בו.",
-     "train": null,
-     "unseen": null,
-     "whole": null,
-     "halves": null,
-     "neighbours": null,
-     "tested": 6,
-     "cost_r": null,
-     "risk_pct": null,
-     "baseline": null,
-     "change": null,
-     "detail": {
-      "task": "tal1411risk",
-      "scouts": {
-       "train": {
-        "total_pct": 49.39,
-        "worst_day_pct": -1.69,
-        "max_fall_pct": 4.89,
-        "low_pct": -2.43,
-        "daily_stops": 0,
-        "room_cut": 0,
-        "room_skipped": 0,
-        "open_peak_pct": 2.24,
-        "open_days_over_day_lim": 0,
-        "stopped": null,
-        "n": 916
-       },
-       "unseen": {
-        "total_pct": 34.3,
-        "worst_day_pct": -1.93,
-        "max_fall_pct": 10.14,
-        "low_pct": -1.1,
-        "daily_stops": 0,
-        "room_cut": 0,
-        "room_skipped": 0,
-        "open_peak_pct": 2.08,
-        "open_days_over_day_lim": 0,
-        "stopped": null,
-        "n": 1339
-       }
-      },
-      "gap_only_unseen_x0.85": {
-       "max_fall_pct": 8.84,
-       "open_peak_pct": 2.45,
-       "room_cut": 0,
-       "room_skipped": 0
-      },
-      "overlap_rules": {
-       "now": {
-        "train_total": 49.39,
-        "unseen_total": 34.3,
-        "unseen_fall": 10.14
-       },
-       "side1": {
-        "train_total": 36.35,
-        "unseen_total": 27.54,
-        "unseen_fall": 7.94
-       },
-       "side2": {
-        "train_total": 49.42,
-        "train_fall": 4.87,
-        "unseen_total": 32.16,
-        "unseen_fall": 10.06
-       },
-       "sym2": {
-        "train_total": 47.14,
-        "unseen_total": 30.85,
-        "unseen_fall": 8.46
-       }
-      },
-      "code": "agent_bot5.py guard5 / guard5_card, NOTE_TESTS *_rearm"
-     },
-     "made": "2026-11-14T22:25:23+00:00",
-     "id": "5de028c2dcea",
-     "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T22:25:42+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T22:25:43+00:00",
-     "decision_id": "05998720b3c3"
     },
     {
      "bot": "bot5",
@@ -466476,8 +466388,8 @@
    "health": {
     "bot": "bot5",
     "name": "בוט 5 - סקאלפינג",
-    "updated": "2026-11-14T21:58:22+00:00",
-    "state_updated": "2026-11-14T21:56:45+00:00",
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:26+00:00",
     "minutes_since_state": 2,
     "balance": 98176.89,
     "equity": 98176.89,
@@ -485087,8 +484999,8 @@
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-14T21:58:22+00:00",
-    "state_updated": "2026-11-14T21:56:49+00:00",
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:31+00:00",
     "minutes_since_state": 2,
     "balance": 100324.41,
     "equity": 100324.41,
@@ -514888,9 +514800,9 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-14T21:58:22+00:00",
-    "state_updated": "2026-11-14T21:57:09+00:00",
-    "minutes_since_state": 1,
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:09+00:00",
+    "minutes_since_state": 3,
     "balance": 100000.0,
     "equity": 100000.0,
     "day_pct": 0.0,
@@ -514947,9 +514859,7 @@
   }
  },
  "decisions": {
-  "new": [
-   "05998720b3c3"
-  ],
-  "unread": 395
+  "new": [],
+  "unread": 394
  }
 }

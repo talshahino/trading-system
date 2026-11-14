@@ -168,9 +168,19 @@
    {
     "combo": "TV11|4Hour|USDJPY",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.9",
+      "decision": "619876fcefb9",
+      "at": "2026-11-14T01:30:28+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.9
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TT45|1Hour|WTI",
@@ -251,14 +261,14 @@
    }
   ],
   "open": [
-   "TV11|4Hour|USDJPY",
    "TT45|1Hour|WTI"
   ],
   "cut_only": [
+   "TV11|4Hour|USDJPY",
    "SE02|1Hour|USDJPY",
    "TV39|1Hour|JP225"
   ],
   "total_month_pct": -0.41,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

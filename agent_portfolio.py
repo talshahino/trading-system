@@ -86,7 +86,11 @@ NEW_ONLY = {"bot5": ["XAUUSD", "EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD",
             "bot6": ["US100", "US500", "US30"]}                         # % per trade where the bot has no json (bot 7: the virtual account)
 FILTER_HE = {"with_trend200": "רק עם המגמה (ממוצע 200)", "adx_trend": "רק בשוק במגמה (ADX מעל 20)",
              "adx_range": "רק בשוק בדשדוש (ADX מתחת 20)", "vol_normal": "רק בתנודתיות רגילה",
-             "vol_high": "רק בתנודתיות גבוהה", "vol_low": "רק בתנודתיות נמוכה", "none": "בלי סינון"}
+             "vol_high": "רק בתנודתיות גבוהה", "vol_low": "רק בתנודתיות נמוכה", "none": "בלי סינון",
+             "ema9_20": "רק בכיוון EMA 9/20", "bbw_p20": "לא ברוחב בולינגר נמוך (מתחת לאחוזון 20)"}
+# bots whose filter tests also try the user's EMA 9/20 and Bollinger-width filters (task tal1411ema, 14.11.2026); the
+# other bots join when their live runner knows the two names (live/news_bot.regime does for bot 7)
+FILTERS_EXTRA = {"bot7"}
 
 
 def explain_manage(v):
@@ -325,6 +329,8 @@ def run_rules(combos, fam, budget_min, extra=None):
         cmd += ["--optimize", SPLIT]
     elif fam == "filters":
         cmd += ["--filters", SPLIT]
+        if BOT_NOW.get("bot") in FILTERS_EXTRA:
+            cmd += ["--filters-extra"]               # the user's EMA 9/20 + Bollinger-width filters (14.11.2026)
     elif fam in ("manage", "fib", "ladder"):
         cmd += ["--manage", SPLIT] + (["--manage-grid", fam] if fam in ("fib", "ladder") else [])
     if fam in ("exits", "filters", "manage", "fib", "ladder"):
@@ -419,6 +425,10 @@ def experiments(bot, budget_s, where):
                 # the daily loss review asked for this test (agents/loss_review.py): first, before anything else
                 todo.append((-1, fam, -age, sym, combo))
                 continue
+            if fam == "filters" and bot in FILTERS_EXTRA and d.get("variants") and not d.get("filters_extra"):
+                # measured before the user's EMA 9/20 + Bollinger-width filters (task tal1411ema, 14.11.2026): again
+                todo.append((1, fam, -age, sym, combo))
+                continue
             if age >= RERUN_DAYS or (d.get("variants") and not tr_ok(d)):    # (12.11.2026: trades for the whole-bot check)
                 pr = 0 if age == 999 or combo in fixing_ else 1
                 if pr == 0 and combo not in fixing_ and fam != replay_family(pl):
@@ -498,6 +508,8 @@ def experiments(bot, budget_s, where):
             # the machine's own unweighted stats of every variant (the filters keep only two variants' trades)
             doc["grid"] = [{"variant": x["variant"], "train": x["train"], "valid": x["valid"]}
                            for x in (rows.get(c) or {}).get("all", [])]
+            if fam == "filters" and bot in FILTERS_EXTRA:
+                doc["filters_extra"] = 1
             st.put(fam, c, doc)
             done += 1
         print(f"  {sym} {fam}: {len(combos)} combos ({time.time() - ts:.0f}s)")
@@ -772,6 +784,16 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 entry study failed: {e}")
+        # EV04, the straddle before a release (the user's task tal1411strad, 14.11.2026, agents/news_straddle.py): a
+        # third of the budget, ahead of the entry study's leftover (the user's own request), gold first
+        try:
+            from agents import news_straddle as NS
+            if NS.stale():
+                mins = max(6.0, a.minutes / 3)
+                subprocess.run([sys.executable, "-m", "agents.news_straddle", "--minutes", str(mins)], cwd=str(ROOT),
+                               timeout=int(mins * 60 + 1800))
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 straddle study failed: {e}")
     # the scout's strategies first, with up to a third of the time, while some are still untested (12.11.2026: with
     # 0.8 of the budget for the experiments, the leftover was under the 2-minute minimum and they never ran)
     first = test_new(a.bot, budget / 3, a.where) if untested_new(a.bot, a.where) else 0

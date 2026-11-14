@@ -120,6 +120,15 @@ def regime(d, name):
     if name == "with_trend200":
         e = R.ema(c, 200)
         return c > e, c < e
+    if name == "ema9_20":                            # the user's filters (14.11.2026), as run_rules._extra_regimes
+        e9, e20 = R.ema(c, 9), R.ema(c, 20)
+        return e9 > e20, e9 < e20
+    if name == "bbw_p20":
+        s_ = pd.Series(c)
+        w = (4 * s_.rolling(20).std(ddof=0) / s_.rolling(20).mean()).to_numpy()
+        lo = pd.Series(w).rolling(100, min_periods=50).quantile(0.2).to_numpy()
+        m = np.isfinite(w) & np.isfinite(lo) & (w > lo)
+        return m, m
     if name in ("adx_trend", "adx_range"):
         a = R.adx(h, l, c, 14)
         m = a > 20 if name == "adx_trend" else a < 20

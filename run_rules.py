@@ -98,7 +98,25 @@ def _regimes(df):
         "vol_normal": ((pr > 0.2) & (pr < 0.9), (pr > 0.2) & (pr < 0.9)),
         "vol_high": (pr >= 0.5, pr >= 0.5),
         "vol_low": (pr < 0.5, pr < 0.5),
+        **_extra_regimes(c),
     }
+
+
+# the user's filters (14.11.2026, task tal1411ema): tried only with --filters-extra (bot 7 first); always known to
+# _regimes so a built plan with one of them resolves
+EXTRA_REGIMES = ("ema9_20", "bbw_p20")
+
+
+def _extra_regimes(c):
+    """ema9_20: EMA 9 above EMA 20 = longs only, below = shorts only (the bar's own timeframe).
+    bbw_p20: Bollinger 20/2 width ((upper - lower) / middle) above its 20th percentile of the last 100 bars."""
+    e9, e20 = R.ema(c, 9), R.ema(c, 20)
+    s = pd.Series(c)
+    mid, sd = s.rolling(20).mean(), s.rolling(20).std(ddof=0)
+    w = (4 * sd / mid).to_numpy()
+    lo = pd.Series(w).rolling(100, min_periods=50).quantile(0.2).to_numpy()
+    ok = np.isfinite(w) & np.isfinite(lo) & (w > lo)
+    return {"ema9_20": (e9 > e20, e9 < e20), "bbw_p20": (ok, ok)}
 
 
 def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
@@ -113,6 +131,8 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
     regimes = _regimes(df)
     rows, keep = [], {}
     for name, (al, ash) in regimes.items():
+        if name in EXTRA_REGIMES and not getattr(args, "filters_extra", False):
+            continue
         def g(d, al=al, ash=ash):
             lo, sh, plan = fn(d)
             return np.asarray(lo, bool) & al, np.asarray(sh, bool) & ash, {**plan, **pk}
@@ -445,6 +465,8 @@ def main():
     ap.add_argument("--filters", default="",
                     help="YYYY-MM-DD: with --combos-file, try market-regime filters per combo, choose on "
                          "--test-from..this date, check on this date..end")
+    ap.add_argument("--filters-extra", action="store_true",
+                    help="--filters also tries the user's EMA 9/20 direction and Bollinger-width filters (14.11.2026)")
     ap.add_argument("--combos-file", default="",
                     help="file with sid|timeframe|symbol lines: run only these and save their trades (no Prophet)")
     ap.add_argument("--stock-spread-mult", type=float, default=0.0,

@@ -386,10 +386,16 @@ SWP26 = tuple(("SWP", v) for v in TG.SWP2_VALS)
 # last Heikin Ashi colour; ha2 = two of the same colour, the last without a wick against it, else no entry. As the
 # track's TREND, head to head on the four running tracks and three indices; a card only if better on 2026 too.
 SET76 = (("TREND", "fib5"), ("TREND", "ha"), ("TREND", "ha2"))
+# LAZYBEAR'S SQUEEZE MOMENTUM AND YESTERDAY'S HIGH / LOW BREAKOUT (bot 5's task for bot 6, b5to6sqz, 14.11.2026 evening;
+# the user's videos tal1411set7 (12) / (16), bot 5's e90e104ec, tal_gap.Data.trend - closed candles only, the same in
+# simulate and in live_trades): sqzm = the momentum's sign on the high timeframe, sqz = the same and no entry while the
+# squeeze is on, pdbrk = over yesterday's high longs only / under its low shorts only. Head to head on the four running
+# tracks and three indices, like SET76; a card only if better on 2026 too, naming bot 5's result.
+SQZ6 = (("TREND", "sqzm"), ("TREND", "sqz"), ("TREND", "pdbrk"))
 TASK6 = {"wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
-         "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76}
-USER6 = WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76
-TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2"}
+         "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6}
+USER6 = WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
                            "nowick": "בלי גאפ שלנר 3 שלו פתיל גדול",
@@ -414,7 +420,10 @@ FILT_HE["TREND"] = lambda v: {"e920": "רק בכיוון EMA 9/20 של הטיי�
                               "dbias": "רק בכיוון ההטיה היומית (Daily Bias של היום הקודם)",
                               "fib5": "רק כשממוצעי פיבונאצ'י 8/13/21/34/55 (15 דק') מסודרים בכיוון",
                               "ha": "רק בכיוון נר הייקין אשי האחרון של הטיים פריים הגבוה",
-                              "ha2": "רק אחרי שני נרות הייקין אשי באותו צבע, האחרון בלי פתיל נגד"}.get(str(v), f"TREND {v}") + f" (TREND {v})"
+                              "ha2": "רק אחרי שני נרות הייקין אשי באותו צבע, האחרון בלי פתיל נגד",
+                              "sqzm": "רק בכיוון מומנטום הסקוויז של LazyBear בטיים פריים הגבוה",
+                              "sqz": "רק בכיוון מומנטום הסקוויז, ובלי כניסה בזמן סקוויז",
+                              "pdbrk": "מעל השיא של אתמול רק קניות, מתחת לשפל רק מכירות"}.get(str(v), f"TREND {v}") + f" (TREND {v})"
 FILT_HE["BBW"] = lambda v: ("בלי כניסה כשרוחב בולינגר 20/2 מתחת לאחוזון 20 של 100 הנרות, טיים פריים "
                             + ("הכניסה" if str(v)[0] == "l" else "גבוה") + f" (BBW {v})")
 FILT_HE["NEWSX"] = lambda v: f"הגנת חדשות: בלי כניסה ±{int(v)} דק' סביב חדשה אדומה, וסגירה {int(v)} דק' לפניה (NEWSX {int(v)})"

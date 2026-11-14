@@ -1,0 +1,225 @@
+{
+ "train": {
+  "trades": 651,
+  "base": {
+   "total_pct": 4.53,
+   "raw_pct": 5.35,
+   "worst_day_pct": -2.14,
+   "max_fall_pct": 10.19,
+   "days_3pct": 0
+  },
+  "anti": {
+   "total_pct": 5.41,
+   "raw_pct": 6.36,
+   "worst_day_pct": -2.25,
+   "max_fall_pct": 11.78,
+   "days_3pct": 0
+  }
+ },
+ "train_missing": [
+  "EV01|5Min|US100",
+  "EV01|5Min|US500",
+  "EV01|5Min|US30",
+  "EV01|5Min|GER40",
+  "EV01|5Min|UK100",
+  "EV01|5Min|JP225",
+  "EV01|5Min|XAUUSD",
+  "EV01|5Min|EURUSD",
+  "EV01|5Min|USDJPY",
+  "EV01|5Min|AUDUSD",
+  "EV01|5Min|USDCAD",
+  "EV01|5Min|USDCHF",
+  "EV01|5Min|NZDUSD",
+  "EV01|5Min|EURJPY",
+  "EV02|5Min|US500",
+  "EV02|5Min|US30",
+  "EV02|5Min|GER40",
+  "EV02|5Min|UK100",
+  "EV02|5Min|JP225",
+  "EV02|5Min|XAUUSD",
+  "EV02|5Min|EURUSD",
+  "EV02|5Min|USDJPY",
+  "EV02|5Min|AUDUSD",
+  "EV02|5Min|USDCAD",
+  "EV02|5Min|USDCHF",
+  "EV02|5Min|EURJPY",
+  "EV03|5Min|US100",
+  "EV03|5Min|US500",
+  "EV03|5Min|US30",
+  "EV03|5Min|GER40",
+  "EV03|5Min|UK100",
+  "EV03|5Min|JP225",
+  "EV03|5Min|XAUUSD",
+  "EV03|5Min|EURUSD",
+  "EV03|5Min|GBPUSD",
+  "EV03|5Min|USDJPY",
+  "EV03|5Min|AUDUSD",
+  "EV03|5Min|USDCAD",
+  "EV03|5Min|USDCHF",
+  "EV03|5Min|NZDUSD",
+  "EV03|5Min|EURJPY",
+  "EV03|5Min|GBPJPY",
+  "SH01|1Min|US100",
+  "SH01|1Min|GER40"
+ ],
+ "unseen": {
+  "trades": 1576,
+  "base": {
+   "total_pct": 12.98,
+   "raw_pct": 12.98,
+   "worst_day_pct": -3.59,
+   "max_fall_pct": 14.26,
+   "days_3pct": 3
+  },
+  "anti": {
+   "total_pct": 18.66,
+   "raw_pct": 18.66,
+   "worst_day_pct": -3.68,
+   "max_fall_pct": 15.31,
+   "days_3pct": 3
+  }
+ },
+ "unseen_missing": [
+  "EV01|5Min|US100",
+  "EV01|5Min|US500",
+  "EV01|5Min|US30",
+  "EV01|5Min|GER40",
+  "EV01|5Min|UK100",
+  "EV01|5Min|JP225",
+  "EV01|5Min|XAUUSD",
+  "EV01|5Min|USDJPY",
+  "EV01|5Min|USDCAD",
+  "EV01|5Min|USDCHF",
+  "EV01|5Min|NZDUSD",
+  "EV02|5Min|US500",
+  "EV02|5Min|US30",
+  "EV02|5Min|GER40",
+  "EV02|5Min|UK100",
+  "EV02|5Min|JP225",
+  "EV02|5Min|XAUUSD",
+  "EV02|5Min|USDJPY",
+  "EV02|5Min|USDCAD",
+  "EV02|5Min|USDCHF",
+  "EV03|5Min|US100",
+  "EV03|5Min|US500",
+  "EV03|5Min|US30",
+  "EV03|5Min|GER40",
+  "EV03|5Min|UK100",
+  "EV03|5Min|JP225",
+  "EV03|5Min|XAUUSD",
+  "EV03|5Min|EURUSD",
+  "EV03|5Min|GBPUSD",
+  "EV03|5Min|USDJPY",
+  "EV03|5Min|AUDUSD",
+  "EV03|5Min|USDCAD",
+  "EV03|5Min|USDCHF",
+  "EV03|5Min|NZDUSD",
+  "EV03|5Min|EURJPY",
+  "EV03|5Min|GBPJPY",
+  "SH01|1Min|US100",
+  "SH01|1Min|GER40"
+ ],
+ "per_combo": {
+  "EV02|5Min|US100": {
+   "train": {
+    "n": 1,
+    "base_R": -0.04,
+    "anti_R": -0.04
+   }
+  },
+  "EV02|5Min|GBPUSD": {
+   "train": {
+    "n": 1,
+    "base_R": 1.28,
+    "anti_R": 1.28
+   },
+   "unseen": {
+    "n": 1,
+    "base_R": 0.01,
+    "anti_R": 0.01
+   }
+  },
+  "EV02|5Min|NZDUSD": {
+   "train": {
+    "n": 1,
+    "base_R": 1.4,
+    "anti_R": 1.4
+   },
+   "unseen": {
+    "n": 2,
+    "base_R": 0.63,
+    "anti_R": 0.71
+   }
+  },
+  "EV02|5Min|GBPJPY": {
+   "train": {
+    "n": 1,
+    "base_R": 0.7,
+    "anti_R": 0.7
+   }
+  },
+  "SC001|1Min|JP225": {
+   "train": {
+    "n": 496,
+    "base_R": 6.12,
+    "anti_R": 5.95
+   },
+   "unseen": {
+    "n": 1381,
+    "base_R": 26.85,
+    "anti_R": 29.61
+   }
+  },
+  "SC086|4Hour|JP225": {
+   "train": {
+    "n": 38,
+    "base_R": 2.5,
+    "anti_R": 4.9
+   },
+   "unseen": {
+    "n": 48,
+    "base_R": 5.11,
+    "anti_R": 7.65
+   }
+  },
+  "SC070|5Min|JP225": {
+   "train": {
+    "n": 113,
+    "base_R": 1.88,
+    "anti_R": 2.55
+   },
+   "unseen": {
+    "n": 140,
+    "base_R": 4.1,
+    "anti_R": 14.93
+   }
+  },
+  "EV02|5Min|EURUSD": {
+   "unseen": {
+    "n": 2,
+    "base_R": 0.03,
+    "anti_R": 0.03
+   }
+  },
+  "EV02|5Min|AUDUSD": {
+   "unseen": {
+    "n": 2,
+    "base_R": 0.05,
+    "anti_R": 0.05
+   }
+  }
+ },
+ "fair_k": 0.865,
+ "fair": {
+  "train": {
+   "total_pct": 4.68,
+   "worst_day_pct": -1.95,
+   "max_fall_pct": 10.19
+  },
+  "unseen": {
+   "total_pct": 16.14,
+   "worst_day_pct": -3.18,
+   "max_fall_pct": 13.24
+  }
+ }
+}

@@ -1,7 +1,239 @@
 {
- "updated": "2026-11-14T09:26:07+00:00",
- "new": [],
+ "updated": "2026-11-14T09:37:31+00:00",
+ "new": [
+  "2977019eb9ef",
+  "11c4335791fc",
+  "4ba7e5b928ef",
+  "51619a708135",
+  "7d109844e3a5",
+  "e3b86cce4f6d",
+  "cedae1a38766"
+ ],
  "decisions": [
+  {
+   "id": "2977019eb9ef",
+   "bot": "bot2",
+   "type": "card",
+   "card": "0b88f2efa8f9",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ TV56|4Hour|USDJPY: ב־1.5R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.17R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.33R לעסקה, 45.0 עסקאות אפקטיביות, +0.11R מעל המצב הקיים) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.63 לאסטרטגיה: רווח +110.58% → +111.67% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.63 ובמעקב מוקפד",
+   "effect": "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3769,
+     "total": 110.58,
+     "worst_day": -3.33,
+     "max_dd": 8.2,
+     "near_days": 1,
+     "max_open": 4.94,
+     "max_side": 4.19
+    },
+    "after": {
+     "trades": 3769,
+     "total": 111.67,
+     "worst_day": -3.33,
+     "max_dd": 8.24,
+     "near_days": 1,
+     "max_open": 4.94,
+     "max_side": 4.19
+    }
+   },
+   "at": "2026-11-14T09:37:31+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "11c4335791fc",
+   "bot": "bot2",
+   "type": "card",
+   "card": "b6961edcbf9d",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ TV36|1Hour|ARM: איזון ב־23.6% מהדרך ליעד",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.11R לעסקה, 50.0 עסקאות אפקטיביות, +0.03R מעל המצב הקיים) · נבדקו 70 שילובים, אז חלק מהיתרון עלול להיות מזל · בבוט השלם על 2026: רווח +110.58% → +111.34%, בלי יותר סיכון (יום גרוע -3.33%, ירידה 8.20%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3769,
+     "total": 110.58,
+     "worst_day": -3.33,
+     "max_dd": 8.2,
+     "near_days": 1,
+     "max_open": 4.94,
+     "max_side": 4.19
+    },
+    "after": {
+     "trades": 3769,
+     "total": 111.34,
+     "worst_day": -3.33,
+     "max_dd": 8.2,
+     "near_days": 1,
+     "max_open": 4.94,
+     "max_side": 4.19
+    }
+   },
+   "at": "2026-11-14T09:37:31+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "4ba7e5b928ef",
+   "bot": "bot2",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV36|1Hour|ARM",
+   "title": "TV36|1Hour|ARM: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.11R לעסקה, 50.0 עסקאות אפקטיביות, +0.03R מעל המצב הקיים) · נבדקו 70 שילובים, אז חלק מהיתרון עלול להיות מזל · בבוט השלם על 2026: רווח +110.58% → +111.34%, בלי יותר סיכון (יום גרוע -3.33%, ירידה 8.20%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "11c4335791fc",
+   "star": true,
+   "action": {
+    "bot": "bot2",
+    "combo": "TV36|1Hour|ARM",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-14T09:37:31+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "51619a708135",
+   "bot": "bot2",
+   "type": "card",
+   "card": "15ad6a81fce9",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ QB11|1Hour|USDJPY: ב־1.5R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.17R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.10R לעסקה, 127.0 עסקאות אפקטיביות, +0.08R מעל המצב הקיים) · בבוט השלם על 2026: רווח +110.58% → +112.91%, בלי יותר סיכון (יום גרוע -3.33%, ירידה 8.20%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3769,
+     "total": 110.58,
+     "worst_day": -3.33,
+     "max_dd": 8.2,
+     "near_days": 1,
+     "max_open": 4.94,
+     "max_side": 4.19
+    },
+    "after": {
+     "trades": 3774,
+     "total": 112.91,
+     "worst_day": -3.33,
+     "max_dd": 8.2,
+     "near_days": 1,
+     "max_open": 4.94,
+     "max_side": 4.19
+    }
+   },
+   "at": "2026-11-14T09:37:31+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "7d109844e3a5",
+   "bot": "bot2",
+   "type": "card",
+   "card": "a4e91072af0c",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -3.33% → -3.79%, ירידה 8.20% → 8.10%) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3769,
+     "total": 110.58,
+     "worst_day": -3.33,
+     "max_dd": 8.2,
+     "near_days": 1,
+     "max_open": 4.94,
+     "max_side": 4.19
+    },
+    "after": {
+     "trades": 3881,
+     "total": 114.99,
+     "worst_day": -3.79,
+     "max_dd": 8.1,
+     "near_days": 1,
+     "max_open": 5.31,
+     "max_side": 4.64
+    }
+   },
+   "at": "2026-11-14T09:37:31+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "e3b86cce4f6d",
+   "bot": "bot2",
+   "type": "card",
+   "card": "762da4dffe14",
+   "kind": "info",
+   "tier": "regular",
+   "title": "MQ02|1Hour|XAUUSD: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-14T09:37:31+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "cedae1a38766",
+   "bot": "bot2",
+   "type": "card",
+   "card": "be7c3d150de0",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC154|5Min|XAUUSD · SMA10/30 cross + EMA5 filter, 1% / 2%, 5m",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -3.33% → -3.32%, ירידה 8.20% → 11.15%) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3769,
+     "total": 110.58,
+     "worst_day": -3.33,
+     "max_dd": 8.2,
+     "near_days": 1,
+     "max_open": 4.94,
+     "max_side": 4.19
+    },
+    "after": {
+     "trades": 4057,
+     "total": 114.65,
+     "worst_day": -3.32,
+     "max_dd": 11.15,
+     "near_days": 1,
+     "max_open": 5.39,
+     "max_side": 4.64
+    }
+   },
+   "at": "2026-11-14T09:37:31+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "de046b751834",
    "bot": "bot1",

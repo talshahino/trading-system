@@ -1,7 +1,179 @@
 {
  "bot": "bot5",
- "updated": "2026-11-14T06:49:39+00:00",
+ "updated": "2026-11-14T08:16:44+00:00",
  "cards": [
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "נבנו בבוט 5 לבדיקה: 6 מסנני כיוון מהסרטונים של 14.11 על שיטת הגאפ",
+   "what": "מהסרטונים של היום נבנו כמסננים על 6 המסלולים שרצים (זהה בבדיקה ובבוט החי): RSI מעל/מתחת 50, RSI במגמה (לא קונים ב־RSI מתחת 35 מתחת לממוצע 200 ולא מוכרים מעל 65 מעליו), ADX מעל 20, סופרטרנד 10/3, EMA 50 מול 200, וסדר 5 הממוצעים 9/21/50/100/200. רצים בסבב הבא במחשב; כרטיס רק אם משפר גם ב־2024-2025 וגם ב־2026. VWAP ולחץ קונים/מוכרים צריכים נפח טיקים, שאין בפיד של הבוט החי - לא נבנו. האסטרטגיות עצמן (טווח 4 שעות ראשון, פריצה וחזרה לרמה, ועוד) עוברות דרך הסייר לבדיקה של אסטרטגיות חדשות בבוט 5.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "code": "agents/tal_gap.py Data.video_trend, VIDEO_TREND; agent_bot5.py NOTE_TESTS *_video (commit 84f9be152)"
+   },
+   "made": "2026-11-14T08:16:44+00:00",
+   "id": "43bacfafc7f3",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "דוח ההפסד של 13.11 (-108$, -0.11%): מה נבדק עד עכשיו",
+   "what": "3 הפסדים: 15 דק'/דקה ב־US30 וב־US500, ו־4 שעות/5 דק' ב־US500 - כולם נעצרו אחרי תנועה קטנה לטובה. מול הצפי: -0.9R במקום -0.1R. נבדק: (1) 15 דק'/דקה - סטופ מינימלי 0.5 × ATR: טוב יותר בשתי התקופות אבל מעט (2026: +21.7R ← +23.1R, כ־+0.03% בחודש) - כרטיס fa7420cf11ff אצל המנהל; סטופ רחב יותר וכניסה מדורגת - גרועים עד 2025. (2) 4 שעות/5 דק' - בלי כניסות ב־09:30-10:00 ניו יורק: עד 2025 שווה (+59.1R ← +58.9R), ב־2026 +2.5R ← +18.1R והיום הגרוע -7.3R ← -6.0R. לא מוצע, כי הבחירה רק לפי 2024-2025 ושם אין שיפור. הבא: מסנני EMA, בולינגר, חדשות ומסנני הסרטונים על שני המסלולים - בסבב הבא במחשב. לפי הכלל, קודם תיקון ורק אחר כך סיכון.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "t15_1_minstop": {
+     "track": "t15_1",
+     "pair": "15m/1m",
+     "knob": "MINSTOP",
+     "now": {
+      "val": null,
+      "train": {
+       "n": 558,
+       "total": 78.3,
+       "max_fall": 30.6,
+       "worst_day": -5.51,
+       "per_fall": 2.56,
+       "small_wins": 0.5
+      },
+      "unseen": {
+       "n": 266,
+       "total": 21.7,
+       "max_fall": 34.4,
+       "worst_day": -6.19,
+       "per_fall": 0.631,
+       "small_wins": 0.0
+      }
+     },
+     "0.25": {
+      "train": {
+       "n": 558,
+       "total": 78.3,
+       "max_fall": 30.6,
+       "worst_day": -5.51,
+       "per_fall": 2.56,
+       "small_wins": 0.5
+      },
+      "unseen": {
+       "n": 269,
+       "total": 18.6,
+       "max_fall": 34.3,
+       "worst_day": -6.19,
+       "per_fall": 0.542,
+       "small_wins": 0.0
+      }
+     },
+     "0.5": {
+      "train": {
+       "n": 554,
+       "total": 78.7,
+       "max_fall": 29.0,
+       "worst_day": -5.41,
+       "per_fall": 2.716,
+       "small_wins": 0.5
+      },
+      "unseen": {
+       "n": 269,
+       "total": 23.1,
+       "max_fall": 29.3,
+       "worst_day": -6.19,
+       "per_fall": 0.788,
+       "small_wins": 0.0
+      }
+     },
+     "1.0": {
+      "train": {
+       "n": 430,
+       "total": 55.5,
+       "max_fall": 21.5,
+       "worst_day": -5.32,
+       "per_fall": 2.585,
+       "small_wins": 0.7
+      },
+      "unseen": {
+       "n": 198,
+       "total": 37.8,
+       "max_fall": 18.1,
+       "worst_day": -5.15,
+       "per_fall": 2.081,
+       "small_wins": 0.0
+      }
+     },
+     "state": "done",
+     "chosen": 0.5,
+     "better": true
+    },
+    "t4h_5_xopen": {
+     "track": "t4h_5",
+     "pair": "4h/5m",
+     "knob": "SESS",
+     "now": {
+      "val": null,
+      "train": {
+       "n": 821,
+       "total": 59.1,
+       "max_fall": 17.8,
+       "worst_day": -7.13,
+       "per_fall": 3.329,
+       "small_wins": 6.1
+      },
+      "unseen": {
+       "n": 372,
+       "total": 2.5,
+       "max_fall": 35.2,
+       "worst_day": -7.32,
+       "per_fall": 0.071,
+       "small_wins": 5.9
+      }
+     },
+     "xopen": {
+      "train": {
+       "n": 740,
+       "total": 58.9,
+       "max_fall": 17.7,
+       "worst_day": -6.12,
+       "per_fall": 3.318,
+       "small_wins": 6.5
+      },
+      "unseen": {
+       "n": 342,
+       "total": 18.1,
+       "max_fall": 32.0,
+       "worst_day": -6.04,
+       "per_fall": 0.567,
+       "small_wins": 5.8
+      }
+     },
+     "state": "done",
+     "chosen": null,
+     "better": false
+    },
+    "report": "reports/agents/losses/bot5/2026-11-13.json"
+   },
+   "made": "2026-11-14T08:16:44+00:00",
+   "id": "4d68c8b28874",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
   {
    "bot": "bot5",
    "kind": "info",
@@ -27,7 +199,9 @@
     ]
    },
    "made": "2026-11-14T06:49:39+00:00",
-   "id": "637aebfd3cec"
+   "id": "637aebfd3cec",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
   },
   {
    "bot": "bot5",

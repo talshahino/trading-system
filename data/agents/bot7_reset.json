@@ -1,5 +1,5 @@
 {
- "fp": "9e9b4607cf22",
+ "fp": "e0c8054151be",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -51,6 +51,12 @@
    "EV03|5Min|USDJPY",
    "EV03|5Min|XAUUSD",
    "SC001|1Min|JP225",
+   "SC070|5Min|JP225",
+   "SC086|4Hour|JP225",
+   "SC089|5Min|GER40",
+   "SC089|5Min|JP225",
+   "SC097|1Hour|JP225",
+   "SC097|4Hour|GER40",
    "SH01|1Min|GER40",
    "SH01|1Min|US100"
   ],
@@ -137,68 +143,102 @@
     "why_off": "הוסר: שבעה ניסיונות תיקון נכשלו"
    },
    "EV03|5Min|AUDUSD": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|EURJPY": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|EURUSD": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|GBPJPY": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|GBPUSD": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|GER40": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|JP225": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|NZDUSD": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|UK100": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|US100": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|US30": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|US500": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|USDCAD": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|USDCHF": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|USDJPY": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
    },
    "EV03|5Min|XAUUSD": {
-    "target": 3.0,
-    "limit": 0.5
+    "target": 2.0,
+    "limit": 0.5,
+    "target_card": "93b5b4e30f5e"
+   },
+   "SC070|5Min|JP225": {
+    "added": "2026-11-14"
+   },
+   "SC086|4Hour|JP225": {
+    "added": "2026-11-14"
+   },
+   "SC089|5Min|GER40": {
+    "added": "2026-11-14"
+   },
+   "SC089|5Min|JP225": {
+    "added": "2026-11-14"
+   },
+   "SC097|1Hour|JP225": {
+    "added": "2026-11-14"
+   },
+   "SC097|4Hour|GER40": {
+    "added": "2026-11-14"
    },
    "SH01|1Min|GER40": {
     "K": 8,
@@ -214,8 +254,8 @@
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-13T21:18:38+00:00",
- "account_v": 5,
+ "last_reset": "2026-11-14T05:00:48+00:00",
+ "account_v": 7,
  "resets": [
   {
    "v": 2,
@@ -244,6 +284,20 @@
    "what": "כלל השתנה ב־EV01|5Min|AUDUSD, EV01|5Min|EURJPY, EV01|5Min|EURUSD, EV01|5Min|GBPJPY",
    "archive": "data/agents/bot7_archive/account_v4.json",
    "id": "f78ed559edad"
+  },
+  {
+   "v": 6,
+   "at": "2026-11-14T05:00:18+00:00",
+   "what": "נוספו 6 אסטרטגיות/מכשירים · כלל השתנה ב־SC070|5Min|JP225, SC086|4Hour|JP225, SC089|5Min|GER40, SC089|5Min|JP225",
+   "archive": "data/agents/bot7_archive/account_v5.json",
+   "id": "112f5081bc8d"
+  },
+  {
+   "v": 7,
+   "at": "2026-11-14T05:00:48+00:00",
+   "what": "כלל השתנה ב־EV03|5Min|AUDUSD, EV03|5Min|EURJPY, EV03|5Min|EURUSD, EV03|5Min|GBPJPY",
+   "archive": "data/agents/bot7_archive/account_v5.json",
+   "id": "a24ef92e9a6e"
   }
  ],
  "stable": false,

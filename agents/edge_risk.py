@@ -107,14 +107,17 @@ def run(states=None, force=False):
             if mult is None:
                 continue
             target = LR.MIN_LOT if mult == LR.MIN_LOT else round(base * mult, 2)
-            why_cap = ""
+            # the approved risk the ratio multiplies, in the card's words (manager, 14.11.2026: TV58 USDCAD read
+            # "×0.69" in the why and "×0.48" in the title - the ×0.7 approved before was not shown)
+            why_cap = (f"; כפול הסיכון המאושר ×{base:g} = ×{target:g}"
+                       if mult != LR.MIN_LOT and abs(base - 1.0) >= 0.005 else "")
             if target > cur:
                 if not raise_ok or c not in book:
                     out["combos"][c] = {"base": base, "now": cur, "target": target, "held": "עוד אין בדיקה לכל הבוט - לא מעלים"}
                     continue
                 cap = round(ceiling(bot, {**book, c: (book[c][0], cur)}, c, cur, target, risk), 2)
                 if cap < target:
-                    why_cap = f"; הבוט השלם על 2026 נשאר במגבלות שלו רק עד ×{cap}"
+                    why_cap += f"; הבוט השלם על 2026 נשאר במגבלות שלו רק עד ×{cap}"
                     target = cap
             if target < cur and not fixes_failed(bot, c):
                 # not yet: first a fix - the strategy goes first in its agent's test queue

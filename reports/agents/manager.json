@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-14T10:37:32+00:00",
+ "updated": "2026-11-14T10:56:52+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -213,67 +213,6 @@
     },
     {
      "bot": "bot1",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
-     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 28,
-      "eff_n": 28.0,
-      "mean": 0.0567,
-      "t": 0.32,
-      "win": 46.6
-     },
-     "unseen": {
-      "n": 36,
-      "eff_n": 36.0,
-      "mean": 0.1659,
-      "t": 1.31,
-      "win": 55.5
-     },
-     "whole": {
-      "n": 64,
-      "eff_n": 63.8,
-      "mean": 0.1206,
-      "t": 1.14,
-      "win": 51.8
-     },
-     "halves": [
-      0.0063,
-      0.2258
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.375,
-     "baseline": null,
-     "change": {
-      "combo": "SC010|15Min|ARM",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
-       "source": "FX Replay",
-       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T09:01:33+00:00",
-     "id": "8a1847e4bf81",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 36.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 1: נוספה לבוט: SC010|15Min|ARM, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-13T00:51:02+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T00:51:02+00:00",
-     "decision_id": "8759c003b478"
-    },
-    {
-     "bot": "bot1",
      "kind": "risk",
      "title": "SE02|1Hour|USDJPY: סיכון ×0.95 ← ×0.79 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.23)",
      "what": "מה הפסיד: סטופ אחרי תנועה קטנה לטובה. מה נבדק בבדיקה ההוגנת (נבחר עד 2025, מוצג על 2026, מחירי FTMO): נבדקה בבוט 2 באותם כללים: יציאות - יעד 3R, סטופ ×1.25 +32.9R (שווה); ניהול - איזון 1.5R +31.1R; פיבונאצ'י - פחות. אין תיקון. האסטרטגיה עצמה מרוויחה: עד 2025 +0.05R על 169, ב־2026 +0.15R על 219. לכן לפי הכלל של טל (13.11) הסיכון יורד לפי ציון הכישלון ולא מסירים: ציון 0.23 → ×0.83 מהסיכון של היום. המחיר: כ־0.19% מהחשבון בחודש פחות רווח בצפי, תמורת פחות חשיפה לאסטרטגיה שחוזרת להפסיד. כשיימצא תיקון - הסיכון חוזר.",
@@ -336,67 +275,6 @@
     {
      "bot": "bot1",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 107,
-      "eff_n": 106.9,
-      "mean": 0.0114,
-      "t": 0.15,
-      "win": 50.5
-     },
-     "unseen": {
-      "n": 112,
-      "eff_n": 112.0,
-      "mean": 0.0863,
-      "t": 1.16,
-      "win": 61.6
-     },
-     "whole": {
-      "n": 219,
-      "eff_n": 218.5,
-      "mean": 0.0512,
-      "t": 0.96,
-      "win": 56.4
-     },
-     "halves": [
-      0.0015,
-      0.0984
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.375,
-     "baseline": null,
-     "change": {
-      "combo": "SC069|15Min|XAUUSD",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-       "source": "NYC Servers (blog)",
-       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
-       "added": "2026-11-13"
-      }
-     },
-     "made": "2026-11-14T09:01:34+00:00",
-     "id": "7877d95398b6",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.09R לעסקה, 112.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 1: נוספה לבוט: SC069|15Min|XAUUSD, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-14T09:12:06+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T09:12:07+00:00",
-     "decision_id": "acf363b006c4"
-    },
-    {
-     "bot": "bot1",
-     "kind": "new",
      "title": "אסטרטגיה חדשה: SC094|1Hour|XAGUSD · MTF Ichimoku: over the cloud and the Kijun on 4H and 1H, 2% / 4%, 12-bar cooldown",
      "what": "הסייר הביא אותה (TradingView (script)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -446,7 +324,7 @@
      "made": "2026-11-14T09:01:34+00:00",
      "id": "3478dfb15e29",
      "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.07R לעסקה, 94.0 עסקאות אפקטיביות) · נבחר מתוך 6 מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 (-7.5R), והתוצאה שלו עד 2025 חלשה (t 0.8) - כנראה מזל, מחכה",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.07R לעסקה, 94.0 עסקאות אפקטיביות) · נבחר מתוך 6 מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 (-7.5R), והתוצאה שלו עד 2025 לא בולטת מעל המזל (t 0.8, צריך 1.39) - כנראה מזל, מחכה",
      "status": "watch",
      "note": null,
      "reply": null,
@@ -3043,6 +2921,67 @@
     {
      "bot": "bot1",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 28,
+      "eff_n": 28.0,
+      "mean": 0.0567,
+      "t": 0.32,
+      "win": 46.6
+     },
+     "unseen": {
+      "n": 36,
+      "eff_n": 36.0,
+      "mean": 0.1659,
+      "t": 1.31,
+      "win": 55.5
+     },
+     "whole": {
+      "n": 64,
+      "eff_n": 63.8,
+      "mean": 0.1206,
+      "t": 1.14,
+      "win": 51.8
+     },
+     "halves": [
+      0.0063,
+      0.2258
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": null,
+     "change": {
+      "combo": "SC010|15Min|ARM",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+       "source": "FX Replay",
+       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T09:01:33+00:00",
+     "id": "8a1847e4bf81",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.6R (t 0.32) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 1: נוספה לבוט: SC010|15Min|ARM, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T00:51:02+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T00:51:02+00:00",
+     "decision_id": "8759c003b478"
+    },
+    {
+     "bot": "bot1",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC037|15Min|ARM · Butterfly harmonic X-A-B-C-D, entry at the 1.27 XA extension, target A",
      "what": "הסייר הביא אותה (Facebook (Trader Dhana reel, sent by the user)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -3453,6 +3392,67 @@
     {
      "bot": "bot1",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 107,
+      "eff_n": 106.9,
+      "mean": 0.0114,
+      "t": 0.15,
+      "win": 50.5
+     },
+     "unseen": {
+      "n": 112,
+      "eff_n": 112.0,
+      "mean": 0.0863,
+      "t": 1.16,
+      "win": 61.6
+     },
+     "whole": {
+      "n": 219,
+      "eff_n": 218.5,
+      "mean": 0.0512,
+      "t": 0.96,
+      "win": 56.4
+     },
+     "halves": [
+      0.0015,
+      0.0984
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": null,
+     "change": {
+      "combo": "SC069|15Min|XAUUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+       "source": "NYC Servers (blog)",
+       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
+       "added": "2026-11-13"
+      }
+     },
+     "made": "2026-11-14T09:01:34+00:00",
+     "id": "7877d95398b6",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.2R (t 0.15) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 1: נוספה לבוט: SC069|15Min|XAUUSD, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-14T09:12:06+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T09:12:07+00:00",
+     "decision_id": "acf363b006c4"
+    },
+    {
+     "bot": "bot1",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC088|1Hour|GBPJPY · Williams AO 11/40 zero cross + AC 3 bars + RSI 20, BB width filter, 60 / 90 pips, H1",
      "what": "הסייר הביא אותה (StockSharp (port of MT4 EA)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -3502,7 +3502,7 @@
      "made": "2026-11-14T09:01:34+00:00",
      "id": "e2e317e7bc29",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +2.9R (+0.084R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.0R (t 0.01) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -3796,7 +3796,7 @@
      "made": "2026-11-14T09:01:34+00:00",
      "id": "3cd2ab0a2030",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +2.3R (+0.053R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.6R (t 0.37) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -3854,7 +3854,7 @@
      "made": "2026-11-14T09:01:34+00:00",
      "id": "635fb17320fc",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.6R (+0.043R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.4R (t 0.14) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -3970,7 +3970,7 @@
      "made": "2026-11-14T09:01:34+00:00",
      "id": "bef5b4e0e425",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +1.3R (+0.031R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.1R (t 0.05) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -4260,7 +4260,7 @@
      "made": "2026-11-14T09:01:33+00:00",
      "id": "2641c857c092",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.3R (+0.016R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.3R (t 0.36) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -31891,67 +31891,6 @@
     },
     {
      "bot": "bot2",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
-     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 28,
-      "eff_n": 28.0,
-      "mean": 0.0567,
-      "t": 0.32,
-      "win": 46.6
-     },
-     "unseen": {
-      "n": 36,
-      "eff_n": 36.0,
-      "mean": 0.1659,
-      "t": 1.31,
-      "win": 55.5
-     },
-     "whole": {
-      "n": 64,
-      "eff_n": 63.8,
-      "mean": 0.1206,
-      "t": 1.14,
-      "win": 51.8
-     },
-     "halves": [
-      0.0063,
-      0.2258
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC010|15Min|ARM",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
-       "source": "FX Replay",
-       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T09:35:53+00:00",
-     "id": "c0b6cb102e54",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 36.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 2: נוספה לבוט: SC010|15Min|ARM, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-13T01:11:07+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "023de66f03f3"
-    },
-    {
-     "bot": "bot2",
      "kind": "risk",
      "title": "SE02|1Hour|USDJPY: סיכון ×0.85 ← ×0.67 - לפי היתרון שלה",
      "what": "עד 2025 +0.05R לעסקה על 169, ב־2026 +0.15R על 219; בחי -0.28R על 7. התיקון נכשל (יציאות, ניהול, פיבונאצ'י). היתרון עכשיו +0.11R מול +0.15R שאושר → ×0.95 × 0.71 = ×0.67. בבוקר המנהל הוריד אותה לפי היתרון, ו־20 דקות אחר כך תקלה בדוחות ההפסד החזירה את ההורדה הקודמת ('נמצא תיקון' - כשה'תיקון' היה רק הורדת סיכון). התקלה תוקנה; הכרטיס מחזיר את מה שהנוסחה של טל קובעת. הבוט השלם על 2026 (7 מתוך 32 אסטרטגיות עם עסקאות שמורות): רווח +41.03% → +38.37%, ירידה מהשיא 4.82% → 4.45%, יום גרוע -1.71% → -1.68%.",
@@ -32029,128 +31968,6 @@
     },
     {
      "bot": "bot2",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC044|4Hour|EURJPY · RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
-     "what": "הסייר הביא אותה (Tradingpedia). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 27,
-      "eff_n": 27.0,
-      "mean": 0.0638,
-      "t": 0.33,
-      "win": 66.2
-     },
-     "unseen": {
-      "n": 37,
-      "eff_n": 37.0,
-      "mean": 0.1438,
-      "t": 0.77,
-      "win": 67.6
-     },
-     "whole": {
-      "n": 64,
-      "eff_n": 63.9,
-      "mean": 0.1116,
-      "t": 0.82,
-      "win": 67.0
-     },
-     "halves": [
-      0.071,
-      0.156
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC044|4Hour|EURJPY",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
-       "source": "Tradingpedia",
-       "url": "https://www.tradingpedia.com/forex-trading-strategies/squeezing-pips-from-ranging-markets-via-rsi/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T09:35:54+00:00",
-     "id": "9c68a0c1934e",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 37.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 2: נוספה לבוט: SC044|4Hour|EURJPY, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-13T18:37:25+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T18:37:25+00:00",
-     "decision_id": "2e066aaee761"
-    },
-    {
-     "bot": "bot2",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC020|15Min|GBPJPY · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
-     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 37,
-      "eff_n": 37.0,
-      "mean": 0.0025,
-      "t": 0.01,
-      "win": 46.1
-     },
-     "unseen": {
-      "n": 52,
-      "eff_n": 52.0,
-      "mean": 0.1206,
-      "t": 0.78,
-      "win": 50.0
-     },
-     "whole": {
-      "n": 89,
-      "eff_n": 88.8,
-      "mean": 0.0738,
-      "t": 0.63,
-      "win": 48.5
-     },
-     "halves": [
-      0.0081,
-      0.133
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC020|15Min|GBPJPY",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
-       "source": "ProRealCode",
-       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T09:35:53+00:00",
-     "id": "9605c10578db",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.12R לעסקה, 52.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T10:56:20+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "97f22dac6d57"
-    },
-    {
-     "bot": "bot2",
      "kind": "improve",
      "title": "TV36|1Hour|ARM: איזון ב־23.6% מהדרך ליעד",
      "what": "ניהול העסקה ברמות פיבונאצ׳י (נקודת איזון / יציאה חלקית) לאסטרטגיה TV36|1Hour|ARM: איזון ב־23.6% מהדרך ליעד. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
@@ -32217,67 +32034,6 @@
     },
     {
      "bot": "bot2",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC043|4Hour|EURJPY · 15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
-     "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 29,
-      "eff_n": 29.0,
-      "mean": 0.0277,
-      "t": 0.13,
-      "win": 31.1
-     },
-     "unseen": {
-      "n": 40,
-      "eff_n": 40.0,
-      "mean": 0.1014,
-      "t": 0.42,
-      "win": 42.6
-     },
-     "whole": {
-      "n": 69,
-      "eff_n": 68.9,
-      "mean": 0.0718,
-      "t": 0.43,
-      "win": 38.0
-     },
-     "halves": [
-      -0.0397,
-      0.1692
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC043|4Hour|EURJPY",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
-       "source": "BabyPips forum",
-       "url": "https://forums.babypips.com/t/scalping-15mdblebol/73264",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T09:35:54+00:00",
-     "id": "870583f90d93",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.10R לעסקה, 40.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 2: נוספה לבוט: SC043|4Hour|EURJPY, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-13T18:37:25+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T18:37:25+00:00",
-     "decision_id": "a5a6889d615f"
-    },
-    {
-     "bot": "bot2",
      "kind": "improve",
      "title": "QB11|1Hour|USDJPY: ב־1.5R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.17R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
      "what": "הוספה לעסקה מנצחת (פירמידה) לאסטרטגיה QB11|1Hour|USDJPY: ב־1.5R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.17R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד). נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
@@ -32341,67 +32097,6 @@
      "by": "manager",
      "decided": "2026-11-14T09:37:31+00:00",
      "decision_id": "51619a708135"
-    },
-    {
-     "bot": "bot2",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 107,
-      "eff_n": 106.9,
-      "mean": 0.0114,
-      "t": 0.15,
-      "win": 50.5
-     },
-     "unseen": {
-      "n": 112,
-      "eff_n": 112.0,
-      "mean": 0.0863,
-      "t": 1.16,
-      "win": 61.6
-     },
-     "whole": {
-      "n": 219,
-      "eff_n": 218.5,
-      "mean": 0.0512,
-      "t": 0.96,
-      "win": 56.4
-     },
-     "halves": [
-      0.0015,
-      0.0984
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC069|15Min|XAUUSD",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-       "source": "NYC Servers (blog)",
-       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
-       "added": "2026-11-13"
-      }
-     },
-     "made": "2026-11-14T09:35:54+00:00",
-     "id": "a4e91072af0c",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.09R לעסקה, 112.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T09:37:31+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T09:37:31+00:00",
-     "decision_id": "7d109844e3a5"
     },
     {
      "bot": "bot2",
@@ -32516,7 +32211,7 @@
      "made": "2026-11-14T09:35:54+00:00",
      "id": "49b8c6e5cca9",
      "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.07R לעסקה, 94.0 עסקאות אפקטיביות) · נבחר מתוך 4 מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 (-2.5R), והתוצאה שלו עד 2025 חלשה (t 0.8) - כנראה מזל, מחכה",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.07R לעסקה, 94.0 עסקאות אפקטיביות) · נבחר מתוך 4 מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 (-2.5R), והתוצאה שלו עד 2025 לא בולטת מעל המזל (t 0.8, צריך 1.17) - כנראה מזל, מחכה",
      "status": "watch",
      "note": null,
      "reply": null,
@@ -34671,6 +34366,67 @@
     {
      "bot": "bot2",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 28,
+      "eff_n": 28.0,
+      "mean": 0.0567,
+      "t": 0.32,
+      "win": 46.6
+     },
+     "unseen": {
+      "n": 36,
+      "eff_n": 36.0,
+      "mean": 0.1659,
+      "t": 1.31,
+      "win": 55.5
+     },
+     "whole": {
+      "n": 64,
+      "eff_n": 63.8,
+      "mean": 0.1206,
+      "t": 1.14,
+      "win": 51.8
+     },
+     "halves": [
+      0.0063,
+      0.2258
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC010|15Min|ARM",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+       "source": "FX Replay",
+       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T09:35:53+00:00",
+     "id": "c0b6cb102e54",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.6R (t 0.32) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 2: נוספה לבוט: SC010|15Min|ARM, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T01:11:07+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T04:57:07+00:00",
+     "decision_id": "023de66f03f3"
+    },
+    {
+     "bot": "bot2",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC037|15Min|ARM · Butterfly harmonic X-A-B-C-D, entry at the 1.27 XA extension, target A",
      "what": "הסייר הביא אותה (Facebook (Trader Dhana reel, sent by the user)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -34854,6 +34610,67 @@
     {
      "bot": "bot2",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC044|4Hour|EURJPY · RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
+     "what": "הסייר הביא אותה (Tradingpedia). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 27,
+      "eff_n": 27.0,
+      "mean": 0.0638,
+      "t": 0.33,
+      "win": 66.2
+     },
+     "unseen": {
+      "n": 37,
+      "eff_n": 37.0,
+      "mean": 0.1438,
+      "t": 0.77,
+      "win": 67.6
+     },
+     "whole": {
+      "n": 64,
+      "eff_n": 63.9,
+      "mean": 0.1116,
+      "t": 0.82,
+      "win": 67.0
+     },
+     "halves": [
+      0.071,
+      0.156
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC044|4Hour|EURJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
+       "source": "Tradingpedia",
+       "url": "https://www.tradingpedia.com/forex-trading-strategies/squeezing-pips-from-ranging-markets-via-rsi/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T09:35:54+00:00",
+     "id": "9c68a0c1934e",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.7R (t 0.33) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 2: נוספה לבוט: SC044|4Hour|EURJPY, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T18:37:25+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T18:37:25+00:00",
+     "decision_id": "2e066aaee761"
+    },
+    {
+     "bot": "bot2",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC061|1Hour|XAUUSD · Gold 1h: under the BB(15) top and over the 53-bar high, 2.9 / 5.8 ATR(9), long",
      "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -34969,6 +34786,64 @@
     },
     {
      "bot": "bot2",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC020|15Min|GBPJPY · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 37,
+      "eff_n": 37.0,
+      "mean": 0.0025,
+      "t": 0.01,
+      "win": 46.1
+     },
+     "unseen": {
+      "n": 52,
+      "eff_n": 52.0,
+      "mean": 0.1206,
+      "t": 0.78,
+      "win": 50.0
+     },
+     "whole": {
+      "n": 89,
+      "eff_n": 88.8,
+      "mean": 0.0738,
+      "t": 0.63,
+      "win": 48.5
+     },
+     "halves": [
+      0.0081,
+      0.133
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC020|15Min|GBPJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+       "source": "ProRealCode",
+       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T09:35:53+00:00",
+     "id": "9605c10578db",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +0.1R (t 0.01) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T10:56:20+00:00"
+    },
+    {
+     "bot": "bot2",
      "kind": "improve",
      "title": "YT03|1Hour|NVDA: כניסה בלימיט 0.25R טוב יותר",
      "what": "יעד / סטופ / כניסה לאסטרטגיה YT03|1Hour|NVDA: כניסה בלימיט 0.25R טוב יותר. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
@@ -35028,6 +34903,125 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T18:37:25+00:00"
+    },
+    {
+     "bot": "bot2",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC043|4Hour|EURJPY · 15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
+     "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 29,
+      "eff_n": 29.0,
+      "mean": 0.0277,
+      "t": 0.13,
+      "win": 31.1
+     },
+     "unseen": {
+      "n": 40,
+      "eff_n": 40.0,
+      "mean": 0.1014,
+      "t": 0.42,
+      "win": 42.6
+     },
+     "whole": {
+      "n": 69,
+      "eff_n": 68.9,
+      "mean": 0.0718,
+      "t": 0.43,
+      "win": 38.0
+     },
+     "halves": [
+      -0.0397,
+      0.1692
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC043|4Hour|EURJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
+       "source": "BabyPips forum",
+       "url": "https://forums.babypips.com/t/scalping-15mdblebol/73264",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T09:35:54+00:00",
+     "id": "870583f90d93",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +0.8R (t 0.13) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 2: נוספה לבוט: SC043|4Hour|EURJPY, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T18:37:25+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T18:37:25+00:00",
+     "decision_id": "a5a6889d615f"
+    },
+    {
+     "bot": "bot2",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 107,
+      "eff_n": 106.9,
+      "mean": 0.0114,
+      "t": 0.15,
+      "win": 50.5
+     },
+     "unseen": {
+      "n": 112,
+      "eff_n": 112.0,
+      "mean": 0.0863,
+      "t": 1.16,
+      "win": 61.6
+     },
+     "whole": {
+      "n": 219,
+      "eff_n": 218.5,
+      "mean": 0.0512,
+      "t": 0.96,
+      "win": 56.4
+     },
+     "halves": [
+      0.0015,
+      0.0984
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC069|15Min|XAUUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+       "source": "NYC Servers (blog)",
+       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
+       "added": "2026-11-13"
+      }
+     },
+     "made": "2026-11-14T09:35:54+00:00",
+     "id": "a4e91072af0c",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.2R (t 0.15) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-14T09:37:31+00:00"
     },
     {
      "bot": "bot2",
@@ -35446,7 +35440,7 @@
      "made": "2026-11-14T09:35:54+00:00",
      "id": "e610d3bad770",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.6R (+0.043R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.4R (t 0.14) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -35736,7 +35730,7 @@
      "made": "2026-11-14T09:35:53+00:00",
      "id": "a4469fbd411c",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.2R (+0.009R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.4R (t 0.31) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -51600,128 +51594,6 @@
    "cards": [
     {
      "bot": "bot3",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
-     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 28,
-      "eff_n": 28.0,
-      "mean": 0.0567,
-      "t": 0.32,
-      "win": 46.6
-     },
-     "unseen": {
-      "n": 36,
-      "eff_n": 36.0,
-      "mean": 0.1659,
-      "t": 1.31,
-      "win": 55.5
-     },
-     "whole": {
-      "n": 64,
-      "eff_n": 63.8,
-      "mean": 0.1206,
-      "t": 1.14,
-      "win": 51.8
-     },
-     "halves": [
-      0.0063,
-      0.2258
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.375,
-     "baseline": null,
-     "change": {
-      "combo": "SC010|15Min|ARM",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
-       "source": "FX Replay",
-       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T10:14:20+00:00",
-     "id": "b80754aa5b8a",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 36.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 3: נוספה לבוט: SC010|15Min|ARM, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-13T05:58:25+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "8eb85d3479fd"
-    },
-    {
-     "bot": "bot3",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 107,
-      "eff_n": 106.9,
-      "mean": 0.0114,
-      "t": 0.15,
-      "win": 50.5
-     },
-     "unseen": {
-      "n": 112,
-      "eff_n": 112.0,
-      "mean": 0.0863,
-      "t": 1.16,
-      "win": 61.6
-     },
-     "whole": {
-      "n": 219,
-      "eff_n": 218.5,
-      "mean": 0.0512,
-      "t": 0.96,
-      "win": 56.4
-     },
-     "halves": [
-      0.0015,
-      0.0984
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.375,
-     "baseline": null,
-     "change": {
-      "combo": "SC069|15Min|XAUUSD",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-       "source": "NYC Servers (blog)",
-       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
-       "added": "2026-11-13"
-      }
-     },
-     "made": "2026-11-14T10:14:21+00:00",
-     "id": "5c613bb21a54",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.09R לעסקה, 112.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 3: נוספה לבוט: SC069|15Min|XAUUSD, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-14T10:25:20+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T10:25:21+00:00",
-     "decision_id": "e1e1c4294cb2"
-    },
-    {
-     "bot": "bot3",
      "kind": "info",
      "title": "TV17|15Min|AAPL: היתרון נשחק",
      "what": "בחצי השנה האחרונה -0.12R לעסקה, לעומת +0.20R בשנה וחצי שלפני",
@@ -51833,72 +51705,11 @@
      "made": "2026-11-14T10:14:21+00:00",
      "id": "a83947b45226",
      "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.07R לעסקה, 94.0 עסקאות אפקטיביות) · נבחר מתוך 6 מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 (-9.4R), והתוצאה שלו עד 2025 חלשה (t 0.8) - כנראה מזל, מחכה",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.07R לעסקה, 94.0 עסקאות אפקטיביות) · נבחר מתוך 6 מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 (-9.4R), והתוצאה שלו עד 2025 לא בולטת מעל המזל (t 0.8, צריך 1.39) - כנראה מזל, מחכה",
      "status": "watch",
      "note": null,
      "reply": null,
      "first_seen": "2026-11-14T10:25:20+00:00"
-    },
-    {
-     "bot": "bot3",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC002|1Hour|INTC · Alligator + Fractals breakout, fractal stop, 1:3",
-     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 42,
-      "eff_n": 42.0,
-      "mean": 0.0616,
-      "t": 0.56,
-      "win": 45.8
-     },
-     "unseen": {
-      "n": 76,
-      "eff_n": 76.0,
-      "mean": 0.0694,
-      "t": 1.28,
-      "win": 51.3
-     },
-     "whole": {
-      "n": 118,
-      "eff_n": 117.8,
-      "mean": 0.0668,
-      "t": 1.28,
-      "win": 49.5
-     },
-     "halves": [
-      0.0281,
-      0.1035
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.375,
-     "baseline": null,
-     "change": {
-      "combo": "SC002|1Hour|INTC",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
-       "source": "RoboForex blog",
-       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T10:14:20+00:00",
-     "id": "26f0c0414e65",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.07R לעסקה, 76.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 3: נוספה לבוט: SC002|1Hour|INTC, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-13T12:24:13+00:00",
-     "by": "manager",
-     "decided": "2026-11-12T04:19:34+00:00",
-     "decision_id": "8a2acebfc37f"
     },
     {
      "bot": "bot3",
@@ -52425,7 +52236,7 @@
      "made": "2026-11-14T10:14:21+00:00",
      "id": "e4cfd7f579ae",
      "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.02R לעסקה, 355.9 עסקאות אפקטיביות) · נבחר מתוך 4 מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 (-6.5R), והתוצאה שלו עד 2025 חלשה (t 0.58) - כנראה מזל, מחכה",
+     "verdict": "חיובי בתקופה שלא נראתה (+0.02R לעסקה, 355.9 עסקאות אפקטיביות) · נבחר מתוך 4 מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 (-6.5R), והתוצאה שלו עד 2025 לא בולטת מעל המזל (t 0.58, צריך 1.17) - כנראה מזל, מחכה",
      "status": "watch",
      "note": null,
      "reply": null,
@@ -54045,6 +53856,67 @@
     {
      "bot": "bot3",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 28,
+      "eff_n": 28.0,
+      "mean": 0.0567,
+      "t": 0.32,
+      "win": 46.6
+     },
+     "unseen": {
+      "n": 36,
+      "eff_n": 36.0,
+      "mean": 0.1659,
+      "t": 1.31,
+      "win": 55.5
+     },
+     "whole": {
+      "n": 64,
+      "eff_n": 63.8,
+      "mean": 0.1206,
+      "t": 1.14,
+      "win": 51.8
+     },
+     "halves": [
+      0.0063,
+      0.2258
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": null,
+     "change": {
+      "combo": "SC010|15Min|ARM",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+       "source": "FX Replay",
+       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T10:14:20+00:00",
+     "id": "b80754aa5b8a",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.6R (t 0.32) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 3: נוספה לבוט: SC010|15Min|ARM, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T05:58:25+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T04:57:07+00:00",
+     "decision_id": "8eb85d3479fd"
+    },
+    {
+     "bot": "bot3",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC037|15Min|ARM · Butterfly harmonic X-A-B-C-D, entry at the 1.27 XA extension, target A",
      "what": "הסייר הביא אותה (Facebook (Trader Dhana reel, sent by the user)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -54397,6 +54269,67 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-12T04:19:33+00:00"
+    },
+    {
+     "bot": "bot3",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 107,
+      "eff_n": 106.9,
+      "mean": 0.0114,
+      "t": 0.15,
+      "win": 50.5
+     },
+     "unseen": {
+      "n": 112,
+      "eff_n": 112.0,
+      "mean": 0.0863,
+      "t": 1.16,
+      "win": 61.6
+     },
+     "whole": {
+      "n": 219,
+      "eff_n": 218.5,
+      "mean": 0.0512,
+      "t": 0.96,
+      "win": 56.4
+     },
+     "halves": [
+      0.0015,
+      0.0984
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": null,
+     "change": {
+      "combo": "SC069|15Min|XAUUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+       "source": "NYC Servers (blog)",
+       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
+       "added": "2026-11-13"
+      }
+     },
+     "made": "2026-11-14T10:14:21+00:00",
+     "id": "5c613bb21a54",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.2R (t 0.15) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 3: נוספה לבוט: SC069|15Min|XAUUSD, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-14T10:25:20+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T10:25:21+00:00",
+     "decision_id": "e1e1c4294cb2"
     },
     {
      "bot": "bot3",
@@ -54765,6 +54698,67 @@
     },
     {
      "bot": "bot3",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|INTC · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 42,
+      "eff_n": 42.0,
+      "mean": 0.0616,
+      "t": 0.56,
+      "win": 45.8
+     },
+     "unseen": {
+      "n": 76,
+      "eff_n": 76.0,
+      "mean": 0.0694,
+      "t": 1.28,
+      "win": 51.3
+     },
+     "whole": {
+      "n": 118,
+      "eff_n": 117.8,
+      "mean": 0.0668,
+      "t": 1.28,
+      "win": 49.5
+     },
+     "halves": [
+      0.0281,
+      0.1035
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.375,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|1Hour|INTC",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T10:14:20+00:00",
+     "id": "26f0c0414e65",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +2.6R (t 0.56) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 3: נוספה לבוט: SC002|1Hour|INTC, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T12:24:13+00:00",
+     "by": "manager",
+     "decided": "2026-11-12T04:19:34+00:00",
+     "decision_id": "8a2acebfc37f"
+    },
+    {
+     "bot": "bot3",
      "kind": "improve",
      "title": "SC002|1Hour|AMZN: איזון ב־23.6% מהדרך ליעד",
      "what": "ניהול העסקה ברמות פיבונאצ׳י (נקודת איזון / יציאה חלקית) לאסטרטגיה SC002|1Hour|AMZN: איזון ב־23.6% מהדרך ליעד. נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
@@ -54994,7 +54988,7 @@
      "made": "2026-11-14T10:14:20+00:00",
      "id": "1c14a16769c2",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +1.1R (+0.054R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +1.0R (t 0.54) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -55052,7 +55046,7 @@
      "made": "2026-11-14T10:14:21+00:00",
      "id": "5d932b6ff156",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +2.3R (+0.053R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.6R (t 0.37) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -55110,7 +55104,7 @@
      "made": "2026-11-14T10:14:21+00:00",
      "id": "1363f81e91a3",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +2.3R (+0.050R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.1R (t 0.01) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -55168,7 +55162,7 @@
      "made": "2026-11-14T10:14:21+00:00",
      "id": "8b8010d0b10b",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.6R (+0.043R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.4R (t 0.14) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -55284,7 +55278,7 @@
      "made": "2026-11-14T10:14:20+00:00",
      "id": "430a076736e7",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +1.9R (+0.031R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +2.3R (t 0.76) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -55574,7 +55568,7 @@
      "made": "2026-11-14T10:14:21+00:00",
      "id": "ae788b24ee6f",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.4R (+0.002R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +2.1R (t 0.12) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -85588,311 +85582,6 @@
     },
     {
      "bot": "bot4",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
-     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 28,
-      "eff_n": 28.0,
-      "mean": 0.0567,
-      "t": 0.32,
-      "win": 46.6
-     },
-     "unseen": {
-      "n": 36,
-      "eff_n": 36.0,
-      "mean": 0.1659,
-      "t": 1.31,
-      "win": 55.5
-     },
-     "whole": {
-      "n": 64,
-      "eff_n": 63.8,
-      "mean": 0.1206,
-      "t": 1.14,
-      "win": 51.8
-     },
-     "halves": [
-      0.0063,
-      0.2258
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC010|15Min|ARM",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
-       "source": "FX Replay",
-       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T03:15:54+00:00",
-     "id": "61036dc9719e",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 36.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 4: נוספה לבוט: SC010|15Min|ARM, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-13T01:48:52+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "48b94e194d11"
-    },
-    {
-     "bot": "bot4",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC044|4Hour|EURJPY · RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
-     "what": "הסייר הביא אותה (Tradingpedia). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 27,
-      "eff_n": 27.0,
-      "mean": 0.0638,
-      "t": 0.33,
-      "win": 66.2
-     },
-     "unseen": {
-      "n": 37,
-      "eff_n": 37.0,
-      "mean": 0.1438,
-      "t": 0.77,
-      "win": 67.6
-     },
-     "whole": {
-      "n": 64,
-      "eff_n": 63.9,
-      "mean": 0.1116,
-      "t": 0.82,
-      "win": 67.0
-     },
-     "halves": [
-      0.071,
-      0.156
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC044|4Hour|EURJPY",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
-       "source": "Tradingpedia",
-       "url": "https://www.tradingpedia.com/forex-trading-strategies/squeezing-pips-from-ranging-markets-via-rsi/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T03:15:55+00:00",
-     "id": "8de79dde06db",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 37.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T20:05:48+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "0f3e6d75dc2f"
-    },
-    {
-     "bot": "bot4",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC020|15Min|GBPJPY · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
-     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 37,
-      "eff_n": 37.0,
-      "mean": 0.0025,
-      "t": 0.01,
-      "win": 46.1
-     },
-     "unseen": {
-      "n": 52,
-      "eff_n": 52.0,
-      "mean": 0.1206,
-      "t": 0.78,
-      "win": 50.0
-     },
-     "whole": {
-      "n": 89,
-      "eff_n": 88.8,
-      "mean": 0.0738,
-      "t": 0.63,
-      "win": 48.5
-     },
-     "halves": [
-      0.0081,
-      0.133
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC020|15Min|GBPJPY",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
-       "source": "ProRealCode",
-       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T03:15:54+00:00",
-     "id": "57118a21862f",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.12R לעסקה, 52.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 4: נוספה לבוט: SC020|15Min|GBPJPY, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-13T06:24:23+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T06:24:23+00:00",
-     "decision_id": "cf9e1bc6ef9c"
-    },
-    {
-     "bot": "bot4",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC043|4Hour|EURJPY · 15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
-     "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 29,
-      "eff_n": 29.0,
-      "mean": 0.0277,
-      "t": 0.13,
-      "win": 31.1
-     },
-     "unseen": {
-      "n": 40,
-      "eff_n": 40.0,
-      "mean": 0.1014,
-      "t": 0.42,
-      "win": 42.6
-     },
-     "whole": {
-      "n": 69,
-      "eff_n": 68.9,
-      "mean": 0.0718,
-      "t": 0.43,
-      "win": 38.0
-     },
-     "halves": [
-      -0.0397,
-      0.1692
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC043|4Hour|EURJPY",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
-       "source": "BabyPips forum",
-       "url": "https://forums.babypips.com/t/scalping-15mdblebol/73264",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T03:15:55+00:00",
-     "id": "64de7cf8c6a4",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.10R לעסקה, 40.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T20:05:48+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "1d6d66f66f29"
-    },
-    {
-     "bot": "bot4",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 107,
-      "eff_n": 106.9,
-      "mean": 0.0114,
-      "t": 0.15,
-      "win": 50.5
-     },
-     "unseen": {
-      "n": 112,
-      "eff_n": 112.0,
-      "mean": 0.0863,
-      "t": 1.16,
-      "win": 61.6
-     },
-     "whole": {
-      "n": 219,
-      "eff_n": 218.5,
-      "mean": 0.0512,
-      "t": 0.96,
-      "win": 56.4
-     },
-     "halves": [
-      0.0015,
-      0.0984
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC069|15Min|XAUUSD",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-       "source": "NYC Servers (blog)",
-       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
-       "added": "2026-11-13"
-      }
-     },
-     "made": "2026-11-14T03:15:55+00:00",
-     "id": "639da469b229",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.09R לעסקה, 112.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 4: נוספה לבוט: SC069|15Min|XAUUSD, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-14T03:24:30+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "7e6fcb6d0c0a"
-    },
-    {
-     "bot": "bot4",
      "kind": "info",
      "title": "SE01|1Hour|CSCO: היתרון נשחק",
      "what": "בחצי השנה האחרונה -0.04R לעסקה, לעומת +0.20R בשנה וחצי שלפני",
@@ -86012,67 +85701,6 @@
      "by": "manager",
      "decided": "2026-11-14T03:24:30+00:00",
      "decision_id": "62491a279446"
-    },
-    {
-     "bot": "bot4",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC002|1Hour|INTC · Alligator + Fractals breakout, fractal stop, 1:3",
-     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 42,
-      "eff_n": 42.0,
-      "mean": 0.0616,
-      "t": 0.56,
-      "win": 45.8
-     },
-     "unseen": {
-      "n": 76,
-      "eff_n": 76.0,
-      "mean": 0.0694,
-      "t": 1.28,
-      "win": 51.3
-     },
-     "whole": {
-      "n": 118,
-      "eff_n": 117.8,
-      "mean": 0.0668,
-      "t": 1.28,
-      "win": 49.5
-     },
-     "halves": [
-      0.0281,
-      0.1035
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.45,
-     "baseline": null,
-     "change": {
-      "combo": "SC002|1Hour|INTC",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
-       "source": "RoboForex blog",
-       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T03:15:54+00:00",
-     "id": "c87a40ce05e2",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.07R לעסקה, 76.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 4: נוספה לבוט: SC002|1Hour|INTC, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-13T12:24:13+00:00",
-     "by": "manager",
-     "decided": "2026-11-12T10:44:44+00:00",
-     "decision_id": "b3f106d6434f"
     },
     {
      "bot": "bot4",
@@ -87460,7 +87088,7 @@
      "made": "2026-11-14T03:15:55+00:00",
      "id": "59814f8889c2",
      "tier": "watch",
-     "verdict": "חיובי בתקופה שלא נראתה, אבל רק 15.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +1.1R (t 0.30) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -87817,6 +87445,67 @@
     {
      "bot": "bot4",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+     "what": "הסייר הביא אותה (FX Replay). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 28,
+      "eff_n": 28.0,
+      "mean": 0.0567,
+      "t": 0.32,
+      "win": 46.6
+     },
+     "unseen": {
+      "n": 36,
+      "eff_n": 36.0,
+      "mean": 0.1659,
+      "t": 1.31,
+      "win": 55.5
+     },
+     "whole": {
+      "n": 64,
+      "eff_n": 63.8,
+      "mean": 0.1206,
+      "t": 1.14,
+      "win": 51.8
+     },
+     "halves": [
+      0.0063,
+      0.2258
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC010|15Min|ARM",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+       "source": "FX Replay",
+       "url": "https://fxreplay.com/strategies/toto-capital-sbl-reversal-model",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T03:15:54+00:00",
+     "id": "61036dc9719e",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.6R (t 0.32) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 4: נוספה לבוט: SC010|15Min|ARM, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T01:48:52+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T04:57:07+00:00",
+     "decision_id": "48b94e194d11"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC037|15Min|ARM · Butterfly harmonic X-A-B-C-D, entry at the 1.27 XA extension, target A",
      "what": "הסייר הביא אותה (Facebook (Trader Dhana reel, sent by the user)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -87867,6 +87556,64 @@
      "id": "7a99665c4d72",
      "tier": "watch",
      "verdict": "מעט מדי עסקאות בתקופה שלא נראתה - נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T20:05:48+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC044|4Hour|EURJPY · RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
+     "what": "הסייר הביא אותה (Tradingpedia). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 27,
+      "eff_n": 27.0,
+      "mean": 0.0638,
+      "t": 0.33,
+      "win": 66.2
+     },
+     "unseen": {
+      "n": 37,
+      "eff_n": 37.0,
+      "mean": 0.1438,
+      "t": 0.77,
+      "win": 67.6
+     },
+     "whole": {
+      "n": 64,
+      "eff_n": 63.9,
+      "mean": 0.1116,
+      "t": 0.82,
+      "win": 67.0
+     },
+     "halves": [
+      0.071,
+      0.156
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC044|4Hour|EURJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
+       "source": "Tradingpedia",
+       "url": "https://www.tradingpedia.com/forex-trading-strategies/squeezing-pips-from-ranging-markets-via-rsi/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T03:15:55+00:00",
+     "id": "8de79dde06db",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.7R (t 0.33) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -88107,6 +87854,67 @@
     {
      "bot": "bot4",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC020|15Min|GBPJPY · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 37,
+      "eff_n": 37.0,
+      "mean": 0.0025,
+      "t": 0.01,
+      "win": 46.1
+     },
+     "unseen": {
+      "n": 52,
+      "eff_n": 52.0,
+      "mean": 0.1206,
+      "t": 0.78,
+      "win": 50.0
+     },
+     "whole": {
+      "n": 89,
+      "eff_n": 88.8,
+      "mean": 0.0738,
+      "t": 0.63,
+      "win": 48.5
+     },
+     "halves": [
+      0.0081,
+      0.133
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC020|15Min|GBPJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+       "source": "ProRealCode",
+       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T03:15:54+00:00",
+     "id": "57118a21862f",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +0.1R (t 0.01) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 4: נוספה לבוט: SC020|15Min|GBPJPY, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T06:24:23+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T06:24:23+00:00",
+     "decision_id": "cf9e1bc6ef9c"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC020|15Min|CSCO · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
      "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -88165,6 +87973,64 @@
     {
      "bot": "bot4",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC043|4Hour|EURJPY · 15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
+     "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 29,
+      "eff_n": 29.0,
+      "mean": 0.0277,
+      "t": 0.13,
+      "win": 31.1
+     },
+     "unseen": {
+      "n": 40,
+      "eff_n": 40.0,
+      "mean": 0.1014,
+      "t": 0.42,
+      "win": 42.6
+     },
+     "whole": {
+      "n": 69,
+      "eff_n": 68.9,
+      "mean": 0.0718,
+      "t": 0.43,
+      "win": 38.0
+     },
+     "halves": [
+      -0.0397,
+      0.1692
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC043|4Hour|EURJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
+       "source": "BabyPips forum",
+       "url": "https://forums.babypips.com/t/scalping-15mdblebol/73264",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T03:15:55+00:00",
+     "id": "64de7cf8c6a4",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +0.8R (t 0.13) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T20:05:48+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC013|4Hour|SPCX · Doji sandwich continuation, stop at the doji, stochastic exit",
      "what": "הסייר הביא אותה (TradingView (idea)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -88219,6 +88085,67 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T12:24:13+00:00"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 107,
+      "eff_n": 106.9,
+      "mean": 0.0114,
+      "t": 0.15,
+      "win": 50.5
+     },
+     "unseen": {
+      "n": 112,
+      "eff_n": 112.0,
+      "mean": 0.0863,
+      "t": 1.16,
+      "win": 61.6
+     },
+     "whole": {
+      "n": 219,
+      "eff_n": 218.5,
+      "mean": 0.0512,
+      "t": 0.96,
+      "win": 56.4
+     },
+     "halves": [
+      0.0015,
+      0.0984
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC069|15Min|XAUUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+       "source": "NYC Servers (blog)",
+       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
+       "added": "2026-11-13"
+      }
+     },
+     "made": "2026-11-14T03:15:55+00:00",
+     "id": "639da469b229",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.2R (t 0.15) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 4: נוספה לבוט: SC069|15Min|XAUUSD, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-14T03:24:30+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T04:57:07+00:00",
+     "decision_id": "7e6fcb6d0c0a"
     },
     {
      "bot": "bot4",
@@ -88521,6 +88448,67 @@
     {
      "bot": "bot4",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC002|1Hour|INTC · Alligator + Fractals breakout, fractal stop, 1:3",
+     "what": "הסייר הביא אותה (RoboForex blog). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 42,
+      "eff_n": 42.0,
+      "mean": 0.0616,
+      "t": 0.56,
+      "win": 45.8
+     },
+     "unseen": {
+      "n": 76,
+      "eff_n": 76.0,
+      "mean": 0.0694,
+      "t": 1.28,
+      "win": 51.3
+     },
+     "whole": {
+      "n": 118,
+      "eff_n": 117.8,
+      "mean": 0.0668,
+      "t": 1.28,
+      "win": 49.5
+     },
+     "halves": [
+      0.0281,
+      0.1035
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.45,
+     "baseline": null,
+     "change": {
+      "combo": "SC002|1Hour|INTC",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Alligator + Fractals breakout, fractal stop, 1:3",
+       "source": "RoboForex blog",
+       "url": "https://roboforex.com/blog/education/trading-the-alligator-fractals-strategy/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T03:15:54+00:00",
+     "id": "c87a40ce05e2",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +2.6R (t 0.56) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 4: נוספה לבוט: SC002|1Hour|INTC, בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T12:24:13+00:00",
+     "by": "manager",
+     "decided": "2026-11-12T10:44:44+00:00",
+     "decision_id": "b3f106d6434f"
+    },
+    {
+     "bot": "bot4",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC020|15Min|ARM · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
      "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -88686,7 +88674,7 @@
      "made": "2026-11-14T03:15:55+00:00",
      "id": "d6116d01bbb9",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.6R (+0.043R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.4R (t 0.14) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -88864,7 +88852,7 @@
      "made": "2026-11-14T03:15:55+00:00",
      "id": "89c8a9d00f27",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.5R (+0.035R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.5R (t 0.30) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -89274,7 +89262,7 @@
      "made": "2026-11-14T03:15:54+00:00",
      "id": "a528aa53cb08",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.2R (+0.009R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.4R (t 0.31) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -89332,7 +89320,7 @@
      "made": "2026-11-14T03:15:54+00:00",
      "id": "06ba2f72b2c7",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.3R (+0.001R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.2R (t 0.36) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -114211,128 +114199,6 @@
     {
      "bot": "bot5",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC071|15Min|US30 · Keltner lower band + hammer/engulfing on light volume, 0.25 ATR wick stop, to the EMA20",
-     "what": "הסייר הביא אותה (JournalPlus (article)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 28,
-      "eff_n": 28.0,
-      "mean": 0.0786,
-      "t": 0.33,
-      "win": 35.8
-     },
-     "unseen": {
-      "n": 77,
-      "eff_n": 77.0,
-      "mean": 0.0975,
-      "t": 0.55,
-      "win": 50.6
-     },
-     "whole": {
-      "n": 105,
-      "eff_n": 104.8,
-      "mean": 0.0927,
-      "t": 0.64,
-      "win": 46.9
-     },
-     "halves": [
-      0.0462,
-      0.1398
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC071|15Min|US30",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Keltner lower band + hammer/engulfing on light volume, 0.25 ATR wick stop, to the EMA20",
-       "source": "JournalPlus (article)",
-       "url": "https://journalplus.co/strategies/keltner-channel-strategy",
-       "added": "2026-11-13"
-      }
-     },
-     "made": "2026-11-14T08:12:41+00:00",
-     "id": "644219cc64bf",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.10R לעסקה, 77.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 5: נוספה לבוט 5: SC071|15Min|US30, בסיכון של הבוט ×0.7 (⭐ אולי מזל). יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-14T08:13:27+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T08:13:28+00:00",
-     "decision_id": "c1d94cf132ac"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 107,
-      "eff_n": 106.9,
-      "mean": 0.0114,
-      "t": 0.15,
-      "win": 50.5
-     },
-     "unseen": {
-      "n": 112,
-      "eff_n": 112.0,
-      "mean": 0.0863,
-      "t": 1.16,
-      "win": 61.6
-     },
-     "whole": {
-      "n": 219,
-      "eff_n": 218.5,
-      "mean": 0.0512,
-      "t": 0.96,
-      "win": 56.4
-     },
-     "halves": [
-      0.0015,
-      0.0984
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "combo": "SC069|15Min|XAUUSD",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-       "source": "NYC Servers (blog)",
-       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
-       "added": "2026-11-13"
-      }
-     },
-     "made": "2026-11-14T08:12:41+00:00",
-     "id": "ed7fb7e31c85",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.09R לעסקה, 112.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה בבוט ויותקן אוטומטית: נוספה לבוט 5: SC069|15Min|XAUUSD, בסיכון של הבוט ×0.7 (⭐ אולי מזל) · אותן פונקציות של הבדיקה רצות על הנרות החיים, עלות לפי המרווח החי של FTMO",
-     "first_seen": "2026-11-14T01:01:00+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T01:01:00+00:00",
-     "decision_id": "4a60c1885f1c"
-    },
-    {
-     "bot": "bot5",
-     "kind": "new",
      "title": "אסטרטגיה חדשה: SC138|15Min|XAUUSD · DAX Reversal Catcher: BB 1.5 lower poke + higher bar + TEMA21>50 + VWAP cross, upper-band exit, 15:00 flat",
      "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -115337,7 +115203,7 @@
      "made": "2026-11-14T08:12:40+00:00",
      "id": "18bab78fa06e",
      "tier": "watch",
-     "verdict": "חיובי בתקופה שלא נראתה, אבל רק 18.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.6R (t 0.08) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -116237,6 +116103,67 @@
     },
     {
      "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC071|15Min|US30 · Keltner lower band + hammer/engulfing on light volume, 0.25 ATR wick stop, to the EMA20",
+     "what": "הסייר הביא אותה (JournalPlus (article)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 28,
+      "eff_n": 28.0,
+      "mean": 0.0786,
+      "t": 0.33,
+      "win": 35.8
+     },
+     "unseen": {
+      "n": 77,
+      "eff_n": 77.0,
+      "mean": 0.0975,
+      "t": 0.55,
+      "win": 50.6
+     },
+     "whole": {
+      "n": 105,
+      "eff_n": 104.8,
+      "mean": 0.0927,
+      "t": 0.64,
+      "win": 46.9
+     },
+     "halves": [
+      0.0462,
+      0.1398
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC071|15Min|US30",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Keltner lower band + hammer/engulfing on light volume, 0.25 ATR wick stop, to the EMA20",
+       "source": "JournalPlus (article)",
+       "url": "https://journalplus.co/strategies/keltner-channel-strategy",
+       "added": "2026-11-13"
+      }
+     },
+     "made": "2026-11-14T08:12:41+00:00",
+     "id": "644219cc64bf",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +2.2R (t 0.33) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 5: נוספה לבוט 5: SC071|15Min|US30, בסיכון של הבוט ×0.7 (⭐ אולי מזל). יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-14T08:13:27+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T08:13:28+00:00",
+     "decision_id": "c1d94cf132ac"
+    },
+    {
+     "bot": "bot5",
      "kind": "improve",
      "title": "שיטת הגאפ · 15 דק' / דקה: סטופ מינימלי לפי התנודתיות (× ATR של הטיים פריים הגבוה) (0.5) - מההערה של טל",
      "what": "מההערה של טל על עסקה במסלול t15_1. הכללים שרצים, רק MINSTOP = 0.5. 2024-2025 (סה\"כ משוקלל +78.3R ← +78.7R), 2026 (לא נראתה): סה\"כ +21.7R ← +23.1R, היום הגרוע -6.2R ← -6.2R, ירידה 34.4R ← 29.3R, 269 עסקאות. שווי: +0.03% מהחשבון בחודש בסיכון של המסלול.",
@@ -116391,6 +116318,67 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-14T06:42:29+00:00"
+    },
+    {
+     "bot": "bot5",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 107,
+      "eff_n": 106.9,
+      "mean": 0.0114,
+      "t": 0.15,
+      "win": 50.5
+     },
+     "unseen": {
+      "n": 112,
+      "eff_n": 112.0,
+      "mean": 0.0863,
+      "t": 1.16,
+      "win": 61.6
+     },
+     "whole": {
+      "n": 219,
+      "eff_n": 218.5,
+      "mean": 0.0512,
+      "t": 0.96,
+      "win": 56.4
+     },
+     "halves": [
+      0.0015,
+      0.0984
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "combo": "SC069|15Min|XAUUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+       "source": "NYC Servers (blog)",
+       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
+       "added": "2026-11-13"
+      }
+     },
+     "made": "2026-11-14T08:12:41+00:00",
+     "id": "ed7fb7e31c85",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.2R (t 0.15) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה בבוט ויותקן אוטומטית: נוספה לבוט 5: SC069|15Min|XAUUSD, בסיכון של הבוט ×0.7 (⭐ אולי מזל) · אותן פונקציות של הבדיקה רצות על הנרות החיים, עלות לפי המרווח החי של FTMO",
+     "first_seen": "2026-11-14T01:01:00+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T01:01:00+00:00",
+     "decision_id": "4a60c1885f1c"
     },
     {
      "bot": "bot5",
@@ -116560,7 +116548,7 @@
      "made": "2026-11-14T08:12:41+00:00",
      "id": "33111d5853c8",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +1.6R (+0.035R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.2R (t 0.03) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -116792,7 +116780,7 @@
      "made": "2026-11-14T08:12:40+00:00",
      "id": "4c4fad98e2c2",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.2R (+0.001R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +2.9R (t 0.29) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": "לא נבנה: ב־2026 כולה רק +0.2R (+0.001R לעסקה), ולפי כלל המנהל מ־00:29 (אסטרטגיה חדשה צריכה להוסיף לפחות +3R) היא רק מוסיפה סיכון ולוקחת חלק מהמגבלה היומית. תוקן גם שכרטיס חדש שלא נבנה יוצא כשהכלל מחמיר. אם היא תשתפר - כרטיס חדש.",
@@ -136333,92 +136321,6 @@
     {
      "bot": "bot6",
      "kind": "new",
-     "title": "אסטרטגיה חדשה בעולם של בוט 6: SC005|5Min|US100 · יעד 1R, סטופ x0.75",
-     "what": "נבדקה על החוזים (עלויות מיקרו, שעות FTMO Futures, בלי כניסה סביב הודעות, איזון לפי הכלל), 96 גרסאות. נבחרה על 2024-2025 בלבד: +0.08R על 29 עסקאות; ב־2026 (לא נראתה): +0.29R על 31 עסקאות. כמו במקור: עד 2025 -0.43R על 29 עסקאות, ב־2026 +0.54R על 31 עסקאות. עלות 0.055R לעסקה. בסיכון של הבוט (0.4%). · בבוט 5 לא נבדקה על המדד הזה",
-     "train": {
-      "n": 29,
-      "eff_n": 29.0,
-      "mean": 0.0776,
-      "t": 0.42,
-      "win": 48.5
-     },
-     "unseen": {
-      "n": 31,
-      "eff_n": 31.0,
-      "mean": 0.2873,
-      "t": 1.55,
-      "win": 67.7
-     },
-     "whole": null,
-     "halves": [
-      0.1225,
-      0.0352
-     ],
-     "neighbours": {
-      "share_positive": 0.17
-     },
-     "tested": 96,
-     "cost_r": 0.055,
-     "risk_pct": 0.4,
-     "baseline": null,
-     "change": {
-      "family": "scout_fut",
-      "combo": "SC005|5Min|US100",
-      "v": {
-       "target": 1.0,
-       "stop": 0.75,
-       "time": "own",
-       "be": true
-      }
-     },
-     "detail": {
-      "world": "bot6",
-      "approved_cfd_card": "1ae50519f6f2",
-      "base": {
-       "v": {
-        "target": "own",
-        "stop": 1.0,
-        "time": "own",
-        "be": true
-       },
-       "train": {
-        "n": 29,
-        "eff_n": 29.0,
-        "mean": -0.4251,
-        "t": -2.03,
-        "win": 21.3
-       },
-       "unseen": {
-        "n": 31,
-        "eff_n": 31.0,
-        "mean": 0.5448,
-        "t": 1.75,
-        "win": 54.9
-       },
-       "unseen_sum": 16.86,
-       "cost_r": 0.041,
-       "halves": [
-        -0.6865,
-        -0.199
-       ]
-      },
-      "bot5": null
-     },
-     "made": "2026-11-14T07:27:22+00:00",
-     "id": "f02478f826fa",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.29R לעסקה, 31.0 עסקאות אפקטיביות) · נבדקו 96 שילובים, אז חלק מהיתרון עלול להיות מזל",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה אוטומטית בבוט 6: נוספה לבוט 6: SC005|5Min|US100 (יעד 1R, סטופ x0.75), בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-13T00:13:21+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T00:13:21+00:00",
-     "decision_id": "ca42958cb3a4"
-    },
-    {
-     "bot": "bot6",
-     "kind": "new",
      "title": "אסטרטגיה חדשה בעולם של בוט 6: SC005|5Min|US500 · יעד 2R, סטופ x0.75",
      "what": "נבדקה על החוזים (עלויות מיקרו, שעות FTMO Futures, בלי כניסה סביב הודעות, איזון לפי הכלל), 96 גרסאות. נבחרה על 2024-2025 בלבד: +0.16R על 25 עסקאות; ב־2026 (לא נראתה): +0.25R על 32 עסקאות. כמו במקור: עד 2025 -0.39R על 25 עסקאות, ב־2026 +0.57R על 32 עסקאות. עלות 0.155R לעסקה. בסיכון של הבוט (0.4%). · בבוט 5 לא נבדקה על המדד הזה",
      "train": {
@@ -139551,6 +139453,44 @@
     },
     {
      "bot": "bot6",
+     "kind": "info",
+     "title": "בוט 6: נבדק אם לקחת בחוזה אחד עסקאות שמדלגים עליהן, ונוספו פרמיה / דיסקאונט ופיבוט יומי",
+     "what": "מאז כרטיס ×0.3 (סיכון 0.12% למסלול, כדי שהחשבון יישאר במגבלות FTMO Futures: 1.5% ביום, 4.5% מתחת לשיא) חוזה MNQ / MES / MYM אחד גדול לעיתים קרובות מהסיכון, והעסקה לא נלקחת: בבדיקת החשבון 352 עסקאות עד 2025 ו־250 ב־2026 דולגו רק בגלל זה. נבנה מבחן: לקחת עסקה כזאת בחוזה אחד, אם הוא מסכן עד 0.2 / 0.3 / 0.4% (לא מעל הסיכון של הבוט) ויש מקום במגבלות. נבחר על 2024-2025 בלבד; כרטיס רק אם יש יותר רווח, והיום הגרוע והירידה הגדולה לא גרועים מהיום - בשתי התקופות. בבוט החי זו הגדרה (כבויה עד אישור). בבוט 5 אין דילוג כזה (CFD בשברי לוט). באותו סבב: שני המסננים שבוט 5 בנה היום מהסרטונים (פרמיה / דיסקאונט של 20 / 50 נרות, פיבוט יומי) על 4 המסלולים. שאלה למנהל: לפי הכלל של 14.11 בוטים 1-6 הם חשבון FTMO רגיל (5% / 10%), ובוט 6 עובד במגבלות FTMO Futures המחמירות - הן הסיבה ל־×0.3.",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": null,
+     "detail": {
+      "world": "bot6",
+      "commit": "ff3a1c51f",
+      "tasks": [
+       "tal1411set6"
+      ],
+      "skipped_one_contract": {
+       "train": 352,
+       "unseen": 250
+      }
+     },
+     "made": "2026-11-14T10:38:40+00:00",
+     "id": "d22330bc6ee4",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-14T10:56:52+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T10:56:52+00:00",
+     "decision_id": "d26a0688cbff"
+    },
+    {
+     "bot": "bot6",
      "kind": "new",
      "title": "אסטרטגיה חדשה: SC107|1Min|US500 · News 1m: impulse candle, entry after the 3-minute correction, stop past it, target the impulse extreme",
      "what": "הסייר הביא אותה (TradingView (idea)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
@@ -139717,7 +139657,7 @@
      "made": "2026-11-14T04:35:52+00:00",
      "id": "c79211464886",
      "tier": "watch",
-     "verdict": "חיובי בתקופה שלא נראתה, אבל רק 26.0 עסקאות אפקטיביות (צריך 30) - נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +1.4R (t 0.20) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -139780,6 +139720,92 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-14T04:42:31+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה בעולם של בוט 6: SC005|5Min|US100 · יעד 1R, סטופ x0.75",
+     "what": "נבדקה על החוזים (עלויות מיקרו, שעות FTMO Futures, בלי כניסה סביב הודעות, איזון לפי הכלל), 96 גרסאות. נבחרה על 2024-2025 בלבד: +0.08R על 29 עסקאות; ב־2026 (לא נראתה): +0.29R על 31 עסקאות. כמו במקור: עד 2025 -0.43R על 29 עסקאות, ב־2026 +0.54R על 31 עסקאות. עלות 0.055R לעסקה. בסיכון של הבוט (0.4%). · בבוט 5 לא נבדקה על המדד הזה",
+     "train": {
+      "n": 29,
+      "eff_n": 29.0,
+      "mean": 0.0776,
+      "t": 0.42,
+      "win": 48.5
+     },
+     "unseen": {
+      "n": 31,
+      "eff_n": 31.0,
+      "mean": 0.2873,
+      "t": 1.55,
+      "win": 67.7
+     },
+     "whole": null,
+     "halves": [
+      0.1225,
+      0.0352
+     ],
+     "neighbours": {
+      "share_positive": 0.17
+     },
+     "tested": 96,
+     "cost_r": 0.055,
+     "risk_pct": 0.4,
+     "baseline": null,
+     "change": {
+      "family": "scout_fut",
+      "combo": "SC005|5Min|US100",
+      "v": {
+       "target": 1.0,
+       "stop": 0.75,
+       "time": "own",
+       "be": true
+      }
+     },
+     "detail": {
+      "world": "bot6",
+      "approved_cfd_card": "1ae50519f6f2",
+      "base": {
+       "v": {
+        "target": "own",
+        "stop": 1.0,
+        "time": "own",
+        "be": true
+       },
+       "train": {
+        "n": 29,
+        "eff_n": 29.0,
+        "mean": -0.4251,
+        "t": -2.03,
+        "win": 21.3
+       },
+       "unseen": {
+        "n": 31,
+        "eff_n": 31.0,
+        "mean": 0.5448,
+        "t": 1.75,
+        "win": 54.9
+       },
+       "unseen_sum": 16.86,
+       "cost_r": 0.041,
+       "halves": [
+        -0.6865,
+        -0.199
+       ]
+      },
+      "bot5": null
+     },
+     "made": "2026-11-14T07:27:22+00:00",
+     "id": "f02478f826fa",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +2.3R (t 0.42) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה אוטומטית בבוט 6: נוספה לבוט 6: SC005|5Min|US100 (יעד 1R, סטופ x0.75), בסיכון של הבוט. יותקן במחשב הבוטים תוך כ־10 דקות.",
+     "first_seen": "2026-11-13T00:13:21+00:00",
+     "by": "manager",
+     "decided": "2026-11-13T00:13:21+00:00",
+     "decision_id": "ca42958cb3a4"
     },
     {
      "bot": "bot6",
@@ -141520,7 +141546,7 @@
      "made": "2026-11-14T04:35:52+00:00",
      "id": "d89e35b349ab",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +1.8R (+0.007R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.6R (t 0.81) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "approved",
      "note": null,
      "reply": "נבדקה בעולם של בוט 6: אף גרסה לא עברה (גם בגלל הסטופ של 10% שגדול מסיכון הבוט לחוזה אחד). fix_attempts: failed - לא נבנית.",
@@ -141639,7 +141665,7 @@
      "made": "2026-11-14T04:35:53+00:00",
      "id": "c90997a13d14",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +1.0R (+0.001R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.5R (t 0.61) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -154437,67 +154463,6 @@
     {
      "bot": "bot7",
      "kind": "new",
-     "title": "אסטרטגיה חדשה: SC097|4Hour|GER40 · Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR",
-     "what": "הסייר הביא אותה (TradingView (script)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 78,
-      "eff_n": 77.9,
-      "mean": 0.0218,
-      "t": 0.2,
-      "win": 41.3
-     },
-     "unseen": {
-      "n": 94,
-      "eff_n": 94.0,
-      "mean": 0.1565,
-      "t": 1.49,
-      "win": 51.2
-     },
-     "whole": {
-      "n": 172,
-      "eff_n": 171.7,
-      "mean": 0.098,
-      "t": 1.3,
-      "win": 46.9
-     },
-     "halves": [
-      -0.0337,
-      0.2188
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.5,
-     "baseline": null,
-     "change": {
-      "combo": "SC097|4Hour|GER40",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR",
-       "source": "TradingView (script)",
-       "url": "https://www.tradingview.com/script/OQGzolcI-Keltner-Channel-Strategy/",
-       "added": "2026-11-13"
-      }
-     },
-     "made": "2026-11-14T03:50:48+00:00",
-     "id": "a8aec0b2566d",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.16R לעסקה, 94.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "הוסר מבוט 7: SC097 על GER40 (4 שעות) - המנהל חזר בו (בבוט השלם מוסיף סיכון: יום גרוע / ירידה גבוהים יותר). נבנה בטעות בבוקר לפני שהחזרה נקלטה; לא נפתחה עסקה.",
-     "first_seen": "2026-11-14T04:01:13+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:01:13+00:00",
-     "decision_id": "840466e2b6fb"
-    },
-    {
-     "bot": "bot7",
-     "kind": "new",
      "title": "שיטה חדשה: נגד הזעזוע (בלי פרסום) על US100 ו־GER40",
      "what": "זעזוע = דקה (או 3 דקות) שזזה פי 8 מהטווח החציוני של היממה האחרונה, לפחות 0.18-0.2%, לא סביב פרסום ולא בפתיחה/סגירה. כניסה נגד הזעזוע בפתיחת הדקה הבאה (US100) או אחרי 3 דקות (GER40); סטופ 25% מהזעזוע מעבר לקיצון; יציאה אחרי 60 דקות. כל מכשיר נבחר על 2025 בלבד: הגרסה שנבחרה על מאי-אוגוסט 2025 הרוויחה גם בספטמבר-דצמבר 2025. ב־2025: 94 עסקאות +48.8R; ב־2026 שלא נראתה: 145 עסקאות +21.9R (US100 +26.4R על 77, GER40 -4.5R על 68). עלויות FTMO אמיתיות בדקת הזעזוע. זהירות: ההגבלה ל\"נגד\" בלבד באה מרמז על סוגי הזעזועים של 2026 - בלעדיה (כולל זהב \"עם הזעזוע\") הספר הוגן לגמרי ומפסיד ב־2026 (-10.5R). לכן: סיכון x0.5, בוט 7 וירטואלי - המקום לאסוף עסקאות אמיתיות.",
      "train": {
@@ -154650,311 +154615,6 @@
      "by": "manager",
      "decided": "2026-11-13T14:58:38+00:00",
      "decision_id": "784c8bebec42"
-    },
-    {
-     "bot": "bot7",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC044|4Hour|EURJPY · RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
-     "what": "הסייר הביא אותה (Tradingpedia). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 27,
-      "eff_n": 27.0,
-      "mean": 0.0638,
-      "t": 0.33,
-      "win": 66.2
-     },
-     "unseen": {
-      "n": 37,
-      "eff_n": 37.0,
-      "mean": 0.1438,
-      "t": 0.77,
-      "win": 67.6
-     },
-     "whole": {
-      "n": 64,
-      "eff_n": 63.9,
-      "mean": 0.1116,
-      "t": 0.82,
-      "win": 67.0
-     },
-     "halves": [
-      0.071,
-      0.156
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.5,
-     "baseline": null,
-     "change": {
-      "combo": "SC044|4Hour|EURJPY",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
-       "source": "Tradingpedia",
-       "url": "https://www.tradingpedia.com/forex-trading-strategies/squeezing-pips-from-ranging-markets-via-rsi/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T03:50:48+00:00",
-     "id": "8d8e87341070",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 37.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T20:42:10+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "9356802771d8"
-    },
-    {
-     "bot": "bot7",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC020|15Min|GBPJPY · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
-     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 37,
-      "eff_n": 37.0,
-      "mean": 0.0025,
-      "t": 0.01,
-      "win": 46.1
-     },
-     "unseen": {
-      "n": 52,
-      "eff_n": 52.0,
-      "mean": 0.1206,
-      "t": 0.78,
-      "win": 50.0
-     },
-     "whole": {
-      "n": 89,
-      "eff_n": 88.8,
-      "mean": 0.0738,
-      "t": 0.63,
-      "win": 48.5
-     },
-     "halves": [
-      0.0081,
-      0.133
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.5,
-     "baseline": null,
-     "change": {
-      "combo": "SC020|15Min|GBPJPY",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
-       "source": "ProRealCode",
-       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T03:50:47+00:00",
-     "id": "0b7d508579df",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.12R לעסקה, 52.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T07:00:13+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "05d238397e2f"
-    },
-    {
-     "bot": "bot7",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC086|4Hour|JP225 · Exp TrendMagic CCI 50 median + ATR 5 colour switch, 3.5 / 7 ATR, 4H",
-     "what": "הסייר הביא אותה (StockSharp (port of MT5 EA)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 38,
-      "eff_n": 38.0,
-      "mean": 0.0661,
-      "t": 0.82,
-      "win": 60.6
-     },
-     "unseen": {
-      "n": 48,
-      "eff_n": 48.0,
-      "mean": 0.1071,
-      "t": 1.84,
-      "win": 60.4
-     },
-     "whole": {
-      "n": 86,
-      "eff_n": 85.8,
-      "mean": 0.0898,
-      "t": 1.87,
-      "win": 60.5
-     },
-     "halves": [
-      0.0762,
-      0.1008
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.5,
-     "baseline": null,
-     "change": {
-      "combo": "SC086|4Hour|JP225",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Exp TrendMagic CCI 50 median + ATR 5 colour switch, 3.5 / 7 ATR, 4H",
-       "source": "StockSharp (port of MT5 EA)",
-       "url": "https://doc.stocksharp.com/en/api-examples/3746_Exp_TrendMagic",
-       "added": "2026-11-13"
-      }
-     },
-     "made": "2026-11-14T03:50:48+00:00",
-     "id": "d76afd8d8393",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.11R לעסקה, 48.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה בבוט 7: SC086 על JP225 (4 שעות), בסיכון x0.7 (כוכבית המנהל - אולי מזל). ההגדרות ב־live/bots/bot7.json.",
-     "first_seen": "2026-11-14T04:01:13+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:01:13+00:00",
-     "decision_id": "de383a4426e1"
-    },
-    {
-     "bot": "bot7",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC043|4Hour|EURJPY · 15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
-     "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 29,
-      "eff_n": 29.0,
-      "mean": 0.0277,
-      "t": 0.13,
-      "win": 31.1
-     },
-     "unseen": {
-      "n": 40,
-      "eff_n": 40.0,
-      "mean": 0.1014,
-      "t": 0.42,
-      "win": 42.6
-     },
-     "whole": {
-      "n": 69,
-      "eff_n": 68.9,
-      "mean": 0.0718,
-      "t": 0.43,
-      "win": 38.0
-     },
-     "halves": [
-      -0.0397,
-      0.1692
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.5,
-     "baseline": null,
-     "change": {
-      "combo": "SC043|4Hour|EURJPY",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
-       "source": "BabyPips forum",
-       "url": "https://forums.babypips.com/t/scalping-15mdblebol/73264",
-       "added": "2026-11-12"
-      }
-     },
-     "made": "2026-11-14T03:50:48+00:00",
-     "id": "410f07a32f29",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.10R לעסקה, 40.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T20:42:10+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "e0412ce28c58"
-    },
-    {
-     "bot": "bot7",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 107,
-      "eff_n": 106.9,
-      "mean": 0.0114,
-      "t": 0.15,
-      "win": 50.5
-     },
-     "unseen": {
-      "n": 112,
-      "eff_n": 112.0,
-      "mean": 0.0863,
-      "t": 1.16,
-      "win": 61.6
-     },
-     "whole": {
-      "n": 219,
-      "eff_n": 218.5,
-      "mean": 0.0512,
-      "t": 0.96,
-      "win": 56.4
-     },
-     "halves": [
-      0.0015,
-      0.0984
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.5,
-     "baseline": null,
-     "change": {
-      "combo": "SC069|15Min|XAUUSD",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
-       "source": "NYC Servers (blog)",
-       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
-       "added": "2026-11-13"
-      }
-     },
-     "made": "2026-11-14T03:50:48+00:00",
-     "id": "77fac48939fb",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.09R לעסקה, 112.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T04:01:13+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:57:07+00:00",
-     "decision_id": "6abed8d709f1"
     },
     {
      "bot": "bot7",
@@ -155163,67 +154823,6 @@
      "by": "manager",
      "decided": "2026-11-14T04:01:13+00:00",
      "decision_id": "620302002693"
-    },
-    {
-     "bot": "bot7",
-     "kind": "new",
-     "title": "אסטרטגיה חדשה: SC070|5Min|JP225 · Keltner 20/2 breakout held, first 20-EMA touch, swing/1 ATR stop, 2 ATR target, long",
-     "what": "הסייר הביא אותה (JournalPlus (article)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
-     "train": {
-      "n": 113,
-      "eff_n": 112.9,
-      "mean": 0.0115,
-      "t": 0.06,
-      "win": 32.8
-     },
-     "unseen": {
-      "n": 140,
-      "eff_n": 140.0,
-      "mean": 0.035,
-      "t": 0.21,
-      "win": 35.8
-     },
-     "whole": {
-      "n": 253,
-      "eff_n": 252.4,
-      "mean": 0.025,
-      "t": 0.19,
-      "win": 34.5
-     },
-     "halves": [
-      -0.0862,
-      0.1327
-     ],
-     "neighbours": {
-      "share_positive": null
-     },
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": 0.5,
-     "baseline": null,
-     "change": {
-      "combo": "SC070|5Min|JP225",
-      "kind": "add"
-     },
-     "detail": {
-      "scout": {
-       "name": "Keltner 20/2 breakout held, first 20-EMA touch, swing/1 ATR stop, 2 ATR target, long",
-       "source": "JournalPlus (article)",
-       "url": "https://journalplus.co/strategies/keltner-channel-strategy",
-       "added": "2026-11-13"
-      }
-     },
-     "made": "2026-11-14T03:50:48+00:00",
-     "id": "e6155f1dd8b1",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.04R לעסקה, 140.0 עסקאות אפקטיביות)",
-     "status": "approved",
-     "note": null,
-     "reply": "נבנה בבוט 7: SC070 על JP225 (5 דקות), בסיכון x0.7 (כוכבית המנהל - אולי מזל). ההגדרות ב־live/bots/bot7.json.",
-     "first_seen": "2026-11-14T04:01:13+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T04:01:13+00:00",
-     "decision_id": "73b7c64fca3c"
     },
     {
      "bot": "bot7",
@@ -155694,6 +155293,42 @@
      "by": "manager",
      "decided": "2026-11-14T09:12:07+00:00",
      "decision_id": "33d5361dd18f"
+    },
+    {
+     "bot": "bot7",
+     "kind": "info",
+     "title": "בוט 7: SC086 על JP225 נבחר לפי 2026 - נבנתה בדיקת תיקון על כל המשפחה",
+     "what": "משימת המנהל (mgr1411thin): SC086 (TrendMagic, 4 שעות) על JP225 הרוויח עד 2025 רק +2.5R ב־38 עסקאות (t 0.82), ב־2026 +5.1R. בשני המכשירים האחרים שנבדקו הוא מפסיד ב־2026 (GER40 -2.0R, זהב -4.6R). פירוק לפי כיוון ושעה לא מחזיק: עד 2025 רק הקניות הרוויחו, ב־2026 דווקא המכירות. לכן נבנתה בדיקת מסננים על כל המשפחה, 7 מכשירים, במחשב הבוטים בסבב הבא. אם יימצא מסנן שמביא את המשפחה ל־3R ומעלה עד 2025 ומחזיק ב־2026, יבוא כרטיס תיקון. אם לא, עד 18.11 יבוא כרטיס הורדת סיכון. בחשבון 5 עוד אין עסקאות (סוף שבוע) ואין זעזועים חדשים. התוצאות של EV03, EV05-EV07 ו־SC001 / SC070 מחכות לסבב של בוט 7 במחשב (האחרון 03:21).",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": {
+      "combo": "bot7|*",
+      "note": "info only",
+      "night": "2026-11-14y",
+      "at": "2026-11-14T10:56"
+     },
+     "detail": {
+      "study": "agent_portfolio.family_fix -> reports/agents/bot7/family_fix.json",
+      "task": "mgr1411thin"
+     },
+     "made": "2026-11-14T10:56:44+00:00",
+     "id": "9bfbd9c41475",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-14T10:56:52+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T10:56:52+00:00",
+     "decision_id": "ae9895d7b99d"
     },
     {
      "bot": "bot7",
@@ -156450,6 +156085,122 @@
     {
      "bot": "bot7",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC097|4Hour|GER40 · Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR",
+     "what": "הסייר הביא אותה (TradingView (script)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 78,
+      "eff_n": 77.9,
+      "mean": 0.0218,
+      "t": 0.2,
+      "win": 41.3
+     },
+     "unseen": {
+      "n": 94,
+      "eff_n": 94.0,
+      "mean": 0.1565,
+      "t": 1.49,
+      "win": 51.2
+     },
+     "whole": {
+      "n": 172,
+      "eff_n": 171.7,
+      "mean": 0.098,
+      "t": 1.3,
+      "win": 46.9
+     },
+     "halves": [
+      -0.0337,
+      0.2188
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.5,
+     "baseline": null,
+     "change": {
+      "combo": "SC097|4Hour|GER40",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR",
+       "source": "TradingView (script)",
+       "url": "https://www.tradingview.com/script/OQGzolcI-Keltner-Channel-Strategy/",
+       "added": "2026-11-13"
+      }
+     },
+     "made": "2026-11-14T03:50:48+00:00",
+     "id": "a8aec0b2566d",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.7R (t 0.20) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": "הוסר מבוט 7: SC097 על GER40 (4 שעות) - המנהל חזר בו (בבוט השלם מוסיף סיכון: יום גרוע / ירידה גבוהים יותר). נבנה בטעות בבוקר לפני שהחזרה נקלטה; לא נפתחה עסקה.",
+     "first_seen": "2026-11-14T04:01:13+00:00"
+    },
+    {
+     "bot": "bot7",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC044|4Hour|EURJPY · RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
+     "what": "הסייר הביא אותה (Tradingpedia). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 27,
+      "eff_n": 27.0,
+      "mean": 0.0638,
+      "t": 0.33,
+      "win": 66.2
+     },
+     "unseen": {
+      "n": 37,
+      "eff_n": 37.0,
+      "mean": 0.1438,
+      "t": 0.77,
+      "win": 67.6
+     },
+     "whole": {
+      "n": 64,
+      "eff_n": 63.9,
+      "mean": 0.1116,
+      "t": 0.82,
+      "win": 67.0
+     },
+     "halves": [
+      0.071,
+      0.156
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.5,
+     "baseline": null,
+     "change": {
+      "combo": "SC044|4Hour|EURJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
+       "source": "Tradingpedia",
+       "url": "https://www.tradingpedia.com/forex-trading-strategies/squeezing-pips-from-ranging-markets-via-rsi/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T03:50:48+00:00",
+     "id": "8d8e87341070",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.7R (t 0.33) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T20:42:10+00:00"
+    },
+    {
+     "bot": "bot7",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC061|1Hour|XAUUSD · Gold 1h: under the BB(15) top and over the 53-bar high, 2.9 / 5.8 ATR(9), long",
      "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -156566,6 +156317,241 @@
     {
      "bot": "bot7",
      "kind": "new",
+     "title": "אסטרטגיה חדשה: SC020|15Min|GBPJPY · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+     "what": "הסייר הביא אותה (ProRealCode). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 37,
+      "eff_n": 37.0,
+      "mean": 0.0025,
+      "t": 0.01,
+      "win": 46.1
+     },
+     "unseen": {
+      "n": 52,
+      "eff_n": 52.0,
+      "mean": 0.1206,
+      "t": 0.78,
+      "win": 50.0
+     },
+     "whole": {
+      "n": 89,
+      "eff_n": 88.8,
+      "mean": 0.0738,
+      "t": 0.63,
+      "win": 48.5
+     },
+     "halves": [
+      0.0081,
+      0.133
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.5,
+     "baseline": null,
+     "change": {
+      "combo": "SC020|15Min|GBPJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+       "source": "ProRealCode",
+       "url": "https://www.prorealcode.com/prorealtime-trading-strategies/dax-15min-false-breakout-supertrend/",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T03:50:47+00:00",
+     "id": "0b7d508579df",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +0.1R (t 0.01) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T07:00:13+00:00"
+    },
+    {
+     "bot": "bot7",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC086|4Hour|JP225 · Exp TrendMagic CCI 50 median + ATR 5 colour switch, 3.5 / 7 ATR, 4H",
+     "what": "הסייר הביא אותה (StockSharp (port of MT5 EA)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 38,
+      "eff_n": 38.0,
+      "mean": 0.0661,
+      "t": 0.82,
+      "win": 60.6
+     },
+     "unseen": {
+      "n": 48,
+      "eff_n": 48.0,
+      "mean": 0.1071,
+      "t": 1.84,
+      "win": 60.4
+     },
+     "whole": {
+      "n": 86,
+      "eff_n": 85.8,
+      "mean": 0.0898,
+      "t": 1.87,
+      "win": 60.5
+     },
+     "halves": [
+      0.0762,
+      0.1008
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.5,
+     "baseline": null,
+     "change": {
+      "combo": "SC086|4Hour|JP225",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Exp TrendMagic CCI 50 median + ATR 5 colour switch, 3.5 / 7 ATR, 4H",
+       "source": "StockSharp (port of MT5 EA)",
+       "url": "https://doc.stocksharp.com/en/api-examples/3746_Exp_TrendMagic",
+       "added": "2026-11-13"
+      }
+     },
+     "made": "2026-11-14T03:50:48+00:00",
+     "id": "d76afd8d8393",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +2.5R (t 0.82) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה בבוט 7: SC086 על JP225 (4 שעות), בסיכון x0.7 (כוכבית המנהל - אולי מזל). ההגדרות ב־live/bots/bot7.json.",
+     "first_seen": "2026-11-14T04:01:13+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T04:01:13+00:00",
+     "decision_id": "de383a4426e1"
+    },
+    {
+     "bot": "bot7",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC043|4Hour|EURJPY · 15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
+     "what": "הסייר הביא אותה (BabyPips forum). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 29,
+      "eff_n": 29.0,
+      "mean": 0.0277,
+      "t": 0.13,
+      "win": 31.1
+     },
+     "unseen": {
+      "n": 40,
+      "eff_n": 40.0,
+      "mean": 0.1014,
+      "t": 0.42,
+      "win": 42.6
+     },
+     "whole": {
+      "n": 69,
+      "eff_n": 68.9,
+      "mean": 0.0718,
+      "t": 0.43,
+      "win": 38.0
+     },
+     "halves": [
+      -0.0397,
+      0.1692
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.5,
+     "baseline": null,
+     "change": {
+      "combo": "SC043|4Hour|EURJPY",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
+       "source": "BabyPips forum",
+       "url": "https://forums.babypips.com/t/scalping-15mdblebol/73264",
+       "added": "2026-11-12"
+      }
+     },
+     "made": "2026-11-14T03:50:48+00:00",
+     "id": "410f07a32f29",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +0.8R (t 0.13) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T20:42:10+00:00"
+    },
+    {
+     "bot": "bot7",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+     "what": "הסייר הביא אותה (NYC Servers (blog)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 107,
+      "eff_n": 106.9,
+      "mean": 0.0114,
+      "t": 0.15,
+      "win": 50.5
+     },
+     "unseen": {
+      "n": 112,
+      "eff_n": 112.0,
+      "mean": 0.0863,
+      "t": 1.16,
+      "win": 61.6
+     },
+     "whole": {
+      "n": 219,
+      "eff_n": 218.5,
+      "mean": 0.0512,
+      "t": 0.96,
+      "win": 56.4
+     },
+     "halves": [
+      0.0015,
+      0.0984
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.5,
+     "baseline": null,
+     "change": {
+      "combo": "SC069|15Min|XAUUSD",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+       "source": "NYC Servers (blog)",
+       "url": "https://newyorkcityservers.com/blog/gold-xauusd-trading-strategy",
+       "added": "2026-11-13"
+      }
+     },
+     "made": "2026-11-14T03:50:48+00:00",
+     "id": "77fac48939fb",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.2R (t 0.15) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-14T04:01:13+00:00"
+    },
+    {
+     "bot": "bot7",
+     "kind": "new",
      "title": "אסטרטגיה חדשה: SC034|1Hour|JP225 · ATR Trend + RSI<40 pullback over a rising EMA200, 1.5/3 ATR, long",
      "what": "הסייר הביא אותה (TradingView). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
      "train": {
@@ -156615,7 +156601,7 @@
      "made": "2026-11-14T03:50:48+00:00",
      "id": "bd80e88e6339",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +2.3R (+0.050R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.1R (t 0.01) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -156678,6 +156664,67 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T02:20:59+00:00"
+    },
+    {
+     "bot": "bot7",
+     "kind": "new",
+     "title": "אסטרטגיה חדשה: SC070|5Min|JP225 · Keltner 20/2 breakout held, first 20-EMA touch, swing/1 ATR stop, 2 ATR target, long",
+     "what": "הסייר הביא אותה (JournalPlus (article)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
+     "train": {
+      "n": 113,
+      "eff_n": 112.9,
+      "mean": 0.0115,
+      "t": 0.06,
+      "win": 32.8
+     },
+     "unseen": {
+      "n": 140,
+      "eff_n": 140.0,
+      "mean": 0.035,
+      "t": 0.21,
+      "win": 35.8
+     },
+     "whole": {
+      "n": 253,
+      "eff_n": 252.4,
+      "mean": 0.025,
+      "t": 0.19,
+      "win": 34.5
+     },
+     "halves": [
+      -0.0862,
+      0.1327
+     ],
+     "neighbours": {
+      "share_positive": null
+     },
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": 0.5,
+     "baseline": null,
+     "change": {
+      "combo": "SC070|5Min|JP225",
+      "kind": "add"
+     },
+     "detail": {
+      "scout": {
+       "name": "Keltner 20/2 breakout held, first 20-EMA touch, swing/1 ATR stop, 2 ATR target, long",
+       "source": "JournalPlus (article)",
+       "url": "https://journalplus.co/strategies/keltner-channel-strategy",
+       "added": "2026-11-13"
+      }
+     },
+     "made": "2026-11-14T03:50:48+00:00",
+     "id": "e6155f1dd8b1",
+     "tier": "watch",
+     "verdict": "עד 2025 בסך הכל רק +1.3R (t 0.06) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
+     "status": "approved",
+     "note": null,
+     "reply": "נבנה בבוט 7: SC070 על JP225 (5 דקות), בסיכון x0.7 (כוכבית המנהל - אולי מזל). ההגדרות ב־live/bots/bot7.json.",
+     "first_seen": "2026-11-14T04:01:13+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T04:01:13+00:00",
+     "decision_id": "73b7c64fca3c"
     },
     {
      "bot": "bot7",
@@ -156789,7 +156836,7 @@
      "made": "2026-11-14T03:50:47+00:00",
      "id": "72c796e64a61",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.2R (+0.009R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.4R (t 0.31) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -156905,7 +156952,7 @@
      "made": "2026-11-14T03:50:48+00:00",
      "id": "010f0594fce3",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.4R (+0.002R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +2.1R (t 0.12) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -156963,7 +157010,7 @@
      "made": "2026-11-14T03:50:47+00:00",
      "id": "dcc5ee4f25dd",
      "tier": "watch",
-     "verdict": "ב־2026 בסך הכל רק +0.3R (+0.001R לעסקה) - פחות מ־3R, לא מגדיל את הרווח הכולל. נשמר להמשך",
+     "verdict": "עד 2025 בסך הכל רק +0.2R (t 0.36) - היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך",
      "status": "pending",
      "note": null,
      "reply": null,
@@ -178473,7 +178520,10 @@
   }
  },
  "decisions": {
-  "new": [],
-  "unread": 313
+  "new": [
+   "d26a0688cbff",
+   "ae9895d7b99d"
+  ],
+  "unread": 315
  }
 }

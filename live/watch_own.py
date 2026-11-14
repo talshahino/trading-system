@@ -580,7 +580,7 @@ def fmt(name, p):
 FUT_WORD = {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה", "breakeven": "ברייק (30% יצאו)"}
 
 
-def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
+def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen, calm=None):
     """Bot 6 (12.11.2026): the user's gap method on 1 hour / 5 minutes (agents/tal_gap.py, card abb187377383) - an
     impulse on the hour chart, the gap between candle 1 and candle 3 that stayed open, a limit at its middle, the stop
     2 ticks beyond the 2nd 5-minute swing beyond the entry, the target at the 2nd swing on the other side, no management.
@@ -588,8 +588,11 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen):
     in micro contracts on the virtual FTMO Futures account. It replaced the scalping bot's old gap tracks."""
     shut, late = FA.session_masks(df)
     tick = FA.SPEC[name][2]
+    # calm (14.11.2026, bot 6's smart agent): the high-impact calendar masks, as bot 5's gap tracks get them - so a
+    # track with PROT cal15 / cal60 or the news guard NEWSX (the user's task tal1411strad) trades live exactly as tested
+    # (before this bot 6's live Data had no calendar and those rules were silently off). No track uses them today.
     D = TG.Data(name, df[["o", "h", "l", "c"]], np.full(len(df), tick), np.asarray(stop_at | shut, bool),
-                np.asarray(noent | late, bool), 2 * tick, {})
+                np.asarray(noent | late, bool), 2 * tick, calm or {})
     contract = FA.SPEC[name][0]
     cutoff = (df.index[-1] - pd.Timedelta(days=2)).isoformat()
     for trk, (pair, cfg) in FA.TAL_TRACKS.items():
@@ -992,7 +995,12 @@ def main():
                         for k_, v_ in keep1.items():
                             setattr(OG, k_, v_)
                 if name in FA.SPEC:
-                    fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen)
+                    try:
+                        calm = cal.cal_masks(df, name)
+                    except Exception as e:  # noqa: BLE001
+                        calm = {}
+                        log(f"bot 6 calendar masks failed for {name}: {e}")
+                    fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen, calm=calm)
                 if name in V4_SYMBOLS:
                     keep4 = {k_: getattr(CORE, k_) for k_ in V4}
                     try:

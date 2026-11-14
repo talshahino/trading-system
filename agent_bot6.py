@@ -339,6 +339,27 @@ FILT_HE["MINSTOP"] = lambda v: f"סטופ לפחות {v:g} × ATR של הטיי�
 # volatility stop were queued behind the broad filters and the search, and on 13.11 the bots' computer ran over its
 # minutes before reaching them (no result for a day). Their runs now go first, with a budget of their own.
 USER6 = LAD6 + (("EXIT", "p50_50"),) + MIN6
+# THE USER'S TASKS OF 14.11.2026 (replies.json "_tasks" tal1411ema / tal1411strad / tal1411anti), shared with bot 5 -
+# the same tal_gap knobs (bot 5's commit 9de242565), the same in simulate and in live_trades except PYR: on every
+# running track of bot 6, one knob moved on its rules as they are, each group answered on its own (not hidden behind
+# another group's best): (1) EMA 9/20 direction on the high / the entry timeframe (TREND e920 / e920l - replaces the
+# track's TREND), (2) no entry while the Bollinger 20/2 width is under its 20th percentile of 100 candles, on the entry
+# / the high timeframe (BBW l20 / h20), (3) the news guard: no entry +-15 / 60 minutes around a red release and an open
+# trade closed 15 / 60 minutes before it (NEWSX; the live bot 6 has the calendar since 14.11.2026), (4) the pyramid:
+# half a position more at +1R, the whole stop moved so a stop still loses 1R (PYR; the test only - its card is
+# tal_gap_code, built by the smart agent after an approval). Queued after the 13.11 tasks inside the user's step.
+EMA6 = (("TREND", "e920"), ("TREND", "e920l"))
+BBW6 = (("BBW", "l20"), ("BBW", "h20"))
+NEWS6 = (("NEWSX", 15), ("NEWSX", 60))
+PYR6 = (("PYR", 1.0),)
+TASK6 = {"ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6}
+USER6 = USER6 + EMA6 + BBW6 + NEWS6 + PYR6
+FILT_HE["TREND"] = lambda v: {"e920": "רק בכיוון EMA 9/20 של הטיים פריים הגבוה", "e920l": "רק בכיוון EMA 9/20 של טיים פריים הכניסה",
+                              "day": "רק בכיוון פתיחת היום", "up20": "רק בכיוון EMA 20 של הטיים פריים שמעל"}.get(str(v), f"TREND {v}") + f" (TREND {v})"
+FILT_HE["BBW"] = lambda v: ("בלי כניסה כשרוחב בולינגר 20/2 מתחת לאחוזון 20 של 100 הנרות, טיים פריים "
+                            + ("הכניסה" if str(v)[0] == "l" else "גבוה") + f" (BBW {v})")
+FILT_HE["NEWSX"] = lambda v: f"הגנת חדשות: בלי כניסה ±{int(v)} דק' סביב חדשה אדומה, וסגירה {int(v)} דק' לפניה (NEWSX {int(v)})"
+FILT_HE["PYR"] = lambda v: f"פירמידה: חצי פוזיציה נוספת ב־{v:g}R, הסטופ של הכל זז כך שהסיכון נשאר 1R (PYR {v:g})"
 
 
 def filt_runs(idx, budget_s, group=None):
@@ -438,14 +459,23 @@ def filt_cards(idx, group=FILT6):
                           f"({better} מהם טובים מהיום ב־2024-2025; סה\"כ משוקלל {lv['train_w']:+.1f}R ← {x['train_w']:+.1f}R). "
                           f"2026 (לא נראתה): סה\"כ {lv['unseen']:+.1f}R ← {x['unseen']:+.1f}R, {x['n_unseen']} עסקאות, "
                           f"{x['mean_unseen']:+.2f}R לעסקה (היום {lv['mean_unseen']:+.2f}R על {lv['n_unseen']}), היום הגרוע "
-                          f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. בבוט 5: "
-                          + (_b5_ladder() if k == "LADDER" else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
+                          f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. "
+                          + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR") or str(v).startswith("e920") else "")
+                          + "בבוט 5: " + (_b5_ladder(k) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP") or str(v).startswith("e920")
+                                          else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
                           tested=len(vs), risk_pct=round(r_ * 100, 3), baseline=bs["unseen"],
                           neighbours={"values": [q for q in row if q != "live"], "share_positive": round(float(np.mean(
                               [row[q]["unseen"] > lv["unseen"] for q in row if q != "live"])), 2)},
                           detail={"world": "bot6", "filters": row, "bot5": b5.get(pn)},
-                          change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
+                          # PYR is not in live_trades yet: a code card (the smart agent builds it after an approval)
+                          change=({"method": "tal_gap_code", "pair": pn, "cfg": c, "track": trk, "knob": "PYR", "to": v}
+                                  if k == "PYR" else
+                                  # "test" (14.11.2026): the head-to-head card must not share its id with the search's
+                                  # card of the same pair and rules - 38531db8b5eb (t5_1 + MAXC 0.2, the fix of the 13.11
+                                  # loss) was withdrawn as its own duplicate and an id once decided is never decided again
+                                  {"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg",
+                                   "test": "head2head"})))
     return out, res
 
 
@@ -498,16 +528,18 @@ def ask_cards(idx):
     return out, res
 
 
-def _b5_ladder():
-    """What bot 5's agent found for the laddered entries (its LADDER cards, 13.11.2026)."""
+def _b5_ladder(knob="LADDER"):
+    """What bot 5's agent found for the same knob (its improve cards: LADDER 13.11.2026; BBW / NEWSX / PYR / TREND
+    e920 / MINSTOP 14.11.2026)."""
+    pat = '"e920' if knob == "TREND" else f'"{knob}"'
     try:
         cs = [c for nm in ("cards.json", "cards_notes.json", "cards_smart.json") if Path(f"reports/agents/bot5/{nm}").exists()
               for c in json.loads(Path(f"reports/agents/bot5/{nm}").read_text(encoding="utf-8")).get("cards", [])
-              if "LADDER" in json.dumps(c.get("change") or {}) and c.get("kind") == "improve"]
+              if pat in json.dumps(c.get("change") or {}) and c.get("kind") == "improve"]
     except Exception:  # noqa: BLE001
         cs = []
     if not cs:
-        return "הכניסה המדורגת נבדקת על 6 המסלולים שלו, עוד אין כרטיס שיפור."
+        return ("הכניסה המדורגת" if knob == "LADDER" else f"אותו שינוי ({knob})") + " נבדק על 6 המסלולים שלו, עוד אין כרטיס שיפור."
     return "; ".join(f"{c['title'][:70]} ({(c.get('unseen') or {}).get('mean', 0):+.2f}R לעסקה ב־2026)" for c in cs[:3]) + "."
 
 
@@ -684,6 +716,134 @@ def scale_cards(pf, rk):
     return out
 
 
+# SIZE UP AFTER A WIN (the user's task tal1411anti, 14.11.2026, every bot; bot 5's anti_cards, shared): (a) the next
+# trade of the same track at x1.25 the risk after a winning trade, up to x2, back to x1 after a loss; (b) the pyramid
+# (PYR, per track in TASK6, and here on the whole bot). On bot 6 as the account takes it: every running track at its
+# real risk, the day's total in % of the balance, a trade's multiplier only from the track's trades CLOSED before it.
+# Fair against more risk (the main goal): the variant is scaled down so its deepest fall on 2024-2025 equals the bot's
+# as it runs, then compared on both periods - and within bot 6's own limits (FTMO Futures, fut_lim), not bot 5's.
+def anti6_cards(idx, b5=None):
+    rk = {**FA.RISK}
+    try:
+        rk.update(json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8")).get("risk") or {})
+    except Exception:  # noqa: BLE001
+        pass
+    rows, prow, miss, pmiss = [], [], [], []
+    for trk, (pn, cfg) in live_tracks().items():
+        r_ = float(rk.get(trk, FA.RISK_TAL) or 0) * 100
+        if r_ <= 0:
+            continue
+        c0 = TG._norm(dict(cfg))
+        t = _t6(idx, pn, c0)
+        if t is None:
+            miss.append(trk)
+            continue
+        t = t.sort_values("time").reset_index(drop=True)
+        mins = t["mins"] if "mins" in t else pd.Series(0.0, index=t.index)
+        t["out"] = t["time"] + pd.to_timedelta(mins.fillna(0).astype(float) + 1, unit="min")
+        t["base"] = t["r"] * r_
+        t["anti"] = t["r"] * r_ * A._anti_mult(t)
+        rows.append(t[["time", "base", "anti"]])
+        pt = _t6(idx, pn, TG._norm(dict(c0, PYR=1.0)))
+        if pt is None:
+            pmiss.append(trk)
+        else:
+            prow.append(pd.DataFrame({"time": pt["time"], "pyr": pt["r"] * r_}))
+    if not rows:
+        return [], {"state": "running", "missing": miss}
+    t = pd.concat(rows, ignore_index=True)
+    lm = fut_lim()
+    res = {"state": "done" if not miss else "partial", "missing": miss, "pyr_missing": pmiss, "rule": A.ANTI,
+           "limits": {"day": lm["day"], "all": lm["all"]}, "now": A._pct_view(t, "base"), "anti": A._pct_view(t, "anti")}
+    if prow and not pmiss and not miss:
+        res["pyr"] = A._pct_view(pd.concat(prow, ignore_index=True), "pyr")
+    b5t = "בבוט 5: " + ("; ".join(f"{nm} {'עדיף' if (b5.get(nm) or {}).get('better') else 'לא עדיף'}" for nm in ("anti", "pyr") if b5.get(nm))
+                        if b5 and b5.get("state") in ("done", "partial") else "הבדיקה עוד רצה")
+    res["bot5"] = b5t
+    cards, b = [], res["now"]
+    for nm in ("anti", "pyr"):
+        v = res.get(nm)
+        if not (v and v.get("train") and v.get("unseen") and b.get("train") and b.get("unseen")) or miss:
+            continue
+        k = min(1.0, b["train"]["max_fall_pct"] / max(v["train"]["max_fall_pct"], 1e-9))   # the same risk as now
+        vt, vu = v["train"]["total_pct"] * k, v["unseen"]["total_pct"] * k
+        res[nm]["fair_k"] = round(k, 3)
+        res[nm]["fair"] = {"train_total_pct": round(vt, 2), "unseen_total_pct": round(vu, 2),
+                           "unseen_worst_day_pct": round(v["unseen"]["worst_day_pct"] * k, 2),
+                           "unseen_max_fall_pct": round(v["unseen"]["max_fall_pct"] * k, 2)}
+        win = (vt > b["train"]["total_pct"] and vu > b["unseen"]["total_pct"]
+               and v["unseen"]["worst_day_pct"] * k >= b["unseen"]["worst_day_pct"]
+               and v["unseen"]["max_fall_pct"] * k <= b["unseen"]["max_fall_pct"]
+               and v["unseen"]["worst_day_pct"] * k > -0.8 * lm["day"] and v["unseen"]["max_fall_pct"] * k < 0.8 * lm["all"])
+        res[nm]["better"] = bool(win)
+        if not win:
+            continue
+        he = "x1.25 אחרי עסקה מנצחת באותו מסלול, עד x2, חזרה לבסיס אחרי הפסד" if nm == "anti" else \
+             "חצי פוזיציה נוספת ב־1R, הסטופ של הכל כך שהסיכון נשאר 1R"
+        cards.append(K.card(
+            "bot6", "improve", "בוט 6 · שיטת הגאפ, כל המסלולים: " + ("הגדלה אחרי ניצחון" if nm == "anti" else "פירמידה"),
+            f"משימה של טל מ־14.11. {he}. הבוט כולו (המסלולים שרצים בסיכון שלהם), מוקטן ל־x{k:.2f} כדי שהירידה הגדולה "
+            f"ב־2024-2025 תהיה כמו היום. 2024-2025: {b['train']['total_pct']:+.1f}% ← {vt:+.1f}%; 2026 (לא נראתה): "
+            f"{b['unseen']['total_pct']:+.1f}% ← {vu:+.1f}%, היום הגרוע {b['unseen']['worst_day_pct']:+.2f}% ← "
+            f"{v['unseen']['worst_day_pct'] * k:+.2f}%, ירידה {b['unseen']['max_fall_pct']:.1f}% ← {v['unseen']['max_fall_pct'] * k:.1f}% "
+            f"(המגבלות של החשבון: {lm['day']:g}% ביום, {lm['all']:g}% מהשיא). {b5t}. צריך קוד בבוט החי (נבנה אחרי אישור).",
+            None, None, tested=2, risk_pct=None, detail={"world": "bot6", "anti": res},
+            change={"method": "tal_gap_code", "track": "tal_all", "knob": "ANTI" if nm == "anti" else "PYR",
+                    "to": A.ANTI if nm == "anti" else 1.0, "scale": round(k, 3)}))
+    return cards, res
+
+
+# THE STRADDLE BEFORE A RED RELEASE (the user's task tal1411strad, 14.11.2026: bot 7 builds EV04 in
+# agents/news_straddle.py, bots 5-6 use the same code and cache) on bot 6's three indices. The study's costs are
+# FTMO's CFD spread at the fill minute + the extra news slippage - wider than a micro future's tick + commission, so a
+# variant that holds here holds with room on the futures; only the FTMO-safe start (minute 3) may be proposed.
+def straddle6_runs(budget_s):
+    keep = A.STRAD_SYMS
+    try:
+        A.STRAD_SYMS = list(WORLD["symbols"])
+        return A.straddle_runs(budget_s)
+    finally:
+        A.STRAD_SYMS = keep
+
+
+def straddle6_cards(b5=None):
+    from agents import news_straddle as NS
+    rows, have = [], []
+    for sym in WORLD["symbols"]:
+        try:
+            c_ = json.loads((NS.CACHE / f"{sym}.json").read_text(encoding="utf-8"))
+            if c_.get("version") == NS.VERSION:
+                rows += c_["rows"]
+                have.append(sym)
+        except Exception:  # noqa: BLE001
+            pass
+    if not rows:
+        return [], {"state": "running", "symbols": have}
+    df = pd.DataFrame(rows)
+    st = NS.study(df)
+    safe = NS.study(df[df["v"].astype(str).str.startswith("safe|")])
+    res = {"state": "done" if len(have) == len(WORLD["symbols"]) else "partial", "symbols": have,
+           "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
+           "all": {k: st.get(k) for k in ("baseline", "best", "robust", "tested")},
+           "safe": {k: safe.get(k) for k in ("baseline", "best", "robust", "tested")}}
+    b5b = ((b5 or {}).get("safe") or {}).get("best") or {}
+    res["bot5"] = (f"בבוט 5 (המדדים והזהב): {b5b.get('v')}, 2026 {((b5b.get('unseen') or {}).get('sum') or 0):+.1f}R"
+                   if b5b else "בבוט 5 הבדיקה עוד רצה")
+    b = safe.get("best")
+    rob = safe.get("robust") or {}
+    if res["state"] != "done" or not b or not b["train"]["sum"] or b["train"]["sum"] <= 0 or (b["unseen"]["sum"] or 0) <= 0 \
+            or rob.get("top_positive_unseen", 0) * 2 < rob.get("top", 10):
+        return [], res
+    return [K.card("bot6", "new", f"בוט 6 · סטרדל לפני חדשה אדומה (EV04) על 3 המדדים: {b['v']}",
+                   f"משימה של טל מ־14.11. Buy Stop + Sell Stop אחרי החדשה (דקה 3, מחוץ לחלון של FTMO), OCO, סיכון קבוע, בלי "
+                   f"הכפלה. נבחר על 2025, 2026 (לא נראתה): {b['unseen']['n']} עסקאות, {b['unseen']['sum']:+.1f}R. מתוך 10 הטובות "
+                   f"ב־2025, {rob.get('top_positive_unseen')} מרוויחות ב־2026. עלויות CFD של FTMO (רחבות מחוזה מיקרו). "
+                   f"מסלול נפרד בסיכון של מסלולי הגאפ. {res['bot5']}.",
+                   b["train"], b["unseen"], tested=safe.get("tested") or 1, risk_pct=0.28,
+                   detail={"world": "bot6", "straddle": res},
+                   change={"method": "straddle_code", "v": b["v"], "symbols": have})], res
+
+
 STEPS = {}                 # this run's gap-method steps: {name: {done | err, at, sec, budget_sec}} -> results bot6.steps
 
 
@@ -777,6 +937,32 @@ def tal(budget_s):
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     except Exception as e:  # noqa: BLE001
         print(f"tal_gap ladder cards failed: {e}")
+    for gk, grp in TASK6.items():   # the user's tasks of 14.11.2026, each group head to head on what runs
+        try:
+            gc, gres = filt_cards(idx, grp)
+            pcards += gc
+            if gres:
+                doc["bot6"].setdefault("tasks1411", {})[gk] = gres
+                TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        except Exception as e:  # noqa: BLE001
+            print(f"tal_gap {gk} cards failed: {e}")
+    try:            # size up after a win / the pyramid on the whole bot (tal1411anti)
+        ac_, ares_ = anti6_cards(idx, (doc.get("bot5") or {}).get("anti"))
+        pcards += ac_
+        doc["bot6"]["anti"] = ares_
+        TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print(f"tal_gap anti failed: {e}")
+    try:            # EV04 on the three indices (tal1411strad) - the shared cache, so bot 5 / 7's runs cost nothing
+        t1 = time.time()
+        STEPS["straddle"] = {"done": straddle6_runs(budget_s * 0.1), "sec": round(time.time() - t1),
+                             "budget_sec": round(budget_s * 0.1)}
+        sc6, sres6 = straddle6_cards((doc.get("bot5") or {}).get("straddle"))
+        pcards += sc6
+        doc["bot6"]["straddle"] = sres6
+        TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print(f"tal_gap straddle failed: {e}")
     try:            # the shared exit on the whole bot (the user's task, 13.11.2026)
         t1 = time.time()
         STEPS["shared_exit"] = {"done": shared6_runs(budget_s * 0.3), "sec": round(time.time() - t1),

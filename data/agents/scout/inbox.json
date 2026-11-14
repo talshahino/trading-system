@@ -5923,6 +5923,2853 @@
     "bot6"
    ],
    "rules": "FVG return entry (SC250 mechanics, any gap) only with the Gaussian filter rising and the close over it (mirror); gap stop; 2R."
+  },
+  {
+   "id": "SC290",
+   "name": "CRT 4H live: sweep of the previous 4H candle, LTF structure shift, FVG return, target the range's other side (thecrypteller / wyckoff.hq)",
+   "source": "TikTok video sent by the user (task tal1411set7 (1), (14)): thecrypteller / wyckoff.hq CRT 4H",
+   "url": "https://www.luxalgo.com/library/concept/candle-range-theory/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "fx",
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Previous 4H candle range; sweep in the current 4H candle; LTF BOS/CHoCH back (smc k3) within 6 bars; FVG return entry; gap stop; target the other side of the 4H range."
+  },
+  {
+   "id": "SC291",
+   "name": "FVG return only on the stronger instrument of a correlated pair (displacement vs the partner, ER >= 0.3), 2R (ictrules)",
+   "source": "TikTok video sent by the user (task tal1411set7 (2)): ictrules - trade the stronger of correlated assets",
+   "url": "https://www.tiktok.com/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "fx",
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "FVG return only when the instrument's 10-bar ATR displacement beats the partner's and ER(10) >= 0.3; gap stop; 2R."
+  },
+  {
+   "id": "SC292",
+   "name": "SMT divergence -> iFVG -> CISD entry, SMT-swing stop, 2R (The Creative Trader)",
+   "source": "TikTok video sent by the user (task tal1411set7 (3)): The Creative Trader - SMT confirmation model",
+   "url": "https://it.tradingview.com/script/PH9fxHqo-SMT-Divergence",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SMT (k3) -> iFVG within 20 bars -> CISD within 10 bars of the inversion; SMT-swing stop; 2R."
+  },
+  {
+   "id": "SC293",
+   "name": "SMT divergence + engulfing within 5 bars, SMT-swing stop, 2R (CY FOREX)",
+   "source": "TikTok video sent by the user (task tal1411set7 (3)): CY FOREX - SMT + engulfing",
+   "url": "https://it.tradingview.com/script/PH9fxHqo-SMT-Divergence",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "index",
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Engulfing within 5 bars of an SMT divergence; SMT-swing stop; 2R."
+  },
+  {
+   "id": "SC294",
+   "name": "Inversion FVG retest (body close through a gap flips it), zone stop, 2R (LuxAlgo)",
+   "source": "TikTok video sent by the user (task tal1411set7 (4)): LuxAlgo Inversion FVG",
+   "url": "https://www.tradingview.com/script/8FHucjY6-Inversion-Fair-Value-Gaps-IFVG-LuxAlgo/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Retest of the inverted gap (wick into it, close back out); zone stop; 2R."
+  },
+  {
+   "id": "SC295",
+   "name": "CHoCH, then the return to the broken level / OB with a confirmation candle, 2R (TradeMachine / LuxAlgo)",
+   "source": "TikTok video sent by the user (task tal1411set7 (5)): TradeMachine / LuxAlgo - CHoCH with confirmation",
+   "url": "https://www.tradingview.com/script/CnB3fSph-Smart-Money-Concepts-SMC-LuxAlgo/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "After CHoCH: return to the broken level / OB within 30 bars + confirmation candle; OB / pullback-low stop; 2R."
+  },
+  {
+   "id": "SC296",
+   "name": "CHoCH immediate entry on the break close, swing stop, 2R (comparison for SC295)",
+   "source": "TikTok video sent by the user (task tal1411set7 (5)): comparison - immediate CHoCH entry",
+   "url": "https://www.tradingview.com/script/CnB3fSph-Smart-Money-Concepts-SMC-LuxAlgo/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Enter on the CHoCH close; last swing stop; 2R."
+  },
+  {
+   "id": "SC297",
+   "name": "Heikin Ashi swing: colour change + 2nd no-opposite-wick candle, exit on the opposite colour",
+   "source": "TikTok video sent by the user (task tal1411set7 (6)): Heikin Ashi swing (4H / daily)",
+   "url": "https://www.investopedia.com/trading/heikin-ashi-better-candlestick/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [
+    "metal",
+    "index",
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "HA colour flip + 2nd candle without the opposite wick; 5-bar swing stop; exit on the first opposite-colour HA candle."
+  },
+  {
+   "id": "SC298",
+   "name": "External liquidity sweep -> target the internal FVG (IRL), sweep stop (Ali Khan)",
+   "source": "TikTok video sent by the user (task tal1411set7 (7)): Ali Khan - ERL sweep -> IRL target",
+   "url": "https://www.tiktok.com/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Sweep of the last swing high/low with a close back; sweep stop; target the internal FVG (else 2R)."
+  },
+  {
+   "id": "SC299",
+   "name": "Internal FVG fill in the trend -> target the external swing (ERL), gap stop (Ali Khan)",
+   "source": "TikTok video sent by the user (task tal1411set7 (7)): Ali Khan - IRL fill -> ERL target",
+   "url": "https://www.tiktok.com/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "FVG return in the structure trend; gap stop; target the external swing."
+  },
+  {
+   "id": "SC300",
+   "name": "First pullback to the last swing's POC (Swing Profile Analyzer), value-area stop, leg-extreme target (ChartPrime)",
+   "source": "TikTok video sent by the user (task tal1411set7 (8)): ChartPrime Swing Profile Analyzer",
+   "url": "https://www.tradingview.com/script/8S40eYNi-Swing-Profile-Analyzer-ChartPrime/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "First pullback to the completed leg's POC with a close back; value-area stop; target the leg extreme."
+  },
+  {
+   "id": "SC301",
+   "name": "SK System: structure + 0.5-0.618 retracement entry, 0.786 stop, 1.414 extension target (TradersNotes)",
+   "source": "TikTok video sent by the user (task tal1411set7 (9)): TradersNotes SK System",
+   "url": "https://in.tradingview.com/script/HesTezMz-SK-Trading-System-v1-6",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Structure trend; 0.5-0.618 retracement entry with a close out of the zone; 0.786 stop; 1.414 extension target."
+  },
+  {
+   "id": "SC302",
+   "name": "Double top / bottom: entry at the second touch with a rejection candle, neckline target (comparison for TV57)",
+   "source": "TikTok video sent by the user (task tal1411set7 (10)): double top - comparison of the entry at the 2nd top vs the neckline (TV57)",
+   "url": "https://www.tiktok.com/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "2nd touch within 0.3 ATR of the swing extreme + rejection candle; neckline >= 1 ATR away; stop over the higher top; neckline target."
+  },
+  {
+   "id": "SC303",
+   "name": "London sweeps Asia + iFVG -> Asian-range target; NY sweeps London + iFVG -> London-range target (QuantFlowLabs)",
+   "source": "TikTok video sent by the user (task tal1411set7 (11)): QuantFlowLabs London / NY reversal, EURUSD 1m",
+   "url": "https://tradingfinder.com/education/forex/ict-daily-profile-london-newyork-continuation",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "London 07-10: Asia sweep + iFVG -> Asian-range target; NY 13:30-16 London time: London sweep + iFVG -> London-range target; sweep stop."
+  },
+  {
+   "id": "SC304",
+   "name": "LazyBear Squeeze release in the histogram's colour, squeeze-range stop, 2R, fade exit",
+   "source": "TikTok video sent by the user (task tal1411set7 (12)): LazyBear Squeeze Momentum",
+   "url": "https://www.tradingview.com/script/nqQ1DT5a-Squeeze-Momentum-Indicator-LazyBear/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Squeeze off after >= 3 bars on, lime / red histogram; squeeze-range stop; 2R; exit when the histogram weakens."
+  },
+  {
+   "id": "SC305",
+   "name": "Fibonacci EMA stack 8/13/21/34/55 in order, pullback to the 21-34, EMA55 stop, 2R (Trading Data)",
+   "source": "TikTok video sent by the user (task tal1411set7 (13)): Trading Data - Fibonacci EMAs",
+   "url": "https://www.tiktok.com/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "EMA 8/13/21/34/55 fully ordered; low to the EMA21 (not under EMA55), close back over EMA21; EMA55/34 stop; 2R."
+  },
+  {
+   "id": "SC306",
+   "name": "ICT Unicorn: breaker + FVG overlap retest, breaker stop, opposing swing or 2R (LuxAlgo / Flux)",
+   "source": "LuxAlgo concept 'ICT Unicorn' / Flux Charts ICT Unicorn",
+   "url": "https://www.luxalgo.com/library/concept/unicorn/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Breaker + FVG overlap retest; breaker stop; opposing swing (>= 1.5R) or 2R."
+  },
+  {
+   "id": "SC307",
+   "name": "ICT Power of Three: manipulation under the NY midnight open and the Asian low, close back over the open, 2R, out 16:00 NY",
+   "source": "LuxAlgo concept 'Accumulation-Manipulation-Distribution' (ICT PO3); FXOpen",
+   "url": "https://www.luxalgo.com/library/concept/accumulation-manipulation-distribution/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "fx",
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Manipulation under the NY midnight open and the Asian low, first close back over the open before 11:00 NY; day-low stop; 2R; out 16:00 NY."
+  },
+  {
+   "id": "SC308",
+   "name": "ICT rejection block revisit (long-wick swing), wick stop, 2R (LuxAlgo concept)",
+   "source": "LuxAlgo concept 'Rejection Block'; UAlgo Rejection Blocks",
+   "url": "https://www.luxalgo.com/library/concept/rejection-block/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Long-wick swing extreme zone revisit with a close back out; wick stop; 2R."
+  },
+  {
+   "id": "SC309",
+   "name": "ICT NWOG / NDOG edge rejection, CE stop, 2R (LuxAlgo concept)",
+   "source": "LuxAlgo concepts 'Opening Gap' / 'New Week Opening Gap' (ICT NWOG / NDOG)",
+   "url": "https://www.luxalgo.com/library/concept/new-week-opening-gap/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "index",
+    "fx",
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Edge rejection at the latest NWOG / NDOG; stop beyond the CE (>= 0.5 ATR); 2R."
+  },
+  {
+   "id": "SC310",
+   "name": "ICT Balanced Price Range retest, zone stop, 2R (UAlgo / TakingProphets)",
+   "source": "ICT Balanced Price Range (UAlgo / TakingProphets open-source scripts)",
+   "url": "https://www.tradingview.com/script/zPbYfcE8-ICT-Balance-Price-Range-UAlgo/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Opposite FVGs overlapping within 5 bars; retest of the overlap; zone stop; 2R."
+  },
+  {
+   "id": "SC311",
+   "name": "WH SelfInvest London Reversal: fade the Asian (London) extreme +/- 0.25 ATR in the first 2 hours, 5 ATR stop / target",
+   "source": "WH SelfInvest free strategy 93 'London Reversal System'",
+   "url": "https://www.whselfinvest.de/en-de/trading-platform/free-trading-strategies/tradingsystem/93-london-reversal-system",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "fx",
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Cross beyond the previous session's extreme +/- 0.25 ATR(20) in the first 2 hours of London / NY; stop 5 ATR(20), target 5 ATR(20)."
+  },
+  {
+   "id": "SC312",
+   "name": "Big Ben: fade the pre-London breakout of the Asian body range, range-size target, 60-minute time stop",
+   "source": "TradingView idea 'EURAUD 15M Big Ben breakout' (Tradingstrategyguides)",
+   "url": "https://id.tradingview.com/chart/EURAUD/O8s3VFzb-EURAUD-15M-BIG-BEN-BREAKOUT-TRADING-STRATEGY",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Asian body range; pre-London breakout 07-08; first close back inside 08:05-09:00; range-size target beyond the far side; 60-minute time stop; safety stop beyond the pre-open extreme."
+  },
+  {
+   "id": "SC313",
+   "name": "Coppock Curve turn under / over zero, 2 ATR stop, opposite-turn exit (StockCharts)",
+   "source": "StockCharts ChartSchool - Coppock Curve",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/coppock-curve",
+   "added": "2026-11-15",
+   "timeframes": [
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Turn up under zero -> buy (mirror ours); 2 ATR stop; opposite-turn exit."
+  },
+  {
+   "id": "SC314",
+   "name": "Ultimate Oscillator divergence, Williams' 3 rules (30 / 70), exit at 70 / 30",
+   "source": "StockCharts ChartSchool - Ultimate Oscillator (Williams' rules)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/ultimate-oscillator",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Divergence with the first extreme under 35 (over 65), UO breaks the divergence's high; extreme stop; exit at 70 / 30."
+  },
+  {
+   "id": "SC315",
+   "name": "Klinger Volume Oscillator signal cross on the right side of zero with the EMA100, 2 ATR, 2R",
+   "source": "StockCharts ChartSchool - Klinger Volume Oscillator",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/klinger-volume-oscillator",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "KVO / signal cross on the right side of zero with the EMA100; 2 ATR; 2R."
+  },
+  {
+   "id": "SC316",
+   "name": "EMA 9/21 cross unless a Mass Index reversal bulge is pending; after a bulge trade the EMA9 turn (Dorsey)",
+   "source": "StockCharts ChartSchool - Mass Index (Dorsey)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/mass-index",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "EMA 9/21 cross unless a bulge in the last 20 bars; after a bulge the EMA9 turn; 2 ATR; 2R."
+  },
+  {
+   "id": "SC317",
+   "name": "McGinley Dynamic +/-0.25% threshold cross, 10-bar cooldown, reverse (StockSharp 1038)",
+   "source": "StockSharp example 1038 'McGinley Dynamic (Improved)'",
+   "url": "https://doc.stocksharp.com/en/api-examples/1038_McGinley_Dynamic_Improved",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "(close - MD) / close crosses +/-0.25%, 10-bar cooldown, reverse; 2 ATR stop (ours)."
+  },
+  {
+   "id": "SC318",
+   "name": "Elder Ray: rising EMA13 with rising negative bear power (mirror), swing stop, 2R (Elder)",
+   "source": "Elder Ray (Elder; LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/elder-ray/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Rising EMA13 + negative rising bear power (mirror); 5-bar swing stop; 2R."
+  },
+  {
+   "id": "SC319",
+   "name": "Wilder Volatility System: 3 x ATR(7) close SAR, stop and reverse (Wilder 1978)",
+   "source": "Wilder, New Concepts in Technical Trading Systems (1978); open-source port LucF",
+   "url": "https://www.tradingview.com/script/pjZKWnHl-Volatility-System-by-Wilder-LucF",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Close SAR 3 x ATR(7), stop and reverse."
+  },
+  {
+   "id": "SC320",
+   "name": "FRAMA cross with its slope, 2 ATR stop, cross-back exit (Ehlers 2005)",
+   "source": "Ehlers FRAMA, S&C Oct 2005 Traders' Tips",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2005/10/TradersTips/TradersTips.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Close crosses a sloping FRAMA; 2 ATR; cross-back exit."
+  },
+  {
+   "id": "SC321",
+   "name": "Hurst < 0.7 mean reversion to the SMA20, 2% stop (StockSharp 0228)",
+   "source": "StockSharp example 0228 'Hurst Exponent Reversion'",
+   "url": "https://doc.stocksharp.com/en/api-examples/0228_Hurst_Exponent_Reversion",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Hurst(100) < 0.7 and close vs SMA20; exit at the SMA or Hurst > 0.7; 2% stop."
+  },
+  {
+   "id": "SC322",
+   "name": "Linear regression channel 50 / 1.5 SE fade with the slope, exit at the line (StockSharp)",
+   "source": "StockSharp designer gallery 'Linear Regression Channel'",
+   "url": "https://doc.stocksharp.com/en/designer-gallery/Linear_Regression_Channel",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Slope side + close outside the 1.5 SE band; exit at the line; 2 ATR stop (ours)."
+  },
+  {
+   "id": "SC323",
+   "name": "Renko (0.5 x StdDev14) trend reversal bricks, 3% stop, reverse (StockSharp 1608)",
+   "source": "StockSharp example 1608 'Renko Trend Reversal'",
+   "url": "https://doc.stocksharp.com/en/api-examples/1608_Renko_Trend_Reversal",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "0.5 x StdDev(14) close bricks; reversal brick entries; 3% stop; reverse."
+  },
+  {
+   "id": "SC324",
+   "name": "Woodies CCI zero-line reject in the CCI trend, swing stop, 2R",
+   "source": "Woodies CCI conventions (LuxAlgo concept; StockSharp 2263)",
+   "url": "https://www.luxalgo.com/library/concept/woodies-cci-conventions/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "CCI14 6-bar trend; zero-line reject; swing stop; 2R."
+  },
+  {
+   "id": "SC325",
+   "name": "Power hour: new day high / low after 15:00 NY, 1 ATR stop, 2R, out at 16:00 (edgeful)",
+   "source": "edgeful 'Power hour breakout' report",
+   "url": "https://docs.edgeful.com/trade-using-edgeful/price-action-reports/power-hour-breakout",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "First close beyond the 09:30-15:00 NY extreme in 15:00-15:50; 1 ATR; 2R; out at 16:00."
+  },
+  {
+   "id": "SC326",
+   "name": "Smart Money Index divergence vs the 5-session price change, day trade (Don Hays)",
+   "source": "Smart Money Index (Don Hays; LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/smart-money-index/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5-session price change vs SMI change divergence; first bar after 10:00 NY; 1.5 ATR; out 16:00."
+  },
+  {
+   "id": "SC327",
+   "name": "Woodie pivots: PP bounce in the open's direction, S1 stop, R1 target (DailyFX)",
+   "source": "Woodie pivots (LuxAlgo concept; DailyFX 'Trading with Woodie's pivots')",
+   "url": "https://www.luxalgo.com/library/concept/woodie-pivots/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Open over the PP, PP touch with a close back over it -> buy to R1, stop under S1 (mirror)."
+  },
+  {
+   "id": "SC328",
+   "name": "OBV breakout ahead of price over the EMA50, 2 ATR, 2R (Granville)",
+   "source": "StockCharts ChartSchool - On-Balance Volume (Granville)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/on-balance-volume-obv",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "OBV over its 20-bar high while price is not, over EMA50; 2 ATR; 2R."
+  },
+  {
+   "id": "SC329",
+   "name": "Ease of Movement zero cross with the SMA50, 2 ATR, cross-back exit (Arms)",
+   "source": "StockCharts ChartSchool - Ease of Movement (Arms)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/ease-of-movement-emv",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "EMV(14) zero cross with the SMA50; 2 ATR; cross-back exit."
+  },
+  {
+   "id": "SC330",
+   "name": "EMA 20/50 cross only while the Ulcer Index is under its 100-bar median, 2 ATR, 2R",
+   "source": "StockCharts ChartSchool - Ulcer Index (Martin), as a filter",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/ulcer-index",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "EMA 20/50 cross only while UI(14) <= its 100-bar median; 2 ATR; 2R."
+  },
+  {
+   "id": "IB001",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + RSI range-shift pullback turn (40-80 / 20-60), stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"rsi_pull\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = RSI range-shift pullback turn (40-80 / 20-60) in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB002",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + RSI range-shift pullback turn (40-80 / 20-60), stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"rsi_pull\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = RSI range-shift pullback turn (40-80 / 20-60) in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB003",
+   "name": "IB: SuperTrend 10x3 side + RSI range-shift pullback turn (40-80 / 20-60), stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"rsi_pull\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = RSI range-shift pullback turn (40-80 / 20-60) in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB004",
+   "name": "IB: SuperTrend 10x3 side + RSI range-shift pullback turn (40-80 / 20-60), stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"rsi_pull\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = RSI range-shift pullback turn (40-80 / 20-60) in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB005",
+   "name": "IB: price above / below the Ichimoku cloud + RSI range-shift pullback turn (40-80 / 20-60), stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"trigger\": \"rsi_pull\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud; entry = RSI range-shift pullback turn (40-80 / 20-60) in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB006",
+   "name": "IB: price above / below the Ichimoku cloud + RSI range-shift pullback turn (40-80 / 20-60), stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"trigger\": \"rsi_pull\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud; entry = RSI range-shift pullback turn (40-80 / 20-60) in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB007",
+   "name": "IB: SuperTrend 10x3 side + WaveTrend cross on the pullback side of zero, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"wavetrend\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = WaveTrend cross on the pullback side of zero in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB008",
+   "name": "IB: SuperTrend 10x3 side + WaveTrend cross on the pullback side of zero, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"wavetrend\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = WaveTrend cross on the pullback side of zero in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB009",
+   "name": "IB: Gaussian Channel filter slope and side + WaveTrend cross on the pullback side of zero, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"gaussian\", \"trigger\": \"wavetrend\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Gaussian Channel filter slope and side; entry = WaveTrend cross on the pullback side of zero in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB010",
+   "name": "IB: Gaussian Channel filter slope and side + WaveTrend cross on the pullback side of zero, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"gaussian\", \"trigger\": \"wavetrend\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Gaussian Channel filter slope and side; entry = WaveTrend cross on the pullback side of zero in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB011",
+   "name": "IB: Zero Lag Trend side + WaveTrend cross on the pullback side of zero, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"zero_lag\", \"trigger\": \"wavetrend\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Zero Lag Trend side; entry = WaveTrend cross on the pullback side of zero in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB012",
+   "name": "IB: Zero Lag Trend side + WaveTrend cross on the pullback side of zero, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"zero_lag\", \"trigger\": \"wavetrend\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Zero Lag Trend side; entry = WaveTrend cross on the pullback side of zero in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB013",
+   "name": "IB: SuperTrend 10x3 side + QQE cross of its trailing line, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"qqe\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = QQE cross of its trailing line in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB014",
+   "name": "IB: SuperTrend 10x3 side + QQE cross of its trailing line, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"qqe\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = QQE cross of its trailing line in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB015",
+   "name": "IB: Gaussian Channel filter slope and side + QQE cross of its trailing line, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"gaussian\", \"trigger\": \"qqe\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Gaussian Channel filter slope and side; entry = QQE cross of its trailing line in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB016",
+   "name": "IB: Gaussian Channel filter slope and side + QQE cross of its trailing line, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"gaussian\", \"trigger\": \"qqe\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Gaussian Channel filter slope and side; entry = QQE cross of its trailing line in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB017",
+   "name": "IB: Zero Lag Trend side + QQE cross of its trailing line, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"zero_lag\", \"trigger\": \"qqe\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Zero Lag Trend side; entry = QQE cross of its trailing line in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB018",
+   "name": "IB: Zero Lag Trend side + QQE cross of its trailing line, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"zero_lag\", \"trigger\": \"qqe\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Zero Lag Trend side; entry = QQE cross of its trailing line in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB019",
+   "name": "IB: SuperTrend 10x3 side + Laguerre RSI turn out of 0.2 / 0.8, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"laguerre\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = Laguerre RSI turn out of 0.2 / 0.8 in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB020",
+   "name": "IB: SuperTrend 10x3 side + Laguerre RSI turn out of 0.2 / 0.8, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"laguerre\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = Laguerre RSI turn out of 0.2 / 0.8 in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB021",
+   "name": "IB: Gaussian Channel filter slope and side + Laguerre RSI turn out of 0.2 / 0.8, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"gaussian\", \"trigger\": \"laguerre\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Gaussian Channel filter slope and side; entry = Laguerre RSI turn out of 0.2 / 0.8 in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB022",
+   "name": "IB: Gaussian Channel filter slope and side + Laguerre RSI turn out of 0.2 / 0.8, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"gaussian\", \"trigger\": \"laguerre\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Gaussian Channel filter slope and side; entry = Laguerre RSI turn out of 0.2 / 0.8 in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB023",
+   "name": "IB: Zero Lag Trend side + Laguerre RSI turn out of 0.2 / 0.8, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"zero_lag\", \"trigger\": \"laguerre\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Zero Lag Trend side; entry = Laguerre RSI turn out of 0.2 / 0.8 in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB024",
+   "name": "IB: Zero Lag Trend side + Laguerre RSI turn out of 0.2 / 0.8, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"zero_lag\", \"trigger\": \"laguerre\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Zero Lag Trend side; entry = Laguerre RSI turn out of 0.2 / 0.8 in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB025",
+   "name": "IB: SuperTrend 10x3 side + Fisher Transform trigger cross, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"fisher\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = Fisher Transform trigger cross in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB026",
+   "name": "IB: SuperTrend 10x3 side + Fisher Transform trigger cross, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"fisher\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = Fisher Transform trigger cross in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB027",
+   "name": "IB: Gaussian Channel filter slope and side + Fisher Transform trigger cross, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"gaussian\", \"trigger\": \"fisher\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Gaussian Channel filter slope and side; entry = Fisher Transform trigger cross in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB028",
+   "name": "IB: Gaussian Channel filter slope and side + Fisher Transform trigger cross, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"gaussian\", \"trigger\": \"fisher\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Gaussian Channel filter slope and side; entry = Fisher Transform trigger cross in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB029",
+   "name": "IB: Zero Lag Trend side + Fisher Transform trigger cross, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"zero_lag\", \"trigger\": \"fisher\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Zero Lag Trend side; entry = Fisher Transform trigger cross in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB030",
+   "name": "IB: Zero Lag Trend side + Fisher Transform trigger cross, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"zero_lag\", \"trigger\": \"fisher\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = Zero Lag Trend side; entry = Fisher Transform trigger cross in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB031",
+   "name": "IB: SMC structure trend (k 5) + CISD close, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"smc\", \"trigger\": \"cisd\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SMC structure trend (k 5); entry = CISD close in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB032",
+   "name": "IB: SMC structure trend (k 5) + CISD close, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"smc\", \"trigger\": \"cisd\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SMC structure trend (k 5); entry = CISD close in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB033",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + CISD close, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"cisd\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = CISD close in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB034",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + CISD close, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"cisd\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = CISD close in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB035",
+   "name": "IB: HalfTrend side + CISD close, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"halftrend\", \"trigger\": \"cisd\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = HalfTrend side; entry = CISD close in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB036",
+   "name": "IB: HalfTrend side + CISD close, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"halftrend\", \"trigger\": \"cisd\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = HalfTrend side; entry = CISD close in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB037",
+   "name": "IB: SMC structure trend (k 5) + Inversion FVG retest, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"smc\", \"trigger\": \"ifvg\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SMC structure trend (k 5); entry = Inversion FVG retest in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB038",
+   "name": "IB: SMC structure trend (k 5) + Inversion FVG retest, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"smc\", \"trigger\": \"ifvg\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SMC structure trend (k 5); entry = Inversion FVG retest in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB039",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + Inversion FVG retest, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"ifvg\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = Inversion FVG retest in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB040",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + Inversion FVG retest, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"ifvg\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = Inversion FVG retest in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB041",
+   "name": "IB: HalfTrend side + Inversion FVG retest, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"halftrend\", \"trigger\": \"ifvg\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = HalfTrend side; entry = Inversion FVG retest in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB042",
+   "name": "IB: HalfTrend side + Inversion FVG retest, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"halftrend\", \"trigger\": \"ifvg\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = HalfTrend side; entry = Inversion FVG retest in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB043",
+   "name": "IB: SMC structure trend (k 5) + SMC order-block retest, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"smc\", \"trigger\": \"ob_retest\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SMC structure trend (k 5); entry = SMC order-block retest in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB044",
+   "name": "IB: SMC structure trend (k 5) + SMC order-block retest, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"smc\", \"trigger\": \"ob_retest\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SMC structure trend (k 5); entry = SMC order-block retest in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB045",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + SMC order-block retest, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"ob_retest\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = SMC order-block retest in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB046",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + SMC order-block retest, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"ob_retest\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = SMC order-block retest in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB047",
+   "name": "IB: HalfTrend side + SMC order-block retest, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"halftrend\", \"trigger\": \"ob_retest\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = HalfTrend side; entry = SMC order-block retest in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB048",
+   "name": "IB: HalfTrend side + SMC order-block retest, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"halftrend\", \"trigger\": \"ob_retest\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = HalfTrend side; entry = SMC order-block retest in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB049",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + Woodies CCI zero-line reject, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"woodies\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = Woodies CCI zero-line reject in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB050",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + Woodies CCI zero-line reject, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"woodies\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = Woodies CCI zero-line reject in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB051",
+   "name": "IB: SuperTrend 10x3 side + Woodies CCI zero-line reject, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"woodies\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = Woodies CCI zero-line reject in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB052",
+   "name": "IB: SuperTrend 10x3 side + Woodies CCI zero-line reject, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"woodies\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = Woodies CCI zero-line reject in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB053",
+   "name": "IB: price above / below the Ichimoku cloud + Woodies CCI zero-line reject, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"trigger\": \"woodies\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud; entry = Woodies CCI zero-line reject in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB054",
+   "name": "IB: price above / below the Ichimoku cloud + Woodies CCI zero-line reject, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"trigger\": \"woodies\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud; entry = Woodies CCI zero-line reject in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB055",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + Elder Ray power turn, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"elder\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = Elder Ray power turn in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB056",
+   "name": "IB: EMA 9/21/50/100/200 stack fully ordered + Elder Ray power turn, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"trigger\": \"elder\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered; entry = Elder Ray power turn in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB057",
+   "name": "IB: SuperTrend 10x3 side + Elder Ray power turn, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"elder\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = Elder Ray power turn in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB058",
+   "name": "IB: SuperTrend 10x3 side + Elder Ray power turn, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"trigger\": \"elder\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side; entry = Elder Ray power turn in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB059",
+   "name": "IB: price above / below the Ichimoku cloud + Elder Ray power turn, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"trigger\": \"elder\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud; entry = Elder Ray power turn in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB060",
+   "name": "IB: price above / below the Ichimoku cloud + Elder Ray power turn, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"trigger\": \"elder\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud; entry = Elder Ray power turn in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB061",
+   "name": "IB: price above / below the Ichimoku cloud + UT Bot trailing-stop cross, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"trigger\": \"ut_bot\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud; entry = UT Bot trailing-stop cross in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB062",
+   "name": "IB: price above / below the Ichimoku cloud + UT Bot trailing-stop cross, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"trigger\": \"ut_bot\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud; entry = UT Bot trailing-stop cross in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB063",
+   "name": "IB: close vs a sloping McGinley Dynamic + UT Bot trailing-stop cross, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"mcginley\", \"trigger\": \"ut_bot\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = close vs a sloping McGinley Dynamic; entry = UT Bot trailing-stop cross in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB064",
+   "name": "IB: close vs a sloping McGinley Dynamic + UT Bot trailing-stop cross, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"mcginley\", \"trigger\": \"ut_bot\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = close vs a sloping McGinley Dynamic; entry = UT Bot trailing-stop cross in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB065",
+   "name": "IB: HalfTrend side + UT Bot trailing-stop cross, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"halftrend\", \"trigger\": \"ut_bot\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = HalfTrend side; entry = UT Bot trailing-stop cross in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB066",
+   "name": "IB: HalfTrend side + UT Bot trailing-stop cross, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"halftrend\", \"trigger\": \"ut_bot\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = HalfTrend side; entry = UT Bot trailing-stop cross in that direction; exit stop 2 ATR, 2.5 ATR trail, out on a direction flip."
+  },
+  {
+   "id": "IB067",
+   "name": "IB: LazyBear squeeze release while ADX(14) >= 20, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"regime\": \"adx20\", \"trigger\": \"squeeze\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: LazyBear squeeze release in the momentum's direction, only while ADX(14) >= 20 (volatility regime + breakout); exit stop 1.5 ATR, 2R (E2's flip = the close crossing the EMA50)."
+  },
+  {
+   "id": "IB068",
+   "name": "IB: LazyBear squeeze release while ADX(14) >= 20, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"regime\": \"adx20\", \"trigger\": \"squeeze\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: LazyBear squeeze release in the momentum's direction, only while ADX(14) >= 20 (volatility regime + breakout); exit stop 2 ATR, 2.5 ATR trail, out on a direction flip (E2's flip = the close crossing the EMA50)."
+  },
+  {
+   "id": "IB069",
+   "name": "IB: LazyBear squeeze release while |Kaufman ER| >= 0.3, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"regime\": \"er03\", \"trigger\": \"squeeze\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: LazyBear squeeze release in the momentum's direction, only while |Kaufman ER| >= 0.3 (volatility regime + breakout); exit stop 1.5 ATR, 2R (E2's flip = the close crossing the EMA50)."
+  },
+  {
+   "id": "IB070",
+   "name": "IB: LazyBear squeeze release while |Kaufman ER| >= 0.3, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"regime\": \"er03\", \"trigger\": \"squeeze\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: LazyBear squeeze release in the momentum's direction, only while |Kaufman ER| >= 0.3 (volatility regime + breakout); exit stop 2 ATR, 2.5 ATR trail, out on a direction flip (E2's flip = the close crossing the EMA50)."
+  },
+  {
+   "id": "IB071",
+   "name": "IB: LazyBear squeeze release while Choppiness < 50, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"regime\": \"chop50\", \"trigger\": \"squeeze\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: LazyBear squeeze release in the momentum's direction, only while Choppiness < 50 (volatility regime + breakout); exit stop 1.5 ATR, 2R (E2's flip = the close crossing the EMA50)."
+  },
+  {
+   "id": "IB072",
+   "name": "IB: LazyBear squeeze release while Choppiness < 50, stop 2 ATR, 2.5 ATR trail, out on a direction flip",
+   "source": "Indicator builder (task tal1411indstrat): {\"regime\": \"chop50\", \"trigger\": \"squeeze\", \"exit\": \"E2\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: LazyBear squeeze release in the momentum's direction, only while Choppiness < 50 (volatility regime + breakout); exit stop 2 ATR, 2.5 ATR trail, out on a direction flip (E2's flip = the close crossing the EMA50)."
+  },
+  {
+   "id": "IB073",
+   "name": "IB: 4H SuperTrend 10x3 side + CISD close on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"htf\": \"4h\", \"trigger\": \"cisd\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side on the 4h chart; entry = CISD close in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB074",
+   "name": "IB: 4H SuperTrend 10x3 side + Inversion FVG retest on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"htf\": \"4h\", \"trigger\": \"ifvg\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side on the 4h chart; entry = Inversion FVG retest in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB075",
+   "name": "IB: 4H SuperTrend 10x3 side + RSI range-shift pullback turn (40-80 / 20-60) on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"htf\": \"4h\", \"trigger\": \"rsi_pull\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side on the 4h chart; entry = RSI range-shift pullback turn (40-80 / 20-60) in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB076",
+   "name": "IB: 4H SuperTrend 10x3 side + WaveTrend cross on the pullback side of zero on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"supertrend\", \"htf\": \"4h\", \"trigger\": \"wavetrend\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = SuperTrend 10x3 side on the 4h chart; entry = WaveTrend cross on the pullback side of zero in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB077",
+   "name": "IB: 4H EMA 9/21/50/100/200 stack fully ordered + CISD close on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"htf\": \"4h\", \"trigger\": \"cisd\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered on the 4h chart; entry = CISD close in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB078",
+   "name": "IB: 4H EMA 9/21/50/100/200 stack fully ordered + Inversion FVG retest on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"htf\": \"4h\", \"trigger\": \"ifvg\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered on the 4h chart; entry = Inversion FVG retest in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB079",
+   "name": "IB: 4H EMA 9/21/50/100/200 stack fully ordered + RSI range-shift pullback turn (40-80 / 20-60) on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"htf\": \"4h\", \"trigger\": \"rsi_pull\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered on the 4h chart; entry = RSI range-shift pullback turn (40-80 / 20-60) in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB080",
+   "name": "IB: 4H EMA 9/21/50/100/200 stack fully ordered + WaveTrend cross on the pullback side of zero on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ema_stack\", \"htf\": \"4h\", \"trigger\": \"wavetrend\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = EMA 9/21/50/100/200 stack fully ordered on the 4h chart; entry = WaveTrend cross on the pullback side of zero in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB081",
+   "name": "IB: 4H price above / below the Ichimoku cloud + CISD close on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"htf\": \"4h\", \"trigger\": \"cisd\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud on the 4h chart; entry = CISD close in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB082",
+   "name": "IB: 4H price above / below the Ichimoku cloud + Inversion FVG retest on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"htf\": \"4h\", \"trigger\": \"ifvg\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud on the 4h chart; entry = Inversion FVG retest in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB083",
+   "name": "IB: 4H price above / below the Ichimoku cloud + RSI range-shift pullback turn (40-80 / 20-60) on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"htf\": \"4h\", \"trigger\": \"rsi_pull\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud on the 4h chart; entry = RSI range-shift pullback turn (40-80 / 20-60) in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "IB084",
+   "name": "IB: 4H price above / below the Ichimoku cloud + WaveTrend cross on the pullback side of zero on the entry chart, stop 1.5 ATR, 2R",
+   "source": "Indicator builder (task tal1411indstrat): {\"direction\": \"ichimoku\", \"htf\": \"4h\", \"trigger\": \"wavetrend\", \"exit\": \"E1\"}",
+   "url": "agents/indicators/builder.py",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Indicator builder: direction = price above / below the Ichimoku cloud on the 4h chart; entry = WaveTrend cross on the pullback side of zero in that direction; exit stop 1.5 ATR, 2R."
   }
  ],
  "indicators": [
@@ -6401,6 +9248,188 @@
    "url": "https://it.tradingview.com/script/PH9fxHqo-SMT-Divergence",
    "added": "2026-11-14",
    "uses": "index pair confirmation (US100 / US500) for sweeps and gaps in bots 5-6; SC288"
+  },
+  {
+   "name": "ifvg",
+   "source": "Inversion FVG: a gap closed through by a body flips role; retest of the inverted zone (LuxAlgo, our build of the published rules)",
+   "url": "https://www.tradingview.com/script/8FHucjY6-Inversion-Fair-Value-Gaps-IFVG-LuxAlgo/",
+   "added": "2026-11-15",
+   "uses": "entry (SC294, SC292, SC303, builder trigger); IFVG step of the ICT models; filter for the gap method"
+  },
+  {
+   "name": "heikin_ashi",
+   "source": "Heikin Ashi candles: colour, no-opposite-wick, colour runs, flip + 2nd no-wick confirmation",
+   "url": "https://www.investopedia.com/trading/heikin-ashi-better-candlestick/",
+   "added": "2026-11-15",
+   "uses": "direction filter (colour / runs), swing entry SC297, exit on colour"
+  },
+  {
+   "name": "squeeze_momentum",
+   "source": "Squeeze Momentum [LazyBear]: BB(20, 1.5 quirk) vs KC(20, 1.5 TR), linreg momentum, lime/green/red/maroon",
+   "url": "https://www.tradingview.com/script/nqQ1DT5a-Squeeze-Momentum-Indicator-LazyBear/",
+   "added": "2026-11-15",
+   "uses": "breakout entry SC304, builder regime breakouts IB067-IB072, exit when the histogram weakens"
+  },
+  {
+   "name": "swing_profile",
+   "source": "Swing Profile Analyzer: per-swing frequency-of-closes profile (or volume), leg POC / value area, developing leg POC (ChartPrime, our reconstruction)",
+   "url": "https://www.tradingview.com/script/8S40eYNi-Swing-Profile-Analyzer-ChartPrime/",
+   "added": "2026-11-15",
+   "uses": "leg POC as a pullback entry SC300 / target / filter (price over the last up-leg POC)"
+  },
+  {
+   "name": "coppock",
+   "source": "Coppock Curve: WMA10 of ROC14 + ROC11, turns",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/coppock-curve",
+   "added": "2026-11-15",
+   "uses": "long-term momentum turn SC313; HTF direction filter"
+  },
+  {
+   "name": "ultimate_oscillator",
+   "source": "Ultimate Oscillator 7/14/28 (Larry Williams)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/ultimate-oscillator",
+   "added": "2026-11-15",
+   "uses": "divergence entry SC314; OB/OS exit"
+  },
+  {
+   "name": "klinger",
+   "source": "Klinger Volume Oscillator 34/55, signal 13 (tick volume)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/klinger-volume-oscillator",
+   "added": "2026-11-15",
+   "uses": "volume-flow confirmation SC315"
+  },
+  {
+   "name": "mass_index",
+   "source": "Mass Index 9/25 and Dorsey's reversal bulge (27 -> 26.5)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/mass-index",
+   "added": "2026-11-15",
+   "uses": "reversal-bulge warning / filter SC316"
+  },
+  {
+   "name": "mcginley",
+   "source": "McGinley Dynamic (k 0.6, exponent 4)",
+   "url": "https://doc.stocksharp.com/en/api-examples/1038_McGinley_Dynamic_Improved",
+   "added": "2026-11-15",
+   "uses": "adaptive trend line SC317; builder direction"
+  },
+  {
+   "name": "elder_ray",
+   "source": "Elder Ray: bull / bear power vs EMA13, Elder's buy / sell conditions",
+   "url": "https://www.luxalgo.com/library/concept/elder-ray/",
+   "added": "2026-11-15",
+   "uses": "pullback entry SC318; builder trigger"
+  },
+  {
+   "name": "volatility_system",
+   "source": "Wilder Volatility System: close-based SAR 3 x ATR(7), stop and reverse",
+   "url": "https://www.tradingview.com/script/pjZKWnHl-Volatility-System-by-Wilder-LucF",
+   "added": "2026-11-15",
+   "uses": "stop-and-reverse SC319; trailing stop for other strategies"
+  },
+  {
+   "name": "frama",
+   "source": "Ehlers FRAMA (16, hl2), fractal-dimension alpha",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2005/10/TradersTips/TradersTips.html",
+   "added": "2026-11-15",
+   "uses": "adaptive trend SC320"
+  },
+  {
+   "name": "hurst",
+   "source": "Rolling Hurst exponent (R/S, 100 log returns) - < 0.5..0.7 mean-reverting",
+   "url": "https://doc.stocksharp.com/en/api-examples/0228_Hurst_Exponent_Reversion",
+   "added": "2026-11-15",
+   "uses": "regime filter (mean-reverting vs trending) SC321"
+  },
+  {
+   "name": "linreg_channel",
+   "source": "Linear regression channel 50 +/- 1.5 standard errors, slope",
+   "url": "https://doc.stocksharp.com/en/designer-gallery/Linear_Regression_Channel",
+   "added": "2026-11-15",
+   "uses": "channel fade SC322; slope filter"
+  },
+  {
+   "name": "renko_trend",
+   "source": "Renko bricks on closes, 0.5 x StdDev(14) size, reversals",
+   "url": "https://doc.stocksharp.com/en/api-examples/1608_Renko_Trend_Reversal",
+   "added": "2026-11-15",
+   "uses": "noise-filtered trend SC323; direction filter"
+  },
+  {
+   "name": "woodies_cci",
+   "source": "Woodies CCI: turbo 6 / CCI 14, 6-bar trend, zero-line reject",
+   "url": "https://www.luxalgo.com/library/concept/woodies-cci-conventions/",
+   "added": "2026-11-15",
+   "uses": "zero-line reject SC324; builder trigger"
+  },
+  {
+   "name": "woodie_pivots",
+   "source": "Woodie pivots: PP = (H + L + 2 x open) / 4, R1/S1/R2/S2",
+   "url": "https://www.luxalgo.com/library/concept/woodie-pivots/",
+   "added": "2026-11-15",
+   "uses": "daily levels SC327; targets"
+  },
+  {
+   "name": "obv",
+   "source": "On-Balance Volume (tick volume), EMA20, prior 20-bar extremes",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/on-balance-volume-obv",
+   "added": "2026-11-15",
+   "uses": "volume-leads-price breakout SC328"
+  },
+  {
+   "name": "eom",
+   "source": "Ease of Movement (Arms) SMA14, tick volume",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/ease-of-movement-emv",
+   "added": "2026-11-15",
+   "uses": "volume-ease filter SC329"
+  },
+  {
+   "name": "ulcer_index",
+   "source": "Ulcer Index 14 (drawdown depth / duration)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/ulcer-index",
+   "added": "2026-11-15",
+   "uses": "calm-market filter SC330"
+  },
+  {
+   "name": "smart_money_index",
+   "source": "Smart Money Index (Don Hays): - first 30 min + last hour, completed US days",
+   "url": "https://www.luxalgo.com/library/concept/smart-money-index/",
+   "added": "2026-11-15",
+   "uses": "daily sentiment divergence SC326 (US indices / stocks)"
+  },
+  {
+   "name": "rejection_blocks",
+   "source": "ICT rejection blocks: long-wick swing extremes, body edge to wick, revisit signals",
+   "url": "https://www.luxalgo.com/library/concept/rejection-block/",
+   "added": "2026-11-15",
+   "uses": "ICT zone entry SC308"
+  },
+  {
+   "name": "bpr",
+   "source": "ICT Balanced Price Range: overlap of opposite FVGs within 5 bars, retests (our build)",
+   "url": "https://www.tradingview.com/script/zPbYfcE8-ICT-Balance-Price-Range-UAlgo/",
+   "added": "2026-11-15",
+   "uses": "ICT zone entry SC310"
+  },
+  {
+   "name": "opening_gaps",
+   "source": "ICT NWOG / NDOG: previous close vs reopen across the 17:00 NY break, CE",
+   "url": "https://www.luxalgo.com/library/concept/opening-gap/",
+   "added": "2026-11-15",
+   "uses": "NWOG / NDOG levels SC309; targets / CE magnets"
+  },
+  {
+   "name": "po3_midnight",
+   "source": "ICT Power of Three around the NY midnight open: Asian range, manipulation, distribution back through the open",
+   "url": "https://www.luxalgo.com/library/concept/accumulation-manipulation-distribution/",
+   "added": "2026-11-15",
+   "uses": "ICT AMD day frame SC307; Asian range / midnight-open filter for the gap method"
+  },
+  {
+   "name": "unicorn",
+   "source": "ICT Unicorn: breaker block overlapping an FVG of the break, retests, breaker stop",
+   "url": "https://www.luxalgo.com/library/concept/unicorn/",
+   "added": "2026-11-15",
+   "uses": "ICT breaker+FVG entry SC306"
   }
  ],
  "sources": [
@@ -6408,7 +9437,7 @@
    "name": "TradingView (open-source scripts + ideas)",
    "url": "https://www.tradingview.com/scripts/",
    "look_for": "open-source Pine strategies / indicators to port; ideas with full rules",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "FXStreet",
@@ -6438,19 +9467,19 @@
    "name": "Forex Factory (forum + calendar)",
    "url": "https://www.forexfactory.com/forum/71-trading-systems",
    "look_for": "trading-system threads with first-post rules; the calendar for bot 7",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "Myfxbook",
    "url": "https://www.myfxbook.com/systems",
    "look_for": "verified long-running profitable accounts - which methods they trade (description, trade times, holding times)",
-   "last_scanned": ""
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "MQL5 CodeBase / Market / Articles",
    "url": "https://www.mql5.com/en/code",
    "look_for": "EA logic in articles and the CodeBase; indicators to port",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "DailyFX / IG education",
@@ -6468,7 +9497,7 @@
    "name": "Investing.com",
    "url": "https://www.investing.com/analysis/",
    "look_for": "strategy articles; economic calendar",
-   "last_scanned": ""
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "Bloomberg",
@@ -6516,13 +9545,13 @@
    "name": "TikTok / Instagram / Facebook / X",
    "url": "https://www.tiktok.com/",
    "look_for": "the user's videos (tal1411*) and the creators behind them; TikTok itself is blocked to reading - search for the creators elsewhere",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "Reddit r/algotrading, r/Daytrading, r/Forex",
    "url": "https://www.reddit.com/r/algotrading/",
    "look_for": "shared systems with backtests",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "QuantConnect / Quantpedia",
@@ -6540,19 +9569,31 @@
    "name": "StockSharp examples",
    "url": "https://doc.stocksharp.com/en/api-examples/",
    "look_for": "hundreds of documented strategy examples with exact rules",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "LuxAlgo library",
    "url": "https://www.luxalgo.com/library/",
    "look_for": "concept pages with exact indicator formulas",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "WH SelfInvest free strategies",
    "url": "https://whselfinvest.com/en/trading_strategies_33_Kaufman_Efficiency_Ratio.php",
    "look_for": "free strategies with rules",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
+  },
+  {
+   "name": "StockCharts ChartSchool",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators",
+   "look_for": "classic indicator formulas and their documented signals",
+   "last_scanned": "2026-11-15"
+  },
+  {
+   "name": "edgeful reports",
+   "url": "https://docs.edgeful.com/",
+   "look_for": "session statistics setups (power hour, ORB, gap fill) with exact windows",
+   "last_scanned": "2026-11-15"
   }
  ],
  "sources_note": "The scout's standing source list (user, 14.11.2026 12:45, task tal1411src 'super important for the scout'). Every night the scout searches these (rotating, different ones each night) for new strategies and indicators; last_scanned = the last night it searched there (empty = not yet)."

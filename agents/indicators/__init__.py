@@ -47,8 +47,17 @@ from agents.indicators.vwap_bands import anchored_vwap_swing, vwap_bands
 from agents.indicators.wavetrend import wavetrend
 from agents.indicators.williams_gsv import williams_gsv
 from agents.indicators.zero_lag_trend import zero_lag_trend
+from agents.indicators.ifvg import ifvg
+from agents.indicators.heikin_ashi import heikin_ashi
+from agents.indicators.squeeze_momentum import squeeze_momentum
+from agents.indicators.swing_profile import swing_profile
+from agents.indicators.classic2 import (coppock, eom, elder_ray, frama, hurst, klinger, linreg_channel, mass_index,
+                                        mcginley, obv, renko_trend, smart_money_index, ulcer_index, ultimate_oscillator,
+                                        volatility_system, woodie_pivots, woodies_cci)
+from agents.indicators.ict_extra import bpr, opening_gaps, po3_midnight, rejection_blocks, unicorn
 
 TV = "https://www.tradingview.com/script/"
+SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
 
 INDICATORS = {
     "supertrend_ai": (supertrend_ai, "SuperTrend AI: k-means picks the best ATR factor (1-5), flips = buy/sell (LuxAlgo; = Flux 'AI SuperTrend')",
@@ -184,6 +193,39 @@ INDICATORS = {
             "https://www.luxalgo.com/library/concept/candle-range-theory/"),
     "smt_divergence": (smt_divergence, "SMT divergence vs a correlated partner at confirmed swing highs / lows (needs the partner's bars)",
                        "https://it.tradingview.com/script/PH9fxHqo-SMT-Divergence"),
+    # ---- 15.11.2026: task tal1411set7 and the night's search ----
+    "ifvg": (ifvg, "Inversion FVG: a gap closed through by a body flips role; retest of the inverted zone (LuxAlgo, our build of the published rules)",
+             TV + "8FHucjY6-Inversion-Fair-Value-Gaps-IFVG-LuxAlgo/"),
+    "heikin_ashi": (heikin_ashi, "Heikin Ashi candles: colour, no-opposite-wick, colour runs, flip + 2nd no-wick confirmation",
+                    "https://www.investopedia.com/trading/heikin-ashi-better-candlestick/"),
+    "squeeze_momentum": (squeeze_momentum, "Squeeze Momentum [LazyBear]: BB(20, 1.5 quirk) vs KC(20, 1.5 TR), linreg momentum, lime/green/red/maroon",
+                         TV + "nqQ1DT5a-Squeeze-Momentum-Indicator-LazyBear/"),
+    "swing_profile": (swing_profile, "Swing Profile Analyzer: per-swing frequency-of-closes profile (or volume), leg POC / value area, developing leg POC (ChartPrime, our reconstruction)",
+                      TV + "8S40eYNi-Swing-Profile-Analyzer-ChartPrime/"),
+    "coppock": (coppock, "Coppock Curve: WMA10 of ROC14 + ROC11, turns", SC2 + "coppock-curve"),
+    "ultimate_oscillator": (ultimate_oscillator, "Ultimate Oscillator 7/14/28 (Larry Williams)", SC2 + "ultimate-oscillator"),
+    "klinger": (klinger, "Klinger Volume Oscillator 34/55, signal 13 (tick volume)", SC2 + "klinger-volume-oscillator"),
+    "mass_index": (mass_index, "Mass Index 9/25 and Dorsey's reversal bulge (27 -> 26.5)", SC2 + "mass-index"),
+    "mcginley": (mcginley, "McGinley Dynamic (k 0.6, exponent 4)", "https://doc.stocksharp.com/en/api-examples/1038_McGinley_Dynamic_Improved"),
+    "elder_ray": (elder_ray, "Elder Ray: bull / bear power vs EMA13, Elder's buy / sell conditions", "https://www.luxalgo.com/library/concept/elder-ray/"),
+    "volatility_system": (volatility_system, "Wilder Volatility System: close-based SAR 3 x ATR(7), stop and reverse",
+                          TV + "pjZKWnHl-Volatility-System-by-Wilder-LucF"),
+    "frama": (frama, "Ehlers FRAMA (16, hl2), fractal-dimension alpha", "https://www.traders.com/Documentation/FEEDbk_docs/2005/10/TradersTips/TradersTips.html"),
+    "hurst": (hurst, "Rolling Hurst exponent (R/S, 100 log returns) - < 0.5..0.7 mean-reverting", "https://doc.stocksharp.com/en/api-examples/0228_Hurst_Exponent_Reversion"),
+    "linreg_channel": (linreg_channel, "Linear regression channel 50 +/- 1.5 standard errors, slope", "https://doc.stocksharp.com/en/designer-gallery/Linear_Regression_Channel"),
+    "renko_trend": (renko_trend, "Renko bricks on closes, 0.5 x StdDev(14) size, reversals", "https://doc.stocksharp.com/en/api-examples/1608_Renko_Trend_Reversal"),
+    "woodies_cci": (woodies_cci, "Woodies CCI: turbo 6 / CCI 14, 6-bar trend, zero-line reject", "https://www.luxalgo.com/library/concept/woodies-cci-conventions/"),
+    "woodie_pivots": (woodie_pivots, "Woodie pivots: PP = (H + L + 2 x open) / 4, R1/S1/R2/S2", "https://www.luxalgo.com/library/concept/woodie-pivots/"),
+    "obv": (obv, "On-Balance Volume (tick volume), EMA20, prior 20-bar extremes", SC2 + "on-balance-volume-obv"),
+    "eom": (eom, "Ease of Movement (Arms) SMA14, tick volume", SC2 + "ease-of-movement-emv"),
+    "ulcer_index": (ulcer_index, "Ulcer Index 14 (drawdown depth / duration)", SC2 + "ulcer-index"),
+    "smart_money_index": (smart_money_index, "Smart Money Index (Don Hays): - first 30 min + last hour, completed US days", "https://www.luxalgo.com/library/concept/smart-money-index/"),
+    "rejection_blocks": (rejection_blocks, "ICT rejection blocks: long-wick swing extremes, body edge to wick, revisit signals", "https://www.luxalgo.com/library/concept/rejection-block/"),
+    "bpr": (bpr, "ICT Balanced Price Range: overlap of opposite FVGs within 5 bars, retests (our build)", TV + "zPbYfcE8-ICT-Balance-Price-Range-UAlgo/"),
+    "opening_gaps": (opening_gaps, "ICT NWOG / NDOG: previous close vs reopen across the 17:00 NY break, CE", "https://www.luxalgo.com/library/concept/opening-gap/"),
+    "po3_midnight": (po3_midnight, "ICT Power of Three around the NY midnight open: Asian range, manipulation, distribution back through the open",
+                     "https://www.luxalgo.com/library/concept/accumulation-manipulation-distribution/"),
+    "unicorn": (unicorn, "ICT Unicorn: breaker block overlapping an FVG of the break, retests, breaker stop", "https://www.luxalgo.com/library/concept/unicorn/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

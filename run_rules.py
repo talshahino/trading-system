@@ -141,9 +141,12 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
 # timing tuned per strategy" + partial exits): on top of the combo's exits as the bot trades it now (--plans-file)
 # never without a breakeven: every strategy moves its stop to the entry at some point (user, 09.11.2026) - only WHEN
 MAN_BE = [0.4, 0.5, 0.6, 0.7, 0.8]                      # with a target: breakeven at this share of the way
-MAN_BE_R = [1.5, 2.0, 2.5, 3.0]                         # no target: breakeven once this many R in profit
+MAN_BE_R = [0.75, 1.0, 1.5, 2.0, 2.5, 3.0]               # no target: breakeven once this many R in profit
+# 0.75 / 1R and half at +0.5R (bots 1-4 smart agent, 14.11.2026): 22 live trades of bots 1-4 were +0.5R or more and
+# ended at a full stop (-22R), 11 of them no-target strategies (FR01 GBPUSD +1.16R, TV20 XAUUSD +0.84R, SE02 USDJPY
+# +0.56R x4, FR08 SPCX x3) - the grid never had a point under 1.5R for them. Chosen to 2025 / shown on 2026 as always.
 MAN_PART = [None, (0.5, 0.25), (0.3, 0.5), (0.3, 0.7), (0.5, 0.5), (0.5, 0.7)]   # with a target: (share out, way); half at a quarter: 12.11.2026
-MAN_PART_R = [None, (0.3, 1.0), (0.5, 1.0), (0.3, 2.0), (0.5, 2.0)]    # no target: (share out, at R)
+MAN_PART_R = [None, (0.5, 0.5), (0.3, 1.0), (0.5, 1.0), (0.3, 2.0), (0.5, 2.0)]    # no target: (share out, at R)
 # Fibonacci levels of the way from the entry to the target (user, 12.11.2026 - standing task for every bot): the stop to
 # entry at each level, a part out (25% / 33% / 50%) at one level and the rest to breakeven / the target, two levels
 # (a part out at 38.2%, breakeven at 61.8%). --manage-grid fib; strategies with no target have no way to measure.

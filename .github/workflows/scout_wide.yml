@@ -1,0 +1,111 @@
+name: Scout strategies on every bot (now, parallel)
+
+# Every new scout strategy (the user's TikTok videos, 14.11.2026) on every bot's instruments, one machine per
+# bot x instrument (agents/scout_wide_gh.py). Results go to reports/agents/<bot>/exp; the bots' agents and the manager
+# make the cards from them. The bots' computer keeps doing the same queue - what is done here it skips.
+
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "minutes of tests per machine"
+        default: "90"
+
+permissions:
+  contents: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      jobs: ${{ steps.p.outputs.jobs }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - id: p
+        run: echo "jobs=$(python -m agents.scout_wide_gh plan)" >> "$GITHUB_OUTPUT"
+  run:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        job: ${{ fromJson(needs.plan.outputs.jobs) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Run
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: python -u -m agents.scout_wide_gh run --job "${{ matrix.job }}" --minutes ${{ inputs.minutes }} 2>&1 | tail -30
+      - name: Name
+        id: n
+        run: echo "n=$(echo '${{ matrix.job }}' | tr ':/' '__')" >> "$GITHUB_OUTPUT"
+      - name: Changed results
+        if: always()
+        run: |
+          mkdir -p out
+          git status --porcelain reports/agents | awk '{print $2}' | grep '/exp/' | while read f; do mkdir -p "out/$(dirname "$f")"; cp "$f" "out/$f"; done || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sw-${{ steps.n.outputs.n }}
+          path: out
+          if-no-files-found: ignore
+          retention-days: 5
+  merge:
+    needs: run
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          path: parts
+          pattern: sw-*
+      - name: Merge
+        run: |
+          for d in parts/*/; do [ -d "$d/reports" ] && cp -r "$d/reports/." reports/; done
+          git status --porcelain reports/agents | wc -l
+      - name: Manager
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -u agent_manager.py 2>&1 | tail -20
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/agents || true
+          git commit -qm "Scout strategies on every bot, in parallel (GitHub, scout_wide_gh)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

@@ -99,6 +99,7 @@ def _regimes(df):
         "vol_high": (pr >= 0.5, pr >= 0.5),
         "vol_low": (pr < 0.5, pr < 0.5),
         **_extra_regimes(c),
+        **R.video_regimes(h, l, c),
     }
 
 
@@ -106,6 +107,7 @@ def _regimes(df):
 # _regimes so a built plan with one of them resolves
 EXTRA_REGIMES = ("ema9_20", "bbw_p20")
 RSI_REGIMES = ("rsi_trend",)            # tried only with --filters-rsi (bots 1-4 first, task tal1411rsi)
+VIDEO_REGIMES = R.VIDEO_REGIMES         # tried only with --filters-video (bots 1-4, tasks tal1411set2-set5)
 
 
 def _extra_regimes(c):
@@ -142,6 +144,8 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
         if name in EXTRA_REGIMES and not getattr(args, "filters_extra", False):
             continue
         if name in RSI_REGIMES and not getattr(args, "filters_rsi", False):
+            continue
+        if name in VIDEO_REGIMES and not getattr(args, "filters_video", False):
             continue
         def g(d, al=al, ash=ash):
             lo, sh, plan = fn(d)
@@ -557,6 +561,9 @@ def main():
                          "--test-from..this date, check on this date..end")
     ap.add_argument("--filters-rsi", action="store_true",
                     help="--filters also tries the user's RSI-against-the-trend filter (14.11.2026)")
+    ap.add_argument("--filters-video", action="store_true",
+                    help="--filters also tries the filters of the user's videos (RSI 50, Supertrend, EMA 50/200, "
+                         "5 EMAs in order, 3 SMAs in order; 14.11.2026)")
     ap.add_argument("--filters-extra", action="store_true",
                     help="--filters also tries the user's EMA 9/20 direction and Bollinger-width filters (14.11.2026)")
     ap.add_argument("--combos-file", default="",

@@ -101,6 +101,51 @@ def supertrend(h, l, c, period=10, mult=3.0):
     return flip > 0, flip < 0
 
 
+
+def supertrend_dir(h, l, c, period=10, mult=3.0):
+    """Supertrend direction per bar (+1 green / -1 red), the same bands as supertrend() (known at the bar's close)."""
+    a = atr(h, l, c, period)
+    mid = (h + l) / 2
+    up, dn = (mid - mult * a).tolist(), (mid + mult * a).tolist()
+    cl = c.tolist()
+    out = [1.0] * len(cl)
+    fu, fd, t = up[0], dn[0], 1.0
+    for i in range(1, len(cl)):
+        nfu = max(up[i], fu) if cl[i - 1] > fu else up[i]
+        nfd = min(dn[i], fd) if cl[i - 1] < fd else dn[i]
+        t = 1.0 if cl[i] > fd else -1.0 if cl[i] < fu else t
+        fu, fd = nfu, nfd
+        out[i] = t
+    return np.asarray(out)
+
+
+# the filters from the user's videos of 14.11.2026 (replies.json "_tasks" tal1411set2 / set3 / set4 / set5,
+# tal1411vwap 2) for bots 1-4, on the combo's own timeframe - ONE function for the backtest (run_rules._regimes) and
+# the live bot (live/runner._regime), so both see exactly the same masks. (ADX14 > 20 of set2 is "adx_trend".)
+VIDEO_REGIMES = ("v_rsi50", "v_st", "v_e50_200", "v_ema5", "v_sma3")
+
+
+def video_regimes(h, l, c):
+    """(allow_long, allow_short) per bar, from closed bars only.
+      v_rsi50    RSI14 above 50 = longs only, below = shorts only (set5)
+      v_st       Supertrend 10 / x3 green = longs only, red = shorts only (set3, Quant Tactics)
+      v_e50_200  EMA 50 above EMA 200 = longs only, below = shorts only (tal1411vwap 2 / set5)
+      v_ema5     EMA 9/21/50/100/200 all in order up = no shorts, all in order down = no longs (set4: a strong trend
+                 is traded only its way); otherwise both sides
+      v_sma3     SMA 10 / 20 / 50 in order (fast over middle over slow) = longs only, the reverse = shorts only,
+                 mixed = no entry (set2 (3), the three-averages idea as a trend filter)"""
+    rs = rsi(c, 14)
+    sd = supertrend_dir(h, l, c, 10, 3.0)
+    e9, e21, e50, e100, e200 = (ema(c, n) for n in (9, 21, 50, 100, 200))
+    up5 = (e9 > e21) & (e21 > e50) & (e50 > e100) & (e100 > e200)
+    dn5 = (e9 < e21) & (e21 < e50) & (e50 < e100) & (e100 < e200)
+    s10, s20, s50 = sma(c, 10), sma(c, 20), sma(c, 50)
+    with np.errstate(invalid="ignore"):
+        u3, d3 = (s10 > s20) & (s20 > s50), (s10 < s20) & (s20 < s50)
+        r_up, r_dn = rs > 50, rs < 50
+    return {"v_rsi50": (r_up, r_dn), "v_st": (sd > 0, sd < 0), "v_e50_200": (e50 > e200, e50 < e200),
+            "v_ema5": (~dn5, ~up5), "v_sma3": (u3, d3)}
+
 # ---------------- strategies (as published) ----------------
 def s_gold_pro(df):
     """TV 'Gold Pro Strategy' (zackseal): EMA50 vs EMA200 trend + price on that side of EMA200,

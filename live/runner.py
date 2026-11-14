@@ -312,6 +312,8 @@ def _regime(df, name):
         e200, rs = R.ema(c, 200), R.rsi(c, 14)
         with np.errstate(invalid="ignore"):
             return ~((c < e200) & (rs < 35)), ~((c > e200) & (rs > 65))
+    if name in R.VIDEO_REGIMES:                      # the user's video filters (14.11.2026): the same function as run_rules
+        return R.video_regimes(h, l, c)[name]
     if name == "bbw_p20":
         s_ = pd.Series(c)
         w = (4 * s_.rolling(20).std(ddof=0) / s_.rolling(20).mean()).to_numpy()
@@ -324,7 +326,8 @@ def _regime(df, name):
     return m, m
 
 
-REGIMES = ("with_trend200", "adx_trend", "adx_range", "vol_normal", "vol_high", "vol_low", "ema9_20", "bbw_p20", "rsi_trend")
+REGIMES = ("with_trend200", "adx_trend", "adx_range", "vol_normal", "vol_high", "vol_low", "ema9_20", "bbw_p20", "rsi_trend",
+           *R.VIDEO_REGIMES)
 
 
 def strat(sid, df, sym, tf):

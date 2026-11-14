@@ -90,12 +90,18 @@ FILTER_HE = {"with_trend200": "רק עם המגמה (ממוצע 200)", "adx_tren
              "adx_range": "רק בשוק בדשדוש (ADX מתחת 20)", "vol_normal": "רק בתנודתיות רגילה",
              "vol_high": "רק בתנודתיות גבוהה", "vol_low": "רק בתנודתיות נמוכה", "none": "בלי סינון",
              "ema9_20": "רק בכיוון EMA 9/20", "bbw_p20": "לא ברוחב בולינגר נמוך (מתחת לאחוזון 20)",
-             "rsi_trend": "לא נגד המגמה לפי RSI (לא קונים ב־RSI מתחת 35 מתחת לממוצע 200, לא מוכרים מעל 65 מעליו)"}
+             "rsi_trend": "לא נגד המגמה לפי RSI (לא קונים ב־RSI מתחת 35 מתחת לממוצע 200, לא מוכרים מעל 65 מעליו)",
+             "v_rsi50": "רק בכיוון RSI 50 (מעל = קניות, מתחת = מכירות)", "v_st": "רק בכיוון סופרטרנד 10/3",
+             "v_e50_200": "רק בכיוון EMA 50 מול 200", "v_ema5": "לא נגד מגמה חזקה (5 ממוצעים 9/21/50/100/200 בסדר)",
+             "v_sma3": "רק כש־3 ממוצעים 10/20/50 בסדר, בכיוון שלהם"}
 # bots whose filter tests also try the user's EMA 9/20 and Bollinger-width filters (task tal1411ema, 14.11.2026):
 # live/news_bot.regime knows them for bot 7, live/runner._regime for bots 1-4 (since 14.11.2026)
 FILTERS_EXTRA = {"bot1", "bot2", "bot3", "bot4", "bot7"}
 # ... and the RSI-against-the-trend filter (task tal1411rsi, 14.11.2026): live/runner._regime knows it (bots 1-4)
 FILTERS_RSI = {"bot1", "bot2", "bot3", "bot4", "bot7"}   # bot 7: live/news_bot.regime (14.11.2026)
+# ... and the filters of the user's videos (tasks tal1411set2-set5, 14.11.2026): rules_agent.video_regimes, the same in
+# run_rules and live/runner._regime - bots 1-4 only (live/news_bot does not know them)
+FILTERS_VIDEO = {"bot1", "bot2", "bot3", "bot4"}
 
 
 def explain_manage(v):
@@ -353,6 +359,8 @@ def run_rules(combos, fam, budget_min, extra=None):
             cmd += ["--filters-extra"]               # the user's EMA 9/20 + Bollinger-width filters (14.11.2026)
         if BOT_NOW.get("bot") in FILTERS_RSI:
             cmd += ["--filters-rsi"]                 # the user's RSI-against-the-trend filter (14.11.2026)
+        if BOT_NOW.get("bot") in FILTERS_VIDEO:
+            cmd += ["--filters-video"]               # the filters of the user's videos (14.11.2026)
     elif fam in ("manage", "fib", "ladder", "pyr"):
         cmd += ["--manage", SPLIT] + (["--manage-grid", fam] if fam in ("fib", "ladder", "pyr") else [])
     if fam in ("exits", "filters", "manage", "fib", "ladder", "pyr"):
@@ -502,7 +510,8 @@ def experiments(bot, budget_s, where):
                 todo.append((-1, fam, -age, sym, combo))
                 continue
             if fam == "filters" and d.get("variants") and ((bot in FILTERS_EXTRA and not d.get("filters_extra"))
-                                                          or (bot in FILTERS_RSI and not d.get("filters_rsi"))):
+                                                          or (bot in FILTERS_RSI and not d.get("filters_rsi"))
+                                                          or (bot in FILTERS_VIDEO and not d.get("filters_video"))):
                 # measured before the user's EMA 9/20 + Bollinger-width filters (task tal1411ema, 14.11.2026): again
                 todo.append((1, fam, -age, sym, combo))
                 continue
@@ -589,6 +598,8 @@ def experiments(bot, budget_s, where):
                 doc["filters_extra"] = 1
             if fam == "filters" and bot in FILTERS_RSI:
                 doc["filters_rsi"] = 1
+            if fam == "filters" and bot in FILTERS_VIDEO:
+                doc["filters_video"] = 1
             st.put(fam, c, doc)
             done += 1
         print(f"  {sym} {fam}: {len(combos)} combos ({time.time() - ts:.0f}s)")

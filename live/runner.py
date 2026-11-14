@@ -360,14 +360,19 @@ def learn_breaks(sym):
         return BREAKS.get(sym, set())
     t = pd.to_datetime(pd.Series(rates["time"]), unit="s")
     nxt = t.shift(-1)
-    starts = (t + pd.Timedelta(minutes=1))[(nxt - t) > pd.Timedelta(hours=2)]
+    # the break is from the end of the last bar (t + 1 minute) to the next bar - the same as the backtest's
+    # break_mask (next start - (start + bar length)). Measured from the bar's open, MetaQuotes-Demo's daily
+    # 2-hour metals pause (23:00-01:00 server) came out 121 minutes, "over 2 hours", and bots 2-4 closed
+    # XAUUSD / XAGUSD every night for it (bots 1-4 smart agent, 14.11.2026 night 3, task b14brk).
+    gap = nxt - (t + pd.Timedelta(minutes=1))
+    starts = (t + pd.Timedelta(minutes=1))[gap > pd.Timedelta(hours=2)]
     keys = pd.Series([(x.weekday(), (x.hour * 60 + x.minute) // 15 * 15) for x in starts])
     cnt = keys.value_counts()
     # how long each learned break is (bots 1-4 smart agent, 14.11.2026 night): the live bots close XAUUSD / XAGUSD
     # every Mon-Thu at 20:45 UTC for a break over 2 hours that the backtest's own bars do not have - the length in
     # the 1-minute bars goes into the state (live/<bot>_state.json "breaks"), so the agents can check it against
     # FTMO's trading hours. Reporting only, nothing in the trading changes.
-    lens = ((nxt - t)[(nxt - t) > pd.Timedelta(hours=2)].dt.total_seconds() / 60).to_numpy()
+    lens = (gap[gap > pd.Timedelta(hours=2)].dt.total_seconds() / 60).to_numpy()
     BREAK_LEN[sym] = {f"{k[0]}-{k[1]}": round(float(np.median([L for kk, L in zip(keys, lens) if kk == k])), 1)
                       for k, n in cnt.items() if n >= 2}
     return {k for k, n in cnt.items() if n >= 2}

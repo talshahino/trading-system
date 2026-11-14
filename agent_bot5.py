@@ -264,6 +264,13 @@ NOTE_TESTS = [
     {"id": "t15_1_xopen", "track": "t15_1", "knob": "SESS", "vals": ["xopen"], "he": "בלי כניסות ב־09:30-10:00 ניו יורק"},
     {"id": "t4h_5_xopen", "track": "t4h_5", "knob": "SESS", "vals": ["xopen"], "he": "בלי כניסות ב־09:30-10:00 ניו יורק"},
 ] + [
+    # the stop by the market's volatility (bot 5's smart agent, 14.11.2026, from the user's question on the sibling
+    # trades of 13.11: US500's stop 0.37% from the entry was hit, US100's 1.3% from the same impulse held): the stop at
+    # least MINSTOP x the high timeframe's ATR from the entry (tal_gap.min_stop), a wider one left as it is
+    {"id": f"{trk}_minstop", "track": trk, "knob": "MINSTOP", "vals": [0.25, 0.5, 1.0],
+     "he": "סטופ מינימלי לפי התנודתיות (× ATR של הטיים פריים הגבוה)"}
+    for trk in ("t4h_5", "t15_1", "t15_5")
+] + [
     # laddered entries across the gap's box (user, 13.11.2026, the task in replies.json "_tasks"): the same total risk,
     # stop and target, 2-4 levels (tal_gap.LADDERS; "3m" = more in the middle) - on every index track that runs
     {"id": f"{trk}_ladder", "track": trk, "knob": "LADDER", "vals": ["2", "3", "3m", "4"],

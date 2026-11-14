@@ -16,7 +16,12 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "data" / "agents" / "scout" / "tiktok_explore.json"
+SCOUT = ROOT / "data" / "agents" / "scout"
+OUT = SCOUT / "tiktok_explore.json"
+# the same searches on every platform, in turn (user, 14.11.2026: TikTok -> Instagram -> YouTube -> TikTok ...)
+PLATFORMS = {"tiktok": SCOUT / "tiktok_explore.json", "instagram": SCOUT / "instagram_explore.json",
+             "youtube": SCOUT / "youtube_explore.json"}
+CONTROL = SCOUT / "explore_state.json"
 
 CONCEPTS = [
     "trading strategy", "scalping strategy", "day trading strategy", "swing trading strategy", "price action strategy",
@@ -77,18 +82,26 @@ def build():
 
 
 def main():
-    try:
-        st = json.loads(OUT.read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001
-        st = {"note": "", "queue": [], "done": {}, "videos": {}, "ideas": [], "runs": [], "finished_at": None}
-    st["note"] = ("סייר הטיקטוק (טל, 14.11.2026): חיפושים בטיקטוק דרך הכרום במחשב הבוטים, בקצב איטי. "
-                  "queue = החיפושים לפי הסדר, done = חיפוש -> {at, videos, ideas}, videos = מזהה סרטון -> מה נראה בו, "
-                  "ideas = רעיונות חדשים לסייר (אסטרטגיה / אינדיקטור / לימוד) שעוד לא בספרייה.")
-    have = set(st.get("queue") or [])
-    st["queue"] = list(st.get("queue") or []) + [x for x in build() if x not in have]
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(st, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(len(st["queue"]), "searches,", len(st.get("done") or {}), "done")
+    q = build()
+    for plat, path in PLATFORMS.items():
+        try:
+            st = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            st = {"queue": [], "done": {}, "videos": {}, "ideas": [], "runs": [], "finished_at": None}
+        st["platform"] = plat
+        st["note"] = (f"סייר הרשתות ({plat}) - טל, 14.11.2026: אותם חיפושים בכל רשת, בתורה, דרך הכרום במחשב הבוטים, "
+                      "בקצב איטי. queue = החיפושים, done = חיפוש -> {at, videos, ideas}, videos = מזהה -> מה נראה, "
+                      "ideas = רעיונות חדשים לסייר (אסטרטגיה / אינדיקטור / מסנן / יציאה / לימוד) שעוד לא בספרייה.")
+        have = set(st.get("queue") or [])
+        st["queue"] = list(st.get("queue") or []) + [x for x in q if x not in have]
+        path.write_text(json.dumps(st, ensure_ascii=False, indent=1), encoding="utf-8")
+        print(plat, len(st["queue"]), "searches,", len(st.get("done") or {}), "done")
+    if not CONTROL.exists():
+        CONTROL.write_text(json.dumps({
+            "note": "סדר הרשתות (טל, 14.11.2026): טיקטוק -> אינסטגרם -> יוטיוב -> טיקטוק (רק תוכן חדש) וכן הלאה. "
+                    "בסוף כל רשת: דוח מפורט ב־reports/scout/explore_<platform>_<cycle>.md ועדכון לטל.",
+            "order": ["tiktok", "instagram", "youtube"], "platform": "tiktok", "cycle": 1, "history": []},
+            ensure_ascii=False, indent=1), encoding="utf-8")
 
 
 if __name__ == "__main__":

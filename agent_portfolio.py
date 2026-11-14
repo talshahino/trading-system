@@ -674,14 +674,14 @@ def family_fix(bot, budget_s, one=False):
     for base, syms in families_of(bot).items():
         for sym in syms:
             c = f"{base}|{sym}"
-            if st.age_days("family", c) < FAMILY_DAYS:
-                continue
+            if st.age_days("family", c) < FAMILY_DAYS and (st.get("family", c) or {}).get("all_filters"):
+                continue                 # (before 14.11.2026 midday only the per-instrument pick was kept: run again)
             left = budget_s - (time.time() - t0)
             if left < 300:
                 return done
             ts = time.time()
             try:
-                t, rows = run_rules([c], "filters", left / 60)
+                t, rows = run_rules([c], "filters", left / 60, extra=["--filters-all-trades"])
             except Exception as e:  # noqa: BLE001
                 print(f"  family {c}: failed - {str(e)[-300:]}")
                 if "Time budget reached" in str(e):
@@ -692,7 +692,7 @@ def family_fix(bot, budget_s, one=False):
             tc = t[(t["sid"] == sid) & (t["tf"] == tf) & (t["symbol"] == s_)].copy()
             tc["time"] = pd.to_datetime(tc["time"], utc=True, format="ISO8601")
             doc = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": "family",
-                   "secs": round(time.time() - ts, 1), "sums": {}}
+                   "secs": round(time.time() - ts, 1), "sums": {}, "all_filters": True}
             for v, g in tc.groupby("variant") if "variant" in tc else []:
                 tr = g[(g["time"] >= pd.Timestamp(TEST_FROM, tz="UTC")) & (g["time"] < T_SPLIT)]
                 un = g[g["time"] >= T_SPLIT]
@@ -713,7 +713,7 @@ def family_report(bot):
         agg, have = {}, []
         for sym in syms:
             d = st.get("family", f"{base}|{sym}") or {}
-            if not d.get("sums"):
+            if not d.get("sums") or not d.get("all_filters"):
                 continue
             have.append(sym)
             for v, x in d["sums"].items():

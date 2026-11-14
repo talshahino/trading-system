@@ -167,7 +167,10 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
     best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
     base = next((x for x in rows if x["variant"] == "none"), None)
     OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows})
-    for k in {best["variant"], "none"} & set(keep):
+    # --filters-all-trades (bots 1-4 smart agent, 14.11.2026): every filter's trades, for the whole-family fix test
+    # (agent_portfolio.family_fix sums each filter over the family's instruments - with only the per-instrument pick
+    # kept, a filter counted only where it happened to win, e.g. SC010|15Min bbw_p20 = ASML alone)
+    for k in (set(keep) if getattr(args, "filters_all_trades", False) else {best["variant"], "none"} & set(keep)):
         COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
 
 
@@ -564,6 +567,8 @@ def main():
     ap.add_argument("--filters-video", action="store_true",
                     help="--filters also tries the filters of the user's videos (RSI 50, Supertrend, EMA 50/200, "
                          "5 EMAs in order, 3 SMAs in order; 14.11.2026)")
+    ap.add_argument("--filters-all-trades", action="store_true",
+                    help="--filters saves the trades of every filter, not only the chosen one (the family fix test)")
     ap.add_argument("--filters-extra", action="store_true",
                     help="--filters also tries the user's EMA 9/20 direction and Bollinger-width filters (14.11.2026)")
     ap.add_argument("--combos-file", default="",

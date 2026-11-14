@@ -606,11 +606,24 @@ def publish(files, message):
         return None
     h = _h()
     blobs = {}
+    skipped = []
     for rel, data in files.items():
         r = requests.post(f"{API}/git/blobs", headers=h, timeout=120,
                           json={"content": base64.b64encode(data).decode(), "encoding": "base64"})
+        # one file GitHub refuses (422, e.g. too large) no longer loses the whole run (bots 1-4 smart agent,
+        # 14.11.2026 night 3: bot 1's smart run of 21:40 UTC was never published - "422 ... git/blobs"); the rest
+        # goes, the refused files are named in host.json ("pub_skipped") and in the commit message
+        if r.status_code == 422 and rel != HOST and rel != REPLIES:
+            skipped.append(f"{rel} ({len(data) / 1e6:.1f} MB): {r.text[:80]}")
+            continue
         r.raise_for_status()
         blobs[rel] = r.json()["sha"]
+    _S["pub_skipped"] = skipped
+    if skipped:
+        _S["log"](f"publishing: GitHub refused {len(skipped)} file(s): {skipped}")
+        message += f" ({len(skipped)} file(s) refused by GitHub: " + ", ".join(x.split(" (")[0] for x in skipped)[:300] + ")"
+    if not blobs:
+        return None
     for attempt in range(5):
         head = requests.get(f"{API}/git/ref/heads/main", headers=h, timeout=30)
         head.raise_for_status()
@@ -649,7 +662,7 @@ def host_doc(st, kind):
             "smart_minutes": st.get("smart_minutes"), "agent_errors": st.get("agent_errors") or [],
             "agent_last": st.get("agent_last") or {}, "agent_tail": st.get("agent_tail") or {},
             "agent_runs": st.get("agent_runs") or {}, "agent_errors_24h": st.get("agent_errors_24h") or [],
-            "box_pub": box_pub(), "alpaca": bool(secrets()),
+            "box_pub": box_pub(), "alpaca": bool(secrets()), "pub_skipped": _S.get("pub_skipped") or [],
             "last_error": st.get("last_error"),
             "errors_in_row": st.get("errors_in_row", 0)}
 

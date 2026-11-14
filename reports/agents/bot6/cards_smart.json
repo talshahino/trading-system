@@ -1,6 +1,6 @@
 {
  "bot": "bot6",
- "updated": "2026-11-14T18:35:43+00:00",
+ "updated": "2026-11-14T20:39:29+00:00",
  "cards": [
   {
    "bot": "bot6",
@@ -726,6 +726,141 @@
    },
    "made": "2026-11-14T18:35:43+00:00",
    "id": "82182604b396"
+  },
+  {
+   "bot": "bot6",
+   "kind": "info",
+   "title": "בוט 6: הבדיקות עכשיו על הכללים כמו בחי, ותיקון חדש לעלות של כלל סוף השבוע (REARM)",
+   "what": "• נמצא ותוקן (כמו בבוט 5): בדיקות המסננים, הכיוון והבקשה שלך על הגאפ רצו בלי כלל FTMO (אין הוראה מעל הפסקה של שעתיים+), בזמן שהבוט החי סוחר איתו. מעכשיו כל בדיקה על הכללים בדיוק כמו בחי, וכל המסננים נבדקים שוב בסבב הבא במחשב.\n• העלות של הכלל ב־2026: שעה/5 דק' +45.6R ← +20.1R, 4 שעות/שעה +31.1R ← +2.3R, 15/5 דק' +25.3R ← +31.5R, 5 דק'/דקה +34.9R ← +32.4R. הסיבה: הוראה בתוקף 120 שעות שהונחה בשני-חמישי בוטלה ביום שישי לתמיד.\n• התיקון (קודם מתקנים): REARM - ההוראה מבוטלת לפני סוף השבוע (הכלל נשמר) ומונחת שוב בפתיחה, כל עוד הגאפ בתוקף. זהה בבדיקה ובחי (נבדק). לצדו BRKH 1/3/6 של בוט 5. ראשונים בתור במחשב; כרטיס רק אם משפר גם ב־2026. בבוט 5: BRKH עוד בלי תוצאה, REARM נשלח אליו כמשימה.\n• כלל הסיכון הקבוע: בבוט כולו (4 מסלולי הגאפ) ב־2026 - 0 עסקאות הוקטנו ו־0 דולגו בגלל המקום שנשאר; 353 דולגו כי חוזה מיקרו אחד גדול מהסיכון. הסיכון הפתוח הגבוה 0.84% (2024-2025: 0.96%), מול מקום של 1.35% ביום. 5 אסטרטגיות הסייר לא היו בבדיקה - נוספו, המספר המלא בסבב הבא.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "world": "bot6",
+    "commit": "668200ef1",
+    "tasks": [
+     "b5to6brk",
+     "tal1411risk",
+     "tal1411wkend"
+    ],
+    "wknd_cost": {
+     "tal": {
+      "live": {
+       "train_w": 46.1,
+       "unseen": 45.6,
+       "n_unseen": 254,
+       "mean_unseen": 0.179,
+       "worst_day_train": -4.57,
+       "worst_day_unseen": -4.68
+      },
+      "WKND=10": {
+       "train_w": 11.7,
+       "unseen": 20.1,
+       "n_unseen": 218,
+       "mean_unseen": 0.092,
+       "worst_day_train": -4.52,
+       "worst_day_unseen": -4.68
+      }
+     },
+     "tal4h": {
+      "live": {
+       "train_w": 31.3,
+       "unseen": 31.1,
+       "n_unseen": 158,
+       "mean_unseen": 0.197,
+       "worst_day_train": -2.61,
+       "worst_day_unseen": -2.92
+      },
+      "WKND=10": {
+       "train_w": 25.9,
+       "unseen": 2.3,
+       "n_unseen": 144,
+       "mean_unseen": 0.016,
+       "worst_day_train": -2.61,
+       "worst_day_unseen": -2.92
+      }
+     },
+     "t15_5": {
+      "live": {
+       "train_w": 54.8,
+       "unseen": 25.3,
+       "n_unseen": 187,
+       "mean_unseen": 0.135,
+       "worst_day_train": -5.18,
+       "worst_day_unseen": -3.31
+      },
+      "WKND=10": {
+       "train_w": 51.4,
+       "unseen": 31.5,
+       "n_unseen": 178,
+       "mean_unseen": 0.177,
+       "worst_day_train": -5.18,
+       "worst_day_unseen": -3.29
+      }
+     },
+     "t5_1": {
+      "live": {
+       "train_w": 32.0,
+       "unseen": 34.9,
+       "n_unseen": 257,
+       "mean_unseen": 0.136,
+       "worst_day_train": -4.67,
+       "worst_day_unseen": -3.3
+      },
+      "WKND=10": {
+       "train_w": 29.9,
+       "unseen": 32.4,
+       "n_unseen": 261,
+       "mean_unseen": 0.124,
+       "worst_day_train": -4.67,
+       "worst_day_unseen": -3.3
+      }
+     }
+    },
+    "guard_gap_tracks": {
+     "train": {
+      "total_pct": 22.37,
+      "worst_day_pct": -0.74,
+      "max_fall_pct": 2.95,
+      "low_pct": -0.48,
+      "daily_stops": 0,
+      "room_cut": 0,
+      "room_skipped": 444,
+      "open_peak_pct": 0.96,
+      "open_days_over_day_lim": 0,
+      "stopped": null,
+      "contract_skipped": 444
+     },
+     "unseen": {
+      "total_pct": 10.28,
+      "worst_day_pct": -0.54,
+      "max_fall_pct": 2.04,
+      "low_pct": -1.8,
+      "daily_stops": 0,
+      "room_cut": 0,
+      "room_skipped": 353,
+      "open_peak_pct": 0.84,
+      "open_days_over_day_lim": 0,
+      "stopped": null,
+      "contract_skipped": 353
+     }
+    },
+    "queued": [
+     "REARM",
+     "BRKH 1",
+     "BRKH 3",
+     "BRKH 6"
+    ]
+   },
+   "made": "2026-11-14T20:39:29+00:00",
+   "id": "394d699ab1d6"
   }
  ]
 }

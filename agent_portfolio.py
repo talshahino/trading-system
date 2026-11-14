@@ -436,7 +436,15 @@ def experiments(bot, budget_s, where):
     # needs more than the run's minutes on ~1M bars, so the whole group ran out of time every run since 31.10 and
     # TT16 JP225, TV02 JP225, IM03 / QC04 / SC002 USDCAD never got their exits tested)
     one_min = lambda c: c.split("|")[1] == "1Min"                      # noqa: E731
-    todo.sort(key=lambda x: (x[0], x[3], x[1], one_min(x[4]), x[2]))  # never-run first, one instrument's combos together
+    # never-run first, one instrument's combos together. Inside one priority the instrument whose oldest result is the
+    # oldest goes first, not the alphabet (bots 1-4 smart agent, 14.11.2026: bot 1's loss-review list fills every run's
+    # minutes, sorted A-Z, so USDJPY / WTI / XAUUSD / XAGUSD / XPTUSD were never reached - SE02 and TV11 USDJPY, TV20
+    # XAUUSD, TT45 WTI, 18 of bot 1's 46 strategies, had no result at all, while ARM / ASML / ETHUSD ran again daily)
+    oldest = {}
+    for x in todo:
+        oldest[(x[0], x[3])] = min(oldest.get((x[0], x[3]), 0), x[2])
+    # (a 1-minute strategy still goes after the tier's other ones - one such run can take a whole run's minutes)
+    todo.sort(key=lambda x: (x[0], one_min(x[4]), oldest[(x[0], x[3])], x[3], x[1], x[2]))
     t0, done = time.time(), 0
     groups = {}
     for x in todo:

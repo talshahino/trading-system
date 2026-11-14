@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-14T22:41:28+00:00",
+ "updated": "2026-11-14T22:46:26+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -1568,7 +1568,7 @@
       "week": "2026-W46"
      },
      "detail": {},
-     "made": "2026-11-14T22:41:24+00:00",
+     "made": "2026-11-14T22:26:01+00:00",
      "id": "7d4268d77f15",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -31495,9 +31495,9 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-14T22:41:13+00:00",
-    "state_updated": "2026-11-14T22:41:09+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:22:56+00:00",
+    "minutes_since_state": 3,
     "balance": 96946.87,
     "equity": 96946.87,
     "day_pct": 1.21,
@@ -51887,8 +51887,8 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-14T22:41:13+00:00",
-    "state_updated": "2026-11-14T22:38:17+00:00",
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:06+00:00",
     "minutes_since_state": 3,
     "balance": 109109.42,
     "equity": 109109.42,
@@ -85895,8 +85895,8 @@
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-14T22:41:13+00:00",
-    "state_updated": "2026-11-14T22:38:20+00:00",
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:11+00:00",
     "minutes_since_state": 3,
     "balance": 100011.58,
     "equity": 100011.58,
@@ -125394,8 +125394,8 @@
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-14T22:41:13+00:00",
-    "state_updated": "2026-11-14T22:38:26+00:00",
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:14+00:00",
     "minutes_since_state": 3,
     "balance": 100085.36,
     "equity": 100085.36,
@@ -131647,9 +131647,9 @@
      "status": "approved",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-14T22:41:28+00:00",
+     "first_seen": "2026-11-14T22:46:26+00:00",
      "by": "manager",
-     "decided": "2026-11-14T22:41:30+00:00",
+     "decided": "2026-11-14T22:46:26+00:00",
      "decision_id": "05998720b3c3"
     },
     {
@@ -466476,9 +466476,9 @@
    "health": {
     "bot": "bot5",
     "name": "בוט 5 - סקאלפינג",
-    "updated": "2026-11-14T22:41:13+00:00",
-    "state_updated": "2026-11-14T22:41:04+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:26+00:00",
+    "minutes_since_state": 2,
     "balance": 98176.89,
     "equity": 98176.89,
     "day_pct": 0.0,
@@ -468489,6 +468489,324 @@
      "by": "manager",
      "decided": "2026-11-14T21:43:55+00:00",
      "decision_id": "3c98d495853a"
+    },
+    {
+     "bot": "bot6",
+     "kind": "info",
+     "title": "בוט 6: חוזה אחד, הגדלה אחרי ניצחון ו־EV04 - אף אחד לא נכנס (יותר רווח רק עם יותר סיכון)",
+     "what": "• שלוש משימות שהסתיימו במחשב הבוטים (ריצה של 19:06), אף אחת לא נכנסת - כל אחת מוסיפה רווח רק עם יותר סיכון, או אסורה:\n• חוזה אחד לעסקה שחוזה מיקרו אחד שלה גדול מהסיכון (0.2 / 0.3 / 0.4%): הכי טוב 0.3% - 2026 +10.3% ← +13.7%, אבל היום הגרוע -0.54% ← -1.02% והירידה הגדולה 2.0% ← 3.8% (2024-2025: -0.74% ← -1.00%, 3.0% ← 4.2%). לפי המטרה - לא נכנס. בבוט 5 אין דילוג כזה (שברי לוט).\n• הגדלה אחרי ניצחון (x1.25 עד x2): אחרי הקטנה לאותה ירידה כמו היום (x0.903) - 2026 +15.2% ← +17.9%, אבל היום הגרוע -0.96% ← -1.08% והירידה 2.6% ← 2.8%. לא נכנס. פירמידה ב־1R: פחות רווח (+6.1%). בבוט 5: anti לא עדיף; pyr לא עדיף.\n• EV04 (סטרדל דקה לפני חדשה): לא לבוט 6 - חשבון ממומן אוסר פתיחה / סגירה 2 דקות סביב חדשה מוגבלת, וגם חלש: הגרסה הבטוחה -3.1R ב־2026. נשאר בבוט 7 בלבד.\n• הבדיקות האלה רצו עוד בלי כלל ההפסקה של FTMO; מהסבב הבא הבוט כולו נבדק על הכללים כמו בחי, וכל אחת מהן חוזרת אוטומטית - אם תעבור, יגיע כרטיס.\n• הבא בתור במחשב (בסבב הקרוב): REARM ו־BRKH 1/3/6 לעלות של כלל סוף השבוע, ואחריהם כל המסננים מהסרטונים על הכללים כמו בחי. 84 אסטרטגיות האינדיקטורים החדשות (IB) נכנסות לבדיקת האסטרטגיות החדשות של בוט 6.",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 2309,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": null,
+     "detail": {
+      "world": "bot6",
+      "tasks": [
+       "tal1411anti",
+       "tal1411strad",
+       "tal1411risk"
+      ],
+      "one_micro": {
+       "now": {
+        "train": {
+         "total_pct": 22.37,
+         "worst_day_pct": -0.74,
+         "max_fall_pct": 2.95,
+         "low_pct": -0.48,
+         "daily_stops": 0,
+         "room_cut": 0,
+         "room_skipped": 444,
+         "open_peak_pct": 0.96,
+         "open_days_over_day_lim": 0,
+         "stopped": null,
+         "contract_skipped": 444
+        },
+        "unseen": {
+         "total_pct": 10.28,
+         "worst_day_pct": -0.54,
+         "max_fall_pct": 2.04,
+         "low_pct": -1.8,
+         "daily_stops": 0,
+         "room_cut": 0,
+         "room_skipped": 353,
+         "open_peak_pct": 0.84,
+         "open_days_over_day_lim": 0,
+         "stopped": null,
+         "contract_skipped": 353
+        }
+       },
+       "variants": {
+        "0.002": {
+         "train": {
+          "total_pct": 21.04,
+          "worst_day_pct": -0.99,
+          "max_fall_pct": 3.04,
+          "low_pct": -0.42,
+          "daily_stops": 0,
+          "room_cut": 0,
+          "room_skipped": 225,
+          "open_peak_pct": 0.96,
+          "open_days_over_day_lim": 0,
+          "stopped": null,
+          "contract_skipped": 225,
+          "one_micro": 220
+         },
+         "unseen": {
+          "total_pct": 13.12,
+          "worst_day_pct": -0.83,
+          "max_fall_pct": 3.02,
+          "low_pct": -2.65,
+          "daily_stops": 0,
+          "room_cut": 0,
+          "room_skipped": 200,
+          "open_peak_pct": 0.84,
+          "open_days_over_day_lim": 0,
+          "stopped": null,
+          "contract_skipped": 200,
+          "one_micro": 145
+         }
+        },
+        "0.003": {
+         "train": {
+          "total_pct": 23.57,
+          "worst_day_pct": -1.0,
+          "max_fall_pct": 4.15,
+          "low_pct": -0.42,
+          "daily_stops": 0,
+          "room_cut": 0,
+          "room_skipped": 138,
+          "open_peak_pct": 0.96,
+          "open_days_over_day_lim": 0,
+          "stopped": null,
+          "contract_skipped": 138,
+          "one_micro": 300
+         },
+         "unseen": {
+          "total_pct": 13.72,
+          "worst_day_pct": -1.02,
+          "max_fall_pct": 3.8,
+          "low_pct": -1.96,
+          "daily_stops": 0,
+          "room_cut": 0,
+          "room_skipped": 122,
+          "open_peak_pct": 0.84,
+          "open_days_over_day_lim": 0,
+          "stopped": null,
+          "contract_skipped": 122,
+          "one_micro": 221
+         }
+        },
+        "0.004": {
+         "train": {
+          "total_pct": 21.92,
+          "worst_day_pct": -1.14,
+          "max_fall_pct": 5.24,
+          "low_pct": -0.42,
+          "daily_stops": 0,
+          "room_cut": 1,
+          "room_skipped": 106,
+          "open_peak_pct": 0.96,
+          "open_days_over_day_lim": 0,
+          "stopped": null,
+          "contract_skipped": 104,
+          "one_micro": 346
+         },
+         "unseen": {
+          "total_pct": 12.9,
+          "worst_day_pct": -1.02,
+          "max_fall_pct": 3.32,
+          "low_pct": -1.79,
+          "daily_stops": 0,
+          "room_cut": 0,
+          "room_skipped": 98,
+          "open_peak_pct": 0.84,
+          "open_days_over_day_lim": 0,
+          "stopped": null,
+          "contract_skipped": 98,
+          "one_micro": 246
+         }
+        }
+       },
+       "chosen": null
+      },
+      "anti": {
+       "state": "done",
+       "missing": [],
+       "pyr_missing": [],
+       "rule": {
+        "step": 1.25,
+        "cap": 2.0,
+        "be": 0.05
+       },
+       "limits": {
+        "day": 1.5,
+        "all": 4.5
+       },
+       "now": {
+        "train": {
+         "n": 1719,
+         "total_pct": 18.55,
+         "max_fall_pct": 3.8,
+         "worst_day_pct": -0.86,
+         "days_under_3": 0
+        },
+        "unseen": {
+         "n": 856,
+         "total_pct": 15.17,
+         "max_fall_pct": 2.6,
+         "worst_day_pct": -0.96,
+         "days_under_3": 0
+        }
+       },
+       "anti": {
+        "train": {
+         "n": 1719,
+         "total_pct": 25.7,
+         "max_fall_pct": 4.21,
+         "worst_day_pct": -1.21,
+         "days_under_3": 0
+        },
+        "unseen": {
+         "n": 856,
+         "total_pct": 19.88,
+         "max_fall_pct": 3.05,
+         "worst_day_pct": -1.2,
+         "days_under_3": 0
+        },
+        "fair_k": 0.903,
+        "fair": {
+         "train_total_pct": 23.2,
+         "unseen_total_pct": 17.94,
+         "unseen_worst_day_pct": -1.08,
+         "unseen_max_fall_pct": 2.75
+        },
+        "better": false
+       },
+       "pyr": {
+        "train": {
+         "n": 1724,
+         "total_pct": 12.69,
+         "max_fall_pct": 4.31,
+         "worst_day_pct": -0.92,
+         "days_under_3": 0
+        },
+        "unseen": {
+         "n": 867,
+         "total_pct": 6.87,
+         "max_fall_pct": 4.52,
+         "worst_day_pct": -0.96,
+         "days_under_3": 0
+        },
+        "fair_k": 0.882,
+        "fair": {
+         "train_total_pct": 11.19,
+         "unseen_total_pct": 6.06,
+         "unseen_worst_day_pct": -0.85,
+         "unseen_max_fall_pct": 3.99
+        },
+        "better": false
+       },
+       "bot5": "בבוט 5: anti לא עדיף; pyr לא עדיף"
+      },
+      "straddle": {
+       "all": {
+        "baseline": {
+         "v": "pre|x1|opp|t2|h30|cusd|sp0",
+         "train": {
+          "n": 78,
+          "eff_n": 77.9,
+          "mean": 0.1987,
+          "t": 1.26,
+          "win": 44.7,
+          "sum": 15.9
+         },
+         "unseen": {
+          "n": 96,
+          "eff_n": 96.0,
+          "mean": 0.0155,
+          "t": 0.13,
+          "win": 38.2,
+          "sum": 2.17
+         },
+         "gross_unseen": 8.46
+        },
+        "best": {
+         "v": "pre|x0.5|opp|be1|h30|cusd|sp0",
+         "train": {
+          "n": 85,
+          "eff_n": 84.9,
+          "mean": 0.6663,
+          "t": 2.39,
+          "win": 34.1,
+          "sum": 57.24
+         },
+         "unseen": {
+          "n": 107,
+          "eff_n": 107.0,
+          "mean": 0.073,
+          "t": 0.33,
+          "win": 24.2,
+          "sum": 8.52
+         },
+         "gross_unseen": 22.52
+        },
+        "robust": {
+         "top_positive_unseen": 10,
+         "top": 10,
+         "top_better_than_base": 10
+        },
+        "tested": 1536
+       },
+       "safe": {
+        "baseline": null,
+        "best": {
+         "v": "safe|x1.5|opp|t1.5|h30|cusd|sp0",
+         "train": {
+          "n": 56,
+          "eff_n": 55.9,
+          "mean": 0.0281,
+          "t": 0.2,
+          "win": 48.1,
+          "sum": 1.66
+         },
+         "unseen": {
+          "n": 69,
+          "eff_n": 69.0,
+          "mean": -0.0499,
+          "t": -0.48,
+          "win": 46.1,
+          "sum": -3.08
+         },
+         "gross_unseen": -0.88
+        },
+        "robust": {
+         "top_positive_unseen": 2,
+         "top": 10,
+         "top_better_than_base": 0
+        },
+        "tested": 768
+       },
+       "bot5": "בבוט 5 (המדדים והזהב): safe|x0.5|opp|t2|h30|cusd|sp0|cap1, 2026 -6.0R"
+      },
+      "rules_note": "whole-bot runs of 14.11 19:06, before TG.ftmo_cfg"
+     },
+     "made": "2026-11-14T22:46:19+00:00",
+     "id": "0f0f8053fadd",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-14T22:46:26+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T22:46:26+00:00",
+     "decision_id": "521dc50418af"
     },
     {
      "bot": "bot6",
@@ -485087,9 +485405,9 @@
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-14T22:41:13+00:00",
-    "state_updated": "2026-11-14T22:41:08+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:31+00:00",
+    "minutes_since_state": 2,
     "balance": 100324.41,
     "equity": 100324.41,
     "day_pct": 0.0,
@@ -514888,9 +515206,9 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-14T22:41:13+00:00",
-    "state_updated": "2026-11-14T22:40:09+00:00",
-    "minutes_since_state": 1,
+    "updated": "2026-11-14T22:25:49+00:00",
+    "state_updated": "2026-11-14T22:23:09+00:00",
+    "minutes_since_state": 3,
     "balance": 100000.0,
     "equity": 100000.0,
     "day_pct": 0.0,
@@ -514948,8 +515266,9 @@
  },
  "decisions": {
   "new": [
-   "05998720b3c3"
+   "05998720b3c3",
+   "521dc50418af"
   ],
-  "unread": 424
+  "unread": 425
  }
 }

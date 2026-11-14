@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-14T18:35:48+00:00",
+ "updated": "2026-11-14T18:54:45+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -1407,6 +1407,36 @@
     {
      "bot": "bot1",
      "kind": "info",
+     "title": "המנהל, 14.11 ערב: הסוכנים במחשב הבוטים עדיין עצורים מ־14:18 - תוצאות הסייר נארזו",
+     "what": "הסוכנים במחשב הבוטים (health, מנהל, בנייה, סוכנים חכמים) לא סיימו סבב מאז 14:18 UTC, גם אחרי התיקון של 16:51. הסיבה: הסייר על GitHub כתב כ־85 אלף קבצי תוצאות (2.8GB); הרענון במחשב צריך להוריד את כולם (zip של 1.35GB), וכל התקנת קוד (כל ~50 דק') מפעילה מחדש את המנהל ומתחילה את ההורדה מההתחלה - היא אף פעם לא מסתיימת. תיקון: התוצאות נארזו ל־~140 קבצים דחוסים (בערך 500MB במקום 2.8GB, אותו תוכן, הסוכנים קוראים אותם כמו קודם), הרענון מוריד אותם אחד אחד (התקדמות נשמרת גם אם יש הפעלה מחדש), והסייר על GitHub אורז מעכשיו בעצמו. הבוטים עצמם המשיכו לסחור כרגיל כל הזמן; health רץ בינתיים על GitHub.",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": {
+      "info": "mgr1411pack"
+     },
+     "detail": {},
+     "made": "2026-11-14T19:10:00+00:00",
+     "id": "5eb4caf911b6",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-14T18:54:45+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T18:54:45+00:00",
+     "decision_id": "2d29d518fb5d"
+    },
+    {
+     "bot": "bot1",
+     "kind": "info",
      "title": "הבוט כולו גרוע מהבדיקה",
      "what": "151 עסקאות בפועל, -0.08R לעסקה, מול +0.14R בבדיקה על נתוני העבר של אותן אסטרטגיות (סטייה של 2.7 סטיות תקן). אישור: הסוכן של הבוט יבדוק אם הבעיה בעלויות, בביצוע או בשוק, ויציע תיקון.",
      "train": null,
@@ -1423,7 +1453,7 @@
       "week": "2026-W46"
      },
      "detail": {},
-     "made": "2026-11-14T16:51:38+00:00",
+     "made": "2026-11-14T18:49:22+00:00",
      "id": "7d4268d77f15",
      "tier": "regular",
      "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
@@ -31252,9 +31282,9 @@
    "health": {
     "bot": "bot1",
     "name": "בוט 1",
-    "updated": "2026-11-14T16:51:37+00:00",
-    "state_updated": "2026-11-14T16:51:33+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-14T18:49:21+00:00",
+    "state_updated": "2026-11-14T18:46:47+00:00",
+    "minutes_since_state": 3,
     "balance": 96946.87,
     "equity": 96946.87,
     "day_pct": 1.21,
@@ -51550,9 +51580,9 @@
    "health": {
     "bot": "bot2",
     "name": "בוט 2",
-    "updated": "2026-11-14T16:51:37+00:00",
-    "state_updated": "2026-11-14T16:48:32+00:00",
-    "minutes_since_state": 3,
+    "updated": "2026-11-14T18:49:21+00:00",
+    "state_updated": "2026-11-14T18:46:54+00:00",
+    "minutes_since_state": 2,
     "balance": 109109.42,
     "equity": 109109.42,
     "day_pct": 0.0,
@@ -85370,9 +85400,9 @@
    "health": {
     "bot": "bot3",
     "name": "בוט 3",
-    "updated": "2026-11-14T16:51:37+00:00",
-    "state_updated": "2026-11-14T16:48:37+00:00",
-    "minutes_since_state": 3,
+    "updated": "2026-11-14T18:49:21+00:00",
+    "state_updated": "2026-11-14T18:47:00+00:00",
+    "minutes_since_state": 2,
     "balance": 100011.58,
     "equity": 100011.58,
     "day_pct": 0.0,
@@ -124685,9 +124715,9 @@
    "health": {
     "bot": "bot4",
     "name": "בוט 4",
-    "updated": "2026-11-14T16:51:37+00:00",
-    "state_updated": "2026-11-14T16:48:39+00:00",
-    "minutes_since_state": 3,
+    "updated": "2026-11-14T18:49:21+00:00",
+    "state_updated": "2026-11-14T18:47:01+00:00",
+    "minutes_since_state": 2,
     "balance": 100085.36,
     "equity": 100085.36,
     "day_pct": 0.0,
@@ -149240,17 +149270,17 @@
    "health": {
     "bot": "bot5",
     "name": "בוט 5 - סקאלפינג",
-    "updated": "2026-11-14T16:51:37+00:00",
-    "state_updated": "2026-11-14T16:50:01+00:00",
-    "minutes_since_state": 2,
-    "balance": 98189.5,
-    "equity": 98189.5,
+    "updated": "2026-11-14T18:49:21+00:00",
+    "state_updated": "2026-11-14T18:48:04+00:00",
+    "minutes_since_state": 1,
+    "balance": 98176.89,
+    "equity": 98176.89,
     "day_pct": 0.0,
-    "total_pct": -1.81,
-    "trades": 8,
-    "mean_r": -0.33,
-    "sum_r": -2.64,
-    "bt_mean_r": 0.042,
+    "total_pct": -1.82,
+    "trades": 10,
+    "mean_r": -0.269,
+    "sum_r": -2.69,
+    "bt_mean_r": 0.059,
     "flagged": 0,
     "combos": [
      {
@@ -149292,12 +149322,36 @@
      {
       "combo": "TAL|t4h_1h|GER40",
       "n": 1,
-      "mean": 0.194,
-      "sum": 0.19,
+      "mean": 0.239,
+      "sum": 0.24,
       "win": 100.0,
       "streak": 0,
-      "bt_mean": null,
-      "bt_n": null,
+      "bt_mean": 0.1451,
+      "bt_n": 989,
+      "z": null,
+      "flags": []
+     },
+     {
+      "combo": "TAL|t4h_1h|US100",
+      "n": 1,
+      "mean": -0.056,
+      "sum": -0.06,
+      "win": 0.0,
+      "streak": 1,
+      "bt_mean": 0.1451,
+      "bt_n": 989,
+      "z": null,
+      "flags": []
+     },
+     {
+      "combo": "TAL|t4h_1h|US500",
+      "n": 1,
+      "mean": -0.042,
+      "sum": -0.04,
+      "win": 0.0,
+      "streak": 1,
+      "bt_mean": 0.1451,
+      "bt_n": 989,
       "z": null,
       "flags": []
      },
@@ -167763,9 +167817,9 @@
    "health": {
     "bot": "bot6",
     "name": "בוט 6 · חוזים עתידיים",
-    "updated": "2026-11-14T16:51:37+00:00",
-    "state_updated": "2026-11-14T16:50:05+00:00",
-    "minutes_since_state": 2,
+    "updated": "2026-11-14T18:49:21+00:00",
+    "state_updated": "2026-11-14T18:48:08+00:00",
+    "minutes_since_state": 1,
     "balance": 100324.41,
     "equity": 100324.41,
     "day_pct": 0.0,
@@ -197247,9 +197301,9 @@
    "health": {
     "bot": "bot7",
     "name": "בוט 7 · פרסומים כלכליים",
-    "updated": "2026-11-14T16:51:37+00:00",
-    "state_updated": "2026-11-14T16:51:09+00:00",
-    "minutes_since_state": 0,
+    "updated": "2026-11-14T18:49:21+00:00",
+    "state_updated": "2026-11-14T18:47:09+00:00",
+    "minutes_since_state": 2,
     "balance": 100000.0,
     "equity": 100000.0,
     "day_pct": 0.0,
@@ -197307,7 +197361,7 @@
  },
  "decisions": {
   "new": [
-   "def087131857"
+   "2d29d518fb5d"
   ],
   "unread": 372
  }

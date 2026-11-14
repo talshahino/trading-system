@@ -550,6 +550,15 @@
     "cause": "כניסה / כיוון",
     "fixes": [
      {
+      "what": "סיכון ×0.21",
+      "decision": "29b3e0e47237",
+      "at": "2026-11-14T22:27:24+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.38,
+      "value": 0.21
+     },
+     {
       "what": "סיכון ×0.89",
       "decision": "3bfde4a01075",
       "at": "2026-11-13T18:37:25+00:00",
@@ -574,9 +583,19 @@
    {
     "combo": "TV08|15Min|NVDA",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.001",
+      "decision": "e598e9b89fc1",
+      "at": "2026-11-14T22:27:24+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.001
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV39|1Hour|JP225",
@@ -670,6 +689,15 @@
     "cause": "סגירה בגלל כלל",
     "fixes": [
      {
+      "what": "סיכון ×0.9",
+      "decision": "553e6111b9d6",
+      "at": "2026-11-14T22:27:24+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.9
+     },
+     {
       "what": "TV02|15Min|TSLA: בלי יעד · סטופ x0.75",
       "decision": "9099c0ab4ef9",
       "at": "2026-11-13T17:46:02+00:00",
@@ -690,18 +718,17 @@
     "cut_only": false
    }
   ],
-  "open": [
-   "TV08|15Min|NVDA"
-  ],
+  "open": [],
   "cut_only": [
    "TT45|1Hour|GBPJPY",
    "SE02|1Hour|USDJPY",
    "TV33|15Min|MSTR",
+   "TV08|15Min|NVDA",
    "TV39|1Hour|JP225",
    "TV41|4Hour|NZDUSD",
    "TV10|1Hour|US100"
   ],
   "total_month_pct": -0.55,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 6 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 7 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

@@ -320,6 +320,15 @@
     "cause": "כניסה / כיוון",
     "fixes": [
      {
+      "what": "סיכון ×0.54",
+      "decision": "39fdaa7c48ef",
+      "at": "2026-11-14T22:27:24+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.85,
+      "value": 0.54
+     },
+     {
       "what": "סיכון ×0.85",
       "decision": "eef3134cd178",
       "at": "2026-11-14T12:38:10+00:00",
@@ -532,9 +541,19 @@
    {
     "combo": "TT56|1Hour|GME",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "סיכון ×0.001",
+      "decision": "3c45b8019cb6",
+      "at": "2026-11-14T22:27:24+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.001
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.001,
     "edge_parts": [
      "בבדיקה של 2026: -0.04R לעסקה (38 עסקאות), בתקופת הבחירה +0.71R",
@@ -584,16 +603,16 @@
    }
   ],
   "open": [
-   "TV20|1Hour|XAUUSD",
-   "TT56|1Hour|GME"
+   "TV20|1Hour|XAUUSD"
   ],
   "cut_only": [
    "TV56|1Hour|US2000",
    "SE02|1Hour|USDJPY",
    "TV39|1Hour|JP225",
+   "TT56|1Hour|GME",
    "TV10|1Hour|US100"
   ],
   "total_month_pct": 0.29,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 4 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

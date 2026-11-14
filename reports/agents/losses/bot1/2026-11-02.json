@@ -227,6 +227,15 @@
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
      {
+      "what": "סיכון ×0.9",
+      "decision": "553e6111b9d6",
+      "at": "2026-11-14T22:27:24+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.9
+     },
+     {
       "what": "TV02|15Min|TSLA: בלי יעד · סטופ x0.75",
       "decision": "9099c0ab4ef9",
       "at": "2026-11-13T17:46:02+00:00",
@@ -242,9 +251,19 @@
    {
     "combo": "TT56|1Hour|GME",
     "cause": "סגירה בגלל כלל",
-    "fixes": [],
+    "fixes": [
+     {
+      "what": "סיכון ×0.001",
+      "decision": "3c45b8019cb6",
+      "at": "2026-11-14T22:27:24+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.001
+     }
+    ],
     "open": false,
-    "cut_only": false
+    "cut_only": true
    },
    {
     "combo": "TV62|1Hour|USDCAD",
@@ -259,9 +278,10 @@
    "TV62|1Hour|USDCAD"
   ],
   "cut_only": [
-   "TV10|1Hour|US100"
+   "TV10|1Hour|US100",
+   "TT56|1Hour|GME"
   ],
   "total_month_pct": 0.0,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

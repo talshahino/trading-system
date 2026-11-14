@@ -197,7 +197,7 @@ def trend_runs(idx, budget_s):
     want = []
     for pn, cfg in live_tracks().values():
         if pn in pairs:
-            c0 = TG._norm({k: v for k, v in cfg.items() if k != "TREND"})
+            c0 = TG.ftmo_cfg({k: v for k, v in cfg.items() if k != "TREND"})   # as the live bot runs it (b5to6brk)
             want += [(pn, c0)] + [(pn, TG._norm(dict(c0, TREND=m))) for m in TREND6]
     t0, done = time.time(), 0
     for sym in WORLD["symbols"]:
@@ -251,7 +251,7 @@ def trend_cards(idx, b5_res=None):
         f"{m} {(v.get(m) or {}).get('train_w', '-')}R/{(v.get(m) or {}).get('unseen', '-')}R" for m in ("day", "up20"))
         for k, v in (b5_res or {}).items()) or "TREND לא שיפר בשתי התקופות באף מסלול שנבדק (15 דק'/דקה: לא עדיף ב־2024-2025)"
     for trk, (pn, cfg) in live_tracks().items():
-        c0 = TG._norm({k: v for k, v in cfg.items() if k != "TREND"})
+        c0 = TG.ftmo_cfg({k: v for k, v in cfg.items() if k != "TREND"})       # as the live bot runs it (b5to6brk)
         base = _t6(idx, pn, c0)
         if base is None:
             continue
@@ -325,7 +325,10 @@ FILT_HE["LADDER"] = lambda v: {"2": "כניסה מדורגת: 2 כניסות ל�
 
 
 def _filt_variants(cfg, group=FILT6):
-    c0 = TG._norm(dict(cfg))
+    # the rules exactly as the live bot runs them (bot 5's task b5to6brk, 14.11.2026 night): live/watch_own.py trades
+    # TG.ftmo_cfg(cfg) (FTMO's 2h+ break rule on, WKND 10), so every head-to-head is measured on it - only the rule's
+    # own test (the WKND group) keeps the rules without it as its "now". Before this the tests ran without the rule.
+    c0 = TG._norm(dict(cfg)) if all(k == "WKND" for k, _ in group) else TG.ftmo_cfg(cfg)
     return c0, [(k, v, TG._norm(dict(c0, **{k: v}))) for k, v in group if c0.get(k) != v]
 
 
@@ -392,9 +395,18 @@ SET76 = (("TREND", "fib5"), ("TREND", "ha"), ("TREND", "ha2"))
 # squeeze is on, pdbrk = over yesterday's high longs only / under its low shorts only. Head to head on the four running
 # tracks and three indices, like SET76; a card only if better on 2026 too, naming bot 5's result.
 SQZ6 = (("TREND", "sqzm"), ("TREND", "sqz"), ("TREND", "pdbrk"))
-TASK6 = {"wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
+# THE FIX FOR THE BREAK RULE'S COST (bot 5's task b5to6brk, 14.11.2026 night). On bot 6 the rule (WKND 10) took 2026 from
+# +45.6R to +20.1R on 1h/5m and from +31.1R to +2.3R on 4h/1h: with EXPIRY 120 hours a gap order placed on Monday-Thursday
+# still waited on Friday and was cancelled for good. Head to head on the rules as the live bot runs them (WKND 10):
+# BRKH 1 / 3 / 6 (bot 5's fix - no order from X hours before the break) and REARM (bot 6's - the cancelled order is
+# placed again at the reopening while the gap is within EXPIRY; no order waits over the break, so the rule is kept).
+# First in the user's step. tal_gap.order_ok / rearm, the same in simulate and live_trades.
+BRK6 = (("REARM", True), ("BRKH", 1), ("BRKH", 3), ("BRKH", 6))
+FILT_HE["REARM"] = lambda v: "הוראת גאפ שבוטלה לפני סוף שבוע / חג חוזרת בפתיחה, כל עוד הגאפ בתוקף (REARM)"
+FILT_HE["BRKH"] = lambda v: f"בלי הוראת גאפ חדשה {v:g} שעות לפני הפסקה של שעתיים ומעלה (BRKH {v:g})"
+TASK6 = {"brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
          "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6}
-USER6 = WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+USER6 = BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
@@ -441,7 +453,7 @@ def filt_runs(idx, budget_s, group=None):
     for pn, cfg in live_tracks().values():
         if pn in pairs:
             c0, vs = _filt_variants(cfg, group or (FILT6 + LAD6 + MIN6))
-            want += [(pn, c0)] + [(pn, c) for _, _, c in vs]
+            want += [(pn, c0), (pn, TG._norm(dict(cfg)))] + [(pn, c) for _, _, c in vs]   # + the rules without WKND
     t0, done = time.time(), 0
     for sym in WORLD["symbols"]:
         todo = [(pn, c) for pn, c in want if f"{pairs[pn][0]}_{pairs[pn][1]}_{TG.vid(c)}_{sym}" not in idx]
@@ -529,8 +541,9 @@ def filt_cards(idx, group=FILT6):
                           f"2026 (לא נראתה): סה\"כ {lv['unseen']:+.1f}R ← {x['unseen']:+.1f}R, {x['n_unseen']} עסקאות, "
                           f"{x['mean_unseen']:+.2f}R לעסקה (היום {lv['mean_unseen']:+.2f}R על {lv['n_unseen']}), היום הגרוע "
                           f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. "
-                          + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND", "G3", "SWP") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10") else "")
-                          + "בבוט 5: " + (_b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND", "G3", "SWP") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10")
+                          + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND", "G3", "SWP", "BRKH", "REARM") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10") else "")
+                          + "בבוט 5: " + ("עוד לא נבדק - שיטה של בוט 6, נשלחה לבוט 5 כמשימה (b6to5rearm)." if k == "REARM" else
+                                          _b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND", "G3", "SWP", "BRKH") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10")
                                           else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
                           tested=len(vs), risk_pct=round(r_ * 100, 3), baseline=bs["unseen"],
@@ -568,7 +581,7 @@ def ask_cards(idx):
     for trk, (pn, cfg) in live_tracks().items():
         if pn not in ASK_PAIRS:
             continue
-        c0 = TG._norm(dict(cfg))
+        c0 = TG.ftmo_cfg(cfg)                            # as the live bot runs it (b5to6brk)
         c = TG._norm(dict(c0, **ASK6))
         if c == c0:
             continue
@@ -737,6 +750,95 @@ def fut_lim():
             "use": FA.ROOM_USE, "day_hard": True, "dayf": FA.tday,
             "contracts": {"syms": {s: (pv, tick) for s, (_, pv, tick) in FA.SPEC.items()}, "comm": FA.COMM,
                           "slip": FA.SLIP_TICKS, "initial": FA.INITIAL, "max_n": FA.MAX_MICROS}}
+
+
+# THE FIXED RISK RULE (the user, 14.11.2026 22:16, task tal1411risk: "a fixed rule that never changes - the daily and the
+# overall risk; if such a risk is opened, it is not right"). The live account (live/fut_account.size) counts every open
+# trade at its stop and gives a new trade only the room left; the whole-bot test (TG.account with fut_lim) does the same.
+# What the gap tracks' test did not have: the scout strategies bot 6 also trades (live/bots/bot6.json "scout", their own
+# risk) - so the whole bot here = the gap tracks (as the live bot runs them) + every scout strategy with its live
+# variant, and the card reports how many trades the room rule cut / skipped in each period (a lot = fix the overlap).
+def guard6(idx, counted, rk, budget_s):
+    from agents import scout_fut as SF
+    t0, rows = time.time(), []
+    for trk, (pn, c) in counted.items():
+        c = TG._norm(dict(c))
+        fs = list({v["sym"]: v for v in idx.values() if v["pair"] == pn and TG._norm(dict(v["cfg"])) == c
+                   and v["sym"] in WORLD["symbols"]}.values())
+        if {v["sym"] for v in fs} != set(WORLD["symbols"]):
+            return None
+        for v in fs:
+            t = pd.read_csv(TAL_DIR / v["file"])
+            t["trk"], t["sym"] = trk, v["sym"]
+            rows.append(t[["time", "dir", "r", "cost_r", "mins", "trk", "sym"]])
+    gap = pd.concat(rows, ignore_index=True)
+    gap["time"] = pd.to_datetime(gap["time"], utc=True, format="ISO8601")
+    gap["out"] = gap["time"] + pd.to_timedelta(gap["mins"].fillna(0).astype(float) + 1, unit="min")
+    try:
+        sc = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8")).get("scout") or {}
+    except Exception:  # noqa: BLE001
+        sc = {}
+    end = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+    data, srows, missing = {}, [], []
+    for combo, e in sc.items():
+        try:
+            sid, tf, sym = combo.split("|")
+            v = (e or {}).get("v") or {}
+            if sym not in FA.SPEC or time.time() - t0 > budget_s:
+                missing.append(combo)
+                continue
+            if sym not in data:
+                pr = prep(sym, end)
+                data[sym] = None if pr is None else pr
+            if data[sym] is None:
+                missing.append(combo)
+                continue
+            df, _, _, noent = data[sym]
+            shut, _ = FA.session_masks(df)
+            _, pv, tick = FA.SPEC[sym]
+            t = SF.trades(df, sym, sid, tf, v, noent, shut, tick + (FA.COMM + FA.SLIP_TICKS * tick * pv) / pv)
+            if t.empty:
+                continue
+            k = f"scout:{combo}" if f"scout:{combo}" in rk else "scout"
+            x = pd.DataFrame({"time": pd.to_datetime(t["time"], utc=True), "dir": t["dir"].astype(int), "r": t["r"].astype(float),
+                              "cost_r": t["cost_r"].astype(float), "trk": k, "sym": sym})
+            x["out"] = pd.to_datetime(t["exit_time"], utc=True) + pd.Timedelta(minutes=1)
+            x["mins"] = (x["out"] - x["time"]).dt.total_seconds() / 60
+            srows.append(x)
+        except Exception as ex:  # noqa: BLE001 - one strategy must not stop the test
+            print(f"guard6 {combo}: {ex}")
+            missing.append(combo)
+    allt = pd.concat([gap] + srows, ignore_index=True)
+    risk = {k: float(rk.get(k, FA.RISK_TAL)) * 100 for k in set(allt["trk"])}
+    lim = fut_lim()
+    res = {"tracks": sorted(counted), "scouts": sorted(sc), "missing": missing, "risk_pct": risk}
+    for nm, t in (("gap_only", gap), ("whole", allt)):
+        res[nm] = {per: TG.account(t[(t["time"] < TG.SPLIT) == (per == "train")].copy(), risk, lim) for per in ("train", "unseen")}
+        for per in ("train", "unseen"):
+            a = res[nm][per] or {}
+            a["n"] = int(((t["time"] < TG.SPLIT) == (per == "train")).sum())
+            a["room_only_skipped"] = int((a.get("room_skipped") or 0) - (a.get("contract_skipped") or 0))
+    return res
+
+
+def guard6_card(g):
+    """The info card of the fixed risk rule (tal1411risk): how many trades the room rule cut / skipped, per period."""
+    if not g:
+        return None
+    w, wt, gu = g["whole"]["unseen"] or {}, g["whole"]["train"] or {}, g["gap_only"]["unseen"] or {}
+    many = (w.get("room_cut", 0) + w.get("room_only_skipped", 0)) > 0.05 * max(1, w.get("n", 1))
+    what = (f"כלל הסיכון הקבוע: כל עסקה פתוחה נספרת עד הסטופ, ועסקה חדשה מקבלת רק את המקום שנשאר (בבוט 6: {FA.ROOM_USE:.0%} מהמקום "
+            f"עד {FA.DAILY_LOSS / FA.INITIAL:.1%} ביום ו־{FA.MAX_LOSS / FA.INITIAL:.1%} נגרר). הבוט כולו - {len(g['tracks'])} מסלולי הגאפ כפי שהם רצים "
+            f"ו־{len(g['scouts'])} אסטרטגיות הסייר, כל אחת בסיכון שלה. 2026: מתוך {w.get('n', 0)} עסקאות {w.get('room_cut', 0)} הוקטנו ו־"
+            f"{w.get('room_only_skipped', 0)} דולגו בגלל המקום (ועוד {w.get('contract_skipped', 0)} כי חוזה מיקרו אחד גדול מהסיכון של העסקה); "
+            f"הסיכון הפתוח הגבוה בלי הכלל {w.get('open_peak_pct')}%, היום הגרוע {w.get('worst_day_pct')}%, הירידה הגדולה {w.get('max_fall_pct')}%. "
+            f"2024-2025: {wt.get('room_cut', 0)} הוקטנו, {wt.get('room_only_skipped', 0)} דולגו מתוך {wt.get('n', 0)}. "
+            f"רק מסלולי הגאפ (2026): {gu.get('room_cut', 0)} / {gu.get('room_only_skipped', 0)}. "
+            + ("זה הרבה - המשימה הבאה: לתקן את החפיפה בין האסטרטגיות (קודם מתקנים)." if many else
+               "מעט - אין חפיפה שצריך לתקן; שום שינוי לא יאושר אם הוא פותח סיכון מעבר למקום הזה.")
+            + (f" לא נבדקו: {', '.join(g['missing'])}." if g["missing"] else ""))
+    return K.card("bot6", "info", "בוט 6: כלל הסיכון הקבוע - כמה עסקאות הוקטנו או דולגו בגלל המקום שנשאר", what, None, None,
+                  tested=1, detail={"world": "bot6", "task": "tal1411risk", "guard": g})
 
 
 def scale_cards(pf, rk):
@@ -1011,6 +1113,13 @@ def tal(budget_s):
         rk = {**FA.RISK, **(json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json")
                                        .read_text(encoding="utf-8")).get("risk") or {})}
         counted = {k: v for k, v in run.items() if float(rk.get(k, FA.RISK_TAL) or 0) > 0}
+        # the whole bot on the rules exactly as the live bot runs them (b5to6brk, 14.11.2026 night): every track with
+        # FTMO's break rule on (TG.ftmo_cfg) once its runs exist on the three indices, else as before (noted)
+        def _has(pn_, c_):
+            c_ = TG._norm(dict(c_))
+            return {v["sym"] for v in idx.values() if v["pair"] == pn_ and TG._norm(dict(v["cfg"])) == c_} >= set(WORLD["symbols"])
+        counted = {k: ((pn, TG.ftmo_cfg(c)) if _has(pn, TG.ftmo_cfg(c)) else (pn, c)) for k, (pn, c) in counted.items()}
+        STEPS["portfolio_rules"] = {k: ("ftmo" if "WKND" in c else "without WKND (runs missing)") for k, (_, c) in counted.items()}
         # the hour filter and the direction cap are bot 5's methods (13.11.2026), shared: chosen on 2024-2025 only.
         # Bot 6 has ~600 gap trades to 2025 against bot 5's ~5,000, so an hour needs 30 trades here (100 there),
         # with the same t <= -1.5
@@ -1030,6 +1139,15 @@ def tal(budget_s):
             except Exception as e:  # noqa: BLE001
                 print(f"tal_gap one micro failed: {e}")
             doc["bot6"]["portfolio"] = pf
+            try:        # the fixed risk rule on the whole bot, scouts included (tal1411risk, 14.11.2026 night)
+                g6 = guard6(idx, counted, rk, budget_s * 0.05)
+                if g6:
+                    doc["bot6"]["risk_guard"] = g6
+                    gc6 = guard6_card(g6)
+                    if gc6:
+                        pcards.append(gc6)
+            except Exception as e:  # noqa: BLE001
+                print(f"tal_gap risk guard failed: {e}")
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             pf5 = (doc.get("bot5") or {}).get("portfolio") or {}
             for pc in (TG.portfolio_card("bot6", pf, FA.RISK_TAL * 100), TG.hours_card("bot6", pf, FA.RISK_TAL * 100)):

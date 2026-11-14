@@ -728,7 +728,7 @@ def shut_of(D, cfg, f, e):
 # FTMO's rule (user, 14.11.2026: "it breaks FTMO's rules"): in a funded Standard account no position is held and no order
 # waits over a market break of 2+ hours (the weekend, a holiday, a daily close). WKND = minutes before the break: every
 # gap trade is closed at the open of the window's first minute, every waiting gap order is cancelled (not placed again
-# after the break), and no entry inside the window. Bot 5 runs it on every gap track (ftmo_cfg, the default below);
+# after the break - unless REARM, below), and no entry inside the window. Bot 5 runs it on every gap track (ftmo_cfg, the default below);
 # WKND 0 / absent = the rules as before (the same configuration names, so the old runs are the "without" side).
 WKND_MIN = 10
 
@@ -753,6 +753,29 @@ def brkh(cfg):
     minutes before the break. Off (absent / 0) = the rules as before, the same configuration name."""
     x = cfg.get("BRKH")
     return float(x) if x else 0.0
+
+
+def rearm(cfg):
+    """REARM (bot 6's smart agent, 14.11.2026 night, task b5to6brk - a fix for FTMO's break rule's cost that keeps the
+    rule): a gap order cancelled before a 2+ hour break is placed again at the first bar after the break (the market's
+    reopening) while its gap is still within EXPIRY - no order waits over the break, but the gap is not lost. The trade
+    is filled at the reopening's price when the market opened beyond the order (as any fill). Off (absent / False) =
+    cancelled for good, as before. The same in simulate() and live_trades()."""
+    return bool(cfg.get("REARM"))
+
+
+def order_ok(D, cfg, q0, q1):
+    """REARM: per bar of [q0, q1) True where the gap's order may wait (outside every pre-break window and the last bar
+    before a 2+ hour break - Data.cancel_at's bars); None when REARM / the break rule is off."""
+    wk = max(wknd(cfg), int(round(brkh(cfg) * 60)))
+    if not wk or not rearm(cfg):
+        return None
+    key = ("blocked", int(wk))
+    if key not in D.sw:
+        b = np.zeros(len(D.ns), bool)
+        b[D.cancel_at(wk)] = True
+        D.sw[key] = b
+    return ~D.sw[key][q0:q1]
 
 
 def cancel_bar(D, cfg, q0):
@@ -915,11 +938,15 @@ def simulate(D, pair, cfg, gcache, keep=None):
             continue                                     # G3 / SWP: the gap's own quality (candle 3, a sweep before)
         q0 = int(np.searchsorted(ns, armed))
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))      # from the impulse's end (the order's placing)
-        q1 = min(q1, cancel_bar(D, cfg, q0))                          # WKND: cancelled before a 2+ hour break
+        ok = order_ok(D, cfg, q0, q1)                                 # REARM: placed again after the break
+        if ok is None:
+            q1 = min(q1, cancel_bar(D, cfg, q0))                      # WKND: cancelled before a 2+ hour break
         if q0 >= q1:
             continue
         lv0 = (near + lad[0][0] * (far - near)) if lad else mid       # LADDER: the first level's touch starts the trade
         seg = (l1[q0:q1] <= lv0) if d > 0 else (h1[q0:q1] >= lv0)
+        if ok is not None:
+            seg &= ok
         if not seg.any():
             continue
         f = q0 + int(np.argmax(seg))
@@ -1144,6 +1171,8 @@ def _norm(c):
         c.pop("WKND")                                   # WKND 0 = off: the rules as before, the same name
     if "BRKH" in c and not c["BRKH"]:
         c.pop("BRKH")                                   # BRKH 0 = off: the same name
+    if "REARM" in c and not c["REARM"]:
+        c.pop("REARM")                                  # REARM off: the same name
     return c
 
 
@@ -1984,7 +2013,8 @@ def live_trades(D, pair, cfg, gcache=None):
         if gk is not None and not gk[gi]:                             # G3 / SWP (as simulate): no order for this gap
             out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="gapq"))
             continue
-        qc = cancel_bar(D, cfg, q0)                                   # WKND: cancelled before a 2+ hour break (as simulate)
+        ok = order_ok(D, cfg, q0, q1)                                 # REARM: placed again after the break (as simulate)
+        qc = cancel_bar(D, cfg, q0) if ok is None else n1             # WKND: cancelled before a 2+ hour break (as simulate)
         if qc < q1:
             seg_c = (l1[q0:qc] <= ((near + lad[0][0] * (far - near)) if lad else mid)) if d > 0 else \
                 (h1[q0:qc] >= ((near + lad[0][0] * (far - near)) if lad else mid))
@@ -1994,6 +2024,12 @@ def live_trades(D, pair, cfg, gcache=None):
             q1 = qc
         lv0 = (near + lad[0][0] * (far - near)) if lad else mid       # LADDER: the first level's touch (as simulate)
         seg = (l1[q0:q1] <= lv0) if d > 0 else (h1[q0:q1] >= lv0)
+        if ok is not None:
+            seg &= ok
+            if not seg.any() and q1 == n1 and not ok[-1] and armed + exp_ns > ns[-1]:
+                # inside a break's window now: no order at the broker; it comes back (pending) after the reopening
+                out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="break"))
+                continue
         if calk and calk in D.cal and D.cal_start[calk][q1 - 1] - (D.cal_start[calk][q0 - 1] if q0 else 0) > 0 and not seg.any():
             out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="news"))
             continue

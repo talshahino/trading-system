@@ -585,7 +585,18 @@ def main():
         pass
     all_rows, recent, done, fix_rows = [], [], [], []
     sh_t = {}                                                   # (sym, K) -> (signal times, directions) for CO_SYM
-    for sym in INSTR:
+    # the order (bot 7 agent, 14.11.2026): the runs end on their time budget after ~7 instruments, so GER40 (SH01's
+    # losing instrument, its fix attempt), WTI and BTCUSD were never reached. SH01's instruments first (US100 before
+    # GER40 for CO_SYM), then the ones the last run did not reach, then the rest; the scan keeps the last run's shocks
+    # of the instruments this run did not reach.
+    try:
+        prev = json.loads(SCAN.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        prev = {}
+    prev_done = set(prev.get("instruments") or [])
+    order = list(SH01_SYMS) + [x for x in INSTR if x not in SH01_SYMS and x not in prev_done] + \
+        [x for x in INSTR if x not in SH01_SYMS and x in prev_done]
+    for sym in order:
         if time.time() > t_end and done:
             print(f"time budget reached after {done}")
             break
@@ -613,6 +624,9 @@ def main():
     df = pd.DataFrame(all_rows)
     res = study(df, causes, now) if len(df) else {"tested": 0}
     groups = group(recent)
+    keep = [g for g in prev.get("shocks") or [] if not set(g.get("instruments") or []) & set(done)
+            and pd.Timestamp(g["t"]) >= now - pd.Timedelta(days=a.days)]
+    groups = sorted(groups + keep, key=lambda g: pd.Timestamp(g["t"]))
     SCAN.parent.mkdir(parents=True, exist_ok=True)
     SCAN.write_text(json.dumps({"updated": now.isoformat(timespec="seconds"), "definition": "v1 K=8 (agents/shocks.py)",
                                 "days": a.days, "instruments": done, "shocks": groups}, ensure_ascii=False, indent=1, default=str),

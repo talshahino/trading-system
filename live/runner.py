@@ -290,6 +290,10 @@ def plan_of(combo):
             out["be_r"], out["lock_r"] = (float(p["be_r"]) or None), ((3.0, 1.0) if float(p["be_r"]) else None)
         if p.get("partial") and 0 < float(p["partial"][0]) < 1 and 0 < float(p["partial"][1]) <= 5:
             out["partial"] = (float(p["partial"][0]), float(p["partial"][1]))
+        # pyramid (14.11.2026, task tal1411anti; bot 2 cards 0b88f2efa8f9 / 15ad6a81fce9): at `at` R in profit `frac`
+        # of a position more, the whole stop moved so a stop still loses 1R in all (rules_agent.run plan "pyramid")
+        if p.get("pyramid") and 0 < float(p["pyramid"][0]) <= 5 and 0 < float(p["pyramid"][1]) <= 1:
+            out["pyramid"] = (float(p["pyramid"][0]), float(p["pyramid"][1]))
     except (TypeError, ValueError, IndexError):
         return {}
     return out
@@ -1091,6 +1095,83 @@ def late_entry_ok(sym, d, open_px, stop, target, hi, lo):
     return True, f"price {off:+.2f}R from the backtest's entry"
 
 
+def pyramid_add(combo, sym, pos, t, new_sl, last_closed):
+    """The pyramid of an approved card (plans "pyramid" [at R, fraction]; run_rules.PYRS, rules_agent.run): once the
+    replay's trade reached `at` R on a closed bar (its "pyr_time"), `fraction` of the trade's size more at market, with
+    the trade's moved stop (new_sl, from the replay) and its target. Once per trade. The added size is cut so that both
+    together never lose more at the stop than the trade's own risk (the backtest adds at the level exactly; a live fill
+    farther away gets fewer lots, never more), and nothing is added near the limits, a long break or a stock's close."""
+    pyr = plan_of(combo).get("pyramid")
+    pt = t.get("pyr_time") if hasattr(t, "get") else None
+    if not pyr or pt is None or pd.isna(pt) or pd.Timestamp(pt) > last_closed or len(pos) != 1:
+        return
+    key = STATE["entry"].get(combo, "")
+    done = STATE.setdefault("pyr", {})
+    if done.get(combo) == key:
+        return
+    p = pos[0]
+    d = 1 if p.type == 0 else -1
+
+    def handled(why):
+        done[combo] = key
+        save_state()
+        log(f"pyramid {combo}: {why}")
+
+    now = pd.Timestamp.now(tz="UTC")
+    if break_soon(sym, now) or holiday_block(sym, now):
+        return handled("not added - a market break / holiday ahead")
+    if U.CLASS.get(sym) == "stock":
+        tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
+        loc = now.tz_convert(tz)
+        if loc.hour * 60 + loc.minute >= close_min - 15:
+            return handled("not added - last 15 minutes of the stock session")
+    if ACC.allowed_risk(1.0) <= 0:
+        return handled("not added - too close to the daily 4.5% / total 9% limit")
+    name = p.symbol
+    info, tick = mt5.symbol_info(name), mt5.symbol_info_tick(name)
+    if info is None or tick is None:
+        return                                          # tried again at the next loop
+    px = tick.ask if d > 0 else tick.bid
+    sl = round(float(new_sl), info.digits)
+    if d * (px - sl) <= 0:
+        return handled(f"not added - price {px} already at / past the stop {sl}")
+    kind = mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL
+
+    def loss_at(lots, frm):
+        try:
+            v = mt5.order_calc_profit(kind, name, lots, frm, sl)
+        except Exception:  # noqa: BLE001
+            v = None
+        if v is None:
+            v = -d * (frm - sl) * lots / info.trade_tick_size * info.trade_tick_value if info.trade_tick_size else 0.0
+        return max(0.0, -float(v))
+    risk0 = float(STATE["risk"].get(str(p.ticket)) or ACC.risk_usd * risk_mult(combo))
+    budget = risk0 - loss_at(p.volume, p.price_open)
+    per_lot = loss_at(1.0, px)
+    step_ = info.volume_step or 0.01
+    lots = p.volume * pyr[1]
+    if per_lot > 0:
+        lots = min(lots, budget / per_lot)
+    lots = round(int(lots / step_ + 1e-9) * step_, 8)
+    if lots < (info.volume_min or step_):
+        return handled(f"not added - {lots} lots under the minimum (room at the stop ${budget:,.2f})")
+    req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": name, "volume": lots, "type": kind, "price": px, "sl": sl,
+           "tp": p.tp or 0.0, "deviation": 20, "magic": p.magic, "comment": ("pyr " + combo)[:31],
+           "type_time": mt5.ORDER_TIME_GTC, "type_filling": mt5.ORDER_FILLING_IOC}
+    r = send(req, f"pyramid {combo} {'buy' if d > 0 else 'sell'} {lots} @ {px} sl {sl:.5g}")
+    done[combo] = key
+    if r is not None:
+        STATE.setdefault("pyr_tickets", {})[str(r.order)] = int(p.ticket)
+        keep = sorted(STATE["pyr_tickets"], key=int)[-200:]
+        STATE["pyr_tickets"] = {k: STATE["pyr_tickets"][k] for k in keep}
+        STATE["risk"][str(r.order)] = loss_at(lots, px)
+        if not ACC.dry:
+            REP.notify(f"{BOT}: הוספה לעסקה מנצחת", f"{pretty(combo)}\n+{lots} @ {px:g} · הסטופ של הכול {sl:g}\n"
+                       f"בסטופ: ${loss_at(p.volume, p.price_open) + loss_at(lots, px):,.0f} (סיכון העסקה ${risk0:,.0f})",
+                       tags=["heavy_plus_sign"])
+    save_state()
+
+
 def step(combo, sid, tf, sym, off):
     df = bars(sym, tf, off)
     now = pd.Timestamp.now(tz="UTC")
@@ -1150,7 +1231,8 @@ def step(combo, sid, tf, sym, off):
         # FTMO restricted event: no position from 3 minutes before to 3 minutes after it.
         # An open one is closed before FTMO's ban starts; a new entry of this bar is dropped.
         if nw == "close" and pos:
-            close(pos[0], "restricted news ahead (Standard rule)")   # closed for the news: not reopened
+            for q in pos:                                            # the pyramid's added part too
+                close(q, "restricted news ahead (Standard rule)")   # closed for the news: not reopened
         new = tr[tr["time"] == forming] if len(tr) else tr
         if len(new) and STATE["entry"].get(combo) != str(new.iloc[-1]["time"]):
             STATE["entry"][combo] = str(new.iloc[-1]["time"])       # a signal inside the window is not taken, not later either
@@ -1187,6 +1269,10 @@ def step(combo, sid, tf, sym, off):
         return float(m.iloc[-1]["stop_last"]) if len(m) and m.iloc[-1]["reason"] == "סוף הנתונים" else None
 
     if pos:
+        # the pyramid's added part (pyramid_add) is a second position of the same combo: the trade itself is the
+        # other one, and every stop move / close goes to both
+        added = {int(k) for k in (STATE.get("pyr_tickets") or {})}
+        pos = sorted(pos, key=lambda q: (q.ticket in added, q.ticket))
         p = pos[0]
         mine = tr[tr["time"].astype(str) == STATE["entry"].get(combo, "")] if len(tr) else tr
         if mine.empty:
@@ -1203,16 +1289,21 @@ def step(combo, sid, tf, sym, off):
                 save_state()
         if reason == "יעד" or "סטופ" in reason:
             if t["exit_time"] > forming and (sn := stop_now()) is not None:   # only the helper bars "hit" it
-                move_stop(p, sn)
+                for q in pos:
+                    move_stop(q, sn)
+                pyramid_add(combo, sym, pos, t, sn, last_closed)
             elif t["exit_time"] == forming and "פער פתיחה" in reason:
-                close(p, "stop (gap)")                 # the new stop is already past the price: out at market
+                for q in pos:
+                    close(q, "stop (gap)")             # the new stop is already past the price: out at market
             return                                     # real stop/target: the broker closes it at that price
         if reason == "סוף הנתונים" or not (t["exit_time"] <= last_closed or (
                 t["exit_time"] == forming and reason in ("סיגנל יציאה", "סיגנל הפוך"))):
             if (sn := stop_now()) is not None:
-                move_stop(p, sn)
+                for q in pos:
+                    move_stop(q, sn)
+                pyramid_add(combo, sym, pos, t, sn, last_closed)
             return
-        if close(p, reason) is None:                   # exit signal / opposite signal / time / session end
+        if any(close(q, reason) is None for q in pos):  # exit signal / opposite signal / time / session end
             return                                     # the close failed: never open a new trade next to it
         # an opposite signal may open the next trade on this same bar: fall through
     src = pend if limit else tr                       # limit combos enter only through a waiting limit order
@@ -1554,7 +1645,9 @@ def closed_doc(days=60):
             "gross": round(sum(d.profit for d in ds), 2), "swap": round(sum(d.swap for d in ds), 2),
             "comm": round(sum(d.commission + getattr(d, "fee", 0.0) for d in ds), 2),
             "net": round(sum(d.profit + d.swap + d.commission + getattr(d, "fee", 0.0) for d in ds), 2),
-            "why": outs[-1].comment, "reason": REASON.get(outs[-1].reason, ""), "pip": pip_size(o.symbol)}
+            "why": outs[-1].comment, "reason": REASON.get(outs[-1].reason, ""), "pip": pip_size(o.symbol),
+            # the pyramid's added part of another position (pyramid_add): not a trade of its own
+            **({"pyr_of": STATE["pyr_tickets"][key]} if key in (STATE.get("pyr_tickets") or {}) else {})}
     if len(cache) > 3000:
         for k in sorted(cache, key=lambda k: cache[k]["close_t"])[:len(cache) - 3000]:
             cache.pop(k)

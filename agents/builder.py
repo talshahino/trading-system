@@ -59,6 +59,10 @@ def buildable(c):
     ch, bot = c.get("change") or {}, c.get("bot")
     if c.get("kind") == "improve" and bot in PLAN_BOTS and ch.get("combo") and ch.get("family") in ("exits", "filters", "manage") and ch.get("to"):
         return {"bot": bot, "combo": ch["combo"], "family": ch["family"], "to": ch["to"]}
+    # the pyramid (14.11.2026, task tal1411anti): live/runner.py pyramid_add (bots 1-4), live/news_bot.py (bot 7)
+    if c.get("kind") == "improve" and bot in PLAN_BOTS and ch.get("combo") and ch.get("family") == "pyr" \
+            and pyr_plan(ch.get("to")) is not None:
+        return {"bot": bot, "combo": ch["combo"], "family": "pyr", "to": ch["to"]}
     if c.get("kind") == "new" and bot in ADD_BOTS and ch.get("combo") and ch.get("kind") == "add":
         return {"bot": bot, "combo": ch["combo"], "family": "add"}
     # bots 5-6: a gap track's rule, a track's risk, the user's gap method's timeframes / rules (bot 6 trades it)
@@ -151,6 +155,18 @@ def exit_plan(v):
     return p
 
 
+def pyr_plan(v):
+    """pyr1.5@0.5 -> [1.5, 0.5] (at R in profit, fraction of a position added); pyr0 -> []; anything else None."""
+    if v == "pyr0":
+        return []
+    try:
+        at, fr = str(v)[3:].split("@")
+        at, fr = float(at), float(fr)
+    except (TypeError, ValueError):
+        return None
+    return [at, fr] if str(v).startswith("pyr") and 0 < at <= 5 and 0 < fr <= 1 else None
+
+
 def manage_plan(v):
     """be0.6|part0.3@0.5 / ber2.5|part0 -> the plan keys live/runner.py and live/news_bot.py read."""
     b, pa = v.split("|")
@@ -198,6 +214,9 @@ def describe(b):
     if b["family"] == "manage":
         from agent_portfolio import explain_manage
         return f"{b['combo']}: {explain_manage(b['to'])}"
+    if b["family"] == "pyr":
+        v = pyr_plan(b["to"])
+        return f"{b['combo']}: " + (f"ב־{v[0]:g}R רווח מוסיפים {v[1]:g} פוזיציה, והסטופ של הכול זז כך שסטופ מפסיד 1R" if v else "בלי הוספה")
     p = exit_plan(b["to"])
     parts = [("בלי יעד" if p.get("target") == "none" else f"יעד {p['target']:g}R") if "target" in p else None,
              f"סטופ x{p['stop']:g}" if "stop" in p else None, f"כניסה בלימיט {p['limit']:g}R טוב יותר" if "limit" in p else None]
@@ -312,6 +331,13 @@ def apply(cfg, b, card_id):
         p.update(manage_plan(b["to"]))
         p["manage_card"] = card_id
         return
+    if b["family"] == "pyr":
+        v = pyr_plan(b["to"])
+        p.pop("pyramid", None)
+        if v:
+            p["pyramid"] = v
+        p["pyr_card"] = card_id
+        return
     if b["family"] == "filters":
         if b["to"] == "none":
             p.pop("filter", None)
@@ -387,7 +413,11 @@ def revert(cfg, card_id):
             p.pop("filter", None)
             p.pop("filter_card", None)
             done = True
-        if not {k for k in p if k not in ("card", "filter_card", "manage_card")}:
+        if p.get("pyr_card") == card_id:
+            p.pop("pyramid", None)
+            p.pop("pyr_card", None)
+            done = True
+        if not {k for k in p if k not in ("card", "filter_card", "manage_card", "pyr_card")}:
             cfg["plans"].pop(combo)
     return done
 

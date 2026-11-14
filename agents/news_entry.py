@@ -26,6 +26,18 @@ in US releases and its built version (pullback 0.5R, target 3R) only stops the l
   entry      at once / a limit 0.5R better (3 bars)    target 1.5R / 2R / 3R    surprise and cap as above
 Kept in its own cache (cache/news_entry/<sym>_ev03.json) and its own result ("study_ev03"), so EV01's rows stay.
 
+PRE (fix attempt 6 for EV03 and a wider sample for EV04, 14.11.2026): the only release strategy that held out of
+sample so far is the jobs box (news_improve2.py: the 10 minutes BEFORE the release make the box, the breakout
+after it; 2025 17 trades +0.32R, 2026 19 trades +0.23R) - EV03 draws its range AFTER the release and loses in US
+releases. Same machinery as EV03, the range moved before the release:
+  box        the 10 / 15 / 20 / 30 minutes before the release (2 / 3 / 4 / 6 five-minute bars)
+  side       the first 5-minute close outside it, from the release bar (closes at minute 5) through minute 30:
+             with the break (stop the box's other side) or against it (stop beyond the break bar + 0.1 ATR)
+  entry      at once / a limit 0.5R better (3 bars)    target 1.5R / 2R / 3R    out after an hour
+  surprise and cap as above; and every release type on its own ("by_cat": the best variant chosen on 2025 within
+  that type, shown on 2026), so the jobs box can be checked on all 16 instruments and the other types beside it.
+Own cache (cache/news_entry/<sym>_pre.json) and result ("study_pre").
+
 Output: reports/agents/bot7/entry_study.json. Cached per instrument (cache/news_entry/<sym>.json), resumes after a
 time budget cut. Runs on the bots' computer inside agent_portfolio.py --bot bot7, after the fix study.
   python -m agents.news_entry [--minutes 10]
@@ -69,6 +81,9 @@ STALE_DAYS = 3
 BOX_VERSION = 1
 BOX_TARGETS = (1.5, 2.0, 3.0)
 BOX_BASE = "b15|with|l0.5|t3|sall"     # EV03 as it trades now (card 340e3e2fcd30)
+PRE_VERSION = 1
+PRE_BASE = "p10|with|l0|t2|sall"       # the closest to the jobs box card faee9efdd86f (box 10, market entry)
+MIN_CAT_N = 8                          # a release type needs this many 2025 trades to choose a variant in it
 
 
 def strat(w, k, side):
@@ -127,6 +142,44 @@ def strat_box(w, side):
     return fn
 
 
+def strat_pre(w, side):
+    """The range moved before the release: the `w` 5-minute bars before it make the box; the first close outside it
+    from the release bar through minute 30 enters with the break (stop the box's other side) or against it (stop
+    beyond the break bar's extreme + 0.1 ATR). Entry at the next bar's open (minute 5 at the earliest: outside
+    FTMO's 2 minutes around a restricted release)."""
+    def fn(df):
+        h, l, c = (df[x].to_numpy() for x in "hlc")
+        a = atr(h, l, c, 14)
+        n = len(c)
+        long_, short = np.zeros(n, bool), np.zeros(n, bool)
+        sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+        for k0 in E._event_bars(df):
+            if k0 < 20 or k0 + 18 >= n or df.index[k0] - df.index[k0 - w] != pd.Timedelta(minutes=5 * w):
+                continue
+            ref = a[k0 - w - 1]
+            if not np.isfinite(ref) or ref <= 0:
+                continue
+            hi, lo = h[k0 - w:k0].max(), l[k0 - w:k0].min()
+            for k in range(k0, k0 + 6):
+                if df.index[k] - df.index[k0] > pd.Timedelta(minutes=25):
+                    break
+                up, dn = c[k] > hi, c[k] < lo
+                if not (up or dn):
+                    continue
+                d = (1 if up else -1) * side
+                if d > 0:
+                    long_[k], sl_l[k] = True, lo if side > 0 else l[k] - 0.1 * ref
+                else:
+                    short[k], sl_s[k] = True, hi if side > 0 else h[k] + 0.1 * ref
+                break
+        return long_, short, {"stop": ("level", sl_l, sl_s), "target": ("R", 2.0), "max_bars": 12}
+    return fn
+
+
+def vkey_pre(w, side, lim, tg):
+    return f"p{5 * w}|{'with' if side > 0 else 'fade'}|l{lim:g}|t{tg:g}"
+
+
 def grid_box():
     return list(itertools.product(WINDOWS, SIDES, LIMITS, BOX_TARGETS))
 
@@ -164,6 +217,8 @@ def trades_sym(sym, rel, family="EV01"):
     rows = []
     if family == "EV03":
         variants = [(vkey_box(w, side, lim, tg), strat_box(w, side), lim, tg) for w, side, lim, tg in grid_box()]
+    elif family == "PRE":
+        variants = [(vkey_pre(w, side, lim, tg), strat_pre(w, side), lim, tg) for w, side, lim, tg in grid_box()]
     else:
         variants = [(vkey(w, k, side, lim, tg), strat(w, k, side), lim, tg) for w, k, side, lim, tg in grid()]
     for vk, base, lim, tg in variants:
@@ -220,7 +275,7 @@ def study(df, base_key="m10|k1.5|with|l0|t2|sall"):
     top = cand[:TOP]
     base = next((c for c in cand if c["v"] == base_key), None)   # the strategy as it trades now
     by = {}
-    for key, pat in (("window", r"^[mb](\d+)\|"), ("spike", r"\|k([\d.]+)\|"), ("side", r"\|(with|fade)\|"),
+    for key, pat in (("window", r"^[mbp](\d+)\|"), ("spike", r"\|k([\d.]+)\|"), ("side", r"\|(with|fade)\|"),
                      ("surprise", r"\|s([a-z]+)"), ("cap", r"(?:\|c(\d+))?$")):
         g = {}
         for c in cand:
@@ -242,9 +297,24 @@ def stale():
     try:
         j = json.loads(OUT.read_text(encoding="utf-8"))
         return (pd.Timestamp.now(tz="UTC") - pd.Timestamp(j["at"]) > pd.Timedelta(days=STALE_DAYS) or j.get("partial")
-                or j.get("version") != VERSION or j.get("partial_ev03", True) or j.get("box_version") != BOX_VERSION)
+                or j.get("version") != VERSION or j.get("partial_ev03", True) or j.get("box_version") != BOX_VERSION
+                or j.get("partial_pre", True) or j.get("pre_version") != PRE_VERSION)
     except Exception:  # noqa: BLE001
         return True
+
+
+def by_cat(df):
+    """Every release type on its own: the variant with the most total R on 2025 within that type (at least MIN_CAT_N
+    trades there), shown on 2026; plus how many of the type's 10 best on 2025 made money in 2026."""
+    out = {}
+    for cat, y in df.groupby("cat"):
+        r_ = study(y, PRE_BASE)
+        top = [c for c in r_["top"] if c["train"]["n"] >= MIN_CAT_N]
+        if not top:
+            continue
+        out[cat] = {"best": top[0], "baseline": r_["baseline"],
+                    "top_positive_unseen": int(sum(1 for c in top if (c["unseen"]["sum"] or 0) > 0)), "top": len(top)}
+    return out
 
 
 def _family(fam, ver, suffix, rel, t_end):
@@ -293,15 +363,21 @@ def main(argv=None):
     res = study(df) if len(df) else {}
     df_b = pd.DataFrame(rows_b)
     res_b = study(df_b, BOX_BASE) if len(df_b) else {}
+    rows_p, done_p = _family("PRE", PRE_VERSION, "_pre", rel, t_end) if len(done_b) == len(NF.SYMBOLS) else ([], [])
+    df_p = pd.DataFrame(rows_p)
+    res_p = study(df_p, PRE_BASE) if len(df_p) else {}
+    if res_p:
+        res_p["by_cat"] = by_cat(df_p.assign(train=pd.to_datetime(df_p["t"], utc=True) < NF.SPLIT))
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "version": VERSION,
                                "box_version": BOX_VERSION,
                                "symbols": done, "partial": len(done) < len(NF.SYMBOLS), "rows": int(len(df)),
                                "symbols_ev03": done_b, "partial_ev03": len(done_b) < len(NF.SYMBOLS), "rows_ev03": int(len(df_b)),
                                "split": str(NF.SPLIT.date()), "test_from": str(NF.TEST_FROM.date()), "study": res,
-                               "study_ev03": res_b},
+                               "study_ev03": res_b, "pre_version": PRE_VERSION, "symbols_pre": done_p,
+                               "partial_pre": len(done_p) < len(NF.SYMBOLS), "rows_pre": int(len(df_p)), "study_pre": res_p},
                               ensure_ascii=False, indent=1, default=str), encoding="utf-8")
-    for name, r_ in (("EV01", res), ("EV03", res_b)):
+    for name, r_ in (("EV01", res), ("EV03", res_b), ("PRE", res_p)):
         if r_:
             print(name, json.dumps({"base": r_["baseline"], "best": r_["best"], "robust": r_["robust"]}, ensure_ascii=False, default=str))
 

@@ -724,7 +724,9 @@ def main():
         try:
             from agents import news_entry as NE
             if NE.stale() and not NF.stale():
-                mins = max(6.0, a.minutes / 3)
+                # half the budget (14.11.2026: the user's rule - fix the losers first; EV03's attempt 5 was 9/16 after
+                # a whole round and attempt 6, the box before the release, waits behind it)
+                mins = max(6.0, a.minutes / 2)
                 subprocess.run([sys.executable, "-m", "agents.news_entry", "--minutes", str(mins)], cwd=str(ROOT),
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001

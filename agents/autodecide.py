@@ -34,6 +34,20 @@ NO_RISK_DOWN = set()                   # (until 12.11.2026 bot 3; now the user: 
 KIND_HE = {"mult": "סיכון", "remove": "הסרה", "dir": "כיוון", "tp": "יעד", "sl": "סטופ", "hours": "שעות", "vol": "תנודתיות"}
 
 
+
+def _in_bot(bot, c):
+    """The card's change is already in live/bots/<bot>.json (a new strategy among its combos, an improvement's card id
+    in its plan): a whole-bot check after the build compares the bot with itself."""
+    try:
+        cfg = json.loads((ROOT / "live" / "bots" / f"{bot}.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return True
+    combo = (c.get("change") or {}).get("combo")
+    if c.get("kind") == "new":
+        return combo in (cfg.get("combos") or [])
+    p = (cfg.get("plans") or {}).get(combo) or {}
+    return c.get("id") in {v for k, v in p.items() if str(k).endswith("card")}
+
 def _git_show(path):
     from agents import repo_io as RIO
     return RIO.live_json(path)
@@ -313,6 +327,26 @@ def decide(bots, now=None):
             if did in uundo:
                 c["status"], c["verdict"] = "rejected", c["verdict"] + " · בוטל על ידך"
                 continue
+            if prev and prev.get("decision") == "approved" and c["kind"] in ("new", "improve") and not prev.get("whole_bot") \
+                    and c["id"] not in built and not _in_bot(bot, c):
+                # approved without the whole-bot check (it said "unknown" - manager, 14.11.2026: all 21 new / improve
+                # cards of bots 1-4 since 13.11, and bot 7's 6 scout strategies of 04:18) and not built yet: checked now
+                # that it can run; one that adds no 2026 profit to the whole bot, or only risk, is withdrawn, never built
+                try:
+                    from agents import portfolio_check as PC
+                    whole = PC.check(bot, c)
+                except Exception:  # noqa: BLE001
+                    whole = None
+                if whole is not None and not whole["ok"]:
+                    prev.update(decision="withdrawn", withdrawn_at=at)
+                    add({"id": _did("withdraw", c["id"]), "bot": bot, "type": "card", "card": c["id"],
+                         "kind": c["kind"], "tier": c["tier"], "title": "המנהל חזר בו: " + c["title"],
+                         "decision": "withdrawn", "why": "בדיקת הבוט השלם (לא רצה כשאושר): " + whole["why"],
+                         "effect": "לא ייבנה בבוט", "of": did, "whole_bot": {k: whole[k] for k in ("before", "after")}})
+                    c["status"], c["by"], c["verdict"] = "rejected", "manager", c["verdict"] + " · " + whole["why"]
+                    continue
+                if whole is not None:
+                    prev["whole_bot"] = {k: whole[k] for k in ("before", "after")}
             ccombo = (c.get("change") or {}).get("combo")
             if did not in old and c["kind"] == "improve" and ccombo:
                 if best_now.get((bot, ccombo), (c["id"],))[0] != c["id"]:

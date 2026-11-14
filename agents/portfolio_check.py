@@ -109,7 +109,15 @@ def current_trades(bot, combo, cfg, key="tr"):
                 return live_entries(combo, d, tr)
         return None
     d = exp(bot, "exits", combo) or {}
-    return live_entries(combo, d, (d.get(key) or {}).get(built_variant(bot, combo, "exits")))
+    tr = (d.get(key) or {}).get(built_variant(bot, combo, "exits"))
+    if tr is None and not any(k in p for k in ("target", "stop", "limit")):
+        # a scout strategy built as the scout brought it (manager, 14.11.2026: SC122 / SC094 in bot 4, SC001 in bots
+        # 2-3 had no exits experiment yet, so the whole-bot check saw them as unknown) - its own test's trades are the
+        # trades it takes now, until its exits experiment is stored
+        dn = exp(bot, "new", combo) or {}
+        if (dn.get(key) or {}).get("new"):
+            return live_entries(combo, dn, dn[key]["new"])
+    return live_entries(combo, d, tr)
 
 
 def trades_of_card(bot, card):
@@ -175,6 +183,20 @@ def riskier(new, old):
             or new["near_days"] > old["near_days"])
 
 
+SAFE_DAY, SAFE_DD = -2.5, 6.0     # % - half the daily limit, 60% of the total limit (5% / 10%, fixed forever)
+
+
+def adds_risk(new, old):
+    """For a new / improved strategy (manager, 14.11.2026): THE GOAL is the total profit (objective.md), the limits are
+    5% a day and 10% in all. A change that adds profit and leaves the whole bot's 2026 replay well inside them (worst
+    day above -2.5%, deepest fall under 6%, no more days near the limit) does not count as more risk - each measure on
+    its own: a worse worst day counts only below -2.5%, a deeper fall only above 6% (14.11: bot 4's worst day 1.83% ->
+    2.08% with a SMALLER fall, 8.6% -> 7.2%, blocked SC010 ARM even at half risk)."""
+    day_worse = new["worst_day"] < old["worst_day"] - EPS and new["worst_day"] < SAFE_DAY
+    dd_worse = new["max_dd"] > old["max_dd"] + EPS and new["max_dd"] > SAFE_DD
+    return day_worse or dd_worse or new["near_days"] > old["near_days"]
+
+
 def check(bot, card):
     """The whole bot with and without the card's change. {"ok": bool, "mult": m, "why": Hebrew, "before", "after"} or
     None when the trades are not stored yet (the agents re-run those combos first)."""
@@ -185,23 +207,36 @@ def check(bot, card):
     if not combo or tr is None:
         return None
     book, missing = book_now(bot, cfg)
-    if len(missing) > max(2, 0.2 * len(cfg.get("combos") or [])):
-        return None                                   # too much of the bot unknown yet to judge it as a whole
+    if card.get("kind") != "new" and combo in missing:
+        return None                                   # the strategy's own trades as it runs now unknown: no fair "before"
+    # (manager, 14.11.2026: with more than a fifth of the bot unknown the check returned None, and since 13.11 every one
+    # of the 21 new / improve cards approved in bots 1-4 went in without it - 8-20 strategies a bot wait for their
+    # re-run. The profit difference does not depend on the unknown strategies - they are the same before and after -
+    # so the user's rule "only if the 2026 total beats what runs now" is checked exactly; the risk numbers are on the
+    # known part of the bot, and say so.)
+    partial = len(missing) > max(2, 0.2 * len(cfg.get("combos") or []))
     risk = bot_risk(bot, cfg)
     before = replay(book, risk)
     m0 = book.get(combo, (None, float(mults(bot).get(combo, 1.0))))[1] or 1.0
     after = replay({**book, combo: (tr, m0)}, risk)
-    out = {"before": before, "after": after, "missing": missing, "combo": combo}
+    out = {"before": before, "after": after, "missing": missing, "combo": combo, "partial": partial}
+    res = _verdict(bot, out, book, combo, tr, m0, risk, before, after)
+    if partial and res.get("why"):
+        res["why"] += f" (סיכון על {len(book)} מתוך {len(book) + len(missing)} אסטרטגיות שהעסקאות שלהן ידועות)"
+    return res
+
+
+def _verdict(bot, out, book, combo, tr, m0, risk, before, after):
     if after["total"] <= before["total"]:
         return {**out, "ok": False, "mult": None,
                 "why": f"בבוט השלם על 2026 לא מוסיף רווח ({after['total']:+.2f}% מול {before['total']:+.2f}% היום)"}
-    if not riskier(after, before):
+    if not adds_risk(after, before):
         return {**out, "ok": True, "mult": None,
                 "why": f"בבוט השלם על 2026: רווח {before['total']:+.2f}% → {after['total']:+.2f}%, בלי יותר סיכון "
                        f"(יום גרוע {after['worst_day']:.2f}%, ירידה {after['max_dd']:.2f}%)"}
     for m in (0.9, 0.8, 0.7, 0.6, 0.5):
         a2 = replay({**book, combo: (tr, m0 * m)}, risk)
-        if a2["total"] > before["total"] and not riskier(a2, before):
+        if a2["total"] > before["total"] and not adds_risk(a2, before):
             return {**out, "after": a2, "ok": True, "mult": round(m0 * m, 2),
                     "why": f"בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×{m0 * m:.2f} לאסטרטגיה: רווח "
                            f"{before['total']:+.2f}% → {a2['total']:+.2f}% והסיכון לא עולה"}

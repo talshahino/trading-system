@@ -483,6 +483,13 @@ def experiments(bot, budget_s, where):
             keep = {base_variant(bot, c, fam, doc), {"exits": "own|be0.6|stop1|entry0", "filters": "none"}.get(fam, base_variant(bot, c, fam, doc))}
             keep |= set(sorted((v for v, x in doc["variants"].items() if (x["train"].get("eff_n") or 0) >= 10),
                                key=lambda v: -(doc["variants"][v]["train"]["mean"] or -9))[:5])
+            # ... and the five with the most TOTAL R on the choosing period (manager, 14.11.2026: the cards pick the
+            # variant by total R - objective.md - but only the best five by R a trade kept their trades, so the card's
+            # own variant often had none, the whole-bot check returned "unknown" and every improve card in bots 1-4
+            # since 13.11 went in without it)
+            keep |= set(sorted((v for v, x in doc["variants"].items() if (x["train"].get("eff_n") or 0) >= 10
+                                and x["train"].get("mean") is not None),
+                               key=lambda v: -(doc["variants"][v]["train"]["eff_n"] or 0) * doc["variants"][v]["train"]["mean"])[:5])
             doc["tr"] = {v: trades_2026(tc[tc["variant"] == v]) for v in keep if "variant" in tc and v in doc["variants"]}
             # the choosing period's trades of the variant in the bot now (whole-bot rules chosen on 2025, 13.11.2026)
             b0 = base_variant(bot, c, fam, doc)

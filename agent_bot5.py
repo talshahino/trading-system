@@ -346,7 +346,15 @@ NOTE_TESTS += [
     {"id": f"{trk}_set7", "track": trk, "knob": "TREND", "vals": ["fib5", "ha", "ha2"], "src": "tal1411set7",
      "he": "רק בכיוון ממוצעי פיבונאצ'י (8/13/21/34/55) או נרות הייקין אשי"}
     for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
-NOTE_SRC = {"tal1411set7": "משימה של טל מ־14.11 (ממוצעי פיבונאצ'י והייקין אשי מהסרטונים).",
+NOTE_TESTS += [
+    # the user's videos of 14.11.2026 17:51-18:15 (task tal1411set7 (12) / (16)), on the gap method as it runs - one TREND
+    # value each, from closed candles only (tal_gap.Data.trend, the same on the live bot): sqzm = the sign of LazyBear's
+    # squeeze momentum on the high timeframe, sqz = the same and no entry while the squeeze is on; pdbrk = over
+    # yesterday's high = longs only, under its low = shorts only, inside = both
+    {"id": f"{trk}_set7b", "track": trk, "knob": "TREND", "vals": ["sqz", "sqzm", "pdbrk"], "src": "tal1411set7",
+     "he": "רק בכיוון מומנטום הסקוויז של LazyBear, או בכיוון פריצת השיא / השפל של אתמול"}
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
+NOTE_SRC = {"tal1411set7": "משימה של טל מ־14.11 (ממוצעי פיבונאצ'י, הייקין אשי, הסקוויז של LazyBear ושיא / שפל של אתמול מהסרטונים).",
             "tal1411gapplus": "משימה של טל מ־14.11 (שיטות קרובות לגאפ: Silver Bullet, איכות נר 3, גאפ אחרי גריפה).",
             "tal1411set6": "משימה של טל מ־14.11 (פרמיה / דיסקאונט ופיבוט יומי מהסרטונים).",
             "tal1411vid": "משימות של טל מ־14.11 (מסנני הסרטונים: RSI במגמה, ADX, סופרטרנד, EMA 50/200, סדר הממוצעים).",

@@ -290,6 +290,43 @@ class Data:
                              np.where(sw_lo & ~sw_hi, 1, 2))))
                 b = np.where(np.isnan(ph), 0, b).astype(float)
                 s = self._closed("1d", b)
+            elif mode in ("sqz", "sqzm"):
+                # LazyBear's Squeeze Momentum (the user's video of 14.11.2026 17:51-18:03, task tal1411set7 (12)) on the
+                # CLOSED candles of the high timeframe, length 20, Bollinger 2.0, Keltner 1.5 x the true range's SMA:
+                # the momentum = the 20-candle linear regression (its value at the last candle) of close - the middle
+                # of (the 20-candle high / low middle, SMA 20). sqzm = its sign only (above 0 = longs only, below =
+                # shorts only); sqz = the same, and no entry while the squeeze is on (Bollinger inside Keltner)
+                ts, o, h, l, c, _ = self.tf(htf)
+                n_ = 20
+                cs = pd.Series(c)
+                sma = cs.rolling(n_, min_periods=n_).mean().to_numpy()
+                sd = cs.rolling(n_, min_periods=n_).std(ddof=0).to_numpy()
+                pc_ = np.r_[c[0], c[:-1]]
+                tr_ = np.maximum(h - l, np.maximum(np.abs(h - pc_), np.abs(l - pc_)))
+                rma = pd.Series(tr_).rolling(n_, min_periods=n_).mean().to_numpy()
+                on = (sma - 2.0 * sd > sma - 1.5 * rma) & (sma + 2.0 * sd < sma + 1.5 * rma)
+                hh_ = pd.Series(h).rolling(n_, min_periods=n_).max().to_numpy()
+                ll_ = pd.Series(l).rolling(n_, min_periods=n_).min().to_numpy()
+                y = c - ((hh_ + ll_) / 2 + sma) / 2
+                ok = ~np.isnan(y)
+                y0 = np.where(ok, y, 0.0)
+                sy = np.convolve(y0, np.ones(n_))[:len(y0)]
+                sxy = np.convolve(y0, np.arange(n_ - 1, -1, -1, dtype=float))[:len(y0)]
+                cnt = np.convolve(ok.astype(float), np.ones(n_))[:len(y0)]
+                sx, sxx = n_ * (n_ - 1) / 2, (n_ - 1) * n_ * (2 * n_ - 1) / 6
+                bb = (n_ * sxy - sx * sy) / (n_ * sxx - sx * sx)
+                val = np.where(cnt >= n_, (sy - bb * sx) / n_ + bb * (n_ - 1), np.nan)
+                b = np.sign(np.nan_to_num(val))
+                if mode == "sqz":
+                    b = np.where(on, 0, b)
+                s = np.nan_to_num(self._closed(htf, b.astype(float)), nan=0.0)
+            elif mode == "pdbrk":
+                # Daily High & Low (the user's video of 14.11.2026 18:11-18:15, task tal1411set7 (16), chebito): the price
+                # (the previous minute's close) over the last CLOSED UTC day's high = longs only, under its low = shorts
+                # only, inside the day's range = both (2)
+                ts, o, h, l, c, _ = self.tf("1d")
+                yh, yl = self._closed("1d", h), self._closed("1d", l)
+                s = np.where(np.isnan(yh), 0, np.where(prev > yh, 1, np.where(prev < yl, -1, 2)))
             else:
                 up = UP.get(htf, "4h")
                 ts, o, h, l, c, _ = self.tf(up)

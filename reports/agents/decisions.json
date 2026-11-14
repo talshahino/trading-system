@@ -1,7 +1,66 @@
 {
- "updated": "2026-11-14T06:01:38+00:00",
- "new": [],
+ "updated": "2026-11-14T06:05:33+00:00",
+ "new": [
+  "898f88d807b9",
+  "602cfd859497",
+  "3f6612a2d860"
+ ],
  "decisions": [
+  {
+   "id": "898f88d807b9",
+   "bot": "bot7",
+   "type": "card",
+   "card": "9bbba5a95257",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 7: 6 אסטרטגיות חדשות נבנו, EV03 כבר לא מפסיד - הצעה ליעד 2R",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-14T06:05:33+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "602cfd859497",
+   "bot": "bot7",
+   "type": "card",
+   "card": "8341533e53a5",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 7: 4 אסטרטגיות שהמנהל חזר בו מהן הוסרו; הסטרדל לפני חדשה והמסננים של טל בבדיקה",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-14T06:05:33+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "3f6612a2d860",
+   "bot": "bot7",
+   "type": "reset",
+   "kind": "reset",
+   "combo": null,
+   "title": "בוט 7: החשבון מתחיל מחדש מ־100,000$ (חשבון 8)",
+   "decision": "approved",
+   "why": "שינוי מהותי בסגנון האסטרטגיה (הוסרו 4 אסטרטגיות/מכשירים · כלל השתנה ב־SC089|5Min|GER40, SC089|5Min|JP225, SC097|1Hour|JP225, SC097|4Hour|GER40), והבוט עוד לא יציב (0 ימים מהאיפוס האחרון, פחות מ־14)",
+   "effect": "החשבון הקודם (0 עסקאות, +0$) נשמר ב־data/agents/bot7_archive/account_v5.json לסוכן של בוט 7 ולמנהל, ללמוד ממנו מה לשפר ומה לשמר. ביטול מחזיר את החשבון הקודם עם כל העסקאות",
+   "archive": "data/agents/bot7_archive/account_v5.json",
+   "action": {
+    "bot": "bot7",
+    "kind": "reset",
+    "v": 8
+   },
+   "at": "2026-11-14T06:05:33+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "da0b7cc7d235",
    "bot": "bot4",

@@ -1,5 +1,5 @@
 {
- "fp": "e0c8054151be",
+ "fp": "cebe54b90938",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -53,10 +53,6 @@
    "SC001|1Min|JP225",
    "SC070|5Min|JP225",
    "SC086|4Hour|JP225",
-   "SC089|5Min|GER40",
-   "SC089|5Min|JP225",
-   "SC097|1Hour|JP225",
-   "SC097|4Hour|GER40",
    "SH01|1Min|GER40",
    "SH01|1Min|US100"
   ],
@@ -228,18 +224,6 @@
    "SC086|4Hour|JP225": {
     "added": "2026-11-14"
    },
-   "SC089|5Min|GER40": {
-    "added": "2026-11-14"
-   },
-   "SC089|5Min|JP225": {
-    "added": "2026-11-14"
-   },
-   "SC097|1Hour|JP225": {
-    "added": "2026-11-14"
-   },
-   "SC097|4Hour|GER40": {
-    "added": "2026-11-14"
-   },
    "SH01|1Min|GER40": {
     "K": 8,
     "D": 3,
@@ -254,8 +238,8 @@
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-14T05:00:48+00:00",
- "account_v": 7,
+ "last_reset": "2026-11-14T06:05:33+00:00",
+ "account_v": 8,
  "resets": [
   {
    "v": 2,
@@ -298,6 +282,13 @@
    "what": "כלל השתנה ב־EV03|5Min|AUDUSD, EV03|5Min|EURJPY, EV03|5Min|EURUSD, EV03|5Min|GBPJPY",
    "archive": "data/agents/bot7_archive/account_v5.json",
    "id": "a24ef92e9a6e"
+  },
+  {
+   "v": 8,
+   "at": "2026-11-14T06:05:33+00:00",
+   "what": "הוסרו 4 אסטרטגיות/מכשירים · כלל השתנה ב־SC089|5Min|GER40, SC089|5Min|JP225, SC097|1Hour|JP225, SC097|4Hour|GER40",
+   "archive": "data/agents/bot7_archive/account_v5.json",
+   "id": "3f6612a2d860"
   }
  ],
  "stable": false,

@@ -1,7 +1,76 @@
 {
- "updated": "2026-11-14T10:27:14+00:00",
- "new": [],
+ "updated": "2026-11-14T10:25:21+00:00",
+ "new": [
+  "e1e1c4294cb2",
+  "e6bbb4b039ae",
+  "3f0b58b548bb",
+  "4c0d48750a3b",
+  "80fba27be034",
+  "794f87ff47ae",
+  "b6a572917a08"
+ ],
  "decisions": [
+  {
+   "id": "e1e1c4294cb2",
+   "bot": "bot3",
+   "type": "card",
+   "card": "5c613bb21a54",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.09R לעסקה, 112.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +77.82% → +81.49%, בלי יותר סיכון (יום גרוע -2.30%, ירידה 4.62%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3680,
+     "total": 77.82,
+     "worst_day": -2.21,
+     "max_dd": 4.22,
+     "near_days": 0,
+     "max_open": 3.52,
+     "max_side": 3.08
+    },
+    "after": {
+     "trades": 3792,
+     "total": 81.49,
+     "worst_day": -2.3,
+     "max_dd": 4.62,
+     "near_days": 0,
+     "max_open": 3.84,
+     "max_side": 3.08
+    }
+   },
+   "at": "2026-11-14T10:25:21+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "e6bbb4b039ae",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC069|15Min|XAUUSD",
+   "title": "SC069|15Min|XAUUSD: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.09R לעסקה, 112.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +77.82% → +81.49%, בלי יותר סיכון (יום גרוע -2.30%, ירידה 4.62%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "e1e1c4294cb2",
+   "star": true,
+   "action": {
+    "bot": "bot3",
+    "combo": "SC069|15Min|XAUUSD",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-14T10:25:21+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "3f0b58b548bb",
    "bot": "bot3",
@@ -34,7 +103,7 @@
      "max_side": 3.08
     }
    },
-   "at": "2026-11-14T10:26:39+00:00",
+   "at": "2026-11-14T10:25:21+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -58,7 +127,7 @@
     "value": 0.7,
     "prev": null
    },
-   "at": "2026-11-14T10:26:39+00:00",
+   "at": "2026-11-14T10:25:21+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -95,7 +164,7 @@
      "max_side": 3.45
     }
    },
-   "at": "2026-11-14T10:26:39+00:00",
+   "at": "2026-11-14T10:25:21+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -119,7 +188,7 @@
     "value": 0.7,
     "prev": null
    },
-   "at": "2026-11-14T10:26:39+00:00",
+   "at": "2026-11-14T10:25:21+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -136,7 +205,7 @@
    "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
    "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
    "star": false,
-   "at": "2026-11-14T10:26:39+00:00",
+   "at": "2026-11-14T10:25:21+00:00",
    "by": "manager",
    "read": false,
    "undone": false

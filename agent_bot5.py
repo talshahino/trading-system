@@ -315,7 +315,21 @@ NOTE_TESTS += [
     {"id": f"{trk}_pdpiv", "track": trk, "knob": "TREND", "vals": ["pd20", "pd50", "piv"], "src": "tal1411set6",
      "he": "רק בדיסקאונט / פרמיה של הטווח, או בכיוון הפיבוט היומי"}
     for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
-NOTE_SRC = {"tal1411set6": "משימה של טל מ־14.11 (פרמיה / דיסקאונט ופיבוט יומי מהסרטונים).",
+NOTE_TESTS += [
+    # the user's videos of 14.11.2026 12:48-13:45 (task tal1411gapplus: Silver Bullet, FVG quality by candle 3, the gap
+    # after a liquidity sweep - "close to my gap method"), on the gap method as it runs, one knob moved each, from the
+    # high timeframe's closed candles only (tal_gap.gap_keep / SESS_NY, the same on the live bot): G3 = candle 3's
+    # body / wicks against the ATR; SWP = a sweep of the previous day's low / high or of the 20 candles' low / high just
+    # before the impulse; SESS sb / sb10 = only fills in the Silver Bullet windows (New York 03-04, 10-11, 14-15 / 10-11)
+    T_ for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5") for T_ in (
+        {"id": f"{trk}_g3", "track": trk, "knob": "G3", "vals": list(TG.G3_VALS), "src": "tal1411gapplus",
+         "he": "איכות הגאפ לפי נר 3 (גוף / פתיל מול ATR)"},
+        {"id": f"{trk}_swp", "track": trk, "knob": "SWP", "vals": list(TG.SWP_VALS), "src": "tal1411gapplus",
+         "he": "רק גאפ אחרי גריפת נזילות (שפל / שיא של אתמול או של 20 הנרות)"},
+        {"id": f"{trk}_sb", "track": trk, "knob": "SESS", "vals": ["sb", "sb10"], "src": "tal1411gapplus",
+         "he": "רק בחלונות Silver Bullet (ניו יורק 03-04, 10-11, 14-15)"})]
+NOTE_SRC = {"tal1411gapplus": "משימה של טל מ־14.11 (שיטות קרובות לגאפ: Silver Bullet, איכות נר 3, גאפ אחרי גריפה).",
+            "tal1411set6": "משימה של טל מ־14.11 (פרמיה / דיסקאונט ופיבוט יומי מהסרטונים).",
             "tal1411vid": "משימות של טל מ־14.11 (מסנני הסרטונים: RSI במגמה, ADX, סופרטרנד, EMA 50/200, סדר הממוצעים).",
             "tal1411wkend": "משימה של טל מ־14.11 (כלל FTMO: בלי עסקה פתוחה בהפסקה של שעתיים ומעלה).",
             "tal1411ema": "משימה של טל מ־14.11 (מסנני EMA 9/20 ובולינגר).",

@@ -481,7 +481,10 @@ SESS_NY = {"rth": [(570, 960)], "nyam": [(570, 690)], "xopen": [(0, 570), (600, 
            # -0.19R / -0.37R a trade, while 22:00 UTC earned); xlate = no entry in the last 45 minutes before the
            # 15:45 cutoff, 15:00-15:45 (on 13.11 a 5m/1m long at 15:25 was stopped at 15:40, -1R) - little time left
            # before the forced exit at 16:05 and the close's own swings
-           "xreopen": [(0, 1080), (1140, 1440)], "xlate": [(0, 900), (945, 1440)]}
+           "xreopen": [(0, 1080), (1140, 1440)], "xlate": [(0, 900), (945, 1440)],
+           # ICT Silver Bullet (the user's video of 14.11.2026, task tal1411gapplus (1), Flux): entries only in the
+           # three New York windows 03:00-04:00, 10:00-11:00 and 14:00-15:00
+           "sb": [(180, 240), (600, 660), (840, 900)], "sb10": [(600, 660)]}
 
 
 def filt_ok(cfg, cost, risk, t_ns):
@@ -535,6 +538,73 @@ def bbw_mask(D, cfg, htf, ltf):
     if not b or b == "none":
         return None
     return D.bbw_ok(ltf if str(b)[0] == "l" else htf, int(str(b)[1:]) / 100)
+
+
+G3_VALS = ("weak", "nostrong", "nowick", "nobad")
+SWP_VALS = ("pdhl", "sw20")
+
+
+def gap_keep(D, cfg, htf, g):
+    """G3 / SWP (the user's videos of 14.11.2026 12:48-13:45, task tal1411gapplus - the gap's own quality, judged on the
+    high timeframe's CLOSED candles 1-3 and before them only, so the backtest and the live bot agree; agents/indicators/
+    fvg_quality.py has the same thresholds). Per gap of gaps(): True = kept. None when both are off.
+      G3  candle 3 (thecrypteller, (4)): body / wick in ATR(14) of candle 2 - weak = body < 0.5 and wicks < 0.5 (a good
+          gap, only these); nostrong = not a body >= 1.0 ATR (the price may not come back); nowick = not wicks >= 0.5
+          ATR and >= the body (do not trust it); nobad = neither strong nor big-wicked.
+      SWP a liquidity sweep before the impulse ((1) Silver Bullet / (7) 'Simple Daily Setup' / (10) Callisto SMC: the
+          gap after a sweep): within the 7 candles up to candle 2, the price ran under (longs; over for shorts)
+          pdhl = the previous UTC day's low / high; sw20 = the lowest low / highest high of the 20 candles before them."""
+    q3, sw = cfg.get("G3"), cfg.get("SWP")
+    q3 = q3 if q3 in G3_VALS else None
+    sw = sw if sw in SWP_VALS else None
+    if not (q3 or sw) or not g:
+        return None
+    key = ("gkeep", htf, cfg["GBODY"], cfg["MIN_GAP"], q3, sw, len(g))
+    if key in D.sw:
+        return D.sw[key]
+    ts, o, h, l, c, atr = D.tf(htf)
+    step = TF[htf] * 60_000_000_000
+    if sw == "pdhl":
+        dts, _, dh, dl, _, _ = D.tf("1d")
+    keep = np.ones(len(g), bool)
+    for gi, (d, mid, near, far, made, armed) in enumerate(g):
+        k3 = int(np.searchsorted(ts, made - step))           # candle 3
+        k = k3 - 1                                            # candle 2
+        if k < 1 or k3 >= len(c):
+            keep[gi] = False
+            continue
+        if q3:
+            a = atr[k]
+            if not (a > 0):
+                keep[gi] = False
+                continue
+            body = abs(c[k3] - o[k3]) / a
+            wick = (h[k3] - l[k3]) / a - body
+            strong, bigw = body >= 1.0, (wick >= 0.5) and (wick >= body)
+            ok = {"weak": body < 0.5 and wick < 0.5, "nostrong": not strong, "nowick": not bigw,
+                  "nobad": not strong and not bigw}[q3]
+            if not ok:
+                keep[gi] = False
+                continue
+        if sw:
+            a0 = max(0, k - 6)
+            ext = l[a0:k + 1].min() if d > 0 else h[a0:k + 1].max()
+            if sw == "pdhl":
+                j = int(np.searchsorted(dts, ts[a0] - 1440 * 60_000_000_000, side="right")) - 1   # the last day closed
+                if j < 0:
+                    keep[gi] = False
+                    continue
+                ref = dl[j] if d > 0 else dh[j]
+            else:
+                b0 = a0 - 20
+                if b0 < 0:
+                    keep[gi] = False
+                    continue
+                ref = l[b0:a0].min() if d > 0 else h[b0:a0].max()
+            if not ((ext < ref) if d > 0 else (ext > ref)):
+                keep[gi] = False
+    D.sw[key] = keep
+    return keep
 
 
 def news_x(D, cfg):
@@ -730,8 +800,11 @@ def simulate(D, pair, cfg, gcache, keep=None):
     trend = D.trend(htf, cfg.get("TREND", "none"), ltf)
     bbw, newsx = bbw_mask(D, cfg, htf, ltf), news_x(D, cfg)
     lad = ladder_of(cfg)
+    gk = gap_keep(D, cfg, htf, g)
     cands = []
-    for d, mid, near, far, made, armed in g:
+    for gi, (d, mid, near, far, made, armed) in enumerate(g):
+        if gk is not None and not gk[gi]:
+            continue                                     # G3 / SWP: the gap's own quality (candle 3, a sweep before)
         q0 = int(np.searchsorted(ns, armed))
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))      # from the impulse's end (the order's placing)
         q1 = min(q1, cancel_bar(D, cfg, q0))                          # WKND: cancelled before a 2+ hour break
@@ -956,7 +1029,7 @@ def _cfg_runs(p, cfg, symbols, idx):
 
 
 def _norm(c):
-    for k in ("EXIT", "IMP1", "TREND", "LADDER", "BBW", "NEWSX", "PYR"):
+    for k in ("EXIT", "IMP1", "TREND", "LADDER", "BBW", "NEWSX", "PYR", "G3", "SWP"):
         if c.get(k) == "none":
             c.pop(k)                                    # "none" is the base: the same configuration, the same name
     if "WKND" in c and not c["WKND"]:
@@ -1782,6 +1855,7 @@ def live_trades(D, pair, cfg, gcache=None):
     trend = D.trend(htf, cfg.get("TREND", "none"), ltf)
     bbw, newsx = bbw_mask(D, cfg, htf, ltf), news_x(D, cfg)
     lad = ladder_of(cfg)
+    gk = gap_keep(D, cfg, htf, g)
     out, cands = [], []
     # pass 1: every gap -> pending / cancelled, or a candidate fill (exactly simulate()'s checks, protection included)
     geo = gcache.get((htf, cfg["GBODY"], cfg["MIN_GAP"], "geo")) or []
@@ -1796,6 +1870,9 @@ def live_trades(D, pair, cfg, gcache=None):
         q0 = int(np.searchsorted(ns, armed))
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))
         if q0 >= n1:
+            continue
+        if gk is not None and not gk[gi]:                             # G3 / SWP (as simulate): no order for this gap
+            out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="gapq"))
             continue
         qc = cancel_bar(D, cfg, q0)                                   # WKND: cancelled before a 2+ hour break (as simulate)
         if qc < q1:

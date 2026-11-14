@@ -619,7 +619,11 @@ FAMILY = {"SC001|1Min": ["JP225", "US100", "GER40", "US500", "US30", "UK100", "X
                          "AUDUSD", "NZDUSD", "USDCHF", "USDCAD", "EURJPY", "GBPJPY"],
           # the manager's task mgr1411fam2 (14.11.2026, deadline 17.11): SC070|5Min|JP225 runs in bot 7 at t 0.06 to 2025
           # out of a family that loses (5Min GER40 -0.57R a trade in 2026) - a filter chosen on the whole family
-          "SC070|5Min": ["JP225", "GER40", "US100", "US500", "US30", "UK100", "XAUUSD"]}
+          "SC070|5Min": ["JP225", "GER40", "US100", "US500", "US30", "UK100", "XAUUSD"],
+          # the manager's task mgr1411thin (14.11.2026, deadline 18.11): SC086|4Hour|JP225 runs in bot 7 on +2.5R to 2025
+          # (t 0.82); of its 3 tested instruments GER40 / XAUUSD lose in 2026 (-2.0R / -4.6R) - a filter chosen on the
+          # whole family (4-hour runs are quick: all 7 instruments fit one round)
+          "SC086|4Hour": ["JP225", "GER40", "XAUUSD", "US100", "US500", "US30", "UK100"]}
 FAMILY_DAYS = 10
 
 
@@ -628,8 +632,8 @@ def families_of(bot):
     picked as one instrument out of a family that loses to 2025 (the rule of agents/autodecide._family_pick: >= 4 pairs
     tested, the pooled result to 2025 below 0, its own t below 1) - SC010|15Min|ARM in bots 1-4, SC006|4Hour|EURJPY and
     SC094|1Hour|XAGUSD in bot 4. The family = the strategy on the same timeframe on every instrument the bot tested."""
-    if bot == "bot7":
-        return FAMILY
+    if bot == "bot7":     # the quick 4-hour family first, so the 1-minute one cannot leave it without minutes
+        return dict(sorted(FAMILY.items(), key=lambda kv: kv[0].split("|")[1] in ("1Min", "5Min")))
     # bot 5 (its smart agent, 14.11.2026, the manager's task mgr1411fam2 - SC071|15Min|US30, 4 indices to 2025 -16R):
     # its scout strategies are "scout" in live/bots/bot5.json and its new-strategy cards are cards_new.json
     try:
@@ -697,7 +701,8 @@ def family_fix(bot, budget_s, one=False):
             st.put("family", c, doc)
             done += 1
             print(f"  family {c}: {len(doc['sums'])} filters ({time.time() - ts:.0f}s)")
-            if one:            # one instrument per family per round (14.11.2026: SC070's 5-minute runs are quick and
+            # (a 15-minute to 4-hour family runs all its instruments in one round - SC086|4Hour, 14.11.2026)
+            if one and base.split("|")[1] in ("1Min", "5Min"):   # one instrument per family per round (14.11.2026: SC070's 5-minute runs are quick and
                 break          # its deadline is 17.11 - it must not wait behind SC001's 16 one-minute instruments)
     return done
 

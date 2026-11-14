@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-14T03:56:07+00:00",
+ "updated": "2026-11-14T12:28:32+00:00",
  "train": [
   "2025-04-30",
   "2025-12-31"
@@ -9,509 +9,6 @@
   "2026-11-14"
  ],
  "symbols": {
-  "GER40": {
-   "current": {
-    "v": {
-     "K": 8,
-     "D": 3,
-     "p": 0.25,
-     "H": 60,
-     "tg": 0.0,
-     "hours": "all",
-     "side": "all"
-    },
-    "train": {
-     "n": 39,
-     "eff_n": 39.0,
-     "mean": 0.2732,
-     "t": 0.93,
-     "win": 48.8,
-     "sum": 10.59
-    },
-    "unseen": {
-     "n": 68,
-     "eff_n": 68.0,
-     "mean": -0.0656,
-     "t": -0.44,
-     "win": 38.2,
-     "sum": -4.48
-    }
-   },
-   "best": {
-    "v": {
-     "K": 10,
-     "D": 1,
-     "p": 0.25,
-     "H": 120,
-     "tg": 0.0,
-     "hours": "all",
-     "side": "down"
-    },
-    "train": {
-     "n": 23,
-     "eff_n": 23.0,
-     "mean": 0.9127,
-     "t": 1.33,
-     "win": 43.3,
-     "sum": 20.76
-    },
-    "unseen": {
-     "n": 25,
-     "eff_n": 25.0,
-     "mean": -0.1936,
-     "t": -0.61,
-     "win": 27.9,
-     "sum": -4.78
-    }
-   },
-   "top": [
-    {
-     "v": {
-      "K": 10,
-      "D": 1,
-      "p": 0.25,
-      "H": 120,
-      "tg": 0.0,
-      "hours": "all",
-      "side": "down"
-     },
-     "train": {
-      "n": 23,
-      "eff_n": 23.0,
-      "mean": 0.9127,
-      "t": 1.33,
-      "win": 43.3,
-      "sum": 20.76
-     },
-     "unseen": {
-      "n": 25,
-      "eff_n": 25.0,
-      "mean": -0.1936,
-      "t": -0.61,
-      "win": 27.9,
-      "sum": -4.78
-     }
-    },
-    {
-     "v": {
-      "K": 6,
-      "D": 2,
-      "p": 0.25,
-      "H": 120,
-      "tg": 0.0,
-      "hours": "all",
-      "side": "down"
-     },
-     "train": {
-      "n": 33,
-      "eff_n": 33.0,
-      "mean": 0.584,
-      "t": 1.28,
-      "win": 45.2,
-      "sum": 19.99
-     },
-     "unseen": {
-      "n": 47,
-      "eff_n": 47.0,
-      "mean": 0.1004,
-      "t": 0.41,
-      "win": 40.5,
-      "sum": 4.76
-     }
-    },
-    {
-     "v": {
-      "K": 6,
-      "D": 3,
-      "p": 0.25,
-      "H": 30,
-      "tg": 0.0,
-      "hours": "all",
-      "side": "down"
-     },
-     "train": {
-      "n": 29,
-      "eff_n": 29.0,
-      "mean": 0.6757,
-      "t": 1.84,
-      "win": 58.5,
-      "sum": 19.81
-     },
-     "unseen": {
-      "n": 46,
-      "eff_n": 46.0,
-      "mean": 0.3307,
-      "t": 1.53,
-      "win": 54.4,
-      "sum": 15.23
-     }
-    },
-    {
-     "v": {
-      "K": 6,
-      "D": 3,
-      "p": 0.25,
-      "H": 120,
-      "tg": 0.0,
-      "hours": "all",
-      "side": "down"
-     },
-     "train": {
-      "n": 29,
-      "eff_n": 29.0,
-      "mean": 0.6592,
-      "t": 1.45,
-      "win": 48.1,
-      "sum": 19.63
-     },
-     "unseen": {
-      "n": 46,
-      "eff_n": 46.0,
-      "mean": 0.2789,
-      "t": 0.97,
-      "win": 45.7,
-      "sum": 12.81
-     }
-    },
-    {
-     "v": {
-      "K": 6,
-      "D": 3,
-      "p": 0.25,
-      "H": 60,
-      "tg": 0.0,
-      "hours": "all",
-      "side": "down"
-     },
-     "train": {
-      "n": 29,
-      "eff_n": 29.0,
-      "mean": 0.6684,
-      "t": 1.79,
-      "win": 58.6,
-      "sum": 19.44
-     },
-     "unseen": {
-      "n": 46,
-      "eff_n": 46.0,
-      "mean": 0.1596,
-      "t": 0.79,
-      "win": 50.0,
-      "sum": 7.36
-     }
-    },
-    {
-     "v": {
-      "K": 8,
-      "D": 3,
-      "p": 0.25,
-      "H": 30,
-      "tg": 0.0,
-      "hours": "all",
-      "side": "down"
-     },
-     "train": {
-      "n": 23,
-      "eff_n": 23.0,
-      "mean": 0.7991,
-      "t": 1.78,
-      "win": 56.6,
-      "sum": 18.56
-     },
-     "unseen": {
-      "n": 22,
-      "eff_n": 22.0,
-      "mean": 0.158,
-      "t": 0.72,
-      "win": 59.0,
-      "sum": 3.53
-     }
-    },
-    {
-     "v": {
-      "K": 6,
-      "D": 3,
-      "p": 0.25,
-      "H": 120,
-      "tg": 1.0,
-      "hours": "all",
-      "side": "down"
-     },
-     "train": {
-      "n": 29,
-      "eff_n": 29.0,
-      "mean": 0.5831,
-      "t": 1.89,
-      "win": 65.3,
-      "sum": 17.09
-     },
-     "unseen": {
-      "n": 45,
-      "eff_n": 45.0,
-      "mean": 0.1753,
-      "t": 0.83,
-      "win": 51.1,
-      "sum": 7.87
-     }
-    },
-    {
-     "v": {
-      "K": 6,
-      "D": 1,
-      "p": 0.25,
-      "H": 120,
-      "tg": 0.0,
-      "hours": "all",
-      "side": "down"
-     },
-     "train": {
-      "n": 42,
-      "eff_n": 42.0,
-      "mean": 0.4131,
-      "t": 0.95,
-      "win": 31.0,
-      "sum": 17.08
-     },
-     "unseen": {
-      "n": 68,
-      "eff_n": 68.0,
-      "mean": 0.017,
-      "t": 0.07,
-      "win": 26.4,
-      "sum": 1.44
-     }
-    },
-    {
-     "v": {
-      "K": 6,
-      "D": 3,
-      "p": 0.5,
-      "H": 120,
-      "tg": 0.0,
-      "hours": "all",
-      "side": "down"
-     },
-     "train": {
-      "n": 35,
-      "eff_n": 35.0,
-      "mean": 0.4778,
-      "t": 1.56,
-      "win": 51.4,
-      "sum": 16.64
-     },
-     "unseen": {
-      "n": 61,
-      "eff_n": 61.0,
-      "mean": 0.0226,
-      "t": 0.11,
-      "win": 41.0,
-      "sum": 1.34
-     }
-    },
-    {
-     "v": {
-      "K": 10,
-      "D": 1,
-      "p": 0.25,
-      "H": 120,
-      "tg": 1.0,
-      "hours": "all",
-      "side": "down"
-     },
-     "train": {
-      "n": 23,
-      "eff_n": 23.0,
-      "mean": 0.7124,
-      "t": 1.77,
-      "win": 52.1,
-      "sum": 16.41
-     },
-     "unseen": {
-      "n": 25,
-      "eff_n": 25.0,
-      "mean": -0.1212,
-      "t": -0.42,
-      "win": 31.9,
-      "sum": -2.96
-     }
-    }
-   ],
-   "top10_positive_unseen": 8,
-   "walk_forward_2025": {
-    "pick_a": {
-     "K": 6,
-     "D": 2,
-     "p": 0.25,
-     "H": 120,
-     "tg": 0.0,
-     "hours": "all",
-     "side": "down"
-    },
-    "a_sum": 19.12,
-    "b_sum": 0.87
-   },
-   "by": {
-    "hours": {
-     "all": {
-      "variants": 1516,
-      "train_median_sum": 0.86,
-      "unseen_median_sum": 0.93,
-      "unseen_positive": 865
-     },
-     "cash": {
-      "variants": 884,
-      "train_median_sum": 2.77,
-      "unseen_median_sum": -1.13,
-      "unseen_positive": 359
-     },
-     "off": {
-      "variants": 924,
-      "train_median_sum": -1.23,
-      "unseen_median_sum": 1.28,
-      "unseen_positive": 574
-     }
-    },
-    "side": {
-     "all": {
-      "variants": 1544,
-      "train_median_sum": 0.3,
-      "unseen_median_sum": 1.47,
-      "unseen_positive": 943
-     },
-     "down": {
-      "variants": 1108,
-      "train_median_sum": 2.58,
-      "unseen_median_sum": -0.68,
-      "unseen_positive": 479
-     },
-     "up": {
-      "variants": 672,
-      "train_median_sum": -2.9,
-      "unseen_median_sum": 0.81,
-      "unseen_positive": 376
-     }
-    },
-    "D": {
-     "1": {
-      "variants": 936,
-      "train_median_sum": -0.55,
-      "unseen_median_sum": 0.73,
-      "unseen_positive": 536
-     },
-     "2": {
-      "variants": 824,
-      "train_median_sum": 0.01,
-      "unseen_median_sum": 1.79,
-      "unseen_positive": 525
-     },
-     "3": {
-      "variants": 804,
-      "train_median_sum": 2.05,
-      "unseen_median_sum": 1.28,
-      "unseen_positive": 483
-     },
-     "5": {
-      "variants": 760,
-      "train_median_sum": 1.1,
-      "unseen_median_sum": -1.64,
-      "unseen_positive": 254
-     }
-    },
-    "p": {
-     "0.25": {
-      "variants": 972,
-      "train_median_sum": 1.46,
-      "unseen_median_sum": 1.41,
-      "unseen_positive": 587
-     },
-     "0.5": {
-      "variants": 1140,
-      "train_median_sum": -0.18,
-      "unseen_median_sum": 0.9,
-      "unseen_positive": 645
-     },
-     "1.0": {
-      "variants": 1212,
-      "train_median_sum": 0.97,
-      "unseen_median_sum": -0.38,
-      "unseen_positive": 566
-     }
-    },
-    "H": {
-     "15": {
-      "variants": 831,
-      "train_median_sum": -0.18,
-      "unseen_median_sum": 0.93,
-      "unseen_positive": 480
-     },
-     "30": {
-      "variants": 831,
-      "train_median_sum": 1.16,
-      "unseen_median_sum": 1.46,
-      "unseen_positive": 517
-     },
-     "60": {
-      "variants": 831,
-      "train_median_sum": 1.3,
-      "unseen_median_sum": -0.37,
-      "unseen_positive": 386
-     },
-     "120": {
-      "variants": 831,
-      "train_median_sum": 0.15,
-      "unseen_median_sum": -0.0,
-      "unseen_positive": 415
-     }
-    },
-    "tg": {
-     "0.0": {
-      "variants": 1124,
-      "train_median_sum": 1.33,
-      "unseen_median_sum": 1.13,
-      "unseen_positive": 664
-     },
-     "0.5": {
-      "variants": 1076,
-      "train_median_sum": -0.33,
-      "unseen_median_sum": 0.37,
-      "unseen_positive": 569
-     },
-     "1.0": {
-      "variants": 1124,
-      "train_median_sum": 1.21,
-      "unseen_median_sum": 0.06,
-      "unseen_positive": 565
-     }
-    },
-    "K": {
-     "6": {
-      "variants": 1168,
-      "train_median_sum": 0.0,
-      "unseen_median_sum": -0.4,
-      "unseen_positive": 545
-     },
-     "8": {
-      "variants": 1004,
-      "train_median_sum": 1.01,
-      "unseen_median_sum": 0.54,
-      "unseen_positive": 556
-     },
-     "10": {
-      "variants": 808,
-      "train_median_sum": 1.06,
-      "unseen_median_sum": 1.65,
-      "unseen_positive": 479
-     },
-     "12": {
-      "variants": 344,
-      "train_median_sum": -0.03,
-      "unseen_median_sum": 1.38,
-      "unseen_positive": 218
-     }
-    }
-   },
-   "tested": 3324
-  },
   "US100": {
    "current": {
     "v": {
@@ -521,7 +18,8 @@
      "H": 60,
      "tg": 0.0,
      "hours": "all",
-     "side": "all"
+     "side": "all",
+     "co": "all"
     },
     "train": {
      "n": 55,
@@ -548,7 +46,8 @@
      "H": 60,
      "tg": 0.0,
      "hours": "cash",
-     "side": "all"
+     "side": "all",
+     "co": "all"
     },
     "train": {
      "n": 41,
@@ -576,7 +75,8 @@
       "H": 60,
       "tg": 0.0,
       "hours": "cash",
-      "side": "all"
+      "side": "all",
+      "co": "all"
      },
      "train": {
       "n": 41,
@@ -603,7 +103,8 @@
       "H": 120,
       "tg": 0.0,
       "hours": "cash",
-      "side": "all"
+      "side": "all",
+      "co": "all"
      },
      "train": {
       "n": 41,
@@ -616,7 +117,7 @@
      "unseen": {
       "n": 55,
       "eff_n": 55.0,
-      "mean": -0.0598,
+      "mean": -0.0597,
       "t": -0.18,
       "win": 20.2,
       "sum": -3.82
@@ -630,12 +131,13 @@
       "H": 120,
       "tg": 0.0,
       "hours": "cash",
-      "side": "down"
+      "side": "down",
+      "co": "all"
      },
      "train": {
       "n": 29,
       "eff_n": 29.0,
-      "mean": 1.3598,
+      "mean": 1.3597,
       "t": 1.72,
       "win": 27.1,
       "sum": 40.77
@@ -657,7 +159,8 @@
       "H": 60,
       "tg": 0.0,
       "hours": "all",
-      "side": "all"
+      "side": "all",
+      "co": "all"
      },
      "train": {
       "n": 55,
@@ -684,7 +187,8 @@
       "H": 60,
       "tg": 0.0,
       "hours": "cash",
-      "side": "down"
+      "side": "down",
+      "co": "all"
      },
      "train": {
       "n": 29,
@@ -711,7 +215,8 @@
       "H": 120,
       "tg": 0.0,
       "hours": "all",
-      "side": "all"
+      "side": "all",
+      "co": "all"
      },
      "train": {
       "n": 55,
@@ -738,7 +243,8 @@
       "H": 120,
       "tg": 0.0,
       "hours": "all",
-      "side": "down"
+      "side": "down",
+      "co": "all"
      },
      "train": {
       "n": 39,
@@ -765,7 +271,8 @@
       "H": 120,
       "tg": 0.0,
       "hours": "cash",
-      "side": "down"
+      "side": "down",
+      "co": "all"
      },
      "train": {
       "n": 36,
@@ -792,7 +299,8 @@
       "H": 30,
       "tg": 0.0,
       "hours": "cash",
-      "side": "all"
+      "side": "all",
+      "co": "all"
      },
      "train": {
       "n": 41,
@@ -819,7 +327,8 @@
       "H": 120,
       "tg": 0.0,
       "hours": "cash",
-      "side": "down"
+      "side": "down",
+      "co": "all"
      },
      "train": {
       "n": 31,
@@ -848,7 +357,8 @@
      "H": 120,
      "tg": 0.0,
      "hours": "cash",
-     "side": "down"
+     "side": "down",
+     "co": "all"
     },
     "a_sum": 36.04,
     "b_sum": 4.74
@@ -892,6 +402,14 @@
       "train_median_sum": -2.16,
       "unseen_median_sum": 0.77,
       "unseen_positive": 266
+     }
+    },
+    "co": {
+     "all": {
+      "variants": 2400,
+      "train_median_sum": -0.63,
+      "unseen_median_sum": 0.87,
+      "unseen_positive": 1382
      }
     },
     "D": {

@@ -400,6 +400,51 @@
    "combo": "SC154|5Min|XAUUSD",
    "before": "__none__",
    "star_risk_before": "__none__"
+  },
+  "d862fbb89f42": {
+   "family": "tal5",
+   "track": "t4h_1h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h"
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 3,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "LADDER": "2"
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "98d680dcb28a": {
+   "family": "tal5",
+   "track": "t4h_5",
+   "before": {
+    "pair": [
+     "4h",
+     "5m"
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 5,
+     "MIN_RR": 0.5,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be70"
+    }
+   },
+   "risk_before": 0.0014
+  },
+  "a5d5327de8cd": {
+   "family": "flag",
+   "key": "tal_risk_scale",
+   "before": 0.55
   }
  },
  "tal_tracks": {
@@ -442,10 +487,11 @@
    "cfg": {
     "GBODY": 0.0,
     "MIN_GAP": 0.0,
-    "SW": 3,
-    "MIN_RR": 1.0,
+    "SW": 2,
+    "MIN_RR": 0.0,
     "EXPIRY": 120,
     "PROT": "none",
+    "EXIT": "be618",
     "LADDER": "2"
    }
   },
@@ -509,7 +555,8 @@
     "MIN_RR": 0.5,
     "EXPIRY": 120,
     "PROT": "none",
-    "EXIT": "be70"
+    "EXIT": "be70",
+    "G3": "nowick"
    }
   },
   "t1h_5@US30": {
@@ -798,7 +845,7 @@
    ]
   }
  },
- "tal_risk_scale": 0.55,
+ "tal_risk_scale": 0.468,
  "scout": {
   "SC042|15Min|XAUUSD": {
    "since": "2026-11-14T02:19:22+00:00",

@@ -70,7 +70,13 @@ def watch_trades(state, bot):
             continue
         trk = w.get("trk") or (w["id"].split("|")[3] if w.get("id", "").count("|") >= 3 else "")
         tf = "1Min" if str(trk).endswith("1m") else "15Min"
-        combo = (f"TAL|4Hour|{w['symbol']}" if trk == "tal4h" else f"TAL|1Hour|{w['symbol']}") if str(trk).startswith("tal") else f"{pre}|{tf}|{w['symbol']}"   # the user's gap method
+        if bot == "bot6" and w.get("id", "").count("|") >= 1 and w["id"].split("|")[1] == "tal":
+            # bot 6 (14.11.2026, its smart agent): every gap track by its own name - TAL|<track>|<index> (tal, tal4h,
+            # t15_5, t5_1, ...). Before, t15_5 and t5_1 were both FUT|15Min and tal4h's risk change followed them,
+            # and the watch never saw a gap card's trades at all (agents/watch.py TRACKS).
+            combo = f"TAL|{trk or 'tal'}|{w['symbol']}"
+        else:
+            combo = (f"TAL|4Hour|{w['symbol']}" if trk == "tal4h" else f"TAL|1Hour|{w['symbol']}") if str(trk).startswith("tal") else f"{pre}|{tf}|{w['symbol']}"   # the user's gap method
         rows.append({"id": w["id"], "combo": combo, "time": w.get("time"),
                      "close": w.get("exit_time") or w.get("time"), "r": float(w["r"]), "net": None})
     return rows
@@ -79,9 +85,12 @@ def watch_trades(state, bot):
 def trades(state, bot=None):
     """Closed trades in R after costs: price R x net / gross (the costs the bot actually paid)."""
     rows = watch_trades(state, bot) if state.get("watch") else []
+    closed = state.get("closed") or []
     if rows:
-        state = {}
-    for c in state.get("closed") or []:
+        # bots 5-6: the gap tracks come from the watch record; the scout strategies they trade (SCxxx|tf|sym) are only
+        # in the account's closed trades - kept, so the watch follows an added scout strategy too (14.11.2026)
+        closed = [c for c in closed if str(c.get("combo", "")).startswith("SC")]
+    for c in closed:
         try:
             side = 1 if c["side"] == "buy" else -1
             o, sl0 = float(c["open_px"]), float(c.get("sl0") or 0)

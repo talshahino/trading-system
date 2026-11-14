@@ -102,9 +102,29 @@ def watched(decisions, undo, replies, cards):
 
 
 # bots 5-6: which live trades a settings change touches (agents/health.py names them OWN|15Min|.., OWN|1Min|.., TAL|1Hour|..)
+def _bot6_track(b):
+    """Bot 6's gap card -> the track it changed: the main pair is "tal", another pair the "tal_tracks" entry on that
+    pair (live/bots/bot6.json, as agents/builder.py writes it)."""
+    try:
+        d = json.loads((ROOT / "live" / "bots" / "bot6.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        d = {}
+    pr = list(b.get("pair") or [])[:2]
+    if list((d.get("tal") or {}).get("pair") or [])[:2] == pr:
+        return "tal"
+    return next((k for k, v in (d.get("tal_tracks") or {}).items() if list((v or {}).get("pair") or [])[:2] == pr), None)
+
+
+def _risk_combo(b):
+    if b.get("bot") == "bot6":       # bot 6: each gap track by its name (agents/health.py watch_trades, 14.11.2026)
+        return f"re:^TAL\\|{b['track']}\\|"
+    return ("re:^TAL\\|" if b["track"] == "tal" else "re:^(OWN|FUT)\\|" + ("1Min" if b["track"] == "v1m" else "15Min") + "\\|")
+
+
 TRACKS = {"track": lambda b: "re:^OWN\\|" + ("1Min" if b["track"] == "v1m" else "15Min") + "\\|",
-          "risk": lambda b: ("re:^TAL\\|" if b["track"] == "tal" else "re:^(OWN|FUT)\\|" + ("1Min" if b["track"] == "v1m" else "15Min") + "\\|"),
-          "tal": lambda b: "re:^TAL\\|"}
+          "risk": _risk_combo,
+          "tal": lambda b: "re:^TAL\\|",
+          "tal6": lambda b: (f"re:^TAL\\|{_bot6_track(b)}\\|" if _bot6_track(b) else None)}
 
 
 RISK_BOTS = ("bot1", "bot2", "bot3", "bot4")

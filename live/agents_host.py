@@ -622,6 +622,12 @@ def _smart(st, log, t0):
         # what the agent printed about its own failures (manager, 12.11.2026: bot 6's gap search ended without results
         # and without an error - an exception caught and printed inside the agent is invisible from here otherwise)
         st.setdefault("agent_tail", {})[name] = _tail(f"agent_{name}.log")
+        # the run stays on record, marked ended, until its results are published (bot 6's smart agent, 14.11.2026:
+        # bot 6's run of 23:16-00:25 UTC on 13.11 ended, the record was dropped here, an install restarted the manager
+        # during the replay / publish below, and 69 minutes of results - the user's tasks among them - were never
+        # published; the next refresh wrote main's copy over them). A restart in this window publishes them (loop()).
+        st["run"]["ended"] = True
+        _save(st)
         # the daily whole-bot replay also inside a round (manager, 13.11.2026: every code install restarts the manager,
         # the round never reached its end and reports/agents/<bot>/portfolio.json stayed from 12.11 11:41 for 19 hours)
         if time.time() - (_ts(st.get("portfolio_at")) or 0.0) >= 3 * 3600:
@@ -636,10 +642,7 @@ def _smart(st, log, t0):
             log(f"publishing {name} failed: {e}")
             errs.append(f"{name}: publishing failed: {e}"[:300])     # shown in host.json on the next publish
             st["agent_errors"] = errs
-            hist = [x for x in st.get("agent_errors_24h") or [] if time.time() - (_ts(x.get("at")) or 0.0) < 86400]
-            st["agent_errors_24h"] = (hist + [{"at": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
-                                               "err": f"{name}: publishing failed: {e}"[:300]}])[-20:]
-        st.pop("run", None)                   # only now: published (or its failure recorded)
+        st.pop("run", None)
         _save(st)
     before = snapshot()
     _portfolio_check(st)                                 # the whole bots, as they are
@@ -674,7 +677,17 @@ def loop(log=print, enabled=lambda: True):
     _S["log"] = log
     time.sleep(90)                                   # let the bots start first
     st = _load()
-    orphan = bool(st.get("run") and (st.get("pid") or (st.get("run") or {}).get("ended")))
+    r0 = st.get("run") or {}
+    if r0.get("ended") and not st.get("pid"):
+        # an agent that ended before the restart, its results not published yet (see _smart): published now, before
+        # the continuous layer starts and any refresh writes main's copy over them
+        try:
+            _publish_lost(st, r0)
+        except Exception as e:  # noqa: BLE001
+            log(f"publishing the ended agent {r0.get('name')} failed: {e}")
+        st.pop("run", None)
+        _save(st)
+    orphan = bool(st.get("pid") and st.get("run"))
     if orphan:
         _S["smart_running"] = True                   # the continuous layer: no refresh under the running agent
     else:

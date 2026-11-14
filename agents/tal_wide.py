@@ -28,8 +28,15 @@ FX28 = ["AUDCAD", "AUDCHF", "AUDJPY", "AUDNZD", "AUDUSD", "CADCHF", "CADJPY", "C
         "NZDCHF", "NZDJPY", "NZDUSD", "USDCAD", "USDCHF", "USDJPY"]
 METALS = ["XAUUSD", "XAGUSD", "XPTUSD"]
 INDICES = ["UK100", "FRA40", "EU50", "AUS200", "HK50", "N25", "SPN35", "US2000"]
+# the shared pool (user, 14.11.2026, task tal1411pool: "test tal_gap on the instruments of bots 1-4 that fit it -
+# indices, forex, gold, stocks with an opening gap - and report to bots 1-4 through the manager"): bots 1-4's forex,
+# gold and indices are already above; their stocks run here in phase 1 only (the base and the indices' choice), and are
+# a REPORT for bots 1-4 - never a card for bot 5 (an index scalping bot)
+POOL14 = ["AAPL", "AMZN", "ARM", "ASML", "CSCO", "GME", "GOOG", "INTC", "KO", "MSTR", "NVDA", "PFE", "PLTR", "QCOM",
+          "T", "TSLA", "WMT", "XOM", "AIRF", "LVMH", "RACE", "SIEG"]
+REPORT_ONLY = set(POOL14)
 # gold and EURUSD first: the user built the method on them (tal_gap.md)
-SYMBOLS = ["XAUUSD", "EURUSD"] + [s for s in FX28 + METALS + INDICES if s not in ("XAUUSD", "EURUSD")]
+SYMBOLS = ["XAUUSD", "EURUSD"] + [s for s in FX28 + METALS + INDICES if s not in ("XAUUSD", "EURUSD")] + POOL14
 STATUS = "status.json"
 MIN_UNSEEN_N = 30
 
@@ -72,6 +79,8 @@ def run(load, out_dir, budget_s, chosen, symbols=None):
     for phase in (1, 2):
         plan = _cfgs(phase, chosen)
         for s in symbols:
+            if phase == 2 and s in REPORT_ONLY:
+                continue                                  # bots 1-4's stocks: phase 1 only (a report, not bot 5's)
             # a missing instrument is tried again after a day (a download may have failed once)
             if s in missing and (now - pd.Timestamp(missing[s]["at"])).total_seconds() < 86400:
                 continue
@@ -117,7 +126,8 @@ def run(load, out_dir, budget_s, chosen, symbols=None):
         if stopped:
             break
     c1, c2 = _cfgs(1, chosen), _cfgs(2, chosen)
-    planned = sum(len({TG.vid(c) for c in c1[pn] + c2[pn]}) for pn in c1) * len(symbols)
+    planned = sum(len({TG.vid(c) for c in c1[pn] + c2[pn]}) for pn in c1) * len([x for x in symbols if x not in REPORT_ONLY]) \
+        + sum(len({TG.vid(c) for c in c1[pn]}) for pn in c1) * len([x for x in symbols if x in REPORT_ONLY])
     st = {"at": now.isoformat(timespec="seconds"), "symbols": symbols, "missing": missing, "runs": len(idx),
           "planned": planned, "this_run": done}
     (out_dir / STATUS).write_text(json.dumps(st, ensure_ascii=False, default=str))
@@ -167,7 +177,8 @@ def table(summ):
         if best:
             _, pn, ch = best
             rows.append({"sym": s, "pair": pn, "train_mean": ch["train"]["mean"], "train_n": ch["train"]["n"],
-                         "unseen_mean": ch["unseen"]["mean"], "unseen_n": ch["unseen"]["n"], "cost_r": ch["cost_r"]})
+                         "unseen_mean": ch["unseen"]["mean"], "unseen_n": ch["unseen"]["n"], "cost_r": ch["cost_r"],
+                         **({"report": "bots1-4"} if s in REPORT_ONLY else {})})
     return sorted(rows, key=lambda r: -((r["unseen_mean"] or -9) * (r["unseen_n"] or 0)))
 
 
@@ -177,6 +188,8 @@ def cards(bot, summ, risk_pct, tested, live=None):
     out = []
     live = live or set()
     for s, pairs in summ.items():
+        if s in REPORT_ONLY:
+            continue                                      # bots 1-4's stocks: a report through the manager (pool14())
         for pn, x in pairs.items():
             ch = x.get("chosen")
             if not ch or (s, pn) in live:
@@ -198,4 +211,16 @@ def cards(bot, summ, risk_pct, tested, live=None):
                               neighbours={"values": [], "share_positive": x["share_positive"]},
                               change={"method": "tal_gap_sym", "sym": s, "pair": pn, "cfg": cfg,
                                       "track": f"tal_gap|{pn}|{s}", "knob": "cfg"}))
+    return out
+
+
+def pool14(summ):
+    """The report for bots 1-4 (task tal1411pool): per stock of theirs, the pair chosen on the period to 2025-12-31
+    and what it did on 2026 - "holds" when it earns on both (train t >= 1.5, 2026 mean > 0 on >= MIN_UNSEEN_N)."""
+    out = []
+    for r in table({s: v for s, v in summ.items() if s in REPORT_ONLY}):
+        ch = summ[r["sym"]][r["pair"]]["chosen"]
+        out.append(dict(r, train_t=ch["train"].get("t"), unseen_t=ch["unseen"].get("t"), cfg=ch["cfg"],
+                        holds=bool((ch["train"].get("t") or 0) >= 1.5 and (r["unseen_mean"] or 0) > 0
+                                   and (r["unseen_n"] or 0) >= MIN_UNSEEN_N)))
     return out

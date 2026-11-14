@@ -328,6 +328,17 @@ NOTE_TESTS += [
          "he": "רק גאפ אחרי גריפת נזילות (שפל / שיא של אתמול או של 20 הנרות)"},
         {"id": f"{trk}_sb", "track": trk, "knob": "SESS", "vals": ["sb", "sb10"], "src": "tal1411gapplus",
          "he": "רק בחלונות Silver Bullet (ניו יורק 03-04, 10-11, 14-15)"})]
+NOTE_TESTS += [
+    # bot 6's task for bot 5 (b6to5dbias, 14.11.2026): the Daily Bias of the user's video (tal1411gapplus (a), 14:26) -
+    # tal_gap TREND "dbias", the last closed day against the one before it (bot 6 runs it on its 4 tracks); and the
+    # sweep's stricter forms from the videos of 14:23-14:26 (tal_gap.SWP2_VALS): sw20r / pdhlr = the sweep candle
+    # itself closes back inside (Tarzan: a rejection back into the range), eql = equal lows / highs swept (Kai Rui Liu:
+    # the stop hunt under the equal lows below the block)
+    T_ for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5") for T_ in (
+        {"id": f"{trk}_dbias", "track": trk, "knob": "TREND", "vals": ["dbias"], "src": "tal1411gapplus",
+         "he": "רק בכיוון ההטיה היומית (סגירה מעל / מתחת ליום הקודם, גריפה = הצד ההפוך)"},
+        {"id": f"{trk}_swp2", "track": trk, "knob": "SWP", "vals": list(TG.SWP2_VALS), "src": "tal1411gapplus",
+         "he": "גאפ אחרי גריפה עם דחייה (הנר סוגר בחזרה בפנים) או גריפת שפלים / שיאים שווים"})]
 NOTE_SRC = {"tal1411gapplus": "משימה של טל מ־14.11 (שיטות קרובות לגאפ: Silver Bullet, איכות נר 3, גאפ אחרי גריפה).",
             "tal1411set6": "משימה של טל מ־14.11 (פרמיה / דיסקאונט ופיבוט יומי מהסרטונים).",
             "tal1411vid": "משימות של טל מ־14.11 (מסנני הסרטונים: RSI במגמה, ADX, סופרטרנד, EMA 50/200, סדר הממוצעים).",
@@ -1184,6 +1195,11 @@ def main():
                 except Exception:  # noqa: BLE001
                     wst = {}
                 doc["bot5"]["wide"] = {"status": wst, "table": TW.table(summ), "pairs": summ}
+                # the shared pool (task tal1411pool): the gap method on bots 1-4's stocks - a report for them via the
+                # manager (TW.REPORT_ONLY never makes a bot 5 card)
+                doc["bot5"]["pool14"] = {"at": wst.get("at"), "for": ["bot1", "bot2", "bot3", "bot4"],
+                                         "missing": {k: v for k, v in (wst.get("missing") or {}).items() if k in TW.REPORT_ONLY},
+                                         "table": TW.pool14(summ)}
                 live_sym = {(sy, f"{v['pair'][0]}/{v['pair'][1]}") for v in (s5.get("tal_tracks") or {}).values()
                             for sy in (v.get("symbols") or [])}
                 rk_ = [float(s5["risk"][k]) for k in (s5.get("tal_tracks") or {}) if float((s5.get("risk") or {}).get(k, 0) or 0) > 0]

@@ -554,6 +554,11 @@ def bbw_mask(D, cfg, htf, ltf):
 
 G3_VALS = ("weak", "nostrong", "nowick", "nobad")
 SWP_VALS = ("pdhl", "sw20")
+# the sweep's stricter forms (the user's videos of 14.11.2026 14:23-14:26, task tal1411gapplus): sw20r / pdhlr = the
+# sweep as SWP, and the candle that ran through the level closed back inside it (a rejection, Tarzan's "liquidity
+# sweep step by step"); eql = equal lows (longs; highs for shorts) among the 20 candles before - two swing lows within
+# 0.15 ATR - and the price ran under both (Kai Rui Liu: the stop hunt under the equal lows below the block)
+SWP2_VALS = ("sw20r", "pdhlr", "eql")
 
 
 def gap_keep(D, cfg, htf, g):
@@ -568,7 +573,7 @@ def gap_keep(D, cfg, htf, g):
           pdhl = the previous UTC day's low / high; sw20 = the lowest low / highest high of the 20 candles before them."""
     q3, sw = cfg.get("G3"), cfg.get("SWP")
     q3 = q3 if q3 in G3_VALS else None
-    sw = sw if sw in SWP_VALS else None
+    sw = sw if sw in SWP_VALS + SWP2_VALS else None
     if not (q3 or sw) or not g:
         return None
     key = ("gkeep", htf, cfg["GBODY"], cfg["MIN_GAP"], q3, sw, len(g))
@@ -576,7 +581,7 @@ def gap_keep(D, cfg, htf, g):
         return D.sw[key]
     ts, o, h, l, c, atr = D.tf(htf)
     step = TF[htf] * 60_000_000_000
-    if sw == "pdhl":
+    if sw in ("pdhl", "pdhlr"):
         dts, _, dh, dl, _, _ = D.tf("1d")
     keep = np.ones(len(g), bool)
     for gi, (d, mid, near, far, made, armed) in enumerate(g):
@@ -598,10 +603,25 @@ def gap_keep(D, cfg, htf, g):
             if not ok:
                 keep[gi] = False
                 continue
+        if sw == "eql":
+            a0 = max(0, k - 6)
+            b0 = a0 - 20
+            a = atr[k]
+            if b0 < 1 or not (a > 0):
+                keep[gi] = False
+                continue
+            ext = l[a0:k + 1].min() if d > 0 else h[a0:k + 1].max()
+            x = l if d > 0 else -h                       # swing lows (longs) / highs (shorts, mirrored)
+            sw_i = [i for i in range(b0 + 1, a0 - 1) if x[i] <= x[i - 1] and x[i] <= x[i + 1]]
+            lv = sorted(x[i] for i in sw_i)
+            ref = next((lv[i] for i in range(len(lv) - 1) if lv[i + 1] - lv[i] <= 0.15 * a), None)
+            if ref is None or not ((ext < ref) if d > 0 else (-ext < ref)):
+                keep[gi] = False
+            continue
         if sw:
             a0 = max(0, k - 6)
             ext = l[a0:k + 1].min() if d > 0 else h[a0:k + 1].max()
-            if sw == "pdhl":
+            if sw in ("pdhl", "pdhlr"):
                 j = int(np.searchsorted(dts, ts[a0] - 1440 * 60_000_000_000, side="right")) - 1   # the last day closed
                 if j < 0:
                     keep[gi] = False
@@ -615,6 +635,11 @@ def gap_keep(D, cfg, htf, g):
                 ref = l[b0:a0].min() if d > 0 else h[b0:a0].max()
             if not ((ext < ref) if d > 0 else (ext > ref)):
                 keep[gi] = False
+            elif sw in ("sw20r", "pdhlr"):
+                # a rejection: a candle that ran through the level closed back inside it
+                rng = range(a0, k + 1)
+                if not any((l[i] < ref and c[i] >= ref) if d > 0 else (h[i] > ref and c[i] <= ref) for i in rng):
+                    keep[gi] = False
     D.sw[key] = keep
     return keep
 

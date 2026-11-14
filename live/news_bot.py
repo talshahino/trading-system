@@ -18,6 +18,8 @@ read-only, nothing is ever sent to a broker), builds 5-minute candles and runs e
                          against it D minutes later, stop 25% of the shock beyond its extreme, out after 60 minutes
 Releases: FTMO's own economic calendar, high impact or FTMO-restricted, concerning the instrument (read every hour).
 Entries are 10+ minutes after the release, so FTMO's restricted window (3 minutes either side) is never touched.
+FTMO Standard (14.11.2026, task tal1411wkend): no position through a market break over 2 hours - closed BREAK_W
+minutes before it (break_exit), no new entry then; the backtest does the same (--break-exit).
 Trade management as the live bots: one position per strategy and instrument, breakeven at 60% of the way to the
 target (+ costs). Costs: spread (bot 1's own live samples of FTMO's spread), FTMO commission and swap.
 Virtual account: $100,000, RISK of the balance per trade, the bots' daily stop (4.5%) and FTMO's 10% maximum loss.
@@ -73,6 +75,44 @@ HI_TF = ("1Hour", "4Hour")      # scout strategies on longer candles (14.11.2026
 HI_DAYS, HI_EVERY = 125, 120     # 1-hour history asked for (the server sends at most 3000 bars); refreshed every 2 minutes
 TF_HE = {"1Min": "דקה", "5Min": "5 דקות", "1Hour": "שעה", "4Hour": "4 שעות"}
 PLANS_F = LIVE / "bots" / "bot7.json"   # approved cards, built (agent_portfolio.built_variant reads the same "plans")
+TF_M = {"1Min": 1, "5Min": 5, "1Hour": 60, "4Hour": 240}
+BREAK_W = 10                     # minutes before a market break of 2h+ at which every position is closed (FTMO Standard)
+
+
+def break_exit(d, tf):
+    """FTMO Standard account (user, 14.11.2026, task tal1411wkend): no position held through a market break over 2 hours
+    (weekends, holidays). The backtest's rule (run_rules.break_mask, agent_portfolio's --break-exit): the last bar before
+    such a gap is closed at its close. Live the gap is not known yet, so the breaks seen in the candles are also carried
+    one week forward (as agents/tal_gap.pre_break_mask, earliest of the market time zones): the bars ending from
+    BREAK_W minutes before that time to 2 hours after it. -> (force_exit, no_entry) boolean masks."""
+    n = len(d)
+    fe, ne = np.zeros(n, bool), np.zeros(n, bool)
+    if n < 2:
+        return fe, ne
+    step = TF_M.get(tf, 5) * 60 * 10**9
+    ns = d.index.as_unit("ns").asi8
+    gap = (ns[1:] - ns[:-1] - step) > 2 * 3600 * 10**9
+    fe[:-1] = gap
+    brk = np.flatnonzero(gap)
+    if len(brk):
+        c = pd.DatetimeIndex(ns[brk] + step).tz_localize("UTC")
+        best = None
+        for z in ("UTC", "America/New_York", "Europe/London", "Europe/Berlin", "Australia/Sydney"):
+            loc = c.tz_convert(z).tz_localize(None) + pd.Timedelta(days=7)
+            p = loc.tz_localize(z, ambiguous="NaT", nonexistent="shift_forward").tz_convert("UTC")
+            v = p.as_unit("ns").asi8.astype(float)
+            v[np.asarray(p.isna())] = np.inf
+            best = v if best is None else np.minimum(best, v)
+        pr = best[np.isfinite(best)].astype(np.int64)
+        end = ns + step
+        a = np.searchsorted(end, pr - BREAK_W * 60 * 10**9)
+        b = np.searchsorted(end, pr + 2 * 3600 * 10**9, side="right")
+        dm = np.zeros(n + 1, int)
+        np.add.at(dm, a, 1)
+        np.add.at(dm, b, -1)
+        ne = np.cumsum(dm[:-1]) > 0
+        fe |= ne
+    return fe, ne
 
 
 def extras():
@@ -358,12 +398,15 @@ def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None):
         sp = pd.Series([spread_now], index=[d.index[0]]) if spread_now else None
         p_ = pl.get(f"{sid}|{tf}|{name}") or {}
         fn = filtered(fn0, p_.get("filter"), plan_keys(p_))
+        fe, ne = break_exit(d, tf)                          # no position through a 2h+ market break (FTMO Standard)
+        if ne.any():
+            fn = CAL.blocked(fn, ne)
         px = float(d["c"].iloc[-1])
         spec = U.spec(name)
         comm = (px * float(spec["commission"]) / (float(spec["contractSize"]) * U.BASE_USD.get(spec["code"].split("/")[0], 1.0))
                 if spec["commissionType"] == "flat_USD" else px * 2 * float(spec["commission"]) / 100.0)
         be = (0.6, ((spread_now or 0.0) + comm) / px)
-        t = R.run(d, fn, 0.0, breakeven=be)
+        t = R.run(d, fn, 0.0, breakeven=be, session_exit=fe if fe.any() else None)
         if t is None or not len(t):
             continue
         net = C.apply(t, name, sp)

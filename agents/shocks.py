@@ -455,7 +455,26 @@ def _in_cash(t, sym):
     return (int(a[:2]) * 60 + int(a[3:])) <= m < (int(b[:2]) * 60 + int(b[3:])) and loc.weekday() < 5
 
 
-def fade_grid(d, sp, sym, shocks, k_mult):
+CO_SYM = {"GER40": "US100"}         # SH01 fix attempt 2 (14.11.2026): GER40 only when US100 shocks the same way too
+CO_MIN = 3                          # minutes between the two shocks' signal bars
+
+
+def co_flag(t, dr, ref):
+    """1 when the reference instrument had a shock the same way within CO_MIN minutes, 0 when not, -1 = no reference."""
+    if ref is None:
+        return -1
+    ts, ds = ref
+    if not len(ts):
+        return 0
+    k = ts.searchsorted(t - pd.Timedelta(minutes=CO_MIN))
+    while k < len(ts) and ts[k] <= t + pd.Timedelta(minutes=CO_MIN):
+        if ds[k] == dr:
+            return 1
+        k += 1
+    return 0
+
+
+def fade_grid(d, sp, sym, shocks, k_mult, co_ref=None):
     """Fade trades of one instrument for one K over the wider grid (same walk and FTMO costs as trades())."""
     o, h, l, c = (d[x].to_numpy(float) for x in "ohlc")
     idx, n = d.index, len(d)
@@ -465,7 +484,8 @@ def fade_grid(d, sp, sym, shocks, k_mult):
         if i + 241 >= n:
             continue
         ext = h[i - 2:i + 1].max() if dr > 0 else l[i - 2:i + 1].min()
-        base = {"sym": sym, "t": idx[i], "K": k_mult, "up": int(dr > 0), "cash": int(_in_cash(idx[i], sym))}
+        base = {"sym": sym, "t": idx[i], "K": k_mult, "up": int(dr > 0), "cash": int(_in_cash(idx[i], sym)),
+                "co": co_flag(idx[i], dr, co_ref)}
         for D in (1, 2, 3, 5):
             ke = i + D
             if ke >= n or (idx[ke] - idx[i]) > pd.Timedelta(minutes=D + 2):
@@ -491,16 +511,21 @@ def fix_sh01(rows, now):
     if not rows:
         return {}
     df = pd.DataFrame(rows)
-    keys = ["K", "D", "p", "H", "tg", "hours", "side"]
+    keys = ["K", "D", "p", "H", "tg", "hours", "side", "co"]
+    if "co" not in df:
+        df = df.assign(co=-1)
     parts = []
     for hours, mh in (("all", None), ("cash", 1), ("off", 0)):
         for side, ms in (("all", None), ("up", 1), ("down", 0)):
-            x = df
-            if mh is not None:
-                x = x[x["cash"] == mh]
-            if ms is not None:
-                x = x[x["up"] == ms]
-            parts.append(x.assign(hours=hours, side=side))
+            for co, mc in (("all", None), ("with", 1), ("alone", 0)):
+                x = df
+                if mh is not None:
+                    x = x[x["cash"] == mh]
+                if ms is not None:
+                    x = x[x["up"] == ms]
+                if mc is not None:
+                    x = x[x["co"] == mc]
+                parts.append(x.drop(columns="co").assign(hours=hours, side=side, co=co))
     df = pd.concat(parts, ignore_index=True)
     out = {}
     for sym, x in df.groupby("sym"):
@@ -519,7 +544,7 @@ def fix_sh01(rows, now):
                     "train": {**stats(a, now), "sum": round(float(a["r"].sum()), 2)} if len(a) else None,
                     "unseen": {**stats(b, now), "sum": round(float(b["r"].sum()), 2)} if len(b) else None}
         cur = SH01_SYMS.get(sym, {})
-        k_cur = (cur.get("K"), cur.get("D"), cur.get("p"), cur.get("H"), cur.get("tg"), "all", "all")
+        k_cur = (cur.get("K"), cur.get("D"), cur.get("p"), cur.get("H"), cur.get("tg"), "all", "all", "all")
         top = list(g.head(10).index)
         a_, b_ = tr_[tr_["t"] < MID], tr_[tr_["t"] >= MID]
         ga = a_.groupby(keys)["r"].agg(["sum", "count"])
@@ -530,7 +555,7 @@ def fix_sh01(rows, now):
             wf = {"pick_a": show(ka)["v"], "a_sum": round(float(ga.iloc[0]["sum"]), 2),
                   "b_sum": round(float(b_[(b_[keys] == pd.Series(ka, index=keys)).all(axis=1)]["r"].sum()), 2)}
         by = {}
-        for col in ("hours", "side", "D", "p", "H", "tg", "K"):
+        for col in ("hours", "side", "co", "D", "p", "H", "tg", "K"):
             for v, y in g.reset_index().groupby(col):
                 u = [float(ug.loc[k, "sum"]) if k in ug.index else 0.0 for k in y[keys].itertuples(index=False, name=None)]
                 by.setdefault(col, {})[str(v)] = {"variants": int(len(y)), "train_median_sum": round(float(y["sum"].median()), 2),
@@ -559,6 +584,7 @@ def main():
     except Exception:  # noqa: BLE001
         pass
     all_rows, recent, done, fix_rows = [], [], [], []
+    sh_t = {}                                                   # (sym, K) -> (signal times, directions) for CO_SYM
     for sym in INSTR:
         if time.time() > t_end and done:
             print(f"time budget reached after {done}")
@@ -577,8 +603,9 @@ def main():
         for kk in KS:
             sh = [s for s in detect(d, sym, kk, rel) if d.index[s["i"]] >= START]
             all_rows += trades(d, sp, sym, sh, kk)
+            sh_t[(sym, kk)] = (pd.DatetimeIndex([d.index[s["i"]] for s in sh]), np.array([s["dir"] for s in sh]))
             if sym in SH01_SYMS:                                    # SH01 fix attempt (13.11.2026)
-                fix_rows += fade_grid(d, sp, sym, sh, kk)
+                fix_rows += fade_grid(d, sp, sym, sh, kk, sh_t.get((CO_SYM.get(sym), kk)))
             if kk == 8:                                            # the log's definition (version 1)
                 recent += [describe(d, sp, sym, s) for s in sh if d.index[s["i"]] >= now - pd.Timedelta(days=a.days)]
             print(f"{sym} K={kk}: {len(sh)} shocks")

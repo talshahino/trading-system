@@ -49,7 +49,11 @@
   "scout:SC142|15Min|XAUUSD": 0.0028,
   "scout:SC071|15Min|US30": 0.0028,
   "scout:SC138|15Min|XAUUSD": 0.0028,
-  "scout:SC154|5Min|XAUUSD": 0.0028
+  "scout:SC154|5Min|XAUUSD": 0.0028,
+  "scout:FR03|15Min|GBPUSD": 0.0028,
+  "scout:BK07|15Min|US100": 0.0028,
+  "scout:BK07|15Min|EURUSD": 0.0028,
+  "scout:SC056|15Min|GBPUSD": 0.0028
  },
  "changes": {
   "a0a49a4ffc34": {
@@ -445,6 +449,30 @@
    "family": "flag",
    "key": "tal_risk_scale",
    "before": 0.55
+  },
+  "43703d5d8576": {
+   "family": "scout5",
+   "combo": "FR03|15Min|GBPUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "08a1130475cd": {
+   "family": "scout5",
+   "combo": "BK07|15Min|US100",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "46d7582fcd88": {
+   "family": "scout5",
+   "combo": "BK07|15Min|EURUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "81e26b402bb5": {
+   "family": "scout5",
+   "combo": "SC056|15Min|GBPUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
   }
  },
  "tal_tracks": {
@@ -874,6 +902,22 @@
   "SC154|5Min|XAUUSD": {
    "since": "2026-11-14T09:12:20+00:00",
    "card": "770f9eb8ce45"
+  },
+  "FR03|15Min|GBPUSD": {
+   "since": "2026-11-14T21:44:05+00:00",
+   "card": "43703d5d8576"
+  },
+  "BK07|15Min|US100": {
+   "since": "2026-11-14T21:44:05+00:00",
+   "card": "08a1130475cd"
+  },
+  "BK07|15Min|EURUSD": {
+   "since": "2026-11-14T21:44:05+00:00",
+   "card": "46d7582fcd88"
+  },
+  "SC056|15Min|GBPUSD": {
+   "since": "2026-11-14T21:44:05+00:00",
+   "card": "81e26b402bb5"
   }
  }
 }

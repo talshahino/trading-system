@@ -49,7 +49,8 @@
     "EXPIRY": 120,
     "PROT": "none",
     "EXIT": "be786",
-    "TREND": "day"
+    "TREND": "day",
+    "BBW": "h20"
    }
   },
   "t5_1": {
@@ -83,7 +84,8 @@
   "scout:SC020|15Min|US500": 0.0028,
   "t15_5": 0.0012,
   "t5_1": 0.00084,
-  "scout:SC051|15Min|US100": 0.0028
+  "scout:SC051|15Min|US100": 0.0028,
+  "scout:SC258|5Min|US100": 0.0028
  },
  "changes": {
   "abb187377383": {
@@ -243,6 +245,34 @@
     "since": "2026-11-13T00:13:28+00:00",
     "card": "f02478f826fa"
    }
+  },
+  "0fa5dc49c3ba": {
+   "family": "tal5",
+   "track": "t15_5",
+   "before": {
+    "pair": [
+     "15m",
+     "5m",
+     1
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.6,
+     "SW": 3,
+     "MIN_RR": 2.0,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be786",
+     "TREND": "day"
+    }
+   },
+   "risk_before": 0.0012
+  },
+  "c49201c6a29c": {
+   "family": "scout6",
+   "combo": "SC258|5Min|US100",
+   "before": "__none__",
+   "star_risk_before": "__none__"
   }
  },
  "scout": {
@@ -295,6 +325,16 @@
    },
    "since": "2026-11-14T07:59:04+00:00",
    "card": "c24bbe546a30"
+  },
+  "SC258|5Min|US100": {
+   "v": {
+    "target": "none",
+    "stop": 1.25,
+    "time": "own",
+    "be": true
+   },
+   "since": "2026-11-14T21:44:05+00:00",
+   "card": "c49201c6a29c"
   }
  }
 }

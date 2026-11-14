@@ -93,6 +93,31 @@ def star_floor(c, cur_m):
     return min(cur_m, math.ceil(cur_m * tb / tn * 100) / 100)
 
 
+FAMILY_MIN, FAMILY_T = 5, 1.0                  # a scout strategy tested on >= 5 instruments of one bot ...
+
+
+def _family_pick(cards, c):
+    """A new scout strategy on ONE instrument, picked out of a family that loses on the choosing period (to 2025).
+    Manager, 14.11.2026: SC010|15Min (Toto SBL) was tested on ~15 instruments in bots 2-4; together they lost on 2024-2025
+    and on 2026, and ARM alone (+0.06R a trade to 2025, t 0.32, 28 trades) was approved in all three bots - the pick
+    among many is luck, not an edge chosen on the period to 2025 (objective.md). Such a card waits (watch) unless its own
+    choosing-period result is clear (t >= 1). Returns the reason, or None."""
+    combo = (c.get("change") or {}).get("combo") or ""
+    if combo.count("|") != 2:
+        return None
+    fam = combo.rsplit("|", 1)[0] + "|"
+    tr = [x.get("train") or {} for x in cards
+          if x.get("kind") == "new" and ((x.get("change") or {}).get("combo") or "").startswith(fam)]
+    if len(tr) < FAMILY_MIN:
+        return None
+    pooled = sum(_total(s) or 0.0 for s in tr)
+    own_t = (c.get("train") or {}).get("t")
+    if pooled >= 0 or (own_t is not None and own_t >= FAMILY_T):
+        return None
+    return (f"נבחר מתוך {len(tr)} מכשירים של אותה אסטרטגיה שיחד הפסידו עד 2025 ({pooled:+.1f}R), "
+            f"והתוצאה שלו עד 2025 חלשה (t {own_t if own_t is not None else '-'}) - כנראה מזל, מחכה")
+
+
 def tried_and_failed(bot, combo):
     """bots 1-4 / 7: the exits, filters and trade-management tests of the strategy have run (reports/agents/<bot>/exp)
     and no improvement card for it is strong or regular now."""
@@ -386,6 +411,10 @@ def decide(bots, now=None):
                 add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
                      "title": c["title"], "decision": "declined", "why": why, "effect": "לא ייבנה בבוט"})
                 c["status"], c["by"], c["verdict"] = "rejected", "manager", c["verdict"] + " · " + why
+                continue
+            fam = _family_pick(b.get("cards", []), c) if is_new and c["kind"] == "new" else None
+            if fam:
+                c["status"], c["verdict"] = "watch", c["verdict"] + " · " + fam
                 continue
             if is_new and c["kind"] in ("improve", "new"):
                 # the whole bot with and without it, on 2026 (agents/portfolio_check.py; user, 12.11.2026)

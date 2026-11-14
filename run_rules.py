@@ -193,6 +193,26 @@ def plan_keys(p):
         out["partial"] = tuple(float(x) for x in p["partial"])
     if p.get("ladder"):
         out["ladder"] = (tuple(float(x) for x in p["ladder"]), int(p.get("ladder_bars") or LADDER_BARS))
+    out.update(rule_keys(p, exits=not any(k in p for k in ("target", "stop", "limit"))))
+    return out
+
+
+def rule_keys(p, exits=True):
+    """The morning review's live rules on a combo (agent_portfolio puts them in the plans file as "rules", 14.11.2026),
+    in the engine's words - as live/runner.combo_rules: direction and hours always, the target / stop factors only
+    when the combo has no built exit plan (the plan wins for the exits)."""
+    r, out = p.get("rules") or {}, {}
+    try:
+        if r.get("dir") in (1, -1):
+            out["rule_dir"] = int(r["dir"])
+        if r.get("hours") and len(r["hours"]) == 2 and 0 <= int(r["hours"][0]) < int(r["hours"][1]) <= 24:
+            out["rule_hours"] = (int(r["hours"][0]), int(r["hours"][1]))
+        if exits and r.get("tp") is not None and 0.3 <= float(r["tp"]) < 1:
+            out["rule_tp"] = float(r["tp"])
+        if exits and r.get("sl") is not None and 0.5 <= float(r["sl"]) < 1:
+            out["rule_sl"] = float(r["sl"])
+    except (TypeError, ValueError):
+        return {}
     return out
 
 
@@ -244,6 +264,52 @@ def ladder_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
     ok = [x for x in rows if x["train"]["n"] >= 20]
     best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
     base = next((x for x in rows if x["variant"] == "lad0"), None)
+    OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows,
+                        "has_target": plan0.get("target") is not None})
+    for k in set(keep):
+        COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
+
+
+# pyramid (user, 14.11.2026, task tal1411anti): add `frac` of a position at `at` R in profit, the whole stop moved so a
+# stop still loses exactly 1R (rules_agent.run, plan "pyramid"). "pyr0" = no adding, as the bots trade now. No
+# martingale: nothing is added to a losing trade and the risk never goes over the bot's 1R.
+PYRS = {"pyr1@0.5": (1.0, 0.5), "pyr1.5@0.5": (1.5, 0.5), "pyr1@0.33": (1.0, 0.33), "pyr2@0.5": (2.0, 0.5)}
+
+
+def pyr_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """Every pyramid variant of one combo, on top of its plan as the bot trades it now (exits, filter, management)."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
+    t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
+    pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
+    plan0 = {**fn(df)[2], **pk}
+    flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    regime = _regimes(df).get(flt) if flt else None
+    rows, keep = [], {}
+    for key, pv in [("pyr0", None)] + list(PYRS.items()):
+        extra = {**pk, **({"pyramid": pv} if pv else {})}
+
+        def g(d, extra=extra):
+            lo, sh, plan = fn(d)
+            if regime is not None:
+                lo, sh = np.asarray(lo, bool) & regime[0], np.asarray(sh, bool) & regime[1]
+            return lo, sh, {**plan, **extra}
+        t = R.run(df, g, cost, breakeven=be, session_exit=sess)
+        t = drop_hole_trades(t, df, s, tf)
+        if t.empty:
+            continue
+        if real:
+            t = C.apply(t, s, SPREADS.get(s))
+        if events is not None:
+            t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
+        tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
+        rows.append({"variant": key, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
+        keep[key] = t[t["time"] >= t0]
+    if not rows:
+        return
+    ok = [x for x in rows if x["train"]["n"] >= 20]
+    best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
+    base = next((x for x in rows if x["variant"] == "pyr0"), None)
     OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows,
                         "has_target": plan0.get("target") is not None})
     for k in set(keep):
@@ -328,10 +394,24 @@ def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_bloc
     t0, t1 = SPLIT, pd.Timestamp(args.optimize, tz="UTC")
     rows, keep = [], {}
     bf = be[0] if be else 0.0
+    # the review's live rules (14.11.2026): direction / hours on every variant; its target / stop factors only on the
+    # strategy's own exits (an approved exit plan replaces them in the live bot, live/runner.combo_rules)
+    rk_all = rule_keys(PLANS.get(f"{sid}|{tf}|{s}") or {}, exits=True)
+    rk_dir = {k: v for k, v in rk_all.items() if k in ("rule_dir", "rule_hours")}
+
+    def with_rules(g, extra):
+        if not extra:
+            return g
+
+        def h(d):
+            lo, sh, plan = g(d)
+            return lo, sh, {**plan, **extra}
+        return h
     for tg in OPT_TARGETS:
         for sc in OPT_STOP:
             for pb in OPT_ENTRY:
-                t = R.run(df, _variant(fn, tg, sc, pb), cost, breakeven=be, session_exit=sess)
+                rk = rk_all if (tg is None and sc == 1.0 and not pb) else rk_dir
+                t = R.run(df, with_rules(_variant(fn, tg, sc, pb), rk), cost, breakeven=be, session_exit=sess)
                 t = drop_hole_trades(t, df, s, tf)
                 if t.empty:
                     continue
@@ -457,7 +537,7 @@ def main():
     ap.add_argument("--manage", default="",
                     help="YYYY-MM-DD: with --combos-file, try breakeven points x partial exits per combo (on top of its "
                          "--plans-file plan), choose on --test-from..this date, check on this date..end")
-    ap.add_argument("--manage-grid", default="std", choices=["std", "fib", "ladder"],
+    ap.add_argument("--manage-grid", default="std", choices=["std", "fib", "ladder", "pyr"],
                     help="--manage values: std (40-80%% of the way, 30/50%% out), fib (Fibonacci levels of the way) or "
                          "ladder (the entry split into 2-4 limit orders, same total risk)")
     ap.add_argument("--plans-file", default="",
@@ -580,6 +660,12 @@ def main():
                 if combos is not None and (sid, tf, s) not in combos:
                     continue
                 if args.respect_tf and not R.timeframe_ok(sid, tf):
+                    continue
+                if args.manage and args.manage_grid == "pyr":
+                    try:
+                        pyr_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
+                    except Exception:  # noqa: BLE001
+                        ERRORS.append(f"pyr {sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue
                 if args.manage and args.manage_grid == "ladder":
                     try:

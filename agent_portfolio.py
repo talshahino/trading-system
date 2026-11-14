@@ -45,10 +45,12 @@ T_SPLIT = pd.Timestamp(SPLIT, tz="UTC")
 START = "2024-01-01"
 RERUN_DAYS = 14
 BOT_NOW = {}
-FAMILIES = ("exits", "filters", "manage", "fib", "ladder")   # manage (12.11.2026): breakeven point x partial exit per strategy;
+FAMILIES = ("exits", "filters", "manage", "fib", "ladder", "pyr")   # manage (12.11.2026): breakeven point x partial exit per strategy;
 # fib (12.11.2026, user's standing task): the same at the Fibonacci levels of the way to the target - built as "manage"
 # ladder (13.11.2026, user's standing task): the entry split into 2-4 limit orders with the same total risk, stop and
 # target (run_rules --manage-grid ladder); the live bots need runner code for it, built when a card is approved
+# pyr (14.11.2026, user's task tal1411anti): add to a winning trade (half a position at +1R, ...) with the whole stop
+# moved so a stop still loses exactly 1R (run_rules --manage-grid pyr); bots 1-4 only (PYR_BOTS), runner code on approval
 # FTMO's real stock spreads: ~2.4x the history (measured on the demo 10.11.2026, run_rules --stock-spread-mult). Until
 # 13.11.2026 the experiments ran without it, so every stock combo's exits / filters / manage / fib / new results were
 # measured with too-cheap costs (the 10.11 stress test: SS01 WMT +15.6R -> -4.0R) - those results are run again (COSTS).
@@ -88,9 +90,9 @@ FILTER_HE = {"with_trend200": "רק עם המגמה (ממוצע 200)", "adx_tren
              "adx_range": "רק בשוק בדשדוש (ADX מתחת 20)", "vol_normal": "רק בתנודתיות רגילה",
              "vol_high": "רק בתנודתיות גבוהה", "vol_low": "רק בתנודתיות נמוכה", "none": "בלי סינון",
              "ema9_20": "רק בכיוון EMA 9/20", "bbw_p20": "לא ברוחב בולינגר נמוך (מתחת לאחוזון 20)"}
-# bots whose filter tests also try the user's EMA 9/20 and Bollinger-width filters (task tal1411ema, 14.11.2026); the
-# other bots join when their live runner knows the two names (live/news_bot.regime does for bot 7)
-FILTERS_EXTRA = {"bot7"}
+# bots whose filter tests also try the user's EMA 9/20 and Bollinger-width filters (task tal1411ema, 14.11.2026):
+# live/news_bot.regime knows them for bot 7, live/runner._regime for bots 1-4 (since 14.11.2026)
+FILTERS_EXTRA = {"bot1", "bot2", "bot3", "bot4", "bot7"}
 
 
 def explain_manage(v):
@@ -112,6 +114,19 @@ def explain_ladder(v):
         return "כניסה אחת בפתיחה"
     parts = ["בפתיחה" if x == 0 else f"בנסיגה של {x:g}R" for x in lv]
     return f"כניסה מדורגת ב־{len(lv)} חלקים שווים ({', '.join(parts)}), אותו סיכון כולל, סטופ ויעד; חלק שלא התמלא תוך 3 נרות מתבטל"
+
+
+PYR_BOTS = {"bot1", "bot2", "bot3", "bot4"}
+
+
+def explain_pyr(v):
+    """pyr1@0.5 -> Hebrew."""
+    if v == "pyr0":
+        return "בלי הוספה לעסקה"
+    at, fr = v[3:].split("@")
+    x = (float(fr) * float(at) - 1) / (1 + float(fr))
+    return (f"ב־{float(at):g}R רווח מוסיפים {float(fr):g} פוזיציה, והסטופ של הכול זז ל־{x:+.2f}R כך שסטופ מפסיד בדיוק 1R "
+            f"(בלי הגדלה אחרי הפסד)")
 
 
 def explain_exit(v):
@@ -148,7 +163,7 @@ def base_variant(bot, combo, fam, doc=None):
     """The variant the combo trades now (manage: the bots' default when no card changed it)."""
     fam = "manage" if fam == "fib" else fam
     v = built_variant(bot, combo, fam)
-    if fam == "ladder":
+    if fam in ("ladder", "pyr"):
         return v
     if v is None and fam == "manage":
         ht = (doc or {}).get("has_target")
@@ -169,6 +184,8 @@ def built_variant(bot, combo, fam):
         return p.get("filter") or "none"
     if fam == "ladder":
         return "lad" + ",".join(f"{float(x):g}" for x in p["ladder"]) if p.get("ladder") else "lad0"
+    if fam == "pyr":
+        return "pyr0"                                   # no bot adds to a trade yet (runner code on approval)
     if fam in ("manage", "fib"):
         nt = (p.get("target") == "none")
         if p.get("be_way") is None and p.get("be_r") is None and not p.get("partial"):
@@ -331,12 +348,13 @@ def run_rules(combos, fam, budget_min, extra=None):
         cmd += ["--filters", SPLIT]
         if BOT_NOW.get("bot") in FILTERS_EXTRA:
             cmd += ["--filters-extra"]               # the user's EMA 9/20 + Bollinger-width filters (14.11.2026)
-    elif fam in ("manage", "fib", "ladder"):
-        cmd += ["--manage", SPLIT] + (["--manage-grid", fam] if fam in ("fib", "ladder") else [])
-    if fam in ("exits", "filters", "manage", "fib", "ladder"):
-        bf = ROOT / "live" / "bots" / f"{BOT_NOW.get('bot')}.json"
-        if bf.exists():
-            cmd += ["--plans-file", str(bf)]          # on top of what the bot trades now (exits / filters too: 13.11.2026)
+    elif fam in ("manage", "fib", "ladder", "pyr"):
+        cmd += ["--manage", SPLIT] + (["--manage-grid", fam] if fam in ("fib", "ladder", "pyr") else [])
+    if fam in ("exits", "filters", "manage", "fib", "ladder", "pyr"):
+        bf = plans_file(BOT_NOW.get("bot"), out_dir)
+        if bf is not None:
+            cmd += ["--plans-file", str(bf)]          # on top of what the bot trades now (exits / filters too: 13.11.2026;
+            #                                           the morning review's live rules too: 14.11.2026)
     env = dict(os.environ, MAX_RUN_MINUTES=str(max(5, int(budget_min))))
     r = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", errors="replace",
                        timeout=int(budget_min * 60 + 900))
@@ -349,7 +367,7 @@ def run_rules(combos, fam, budget_min, extra=None):
         nd = [x for x in (r.stdout or "").splitlines() if "NO DATA" in x]
         raise RuntimeError(f"no market data: {nd[0].strip()[:200] if nd else sym}")
     rows = {}
-    jf = out_dir / f"{ {'exits': 'optimize', 'filters': 'filters', 'manage': 'manage', 'fib': 'manage', 'ladder': 'manage'}.get(fam, 'x') }_{tag}.json"
+    jf = out_dir / f"{ {'exits': 'optimize', 'filters': 'filters', 'manage': 'manage', 'fib': 'manage', 'ladder': 'manage', 'pyr': 'manage'}.get(fam, 'x') }_{tag}.json"
     if fam in FAMILIES and jf.exists():
         rows = {x["combo"]: x for x in json.loads(jf.read_text(encoding="utf-8"))}
     return t, rows
@@ -378,13 +396,64 @@ def loss_priority(bot):
 
 
 def plan_now(bot, combo):
-    """The combo's built plan in live/bots/<bot>.json (exits / filter / management), without the card ids: the
-    experiments run on top of it (run_rules.py --plans-file), so a result measured on another plan is stale."""
+    """The combo's built plan in live/bots/<bot>.json (exits / filter / management), without the card ids, and the
+    morning review's live rules on it ("rules": target / stop factor, hours, direction - live/runner.combo_rules): the
+    experiments run on top of both (run_rules.py --plans-file), so a result measured on another plan is stale."""
     try:
         p = (json.loads((ROOT / "live" / "bots" / f"{bot}.json").read_text(encoding="utf-8")).get("plans") or {}).get(combo) or {}
     except Exception:  # noqa: BLE001
         p = {}
-    return {k: v for k, v in sorted(p.items()) if k != "card" and not k.endswith("_card")}
+    out = {k: v for k, v in sorted(p.items()) if k != "card" and not k.endswith("_card")}
+    r = live_rules(bot).get(combo)
+    if r:
+        out["rules"] = r
+    return out
+
+
+_LIVE_RULES = {}
+RULE_KINDS = ("tp", "sl", "hours", "dir")
+
+
+def live_rules(bot):
+    """{combo: {tp, sl, hours, dir}} - the morning review's rules the live bot applies on top of its plans (branch live,
+    live/manager_state.json "risk", the same source as the risk multipliers). 14.11.2026: the experiments ran without
+    them, so for 14 strategies of bots 1-4 they measured a version that does not trade (bot 1: TV02 INTC stop x0.6,
+    TT45 WTI target x0.7, ...) and the whole-bot replay counted trades the bot never takes. Read once per run."""
+    if bot in _LIVE_RULES:
+        return _LIVE_RULES[bot]
+    out = {}
+    if bot in ("bot1", "bot2", "bot3", "bot4"):
+        try:
+            from agents import repo_io as RIO
+            sec = ((RIO.live_json("live/manager_state.json").get("risk") or {}).get(bot) or {})
+            for k in RULE_KINDS:
+                for combo, v in (sec.get(k) or {}).items():
+                    if v is not None and v != [] and v != {}:
+                        out.setdefault(combo, {})[k] = v
+        except Exception:  # noqa: BLE001
+            out = {}
+    _LIVE_RULES[bot] = out
+    return out
+
+
+def plans_file(bot, out_dir):
+    """live/bots/<bot>.json's plans with the live rules merged in ("rules" per combo), for run_rules --plans-file."""
+    bf = ROOT / "live" / "bots" / f"{bot}.json"
+    if not bf.exists():
+        return None
+    try:
+        plans = json.loads(bf.read_text(encoding="utf-8")).get("plans") or {}
+    except Exception:  # noqa: BLE001
+        return bf
+    rules = live_rules(bot)
+    if not rules:
+        return bf
+    merged = {c: dict(p) for c, p in plans.items()}
+    for c, r in rules.items():
+        merged.setdefault(c, {})["rules"] = r
+    f = out_dir / f"plans_{bot}.json"
+    f.write_text(json.dumps({"plans": merged}, ensure_ascii=False), encoding="utf-8")
+    return f
 
 
 def replay_family(plan):
@@ -409,6 +478,8 @@ def experiments(bot, budget_s, where):
         prio = (loss_priority(bot).get(combo) or {})
         pl = plan_now(bot, combo)
         for fam in FAMILIES:
+            if fam == "pyr" and bot not in PYR_BOTS:
+                continue
             age = st.age_days(fam, combo)
             d = st.get(fam, combo) or {}
             if d.get("variants") and age < RERUN_DAYS and (d.get("plan") or {}) != pl:
@@ -436,7 +507,7 @@ def experiments(bot, budget_s, where):
                     # exits): that one first for every strategy, the other families after (13.11.2026: bot 1's 2026
                     # replay saw 8 of 46 strategies - every re-run went through all families, one instrument at a time)
                     pr = 0.8
-                if fam in ("fib", "ladder") and combo not in fixing_:
+                if fam in ("fib", "ladder", "pyr") and combo not in fixing_:
                     pr = 1.5                     # (the ladder too: a new family for every strategy, 13.11.2026)                     # the Fibonacci grid after the re-runs the whole-bot check waits for
                 todo.append((pr, fam, -age, sym, combo))
             elif d.get("variants") and legacy_tr(d):                         # trades stored in 1000-minute steps
@@ -718,16 +789,18 @@ def cards_for(bot):
             others = [g for g in grid if g["variant"] != base_key and g["valid"]["n"] >= 5]
             share = (round(sum(1 for g in others if g["valid"]["avg"] > (bval or 0)) / len(others), 2) if others and bval is not None else None)
             what = (explain_exit(v) if fam == "exits" else explain_manage(v) if fam in ("manage", "fib")
-                    else explain_ladder(v) if fam == "ladder" else FILTER_HE.get(v, v))
+                    else explain_ladder(v) if fam == "ladder" else explain_pyr(v) if fam == "pyr" else FILTER_HE.get(v, v))
             cards.append(K.card(
                 bot, "improve", f"{combo}: {what}",
-                f"{ {'exits': 'יעד / סטופ / כניסה', 'manage': 'ניהול העסקה (נקודת איזון / יציאה חלקית)', 'fib': 'ניהול העסקה ברמות פיבונאצ׳י (נקודת איזון / יציאה חלקית)', 'ladder': 'כניסה מדורגת'}.get(fam, 'סינון מצב שוק') } לאסטרטגיה {combo}: {what}. "
+                f"{ {'exits': 'יעד / סטופ / כניסה', 'manage': 'ניהול העסקה (נקודת איזון / יציאה חלקית)', 'fib': 'ניהול העסקה ברמות פיבונאצ׳י (נקודת איזון / יציאה חלקית)', 'ladder': 'כניסה מדורגת', 'pyr': 'הוספה לעסקה מנצחת (פירמידה)'}.get(fam, 'סינון מצב שוק') } לאסטרטגיה {combo}: {what}. "
                 f"נבחר על 30.04-31.12.2025 בלבד, ומוצג על 2026 שלא נראתה, עם החוקים של הבוט.",
                 best["train"], best["unseen"], whole=best["whole"], halves_=best["halves"],
                 neighbours={"values": len(grid) or len(vs), "share_positive": share},
                 tested=len(grid) or len(vs), risk_pct=risk, baseline=base["unseen"],
                 detail={"exp_at": d.get("at"), **({"needs_code": "live/runner.py: כמה הוראות לימיט לאסטרטגיה אחת - נבנה "
-                                                   "כשהכרטיס מאושר"} if fam == "ladder" else {})},
+                                                   "כשהכרטיס מאושר"} if fam == "ladder" else
+                                                  {"needs_code": "live/runner.py: הוספה לעסקה פתוחה והזזת הסטופ של "
+                                                   "הכול - נבנה כשהכרטיס מאושר"} if fam == "pyr" else {})},
                 change={"combo": combo, "family": "manage" if fam == "fib" else fam, "from": base_key, "to": v,
                         **({"src": "fib"} if fam == "fib" else {})}))
     # the scout's strategies

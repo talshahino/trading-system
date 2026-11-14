@@ -262,7 +262,8 @@ PROTECT = {"be_r": 2.5, "lock_r": (3.0, 1.0)}
 #   target   "none" = no target (the no-target protection above applies) | k = k x the stop distance (the "kR" variants)
 #   stop     x the strategy's stop distance (the same dollar risk: the lots follow the stop)
 #   limit    a limit order k R better than the next open, valid 3 bars (run_rules OPT_ENTRY)
-#   filter   a market-regime filter of run_rules._regimes (only with the 200 trend, ADX, volatility)
+#   filter   a market-regime filter of run_rules._regimes (the 200 trend, ADX, volatility; EMA 9/20 and Bollinger width
+#            since 14.11.2026)
 PLANS = {}
 LIMIT_BARS = 3
 
@@ -304,13 +305,22 @@ def _regime(df, name):
         a = R.adx(h, l, c, 14)
         m = a > 20 if name == "adx_trend" else a < 20
         return m, m
+    if name == "ema9_20":                            # the user's filters (14.11.2026), as run_rules._extra_regimes
+        e9, e20 = R.ema(c, 9), R.ema(c, 20)
+        return e9 > e20, e9 < e20
+    if name == "bbw_p20":
+        s_ = pd.Series(c)
+        w = (4 * s_.rolling(20).std(ddof=0) / s_.rolling(20).mean()).to_numpy()
+        lo = pd.Series(w).rolling(100, min_periods=50).quantile(0.2).to_numpy()
+        m = np.isfinite(w) & np.isfinite(lo) & (w > lo)
+        return m, m
     at = R.atr(h, l, c, 14) / c
     pr = pd.Series(at).rolling(500, min_periods=100).rank(pct=True).to_numpy()
     m = {"vol_normal": (pr > 0.2) & (pr < 0.9), "vol_high": pr >= 0.5, "vol_low": pr < 0.5}[name]
     return m, m
 
 
-REGIMES = ("with_trend200", "adx_trend", "adx_range", "vol_normal", "vol_high", "vol_low")
+REGIMES = ("with_trend200", "adx_trend", "adx_range", "vol_normal", "vol_high", "vol_low", "ema9_20", "bbw_p20")
 
 
 def strat(sid, df, sym, tf):

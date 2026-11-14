@@ -185,6 +185,10 @@ def _risk_card(c, bot):
         # 13.11.2026) - until then such a card was approved and never applied (rounded to 0.0, outside 0.5-1.5)
         return 0.001
     v = round(v, 2)
+    if (c.get("detail") or {}).get("account_fit") and 0.1 <= v < 0.5:
+        # the whole bot sized back into its own limits (bots 1-4 smart agent, 14.11.2026: SC001|1Min|JP225 at x0.7 took
+        # bot 2's 2026 replay to a 10.3% fall and 7 days of -3% or worse); live/manager accepts any value up to 3
+        return v
     return v if 0.5 <= v <= 1.5 else None
 
 

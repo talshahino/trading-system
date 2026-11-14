@@ -314,10 +314,23 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
     line = plan.get("line")
     n = len(c)
     sig = np.where(long_, 1, np.where(short, -1, 0))
+    # the morning review's live rules (live/runner.combo_rules, 14.11.2026): measured as the bot trades them -
+    # dir = buy / sell only; hours [a, b) = no new trade when the entry opens in that Israel-time hour block
+    rdir = plan.get("rule_dir")
+    if rdir in (1, -1):
+        sig = np.where(sig == rdir, sig, 0)
+    rh = plan.get("rule_hours")
+    no_entry = None
+    if rh:
+        try:
+            hr = pd.DatetimeIndex(df.index).tz_convert("Asia/Jerusalem").hour.to_numpy()
+            no_entry = (hr >= int(rh[0])) & (hr < int(rh[1]))
+        except (TypeError, ValueError):
+            no_entry = None
     rows, i = [], 0
     while i < n - 2:
         d = sig[i]
-        if d == 0 or not np.isfinite(a[i]) or a[i] <= 0:
+        if d == 0 or not np.isfinite(a[i]) or a[i] <= 0 or (no_entry is not None and no_entry[i + 1]):
             i += 1
             continue
         e_t, e = i + 1, o[i + 1]
@@ -351,6 +364,14 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
                 continue
         else:
             target = e + d * tg[1] * risk
+        # the review's target / stop factors (live/runner.open_trade): the target at f x its distance, then the stop at
+        # f x its distance from the entry (the same dollar risk) - after the strategy's own levels, as the live bot
+        rtp, rsl = plan.get("rule_tp"), plan.get("rule_sl")
+        if rtp and target is not None and 0.3 <= float(rtp) < 1:
+            target = e + float(rtp) * (target - e)
+        if rsl and 0.5 <= float(rsl) < 1:
+            stop = e - float(rsl) * (e - stop)
+            risk = d * (e - stop)
         pb = plan.get("entry_pullback")          # variant tests: a limit order k x risk better, valid W bars
         if pb and pb[0] > 0:
             lim = e - d * pb[0] * risk
@@ -385,6 +406,10 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
         if part and 0 < part[0] < 1 and part[1] > 0:
             plvl = e + d * part[1] * (target - e) if target is not None else e + d * part[1] * risk
         part_t = None
+        # pyramid (user, 14.11.2026, task tal1411anti): at `at` R in profit `frac` of a position more at that level, and
+        # the stop of the whole position moves so that a stop still loses exactly 1R in all (1R / 0.5: entry - R/3)
+        pyr = plan.get("pyramid")
+        pyr_t, pyr_px = None, None
         best = e
         worst = e
         stop0 = stop
@@ -428,6 +453,11 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             if plvl is not None and part_t is None and d * (best - plvl) >= 0:
                 part_t = t
                 lvl = e * (1 + d * (be[1] if be else 0.0))
+                stop = max(stop, lvl) if d > 0 else min(stop, lvl)
+            if pyr and pyr_t is None and d * (best - e) >= pyr[0] * risk and t + 1 < n:
+                pyr_t, pyr_px = t, e + d * pyr[0] * risk
+                x = (pyr[1] * pyr[0] - 1.0) / (1.0 + pyr[1])           # the whole position's stop, in R from entry
+                lvl = e + d * x * risk
                 stop = max(stop, lvl) if d > 0 else min(stop, lvl)
             ber = plan.get("be_r")     # no target: stop to entry + costs once k R in profit (test, 06.11.2026)
             if ber and target is None and d * (best - e) >= ber * risk:
@@ -506,7 +536,12 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             r_mult = (part[0] * d * (plvl - e) + (1 - part[0]) * d * (exit_px - e)) / risk - 2 * cost_side * e / risk
         else:
             r_mult = d * (exit_px - e) / risk - 2 * cost_side * e / risk
-        rows.append({"time": df.index[e_t], "exit_time": df.index[exit_t], "dir": d, "r": float(r_mult),
+        extra_cols = {}
+        if pyr_t is not None and exit_t > pyr_t:
+            # the added part: its own result on the original risk, its own costs (agents/ftmo_costs.apply via cost_risk)
+            r_mult += pyr[1] * d * (exit_px - pyr_px) / risk - pyr[1] * 2 * cost_side * pyr_px / risk
+            extra_cols = {"cost_risk": float(risk / (1.0 + pyr[1])), "pyr_time": df.index[pyr_t]}
+        rows.append({**extra_cols, "time": df.index[e_t], "exit_time": df.index[exit_t], "dir": d, "r": float(r_mult),
                      "part_time": df.index[part_t] if part_t is not None else pd.NaT,
                      "held": int(exit_t - e_t), "entry_px": float(e), "exit_px": float(exit_px),
                      "stop_px": float(stop0), "target_px": float(target) if target is not None else np.nan,

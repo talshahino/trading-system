@@ -863,6 +863,16 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 straddle study failed: {e}")
+        # EV05, fading the release spike early (the user's task tal1411fade, 14.11.2026, agents/news_fade.py): a
+        # quarter of the budget, right after the straddle, gold first
+        try:
+            from agents import news_fade as NFD
+            if NFD.stale():
+                mins = max(6.0, a.minutes / 4)
+                subprocess.run([sys.executable, "-m", "agents.news_fade", "--minutes", str(mins)], cwd=str(ROOT),
+                               timeout=int(mins * 60 + 1800))
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 fade study failed: {e}")
         # fix attempt 6 for EV01 (13.11.2026): the entry's minute after the release, the spike size, the side and the
         # surprise (agents/news_entry.py), up to a third of the budget, once the fix study is complete
         try:

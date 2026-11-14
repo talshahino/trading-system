@@ -310,7 +310,11 @@ def note_runs(budget_s):
             key = f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}"
             if key in have:
                 continue
-            t = TG.simulate(D, pairs[pn], c, gc.setdefault(pn.split("/")[0], {}))
+            try:      # one failing test (14.11.2026: LADDER at the data's end) no longer stops the others
+                t = TG.simulate(D, pairs[pn], c, gc.setdefault(pn.split("/")[0], {}))
+            except Exception as e:  # noqa: BLE001
+                print(f"tal note test {key} failed: {e}")
+                continue
             t.to_csv(TAL_DIR / f"{key}.csv.gz", index=False)
             (idx_dir / f"{key}.json").write_text(json.dumps(
                 {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": pairs[pn][2],

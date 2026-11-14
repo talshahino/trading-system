@@ -428,7 +428,7 @@ def ladder_trade(D, f, d, legs, stop, tgt, ref, cfg, e):
             part = frac * d * (lvl - px) / risk
             be = (ls[i_lv + 1:] <= px) if d > 0 else (hs[i_lv + 1:] >= px)
             i_be = i_lv + 1 + int(np.argmax(be)) if be.any() else big
-            if i_be <= i:
+            if i_be < big and i_be <= i:              # not reached (big) while the trade is open at e: still open
                 ie, why = i_be, "breakeven"
                 ex = min(px, o1[f + ie]) if d > 0 else max(px, o1[f + ie])
         keep = 1 - frac if part else 1.0

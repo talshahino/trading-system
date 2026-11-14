@@ -329,16 +329,28 @@ def _filt_variants(cfg, group=FILT6):
     return c0, [(k, v, TG._norm(dict(c0, **{k: v}))) for k, v in group if c0.get(k) != v]
 
 
-def filt_runs(idx, budget_s):
-    """Every running track's own rules, alone and with each FILT6 variant, on bot 6's three indices - 'search' rows in
-    the gap method's index (from "bot6_filt"), resumed where the last run stopped."""
+# A STOP BY THE MARKET'S VOLATILITY (bot 5's agent, 14.11.2026 - tal_gap.min_stop, the same in the backtest and in
+# live_trades, which bot 6's account trades): the stop at least MINSTOP x the ATR(14) of the high timeframe's last
+# closed candle from the entry, a wider stop left as it is, the same risk per trade (fewer contracts). From the user's
+# question on the sibling trades of 13.11 (a tight stop hit, a wide one held). A group of its own on every running track.
+MIN6 = (("MINSTOP", 0.25), ("MINSTOP", 0.5), ("MINSTOP", 1.0))
+FILT_HE["MINSTOP"] = lambda v: f"סטופ לפחות {v:g} × ATR של הטיים פריים הגבוה מהכניסה (MINSTOP {v:g}, סטופ לפי התנודתיות)"
+# THE USER'S OWN TASKS FIRST (bot 6's smart agent, 14.11.2026): the laddered entries, half at half (p50_50) and the
+# volatility stop were queued behind the broad filters and the search, and on 13.11 the bots' computer ran over its
+# minutes before reaching them (no result for a day). Their runs now go first, with a budget of their own.
+USER6 = LAD6 + (("EXIT", "p50_50"),) + MIN6
+
+
+def filt_runs(idx, budget_s, group=None):
+    """Every running track's own rules, alone and with each FILT6 variant (or the group given), on bot 6's three
+    indices - 'search' rows in the gap method's index (from "bot6_filt"), resumed where the last run stopped."""
     pairs = {TG.pair_name(p): p for p in TG.PAIRS}
     idx_dir = TAL_DIR / "idx"
     idx_dir.mkdir(parents=True, exist_ok=True)
     want = []
     for pn, cfg in live_tracks().values():
         if pn in pairs:
-            c0, vs = _filt_variants(cfg, FILT6 + LAD6)
+            c0, vs = _filt_variants(cfg, group or (FILT6 + LAD6 + MIN6))
             want += [(pn, c0)] + [(pn, c) for _, _, c in vs]
     t0, done = time.time(), 0
     for sym in WORLD["symbols"]:
@@ -366,7 +378,7 @@ def filt_runs(idx, budget_s):
                         "from": "bot6_filt"}
             (idx_dir / f"{key}.json").write_text(json.dumps(idx[key], default=str))
             done += 1
-    print(f"tal filt (bot 6): {done} run")
+    print(f"tal filt (bot 6): {done} run, {len(want) * len(WORLD['symbols'])} wanted")
     return done
 
 
@@ -666,18 +678,29 @@ def scale_cards(pf, rk):
     return out
 
 
+STEPS = {}                 # this run's gap-method steps: {name: {done | err, at, sec, budget_sec}} -> results bot6.steps
+
+
 def tal(budget_s):
     t0 = time.time()
     idx0 = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")} if (TAL_DIR / "idx").exists() else {}
-    try:
-        trend_runs(idx0, budget_s * 0.25)           # TREND against exactly what runs, first (13.11.2026)
-    except Exception as e:  # noqa: BLE001
-        print(f"tal trend failed: {e}")
-    try:
-        filt_runs(idx0, budget_s * 0.25)            # bot 5's cost / hours filters + the futures' clock + tp30 (13.11 night)
-    except Exception as e:  # noqa: BLE001
-        print(f"tal filt failed: {e}")
+    # each step's outcome into the results (bot6.steps, 14.11.2026, as bot 5): the bots' computer keeps its logs to
+    # itself, so a step that failed or found no time was invisible to the nightly smart agent in the cloud
+    for nm, fn, share in (("user_tasks", lambda b: filt_runs(idx0, b, USER6), 0.4),   # the user's tasks first (14.11)
+                          ("trend_fix", lambda b: trend_runs(idx0, b), 0.15),        # TREND against what runs (13.11)
+                          ("filters", lambda b: filt_runs(idx0, b), 0.2)):           # cost / hours / clock filters (13.11 night)
+        t1 = time.time()
+        try:
+            STEPS[nm] = {"done": fn(budget_s * share)}
+        except Exception as e:  # noqa: BLE001
+            STEPS[nm] = {"err": str(e)[:300]}
+            print(f"tal {nm} failed: {e}")
+        STEPS[nm].update(at=pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), sec=round(time.time() - t1),
+                         budget_sec=round(budget_s * share))
+    t1 = time.time()
     idx, left = TG.run("bot6", WORLD["symbols"], tal_load, TAL_DIR, budget_s * 0.8 - (time.time() - t0))
+    STEPS["search"] = {"done": left, "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
+                       "sec": round(time.time() - t1), "note": "done = runs left"}
     shared(idx, budget_s - (time.time() - t0))
     pairs, answers = TG.summarize(idx, WORLD["symbols"], TAL_DIR)
     planned = len(TG.PAIRS) * len(TG.variants()) * len(WORLD["symbols"])
@@ -714,6 +737,15 @@ def tal(budget_s):
                 pcards.append(pc)
     except Exception as e:  # noqa: BLE001
         print(f"tal_gap portfolio failed: {e}")
+    try:            # the volatility stop on what runs, head to head (bot 5's MINSTOP, 14.11.2026)
+        mc, mres = filt_cards(idx, MIN6)
+        pcards += mc
+        if mres:
+            doc["bot6"]["minstop_fix"] = mres
+    except Exception as e:  # noqa: BLE001
+        print(f"tal_gap minstop cards failed: {e}")
+    doc["bot6"]["steps"] = STEPS
+    TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     try:            # TREND on what runs, head to head (13.11.2026)
         tc, tres = trend_cards(idx, (doc.get("bot5") or {}).get("trend_fix"))
         pcards += tc
@@ -740,7 +772,9 @@ def tal(budget_s):
     except Exception as e:  # noqa: BLE001
         print(f"tal_gap ladder cards failed: {e}")
     try:            # the shared exit on the whole bot (the user's task, 13.11.2026)
-        shared6_runs(budget_s * 0.3)
+        t1 = time.time()
+        STEPS["shared_exit"] = {"done": shared6_runs(budget_s * 0.3), "sec": round(time.time() - t1),
+                                "budget_sec": round(budget_s * 0.3)}
         sc_, sres = shared6_cards()
         pcards += sc_
         doc["bot6"]["shared_exit"] = sres

@@ -70,11 +70,15 @@ def watch_trades(state, bot):
             continue
         trk = w.get("trk") or (w["id"].split("|")[3] if w.get("id", "").count("|") >= 3 else "")
         tf = "1Min" if str(trk).endswith("1m") else "15Min"
-        if bot == "bot6" and w.get("id", "").count("|") >= 1 and w["id"].split("|")[1] == "tal":
+        if bot in ("bot5", "bot6") and w.get("id", "").count("|") >= 1 and w["id"].split("|")[1] == "tal":
             # bot 6 (14.11.2026, its smart agent): every gap track by its own name - TAL|<track>|<index> (tal, tal4h,
             # t15_5, t5_1, ...). Before, t15_5 and t5_1 were both FUT|15Min and tal4h's risk change followed them,
             # and the watch never saw a gap card's trades at all (agents/watch.py TRACKS).
+            # bot 5 the same (14.11.2026 evening, task b6to5watch): before, all its gap tracks (t15_1, t1h_15, t4h_15,
+            # t1h_5@US30, ...) were one OWN|15Min|<index>, compared with the v5 track's expectation
             combo = f"TAL|{trk or 'tal'}|{w['symbol']}"
+            if str(trk).startswith("sc:"):
+                combo = str(trk)[3:]                     # a scout strategy bot 5 trades: SCxxx|tf|sym
         else:
             combo = (f"TAL|4Hour|{w['symbol']}" if trk == "tal4h" else f"TAL|1Hour|{w['symbol']}") if str(trk).startswith("tal") else f"{pre}|{tf}|{w['symbol']}"   # the user's gap method
         rows.append({"id": w["id"], "combo": combo, "time": w.get("time"),
@@ -137,6 +141,21 @@ def expectations(bot):
                     out["@" + trk] = {"mean": b["mean"], "n": b.get("n"), "win": (b.get("win") or 0) / 100, "sd": None}
         except Exception:  # noqa: BLE001
             pass
+        # the gap tracks (14.11.2026 evening): the test of the rules the track trades now (the chosen rules of its pair
+        # in tal_gap_results, only when they are exactly the live track's rules - else no expectation, not v5's)
+        try:
+            cfg5 = json.loads((ROOT / "live/bots/bot5.json").read_text(encoding="utf-8"))
+            res = json.loads((ROOT / "data/agents/strategies/tal_gap_results.json").read_text(encoding="utf-8")).get("bot5", {})
+            for trk, v in (cfg5.get("tal_tracks") or {}).items():
+                if v.get("symbols"):
+                    continue
+                pr = "/".join(v.get("pair") or [])
+                ch = ((res.get("pairs") or {}).get(pr) or {}).get("chosen") or {}
+                b = ch.get("whole") or {}
+                if ch.get("cfg") == v.get("cfg") and b.get("mean") is not None:
+                    out["@" + trk] = {"mean": b["mean"], "n": b.get("n"), "win": (b.get("win") or 0) / 100, "sd": None}
+        except Exception:  # noqa: BLE001
+            pass
     try:
         extra = json.loads((ROOT / "data/agents/expect.json").read_text(encoding="utf-8")).get(bot, {})
         out.update(extra)
@@ -148,6 +167,10 @@ def expectations(bot):
 def expect_for(bot, combo, exp):
     if combo in exp:
         return exp[combo]
+    if bot == "bot5" and combo.startswith("TAL|"):   # a gap track: its own test only (14.11.2026 evening)
+        return exp.get("@" + combo.split("|")[1])
+    if bot == "bot5" and combo.startswith("SC"):
+        return None
     if bot == "bot5":                           # bot 5: by track (the 1-minute track or the 15-minute one)
         return exp.get("@v1m" if "|1Min|" in combo else "@v5")
     return None

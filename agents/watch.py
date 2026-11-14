@@ -22,6 +22,7 @@ State and the list the app shows: reports/agents/watch.json.
 from __future__ import annotations
 
 import json
+import re
 import math
 from pathlib import Path
 
@@ -115,16 +116,34 @@ def _bot6_track(b):
     return next((k for k, v in (d.get("tal_tracks") or {}).items() if list((v or {}).get("pair") or [])[:2] == pr), None)
 
 
+def _bot5_tracks(b):
+    """Bot 5's gap card -> the tracks it changed (live/bots/bot5.json "tal_tracks", as agents/builder.py writes them):
+    tal5 = the track on that pair without "symbols", tal5sym = <track>@<symbol> (14.11.2026 evening, task b6to5watch)."""
+    try:
+        tt = json.loads((ROOT / "live" / "bots" / "bot5.json").read_text(encoding="utf-8")).get("tal_tracks") or {}
+    except Exception:  # noqa: BLE001
+        tt = {}
+    pr = list(b.get("pair") or [])[:2]
+    if b.get("family") == "tal5sym":
+        k = "t" + pr[0].rstrip("m") + "_" + pr[1].rstrip("m") + "@" + str(b.get("sym"))
+        return f"re:^TAL\\|{re.escape(k)}\\|" if k in tt else None
+    k = next((k for k, v in tt.items() if list(v.get("pair") or [])[:2] == pr and not v.get("symbols")), None)
+    return f"re:^TAL\\|{re.escape(k)}\\|" if k else None
+
+
 def _risk_combo(b):
-    if b.get("bot") == "bot6":       # bot 6: each gap track by its name (agents/health.py watch_trades, 14.11.2026)
-        return f"re:^TAL\\|{b['track']}\\|"
+    if b.get("bot") == "bot6" or (b.get("bot") == "bot5" and b["track"] not in ("v5", "v1m")):
+        # bots 5-6: each gap track by its name (agents/health.py watch_trades, 14.11.2026)
+        return f"re:^TAL\\|{re.escape(b['track'])}\\|"
     return ("re:^TAL\\|" if b["track"] == "tal" else "re:^(OWN|FUT)\\|" + ("1Min" if b["track"] == "v1m" else "15Min") + "\\|")
 
 
 TRACKS = {"track": lambda b: "re:^OWN\\|" + ("1Min" if b["track"] == "v1m" else "15Min") + "\\|",
           "risk": _risk_combo,
           "tal": lambda b: "re:^TAL\\|",
-          "tal6": lambda b: (f"re:^TAL\\|{_bot6_track(b)}\\|" if _bot6_track(b) else None)}
+          "tal6": lambda b: (f"re:^TAL\\|{_bot6_track(b)}\\|" if _bot6_track(b) else None),
+          "tal5": _bot5_tracks,
+          "tal5sym": _bot5_tracks}
 
 
 RISK_BOTS = ("bot1", "bot2", "bot3", "bot4")

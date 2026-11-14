@@ -97,24 +97,163 @@ def main_sha():
     return r.json()["sha"]
 
 
+SKIP_TOP = ("docs/", "mt5/", "dashboard/")      # never needed in the working copy (live/: the bots' settings)
+INDEX = WORK / "tree_index.json"
+BLOB_MAX = 300                                    # more changed files than this: one zip instead of a request each
+
+
+def _skip(rel):
+    return rel.startswith(SKIP_TOP)
+
+
+def _blob_sha(data):
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
+def _git_tree(h, sha, recursive=False):
+    r = requests.get(f"{API}/git/trees/{sha}", headers=h, params={"recursive": "1"} if recursive else None, timeout=120)
+    r.raise_for_status()
+    j = r.json()
+    return j.get("tree") or [], bool(j.get("truncated"))
+
+
+def _drop_dir(idx, d):
+    node = idx.pop(d, None)
+    for sub in (node or {}).get("dirs") or []:
+        _drop_dir(idx, f"{d}/{sub}" if d else sub)
+
+
+def _walk(h, idx, d, sha):
+    """The index of main's tree, only the folders whose tree changed are asked for (manager, 14.11.2026: the GitHub
+    scout added 83 thousand result files, 2.9 GB, the zip of main grew to 1.35 GB and the refresh - a whole zip in
+    memory and every file compared, every 10 minutes and before every agent - stopped the agents for hours)."""
+    node = idx.get(d)
+    if node and node.get("sha") == sha:
+        return
+    entries = None
+    if node is None:                              # a folder not seen before: all of it at once when GitHub allows
+        try:
+            flat, trunc = _git_tree(h, sha, recursive=True)
+            entries = None if trunc else flat
+        except Exception:  # noqa: BLE001
+            entries = None
+    if entries is not None:
+        nodes = {d: {"sha": sha, "files": {}, "dirs": []}}
+        # folders first, parents before children, so every file finds its folder
+        for e in sorted(entries, key=lambda e: (e["type"] != "tree", e["path"].count("/"))):
+            path = e["path"]
+            parent, _, name = path.rpartition("/")
+            pd = f"{d}/{parent}" if d and parent else (parent or d)
+            full = f"{d}/{path}" if d else path
+            if _skip(full) or pd not in nodes:
+                continue
+            if e["type"] == "tree":
+                nodes[pd]["dirs"].append(name)
+                nodes[full] = {"sha": e["sha"], "files": {}, "dirs": []}
+            elif e["type"] == "blob":
+                nodes[pd]["files"][name] = [e["sha"], None, None]
+        idx.update(nodes)
+        return
+    listing, _ = _git_tree(h, sha)
+    old_files = (node or {}).get("files") or {}
+    files, dirs = {}, []
+    for e in listing:
+        name = e["path"]
+        full = f"{d}/{name}" if d else name
+        if _skip(full):
+            continue
+        if e["type"] == "tree":
+            dirs.append(name)
+            _walk(h, idx, full, e["sha"])
+        elif e["type"] == "blob":
+            o = old_files.get(name)
+            files[name] = [e["sha"], o[1], o[2]] if o and o[0] == e["sha"] else [e["sha"], None, None]
+    for gone in set((node or {}).get("dirs") or []) - set(dirs):
+        _drop_dir(idx, f"{d}/{gone}" if d else gone)
+    idx[d] = {"sha": sha, "files": files, "dirs": dirs}
+
+
+def _load_index():
+    try:
+        return json.loads(INDEX.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _write(rel, data, rec):
+    dest = WORK / rel
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_bytes(data)
+    s = dest.stat()
+    rec[1], rec[2] = s.st_size, s.st_mtime_ns
+
+
 def refresh(st):
-    """Bring the working copy to the newest main (code and the latest published results). The cache stays."""
+    """Bring the working copy to the newest main (code and the latest published results). The cache stays.
+    Incremental (manager, 14.11.2026): the tree of main is kept in tree_index.json with each file's git sha and the
+    size / time it had here when it matched; only files that changed on main, or here since, are downloaded - one by
+    one, or from one zip of main (streamed to disk) when there are many. Same result as before: every file of main
+    as it is on main."""
     sha = main_sha()
     if st.get("sha") == sha and (WORK / "agent_bot5.py").exists():
         return sha
-    r = requests.get(f"{API}/zipball/{sha}", headers=_h(), timeout=300)
+    h = _h()
+    r = requests.get(f"{API}/git/commits/{sha}", headers=h, timeout=60)
     r.raise_for_status()
-    z = zipfile.ZipFile(io.BytesIO(r.content))
-    top = z.namelist()[0].split("/")[0]
-    for info in z.infolist():
-        rel = info.filename[len(top) + 1:]
-        if not rel or info.is_dir() or rel.startswith(("docs/", "mt5/", "dashboard/")):   # live/: the bots' settings
-            continue
-        dest = WORK / rel
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        data = z.read(info)
-        if not (dest.exists() and dest.read_bytes() == data):
-            dest.write_bytes(data)
+    root_tree = r.json()["tree"]["sha"]
+    idx = _load_index()
+    _walk(h, idx, "", root_tree)
+    need = []                                     # (rel, blob sha, the index record)
+    for d, node in idx.items():
+        for name, rec in node["files"].items():
+            rel = f"{d}/{name}" if d else name
+            f = WORK / rel
+            try:
+                s = f.stat()
+            except OSError:
+                need.append((rel, rec[0], rec))
+                continue
+            if rec[1] == s.st_size and rec[2] == s.st_mtime_ns:
+                continue
+            try:
+                same = _blob_sha(f.read_bytes()) == rec[0]
+            except OSError:
+                same = False
+            if same:
+                rec[1], rec[2] = s.st_size, s.st_mtime_ns
+            else:
+                need.append((rel, rec[0], rec))
+    if 0 < len(need) <= BLOB_MAX:
+        for rel, bsha, rec in need:
+            b = requests.get(f"{API}/git/blobs/{bsha}", headers=h, timeout=120)
+            b.raise_for_status()
+            _write(rel, base64.b64decode(b.json()["content"]), rec)
+    elif need:
+        want = {rel: (bsha, rec) for rel, bsha, rec in need}
+        tmp = WORK / "_main.zip"
+        with requests.get(f"{API}/zipball/{sha}", headers=h, timeout=300, stream=True) as z:
+            z.raise_for_status()
+            with open(tmp, "wb") as out:
+                for chunk in z.iter_content(1 << 20):
+                    out.write(chunk)
+        try:
+            with zipfile.ZipFile(tmp) as zf:
+                for info in zf.infolist():
+                    rel = info.filename.split("/", 1)[1] if "/" in info.filename else ""
+                    if info.is_dir() or rel not in want:
+                        continue
+                    data = zf.read(info)
+                    bsha, rec = want[rel]
+                    if _blob_sha(data) == bsha:
+                        _write(rel, data, rec)
+        finally:
+            try:
+                tmp.unlink()
+            except OSError:
+                pass
+    tmpi = INDEX.with_suffix(".tmp")
+    tmpi.write_text(json.dumps(idx, separators=(",", ":")), encoding="utf-8")
+    os.replace(tmpi, INDEX)
     req = (WORK / "requirements.txt").read_bytes() if (WORK / "requirements.txt").exists() else b""
     hreq = hashlib.sha1(req).hexdigest()
     if req and st.get("req") != hreq:
@@ -145,7 +284,12 @@ def ensure_node():
     return str(home)
 
 
+_HC = {}                                          # rel -> (size, mtime_ns, sha1): a file not touched is not read again
+
+
 def snapshot():
+    """sha1 of every file under PUBLISH. Files whose size and time did not change are not read again (manager,
+    14.11.2026: 2.9 GB of results were hashed twice every 10 minutes)."""
     out = {}
     for d in PUBLISH:
         base = WORK / d
@@ -154,8 +298,24 @@ def snapshot():
                 rel = f.relative_to(WORK).as_posix()
                 # the gap method's run cache (reports/agents/bot5|bot6/tal: thousands of csv.gz) is the computer's own,
                 # never published (manager, 12.11.2026: a first run on bot 6 made ~900 of them - one commit of 900 blobs)
-                if f.is_file() and "/tal/" not in rel:
-                    out[rel] = hashlib.sha1(f.read_bytes()).hexdigest()
+                if "/tal/" in rel:
+                    continue
+                try:
+                    s = f.stat()
+                except OSError:
+                    continue
+                if not f.is_file():
+                    continue
+                c = _HC.get(rel)
+                if c and c[0] == s.st_size and c[1] == s.st_mtime_ns:
+                    out[rel] = c[2]
+                    continue
+                try:
+                    hsh = hashlib.sha1(f.read_bytes()).hexdigest()
+                except OSError:
+                    continue
+                _HC[rel] = (s.st_size, s.st_mtime_ns, hsh)
+                out[rel] = hsh
     return out
 
 

@@ -597,6 +597,79 @@ def experiments(bot, budget_s, where):
     return done, left
 
 
+# ---------- a scout strategy's whole family (manager's task mgr1411fam, 14.11.2026) ----------
+# SC001|1Min|JP225 was picked as one instrument out of a family that loses to 2025 (all its instruments together about
+# -3,900R to 2025, -6,700R in 2026; JP225 alone t 0.21). The fix has to be chosen on the FAMILY: every filter
+# (trend 200, ADX, volatility, EMA 9/20, Bollinger width, RSI against the trend) on each of bot 7's instruments of
+# SC001, one instrument per run on the bots' computer; family_report sums each filter over the instruments on
+# 30.04-31.12.2025 (the choice) and shows 2026 - a filter that turns the family positive on 2025 and holds on 2026 is
+# a fix for JP225 too; none -> the attempt failed and the risk card is allowed.
+FAMILY = {"SC001|1Min": ["JP225", "US100", "GER40", "US500", "US30", "UK100", "XAUUSD", "EURUSD", "GBPUSD", "USDJPY",
+                         "AUDUSD", "NZDUSD", "USDCHF", "USDCAD", "EURJPY", "GBPJPY"]}
+FAMILY_DAYS = 10
+
+
+def family_fix(bot, budget_s, one=False):
+    st, t0, done = Store(bot), time.time(), 0
+    for base, syms in FAMILY.items():
+        for sym in syms:
+            c = f"{base}|{sym}"
+            if st.age_days("family", c) < FAMILY_DAYS:
+                continue
+            left = budget_s - (time.time() - t0)
+            if left < 300:
+                return done
+            ts = time.time()
+            try:
+                t, rows = run_rules([c], "filters", left / 60)
+            except Exception as e:  # noqa: BLE001
+                print(f"  family {c}: failed - {str(e)[-300:]}")
+                if "Time budget reached" in str(e):
+                    return done
+                st.put("family", c, {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "error": str(e)[-300:]})
+                continue
+            sid, tf, s_ = c.split("|")
+            tc = t[(t["sid"] == sid) & (t["tf"] == tf) & (t["symbol"] == s_)].copy()
+            tc["time"] = pd.to_datetime(tc["time"], utc=True, format="ISO8601")
+            doc = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": "family",
+                   "secs": round(time.time() - ts, 1), "sums": {}}
+            for v, g in tc.groupby("variant") if "variant" in tc else []:
+                tr = g[(g["time"] >= pd.Timestamp(TEST_FROM, tz="UTC")) & (g["time"] < T_SPLIT)]
+                un = g[g["time"] >= T_SPLIT]
+                doc["sums"][v] = {"train_n": int(len(tr)), "train_r": round(float(tr["r"].sum()), 2),
+                                  "unseen_n": int(len(un)), "unseen_r": round(float(un["r"].sum()), 2)}
+            st.put("family", c, doc)
+            done += 1
+            print(f"  family {c}: {len(doc['sums'])} filters ({time.time() - ts:.0f}s)")
+            if one:
+                return done
+    return done
+
+
+def family_report(bot):
+    st, out = Store(bot), {}
+    for base, syms in FAMILY.items():
+        agg, have = {}, []
+        for sym in syms:
+            d = st.get("family", f"{base}|{sym}") or {}
+            if not d.get("sums"):
+                continue
+            have.append(sym)
+            for v, x in d["sums"].items():
+                a = agg.setdefault(v, {"train_n": 0, "train_r": 0.0, "unseen_n": 0, "unseen_r": 0.0, "positive_train": 0})
+                for k in ("train_n", "train_r", "unseen_n", "unseen_r"):
+                    a[k] += x[k]
+                a["positive_train"] += int(x["train_r"] > 0)
+        rank = sorted(agg.items(), key=lambda kv: -kv[1]["train_r"])
+        out[base] = {"instruments": have, "missing": [s_ for s_ in syms if s_ not in have],
+                     "none": agg.get("none"), "best": rank[0] if rank else None,
+                     "filters": {v: {k: round(x, 2) if isinstance(x, float) else x for k, x in a.items()} for v, a in rank}}
+    (ROOT / "reports" / "agents" / bot / "family_fix.json").write_text(
+        json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "split": SPLIT, "test_from": TEST_FROM,
+                    "families": out}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    return out
+
+
 # ---------- new strategies from the scout ----------
 def inbox():
     try:
@@ -873,6 +946,14 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 fade study failed: {e}")
+        # SC001's whole family (the manager's task mgr1411fam, deadline 16.11.2026): one instrument's filter test per
+        # round (up to 20 minutes), then the sum per filter over the family
+        try:
+            BOT_NOW["bot"] = a.bot
+            family_fix(a.bot, max(20 * 60, budget / 4), one=True)   # a 1-minute filter run: ~15 minutes
+            family_report(a.bot)
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 family fix failed: {e}")
         # fix attempt 6 for EV01 (13.11.2026): the entry's minute after the release, the spike size, the side and the
         # surprise (agents/news_entry.py), up to a third of the budget, once the fix study is complete
         try:

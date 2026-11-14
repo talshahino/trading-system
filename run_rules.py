@@ -105,6 +105,7 @@ def _regimes(df):
 # the user's filters (14.11.2026, task tal1411ema): tried only with --filters-extra (bot 7 first); always known to
 # _regimes so a built plan with one of them resolves
 EXTRA_REGIMES = ("ema9_20", "bbw_p20")
+RSI_REGIMES = ("rsi_trend",)            # tried only with --filters-rsi (bots 1-4 first, task tal1411rsi)
 
 
 def _extra_regimes(c):
@@ -116,7 +117,14 @@ def _extra_regimes(c):
     w = (4 * sd / mid).to_numpy()
     lo = pd.Series(w).rolling(100, min_periods=50).quantile(0.2).to_numpy()
     ok = np.isfinite(w) & np.isfinite(lo) & (w > lo)
-    return {"ema9_20": (e9 > e20, e9 < e20), "bbw_p20": (ok, ok)}
+    # rsi_trend (user, 14.11.2026, task tal1411rsi): in a trend the RSI does not reach 30 / 70 - a buy on a low RSI under
+    # the 200 average (a falling market, where the RSI swings ~20-60) or a sell on a high RSI over it (~40-80) is
+    # against the trend: those entries are skipped, everything else trades. One setting (35 / 65), not tuned.
+    e200, rs = R.ema(c, 200), R.rsi(c, 14)
+    with np.errstate(invalid="ignore"):
+        rl = ~((c < e200) & (rs < 35))
+        rsh = ~((c > e200) & (rs > 65))
+    return {"ema9_20": (e9 > e20, e9 < e20), "bbw_p20": (ok, ok), "rsi_trend": (rl, rsh)}
 
 
 def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
@@ -132,6 +140,8 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
     rows, keep = [], {}
     for name, (al, ash) in regimes.items():
         if name in EXTRA_REGIMES and not getattr(args, "filters_extra", False):
+            continue
+        if name in RSI_REGIMES and not getattr(args, "filters_rsi", False):
             continue
         def g(d, al=al, ash=ash):
             lo, sh, plan = fn(d)
@@ -545,6 +555,8 @@ def main():
     ap.add_argument("--filters", default="",
                     help="YYYY-MM-DD: with --combos-file, try market-regime filters per combo, choose on "
                          "--test-from..this date, check on this date..end")
+    ap.add_argument("--filters-rsi", action="store_true",
+                    help="--filters also tries the user's RSI-against-the-trend filter (14.11.2026)")
     ap.add_argument("--filters-extra", action="store_true",
                     help="--filters also tries the user's EMA 9/20 direction and Bollinger-width filters (14.11.2026)")
     ap.add_argument("--combos-file", default="",

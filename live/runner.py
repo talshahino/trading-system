@@ -308,6 +308,10 @@ def _regime(df, name):
     if name == "ema9_20":                            # the user's filters (14.11.2026), as run_rules._extra_regimes
         e9, e20 = R.ema(c, 9), R.ema(c, 20)
         return e9 > e20, e9 < e20
+    if name == "rsi_trend":                          # no buy on RSI < 35 under the 200 average / sell on RSI > 65 over it
+        e200, rs = R.ema(c, 200), R.rsi(c, 14)
+        with np.errstate(invalid="ignore"):
+            return ~((c < e200) & (rs < 35)), ~((c > e200) & (rs > 65))
     if name == "bbw_p20":
         s_ = pd.Series(c)
         w = (4 * s_.rolling(20).std(ddof=0) / s_.rolling(20).mean()).to_numpy()
@@ -320,7 +324,7 @@ def _regime(df, name):
     return m, m
 
 
-REGIMES = ("with_trend200", "adx_trend", "adx_range", "vol_normal", "vol_high", "vol_low", "ema9_20", "bbw_p20")
+REGIMES = ("with_trend200", "adx_trend", "adx_range", "vol_normal", "vol_high", "vol_low", "ema9_20", "bbw_p20", "rsi_trend")
 
 
 def strat(sid, df, sym, tf):

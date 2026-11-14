@@ -89,10 +89,13 @@ NEW_ONLY = {"bot5": ["XAUUSD", "EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD",
 FILTER_HE = {"with_trend200": "רק עם המגמה (ממוצע 200)", "adx_trend": "רק בשוק במגמה (ADX מעל 20)",
              "adx_range": "רק בשוק בדשדוש (ADX מתחת 20)", "vol_normal": "רק בתנודתיות רגילה",
              "vol_high": "רק בתנודתיות גבוהה", "vol_low": "רק בתנודתיות נמוכה", "none": "בלי סינון",
-             "ema9_20": "רק בכיוון EMA 9/20", "bbw_p20": "לא ברוחב בולינגר נמוך (מתחת לאחוזון 20)"}
+             "ema9_20": "רק בכיוון EMA 9/20", "bbw_p20": "לא ברוחב בולינגר נמוך (מתחת לאחוזון 20)",
+             "rsi_trend": "לא נגד המגמה לפי RSI (לא קונים ב־RSI מתחת 35 מתחת לממוצע 200, לא מוכרים מעל 65 מעליו)"}
 # bots whose filter tests also try the user's EMA 9/20 and Bollinger-width filters (task tal1411ema, 14.11.2026):
 # live/news_bot.regime knows them for bot 7, live/runner._regime for bots 1-4 (since 14.11.2026)
 FILTERS_EXTRA = {"bot1", "bot2", "bot3", "bot4", "bot7"}
+# ... and the RSI-against-the-trend filter (task tal1411rsi, 14.11.2026): live/runner._regime knows it (bots 1-4)
+FILTERS_RSI = {"bot1", "bot2", "bot3", "bot4"}
 
 
 def explain_manage(v):
@@ -348,6 +351,8 @@ def run_rules(combos, fam, budget_min, extra=None):
         cmd += ["--filters", SPLIT]
         if BOT_NOW.get("bot") in FILTERS_EXTRA:
             cmd += ["--filters-extra"]               # the user's EMA 9/20 + Bollinger-width filters (14.11.2026)
+        if BOT_NOW.get("bot") in FILTERS_RSI:
+            cmd += ["--filters-rsi"]                 # the user's RSI-against-the-trend filter (14.11.2026)
     elif fam in ("manage", "fib", "ladder", "pyr"):
         cmd += ["--manage", SPLIT] + (["--manage-grid", fam] if fam in ("fib", "ladder", "pyr") else [])
     if fam in ("exits", "filters", "manage", "fib", "ladder", "pyr"):
@@ -496,7 +501,8 @@ def experiments(bot, budget_s, where):
                 # the daily loss review asked for this test (agents/loss_review.py): first, before anything else
                 todo.append((-1, fam, -age, sym, combo))
                 continue
-            if fam == "filters" and bot in FILTERS_EXTRA and d.get("variants") and not d.get("filters_extra"):
+            if fam == "filters" and d.get("variants") and ((bot in FILTERS_EXTRA and not d.get("filters_extra"))
+                                                          or (bot in FILTERS_RSI and not d.get("filters_rsi"))):
                 # measured before the user's EMA 9/20 + Bollinger-width filters (task tal1411ema, 14.11.2026): again
                 todo.append((1, fam, -age, sym, combo))
                 continue
@@ -581,6 +587,8 @@ def experiments(bot, budget_s, where):
                            for x in (rows.get(c) or {}).get("all", [])]
             if fam == "filters" and bot in FILTERS_EXTRA:
                 doc["filters_extra"] = 1
+            if fam == "filters" and bot in FILTERS_RSI:
+                doc["filters_rsi"] = 1
             st.put(fam, c, doc)
             done += 1
         print(f"  {sym} {fam}: {len(combos)} combos ({time.time() - ts:.0f}s)")

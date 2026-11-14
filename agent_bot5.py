@@ -666,6 +666,7 @@ def wide_chosen():
     except Exception:  # noqa: BLE001
         pass
     return out
+STEPS = {}                 # this run's gap-method steps: {name: {done | err, at, sec, budget_sec}} -> results bot5.steps
 TAL_WORLD = {"symbols": TAL_SYMBOLS, "costs": "FTMO's recorded 1-minute spread + commission",
              "sessions": "FTMO Standard: market breaks and session ends closed, news masks", "stop_buffer": "2 points",
              "split": "train to 2025-12-31, unseen 2026"}
@@ -818,26 +819,21 @@ def main():
     if tal_left > 60 and BOT == "bot5" and not only:
         # the user's task of 13.11.2026 (high priority): the method on every FTMO forex pair, metals, other indices -
         # half of what is left, the indices' never-ending search the rest
-        try:
-            sym_runs(tal_left * 0.3)                # the instrument tracks, so the whole bot is tested together (first)
-        except Exception as e:  # noqa: BLE001
-            print("tal instrument track runs failed:", e)
-        try:
-            trend_runs(tal_left * 0.25)             # the fix of the 12.11 loss against exactly what runs, first
-        except Exception as e:  # noqa: BLE001
-            print("tal trend runs failed:", e)
-        try:
-            note_runs(tal_left * 0.2)               # the user's notes on live trades (13.11.2026): wider stop, half at half
-        except Exception as e:  # noqa: BLE001
-            print("tal note runs failed:", e)
-        try:
-            shared_runs(tal_left * 0.15)            # the shared exit on the whole bot (user, 13.11.2026)
-        except Exception as e:  # noqa: BLE001
-            print("tal shared exit runs failed:", e)
-        try:
-            stab_runs(tal_left * 0.1)               # stability: the low-MIN_RR tracks with MIN_RR 0.5 / 1.0 (13.11.2026 night)
-        except Exception as e:  # noqa: BLE001
-            print("tal stability runs failed:", e)
+        # each step's outcome is kept in the results (bot5.steps, 14.11.2026): the bots' computer keeps its logs to
+        # itself, so a step that failed or found no time was invisible to the nightly smart agent in the cloud
+        for nm, fn, share in (("instrument_tracks", sym_runs, 0.3),   # the instrument tracks, so the whole bot is tested together
+                              ("trend_fix", trend_runs, 0.25),        # the fix of the 12.11 loss against exactly what runs
+                              ("notes", note_runs, 0.2),              # the user's notes on live trades (13.11.2026)
+                              ("shared_exit", shared_runs, 0.15),     # the shared exit on the whole bot (user, 13.11.2026)
+                              ("stability", stab_runs, 0.1)):         # the low-MIN_RR tracks with MIN_RR 0.5 / 1.0
+            t1 = time.time()
+            try:
+                STEPS[nm] = {"done": fn(tal_left * share)}
+            except Exception as e:  # noqa: BLE001
+                STEPS[nm] = {"err": str(e)[:300]}
+                print(f"tal {nm} runs failed:", e)
+            STEPS[nm].update(at=pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), sec=round(time.time() - t1),
+                             budget_sec=round(tal_left * share))
         tal_left = a.minutes * 60 - (time.time() - t_start)
         try:
             TW.run(tal_load, TAL_WIDE_DIR, tal_left * 0.5, wide_chosen())
@@ -955,6 +951,7 @@ def main():
         except Exception as e:  # noqa: BLE001
             print("tal whole bot failed:", e)
             pf_all = None
+        doc["bot5"]["steps"] = STEPS
         if pf_all:
             doc["bot5"]["portfolio_all"] = pf_all
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")

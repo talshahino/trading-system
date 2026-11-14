@@ -616,7 +616,10 @@ def experiments(bot, budget_s, where):
 # 30.04-31.12.2025 (the choice) and shows 2026 - a filter that turns the family positive on 2025 and holds on 2026 is
 # a fix for JP225 too; none -> the attempt failed and the risk card is allowed.
 FAMILY = {"SC001|1Min": ["JP225", "US100", "GER40", "US500", "US30", "UK100", "XAUUSD", "EURUSD", "GBPUSD", "USDJPY",
-                         "AUDUSD", "NZDUSD", "USDCHF", "USDCAD", "EURJPY", "GBPJPY"]}
+                         "AUDUSD", "NZDUSD", "USDCHF", "USDCAD", "EURJPY", "GBPJPY"],
+          # the manager's task mgr1411fam2 (14.11.2026, deadline 17.11): SC070|5Min|JP225 runs in bot 7 at t 0.06 to 2025
+          # out of a family that loses (5Min GER40 -0.57R a trade in 2026) - a filter chosen on the whole family
+          "SC070|5Min": ["JP225", "GER40", "US100", "US500", "US30", "UK100", "XAUUSD"]}
 FAMILY_DAYS = 10
 
 
@@ -684,8 +687,8 @@ def family_fix(bot, budget_s, one=False):
             st.put("family", c, doc)
             done += 1
             print(f"  family {c}: {len(doc['sums'])} filters ({time.time() - ts:.0f}s)")
-            if one:
-                return done
+            if one:            # one instrument per family per round (14.11.2026: SC070's 5-minute runs are quick and
+                break          # its deadline is 17.11 - it must not wait behind SC001's 16 one-minute instruments)
     return done
 
 
@@ -989,6 +992,17 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 fade study failed: {e}")
+        # EV06 (retests of the broken levels, the user's task tal1411fade 09:17) and EV07 (absorption after the release,
+        # tal1411of), agents/news_retest.py: in the straddle's / fade's slot once both are complete - the round's time
+        # does not grow (14.11.2026)
+        try:
+            from agents import news_retest as NRT
+            if NRT.stale() and not NS.stale() and not NFD.stale():
+                mins = max(6.0, a.minutes / 3)
+                subprocess.run([sys.executable, "-m", "agents.news_retest", "--minutes", str(mins)], cwd=str(ROOT),
+                               timeout=int(mins * 60 + 1800))
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 retest study failed: {e}")
         # SC001's whole family (the manager's task mgr1411fam, deadline 16.11.2026): one instrument's filter test per
         # round (up to 20 minutes), then the sum per filter over the family
         try:

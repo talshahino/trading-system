@@ -620,9 +620,41 @@ FAMILY = {"SC001|1Min": ["JP225", "US100", "GER40", "US500", "US30", "UK100", "X
 FAMILY_DAYS = 10
 
 
+def families_of(bot):
+    """bots 1-4 (manager's tasks mgr1411fam / mgr1411fam2, 14.11.2026): every scout strategy the bot runs that was
+    picked as one instrument out of a family that loses to 2025 (the rule of agents/autodecide._family_pick: >= 4 pairs
+    tested, the pooled result to 2025 below 0, its own t below 1) - SC010|15Min|ARM in bots 1-4, SC006|4Hour|EURJPY and
+    SC094|1Hour|XAGUSD in bot 4. The family = the strategy on the same timeframe on every instrument the bot tested."""
+    if bot == "bot7":
+        return FAMILY
+    try:
+        cards = json.loads((K.CARDS_DIR / bot / "cards.json").read_text(encoding="utf-8")).get("cards", [])
+    except Exception:  # noqa: BLE001
+        return {}
+    new = [c for c in cards if c.get("kind") == "new" and str((c.get("change") or {}).get("combo") or "").count("|") == 2]
+    out = {}
+    for combo in bot_combos(bot):
+        sid, tf, sym = combo.split("|")
+        if not sid.startswith("SC"):
+            continue
+        fam = [c for c in new if c["change"]["combo"].startswith(f"{sid}|{tf}|")]
+        own = next((c for c in fam if c["change"]["combo"] == combo), None)
+        tr = [c.get("train") or {} for c in fam]
+        pooled = sum(float(x.get("n") or 0) * float(x.get("mean") or 0) for x in tr)
+        own_t = ((own or {}).get("train") or {}).get("t")
+        if tf == "1Min":                 # SC001 1-minute: bot 7's family test already covers it (16 instruments)
+            continue
+        if len(fam) >= 4 and pooled < 0 and (own_t is None or own_t < 1):
+            syms = [sym] + sorted({c["change"]["combo"].split("|")[2] for c in fam} - {sym})
+            out[f"{sid}|{tf}"] = syms
+    # the ones the manager named first (SC010 in bots 1-4, then bot 4's SC006 / SC094), then the rest (SC002)
+    first = ("SC010|15Min", "SC006|4Hour", "SC094|1Hour")
+    return dict(sorted(out.items(), key=lambda kv: (first.index(kv[0]) if kv[0] in first else 9, len(kv[1]))))
+
+
 def family_fix(bot, budget_s, one=False):
     st, t0, done = Store(bot), time.time(), 0
-    for base, syms in FAMILY.items():
+    for base, syms in families_of(bot).items():
         for sym in syms:
             c = f"{base}|{sym}"
             if st.age_days("family", c) < FAMILY_DAYS:
@@ -659,7 +691,7 @@ def family_fix(bot, budget_s, one=False):
 
 def family_report(bot):
     st, out = Store(bot), {}
-    for base, syms in FAMILY.items():
+    for base, syms in families_of(bot).items():
         agg, have = {}, []
         for sym in syms:
             d = st.get("family", f"{base}|{sym}") or {}
@@ -977,6 +1009,16 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 entry study failed: {e}")
+    if a.bot in ("bot1", "bot2", "bot3", "bot4") and a.where in ("pc", "all"):
+        # the scout strategies picked out of a losing family (the manager's tasks mgr1411fam / mgr1411fam2, deadline
+        # 16-17.11.2026): one instrument's filter test per round (a fifth of the budget, at least 10 minutes), then the
+        # sum per filter over the family -> reports/agents/<bot>/family_fix.json
+        try:
+            if families_of(a.bot):
+                family_fix(a.bot, max(10 * 60, budget / 5))
+                family_report(a.bot)
+        except Exception as e:  # noqa: BLE001
+            print(f"{a.bot} family fix failed: {e}")
     # the scout's strategies first, with up to a third of the time, while some are still untested (12.11.2026: with
     # 0.8 of the budget for the experiments, the leftover was under the 2-minute minimum and they never ran)
     first = test_new(a.bot, budget / 3, a.where) if untested_new(a.bot, a.where) else 0

@@ -151,16 +151,26 @@ class Data:
             self.bars[name] = (m.index.as_unit("ns").asi8, o, h, l, c, atr)
         return self.bars[name]
 
-    def trend(self, htf, mode):
+    def trend(self, htf, mode, ltf=None):
         """TREND: per 1-minute bar, +1 / -1 / 0 = the side the bigger picture allows (known before the bar opens), or
         None when off. day: the previous minute's close against the UTC day's first open; up20: the last CLOSED candle
-        of the timeframe above HTF against its 20-candle EMA."""
+        of the timeframe above HTF against its 20-candle EMA; e920 / e920l (user, 14.11.2026): the EMA 9 against the
+        EMA 20 of the last CLOSED candle of the high timeframe (e920) / the entry timeframe (e920l) - 9 above 20 =
+        longs only, below = shorts only."""
         if not mode or mode == "none":
             return None
-        key = ("trend", htf, mode)
+        key = ("trend", htf, mode, ltf if mode == "e920l" else None)
         if key not in self.sw:
             prev = np.r_[self.c1[0], self.c1[:-1]]
-            if mode == "day":
+            if mode in ("e920", "e920l"):
+                tfn = ltf if (mode == "e920l" and ltf) else htf
+                ts, o, h, l, c, _ = self.tf(tfn)
+                e9 = pd.Series(c).ewm(span=9, adjust=False).mean().to_numpy()
+                e20 = pd.Series(c).ewm(span=20, adjust=False).mean().to_numpy()
+                j = np.searchsorted(ts, self.ns - TF[tfn] * 60_000_000_000, side="right") - 1
+                jj = np.maximum(j, 0)
+                s = np.where(j >= 0, np.sign(e9[jj] - e20[jj]), 0)
+            elif mode == "day":
                 day0 = pd.Series(self.o1, index=self.t1).groupby(self.t1.floor("1D")).transform("first").to_numpy(float)
                 s = np.sign(prev - day0)
             elif mode == "rth":
@@ -183,6 +193,22 @@ class Data:
                 jj = np.maximum(j, 0)
                 s = np.where(j >= 0, np.sign(c[jj] - ema[jj]), 0)
             self.sw[key] = np.nan_to_num(s).astype(np.int8)
+        return self.sw[key]
+
+    def bbw_ok(self, tfn, pct):
+        """BBW (user, 14.11.2026): per 1-minute bar, True when the Bollinger 20/2 width ((upper - lower) / middle) of
+        the last CLOSED candle of timeframe tfn is at least its pct-quantile over the 100 candles before it - no entry
+        in a squeeze (a quiet market). Known before the bar opens."""
+        key = ("bbw", tfn, pct)
+        if key not in self.sw:
+            ts, o, h, l, c, _ = self.tf(tfn)
+            cs = pd.Series(c)
+            mid = cs.rolling(20).mean()
+            w = (4 * cs.rolling(20).std(ddof=0) / mid).to_numpy()
+            q = pd.Series(w).rolling(100, min_periods=50).quantile(pct).shift(1).to_numpy()
+            ok_c = ~(w < q)                                   # unknown (warm-up) = allowed
+            j = np.searchsorted(ts, self.ns - TF[tfn] * 60_000_000_000, side="right") - 1
+            self.sw[key] = np.where(j >= 0, ok_c[np.maximum(j, 0)], True).astype(bool)
         return self.sw[key]
 
     def swings(self, name, w):
@@ -357,6 +383,32 @@ def min_stop(D, cfg, htf, t_ns, px, stop, d):
     return px - d * room if d * (px - stop) < room else stop
 
 
+def bbw_mask(D, cfg, htf, ltf):
+    """BBW "l20" / "h20": the Bollinger-width filter on the entry (l) / high (h) timeframe at the 20th percentile; None
+    when off (absent = the rules as before, the same configuration names)."""
+    b = cfg.get("BBW")
+    if not b or b == "none":
+        return None
+    return D.bbw_ok(ltf if str(b)[0] == "l" else htf, int(str(b)[1:]) / 100)
+
+
+def news_x(D, cfg):
+    """NEWSX 15 / 60 (user, 14.11.2026, the news guard for the gap): no entry within +-X minutes of a red release of
+    the instrument's currencies, and an open trade is closed at the open of the window's first minute (X before the
+    release) - the gap trade is not left open into the news. None when off or the calendar is missing."""
+    x = cfg.get("NEWSX")
+    return D.cal.get(f"cal{int(x)}") if x else None
+
+
+def shut_of(D, cfg, f, e):
+    """The forced-close mask from bar f to e (the world's own closes, and NEWSX's window starts)."""
+    sh = D.shut[f:e].copy()
+    nx = news_x(D, cfg)
+    if nx is not None:
+        sh |= nx[f:e]
+    return sh
+
+
 def tp_way(cfg):
     """EXIT "tp30" (user, 13.11.2026: "take 100% of the profit at 30% of the way to the target"): the target moves to
     30% of the way; None for every other EXIT."""
@@ -404,7 +456,7 @@ def ladder_trade(D, f, d, legs, stop, tgt, ref, cfg, e):
     st = (ls <= stop) if d > 0 else (hs >= stop)
     tg = (hs >= tgt) if d > 0 else (ls <= tgt)
     tg[0] = False
-    sh = D.shut[f:e].copy()
+    sh = shut_of(D, cfg, f, e)
     sh[0] = False
     i_st = int(np.argmax(st)) if st.any() else big
     i_tg = int(np.argmax(tg)) if tg.any() else big
@@ -496,7 +548,8 @@ def simulate(D, pair, cfg, gcache, keep=None):
     prot = cfg["PROT"]
     calk = "cal60" if prot == "cal60" else "cal15" if prot in ("cal15", "cal15shock") else None
     shock = prot in ("shock", "cal15shock")
-    trend = D.trend(htf, cfg.get("TREND", "none"))
+    trend = D.trend(htf, cfg.get("TREND", "none"), ltf)
+    bbw, newsx = bbw_mask(D, cfg, htf, ltf), news_x(D, cfg)
     lad = ladder_of(cfg)
     cands = []
     for d, mid, near, far, made, armed in g:
@@ -513,6 +566,10 @@ def simulate(D, pair, cfg, gcache, keep=None):
             continue                                     # the world's no-entry time (session)
         if trend is not None and trend[f] != d:
             continue                                     # TREND: against the bigger picture
+        if bbw is not None and not bbw[f]:
+            continue                                     # BBW: a squeeze (Bollinger width under its percentile)
+        if newsx is not None and newsx[f]:
+            continue                                     # NEWSX: inside a red release's window
         if calk:
             if D.cal[calk][f] or D.cal_start[calk][f] - (D.cal_start[calk][q0 - 1] if q0 else 0) > 0:
                 continue                                 # a release window: no entry, the waiting order was cancelled
@@ -568,7 +625,7 @@ def simulate(D, pair, cfg, gcache, keep=None):
             st = (ls <= stop) if d > 0 else (hs >= stop)
             tg = (hs >= tgt) if d > 0 else (ls <= tgt)
             tg[0] = False
-            sh = D.shut[f:e].copy()
+            sh = shut_of(D, cfg, f, e)
             sh[0] = False
             big = e - f + 1
             i_st = int(np.argmax(st)) if st.any() else big
@@ -581,6 +638,33 @@ def simulate(D, pair, cfg, gcache, keep=None):
             break                                        # still open at the data's end
         em = exit_mode(cfg)
         part_r, frac = 0.0, 0.0
+        # PYR (user, 14.11.2026: "add to a winning trade"): at +PYR R the trade adds half its size (a stop order, filled
+        # at the level or the minute's open if worse, its own spread + commission) and the stop of the whole position
+        # moves to entry - R/3, so a stop then loses exactly the original 1R (1 x -1/3 + 0.5 x -4/3) - the risk never
+        # grows. Only when the target is beyond the add level, and only when the add comes before EXIT's management
+        # level (then the management of EXIT is not used - the pyramid replaces it). Off unless set; the test only
+        # (the live bot is built after an approval).
+        pyr = None
+        pk = cfg.get("PYR")
+        if pk and d * (tgt - px) > float(pk) * risk:
+            la = px + d * float(pk) * risk
+            ad = (hs >= la) if d > 0 else (ls <= la)
+            ad[0] = False
+            i_ad = int(np.argmax(ad)) if ad.any() else big
+            i_lv0 = big
+            if em is not None:
+                lv0 = px + em[1] * (tgt - px)
+                lvm = (hs >= lv0) if d > 0 else (ls <= lv0)
+                lvm[0] = False
+                i_lv0 = int(np.argmax(lvm)) if lvm.any() else big
+            if i_ad < i and i_ad <= i_lv0:
+                pa = max(la, o1[f + i_ad]) if d > 0 else min(la, o1[f + i_ad])
+                nstop = px - d * risk / 3
+                st2 = (ls <= nstop) if d > 0 else (hs >= nstop)
+                st2[:i_ad] = False                        # from the add's own minute (careful)
+                i_st = int(np.argmax(st2)) if st2.any() else big
+                i = min(i_st, i_tg, i_sh)
+                stop, pyr, em = nstop, (pa, float(D.cost[f + i_ad]) / risk), None
         if em is not None:
             frac, way = em
             lvl = px + way * (tgt - px)
@@ -608,6 +692,9 @@ def simulate(D, pair, cfg, gcache, keep=None):
         cost_r = D.cost[f] / risk
         r_rest = d * (ex - px) / risk
         r_all = (part_r + (1 - frac) * r_rest) if part_r else r_rest
+        if pyr is not None:                               # PYR: the added half from its own fill
+            r_all += 0.5 * d * (ex - pyr[0]) / risk
+            cost_r += 0.5 * pyr[1]
         rows.append({"time": pd.Timestamp(ns[f], tz="UTC").isoformat(), "dir": d, "r": round(r_all - cost_r, 4),
                      "cost_r": round(cost_r, 4), "rr": round(d * (tgt - px) / risk, 2), "why": why, "mins": i})
         if keep is not None:                              # the trade's path (shared_exit): where it was each minute
@@ -689,7 +776,7 @@ def _cfg_runs(p, cfg, symbols, idx):
 
 
 def _norm(c):
-    for k in ("EXIT", "IMP1", "TREND", "LADDER"):
+    for k in ("EXIT", "IMP1", "TREND", "LADDER", "BBW", "NEWSX", "PYR"):
         if c.get(k) == "none":
             c.pop(k)                                    # "none" is the base: the same configuration, the same name
     return c
@@ -1495,7 +1582,8 @@ def live_trades(D, pair, cfg, gcache=None):
     prot = cfg.get("PROT", "none")
     calk = "cal60" if prot == "cal60" else "cal15" if prot in ("cal15", "cal15shock") else None
     shock = prot in ("shock", "cal15shock")
-    trend = D.trend(htf, cfg.get("TREND", "none"))
+    trend = D.trend(htf, cfg.get("TREND", "none"), ltf)
+    bbw, newsx = bbw_mask(D, cfg, htf, ltf), news_x(D, cfg)
     lad = ladder_of(cfg)
     out, cands = [], []
     # pass 1: every gap -> pending / cancelled, or a candidate fill (exactly simulate()'s checks, protection included)
@@ -1533,6 +1621,10 @@ def live_trades(D, pair, cfg, gcache=None):
             why = "session"
         elif trend is not None and trend[f] != d:
             why = "trend"
+        elif bbw is not None and not bbw[f]:
+            why = "bbw"
+        elif newsx is not None and newsx[f]:
+            why = "news"
         elif calk and calk in D.cal and (D.cal[calk][f] or D.cal_start[calk][f] - (D.cal_start[calk][q0 - 1] if q0 else 0) > 0):
             why = "news"
         elif shock:
@@ -1606,7 +1698,7 @@ def live_trades(D, pair, cfg, gcache=None):
         st = (ls <= stop) if d > 0 else (hs >= stop)
         tg = (hs >= t2) if d > 0 else (ls <= t2)
         tg[0] = False
-        sh = D.shut[f:].copy()
+        sh = shut_of(D, cfg, f, n1)
         sh[0] = False
         big = n1 - f + 1
         i_st = int(np.argmax(st)) if st.any() else big

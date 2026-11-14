@@ -275,7 +275,26 @@ NOTE_TESTS = [
     # stop and target, 2-4 levels (tal_gap.LADDERS; "3m" = more in the middle) - on every index track that runs
     {"id": f"{trk}_ladder", "track": trk, "knob": "LADDER", "vals": ["2", "3", "3m", "4"],
      "he": "כניסה מדורגת לאורך הגאפ, אותו סיכון כולל"}
-    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")] + [
+    # the user's tasks of 14.11.2026 (replies.json "_tasks" tal1411ema / tal1411strad / tal1411anti), on every index
+    # track that runs - one knob moved on its rules as they are: (1) EMA 9/20 direction on the high / the entry
+    # timeframe (tal_gap TREND e920 / e920l), (2) the Bollinger 20/2 width above its 20th percentile of 100 candles on
+    # the entry / the high timeframe (BBW l20 / h20), (3) the news guard: no entry +-15 / 60 minutes around a red
+    # release and an open trade closed 15 / 60 minutes before it (NEWSX), (4) the pyramid: half a position more at
+    # +1R, the whole stop moved so the risk stays the original 1R (PYR; test only - "code": the live bot is built
+    # after an approval)
+    T_ for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5") for T_ in (
+        {"id": f"{trk}_ema920", "track": trk, "knob": "TREND", "vals": ["e920", "e920l"], "src": "tal1411ema",
+         "he": "רק בכיוון EMA 9/20 (טיים פריים גבוה / של הכניסה)"},
+        {"id": f"{trk}_bbw", "track": trk, "knob": "BBW", "vals": ["l20", "h20"], "src": "tal1411ema",
+         "he": "בלי כניסה כשרוחב בולינגר 20/2 מתחת לאחוזון 20 של 100 הנרות"},
+        {"id": f"{trk}_newsx", "track": trk, "knob": "NEWSX", "vals": [15, 60], "src": "tal1411strad",
+         "he": "הגנת חדשות: בלי כניסה ±X דק' סביב חדשה אדומה, וסגירה X דק' לפניה"},
+        {"id": f"{trk}_pyr", "track": trk, "knob": "PYR", "vals": [1.0], "src": "tal1411anti", "code": True,
+         "he": "פירמידה: חצי פוזיציה נוספת ב־1R, הסטופ של הכל זז כך שהסיכון נשאר 1R"})]
+NOTE_SRC = {"tal1411ema": "משימה של טל מ־14.11 (מסנני EMA 9/20 ובולינגר).",
+            "tal1411strad": "משימה של טל מ־14.11 (הגנת חדשות לגאפ).",
+            "tal1411anti": "משימה של טל מ־14.11 (הוספה לעסקה מנצחת)."}
 
 
 def _note_cfgs():
@@ -384,11 +403,16 @@ def note_cards(tidx):
             rk = 0.0028
         worth = round((u["total"] - bu["total"]) / months * rk * 100, 3)
         hi, lo = pn.split("/")
+        src = NOTE_SRC.get(T.get("src"))
+        chg = {"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}
+        if T.get("code"):            # the live bot does not run this knob yet: the smart agent builds it after approval
+            chg = dict(chg, method="tal_gap_code", track=T["track"], knob=T["knob"], to=x)
         out.append(K.card(
-            BOT, "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: {T['he']} ({x}) - מההערה של טל",
+            BOT, "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: {T['he']} ({x}) - " + ("משימה של טל" if src else "מההערה של טל"),
             ("בקשה של טל (13.11: 'אני רוצה שבכל זאת' בגרפים המהירים) - " + ("עדיף בשתי התקופות. " if win else "לא עדיף בשתי התקופות, ההחלטה אצל המנהל. ")
              if T.get("ask") else "") +
-            f"מההערה של טל על עסקה במסלול {T['track']}. הכללים שרצים, רק {T['knob']} = {x}. 2024-2025 (סה\"כ משוקלל "
+            (f"{src} מסלול {T['track']}" if src else f"מההערה של טל על עסקה במסלול {T['track']}") +
+            f". הכללים שרצים, רק {T['knob']} = {x}. 2024-2025 (סה\"כ משוקלל "
             f"{btr['total']:+.1f}R ← {tr['total']:+.1f}R), 2026 (לא נראתה): סה\"כ {bu['total']:+.1f}R ← {u['total']:+.1f}R, "
             f"היום הגרוע {bu['worst_day']:+.1f}R ← {u['worst_day']:+.1f}R, ירידה {bu['max_fall']:.1f}R ← {u['max_fall']:.1f}R, "
             f"{u['n']} עסקאות. שווי: {worth:+.2f}% מהחשבון בחודש בסיכון של המסלול.",
@@ -397,7 +421,7 @@ def note_cards(tidx):
             neighbours={"values": [y for y, _ in vs], "share_positive": round(float(np.mean(
                 [bool((row.get(str(y)) or {}).get("unseen")) and row[str(y)]["unseen"]["total"] > bu["total"] for y, _ in vs])), 2)},
             detail={"note_test": row, "worth_month_pct": worth},
-            change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
+            change=chg))
     return out, res
 
 
@@ -582,6 +606,184 @@ def _trades(tidx, pn, cfg):
     t = pd.concat([pd.read_csv(TAL_DIR / v["file"]) for v in fs], ignore_index=True)
     t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
     return t
+
+
+# size up after a win (the user's task tal1411anti, 14.11.2026, every bot): (a) the next trade of the same track at
+# x1.25 the risk after a winning trade, up to x2, back to x1 after a loss (a breakeven keeps it); (b) the pyramid
+# (PYR in NOTE_TESTS, per track, and here on the whole bot). Measured on the whole bot as the account takes it: every
+# index track at its real risk x tal_risk_scale, the day's total in % of the balance, a trade's multiplier only from
+# the track's trades CLOSED before it opened. Fair against more risk (the main goal): the variant is scaled down so
+# its deepest fall on 2024-2025 equals the bot's as it runs, then compared on both periods.
+ANTI = {"step": 1.25, "cap": 2.0, "be": 0.05}
+
+
+def _anti_mult(t):
+    """Per trade (t sorted by time, columns time / out / r) the multiplier of rule (a)."""
+    order = np.argsort(t["out"].to_numpy())
+    outs = t["out"].to_numpy()[order]
+    m, after = 1.0, []
+    for r in t["r"].to_numpy(float)[order]:
+        if r > ANTI["be"]:
+            m = min(ANTI["cap"], m * ANTI["step"])
+        elif r < -ANTI["be"]:
+            m = 1.0
+        after.append(m)
+    k = np.searchsorted(outs, t["time"].to_numpy(), side="right") - 1
+    return np.where(k >= 0, np.asarray(after + [1.0])[np.maximum(k, 0)], 1.0)
+
+
+def _pct_view(t, col):
+    """Per period: total % (time-weighted on 2024-2025), deepest fall %, worst day %, days under -3%."""
+    out = {}
+    for nm, part in (("train", t[t["time"] < SPLIT]), ("unseen", t[t["time"] >= SPLIT])):
+        part = part.sort_values("time")
+        if len(part) < 20:
+            out[nm] = None
+            continue
+        x = part[col].to_numpy(float)
+        tot = float(np.sum(K.weights(part["time"]) * x)) if nm == "train" else float(x.sum())
+        cum = np.cumsum(x)
+        day = pd.Series(x).groupby(part["time"].dt.strftime("%Y-%m-%d").to_numpy()).sum()
+        out[nm] = {"n": int(len(part)), "total_pct": round(tot, 2), "max_fall_pct": round(float((np.maximum.accumulate(cum) - cum).max()), 2),
+                   "worst_day_pct": round(float(day.min()), 2), "days_under_3": int((day < -3).sum())}
+    return out
+
+
+def anti_cards(tidx):
+    """(cards, results) of the user's task tal1411anti on the whole bot (index tracks)."""
+    s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
+    rkd, sc = s5.get("risk") or {}, float(s5.get("tal_risk_scale", 1.0) or 1.0)
+    rows, prow, miss, pmiss = [], [], [], []
+    for trk, v in (s5.get("tal_tracks") or {}).items():
+        rk = float(rkd.get(trk, 0) or 0) * sc * 100
+        if v.get("symbols") or rk <= 0:
+            continue
+        pn, now = f"{v['pair'][0]}/{v['pair'][1]}", TG._norm(dict(v["cfg"]))
+        t = _trades(tidx, pn, now)
+        if t is None:
+            miss.append(trk)
+            continue
+        t = t.sort_values("time").reset_index(drop=True)
+        t["out"] = t["time"] + pd.to_timedelta(t["mins"].fillna(0).astype(float) + 1, unit="min")
+        t["base"] = t["r"] * rk
+        t["anti"] = t["r"] * rk * _anti_mult(t)
+        rows.append(t[["time", "base", "anti"]])
+        pt = _trades(tidx, pn, TG._norm(dict(now, PYR=1.0)))
+        if pt is None:
+            pmiss.append(trk)
+        else:
+            prow.append(pd.DataFrame({"time": pt["time"], "pyr": pt["r"] * rk}))
+    if not rows:
+        return [], {"state": "running", "missing": miss}
+    t = pd.concat(rows, ignore_index=True)
+    res = {"state": "done" if not miss else "partial", "missing": miss, "rule": ANTI,
+           "now": _pct_view(t, "base"), "anti": _pct_view(t, "anti")}
+    if prow and not pmiss and not miss:
+        res["pyr"] = _pct_view(pd.concat(prow, ignore_index=True), "pyr")
+    cards = []
+    b = res["now"]
+    for nm in ("anti", "pyr"):
+        v = res.get(nm)
+        if not (v and v.get("train") and v.get("unseen") and b.get("train") and b.get("unseen")) or miss:
+            continue
+        k = min(1.0, b["train"]["max_fall_pct"] / max(v["train"]["max_fall_pct"], 1e-9))   # the same risk as now
+        vt, vu = v["train"]["total_pct"] * k, v["unseen"]["total_pct"] * k
+        res[nm]["fair_k"] = round(k, 3)
+        res[nm]["fair"] = {"train_total_pct": round(vt, 2), "unseen_total_pct": round(vu, 2),
+                           "unseen_worst_day_pct": round(v["unseen"]["worst_day_pct"] * k, 2),
+                           "unseen_max_fall_pct": round(v["unseen"]["max_fall_pct"] * k, 2)}
+        win = (vt > b["train"]["total_pct"] and vu > b["unseen"]["total_pct"]
+               and v["unseen"]["worst_day_pct"] * k >= b["unseen"]["worst_day_pct"]
+               and v["unseen"]["max_fall_pct"] * k <= b["unseen"]["max_fall_pct"]
+               and v["unseen"]["worst_day_pct"] > -4.5 and v["unseen"]["max_fall_pct"] < 9)
+        res[nm]["better"] = bool(win)
+        if not win:
+            continue
+        he = "x1.25 אחרי עסקה מנצחת באותו מסלול, עד x2, חזרה לבסיס אחרי הפסד" if nm == "anti" else \
+             "חצי פוזיציה נוספת ב־1R, הסטופ של הכל כך שהסיכון נשאר 1R"
+        cards.append(K.card(
+            BOT, "improve", "שיטת הגאפ, כל המסלולים: " + ("הגדלה אחרי ניצחון" if nm == "anti" else "פירמידה"),
+            f"משימה של טל מ־14.11. {he}. הבוט כולו (מסלולי המדדים בסיכון שלהם), מוקטן ל־x{k:.2f} כדי שהירידה הגדולה "
+            f"ב־2024-2025 תהיה כמו היום. 2024-2025: {b['train']['total_pct']:+.1f}% ← {vt:+.1f}%; 2026 (לא נראתה): "
+            f"{b['unseen']['total_pct']:+.1f}% ← {vu:+.1f}%, היום הגרוע {b['unseen']['worst_day_pct']:+.2f}% ← "
+            f"{v['unseen']['worst_day_pct'] * k:+.2f}%, ירידה {b['unseen']['max_fall_pct']:.1f}% ← {v['unseen']['max_fall_pct'] * k:.1f}%.",
+            None, None, tested=2, risk_pct=None, detail={"anti": res},
+            change={"method": "tal_gap_code", "track": "tal_all", "knob": "ANTI" if nm == "anti" else "PYR",
+                    "to": ANTI if nm == "anti" else 1.0, "scale": round(k, 3)}))
+    return cards, res
+
+
+# the straddle before a red release (the user's task tal1411strad, 14.11.2026: bot 7 builds EV04 in
+# agents/news_straddle.py, bots 5-6 use the same code) on bot 5's instruments - the indices and the gold. The rows are
+# the study's own cache (cache/news_straddle/<sym>.json, shared with bot 7's run), so an instrument bot 7 already did
+# costs nothing. Only "safe" variants (orders at minute 3, outside FTMO's restricted window) can be proposed.
+STRAD_SYMS = ["US100", "US30", "US500", "GER40", "XAUUSD"]
+STRAD_OUT = OUT / "straddle_study.json"
+
+
+def straddle_runs(budget_s):
+    from agents import news_straddle as NS
+    t0, done, rel = time.time(), 0, None
+    NS.CACHE.mkdir(parents=True, exist_ok=True)
+    for sym in STRAD_SYMS:
+        f = NS.CACHE / f"{sym}.json"
+        try:
+            c_ = json.loads(f.read_text(encoding="utf-8"))
+            if c_.get("version") == NS.VERSION and pd.Timestamp.now(tz="UTC") - pd.Timestamp(c_["at"]) < pd.Timedelta(days=NS.STALE_DAYS):
+                continue
+        except Exception:  # noqa: BLE001
+            pass
+        if time.time() - t0 > budget_s:
+            break
+        rel = rel if rel is not None else NS.NF.releases()
+        try:
+            r_ = NS.trades_sym(sym, rel)
+        except Exception as e:  # noqa: BLE001
+            print(f"bot5 straddle {sym} failed: {e}")
+            continue
+        f.write_text(json.dumps({"version": NS.VERSION, "at": pd.Timestamp.now(tz="UTC").isoformat(), "rows": r_}), encoding="utf-8")
+        done += 1
+    print(f"bot5 straddle: {done} instruments run")
+    return done
+
+
+def straddle_cards():
+    from agents import news_straddle as NS
+    rows, have = [], []
+    for sym in STRAD_SYMS:
+        try:
+            c_ = json.loads((NS.CACHE / f"{sym}.json").read_text(encoding="utf-8"))
+            if c_.get("version") == NS.VERSION:
+                rows += c_["rows"]
+                have.append(sym)
+        except Exception:  # noqa: BLE001
+            pass
+    if not rows:
+        return [], {"state": "running", "symbols": have}
+    df = pd.DataFrame(rows)
+    st = NS.study(df)
+    safe = NS.study(df[df["v"].astype(str).str.startswith("safe|")])
+    res = {"state": "done" if len(have) == len(STRAD_SYMS) else "partial", "symbols": have,
+           "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
+           "all": {k: st.get(k) for k in ("baseline", "best", "robust", "tested")},
+           "safe": {k: safe.get(k) for k in ("baseline", "best", "robust", "tested")}}
+    try:
+        tr = df.copy()
+        res["by_sym"] = NS.by_group(tr, "sym")
+    except Exception as e:  # noqa: BLE001
+        res["by_sym_err"] = str(e)[:200]
+    STRAD_OUT.write_text(json.dumps(res, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    b = safe.get("best")
+    rob = safe.get("robust") or {}
+    if res["state"] != "done" or not b or not b["train"]["sum"] or b["train"]["sum"] <= 0 or (b["unseen"]["sum"] or 0) <= 0 \
+            or rob.get("top_positive_unseen", 0) * 2 < rob.get("top", 10):
+        return [], res
+    return [K.card(BOT, "new", f"סטרדל לפני חדשה אדומה (EV04) על המכשירים של בוט 5: {b['v']}",
+                   f"משימה של טל מ־14.11. Buy Stop + Sell Stop אחרי החדשה (דקה 3, מחוץ לחלון של FTMO), OCO, סיכון קבוע. "
+                   f"נבחר על 2025, 2026 (לא נראתה): {b['unseen']['n']} עסקאות, {b['unseen']['sum']:+.1f}R. מתוך 10 הטובות "
+                   f"ב־2025, {rob.get('top_positive_unseen')} מרוויחות ב־2026. מסלול נפרד בסיכון של מסלולי הגאפ.",
+                   b["train"], b["unseen"], tested=safe.get("tested") or 1, risk_pct=0.28,
+                   detail={"straddle": res}, change={"method": "straddle_code", "v": b["v"], "symbols": have})], res
 
 
 def trend_fix(tidx, pf, rule_cards):
@@ -828,9 +1030,10 @@ def main():
         # half of what is left, the indices' never-ending search the rest
         # each step's outcome is kept in the results (bot5.steps, 14.11.2026): the bots' computer keeps its logs to
         # itself, so a step that failed or found no time was invisible to the nightly smart agent in the cloud
-        for nm, fn, share in (("instrument_tracks", sym_runs, 0.3),   # the instrument tracks, so the whole bot is tested together
-                              ("trend_fix", trend_runs, 0.25),        # the fix of the 12.11 loss against exactly what runs
-                              ("notes", note_runs, 0.2),              # the user's notes on live trades (13.11.2026)
+        for nm, fn, share in (("instrument_tracks", sym_runs, 0.25),  # the instrument tracks, so the whole bot is tested together
+                              ("trend_fix", trend_runs, 0.15),        # the fix of the 12.11 loss against exactly what runs
+                              ("notes", note_runs, 0.25),             # the user's notes on live trades + the tasks of 14.11
+                              ("straddle", straddle_runs, 0.1),       # EV04 on bot 5's instruments (tal1411strad, 14.11.2026)
                               ("shared_exit", shared_runs, 0.15),     # the shared exit on the whole bot (user, 13.11.2026)
                               ("stability", stab_runs, 0.1)):         # the low-MIN_RR tracks with MIN_RR 0.5 / 1.0
             t1 = time.time()
@@ -993,6 +1196,14 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             except Exception as e:  # noqa: BLE001
                 print("tal note tests failed:", e)
+            for key, fn_ in (("anti", lambda: anti_cards(tidx)), ("straddle", straddle_cards)):
+                try:
+                    acards, ares = fn_()
+                    cards += acards
+                    doc["bot5"][key] = ares
+                    TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+                except Exception as e:  # noqa: BLE001
+                    print(f"tal {key} failed:", e)
             try:
                 xcards, xres = shared_cards()
                 cards += xcards

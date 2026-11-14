@@ -375,16 +375,24 @@ PDP6 = (("TREND", "pd20"), ("TREND", "pd50"), ("TREND", "piv"))
 # four running tracks and three indices; a card only if better on 2026 too.
 GQ6 = tuple(("G3", v) for v in TG.G3_VALS) + tuple(("SWP", v) for v in TG.SWP_VALS) + (("SESS", "sb"), ("SESS", "sb10"))
 DB6 = (("TREND", "dbias"),)
+# The sweep's stricter forms (bot 5's task for bot 6, b5to6swp2, 14.11.2026 evening; tal_gap.SWP2_VALS, the user's videos
+# of 14:23-14:26): sw20r / pdhlr = the 20 candles' / yesterday's low (high) swept and the sweeping candle closed back
+# inside (a rejection), eql = equal lows (highs) swept. One knob each, head to head on the four running tracks and the
+# three indices, like GQ6; a card only if better on 2026 too, naming bot 5's result for the same value.
+SWP26 = tuple(("SWP", v) for v in TG.SWP2_VALS)
 TASK6 = {"wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
-         "gapq": GQ6, "dbias": DB6}
-USER6 = WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6
+         "gapq": GQ6, "dbias": DB6, "swp2": SWP26}
+USER6 = WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
                            "nowick": "בלי גאפ שלנר 3 שלו פתיל גדול",
                            "nobad": "בלי גאפ שנר 3 שלו חזק או עם פתיל גדול"}.get(str(v), f"G3 {v}") + f" (G3 {v})"
 FILT_HE["SWP"] = lambda v: {"pdhl": "רק גאפ אחרי גריפה של השפל / השיא של אתמול",
-                            "sw20": "רק גאפ אחרי גריפה של השפל / השיא של 20 הנרות"}.get(str(v), f"SWP {v}") + f" (SWP {v})"
+                            "sw20": "רק גאפ אחרי גריפה של השפל / השיא של 20 הנרות",
+                            "sw20r": "רק גאפ אחרי גריפה של 20 הנרות שהנר שלה נסגר בחזרה בפנים (דחייה)",
+                            "pdhlr": "רק גאפ אחרי גריפה של אתמול שהנר שלה נסגר בחזרה בפנים (דחייה)",
+                            "eql": "רק גאפ אחרי גריפה של שפלים / שיאים שווים"}.get(str(v), f"SWP {v}") + f" (SWP {v})"
 _sess_he = FILT_HE["SESS"]
 FILT_HE["SESS"] = lambda v: ({"sb": "רק בחלונות Silver Bullet (ניו יורק 03-04, 10-11, 14-15)",
                               "sb10": "רק בחלון Silver Bullet 10:00-11:00 ניו יורק"}[v] + f" (SESS {v})") \

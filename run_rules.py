@@ -214,6 +214,10 @@ def plan_keys(p):
         out["partial"] = tuple(float(x) for x in p["partial"])
     if p.get("ladder"):
         out["ladder"] = (tuple(float(x) for x in p["ladder"]), int(p.get("ladder_bars") or LADDER_BARS))
+    # a built pyramid (bots 2 / 4 since 14.11.2026, live/runner.plan_of "pyramid"): every experiment on the combo runs
+    # with it, as the bot trades (bots 1-4 smart agent, 14.11.2026 late night - before, the backtests left it out)
+    if p.get("pyramid") and len(p["pyramid"]) == 2:
+        out["pyramid"] = (float(p["pyramid"][0]), float(p["pyramid"][1]))
     out.update(rule_keys(p, exits=not any(k in p for k in ("target", "stop", "limit"))))
     return out
 
@@ -302,7 +306,8 @@ def pyr_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=Non
     fn0 = R.STRATEGIES[sid][1]
     fn = fn0 if news_block is None else _blocked(fn0, news_block)
     t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
-    pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
+    # "pyr0" stays without adding, also when a pyramid is built (it is one of the variants)
+    pk = {k: v for k, v in plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {}).items() if k != "pyramid"}
     plan0 = {**fn(df)[2], **pk}
     flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
     regime = _regimes(df).get(flt) if flt else None

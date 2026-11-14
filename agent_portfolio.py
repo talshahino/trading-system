@@ -201,7 +201,10 @@ def built_variant(bot, combo, fam):
     if fam == "ladder":
         return "lad" + ",".join(f"{float(x):g}" for x in p["ladder"]) if p.get("ladder") else "lad0"
     if fam == "pyr":
-        return "pyr0"                                   # no bot adds to a trade yet (runner code on approval)
+        # the built pyramid (bots 2 / 4 since 14.11.2026; before, always "pyr0" - new pyramid cards were measured
+        # against no adding although the bot adds)
+        py = p.get("pyramid")
+        return f"pyr{float(py[0]):g}@{float(py[1]):g}" if py and len(py) == 2 else "pyr0"
     if fam in ("manage", "fib"):
         nt = (p.get("target") == "none")
         if p.get("be_way") is None and p.get("be_r") is None and not p.get("partial"):

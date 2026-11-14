@@ -102,6 +102,14 @@ def current_trades(bot, combo, cfg, key="tr"):
     if p.get("ladder"):                                          # a built laddered entry (13.11.2026): its own trades
         d = exp(bot, "ladder", combo) or {}
         return live_entries(combo, d, (d.get(key) or {}).get(built_variant(bot, combo, "ladder")))
+    if p.get("pyramid"):
+        # a built pyramid (bots 2 / 4, 14.11.2026): its own experiment's trades at the built variant (bots 1-4 smart
+        # agent, 14.11.2026 late night: the replay used the trades without adding for QB11 / TV56 USDJPY in bot 2 and
+        # SC006 EURJPY / SC002 USDCAD in bot 4). The choosing period holds only "pyr0": then the trades below.
+        d = exp(bot, "pyr", combo) or {}
+        tr = (d.get(key) or {}).get(built_variant(bot, combo, "pyr"))
+        if tr:
+            return live_entries(combo, d, tr)
     if p.get("filter"):
         d = exp(bot, "filters", combo) or {}
         return live_entries(combo, d, (d.get(key) or {}).get(p["filter"]))

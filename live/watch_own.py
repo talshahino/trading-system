@@ -469,6 +469,15 @@ class Calendar:
             noent[max(0, a - 1):b] = True                    # no entry from 2 minutes before to 2 after
             if a - 1 >= 0:
                 stop_at[a - 1] = True                         # out 2 minutes before
+        # FTMO's rule (user, 14.11.2026): no position over a market break of 2+ hours - known in advance from the same
+        # weekday a week earlier (tal_gap.pre_break_mask), so every track closes WKND_MIN minutes before the weekend /
+        # a daily close and opens nothing in that window (the break in the data is seen only after it, too late)
+        try:
+            pre = TG.pre_break_mask(pd.DatetimeIndex(idx).as_unit("ns").asi8, TG.WKND_MIN)
+            stop_at = stop_at | pre
+            noent = noent | pre
+        except Exception as e:  # noqa: BLE001 - the masks as before rather than no masks
+            log(f"{name}: the pre-break window not computed ({e})")
         return stop_at, np.r_[noent[1:], False]
 
 
@@ -1018,7 +1027,7 @@ def main():
                     for trk, (pair, cfg) in TAL5.items():
                         if name not in (TAL5_SYMS.get(trk) or TAL5_SYMBOLS):
                             continue                      # an instrument's own track / the indices' tracks
-                        for x in TG.live_trades(D5, pair, cfg):
+                        for x in TG.live_trades(D5, pair, TG.ftmo_cfg(cfg)):   # FTMO: closed / cancelled before a 2h+ break
                             g_ = x.get("gap") or [x["entry"], x["entry"]]
                             res.append({"symbol": name, "dir": x["dir"], "status": x["status"], "entry": x["entry"],
                                         "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,

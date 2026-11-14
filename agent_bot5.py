@@ -292,7 +292,16 @@ NOTE_TESTS = [
          "he": "הגנת חדשות: בלי כניסה ±X דק' סביב חדשה אדומה, וסגירה X דק' לפניה"},
         {"id": f"{trk}_pyr", "track": trk, "knob": "PYR", "vals": [1.0], "src": "tal1411anti", "code": True,
          "he": "פירמידה: חצי פוזיציה נוספת ב־1R, הסטופ של הכל זז כך שהסיכון נשאר 1R"})]
-NOTE_SRC = {"tal1411ema": "משימה של טל מ־14.11 (מסנני EMA 9/20 ובולינגר).",
+NOTE_TESTS[:0] = [
+    # FTMO's rule (user, 14.11.2026, task tal1411wkend: "it breaks FTMO's rules"): every gap trade closed and every
+    # waiting order cancelled WKND minutes before a 2+ hour break (tal_gap.WKND / pre_break_mask), already on in the
+    # live bot (live/watch_own.py, tal_gap.ftmo_cfg) - a must, not an option, so no card: the result shows what the rule
+    # costs each track (2024-2025 / 2026) for the manager, and where a track is hurt the next step is its fix
+    {"id": f"{trk}_wknd", "track": trk, "knob": "WKND", "vals": [10], "src": "tal1411wkend", "inform": True,
+     "he": "כלל FTMO: סגירה וביטול הוראות 10 דק' לפני הפסקה של שעתיים ומעלה"}
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
+NOTE_SRC = {"tal1411wkend": "משימה של טל מ־14.11 (כלל FTMO: בלי עסקה פתוחה בהפסקה של שעתיים ומעלה).",
+            "tal1411ema": "משימה של טל מ־14.11 (מסנני EMA 9/20 ובולינגר).",
             "tal1411strad": "משימה של טל מ־14.11 (הגנת חדשות לגאפ).",
             "tal1411anti": "משימה של טל מ־14.11 (הוספה לעסקה מנצחת)."}
 
@@ -383,6 +392,8 @@ def note_cards(tidx):
                    and best[1]["unseen"]["worst_day"] >= bv["unseen"]["worst_day"])
         row["chosen"], row["better"] = (best[0] if best else None), win
         res[T["id"]] = row
+        if T.get("inform"):
+            continue                                     # a must (FTMO): the numbers only, no card
         if not win and T.get("ask") and vs:
             x, c = vs[0]
             t = _trades(tidx, pn, c)

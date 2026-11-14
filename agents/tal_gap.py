@@ -113,6 +113,35 @@ def vid(cfg):
     return hashlib.sha1(json.dumps(cfg, sort_keys=True).encode()).hexdigest()[:10]
 
 
+def pre_break_mask(ns, minutes):
+    """Data.pre_break on any sorted 1-minute bar times (int64 ns, UTC) - also the live bot's own masks
+    (live/watch_own.py), so every track of bot 5 closes before a break, not only the gap tracks."""
+    ns = np.asarray(ns, np.int64)
+    n = len(ns)
+    m = np.zeros(n, bool)
+    if n < 2:
+        return m
+    step = 60_000_000_000
+    brk = np.flatnonzero((ns[1:] - ns[:-1] - step) > 2 * 3600 * 10**9)
+    if not len(brk):
+        return m
+    c = pd.DatetimeIndex(ns[brk] + step).tz_localize("UTC")
+    best = None
+    for z in ("UTC", "America/New_York", "Europe/London", "Europe/Berlin", "Australia/Sydney"):
+        loc = c.tz_convert(z).tz_localize(None) + pd.Timedelta(days=7)
+        p = loc.tz_localize(z, ambiguous="NaT", nonexistent="shift_forward").tz_convert("UTC")
+        v = p.as_unit("ns").asi8.astype(float)
+        v[np.asarray(p.isna())] = np.inf
+        best = v if best is None else np.minimum(best, v)
+    p = best[np.isfinite(best)].astype(np.int64)
+    a = np.searchsorted(ns, p - int(minutes) * step)
+    b = np.searchsorted(ns, p + 2 * 3600 * 10**9)
+    dm = np.zeros(n + 1, int)
+    np.add.at(dm, a, 1)
+    np.add.at(dm, b, -1)
+    return np.cumsum(dm[:-1]) > 0
+
+
 # ---------------------------------------------------------------- data per instrument (shared by all variants)
 class Data:
     """1-minute bars + the world's masks, and every timeframe resampled once."""
@@ -139,6 +168,29 @@ class Data:
         self.cal_cs = {k: np.cumsum(v) for k, v in cal.items()}
         self.cal_start = {k: np.cumsum(v & ~np.r_[False, v[:-1]]) for k, v in cal.items()}
         self.bars, self.sw = {}, {}
+
+    def pre_break(self, minutes):
+        """WKND (FTMO rule, user 14.11.2026): per 1-minute bar, True from `minutes` before the market's next break of 2+
+        hours (the weekend, a daily close, a holiday) - known IN ADVANCE, from the same weekday a week earlier: each
+        break seen in the data (the last bar's end) is carried 7 days forward on every clock an exchange may follow
+        (UTC, New York, London, Frankfurt, Sydney - summer / winter time), and the earliest is taken, so a clock
+        change never makes it late. The window runs to 2 hours after that time (the break itself). The same on the
+        backtest and on the live bot's 14 days of minutes; a holiday's break also closes early the week after (careful)."""
+        key = ("prebrk", int(minutes))
+        if key not in self.sw:
+            self.sw[key] = pre_break_mask(self.ns, minutes)
+        return self.sw[key]
+
+    def cancel_at(self, minutes):
+        """WKND: the bars where every waiting gap order is cancelled - the pre-break window (pre_break) and the last bar
+        before a 2+ hour break in the data (on the live bot that one is known only after the break, when pre_break has
+        already cancelled it). Sorted bar positions."""
+        key = ("cancel", int(minutes))
+        if key not in self.sw:
+            ns = self.ns
+            last = np.r_[(ns[1:] - ns[:-1] - 60_000_000_000) > 2 * 3600 * 10**9, False] if len(ns) else np.zeros(0, bool)
+            self.sw[key] = np.flatnonzero(self.pre_break(minutes) | last)
+        return self.sw[key]
 
     def tf(self, name):
         if name not in self.bars:
@@ -401,12 +453,46 @@ def news_x(D, cfg):
 
 
 def shut_of(D, cfg, f, e):
-    """The forced-close mask from bar f to e (the world's own closes, and NEWSX's window starts)."""
+    """The forced-close mask from bar f to e (the world's own closes, NEWSX's window starts, WKND's pre-break window)."""
     sh = D.shut[f:e].copy()
     nx = news_x(D, cfg)
     if nx is not None:
         sh |= nx[f:e]
+    wk = wknd(cfg)
+    if wk:
+        sh |= D.pre_break(wk)[f:e]
     return sh
+
+
+# FTMO's rule (user, 14.11.2026: "it breaks FTMO's rules"): in a funded Standard account no position is held and no order
+# waits over a market break of 2+ hours (the weekend, a holiday, a daily close). WKND = minutes before the break: every
+# gap trade is closed at the open of the window's first minute, every waiting gap order is cancelled (not placed again
+# after the break), and no entry inside the window. Bot 5 runs it on every gap track (ftmo_cfg, the default below);
+# WKND 0 / absent = the rules as before (the same configuration names, so the old runs are the "without" side).
+WKND_MIN = 10
+
+
+def wknd(cfg):
+    x = cfg.get("WKND")
+    return int(x) if x else 0
+
+
+def ftmo_cfg(cfg, minutes=WKND_MIN):
+    """The track's rules with FTMO's break rule on (WKND), unless the rules set WKND themselves."""
+    c = dict(cfg)
+    if "WKND" not in c:
+        c["WKND"] = int(minutes)
+    return _norm(c)
+
+
+def cancel_bar(D, cfg, q0):
+    """WKND: the first bar at or after q0 where a waiting order is cancelled (len(ns) when none / off)."""
+    wk = wknd(cfg)
+    if not wk:
+        return len(D.ns)
+    ca = D.cancel_at(wk)
+    i = int(np.searchsorted(ca, q0))
+    return int(ca[i]) if i < len(ca) else len(D.ns)
 
 
 def tp_way(cfg):
@@ -555,6 +641,7 @@ def simulate(D, pair, cfg, gcache, keep=None):
     for d, mid, near, far, made, armed in g:
         q0 = int(np.searchsorted(ns, armed))
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))      # from the impulse's end (the order's placing)
+        q1 = min(q1, cancel_bar(D, cfg, q0))                          # WKND: cancelled before a 2+ hour break
         if q0 >= q1:
             continue
         lv0 = (near + lad[0][0] * (far - near)) if lad else mid       # LADDER: the first level's touch starts the trade
@@ -779,6 +866,8 @@ def _norm(c):
     for k in ("EXIT", "IMP1", "TREND", "LADDER", "BBW", "NEWSX", "PYR"):
         if c.get(k) == "none":
             c.pop(k)                                    # "none" is the base: the same configuration, the same name
+    if "WKND" in c and not c["WKND"]:
+        c.pop("WKND")                                   # WKND 0 = off: the rules as before, the same name
     return c
 
 
@@ -1600,6 +1689,14 @@ def live_trades(D, pair, cfg, gcache=None):
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))
         if q0 >= n1:
             continue
+        qc = cancel_bar(D, cfg, q0)                                   # WKND: cancelled before a 2+ hour break (as simulate)
+        if qc < q1:
+            seg_c = (l1[q0:qc] <= ((near + lad[0][0] * (far - near)) if lad else mid)) if d > 0 else \
+                (h1[q0:qc] >= ((near + lad[0][0] * (far - near)) if lad else mid))
+            if not seg_c.any():
+                out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="break"))
+                continue
+            q1 = qc
         lv0 = (near + lad[0][0] * (far - near)) if lad else mid       # LADDER: the first level's touch (as simulate)
         seg = (l1[q0:q1] <= lv0) if d > 0 else (h1[q0:q1] >= lv0)
         if calk and calk in D.cal and D.cal_start[calk][q1 - 1] - (D.cal_start[calk][q0 - 1] if q0 else 0) > 0 and not seg.any():

@@ -6530,6 +6530,272 @@ def s_pocket_pivot(df):
     return L, np.zeros(len(c), bool), {"stop": ("atr", 2.5), "target": None, "exit_long": c < sma(c, 10)}
 
 
+
+# ======================= 14.11.2026 manual run: SC275-SC289 (task tal1411ind, the indicators still missing) =======================
+
+# ---------------- SC275 AI Trend Navigator [K-Neighbor] turn with the classifier (Zeiierman) ----------------
+def s_knn_trend_navigator(df):
+    """AI Trend Navigator [K-Neighbor] (Zeiierman, open source; Flux / the user's 'AI indicators' list, task tal1411ind):
+    buy when the KNN line turns up (green) and the classifier's prediction is positive, sell when it turns down with a
+    negative prediction; the opposite turn reverses; no stop in the source - ours 2 ATR(14). agents/indicators
+    knn_trend_navigator (K 3, window 30, SMA(hl2, 5) vs RMA(close, 5), smoothing 50)."""
+    kn = IND.knn_trend_navigator(df)
+    L, S = _excl(kn["buy"], kn["sell"])
+    return L, S, {"stop": ("atr", 2.0), "target": None, "opposite": True}
+
+
+# ---------------- SC276 Gaussian Channel breakout while the filter rises (DonovanWall) ----------------
+def s_gaussian_channel_break(df):
+    """Gaussian Channel [DW] (DonovanWall, open source) as its common strategy port trades it: the filter rising and the
+    close crossing above the upper band -> long, out on a close back under the upper band; mirror short under the lower
+    band while the filter falls (the port is long-only - the short side is ours); stop 2 ATR (ours). agents/indicators
+    gaussian_channel (4 poles, period 144, x1.414)."""
+    o, h, l, c, v = _ohlcv(df)
+    g = IND.gaussian_channel(df)
+    fall = g["filt"] < _sh(g["filt"])
+    L = g["rising"] & cross_up(c, g["upper"])
+    S = fall & cross_down(c, g["lower"])
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": c < g["upper"], "exit_short": c > g["lower"]}
+
+
+# ---------------- SC277 Kalman SuperTrend flip ('Pro Scalper' reconstruction, ProTrippa) ----------------
+def s_kalman_supertrend(df):
+    """'Pro Scalper' (profitprotrading, invite-only; in ProTrippa's scalping list, task tal1411ind) - OUR reconstruction
+    from its description: SuperTrend on a Kalman-smoothed price; buy / sell on the flips, skipping buys that start over
+    the upper VWMA band (overbought) and sells under the lower band (oversold); stop at the SuperTrend line (at least
+    0.25 ATR away), exit on the opposite flip. agents/indicators kalman_supertrend."""
+    o, h, l, c, v = _ohlcv(df)
+    k = IND.kalman_supertrend(df)
+    a = atr(h, l, c, 14)
+    L = k["buy"] & ~(c > k["ob"])
+    S = k["sell"] & ~(c < k["os"])
+    L, S = _excl(L, S)
+    ln = k["line"]
+    return L, S, {"stop": ("level", np.fmin(ln, c - 0.25 * a), np.fmax(ln, c + 0.25 * a)), "target": None,
+                  "opposite": True}
+
+
+# ---------------- SC278 Trend Magnet flip outside low-momentum zones (BigBeluga reconstruction) ----------------
+def s_trend_magnet(df):
+    """BigBeluga 'Trend Magnet' (closed, Market Waves Pro; task tal1411ind) - OUR reconstruction: the band flips up / down
+    (Normal sensitivity, EMA50 of hlc3 +/- 1.5 ATR50); trade the flip only outside a low-momentum zone (ADX14 >= 20 - the
+    toolkit's 'low momentum zones' filter); stop at the magnet line, exit on the opposite flip."""
+    o, h, l, c, v = _ohlcv(df)
+    tm = IND.trend_magnet(df, "normal")
+    a = atr(h, l, c, 14)
+    L, S = _excl(tm["buy"] & ~tm["low_mom"], tm["sell"] & ~tm["low_mom"])
+    ln = tm["line"]
+    return L, S, {"stop": ("level", np.fmin(ln, c - 0.25 * a), np.fmax(ln, c + 0.25 * a)), "target": None,
+                  "opposite": True}
+
+
+# ---------------- SC279 Volume Mapping zero cross with the EMA50 trend (BigBeluga reconstruction) ----------------
+def s_volume_mapping_trend(df):
+    """BigBeluga 'Volume Mapping' (closed, Nautilus; task tal1411ind: green = buying volume dominant) - OUR
+    reconstruction: the buy-minus-sell tick-volume oscillator crosses above zero while the close is over a rising
+    EMA50 -> long (mirror short); out when it crosses back; stop 1.5 ATR, 2R (ours). agents/indicators volume_mapping."""
+    o, h, l, c, v = _ohlcv(df)
+    vm = IND.volume_mapping(df)
+    e = ema(c, 50)
+    L = cross_up(vm, 0) & (c > e) & (e > _sh(e, 3))
+    S = cross_down(vm, 0) & (c < e) & (e < _sh(e, 3))
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 2.0), "exit_long": vm < 0, "exit_short": vm > 0}
+
+
+# ---------------- SC280 / SC281 Sniper V.02: EMA 9/21 cross with the score, and the ribbon retest ----------------
+def s_sniper_cross_score(df):
+    """'Sniper Entry/Exit with SL&TP by KhanSaab V.02' (3 / 5 / 15 min; task tal1411ind 'Sniper V.02') - OUR
+    reconstruction: the EMA9 / EMA21 cross (black candle) taken only with the dashboard's bull score > 60% (bear score for
+    sells): close vs session VWAP, RSI14 50, MACD histogram, ADX14 > 20 with DI; stop 1.5 ATR, target 3 ATR (its ATR
+    TP3 - multipliers not published, ours), trail exit on a close beyond EMA21."""
+    o, h, l, c, v = _ohlcv(df)
+    s = IND.sniper_ribbon(df)
+    L, S = _excl(s["buy"] & (s["bull_score"] > 0.6), s["sell"] & (s["bear_score"] > 0.6))
+    return L, S, {"stop": ("atr", 1.5), "target": ("atr", 3.0), "exit_long": c < s["e21"], "exit_short": c > s["e21"]}
+
+
+def s_sniper_retest(df):
+    """Sniper V.02's 'retest' (orange candle): in the EMA9 > EMA21 trend the low touches the ribbon and the candle closes
+    up over EMA21 (mirror for sells), with the bull (bear) score > 60%; one per trend leg (the first retest after each
+    cross); stop 1.5 ATR, target 3 ATR, trail exit beyond EMA21 (ours, as SC280)."""
+    o, h, l, c, v = _ohlcv(df)
+    s = IND.sniper_ribbon(df)
+    bl, bs = _bars_since(s["buy"]), _bars_since(s["sell"])
+    rl = s["retest_long"] & (s["bull_score"] > 0.6) & (bl < bs)
+    rs = s["retest_short"] & (s["bear_score"] > 0.6) & (bs < bl)
+    # first retest after each cross
+    fl = rl & (_bars_since(_sh(rl.astype(float)) > 0) > bl)
+    fs = rs & (_bars_since(_sh(rs.astype(float)) > 0) > bs)
+    L, S = _excl(fl, fs)
+    return L, S, {"stop": ("atr", 1.5), "target": ("atr", 3.0), "exit_long": c < s["e21"], "exit_short": c > s["e21"]}
+
+
+# ---------------- SC282 VuManChu Cipher B green / red dot with the money flow turning (VuManChu) ----------------
+def s_cipher_b_dot_mf(df):
+    """VuManChu Cipher B (open source; task tal1411ind): the green dot (WaveTrend cross up under -53) only when the
+    RSI+MFI money-flow area is turning up (higher than 3 bars ago) - or a WaveTrend bullish divergence within the last 10
+    bars; red dot mirror. Stop beyond the 10-bar swing, 2R (ours - Cipher B has no exits). Differs from SC227 (the bare
+    WaveTrend cross) by the money-flow / divergence condition. agents/indicators cipher_b."""
+    o, h, l, c, v = _ohlcv(df)
+    cb = IND.cipher_b(df)
+    a = atr(h, l, c, 14)
+    mf = cb["rsimfi"]
+    bd, sd = _bars_since(cb["bull_div"]) <= 10, _bars_since(cb["bear_div"]) <= 10
+    L = cb["buy"] & ((mf > _sh(mf, 3)) | bd)
+    S = cb["sell"] & ((mf < _sh(mf, 3)) | sd)
+    L, S = _excl(np.nan_to_num(L, nan=0).astype(bool), np.nan_to_num(S, nan=0).astype(bool))
+    sl, ss = _swing_stops(h, l, a, 10, 0.1)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+# ---------------- SC283 VuManChu Swing Free (Range Filter 20 / 3.5) signals, band stop, reverse ----------------
+def s_swing_free(df):
+    """VuManChu Swing Free (= DonovanWall's Range Filter, swing period 20, multiplier 3.5; task tal1411ind): BUY / SELL on
+    the filter's state changes; the opposite signal reverses; stop at the opposite range band (filter -/+ the smooth
+    range, at least 0.5 ATR). Differs from SC079 (Range Filter 100 / 3 with RSI and ADX filters, 3R)."""
+    o, h, l, c, v = _ohlcv(df)
+    rf = IND.range_filter(df, 20, 3.5)
+    a = atr(h, l, c, 14)
+    L, S = _excl(rf["buy"], rf["sell"])
+    return L, S, {"stop": ("level", np.fmin(rf["lband"], c - 0.5 * a), np.fmax(rf["hband"], c + 0.5 * a)),
+                  "target": None, "opposite": True}
+
+
+# ---------------- SC284 HalfTrend signal engine: flip, band stop, 3R, opposite exit (BigBeluga / Trading Data) ----------
+def s_halftrend_engine(df):
+    """'HalfTrend Long/Short Signal Engine [BigBeluga]' (open source; Trading Data 'This FREE Indicator Should Be Illegal',
+    task tal1411ind): LONG on the HalfTrend bearish -> bullish flip, SHORT on the reverse; stop beyond the HalfTrend
+    channel (line -/+ 2 x ATR(100)/2, at least 0.5 ATR); target 3R (the dashboard's 1:3; TP1 at 1:1 is the engine's
+    'scratch' rule, not modelled); the opposite signal exits. agents/indicators halftrend."""
+    o, h, l, c, v = _ohlcv(df)
+    ht = IND.halftrend(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(ht["buy"], ht["sell"])
+    return L, S, {"stop": ("level", np.fmin(ht["band_lo"], c - 0.5 * a), np.fmax(ht["band_hi"], c + 0.5 * a)),
+                  "target": ("R", 3.0), "opposite": True}
+
+
+# ---------------- SC285 MSNR: first touch of a fresh support in a bullish storyline, target the next fresh level -------
+def s_msnr_fresh_touch(df):
+    """Malaysian SnR (task tal1411ind 12:47; Keenbase / LuxAlgo rules): in a bullish storyline price reaches a fresh
+    support (V-level / gap level / flipped resistance) and the candle does not close through it -> buy at the close;
+    stop under the bar's low and the level - 0.1 ATR; target the nearest fresh resistance; skip unless the target is
+    >= 1.5x the stop distance; out after 200 bars. Sells mirror. Ours: storyline = the close over / under EMA20 of the
+    4x higher timeframe (the source reads it from D1 / H4 levels). agents/indicators msnr."""
+    o, h, l, c, v = _ohlcv(df)
+    m = IND.msnr(df)
+    a = atr(h, l, c, 14)
+    up = _htf_above_ema20(df)
+    sl_l = np.fmin(l, m["lvl"]) - 0.1 * a
+    sl_s = np.fmax(h, m["lvl"]) + 0.1 * a
+    tl, ts = m["res"], m["sup"]
+    okl = (tl - c) >= 1.5 * (c - sl_l)
+    oks = (c - ts) >= 1.5 * (sl_s - c)
+    L = m["touch_sup"] & (c > m["lvl"]) & up & okl
+    S = m["touch_res"] & (c < m["lvl"]) & ~up & oks
+    L, S = _excl(np.nan_to_num(L, nan=0).astype(bool), np.nan_to_num(S, nan=0).astype(bool))
+    return L, S, _plan_lv(sl_l, sl_s, tl, ts, max_bars=200)
+
+
+def _crt_rule(df):
+    bm = _bar_minutes(df)
+    return "4h" if bm < 240 else ("1D" if bm < 1440 else "7D")
+
+
+def _crt(df, target):
+    o, h, l, c, v = _ohlcv(df)
+    k = IND.crt(df, _crt_rule(df))
+    a = atr(h, l, c, 14)
+    L, S = _excl(k["bull"], k["bear"])
+    if target == "eq":
+        tl = ts = k["eq"]
+    else:
+        tl, ts = k["c1_hi"], k["c1_lo"]
+    return L, S, _plan_lv(k["c2_lo"] - 0.1 * a, k["c2_hi"] + 0.1 * a, tl, ts)
+
+
+# ---------------- SC286 / SC287 Candle Range Theory on the 4-hour candle (LuxAlgo; JP225 video) ----------------
+def s_crt_far_extreme(df):
+    """Candle Range Theory (task tal1411ind 12:47, JP225 2-hour; LuxAlgo concept): higher-timeframe candle 2 sweeps candle
+    1's low and closes back inside its range -> buy at candle 2's close (mirror: sweep of the high -> sell); stop 0.1 ATR
+    beyond candle 2's extreme; target candle 1's other extreme (TP2). Higher timeframe: 4H for intraday bars (ours; the
+    video's 2H is a sweep for the bots), 1D for 4H bars, a week for daily. Differs from TT19 / TT35 (one fixed session
+    candle) - every higher-timeframe candle counts."""
+    return _crt(df, "far")
+
+
+def s_crt_eq(df):
+    """SC286 with candle 1's 50% (EQ, LuxAlgo's TP1) as the target."""
+    return _crt(df, "eq")
+
+
+def _partner_hl(df):
+    """The partner's high / low aligned to df (agents/intermarket_strategies partner and loader). Without a symbol
+    (synthetic test data only) a stand-in partner = the 3-bar mean of the instrument's own high / low, so the code path
+    runs; no real backtest uses it."""
+    sym, tf = df.attrs.get("symbol"), df.attrs.get("tf")
+    if not sym or not tf:
+        return pd.DataFrame({"h": _s(df["h"].to_numpy(float)).rolling(3, min_periods=1).mean().to_numpy(),
+                             "l": _s(df["l"].to_numpy(float)).rolling(3, min_periods=1).mean().to_numpy()}, index=df.index)
+    from agents import intermarket_strategies as IM
+    p = IM.partner_of(sym)
+    start, end = df.index[0].strftime("%Y-%m-%d"), (df.index[-1] + pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+    key = ("hl", p, tf, start, end)
+    if key not in IM._CACHE:
+        try:
+            IM._CACHE[key] = IM.PARTNER_BARS(p, tf, start, end)
+        except Exception:  # noqa: BLE001 - no partner data: no signals
+            IM._CACHE[key] = None
+    pdf = IM._CACHE[key]
+    if pdf is None or len(pdf) == 0:
+        return None
+    u = df.index.union(pdf.index)
+    return pd.DataFrame({x: pdf[x].reindex(u).ffill(limit=3).reindex(df.index).to_numpy(float) for x in ("h", "l")},
+                        index=df.index)
+
+
+# ---------------- SC288 SMT divergence + structure shift, sweep stop, 2R (simple_forex; US100 vs US500) ----------------
+def s_smt_divergence_mss(df):
+    """SMT divergence (simple_forex video, task tal1411ind 12:52: US100 vs US500 - one makes a new high, the other does
+    not; ICT usage): a bearish SMT at a confirmed swing high (pivots k=3) with the partner from
+    agents/intermarket_strategies (US100 <-> US500, EURUSD <-> GBPUSD, gold <-> silver ...), then within 10 bars a close
+    under the previous bar's low (the market-structure shift) -> sell; stop 0.1 ATR over the swing; target 2R (ours for
+    'the opposing liquidity'). Bullish mirror. No partner data -> no signals. agents/indicators smt_divergence."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    part = _partner_hl(df)
+    if part is None:
+        z = np.zeros(n, bool)
+        return z, z, {"stop": ("atr", 2.0), "target": None}
+    sm = IND.smt_divergence(df, part, 3)
+    a = atr(h, l, c, 14)
+    bb, bs = _bars_since(sm["bull"]), _bars_since(sm["bear"])
+    plo = _s(sm["piv_lo"]).ffill().to_numpy()
+    phi = _s(sm["piv_hi"]).ffill().to_numpy()
+    L = (bb <= 10) & (bb < bs) & (c > _sh(h)) & (c > plo)
+    S = (bs <= 10) & (bs < bb) & (c < _sh(l)) & (c < phi)
+    # once per divergence
+    L = L & (_bars_since(_sh(L.astype(float)) > 0) > bb)
+    S = S & (_bars_since(_sh(S.astype(float)) > 0) > bs)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(plo - 0.1 * a, phi + 0.1 * a, 2.0)
+
+
+# ---------------- SC289 Gaussian Channel as a filter for the user's gap entry: FVG return in the filter's direction -------
+def s_fvg_gaussian_trend(df):
+    """The indicator-as-filter test the user asks for (task tal1411ind: 'test each as a filter on the gap method'): the
+    library's FVG return entry (SC250's mechanics, any gap) only in the Gaussian Channel's direction - bullish gaps while
+    the filter rises and the close is over it, bearish mirror; gap stop, 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    g = IND.gaussian_channel(df)
+    up = g["rising"] & (c > g["filt"])
+    dn = (g["filt"] < _sh(g["filt"])) & (c < g["filt"])
+    L, S, sl, ss = _fvg_return(df, up, dn)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
 SCOUT = {
     "SC001": ("RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute (TradingView)", s_rv_ema20_scalp, ["1Min"]),
     "SC002": ("Alligator + Fractals breakout, fractal stop, 1:3 (RoboForex)", s_alligator_fractal, ["1Hour", "4Hour"]),
@@ -6805,4 +7071,19 @@ SCOUT = {
     "SC272": ('UT Bot (3, ATR 10) signals with volume >= 1.2x, 2 ATR stop, reverse (TradeIQ)', s_tiq_ut_bot_volume, ['1Hour', '4Hour']),
     "SC273": ('TTM Squeeze Pro fire after high compression (KC 1.0) with momentum, fade exit, 2 ATR stop (Carter)', s_ttm_squeeze_pro_fire, ['15Min', '1Hour', '4Hour', '1Day']),
     "SC274": ('Pocket Pivot near the 10-bar line over SMA50, 2.5 ATR stop, out under the 10-bar line (Kacher / Morales)', s_pocket_pivot, ['1Hour', '4Hour', '1Day']),
+    "SC275": ('AI Trend Navigator [K-Neighbor] line turn with the classifier, reverse, 2 ATR stop (Zeiierman)', s_knn_trend_navigator, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC276": ('Gaussian Channel [DW] upper-band breakout while the filter rises, out back under the band (DonovanWall)', s_gaussian_channel_break, ['15Min', '1Hour', '4Hour', '1Day']),
+    "SC277": ("Kalman SuperTrend flips outside the VWMA OB / OS bands, line stop ('Pro Scalper' reconstruction)", s_kalman_supertrend, ['1Min', '5Min', '15Min']),
+    "SC278": ('Trend Magnet flip outside low-momentum zones (ADX >= 20), line stop (BigBeluga reconstruction)', s_trend_magnet, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC279": ('Volume Mapping buy-sell volume zero cross with a rising EMA50, 1.5 ATR, 2R (BigBeluga reconstruction)', s_volume_mapping_trend, ['5Min', '15Min', '1Hour']),
+    "SC280": ('Sniper V.02: EMA 9/21 cross with bull score > 60%, 1.5 / 3 ATR, EMA21 trail (KhanSaab reconstruction)', s_sniper_cross_score, ['1Min', '5Min', '15Min']),
+    "SC281": ('Sniper V.02: first ribbon retest after the cross with score > 60%, 1.5 / 3 ATR, EMA21 trail', s_sniper_retest, ['1Min', '5Min', '15Min']),
+    "SC282": ('VuManChu Cipher B green / red dot with money flow turning or a WT divergence, swing stop, 2R', s_cipher_b_dot_mf, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC283": ('VuManChu Swing Free (Range Filter 20 / 3.5) state changes, band stop, reverse', s_swing_free, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC284": ('HalfTrend signal engine: flip, channel stop, 3R, opposite exit (BigBeluga / Trading Data)', s_halftrend_engine, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC285": ('MSNR: first touch of a fresh support / resistance in the storyline, next fresh level target >= 1.5R (Malaysian SnR)', s_msnr_fresh_touch, ['15Min', '1Hour', '4Hour']),
+    "SC286": ('Candle Range Theory: HTF candle 2 sweeps candle 1 and closes inside, target the far extreme (LuxAlgo)', s_crt_far_extreme, ['15Min', '1Hour', '4Hour', '1Day']),
+    "SC287": ("Candle Range Theory, target candle 1's 50% (EQ)", s_crt_eq, ['15Min', '1Hour', '4Hour', '1Day']),
+    "SC288": ('SMT divergence vs the partner (US100 / US500 ...) + structure shift, swing stop, 2R (simple_forex / ICT)', s_smt_divergence_mss, ['1Min', '5Min', '15Min', '1Hour']),
+    "SC289": ("FVG return entry only in the Gaussian Channel's direction, gap stop, 2R (filter test for the gap method)", s_fvg_gaussian_trend, ['5Min', '15Min', '1Hour']),
 }

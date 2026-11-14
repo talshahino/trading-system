@@ -18,17 +18,22 @@ from agents.indicators.ehlers import ehlers_itrend, mama_fama
 from agents.indicators.fib_legs import fib_legs
 from agents.indicators.fvg_quality import fvg_quality
 from agents.indicators.funk_rsi import funk_rsi
+from agents.indicators.halftrend import halftrend
 from agents.indicators.golden_wave import golden_wave
 from agents.indicators.impulse_zones import impulse_zones
 from agents.indicators.judas_swing import judas_swing
 from agents.indicators.levels import htf_levels, pivot_points
+from agents.indicators.levels_ict import crt, msnr
 from agents.indicators.liquidity import liquidity
 from agents.indicators.lorentzian import lorentzian
+from agents.indicators.ml_filters import (gaussian_channel, kalman_supertrend, knn_trend_navigator, sniper_ribbon,
+                                          trend_magnet, volume_mapping)
 from agents.indicators.nwe_envelope import nwe_envelope
 from agents.indicators.regime import choppiness, efficiency_ratio, squeeze_pro
 from agents.indicators.sessions_ict import judas_open_range, silver_bullet
 from agents.indicators.order_flow import absorption, big_trades, buy_sell_pressure, cvd
 from agents.indicators.smc import premium_discount, smc
+from agents.indicators.smt import smt_divergence
 from agents.indicators.sr_levels import sr_levels
 from agents.indicators.supertrend_ai import supertrend_ai
 from agents.indicators.supply_demand import supply_demand
@@ -36,6 +41,7 @@ from agents.indicators.trend_duration import trend_duration
 from agents.indicators.trendlines import trendlines
 from agents.indicators.ut_bot import ut_bot
 from agents.indicators.volume_flow import cmf, pocket_pivot
+from agents.indicators.vumanchu import cipher_b, range_filter
 from agents.indicators.volume_profile import delta_void_profile, tpo_profile, volume_profile
 from agents.indicators.vwap_bands import anchored_vwap_swing, vwap_bands
 from agents.indicators.wavetrend import wavetrend
@@ -154,6 +160,30 @@ INDICATORS = {
                "https://www.tradingview.com/script/n8ss8BID-UT-Bot-Alerts/"),
     "williams_gsv": (williams_gsv, "Larry Williams Greatest Swing Value: open +/- 1.8 x average failure swing, 5-bar setup",
                      "https://www.mql5.com/en/articles/21913"),
+    "knn_trend_navigator": (knn_trend_navigator, "AI Trend Navigator [K-Neighbor]: KNN mean of past SMA(hl2) closest to RMA(close), WMA line + 10-bar classifier",
+                            "https://www.tradingview.com/script/30aLnPNh-AI-Trend-Navigator-K-Neighbor/"),
+    "gaussian_channel": (gaussian_channel, "Gaussian Channel [DW]: 4-pole Gaussian filter of hlc3 (period 144) +/- 1.414 x filtered TR",
+                         "https://www.tradingview.com/script/WpVY7GKW-Gaussian-Channel-DW/"),
+    "kalman_supertrend": (kalman_supertrend, "Pro Scalper reconstruction: SuperTrend 10 x 3 on a Kalman-filtered close + VWMA high / low bands",
+                          "https://tradingview.com/script/BEhT6Syv-Pro-Scalper"),
+    "trend_magnet": (trend_magnet, "Trend Magnet reconstruction (BigBeluga, closed): EMA(hlc3) +/- 1.5 ATR ratcheting band, flips, ADX<20 low momentum",
+                     "https://www.tradingview.com/script/HNuao7jn-Market-Waves-BigBeluga/"),
+    "volume_mapping": (volume_mapping, "Volume Mapping reconstruction (BigBeluga, closed): EMA of up-candle minus down-candle volume / average volume",
+                       "https://docs.bigbeluga.com/oscillators/nautilus-tm/volume-mapping"),
+    "sniper_ribbon": (sniper_ribbon, "Sniper V.02 reconstruction: EMA 9/21 ribbon cross, ribbon retests, bull / bear score (VWAP, RSI, MACD, ADX)",
+                      "https://www.tradingview.com/script/HBDcHSB7-Sniper-Entry-Exit-with-SL-TP-by-KhanSaab-V-02/"),
+    "cipher_b": (cipher_b, "VuManChu Cipher B: WaveTrend dots at +/-53, RSI+MFI area, fractal WaveTrend divergences",
+                 "https://www.tradingview.com/script/Msm4SjwI-VuManChu-Cipher-B-Divergences/"),
+    "range_filter": (range_filter, "VuManChu Swing Free = Range Filter (20, 3.5): ratcheting filter, buy / sell on state changes",
+                     "https://in.tradingview.com/script/q23anHmP-VuManChu-Swing-Free"),
+    "halftrend": (halftrend, "HalfTrend (everget; BigBeluga signal engine): amplitude 2, ATR(100)/2 bands, long / short on flips",
+                  "https://www.tradingview.com/script/ZHGPnlAz-HalfTrend-Long-Short-Signal-Engine-BigBeluga/"),
+    "msnr": (msnr, "Malaysian SnR: A / V / gap levels from closes, fresh until a wick touches, role flip on a close through",
+             "https://www.luxalgo.com/library/concept/malaysian-snr/"),
+    "crt": (crt, "Candle Range Theory: higher-timeframe candle 2 sweeps candle 1's high / low and closes back inside",
+            "https://www.luxalgo.com/library/concept/candle-range-theory/"),
+    "smt_divergence": (smt_divergence, "SMT divergence vs a correlated partner at confirmed swing highs / lows (needs the partner's bars)",
+                       "https://it.tradingview.com/script/PH9fxHqo-SMT-Divergence"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

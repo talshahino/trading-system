@@ -5595,6 +5595,334 @@
     "bot4"
    ],
    "rules": "Up bar with volume over every down bar's of the previous 10, close over SMA50 and within 1.5 ATR of SMA10 -> buy; exit on a close under SMA10; stop 2.5 ATR (for their 7-8%). Long only. agents/indicators pocket_pivot."
+  },
+  {
+   "id": "SC275",
+   "name": "AI Trend Navigator [K-Neighbor] line turn with the classifier, reverse, 2 ATR stop (Zeiierman)",
+   "source": "Zeiierman 'AI Trend Navigator [K-Neighbor]' (task tal1411ind, Flux 'AI indicators' list)",
+   "url": "https://www.tradingview.com/script/30aLnPNh-AI-Trend-Navigator-K-Neighbor/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "KNN line (WMA of the K=3 nearest past SMA(hl2) values to RMA(close)) turns up with classifier prediction > 0 -> buy; mirror; opposite turn reverses; 2 ATR stop (ours)."
+  },
+  {
+   "id": "SC276",
+   "name": "Gaussian Channel [DW] upper-band breakout while the filter rises, out back under the band (DonovanWall)",
+   "source": "DonovanWall 'Gaussian Channel [DW]' (open source; its common strategy port)",
+   "url": "https://www.tradingview.com/script/WpVY7GKW-Gaussian-Channel-DW/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "4-pole Gaussian filter of hlc3, period 144, bands +/-1.414 filtered TR; filter rising and close crosses over the upper band -> long, exit on a close back under it; short mirror (ours); 2 ATR stop (ours)."
+  },
+  {
+   "id": "SC277",
+   "name": "Kalman SuperTrend flips outside the VWMA OB / OS bands, line stop ('Pro Scalper' reconstruction)",
+   "source": "'Pro Scalper' (profitprotrading, invite-only; ProTrippa list) - our reconstruction",
+   "url": "https://tradingview.com/script/BEhT6Syv-Pro-Scalper",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SuperTrend 10x3 on a Kalman-filtered close; flips -> enter unless starting beyond the VWMA high / low band; stop the line; opposite flip exits."
+  },
+  {
+   "id": "SC278",
+   "name": "Trend Magnet flip outside low-momentum zones (ADX >= 20), line stop (BigBeluga reconstruction)",
+   "source": "BigBeluga 'Trend Magnet' (closed) - our reconstruction",
+   "url": "https://www.tradingview.com/script/HNuao7jn-Market-Waves-BigBeluga/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "EMA50(hlc3) +/-1.5 ATR ratcheting band flips, only with ADX14 >= 20; stop the line; opposite flip exits."
+  },
+  {
+   "id": "SC279",
+   "name": "Volume Mapping buy-sell volume zero cross with a rising EMA50, 1.5 ATR, 2R (BigBeluga reconstruction)",
+   "source": "BigBeluga 'Volume Mapping' (closed) - our reconstruction",
+   "url": "https://docs.bigbeluga.com/oscillators/nautilus-tm/volume-mapping",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Buy-minus-sell tick volume oscillator crosses zero in the direction of a rising / falling EMA50; exit on the cross back; 1.5 ATR stop, 2R."
+  },
+  {
+   "id": "SC280",
+   "name": "Sniper V.02: EMA 9/21 cross with bull score > 60%, 1.5 / 3 ATR, EMA21 trail (KhanSaab reconstruction)",
+   "source": "'Sniper Entry/Exit with SL&TP by KhanSaab V.02' - our reconstruction",
+   "url": "https://www.tradingview.com/script/HBDcHSB7-Sniper-Entry-Exit-with-SL-TP-by-KhanSaab-V-02/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "EMA9/21 cross with the bull score (VWAP, RSI 50, MACD hist, ADX 20 + DI) > 60%; 1.5 ATR stop, 3 ATR target, exit on a close beyond EMA21."
+  },
+  {
+   "id": "SC281",
+   "name": "Sniper V.02: first ribbon retest after the cross with score > 60%, 1.5 / 3 ATR, EMA21 trail",
+   "source": "'Sniper V.02' retest (orange candle) - our reconstruction",
+   "url": "https://www.tradingview.com/script/HBDcHSB7-Sniper-Entry-Exit-with-SL-TP-by-KhanSaab-V-02/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "First ribbon retest after the cross (low touches EMA9/21, close over EMA21, up candle) with score > 60%; 1.5 / 3 ATR, EMA21 trail."
+  },
+  {
+   "id": "SC282",
+   "name": "VuManChu Cipher B green / red dot with money flow turning or a WT divergence, swing stop, 2R",
+   "source": "VuManChu Cipher B (open source)",
+   "url": "https://www.tradingview.com/script/Msm4SjwI-VuManChu-Cipher-B-Divergences/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Green dot (WT cross up, wt2 <= -53) with the RSI+MFI area rising vs 3 bars ago or a WT bullish divergence within 10 bars; red mirror; 10-bar swing stop; 2R."
+  },
+  {
+   "id": "SC283",
+   "name": "VuManChu Swing Free (Range Filter 20 / 3.5) state changes, band stop, reverse",
+   "source": "VuManChu Swing Free (= DonovanWall Range Filter)",
+   "url": "https://in.tradingview.com/script/q23anHmP-VuManChu-Swing-Free",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Range Filter 20 / 3.5 buy / sell state changes; stop at the opposite band (>= 0.5 ATR); the opposite signal reverses."
+  },
+  {
+   "id": "SC284",
+   "name": "HalfTrend signal engine: flip, channel stop, 3R, opposite exit (BigBeluga / Trading Data)",
+   "source": "BigBeluga 'HalfTrend Long/Short Signal Engine' (Trading Data video)",
+   "url": "https://www.tradingview.com/script/ZHGPnlAz-HalfTrend-Long-Short-Signal-Engine-BigBeluga/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "HalfTrend (amplitude 2, ATR100/2 x2) flips -> enter; stop beyond the channel (>= 0.5 ATR); 3R; opposite signal exits."
+  },
+  {
+   "id": "SC285",
+   "name": "MSNR: first touch of a fresh support / resistance in the storyline, next fresh level target >= 1.5R (Malaysian SnR)",
+   "source": "Malaysian SnR (Keenbase rules, LuxAlgo concept; task tal1411ind 12:47)",
+   "url": "https://www.keenbase-trading.com/msnr-trading-strategy/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Fresh V / gap / flipped level first wick touch, close holds, HTF (4x) storyline over EMA20 -> buy; stop under the bar / level - 0.1 ATR; target the nearest fresh resistance, only if >= 1.5R; 200-bar time stop. Mirror."
+  },
+  {
+   "id": "SC286",
+   "name": "Candle Range Theory: HTF candle 2 sweeps candle 1 and closes inside, target the far extreme (LuxAlgo)",
+   "source": "Candle Range Theory (LuxAlgo concept; JP225 video, task tal1411ind)",
+   "url": "https://www.luxalgo.com/library/concept/candle-range-theory/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "HTF (4H for intraday bars) candle 2 sweeps candle 1's low / high and closes back inside -> enter at its close; stop 0.1 ATR beyond candle 2; target candle 1's other extreme."
+  },
+  {
+   "id": "SC287",
+   "name": "Candle Range Theory, target candle 1's 50% (EQ)",
+   "source": "Candle Range Theory, TP1 (LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/candle-range-theory/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SC286 with target candle 1's 50% (EQ)."
+  },
+  {
+   "id": "SC288",
+   "name": "SMT divergence vs the partner (US100 / US500 ...) + structure shift, swing stop, 2R (simple_forex / ICT)",
+   "source": "SMT divergence (simple_forex video; ClayeWeight / TJR open-source logic)",
+   "url": "https://it.tradingview.com/script/PH9fxHqo-SMT-Divergence",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "index",
+    "fx",
+    "metal",
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Partner from intermarket_strategies (US100<->US500 ...); SMT at confirmed swings (k=3), then within 10 bars a close beyond the previous bar's extreme (MSS) -> enter; stop 0.1 ATR beyond the swing; 2R. No partner data -> no signals."
+  },
+  {
+   "id": "SC289",
+   "name": "FVG return entry only in the Gaussian Channel's direction, gap stop, 2R (filter test for the gap method)",
+   "source": "Filter test: Gaussian Channel on the FVG return (task tal1411ind: each indicator as a filter on the gap method)",
+   "url": "https://www.tradingview.com/script/WpVY7GKW-Gaussian-Channel-DW/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "FVG return entry (SC250 mechanics, any gap) only with the Gaussian filter rising and the close over it (mirror); gap stop; 2R."
   }
  ],
  "indicators": [
@@ -5989,6 +6317,90 @@
    "url": "https://www.mql5.com/en/articles/21913",
    "added": "2026-11-14",
    "uses": "volatility breakout trigger levels from the open; SC266"
+  },
+  {
+   "name": "knn_trend_navigator",
+   "source": "Zeiierman AI Trend Navigator [K-Neighbor] (port via the ProRealCode translation)",
+   "url": "https://www.tradingview.com/script/30aLnPNh-AI-Trend-Navigator-K-Neighbor/",
+   "added": "2026-11-14",
+   "uses": "trend filter (line colour / prediction sign) for any entry or the gap method; SC275"
+  },
+  {
+   "name": "gaussian_channel",
+   "source": "DonovanWall Gaussian Channel [DW] (port of the MPL-2.0 Pine)",
+   "url": "https://www.tradingview.com/script/WpVY7GKW-Gaussian-Channel-DW/",
+   "added": "2026-11-14",
+   "uses": "trend filter (filter slope) and band breakouts; SC276, SC289 (gap filter)"
+  },
+  {
+   "name": "kalman_supertrend",
+   "source": "'Pro Scalper' (closed) - our reconstruction from its description",
+   "url": "https://tradingview.com/script/BEhT6Syv-Pro-Scalper",
+   "added": "2026-11-14",
+   "uses": "scalping trend flips and OB / OS bands; SC277"
+  },
+  {
+   "name": "trend_magnet",
+   "source": "BigBeluga Trend Magnet (closed) - our reconstruction",
+   "url": "https://www.tradingview.com/script/HNuao7jn-Market-Waves-BigBeluga/",
+   "added": "2026-11-14",
+   "uses": "trend band + low-momentum filter; SC278"
+  },
+  {
+   "name": "volume_mapping",
+   "source": "BigBeluga Volume Mapping (closed) - our reconstruction",
+   "url": "https://docs.bigbeluga.com/oscillators/nautilus-tm/volume-mapping",
+   "added": "2026-11-14",
+   "uses": "buying vs selling tick-volume filter (e.g. gaps only with buying volume dominant); SC279"
+  },
+  {
+   "name": "sniper_ribbon",
+   "source": "Sniper V.02 (KhanSaab) - our reconstruction (score thresholds / ATR multipliers not published)",
+   "url": "https://www.tradingview.com/script/HBDcHSB7-Sniper-Entry-Exit-with-SL-TP-by-KhanSaab-V-02/",
+   "added": "2026-11-14",
+   "uses": "EMA 9/21 ribbon entries, retests and a multi-check score filter; SC280-SC281"
+  },
+  {
+   "name": "cipher_b",
+   "source": "VuManChu Cipher B (port of the open-source v4)",
+   "url": "https://www.tradingview.com/script/Msm4SjwI-VuManChu-Cipher-B-Divergences/",
+   "added": "2026-11-14",
+   "uses": "WaveTrend dots, money-flow area and divergences as entry / filter; SC282"
+  },
+  {
+   "name": "range_filter",
+   "source": "VuManChu Swing Free / DonovanWall Range Filter (port)",
+   "url": "https://in.tradingview.com/script/q23anHmP-VuManChu-Swing-Free",
+   "added": "2026-11-14",
+   "uses": "trend state filter and trailing band; SC283"
+  },
+  {
+   "name": "halftrend",
+   "source": "everget HalfTrend / BigBeluga signal engine (port)",
+   "url": "https://www.tradingview.com/script/ZHGPnlAz-HalfTrend-Long-Short-Signal-Engine-BigBeluga/",
+   "added": "2026-11-14",
+   "uses": "trend flips and channel stops; SC284"
+  },
+  {
+   "name": "msnr",
+   "source": "Malaysian SnR levels (our build from the documented rules)",
+   "url": "https://www.luxalgo.com/library/concept/malaysian-snr/",
+   "added": "2026-11-14",
+   "uses": "fresh-level targets / stops and first-touch entries; SC285"
+  },
+  {
+   "name": "crt",
+   "source": "Candle Range Theory (our build from LuxAlgo's definition)",
+   "url": "https://www.luxalgo.com/library/concept/candle-range-theory/",
+   "added": "2026-11-14",
+   "uses": "HTF sweep-and-close-back context for LTF entries (e.g. gaps after a CRT sweep); SC286-SC287"
+  },
+  {
+   "name": "smt_divergence",
+   "source": "SMT divergence (our build of the open-source logic; needs the partner's bars)",
+   "url": "https://it.tradingview.com/script/PH9fxHqo-SMT-Divergence",
+   "added": "2026-11-14",
+   "uses": "index pair confirmation (US100 / US500) for sweeps and gaps in bots 5-6; SC288"
   }
  ],
  "sources": [
@@ -6104,7 +6516,7 @@
    "name": "TikTok / Instagram / Facebook / X",
    "url": "https://www.tiktok.com/",
    "look_for": "the user's videos (tal1411*) and the creators behind them; TikTok itself is blocked to reading - search for the creators elsewhere",
-   "last_scanned": ""
+   "last_scanned": "2026-11-14"
   },
   {
    "name": "Reddit r/algotrading, r/Daytrading, r/Forex",
@@ -6122,7 +6534,7 @@
    "name": "GitHub (freqtrade, jesse, backtrader)",
    "url": "https://github.com/freqtrade/freqtrade-strategies",
    "look_for": "open strategy code",
-   "last_scanned": ""
+   "last_scanned": "2026-11-14"
   },
   {
    "name": "StockSharp examples",

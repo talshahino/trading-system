@@ -1,0 +1,146 @@
+{
+ "at": "2026-11-14T10:26:25+00:00",
+ "split": "2026-01-01",
+ "test_from": "2025-04-30",
+ "families": {
+  "SC010|15Min": {
+   "instruments": [
+    "ARM",
+    "CSCO",
+    "EURJPY",
+    "EURUSD",
+    "GBPJPY",
+    "GBPUSD",
+    "INTC",
+    "SPCX"
+   ],
+   "missing": [
+    "USDCAD"
+   ],
+   "none": {
+    "train_n": 543,
+    "train_r": -34.91,
+    "unseen_n": 709,
+    "unseen_r": -62.31000000000001,
+    "positive_train": 2
+   },
+   "best": [
+    "adx_range",
+    {
+     "train_n": 135,
+     "train_r": 25.09,
+     "unseen_n": 186,
+     "unseen_r": -40.39,
+     "positive_train": 2
+    }
+   ],
+   "filters": {
+    "adx_range": {
+     "train_n": 135,
+     "train_r": 25.09,
+     "unseen_n": 186,
+     "unseen_r": -40.39,
+     "positive_train": 2
+    },
+    "with_trend200": {
+     "train_n": 94,
+     "train_r": 0.51,
+     "unseen_n": 141,
+     "unseen_r": -15.88,
+     "positive_train": 1
+    },
+    "vol_low": {
+     "train_n": 6,
+     "train_r": 0.08,
+     "unseen_n": 11,
+     "unseen_r": 3.39,
+     "positive_train": 1
+    },
+    "adx_trend": {
+     "train_n": 0,
+     "train_r": 0.0,
+     "unseen_n": 11,
+     "unseen_r": 2.01,
+     "positive_train": 0
+    },
+    "v_rsi50": {
+     "train_n": 107,
+     "train_r": -1.86,
+     "unseen_n": 141,
+     "unseen_r": -9.0,
+     "positive_train": 1
+    },
+    "none": {
+     "train_n": 543,
+     "train_r": -34.91,
+     "unseen_n": 709,
+     "unseen_r": -62.31,
+     "positive_train": 2
+    }
+   }
+  },
+  "SC006|4Hour": {
+   "instruments": [],
+   "missing": [
+    "EURJPY",
+    "ARM",
+    "CSCO",
+    "EURUSD",
+    "GBPJPY",
+    "GBPUSD",
+    "INTC",
+    "SPCX",
+    "USDCAD"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  },
+  "SC094|1Hour": {
+   "instruments": [],
+   "missing": [
+    "XAGUSD",
+    "ARM",
+    "CSCO",
+    "XAUUSD"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  },
+  "SC002|4Hour": {
+   "instruments": [],
+   "missing": [
+    "USDCAD",
+    "ARM",
+    "CSCO",
+    "EURJPY",
+    "EURUSD",
+    "GBPJPY",
+    "GBPUSD",
+    "INTC",
+    "SPCX"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  },
+  "SC002|1Hour": {
+   "instruments": [],
+   "missing": [
+    "INTC",
+    "ARM",
+    "CSCO",
+    "EURJPY",
+    "EURUSD",
+    "GBPJPY",
+    "GBPUSD",
+    "SPCX",
+    "USDCAD"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  }
+ }
+}

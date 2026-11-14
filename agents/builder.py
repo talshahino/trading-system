@@ -76,6 +76,11 @@ def buildable(c):
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "HOURS_OFF" \
             and isinstance(ch.get("to"), list) and all(isinstance(x, int) and 0 <= x <= 23 for x in ch["to"]) and len(ch["to"]) <= 12:
         return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_hours_off", "to": sorted(set(ch["to"]))}
+    # bot 6 (14.11.2026 night): one micro contract for a gap trade whose single contract is more than the track's risk,
+    # up to a share of the balance (at most the bot's own 0.4%) - "tal_one_micro_up_to" in live/bots/bot6.json
+    if bot == "bot6" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "ONE_MICRO" \
+            and isinstance(ch.get("to"), (int, float)) and 0 <= float(ch["to"]) <= 0.004:
+        return {"bot": bot, "combo": "TAL|all", "family": "flag", "key": "tal_one_micro_up_to", "to": round(float(ch["to"]), 5)}
     # one factor on every gap track's risk (13.11.2026 night, tal_gap.scale_card: chosen on 2024-2025 so the account
     # stays two thirds inside the bot's limits) - "tal_risk_scale" in live/bots/bot5.json, read by live/watch_own.py
     if bot == "bot5" and c.get("kind") == "risk" and ch.get("track") == "tal_all" and ch.get("knob") == "RISK_SCALE" \
@@ -169,6 +174,9 @@ def describe(b):
         if b["key"] == "dd_fit":
             return (f"הסיכון של כל הבוט קטן כשנשאר עד המגבלה (9%) פחות מ־{b['to']:g}% (הירידה הגרועה בבדיקת הבוט על 2026), "
                     "וחוזר לרגיל לבד")
+        if b["key"] == "tal_one_micro_up_to":
+            return (f"שיטת הגאפ: עסקה שחוזה מיקרו אחד שלה גדול מהסיכון של המסלול נלקחת בחוזה אחד, אם הוא מסכן עד {b['to'] * 100:g}% "
+                    "מהחשבון ויש מקום") if b["to"] else "שיטת הגאפ: בלי חוזה אחד מעל הסיכון של המסלול"
         if b["key"] == "tal_hours_off":
             return ("שיטת הגאפ: בלי כניסות בשעות " + ", ".join(f"{x:02d}:00" for x in b["to"]) + " (UTC)") if b["to"] else "שיטת הגאפ: בלי מסנן שעות"
         return "שיטת הגאפ: מסלול לא נכנס למכשיר ולכיוון שמסלול אחר כבר מחזיק" if b["to"] else "שיטת הגאפ: בלי הכלל נגד סיכון כפול"

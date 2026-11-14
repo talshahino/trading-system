@@ -360,13 +360,23 @@ WKND6 = (("WKND", 10),)
 # THE VIDEO FILTERS OF 14.11.2026 (bot 5's b5to6vid1411, tal_gap.VIDEO_TREND): RSI 50 side, RSI in the trend against
 # EMA 200, ADX14 >= 20, SuperTrend 10/3, EMA 50 / 200, the order of 5 EMAs - each one as the track's TREND, head to head
 VID6 = tuple(("TREND", v) for v in TG.VIDEO_TREND)
-TASK6 = {"wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6}
-USER6 = WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6
+# PREMIUM / DISCOUNT AND THE DAILY PIVOT (the user's videos of 14.11.2026, task tal1411set6 (7) / (9); bot 5's commit
+# 912f549ba, tal_gap.Data.trend - closed candles only, the same in simulate and in live_trades, which bot 6's account
+# trades): longs only under the middle of the last 20 / 50 high-timeframe candles' range and shorts only over it
+# (pd20 / pd50), or longs only above the previous day's pivot (H+L+C)/3 and shorts only below it (piv) - as the track's
+# TREND, head to head on bot 6's four running tracks and three indices.
+PDP6 = (("TREND", "pd20"), ("TREND", "pd50"), ("TREND", "piv"))
+TASK6 = {"wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6}
+USER6 = WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6
+TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv"}
 FILT_HE["TREND"] = lambda v: {"e920": "רק בכיוון EMA 9/20 של הטיים פריים הגבוה", "e920l": "רק בכיוון EMA 9/20 של טיים פריים הכניסה",
                               "day": "רק בכיוון פתיחת היום", "up20": "רק בכיוון EMA 20 של הטיים פריים שמעל",
                               "rsi50": "רק בצד של RSI 50", "rsix": "RSI במגמה מול EMA 200", "adx": "רק כש־ADX14 מעל 20",
                               "st": "רק בכיוון סופרטרנד 10/3", "e50200": "רק בכיוון EMA 50 מול 200",
-                              "ema5": "רק כש־5 הממוצעים מסודרים בכיוון"}.get(str(v), f"TREND {v}") + f" (TREND {v})"
+                              "ema5": "רק כש־5 הממוצעים מסודרים בכיוון",
+                              "pd20": "קנייה רק בדיסקאונט / מכירה רק בפרמיה של 20 הנרות בטיים פריים הגבוה",
+                              "pd50": "קנייה רק בדיסקאונט / מכירה רק בפרמיה של 50 הנרות בטיים פריים הגבוה",
+                              "piv": "רק בכיוון הפיבוט היומי (מעל P קנייה, מתחת מכירה)"}.get(str(v), f"TREND {v}") + f" (TREND {v})"
 FILT_HE["BBW"] = lambda v: ("בלי כניסה כשרוחב בולינגר 20/2 מתחת לאחוזון 20 של 100 הנרות, טיים פריים "
                             + ("הכניסה" if str(v)[0] == "l" else "גבוה") + f" (BBW {v})")
 FILT_HE["NEWSX"] = lambda v: f"הגנת חדשות: בלי כניסה ±{int(v)} דק' סביב חדשה אדומה, וסגירה {int(v)} דק' לפניה (NEWSX {int(v)})"
@@ -472,8 +482,8 @@ def filt_cards(idx, group=FILT6):
                           f"2026 (לא נראתה): סה\"כ {lv['unseen']:+.1f}R ← {x['unseen']:+.1f}R, {x['n_unseen']} עסקאות, "
                           f"{x['mean_unseen']:+.2f}R לעסקה (היום {lv['mean_unseen']:+.2f}R על {lv['n_unseen']}), היום הגרוע "
                           f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. "
-                          + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND") or str(v).startswith("e920") or v in TG.VIDEO_TREND else "")
-                          + "בבוט 5: " + (_b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND") or str(v).startswith("e920") or v in TG.VIDEO_TREND
+                          + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND") or str(v).startswith("e920") or v in TASK_TREND else "")
+                          + "בבוט 5: " + (_b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND") or str(v).startswith("e920") or v in TASK_TREND
                                           else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
                           tested=len(vs), risk_pct=round(r_ * 100, 3), baseline=bs["unseen"],
@@ -543,7 +553,7 @@ def ask_cards(idx):
 def _b5_ladder(knob="LADDER", val=None):
     """What bot 5's agent found for the same knob (its improve cards: LADDER 13.11.2026; BBW / NEWSX / PYR / TREND
     e920 / MINSTOP 14.11.2026)."""
-    pat = (f'"{val}"' if val in TG.VIDEO_TREND else '"e920') if knob == "TREND" else f'"{knob}"'
+    pat = (f'"{val}"' if val in TASK_TREND else '"e920') if knob == "TREND" else f'"{knob}"'
     try:
         cs = [c for nm in ("cards.json", "cards_notes.json", "cards_smart.json") if Path(f"reports/agents/bot5/{nm}").exists()
               for c in json.loads(Path(f"reports/agents/bot5/{nm}").read_text(encoding="utf-8")).get("cards", [])
@@ -728,6 +738,62 @@ def scale_cards(pf, rk):
     return out
 
 
+# ONE MICRO UP TO (bot 6's smart agent, 14.11.2026 night): at the risk the account's limits allow (0.12% a track since
+# the x 0.3 card of 14.11), one MNQ / MES / MYM is often more than a trade may risk - the account test of that card
+# skipped 352 trades on 2024-2025 and 250 on 2026 for that alone (live/fut_account.size "small"). The variant: such a
+# trade is taken with ONE contract when it risks at most 0.2 / 0.3 / 0.4% of the balance (never over the bot's own
+# 0.4%) and fits the room left to the account's limits. Chosen on 2024-2025: the most total %, the train period still
+# inside 80% of the limits (a fall <= 3.6%, a day >= -1.2%) and no account failure; a card only if 2026 is also better
+# in total, its worst day and deepest fall stay inside the same margin. Bot 5 trades CFDs in fractions of a lot - it has
+# no such skip, so this is bot 6's own.
+ONE6 = (0.002, 0.003, 0.004)
+
+
+def one6_cards(pf):
+    a = (pf or {}).get("account") or {}
+    om, lm = a.get("one_micro") or {}, ((a.get("scale") or {}).get("limits") or {})
+    now = a.get("now") or {}
+    nt, nu = now.get("train") or {}, now.get("unseen") or {}
+    if not om or not nt or not nu:
+        return [], {}
+    L = fut_lim()
+    dl, al = 0.8 * L["day"], 0.8 * L["all"]
+    fits = lambda x: bool(x) and not x.get("stopped") and x.get("max_fall_pct", 99) <= al + 1e-9 \
+        and x.get("worst_day_pct", -99) >= -dl - 1e-9        # noqa: E731
+    # the main goal (data/agents/tal_thinking.md): more profit AND no more risk - more total %, the worst day and the
+    # deepest fall no worse than the bot as it runs, inside 80% of the limits, no failure
+    better = lambda x, b: fits(x) and x.get("total_pct", -99) > b.get("total_pct", -99) \
+        and x.get("worst_day_pct", -99) >= b.get("worst_day_pct", 0) - 1e-9 \
+        and x.get("max_fall_pct", 99) <= b.get("max_fall_pct", 0) + 1e-9      # noqa: E731
+    best = None
+    for k, row in om.items():
+        tr = row.get("train") or {}
+        if better(tr, nt) and (best is None or tr["total_pct"] > om[best]["train"]["total_pct"]):
+            best = k
+    res = {"now": now, "variants": om, "chosen": best}
+    if best is None:
+        return [], res
+    bt, bu = om[best]["train"], om[best]["unseen"] or {}
+    if not better(bu, nu):
+        return [], res
+    line = lambda x: (f"סה\"כ {x.get('total_pct', 0):+.1f}%, היום הגרוע {x.get('worst_day_pct', 0):+.1f}%, "   # noqa: E731
+                      f"הירידה הגדולה {x.get('max_fall_pct', 0):.1f}%, דולגו {x.get('room_skipped', 0)}"
+                      + (f" (מהן {x['contract_skipped']} כי חוזה אחד גדול מהסיכון)" if x.get("contract_skipped") else "")
+                      + (f", בחוזה אחד {x['one_micro']}" if x.get("one_micro") else ""))
+    to = float(best)
+    card = K.card("bot6", "risk", f"בוט 6 · שיטת הגאפ: עסקה שחוזה מיקרו אחד שלה גדול מהסיכון - בחוזה אחד, עד {to * 100:g}%",
+                  f"היום עסקה שחוזה MNQ / MES / MYM אחד שלה מסכן יותר מהסיכון של המסלול (0.12% מאז כרטיס ×0.3) לא נלקחת. "
+                  f"ההצעה: לקחת אותה בחוזה אחד, אם הוא מסכן עד {to * 100:g}% מהחשבון (לא מעל הסיכון של הבוט, 0.4%) ויש מקום "
+                  f"במגבלות של החשבון. הבוט כולו, כמו בחי (FTMO Futures {L['day']:g}% ביום, {L['all']:g}% מתחת לשיא): "
+                  f"2024-2025: היום {line(nt)} ← {line(bt)}; 2026 (לא נראתה): היום {line(nu)} ← {line(bu)}. "
+                  f"נבחר על 2024-2025 בלבד מתוך {len(om)} ערכים (0.2 / 0.3 / 0.4%): יותר רווח, והיום הגרוע והירידה הגדולה לא גרועים מהיום, בשתי התקופות. "
+                  "בבוט 5 אין דילוג כזה (CFD בשברי לוט) - זה של בוט 6 בלבד.",
+                  None, None, tested=len(om), risk_pct=round(to * 100, 3),
+                  detail={"world": "bot6", "account": a, "one_micro": res},
+                  change={"track": "tal_all", "knob": "ONE_MICRO", "from": 0.0, "to": to})
+    return [card], res
+
+
 # SIZE UP AFTER A WIN (the user's task tal1411anti, 14.11.2026, every bot; bot 5's anti_cards, shared): (a) the next
 # trade of the same track at x1.25 the risk after a winning trade, up to x2, back to x1 after a loss; (b) the pyramid
 # (PYR, per track in TASK6, and here on the whole bot). On bot 6 as the account takes it: every running track at its
@@ -895,12 +961,18 @@ def tal(budget_s):
         # the account in % with each track's real risk (bot 5's rule, 13.11.2026 night, shared): the bot's limits
         # in % - not in R - and one factor on the tracks' risk chosen on 2024-2025 (scale_cards)
         pf = TG.portfolio(idx, WORLD["symbols"], TAL_DIR, counted, hour_min_n=30,
-                          risk={k: float(rk.get(k, FA.RISK_TAL)) for k in counted}, lim=fut_lim())
+                          risk={k: float(rk.get(k, FA.RISK_TAL)) for k in counted}, lim=fut_lim(), one_ups=ONE6)
         if pf:
             try:
                 pcards += scale_cards(pf, {k: float(rk.get(k, FA.RISK_TAL)) for k in counted})
             except Exception as e:  # noqa: BLE001
                 print(f"tal_gap scale failed: {e}")
+            try:        # one micro up to 0.2-0.4% (14.11.2026 night)
+                oc_, ores_ = one6_cards(pf)
+                pcards += oc_
+                doc["bot6"]["one_micro"] = ores_
+            except Exception as e:  # noqa: BLE001
+                print(f"tal_gap one micro failed: {e}")
             doc["bot6"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             pf5 = (doc.get("bot5") or {}).get("portfolio") or {}

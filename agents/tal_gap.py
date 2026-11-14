@@ -1321,7 +1321,11 @@ def account(part, risk_pct, lim=None):
         init, max_n = float(ct.get("initial", 100_000.0)), int(ct.get("max_n", 10 ** 9))
     else:
         ct, per1, pnl1 = None, np.full(len(part), np.nan), np.full(len(part), np.nan)
-    small = 0
+    # ONE MICRO UP TO (bot 6, 14.11.2026 night): ct["one_up_to"] = a share of the balance; a gap trade whose ONE micro
+    # contract risks more than the track's risk but at most this share (never over the bot's own risk) and fits the room
+    # left is taken with one contract instead of skipped - live/fut_account.size with ONE_UP_TO. 0 / missing = as before.
+    one_up = float((ct or {}).get("one_up_to") or 0.0)
+    small, ones = 0, 0
     eq, peak, fall, low, dead = 0.0, 0.0, 0.0, 0.0, None
     day_real, stopped_days, cut, skipped = {}, set(), 0, 0
     opened = []                       # (out, risk %, pnl %, contracts) of the trades taken and not booked yet
@@ -1374,6 +1378,9 @@ def account(part, risk_pct, lim=None):
             want_usd = init * (1 + eq / 100) * w_ / 100
             n = int(min(want_usd, room * init / 100) // pc_) if room > 0 else 0
             n = min(n, max_n - sum(o[3] for o in opened))
+            if n < 1 and one_up > 0 and room * init / 100 >= pc_ and pc_ <= init * (1 + eq / 100) * one_up \
+                    and max_n - sum(o[3] for o in opened) >= 1:
+                n, ones = 1, ones + 1
             if n < 1:
                 skipped += 1
                 small += room * init / 100 >= want_usd      # skipped for the contract's size, not for the room
@@ -1393,7 +1400,7 @@ def account(part, risk_pct, lim=None):
     return {"total_pct": round(float(eq), 2), "worst_day_pct": round(float(worst), 2), "max_fall_pct": round(float(fall), 2),
             "low_pct": round(float(low), 2), "daily_stops": len(stopped_days), "room_cut": int(cut), "room_skipped": int(skipped),
             "open_peak_pct": round(float(raw_peak), 2), "open_days_over_day_lim": len(raw_days), "stopped": dead,
-            **({"contract_skipped": int(small)} if ct is not None else {})}
+            **({"contract_skipped": int(small)} if ct is not None else {}), **({"one_micro": int(ones)} if one_up > 0 else {})}
 
 
 MARGIN = 0.8          # the train period must stay within 80% of the bot's limits (a fall <= 7.2%, a day >= -3.6%)
@@ -1434,7 +1441,7 @@ def risk_scale(t, risk_pct, lim=None):
             "rows": {str(round(float(k), 2)): {"train": b, "unseen": account(un, rk, lim)}}}
 
 
-def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None, lim=None):
+def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None, lim=None, one_ups=None):
     """All the tracks the bot runs together (live = {track: (pair_name, cfg)}), the way the account takes them: the
     total time-weighted R, the worst day and the deepest fall (in R of one trade), on 2024-2025 and on 2026 - and the
     same with one rule against doubled risk: a track does not enter a symbol in a direction another track already holds
@@ -1529,6 +1536,14 @@ def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None, lim=None):
         acct = {"risk_pct": rk,
                 "now": {"train": account(t[t["time"] < SPLIT], rk, lim), "unseen": account(t[t["time"] >= SPLIT], rk, lim)},
                 "scale": risk_scale(t, rk, lim)}
+        # one micro up to (bot 6, 14.11.2026 night): the same account at its risk as it runs, where a trade whose one
+        # micro contract is more than the track's risk is taken with one contract up to each share given
+        if one_ups and (lim or {}).get("contracts"):
+            acct["one_micro"] = {}
+            for x_ in one_ups:
+                lx = {**lim, "contracts": {**lim["contracts"], "one_up_to": float(x_)}}
+                acct["one_micro"][str(x_)] = {"train": account(t[t["time"] < SPLIT], rk, lx),
+                                              "unseen": account(t[t["time"] >= SPLIT], rk, lx)}
     return {"account": acct, "tracks": {k: v[0] + (f" {','.join(v[2])}" if len(v) > 2 and v[2] else "") for k, v in live.items()},
             "same_dir_max": same, "now": stats(t), "one_per_side": stats(t[t["solo"]]),
             "max_dir": {str(c): stats(t[pd.Series(k_, index=t.index)]) for c, k_ in caps.items()},

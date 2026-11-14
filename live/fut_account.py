@@ -41,6 +41,11 @@ TAL_COMBO = {"tal": "TAL|1Hour", "tal4h": "TAL|4Hour"}
 RISK = {"v5": 0.0, "v1m": 0.0, "tal": RISK_TAL, "tal4h": RISK_TAL}   # the old gap tracks are replaced (12.11.2026)
 # the 1-minute track is stopped (card 9a0bc4200f6d, 12.11.2026): it loses in bot 6's world (backtest -0.08R, 2026 -0.04R)
 ROOM_USE = 0.9                              # open risk may use at most 90% of the room left to either limit
+# ONE MICRO UP TO (bot 6's smart agent, 14.11.2026 night; "tal_one_micro_up_to" in live/bots/bot6.json, 0 = off): a gap
+# track's trade whose one micro contract risks more than the track's risk is taken with ONE contract when that contract
+# risks at most this share of the balance (never over the bot's own risk, ONE_CAP) and fits the room left - instead of
+# skipped. The same in the whole-bot test (tal_gap.account, lim["contracts"]["one_up_to"]).
+ONE_UP_TO, ONE_CAP = 0.0, 0.004
 VERSION = 3                 # 2 (10.11.2026): one name per gap; 3 (12.11.2026): the user's gap method - a fresh $100K account
 
 
@@ -111,6 +116,10 @@ class Account:
         want = bal * RISK.get(trk, 0.0)
         n = int(min(want, room) // per)
         n = min(n, MAX_MICROS - sum(r.get("n") or 0 for r in open_recs))
+        one = min(float(ONE_UP_TO or 0.0), ONE_CAP)
+        if n < 1 and one > 0 and trk in TAL_TRACKS and room >= per and per <= bal * one \
+                and MAX_MICROS - sum(r.get("n") or 0 for r in open_recs) >= 1:
+            n = 1
         if n < 1:
             return 0, "room" if room < want else "small"
         return n, None

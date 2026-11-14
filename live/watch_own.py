@@ -300,6 +300,10 @@ def load_settings():
                     TAL6_MAXDIR[0] = max(0, int(d.get("tal_max_dir", 0) or 0))
                 except (TypeError, ValueError):
                     TAL6_MAXDIR[0] = 0
+                try:        # one micro up to (14.11.2026 night): 0 = off, at most the bot's own risk
+                    FA.ONE_UP_TO = min(max(0.0, float(d.get("tal_one_micro_up_to", 0) or 0)), FA.ONE_CAP)
+                except (TypeError, ValueError):
+                    FA.ONE_UP_TO = 0.0
                 TAL6_HOURS_OFF.clear()
                 try:
                     TAL6_HOURS_OFF.update(int(h_) for h_ in (d.get("tal_hours_off") or []) if 0 <= int(h_) <= 23)

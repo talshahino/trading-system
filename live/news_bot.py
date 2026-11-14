@@ -173,6 +173,15 @@ def regime(d, name):
         e200, rs = R.ema(c, 200), R.rsi(c, 14)
         with np.errstate(invalid="ignore"):
             return ~((c < e200) & (rs < 35)), ~((c > e200) & (rs > 65))
+    if name in ("chop_trend", "chop_range"):        # Choppiness Index 14 below / from 50 (task tal1411indstrat,
+        pc = np.r_[c[0], c[:-1]]                     # agents/news_regime.py; agents/indicators/regime.choppiness)
+        tr = np.maximum(h - l, np.maximum(np.abs(h - pc), np.abs(l - pc)))
+        s_ = pd.Series(tr).rolling(14).sum().to_numpy()
+        w = pd.Series(h).rolling(14).max().to_numpy() - pd.Series(l).rolling(14).min().to_numpy()
+        with np.errstate(divide="ignore", invalid="ignore"):
+            ch = np.where((w > 0) & (s_ > 0), 100 * np.log10(s_ / w) / np.log10(14), np.nan)
+            m = ch < 50 if name == "chop_trend" else ch >= 50
+        return m, m
     if name in ("adx_trend", "adx_range"):
         a = R.adx(h, l, c, 14)
         m = a > 20 if name == "adx_trend" else a < 20

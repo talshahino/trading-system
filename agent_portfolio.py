@@ -93,7 +93,9 @@ FILTER_HE = {"with_trend200": "רק עם המגמה (ממוצע 200)", "adx_tren
              "rsi_trend": "לא נגד המגמה לפי RSI (לא קונים ב־RSI מתחת 35 מתחת לממוצע 200, לא מוכרים מעל 65 מעליו)",
              "v_rsi50": "רק בכיוון RSI 50 (מעל = קניות, מתחת = מכירות)", "v_st": "רק בכיוון סופרטרנד 10/3",
              "v_e50_200": "רק בכיוון EMA 50 מול 200", "v_ema5": "לא נגד מגמה חזקה (5 ממוצעים 9/21/50/100/200 בסדר)",
-             "v_sma3": "רק כש־3 ממוצעים 10/20/50 בסדר, בכיוון שלהם"}
+             "v_sma3": "רק כש־3 ממוצעים 10/20/50 בסדר, בכיוון שלהם",
+             "chop_trend": "רק כשהשוק לא מדשדש (מדד Choppiness מתחת 50)",
+             "chop_range": "רק כשהשוק מדשדש (מדד Choppiness 50 ומעלה)"}
 # bots whose filter tests also try the user's EMA 9/20 and Bollinger-width filters (task tal1411ema, 14.11.2026):
 # live/news_bot.regime knows them for bot 7, live/runner._regime for bots 1-4 (since 14.11.2026)
 FILTERS_EXTRA = {"bot1", "bot2", "bot3", "bot4", "bot7"}
@@ -1068,6 +1070,17 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001 - the study's failure never stops the experiments
             print(f"bot7 fix study failed: {e}")
+        # the market-regime filters (ADX, Choppiness, volatility, trend) on EV02 / EV03 pooled over the 16 instruments
+        # and on SH01 per instrument, on top of what the bot trades now (the user's task tal1411indstrat, 14.11.2026,
+        # agents/news_regime.py): one variant per filter, so quick - a sixth of the budget, before the straddle
+        try:
+            from agents import news_regime as NRG
+            if NRG.stale():
+                mins = max(5.0, a.minutes / 6)
+                subprocess.run([sys.executable, "-m", "agents.news_regime", "--minutes", str(mins)], cwd=str(ROOT),
+                               timeout=int(mins * 60 + 1800))
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 regime study failed: {e}")
         # EV04, the straddle before a release (the user's task tal1411strad, 14.11.2026, agents/news_straddle.py): a
         # third of the budget, BEFORE the entry study (the user's priority, 14.11.2026), gold first
         try:

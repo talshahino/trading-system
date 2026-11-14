@@ -1,7 +1,146 @@
 {
- "updated": "2026-11-14T10:12:01+00:00",
+ "updated": "2026-11-14T10:27:14+00:00",
  "new": [],
  "decisions": [
+  {
+   "id": "3f0b58b548bb",
+   "bot": "bot3",
+   "type": "card",
+   "card": "bc69b901f3dc",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC097|1Hour|JP225 · Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.06R לעסקה, 303.9 עסקאות אפקטיביות) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.80 לאסטרטגיה: רווח +77.82% → +83.71% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3680,
+     "total": 77.82,
+     "worst_day": -2.21,
+     "max_dd": 4.22,
+     "near_days": 0,
+     "max_open": 3.52,
+     "max_side": 3.08
+    },
+    "after": {
+     "trades": 3984,
+     "total": 83.71,
+     "worst_day": -2.22,
+     "max_dd": 5.77,
+     "near_days": 0,
+     "max_open": 3.59,
+     "max_side": 3.08
+    }
+   },
+   "at": "2026-11-14T10:26:39+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "4c0d48750a3b",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC097|1Hour|JP225",
+   "title": "SC097|1Hour|JP225: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.06R לעסקה, 303.9 עסקאות אפקטיביות) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.80 לאסטרטגיה: רווח +77.82% → +83.71% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "3f0b58b548bb",
+   "star": true,
+   "action": {
+    "bot": "bot3",
+    "combo": "SC097|1Hour|JP225",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-14T10:26:39+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "80fba27be034",
+   "bot": "bot3",
+   "type": "card",
+   "card": "00a8c6765bee",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC154|5Min|XAUUSD · SMA10/30 cross + EMA5 filter, 1% / 2%, 5m",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.03R לעסקה, 287.9 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +77.82% → +81.20%, בלי יותר סיכון (יום גרוע -2.41%, ירידה 5.01%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3680,
+     "total": 77.82,
+     "worst_day": -2.21,
+     "max_dd": 4.22,
+     "near_days": 0,
+     "max_open": 3.52,
+     "max_side": 3.08
+    },
+    "after": {
+     "trades": 3968,
+     "total": 81.2,
+     "worst_day": -2.41,
+     "max_dd": 5.01,
+     "near_days": 0,
+     "max_open": 3.84,
+     "max_side": 3.45
+    }
+   },
+   "at": "2026-11-14T10:26:39+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "794f87ff47ae",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC154|5Min|XAUUSD",
+   "title": "SC154|5Min|XAUUSD: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.03R לעסקה, 287.9 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +77.82% → +81.20%, בלי יותר סיכון (יום גרוע -2.41%, ירידה 5.01%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "80fba27be034",
+   "star": true,
+   "action": {
+    "bot": "bot3",
+    "combo": "SC154|5Min|XAUUSD",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-14T10:26:39+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "b6a572917a08",
+   "bot": "bot5",
+   "type": "card",
+   "card": "a0b6ae3119ad",
+   "kind": "info",
+   "tier": "regular",
+   "title": "נבנו בבוט 5 לבדיקה: פרמיה / דיסקאונט ופיבוט יומי על הגאפ, ותיקון למשפחה של SC071",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-14T10:26:39+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "2977019eb9ef",
    "bot": "bot2",

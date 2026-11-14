@@ -107,6 +107,15 @@ def judge(c):
     if t.get("mean") is not None and (t.get("eff_n") or t.get("n") or 0) >= 10 and t["mean"] <= 0:
         return "rejected", (f"הפסיד בתקופה עד 2025 ({t['mean']:+.2f}R לעסקה) - חיובי רק ב־2026, כלומר נבחר לפי 2026 "
                             "ועלול להיות מזל")
+    # the same for a barely positive choosing period: a new strategy must earn its place on the period to 2025 too -
+    # at least NEW_MIN_TOTAL R there, or a clear t >= 1 (manager, 14.11.2026: SC069|15Min|XAUUSD, +0.01R x 107 = +1.2R
+    # to 2025 and t 0.15, was approved into bots 1, 4 and 5 on its 2026 result; SC020|15Min|GBPJPY +0.1R, t 0.01 -
+    # both picked by 2026, against objective.md)
+    tn = (t.get("eff_n") or t.get("n") or 0)
+    if (c["kind"] == "new" and base is None and t.get("mean") is not None and tn >= 10
+            and tn * t["mean"] < NEW_MIN_TOTAL and (t.get("t") or 0) < 1.0):
+        return "watch", (f"עד 2025 בסך הכל רק {tn * t['mean']:+.1f}R (t {t.get('t') or 0:.2f}) - "
+                         f"היתרון נראה רק ב־2026, כלומר נבחר לפי 2026. נשמר להמשך")
     # a new strategy must add to the TOTAL: under +3R on the whole of 2026 it only adds risk and a share of the daily
     # loss limit (manager, 13.11.2026: SC021|5Min|XAUUSD, +0.001R x 188 = +0.2R in 2026, +0.02R to 2025, approved into
     # bot 5; SC002|1Hour|ARM, +0.2R in 2026, ran in four bots)

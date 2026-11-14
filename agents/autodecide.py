@@ -115,10 +115,14 @@ def _family_pick(cards, c):
         return None
     pooled = sum(_total(s) or 0.0 for s in tr)
     own_t = (c.get("train") or {}).get("t")
-    if pooled >= 0 or (own_t is not None and own_t >= FAMILY_T):
+    # the best of n pairs reaches t ~ sqrt(2 ln n) by chance alone, so the bar grows with the family (manager, 14.11.2026
+    # midday: SC097|1Hour|JP225 in bot 3, t 1.44 - the best of 12 pairs that together lost -414R to 2025, 11 of them
+    # negative - passed the fixed t >= 1 and was approved)
+    bar = max(FAMILY_T, math.sqrt(2 * math.log(len(tr))) - 0.5)
+    if pooled >= 0 or (own_t is not None and own_t >= bar):
         return None
     return (f"נבחר מתוך {len(tr)} מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 ({pooled:+.1f}R), "
-            f"והתוצאה שלו עד 2025 חלשה (t {own_t if own_t is not None else '-'}) - כנראה מזל, מחכה")
+            f"והתוצאה שלו עד 2025 לא בולטת מעל המזל (t {own_t if own_t is not None else '-'}, צריך {bar:.2f}) - כנראה מזל, מחכה")
 
 
 def tried_and_failed(bot, combo):

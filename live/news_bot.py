@@ -16,6 +16,8 @@ read-only, nothing is ever sent to a broker), builds 5-minute candles and runs e
   1-hour bars (~125 days), the 4-hour ones resampled from them on UTC as the backtest and live/runner.py do.
   SH01 shock fade (card 42c723b87f92, 13.11.2026) - a 1-minute shock without a release (agents/shocks.py detect, K=8):
                          against it D minutes later, stop 25% of the shock beyond its extreme, out after 60 minutes
+                         14.11.2026: US100 only in a trending market (chop_trend, card 69f4dc4a25da); GER40 K6, D1, 120 min,
+                         only buys after a shock down and only when US100 had no shock the same way (card 3718a860cb42)
 Releases: FTMO's own economic calendar, high impact or FTMO-restricted, concerning the instrument (read every hour).
 Entries are 10+ minutes after the release, so FTMO's restricted window (3 minutes either side) is never touched.
 FTMO Standard (14.11.2026, task tal1411wkend): no position through a market break over 2 hours - closed BREAK_W
@@ -67,6 +69,7 @@ STRATS = ["EV01", "EV02", "EV03"]
 NAMES = {"EV01": "הליכה עם הפרסום", "EV02": "נגד הקפיצה", "EV03": "פריצת טווח", "SH01": "נגד הזעזוע (בלי פרסום)"}
 SHOCK = {"SH01"}                # shock strategies on 1-minute candles (agents/shocks.py live_fade; card 42c723b87f92)
 REL = {}                       # important releases by currency, from the calendar the bot read (shocks near them are skipped)
+D1 = {}                        # this round's 1-minute candles by instrument (SH01 GER40 checks US100's shocks; card bd7be6c8ae8a)
 END = "סוף הנתונים"            # rules_agent's reason for a trade still open at the last candle
 INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.005, 0.045, 0.10
 ACCT_V = 1
@@ -392,9 +395,12 @@ def shock_fn(sid, name, p):
     from the approved plan in live/bots/bot7.json."""
     try:
         k, dd, hh = int(p.get("K", 8)), int(p.get("D", 1)), int(p.get("H", 60))
+        pp = float(p.get("p", 0.25))
     except (TypeError, ValueError):
-        k, dd, hh = 8, 1, 60
-    return SH.live_fade(name, k, dd, hh, rel=lambda: REL)
+        k, dd, hh, pp = 8, 1, 60, 0.25
+    side, co, cs = p.get("side", "all"), p.get("co", "all"), p.get("co_sym")   # card bd7be6c8ae8a (GER40, 14.11)
+    return SH.live_fade(name, k, dd, hh, rel=lambda: REL, p=pp, side=side, co=co, co_sym=cs,
+                        co_df=(lambda: D1.get(cs)) if cs else None)
 
 
 def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None):
@@ -626,6 +632,7 @@ def main():
                     continue
                 if d1 is None or len(d1) < 600:
                     continue
+                D1[name] = d1
                 d5 = five(d1)
                 d5.attrs.update(symbol=name, tf="5Min")
                 d1.attrs.update(symbol=name, tf="1Min")

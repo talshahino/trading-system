@@ -163,24 +163,40 @@ def releases_from(items):
     return {k: (pd.DatetimeIndex(sorted(v)), [v[t] for t in sorted(v)]) for k, v in out.items()}
 
 
-def live_fade(sym, k_mult=8, D=1, H=60, rel=None):
+def live_fade(sym, k_mult=8, D=1, H=60, rel=None, p=0.25, side="all", co="all", co_df=None, co_sym=None):
     """SH01 for the engine (agents/rules_agent.run) on 1-minute candles - card 42c723b87f92 (13.11.2026): against a
     shock (detect(), version 1) entered at the open D minutes after the shock minute, stop 25% of the shock beyond its
     extreme, out after H minutes, no target - exactly trades() FADE with tg 0. rel: a callable returning releases()
-    (read when the strategy runs, so the bot's hourly calendar refresh is used)."""
+    (read when the strategy runs, so the bot's hourly calendar refresh is used).
+    Card bd7be6c8ae8a (SH01 GER40 fix, 14.11.2026; as fade_grid / fix_sh01): p = stop as a share of the shock beyond
+    its extreme; side "down" = only against shocks down (buys), "up" = only against shocks up; co "alone" = only when
+    co_sym (US100) had no shock the same way within CO_MIN minutes (detect() at the same K), "with" = only when it had.
+    co_df: a callable returning co_sym's 1-minute candles (None = not read -> no trade when co is set)."""
     def fn(df):
         o, h, l, c = (df[x].to_numpy(float) for x in "ohlc")
         n, idx = len(c), df.index
         long_, short = np.zeros(n, bool), np.zeros(n, bool)
         sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
         r_ = rel() if callable(rel) else (rel or {})
+        ref = None
+        if co in ("alone", "with"):
+            cd = co_df() if callable(co_df) else co_df
+            if cd is not None and len(cd) >= 600 and co_sym:
+                rs = detect(cd, co_sym, k_mult, r_)
+                ref = (pd.DatetimeIndex([cd.index[x["i"]] for x in rs]), np.array([x["dir"] for x in rs]))
         for s_ in detect(df, sym, k_mult, r_):
             i, dr, mv = s_["i"], s_["dir"], s_["move"]
+            if side == "down" and dr > 0 or side == "up" and dr < 0:
+                continue
+            if co in ("alone", "with"):
+                f = co_flag(idx[i], dr, ref)
+                if f < 0 or f != (1 if co == "with" else 0):
+                    continue
             ke = i + D
             if ke >= n or (idx[ke] - idx[i]) > pd.Timedelta(minutes=D + 2):
                 continue
             ext = h[i - 2:i + 1].max() if dr > 0 else l[i - 2:i + 1].min()
-            stop = ext + dr * 0.25 * mv
+            stop = ext + dr * float(p) * mv
             if dr * (stop - o[ke]) <= 0.15 * mv:
                 continue
             if dr > 0:

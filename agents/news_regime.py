@@ -55,7 +55,7 @@ SH_SYMBOLS = ("GER40", "US100")                                          # SH01'
 FILTERS = ("none", "with_trend200", "adx_trend", "adx_range", "vol_normal", "vol_high", "vol_low", "ema9_20", "bbw_p20",
            "rsi_trend", "chop_trend", "chop_range")
 LOAD_FROM, TEST_FROM, SPLIT = "2025-03-01", pd.Timestamp("2025-04-30", tz="UTC"), pd.Timestamp("2026-01-01", tz="UTC")
-VERSION = 1
+VERSION = 2                 # 2: SH01 with the plan's p / side / US100 check (card bd7be6c8ae8a, 14.11.2026)
 STALE_DAYS = 3
 MIN_N = {"EV02": 8, "EV03": 20, "SH01": 20}      # trades on 2025 a filter must keep to be picked
 
@@ -137,11 +137,18 @@ def rows_sym(sym, plans, rel_sh):
     if sym in SH_SYMBOLS:
         p_ = plans.get(f"SH01|1Min|{sym}") or {}
         try:
-            k, dd, hh = int(p_.get("K", 8)), int(p_.get("D", 1)), int(p_.get("H", 60))
+            k, dd, hh, pp = int(p_.get("K", 8)), int(p_.get("D", 1)), int(p_.get("H", 60)), float(p_.get("p", 0.25))
         except (TypeError, ValueError):
-            k, dd, hh = 8, 1, 60
+            k, dd, hh, pp = 8, 1, 60, 0.25
+        cs = p_.get("co_sym")                       # SH01 GER40 since card bd7be6c8ae8a: only when US100 had no shock
+        co_d = None
+        if cs:
+            co_d = P.bars(cs, "1Min", LOAD_FROM, end)
+            co_d = co_d[~co_d.index.duplicated()].sort_index() if co_d is not None and len(co_d) else None
         d1.attrs.update(symbol=sym, tf="1Min")
-        rows += _run_filters(d1, sym, "1Min", "SH01", SH.live_fade(sym, k, dd, hh, rel=rel_sh), p_, sp)
+        rows += _run_filters(d1, sym, "1Min", "SH01", SH.live_fade(sym, k, dd, hh, rel=rel_sh, p=pp,
+                                                                   side=p_.get("side", "all"), co=p_.get("co", "all"),
+                                                                   co_sym=cs, co_df=co_d), p_, sp)
     return rows
 
 

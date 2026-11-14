@@ -1109,6 +1109,18 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 entry study failed: {e}")
+        # EV08, the release's surprise by its direction (the user's task, 14.11.2026, item 41 - Dewonggo: jobless claims
+        # worse than expected = buy BTC / indices / gold), agents/news_surprise.py: first FTMO's whole calendar with the
+        # US numbers (the history the other studies use has none), then the study; a third of the budget once the
+        # entry study is complete (it is not stale for 3 days after it finished)
+        try:
+            from agents import news_surprise as NSU
+            if NSU.stale() and not NE.stale():
+                mins = max(6.0, a.minutes / 3)
+                subprocess.run([sys.executable, "-m", "agents.news_surprise", "--minutes", str(mins)], cwd=str(ROOT),
+                               timeout=int(mins * 60 + 1800))
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 surprise study failed: {e}")
     if a.bot in ("bot1", "bot2", "bot3", "bot4", "bot5") and a.where in ("pc", "all"):
         # the scout strategies picked out of a losing family (the manager's tasks mgr1411fam / mgr1411fam2, deadline
         # 16-17.11.2026): one instrument's filter test per round (a fifth of the budget, at least 10 minutes), then the

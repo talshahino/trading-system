@@ -182,10 +182,12 @@ def sym_runs(budget_s):
         pn = f"{v['pair'][0]}/{v['pair'][1]}"
         if not v.get("symbols") or float(rk.get(k, 0) or 0) <= 0 or pn not in pairs:
             continue
-        c = TG._norm(dict(v["cfg"]))
-        for sym in v["symbols"]:
-            if f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}" not in have:
-                want.setdefault(sym, []).append((pn, c))
+        # the rules as they run (FTMO's break rule on, tal_gap.ftmo_cfg - as live/watch_own.py trades them) first, for
+        # the fixed risk rule's whole-bot test (guard5, task tal1411risk); then the rules as stored (TG.portfolio)
+        for c in (TG.ftmo_cfg(v["cfg"]), TG._norm(dict(v["cfg"]))):
+            for sym in v["symbols"]:
+                if f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}" not in have and (pn, c) not in want.get(sym, []):
+                    want.setdefault(sym, []).append((pn, c))
     t0, done = time.time(), 0
     for sym, todo in want.items():
         if time.time() - t0 > budget_s:
@@ -310,6 +312,19 @@ NOTE_TESTS[6:6] = [
     {"id": f"{trk}_brkh", "track": trk, "knob": "BRKH", "vals": [1, 3, 6], "src": "tal1411wkend",
      "he": "בלי הוראה חדשה X שעות לפני הפסקה של שעתיים ומעלה (התיקון לעלות של כלל FTMO)"}
     for trk in ("t4h_1h", "t4h_15", "t1h_15", "t4h_5")]
+# bot 6's task for bot 5 (b6to5rearm, 14.11.2026 night): REARM - a gap order cancelled before a 2+ hour break is placed
+# again at the reopening while its gap is within EXPIRY (tal_gap.rearm / order_ok, the same in simulate and live_trades;
+# live/watch_own.py follows each setup's status from live_trades every minute, so a "cancelled" setup that comes back
+# "pending" is waiting again - nothing more to build there). Right after BRKH, on every index track that runs: alone on
+# the rules as they run, and (inform - numbers only, the smart agent reads them) on top of each BRKH value ("with")
+_brkh_end = max(i for i, T_ in enumerate(NOTE_TESTS) if T_["knob"] == "BRKH") + 1
+NOTE_TESTS[_brkh_end:_brkh_end] = [
+    {"id": f"{trk}_rearm", "track": trk, "knob": "REARM", "vals": [True], "src": "b6to5rearm",
+     "he": "הוראת גאפ שבוטלה לפני הפסקה של שעתיים+ חוזרת בפתיחה, כל עוד הגאפ בתוקף (REARM)"}
+    for trk in ("t4h_1h", "t4h_15", "t1h_15", "t4h_5", "t15_1", "t15_5")] + [
+    {"id": f"{trk}_rearm_brkh{h}", "track": trk, "knob": "REARM", "vals": [True], "with": {"BRKH": h}, "inform": True,
+     "src": "b6to5rearm", "he": f"REARM על BRKH {h}"}
+    for trk in ("t4h_1h", "t4h_15", "t1h_15", "t4h_5") for h in (1, 3)]
 NOTE_TESTS += [
     # the filters of the user's videos of 14.11.2026 (tal1411rsi a, tal1411vwap 2, tal1411set2 1, set3 2, set4 2,
     # set5 1-2) on the gap method as it runs - one TREND value each (tal_gap.Data.video_trend, the same on the live bot).
@@ -364,7 +379,8 @@ NOTE_TESTS += [
     {"id": f"{trk}_set7b", "track": trk, "knob": "TREND", "vals": ["sqz", "sqzm", "pdbrk"], "src": "tal1411set7",
      "he": "רק בכיוון מומנטום הסקוויז של LazyBear, או בכיוון פריצת השיא / השפל של אתמול"}
     for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
-NOTE_SRC = {"tal1411set7": "משימה של טל מ־14.11 (ממוצעי פיבונאצ'י, הייקין אשי, הסקוויז של LazyBear ושיא / שפל של אתמול מהסרטונים).",
+NOTE_SRC = {"b6to5rearm": "משימה מסוכן בוט 6 מ־14.11 (REARM - התיקון שלו לעלות של כלל FTMO).",
+            "tal1411set7": "משימה של טל מ־14.11 (ממוצעי פיבונאצ'י, הייקין אשי, הסקוויז של LazyBear ושיא / שפל של אתמול מהסרטונים).",
             "tal1411gapplus": "משימה של טל מ־14.11 (שיטות קרובות לגאפ: Silver Bullet, איכות נר 3, גאפ אחרי גריפה).",
             "tal1411set6": "משימה של טל מ־14.11 (פרמיה / דיסקאונט ופיבוט יומי מהסרטונים).",
             "tal1411vid": "משימות של טל מ־14.11 (מסנני הסרטונים: RSI במגמה, ADX, סופרטרנד, EMA 50/200, סדר הממוצעים).",
@@ -389,6 +405,8 @@ def _note_cfgs():
         # TG.ftmo_cfg(cfg) (the FTMO break rule on), so every test is measured on it too - only the rule's own test
         # (knob WKND) keeps the rules without it as its "now"
         now = TG._norm(dict(v["cfg"])) if T["knob"] == "WKND" else TG.ftmo_cfg(v["cfg"])
+        if T.get("with"):              # a test on top of another value (b6to5rearm: REARM over BRKH) - inform only
+            now = TG._norm(dict(now, **T["with"]))
         out.append((T, f"{v['pair'][0]}/{v['pair'][1]}", now,
                     [(x, TG._norm(dict(now, **{T["knob"]: x}))) for x in T["vals"] if now.get(T["knob"]) != x]))
     return out
@@ -704,6 +722,101 @@ def _trades(tidx, pn, cfg):
     t = pd.concat([pd.read_csv(TAL_DIR / v["file"]) for v in fs], ignore_index=True)
     t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
     return t
+
+
+# THE FIXED RISK RULE (the user, 14.11.2026 22:16, task tal1411risk): live/watch_own.py counts every open trade at its
+# stop and gives a new one only the room left to 4.5% a day / 9% from the start (under a quarter of its risk -> not
+# taken); TG.account does the same. The whole-bot test (TG.portfolio) holds only the gap tracks - not bot 5's scout
+# strategies ("scout" in live/bots/bot5.json, 11 on 14.11 night, their own risk "scout:<combo>"). Here the whole bot as
+# the account counts it: every gap track with risk > 0 (the indices' and the instruments' own) on its rules as they run
+# (FTMO's break rule on; the stored rules where that run is not there yet), at risk x tal_risk_scale, plus every scout
+# strategy's stored trades as it was tested (reports/agents/bot5/exp "new": "tr25" = 30.04-31.12.2025, "tr" = 2026).
+# The old tracks v5 / v1m are not counted by the account since 12.11.2026 (watch_own: skipped "old") - not here either.
+# The periods: the scouts' trades exist from 30.04.2025, so "train" = 30.04.2025-31.12.2025 for every part.
+G5_FROM = pd.Timestamp("2025-04-30", tz="UTC")
+
+
+def guard5(tidx):
+    from agents import portfolio_check as PCK
+    s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
+    rk, sc = s5.get("risk") or {}, float(s5.get("tal_risk_scale", 1.0) or 1.0)
+    rows, missing, stored = [], [], []
+    for trk, v in (s5.get("tal_tracks") or {}).items():
+        if float(rk.get(trk, 0.0028) or 0) <= 0:
+            continue
+        pn, syms = f"{v['pair'][0]}/{v['pair'][1]}", list(v.get("symbols") or TAL_SYMBOLS)
+        got = None
+        for c in (TG.ftmo_cfg(v["cfg"]), TG._norm(dict(v["cfg"]))):
+            fs = list({x["sym"]: x for x in tidx.values() if x["pair"] == pn and TG._norm(dict(x["cfg"])) == c
+                       and x["sym"] in syms}.values())
+            if {x["sym"] for x in fs} == set(syms):
+                got = fs
+                if c != TG.ftmo_cfg(v["cfg"]):
+                    stored.append(trk)
+                break
+        if not got:
+            missing.append(trk)
+            continue
+        for x in got:
+            t = pd.read_csv(TAL_DIR / x["file"])
+            if t.empty:
+                continue
+            t["trk"], t["sym"] = trk, x["sym"]
+            rows.append(t[["time", "dir", "r", "mins", "trk", "sym"]])
+    gap = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame(columns=["time", "dir", "r", "mins", "trk", "sym"])
+    gap["time"] = pd.to_datetime(gap["time"], utc=True, format="ISO8601")
+    gap["out"] = gap["time"] + pd.to_timedelta(gap["mins"].fillna(0).astype(float) + 1, unit="min")
+    srows = []
+    for combo in s5.get("scout") or {}:
+        d = PCK.exp(BOT, "new", combo) or {}
+        k = f"scout:{combo}"
+        for key in ("tr25", "tr"):
+            tr = PCK._minutes(((d.get(key) or {}).get("new")) or [])
+            if not tr:
+                if key == "tr":
+                    missing.append(combo)
+                continue
+            a = np.array(tr, float)
+            srows.append(pd.DataFrame({"time": pd.to_datetime(a[:, 0] * 60, unit="s", utc=True),
+                                       "out": pd.to_datetime(a[:, 1] * 60 + 60, unit="s", utc=True),
+                                       "dir": a[:, 2].astype(int), "r": a[:, 3], "trk": k, "sym": combo.split("|")[-1]}))
+    scout = pd.concat(srows, ignore_index=True) if srows else gap.iloc[:0][["time", "out", "dir", "r", "trk", "sym"]]
+    risk = {t_: float(rk.get(t_, 0.0028)) * sc * 100 for t_ in set(gap["trk"])}
+    risk.update({t_: float(rk.get(t_, rk.get("scout", 0.004))) * 100 for t_ in set(scout["trk"])})
+    allt = pd.concat([gap[["time", "out", "dir", "r", "trk", "sym"]], scout], ignore_index=True)
+    res = {"tracks": sorted(set(gap["trk"])), "scouts": sorted(s5.get("scout") or {}), "missing": missing,
+           "stored_rules": stored, "scale": sc, "risk_pct": {k_: round(v_, 4) for k_, v_ in risk.items()},
+           "train_from": str(G5_FROM.date())}
+    for nm, t in (("gap_only", gap), ("scouts_only", scout), ("whole", allt)):
+        res[nm] = {}
+        for per in ("train", "unseen"):
+            m = (t["time"] >= TG.SPLIT) if per == "unseen" else ((t["time"] >= G5_FROM) & (t["time"] < TG.SPLIT))
+            a = TG.account(t[m].copy(), risk) or {}
+            a["n"] = int(m.sum())
+            res[nm][per] = a
+    return res
+
+
+def guard5_card(g):
+    """The info card of the fixed risk rule (tal1411risk): how many trades the room rule cut / skipped on the whole bot."""
+    if not g or not (g["gap_only"]["unseen"] or {}).get("n"):
+        return None                     # the gap tracks' runs are not there yet: no whole-bot number to show
+    w, wt = g["whole"]["unseen"] or {}, g["whole"]["train"] or {}
+    gu, su = g["gap_only"]["unseen"] or {}, g["scouts_only"]["unseen"] or {}
+    many = (w.get("room_cut", 0) + w.get("room_skipped", 0)) > 0.05 * max(1, w.get("n", 1))
+    what = (f"כלל הסיכון הקבוע: כל עסקה פתוחה נספרת עד הסטופ, ועסקה חדשה מקבלת רק את המקום שנשאר עד 4.5% ביום ו־9% מההתחלה "
+            f"(כמו בבוט החי). הבוט כולו: {len(g['tracks'])} מסלולי גאפ (×{g['scale']}) ו־{len(g['scouts'])} אסטרטגיות סייר, כל אחת "
+            f"בסיכון שלה. 2026: מתוך {w.get('n', 0)} עסקאות {w.get('room_cut', 0)} הוקטנו ו־{w.get('room_skipped', 0)} דולגו; "
+            f"סיכון פתוח מרבי {w.get('open_peak_pct')}%, היום הגרוע {w.get('worst_day_pct')}%, ירידה מהשיא {w.get('max_fall_pct')}% "
+            f"(הנמוך מההתחלה {w.get('low_pct')}%), סה\"כ {w.get('total_pct')}%. מאי-דצמבר 2025: {wt.get('room_cut', 0)} הוקטנו, "
+            f"{wt.get('room_skipped', 0)} דולגו מתוך {wt.get('n', 0)}, ירידה {wt.get('max_fall_pct')}%. "
+            f"לבד ב־2026: הגאפ ירידה {gu.get('max_fall_pct')}%, הסייר ירידה {su.get('max_fall_pct')}%. "
+            + ("זה הרבה - הבא: לתקן את החפיפה בין האסטרטגיות (קודם מתקנים)." if many else
+               "מעט - אין חפיפה לתקן; שום שינוי לא יאושר אם הוא פותח סיכון מעבר למקום הזה.")
+            + (f" חסרו: {', '.join(g['missing'])}." if g["missing"] else ""))
+    return K.card(BOT, "info", f"בוט 5: כלל הסיכון הקבוע על הבוט כולו - ב־2026 {w.get('room_cut', 0)} הוקטנו ו־"
+                  f"{w.get('room_skipped', 0)} דולגו (מתוך {w.get('n', 0)}), ירידה {w.get('max_fall_pct')}%", what, None, None,
+                  tested=1, detail={"world": "bot5", "task": "tal1411risk", "guard": g})
 
 
 # size up after a win (the user's task tal1411anti, 14.11.2026, every bot): (a) the next trade of the same track at
@@ -1270,6 +1383,15 @@ def main():
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
         else:
             print("tal whole bot: an instrument track's runs are missing - the index tracks only")
+        try:        # the fixed risk rule on the whole bot, scout strategies included (tal1411risk, 14.11.2026 night)
+            g5 = guard5(tidx_all if pf_all else tidx)
+            doc["bot5"]["risk_guard"] = g5
+            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+            gc5 = guard5_card(g5)
+            if gc5:
+                cards.append(gc5)
+        except Exception as e:  # noqa: BLE001
+            print("tal risk guard failed:", e)
         if pf:
             doc["bot5"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")

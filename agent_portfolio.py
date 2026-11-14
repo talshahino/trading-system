@@ -764,6 +764,43 @@ def inbox():
         return []
 
 
+POOL_BOTS = ("bot1", "bot2", "bot3", "bot4", "bot7")
+
+
+def pool():
+    """The pool (user, 14.11.2026: "every bot gets the strategies that pass into the pool and can use them - and
+    checks whether it can use them"): every strategy some bot trades now, with the timeframes it trades on, offered to
+    every other bot exactly like a new scout strategy - on all of that bot's instruments, by the same test (live rules,
+    FTMO costs, chosen to 2025, shown on 2026). Only strategies of the rules library (the news events of bot 7 run on
+    their own engine)."""
+    try:
+        from agents import rules_agent as R
+        known = set(R.STRATEGIES)
+    except Exception:  # noqa: BLE001
+        known = None
+    tfs, who = {}, {}
+    for b in POOL_BOTS:
+        try:
+            cs = bot_combos(b)
+        except Exception:  # noqa: BLE001
+            continue
+        for c in cs:
+            sid, tf, _ = (c.split("|") + ["", ""])[:3]
+            if known is not None and sid not in known:
+                continue
+            tfs.setdefault(sid, set()).add(tf)
+            who.setdefault(sid, set()).add(b)
+    return [{"id": sid, "timeframes": sorted(tfs[sid]), "name": f"pool: {sid} (live in {', '.join(sorted(who[sid]))})",
+             "source": "pool", "pool_of": sorted(who[sid])} for sid in sorted(tfs)]
+
+
+def to_test():
+    """The scout's new strategies, then the pool's (a strategy in both is tested once, as the scout's)."""
+    sc = inbox()
+    ids = {s_.get("id") for s_ in sc}
+    return sc + [s_ for s_ in pool() if s_["id"] not in ids]
+
+
 def bot_symbols(bot):
     return NEW_ONLY.get(bot) or sorted({c.split("|")[2] for c in bot_combos(bot)})
 
@@ -773,18 +810,28 @@ def can_test(bot, s_):
     the scout's guess (user, 12.11.2026; the scout's "bots" field is only a hint). The one limit is technical: the
     scalping bots (5-6) trade 1-15 minute charts, so a strategy whose source states only longer timeframes has nothing
     to run there."""
-    tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or ["1Hour"]
-    return bot not in NEW_ONLY or any(x in ("1Min", "5Min", "15Min") for x in tfs)
+    # 14.11.2026 (user: every bot gets every strategy and checks whether it can use it): a strategy stated only on
+    # longer charts is tested on the scalping bots too, on their 15-minute chart (tfs_for) - the test decides.
+    return True
+
+
+def tfs_for(bot, s_, default=None):
+    tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or (default or ["1Hour"])
+    if bot in NEW_ONLY:
+        tfs = [x for x in tfs if x in ("1Min", "5Min", "15Min")] or ["15Min"]          # scalping bots: short charts
+    return tfs
 
 
 def untested_new(bot, where):
     st = Store(bot)
-    for s_ in inbox():
+    own = set(bot_combos(bot))
+    for s_ in to_test():
         if not s_.get("id") or not can_test(bot, s_):
             continue
-        tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or ["1Hour"]
+        tfs = tfs_for(bot, s_)
         for sym in bot_symbols(bot):
-            if runs_here(sym, where) and any(st.age_days("new", f"{s_['id']}|{tf}|{sym}") >= RERUN_DAYS for tf in tfs):
+            if runs_here(sym, where) and any(f"{s_['id']}|{tf}|{sym}" not in own and
+                                             st.age_days("new", f"{s_['id']}|{tf}|{sym}") >= RERUN_DAYS for tf in tfs):
                 return True
     return False
 
@@ -814,19 +861,18 @@ def test_new(bot, budget_s, where, symbols=None, timeframes=None):
     t0, done = time.time(), 0
     syms = symbols or bot_symbols(bot)
     queue = []                                                   # (sym, strategy, combos), in the scout's order
-    for s_ in inbox():
+    own = set(bot_combos(bot))                                   # what the bot trades already is not "new" to it
+    for s_ in to_test():
         if not s_.get("id") or not can_test(bot, s_):
             continue
         sid = s_["id"]
-        tfs = [x for x in (s_.get("timeframes") or []) if x in ("1Min", "5Min", "15Min", "1Hour", "4Hour")] or (timeframes or ["1Hour"])
-        if bot in NEW_ONLY:
-            tfs = [x for x in tfs if x in ("1Min", "5Min", "15Min")]          # scalping bots: short timeframes only
+        tfs = tfs_for(bot, s_, timeframes)
         # on ALL the bot's instruments, not only the markets the source names (user: test everything, each strategy
         # where it wins)
         mk = set(s_.get("markets") or [])
         for sym in [x for x in syms if runs_here(x, where)]:
-            combos = [f"{sid}|{tf}|{sym}" for tf in tfs]
-            if any(st.age_days("new", c) >= RERUN_DAYS for c in combos):
+            combos = [f"{sid}|{tf}|{sym}" for tf in tfs if f"{sid}|{tf}|{sym}" not in own]
+            if combos and any(st.age_days("new", c) >= RERUN_DAYS for c in combos):
                 fresh = any(st.age_days("new", c) >= 999 for c in combos)
                 queue.append((sym, s_, combos, (0 if fresh else 1,                          # never tested before a re-run
                                                 0 if not mk or U.CLASS.get(sym) in mk else 1)))  # the source's markets first
@@ -837,9 +883,9 @@ def test_new(bot, budget_s, where, symbols=None, timeframes=None):
     # strategies tested on the fewest of the bot's instruments first - so every new strategy gets its first fair test
     # within a run or two. Nothing is skipped: the rest follows in the same order in the next runs.
     cover = {}
-    for s_ in inbox():
+    for s_ in to_test():
         if s_.get("id"):
-            cover[s_["id"]] = sum(1 for sym in syms for tf in (s_.get("timeframes") or ["1Hour"])
+            cover[s_["id"]] = sum(1 for sym in syms for tf in tfs_for(bot, s_)
                                   if st.age_days("new", f"{s_['id']}|{tf}|{sym}") < 999)
     queue.sort(key=lambda q: (q[3][0], q[3][1], cover.get(q[1]["id"], 0)))     # stable: the scout's order within
     queue = [q[:3] for q in queue]
@@ -852,7 +898,7 @@ def test_new(bot, budget_s, where, symbols=None, timeframes=None):
             st.put("new", c, {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "combo": c, "family": "new",
                               "tr": {"new": trades_2026(tc)} if len(tc) else {},
                               "tr25": {"new": trades_2026(tc, train=True)} if len(tc) else {},
-                              "scout": {k: s_.get(k) for k in ("name", "source", "url", "added")},
+                              "scout": {k: s_.get(k) for k in ("name", "source", "url", "added", "pool_of")},
                               "stats": variant_stats(tc) if len(tc) else None})
             n += 1
         return n

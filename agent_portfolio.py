@@ -630,13 +630,23 @@ def families_of(bot):
     SC094|1Hour|XAGUSD in bot 4. The family = the strategy on the same timeframe on every instrument the bot tested."""
     if bot == "bot7":
         return FAMILY
+    # bot 5 (its smart agent, 14.11.2026, the manager's task mgr1411fam2 - SC071|15Min|US30, 4 indices to 2025 -16R):
+    # its scout strategies are "scout" in live/bots/bot5.json and its new-strategy cards are cards_new.json
     try:
-        cards = json.loads((K.CARDS_DIR / bot / "cards.json").read_text(encoding="utf-8")).get("cards", [])
+        cards = json.loads((K.CARDS_DIR / bot / ("cards_new.json" if bot == "bot5" else "cards.json")).read_text(
+            encoding="utf-8")).get("cards", [])
     except Exception:  # noqa: BLE001
         return {}
     new = [c for c in cards if c.get("kind") == "new" and str((c.get("change") or {}).get("combo") or "").count("|") == 2]
     out = {}
-    for combo in bot_combos(bot):
+    if bot == "bot5":
+        try:
+            running = list((json.loads((ROOT / "live" / "bots" / "bot5.json").read_text(encoding="utf-8")).get("scout") or []))
+        except Exception:  # noqa: BLE001
+            running = []
+    else:
+        running = bot_combos(bot)
+    for combo in running:
         sid, tf, sym = combo.split("|")
         if not sid.startswith("SC"):
             continue
@@ -1023,7 +1033,7 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 entry study failed: {e}")
-    if a.bot in ("bot1", "bot2", "bot3", "bot4") and a.where in ("pc", "all"):
+    if a.bot in ("bot1", "bot2", "bot3", "bot4", "bot5") and a.where in ("pc", "all"):
         # the scout strategies picked out of a losing family (the manager's tasks mgr1411fam / mgr1411fam2, deadline
         # 16-17.11.2026): one instrument's filter test per round (a fifth of the budget, at least 10 minutes), then the
         # sum per filter over the family -> reports/agents/<bot>/family_fix.json

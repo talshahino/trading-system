@@ -307,7 +307,16 @@ NOTE_TESTS += [
     {"id": f"{trk}_video", "track": trk, "knob": "TREND", "vals": list(TG.VIDEO_TREND), "src": "tal1411vid",
      "he": "מסנן כיוון מהסרטונים (RSI / ADX / סופרטרנד / EMA 50-200 / סדר 5 ממוצעים)"}
     for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
-NOTE_SRC = {"tal1411vid": "משימות של טל מ־14.11 (מסנני הסרטונים: RSI במגמה, ADX, סופרטרנד, EMA 50/200, סדר הממוצעים).",
+NOTE_TESTS += [
+    # the user's videos of 14.11.2026 09:38-10:34 (task tal1411set6 (7) / (9)), on the gap method as it runs - one TREND
+    # value each (tal_gap.Data.trend, the same on the live bot): pd20 / pd50 = premium / discount of the last 20 / 50
+    # closed candles of the high timeframe (longs only under the range's middle, shorts only over it); piv = the
+    # previous day's pivot P (above = longs only, below = shorts only)
+    {"id": f"{trk}_pdpiv", "track": trk, "knob": "TREND", "vals": ["pd20", "pd50", "piv"], "src": "tal1411set6",
+     "he": "רק בדיסקאונט / פרמיה של הטווח, או בכיוון הפיבוט היומי"}
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
+NOTE_SRC = {"tal1411set6": "משימה של טל מ־14.11 (פרמיה / דיסקאונט ופיבוט יומי מהסרטונים).",
+            "tal1411vid": "משימות של טל מ־14.11 (מסנני הסרטונים: RSI במגמה, ADX, סופרטרנד, EMA 50/200, סדר הממוצעים).",
             "tal1411wkend": "משימה של טל מ־14.11 (כלל FTMO: בלי עסקה פתוחה בהפסקה של שעתיים ומעלה).",
             "tal1411ema": "משימה של טל מ־14.11 (מסנני EMA 9/20 ובולינגר).",
             "tal1411strad": "משימה של טל מ־14.11 (הגנת חדשות לגאפ).",

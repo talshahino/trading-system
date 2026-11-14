@@ -241,6 +241,19 @@ class Data:
                 o930 = pd.Series(np.where(rth, self.o1, np.nan)).groupby(np.asarray(day)).transform("first").to_numpy(float)
                 ref = np.where(rth & ~np.isnan(o930), o930, day0)
                 s = np.sign(prev - ref)
+            elif mode in ("pd20", "pd50"):
+                # premium / discount (the user's video of 14.11.2026, task tal1411set6 (9), Forex Bull Signals: "buy only
+                # in the discount"): the range of the last 20 / 50 CLOSED candles of the high timeframe - under its
+                # middle = longs only (discount), over it = shorts only (premium)
+                ts, o, h, l, c, _ = self.tf(htf)
+                n_ = int(mode[2:])
+                mid_ = ((pd.Series(h).rolling(n_, min_periods=n_).max() + pd.Series(l).rolling(n_, min_periods=n_).min()) / 2).to_numpy()
+                s = np.sign(self._closed(htf, mid_) - prev)
+            elif mode == "piv":
+                # the daily pivot (the user's video of 14.11.2026, task tal1411set6 (7), Ezekiel Chew): P = (high + low +
+                # close) / 3 of the previous UTC day - the price above P = longs only, below = shorts only
+                ts, o, h, l, c, _ = self.tf("1d")
+                s = np.sign(prev - self._closed("1d", (h + l + c) / 3))
             else:
                 up = UP.get(htf, "4h")
                 ts, o, h, l, c, _ = self.tf(up)

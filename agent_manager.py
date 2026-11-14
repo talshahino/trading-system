@@ -226,15 +226,24 @@ def main():
         def _tot(c):
             t = c.get("train") or {}
             return (t.get("eff_n") or t.get("n") or 0) * t["mean"] if t.get("mean") is not None else -9e9
+        # only a live proposal competes (14.11.2026, bot 6's smart agent): a card already withdrawn / declined kept
+        # every later proposal of the same track + knob at "watch" - 38531db8b5eb (bot 6 t5_1 + MAXC 0.2, the fix of
+        # the 13.11 loss) was withdrawn and then held its re-issued copy back, so the fix could never be decided
+        try:
+            gone = {x.get("card") for x in json.loads(Path("reports/agents/decisions.json").read_text(encoding="utf-8")).get("decisions", [])
+                    if x.get("type") == "card" and x.get("bot") == bot and x.get("decision") in ("withdrawn", "declined")}
+        except Exception:  # noqa: BLE001
+            gone = set()
+        live_st = lambda c: c["status"] in ("pending", "approved") and c["id"] not in gone  # noqa: E731
         best = {}
         for c in cards:
-            if c["tier"] in ("strong", "regular") and c["kind"] == "improve":
+            if c["tier"] in ("strong", "regular") and c["kind"] == "improve" and live_st(c):
                 ch = c["change"] or {}
                 k = ch.get("track") or ch.get("combo"), ch.get("knob") or ch.get("family")
                 if k not in best or _tot(c) > _tot(best[k]):
                     best[k] = c
         for c in cards:
-            if c["tier"] in ("strong", "regular") and c["kind"] == "improve":
+            if c["tier"] in ("strong", "regular") and c["kind"] == "improve" and live_st(c):
                 ch = c["change"] or {}
                 k = ch.get("track") or ch.get("combo"), ch.get("knob") or ch.get("family")
                 if best[k] is not c:

@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-14T23:07:12+00:00",
+ "updated": "2026-11-14T22:41:28+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -1548,48 +1548,6 @@
      "by": "manager",
      "decided": "2026-11-14T21:43:55+00:00",
      "decision_id": "d758153a22de"
-    },
-    {
-     "bot": "bot1",
-     "kind": "info",
-     "title": "בוט 1, 14.11 לילה 3: הזהב והכסף לא נסגרים בלילה בבוט 1; תוצאות הסבב של 21:40 לא פורסמו - תוקן",
-     "what": "תיקון לכרטיס הקודם: בבוט 1 (שרת FTMO) אין הפסקה לילית של יותר משעתיים בזהב ובכסף - ההפסקה היחידה שלמד היא סוף השבוע, ואף עסקת מתכות לא נסגרה ב־20:45. הסגירה הלילית הייתה רק בבוטים 2-4 (שרת MetaQuotes), ותוקנה הלילה. לכן הפער של TV20 XAUUSD בבוט 1 הוא העסקה של 11.11 שלא נפתחה, לא סגירה לילית. בנוסף: הסבב של בוט 1 במחשב הבוטים (21:40) לא פורסם - GitHub דחה קובץ אחד (שגיאה 422) וכל התוצאות נעצרו. מעכשיו קובץ שנדחה לא עוצר את השאר, ושמו נרשם ב־host.json. הבוט השלם ב־2026: +118.1%, יום גרוע -2.83%, ירידה מהשיא 5.02% - רחוק מהמגבלות, אין צורך בכרטיס סיכון.",
-     "train": null,
-     "unseen": null,
-     "whole": null,
-     "halves": null,
-     "neighbours": null,
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": null,
-     "baseline": null,
-     "change": {
-      "info": "bot1-1411n3"
-     },
-     "detail": {
-      "task": [
-       "b14brk"
-      ],
-      "commits": [
-       "e2418dd4a",
-       "527d9de49"
-      ],
-      "bot1_breaks_XAUUSD": {
-       "4-1425": 2956
-      },
-      "made_by": "smart agent 14.11 night 3"
-     },
-     "made": "2026-11-14T22:58:58+00:00",
-     "id": "665e3e1bf24d",
-     "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T22:59:12+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T22:59:12+00:00",
-     "decision_id": "dfcb6b49c0e8"
     },
     {
      "bot": "bot1",
@@ -33881,54 +33839,6 @@
     {
      "bot": "bot2",
      "kind": "info",
-     "title": "בוט 2, 14.11 לילה 3: זהב וכסף נסגרו כל לילה בגלל טעות של דקה - תוקן, עכשיו כמו הבדיקה",
-     "what": "הבוט החי סגר XAUUSD / XAGUSD כל לילה ב־20:45 UTC (ב' עד ה'), כי ההפסקה היומית של המתכות בשרת (23:00-01:00) נמדדה מפתיחת הנר האחרון ויצאה 121 דקות - 'יותר משעתיים'. בפועל היא בדיוק שעתיים, וחוק FTMO הוא רק יותר משעתיים (ובשרת של FTMO ההפסקה קצרה יותר). הבדיקה לא סוגרת שם, ולכן החי והבדיקה לא היו אותו דבר. בשבועיים האחרונים 4 עסקאות מתכות נסגרו כך מוקדם (+2.13R, +908$). התיקון: מודדים מסוף הנר האחרון, בדיוק כמו בבדיקה (break_mask). ייכנס לבוט תוך 10 דקות מההתקנה; מעכשיו עסקאות מתכות ממשיכות דרך הלילה כמו בבדיקה, והסטופ נשאר. הבוט השלם ב־2026: +108.0%, ירידה מהשיא 8.56% (מעולם לא מתחת ליתרת הפתיחה). העלאות הסיכון של 22:27 מ־1-3 עסקאות חוזרות לפי המנהל - לא מוסיף כרטיס סיכון.",
-     "train": null,
-     "unseen": null,
-     "whole": null,
-     "halves": null,
-     "neighbours": null,
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": null,
-     "baseline": null,
-     "change": {
-      "info": "bot2-1411n3"
-     },
-     "detail": {
-      "task": [
-       "b14brk"
-      ],
-      "commits": [
-       "e2418dd4a",
-       "527d9de49"
-      ],
-      "nightly_metal_closes": {
-       "n": 4,
-       "R": 2.13,
-       "usd": 908
-      },
-      "server_break_XAUUSD": {
-       "0..3-1380": 121,
-       "4-1380": 3001
-      },
-      "made_by": "smart agent 14.11 night 3"
-     },
-     "made": "2026-11-14T22:58:58+00:00",
-     "id": "b20bdb0e81ef",
-     "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T22:59:12+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T22:59:12+00:00",
-     "decision_id": "faa4b5ec1fca"
-    },
-    {
-     "bot": "bot2",
-     "kind": "info",
      "title": "YT03|1Hour|NVDA: היתרון נשחק",
      "what": "בחצי השנה האחרונה -0.03R לעסקה, לעומת +0.48R בשנה וחצי שלפני",
      "train": {
@@ -53620,54 +53530,6 @@
      "by": "manager",
      "decided": "2026-11-14T21:43:55+00:00",
      "decision_id": "1bed64a80f73"
-    },
-    {
-     "bot": "bot3",
-     "kind": "info",
-     "title": "בוט 3, 14.11 לילה 3: זהב וכסף נסגרו כל לילה בגלל טעות של דקה - תוקן, עכשיו כמו הבדיקה",
-     "what": "הבוט החי סגר XAUUSD / XAGUSD כל לילה ב־20:45 UTC (ב' עד ה'), כי ההפסקה היומית של המתכות בשרת (23:00-01:00) נמדדה מפתיחת הנר האחרון ויצאה 121 דקות - 'יותר משעתיים'. בפועל היא בדיוק שעתיים, וחוק FTMO הוא רק יותר משעתיים (ובשרת של FTMO ההפסקה קצרה יותר). הבדיקה לא סוגרת שם, ולכן החי והבדיקה לא היו אותו דבר. בשבועיים האחרונים 5 עסקאות מתכות נסגרו כך מוקדם (+1.92R, +664$). התיקון: מודדים מסוף הנר האחרון, בדיוק כמו בבדיקה (break_mask). ייכנס לבוט תוך 10 דקות מההתקנה; מעכשיו עסקאות מתכות ממשיכות דרך הלילה כמו בבדיקה, והסטופ נשאר. הבוט השלם ב־2026: +86.5%, ירידה 5.81%; הביטוח של 2025 (dd_fit 8.5%) בתוקף, התיקונים של TT03 / SS09 / SS01 בתור במחשב.",
-     "train": null,
-     "unseen": null,
-     "whole": null,
-     "halves": null,
-     "neighbours": null,
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": null,
-     "baseline": null,
-     "change": {
-      "info": "bot3-1411n3"
-     },
-     "detail": {
-      "task": [
-       "b14brk"
-      ],
-      "commits": [
-       "e2418dd4a",
-       "527d9de49"
-      ],
-      "nightly_metal_closes": {
-       "n": 5,
-       "R": 1.92,
-       "usd": 664
-      },
-      "server_break_XAUUSD": {
-       "0..3-1380": 121,
-       "4-1380": 3001
-      },
-      "made_by": "smart agent 14.11 night 3"
-     },
-     "made": "2026-11-14T22:58:58+00:00",
-     "id": "e6804f23fecf",
-     "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T22:59:12+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T22:59:12+00:00",
-     "decision_id": "7e12a9932ab3"
     },
     {
      "bot": "bot3",
@@ -88128,54 +87990,6 @@
      "by": "manager",
      "decided": "2026-11-14T21:43:55+00:00",
      "decision_id": "748a07a3bff2"
-    },
-    {
-     "bot": "bot4",
-     "kind": "info",
-     "title": "בוט 4, 14.11 לילה 3: זהב וכסף נסגרו כל לילה בגלל טעות של דקה - תוקן, עכשיו כמו הבדיקה",
-     "what": "הבוט החי סגר XAUUSD / XAGUSD כל לילה ב־20:45 UTC (ב' עד ה'), כי ההפסקה היומית של המתכות בשרת (23:00-01:00) נמדדה מפתיחת הנר האחרון ויצאה 121 דקות - 'יותר משעתיים'. בפועל היא בדיוק שעתיים, וחוק FTMO הוא רק יותר משעתיים (ובשרת של FTMO ההפסקה קצרה יותר). הבדיקה לא סוגרת שם, ולכן החי והבדיקה לא היו אותו דבר. בשבועיים האחרונים 5 עסקאות מתכות נסגרו כך מוקדם (-0.11R, -58$). התיקון: מודדים מסוף הנר האחרון, בדיוק כמו בבדיקה (break_mask). ייכנס לבוט תוך 10 דקות מההתקנה; מעכשיו עסקאות מתכות ממשיכות דרך הלילה כמו בבדיקה, והסטופ נשאר. הבוט השלם ב־2026: +70.3%, ירידה מהשיא 10.4% (הנקודה הנמוכה 97.7% מהפתיחה - לא נוגע ב־9%). שני הכרטיסים של GH02 USDJPY ו־SC001 USDCAD עדיין מחכים למסננים, ראשונים בתור.",
-     "train": null,
-     "unseen": null,
-     "whole": null,
-     "halves": null,
-     "neighbours": null,
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": null,
-     "baseline": null,
-     "change": {
-      "info": "bot4-1411n3"
-     },
-     "detail": {
-      "task": [
-       "b14brk"
-      ],
-      "commits": [
-       "e2418dd4a",
-       "527d9de49"
-      ],
-      "nightly_metal_closes": {
-       "n": 5,
-       "R": -0.11,
-       "usd": -58
-      },
-      "server_break_XAUUSD": {
-       "0..3-1380": 121,
-       "4-1380": 3001
-      },
-      "made_by": "smart agent 14.11 night 3"
-     },
-     "made": "2026-11-14T22:58:58+00:00",
-     "id": "d260220321dc",
-     "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T22:59:12+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T22:59:12+00:00",
-     "decision_id": "2ce1a0dd6ba1"
     },
     {
      "bot": "bot4",
@@ -131833,9 +131647,9 @@
      "status": "approved",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-14T22:46:26+00:00",
+     "first_seen": "2026-11-14T22:41:28+00:00",
      "by": "manager",
-     "decided": "2026-11-14T22:46:26+00:00",
+     "decided": "2026-11-14T22:41:30+00:00",
      "decision_id": "05998720b3c3"
     },
     {
@@ -468678,324 +468492,6 @@
     },
     {
      "bot": "bot6",
-     "kind": "info",
-     "title": "בוט 6: חוזה אחד, הגדלה אחרי ניצחון ו־EV04 - אף אחד לא נכנס (יותר רווח רק עם יותר סיכון)",
-     "what": "• שלוש משימות שהסתיימו במחשב הבוטים (ריצה של 19:06), אף אחת לא נכנסת - כל אחת מוסיפה רווח רק עם יותר סיכון, או אסורה:\n• חוזה אחד לעסקה שחוזה מיקרו אחד שלה גדול מהסיכון (0.2 / 0.3 / 0.4%): הכי טוב 0.3% - 2026 +10.3% ← +13.7%, אבל היום הגרוע -0.54% ← -1.02% והירידה הגדולה 2.0% ← 3.8% (2024-2025: -0.74% ← -1.00%, 3.0% ← 4.2%). לפי המטרה - לא נכנס. בבוט 5 אין דילוג כזה (שברי לוט).\n• הגדלה אחרי ניצחון (x1.25 עד x2): אחרי הקטנה לאותה ירידה כמו היום (x0.903) - 2026 +15.2% ← +17.9%, אבל היום הגרוע -0.96% ← -1.08% והירידה 2.6% ← 2.8%. לא נכנס. פירמידה ב־1R: פחות רווח (+6.1%). בבוט 5: anti לא עדיף; pyr לא עדיף.\n• EV04 (סטרדל דקה לפני חדשה): לא לבוט 6 - חשבון ממומן אוסר פתיחה / סגירה 2 דקות סביב חדשה מוגבלת, וגם חלש: הגרסה הבטוחה -3.1R ב־2026. נשאר בבוט 7 בלבד.\n• הבדיקות האלה רצו עוד בלי כלל ההפסקה של FTMO; מהסבב הבא הבוט כולו נבדק על הכללים כמו בחי, וכל אחת מהן חוזרת אוטומטית - אם תעבור, יגיע כרטיס.\n• הבא בתור במחשב (בסבב הקרוב): REARM ו־BRKH 1/3/6 לעלות של כלל סוף השבוע, ואחריהם כל המסננים מהסרטונים על הכללים כמו בחי. 84 אסטרטגיות האינדיקטורים החדשות (IB) נכנסות לבדיקת האסטרטגיות החדשות של בוט 6.",
-     "train": null,
-     "unseen": null,
-     "whole": null,
-     "halves": null,
-     "neighbours": null,
-     "tested": 2309,
-     "cost_r": null,
-     "risk_pct": null,
-     "baseline": null,
-     "change": null,
-     "detail": {
-      "world": "bot6",
-      "tasks": [
-       "tal1411anti",
-       "tal1411strad",
-       "tal1411risk"
-      ],
-      "one_micro": {
-       "now": {
-        "train": {
-         "total_pct": 22.37,
-         "worst_day_pct": -0.74,
-         "max_fall_pct": 2.95,
-         "low_pct": -0.48,
-         "daily_stops": 0,
-         "room_cut": 0,
-         "room_skipped": 444,
-         "open_peak_pct": 0.96,
-         "open_days_over_day_lim": 0,
-         "stopped": null,
-         "contract_skipped": 444
-        },
-        "unseen": {
-         "total_pct": 10.28,
-         "worst_day_pct": -0.54,
-         "max_fall_pct": 2.04,
-         "low_pct": -1.8,
-         "daily_stops": 0,
-         "room_cut": 0,
-         "room_skipped": 353,
-         "open_peak_pct": 0.84,
-         "open_days_over_day_lim": 0,
-         "stopped": null,
-         "contract_skipped": 353
-        }
-       },
-       "variants": {
-        "0.002": {
-         "train": {
-          "total_pct": 21.04,
-          "worst_day_pct": -0.99,
-          "max_fall_pct": 3.04,
-          "low_pct": -0.42,
-          "daily_stops": 0,
-          "room_cut": 0,
-          "room_skipped": 225,
-          "open_peak_pct": 0.96,
-          "open_days_over_day_lim": 0,
-          "stopped": null,
-          "contract_skipped": 225,
-          "one_micro": 220
-         },
-         "unseen": {
-          "total_pct": 13.12,
-          "worst_day_pct": -0.83,
-          "max_fall_pct": 3.02,
-          "low_pct": -2.65,
-          "daily_stops": 0,
-          "room_cut": 0,
-          "room_skipped": 200,
-          "open_peak_pct": 0.84,
-          "open_days_over_day_lim": 0,
-          "stopped": null,
-          "contract_skipped": 200,
-          "one_micro": 145
-         }
-        },
-        "0.003": {
-         "train": {
-          "total_pct": 23.57,
-          "worst_day_pct": -1.0,
-          "max_fall_pct": 4.15,
-          "low_pct": -0.42,
-          "daily_stops": 0,
-          "room_cut": 0,
-          "room_skipped": 138,
-          "open_peak_pct": 0.96,
-          "open_days_over_day_lim": 0,
-          "stopped": null,
-          "contract_skipped": 138,
-          "one_micro": 300
-         },
-         "unseen": {
-          "total_pct": 13.72,
-          "worst_day_pct": -1.02,
-          "max_fall_pct": 3.8,
-          "low_pct": -1.96,
-          "daily_stops": 0,
-          "room_cut": 0,
-          "room_skipped": 122,
-          "open_peak_pct": 0.84,
-          "open_days_over_day_lim": 0,
-          "stopped": null,
-          "contract_skipped": 122,
-          "one_micro": 221
-         }
-        },
-        "0.004": {
-         "train": {
-          "total_pct": 21.92,
-          "worst_day_pct": -1.14,
-          "max_fall_pct": 5.24,
-          "low_pct": -0.42,
-          "daily_stops": 0,
-          "room_cut": 1,
-          "room_skipped": 106,
-          "open_peak_pct": 0.96,
-          "open_days_over_day_lim": 0,
-          "stopped": null,
-          "contract_skipped": 104,
-          "one_micro": 346
-         },
-         "unseen": {
-          "total_pct": 12.9,
-          "worst_day_pct": -1.02,
-          "max_fall_pct": 3.32,
-          "low_pct": -1.79,
-          "daily_stops": 0,
-          "room_cut": 0,
-          "room_skipped": 98,
-          "open_peak_pct": 0.84,
-          "open_days_over_day_lim": 0,
-          "stopped": null,
-          "contract_skipped": 98,
-          "one_micro": 246
-         }
-        }
-       },
-       "chosen": null
-      },
-      "anti": {
-       "state": "done",
-       "missing": [],
-       "pyr_missing": [],
-       "rule": {
-        "step": 1.25,
-        "cap": 2.0,
-        "be": 0.05
-       },
-       "limits": {
-        "day": 1.5,
-        "all": 4.5
-       },
-       "now": {
-        "train": {
-         "n": 1719,
-         "total_pct": 18.55,
-         "max_fall_pct": 3.8,
-         "worst_day_pct": -0.86,
-         "days_under_3": 0
-        },
-        "unseen": {
-         "n": 856,
-         "total_pct": 15.17,
-         "max_fall_pct": 2.6,
-         "worst_day_pct": -0.96,
-         "days_under_3": 0
-        }
-       },
-       "anti": {
-        "train": {
-         "n": 1719,
-         "total_pct": 25.7,
-         "max_fall_pct": 4.21,
-         "worst_day_pct": -1.21,
-         "days_under_3": 0
-        },
-        "unseen": {
-         "n": 856,
-         "total_pct": 19.88,
-         "max_fall_pct": 3.05,
-         "worst_day_pct": -1.2,
-         "days_under_3": 0
-        },
-        "fair_k": 0.903,
-        "fair": {
-         "train_total_pct": 23.2,
-         "unseen_total_pct": 17.94,
-         "unseen_worst_day_pct": -1.08,
-         "unseen_max_fall_pct": 2.75
-        },
-        "better": false
-       },
-       "pyr": {
-        "train": {
-         "n": 1724,
-         "total_pct": 12.69,
-         "max_fall_pct": 4.31,
-         "worst_day_pct": -0.92,
-         "days_under_3": 0
-        },
-        "unseen": {
-         "n": 867,
-         "total_pct": 6.87,
-         "max_fall_pct": 4.52,
-         "worst_day_pct": -0.96,
-         "days_under_3": 0
-        },
-        "fair_k": 0.882,
-        "fair": {
-         "train_total_pct": 11.19,
-         "unseen_total_pct": 6.06,
-         "unseen_worst_day_pct": -0.85,
-         "unseen_max_fall_pct": 3.99
-        },
-        "better": false
-       },
-       "bot5": "בבוט 5: anti לא עדיף; pyr לא עדיף"
-      },
-      "straddle": {
-       "all": {
-        "baseline": {
-         "v": "pre|x1|opp|t2|h30|cusd|sp0",
-         "train": {
-          "n": 78,
-          "eff_n": 77.9,
-          "mean": 0.1987,
-          "t": 1.26,
-          "win": 44.7,
-          "sum": 15.9
-         },
-         "unseen": {
-          "n": 96,
-          "eff_n": 96.0,
-          "mean": 0.0155,
-          "t": 0.13,
-          "win": 38.2,
-          "sum": 2.17
-         },
-         "gross_unseen": 8.46
-        },
-        "best": {
-         "v": "pre|x0.5|opp|be1|h30|cusd|sp0",
-         "train": {
-          "n": 85,
-          "eff_n": 84.9,
-          "mean": 0.6663,
-          "t": 2.39,
-          "win": 34.1,
-          "sum": 57.24
-         },
-         "unseen": {
-          "n": 107,
-          "eff_n": 107.0,
-          "mean": 0.073,
-          "t": 0.33,
-          "win": 24.2,
-          "sum": 8.52
-         },
-         "gross_unseen": 22.52
-        },
-        "robust": {
-         "top_positive_unseen": 10,
-         "top": 10,
-         "top_better_than_base": 10
-        },
-        "tested": 1536
-       },
-       "safe": {
-        "baseline": null,
-        "best": {
-         "v": "safe|x1.5|opp|t1.5|h30|cusd|sp0",
-         "train": {
-          "n": 56,
-          "eff_n": 55.9,
-          "mean": 0.0281,
-          "t": 0.2,
-          "win": 48.1,
-          "sum": 1.66
-         },
-         "unseen": {
-          "n": 69,
-          "eff_n": 69.0,
-          "mean": -0.0499,
-          "t": -0.48,
-          "win": 46.1,
-          "sum": -3.08
-         },
-         "gross_unseen": -0.88
-        },
-        "robust": {
-         "top_positive_unseen": 2,
-         "top": 10,
-         "top_better_than_base": 0
-        },
-        "tested": 768
-       },
-       "bot5": "בבוט 5 (המדדים והזהב): safe|x0.5|opp|t2|h30|cusd|sp0|cap1, 2026 -6.0R"
-      },
-      "rules_note": "whole-bot runs of 14.11 19:06, before TG.ftmo_cfg"
-     },
-     "made": "2026-11-14T22:46:19+00:00",
-     "id": "0f0f8053fadd",
-     "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T22:46:26+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T22:46:26+00:00",
-     "decision_id": "521dc50418af"
-    },
-    {
-     "bot": "bot6",
      "kind": "new",
      "title": "אסטרטגיה חדשה: SC107|1Min|US500 · News 1m: impulse candle, entry after the 3-minute correction, stop past it, target the impulse extreme",
      "what": "הסייר הביא אותה (TradingView (idea)). נבדקה על הכלים של הבוט עם החוקים שלו: 30.04-31.12.2025, ומוצגת על 2026.",
@@ -487246,64 +486742,6 @@
      "by": "manager",
      "decided": "2026-11-13T03:48:28+00:00",
      "decision_id": "029775b2c90a"
-    },
-    {
-     "bot": "bot7",
-     "kind": "info",
-     "title": "בוט 7: דעיכת הזינוק (EV05) לא מרוויחה ב־2026 - לא נכנסת; הסטרדל והשאר בריצה",
-     "what": "EV05 (דעיכת הזינוק מיד אחרי הפרסום, המשימה של טל) נבדק על כל 16 המכשירים ב־GitHub: 7,344 גרסאות (חלון 1-5 דקות, גודל זינוק 1-2.5 ATR, כניסה בדקה 10 / בחזרה מתחת לנר / בלימיט, סטופ, יעד, יציאה בזמן), עלויות FTMO אמיתיות. הגרסה הטובה ב־2025: 153 עסקאות +12.4R, וב־2026 197 עסקאות -27.3R. אף אחת מ־10 הטובות לא מרוויחה ב־2026; גם לפי סוג פרסום, מכשיר וכיוון. בזהב לבד (הדוגמה מהסרטון) רק 5-11 עסקאות - מעט מדי. למה: הזינוק בדקות הראשונות ממשיך לעיתים קרובות, והספרד בדקת הפרסום אוכל את מה שנשאר (לפני עלויות האינפלציה הייתה +9.4R ב־2026, אחרי עלויות +2.5R על 58 עסקאות, t 0.7). לא נכנס לבוט. EV04 (סטרדל לפני חדשה): 13 מתוך 16 מכשירים - הגרסה הטובה ב־2025 +114.4R, ב־2026 רק +5.9R על 472 עסקאות (כמו הבסיס +5.8R) - היתרון לפני עלויות נבלע בספרד. נשלחה ריצה ב־GitHub שמסיימת את 3 המכשירים, EV06/EV07 (בדיקה חוזרת וספיגה) ו־EV08 (הפתעת הפרסום); מחשב הבוטים הגיע לבוט 7 רק פעם אחת ב־12 שעות. שימו לב: הריצה של הבוט כולו על 2026 עם ההגנה של 4.5%/9% מראה -8.9% וירידה של 12% - בעיקר SC001 על JP225 (1,388 עסקאות). בדיקת התיקון על המשפחה שלו עוד רצה; עד 16.11 תיקון או כרטיס הורדת סיכון.",
-     "train": {
-      "n": 153,
-      "eff_n": 152.8,
-      "mean": 0.0786,
-      "t": 0.87,
-      "win": 48.2,
-      "sum": 12.44
-     },
-     "unseen": {
-      "n": 197,
-      "eff_n": 197.0,
-      "mean": -0.14,
-      "t": -1.94,
-      "win": 40.0,
-      "sum": -27.28
-     },
-     "whole": null,
-     "halves": null,
-     "neighbours": null,
-     "tested": 7344,
-     "cost_r": null,
-     "risk_pct": null,
-     "baseline": {
-      "n": 150,
-      "eff_n": 150.0,
-      "mean": -0.0638,
-      "t": -1.07,
-      "win": 59.2,
-      "sum": -9.24
-     },
-     "change": {
-      "combo": "bot7|*",
-      "note": "info only",
-      "night": "2026-11-15a",
-      "at": "2026-11-14T23:07:04+00:00"
-     },
-     "detail": {
-      "source": "agents/news_fade.py -> reports/agents/bot7/fade_study.json (GitHub 2026-11-14T21:19)",
-      "straddle_partial": true,
-      "github_run": "shocks.yml straddle 50 / retest 60 / surprise 60"
-     },
-     "made": "2026-11-14T23:07:04+00:00",
-     "id": "63873fee7bf9",
-     "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T23:07:12+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T23:07:12+00:00",
-     "decision_id": "ab54dad4461e"
     },
     {
      "bot": "bot7",
@@ -515510,8 +514948,8 @@
  },
  "decisions": {
   "new": [
-   "ab54dad4461e"
+   "05998720b3c3"
   ],
-  "unread": 430
+  "unread": 424
  }
 }

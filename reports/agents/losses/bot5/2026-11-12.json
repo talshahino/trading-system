@@ -166,8 +166,16 @@
    {
     "combo": "TAL|15Min|US500",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "שיטת הגאפ: סיכון כל המסלולים × 0.85",
+      "decision": null,
+      "card": "a5d5327de8cd",
+      "at": "2026-11-14T18:18:14+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
@@ -178,6 +186,13 @@
       "what": "הוסרה מהבוט (מסלול 5m/1m, סיכון 0)",
       "decision": null,
       "at": null,
+      "effect_month_pct": null
+     },
+     {
+      "what": "שיטת הגאפ: סיכון כל המסלולים × 0.85",
+      "decision": null,
+      "card": "a5d5327de8cd",
+      "at": "2026-11-14T18:18:14+00:00",
       "effect_month_pct": null
      },
      {
@@ -209,6 +224,13 @@
       "effect_month_pct": null
      },
      {
+      "what": "שיטת הגאפ: סיכון כל המסלולים × 0.85",
+      "decision": null,
+      "card": "a5d5327de8cd",
+      "at": "2026-11-14T18:18:14+00:00",
+      "effect_month_pct": null
+     },
+     {
       "what": "שיטת הגאפ בבוט 6, מסלול t5_1: סיכון 0.28% ← 0.084% (× 0.3)",
       "decision": null,
       "card": "6b60a751cacd",
@@ -227,11 +249,9 @@
     "cut_only": false
    }
   ],
-  "open": [
-   "TAL|15Min|US500"
-  ],
+  "open": [],
   "cut_only": [],
   "total_month_pct": 0.54,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון"
  }
 }

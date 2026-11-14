@@ -535,6 +535,20 @@ def untested_new(bot, where):
 NEW_BATCH = 30                         # combos of one instrument in one backtest run (its bars are loaded once)
 
 
+def _new_caps(bot):
+    """Per-instrument batch sizes cut after a batch timed out (reports/agents/<bot>/new_batch.json)."""
+    try:
+        return json.loads((ROOT / "reports" / "agents" / bot / "new_batch.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def _save_new_caps(bot, caps):
+    p = ROOT / "reports" / "agents" / bot / "new_batch.json"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(caps, indent=1), encoding="utf-8")
+
+
 def test_new(bot, budget_s, where, symbols=None, timeframes=None):
     """Every scout strategy, on the bot's instruments and the timeframes its source states, once (re-run after RERUN_DAYS).
     The due combos of one instrument go into one backtest run, several strategies together (manager, 12.11.2026: one
@@ -591,15 +605,17 @@ def test_new(bot, budget_s, where, symbols=None, timeframes=None):
             st.put("new", c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - 1)).isoformat(),
                               "combo": c, "error": str(e)[-300:]})
 
+    caps = _new_caps(bot)
     while queue:
         left = budget_s - (time.time() - t0)
         if left < 120:
             print(f"new strategies: stopped for time, {done} tested, {sum(len(q[2]) for q in queue)} combos left")
             return done
         sym = queue[0][0]
+        cap = int(caps.get(sym, NEW_BATCH))
         batch, n = [], 0
         for q in list(queue):
-            if q[0] == sym and (n == 0 or n + len(q[2]) <= NEW_BATCH):
+            if q[0] == sym and (n == 0 or n + len(q[2]) <= cap):
                 batch.append(q)
                 n += len(q[2])
                 queue.remove(q)
@@ -608,6 +624,24 @@ def test_new(bot, budget_s, where, symbols=None, timeframes=None):
             for _, s_, combos in batch:
                 done += store(t, s_, combos)
         except Exception as e:  # noqa: BLE001
+            # 14.11.2026 (manager): a 30-combo batch on the metals (XAGUSD / XAUUSD / XPTUSD, with 1-minute combos) did
+            # not finish inside the run's time - run_rules stopped on its time budget, no trades file, every strategy
+            # put back, nothing stored - so bots 2-4 tested 0 new combos run after run, the same batch first every
+            # time. Now a timed-out batch halves that instrument's batch size (kept for the next runs) and goes back
+            # first in the queue; a single combo that still times out is marked failed and retried in a day.
+            if "Time budget reached" in str(e) or "timed out" in str(e).lower():
+                if left < 480:                       # little time was left anyway: not the batch's fault
+                    queue[0:0] = batch
+                    print(f"new strategies: stopped for time, {done} tested, {sum(len(q[2]) for q in queue)} combos left")
+                    return done
+                if n > 1:
+                    caps[sym] = max(1, n // 2)
+                    _save_new_caps(bot, caps)
+                    print(f"new strategies: {sym} batch of {n} timed out, now {caps[sym]}")
+                    queue[0:0] = batch
+                else:
+                    failed(batch[0][2], e)
+                continue
             if len(batch) == 1 or "no market data" in str(e):
                 for q in batch:
                     failed(q[2], e)

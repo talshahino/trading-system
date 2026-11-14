@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-14T12:03:17+00:00",
+ "updated": "2026-11-14T12:16:45+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -12,7 +12,7 @@
     71,
     276
    ],
-   "risk_recs": 26,
+   "risk_recs": 31,
    "pending": 0,
    "cards": [
     {
@@ -31667,7 +31667,7 @@
     79,
     204
    ],
-   "risk_recs": 15,
+   "risk_recs": 24,
    "pending": 0,
    "cards": [
     {
@@ -51649,7 +51649,7 @@
     103,
     186
    ],
-   "risk_recs": 18,
+   "risk_recs": 25,
    "pending": 0,
    "cards": [
     {
@@ -85295,7 +85295,7 @@
     92,
     162
    ],
-   "risk_recs": 14,
+   "risk_recs": 24,
    "pending": 0,
    "cards": [
     {
@@ -126525,6 +126525,36 @@
      "by": "manager",
      "decided": "2026-11-14T10:25:21+00:00",
      "decision_id": "b6a572917a08"
+    },
+    {
+     "bot": "bot5",
+     "kind": "info",
+     "title": "נבנו בבוט 5 לבדיקה: איכות הגאפ לפי נר 3, גאפ אחרי גריפת נזילות, חלונות Silver Bullet",
+     "what": "מהסרטונים של 14.11 (משימה tal1411gapplus): (1) איכות נר 3 - גוף ופתיל מול ATR: רק נר 3 חלש, או בלי נר 3 חזק / עם פתיל גדול; (2) רק גאפ שהדחף שלו גרף לפני כן את השפל / השיא של אתמול או של 20 הנרות האחרונים; (3) כניסות רק בחלונות Silver Bullet (ניו יורק 03-04, 10-11, 14-15). מנרות סגורים בלבד, זהה בבדיקה ובבוט החי, רץ על 6 המסלולים בסבב הבא במחשב; כרטיס רק אם משפר גם עד 2025 וגם ב־2026. ולמשימת המנהל (mgr1411thin): SC069 זהב בבוט 5 מקבלת את אותו תיקון שנבחר פעם אחת בבוטים 1/3/4.",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": null,
+     "detail": {
+      "code": "agents/tal_gap.py gap_keep (G3 / SWP), SESS_NY sb / sb10; agent_bot5.py NOTE_TESTS *_g3 / *_swp / *_sb (commit 17b23b710)"
+     },
+     "made": "2026-11-14T12:16:24+00:00",
+     "id": "62e22afb014a",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-14T12:16:45+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T12:16:45+00:00",
+     "decision_id": "eee2e05aa213"
     },
     {
      "bot": "bot5",
@@ -189895,7 +189925,17 @@
   }
  },
  "decisions": {
-  "new": [],
-  "unread": 331
+  "new": [
+   "eee2e05aa213",
+   "33e62378bc9e",
+   "eef3134cd178",
+   "f279bd408ac0",
+   "ac1e7029417a",
+   "0e5bffa7eba6",
+   "46cf8abe905a",
+   "984676e1c5c0",
+   "96ccea6788ca"
+  ],
+  "unread": 340
  }
 }

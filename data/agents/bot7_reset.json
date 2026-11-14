@@ -1,5 +1,5 @@
 {
- "fp": "7fe1b797a7bb",
+ "fp": "cebe54b90938",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -225,35 +225,21 @@
     "added": "2026-11-14"
    },
    "SH01|1Min|GER40": {
-    "K": 6,
-    "D": 1,
-    "H": 120,
-    "p": 0.25,
-    "side": "down",
-    "co": "alone",
-    "co_sym": "US100",
-    "fix_card": "3718a860cb42",
-    "prev": {
-     "K": 8,
-     "D": 3,
-     "H": 60
-    },
-    "fix_why": "ניסיון תיקון 3: רק קנייה אחרי זעזוע למטה, רק כש־US100 לא מזדעזע באותו כיוון - 2026 +15.3R במקום -4.5R; הסיכון נשאר x0.5"
+    "K": 8,
+    "D": 3,
+    "H": 60
    },
    "SH01|1Min|US100": {
     "K": 8,
     "D": 1,
-    "H": 60,
-    "filter": "chop_trend",
-    "filter_card": "69f4dc4a25da",
-    "filter_why": "רק כשהשוק במגמה (Choppiness 14 מתחת ל־50) - 2026 +31.6R במקום +27.5R; הסיכון נשאר x0.5"
+    "H": 60
    }
   },
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-14T21:04:44+00:00",
- "account_v": 9,
+ "last_reset": "2026-11-14T06:05:33+00:00",
+ "account_v": 8,
  "resets": [
   {
    "v": 2,
@@ -303,13 +289,6 @@
    "what": "הוסרו 4 אסטרטגיות/מכשירים · כלל השתנה ב־SC089|5Min|GER40, SC089|5Min|JP225, SC097|1Hour|JP225, SC097|4Hour|GER40",
    "archive": "data/agents/bot7_archive/account_v5.json",
    "id": "3f6612a2d860"
-  },
-  {
-   "v": 9,
-   "at": "2026-11-14T21:04:44+00:00",
-   "what": "כלל השתנה ב־SH01|1Min|GER40, SH01|1Min|US100",
-   "archive": "data/agents/bot7_archive/account_v5.json",
-   "id": "ae351fd58868"
   }
  ],
  "stable": false,

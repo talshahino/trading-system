@@ -366,9 +366,29 @@ VID6 = tuple(("TREND", v) for v in TG.VIDEO_TREND)
 # (pd20 / pd50), or longs only above the previous day's pivot (H+L+C)/3 and shorts only below it (piv) - as the track's
 # TREND, head to head on bot 6's four running tracks and three indices.
 PDP6 = (("TREND", "pd20"), ("TREND", "pd50"), ("TREND", "piv"))
-TASK6 = {"wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6}
-USER6 = WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6
-TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv"}
+# CLOSE TO THE GAP METHOD (the user's videos of 14.11.2026 12:48-14:26, task tal1411gapplus; bot 5's commit 17b23b710,
+# tal_gap.gap_keep / SESS_NY - the high timeframe's closed candles only, the same in simulate and in live_trades, which
+# bot 6's account trades): G3 = the gap's quality by candle 3 (body / wicks against the ATR), SWP = only a gap whose
+# impulse swept the previous day's / the 20 candles' low or high, SESS sb / sb10 = fills only in the Silver Bullet
+# windows (New York 03-04, 10-11, 14-15 / 10-11 - inside the futures' session), and TREND dbias = the Daily Bias of the
+# last closed day (bot 6's smart agent, 14.11.2026 afternoon, tal_gap.Data.trend). One knob each, head to head on the
+# four running tracks and three indices; a card only if better on 2026 too.
+GQ6 = tuple(("G3", v) for v in TG.G3_VALS) + tuple(("SWP", v) for v in TG.SWP_VALS) + (("SESS", "sb"), ("SESS", "sb10"))
+DB6 = (("TREND", "dbias"),)
+TASK6 = {"wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
+         "gapq": GQ6, "dbias": DB6}
+USER6 = WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6
+TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias"}
+FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
+                           "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
+                           "nowick": "בלי גאפ שלנר 3 שלו פתיל גדול",
+                           "nobad": "בלי גאפ שנר 3 שלו חזק או עם פתיל גדול"}.get(str(v), f"G3 {v}") + f" (G3 {v})"
+FILT_HE["SWP"] = lambda v: {"pdhl": "רק גאפ אחרי גריפה של השפל / השיא של אתמול",
+                            "sw20": "רק גאפ אחרי גריפה של השפל / השיא של 20 הנרות"}.get(str(v), f"SWP {v}") + f" (SWP {v})"
+_sess_he = FILT_HE["SESS"]
+FILT_HE["SESS"] = lambda v: ({"sb": "רק בחלונות Silver Bullet (ניו יורק 03-04, 10-11, 14-15)",
+                              "sb10": "רק בחלון Silver Bullet 10:00-11:00 ניו יורק"}[v] + f" (SESS {v})") \
+    if v in ("sb", "sb10") else _sess_he(v)
 FILT_HE["TREND"] = lambda v: {"e920": "רק בכיוון EMA 9/20 של הטיים פריים הגבוה", "e920l": "רק בכיוון EMA 9/20 של טיים פריים הכניסה",
                               "day": "רק בכיוון פתיחת היום", "up20": "רק בכיוון EMA 20 של הטיים פריים שמעל",
                               "rsi50": "רק בצד של RSI 50", "rsix": "RSI במגמה מול EMA 200", "adx": "רק כש־ADX14 מעל 20",
@@ -376,7 +396,8 @@ FILT_HE["TREND"] = lambda v: {"e920": "רק בכיוון EMA 9/20 של הטיי�
                               "ema5": "רק כש־5 הממוצעים מסודרים בכיוון",
                               "pd20": "קנייה רק בדיסקאונט / מכירה רק בפרמיה של 20 הנרות בטיים פריים הגבוה",
                               "pd50": "קנייה רק בדיסקאונט / מכירה רק בפרמיה של 50 הנרות בטיים פריים הגבוה",
-                              "piv": "רק בכיוון הפיבוט היומי (מעל P קנייה, מתחת מכירה)"}.get(str(v), f"TREND {v}") + f" (TREND {v})"
+                              "piv": "רק בכיוון הפיבוט היומי (מעל P קנייה, מתחת מכירה)",
+                              "dbias": "רק בכיוון ההטיה היומית (Daily Bias של היום הקודם)"}.get(str(v), f"TREND {v}") + f" (TREND {v})"
 FILT_HE["BBW"] = lambda v: ("בלי כניסה כשרוחב בולינגר 20/2 מתחת לאחוזון 20 של 100 הנרות, טיים פריים "
                             + ("הכניסה" if str(v)[0] == "l" else "גבוה") + f" (BBW {v})")
 FILT_HE["NEWSX"] = lambda v: f"הגנת חדשות: בלי כניסה ±{int(v)} דק' סביב חדשה אדומה, וסגירה {int(v)} דק' לפניה (NEWSX {int(v)})"
@@ -482,8 +503,8 @@ def filt_cards(idx, group=FILT6):
                           f"2026 (לא נראתה): סה\"כ {lv['unseen']:+.1f}R ← {x['unseen']:+.1f}R, {x['n_unseen']} עסקאות, "
                           f"{x['mean_unseen']:+.2f}R לעסקה (היום {lv['mean_unseen']:+.2f}R על {lv['n_unseen']}), היום הגרוע "
                           f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. "
-                          + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND") or str(v).startswith("e920") or v in TASK_TREND else "")
-                          + "בבוט 5: " + (_b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND") or str(v).startswith("e920") or v in TASK_TREND
+                          + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND", "G3", "SWP") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10") else "")
+                          + "בבוט 5: " + (_b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND", "G3", "SWP") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10")
                                           else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
                           tested=len(vs), risk_pct=round(r_ * 100, 3), baseline=bs["unseen"],
@@ -553,7 +574,8 @@ def ask_cards(idx):
 def _b5_ladder(knob="LADDER", val=None):
     """What bot 5's agent found for the same knob (its improve cards: LADDER 13.11.2026; BBW / NEWSX / PYR / TREND
     e920 / MINSTOP 14.11.2026)."""
-    pat = (f'"{val}"' if val in TASK_TREND else '"e920') if knob == "TREND" else f'"{knob}"'
+    pat = (f'"{val}"' if val in TASK_TREND else '"e920') if knob == "TREND" else \
+        (f'"{val}"' if knob == "SESS" else f'"{knob}"')
     try:
         cs = [c for nm in ("cards.json", "cards_notes.json", "cards_smart.json") if Path(f"reports/agents/bot5/{nm}").exists()
               for c in json.loads(Path(f"reports/agents/bot5/{nm}").read_text(encoding="utf-8")).get("cards", [])
@@ -1086,7 +1108,12 @@ SCOUT_RERUN_DAYS = 14
 # Bollinger / Keltner ones (SC068, SC070, SC071). SC058: no variant earned on 2024-2025 and on 2026, on any index.
 # 13.11.2026 late night: SC104 (the scout's US30 1-minute Parabolic SAR flip after 13:00 London, 25 / 50 points,
 # marked for bots 5-6) first - built for the Dow on one minute, the bot's own instrument and the fastest track.
-DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC104", ("1Min",)), ("SC058", ("5Min", "15Min", "1Min")), ("SC063", ("5Min",)),
+# 14.11.2026 afternoon: the scout's strategies from the user's videos of 14.11 that are close to his gap method and built
+# for the New York session - SC258 (the Judas swing of the 09:30-09:45 range + CISD), SC253 (the Silver Bullet's three
+# windows), SC250 (an FVG with a weak candle 3), SC251 (an FVG with displacement), SC286 (Candle Range Theory) - first.
+DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC258", ("5Min", "1Min")), ("SC253", ("5Min", "1Min")),
+                                                 ("SC250", ("5Min", "1Min")), ("SC251", ("5Min",)), ("SC286", ("15Min",)),
+                                                 ("SC104", ("1Min",)), ("SC058", ("5Min", "15Min", "1Min")), ("SC063", ("5Min",)),
                                                  ("SC073", ("5Min",)), ("SC077", ("5Min", "1Min")), ("SC078", ("15Min",)),
                                                  ("SC011", ("1Min",)), ("SC052", ("1Min",)), ("SC003", ("1Min",)),
                                                  ("SC047", ("1Min",)), ("SC021", ("5Min",)), ("SC028", ("5Min",)),

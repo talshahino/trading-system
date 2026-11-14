@@ -254,6 +254,18 @@ class Data:
                 # close) / 3 of the previous UTC day - the price above P = longs only, below = shorts only
                 ts, o, h, l, c, _ = self.tf("1d")
                 s = np.sign(prev - self._closed("1d", (h + l + c) / 3))
+            elif mode == "dbias":
+                # Daily Bias (the user's video of 14.11.2026 14:26, task tal1411gapplus (a)), from the last CLOSED UTC
+                # day against the day before it: a close over the previous high = longs only; under the previous low
+                # = shorts only; a wick through the previous high closed back inside = a sweep -> shorts only (and a
+                # wick under the previous low closed inside -> longs only); an inside day or both sides swept = both (2)
+                ts, o, h, l, c, _ = self.tf("1d")
+                ph, pl = np.r_[np.nan, h[:-1]], np.r_[np.nan, l[:-1]]
+                sw_hi, sw_lo = (h > ph) & (c <= ph), (l < pl) & (c >= pl)
+                b = np.where(c > ph, 1, np.where(c < pl, -1, np.where(sw_hi & ~sw_lo, -1,
+                             np.where(sw_lo & ~sw_hi, 1, 2))))
+                b = np.where(np.isnan(ph), 0, b).astype(float)
+                s = self._closed("1d", b)
             else:
                 up = UP.get(htf, "4h")
                 ts, o, h, l, c, _ = self.tf(up)

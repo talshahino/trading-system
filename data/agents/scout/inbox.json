@@ -1,5 +1,5 @@
 {
- "note": "The scout agent's new strategies (agents/scout_strategies.py). bots: which bots' agents test it (bot1-bot4 portfolios, bot5/bot6 scalping 1-15 minutes, bot7 economic releases); timeframes: what the source states; markets: fx, index, metal, energy, crypto, stock (empty = all of the bot's).",
+ "note": "The scout agent's new strategies (agents/scout_strategies.py). bots: which bots' agents test it (bot1-bot4 portfolios, bot5/bot6 scalping 1-15 minutes, bot7 economic releases); timeframes: what the source states; markets: fx, index, metal, energy, crypto, stock (empty = all of the bot's). indicators: the shared library agents/indicators (user, 14.11.2026: no compromise on indicators) - every bot's agent tests each as a filter / entry / exit on its own instruments; uses = ideas, the strategies that already use it.",
  "strategies": [
   {
    "id": "SC001",
@@ -3332,6 +3332,2029 @@
     "bot6"
    ],
    "rules": "5m long: EMA20 crosses over EMA50, Heikin-Ashi close over EMA20 and green -> buy / stop -10% / ROI 5%, 4% (20 min), 3% (30), 1% (60); sell EMA50 over EMA100 cross + HA close under EMA20 and red"
+  },
+  {
+   "id": "SC173",
+   "name": "Diamond top / bottom: close through the right-side line, stop the last inner swing, full-height target, 15m/30m",
+   "source": "Facebook (Trader Dhana reel 'Bearish Diamond Pattern', sent by the user; task 15)",
+   "url": "replies.json _tasks #15",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Diamond top / bottom (Trader Dhana, Facebook reel 'Bearish Diamond Pattern', sent by the user - task 15), intraday 15m / 30m. After an up trend the range widens (higher highs, lower lows) and then narrows (lower highs, higher lows); sell on a close under the lower-right line, stop over the last swing high inside the diamond, target = the full height (highest high to lowest low) projected down from the break. Diamond bottom = mirror. Ours: 2-bar swings, the formation = the last 3 swing highs and 3 swing lows, prior trend = 20 bars."
+  },
+  {
+   "id": "SC174",
+   "name": "Diamond top / bottom, target 61.8% of the height",
+   "source": "Facebook (Trader Dhana reel 'Bearish Diamond Pattern', sent by the user; task 15)",
+   "url": "replies.json _tasks #15",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SC173 diamond with the user's alternative target: 61.8% of the height (task 15: 'also test 50% / 61.8%')."
+  },
+  {
+   "id": "SC175",
+   "name": "3-touch trend-line liquidity grab + FVG + BOS, entry back in the FVG, grab stop, 2R",
+   "source": "Facebook (TheTrader's Villa reel 'Liquidity Trendline Break + FVG', sent by the user; task 16)",
+   "url": "https://www.facebook.com/share/r/1b3RsdvLg1/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TheTrader's Villa 'Liquidity Trendline Break + FVG' (Facebook reel, task 16), 5m - 1h. A falling trend line with 3+ touches (resistance - buyers' stops above it); price pokes through it (the liquidity grab), then a strong bearish candle leaves a bearish FVG (high[i] < low[i-2]) and closes under the last swing low (BOS) -> sell when price comes back into the FVG (its middle); stop over the high of the grab; target 2R (the video: the next liquidity below / a fixed R). Bullish mirror (rising line with 3+ touches, sweep under it, bullish FVG + BOS over the last swing high, buy back in the FVG). Differs from the user's gap method (tal_gap) by the 3-touch line and the sweep before the gap. Ours: l"
+  },
+  {
+   "id": "SC176",
+   "name": "Under VWAP + RSI14 back over 30 + reversal candle, 5-bar swing stop, target the VWAP",
+   "source": "TikTok (The Trader's Guide post, sent by the user; task 38)",
+   "url": "https://www.tiktok.com/@thetraders.guide",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The Trader's Guide (TikTok post, task 38), 5-15m intraday: buy when price is under the session VWAP, RSI(14) was under 30 and crosses back over 30, confirmed by a reversal candle (close over the previous candle's high); sell = mirror (over VWAP, RSI back under 70, close under the previous low). No stop / target in the post - ours: stop beyond the 5-bar low / high + 0.2 ATR, target = back to the VWAP. Session VWAP from 00:00 UTC on tick volume (CFDs have no real volume - noted). Differs from SS05 (RSI(2) + 2-SD) by RSI 14 with the reversal confirmation."
+  },
+  {
+   "id": "SC177",
+   "name": "Under VWAP + RSI14 back over 30 + reversal candle, 5-bar swing stop, 2R",
+   "source": "TikTok (The Trader's Guide post, sent by the user; task 38)",
+   "url": "https://www.tiktok.com/@thetraders.guide",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SC176 with the post's variant target 2R instead of the VWAP (task 38)."
+  },
+  {
+   "id": "SC178",
+   "name": "RSI range shift: up trend RSI dips to 40-45 and turns / down trend 55-60, swing stop, 2R",
+   "source": "TikTok (Trading Data, sent by the user; task tal1411rsi)",
+   "url": "replies.json _tasks tal1411rsi",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Trading Data (TikTok, task tal1411rsi): in a trend RSI does not reach 30 / 70 - in a down trend it lives in ~20-60, in an up trend in ~40-80, so 'buy at 30' fails in a down trend. Rule (b): in an up trend buy when RSI(14) dips to 40-45 and turns up; in a down trend sell when RSI rises to 55-60 and turns down. Trend (ours, from the same day's Market Structure video): close over EMA50 and EMA21 over EMA50 (mirror). No stop / target in the video - ours: stop beyond the 10-bar swing extreme, target 2R. agents/indicators rsi_regime."
+  },
+  {
+   "id": "SC179",
+   "name": "RSI 60-40 setup A: EMA21>50 trend, RSI ~40 turn near EMA21 + confirm candle, EMA50 stop, last-high target, EMA21 trail",
+   "source": "TikTok (Market Structure 'RSI 60-40 Setup', sent by the user; task tal1411rsi)",
+   "url": "replies.json _tasks tal1411rsi",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Market Structure (TikTok 'RSI 60-40 Setup', task tal1411rsi 08:58), 15m / 1h / 4h. Trend up = close over EMA21 and EMA50 and EMA21 over EMA50. Entry A (pullback): RSI(14) near 40 (<= 45 on the previous bar) and turning up, price near EMA21/50 (the low within 0.5 ATR of EMA21 or under it, close over EMA50), on a confirmation candle (close over the previous high). Stop under EMA50 (ours: EMA50 - 0.2 ATR); target 1 = the last swing high (ours: the whole position at the last confirmed 5-bar swing high, at least 1R away), trail under EMA21 (exit on a close under EMA21). Short = mirror (RSI near 60 turning down)."
+  },
+  {
+   "id": "SC180",
+   "name": "RSI 60-40 setup B: RSI > 60 + strong candle through the swing high, EMA21 stop, 2.5R, EMA21 trail",
+   "source": "TikTok (Market Structure 'RSI 60-40 Setup', sent by the user; task tal1411rsi)",
+   "url": "replies.json _tasks tal1411rsi",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Market Structure 'RSI 60-40 Setup' entry B (breakout), 15m / 1h / 4h: in the up trend (as SC179) RSI(14) over 60 and a strong candle (body >= 0.6 of its true range, true range >= 1 ATR) closes over the last swing high -> buy; stop under EMA21; target 2-3R (ours: 2.5R) with the trail under EMA21 (exit on a close under it). Short = mirror (RSI under 40, close under the last swing low)."
+  },
+  {
+   "id": "SC181",
+   "name": "RSI14 divergence with the EMA200 trend, then RSI 50 cross, divergence-extreme stop, 2R",
+   "source": "TikTok (The Trader's Guide '5 RSI ideas'; task tal1411rsi)",
+   "url": "https://www.tiktok.com/@thetraders.guide",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The Trader's Guide ('5 RSI ideas', task tal1411rsi 09:16): RSI divergence only in the direction of the big trend, confirmed by RSI crossing 50. Long: close over EMA200, a confirmed swing low (5 bars) lower than the previous one with a HIGHER RSI(14) at it (bullish divergence), then RSI crosses over 50 within 20 bars -> buy. Short = mirror (under EMA200, bearish divergence, RSI under 50). No stop / target in the video - ours: stop under the divergence low (over the high), target 2R."
+  },
+  {
+   "id": "SC182",
+   "name": "Close beyond both the VWAP and EMA20, exit on a close back beyond both, 1.5 ATR stop",
+   "source": "TikTok (The Trader's Guide; task tal1411vwap)",
+   "url": "https://www.tiktok.com/@thetraders.guide",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The Trader's Guide (TikTok, task tal1411vwap (1)), intraday: sell when a candle closes under the session VWAP AND under the EMA; exit when a candle closes over both; buy = mirror. Ours: EMA 20 (the video does not say the length), the first close beyond both (onset), stop 1.5 ATR (no stop in the video), no fixed target - the exit rule. Tick volume VWAP (CFDs, noted)."
+  },
+  {
+   "id": "SC183",
+   "name": "EMA50>200 trend, 0.5-0.786 pullback, entry on the EMA9 reclaim, pullback-low stop, swing-high / 2R",
+   "source": "TikTok (The Trader's Guide; task tal1411vwap)",
+   "url": "https://www.tiktok.com/@thetraders.guide",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The Trader's Guide (TikTok, task tal1411vwap (2)): in a trend (EMA50 over EMA200) wait for a pullback into the 0.5-0.786 zone of the last move (confirmed 5-bar swing low -> swing high), enter only after the price closes back over EMA9; stop under the pullback low; target the swing high / 2R (ours: the swing high when it is >= 1R away, else 2R). Short = mirror. Differs from SW16 / TT12 by the EMA9-reclaim trigger and the 0.786 floor."
+  },
+  {
+   "id": "SC184",
+   "name": "Ichimoku 9/26/52: over the cloud + TK cross + Chikou over the price, Kijun stop, TK-cross exit",
+   "source": "TikTok (Quant Tactics; task tal1411vwap)",
+   "url": "replies.json _tasks tal1411vwap",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Quant Tactics (TikTok, '2944% backtest' on crypto - probably exaggerated; task tal1411vwap (3)): buy when price is over the cloud, Tenkan crosses over Kijun and the Chikou span is over the price (= today's close over the close 26 bars ago - no look-ahead); sell = mirror. Ichimoku 9/26/52. No stop / target in the video - ours: stop at the Kijun (or 1.5 ATR when the Kijun is closer than 0.5 ATR), exit on the opposite TK cross, no fixed target. Differs from TV20 (no Chikou rule) and GH13 (7/14/30)."
+  },
+  {
+   "id": "SC185",
+   "name": "EMA9/21 cross over VWAP + ADX > 20, stop entry over the confirm high, candle stop, 2R",
+   "source": "TikTok (The Trader's Guide 'ADX 80%'; task tal1411set2)",
+   "url": "https://www.tiktok.com/@thetraders.guide",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The Trader's Guide 'ADX 80%' (TikTok, task tal1411set2 (1)): EMA9 crosses over EMA21, price over EMA9 and over the VWAP, ADX(14) over 20 on the confirmation candle -> buy on a break of the confirmation candle's high (within 3 bars); stop under the confirmation candle (or EMA21, the lower), target 2R (the video: 1.5-2R or exit on the cross back - we also exit on EMA9 crossing back under EMA21). Sell = mirror. Differs from SC008 (EMA 5/13, entry at the cross) by EMA 9/21 and the stop-entry over the confirmation high."
+  },
+  {
+   "id": "SC186",
+   "name": "Swing-low sweep and reclaim, sweep-low stop, target the previous swing high, gold 15m",
+   "source": "TikTok (sphula, gold 15m; task tal1411set2)",
+   "url": "replies.json _tasks tal1411set2",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "sphula (TikTok, gold 15m, task tal1411set2 (2)): price runs under a previous swing low and comes back over it - buy on the reclaim (the close back over the low) or on the retest of the zone; stop under the sweep low; target the previous swing high. Sell = mirror. Ours: swings of 5 bars (agents/indicators liquidity), entry at the reclaim close, target = the last confirmed swing high when it is >= 1R away (else 2R). Differs from SC151 (pivot-5 + SMA50 filter, 2R) and TV11 (the previous DAY's low) by the swing-high target and no trend filter."
+  },
+  {
+   "id": "SC187",
+   "name": "EMA20/50 direction + buyer/seller pressure flip (tick volume), swing stop, 2R",
+   "source": "TikTok (ProTrippa 'Forget MACD & RSI'; task tal1411set3)",
+   "url": "replies.json _tasks tal1411set3",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "ProTrippa 'Forget MACD & RSI' (TikTok, task tal1411set3 (1)): two moving averages give the direction (ours: EMA20 over EMA50 and both rising = up); enter only when the buyers-vs-sellers pressure oscillator flips to the side of the trend (agents/indicators buy_sell_pressure: close location x tick volume - CFDs have no real volume, noted). No stop / target in the video - ours: stop beyond the 10-bar swing, target 2R, exit when the pressure flips back."
+  },
+  {
+   "id": "SC188",
+   "name": "MFI14 back over 20 above EMA200 / under 80 below, swing stop, 2R",
+   "source": "TikTok (Quant Tactics MFI; task tal1411set3)",
+   "url": "replies.json _tasks tal1411set3",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Quant Tactics (TikTok, crypto results 300%+ probably exaggerated; task tal1411set3 (2)): Money Flow Index (14) - buy when it leaves the zone under 20 (crosses back over 20) in an up trend, sell when it crosses back under 80 in a down trend. Trend (ours) = EMA50 vs EMA200 (the dip under 20 often takes the price itself under a long average). Tick volume (CFDs). No stop / target - ours: stop beyond the 10-bar swing, target 2R. Differs from SC129 (MFI(3) = 100 / 0 momentum)."
+  },
+  {
+   "id": "SC189",
+   "name": "Broken S/R level (2+ tests) retest + EMA50 slope + RSI 50 confirmation, level stop, next-level target",
+   "source": "TikTok (Flux Charts 'S&R Strategy'; task tal1411set4)",
+   "url": "https://www.tradingview.com/u/fluxchart/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Flux Charts 'S&R Strategy' (TikTok, task tal1411set4 (1)): automatic S/R levels (swings tested 2+ times); enter on the retest of a level that broke, only with a second indicator's confirmation (ours: EMA50 slope in the trade's direction AND RSI(14) on the right side of 50); stop beyond the level; target the next level. Ours: agents/indicators sr_levels (pivots 5, zone 0.25 ATR), the level must have had 2+ tests before the break; stop = level -/+ 0.5 ATR; target = the next resistance (support) when >= 1R away, else 2R."
+  },
+  {
+   "id": "SC190",
+   "name": "Support held 3 tests, break, retest and rejection, pre-break swing stop, next level / 2R",
+   "source": "TikTok (Lima Signal; task tal1411set4)",
+   "url": "replies.json _tasks tal1411set4",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Lima Signal (TikTok, task tal1411set4 09:31) break and retest: a support that held 3 pullbacks; a candle closes under it; price comes back to it from below and is rejected -> sell; stop over the swing high before the break; target the established low (ours: 2R - the video's 'established low' is the next support, taken when it is >= 1R away). Buy = mirror (resistance held 3 times, broken up, retested from above). agents/indicators sr_levels."
+  },
+  {
+   "id": "SC191",
+   "name": "EMA 9/21/50/100/200 graded trend: strong -> EMA50 pullback, normal -> EMA21, 2R",
+   "source": "TikTok (The Trader's Guide EMA 9/21/50/100/200; task tal1411set4)",
+   "url": "https://www.tiktok.com/@thetraders.guide",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The Trader's Guide (TikTok, task tal1411set4 (2)): the order of EMA 9/21/50/100/200 grades the trend - all five in order = strong trend, pullbacks go to EMA50/100; a normal trend (price over EMA200, 9 > 21 > 50) pulls back to EMA21. Buy when the low touches the EMA of the grade (strong: EMA50, normal: EMA21) and the candle closes back over it; sell = mirror. No stop / target - ours: stop 0.5 ATR beyond the next slower EMA (strong: EMA100, normal: EMA50), target 2R. agents/indicators ema_stack."
+  },
+  {
+   "id": "SC192",
+   "name": "Falling trend-line touch short, stop 0.3 ATR over the line, 4R, US500 1m",
+   "source": "TikTok (Dan-Chi, US500 1m; task tal1411set4)",
+   "url": "replies.json _tasks tal1411set4",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Dan-Chi (TikTok, US500 1-minute, task tal1411set4 09:37): sell at the touch of a falling trend line with a tight stop over it and a far target. Ours: automatic line through the last two lower confirmed swing highs (agents/ indicators trendlines, pivots 5), the high reaches the line and the candle closes under it -> sell; stop = the line + 0.3 ATR; target 4R ('far' - ours). Buy = mirror on a rising support line."
+  },
+  {
+   "id": "SC193",
+   "name": "EMA20>50 + RSI > 50, touch of EMA20, exit on 20<50 or close < EMA50",
+   "source": "TikTok (Market Structure; task tal1411set6)",
+   "url": "replies.json _tasks tal1411set6",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Market Structure 'pullbacks EMA20/50 + RSI' (TikTok, task tal1411set6 (2)): EMA20 over EMA50 and RSI(14) over 50 -> buy when the price touches EMA20 (the low reaches it, the close stays over it) with RSI still over 50; exit when EMA20 closes under EMA50 or the price closes under EMA50. Sell = mirror. No stop in the video - ours: EMA50 - 0.5 ATR, no fixed target. Differs from SC057 (needs an engulfing / pin bar and 2R)."
+  },
+  {
+   "id": "SC194",
+   "name": "Previous-session POC retest after acceptance, rejection candle, 0.5 ATR stop, 2R",
+   "source": "TikTok (Market Structure '8 types of retest'; task tal1411set6)",
+   "url": "replies.json _tasks tal1411set6",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Market Structure '8 types of retest' (TikTok, task tal1411set6 (3)) - the POC kind: once the price has closed over the previous session's POC (bullish POC), the first return to it that is rejected (the low reaches the POC, the close is back over it and over the open = rejection candle) -> buy; mirror for a bearish POC. Entry only after the confirmation, as the video says. Ours: previous-UTC-session POC from the tick-volume profile (agents/ indicators volume_profile - CFD tick volume, noted), stop 0.5 ATR beyond the POC, target 2R, one per side a day."
+  },
+  {
+   "id": "SC195",
+   "name": "RSI divergence, then a structure break on expanding volume, divergence-low stop, 2R",
+   "source": "TikTok (Market Structure 'divergence is a warning'; task tal1411set6)",
+   "url": "replies.json _tasks tal1411set6",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Market Structure 'RSI divergence is a warning, not an entry' (TikTok, task tal1411set6 (4)): after a bullish RSI(14) divergence (lower swing low, higher RSI - pivots of 5 bars, known 5 bars late) wait for a break of structure - a close over the last swing high - with expanding volume (tick volume over its 20-bar average; a feed without volume passes) -> buy; bearish mirror. Valid 30 bars after the divergence. No stop / target in the video - ours: stop under the divergence low, target 2R."
+  },
+  {
+   "id": "SC196",
+   "name": "Bollinger 20/2 poke back inside within the value area / POC / HVN, target the middle band",
+   "source": "TikTok (Flux Charts 'Bollinger + Volume Profile'; task tal1411set6)",
+   "url": "https://www.tradingview.com/u/fluxchart/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Flux Charts 'Bollinger + Volume Profile' (TikTok, task tal1411set6 (5)): a candle outside the lower Bollinger band (20, 2) inside a high-volume area / the POC that closes back inside the bands -> buy; target the middle band (variant: the other band). Sell = mirror at the upper band. Ours: 'high-volume area' = within the previous session's value area (VAL..VAH) or within 0.5 ATR of its POC or an HVN (tick-volume profile, noted); entry at the close back inside; stop 0.3 ATR beyond the poke's extreme; target the middle band."
+  },
+  {
+   "id": "SC197",
+   "name": "Symmetric / ascending / descending triangle breakout, opposite-line stop, height target",
+   "source": "TikTok ('16 chart patterns'; task tal1411set6)",
+   "url": "replies.json _tasks tal1411set6",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "'16 chart patterns' (TikTok, task tal1411set6 (6)) - the triangles, which the library did not have: symmetric (falling highs + rising lows), ascending (flat highs + rising lows) and descending (falling highs + flat lows). Buy on a close over the upper line, sell on a close under the lower line; stop on the other side of the triangle at the breakout bar (the opposite line); target = the triangle's height at its start projected from the break (the classic measured move). Ours: lines + pattern from agents/indicators trendlines (pivots 4); ascending only long, descending only short, symmetric both."
+  },
+  {
+   "id": "SC198",
+   "name": "Triple top / bottom neckline break, extreme stop, height target",
+   "source": "TikTok ('16 chart patterns'; task tal1411set6)",
+   "url": "replies.json _tasks tal1411set6",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "'16 chart patterns' (TikTok, task tal1411set6 (6)): triple top = three swing highs within 1 ATR of each other with the two lows between them (the neckline = the lower of those lows); sell on a close under the neckline; stop over the highest of the three tops; target = the pattern's height under the neckline. Triple bottom = mirror. Ours: swings of 4 bars (known 4 bars late), tops within 1 ATR, the pattern must break within 40 bars of the third top."
+  },
+  {
+   "id": "SC199",
+   "name": "Bull / bear flag: 3-ATR pole, 5-20 bar flag under 50%, flag break, pole target",
+   "source": "TikTok ('16 chart patterns'; task tal1411set6)",
+   "url": "replies.json _tasks tal1411set6",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "'16 chart patterns' (TikTok, task tal1411set6 (6)) - flags: a pole (a move of >= 3 ATR within <= 10 bars) then a flag of 5-20 bars that retraces under 50% of the pole; buy on a close over the flag's high (bull flag), stop under the flag's low, target = the pole's length from the breakout (measured move). Bear flag = mirror. Ours: the flag = the bars since the pole's extreme; ATR(14) at the pole."
+  },
+  {
+   "id": "SC200",
+   "name": "Daily pivot bias: over P, first pullback to P, stop S1 / 1 ATR, target R1",
+   "source": "TikTok (Ezekiel Chew daily pivots; task tal1411set6)",
+   "url": "replies.json _tasks tal1411set6",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ezekiel Chew (TikTok, task tal1411set6 (7)): daily pivot points as support / resistance and trend - price over P = bullish. Rules (ours, from the video's idea): after the price has closed over the day's P (traditional, from the previous UTC day - agents/indicators pivot_points), the first pullback that touches P and closes back over it -> buy, target R1 (R2 when R1 is under 1R away), stop under S1 or 1 ATR under P, the nearer. Mirror for shorts under P (target S1). One per side a day."
+  },
+  {
+   "id": "SC201",
+   "name": "20-bar box breakout with >= 80% buyer share of the bar's tick volume, mid stop, box-height target",
+   "source": "TikTok (Flux Charts 'Easy Strategy'; task tal1411set6)",
+   "url": "https://www.tradingview.com/u/fluxchart/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Flux Charts 'Easy Strategy, two free indicators' (TikTok, task tal1411set6 (8)): breakout from a range box confirmed by the buyers' share of the breakout candle's volume (83% buyers in the video). Ours: box = the last 20 bars' high-low, tight = height <= 5 ATR; buy on a close over the box with the bar's buy share >= 80% (close location in the true range - no real volume / order flow, noted), sell mirror (<= 20%); stop at the box middle; target = the box height from the close."
+  },
+  {
+   "id": "SC202",
+   "name": "20-bar box breakout on a 'big trade' (tick-volume z >= 2), mid stop, box-height target",
+   "source": "TikTok (Meks Trades 'big trades' idea + the Flux box; tasks tal1411ind / set6)",
+   "url": "replies.json _tasks tal1411ind",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SC201's box breakout confirmed instead by a 'big trade' (Meks Trades, task tal1411ind 10:08): tick volume z-score >= 2 on the breakout candle closing in its upper (lower) half (agents/indicators big_trades; a feed with constant volume uses the bar's direction only). Same box, stop and target as SC201."
+  },
+  {
+   "id": "SC203",
+   "name": "ICT OTE in the discount: 61.8-79% of the up leg + bullish candle, swing-low stop, swing-high target, gold",
+   "source": "TikTok (Forex Bull Signals, gold premium / discount OTE; task tal1411set6)",
+   "url": "replies.json _tasks tal1411set6",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Forex Bull Signals (TikTok, gold, task tal1411set6 (9)): fib of the swing; buy only under 50% (discount), the entry zone is the 61.8-79% retracement (OTE). Ours: dealing range = the last confirmed 10-bar swing low -> swing high (up leg, agents/indicators premium_discount), the close in the OTE zone (21-38.2% of the range from the low) on a bullish candle (close over open and over the previous close) -> buy; stop under the swing low - 0.2 ATR; target the swing high. Sell = mirror in the premium of a down leg."
+  },
+  {
+   "id": "SC204",
+   "name": "First touch of the previous session's POC, reverse entry, 1 ATR stop, 2R",
+   "source": "TikTok (sixlots, POC as a reversal level; task tal1411set6)",
+   "url": "replies.json _tasks tal1411set6",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "sixlots (TikTok, task tal1411set6 (10)): the POC as a reversal level - a limit order at the previous session's POC, reverse entry at the FIRST touch. Coming from above -> buy at the POC, from below -> sell. Ours: the session opens on one side of the previous UTC session's POC (agents/indicators volume_profile, tick volume - noted); the first bar that reaches it enters at the close of that bar (a bar-close approximation of the limit), stop 1 ATR beyond the POC, target 2R; one a day."
+  },
+  {
+   "id": "SC205",
+   "name": "Over EMA50 + DI cross + ADX > 20 rising, swing stop, 2R",
+   "source": "TikTok (The Trader's Guide ADX + DI + EMA50; task tal1411set6)",
+   "url": "https://www.tiktok.com/@thetraders.guide",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The Trader's Guide (TikTok, task tal1411set6 (11)): price over EMA50, +DI crosses over -DI, ADX(14) over 20 and rising -> buy (sell = mirror). Ours: the cross may come up to 3 bars before ADX is over 20 and rising (+DI still over -DI), the first bar where all hold. No stop / target in the video - ours: stop beyond the 10-bar swing, target 2R. Differs from TV24 (ADX > 25, ATR trail, no EMA50)."
+  },
+  {
+   "id": "SC206",
+   "name": "ICT Judas swing of the Asian range at London / NY, order-block re-entry, sweep stop, Asian-range target",
+   "source": "TikTok (Flux Charts ICT Judas Swing + Order Block; task tal1411set6)",
+   "url": "https://www.tradingview.com/u/fluxchart/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "ICT Judas Swing + Order Block (Flux Charts, TikTok, task tal1411set6 (13)): at the London / New York open the first move sweeps the Asian high / low (or the previous day's) and reverses; enter on the return to the order block that formed; stop beyond the sweep's extreme; target the other side of the range. Ours: agents/indicators judas_swing (Asian range 19:00-24:00 NY, windows 02-05 and 08:30-11 NY); buy when, within 12 bars after the bullish Judas signal, the low trades back into the order block (its top) and the bar closes over the OB's bottom; stop under the sweep low - 0.1 ATR; target the Asian high (mirror: Asian low). Fits bots 5-6 (opens)."
+  },
+  {
+   "id": "SC207",
+   "name": "Balanced (D) previous session: VAL / VAH rejection, edge stop, target the POC",
+   "source": "TikTok (Dualis Flow / Olisa Flow / saint / nq tom volume-profile videos; task tal1411vp)",
+   "url": "replies.json _tasks tal1411vp",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Dualis Flow / saint (TikTok, task tal1411vp): after a balanced session (D-shaped profile) trade edge to edge - buy at the lower edge of the value area (VAL), sell at the upper (VAH), target the POC; saint 'wait for the edge, do not trade the middle'. Ours: the previous UTC session's tick-volume profile (agents/indicators volume_profile - no real volume in CFDs, noted); a rejection at VAL (the low under it, the close back over it) -> buy; stop 0.5 ATR beyond the edge; target the POC; first per side a day."
+  },
+  {
+   "id": "SC208",
+   "name": "Balanced (D) TPO profile: VAL / VAH rejection, target the TPO POC",
+   "source": "TikTok (Meks Trades TPO profile idea; task tal1411ind)",
+   "url": "replies.json _tasks tal1411ind",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SC207 on the TPO (time-at-price) profile instead of volume (Meks Trades 'TPO profile', task tal1411ind) - agents/indicators tpo_profile; everything else as SC207."
+  },
+  {
+   "id": "SC209",
+   "name": "P / b previous session: pullback to the POC in the shape's direction, VA-edge stop, 2R",
+   "source": "TikTok (Dualis Flow / Olisa Flow / saint / nq tom volume-profile videos; task tal1411vp)",
+   "url": "replies.json _tasks tal1411vp",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Dualis Flow (TikTok, task tal1411vp (b)): a P-shaped session (volume in the upper part - short covering) tends to continue up, a b-shaped one (volume low - long liquidation) down; enter on the pullback to the POC in that direction. Ours (with saint's 'trend day - one side dominates, do not trade against it': a trend-up session counts as P, trend-down as b): previous session P -> the first bar that trades down to its POC and closes over it -> buy, stop under the VAL - 0.2 ATR, target 2R; b -> mirror. One a day."
+  },
+  {
+   "id": "SC210",
+   "name": "Close through a previous-session LVN, target the next HVN, 1 ATR stop",
+   "source": "TikTok (Dualis Flow / Olisa Flow / saint / nq tom volume-profile videos; task tal1411vp)",
+   "url": "replies.json _tasks tal1411vp",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Olisa Flow (TikTok, LVN; task tal1411vp / tal1411of (2)): price moves fast through low-volume nodes - a break into an LVN targets the next high-volume node. Ours: the close crosses up through an LVN of the previous session (agents/indicators volume_profile: the bar's low under the LVN, its close over it) -> buy, target the next HVN above (must be >= 1 ATR away), stop 1 ATR under the LVN; mirror down. Do not place targets / stops inside an LVN is the filter idea for the bots (in_lvn)."
+  },
+  {
+   "id": "SC211",
+   "name": "Double-distribution (B) session: close through the void, target the other HVN",
+   "source": "TikTok (Dualis Flow / Olisa Flow / saint / nq tom volume-profile videos; task tal1411vp)",
+   "url": "replies.json _tasks tal1411vp",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "saint / Dualis Flow B-shape (two distributions, task tal1411vp): after a double-distribution session, a break out of the low-volume zone between the two peaks (the 'void' - Delta Void Profile idea, BigBeluga) goes to the other distribution. Ours: previous session B (agents/indicators volume_profile / delta_void_profile); a close crossing over the void -> buy, target the HVN above, stop 1 ATR under the void; crossing under -> sell to the HVN below."
+  },
+  {
+   "id": "SC212",
+   "name": "Absorption bar (2x tick volume, small body, at an extreme) + confirmation close, bar stop, 2R",
+   "source": "TikTok (Orderflow Sniper, 4 order-flow concepts; task tal1411of)",
+   "url": "replies.json _tasks tal1411of",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Orderflow Sniper (TikTok, task tal1411of (1)): absorption = abnormal tick volume (2x+ the average) on a candle with a small range / body at the end of a move - someone is absorbing; enter the opposite way after a confirmation candle; stop beyond the absorption candle. Ours: agents/indicators absorption (body <= 0.35 ATR, at a 10-bar extreme; no order book - tick volume only, noted); the next 3 bars: a close over the absorption bar's high -> buy (mirror: under its low -> sell); stop 0.1 ATR beyond the absorption bar; target 2R. Bot 7: the same in the minutes after a release."
+  },
+  {
+   "id": "SC213",
+   "name": "Equal highs / lows sweep and close back, sweep stop, opposite equal level / 2R",
+   "source": "TikTok (Orderflow Sniper, 4 order-flow concepts; task tal1411of)",
+   "url": "replies.json _tasks tal1411of",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Orderflow Sniper (TikTok, task tal1411of (3)): equal highs / lows (2+ touches) attract the price, and are bait before a reversal - a sweep of the level and a close back inside = enter the other way. Ours: agents/indicators liquidity (equal = two confirmed 5-bar swings within 0.1 ATR); entry at the sweep bar's close back inside; stop 0.2 ATR beyond the sweep extreme; target = the opposite equal level when one is live and >= 1R away, else 2R (the 'magnet' half of the video)."
+  },
+  {
+   "id": "SC214",
+   "name": "Approximate CVD divergence at a swing + reversal close, swing stop, 2R",
+   "source": "TikTok (Orderflow Sniper, 4 order-flow concepts; task tal1411of)",
+   "url": "replies.json _tasks tal1411of",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Orderflow Sniper (TikTok, task tal1411of (4)): approximate cumulative delta (tick volume x close location, reset each UTC session - no real order flow, noted) diverging from the price is a reversal warning. Ours: a bullish CVD divergence at a confirmed 5-bar swing low (agents/indicators cvd), then within 10 bars a close over the previous bar's high -> buy; stop under the divergence low - 0.1 ATR; target 2R. Mirror short."
+  },
+  {
+   "id": "SC215",
+   "name": "EMA50 pullback in the EMA50/200 trend, target the previous week's high (>= 3R), BE at 1R",
+   "source": "TikTok (Ezekiel Chew US500 far target; task tal1411set5)",
+   "url": "replies.json _tasks tal1411set5",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ezekiel Chew (TikTok, US500, 1:5.7, task tal1411set5 (3)): the idea is a far structural target (a big swing) instead of 1:1, with an early break-even. Ours on a plain trend pullback so the bots can compare the exit: up trend (EMA50 over EMA200, close over EMA50), the low touches EMA50 and the close is back over it -> buy; stop under the 10-bar low; target = the previous WEEK's high (agents/indicators htf_levels) when it is >= 3R away, else 3R; break-even at 1R (the breakeven rule: at 1/3 of the way to a 3R target). Mirror short to the previous week's low."
+  },
+  {
+   "id": "SC216",
+   "name": "SuperTrend AI (k-means factor) flips, line stop, flip exit",
+   "source": "agents/indicators supertrend_ai (SuperTrend AI: k-means picks the best ATR factor (1-5), flips = buy/sell (LuxAlgo; = Flux 'AI SuperTrend'))",
+   "url": "https://www.tradingview.com/script/wP7WWjLL-SuperTrend-AI-Clustering-LuxAlgo/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SuperTrend AI (Clustering) [LuxAlgo] / Flux 'AI SuperTrend' (task tal1411ind): buy when the adaptive SuperTrend flips up, sell when it flips down (the original's signals); stop at the trailing line (0.25 ATR beyond it when it is closer); exit on the opposite flip; no fixed target. agents/indicators supertrend_ai (ATR 10, factors 1-5, k-means 'best' cluster)."
+  },
+  {
+   "id": "SC217",
+   "name": "ML Lorentzian Classification signal + kernel direction, 4-bar hold, 1.5 ATR stop",
+   "source": "agents/indicators lorentzian (ML Lorentzian Classification: kNN (k 8) on RSI/WT/CCI/ADX features, 4-bar labels, + RQ kernel (jdehorty))",
+   "url": "https://www.tradingview.com/script/WhBzgfDu-Machine-Learning-Lorentzian-Classification/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Machine Learning: Lorentzian Classification (jdehorty, task tal1411ind): a new +1 / -1 classification with the kernel estimate in the same direction (the original's default kernel filter) -> buy / sell; exit after 4 bars (the original's hold) or on the opposite signal; stop 1.5 ATR (ours - the original has none). agents/indicators lorentzian."
+  },
+  {
+   "id": "SC218",
+   "name": "HMA50 trend turn, exit when the trend reaches its average length",
+   "source": "agents/indicators trend_duration (Trend Duration Forecast: HMA trend age vs the average / median length of past trends (ChartPrime))",
+   "url": "https://www.tradingview.com/script/L3SJFfAQ/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Trend Duration Forecast [ChartPrime] / 'expected trend length' (Trading Data, task tal1411set2 (4)): enter on an HMA(50) trend turn, exit when the running trend is as old as the average of the last 10 trends of that side (agents/indicators trend_duration ratio >= 1) or on the next turn; stop beyond the 10-bar swing; no target."
+  },
+  {
+   "id": "SC219",
+   "name": "Zero Lag Trend re-entry (close back over ZLEMA in the trend), band stop, 2R, flip exit",
+   "source": "agents/indicators zero_lag_trend (Zero Lag Trend Signals: ZLEMA 70 +/- highest ATR x1.2, trend flips and re-entries (AlgoAlpha))",
+   "url": "https://www.tradingview.com/script/tHK4O1Fi-Zero-Lag-Trend-Signals-MTF-AlgoAlpha/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Zero Lag Trend Signals [AlgoAlpha] (task tal1411ind): in an established trend (+1 for 2+ bars), the 'Bullish Entry' = close crosses back over the ZLEMA -> buy; 'Bearish Entry' mirror; stop at the opposite band side (ZLEMA - volatility for longs), target 2R, exit when the trend flips. agents/indicators zero_lag_trend."
+  },
+  {
+   "id": "SC220",
+   "name": "Zero Lag Trend flips (close beyond ZLEMA +/- volatility), ZLEMA stop, flip exit",
+   "source": "agents/indicators zero_lag_trend (Zero Lag Trend Signals: ZLEMA 70 +/- highest ATR x1.2, trend flips and re-entries (AlgoAlpha))",
+   "url": "https://www.tradingview.com/script/tHK4O1Fi-Zero-Lag-Trend-Signals-MTF-AlgoAlpha/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Zero Lag Trend Signals [AlgoAlpha]: the big trend-flip arrows (close beyond ZLEMA +/- volatility) -> enter, exit on the opposite flip; stop at the ZLEMA (ours), no target."
+  },
+  {
+   "id": "SC221",
+   "name": "ATR Fibonacci envelope trend: golden-pocket pullback, trail-band stop, 2R",
+   "source": "agents/indicators atr_fib_envelopes (ATR Fibonacci Trend Envelopes: RMA100 +/- 3 ATR trend + golden-pocket fib lines (BigBeluga))",
+   "url": "https://www.tradingview.com/script/16toJPAD-ATR-Fibonacci-Trend-Envelopes-BigBeluga/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "ATR Fibonacci Trend Envelopes [BigBeluga] (task tal1411ind): in the envelope's trend, a pullback into the golden pocket (between the 0.618 and 0.786 lines) that closes back out on the trend side (close over open) -> buy; stop at the trailing band (the trend line), target 2R; mirror short. agents/indicators atr_fib_envelopes."
+  },
+  {
+   "id": "SC222",
+   "name": "Double Ribbon trend score sign change, 2 ATR stop, opposite exit",
+   "source": "agents/indicators double_ribbon (Double Ribbon: 11 offset SMAs vs 11 growing SMAs, trend score -1..1 (ChartPrime, our reconstruction))",
+   "url": "https://www.tradingview.com/script/OdtelUqS-Double-Ribbon-ChartPrime/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Double Ribbon [ChartPrime] (task tal1411ind): the trend score turns positive -> buy, negative -> sell; exit on the opposite turn; stop 2 ATR (ours), no target. agents/indicators double_ribbon (our reconstruction)."
+  },
+  {
+   "id": "SC223",
+   "name": "Fibonacci Golden Wave: 0.5-0.618 touch of the 20-bar up leg, range-low stop, range-high target",
+   "source": "agents/indicators golden_wave (Fibonacci Golden Wave: 0.5-0.618 zone of the 20-bar range, pullback touches (Flux Charts))",
+   "url": "https://www.tradingview.com/script/SWe51Ddl-Fibonacci-Golden-Wave-Flux-Charts",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Fibonacci Golden Wave [Flux Charts] (task tal1411ind - 'Fibonacci Golden Wave' video of Flux): in an up leg of the 20-bar range (its high made after its low), a low inside the 0.5-0.618 golden zone with a close back over the zone -> buy; stop under the 20-bar low (the 1.0 level); target the 20-bar high; mirror short. agents/indicators golden_wave."
+  },
+  {
+   "id": "SC224",
+   "name": "Swing sweep then CISD within 10 bars, sweep stop, 2R",
+   "source": "agents/indicators cisd (Change in State of Delivery: close through the open of the last opposite candle run (ICT / LuxAlgo, = CISD Finder))",
+   "url": "https://www.tradingview.com/script/gHHRpuHC-Change-in-State-of-Delivery-CISD-LuxAlgo",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "CISD (ICT, LuxAlgo 'Change in State of Delivery' / CISD Finder, task tal1411ind 10:33) with its liquidity-sweep method: a sweep of a swing low (agents/indicators liquidity, 5-bar swings) and then, within 10 bars, a bullish CISD (close over the open of the last bearish run's first candle) -> buy; stop under the sweep low; target 2R. Mirror short. Differs from TT03 (sweep + POI + IFVG + CISD chain) - only the sweep and the CISD."
+  },
+  {
+   "id": "SC225",
+   "name": "Impulse Zone retest (1.5 ATR + 1.5x volume bar), zone stop, 2R",
+   "source": "agents/indicators impulse_zones (Impulse Zones: big-range + high-volume bars become zones, retests (Flux Charts))",
+   "url": "https://www.tradingview.com/script/Iv9MOWJ1-Impulse-Zones-Flux-Charts/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Impulse Zones [Flux Charts] (task tal1411ind 09:30 - 'close to the user's gap method'): a retest of the latest live bullish impulse zone (the low enters it, the close is back over its top) -> buy; stop under the zone's bottom - 0.1 ATR; target 2R; mirror short. agents/indicators impulse_zones (range > 1.5 ATR, tick volume > 1.5x avg)."
+  },
+  {
+   "id": "SC226",
+   "name": "Funk RSI 30/70 swing reversal, swing-bar target, our excursion stop",
+   "source": "agents/indicators funk_rsi (Funk RSI: RSI 30/70 swing reversals, target the swing, stop 14 bars back (Almazov Trade))",
+   "url": "https://www.tradingview.com/script/823fXWAN-funk-rsi-break-the-rules-almazov-trade/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Funk RSI: Break the Rules [Almazov Trade] (task tal1411ind 10:33): RSI(14) 30/70 swing reversal - a confirmed 1-bar swing low with RSI under 30 in its window -> buy at the confirmation close, target the swing bar's high; mirror short. Stop: ours (the page's stop lies on the wrong side) - beyond the whole RSI excursion + 0.25 ATR. agents/indicators funk_rsi."
+  },
+  {
+   "id": "SC227",
+   "name": "WaveTrend cross under -53 / over +53, swing stop, 2R",
+   "source": "agents/indicators wavetrend (WaveTrend 10/21: OB/OS, crosses, divergences, trend (LazyBear))",
+   "url": "https://www.tradingview.com/script/2KE8wTuF-Indicator-WaveTrend-Oscillator-WT/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "WaveTrend [LazyBear] (task tal1411ind 09:30, uses 1+2): wt1 crosses over wt2 under the oversold level -53 -> buy; crosses under over +53 -> sell; stop beyond the 10-bar swing; target 2R; exit at the opposite zone cross. Differs from SC128 (WT cross + Kalman Hull on the same bar)."
+  },
+  {
+   "id": "SC228",
+   "name": "WaveTrend divergence + cross within 10 bars, swing stop, 2R",
+   "source": "agents/indicators wavetrend (WaveTrend 10/21: OB/OS, crosses, divergences, trend (LazyBear))",
+   "url": "https://www.tradingview.com/script/2KE8wTuF-Indicator-WaveTrend-Oscillator-WT/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "WaveTrend [LazyBear] uses 3+4 (divergence with the trend): a bullish wt1 divergence at a confirmed 5-bar swing low while wt1 is under 0, then wt1 crosses over wt2 within 10 bars -> buy; mirror short. Stop beyond the 10-bar swing, target 2R."
+  },
+  {
+   "id": "SC229",
+   "name": "Nadaraya-Watson envelope (non-repaint) band-cross dots, 1.5 ATR stop, mid target",
+   "source": "agents/indicators nwe_envelope (Nadaraya-Watson Envelope, non-repainting endpoint version, band-cross reversal dots (LuxAlgo; = the 'Non Repaint' ad))",
+   "url": "https://www.tradingview.com/script/Iko0E2kL-Nadaraya-Watson-Envelope-LuxAlgo/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Nadaraya-Watson Envelope [LuxAlgo], non-repainting endpoint version (our version of the paid 'Non Repaint' envelope with reversal dots, task tal1411set2 / tal1411ind): the close crosses under the lower envelope = buy dot, over the upper = sell dot -> enter at the close; target the middle line; stop 1.5 ATR (ours). agents/indicators nwe_envelope (h 8, window 500; ours x2.5 instead of the original x3 - the x3 dots are very rare intraday)."
+  },
+  {
+   "id": "SC230",
+   "name": "Pullback to the VWAP anchored at the last swing low over EMA50, 1 ATR stop, 2R",
+   "source": "agents/indicators anchored_vwap_swing (Anchored VWAPs from the last confirmed swing high and swing low)",
+   "url": "https://www.tradingview.com/support/solutions/43000652199-anchored-vwap/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Anchored VWAP (task tal1411ind): in an up trend (close over EMA50) a pullback to the VWAP anchored at the last confirmed swing low (10-bar pivots; the line exists only from the confirmation bar - no look-ahead) that closes back over it -> buy; mirror short on the VWAP anchored at the last swing high. Stop 1 ATR beyond the AVWAP, target 2R. agents/indicators anchored_vwap_swing."
+  },
+  {
+   "id": "SC231",
+   "name": "SMC: order-block retest with the structure trend, OB stop, 2R",
+   "source": "agents/indicators smc (Smart Money Concepts: BOS / CHoCH, order blocks, breaker blocks, FVG, premium/discount (LuxAlgo port, core))",
+   "url": "https://www.tradingview.com/script/CnB3fSph-Smart-Money-Concepts-SMC-LuxAlgo/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Smart Money Concepts [LuxAlgo] (the thaa.fx gold board, task tal1411ind 10:34): continuation - while the structure trend is up (last break = BOS / CHoCH up), the first retest of the live bullish order block (the low enters the OB, the close is back over its top) -> buy; stop under the OB's bottom - 0.1 ATR; target 2R; mirror short. agents/indicators smc (pivots 5)."
+  },
+  {
+   "id": "SC232",
+   "name": "SMC: CHoCH then the first FVG return, swing stop, 2R",
+   "source": "agents/indicators smc (Smart Money Concepts: BOS / CHoCH, order blocks, breaker blocks, FVG, premium/discount (LuxAlgo port, core))",
+   "url": "https://www.tradingview.com/script/CnB3fSph-Smart-Money-Concepts-SMC-LuxAlgo/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Smart Money Concepts [LuxAlgo]: reversal - after a CHoCH up, the first return into the live bullish FVG (within 20 bars; the low enters the gap, the close stays over its bottom) -> buy; stop under the last swing low; target 2R; mirror after a CHoCH down. agents/indicators smc."
+  },
+  {
+   "id": "SC233",
+   "name": "Breaker block retest (failed order block), breaker stop, 2R",
+   "source": "agents/indicators smc (Smart Money Concepts: BOS / CHoCH, order blocks, breaker blocks, FVG, premium/discount (LuxAlgo port, core))",
+   "url": "https://www.tradingview.com/script/CnB3fSph-Smart-Money-Concepts-SMC-LuxAlgo/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Breaker Blocks (Flux Charts / LuxAlgo SMC, task tal1411ind): an order block that failed (a close through it) flips role - a bearish OB broken up becomes a bullish breaker; its retest (the low enters it, the close is back over its top) -> buy; stop under the breaker's bottom - 0.1 ATR; target 2R; mirror short. agents/indicators smc."
+  },
+  {
+   "id": "SC234",
+   "name": "Supply / demand zone breakout (close through the zone), zone stop, 2R",
+   "source": "agents/indicators supply_demand (Supply & demand zones (base + departure), first touches and breakouts (zone matrix, our build))",
+   "url": "https://www.tradingview.com/scripts/supplyanddemand/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Supply & Demand + Breakout (Flux Charts / Demand Supply Zone Matrix, task tal1411ind): a close through a live supply zone (zone broken) -> buy (the breakout half of the indicator); stop under the broken zone's bottom - 0.2 ATR (ours: 1.5 ATR when no zone level), target 2R; a close through a demand zone -> sell. agents/indicators supply_demand (base + departure >= 1.5 ATR). The first-touch half exists already as YT03."
+  },
+  {
+   "id": "SC235",
+   "name": "Break of a 3-touch auto trend line, swing stop, 2R",
+   "source": "agents/indicators trendlines (Auto trend lines from the last two pivots, touches, breaks, triangle / channel / wedge detector (BigBeluga Pattern Detector idea, our build))",
+   "url": "https://www.tradingview.com/scripts/chartpatterns/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Automatic trend-line breakout (BigBeluga Pattern Detector / Market Structure 'trend-line retest', task tal1411ind 09:39): a close over a falling resistance line that had 3+ touches -> buy; stop under the last confirmed swing low (5-bar), target 2R; mirror short through a rising support line with 3+ touches. agents/indicators trendlines."
+  },
+  {
+   "id": "SC236",
+   "name": "EMA9/20 cross only when BB 20/2 width >= its 20th percentile, swing stop, 2R",
+   "source": "agents/indicators bb_width_pct (Bollinger 20/2 width and its percentile over 100 bars (volatility filter))",
+   "url": "https://www.tradingview.com/support/solutions/43000501972-bollinger-bands-width-bbw/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The user's two filters of 14.11 (task tal1411ema) as one strategy so the bots see them work together: EMA9 crosses over EMA20 (buys only while 9 is over 20) and the Bollinger 20/2 width is NOT under its 20th percentile of the last 100 bars (agents/indicators bb_width_pct) -> buy; mirror; stop beyond the 10-bar swing; target 2R; exit on the cross back."
+  },
+  {
+   "id": "SC237",
+   "name": "QQE 14/5/4.238 cross of its trailing line, cross-back exit, 2 ATR stop",
+   "source": "StockSharp API examples",
+   "url": "https://doc.stocksharp.com/en/api-examples/0440_Qqe_Signals",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "QQE signals (StockSharp example https://doc.stocksharp.com/en/api-examples/0440_Qqe_Signals , M30): RSI 14 smoothed by EMA5, QQE factor 4.238; buy when the smoothed RSI crosses over the QQE trailing line, exit when it crosses back. The source is long-only and has no stop - ours: the mirror short, stop 2 ATR. agents/indicators qqe."
+  },
+  {
+   "id": "SC238",
+   "name": "Laguerre RSI 0.7 crosses 30 / 70, exit at 50, 2% stop",
+   "source": "StockSharp API examples",
+   "url": "https://doc.stocksharp.com/en/api-examples/0024_RSI_Laguerre",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Laguerre RSI reversion (StockSharp https://doc.stocksharp.com/en/api-examples/0024_RSI_Laguerre , M5): gamma 0.7; buy when it crosses up through 30, sell when it crosses down through 70; exit at 50 (or the opposite signal); stop 2% from the fill (a percentage - kept). agents/indicators laguerre_rsi."
+  },
+  {
+   "id": "SC239",
+   "name": "Fisher Transform 9 trigger cross (under / over 1), opposite exit, 2 ATR stop",
+   "source": "FMZ strategy library",
+   "url": "https://www.fmz.com/lang/en/strategy/503845",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Fisher Transform crossover (FMZ https://www.fmz.com/lang/en/strategy/503845 ): Fisher(9) crosses over its trigger (the previous value) while under 1 -> buy, crosses under while over 1 -> sell (as published... the short side's 'over 1' is the source's rule), exit on the opposite cross. No stop in the source - ours: 2 ATR. agents/indicators fisher_transform."
+  },
+  {
+   "id": "SC240",
+   "name": "SSL channel flip + HMA60 baseline + WaveTrend cross, 1.5 ATR stop, 1R",
+   "source": "FMZ strategy library",
+   "url": "https://www.fmz.com/strategy/442097",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SSL Hybrid + WaveTrend (FMZ https://www.fmz.com/strategy/442097 - some parameters behind a login): long when the HMA baseline is bullish (close over HMA60 - ours), the SSL channel (10) flips up and WaveTrend crosses up (within the last 3 bars), and the candle is not oversized (range <= 2 ATR); short mirror. Stop = 1.5 ATR (the source: k x ATR, k ours), target 1R (the source's default 1:1). agents/indicators ssl_channel, wavetrend."
+  },
+  {
+   "id": "SC241",
+   "name": "Gartley harmonic XABCD (0.618 / 0.786), stop beyond X, target C",
+   "source": "The Right Trader",
+   "url": "https://therighttrader.com/learn/harmonic-patterns/gartley-pattern",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Gartley harmonic (The Right Trader https://therighttrader.com/learn/harmonic-patterns/gartley-pattern ), any timeframe: AB = 0.618 of XA, BC = 0.382-0.886 of AB, D = the 0.786 retracement of XA (CD = 1.13-1.618 of BC); enter at D; stop beyond X; target 1 = C (this one), target 2 = A (SC242). Bullish and bearish mirrors. Ours: 2-bar zigzag swings, +/-5% tolerance, entry at the close of the first bar reaching the D zone."
+  },
+  {
+   "id": "SC242",
+   "name": "Gartley harmonic, target A",
+   "source": "The Right Trader",
+   "url": "https://therighttrader.com/learn/harmonic-patterns/gartley-pattern",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SC241 Gartley with the source's second target, the A level."
+  },
+  {
+   "id": "SC243",
+   "name": "Joe Ross Gimmee bar: BB touch + opposite close in a sideways market (ADX < 20), bar stop, middle-band target",
+   "source": "LuxAlgo (classic bar setups, Joe Ross)",
+   "url": "https://www.luxalgo.com/library/concept/classic-bar-setups/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Joe Ross 'Gimmee bar' (LuxAlgo classic bar setups https://www.luxalgo.com/library/concept/classic-bar-setups/ ), sideways markets only: Bollinger 20/2; sell setup = the bar's high at / over the upper band and the close under its open -> sell stop 1 tick under that bar's low (next 2 bars); buy mirror at the lower band. Ours: sideways = ADX(14) < 20 (the source suggests an ADX filter); stop the setup bar's other extreme; target the middle band (no target in the source)."
+  },
+  {
+   "id": "SC244",
+   "name": "Momentum Pinball: RSI3 of the daily change < 30 / > 70, first-hour breakout, first-hour stop, next-morning exit",
+   "source": "WH SelfInvest (Raschke & Connors)",
+   "url": "https://www.whselfinvest.de/en-de/trading-platform/free-trading-strategies/tradingsystem/48-momentum-pinball-trading-indicator-raschke-linda-connors-larry",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Momentum Pinball (Raschke & Connors; WH SelfInvest https://www.whselfinvest.de/en-de/trading-platform/free-trading-strategies/tradingsystem/48-momentum-pinball-trading-indicator-raschke-linda-connors-larry ), daily signal, intraday entry: RSI(3) of the 1-day change closes under 30 -> the next day buy stop over the first hour's high (stop = the first hour's low); over 70 -> sell stop under the first hour's low. Exit: a loser is closed before the close; a winner is held overnight and closed the next morning. Ours on intraday bars (15m / 1h): UTC days, the first hour = 00:00-01:00 UTC; entry = the first close beyond that hour's range; time exit after 24 hours (= 'the next morning')."
+  },
+  {
+   "id": "SC245",
+   "name": "Elder Triple Screen: 4x-TF MACD-hist slope + Force Index EMA2 pullback + prior-high break, 2R",
+   "source": "forexop",
+   "url": "https://forexop.com/strategy/simple-triple-screen/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Elder Triple Screen (forexop https://forexop.com/strategy/simple-triple-screen/ ), e.g. Daily / H4 / H1: screen 1 = the trend from the MACD-histogram slope of a 4x higher timeframe (rising = long only); screen 2 = Force Index EMA(2) under 0 on this timeframe (a pullback); screen 3 = buy stop over the previous bar's high (Elder's rule) -> the first close over it; stop under the low of the signal / previous bar; target 2R (no fixed target in the source - ours). Short = mirror."
+  },
+  {
+   "id": "SC246",
+   "name": "Raschke Anti 3/10 oscillator pullback re-cross, pullback-low stop, cross-back exit",
+   "source": "MQL5 article (Raschke)",
+   "url": "https://www.mql5.com/en/articles/24280",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Raschke 'Anti', 3/10 oscillator version (MQL5 article https://www.mql5.com/en/articles/24280 , H4): fast = SMA3 - SMA10, slow = SMA16(fast); the slow line over 0 opens the long window; the fast line pulls back to / under the slow line and then crosses back over it (the first cross) with a close over the previous close -> buy at the next open; stop the lowest low of the pullback; exit when the fast line crosses back under. Short = mirror. Differs from FR11 (the stochastic hook)."
+  },
+  {
+   "id": "SC247",
+   "name": "Larry Williams Smash Day: close under the prior low at an 8-bar low close, buy over its high, 3-bar exit",
+   "source": "Rogue Quant (Substack, Larry Williams)",
+   "url": "https://roguequant.substack.com/p/i-backtested-larry-williams-trading",
+   "added": "2026-11-14",
+   "timeframes": [
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Larry Williams Smash Day (Rogue Quant https://roguequant.substack.com/p/i-backtested-larry-williams-trading ), daily: a bar that closes under the previous low AND is the lowest close of the last 8 bars -> buy stop over that bar's high on the next bar (the first close over it within 1 bar); sell = mirror. The source tests it as stop-and- reverse; Williams' own exits: a stop / the first profitable open - ours: stop at the smash bar's low (high), exit after 3 bars, no target. Differs from QB13 (the HIDDEN smash day)."
+  },
+  {
+   "id": "SC248",
+   "name": "Weinstein stage 1->2 (SMA150 slope, 10-bar highs) on 1.8x volume + RSI >= 50, 2 / 6 ATR, SMA exit",
+   "source": "MQL5 article (Weinstein)",
+   "url": "https://www.mql5.com/en/articles/22746",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Day",
+    "4Hour"
+   ],
+   "markets": [
+    "stock",
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Stan Weinstein stage 1 -> 2 transition (MQL5 https://www.mql5.com/en/articles/22746 ), daily: SMA150 for the 30-week line; slope = (SMA - SMA 10 bars ago) / 10 / close, rising > +0.0001; stage 2 = rising SMA, price over it and the last 10 highs over the 10 before; long when stage 2 begins on tick volume > 1.8x its 20-bar average (a feed without volume passes) with RSI(14) >= 50; short = the stage 3 -> 4 mirror. Stop 2 ATR(14), target 3x the stop; early exit on a close back across the SMA."
+  },
+  {
+   "id": "SC249",
+   "name": "Close 2.5x avg range under the 10-bar high twice + IBS < 0.2, long, out over the prior high",
+   "source": "TradingView",
+   "url": "https://in.tradingview.com/script/BTwOiV1h-Average-High-Low-Range-IBS-Reversal-Strategy",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Day",
+    "4Hour"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Average High-Low Range + IBS reversal (TradingView https://in.tradingview.com/script/BTwOiV1h-Average-High-Low-Range-IBS-Reversal-Strategy ), daily, long only: the close under (10-bar highest high - 2.5 x the 20-bar average of high - low) on 2 bars in a row and IBS = (close - low) / (high - low) under 0.2 -> buy; exit on a close over the previous bar's high. The source's 'upper' is not defined - ours: the 10-bar highest high; IBS on the true range (a gap bar counts); no stop in the source - ours: 2 ATR."
+  }
+ ],
+ "indicators": [
+  {
+   "name": "supertrend_ai",
+   "source": "SuperTrend AI: k-means picks the best ATR factor (1-5), flips = buy/sell (LuxAlgo; = Flux 'AI SuperTrend')",
+   "url": "https://www.tradingview.com/script/wP7WWjLL-SuperTrend-AI-Clustering-LuxAlgo/",
+   "added": "2026-11-14",
+   "uses": "entry on flips (SC216); filter: trade only with trend; exit: trailing line as stop"
+  },
+  {
+   "name": "lorentzian",
+   "source": "ML Lorentzian Classification: kNN (k 8) on RSI/WT/CCI/ADX features, 4-bar labels, + RQ kernel (jdehorty)",
+   "url": "https://www.tradingview.com/script/WhBzgfDu-Machine-Learning-Lorentzian-Classification/",
+   "added": "2026-11-14",
+   "uses": "entry SC217; filter: only longs while signal +1 / kernel rising; exit after 4 bars"
+  },
+  {
+   "name": "trend_duration",
+   "source": "Trend Duration Forecast: HMA trend age vs the average / median length of past trends (ChartPrime)",
+   "url": "https://www.tradingview.com/script/L3SJFfAQ/",
+   "added": "2026-11-14",
+   "uses": "exit when the trend's age reaches its average length (SC218); filter: skip entries when ratio > 1 (old trend)"
+  },
+  {
+   "name": "zero_lag_trend",
+   "source": "Zero Lag Trend Signals: ZLEMA 70 +/- highest ATR x1.2, trend flips and re-entries (AlgoAlpha)",
+   "url": "https://www.tradingview.com/script/tHK4O1Fi-Zero-Lag-Trend-Signals-MTF-AlgoAlpha/",
+   "added": "2026-11-14",
+   "uses": "entries SC219 / SC220; filter: trend +1 / -1 for every strategy and the gap method"
+  },
+  {
+   "name": "atr_fib_envelopes",
+   "source": "ATR Fibonacci Trend Envelopes: RMA100 +/- 3 ATR trend + golden-pocket fib lines (BigBeluga)",
+   "url": "https://www.tradingview.com/script/16toJPAD-ATR-Fibonacci-Trend-Envelopes-BigBeluga/",
+   "added": "2026-11-14",
+   "uses": "entry SC221 (golden pocket pullback); filter: envelope trend; stop at the trail band"
+  },
+  {
+   "name": "double_ribbon",
+   "source": "Double Ribbon: 11 offset SMAs vs 11 growing SMAs, trend score -1..1 (ChartPrime, our reconstruction)",
+   "url": "https://www.tradingview.com/script/OdtelUqS-Double-Ribbon-ChartPrime/",
+   "added": "2026-11-14",
+   "uses": "entry SC222; filter: score sign / |score| = 1 alignment"
+  },
+  {
+   "name": "golden_wave",
+   "source": "Fibonacci Golden Wave: 0.5-0.618 zone of the 20-bar range, pullback touches (Flux Charts)",
+   "url": "https://www.tradingview.com/script/SWe51Ddl-Fibonacci-Golden-Wave-Flux-Charts",
+   "added": "2026-11-14",
+   "uses": "entry SC223; filter: gap / pullback entries only inside the 0.5-0.618 zone"
+  },
+  {
+   "name": "cisd",
+   "source": "Change in State of Delivery: close through the open of the last opposite candle run (ICT / LuxAlgo, = CISD Finder)",
+   "url": "https://www.tradingview.com/script/gHHRpuHC-Change-in-State-of-Delivery-CISD-LuxAlgo",
+   "added": "2026-11-14",
+   "uses": "entry SC224 (after a sweep); confirmation for TT03 / SM01 / gap entries; trend = last CISD"
+  },
+  {
+   "name": "impulse_zones",
+   "source": "Impulse Zones: big-range + high-volume bars become zones, retests (Flux Charts)",
+   "url": "https://www.tradingview.com/script/Iv9MOWJ1-Impulse-Zones-Flux-Charts/",
+   "added": "2026-11-14",
+   "uses": "entry SC225; filter for the user's gap method: a gap inside / from an impulse zone with high volume"
+  },
+  {
+   "name": "funk_rsi",
+   "source": "Funk RSI: RSI 30/70 swing reversals, target the swing, stop 14 bars back (Almazov Trade)",
+   "url": "https://www.tradingview.com/script/823fXWAN-funk-rsi-break-the-rules-almazov-trade/",
+   "added": "2026-11-14",
+   "uses": "entry SC226; exit idea: target the swing bar"
+  },
+  {
+   "name": "wavetrend",
+   "source": "WaveTrend 10/21: OB/OS, crosses, divergences, trend (LazyBear)",
+   "url": "https://www.tradingview.com/script/2KE8wTuF-Indicator-WaveTrend-Oscillator-WT/",
+   "added": "2026-11-14",
+   "uses": "entries SC227 / SC228 / SC240; filter: wt1 > 0 trend, no buys when OB"
+  },
+  {
+   "name": "nwe_envelope",
+   "source": "Nadaraya-Watson Envelope, non-repainting endpoint version, band-cross reversal dots (LuxAlgo; = the 'Non Repaint' ad)",
+   "url": "https://www.tradingview.com/script/Iko0E2kL-Nadaraya-Watson-Envelope-LuxAlgo/",
+   "added": "2026-11-14",
+   "uses": "entry SC229; filter: no buys over the upper band; exit at the mid line"
+  },
+  {
+   "name": "volume_profile",
+   "source": "Session volume profile on tick volume: POC/VAH/VAL, HVN/LVN, P/b/D/B/trend shape (our build)",
+   "url": "https://www.tradingview.com/support/solutions/43000703072-volume-profile-indicators-basic-concepts/",
+   "added": "2026-11-14",
+   "uses": "entries SC194 / SC196 / SC204 / SC207 / SC209 / SC210 / SC211; filters: P/b direction, trade only at VAH/VAL edges (saint), no target / stop inside an LVN, gap inside an LVN"
+  },
+  {
+   "name": "tpo_profile",
+   "source": "TPO (time-at-price) market profile: POC/VAH/VAL/shape by time (our build)",
+   "url": "https://www.tradingview.com/support/solutions/43000713306-time-price-opportunity-tpo-indicator/",
+   "added": "2026-11-14",
+   "uses": "entry SC208; same filters as volume_profile by time"
+  },
+  {
+   "name": "delta_void_profile",
+   "source": "Delta Void Profile: previous session's void (deepest gap) + POC buy/sell delta (BigBeluga idea, our build)",
+   "url": "https://www.tradingview.com/script/hD0LaluR-Delta-Void-Profile-BigBeluga/",
+   "added": "2026-11-14",
+   "uses": "entry SC211; target: the next HVN past the void"
+  },
+  {
+   "name": "vwap_bands",
+   "source": "Session / weekly / anchored VWAP with 1-2-3 standard-deviation bands (our build of the standard)",
+   "url": "https://www.tradingview.com/support/solutions/43000502018-volume-weighted-average-price-vwap/",
+   "added": "2026-11-14",
+   "uses": "entries SC176 / SC177 / SC182 / SC185; filter: side of the session VWAP; exits at +/-1-2 SD"
+  },
+  {
+   "name": "anchored_vwap_swing",
+   "source": "Anchored VWAPs from the last confirmed swing high and swing low",
+   "url": "https://www.tradingview.com/support/solutions/43000652199-anchored-vwap/",
+   "added": "2026-11-14",
+   "uses": "entry SC230; filter: price over the AVWAP from the last swing low = buyers in control"
+  },
+  {
+   "name": "buy_sell_pressure",
+   "source": "Buyer vs seller pressure oscillator from the bar's close location x tick volume (ProTrippa idea, our build)",
+   "url": "https://www.tradingview.com/script/1TpX6kXo-Buying-Selling-Volume/",
+   "added": "2026-11-14",
+   "uses": "entries SC187 / SC201; filter: enter only when pressure is on the trade's side"
+  },
+  {
+   "name": "cvd",
+   "source": "Approximate cumulative volume delta per session + price/CVD divergences (our build)",
+   "url": "https://www.tradingview.com/script/1TpX6kXo-Buying-Selling-Volume/",
+   "added": "2026-11-14",
+   "uses": "entry SC214; filter / exit: CVD divergence as a reversal warning"
+  },
+  {
+   "name": "absorption",
+   "source": "Absorption: 2x tick volume with a small body at a 10-bar extreme (Orderflow Sniper idea, our build)",
+   "url": "https://www.tiktok.com/ (Orderflow Sniper, task tal1411of)",
+   "added": "2026-11-14",
+   "uses": "entry SC212; bot 7: absorption in the minutes after a release; filter: no gap entry into an absorption bar"
+  },
+  {
+   "name": "big_trades",
+   "source": "'Big trades': tick-volume z-score >= 3 on the bar, buy / sell side by close location (Meks Trades idea)",
+   "url": "https://www.tiktok.com/ (Meks Trades, task tal1411ind)",
+   "added": "2026-11-14",
+   "uses": "entry SC202; confirmation of breakouts"
+  },
+  {
+   "name": "liquidity",
+   "source": "Equal highs / lows, liquidity sweeps and post-sweep entry zones (LuxAlgo EQH/EQL definition, our build)",
+   "url": "https://www.tradingview.com/script/CnB3fSph-Smart-Money-Concepts-SMC-LuxAlgo/",
+   "added": "2026-11-14",
+   "uses": "entries SC186 / SC213 / SC224; targets: equal highs / lows as magnets"
+  },
+  {
+   "name": "smc",
+   "source": "Smart Money Concepts: BOS / CHoCH, order blocks, breaker blocks, FVG, premium/discount (LuxAlgo port, core)",
+   "url": "https://www.tradingview.com/script/CnB3fSph-Smart-Money-Concepts-SMC-LuxAlgo/",
+   "added": "2026-11-14",
+   "uses": "entries SC231 / SC232 / SC233 / SC203; filters: structure trend, order blocks, FVGs"
+  },
+  {
+   "name": "premium_discount",
+   "source": "ICT premium / discount of the dealing range + OTE 61.8-79% zones",
+   "url": "https://www.tradingview.com/script/CnB3fSph-Smart-Money-Concepts-SMC-LuxAlgo/",
+   "added": "2026-11-14",
+   "uses": "entry SC203; filter for the gap method: long gaps only in the discount, shorts in the premium"
+  },
+  {
+   "name": "sr_levels",
+   "source": "Support / resistance from merged pivots with test counts, hold %, breaks and flipped-level retests (Flux / BigBeluga ideas, our build)",
+   "url": "https://www.tradingview.com/script/E8byEL6g-Adaptive-Support-and-Resistance-Zones-BigBeluga/",
+   "added": "2026-11-14",
+   "uses": "entries SC189 / SC190; filter: hold % of the nearest level; targets: the next level"
+  },
+  {
+   "name": "supply_demand",
+   "source": "Supply & demand zones (base + departure), first touches and breakouts (zone matrix, our build)",
+   "url": "https://www.tradingview.com/scripts/supplyanddemand/",
+   "added": "2026-11-14",
+   "uses": "entry SC234 (breakout); YT03 first retest; filter: no longs right under a fresh supply zone"
+  },
+  {
+   "name": "trendlines",
+   "source": "Auto trend lines from the last two pivots, touches, breaks, triangle / channel / wedge detector (BigBeluga Pattern Detector idea, our build)",
+   "url": "https://www.tradingview.com/scripts/chartpatterns/",
+   "added": "2026-11-14",
+   "uses": "entries SC175 / SC192 / SC197 / SC235; pattern code filter (triangles, channels, wedges)"
+  },
+  {
+   "name": "pivot_points",
+   "source": "Traditional daily / weekly pivot points P, R1-R3, S1-S3",
+   "url": "https://www.tradingview.com/support/solutions/43000521824-pivot-points-standard/",
+   "added": "2026-11-14",
+   "uses": "entry SC200; filter: over P = longs only (Ezekiel Chew); targets R1 / S1"
+  },
+  {
+   "name": "htf_levels",
+   "source": "Previous day / week high-low and today's high-low so far",
+   "url": "https://www.tradingview.com/support/solutions/43000521824-pivot-points-standard/",
+   "added": "2026-11-14",
+   "uses": "target in SC215 (previous week's high / low); filters: distance to PDH / PDL"
+  },
+  {
+   "name": "judas_swing",
+   "source": "ICT Judas Swing: London / NY window sweeps the Asian range and reverses, + its order block (our build)",
+   "url": "https://www.tradingview.com/scripts/judasswing/",
+   "added": "2026-11-14",
+   "uses": "entry SC206; filter for bots 5-6: trade the open's reversal, not the first move"
+  },
+  {
+   "name": "ichimoku",
+   "source": "Ichimoku 9/26/52 cloud, TK cross, look-ahead-free Chikou check",
+   "url": "https://www.tradingview.com/support/solutions/43000589152-ichimoku-cloud/",
+   "added": "2026-11-14",
+   "uses": "entry SC184; filter: over / under the cloud"
+  },
+  {
+   "name": "mfi",
+   "source": "Money Flow Index 14 on tick volume, exits from 20 / 80",
+   "url": "https://www.tradingview.com/support/solutions/43000502348-money-flow-index-mfi/",
+   "added": "2026-11-14",
+   "uses": "entry SC188; filter: MFI extremes"
+  },
+  {
+   "name": "adx_di",
+   "source": "ADX with +DI / -DI crosses and ADX rising",
+   "url": "https://www.tradingview.com/support/solutions/43000502250-average-directional-index-adx/",
+   "added": "2026-11-14",
+   "uses": "entry SC205; filter: ADX > 20 rising"
+  },
+  {
+   "name": "bb_width_pct",
+   "source": "Bollinger 20/2 width and its percentile over 100 bars (volatility filter)",
+   "url": "https://www.tradingview.com/support/solutions/43000501972-bollinger-bands-width-bbw/",
+   "added": "2026-11-14",
+   "uses": "entry SC236; filter (task tal1411ema): no entries under the 20th percentile width"
+  },
+  {
+   "name": "ema_stack",
+   "source": "EMA 9/21/50/100/200 order score as a graded trend filter",
+   "url": "https://www.tradingview.com/support/solutions/43000592270-exponential-moving-average/",
+   "added": "2026-11-14",
+   "uses": "entry SC191; filter (tasks tal1411ema / set4): graded trend 9/21/50/100/200 or 9/20"
+  },
+  {
+   "name": "rsi_regime",
+   "source": "RSI range shift: 40-80 in up trends, 20-60 in down trends; trend pullback / momentum turns",
+   "url": "https://www.tradingview.com/support/solutions/43000502338-relative-strength-index-rsi/",
+   "added": "2026-11-14",
+   "uses": "entry SC178; filter (task tal1411rsi): no buys on low RSI against the trend"
+  },
+  {
+   "name": "qqe",
+   "source": "QQE: smoothed RSI vs its ATR-of-RSI trailing line (factor 4.238)",
+   "url": "https://doc.stocksharp.com/en/api-examples/0440_Qqe_Signals",
+   "added": "2026-11-14",
+   "uses": "entry SC237; filter: RsiMa over the trail"
+  },
+  {
+   "name": "laguerre_rsi",
+   "source": "Ehlers Laguerre RSI (gamma 0.7), crosses of 30 / 70",
+   "url": "https://doc.stocksharp.com/en/api-examples/0024_RSI_Laguerre",
+   "added": "2026-11-14",
+   "uses": "entry SC238; exit at 50"
+  },
+  {
+   "name": "fisher_transform",
+   "source": "Ehlers Fisher Transform 9 with the previous-bar trigger",
+   "url": "https://www.fmz.com/lang/en/strategy/503845",
+   "added": "2026-11-14",
+   "uses": "entry SC239; exit on the opposite cross"
+  },
+  {
+   "name": "ssl_channel",
+   "source": "SSL Channel 10: SMA of highs / lows, side flips",
+   "url": "https://www.tradingview.com/scripts/sslchannel/",
+   "added": "2026-11-14",
+   "uses": "entry SC240; filter: SSL side"
+  },
+  {
+   "name": "supertrend",
+   "source": "Classic SuperTrend ATR 10 x 3",
+   "url": "https://www.tradingview.com/support/solutions/43000634738-supertrend/",
+   "added": "2026-11-14",
+   "uses": "filter: SuperTrend 10/3 side (as in set3 / rules_agent v_st); used in the library's existing Supertrend strategies"
+  },
+  {
+   "name": "macd_hist",
+   "source": "MACD 12/26/9 line, signal, histogram, crosses",
+   "url": "https://www.tradingview.com/support/solutions/43000502344-macd-moving-average-convergence-divergence/",
+   "added": "2026-11-14",
+   "uses": "used by SC245 (Elder screen 1: higher-timeframe histogram slope)"
+  },
+  {
+   "name": "raschke_osc",
+   "source": "Raschke 3/10 oscillator with its 16-bar signal line",
+   "url": "https://www.mql5.com/en/articles/24280",
+   "added": "2026-11-14",
+   "uses": "entry SC246 (Raschke Anti 3/10)"
   }
  ]
 }

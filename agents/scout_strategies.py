@@ -4318,6 +4318,1654 @@ def s_ft_strategy001(df):
     return L, np.zeros(len(c), bool), p
 
 
+
+# =====================================================================================================================
+# 14.11.2026 scout run - the user's TikTok / Facebook videos (replies.json "_tasks" 15, 16, 38, tal1411*) and the
+# shared indicator library agents/indicators (user: "not compromising on indicators either"). Every strategy below is
+# built from closed bars only; where a video left out the stop / target, a standard one is chosen and SAID so.
+# =====================================================================================================================
+from agents import indicators as IND  # noqa: E402
+
+
+def _ohlcv(df):
+    """o, h, l, c, v (no-open feeds -> the previous close as the open, as everywhere in the library)."""
+    from agents.indicators._core import cols
+    return cols(df)
+
+
+def _plan_r(sl_l, sl_s, r=2.0, **kw):
+    p = {"stop": ("level", np.asarray(sl_l, float), np.asarray(sl_s, float)), "target": ("R", float(r))}
+    p.update(kw)
+    return p
+
+
+def _plan_lv(sl_l, sl_s, tg_l, tg_s, **kw):
+    p = {"stop": ("level", np.asarray(sl_l, float), np.asarray(sl_s, float)),
+         "target": ("level", np.asarray(tg_l, float), np.asarray(tg_s, float))}
+    p.update(kw)
+    return p
+
+
+def _excl(L, S):
+    L = np.asarray(L, bool)
+    return L, np.asarray(S, bool) & ~L
+
+
+# ---------------- SC173 / SC174 Diamond top / bottom (Trader Dhana, Facebook; task 15) ----------------
+def _diamond(df, k=2, frac=1.0):
+    """Swings (k bars each side, known k bars late): after a prior trend, an expanding part (a higher high AND a lower
+    low than the first swings) followed by a contracting part (a lower high AND a higher low) - 4 lines, 2+ touches a
+    side = at least 3 highs and 3 lows in the formation (h1 < h2 > h3, l1 > l2 < l3 alternating). Top: prior trend up
+    (close 20 bars before the first pivot below it); sell on the first close under the lower-right line (the line
+    through l2 and l3, extended); stop over the last swing high inside the diamond (h3) ; target = the diamond's height
+    (h2 - l2) x frac projected from the break. Bottom = mirror (prior trend down, buy over the upper-right line)."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    from agents.indicators._core import pivots
+    phc, plc, phv, plv, phi, pli = pivots(h, l, k)
+    H, Lw = [], []
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    used = set()
+    for t in range(n):
+        if phc[t]:
+            H.append((phi[t], phv[t]))
+        if plc[t]:
+            Lw.append((pli[t], plv[t]))
+        if len(H) < 3 or len(Lw) < 3:
+            continue
+        (a1, h1), (a2, h2), (a3, h3) = H[-3:]
+        (b1, l1), (b2, l2), (b3, l3) = Lw[-3:]
+        if not (h2 > h1 and h2 > h3 and l2 < l1 and l2 < l3):
+            continue
+        if not (min(a1, b1) < min(a2, b2) and max(a2, b2) < min(a3, b3) + 1 and t - max(a3, b3) <= 30):
+            continue
+        key = (a2, b2)
+        if key in used:
+            continue
+        start = min(a1, b1)
+        hgt = h2 - l2
+        if hgt <= 0 or start < 20:
+            continue
+        m_lo = (l3 - l2) / (b3 - b2) if b3 != b2 else 0.0
+        m_hi = (h3 - h2) / (a3 - a2) if a3 != a2 else 0.0
+        lo_line = l3 + m_lo * (t - b3)
+        hi_line = h3 + m_hi * (t - a3)
+        prior_up = c[start - 20] < c[start]
+        if prior_up and c[t] < lo_line and (t == 0 or c[t - 1] >= l3 + m_lo * (t - 1 - b3)):
+            S[t], sl_s[t], tg_s[t] = True, h3, c[t] - frac * hgt
+            used.add(key)
+        elif not prior_up and c[t] > hi_line and (t == 0 or c[t - 1] <= h3 + m_hi * (t - 1 - a3)):
+            L[t], sl_l[t], tg_l[t] = True, l3, c[t] + frac * hgt
+            used.add(key)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, tg_l, tg_s)
+
+
+def s_diamond_full(df):
+    """Diamond top / bottom (Trader Dhana, Facebook reel 'Bearish Diamond Pattern', sent by the user - task 15),
+    intraday 15m / 30m. After an up trend the range widens (higher highs, lower lows) and then narrows (lower highs,
+    higher lows); sell on a close under the lower-right line, stop over the last swing high inside the diamond,
+    target = the full height (highest high to lowest low) projected down from the break. Diamond bottom = mirror.
+    Ours: 2-bar swings, the formation = the last 3 swing highs and 3 swing lows, prior trend = 20 bars."""
+    return _diamond(df, k=2, frac=1.0)
+
+
+def s_diamond_618(df):
+    """SC173 diamond with the user's alternative target: 61.8% of the height (task 15: 'also test 50% / 61.8%')."""
+    return _diamond(df, k=2, frac=0.618)
+
+
+# ---------------- SC175 Liquidity trend-line sweep + FVG + BOS (TheTrader's Villa, Facebook; task 16) ----------------
+def s_villa_tl_sweep_fvg(df):
+    """TheTrader's Villa 'Liquidity Trendline Break + FVG' (Facebook reel, task 16), 5m - 1h. A falling trend line with
+    3+ touches (resistance - buyers' stops above it); price pokes through it (the liquidity grab), then a strong
+    bearish candle leaves a bearish FVG (high[i] < low[i-2]) and closes under the last swing low (BOS) -> sell when
+    price comes back into the FVG (its middle); stop over the high of the grab; target 2R (the video: the next
+    liquidity below / a fixed R). Bullish mirror (rising line with 3+ touches, sweep under it, bullish FVG + BOS over
+    the last swing high, buy back in the FVG). Differs from the user's gap method (tal_gap) by the 3-touch line and the
+    sweep before the gap. Ours: line = agents/indicators trendlines (pivots 3), touch tolerance 0.3 ATR, the FVG entry
+    valid 10 bars, the grab within the 10 bars before the FVG."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    tl = IND.trendlines(df, k=3, tol=0.3)
+    sh, sl = _swings(h, l, 3)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    arm_s = arm_l = None  # (fvg_top, fvg_bot, stop, born)
+    for i in range(2, n):
+        w0 = max(0, i - 10)
+        grab_s = np.any((tl["res_touches"][w0:i + 1] >= 3) & (h[w0:i + 1] > tl["res_line"][w0:i + 1]))
+        grab_l = np.any((tl["sup_touches"][w0:i + 1] >= 3) & (l[w0:i + 1] < tl["sup_line"][w0:i + 1]))
+        if grab_s and h[i] < l[i - 2] and c[i] < o[i] and np.isfinite(sl[i - 1]) and c[i] < sl[i - 1]:
+            arm_s = (l[i - 2], h[i], h[w0:i + 1].max(), i)
+        if grab_l and l[i] > h[i - 2] and c[i] > o[i] and np.isfinite(sh[i - 1]) and c[i] > sh[i - 1]:
+            arm_l = (l[i], h[i - 2], l[w0:i + 1].min(), i)
+        if arm_s is not None:
+            top, bot, st, b = arm_s
+            if i - b > 10 or c[i] > st:
+                arm_s = None
+            elif i > b and h[i] >= (top + bot) / 2:
+                S[i], sl_s[i] = True, st
+                arm_s = None
+        if arm_l is not None:
+            top, bot, st, b = arm_l
+            if i - b > 10 or c[i] < st:
+                arm_l = None
+            elif i > b and l[i] <= (top + bot) / 2:
+                L[i], sl_l[i] = True, st
+                arm_l = None
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+# ---------------- SC176 / SC177 VWAP + RSI(14) 30/70 re-cross with a reversal candle (The Trader's Guide; task 38) ------
+def _vwap_rsi14(df, target):
+    o, h, l, c, v = _ohlcv(df)
+    vw = IND.vwap_bands(df)["vwap"]
+    r = rsi(c, 14)
+    a = atr(h, l, c, 14)
+    rev_l = c > _sh(h)
+    rev_s = c < _sh(l)
+    L = (c < vw) & cross_up(r, 30.0) & rev_l
+    S = (c > vw) & cross_down(r, 70.0) & rev_s
+    sl_l = _s(l).rolling(5).min().to_numpy() - 0.2 * a
+    sl_s = _s(h).rolling(5).max().to_numpy() + 0.2 * a
+    L, S = _excl(L, S)
+    if target == "vwap":
+        return L, S, _plan_lv(sl_l, sl_s, vw, vw)
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+def s_tg_vwap_rsi14_to_vwap(df):
+    """The Trader's Guide (TikTok post, task 38), 5-15m intraday: buy when price is under the session VWAP, RSI(14) was
+    under 30 and crosses back over 30, confirmed by a reversal candle (close over the previous candle's high); sell =
+    mirror (over VWAP, RSI back under 70, close under the previous low). No stop / target in the post - ours: stop
+    beyond the 5-bar low / high + 0.2 ATR, target = back to the VWAP. Session VWAP from 00:00 UTC on tick volume
+    (CFDs have no real volume - noted). Differs from SS05 (RSI(2) + 2-SD) by RSI 14 with the reversal confirmation."""
+    return _vwap_rsi14(df, "vwap")
+
+
+def s_tg_vwap_rsi14_2r(df):
+    """SC176 with the post's variant target 2R instead of the VWAP (task 38)."""
+    return _vwap_rsi14(df, "2r")
+
+
+# ---------------- SC178 RSI range-shift pullback (Trading Data, TikTok; task tal1411rsi (b)) ----------------
+def s_td_rsi_range_shift(df):
+    """Trading Data (TikTok, task tal1411rsi): in a trend RSI does not reach 30 / 70 - in a down trend it lives in
+    ~20-60, in an up trend in ~40-80, so 'buy at 30' fails in a down trend. Rule (b): in an up trend buy when RSI(14)
+    dips to 40-45 and turns up; in a down trend sell when RSI rises to 55-60 and turns down. Trend (ours, from the
+    same day's Market Structure video): close over EMA50 and EMA21 over EMA50 (mirror). No stop / target in the video -
+    ours: stop beyond the 10-bar swing extreme, target 2R. agents/indicators rsi_regime."""
+    o, h, l, c, v = _ohlcv(df)
+    rr = IND.rsi_regime(df)
+    a = atr(h, l, c, 14)
+    sl_l = _s(l).rolling(10).min().to_numpy() - 0.1 * a
+    sl_s = _s(h).rolling(10).max().to_numpy() + 0.1 * a
+    L, S = _excl(rr["pull_long"], rr["pull_short"])
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+# ---------------- SC179 / SC180 Market Structure 'RSI 60-40 setup' A (pullback) and B (breakout) ----------------
+def s_ms_rsi40_pullback(df):
+    """Market Structure (TikTok 'RSI 60-40 Setup', task tal1411rsi 08:58), 15m / 1h / 4h. Trend up = close over EMA21
+    and EMA50 and EMA21 over EMA50. Entry A (pullback): RSI(14) near 40 (<= 45 on the previous bar) and turning up,
+    price near EMA21/50 (the low within 0.5 ATR of EMA21 or under it, close over EMA50), on a confirmation candle
+    (close over the previous high). Stop under EMA50 (ours: EMA50 - 0.2 ATR); target 1 = the last swing high (ours:
+    the whole position at the last confirmed 5-bar swing high, at least 1R away), trail under EMA21 (exit on a close
+    under EMA21). Short = mirror (RSI near 60 turning down)."""
+    o, h, l, c, v = _ohlcv(df)
+    e21, e50 = ema(c, 21), ema(c, 50)
+    r = rsi(c, 14)
+    a = atr(h, l, c, 14)
+    sh, sl = _swings(h, l, 5)
+    up = (c > e21) & (c > e50) & (e21 > e50)
+    dn = (c < e21) & (c < e50) & (e21 < e50)
+    pr = _sh(r)
+    L = up & (pr <= 45) & (r > pr) & (l <= e21 + 0.5 * a) & (c > _sh(h))
+    S = dn & (pr >= 55) & (r < pr) & (h >= e21 - 0.5 * a) & (c < _sh(l))
+    stl, sts = e50 - 0.2 * a, e50 + 0.2 * a
+    tgl = np.where(sh - c >= (c - stl), sh, c + (c - stl) * 2)
+    tgs = np.where(c - sl >= (sts - c), sl, c - (sts - c) * 2)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(stl, sts, tgl, tgs, exit_long=c < e21, exit_short=c > e21)
+
+
+def s_ms_rsi60_breakout(df):
+    """Market Structure 'RSI 60-40 Setup' entry B (breakout), 15m / 1h / 4h: in the up trend (as SC179) RSI(14) over
+    60 and a strong candle (body >= 0.6 of its true range, true range >= 1 ATR) closes over the last swing high -> buy; stop
+    under EMA21; target 2-3R (ours: 2.5R) with the trail under EMA21 (exit on a close under it). Short = mirror
+    (RSI under 40, close under the last swing low)."""
+    o, h, l, c, v = _ohlcv(df)
+    e21, e50 = ema(c, 21), ema(c, 50)
+    r = rsi(c, 14)
+    a = atr(h, l, c, 14)
+    sh, sl = _swings(h, l, 5)
+    up = (c > e21) & (c > e50) & (e21 > e50)
+    dn = (c < e21) & (c < e50) & (e21 < e50)
+    pc = _sh(c)
+    rng = np.fmax(h, pc) - np.fmin(l, pc)  # true range (a gap counts)
+    strong = (np.abs(c - o) >= 0.6 * rng) & (rng >= a)
+    L = up & (r > 60) & strong & (c > o) & cross_up(c, sh)
+    S = dn & (r < 40) & strong & (c < o) & cross_down(c, sl)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(e21 - 0.1 * a, e21 + 0.1 * a, 2.5, exit_long=c < e21, exit_short=c > e21)
+
+
+# ---------------- SC181 RSI divergence with the big trend + RSI 50 confirmation (The Trader's Guide) ----------------
+def s_tg_rsi_div_trend50(df):
+    """The Trader's Guide ('5 RSI ideas', task tal1411rsi 09:16): RSI divergence only in the direction of the big
+    trend, confirmed by RSI crossing 50. Long: close over EMA200, a confirmed swing low (5 bars) lower than the previous
+    one with a HIGHER RSI(14) at it (bullish divergence), then RSI crosses over 50 within 20 bars -> buy. Short =
+    mirror (under EMA200, bearish divergence, RSI under 50). No stop / target in the video - ours: stop under the
+    divergence low (over the high), target 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    from agents.indicators._core import pivots
+    r = rsi(c, 14)
+    e200 = ema(c, 200)
+    phc, plc, phv, plv, phi, pli = pivots(h, l, 5)
+    n = len(c)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    lj = hj = None
+    arm_l = arm_s = None
+    c50u, c50d = cross_up(r, 50.0), cross_down(r, 50.0)
+    for t in range(n):
+        if plc[t]:
+            j = pli[t]
+            if lj is not None and l[j] < l[lj] and r[j] > r[lj]:
+                arm_l = (t, l[j])
+            lj = j
+        if phc[t]:
+            j = phi[t]
+            if hj is not None and h[j] > h[hj] and r[j] < r[hj]:
+                arm_s = (t, h[j])
+            hj = j
+        if arm_l is not None and t - arm_l[0] <= 20 and c50u[t] and c[t] > e200[t]:
+            L[t], sl_l[t] = True, arm_l[1]
+            arm_l = None
+        if arm_s is not None and t - arm_s[0] <= 20 and c50d[t] and c[t] < e200[t]:
+            S[t], sl_s[t] = True, arm_s[1]
+            arm_s = None
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+# ---------------- SC182 VWAP + EMA close beyond both, exit back beyond both (The Trader's Guide) ----------------
+def s_tg_vwap_ema_both(df):
+    """The Trader's Guide (TikTok, task tal1411vwap (1)), intraday: sell when a candle closes under the session VWAP
+    AND under the EMA; exit when a candle closes over both; buy = mirror. Ours: EMA 20 (the video does not say the
+    length), the first close beyond both (onset), stop 1.5 ATR (no stop in the video), no fixed target - the exit
+    rule. Tick volume VWAP (CFDs, noted)."""
+    o, h, l, c, v = _ohlcv(df)
+    vw = IND.vwap_bands(df)["vwap"]
+    e = ema(c, 20)
+    below = (c < vw) & (c < e)
+    above = (c > vw) & (c > e)
+    L, S = _excl(_onset(above), _onset(below))
+    return L, S, {"stop": ("atr", 1.5), "target": None, "exit_long": below, "exit_short": above}
+
+
+# ---------------- SC183 Fibonacci 0.5-0.786 pullback + EMA9 reclaim in the EMA50/200 trend (The Trader's Guide) ------
+def s_tg_fib_ema9_reclaim(df):
+    """The Trader's Guide (TikTok, task tal1411vwap (2)): in a trend (EMA50 over EMA200) wait for a pullback into the
+    0.5-0.786 zone of the last move (confirmed 5-bar swing low -> swing high), enter only after the price closes back
+    over EMA9; stop under the pullback low; target the swing high / 2R (ours: the swing high when it is >= 1R away,
+    else 2R). Short = mirror. Differs from SW16 / TT12 by the EMA9-reclaim trigger and the 0.786 floor."""
+    o, h, l, c, v = _ohlcv(df)
+    from agents.indicators._core import pivots
+    e9, e50, e200 = ema(c, 9), ema(c, 50), ema(c, 200)
+    phc, plc, phv, plv, phi, pli = pivots(h, l, 5)
+    n = len(c)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    lo = hi = None  # (idx, price)
+    touched_l = touched_s = None
+    for t in range(n):
+        if plc[t]:
+            lo = (pli[t], plv[t])
+        if phc[t]:
+            hi = (phi[t], phv[t])
+        if lo and hi and lo[0] < hi[0] and e50[t] > e200[t]:
+            mv = hi[1] - lo[1]
+            z1, z2 = hi[1] - 0.5 * mv, hi[1] - 0.786 * mv
+            if l[t] <= z1 and l[t] >= z2:
+                touched_l = min(touched_l, l[t]) if touched_l is not None else l[t]
+            if l[t] < z2:
+                touched_l = None
+            if t > 0 and touched_l is not None and c[t] > e9[t] and c[t - 1] <= e9[t - 1]:
+                risk = c[t] - touched_l
+                if risk > 0:
+                    L[t], sl_l[t] = True, touched_l
+                    tg_l[t] = hi[1] if hi[1] - c[t] >= risk else c[t] + 2 * risk
+                touched_l = None
+        else:
+            touched_l = None
+        if lo and hi and hi[0] < lo[0] and e50[t] < e200[t]:
+            mv = hi[1] - lo[1]
+            z1, z2 = lo[1] + 0.5 * mv, lo[1] + 0.786 * mv
+            if h[t] >= z1 and h[t] <= z2:
+                touched_s = max(touched_s, h[t]) if touched_s is not None else h[t]
+            if h[t] > z2:
+                touched_s = None
+            if t > 0 and touched_s is not None and c[t] < e9[t] and c[t - 1] >= e9[t - 1]:
+                risk = touched_s - c[t]
+                if risk > 0:
+                    S[t], sl_s[t] = True, touched_s
+                    tg_s[t] = lo[1] if c[t] - lo[1] >= risk else c[t] - 2 * risk
+                touched_s = None
+        else:
+            touched_s = None
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, tg_l, tg_s)
+
+
+# ---------------- SC184 Ichimoku: over the cloud + TK cross + Chikou over the price (Quant Tactics) ----------------
+def s_qt_ichimoku_chikou(df):
+    """Quant Tactics (TikTok, '2944% backtest' on crypto - probably exaggerated; task tal1411vwap (3)): buy when price
+    is over the cloud, Tenkan crosses over Kijun and the Chikou span is over the price (= today's close over the close
+    26 bars ago - no look-ahead); sell = mirror. Ichimoku 9/26/52. No stop / target in the video - ours: stop at the
+    Kijun (or 1.5 ATR when the Kijun is closer than 0.5 ATR), exit on the opposite TK cross, no fixed target.
+    Differs from TV20 (no Chikou rule) and GH13 (7/14/30)."""
+    o, h, l, c, v = _ohlcv(df)
+    ic = IND.ichimoku(df)
+    a = atr(h, l, c, 14)
+    L = ic["above_cloud"] & ic["tk_up"] & ic["chikou_up"]
+    S = ic["below_cloud"] & ic["tk_dn"] & ic["chikou_dn"]
+    kj = ic["kijun"]
+    sl_l = np.where(c - kj >= 0.5 * a, kj, c - 1.5 * a)
+    sl_s = np.where(kj - c >= 0.5 * a, kj, c + 1.5 * a)
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", sl_l, sl_s), "target": None, "exit_long": ic["tk_dn"], "exit_short": ic["tk_up"]}
+
+
+# ---------------- SC185 EMA 9/21 cross + VWAP + ADX > 20, break of the confirmation high (The Trader's Guide) --------
+def s_tg_ema9_21_vwap_adx_break(df):
+    """The Trader's Guide 'ADX 80%' (TikTok, task tal1411set2 (1)): EMA9 crosses over EMA21, price over EMA9 and over
+    the VWAP, ADX(14) over 20 on the confirmation candle -> buy on a break of the confirmation candle's high (within 3
+    bars); stop under the confirmation candle (or EMA21, the lower), target 2R (the video: 1.5-2R or exit on the cross
+    back - we also exit on EMA9 crossing back under EMA21). Sell = mirror. Differs from SC008 (EMA 5/13, entry at the
+    cross) by EMA 9/21 and the stop-entry over the confirmation high."""
+    o, h, l, c, v = _ohlcv(df)
+    e9, e21 = ema(c, 9), ema(c, 21)
+    vw = IND.vwap_bands(df)["vwap"]
+    ad = adx(h, l, c, 14)
+    n = len(c)
+    conf_l = cross_up(e9, e21) & (c > e9) & (c > vw) & (ad > 20)
+    conf_s = cross_down(e9, e21) & (c < e9) & (c < vw) & (ad > 20)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    for t in range(1, n):
+        for k in (1, 2, 3):
+            j = t - k
+            if j < 0:
+                break
+            if conf_l[j] and c[t] > h[j] and not np.any(c[j + 1:t] > h[j]):
+                L[t], sl_l[t] = True, min(l[j], e21[t])
+            if conf_s[j] and c[t] < l[j] and not np.any(c[j + 1:t] < l[j]):
+                S[t], sl_s[t] = True, max(h[j], e21[t])
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl_l, sl_s, 2.0, exit_long=cross_down(e9, e21), exit_short=cross_up(e9, e21))
+
+
+# ---------------- SC186 Gold 15m liquidity sweep and reclaim, target the previous swing (sphula) ----------------
+def s_sphula_sweep_reclaim(df):
+    """sphula (TikTok, gold 15m, task tal1411set2 (2)): price runs under a previous swing low and comes back over it -
+    buy on the reclaim (the close back over the low) or on the retest of the zone; stop under the sweep low; target the
+    previous swing high. Sell = mirror. Ours: swings of 5 bars (agents/indicators liquidity), entry at the reclaim
+    close, target = the last confirmed swing high when it is >= 1R away (else 2R). Differs from SC151 (pivot-5 + SMA50
+    filter, 2R) and TV11 (the previous DAY's low) by the swing-high target and no trend filter."""
+    o, h, l, c, v = _ohlcv(df)
+    lq = IND.liquidity(df, k=5)
+    sh, sl = _swings(h, l, 5)
+    L, S = lq["sweep_bull"], lq["sweep_bear"]
+    risk_l, risk_s = c - l, h - c
+    tgl = np.where(sh - c >= risk_l, sh, c + 2 * risk_l)
+    tgs = np.where(c - sl >= risk_s, sl, c - 2 * risk_s)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(l, h, tgl, tgs)
+
+
+# ---------------- SC187 Two EMAs + buyer / seller pressure flip (ProTrippa) ----------------
+def s_pt_ma_pressure(df):
+    """ProTrippa 'Forget MACD & RSI' (TikTok, task tal1411set3 (1)): two moving averages give the direction (ours:
+    EMA20 over EMA50 and both rising = up); enter only when the buyers-vs-sellers pressure oscillator flips to the side
+    of the trend (agents/indicators buy_sell_pressure: close location x tick volume - CFDs have no real volume, noted).
+    No stop / target in the video - ours: stop beyond the 10-bar swing, target 2R, exit when the pressure flips back."""
+    o, h, l, c, v = _ohlcv(df)
+    e20, e50 = ema(c, 20), ema(c, 50)
+    bp = IND.buy_sell_pressure(df)
+    a = atr(h, l, c, 14)
+    up = (e20 > e50) & (e20 > _sh(e20)) & (e50 > _sh(e50))
+    dn = (e20 < e50) & (e20 < _sh(e20)) & (e50 < _sh(e50))
+    L, S = _excl(up & bp["buy_flip"], dn & bp["sell_flip"])
+    return L, S, _plan_r(_s(l).rolling(10).min().to_numpy() - 0.1 * a, _s(h).rolling(10).max().to_numpy() + 0.1 * a,
+                         2.0, exit_long=bp["sell_flip"], exit_short=bp["buy_flip"])
+
+
+# ---------------- SC188 MFI(14) out of 20 / 80 with the trend (Quant Tactics) ----------------
+def s_qt_mfi14_trend(df):
+    """Quant Tactics (TikTok, crypto results 300%+ probably exaggerated; task tal1411set3 (2)): Money Flow Index (14)
+    - buy when it leaves the zone under 20 (crosses back over 20) in an up trend, sell when it crosses back under 80 in
+    a down trend. Trend (ours) = EMA50 vs EMA200 (the dip under 20 often takes the price itself under a long average). Tick volume (CFDs). No stop / target - ours: stop beyond the 10-bar
+    swing, target 2R. Differs from SC129 (MFI(3) = 100 / 0 momentum)."""
+    o, h, l, c, v = _ohlcv(df)
+    m = IND.mfi(df, 14)
+    e50, e200 = ema(c, 50), ema(c, 200)
+    a = atr(h, l, c, 14)
+    L, S = _excl(m["exit_os"] & (e50 > e200), m["exit_ob"] & (e50 < e200))
+    return L, S, _plan_r(_s(l).rolling(10).min().to_numpy() - 0.1 * a, _s(h).rolling(10).max().to_numpy() + 0.1 * a, 2.0)
+
+
+# ---------------- SC189 / SC190 Support / resistance retest (Flux Charts S&R; Lima Signal) ----------------
+def s_flux_sr_retest_confirm(df):
+    """Flux Charts 'S&R Strategy' (TikTok, task tal1411set4 (1)): automatic S/R levels (swings tested 2+ times); enter
+    on the retest of a level that broke, only with a second indicator's confirmation (ours: EMA50 slope in the trade's
+    direction AND RSI(14) on the right side of 50); stop beyond the level; target the next level. Ours: agents/indicators
+    sr_levels (pivots 5, zone 0.25 ATR), the level must have had 2+ tests before the break; stop = level -/+ 0.5 ATR;
+    target = the next resistance (support) when >= 1R away, else 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    sr = IND.sr_levels(df, k=5)
+    a = atr(h, l, c, 14)
+    e50 = ema(c, 50)
+    r = rsi(c, 14)
+    lvl = sr["retest_level"]
+    tests = np.nan_to_num(sr["retest_tests"])
+    L = sr["retest_long"] & (tests >= 2) & (e50 > _sh(e50)) & (r > 50)
+    S = sr["retest_short"] & (tests >= 2) & (e50 < _sh(e50)) & (r < 50)
+    sl_l, sl_s = lvl - 0.5 * a, lvl + 0.5 * a
+    res, sup = sr["res"], sr["sup"]
+    tgl = np.where(np.isfinite(res) & (res - c >= c - sl_l), res, c + 2 * (c - sl_l))
+    tgs = np.where(np.isfinite(sup) & (c - sup >= sl_s - c), sup, c - 2 * (sl_s - c))
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, tgl, tgs)
+
+
+def s_lima_break_retest_3tests(df):
+    """Lima Signal (TikTok, task tal1411set4 09:31) break and retest: a support that held 3 pullbacks; a candle closes
+    under it; price comes back to it from below and is rejected -> sell; stop over the swing high before the break;
+    target the established low (ours: 2R - the video's 'established low' is the next support, taken when it is >= 1R
+    away). Buy = mirror (resistance held 3 times, broken up, retested from above). agents/indicators sr_levels."""
+    o, h, l, c, v = _ohlcv(df)
+    sr = IND.sr_levels(df, k=5)
+    a = atr(h, l, c, 14)
+    tests = np.nan_to_num(sr["retest_tests"])
+    sw = sr["pre_break_swing"]
+    lvl = sr["retest_level"]
+    S = sr["retest_short"] & (tests >= 3)
+    L = sr["retest_long"] & (tests >= 3)
+    sl_s = np.where(np.isfinite(sw) & (sw > c), sw, lvl + 0.5 * a)
+    sl_l = np.where(np.isfinite(sw) & (sw < c), sw, lvl - 0.5 * a)
+    sup, res = sr["sup"], sr["res"]
+    tgs = np.where(np.isfinite(sup) & (c - sup >= sl_s - c), sup, c - 2 * (sl_s - c))
+    tgl = np.where(np.isfinite(res) & (res - c >= c - sl_l), res, c + 2 * (c - sl_l))
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, tgl, tgs)
+
+
+# ---------------- SC191 EMA 9/21/50/100/200 graded pullback (The Trader's Guide) ----------------
+def s_tg_ema_stack_pullback(df):
+    """The Trader's Guide (TikTok, task tal1411set4 (2)): the order of EMA 9/21/50/100/200 grades the trend - all five
+    in order = strong trend, pullbacks go to EMA50/100; a normal trend (price over EMA200, 9 > 21 > 50) pulls back to
+    EMA21. Buy when the low touches the EMA of the grade (strong: EMA50, normal: EMA21) and the candle closes back over
+    it; sell = mirror. No stop / target - ours: stop 0.5 ATR beyond the next slower EMA (strong: EMA100, normal: EMA50),
+    target 2R. agents/indicators ema_stack."""
+    o, h, l, c, v = _ohlcv(df)
+    es = IND.ema_stack(df)
+    E = es["lines"]
+    a = atr(h, l, c, 14)
+    strong_u, strong_d = es["full_up"], es["full_dn"]
+    norm_u = ~strong_u & (c > E[200]) & (E[9] > E[21]) & (E[21] > E[50])
+    norm_d = ~strong_d & (c < E[200]) & (E[9] < E[21]) & (E[21] < E[50])
+    Ls = strong_u & (l <= E[50]) & (c > E[50])
+    Ln = norm_u & (l <= E[21]) & (c > E[21])
+    Ss = strong_d & (h >= E[50]) & (c < E[50])
+    Sn = norm_d & (h >= E[21]) & (c < E[21])
+    sl_l = np.where(Ls, E[100] - 0.5 * a, E[50] - 0.5 * a)
+    sl_s = np.where(Ss, E[100] + 0.5 * a, E[50] + 0.5 * a)
+    L, S = _excl(Ls | Ln, Ss | Sn)
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+# ---------------- SC192 Falling trend-line touch, tight stop, far target (Dan-Chi, US500 1m) ----------------
+def s_danchi_tl_touch_far(df):
+    """Dan-Chi (TikTok, US500 1-minute, task tal1411set4 09:37): sell at the touch of a falling trend line with a tight
+    stop over it and a far target. Ours: automatic line through the last two lower confirmed swing highs (agents/
+    indicators trendlines, pivots 5), the high reaches the line and the candle closes under it -> sell; stop = the line
+    + 0.3 ATR; target 4R ('far' - ours). Buy = mirror on a rising support line."""
+    o, h, l, c, v = _ohlcv(df)
+    tl = IND.trendlines(df, k=5)
+    a = atr(h, l, c, 14)
+    S = tl["touch_res"] & (tl["res_slope"] < 0)
+    L = tl["touch_sup"] & (tl["sup_slope"] > 0)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(tl["sup_line"] - 0.3 * a, tl["res_line"] + 0.3 * a, 4.0)
+
+
+# ---------------- SC193 EMA20/50 + RSI 50 pullback to EMA20, exit on the 20/50 cross back (Market Structure) ----------
+def s_ms_ema20_50_rsi_pullback(df):
+    """Market Structure 'pullbacks EMA20/50 + RSI' (TikTok, task tal1411set6 (2)): EMA20 over EMA50 and RSI(14) over
+    50 -> buy when the price touches EMA20 (the low reaches it, the close stays over it) with RSI still over 50; exit
+    when EMA20 closes under EMA50 or the price closes under EMA50. Sell = mirror. No stop in the video - ours: EMA50 -
+    0.5 ATR, no fixed target. Differs from SC057 (needs an engulfing / pin bar and 2R)."""
+    o, h, l, c, v = _ohlcv(df)
+    e20, e50 = ema(c, 20), ema(c, 50)
+    r = rsi(c, 14)
+    a = atr(h, l, c, 14)
+    L = (e20 > e50) & (r > 50) & (l <= e20) & (c > e20)
+    S = (e20 < e50) & (r < 50) & (h >= e20) & (c < e20)
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", e50 - 0.5 * a, e50 + 0.5 * a), "target": None,
+                  "exit_long": (e20 < e50) | (c < e50), "exit_short": (e20 > e50) | (c > e50)}
+
+
+# ---------------- SC194 POC retest (Market Structure '8 types of retest'; task tal1411set6 (3)) ----------------
+def s_ms_poc_retest(df):
+    """Market Structure '8 types of retest' (TikTok, task tal1411set6 (3)) - the POC kind: once the price has closed
+    over the previous session's POC (bullish POC), the first return to it that is rejected (the low reaches the POC,
+    the close is back over it and over the open = rejection candle) -> buy; mirror for a bearish POC. Entry only after
+    the confirmation, as the video says. Ours: previous-UTC-session POC from the tick-volume profile (agents/
+    indicators volume_profile - CFD tick volume, noted), stop 0.5 ATR beyond the POC, target 2R, one per side a day."""
+    o, h, l, c, v = _ohlcv(df)
+    vp = IND.volume_profile(df)
+    poc = vp["poc"]
+    a = atr(h, l, c, 14)
+    day = pd.Series(df.index.tz_convert("UTC").date).to_numpy()
+    was_above = pd.Series((c > poc + 0.25 * a).astype(float)).groupby(day).cummax().to_numpy() > 0
+    was_below = pd.Series((c < poc - 0.25 * a).astype(float)).groupby(day).cummax().to_numpy() > 0
+    L = _shb(was_above) & (l <= poc) & (c > poc) & (c > o)
+    S = _shb(was_below) & (h >= poc) & (c < poc) & (c < o)
+    L, S = _excl(_first_per_day(L, day), _first_per_day(S, day))
+    return L, S, _plan_r(poc - 0.5 * a, poc + 0.5 * a, 2.0)
+
+
+# ---------------- SC195 RSI divergence, then a structure break with expanding volume (Market Structure) -------------
+def s_ms_div_then_bos(df):
+    """Market Structure 'RSI divergence is a warning, not an entry' (TikTok, task tal1411set6 (4)): after a bullish
+    RSI(14) divergence (lower swing low, higher RSI - pivots of 5 bars, known 5 bars late) wait for a break of
+    structure - a close over the last swing high - with expanding volume (tick volume over its 20-bar average; a feed
+    without volume passes) -> buy; bearish mirror. Valid 30 bars after the divergence. No stop / target in the video -
+    ours: stop under the divergence low, target 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    from agents.indicators._core import pivots
+    r = rsi(c, 14)
+    sh, sl = _swings(h, l, 5)
+    vok = _vol_ok(v, 20, 1.0)
+    phc, plc, phv, plv, phi, pli = pivots(h, l, 5)
+    n = len(c)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    lj = hj = None
+    arm_l = arm_s = None
+    for t in range(1, n):
+        if plc[t]:
+            j = pli[t]
+            if lj is not None and l[j] < l[lj] and r[j] > r[lj]:
+                arm_l = (t, l[j])
+            lj = j
+        if phc[t]:
+            j = phi[t]
+            if hj is not None and h[j] > h[hj] and r[j] < r[hj]:
+                arm_s = (t, h[j])
+            hj = j
+        if arm_l and t - arm_l[0] <= 30 and np.isfinite(sh[t]) and c[t] > sh[t] and c[t - 1] <= sh[t] and vok[t]:
+            L[t], sl_l[t] = True, arm_l[1]
+            arm_l = None
+        if arm_s and t - arm_s[0] <= 30 and np.isfinite(sl[t]) and c[t] < sl[t] and c[t - 1] >= sl[t] and vok[t]:
+            S[t], sl_s[t] = True, arm_s[1]
+            arm_s = None
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+# ---------------- SC196 Bollinger poke back inside at a high-volume area (Flux 'Bollinger + Volume Profile') ---------
+def s_flux_bb_vp(df):
+    """Flux Charts 'Bollinger + Volume Profile' (TikTok, task tal1411set6 (5)): a candle outside the lower Bollinger
+    band (20, 2) inside a high-volume area / the POC that closes back inside the bands -> buy; target the middle band
+    (variant: the other band). Sell = mirror at the upper band. Ours: 'high-volume area' = within the previous
+    session's value area (VAL..VAH) or within 0.5 ATR of its POC or an HVN (tick-volume profile, noted); entry at the
+    close back inside; stop 0.3 ATR beyond the poke's extreme; target the middle band."""
+    o, h, l, c, v = _ohlcv(df)
+    lo, mid, up = _bb(c, 20, 2.0)
+    vp = IND.volume_profile(df)
+    a = atr(h, l, c, 14)
+    in_va = (c >= vp["val"]) & (c <= vp["vah"])
+    near = (np.abs(c - vp["poc"]) <= 0.5 * a) | (np.abs(c - vp["hvn_below"]) <= 0.5 * a) | \
+           (np.abs(c - vp["hvn_above"]) <= 0.5 * a)
+    hv = in_va | near
+    L = hv & (_sh(l) < _sh(lo)) & (c > lo) & (_sh(c) < _sh(lo))
+    S = hv & (_sh(h) > _sh(up)) & (c < up) & (_sh(c) > _sh(up))
+    sl_l = np.fmin(l, _sh(l)) - 0.3 * a
+    sl_s = np.fmax(h, _sh(h)) + 0.3 * a
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, mid, mid)
+
+
+# ---------------- SC197 Triangle breakout (16 chart patterns video; task tal1411set6 (6)) ----------------
+def s_triangle_breakout(df):
+    """'16 chart patterns' (TikTok, task tal1411set6 (6)) - the triangles, which the library did not have: symmetric
+    (falling highs + rising lows), ascending (flat highs + rising lows) and descending (falling highs + flat lows).
+    Buy on a close over the upper line, sell on a close under the lower line; stop on the other side of the triangle
+    at the breakout bar (the opposite line); target = the triangle's height at its start projected from the break
+    (the classic measured move). Ours: lines + pattern from agents/indicators trendlines (pivots 4); ascending only
+    long, descending only short, symmetric both."""
+    o, h, l, c, v = _ohlcv(df)
+    tl = IND.trendlines(df, k=4)
+    p = np.nan_to_num(tl["pattern"])
+    pp = _sh(p)
+    hgt = tl["height"]
+    L = tl["break_res"] & np.isin(pp, [1, 2]) & np.isfinite(hgt)
+    S = tl["break_sup"] & np.isin(pp, [1, 3]) & np.isfinite(hgt)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(_sh(tl["sup_line"]), _sh(tl["res_line"]), c + hgt, c - hgt)
+
+
+# ---------------- SC198 Triple top / bottom (16 chart patterns) ----------------
+def s_triple_top_bottom(df):
+    """'16 chart patterns' (TikTok, task tal1411set6 (6)): triple top = three swing highs within 1 ATR of each other
+    with the two lows between them (the neckline = the lower of those lows); sell on a close under the neckline; stop
+    over the highest of the three tops; target = the pattern's height under the neckline. Triple bottom = mirror.
+    Ours: swings of 4 bars (known 4 bars late), tops within 1 ATR, the pattern must break within 40 bars of the
+    third top."""
+    o, h, l, c, v = _ohlcv(df)
+    from agents.indicators._core import pivots
+    a = atr(h, l, c, 14)
+    phc, plc, phv, plv, phi, pli = pivots(h, l, 4)
+    n = len(c)
+    H, Lw = [], []
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    arm_s = arm_l = None
+    for t in range(n):
+        if phc[t]:
+            H.append((phi[t], phv[t]))
+            if len(H) >= 3:
+                (x1, y1), (x2, y2), (x3, y3) = H[-3:]
+                lows = [p for (j, p) in Lw if x1 < j < x3]
+                if len(lows) >= 2 and max(y1, y2, y3) - min(y1, y2, y3) <= 1.0 * a[t]:
+                    neck = min(lows)
+                    arm_s = (neck, max(y1, y2, y3), t)
+        if plc[t]:
+            Lw.append((pli[t], plv[t]))
+            if len(Lw) >= 3:
+                (x1, y1), (x2, y2), (x3, y3) = Lw[-3:]
+                highs = [p for (j, p) in H if x1 < j < x3]
+                if len(highs) >= 2 and max(y1, y2, y3) - min(y1, y2, y3) <= 1.0 * a[t]:
+                    neck = max(highs)
+                    arm_l = (neck, min(y1, y2, y3), t)
+        if arm_s and t - arm_s[2] <= 40:
+            neck, top, _ = arm_s
+            if c[t] < neck:
+                S[t], sl_s[t], tg_s[t] = True, top, neck - (top - neck)
+                arm_s = None
+            elif c[t] > top:
+                arm_s = None
+        if arm_l and t - arm_l[2] <= 40:
+            neck, bot, _ = arm_l
+            if c[t] > neck:
+                L[t], sl_l[t], tg_l[t] = True, bot, neck + (neck - bot)
+                arm_l = None
+            elif c[t] < bot:
+                arm_l = None
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, tg_l, tg_s)
+
+
+# ---------------- SC199 Bull / bear flag (16 chart patterns) ----------------
+def s_flag_breakout(df):
+    """'16 chart patterns' (TikTok, task tal1411set6 (6)) - flags: a pole (a move of >= 3 ATR within <= 10 bars) then a
+    flag of 5-20 bars that retraces under 50% of the pole; buy on a close over the flag's high (bull flag), stop under
+    the flag's low, target = the pole's length from the breakout (measured move). Bear flag = mirror. Ours: the flag =
+    the bars since the pole's extreme; ATR(14) at the pole."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    for t in range(40, n):
+        for f in range(5, 21):
+            pk = t - f            # pole extreme bar (the flag is pk+1 .. t-1)
+            if pk - 10 < 0:
+                break
+            fl_h, fl_l = h[pk + 1:t].max(), l[pk + 1:t].min()
+            # bull: pole up into pk
+            base = l[pk - 10:pk + 1].min()
+            pole = h[pk] - base
+            if h[pk] >= h[pk - 10:t].max() and pole >= 3 * a[pk] and fl_l >= h[pk] - 0.5 * pole and fl_h <= h[pk] \
+                    and c[t] > fl_h and c[t - 1] <= fl_h:
+                L[t], sl_l[t], tg_l[t] = True, fl_l, c[t] + pole
+                break
+            top = h[pk - 10:pk + 1].max()
+            pole_d = top - l[pk]
+            if l[pk] <= l[pk - 10:t].min() and pole_d >= 3 * a[pk] and fl_h <= l[pk] + 0.5 * pole_d \
+                    and fl_l >= l[pk] and c[t] < fl_l and c[t - 1] >= fl_l:
+                S[t], sl_s[t], tg_s[t] = True, fl_h, c[t] - pole_d
+                break
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, tg_l, tg_s)
+
+
+# ---------------- SC200 Daily pivot bias + pullback to P (Ezekiel Chew) ----------------
+def s_ec_daily_pivot_bias(df):
+    """Ezekiel Chew (TikTok, task tal1411set6 (7)): daily pivot points as support / resistance and trend - price over
+    P = bullish. Rules (ours, from the video's idea): after the price has closed over the day's P (traditional, from
+    the previous UTC day - agents/indicators pivot_points), the first pullback that touches P and closes back over it
+    -> buy, target R1 (R2 when R1 is under 1R away), stop under S1 or 1 ATR under P, the nearer. Mirror for shorts
+    under P (target S1). One per side a day."""
+    o, h, l, c, v = _ohlcv(df)
+    pv = IND.pivot_points(df)
+    a = atr(h, l, c, 14)
+    P, R1, R2, S1, S2 = pv["P"], pv["R1"], pv["R2"], pv["S1"], pv["S2"]
+    day = pd.Series(df.index.tz_convert("UTC").date).to_numpy()
+    ab = pd.Series((c > P + 0.2 * a).astype(float)).groupby(day).cummax().to_numpy() > 0
+    be = pd.Series((c < P - 0.2 * a).astype(float)).groupby(day).cummax().to_numpy() > 0
+    L = _shb(ab) & (l <= P) & (c > P)
+    S = _shb(be) & (h >= P) & (c < P)
+    sl_l = np.fmax(S1, P - a)
+    sl_s = np.fmin(R1, P + a)
+    tgl = np.where(R1 - c >= c - sl_l, R1, R2)
+    tgs = np.where(c - S1 >= sl_s - c, S1, S2)
+    L, S = _excl(_first_per_day(L, day), _first_per_day(S, day))
+    return L, S, _plan_lv(sl_l, sl_s, tgl, tgs)
+
+
+# ---------------- SC201 / SC202 Range-box breakout with buyer volume (Flux 'Easy Strategy') ----------------
+def _box_break(df, mode):
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    bh, bl = _sh(_s(h).rolling(20).max().to_numpy()), _sh(_s(l).rolling(20).min().to_numpy())
+    tight = (bh - bl) <= 5.0 * _sh(a)
+    if mode == "pct":
+        bp = IND.buy_sell_pressure(df)["buy_pct"]
+        vl, vs = bp >= 0.8, bp <= 0.2
+    else:
+        bt = IND.big_trades(df, z=2.0)
+        flat = _s(v).rolling(50).std(ddof=0).to_numpy() == 0
+        vl = bt["big_buy"] | (flat & (c > _sh(c)))
+        vs = bt["big_sell"] | (flat & (c < _sh(c)))
+    L = tight & (c > bh) & vl
+    S = tight & (c < bl) & vs
+    mid = (bh + bl) / 2
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(mid, mid, c + (bh - bl), c - (bh - bl))
+
+
+def s_flux_box_break_buy_pct(df):
+    """Flux Charts 'Easy Strategy, two free indicators' (TikTok, task tal1411set6 (8)): breakout from a range box
+    confirmed by the buyers' share of the breakout candle's volume (83% buyers in the video). Ours: box = the last 20
+    bars' high-low, tight = height <= 5 ATR; buy on a close over the box with the bar's buy share >= 80% (close location in the
+    true range - no real volume / order flow, noted), sell mirror (<= 20%); stop at the box middle; target = the box
+    height from the close."""
+    return _box_break(df, "pct")
+
+
+def s_meks_box_break_big_trade(df):
+    """SC201's box breakout confirmed instead by a 'big trade' (Meks Trades, task tal1411ind 10:08): tick volume
+    z-score >= 2 on the breakout candle closing in its upper (lower) half (agents/indicators big_trades; a feed with
+    constant volume uses the bar's direction only). Same box, stop and target as SC201."""
+    return _box_break(df, "big")
+
+
+# ---------------- SC203 OTE in the discount (Forex Bull Signals, gold) ----------------
+def s_fbs_ote_discount(df):
+    """Forex Bull Signals (TikTok, gold, task tal1411set6 (9)): fib of the swing; buy only under 50% (discount), the
+    entry zone is the 61.8-79% retracement (OTE). Ours: dealing range = the last confirmed 10-bar swing low -> swing
+    high (up leg, agents/indicators premium_discount), the close in the OTE zone (21-38.2% of the range from the low)
+    on a bullish candle (close over open and over the previous close) -> buy; stop under the swing low - 0.2 ATR;
+    target the swing high. Sell = mirror in the premium of a down leg."""
+    o, h, l, c, v = _ohlcv(df)
+    pdz = IND.premium_discount(df, k=10)
+    sm = IND.smc(df, k=10)
+    a = atr(h, l, c, 14)
+    lo, hi = sm["swing_lo"], sm["swing_hi"]
+    L = pdz["up_leg"] & pdz["ote_long"] & (c > o) & (c > _sh(c))
+    S = ~pdz["up_leg"] & pdz["ote_short"] & (c < o) & (c < _sh(c))
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(lo - 0.2 * a, hi + 0.2 * a, hi, lo)
+
+
+# ---------------- SC204 First touch of the previous session's POC, reverse (sixlots) ----------------
+def s_sixlots_poc_first_touch(df):
+    """sixlots (TikTok, task tal1411set6 (10)): the POC as a reversal level - a limit order at the previous session's
+    POC, reverse entry at the FIRST touch. Coming from above -> buy at the POC, from below -> sell. Ours: the session
+    opens on one side of the previous UTC session's POC (agents/indicators volume_profile, tick volume - noted); the
+    first bar that reaches it enters at the close of that bar (a bar-close approximation of the limit), stop 1 ATR
+    beyond the POC, target 2R; one a day."""
+    o, h, l, c, v = _ohlcv(df)
+    vp = IND.volume_profile(df)
+    poc = vp["poc"]
+    a = atr(h, l, c, 14)
+    day = pd.Series(df.index.tz_convert("UTC").date).to_numpy()
+    first_o = pd.Series(o).groupby(day).transform("first").to_numpy()
+    touch = (l <= poc) & (h >= poc)
+    ft = _first_per_day(touch, day)
+    L = ft & (first_o > poc) & (c >= poc - 0.5 * a)
+    S = ft & (first_o < poc) & (c <= poc + 0.5 * a)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(poc - a, poc + a, 2.0)
+
+
+# ---------------- SC205 ADX + DI cross + EMA50 (The Trader's Guide) ----------------
+def s_tg_adx_di_ema50(df):
+    """The Trader's Guide (TikTok, task tal1411set6 (11)): price over EMA50, +DI crosses over -DI, ADX(14) over 20 and
+    rising -> buy (sell = mirror). Ours: the cross may come up to 3 bars before ADX is over 20 and rising (+DI still
+    over -DI), the first bar where all hold. No stop / target in the video - ours: stop beyond the 10-bar swing, target 2R.
+    Differs from TV24 (ADX > 25, ATR trail, no EMA50)."""
+    o, h, l, c, v = _ohlcv(df)
+    d = IND.adx_di(df, 14)
+    e50 = ema(c, 50)
+    a = atr(h, l, c, 14)
+    up_x = d["di_up"] | _since(d["di_up"], 3)
+    dn_x = d["di_dn"] | _since(d["di_dn"], 3)
+    L = _onset((c > e50) & up_x & (d["pdi"] > d["ndi"]) & (d["adx"] > 20) & d["adx_rising"])
+    S = _onset((c < e50) & dn_x & (d["pdi"] < d["ndi"]) & (d["adx"] > 20) & d["adx_rising"])
+    L, S = _excl(L, S)
+    return L, S, _plan_r(_s(l).rolling(10).min().to_numpy() - 0.1 * a, _s(h).rolling(10).max().to_numpy() + 0.1 * a, 2.0)
+
+
+# ---------------- SC206 ICT Judas Swing + order block re-entry (Flux; task tal1411set6 (13)) ----------------
+def s_judas_ob(df):
+    """ICT Judas Swing + Order Block (Flux Charts, TikTok, task tal1411set6 (13)): at the London / New York open the
+    first move sweeps the Asian high / low (or the previous day's) and reverses; enter on the return to the order block
+    that formed; stop beyond the sweep's extreme; target the other side of the range. Ours: agents/indicators
+    judas_swing (Asian range 19:00-24:00 NY, windows 02-05 and 08:30-11 NY); buy when, within 12 bars after the
+    bullish Judas signal, the low trades back into the order block (its top) and the bar closes over the OB's bottom;
+    stop under the sweep low - 0.1 ATR; target the Asian high (mirror: Asian low). Fits bots 5-6 (opens)."""
+    o, h, l, c, v = _ohlcv(df)
+    j = IND.judas_swing(df)
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    armL = armS = None
+    for t in range(n):
+        if j["bull"][t]:
+            armL = (t, j["ob_top"][t], j["ob_bot"][t], j["sweep_lo"][t], j["asia_hi"][t])
+        if j["bear"][t]:
+            armS = (t, j["ob_top"][t], j["ob_bot"][t], j["sweep_hi"][t], j["asia_lo"][t])
+        if armL and t > armL[0]:
+            b, top, bot, sw, tgt = armL
+            if t - b > 12 or c[t] < sw:
+                armL = None
+            elif l[t] <= top and c[t] > bot:
+                L[t], sl_l[t], tg_l[t] = True, sw - 0.1 * a[t], tgt
+                armL = None
+        if armS and t > armS[0]:
+            b, top, bot, sw, tgt = armS
+            if t - b > 12 or c[t] > sw:
+                armS = None
+            elif h[t] >= bot and c[t] < top:
+                S[t], sl_s[t], tg_s[t] = True, sw + 0.1 * a[t], tgt
+                armS = None
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, tg_l, tg_s)
+
+
+# ---------------- SC207 - SC211 Volume-profile shapes (Dualis Flow / Olisa Flow / saint / nq tom; task tal1411vp) -----
+def _vp_ctx(df, mode="volume"):
+    o, h, l, c, v = _ohlcv(df)
+    vp = IND.volume_profile(df, mode=mode)
+    a = atr(h, l, c, 14)
+    day = pd.Series(df.index.tz_convert("UTC").date).to_numpy()
+    return o, h, l, c, vp, a, day
+
+
+def _vp_d_fade(df, mode):
+    o, h, l, c, vp, a, day = _vp_ctx(df, mode)
+    D = vp["shape"] == 0
+    L = D & (l <= vp["val"]) & (c > vp["val"])
+    S = D & (h >= vp["vah"]) & (c < vp["vah"])
+    L, S = _excl(_first_per_day(L, day), _first_per_day(S, day))
+    return L, S, _plan_lv(vp["val"] - 0.5 * a, vp["vah"] + 0.5 * a, vp["poc"], vp["poc"])
+
+
+def s_vp_d_edges_to_poc(df):
+    """Dualis Flow / saint (TikTok, task tal1411vp): after a balanced session (D-shaped profile) trade edge to edge -
+    buy at the lower edge of the value area (VAL), sell at the upper (VAH), target the POC; saint 'wait for the edge,
+    do not trade the middle'. Ours: the previous UTC session's tick-volume profile (agents/indicators volume_profile -
+    no real volume in CFDs, noted); a rejection at VAL (the low under it, the close back over it) ->
+    buy; stop 0.5 ATR beyond the edge; target the POC; first per side a day."""
+    return _vp_d_fade(df, "volume")
+
+
+def s_tpo_d_edges_to_poc(df):
+    """SC207 on the TPO (time-at-price) profile instead of volume (Meks Trades 'TPO profile', task tal1411ind) -
+    agents/indicators tpo_profile; everything else as SC207."""
+    return _vp_d_fade(df, "tpo")
+
+
+def s_vp_pb_poc_pullback(df):
+    """Dualis Flow (TikTok, task tal1411vp (b)): a P-shaped session (volume in the upper part - short covering) tends
+    to continue up, a b-shaped one (volume low - long liquidation) down; enter on the pullback to the POC in that
+    direction. Ours (with saint's 'trend day - one side
+    dominates, do not trade against it': a trend-up session counts as P, trend-down as b): previous session P -> the first bar that trades down to its POC and closes over it -> buy, stop
+    under the VAL - 0.2 ATR, target 2R; b -> mirror. One a day."""
+    o, h, l, c, vp, a, day = _vp_ctx(df)
+    P, b = np.isin(vp["shape"], [1, 2]), np.isin(vp["shape"], [-1, -2])
+    L = P & (l <= vp["poc"]) & (c > vp["poc"])
+    S = b & (h >= vp["poc"]) & (c < vp["poc"])
+    L, S = _excl(_first_per_day(L, day), _first_per_day(S, day))
+    return L, S, _plan_r(vp["val"] - 0.2 * a, vp["vah"] + 0.2 * a, 2.0)
+
+
+def s_vp_lvn_to_hvn(df):
+    """Olisa Flow (TikTok, LVN; task tal1411vp / tal1411of (2)): price moves fast through low-volume nodes - a break
+    into an LVN targets the next high-volume node. Ours: the close crosses up through an LVN of the previous session
+    (agents/indicators volume_profile: the bar's low under the LVN, its close over it) -> buy, target the next HVN above
+    (must be >= 1 ATR away), stop 1 ATR under the LVN; mirror down. Do not place targets / stops inside an LVN is the
+    filter idea for the bots (in_lvn)."""
+    o, h, l, c, vp, a, day = _vp_ctx(df)
+    lb, la = vp["lvn_below"], vp["lvn_above"]
+    ha, hb = vp["hvn_above"], vp["hvn_below"]
+    L = np.isfinite(lb) & (l <= lb) & (c > lb + 0.1 * a) & np.isfinite(ha) & (ha - c >= a)
+    S = np.isfinite(la) & (h >= la) & (c < la - 0.1 * a) & np.isfinite(hb) & (c - hb >= a)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(lb - a, la + a, ha, hb)
+
+
+def s_vp_b_void_break(df):
+    """saint / Dualis Flow B-shape (two distributions, task tal1411vp): after a double-distribution session, a break
+    out of the low-volume zone between the two peaks (the 'void' - Delta Void Profile idea, BigBeluga) goes to the
+    other distribution. Ours: previous session B (agents/indicators volume_profile / delta_void_profile); a close
+    crossing over the void -> buy, target the HVN above, stop 1 ATR under the void; crossing under -> sell to the HVN
+    below."""
+    o, h, l, c, vp, a, day = _vp_ctx(df)
+    dv = IND.delta_void_profile(df)
+    B = vp["shape"] == 3
+    vd = dv["void"]
+    L = B & cross_up(c, vd) & np.isfinite(dv["hvn_above"])
+    S = B & cross_down(c, vd) & np.isfinite(dv["hvn_below"])
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(vd - a, vd + a, dv["hvn_above"], dv["hvn_below"])
+
+
+# ---------------- SC212 Absorption reversal (Orderflow Sniper; task tal1411of (1)) ----------------
+def s_of_absorption_reversal(df):
+    """Orderflow Sniper (TikTok, task tal1411of (1)): absorption = abnormal tick volume (2x+ the average) on a candle
+    with a small range / body at the end of a move - someone is absorbing; enter the opposite way after a confirmation
+    candle; stop beyond the absorption candle. Ours: agents/indicators absorption (body <= 0.35 ATR, at a 10-bar
+    extreme; no order book - tick volume only, noted); the next 3 bars: a close over the absorption bar's high -> buy
+    (mirror: under its low -> sell); stop 0.1 ATR beyond the absorption bar; target 2R. Bot 7: the same in the minutes
+    after a release."""
+    o, h, l, c, v = _ohlcv(df)
+    ab = IND.absorption(df)
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    for t in range(1, n):
+        for k in (1, 2, 3):
+            j = t - k
+            if j < 0:
+                break
+            if ab["bull"][j] and c[t] > h[j] and not np.any(c[j + 1:t] > h[j]):
+                L[t], sl_l[t] = True, l[j] - 0.1 * a[t]
+            if ab["bear"][j] and c[t] < l[j] and not np.any(c[j + 1:t] < l[j]):
+                S[t], sl_s[t] = True, h[j] + 0.1 * a[t]
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+# ---------------- SC213 Equal highs / lows sweep reversal (Orderflow Sniper; task tal1411of (3)) ----------------
+def s_of_equal_level_sweep(df):
+    """Orderflow Sniper (TikTok, task tal1411of (3)): equal highs / lows (2+ touches) attract the price, and are bait
+    before a reversal - a sweep of the level and a close back inside = enter the other way. Ours: agents/indicators
+    liquidity (equal = two confirmed 5-bar swings within 0.1 ATR); entry at the sweep bar's close back inside; stop 0.2
+    ATR beyond the sweep extreme; target = the opposite equal level when one is live and >= 1R away, else 2R
+    (the 'magnet' half of the video)."""
+    o, h, l, c, v = _ohlcv(df)
+    lq = IND.liquidity(df, k=5)
+    a = atr(h, l, c, 14)
+    sl_l, sl_s = l - 0.2 * a, h + 0.2 * a
+    eqh, eql = _sh(lq["eqh"]), _sh(lq["eql"])
+    tgl = np.where(np.isfinite(eqh) & (eqh - c >= c - sl_l), eqh, c + 2 * (c - sl_l))
+    tgs = np.where(np.isfinite(eql) & (c - eql >= sl_s - c), eql, c - 2 * (sl_s - c))
+    L, S = _excl(lq["sweep_eq_bull"], lq["sweep_eq_bear"])
+    return L, S, _plan_lv(sl_l, sl_s, tgl, tgs)
+
+
+# ---------------- SC214 CVD divergence + reversal candle (Orderflow Sniper; task tal1411of (4)) ----------------
+def s_of_cvd_divergence(df):
+    """Orderflow Sniper (TikTok, task tal1411of (4)): approximate cumulative delta (tick volume x close location, reset
+    each UTC session - no real order flow, noted) diverging from the price is a reversal warning. Ours: a bullish
+    CVD divergence at a confirmed 5-bar swing low (agents/indicators cvd), then within 10 bars a close over the previous
+    bar's high -> buy; stop under the divergence low - 0.1 ATR; target 2R. Mirror short."""
+    o, h, l, c, v = _ohlcv(df)
+    cv = IND.cvd(df, k=5)
+    a = atr(h, l, c, 14)
+    sh, sl = _swings(h, l, 5)
+    n = len(c)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    arm_l = arm_s = None
+    for t in range(1, n):
+        if cv["bull_div"][t]:
+            arm_l = (t, sl[t])
+        if cv["bear_div"][t]:
+            arm_s = (t, sh[t])
+        if arm_l and t - arm_l[0] <= 10 and c[t] > h[t - 1]:
+            L[t], sl_l[t] = True, arm_l[1] - 0.1 * a[t]
+            arm_l = None
+        if arm_s and t - arm_s[0] <= 10 and c[t] < l[t - 1]:
+            S[t], sl_s[t] = True, arm_s[1] + 0.1 * a[t]
+            arm_s = None
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+# ---------------- SC215 Far structural target with an early break-even (Ezekiel Chew; task tal1411set5 (3)) ----------
+def s_ec_far_structural_target(df):
+    """Ezekiel Chew (TikTok, US500, 1:5.7, task tal1411set5 (3)): the idea is a far structural target (a big swing)
+    instead of 1:1, with an early break-even. Ours on a plain trend pullback so the bots can compare the exit: up trend
+    (EMA50 over EMA200, close over EMA50), the low touches EMA50 and the close is back over it -> buy; stop under the
+    10-bar low; target = the previous WEEK's high (agents/indicators htf_levels) when it is >= 3R away, else 3R;
+    break-even at 1R (the breakeven rule: at 1/3 of the way to a 3R target). Mirror short to the previous week's low."""
+    o, h, l, c, v = _ohlcv(df)
+    e50, e200 = ema(c, 50), ema(c, 200)
+    hl = IND.htf_levels(df)
+    a = atr(h, l, c, 14)
+    sl_l = _s(l).rolling(10).min().to_numpy() - 0.1 * a
+    sl_s = _s(h).rolling(10).max().to_numpy() + 0.1 * a
+    L = (e50 > e200) & (l <= e50) & (c > e50)
+    S = (e50 < e200) & (h >= e50) & (c < e50)
+    rl, rs = c - sl_l, sl_s - c
+    tgl = np.where(hl["pwh"] - c >= 3 * rl, hl["pwh"], c + 3 * rl)
+    tgs = np.where(c - hl["pwl"] >= 3 * rs, hl["pwl"], c - 3 * rs)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, tgl, tgs, breakeven=(0.33, 0.0))
+
+
+# ---------------- strategies on the new indicators (one or more per indicator, so every bot's agent tests them) ------
+def _swing_stops(h, l, a, n=10, buf=0.1):
+    return _s(l).rolling(n).min().to_numpy() - buf * a, _s(h).rolling(n).max().to_numpy() + buf * a
+
+
+def s_ind_supertrend_ai(df):
+    """SuperTrend AI (Clustering) [LuxAlgo] / Flux 'AI SuperTrend' (task tal1411ind): buy when the adaptive SuperTrend
+    flips up, sell when it flips down (the original's signals); stop at the trailing line (0.25 ATR beyond it when it
+    is closer); exit on the opposite flip; no fixed target. agents/indicators supertrend_ai (ATR 10, factors 1-5,
+    k-means 'best' cluster)."""
+    o, h, l, c, v = _ohlcv(df)
+    st = IND.supertrend_ai(df)
+    a = atr(h, l, c, 14)
+    ln = st["line"]
+    sl_l = np.where(c - ln >= 0.25 * a, ln, c - 0.25 * a)
+    sl_s = np.where(ln - c >= 0.25 * a, ln, c + 0.25 * a)
+    L, S = _excl(st["buy"], st["sell"])
+    return L, S, {"stop": ("level", sl_l, sl_s), "target": None, "exit_long": st["sell"], "exit_short": st["buy"]}
+
+
+def s_ind_lorentzian(df):
+    """Machine Learning: Lorentzian Classification (jdehorty, task tal1411ind): a new +1 / -1 classification with the
+    kernel estimate in the same direction (the original's default kernel filter) -> buy / sell; exit after 4 bars (the
+    original's hold) or on the opposite signal; stop 1.5 ATR (ours - the original has none). agents/indicators
+    lorentzian."""
+    o, h, l, c, v = _ohlcv(df)
+    lz = IND.lorentzian(df)
+    L = lz["buy"] & lz["kernel_up"]
+    S = lz["sell"] & ~lz["kernel_up"]
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 1.5), "target": None, "max_bars": 4, "exit_long": lz["sell"], "exit_short": lz["buy"]}
+
+
+def s_ind_trend_duration_exit(df):
+    """Trend Duration Forecast [ChartPrime] / 'expected trend length' (Trading Data, task tal1411set2 (4)): enter on an
+    HMA(50) trend turn, exit when the running trend is as old as the average of the last 10 trends of that side
+    (agents/indicators trend_duration ratio >= 1) or on the next turn; stop beyond the 10-bar swing; no target."""
+    o, h, l, c, v = _ohlcv(df)
+    td = IND.trend_duration(df)
+    a = atr(h, l, c, 14)
+    d = td["dir"]
+    pd_ = _sh(d)
+    L = (d == 1) & (pd_ == -1)
+    S = (d == -1) & (pd_ == 1)
+    old = np.nan_to_num(td["ratio"]) >= 1.0
+    sl_l, sl_s = _swing_stops(h, l, a)
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", sl_l, sl_s), "target": None, "exit_long": old | (d == -1),
+                  "exit_short": old | (d == 1)}
+
+
+def s_ind_zero_lag_reentry(df):
+    """Zero Lag Trend Signals [AlgoAlpha] (task tal1411ind): in an established trend (+1 for 2+ bars), the
+    'Bullish Entry' = close crosses back over the ZLEMA -> buy; 'Bearish Entry' mirror; stop at the opposite band
+    side (ZLEMA - volatility for longs), target 2R, exit when the trend flips. agents/indicators zero_lag_trend."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.zero_lag_trend(df)
+    L, S = _excl(z["entry_long"], z["entry_short"])
+    return L, S, _plan_r(z["lower"], z["upper"], 2.0, exit_long=z["sell"], exit_short=z["buy"])
+
+
+def s_ind_zero_lag_flip(df):
+    """Zero Lag Trend Signals [AlgoAlpha]: the big trend-flip arrows (close beyond ZLEMA +/- volatility) -> enter,
+    exit on the opposite flip; stop at the ZLEMA (ours), no target."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.zero_lag_trend(df)
+    a = atr(h, l, c, 14)
+    zl = z["zlema"]
+    L, S = _excl(z["buy"], z["sell"])
+    return L, S, {"stop": ("level", np.fmin(zl, c - 0.5 * a), np.fmax(zl, c + 0.5 * a)), "target": None,
+                  "exit_long": z["sell"], "exit_short": z["buy"]}
+
+
+def s_ind_atr_fib_pocket(df):
+    """ATR Fibonacci Trend Envelopes [BigBeluga] (task tal1411ind): in the envelope's trend, a pullback into the golden
+    pocket (between the 0.618 and 0.786 lines) that closes back out on the trend side (close over open) -> buy; stop at
+    the trailing band (the trend line), target 2R; mirror short. agents/indicators atr_fib_envelopes."""
+    o, h, l, c, v = _ohlcv(df)
+    e = IND.atr_fib_envelopes(df)
+    up, dn = e["trend"] > 0, e["trend"] < 0
+    L = up & e["in_pocket"] & (c > o)
+    S = dn & e["in_pocket"] & (c < o)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(e["trail"], e["trail"], 2.0)
+
+
+def s_ind_double_ribbon(df):
+    """Double Ribbon [ChartPrime] (task tal1411ind): the trend score turns positive -> buy, negative -> sell; exit on the
+    opposite turn; stop 2 ATR (ours), no target. agents/indicators double_ribbon (our reconstruction)."""
+    rb = IND.double_ribbon(df)
+    L, S = _excl(rb["buy"], rb["sell"])
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": rb["sell"], "exit_short": rb["buy"]}
+
+
+def s_ind_golden_wave(df):
+    """Fibonacci Golden Wave [Flux Charts] (task tal1411ind - 'Fibonacci Golden Wave' video of Flux): in an up leg of
+    the 20-bar range (its high made after its low), a low inside the 0.5-0.618 golden zone with a close back over the
+    zone -> buy; stop under the 20-bar low (the 1.0 level); target the 20-bar high; mirror short. agents/indicators
+    golden_wave."""
+    o, h, l, c, v = _ohlcv(df)
+    g = IND.golden_wave(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(g["touch_long"], g["touch_short"])
+    return L, S, _plan_lv(g["bottom"] - 0.1 * a, g["top"] + 0.1 * a, g["top"], g["bottom"])
+
+
+def s_ind_cisd_after_sweep(df):
+    """CISD (ICT, LuxAlgo 'Change in State of Delivery' / CISD Finder, task tal1411ind 10:33) with its liquidity-sweep
+    method: a sweep of a swing low (agents/indicators liquidity, 5-bar swings) and then, within 10 bars, a bullish CISD
+    (close over the open of the last bearish run's first candle) -> buy; stop under the sweep low; target 2R. Mirror
+    short. Differs from TT03 (sweep + POI + IFVG + CISD chain) - only the sweep and the CISD."""
+    o, h, l, c, v = _ohlcv(df)
+    lq = IND.liquidity(df, k=5)
+    cs = IND.cisd(df)
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    arm_l = arm_s = None
+    for t in range(n):
+        if lq["sweep_bull"][t]:
+            arm_l = (t, l[t])
+        if lq["sweep_bear"][t]:
+            arm_s = (t, h[t])
+        if arm_l and t - arm_l[0] <= 10 and cs["bull"][t]:
+            L[t], sl_l[t] = True, min(arm_l[1], l[t]) - 0.1 * a[t]
+            arm_l = None
+        if arm_s and t - arm_s[0] <= 10 and cs["bear"][t]:
+            S[t], sl_s[t] = True, max(arm_s[1], h[t]) + 0.1 * a[t]
+            arm_s = None
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+def s_ind_impulse_zone_retest(df):
+    """Impulse Zones [Flux Charts] (task tal1411ind 09:30 - 'close to the user's gap method'): a retest of the latest
+    live bullish impulse zone (the low enters it, the close is back over its top) -> buy; stop under the zone's bottom
+    - 0.1 ATR; target 2R; mirror short. agents/indicators impulse_zones (range > 1.5 ATR, tick volume > 1.5x avg)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.impulse_zones(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(z["retest_long"], z["retest_short"])
+    return L, S, _plan_r(z["bull_bot"] - 0.1 * a, z["bear_top"] + 0.1 * a, 2.0)
+
+
+def s_ind_funk_rsi(df):
+    """Funk RSI: Break the Rules [Almazov Trade] (task tal1411ind 10:33): RSI(14) 30/70 swing reversal - a confirmed
+    1-bar swing low with RSI under 30 in its window -> buy at the confirmation close, target the swing bar's high;
+    mirror short. Stop: ours (the page's stop lies on the wrong side) - beyond the whole RSI excursion + 0.25 ATR.
+    agents/indicators funk_rsi."""
+    f = IND.funk_rsi(df)
+    L, S = _excl(f["long"], f["short"])
+    return L, S, _plan_lv(f["stop_long"], f["stop_short"], f["tgt_long"], f["tgt_short"])
+
+
+def s_ind_wavetrend_zone_cross(df):
+    """WaveTrend [LazyBear] (task tal1411ind 09:30, uses 1+2): wt1 crosses over wt2 under the oversold level -53 -> buy;
+    crosses under over +53 -> sell; stop beyond the 10-bar swing; target 2R; exit at the opposite zone cross. Differs
+    from SC128 (WT cross + Kalman Hull on the same bar)."""
+    o, h, l, c, v = _ohlcv(df)
+    w = IND.wavetrend(df)
+    a = atr(h, l, c, 14)
+    sl_l, sl_s = _swing_stops(h, l, a)
+    L, S = _excl(w["buy"], w["sell"])
+    return L, S, _plan_r(sl_l, sl_s, 2.0, exit_long=w["sell"], exit_short=w["buy"])
+
+
+def s_ind_wavetrend_divergence(df):
+    """WaveTrend [LazyBear] uses 3+4 (divergence with the trend): a bullish wt1 divergence at a confirmed 5-bar swing low
+    while wt1 is under 0, then wt1 crosses over wt2 within 10 bars -> buy; mirror short. Stop beyond the 10-bar swing,
+    target 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    w = IND.wavetrend(df)
+    a = atr(h, l, c, 14)
+    cu, cd = cross_up(w["wt1"], w["wt2"]), cross_down(w["wt1"], w["wt2"])
+    L = _since(w["bull_div"], 10) & cu & (w["wt1"] < 0)
+    S = _since(w["bear_div"], 10) & cd & (w["wt1"] > 0)
+    sl_l, sl_s = _swing_stops(h, l, a)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+def s_ind_nwe_reversal(df):
+    """Nadaraya-Watson Envelope [LuxAlgo], non-repainting endpoint version (our version of the paid 'Non Repaint'
+    envelope with reversal dots, task tal1411set2 / tal1411ind): the close crosses under the lower envelope = buy dot,
+    over the upper = sell dot -> enter at the close; target the middle line; stop 1.5 ATR (ours). agents/indicators
+    nwe_envelope (h 8, window 500; ours x2.5 instead of the original x3 - the x3 dots are very rare intraday)."""
+    nw = IND.nwe_envelope(df, mult=2.5)
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(nw["buy"], nw["sell"])
+    return L, S, _plan_lv(c - 1.5 * a, c + 1.5 * a, nw["mid"], nw["mid"])
+
+
+def s_ind_avwap_swing_pullback(df):
+    """Anchored VWAP (task tal1411ind): in an up trend (close over EMA50) a pullback to the VWAP anchored at the last
+    confirmed swing low (10-bar pivots; the line exists only from the confirmation bar - no look-ahead) that closes back
+    over it -> buy; mirror short on the VWAP anchored at the last swing high. Stop 1 ATR beyond the AVWAP, target 2R.
+    agents/indicators anchored_vwap_swing."""
+    o, h, l, c, v = _ohlcv(df)
+    av = IND.anchored_vwap_swing(df, k=10)
+    e50 = ema(c, 50)
+    a = atr(h, l, c, 14)
+    al, ah = av["avwap_low"], av["avwap_high"]
+    L = (c > e50) & (l <= al) & (c > al)
+    S = (c < e50) & (h >= ah) & (c < ah)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(al - a, ah + a, 2.0)
+
+
+def s_ind_smc_bos_ob(df):
+    """Smart Money Concepts [LuxAlgo] (the thaa.fx gold board, task tal1411ind 10:34): continuation - while the
+    structure trend is up (last break = BOS / CHoCH up), the first retest of the live bullish order block (the low
+    enters the OB, the close is back over its top) -> buy; stop under the OB's bottom - 0.1 ATR; target 2R; mirror
+    short. agents/indicators smc (pivots 5)."""
+    o, h, l, c, v = _ohlcv(df)
+    sm = IND.smc(df, k=5)
+    a = atr(h, l, c, 14)
+    L = (sm["trend"] == 1) & sm["ob_retest_long"]
+    S = (sm["trend"] == -1) & sm["ob_retest_short"]
+    L, S = _excl(_onset(L), _onset(S))
+    return L, S, _plan_r(sm["ob_bull_bot"] - 0.1 * a, sm["ob_bear_top"] + 0.1 * a, 2.0)
+
+
+def s_ind_smc_choch_fvg(df):
+    """Smart Money Concepts [LuxAlgo]: reversal - after a CHoCH up, the first return into the live bullish FVG (within
+    20 bars; the low enters the gap, the close stays over its bottom) -> buy; stop under the last swing low; target 2R;
+    mirror after a CHoCH down. agents/indicators smc."""
+    o, h, l, c, v = _ohlcv(df)
+    sm = IND.smc(df, k=5)
+    a = atr(h, l, c, 14)
+    ch_u = _since(sm["choch_up"], 20) | sm["choch_up"]
+    ch_d = _since(sm["choch_dn"], 20) | sm["choch_dn"]
+    ft, fb = sm["fvg_bull_top"], sm["fvg_bull_bot"]
+    st, sb = sm["fvg_bear_top"], sm["fvg_bear_bot"]
+    L = ch_u & (sm["trend"] == 1) & np.isfinite(ft) & (l <= ft) & (c > fb)
+    S = ch_d & (sm["trend"] == -1) & np.isfinite(sb) & (h >= sb) & (c < st)
+    L, S = _excl(_onset(L), _onset(S))
+    return L, S, _plan_r(sm["swing_lo"] - 0.1 * a, sm["swing_hi"] + 0.1 * a, 2.0)
+
+
+def s_ind_breaker_retest(df):
+    """Breaker Blocks (Flux Charts / LuxAlgo SMC, task tal1411ind): an order block that failed (a close through it)
+    flips role - a bearish OB broken up becomes a bullish breaker; its retest (the low enters it, the close is back
+    over its top) -> buy; stop under the breaker's bottom - 0.1 ATR; target 2R; mirror short. agents/indicators smc."""
+    o, h, l, c, v = _ohlcv(df)
+    sm = IND.smc(df, k=5)
+    a = atr(h, l, c, 14)
+    L, S = _excl(_onset(sm["brk_retest_long"]), _onset(sm["brk_retest_short"]))
+    return L, S, _plan_r(sm["brk_bull_bot"] - 0.1 * a, sm["brk_bear_top"] + 0.1 * a, 2.0)
+
+
+def s_ind_sd_breakout(df):
+    """Supply & Demand + Breakout (Flux Charts / Demand Supply Zone Matrix, task tal1411ind): a close through a live
+    supply zone (zone broken) -> buy (the breakout half of the indicator); stop under the broken zone's bottom - 0.2
+    ATR (ours: 1.5 ATR when no zone level), target 2R; a close through a demand zone -> sell. agents/indicators
+    supply_demand (base + departure >= 1.5 ATR). The first-touch half exists already as YT03."""
+    o, h, l, c, v = _ohlcv(df)
+    sd = IND.supply_demand(df)
+    a = atr(h, l, c, 14)
+    pst, psb = _sh(sd["sup_bot"]), _sh(sd["dem_top"])
+    sl_l = np.where(np.isfinite(pst) & (pst < c), pst - 0.2 * a, c - 1.5 * a)
+    sl_s = np.where(np.isfinite(psb) & (psb > c), psb + 0.2 * a, c + 1.5 * a)
+    L, S = _excl(sd["break_up"], sd["break_dn"])
+    return L, S, _plan_r(sl_l, sl_s, 2.0)
+
+
+def s_ind_trendline_break(df):
+    """Automatic trend-line breakout (BigBeluga Pattern Detector / Market Structure 'trend-line retest', task
+    tal1411ind 09:39): a close over a falling resistance line that had 3+ touches -> buy; stop under the last confirmed
+    swing low (5-bar), target 2R; mirror short through a rising support line with 3+ touches. agents/indicators
+    trendlines."""
+    o, h, l, c, v = _ohlcv(df)
+    tl = IND.trendlines(df, k=5)
+    sh, sl = _swings(h, l, 5)
+    a = atr(h, l, c, 14)
+    L = tl["break_res"] & (np.nan_to_num(_sh(tl["res_touches"])) >= 3) & (np.nan_to_num(tl["res_slope"]) < 0)
+    S = tl["break_sup"] & (np.nan_to_num(_sh(tl["sup_touches"])) >= 3) & (np.nan_to_num(tl["sup_slope"]) > 0)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl - 0.1 * a, sh + 0.1 * a, 2.0)
+
+
+def s_ind_ema9_20_bbw(df):
+    """The user's two filters of 14.11 (task tal1411ema) as one strategy so the bots see them work together: EMA9
+    crosses over EMA20 (buys only while 9 is over 20) and the Bollinger 20/2 width is NOT under its 20th percentile of
+    the last 100 bars (agents/indicators bb_width_pct) -> buy; mirror; stop beyond the 10-bar swing; target 2R; exit on
+    the cross back."""
+    o, h, l, c, v = _ohlcv(df)
+    e9, e20 = ema(c, 9), ema(c, 20)
+    bw = IND.bb_width_pct(df)["width_pct"]
+    a = atr(h, l, c, 14)
+    ok = np.nan_to_num(bw, nan=0.0) >= 0.2
+    sl_l, sl_s = _swing_stops(h, l, a)
+    L, S = _excl(cross_up(e9, e20) & ok, cross_down(e9, e20) & ok)
+    return L, S, _plan_r(sl_l, sl_s, 2.0, exit_long=cross_down(e9, e20), exit_short=cross_up(e9, e20))
+
+
+# ---------------- strategies from tonight's web search (rules from the sources named in each docstring) ----------------
+def s_qqe_cross(df):
+    """QQE signals (StockSharp example https://doc.stocksharp.com/en/api-examples/0440_Qqe_Signals , M30): RSI 14
+    smoothed by EMA5, QQE factor 4.238; buy when the smoothed RSI crosses over the QQE trailing line, exit when it
+    crosses back. The source is long-only and has no stop - ours: the mirror short, stop 2 ATR. agents/indicators qqe."""
+    q = IND.qqe(df)
+    L, S = _excl(q["buy"], q["sell"])
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": q["sell"], "exit_short": q["buy"]}
+
+
+def s_laguerre_rsi(df):
+    """Laguerre RSI reversion (StockSharp https://doc.stocksharp.com/en/api-examples/0024_RSI_Laguerre , M5): gamma
+    0.7; buy when it crosses up through 30, sell when it crosses down through 70; exit at 50 (or the opposite
+    signal); stop 2% from the fill (a percentage - kept). agents/indicators laguerre_rsi."""
+    o, h, l, c, v = _ohlcv(df)
+    lr = IND.laguerre_rsi(df)
+    x = lr["lrsi"]
+    L, S = _excl(lr["buy"], lr["sell"])
+    return L, S, {"stop": ("level", c * 0.98, c * 1.02), "target": None, "exit_long": x >= 50, "exit_short": x <= 50}
+
+
+def s_fisher_cross(df):
+    """Fisher Transform crossover (FMZ https://www.fmz.com/lang/en/strategy/503845 ): Fisher(9) crosses over its
+    trigger (the previous value) while under 1 -> buy, crosses under while over 1 -> sell (as published... the short
+    side's 'over 1' is the source's rule), exit on the opposite cross. No stop in the source - ours: 2 ATR.
+    agents/indicators fisher_transform."""
+    f = IND.fisher_transform(df)
+    L, S = _excl(f["buy"], f["sell"])
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": cross_down(f["fisher"], f["trigger"]),
+                  "exit_short": cross_up(f["fisher"], f["trigger"])}
+
+
+def s_ssl_hma_wavetrend(df):
+    """SSL Hybrid + WaveTrend (FMZ https://www.fmz.com/strategy/442097 - some parameters behind a login): long when the
+    HMA baseline is bullish (close over HMA60 - ours), the SSL channel (10) flips up and WaveTrend crosses up (within
+    the last 3 bars), and the candle is not oversized (range <= 2 ATR); short mirror. Stop = 1.5 ATR (the source: k x
+    ATR, k ours), target 1R (the source's default 1:1). agents/indicators ssl_channel, wavetrend."""
+    o, h, l, c, v = _ohlcv(df)
+    ss = IND.ssl_channel(df, 10)
+    w = IND.wavetrend(df)
+    hm = _hma(c, 60)
+    a = atr(h, l, c, 14)
+    wu = cross_up(w["wt1"], w["wt2"])
+    wd = cross_down(w["wt1"], w["wt2"])
+    small = (h - l) <= 2 * a
+    L = (c > hm) & ss["buy"] & (wu | _since(wu, 3)) & small
+    S = (c < hm) & ss["sell"] & (wd | _since(wd, 3)) & small
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 1.0)}
+
+
+def _harmonic(df, ab, bc, cd, d_xa, k=2, tol=0.05, stop_x=True, target="C"):
+    """Generic XABCD harmonic on the zigzag of _zigzag_snapshots: AB/XA within ab, BC/AB within bc, CD/BC within cd,
+    D = A + s x d_xa x XA (s = +1 for a high X); entry at the first bar reaching the D zone; stop beyond X (+5% XA);
+    target C or A."""
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    n = len(c)
+    piv, snaps = _zigzag_snapshots(h, l, k)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    st_l, st_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    for t in range(1, n):
+        m = snaps[t]
+        for end in (m, m - 1):
+            if end < 4:
+                continue
+            (xi, X, xt), (ai, A, _), (bi, B, _), (ci, C, ct) = piv[end - 4:end]
+            if ct != -xt:
+                continue
+            s = xt
+            XA, AB, BC = s * (X - A), s * (B - A), s * (B - C)
+            if XA <= 0 or AB <= 0 or BC <= 0:
+                continue
+            if not (ab[0] * (1 - tol) <= AB / XA <= ab[1] * (1 + tol) and bc[0] * (1 - tol) <= BC / AB <= bc[1] * (1 + tol)):
+                continue
+            D = A + s * d_xa * XA
+            CD = s * (D - C)
+            if CD <= 0 or not (cd[0] * (1 - tol) <= CD / BC <= cd[1] * (1 + tol)):
+                continue
+            Dt = D - s * tol * XA
+            seg = h[ci + 1:t] if s > 0 else l[ci + 1:t]
+            tgt = C if target == "C" else A
+            if s > 0:
+                if h[t] < Dt or (len(seg) and seg.max() >= Dt):
+                    continue
+                stop = X + 0.05 * XA if stop_x else D + 0.1 * XA
+                if c[t] < stop and tgt < c[t]:
+                    S[t], st_s[t], tg_s[t] = True, stop, tgt
+            else:
+                if l[t] > Dt or (len(seg) and seg.min() <= Dt):
+                    continue
+                stop = X - 0.05 * XA if stop_x else D - 0.1 * XA
+                if c[t] > stop and tgt > c[t]:
+                    L[t], st_l[t], tg_l[t] = True, stop, tgt
+            break
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(st_l, st_s, tg_l, tg_s)
+
+
+def s_gartley_harmonic(df):
+    """Gartley harmonic (The Right Trader https://therighttrader.com/learn/harmonic-patterns/gartley-pattern ), any
+    timeframe: AB = 0.618 of XA, BC = 0.382-0.886 of AB, D = the 0.786 retracement of XA (CD = 1.13-1.618 of BC);
+    enter at D; stop beyond X; target 1 = C (this one), target 2 = A (SC242). Bullish and bearish mirrors. Ours:
+    2-bar zigzag swings, +/-5% tolerance, entry at the close of the first bar reaching the D zone."""
+    return _harmonic(df, (0.618, 0.618), (0.382, 0.886), (1.13, 1.618), 0.786, target="C")
+
+
+def s_gartley_target_a(df):
+    """SC241 Gartley with the source's second target, the A level."""
+    return _harmonic(df, (0.618, 0.618), (0.382, 0.886), (1.13, 1.618), 0.786, target="A")
+
+
+def s_ross_gimmee_bar(df):
+    """Joe Ross 'Gimmee bar' (LuxAlgo classic bar setups https://www.luxalgo.com/library/concept/classic-bar-setups/ ),
+    sideways markets only: Bollinger 20/2; sell setup = the bar's high at / over the upper band and the close under its
+    open -> sell stop 1 tick under that bar's low (next 2 bars); buy mirror at the lower band. Ours: sideways =
+    ADX(14) < 20 (the source suggests an ADX filter); stop the setup bar's other extreme; target the middle band
+    (no target in the source)."""
+    o, h, l, c, v = _ohlcv(df)
+    lo, mid, up = _bb(c, 20, 2.0)
+    ad = adx(h, l, c, 14)
+    n = len(c)
+    setup_s = (h >= up) & (c < o) & (ad < 20)
+    setup_l = (l <= lo) & (c > o) & (ad < 20)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    for t in range(1, n):
+        for k in (1, 2):
+            j = t - k
+            if j < 0:
+                break
+            if setup_s[j] and c[t] < l[j] and not np.any(c[j + 1:t] < l[j]):
+                S[t], sl_s[t] = True, h[j]
+            if setup_l[j] and c[t] > h[j] and not np.any(c[j + 1:t] > h[j]):
+                L[t], sl_l[t] = True, l[j]
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, mid, mid)
+
+
+def s_momentum_pinball(df):
+    """Momentum Pinball (Raschke & Connors; WH SelfInvest
+    https://www.whselfinvest.de/en-de/trading-platform/free-trading-strategies/tradingsystem/48-momentum-pinball-trading-indicator-raschke-linda-connors-larry ),
+    daily signal, intraday entry: RSI(3) of the 1-day change closes under 30 -> the next day buy stop over the first
+    hour's high (stop = the first hour's low); over 70 -> sell stop under the first hour's low. Exit: a loser is closed
+    before the close; a winner is held overnight and closed the next morning. Ours on intraday bars (15m / 1h): UTC days,
+    the first hour = 00:00-01:00 UTC; entry = the first close beyond that hour's range; time exit after 24 hours
+    (= 'the next morning')."""
+    o, h, l, c, v = _ohlcv(df)
+    idx = df.index.tz_convert("UTC")
+    day = pd.Series(idx.date).to_numpy()
+    dc = pd.Series(c).groupby(day).last()
+    ind = pd.Series(rsi(dc.diff().fillna(0).to_numpy(), 3), index=dc.index).shift(1)
+    rv = pd.Series(day).map(ind).to_numpy(dtype=float)
+    hr = idx.hour.to_numpy()
+    fh = hr < 1
+    fhh = pd.Series(np.where(fh, h, np.nan)).groupby(day).transform("max").to_numpy()
+    fhl = pd.Series(np.where(fh, l, np.nan)).groupby(day).transform("min").to_numpy()
+    after = ~fh
+    L = after & (rv < 30) & (c > fhh)
+    S = after & (rv > 70) & (c < fhl)
+    L, S = _excl(_first_per_day(L, day), _first_per_day(S, day))
+    nb = max(1, int(round(24 * 60 / max(_bar_minutes(df), 1.0))))
+    return L, S, {"stop": ("level", fhl, fhh), "target": None, "max_bars": nb}
+
+
+def s_elder_triple_screen(df):
+    """Elder Triple Screen (forexop https://forexop.com/strategy/simple-triple-screen/ ), e.g. Daily / H4 / H1: screen 1
+    = the trend from the MACD-histogram slope of a 4x higher timeframe (rising = long only); screen 2 = Force Index
+    EMA(2) under 0 on this timeframe (a pullback); screen 3 = buy stop over the previous bar's high (Elder's rule) ->
+    the first close over it; stop under the low of the signal / previous bar; target 2R (no fixed target in the
+    source - ours). Short = mirror."""
+    o, h, l, c, v = _ohlcv(df)
+    bm = _bar_minutes(df)
+    rule = f"{int(bm * 4)}min"
+    mh = _htf(df, rule, lambda g: IND.macd_hist(g)["hist"])
+    mh_prev = _htf(df, rule, lambda g: _sh(IND.macd_hist(g)["hist"]))
+    up, dn = mh > mh_prev, mh < mh_prev
+    fi = ema(np.diff(c, prepend=c[0]) * np.where(v > 0, v, 1.0), 2)
+    L = up & (_sh(fi) < 0) & (c > _sh(h))
+    S = dn & (_sh(fi) > 0) & (c < _sh(l))
+    L, S = _excl(L, S)
+    return L, S, _plan_r(np.fmin(l, _sh(l)), np.fmax(h, _sh(h)), 2.0)
+
+
+def s_raschke_anti_310(df):
+    """Raschke 'Anti', 3/10 oscillator version (MQL5 article https://www.mql5.com/en/articles/24280 , H4): fast = SMA3 -
+    SMA10, slow = SMA16(fast); the slow line over 0 opens the long window; the fast line pulls back to / under the slow
+    line and then crosses back over it (the first cross) with a close over the previous close -> buy at the next open;
+    stop the lowest low of the pullback; exit when the fast line crosses back under. Short = mirror. Differs from FR11
+    (the stochastic hook)."""
+    o, h, l, c, v = _ohlcv(df)
+    ro = IND.raschke_osc(df)
+    f, s = ro["fast"], ro["slow"]
+    n = len(c)
+    cu, cd = cross_up(f, s), cross_down(f, s)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    pb_lo = pb_hi = None
+    for t in range(1, n):
+        if not np.isfinite(s[t]):
+            continue
+        if s[t] > 0:
+            if cd[t]:
+                pb_lo = l[t]
+            elif pb_lo is not None and f[t] <= s[t]:
+                pb_lo = min(pb_lo, l[t])
+            if pb_lo is not None and cu[t] and c[t] > c[t - 1]:
+                L[t], sl_l[t] = True, min(pb_lo, l[t])
+                pb_lo = None
+        else:
+            pb_lo = None
+        if s[t] < 0:
+            if cu[t]:
+                pb_hi = h[t]
+            elif pb_hi is not None and f[t] >= s[t]:
+                pb_hi = max(pb_hi, h[t])
+            if pb_hi is not None and cd[t] and c[t] < c[t - 1]:
+                S[t], sl_s[t] = True, max(pb_hi, h[t])
+                pb_hi = None
+        else:
+            pb_hi = None
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", sl_l, sl_s), "target": None, "exit_long": cd, "exit_short": cu}
+
+
+def s_lw_smash_day(df):
+    """Larry Williams Smash Day (Rogue Quant https://roguequant.substack.com/p/i-backtested-larry-williams-trading ),
+    daily: a bar that closes under the previous low AND is the lowest close of the last 8 bars -> buy stop over that
+    bar's high on the next bar (the first close over it within 1 bar); sell = mirror. The source tests it as stop-and-
+    reverse; Williams' own exits: a stop / the first profitable open - ours: stop at the smash bar's low (high), exit
+    after 3 bars, no target. Differs from QB13 (the HIDDEN smash day)."""
+    o, h, l, c, v = _ohlcv(df)
+    ll8 = _s(c).rolling(8).min().to_numpy()
+    hh8 = _s(c).rolling(8).max().to_numpy()
+    sb = (c < _sh(l)) & (c <= ll8)
+    ss = (c > _sh(h)) & (c >= hh8)
+    L = _shb(sb) & (c > _sh(h))
+    S = _shb(ss) & (c < _sh(l))
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", _sh(l), _sh(h)), "target": None, "max_bars": 3}
+
+
+def s_weinstein_stage2(df):
+    """Stan Weinstein stage 1 -> 2 transition (MQL5 https://www.mql5.com/en/articles/22746 ), daily: SMA150 for the
+    30-week line; slope = (SMA - SMA 10 bars ago) / 10 / close, rising > +0.0001; stage 2 = rising SMA, price over it
+    and the last 10 highs over the 10 before; long when stage 2 begins on tick volume > 1.8x its 20-bar average (a feed
+    without volume passes) with RSI(14) >= 50; short = the stage 3 -> 4 mirror. Stop 2 ATR(14), target 3x the stop;
+    early exit on a close back across the SMA."""
+    o, h, l, c, v = _ohlcv(df)
+    m = sma(c, 150)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        slope = (m - _sh(m, 10)) / 10 / c
+    hh = _s(h).rolling(10).max().to_numpy()
+    st2 = (slope > 1e-4) & (c > m) & (hh > _sh(hh, 10))
+    st4 = (slope < -1e-4) & (c < m) & (_s(l).rolling(10).min().to_numpy() < _sh(_s(l).rolling(10).min().to_numpy(), 10))
+    vok = _vol_ok(v, 20, 1.8)
+    r = rsi(c, 14)
+    L = _onset(st2) & vok & (r >= 50)
+    S = _onset(st4) & vok & (r <= 50)
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 2.0), "target": ("atr", 6.0), "exit_long": c < m, "exit_short": c > m}
+
+
+def s_avg_hl_ibs(df):
+    """Average High-Low Range + IBS reversal (TradingView https://in.tradingview.com/script/BTwOiV1h-Average-High-Low-Range-IBS-Reversal-Strategy ),
+    daily, long only: the close under (10-bar highest high - 2.5 x the 20-bar average of high - low) on 2 bars in a row
+    and IBS = (close - low) / (high - low) under 0.2 -> buy; exit on a close over the previous bar's high. The source's
+    'upper' is not defined - ours: the 10-bar highest high; IBS on the true range (a gap bar counts); no stop in the source - ours: 2 ATR."""
+    o, h, l, c, v = _ohlcv(df)
+    upper = _s(h).rolling(10).max().to_numpy()
+    rng = sma(h - l, 20)
+    under = c < upper - 2.5 * rng
+    pc = _sh(c)
+    hi, lo = np.fmax(h, pc), np.fmin(l, pc)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        ibs = np.where(hi > lo, (c - lo) / (hi - lo), 0.5)
+    L = under & _shb(under) & (ibs < 0.2)
+    return L, np.zeros(len(c), bool), {"stop": ("atr", 2.0), "target": None, "exit_long": c > _sh(h)}
+
+
 SCOUT = {
     "SC001": ("RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute (TradingView)", s_rv_ema20_scalp, ["1Min"]),
     "SC002": ("Alligator + Fractals breakout, fractal stop, 1:3 (RoboForex)", s_alligator_fractal, ["1Hour", "4Hour"]),
@@ -4491,4 +6139,81 @@ SCOUT = {
     "SC170": ("freqtrade BinHV27: EMA5(RSI5) <= 20/25 under EMA60/120 + -DI over its EMA25, four SMA120/240 regimes, signal exits, 5m (GitHub)", s_ft_binhv27, ["5Min"]),
     "SC171": ("freqtrade AverageStrategy: EMA8 crosses EMA21, -20% / 50%, cross-back exit, 4h (GitHub)", s_ft_average_ema8_21, ["4Hour"]),
     "SC172": ("freqtrade Strategy001: EMA20/50 cross + green Heikin-Ashi over EMA20, -10% / ROI 3%, 60-min exit, 5m (GitHub)", s_ft_strategy001, ["5Min"]),
+    "SC173": ('Diamond top / bottom: close through the right-side line, stop the last inner swing, full-height target, 15m/30m (Trader Dhana, Facebook)', s_diamond_full, ['15Min', '1Hour']),
+    "SC174": ("Diamond top / bottom, target 61.8% of the height (Trader Dhana; user's variant)", s_diamond_618, ['15Min', '1Hour']),
+    "SC175": ("3-touch trend-line liquidity grab + FVG + BOS, entry back in the FVG, grab stop, 2R (TheTrader's Villa, Facebook)", s_villa_tl_sweep_fvg, ['5Min', '15Min', '1Hour']),
+    "SC176": ("Under VWAP + RSI14 back over 30 + reversal candle, 5-bar swing stop, target the VWAP (The Trader's Guide, TikTok)", s_tg_vwap_rsi14_to_vwap, ['5Min', '15Min']),
+    "SC177": ("Under VWAP + RSI14 back over 30 + reversal candle, 5-bar swing stop, 2R (The Trader's Guide; variant)", s_tg_vwap_rsi14_2r, ['5Min', '15Min']),
+    "SC178": ('RSI range shift: up trend RSI dips to 40-45 and turns / down trend 55-60, swing stop, 2R (Trading Data, TikTok)', s_td_rsi_range_shift, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC179": ('RSI 60-40 setup A: EMA21>50 trend, RSI ~40 turn near EMA21 + confirm candle, EMA50 stop, last-high target, EMA21 trail (Market Structure, TikTok)', s_ms_rsi40_pullback, ['15Min', '1Hour', '4Hour']),
+    "SC180": ('RSI 60-40 setup B: RSI > 60 + strong candle through the swing high, EMA21 stop, 2.5R, EMA21 trail (Market Structure, TikTok)', s_ms_rsi60_breakout, ['15Min', '1Hour', '4Hour']),
+    "SC181": ("RSI14 divergence with the EMA200 trend, then RSI 50 cross, divergence-extreme stop, 2R (The Trader's Guide, TikTok)", s_tg_rsi_div_trend50, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC182": ("Close beyond both the VWAP and EMA20, exit on a close back beyond both, 1.5 ATR stop (The Trader's Guide, TikTok)", s_tg_vwap_ema_both, ['5Min', '15Min']),
+    "SC183": ("EMA50>200 trend, 0.5-0.786 pullback, entry on the EMA9 reclaim, pullback-low stop, swing-high / 2R (The Trader's Guide, TikTok)", s_tg_fib_ema9_reclaim, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC184": ('Ichimoku 9/26/52: over the cloud + TK cross + Chikou over the price, Kijun stop, TK-cross exit (Quant Tactics, TikTok)', s_qt_ichimoku_chikou, ['1Hour', '4Hour', '1Day']),
+    "SC185": ("EMA9/21 cross over VWAP + ADX > 20, stop entry over the confirm high, candle stop, 2R (The Trader's Guide 'ADX 80%', TikTok)", s_tg_ema9_21_vwap_adx_break, ['5Min', '15Min']),
+    "SC186": ('Swing-low sweep and reclaim, sweep-low stop, target the previous swing high, gold 15m (sphula, TikTok)', s_sphula_sweep_reclaim, ['5Min', '15Min']),
+    "SC187": ('EMA20/50 direction + buyer/seller pressure flip (tick volume), swing stop, 2R (ProTrippa, TikTok)', s_pt_ma_pressure, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC188": ('MFI14 back over 20 above EMA200 / under 80 below, swing stop, 2R (Quant Tactics, TikTok)', s_qt_mfi14_trend, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC189": ('Broken S/R level (2+ tests) retest + EMA50 slope + RSI 50 confirmation, level stop, next-level target (Flux Charts, TikTok)', s_flux_sr_retest_confirm, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC190": ('Support held 3 tests, break, retest and rejection, pre-break swing stop, next level / 2R (Lima Signal, TikTok)', s_lima_break_retest_3tests, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC191": ("EMA 9/21/50/100/200 graded trend: strong -> EMA50 pullback, normal -> EMA21, 2R (The Trader's Guide, TikTok)", s_tg_ema_stack_pullback, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC192": ('Falling trend-line touch short, stop 0.3 ATR over the line, 4R, US500 1m (Dan-Chi, TikTok)', s_danchi_tl_touch_far, ['1Min', '5Min']),
+    "SC193": ('EMA20>50 + RSI > 50, touch of EMA20, exit on 20<50 or close < EMA50 (Market Structure, TikTok)', s_ms_ema20_50_rsi_pullback, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC194": ("Previous-session POC retest after acceptance, rejection candle, 0.5 ATR stop, 2R (Market Structure '8 retests', TikTok)", s_ms_poc_retest, ['5Min', '15Min', '1Hour']),
+    "SC195": ('RSI divergence, then a structure break on expanding volume, divergence-low stop, 2R (Market Structure, TikTok)', s_ms_div_then_bos, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC196": ('Bollinger 20/2 poke back inside within the value area / POC / HVN, target the middle band (Flux Charts, TikTok)', s_flux_bb_vp, ['5Min', '15Min', '1Hour']),
+    "SC197": ('Symmetric / ascending / descending triangle breakout, opposite-line stop, height target (16 chart patterns, TikTok)', s_triangle_breakout, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC198": ('Triple top / bottom neckline break, extreme stop, height target (16 chart patterns, TikTok)', s_triple_top_bottom, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC199": ('Bull / bear flag: 3-ATR pole, 5-20 bar flag under 50%, flag break, pole target (16 chart patterns, TikTok)', s_flag_breakout, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC200": ('Daily pivot bias: over P, first pullback to P, stop S1 / 1 ATR, target R1 (Ezekiel Chew, TikTok)', s_ec_daily_pivot_bias, ['5Min', '15Min', '1Hour']),
+    "SC201": ("20-bar box breakout with >= 80% buyer share of the bar's tick volume, mid stop, box-height target (Flux Charts, TikTok)", s_flux_box_break_buy_pct, ['5Min', '15Min', '1Hour']),
+    "SC202": ("20-bar box breakout on a 'big trade' (tick-volume z >= 2), mid stop, box-height target (Meks Trades idea)", s_meks_box_break_big_trade, ['5Min', '15Min', '1Hour']),
+    "SC203": ('ICT OTE in the discount: 61.8-79% of the up leg + bullish candle, swing-low stop, swing-high target, gold (Forex Bull Signals, TikTok)', s_fbs_ote_discount, ['5Min', '15Min', '1Hour']),
+    "SC204": ("First touch of the previous session's POC, reverse entry, 1 ATR stop, 2R (sixlots, TikTok)", s_sixlots_poc_first_touch, ['5Min', '15Min']),
+    "SC205": ("Over EMA50 + DI cross + ADX > 20 rising, swing stop, 2R (The Trader's Guide, TikTok)", s_tg_adx_di_ema50, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC206": ('ICT Judas swing of the Asian range at London / NY, order-block re-entry, sweep stop, Asian-range target (Flux Charts, TikTok)', s_judas_ob, ['5Min', '15Min']),
+    "SC207": ('Balanced (D) previous session: VAL / VAH rejection, edge stop, target the POC (Dualis Flow / saint, TikTok)', s_vp_d_edges_to_poc, ['5Min', '15Min', '1Hour']),
+    "SC208": ('Balanced (D) TPO profile: VAL / VAH rejection, target the TPO POC (Meks Trades TPO idea)', s_tpo_d_edges_to_poc, ['5Min', '15Min', '1Hour']),
+    "SC209": ("P / b previous session: pullback to the POC in the shape's direction, VA-edge stop, 2R (Dualis Flow, TikTok)", s_vp_pb_poc_pullback, ['5Min', '15Min', '1Hour']),
+    "SC210": ('Close through a previous-session LVN, target the next HVN, 1 ATR stop (Olisa Flow, TikTok)', s_vp_lvn_to_hvn, ['5Min', '15Min', '1Hour']),
+    "SC211": ('Double-distribution (B) session: close through the void, target the other HVN (saint / Dualis Flow; Delta Void idea)', s_vp_b_void_break, ['5Min', '15Min', '1Hour']),
+    "SC212": ('Absorption bar (2x tick volume, small body, at an extreme) + confirmation close, bar stop, 2R (Orderflow Sniper, TikTok)', s_of_absorption_reversal, ['1Min', '5Min', '15Min', '1Hour']),
+    "SC213": ('Equal highs / lows sweep and close back, sweep stop, opposite equal level / 2R (Orderflow Sniper, TikTok)', s_of_equal_level_sweep, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC214": ('Approximate CVD divergence at a swing + reversal close, swing stop, 2R (Orderflow Sniper, TikTok)', s_of_cvd_divergence, ['5Min', '15Min', '1Hour']),
+    "SC215": ("EMA50 pullback in the EMA50/200 trend, target the previous week's high (>= 3R), BE at 1R (Ezekiel Chew, TikTok)", s_ec_far_structural_target, ['15Min', '1Hour', '4Hour']),
+    "SC216": ("SuperTrend AI (k-means factor) flips, line stop, flip exit (LuxAlgo / Flux 'AI SuperTrend')", s_ind_supertrend_ai, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC217": ('ML Lorentzian Classification signal + kernel direction, 4-bar hold, 1.5 ATR stop (jdehorty)', s_ind_lorentzian, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC218": ('HMA50 trend turn, exit when the trend reaches its average length (ChartPrime Trend Duration / Trading Data)', s_ind_trend_duration_exit, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC219": ('Zero Lag Trend re-entry (close back over ZLEMA in the trend), band stop, 2R, flip exit (AlgoAlpha)', s_ind_zero_lag_reentry, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC220": ('Zero Lag Trend flips (close beyond ZLEMA +/- volatility), ZLEMA stop, flip exit (AlgoAlpha)', s_ind_zero_lag_flip, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC221": ('ATR Fibonacci envelope trend: golden-pocket pullback, trail-band stop, 2R (BigBeluga)', s_ind_atr_fib_pocket, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC222": ('Double Ribbon trend score sign change, 2 ATR stop, opposite exit (ChartPrime, our reconstruction)', s_ind_double_ribbon, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC223": ('Fibonacci Golden Wave: 0.5-0.618 touch of the 20-bar up leg, range-low stop, range-high target (Flux Charts)', s_ind_golden_wave, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC224": ('Swing sweep then CISD within 10 bars, sweep stop, 2R (ICT / LuxAlgo CISD)', s_ind_cisd_after_sweep, ['1Min', '5Min', '15Min', '1Hour']),
+    "SC225": ('Impulse Zone retest (1.5 ATR + 1.5x volume bar), zone stop, 2R (Flux Charts)', s_ind_impulse_zone_retest, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC226": ('Funk RSI 30/70 swing reversal, swing-bar target, our excursion stop (Almazov Trade)', s_ind_funk_rsi, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC227": ('WaveTrend cross under -53 / over +53, swing stop, 2R (LazyBear)', s_ind_wavetrend_zone_cross, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC228": ('WaveTrend divergence + cross within 10 bars, swing stop, 2R (LazyBear)', s_ind_wavetrend_divergence, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC229": ("Nadaraya-Watson envelope (non-repaint) band-cross dots, 1.5 ATR stop, mid target (LuxAlgo; our 'Non Repaint')", s_ind_nwe_reversal, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC230": ('Pullback to the VWAP anchored at the last swing low over EMA50, 1 ATR stop, 2R', s_ind_avwap_swing_pullback, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC231": ('SMC: order-block retest with the structure trend, OB stop, 2R (LuxAlgo)', s_ind_smc_bos_ob, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC232": ('SMC: CHoCH then the first FVG return, swing stop, 2R (LuxAlgo)', s_ind_smc_choch_fvg, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC233": ('Breaker block retest (failed order block), breaker stop, 2R (Flux / LuxAlgo)', s_ind_breaker_retest, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC234": ('Supply / demand zone breakout (close through the zone), zone stop, 2R (Flux / zone matrix)', s_ind_sd_breakout, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC235": ('Break of a 3-touch auto trend line, swing stop, 2R (BigBeluga Pattern Detector idea)', s_ind_trendline_break, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC236": ("EMA9/20 cross only when BB 20/2 width >= its 20th percentile, swing stop, 2R (user's filters tal1411ema)", s_ind_ema9_20_bbw, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC237": ('QQE 14/5/4.238 cross of its trailing line, cross-back exit, 2 ATR stop (StockSharp)', s_qqe_cross, ['15Min', '1Hour', '4Hour']),
+    "SC238": ('Laguerre RSI 0.7 crosses 30 / 70, exit at 50, 2% stop (StockSharp)', s_laguerre_rsi, ['5Min', '15Min']),
+    "SC239": ('Fisher Transform 9 trigger cross (under / over 1), opposite exit, 2 ATR stop (FMZ)', s_fisher_cross, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC240": ('SSL channel flip + HMA60 baseline + WaveTrend cross, 1.5 ATR stop, 1R (FMZ)', s_ssl_hma_wavetrend, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC241": ('Gartley harmonic XABCD (0.618 / 0.786), stop beyond X, target C (The Right Trader)', s_gartley_harmonic, ['15Min', '1Hour', '4Hour']),
+    "SC242": ('Gartley harmonic, target A (The Right Trader; second target)', s_gartley_target_a, ['15Min', '1Hour', '4Hour']),
+    "SC243": ('Joe Ross Gimmee bar: BB touch + opposite close in a sideways market (ADX < 20), bar stop, middle-band target (LuxAlgo)', s_ross_gimmee_bar, ['5Min', '15Min', '1Hour', '4Hour']),
+    "SC244": ('Momentum Pinball: RSI3 of the daily change < 30 / > 70, first-hour breakout, first-hour stop, next-morning exit (Raschke / Connors)', s_momentum_pinball, ['15Min', '1Hour']),
+    "SC245": ('Elder Triple Screen: 4x-TF MACD-hist slope + Force Index EMA2 pullback + prior-high break, 2R (forexop)', s_elder_triple_screen, ['15Min', '1Hour', '4Hour']),
+    "SC246": ('Raschke Anti 3/10 oscillator pullback re-cross, pullback-low stop, cross-back exit (MQL5)', s_raschke_anti_310, ['1Hour', '4Hour']),
+    "SC247": ('Larry Williams Smash Day: close under the prior low at an 8-bar low close, buy over its high, 3-bar exit (Rogue Quant)', s_lw_smash_day, ['4Hour', '1Day']),
+    "SC248": ('Weinstein stage 1->2 (SMA150 slope, 10-bar highs) on 1.8x volume + RSI >= 50, 2 / 6 ATR, SMA exit (MQL5)', s_weinstein_stage2, ['1Day', '4Hour']),
+    "SC249": ('Close 2.5x avg range under the 10-bar high twice + IBS < 0.2, long, out over the prior high (TradingView)', s_avg_hl_ibs, ['1Day', '4Hour']),
 }

@@ -837,7 +837,8 @@ def guard6_card(g):
             + ("זה הרבה - המשימה הבאה: לתקן את החפיפה בין האסטרטגיות (קודם מתקנים)." if many else
                "מעט - אין חפיפה שצריך לתקן; שום שינוי לא יאושר אם הוא פותח סיכון מעבר למקום הזה.")
             + (f" לא נבדקו: {', '.join(g['missing'])}." if g["missing"] else ""))
-    return K.card("bot6", "info", "בוט 6: כלל הסיכון הקבוע - כמה עסקאות הוקטנו או דולגו בגלל המקום שנשאר", what, None, None,
+    return K.card("bot6", "info", f"בוט 6: כלל הסיכון הקבוע - ב־2026 {w.get('room_cut', 0)} עסקאות הוקטנו ו־"
+                  f"{w.get('room_only_skipped', 0)} דולגו בגלל המקום שנשאר (מתוך {w.get('n', 0)})", what, None, None,
                   tested=1, detail={"world": "bot6", "task": "tal1411risk", "guard": g})
 
 

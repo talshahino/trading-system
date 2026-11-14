@@ -3220,6 +3220,118 @@
     "bot7"
    ],
    "rules": "1m: at 10:30 buy stop +20 pips / sell stop -20 pips, OCO / stop 50 pips / target 150 pips, 5-pip trail; everything closed at 22:30"
+  },
+  {
+   "id": "SC167",
+   "name": "freqtrade Quickie: ADX > 30 + TEMA9 rising under the BB mid + under SMA200, -25% / ROI 3%, 100-min exit, 5m",
+   "source": "GitHub (freqtrade-strategies)",
+   "url": "https://github.com/freqtrade/freqtrade-strategies/blob/main/user_data/strategies/berlinguyinca/Quickie.py",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m long: ADX > 30, TEMA9 under the BB(20,2) middle and rising, SMA200 over the close -> buy / stop -25% / ROI 15% (10 min), 6% (15), 3% (30), 1% (100); sell ADX > 70 + TEMA over the middle and falling"
+  },
+  {
+   "id": "SC168",
+   "name": "freqtrade Simple: MACD > 0 and over signal + rising BB(12) top + RSI7 > 70, -25% / 1%, RSI 80 exit, 5m",
+   "source": "GitHub (freqtrade-strategies)",
+   "url": "https://github.com/freqtrade/freqtrade-strategies/blob/main/user_data/strategies/berlinguyinca/Simple.py",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m long: MACD > 0 and over signal, BB(12,2) upper band rising, RSI7 > 70 -> buy / stop -25% / ROI 1%; sell RSI7 > 80"
+  },
+  {
+   "id": "SC169",
+   "name": "freqtrade AdxSmas: ADX > 25 + SMA3 crosses SMA6, -25% / 10%, ADX < 25 cross-back exit, 1h",
+   "source": "GitHub (freqtrade-strategies)",
+   "url": "https://github.com/freqtrade/freqtrade-strategies/blob/main/user_data/strategies/berlinguyinca/AdxSmas.py",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1h long: ADX > 25 and SMA3 crosses over SMA6 -> buy / stop -25% / ROI 10%; sell ADX < 25 and SMA6 crosses over SMA3"
+  },
+  {
+   "id": "SC170",
+   "name": "freqtrade BinHV27: EMA5(RSI5) <= 20/25 under EMA60/120 + -DI over its EMA25, four SMA120/240 regimes, signal exits, 5m",
+   "source": "GitHub (freqtrade-strategies)",
+   "url": "https://github.com/freqtrade/freqtrade-strategies/blob/main/user_data/strategies/berlinguyinca/BinHV27.py",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m long: close under EMA60 and EMA120, -DI over its EMA25, RSI5 not falling, one of 4 SMA120/240 regimes with ADX 25-35 and EMA5(RSI5) <= 20/25 -> buy / stop -50% / ROI 100%; 5 signal-exit branches"
+  },
+  {
+   "id": "SC171",
+   "name": "freqtrade AverageStrategy: EMA8 crosses EMA21, -20% / 50%, cross-back exit, 4h",
+   "source": "GitHub (freqtrade-strategies)",
+   "url": "https://github.com/freqtrade/freqtrade-strategies/blob/main/user_data/strategies/berlinguyinca/AverageStrategy.py",
+   "added": "2026-11-14",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "4h long: EMA8 crosses over EMA21 -> buy / stop -20% / ROI 50%; sell when EMA21 crosses over EMA8"
+  },
+  {
+   "id": "SC172",
+   "name": "freqtrade Strategy001: EMA20/50 cross + green Heikin-Ashi over EMA20, -10% / ROI 3%, 60-min exit, 5m",
+   "source": "GitHub (freqtrade-strategies)",
+   "url": "https://github.com/freqtrade/freqtrade-strategies/blob/main/user_data/strategies/Strategy001.py",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m long: EMA20 crosses over EMA50, Heikin-Ashi close over EMA20 and green -> buy / stop -10% / ROI 5%, 4% (20 min), 3% (30), 1% (60); sell EMA50 over EMA100 cross + HA close under EMA20 and red"
   }
  ]
 }

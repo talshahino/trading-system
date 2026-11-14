@@ -4204,6 +4204,120 @@ def s_ss_enews_lucky_1030(df):
                                           "force_exit": hs >= 22.5}
 
 
+# ---------------- shared helpers for SC167-SC172 ----------------
+def _roi_plan(df, c, sl_pct, tp_pct, minutes):
+    """freqtrade stoploss / minimal_roi -> a fixed % stop, one % target and a time exit after `minutes`."""
+    (sl, _), (tl, _) = _pct_levels(c, sl_pct, tp_pct)
+    nb = max(1, int(round(minutes / max(_bar_minutes(df), 1.0))))
+    return {"stop": ("level", sl, sl), "target": ("level", tl, tl), "max_bars": nb}
+
+
+# ---------------- SC167 freqtrade Quickie: ADX 30 + TEMA9 under the mid band and rising, under SMA200, 5m (GitHub) ----------------
+def s_ft_quickie(df):
+    """freqtrade-strategies 'Quickie' (berlinguyinca; crypto spot, 5-minute, long only): ADX(14) > 30, TEMA(9) under
+    the Bollinger (20, 2) middle band and rising, SMA200 over the close -> buy. Stop -25%; ROI 15% after 10 min,
+    6% after 15, 3% after 30, 1% after 100; sell when ADX > 70 and TEMA is over the middle band and falling.
+    Ours: one target 3% (the ROI from 30 minutes on) and a time exit at 100 minutes."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    ad = adx(h, l, c, 14)
+    tm = _tema(c, 9)
+    _, mid, _ = _bb(c, 20, 2.0)
+    L = (ad > 30) & (tm < mid) & (tm > _sh(tm)) & (sma(c, 200) > c)
+    p = _roi_plan(df, c, 25.0, 3.0, 100)
+    p["exit_long"] = (ad > 70) & (tm > mid) & (tm < _sh(tm))
+    return L, np.zeros(len(c), bool), p
+
+
+# ---------------- SC168 freqtrade Simple: MACD over 0 and signal + widening upper band + RSI7 > 70, 5m (GitHub) ----------------
+def s_ft_simple_macd_rsi7(df):
+    """freqtrade-strategies 'Simple' (berlinguyinca, after the book 'The Simple Strategy'; crypto spot, 5-minute,
+    long only): MACD(12,26,9) > 0 and over its signal, the upper Bollinger band (12, 2) higher than on the previous
+    bar and RSI(7) > 70 -> buy. Stop -25%, ROI 1% from the start; sell when RSI(7) > 80."""
+    c = df["c"].to_numpy(float)
+    m, s, _ = macd(c, 12, 26, 9)
+    _, _, ub = _bb(c, 12, 2.0)
+    r = rsi(c, 7)
+    L = (m > 0) & (m > s) & (ub > _sh(ub)) & (r > 70)
+    (sl, _), (tl, _) = _pct_levels(c, 25.0, 1.0)
+    return L, np.zeros(len(c), bool), {"stop": ("level", sl, sl), "target": ("level", tl, tl), "exit_long": r > 80}
+
+
+# ---------------- SC169 freqtrade AdxSmas: ADX 25 + SMA3 crossing SMA6, -25% / 10%, 1h (GitHub) ----------------
+def s_ft_adx_smas(df):
+    """freqtrade-strategies 'AdxSmas' (berlinguyinca, port of Mynt AdxSmas; crypto spot, 1-hour, long only): ADX(14) >
+    25 and SMA3 crosses over SMA6 -> buy. Stop -25%, ROI 10% from the start; sell when ADX < 25 and SMA6 crosses
+    over SMA3."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    ad = adx(h, l, c, 14)
+    s3, s6 = sma(c, 3), sma(c, 6)
+    L = (ad > 25) & cross_up(s3, s6)
+    (sl, _), (tl, _) = _pct_levels(c, 25.0, 10.0)
+    return L, np.zeros(len(c), bool), {"stop": ("level", sl, sl), "target": ("level", tl, tl),
+                                       "exit_long": (ad < 25) & cross_up(s6, s3)}
+
+
+# ---------------- SC170 freqtrade BinHV27: RSI5-EMA5 <= 20/25 under EMA60/120 with -DI over its EMA25, 5m (GitHub) ----------------
+def s_ft_binhv27(df):
+    """freqtrade-strategies 'BinHV27' (berlinguyinca; crypto spot, 5-minute, long only): close under EMA120 and EMA60,
+    -DI over its EMA25, RSI(5) not falling, and one of four regimes from SMA120 / SMA240 (bigup = SMA120 over SMA240
+    by more than close/300, trend turning, SMA240 rising two bars) with ADX > 25-35 and EMA5 of RSI(5) <= 20 (25) ->
+    buy. Stop -50%, ROI 100% (effectively signal exits); the five sell branches of the source are coded as published."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    r = np.nan_to_num(rsi(c, 5))
+    er = ema(r, 5)
+    ad = np.nan_to_num(adx(h, l, c, 14))
+    pdi, ndi = _di(h, l, c, 14)
+    pdi, ndi = np.nan_to_num(pdi), np.nan_to_num(ndi)
+    ndie = ema(ndi, 25)
+    lows, highs = ema(c, 60), ema(c, 120)
+    fs, ss = np.nan_to_num(sma(c, 120)), np.nan_to_num(sma(c, 240))
+    bigup = (fs > ss) & ((fs - ss) > c / 300)
+    bigdown = ~bigup
+    tr = fs - ss
+    pct = tr > _sh(tr)
+    pctc = pct & (_sh(tr) > _sh(tr, 2))
+    cu = (ss > _sh(ss)) & (_sh(ss) > _sh(ss, 2))
+    dl = fs - _sh(fs)
+    slow = dl < _sh(dl)
+    base = (ss > 0) & (c < highs) & (c < lows) & (ndi > ndie) & (r >= _sh(r))
+    L = base & ((~pct & ~cu & (ad > 25) & bigdown & (er <= 20)) | (~pct & cu & (ad > 30) & bigdown & (er <= 20)) |
+                (~cu & (ad > 35) & bigup & (er <= 20)) | (cu & (ad > 30) & bigup & (er <= 25)))
+    ex = ((~pctc & ~cu & ((c > lows) | (c > highs)) & bigdown) |
+          (~pctc & ~cu & (c > highs) & ((er >= 75) | (c > ss)) & bigdown) |
+          (~pctc & (c > highs) & (ad > 30) & (er >= 80) & bigup) |
+          (pctc & ~cu & slow & (er >= 75)) |
+          (pctc & (ndi < pdi) & (c > lows)))
+    (sl, _), (tl, _) = _pct_levels(c, 50.0, 100.0)
+    return L, np.zeros(len(c), bool), {"stop": ("level", sl, sl), "target": ("level", tl, tl), "exit_long": ex}
+
+
+# ---------------- SC171 freqtrade AverageStrategy: EMA 8/21 cross, -20% / 50%, 4h (GitHub) ----------------
+def s_ft_average_ema8_21(df):
+    """freqtrade-strategies 'AverageStrategy' (berlinguyinca; crypto spot, 4-hour, long only): EMA8 crosses over EMA21
+    -> buy. Stop -20%, ROI 50% from the start; sell when EMA21 crosses over EMA8. Differs from TT45 / CR07 in the
+    periods and the exits."""
+    c = df["c"].to_numpy(float)
+    e8, e21 = ema(c, 8), ema(c, 21)
+    (sl, _), (tl, _) = _pct_levels(c, 20.0, 50.0)
+    return cross_up(e8, e21), np.zeros(len(c), bool), {"stop": ("level", sl, sl), "target": ("level", tl, tl),
+                                                       "exit_long": cross_up(e21, e8)}
+
+
+# ---------------- SC172 freqtrade Strategy001: EMA 20/50 cross + green Heikin-Ashi over EMA20, 5m (GitHub) ----------------
+def s_ft_strategy001(df):
+    """freqtrade-strategies 'Strategy001' (crypto spot, 5-minute, long only): EMA20 crosses over EMA50, the
+    Heikin-Ashi close over EMA20 and the HA candle green -> buy. Stop -10%; ROI 5% at once, 4% after 20 min, 3% after
+    30, 1% after 60; sell when EMA50 crosses over EMA100 with the HA close under EMA20 and a red HA candle. Ours: one
+    target 3% (the ROI from 30 minutes on) and a time exit at 60 minutes."""
+    c = df["c"].to_numpy(float)
+    hc, ho = _ha(df)
+    e20, e50, e100 = ema(c, 20), ema(c, 50), ema(c, 100)
+    L = cross_up(e20, e50) & (hc > e20) & (ho < hc)
+    p = _roi_plan(df, c, 10.0, 3.0, 60)
+    p["exit_long"] = cross_up(e50, e100) & (hc < e20) & (ho > hc)
+    return L, np.zeros(len(c), bool), p
+
+
 SCOUT = {
     "SC001": ("RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute (TradingView)", s_rv_ema20_scalp, ["1Min"]),
     "SC002": ("Alligator + Fractals breakout, fractal stop, 1:3 (RoboForex)", s_alligator_fractal, ["1Hour", "4Hour"]),
@@ -4371,4 +4485,10 @@ SCOUT = {
     "SC164": ("PineMyths #2: EMA 5/21 + 50/200 + BB %B 0.75 / 0.25 + ADX 15 + Awesome Oscillator, 2% / 1%, 1m (Medium / YouTube)", s_pm_adx_pctb_ao_ema, ["1Min"]),
     "SC165": ("freqtrade MACD RSI EMA: histogram zero cross + RSI 50 + EMA5 > EMA20, -8% / ROI 3%, RSI 40 exit, 1h (GitHub)", s_ft_macd_rsi_ema_1h, ["1Hour"]),
     "SC166": ("E-News Lucky: 10:30 straddle +/-20 pips, 50 / 150 pips, flat 22:30, 1m (StockSharp)", s_ss_enews_lucky_1030, ["1Min", "5Min"]),
+    "SC167": ("freqtrade Quickie: ADX > 30 + TEMA9 rising under the BB mid + under SMA200, -25% / ROI 3%, 100-min exit, 5m (GitHub)", s_ft_quickie, ["5Min"]),
+    "SC168": ("freqtrade Simple: MACD > 0 and over signal + rising BB(12) top + RSI7 > 70, -25% / 1%, RSI 80 exit, 5m (GitHub)", s_ft_simple_macd_rsi7, ["5Min"]),
+    "SC169": ("freqtrade AdxSmas: ADX > 25 + SMA3 crosses SMA6, -25% / 10%, ADX < 25 cross-back exit, 1h (GitHub)", s_ft_adx_smas, ["1Hour"]),
+    "SC170": ("freqtrade BinHV27: EMA5(RSI5) <= 20/25 under EMA60/120 + -DI over its EMA25, four SMA120/240 regimes, signal exits, 5m (GitHub)", s_ft_binhv27, ["5Min"]),
+    "SC171": ("freqtrade AverageStrategy: EMA8 crosses EMA21, -20% / 50%, cross-back exit, 4h (GitHub)", s_ft_average_ema8_21, ["4Hour"]),
+    "SC172": ("freqtrade Strategy001: EMA20/50 cross + green Heikin-Ashi over EMA20, -10% / ROI 3%, 60-min exit, 5m (GitHub)", s_ft_strategy001, ["5Min"]),
 }

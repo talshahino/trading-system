@@ -300,7 +300,15 @@ NOTE_TESTS[:0] = [
     {"id": f"{trk}_wknd", "track": trk, "knob": "WKND", "vals": [10], "src": "tal1411wkend", "inform": True,
      "he": "כלל FTMO: סגירה וביטול הוראות 10 דק' לפני הפסקה של שעתיים ומעלה"}
     for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
-NOTE_SRC = {"tal1411wkend": "משימה של טל מ־14.11 (כלל FTMO: בלי עסקה פתוחה בהפסקה של שעתיים ומעלה).",
+NOTE_TESTS += [
+    # the filters of the user's videos of 14.11.2026 (tal1411rsi a, tal1411vwap 2, tal1411set2 1, set3 2, set4 2,
+    # set5 1-2) on the gap method as it runs - one TREND value each (tal_gap.Data.video_trend, the same on the live bot).
+    # VWAP and the buyers / sellers pressure need the tick volume, which the live bot's feed does not carry - not here.
+    {"id": f"{trk}_video", "track": trk, "knob": "TREND", "vals": list(TG.VIDEO_TREND), "src": "tal1411vid",
+     "he": "מסנן כיוון מהסרטונים (RSI / ADX / סופרטרנד / EMA 50-200 / סדר 5 ממוצעים)"}
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
+NOTE_SRC = {"tal1411vid": "משימות של טל מ־14.11 (מסנני הסרטונים: RSI במגמה, ADX, סופרטרנד, EMA 50/200, סדר הממוצעים).",
+            "tal1411wkend": "משימה של טל מ־14.11 (כלל FTMO: בלי עסקה פתוחה בהפסקה של שעתיים ומעלה).",
             "tal1411ema": "משימה של טל מ־14.11 (מסנני EMA 9/20 ובולינגר).",
             "tal1411strad": "משימה של טל מ־14.11 (הגנת חדשות לגאפ).",
             "tal1411anti": "משימה של טל מ־14.11 (הוספה לעסקה מנצחת)."}

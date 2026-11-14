@@ -72,6 +72,7 @@ NAMES = {"GBODY": "עוצמת הדחף (גוף הנר האמצעי מול הממ
          "IMP1": "אחרי סטופ - בלי עוד כניסות מאותו דחף",
          "TREND": "רק בכיוון התמונה הגדולה (פתיחת היום / טיים פריים מעל)",
          "LADDER": "כניסה מדורגת לאורך הגאפ (אותו סיכון כולל)"}
+VIDEO_TREND = ("rsi50", "rsix", "adx", "st", "e50200", "ema5")   # Data.video_trend: 2 = both sides allowed
 UP = {"1m": "5m", "5m": "15m", "15m": "1h", "1h": "4h", "4h": "4h", "1d": "4h"}   # TREND up20: the timeframe above (<= 4h)
 PROT_HE = {"none": "בלי הגנה", "cal15": "יומן ±15 דק'", "cal60": "יומן ±60 דק'", "shock": "זעזועים",
            "cal15shock": "יומן ±15 דק' + זעזועים"}
@@ -214,6 +215,9 @@ class Data:
         key = ("trend", htf, mode, ltf if mode == "e920l" else None)
         if key not in self.sw:
             prev = np.r_[self.c1[0], self.c1[:-1]]
+            if mode in VIDEO_TREND:
+                self.sw[key] = self.video_trend(htf, mode)
+                return self.sw[key]
             if mode in ("e920", "e920l"):
                 tfn = ltf if (mode == "e920l" and ltf) else htf
                 ts, o, h, l, c, _ = self.tf(tfn)
@@ -246,6 +250,82 @@ class Data:
                 s = np.where(j >= 0, np.sign(c[jj] - ema[jj]), 0)
             self.sw[key] = np.nan_to_num(s).astype(np.int8)
         return self.sw[key]
+
+    def _closed(self, tfn, vals):
+        """vals per candle of timeframe tfn -> per 1-minute bar, the value of the last CLOSED candle (NaN before)."""
+        ts = self.tf(tfn)[0]
+        j = np.searchsorted(ts, self.ns - TF[tfn] * 60_000_000_000, side="right") - 1
+        return np.where(j >= 0, np.asarray(vals, float)[np.maximum(j, 0)], np.nan)
+
+    def video_trend(self, htf, mode):
+        """The filters from the user's videos of 14.11.2026 (replies.json "_tasks" tal1411rsi / tal1411vwap /
+        tal1411set2 / set3 / set4 / set5), as TREND values: per 1-minute bar +1 = longs only, -1 = shorts only,
+        2 = both, 0 = none - from CLOSED candles only, the same on the backtest and the live bot. The long averages
+        (EMA 200) are on the 15-minute chart, so the live bot's 14 days of minutes (~900 candles) warm them up exactly
+        like the backtest; the short ones (RSI 14, ADX 14, Supertrend 10/3) on the high timeframe.
+          rsi50  RSI14 of the high timeframe above 50 = longs, below = shorts (set5)
+          rsix   RSI in a trend (tal1411rsi a): no long while the 15-minute RSI14 < 35 under its EMA 200, no short
+                 while RSI14 > 65 above it - "buying at 30" against a downtrend is what fails
+          adx    ADX14 of the high timeframe >= 20 (a trending market, set2), any side; else no entry
+          st     Supertrend 10 / x3 of the high timeframe: green = longs, red = shorts (set3)
+          e50200 EMA 50 against EMA 200 on 15 minutes (tal1411vwap 2, the trend of the Fibonacci + EMA video)
+          ema5   EMA 9/21/50/100/200 on 15 minutes all in order = only that side (a strong trend, set4); else both"""
+        def ema(c, n):
+            return pd.Series(c).ewm(span=n, adjust=False).mean().to_numpy()
+
+        def rsi(c):
+            dc = np.diff(c, prepend=c[0])
+            up = pd.Series(np.maximum(dc, 0)).ewm(alpha=1 / 14, adjust=False).mean().to_numpy()
+            dn = pd.Series(np.maximum(-dc, 0)).ewm(alpha=1 / 14, adjust=False).mean().to_numpy()
+            with np.errstate(divide="ignore", invalid="ignore"):
+                return np.where(dn > 0, 100 - 100 / (1 + up / np.where(dn > 0, dn, 1)), 100.0)
+
+        if mode in ("rsi50", "adx", "st"):
+            ts, o, h, l, c, _ = self.tf(htf)
+            if mode == "rsi50":
+                v = np.sign(rsi(c) - 50)
+            elif mode == "adx":
+                pc, ph, pl = np.r_[c[0], c[:-1]], np.r_[h[0], h[:-1]], np.r_[l[0], l[:-1]]
+                upm, dnm = h - ph, pl - l
+                pdm = np.where((upm > dnm) & (upm > 0), upm, 0.0)
+                ndm = np.where((dnm > upm) & (dnm > 0), dnm, 0.0)
+                tr = np.maximum(h - l, np.maximum(np.abs(h - pc), np.abs(l - pc)))
+                w = lambda x: pd.Series(x).ewm(alpha=1 / 14, adjust=False).mean().to_numpy()   # noqa: E731
+                atr_ = w(tr)
+                with np.errstate(divide="ignore", invalid="ignore"):
+                    pdi, ndi = 100 * w(pdm) / atr_, 100 * w(ndm) / atr_
+                    dx = np.nan_to_num(100 * np.abs(pdi - ndi) / (pdi + ndi))
+                v = np.where(w(dx) >= 20, 2, 0)
+            else:
+                pc = np.r_[c[0], c[:-1]]
+                tr = np.maximum(h - l, np.maximum(np.abs(h - pc), np.abs(l - pc)))
+                a10 = pd.Series(tr).ewm(alpha=1 / 10, adjust=False).mean().to_numpy()
+                mid = (h + l) / 2
+                bu, bl = mid + 3 * a10, mid - 3 * a10
+                v = np.zeros(len(c))
+                fu, fl, dr = bu[0], bl[0], 1
+                for i in range(len(c)):
+                    if i:
+                        fu = bu[i] if (bu[i] < fu or c[i - 1] > fu) else fu
+                        fl = bl[i] if (bl[i] > fl or c[i - 1] < fl) else fl
+                        dr = 1 if c[i] > fu else -1 if c[i] < fl else dr
+                    v[i] = dr
+            s = self._closed(htf, v)
+        else:
+            ts, o, h, l, c, _ = self.tf("15m")
+            e200 = ema(c, 200)
+            if mode == "rsix":
+                r = rsi(c)
+                v = np.where((r < 35) & (c < e200), -1, np.where((r > 65) & (c > e200), 1, 2))
+            elif mode == "e50200":
+                v = np.sign(ema(c, 50) - e200)
+            else:
+                e = [ema(c, n) for n in (9, 21, 50)] + [ema(c, 100), e200]
+                upk = (e[0] > e[1]) & (e[1] > e[2]) & (e[2] > e[3]) & (e[3] > e[4])
+                dnk = (e[0] < e[1]) & (e[1] < e[2]) & (e[2] < e[3]) & (e[3] < e[4])
+                v = np.where(upk, 1, np.where(dnk, -1, 2))
+            s = self._closed("15m", v)
+        return np.nan_to_num(s, nan=2.0 if mode in ("rsix", "ema5") else 0.0).astype(np.int8)
 
     def bbw_ok(self, tfn, pct):
         """BBW (user, 14.11.2026): per 1-minute bar, True when the Bollinger 20/2 width ((upper - lower) / middle) of
@@ -651,7 +731,7 @@ def simulate(D, pair, cfg, gcache, keep=None):
         f = q0 + int(np.argmax(seg))
         if D.late[f]:
             continue                                     # the world's no-entry time (session)
-        if trend is not None and trend[f] != d:
+        if trend is not None and trend[f] != d and trend[f] != 2:
             continue                                     # TREND: against the bigger picture
         if bbw is not None and not bbw[f]:
             continue                                     # BBW: a squeeze (Bollinger width under its percentile)
@@ -1716,7 +1796,7 @@ def live_trades(D, pair, cfg, gcache=None):
         why = None
         if D.late[f]:
             why = "session"
-        elif trend is not None and trend[f] != d:
+        elif trend is not None and trend[f] != d and trend[f] != 2:
             why = "trend"
         elif bbw is not None and not bbw[f]:
             why = "bbw"

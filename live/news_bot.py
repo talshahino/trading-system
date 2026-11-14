@@ -11,6 +11,9 @@ read-only, nothing is ever sent to a broker), builds 5-minute candles and runs e
   EV03 range breakout    - the first 15 minutes' range, the first close outside it within the hour, target 1.5R
   EV01 removed from 14.11.2026 (card d51b540869aa): plans "off_from" - no new trade after that time; the trades
   before it stay in the ledger.
+  Approved scout strategies (cards of kind "new") run on 1- or 5-minute candles from the 1-minute ones, and from
+  14.11.2026 also on 1-hour / 4-hour candles (cards a8aec0b2566d, d76afd8d8393, ef75662acd2d): the candle server's
+  1-hour bars (~125 days), the 4-hour ones resampled from them on UTC as the backtest and live/runner.py do.
   SH01 shock fade (card 42c723b87f92, 13.11.2026) - a 1-minute shock without a release (agents/shocks.py detect, K=8):
                          against it D minutes later, stop 25% of the shock beyond its extreme, out after 60 minutes
 Releases: FTMO's own economic calendar, high impact or FTMO-restricted, concerning the instrument (read every hour).
@@ -66,6 +69,9 @@ END = "סוף הנתונים"            # rules_agent's reason for a trade stil
 INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.005, 0.045, 0.10
 ACCT_V = 1
 KEEP = 300
+HI_TF = ("1Hour", "4Hour")      # scout strategies on longer candles (14.11.2026): from the server's 1-hour bars
+HI_DAYS, HI_EVERY = 125, 120     # 1-hour history asked for (the server sends at most 3000 bars); refreshed every 2 minutes
+TF_HE = {"1Min": "דקה", "5Min": "5 דקות", "1Hour": "שעה", "4Hour": "4 שעות"}
 PLANS_F = LIVE / "bots" / "bot7.json"   # approved cards, built (agent_portfolio.built_variant reads the same "plans")
 
 
@@ -82,7 +88,7 @@ def extras():
             sid, tf, name = c.split("|")
         except ValueError:
             continue
-        if (sid in SCS.SCOUT and tf in ("1Min", "5Min") or sid in SHOCK and tf == "1Min") and name in SYMBOLS:
+        if (sid in SCS.SCOUT and tf in ("1Min", "5Min") + HI_TF or sid in SHOCK and tf == "1Min") and name in SYMBOLS:
             out.append((sid, tf, name))
     return out
 
@@ -178,8 +184,8 @@ class Source:
         self.url = f"http://127.0.0.1:{port}/candles"
         self.broker, self.df = {}, {}
 
-    def get(self, sym, t0, t1):
-        j = requests.get(self.url, params={"symbol": sym, "tf": "1m", "from": int(t0), "to": int(t1)}, timeout=20).json()
+    def get(self, sym, t0, t1, tf="1m"):
+        j = requests.get(self.url, params={"symbol": sym, "tf": tf, "from": int(t0), "to": int(t1)}, timeout=20).json()
         if j.get("error"):
             raise RuntimeError(j["error"])
         b = j.get("bars") or []
@@ -215,6 +221,37 @@ class Source:
             d = d.iloc[:-1]                                     # the forming candle is left out
         self.df[name] = d
         return d
+
+
+    def hi(self, name, need):
+        """1-hour / 4-hour candles for the scout strategies on longer timeframes ({"1Hour": df, "4Hour": df}, only the
+        ones asked for): the server's 1-hour bars (UTC), the 4-hour ones resampled from them on UTC exactly as
+        live/runner.bars and the backtest; the forming candle is left out. Cached for HI_EVERY seconds."""
+        if not need or not self.broker.get(name):
+            return {}
+        if not hasattr(self, "_hi"):
+            self._hi = {}
+        t, h1 = self._hi.get(name, (0, None))
+        if h1 is None or time.time() - t > HI_EVERY:
+            try:
+                h1 = self.get(self.broker[name], time.time() - HI_DAYS * 86400, time.time(), tf="1h")
+                h1 = h1[~h1.index.duplicated(keep="last")].sort_index()
+                self._hi[name] = (time.time(), h1)
+            except Exception as e:  # noqa: BLE001
+                log(f"{name}: 1-hour candles not read ({e})")
+                if h1 is None:
+                    return {}
+        now = pd.Timestamp.now(tz="UTC")
+        out = {}
+        if "1Hour" in need:
+            out["1Hour"] = h1[h1.index + pd.Timedelta(hours=1) <= now]
+        if "4Hour" in need:
+            h4 = h1.resample("4h", label="left", closed="left").agg(
+                {"o": "first", "h": "max", "l": "min", "c": "last", "v": "sum"}).dropna(subset=["o"])
+            out["4Hour"] = h4[h4.index + pd.Timedelta(hours=4) <= now]
+        for tf, d in out.items():
+            d.attrs.update(symbol=name, tf=tf)
+        return out
 
 
 def five(d1):
@@ -296,16 +333,17 @@ def shock_fn(sid, name, p):
     return SH.live_fade(name, k, dd, hh, rel=lambda: REL)
 
 
-def trades_of(name, d5, spread_now, d1=None, extra=()):
+def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None):
     """Every trade of the three release strategies (and the approved extra ones) on this instrument in the candles
-    held, net of FTMO costs (r in R)."""
+    held, net of FTMO costs (r in R). hi: {"1Hour"/"4Hour": candles} for the scout strategies on those timeframes."""
     out = []
     pl = plans()
+    hi = hi or {}
     jobs = [(sid, "5Min", E.EVENTS[sid][1]) for sid in STRATS]
     jobs += [(sid, tf, shock_fn(sid, name, pl.get(f"{sid}|{tf}|{name}") or {}) if sid in SHOCK else SCS.SCOUT[sid][1])
-             for sid, tf, n in extra if n == name and (tf == "5Min" or d1 is not None)]
+             for sid, tf, n in extra if n == name and (tf == "5Min" or tf == "1Min" and d1 is not None or tf in hi)]
     for sid, tf, fn0 in jobs:
-        d = d5 if tf == "5Min" else d1
+        d = d5 if tf == "5Min" else hi.get(tf) if tf in HI_TF else d1
         if d is None or len(d) < 50:
             continue
         sp = pd.Series([spread_now], index=[d.index[0]]) if spread_now else None
@@ -451,7 +489,7 @@ def state_of(acc, trades, cal, src):
              f"סטופ לנקודת הכניסה ב־60% מהדרך ליעד · סיכון {RISK * 100:g}% מהיתרה לעסקה · עלויות FTMO אמיתיות · "
              f"עצירה יומית {DAILY_STOP * 100:g}%, הפסד מקסימלי {MAX_LOSS * 100:g}% · "
              f"{len(SYMBOLS)} נכסים: {', '.join(SYMBOLS)}"
-             + "".join(f" · נוספה (כרטיס מאושר): {s} {sname(s)} על {n}, נרות {'דקה' if tf == '1Min' else '5 דקות'}"
+             + "".join(f" · נוספה (כרטיס מאושר): {s} {sname(s)} על {n}, נרות {TF_HE.get(tf, tf)}"
                        f" (סיכון ×{risk_mult(plans(), f'{s}|{tf}|{n}'):g})" for s, tf, n in ex))
     return {"bot": NAME, "label": LABEL, "watch_only": True, "rules": rules, "account": "וירטואלי · פרסומים כלכליים",
             "server": "צפייה בלבד · בלי כסף", "initial": acc.a["initial"], "risk": RISK, "balance": round(bal, 2),
@@ -514,7 +552,8 @@ def main():
                 d5 = five(d1)
                 d5.attrs.update(symbol=name, tf="5Min")
                 d1.attrs.update(symbol=name, tf="1Min")
-                for t in trades_of(name, d5, sp.get(name), d1, ex):
+                hi = src.hi(name, {tf for _, tf, n in ex if n == name and tf in HI_TF})
+                for t in trades_of(name, d5, sp.get(name), d1, ex, hi):
                     seen[t["id"]] = t
             for k, t in seen.items():
                 old = trades.get(k)

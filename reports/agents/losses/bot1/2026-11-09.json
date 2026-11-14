@@ -191,7 +191,7 @@
       "what": "TV11|4Hour|USDJPY: יעד 4R · סטופ x0.75",
       "decision": "84a71ede8ae7",
       "at": "2026-11-14T01:43:44+00:00",
-      "effect_month_pct": 0.85,
+      "effect_month_pct": null,
       "cut": false,
       "prev": null,
       "value": null
@@ -214,15 +214,6 @@
     "cause": "כניסה / כיוון",
     "fixes": [
      {
-      "what": "⭐ TT45|1Hour|WTI: רק בתנודתיות גבוהה",
-      "decision": "6694553ab6ac",
-      "at": "2026-11-14T01:43:44+00:00",
-      "effect_month_pct": 0.14,
-      "cut": false,
-      "prev": null,
-      "value": null
-     },
-     {
       "what": "סיכון ×0.7",
       "decision": "3214ff52985b",
       "at": "2026-11-14T01:43:44+00:00",
@@ -233,7 +224,7 @@
      }
     ],
     "open": false,
-    "cut_only": false
+    "cut_only": true
    },
    {
     "combo": "SE02|1Hour|USDJPY",
@@ -308,10 +299,11 @@
   ],
   "open": [],
   "cut_only": [
+   "TT45|1Hour|WTI",
    "SE02|1Hour|USDJPY",
    "TV39|1Hour|JP225"
   ],
-  "total_month_pct": 1.28,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.29,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

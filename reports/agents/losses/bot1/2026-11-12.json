@@ -574,7 +574,7 @@
       "what": "TV11|4Hour|USDJPY: יעד 4R · סטופ x0.75",
       "decision": "84a71ede8ae7",
       "at": "2026-11-14T01:43:44+00:00",
-      "effect_month_pct": 0.85,
+      "effect_month_pct": null,
       "cut": false,
       "prev": null,
       "value": null
@@ -740,15 +740,6 @@
     "cause": "סגירה בגלל כלל",
     "fixes": [
      {
-      "what": "⭐ TT45|1Hour|WTI: רק בתנודתיות גבוהה",
-      "decision": "6694553ab6ac",
-      "at": "2026-11-14T01:43:44+00:00",
-      "effect_month_pct": 0.14,
-      "cut": false,
-      "prev": null,
-      "value": null
-     },
-     {
       "what": "סיכון ×0.7",
       "decision": "3214ff52985b",
       "at": "2026-11-14T01:43:44+00:00",
@@ -759,7 +750,17 @@
      }
     ],
     "open": false,
-    "cut_only": false
+    "cut_only": true,
+    "edge_mult": 0.001,
+    "edge_parts": [
+     "בבדיקה של 2026: +0.07R לעסקה (60 עסקאות), בתקופת הבחירה +0.34R",
+     "בחי: -0.49R לעסקה (3 עסקאות)",
+     "הבדיקה שווה 79% מהמשקל, החי 21%",
+     "היתרון עכשיו: -0.05R לעסקה",
+     "אין יתרון - נסחרת בכמות המינימלית עד שיימצא תיקון"
+    ],
+    "edge0": 0.073,
+    "edge": -0.047
    },
    {
     "combo": "TV60|15Min|ARM",
@@ -969,12 +970,13 @@
    "TV41|4Hour|NZDUSD",
    "SE02|1Hour|USDJPY",
    "TT45|1Hour|GBPJPY",
+   "TT45|1Hour|WTI",
    "TV39|1Hour|JP225",
    "MQ11|4Hour|MSTR",
    "TV10|1Hour|US100",
    "TV33|15Min|MSTR"
   ],
-  "total_month_pct": 1.76,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 7 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.77,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 8 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

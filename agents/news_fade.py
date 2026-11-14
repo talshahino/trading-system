@@ -47,6 +47,7 @@ sys.path.insert(0, str(ROOT))
 
 from agents import rules_agent as R  # noqa: E402,F401  (first: rules_agent and event_strategies import each other)
 from agents import event_strategies as E  # noqa: E402
+from agents import agentkit as K  # noqa: E402
 from agents import ftmo_costs as C  # noqa: E402
 from agents import ftmo_universe as U  # noqa: E402
 from agents import news_fix as NF  # noqa: E402
@@ -192,14 +193,33 @@ def expand(df):
     return pd.concat(out, ignore_index=True) if out else df
 
 
+def _wf(z):
+    """NF._w with the weights computed once for the whole table (column w) - NF._w parses the times again on every
+    call, ~200,000 calls in the full study: the run went past its 37 minutes and was killed every round (14.11.2026)."""
+    if z.empty:
+        return {"n": 0, "eff_n": 0.0, "mean": None, "t": None, "win": None, "sum": 0.0}
+    s = K.wstats(z["r"].to_numpy(), z["w"].to_numpy())
+    s["sum"] = round(float(z["r"].sum()), 2)
+    return s
+
+
+def prep(df):
+    """Times parsed once and the time weights computed once (the same weights NF._w gives)."""
+    df = df.assign(t=pd.to_datetime(df["t"], utc=True, format="ISO8601"),
+                   rel=pd.to_datetime(df["rel"], utc=True, format="ISO8601"))
+    return df.assign(w=K.weights(df["t"]))
+
+
 def study(df, base_key=BASE):
-    df = df.assign(train=pd.to_datetime(df["t"], utc=True) < NF.SPLIT)
+    if "w" not in df:
+        df = prep(df)
+    df = df.assign(train=df["t"] < NF.SPLIT)
     cand = []
-    for v, y in df.groupby("v"):
+    for v, y in df.groupby("v", sort=False):
         for cap in CAPS:
             z = NS.capped(y, cap)
             tr, un = z[z.train], z[~z.train]
-            cand.append({"v": v + (f"|cap{cap}" if cap else ""), "train": NF._w(tr), "unseen": NF._w(un),
+            cand.append({"v": v + (f"|cap{cap}" if cap else ""), "train": _wf(tr), "unseen": _wf(un),
                          "gross_unseen": round(float(un["gross"].sum()), 2) if len(un) else 0.0})
     cand.sort(key=lambda c_: (c_["train"]["n"] < MIN_N, -c_["train"]["sum"]))
     top = cand[:TOP]
@@ -253,13 +273,15 @@ def main(argv=None):
     rel = NF.releases()
     CACHE.mkdir(parents=True, exist_ok=True)
     syms = [s for s in a.symbols.split(",") if s] or ["XAUUSD"] + [s for s in NF.SYMBOLS if s != "XAUUSD"]   # the gold first
-    rows, done = [], []
+    rows, done = [], []                  # rows: one table per instrument (a list of dicts per row took gigabytes)
     for sym in syms:
         f = CACHE / f"{sym}.json"
         try:
             c_ = json.loads(f.read_text(encoding="utf-8"))
             if c_.get("version") == VERSION and pd.Timestamp.now(tz="UTC") - pd.Timestamp(c_["at"]) < pd.Timedelta(days=STALE_DAYS):
-                rows += c_["rows"]
+                if c_["rows"]:
+                    rows.append(pd.DataFrame(c_["rows"]))
+                del c_
                 done.append(sym)
                 continue
         except Exception:  # noqa: BLE001
@@ -269,22 +291,26 @@ def main(argv=None):
             continue
         try:
             r_ = trades_sym(sym, rel)
-            rows += r_
             f.write_text(json.dumps({"version": VERSION, "at": pd.Timestamp.now(tz="UTC").isoformat(), "rows": r_}), encoding="utf-8")
+            if r_:
+                rows.append(pd.DataFrame(r_))
             done.append(sym)
-            print(f"EV05 {sym}: {len(r_)} rows ({len(rows)} so far)", flush=True)
+            print(f"EV05 {sym}: {len(r_)} rows ({sum(len(x) for x in rows)} so far)", flush=True)
         except Exception as e:  # noqa: BLE001 - one instrument without data does not stop the study
             print(f"EV05 {sym}: failed ({e})")
-    df = expand(pd.DataFrame(rows)) if rows else pd.DataFrame()
+    df = expand(prep(pd.concat(rows, ignore_index=True))) if rows else pd.DataFrame()
+    rows = None
+    partial = len(done) < len(NF.SYMBOLS)
     res = study(df) if len(df) else {}
     if len(df):
         res["gold"] = study(df[df["sym"] == "XAUUSD"]) if (df["sym"] == "XAUUSD").any() else None
-        res["by_cat"] = by_group(df, "cat")
-        res["by_sym"] = by_group(df, "sym")
-        res["by_side"] = by_group(df, "side")
+        if not partial:                  # the breakdowns once every instrument is in (they are most of the study's time)
+            res["by_cat"] = by_group(df, "cat")
+            res["by_sym"] = by_group(df, "sym")
+            res["by_side"] = by_group(df, "side")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "version": VERSION,
-                               "symbols": done, "partial": len(done) < len(NF.SYMBOLS), "rows": int(len(df)),
+                               "symbols": done, "partial": partial, "rows": int(len(df)),
                                "split": str(NF.SPLIT.date()), "test_from": str(NF.TEST_FROM.date()), "base": BASE,
                                "study": res}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     if res:

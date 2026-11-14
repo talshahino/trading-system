@@ -547,6 +547,16 @@ def decide(bots, now=None):
     smart_rules = {(d["bot"], d.get("combo"), d["kind"]) for d in list(old.values()) + new
                    if d.get("type") == "risk" and d.get("smart_rule") and d.get("decision") == "approved"
                    and d.get("card_decision") not in uundo}
+    def loss_hold(bot, combo):
+        """The risk the manager set by the strategy's own edge (agents/loss_review.py enforce "until a fix is found", and
+        agents/edge_risk.py "risk follows the edge"): the latest such approved decision, unless it is a loss review's
+        "fix found - risk back". None when there is none."""
+        ds = [d for d in list(old.values()) + new if d.get("type") == "risk" and d.get("bot") == bot
+              and (d.get("action") or {}).get("combo") == combo and d.get("decision") == "approved"
+              and d["id"] not in uundo and (d.get("loss_report") or d.get("loss_back") or d.get("edge_risk"))]
+        last = max(ds, key=lambda d: d["at"], default=None)
+        return None if last is None or last.get("loss_back") else last
+
     for bot, x in (risk.get("bots") or {}).items():
         dec = cur.get(bot, {})
         rej = dec.get("rejected", {}) or {}
@@ -574,12 +584,48 @@ def decide(bots, now=None):
                     continue                                          # user: never lower bot 3's risk
                 if kind == "mult" and (c.get("trades") or 0) < MIN_TRADES_MULT:
                     continue                                          # too few live trades to move the risk yet
+                if kind == "mult" and float(val) > mult and loss_hold(bot, combo):
+                    # the morning trade review does not raise a strategy the loss review / edge rule set by its own edge
+                    # (the edge rule raises it itself when the edge grows; the loss review when a fix is found) (manager, 14.11.2026: at 12:38 it took TV41|4Hour|NZDUSD in bot 1 from x0.18 to x1,
+                    # TV56|1Hour|US2000 x0.48 -> x1, SE02|1Hour|USDJPY x0.57 -> x0.9 - all three below the bot live)
+                    continue
                 set_kind, set_val = ("mult", 0) if kind == "remove" else (kind, val)
                 prev = mult if set_kind == "mult" else (dec.get(set_kind) or {}).get(combo)
                 add({"id": did, "bot": bot, "type": "risk", "kind": kind, "combo": combo,
                      "title": f"{combo}: {r.get('label') or KIND_HE.get(kind, kind)}", "decision": "approved",
                      "why": r.get("why") or "", "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
                      "action": {"bot": bot, "combo": combo, "kind": set_kind, "value": set_val, "prev": None if prev == 1.0 and set_kind == "mult" else prev}})
+    # 2b) repair: a loss-review cut that the trade review raised before the rule above (14.11.2026) is put back once,
+    # only when nothing else (a card, a star, a fix found, the user) changed the strategy's risk since that raise
+    held = {(d["bot"], (d.get("action") or {}).get("combo")) for d in old.values()
+            if d.get("type") == "risk" and (d.get("loss_report") or d.get("edge_risk")) and d.get("decision") == "approved"}
+    for bot, combo in sorted(held):
+        mm = (cur.get(bot) or {}).get("mult") or {}
+        m_now = mm.get(combo, 1.0)                             # a strategy at x1 has no entry in the list
+        if True:
+            h = loss_hold(bot, combo)
+            if not h or m_now is None or float(m_now) <= float(h["action"]["value"]) + 1e-9:
+                continue
+            later = [d for d in list(old.values()) + new if d.get("type") == "risk" and d.get("bot") == bot
+                     and (d.get("action") or {}).get("combo") == combo and d.get("decision") == "approved"
+                     and d["id"] not in uundo and d["at"] > h["at"] and (d.get("action") or {}).get("kind") == "mult"]
+            if not later or any(d.get("card_decision") or d.get("star") or d.get("smart_rule") or d.get("loss_back")
+                                or d.get("star_of") for d in later):
+                continue
+            last = max(later, key=lambda d: d["at"])
+            if abs(float(last["action"].get("value") or 0) - float(m_now)) > 1e-9:
+                continue                                       # applied value is not the trade review's raise
+            if bot in NO_RISK_DOWN:
+                continue
+            v = float(h["action"]["value"])
+            add({"id": _did("losshold", h["id"], last["id"]), "bot": bot, "type": "risk", "kind": "mult", "combo": combo,
+                 "title": f"{combo}: סיכון חוזר ל־×{v:g} - הסיכון לפי היתרון בתוקף",
+                 "decision": "approved", "loss_hold": h["id"],
+                 "why": f"המנהל: בדיקת העסקאות של הבוקר העלתה את הסיכון ל־×{float(m_now):g} (לפי היציבות, בלי לדעת "
+                        f"על ההורדה), אבל ×{v:g} נקבע לפי היתרון של האסטרטגיה עצמה ({h['title']}). הוא בתוקף עד "
+                        "שהיתרון יגדל או שיימצא תיקון. מעכשיו בדיקת הבוקר לא מעלה אסטרטגיה כזו.",
+                 "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+                 "action": {"bot": bot, "combo": combo, "kind": "mult", "value": v, "prev": float(m_now)}})
     # 3) bot 7's account reset (user, 12.11.2026): the manager decides it on a material change of bot 7's strategies,
     # stops resetting by itself after two stable weeks (then it asks), and archives the trades first (agents/reset_rule.py)
     try:

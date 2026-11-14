@@ -1,0 +1,310 @@
+{
+ "state": "done",
+ "symbols": [
+  "US100",
+  "US30",
+  "US500",
+  "GER40",
+  "XAUUSD"
+ ],
+ "at": "2026-11-14T14:20:59+00:00",
+ "all": {
+  "baseline": {
+   "v": "pre|x1|opp|t2|h30|cusd|sp0",
+   "train": {
+    "n": 126,
+    "eff_n": 125.8,
+    "mean": 0.095,
+    "t": 0.81,
+    "win": 40.4,
+    "sum": 12.3
+   },
+   "unseen": {
+    "n": 161,
+    "eff_n": 161.0,
+    "mean": 0.0269,
+    "t": 0.29,
+    "win": 40.8,
+    "sum": 5.0
+   },
+   "gross_unseen": 17.32
+  },
+  "best": {
+   "v": "pre|x0.5|atr1|be1|h30|cusd|sp3",
+   "train": {
+    "n": 115,
+    "eff_n": 114.9,
+    "mean": 0.6219,
+    "t": 2.22,
+    "win": 30.5,
+    "sum": 71.91
+   },
+   "unseen": {
+    "n": 133,
+    "eff_n": 133.0,
+    "mean": -0.1454,
+    "t": -0.74,
+    "win": 17.2,
+    "sum": -18.85
+   },
+   "gross_unseen": -1.82
+  },
+  "robust": {
+   "top_positive_unseen": 5,
+   "top": 10,
+   "top_better_than_base": 5
+  },
+  "tested": 1536
+ },
+ "safe": {
+  "baseline": null,
+  "best": {
+   "v": "safe|x0.5|opp|t2|h30|cusd|sp0|cap1",
+   "train": {
+    "n": 29,
+    "eff_n": 29.0,
+    "mean": 0.0454,
+    "t": 0.17,
+    "win": 41.5,
+    "sum": 1.21
+   },
+   "unseen": {
+    "n": 37,
+    "eff_n": 37.0,
+    "mean": -0.1617,
+    "t": -0.75,
+    "win": 32.4,
+    "sum": -5.97
+   },
+   "gross_unseen": -3.66
+  },
+  "robust": {
+   "top_positive_unseen": 1,
+   "top": 10,
+   "top_better_than_base": 0
+  },
+  "tested": 768
+ },
+ "by_sym": {
+  "GER40": {
+   "best": {
+    "v": "pre|x0.5|opp|be1t2|h30|cusd|sp0",
+    "train": {
+     "n": 29,
+     "eff_n": 29.0,
+     "mean": 0.1569,
+     "t": 0.65,
+     "win": 38.0,
+     "sum": 4.44
+    },
+    "unseen": {
+     "n": 37,
+     "eff_n": 37.0,
+     "mean": -0.2887,
+     "t": -1.61,
+     "win": 26.9,
+     "sum": -10.54
+    },
+    "gross_unseen": -7.77
+   },
+   "baseline": {
+    "v": "pre|x1|opp|t2|h30|cusd|sp0",
+    "train": {
+     "n": 23,
+     "eff_n": 23.0,
+     "mean": -0.2533,
+     "t": -1.27,
+     "win": 21.5,
+     "sum": -5.7
+    },
+    "unseen": {
+     "n": 30,
+     "eff_n": 30.0,
+     "mean": 0.0352,
+     "t": 0.19,
+     "win": 46.6,
+     "sum": 1.1
+    },
+    "gross_unseen": 2.29
+   },
+   "top_positive_unseen": 0,
+   "top": 10
+  },
+  "US100": {
+   "best": {
+    "v": "pre|x0.5|atr1|be1|h30|cusd|sp0",
+    "train": {
+     "n": 29,
+     "eff_n": 29.0,
+     "mean": 0.7958,
+     "t": 1.4,
+     "win": 34.5,
+     "sum": 23.48
+    },
+    "unseen": {
+     "n": 36,
+     "eff_n": 36.0,
+     "mean": 0.0943,
+     "t": 0.23,
+     "win": 25.0,
+     "sum": 3.59
+    },
+    "gross_unseen": 8.3
+   },
+   "baseline": {
+    "v": "pre|x1|opp|t2|h30|cusd|sp0",
+    "train": {
+     "n": 27,
+     "eff_n": 27.0,
+     "mean": 0.2856,
+     "t": 1.08,
+     "win": 44.2,
+     "sum": 7.87
+    },
+    "unseen": {
+     "n": 33,
+     "eff_n": 33.0,
+     "mean": 0.1287,
+     "t": 0.61,
+     "win": 42.1,
+     "sum": 4.54
+    },
+    "gross_unseen": 6.05
+   },
+   "top_positive_unseen": 10,
+   "top": 10
+  },
+  "US30": {
+   "best": {
+    "v": "pre|x0.5|atr1|be1|h30|cusd|sp3",
+    "train": {
+     "n": 20,
+     "eff_n": 20.0,
+     "mean": 0.954,
+     "t": 1.31,
+     "win": 34.8,
+     "sum": 19.3
+    },
+    "unseen": {
+     "n": 19,
+     "eff_n": 19.0,
+     "mean": 0.0911,
+     "t": 0.17,
+     "win": 15.6,
+     "sum": 1.85
+    },
+    "gross_unseen": 3.15
+   },
+   "baseline": {
+    "v": "pre|x1|opp|t2|h30|cusd|sp0",
+    "train": {
+     "n": 24,
+     "eff_n": 24.0,
+     "mean": 0.0278,
+     "t": 0.1,
+     "win": 45.7,
+     "sum": 0.77
+    },
+    "unseen": {
+     "n": 33,
+     "eff_n": 33.0,
+     "mean": -0.1272,
+     "t": -0.66,
+     "win": 33.1,
+     "sum": -4.03
+    },
+    "gross_unseen": -2.08
+   },
+   "top_positive_unseen": 10,
+   "top": 10
+  },
+  "US500": {
+   "best": {
+    "v": "pre|x0.5|opp|be1|h30|cusd|sp0",
+    "train": {
+     "n": 29,
+     "eff_n": 29.0,
+     "mean": 0.8503,
+     "t": 1.76,
+     "win": 34.6,
+     "sum": 24.6
+    },
+    "unseen": {
+     "n": 35,
+     "eff_n": 35.0,
+     "mean": 0.13,
+     "t": 0.35,
+     "win": 28.4,
+     "sum": 4.83
+    },
+    "gross_unseen": 10.28
+   },
+   "baseline": {
+    "v": "pre|x1|opp|t2|h30|cusd|sp0",
+    "train": {
+     "n": 27,
+     "eff_n": 27.0,
+     "mean": 0.2628,
+     "t": 0.98,
+     "win": 44.2,
+     "sum": 7.26
+    },
+    "unseen": {
+     "n": 30,
+     "eff_n": 30.0,
+     "mean": 0.0478,
+     "t": 0.21,
+     "win": 39.7,
+     "sum": 1.67
+    },
+    "gross_unseen": 4.49
+   },
+   "top_positive_unseen": 10,
+   "top": 10
+  },
+  "XAUUSD": {
+   "best": {
+    "v": "pre|x0.5|atr1|be1|h30|cusd|sp3",
+    "train": {
+     "n": 17,
+     "eff_n": 17.0,
+     "mean": 1.641,
+     "t": 1.42,
+     "win": 41.6,
+     "sum": 27.86
+    },
+    "unseen": {
+     "n": 19,
+     "eff_n": 19.0,
+     "mean": 0.0678,
+     "t": 0.08,
+     "win": 10.6,
+     "sum": 1.14
+    },
+    "gross_unseen": 5.44
+   },
+   "baseline": {
+    "v": "pre|x1|opp|t2|h30|cusd|sp0",
+    "train": {
+     "n": 25,
+     "eff_n": 25.0,
+     "mean": 0.0929,
+     "t": 0.36,
+     "win": 44.5,
+     "sum": 2.1
+    },
+    "unseen": {
+     "n": 35,
+     "eff_n": 35.0,
+     "mean": 0.0509,
+     "t": 0.23,
+     "win": 42.8,
+     "sum": 1.73
+    },
+    "gross_unseen": 6.57
+   },
+   "top_positive_unseen": 8,
+   "top": 10
+  }
+ }
+}

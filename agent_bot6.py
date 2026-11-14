@@ -969,7 +969,15 @@ def tal(budget_s):
     idx0 = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")} if (TAL_DIR / "idx").exists() else {}
     # each step's outcome into the results (bot6.steps, 14.11.2026, as bot 5): the bots' computer keeps its logs to
     # itself, so a step that failed or found no time was invisible to the nightly smart agent in the cloud
-    for nm, fn, share in (("user_tasks", lambda b: filt_runs(idx0, b, USER6), 0.4),   # the user's tasks first (14.11)
+    # the user's tasks get the search's minutes once the search has nothing left (bot 6's smart agent, 14.11.2026
+    # night): the last round's search ran 0 new runs in 744 s while the user's 14.11 queue (about 30 knobs x 4 tracks
+    # x 3 indices, ~6.5 s a run) needed several rounds at 0.4 - "no waiting" (principle 12)
+    try:
+        _srch = (json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot6") or {}).get("steps", {}).get("search", {})
+        ushare = 0.6 if _srch.get("done") == 0 else 0.4
+    except Exception:  # noqa: BLE001
+        ushare = 0.4
+    for nm, fn, share in (("user_tasks", lambda b: filt_runs(idx0, b, USER6), ushare),   # the user's tasks first (14.11)
                           ("trend_fix", lambda b: trend_runs(idx0, b), 0.15),        # TREND against what runs (13.11)
                           ("filters", lambda b: filt_runs(idx0, b), 0.2)):           # cost / hours / clock filters (13.11 night)
         t1 = time.time()

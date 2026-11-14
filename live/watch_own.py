@@ -606,12 +606,20 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen, calm=None):
     cutoff = (df.index[-1] - pd.Timedelta(days=2)).isoformat()
     for trk, (pair, cfg) in FA.TAL_TRACKS.items():
       gcache = {}
-      for x in TG.live_trades(D, pair, cfg, gcache):
+      # FTMO's break rule (the user, 14.11.2026, as bot 5): no waiting gap order over a 2+ hour break (the weekend, a
+      # holiday) - cancelled WKND_MIN minutes before it; the trades were already out at 16:05 New York
+      for x in TG.live_trades(D, pair, TG.ftmo_cfg(cfg), gcache):
         if x["status"] == "cancelled" and (x.get("time") or x["setup_t"]) < cutoff:
             continue
         k = f"{name}|{x['id_key']}" + ("" if trk == "tal" else f"|{trk}")
-        fseen.add(k)
         old = ftrades.get(k, {})
+        if x["status"] == "cancelled" and old.get("status") in ("open", "closed"):
+            # a trade already taken stays as it was (the break rule of 14.11.2026 counts from now on): a closed one is
+            # kept, an open one is followed to its stop / target / 16:05 by the loop below (not marked seen)
+            if old["status"] == "closed":
+                fseen.add(k)
+            continue
+        fseen.add(k)
         rec = {"id": k, "symbol": name, "contract": contract, "trk": trk, "dir": x["dir"], "status": x["status"],
                "entry": x["entry"], "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,
                "setup_t": x["setup_t"], "time": x.get("time"), "exit_time": x.get("exit_time"), "exit": x.get("exit"),

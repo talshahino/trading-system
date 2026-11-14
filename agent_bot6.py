@@ -352,13 +352,25 @@ EMA6 = (("TREND", "e920"), ("TREND", "e920l"))
 BBW6 = (("BBW", "l20"), ("BBW", "h20"))
 NEWS6 = (("NEWSX", 15), ("NEWSX", 60))
 PYR6 = (("PYR", 1.0),)
-TASK6 = {"ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6}
-USER6 = USER6 + EMA6 + BBW6 + NEWS6 + PYR6
+# FTMO'S BREAK RULE (the user, 14.11.2026, tal1411wkend / bot 5's b5to6wk1411): no waiting order over a market break of
+# 2+ hours. Bot 6's trades were already out at 16:05 New York and the futures' daily break (16:05-18:00) is under 2 hours,
+# but a gap order waited over the weekend. The live bot 6 runs its tracks with tal_gap.ftmo_cfg (WKND 10) since
+# 14.11.2026 night; this measures, per track, what the rule costs against the rules as tested (first in line).
+WKND6 = (("WKND", 10),)
+# THE VIDEO FILTERS OF 14.11.2026 (bot 5's b5to6vid1411, tal_gap.VIDEO_TREND): RSI 50 side, RSI in the trend against
+# EMA 200, ADX14 >= 20, SuperTrend 10/3, EMA 50 / 200, the order of 5 EMAs - each one as the track's TREND, head to head
+VID6 = tuple(("TREND", v) for v in TG.VIDEO_TREND)
+TASK6 = {"wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6}
+USER6 = WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6
 FILT_HE["TREND"] = lambda v: {"e920": "רק בכיוון EMA 9/20 של הטיים פריים הגבוה", "e920l": "רק בכיוון EMA 9/20 של טיים פריים הכניסה",
-                              "day": "רק בכיוון פתיחת היום", "up20": "רק בכיוון EMA 20 של הטיים פריים שמעל"}.get(str(v), f"TREND {v}") + f" (TREND {v})"
+                              "day": "רק בכיוון פתיחת היום", "up20": "רק בכיוון EMA 20 של הטיים פריים שמעל",
+                              "rsi50": "רק בצד של RSI 50", "rsix": "RSI במגמה מול EMA 200", "adx": "רק כש־ADX14 מעל 20",
+                              "st": "רק בכיוון סופרטרנד 10/3", "e50200": "רק בכיוון EMA 50 מול 200",
+                              "ema5": "רק כש־5 הממוצעים מסודרים בכיוון"}.get(str(v), f"TREND {v}") + f" (TREND {v})"
 FILT_HE["BBW"] = lambda v: ("בלי כניסה כשרוחב בולינגר 20/2 מתחת לאחוזון 20 של 100 הנרות, טיים פריים "
                             + ("הכניסה" if str(v)[0] == "l" else "גבוה") + f" (BBW {v})")
 FILT_HE["NEWSX"] = lambda v: f"הגנת חדשות: בלי כניסה ±{int(v)} דק' סביב חדשה אדומה, וסגירה {int(v)} דק' לפניה (NEWSX {int(v)})"
+FILT_HE["WKND"] = lambda v: f"כלל FTMO: ביטול הוראה ממתינה וסגירה {int(v)} דק' לפני הפסקה של שעתיים ומעלה (WKND {int(v)})"
 FILT_HE["PYR"] = lambda v: f"פירמידה: חצי פוזיציה נוספת ב־{v:g}R, הסטופ של הכל זז כך שהסיכון נשאר 1R (PYR {v:g})"
 
 
@@ -460,8 +472,8 @@ def filt_cards(idx, group=FILT6):
                           f"2026 (לא נראתה): סה\"כ {lv['unseen']:+.1f}R ← {x['unseen']:+.1f}R, {x['n_unseen']} עסקאות, "
                           f"{x['mean_unseen']:+.2f}R לעסקה (היום {lv['mean_unseen']:+.2f}R על {lv['n_unseen']}), היום הגרוע "
                           f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. "
-                          + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR") or str(v).startswith("e920") else "")
-                          + "בבוט 5: " + (_b5_ladder(k) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP") or str(v).startswith("e920")
+                          + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND") or str(v).startswith("e920") or v in TG.VIDEO_TREND else "")
+                          + "בבוט 5: " + (_b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND") or str(v).startswith("e920") or v in TG.VIDEO_TREND
                                           else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
                           tested=len(vs), risk_pct=round(r_ * 100, 3), baseline=bs["unseen"],
@@ -528,10 +540,10 @@ def ask_cards(idx):
     return out, res
 
 
-def _b5_ladder(knob="LADDER"):
+def _b5_ladder(knob="LADDER", val=None):
     """What bot 5's agent found for the same knob (its improve cards: LADDER 13.11.2026; BBW / NEWSX / PYR / TREND
     e920 / MINSTOP 14.11.2026)."""
-    pat = '"e920' if knob == "TREND" else f'"{knob}"'
+    pat = (f'"{val}"' if val in TG.VIDEO_TREND else '"e920') if knob == "TREND" else f'"{knob}"'
     try:
         cs = [c for nm in ("cards.json", "cards_notes.json", "cards_smart.json") if Path(f"reports/agents/bot5/{nm}").exists()
               for c in json.loads(Path(f"reports/agents/bot5/{nm}").read_text(encoding="utf-8")).get("cards", [])

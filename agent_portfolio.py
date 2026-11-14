@@ -627,6 +627,11 @@ FAMILY = {"SC001|1Min": ["JP225", "US100", "GER40", "US500", "US30", "UK100", "X
 FAMILY_DAYS = 10
 
 
+# named by the manager although its own t to 2025 is over 1 (task mgr1411thin, 14.11.2026, deadline 18.11): SC097|1Hour|
+# JP225 in bot 3 is the best of 12 SC097 pairs that lost -414R together to 2025 (on 1Hour: FRA40 0, XAGUSD -23R, XAUUSD -22R)
+FAMILY_NAMED = {"bot3": ("SC097|1Hour|JP225",)}
+
+
 def families_of(bot):
     """bots 1-4 (manager's tasks mgr1411fam / mgr1411fam2, 14.11.2026): every scout strategy the bot runs that was
     picked as one instrument out of a family that loses to 2025 (the rule of agents/autodecide._family_pick: >= 4 pairs
@@ -661,7 +666,7 @@ def families_of(bot):
         own_t = ((own or {}).get("train") or {}).get("t")
         if tf == "1Min":                 # SC001 1-minute: bot 7's family test already covers it (16 instruments)
             continue
-        if len(fam) >= 4 and pooled < 0 and (own_t is None or own_t < 1):
+        if len(fam) >= 4 and pooled < 0 and (own_t is None or own_t < 1 or combo in FAMILY_NAMED.get(bot, ())):
             syms = [sym] + sorted({c["change"]["combo"].split("|")[2] for c in fam} - {sym})
             out[f"{sid}|{tf}"] = syms
     # the ones the manager named first (SC010 in bots 1-4, then bot 4's SC006 / SC094), then the rest (SC002)

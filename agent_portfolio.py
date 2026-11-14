@@ -778,6 +778,11 @@ def pool():
         known = set(R.STRATEGIES)
     except Exception:  # noqa: BLE001
         known = None
+    try:                                  # (after rules_agent: event_strategies imports it back)
+        from agents.event_strategies import EVENTS
+        ev_ids = set(EVENTS)
+    except Exception:  # noqa: BLE001
+        ev_ids = set()
     tfs, who = {}, {}
     for b in POOL_BOTS:
         try:
@@ -787,6 +792,10 @@ def pool():
         for c in cs:
             sid, tf, _ = (c.split("|") + ["", ""])[:3]
             if known is not None and sid not in known:
+                continue
+            # bot 7's news strategies (EV01-EV03 are in the rules library too) never go to bots 1-6: a funded account
+            # forbids trading around restricted news (user, 14.11.2026, data/agents/tal_thinking.md "shared pool")
+            if sid.startswith("EV") or sid in ev_ids:
                 continue
             tfs.setdefault(sid, set()).add(tf)
             who.setdefault(sid, set()).add(b)

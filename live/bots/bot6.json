@@ -25,12 +25,14 @@
     1
    ],
    "cfg": {
-    "GBODY": 1.5,
-    "MIN_GAP": 0.6,
-    "SW": 3,
+    "GBODY": 0.0,
+    "MIN_GAP": 0.0,
+    "SW": 2,
     "MIN_RR": 1.0,
-    "EXPIRY": 48,
-    "PROT": "none"
+    "EXPIRY": 120,
+    "PROT": "cal15",
+    "EXIT": "be886",
+    "LADDER": "4"
    }
   },
   "t15_5": {
@@ -65,21 +67,23 @@
     "PROT": "shock",
     "EXIT": "be382",
     "IMP1": true,
-    "TREND": "up20"
+    "TREND": "up20",
+    "MAXC": 0.2
    }
   }
  },
  "risk": {
   "v5": 0.0,
   "v1m": 0.0,
-  "tal": 0.004,
-  "tal4h": 0.004,
+  "tal": 0.0012,
+  "tal4h": 0.0012,
   "scout": 0.004,
   "scout:SC005|5Min|US100": 0.0028,
   "scout:SC005|5Min|US500": 0.0028,
   "scout:SC020|15Min|US500": 0.0028,
-  "t15_5": 0.004,
-  "t5_1": 0.0028
+  "t15_5": 0.0012,
+  "t5_1": 0.00084,
+  "scout:SC051|15Min|US100": 0.0028
  },
  "changes": {
   "abb187377383": {
@@ -151,6 +155,80 @@
     }
    },
    "risk_before": 0.004
+  },
+  "5ef0b633d547": {
+   "family": "scout6",
+   "combo": "SC072|5Min|US500",
+   "before": "__none__"
+  },
+  "65e7b4a71117": {
+   "family": "tal5",
+   "track": "tal4h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h",
+     1
+    ],
+    "cfg": {
+     "GBODY": 1.5,
+     "MIN_GAP": 0.6,
+     "SW": 3,
+     "MIN_RR": 1.0,
+     "EXPIRY": 48,
+     "PROT": "none"
+    }
+   },
+   "risk_before": 0.004
+  },
+  "d36ffc43e987": {
+   "family": "tal5",
+   "track": "t5_1",
+   "before": {
+    "pair": [
+     "5m",
+     "1m",
+     1
+    ],
+    "cfg": {
+     "GBODY": 2.0,
+     "MIN_GAP": 0.0,
+     "SW": 3,
+     "MIN_RR": 2.0,
+     "EXPIRY": 24,
+     "PROT": "shock",
+     "EXIT": "be382",
+     "IMP1": true,
+     "TREND": "up20"
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "c24bbe546a30": {
+   "family": "scout6",
+   "combo": "SC051|15Min|US100",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "7c692d801306": {
+   "family": "risk",
+   "track": "tal",
+   "before": 0.004
+  },
+  "cc4aed334a7d": {
+   "family": "risk",
+   "track": "tal4h",
+   "before": 0.004
+  },
+  "b99ca9b5a816": {
+   "family": "risk",
+   "track": "t15_5",
+   "before": 0.004
+  },
+  "6b60a751cacd": {
+   "family": "risk",
+   "track": "t5_1",
+   "before": 0.0028
   }
  },
  "scout": {
@@ -183,6 +261,26 @@
    },
    "since": "2026-11-13T00:13:28+00:00",
    "card": "3434f4433c75"
+  },
+  "SC072|5Min|US500": {
+   "v": {
+    "target": "none",
+    "stop": 0.75,
+    "time": "own",
+    "be": false
+   },
+   "since": "2026-11-14T07:59:04+00:00",
+   "card": "5ef0b633d547"
+  },
+  "SC051|15Min|US100": {
+   "v": {
+    "target": "none",
+    "stop": 0.75,
+    "time": "own",
+    "be": false
+   },
+   "since": "2026-11-14T07:59:04+00:00",
+   "card": "c24bbe546a30"
   }
  }
 }

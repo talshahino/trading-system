@@ -348,6 +348,25 @@
    "combo": "SC069|15Min|XAUUSD",
    "before": "__none__",
    "star_risk_before": "__none__"
+  },
+  "2fd393808cfe": {
+   "family": "tal5",
+   "track": "t4h_1h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h"
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 3,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "none"
+    }
+   },
+   "risk_before": 0.0028
   }
  },
  "tal_tracks": {
@@ -393,7 +412,8 @@
     "SW": 3,
     "MIN_RR": 1.0,
     "EXPIRY": 120,
-    "PROT": "none"
+    "PROT": "none",
+    "LADDER": "2"
    }
   },
   "t4h_15": {

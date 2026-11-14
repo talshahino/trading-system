@@ -259,6 +259,24 @@
     "cause": "ניהול העסקה",
     "fixes": [
      {
+      "what": "⭐ FR01|1Hour|GBPUSD: הסטופ ×0.6 ← ×0.75 (הגרסה שנבדקה בבדיקה ההוגנת)",
+      "decision": "3ff12265e73f",
+      "at": "2026-11-14T05:10:59+00:00",
+      "effect_month_pct": 0.03,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "⭐ FR01|1Hour|GBPUSD: הסטופ ×0.6 ← ×0.75 (הגרסה שנבדקה בבדיקה ההוגנת)",
+      "decision": "2602a5ba4d0c",
+      "at": "2026-11-14T05:10:59+00:00",
+      "effect_month_pct": null,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
       "what": "סיכון ×0.64",
       "decision": "7e4ca62ede4d",
       "at": "2026-11-13T22:11:46+00:00",
@@ -269,17 +287,7 @@
      }
     ],
     "open": false,
-    "cut_only": true,
-    "edge_mult": 0.6,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.25R לעסקה (24 עסקאות), בתקופת הבחירה +0.31R",
-     "בחי: -1.00R לעסקה (2 עסקאות)",
-     "הבדיקה שווה 92% מהמשקל, החי 8%",
-     "היתרון עכשיו: +0.15R לעסקה",
-     "סיכון = +0.15 ÷ +0.25 = ×0.60"
-    ],
-    "edge0": 0.252,
-    "edge": 0.151
+    "cut_only": false
    },
    {
     "combo": "FR01|1Hour|EURUSD",
@@ -366,12 +374,11 @@
   "open": [],
   "cut_only": [
    "SC002|1Hour|USDCAD",
-   "FR01|1Hour|GBPUSD",
    "FR01|1Hour|EURUSD",
    "SE02|1Hour|GBPJPY",
    "QC07|15Min|ARM"
   ],
-  "total_month_pct": 0.0,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.03,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 4 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

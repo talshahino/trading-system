@@ -629,8 +629,12 @@ def fut_lim():
     under the best end-of-day balance (it stops rising at the start), ROOM_USE of the room left with every open trade's
     full risk inside it, the futures' trading day from 18:00 New York; a day past the daily loss fails the account.
     Before this the test used bot 5's 4.5% / 9% - three times the daily room bot 6 really has."""
+    # whole micro contracts as live/fut_account.size takes them (14.11.2026): at the small risk the account's limits
+    # allow (x 0.2-0.4 of 0.4%), one MNQ / MES / MYM is often more than a trade may risk - live skips such a trade
     return {"day": FA.DAILY_LOSS / FA.INITIAL * 100, "all": FA.MAX_LOSS / FA.INITIAL * 100, "trail": True,
-            "use": FA.ROOM_USE, "day_hard": True, "dayf": FA.tday}
+            "use": FA.ROOM_USE, "day_hard": True, "dayf": FA.tday,
+            "contracts": {"syms": {s: (pv, tick) for s, (_, pv, tick) in FA.SPEC.items()}, "comm": FA.COMM,
+                          "slip": FA.SLIP_TICKS, "initial": FA.INITIAL, "max_n": FA.MAX_MICROS}}
 
 
 def scale_cards(pf, rk):
@@ -647,7 +651,9 @@ def scale_cards(pf, rk):
     bt, bu = sc["rows"][str(k)].get("train") or {}, sc["rows"][str(k)].get("unseen") or {}
     line = lambda x: (f"סה\"כ {x.get('total_pct', 0):+.1f}%, היום הגרוע {x.get('worst_day_pct', 0):+.1f}%, "  # noqa: E731
                       f"הירידה הגדולה {x.get('max_fall_pct', 0):.1f}%, עסקאות שדולגו / הוקטנו בגלל המקום "
-                      f"{x.get('room_skipped', 0)} / {x.get('room_cut', 0)}" + (f", החשבון נכשל ב־{str(x['stopped'])[:10]}"
+                      f"{x.get('room_skipped', 0)} / {x.get('room_cut', 0)}" + (f" (מהן {x['contract_skipped']} כי חוזה מיקרו אחד גדול מהסיכון)"
+                                                                              if x.get("contract_skipped") else "")
+                      + (f", החשבון נכשל ב־{str(x['stopped'])[:10]}"
                                                                               if x.get("stopped") else ""))
     try:            # what bot 5's agent found with the same rule (its RISK_SCALE card)
         b5 = next((c for c in json.loads(Path("reports/agents/bot5/cards.json").read_text(encoding="utf-8")).get("cards", [])
@@ -668,8 +674,8 @@ def scale_cards(pf, rk):
                           f"עם המקדם: 2024-2025: {line(bt)}; 2026 (לא נראתה): {line(bu)}. אסטרטגיות הסייר (0.28% כל אחת) "
                           f"מעל זה - לא בחישוב. " + ("" if sc.get("fits") else "גם במקדם הזה 2024-2025 לא נכנס ב־80% מהמגבלות - "
                           "צריך גם פחות מסלולים או מסלולים חזקים יותר. ") + "חוזה מיקרו אחד הוא המינימום: עסקה שחוזה אחד שלה "
-                          f"מסכן יותר מ־{to * 100:g}% מהחשבון לא נלקחת (בעיקר שעה / 5 דק' על US30 עם סטופ רחב), אז הרווח בחי "
-                          f"יהיה קצת מתחת לבדיקה. {b5t}.",
+                          f"מסכן יותר מ־{to * 100:g}% מהחשבון לא נלקחת, וכמות תמיד מעוגלת למטה - הבדיקה עושה בדיוק כמו החי "
+                          f"(חוזים שלמים, עד {FA.MAX_MICROS} פתוחים). {b5t}.",
                           None, None, tested=1, risk_pct=round(to * 100, 4),
                           # account_fit (13.11.2026 night): the risk the account's own fixed limits allow, not a cut of a
                           # losing strategy - agents/autodecide does not hold it for "fix first"

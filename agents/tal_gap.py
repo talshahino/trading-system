@@ -1000,9 +1000,27 @@ def _lim(lim):
     (FTMO Futures, live/fut_account.py: a day loss of DAILY_LOSS, a trailing maximum loss from the best end-of-day
     balance that stops rising at the start, ROOM_USE of the room, the futures' trading day from 18:00 New York, and a
     day that passes the daily loss fails the account - FTMO's hard daily limit)."""
-    d = {"day": DAY_LIM, "all": ALL_LIM, "trail": False, "use": 1.0, "dayf": None, "day_hard": False}
+    d = {"day": DAY_LIM, "all": ALL_LIM, "trail": False, "use": 1.0, "dayf": None, "day_hard": False, "contracts": None}
     d.update(lim or {})
     return d
+
+
+def _contract_risk(part, spec):
+    """Bot 6 (14.11.2026): the trade's risk and result per ONE micro contract, in $ - the way live/fut_account.size
+    takes it (per_contract = the stop distance x point value + commission + slippage; whole contracts only).
+    The trades' files keep no stop distance, but they keep cost_r = the cost in price / the stop distance in price,
+    and the cost in price is the symbol's constant (agent_bot6.tal_load), so the distance = cost / cost_r.
+    spec = {"syms": {symbol: (point value, tick)}, "comm", "slip"}. A row without a usable cost_r -> NaN (no rounding)."""
+    syms, comm, slip = spec["syms"], float(spec["comm"]), float(spec["slip"])
+    per, pnl1 = np.full(len(part), np.nan), np.full(len(part), np.nan)
+    for i, (sym, cr, r_) in enumerate(zip(part["sym"], part["cost_r"], part["r"])):
+        if sym not in syms or not cr or not np.isfinite(cr) or cr <= 0:
+            continue
+        pv, tick = syms[sym]
+        dist = (tick + (comm + slip * tick * pv) / pv) / float(cr)
+        per[i] = dist * pv + comm + slip * tick * pv
+        pnl1[i] = dist * pv * float(r_)
+    return per, pnl1
 
 
 def account(part, risk_pct, lim=None):
@@ -1013,7 +1031,8 @@ def account(part, risk_pct, lim=None):
     within DAY_LIM, and the fall from the start plus the open risk within ALL_LIM; under a quarter of its risk left it is
     not taken. Once the fall from the start reaches ALL_LIM the account stops. Returns total, worst day, deepest fall
     from the peak, the fall from the start, days the daily limit stopped trading, trades cut / skipped by the room rule,
-    the largest open risk at once (and the days it passed DAY_LIM before this rule), and when the account stopped."""
+    the largest open risk at once (and the days it passed DAY_LIM before this rule), and when the account stopped.
+    lim["contracts"] (bot 6, 14.11.2026): whole micro contracts exactly as live/fut_account.size - see _contract_risk."""
     if part.empty:
         return None
     L = _lim(lim)
@@ -1024,9 +1043,19 @@ def account(part, risk_pct, lim=None):
     rr = part["r"].to_numpy(float)
     times = list(part["time"])
     outs = list(part["out"]) if "out" in part else times
+    # whole micro contracts (bot 6, 14.11.2026): at a small risk one contract can be more than the trade may risk - the
+    # live account then skips it (fut_account.size "small"), and a size is always rounded down. Without this the test
+    # took fractions of a contract, so a factor on the tracks' risk looked better than the account could trade.
+    ct = L.get("contracts")
+    if ct and {"sym", "cost_r"} <= set(part.columns):
+        per1, pnl1 = _contract_risk(part, ct)
+        init, max_n = float(ct.get("initial", 100_000.0)), int(ct.get("max_n", 10 ** 9))
+    else:
+        ct, per1, pnl1 = None, np.full(len(part), np.nan), np.full(len(part), np.nan)
+    small = 0
     eq, peak, fall, low, dead = 0.0, 0.0, 0.0, 0.0, None
     day_real, stopped_days, cut, skipped = {}, set(), 0, 0
-    opened = []                       # (out, risk %, pnl %) of the trades taken and not booked yet
+    opened = []                       # (out, risk %, pnl %, contracts) of the trades taken and not booked yet
     raw_open, raw_peak, raw_days = [], 0.0, set()
     eod = {"day": None, "eq": 0.0, "peak": 0.0}     # the trailing level (bot 6): the best end-of-day balance so far
 
@@ -1053,7 +1082,7 @@ def account(part, risk_pct, lim=None):
             if (eq <= level() or (L["day_hard"] and day_real[d_] <= -day_lim - 1e-9)) and dead is None:
                 dead = o[0].isoformat()
 
-    for r_, w_, t_, o_ in zip(rr, rk, times, outs):
+    for r_, w_, t_, o_, pc_, p1_ in zip(rr, rk, times, outs, per1, pnl1):
         book(t_)
         # the open risk with no room rule (what the tracks would hold at once): how often alone it passes DAY_LIM
         raw_open = [x for x in raw_open if x[0] > t_] + [(o_, w_)]
@@ -1071,17 +1100,31 @@ def account(part, risk_pct, lim=None):
             continue
         open_ = sum(o[1] for o in opened)
         room = use_k * min(day_lim + dreal, eq - level()) - open_
+        if ct is not None and np.isfinite(pc_):
+            # live/fut_account.size: n = min(balance x risk, room) // one contract's risk, at most MAX_MICROS open
+            want_usd = init * (1 + eq / 100) * w_ / 100
+            n = int(min(want_usd, room * init / 100) // pc_) if room > 0 else 0
+            n = min(n, max_n - sum(o[3] for o in opened))
+            if n < 1:
+                skipped += 1
+                small += room * init / 100 >= want_usd      # skipped for the contract's size, not for the room
+                continue
+            use = n * pc_ / init * 100
+            cut += min(want_usd, room * init / 100) < want_usd
+            opened.append((o_, use, n * p1_ / init * 100, n))
+            continue
         if room < 0.25 * w_:
             skipped += 1
             continue
         use = min(w_, room)
         cut += use < w_
-        opened.append((o_, use, r_ * use))
+        opened.append((o_, use, r_ * use, 0))
     book(pd.Timestamp.max.tz_localize("UTC"))
     worst = min([0.0] + list(day_real.values()))
     return {"total_pct": round(float(eq), 2), "worst_day_pct": round(float(worst), 2), "max_fall_pct": round(float(fall), 2),
             "low_pct": round(float(low), 2), "daily_stops": len(stopped_days), "room_cut": int(cut), "room_skipped": int(skipped),
-            "open_peak_pct": round(float(raw_peak), 2), "open_days_over_day_lim": len(raw_days), "stopped": dead}
+            "open_peak_pct": round(float(raw_peak), 2), "open_days_over_day_lim": len(raw_days), "stopped": dead,
+            **({"contract_skipped": int(small)} if ct is not None else {})}
 
 
 MARGIN = 0.8          # the train period must stay within 80% of the bot's limits (a fall <= 7.2%, a day >= -3.6%)

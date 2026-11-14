@@ -6579,10 +6579,10 @@ def s_kalman_supertrend(df):
 # ---------------- SC278 Trend Magnet flip outside low-momentum zones (BigBeluga reconstruction) ----------------
 def s_trend_magnet(df):
     """BigBeluga 'Trend Magnet' (closed, Market Waves Pro; task tal1411ind) - OUR reconstruction: the band flips up / down
-    (Normal sensitivity, EMA50 of hlc3 +/- 1.5 ATR50); trade the flip only outside a low-momentum zone (ADX14 >= 20 - the
+    (Scalp sensitivity - EMA20 of hlc3 +/- 1.5 ATR20 - on 1-15 minute bars, Normal - EMA50 / ATR50 - above); trade the flip only outside a low-momentum zone (ADX14 >= 20 - the
     toolkit's 'low momentum zones' filter); stop at the magnet line, exit on the opposite flip."""
     o, h, l, c, v = _ohlcv(df)
-    tm = IND.trend_magnet(df, "normal")
+    tm = IND.trend_magnet(df, "scalp" if _bar_minutes(df) <= 15 else "normal")
     a = atr(h, l, c, 14)
     L, S = _excl(tm["buy"] & ~tm["low_mom"], tm["sell"] & ~tm["low_mom"])
     ln = tm["line"]

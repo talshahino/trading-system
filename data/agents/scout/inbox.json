@@ -5681,7 +5681,7 @@
     "bot3",
     "bot4"
    ],
-   "rules": "EMA50(hlc3) +/-1.5 ATR ratcheting band flips, only with ADX14 >= 20; stop the line; opposite flip exits."
+   "rules": "EMA(hlc3) +/-1.5 ATR ratcheting band flips (Scalp sensitivity EMA20 / ATR20 on 1-15 minute bars, Normal EMA50 / ATR50 above), only with ADX14 >= 20; stop the line; opposite flip exits."
   },
   {
    "id": "SC279",

@@ -2880,6 +2880,346 @@
     "bot6"
    ],
    "rules": "CL on EIA Wednesdays: box = 10:15-10:30 ET high / low, wait 30 s after 10:30, break of the box -> enter / stop the box midpoint / target 2:1 or 3:1"
+  },
+  {
+   "id": "SC150",
+   "name": "Engulfing / pin bar breakout, stop entry past the signal candle, candle stop, 5R long / 4R short, 1H",
+   "source": "TradingView (script, Punisher1on1)",
+   "url": "https://id.tradingview.com/script/HxAZurpN-Engulfing-Pin-Bar-Breakout-Strategy",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H: hammer / bullish engulfing -> buy stop over its high (shooting star / bearish engulfing -> sell stop under its low) / stop the signal candle's other end / target 1:5 long, 1:4 short"
+  },
+  {
+   "id": "SC151",
+   "name": "1h liquidity swings: low reclaims the pivot-5 low over SMA50, 0.5% buffer stop, 2R, close-through exit",
+   "source": "TradingView (script)",
+   "url": "https://id.tradingview.com/script/M2mmJE1d-1h-Liquidity-Swings-Strategy-with-1-2-RR",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "crypto",
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H: uptrend + low crosses back over the last pivot-5 low and close under the pivot high -> long (mirror short) / stop support - 0.5% / target 2R; out on a close through the level"
+  },
+  {
+   "id": "SC152",
+   "name": "50 Pips A Day: 07:00 GMT hourly candle straddle, 15 / 50 pips, Mon-Fri",
+   "source": "TradingView (script, Kaspricci)",
+   "url": "https://de.tradingview.com/script/Ab9UrFp5/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H: buy stop at the 07:00 GMT candle high, sell stop at its low, OCO, Mon-Fri / stop 15 pips / target 50 pips; closed at the session end"
+  },
+  {
+   "id": "SC153",
+   "name": "Bollinger 20/2 close breakout + RSI 50, 2% / 4%, 4H",
+   "source": "TradingView (script)",
+   "url": "https://de.tradingview.com/script/7hTZJcdY-Bollinger-Breakout-Strategy-with-Direction-Control-4H-crypto",
+   "added": "2026-11-14",
+   "timeframes": [
+    "4Hour"
+   ],
+   "markets": [
+    "crypto",
+    "fx",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "4H: close over the upper BB(20,2) and RSI(14) > 50 -> long (mirror short) / stop 2% / target 4% (2:1)"
+  },
+  {
+   "id": "SC154",
+   "name": "SMA10/30 cross + EMA5 filter, 1% / 2%, 5m",
+   "source": "TradingView (script)",
+   "url": "https://in.tradingview.com/script/Pid4MrSu-MA-Crossover-Strategy-with-TP-SL-5-EMA-Filter",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m: SMA10 crosses over SMA30 with close > EMA5 -> long (mirror short) / stop 1% / target 2%"
+  },
+  {
+   "id": "SC155",
+   "name": "Nifty EMA 5/10 cross + Stochastic 14/3/3 over 20 / under 80, 5 / 10 points, stoch exit, 1m",
+   "source": "TradingView (script, rahul52das)",
+   "url": "https://il.tradingview.com/script/Ibnt5Xju-Nifty-1m-EMA-Pullback-Scalper-Signals",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m: EMA5 crosses over EMA10 and Stochastic(14,3,3) rises over 20 -> buy (mirror under 80 -> sell) / stop 5 points / target 10 points; out at stochastic overbought / oversold"
+  },
+  {
+   "id": "SC156",
+   "name": "Forex Master: EMA20(RSI10) up / EMA30(RSI30) down through 50, 50 / 50 pips, opposite exit, 1H",
+   "source": "TradingView (script, Stable_Camel)",
+   "url": "https://my.tradingview.com/script/Figho5B3-Forex-Master-EUR-USD",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H EURUSD: EMA20 of RSI(10) crosses over 50 -> long; EMA30 of RSI(30) crosses under 50 -> short / stop 50 pips / target 50 pips; opposite signal closes"
+  },
+  {
+   "id": "SC157",
+   "name": "EMA9 breakaway: low 5 pips off the EMA9 + close over the prior high, prior-candle stop, 2R, M15",
+   "source": "Forex Factory (post, via energyexch.com)",
+   "url": "https://www.energyexch.com/thread/post/3823246",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "M15 GBPUSD: prior candle closes over EMA9, this candle's low >= 5 pips over EMA9 and close > prior high -> buy (mirror sell) / stop prior low - 1 pip - spread / target 2 x stop"
+  },
+  {
+   "id": "SC158",
+   "name": "MACD 12/26/9 cross + confirming candle, 125 / 30 pips, 6-bar exit, H1",
+   "source": "Forex Factory (post, via energyexch.com)",
+   "url": "https://www.energyexch.com/thread/post/2206469",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "H1 GBPUSD: MACD(12,26,9) crosses its signal, next candle confirms (bullish, MACD still over) -> enter at its close (mirror) / stop 125 pips / target 30 pips; closed after 6 hourly candles"
+  },
+  {
+   "id": "SC159",
+   "name": "Kathy Lien Pure Fade: 3-SD touch + RSI 30/70, close back in the 2-1 SD zone, swing stop, BE 1R, 2R, 1H",
+   "source": "Book (Kathy Lien, High Probability Trading Setups) via forexar.yolasite.com",
+   "url": "https://forexar.yolasite.com/index/the-pure-fade-trade",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H: RSI < 30 + touch of the lower 3-SD band, then a candle closes inside the 2-1 SD zone -> buy (mirror) / stop 10 pips past the swing / half at 1R + break-even, rest at the opposite 2-SD band (variant 2R)"
+  },
+  {
+   "id": "SC160",
+   "name": "Steel Wolverine: Supertrend 10/3 + rising HMA20 pullback + ROC(9) zero cross on a pin / engulfing, 2.5R, London-NY opens",
+   "source": "tradingstrategyguides.com",
+   "url": "https://tradingstrategyguides.com/the-steel-wolverine-trading-strategy-high-precision-intraday-momentum/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [
+    "fx",
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2"
+   ],
+   "rules": "5m/15m: Supertrend(10,3) up + rising HMA20, pullback to the HMA, engulfing / pin bar closes over it as ROC(9) crosses 0 -> buy (mirror) / stop 2-3 pips past the swing / target 2.5-3R; London / NY opens"
+  },
+  {
+   "id": "SC161",
+   "name": "Velvet Hammer: rising HMA20 touch + Stoch RSI 14/14/3/3 under 20 + engulfing, swing stop, 2R",
+   "source": "tradingstrategyguides.com",
+   "url": "https://tradingstrategyguides.com/the-velvet-hammer-a-precision-momentum-reversal-strategy/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [
+    "index",
+    "crypto",
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot6"
+   ],
+   "rules": "15m/1h/4h: rising HMA20 touched, Stoch RSI(14,14,3,3) K and D < 20, bullish engulfing closes -> buy (mirror) / stop 2-3 pips past the swing or engulfing low / target 2R"
+  },
+  {
+   "id": "SC162",
+   "name": "50 pips a day: 07:00 GMT candle's direction, stop entry at its extreme, 7.5 pips past the other end, 50 pips, EOD exit",
+   "source": "tradefx.co.za",
+   "url": "https://tradefx.co.za/50-pips-a-day-strategy/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1H EURUSD/GBPUSD: 07:00 GMT candle bullish -> buy stop at its high (bearish -> sell stop at its low) / stop 5-10 pips past the other end / target 50 pips; closed at the end of the day"
+  },
+  {
+   "id": "SC163",
+   "name": "EMA 5/20 cross with all over / under EMA50, 10 / 20 pips, BE at 10, cross-back exit, 15m",
+   "source": "TradingView (idea)",
+   "url": "https://ar.tradingview.com/chart/EURGBP/1ImcwzBC-The-Simplest-Scalping-Strategy-With-3-EMA-s-For-20-Pips-Per-Day/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "15m EURGBP: EMA5 crosses over EMA20 with close, EMA5, EMA20 over EMA50 -> buy (mirror) / stop 10 pips / target 20 pips or the cross back; break-even at +10"
+  },
+  {
+   "id": "SC164",
+   "name": "PineMyths #2: EMA 5/21 + 50/200 + BB %B 0.75 / 0.25 + ADX 15 + Awesome Oscillator, 2% / 1%, 1m",
+   "source": "Medium (PineMyths #2, from a YouTube video)",
+   "url": "https://medium.com/pinemyths/adx-bb-b-ao-ema-strategy-pinemyths-2-e8107158519c",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "1m ETHUSDT: EMA5 > EMA21, EMA50 > EMA200, BB %B > 0.75, ADX > 15, AO > 2 -> long (mirror short) / stop 2% / target 1%"
+  },
+  {
+   "id": "SC165",
+   "name": "freqtrade MACD RSI EMA: histogram zero cross + RSI 50 + EMA5 > EMA20, -8% / ROI 3%, RSI 40 exit, 1h",
+   "source": "GitHub (freqtrade strategy listing)",
+   "url": "https://fts.naif.one/strategies/macd-rsi-ema-strategy",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "1h long only: MACD histogram crosses over 0, RSI(14) > 50, EMA5 > EMA20 -> buy / stop -8% / ROI 5% -> 3% (30 min) -> 1% (60) -> 0 (120); out on RSI < 40 or 2 negative histogram bars"
+  },
+  {
+   "id": "SC166",
+   "name": "E-News Lucky: 10:30 straddle +/-20 pips, 50 / 150 pips, flat 22:30, 1m",
+   "source": "StockSharp (port of MT4 EA)",
+   "url": "https://doc.stocksharp.com/en/api-examples/2839_E_News_Lucky",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "1m: at 10:30 buy stop +20 pips / sell stop -20 pips, OCO / stop 50 pips / target 150 pips, 5-pip trail; everything closed at 22:30"
   }
  ]
 }

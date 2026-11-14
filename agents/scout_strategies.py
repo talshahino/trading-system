@@ -3882,6 +3882,328 @@ def s_dtt_eia_box_break(df):
     return L0 & first, S0 & first & ~L0, {"stop": ("level", mid, mid), "target": ("R", 2.0)}
 
 
+# ---------------- shared helpers for SC150-SC166 ----------------
+def _star(o, h, l, c):
+    """Shooting star: the mirror of _hammer (upper wick >= 2 bodies, lower wick <= the body)."""
+    body = np.abs(c - o)
+    lw = np.minimum(o, c) - l
+    uw = h - np.maximum(o, c)
+    return (uw >= 2 * body) & (lw <= np.maximum(body, 1e-12)) & (h > l)
+
+
+def _lo(l, n=5):
+    return _s(l).rolling(n).min().to_numpy()
+
+
+def _hi(h, n=5):
+    return _s(h).rolling(n).max().to_numpy()
+
+
+# ---------------- SC150 Engulfing / pin bar breakout, candle stop, 5R long / 4R short (TradingView) ----------------
+def s_tv_engulf_pin_breakout(df):
+    """TradingView 'Engulfing & Pin Bar Breakout Strategy' (Punisher1on1; 1-hour chart, BTCUSD example): a hammer or
+    bullish engulfing signal candle -> buy stop above its high on the next candle; a shooting star or bearish
+    engulfing -> sell stop below its low. Stop = the other end of the signal candle; target 1:5 for longs, 1:4 for
+    shorts (as published). Ours: pattern definitions are the library's (_hammer / _engulf, star = mirror hammer);
+    the signal is the next bar whose high / low reaches the stop level (entry next open), targets measured from the
+    stop level."""
+    o, h, l, c = _open(df), df["h"].to_numpy(float), df["l"].to_numpy(float), df["c"].to_numpy(float)
+    be, se = _engulf(o, c)
+    bull = _sh((_hammer(o, h, l, c) | be).astype(float)) > 0
+    bear = _sh((_star(o, h, l, c) | se).astype(float)) > 0
+    h1, l1 = _sh(h), _sh(l)
+    L = bull & (h >= h1)
+    S = bear & (l <= l1) & ~L
+    rg = h1 - l1
+    return L, S, {"stop": ("level", l1, h1), "target": ("level", h1 + 5 * rg, l1 - 4 * rg)}
+
+
+# ---------------- SC151 1h liquidity swings, pivot 5 reclaim, SMA50, 0.5% buffer stop, 2R (TradingView) ----------------
+def s_tv_liquidity_swings_1h(df):
+    """TradingView '1h Liquidity Swings Strategy with 1:2 RR' (BTCUSD, EURUSD; 1-hour): support = the last pivot low
+    (5 bars each side), resistance = the last pivot high. Uptrend + the low crosses back above support + close below
+    resistance -> long; downtrend + the high crosses back under resistance + close above support -> short. Stop =
+    support - 0.5% (resistance + 0.5%), target 2R; a long closes on a close under support (short: over resistance).
+    Ours: the trend rule is not stated - read as close vs SMA50 (the script's trend filter)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    res, sup = _swings(h, l, 5)
+    s50 = sma(c, 50)
+    L = (c > s50) & cross_up(l, sup) & (c < res)
+    S = (c < s50) & cross_down(h, res) & (c > sup) & ~L
+    return L, S, {"stop": ("level", sup * 0.995, res * 1.005), "target": ("R", 2.0),
+                  "exit_long": c < sup, "exit_short": c > res}
+
+
+# ---------------- SC152 50 Pips A Day: 07:00 GMT hourly candle straddle, 15 / 50 pips (TradingView) ----------------
+def s_tv_50pips_0700_straddle(df):
+    """TradingView '50 Pips A Day' (Kaspricci; 1-hour, EURUSD / GBPUSD): range = the 07:00 GMT (London open) hourly
+    candle; buy stop at its high, sell stop at its low (+/- a gap, default not stated -> 0), the other order cancelled
+    once one fills; stop 15 pips, target 50 pips; Monday-Friday; open trades closed at the session end (time not
+    stated -> ours 21:00 UTC). Translation: 15 / 50 EURUSD pips -> ATR(14) multiples of the bar's timeframe
+    (_pips_atr; 1-hour: 1.4 / 4.5 ATR). The signal is the first bar after 08:00 whose high / low reaches the level."""
+    h, l = df["h"].to_numpy(float), df["l"].to_numpy(float)
+    hi, lo, hs, _, wd, day = _range_levels(df, "UTC", 7.0, 8.0)
+    tm = (hs < 21.0) & (wd < 5)
+    L0 = tm & (h >= hi)
+    S0 = tm & (l <= lo)
+    first = _first_per_day(L0 | S0, day)
+    return L0 & first, S0 & first & ~L0, {"stop": ("atr", _pips_atr(df, 15)), "target": ("atr", _pips_atr(df, 50)),
+                                          "force_exit": hs >= 21.0}
+
+
+# ---------------- SC153 Bollinger 20/2 close breakout + RSI 50, 2% / 4%, 4H (TradingView) ----------------
+def s_tv_bb_breakout_rsi50_4h(df):
+    """TradingView 'Bollinger Breakout Strategy with Direction Control [4H crypto]' (BTC, also FX / stocks; 4-hour):
+    close above the upper Bollinger band (20, 2) and RSI(14) > 50 -> long; close under the lower band and RSI < 50
+    -> short. Stop 2% from entry, target 2:1 (4%). Differs from CR08 / CS08 (mid-band exit, no RSI)."""
+    c = df["c"].to_numpy(float)
+    lb, _, ub = _bb(c, 20, 2.0)
+    r = rsi(c, 14)
+    L = (c > ub) & (r > 50)
+    S = (c < lb) & (r < 50)
+    (sl, ss), (tl, ts) = _pct_levels(c, 2.0, 4.0)
+    return L, S & ~L, {"stop": ("level", sl, ss), "target": ("level", tl, ts)}
+
+
+# ---------------- SC154 SMA10/30 cross + EMA5 filter, 1% / 2%, 5m (TradingView) ----------------
+def s_tv_sma10_30_ema5(df):
+    """TradingView 'MA Crossover Strategy with TP/SL (5 EMA Filter)' (5-minute): SMA10 crosses above SMA30 and the
+    close is above EMA5 -> long at the close; SMA10 under SMA30 and close under EMA5 -> short. Stop 1%, target 2%,
+    held until one is hit."""
+    c = df["c"].to_numpy(float)
+    f, s, e5 = sma(c, 10), sma(c, 30), ema(c, 5)
+    L = cross_up(f, s) & (c > e5)
+    S = cross_down(f, s) & (c < e5)
+    (sl, ss), (tl, ts) = _pct_levels(c, 1.0, 2.0)
+    return L, S & ~L, {"stop": ("level", sl, ss), "target": ("level", tl, ts)}
+
+
+# ---------------- SC155 Nifty 1m EMA 5/10 cross + Stochastic 14/3/3, 5 / 10 points (TradingView) ----------------
+def s_tv_nifty_ema5_10_stoch(df):
+    """TradingView 'Nifty 1m EMA Pullback Scalper' (rahul52das; Nifty, 1-minute): EMA5 crosses above EMA10 and the
+    Stochastic (14,3,3) rises above 20 -> buy; EMA5 under EMA10 and the Stochastic falls under 80 -> sell. Stop 5
+    index points, target 10 points; out when the Stochastic reaches overbought / oversold (80 / 20, not stated).
+    Translation: Nifty's 1-minute ATR(14) ~10 points -> stop 0.5 ATR, target 1.0 ATR. 'Rises above 20' read as
+    %K > 20 and rising (mirror: %K < 80 and falling)."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    k, _ = _stoch(h, l, c, 14, 3, 3)
+    e5, e10 = ema(c, 5), ema(c, 10)
+    L = cross_up(e5, e10) & (k > 20) & (k > _sh(k)) & (k < 80)
+    S = cross_down(e5, e10) & (k < 80) & (k < _sh(k)) & (k > 20)
+    return L, S & ~L, {"stop": ("atr", 0.5), "target": ("atr", 1.0), "exit_long": k >= 80, "exit_short": k <= 20}
+
+
+# ---------------- SC156 Forex Master: EMA20(RSI10) / EMA30(RSI30) cross of 50, 50 / 50 pips, 1h (TradingView) ----------------
+def s_tv_forex_master_rsi_ema(df):
+    """TradingView 'Forex Master (EUR/USD)' (Stable_Camel; EURUSD, 1-hour): long when EMA20 of RSI(10) crosses above
+    50; short when EMA30 of RSI(30) crosses below 50. Stop 50 pips, target 50 pips, closed on the opposite signal.
+    Translation: 50 EURUSD pips -> _pips_atr (1-hour ~4.5 ATR)."""
+    c = df["c"].to_numpy(float)
+    el = ema(np.nan_to_num(rsi(c, 10), nan=50.0), 20)
+    es = ema(np.nan_to_num(rsi(c, 30), nan=50.0), 30)
+    L = cross_up(el, 50.0)
+    S = cross_down(es, 50.0) & ~L
+    m = _pips_atr(df, 50)
+    return L, S, {"stop": ("atr", m), "target": ("atr", m), "opposite": True}
+
+
+# ---------------- SC157 EMA9 breakaway candle 5 pips off the EMA, previous-candle stop, 2R, M15 (Forex Factory) ----------------
+def s_ff_ema9_breakaway(df):
+    """Forex Factory post (GBPUSD M15): the previous candle closes above EMA9, this candle's low is at least 5 pips
+    above EMA9 and it closes above the previous candle's high -> buy; mirror sell. Stop = the previous candle's low
+    - 1 pip - spread (short: its high + 1 pip), target 2 x the stop. Translation (_pips_atr, 15-minute): 5 pips ~
+    0.9 ATR, 1 pip ~ 0.18 ATR; the spread is left to the bot's costs."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    a = atr(h, l, c, 14)
+    e9 = ema(c, 9)
+    g, p1 = _pips_atr(df, 5) * a, _pips_atr(df, 1) * a
+    c1, e1, h1, l1 = _sh(c), _sh(e9), _sh(h), _sh(l)
+    L = (c1 > e1) & (l >= e9 + g) & (c > h1)
+    S = (c1 < e1) & (h <= e9 - g) & (c < l1)
+    return L, S & ~L, {"stop": ("level", l1 - p1, h1 + p1), "target": ("R", 2.0)}
+
+
+# ---------------- SC158 MACD 12/26/9 cross + confirming candle, 125 / 30 pips, 6-bar exit, H1 (Forex Factory) ----------------
+def s_ff_macd_confirm_h1(df):
+    """Forex Factory post (GBPUSD, 1-hour): the MACD line crosses over the signal line, the next hourly candle is
+    bullish with the MACD still above the signal -> buy at that candle's close; mirror sell. Stop 125 pips, target
+    30 pips, every trade closed at the end of six hourly candles. The author's counter-trend filter is undefined and
+    left out. Translation (_pips_atr, 1-hour): 125 pips ~ 11.4 ATR, 30 pips ~ 2.7 ATR."""
+    o, c = _open(df), df["c"].to_numpy(float)
+    m, s, _ = macd(c, 12, 26, 9)
+    xu, xd = _sh(cross_up(m, s).astype(float)) > 0, _sh(cross_down(m, s).astype(float)) > 0
+    L = xu & (c > o) & (m > s)
+    S = xd & (c < o) & (m < s)
+    return L, S & ~L, {"stop": ("atr", _pips_atr(df, 125)), "target": ("atr", _pips_atr(df, 30)), "max_bars": 6}
+
+
+# ---------------- SC159 Kathy Lien Pure Fade: 3-SD touch + RSI, close back in the 2-1 SD zone, 2R (book) ----------------
+def s_kl_pure_fade_bb3(df):
+    """Kathy Lien 'High Probability Trading Setups' - The Pure Fade Trade (FX, 1-hour only): Bollinger 20 at 1, 2
+    and 3 SD. RSI < 30 and price touches the lower 3-SD band; then a candle closes fully inside the lower 2-SD /
+    1-SD zone -> buy; mirror sell (RSI > 70, upper 3-SD touch, close inside the upper 1-2 SD zone). Stop 10 pips
+    beyond the swing low / high of the move; half at 1R and the stop to break-even, the rest at the opposite 2-SD
+    band (the book's no-watch variant: 2R - used here). Ours: the touch within the last 10 bars, 'fully inside' =
+    the candle's open and close in the zone, swing = the 10-bar extreme, 10 pips via _pips_atr (1-hour ~0.9 ATR),
+    break-even at 1R = half of the 2R target."""
+    o, h, l, c = _open(df), df["h"].to_numpy(float), df["l"].to_numpy(float), df["c"].to_numpy(float)
+    a = atr(h, l, c, 14)
+    l1, _, u1 = _bb(c, 20, 1.0)
+    l2, _, u2 = _bb(c, 20, 2.0)
+    l3, _, u3 = _bb(c, 20, 3.0)
+    r = rsi(c, 14)
+    tl = _since((l <= l3) & (r < 30), 10)
+    ts = _since((h >= u3) & (r > 70), 10)
+    inl = (np.minimum(o, c) >= l2) & (np.maximum(o, c) <= l1)
+    ins = (np.maximum(o, c) <= u2) & (np.minimum(o, c) >= u1)
+    L = _onset(tl & inl)
+    S = _onset(ts & ins) & ~L
+    p10 = _pips_atr(df, 10) * a
+    return L, S, {"stop": ("level", _lo(l, 10) - p10, _hi(h, 10) + p10), "target": ("R", 2.0),
+                  "breakeven": (0.5, 0.0)}
+
+
+# ---------------- SC160 Steel Wolverine: Supertrend 10/3 + HMA20 + ROC(9) zero cross (tradingstrategyguides) ----------------
+def s_tsg_steel_wolverine(df):
+    """TradingStrategyGuides 'The Steel Wolverine' (EURUSD, GBPUSD, NQ, ES; 5m / 15m, 1h / 4h): Supertrend(10, 3)
+    under price and HMA20 rising; price pulls back to the HMA20 with no close beyond the Supertrend and ROC(9) dips
+    to about 0; trigger = a bullish engulfing or pin bar closing above the HMA20 while ROC(9) crosses above 0 on that
+    bar -> buy at the close; mirror sell. Stop 2-3 pips beyond the pullback swing; target 2.5R (option A). London and
+    NY opening sessions only (ours 07:00-10:00 and 13:00-16:00 UTC); skip an abnormally large trigger (ours > 2 ATR).
+    Ours: the HMA touch on this bar or the 3 before, 2.5 pips via _pips_atr, swing = 5-bar extreme."""
+    o, h, l, c = _open(df), df["h"].to_numpy(float), df["l"].to_numpy(float), df["c"].to_numpy(float)
+    a = atr(h, l, c, 14)
+    stl = _supertrend_line(h, l, c, 10, 3.0)
+    hm = _hma(c, 20)
+    roc = 100 * (c / _sh(c, 9) - 1)
+    be, se = _engulf(o, c)
+    hr = df.index.tz_convert("UTC").hour.to_numpy()
+    sess = ((hr >= 7) & (hr < 10)) | ((hr >= 13) & (hr < 16))
+    ok = (h - l) <= 2 * a
+    p = _pips_atr(df, 2.5) * a
+    tb = (l <= hm) | _since(l <= hm, 3)
+    ts = (h >= hm) | _since(h >= hm, 3)
+    L = (c > stl) & (hm > _sh(hm)) & tb & (c > hm) & cross_up(roc, 0.0) & (be | _hammer(o, h, l, c)) & sess & ok
+    S = (c < stl) & (hm < _sh(hm)) & ts & (c < hm) & cross_down(roc, 0.0) & (se | _star(o, h, l, c)) & sess & ok
+    return L, S & ~L, {"stop": ("level", _lo(l) - p, _hi(h) + p), "target": ("R", 2.5)}
+
+
+# ---------------- SC161 Velvet Hammer: HMA20 + Stochastic RSI < 20 + engulfing, 2R (tradingstrategyguides) ----------------
+def s_tsg_velvet_hammer(df):
+    """TradingStrategyGuides 'The Velvet Hammer' (index ETFs, crypto, FX; 15m, 1h, 4h): HMA20 rising and price above
+    it; price touches or pierces the HMA20 without the HMA changing slope; Stochastic RSI (14,14,3,3) %K and %D both
+    under 20; a bullish engulfing closes while the HMA still rises -> buy at the close; mirror sell (%K, %D over 80,
+    bearish engulfing). Stop 2-3 pips beyond the lower of the pullback swing low and the engulfing low; target 2R.
+    Ours: touch and the oversold Stoch RSI on this bar or the 5 before, the HMA rising for 4 bars, 2.5 pips via
+    _pips_atr, swing = 5-bar extreme."""
+    o, h, l, c = _open(df), df["h"].to_numpy(float), df["l"].to_numpy(float), df["c"].to_numpy(float)
+    a = atr(h, l, c, 14)
+    hm = _hma(c, 20)
+    k, d = _stochrsi(c, 14, 14, 3, 3)
+    be, se = _engulf(o, c)
+    rise = pd.Series((hm > _sh(hm)).astype(float)).rolling(4).min().to_numpy() > 0
+    fall = pd.Series((hm < _sh(hm)).astype(float)).rolling(4).min().to_numpy() > 0
+    os_, ob = (k < 20) & (d < 20), (k > 80) & (d > 80)
+    p = _pips_atr(df, 2.5) * a
+    L = rise & (c > hm) & ((l <= hm) | _since(l <= hm, 5)) & (os_ | _since(os_, 5)) & be
+    S = fall & (c < hm) & ((h >= hm) | _since(h >= hm, 5)) & (ob | _since(ob, 5)) & se
+    return L, S & ~L, {"stop": ("level", _lo(l) - p, _hi(h) + p), "target": ("R", 2.0)}
+
+
+# ---------------- SC162 50 pips a day: 07:00 GMT candle's direction, stop past its other end, 50 pips (tradefx) ----------------
+def s_tfx_50pips_0700_direction(df):
+    """tradefx.co.za '50 Pips a Day Strategy' (EURUSD / GBPUSD, 1-hour): the 07:00 GMT hourly candle; bullish -> buy
+    stop at its high, bearish -> sell stop at its low (one direction only, unlike SC152's straddle). Stop 5-10 pips
+    beyond the candle's other end, target +50 pips, closed at the end of the day if neither is hit. Translation
+    (_pips_atr): 7.5 pips beyond the other end, 50 pips from entry (1-hour ~4.5 ATR); end of day = 23:00 UTC."""
+    o, h, l, c = _open(df), df["h"].to_numpy(float), df["l"].to_numpy(float), df["c"].to_numpy(float)
+    a = atr(h, l, c, 14)
+    hi, lo, hs, _, wd, day = _range_levels(df, "UTC", 7.0, 8.0)
+    inr = (hs >= 7.0) & (hs < 8.0)
+    ro = pd.Series(np.where(inr, o, np.nan)).groupby(day).transform("first").to_numpy()
+    rc = pd.Series(np.where(inr, c, np.nan)).groupby(day).transform("last").to_numpy()
+    tm = (hs >= 8.0) & (hs < 23.0) & (wd < 5)
+    L0 = tm & (rc > ro) & (h >= hi)
+    S0 = tm & (rc < ro) & (l <= lo)
+    first = _first_per_day(L0 | S0, day)
+    b = _pips_atr(df, 7.5) * a
+    return L0 & first, S0 & first & ~L0, {"stop": ("level", lo - b, hi + b), "target": ("atr", _pips_atr(df, 50)),
+                                          "force_exit": hs >= 23.0}
+
+
+# ---------------- SC163 EMA 5/20 cross over / under EMA50, 10 / 20 pips, BE at 10, 15m (TradingView idea) ----------------
+def s_tv_ema5_20_50_20pips(df):
+    """TradingView idea 'The Simplest Scalping Strategy With 3 EMAs For 20 Pips Per Day' (EURGBP, 15-minute): EMA5
+    crosses above EMA20 with the close, EMA5 and EMA20 all above EMA50 -> buy; mirror sell. Stop 10 pips, target 20
+    pips or out earlier when EMA5 crosses back over EMA20; stop to entry at +10 pips. Translation (_pips_atr,
+    15-minute): 10 pips ~ 1.8 ATR, 20 pips ~ 3.6 ATR, break-even at half the target."""
+    c = df["c"].to_numpy(float)
+    e5, e20, e50 = ema(c, 5), ema(c, 20), ema(c, 50)
+    L = cross_up(e5, e20) & (c > e50) & (e5 > e50) & (e20 > e50)
+    S = cross_down(e5, e20) & (c < e50) & (e5 < e50) & (e20 < e50)
+    return L, S & ~L, {"stop": ("atr", _pips_atr(df, 10)), "target": ("atr", _pips_atr(df, 20)),
+                       "breakeven": (0.5, 0.0), "exit_long": cross_down(e5, e20), "exit_short": cross_up(e5, e20)}
+
+
+# ---------------- SC164 PineMyths #2: ADX + Bollinger %B + Awesome Oscillator + 4 EMAs, 2% / 1% (Medium / YouTube) ----------------
+def s_pm_adx_pctb_ao_ema(df):
+    """Medium 'ADX + BB %B + AO + EMA strategy - PineMyths #2' (from a YouTube video; ETHUSDT, tested on 1-minute):
+    EMA5 > EMA21, EMA50 > EMA200, Bollinger %B(20, 2) > 0.75, ADX(14) > 15 and Awesome Oscillator > 2 -> long;
+    EMA5 < EMA21, EMA50 < EMA200, %B < 0.25, ADX > 15, AO < -2 -> short. Stop 2%, target 1% (as published).
+    Translation: AO +/-2 is in ETH dollars (~0.07% of ETH's price) -> AO beyond +/-0.07% of the close."""
+    h, l, c = (df[x].to_numpy(float) for x in "hlc")
+    lb, _, ub = _bb(c, 20, 2.0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        pb = (c - lb) / (ub - lb)
+    hl2 = (h + l) / 2
+    ao = sma(hl2, 5) - sma(hl2, 34)
+    ad = adx(h, l, c, 14)
+    e5, e21, e50, e200 = ema(c, 5), ema(c, 21), ema(c, 50), ema(c, 200)
+    th = 0.0007 * c
+    L = (e5 > e21) & (e50 > e200) & (pb > 0.75) & (ad > 15) & (ao > th)
+    S = (e5 < e21) & (e50 < e200) & (pb < 0.25) & (ad > 15) & (ao < -th)
+    (sl, ss), (tl, ts) = _pct_levels(c, 2.0, 1.0)
+    return L, S & ~L, {"stop": ("level", sl, ss), "target": ("level", tl, ts)}
+
+
+# ---------------- SC165 freqtrade MACD RSI EMA: histogram zero cross + RSI 50 + EMA5 > EMA20, 1h (GitHub) ----------------
+def s_ft_macd_rsi_ema_1h(df):
+    """freqtrade 'MACD RSI EMA Strategy' (crypto, 1-hour, long only): MACD(12,26,9) histogram crosses above 0, RSI(14)
+    > 50 and EMA5 > EMA20 -> buy. Stop -8%; minimal ROI 5% at once, 3% after 30 min, 1% after 60 min, 0% after 120
+    min; trailing 2% from +3%; sell when RSI < 40 or the histogram is under 0 two bars running. Ours: target 3%
+    (the ROI from 30 minutes on), a time exit at 120 minutes, the two sell signals; the trailing is not modelled."""
+    c = df["c"].to_numpy(float)
+    _, _, hist = macd(c, 12, 26, 9)
+    r = rsi(c, 14)
+    L = cross_up(hist, 0.0) & (r > 50) & (ema(c, 5) > ema(c, 20))
+    (sl, _), (tl, _) = _pct_levels(c, 8.0, 3.0)
+    nb = max(1, int(round(120 / max(_bar_minutes(df), 1.0))))
+    return L, np.zeros(len(c), bool), {"stop": ("level", sl, sl), "target": ("level", tl, tl), "max_bars": nb,
+                                       "exit_long": (r < 40) | ((hist < 0) & (_sh(hist) < 0))}
+
+
+# ---------------- SC166 E-News Lucky: 10:30 straddle +/-20 pips, 50 / 150 pips, flat 22:30, 1m (StockSharp) ----------------
+def s_ss_enews_lucky_1030(df):
+    """StockSharp 'E-News Lucky' (port of an MT4 EA; FX, 1-minute): at 10:30 a buy stop 20 pips above and a sell stop
+    20 pips below the price; once one fills the other is cancelled (one trade a day); stop 50 pips, target 150
+    pips, a 5-pip trailing stop; pending orders removed and positions closed at 22:30. Ours: times as UTC (the EA
+    uses terminal time), the price = the 10:30 bar's open, the signal the first bar reaching a level, the trailing
+    not modelled. Translation (_pips_atr, 1-minute): 20 / 50 / 150 pips -> ATR multiples of the bar's timeframe,
+    the 20-pip distance with the ATR of the 10:30 bar."""
+    o, h, l, c = _open(df), df["h"].to_numpy(float), df["l"].to_numpy(float), df["c"].to_numpy(float)
+    a = atr(h, l, c, 14)
+    ref, day = _at_local_time(df, o, "UTC", 10, 30)
+    ar, _ = _at_local_time(df, a, "UTC", 10, 30)
+    hs, _, _, _, _ = _local(df, "UTC")
+    d = _pips_atr(df, 20) * ar
+    tm = (hs >= 10.5) & (hs < 22.5)
+    L0 = tm & (h >= ref + d)
+    S0 = tm & (l <= ref - d)
+    first = _first_per_day(L0 | S0, day)
+    return L0 & first, S0 & first & ~L0, {"stop": ("atr", _pips_atr(df, 50)), "target": ("atr", _pips_atr(df, 150)),
+                                          "force_exit": hs >= 22.5}
+
+
 SCOUT = {
     "SC001": ("RV EMA20 cross over the 5m EMA200, 0.5% stop, 1:2, 1-minute (TradingView)", s_rv_ema20_scalp, ["1Min"]),
     "SC002": ("Alligator + Fractals breakout, fractal stop, 1:3 (RoboForex)", s_alligator_fractal, ["1Hour", "4Hour"]),
@@ -4032,4 +4354,21 @@ SCOUT = {
     "SC147": ("Warrior pullback: 5+ green ramp, dip to EMA9 / VWAP, first new-high candle, pullback-low stop, HOD target, 5m (Warrior Trading)", s_wt_ramp_pullback_9ema, ["5Min"]),
     "SC148": ("EMA50 cross, stop 1 x ADR(14), target 2 x ADR (HowToTrade)", s_htt_ema50_adr, ["15Min", "1Hour"]),
     "SC149": ("EIA Wednesday 10:15-10:30 ET box breakout after 10:30, midpoint stop, 2R (DayTradingToolkit)", s_dtt_eia_box_break, ["1Min", "5Min"]),
+    "SC150": ("Engulfing / pin bar breakout, stop entry past the signal candle, candle stop, 5R long / 4R short, 1H (TradingView)", s_tv_engulf_pin_breakout, ["1Hour"]),
+    "SC151": ("1h liquidity swings: low reclaims the pivot-5 low over SMA50, 0.5% buffer stop, 2R, close-through exit (TradingView)", s_tv_liquidity_swings_1h, ["1Hour"]),
+    "SC152": ("50 Pips A Day: 07:00 GMT hourly candle straddle, 15 / 50 pips, Mon-Fri (TradingView, Kaspricci)", s_tv_50pips_0700_straddle, ["1Hour"]),
+    "SC153": ("Bollinger 20/2 close breakout + RSI 50, 2% / 4%, 4H (TradingView)", s_tv_bb_breakout_rsi50_4h, ["4Hour"]),
+    "SC154": ("SMA10/30 cross + EMA5 filter, 1% / 2%, 5m (TradingView)", s_tv_sma10_30_ema5, ["5Min"]),
+    "SC155": ("Nifty EMA 5/10 cross + Stochastic 14/3/3 over 20 / under 80, 5 / 10 points, stoch exit, 1m (TradingView)", s_tv_nifty_ema5_10_stoch, ["1Min"]),
+    "SC156": ("Forex Master: EMA20(RSI10) up / EMA30(RSI30) down through 50, 50 / 50 pips, opposite exit, 1H (TradingView)", s_tv_forex_master_rsi_ema, ["1Hour"]),
+    "SC157": ("EMA9 breakaway: low 5 pips off the EMA9 + close over the prior high, prior-candle stop, 2R, M15 (Forex Factory)", s_ff_ema9_breakaway, ["15Min"]),
+    "SC158": ("MACD 12/26/9 cross + confirming candle, 125 / 30 pips, 6-bar exit, H1 (Forex Factory)", s_ff_macd_confirm_h1, ["1Hour"]),
+    "SC159": ("Kathy Lien Pure Fade: 3-SD touch + RSI 30/70, close back in the 2-1 SD zone, swing stop, BE 1R, 2R, 1H (book)", s_kl_pure_fade_bb3, ["1Hour"]),
+    "SC160": ("Steel Wolverine: Supertrend 10/3 + rising HMA20 pullback + ROC(9) zero cross on a pin / engulfing, 2.5R, London-NY opens (TSG)", s_tsg_steel_wolverine, ["5Min", "15Min", "1Hour", "4Hour"]),
+    "SC161": ("Velvet Hammer: rising HMA20 touch + Stoch RSI 14/14/3/3 under 20 + engulfing, swing stop, 2R (TSG)", s_tsg_velvet_hammer, ["15Min", "1Hour", "4Hour"]),
+    "SC162": ("50 pips a day: 07:00 GMT candle's direction, stop entry at its extreme, 7.5 pips past the other end, 50 pips, EOD exit (tradefx)", s_tfx_50pips_0700_direction, ["1Hour"]),
+    "SC163": ("EMA 5/20 cross with all over / under EMA50, 10 / 20 pips, BE at 10, cross-back exit, 15m (TradingView idea)", s_tv_ema5_20_50_20pips, ["15Min"]),
+    "SC164": ("PineMyths #2: EMA 5/21 + 50/200 + BB %B 0.75 / 0.25 + ADX 15 + Awesome Oscillator, 2% / 1%, 1m (Medium / YouTube)", s_pm_adx_pctb_ao_ema, ["1Min"]),
+    "SC165": ("freqtrade MACD RSI EMA: histogram zero cross + RSI 50 + EMA5 > EMA20, -8% / ROI 3%, RSI 40 exit, 1h (GitHub)", s_ft_macd_rsi_ema_1h, ["1Hour"]),
+    "SC166": ("E-News Lucky: 10:30 straddle +/-20 pips, 50 / 150 pips, flat 22:30, 1m (StockSharp)", s_ss_enews_lucky_1030, ["1Min", "5Min"]),
 }

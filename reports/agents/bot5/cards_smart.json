@@ -1,6 +1,6 @@
 {
  "bot": "bot5",
- "updated": "2026-11-14T18:21:03+00:00",
+ "updated": "2026-11-14T20:18:34+00:00",
  "cards": [
   {
    "bot": "bot5",
@@ -361,6 +361,28 @@
    },
    "made": "2026-11-14T18:21:03+00:00",
    "id": "e31d859b2229"
+  },
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: כלל FTMO חל גם על הפסקה יומית של שעתיים+ - נבנה תיקון לעלות שלו, והבדיקות עכשיו על הכללים כמו בחי",
+   "what": "• השאלה מהכרטיס הקודם נענתה מהאתר של FTMO: בחשבון ממומן Standard \"FTMO restricts holding positions through market breaks longer than 2 hours\" - כל הפסקה ארוכה משעתיים, לא רק סוף שבוע. הכלל בבוט נכון ונשאר.\n• התיקון לעלות שלו במסלולים האיטיים (4 שעות/שעה, 4 שעות/15, שעה/15, 4 שעות/5): בלי הוראה חדשה 1 / 3 / 6 שעות לפני הפסקה, כדי לא לפתוח עסקה שתיסגר בכוח לפני שהגיעה ליעד. הסגירה עצמה נשארת 10 דק' לפני. אותו קוד בבדיקה ובחי (BRKH), ואם יעבור - נבנה מיד כהגדרה.\n• נמצא ותוקן: 21 המסננים נבדקו עד עכשיו על הכללים בלי כלל FTMO, בזמן שהבוט החי סוחר איתו. מעכשיו כל בדיקה על הכללים בדיוק כמו בחי, וכל המסננים (כולל איכות נר 3 שאושרה) נבדקים שוב בסבב הבא במחשב.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "source": "https://ftmo.com/en/faq/can-i-hold-positions-overnight-or-over-the-weekend/",
+    "code": "agents/tal_gap.py brkh/cancel_bar, agent_bot5.py NOTE_TESTS *_brkh, _note_cfgs ftmo_cfg"
+   },
+   "made": "2026-11-14T20:18:34+00:00",
+   "id": "d63cc090bd11"
   }
  ]
 }

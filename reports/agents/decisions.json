@@ -1,10 +1,896 @@
 {
- "updated": "2026-11-14T04:42:32+00:00",
+ "updated": "2026-11-14T04:56:43+00:00",
  "new": [
-  "6153a65ecf1a",
-  "a9725c32547c"
+  "be0f1f7ac91d",
+  "f5385e94d710",
+  "023de66f03f3",
+  "8506c982b56c",
+  "97f22dac6d57",
+  "b17fd541f01c",
+  "fc554057226b",
+  "8eb85d3479fd",
+  "1681d1da6990",
+  "44acd65cc107",
+  "3ff12265e73f",
+  "2602a5ba4d0c",
+  "48b94e194d11",
+  "6caff87b75f3",
+  "0f3e6d75dc2f",
+  "1d6d66f66f29",
+  "7e6fcb6d0c0a",
+  "96e0912107d7",
+  "50d2d78b5167",
+  "9d685bcc1eaa",
+  "8f8403e67b3e",
+  "00fc57b6aee4",
+  "9356802771d8",
+  "05d238397e2f",
+  "e0412ce28c58",
+  "6abed8d709f1",
+  "0c9b3e2a8c5e",
+  "2424a5638187",
+  "d6aa058b2464"
  ],
  "decisions": [
+  {
+   "id": "be0f1f7ac91d",
+   "bot": "bot1",
+   "type": "card",
+   "card": "ec8afa7d677e",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 1, 14.11 בוקר: 9 אסטרטגיות רצות בחי עם כלל יעד / סטופ של סקירת הבוקר שהבדיקה ההוגנת לא מדדה",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "f5385e94d710",
+   "bot": "bot2",
+   "type": "card",
+   "card": "08e8a305f277",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC006|4Hour|EURJPY · Stochastic Hash 16/7/3 cross at 25/70, 3.18R",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -4.06% → -4.06%, ירידה 10.31% → 10.83%) גם בסיכון מוקטן (סיכון על 26 מתוך 33 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3440,
+     "total": 100.96,
+     "worst_day": -4.06,
+     "max_dd": 10.31,
+     "near_days": 7,
+     "max_open": 5.09,
+     "max_side": 3.96
+    },
+    "after": {
+     "trades": 3520,
+     "total": 111.26,
+     "worst_day": -4.06,
+     "max_dd": 10.83,
+     "near_days": 9,
+     "max_open": 5.54,
+     "max_side": 3.96
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "023de66f03f3",
+   "bot": "bot2",
+   "type": "card",
+   "card": "c0b6cb102e54",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 36.0 עסקאות אפקטיביות) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.50 לאסטרטגיה: רווח +100.96% → +102.30% והסיכון לא עולה (סיכון על 26 מתוך 33 אסטרטגיות שהעסקאות שלהן ידועות) · ⭐ אולי מזל: נכנס בסיכון ×0.5 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3440,
+     "total": 100.96,
+     "worst_day": -4.06,
+     "max_dd": 10.31,
+     "near_days": 7,
+     "max_open": 5.09,
+     "max_side": 3.96
+    },
+    "after": {
+     "trades": 3476,
+     "total": 102.3,
+     "worst_day": -4.06,
+     "max_dd": 10.41,
+     "near_days": 7,
+     "max_open": 5.09,
+     "max_side": 3.96
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "8506c982b56c",
+   "bot": "bot2",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC010|15Min|ARM",
+   "title": "SC010|15Min|ARM: סיכון ×0.5 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 36.0 עסקאות אפקטיביות) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.50 לאסטרטגיה: רווח +100.96% → +102.30% והסיכון לא עולה (סיכון על 26 מתוך 33 אסטרטגיות שהעסקאות שלהן ידועות) · ⭐ אולי מזל: נכנס בסיכון ×0.5 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "023de66f03f3",
+   "star": true,
+   "action": {
+    "bot": "bot2",
+    "combo": "SC010|15Min|ARM",
+    "kind": "mult",
+    "value": 0.5,
+    "prev": null
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "97f22dac6d57",
+   "bot": "bot2",
+   "type": "card",
+   "card": "9605c10578db",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC020|15Min|GBPJPY · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -4.06% → -4.53%, ירידה 10.31% → 10.96%) גם בסיכון מוקטן (סיכון על 26 מתוך 33 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3440,
+     "total": 100.96,
+     "worst_day": -4.06,
+     "max_dd": 10.31,
+     "near_days": 7,
+     "max_open": 5.09,
+     "max_side": 3.96
+    },
+    "after": {
+     "trades": 3492,
+     "total": 103.8,
+     "worst_day": -4.53,
+     "max_dd": 10.96,
+     "near_days": 6,
+     "max_open": 5.09,
+     "max_side": 3.96
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "b17fd541f01c",
+   "bot": "bot2",
+   "type": "card",
+   "card": "0fc51e82f33c",
+   "kind": "info",
+   "tier": "regular",
+   "title": "מנהל: בדיקת הבוט השלם לא רצה מאז 13.11 - תוקן; 4 אסטרטגיות של בוט 7 בוטלו לפני שנבנו",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "fc554057226b",
+   "bot": "bot2",
+   "type": "card",
+   "card": "0c1a0739ff34",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 2, 14.11 בוקר: TT16 JP225 רצה עם יעד ×0.9 של סקירת הבוקר שלא נבדק; סבב הסייר הבא",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "8eb85d3479fd",
+   "bot": "bot3",
+   "type": "card",
+   "card": "b80754aa5b8a",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 36.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +73.11% → +75.34%, בלי יותר סיכון (יום גרוע -3.62%, ירידה 6.70%) (סיכון על 23 מתוך 30 אסטרטגיות שהעסקאות שלהן ידועות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3445,
+     "total": 73.11,
+     "worst_day": -3.62,
+     "max_dd": 6.86,
+     "near_days": 2,
+     "max_open": 3.48,
+     "max_side": 2.63
+    },
+    "after": {
+     "trades": 3481,
+     "total": 75.34,
+     "worst_day": -3.62,
+     "max_dd": 6.7,
+     "near_days": 2,
+     "max_open": 3.48,
+     "max_side": 3.0
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "1681d1da6990",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC010|15Min|ARM",
+   "title": "SC010|15Min|ARM: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 36.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +73.11% → +75.34%, בלי יותר סיכון (יום גרוע -3.62%, ירידה 6.70%) (סיכון על 23 מתוך 30 אסטרטגיות שהעסקאות שלהן ידועות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "8eb85d3479fd",
+   "star": true,
+   "action": {
+    "bot": "bot3",
+    "combo": "SC010|15Min|ARM",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "44acd65cc107",
+   "bot": "bot3",
+   "type": "card",
+   "card": "bdcc50301db0",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 3, 14.11 בוקר: 5 אסטרטגיות רצות עם יעד של סקירת הבוקר שלא נבדק, כולל TV50 XAGUSD מעל המסנן החדש",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "3ff12265e73f",
+   "bot": "bot4",
+   "type": "card",
+   "card": "de93ac8d0802",
+   "kind": "risk",
+   "tier": "regular",
+   "title": "⭐ FR01|1Hour|GBPUSD: הסטופ ×0.6 ← ×0.75 (הגרסה שנבדקה בבדיקה ההוגנת)",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "star": false,
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "2602a5ba4d0c",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "sl",
+   "combo": "FR01|1Hour|GBPUSD",
+   "title": "⭐ FR01|1Hour|GBPUSD: הסטופ ×0.6 ← ×0.75 (הגרסה שנבדקה בבדיקה ההוגנת)",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "smart_rule": true,
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "3ff12265e73f",
+   "action": {
+    "bot": "bot4",
+    "combo": "FR01|1Hour|GBPUSD",
+    "kind": "sl",
+    "value": 0.75,
+    "prev": 0.6
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "48b94e194d11",
+   "bot": "bot4",
+   "type": "card",
+   "card": "61036dc9719e",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC010|15Min|ARM · Toto SBL: EMA 50/100/200 aligned, swing sweep in killzones, 2R",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 36.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +57.01% → +59.69%, בלי יותר סיכון (יום גרוע -2.08%, ירידה 7.20%) (סיכון על 17 מתוך 25 אסטרטגיות שהעסקאות שלהן ידועות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 1705,
+     "total": 57.01,
+     "worst_day": -1.83,
+     "max_dd": 8.6,
+     "near_days": 0,
+     "max_open": 3.83,
+     "max_side": 3.75
+    },
+    "after": {
+     "trades": 1741,
+     "total": 59.69,
+     "worst_day": -2.08,
+     "max_dd": 7.2,
+     "near_days": 0,
+     "max_open": 4.09,
+     "max_side": 3.75
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "6caff87b75f3",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC010|15Min|ARM",
+   "title": "SC010|15Min|ARM: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 36.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +57.01% → +59.69%, בלי יותר סיכון (יום גרוע -2.08%, ירידה 7.20%) (סיכון על 17 מתוך 25 אסטרטגיות שהעסקאות שלהן ידועות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "48b94e194d11",
+   "star": true,
+   "action": {
+    "bot": "bot4",
+    "combo": "SC010|15Min|ARM",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "0f3e6d75dc2f",
+   "bot": "bot4",
+   "type": "card",
+   "card": "8de79dde06db",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC044|4Hour|EURJPY · RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -1.83% → -1.83%, ירידה 8.60% → 9.45%) גם בסיכון מוקטן (סיכון על 17 מתוך 25 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 1705,
+     "total": 57.01,
+     "worst_day": -1.83,
+     "max_dd": 8.6,
+     "near_days": 0,
+     "max_open": 3.83,
+     "max_side": 3.75
+    },
+    "after": {
+     "trades": 1742,
+     "total": 59.38,
+     "worst_day": -1.83,
+     "max_dd": 9.45,
+     "near_days": 0,
+     "max_open": 3.83,
+     "max_side": 3.75
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "1d6d66f66f29",
+   "bot": "bot4",
+   "type": "card",
+   "card": "64de7cf8c6a4",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC043|4Hour|EURJPY · 15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -1.83% → -2.03%, ירידה 8.60% → 9.40%) גם בסיכון מוקטן (סיכון על 17 מתוך 25 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 1705,
+     "total": 57.01,
+     "worst_day": -1.83,
+     "max_dd": 8.6,
+     "near_days": 0,
+     "max_open": 3.83,
+     "max_side": 3.75
+    },
+    "after": {
+     "trades": 1745,
+     "total": 58.77,
+     "worst_day": -2.03,
+     "max_dd": 9.4,
+     "near_days": 0,
+     "max_open": 3.83,
+     "max_side": 3.75
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "7e6fcb6d0c0a",
+   "bot": "bot4",
+   "type": "card",
+   "card": "639da469b229",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.09R לעסקה, 112.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +57.01% → +61.42%, בלי יותר סיכון (יום גרוע -2.29%, ירידה 8.27%) (סיכון על 17 מתוך 25 אסטרטגיות שהעסקאות שלהן ידועות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 1705,
+     "total": 57.01,
+     "worst_day": -1.83,
+     "max_dd": 8.6,
+     "near_days": 0,
+     "max_open": 3.83,
+     "max_side": 3.75
+    },
+    "after": {
+     "trades": 1817,
+     "total": 61.42,
+     "worst_day": -2.29,
+     "max_dd": 8.27,
+     "near_days": 0,
+     "max_open": 3.94,
+     "max_side": 3.75
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "96e0912107d7",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC069|15Min|XAUUSD",
+   "title": "SC069|15Min|XAUUSD: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.09R לעסקה, 112.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +57.01% → +61.42%, בלי יותר סיכון (יום גרוע -2.29%, ירידה 8.27%) (סיכון על 17 מתוך 25 אסטרטגיות שהעסקאות שלהן ידועות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "7e6fcb6d0c0a",
+   "star": true,
+   "action": {
+    "bot": "bot4",
+    "combo": "SC069|15Min|XAUUSD",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "50d2d78b5167",
+   "bot": "bot4",
+   "type": "card",
+   "card": "22fb71900f96",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 4, 14.11 בוקר: הסבב במחשב - FR01 GBPUSD רצה בסטופ שלא נבדק; GH02 XAUUSD הפסד קטן יותר",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "9d685bcc1eaa",
+   "bot": "bot6",
+   "type": "card",
+   "card": "00eb10299c85",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 6: הנוסחה של טל על 4 המסלולים, ובדיקת החשבון עכשיו בחוזים שלמים כמו בחי",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "8f8403e67b3e",
+   "bot": "bot7",
+   "type": "card",
+   "card": "afae5be23edb",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC006|4Hour|EURJPY · Stochastic Hash 16/7/3 cross at 25/70, 3.18R",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -5.15% → -5.17%, ירידה 23.64% → 26.16%) גם בסיכון מוקטן (סיכון על 18 מתוך 51 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 1551,
+     "total": 22.02,
+     "worst_day": -5.17,
+     "max_dd": 26.16,
+     "near_days": 11,
+     "max_open": 3.0,
+     "max_side": 3.0
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "00fc57b6aee4",
+   "bot": "bot7",
+   "type": "card",
+   "card": "a8aec0b2566d",
+   "kind": "new",
+   "tier": "regular",
+   "title": "המנהל חזר בו: אסטרטגיה חדשה: SC097|4Hour|GER40 · Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR",
+   "decision": "withdrawn",
+   "why": "בדיקת הבוט השלם (לא רצה כשאושר): בבוט השלם מוסיף סיכון (יום גרוע -5.15% → -6.17%, ירידה 23.64% → 21.69%) גם בסיכון מוקטן (סיכון על 18 מתוך 51 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "of": "840466e2b6fb",
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 1565,
+     "total": 17.87,
+     "worst_day": -6.17,
+     "max_dd": 21.69,
+     "near_days": 8,
+     "max_open": 2.5,
+     "max_side": 2.5
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "9356802771d8",
+   "bot": "bot7",
+   "type": "card",
+   "card": "8d8e87341070",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC044|4Hour|EURJPY · RSI 30/70 re-cross with a reversal bar, half at 0.5R + break-even, RSI exit",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -5.15% → -5.15%, ירידה 23.64% → 24.36%) גם בסיכון מוקטן (סיכון על 18 מתוך 51 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 1508,
+     "total": 13.22,
+     "worst_day": -5.15,
+     "max_dd": 24.36,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "05d238397e2f",
+   "bot": "bot7",
+   "type": "card",
+   "card": "0b7d508579df",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC020|15Min|GBPJPY · DAX false breakout of the 20-bar low + SuperTrend 18/1.5, long",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -5.15% → -5.65%, ירידה 23.64% → 23.90%) גם בסיכון מוקטן (סיכון על 18 מתוך 51 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 1523,
+     "total": 13.74,
+     "worst_day": -5.65,
+     "max_dd": 23.9,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "e0412ce28c58",
+   "bot": "bot7",
+   "type": "card",
+   "card": "410f07a32f29",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC043|4Hour|EURJPY · 15MDbleBol: BB 20 + BB 25 poke, reversal candle back inside, target the middle band",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -5.15% → -5.15%, ירידה 23.64% → 24.41%) גם בסיכון מוקטן (סיכון על 18 מתוך 51 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 1511,
+     "total": 12.53,
+     "worst_day": -5.15,
+     "max_dd": 24.41,
+     "near_days": 10,
+     "max_open": 2.5,
+     "max_side": 2.5
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "6abed8d709f1",
+   "bot": "bot7",
+   "type": "card",
+   "card": "77fac48939fb",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC069|15Min|XAUUSD · Gold: Asian 00-07 GMT range broken 12-16 GMT, stop the other end, 1.5x range target",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -5.15% → -5.15%, ירידה 23.64% → 24.74%) גם בסיכון מוקטן (סיכון על 18 מתוך 51 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 1583,
+     "total": 15.47,
+     "worst_day": -5.15,
+     "max_dd": 24.74,
+     "near_days": 10,
+     "max_open": 2.5,
+     "max_side": 2.5
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "0c9b3e2a8c5e",
+   "bot": "bot7",
+   "type": "card",
+   "card": "ef75662acd2d",
+   "kind": "new",
+   "tier": "regular",
+   "title": "המנהל חזר בו: אסטרטגיה חדשה: SC097|1Hour|JP225 · Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR",
+   "decision": "withdrawn",
+   "why": "בדיקת הבוט השלם (לא רצה כשאושר): בבוט השלם מוסיף סיכון (יום גרוע -5.15% → -5.31%, ירידה 23.64% → 31.86%) גם בסיכון מוקטן (סיכון על 18 מתוך 51 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "of": "aea7bc8b0855",
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 1775,
+     "total": 20.4,
+     "worst_day": -5.31,
+     "max_dd": 31.86,
+     "near_days": 13,
+     "max_open": 2.5,
+     "max_side": 2.5
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "2424a5638187",
+   "bot": "bot7",
+   "type": "card",
+   "card": "0c25b5583ccf",
+   "kind": "new",
+   "tier": "regular",
+   "title": "המנהל חזר בו: אסטרטגיה חדשה: SC089|5Min|JP225 · EMA 12/26 cross over EMA55 + RSI 35-65 + MACD rising, 0.5% / 1%, 5m",
+   "decision": "withdrawn",
+   "why": "בדיקת הבוט השלם (לא רצה כשאושר): בבוט השלם מוסיף סיכון (יום גרוע -5.15% → -6.72%, ירידה 23.64% → 24.35%) גם בסיכון מוקטן (סיכון על 18 מתוך 51 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "of": "620302002693",
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 2102,
+     "total": 22.75,
+     "worst_day": -6.72,
+     "max_dd": 24.35,
+     "near_days": 15,
+     "max_open": 2.5,
+     "max_side": 2.5
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "d6aa058b2464",
+   "bot": "bot7",
+   "type": "card",
+   "card": "d11f14caaeed",
+   "kind": "new",
+   "tier": "regular",
+   "title": "המנהל חזר בו: אסטרטגיה חדשה: SC089|5Min|GER40 · EMA 12/26 cross over EMA55 + RSI 35-65 + MACD rising, 0.5% / 1%, 5m",
+   "decision": "withdrawn",
+   "why": "בדיקת הבוט השלם (לא רצה כשאושר): בבוט השלם מוסיף סיכון (יום גרוע -5.15% → -6.18%, ירידה 23.64% → 23.92%) גם בסיכון מוקטן (סיכון על 18 מתוך 51 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "of": "d635b926e94d",
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 1806,
+     "total": 14.65,
+     "worst_day": -6.18,
+     "max_dd": 23.92,
+     "near_days": 11,
+     "max_open": 3.0,
+     "max_side": 3.0
+    }
+   },
+   "at": "2026-11-14T04:56:43+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "6153a65ecf1a",
    "bot": "bot6",
@@ -64,14 +950,15 @@
    "kind": "new",
    "tier": "regular",
    "title": "⭐ אסטרטגיה חדשה: SC097|4Hour|GER40 · Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR",
-   "decision": "approved",
+   "decision": "withdrawn",
    "why": "חיובי בתקופה שלא נראתה (+0.16R לעסקה, 94.0 עסקאות אפקטיביות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
    "effect": "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה",
    "star": true,
    "at": "2026-11-14T04:01:13+00:00",
    "by": "manager",
    "read": false,
-   "undone": false
+   "undone": false,
+   "withdrawn_at": "2026-11-14T04:56:43+00:00"
   },
   {
    "id": "de383a4426e1",
@@ -88,7 +975,27 @@
    "at": "2026-11-14T04:01:13+00:00",
    "by": "manager",
    "read": false,
-   "undone": false
+   "undone": false,
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 1519,
+     "total": 13.14,
+     "worst_day": -5.15,
+     "max_dd": 22.89,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    }
+   }
   },
   {
    "id": "aea7bc8b0855",
@@ -98,14 +1005,15 @@
    "kind": "new",
    "tier": "regular",
    "title": "⭐ אסטרטגיה חדשה: SC097|1Hour|JP225 · Keltner band reversal + EMA 9/21 cross over EMA50, 1.5 / 2 ATR",
-   "decision": "approved",
+   "decision": "withdrawn",
    "why": "חיובי בתקופה שלא נראתה (+0.06R לעסקה, 303.9 עסקאות אפקטיביות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
    "effect": "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה",
    "star": true,
    "at": "2026-11-14T04:01:13+00:00",
    "by": "manager",
    "read": false,
-   "undone": false
+   "undone": false,
+   "withdrawn_at": "2026-11-14T04:56:43+00:00"
   },
   {
    "id": "620302002693",
@@ -115,14 +1023,15 @@
    "kind": "new",
    "tier": "regular",
    "title": "⭐ אסטרטגיה חדשה: SC089|5Min|JP225 · EMA 12/26 cross over EMA55 + RSI 35-65 + MACD rising, 0.5% / 1%, 5m",
-   "decision": "approved",
+   "decision": "withdrawn",
    "why": "חיובי בתקופה שלא נראתה (+0.04R לעסקה, 630.9 עסקאות אפקטיביות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
    "effect": "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה",
    "star": true,
    "at": "2026-11-14T04:01:13+00:00",
    "by": "manager",
    "read": false,
-   "undone": false
+   "undone": false,
+   "withdrawn_at": "2026-11-14T04:56:43+00:00"
   },
   {
    "id": "73b7c64fca3c",
@@ -139,7 +1048,27 @@
    "at": "2026-11-14T04:01:13+00:00",
    "by": "manager",
    "read": false,
-   "undone": false
+   "undone": false,
+   "whole_bot": {
+    "before": {
+     "trades": 1471,
+     "total": 10.58,
+     "worst_day": -5.15,
+     "max_dd": 23.64,
+     "near_days": 9,
+     "max_open": 2.5,
+     "max_side": 2.5
+    },
+    "after": {
+     "trades": 1611,
+     "total": 12.63,
+     "worst_day": -5.15,
+     "max_dd": 23.63,
+     "near_days": 9,
+     "max_open": 3.0,
+     "max_side": 2.5
+    }
+   }
   },
   {
    "id": "d635b926e94d",
@@ -149,14 +1078,15 @@
    "kind": "new",
    "tier": "regular",
    "title": "⭐ אסטרטגיה חדשה: SC089|5Min|GER40 · EMA 12/26 cross over EMA55 + RSI 35-65 + MACD rising, 0.5% / 1%, 5m",
-   "decision": "approved",
+   "decision": "withdrawn",
    "why": "חיובי בתקופה שלא נראתה (+0.02R לעסקה, 334.9 עסקאות אפקטיביות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
    "effect": "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה",
    "star": true,
    "at": "2026-11-14T04:01:13+00:00",
    "by": "manager",
    "read": false,
-   "undone": false
+   "undone": false,
+   "withdrawn_at": "2026-11-14T04:56:43+00:00"
   },
   {
    "id": "2fb169388c03",

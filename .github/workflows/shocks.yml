@@ -12,6 +12,9 @@ on:
       regime_minutes:
         description: "Minutes for the regime-filter study (agents/news_regime.py, fix attempts EV03 / SH01 GER40); 0 = skip"
         default: "80"
+      fade_minutes:
+        description: "Minutes for the release-spike fade study EV05 (agents/news_fade.py, task tal1411fade); 0 = skip"
+        default: "0"
 
 permissions:
   contents: write
@@ -47,6 +50,10 @@ jobs:
           if [ "${{ inputs.regime_minutes || '80' }}" != "0" ]; then
             python -u -m agents.news_regime --minutes ${{ inputs.regime_minutes || '80' }} --force 2>&1 | tee regime.log || true
           fi
+          # EV05 release-spike fade (14.11.2026: timed out on the bots' computer every round)
+          if [ "${{ inputs.fade_minutes || '0' }}" != "0" ]; then
+            python -u -m agents.news_fade --minutes ${{ inputs.fade_minutes }} 2>&1 | tee fade.log || true
+          fi
       - name: Save data cache
         if: always()
         uses: actions/cache/save@v4
@@ -59,8 +66,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           cp shocks.log reports/agents/bot7/shocks.log
           cp regime.log reports/agents/bot7/regime.log 2>/dev/null || true
+          cp fade.log reports/agents/bot7/fade.log 2>/dev/null || true
           # sh01_fix.json / regime_study.json: the fix attempts' results (left out before 14.11.2026 - only in the log)
           git add data/agents/shocks_scan.json reports/agents/bot7/shocks_study.json reports/agents/bot7/shocks.log
-          for f in reports/agents/bot7/sh01_fix.json reports/agents/bot7/regime_study.json reports/agents/bot7/regime.log; do [ -f "$f" ] && git add "$f"; done; true
+          for f in reports/agents/bot7/sh01_fix.json reports/agents/bot7/regime_study.json reports/agents/bot7/regime.log reports/agents/bot7/fade_study.json reports/agents/bot7/fade.log; do [ -f "$f" ] && git add "$f"; done; true
           git commit -qm "Bot 7: shocks scan and study" || exit 0
           for i in 1 2 3; do git pull -q --rebase -X theirs && git push -q && break; done

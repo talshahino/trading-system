@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-14T06:46:09+00:00",
+ "updated": "2026-11-14T06:49:43+00:00",
  "new": [],
  "bots": {
   "bot1": {
@@ -96946,9 +96946,9 @@
      "status": "approved",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-14T06:44:27+00:00",
+     "first_seen": "2026-11-14T06:49:43+00:00",
      "by": "manager",
-     "decided": "2026-11-14T06:44:27+00:00",
+     "decided": "2026-11-14T06:49:44+00:00",
      "decision_id": "419c65c5e420"
     },
     {
@@ -98047,6 +98047,42 @@
     {
      "bot": "bot5",
      "kind": "info",
+     "title": "נבנה בבוט 5: כלל FTMO - בלי עסקה פתוחה ובלי הוראה ממתינה בהפסקה של שעתיים ומעלה",
+     "what": "מהמשימה של טל (14.11, 4 עסקאות גאפ נשארו פתוחות בסוף השבוע). עד היום הבוט החי זיהה את הסגירה רק כשהגיעו נתוני יום שני. מעכשיו: 10 דק' לפני הפסקה של שעתיים ומעלה (סוף שבוע, סגירה יומית, חג) כל עסקה נסגרת, כל הוראה ממתינה מבוטלת, ואין כניסות. השעה ידועה מראש - מאותו יום בשבוע הקודם, ונלקחת המוקדמת מבין השעונים (UTC / ניו יורק / אירופה / סידני), כך ששינוי שעון קיץ/חורף לא מאחר אותה. זהה בבדיקה ובבוט החי, ובבוט החי על כל המסלולים של בוט 5. כמה זה עולה לכל מסלול - בסבב הבא במחשב; מסלול שייפגע יקבל תיקון. בסבב של הבוקר: כניסה מדורגת ב־4 שעות / שעה עדיפה בשתי התקופות (כרטיס 2fd393808cfe), סטופ מינימלי לפי ATR ב־15 דק' / דקה עדיף מעט (fa7420cf11ff); סטופ רחב, 50% בחצי הדרך ובלי פתיחת ניו יורק - לא עדיפים.",
+     "train": null,
+     "unseen": null,
+     "whole": null,
+     "halves": null,
+     "neighbours": null,
+     "tested": 1,
+     "cost_r": null,
+     "risk_pct": null,
+     "baseline": null,
+     "change": null,
+     "detail": {
+      "task": "tal1411wkend",
+      "knob": "WKND",
+      "minutes": 10,
+      "code": [
+       "agents/tal_gap.py pre_break_mask / WKND",
+       "live/watch_own.py Calendar.masks"
+      ]
+     },
+     "made": "2026-11-14T06:49:39+00:00",
+     "id": "637aebfd3cec",
+     "tier": "regular",
+     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+     "status": "approved",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-14T06:49:43+00:00",
+     "by": "manager",
+     "decided": "2026-11-14T06:49:44+00:00",
+     "decision_id": "ae89c4a09f18"
+    },
+    {
+     "bot": "bot5",
+     "kind": "info",
      "title": "נבנו בבוט 5 לבדיקה: שלוש המשימות של טל מ־14.11 (EMA ובולינגר, חדשות, הגדלה אחרי ניצחון)",
      "what": "(1) מסנני EMA 9/20 (רק בכיוון, בטיים פריים הגבוה או של הכניסה) ורוחב בולינגר 20/2 מעל אחוזון 20 נוספו לשיטת הגאפ - זהים בבדיקה ובבוט החי. (2) חדשות: הסטרדל EV04 של בוט 7 רץ גם על US100 / US30 / US500 / GER40 והזהב (רק גרסה מחוץ לחלון של FTMO תוצע), ונוספה הגנת חדשות לגאפ: בלי כניסה ±15 / 60 דק' סביב חדשה אדומה, ועסקה פתוחה נסגרת לפני. (3) הגדלה אחרי ניצחון (x1.25 עד x2): נבדקה בענן על 15 דק' / דקה - מוסיפה רווח (2026: +4.05% ← +4.25%) אבל הירידה הגדולה גדלה (6.75% ← 7.85%); בסיכון שווה מרוויחה פחות בשתי התקופות (2026: 4.05% ← 3.6%), אז לא מוצעת שם. פירמידה (חצי פוזיציה ב־1R, הסיכון נשאר 1R), הבוט כולו ושאר הבדיקות - על 6 המסלולים בסבב הבא במחשב. כרטיס רק אם משפר גם ב־2024-2025 וגם ב־2026 בלי להגדיל סיכון.",
      "train": null,
@@ -98088,80 +98124,10 @@
      "status": "approved",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-14T06:44:27+00:00",
+     "first_seen": "2026-11-14T06:49:43+00:00",
      "by": "manager",
-     "decided": "2026-11-14T06:44:27+00:00",
+     "decided": "2026-11-14T06:49:44+00:00",
      "decision_id": "1d66ad74fa4b"
-    },
-    {
-     "bot": "bot5",
-     "kind": "info",
-     "title": "מה תוקן הלילה בבוט 5: תקלה שעצרה את בדיקות ההערות, וסטופ לפי תנודתיות",
-     "what": "במחשב הבוטים כל בדיקות ההערות של טל (סטופ רחב, 50% בחצי הדרך, בלי פתיחת ניו יורק, כניסה מדורגת) נעצרו בגלל תקלה: עסקה מדורגת שעוד פתוחה בסוף הנתונים קראה מחוץ למערך. תוקן, וכל בדיקה רצה עכשיו בנפרד (אותה תקלה הייתה עוצרת גם את הבוט החי במסלול מדורג). תוצאה שכבר יש: 50% בחצי הדרך ב־15 דק' / 5 דק' מרוויח פחות בשתי התקופות (2026: +29.1R ← +9.4R), היום הגרוע קטן יותר (-4.1R ← -3.1R) - כרטיס 8cc372e73a29 אצל המנהל לפי הבקשה של טל. חדש: סטופ מינימלי לפי התנודתיות (0.25 / 0.5 / 1.0 × ATR של הטיים פריים הגבוה, רק מרחיב סטופ צמוד) - מהשאלה של טל על US500 (סטופ 0.37%) מול US100 (1.3%) מאותו דחף; נבדק על t4h_5, t15_1, t15_5, בחירה עד 2025 והצגה על 2026. גם: כל שלב במחשב נרשם עכשיו בתוצאות, כדי לראות למה הבוט השלם והיציאה המשותפת עוד לא רצו. ב־13.11 עסקאות שיטת הגאפ שנסגרו הרוויחו בסך הכל (+688$), ואין דוח הפסד.",
-     "train": null,
-     "unseen": null,
-     "whole": null,
-     "halves": null,
-     "neighbours": null,
-     "tested": 9,
-     "cost_r": null,
-     "risk_pct": null,
-     "baseline": null,
-     "change": null,
-     "detail": {
-      "fixed": "agents/tal_gap.ladder_trade (breakeven not reached at the data's end)",
-      "new": "agents/tal_gap.min_stop (MINSTOP)",
-      "tests": [
-       "t4h_5/t15_1/t15_5 MINSTOP 0.25/0.5/1.0"
-      ],
-      "steps": "tal_gap_results.json bot5.steps"
-     },
-     "made": "2026-11-14T00:18:07+00:00",
-     "id": "bbe9efde19bf",
-     "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T00:18:16+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T00:18:16+00:00",
-     "decision_id": "40f043eeb88b"
-    },
-    {
-     "bot": "bot5",
-     "kind": "info",
-     "title": "נבנו בבוט 5: שתי אסטרטגיות זהב של הסייר, ותיקון לעסקאות ארוכות",
-     "what": "נבנו בבוט 5 שתי האסטרטגיות של הסייר שהמנהל אישר הלילה, על זהב בגרף 15 דק', כל אחת ב־0.28% (⭐ אולי מזל, ×0.7): SC042 - חציית ממוצעים 9/21 עם RSI, סטופ בסווינג, יעד 2R (2026: +0.04R לעסקה, 313 עסקאות); SC069 - פריצת טווח אסיה בשעות 12-16, סטופ בצד השני, יעד פי 1.5 מהטווח (2026: +0.09R, 112 עסקאות). בבוט רצות בדיוק הפונקציות של הבדיקה: בלי עסקה בסוף שבוע, יציאה 3 דק' לפני הודעה מוגבלת, סטופ לכניסה ב־60% מהדרך, והעלות לפי המרווח החי של FTMO (נמדד כל דקה). שתיהן חלשות עד 2025 (+0.01/+0.02R) - במעקב צמוד, והמעקב מחזיר אם גרוע בבירור. תוקנה גם תקלה: עסקה פתוחה יותר מיומיים (מסלולי שעה ו־4 שעות, וכל עסקה שעוברת סוף שבוע) לא נסגרה בחשבון הווירטואלי - 4 עסקאות שפתוחות עכשיו (GER40, JP225, US100 ×2) היו נתקעות ביום שני. עכשיו כל עסקה פתוחה נעקבת עד היציאה.",
-     "train": null,
-     "unseen": null,
-     "whole": null,
-     "halves": null,
-     "neighbours": null,
-     "tested": 2,
-     "cost_r": null,
-     "risk_pct": null,
-     "baseline": null,
-     "change": null,
-     "detail": {
-      "built": [
-       "SC042|15Min|XAUUSD (card fb11e02eda66)",
-       "SC069|15Min|XAUUSD (card ed7fb7e31c85)"
-      ],
-      "code": "live/watch_own.py scout5_trades, agents/builder.py family scout5",
-      "fixed": "live/watch_own.py: open trades older than the 2-day report window are followed to their exit"
-     },
-     "made": "2026-11-14T02:22:00+00:00",
-     "id": "6110f72b6a7e",
-     "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T02:57:00+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T02:57:00+00:00",
-     "decision_id": "6fd16d264e32"
     },
     {
      "bot": "bot5",
@@ -99215,7 +99181,7 @@
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-14T06:44:27+00:00"
+     "first_seen": "2026-11-14T06:49:43+00:00"
     },
     {
      "bot": "bot5",
@@ -100816,7 +100782,7 @@
      "status": "pending",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-14T06:44:27+00:00"
+     "first_seen": "2026-11-14T06:49:43+00:00"
     },
     {
      "bot": "bot5",
@@ -113572,355 +113538,6 @@
     {
      "bot": "bot6",
      "kind": "improve",
-     "title": "שיטת הגאפ · 5 דק' / דקה: בלי עסקה שהעלות שלה מעל 20% מהסיכון (MAXC 0.2)",
-     "what": "המסלול t5_1 עם הכללים שרצים, ועוד: בלי עסקה שהעלות שלה מעל 20% מהסיכון (MAXC 0.2). נבחר על 2024-2025 בלבד מתוך 9 מסננים (4 מהם טובים מהיום ב־2024-2025; סה\"כ משוקלל +17.5R ← +32.1R). 2026 (לא נראתה): סה\"כ +30.4R ← +34.9R, 257 עסקאות, +0.14R לעסקה (היום +0.10R על 312), היום הגרוע -3.73R ← -3.3R. בסיכון 0.4%. בבוט 5: במדדים של בוט 5 (הגדרת קבוצה): MAXC 0.1, SESS lnny, EXIT be786, 2026 +0.05R לעסקה. · בבוט 5 אותו שינוי: regular, +0.08R בתקופה שלא נראתה",
-     "train": {
-      "n": 524,
-      "eff_n": 509.6,
-      "mean": 0.0792,
-      "t": 1.16,
-      "win": 24.9
-     },
-     "unseen": {
-      "n": 257,
-      "eff_n": 257.0,
-      "mean": 0.1377,
-      "t": 1.43,
-      "win": 24.2
-     },
-     "whole": {
-      "n": 781,
-      "eff_n": 758.2,
-      "mean": 0.1017,
-      "t": 1.81,
-      "win": 24.6
-     },
-     "halves": [
-      0.0798,
-      0.0936
-     ],
-     "neighbours": {
-      "values": [
-       "MAXC=0.1",
-       "MAXC=0.2",
-       "MAXC=0.3",
-       "SESS=lnny",
-       "SESS=ny",
-       "SESS=rth",
-       "SESS=nyam",
-       "SESS=xopen",
-       "EXIT=tp30"
-      ],
-      "share_positive": 0.22
-     },
-     "tested": 9,
-     "cost_r": 0.093,
-     "risk_pct": 0.4,
-     "baseline": {
-      "n": 312,
-      "eff_n": 311.9,
-      "mean": 0.0992,
-      "t": 1.14,
-      "win": 23.7
-     },
-     "change": {
-      "method": "tal_gap",
-      "pair": "5m/1m",
-      "cfg": {
-       "GBODY": 2.0,
-       "MIN_GAP": 0.0,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 24,
-       "PROT": "shock",
-       "EXIT": "be382",
-       "IMP1": true,
-       "TREND": "up20",
-       "MAXC": 0.2
-      },
-      "track": "tal_gap|5m/1m",
-      "knob": "cfg"
-     },
-     "detail": {
-      "world": "bot6",
-      "filters": {
-       "live": {
-        "train_w": 17.5,
-        "unseen": 30.4,
-        "n_unseen": 312,
-        "mean_unseen": 0.098,
-        "worst_day_train": -6.11,
-        "worst_day_unseen": -3.73
-       },
-       "MAXC=0.1": {
-        "train_w": 29.7,
-        "unseen": 10.4,
-        "n_unseen": 156,
-        "mean_unseen": 0.067,
-        "worst_day_train": -3.2,
-        "worst_day_unseen": -3.3
-       },
-       "MAXC=0.2": {
-        "train_w": 32.1,
-        "unseen": 34.9,
-        "n_unseen": 257,
-        "mean_unseen": 0.136,
-        "worst_day_train": -4.67,
-        "worst_day_unseen": -3.3
-       },
-       "MAXC=0.3": {
-        "train_w": 18.6,
-        "unseen": 32.9,
-        "n_unseen": 294,
-        "mean_unseen": 0.112,
-        "worst_day_train": -6.11,
-        "worst_day_unseen": -3.73
-       },
-       "SESS=lnny": {
-        "train_w": 21.7,
-        "unseen": 9.1,
-        "n_unseen": 195,
-        "mean_unseen": 0.047,
-        "worst_day_train": -6.11,
-        "worst_day_unseen": -3.73
-       },
-       "SESS=ny": {
-        "train_w": 12.8,
-        "unseen": 16.6,
-        "n_unseen": 99,
-        "mean_unseen": 0.167,
-        "worst_day_train": -4.67,
-        "worst_day_unseen": -2.26
-       },
-       "SESS=rth": {
-        "train_w": 10.5,
-        "unseen": 10.8,
-        "n_unseen": 64,
-        "mean_unseen": 0.169,
-        "worst_day_train": -4.67,
-        "worst_day_unseen": -2.15
-       },
-       "SESS=nyam": {
-        "train_w": 0.3,
-        "unseen": 0.5,
-        "n_unseen": 44,
-        "mean_unseen": 0.012,
-        "worst_day_train": -2.41,
-        "worst_day_unseen": -2.15
-       },
-       "SESS=xopen": {
-        "train_w": 9.3,
-        "unseen": 28.7,
-        "n_unseen": 299,
-        "mean_unseen": 0.096,
-        "worst_day_train": -4.89,
-        "worst_day_unseen": -3.73
-       },
-       "EXIT=tp30": {
-        "train_w": -37.1,
-        "unseen": 15.6,
-        "n_unseen": 316,
-        "mean_unseen": 0.049,
-        "worst_day_train": -5.02,
-        "worst_day_unseen": -3.0
-       }
-      },
-      "bot5": {
-       "tier": "regular",
-       "unseen": 0.0823
-      }
-     },
-     "made": "2026-11-13T16:07:54+00:00",
-     "id": "38531db8b5eb",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 257.0 עסקאות אפקטיביות, +0.04R מעל המצב הקיים)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-13T16:50:55+00:00",
-     "by": "manager",
-     "decided": "2026-11-13T16:50:55+00:00",
-     "decision_id": "d9dbb67e476e"
-    },
-    {
-     "bot": "bot6",
-     "kind": "improve",
-     "title": "בוט 6 · 5 דק' / דקה (t5_1): בלי עסקה שהעלות שלה מעל 20% מהסיכון (MAXC 0.2) - התיקון של דוח ההפסד 13.11",
-     "what": "התיקון של דוח ההפסד (0dcedfa9183e): ב־13.11 שתי עסקאות t5_1 (US30, US500) נסגרו בברייק במינוס כי העלות (טיק + עמלה + החלקה) גדולה ביחס לסטופ הצמוד. המסלול t5_1 עם הכללים שרצים, רק MAXC 0.2. נבחר על 2024-2025 בלבד מתוך 9 מסננים (סה\"כ משוקלל +17.5R ← +32.1R, היום הגרוע -6.11R ← -4.67R). 2026 (לא נראתה): סה\"כ +30.4R ← +34.9R, 257 עסקאות, +0.10R ← +0.14R לעסקה, היום הגרוע -3.73R ← -3.30R. יותר רווח ופחות סיכון בכל 4 המספרים. שווי: כ־+0.1% מהחשבון בחודש בסיכון 0.28%. הכרטיס הקודם (38531db8b5eb) נסוג כעותק כפול של עצמו ולא נבנה - זה אותו שינוי בדיוק. בבוט 5: MAXC 0.1 בהגדרת הקבוצה של המדדים, +0.08R לעסקה ב־2026 (regular).",
-     "train": {
-      "n": 524,
-      "eff_n": 509.6,
-      "mean": 0.0792,
-      "t": 1.16,
-      "win": 24.9
-     },
-     "unseen": {
-      "n": 257,
-      "eff_n": 257.0,
-      "mean": 0.1377,
-      "t": 1.43,
-      "win": 24.2
-     },
-     "whole": {
-      "n": 781,
-      "eff_n": 758.2,
-      "mean": 0.1017,
-      "t": 1.81,
-      "win": 24.6
-     },
-     "halves": [
-      0.0798,
-      0.0936
-     ],
-     "neighbours": {
-      "values": [
-       "MAXC=0.1",
-       "MAXC=0.2",
-       "MAXC=0.3",
-       "SESS=lnny",
-       "SESS=ny",
-       "SESS=rth",
-       "SESS=nyam",
-       "SESS=xopen",
-       "EXIT=tp30"
-      ],
-      "share_positive": 0.22
-     },
-     "tested": 9,
-     "cost_r": 0.093,
-     "risk_pct": 0.28,
-     "baseline": {
-      "n": 312,
-      "eff_n": 311.9,
-      "mean": 0.0992,
-      "t": 1.14,
-      "win": 23.7
-     },
-     "change": {
-      "method": "tal_gap",
-      "pair": "5m/1m",
-      "cfg": {
-       "GBODY": 2.0,
-       "MIN_GAP": 0.0,
-       "SW": 3,
-       "MIN_RR": 2.0,
-       "EXPIRY": 24,
-       "PROT": "shock",
-       "EXIT": "be382",
-       "IMP1": true,
-       "TREND": "up20",
-       "MAXC": 0.2
-      },
-      "track": "tal_gap|5m/1m",
-      "knob": "cfg",
-      "test": "loss_fix"
-     },
-     "detail": {
-      "world": "bot6",
-      "loss_report": "0dcedfa9183e",
-      "replaces": "38531db8b5eb",
-      "bot5": {
-       "tier": "regular",
-       "unseen": 0.0823
-      },
-      "filters": {
-       "live": {
-        "train_w": 17.5,
-        "unseen": 30.4,
-        "n_unseen": 312,
-        "mean_unseen": 0.098,
-        "worst_day_train": -6.11,
-        "worst_day_unseen": -3.73
-       },
-       "MAXC=0.1": {
-        "train_w": 29.7,
-        "unseen": 10.4,
-        "n_unseen": 156,
-        "mean_unseen": 0.067,
-        "worst_day_train": -3.2,
-        "worst_day_unseen": -3.3
-       },
-       "MAXC=0.2": {
-        "train_w": 32.1,
-        "unseen": 34.9,
-        "n_unseen": 257,
-        "mean_unseen": 0.136,
-        "worst_day_train": -4.67,
-        "worst_day_unseen": -3.3
-       },
-       "MAXC=0.3": {
-        "train_w": 18.6,
-        "unseen": 32.9,
-        "n_unseen": 294,
-        "mean_unseen": 0.112,
-        "worst_day_train": -6.11,
-        "worst_day_unseen": -3.73
-       },
-       "SESS=lnny": {
-        "train_w": 21.7,
-        "unseen": 9.1,
-        "n_unseen": 195,
-        "mean_unseen": 0.047,
-        "worst_day_train": -6.11,
-        "worst_day_unseen": -3.73
-       },
-       "SESS=ny": {
-        "train_w": 12.8,
-        "unseen": 16.6,
-        "n_unseen": 99,
-        "mean_unseen": 0.167,
-        "worst_day_train": -4.67,
-        "worst_day_unseen": -2.26
-       },
-       "SESS=rth": {
-        "train_w": 10.5,
-        "unseen": 10.8,
-        "n_unseen": 64,
-        "mean_unseen": 0.169,
-        "worst_day_train": -4.67,
-        "worst_day_unseen": -2.15
-       },
-       "SESS=nyam": {
-        "train_w": 0.3,
-        "unseen": 0.5,
-        "n_unseen": 44,
-        "mean_unseen": 0.012,
-        "worst_day_train": -2.41,
-        "worst_day_unseen": -2.15
-       },
-       "SESS=xopen": {
-        "train_w": 9.3,
-        "unseen": 28.7,
-        "n_unseen": 299,
-        "mean_unseen": 0.096,
-        "worst_day_train": -4.89,
-        "worst_day_unseen": -3.73
-       },
-       "EXIT=tp30": {
-        "train_w": -37.1,
-        "unseen": 15.6,
-        "n_unseen": 316,
-        "mean_unseen": 0.049,
-        "worst_day_train": -5.02,
-        "worst_day_unseen": -3.0
-       }
-      }
-     },
-     "made": "2026-11-14T06:43:02+00:00",
-     "id": "d36ffc43e987",
-     "tier": "regular",
-     "verdict": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 257.0 עסקאות אפקטיביות, +0.04R מעל המצב הקיים)",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T06:44:27+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T06:46:09+00:00",
-     "decision_id": "e6c71394ce02"
-    },
-    {
-     "bot": "bot6",
-     "kind": "improve",
      "title": "שיטת הגאפ · 15 דק' / 5 דק': רק בכיוון פתיחת היום (day)",
      "what": "המסלול t15_5 עם הכללים שרצים, ועוד מסנן TREND=day. נבחר על 2024-2025 בלבד (סה\"כ משוקלל +30.8R ← +54.9R, מתוך day / up20 / rth); 2026 (לא נראתה): סה\"כ -14.0R ← +25.3R, 187 עסקאות, +0.14R לעסקה (היום -0.04R על 337), היום הגרוע -6.23R ← -3.31R. בסיכון 0.4%. בבוט 5: t15_1: מה שרץ 78.3R/21.7R, day 29.6R/19.3R, up20 30.7R/36.7R; t1h_15: מה שרץ 38.8R/33.4R, day 16.3R/47.3R, up20 -4.2R/15.5R; t4h_1h: מה שרץ 49.4R/30.1R, day -1000000000.0R/4.7R, up20 21.4R/-0.9R; t4h_15: מה שרץ 65.9R/54.7R, day 16.2R/29.9R, up20 26.3R/29.0R; t15_5: מה שרץ 27.6R/5.1R, day 27.7R/27.1R, up20 12.0R/26.7R; t4h_5: מה שרץ 59.2R/2.5R, day 12.1R/28.6R, up20 3.4R/5.7R. · בבוט 5 אותו שינוי: regular, +0.15R בתקופה שלא נראתה",
      "train": {
@@ -114176,7 +113793,7 @@
      "verdict": "חיובי בתקופה שלא נראתה (+0.08R לעסקה, 102.0 עסקאות אפקטיביות)",
      "status": "approved",
      "note": null,
-     "reply": "אושר - נבדק קודם בעולם של בוט 6 (חוזי מיקרו, שעות FTMO Futures, בחירה עד 2025, הצגה על 2026) בריצה הבאה במחשב; נכנס רק אם עובר שם (agent_bot6._approved_scout).",
+     "reply": null,
      "first_seen": "2026-11-14T04:42:31+00:00",
      "by": "manager",
      "decided": "2026-11-14T04:42:32+00:00",
@@ -114237,7 +113854,7 @@
      "verdict": "חיובי בתקופה שלא נראתה (+0.06R לעסקה, 205.0 עסקאות אפקטיביות)",
      "status": "approved",
      "note": null,
-     "reply": "אושר - נבדק קודם בעולם של בוט 6 (חוזי מיקרו, שעות FTMO Futures, בחירה עד 2025, הצגה על 2026) בריצה הבאה במחשב; נכנס רק אם עובר שם (agent_bot6._approved_scout).",
+     "reply": null,
      "first_seen": "2026-11-14T04:42:31+00:00",
      "by": "manager",
      "decided": "2026-11-14T04:42:32+00:00",
@@ -115003,44 +114620,6 @@
      "by": "manager",
      "decided": "2026-11-14T02:57:00+00:00",
      "decision_id": "ef74adf16d69"
-    },
-    {
-     "bot": "bot6",
-     "kind": "info",
-     "title": "בוט 6: שלוש המשימות שלך מ־14.11 נבנו - רצות ראשונות במחשב הבוטים",
-     "what": "על 4 המסלולים שרצים (1h/5m, 4h/1h, 15m/5m, 5m/1m), 3 המדדים בעולם של בוט 6, בחירה עד 2025 והצגה על 2026: (1) EMA 9/20 בכיוון - בטיים פריים הגבוה ובטיים פריים של הכניסה; רוחב בולינגר 20/2 מעל אחוזון 20 של 100 נרות. (2) הגנת חדשות לגאפ: בלי כניסה ±15/60 דק' סביב חדשה אדומה וסגירה לפניה - והבוט החי של בוט 6 קיבל עכשיו את יומן החדשות (לפני כן היה בלעדיו), כך שאם יאושר ייבנה מיד; הסטרדל EV04 על US100/US500/US30 מהקוד של בוט 7. (3) הגדלה אחרי ניצחון (x1.25 עד x2) ופירמידה ב־1R - על הבוט כולו, מוקטן לאותה ירידה כמו היום, בתוך המגבלות של FTMO Futures (1.5% ביום, 4.5% מהשיא). כרטיס רק מה שמשפר גם ב־2026. בדיקה ראשונה על נתונים מדומים: EMA בטיים פריים של הכניסה כמעט אף פעם לא בכיוון ברגע הכניסה (הכניסה היא בתיקון), כנראה יסנן כמעט הכל. בבוט 5: אותן בדיקות רצות על 6 המסלולים שלו; הגדלה אחרי ניצחון נבדקה בענן על t15_1 - פחות רווח באותו סיכון. ושתי אסטרטגיות הסייר שאושרו הבוקר (SC072 US500, SC051 US100) נבדקות קודם בעולם של בוט 6, ורק אם עוברות - נכנסות.",
-     "train": null,
-     "unseen": null,
-     "whole": null,
-     "halves": null,
-     "neighbours": null,
-     "tested": 1,
-     "cost_r": null,
-     "risk_pct": null,
-     "baseline": null,
-     "change": null,
-     "detail": {
-      "tasks": [
-       "tal1411ema",
-       "tal1411strad",
-       "tal1411anti"
-      ],
-      "code": [
-       "agent_bot6.py TASK6 / anti6_cards / straddle6",
-       "live/watch_own.py fut_step calm"
-      ]
-     },
-     "made": "2026-11-14T06:43:02+00:00",
-     "id": "eba4e608fdb1",
-     "tier": "regular",
-     "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-     "status": "approved",
-     "note": null,
-     "reply": null,
-     "first_seen": "2026-11-14T06:44:27+00:00",
-     "by": "manager",
-     "decided": "2026-11-14T06:44:27+00:00",
-     "decision_id": "1b632ddca7d4"
     },
     {
      "bot": "bot6",
@@ -115915,6 +115494,176 @@
      "note": null,
      "reply": null,
      "first_seen": "2026-11-13T00:13:21+00:00"
+    },
+    {
+     "bot": "bot6",
+     "kind": "improve",
+     "title": "שיטת הגאפ · 5 דק' / דקה: בלי עסקה שהעלות שלה מעל 20% מהסיכון (MAXC 0.2)",
+     "what": "המסלול t5_1 עם הכללים שרצים, ועוד: בלי עסקה שהעלות שלה מעל 20% מהסיכון (MAXC 0.2). נבחר על 2024-2025 בלבד מתוך 9 מסננים (4 מהם טובים מהיום ב־2024-2025; סה\"כ משוקלל +17.5R ← +32.1R). 2026 (לא נראתה): סה\"כ +30.4R ← +34.9R, 257 עסקאות, +0.14R לעסקה (היום +0.10R על 312), היום הגרוע -3.73R ← -3.3R. בסיכון 0.4%. בבוט 5: במדדים של בוט 5 (הגדרת קבוצה): MAXC 0.1, SESS lnny, EXIT be786, 2026 +0.05R לעסקה. · בבוט 5 אותו שינוי: regular, +0.08R בתקופה שלא נראתה",
+     "train": {
+      "n": 524,
+      "eff_n": 509.6,
+      "mean": 0.0792,
+      "t": 1.16,
+      "win": 24.9
+     },
+     "unseen": {
+      "n": 257,
+      "eff_n": 257.0,
+      "mean": 0.1377,
+      "t": 1.43,
+      "win": 24.2
+     },
+     "whole": {
+      "n": 781,
+      "eff_n": 758.2,
+      "mean": 0.1017,
+      "t": 1.81,
+      "win": 24.6
+     },
+     "halves": [
+      0.0798,
+      0.0936
+     ],
+     "neighbours": {
+      "values": [
+       "MAXC=0.1",
+       "MAXC=0.2",
+       "MAXC=0.3",
+       "SESS=lnny",
+       "SESS=ny",
+       "SESS=rth",
+       "SESS=nyam",
+       "SESS=xopen",
+       "EXIT=tp30"
+      ],
+      "share_positive": 0.22
+     },
+     "tested": 9,
+     "cost_r": 0.093,
+     "risk_pct": 0.4,
+     "baseline": {
+      "n": 312,
+      "eff_n": 311.9,
+      "mean": 0.0992,
+      "t": 1.14,
+      "win": 23.7
+     },
+     "change": {
+      "method": "tal_gap",
+      "pair": "5m/1m",
+      "cfg": {
+       "GBODY": 2.0,
+       "MIN_GAP": 0.0,
+       "SW": 3,
+       "MIN_RR": 2.0,
+       "EXPIRY": 24,
+       "PROT": "shock",
+       "EXIT": "be382",
+       "IMP1": true,
+       "TREND": "up20",
+       "MAXC": 0.2
+      },
+      "track": "tal_gap|5m/1m",
+      "knob": "cfg"
+     },
+     "detail": {
+      "world": "bot6",
+      "filters": {
+       "live": {
+        "train_w": 17.5,
+        "unseen": 30.4,
+        "n_unseen": 312,
+        "mean_unseen": 0.098,
+        "worst_day_train": -6.11,
+        "worst_day_unseen": -3.73
+       },
+       "MAXC=0.1": {
+        "train_w": 29.7,
+        "unseen": 10.4,
+        "n_unseen": 156,
+        "mean_unseen": 0.067,
+        "worst_day_train": -3.2,
+        "worst_day_unseen": -3.3
+       },
+       "MAXC=0.2": {
+        "train_w": 32.1,
+        "unseen": 34.9,
+        "n_unseen": 257,
+        "mean_unseen": 0.136,
+        "worst_day_train": -4.67,
+        "worst_day_unseen": -3.3
+       },
+       "MAXC=0.3": {
+        "train_w": 18.6,
+        "unseen": 32.9,
+        "n_unseen": 294,
+        "mean_unseen": 0.112,
+        "worst_day_train": -6.11,
+        "worst_day_unseen": -3.73
+       },
+       "SESS=lnny": {
+        "train_w": 21.7,
+        "unseen": 9.1,
+        "n_unseen": 195,
+        "mean_unseen": 0.047,
+        "worst_day_train": -6.11,
+        "worst_day_unseen": -3.73
+       },
+       "SESS=ny": {
+        "train_w": 12.8,
+        "unseen": 16.6,
+        "n_unseen": 99,
+        "mean_unseen": 0.167,
+        "worst_day_train": -4.67,
+        "worst_day_unseen": -2.26
+       },
+       "SESS=rth": {
+        "train_w": 10.5,
+        "unseen": 10.8,
+        "n_unseen": 64,
+        "mean_unseen": 0.169,
+        "worst_day_train": -4.67,
+        "worst_day_unseen": -2.15
+       },
+       "SESS=nyam": {
+        "train_w": 0.3,
+        "unseen": 0.5,
+        "n_unseen": 44,
+        "mean_unseen": 0.012,
+        "worst_day_train": -2.41,
+        "worst_day_unseen": -2.15
+       },
+       "SESS=xopen": {
+        "train_w": 9.3,
+        "unseen": 28.7,
+        "n_unseen": 299,
+        "mean_unseen": 0.096,
+        "worst_day_train": -4.89,
+        "worst_day_unseen": -3.73
+       },
+       "EXIT=tp30": {
+        "train_w": -37.1,
+        "unseen": 15.6,
+        "n_unseen": 316,
+        "mean_unseen": 0.049,
+        "worst_day_train": -5.02,
+        "worst_day_unseen": -3.0
+       }
+      },
+      "bot5": {
+       "tier": "regular",
+       "unseen": 0.0823
+      }
+     },
+     "made": "2026-11-13T16:07:54+00:00",
+     "id": "38531db8b5eb",
+     "tier": "watch",
+     "verdict": "יש הצעה טובה יותר לאותו שינוי",
+     "status": "pending",
+     "note": null,
+     "reply": null,
+     "first_seen": "2026-11-13T16:50:55+00:00"
     },
     {
      "bot": "bot6",
@@ -129566,7 +129315,7 @@
      "status": "watch",
      "note": null,
      "reply": "נבנה בבוט 7: EV03 (פריצת טווח) ביעד 2R במקום 3R בכל 16 המכשירים; הכניסה בתיקון 0.5R והסיכון x0.7 נשארים. ההגדרות ב־live/bots/bot7.json. יותקן במחשב הבוטים תוך כ־10 דקות.",
-     "first_seen": "2026-11-14T06:44:27+00:00"
+     "first_seen": "2026-11-14T06:49:43+00:00"
     },
     {
      "bot": "bot7",
@@ -130093,9 +129842,9 @@
      "status": "approved",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-14T06:44:27+00:00",
+     "first_seen": "2026-11-14T06:49:43+00:00",
      "by": "manager",
-     "decided": "2026-11-14T06:44:27+00:00",
+     "decided": "2026-11-14T06:49:44+00:00",
      "decision_id": "898f88d807b9"
     },
     {
@@ -130137,9 +129886,9 @@
      "status": "approved",
      "note": null,
      "reply": null,
-     "first_seen": "2026-11-14T06:44:27+00:00",
+     "first_seen": "2026-11-14T06:49:43+00:00",
      "by": "manager",
-     "decided": "2026-11-14T06:44:27+00:00",
+     "decided": "2026-11-14T06:49:44+00:00",
      "decision_id": "602cfd859497"
     },
     {
@@ -152929,8 +152678,12 @@
  },
  "decisions": {
   "new": [
-   "e6c71394ce02"
+   "419c65c5e420",
+   "ae89c4a09f18",
+   "1d66ad74fa4b",
+   "898f88d807b9",
+   "602cfd859497"
   ],
-  "unread": 261
+  "unread": 260
  }
 }

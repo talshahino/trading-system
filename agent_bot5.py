@@ -432,7 +432,21 @@ def note_cards(tidx):
         row["state"] = "done"
         win = bool(best and bv["unseen"] and best[1]["unseen"] and best[1]["unseen"]["total"] > bv["unseen"]["total"]
                    and best[1]["unseen"]["worst_day"] >= bv["unseen"]["worst_day"])
+        # the main goal is profit AND risk (tal_thinking.md): the value chosen on 2024-2025 also wins when on 2026 it
+        # earns as much per trade or more, its total per deepest fall is better and its worst day is not worse - the
+        # same rule as stab_cards (14.11.2026 evening, bot 5's smart agent: t4h_15 G3 nowick, 2026 +53.1R vs +54.7R
+        # but the deepest fall 13.1R vs 19.0R and the worst day -3.0R vs -5.4R, and better on 2024-2025 in all three).
+        # The same value, no new choice - only a second way for it to show it is better.
+        safer = False
+        if best and not win and bv["unseen"] and best[1]["unseen"]:
+            bu_, u_ = bv["unseen"], best[1]["unseen"]
+            safer = (u_["per_fall"] > bu_["per_fall"] * 1.1 and u_["worst_day"] >= bu_["worst_day"]
+                     and u_["total"] / max(u_["n"], 1) >= bu_["total"] / max(bu_["n"], 1) and u_["total"] > 0
+                     and best[1]["train"]["per_fall"] >= bv["train"]["per_fall"])
+            win = safer
         row["chosen"], row["better"] = (best[0] if best else None), win
+        if safer:
+            row["safer"] = True
         res[T["id"]] = row
         if T.get("inform"):
             continue                                     # a must (FTMO): the numbers only, no card
@@ -461,8 +475,10 @@ def note_cards(tidx):
         if T.get("code"):            # the live bot does not run this knob yet: the smart agent builds it after approval
             chg = dict(chg, method="tal_gap_code", track=T["track"], knob=T["knob"], to=x)
         out.append(K.card(
-            BOT, "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: {T['he']} ({x}) - " + ("משימה של טל" if src else "מההערה של טל"),
-            ("בקשה של טל (13.11: 'אני רוצה שבכל זאת' בגרפים המהירים) - " + ("עדיף בשתי התקופות. " if win else "לא עדיף בשתי התקופות, ההחלטה אצל המנהל. ")
+            BOT, "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: {T['he']} ({x}) - " + ("משימה של טל" if src else "מההערה של טל")
+            + (" · פחות סיכון" if row.get("safer") else ""),
+            ("אותו רווח לעסקה ופחות סיכון ב־2026 (רווח ליחידת ירידה ↑, היום הגרוע לא גרוע יותר), אבל סך ה־R ב־2026 קצת נמוך יותר. "
+             if row.get("safer") else "") + ("בקשה של טל (13.11: 'אני רוצה שבכל זאת' בגרפים המהירים) - " + ("עדיף בשתי התקופות. " if win else "לא עדיף בשתי התקופות, ההחלטה אצל המנהל. ")
              if T.get("ask") else "") +
             (f"{src} מסלול {T['track']}" if src else f"מההערה של טל על עסקה במסלול {T['track']}") +
             f". הכללים שרצים, רק {T['knob']} = {x}. 2024-2025 (סה\"כ משוקלל "

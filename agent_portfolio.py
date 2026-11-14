@@ -509,6 +509,16 @@ def experiments(bot, budget_s, where):
                 # the daily loss review asked for this test (agents/loss_review.py): first, before anything else
                 todo.append((-1, fam, -age, sym, combo))
                 continue
+            if (fam == replay_family(pl) and d.get("variants") and age >= 0.25 and age < RERUN_DAYS
+                    and base_variant(bot, combo, fam, d) not in (d.get("tr") or {})
+                    and base_variant(bot, combo, fam, d) in ({g.get("variant") for g in (d.get("grid") or [])}
+                                                             | set(d.get("variants") or {}))):
+                # the whole-bot check reads this family, and the variant the bot trades now has no stored trades
+                # (bots 1-4 smart agent, 14.11.2026 evening: 8 of the 35 strategies missing from bots 1-4's 2026 replay
+                # had a result, but not for what they trade - a filter that was not the run's pick, or a result stored
+                # before the card was built; they waited up to 14 days). Again, with the never-run ones.
+                todo.append((0, fam, -age, sym, combo))
+                continue
             if fam == "filters" and d.get("variants") and ((bot in FILTERS_EXTRA and not d.get("filters_extra"))
                                                           or (bot in FILTERS_RSI and not d.get("filters_rsi"))
                                                           or (bot in FILTERS_VIDEO and not d.get("filters_video"))):

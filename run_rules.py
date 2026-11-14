@@ -170,7 +170,11 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
     # --filters-all-trades (bots 1-4 smart agent, 14.11.2026): every filter's trades, for the whole-family fix test
     # (agent_portfolio.family_fix sums each filter over the family's instruments - with only the per-instrument pick
     # kept, a filter counted only where it happened to win, e.g. SC010|15Min bbw_p20 = ASML alone)
-    for k in (set(keep) if getattr(args, "filters_all_trades", False) else {best["variant"], "none"} & set(keep)):
+    # ... and always the filter the bot trades now (bots 1-4 smart agent, 14.11.2026 evening: a built filter that was not
+    # this run's pick had no trades stored - bot 4 BK05|1Hour|EURUSD adx_range, bot 3 TV50|15Min|ASML with_trend200 -
+    # so the whole-bot check, agents/portfolio_check.current_trades, left those strategies out of the bot's replay)
+    built = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    for k in (set(keep) if getattr(args, "filters_all_trades", False) else {best["variant"], "none", built} & set(keep)):
         COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
 
 

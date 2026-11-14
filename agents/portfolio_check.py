@@ -152,13 +152,67 @@ def _minutes(tr):
     return tr
 
 
-def replay(book, risk):
-    """book: {combo: (trades, multiplier)} -> account numbers in % of the opening balance."""
-    rows = [(a, b, d, r * risk * 100 * m, risk * 100 * m) for combo, (tr, m) in book.items() if tr and m > 0
+GUARD_DAY, GUARD_ALL = 4.5, 9.0          # % - the bot's own limits (live/runner.py GUARD_DAILY / GUARD_TOTAL)
+GRADE_SHARE, GRADE_MIN = 0.5, 0.10       # live/runner.py: near a limit risk = half the room left; skip under 10%
+
+
+def guarded(book, risk, guard=True):
+    """Every trade of the book in time order, with the live bots' fixed risk rule (user, 14.11.2026, task tal1411risk:
+    "a rule that never changes - the daily and the total risk"): every open trade counts as if it hit its stop, and a
+    new trade gets only the room left to 4.5% below the day's starting balance and 9% below the account size - exactly
+    live/runner.allowed_risk: risk = min(normal, half the room), skipped under 10% of the normal risk. The balance is
+    the realised profit (exits before the entry), the day is FTMO's (Europe/Prague).
+    -> (DataFrame a, b, d, pnl, risk in % of the opening balance - skipped trades dropped, {"cut", "skipped"})"""
+    rows = [(a, b, d, r, risk * 100 * m) for combo, (tr, m) in book.items() if tr and m > 0
             for a, b, d, r in _minutes(tr)]
+    cols = ["a", "b", "d", "pnl", "risk"]
     if not rows:
-        return {"trades": 0, "total": 0.0, "worst_day": 0.0, "max_dd": 0.0, "near_days": 0, "max_open": 0.0, "max_side": 0.0}
-    t = pd.DataFrame(rows, columns=["a", "b", "d", "pnl", "risk"])
+        return pd.DataFrame(rows, columns=cols), {"cut": 0, "skipped": 0}
+    rows.sort(key=lambda x: (x[0], x[1]))
+    if not guard:
+        t = pd.DataFrame([(a, b, d, r * k, k) for a, b, d, r, k in rows], columns=cols)
+        return t, {"cut": 0, "skipped": 0}
+    import heapq
+    ent = pd.to_datetime([x[0] for x in rows], unit="m", utc=True).tz_convert("Europe/Prague")
+    ext = pd.to_datetime([x[1] for x in rows], unit="m", utc=True).tz_convert("Europe/Prague")
+    eday = [x.date() for x in ent]
+    xday = [x.date() for x in ext]
+    bal, ds, cur, open_r = 100.0, 100.0, None, 0.0
+    heap, out, cut, skip = [], [], 0, 0
+
+    def new_day(d):
+        nonlocal ds, cur
+        if cur is None or d > cur:
+            ds, cur = bal, d
+
+    for i, (a, b, d, r, k) in enumerate(rows):
+        while heap and heap[0][0] <= a:                       # exits up to the entry first (as live: they are closed)
+            _, j, pnl, rk = heapq.heappop(heap)
+            new_day(xday[j])
+            bal += pnl
+            open_r -= rk
+        new_day(eday[i])
+        left = bal - open_r
+        room = min(left - (100 - GUARD_ALL), left - (ds - GUARD_DAY))
+        use = min(k, GRADE_SHARE * room) if room < 2 * k else k
+        if use < GRADE_MIN * k:
+            skip += 1
+            continue
+        if use < k - 1e-9:
+            cut += 1
+        open_r += use
+        heapq.heappush(heap, (b, i, r * use, use))
+        out.append((a, b, d, r * use, use))
+    return pd.DataFrame(out, columns=cols), {"cut": cut, "skipped": skip}
+
+
+def replay(book, risk, guard=True):
+    """book: {combo: (trades, multiplier)} -> account numbers in % of the opening balance, with the live bots' fixed
+    risk rule (guarded) unless guard=False; "guard_cut" / "guard_skipped": trades made smaller / skipped by it."""
+    t, g = guarded(book, risk, guard)
+    if t.empty:
+        return {"trades": 0, "total": 0.0, "worst_day": 0.0, "max_dd": 0.0, "near_days": 0, "max_open": 0.0, "max_side": 0.0,
+                "guard_cut": g["cut"], "guard_skipped": g["skipped"]}
     day = pd.to_datetime(t["b"], unit="m", utc=True).dt.tz_convert("Europe/Prague").dt.date      # FTMO's day (CE(S)T)
     daily = t.groupby(day)["pnl"].sum().sort_index()
     eq = np.r_[100.0, 100 + daily.cumsum().to_numpy()]
@@ -174,7 +228,8 @@ def replay(book, risk):
             side_s += r
         mo, ms = max(mo, op), max(ms, side_l, side_s)
     return {"trades": int(len(t)), "total": round(float(daily.sum()), 2), "worst_day": round(float(min(0.0, daily.min())), 2),
-            "max_dd": round(dd, 2), "near_days": int((daily <= -NEAR).sum()), "max_open": round(mo, 2), "max_side": round(ms, 2)}
+            "max_dd": round(dd, 2), "near_days": int((daily <= -NEAR).sum()), "max_open": round(mo, 2), "max_side": round(ms, 2),
+            "guard_cut": g["cut"], "guard_skipped": g["skipped"]}
 
 
 def book_now(bot, cfg=None, key="tr"):
@@ -377,11 +432,10 @@ def currency_exposure(bot, cfg=None):
 
 
 def daily_pnl(book, risk):
-    """The account's profit per FTMO day in % of the opening balance (the same booking as replay())."""
-    rows = [(b, r * risk * 100 * m) for combo, (tr, m) in book.items() if tr and m > 0 for a, b, d, r in _minutes(tr)]
-    if not rows:
+    """The account's profit per FTMO day in % of the opening balance (the same booking and guard as replay())."""
+    t, _ = guarded(book, risk)
+    if t.empty:
         return []
-    t = pd.DataFrame(rows, columns=["b", "pnl"])
     day = pd.to_datetime(t["b"], unit="m", utc=True).dt.tz_convert("Europe/Prague").dt.date
     return [float(x) for x in t.groupby(day)["pnl"].sum().sort_index().to_numpy()]
 
@@ -421,6 +475,7 @@ def daily(now=None):
             continue
         book, missing = book_now(bot, cfg)
         r = replay(book, bot_risk(bot, cfg))
+        raw = replay(book, bot_risk(bot, cfg), guard=False)     # without the fixed risk rule: what it saves
         warn = []
         if r["worst_day"] <= -3.5:
             warn.append(f"היום הגרוע ב־2026 {r['worst_day']:.2f}% - קרוב למגבלה היומית של הבוט (4.5%)")
@@ -446,7 +501,7 @@ def daily(now=None):
             ccy = currency_exposure(bot, cfg)
         except Exception as e:  # noqa: BLE001
             ccy = {"error": str(e)[-200:]}
-        out.write_text(json.dumps({"updated": at, "bot": bot, "replay_2026": r, "combos": len(book), "missing": missing,
+        out.write_text(json.dumps({"updated": at, "bot": bot, "replay_2026": r, "replay_2026_no_guard": raw, "combos": len(book), "missing": missing,
                                    "warnings": warn, "side_conflicts": conf, "dd_fit_stress": stress,
                                    "currency_exposure": ccy},
                                   ensure_ascii=False, indent=1), encoding="utf-8")

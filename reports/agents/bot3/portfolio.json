@@ -1,14 +1,27 @@
 {
- "updated": "2026-11-14T19:03:43+00:00",
+ "updated": "2026-11-14T20:53:18+00:00",
  "bot": "bot3",
  "replay_2026": {
+  "trades": 4384,
+  "total": 86.5,
+  "worst_day": -2.45,
+  "max_dd": 5.81,
+  "near_days": 0,
+  "max_open": 3.92,
+  "max_side": 3.28,
+  "guard_cut": 16,
+  "guard_skipped": 0
+ },
+ "replay_2026_no_guard": {
   "trades": 4384,
   "total": 87.22,
   "worst_day": -2.47,
   "max_dd": 5.81,
   "near_days": 0,
   "max_open": 3.92,
-  "max_side": 3.34
+  "max_side": 3.34,
+  "guard_cut": 0,
+  "guard_skipped": 0
  },
  "combos": 28,
  "missing": [
@@ -28,22 +41,26 @@
    "skipped_r": 0.5,
    "skipped_mean": 0.005,
    "before": {
-    "trades": 1775,
-    "total": 6.16,
-    "worst_day": -2.28,
-    "max_dd": 15.09,
+    "trades": 432,
+    "total": -8.97,
+    "worst_day": -1.8,
+    "max_dd": 9.0,
     "near_days": 0,
-    "max_open": 3.33,
-    "max_side": 2.49
+    "max_open": 2.96,
+    "max_side": 1.94,
+    "guard_cut": 66,
+    "guard_skipped": 1343
    },
    "after": {
-    "trades": 1670,
-    "total": 6.64,
-    "worst_day": -2.28,
-    "max_dd": 13.36,
+    "trades": 394,
+    "total": -8.99,
+    "worst_day": -1.63,
+    "max_dd": 9.24,
     "near_days": 0,
-    "max_open": 3.21,
-    "max_side": 2.49
+    "max_open": 2.59,
+    "max_side": 1.87,
+    "guard_cut": 54,
+    "guard_skipped": 1276
    }
   },
   "unseen": {
@@ -54,21 +71,25 @@
    "skipped_mean": 0.012,
    "before": {
     "trades": 4384,
-    "total": 87.22,
-    "worst_day": -2.47,
+    "total": 86.5,
+    "worst_day": -2.45,
     "max_dd": 5.81,
     "near_days": 0,
     "max_open": 3.92,
-    "max_side": 3.34
+    "max_side": 3.28,
+    "guard_cut": 16,
+    "guard_skipped": 0
    },
    "after": {
     "trades": 3988,
-    "total": 79.92,
-    "worst_day": -2.45,
+    "total": 79.64,
+    "worst_day": -2.56,
     "max_dd": 7.86,
     "near_days": 0,
     "max_open": 3.73,
-    "max_side": 2.85
+    "max_side": 2.85,
+    "guard_cut": 9,
+    "guard_skipped": 0
    }
   }
  },
@@ -76,12 +97,12 @@
   "fit": 5.81,
   "from_100": {
    "now": {
-    "end": 187.22,
+    "end": 186.5,
     "low": 96.91,
     "hit_limit": false
    },
    "dd_fit": {
-    "end": 187.22,
+    "end": 186.5,
     "low": 96.91,
     "hit_limit": false
    }
@@ -89,12 +110,12 @@
   "balance": 100.01,
   "from_balance": {
    "now": {
-    "end": 187.23,
+    "end": 186.52,
     "low": 96.92,
     "hit_limit": false
    },
    "dd_fit": {
-    "end": 187.23,
+    "end": 186.52,
     "low": 96.92,
     "hit_limit": false
    }
@@ -107,49 +128,59 @@
    "trades": 1775,
    "fx_trades": 401,
    "now": {
-    "trades": 1775,
-    "total": 6.16,
-    "worst_day": -2.28,
-    "max_dd": 15.09,
+    "trades": 432,
+    "total": -8.97,
+    "worst_day": -1.8,
+    "max_dd": 9.0,
     "near_days": 0,
-    "max_open": 3.33,
-    "max_side": 2.49
+    "max_open": 2.96,
+    "max_side": 1.94,
+    "guard_cut": 66,
+    "guard_skipped": 1343
    },
    "cap1": {
-    "trades": 1711,
-    "total": 4.74,
-    "worst_day": -2.28,
-    "max_dd": 13.63,
+    "trades": 416,
+    "total": -8.99,
+    "worst_day": -1.8,
+    "max_dd": 9.0,
     "near_days": 0,
-    "max_open": 3.33,
-    "max_side": 2.35
+    "max_open": 2.96,
+    "max_side": 1.87,
+    "guard_cut": 55,
+    "guard_skipped": 1295
    },
    "cap1.5": {
-    "trades": 1748,
-    "total": 5.61,
-    "worst_day": -2.28,
-    "max_dd": 14.16,
+    "trades": 433,
+    "total": -8.97,
+    "worst_day": -1.8,
+    "max_dd": 9.0,
     "near_days": 0,
-    "max_open": 3.33,
-    "max_side": 2.35
+    "max_open": 2.96,
+    "max_side": 1.94,
+    "guard_cut": 66,
+    "guard_skipped": 1315
    },
    "cap2": {
-    "trades": 1775,
-    "total": 6.17,
-    "worst_day": -2.28,
-    "max_dd": 14.78,
+    "trades": 434,
+    "total": -8.97,
+    "worst_day": -1.8,
+    "max_dd": 9.0,
     "near_days": 0,
-    "max_open": 3.33,
-    "max_side": 2.49
+    "max_open": 2.96,
+    "max_side": 1.94,
+    "guard_cut": 67,
+    "guard_skipped": 1341
    },
    "half2nd": {
-    "trades": 1775,
-    "total": 4.71,
-    "worst_day": -2.28,
-    "max_dd": 14.92,
+    "trades": 422,
+    "total": -9.0,
+    "worst_day": -1.74,
+    "max_dd": 9.0,
     "near_days": 0,
-    "max_open": 3.33,
-    "max_side": 2.49
+    "max_open": 2.96,
+    "max_side": 1.94,
+    "guard_cut": 57,
+    "guard_skipped": 1353
    }
   },
   "unseen": {
@@ -159,48 +190,58 @@
    "fx_trades": 834,
    "now": {
     "trades": 4384,
-    "total": 87.22,
-    "worst_day": -2.47,
+    "total": 86.5,
+    "worst_day": -2.45,
     "max_dd": 5.81,
     "near_days": 0,
     "max_open": 3.92,
-    "max_side": 3.34
+    "max_side": 3.28,
+    "guard_cut": 16,
+    "guard_skipped": 0
    },
    "cap1": {
     "trades": 4209,
-    "total": 75.24,
+    "total": 75.08,
     "worst_day": -1.84,
     "max_dd": 5.16,
     "near_days": 0,
     "max_open": 3.92,
-    "max_side": 3.34
+    "max_side": 3.34,
+    "guard_cut": 7,
+    "guard_skipped": 0
    },
    "cap1.5": {
     "trades": 4317,
-    "total": 80.68,
-    "worst_day": -2.13,
-    "max_dd": 5.3,
+    "total": 80.52,
+    "worst_day": -2.1,
+    "max_dd": 5.28,
     "near_days": 0,
     "max_open": 3.92,
-    "max_side": 3.34
+    "max_side": 3.28,
+    "guard_cut": 9,
+    "guard_skipped": 0
    },
    "cap2": {
     "trades": 4364,
-    "total": 83.81,
-    "worst_day": -2.34,
-    "max_dd": 5.71,
+    "total": 83.57,
+    "worst_day": -2.35,
+    "max_dd": 5.72,
     "near_days": 0,
     "max_open": 3.92,
-    "max_side": 3.34
+    "max_side": 3.28,
+    "guard_cut": 11,
+    "guard_skipped": 0
    },
    "half2nd": {
     "trades": 4384,
-    "total": 78.73,
-    "worst_day": -2.07,
+    "total": 78.45,
+    "worst_day": -2.12,
     "max_dd": 5.54,
     "near_days": 0,
     "max_open": 3.92,
-    "max_side": 3.34
+    "max_side": 3.28,
+    "guard_cut": 9,
+    "guard_skipped": 0
    }
   }
  }

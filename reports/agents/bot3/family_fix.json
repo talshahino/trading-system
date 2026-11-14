@@ -1,0 +1,166 @@
+{
+ "at": "2026-11-14T09:47:28+00:00",
+ "split": "2026-01-01",
+ "test_from": "2025-04-30",
+ "families": {
+  "SC010|15Min": {
+   "instruments": [
+    "ARM",
+    "AAPL",
+    "AIRF",
+    "AMZN",
+    "ASML",
+    "GOOG",
+    "INTC",
+    "MSTR"
+   ],
+   "missing": [],
+   "none": {
+    "train_n": 224,
+    "train_r": -24.959999999999997,
+    "unseen_n": 302,
+    "unseen_r": -9.329999999999997,
+    "positive_train": 1
+   },
+   "best": [
+    "v_rsi50",
+    {
+     "train_n": 26,
+     "train_r": 3.2,
+     "unseen_n": 35,
+     "unseen_r": 6.04,
+     "positive_train": 1
+    }
+   ],
+   "filters": {
+    "v_rsi50": {
+     "train_n": 26,
+     "train_r": 3.2,
+     "unseen_n": 35,
+     "unseen_r": 6.04,
+     "positive_train": 1
+    },
+    "bbw_p20": {
+     "train_n": 12,
+     "train_r": 2.63,
+     "unseen_n": 21,
+     "unseen_r": -3.38,
+     "positive_train": 1
+    },
+    "ema9_20": {
+     "train_n": 34,
+     "train_r": 1.29,
+     "unseen_n": 51,
+     "unseen_r": 2.89,
+     "positive_train": 1
+    },
+    "vol_low": {
+     "train_n": 15,
+     "train_r": 1.12,
+     "unseen_n": 23,
+     "unseen_r": 2.05,
+     "positive_train": 2
+    },
+    "with_trend200": {
+     "train_n": 20,
+     "train_r": -1.52,
+     "unseen_n": 16,
+     "unseen_r": -3.24,
+     "positive_train": 0
+    },
+    "none": {
+     "train_n": 224,
+     "train_r": -24.96,
+     "unseen_n": 302,
+     "unseen_r": -9.33,
+     "positive_train": 1
+    }
+   }
+  },
+  "SC002|1Hour": {
+   "instruments": [
+    "AMZN",
+    "AAPL",
+    "AIRF",
+    "ARM"
+   ],
+   "missing": [
+    "ASML",
+    "FRA40",
+    "GOOG",
+    "INTC",
+    "JP225",
+    "MSTR",
+    "NATGAS",
+    "SPN35"
+   ],
+   "none": {
+    "train_n": 199,
+    "train_r": -7.54,
+    "unseen_n": 260,
+    "unseen_r": -14.06,
+    "positive_train": 1
+   },
+   "best": [
+    "vol_normal",
+    {
+     "train_n": 56,
+     "train_r": 6.6899999999999995,
+     "unseen_n": 86,
+     "unseen_r": -3.1799999999999997,
+     "positive_train": 2
+    }
+   ],
+   "filters": {
+    "vol_normal": {
+     "train_n": 56,
+     "train_r": 6.69,
+     "unseen_n": 86,
+     "unseen_r": -3.18,
+     "positive_train": 2
+    },
+    "bbw_p20": {
+     "train_n": 48,
+     "train_r": 0.68,
+     "unseen_n": 60,
+     "unseen_r": -4.78,
+     "positive_train": 1
+    },
+    "vol_high": {
+     "train_n": 26,
+     "train_r": -0.08,
+     "unseen_n": 46,
+     "unseen_r": -0.57,
+     "positive_train": 0
+    },
+    "none": {
+     "train_n": 199,
+     "train_r": -7.54,
+     "unseen_n": 260,
+     "unseen_r": -14.06,
+     "positive_train": 1
+    }
+   }
+  },
+  "SC002|4Hour": {
+   "instruments": [],
+   "missing": [
+    "AIRF",
+    "AAPL",
+    "AMZN",
+    "ARM",
+    "ASML",
+    "FRA40",
+    "GOOG",
+    "INTC",
+    "JP225",
+    "MSTR",
+    "NATGAS",
+    "SPN35"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  }
+ }
+}

@@ -56,6 +56,12 @@ from agents.indicators.classic2 import (coppock, eom, elder_ray, frama, hurst, k
                                         volatility_system, woodie_pivots, woodies_cci)
 from agents.indicators.ict_extra import bpr, opening_gaps, po3_midnight, rejection_blocks, unicorn
 
+from agents.indicators.classic3 import (bop, chaikin_osc, chande_kroll, cmo, dpo, force_index, nvi_pvi, ppo, qstick, rvi,
+                                        rwi, starc, tii, tsi, vhf, volatility_stop)
+from agents.indicators.ehlers2 import (center_of_gravity, cyber_cycle, cybernetic_osc, decycler, ebsw, roofing,
+                                       sinewave)
+from agents.indicators.tv_popular import (coral, crsi, gmma, ift_rsi, macd_v, pmax, rsx, smoothed_ha, tdi, vfi,
+                                          waddah_attar)
 TV = "https://www.tradingview.com/script/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
 
@@ -226,6 +232,43 @@ INDICATORS = {
     "po3_midnight": (po3_midnight, "ICT Power of Three around the NY midnight open: Asian range, manipulation, distribution back through the open",
                      "https://www.luxalgo.com/library/concept/accumulation-manipulation-distribution/"),
     "unicorn": (unicorn, "ICT Unicorn: breaker block overlapping an FVG of the break, retests, breaker stop", "https://www.luxalgo.com/library/concept/unicorn/"),
+    # scout 15.11.2026: classic oscillators / bands / stops (agents/indicators/classic3.py)
+    "tsi": (tsi, "True Strength Index 25/13, signal 7 (Blau); r 20 / s 5 / sig 5 = SMI Ergodic", SC2 + "true-strength-index"),
+    "cmo": (cmo, "Chande Momentum Oscillator 9, -100..100", "https://www.luxalgo.com/library/concept/chande-momentum-oscillator/"),
+    "dpo": (dpo, "Detrended Price Oscillator 20, non-centred (no look-ahead)", SC2 + "detrended-price-oscillator-dpo"),
+    "rvi": (rvi, "Relative Vigor Index 10 with its 4-bar weighted signal (Ehlers)", "https://www.luxalgo.com/blog/relative-vigor-index-to-judge-bull-bear-balance/"),
+    "ppo": (ppo, "Percentage Price Oscillator 12/26/9 (MACD in % of the slow EMA)", SC2 + "percentage-price-oscillator-ppo"),
+    "force_index": (force_index, "Elder Force Index EMA13 / EMA2 (tick volume)", SC2 + "force-index"),
+    "chaikin_osc": (chaikin_osc, "Chaikin Oscillator EMA3 - EMA10 of the A/D line (tick volume)", SC2 + "chaikin-oscillator"),
+    "nvi_pvi": (nvi_pvi, "Negative / Positive Volume Index with the 255 EMA (Fosback)", SC2 + "negative-volume-index-nvi"),
+    "starc": (starc, "STARC bands SMA6 +/- 2 x ATR15 (Manning Stoller)", "https://www.luxalgo.com/library/concept/starc-bands/"),
+    "rwi": (rwi, "Random Walk Index high / low, lookbacks 2..14 (Poulos)", "https://www.luxalgo.com/library/indicator/random-walk-index/"),
+    "vhf": (vhf, "Vertical Horizontal Filter 28: trending vs congested (Adam White)", "https://ta-lib.org/functions/vhf.html"),
+    "bop": (bop, "Balance of Power: SMA14 of (c - o) / (h - l) (Livshin)", "https://www.luxalgo.com/library/concept/balance-of-power/"),
+    "qstick": (qstick, "QStick 8: SMA of (close - open) (Chande)", "https://www.luxalgo.com/library/concept/qstick/"),
+    "tii": (tii, "Trend Intensity Index 60/30: share of positive deviations from the SMA60, 0..100 (M. H. Pee)", "https://www.luxalgo.com/library/concept/trend-intensity-index/"),
+    "chande_kroll": (chande_kroll, "Chande Kroll Stop p 10 / x 1 / q 9, upper and lower stop lines", "https://www.luxalgo.com/library/concept/chande-kroll-stop/"),
+    "volatility_stop": (volatility_stop, "Volatility Stop 20 x 2 ATR from the extreme close since the flip (TradingView VStop)", "https://www.tradingview.com/support/solutions/43000594695-volatility-stop/"),
+    # Ehlers cycle tools (agents/indicators/ehlers2.py)
+    "roofing": (roofing, "Ehlers Roofing filter (HP 48 -> SS 10) and its stochastic, 0.2 / 0.8 crosses", "https://toslc.thinkorswim.com/center/reference/Tech-Indicators/strategies/E-K/EhlersStoch"),
+    "decycler": (decycler, "Ehlers Decycler (close - HP60) and the Decycler Oscillators 100 / 125, crosses", "https://www.traders.com/Documentation/FEEDbk_docs/2015/09/TradersTips.html"),
+    "cyber_cycle": (cyber_cycle, "Ehlers Cyber Cycle (alpha 0.07) with its 1-bar trigger", "https://www.luxalgo.com/library/concept/cyber-cycle/"),
+    "center_of_gravity": (center_of_gravity, "Ehlers Center of Gravity oscillator 10 (hl2) with its 1-bar trigger", "https://www.luxalgo.com/library/concept/center-of-gravity/"),
+    "ebsw": (ebsw, "Ehlers Even Better Sinewave (HP 40, SS 10), -1..1", "https://www.luxalgo.com/library/indicator/even-better-sinewave/"),
+    "sinewave": (sinewave, "Ehlers Hilbert Sinewave: Sine vs LeadSine of the dominant-cycle phase", "https://www.whselfinvest.de/en/trading-platform/free-trading-strategies/tradingsystem/09-sinewave-ehlers"),
+    "cybernetic_osc": (cybernetic_osc, "Ehlers Cybernetic Oscillator (HP 30 -> SS 20) / 100-bar RMS (TASC 2025.06)", "https://www.tradingview.com/scripts/highpass/"),
+    # TradingView / MT4 favourites (agents/indicators/tv_popular.py)
+    "waddah_attar": (waddah_attar, "Waddah Attar Explosion: MACD(20, 40) change x 150 vs BB width and an ATR dead zone", TV + "iu3kKWDI-Waddah-Attar-Explosion-LazyBear/"),
+    "tdi": (tdi, "Traders Dynamic Index: RSI13 price line 2 / signal 7 / base 34 +/- 1.6185 SD (Dean Malone)", "https://www.luxalgo.com/library/concept/traders-dynamic-index/"),
+    "macd_v": (macd_v, "MACD-V: 100 x MACD / ATR26, signal 9, +/-50 neutral, +/-150 extended (Spiroglou)", SC2 + "macd-v"),
+    "vfi": (vfi, "Volume Flow Indicator 130 (Katsanos; LazyBear), signal EMA5, tick volume", TV + "MhlDpfdS-Volume-Flow-Indicator-LazyBear/"),
+    "coral": (coral, "Coral Trend 21 / 0.4 (LazyBear): EMA-cascade line, colour = slope", "https://www.luxalgo.com/library/concept/coral-trend/"),
+    "pmax": (pmax, "Profit Maximizer: SuperTrend on EMA10(hl2), ATR10 x 3; 'rsi_t3' = PMax on T3(RSI) (KivancOzbilgic)", TV + "7yn5dteO-Profit-Maximizer-Strategy/"),
+    "gmma": (gmma, "Guppy Multiple MAs 3-15 / 30-60: group edges, long-group width, bull / bear separation", "https://www.babypips.com/learn/forex/guppy-multiple-moving-average"),
+    "rsx": (rsx, "Jurik RSX 14 (everget's open port), smooth RSI 0..100", TV + "20TzvKPk-Jurik-RSX/"),
+    "crsi": (crsi, "Cyclic Smoothed RSI (whentotrade): cycle 20, vibration 10, 10/90 % dynamic bands", "https://www.prorealcode.com/prorealtime-indicators/rsi-cyclic-smoothed/"),
+    "ift_rsi": (ift_rsi, "Inverse Fisher Transform of RSI5 (WMA9), -1..1 (Vervoort)", TV + "Nw4PDAwY-Inverse-Fisher-Transform-on-RSI-for-backtest-w-alerts/"),
+    "smoothed_ha": (smoothed_ha, "Heiken Ashi Smoothed (SMMA6 -> HA -> LWMA2, the MT4 one used by TMS)", "https://www.prorealcode.com/topic/trading-made-simple-tms-system"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

@@ -8770,6 +8770,933 @@
     "bot6"
    ],
    "rules": "Indicator builder: direction = price above / below the Ichimoku cloud on the 4h chart; entry = WaveTrend cross on the pullback side of zero in that direction; exit stop 1.5 ATR, 2R."
+  },
+  {
+   "id": "SC331",
+   "name": "Coral Trend Pullback: clean candle over the line, pullback close under, close back over, swing stop, 2R (TradeIQ)",
+   "source": "Coral Trend Pullback Strategy (TradeIQ), TradingView",
+   "url": "https://www.tradingview.com/script/kc6Itas8-Coral-Trend-Pullback-Strategy-TradeIQ/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "15Min",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Coral 21/0.4 bullish, a candle with low over the line since the cross, pullback close under, close back over = long (mirror); stop = 10-bar swing (lookback ours), 2R (R:R ours)."
+  },
+  {
+   "id": "SC332",
+   "name": "Heiken Ashi TMS / TDI: TDI 2 / 7 cross on the other side of 50 + HA vs the shifted SMA5, source exits (ProRealCode)",
+   "source": "ProRealCode - Heiken Ashi TMS/TDI strategy (Elsborgtrading, Brent 2H)",
+   "url": "https://www.prorealcode.com/prorealtime-trading-strategies/heiken-ashi-tmstdi-strategy/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TDI RSI13 SMA2 x SMA7 cross on the other side of 50 + HA high/low vs SMA5(typical) shifted 2; source exits (50-68 / 32-50); no stop in the source -> 2 ATR (ours)."
+  },
+  {
+   "id": "SC333",
+   "name": "Chande Kroll Trend: close back over Lowest(21) + 3 ATR above the SMA21, out under Highest(21) - 3 ATR, long only (StockSharp 0611)",
+   "source": "StockSharp example 0611 Chande Kroll Trend (1H, long only)",
+   "url": "https://doc.stocksharp.com/en/api-examples/0611_Chande_Kroll_Trend",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "prev close <= prev Lowest(21)+3ATR10 and close > it and > SMA21 -> long; exit close < Highest(21)-3ATR10; 3 ATR protective stop (ours)."
+  },
+  {
+   "id": "SC334",
+   "name": "Chande Kroll Stop 10 / 1 / 9 breakout through the opposite line, reverse (Chande & Kroll)",
+   "source": "Chande Kroll Stop (Chande & Kroll; LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/chande-kroll-stop/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "close over the upper line -> long, under the lower -> short; opposite line stop; reverse."
+  },
+  {
+   "id": "SC335",
+   "name": "Ehlers Sinewave: Sine / LeadSine cross, stop and reverse (WH SelfInvest system 09)",
+   "source": "WH SelfInvest free system 09 - Sinewave Market Cycles (Ehlers)",
+   "url": "https://www.whselfinvest.de/en/trading-platform/free-trading-strategies/tradingsystem/09-sinewave-ehlers",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Sine x LeadSine stop and reverse; 3 ATR protective stop (ours)."
+  },
+  {
+   "id": "SC336",
+   "name": "Ehlers Sinewave + MACD 11 / 66 trend filter, 10 x ATR(280) target (WH SelfInvest, Grube variant)",
+   "source": "WH SelfInvest system 09, Grube variant (15m Eurostoxx 50)",
+   "url": "https://www.whselfinvest.de/en/trading-platform/free-trading-strategies/tradingsystem/09-sinewave-ehlers",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Sinewave cross in the EMA11-EMA66 direction; target 10 x ATR(280); stop 3 ATR (ours)."
+  },
+  {
+   "id": "SC337",
+   "name": "Even Better Sinewave back over -0.85 / under +0.85 in cycle mode (VHF low), 1.5 ATR, 2R (Ehlers)",
+   "source": "Ehlers Even Better Sinewave (Cycle Analytics for Traders; LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/indicator/even-better-sinewave/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "wave back over -0.85 / under +0.85 while VHF under its median (cycle mode, ours); 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC338",
+   "name": "Waddah Attar Explosion first 'go' bar over the explosion line and dead zone, EMA200 side, out when it fades",
+   "source": "Waddah Attar Explosion (LazyBear; LuxAlgo concept) + EMA200 scalp filter",
+   "url": "https://www.tradingview.com/script/iu3kKWDI-Waddah-Attar-Explosion-LazyBear/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "first bar with the histogram over the explosion line and dead zone, EMA200 side; exit when it falls under the explosion line; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC339",
+   "name": "TDI classic: green over red above the base and 50, under the upper band, out on the cross back (Dean Malone)",
+   "source": "Traders Dynamic Index (Dean Malone; LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/traders-dynamic-index/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "green x red above base and 50, under the upper band (mirror); exit on the cross back; 1.5 ATR; 2R (ours)."
+  },
+  {
+   "id": "SC340",
+   "name": "TDI shark fin: green back inside the volatility band -> fade, swing stop, 2R (Forex Factory)",
+   "source": "TDI Shark Fin (Forex Factory thread)",
+   "url": "https://www.forexfactory.com/thread/1219986-tdi-shark-fin",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "green crosses back inside the volatility band -> fade; 10-bar swing stop; 2R (ours)."
+  },
+  {
+   "id": "SC341",
+   "name": "PMax: EMA10(hl2) crosses the ATR 10 x 3 PMax line, stop and reverse (KivancOzbilgic)",
+   "source": "Profit Maximizer (PMax) Strategy - KivancOzbilgic",
+   "url": "https://www.tradingview.com/script/7yn5dteO-Profit-Maximizer-Strategy/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "EMA10(hl2) x PMax (ATR10 x 3), stop at PMax, reverse."
+  },
+  {
+   "id": "SC342",
+   "name": "PMax on RSI with T3: T3(RSI14) crosses its PMax, reverse (KivancOzbilgic)",
+   "source": "PMax on Rsi w/T3 Strategy - KivancOzbilgic",
+   "url": "https://www.tradingview.com/script/ZLcmWQtj-PMax-on-Rsi-w-T3-Strategy/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "T3(8) of RSI14 x its PMax (RSI range as ATR, our reading), 2 ATR, reverse."
+  },
+  {
+   "id": "SC343",
+   "name": "MACD-V signal cross outside the +/-50 neutral band (rebound from the risk zone), 2 ATR, 2R (Spiroglou)",
+   "source": "MACD-V (Spiroglou; StockCharts / LuxAlgo)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/macd-v",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "signal cross outside +/-50 (from below -50 long, above +50 short); 2 ATR; 2R (ours)."
+  },
+  {
+   "id": "SC344",
+   "name": "MACD-V momentum through +/-50, out on the signal cross or past +/-150 (Spiroglou)",
+   "source": "MACD-V momentum zone (Spiroglou)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/macd-v",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "cross through +/-50 with the histogram, under 150; exit on the signal cross or past 150; 2 ATR."
+  },
+  {
+   "id": "SC345",
+   "name": "Volume Flow Indicator zero cross over its signal on the EMA50 side, 2 ATR, 2R (Katsanos / LazyBear)",
+   "source": "Volume Flow Indicator (Katsanos; LazyBear)",
+   "url": "https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "VFI zero cross over its EMA5 on the EMA50 side; exit on the cross back; 2 ATR; 2R."
+  },
+  {
+   "id": "SC346",
+   "name": "Cyclic Smoothed RSI back inside its dynamic bands, out at the opposite band (whentotrade)",
+   "source": "RSI Cyclic Smoothed (Lars von Thienen; ProRealCode)",
+   "url": "https://www.prorealcode.com/prorealtime-indicators/rsi-cyclic-smoothed/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "cRSI back over the lower / under the upper dynamic band; exit at the opposite band; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC347",
+   "name": "True Strength Index 25 / 13 signal cross beyond +/-25, 2 ATR, 2R (Blau)",
+   "source": "True Strength Index (Blau; StockCharts)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/true-strength-index",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TSI 25/13 signal-7 cross from beyond +/-25; opposite-cross exit; 2 ATR; 2R."
+  },
+  {
+   "id": "SC348",
+   "name": "SMI Ergodic (TSI 20 / 5 / 5) signal cross on the EMA50 side, 1.5 ATR, 2R (Blau)",
+   "source": "SMI Ergodic (Blau) = TSI 20/5/5",
+   "url": "https://doc.stocksharp.com/en/designer-gallery/TSI_MACD_Crossover",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "signal cross on the positive / negative side with the EMA50; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC349",
+   "name": "Chande Momentum Oscillator back over -50 / under +50 on the EMA200 side, 2 ATR, 2R",
+   "source": "Chande Momentum Oscillator (LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/chande-momentum-oscillator/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "CMO9 back over -50 above EMA200 / under +50 below; exit at the opposite 50; 2 ATR; 2R."
+  },
+  {
+   "id": "SC350",
+   "name": "Detrended Price Oscillator zero cross with the SMA50 slope, 1.5 ATR, 2R",
+   "source": "Detrended Price Oscillator (StockCharts), non-centred",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/detrended-price-oscillator-dpo",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "DPO20 zero cross with the SMA50 slope; exit on the cross back; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC351",
+   "name": "Relative Vigor Index signal cross on the far side of zero with the EMA50, 1.5 ATR, 2R (variant of SC143)",
+   "source": "Relative Vigor Index (Ehlers; LuxAlgo blog)",
+   "url": "https://www.luxalgo.com/blog/relative-vigor-index-to-judge-bull-bear-balance/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "RVI10 x signal on the far side of zero with the EMA50; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC352",
+   "name": "PPO early-turn signal cross only when |PPO| is over its median, 2 ATR, 2R",
+   "source": "Percentage Price Oscillator (StockCharts)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/percentage-price-oscillator-ppo",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "PPO 12/26/9 early-turn cross when |PPO| >= its 100-bar median; 2 ATR; 2R."
+  },
+  {
+   "id": "SC353",
+   "name": "Elder Force Index(13) zero cross with the EMA22 slope, 2 ATR, 2R",
+   "source": "Elder Force Index (StockCharts)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/force-index",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "FI13 zero cross with the EMA22 slope; exit on the cross back; 2 ATR; 2R."
+  },
+  {
+   "id": "SC354",
+   "name": "EMA 20 / 50 cross only on the Chaikin Oscillator's side of zero, out when it flips, 2 ATR, 2R (StockCharts)",
+   "source": "Chaikin Oscillator (StockCharts) as a filter",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/chaikin-oscillator",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "EMA20/50 cross only on the oscillator's side of zero and moving that way; exit on its flip; 2 ATR; 2R."
+  },
+  {
+   "id": "SC355",
+   "name": "SMA50 close cross only while the Negative Volume Index is on its 255-EMA side (Fosback filter), 2 ATR, 2R",
+   "source": "Negative Volume Index (Fosback; StockCharts) as a filter",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/negative-volume-index-nvi",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SMA50 close cross only while NVI is on its 255-EMA side; exit when NVI crosses its EMA; 2 ATR; 2R."
+  },
+  {
+   "id": "SC356",
+   "name": "STARC band pierce and close back inside with the SMA50 trend, target the SMA6 middle (Stoller)",
+   "source": "STARC Bands (Manning Stoller; LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/starc-bands/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "pierce of the band + close back inside with the SMA50 trend; target SMA6; stop band - 1 ATR."
+  },
+  {
+   "id": "SC357",
+   "name": "Random Walk Index high over low and > 1 = trend start, 2 ATR, 2R (Poulos)",
+   "source": "Random Walk Index (Poulos, TASC 9:2; LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/indicator/random-walk-index/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "RWI high crosses over low with high > 1 (mirror); exit on the cross back; 2 ATR; 2R."
+  },
+  {
+   "id": "SC358",
+   "name": "20-bar breakout only when the Vertical Horizontal Filter is rising and over its median, 2 ATR, 2R",
+   "source": "Vertical Horizontal Filter (White; TA-Lib) as a trend filter",
+   "url": "https://ta-lib.org/functions/vhf.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "20-bar close breakout only while VHF28 rises and is over its 100-bar median; 2 ATR; 2R."
+  },
+  {
+   "id": "SC359",
+   "name": "Balance of Power zero cross with the EMA50, 1.5 ATR, 2R (Livshin)",
+   "source": "Balance of Power (Livshin; LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/balance-of-power/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "BOP14 zero cross with the EMA50; exit on the cross back; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC360",
+   "name": "QStick(8) zero cross after 5 bars on the other side, EMA100 side, 1.5 ATR, 2R (Chande)",
+   "source": "QStick (Chande; LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/qstick/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "QStick8 zero cross after 5 bars on the other side, EMA100 side; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC361",
+   "name": "Trend Intensity Index over 80 / under 20, out through 50, 2 ATR, 3R (Pee)",
+   "source": "Trend Intensity Index (M. H. Pee, TASC 2002; LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/trend-intensity-index/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TII over 80 long / under 20 short; exit through 50; 2 ATR; 3R."
+  },
+  {
+   "id": "SC362",
+   "name": "Volatility Stop 20 x 2 flip, stop at the line, reverse (TradingView VStop)",
+   "source": "Volatility Stop (TradingView built-in)",
+   "url": "https://www.tradingview.com/support/solutions/43000594695-volatility-stop/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "VStop 20 x 2 flips; stop at the line; reverse."
+  },
+  {
+   "id": "SC363",
+   "name": "Coral Trend colour flip with the close on its side, reverse (LazyBear)",
+   "source": "Coral Trend (LazyBear; LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/coral-trend/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "colour flip with the close on its side; 1.5 ATR; reverse."
+  },
+  {
+   "id": "SC364",
+   "name": "GMMA: short group separates over / under a compressed long group, long-group stop, 2R (Guppy)",
+   "source": "Guppy GMMA - trading the breakout (Guppy; BabyPips)",
+   "url": "https://www.babypips.com/learn/forex/guppy-multiple-moving-average",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "short group separates over/under a long group that was compressed (width < 25th pct) in the last 10 bars; long-group stop; 2R."
+  },
+  {
+   "id": "SC365",
+   "name": "Jurik RSX back over 30 / under 70 on the EMA200 side, out at 70 / 30",
+   "source": "Jurik RSX (everget port)",
+   "url": "https://www.tradingview.com/script/20TzvKPk-Jurik-RSX/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "RSX back over 30 above EMA200 / under 70 below; exit at 70 / 30; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC366",
+   "name": "Inverse Fisher RSI over -0.5 / under +0.5, out at the opposite level (Vervoort)",
+   "source": "Inverse Fisher Transform on RSI (Vervoort)",
+   "url": "https://www.tradingview.com/script/Nw4PDAwY-Inverse-Fisher-Transform-on-RSI-for-backtest-w-alerts/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "IFT over -0.5 long / under +0.5 short; exit at the opposite level; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC367",
+   "name": "Ehlers Cyber Cycle trigger cross on the extreme side of zero, 1.5 ATR, 2R",
+   "source": "Ehlers Cyber Cycle (LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/cyber-cycle/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "cycle x trigger on the extreme side of zero; opposite-cross exit; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC368",
+   "name": "Ehlers Center of Gravity trigger cross on the far side of zero with the EMA50, 1.5 ATR, 2R",
+   "source": "Ehlers Center of Gravity (LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/center-of-gravity/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "CG x trigger on the far side of zero with the EMA50; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC369",
+   "name": "Ehlers roofing stochastic over 0.2 / under 0.8, reverse (thinkorswim EhlersStoch)",
+   "source": "thinkorswim strategy EhlersStoch (roofing filter stochastic)",
+   "url": "https://toslc.thinkorswim.com/center/reference/Tech-Indicators/strategies/E-K/EhlersStoch",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "stochastic over 0.2 buy / under 0.8 sell, reverse; 2 ATR (ours)."
+  },
+  {
+   "id": "SC370",
+   "name": "Ehlers Decycler Oscillator 100 / 125 cross on the Decycler side, reverse (TASC 2015)",
+   "source": "Ehlers Decyclers (TASC Sep 2015 Traders' Tips)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2015/09/TradersTips.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Decycler Osc 100 x 125 cross on the Decycler-line side; reverse; 2 ATR."
+  },
+  {
+   "id": "SC371",
+   "name": "Ehlers Cybernetic Oscillator zero cross with the EMA100, 2 ATR, 2R (TASC 2025.06)",
+   "source": "Ehlers Cybernetic Oscillator (TASC 2025.06)",
+   "url": "https://www.tradingview.com/scripts/highpass/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "zero cross on the EMA100 side; exit on the cross back; 2 ATR; 2R (ours)."
+  },
+  {
+   "id": "SC372",
+   "name": "Trading Made Simple: smoothed HA + TDI over 50 + close over the EMA5 high channel, swing stop, 2R, HA-flip exit",
+   "source": "Trading Made Simple (TMS) - ProRealCode topic / Forex Factory",
+   "url": "https://www.prorealcode.com/topic/trading-made-simple-tms-system",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "smoothed HA bull + TDI green over red and 50 + close over EMA5(high) (mirror); 10-bar swing stop; 2R; HA flip exit."
   }
  ],
  "indicators": [
@@ -9430,6 +10357,244 @@
    "url": "https://www.luxalgo.com/library/concept/unicorn/",
    "added": "2026-11-15",
    "uses": "ICT breaker+FVG entry SC306"
+  },
+  {
+   "name": "tsi",
+   "source": "True Strength Index 25/13, signal 7 (Blau); r 20 / s 5 / sig 5 = SMI Ergodic",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/true-strength-index",
+   "added": "2026-11-15",
+   "uses": "momentum turns beyond +/-25 (SC347), SMI Ergodic (SC348); filter for trend-pullback entries"
+  },
+  {
+   "name": "cmo",
+   "source": "Chande Momentum Oscillator 9, -100..100",
+   "url": "https://www.luxalgo.com/library/concept/chande-momentum-oscillator/",
+   "added": "2026-11-15",
+   "uses": "oversold / overbought dips in trend (SC349)"
+  },
+  {
+   "name": "dpo",
+   "source": "Detrended Price Oscillator 20, non-centred (no look-ahead)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/detrended-price-oscillator-dpo",
+   "added": "2026-11-15",
+   "uses": "cycle-low timing (SC350)"
+  },
+  {
+   "name": "rvi",
+   "source": "Relative Vigor Index 10 with its 4-bar weighted signal (Ehlers)",
+   "url": "https://www.luxalgo.com/blog/relative-vigor-index-to-judge-bull-bear-balance/",
+   "added": "2026-11-15",
+   "uses": "conviction filter / entry (SC351)"
+  },
+  {
+   "name": "ppo",
+   "source": "Percentage Price Oscillator 12/26/9 (MACD in % of the slow EMA)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/percentage-price-oscillator-ppo",
+   "added": "2026-11-15",
+   "uses": "scale-free MACD for cross-instrument rules (SC352)"
+  },
+  {
+   "name": "force_index",
+   "source": "Elder Force Index EMA13 / EMA2 (tick volume)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/force-index",
+   "added": "2026-11-15",
+   "uses": "trend momentum confirmation (SC353)"
+  },
+  {
+   "name": "chaikin_osc",
+   "source": "Chaikin Oscillator EMA3 - EMA10 of the A/D line (tick volume)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/chaikin-oscillator",
+   "added": "2026-11-15",
+   "uses": "money-flow filter on MA crosses (SC354)"
+  },
+  {
+   "name": "nvi_pvi",
+   "source": "Negative / Positive Volume Index with the 255 EMA (Fosback)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/negative-volume-index-nvi",
+   "added": "2026-11-15",
+   "uses": "smart-money phase filter (SC355)"
+  },
+  {
+   "name": "starc",
+   "source": "STARC bands SMA6 +/- 2 x ATR15 (Manning Stoller)",
+   "url": "https://www.luxalgo.com/library/concept/starc-bands/",
+   "added": "2026-11-15",
+   "uses": "band fade to the middle (SC356); stop placement"
+  },
+  {
+   "name": "rwi",
+   "source": "Random Walk Index high / low, lookbacks 2..14 (Poulos)",
+   "url": "https://www.luxalgo.com/library/indicator/random-walk-index/",
+   "added": "2026-11-15",
+   "uses": "trend-start detector (SC357)"
+  },
+  {
+   "name": "vhf",
+   "source": "Vertical Horizontal Filter 28: trending vs congested (Adam White)",
+   "url": "https://ta-lib.org/functions/vhf.html",
+   "added": "2026-11-15",
+   "uses": "trend vs congestion regime filter (SC358, SC337)"
+  },
+  {
+   "name": "bop",
+   "source": "Balance of Power: SMA14 of (c - o) / (h - l) (Livshin)",
+   "url": "https://www.luxalgo.com/library/concept/balance-of-power/",
+   "added": "2026-11-15",
+   "uses": "buyer / seller control filter (SC359)"
+  },
+  {
+   "name": "qstick",
+   "source": "QStick 8: SMA of (close - open) (Chande)",
+   "url": "https://www.luxalgo.com/library/concept/qstick/",
+   "added": "2026-11-15",
+   "uses": "candle-body pressure (SC360)"
+  },
+  {
+   "name": "tii",
+   "source": "Trend Intensity Index 60/30: share of positive deviations from the SMA60, 0..100 (M. H. Pee)",
+   "url": "https://www.luxalgo.com/library/concept/trend-intensity-index/",
+   "added": "2026-11-15",
+   "uses": "strong-trend gate (SC361)"
+  },
+  {
+   "name": "chande_kroll",
+   "source": "Chande Kroll Stop p 10 / x 1 / q 9, upper and lower stop lines",
+   "url": "https://www.luxalgo.com/library/concept/chande-kroll-stop/",
+   "added": "2026-11-15",
+   "uses": "stops / breakout entries (SC333, SC334)"
+  },
+  {
+   "name": "volatility_stop",
+   "source": "Volatility Stop 20 x 2 ATR from the extreme close since the flip (TradingView VStop)",
+   "url": "https://www.tradingview.com/support/solutions/43000594695-volatility-stop/",
+   "added": "2026-11-15",
+   "uses": "trailing stop / flip entries (SC362)"
+  },
+  {
+   "name": "roofing",
+   "source": "Ehlers Roofing filter (HP 48 -> SS 10) and its stochastic, 0.2 / 0.8 crosses",
+   "url": "https://toslc.thinkorswim.com/center/reference/Tech-Indicators/strategies/E-K/EhlersStoch",
+   "added": "2026-11-15",
+   "uses": "cycle stochastic entries (SC369)"
+  },
+  {
+   "name": "decycler",
+   "source": "Ehlers Decycler (close - HP60) and the Decycler Oscillators 100 / 125, crosses",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2015/09/TradersTips.html",
+   "added": "2026-11-15",
+   "uses": "lag-free trend line + oscillator crosses (SC370)"
+  },
+  {
+   "name": "cyber_cycle",
+   "source": "Ehlers Cyber Cycle (alpha 0.07) with its 1-bar trigger",
+   "url": "https://www.luxalgo.com/library/concept/cyber-cycle/",
+   "added": "2026-11-15",
+   "uses": "cycle turns (SC367)"
+  },
+  {
+   "name": "center_of_gravity",
+   "source": "Ehlers Center of Gravity oscillator 10 (hl2) with its 1-bar trigger",
+   "url": "https://www.luxalgo.com/library/concept/center-of-gravity/",
+   "added": "2026-11-15",
+   "uses": "early cycle turns (SC368)"
+  },
+  {
+   "name": "ebsw",
+   "source": "Ehlers Even Better Sinewave (HP 40, SS 10), -1..1",
+   "url": "https://www.luxalgo.com/library/indicator/even-better-sinewave/",
+   "added": "2026-11-15",
+   "uses": "cycle-mode reversals (SC337)"
+  },
+  {
+   "name": "sinewave",
+   "source": "Ehlers Hilbert Sinewave: Sine vs LeadSine of the dominant-cycle phase",
+   "url": "https://www.whselfinvest.de/en/trading-platform/free-trading-strategies/tradingsystem/09-sinewave-ehlers",
+   "added": "2026-11-15",
+   "uses": "cycle stop-and-reverse (SC335, SC336)"
+  },
+  {
+   "name": "cybernetic_osc",
+   "source": "Ehlers Cybernetic Oscillator (HP 30 -> SS 20) / 100-bar RMS (TASC 2025.06)",
+   "url": "https://www.tradingview.com/scripts/highpass/",
+   "added": "2026-11-15",
+   "uses": "normalised trend oscillator (SC371)"
+  },
+  {
+   "name": "waddah_attar",
+   "source": "Waddah Attar Explosion: MACD(20, 40) change x 150 vs BB width and an ATR dead zone",
+   "url": "https://www.tradingview.com/script/iu3kKWDI-Waddah-Attar-Explosion-LazyBear/",
+   "added": "2026-11-15",
+   "uses": "momentum-explosion gate for scalps (SC338)"
+  },
+  {
+   "name": "tdi",
+   "source": "Traders Dynamic Index: RSI13 price line 2 / signal 7 / base 34 +/- 1.6185 SD (Dean Malone)",
+   "url": "https://www.luxalgo.com/library/concept/traders-dynamic-index/",
+   "added": "2026-11-15",
+   "uses": "RSI-based entry / exit (SC332, SC339, SC340, SC372)"
+  },
+  {
+   "name": "macd_v",
+   "source": "MACD-V: 100 x MACD / ATR26, signal 9, +/-50 neutral, +/-150 extended (Spiroglou)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/macd-v",
+   "added": "2026-11-15",
+   "uses": "volatility-normalised momentum zones (SC343, SC344)"
+  },
+  {
+   "name": "vfi",
+   "source": "Volume Flow Indicator 130 (Katsanos; LazyBear), signal EMA5, tick volume",
+   "url": "https://www.tradingview.com/script/MhlDpfdS-Volume-Flow-Indicator-LazyBear/",
+   "added": "2026-11-15",
+   "uses": "volume-flow trend filter (SC345)"
+  },
+  {
+   "name": "coral",
+   "source": "Coral Trend 21 / 0.4 (LazyBear): EMA-cascade line, colour = slope",
+   "url": "https://www.luxalgo.com/library/concept/coral-trend/",
+   "added": "2026-11-15",
+   "uses": "smooth trend line, pullbacks (SC331, SC363)"
+  },
+  {
+   "name": "pmax",
+   "source": "Profit Maximizer: SuperTrend on EMA10(hl2), ATR10 x 3; 'rsi_t3' = PMax on T3(RSI) (KivancOzbilgic)",
+   "url": "https://www.tradingview.com/script/7yn5dteO-Profit-Maximizer-Strategy/",
+   "added": "2026-11-15",
+   "uses": "MA-based SuperTrend (SC341, SC342)"
+  },
+  {
+   "name": "gmma",
+   "source": "Guppy Multiple MAs 3-15 / 30-60: group edges, long-group width, bull / bear separation",
+   "url": "https://www.babypips.com/learn/forex/guppy-multiple-moving-average",
+   "added": "2026-11-15",
+   "uses": "trend compression / separation (SC364)"
+  },
+  {
+   "name": "rsx",
+   "source": "Jurik RSX 14 (everget's open port), smooth RSI 0..100",
+   "url": "https://www.tradingview.com/script/20TzvKPk-Jurik-RSX/",
+   "added": "2026-11-15",
+   "uses": "smooth RSI levels (SC365)"
+  },
+  {
+   "name": "crsi",
+   "source": "Cyclic Smoothed RSI (whentotrade): cycle 20, vibration 10, 10/90 % dynamic bands",
+   "url": "https://www.prorealcode.com/prorealtime-indicators/rsi-cyclic-smoothed/",
+   "added": "2026-11-15",
+   "uses": "adaptive RSI bands (SC346)"
+  },
+  {
+   "name": "ift_rsi",
+   "source": "Inverse Fisher Transform of RSI5 (WMA9), -1..1 (Vervoort)",
+   "url": "https://www.tradingview.com/script/Nw4PDAwY-Inverse-Fisher-Transform-on-RSI-for-backtest-w-alerts/",
+   "added": "2026-11-15",
+   "uses": "sharp RSI turns (SC366)"
+  },
+  {
+   "name": "smoothed_ha",
+   "source": "Heiken Ashi Smoothed (SMMA6 -> HA -> LWMA2, the MT4 one used by TMS)",
+   "url": "https://www.prorealcode.com/topic/trading-made-simple-tms-system",
+   "added": "2026-11-15",
+   "uses": "trend colour / exits (SC372)"
   }
  ],
  "sources": [

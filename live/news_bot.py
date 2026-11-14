@@ -169,6 +169,10 @@ def regime(d, name):
         lo = pd.Series(w).rolling(100, min_periods=50).quantile(0.2).to_numpy()
         m = np.isfinite(w) & np.isfinite(lo) & (w > lo)
         return m, m
+    if name == "rsi_trend":                          # the user's RSI filter (14.11.2026, task tal1411rsi), as run_rules
+        e200, rs = R.ema(c, 200), R.rsi(c, 14)
+        with np.errstate(invalid="ignore"):
+            return ~((c < e200) & (rs < 35)), ~((c > e200) & (rs > 65))
     if name in ("adx_trend", "adx_range"):
         a = R.adx(h, l, c, 14)
         m = a > 20 if name == "adx_trend" else a < 20
@@ -198,6 +202,8 @@ def plan_keys(p):
             out["be_r"], out["lock_r"] = (float(p["be_r"]) or None), ((3.0, 1.0) if float(p["be_r"]) else None)
         if p.get("partial") and 0 < float(p["partial"][0]) < 1 and 0 < float(p["partial"][1]) <= 5:
             out["partial"] = (float(p["partial"][0]), float(p["partial"][1]))
+        if p.get("pyramid") and 0 < float(p["pyramid"][0]) <= 5 and 0 < float(p["pyramid"][1]) <= 1:
+            out["pyramid"] = (float(p["pyramid"][0]), float(p["pyramid"][1]))   # run_rules.PYRS (task tal1411anti)
     except (TypeError, ValueError, IndexError):
         return {}
     return out

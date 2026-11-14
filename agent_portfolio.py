@@ -95,7 +95,7 @@ FILTER_HE = {"with_trend200": "רק עם המגמה (ממוצע 200)", "adx_tren
 # live/news_bot.regime knows them for bot 7, live/runner._regime for bots 1-4 (since 14.11.2026)
 FILTERS_EXTRA = {"bot1", "bot2", "bot3", "bot4", "bot7"}
 # ... and the RSI-against-the-trend filter (task tal1411rsi, 14.11.2026): live/runner._regime knows it (bots 1-4)
-FILTERS_RSI = {"bot1", "bot2", "bot3", "bot4"}
+FILTERS_RSI = {"bot1", "bot2", "bot3", "bot4", "bot7"}   # bot 7: live/news_bot.regime (14.11.2026)
 
 
 def explain_manage(v):
@@ -119,7 +119,7 @@ def explain_ladder(v):
     return f"כניסה מדורגת ב־{len(lv)} חלקים שווים ({', '.join(parts)}), אותו סיכון כולל, סטופ ויעד; חלק שלא התמלא תוך 3 נרות מתבטל"
 
 
-PYR_BOTS = {"bot1", "bot2", "bot3", "bot4"}
+PYR_BOTS = {"bot1", "bot2", "bot3", "bot4", "bot7"}   # bot 7: live/news_bot.plan_keys "pyramid" (14.11.2026)
 
 
 def explain_pyr(v):

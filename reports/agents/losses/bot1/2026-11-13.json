@@ -320,6 +320,15 @@
     "cause": "כניסה / כיוון",
     "fixes": [
      {
+      "what": "סיכון ×0.35",
+      "decision": "d4cb6c208998",
+      "at": "2026-11-14T22:42:47+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.54,
+      "value": 0.35
+     },
+     {
       "what": "סיכון ×0.54",
       "decision": "39fdaa7c48ef",
       "at": "2026-11-14T22:27:24+00:00",
@@ -416,9 +425,19 @@
    {
     "combo": "TV20|1Hour|XAUUSD",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "סיכון ×0.83",
+      "decision": "cdae3ecea358",
+      "at": "2026-11-14T22:42:47+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.83
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.83,
     "edge_parts": [
      "בבדיקה של 2026: +0.43R לעסקה (75 עסקאות), בתקופת הבחירה +0.22R",
@@ -434,6 +453,15 @@
     "combo": "SE02|1Hour|USDJPY",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
+     {
+      "what": "סיכון ×0.34",
+      "decision": "d33fd9f036c7",
+      "at": "2026-11-14T22:42:47+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.57,
+      "value": 0.34
+     },
      {
       "what": "סיכון ×0.57",
       "decision": "909587b89d5b",
@@ -602,17 +630,16 @@
     "edge": -0.044
    }
   ],
-  "open": [
-   "TV20|1Hour|XAUUSD"
-  ],
+  "open": [],
   "cut_only": [
    "TV56|1Hour|US2000",
+   "TV20|1Hour|XAUUSD",
    "SE02|1Hour|USDJPY",
    "TV39|1Hour|JP225",
    "TT56|1Hour|GME",
    "TV10|1Hour|US100"
   ],
   "total_month_pct": 0.29,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 6 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

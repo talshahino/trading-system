@@ -325,9 +325,19 @@
    {
     "combo": "TV20|1Hour|XAUUSD",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.83",
+      "decision": "cdae3ecea358",
+      "at": "2026-11-14T22:42:47+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.83
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV62|1Hour|USDCAD",
@@ -346,9 +356,19 @@
    {
     "combo": "TV38|15Min|GOOG",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.001",
+      "decision": "7b79b2bfd63c",
+      "at": "2026-11-14T22:42:47+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.001
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "YT03|1Hour|LVMH",
@@ -361,6 +381,15 @@
     "combo": "TT45|15Min|CSCO",
     "cause": "סגירה בגלל כלל",
     "fixes": [
+     {
+      "what": "סיכון ×0.001",
+      "decision": "af03cfef14da",
+      "at": "2026-11-14T22:42:47+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.001
+     },
      {
       "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
       "decision": "137acbe329fb",
@@ -386,14 +415,14 @@
   ],
   "open": [
    "YT03|1Hour|PFE",
-   "TV20|1Hour|XAUUSD",
-   "TV62|1Hour|USDCAD",
-   "TV38|15Min|GOOG"
+   "TV62|1Hour|USDCAD"
   ],
   "cut_only": [
-   "TV24|15Min|KO"
+   "TV24|15Min|KO",
+   "TV20|1Hour|XAUUSD",
+   "TV38|15Min|GOOG"
   ],
   "total_month_pct": 0.3,
-  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

@@ -418,6 +418,15 @@
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
      {
+      "what": "סיכון ×0.001",
+      "decision": "af03cfef14da",
+      "at": "2026-11-14T22:42:47+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.95,
+      "value": 0.001
+     },
+     {
       "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
       "decision": "137acbe329fb",
       "at": "2026-11-13T05:31:47+00:00",
@@ -442,9 +451,19 @@
    {
     "combo": "TV38|15Min|GOOG",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.001",
+      "decision": "7b79b2bfd63c",
+      "at": "2026-11-14T22:42:47+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.001
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV29|4Hour|US30",
@@ -564,6 +583,15 @@
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
      {
+      "what": "סיכון ×0.34",
+      "decision": "d33fd9f036c7",
+      "at": "2026-11-14T22:42:47+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.57,
+      "value": 0.34
+     },
+     {
       "what": "סיכון ×0.57",
       "decision": "909587b89d5b",
       "at": "2026-11-14T14:32:14+00:00",
@@ -614,17 +642,17 @@
    }
   ],
   "open": [
-   "TV62|1Hour|USDCAD",
-   "TV38|15Min|GOOG"
+   "TV62|1Hour|USDCAD"
   ],
   "cut_only": [
    "TV10|1Hour|US100",
+   "TV38|15Min|GOOG",
    "TV29|4Hour|US30",
    "TV14|4Hour|XPTUSD",
    "TV33|15Min|MSTR",
    "SE02|1Hour|USDJPY"
   ],
   "total_month_pct": 0.37,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 6 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

@@ -93,7 +93,7 @@ def star_floor(c, cur_m):
     return min(cur_m, math.ceil(cur_m * tb / tn * 100) / 100)
 
 
-FAMILY_MIN, FAMILY_T = 5, 1.0                  # a scout strategy tested on >= 5 instruments of one bot ...
+FAMILY_MIN, FAMILY_T = 4, 1.0                  # a scout strategy tested on >= 4 instrument/timeframe pairs of one bot ...
 
 
 def _family_pick(cards, c):
@@ -105,7 +105,10 @@ def _family_pick(cards, c):
     combo = (c.get("change") or {}).get("combo") or ""
     if combo.count("|") != 2:
         return None
-    fam = combo.rsplit("|", 1)[0] + "|"
+    # the family is the strategy on every timeframe and instrument the bot tested (manager, 14.11.2026 night: bot 5 / 6
+    # test 4 instruments per timeframe, so a family of one timeframe never reached 5 - SC071|15Min|US30 was approved at
+    # t 0.33 on 28 trades while SC071 on its 8 pairs lost -101R to 2025; bot 7's SC043|4Hour|EURJPY likewise, -374R)
+    fam = combo.split("|", 1)[0] + "|"
     tr = [x.get("train") or {} for x in cards
           if x.get("kind") == "new" and ((x.get("change") or {}).get("combo") or "").startswith(fam)]
     if len(tr) < FAMILY_MIN:
@@ -114,7 +117,7 @@ def _family_pick(cards, c):
     own_t = (c.get("train") or {}).get("t")
     if pooled >= 0 or (own_t is not None and own_t >= FAMILY_T):
         return None
-    return (f"נבחר מתוך {len(tr)} מכשירים של אותה אסטרטגיה שיחד הפסידו עד 2025 ({pooled:+.1f}R), "
+    return (f"נבחר מתוך {len(tr)} מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 ({pooled:+.1f}R), "
             f"והתוצאה שלו עד 2025 חלשה (t {own_t if own_t is not None else '-'}) - כנראה מזל, מחכה")
 
 

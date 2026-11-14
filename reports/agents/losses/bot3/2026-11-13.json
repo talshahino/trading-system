@@ -152,19 +152,28 @@
    {
     "combo": "TV50|1Hour|XAGUSD",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
-    "edge_mult": 0.001,
-    "edge_parts": [
-     "בבדיקה של 2026: -0.05R לעסקה (72 עסקאות), בתקופת הבחירה +0.25R",
-     "בחי: +0.30R לעסקה (3 עסקאות)",
-     "הבדיקה שווה 85% מהמשקל, החי 15%",
-     "היתרון עכשיו: +0.00R לעסקה",
-     "אין יתרון - נסחרת בכמות המינימלית עד שיימצא תיקון"
+    "fixes": [
+     {
+      "what": "⭐ TV50|1Hour|XAGUSD: רק בתנודתיות נמוכה",
+      "decision": "94c0a9c77183",
+      "at": "2026-11-14T02:42:28+00:00",
+      "effect_month_pct": 0.17,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "42c0ca74a25a",
+      "at": "2026-11-14T02:42:28+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.05,
+      "value": 0.7
+     }
     ],
-    "edge0": -0.048,
-    "edge": 0.005
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "TV15|1Hour|INTC",
@@ -181,11 +190,9 @@
     "cut_only": false
    }
   ],
-  "open": [
-   "TV50|1Hour|XAGUSD"
-  ],
+  "open": [],
   "cut_only": [],
-  "total_month_pct": 0.0,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
+  "total_month_pct": 0.17,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון"
  }
 }

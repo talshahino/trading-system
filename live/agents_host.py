@@ -308,6 +308,17 @@ def adopt_orphan(st):
     is waited for and then published - not killed (manager, 12.11.2026: 8+ installs a day killed bot 5's and bot 6's
     gap runs half-way, 18:50 / 18:58 UTC, so their results stopped updating). Past its own timeout it is stopped."""
     pid, r = st.get("pid"), st.get("run") or {}
+    if r.get("name") and r.get("ended"):
+        # the agent ended and the manager restarted before its publish (manager, 14.11.2026: bot 6's 68-minute run of
+        # 23:16 UTC ended ~00:25, an install restarted the manager during the whole-bot replay that runs between the
+        # agent's end and its publish - no commit, no error, its gap results stayed from 13.11 16:07)
+        try:
+            _publish_lost(st, r)
+        except Exception as e:  # noqa: BLE001
+            _S["log"](f"publishing the ended agent failed: {e}")
+        st.pop("run", None)
+        _S["smart_running"] = False
+        return kill_orphan(st)
     if not (pid and r.get("name") and time.time() - float(r.get("at", 0)) < float(r.get("timeout", 0)) and _alive(pid)):
         gone = bool(pid and r.get("name") and not _alive(pid))
         if not _turn_back(st, r) and gone:
@@ -316,6 +327,7 @@ def adopt_orphan(st):
             except Exception as e:  # noqa: BLE001
                 _S["log"](f"publishing the ended agent failed: {e}")
         st.pop("run", None)
+        _S["smart_running"] = False
         return kill_orphan(st)
     name, log = r["name"], _S["log"]
     log(f"agent {name} (pid {pid}) still runs after the restart: waiting for it")
@@ -596,6 +608,9 @@ def _smart(st, log, t0):
             err = f"{name}: {e}"[:300]
             errs.append(err)
             log(f"agent {name} failed: {e}")
+        if st.get("run"):                     # ended: a restart from here on still publishes it (adopt_orphan)
+            st["run"]["ended"] = True
+            _save(st)
         # every agent's last run, kept across rounds (manager, 13.11.2026: bot 2 ran 2 of its 30 minutes at 05:28 and
         # published nothing; agent_errors only holds the current round, and every code install starts a new round,
         # so a failure was gone from host.json before anyone saw it)
@@ -607,7 +622,6 @@ def _smart(st, log, t0):
         # what the agent printed about its own failures (manager, 12.11.2026: bot 6's gap search ended without results
         # and without an error - an exception caught and printed inside the agent is invisible from here otherwise)
         st.setdefault("agent_tail", {})[name] = _tail(f"agent_{name}.log")
-        st.pop("run", None)
         # the daily whole-bot replay also inside a round (manager, 13.11.2026: every code install restarts the manager,
         # the round never reached its end and reports/agents/<bot>/portfolio.json stayed from 12.11 11:41 for 19 hours)
         if time.time() - (_ts(st.get("portfolio_at")) or 0.0) >= 3 * 3600:
@@ -622,6 +636,11 @@ def _smart(st, log, t0):
             log(f"publishing {name} failed: {e}")
             errs.append(f"{name}: publishing failed: {e}"[:300])     # shown in host.json on the next publish
             st["agent_errors"] = errs
+            hist = [x for x in st.get("agent_errors_24h") or [] if time.time() - (_ts(x.get("at")) or 0.0) < 86400]
+            st["agent_errors_24h"] = (hist + [{"at": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
+                                               "err": f"{name}: publishing failed: {e}"[:300]}])[-20:]
+        st.pop("run", None)                   # only now: published (or its failure recorded)
+        _save(st)
     before = snapshot()
     _portfolio_check(st)                                 # the whole bots, as they are
     host_doc(st, "smart")                                # stamps smart_at (the manager / builder: the continuous layer)
@@ -655,7 +674,7 @@ def loop(log=print, enabled=lambda: True):
     _S["log"] = log
     time.sleep(90)                                   # let the bots start first
     st = _load()
-    orphan = bool(st.get("pid") and st.get("run"))
+    orphan = bool(st.get("run") and (st.get("pid") or (st.get("run") or {}).get("ended")))
     if orphan:
         _S["smart_running"] = True                   # the continuous layer: no refresh under the running agent
     else:

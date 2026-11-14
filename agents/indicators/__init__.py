@@ -14,6 +14,9 @@ from agents.indicators.cisd import cisd
 from agents.indicators.classic import (adx_di, bb_width_pct, ema_stack, fisher_transform, ichimoku, laguerre_rsi,
                                        macd_hist, mfi, qqe, raschke_osc, rsi_regime, ssl_channel, supertrend)
 from agents.indicators.double_ribbon import double_ribbon
+from agents.indicators.ehlers import ehlers_itrend, mama_fama
+from agents.indicators.fib_legs import fib_legs
+from agents.indicators.fvg_quality import fvg_quality
 from agents.indicators.funk_rsi import funk_rsi
 from agents.indicators.golden_wave import golden_wave
 from agents.indicators.impulse_zones import impulse_zones
@@ -22,6 +25,8 @@ from agents.indicators.levels import htf_levels, pivot_points
 from agents.indicators.liquidity import liquidity
 from agents.indicators.lorentzian import lorentzian
 from agents.indicators.nwe_envelope import nwe_envelope
+from agents.indicators.regime import choppiness, efficiency_ratio, squeeze_pro
+from agents.indicators.sessions_ict import judas_open_range, silver_bullet
 from agents.indicators.order_flow import absorption, big_trades, buy_sell_pressure, cvd
 from agents.indicators.smc import premium_discount, smc
 from agents.indicators.sr_levels import sr_levels
@@ -29,9 +34,12 @@ from agents.indicators.supertrend_ai import supertrend_ai
 from agents.indicators.supply_demand import supply_demand
 from agents.indicators.trend_duration import trend_duration
 from agents.indicators.trendlines import trendlines
+from agents.indicators.ut_bot import ut_bot
+from agents.indicators.volume_flow import cmf, pocket_pivot
 from agents.indicators.volume_profile import delta_void_profile, tpo_profile, volume_profile
 from agents.indicators.vwap_bands import anchored_vwap_swing, vwap_bands
 from agents.indicators.wavetrend import wavetrend
+from agents.indicators.williams_gsv import williams_gsv
 from agents.indicators.zero_lag_trend import zero_lag_trend
 
 TV = "https://www.tradingview.com/script/"
@@ -121,6 +129,31 @@ INDICATORS = {
     "macd_hist": (macd_hist, "MACD 12/26/9 line, signal, histogram, crosses",
                   "https://www.tradingview.com/support/solutions/43000502344-macd-moving-average-convergence-divergence/"),
     "raschke_osc": (raschke_osc, "Raschke 3/10 oscillator with its 16-bar signal line", "https://www.mql5.com/en/articles/24280"),
+    "fvg_quality": (fvg_quality, "FVG quality: candle-3 weak / strong / big wick (thecrypteller), significant displacement (SecondBell), buy share of the gap's volume (Volumatic idea)",
+                    "https://www.tradingview.com/script/PsBN8tD2-Fair-Value-Gaps-Significant-Displacement/"),
+    "fib_legs": (fib_legs, "Latest up / down impulse leg: golden zone 0.5-0.618, 0.618-0.786, extensions 1.272-2.618, leg order block, FVG overlapping the zone",
+                 "https://www.tradingview.com/script/C62RhZ7n/"),
+    "silver_bullet": (silver_bullet, "ICT Silver Bullet 03-04 / 10-11 / 14-15 NY: pool sweep, FVG in the window, entry back from the gap, target the opposing pool",
+                      "https://www.luxalgo.com/library/concept/silver-bullet/"),
+    "judas_open_range": (judas_open_range, "Judas swing of the opening range (NY 09:30-09:45 or 08:15-08:30) with a CISD close (TradingFinder ICT Setup 03)",
+                         "https://www.tradingview.com/script/mRmLRVSW-ICT-Setup-03-TradingFinder-Judas-Swing-NY-9-30am-CHoCH-FVG/"),
+    "choppiness": (choppiness, "Choppiness Index 14: < 38.2 trending, > 61.8 choppy",
+                   "https://doc.stocksharp.com/en/api-examples/0045_Choppiness_Index_Breakout"),
+    "efficiency_ratio": (efficiency_ratio, "Kaufman Efficiency Ratio 10, signed -1..+1, zones +/- 0.6",
+                         "https://whselfinvest.com/en/trading_strategies_33_Kaufman_Efficiency_Ratio.php"),
+    "squeeze_pro": (squeeze_pro, "TTM Squeeze Pro: BB 20/2 inside KC 2.0 / 1.5 / 1.0 (low / mid / high compression), fire and linreg momentum",
+                    "https://www.tradingview.com/script/0drMdHsO-TTM-Squeeze-Pro/"),
+    "mama_fama": (mama_fama, "Ehlers MESA Adaptive MA (MAMA) and FAMA, limits 0.5 / 0.05, crosses",
+                  "https://mesasoftware.com/papers/papers/MAMA.pdf"),
+    "ehlers_itrend": (ehlers_itrend, "Ehlers Instantaneous Trendline (alpha 0.07, hl2) and its Trigger, crosses",
+                      "https://www.tradingview.com/script/edDSj1kq-blackcat-L2-Ehlers-Instantaneous-Trendline-Trading-Strategy/"),
+    "cmf": (cmf, "Chaikin Money Flow 20 on tick volume, zero-line side", "https://therighttrader.com/learn/indicators/chaikin-money-flow"),
+    "pocket_pivot": (pocket_pivot, "Pocket Pivot: up bar with volume over every down bar's of 10, over SMA50, near SMA10 (Kacher / Morales)",
+                     "https://www.luxalgo.com/library/concept/pocket-pivot/"),
+    "ut_bot": (ut_bot, "UT Bot Alerts: ATR(10) x 3 trailing stop, close (or Heikin-Ashi close) crosses = buy / sell",
+               "https://www.tradingview.com/script/n8ss8BID-UT-Bot-Alerts/"),
+    "williams_gsv": (williams_gsv, "Larry Williams Greatest Swing Value: open +/- 1.8 x average failure swing, 5-bar setup",
+                     "https://www.mql5.com/en/articles/21913"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

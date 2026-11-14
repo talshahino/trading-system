@@ -5052,6 +5052,549 @@
     "bot4"
    ],
    "rules": "Average High-Low Range + IBS reversal (TradingView https://in.tradingview.com/script/BTwOiV1h-Average-High-Low-Range-IBS-Reversal-Strategy ), daily, long only: the close under (10-bar highest high - 2.5 x the 20-bar average of high - low) on 2 bars in a row and IBS = (close - low) / (high - low) under 0.2 -> buy; exit on a close over the previous bar's high. The source's 'upper' is not defined - ours: the 10-bar highest high; IBS on the true range (a gap bar counts); no stop in the source - ours: 2 ATR."
+  },
+  {
+   "id": "SC250",
+   "name": "FVG with a weak third candle (body and wicks < 0.5 ATR), return entry, gap stop, 2R (thecrypteller, TikTok)",
+   "source": "thecrypteller (TikTok, user's task tal1411gapplus (4)) + agents/indicators fvg_quality",
+   "url": "https://www.tradingview.com/script/PsBN8tD2-Fair-Value-Gaps-Significant-Displacement/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Only gaps whose 3rd candle is weak (body < 0.5 ATR, total wick < 0.5 ATR - our thresholds, the video gives none); entry when price returns into the gap and closes back out of it in the gap's direction; stop 0.1 ATR beyond the gap; 2R. Also a ready filter for the user's gap method (bots 5-6): skip gaps with a strong / big-wick candle 3."
+  },
+  {
+   "id": "SC251",
+   "name": "FVG with significant displacement (1.25x volume, body >= 0.7 ATR and 60%), return entry, 2R (SecondBell / edgeful)",
+   "source": "TradingView SecondBell 'Fair Value Gaps - Significant Displacement' + edgeful FVG guide",
+   "url": "https://www.tradingview.com/script/PsBN8tD2-Fair-Value-Gaps-Significant-Displacement/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Gap's middle candle: relative volume >= 1.25x (20-bar), body >= 0.7 ATR and >= 60% of its range, gap >= 0.1 ATR, candle in the gap's direction; entry on a close back out of the gap after a return (edgeful), stop beyond the gap, 2R (ours)."
+  },
+  {
+   "id": "SC252",
+   "name": "FVG made on >= 65% buyer (<= 35%) tick volume, return entry, gap stop, 2R (Flux / Volumatic idea)",
+   "source": "Flux Charts 'How to choose the correct FVG' / BigBeluga Volumatic FVG (user's task tal1411gapplus (5))",
+   "url": "https://www.tradingview.com/scripts/fairvaluegaps/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Bullish gap only when >= 65% of the three candles' tick volume is buying (close location in the true range - our reconstruction of the lower-timeframe split), bearish <= 35%; return entry, gap stop, 2R."
+  },
+  {
+   "id": "SC253",
+   "name": "ICT Silver Bullet 03-04 / 10-11 / 14-15 NY: sweep, window FVG return, sweep stop, opposing-pool target (LuxAlgo)",
+   "source": "LuxAlgo 'Silver Bullet' concept (user's task tal1411gapplus (1), Flux video)",
+   "url": "https://www.luxalgo.com/library/concept/silver-bullet/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Windows 03-04 / 10-11 / 14-15 New York; pools = high / low of the 3 hours before the window; sweep of one pool in the window, displacement candle of an FVG inside the window, entry on the return into the gap with a close out of it (up to 60 min after the window), stop 0.1 ATR beyond the sweep, target the opposing pool. TT39 = 10-11 only with 2R."
+  },
+  {
+   "id": "SC254",
+   "name": "FVG overlapping the impulse's order block and 0.5-0.618, block stop, 1.272 extension (TradersNotes, TikTok)",
+   "source": "TradersNotes (TikTok, 5m; user's task tal1411gapplus (2))",
+   "url": "https://www.tradingview.com/script/C62RhZ7n/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Impulse leg from confirmed pivots (k=3, agents/indicators fib_legs); its FVG overlaps the 0.5-0.618 zone and its order block reaches the 0.786 area; entry on the return into the overlap with a close up out of it; stop under the block / leg start; target the 1.272 extension. First touch per leg, leg <= 60 bars old."
+  },
+  {
+   "id": "SC255",
+   "name": "FVG + order block + 0.5-0.618 confluence, target the 2.0 extension (TradersNotes, TikTok)",
+   "source": "TradersNotes (TikTok, 5m; user's task tal1411gapplus (2))",
+   "url": "https://www.tradingview.com/script/C62RhZ7n/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "SC254 with the 2.0 extension target."
+  },
+  {
+   "id": "SC256",
+   "name": "CHoCH then BOS, golden zone 0.5-0.618 inside the order block, leg-start stop, leg-end target (Mr Albash, TikTok)",
+   "source": "Mr Albash (TikTok, 'SMC + Fibonacci'; user's task tal1411gapplus (3))",
+   "url": "https://www.luxalgo.com/library/concept/fibonacci-retracement/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "CHoCH then BOS (agents/indicators smc), golden zone 0.5-0.618 of the latest impulse (fib_legs) overlapping the live order block (demand / supply); a touch of the zone closing inside / beyond it; stop beyond the leg start; target the leg's end."
+  },
+  {
+   "id": "SC257",
+   "name": "CHoCH then BOS, golden zone in the order block, 1.272 extension target (Mr Albash, TikTok)",
+   "source": "Mr Albash (TikTok, 'SMC + Fibonacci'; user's task tal1411gapplus (3))",
+   "url": "https://www.luxalgo.com/library/concept/fibonacci-retracement/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "SC256 with the 1.272 extension target."
+  },
+  {
+   "id": "SC258",
+   "name": "Judas swing of the NY 09:30-09:45 range + CISD close, sweep stop, opposite edge / 1.5R (TradingFinder / the user)",
+   "source": "TradingFinder 'ICT Setup 03 Judas Swing NY 9:30am + CHoCH/FVG' + the user's task tal1411gapplus (range 9:30-9:45 NY)",
+   "url": "https://www.tradingview.com/script/mRmLRVSW-ICT-Setup-03-TradingFinder-Judas-Swing-NY-9-30am-CHoCH-FVG/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Range 09:30-09:45 NY; until 11:00 a sweep of one side, then a CISD close (beyond the open of the sweep leg's candles) -> enter the other way; stop 0.1 ATR beyond the sweep; target the opposite range edge, at least 1.5R (ours); flat 15:45 NY; one per day. agents/indicators judas_open_range."
+  },
+  {
+   "id": "SC259",
+   "name": "Judas swing of the 08:15-08:30 NY range + CISD close, forex timing (TradingFinder)",
+   "source": "TradingFinder 'ICT Setup 03' forex windows",
+   "url": "https://www.tradingview.com/script/mRmLRVSW-ICT-Setup-03-TradingFinder-Judas-Swing-NY-9-30am-CHoCH-FVG/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "fx",
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Same as SC258 with the forex timing: range 08:15-08:30 NY, Judas move and CISD from 08:30 (source: to 08:45; ours: confirmation until 09:30)."
+  },
+  {
+   "id": "SC260",
+   "name": "After a CHoCH, a fake breakout into an FVG at 0.618-0.786 of the leg, bar stop, 1.272 extension (TradersNotes 4H)",
+   "source": "TradersNotes (TikTok, 4H; user's task tal1411gapplus (6))",
+   "url": "https://www.tradingview.com/script/C62RhZ7n/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "After a bearish CHoCH (<= 80 bars), a sweep of the previous 3 bars' high that closes back under it, reaching 0.618-0.786 of the down leg where a live bearish FVG overlaps that zone -> sell; stop 0.1 ATR over the bar; target the 1.272 extension of the leg. Mirror long."
+  },
+  {
+   "id": "SC261",
+   "name": "Release staircase: up to 3 retests of broken levels in the move's direction, common measured-move target (sphula, TikTok)",
+   "source": "sphula (TikTok, gold CPI 15m; user's task tal1411fade EV06 idea)",
+   "url": "https://www.forex.com/en/news-and-analysis/gold-hammered-after-cpi-tests-below-4100/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot7",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Release (FTMO calendar via _release_bars); direction = first close within 3 bars >= 0.8 ATR from the pre-release close; levels = the pre-release hour's edge once broken + earlier extremes after a pause; each retest (within 0.1 ATR, close on the move's side, candle in its direction) -> entry, own stop 0.3 ATR beyond the level, common measured-move target; max 3 entries in 3 hours. The 1R total risk per release is the bot's rule."
+  },
+  {
+   "id": "SC262",
+   "name": "Pre-release straddle +/-1 ATR, OCO, stop at the other order, 2R, 30-minute exit (ExpertFx, TikTok)",
+   "source": "ExpertFx (TikTok, gold PPI straddle; user's task tal1411strad)",
+   "url": "https://www.babypips.com/learn/forex/news-straddle",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot7",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Buy / sell stop +/-1.0 ATR(14) from the last close before the release (task: test 0.5 / 1 / 1.5), OCO, valid 5 minutes, a bar touching both skipped; stop at the other order's level; 2R; out after 30 minutes. Bot 7's EV04 is the full version (spread limit, slippage)."
+  },
+  {
+   "id": "SC263",
+   "name": "London 08:00 / NY 09:30 straddle +/-0.5 ATR, OCO, other-order stop, 2R, 60-minute exit (user's tal1411strad)",
+   "source": "User's task tal1411strad (14.11 08:13: London / NY opens), built on the ExpertFx straddle",
+   "url": "https://www.babypips.com/learn/forex/news-straddle",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "At 08:00 London and 09:30 New York: buy / sell stop +/-0.5 ATR(14) from the last close, OCO, valid 15 minutes; stop at the other order's level; 2R; out after 60 minutes; one per session. Distance and opens are the bots' sweep."
+  },
+  {
+   "id": "SC264",
+   "name": "Tokyo 00-08 UTC range breakout near the prior-day extreme, 80% body, asymmetric R stops / targets, GBPUSD M15 (MQL5)",
+   "source": "MQL5 article 'GBPUSD M15 Tokyo-range breakout EA, part 2'",
+   "url": "https://www.mql5.com/en/articles/24936",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Range 02-10 server (ours UTC+2 -> 00-08 UTC); within 48 bars a close beyond the edge by 0.05 ATR with body >= 80% of the bar, edge <= 5 pips (_pips_atr) from the prior-day high / low; up: stop edge - 0.60R, target +0.85R; down: stop edge + 1.50R, target -0.30R (R = range width, stop >= 0.5 ATR); out on a close 0.25R back inside, after 32 bars or 19:45 UTC."
+  },
+  {
+   "id": "SC265",
+   "name": "Gold 01-06 UTC box breakout, 0.3-1.6% range filter, stop <= 0.6%, 2.5R, BE 1.5R, flat 19 UTC (MQL5 blog)",
+   "source": "MQL5 blog 'London Breakout on Gold: 3.7 Years of Backtests'",
+   "url": "https://www.mql5.com/en/blogs/post/777540",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Range 03-08 server (ours 01-06 UTC); stop orders over / under it, OCO, one a day; range 0.30-1.60% of price (ours 1.7-9 ATR of 15m, scaled), stop the other side capped 0.6% (3.3 ATR15), 2.5R, break-even at 1.5R, flat 19:00 UTC. Author: 2026 out-of-sample PF 1.61."
+  },
+  {
+   "id": "SC266",
+   "name": "Larry Williams Greatest Swing Value: open +/- 1.8 x failure swing after a 5-bar setup, bar-extreme stop, 2R (MQL5)",
+   "source": "MQL5 article 'Larry Williams Greatest Swing Value'",
+   "url": "https://www.mql5.com/en/articles/21913",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Setup close[1] < close[6] (bull) / > (bear); trigger = open +/- 1.8 x average of the last 4 failure swings; entry when the bar's close crosses the trigger; stop the bar's low / high; 2R. agents/indicators williams_gsv."
+  },
+  {
+   "id": "SC267",
+   "name": "Choppiness < 38.2 with close over / under SMA20, out when CHOP > 61.8, 2% stop (StockSharp)",
+   "source": "StockSharp 'Choppiness Index Breakout'",
+   "url": "https://doc.stocksharp.com/en/api-examples/0045_Choppiness_Index_Breakout",
+   "added": "2026-11-14",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "CHOP(14) < 38.2 and close over SMA20 -> buy (under -> sell); exit when CHOP > 61.8; stop 2%; no target. agents/indicators choppiness."
+  },
+  {
+   "id": "SC268",
+   "name": "Kaufman Efficiency Ratio crosses +/-0.6, 10-bar extreme stop and trailing exit (WH SelfInvest)",
+   "source": "WH SelfInvest 'Kaufman Efficiency Ratio'",
+   "url": "https://whselfinvest.com/en/trading_strategies_33_Kaufman_Efficiency_Ratio.php",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Signed ER(10) crosses over +0.6 -> buy, under -0.6 -> sell; stop the 10-bar low / high; exit on a close beyond the trailing 10-bar extreme. agents/indicators efficiency_ratio."
+  },
+  {
+   "id": "SC269",
+   "name": "Ehlers MAMA / FAMA cross, always in, 2 ATR stop (LazyBear / FMZ)",
+   "source": "Ehlers MAMA / FAMA (LazyBear, FMZ)",
+   "url": "https://fmz.com/strategy/428090",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "MAMA crosses FAMA (fast 0.5, slow 0.05, hl2) -> enter, opposite cross reverses; stop 2 ATR (ours). agents/indicators mama_fama."
+  },
+  {
+   "id": "SC270",
+   "name": "Ehlers Instantaneous Trendline trigger cross, 2 ATR stop, 1.5% target, reverse (blackcat1402)",
+   "source": "blackcat1402 'L2 Ehlers Instantaneous Trendline Trading Strategy'",
+   "url": "https://www.tradingview.com/script/edDSj1kq-blackcat-L2-Ehlers-Instantaneous-Trendline-Trading-Strategy/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Trigger crosses ITrend (alpha 0.07, hl2) -> enter; stop 2 ATR; target 1.5% (RevPct 1.015); opposite cross reverses. agents/indicators ehlers_itrend."
+  },
+  {
+   "id": "SC271",
+   "name": "CMF(20) zero cross with a rising EMA50, negative-run low stop, out back under zero, 2R (The Right Trader)",
+   "source": "The Right Trader 'Chaikin Money Flow' plan 1",
+   "url": "https://therighttrader.com/learn/indicators/chaikin-money-flow",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Close over a rising EMA50 (trend, ours) and CMF(20) crosses above zero -> buy; stop under the low of the negative-CMF run (<= 30 bars); out on CMF back under zero; 2R (ours for 'next resistance'). Mirror. agents/indicators cmf (tick volume, true-range close location)."
+  },
+  {
+   "id": "SC272",
+   "name": "UT Bot (3, ATR 10) signals with volume >= 1.2x, 2 ATR stop, reverse (TradeIQ)",
+   "source": "TradingView 'UT Bot Strategy with Risk Management [TradeIQ]'",
+   "url": "https://www.tradingview.com/script/pWT8wmAC-UT-Bot-Strategy-with-Risk-Management-TradeIQ/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "UT Bot (key 3, ATR 10) buy / sell only with volume >= 1.2x its 20-bar average; stop 2 ATR; the opposite signal reverses; 4H crypto in the source. agents/indicators ut_bot."
+  },
+  {
+   "id": "SC273",
+   "name": "TTM Squeeze Pro fire after high compression (KC 1.0) with momentum, fade exit, 2 ATR stop (Carter)",
+   "source": "TTM Squeeze Pro (John Carter; LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/ttm-squeeze/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Fire (BB 20/2 leaves KC 1.5) after high compression (BB inside KC 1.0) within 10 bars; long with momentum > 0 rising, short < 0 falling; exit when momentum turns; stop 2 ATR (ours). agents/indicators squeeze_pro."
+  },
+  {
+   "id": "SC274",
+   "name": "Pocket Pivot near the 10-bar line over SMA50, 2.5 ATR stop, out under the 10-bar line (Kacher / Morales)",
+   "source": "Pocket Pivot (Kacher & Morales; MarketSmith / LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/pocket-pivot/",
+   "added": "2026-11-14",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [
+    "stock",
+    "index",
+    "crypto"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Up bar with volume over every down bar's of the previous 10, close over SMA50 and within 1.5 ATR of SMA10 -> buy; exit on a close under SMA10; stop 2.5 ATR (for their 7-8%). Long only. agents/indicators pocket_pivot."
   }
  ],
  "indicators": [
@@ -5355,6 +5898,250 @@
    "url": "https://www.mql5.com/en/articles/24280",
    "added": "2026-11-14",
    "uses": "entry SC246 (Raschke Anti 3/10)"
+  },
+  {
+   "name": "fvg_quality",
+   "source": "thecrypteller candle-3 rule (our thresholds) + SecondBell 'FVG Significant Displacement' (port) + Volumatic buy/sell split (our reconstruction)",
+   "url": "https://www.tradingview.com/script/PsBN8tD2-Fair-Value-Gaps-Significant-Displacement/",
+   "added": "2026-11-14",
+   "uses": "filter for the user's gap method (bots 5-6: skip strong / big-wick candle 3, demand displacement or buyer share); entries SC250-SC252"
+  },
+  {
+   "name": "fib_legs",
+   "source": "our build: latest impulse legs from confirmed pivots, golden zone, 0.618-0.786, extensions 1.272-2.618, leg order block, overlapping FVG",
+   "url": "https://www.tradingview.com/script/C62RhZ7n/",
+   "added": "2026-11-14",
+   "uses": "confluence filter for FVG / OB entries and extension targets for the gap method; SC254-SC257, SC260"
+  },
+  {
+   "name": "silver_bullet",
+   "source": "LuxAlgo Silver Bullet concept (our build)",
+   "url": "https://www.luxalgo.com/library/concept/silver-bullet/",
+   "added": "2026-11-14",
+   "uses": "time + sweep filter for the gap method (tal1411gapplus (1)); SC253"
+  },
+  {
+   "name": "judas_open_range",
+   "source": "TradingFinder ICT Setup 03 (our build, CISD close)",
+   "url": "https://www.tradingview.com/script/mRmLRVSW-ICT-Setup-03-TradingFinder-Judas-Swing-NY-9-30am-CHoCH-FVG/",
+   "added": "2026-11-14",
+   "uses": "opening-range sweep / reversal filter; SC258-SC259"
+  },
+  {
+   "name": "choppiness",
+   "source": "Choppiness Index (Dreiss; StockSharp port)",
+   "url": "https://doc.stocksharp.com/en/api-examples/0045_Choppiness_Index_Breakout",
+   "added": "2026-11-14",
+   "uses": "trend / range filter (< 38.2 trend, > 61.8 chop) for any breakout; exit when choppy; SC267"
+  },
+  {
+   "name": "efficiency_ratio",
+   "source": "Kaufman Efficiency Ratio (signed; WH SelfInvest)",
+   "url": "https://whselfinvest.com/en/trading_strategies_33_Kaufman_Efficiency_Ratio.php",
+   "added": "2026-11-14",
+   "uses": "trend-quality filter; entry on +/-0.6; SC268"
+  },
+  {
+   "name": "squeeze_pro",
+   "source": "TTM Squeeze Pro (Carter; port of the open-source script logic)",
+   "url": "https://www.tradingview.com/script/0drMdHsO-TTM-Squeeze-Pro/",
+   "added": "2026-11-14",
+   "uses": "volatility-compression filter (graded 1-3) before breakouts; SC273"
+  },
+  {
+   "name": "mama_fama",
+   "source": "Ehlers MAMA / FAMA (paper port)",
+   "url": "https://mesasoftware.com/papers/papers/MAMA.pdf",
+   "added": "2026-11-14",
+   "uses": "adaptive trend filter / cross entries; SC269"
+  },
+  {
+   "name": "ehlers_itrend",
+   "source": "Ehlers Instantaneous Trendline + Trigger (book formula port)",
+   "url": "https://www.tradingview.com/script/edDSj1kq-blackcat-L2-Ehlers-Instantaneous-Trendline-Trading-Strategy/",
+   "added": "2026-11-14",
+   "uses": "low-lag trend filter / cross entries; SC270"
+  },
+  {
+   "name": "cmf",
+   "source": "Chaikin Money Flow (Twiggs gap correction by default)",
+   "url": "https://therighttrader.com/learn/indicators/chaikin-money-flow",
+   "added": "2026-11-14",
+   "uses": "buying / selling pressure filter (CMF side) for trend entries; SC271"
+  },
+  {
+   "name": "pocket_pivot",
+   "source": "Pocket Pivot (Kacher & Morales)",
+   "url": "https://www.luxalgo.com/library/concept/pocket-pivot/",
+   "added": "2026-11-14",
+   "uses": "accumulation-day entry / volume confirmation for stock / index longs; SC274"
+  },
+  {
+   "name": "ut_bot",
+   "source": "UT Bot Alerts (QuantNomad Pine port)",
+   "url": "https://www.tradingview.com/script/n8ss8BID-UT-Bot-Alerts/",
+   "added": "2026-11-14",
+   "uses": "ATR trailing stop / regime filter / exit line; SC272"
+  },
+  {
+   "name": "williams_gsv",
+   "source": "Larry Williams Greatest Swing Value (MQL5 article port)",
+   "url": "https://www.mql5.com/en/articles/21913",
+   "added": "2026-11-14",
+   "uses": "volatility breakout trigger levels from the open; SC266"
   }
- ]
+ ],
+ "sources": [
+  {
+   "name": "TradingView (open-source scripts + ideas)",
+   "url": "https://www.tradingview.com/scripts/",
+   "look_for": "open-source Pine strategies / indicators to port; ideas with full rules",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "FXStreet",
+   "url": "https://www.fxstreet.com/education",
+   "look_for": "education articles with strategy rules; post-release market reactions (bot 7)",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "Autochartist",
+   "url": "https://support.autochartist.com/en/knowledgebase/article/non-trending-pattern-types",
+   "look_for": "which chart patterns it detects (rectangles, triangles, pennants, flags, wedges, channels, H&S) and its A.I.M. / A.I.R. entries - build our own detectors",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "Trading Central",
+   "url": "https://investor.tradingcentral.com/learn/analyst-views/introduction",
+   "look_for": "Analyst Views pivot / target methodology, adaptive candlesticks",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "MarketSmith / IBD (O'Neil)",
+   "url": "https://www.luxalgo.com/library/concept/pocket-pivot/",
+   "look_for": "O'Neil / Kacher-Morales setups: pocket pivots, buyable gap-ups, bases",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "Forex Factory (forum + calendar)",
+   "url": "https://www.forexfactory.com/forum/71-trading-systems",
+   "look_for": "trading-system threads with first-post rules; the calendar for bot 7",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "Myfxbook",
+   "url": "https://www.myfxbook.com/systems",
+   "look_for": "verified long-running profitable accounts - which methods they trade (description, trade times, holding times)",
+   "last_scanned": ""
+  },
+  {
+   "name": "MQL5 CodeBase / Market / Articles",
+   "url": "https://www.mql5.com/en/code",
+   "look_for": "EA logic in articles and the CodeBase; indicators to port",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "DailyFX / IG education",
+   "url": "https://www.ig.com/en/trading-strategies",
+   "look_for": "strategy guides with rules; release reactions",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "ForexLive / investingLive",
+   "url": "https://investinglive.com/Education/",
+   "look_for": "education + live release reactions (bot 7)",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "Investing.com",
+   "url": "https://www.investing.com/analysis/",
+   "look_for": "strategy articles; economic calendar",
+   "last_scanned": ""
+  },
+  {
+   "name": "Bloomberg",
+   "url": "https://www.bloomberg.com/markets",
+   "look_for": "release reactions, session flows (bot 7) - context, rarely rules",
+   "last_scanned": ""
+  },
+  {
+   "name": "Reuters",
+   "url": "https://www.reuters.com/markets/",
+   "look_for": "release reactions (bot 7) - context",
+   "last_scanned": ""
+  },
+  {
+   "name": "BabyPips (school + forum)",
+   "url": "https://forums.babypips.com/c/trading-systems/free-forex-trading-systems/15",
+   "look_for": "free trading systems threads with rules",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "Investopedia",
+   "url": "https://www.investopedia.com/trading-4427765",
+   "look_for": "indicator definitions and classic strategies",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "YouTube",
+   "url": "https://www.youtube.com/results?search_query=trading+strategy+rules",
+   "look_for": "strategy videos (via transcripts / summaries)",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "Udemy",
+   "url": "https://www.udemy.com/topic/forex/",
+   "look_for": "course outlines of named strategies",
+   "last_scanned": ""
+  },
+  {
+   "name": "Coursera",
+   "url": "https://www.coursera.org/search?query=algorithmic%20trading",
+   "look_for": "algorithmic-trading course material",
+   "last_scanned": ""
+  },
+  {
+   "name": "TikTok / Instagram / Facebook / X",
+   "url": "https://www.tiktok.com/",
+   "look_for": "the user's videos (tal1411*) and the creators behind them; TikTok itself is blocked to reading - search for the creators elsewhere",
+   "last_scanned": ""
+  },
+  {
+   "name": "Reddit r/algotrading, r/Daytrading, r/Forex",
+   "url": "https://www.reddit.com/r/algotrading/",
+   "look_for": "shared systems with backtests",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "QuantConnect / Quantpedia",
+   "url": "https://www.quantconnect.com/forum/",
+   "look_for": "community algorithms, documented anomalies",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "GitHub (freqtrade, jesse, backtrader)",
+   "url": "https://github.com/freqtrade/freqtrade-strategies",
+   "look_for": "open strategy code",
+   "last_scanned": ""
+  },
+  {
+   "name": "StockSharp examples",
+   "url": "https://doc.stocksharp.com/en/api-examples/",
+   "look_for": "hundreds of documented strategy examples with exact rules",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "LuxAlgo library",
+   "url": "https://www.luxalgo.com/library/",
+   "look_for": "concept pages with exact indicator formulas",
+   "last_scanned": "2026-11-14"
+  },
+  {
+   "name": "WH SelfInvest free strategies",
+   "url": "https://whselfinvest.com/en/trading_strategies_33_Kaufman_Efficiency_Ratio.php",
+   "look_for": "free strategies with rules",
+   "last_scanned": "2026-11-14"
+  }
+ ],
+ "sources_note": "The scout's standing source list (user, 14.11.2026 12:45, task tal1411src 'super important for the scout'). Every night the scout searches these (rotating, different ones each night) for new strategies and indicators; last_scanned = the last night it searched there (empty = not yet)."
 }

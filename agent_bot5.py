@@ -300,6 +300,16 @@ NOTE_TESTS[:0] = [
     {"id": f"{trk}_wknd", "track": trk, "knob": "WKND", "vals": [10], "src": "tal1411wkend", "inform": True,
      "he": "כלל FTMO: סגירה וביטול הוראות 10 דק' לפני הפסקה של שעתיים ומעלה"}
     for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
+NOTE_TESTS[6:6] = [
+    # the fix for the rule's cost (bot 5's smart agent, 14.11.2026 night): on 2026 the rule takes most of the slow tracks'
+    # profit (4h/1h +49.7R -> +13.7R, 4h/15 +54.7R -> +27.2R, 1h/15 +33.4R -> +8.9R, 4h/5 +2.5R -> -10.4R). FTMO's own
+    # FAQ: "FTMO restricts holding positions through market breaks longer than 2 hours" on the funded Standard account,
+    # so the daily breaks of 2+ hours count too - the rule stays. The fix: no order waits / is placed BRKH hours before
+    # the break (tal_gap.brkh), so a trade with no time to work is not opened and then closed by force; on the rules
+    # as they run with the FTMO rule on
+    {"id": f"{trk}_brkh", "track": trk, "knob": "BRKH", "vals": [1, 3, 6], "src": "tal1411wkend",
+     "he": "בלי הוראה חדשה X שעות לפני הפסקה של שעתיים ומעלה (התיקון לעלות של כלל FTMO)"}
+    for trk in ("t4h_1h", "t4h_15", "t1h_15", "t4h_5")]
 NOTE_TESTS += [
     # the filters of the user's videos of 14.11.2026 (tal1411rsi a, tal1411vwap 2, tal1411set2 1, set3 2, set4 2,
     # set5 1-2) on the gap method as it runs - one TREND value each (tal_gap.Data.video_trend, the same on the live bot).
@@ -375,7 +385,10 @@ def _note_cfgs():
         v = tt.get(T["track"])
         if not v or v.get("symbols"):
             continue
-        now = TG._norm(dict(v["cfg"]))
+        # the rules exactly as the live bot runs them (14.11.2026 night, bot 5's smart agent): the live bot trades
+        # TG.ftmo_cfg(cfg) (the FTMO break rule on), so every test is measured on it too - only the rule's own test
+        # (knob WKND) keeps the rules without it as its "now"
+        now = TG._norm(dict(v["cfg"])) if T["knob"] == "WKND" else TG.ftmo_cfg(v["cfg"])
         out.append((T, f"{v['pair'][0]}/{v['pair'][1]}", now,
                     [(x, TG._norm(dict(now, **{T["knob"]: x}))) for x in T["vals"] if now.get(T["knob"]) != x]))
     return out

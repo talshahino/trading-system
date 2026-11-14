@@ -746,9 +746,19 @@ def ftmo_cfg(cfg, minutes=WKND_MIN):
     return _norm(c)
 
 
+def brkh(cfg):
+    """BRKH (bot 5's smart agent, 14.11.2026 night, the fix for FTMO's break rule's cost on the slow tracks): no gap order
+    waits, and none is placed, from BRKH hours before a 2+ hour break (the weekend, a daily close, a holiday) - a trade
+    that has no time to reach its target before the forced close is not opened. The forced close itself stays at WKND
+    minutes before the break. Off (absent / 0) = the rules as before, the same configuration name."""
+    x = cfg.get("BRKH")
+    return float(x) if x else 0.0
+
+
 def cancel_bar(D, cfg, q0):
-    """WKND: the first bar at or after q0 where a waiting order is cancelled (len(ns) when none / off)."""
-    wk = wknd(cfg)
+    """WKND: the first bar at or after q0 where a waiting order is cancelled (len(ns) when none / off); BRKH moves the
+    cancellation earlier (hours before the break), the same in simulate() and live_trades()."""
+    wk = max(wknd(cfg), int(round(brkh(cfg) * 60)))
     if not wk:
         return len(D.ns)
     ca = D.cancel_at(wk)
@@ -1132,6 +1142,8 @@ def _norm(c):
             c.pop(k)                                    # "none" is the base: the same configuration, the same name
     if "WKND" in c and not c["WKND"]:
         c.pop("WKND")                                   # WKND 0 = off: the rules as before, the same name
+    if "BRKH" in c and not c["BRKH"]:
+        c.pop("BRKH")                                   # BRKH 0 = off: the same name
     return c
 
 

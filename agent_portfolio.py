@@ -772,6 +772,16 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001 - the study's failure never stops the experiments
             print(f"bot7 fix study failed: {e}")
+        # EV04, the straddle before a release (the user's task tal1411strad, 14.11.2026, agents/news_straddle.py): a
+        # third of the budget, BEFORE the entry study (the user's priority, 14.11.2026), gold first
+        try:
+            from agents import news_straddle as NS
+            if NS.stale():
+                mins = max(6.0, a.minutes / 3)
+                subprocess.run([sys.executable, "-m", "agents.news_straddle", "--minutes", str(mins)], cwd=str(ROOT),
+                               timeout=int(mins * 60 + 1800))
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 straddle study failed: {e}")
         # fix attempt 6 for EV01 (13.11.2026): the entry's minute after the release, the spike size, the side and the
         # surprise (agents/news_entry.py), up to a third of the budget, once the fix study is complete
         try:
@@ -784,16 +794,6 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 entry study failed: {e}")
-        # EV04, the straddle before a release (the user's task tal1411strad, 14.11.2026, agents/news_straddle.py): a
-        # third of the budget, ahead of the entry study's leftover (the user's own request), gold first
-        try:
-            from agents import news_straddle as NS
-            if NS.stale():
-                mins = max(6.0, a.minutes / 3)
-                subprocess.run([sys.executable, "-m", "agents.news_straddle", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
-        except Exception as e:  # noqa: BLE001
-            print(f"bot7 straddle study failed: {e}")
     # the scout's strategies first, with up to a third of the time, while some are still untested (12.11.2026: with
     # 0.8 of the budget for the experiments, the leftover was under the 2-minute minimum and they never ran)
     first = test_new(a.bot, budget / 3, a.where) if untested_new(a.bot, a.where) else 0

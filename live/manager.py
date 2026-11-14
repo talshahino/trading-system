@@ -773,6 +773,89 @@ def _decisions():
     return r.json()
 
 
+def _valid(a):
+    try:
+        _risk_value(a["kind"], a["value"])
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def _recent(x, hours=36):
+    """Only the last day and a half's decisions are tried again / checked (an older one may be stale)."""
+    try:
+        import calendar
+        t = calendar.timegm(time.strptime(str(x.get("at"))[:19], "%Y-%m-%dT%H:%M:%S"))
+        return time.time() - t < hours * 3600
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def _lowers_bot3(a):
+    """The user's standing rule: bot 3's risk is never lowered - not by a retry or a re-apply either."""
+    try:
+        return a.get("bot") == "bot3" and a.get("kind") == "mult" and float(a.get("value") or 0) < float(a.get("prev") or 1)
+    except Exception:  # noqa: BLE001
+        return True
+
+
+def _latest_risk(ordered):
+    """The newest approved risk decision per (bot, strategy, kind): {id: decision}."""
+    last = {}
+    for x in ordered:
+        a = x.get("action")
+        if x.get("type") == "risk" and x.get("decision") == "approved" and a and a.get("combo") and not x.get("undone"):
+            last[(a["bot"], a["combo"], a["kind"])] = x
+    return {x["id"]: x for x in last.values()}
+
+
+def _reconcile_applied(ordered, latest, gone):
+    """The newest applied risk decision of each strategy must be the value the bot has (manager, 14.11.2026: four edge
+    decisions of 13.11 22:11 - TV41 NZDUSD x0.18, TV24 KO x0.91, TT45 GBPJPY x0.64 in bot 1, GH04 EURJPY minimum
+    volume in bot 4 - were marked applied but the bots kept the old values). A value changed on purpose since (you in
+    the app: a later log entry to a value no decision of the manager's gave) is left alone; undone / taken back ones too."""
+    with AGENT_LOCK:
+        m = agent_meta()
+    undo, rev = set(m["undo"]), set((m.get("reverted") or {}).values())
+    rd = risk_doc()
+    for x in latest.values():
+        a, rec = x["action"], m["applied"].get(x["id"])
+        if not rec or rec.get("failed") or x["id"] in undo or x["id"] in rev \
+                or (x.get("card_decision") or x.get("star_of")) in gone or not _recent(x) or _lowers_bot3(a):
+            continue
+        try:
+            want = _risk_value(a["kind"], a["value"])
+        except ValueError:
+            continue
+        b = rd.get(a["bot"], {})
+        if (b.get(a["kind"]) or {}).get(a["combo"]) == want:
+            continue
+        ours = set()
+        for y in ordered:
+            ya = y.get("action") or {}
+            if y.get("type") == "risk" and ya.get("combo") == a["combo"] and ya.get("bot") == a["bot"] \
+                    and ya.get("kind") == a["kind"]:
+                try:
+                    ours.add(json.dumps(_risk_value(ya["kind"], ya.get("value"))))
+                    ours.add(json.dumps(_risk_value(ya["kind"], ya.get("prev"))))
+                except Exception:  # noqa: BLE001
+                    pass
+        later = [e for e in b.get("log") or [] if e.get("combo") == a["combo"] and e.get("kind") == a["kind"]
+                 and str(e.get("t") or "") > str(rec.get("at") or "") and "to" in e]
+        if later and json.dumps(later[-1].get("to")) not in ours:
+            continue                                 # changed on purpose since
+        f = LIVE / "bots" / f"{a['bot']}.json"
+        try:
+            if not f.exists() or a["combo"] not in json.loads(f.read_text(encoding="utf-8"))["combos"]:
+                continue                             # no longer in the bot
+            risk_change(a["bot"], a["combo"], a["kind"], a["value"])
+        except Exception as e:  # noqa: BLE001
+            log(f"manager's decision {x['id']} not re-applied: {e}")
+            continue
+        log(f"manager's decision {x['id']} re-applied (the bot had another value): {a['bot']} {a['combo']} {a['kind']} -> {a['value']}")
+        agent_publish()
+
+
 def auto_apply():
     """Every 10 minutes: apply the manager's risk / removal decisions that are not applied and not undone."""
     time.sleep(90)
@@ -803,7 +886,12 @@ def auto_apply():
                     risk_change(ok[0]["bot"], ok[0]["combo"], ok[0]["kind"], ok[0].get("prev"))
                     log(f"risk of card decision {link} back to {ok[0].get('prev')} ({ok[0]['bot']} {ok[0]['combo']})")
                     agent_publish()
-            for x in j.get("decisions", []):
+            # oldest first (manager, 14.11.2026: decisions.json is newest first, so two decisions on one strategy in the
+            # same 10 minutes were applied newest-then-oldest and the older value stayed - TV56 US2000 x0.95 over the
+            # newer x0.48, TV11 USDJPY x0.9 over the newer minimum volume, both 14.11 01:1x-01:3x UTC)
+            ordered = sorted(j.get("decisions", []), key=lambda x: str(x.get("at") or ""))
+            latest = _latest_risk(ordered)
+            for x in ordered:
                 a = x.get("action")
                 if (x.get("card_decision") or x.get("star_of")) in gone:
                     continue                         # its card is undone / taken back: not applied
@@ -877,6 +965,11 @@ def auto_apply():
                     # one that failed for another reason (e.g. an invalid value) is not
                     retry = bool(rec and rec.get("failed") and (rec.get("err") in (None, "missing"))
                                  and rec.get("tries", 1) < 432)
+                    # one that failed as invalid under an older rule (e.g. a cut by the edge under x0.5, before
+                    # 13.11.2026) is tried again a few times while it is still the newest decision on its strategy
+                    retry = retry or bool(rec and rec.get("failed") and rec.get("err") == "invalid"
+                                          and rec.get("tries", 1) < 3 and x["id"] in latest and _valid(a)
+                                          and _recent(x) and not _lowers_bot3(a))
                     if (rec and not retry) or x["id"] in m["undo"] or (x["id"] in rev and rev[x["id"]] not in m["undo"]):
                         continue                     # applied, undone, or taken back by the watch (unless you undid that)
                 err = None
@@ -900,6 +993,10 @@ def auto_apply():
                     continue
                 log(f"manager's decision applied: {a['bot']} {a['combo']} {a['kind']} -> {a['value']}")
                 agent_publish()
+            try:
+                _reconcile_applied(ordered, latest, gone)
+            except Exception as e:  # noqa: BLE001
+                log(f"auto_apply: checking the applied values failed: {e}")
             AUTO_APPLY["err"] = None
         except Exception as e:  # noqa: BLE001
             # never silent again (12.11.2026: the user's revert of 10 decisions waited for hours with no trace)

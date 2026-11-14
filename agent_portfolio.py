@@ -102,6 +102,7 @@ FILTERS_RSI = {"bot1", "bot2", "bot3", "bot4", "bot7"}   # bot 7: live/news_bot.
 # ... and the filters of the user's videos (tasks tal1411set2-set5, 14.11.2026): rules_agent.video_regimes, the same in
 # run_rules and live/runner._regime - bots 1-4 only (live/news_bot does not know them)
 FILTERS_VIDEO = {"bot1", "bot2", "bot3", "bot4"}
+FILTERS_VIDEO_V = 2   # 2 = with v_fib5 / v_ha (task tal1411set7, 14.11.2026 night): every filters result again
 
 
 def explain_manage(v):
@@ -521,7 +522,7 @@ def experiments(bot, budget_s, where):
                 continue
             if fam == "filters" and d.get("variants") and ((bot in FILTERS_EXTRA and not d.get("filters_extra"))
                                                           or (bot in FILTERS_RSI and not d.get("filters_rsi"))
-                                                          or (bot in FILTERS_VIDEO and not d.get("filters_video"))):
+                                                          or (bot in FILTERS_VIDEO and (d.get("filters_video") or 0) < FILTERS_VIDEO_V)):
                 # measured before the user's EMA 9/20 + Bollinger-width filters (task tal1411ema, 14.11.2026): again
                 todo.append((1, fam, -age, sym, combo))
                 continue
@@ -609,7 +610,7 @@ def experiments(bot, budget_s, where):
             if fam == "filters" and bot in FILTERS_RSI:
                 doc["filters_rsi"] = 1
             if fam == "filters" and bot in FILTERS_VIDEO:
-                doc["filters_video"] = 1
+                doc["filters_video"] = FILTERS_VIDEO_V
             st.put(fam, c, doc)
             done += 1
         print(f"  {sym} {fam}: {len(combos)} combos ({time.time() - ts:.0f}s)")

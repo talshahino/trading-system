@@ -99,7 +99,7 @@ def _regimes(df):
         "vol_high": (pr >= 0.5, pr >= 0.5),
         "vol_low": (pr < 0.5, pr < 0.5),
         **_extra_regimes(c),
-        **R.video_regimes(h, l, c),
+        **R.video_regimes(h, l, c, df["o"].to_numpy()),
     }
 
 

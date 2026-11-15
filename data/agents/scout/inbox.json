@@ -10418,6 +10418,1042 @@
     "bot6"
    ],
    "rules": "5 confirmed swings (k 3) with 3 beyond 1, 4 inside, 5 beyond 3 at the 1-3 line; stop past 5; target the 1-4 line."
+  },
+  {
+   "id": "SC406",
+   "name": "CM Williams Vix Fix: fear spike ends + close over the prior high (inverse for tops), 5-bar stop, 2R",
+   "source": "CM Williams Vix Fix (ChrisMoody, TradingView open source) + Bottoms and Tops version",
+   "url": "https://www.tradingview.com/script/og7JPrRA-CM-Williams-Vix-Fix-Finds-Market-Bottoms/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "CM Williams Vix Fix (ChrisMoody, open source; Larry Williams' synthetic VIX): WVF = (highest close 22 - low) / highest close 22 x 100; a 'fear spike' when WVF >= its BB 20/2 upper band or >= 0.85 x its 50-bar high. Moody's use: buy when the spike bars END - ours: a spike in the last 3 bars, none on this bar, and a close over the prior bar's high. Tops: the inverse Vix Fix ('Williams Vix Fix Bottoms and Tops') mirrored for shorts. Stop 0.1 ATR beyond the 5-bar extreme, target 2R (the scripts are signals only - stop / target are the library standard)."
+  },
+  {
+   "id": "SC407",
+   "name": "Bollinger BBTrend crosses zero with the close past the 20 middle, out on the cross back, 2 ATR",
+   "source": "BBTrend (John Bollinger, 2024; TradingView help)",
+   "url": "https://www.tradingview.com/support/solutions/43000726749/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "John Bollinger's BBTrend (2024): (|lower20 - lower50| - |upper20 - upper50|) / middle20 x 100 - positive = the fast bands expand downward less than upward (up trend). Bollinger: a reading crossing zero marks the trend change. Ours: long when BBTrend crosses over 0 with the close over the 20-bar middle band, out when it crosses back under 0 (mirror for shorts); stop 2 ATR, no fixed target."
+  },
+  {
+   "id": "SC408",
+   "name": "Khalil VZO trend: ADX > 18 + EMA60 side, VZO back over 0 after < -40, zone exits, 2 ATR",
+   "source": "Walid Khalil, 'Trending or Nontrending?' TASC 2011.05 (VZO)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2011/05/Khalil.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Walid Khalil, 'Trending or Nontrending?' (TASC 2011.05), Volume Zone Oscillator in a trend (ADX14 > 18, close over / under the EMA60): buy when the VZO, after a dip under -40 in the last 10 bars, crosses back over 0; out when it falls under -5, or under +40 after having been over +60 (Khalil's zones +/-5, 40, 60). Mirror for shorts. Stop 2 ATR (ours - the article exits on the oscillator only)."
+  },
+  {
+   "id": "SC409",
+   "name": "Khalil VZO range: ADX < 18, VZO back over -40 (under +40), out at the opposite 40, 2 ATR",
+   "source": "Walid Khalil, TASC 2011.05 (VZO, non-trending rules)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2011/05/Khalil.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Khalil (TASC 2011.05), the non-trending market (ADX14 < 18): buy when the VZO crosses back over -40 (oversold), sell at +40; mirror for shorts (cross back under +40, cover at -40). Stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC410",
+   "name": "Khalil Price Zone Oscillator range: ADX < 18, back over -40 / under +40, out at the opposite 40",
+   "source": "Walid Khalil Price Zone Oscillator (thinkorswim PriceZoneOscillatorLX/SE)",
+   "url": "https://toslc.thinkorswim.com/center/reference/Tech-Indicators/strategies/L-P/PriceZoneOscillatorLX",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Khalil's Price Zone Oscillator (TASC 2011 companion of the VZO; thinkorswim PriceZoneOscillatorLX/SE) in the non-trending market: ADX14 < 18, buy on the PZO back over -40, out at +40; mirror. Stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC411",
+   "name": "Twiggs Money Flow 21 zero cross after 10 bars on the other side, rising EMA50 side, 2 ATR, 2R",
+   "source": "Twiggs Money Flow (incrediblecharts.com)",
+   "url": "https://www.incrediblecharts.com/indicators/twiggs_money_flow.php",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Twiggs Money Flow 21 (Colin Twiggs, incrediblecharts.com): a CMF built on the true range with Wilder smoothing. Twiggs trades the zero line in the trend's direction - ours: TMF crosses over 0 after 10+ bars under it while the close is over a rising EMA50 (mirror), stop 2 ATR, 2R. Differs from SC271 (CMF 20, plain high-low location, negative-run stop)."
+  },
+  {
+   "id": "SC412",
+   "name": "Relative Momentum Index 14/5 back over 30 / under 70 on the EMA200 side, 1.5 ATR, 2R (Altman)",
+   "source": "Relative Momentum Index (Altman, TASC 1993; LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/relative-momentum-index/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Relative Momentum Index 14 / 5 (Roger Altman, TASC 1993): the RSI of the 5-bar momentum. Altman's overbought / oversold 70 / 30 - ours: back over 30 on the EMA200's up side (back under 70 under it), 1.5 ATR stop, 2R."
+  },
+  {
+   "id": "SC413",
+   "name": "DecisionPoint PMO signal cross under zero (over zero for shorts), opposite-cross exit, 2 ATR, 2R",
+   "source": "DecisionPoint PMO (StockCharts ChartSchool)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/decisionpoint-price-momentum-oscillator-pmo",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "DecisionPoint Price Momentum Oscillator 35/20 with its EMA10 signal (Carl Swenlin, StockCharts ChartSchool): a PMO crossover of the signal line BELOW zero = buy (above zero for the sell), exit on the opposite crossover. Stop 2 ATR, target 2R (ours)."
+  },
+  {
+   "id": "SC414",
+   "name": "Tillson T3(8) / T3(21) cross, out on the cross back, 2 ATR",
+   "source": "T3 Averages Strategy (TradingView open source; Tillson T3)",
+   "url": "https://www.tradingview.com/script/J7vActDK-T3-Averages-Strategy/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Tillson T3 (TASC 1998, volume factor 0.7) crossover, as in TradingView's 'T3 Averages Strategy': T3(8) crosses T3(21) - long over, short under, out on the cross back. Stop 2 ATR, no fixed target (the published script is always-in)."
+  },
+  {
+   "id": "SC415",
+   "name": "Absolute Strength Histogram 9/3 bulls / bears cross, reverse-cross exit, 2 ATR",
+   "source": "Absolute Strength Histogram (MQL5 codebase)",
+   "url": "https://www.mql5.com/en/code/21429",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Absolute Strength Histogram (RSI method, 9 / 3; MQL5 codebase / backtrader recipe): buy when the smoothed bulls cross over the smoothed bears, sell on the opposite cross (the original's signals), out on the reverse cross. Stop 2 ATR, no fixed target."
+  },
+  {
+   "id": "SC416",
+   "name": "Trendilo ALMA-50 % change over / under its RMS band, out through zero, 2 ATR (dudeowns)",
+   "source": "Trendilo (dudeowns, TradingView open source)",
+   "url": "https://www.tradingview.com/script/h5kMWewu-Trendilo-OPEN-SOURCE/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Trendilo (dudeowns, open source): ALMA 50 of the bar % change against its RMS band - over the band = up trend, under minus the band = down trend. Ours: enter when the trend turns +1 / -1, out when the smoothed change crosses zero against the trade; stop 2 ATR, no fixed target."
+  },
+  {
+   "id": "SC417",
+   "name": "Darvas box breakout / breakdown, stop past the box, 2R",
+   "source": "Darvas box (Darvas 1960; TradingView Advanced Intraday Darvas Box)",
+   "url": "https://www.tradingview.com/script/hZV01YX6-Advanced-Intraday-Darvas-Box/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Nicolas Darvas' box (1960): top = a 20-bar high not exceeded for 3 bars, bottom = the lowest low after it not broken for 3 bars; buy the close over the top of a complete box, stop 0.1 ATR under the box bottom (Darvas' stop), target 2R (ours - Darvas trailed into the next box). Breakdown under the bottom = the short mirror (ours)."
+  },
+  {
+   "id": "SC418",
+   "name": "VSA no-supply (no-demand) test in the trend, close past its high (low) within 2 bars, 2R",
+   "source": "VSA no supply / no demand (Tom Williams; TradingView NSND open source)",
+   "url": "https://www.tradingview.com/script/OBV1KONK-No-Supply-No-Demand-NSND-Volume-Spread-Analysis-Tool/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "VSA (Tom Williams, 'Master the Markets'): a no-supply bar (down bar, below-average true-range spread, volume under the two previous bars) inside an up trend = professionals not selling; buy when a following bar (within 2) closes over its high. Stop 0.1 ATR under the no-supply bar, 2R. Mirror: no-demand bar in a down trend. Trend = close over a rising EMA50 (ours). Tick volume."
+  },
+  {
+   "id": "SC419",
+   "name": "VSA upthrust / spring on high volume, next close past its low (high), bar stop, 2R",
+   "source": "VSA upthrust / spring (TAC VSA, ProRealCode)",
+   "url": "https://www.prorealcode.com/prorealtime-indicators/tac-vsa-volume-spread-analysis-2",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "VSA upthrust / spring: a new 20-bar high on high volume (> 1.5 x average) that closes back under the broken high = upthrust; sell when the next bar closes under the upthrust bar's low, stop 0.1 ATR over its high, 2R. Spring (shakeout) = mirror for longs."
+  },
+  {
+   "id": "SC420",
+   "name": "Round '00' level rejection (unbroken 20 bars, wick >= body), stop 0.5 ATR past the level, 2R",
+   "source": "Psychological levels (BabyPips; DailyFX round numbers)",
+   "url": "https://www.babypips.com/learn/forex/psychological-level",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Psychological round levels (BabyPips / DailyFX 'psychological levels and round numbers'): a touch of a '00' level that no close has gone through in the last 20 bars, rejected - low within 0.05 ATR of the level under the previous close, close back over it, a bullish rejection candle (lower wick >= the body and >= 30% of the range); stop 0.5 ATR under the level (or 0.1 ATR under the low if lower), 2R. Mirror at the level over. OUR translation of '00' to every instrument: step = 10^(digits - 2) of the price (EURUSD 0.01, USDJPY 1, gold 10, US100 100)."
+  },
+  {
+   "id": "SC421",
+   "name": "Round '00' level break and retest in 3-20 bars, stop 0.5 ATR past the level, 2R",
+   "source": "Psychological levels & round numbers (IG / DailyFX)",
+   "url": "https://www.dailyfx.com/education/support-and-resistance/psychological-levels-and-round-numbers.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Round level break and retest (BabyPips psychological levels; IG 'Psychological Levels & Round Numbers'): a close through a '00' level, then within 3-20 bars a pull back that touches it (0.1 ATR) and closes away in the break's direction; stop 0.5 ATR beyond the level, 2R. Same level step as SC420."
+  },
+  {
+   "id": "SC422",
+   "name": "ADR exhaustion fade: >= 100% of ADR14 used, day-extreme reversal close, target the day mid, flat 21 UTC",
+   "source": "How to use the Average Daily Range (FXStreet)",
+   "url": "https://www.fxstreet.com/education/how-to-use-the-average-daily-range-when-trading-forex-201610051529",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "ADR exhaustion fade (FXStreet 'How to use the Average Daily Range'; forex-station / MQL5 ADR fade): once the day has used >= 100% of its 14-day ADR, a bar that makes the day's extreme and then a reversal close (back under the previous bar's low for a short) fades toward the day's middle. Stop 0.2 ATR beyond the day extreme, target the running day mid; flat at 21:00 UTC (the forex day end). Intraday, UTC days."
+  },
+  {
+   "id": "SC423",
+   "name": "NY 15-min ORB only while < 60% of ADR14 is used, range stop, 2R, flat 16:00 NY",
+   "source": "ADR room rule (NexusFi ADR; FXStreet) on the NY 15-min ORB",
+   "url": "https://nexusfi.com/a/indicators/average-daily-range-adr",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "New York 15-minute opening range (09:30-09:45) breakout only while the day has used < 60% of its ADR at the break (the ADR 'room left' rule of FXStreet / NexusFi ADR guides): close through the range, stop at the other side, 2R, flat 16:00 NY, first break per day. Differs from SS01 by the ADR filter."
+  },
+  {
+   "id": "SC424",
+   "name": "ICT CBDR: 20-11 NY rejection of CBDR +/- 2 SD, stop past 3 SD, target the CBDR edge, flat 16:00",
+   "source": "ICT Central Bank Dealers Range (CBDR Deviations, TradingView open source)",
+   "url": "https://www.tradingview.com/script/DtiFgMfL-CBDR-Deviations-M1D/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "ICT Central Bank Dealers Range (Mentorship month 8; 'CBDR Deviations' open source): the 14:00-20:00 NY range projects the next day's extremes at 1-4 standard deviations (one SD = the range's height). Ours: from 20:00 NY (Asia) to 11:00 NY (London / NY morning), a bar that trades through CBDR high + 2 SD and closes back under it = short, stop 0.1 ATR over the 3 SD level or the bar high (the higher), target the CBDR high; mirror under CBDR low - 2 SD. Flat 16:00 NY."
+  },
+  {
+   "id": "SC425",
+   "name": "Street Smarts Whiplash (NY cash sessions): gap past the prior extreme, close in the other half, next session, 2R",
+   "source": "Street Smarts Whiplash (Raschke & Connors; cryptodatadownload port)",
+   "url": "https://www.cryptodatadownload.com/blog/posts/whiplash-trading-strategy-cryptocurrency-python/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Whiplash (Raschke & Connors, 'Street Smarts' 1995, a daily S&P pattern; cryptodatadownload.com port): the session opens with a gap under the previous session's low and closes in the top half of its range (over its open) = buy the next session's open, sell at that session's close (as published); mirror for a gap over the previous high that closes in the lower half. Ours: sessions = New York cash hours 09:30-16:00 on intraday bars (the signal sits on the bar before the next 09:30 open, so the entry is that open), stop 0.1 ATR beyond the signal session's extreme, target 2R, flat 16:00 NY."
+  },
+  {
+   "id": "SC428",
+   "name": "Street Smarts Turtle Soup Plus One: close at a new 20-bar low, next close back over the old low, 2R",
+   "source": "Turtle Soup Plus One (Street Smarts; TradingView idea)",
+   "url": "https://www.tradingview.com/chart/RWC/swV5nnkS-Turtle-soup-plus-1-reversal-of-new-20-day-low/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Turtle Soup Plus One (Raschke & Connors, 'Street Smarts'): the previous bar CLOSED at a new 20-bar low, the prior 20-bar low having been set at least 3 bars before; this bar closes back over that earlier 20-bar low = buy; stop 0.1 ATR under the lower of the two bars' lows, target 2R (the book: trail, partial at 1-2 days). Mirror for the high. Differs from SS13 (Turtle Soup: same-bar re-entry, no close beyond required)."
+  },
+  {
+   "id": "SC429",
+   "name": "Joe Ross 1-2-3 reversal: close through point 2, stop under point 3, 2R",
+   "source": "Joe Ross 1-2-3 reversal (LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/1-2-3-reversal/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Joe Ross 1-2-3 reversal (tradingeducators.com; LuxAlgo '1-2-3 Reversal'): point 1 = a 30-bar swing low, 2 = the swing high after it, 3 = a higher swing low (all confirmed, k 3); buy on the close through point 2, stop 0.1 ATR under point 3, target 2R. Mirror for tops."
+  },
+  {
+   "id": "SC430",
+   "name": "Joe Ross hook after the 1-2-3 break: close through the hook, stop under the pullback, 2R",
+   "source": "Ross hook (FXOpen)",
+   "url": "https://fxopen.com/blog/en/how-to-trade-with-a-ross-hook-pattern",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ross hook (Joe Ross; FXOpen 'How to Trade with a Ross Hook Pattern'): after the 1-2-3 break, the first bar that fails to make a new high forms the hook; buy on the close through the hook high, stop 0.1 ATR under the lowest low since the hook, target 2R. Mirror."
+  },
+  {
+   "id": "SC431",
+   "name": "Three Line Break reversal on the EMA50 side, out on the opposite reversal, 2 ATR (Nison)",
+   "source": "Three Line Break Backtest (TradingView open source; Nison)",
+   "url": "https://www.tradingview.com/script/osNKt5nz-Three-Line-Break-Backtest/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Three Line Break (Steve Nison, 'Beyond Candlesticks'; TradingView 'Three Line Break Backtest' open source): trade the reversal - a close beyond the extreme of the last 3 lines - in the EMA50's direction, out on the opposite reversal; stop 2 ATR, no fixed target."
+  },
+  {
+   "id": "SC432",
+   "name": "Point & Figure double-top buy / double-bottom sell, 3-box reversal, box 0.5 ATR50, column stop, 2R",
+   "source": "Point & Figure double top / bottom (LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/point-and-figure/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Point & Figure double-top buy / double-bottom sell (3-box reversal on closes, box 0.5 x ATR50 fixed when a column starts - our translation of a fixed box; LuxAlgo 'Point & Figure', StockCharts P&F): buy when an X column rises over the previous X column's top, stop 0.1 ATR under the current column's bottom (the column start), target 2R. Mirror."
+  },
+  {
+   "id": "SC433",
+   "name": "Ehlers Ultimate Oscillator 2025 zero cross, out on the cross back, 2 ATR (TASC 2025.04)",
+   "source": "Ehlers 'The Ultimate Oscillator', TASC 2025.04 Traders' Tips",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/04/TradersTips.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers 'The Ultimate Oscillator' (TASC 2025.04; Wealth-Lab rule in the Traders' Tips): buy when the UO crosses over zero, exit when it crosses back under; mirror for shorts (ours). Stop 2 ATR, no fixed target."
+  },
+  {
+   "id": "SC434",
+   "name": "Ehlers UltimateSmoother 40 cross of the Laguerre filter 0.8, cross-back exit, 2 ATR (TASC 2025.07)",
+   "source": "Ehlers 'Laguerre Filters', TASC 2025.07 Traders' Tips",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/07/TradersTips.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers 'Laguerre Filters' (TASC 2025.07; Wealth-Lab rule): long when the UltimateSmoother(40) crosses over the Laguerre filter (gamma 0.8), exit when it crosses under; mirror for shorts (ours). Stop 2 ATR."
+  },
+  {
+   "id": "SC435",
+   "name": "Ehlers Laguerre oscillator turn from beyond -2 / +2 SD, 3% stop, filter-cross exit (TASC 2025.07)",
+   "source": "Ehlers 'Laguerre Filters', TASC 2025.07 (Wealth-Lab oscillator rule)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/07/TradersTips.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers Laguerre oscillator (TASC 2025.07; Wealth-Lab rule): buy when the RMS-normalised oscillator turns up from under -2 (Wealth-Lab: between -2 and -3 SD), 3% stop as published, exit when the UltimateSmoother crosses under the Laguerre filter. Mirror (turn down from over +2) for shorts - ours."
+  },
+  {
+   "id": "SC436",
+   "name": "Ehlers Continuation Index through +/-0.5, out through 0, 2 ATR (TASC 2025.09)",
+   "source": "Ehlers 'The Continuation Index', TASC 2025.09",
+   "url": "https://www.tradingview.com/script/5ZrOut79-TASC-2025-09-The-Continuation-Index/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers 'The Continuation Index' (TASC 2025.09): CI over +0.5 = a strong trend that should continue. The article gives no trade rule - ours: buy when CI crosses over +0.5, out when it falls under 0; mirror under -0.5. Stop 2 ATR, no fixed target."
+  },
+  {
+   "id": "SC437",
+   "name": "Ehlers One Euro oscillator zero cross with the filter slope, 2 ATR, 2R (TASC 2025.12)",
+   "source": "Ehlers 'The One Euro Filter', TASC 2025.12",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/12/TradersTips.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers 'The One Euro Filter' (TASC 2025.12): the oscillator (filter of HP54) crossing zero while the One Euro filter of the close slopes the same way. No rule in the article - ours: 2 ATR stop, 2R target."
+  },
+  {
+   "id": "SC438",
+   "name": "Ehlers projected MA 20 turns up / down, out on the opposite turn, 2 ATR (TASC 2025.03)",
+   "source": "Ehlers 'Removing Moving Average Lag', TASC 2025.03 (Wealth-Lab rule)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/03/TradersTips.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers 'Removing Moving Average Lag' (TASC 2025.03; Wealth-Lab rule): enter when the projected moving average (PMA 20) turns up, exit when it turns down; mirror for shorts (ours). Stop 2 ATR, no fixed target."
+  },
+  {
+   "id": "SC439",
+   "name": "Ehlers PMA predict line crosses the PMA, cross-back exit, 2 ATR (TASC 2025.03)",
+   "source": "Ehlers 'Removing Moving Average Lag', TASC 2025.03 (Python signal)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/03/TradersTips.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers 'Removing Moving Average Lag' (TASC 2025.03; the Python listing's signal): long while Predict > PMA - ours: enter on the cross over, out on the cross under; mirror. Stop 2 ATR."
+  },
+  {
+   "id": "SC440",
+   "name": "Ehlers Trendflex zero cross confirmed by Reflex, out through zero, 2 ATR (TASC 2020.02)",
+   "source": "Ehlers Reflex / Trendflex, TASC 2020.02 (ProRealCode port)",
+   "url": "https://www.prorealcode.com/prorealtime-indicators/reflex-and-trendflex-indicators-john-f-ehlers/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers Reflex / Trendflex (TASC 2020.02, 'Reflex: A New Zero-Lag Indicator'): Trendflex crosses zero (trend) while Reflex (cycle) is on the same side; out when Trendflex crosses back. Ehlers gives the zero crossings as the signals; the confirmation, 2 ATR stop and exit are ours."
+  },
+  {
+   "id": "SC441",
+   "name": "Zarattini ORB: first 5-min candle's direction, break of it, stop 10% of daily ATR, flat 16:00, RVOL >= 1",
+   "source": "Zarattini, Barbon & Aziz 2024, 'A Profitable Day Trading Strategy for the U.S. Equity Market' (QuantConnect)",
+   "url": "https://www.quantconnect.com/research/18444/opening-range-breakout-for-stocks-in-play/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Zarattini, Barbon & Aziz, 'A Profitable Day Trading Strategy for the U.S. Equity Market' (SSRN / Swiss Finance Institute 2024; QuantConnect 'Opening Range Breakout for Stocks in Play'): the first 5-minute candle from 09:30 NY sets the direction (bullish -> only longs, bearish -> only shorts); entry when price breaks its high (low) - ours on the close through it, next open; stop 10% of the 14-day ATR (ours: the 14-day average range, agents/indicators adr) from the entry; no target, flat at 16:00 NY. 'Stocks in play' = relative volume of that first candle >= 1 (ours: the bar's volume vs the same"
+  },
+  {
+   "id": "SC442",
+   "name": "Zarattini ORB with first-candle RVOL >= 2 (stocks in play), stop 10% of daily ATR, flat 16:00",
+   "source": "Zarattini, Barbon & Aziz 2024 (RVOL >= 2 variant)",
+   "url": "https://concretumgroup.com/a-profitable-day-trading-strategy-for-the-u-s-equity-market/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SC441 with a strict 'in play' filter: first-candle relative volume >= 2 (the paper ranks by RVOL; the top-20 names typically exceed 2x)."
+  },
+  {
+   "id": "SC443",
+   "name": "ICT macro FVG: gap formed inside a macro window, return entry, gap stop, 2R",
+   "source": "ICT Macros (LuxAlgo, TradingView open source)",
+   "url": "https://www.tradingview.com/script/aLTywnJ0-ICT-Macros-LuxAlgo/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "ICT macros (LuxAlgo 'ICT Macros', TradingFinder 'ICT Macro Times'): the algorithm's 20-30 minute delivery windows (02:33-03:00, 04:03-04:30, 08:50-09:10, 09:50-10:10, 10:50-11:10, 11:50-12:10, 13:10-13:40, 15:15-15:45 NY). Only a fair value gap whose third candle closes inside a macro is traded: return into the gap and close back out of it, stop 0.1 ATR beyond the gap, 2R (the library's FVG entry, TV10 / SC250). Best on 1-5 minute bars."
+  },
+  {
+   "id": "SC444",
+   "name": "Fractal Chaos Bands breakout with the EMA50 slope, band / 2 ATR stop, 2R",
+   "source": "Fractal Chaos Bands (Edward Dobson)",
+   "url": "https://www.tradingview.com/script/U1iz6Mxb-Fractal-Chaos-Bands/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Fractal Chaos Bands (Edward Dobson): the last confirmed fractal high / low as bands; a close over the upper band with the EMA50 rising = trend breakout (mirror). Stop at the lower band when it is 0.5-3 ATR away, else 2 ATR; target 2R. Differs from SC002 (no Alligator, fractal bands only)."
+  },
+  {
+   "id": "SC445",
+   "name": "Kairi 25 beyond 2.5 sd of itself and back, target the SMA25, 1.5 ATR stop",
+   "source": "Kairi Relative Index (Investopedia)",
+   "url": "https://www.investopedia.com/terms/k/kairi.asp",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Kairi Relative Index 25 (Japanese classic; Investopedia 'Kairi'): an extreme deviation from the SMA25 reverts. Ours (the classic fixed % thresholds depend on the market): Kairi under -2.5 x its 200-bar standard deviation, then a close back over that line = buy, target the SMA25, stop 1.5 ATR; mirror."
+  },
+  {
+   "id": "SC446",
+   "name": "Order block touched twice -> breakaway gap + iFVG away -> trade the gap's return, OB stop, 2R (TikTok idea)",
+   "source": "ICT & SMC CHARTIST (TikTok) - explorer idea TT-s-gap-ictchartist",
+   "url": "https://www.tiktok.com/search/video?q=gap%20strategy",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Explorer idea TT-s-gap-ictchartist (ICT & SMC CHARTIST, TikTok): a higher-timeframe order block touched twice, then a breakaway gap away from it plus an inverted FVG -> sell the bearish FVG (buy the bullish mirror), stop over the high, target the old low. Ours: the block = the latest live order block from swings k 5 (agents/indicators smc; run the strategy on the higher chart for the 'HTF' block), two separate touches (bars entering the block after leaving it), then a breakaway gap (candle 3 closes beyond candle 2, agents/indicators gap_type) in the direction away from the block with an iFVG i",
+   "explorer_idea": "TT-s-gap-ictchartist"
+  },
+  {
+   "id": "SC447",
+   "name": "Valid order block (sweep + FVG + BMS), entry at the near wick, far-wick stop, 2R (TikTok idea)",
+   "source": "ICT & SMC CHARTIST (TikTok) - explorer idea TT-s-obvalid-ictchartist",
+   "url": "https://www.tiktok.com/search/video?q=order%20block",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Explorer idea TT-s-obvalid-ictchartist (ICT & SMC CHARTIST, TikTok): an order block counts only if (1) it swept the previous swing high, (2) the move away left an FVG, (3) price closed below the last low (BMS) - mirror for bullish (agents/indicators valid_ob, swings k 3). Entry at the block's near wick (first touch), on a close back away from it; stop 0.1 ATR beyond the block's far wick; target 2R (not in the caption). One trade per block.",
+   "explorer_idea": "TT-s-obvalid-ictchartist"
+  },
+  {
+   "id": "SC448",
+   "name": "Valid order block (sweep + FVG + BMS), entry at the OB open, 2R (TikTok idea)",
+   "source": "ICT & SMC CHARTIST (TikTok) - explorer idea TT-s-obvalid-ictchartist",
+   "url": "https://www.tiktok.com/search/video?q=order%20block",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TT-s-obvalid-ictchartist, entry at the order-block candle's open (the 'body' entry); as SC447 otherwise.",
+   "explorer_idea": "TT-s-obvalid-ictchartist"
+  },
+  {
+   "id": "SC449",
+   "name": "Valid order block (sweep + FVG + BMS), entry at the 50%, 2R (TikTok idea)",
+   "source": "ICT & SMC CHARTIST (TikTok) - explorer idea TT-s-obvalid-ictchartist",
+   "url": "https://www.tiktok.com/search/video?q=order%20block",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TT-s-obvalid-ictchartist, entry at the block's 50% (mean threshold); as SC447 otherwise.",
+   "explorer_idea": "TT-s-obvalid-ictchartist"
+  },
+  {
+   "id": "SC450",
+   "name": "FVG return only when candle 3 closes inside candle 2 (a true FVG, not breakaway), 2R (TikTok idea)",
+   "source": "Adem OnChain (TikTok) - explorer idea TT-s-fvg-vs-breakaway",
+   "url": "https://www.tiktok.com/search/video?q=fair%20value%20gap",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Explorer idea TT-s-fvg-vs-breakaway (Adem OnChain, TikTok; TradingView 'FVG Breakaway/3rd Candle (Arjo)'): when candle 3 closes INSIDE candle 2's range the gap is a fair value gap and a retest comes first - only those gaps are traded on the return (close back out of the gap, stop 0.1 ATR beyond it, 2R, library FVG entry).",
+   "explorer_idea": "TT-s-fvg-vs-breakaway"
+  },
+  {
+   "id": "SC451",
+   "name": "Breakaway gap (candle 3 closes past candle 2): enter at once, stop past candle 1, 2R (TikTok idea)",
+   "source": "Adem OnChain (TikTok) - explorer idea TT-s-fvg-vs-breakaway; FVG Breakaway/3rd Candle (Arjo)",
+   "url": "https://www.tradingview.com/script/KmrRBv0v-FVG-Breakaway-3rd-Candle-Arjo-MK/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Explorer idea TT-s-fvg-vs-breakaway: when candle 3 closes BEYOND candle 2's extreme it is a breakaway gap - a strong move without a retest, so do not wait: enter on the next open in the gap's direction, stop 0.1 ATR beyond candle 1 (the gap's far side), target 2R (ours).",
+   "explorer_idea": "TT-s-fvg-vs-breakaway"
+  },
+  {
+   "id": "SC452",
+   "name": "Sweep reversal only of a significant swing (grade >= 2 of 5), sweep-bar stop, 2R (TikTok idea)",
+   "source": "itsnathanoreilly (TikTok) - explorer idea TT-s-swing-significance",
+   "url": "https://www.tiktok.com/search/video?q=liquidity%20sweep",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Explorer idea TT-s-swing-significance (itsnathanoreilly, TikTok: 'not every swing high is equally important for a liquidity sweep'): sweep-and-close-back reversal only when the swept swing grades >= 2 (agents/indicators swing_grade: +1 30-bar extreme, +1 equal highs, +1 prior-day level, +1 age 50+ bars); stop 0.1 ATR beyond the sweep bar, 2R.",
+   "explorer_idea": "TT-s-swing-significance"
+  },
+  {
+   "id": "SC453",
+   "name": "Sweep reversal only of a significant swing (grade >= 3 of 5), sweep-bar stop, 2R (TikTok idea)",
+   "source": "itsnathanoreilly (TikTok) - explorer idea TT-s-swing-significance",
+   "url": "https://www.tiktok.com/search/video?q=liquidity%20sweep",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TT-s-swing-significance with the stricter threshold: grade >= 3.",
+   "explorer_idea": "TT-s-swing-significance"
+  },
+  {
+   "id": "SC454",
+   "name": "TTrades 4H Power of Three: 4H open run takes the prior 4H extreme, close back over the open, flat at 4H end",
+   "source": "TTrades 'Trading the 4 Hour Power Of Three - OHLC' - explorer idea TT-s-po3-4h-ttrades",
+   "url": "https://briefread.pages.dev/en/summary/trading-the-4-hour-power-of",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Explorer idea TT-s-po3-4h-ttrades (TTrades, 'Trading the 4 Hour Power Of Three - OHLC'): every New-York-aligned 4H candle = accumulation at its open, manipulation beyond the open that takes the previous 4H candle's low (high), distribution the other way. Entry on the lower chart: after the run under the 4H open has taken the previous 4H low, a close back over the 4H open = buy; stop 0.1 ATR under the manipulation low, target the previous 4H high when it is >= 1R away (else 2R - ours), flat on the 4H candle's last bar; one trade per 4H candle. Mirror. Differs from SC307 (daily PO3 on the NY mid",
+   "explorer_idea": "TT-s-po3-4h-ttrades"
   }
  ],
  "indicators": [
@@ -11498,6 +12534,244 @@
    "url": "https://www.tradingview.com/scripts/tdsequential/",
    "added": "2026-11-15",
    "uses": "exhaustion count entry (SC403)"
+  },
+  {
+   "name": "ehlers_uo",
+   "source": "Ehlers Ultimate Oscillator 2025: HP(40) - HP(20) of the close / RMS100 (not Williams' UO)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/04/TradersTips.html",
+   "added": "2026-11-15",
+   "uses": "zero-cross trend filter / entry (SC433); exit when it flips"
+  },
+  {
+   "name": "laguerre_filter",
+   "source": "Ehlers Laguerre filter (UltimateSmoother 40, gamma 0.8) + Laguerre oscillator (30, 0.5) / RMS",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/07/TradersTips.html",
+   "added": "2026-11-15",
+   "uses": "US-vs-Laguerre cross entry / trailing exit (SC434); oscillator extremes for pullback entries (SC435)"
+  },
+  {
+   "name": "continuation_index",
+   "source": "Ehlers Continuation Index: tanh(2 (US20 - Laguerre8 of US40) / mean dev 40), -1..1",
+   "url": "https://www.tradingview.com/script/5ZrOut79-TASC-2025-09-The-Continuation-Index/",
+   "added": "2026-11-15",
+   "uses": "trend-continuation filter: only trend entries while |CI| > 0.5 (SC436)"
+  },
+  {
+   "name": "one_euro",
+   "source": "One Euro filter (Casiez 2012, Ehlers TASC 2025.12): adaptive EMA, cutoff 10 + 0.2 |change|; oscillator on HP54",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/12/TradersTips.html",
+   "added": "2026-11-15",
+   "uses": "low-lag adaptive baseline and oscillator (SC437); smoother exits"
+  },
+  {
+   "name": "pma_predict",
+   "source": "Ehlers projected MA 20 (SMA + OLS slope x L/2) and its predict line (TASC 2025.03)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/03/TradersTips.html",
+   "added": "2026-11-15",
+   "uses": "zero-lag MA turns as entry / exit (SC438, SC439)"
+  },
+  {
+   "name": "reflex_trendflex",
+   "source": "Ehlers Reflex / Trendflex 20 (TASC 2020.02): zero-lag cycle / trend oscillators",
+   "url": "https://www.prorealcode.com/prorealtime-indicators/reflex-and-trendflex-indicators-john-f-ehlers/",
+   "added": "2026-11-15",
+   "uses": "trend vs cycle split: Trendflex for direction, Reflex for timing (SC440)"
+  },
+  {
+   "name": "two_pole_predict",
+   "source": "Ehlers simple 2-pole predictor of SS(HP(close, 15), 30), Q 0.35 (TASC 2025.01)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2025/01/TradersTips.html",
+   "added": "2026-11-15",
+   "uses": "early turn filter: band-passed price vs its forward estimate (filter idea for pullback entries)"
+  },
+  {
+   "name": "vix_fix",
+   "source": "CM Williams Vix Fix 22 with BB 20/2 and 0.85 x 50-bar high alerts; inverse version for tops",
+   "url": "https://www.tradingview.com/script/og7JPrRA-CM-Williams-Vix-Fix-Finds-Market-Bottoms/",
+   "added": "2026-11-15",
+   "uses": "fear-spike bottom / top filter for mean-reversion entries (SC406)"
+  },
+  {
+   "name": "bbtrend",
+   "source": "John Bollinger BBTrend (2024): (|lower20 - lower50| - |upper20 - upper50|) / mid20 x 100",
+   "url": "https://www.tradingview.com/support/solutions/43000726749/",
+   "added": "2026-11-15",
+   "uses": "Bollinger trend-strength filter; zero cross entry (SC407)"
+  },
+  {
+   "name": "vzo",
+   "source": "Volume Zone Oscillator 14 (Khalil, TASC 2011): 100 EMA(sign x tick volume) / EMA(volume)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2011/05/Khalil.html",
+   "added": "2026-11-15",
+   "uses": "volume-zone trend / range entries and exits (SC408, SC409)"
+  },
+  {
+   "name": "pzo",
+   "source": "Price Zone Oscillator 14 (Khalil): the VZO with the close instead of the volume",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2011/05/Khalil.html",
+   "added": "2026-11-15",
+   "uses": "price-zone range entries (SC410)"
+  },
+  {
+   "name": "twiggs_mf",
+   "source": "Twiggs Money Flow 21: true-range close location x volume, Wilder smoothing",
+   "url": "https://www.incrediblecharts.com/indicators/twiggs_money_flow.php",
+   "added": "2026-11-15",
+   "uses": "money-flow confirmation for breakouts (SC411)"
+  },
+  {
+   "name": "rmi",
+   "source": "Relative Momentum Index 14 / 5 (Altman): RSI of the 5-bar momentum",
+   "url": "https://www.luxalgo.com/library/concept/relative-momentum-index/",
+   "added": "2026-11-15",
+   "uses": "momentum-based RSI variant for pullbacks (SC412)"
+  },
+  {
+   "name": "pmo",
+   "source": "DecisionPoint Price Momentum Oscillator 35/20 with EMA10 signal (Swenlin)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/decisionpoint-price-momentum-oscillator-pmo",
+   "added": "2026-11-15",
+   "uses": "momentum cross entries / exits (SC413)"
+  },
+  {
+   "name": "t3",
+   "source": "Tillson T3 moving average (6 EMAs, volume factor 0.7)",
+   "url": "https://www.luxalgo.com/library/concept/t3/",
+   "added": "2026-11-15",
+   "uses": "smooth low-lag MA for crosses / trailing (SC414)"
+  },
+  {
+   "name": "alma",
+   "source": "Arnaud Legoux moving average 9 / 0.85 / 6",
+   "url": "https://www.tradingview.com/support/solutions/43000594683-arnaud-legoux-moving-average/",
+   "added": "2026-11-15",
+   "uses": "low-lag baseline for any MA-cross / pullback rule (used inside trendilo)"
+  },
+  {
+   "name": "ash",
+   "source": "Absolute Strength Histogram (RSI method) 9 / 3: smoothed bulls vs bears",
+   "url": "https://www.mql5.com/en/code/21429",
+   "added": "2026-11-15",
+   "uses": "bulls vs bears trend filter (SC415)"
+  },
+  {
+   "name": "trendilo",
+   "source": "Trendilo: ALMA 50 of the % change vs its RMS band, trend +1 / -1 / 0 (dudeowns)",
+   "url": "https://www.tradingview.com/script/h5kMWewu-Trendilo-OPEN-SOURCE/",
+   "added": "2026-11-15",
+   "uses": "trend state filter +1 / -1 / 0 (SC416)"
+  },
+  {
+   "name": "kairi",
+   "source": "Kairi Relative Index: % distance of the close from its SMA25",
+   "url": "https://www.investopedia.com/terms/k/kairi.asp",
+   "added": "2026-11-15",
+   "uses": "stretch-from-the-mean filter (SC445)"
+  },
+  {
+   "name": "fractal_bands",
+   "source": "Fractal Chaos Bands: last confirmed 2/2 fractal high / low (2 bars late)",
+   "url": "https://www.tradingview.com/script/U1iz6Mxb-Fractal-Chaos-Bands/",
+   "added": "2026-11-15",
+   "uses": "breakout levels / trailing stops at the last fractals (SC444)"
+  },
+  {
+   "name": "darvas_box",
+   "source": "Darvas box: 20-bar high held 3 bars, low held 3 bars; close-through breakout / breakdown",
+   "url": "https://www.tradingview.com/script/hZV01YX6-Advanced-Intraday-Darvas-Box/",
+   "added": "2026-11-15",
+   "uses": "box breakout entries and box-bottom stops (SC417)"
+  },
+  {
+   "name": "vsa",
+   "source": "Volume Spread Analysis bars: no demand / no supply / upthrust / spring / stopping volume (tick volume)",
+   "url": "https://www.tradingview.com/script/OBV1KONK-No-Supply-No-Demand-NSND-Volume-Spread-Analysis-Tool/",
+   "added": "2026-11-15",
+   "uses": "volume-spread bar classes: no supply / no demand tests, upthrusts / springs (SC418, SC419)"
+  },
+  {
+   "name": "ross_123",
+   "source": "Joe Ross 1-2-3 reversal (confirmed swings k 3) and the Ross hook after the break of 2",
+   "url": "https://www.luxalgo.com/library/concept/1-2-3-reversal/",
+   "added": "2026-11-15",
+   "uses": "1-2-3 reversal and Ross hook entries with structural stops (SC429, SC430)"
+  },
+  {
+   "name": "three_line_break",
+   "source": "Three Line Break chart trend and reversals (Nison), on closes",
+   "url": "https://www.tradingview.com/scripts/threelinebreak/",
+   "added": "2026-11-15",
+   "uses": "noise-free trend / reversal filter (SC431)"
+  },
+  {
+   "name": "point_figure",
+   "source": "Point & Figure 3-box reversal on closes, box 0.5 ATR50; double-top / double-bottom signals",
+   "url": "https://www.luxalgo.com/library/concept/point-and-figure/",
+   "added": "2026-11-15",
+   "uses": "P&F double-top / bottom breakouts, column stops (SC432)"
+  },
+  {
+   "name": "swing_grade",
+   "source": "Grade 1-5 of the swing a wick sweeps (30-bar extreme, equal highs, prior-day level, age 50+) - TikTok idea",
+   "url": "https://www.tiktok.com/search/video?q=liquidity%20sweep",
+   "added": "2026-11-15",
+   "uses": "filter for every sweep strategy: trade only sweeps of significant swings (SC452, SC453; TikTok idea)"
+  },
+  {
+   "name": "gap_type",
+   "source": "FVG vs breakaway gap: candle 3 closes inside / beyond candle 2's range (Adem OnChain, TikTok)",
+   "url": "https://www.tradingview.com/script/KmrRBv0v-FVG-Breakaway-3rd-Candle-Arjo-MK/",
+   "added": "2026-11-15",
+   "uses": "filter for every FVG strategy incl. the user's gap method: true FVG (retest) vs breakaway (no retest) (SC450, SC451; TikTok idea)"
+  },
+  {
+   "name": "valid_ob",
+   "source": "Valid order block: swept the previous swing + left an FVG + BMS close (ICT & SMC CHARTIST, TikTok)",
+   "url": "https://www.tiktok.com/search/video?q=order%20block",
+   "added": "2026-11-15",
+   "uses": "filter for every order-block strategy: swept + FVG + BMS (SC447-SC449; TikTok idea)"
+  },
+  {
+   "name": "round_levels",
+   "source": "Psychological round levels: step 10^(digits-2) of the price, plus half steps",
+   "url": "https://www.babypips.com/learn/forex/psychological-level",
+   "added": "2026-11-15",
+   "uses": "psychological levels as targets / stops / rejection zones (SC420, SC421)"
+  },
+  {
+   "name": "adr",
+   "source": "Average Daily Range 14 (completed UTC days), running day high / low and % of ADR used",
+   "url": "https://www.fxstreet.com/education/how-to-use-the-average-daily-range-when-trading-forex-201610051529",
+   "added": "2026-11-15",
+   "uses": "ADR exhaustion and 'room left' filters for breakouts and targets (SC422, SC423)"
+  },
+  {
+   "name": "cbdr",
+   "source": "ICT Central Bank Dealers Range 14:00-20:00 NY: high / low / height for SD projections",
+   "url": "https://www.tradingview.com/script/DtiFgMfL-CBDR-Deviations-M1D/",
+   "added": "2026-11-15",
+   "uses": "ICT CBDR SD projections as targets / fade zones (SC424)"
+  },
+  {
+   "name": "rvol",
+   "source": "Relative volume at time of day: cumulative and bar tick volume vs the same slot's 20-session mean",
+   "url": "https://www.tradingview.com/script/8ePzgnzt-Relative-Volume-at-Time/",
+   "added": "2026-11-15",
+   "uses": "relative volume at time of day: 'in play' filter for ORB / breakouts (SC441, SC442)"
+  },
+  {
+   "name": "ict_macros",
+   "source": "ICT macro windows (NY): 02:33, 04:03, 08:50, 09:50, 10:50, 11:50, 13:10, 15:15",
+   "url": "https://www.tradingview.com/script/aLTywnJ0-ICT-Macros-LuxAlgo/",
+   "added": "2026-11-15",
+   "uses": "time filter: FVGs / entries only inside ICT macro windows (SC443)"
+  },
+  {
+   "name": "po3_4h",
+   "source": "NY-aligned 4H candle: open, running high / low, previous 4H high / low (TTrades 4H Power of Three)",
+   "url": "https://briefread.pages.dev/en/summary/trading-the-4-hour-power-of",
+   "added": "2026-11-15",
+   "uses": "4H Power-of-Three context: 4H open, prior 4H extremes (SC454)"
   }
  ],
  "sources": [
@@ -11511,7 +12785,7 @@
    "name": "FXStreet",
    "url": "https://www.fxstreet.com/education",
    "look_for": "education articles with strategy rules; post-release market reactions (bot 7)",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "Autochartist",
@@ -11553,7 +12827,7 @@
    "name": "DailyFX / IG education",
    "url": "https://www.ig.com/en/trading-strategies",
    "look_for": "strategy guides with rules; release reactions",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "ForexLive / investingLive",
@@ -11631,7 +12905,7 @@
    "name": "GitHub (freqtrade, jesse, backtrader)",
    "url": "https://github.com/freqtrade/freqtrade-strategies",
    "look_for": "open strategy code",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "StockSharp examples",
@@ -11661,6 +12935,12 @@
    "name": "edgeful reports",
    "url": "https://docs.edgeful.com/",
    "look_for": "session statistics setups (power hour, ORB, gap fill) with exact windows",
+   "last_scanned": "2026-11-15"
+  },
+  {
+   "name": "TASC Traders' Tips (Technical Analysis of Stocks & Commodities)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/",
+   "look_for": "each month's new indicator with code (Ehlers and others) and the platform rules",
    "last_scanned": "2026-11-15"
   }
  ],

@@ -9190,3 +9190,925 @@ SCOUT.update({
     "SC404": ("Three Bar Play: 2-ATR igniting bar + 1-3 tight resting bars in its upper half, break, resting stop, 2R", s_three_bar_play, ["1Min", "5Min", "15Min"]),
     "SC405": ("Wolfe Wave 5 swings (k 3, confirmed), stop past point 5, target the 1-4 line", s_wolfe_wave, ["15Min", "1Hour", "4Hour"]),
 })
+
+
+# =====================================================================================================================
+# scout 15.11.2026 night 3 (Sunday, one weekly run): SC406-SC454 - Ehlers TASC 2025 filters, community classics,
+# Raschke / Connors Street Smarts, Joe Ross, Darvas, VSA, chart types (3LB, P&F), round numbers, ADR, CBDR, RVOL ORB
+# (Zarattini et al.), ICT macros, and the 5 new TikTok explorer ideas (TT-s-*). Indicators: agents/indicators
+# ehlers3.py, classic5.py, structure2.py, levels2.py.
+# =====================================================================================================================
+from agents.indicators._core import dmi as _dmi  # noqa: E402
+
+
+def _r(a, n=1):
+    """Shift right by n with NaN fill (the value n bars ago)."""
+    a = np.asarray(a, float)
+    return np.concatenate([np.full(n, np.nan), a[:-n]]) if n > 0 else a
+
+
+def _swl(h, l, a, n=5, buf=0.1):
+    return _s(l).rolling(n, min_periods=1).min().to_numpy() - buf * a, _s(h).rolling(n, min_periods=1).max().to_numpy() + buf * a
+
+
+def _atr_plan(c, a, k=2.0, r=2.0, **kw):
+    return _plan_r(c - k * a, c + k * a, r, **kw) if r else {"stop": ("level", c - k * a, c + k * a), "target": None, **kw}
+
+
+def _ny(df):
+    t = df.index.tz_convert("America/New_York")
+    return (t.hour.to_numpy() + t.minute.to_numpy() / 60.0), pd.Series(t.date).to_numpy()
+
+
+# ---------------- SC406 CM Williams Vix Fix bottoms / tops ----------------
+def s_vix_fix(df):
+    """CM Williams Vix Fix (ChrisMoody, open source; Larry Williams' synthetic VIX): WVF = (highest close 22 - low) /
+    highest close 22 x 100; a 'fear spike' when WVF >= its BB 20/2 upper band or >= 0.85 x its 50-bar high. Moody's
+    use: buy when the spike bars END - ours: a spike in the last 3 bars, none on this bar, and a close over the prior
+    bar's high. Tops: the inverse Vix Fix ('Williams Vix Fix Bottoms and Tops') mirrored for shorts. Stop 0.1 ATR beyond
+    the 5-bar extreme, target 2R (the scripts are signals only - stop / target are the library standard)."""
+    o, h, l, c, v = _ohlcv(df)
+    vf = IND.vix_fix(df)
+    a = atr(h, l, c, 14)
+    b, t = vf["bottom"].astype(float), vf["top"].astype(float)
+    rb = _s(_r(b)).rolling(3, min_periods=1).max().to_numpy() > 0
+    rt = _s(_r(t)).rolling(3, min_periods=1).max().to_numpy() > 0
+    L = rb & ~vf["bottom"] & (c > _r(h))
+    S = rt & ~vf["top"] & (c < _r(l))
+    sl, ss = _swl(h, l, a, 5)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+# ---------------- SC407 BBTrend zero cross ----------------
+def s_bbtrend(df):
+    """John Bollinger's BBTrend (2024): (|lower20 - lower50| - |upper20 - upper50|) / middle20 x 100 - positive = the
+    fast bands expand downward less than upward (up trend). Bollinger: a reading crossing zero marks the trend change.
+    Ours: long when BBTrend crosses over 0 with the close over the 20-bar middle band, out when it crosses back under 0
+    (mirror for shorts); stop 2 ATR, no fixed target."""
+    o, h, l, c, v = _ohlcv(df)
+    bt = np.nan_to_num(IND.bbtrend(df))
+    a = atr(h, l, c, 14)
+    m = sma(c, 20)
+    L = cross_up(bt, 0) & (c > m)
+    S = cross_down(bt, 0) & (c < m)
+    L, S = _excl(L, S)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=bt < 0, exit_short=bt > 0)
+
+
+# ---------------- SC408-SC410 Khalil Volume / Price Zone Oscillators ----------------
+def s_vzo_trend(df):
+    """Walid Khalil, 'Trending or Nontrending?' (TASC 2011.05), Volume Zone Oscillator in a trend (ADX14 > 18, close
+    over / under the EMA60): buy when the VZO, after a dip under -40 in the last 20 bars (ours), crosses back over 0; out when
+    it falls under -5, or under +40 after having been over +60 (Khalil's zones +/-5, 40, 60). Mirror for shorts.
+    Stop 2 ATR (ours - the article exits on the oscillator only)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.vzo(df)
+    pdi, ndi, ax = _dmi(h, l, c, 14)
+    e = ema(c, 60)
+    a = atr(h, l, c, 14)
+    dip = _s(z).rolling(20, min_periods=1).min().to_numpy() < -40
+    pk = _s(z).rolling(20, min_periods=1).max().to_numpy() > 40
+    L = (ax > 18) & (c > e) & dip & cross_up(z, 0)
+    S = (ax > 18) & (c < e) & pk & cross_down(z, 0)
+    hi60 = _s(z).rolling(20, min_periods=1).max().to_numpy() > 60
+    lo60 = _s(z).rolling(20, min_periods=1).min().to_numpy() < -60
+    xl = cross_down(z, -5) | (hi60 & cross_down(z, 40))
+    xs = cross_up(z, 5) | (lo60 & cross_up(z, -40))
+    L, S = _excl(L, S)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=xl, exit_short=xs)
+
+
+def _zone_range(df, z):
+    o, h, l, c, v = _ohlcv(df)
+    pdi, ndi, ax = _dmi(h, l, c, 14)
+    a = atr(h, l, c, 14)
+    L = (ax < 18) & cross_up(z, -40)
+    S = (ax < 18) & cross_down(z, 40)
+    L, S = _excl(L, S)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=z > 40, exit_short=z < -40)
+
+
+def s_vzo_range(df):
+    """Khalil (TASC 2011.05), the non-trending market (ADX14 < 18): buy when the VZO crosses back over -40 (oversold),
+    sell at +40; mirror for shorts (cross back under +40, cover at -40). Stop 2 ATR (ours)."""
+    return _zone_range(df, IND.vzo(df))
+
+
+def s_pzo_range(df):
+    """Khalil's Price Zone Oscillator (TASC 2011 companion of the VZO; thinkorswim PriceZoneOscillatorLX/SE) in the
+    non-trending market: ADX14 < 18, buy on the PZO back over -40, out at +40; mirror. Stop 2 ATR (ours)."""
+    return _zone_range(df, IND.pzo(df))
+
+
+# ---------------- SC411 Twiggs Money Flow ----------------
+def s_twiggs_mf(df):
+    """Twiggs Money Flow 21 (Colin Twiggs, incrediblecharts.com): a CMF built on the true range with Wilder smoothing.
+    Twiggs trades the zero line in the trend's direction - ours: TMF crosses over 0 after 10+ bars under it while the
+    close is over a rising EMA50 (mirror), stop 2 ATR, 2R. Differs from SC271 (CMF 20, plain high-low location,
+    negative-run stop)."""
+    o, h, l, c, v = _ohlcv(df)
+    t = IND.twiggs_mf(df)
+    e = ema(c, 50)
+    a = atr(h, l, c, 14)
+    neg = _s(_r(t) < 0).rolling(10).min().to_numpy() > 0
+    pos = _s(_r(t) > 0).rolling(10).min().to_numpy() > 0
+    L = cross_up(t, 0) & neg & (c > e) & (e > _r(e, 5))
+    S = cross_down(t, 0) & pos & (c < e) & (e < _r(e, 5))
+    L, S = _excl(L, S)
+    return L, S, _atr_plan(c, a, 2.0, 2.0)
+
+
+# ---------------- SC412 Relative Momentum Index ----------------
+def s_rmi_reversal(df):
+    """Relative Momentum Index 14 / 5 (Roger Altman, TASC 1993): the RSI of the 5-bar momentum. Altman's overbought /
+    oversold 70 / 30 - ours: back over 30 on the EMA200's up side (back under 70 under it), 1.5 ATR stop, 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    r = IND.rmi(df)
+    e = ema(c, 200)
+    a = atr(h, l, c, 14)
+    L = cross_up(r, 30) & (c > e)
+    S = cross_down(r, 70) & (c < e)
+    L, S = _excl(L, S)
+    return L, S, _atr_plan(c, a, 1.5, 2.0)
+
+
+# ---------------- SC413 DecisionPoint PMO ----------------
+def s_pmo_cross(df):
+    """DecisionPoint Price Momentum Oscillator 35/20 with its EMA10 signal (Carl Swenlin, StockCharts ChartSchool):
+    a PMO crossover of the signal line BELOW zero = buy (above zero for the sell), exit on the opposite crossover.
+    Stop 2 ATR, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.pmo(df)
+    a = atr(h, l, c, 14)
+    up, dn = cross_up(p["pmo"], p["signal"]), cross_down(p["pmo"], p["signal"])
+    L, S = up & (p["pmo"] < 0), dn & (p["pmo"] > 0)
+    L, S = _excl(L, S)
+    return L, S, _atr_plan(c, a, 2.0, 2.0, exit_long=dn, exit_short=up)
+
+
+# ---------------- SC414 Tillson T3 cross ----------------
+def s_t3_cross(df):
+    """Tillson T3 (TASC 1998, volume factor 0.7) crossover, as in TradingView's 'T3 Averages Strategy': T3(8) crosses
+    T3(21) - long over, short under, out on the cross back. Stop 2 ATR, no fixed target (the published script is
+    always-in)."""
+    o, h, l, c, v = _ohlcv(df)
+    f, s = IND.t3(df, 8), IND.t3(df, 21)
+    a = atr(h, l, c, 14)
+    up, dn = cross_up(f, s), cross_down(f, s)
+    L, S = _excl(up, dn)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=dn, exit_short=up)
+
+
+# ---------------- SC415 Absolute Strength Histogram ----------------
+def s_ash_cross(df):
+    """Absolute Strength Histogram (RSI method, 9 / 3; MQL5 codebase / backtrader recipe): buy when the smoothed bulls
+    cross over the smoothed bears, sell on the opposite cross (the original's signals), out on the reverse cross.
+    Stop 2 ATR, no fixed target."""
+    o, h, l, c, v = _ohlcv(df)
+    s = IND.ash(df)
+    a = atr(h, l, c, 14)
+    up, dn = cross_up(s["bulls"], s["bears"]), cross_down(s["bulls"], s["bears"])
+    L, S = _excl(up, dn)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=dn, exit_short=up)
+
+
+# ---------------- SC416 Trendilo ----------------
+def s_trendilo(df):
+    """Trendilo (dudeowns, open source): ALMA 50 of the bar % change against its RMS band - over the band = up trend,
+    under minus the band = down trend. Ours: enter when the trend turns +1 / -1, out when the smoothed change crosses
+    zero against the trade; stop 2 ATR, no fixed target."""
+    o, h, l, c, v = _ohlcv(df)
+    t = IND.trendilo(df)
+    a = atr(h, l, c, 14)
+    tr = t["trend"]
+    L = (tr == 1) & (_r(tr) != 1)
+    S = (tr == -1) & (_r(tr) != -1)
+    av = np.nan_to_num(t["avpch"])
+    L, S = _excl(L, S)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=av < 0, exit_short=av > 0)
+
+
+# ---------------- SC417 Darvas box ----------------
+def s_darvas(df):
+    """Nicolas Darvas' box (1960): top = a 20-bar high not exceeded for 3 bars, bottom = the lowest low after it not
+    broken for 3 bars; buy the close over the top of a complete box, stop 0.1 ATR under the box bottom (Darvas' stop),
+    target 2R (ours - Darvas trailed into the next box). Breakdown under the bottom = the short mirror (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    d = IND.darvas_box(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(d["brk_up"], d["brk_dn"])
+    return L, S, _plan_r(d["bot"] - 0.1 * a, d["top"] + 0.1 * a, 2.0)
+
+
+# ---------------- SC418 / SC419 Volume Spread Analysis ----------------
+def s_vsa_test(df):
+    """VSA (Tom Williams, 'Master the Markets'): a no-supply bar (down bar, below-average true-range spread, volume under the
+    two previous bars) inside an up trend = professionals not selling; buy when a following bar (within 2) closes over its high.
+    Stop 0.1 ATR under the no-supply bar, 2R. Mirror: no-demand bar in a down trend. Trend = close over a rising EMA50
+    (ours). Tick volume."""
+    o, h, l, c, v = _ohlcv(df)
+    q = IND.vsa(df)
+    e = ema(c, 50)
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    up = (c > e) & (e > _r(e, 5))
+    dn = (c < e) & (e < _r(e, 5))
+    for i in range(2, n):
+        for k in (1, 2):
+            j = i - k
+            if q["no_supply"][j] and up[j] and c[i] > h[j] and not L[i - 1]:
+                L[i], sl[i] = True, l[j] - 0.1 * a[i]
+            if q["no_demand"][j] and dn[j] and c[i] < l[j] and not S[i - 1]:
+                S[i], ss[i] = True, h[j] + 0.1 * a[i]
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_vsa_upthrust(df):
+    """VSA upthrust / spring: a new 20-bar high on high volume (> 1.5 x average) that closes back under the broken high
+    = upthrust; sell when the next bar closes under the upthrust bar's low, stop 0.1 ATR over its high, 2R. Spring
+    (shakeout) = mirror for longs."""
+    o, h, l, c, v = _ohlcv(df)
+    q = IND.vsa(df)
+    a = atr(h, l, c, 14)
+    ut, sp = _r(q["upthrust"].astype(float)) > 0, _r(q["spring"].astype(float)) > 0
+    S = ut & (c < _r(l))
+    L = sp & (c > _r(h))
+    L, S = _excl(L, S)
+    return L, S, _plan_r(_r(l) - 0.1 * a, _r(h) + 0.1 * a, 2.0)
+
+
+# ---------------- SC420 / SC421 Round numbers ----------------
+def s_round_reject(df):
+    """Psychological round levels (BabyPips / DailyFX 'psychological levels and round numbers'): a touch of a '00'
+    level that no close has gone through in the last 20 bars, rejected - low within 0.05 ATR of the level under the previous close, close back over
+    it, a bullish rejection candle (lower wick >= the body and >= 30% of the range); stop 0.5 ATR under the level (or 0.1 ATR under the low
+    if lower), 2R. Mirror at the level over. OUR translation of '00' to every instrument: step = 10^(digits - 2) of
+    the price (EURUSD 0.01, USDJPY 1, gold 10, US100 100)."""
+    o, h, l, c, v = _ohlcv(df)
+    rl = IND.round_levels(df)
+    a = atr(h, l, c, 14)
+    lb, la = _r(rl["below"]), _r(rl["above"])
+    rng = np.maximum(h - l, 1e-12)
+    lw = (np.minimum(o, c) - l) / rng
+    uw = (h - np.maximum(o, c)) / rng
+    c20 = _r(_s(c).rolling(20, min_periods=1).min().to_numpy())     # level not closed through in the last 20 bars
+    C20 = _r(_s(c).rolling(20, min_periods=1).max().to_numpy())
+    body = np.abs(c - o)
+    L = (l <= lb + 0.05 * a) & (c > lb) & (c > o) & (lw >= 0.3) & (lw * rng >= body) & (c20 > lb)
+    S = (h >= la - 0.05 * a) & (c < la) & (c < o) & (uw >= 0.3) & (uw * rng >= body) & (C20 < la)
+    sl = np.minimum(lb - 0.5 * a, l - 0.1 * a)
+    ss = np.maximum(la + 0.5 * a, h + 0.1 * a)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_round_retest(df):
+    """Round level break and retest (BabyPips psychological levels; IG 'Psychological Levels & Round Numbers'): a close
+    through a '00' level, then within 2-30 bars a pull back that touches it (0.1 ATR) and closes away in the break's
+    direction; stop 0.5 ATR beyond the level, 2R. Same level step as SC420."""
+    o, h, l, c, v = _ohlcv(df)
+    rl = IND.round_levels(df)
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    bu = bd = None     # (level, bar)
+    for i in range(1, n):
+        lv_up = rl["above"][i - 1]
+        lv_dn = rl["below"][i - 1]
+        if np.isfinite(lv_up) and c[i - 1] < lv_up <= c[i]:
+            bu = (lv_up, i)
+        if np.isfinite(lv_dn) and c[i - 1] > lv_dn >= c[i]:
+            bd = (lv_dn, i)
+        if bu is not None and i - bu[1] >= 2:
+            if i - bu[1] > 30 or c[i] < bu[0] - 0.5 * a[i]:
+                bu = None
+            elif l[i] <= bu[0] + 0.1 * a[i] and c[i] > bu[0] and c[i] > o[i]:
+                L[i], sl[i], bu = True, bu[0] - 0.5 * a[i], None
+        if bd is not None and i - bd[1] >= 2:
+            if i - bd[1] > 30 or c[i] > bd[0] + 0.5 * a[i]:
+                bd = None
+            elif h[i] >= bd[0] - 0.1 * a[i] and c[i] < bd[0] and c[i] < o[i]:
+                S[i], ss[i], bd = True, bd[0] + 0.5 * a[i], None
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+# ---------------- SC422 / SC423 Average Daily Range ----------------
+def s_adr_fade(df):
+    """ADR exhaustion fade (FXStreet 'How to use the Average Daily Range'; forex-station / MQL5 ADR fade): once the day
+    has used >= 100% of its 14-day ADR, a bar that makes the day's extreme and then a reversal close (back under the
+    previous bar's low for a short) fades toward the day's middle. Stop 0.2 ATR beyond the day extreme, target the
+    running day mid; flat at 21:00 UTC (the forex day end). Intraday, UTC days."""
+    o, h, l, c, v = _ohlcv(df)
+    d = IND.adr(df)
+    a = atr(h, l, c, 14)
+    used = np.nan_to_num(d["used"])
+    mid = (d["day_hi"] + d["day_lo"]) / 2
+    newhi = _r(h) >= _r(d["day_hi"]) - 1e-12
+    newlo = _r(l) <= _r(d["day_lo"]) + 1e-12
+    hr = df.index.tz_convert("UTC").hour.to_numpy()
+    S = (used >= 1.0) & newhi & (c < _r(l)) & (c < o) & (hr < 20)
+    L = (used >= 1.0) & newlo & (c > _r(h)) & (c > o) & (hr < 20)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(d["day_lo"] - 0.2 * a, d["day_hi"] + 0.2 * a, mid, mid, force_exit=hr >= 21)
+
+
+def s_orb_adr_room(df):
+    """New York 15-minute opening range (09:30-09:45) breakout only while the day has used < 60% of its ADR at the break
+    (the ADR 'room left' rule of FXStreet / NexusFi ADR guides): close through the range, stop at the other side, 2R,
+    flat 16:00 NY, first break per day. Differs from SS01 by the ADR filter."""
+    o, h, l, c, v = _ohlcv(df)
+    d = IND.adr(df)
+    hr, day = _ny(df)
+    n = len(c)
+    bm = _bar_minutes(df)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    cur, rh, rl_, done = None, -np.inf, np.inf, False
+    for i in range(n):
+        if day[i] != cur:
+            cur, rh, rl_, done = day[i], -np.inf, np.inf, False
+        if 9.5 <= hr[i] and hr[i] + bm / 60.0 <= 9.75 + 1e-9:
+            rh, rl_ = max(rh, h[i]), min(rl_, l[i])
+            continue
+        if done or not np.isfinite(rh) or hr[i] < 9.75 or hr[i] >= 15.5:
+            continue
+        room = np.isfinite(d["used"][i]) and d["used"][i] < 0.6
+        if c[i] > rh and room:
+            L[i], sl[i], done = True, rl_, True
+        elif c[i] < rl_ and room:
+            S[i], ss[i], done = True, rh, True
+    return L, S, _plan_r(sl, ss, 2.0, force_exit=hr >= 16)
+
+
+# ---------------- SC424 ICT CBDR standard-deviation fade ----------------
+def s_cbdr_fade(df):
+    """ICT Central Bank Dealers Range (Mentorship month 8; 'CBDR Deviations' open source): the 14:00-20:00 NY range
+    projects the next day's extremes at 1-4 standard deviations (one SD = the range's height). Ours: from 20:00 NY
+    (Asia) to 11:00 NY (London / NY morning), a bar that trades through the deepest of the +1 / +2 / +3 SD levels and
+    closes back under it = short, stop 0.1 ATR over the next SD level or the bar high (the higher), target the CBDR
+    high; mirror under the CBDR low. Flat 16:00 NY. CBDR range at least 0.25 ATR."""
+    o, h, l, c, v = _ohlcv(df)
+    cb = IND.cbdr(df)
+    a = atr(h, l, c, 14)
+    hr, _ = _ny(df)
+    sd = cb["sd"]
+    ok = ((hr >= 20) | (hr < 11)) & np.nan_to_num(sd > 0.25 * a)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        ku = np.floor((h - cb["hi"]) / sd)
+        kd = np.floor((cb["lo"] - l) / sd)
+    ku, kd = np.nan_to_num(ku, nan=0.0), np.nan_to_num(kd, nan=0.0)
+    u, d = cb["hi"] + ku * sd, cb["lo"] - kd * sd
+    S = ok & (ku >= 1) & (ku <= 3) & (c < u)
+    L = ok & (kd >= 1) & (kd <= 3) & (c > d)
+    ss = np.maximum(cb["hi"] + (ku + 1) * sd, h) + 0.1 * a
+    sl = np.minimum(cb["lo"] - (kd + 1) * sd, l) - 0.1 * a
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl, ss, cb["lo"], cb["hi"], force_exit=hr >= 16)
+
+
+# ---------------- SC425 / SC428 Street Smarts (Raschke & Connors 1995) ----------------
+def _rth_sessions(df):
+    """New York cash sessions 09:30-16:00 on intraday bars: per-bar session number (-1 outside), and per session
+    open / high / low / close and its first / last bar (a session is complete at its last bar's close)."""
+    o, h, l, c, v = _ohlcv(df)
+    hr, day = _ny(df)
+    ins = (hr >= 9.5) & (hr < 16)
+    sid = np.full(len(c), -1)
+    keys, first, last = [], [], []
+    for i in np.where(ins)[0]:
+        if not keys or keys[-1] != day[i]:
+            keys.append(day[i])
+            first.append(i)
+            last.append(i)
+        sid[i] = len(keys) - 1
+        last[-1] = i
+    first, last = np.array(first, int), np.array(last, int)
+    so = o[first] if len(first) else np.array([])
+    sh = np.array([h[f:t + 1].max() for f, t in zip(first, last)])
+    sl = np.array([l[f:t + 1].min() for f, t in zip(first, last)])
+    sc = c[last] if len(last) else np.array([])
+    return hr, sid, first, last, so, sh, sl, sc
+
+
+def s_whiplash(df):
+    """Whiplash (Raschke & Connors, 'Street Smarts' 1995, a daily S&P pattern; cryptodatadownload.com port): the session
+    opens with a gap under the previous session's low and closes in the top half of its range (over its open) = buy
+    the next session's open, sell at that session's close (as published); mirror for a gap over the previous high that
+    closes in the lower half. Ours: sessions = New York cash hours 09:30-16:00 on intraday bars (the signal sits on the
+    bar before the next 09:30 open, so the entry is that open), stop 0.1 ATR beyond the signal session's extreme,
+    target 2R, flat 16:00 NY."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    hr, sid, first, last, so, sh, sl, sc = _rth_sessions(df)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    stl, sts = np.full(n, np.nan), np.full(n, np.nan)
+    for k in range(1, len(first) - 1):
+        j = first[k + 1] - 1
+        if j <= last[k]:
+            continue
+        rng = max(sh[k] - sl[k], 1e-12)
+        pos = (sc[k] - sl[k]) / rng
+        if so[k] < sl[k - 1] and pos > 0.5 and sc[k] > so[k]:
+            L[j], stl[j] = True, sl[k] - 0.1 * a[j]
+        elif so[k] > sh[k - 1] and pos < 0.5 and sc[k] < so[k]:
+            S[j], sts[j] = True, sh[k] + 0.1 * a[j]
+    return L, S, _plan_r(stl, sts, 2.0, force_exit=hr >= 16)
+
+
+def s_turtle_soup_plus1(df):
+    """Turtle Soup Plus One (Raschke & Connors, 'Street Smarts'): the previous bar CLOSED at a new 20-bar low, the
+    prior 20-bar low having been set at least 3 bars before; this bar closes back over that earlier 20-bar low = buy;
+    stop 0.1 ATR under the lower of the two bars' lows, target 2R (the book: trail, partial at 1-2 days). Mirror for
+    the high. Differs from SS13 (Turtle Soup: same-bar re-entry, no close beyond required)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    for i in range(23, n):
+        w = l[i - 21:i - 1]
+        j = int(np.argmin(w)) + i - 21
+        if c[i - 1] < w.min() and (i - 1) - j >= 3 and c[i] > w.min():
+            L[i] = True
+        w = h[i - 21:i - 1]
+        j = int(np.argmax(w)) + i - 21
+        if c[i - 1] > w.max() and (i - 1) - j >= 3 and c[i] < w.max():
+            S[i] = True
+    sl = np.minimum(l, _r(l)) - 0.1 * a
+    ss = np.maximum(h, _r(h)) + 0.1 * a
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+# ---------------- SC429 / SC430 Joe Ross ----------------
+def s_ross_123(df):
+    """Joe Ross 1-2-3 reversal (tradingeducators.com; LuxAlgo '1-2-3 Reversal'): point 1 = a 30-bar swing low, 2 = the
+    swing high after it, 3 = a higher swing low (all confirmed, k 3); buy on the close through point 2, stop 0.1 ATR
+    under point 3, target 2R. Mirror for tops."""
+    o, h, l, c, v = _ohlcv(df)
+    r = IND.ross_123(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(r["long_123"], r["short_123"])
+    return L, S, _plan_r(r["p3_l"] - 0.1 * a, r["p3_s"] + 0.1 * a, 2.0)
+
+
+def s_ross_hook(df):
+    """Ross hook (Joe Ross; FXOpen 'How to Trade with a Ross Hook Pattern'): after the 1-2-3 break, the first bar that
+    fails to make a new high forms the hook; buy on the close through the hook high, stop 0.1 ATR under the lowest low
+    since the hook, target 2R. Mirror."""
+    o, h, l, c, v = _ohlcv(df)
+    r = IND.ross_123(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(r["long_hook"], r["short_hook"])
+    return L, S, _plan_r(r["hook_stop_l"] - 0.1 * a, r["hook_stop_s"] + 0.1 * a, 2.0)
+
+
+# ---------------- SC431 / SC432 chart types ----------------
+def s_three_line_break(df):
+    """Three Line Break (Steve Nison, 'Beyond Candlesticks'; TradingView 'Three Line Break Backtest' open source): trade
+    the reversal - a close beyond the extreme of the last 3 lines - in the EMA50's direction, out on the opposite
+    reversal; stop 2 ATR, no fixed target."""
+    o, h, l, c, v = _ohlcv(df)
+    t = IND.three_line_break(df)
+    e = ema(c, 50)
+    a = atr(h, l, c, 14)
+    L, S = _excl(t["flip_up"] & (c > e), t["flip_dn"] & (c < e))
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=t["flip_dn"], exit_short=t["flip_up"])
+
+
+def s_pnf_double(df):
+    """Point & Figure double-top buy / double-bottom sell (3-box reversal on closes, box 0.5 x ATR50 fixed when a column
+    starts - our translation of a fixed box; LuxAlgo 'Point & Figure', StockCharts P&F): buy when an X column rises over
+    the previous X column's top, stop 0.1 ATR under the current column's bottom (the column start), target 2R. Mirror."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.point_figure(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(p["dbl_top"], p["dbl_bot"])
+    return L, S, _plan_r(p["col_lo"] - 0.1 * a, p["col_hi"] + 0.1 * a, 2.0)
+
+
+# ---------------- SC433-SC440 Ehlers (TASC 2020 / 2025) ----------------
+def s_ehlers_uo(df):
+    """Ehlers 'The Ultimate Oscillator' (TASC 2025.04; Wealth-Lab rule in the Traders' Tips): buy when the UO crosses
+    over zero, exit when it crosses back under; mirror for shorts (ours). Stop 2 ATR, no fixed target."""
+    o, h, l, c, v = _ohlcv(df)
+    u = IND.ehlers_uo(df)["uo"]
+    a = atr(h, l, c, 14)
+    up, dn = cross_up(u, 0), cross_down(u, 0)
+    L, S = _excl(up, dn)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=dn, exit_short=up)
+
+
+def s_laguerre_filter(df):
+    """Ehlers 'Laguerre Filters' (TASC 2025.07; Wealth-Lab rule): long when the UltimateSmoother(40) crosses over the
+    Laguerre filter (gamma 0.8), exit when it crosses under; mirror for shorts (ours). Stop 2 ATR."""
+    o, h, l, c, v = _ohlcv(df)
+    q = IND.laguerre_filter(df)
+    a = atr(h, l, c, 14)
+    up, dn = cross_up(q["us"], q["filt"]), cross_down(q["us"], q["filt"])
+    L, S = _excl(up, dn)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=dn, exit_short=up)
+
+
+def s_laguerre_osc(df):
+    """Ehlers Laguerre oscillator (TASC 2025.07; Wealth-Lab rule): buy when the RMS-normalised oscillator turns up from
+    under -2 (Wealth-Lab: between -2 and -3 SD), 3% stop as published, exit when the UltimateSmoother crosses under the
+    Laguerre filter. Mirror (turn down from over +2) for shorts - ours."""
+    o, h, l, c, v = _ohlcv(df)
+    q = IND.laguerre_filter(df)
+    x = q["osc"]
+    L = (_r(x) < -2) & (x > _r(x)) & (_r(x) <= _r(x, 2))
+    S = (_r(x) > 2) & (x < _r(x)) & (_r(x) >= _r(x, 2))
+    up, dn = cross_up(q["us"], q["filt"]), cross_down(q["us"], q["filt"])
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", c * 0.97, c * 1.03), "target": None, "exit_long": dn, "exit_short": up}
+
+
+def s_continuation_index(df):
+    """Ehlers 'The Continuation Index' (TASC 2025.09): CI over +0.5 = a strong trend that should continue. The article
+    gives no trade rule - ours: buy when CI crosses over +0.5, out when it falls under 0; mirror under -0.5. Stop 2
+    ATR, no fixed target."""
+    o, h, l, c, v = _ohlcv(df)
+    ci = IND.continuation_index(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(cross_up(ci, 0.5), cross_down(ci, -0.5))
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=ci < 0, exit_short=ci > 0)
+
+
+def s_one_euro(df):
+    """Ehlers 'The One Euro Filter' (TASC 2025.12): the oscillator (filter of HP54) crossing zero while the One Euro
+    filter of the close slopes the same way. No rule in the article - ours: 2 ATR stop, 2R target."""
+    o, h, l, c, v = _ohlcv(df)
+    q = IND.one_euro(df)
+    a = atr(h, l, c, 14)
+    f = q["filt"]
+    L = cross_up(q["osc"], 0) & (f > _r(f))
+    S = cross_down(q["osc"], 0) & (f < _r(f))
+    L, S = _excl(L, S)
+    return L, S, _atr_plan(c, a, 2.0, 2.0)
+
+
+def s_pma_turn(df):
+    """Ehlers 'Removing Moving Average Lag' (TASC 2025.03; Wealth-Lab rule): enter when the projected moving average
+    (PMA 20) turns up, exit when it turns down; mirror for shorts (ours). Stop 2 ATR, no fixed target."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.pma_predict(df)["pma"]
+    a = atr(h, l, c, 14)
+    tu = (p > _r(p)) & (_r(p) <= _r(p, 2))
+    td = (p < _r(p)) & (_r(p) >= _r(p, 2))
+    L, S = _excl(tu, td)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=td, exit_short=tu)
+
+
+def s_pma_predict(df):
+    """Ehlers 'Removing Moving Average Lag' (TASC 2025.03; the Python listing's signal): long while Predict > PMA - ours:
+    enter on the cross over, out on the cross under; mirror. Stop 2 ATR."""
+    o, h, l, c, v = _ohlcv(df)
+    q = IND.pma_predict(df)
+    a = atr(h, l, c, 14)
+    up, dn = cross_up(q["predict"], q["pma"]), cross_down(q["predict"], q["pma"])
+    L, S = _excl(up, dn)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=dn, exit_short=up)
+
+
+def s_trendflex(df):
+    """Ehlers Reflex / Trendflex (TASC 2020.02, 'Reflex: A New Zero-Lag Indicator'): Trendflex crosses zero (trend) while
+    Reflex (cycle) is on the same side; out when Trendflex crosses back. Ehlers gives the zero crossings as the
+    signals; the confirmation, 2 ATR stop and exit are ours."""
+    o, h, l, c, v = _ohlcv(df)
+    q = IND.reflex_trendflex(df)
+    a = atr(h, l, c, 14)
+    t, r = q["trendflex"], q["reflex"]
+    L = cross_up(t, 0) & (r > 0)
+    S = cross_down(t, 0) & (r < 0)
+    L, S = _excl(L, S)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=t < 0, exit_short=t > 0)
+
+
+# ---------------- SC441 / SC442 Zarattini ORB for stocks in play ----------------
+def _zarattini_orb(df, min_rvol):
+    o, h, l, c, v = _ohlcv(df)
+    d = IND.adr(df)
+    rv = IND.rvol(df)["bar_rvol"]
+    hr, day = _ny(df)
+    n = len(c)
+    novol = np.nan_to_num(_s(v).rolling(20, min_periods=2).std().to_numpy(), nan=0.0) <= 1e-9 * (np.abs(v) + 1)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    cur, fb, done = None, None, False
+    for i in range(n):
+        if day[i] != cur:
+            cur, fb, done = day[i], None, False
+        if abs(hr[i] - 9.5) < 1e-9:
+            ok = novol[i] or (np.isfinite(rv[i]) and rv[i] >= min_rvol)
+            fb = (o[i], h[i], l[i], c[i]) if ok else None
+            continue
+        if fb is None or done or hr[i] >= 15.5 or not np.isfinite(d["adr"][i]):
+            continue
+        risk = 0.1 * d["adr"][i]
+        if fb[3] > fb[0] and c[i] > fb[1]:
+            L[i], sl[i], done = True, c[i] - risk, True
+        elif fb[3] < fb[0] and c[i] < fb[2]:
+            S[i], ss[i], done = True, c[i] + risk, True
+    return L, S, {"stop": ("level", sl, ss), "target": None, "force_exit": hr >= 16}
+
+
+def s_zarattini_orb(df):
+    """Zarattini, Barbon & Aziz, 'A Profitable Day Trading Strategy for the U.S. Equity Market' (SSRN / Swiss Finance
+    Institute 2024; QuantConnect 'Opening Range Breakout for Stocks in Play'): the first 5-minute candle from 09:30 NY
+    sets the direction (bullish -> only longs, bearish -> only shorts); entry when price breaks its high (low) - ours on
+    the close through it, next open; stop 10% of the 14-day ATR (ours: the 14-day average range, agents/indicators
+    adr) from the entry; no target, flat at 16:00 NY. 'Stocks in play' = relative volume of that first candle >= 1
+    (ours: the bar's volume vs the same 09:30 slot over 20 sessions; feeds without volume pass). Built for 5-minute
+    bars (on other frames the 09:30 bar stands in for the 5-minute candle)."""
+    return _zarattini_orb(df, 1.0)
+
+
+def s_zarattini_orb_rv2(df):
+    """SC441 with a strict 'in play' filter: first-candle relative volume >= 2 (the paper ranks by RVOL; the top-20
+    names typically exceed 2x)."""
+    return _zarattini_orb(df, 2.0)
+
+
+# ---------------- SC443 ICT macro FVG ----------------
+def s_macro_fvg(df):
+    """ICT macros (LuxAlgo 'ICT Macros', TradingFinder 'ICT Macro Times'): the algorithm's 20-30 minute delivery windows
+    (02:33-03:00, 04:03-04:30, 08:50-09:10, 09:50-10:10, 10:50-11:10, 11:50-12:10, 13:10-13:40, 15:15-15:45 NY). Only a
+    fair value gap whose third candle closes inside a macro is traded: return into the gap and close back out of it,
+    stop 0.1 ATR beyond the gap, 2R (the library's FVG entry, TV10 / SC250). Best on 1-5 minute bars."""
+    m = IND.ict_macros(df)["in_macro"]
+    L, S, sl, ss = _fvg_return(df, m, m)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+# ---------------- SC444 Fractal Chaos Bands ----------------
+def s_fractal_bands(df):
+    """Fractal Chaos Bands (Edward Dobson): the last confirmed fractal high / low as bands; a close over the upper band
+    with the EMA50 rising = trend breakout (mirror). Stop at the lower band when it is 0.5-3 ATR away, else 2 ATR;
+    target 2R. Differs from SC002 (no Alligator, fractal bands only)."""
+    o, h, l, c, v = _ohlcv(df)
+    fb = IND.fractal_bands(df)
+    e = ema(c, 50)
+    a = atr(h, l, c, 14)
+    L = cross_up(c, _r(fb["upper"])) & (e > _r(e, 3))
+    S = cross_down(c, _r(fb["lower"])) & (e < _r(e, 3))
+    dl, ds = c - fb["lower"], fb["upper"] - c
+    sl = np.where((dl >= 0.5 * a) & (dl <= 3 * a), fb["lower"], c - 2 * a)
+    ss = np.where((ds >= 0.5 * a) & (ds <= 3 * a), fb["upper"], c + 2 * a)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+# ---------------- SC445 Kairi extreme reversion ----------------
+def s_kairi_revert(df):
+    """Kairi Relative Index 25 (Japanese classic; Investopedia 'Kairi'): an extreme deviation from the SMA25 reverts.
+    Ours (the classic fixed % thresholds depend on the market): Kairi under -2.5 x its 200-bar standard deviation, then
+    a close back over that line = buy, target the SMA25, stop 1.5 ATR; mirror."""
+    o, h, l, c, v = _ohlcv(df)
+    k = IND.kairi(df)
+    sd = _s(k).rolling(200, min_periods=50).std().to_numpy()
+    m = sma(c, 25)
+    a = atr(h, l, c, 14)
+    L = cross_up(k, -2.5 * sd)
+    S = cross_down(k, 2.5 * sd)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(c - 1.5 * a, c + 1.5 * a, m, m)
+
+
+# ---------------- SC446-SC454 the new TikTok explorer ideas (data/agents/scout/tiktok_explore.json, 15.11) ----------------
+def s_ob_twice_breakaway(df):
+    """Explorer idea TT-s-gap-ictchartist (ICT & SMC CHARTIST, TikTok): a higher-timeframe order block touched twice,
+    then a breakaway gap away from it plus an inverted FVG -> sell the bearish FVG (buy the bullish mirror), stop over
+    the high, target the old low. Ours: the block = the latest live order block from swings k 5 (agents/indicators smc; run
+    the strategy on the higher chart for the 'HTF' block), two separate touches (bars entering the block after leaving it), then a breakaway gap (candle 3 closes beyond
+    candle 2, agents/indicators gap_type) in the direction away from the block with an iFVG inverted in that direction
+    in the last 20 bars; entry on the return into that gap with a close back out, stop 0.1 ATR beyond the order block,
+    target 2R (the 'old low' is not defined in the caption). Timeframes not stated: HTF 1h/4h -> ours one chart."""
+    o, h, l, c, v = _ohlcv(df)
+    sm = IND.smc(df, k=5)
+    gt = IND.gap_type(df)
+    iv = IND.ifvg(df)
+    a = atr(h, l, c, 14)
+    n = len(c)
+    ib = _s(iv["inv_bull"].astype(float)).rolling(20, min_periods=1).max().to_numpy() > 0
+    ibr = _s(iv["inv_bear"].astype(float)).rolling(20, min_periods=1).max().to_numpy() > 0
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    st_s = {"key": None, "t": 0, "in": False, "gap": None}
+    st_b = {"key": None, "t": 0, "in": False, "gap": None}
+    for i in range(n):
+        bt, bb = sm["ob_bear_top"][i], sm["ob_bear_bot"][i]
+        if np.isfinite(bt):
+            if st_s["key"] != (bt, bb):
+                st_s.update(key=(bt, bb), t=0, **{"in": False}, gap=None)
+            inside = h[i] >= bb
+            if inside and not st_s["in"]:
+                st_s["t"] += 1
+            st_s["in"] = inside
+            g = st_s["gap"]
+            if g is not None:
+                if c[i] > g[0] or i - g[2] > 30:
+                    st_s["gap"] = None
+                elif i > g[2] and h[i] >= g[1] and c[i] < g[1] and c[i] < o[i]:
+                    S[i], ss[i] = True, bt + 0.1 * a[i]
+                    st_s["gap"] = None
+            if st_s["t"] >= 2 and gt["bear_brk"][i] and gt["top"][i] < bb and ibr[i]:
+                st_s["gap"] = (gt["top"][i], gt["bot"][i], i)
+        else:
+            st_s.update(key=None, t=0, gap=None)
+        bt, bb = sm["ob_bull_top"][i], sm["ob_bull_bot"][i]
+        if np.isfinite(bt):
+            if st_b["key"] != (bt, bb):
+                st_b.update(key=(bt, bb), t=0, **{"in": False}, gap=None)
+            inside = l[i] <= bt
+            if inside and not st_b["in"]:
+                st_b["t"] += 1
+            st_b["in"] = inside
+            g = st_b["gap"]
+            if g is not None:
+                if c[i] < g[1] or i - g[2] > 30:
+                    st_b["gap"] = None
+                elif i > g[2] and l[i] <= g[0] and c[i] > g[0] and c[i] > o[i]:
+                    L[i], sl[i] = True, bb - 0.1 * a[i]
+                    st_b["gap"] = None
+            if st_b["t"] >= 2 and gt["bull_brk"][i] and gt["bot"][i] > bt and ib[i]:
+                st_b["gap"] = (gt["top"][i], gt["bot"][i], i)
+        else:
+            st_b.update(key=None, t=0, gap=None)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def _valid_ob_entry(df, mode):
+    o, h, l, c, v = _ohlcv(df)
+    q = IND.valid_ob(df)
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    used_b = used_s = None
+    for i in range(1, n):
+        bh, blo = q["ob_bear_hi"][i - 1], q["ob_bear_lo"][i - 1]
+        if np.isfinite(bh) and (bh, blo) != used_s:
+            lv = {"wick": blo, "body": q["ob_bear_open"][i - 1], "mid": q["ob_bear_mid"][i - 1]}[mode]
+            if h[i] >= lv and c[i] < lv and c[i] <= bh:
+                S[i], ss[i], used_s = True, bh + 0.1 * a[i], (bh, blo)
+        bh, blo = q["ob_bull_hi"][i - 1], q["ob_bull_lo"][i - 1]
+        if np.isfinite(bh) and (bh, blo) != used_b:
+            lv = {"wick": bh, "body": q["ob_bull_open"][i - 1], "mid": q["ob_bull_mid"][i - 1]}[mode]
+            if l[i] <= lv and c[i] > lv and c[i] >= blo:
+                L[i], sl[i], used_b = True, blo - 0.1 * a[i], (bh, blo)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_valid_ob_wick(df):
+    """Explorer idea TT-s-obvalid-ictchartist (ICT & SMC CHARTIST, TikTok): an order block counts only if (1) it swept
+    the previous swing high, (2) the move away left an FVG, (3) price closed below the last low (BMS) - mirror for
+    bullish (agents/indicators valid_ob, swings k 3). Entry at the block's near wick (first touch), on a close back
+    away from it; stop 0.1 ATR beyond the block's far wick; target 2R (not in the caption). One trade per block."""
+    return _valid_ob_entry(df, "wick")
+
+
+def s_valid_ob_body(df):
+    """TT-s-obvalid-ictchartist, entry at the order-block candle's open (the 'body' entry); as SC447 otherwise."""
+    return _valid_ob_entry(df, "body")
+
+
+def s_valid_ob_mid(df):
+    """TT-s-obvalid-ictchartist, entry at the block's 50% (mean threshold); as SC447 otherwise."""
+    return _valid_ob_entry(df, "mid")
+
+
+def s_fvg_true_gap(df):
+    """Explorer idea TT-s-fvg-vs-breakaway (Adem OnChain, TikTok; TradingView 'FVG Breakaway/3rd Candle (Arjo)'): when
+    candle 3 closes INSIDE candle 2's range the gap is a fair value gap and a retest comes first - only those gaps are
+    traded on the return (close back out of the gap, stop 0.1 ATR beyond it, 2R, library FVG entry)."""
+    gt = IND.gap_type(df)
+    L, S, sl, ss = _fvg_return(df, gt["bull_fvg"], gt["bear_fvg"])
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_breakaway_go(df):
+    """Explorer idea TT-s-fvg-vs-breakaway: when candle 3 closes BEYOND candle 2's extreme it is a breakaway gap - a
+    strong move without a retest, so do not wait: enter on the next open in the gap's direction, stop 0.1 ATR beyond
+    candle 1 (the gap's far side), target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    gt = IND.gap_type(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(gt["bull_brk"], gt["bear_brk"])
+    return L, S, _plan_r(gt["bot"] - 0.1 * a, gt["top"] + 0.1 * a, 2.0)
+
+
+def _graded_sweep(df, g):
+    o, h, l, c, v = _ohlcv(df)
+    q = IND.swing_grade(df)
+    a = atr(h, l, c, 14)
+    S = (q["sweep_hi_grade"] >= g) & (c < q["sweep_hi_lvl"])
+    L = (q["sweep_lo_grade"] >= g) & (c > q["sweep_lo_lvl"])
+    L, S = _excl(L, S)
+    return L, S, _plan_r(l - 0.1 * a, h + 0.1 * a, 2.0)
+
+
+def s_sweep_grade2(df):
+    """Explorer idea TT-s-swing-significance (itsnathanoreilly, TikTok: 'not every swing high is equally important for a
+    liquidity sweep'): sweep-and-close-back reversal only when the swept swing grades >= 2 (agents/indicators
+    swing_grade: +1 30-bar extreme, +1 equal highs, +1 prior-day level, +1 age 50+ bars); stop 0.1 ATR beyond the
+    sweep bar, 2R."""
+    return _graded_sweep(df, 2)
+
+
+def s_sweep_grade3(df):
+    """TT-s-swing-significance with the stricter threshold: grade >= 3."""
+    return _graded_sweep(df, 3)
+
+
+def s_po3_4h(df):
+    """Explorer idea TT-s-po3-4h-ttrades (TTrades, 'Trading the 4 Hour Power Of Three - OHLC'): every New-York-aligned 4H
+    candle = accumulation at its open, manipulation beyond the open that takes the previous 4H candle's low (high),
+    distribution the other way. Entry on the lower chart: after the run under the 4H open has taken the previous 4H
+    low, a close back over the 4H open = buy; stop 0.1 ATR under the manipulation low, target the previous 4H high
+    when it is >= 1R away (else 2R - ours), flat on the 4H candle's last bar; one trade per 4H candle. Mirror.
+    Differs from SC307 (daily PO3 on the NY midnight open)."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.po3_4h(df)
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    tl, ts = np.full(n, np.nan), np.full(n, np.nan)
+    done = -1
+    for i in range(1, n):
+        b = p["block"][i]
+        if b == done or p["last_bar"][i] or not np.isfinite(p["prev_lo"][i]):
+            continue
+        op = p["open4"][i]
+        if p["lo4"][i] <= p["prev_lo"][i] and p["lo4"][i] < op and c[i] > op and c[i - 1] <= op and p["block"][i - 1] == b:
+            st = p["lo4"][i] - 0.1 * a[i]
+            r = c[i] - st
+            L[i], sl[i], done = True, st, b
+            tl[i] = p["prev_hi"][i] if p["prev_hi"][i] - c[i] >= r else c[i] + 2 * r
+        elif p["hi4"][i] >= p["prev_hi"][i] and p["hi4"][i] > op and c[i] < op and c[i - 1] >= op and p["block"][i - 1] == b:
+            st = p["hi4"][i] + 0.1 * a[i]
+            r = st - c[i]
+            S[i], ss[i], done = True, st, b
+            ts[i] = p["prev_lo"][i] if c[i] - p["prev_lo"][i] >= r else c[i] - 2 * r
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl, ss, tl, ts, force_exit=p["last_bar"])
+
+
+SCOUT.update({
+    "SC406": ("CM Williams Vix Fix: fear spike ends + close over the prior high (inverse for tops), 5-bar stop, 2R", s_vix_fix, ["15Min", "1Hour", "4Hour", "1Day"]),
+    "SC407": ("Bollinger BBTrend crosses zero with the close past the 20 middle, out on the cross back, 2 ATR", s_bbtrend, _M),
+    "SC408": ("Khalil VZO trend: ADX > 18 + EMA60 side, VZO back over 0 after < -40, zone exits, 2 ATR", s_vzo_trend, _M),
+    "SC409": ("Khalil VZO range: ADX < 18, VZO back over -40 (under +40), out at the opposite 40, 2 ATR", s_vzo_range, _F),
+    "SC410": ("Khalil Price Zone Oscillator range: ADX < 18, back over -40 / under +40, out at the opposite 40", s_pzo_range, _F),
+    "SC411": ("Twiggs Money Flow 21 zero cross after 10 bars on the other side, rising EMA50 side, 2 ATR, 2R", s_twiggs_mf, _M),
+    "SC412": ("Relative Momentum Index 14/5 back over 30 / under 70 on the EMA200 side, 1.5 ATR, 2R (Altman)", s_rmi_reversal, _F),
+    "SC413": ("DecisionPoint PMO signal cross under zero (over zero for shorts), opposite-cross exit, 2 ATR, 2R", s_pmo_cross, _M),
+    "SC414": ("Tillson T3(8) / T3(21) cross, out on the cross back, 2 ATR", s_t3_cross, _M),
+    "SC415": ("Absolute Strength Histogram 9/3 bulls / bears cross, reverse-cross exit, 2 ATR", s_ash_cross, _M),
+    "SC416": ("Trendilo ALMA-50 % change over / under its RMS band, out through zero, 2 ATR (dudeowns)", s_trendilo, _M),
+    "SC417": ("Darvas box breakout / breakdown, stop past the box, 2R", s_darvas, ["15Min", "1Hour", "4Hour", "1Day"]),
+    "SC418": ("VSA no-supply (no-demand) test in the trend, close past its high (low) within 2 bars, 2R", s_vsa_test, _F),
+    "SC419": ("VSA upthrust / spring on high volume, next close past its low (high), bar stop, 2R", s_vsa_upthrust, _F),
+    "SC420": ("Round '00' level rejection (unbroken 20 bars, wick >= body), stop 0.5 ATR past the level, 2R", s_round_reject, ["5Min", "15Min", "1Hour"]),
+    "SC421": ("Round '00' level break and retest in 2-30 bars, stop 0.5 ATR past the level, 2R", s_round_retest, ["5Min", "15Min", "1Hour"]),
+    "SC422": ("ADR exhaustion fade: >= 100% of ADR14 used, day-extreme reversal close, target the day mid, flat 21 UTC", s_adr_fade, ["5Min", "15Min"]),
+    "SC423": ("NY 15-min ORB only while < 60% of ADR14 is used, range stop, 2R, flat 16:00 NY", s_orb_adr_room, ["5Min", "15Min"]),
+    "SC424": ("ICT CBDR: 20-11 NY rejection of the deepest CBDR +/- 1-3 SD level, stop past the next SD, target the CBDR edge, flat 16:00", s_cbdr_fade, ["5Min", "15Min"]),
+    "SC425": ("Street Smarts Whiplash (NY cash sessions): gap past the prior extreme, close in the other half, next session, 2R", s_whiplash, ["5Min", "15Min", "1Hour"]),
+    "SC428": ("Street Smarts Turtle Soup Plus One: close at a new 20-bar low, next close back over the old low, 2R", s_turtle_soup_plus1, _M + ["1Day"]),
+    "SC429": ("Joe Ross 1-2-3 reversal: close through point 2, stop under point 3, 2R", s_ross_123, _F + ["4Hour"]),
+    "SC430": ("Joe Ross hook after the 1-2-3 break: close through the hook, stop under the pullback, 2R", s_ross_hook, _F + ["4Hour"]),
+    "SC431": ("Three Line Break reversal on the EMA50 side, out on the opposite reversal, 2 ATR (Nison)", s_three_line_break, _M),
+    "SC432": ("Point & Figure double-top buy / double-bottom sell, 3-box reversal, box 0.5 ATR50, column stop, 2R", s_pnf_double, _M),
+    "SC433": ("Ehlers Ultimate Oscillator 2025 zero cross, out on the cross back, 2 ATR (TASC 2025.04)", s_ehlers_uo, _M),
+    "SC434": ("Ehlers UltimateSmoother 40 cross of the Laguerre filter 0.8, cross-back exit, 2 ATR (TASC 2025.07)", s_laguerre_filter, _M),
+    "SC435": ("Ehlers Laguerre oscillator turn from beyond -2 / +2 SD, 3% stop, filter-cross exit (TASC 2025.07)", s_laguerre_osc, _M),
+    "SC436": ("Ehlers Continuation Index through +/-0.5, out through 0, 2 ATR (TASC 2025.09)", s_continuation_index, _M),
+    "SC437": ("Ehlers One Euro oscillator zero cross with the filter slope, 2 ATR, 2R (TASC 2025.12)", s_one_euro, _M),
+    "SC438": ("Ehlers projected MA 20 turns up / down, out on the opposite turn, 2 ATR (TASC 2025.03)", s_pma_turn, _M),
+    "SC439": ("Ehlers PMA predict line crosses the PMA, cross-back exit, 2 ATR (TASC 2025.03)", s_pma_predict, _M),
+    "SC440": ("Ehlers Trendflex zero cross confirmed by Reflex, out through zero, 2 ATR (TASC 2020.02)", s_trendflex, _M),
+    "SC441": ("Zarattini ORB: first 5-min candle's direction, break of it, stop 10% of daily ATR, flat 16:00, RVOL >= 1", s_zarattini_orb, ["5Min"]),
+    "SC442": ("Zarattini ORB with first-candle RVOL >= 2 (stocks in play), stop 10% of daily ATR, flat 16:00", s_zarattini_orb_rv2, ["5Min"]),
+    "SC443": ("ICT macro FVG: gap formed inside a macro window, return entry, gap stop, 2R", s_macro_fvg, ["1Min", "5Min"]),
+    "SC444": ("Fractal Chaos Bands breakout with the EMA50 slope, band / 2 ATR stop, 2R", s_fractal_bands, _M),
+    "SC445": ("Kairi 25 beyond 2.5 sd of itself and back, target the SMA25, 1.5 ATR stop", s_kairi_revert, _F),
+    "SC446": ("Order block touched twice -> breakaway gap + iFVG away -> trade the gap's return, OB stop, 2R (TikTok idea)", s_ob_twice_breakaway, ["5Min", "15Min"]),
+    "SC447": ("Valid order block (sweep + FVG + BMS), entry at the near wick, far-wick stop, 2R (TikTok idea)", s_valid_ob_wick, ["5Min", "15Min", "1Hour"]),
+    "SC448": ("Valid order block (sweep + FVG + BMS), entry at the OB open, 2R (TikTok idea)", s_valid_ob_body, ["5Min", "15Min", "1Hour"]),
+    "SC449": ("Valid order block (sweep + FVG + BMS), entry at the 50%, 2R (TikTok idea)", s_valid_ob_mid, ["5Min", "15Min", "1Hour"]),
+    "SC450": ("FVG return only when candle 3 closes inside candle 2 (a true FVG, not breakaway), 2R (TikTok idea)", s_fvg_true_gap, ["1Min", "5Min", "15Min"]),
+    "SC451": ("Breakaway gap (candle 3 closes past candle 2): enter at once, stop past candle 1, 2R (TikTok idea)", s_breakaway_go, ["1Min", "5Min", "15Min"]),
+    "SC452": ("Sweep reversal only of a significant swing (grade >= 2 of 5), sweep-bar stop, 2R (TikTok idea)", s_sweep_grade2, ["5Min", "15Min"]),
+    "SC453": ("Sweep reversal only of a significant swing (grade >= 3 of 5), sweep-bar stop, 2R (TikTok idea)", s_sweep_grade3, ["5Min", "15Min"]),
+    "SC454": ("TTrades 4H Power of Three: 4H open run takes the prior 4H extreme, close back over the open, flat at 4H end", s_po3_4h, ["5Min", "15Min"]),
+})

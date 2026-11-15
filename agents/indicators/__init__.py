@@ -65,7 +65,15 @@ from agents.indicators.tv_popular import (coral, crsi, gmma, ift_rsi, macd_v, pm
 from agents.indicators.classic4 import (alligator, bw_ao, bw_mfi, chop_zone, connors_rsi, demarker, ewo, gann_hilo, imi,
                                         inertia, kase_peak, kdj, kst, pfe, pgo, psar, pvt, rvi_vol, safezone, smi_blau,
                                         stc, stretch, td_sequential, ttf, vidya, vortex)
+from agents.indicators.ehlers3 import (continuation_index, ehlers_uo, laguerre_filter, one_euro, pma_predict,
+                                       reflex_trendflex, two_pole_predict)
+from agents.indicators.classic5 import (alma, ash, bbtrend, fractal_bands, kairi, pmo, pzo, rmi, t3, trendilo,
+                                        twiggs_mf, vix_fix, vzo)
+from agents.indicators.structure2 import (darvas_box, gap_type, point_figure, ross_123, swing_grade, three_line_break,
+                                          valid_ob, vsa)
+from agents.indicators.levels2 import adr, cbdr, ict_macros, po3_4h, round_levels, rvol
 TV = "https://www.tradingview.com/script/"
+TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
 
 INDICATORS = {
@@ -299,6 +307,42 @@ INDICATORS = {
     "kst": (kst, "Know Sure Thing (Pring) with its SMA9 signal", SC2 + "know-sure-thing-kst"),
     "stretch": (stretch, "Toby Crabel stretch: 10-day mean of min(h - o, o - l), levels open +/- stretch (NY day)", "https://store.traders.com/-v06-c09-playing-pdf.html"),
     "td_sequential": (td_sequential, "TD Sequential setup 9 and countdown 13 counts (DeMark; no TDST)", "https://www.tradingview.com/scripts/tdsequential/"),
+    # scout 15.11.2026 night 3: Ehlers TASC 2025 (ehlers3.py), community classics (classic5.py), structures
+    # (structure2.py, incl. 3 TikTok explorer ideas) and time / level tools (levels2.py)
+    "ehlers_uo": (ehlers_uo, "Ehlers Ultimate Oscillator 2025: HP(40) - HP(20) of the close / RMS100 (not Williams' UO)", TT + "2025/04/TradersTips.html"),
+    "laguerre_filter": (laguerre_filter, "Ehlers Laguerre filter (UltimateSmoother 40, gamma 0.8) + Laguerre oscillator (30, 0.5) / RMS", TT + "2025/07/TradersTips.html"),
+    "continuation_index": (continuation_index, "Ehlers Continuation Index: tanh(2 (US20 - Laguerre8 of US40) / mean dev 40), -1..1", TV + "5ZrOut79-TASC-2025-09-The-Continuation-Index/"),
+    "one_euro": (one_euro, "One Euro filter (Casiez 2012, Ehlers TASC 2025.12): adaptive EMA, cutoff 10 + 0.2 |change|; oscillator on HP54", TT + "2025/12/TradersTips.html"),
+    "pma_predict": (pma_predict, "Ehlers projected MA 20 (SMA + OLS slope x L/2) and its predict line (TASC 2025.03)", TT + "2025/03/TradersTips.html"),
+    "reflex_trendflex": (reflex_trendflex, "Ehlers Reflex / Trendflex 20 (TASC 2020.02): zero-lag cycle / trend oscillators", "https://www.prorealcode.com/prorealtime-indicators/reflex-and-trendflex-indicators-john-f-ehlers/"),
+    "two_pole_predict": (two_pole_predict, "Ehlers simple 2-pole predictor of SS(HP(close, 15), 30), Q 0.35 (TASC 2025.01)", TT + "2025/01/TradersTips.html"),
+    "vix_fix": (vix_fix, "CM Williams Vix Fix 22 with BB 20/2 and 0.85 x 50-bar high alerts; inverse version for tops", TV + "og7JPrRA-CM-Williams-Vix-Fix-Finds-Market-Bottoms/"),
+    "bbtrend": (bbtrend, "John Bollinger BBTrend (2024): (|lower20 - lower50| - |upper20 - upper50|) / mid20 x 100", "https://www.tradingview.com/support/solutions/43000726749/"),
+    "vzo": (vzo, "Volume Zone Oscillator 14 (Khalil, TASC 2011): 100 EMA(sign x tick volume) / EMA(volume)", TT + "2011/05/Khalil.html"),
+    "pzo": (pzo, "Price Zone Oscillator 14 (Khalil): the VZO with the close instead of the volume", TT + "2011/05/Khalil.html"),
+    "twiggs_mf": (twiggs_mf, "Twiggs Money Flow 21: true-range close location x volume, Wilder smoothing", "https://www.incrediblecharts.com/indicators/twiggs_money_flow.php"),
+    "rmi": (rmi, "Relative Momentum Index 14 / 5 (Altman): RSI of the 5-bar momentum", "https://www.luxalgo.com/library/concept/relative-momentum-index/"),
+    "pmo": (pmo, "DecisionPoint Price Momentum Oscillator 35/20 with EMA10 signal (Swenlin)", SC2 + "decisionpoint-price-momentum-oscillator-pmo"),
+    "t3": (t3, "Tillson T3 moving average (6 EMAs, volume factor 0.7)", "https://www.luxalgo.com/library/concept/t3/"),
+    "alma": (alma, "Arnaud Legoux moving average 9 / 0.85 / 6", "https://www.tradingview.com/support/solutions/43000594683-arnaud-legoux-moving-average/"),
+    "ash": (ash, "Absolute Strength Histogram (RSI method) 9 / 3: smoothed bulls vs bears", "https://www.mql5.com/en/code/21429"),
+    "trendilo": (trendilo, "Trendilo: ALMA 50 of the % change vs its RMS band, trend +1 / -1 / 0 (dudeowns)", TV + "h5kMWewu-Trendilo-OPEN-SOURCE/"),
+    "kairi": (kairi, "Kairi Relative Index: % distance of the close from its SMA25", "https://www.investopedia.com/terms/k/kairi.asp"),
+    "fractal_bands": (fractal_bands, "Fractal Chaos Bands: last confirmed 2/2 fractal high / low (2 bars late)", "https://www.tradingview.com/script/U1iz6Mxb-Fractal-Chaos-Bands/"),
+    "darvas_box": (darvas_box, "Darvas box: 20-bar high held 3 bars, low held 3 bars; close-through breakout / breakdown", TV + "hZV01YX6-Advanced-Intraday-Darvas-Box/"),
+    "vsa": (vsa, "Volume Spread Analysis bars: no demand / no supply / upthrust / spring / stopping volume (tick volume)", TV + "OBV1KONK-No-Supply-No-Demand-NSND-Volume-Spread-Analysis-Tool/"),
+    "ross_123": (ross_123, "Joe Ross 1-2-3 reversal (confirmed swings k 3) and the Ross hook after the break of 2", "https://www.luxalgo.com/library/concept/1-2-3-reversal/"),
+    "three_line_break": (three_line_break, "Three Line Break chart trend and reversals (Nison), on closes", "https://www.tradingview.com/scripts/threelinebreak/"),
+    "point_figure": (point_figure, "Point & Figure 3-box reversal on closes, box 0.5 ATR50; double-top / double-bottom signals", "https://www.luxalgo.com/library/concept/point-and-figure/"),
+    "swing_grade": (swing_grade, "Grade 1-5 of the swing a wick sweeps (30-bar extreme, equal highs, prior-day level, age 50+) - TikTok idea", "https://www.tiktok.com/search/video?q=liquidity%20sweep"),
+    "gap_type": (gap_type, "FVG vs breakaway gap: candle 3 closes inside / beyond candle 2's range (Adem OnChain, TikTok)", TV + "KmrRBv0v-FVG-Breakaway-3rd-Candle-Arjo-MK/"),
+    "valid_ob": (valid_ob, "Valid order block: swept the previous swing + left an FVG + BMS close (ICT & SMC CHARTIST, TikTok)", "https://www.tiktok.com/search/video?q=order%20block"),
+    "round_levels": (round_levels, "Psychological round levels: step 10^(digits-2) of the price, plus half steps", "https://www.babypips.com/learn/forex/psychological-level"),
+    "adr": (adr, "Average Daily Range 14 (completed UTC days), running day high / low and % of ADR used", "https://www.fxstreet.com/education/how-to-use-the-average-daily-range-when-trading-forex-201610051529"),
+    "cbdr": (cbdr, "ICT Central Bank Dealers Range 14:00-20:00 NY: high / low / height for SD projections", TV + "DtiFgMfL-CBDR-Deviations-M1D/"),
+    "rvol": (rvol, "Relative volume at time of day: cumulative and bar tick volume vs the same slot's 20-session mean", TV + "8ePzgnzt-Relative-Volume-at-Time/"),
+    "ict_macros": (ict_macros, "ICT macro windows (NY): 02:33, 04:03, 08:50, 09:50, 10:50, 11:50, 13:10, 15:15", TV + "aLTywnJ0-ICT-Macros-LuxAlgo/"),
+    "po3_4h": (po3_4h, "NY-aligned 4H candle: open, running high / low, previous 4H high / low (TTrades 4H Power of Three)", "https://briefread.pages.dev/en/summary/trading-the-4-hour-power-of"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

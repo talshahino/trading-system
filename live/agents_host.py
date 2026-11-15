@@ -653,6 +653,33 @@ def publish(files, message):
     raise RuntimeError(f"publishing failed: {u.status_code} {u.text[:200]}")
 
 
+def machine():
+    """Disk and memory of the bots' computer (user, 15.11.2026: "is there enough room / memory on the bots' computer?").
+    Disk: the drive the repo is on. Memory: Windows GlobalMemoryStatusEx (no extra package)."""
+    out = {}
+    try:
+        du = shutil.disk_usage(str(Path(__file__).resolve().parent.parent))
+        out["disk_gb"] = {"total": round(du.total / 2**30, 1), "free": round(du.free / 2**30, 1)}
+        out["repo_gb"] = round(sum(f.stat().st_size for f in Path(__file__).resolve().parent.parent.rglob("*")
+                                   if f.is_file()) / 2**30, 2)
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        import ctypes
+
+        class MS(ctypes.Structure):
+            _fields_ = [("l", ctypes.c_ulong), ("load", ctypes.c_ulong), ("tot", ctypes.c_ulonglong),
+                        ("avail", ctypes.c_ulonglong), ("tp", ctypes.c_ulonglong), ("ap", ctypes.c_ulonglong),
+                        ("tv", ctypes.c_ulonglong), ("av", ctypes.c_ulonglong), ("ae", ctypes.c_ulonglong)]
+        m = MS()
+        m.l = ctypes.sizeof(MS)
+        if ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m)):
+            out["ram_gb"] = {"total": round(m.tot / 2**30, 1), "free": round(m.avail / 2**30, 1), "load_pct": m.load}
+    except Exception:  # noqa: BLE001
+        pass
+    return out
+
+
 def host_doc(st, kind):
     now = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
     st[f"{kind}_at"] = now
@@ -664,7 +691,7 @@ def host_doc(st, kind):
             "agent_runs": st.get("agent_runs") or {}, "agent_errors_24h": st.get("agent_errors_24h") or [],
             "box_pub": box_pub(), "alpaca": bool(secrets()), "pub_skipped": _S.get("pub_skipped") or [],
             "last_error": st.get("last_error"),
-            "errors_in_row": st.get("errors_in_row", 0)}
+            "errors_in_row": st.get("errors_in_row", 0), "machine": machine()}
 
 
 def _publish_changes(st, before, kind, msg, only=None):

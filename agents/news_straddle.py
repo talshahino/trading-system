@@ -62,7 +62,10 @@ CANCEL = 5                                 # minutes after the release (pre) / a
 SLIP_ATR = 0.1
 CURS = ("usd", "own")
 SPREAD_CAP = (0.0, 3.0)                    # x the instrument's median spread at the order minute (0 = no limit)
-CAPS = (0, 1, 2, 3)
+CAPS = (0, 1, 2, 3, 6, 9)               # 6 / 9 (15.11): the live bot counts every open stop - 9 x 0.5% = its 4.5% day
+STUDY_VERSION = 2                          # the output (caps 6/9, day risk, slippage stress); the row cache keeps VERSION
+STRESS_ATR = (0.2, 0.4)                    # extra slippage on the fill, x the 5-minute ATR (stop orders in news)
+DAY_LIMIT_R = -9.0                         # 4.5% day stop / 0.5% risk per trade
 TOP = 10
 STALE_DAYS = 3
 MIN_CAT_N = 8
@@ -232,6 +235,66 @@ def study(df, base_key=BASE):
             "by": by, "tested": len(cand)}
 
 
+def _rows_for(df, key):
+    """The rows of one study key "<v>|c<cur>|sp<x>[|cap<n>]"."""
+    m = re.match(r"^(.*?)\|c(usd|own)\|sp([\d.]+)(?:\|cap(\d+))?$", key)
+    if not m:
+        return df.iloc[0:0]
+    v, cu, spc, cap = m.group(1), m.group(2), float(m.group(3)), int(m.group(4) or 0)
+    z = df[(df["v"] == v) & (df["usd" if cu == "usd" else "own"] == 1)]
+    if spc:
+        z = z[z["spr"] <= spc]
+    return capped(z, cap)
+
+
+def risk_check(df, key):
+    """For one version: the worst release / day in R (0.5% each: -9R = the bot's 4.5% day stop), how many days crossed
+    it, and the 2026 total with extra slippage (STRESS_ATR x ATR on the fill: about s / (2X) R with the stop at the other
+    order, s R with the 1-ATR stop)."""
+    z = _rows_for(df, key)
+    if z.empty:
+        return None
+    t = pd.to_datetime(z["t"], utc=True)
+    un = z[t >= NF.SPLIT]
+    day = z.groupby(t.dt.strftime("%Y-%m-%d"))["r"].sum()
+    rel = z.groupby("rel")["r"].sum()
+    m = re.search(r"\|x([\d.]+)\|(opp|atr1)\|", key)
+    per = (lambda s_: s_ / (2 * float(m.group(1)))) if m and m.group(2) == "opp" else (lambda s_: s_)
+    return {"worst_day_r": round(float(day.min()), 2), "days_over_limit": int((day <= DAY_LIMIT_R).sum()),
+            "worst_release_r": round(float(rel.min()), 2), "max_per_release": int(z.groupby("rel").size().max()),
+            "days": int(len(day)),
+            "stress_unseen": {f"slip+{s_:g}atr": round(float((un["r"] - per(s_)).sum()), 2) for s_ in STRESS_ATR},
+            "unseen_sum": round(float(un["r"].sum()), 2), "unseen_n": int(len(un))}
+
+
+def deploy(df, res):
+    """What the live bot can really run: chosen on 2025 among the versions with at most 9 trades per release (the open
+    stops of one release must fit the 4.5% day), with the day risk and the slippage stress; plus the same for the
+    overall best and the 10 best (chosen on 2025)."""
+    cands = []
+    for v, y in df.groupby("v"):
+        for cu in CURS:
+            z0 = y[y["usd"] == 1] if cu == "usd" else y[y["own"] == 1]
+            for spc in SPREAD_CAP:
+                z1 = z0 if not spc else z0[z0["spr"] <= spc]
+                for cap in (3, 6, 9):
+                    z = capped(z1, cap)
+                    tr = z[pd.to_datetime(z["t"], utc=True) < NF.SPLIT]
+                    cands.append((float(tr["r"].sum()), len(tr), f"{v}|c{cu}|sp{spc:g}|cap{cap}"))
+    cands.sort(key=lambda x: (x[1] < MIN_CAT_N, -x[0]))
+    out = {"best_capped": [], "top_check": []}
+    for _, _, k in cands[:TOP]:
+        z = _rows_for(df, k)
+        t = pd.to_datetime(z["t"], utc=True)
+        out["best_capped"].append({"v": k, "train": NF._w(z[t < NF.SPLIT]), "unseen": NF._w(z[t >= NF.SPLIT]),
+                                   "risk": risk_check(df, k)})
+    for c_ in (res.get("top") or [])[:TOP]:
+        out["top_check"].append({"v": c_["v"], "risk": risk_check(df, c_["v"])})
+    out["robust_capped"] = {"top_positive_unseen": int(sum(1 for c_ in out["best_capped"] if (c_["unseen"]["sum"] or 0) > 0)),
+                            "top": len(out["best_capped"])}
+    return out
+
+
 def by_group(df, col):
     out = {}
     for k, y in df.groupby(col):
@@ -248,7 +311,7 @@ def stale():
     try:
         j = json.loads(OUT.read_text(encoding="utf-8"))
         return (pd.Timestamp.now(tz="UTC") - pd.Timestamp(j["at"]) > pd.Timedelta(days=STALE_DAYS) or j.get("partial", True)
-                or j.get("version") != VERSION)
+                or j.get("version") != STUDY_VERSION)
     except Exception:  # noqa: BLE001
         return True
 
@@ -296,13 +359,20 @@ def main(argv=None):
         res["by_cat"] = by_group(tr.drop(columns="train"), "cat")
         res["by_sym"] = by_group(tr.drop(columns="train"), "sym")
         res["both_share"] = round(float(df["both"].mean()), 3)
+        try:
+            res["deploy"] = deploy(df, res)
+        except Exception as e:  # noqa: BLE001 - the extra check never loses the study
+            res["deploy"] = {"error": str(e)}
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "version": VERSION,
+    OUT.write_text(json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "version": STUDY_VERSION,
                                "symbols": done, "partial": len(done) < len(NF.SYMBOLS), "rows": int(len(df)),
                                "split": str(NF.SPLIT.date()), "test_from": str(NF.TEST_FROM.date()), "base": BASE,
                                "study": res}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     if res:
         print("EV04", json.dumps({"base": res["baseline"], "best": res["best"], "robust": res["robust"]}, ensure_ascii=False, default=str))
+        d_ = res.get("deploy") or {}
+        print("EV04 deploy", json.dumps({"best_capped": (d_.get("best_capped") or [None])[0], "robust_capped": d_.get("robust_capped"),
+                                         "best_risk": (d_.get("top_check") or [None])[0]}, ensure_ascii=False, default=str))
 
 
 if __name__ == "__main__":

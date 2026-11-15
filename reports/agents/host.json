@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-15T08:11:11+00:00",
+ "updated": "2026-11-15T09:05:31+00:00",
  "light_at": "2026-11-15T07:42:27+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -9,14 +9,15 @@
   "smart": 60
  },
  "smart_minutes": {
-  "bot5-new": 15.0
+  "bot5-new": 15.0,
+  "bot1": 35.0
  },
  "agent_errors": [],
  "agent_last": {
   "bot5": "2026-11-15T04:41:53+00:00",
   "bot5-new": "2026-11-15T07:43:01+00:00",
   "bot6": "2026-11-15T06:20:18+00:00",
-  "bot1": "2026-11-14T21:40:45+00:00",
+  "bot1": "2026-11-15T08:14:21+00:00",
   "bot2": "2026-11-14T22:33:20+00:00",
   "bot3": "2026-11-14T23:40:16+00:00",
   "bot4": "2026-11-15T00:40:18+00:00",
@@ -64,8 +65,8 @@
    "(continued across a manager restart)"
   ],
   "bot1": [
-   "new strategies: 0 combos tested",
-   "{\"bot\": \"bot1\", \"cards\": 40578, \"tiers\": {\"rejected\": 36233, \"watch\": 3906, \"regular\": 439}, \"done\": 93, \"planned\": 288}",
+   "new strategies: stopped for time, 0 tested, 3534 combos left",
+   "{\"bot\": \"bot1\", \"cards\": 45139, \"tiers\": {\"rejected\": 40437, \"watch\": 4206, \"regular\": 496}, \"done\": 94, \"planned\": 312}",
    "(continued across a manager restart)"
   ],
   "bot7": [
@@ -143,8 +144,8 @@
    "adopted": true
   },
   "bot1": {
-   "at": "2026-11-14T21:41:46+00:00",
-   "sec": 2969,
+   "at": "2026-11-15T08:15:15+00:00",
+   "sec": 2940,
    "budget_sec": 2100,
    "ok": null,
    "err": null,
@@ -155,8 +156,8 @@
  "box_pub": "UT9R6umHmW2BY3ghrGz5Lt7nM5l7jNp88LK8mtnz9VQ=",
  "alpaca": true,
  "pub_skipped": [],
- "last_error": null,
- "errors_in_row": 0,
+ "last_error": "15.11 10:43 agent_manager.py: timeout · ",
+ "errors_in_row": 2,
  "machine": {
   "disk_gb": {
    "total": 223.0,
@@ -164,8 +165,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 0.9,
-   "load_pct": 88
+   "free": 1.1,
+   "load_pct": 86
   }
  }
 }

@@ -1,5 +1,5 @@
 {
- "fp": "7fe1b797a7bb",
+ "fp": "a45fb163bb06",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -50,6 +50,11 @@
    "EV03|5Min|USDCHF",
    "EV03|5Min|USDJPY",
    "EV03|5Min|XAUUSD",
+   "EV08|1Min|BTCUSD",
+   "EV08|1Min|US100",
+   "EV08|1Min|US30",
+   "EV08|1Min|US500",
+   "EV08|1Min|XAUUSD",
    "SC001|1Min|JP225",
    "SC070|5Min|JP225",
    "SC086|4Hour|JP225",
@@ -218,6 +223,66 @@
     "limit": 0.5,
     "target_card": "93b5b4e30f5e"
    },
+   "EV08|1Min|BTCUSD": {
+    "groups": [
+     "claims",
+     "home"
+    ],
+    "side": "p1",
+    "entry_min": 10,
+    "stop_atr5": 1.5,
+    "hold_min": 120,
+    "size": "big",
+    "alone": true
+   },
+   "EV08|1Min|US100": {
+    "groups": [
+     "claims",
+     "home"
+    ],
+    "side": "p1",
+    "entry_min": 10,
+    "stop_atr5": 1.5,
+    "hold_min": 120,
+    "size": "big",
+    "alone": true
+   },
+   "EV08|1Min|US30": {
+    "groups": [
+     "claims",
+     "home"
+    ],
+    "side": "p1",
+    "entry_min": 10,
+    "stop_atr5": 1.5,
+    "hold_min": 120,
+    "size": "big",
+    "alone": true
+   },
+   "EV08|1Min|US500": {
+    "groups": [
+     "claims",
+     "home"
+    ],
+    "side": "p1",
+    "entry_min": 10,
+    "stop_atr5": 1.5,
+    "hold_min": 120,
+    "size": "big",
+    "alone": true
+   },
+   "EV08|1Min|XAUUSD": {
+    "groups": [
+     "claims",
+     "home"
+    ],
+    "side": "p1",
+    "entry_min": 10,
+    "stop_atr5": 1.5,
+    "hold_min": 120,
+    "size": "big",
+    "alone": true
+   },
    "SC070|5Min|JP225": {
     "added": "2026-11-14"
    },
@@ -252,8 +317,8 @@
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-14T21:43:55+00:00",
- "account_v": 9,
+ "last_reset": "2026-11-15T01:03:23+00:00",
+ "account_v": 10,
  "resets": [
   {
    "v": 2,
@@ -310,6 +375,13 @@
    "what": "כלל השתנה ב־SH01|1Min|GER40, SH01|1Min|US100",
    "archive": "data/agents/bot7_archive/account_v5.json",
    "id": "ae351fd58868"
+  },
+  {
+   "v": 10,
+   "at": "2026-11-15T01:03:23+00:00",
+   "what": "נוספו 5 אסטרטגיות/מכשירים · כלל השתנה ב־EV08|1Min|BTCUSD, EV08|1Min|US100, EV08|1Min|US30, EV08|1Min|US500",
+   "archive": "data/agents/bot7_archive/account_v9.json",
+   "id": "f3b2b2b8d722"
   }
  ],
  "stable": false,

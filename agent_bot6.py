@@ -905,7 +905,118 @@ def guard6(idx, counted, rk, budget_s):
             a = res[nm][per] or {}
             a["n"] = int(((t["time"] < TG.SPLIT) == (per == "train")).sum())
             a["room_only_skipped"] = int((a.get("room_skipped") or 0) - (a.get("contract_skipped") or 0))
+    try:            # one factor on the scouts' risk, chosen on 2024-2025 (bot 6's smart agent, 15.11.2026 night)
+        res["scout_scale"] = scout_scale6(allt, risk, lim)
+    except Exception as ex:  # noqa: BLE001
+        print(f"guard6 scout scale failed: {ex}")
     return res
+
+
+# THE SCOUTS' RISK ON THE WHOLE BOT (bot 6's smart agent, 15.11.2026 night; principle 11). The gap tracks run at
+# x 0.3 of the bot's 0.4% since 14.11 (scale_cards: the largest factor with 2024-2025 inside 80% of FTMO Futures'
+# limits) - but the ten scout strategies were added on top at 0.28-0.4% each, never in that test. The PC round of
+# 15.11 14:36 (risk_guard, 6 of the 10 scouts): gap tracks alone 2026 +11.4%, worst day -0.43%, deepest fall 1.74%;
+# with the scouts 2026 +30.7% but a fall of 11.7% and 4 days stopped at the daily limit; on 2024-2025 the whole bot
+# ended at -4.46% - its lowest point, at the trailing limit - and skipped 2,873 of 2,955 trades for lack of room
+# (the gap tracks alone: +20.9%, fall 2.8%). Bot 5's agent found the same that night (fall 9.5% -> 18% after 8 new
+# scouts, x 0.45 on them). The rule, shared with the gap tracks (tal_gap.risk_scale): the gap tracks keep their
+# approved risk, the scouts get ONE factor - the largest in steps of 0.05 with which 2024-2025 of the whole bot stays
+# inside MARGIN of the limits and the account never fails; then shown on 2026. A cut to fit the account, not a cut of
+# a losing strategy (account_fit) - so "fix first" does not hold it.
+def scout_scale6(allt, risk, lim):
+    sk = [k for k in risk if str(k).startswith("scout")]
+    tr, un = allt[allt["time"] < TG.SPLIT], allt[allt["time"] >= TG.SPLIT]
+    if not sk or tr.empty:
+        return None
+    L = TG._lim(lim)
+
+    def fits(b):
+        return bool(b) and b["max_fall_pct"] <= TG.MARGIN * L["all"] + 1e-9 \
+            and b["worst_day_pct"] >= -TG.MARGIN * L["day"] - 1e-9 and not b["stopped"]
+
+    def rk(k):
+        return {x: (v * k if x in sk else v) for x, v in risk.items()}
+    tried, k, b = [], 1.0, None
+    while True:
+        b = TG.account(tr.copy(), rk(k), lim)
+        tried.append({"k": k, "fall": (b or {}).get("max_fall_pct"), "day": (b or {}).get("worst_day_pct"),
+                      "total": (b or {}).get("total_pct"), "stopped": (b or {}).get("stopped")})
+        if fits(b) or k <= TG.SCALE_FLOOR + 1e-9:
+            break
+        k = max(TG.SCALE_FLOOR, round(k - 0.05, 2))
+    gap = allt[~allt["trk"].astype(str).str.startswith("scout")]
+    gtr, gun = gap[gap["time"] < TG.SPLIT], gap[gap["time"] >= TG.SPLIT]
+    return {"chosen": round(float(k), 2), "fits": fits(b), "margin": TG.MARGIN,
+            "limits": {"day": L["day"], "all": L["all"], "trail": L["trail"], "use": L["use"]},
+            "scouts": sorted(set(allt.loc[allt["trk"].astype(str).str.startswith("scout"), "trk"].astype(str))),
+            "now": {"train": TG.account(tr.copy(), risk, lim), "unseen": TG.account(un.copy(), risk, lim)},
+            "with": {"train": b, "unseen": TG.account(un.copy(), rk(k), lim)},
+            "gap_only": {"train": TG.account(gtr.copy(), risk, lim), "unseen": TG.account(gun.copy(), risk, lim)},
+            "tried": tried}
+
+
+def scout_scale_cards(g, rk):
+    """One risk card per scout strategy of bot 6 (live/bots/bot6.json "scout") with the factor of scout_scale6 - also
+    the scouts the test could not run in time (the same factor: never more risk than the tested ones)."""
+    s = (g or {}).get("scout_scale") or {}
+    k = s.get("chosen", 1.0)
+    if not s or k >= 1.0:
+        return []
+    gt0 = (s.get("gap_only") or {}).get("train") or {}
+    lm0 = s.get("limits") or {}
+    if not gt0 or gt0.get("stopped") or gt0.get("max_fall_pct", 0) > s.get("margin", 0.8) * lm0.get("all", 4.5) + 1e-9 \
+            or gt0.get("worst_day_pct", 0) < -s.get("margin", 0.8) * lm0.get("day", 1.5) - 1e-9:
+        return []           # the gap tracks alone do not fit - not the scouts' factor to fix (scale_cards is)
+    lm = s.get("limits") or {}
+    nt, nu = (s["now"].get("train") or {}), (s["now"].get("unseen") or {})
+    wt, wu = (s["with"].get("train") or {}), (s["with"].get("unseen") or {})
+    gt, gu = (s["gap_only"].get("train") or {}), (s["gap_only"].get("unseen") or {})
+    line = lambda x: (f"סה\"כ {x.get('total_pct', 0):+.1f}%, היום הגרוע {x.get('worst_day_pct', 0):+.2f}%, "  # noqa: E731
+                      f"הירידה הגדולה {x.get('max_fall_pct', 0):.1f}%, ימים שנעצרו במגבלה היומית {x.get('daily_stops', 0)}, "
+                      f"עסקאות שדולגו בגלל המקום {max(0, (x.get('room_skipped') or 0) - (x.get('contract_skipped') or 0))}"
+                      + (f" (ועוד {x['contract_skipped']} כי חוזה מיקרו אחד גדול מהסיכון)" if x.get("contract_skipped") else "")
+                      + (f", החשבון נכשל ב־{str(x['stopped'])[:10]}" if x.get("stopped") else ""))
+    try:            # what bot 5's agent found with the same rule (15.11.2026 night)
+        b5 = [c for c in json.loads(Path("reports/agents/bot5/cards_smart.json").read_text(encoding="utf-8")).get("cards", [])
+              if str((c.get("change") or {}).get("knob", "")).startswith("RISK_scout:")]
+        f5 = (b5[-1].get("detail") or {}).get("factor") if b5 else None
+        b5t = (f"בבוט 5 אותה בעיה: אחרי 8 אסטרטגיות סייר חדשות הירידה ב־2026 עלתה מ־9.5% ל־18%, והסוכן שם ×{f5} עליהן "
+               f"({len(b5)} כרטיסים)" if f5 else "בבוט 5 אין כרגע כרטיס דומה")
+    except Exception:  # noqa: BLE001
+        b5t = "בבוט 5 אותו כלל נבדק על האסטרטגיות שלו"
+    try:
+        sc = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8")).get("scout") or {}
+    except Exception:  # noqa: BLE001
+        sc = {}
+    tested = {str(x)[6:] for x in s.get("scouts", []) if str(x).startswith("scout:")}
+    gen = "scout" in s.get("scouts", [])
+    out = []
+    for combo in sorted(sc):
+        r0 = float(rk.get(f"scout:{combo}", rk.get("scout", FA.RISK_TAL)) or 0)
+        if r0 <= 0:
+            continue
+        to = round(r0 * k, 5)
+        inn = combo in tested or (gen and f"scout:{combo}" not in rk)
+        out.append(K.card("bot6", "risk", f"בוט 6: {combo} - סיכון {r0 * 100:g}% ← {to * 100:g}% כדי שהבוט כולו יישאר במגבלות החשבון",
+                          f"הבוט כולו קודם (עיקרון 11): מסלולי הגאפ רצים ב־×0.3 מאז 14.11 כדי להיכנס במגבלות של FTMO Futures "
+                          f"({lm.get('day', 1.5):g}% ביום, {lm.get('all', 4.5):g}% נגרר מתחת לשיא של סוף יום), אבל אסטרטגיות הסייר נוספו מעל זה "
+                          f"בסיכון מלא ולא נכנסו לבדיקה הזאת. הבוט כולו היום - 2024-2025: {line(nt)}; 2026: {line(nu)}. "
+                          f"רק מסלולי הגאפ - 2024-2025: {line(gt)}; 2026: {line(gu)}. הכלל (אותו כלל של מסלולי הגאפ ושל בוט 5): "
+                          f"מקדם אחד על הסיכון של אסטרטגיות הסייר, הגדול ביותר שבו 2024-2025 של הבוט כולו נשאר ב־{s.get('margin', 0.8):.0%} "
+                          f"מהמגבלות (ירידה ≤ {s.get('margin', 0.8) * lm.get('all', 4.5):.1f}%, יום ≥ -{s.get('margin', 0.8) * lm.get('day', 1.5):.1f}%) "
+                          f"והחשבון לא נכשל - נבחר רק על 2024-2025 → ×{k}" + ("" if s.get("fits") else " (גם כך לא נכנס - המינימום)")
+                          + f". עם המקדם - 2024-2025: {line(wt)}; 2026 (לא נראתה): {line(wu)}. "
+                          + (f"עם המקדם הסייר עדיין מוסיף לבוט: 2026 {gu.get('total_pct', 0):+.1f}% ← {wu.get('total_pct', 0):+.1f}%. "
+                             if wu.get("total_pct", 0) > gu.get("total_pct", 0) else
+                             f"שימו לב: עם המקדם הסייר לא מוסיף לבוט ב־2026 ({gu.get('total_pct', 0):+.1f}% בלעדיו, "
+                             f"{wu.get('total_pct', 0):+.1f}% איתו) - הצעד הבא: פחות אסטרטגיות סייר, החזקות בלבד (קודם מתקנים). ")
+                          + ("" if inn else "האסטרטגיה הזאת לא נכנסה לבדיקה בזמן - מקבלת את אותו מקדם, כדי לא להוסיף סיכון מעל הנבדקות. ")
+                          + f"לא הקטנה של מפסידה - התאמה למגבלות החשבון; הבדיקה חוזרת בכל סבב במחשב הבוטים. {b5t}.",
+                          None, None, tested=len(s.get("tried") or [1]), risk_pct=round(to * 100, 4),
+                          detail={"world": "bot6", "task": "scout_scale", "account_fit": True, "factor": k, "tested": inn,
+                                  "scale": {kk: s.get(kk) for kk in ("chosen", "fits", "limits", "now", "with", "gap_only", "tried")}},
+                          change={"track": f"scout:{combo}", "knob": f"RISK_scout:{combo}", "from": r0, "to": to}))
+    return out
 
 
 def guard6_card(g):
@@ -1236,12 +1347,14 @@ def tal(budget_s):
                 print(f"tal_gap one micro failed: {e}")
             doc["bot6"]["portfolio"] = pf
             try:        # the fixed risk rule on the whole bot, scouts included (tal1411risk, 14.11.2026 night)
-                g6 = guard6(idx, counted, rk, budget_s * 0.05)
+                # 0.05 of the run left 4 of the 10 scouts out of the 15.11 round (time) - the fixed rule needs them all
+                g6 = guard6(idx, counted, rk, budget_s * 0.12)
                 if g6:
                     doc["bot6"]["risk_guard"] = g6
                     gc6 = guard6_card(g6)
                     if gc6:
                         pcards.append(gc6)
+                    pcards += scout_scale_cards(g6, rk)     # the scouts' risk on the whole bot (15.11.2026 night)
             except Exception as e:  # noqa: BLE001
                 print(f"tal_gap risk guard failed: {e}")
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")

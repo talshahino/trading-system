@@ -14,7 +14,9 @@
    "SW": 3,
    "MIN_RR": 1.0,
    "EXPIRY": 120,
-   "PROT": "none"
+   "PROT": "none",
+   "WKND": 10,
+   "REARM": true
   }
  },
  "tal_tracks": {
@@ -32,7 +34,9 @@
     "EXPIRY": 120,
     "PROT": "cal15",
     "EXIT": "be886",
-    "LADDER": "4"
+    "LADDER": "4",
+    "WKND": 10,
+    "REARM": true
    }
   },
   "t15_5": {
@@ -85,7 +89,10 @@
   "t15_5": 0.0012,
   "t5_1": 0.00084,
   "scout:SC051|15Min|US100": 0.0028,
-  "scout:SC258|5Min|US100": 0.0028
+  "scout:SC258|5Min|US100": 0.0028,
+  "scout:SC261|5Min|US500": 0.0028,
+  "scout:FR03|15Min|US30": 0.0028,
+  "scout:SC084|15Min|US30": 0.0028
  },
  "changes": {
   "abb187377383": {
@@ -273,6 +280,69 @@
    "combo": "SC258|5Min|US100",
    "before": "__none__",
    "star_risk_before": "__none__"
+  },
+  "24042c54f262": {
+   "family": "scout6",
+   "combo": "SC326|15Min|US30",
+   "before": "__none__"
+  },
+  "89dc29914b40": {
+   "family": "scout6",
+   "combo": "SC261|5Min|US500",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "d7d20b5c0d23": {
+   "family": "scout6",
+   "combo": "FR03|15Min|US30",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "3ced409700a5": {
+   "family": "tal",
+   "before": {
+    "pair": [
+     "1h",
+     "5m",
+     2
+    ],
+    "cfg": {
+     "GBODY": 1.5,
+     "MIN_GAP": 0.3,
+     "SW": 3,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "none"
+    }
+   }
+  },
+  "4a76ea371e30": {
+   "family": "tal5",
+   "track": "tal4h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h",
+     1
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 2,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "cal15",
+     "EXIT": "be886",
+     "LADDER": "4"
+    }
+   },
+   "risk_before": 0.0012
+  },
+  "b6fcdec932b5": {
+   "family": "scout6",
+   "combo": "SC084|15Min|US30",
+   "before": "__none__",
+   "star_risk_before": "__none__"
   }
  },
  "scout": {
@@ -335,6 +405,46 @@
    },
    "since": "2026-11-14T21:44:05+00:00",
    "card": "c49201c6a29c"
+  },
+  "SC326|15Min|US30": {
+   "v": {
+    "target": "own",
+    "stop": 1.0,
+    "time": "own",
+    "be": false
+   },
+   "since": "2026-11-15T07:40:11+00:00",
+   "card": "24042c54f262"
+  },
+  "SC261|5Min|US500": {
+   "v": {
+    "target": "none",
+    "stop": 0.75,
+    "time": "own",
+    "be": true
+   },
+   "since": "2026-11-15T07:40:11+00:00",
+   "card": "89dc29914b40"
+  },
+  "FR03|15Min|US30": {
+   "v": {
+    "target": "own",
+    "stop": 1.0,
+    "time": "own",
+    "be": false
+   },
+   "since": "2026-11-15T07:40:11+00:00",
+   "card": "d7d20b5c0d23"
+  },
+  "SC084|15Min|US30": {
+   "v": {
+    "target": "own",
+    "stop": 1.0,
+    "time": "own",
+    "be": false
+   },
+   "since": "2026-11-15T07:40:11+00:00",
+   "card": "b6fcdec932b5"
   }
  }
 }

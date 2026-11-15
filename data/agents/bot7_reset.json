@@ -1,5 +1,5 @@
 {
- "fp": "f504fa843d51",
+ "fp": "55e2eb9d0399",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -50,6 +50,22 @@
    "EV03|5Min|USDCHF",
    "EV03|5Min|USDJPY",
    "EV03|5Min|XAUUSD",
+   "EV04|1Min|AUDUSD",
+   "EV04|1Min|EURJPY",
+   "EV04|1Min|EURUSD",
+   "EV04|1Min|GBPJPY",
+   "EV04|1Min|GBPUSD",
+   "EV04|1Min|GER40",
+   "EV04|1Min|JP225",
+   "EV04|1Min|NZDUSD",
+   "EV04|1Min|UK100",
+   "EV04|1Min|US100",
+   "EV04|1Min|US30",
+   "EV04|1Min|US500",
+   "EV04|1Min|USDCAD",
+   "EV04|1Min|USDCHF",
+   "EV04|1Min|USDJPY",
+   "EV04|1Min|XAUUSD",
    "EV08|1Min|US100",
    "EV08|1Min|US30",
    "EV08|1Min|US500",
@@ -221,6 +237,182 @@
     "limit": 0.5,
     "target_card": "93b5b4e30f5e"
    },
+   "EV04|1Min|AUDUSD": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|EURJPY": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|EURUSD": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|GBPJPY": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|GBPUSD": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|GER40": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|JP225": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|NZDUSD": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|UK100": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|US100": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|US30": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|US500": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|USDCAD": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|USDCHF": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|USDJPY": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
+   "EV04|1Min|XAUUSD": {
+    "start": "pre",
+    "x_atr5": 1.0,
+    "stop": "opp",
+    "exit": "be1",
+    "hold_min": 30,
+    "cur": "own",
+    "cancel_min": 5,
+    "slip_atr": 0.1,
+    "cap_per_release": 9
+   },
    "EV08|1Min|US100": {
     "groups": [
      "claims",
@@ -291,8 +483,8 @@
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-15T02:08:09+00:00",
- "account_v": 10,
+ "last_reset": "2026-11-15T03:39:55+00:00",
+ "account_v": 11,
  "resets": [
   {
    "v": 2,
@@ -356,6 +548,13 @@
    "what": "נוספו 3 אסטרטגיות/מכשירים · כלל השתנה ב־EV08|1Min|US100, EV08|1Min|US30, EV08|1Min|US500",
    "archive": "data/agents/bot7_archive/account_v9.json",
    "id": "a9c788b6e3c3"
+  },
+  {
+   "v": 11,
+   "at": "2026-11-15T03:39:55+00:00",
+   "what": "נוספו 16 אסטרטגיות/מכשירים · כלל השתנה ב־EV04|1Min|AUDUSD, EV04|1Min|EURJPY, EV04|1Min|EURUSD, EV04|1Min|GBPJPY",
+   "archive": "data/agents/bot7_archive/account_v10.json",
+   "id": "7780c5a15013"
   }
  ],
  "stable": false,

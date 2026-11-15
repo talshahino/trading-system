@@ -216,18 +216,13 @@ def built_variant(bot, combo, fam):
     if not any(k in p for k in ("target", "stop", "limit")):
         return "own|be0.6|stop1|entry0"
     tg = p.get("target")
-    tg = "own" if tg is None else ("none" if tg == "none" else f"{_g(tg)}R")
-    return f"{tg}|be0.6|stop{_g(p.get('stop', 1))}|entry{_g(p.get('limit', 0))}"
-
-
-def _g(x):
-    """A plan number as the variant key writes it; a word stays a word (bots 1-4 smart agent, 15.11.2026: bot 7's
-    EV04 straddle is built with "stop": "opp" - the stop at the other order - and float('opp') stopped the daily
-    whole-bot replay of every bot after it). A word never matches an exits variant, so the combo's own test is used."""
     try:
-        return f"{float(x):g}"
+        tg = "own" if tg is None else ("none" if tg == "none" else f"{float(tg):g}R")
+        return f"{tg}|be0.6|stop{float(p.get('stop', 1)):g}|entry{float(p.get('limit', 0)):g}"
     except (TypeError, ValueError):
-        return str(x)
+        # a release strategy's own words, not an exits grid value (bot 7, 15.11.2026: EV04's "stop": "opp" - the
+        # stop at the other order - stopped the whole-bot check of bot 7 with a ValueError): no exits variant
+        return None
 
 
 def bot_risk(bot):

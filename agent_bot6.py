@@ -1264,8 +1264,16 @@ SCOUT_RERUN_DAYS = 14
 # 14.11.2026 afternoon: the scout's strategies from the user's videos of 14.11 that are close to his gap method and built
 # for the New York session - SC258 (the Judas swing of the 09:30-09:45 range + CISD), SC253 (the Silver Bullet's three
 # windows), SC250 (an FVG with a weak candle 3), SC251 (an FVG with displacement), SC286 (Candle Range Theory) - first.
-DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC258", ("5Min", "1Min")), ("SC253", ("5Min", "1Min")),
+# 15.11.2026 night 3 (weekend, no new run yet): SC325 first - the edgeful power hour (a new day high / low 15:00-15:50 NY,
+# out at 16:00), a pure cash-session index pattern, at most one trade a day (quick to run; the 15:45 no-entry rule of
+# FTMO Futures cuts its last 5 minutes, as live). After SC286: the correlated-index ones, natural for MNQ / MES / MYM -
+# SC292 (SMT divergence -> iFVG -> CISD), SC291 (the FVG return only on the stronger index), SC303 (NY sweeps London +
+# iFVG) and SC307 (Power of Three around the NY midnight open).
+DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC325", ("5Min", "15Min")), ("SC258", ("5Min", "1Min")),
+                                                 ("SC253", ("5Min", "1Min")),
                                                  ("SC250", ("5Min", "1Min")), ("SC251", ("5Min",)), ("SC286", ("15Min",)),
+                                                 ("SC292", ("5Min",)), ("SC291", ("5Min",)), ("SC303", ("5Min", "1Min")),
+                                                 ("SC307", ("5Min",)),
                                                  ("SC104", ("1Min",)), ("SC058", ("5Min", "15Min", "1Min")), ("SC063", ("5Min",)),
                                                  ("SC073", ("5Min",)), ("SC077", ("5Min", "1Min")), ("SC078", ("15Min",)),
                                                  ("SC011", ("1Min",)), ("SC052", ("1Min",)), ("SC003", ("1Min",)),

@@ -62,6 +62,12 @@ def user_rules():
 
 RISK_BOTS = ("bot1", "bot2", "bot3", "bot4")   # risk per strategy is applied on the bots' computer (live/risk.json)
 STAR_MULT = 0.7                                 # "maybe luck": the lowered risk a small edge goes in with
+# a new strategy that no whole-bot check can see (bots 5-6, not in agents/portfolio_check.BOTS): at most this many per
+# instrument in 24 hours, the best by the total R to 2025 first (manager, 15.11.2026 morning: with the luck filter by
+# asset class one pass approved 33 new strategies into bot 5 at its full risk, 28 of them on XAUUSD 5 / 15 minutes -
+# never replayed together, one bad gold day hits all of them and the 5% daily limit). The rest wait and come in on the
+# next days, the best first.
+UNCHECKED_CAP = 3
 STAR_GAIN, STAR_N = 0.10, 100                   # ... when the gain is under 0.10R a trade, or under 100 trades shown
 
 
@@ -109,6 +115,25 @@ def star_floor(c, cur_m):
 
 
 FAMILY_MIN, FAMILY_T = 4, 1.0                  # a scout strategy tested on >= 4 instrument/timeframe pairs of one bot ...
+
+
+def _sym_of(combo):
+    parts = str(combo or "").split("|")
+    return parts[2] if len(parts) == 3 else None
+
+
+def _title_combo(title):
+    import re
+    m = re.search(r"([A-Za-z0-9_]+\|[0-9A-Za-z]+\|[A-Za-z0-9_.]+)", str(title or ""))
+    return m.group(1) if m else None
+
+
+def _pc_bots():
+    try:
+        from agents import portfolio_check as PC
+        return set(PC.BOTS)
+    except Exception:  # noqa: BLE001
+        return {"bot1", "bot2", "bot3", "bot4", "bot7"}
 
 
 def _family_pick(cards, c):
@@ -387,6 +412,7 @@ def decide(bots, now=None):
             if (now - pd.Timestamp(d0.get("at") or at)).total_seconds() > 86400 or _in_bot(bot, c):
                 continue
             pending.setdefault(bot, []).append((c, cardrisk.get(d0["id"])))
+    unchecked = {}                                              # (bot, instrument) -> new strategies no whole-bot check sees
     # 1) the agents' cards (all bots)
     for bot, b in bots.items():
         for c in b.get("cards", []):
@@ -517,6 +543,11 @@ def decide(bots, now=None):
                     if fl is not None and fl > mult and not (whole and whole.get("mult") and whole["mult"] < 1):
                         mult = fl                # not below what keeps the 2026 total at least what runs now
                     why += f" · ⭐ אולי מזל: נכנס בסיכון ×{mult:g} ובמעקב מוקפד"
+            if is_new and c["kind"] == "new" and whole is None and bot not in _pc_bots():
+                usym = _sym_of((c.get("change") or {}).get("combo"))
+                if usym:
+                    unchecked.setdefault((bot, usym), []).append((c, did, why, what, star))
+                    continue
             d = add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
                      "title": ("⭐ " if star else "") + c["title"], "decision": "approved", "why": why, "effect": what,
                      "star": star, **({"whole_bot": {k: whole[k] for k in ("before", "after")}} if whole else {})})
@@ -562,6 +593,23 @@ def decide(bots, now=None):
                  "decision": "approved", "why": why, "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "card_decision": did,
                  "star": star, "action": {"bot": bot, "combo": combo, "kind": "mult", "value": value,
                                           "prev": None if cur_m == 1.0 else cur_m}})
+    # 1a) the new strategies no whole-bot check sees: UNCHECKED_CAP per instrument in 24 hours, the best to 2025 first
+    for (bot, usym), xs in unchecked.items():
+        recent = sum(1 for o in old.values() if o.get("bot") == bot and o.get("type") == "card" and o.get("kind") == "new"
+                     and o.get("decision") == "approved" and o["id"] not in uundo
+                     and _sym_of(_title_combo(o.get("title"))) == usym
+                     and (now - pd.Timestamp(o.get("at") or at)).total_seconds() < 86400)
+        xs.sort(key=lambda x: -(_total(x[0].get("train")) or 0.0))
+        for i, (c, did, why, what, star) in enumerate(xs):
+            if i >= UNCHECKED_CAP - recent:
+                c["status"], c["verdict"] = "watch", (c["verdict"] + f" · מחכה: כבר נכנסו {UNCHECKED_CAP} אסטרטגיות חדשות על "
+                                                      f"{usym} ב־24 השעות האחרונות בלי בדיקת בוט שלם - נכנסת בימים הבאים, "
+                                                      "הטובה ביותר עד 2025 קודם")
+                continue
+            d = add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
+                     "title": ("⭐ " if star else "") + c["title"], "decision": "approved", "why": why, "effect": what,
+                     "star": star})
+            c["status"], c["by"], c["decided"], c["decision_id"] = "approved", "manager", d["at"], did
     # 1b) a "maybe luck" risk already applied under the total floor (star_floor, manager 13.11.2026 night) is raised to
     # the floor once, linked to its card like the star's own risk (an undo of the card brings the value before back)
     cards_by_id = {c["id"]: c for b in bots.values() for c in b.get("cards", [])}

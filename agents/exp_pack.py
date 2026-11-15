@@ -21,6 +21,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SHARD_RAW = 20 * 1024 * 1024            # about this much JSON per shard before compression
 _IDX, _SH = {}, OrderedDict()           # caches: index per folder, the last few shards read
+# the docs already asked for (manager, 15.11.2026 morning: the whole-bot checks of agent_manager.py read every combo of
+# a bot once per card, the combos spread over up to 70 shards, and with 3 shards kept every read decompressed a 20 MB
+# shard again - the manager ran past its 20 minutes on the bots' computer and stopped deciding)
+_DOC, DOC_MAX = OrderedDict(), 1500
 
 
 def pack_dir(exp_dir):
@@ -65,7 +69,17 @@ def meta(exp_dir, name):
 
 def packed(exp_dir, name):
     m = index(exp_dir)["docs"].get(name)
-    return _shard(exp_dir, m[3]).get(name) if m else None
+    if not m:
+        return None
+    key = (str(exp_dir), name)
+    if key in _DOC:
+        _DOC.move_to_end(key)
+        return _DOC[key]
+    d = _shard(exp_dir, m[3]).get(name)
+    _DOC[key] = d
+    while len(_DOC) > DOC_MAX:
+        _DOC.popitem(last=False)
+    return d
 
 
 def _single(exp_dir, name):

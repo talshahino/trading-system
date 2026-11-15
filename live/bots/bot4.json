@@ -33,7 +33,14 @@
   "SC094|1Hour|XAGUSD",
   "SC010|15Min|ARM",
   "SC069|15Min|XAUUSD",
-  "SC071|15Min|WMT"
+  "SC071|15Min|WMT",
+  "SC083|1Hour|GBPJPY",
+  "SC295|1Hour|USDJPY",
+  "FR01|1Hour|ARM",
+  "TV56|4Hour|USDJPY",
+  "SE02|1Hour|USDJPY",
+  "SC083|1Hour|USDJPY",
+  "BK07|1Hour|EURUSD"
  ],
  "note": "04.11.2026: built from the new families' combos that passed the first test (GitHub, QuantConnect, forums, books, seasonality, inter-market, Quantpedia), chosen on 2025 and checked on 2026 and by reshuffling; MetaQuotes-demo instruments only (FX, metals, US shares); risk 0.45% chosen by the user; FTMO Standard rule: closed before market breaks over 2 hours; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -91,6 +98,10 @@
    "target": 4.0,
    "stop": 0.75,
    "card": "eebc3e76565a"
+  },
+  "GH02|1Hour|USDJPY": {
+   "filter": "v_sqz",
+   "filter_card": "7ec8367ca88b"
   }
  },
  "added": {
@@ -105,7 +116,14 @@
   "SC094|1Hour|XAGUSD": "d18952323cb5",
   "SC010|15Min|ARM": "61036dc9719e",
   "SC069|15Min|XAUUSD": "639da469b229",
-  "SC071|15Min|WMT": "8de7f1778231"
+  "SC071|15Min|WMT": "8de7f1778231",
+  "SC083|1Hour|GBPJPY": "23c8839975bf",
+  "SC295|1Hour|USDJPY": "75a97df29f02",
+  "FR01|1Hour|ARM": "23f45f1df6dd",
+  "TV56|4Hour|USDJPY": "71d68e28cb44",
+  "SE02|1Hour|USDJPY": "28806ee0d05f",
+  "SC083|1Hour|USDJPY": "329b09205ee7",
+  "BK07|1Hour|EURUSD": "df858d1524b0"
  },
  "removed": {
   "SC002|1Hour|ARM": "ffe0e8720757",

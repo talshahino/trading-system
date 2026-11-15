@@ -724,6 +724,96 @@ def _trades(tidx, pn, cfg):
     return t
 
 
+# THE GAP METHOD'S PAIR CARDS ON THE RULES AS THEY TRADE (bot 6's task for bot 5 b6to5ftmo, 15.11.2026): TG.summarize
+# chooses each pair's version without FTMO's break rule (every pair's "chosen" had no WKND on 15.11), but
+# live/watch_own.py trades TG.ftmo_cfg(cfg), and the builder REPLACES a track's rules with the card's cfg - so a search
+# card on 4h/1h, 4h/15m, 1h/15m or 4h/5m showed 2026 numbers the bot cannot have and, approved, would have dropped the
+# REARM built on 15.11. As in bot 6 (agent_bot6.ftmo_runs / ftmo_pairs): each pair's train-chosen version and each live
+# index track's rules run with the rule on, alone and + REARM, and a pair's card is chosen only among versions with the
+# rule on (by the train total), its baseline = what runs (the live rules with the rule on).
+def ftmo_runs(budget_s):
+    """The live index tracks' rules and each pair's chosen version with FTMO's break rule on, alone and + REARM, on
+    bot 5's indices ('search' rows "from": "bot5_ftmo"), resumed where the last run stopped."""
+    try:
+        prev = ((json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot5") or {}).get("pairs") or {})
+    except Exception:  # noqa: BLE001
+        prev = {}
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    want = []
+    for pn, cfg, _ in _live_tracks().values():                       # what runs first (the cards' baselines)
+        if pn in pairs and TG.ftmo_cfg(cfg) not in [c for p_, c in want if p_ == pn]:
+            want.append((pn, TG.ftmo_cfg(cfg)))
+    order = []
+    for pn, x in prev.items():
+        ch = x.get("chosen") or {}
+        tr = ch.get("train") or {}
+        if pn not in pairs or not isinstance(ch.get("cfg"), dict) or (tr.get("mean") or 0) <= 0:
+            continue
+        order.append((-(tr.get("mean") or 0) * (tr.get("eff_n") or 0), pn, ch["cfg"]))
+    for _, pn, cfg in sorted(order, key=lambda z: z[0]):
+        for c in (TG.ftmo_cfg(cfg), TG.ftmo_cfg(dict(cfg, REARM=True))):
+            if (pn, c) not in want:
+                want.append((pn, c))
+    t0, done, data, gcs = time.time(), 0, {}, {}
+    idx_dir = TAL_DIR / "idx"
+    idx_dir.mkdir(parents=True, exist_ok=True)
+    have = {f.stem for f in idx_dir.glob("*.json")}
+    for pn, c in want:
+        p = pairs[pn]
+        for sym in TAL_SYMBOLS:
+            key = f"{p[0]}_{p[1]}_{TG.vid(c)}_{sym}"
+            if key in have or time.time() - t0 > budget_s:
+                continue
+            if sym not in data:
+                try:
+                    data[sym] = tal_load(sym)
+                except Exception:  # noqa: BLE001
+                    data[sym] = None
+            if data[sym] is None:
+                continue
+            t = TG.simulate(data[sym], p, c, gcs.setdefault((sym, p[0]), {}))
+            t.to_csv(TAL_DIR / f"{key}.csv.gz", index=False)
+            (idx_dir / f"{key}.json").write_text(json.dumps(
+                {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": p[2],
+                 "knob": "search", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f"{key}.csv.gz", "n": len(t),
+                 "from": "bot5_ftmo"}, default=str))
+            have.add(key)
+            done += 1
+    print(f"tal ftmo (bot 5): {done} run, {len(want) * len(TAL_SYMBOLS)} wanted")
+    return done
+
+
+def ftmo_pairs(tidx, pairs):
+    """The pairs for TG.cards with each pair's 'chosen' replaced by the best train total among its versions with FTMO's
+    break rule on (WKND), on all of bot 5's indices, and the live rules' row (with the rule on) among its variants as the
+    baseline; a pair with no such version yet gets no card ('chosen' None). Returns (pairs, {pair: before / now})."""
+    live = {pn: TG.ftmo_cfg(c) for pn, c, _ in _live_tracks().values()}
+    out, note = {}, {}
+    for pn, x in pairs.items():
+        rows, seen = [], set()
+        for v in tidx.values():
+            c = TG._norm(dict(v["cfg"]))
+            if v["pair"] != pn or not TG.wknd(c) or TG.vid(c) in seen:
+                continue
+            seen.add(TG.vid(c))
+            t = _trades(tidx, pn, c)
+            if t is not None and len(t):
+                rows.append({"knob": "search", "val": TG.vid(c), "cfg": c, **TG._stats(t)})
+        ok = [r for r in rows if (r["train"]["eff_n"] or 0) >= K.MIN_EFF_N and r["train"]["mean"] is not None]
+        best = max(ok, key=lambda r: r["train"]["mean"] * r["train"]["eff_n"]) if ok else None
+        y = dict(x, chosen=best)
+        extra = [r for r in rows if (best and r["val"] == best["val"]) or (pn in live and r["val"] == TG.vid(live[pn]))]
+        y["variants"] = list(x.get("variants") or []) + [{k: r[k] for k in ("knob", "val", "train", "unseen", "whole")}
+                                                         for r in extra if not TG._find(x, r["cfg"])]
+        out[pn] = y
+        before = (x.get("chosen") or {}).get("cfg")
+        note[pn] = {"before": before, "before_unseen": ((x.get("chosen") or {}).get("unseen") or {}).get("mean"),
+                    "ftmo": best["cfg"] if best else None, "ftmo_train": best["train"] if best else None,
+                    "ftmo_unseen": best["unseen"] if best else None, "ftmo_versions": len(rows),
+                    "live": live.get(pn), "live_measured": any(r["val"] == TG.vid(live[pn]) for r in rows) if pn in live else None}
+    return out, note
+
+
 # THE FIXED RISK RULE (the user, 14.11.2026 22:16, task tal1411risk): live/watch_own.py counts every open trade at its
 # stop and gives a new one only the room left to 4.5% a day / 9% from the start (under a quarter of its risk -> not
 # taken); TG.account does the same. The whole-bot test (TG.portfolio) holds only the gap tracks - not bot 5's scout
@@ -1247,10 +1337,11 @@ def main():
         # itself, so a step that failed or found no time was invisible to the nightly smart agent in the cloud
         for nm, fn, share in (("instrument_tracks", sym_runs, 0.25),  # the instrument tracks, so the whole bot is tested together
                               ("trend_fix", trend_runs, 0.15),        # the fix of the 12.11 loss against exactly what runs
-                              ("notes", note_runs, 0.25),             # the user's notes on live trades + the tasks of 14.11
-                              ("straddle", straddle_runs, 0.1),       # EV04 on bot 5's instruments (tal1411strad, 14.11.2026)
+                              ("notes", note_runs, 0.2),              # the user's notes on live trades + the tasks of 14.11
+                              ("straddle", straddle_runs, 0.05),       # EV04 on bot 5's instruments (tal1411strad, 14.11.2026)
                               ("shared_exit", shared_runs, 0.15),     # the shared exit on the whole bot (user, 13.11.2026)
-                              ("stability", stab_runs, 0.1)):         # the low-MIN_RR tracks with MIN_RR 0.5 / 1.0
+                              ("stability", stab_runs, 0.1),          # the low-MIN_RR tracks with MIN_RR 0.5 / 1.0
+                              ("ftmo_pairs", ftmo_runs, 0.1)):        # each pair on FTMO's break rule, alone and + REARM (b6to5ftmo)
             t1 = time.time()
             try:
                 STEPS[nm] = {"done": fn(tal_left * share)}
@@ -1335,7 +1426,17 @@ def main():
         # an instrument's own track ("symbols", agents/tal_wide.py) is not the indices' track of that pair
         live5 = {f"{v['pair'][0]}/{v['pair'][1]}": v["cfg"] for v in (s5.get("tal_tracks") or {}).values() if not v.get("symbols")}
         rk5 = [float(s5["risk"][k]) for k in (s5.get("tal_tracks") or {}) if k in (s5.get("risk") or {})]
-        cards += TG.cards(BOT, pairs, doc.get("bot6"), "בוט 6", risk_pct=round(min(rk5) * 100, 3) if rk5 else 0.4, live=live5)
+        # ... chosen only among the versions with FTMO's break rule on, the baseline = the live rules with it on - what
+        # the card shows is what would trade, and an approved card keeps the rule's fix REARM (b6to5ftmo, 15.11.2026)
+        try:
+            cpairs, fnote = ftmo_pairs(tidx, pairs)
+            doc["bot5"]["ftmo_pairs"] = fnote
+            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        except Exception as e:  # noqa: BLE001 - no pair card on the rules without the break rule
+            print(f"tal ftmo pairs failed: {e}")
+            cpairs = {pn: dict(x, chosen=None) for pn, x in pairs.items()}
+        live5f = {pn: TG.ftmo_cfg(c) for pn, c in live5.items()}
+        cards += TG.cards(BOT, cpairs, doc.get("bot6"), "בוט 6", risk_pct=round(min(rk5) * 100, 3) if rk5 else 0.4, live=live5f)
         tal = {"done": len(tidx), "planned": planned}
         # only the tracks the account counts: a track at risk 0 (t5_1, out since 12.11 night) still runs and is shown,
         # but its trades are not the account's - counted here they made the cap / doubled-risk test look worse or better

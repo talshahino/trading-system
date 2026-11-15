@@ -1,9 +1,109 @@
 {
- "updated": "2026-11-15T17:33:00+00:00",
+ "updated": "2026-11-15T18:05:44+00:00",
  "new": [
-  "80ba9088de6a"
+  "ae16971ef1c9",
+  "fd35f4be2d22",
+  "4d66a8feffc3"
  ],
  "decisions": [
+  {
+   "id": "ae16971ef1c9",
+   "bot": "bot2",
+   "type": "card",
+   "card": "52b33c4dd538",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC333|1Hour|GBPJPY: יעד 3R · סטופ x0.75 · כניסה בלימיט 0.5R טוב יותר",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.54R לעסקה, 41.0 עסקאות אפקטיביות, +0.50R מעל המצב הקיים) · נבדקו 96 שילובים, אז חלק מהיתרון עלול להיות מזל · בבוט השלם על 2026: רווח +104.06% → +109.47%, בלי יותר סיכון (יום גרוע -2.76%, ירידה 7.05%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 2251,
+     "total": 104.06,
+     "worst_day": -2.76,
+     "max_dd": 7.32,
+     "near_days": 0,
+     "max_open": 4.19,
+     "max_side": 3.27,
+     "guard_cut": 46,
+     "guard_skipped": 1
+    },
+    "after": {
+     "trades": 2186,
+     "total": 109.47,
+     "worst_day": -2.76,
+     "max_dd": 7.05,
+     "near_days": 0,
+     "max_open": 4.08,
+     "max_side": 3.02,
+     "guard_cut": 39,
+     "guard_skipped": 1
+    }
+   },
+   "at": "2026-11-15T18:05:44+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "fd35f4be2d22",
+   "bot": "bot2",
+   "type": "card",
+   "card": "cdf45dfb7253",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "SC295|1Hour|USDJPY: יעד 4R · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.76% → -2.76%, ירידה 7.07% → 7.51%) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2186,
+     "total": 110.5,
+     "worst_day": -2.76,
+     "max_dd": 7.07,
+     "near_days": 0,
+     "max_open": 4.08,
+     "max_side": 3.02,
+     "guard_cut": 40,
+     "guard_skipped": 1
+    },
+    "after": {
+     "trades": 2166,
+     "total": 111.5,
+     "worst_day": -2.76,
+     "max_dd": 7.51,
+     "near_days": 0,
+     "max_open": 4.08,
+     "max_side": 3.18,
+     "guard_cut": 35,
+     "guard_skipped": 0
+    }
+   },
+   "at": "2026-11-15T18:05:44+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "4d66a8feffc3",
+   "bot": "bot2",
+   "type": "card",
+   "card": "bb23cc1f47a1",
+   "kind": "info",
+   "tier": "regular",
+   "title": "SC330|1Hour|USDJPY: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-15T18:05:44+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "80ba9088de6a",
    "bot": "bot1",

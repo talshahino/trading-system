@@ -2512,6 +2512,17 @@
     "bot3": "14.11 לילה 3: בוצע - ההפסקה היומית של המתכות בשרת MetaQuotes (23:00-01:00) היא בדיוק שעתיים, ונמדדה מפתיחת הנר האחרון (121 דק'). learn_breaks מודד עכשיו מסוף הנר, כמו break_mask בבדיקה (commit e2418dd4a) - המתכות לא נסגרות בלילה, החי כמו הבדיקה, אין צורך להריץ מחדש.",
     "bot4": "14.11 לילה 3: בוצע - ההפסקה היומית של המתכות בשרת MetaQuotes (23:00-01:00) היא בדיוק שעתיים, ונמדדה מפתיחת הנר האחרון (121 דק'). learn_breaks מודד עכשיו מסוף הנר, כמו break_mask בבדיקה (commit e2418dd4a) - המתכות לא נסגרות בלילה, החי כמו הבדיקה, אין צורך להריץ מחדש."
    }
+  },
+  {
+   "id": "mgr1511pub",
+   "at": "2026-11-15",
+   "bots": [
+    "manager"
+   ],
+   "by": "user",
+   "from": "manager",
+   "task": "טל, 15.11 (דחוף): מחשב הבוטים לא מצליח לפרסם חלק מהקבצים: host.json agent_errors 'bot1: publishing failed: 422 Unprocessable Entity .../git/blobs', ו־commit d66630ca0 'refused by GitHub: reports/agents/manager.json, reports/agents/bot3/cards.json'. מה שלא מתפרסם לא מגיע לאפליקציה ולמנהל. למצוא את הסיבה (ה־422 המלא בלוג: גודל? חסימת סודות - push protection? תו לא חוקי?) ולתקן ב־live/agents_host.py (למשל לפצל קובץ גדול כמו cards_rejected_N, או להקטין: לא לשמור כרטיסים שנדחו ב־cards.json - bot2 cards.json 20MB, bot7 15MB, manager.json 5.5MB), ולוודא שה־422 נעלם. נבדק כבר: 'new strategies: 0 combos tested' בבוטים אינו באג - כל הצירופים (46k בבוט 1, 32k בבוט 3, 9k בבוט 5...) כבר נבדקו בהרצות של GitHub ואין צירוף שמחכה; ה־'combos left' בבוטים 3-5 היו לפני שהתוצאות של GitHub נכנסו.",
+   "status": {}
   }
  ],
  "eb3e3e8c550e": {

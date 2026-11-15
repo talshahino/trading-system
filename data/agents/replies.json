@@ -2522,7 +2522,13 @@
    "by": "user",
    "from": "manager",
    "task": "טל, 15.11 (דחוף): מחשב הבוטים לא מצליח לפרסם חלק מהקבצים: host.json agent_errors 'bot1: publishing failed: 422 Unprocessable Entity .../git/blobs', ו־commit d66630ca0 'refused by GitHub: reports/agents/manager.json, reports/agents/bot3/cards.json'. מה שלא מתפרסם לא מגיע לאפליקציה ולמנהל. למצוא את הסיבה (ה־422 המלא בלוג: גודל? חסימת סודות - push protection? תו לא חוקי?) ולתקן ב־live/agents_host.py (למשל לפצל קובץ גדול כמו cards_rejected_N, או להקטין: לא לשמור כרטיסים שנדחו ב־cards.json - bot2 cards.json 20MB, bot7 15MB, manager.json 5.5MB), ולוודא שה־422 נעלם. נבדק כבר: 'new strategies: 0 combos tested' בבוטים אינו באג - כל הצירופים (46k בבוט 1, 32k בבוט 3, 9k בבוט 5...) כבר נבדקו בהרצות של GitHub ואין צירוף שמחכה; ה־'combos left' בבוטים 3-5 היו לפני שהתוצאות של GitHub נכנסו.",
-   "status": {}
+   "status": {
+    "manager": {
+     "state": "done",
+     "at": "2026-11-15T06:30:00+00:00",
+     "text": "15.11 בוקר: בפרסום של 06:13 אין קבצים שנדחו (pub_skipped ריק, agent_errors ריק) - הפיצול של הכרטיסים שנדחו ל־cards_rejected_N עבד. לבדוק בסבב הבא של בוט 3 ש־cards.json שלו מתעדכן (ב־GitHub מ־14.11 22:59)."
+    }
+   }
   },
   {
    "id": "mgr1511host",
@@ -2533,7 +2539,13 @@
    "by": "user",
    "from": "manager",
    "task": "דחוף (15.11 08:00): סוכני מחשב הבוטים (live/agents_host.py) לא פרסמו כלום מאז 04:41 UTC - host.json תקוע ב־04:40, manager_state.agents_host.light_at 04:40:58 ו־running true - בזמן שהבוטים עצמם חיים (מצבי live מ־05:58 UTC). הריצה הקלה כל 10 דקות נעצרה. למצוא למה (ריצת smart שלא חוזרת? נעילה? ההתקנה של 05:11 UTC - גרסה 231e244 עם machine() החדש ב־host_doc? - ביטלתי את סריקת התיקייה ב־4b634a8), לתקן, ולוודא ש־host.json מתעדכן שוב, כולל 'machine' (דיסק וזיכרון - טל שאל אם יש מספיק מקום).",
-   "status": {}
+   "status": {
+    "manager": {
+     "state": "done",
+     "at": "2026-11-15T06:30:00+00:00",
+     "text": "15.11 בוקר: נמצאה הסיבה - אחרי כל הפעלה מחדש הסבב הראשון חישב מחדש טביעה של כל קובצי התוצאות (כ־30 דק' במחשב, הזיכרון של זה היה רק בזיכרון התוכנה), וההתקנות האוטומטיות הגיעו כל 25-30 דק' (04:46, 05:11, 05:41) וקטעו כל סבב. הסבב הסתיים ב־06:13 (host.json חזר, כולל machine: דיסק 139 מתוך 223 GB פנויים, זיכרון 1.5 מתוך 7.9 GB פנויים). תוקן (af2b8e3): הזיכרון נשמר בדיסק (hash_cache.json, גם באמצע סריקה ארוכה), וההתקנה האוטומטית מחכה לסוף סבב שרץ (עד 40 דק')."
+    }
+   }
   }
  ],
  "eb3e3e8c550e": {

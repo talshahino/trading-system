@@ -1,22 +1,30 @@
 {
- "updated": "2026-11-15T20:40:12+00:00",
+ "updated": "2026-11-15T20:58:26+00:00",
  "new": [
-  "a3bf0d1a6587",
-  "fb1fd7d6ac14",
-  "163ecb40c0a3",
-  "bd885415b650",
-  "53cf3a753969",
-  "6fc84079f19f",
-  "b977be0b9be1",
-  "7ab70292c2dc",
-  "2ab93f0dc438",
-  "07ea26421222",
-  "44f1f8451cdc",
-  "f9f2babfdd42",
-  "6dff2fc6edaf",
-  "cbebc2c87450"
+  "e9cbfbb118bd"
  ],
  "decisions": [
+  {
+   "id": "e9cbfbb118bd",
+   "bot": "bot7",
+   "type": "reset",
+   "kind": "reset",
+   "combo": null,
+   "title": "בוט 7: החשבון מתחיל מחדש מ־100,000$ (חשבון 14)",
+   "decision": "approved",
+   "why": "שינוי מהותי בסגנון האסטרטגיה (כלל השתנה ב־SC048|1Hour|US100, SC264|15Min|JP225, SC372|4Hour|XAUUSD, TV56|4Hour|USDJPY), והבוט עוד לא יציב (0 ימים מהאיפוס האחרון, פחות מ־14)",
+   "effect": "החשבון הקודם (0 עסקאות, +0$) נשמר ב־data/agents/bot7_archive/account_v12.json לסוכן של בוט 7 ולמנהל, ללמוד ממנו מה לשפר ומה לשמר. ביטול מחזיר את החשבון הקודם עם כל העסקאות",
+   "archive": "data/agents/bot7_archive/account_v12.json",
+   "action": {
+    "bot": "bot7",
+    "kind": "reset",
+    "v": 14
+   },
+   "at": "2026-11-15T20:58:26+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "a3bf0d1a6587",
    "bot": "bot7",

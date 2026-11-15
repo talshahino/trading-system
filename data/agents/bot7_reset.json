@@ -1,5 +1,5 @@
 {
- "fp": "8cd50c962e1b",
+ "fp": "c86073d05d05",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -483,7 +483,9 @@
    },
    "SC048|1Hour|US100": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "stop": 0.75,
+    "limit": 0.25
    },
    "SC054|1Hour|XAUUSD": {
     "added": "2026-11-15",
@@ -520,7 +522,8 @@
    },
    "SC264|15Min|JP225": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "stop": 0.75
    },
    "SC265|5Min|XAUUSD": {
     "added": "2026-11-15",
@@ -532,7 +535,10 @@
    },
    "SC372|4Hour|XAUUSD": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "target": 3.0,
+    "stop": 0.75,
+    "limit": 0.5
    },
    "SE02|1Hour|GBPJPY": {
     "added": "2026-11-15",
@@ -580,14 +586,16 @@
    },
    "TV56|4Hour|USDJPY": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "target": 4.0,
+    "stop": 0.75
    }
   },
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-15T12:17:35+00:00",
- "account_v": 13,
+ "last_reset": "2026-11-15T20:58:26+00:00",
+ "account_v": 14,
  "resets": [
   {
    "v": 2,
@@ -672,6 +680,13 @@
    "what": "נוספו 20 אסטרטגיות/מכשירים · כלל השתנה ב־IB033|4Hour|XAUUSD, MQ11|4Hour|US30, SC033|1Hour|JP225, SC048|1Hour|US100",
    "archive": "data/agents/bot7_archive/account_v12.json",
    "id": "b25a79478a5a"
+  },
+  {
+   "v": 14,
+   "at": "2026-11-15T20:58:26+00:00",
+   "what": "כלל השתנה ב־SC048|1Hour|US100, SC264|15Min|JP225, SC372|4Hour|XAUUSD, TV56|4Hour|USDJPY",
+   "archive": "data/agents/bot7_archive/account_v12.json",
+   "id": "e9cbfbb118bd"
   }
  ],
  "stable": false,

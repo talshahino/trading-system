@@ -1173,6 +1173,16 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 surprise study failed: {e}")
+        # the trades of bot 7's own strategies for the whole-bot check (agents/bot7_trades.py, 15.11.2026: 46 of 55
+        # combos were unknown there): from the studies' caches every round, so they follow the built plans
+        import importlib
+        from agents import bot7_trades as BT7
+        for mod in ("news_regime", "news_straddle", "news_surprise"):
+            try:
+                m_ = importlib.import_module(f"agents.{mod}")
+                BT7.safe(lambda m_=m_: m_.export(m_._cached_rows()))
+            except Exception as e:  # noqa: BLE001
+                print(f"bot7 trades export ({mod}) failed: {e}")
     if a.bot in ("bot1", "bot2", "bot3", "bot4", "bot5") and a.where in ("pc", "all"):
         # the scout strategies picked out of a losing family (the manager's tasks mgr1411fam / mgr1411fam2, deadline
         # 16-17.11.2026): one instrument's filter test per round (a fifth of the budget, at least 10 minutes), then the

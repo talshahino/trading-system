@@ -49,6 +49,7 @@ from agents import ftmo_costs as C  # noqa: E402
 from agents import ftmo_universe as U  # noqa: E402
 from agents import news_fix as NF  # noqa: E402
 from agents import poc_agent as P  # noqa: E402
+from agents import bot7_trades as BT  # noqa: E402
 
 OUT = ROOT / "reports" / "agents" / "bot7" / "straddle_study.json"
 CACHE = ROOT / "cache" / "news_straddle"
@@ -185,7 +186,7 @@ def trades_sym(sym, rel):
         rows.append({"v": x.v, "sym": sym, "cls": U.CLASS.get(sym, "?"), "t": pd.Timestamp(x.time).isoformat(),
                      "dir": int(x.dir), "r": round(float(x.r), 4), "gross": round(float(tt.at[x.Index, "r"]), 4),
                      "cat": x.cat, "usd": int(x.usd), "own": int(x.own), "spr": round(float(x.spr), 2), "both": int(x.both),
-                     "rel": pd.Timestamp(x.rel).isoformat()})
+                     "rel": pd.Timestamp(x.rel).isoformat(), "x": pd.Timestamp(x.exit_time).isoformat()})
     return rows
 
 
@@ -307,6 +308,43 @@ def by_group(df, col):
     return out
 
 
+def built_key(p):
+    """The study key of a built EV04 plan (live/bots/bot7.json, card bfdb13a3a001)."""
+    return (f"{p.get('start', 'pre')}|x{float(p.get('x_atr5', 1.0)):g}|{p.get('stop', 'opp')}|{p.get('exit', 'be1')}"
+            f"|h{int(p.get('hold_min', 30))}|c{p.get('cur', 'own')}|sp{float(p.get('spread_cap', 0) or 0):g}"
+            + (f"|cap{int(p['cap_per_release'])}" if p.get("cap_per_release") else ""))
+
+
+def export(df):
+    """The built version's trades for the whole-bot check (agents/bot7_trades.py). The cap per release counts the
+    bot's EV04 instruments only, as the live bot does."""
+    b = BT.built("EV04", "1Min")
+    if df is None or not len(df) or not b:
+        return {}
+    syms = [s_ for s_ in b if s_ in set(df["sym"])]
+    keys = {}
+    for s_ in syms:
+        keys.setdefault(built_key(b[s_]), []).append(s_)
+    out = {}
+    for k, ss in keys.items():
+        z = _rows_for(df[df["sym"].isin(ss)], k)
+        hold = {s_: int(b[s_].get("hold_min", 30)) + int(b[s_].get("cancel_min", CANCEL)) for s_ in ss}
+        out.update(BT.write("EV04", "1Min", z, ss, hold, "agents/news_straddle.py", k))
+    return out
+
+
+def _cached_rows():
+    rows = []
+    for f in sorted(CACHE.glob("*.json")) if CACHE.exists() else []:
+        try:
+            c_ = json.loads(f.read_text(encoding="utf-8"))
+            if c_.get("version") == VERSION:
+                rows += c_["rows"]
+        except Exception:  # noqa: BLE001
+            pass
+    return pd.DataFrame(rows)
+
+
 def stale():
     try:
         j = json.loads(OUT.read_text(encoding="utf-8"))
@@ -324,6 +362,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if not a.force and not stale():
         print("straddle study fresh - skipped")
+        BT.safe(lambda: export(_cached_rows()))     # the whole-bot check's trades follow the plans every run
         return
     t_end = time.time() + a.minutes * 60
     rel = NF.releases()
@@ -353,6 +392,7 @@ def main(argv=None):
             print(f"EV04 {sym}: failed ({e})")
     df = pd.DataFrame(rows)
     res = study(df) if len(df) else {}
+    BT.safe(export, df)
     if len(df):
         tr = df.assign(train=pd.to_datetime(df["t"], utc=True) < NF.SPLIT)
         res["gold"] = study(df[df["sym"] == "XAUUSD"]) if (df["sym"] == "XAUUSD").any() else None

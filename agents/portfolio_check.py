@@ -113,6 +113,14 @@ def current_trades(bot, combo, cfg, key="tr"):
     key "tr25": the choosing period's trades (30.04.2025-31.12.2025) instead, where the agents stored them."""
     from agent_portfolio import built_variant
     p = (cfg.get("plans") or {}).get(combo) or {}
+    if bot == "bot7":
+        # bot 7's own strategies (EV02 / EV03 / SH01 / EV04 / EV08) are measured in their studies, which store the
+        # built version's trades (agents/bot7_trades.py, 15.11.2026) - used while the plan is the one they were made of
+        ds = exp(bot, "study", combo) or {}
+        if isinstance(ds.get(key), dict) and "built" in ds[key]:
+            from agents import bot7_trades as BT
+            if ds.get("plan_sig") == BT.plan_sig(p):
+                return ds[key]["built"]
     if p.get("ladder"):                                          # a built laddered entry (13.11.2026): its own trades
         d = exp(bot, "ladder", combo) or {}
         return live_entries(combo, d, (d.get(key) or {}).get(built_variant(bot, combo, "ladder")))
@@ -251,13 +259,30 @@ def book_now(bot, cfg=None, key="tr"):
     mm = mults(bot)
     combos = cfg.get("combos") or []
     book, missing = {}, []
+    plans = cfg.get("plans") or {}
     for c in combos:
+        if (plans.get(c) or {}).get("off_from"):
+            # a removed combo (bot 7's card kind "remove", plans "off_from") trades no more: the bot as it is now has
+            # none of its trades (bot 7 smart agent, 15.11.2026: SC070 JP225, removed 05:01, still took the 2026 replay
+            # to -8.9% and its guard stop made every new bot 7 card "adds no profit")
+            continue
         tr = current_trades(bot, c, cfg, key)
         if tr is None:
             missing.append(c)
             continue
-        book[c] = (tr, float(mm.get(c, 1.0)))
+        book[c] = (tr, float(mm.get(c, _plan_mult(plans.get(c)))))
     return book, missing
+
+
+def _plan_mult(p):
+    """Bot 7 keeps a card's risk in its plan ("risk_mult", live/news_bot.risk_mult: 0.5..1.5, else 1) - not in the
+    manager's multipliers: the whole-bot check used x1 for every bot 7 combo (SC001 trades at x0.7, SH01 / EV04 / EV08
+    at x0.5; bot 7 smart agent, 15.11.2026)."""
+    try:
+        v = float((p or {}).get("risk_mult", 1.0))
+    except (TypeError, ValueError):
+        return 1.0
+    return v if 0.5 <= v <= 1.5 else 1.0
 
 
 def riskier(new, old):

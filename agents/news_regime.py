@@ -44,6 +44,7 @@ from agents import ftmo_costs as C  # noqa: E402
 from agents import ftmo_universe as U  # noqa: E402
 from agents import poc_agent as P  # noqa: E402
 from agents import shocks as SH  # noqa: E402
+from agents import bot7_trades as BT  # noqa: E402
 
 OUT = ROOT / "reports" / "agents" / "bot7" / "regime_study.json"
 CACHE = ROOT / "cache" / "news_regime"
@@ -109,7 +110,10 @@ def _run_filters(d, sym, tf, sid, fn0, p_, sp):
             tt = tt.tz_localize("UTC") if tt.tzinfo is None else tt
             if tt < TEST_FROM:
                 continue
-            rows.append({"sid": sid, "sym": sym, "f": f, "t": tt.isoformat(), "dir": int(x.dir), "r": round(float(x.r), 4)})
+            xt = pd.Timestamp(x.exit_time)
+            xt = xt.tz_localize("UTC") if xt.tzinfo is None else xt
+            rows.append({"sid": sid, "sym": sym, "f": f, "t": tt.isoformat(), "x": xt.isoformat(), "dir": int(x.dir),
+                         "r": round(float(x.r), 4)})
     return rows
 
 
@@ -197,6 +201,41 @@ def study(df):
     return out
 
 
+HOLD_MIN = {"EV02": 90, "EV03": 120}          # the strategies' max_bars x 5 minutes (rows cached before "x")
+
+
+def export(df):
+    """The built version's trades of EV02 / EV03 / SH01 for the whole-bot check (agents/bot7_trades.py): the rows of
+    the filter each combo trades with now (its plan's "filter", else none)."""
+    out = {}
+    if df is None or not len(df):
+        return out
+    for sid, tf in (("EV02", "5Min"), ("EV03", "5Min"), ("SH01", "1Min")):
+        b = BT.built(sid, tf)
+        x = df[df["sid"] == sid]
+        have = set(x["sym"]) if len(x) else set()
+        syms = [s_ for s_ in b if s_ in have]
+        if not syms:
+            continue
+        z = pd.concat([x[(x["sym"] == s_) & (x["f"] == (b[s_].get("filter") or "none"))] for s_ in syms])
+        hold = {s_: (float(b[s_].get("H", 60)) if sid == "SH01" else HOLD_MIN[sid]) for s_ in syms}
+        r = BT.write(sid, tf, z, syms, hold, "agents/news_regime.py", "plan filter")
+        out.update({f"{sid}|{k}": v for k, v in r.items()})
+    return out
+
+
+def _cached_rows():
+    rows = []
+    for f in sorted(CACHE.glob("*.json")) if CACHE.exists() else []:
+        try:
+            c = json.loads(f.read_text(encoding="utf-8"))
+            if c.get("version") == VERSION:
+                rows += c["rows"]
+        except Exception:  # noqa: BLE001
+            pass
+    return pd.DataFrame(rows)
+
+
 def stale():
     try:
         j = json.loads(OUT.read_text(encoding="utf-8"))
@@ -213,6 +252,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if not a.force and not stale():
         print("regime study fresh - skipped")
+        BT.safe(lambda: export(_cached_rows()))     # the whole-bot check's trades follow the plans every run
         return
     t_end = time.time() + a.minutes * 60
     plans = _plans()
@@ -245,6 +285,7 @@ def main(argv=None):
             print(f"{sym}: failed ({str(e)[-200:]})")
     df = pd.DataFrame(rows)
     res = study(df) if len(df) else {}
+    BT.safe(export, df)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "version": VERSION,
                                "symbols": done, "partial": len(done) < len(syms), "rows": int(len(df)),

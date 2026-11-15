@@ -56,6 +56,7 @@ from agents import ftmo_costs as C  # noqa: E402
 from agents import ftmo_universe as U  # noqa: E402
 from agents import news_fix as NF  # noqa: E402
 from agents import poc_agent as P  # noqa: E402
+from agents import bot7_trades as BT  # noqa: E402
 
 OUT = ROOT / "reports" / "agents" / "bot7" / "surprise_study.json"
 CAL_FULL = ROOT / "reports" / "agents" / "bot7" / "calendar_full.json"
@@ -265,7 +266,7 @@ def trades_sym(sym, rel):
     net = C.apply(tt, sym, sp)
     return [{"v": x.v, "sym": sym, "t": pd.Timestamp(x.time).isoformat(), "dir": int(x.dir), "r": round(float(x.r), 4),
              "gross": round(float(tt.at[x.Index, "r"]), 4), "group": x.group, "big": int(x.big), "alone": int(x.alone),
-             "rel": pd.Timestamp(x.rel).isoformat()} for x in net.itertuples()]
+             "rel": pd.Timestamp(x.rel).isoformat(), "x": pd.Timestamp(x.exit_time).isoformat()} for x in net.itertuples()]
 
 
 def _cands(df, fixed_pol=None):
@@ -325,6 +326,44 @@ def study(df):
     return res
 
 
+def built_key(p):
+    """The row key of a built EV08 plan (live/bots/bot7.json, card 00553aab28e5): d<entry>|s<stop>|h<hold>|p<side>."""
+    side = str(p.get("side", "p1"))
+    return vkey(int(p.get("entry_min", 3)), float(p.get("stop_atr5", 3.0)), int(p.get("hold_min", 60)),
+                int(side[1:]) if side.startswith("p") else int(side))
+
+
+def export(df):
+    """The built version's trades for the whole-bot check (agents/bot7_trades.py): its release groups, only big
+    surprises / alone in the minute when the plan says so."""
+    b = BT.built("EV08", "1Min")
+    if df is None or not len(df) or not b:
+        return {}
+    out = {}
+    for s_, p_ in b.items():
+        z = df[(df["sym"] == s_) & (df["v"] == built_key(p_))]
+        if p_.get("groups"):
+            z = z[z["group"].isin(p_["groups"])]
+        if p_.get("size") == "big":
+            z = z[z["big"] == 1]
+        if p_.get("alone"):
+            z = z[z["alone"] == 1]
+        out.update(BT.write("EV08", "1Min", z, [s_], int(p_.get("hold_min", 60)), "agents/news_surprise.py", built_key(p_)))
+    return out
+
+
+def _cached_rows():
+    rows = []
+    for f in sorted(CACHE.glob("*.json")) if CACHE.exists() else []:
+        try:
+            c_ = json.loads(f.read_text(encoding="utf-8"))
+            if str(c_.get("sig", "")).startswith(f"{VERSION}|"):
+                rows += c_["rows"]
+        except Exception:  # noqa: BLE001
+            pass
+    return pd.DataFrame(rows)
+
+
 def stale():
     try:
         j = json.loads(OUT.read_text(encoding="utf-8"))
@@ -342,6 +381,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if not a.force and not stale():
         print("surprise study fresh - skipped")
+        BT.safe(lambda: export(_cached_rows()))     # the whole-bot check's trades follow the plans every run
         return
     t_end = time.time() + a.minutes * 60
     cal = calendar_full(fetch=not a.no_fetch)
@@ -376,6 +416,7 @@ def main(argv=None):
                 print(f"EV08 {sym}: failed ({e})")
     df = pd.DataFrame(rows)
     res = study(df) if len(df) else {}
+    BT.safe(export, df)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "version": VERSION,
                                "symbols": done, "partial": n_tr >= MIN_N and len(done) < len(SYMBOLS), "rows": int(len(df)),

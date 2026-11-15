@@ -473,6 +473,89 @@
    "combo": "SC056|15Min|GBPUSD",
    "before": "__none__",
    "star_risk_before": "__none__"
+  },
+  "c43e9ac46e9c": {
+   "family": "tal5",
+   "track": "t4h_1h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h"
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 2,
+     "MIN_RR": 0.0,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be618",
+     "LADDER": "2"
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "929c147b9a8d": {
+   "family": "tal5",
+   "track": "t4h_15",
+   "before": {
+    "pair": [
+     "4h",
+     "15m"
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 5,
+     "MIN_RR": 0.0,
+     "EXPIRY": 120,
+     "PROT": "cal15",
+     "EXIT": "be70"
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "8ee1b871ad9f": {
+   "family": "tal5",
+   "track": "t1h_15",
+   "before": {
+    "pair": [
+     "1h",
+     "15m"
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.3,
+     "SW": 5,
+     "MIN_RR": 1.5,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be382",
+     "IMP1": true
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "6f0ae4e5fa4e": {
+   "family": "tal5",
+   "track": "t4h_5",
+   "before": {
+    "pair": [
+     "4h",
+     "5m"
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 5,
+     "MIN_RR": 0.5,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be70",
+     "G3": "nowick"
+    }
+   },
+   "risk_before": 0.0014
   }
  },
  "tal_tracks": {
@@ -504,7 +587,9 @@
     "EXPIRY": 120,
     "PROT": "none",
     "EXIT": "be382",
-    "IMP1": true
+    "IMP1": true,
+    "WKND": 10,
+    "REARM": true
    }
   },
   "t4h_1h": {
@@ -520,7 +605,9 @@
     "EXPIRY": 120,
     "PROT": "none",
     "EXIT": "be618",
-    "LADDER": "2"
+    "LADDER": "2",
+    "WKND": 10,
+    "REARM": true
    }
   },
   "t4h_15": {
@@ -535,7 +622,9 @@
     "MIN_RR": 0.0,
     "EXPIRY": 120,
     "PROT": "cal15",
-    "EXIT": "be70"
+    "EXIT": "be70",
+    "WKND": 10,
+    "REARM": true
    }
   },
   "t15_5": {
@@ -584,7 +673,9 @@
     "EXPIRY": 120,
     "PROT": "none",
     "EXIT": "be70",
-    "G3": "nowick"
+    "G3": "nowick",
+    "WKND": 10,
+    "REARM": true
    }
   },
   "t1h_5@US30": {

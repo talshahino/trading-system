@@ -9697,6 +9697,727 @@
     "bot6"
    ],
    "rules": "smoothed HA bull + TDI green over red and 50 + close over EMA5(high) (mirror); 10-bar swing stop; 2R; HA flip exit."
+  },
+  {
+   "id": "SC373",
+   "name": "ICT sweep reversal (SC298) only in a range: |Efficiency Ratio 20| < 0.25 (deltatrendtrading regime filter)",
+   "source": "deltatrendtrading (TikTok) - regime filter for ICT mean reversion; explorer idea TT-7501017829412441374",
+   "url": "https://www.tiktok.com/@deltatrendtrading/video/7501017829412441374",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SC298 sweep reversal gated by |ER(20)| < 0.25; SC298 stop / IRL-or-2R target.",
+   "explorer_idea": "TT-7501017829412441374"
+  },
+  {
+   "id": "SC374",
+   "name": "First NY 4H candle fade (TT01) only while Choppiness 14 > 55 (deltatrendtrading regime filter)",
+   "source": "deltatrendtrading (TikTok) regime filter on TT01 (= explorer idea TT-7707251297434701076, @mstructure)",
+   "url": "https://www.tiktok.com/@deltatrendtrading/video/7501017829412441374",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TT01 first-NY-4H-range fade only while CHOP(14) > 55.",
+   "explorer_idea": "TT-7501017829412441374"
+  },
+  {
+   "id": "SC375",
+   "name": "ICT sweep reversal (SC298) only while ADX 14 < 20 (deltatrendtrading regime filter)",
+   "source": "deltatrendtrading (TikTok) regime filter, ADX variant",
+   "url": "https://www.tiktok.com/@deltatrendtrading/video/7501017829412441374",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SC298 sweep reversal only while ADX(14) < 20.",
+   "explorer_idea": "TT-7501017829412441374"
+  },
+  {
+   "id": "SC376",
+   "name": "Schaff Trend Cycle through 25 / 75 with a rising VIDYA under / over the close, STC exit, 2 ATR, 2R",
+   "source": "Schaff Trend Cycle (LazyBear Pine) + VIDYA (Chande)",
+   "url": "https://www.tradingview.com/script/dbxXeuw2-Indicator-Schaff-Trend-Cycle-STC/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "STC cross 25 up + close over rising VIDYA (mirror 75); STC exit; 2 ATR; 2R."
+  },
+  {
+   "id": "SC377",
+   "name": "Connors RSI 3/2/100 under 10 over the SMA200 (over 90 under it), out over 70 / under 30, 10 bars",
+   "source": "Connors RSI (Connors Research; LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/connors-rsi/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "CRSI < 10 over SMA200 -> long, out CRSI > 70 (mirror 90 / 30); 3 ATR; 10 bars."
+  },
+  {
+   "id": "SC378",
+   "name": "Stochastic Momentum Index 10/3/3 signal cross under -40 / over +40, 1.5 ATR, 2R (Blau)",
+   "source": "Stochastic Momentum Index (Blau; barchart)",
+   "url": "https://www.barchart.com/trader/help/studies/stoch_mom.php",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SMI 10/3/3 crosses its signal under -40 / over +40; opposite-cross exit; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC379",
+   "name": "DeMarker 14 back over 0.3 / under 0.7 on the EMA100 side, swing stop, 2R",
+   "source": "DeMarker (capital.com / StockSharp Simplest DeMarker)",
+   "url": "https://capital.com/en-gb/learn/technical-analysis/demarker-indicator",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "DeM back over 0.3 / under 0.7 on the EMA100 side; 10-bar swing stop; 2R."
+  },
+  {
+   "id": "SC380",
+   "name": "20-bar breakout confirmed by the refined Relative Volatility Index over / under 50, 2 ATR, 2R (Dorsey)",
+   "source": "Relative Volatility Index (Dorsey, TASC 1993/1995)",
+   "url": "https://www.luxalgo.com/library/concept/relative-volatility-index/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "20-bar close breakout with refined RVI > 50 (< 50 short); 2 ATR; 2R."
+  },
+  {
+   "id": "SC381",
+   "name": "Dorsey Inertia through 50, out on the cross back, 2 ATR",
+   "source": "Dorsey Inertia (TradingView open script)",
+   "url": "https://www.tradingview.com/script/bzxmXFGd-Dorsey-Inertia/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Inertia crosses 50; out on the cross back; 2 ATR."
+  },
+  {
+   "id": "SC382",
+   "name": "Elder: EMA22 slope + close back over the EMA13, SafeZone stop and trailing exit, 3R",
+   "source": "Elder SafeZone (Come into my Trading Room)",
+   "url": "https://www.luxalgo.com/library/concept/elder-safezone-stop/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "EMA22 rising 3 bars + close back over EMA13; SafeZone stop + trailing exit; 3R."
+  },
+  {
+   "id": "SC383",
+   "name": "Kase Peak Oscillator peak-out reversal, swing stop, 2R (our KPO reconstruction)",
+   "source": "Kase Peak Oscillator (Kase; our reconstruction from the MT4 versions)",
+   "url": "https://www.mql5.com/en/forum/173722",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "KPO peak-out (beyond the mean+1.5sd line, turning back) with a candle in the turn direction; swing stop; 2R."
+  },
+  {
+   "id": "SC384",
+   "name": "Polarized Fractal Efficiency 10/5 zero cross on the EMA50 side, 2 ATR, 2R (Hannula)",
+   "source": "Polarized Fractal Efficiency (Hannula, TASC 1994)",
+   "url": "https://www.luxalgo.com/library/concept/polarized-fractal-efficiency/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "PFE 10/5 zero cross on the EMA50 side; cross-back exit; 2 ATR; 2R."
+  },
+  {
+   "id": "SC385",
+   "name": "Trend Trigger Factor 15 over +100 / under -100, stop and reverse (Pee, TASC 2004)",
+   "source": "Trend Trigger Factor (M. H. Pee, TASC Dec 2004)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2004/12/Abstracts_new/Pee/pee.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TTF 15 over +100 buy / under -100 sell, stop and reverse; 2 ATR stop."
+  },
+  {
+   "id": "SC386",
+   "name": "Gann HiLo Activator 3 flip on the EMA200 side, stop at the line, 2R",
+   "source": "Gann HiLo Activator Strategy (TradingView open source)",
+   "url": "https://www.tradingview.com/script/PyFdxzcj-Gann-HiLo-Activator-Strategy/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "HiLo 3 flip on the EMA200 side; stop at the line; 2R; opposite-flip exit."
+  },
+  {
+   "id": "SC387",
+   "name": "Pretty Good Oscillator 89 over +3 / under -3, out through 0 (Mark Johnson)",
+   "source": "Pretty Good Oscillator (Mark Johnson; LuxAlgo / backtrader)",
+   "url": "https://www.luxalgo.com/library/concept/pretty-good-oscillator/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "PGO 89 over +3 buy, out under 0 (mirror); 2 ATR."
+  },
+  {
+   "id": "SC388",
+   "name": "Intraday Momentum Index 14 back over 30 / under 70 on the EMA200 side, 1.5 ATR, 2R (Chande)",
+   "source": "Intraday Momentum Index (Chande; LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/intraday-momentum-index/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "IMI 14 back over 30 / under 70 on the EMA200 side; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC389",
+   "name": "Elliott Wave Oscillator wave-5 entry: pullback to near zero after the wave-3 peak, turn, swing stop, 2R",
+   "source": "Elliott Wave Oscillator 5/35 (LuxAlgo, daytrading.com)",
+   "url": "https://www.luxalgo.com/library/concept/5-35-oscillator/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "after the wave-3 EWO peak, pullback to within 25% of it and a turn = wave 5 entry; swing stop; 2R."
+  },
+  {
+   "id": "SC390",
+   "name": "KDJ 9/3/3: J under 0 then K over D (J over 100 then K under D), 1.5 ATR, 2R",
+   "source": "KDJ (KuCoin / changelly crypto guides)",
+   "url": "https://www.kucoin.com/blog/What-is-KDJ-Indicator",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "J < 0 then K over D (J > 100 then K under D); 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC391",
+   "name": "Close cross of a rising VIDYA 14 / CMO 9, 2 ATR, 2R (Chande)",
+   "source": "VIDYA (Chande; TradingView VIDYA Chande / ProTrend)",
+   "url": "https://www.tradingview.com/script/kSf8O7HZ-VIDYA-Chande/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "close cross of a VIDYA rising over 3 bars; 2 ATR; 2R."
+  },
+  {
+   "id": "SC392",
+   "name": "Bill Williams AO saucer over / under zero, 5-bar stop, 2R",
+   "source": "Bill Williams AO saucer (New Trading Dimensions; BabyPips)",
+   "url": "https://www.babypips.com/forexpedia/awesome-oscillator",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "AO over 0: two falling bars then a rising one (mirror); 5-bar stop; 2R."
+  },
+  {
+   "id": "SC393",
+   "name": "Bill Williams AO twin peaks, swing stop, 2R",
+   "source": "Bill Williams AO twin peaks",
+   "url": "https://www.forex.com/en/trading-guides/what-is-the-awesome-oscillator/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "two AO troughs under 0, second higher, no zero cross, turn up (mirror); swing stop; 2R."
+  },
+  {
+   "id": "SC394",
+   "name": "Bill Williams Accelerator: 2nd rising AC bar over zero / 3rd under zero, out after 2 against, 1.5 ATR, 2R",
+   "source": "Bill Williams Accelerator Oscillator",
+   "url": "https://www.avatrade.com.au/education/technical-analysis-indicators-strategies/awesome-oscillator-indicator-strategies",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "2nd rising AC bar over 0 or 3rd under 0 (mirror); out after 2 against; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC395",
+   "name": "20-bar close breakout skipped on Market Facilitation Index fake / fade bars (Williams), 1.5 ATR, 2R",
+   "source": "Bill Williams Market Facilitation Index (MQL5 article 12172)",
+   "url": "https://www.mql5.com/en/articles/12172",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "20-bar close breakout skipped on fake / fade MFI bars; 1.5 ATR; 2R."
+  },
+  {
+   "id": "SC396",
+   "name": "Alligator wakes up: lines fan out in order after sleeping, close-under-teeth exit, 2 ATR (Williams)",
+   "source": "Bill Williams Alligator (BabyPips)",
+   "url": "https://www.babypips.com/forexpedia/alligator-indicator",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "lines fan out in order after sleeping (spread < 0.4 ATR 8 of 15 bars); close-under-teeth exit; 2 ATR."
+  },
+  {
+   "id": "SC397",
+   "name": "Chop Zone turns darkest turquoise / red with the EMA34 side, out on the opposite colour, 2 ATR, 3R",
+   "source": "TradingView Chop Zone",
+   "url": "https://www.tradingview.com/support/solutions/43000589111-chop-zone-chop/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "zone turns +4 (angle >= 5) with close over EMA34 (mirror); out on the opposite colour; 2 ATR; 3R."
+  },
+  {
+   "id": "SC398",
+   "name": "Price Volume Trend over / under its EMA21 on the EMA50 side, 2 ATR, 2R",
+   "source": "Price Volume Trend (StockCharts)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/price-volume-trend-pvt",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "PVT over / under its EMA21 on the EMA50 side; 2 ATR; 2R."
+  },
+  {
+   "id": "SC399",
+   "name": "Vortex 14: VI+ (VI-) rising over 1.10 while dominant, 2 ATR, 2R",
+   "source": "Vortex Indicator (Botes & Siepman; StockCharts)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/vortex-indicator",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "VI+ rising over 1.10 while dominant (mirror VI-); 2 ATR; 2R."
+  },
+  {
+   "id": "SC400",
+   "name": "Parabolic SAR flip with ADX > 20 and the EMA50 side, SAR stop, 2R, flip exit",
+   "source": "Parabolic SAR (Wilder) + ADX",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/parabolic-sar",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "SAR flip with ADX > 20 and the EMA50 side; SAR stop; 2R; flip exit."
+  },
+  {
+   "id": "SC401",
+   "name": "KST signal cross under zero (over zero for shorts), 2 ATR, 2R (Pring)",
+   "source": "Know Sure Thing (Pring)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/know-sure-thing-kst",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "KST signal cross under 0 (over 0 for shorts); 2 ATR; 2R."
+  },
+  {
+   "id": "SC402",
+   "name": "Crabel stretch: close beyond the day open +/- 10-day stretch, first per NY day, open stop, out 16:00 NY",
+   "source": "Toby Crabel stretch (TASC 1988 ORB series)",
+   "url": "https://store.traders.com/-v06-c09-playing-pdf.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "close beyond day open +/- 10-day stretch, first per NY day; stop at the open; out 16:00 NY."
+  },
+  {
+   "id": "SC403",
+   "name": "TD Sequential countdown 13 exhaustion reversal, swing stop, 2R (DeMark)",
+   "source": "TD Sequential countdown 13 (DeMark)",
+   "url": "https://www.tradingview.com/scripts/tdsequential/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "completed buy / sell countdown 13 -> reversal; swing stop; 2R."
+  },
+  {
+   "id": "SC404",
+   "name": "Three Bar Play: 2-ATR igniting bar + 1-3 tight resting bars in its upper half, break, resting stop, 2R",
+   "source": "Three Bar Play (daytradingtoolkit.com)",
+   "url": "https://daytradingtoolkit.com/strategies/three-bar-play-strategy",
+   "added": "2026-11-15",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "2-ATR igniting bar (true range) + 1-3 tight resting bars in its upper half, break; resting stop; 2R."
+  },
+  {
+   "id": "SC405",
+   "name": "Wolfe Wave 5 swings (k 3, confirmed), stop past point 5, target the 1-4 line",
+   "source": "Wolfe Waves (LuxAlgo / ATAS / mql5 forextsd pdf)",
+   "url": "https://www.luxalgo.com/library/concept/wolfe-waves/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5 confirmed swings (k 3) with 3 beyond 1, 4 inside, 5 beyond 3 at the 1-3 line; stop past 5; target the 1-4 line."
   }
  ],
  "indicators": [
@@ -10595,6 +11316,188 @@
    "url": "https://www.prorealcode.com/topic/trading-made-simple-tms-system",
    "added": "2026-11-15",
    "uses": "trend colour / exits (SC372)"
+  },
+  {
+   "name": "stc",
+   "source": "Schaff Trend Cycle 23/50/10, factor 0.5; 25 / 75 crosses (LazyBear port)",
+   "url": "https://www.tradingview.com/script/dbxXeuw2-Indicator-Schaff-Trend-Cycle-STC/",
+   "added": "2026-11-15",
+   "uses": "entry / exit (SC376), trend-cycle filter"
+  },
+  {
+   "name": "connors_rsi",
+   "source": "Connors RSI 3/2/100: RSI3 + streak RSI2 + 100-bar percent rank of ROC1, / 3",
+   "url": "https://www.luxalgo.com/library/concept/connors-rsi/",
+   "added": "2026-11-15",
+   "uses": "mean-reversion entry / exit (SC377)"
+  },
+  {
+   "name": "smi_blau",
+   "source": "Stochastic Momentum Index 10/3/3 (Blau), signal EMA10, -100..100",
+   "url": "https://ta-lib.org/functions/smi.html",
+   "added": "2026-11-15",
+   "uses": "oscillator entry (SC378), overbought / oversold filter"
+  },
+  {
+   "name": "demarker",
+   "source": "DeMarker 14 (Tom DeMark), 0..1, 0.3 / 0.7 zones",
+   "url": "https://www.tradingview.com/script/CF1kNGYo-DeMarker-DeM/",
+   "added": "2026-11-15",
+   "uses": "exhaustion entry (SC379)"
+  },
+  {
+   "name": "rvi_vol",
+   "source": "Relative Volatility Index 10/14 (Dorsey), close-based and refined (high + low)",
+   "url": "https://www.luxalgo.com/library/concept/relative-volatility-index/",
+   "added": "2026-11-15",
+   "uses": "volatility-direction confirmation filter (SC380)"
+  },
+  {
+   "name": "inertia",
+   "source": "Dorsey Inertia: 20-bar linear-regression value of the refined RVI",
+   "url": "https://www.tradingview.com/script/bzxmXFGd-Dorsey-Inertia/",
+   "added": "2026-11-15",
+   "uses": "trend filter / entry (SC381)"
+  },
+  {
+   "name": "safezone",
+   "source": "Elder SafeZone stop 10 x 2.5, held 3 bars (long / short stop lines)",
+   "url": "https://www.luxalgo.com/library/concept/elder-safezone-stop/",
+   "added": "2026-11-15",
+   "uses": "trailing stop / exit for any trend strategy (SC382)"
+  },
+  {
+   "name": "kase_peak",
+   "source": "Kase Peak Oscillator (our reconstruction, k 8..65) with a mean + 1.5 sd peak-out line",
+   "url": "https://www.mql5.com/en/forum/173722",
+   "added": "2026-11-15",
+   "uses": "momentum-exhaustion entry / exit (SC383)"
+  },
+  {
+   "name": "pfe",
+   "source": "Polarized Fractal Efficiency 10 / EMA5 (Hannula), -100..100",
+   "url": "https://www.luxalgo.com/library/concept/polarized-fractal-efficiency/",
+   "added": "2026-11-15",
+   "uses": "trend-efficiency filter / entry (SC384)"
+  },
+  {
+   "name": "ttf",
+   "source": "Trend Trigger Factor 15 (M. H. Pee, TASC 2004), +/-100 triggers",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2004/12/Abstracts_new/Pee/pee.html",
+   "added": "2026-11-15",
+   "uses": "trend trigger entry (SC385)"
+  },
+  {
+   "name": "gann_hilo",
+   "source": "Gann HiLo Activator 3: SMA3 of the highs / lows, trend flips",
+   "url": "https://www.tradingview.com/script/PyFdxzcj-Gann-HiLo-Activator-Strategy/",
+   "added": "2026-11-15",
+   "uses": "trailing line / flip entry (SC386)"
+  },
+  {
+   "name": "pgo",
+   "source": "Pretty Good Oscillator 89 (Mark Johnson): (close - SMA) / EMA(TR), +/-3 breakouts",
+   "url": "https://www.luxalgo.com/library/concept/pretty-good-oscillator/",
+   "added": "2026-11-15",
+   "uses": "breakout entry / exit (SC387)"
+  },
+  {
+   "name": "imi",
+   "source": "Intraday Momentum Index 14 (Chande): RSI of the candle bodies, 0..100",
+   "url": "https://www.luxalgo.com/library/concept/intraday-momentum-index/",
+   "added": "2026-11-15",
+   "uses": "candle-body momentum entry (SC388)"
+  },
+  {
+   "name": "ewo",
+   "source": "Elliott Wave Oscillator SMA5 - SMA35 of hl2",
+   "url": "https://www.luxalgo.com/library/concept/5-35-oscillator/",
+   "added": "2026-11-15",
+   "uses": "wave-count entry (SC389), momentum filter"
+  },
+  {
+   "name": "kdj",
+   "source": "KDJ 9/3/3: K, D and J = 3K - 2D",
+   "url": "https://www.kucoin.com/blog/What-is-KDJ-Indicator",
+   "added": "2026-11-15",
+   "uses": "oscillator entry (SC390)"
+  },
+  {
+   "name": "vidya",
+   "source": "VIDYA 14 / CMO 9 (Chande's variable index dynamic average)",
+   "url": "https://www.tradingview.com/script/kSf8O7HZ-VIDYA-Chande/",
+   "added": "2026-11-15",
+   "uses": "adaptive trend line (SC376, SC391)"
+  },
+  {
+   "name": "bw_ao",
+   "source": "Bill Williams Awesome / Accelerator Oscillators with saucer and twin-peaks signals",
+   "url": "https://www.babypips.com/forexpedia/awesome-oscillator",
+   "added": "2026-11-15",
+   "uses": "saucer / twin peaks / AC entries (SC392-SC394)"
+  },
+  {
+   "name": "bw_mfi",
+   "source": "Bill Williams Market Facilitation Index (h - l) / tick volume: green / fade / fake / squat bars",
+   "url": "https://www.luxalgo.com/library/concept/bill-williams-market-facilitation-index/",
+   "added": "2026-11-15",
+   "uses": "participation filter: skip fake / fade bars (SC395)"
+  },
+  {
+   "name": "alligator",
+   "source": "Williams Alligator SMMA 13/8/5 shifted 8/5/3 + fractals confirmed 2 bars late",
+   "url": "https://www.babypips.com/forexpedia/alligator-indicator",
+   "added": "2026-11-15",
+   "uses": "sleep / wake trend filter, teeth exit (SC396)"
+  },
+  {
+   "name": "chop_zone",
+   "source": "TradingView Chop Zone: EMA34 angle in 9 colour zones (+4 .. -4)",
+   "url": "https://www.tradingview.com/support/solutions/43000589111-chop-zone-chop/",
+   "added": "2026-11-15",
+   "uses": "trend-strength colour filter (SC397)"
+  },
+  {
+   "name": "pvt",
+   "source": "Price Volume Trend (tick volume) with an EMA21 signal",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/price-volume-trend-pvt",
+   "added": "2026-11-15",
+   "uses": "volume-trend confirmation (SC398)"
+  },
+  {
+   "name": "vortex",
+   "source": "Vortex Indicator 14 VI+ / VI- (Botes & Siepman)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/vortex-indicator",
+   "added": "2026-11-15",
+   "uses": "trend-strength entry (SC399)"
+  },
+  {
+   "name": "psar",
+   "source": "Parabolic SAR 0.02 / 0.02 / 0.2 (Wilder), trend and flips",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/parabolic-sar",
+   "added": "2026-11-15",
+   "uses": "trailing stop / flip entry (SC400)"
+  },
+  {
+   "name": "kst",
+   "source": "Know Sure Thing (Pring) with its SMA9 signal",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/know-sure-thing-kst",
+   "added": "2026-11-15",
+   "uses": "long-cycle momentum entry (SC401)"
+  },
+  {
+   "name": "stretch",
+   "source": "Toby Crabel stretch: 10-day mean of min(h - o, o - l), levels open +/- stretch (NY day)",
+   "url": "https://store.traders.com/-v06-c09-playing-pdf.html",
+   "added": "2026-11-15",
+   "uses": "open-based breakout levels (SC402)"
+  },
+  {
+   "name": "td_sequential",
+   "source": "TD Sequential setup 9 and countdown 13 counts (DeMark; no TDST)",
+   "url": "https://www.tradingview.com/scripts/tdsequential/",
+   "added": "2026-11-15",
+   "uses": "exhaustion count entry (SC403)"
   }
  ],
  "sources": [
@@ -10680,13 +11583,13 @@
    "name": "BabyPips (school + forum)",
    "url": "https://forums.babypips.com/c/trading-systems/free-forex-trading-systems/15",
    "look_for": "free trading systems threads with rules",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "Investopedia",
    "url": "https://www.investopedia.com/trading-4427765",
    "look_for": "indicator definitions and classic strategies",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "YouTube",
@@ -10722,7 +11625,7 @@
    "name": "QuantConnect / Quantpedia",
    "url": "https://www.quantconnect.com/forum/",
    "look_for": "community algorithms, documented anomalies",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "GitHub (freqtrade, jesse, backtrader)",

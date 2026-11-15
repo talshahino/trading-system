@@ -62,6 +62,9 @@ from agents.indicators.ehlers2 import (center_of_gravity, cyber_cycle, cyberneti
                                        sinewave)
 from agents.indicators.tv_popular import (coral, crsi, gmma, ift_rsi, macd_v, pmax, rsx, smoothed_ha, tdi, vfi,
                                           waddah_attar)
+from agents.indicators.classic4 import (alligator, bw_ao, bw_mfi, chop_zone, connors_rsi, demarker, ewo, gann_hilo, imi,
+                                        inertia, kase_peak, kdj, kst, pfe, pgo, psar, pvt, rvi_vol, safezone, smi_blau,
+                                        stc, stretch, td_sequential, ttf, vidya, vortex)
 TV = "https://www.tradingview.com/script/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
 
@@ -269,6 +272,33 @@ INDICATORS = {
     "crsi": (crsi, "Cyclic Smoothed RSI (whentotrade): cycle 20, vibration 10, 10/90 % dynamic bands", "https://www.prorealcode.com/prorealtime-indicators/rsi-cyclic-smoothed/"),
     "ift_rsi": (ift_rsi, "Inverse Fisher Transform of RSI5 (WMA9), -1..1 (Vervoort)", TV + "Nw4PDAwY-Inverse-Fisher-Transform-on-RSI-for-backtest-w-alerts/"),
     "smoothed_ha": (smoothed_ha, "Heiken Ashi Smoothed (SMMA6 -> HA -> LWMA2, the MT4 one used by TMS)", "https://www.prorealcode.com/topic/trading-made-simple-tms-system"),
+    # scout 15.11.2026 night 2: classic indicators the library lacked (agents/indicators/classic4.py)
+    "stc": (stc, "Schaff Trend Cycle 23/50/10, factor 0.5; 25 / 75 crosses (LazyBear port)", TV + "dbxXeuw2-Indicator-Schaff-Trend-Cycle-STC/"),
+    "connors_rsi": (connors_rsi, "Connors RSI 3/2/100: RSI3 + streak RSI2 + 100-bar percent rank of ROC1, / 3", "https://www.luxalgo.com/library/concept/connors-rsi/"),
+    "smi_blau": (smi_blau, "Stochastic Momentum Index 10/3/3 (Blau), signal EMA10, -100..100", "https://ta-lib.org/functions/smi.html"),
+    "demarker": (demarker, "DeMarker 14 (Tom DeMark), 0..1, 0.3 / 0.7 zones", TV + "CF1kNGYo-DeMarker-DeM/"),
+    "rvi_vol": (rvi_vol, "Relative Volatility Index 10/14 (Dorsey), close-based and refined (high + low)", "https://www.luxalgo.com/library/concept/relative-volatility-index/"),
+    "inertia": (inertia, "Dorsey Inertia: 20-bar linear-regression value of the refined RVI", TV + "bzxmXFGd-Dorsey-Inertia/"),
+    "safezone": (safezone, "Elder SafeZone stop 10 x 2.5, held 3 bars (long / short stop lines)", "https://www.luxalgo.com/library/concept/elder-safezone-stop/"),
+    "kase_peak": (kase_peak, "Kase Peak Oscillator (our reconstruction, k 8..65) with a mean + 1.5 sd peak-out line", "https://www.mql5.com/en/forum/173722"),
+    "pfe": (pfe, "Polarized Fractal Efficiency 10 / EMA5 (Hannula), -100..100", "https://www.luxalgo.com/library/concept/polarized-fractal-efficiency/"),
+    "ttf": (ttf, "Trend Trigger Factor 15 (M. H. Pee, TASC 2004), +/-100 triggers", "https://www.traders.com/Documentation/FEEDbk_docs/2004/12/Abstracts_new/Pee/pee.html"),
+    "gann_hilo": (gann_hilo, "Gann HiLo Activator 3: SMA3 of the highs / lows, trend flips", TV + "PyFdxzcj-Gann-HiLo-Activator-Strategy/"),
+    "pgo": (pgo, "Pretty Good Oscillator 89 (Mark Johnson): (close - SMA) / EMA(TR), +/-3 breakouts", "https://www.luxalgo.com/library/concept/pretty-good-oscillator/"),
+    "imi": (imi, "Intraday Momentum Index 14 (Chande): RSI of the candle bodies, 0..100", "https://www.luxalgo.com/library/concept/intraday-momentum-index/"),
+    "ewo": (ewo, "Elliott Wave Oscillator SMA5 - SMA35 of hl2", "https://www.luxalgo.com/library/concept/5-35-oscillator/"),
+    "kdj": (kdj, "KDJ 9/3/3: K, D and J = 3K - 2D", "https://www.kucoin.com/blog/What-is-KDJ-Indicator"),
+    "vidya": (vidya, "VIDYA 14 / CMO 9 (Chande's variable index dynamic average)", TV + "kSf8O7HZ-VIDYA-Chande/"),
+    "bw_ao": (bw_ao, "Bill Williams Awesome / Accelerator Oscillators with saucer and twin-peaks signals", "https://www.babypips.com/forexpedia/awesome-oscillator"),
+    "bw_mfi": (bw_mfi, "Bill Williams Market Facilitation Index (h - l) / tick volume: green / fade / fake / squat bars", "https://www.luxalgo.com/library/concept/bill-williams-market-facilitation-index/"),
+    "alligator": (alligator, "Williams Alligator SMMA 13/8/5 shifted 8/5/3 + fractals confirmed 2 bars late", "https://www.babypips.com/forexpedia/alligator-indicator"),
+    "chop_zone": (chop_zone, "TradingView Chop Zone: EMA34 angle in 9 colour zones (+4 .. -4)", "https://www.tradingview.com/support/solutions/43000589111-chop-zone-chop/"),
+    "pvt": (pvt, "Price Volume Trend (tick volume) with an EMA21 signal", SC2 + "price-volume-trend-pvt"),
+    "vortex": (vortex, "Vortex Indicator 14 VI+ / VI- (Botes & Siepman)", SC2 + "vortex-indicator"),
+    "psar": (psar, "Parabolic SAR 0.02 / 0.02 / 0.2 (Wilder), trend and flips", SC2 + "parabolic-sar"),
+    "kst": (kst, "Know Sure Thing (Pring) with its SMA9 signal", SC2 + "know-sure-thing-kst"),
+    "stretch": (stretch, "Toby Crabel stretch: 10-day mean of min(h - o, o - l), levels open +/- stretch (NY day)", "https://store.traders.com/-v06-c09-playing-pdf.html"),
+    "td_sequential": (td_sequential, "TD Sequential setup 9 and countdown 13 counts (DeMark; no TDST)", "https://www.tradingview.com/scripts/tdsequential/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

@@ -53,6 +53,42 @@ def bot_risk(bot, cfg=None):
     return float(cfg.get("risk") or RISK7)
 
 
+_OFF = {}
+
+
+def off_server(bot, cfg=None):
+    """The bot's combos that never trade because its MetaTrader server has no such instrument (bots 1-4 smart agent,
+    15.11.2026: bots 2 and 3 run on MetaQuotes-Demo, and live/runner.py turns off at start every combo whose
+    instrument the server cannot trade - "WARNING: ... cannot be traded on this server - ... is off". The runner's
+    state lists only the combos it runs: 27 of bot 2's 36 and 22 of bot 3's 34 (US30, US100, US500, US2000, JP225,
+    FRA40, SPN35, SIEGn, AIRF, WTI, NATGAS, XRP/USD are not on that server). The whole-bot replay still counted them:
+    bot 3's 2026 replay +86.5% / fall 5.81% is +43.0% / 4.61% as it really trades, its choosing period -9.0% / 9.0%
+    is +5.9% / 8.0%.) An instrument is off when none of its combos is in the runner's fresh state (a combo added
+    since the runner's last start on an instrument the bot already trades is not counted as off)."""
+    if bot not in ("bot1", "bot2", "bot3", "bot4"):
+        return set()
+    if bot in _OFF:
+        return _OFF[bot]
+    out = set()
+    try:
+        from agents import health as H
+        s = H.state_of(bot, H.live_states()) or {}
+        upd = pd.Timestamp(s.get("updated_utc") or "1970-01-01")
+        upd = upd.tz_localize("UTC") if upd.tzinfo is None else upd
+        if s.get("combos") and pd.Timestamp.now(tz="UTC") - upd < pd.Timedelta(days=3):
+            live = set(s["combos"])
+            on = {c.split("|")[2] for c in live}
+            out = {c for c in ((cfg or bot_cfg(bot)).get("combos") or []) if c not in live and c.split("|")[2] not in on}
+    except Exception:  # noqa: BLE001
+        out = set()
+    _OFF[bot] = out
+    return out
+
+
+def off_symbols(bot, cfg=None):
+    return {c.split("|")[2] for c in off_server(bot, cfg)}
+
+
 def mults(bot):
     """The risk multipliers in force on the bots' computer (branch live, live/manager_state.json)."""
     return ((RIO.live_json("live/manager_state.json").get("risk") or {}).get(bot) or {}).get("mult") or {}
@@ -260,7 +296,10 @@ def book_now(bot, cfg=None, key="tr"):
     combos = cfg.get("combos") or []
     book, missing = {}, []
     plans = cfg.get("plans") or {}
+    off = off_server(bot, cfg)
     for c in combos:
+        if c in off:
+            continue                     # its instrument is not on the bot's server: it never trades (off_server)
         if (plans.get(c) or {}).get("off_from"):
             # a removed combo (bot 7's card kind "remove", plans "off_from") trades no more: the bot as it is now has
             # none of its trades (bot 7 smart agent, 15.11.2026: SC070 JP225, removed 05:01, still took the 2026 replay
@@ -313,6 +352,10 @@ def check(bot, card, pending=None):
         return None
     cfg = bot_cfg(bot)
     combo, tr = trades_of_card(bot, card)
+    if combo and combo.count("|") == 2 and combo.split("|")[2] in off_symbols(bot, cfg):
+        # an instrument the bot's server cannot trade: the change would never trade (off_server)
+        return {"ok": False, "mult": None, "combo": combo, "before": None, "after": None, "missing": [],
+                "why": f"המכשיר {combo.split('|')[2]} לא קיים בשרת של הבוט (MetaQuotes) - האסטרטגיה לא תסחר בו"}
     if not combo or tr is None:
         return None
     book, missing = book_now(bot, cfg)
@@ -556,6 +599,7 @@ def daily(now=None):
         except Exception as e:  # noqa: BLE001
             ccy = {"error": str(e)[-200:]}
         out.write_text(json.dumps({"updated": at, "bot": bot, "replay_2026": r, "replay_2026_no_guard": raw, "combos": len(book), "missing": missing,
+                                   "off_server": sorted(off_server(bot, cfg)),
                                    "warnings": warn, "side_conflicts": conf, "dd_fit_stress": stress,
                                    "currency_exposure": ccy},
                                   ensure_ascii=False, indent=1), encoding="utf-8")

@@ -158,7 +158,7 @@ def explain_exit(v):
 
 
 # ---------- the bot ----------
-def bot_combos(bot):
+def bot_combos(bot, with_off=False):
     if bot in NEW_ONLY:
         return []
     if bot == "bot7":
@@ -172,7 +172,14 @@ def bot_combos(bot):
             pl = {}
         return [c for c in cs if not (pl.get(c) or {}).get("off_from")]
     j = json.loads((ROOT / "live" / "bots" / f"{bot}.json").read_text(encoding="utf-8"))
-    return list(j["combos"])
+    # a combo whose instrument the bot's server cannot trade never runs (bots 2-3 on MetaQuotes-Demo, 15.11.2026):
+    # no experiments, no improve cards, and its instrument is not one of the bot's for new strategies
+    try:
+        from agents import portfolio_check as PC
+        off = set() if with_off else PC.off_server(bot, j)
+    except Exception:  # noqa: BLE001
+        off = set()
+    return [c for c in j["combos"] if c not in off]
 
 
 def base_variant(bot, combo, fam, doc=None):
@@ -810,7 +817,7 @@ def pool():
     tfs, who = {}, {}
     for b in POOL_BOTS:
         try:
-            cs = bot_combos(b)
+            cs = bot_combos(b, with_off=True)   # the pool keeps what passed, also where the server lacks the instrument
         except Exception:  # noqa: BLE001
             continue
         for c in cs:

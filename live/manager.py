@@ -1245,6 +1245,17 @@ def install_quiet(now=None):
     return True
 
 
+def agents_hold():
+    """The agents' continuous cycle (health, manager, builder, watch) is in its middle: the install waits for its end,
+    at most 40 minutes past the due time (manager, 15.11.2026: a cycle right after a restart took ~25 minutes, the
+    installs came every 25-30 minutes and cut every cycle - no host.json / decisions from 04:41 to 06:10 UTC)."""
+    try:
+        return (CFG.get("agents_host", True) and AH.light_running()
+                and time.time() - UPDATE.get("seen", 0) < AUTO_SETTLE + 40 * 60)
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def update_check():
     while True:
         nap = 300
@@ -1278,11 +1289,12 @@ def update_check():
                         push("יש עדכון לבוטים", title, action="approve_update", tag="update", extra={"sha": sha[:7]})
             if (UPDATE["sha"] and UPDATE["sha"] != UPD.local() and auto_update_on()
                     and time.time() - UPDATE.get("seen", 0) >= AUTO_SETTLE and not INSTALL_LOCK.locked()
-                    and UPDATE.get("tried") != UPDATE["sha"] and not install_quiet()):
+                    and UPDATE.get("tried") != UPDATE["sha"] and (not install_quiet() or agents_hold())):
                 nap = 15                                                  # due, but a bar opens: look again soon
                 if UPDATE.get("quiet_wait") != UPDATE["sha"]:
                     UPDATE["quiet_wait"] = UPDATE["sha"]
-                    log(f"update {UPDATE['sha'][:7]} waits for a quiet moment (no bar opening, not a session's first minutes)")
+                    log(f"update {UPDATE['sha'][:7]} waits for a quiet moment (no bar opening, not a session's first "
+                        f"minutes, no agents cycle in its middle)")
             elif (UPDATE["sha"] and UPDATE["sha"] != UPD.local() and auto_update_on()
                     and time.time() - UPDATE.get("seen", 0) >= AUTO_SETTLE and not INSTALL_LOCK.locked()
                     and UPDATE.get("tried") != UPDATE["sha"]):            # a failed version is not retried by itself

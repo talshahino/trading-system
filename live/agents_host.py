@@ -285,12 +285,42 @@ def ensure_node():
 
 
 _HC = {}                                          # rel -> (size, mtime_ns, sha1): a file not touched is not read again
+HCACHE = WORK / "hash_cache.json"
+_HC_LOCK = threading.Lock()
+
+
+def _hc_load():
+    """The hash cache from disk (manager, 15.11.2026: _HC lived only in memory, so after every restart the first
+    continuous cycle hashed every result file again - about 25 minutes on the bots' computer - and code installs came
+    every 25-30 minutes: from 04:41 to 06:10 UTC no cycle ended, host.json and the decisions stood still)."""
+    if _HC:
+        return
+    try:
+        _HC.update({k: tuple(v) for k, v in json.loads(HCACHE.read_text(encoding="utf-8")).items()})
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def _hc_save(seen=None):
+    with _HC_LOCK:
+        try:
+            snap = dict(_HC)
+            if seen is not None:
+                snap = {k: v for k, v in snap.items() if k in seen}
+            tmp = HCACHE.with_suffix(".tmp")
+            tmp.write_text(json.dumps(snap, separators=(",", ":")), encoding="utf-8")
+            os.replace(tmp, HCACHE)
+        except Exception:  # noqa: BLE001
+            pass
 
 
 def snapshot():
     """sha1 of every file under PUBLISH. Files whose size and time did not change are not read again (manager,
-    14.11.2026: 2.9 GB of results were hashed twice every 10 minutes)."""
+    14.11.2026: 2.9 GB of results were hashed twice every 10 minutes). The cache is kept on disk, also part-way
+    through a long first scan, so a restart does not start it from nothing."""
+    _hc_load()
     out = {}
+    new, t_save = 0, time.time()
     for d in PUBLISH:
         base = WORK / d
         if base.exists():
@@ -316,6 +346,12 @@ def snapshot():
                     continue
                 _HC[rel] = (s.st_size, s.st_mtime_ns, hsh)
                 out[rel] = hsh
+                new += 1
+                if time.time() - t_save > 60:
+                    _hc_save()
+                    t_save = time.time()
+    if new:
+        _hc_save(seen=out)
     return out
 
 
@@ -725,7 +761,17 @@ def _publish_changes(st, before, kind, msg, only=None):
 def light(st, refresh_first=True):
     """The continuous layer: every bot's health + the manager agent."""
     with _LIGHT:                              # the smart round's refresh between agents waits for this cycle to end
-        return _light(st, refresh_first)
+        _S["light_t0"] = time.time()
+        try:
+            return _light(st, refresh_first)
+        finally:
+            _S["light_t0"] = None
+
+
+def light_running(max_sec=45 * 60):
+    """A continuous cycle is in its middle (the manager's automatic install waits for its end, see live/manager.py)."""
+    t = _S.get("light_t0")
+    return bool(t) and time.time() - t < max_sec
 
 
 def _light(st, refresh_first=True):

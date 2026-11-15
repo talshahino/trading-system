@@ -304,6 +304,30 @@ def _cuts(c):
     return False
 
 
+PARKED = Path("data/agents/broker_parked.json")
+
+
+def park(bot, c, combo, at):
+    """A good strategy the bot's current broker cannot trade (user, 15.11.2026): kept with its numbers, so that when
+    the bot opens at another broker it is checked there (decide() reopens it once the server trades the instrument)."""
+    try:
+        d = json.loads(PARKED.read_text(encoding="utf-8")) if PARKED.exists() else {}
+    except Exception:  # noqa: BLE001
+        d = {}
+    d.setdefault("note", "טל 15.11.2026: אסטרטגיות טובות שלא נכנסו כי המכשיר לא קיים אצל הברוקר של הבוט. "
+                         "כשהבוט עובר לברוקר אחר - המנהל בודק אותן שוב שם (נפתחות מחדש אוטומטית כשהמכשיר נסחר).")
+    items = d.setdefault("items", {})
+    key = f"{bot}|{combo}"
+    items[key] = {"bot": bot, "combo": combo, "card": c.get("id"), "title": c.get("title"), "tier": c.get("tier"),
+                  "train": {k: (c.get("train") or {}).get(k) for k in ("n", "mean", "t")},
+                  "unseen": {k: (c.get("unseen") or {}).get(k) for k in ("n", "mean", "t")},
+                  "at": items.get(key, {}).get("at") or at}
+    try:
+        PARKED.write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def decide(bots, now=None):
     """bots: manager.json bots (cards already judged). Changes card statuses in place for what it decides.
     Returns the decisions document."""
@@ -419,6 +443,18 @@ def decide(bots, now=None):
             if (ucards.get(c["id"]) or {}).get("decision"):           # the user decided it himself
                 continue
             did = _did("card", c["id"])
+            o = old.get(did) or {}
+            osym = o.get("off_server") or (((c.get("change") or {}).get("combo") or "").split("|")[-1]
+                                           if "לא קיים בשרת" in (o.get("why") or "") else None)
+            if osym:
+                # declined only because the bot's broker had no such instrument (user, 15.11.2026: "check them again
+                # at another broker when the bot opens elsewhere"): once the bot's server trades it, decide it again
+                try:
+                    from agents import portfolio_check as PC
+                    if osym not in PC.off_symbols(bot):
+                        did = _did("card", c["id"], "reopen", osym)
+                except Exception:  # noqa: BLE001
+                    pass
             prev = old.get(did)
             if c["tier"] not in ("strong", "regular"):
                 # approved earlier, judged lower now (a stricter rule): not built yet -> withdrawn, never built;
@@ -511,9 +547,13 @@ def decide(bots, now=None):
                 except Exception as e:  # noqa: BLE001
                     whole, why = None, why + f" · בדיקת הבוט השלם נכשלה ({str(e)[:80]})"
                 if whole is not None and not whole["ok"]:
+                    off = "לא קיים בשרת" in (whole.get("why") or "")
                     add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
                          "title": c["title"], "decision": "declined", "why": whole["why"], "effect": "לא ייבנה בבוט",
-                         "whole_bot": {k: whole[k] for k in ("before", "after")}})
+                         "whole_bot": {k: whole[k] for k in ("before", "after")},
+                         **({"off_server": (whole.get("combo") or "").split("|")[-1]} if off else {})})
+                    if off:
+                        park(bot, c, whole.get("combo"), at)
                     c["status"], c["by"], c["verdict"] = "rejected", "manager", c["verdict"] + " · " + whole["why"]
                     continue
                 ncombo = (c.get("change") or {}).get("combo")

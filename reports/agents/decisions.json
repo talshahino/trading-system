@@ -1,13 +1,49 @@
 {
- "updated": "2026-11-15T17:14:57+00:00",
+ "updated": "2026-11-15T17:33:00+00:00",
  "new": [
-  "c6da97811b98",
-  "62a24b5c6976",
-  "6c408e9b7f1e",
-  "39e9d3ba2410",
-  "defa633fdf9e"
+  "80ba9088de6a"
  ],
  "decisions": [
+  {
+   "id": "80ba9088de6a",
+   "bot": "bot1",
+   "type": "card",
+   "card": "234088203fb6",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "IB056|1Hour|XAUUSD: v_ha",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+168.78% מול +169.36% היום) (סיכון על 49 מתוך 67 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 4460,
+     "total": 169.36,
+     "worst_day": -2.38,
+     "max_dd": 4.73,
+     "near_days": 0,
+     "max_open": 5.35,
+     "max_side": 4.04,
+     "guard_cut": 309,
+     "guard_skipped": 41
+    },
+    "after": {
+     "trades": 4446,
+     "total": 168.78,
+     "worst_day": -2.38,
+     "max_dd": 4.73,
+     "near_days": 0,
+     "max_open": 5.06,
+     "max_side": 4.04,
+     "guard_cut": 302,
+     "guard_skipped": 38
+    }
+   },
+   "at": "2026-11-15T17:33:00+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "c6da97811b98",
    "bot": "bot1",

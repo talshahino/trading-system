@@ -24,6 +24,11 @@ read-only, nothing is ever sent to a broker), builds 5-minute candles and runs e
                          only US100 / US500 / US30: BTCUSD and gold lost already on 2025, card 1160aad14f11). Only
                          when the bot read the actual before the entry (live/news_bot_seen.json; the calendar is read
                          every minute for 15 minutes after such a release). BTCUSD only for EV08 (EXTRA_ONLY).
+  EV04 straddle before a release (card bfdb13a3a001, 15.11.2026; agents/news_straddle_live.py) - at the open of the
+                         minute before a release of the instrument's currencies a Buy Stop / Sell Stop 1 x the 5-minute
+                         ATR away, OCO, stop at the other order, stop to entry at +1R, no target, out after 30 minutes,
+                         at most 9 trades per release over all instruments, risk x0.5. Inside FTMO's restricted window:
+                         only for this virtual bot, never for a real account.
 Releases: FTMO's own economic calendar, high impact or FTMO-restricted, concerning the instrument (read every hour).
 Entries are 10+ minutes after the release, so FTMO's restricted window (3 minutes either side) is never touched.
 FTMO Standard (14.11.2026, task tal1411wkend): no position through a market break over 2 hours - closed BREAK_W
@@ -60,6 +65,7 @@ from agents import ftmo_universe as U  # noqa: E402
 from agents import scout_strategies as SCS  # noqa: E402
 from agents import shocks as SH  # noqa: E402
 from agents import news_surprise_live as NSL  # noqa: E402
+from agents import news_straddle_live as NST  # noqa: E402
 from live import reporter as REP  # noqa: E402
 
 NAME = "news_bot"
@@ -75,9 +81,11 @@ SYMBOLS = {"US100": ["US100.cash", "US100"], "US500": ["US500.cash", "US500"], "
 EXTRA_ONLY = {"BTCUSD"}          # instruments only for approved extra strategies (EV08, card 00553aab28e5): no EV01-03
 STRATS = ["EV01", "EV02", "EV03"]
 NAMES = {"EV01": "הליכה עם הפרסום", "EV02": "נגד הקפיצה", "EV03": "פריצת טווח", "SH01": "נגד הזעזוע (בלי פרסום)",
-         "EV08": "הפתעת הפרסום"}
+         "EV08": "הפתעת הפרסום", "EV04": "סטרדל לפני חדשה"}
 SHOCK = {"SH01"}                # shock strategies on 1-minute candles (agents/shocks.py live_fade; card 42c723b87f92)
 SURPRISE = {"EV08"}             # release-surprise strategies on 1-minute candles (agents/news_surprise_live; card 00553aab28e5)
+STRADDLE = {"EV04"}             # the straddle before a release on 1-minute candles (agents/news_straddle_live; card bfdb13a3a001)
+STRADDLE_CAP = 9                # at most 9 EV04 trades per release over all instruments (9 x 0.5% = the 4.5% day)
 CAL_ITEMS = []                 # the calendar items the bot read last (EV08 reads the actual / forecast from them)
 SEEN = {}                      # (release minute|title) -> the first time the bot read that item WITH its actual (EV08)
 SEEN_F = ROOT / "live" / "news_bot_seen.json"
@@ -145,7 +153,7 @@ def extras():
             sid, tf, name = c.split("|")
         except ValueError:
             continue
-        if (sid in SCS.SCOUT and tf in ("1Min", "5Min") + HI_TF or sid in (SHOCK | SURPRISE) and tf == "1Min") and name in SYMBOLS:
+        if (sid in SCS.SCOUT and tf in ("1Min", "5Min") + HI_TF or sid in (SHOCK | SURPRISE | STRADDLE) and tf == "1Min") and name in SYMBOLS:
             out.append((sid, tf, name))
     return out
 
@@ -457,6 +465,58 @@ def surprise_fn(sid, name, p):
                              alone=bool(p.get("alone", True)), side=1 if p.get("side", "p1") == "p1" else -1)
 
 
+def straddle_trades(sid, name, d1, spread_now, p):
+    """EV04 (card bfdb13a3a001): Buy Stop / Sell Stop X x the 5-minute ATR around the open of the minute before each
+    release of the instrument's currencies, OCO, stop at the other order, breakeven at +1R, out after H minutes; net of
+    FTMO costs (SPREAD_X x the median spread at the fill, commission, swap). The per-release cap is applied in main()."""
+    try:
+        x, hh, cn = float(p.get("x_atr5", 1.0)), int(p.get("hold_min", 30)), int(p.get("cancel_min", 5))
+        sl = float(p.get("slip_atr", 0.1))
+    except (TypeError, ValueError):
+        x, hh, cn, sl = 1.0, 30, 5, 0.1
+    rows = NST.live_straddle(d1, E._EVENTS.get(name, []), spread_now or 0.0, x=x, hold=hh, cancel=cn, slip_atr=sl)
+    if not rows:
+        return []
+    t = pd.DataFrame(rows)
+    sp = pd.Series([(spread_now or 0.0) * NST.SPREAD_X], index=[d1.index[0]]) if spread_now else None
+    net = C.apply(t[["time", "exit_time", "dir", "entry_px", "stop_px", "r"]].copy(), name, sp)
+    px = float(d1["c"].iloc[-1])
+    out = []
+    for k, x_ in t.iterrows():
+        risk = abs(float(x_["entry_px"]) - float(x_["stop_px"]))
+        cost = float(x_["r"]) - float(net["r"].iloc[k])
+        r_gross = float(x_["dir"]) * (px - float(x_["entry_px"])) / risk if x_["open"] and risk > 0 else float(x_["r"])
+        tm = pd.Timestamp(x_["time"])
+        out.append({"id": f"{sid}|{name}|{tm.strftime('%Y%m%d%H%M')}", "sid": sid, "tf": "1Min", "symbol": name,
+                    "time": tm.isoformat(), "dir": int(x_["dir"]), "entry": float(x_["entry_px"]), "stop": float(x_["stop_px"]),
+                    "target": None, "status": "open" if x_["open"] else "closed",
+                    "exit_time": None if x_["open"] else pd.Timestamp(x_["exit_time"]).isoformat(),
+                    "exit": None if x_["open"] else float(x_["exit_px"]), "r": round(r_gross - cost, 4),
+                    "reason": "" if x_["open"] else ("זמן" if float(x_["exit_px"]) not in (float(x_["stop_px"]), float(x_["entry_px"])) else "סטופ"),
+                    "rel": pd.Timestamp(x_["rel"]).isoformat(), "event": event_of(name, x_["rel"])})
+    return out
+
+
+def straddle_cap(seen, known):
+    """At most STRADDLE_CAP EV04 trades per release over all instruments, the first by fill time then the bot's fixed
+    instrument order (as the study); a trade the bot already holds always stays."""
+    order = {s_: i for i, s_ in enumerate(SYMBOLS)}
+    ev = sorted((t for t in seen.values() if t.get("sid") in STRADDLE),
+                key=lambda t: (t["rel"], t["time"], order.get(t["symbol"], 99)))
+    n = {}
+    for t in ev:
+        if t["id"] in known:
+            n[t["rel"]] = n.get(t["rel"], 0) + 1
+    for t in ev:
+        if t["id"] in known:
+            continue
+        if n.get(t["rel"], 0) >= STRADDLE_CAP:
+            del seen[t["id"]]
+        else:
+            n[t["rel"]] = n.get(t["rel"], 0) + 1
+    return seen
+
+
 def surprise_event(t):
     """The US number an EV08 trade followed (the latest one within 15 minutes before the entry)."""
     t = pd.Timestamp(t)
@@ -474,6 +534,10 @@ def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None):
     pl = plans()
     hi = hi or {}
     jobs = [] if name in EXTRA_ONLY else [(sid, "5Min", E.EVENTS[sid][1]) for sid in STRATS]
+    for sid, tf, n in extra:                              # EV04: pending orders, not a signal function (own simulation)
+        if sid in STRADDLE and n == name and tf == "1Min" and d1 is not None:
+            out += straddle_trades(sid, name, d1, spread_now, pl.get(f"{sid}|{tf}|{name}") or {})
+    extra = [x for x in extra if x[0] not in STRADDLE]
     jobs += [(sid, tf, shock_fn(sid, name, pl.get(f"{sid}|{tf}|{name}") or {}) if sid in SHOCK
               else surprise_fn(sid, name, pl.get(f"{sid}|{tf}|{name}") or {}) if sid in SURPRISE else SCS.SCOUT[sid][1])
              for sid, tf, n in extra if n == name and (tf == "5Min" or tf == "1Min" and d1 is not None or tf in hi)]
@@ -710,6 +774,7 @@ def main():
                 hi = src.hi(name, {tf for _, tf, n in ex if n == name and tf in HI_TF})
                 for t in trades_of(name, d5, sp.get(name), d1, ex, hi):
                     seen[t["id"]] = t
+            seen = straddle_cap(seen, trades)
             for k, t in seen.items():
                 old = trades.get(k)
                 if old and old["status"] == "closed":

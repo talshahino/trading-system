@@ -57,7 +57,22 @@
   "TV06|4Hour|USDCHF",
   "GH09|1Hour|USDJPY",
   "SE01|1Hour|CSCO",
-  "GH02|1Hour|USDCAD"
+  "GH02|1Hour|USDCAD",
+  "SC244|15Min|GBPUSD",
+  "IB033|4Hour|XAUUSD",
+  "SC370|4Hour|ETHUSD",
+  "IM03|4Hour|ETHUSD",
+  "SC244|1Hour|GBPUSD",
+  "SC048|1Hour|US100",
+  "SC330|1Hour|USDJPY",
+  "SC020|15Min|JP225",
+  "IB034|4Hour|XAUUSD",
+  "SC247|4Hour|EU50",
+  "TV56|4Hour|USDJPY",
+  "SC247|4Hour|US500",
+  "GH04|1Hour|JP225",
+  "IB056|1Hour|XAUUSD",
+  "SC319|1Hour|ETHUSD"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added SE02|1Hour|USDJPY and IM01|1Hour|JP225 (new families, backtest with the bot), approved by the user; 04.11.2026: added FR03|15Min|GBPUSD, QC02|1Hour|ETHUSD (GitHub/QuantConnect/forum families, both halves better with the bot), approved by the user; 04.11.2026 (evening): added MQ11|4Hour|MSTR, MQ02|1Hour|XAUUSD (new pool: papers/books/MQL5 EAs; both halves better, Monte Carlo checked), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -101,6 +116,20 @@
   "TT45|1Hour|WTI": {
    "filter": "vol_high",
    "filter_card": "43649e5065b2"
+  },
+  "GH09|1Hour|USDJPY": {
+   "target": 4.0,
+   "stop": 0.75,
+   "card": "30acb80afef6"
+  },
+  "SC069|15Min|XAUUSD": {
+   "target": 1.5,
+   "stop": 1.25,
+   "card": "2c73af0562a9"
+  },
+  "GH02|1Hour|USDCAD": {
+   "filter": "vol_low",
+   "filter_card": "ba1a1641904e"
   }
  },
  "added": {
@@ -111,7 +140,22 @@
   "TV06|4Hour|USDCHF": "9b65f9f1d418",
   "GH09|1Hour|USDJPY": "82bfcae3aafe",
   "SE01|1Hour|CSCO": "3c05de2fb402",
-  "GH02|1Hour|USDCAD": "ceb25c98d42c"
+  "GH02|1Hour|USDCAD": "ceb25c98d42c",
+  "SC244|15Min|GBPUSD": "463bbf8c42f3",
+  "IB033|4Hour|XAUUSD": "ef18d87344d9",
+  "SC370|4Hour|ETHUSD": "ad92d76a5092",
+  "IM03|4Hour|ETHUSD": "4a00eb9c71e6",
+  "SC244|1Hour|GBPUSD": "b8d28cbda52a",
+  "SC048|1Hour|US100": "719c906552b7",
+  "SC330|1Hour|USDJPY": "53e04390dfab",
+  "SC020|15Min|JP225": "99935f4a292a",
+  "IB034|4Hour|XAUUSD": "060e86c7975f",
+  "SC247|4Hour|EU50": "7f4412a93a86",
+  "TV56|4Hour|USDJPY": "4d03b1357ee6",
+  "SC247|4Hour|US500": "a93a25469227",
+  "GH04|1Hour|JP225": "c29ac3031d7e",
+  "IB056|1Hour|XAUUSD": "c3850278907b",
+  "SC319|1Hour|ETHUSD": "0fa7b0d4a7a4"
  },
  "removed": {
   "SC002|1Hour|ARM": "617a4b123340",

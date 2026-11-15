@@ -422,6 +422,29 @@ def revert(cfg, card_id):
     return done
 
 
+HEAL_HOURS = 24
+HEAL_FAMILIES = ("add", "exits", "filters", "manage", "pyr")
+_SLOT = {"exits": "card", "filters": "filter_card", "manage": "manage_card", "pyr": "pyr_card"}
+
+
+def lost_build(cfg, b, cid):
+    """A card recorded as built ("built": "auto") whose change is not in the bot (bots 1-4 smart agent, 15.11.2026:
+    the builder's run of 09:52:55 UTC built 45 approved changes into bots 1, 3 and 4 - 15 new strategies in bot 1 with
+    SC069 / GH09 / GH02, 26 in bot 3, 8 in bot 4 - and wrote "built" in replies.json, but only bot 2's and bot 5's
+    files reached main; the next refresh wrote main's copy over the three others, and since replies.json said
+    "built", nothing ever built them again). Only when the place is empty - a later card on the same combo, a removed
+    strategy or another family is never overwritten."""
+    if not cfg or b.get("family") not in HEAL_FAMILIES:
+        return False
+    combo = b["combo"]
+    if b["family"] == "add":
+        return combo not in (cfg.get("combos") or []) and combo not in (cfg.get("removed") or {})
+    if combo not in (cfg.get("combos") or []) or combo in (cfg.get("removed") or {}):
+        return False
+    p = (cfg.get("plans") or {}).get(combo) or {}
+    return not p.get(_SLOT[b["family"]])
+
+
 def run(now=None):
     at = (now or pd.Timestamp.now(tz="UTC")).isoformat(timespec="seconds")
     dec = _read(ROOT / "reports" / "agents" / "decisions.json", {}).get("decisions", [])
@@ -465,24 +488,36 @@ def run(now=None):
             replies[cid] = {"text": "לא נבנה: אושר כרטיס חזק יותר על אותו זוג טיים פריים של שיטת הגאפ, והוא נבנה",
                             "at": at, "by": "builder", "built": "skipped"}
             did.append(f"{bb['bot']}: {cid} skipped (a stronger card on the same pair)")
-    # 2) approved, not built yet -> into the bot
-    for cid in approved:
+    # 2) approved, not built yet -> into the bot; and approved, recorded as built, but lost from the bot -> again
+    #    (adds first, so a lost strategy is back in "combos" before its lost exits / filter plan is checked)
+    healed = set()
+    order_ = sorted(approved, key=lambda k: 0 if (buildable(cards.get(k) or {}) or {}).get("family") == "add" else 1)
+    for cid in order_:
         c = cards.get(cid)
-        if not c or cid in undone_cards or (replies.get(cid) or {}).get("built"):
+        if not c or cid in undone_cards:
             continue
         b = buildable(c)
         if not b or not cfgs.get(b["bot"]):
             continue
         cfg = cfgs[b["bot"]]
+        if (replies.get(cid) or {}).get("built"):
+            r0 = replies.get(cid) or {}
+            # only a build of the last day: an older one missing from the bot was taken out on purpose by an agent
+            # (13.11.2026: SC020|15Min|GBPJPY left bot 4 after the whole-bot check without a "removed" entry)
+            fresh = (pd.Timestamp(at) - pd.Timestamp(r0.get("at") or "2000-01-01T00:00:00+00:00")) <= pd.Timedelta(hours=HEAL_HOURS)
+            if r0.get("built") != "auto" or b["bot"] not in ADD_BOTS or not fresh or not lost_build(cfg, b, cid):
+                continue
+            healed.add(cid)
         if b["family"] == "add" and b["combo"].split("|")[0] not in _strategy_ids():
             continue                                     # the strategy's code is not installed yet
         if b["family"] in ("scout6", "scout5", "tal5sym", "tal6") and (approved.get(cid) or {}).get("star"):
             b = dict(b, star=True)
         apply(cfg, b, cid)
         touched.add(b["bot"])
-        replies[cid] = {"text": f"נבנה אוטומטית ב{_he(b['bot'])}: {describe(b)}. יותקן במחשב הבוטים תוך כ־10 דקות.",
+        again = " (נבנה שוב: הבנייה הקודמת לא הגיעה לבוט)" if cid in healed else ""
+        replies[cid] = {"text": f"נבנה אוטומטית ב{_he(b['bot'])}: {describe(b)}{again}. יותקן במחשב הבוטים תוך כ־10 דקות.",
                         "at": at, "by": "builder", "built": "auto"}
-        did.append(f"{b['bot']}: built {cid} {describe(b)}")
+        did.append(f"{b['bot']}: {'rebuilt (lost)' if cid in healed else 'built'} {cid} {describe(b)}")
     # bot 6: a starred scout strategy built before the star had a risk of its own there (13.11.2026) gets it now, once
     cfg6 = cfgs.get("bot6")
     for cid, d in approved.items():

@@ -1,7 +1,168 @@
 {
- "updated": "2026-11-15T16:40:39+00:00",
- "new": [],
+ "updated": "2026-11-15T17:14:57+00:00",
+ "new": [
+  "c6da97811b98",
+  "62a24b5c6976",
+  "6c408e9b7f1e",
+  "39e9d3ba2410",
+  "defa633fdf9e"
+ ],
  "decisions": [
+  {
+   "id": "c6da97811b98",
+   "bot": "bot1",
+   "type": "card",
+   "card": "9819ce3c65d2",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "IB033|4Hour|XAUUSD: רק בכיוון סופרטרנד 10/3",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+168.75% מול +168.93% היום) (סיכון על 49 מתוך 67 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 4459,
+     "total": 168.93,
+     "worst_day": -2.38,
+     "max_dd": 4.73,
+     "near_days": 0,
+     "max_open": 5.35,
+     "max_side": 4.04,
+     "guard_cut": 310,
+     "guard_skipped": 42
+    },
+    "after": {
+     "trades": 4455,
+     "total": 168.75,
+     "worst_day": -2.38,
+     "max_dd": 4.73,
+     "near_days": 0,
+     "max_open": 5.35,
+     "max_side": 4.04,
+     "guard_cut": 308,
+     "guard_skipped": 39
+    }
+   },
+   "at": "2026-11-15T17:14:57+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "62a24b5c6976",
+   "bot": "bot1",
+   "type": "card",
+   "card": "eab84868aa22",
+   "kind": "info",
+   "tier": "regular",
+   "title": "IB033|4Hour|XAUUSD: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-15T17:14:57+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "6c408e9b7f1e",
+   "bot": "bot1",
+   "type": "card",
+   "card": "4eb35268c4ed",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC330|1Hour|USDJPY: איזון ב־70% מהדרך ליעד",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.27R לעסקה, 33.0 עסקאות אפקטיביות, +0.05R מעל המצב הקיים) · בבוט השלם על 2026: רווח +168.93% → +169.36%, בלי יותר סיכון (יום גרוע -2.38%, ירידה 4.73%) (סיכון על 49 מתוך 67 אסטרטגיות שהעסקאות שלהן ידועות) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 4459,
+     "total": 168.93,
+     "worst_day": -2.38,
+     "max_dd": 4.73,
+     "near_days": 0,
+     "max_open": 5.35,
+     "max_side": 4.04,
+     "guard_cut": 310,
+     "guard_skipped": 42
+    },
+    "after": {
+     "trades": 4460,
+     "total": 169.36,
+     "worst_day": -2.38,
+     "max_dd": 4.73,
+     "near_days": 0,
+     "max_open": 5.35,
+     "max_side": 4.04,
+     "guard_cut": 309,
+     "guard_skipped": 41
+    }
+   },
+   "at": "2026-11-15T17:14:57+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "39e9d3ba2410",
+   "bot": "bot1",
+   "type": "card",
+   "card": "72a54a4be3ef",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "IB056|1Hour|XAUUSD: יעד 5R · סטופ x0.75",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+169.01% מול +169.36% היום) (סיכון על 49 מתוך 67 אסטרטגיות שהעסקאות שלהן ידועות)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 4460,
+     "total": 169.36,
+     "worst_day": -2.38,
+     "max_dd": 4.73,
+     "near_days": 0,
+     "max_open": 5.35,
+     "max_side": 4.04,
+     "guard_cut": 309,
+     "guard_skipped": 41
+    },
+    "after": {
+     "trades": 4465,
+     "total": 169.01,
+     "worst_day": -2.39,
+     "max_dd": 4.77,
+     "near_days": 0,
+     "max_open": 5.38,
+     "max_side": 4.04,
+     "guard_cut": 316,
+     "guard_skipped": 44
+    }
+   },
+   "at": "2026-11-15T17:14:57+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "defa633fdf9e",
+   "bot": "bot1",
+   "type": "card",
+   "card": "6042887685d5",
+   "kind": "info",
+   "tier": "regular",
+   "title": "IB056|1Hour|XAUUSD: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-15T17:14:57+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "d1c1a23454bc",
    "bot": "bot6",

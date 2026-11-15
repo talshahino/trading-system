@@ -337,6 +337,24 @@ def decide(bots, now=None):
             gain = _total(c.get("train")) or 0.0                # chosen on the period to 2025 (objective.md)
             if (bot, combo) not in best_now or gain > best_now[(bot, combo)][1]:
                 best_now[(bot, combo)] = (c["id"], gain)
+    # approved new / improved strategies not in the bot yet (built within ~20 minutes): the whole-bot check of the next
+    # card runs on top of them (manager, 15.11.2026 night: bot 4 got 8 new strategies approved at 01:13 and bot 1 5 at
+    # 02:31, each checked alone against the same bot - bot 4's 2026 replay falls 9.5-9.9% each, the 8 together were
+    # never replayed, and the total limit is 10%)
+    cardrisk = {o.get("card_decision"): (o.get("action") or {}).get("value") for o in old.values()
+                if o.get("type") == "risk" and o.get("card_decision") and o.get("decision") == "approved"
+                and (o.get("action") or {}).get("kind") == "mult"}
+    pending = {}
+    for bot, b in bots.items():
+        for c in b.get("cards", []):
+            if c.get("kind") not in ("new", "improve"):
+                continue
+            d0 = old.get(_did("card", c["id"]))
+            if not d0 or d0.get("decision") != "approved" or d0["id"] in uundo or c["id"] in built:
+                continue
+            if (now - pd.Timestamp(d0.get("at") or at)).total_seconds() > 86400 or _in_bot(bot, c):
+                continue
+            pending.setdefault(bot, []).append((c, cardrisk.get(d0["id"])))
     # 1) the agents' cards (all bots)
     for bot, b in bots.items():
         for c in b.get("cards", []):
@@ -431,7 +449,7 @@ def decide(bots, now=None):
                 # the whole bot with and without it, on 2026 (agents/portfolio_check.py; user, 12.11.2026)
                 try:
                     from agents import portfolio_check as PC
-                    whole = PC.check(bot, c)
+                    whole = PC.check(bot, c, pending=pending.get(bot))
                 except Exception as e:  # noqa: BLE001
                     whole, why = None, why + f" · בדיקת הבוט השלם נכשלה ({str(e)[:80]})"
                 if whole is not None and not whole["ok"]:
@@ -471,6 +489,8 @@ def decide(bots, now=None):
                      "title": ("⭐ " if star else "") + c["title"], "decision": "approved", "why": why, "effect": what,
                      "star": star, **({"whole_bot": {k: whole[k] for k in ("before", "after")}} if whole else {})})
             c["status"], c["by"], c["decided"], c["decision_id"] = "approved", "manager", d["at"], did
+            if is_new and c["kind"] in ("new", "improve"):
+                pending.setdefault(bot, []).append((c, mult))
             combo = (c.get("change") or {}).get("combo")
             if is_new and rule_card:
                 rk, rv = rule_card

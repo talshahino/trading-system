@@ -265,9 +265,11 @@ def adds_risk(new, old):
     return day_worse or dd_worse or new["near_days"] > old["near_days"]
 
 
-def check(bot, card):
+def check(bot, card, pending=None):
     """The whole bot with and without the card's change. {"ok": bool, "mult": m, "why": Hebrew, "before", "after"} or
-    None when the trades are not stored yet (the agents re-run those combos first)."""
+    None when the trades are not stored yet (the agents re-run those combos first).
+    pending: [(card, risk mult or None)] approved but not in the bot yet - "before" is the bot with them (manager,
+    15.11.2026: approvals of one pass were each replayed alone against the same bot, never together)."""
     if bot not in BOTS or card.get("kind") not in ("improve", "new"):
         return None
     cfg = bot_cfg(bot)
@@ -275,6 +277,19 @@ def check(bot, card):
     if not combo or tr is None:
         return None
     book, missing = book_now(bot, cfg)
+    mm = mults(bot)
+    for pc_, pm in pending or []:
+        if pc_.get("id") == card.get("id"):
+            continue
+        try:
+            pcombo, ptr = trades_of_card(bot, pc_)
+        except Exception:  # noqa: BLE001
+            continue
+        if not pcombo or ptr is None or pcombo == combo:
+            continue
+        m_ = float(pm) if pm else (book.get(pcombo, (None, float(mm.get(pcombo, 1.0))))[1] or 1.0)
+        book[pcombo] = (ptr, m_)
+        missing = [x for x in missing if x != pcombo]
     if card.get("kind") != "new" and combo in missing:
         return None                                   # the strategy's own trades as it runs now unknown: no fair "before"
     # (manager, 14.11.2026: with more than a fifth of the bot unknown the check returned None, and since 13.11 every one

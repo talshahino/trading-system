@@ -158,10 +158,44 @@ def json_layout(cards):
     return {"indent": 1} if len(cards) <= 2000 else {"separators": (",", ":")}
 
 
+REJECTED_SHARDS = 4      # cards_rejected_0..3.json - always all four, so no stale shard is ever left behind
+
+
+def rejected_new(c):
+    return c.get("kind") == "new" and c.get("tier") == "rejected"
+
+
 def write_cards(bot, cards, extra=None):
+    """cards.json + the rejected new strategies in REJECTED_SHARDS files by id (manager, 15.11.2026 night: with the
+    scout's pack bot 1 has 45,125 cards - cards.json 36 MB even with the short rejected cards; GitHub refused bot 2's
+    40 MB file (422) and bot 1's 21:40 run was lost, so the app and the GitHub agents saw 14.11 09:01's file).
+    agent_manager / autodecide read every cards*.json, agent_portfolio.families_of reads them too."""
     d = CARDS_DIR / bot
     d.mkdir(parents=True, exist_ok=True)
-    (d / "cards.json").write_text(json.dumps({"bot": bot, "updated": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
-                                              "cards": cards, **(extra or {})}, ensure_ascii=False, default=str,
-                                             **json_layout(cards)),
+    now = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+    keep = [c for c in cards if not rejected_new(c)]
+    shards = [[] for _ in range(REJECTED_SHARDS)]
+    for c in cards:
+        if rejected_new(c):
+            shards[int(hashlib.sha1(str(c.get("id")).encode()).hexdigest()[:6], 16) % REJECTED_SHARDS].append(c)
+    (d / "cards.json").write_text(json.dumps({"bot": bot, "updated": now, "cards": keep, **(extra or {}),
+                                              "rejected_new_in": f"cards_rejected_0..{REJECTED_SHARDS - 1}.json"},
+                                             ensure_ascii=False, default=str, **json_layout(keep)),
                                   encoding="utf-8")
+    for i, sh in enumerate(shards):
+        (d / f"cards_rejected_{i}.json").write_text(json.dumps({"bot": bot, "updated": now, "cards": sh},
+                                                               ensure_ascii=False, default=str, **json_layout(sh)),
+                                                    encoding="utf-8")
+
+
+def read_cards(bot, with_rejected=True):
+    """Every card of the bot's nightly experiments: cards.json + the rejected-new shards (see write_cards)."""
+    d = CARDS_DIR / bot
+    names = ["cards.json"] + ([f"cards_rejected_{i}.json" for i in range(REJECTED_SHARDS)] if with_rejected else [])
+    out = []
+    for nm in names:
+        try:
+            out += json.loads((d / nm).read_text(encoding="utf-8")).get("cards", [])
+        except Exception:  # noqa: BLE001
+            pass
+    return out

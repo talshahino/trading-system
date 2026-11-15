@@ -669,8 +669,10 @@ def families_of(bot):
     # bot 5 (its smart agent, 14.11.2026, the manager's task mgr1411fam2 - SC071|15Min|US30, 4 indices to 2025 -16R):
     # its scout strategies are "scout" in live/bots/bot5.json and its new-strategy cards are cards_new.json
     try:
-        cards = json.loads((K.CARDS_DIR / bot / ("cards_new.json" if bot == "bot5" else "cards.json")).read_text(
-            encoding="utf-8")).get("cards", [])
+        if bot == "bot5":
+            cards = json.loads((K.CARDS_DIR / bot / "cards_new.json").read_text(encoding="utf-8")).get("cards", [])
+        else:                            # cards.json + the rejected-new shards (agentkit.write_cards, 15.11.2026)
+            cards = K.read_cards(bot)
     except Exception:  # noqa: BLE001
         return {}
     new = [c for c in cards if c.get("kind") == "new" and str((c.get("change") or {}).get("combo") or "").count("|") == 2]

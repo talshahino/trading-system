@@ -1159,7 +1159,11 @@ def experiments(budget_s, only_syms=None):
     pl = plan()
     order = pl.get("track_order", ["v5", "v1m"])
     skip = set(pl.get("skip_knobs", []))
-    todo = [x for x in todo if x[4] not in skip]
+    # a whole track can be left out (manager, 15.11.2026: bot 6's 1-minute track - not traded since 12.11, -0.12R a
+    # trade to 2025 at t -6.4 - took ~26 minutes an experiment, 46 left, one or two a run: about 20 hours of the bots'
+    # computer for a track the bot does not trade)
+    skip_tr = set(pl.get("skip_tracks", []))
+    todo = [x for x in todo if x[4] not in skip and x[3] not in skip_tr]
     todo.sort(key=lambda x: (x[0], order.index(x[3]) if x[3] in order else 9, x[2], x[1]))
     t0, data, done = time.time(), {}, 0
     for _, _, s, trk, knob, val, cfg, key in todo:

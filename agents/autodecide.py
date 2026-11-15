@@ -72,6 +72,21 @@ def _total(s):
     return float(s.get("eff_n") or s.get("n") or 0) * float(s["mean"])
 
 
+def _strat(c):
+    """The strategy a card changes, as the builder keys it: change.combo, or for the gap method's cards (no combo) the
+    track they replace - TAL|<pair> / TAL|<pair>|<sym> (manager, 15.11.2026: bot 5 got a REARM card and a LADDER card
+    on 4h/15m, and REARM and an ADX filter on 1h/15m, in one round - each a whole cfg tested alone against the same
+    base; with no combo the one-change-per-strategy rule skipped them, and the second built would overwrite the first)."""
+    ch = c.get("change") or {}
+    if ch.get("combo"):
+        return ch["combo"]
+    if ch.get("method") == "tal_gap" and ch.get("pair"):
+        return f"TAL|{ch['pair']}"
+    if ch.get("method") == "tal_gap_sym" and ch.get("pair") and ch.get("sym"):
+        return f"TAL|{ch['pair']}|{ch['sym']}"
+    return None
+
+
 def maybe_luck(c):
     u, b = c.get("unseen") or {}, c.get("baseline") or {}
     if u.get("mean") is None:
@@ -318,7 +333,7 @@ def decide(bots, now=None):
     for bot, b in bots.items():
         for c in b.get("cards", []):
             r = reps.get(c["id"]) if isinstance(reps.get(c["id"]), dict) else {}
-            combo = (c.get("change") or {}).get("combo")
+            combo = _strat(c)
             if r.get("built") and combo and c.get("kind") == "improve":
                 k = (bot, combo)
                 built_at[k] = max(built_at.get(k, ""), str(r.get("at") or ""))
@@ -330,7 +345,7 @@ def decide(bots, now=None):
     best_now = {}                                               # (bot, combo) -> the new card with the most total gain
     for bot, b in bots.items():
         for c in b.get("cards", []):
-            combo = (c.get("change") or {}).get("combo")
+            combo = _strat(c)
             if c.get("kind") != "improve" or c.get("tier") not in ("strong", "regular") or not combo \
                     or _did("card", c["id"]) in old or (ucards.get(c["id"]) or {}).get("decision"):
                 continue
@@ -401,7 +416,7 @@ def decide(bots, now=None):
                     continue
                 if whole is not None:
                     prev["whole_bot"] = {k: whole[k] for k in ("before", "after")}
-            ccombo = (c.get("change") or {}).get("combo")
+            ccombo = _strat(c)
             if did not in old and c["kind"] == "improve" and ccombo:
                 if best_now.get((bot, ccombo), (c["id"],))[0] != c["id"]:
                     c["status"], c["verdict"] = "watch", (c["verdict"] + " · מחכה: שינוי אחר באסטרטגיה הזו נכנס עכשיו - "

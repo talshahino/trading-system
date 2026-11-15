@@ -11454,6 +11454,94 @@
    ],
    "rules": "Explorer idea TT-s-po3-4h-ttrades (TTrades, 'Trading the 4 Hour Power Of Three - OHLC'): every New-York-aligned 4H candle = accumulation at its open, manipulation beyond the open that takes the previous 4H candle's low (high), distribution the other way. Entry on the lower chart: after the run under the 4H open has taken the previous 4H low, a close back over the 4H open = buy; stop 0.1 ATR under the manipulation low, target the previous 4H high when it is >= 1R away (else 2R - ours), flat on the 4H candle's last bar; one trade per 4H candle. Mirror. Differs from SC307 (daily PO3 on the NY mid",
    "explorer_idea": "TT-s-po3-4h-ttrades"
+  },
+  {
+   "id": "SC455",
+   "name": "Ehlers Synthetic Oscillator: Hann(4) ROC crosses zero, out on the opposite cross, 2 ATR (TASC 2026.04)",
+   "source": "Ehlers 'A Synthetic Oscillator', TASC 2026.04 Traders' Tips",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2026/04/TradersTips.html",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers 'A Synthetic Oscillator' (TASC 2026.04, RealTest / Wealth-Lab rule in the Traders' Tips): ROC2 = 1-bar change of Hann(Synth, 4); long when ROC2 crosses over 0, out (and short, RealTest's mirror) when it crosses under. The article has no stop - ours 2 ATR, no fixed target."
+  },
+  {
+   "id": "SC456",
+   "name": "Ehlers Ultimate Channel breakout with the basis slope, basis stop, 2R (TASC 2024.05)",
+   "source": "Ehlers 'Ultimate Channels and Ultimate Bands', TASC 2024.05 (PineCodersTASC open source)",
+   "url": "https://www.tradingview.com/script/4Plc7Zjk-TASC-2024-05-Ultimate-Channels-and-Ultimate-Bands/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers Ultimate Channel (TASC 2024.05): a close over the upper channel (UltimateSmoother 20 + 1 x smoothed true range) with a rising basis = breakout, stop at the basis (or 1 ATR if nearer than 0.5 ATR), 2R; mirror. The article gives no rules - Keltner-style breakout use is ours (it replaces Keltner's EMA / ATR)."
+  },
+  {
+   "id": "SC457",
+   "name": "Ehlers Ultimate Bands (2 x RMS dev) close back inside, target the basis, 3-bar stop (TASC 2024.05)",
+   "source": "Ehlers 'Ultimate Channels and Ultimate Bands', TASC 2024.05",
+   "url": "https://www.tradingview.com/script/4Plc7Zjk-TASC-2024-05-Ultimate-Channels-and-Ultimate-Bands/",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers Ultimate Bands (TASC 2024.05): a close back inside the bands after a close outside (Bollinger-style reversion with the low-lag UltimateSmoother basis), target the basis, stop 0.1 ATR beyond the extreme of the last 3 bars. Rules ours (the article gives none)."
+  },
+  {
+   "id": "SC458",
+   "name": "Kacher-Morales buyable gap-up (>= 0.75 ATR40, 1.5x volume), next session open, gap-day-low stop, 2R",
+   "source": "Kacher & Morales buyable gap-up (Trade Like an O'Neil Disciple; chartmill ATR-based BGU)",
+   "url": "https://www.chartmill.com/trading-ideas/690-Buyable-Gap-Ups-ATR-based",
+   "added": "2026-11-15",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Buyable Gap-Up (Kacher & Morales, 'Trade Like an O'Neil Disciple', 2010): the session opens at least 0.75 x the 40-session ATR over the previous session's close (chartmill 'Buyable Gap Ups (ATR based)') on volume >= 1.5 x the 50-session average; buy (Kacher: on the gap day; ours: the next session's 09:30 open, once the gap day's volume is known), stop at the gap day's intraday low (their rule), target 2R (ours - they hold while it acts well). Sessions = New York cash hours 09:30-16:00; feeds without volume pass the volume test. Mirror (a sellable gap-down) for shorts - ours. Differs from GP01 "
   }
  ],
  "indicators": [
@@ -12772,6 +12860,20 @@
    "url": "https://briefread.pages.dev/en/summary/trading-the-4-hour-power-of",
    "added": "2026-11-15",
    "uses": "4H Power-of-Three context: 4H open, prior 4H extremes (SC454)"
+  },
+  {
+   "name": "synthetic_osc",
+   "source": "Ehlers Synthetic Oscillator (TASC 2026.04): cycle-phase sine, 15-25 bar band, Hann-smoothed ROC signals",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2026/04/TradersTips.html",
+   "added": "2026-11-15",
+   "uses": "cycle-phase oscillator: ROC crosses as entry / exit (SC455); dominant cycle DC as an adaptive length"
+  },
+  {
+   "name": "ultimate_channel",
+   "source": "Ehlers Ultimate Channel (UltimateSmoother of TR) and Ultimate Bands (RMS deviation) around UltimateSmoother 20",
+   "url": "https://www.tradingview.com/script/4Plc7Zjk-TASC-2024-05-Ultimate-Channels-and-Ultimate-Bands/",
+   "added": "2026-11-15",
+   "uses": "low-lag Keltner / Bollinger replacements: breakouts (SC456), reversion to the basis (SC457), basis as trailing stop"
   }
  ],
  "sources": [
@@ -12803,7 +12905,7 @@
    "name": "MarketSmith / IBD (O'Neil)",
    "url": "https://www.luxalgo.com/library/concept/pocket-pivot/",
    "look_for": "O'Neil / Kacher-Morales setups: pocket pivots, buyable gap-ups, bases",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-15"
   },
   {
    "name": "Forex Factory (forum + calendar)",

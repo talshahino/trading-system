@@ -197,3 +197,71 @@ def two_pole_predict(df, hp_len=15, lp_len=30, q=0.35):
     lp2 = np.concatenate([[0.0, 0.0], lp[:-2]])
     pred = (lp - 1.8 * q * lp1 + q * q * lp2) / (1 - 1.8 * q + q * q)
     return {"lp": lp, "predict": pred}
+
+
+# ---- added 15.11.2026 (forced weekend run): TASC 2026.04 Synthetic Oscillator, TASC 2024.05 Ultimate Channels / Bands
+def _hann(x, n):
+    """Hann-window FIR (EasyLanguage form of TASC 2026.04): weights 1 - cos(2 pi k / (n + 1)), k = 1..n, newest first."""
+    x = np.asarray(x, float)
+    w = 1 - np.cos(2 * np.pi * np.arange(1, n + 1) / (n + 1))
+    w = w / w.sum()
+    return S(x).rolling(n, min_periods=1).apply(lambda z: float(np.dot(z[::-1], w[:len(z)]) / w[:len(z)].sum()),
+                                                raw=True).to_numpy()
+
+
+def synthetic_osc(df, lb=15, ub=25, price_len=12, smooth_len=4):
+    """Ehlers 'A Synthetic Oscillator' (TASC 2026.04, https://www.traders.com/Documentation/FEEDbk_docs/2026/04/TradersTips.html;
+    port of the EasyLanguage listing): Hann(close, 12) -> band-pass HP(25) + SuperSmoother(15), RMS-normalised real /
+    imaginary parts give the dominant cycle DC (clamped 15..25); BP = UltimateSmoother(HP(close, sqrt(15 x 25)));
+    phase advances 360 / DC per bar and resets on BP zero crossings (180 / DC up, 180 + 180 / DC down); Synth =
+    sin(phase) with the article's glitch removal. dict synth, synth2 (Hann(synth, 4), RealTest), roc2 (its 1-bar
+    change: the article's buy / sell crosses of zero), dc."""
+    c = cols(df)[3]
+    n = len(c)
+    price = _hann(c, price_len)
+    lp = _ss(_hp(price, ub), lb)
+    real = lp / np.where(_rms(lp, 100) > 0, _rms(lp, 100), np.nan)
+    real = np.nan_to_num(real)
+    roc = np.diff(real, prepend=real[0])
+    r2 = _rms(roc, 100)
+    imag = np.nan_to_num(np.where(r2 > 0, roc / r2, 0.0))
+    mid = float(np.sqrt(lb * ub))
+    bp = ultimate_smoother(_hp(c, mid), mid)
+    dc = np.full(n, float(lb))
+    syn = np.zeros(n)
+    ph = 0.0
+    for i in range(1, n):
+        den = (real[i] - real[i - 1]) * imag[i] - (imag[i] - imag[i - 1]) * real[i]
+        d = 6.28 * (real[i] ** 2 + imag[i] ** 2) / den if den != 0 else dc[i - 1]
+        dc[i] = min(max(d, lb), ub)
+        ph += 360.0 / dc[i]
+        if bp[i] > 0 >= bp[i - 1]:
+            ph = 180.0 / dc[i]
+        elif bp[i] < 0 <= bp[i - 1]:
+            ph = 180.0 + 180.0 / dc[i]
+        ph = ph % 360.0
+        s = np.sin(np.radians(ph))
+        if 0 < ph < 90 and s < syn[i - 1]:
+            s = syn[i - 1]
+        if 180 < ph < 270 and s > syn[i - 1]:
+            s = syn[i - 1]
+        syn[i] = s
+    s2 = _hann(syn, smooth_len)
+    return {"synth": syn, "synth2": s2, "roc2": np.diff(s2, prepend=s2[0]), "dc": dc}
+
+
+def ultimate_channel(df, length=20, str_len=20, mult=1.0, band_len=20, band_mult=1.0):
+    """Ehlers 'Ultimate Channels and Ultimate Bands' (TASC 2024.05; PineCodersTASC open source
+    https://www.tradingview.com/script/4Plc7Zjk-TASC-2024-05-Ultimate-Channels-and-Ultimate-Bands/): basis =
+    UltimateSmoother(close); channel = basis +/- mult x UltimateSmoother(true range); bands = basis +/- band_mult x
+    RMS deviation of the close from the basis over band_len (the description's 'square root of the average squared
+    deviation'). The defaults were not readable - ours 20 / 20 / 1.0 (the Keltner / Bollinger habit). dict basis,
+    ch_up, ch_dn, bd_up, bd_dn."""
+    o, h, l, c, v = cols(df)
+    basis = ultimate_smoother(c, length)
+    pc = np.concatenate([[c[0]], c[:-1]])
+    tr_ = np.maximum(h, pc) - np.minimum(l, pc)
+    st = ultimate_smoother(tr_, str_len)
+    dev = np.sqrt(S((c - basis) ** 2).rolling(band_len, min_periods=2).mean().to_numpy())
+    return {"basis": basis, "ch_up": basis + mult * st, "ch_dn": basis - mult * st,
+            "bd_up": basis + band_mult * dev, "bd_dn": basis - band_mult * dev}

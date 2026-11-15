@@ -66,7 +66,7 @@ from agents.indicators.classic4 import (alligator, bw_ao, bw_mfi, chop_zone, con
                                         inertia, kase_peak, kdj, kst, pfe, pgo, psar, pvt, rvi_vol, safezone, smi_blau,
                                         stc, stretch, td_sequential, ttf, vidya, vortex)
 from agents.indicators.ehlers3 import (continuation_index, ehlers_uo, laguerre_filter, one_euro, pma_predict,
-                                       reflex_trendflex, two_pole_predict)
+                                       reflex_trendflex, synthetic_osc, two_pole_predict, ultimate_channel)
 from agents.indicators.classic5 import (alma, ash, bbtrend, fractal_bands, kairi, pmo, pzo, rmi, t3, trendilo,
                                         twiggs_mf, vix_fix, vzo)
 from agents.indicators.structure2 import (darvas_box, gap_type, point_figure, ross_123, swing_grade, three_line_break,
@@ -343,6 +343,8 @@ INDICATORS = {
     "rvol": (rvol, "Relative volume at time of day: cumulative and bar tick volume vs the same slot's 20-session mean", TV + "8ePzgnzt-Relative-Volume-at-Time/"),
     "ict_macros": (ict_macros, "ICT macro windows (NY): 02:33, 04:03, 08:50, 09:50, 10:50, 11:50, 13:10, 15:15", TV + "aLTywnJ0-ICT-Macros-LuxAlgo/"),
     "po3_4h": (po3_4h, "NY-aligned 4H candle: open, running high / low, previous 4H high / low (TTrades 4H Power of Three)", "https://briefread.pages.dev/en/summary/trading-the-4-hour-power-of"),
+    "synthetic_osc": (synthetic_osc, "Ehlers Synthetic Oscillator (TASC 2026.04): cycle-phase sine, 15-25 bar band, Hann-smoothed ROC signals", TT + "2026/04/TradersTips.html"),
+    "ultimate_channel": (ultimate_channel, "Ehlers Ultimate Channel (UltimateSmoother of TR) and Ultimate Bands (RMS deviation) around UltimateSmoother 20", TV + "4Plc7Zjk-TASC-2024-05-Ultimate-Channels-and-Ultimate-Bands/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

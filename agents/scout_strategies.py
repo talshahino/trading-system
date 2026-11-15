@@ -10112,3 +10112,88 @@ SCOUT.update({
     "SC453": ("Sweep reversal only of a significant swing (grade >= 3 of 5), sweep-bar stop, 2R (TikTok idea)", s_sweep_grade3, ["5Min", "15Min"]),
     "SC454": ("TTrades 4H Power of Three: 4H open run takes the prior 4H extreme, close back over the open, flat at 4H end", s_po3_4h, ["5Min", "15Min"]),
 })
+
+
+# ---------------- 15.11.2026 forced weekend run: SC455-SC458 ----------------
+def s_synthetic_osc(df):
+    """Ehlers 'A Synthetic Oscillator' (TASC 2026.04, RealTest / Wealth-Lab rule in the Traders' Tips): ROC2 = 1-bar
+    change of Hann(Synth, 4); long when ROC2 crosses over 0, out (and short, RealTest's mirror) when it crosses under.
+    The article has no stop - ours 2 ATR, no fixed target."""
+    o, h, l, c, v = _ohlcv(df)
+    r = IND.synthetic_osc(df)["roc2"]
+    a = atr(h, l, c, 14)
+    up, dn = cross_up(r, 0), cross_down(r, 0)
+    L, S = _excl(up, dn)
+    return L, S, _atr_plan(c, a, 2.0, None, exit_long=dn, exit_short=up)
+
+
+def s_ultimate_channel(df):
+    """Ehlers Ultimate Channel (TASC 2024.05): a close over the upper channel (UltimateSmoother 20 + 1 x smoothed true
+    range) with a rising basis = breakout, stop at the basis (or 1 ATR if nearer than 0.5 ATR), 2R; mirror. The
+    article gives no rules - Keltner-style breakout use is ours (it replaces Keltner's EMA / ATR)."""
+    o, h, l, c, v = _ohlcv(df)
+    u = IND.ultimate_channel(df)
+    a = atr(h, l, c, 14)
+    b = u["basis"]
+    L = cross_up(c, u["ch_up"]) & (b > _r(b))
+    S = cross_down(c, u["ch_dn"]) & (b < _r(b))
+    sl = np.where(c - b >= 0.5 * a, b, c - a)
+    ss = np.where(b - c >= 0.5 * a, b, c + a)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_ultimate_bands(df):
+    """Ehlers Ultimate Bands (TASC 2024.05): a close back inside the bands after a close outside (Bollinger-style
+    reversion with the low-lag UltimateSmoother basis), target the basis, stop 0.1 ATR beyond the extreme of the
+    last 3 bars. Rules ours (the article gives none)."""
+    o, h, l, c, v = _ohlcv(df)
+    u = IND.ultimate_channel(df, band_mult=2.0)
+    a = atr(h, l, c, 14)
+    L = (_r(c) < _r(u["bd_dn"])) & (c > u["bd_dn"])
+    S = (_r(c) > _r(u["bd_up"])) & (c < u["bd_up"])
+    sl, ss = _swl(h, l, a, 3)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl, ss, u["basis"], u["basis"])
+
+
+def s_buyable_gap_up(df):
+    """Buyable Gap-Up (Kacher & Morales, 'Trade Like an O'Neil Disciple', 2010): the session opens at least 0.75 x the
+    40-session ATR over the previous session's close (chartmill 'Buyable Gap Ups (ATR based)') on volume >= 1.5 x
+    the 50-session average; buy (Kacher: on the
+    gap day; ours: the next session's 09:30 open, once the gap day's volume is known), stop at the gap day's intraday
+    low (their rule), target 2R (ours - they hold while it acts well). Sessions = New York cash hours 09:30-16:00;
+    feeds without volume pass the volume test. Mirror (a sellable gap-down) for shorts - ours. Differs from GP01
+    (reopening gap > 1.5 ATR, no volume, ATR stop)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    hr, sid, first, last, so, sh, sl_, sc = _rth_sessions(df)
+    n, m = len(c), len(first)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    stl, sts = np.full(n, np.nan), np.full(n, np.nan)
+    if m < 5:
+        return L, S, _plan_r(stl, sts, 2.0)
+    sv = np.array([v[f:t + 1].sum() for f, t in zip(first, last)])
+    pc = np.concatenate([[sc[0]], sc[:-1]])
+    tr_ = np.maximum(sh, pc) - np.minimum(sl_, pc)
+    satr = _s(tr_).rolling(40, min_periods=5).mean().to_numpy()
+    avgv = _s(sv).shift(1).rolling(50, min_periods=5).mean().to_numpy()
+    novol = np.nanstd(sv[max(0, m - 50):]) <= 1e-9 * (np.nanmean(sv) + 1)
+    for k in range(1, m - 1):
+        j = first[k + 1] - 1
+        if j <= last[k] or not np.isfinite(satr[k - 1]):
+            continue
+        vol_ok = novol or (np.isfinite(avgv[k]) and sv[k] >= 1.5 * avgv[k])
+        if so[k] >= sc[k - 1] + 0.75 * satr[k - 1] and vol_ok:
+            L[j], stl[j] = True, sl_[k]
+        elif so[k] <= sc[k - 1] - 0.75 * satr[k - 1] and vol_ok:
+            S[j], sts[j] = True, sh[k]
+    return L, S, _plan_r(stl, sts, 2.0)
+
+
+SCOUT.update({
+    "SC455": ("Ehlers Synthetic Oscillator: Hann(4) ROC crosses zero, out on the opposite cross, 2 ATR (TASC 2026.04)", s_synthetic_osc, _M),
+    "SC456": ("Ehlers Ultimate Channel breakout with the basis slope, basis stop, 2R (TASC 2024.05)", s_ultimate_channel, _M),
+    "SC457": ("Ehlers Ultimate Bands (2 x RMS dev) close back inside, target the basis, 3-bar stop (TASC 2024.05)", s_ultimate_bands, _F),
+    "SC458": ("Kacher-Morales buyable gap-up (>= 0.75 ATR40, 1.5x volume), next session open, gap-day-low stop, 2R", s_buyable_gap_up, ["5Min", "15Min", "1Hour"]),
+})

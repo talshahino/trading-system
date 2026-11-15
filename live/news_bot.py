@@ -20,7 +20,8 @@ read-only, nothing is ever sent to a broker), builds 5-minute candles and runs e
                          only buys after a shock down and only when US100 had no shock the same way (card 3718a860cb42)
   EV08 release surprise (card 00553aab28e5, 15.11.2026; agents/news_surprise_live.py) - a US claims / home sales
                          number worse than expected (big surprise, alone in its minute) = buy BTC / US100 / US500 / US30
-                         / gold 10 minutes later, better = sell; stop 1.5 x the 5-minute ATR, out after 120 minutes. Only
+                         / gold 10 minutes later, better = sell; stop 1.5 x the 5-minute ATR, out after 120 minutes (from 15.11
+                         only US100 / US500 / US30: BTCUSD and gold lost already on 2025, card 1160aad14f11). Only
                          when the bot read the actual before the entry (live/news_bot_seen.json; the calendar is read
                          every minute for 15 minutes after such a release). BTCUSD only for EV08 (EXTRA_ONLY).
 Releases: FTMO's own economic calendar, high impact or FTMO-restricted, concerning the instrument (read every hour).
@@ -693,6 +694,8 @@ def main():
             sp = spreads()
             seen, ex = {}, extras()
             for name in SYMBOLS:
+                if name in EXTRA_ONLY and not any(n == name for _, _, n in ex):
+                    continue                                    # BTCUSD only while an approved extra strategy uses it
                 try:
                     d1 = src.update(name)
                 except Exception as e:  # noqa: BLE001

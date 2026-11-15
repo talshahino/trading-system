@@ -56,11 +56,9 @@
   "SH01|1Min|GER40",
   "SC086|4Hour|JP225",
   "SC070|5Min|JP225",
-  "EV08|1Min|BTCUSD",
   "EV08|1Min|US100",
   "EV08|1Min|US500",
-  "EV08|1Min|US30",
-  "EV08|1Min|XAUUSD"
+  "EV08|1Min|US30"
  ],
  "plans": {
   "EV01|5Min|GBPUSD": {
@@ -352,21 +350,6 @@
    "added": "2026-11-14",
    "risk_mult": 0.7
   },
-  "EV08|1Min|BTCUSD": {
-   "card": "00553aab28e5",
-   "groups": [
-    "claims",
-    "home"
-   ],
-   "side": "p1",
-   "entry_min": 10,
-   "stop_atr5": 1.5,
-   "hold_min": 120,
-   "size": "big",
-   "alone": true,
-   "risk_mult": 0.5,
-   "why": "הפתעת הפרסום: אותו הימור על 5 מכשירים, סיכון x0.5"
-  },
   "EV08|1Min|US100": {
    "card": "00553aab28e5",
    "groups": [
@@ -398,21 +381,6 @@
    "why": "הפתעת הפרסום: אותו הימור על 5 מכשירים, סיכון x0.5"
   },
   "EV08|1Min|US30": {
-   "card": "00553aab28e5",
-   "groups": [
-    "claims",
-    "home"
-   ],
-   "side": "p1",
-   "entry_min": 10,
-   "stop_atr5": 1.5,
-   "hold_min": 120,
-   "size": "big",
-   "alone": true,
-   "risk_mult": 0.5,
-   "why": "הפתעת הפרסום: אותו הימור על 5 מכשירים, סיכון x0.5"
-  },
-  "EV08|1Min|XAUUSD": {
    "card": "00553aab28e5",
    "groups": [
     "claims",

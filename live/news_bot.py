@@ -18,6 +18,11 @@ read-only, nothing is ever sent to a broker), builds 5-minute candles and runs e
                          against it D minutes later, stop 25% of the shock beyond its extreme, out after 60 minutes
                          14.11.2026: US100 only in a trending market (chop_trend, card 69f4dc4a25da); GER40 K6, D1, 120 min,
                          only buys after a shock down and only when US100 had no shock the same way (card 3718a860cb42)
+  EV08 release surprise (card 00553aab28e5, 15.11.2026; agents/news_surprise_live.py) - a US claims / home sales
+                         number worse than expected (big surprise, alone in its minute) = buy BTC / US100 / US500 / US30
+                         / gold 10 minutes later, better = sell; stop 1.5 x the 5-minute ATR, out after 120 minutes. Only
+                         when the bot read the actual before the entry (live/news_bot_seen.json; the calendar is read
+                         every minute for 15 minutes after such a release). BTCUSD only for EV08 (EXTRA_ONLY).
 Releases: FTMO's own economic calendar, high impact or FTMO-restricted, concerning the instrument (read every hour).
 Entries are 10+ minutes after the release, so FTMO's restricted window (3 minutes either side) is never touched.
 FTMO Standard (14.11.2026, task tal1411wkend): no position through a market break over 2 hours - closed BREAK_W
@@ -53,6 +58,7 @@ from agents import ftmo_costs as C  # noqa: E402
 from agents import ftmo_universe as U  # noqa: E402
 from agents import scout_strategies as SCS  # noqa: E402
 from agents import shocks as SH  # noqa: E402
+from agents import news_surprise_live as NSL  # noqa: E402
 from live import reporter as REP  # noqa: E402
 
 NAME = "news_bot"
@@ -64,10 +70,17 @@ SYMBOLS = {"US100": ["US100.cash", "US100"], "US500": ["US500.cash", "US500"], "
            "GER40": ["GER40.cash", "GER40"], "UK100": ["UK100.cash", "UK100"], "JP225": ["JP225.cash", "JP225"],
            "XAUUSD": ["XAUUSD", "XAU/USD"], "EURUSD": ["EURUSD"], "GBPUSD": ["GBPUSD"], "USDJPY": ["USDJPY"],
            "AUDUSD": ["AUDUSD"], "USDCAD": ["USDCAD"], "USDCHF": ["USDCHF"], "NZDUSD": ["NZDUSD"], "EURJPY": ["EURJPY"],
-           "GBPJPY": ["GBPJPY"]}
+           "GBPJPY": ["GBPJPY"], "BTCUSD": ["BTCUSD"]}
+EXTRA_ONLY = {"BTCUSD"}          # instruments only for approved extra strategies (EV08, card 00553aab28e5): no EV01-03
 STRATS = ["EV01", "EV02", "EV03"]
-NAMES = {"EV01": "הליכה עם הפרסום", "EV02": "נגד הקפיצה", "EV03": "פריצת טווח", "SH01": "נגד הזעזוע (בלי פרסום)"}
+NAMES = {"EV01": "הליכה עם הפרסום", "EV02": "נגד הקפיצה", "EV03": "פריצת טווח", "SH01": "נגד הזעזוע (בלי פרסום)",
+         "EV08": "הפתעת הפרסום"}
 SHOCK = {"SH01"}                # shock strategies on 1-minute candles (agents/shocks.py live_fade; card 42c723b87f92)
+SURPRISE = {"EV08"}             # release-surprise strategies on 1-minute candles (agents/news_surprise_live; card 00553aab28e5)
+CAL_ITEMS = []                 # the calendar items the bot read last (EV08 reads the actual / forecast from them)
+SEEN = {}                      # (release minute|title) -> the first time the bot read that item WITH its actual (EV08)
+SEEN_F = ROOT / "live" / "news_bot_seen.json"
+FAST = ("claims", "home sales", "housing starts", "building permits")  # US numbers EV08 waits for: the calendar is read every minute for 15 minutes after them
 REL = {}                       # important releases by currency, from the calendar the bot read (shocks near them are skipped)
 D1 = {}                        # this round's 1-minute candles by instrument (SH01 GER40 checks US100's shocks; card bd7be6c8ae8a)
 END = "סוף הנתונים"            # rules_agent's reason for a trade still open at the last candle
@@ -131,7 +144,7 @@ def extras():
             sid, tf, name = c.split("|")
         except ValueError:
             continue
-        if (sid in SCS.SCOUT and tf in ("1Min", "5Min") + HI_TF or sid in SHOCK and tf == "1Min") and name in SYMBOLS:
+        if (sid in SCS.SCOUT and tf in ("1Min", "5Min") + HI_TF or sid in (SHOCK | SURPRISE) and tf == "1Min") and name in SYMBOLS:
             out.append((sid, tf, name))
     return out
 
@@ -334,8 +347,20 @@ class Calendar:
     def __init__(self):
         self.t, self.items = 0, []
 
+    def _fast(self):
+        """15 minutes after a US claims / home sales release whose actual is not read yet: read every minute (EV08
+        needs the number before its entry, 10 minutes after)."""
+        now = pd.Timestamp.now(tz="UTC")
+        for i in self.items:
+            if (str(i.get("instrument", "")).startswith("USD") and any(k in str(i.get("title", "")).lower() for k in FAST)
+                    and i.get("actual") in (None, "")):
+                t = pd.Timestamp(i["date"]).tz_convert("UTC")
+                if t <= now <= t + pd.Timedelta(minutes=15):
+                    return True
+        return False
+
     def refresh(self):
-        if time.time() - self.t < 3600:
+        if time.time() - self.t < (50 if self._fast() else 3600):
             return
         try:
             now = pd.Timestamp.now(tz="UTC")
@@ -351,6 +376,22 @@ class Calendar:
             EVENT_TITLES.update(titles)
             REL.clear()
             REL.update(SH.releases_from(self.items))
+            CAL_ITEMS[:] = self.items
+            new = False
+            for i in self.items:                          # EV08: when each actual was first read (never earlier)
+                if i.get("actual") not in (None, "") and i.get("date"):
+                    k = NSL.seen_key(i["date"], i.get("title", ""))
+                    if k not in SEEN:
+                        SEEN[k] = now.isoformat(timespec="seconds")
+                        new = True
+            if new:
+                cut = (now - pd.Timedelta(days=30)).isoformat()
+                for k in [k for k in SEEN if k.split("|")[0] < cut]:
+                    del SEEN[k]
+                try:
+                    SEEN_F.write_text(json.dumps(SEEN, ensure_ascii=False), encoding="utf-8")
+                except Exception:  # noqa: BLE001
+                    pass
             self.t = time.time()
         except Exception as e:  # noqa: BLE001
             log(f"FTMO calendar not read ({e}); trying again in 10 minutes")
@@ -403,14 +444,37 @@ def shock_fn(sid, name, p):
                         co_df=(lambda: D1.get(cs)) if cs else None)
 
 
+def surprise_fn(sid, name, p):
+    """EV08 (card 00553aab28e5): the release's surprise - D minutes after it, stop S x the 5-minute ATR, H minutes held,
+    from the approved plan in live/bots/bot7.json."""
+    try:
+        dd, ss, hh = int(p.get("entry_min", 10)), float(p.get("stop_atr5", 1.5)), int(p.get("hold_min", 120))
+    except (TypeError, ValueError):
+        dd, ss, hh = 10, 1.5, 120
+    return NSL.live_surprise(name, lambda: CAL_ITEMS, lambda: SEEN, D=dd, S=ss, H=hh,
+                             groups=tuple(p.get("groups") or ("claims", "home")), size=p.get("size", "big"),
+                             alone=bool(p.get("alone", True)), side=1 if p.get("side", "p1") == "p1" else -1)
+
+
+def surprise_event(t):
+    """The US number an EV08 trade followed (the latest one within 15 minutes before the entry)."""
+    t = pd.Timestamp(t)
+    rs = [(k, x) for k, x in NSL.releases(CAL_ITEMS).items() if k <= t <= k + pd.Timedelta(minutes=15)]
+    if not rs:
+        return None
+    k, x = max(rs, key=lambda z: z[0])
+    return f"{k.tz_convert('Asia/Jerusalem').strftime('%d.%m %H:%M')} USD {x['title']}"
+
+
 def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None):
     """Every trade of the three release strategies (and the approved extra ones) on this instrument in the candles
     held, net of FTMO costs (r in R). hi: {"1Hour"/"4Hour": candles} for the scout strategies on those timeframes."""
     out = []
     pl = plans()
     hi = hi or {}
-    jobs = [(sid, "5Min", E.EVENTS[sid][1]) for sid in STRATS]
-    jobs += [(sid, tf, shock_fn(sid, name, pl.get(f"{sid}|{tf}|{name}") or {}) if sid in SHOCK else SCS.SCOUT[sid][1])
+    jobs = [] if name in EXTRA_ONLY else [(sid, "5Min", E.EVENTS[sid][1]) for sid in STRATS]
+    jobs += [(sid, tf, shock_fn(sid, name, pl.get(f"{sid}|{tf}|{name}") or {}) if sid in SHOCK
+              else surprise_fn(sid, name, pl.get(f"{sid}|{tf}|{name}") or {}) if sid in SURPRISE else SCS.SCOUT[sid][1])
              for sid, tf, n in extra if n == name and (tf == "5Min" or tf == "1Min" and d1 is not None or tf in hi)]
     for sid, tf, fn0 in jobs:
         d = d5 if tf == "5Min" else hi.get(tf) if tf in HI_TF else d1
@@ -450,7 +514,7 @@ def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None):
                         "status": "open" if open_ else "closed", "exit_time": None if open_ else pd.Timestamp(x["exit_time"]).isoformat(),
                         "exit": None if open_ else float(x["exit_px"]), "r": round(r_gross - cost_r, 4),
                         "reason": "" if open_ else str(x["reason"]),
-                        "event": event_of(name, x["time"])})
+                        "event": surprise_event(x["time"]) if sid in SURPRISE else event_of(name, x["time"])})
     return out
 
 
@@ -578,7 +642,7 @@ def state_of(acc, trades, cal, src):
             "server": "צפייה בלבד · בלי כסף", "initial": acc.a["initial"], "risk": RISK, "balance": round(bal, 2),
             "equity": round(eq, 2), "day_start": round(acc.day_start(israel_day(now)), 2), "halted_until": None,
             "started": acc.a["started"], "withdrawals": [],
-            "combos": [f"{s}|5Min|{n}" for s in STRATS for n in SYMBOLS] + [f"{s}|{tf}|{n}" for s, tf, n in ex],
+            "combos": [f"{s}|5Min|{n}" for s in STRATS for n in SYMBOLS if n not in EXTRA_ONLY] + [f"{s}|{tf}|{n}" for s, tf, n in ex],
             "equity_curve": ec, "lows": {}, "updated_utc": ni,
             "summary": {s: {"closed": len(v), "sum_r": round(float(np.sum(v)), 2) if v else 0.0,
                             "win_pct": round(100 * float(np.mean(np.array(v) > 0)), 1) if v else None} for s, v in by.items()},
@@ -609,6 +673,10 @@ def main():
     if not port:
         sys.exit("SOURCE_PORT not set (the manager starts this bot)")
     src, cal = Source(port), Calendar()
+    try:
+        SEEN.update(json.loads(SEEN_F.read_text(encoding="utf-8")))
+    except Exception:  # noqa: BLE001
+        pass
     try:
         saved = json.loads(STATE_F.read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001

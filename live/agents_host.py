@@ -660,8 +660,6 @@ def machine():
     try:
         du = shutil.disk_usage(str(Path(__file__).resolve().parent.parent))
         out["disk_gb"] = {"total": round(du.total / 2**30, 1), "free": round(du.free / 2**30, 1)}
-        out["repo_gb"] = round(sum(f.stat().st_size for f in Path(__file__).resolve().parent.parent.rglob("*")
-                                   if f.is_file()) / 2**30, 2)
     except Exception:  # noqa: BLE001
         pass
     try:

@@ -149,14 +149,77 @@ def unwind_thin(states=None):
     return adds
 
 
+def unwind_twice():
+    """The formula runs once a day. When our own chain of decisions on a strategy has two cuts on the same day (two
+    machines ran it, one without the other's state - 14.11.2026 22:27 and 22:42 UTC), the second one applied the same
+    edge to the first one's result. It goes back to the first cut of that day - the formula applied once. Cheap, every
+    call; only our own chains (a risk someone else set since is not touched)."""
+    from agents import portfolio_check as PC
+    ddoc = _read(DEC, {"decisions": []})
+    chains = {}
+    for d in sorted(ddoc.get("decisions", []), key=lambda x: x.get("at", "")):
+        a = d.get("action") or {}
+        if not (d.get("type") == "risk" and a.get("kind") == "mult" and a.get("combo")):
+            continue
+        if d.get("decision") != "approved" or d.get("undone"):
+            continue
+        key = (a.get("bot") or d.get("bot"), a["combo"])
+        if d.get("edge_risk"):
+            chains.setdefault(key, []).append(d)
+        else:
+            chains.pop(key, None)
+    have = {x["id"] for x in ddoc.get("decisions", [])}
+    at = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+    st = _read(STATE, {})
+    adds, mm_of = [], {}
+    for (bot, c), ch in chains.items():
+        if len(ch) < 2:
+            continue
+        a1, a2 = ch[-2]["action"], ch[-1]["action"]
+        day = lambda d: str(pd.Timestamp(d["at"]).tz_convert(TZ).date())   # noqa: E731
+        v1, p1, v2, p2 = float(a1["value"]), float(a1.get("prev") or 1.0), float(a2["value"]), float(a2.get("prev") or 1.0)
+        if day(ch[-2]) != day(ch[-1]) or not (v1 < p1 and v2 < p2) or abs(p2 - v1) >= 0.005:
+            continue                                         # not two cuts in a row on the same day
+        if bot not in mm_of:
+            mm_of[bot] = PC.mults(bot)
+        cur = float(mm_of[bot].get(c, 1.0) or 1.0)
+        if abs(cur - v2) >= 0.005 or abs(v1 - cur) < 0.01:
+            continue                                         # not in force (yet), or nothing to give back
+        did = hashlib.sha1(f"edgetwice|{bot}|{c}|{ch[-1]['id']}".encode()).hexdigest()[:12]
+        if did in have:
+            continue
+        adds.append({"id": did, "bot": bot, "type": "risk", "kind": "mult", "combo": c,
+                     "title": f"{c}: סיכון ×{cur:g} ← ×{v1:g} (הנוסחה הופעלה פעמיים באותו יום - חוזר להפעלה אחת)",
+                     "decision": "approved", "by": "manager", "read": False, "undone": False, "at": at,
+                     "why": f"המנהל: הסיכון לפי היתרון מחושב פעם ביום. ב־{ch[-2]['at'][:16].replace('T', ' ')} ירד ×{p1:g} ← ×{v1:g}, "
+                            f"וב־{ch[-1]['at'][:16].replace('T', ' ')} חושב שוב מאותו יתרון על התוצאה (×{v1:g} ← ×{v2:g}) - "
+                            "מחשב אחד רץ בלי הקובץ של השני. חוזר ל־×" + f"{v1:g}, היתרון מופעל פעם אחת.",
+                     "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "edge_risk": True,
+                     "action": {"bot": bot, "combo": c, "kind": "mult", "value": v1, "prev": cur}})
+        have.add(did)
+        base = p1
+        for d in reversed(ch[:-1]):                          # where the chain started (the approved risk)
+            base = float(d["action"].get("prev") or 1.0)
+        st.setdefault("bots", {}).setdefault(bot, {})[c] = {"base": base, "last": v1}
+    if adds:
+        ddoc["decisions"] = adds + ddoc.get("decisions", [])
+        ddoc["new"] = list(ddoc.get("new") or []) + [x["id"] for x in adds]
+        _write(DEC, ddoc)
+        _write(STATE, st)
+        for x in adds:
+            print("edge risk once:", x["title"])
+    return adds
+
+
 def run(states=None, force=False):
     from agents import health as H
     from agents import loss_review as LR
     from agents import portfolio_check as PC
     st = _read(STATE, {})
     today = str(pd.Timestamp.now(tz=TZ).date())
+    twice = unwind_twice()
     if st.get("day") == today and not force:
-        return unwind_thin(states)
+        return unwind_thin(states) + twice
     states = states if states is not None else H.live_states()
     ddoc = _read(DEC, {"decisions": []})
     have = {x["id"] for x in ddoc.get("decisions", [])}
@@ -177,8 +240,13 @@ def run(states=None, force=False):
         for c in cfg.get("combos") or []:
             cur = float(mm.get(c, 1.0) or 1.0)
             me = mine.get(c) or {}
-            if me.get("last") is None and (own := mine_last.get((bot, c))) and abs(float(own["value"]) - cur) < 0.005:
-                # the state file was lost (e.g. reset by an install): our own latest decision on it says the same
+            if (own := mine_last.get((bot, c))) and abs(float(own["value"]) - cur) < 0.005:
+                # the decisions log is the truth, the state file only a cache: our own latest decision on it says the
+                # same as the risk in force -> the approved risk is where that chain started. (Until 15.11.2026 only
+                # when the state had nothing: the manager in the cloud ran at 14.11 22:27 UTC without pushing its state
+                # file, the bots' computer ran again at 22:42 with its own older state, took the first cut for
+                # "someone else's" approved risk and cut again with the same edge - bot 1 TV11 USDJPY x0.85 -> x0.54 ->
+                # x0.35, TV02 TSLA x1 -> x0.9 -> x0.81, bot 2 SE02 USDJPY x0.67 -> x0.57 -> x0.34, TT13 INTC x1 -> x0.86 -> x0.74.)
                 me = {"base": float(own.get("prev") or 1.0), "last": cur}
             # someone else set the risk since our last decision -> that is the approved risk now
             base = me.get("base", cur) if me.get("last") is not None and abs(float(me["last"]) - cur) < 0.005 else cur
@@ -251,7 +319,7 @@ def run(states=None, force=False):
             print("edge risk:", x["title"])
     st["day"], st["at"], st["now"] = today, at, rows
     _write(STATE, st)
-    return adds
+    return adds + twice
 
 
 if __name__ == "__main__":

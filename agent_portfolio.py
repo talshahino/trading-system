@@ -1059,6 +1059,15 @@ def cards_for(bot):
             detail={"scout": sc}, change={"combo": d["combo"], "kind": "add"}))
     for c in cards:
         c["tier"], c["verdict"] = K.judge(c)
+        # 15.11.2026 (manager): since the scout's pack is read here (agents/exp_pack.py) bot 2 got 25,609 "new" cards
+        # (22,588 rejected) - cards.json 40 MB and manager.json 58 MB, which GitHub refused, so the app and the nightly
+        # agents saw the old file. A rejected new strategy keeps its numbers (the family tests sum them) and its id
+        # (made from the change), only the long texts go.
+        if c["kind"] == "new" and c["tier"] == "rejected":
+            sc = (c.get("detail") or {}).get("scout") or {}
+            c["title"] = f"אסטרטגיה חדשה: {(c.get('change') or {}).get('combo')}"
+            c["what"] = ""
+            c["detail"] = {"scout": {k: sc.get(k) for k in ("source", "pool_of", "added") if sc.get(k)}}
     return cards, tested
 
 
@@ -1179,7 +1188,8 @@ def main():
         d = K.CARDS_DIR / a.bot
         d.mkdir(parents=True, exist_ok=True)
         (d / "cards_new.json").write_text(json.dumps({"bot": a.bot, "updated": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
-                                                      "cards": cards}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+                                                      "cards": cards}, ensure_ascii=False, default=str,
+                                                     **K.json_layout(cards)), encoding="utf-8")
         print(json.dumps({"bot": a.bot, "new_cards": len(cards)}, ensure_ascii=False))
         return
     combos = bot_combos(a.bot)

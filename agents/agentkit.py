@@ -153,9 +153,15 @@ def judge(c):
                        + (f", {gain:+.2f}R מעל המצב הקיים" if gain is not None else "") + f"){note}")
 
 
+def json_layout(cards):
+    """indent=1 for a readable file; without the whitespace when the file is big (15.11.2026: bot 2's 25k cards)."""
+    return {"indent": 1} if len(cards) <= 2000 else {"separators": (",", ":")}
+
+
 def write_cards(bot, cards, extra=None):
     d = CARDS_DIR / bot
     d.mkdir(parents=True, exist_ok=True)
     (d / "cards.json").write_text(json.dumps({"bot": bot, "updated": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
-                                              "cards": cards, **(extra or {})}, ensure_ascii=False, indent=1, default=str),
+                                              "cards": cards, **(extra or {})}, ensure_ascii=False, default=str,
+                                             **json_layout(cards)),
                                   encoding="utf-8")

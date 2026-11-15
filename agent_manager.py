@@ -177,6 +177,11 @@ def ops():
     return out
 
 
+def _tot_r(c):
+    t = c.get("train") or {}
+    return (t.get("eff_n") or t.get("n") or 0) * t["mean"] if t.get("mean") is not None else -9e9
+
+
 def main():
     dec, rep, rc = decisions(), replies(), risk_counts()
     try:
@@ -265,6 +270,20 @@ def main():
         b["pending"] = sum(1 for c in b["cards"] if c["status"] == "pending" and c["tier"] in ("strong", "regular"))
     new = [c["id"] for b in bots.values() for c in b["cards"]
            if c["status"] == "pending" and c["tier"] in ("strong", "regular") and c["first_seen"] == now]
+    # 15.11.2026 (manager): the scout's pack brought tens of thousands of "new" cards per bot (bot 2: 25,609) and
+    # manager.json grew to 58 MB, which GitHub refused - the app showed an old file. The decisions above saw every
+    # card; the file the app reads keeps every decided / proposed card and only the best of the undecided "new"
+    # strategies that were rejected or are on watch (by the total R to 2025), with the count of the rest.
+    caps = {"rejected": 50, "watch": 300}
+    for b in bots.values():
+        keep, extra = [], {}
+        for t in caps:
+            extra[t] = sorted((c for c in b["cards"] if c["kind"] == "new" and c["status"] == "pending" and c["tier"] == t),
+                              key=lambda c: -_tot_r(c))
+        drop = {id(c) for t, xs in extra.items() for c in xs[caps[t]:]}
+        if drop:
+            b["hidden_new"] = {t: max(0, len(xs) - caps[t]) for t, xs in extra.items()}
+            b["cards"] = [c for c in b["cards"] if id(c) not in drop]
     OUT.parent.mkdir(parents=True, exist_ok=True)
     op = ops()
     for b, o in op.items():
@@ -278,7 +297,9 @@ def main():
             o["problems"] = (o.get("problems") or []) + hp
             o["actions"] = (o.get("actions") or []) + [None] * len(hp)
     OUT.write_text(json.dumps({"updated": now, "new": new, "bots": bots, "ops": op,
-                                "decisions": {"new": dd.get("new", []), "unread": sum(1 for d in dd["decisions"] if not d.get("read") and not d.get("undone"))}}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+                                "decisions": {"new": dd.get("new", []), "unread": sum(1 for d in dd["decisions"] if not d.get("read") and not d.get("undone"))}},
+                              ensure_ascii=False, default=str, **K.json_layout([c for b in bots.values() for c in b["cards"]])),
+                   encoding="utf-8")
     print(f"manager: {sum(b['pending'] for b in bots.values())} proposals waiting, {len(new)} new tonight")
 
 

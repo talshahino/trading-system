@@ -416,7 +416,8 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="row"><span class="mut">אפשר להתקין את הדשבורד כאפליקציה במסך הבית.</span><button class="btn" id="installBtn">התקן אפליקציה</button></div></div>
     <div class="card"><h3>מחשב הבוטים</h3>
       <div class="row"><i class="dot" id="mDot"></i><span id="mState">מחפש את המנהל…</span></div>
-      <div class="msg mut" id="mVer"></div></div>
+      <div class="msg mut" id="mVer"></div>
+      <div class="row" id="mBack" style="margin-top:6px"></div><div class="msg" id="mBackMsg"></div></div>
     <div class="card" id="updCard" style="display:none"><h3>עדכון</h3>
       <div id="updText" style="margin-bottom:10px"></div>
       <div class="row"><button class="btn ok" id="updBtn">אשר עדכון</button><span class="mut">העסקאות הפתוחות נשארות עם הסטופ והיעד, והבוטים עולים מחדש תוך כדקה.</span></div>
@@ -425,7 +426,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div id="autoText" class="mut" style="margin-bottom:10px;line-height:1.55"></div>
       <div class="row" id="autoActs"></div>
       <div class="msg" id="autoMsg"></div></div>
-    <div class="card"><h3>התראות</h3>
+    <div class="card" id="pushCard"><h3>התראות</h3>
       <div class="row"><span class="mut" id="pushState">ההתראות יגיעו לאפליקציה הזו, גם כשהיא סגורה.</span><button class="btn" id="pushBtn">הפעל התראות</button></div>
       <div class="msg" id="pushMsg"></div></div>
     <div class="card"><h3>מנהל הבוטים</h3>
@@ -865,7 +866,15 @@ function renderMgr() {
   $("updCard").style.display = m && m.update ? "" : "none";
   if (m && m.update) $("updText").innerHTML = `<b>${esc(m.update.title)}</b> <span class="mut num">${esc(m.update.sha)}</span>`;
   const au = m && m.auto_update, own = getRole() !== "viewer";
-  $("autoCard").style.display = au ? "" : "none";
+  // Tal, 15.11.2026: the automatic-updates card and the notifications card only when they need him - the card shows
+  // when automatic updates are paused; going back a version is a small link in the bots' computer card
+  $("autoCard").style.display = au && !au.on ? "" : "none";
+  $("mBack").innerHTML = au && au.on && au.prev && own ? `<button class="btn ghost" id="mBackBtn" style="font-size:.85rem;padding:6px 10px">חזור לגרסה הקודמת (<span class="num">${esc(au.prev)}</span>)</button>` : "";
+  if ($("mBackBtn")) $("mBackBtn").onclick = async () => {
+    if (!(await askYes("לחזור לגרסה הקודמת?", "הבוטים ייעצרו לרגע ויעלו בגרסה הקודמת. העדכונים האוטומטיים יושהו עד שתפעיל אותם שוב.", "כן, חזור"))) return;
+    try { await act("/update/rollback"); note("mBackMsg", "חוזר לגרסה הקודמת. הבוטים עולים מחדש תוך כדקה.", true); } catch (e) { note("mBackMsg", e.message, false); }
+  };
+  try { $("pushCard").style.display = (window.Notification && Notification.permission === "granted" && m && m.push_devices > 0) ? "none" : ""; } catch (e) {}
   if (au) {
     const last = au.last || {};
     $("autoText").innerHTML = au.on

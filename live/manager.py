@@ -1807,7 +1807,10 @@ def main():
         save()
         last = (CFG.get("auto_updates") or [{}])[-1]
         if last.get("sha") == UPD.local():
-            push("המנהל התקין עדכון", f"{last.get('title') or ''} · גרסה {(UPD.local() or '?')[:7]}. אפשר לחזור לגרסה הקודמת בלשונית ניהול.")
+            # no push for routine automatic installs (user, 15.11.2026: they come many times a day and the title is
+            # often the agents' own report commit, e.g. "Agents on the bots' computer: health") - the version and the
+            # rollback stay in the app's management tab
+            log(f"auto update installed: {last.get('title') or ''} {(UPD.local() or '?')[:7]}")
         else:
             push("העדכון הותקן", f"הכל רץ בגרסה {(UPD.local() or '?')[:7]}.")
     for a in accounts():

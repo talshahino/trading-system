@@ -53,7 +53,13 @@
   "scout:FR03|15Min|GBPUSD": 0.0028,
   "scout:BK07|15Min|US100": 0.0028,
   "scout:BK07|15Min|EURUSD": 0.0028,
-  "scout:SC056|15Min|GBPUSD": 0.0028
+  "scout:SC056|15Min|GBPUSD": 0.0028,
+  "scout:QC04|15Min|EURUSD": 0.0028,
+  "scout:SC402|15Min|XAUUSD": 0.0028,
+  "scout:SC333|15Min|XAUUSD": 0.0028,
+  "scout:SC326|15Min|USDCHF": 0.0028,
+  "scout:SC326|15Min|USDJPY": 0.0028,
+  "scout:SC311|15Min|GER40": 0.0028
  },
  "changes": {
   "a0a49a4ffc34": {
@@ -556,6 +562,52 @@
     }
    },
    "risk_before": 0.0014
+  },
+  "da2376a8a64d": {
+   "family": "scout5",
+   "combo": "QC04|15Min|EURUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "02e3d3a1b1b8": {
+   "family": "scout5",
+   "combo": "SC326|5Min|GBPUSD",
+   "before": "__none__"
+  },
+  "f679b1ce824c": {
+   "family": "scout5",
+   "combo": "SC402|5Min|XAUUSD",
+   "before": "__none__"
+  },
+  "1df515db1503": {
+   "family": "scout5",
+   "combo": "SC402|15Min|XAUUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "1bcdf86b80fa": {
+   "family": "scout5",
+   "combo": "SC333|15Min|XAUUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "145b89d0f225": {
+   "family": "scout5",
+   "combo": "SC326|15Min|USDCHF",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "f5138b042cc8": {
+   "family": "scout5",
+   "combo": "SC326|15Min|USDJPY",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "57e76b9a1ff3": {
+   "family": "scout5",
+   "combo": "SC311|15Min|GER40",
+   "before": "__none__",
+   "star_risk_before": "__none__"
   }
  },
  "tal_tracks": {
@@ -1009,6 +1061,38 @@
   "SC056|15Min|GBPUSD": {
    "since": "2026-11-14T21:44:05+00:00",
    "card": "81e26b402bb5"
+  },
+  "QC04|15Min|EURUSD": {
+   "since": "2026-11-15T09:53:02+00:00",
+   "card": "da2376a8a64d"
+  },
+  "SC326|5Min|GBPUSD": {
+   "since": "2026-11-15T09:53:02+00:00",
+   "card": "02e3d3a1b1b8"
+  },
+  "SC402|5Min|XAUUSD": {
+   "since": "2026-11-15T09:53:02+00:00",
+   "card": "f679b1ce824c"
+  },
+  "SC402|15Min|XAUUSD": {
+   "since": "2026-11-15T09:53:02+00:00",
+   "card": "1df515db1503"
+  },
+  "SC333|15Min|XAUUSD": {
+   "since": "2026-11-15T09:53:02+00:00",
+   "card": "1bcdf86b80fa"
+  },
+  "SC326|15Min|USDCHF": {
+   "since": "2026-11-15T09:53:02+00:00",
+   "card": "145b89d0f225"
+  },
+  "SC326|15Min|USDJPY": {
+   "since": "2026-11-15T09:53:02+00:00",
+   "card": "f5138b042cc8"
+  },
+  "SC311|15Min|GER40": {
+   "since": "2026-11-15T09:53:02+00:00",
+   "card": "57e76b9a1ff3"
   }
  }
 }

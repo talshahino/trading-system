@@ -41,7 +41,22 @@
   "SC043|4Hour|EURJPY",
   "SC010|15Min|ARM",
   "SC083|1Hour|GBPJPY",
-  "SC249|4Hour|US30"
+  "SC249|4Hour|US30",
+  "SC333|1Hour|GBPJPY",
+  "SC244|15Min|WTI",
+  "MQ11|4Hour|US2000",
+  "SC326|15Min|US30",
+  "SC330|1Hour|USDJPY",
+  "IB017|4Hour|XRP/USD",
+  "TV56|4Hour|US100",
+  "SC295|1Hour|USDJPY",
+  "IB029|4Hour|XRP/USD",
+  "SC200|1Hour|US100",
+  "SC326|15Min|WTI",
+  "SC236|1Hour|WTI",
+  "SC247|4Hour|XRP/USD",
+  "SC086|4Hour|US2000",
+  "TV02|1Hour|JP225"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added BK07|1Hour|EURJPY and SE02|1Hour|USDJPY (new families, backtest with the bot), approved by the user; 04.11.2026: added FR03|15Min|GBPUSD, GH08|1Hour|USDCAD (GitHub/QuantConnect/forum families, both halves better with the bot), approved by the user; 04.11.2026 (evening): added QB11|1Hour|USDJPY, MQ11|4Hour|MSTR, MQ02|1Hour|XAUUSD (new pool: papers/books/MQL5 EAs; both halves better, Monte Carlo checked), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -107,6 +122,10 @@
     0.5
    ],
    "pyr_card": "5862c9ae2f74"
+  },
+  "SC330|1Hour|USDJPY": {
+   "be_way": 0.7,
+   "manage_card": "6bc0176ed124"
   }
  },
  "added": {
@@ -117,7 +136,22 @@
   "SC043|4Hour|EURJPY": "870583f90d93",
   "SC010|15Min|ARM": "c0b6cb102e54",
   "SC083|1Hour|GBPJPY": "d36a6e00f76d",
-  "SC249|4Hour|US30": "a5ee6582a61b"
+  "SC249|4Hour|US30": "a5ee6582a61b",
+  "SC333|1Hour|GBPJPY": "3e885898a46a",
+  "SC244|15Min|WTI": "cbb8d61bc0bd",
+  "MQ11|4Hour|US2000": "b271a0555434",
+  "SC326|15Min|US30": "6dd561420f0a",
+  "SC330|1Hour|USDJPY": "e6f15083a4b4",
+  "IB017|4Hour|XRP/USD": "1218c925fe2c",
+  "TV56|4Hour|US100": "73bedca61495",
+  "SC295|1Hour|USDJPY": "3ce08ae01604",
+  "IB029|4Hour|XRP/USD": "f86a6829d42c",
+  "SC200|1Hour|US100": "57a0d218248b",
+  "SC326|15Min|WTI": "993eca8a5e99",
+  "SC236|1Hour|WTI": "ac271795b50b",
+  "SC247|4Hour|XRP/USD": "f63caa05c41b",
+  "SC086|4Hour|US2000": "9fa25d265a9d",
+  "TV02|1Hour|JP225": "763e3b774981"
  },
  "removed": {
   "SC002|1Hour|ARM": "367a7113d211",

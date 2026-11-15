@@ -94,6 +94,20 @@ def live_entries(combo, doc, tr):
     return [x for x, k in zip(tr, keep) if k]
 
 
+def _worded(p):
+    """A plan built with a word instead of a number (bot 7's EV04: "stop": "opp") has no exits variant: its own test's
+    trades are the trades it takes (bots 1-4 smart agent, 15.11.2026)."""
+    for k in ("target", "stop", "limit"):
+        v = p.get(k)
+        if v is None or v == "none":
+            continue
+        try:
+            float(v)
+        except (TypeError, ValueError):
+            return True
+    return False
+
+
 def current_trades(bot, combo, cfg, key="tr"):
     """The combo's 2026 trades as it trades now (its built exit plan, or its built filter), None when not stored.
     key "tr25": the choosing period's trades (30.04.2025-31.12.2025) instead, where the agents stored them."""
@@ -123,7 +137,7 @@ def current_trades(bot, combo, cfg, key="tr"):
         return None
     d = exp(bot, "exits", combo) or {}
     tr = (d.get(key) or {}).get(built_variant(bot, combo, "exits"))
-    if tr is None and not any(k in p for k in ("target", "stop", "limit")):
+    if tr is None and (not any(k in p for k in ("target", "stop", "limit")) or _worded(p)):
         # a scout strategy built as the scout brought it (manager, 14.11.2026: SC122 / SC094 in bot 4, SC001 in bots
         # 2-3 had no exits experiment yet, so the whole-bot check saw them as unknown) - its own test's trades are the
         # trades it takes now, until its exits experiment is stored

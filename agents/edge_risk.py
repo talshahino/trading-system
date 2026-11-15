@@ -32,7 +32,11 @@ DAY_LIMIT, TOTAL_LIMIT = 4.5, 9.0          # the bots' own loss limits, % (live/
 # x1.39 (bot 2 / 3): where the test of 2026 and the selection period disagree, the formula trusts the live trades
 # almost alone, and a single winner is luck, not proof ("up: slowly ... no maybe-luck raise").
 MIN_LIVE_UP = 5
-KEEP_UP = {"bot3"}         # the manager's standing instruction: bot 3's risk is never lowered - its raises are not taken back
+# (until 15.11.2026 {"bot3"}: "bot 3's risk is never lowered" - an instruction the user replaced on 12.11.2026, "bot 3 works
+# like the other bots, lowering its risk too" (tal_thinking.md principle 14). Bot 3's raises of 14.11 22:27 from 1-3 live
+# trades - TV50 XAGUSD x0.7 -> x1.36, TV28 AMZN x1 -> x1.39, TV17 AAPL x0.7 -> x0.95, SS01 WMT x0.8 -> x0.92 - stayed only
+# because of it: the whole bot on 2026 +86.5% / fall 5.81% -> +88.4% / 6.18%, worst day -2.45% -> -2.61%.)
+KEEP_UP = set()
 
 
 def _read(p, d):
@@ -192,7 +196,7 @@ def run(states=None, force=False):
             if target > cur and len(lr) < MIN_LIVE_UP:
                 out["combos"][c] = {"base": base, "now": cur, "target": target,
                                     "held": f"רק {len(lr)} עסקאות בחי - מעלים מ־{MIN_LIVE_UP}"}
-                # an own earlier raise from fewer trades goes back (not in bot 3)
+                # an own earlier raise from fewer trades goes back (every bot, bot 3 too)
                 target = cur if (cur <= base or bot in KEEP_UP) else base
                 if abs(target - cur) < 0.01:
                     continue

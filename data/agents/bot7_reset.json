@@ -1,5 +1,5 @@
 {
- "fp": "8cd50c962e1b",
+ "fp": "36e32dd1280b",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -69,31 +69,11 @@
    "EV08|1Min|US100",
    "EV08|1Min|US30",
    "EV08|1Min|US500",
-   "IB033|4Hour|XAUUSD",
-   "MQ11|4Hour|US30",
    "SC001|1Min|JP225",
-   "SC033|1Hour|JP225",
-   "SC048|1Hour|US100",
-   "SC054|1Hour|XAUUSD",
    "SC070|5Min|JP225",
-   "SC084|15Min|UK100",
    "SC086|4Hour|JP225",
-   "SC138|15Min|XAUUSD",
-   "SC200|1Hour|US100",
-   "SC249|4Hour|UK100",
-   "SC249|4Hour|US500",
-   "SC264|15Min|JP225",
-   "SC265|5Min|XAUUSD",
-   "SC358|1Hour|XAUUSD",
-   "SC372|4Hour|XAUUSD",
-   "SE02|1Hour|GBPJPY",
    "SH01|1Min|GER40",
-   "SH01|1Min|US100",
-   "TV20|1Hour|XAUUSD",
-   "TV41|4Hour|XAUUSD",
-   "TV56|4Hour|GER40",
-   "TV56|4Hour|US100",
-   "TV56|4Hour|USDJPY"
+   "SH01|1Min|US100"
   ],
   "plans": {
    "EV01|5Min|AUDUSD": {
@@ -469,74 +449,14 @@
     "size": "big",
     "alone": true
    },
-   "IB033|4Hour|XAUUSD": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "MQ11|4Hour|US30": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SC033|1Hour|JP225": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SC048|1Hour|US100": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SC054|1Hour|XAUUSD": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
    "SC070|5Min|JP225": {
     "added": "2026-11-14",
     "off_from": "2026-11-15T05:01:00+00:00",
     "off_card": "e8060d3164ed",
     "why_off": "הוסר: שלושה ניסיונות תיקון נכשלו (מסננים על המכשיר ועל המשפחה, יציאות)"
    },
-   "SC084|15Min|UK100": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
    "SC086|4Hour|JP225": {
     "added": "2026-11-14"
-   },
-   "SC138|15Min|XAUUSD": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SC200|1Hour|US100": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SC249|4Hour|UK100": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SC249|4Hour|US500": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SC264|15Min|JP225": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SC265|5Min|XAUUSD": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SC358|1Hour|XAUUSD": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SC372|4Hour|XAUUSD": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "SE02|1Hour|GBPJPY": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
    },
    "SH01|1Min|GER40": {
     "K": 6,
@@ -561,33 +481,13 @@
     "filter": "chop_trend",
     "filter_card": "69f4dc4a25da",
     "filter_why": "רק כשהשוק במגמה (Choppiness 14 מתחת ל־50) - 2026 +31.6R במקום +27.5R; הסיכון נשאר x0.5"
-   },
-   "TV20|1Hour|XAUUSD": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "TV41|4Hour|XAUUSD": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "TV56|4Hour|GER40": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "TV56|4Hour|US100": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
-   },
-   "TV56|4Hour|USDJPY": {
-    "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
    }
   },
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-15T12:15:33+00:00",
- "account_v": 13,
+ "last_reset": "2026-11-15T06:25:00+00:00",
+ "account_v": 12,
  "resets": [
   {
    "v": 2,
@@ -665,13 +565,6 @@
    "what": "כלל השתנה ב־SC070|5Min|JP225",
    "archive": "data/agents/bot7_archive/account_v11.json",
    "id": "4617fb034513"
-  },
-  {
-   "v": 13,
-   "at": "2026-11-15T12:15:33+00:00",
-   "what": "נוספו 20 אסטרטגיות/מכשירים · כלל השתנה ב־IB033|4Hour|XAUUSD, MQ11|4Hour|US30, SC033|1Hour|JP225, SC048|1Hour|US100",
-   "archive": "data/agents/bot7_archive/account_v12.json",
-   "id": "b25a79478a5a"
   }
  ],
  "stable": false,

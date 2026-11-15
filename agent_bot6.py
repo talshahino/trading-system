@@ -141,6 +141,9 @@ def shared(idx, budget_s):
         return 0
     want = [(pn, (x.get("chosen") or {}).get("cfg")) for pn, x in ((doc.get("bot5") or {}).get("pairs") or {}).items()]
     want += [(f"{v['pair'][0]}/{v['pair'][1]}", v.get("cfg")) for v in (s5.get("tal_tracks") or {}).values()]
+    # and each one with FTMO's break rule on, the way it would trade live here (bot 6's smart agent, 15.11.2026:
+    # live/watch_own.py trades TG.ftmo_cfg(cfg), so a shared method measured without the rule is not what would run)
+    want = [(pn, c) for pn, cfg in want if isinstance(cfg, dict) for c in (cfg, TG.ftmo_cfg(cfg))]
     pairs = {TG.pair_name(p): p for p in TG.PAIRS}
     t0, done, data, gcs = time.time(), 0, {}, {}
     idx_dir = TAL_DIR / "idx"
@@ -169,6 +172,90 @@ def shared(idx, budget_s):
             done += 1
             print(f"  tal_gap bot 5's {pn} on bot 6's world {sym}: {len(t)} trades")
     return done
+
+
+# THE GAP METHOD'S PAIR CARDS ON THE RULES AS THEY TRADE (bot 6's smart agent, 15.11.2026): the search (TG.run) and the
+# shared rows choose each pair's version without FTMO's break rule, but live/watch_own.py trades TG.ftmo_cfg(cfg) and
+# the builder REPLACES a track's rules with the card's cfg - so (1) a pair card showed 2026 numbers the live bot cannot
+# have (the rule took 1h/5m from +45.6R to +20.1R and 4h/1h from +31.1R to +2.3R before REARM), and (2) an approved
+# search card on 1h/5m or 4h/1h would have dropped the REARM the manager approved on 15.11 (3ced409700a5, 4a76ea371e30).
+# Now every pair's train-chosen version is run with the rule on, alone and with REARM, and the pair's card is chosen
+# only among versions with the rule on (by the train total, as summarize) - what the card shows is what would trade.
+def ftmo_runs(idx, budget_s):
+    """Each pair's chosen version of the last results (and the live tracks' pairs first) with FTMO's break rule on,
+    alone and + REARM, on the three indices - 'search' rows from "bot6_ftmo", resumed where the last run stopped."""
+    try:
+        prev = ((json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot6") or {}).get("pairs") or {})
+    except Exception:  # noqa: BLE001
+        return 0
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    live = {pn for pn, _ in live_tracks().values()}
+    order = []
+    for pn, x in prev.items():
+        ch = x.get("chosen") or {}
+        tr, un = ch.get("train") or {}, ch.get("unseen") or {}
+        if pn not in pairs or not isinstance(ch.get("cfg"), dict) or (tr.get("mean") or 0) <= 0:
+            continue
+        order.append((pn not in live, -(tr.get("mean") or 0) * (tr.get("eff_n") or 0), pn, ch["cfg"]))
+    want = []
+    for _, _, pn, cfg in sorted(order, key=lambda z: z[:2]):
+        for c in (TG.ftmo_cfg(cfg), TG.ftmo_cfg(dict(cfg, REARM=True))):
+            if (pn, c) not in want:
+                want.append((pn, c))
+    t0, done, data, gcs = time.time(), 0, {}, {}
+    idx_dir = TAL_DIR / "idx"
+    idx_dir.mkdir(parents=True, exist_ok=True)
+    for pn, c in want:
+        p = pairs[pn]
+        for sym in WORLD["symbols"]:
+            key = f"{p[0]}_{p[1]}_{TG.vid(c)}_{sym}"
+            if key in idx or time.time() - t0 > budget_s:
+                continue
+            if sym not in data:
+                try:
+                    data[sym] = tal_load(sym)
+                except Exception:  # noqa: BLE001
+                    data[sym] = None
+            if data[sym] is None:
+                continue
+            t = TG.simulate(data[sym], p, c, gcs.setdefault((sym, p[0]), {}))
+            f = TAL_DIR / f"{key}.csv.gz"
+            t.to_csv(f, index=False)
+            idx[key] = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": p[2],
+                        "knob": "search", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f.name, "n": len(t),
+                        "from": "bot6_ftmo"}
+            (idx_dir / f"{key}.json").write_text(json.dumps(idx[key], default=str))
+            done += 1
+    print(f"tal ftmo (bot 6): {done} run, {len(want) * len(WORLD['symbols'])} wanted")
+    return done
+
+
+def ftmo_pairs(idx, pairs):
+    """The pairs for TG.cards with each pair's 'chosen' replaced by the best train total among its versions that run
+    with FTMO's break rule on (WKND), on all three indices; a pair with none yet gets no card ('chosen' None) until
+    measured. Returns (pairs, {pair: what was chosen before / now})."""
+    out, note = {}, {}
+    for pn, x in pairs.items():
+        rows, seen = [], set()
+        for v in idx.values():
+            c = TG._norm(dict(v["cfg"]))
+            if v["pair"] != pn or not TG.wknd(c) or TG.vid(c) in seen:
+                continue
+            seen.add(TG.vid(c))
+            t = _t6(idx, pn, c)
+            if t is not None and len(t):
+                rows.append({"knob": "search", "val": TG.vid(c), "cfg": c, **TG._stats(t)})
+        ok = [r for r in rows if (r["train"]["eff_n"] or 0) >= K.MIN_EFF_N and r["train"]["mean"] is not None]
+        best = max(ok, key=lambda r: r["train"]["mean"] * r["train"]["eff_n"]) if ok else None
+        y = dict(x, chosen=best)
+        if best and not TG._find(x, best["cfg"]):     # its row among the pair's variants too (neighbours / baseline)
+            y["variants"] = list(x.get("variants") or []) + [{k: best[k] for k in ("knob", "val", "train", "unseen", "whole")}]
+        out[pn] = y
+        before = (x.get("chosen") or {}).get("cfg")
+        note[pn] = {"before": before, "before_unseen": ((x.get("chosen") or {}).get("unseen") or {}).get("mean"),
+                    "ftmo": best["cfg"] if best else None, "ftmo_train": best["train"] if best else None,
+                    "ftmo_unseen": best["unseen"] if best else None, "ftmo_versions": len(rows)}
+    return out, note
 
 
 # TREND on what runs (bot 6's smart agent, 13.11.2026): bot 5's fix of its 12.11 loss (day = only in the direction of the
@@ -1101,6 +1188,14 @@ def tal(budget_s):
         STEPS[nm].update(at=pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), sec=round(time.time() - t1),
                          budget_sec=round(budget_s * share))
     t1 = time.time()
+    try:            # each pair's chosen version with FTMO's break rule on, alone and + REARM (15.11.2026)
+        STEPS["ftmo_pairs"] = {"done": ftmo_runs(idx0, budget_s * 0.1)}
+    except Exception as e:  # noqa: BLE001
+        STEPS["ftmo_pairs"] = {"err": str(e)[:300]}
+        print(f"tal ftmo runs failed: {e}")
+    STEPS["ftmo_pairs"].update(at=pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), sec=round(time.time() - t1),
+                               budget_sec=round(budget_s * 0.1))
+    t1 = time.time()
     idx, left = TG.run("bot6", WORLD["symbols"], tal_load, TAL_DIR, budget_s * 0.8 - (time.time() - t0))
     STEPS["search"] = {"done": left, "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
                        "sec": round(time.time() - t1), "note": "done = runs left"}
@@ -1242,7 +1337,16 @@ def tal(budget_s):
         print(f"tal_gap ask cards failed: {e}")
     # a card on a pair bot 6 already trades carries what runs as its baseline (approved only if 2026 is better per
     # trade AND in total); a new pair must have earned on 2024-2025 and on 2026 (it must add to the bot as a whole)
-    return TG.cards("bot6", pairs, doc.get("bot5"), "בוט 5", risk_pct=FA.RISK_TAL * 100,
+    # ... chosen only among the versions with FTMO's break rule on - what the card shows is what would trade (15.11.2026)
+    cpairs = pairs
+    try:
+        cpairs, fnote = ftmo_pairs(idx, pairs)
+        doc["bot6"]["ftmo_pairs"] = fnote
+        TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001 - no pair card on the rules without the break rule
+        print(f"tal ftmo pairs failed: {e}")
+        cpairs = {pn: dict(x, chosen=None) for pn, x in pairs.items()}
+    return TG.cards("bot6", cpairs, doc.get("bot5"), "בוט 5", risk_pct=FA.RISK_TAL * 100,
                     live={pn: c for pn, c in run.values()}) + pcards
 
 

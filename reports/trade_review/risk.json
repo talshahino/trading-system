@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-14T11:57:22+00:00",
- "sample": "2026-11-14",
+ "updated": "2026-11-15T12:32:09+00:00",
+ "sample": "2026-11-15",
  "since": "2026-11-01",
  "backtest": {
   "from": "2025-04-30",
@@ -30,7 +30,7 @@
      "sum_r": -0.34,
      "mult": 0.88,
      "risk_pct": 0.33,
-     "target": 1.014,
+     "target": 1.011,
      "recs": [
       {
        "kind": "mult",
@@ -170,9 +170,9 @@
      "win_pct": 0.0,
      "mean_r": -0.692,
      "sum_r": -2.08,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.947,
+     "mult": 0.83,
+     "risk_pct": 0.3112,
+     "target": 0.943,
      "recs": [
       {
        "kind": "mult",
@@ -314,7 +314,7 @@
      "sum_r": -1.1,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.961,
+     "target": 0.958,
      "recs": [
       {
        "kind": "mult",
@@ -444,7 +444,7 @@
      "sum_r": 3.62,
      "mult": 1.15,
      "risk_pct": 0.4312,
-     "target": 1.139,
+     "target": 1.135,
      "recs": [],
      "detail": {
       "profit": {
@@ -568,10 +568,17 @@
      "win_pct": 37.5,
      "mean_r": -0.134,
      "sum_r": -1.07,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.977,
-     "recs": [],
+     "mult": 0.9,
+     "risk_pct": 0.3375,
+     "target": 0.974,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 0.95,
+       "label": "סיכון ×0.95",
+       "why": "רווח ממוצע -0.13R מול -0.07R של הבוט, יציבות 0.67, 8 עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -696,7 +703,7 @@
      "sum_r": -5.57,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.881,
+     "target": 0.878,
      "recs": [
       {
        "kind": "mult",
@@ -841,7 +848,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.013,
+     "target": 1.009,
      "recs": [],
      "detail": {
       "profit": {
@@ -965,9 +972,9 @@
      "win_pct": 25.0,
      "mean_r": -0.555,
      "sum_r": -4.44,
-     "mult": 0.9,
-     "risk_pct": 0.3375,
-     "target": 0.868,
+     "mult": 0.54,
+     "risk_pct": 0.2025,
+     "target": 0.865,
      "recs": [
       {
        "kind": "mult",
@@ -1098,9 +1105,9 @@
        }
       },
       "together": {
-       "with": "TV62|1Hour|USDCAD",
-       "corr": 0.09,
-       "lost_together_days": 33
+       "with": "TV56|4Hour|USDJPY",
+       "corr": 0.15,
+       "lost_together_days": 10
       }
      }
     },
@@ -1112,12 +1119,12 @@
      "sum_r": -1.0,
      "mult": 0.48,
      "risk_pct": 0.18,
-     "target": 0.977,
+     "target": 0.974,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
+       "value": 0.95,
+       "label": "סיכון ×0.95",
        "why": "רווח ממוצע -0.14R מול -0.07R של הבוט, יציבות 0.66, 7 עסקאות"
       }
      ],
@@ -1252,9 +1259,9 @@
      "win_pct": 50.0,
      "mean_r": -0.114,
      "sum_r": -0.69,
-     "mult": 0.95,
-     "risk_pct": 0.3562,
-     "target": 0.993,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 0.989,
      "recs": [
       {
        "kind": "mult",
@@ -1384,7 +1391,7 @@
      "sum_r": -2.47,
      "mult": 0.9,
      "risk_pct": 0.3375,
-     "target": 0.905,
+     "target": 0.902,
      "recs": [],
      "detail": {
       "profit": {
@@ -1517,9 +1524,9 @@
      "win_pct": 0.0,
      "mean_r": -0.779,
      "sum_r": -1.56,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.967,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 0.963,
      "recs": [
       {
        "kind": "mult",
@@ -1622,9 +1629,9 @@
        }
       },
       "together": {
-       "with": "MQ11|4Hour|MSTR",
-       "corr": 0.14,
-       "lost_together_days": 8
+       "with": "GH09|1Hour|USDJPY",
+       "corr": 0.16,
+       "lost_together_days": 3
       }
      }
     },
@@ -1636,7 +1643,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.013,
+     "target": 1.009,
      "recs": [],
      "detail": {
       "profit": {
@@ -1742,7 +1749,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.013,
+     "target": 1.009,
      "recs": [],
      "detail": {
       "profit": {
@@ -1856,7 +1863,7 @@
      "sum_r": -0.88,
      "mult": 0.18,
      "risk_pct": 0.0675,
-     "target": 0.979,
+     "target": 0.976,
      "recs": [
       {
        "kind": "mult",
@@ -2001,7 +2008,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.013,
+     "target": 1.009,
      "recs": [],
      "detail": {
       "profit": {
@@ -2098,9 +2105,9 @@
        }
       },
       "together": {
-       "with": "FR03|15Min|GBPUSD",
-       "corr": 0.23,
-       "lost_together_days": 2
+       "with": "TV56|4Hour|USDJPY",
+       "corr": 0.39,
+       "lost_together_days": 0
       }
      }
     },
@@ -2112,7 +2119,7 @@
      "sum_r": 1.06,
      "mult": 0.92,
      "risk_pct": 0.345,
-     "target": 1.062,
+     "target": 1.059,
      "recs": [
       {
        "kind": "mult",
@@ -2252,9 +2259,9 @@
      "win_pct": 0.0,
      "mean_r": -0.846,
      "sum_r": -1.69,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.967,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 0.963,
      "recs": [
       {
        "kind": "mult",
@@ -2384,7 +2391,7 @@
      "sum_r": 3.81,
      "mult": 1.05,
      "risk_pct": 0.3938,
-     "target": 1.066,
+     "target": 1.063,
      "recs": [],
      "detail": {
       "profit": {
@@ -2519,7 +2526,7 @@
      "sum_r": -0.51,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.991,
+     "target": 0.987,
      "recs": [],
      "detail": {
       "profit": {
@@ -2645,7 +2652,7 @@
      "sum_r": -0.83,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 0.988,
+     "target": 0.985,
      "recs": [
       {
        "kind": "mult",
@@ -2775,7 +2782,7 @@
      "sum_r": 2.32,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.055,
+     "target": 1.051,
      "recs": [
       {
        "kind": "mult",
@@ -2905,7 +2912,7 @@
      "sum_r": 0.46,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.041,
+     "target": 1.038,
      "recs": [
       {
        "kind": "mult",
@@ -3012,9 +3019,9 @@
        }
       },
       "together": {
-       "with": "TV02|15Min|TSLA",
-       "corr": 0.13,
-       "lost_together_days": 16
+       "with": "SE01|1Hour|CSCO",
+       "corr": 0.14,
+       "lost_together_days": 22
       }
      }
     },
@@ -3026,7 +3033,7 @@
      "sum_r": -1.47,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.947,
+     "target": 0.943,
      "recs": [
       {
        "kind": "mult",
@@ -3171,7 +3178,7 @@
      "sum_r": -1.06,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.988,
+     "target": 0.985,
      "recs": [],
      "detail": {
       "profit": {
@@ -3281,7 +3288,7 @@
      "sum_r": 0.44,
      "mult": 0.91,
      "risk_pct": 0.3412,
-     "target": 1.033,
+     "target": 1.029,
      "recs": [
       {
        "kind": "remove",
@@ -3411,7 +3418,7 @@
      "sum_r": 0.54,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.039,
+     "target": 1.036,
      "recs": [
       {
        "kind": "mult",
@@ -3526,9 +3533,9 @@
        }
       },
       "together": {
-       "with": "TV05|15Min|WMT",
-       "corr": 0.11,
-       "lost_together_days": 1
+       "with": "TV56|4Hour|USDJPY",
+       "corr": 0.14,
+       "lost_together_days": 4
       }
      }
     },
@@ -3538,9 +3545,9 @@
      "win_pct": 71.4,
      "mean_r": 0.018,
      "sum_r": 0.13,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 1.008,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 1.004,
      "recs": [
       {
        "kind": "remove",
@@ -3670,7 +3677,7 @@
      "sum_r": -0.51,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.988,
+     "target": 0.985,
      "recs": [],
      "detail": {
       "profit": {
@@ -3778,9 +3785,9 @@
        }
       },
       "together": {
-       "with": "TV37|4Hour|N25",
-       "corr": 0.09,
-       "lost_together_days": 1
+       "with": "TV56|4Hour|USDJPY",
+       "corr": 0.13,
+       "lost_together_days": 2
       }
      }
     },
@@ -3792,7 +3799,7 @@
      "sum_r": -1.09,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.988,
+     "target": 0.985,
      "recs": [],
      "detail": {
       "profit": {
@@ -3906,7 +3913,7 @@
      "sum_r": 1.36,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.061,
+     "target": 1.057,
      "recs": [
       {
        "kind": "mult",
@@ -4039,7 +4046,7 @@
      "sum_r": 0.77,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.055,
+     "target": 1.051,
      "recs": [
       {
        "kind": "mult",
@@ -4160,7 +4167,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.013,
+     "target": 1.009,
      "recs": [],
      "detail": {
       "profit": {
@@ -4286,7 +4293,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.013,
+     "target": 1.009,
      "recs": [],
      "detail": {
       "profit": {
@@ -4385,9 +4392,9 @@
      "win_pct": 25.0,
      "mean_r": -0.407,
      "sum_r": -1.63,
-     "mult": 0.38,
-     "risk_pct": 0.1425,
-     "target": 0.937,
+     "mult": 0.21,
+     "risk_pct": 0.0788,
+     "target": 0.933,
      "recs": [
       {
        "kind": "mult",
@@ -4515,9 +4522,9 @@
      "win_pct": 37.5,
      "mean_r": -0.079,
      "sum_r": -0.63,
-     "mult": 0.95,
-     "risk_pct": 0.3562,
-     "target": 0.997,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 0.994,
      "recs": [
       {
        "kind": "remove",
@@ -4650,7 +4657,7 @@
      "sum_r": 1.44,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.082,
+     "target": 1.079,
      "recs": [
       {
        "kind": "mult",
@@ -4779,7 +4786,7 @@
      "sum_r": -0.15,
      "mult": 0.64,
      "risk_pct": 0.24,
-     "target": 1.015,
+     "target": 1.011,
      "recs": [
       {
        "kind": "mult",
@@ -4910,9 +4917,9 @@
        }
       },
       "together": {
-       "with": "TV62|1Hour|USDCAD",
-       "corr": 0.11,
-       "lost_together_days": 23
+       "with": "TV56|4Hour|USDJPY",
+       "corr": 0.16,
+       "lost_together_days": 11
       }
      }
     },
@@ -4922,9 +4929,9 @@
      "win_pct": 37.5,
      "mean_r": -0.372,
      "sum_r": -2.98,
-     "mult": 0.57,
-     "risk_pct": 0.2137,
-     "target": 0.891,
+     "mult": 0.95,
+     "risk_pct": 0.3562,
+     "target": 0.888,
      "recs": [
       {
        "kind": "mult",
@@ -5044,10 +5051,17 @@
      "win_pct": 0.0,
      "mean_r": -0.052,
      "sum_r": -0.05,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 1.013,
-     "recs": [],
+     "mult": 0.89,
+     "risk_pct": 0.3337,
+     "target": 1.01,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע -0.05R מול -0.07R של הבוט, יציבות 0.94, 1 עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -5169,7 +5183,7 @@
      "sum_r": 8.08,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.036,
+     "target": 1.032,
      "recs": [
       {
        "kind": "mult",
@@ -5299,7 +5313,7 @@
      "sum_r": 0.12,
      "mult": 0.98,
      "risk_pct": 0.3675,
-     "target": 1.023,
+     "target": 1.02,
      "recs": [],
      "detail": {
       "profit": {
@@ -5422,7 +5436,7 @@
      "sum_r": -0.25,
      "mult": 0.9,
      "risk_pct": 0.3375,
-     "target": 1.006,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -5550,10 +5564,17 @@
      "win_pct": 0.0,
      "mean_r": -0.668,
      "sum_r": -0.67,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.988,
-     "recs": [],
+     "mult": 0.69,
+     "risk_pct": 0.2587,
+     "target": 0.985,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע -0.67R מול -0.07R של הבוט, יציבות 0.81, 1 עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -5675,7 +5696,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.013,
+     "target": 1.009,
      "recs": [
       {
        "kind": "mult",
@@ -5745,7 +5766,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.013,
+     "target": 1.009,
      "recs": [
       {
        "kind": "mult",
@@ -5815,7 +5836,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.013,
+     "target": 1.009,
      "recs": [
       {
        "kind": "mult",
@@ -5885,7 +5906,7 @@
      "sum_r": 0.0,
      "mult": 0.6,
      "risk_pct": 0.225,
-     "target": 1.013,
+     "target": 1.009,
      "recs": [
       {
        "kind": "mult",
@@ -5894,6 +5915,1406 @@
        "why": "רווח ממוצע +0.00R מול -0.07R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV06|4Hour|USDCHF",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.2625,
+     "target": 1.009,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.07R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "GH09|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.2625,
+     "target": 1.009,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.07R של הבוט, יציבות 0.89, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 152,
+        "win_pct": 44.7,
+        "mean_r": 0.123,
+        "sum_r": 18.63,
+        "pf": 1.64
+       }
+      },
+      "stability": {
+       "score": 0.89,
+       "demo": null,
+       "backtest": {
+        "score": 0.89,
+        "without_best_r": 15.06,
+        "max_loss_r": 1.05,
+        "avg_win_r": 0.7,
+        "drawdown_r": 3.73,
+        "sd_r": 0.73,
+        "checks": [
+         1.0,
+         0.75,
+         0.92
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 91,
+         "mean_r": 0.13
+        },
+        "sell": {
+         "trades": 61,
+         "mean_r": 0.11
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 152,
+       "demo_trades": 0,
+       "mfe_median_r": 0.34,
+       "mae_winners_p90_r": 0.42
+      },
+      "hours": {
+       "00-04": {
+        "trades": 17,
+        "mean_r": 0.08
+       },
+       "04-08": {
+        "trades": 24,
+        "mean_r": -0.04
+       },
+       "08-12": {
+        "trades": 29,
+        "mean_r": 0.42
+       },
+       "12-16": {
+        "trades": 36,
+        "mean_r": 0.19
+       },
+       "16-20": {
+        "trades": 33,
+        "mean_r": -0.02
+       },
+       "20-24": {
+        "trades": 13,
+        "mean_r": -0.01
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.336,
+        0.454
+       ],
+       "low": {
+        "trades": 51,
+        "mean_r": 0.06
+       },
+       "mid": {
+        "trades": 50,
+        "mean_r": 0.18
+       },
+       "high": {
+        "trades": 51,
+        "mean_r": 0.12
+       }
+      },
+      "together": {
+       "with": "TV56|4Hour|USDJPY",
+       "corr": 0.24,
+       "lost_together_days": 1
+      }
+     }
+    },
+    {
+     "combo": "SE01|1Hour|CSCO",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.2625,
+     "target": 1.009,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.07R של הבוט, יציבות 0.90, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 371,
+        "win_pct": 57.4,
+        "mean_r": 0.167,
+        "sum_r": 62.0,
+        "pf": 1.57
+       }
+      },
+      "stability": {
+       "score": 0.9,
+       "demo": null,
+       "backtest": {
+        "score": 0.9,
+        "without_best_r": 58.89,
+        "max_loss_r": 1.2,
+        "avg_win_r": 0.8,
+        "drawdown_r": 9.24,
+        "sd_r": 0.9,
+        "checks": [
+         1.0,
+         0.75,
+         0.95
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 371,
+         "mean_r": 0.17
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 371,
+       "demo_trades": 0,
+       "mfe_median_r": 0.76,
+       "mae_winners_p90_r": 0.64
+      },
+      "hours": {
+       "12-16": {
+        "trades": 23,
+        "mean_r": 0.27
+       },
+       "16-20": {
+        "trades": 348,
+        "mean_r": 0.16
+       }
+      },
+      "market": {
+       "cut_pct": [
+        1.246,
+        1.64
+       ],
+       "low": {
+        "trades": 124,
+        "mean_r": 0.21
+       },
+       "mid": {
+        "trades": 123,
+        "mean_r": 0.19
+       },
+       "high": {
+        "trades": 124,
+        "mean_r": 0.1
+       }
+      },
+      "together": {
+       "with": "YT03|1Hour|LVMH",
+       "corr": 0.14,
+       "lost_together_days": 28
+      }
+     }
+    },
+    {
+     "combo": "GH02|1Hour|USDCAD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.2625,
+     "target": 1.009,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.07R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC244|15Min|GBPUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "IB033|4Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC370|4Hour|ETHUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "IM03|4Hour|ETHUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC244|1Hour|GBPUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC048|1Hour|US100",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC330|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC020|15Min|JP225",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "IB034|4Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC247|4Hour|EU50",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV56|4Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [
+      {
+       "kind": "sl",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.103,
+        0.122
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.6: בבקטסט +0.10R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 75,
+        "win_pct": 56.0,
+        "mean_r": 0.31,
+        "sum_r": 23.23,
+        "pf": 2.0
+       }
+      },
+      "stability": {
+       "score": 0.9,
+       "demo": null,
+       "backtest": {
+        "score": 0.9,
+        "without_best_r": 15.89,
+        "max_loss_r": 1.49,
+        "avg_win_r": 1.1,
+        "drawdown_r": 5.58,
+        "sd_r": 1.32,
+        "checks": [
+         1.0,
+         0.83,
+         0.88
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 34,
+         "mean_r": 0.23
+        },
+        "sell": {
+         "trades": 41,
+         "mean_r": 0.38
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 75,
+       "demo_trades": 0,
+       "mfe_median_r": 0.69,
+       "mae_winners_p90_r": 0.77
+      },
+      "hours": {
+       "00-04": {
+        "trades": 12,
+        "mean_r": -0.27
+       },
+       "04-08": {
+        "trades": 11,
+        "mean_r": 0.43
+       },
+       "08-12": {
+        "trades": 16,
+        "mean_r": 0.75
+       },
+       "12-16": {
+        "trades": 15,
+        "mean_r": 0.58
+       },
+       "16-20": {
+        "trades": 14,
+        "mean_r": 0.23
+       },
+       "20-24": {
+        "trades": 7,
+        "mean_r": -0.3
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.378,
+        0.514
+       ],
+       "low": {
+        "trades": 25,
+        "mean_r": 0.26
+       },
+       "mid": {
+        "trades": 25,
+        "mean_r": 0.47
+       },
+       "high": {
+        "trades": 25,
+        "mean_r": 0.2
+       }
+      },
+      "together": {
+       "with": "TV05|15Min|WMT",
+       "corr": 0.39,
+       "lost_together_days": 0
+      }
+     }
+    },
+    {
+     "combo": "SC247|4Hour|US500",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "GH04|1Hour|JP225",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "IB056|1Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC319|1Hour|ETHUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.009,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -5962,7 +7383,7 @@
      "sum_r": 0.0,
      "mult": 0.94,
      "risk_pct": 0.423,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [
       {
        "kind": "mult",
@@ -6095,12 +7516,12 @@
      "sum_r": 0.35,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 0.928,
+     "target": 0.925,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
+       "value": 0.9,
+       "label": "סיכון ×0.9",
        "why": "רווח ממוצע +0.06R מול +0.33R של הבוט, יציבות 0.83, 6 עסקאות"
       }
      ],
@@ -6225,7 +7646,7 @@
      "sum_r": 2.16,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.056,
+     "target": 1.052,
      "recs": [
       {
        "kind": "mult",
@@ -6346,7 +7767,7 @@
      "sum_r": 1.97,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.064,
+     "target": 1.06,
      "recs": [
       {
        "kind": "mult",
@@ -6488,7 +7909,7 @@
      "sum_r": -0.17,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 0.93,
+     "target": 0.927,
      "recs": [
       {
        "kind": "mult",
@@ -6630,7 +8051,7 @@
      "sum_r": 1.43,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.034,
+     "target": 1.03,
      "recs": [
       {
        "kind": "mult",
@@ -6775,7 +8196,7 @@
      "sum_r": 0.6,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.003,
      "recs": [
       {
        "kind": "mult",
@@ -6905,7 +8326,7 @@
      "sum_r": 0.33,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.01,
+     "target": 1.006,
      "recs": [],
      "detail": {
       "profit": {
@@ -7028,7 +8449,7 @@
      "sum_r": 0.0,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [
       {
        "kind": "mult",
@@ -7145,7 +8566,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [],
      "detail": {
       "profit": {
@@ -7255,7 +8676,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [],
      "detail": {
       "profit": {
@@ -7378,7 +8799,7 @@
      "sum_r": 0.43,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.016,
+     "target": 1.012,
      "recs": [
       {
        "kind": "mult",
@@ -7495,7 +8916,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [],
      "detail": {
       "profit": {
@@ -7613,7 +9034,7 @@
      "sum_r": 1.99,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.03,
+     "target": 1.026,
      "recs": [
       {
        "kind": "mult",
@@ -7734,7 +9155,7 @@
      "sum_r": -1.0,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.987,
+     "target": 0.984,
      "recs": [
       {
        "kind": "mult",
@@ -7853,10 +9274,17 @@
      "win_pct": null,
      "mean_r": null,
      "sum_r": 0.0,
-     "mult": 1.0,
-     "risk_pct": 0.45,
-     "target": 1.011,
-     "recs": [],
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.96, 0 עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -7978,7 +9406,7 @@
      "sum_r": -0.65,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.965,
+     "target": 0.962,
      "recs": [
       {
        "kind": "mult",
@@ -8097,9 +9525,9 @@
      "win_pct": 33.3,
      "mean_r": -0.01,
      "sum_r": -0.03,
-     "mult": 1.0,
-     "risk_pct": 0.45,
-     "target": 0.952,
+     "mult": 0.86,
+     "risk_pct": 0.387,
+     "target": 0.948,
      "recs": [
       {
        "kind": "mult",
@@ -8228,7 +9656,7 @@
      "sum_r": 2.01,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.034,
+     "target": 1.03,
      "recs": [
       {
        "kind": "mult",
@@ -8361,7 +9789,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [],
      "detail": {
       "profit": {
@@ -8487,7 +9915,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [],
      "detail": {
       "profit": {
@@ -8610,7 +10038,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [],
      "detail": {
       "profit": {
@@ -8718,9 +10146,9 @@
      "win_pct": 0.0,
      "mean_r": -1.0,
      "sum_r": -1.0,
-     "mult": 0.86,
-     "risk_pct": 0.387,
-     "target": 0.987,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 0.984,
      "recs": [
       {
        "kind": "mult",
@@ -8840,9 +10268,9 @@
      "win_pct": 37.5,
      "mean_r": -0.37,
      "sum_r": -2.96,
-     "mult": 0.67,
-     "risk_pct": 0.3015,
-     "target": 0.867,
+     "mult": 0.57,
+     "risk_pct": 0.2565,
+     "target": 0.864,
      "recs": [
       {
        "kind": "mult",
@@ -8964,7 +10392,7 @@
      "sum_r": 8.91,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.034,
+     "target": 1.031,
      "recs": [
       {
        "kind": "mult",
@@ -9094,7 +10522,7 @@
      "sum_r": 2.19,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.056,
+     "target": 1.052,
      "recs": [
       {
        "kind": "mult",
@@ -9222,9 +10650,9 @@
      "win_pct": 40.0,
      "mean_r": -0.028,
      "sum_r": -0.14,
-     "mult": 0.5,
-     "risk_pct": 0.225,
-     "target": 0.917,
+     "mult": 0.59,
+     "risk_pct": 0.2655,
+     "target": 0.914,
      "recs": [
       {
        "kind": "mult",
@@ -9369,7 +10797,7 @@
      "sum_r": -0.18,
      "mult": 0.94,
      "risk_pct": 0.423,
-     "target": 0.965,
+     "target": 0.962,
      "recs": [],
      "detail": {
       "profit": {
@@ -9480,7 +10908,7 @@
      "sum_r": 0.19,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.002,
+     "target": 0.998,
      "recs": [],
      "detail": {
       "profit": {
@@ -9603,7 +11031,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [
       {
        "kind": "mult",
@@ -9671,9 +11099,9 @@
      "win_pct": null,
      "mean_r": null,
      "sum_r": 0.0,
-     "mult": 0.2,
-     "risk_pct": 0.09,
-     "target": 1.011,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 1.008,
      "recs": [
       {
        "kind": "mult",
@@ -9743,7 +11171,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [
       {
        "kind": "mult",
@@ -9813,7 +11241,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.011,
+     "target": 1.008,
      "recs": [
       {
        "kind": "mult",
@@ -9883,7 +11311,1190 @@
      "sum_r": 0.0,
      "mult": 0.5,
      "risk_pct": 0.225,
-     "target": 1.011,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC083|1Hour|GBPJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC249|4Hour|US30",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC333|1Hour|GBPJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.6,
+     "risk_pct": 0.27,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC244|15Min|WTI",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "MQ11|4Hour|US2000",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.45,
+     "target": 1.008,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC326|15Min|US30",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC330|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.83,
+     "risk_pct": 0.3735,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "IB017|4Hour|XRP/USD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV56|4Hour|US100",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC295|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "IB029|4Hour|XRP/USD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC200|1Hour|US100",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.8,
+     "risk_pct": 0.36,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC326|15Min|WTI",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC236|1Hour|WTI",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC247|4Hour|XRP/USD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC086|4Hour|US2000",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.33R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV02|1Hour|JP225",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.6,
+     "risk_pct": 0.27,
+     "target": 1.008,
      "recs": [
       {
        "kind": "mult",
@@ -9960,7 +12571,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [],
      "detail": {
       "profit": {
@@ -10084,10 +12695,17 @@
      "win_pct": 66.7,
      "mean_r": 0.008,
      "sum_r": 0.02,
-     "mult": 1.0,
-     "risk_pct": 0.375,
-     "target": 0.998,
-     "recs": [],
+     "mult": 0.77,
+     "risk_pct": 0.2888,
+     "target": 0.996,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.01R מול +0.04R של הבוט, יציבות 0.89, 3 עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -10207,9 +12825,9 @@
        }
       },
       "together": {
-       "with": "SS09|1Hour|T",
-       "corr": 0.16,
-       "lost_together_days": 45
+       "with": "TV20|1Hour|XAUUSD",
+       "corr": 0.23,
+       "lost_together_days": 41
       }
      }
     },
@@ -10219,9 +12837,9 @@
      "win_pct": 20.0,
      "mean_r": -0.486,
      "sum_r": -2.43,
-     "mult": 0.7,
-     "risk_pct": 0.2625,
-     "target": 0.904,
+     "mult": 0.47,
+     "risk_pct": 0.1762,
+     "target": 0.902,
      "recs": [
       {
        "kind": "mult",
@@ -10352,9 +12970,9 @@
        }
       },
       "together": {
-       "with": "TV60|4Hour|SPN35",
-       "corr": 0.11,
-       "lost_together_days": 10
+       "with": "GH09|1Hour|USDJPY",
+       "corr": 0.26,
+       "lost_together_days": 35
       }
      }
     },
@@ -10366,7 +12984,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [],
      "detail": {
       "profit": {
@@ -10474,9 +13092,9 @@
        }
       },
       "together": {
-       "with": "TV15|1Hour|INTC",
-       "corr": 0.06,
-       "lost_together_days": 25
+       "with": "TV56|4Hour|US2000",
+       "corr": 0.11,
+       "lost_together_days": 12
       }
      }
     },
@@ -10488,7 +13106,7 @@
      "sum_r": 0.9,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.041,
+     "target": 1.039,
      "recs": [
       {
        "kind": "mult",
@@ -10633,7 +13251,7 @@
      "sum_r": 0.11,
      "mult": 0.97,
      "risk_pct": 0.3638,
-     "target": 1.0,
+     "target": 0.997,
      "recs": [],
      "detail": {
       "profit": {
@@ -10756,7 +13374,7 @@
      "sum_r": -2.0,
      "mult": 0.48,
      "risk_pct": 0.18,
-     "target": 0.939,
+     "target": 0.937,
      "recs": [
       {
        "kind": "mult",
@@ -10901,7 +13519,7 @@
      "sum_r": 1.82,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.028,
+     "target": 1.025,
      "recs": [
       {
        "kind": "mult",
@@ -11022,7 +13640,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [],
      "detail": {
       "profit": {
@@ -11145,7 +13763,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [],
      "detail": {
       "profit": {
@@ -11271,7 +13889,7 @@
      "sum_r": -0.36,
      "mult": 0.64,
      "risk_pct": 0.24,
-     "target": 0.981,
+     "target": 0.979,
      "recs": [
       {
        "kind": "mult",
@@ -11378,9 +13996,9 @@
        }
       },
       "together": {
-       "with": "TV36|1Hour|GOOG",
-       "corr": 0.05,
-       "lost_together_days": 7
+       "with": "TV56|4Hour|US2000",
+       "corr": 0.08,
+       "lost_together_days": 5
       }
      }
     },
@@ -11392,7 +14010,7 @@
      "sum_r": 2.93,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.028,
+     "target": 1.025,
      "recs": [
       {
        "kind": "mult",
@@ -11496,9 +14114,9 @@
        }
       },
       "together": {
-       "with": "SS14|1Hour|US500",
-       "corr": 0.06,
-       "lost_together_days": 5
+       "with": "TV56|4Hour|US2000",
+       "corr": 0.08,
+       "lost_together_days": 1
       }
      }
     },
@@ -11510,7 +14128,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "remove",
@@ -11631,7 +14249,7 @@
      "sum_r": 0.99,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.041,
+     "target": 1.038,
      "recs": [
       {
        "kind": "mult",
@@ -11748,7 +14366,7 @@
      "sum_r": 1.32,
      "mult": 0.73,
      "risk_pct": 0.2737,
-     "target": 1.059,
+     "target": 1.056,
      "recs": [
       {
        "kind": "mult",
@@ -11878,7 +14496,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [],
      "detail": {
       "profit": {
@@ -11986,9 +14604,9 @@
        }
       },
       "together": {
-       "with": "TV15|1Hour|INTC",
-       "corr": 0.08,
-       "lost_together_days": 11
+       "with": "TV56|4Hour|USDJPY",
+       "corr": 0.11,
+       "lost_together_days": 2
       }
      }
     },
@@ -12000,7 +14618,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -12125,7 +14743,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [],
      "detail": {
       "profit": {
@@ -12251,7 +14869,7 @@
      "sum_r": 0.0,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "remove",
@@ -12372,7 +14990,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [],
      "detail": {
       "profit": {
@@ -12494,7 +15112,7 @@
      "sum_r": -0.29,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.984,
+     "target": 0.982,
      "recs": [
       {
        "kind": "remove",
@@ -12612,7 +15230,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "remove",
@@ -12729,7 +15347,7 @@
      "sum_r": -0.51,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.97,
+     "target": 0.968,
      "recs": [
       {
        "kind": "mult",
@@ -12850,7 +15468,7 @@
      "sum_r": 0.0,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -12971,7 +15589,7 @@
      "sum_r": -0.03,
      "mult": 0.8,
      "risk_pct": 0.3,
-     "target": 0.99,
+     "target": 0.987,
      "recs": [
       {
        "kind": "remove",
@@ -13100,7 +15718,7 @@
      "sum_r": -1.15,
      "mult": 0.1,
      "risk_pct": 0.0375,
-     "target": 0.939,
+     "target": 0.937,
      "recs": [
       {
        "kind": "mult",
@@ -13233,7 +15851,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -13303,7 +15921,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -13373,7 +15991,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -13443,7 +16061,7 @@
      "sum_r": 0.0,
      "mult": 0.2,
      "risk_pct": 0.075,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -13513,7 +16131,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -13583,7 +16201,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -13653,7 +16271,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -13723,7 +16341,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.005,
+     "target": 1.002,
      "recs": [
       {
        "kind": "mult",
@@ -13732,6 +16350,2336 @@
        "why": "רווח ממוצע +0.00R מול +0.04R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV20|1Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 143,
+        "win_pct": 39.9,
+        "mean_r": 0.322,
+        "sum_r": 46.0,
+        "pf": 1.59
+       }
+      },
+      "stability": {
+       "score": 0.96,
+       "demo": null,
+       "backtest": {
+        "score": 0.96,
+        "without_best_r": 36.08,
+        "max_loss_r": 1.28,
+        "avg_win_r": 2.18,
+        "drawdown_r": 13.7,
+        "sd_r": 2.06,
+        "checks": [
+         1.0,
+         1.0,
+         0.89
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 74,
+         "mean_r": 0.25
+        },
+        "sell": {
+         "trades": 69,
+         "mean_r": 0.4
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 143,
+       "demo_trades": 0,
+       "mfe_median_r": 1.08,
+       "mae_winners_p90_r": 0.83
+      },
+      "hours": {
+       "00-04": {
+        "trades": 19,
+        "mean_r": -0.08
+       },
+       "04-08": {
+        "trades": 31,
+        "mean_r": 0.74
+       },
+       "08-12": {
+        "trades": 22,
+        "mean_r": 0.36
+       },
+       "12-16": {
+        "trades": 14,
+        "mean_r": -0.15
+       },
+       "16-20": {
+        "trades": 36,
+        "mean_r": 0.4
+       },
+       "20-24": {
+        "trades": 21,
+        "mean_r": 0.19
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.352,
+        0.599
+       ],
+       "low": {
+        "trades": 48,
+        "mean_r": 0.32
+       },
+       "mid": {
+        "trades": 47,
+        "mean_r": 0.51
+       },
+       "high": {
+        "trades": 48,
+        "mean_r": 0.15
+       }
+      },
+      "together": {
+       "with": "TV21|1Hour|XAUUSD",
+       "corr": 0.23,
+       "lost_together_days": 41
+      }
+     }
+    },
+    {
+     "combo": "IB033|4Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC235|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC272|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC048|1Hour|US100",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV56|4Hour|US2000",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 78,
+        "win_pct": 59.0,
+        "mean_r": 0.225,
+        "sum_r": 17.58,
+        "pf": 1.66
+       }
+      },
+      "stability": {
+       "score": 0.92,
+       "demo": null,
+       "backtest": {
+        "score": 0.92,
+        "without_best_r": 15.32,
+        "max_loss_r": 1.13,
+        "avg_win_r": 0.96,
+        "drawdown_r": 6.89,
+        "sd_r": 1.02,
+        "checks": [
+         1.0,
+         0.91,
+         0.84
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 37,
+         "mean_r": 0.31
+        },
+        "sell": {
+         "trades": 41,
+         "mean_r": 0.15
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 78,
+       "demo_trades": 0,
+       "mfe_median_r": 0.86,
+       "mae_winners_p90_r": 0.86
+      },
+      "hours": {
+       "00-04": {
+        "trades": 10,
+        "mean_r": 0.75
+       },
+       "04-08": {
+        "trades": 12,
+        "mean_r": 0.34
+       },
+       "08-12": {
+        "trades": 6,
+        "mean_r": 0.47
+       },
+       "12-16": {
+        "trades": 15,
+        "mean_r": -0.14
+       },
+       "16-20": {
+        "trades": 20,
+        "mean_r": -0.01
+       },
+       "20-24": {
+        "trades": 15,
+        "mean_r": 0.36
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.863,
+        1.123
+       ],
+       "low": {
+        "trades": 26,
+        "mean_r": -0.05
+       },
+       "mid": {
+        "trades": 26,
+        "mean_r": 0.01
+       },
+       "high": {
+        "trades": 26,
+        "mean_r": 0.72
+       }
+      },
+      "together": {
+       "with": "TT01|1Hour|US100",
+       "corr": 0.11,
+       "lost_together_days": 12
+      }
+     }
+    },
+    {
+     "combo": "SC033|1Hour|JP225",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC330|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC121|1Hour|USDCAD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC020|15Min|JP225",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC253|15Min|USDCAD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV58|1Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV56|4Hour|US100",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SS14|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC249|4Hour|US30",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV15|4Hour|USDCAD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV56|4Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [
+      {
+       "kind": "sl",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.103,
+        0.122
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.6: בבקטסט +0.10R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 75,
+        "win_pct": 56.0,
+        "mean_r": 0.31,
+        "sum_r": 23.23,
+        "pf": 2.0
+       }
+      },
+      "stability": {
+       "score": 0.9,
+       "demo": null,
+       "backtest": {
+        "score": 0.9,
+        "without_best_r": 15.89,
+        "max_loss_r": 1.49,
+        "avg_win_r": 1.1,
+        "drawdown_r": 5.58,
+        "sd_r": 1.32,
+        "checks": [
+         1.0,
+         0.83,
+         0.88
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 34,
+         "mean_r": 0.23
+        },
+        "sell": {
+         "trades": 41,
+         "mean_r": 0.38
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 75,
+       "demo_trades": 0,
+       "mfe_median_r": 0.69,
+       "mae_winners_p90_r": 0.77
+      },
+      "hours": {
+       "00-04": {
+        "trades": 12,
+        "mean_r": -0.27
+       },
+       "04-08": {
+        "trades": 11,
+        "mean_r": 0.43
+       },
+       "08-12": {
+        "trades": 16,
+        "mean_r": 0.75
+       },
+       "12-16": {
+        "trades": 15,
+        "mean_r": 0.58
+       },
+       "16-20": {
+        "trades": 14,
+        "mean_r": 0.23
+       },
+       "20-24": {
+        "trades": 7,
+        "mean_r": -0.3
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.378,
+        0.514
+       ],
+       "low": {
+        "trades": 25,
+        "mean_r": 0.26
+       },
+       "mid": {
+        "trades": 25,
+        "mean_r": 0.47
+       },
+       "high": {
+        "trades": 25,
+        "mean_r": 0.2
+       }
+      },
+      "together": {
+       "with": "GH09|1Hour|USDJPY",
+       "corr": 0.24,
+       "lost_together_days": 1
+      }
+     }
+    },
+    {
+     "combo": "QB11|1Hour|FRA40",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "IB063|4Hour|USDCAD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC247|4Hour|US500",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "GH09|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 152,
+        "win_pct": 44.7,
+        "mean_r": 0.123,
+        "sum_r": 18.63,
+        "pf": 1.64
+       }
+      },
+      "stability": {
+       "score": 0.89,
+       "demo": null,
+       "backtest": {
+        "score": 0.89,
+        "without_best_r": 15.06,
+        "max_loss_r": 1.05,
+        "avg_win_r": 0.7,
+        "drawdown_r": 3.73,
+        "sd_r": 0.73,
+        "checks": [
+         1.0,
+         0.75,
+         0.92
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 91,
+         "mean_r": 0.13
+        },
+        "sell": {
+         "trades": 61,
+         "mean_r": 0.11
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 152,
+       "demo_trades": 0,
+       "mfe_median_r": 0.34,
+       "mae_winners_p90_r": 0.42
+      },
+      "hours": {
+       "00-04": {
+        "trades": 17,
+        "mean_r": 0.08
+       },
+       "04-08": {
+        "trades": 24,
+        "mean_r": -0.04
+       },
+       "08-12": {
+        "trades": 29,
+        "mean_r": 0.42
+       },
+       "12-16": {
+        "trades": 36,
+        "mean_r": 0.19
+       },
+       "16-20": {
+        "trades": 33,
+        "mean_r": -0.02
+       },
+       "20-24": {
+        "trades": 13,
+        "mean_r": -0.01
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.336,
+        0.454
+       ],
+       "low": {
+        "trades": 51,
+        "mean_r": 0.06
+       },
+       "mid": {
+        "trades": 50,
+        "mean_r": 0.18
+       },
+       "high": {
+        "trades": 51,
+        "mean_r": 0.12
+       }
+      },
+      "together": {
+       "with": "TV41|1Hour|USDJPY",
+       "corr": 0.26,
+       "lost_together_days": 35
+      }
+     }
+    },
+    {
+     "combo": "SC249|4Hour|US500",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "GH04|1Hour|JP225",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV41|1Hour|US100",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "GH04|1Hour|US2000",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "MQ11|4Hour|US30",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "MQ02|1Hour|USDCAD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC157|15Min|JP225",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "IB056|1Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "BK05|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "IB012|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC006|4Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC288|1Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.002,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
@@ -13800,7 +18748,7 @@
      "sum_r": 3.53,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.068,
+     "target": 1.065,
      "recs": [
       {
        "kind": "mult",
@@ -13940,9 +18888,9 @@
      "win_pct": 100.0,
      "mean_r": 2.173,
      "sum_r": 2.17,
-     "mult": 1.0,
-     "risk_pct": 0.45,
-     "target": 1.03,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.027,
      "recs": [
       {
        "kind": "mult",
@@ -14072,7 +19020,7 @@
      "sum_r": 2.45,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.079,
+     "target": 1.077,
      "recs": [
       {
        "kind": "mult",
@@ -14214,7 +19162,7 @@
      "sum_r": -0.06,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.007,
+     "target": 1.004,
      "recs": [
       {
        "kind": "mult",
@@ -14344,7 +19292,7 @@
      "sum_r": -0.74,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 0.968,
+     "target": 0.965,
      "recs": [
       {
        "kind": "mult",
@@ -14462,7 +19410,7 @@
      "sum_r": -2.71,
      "mult": 0.53,
      "risk_pct": 0.2385,
-     "target": 0.884,
+     "target": 0.882,
      "recs": [
       {
        "kind": "mult",
@@ -14570,9 +19518,9 @@
        }
       },
       "together": {
-       "with": "IM03|4Hour|USDCAD",
-       "corr": 0.12,
-       "lost_together_days": 17
+       "with": "SE02|1Hour|USDJPY",
+       "corr": 0.2,
+       "lost_together_days": 93
       }
      }
     },
@@ -14582,9 +19530,9 @@
      "win_pct": 0.0,
      "mean_r": -1.0,
      "sum_r": -2.0,
-     "mult": 0.7,
-     "risk_pct": 0.315,
-     "target": 0.962,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 0.959,
      "recs": [
       {
        "kind": "mult",
@@ -14702,7 +19650,7 @@
      "sum_r": 1.13,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.061,
+     "target": 1.058,
      "recs": [
       {
        "kind": "mult",
@@ -14844,7 +19792,7 @@
      "sum_r": -0.04,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.007,
+     "target": 1.004,
      "recs": [],
      "detail": {
       "profit": {
@@ -14965,9 +19913,9 @@
      "win_pct": 0.0,
      "mean_r": -1.0,
      "sum_r": -2.0,
-     "mult": 0.64,
-     "risk_pct": 0.288,
-     "target": 0.962,
+     "mult": 0.6,
+     "risk_pct": 0.27,
+     "target": 0.959,
      "recs": [
       {
        "kind": "mult",
@@ -15095,7 +20043,7 @@
      "sum_r": -0.25,
      "mult": 0.95,
      "risk_pct": 0.4275,
-     "target": 0.997,
+     "target": 0.994,
      "recs": [
       {
        "kind": "mult",
@@ -15225,7 +20173,7 @@
      "sum_r": -2.68,
      "mult": 0.76,
      "risk_pct": 0.342,
-     "target": 0.888,
+     "target": 0.886,
      "recs": [
       {
        "kind": "mult",
@@ -15355,7 +20303,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [
       {
        "kind": "mult",
@@ -15485,7 +20433,7 @@
      "sum_r": -1.0,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.984,
+     "target": 0.981,
      "recs": [
       {
        "kind": "mult",
@@ -15615,7 +20563,7 @@
      "sum_r": 0.01,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.009,
+     "target": 1.007,
      "recs": [],
      "detail": {
       "profit": {
@@ -15726,7 +20674,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [],
      "detail": {
       "profit": {
@@ -15833,7 +20781,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [],
      "detail": {
       "profit": {
@@ -15940,7 +20888,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [
       {
        "kind": "mult",
@@ -16008,9 +20956,9 @@
      "win_pct": 0.0,
      "mean_r": -1.0,
      "sum_r": -1.0,
-     "mult": 0.7,
-     "risk_pct": 0.315,
-     "target": 0.984,
+     "mult": 0.52,
+     "risk_pct": 0.234,
+     "target": 0.981,
      "recs": [
       {
        "kind": "mult",
@@ -16080,7 +21028,7 @@
      "sum_r": 1.3,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.017,
+     "target": 1.014,
      "recs": [
       {
        "kind": "mult",
@@ -16150,7 +21098,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [
       {
        "kind": "mult",
@@ -16218,9 +21166,9 @@
      "win_pct": null,
      "mean_r": null,
      "sum_r": 0.0,
-     "mult": 0.7,
-     "risk_pct": 0.315,
-     "target": 1.008,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 1.005,
      "recs": [
       {
        "kind": "mult",
@@ -16290,7 +21238,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [
       {
        "kind": "mult",
@@ -16360,7 +21308,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [],
      "detail": {
       "profit": {
@@ -16423,7 +21371,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [
       {
        "kind": "mult",
@@ -16493,7 +21441,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [
       {
        "kind": "mult",
@@ -16563,7 +21511,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [
       {
        "kind": "mult",
@@ -16633,7 +21581,7 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.008,
+     "target": 1.005,
      "recs": [
       {
        "kind": "mult",
@@ -16693,6 +21641,1270 @@
       "hours": {},
       "market": {},
       "together": null
+     }
+    },
+    {
+     "combo": "SC083|1Hour|GBPJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.005,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.04R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC295|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.005,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.04R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "FR01|1Hour|ARM",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.005,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.04R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV56|4Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.005,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.04R של הבוט, יציבות 0.90, 0 עסקאות"
+      },
+      {
+       "kind": "sl",
+       "value": 0.6,
+       "bt_gain_r": [
+        0.103,
+        0.122
+       ],
+       "demo_gain_r": null,
+       "why": "סטופ ×0.6: בבקטסט +0.10R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 75,
+        "win_pct": 56.0,
+        "mean_r": 0.31,
+        "sum_r": 23.23,
+        "pf": 2.0
+       }
+      },
+      "stability": {
+       "score": 0.9,
+       "demo": null,
+       "backtest": {
+        "score": 0.9,
+        "without_best_r": 15.89,
+        "max_loss_r": 1.49,
+        "avg_win_r": 1.1,
+        "drawdown_r": 5.58,
+        "sd_r": 1.32,
+        "checks": [
+         1.0,
+         0.83,
+         0.88
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 34,
+         "mean_r": 0.23
+        },
+        "sell": {
+         "trades": 41,
+         "mean_r": 0.38
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 75,
+       "demo_trades": 0,
+       "mfe_median_r": 0.69,
+       "mae_winners_p90_r": 0.77
+      },
+      "hours": {
+       "00-04": {
+        "trades": 12,
+        "mean_r": -0.27
+       },
+       "04-08": {
+        "trades": 11,
+        "mean_r": 0.43
+       },
+       "08-12": {
+        "trades": 16,
+        "mean_r": 0.75
+       },
+       "12-16": {
+        "trades": 15,
+        "mean_r": 0.58
+       },
+       "16-20": {
+        "trades": 14,
+        "mean_r": 0.23
+       },
+       "20-24": {
+        "trades": 7,
+        "mean_r": -0.3
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.378,
+        0.514
+       ],
+       "low": {
+        "trades": 25,
+        "mean_r": 0.26
+       },
+       "mid": {
+        "trades": 25,
+        "mean_r": 0.47
+       },
+       "high": {
+        "trades": 25,
+        "mean_r": 0.2
+       }
+      },
+      "together": {
+       "with": "GH09|1Hour|USDJPY",
+       "corr": 0.24,
+       "lost_together_days": 1
+      }
+     }
+    },
+    {
+     "combo": "SE02|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.45,
+     "target": 1.005,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 385,
+        "win_pct": 56.1,
+        "mean_r": 0.137,
+        "sum_r": 52.87,
+        "pf": 1.43
+       }
+      },
+      "stability": {
+       "score": 0.91,
+       "demo": null,
+       "backtest": {
+        "score": 0.91,
+        "without_best_r": 48.8,
+        "max_loss_r": 1.15,
+        "avg_win_r": 0.81,
+        "drawdown_r": 9.78,
+        "sd_r": 0.94,
+        "checks": [
+         1.0,
+         0.79,
+         0.94
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 385,
+         "mean_r": 0.14
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 385,
+       "demo_trades": 0,
+       "mfe_median_r": 0.7,
+       "mae_winners_p90_r": 0.74
+      },
+      "hours": {
+       "16-20": {
+        "trades": 385,
+        "mean_r": 0.14
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.179,
+        0.235
+       ],
+       "low": {
+        "trades": 129,
+        "mean_r": 0.16
+       },
+       "mid": {
+        "trades": 128,
+        "mean_r": 0.19
+       },
+       "high": {
+        "trades": 128,
+        "mean_r": 0.06
+       }
+      },
+      "together": {
+       "with": "SE02|1Hour|GBPJPY",
+       "corr": 0.2,
+       "lost_together_days": 93
+      }
+     }
+    },
+    {
+     "combo": "SC083|1Hour|USDJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.005,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.04R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "BK07|1Hour|EURUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.315,
+     "target": 1.005,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.04R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV20|1Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.45,
+     "target": 1.005,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 143,
+        "win_pct": 39.9,
+        "mean_r": 0.322,
+        "sum_r": 46.0,
+        "pf": 1.59
+       }
+      },
+      "stability": {
+       "score": 0.96,
+       "demo": null,
+       "backtest": {
+        "score": 0.96,
+        "without_best_r": 36.08,
+        "max_loss_r": 1.28,
+        "avg_win_r": 2.18,
+        "drawdown_r": 13.7,
+        "sd_r": 2.06,
+        "checks": [
+         1.0,
+         1.0,
+         0.89
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 74,
+         "mean_r": 0.25
+        },
+        "sell": {
+         "trades": 69,
+         "mean_r": 0.4
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 143,
+       "demo_trades": 0,
+       "mfe_median_r": 1.08,
+       "mae_winners_p90_r": 0.83
+      },
+      "hours": {
+       "00-04": {
+        "trades": 19,
+        "mean_r": -0.08
+       },
+       "04-08": {
+        "trades": 31,
+        "mean_r": 0.74
+       },
+       "08-12": {
+        "trades": 22,
+        "mean_r": 0.36
+       },
+       "12-16": {
+        "trades": 14,
+        "mean_r": -0.15
+       },
+       "16-20": {
+        "trades": 36,
+        "mean_r": 0.4
+       },
+       "20-24": {
+        "trades": 21,
+        "mean_r": 0.19
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.352,
+        0.599
+       ],
+       "low": {
+        "trades": 48,
+        "mean_r": 0.32
+       },
+       "mid": {
+        "trades": 47,
+        "mean_r": 0.51
+       },
+       "high": {
+        "trades": 48,
+        "mean_r": 0.15
+       }
+      },
+      "together": {
+       "with": "GH02|1Hour|XAUUSD",
+       "corr": 0.09,
+       "lost_together_days": 15
+      }
+     }
+    },
+    {
+     "combo": "IB033|4Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.45,
+     "target": 1.005,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "FR03|15Min|GBPUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.45,
+     "target": 1.005,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 52,
+        "win_pct": 44.2,
+        "mean_r": 0.772,
+        "sum_r": 40.13,
+        "pf": 2.43
+       }
+      },
+      "stability": {
+       "score": 0.97,
+       "demo": null,
+       "backtest": {
+        "score": 0.97,
+        "without_best_r": 27.89,
+        "max_loss_r": 1.16,
+        "avg_win_r": 2.97,
+        "drawdown_r": 5.49,
+        "sd_r": 2.8,
+        "checks": [
+         1.0,
+         1.0,
+         0.92
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 52,
+         "mean_r": 0.77
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 52,
+       "demo_trades": 0,
+       "mfe_median_r": 0.91,
+       "mae_winners_p90_r": 0.9
+      },
+      "hours": {
+       "00-04": {
+        "trades": 1,
+        "mean_r": 1.36
+       },
+       "04-08": {
+        "trades": 3,
+        "mean_r": 3.34
+       },
+       "08-12": {
+        "trades": 16,
+        "mean_r": 1.6
+       },
+       "12-16": {
+        "trades": 12,
+        "mean_r": 0.03
+       },
+       "16-20": {
+        "trades": 15,
+        "mean_r": 0.34
+       },
+       "20-24": {
+        "trades": 5,
+        "mean_r": -0.44
+       }
+      },
+      "market": {
+       "cut_pct": [
+        0.099,
+        0.143
+       ],
+       "low": {
+        "trades": 18,
+        "mean_r": 2.05
+       },
+       "mid": {
+        "trades": 17,
+        "mean_r": -0.19
+       },
+       "high": {
+        "trades": 17,
+        "mean_r": 0.38
+       }
+      },
+      "together": {
+       "with": "BK05|1Hour|EURUSD",
+       "corr": 0.23,
+       "lost_together_days": 12
+      }
+     }
+    },
+    {
+     "combo": "SC095|1Hour|GBPJPY",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.45,
+     "target": 1.005,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC184|1Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.45,
+     "target": 1.005,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "IB034|4Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.45,
+     "target": 1.005,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV58|1Hour|XAUUSD",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.45,
+     "target": 1.005,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "TV36|1Hour|ARM",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 1.0,
+     "risk_pct": 0.45,
+     "target": 1.005,
+     "recs": [],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 79,
+        "win_pct": 58.2,
+        "mean_r": 0.182,
+        "sum_r": 14.4,
+        "pf": 1.87
+       }
+      },
+      "stability": {
+       "score": 0.88,
+       "demo": null,
+       "backtest": {
+        "score": 0.88,
+        "without_best_r": 10.98,
+        "max_loss_r": 1.05,
+        "avg_win_r": 0.67,
+        "drawdown_r": 2.71,
+        "sd_r": 0.82,
+        "checks": [
+         1.0,
+         0.72,
+         0.91
+        ]
+       }
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 40,
+         "mean_r": 0.23
+        },
+        "sell": {
+         "trades": 39,
+         "mean_r": 0.14
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 79,
+       "demo_trades": 0,
+       "near_miss_pct": 0.0,
+       "reach_pct": 3.8,
+       "mfe_of_target_median_pct": 28.0,
+       "mfe_median_r": 0.56,
+       "mae_winners_p90_r": 0.69
+      },
+      "hours": {
+       "16-20": {
+        "trades": 53,
+        "mean_r": 0.27
+       },
+       "20-24": {
+        "trades": 26,
+        "mean_r": -0.0
+       }
+      },
+      "market": {
+       "cut_pct": [
+        1.745,
+        2.343
+       ],
+       "low": {
+        "trades": 27,
+        "mean_r": 0.2
+       },
+       "mid": {
+        "trades": 26,
+        "mean_r": 0.22
+       },
+       "high": {
+        "trades": 26,
+        "mean_r": 0.12
+       }
+      },
+      "together": {
+       "with": "QP02|1Hour|XAGUSD",
+       "corr": 0.05,
+       "lost_together_days": 6
+      }
      }
     }
    ]

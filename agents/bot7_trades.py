@@ -26,7 +26,7 @@ EXP = ROOT / "reports" / "agents" / "bot7" / "exp"
 PLANS_F = ROOT / "live" / "bots" / "bot7.json"
 TEST_FROM, SPLIT = pd.Timestamp("2025-04-30", tz="UTC"), pd.Timestamp("2026-01-01", tz="UTC")
 _EPOCH = pd.Timestamp("1970-01-01", tz="UTC")
-_SKIP = ("card", "why", "added", "prev", "risk_mult", "note")
+_SKIP = ("card", "why", "added", "on_from", "prev", "risk_mult", "note")
 
 
 def plans():

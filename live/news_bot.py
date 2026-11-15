@@ -96,11 +96,12 @@ END = "סוף הנתונים"            # rules_agent's reason for a trade stil
 INITIAL, RISK, DAILY_STOP, MAX_LOSS = 100_000.0, 0.005, 0.045, 0.10
 ACCT_V = 1
 KEEP = 300
-HI_TF = ("1Hour", "4Hour")      # scout strategies on longer candles (14.11.2026): from the server's 1-hour bars
+HI_TF = ("15Min", "1Hour", "4Hour")  # strategies on longer candles (14.11.2026; 15Min 15.11.2026): the server's 15-minute / 1-hour bars
 HI_DAYS, HI_EVERY = 125, 120     # 1-hour history asked for (the server sends at most 3000 bars); refreshed every 2 minutes
-TF_HE = {"1Min": "דקה", "5Min": "5 דקות", "1Hour": "שעה", "4Hour": "4 שעות"}
+M15_DAYS = 30                    # 15-minute history asked for (2,880 bars, under the server's 3000)
+TF_HE = {"1Min": "דקה", "5Min": "5 דקות", "15Min": "15 דקות", "1Hour": "שעה", "4Hour": "4 שעות"}
 PLANS_F = LIVE / "bots" / "bot7.json"   # approved cards, built (agent_portfolio.built_variant reads the same "plans")
-TF_M = {"1Min": 1, "5Min": 5, "1Hour": 60, "4Hour": 240}
+TF_M = {"1Min": 1, "5Min": 5, "15Min": 15, "1Hour": 60, "4Hour": 240}
 BREAK_W = 10                     # minutes before a market break of 2h+ at which every position is closed (FTMO Standard)
 
 
@@ -153,13 +154,23 @@ def extras():
             sid, tf, name = c.split("|")
         except ValueError:
             continue
-        if (sid in SCS.SCOUT and tf in ("1Min", "5Min") + HI_TF or sid in (SHOCK | SURPRISE | STRADDLE) and tf == "1Min") and name in SYMBOLS:
+        if (rule_fn(sid) is not None and tf in ("1Min", "5Min") + HI_TF or sid in (SHOCK | SURPRISE | STRADDLE) and tf == "1Min") and name in SYMBOLS:
             out.append((sid, tf, name))
     return out
 
 
 def sname(sid):
-    return NAMES.get(sid) or SCS.SCOUT.get(sid, (sid,))[0].split(" (")[0]
+    return NAMES.get(sid) or (SCS.SCOUT.get(sid) or R.STRATEGIES.get(sid) or (sid,))[0].split(" (")[0]
+
+
+def rule_fn(sid):
+    """The signal function of an approved non-EV strategy of bot 7: a scout one (SCS.SCOUT) or one from the pool of
+    bots 1-6 (rules_agent.STRATEGIES, e.g. TV56 / MQ11 / SE02, cards 5f8ee58d2829 / 0c0263ab4803 / 64f0823ec28a,
+    15.11.2026) - the same function the backtest (agent_portfolio) tested. The release / shock strategies are not here."""
+    if sid in STRATS or sid in E.EVENTS or sid in (SHOCK | SURPRISE | STRADDLE):
+        return None
+    e = SCS.SCOUT.get(sid) or R.STRATEGIES.get(sid)
+    return e[1] if e else None
 
 
 def risk_mult(pl, combo):
@@ -332,6 +343,17 @@ class Source:
                     return {}
         now = pd.Timestamp.now(tz="UTC")
         out = {}
+        if "15Min" in need:                                 # the server's own 15-minute bars (as live/runner, M15)
+            t15, m15 = self._hi.get(name + "|15m", (0, None))
+            if m15 is None or time.time() - t15 > HI_EVERY:
+                try:
+                    m15 = self.get(self.broker[name], time.time() - M15_DAYS * 86400, time.time(), tf="15m")
+                    m15 = m15[~m15.index.duplicated(keep="last")].sort_index()
+                    self._hi[name + "|15m"] = (time.time(), m15)
+                except Exception as e:  # noqa: BLE001
+                    log(f"{name}: 15-minute candles not read ({e})")
+            if m15 is not None and len(m15):
+                out["15Min"] = m15[m15.index + pd.Timedelta(minutes=15) <= now]
         if "1Hour" in need:
             out["1Hour"] = h1[h1.index + pd.Timedelta(hours=1) <= now]
         if "4Hour" in need:
@@ -539,7 +561,7 @@ def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None):
             out += straddle_trades(sid, name, d1, spread_now, pl.get(f"{sid}|{tf}|{name}") or {})
     extra = [x for x in extra if x[0] not in STRADDLE]
     jobs += [(sid, tf, shock_fn(sid, name, pl.get(f"{sid}|{tf}|{name}") or {}) if sid in SHOCK
-              else surprise_fn(sid, name, pl.get(f"{sid}|{tf}|{name}") or {}) if sid in SURPRISE else SCS.SCOUT[sid][1])
+              else surprise_fn(sid, name, pl.get(f"{sid}|{tf}|{name}") or {}) if sid in SURPRISE else rule_fn(sid))
              for sid, tf, n in extra if n == name and (tf == "5Min" or tf == "1Min" and d1 is not None or tf in hi)]
     for sid, tf, fn0 in jobs:
         d = d5 if tf == "5Min" else hi.get(tf) if tf in HI_TF else d1
@@ -561,11 +583,13 @@ def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None):
             continue
         net = C.apply(t, name, sp)
         off = pd.Timestamp(p_["off_from"]) if p_.get("off_from") else None   # a removed combo (card kind "remove")
+        on = pd.Timestamp(p_["on_from"]) if p_.get("on_from") else None      # a combo added mid-account: no older trade
         for k in range(len(t)):
             x, n_ = t.iloc[k], net.iloc[k]
-            if off is not None:
+            if off is not None or on is not None:
                 t0 = pd.Timestamp(x["time"])
-                if (t0.tz_localize("UTC") if t0.tzinfo is None else t0) >= off:
+                t0 = t0.tz_localize("UTC") if t0.tzinfo is None else t0
+                if off is not None and t0 >= off or on is not None and t0 < on:
                     continue
             open_ = x["reason"] == END
             risk = abs(float(x["entry_px"]) - float(x["stop_px"]))

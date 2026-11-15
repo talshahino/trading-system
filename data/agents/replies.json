@@ -2523,6 +2523,17 @@
    "from": "manager",
    "task": "טל, 15.11 (דחוף): מחשב הבוטים לא מצליח לפרסם חלק מהקבצים: host.json agent_errors 'bot1: publishing failed: 422 Unprocessable Entity .../git/blobs', ו־commit d66630ca0 'refused by GitHub: reports/agents/manager.json, reports/agents/bot3/cards.json'. מה שלא מתפרסם לא מגיע לאפליקציה ולמנהל. למצוא את הסיבה (ה־422 המלא בלוג: גודל? חסימת סודות - push protection? תו לא חוקי?) ולתקן ב־live/agents_host.py (למשל לפצל קובץ גדול כמו cards_rejected_N, או להקטין: לא לשמור כרטיסים שנדחו ב־cards.json - bot2 cards.json 20MB, bot7 15MB, manager.json 5.5MB), ולוודא שה־422 נעלם. נבדק כבר: 'new strategies: 0 combos tested' בבוטים אינו באג - כל הצירופים (46k בבוט 1, 32k בבוט 3, 9k בבוט 5...) כבר נבדקו בהרצות של GitHub ואין צירוף שמחכה; ה־'combos left' בבוטים 3-5 היו לפני שהתוצאות של GitHub נכנסו.",
    "status": {}
+  },
+  {
+   "id": "mgr1511host",
+   "at": "2026-11-15",
+   "bots": [
+    "manager"
+   ],
+   "by": "user",
+   "from": "manager",
+   "task": "דחוף (15.11 08:00): סוכני מחשב הבוטים (live/agents_host.py) לא פרסמו כלום מאז 04:41 UTC - host.json תקוע ב־04:40, manager_state.agents_host.light_at 04:40:58 ו־running true - בזמן שהבוטים עצמם חיים (מצבי live מ־05:58 UTC). הריצה הקלה כל 10 דקות נעצרה. למצוא למה (ריצת smart שלא חוזרת? נעילה? ההתקנה של 05:11 UTC - גרסה 231e244 עם machine() החדש ב־host_doc? - ביטלתי את סריקת התיקייה ב־4b634a8), לתקן, ולוודא ש־host.json מתעדכן שוב, כולל 'machine' (דיסק וזיכרון - טל שאל אם יש מספיק מקום).",
+   "status": {}
   }
  ],
  "eb3e3e8c550e": {

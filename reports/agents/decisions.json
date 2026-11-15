@@ -1,21 +1,32 @@
 {
- "updated": "2026-11-15T02:08:09+00:00",
+ "updated": "2026-11-15T02:22:47+00:00",
  "new": [
-  "c11ee09cf0fb",
-  "824d6b081c2a",
-  "9662fb400be6",
-  "9e5f73190de6",
-  "3ee79a5563b7",
-  "d021c4ffbe64",
-  "a9c788b6e3c3",
-  "39df260fab35",
-  "95d32e9bad83",
-  "8e22ccaf2630",
-  "285681e899aa",
-  "7f6025fe4ea9",
-  "d1dc0fbfa5d6"
+  "e40c3540bdea"
  ],
  "decisions": [
+  {
+   "id": "e40c3540bdea",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV28|15Min|AMZN",
+   "title": "TV28|15Min|AMZN: סיכון ×1.39 ← ×1 (ההעלאה חוזרת - רק 2 עסקאות בחי)",
+   "decision": "approved",
+   "by": "manager",
+   "read": false,
+   "undone": false,
+   "at": "2026-11-15T02:24:22+00:00",
+   "why": "המנהל: העלאת סיכון לפי החי רק מ־5 עסקאות בחי; ההעלאה ל־×1.39 נעשתה מ־2 - עסקה אחת טובה היא מזל, לא הוכחה. חוזר לסיכון המאושר.",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "edge_risk": true,
+   "action": {
+    "bot": "bot3",
+    "combo": "TV28|15Min|AMZN",
+    "kind": "mult",
+    "value": 1.0,
+    "prev": 1.39
+   }
+  },
   {
    "id": "285681e899aa",
    "bot": "bot3",

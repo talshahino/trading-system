@@ -123,9 +123,26 @@ def _family_pick(cards, c):
     # the family is the strategy on every timeframe and instrument the bot tested (manager, 14.11.2026 night: bot 5 / 6
     # test 4 instruments per timeframe, so a family of one timeframe never reached 5 - SC071|15Min|US30 was approved at
     # t 0.33 on 28 trades while SC071 on its 8 pairs lost -101R to 2025; bot 7's SC043|4Hour|EURJPY likewise, -374R)
+    mode = user_rules().get("luck_filter", "class")
+    if mode == "off":
+        return None
     fam = combo.split("|", 1)[0] + "|"
+    # by asset class (user, 15.11.2026: "a gold strategy should not be judged by its losses on stocks" - metals
+    # against metals, indices against indices, FX against FX, stocks against stocks); "all" = every instrument as
+    # before; "off" = no luck filter. The user's check on 21.11.2026 decides between "class" and "off".
+    try:
+        from agents import ftmo_universe as U
+        cls = U.CLASS.get(combo.split("|")[2])
+    except Exception:  # noqa: BLE001
+        U, cls = None, None
+
+    def same_class(x):
+        xc = ((x.get("change") or {}).get("combo") or "")
+        if mode != "class" or U is None or cls is None or xc.count("|") != 2:
+            return True
+        return U.CLASS.get(xc.split("|")[2]) == cls
     tr = [x.get("train") or {} for x in cards
-          if x.get("kind") == "new" and ((x.get("change") or {}).get("combo") or "").startswith(fam)]
+          if x.get("kind") == "new" and ((x.get("change") or {}).get("combo") or "").startswith(fam) and same_class(x)]
     if len(tr) < FAMILY_MIN:
         return None
     pooled = sum(_total(s) or 0.0 for s in tr)
@@ -136,7 +153,7 @@ def _family_pick(cards, c):
     bar = max(FAMILY_T, math.sqrt(2 * math.log(len(tr))) - 0.5)
     if pooled >= 0 or (own_t is not None and own_t >= bar):
         return None
-    return (f"נבחר מתוך {len(tr)} מכשירים / טווחי זמן של אותה אסטרטגיה שיחד הפסידו עד 2025 ({pooled:+.1f}R), "
+    return (f"נבחר מתוך {len(tr)} מכשירים / טווחי זמן של אותה אסטרטגיה{' מאותו סוג נכס' if mode == 'class' else ''} שיחד הפסידו עד 2025 ({pooled:+.1f}R), "
             f"והתוצאה שלו עד 2025 לא בולטת מעל המזל (t {own_t if own_t is not None else '-'}, צריך {bar:.2f}) - כנראה מזל, מחכה")
 
 

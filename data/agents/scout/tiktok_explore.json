@@ -3722,6 +3722,56 @@
    "at": "2026-11-15T04:24:26Z",
    "videos": 2,
    "ideas": 1
+  },
+  "opening range breakout": {
+   "at": "2026-11-15T06:34:37Z",
+   "videos": 0,
+   "ideas": 0
+  },
+  "gap strategy": {
+   "at": "2026-11-15T06:34:37Z",
+   "videos": 0,
+   "ideas": 1
+  },
+  "fair value gap": {
+   "at": "2026-11-15T06:34:37Z",
+   "videos": 0,
+   "ideas": 1
+  },
+  "inverse fvg": {
+   "at": "2026-11-15T06:34:37Z",
+   "videos": 0,
+   "ideas": 0
+  },
+  "order block": {
+   "at": "2026-11-15T06:34:37Z",
+   "videos": 0,
+   "ideas": 1
+  },
+  "breaker block": {
+   "at": "2026-11-15T06:34:37Z",
+   "videos": 0,
+   "ideas": 0
+  },
+  "liquidity sweep": {
+   "at": "2026-11-15T06:34:37Z",
+   "videos": 0,
+   "ideas": 1
+  },
+  "stop hunt": {
+   "at": "2026-11-15T06:34:37Z",
+   "videos": 0,
+   "ideas": 0
+  },
+  "market structure shift": {
+   "at": "2026-11-15T06:34:37Z",
+   "videos": 0,
+   "ideas": 0
+  },
+  "change of character": {
+   "at": "2026-11-15T06:34:37Z",
+   "videos": 0,
+   "ideas": 0
   }
  },
  "videos": {
@@ -3882,6 +3932,46 @@
    "source": "https://www.tiktok.com/@deltatrendtrading/video/7501017829412441374",
    "at": "2026-11-15T04:24:26Z",
    "state": "new"
+  },
+  {
+   "id": "TT-s-gap-ictchartist",
+   "kind": "strategy",
+   "name": "HTF order block hit twice -> breakaway gap + iFVG -> sell the -FVG",
+   "rules": "(ICT & SMC CHARTIST caption) Higher-timeframe order block touched twice; then a breakaway gap (FVG) plus an inverted FVG in the direction away from it; entry: sell the bearish FVG (buy the bullish mirror), stop above the high; target the old low (liquidity); add on the next FVG retest (IOFED); take profit at an exhaustion gap at the HTF rejection block. Timeframes not stated (HTF 1h/4h, entry 5m/15m).",
+   "markets": "indices, forex",
+   "source": "https://www.tiktok.com/search/video?q=gap%20strategy",
+   "at": "2026-11-15T06:34:37Z",
+   "state": "new"
+  },
+  {
+   "id": "TT-s-obvalid-ictchartist",
+   "kind": "filter",
+   "name": "Valid order block: swept the previous high/low + left an FVG + broke structure",
+   "rules": "(ICT & SMC CHARTIST) A bearish OB counts only if (1) it swept the previous swing high, (2) the move away left a fair value gap, (3) price closed below the last low (BMS); mirror for bullish. Entry at the wick / body / 50% of the OB (test all three), stop beyond the wick. Use as a filter on every order-block strategy in the library.",
+   "markets": "all",
+   "source": "https://www.tiktok.com/search/video?q=order%20block",
+   "at": "2026-11-15T06:34:37Z",
+   "state": "new"
+  },
+  {
+   "id": "TT-s-fvg-vs-breakaway",
+   "kind": "filter",
+   "name": "FVG vs breakaway gap by where candle 3 closes",
+   "rules": "(Adem OnChain) Candle 3 closes inside candle 2's range -> fair value gap, expect a fill / retest first (trade the retest); candle 3 closes beyond candle 2's high (low) -> breakaway gap, strong trend without retrace (do not wait for the retest; trade continuation or skip). Test both as filters on FVG strategies (relates to fvg_quality but a different rule).",
+   "markets": "all",
+   "source": "https://www.tiktok.com/search/video?q=fair%20value%20gap",
+   "at": "2026-11-15T06:34:37Z",
+   "state": "new"
+  },
+  {
+   "id": "TT-s-swing-significance",
+   "kind": "filter",
+   "name": "Only sweeps of significant swings",
+   "rules": "(itsnathanoreilly: 'not every swing high is equally important for a liquidity sweep') Grade the swept swing: higher-timeframe swing / swing confirmed by N bars each side (N 5-20) / swing with equal highs / prior day or session extreme; allow sweep-reversal entries only for the top grades; test the grade threshold as a filter on all sweep strategies.",
+   "markets": "all",
+   "source": "https://www.tiktok.com/search/video?q=liquidity%20sweep",
+   "at": "2026-11-15T06:34:37Z",
+   "state": "new"
   }
  ],
  "runs": [
@@ -3892,6 +3982,14 @@
    "ideas": 3,
    "throttled": false,
    "note": "run from the main conversation (scheduled sessions have no Chrome); /search/video works without login, /search shows an error; most captions have no rules (the rules are spoken in the video)"
+  },
+  {
+   "at": "2026-11-15T06:34:37Z",
+   "searches": 10,
+   "videos": 0,
+   "ideas": 4,
+   "throttled": false,
+   "note": "result titles/captions read from the search page; links did not render this run; heavily covered ICT concepts - few new rules"
   }
  ],
  "finished_at": null,

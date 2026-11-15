@@ -1,13 +1,100 @@
 {
- "updated": "2026-11-15T12:25:50+00:00",
+ "updated": "2026-11-15T12:42:14+00:00",
  "new": [
-  "2858537d26e5",
-  "99624fe8ceab",
-  "2eb6e1c8c7f7",
-  "7bc4608559ac",
-  "6016f5b23106"
+  "fbe4d470262b",
+  "4bbd097d30ef",
+  "8799ced6cf96",
+  "3cc42bf97e52"
  ],
  "decisions": [
+  {
+   "id": "fbe4d470262b",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SE02|1Hour|USDJPY",
+   "title": "SE02|1Hour|USDJPY: סיכון ×0.9",
+   "decision": "approved",
+   "why": "רווח ממוצע -0.37R מול -0.07R של הבוט, יציבות 0.67, 8 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "SE02|1Hour|USDJPY",
+    "kind": "mult",
+    "value": 0.9,
+    "prev": 0.95
+   },
+   "at": "2026-11-15T12:42:14+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "4bbd097d30ef",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "sl",
+   "combo": "TV56|4Hour|USDJPY",
+   "title": "TV56|4Hour|USDJPY: סטופ",
+   "decision": "approved",
+   "why": "סטופ ×0.6: בבקטסט +0.10R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "TV56|4Hour|USDJPY",
+    "kind": "sl",
+    "value": 0.6,
+    "prev": null
+   },
+   "at": "2026-11-15T12:42:14+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "8799ced6cf96",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "sl",
+   "combo": "TV56|4Hour|USDJPY",
+   "title": "TV56|4Hour|USDJPY: סטופ",
+   "decision": "approved",
+   "why": "סטופ ×0.6: בבקטסט +0.10R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot3",
+    "combo": "TV56|4Hour|USDJPY",
+    "kind": "sl",
+    "value": 0.6,
+    "prev": null
+   },
+   "at": "2026-11-15T12:42:14+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "3cc42bf97e52",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "sl",
+   "combo": "TV56|4Hour|USDJPY",
+   "title": "TV56|4Hour|USDJPY: סטופ",
+   "decision": "approved",
+   "why": "סטופ ×0.6: בבקטסט +0.10R ו־+0.12R לעסקה בשני החצאים, בדמו עוד מעט עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot4",
+    "combo": "TV56|4Hour|USDJPY",
+    "kind": "sl",
+    "value": 0.6,
+    "prev": null
+   },
+   "at": "2026-11-15T12:42:14+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "2858537d26e5",
    "bot": "bot5",

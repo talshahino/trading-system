@@ -383,9 +383,19 @@
    {
     "combo": "TV62|1Hour|USDCAD",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.12",
+      "decision": "c775d9cf4648",
+      "at": "2026-11-15T22:09:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.9,
+      "value": 0.12
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV10|1Hour|US100",
@@ -666,10 +676,9 @@
     "cut_only": false
    }
   ],
-  "open": [
-   "TV62|1Hour|USDCAD"
-  ],
+  "open": [],
   "cut_only": [
+   "TV62|1Hour|USDCAD",
    "TV10|1Hour|US100",
    "TV38|15Min|GOOG",
    "TV29|4Hour|US30",
@@ -677,6 +686,6 @@
    "TV33|15Min|MSTR"
   ],
   "total_month_pct": 1.74,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 6 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

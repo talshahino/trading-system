@@ -286,20 +286,30 @@
    {
     "combo": "TV62|1Hour|USDCAD",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.12",
+      "decision": "c775d9cf4648",
+      "at": "2026-11-15T22:09:46+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.9,
+      "value": 0.12
+     }
+    ],
+    "open": false,
+    "cut_only": true
    }
   ],
   "open": [
-   "TT56|1Hour|XOM",
-   "TV62|1Hour|USDCAD"
+   "TT56|1Hour|XOM"
   ],
   "cut_only": [
    "TV10|1Hour|US100",
-   "TT56|1Hour|GME"
+   "TT56|1Hour|GME",
+   "TV62|1Hour|USDCAD"
   ],
   "total_month_pct": 0.0,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

@@ -48,6 +48,37 @@ def _read(p, d):
         return d
 
 
+def _title_combo(title):
+    m = re.search(r"([A-Za-z0-9_]+\|[0-9A-Za-z]+\|[A-Za-z0-9_./]+)", str(title or ""))
+    return m.group(1) if m else None
+
+
+def _clean_star_combos(decisions, have, at, adds):
+    """Once per bad decision: a star step whose combo kept the title's "⭐ " (before 15.11.2026) is issued again on the
+    real combo, linked to the same card, so the lowered risk the star meant is applied at last."""
+    from agents import portfolio_check as PC
+    for x in decisions:
+        a = x.get("action") or {}
+        c = str(a.get("combo") or "")
+        if not (x.get("star_of") and a.get("kind") == "mult" and c and not c[0].isalnum()):
+            continue
+        sid = _did("starfix", x["id"])
+        clean = _title_combo(c)
+        if sid in have or not clean:
+            continue
+        cur = float(PC.mults(x["bot"]).get(clean, 1.0) or 1.0)
+        have.add(sid)
+        if cur <= float(a.get("value") or 1.0) + 1e-9:
+            continue                                       # already at or under the star's risk
+        adds.append({"id": sid, "bot": x["bot"], "type": "risk", "kind": "mult", "combo": clean,
+                     "title": f"⭐ {clean}: סיכון ×{a['value']:g} (אולי מזל) - תיקון שם",
+                     "decision": "approved", "why": x.get("why"), "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+                     "star_of": x["star_of"], "star_step": x.get("star_step"),
+                     "action": {"bot": x["bot"], "combo": clean, "kind": "mult", "value": a["value"],
+                                "prev": None if cur == 1.0 else cur}, "at": at, "by": "manager", "read": False,
+                     "undone": False})
+
+
 def _did(kind, key):
     import hashlib
     return hashlib.sha1(f"{kind}|{key}".encode()).hexdigest()[:12]
@@ -94,7 +125,9 @@ def watched(decisions, undo, replies, cards):
             if b and b["family"] in TRACKS:
                 combo = TRACKS[b["family"]](b)               # bots 5-6: all the trades of the changed track
             else:
-                combo = ((c or {}).get("change") or {}).get("combo") or (d["title"].split(":")[0].strip() if d["title"].count("|") >= 2 else None)
+                # the combo out of the title by its shape (manager, 15.11.2026: a starred card's title starts with "⭐ " -
+                # split(":") gave "⭐ SC043|4Hour|EURJPY", the star's risk went to a combo no bot has and was never applied)
+                combo = ((c or {}).get("change") or {}).get("combo") or _title_combo(d["title"])
             if not combo or (combo.count("|") != 2 and not combo.startswith("re:")):
                 continue
             e = expected_card(c) if c else None
@@ -250,6 +283,10 @@ def run(now=None):
     trades = {}
     rows, reverts, adds = [], [], []
     have = {x["id"] for x in decisions}
+    try:
+        _clean_star_combos(decisions, have, at, adds)
+    except Exception as e:  # noqa: BLE001
+        print(f"watch: star combo repair failed: {e}")
     for d, bot, combo, since, e in watched(decisions, undo, replies, cards):
         old = prev.get(d["id"]) or {}
         if old.get("done"):

@@ -1340,8 +1340,11 @@ def main():
                               ("notes", note_runs, 0.2),              # the user's notes on live trades + the tasks of 14.11
                               ("straddle", straddle_runs, 0.05),       # EV04 on bot 5's instruments (tal1411strad, 14.11.2026)
                               ("shared_exit", shared_runs, 0.15),     # the shared exit on the whole bot (user, 13.11.2026)
-                              ("stability", stab_runs, 0.1),          # the low-MIN_RR tracks with MIN_RR 0.5 / 1.0
-                              ("ftmo_pairs", ftmo_runs, 0.1)):        # each pair on FTMO's break rule, alone and + REARM (b6to5ftmo)
+                              ("stability", stab_runs, 0.1)):         # the low-MIN_RR tracks with MIN_RR 0.5 / 1.0
+            # the steps' shares add up to 1.0 of what was left: by 15.11.2026 they took all of it (3,450 of ~3,600 s),
+            # the wide test ran 0 combos and the indices' never-ending search (TG.run) got no time at all - the steps
+            # now take at most 70% of what was left, 30% stays for the wide test and the search (manager, 15.11.2026)
+            share *= 0.7
             t1 = time.time()
             try:
                 STEPS[nm] = {"done": fn(tal_left * share)}

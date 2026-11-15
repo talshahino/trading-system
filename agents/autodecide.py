@@ -124,7 +124,7 @@ def _sym_of(combo):
 
 def _title_combo(title):
     import re
-    m = re.search(r"([A-Za-z0-9_]+\|[0-9A-Za-z]+\|[A-Za-z0-9_.]+)", str(title or ""))
+    m = re.search(r"([A-Za-z0-9_]+\|[0-9A-Za-z]+\|[A-Za-z0-9_./]+)", str(title or ""))
     return m.group(1) if m else None
 
 

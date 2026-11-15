@@ -1,7 +1,191 @@
 {
- "updated": "2026-11-15T11:06:51+00:00",
- "new": [],
+ "updated": "2026-11-15T11:20:16+00:00",
+ "new": [
+  "0c0b1fcebfb0",
+  "a861444dba0d",
+  "373a73fdd369",
+  "3cd2159a3e1f",
+  "d3ec52c65ec1"
+ ],
  "decisions": [
+  {
+   "id": "0c0b1fcebfb0",
+   "bot": "bot4",
+   "type": "card",
+   "card": "014247ee7d6d",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "BK07|1Hour|EURUSD: רק בתנודתיות נמוכה",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.11% → -2.11%, ירידה 5.79% → 6.04%) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2568,
+     "total": 107.45,
+     "worst_day": -2.11,
+     "max_dd": 5.79,
+     "near_days": 0,
+     "max_open": 4.8,
+     "max_side": 3.96,
+     "guard_cut": 104,
+     "guard_skipped": 4
+    },
+    "after": {
+     "trades": 2550,
+     "total": 109.95,
+     "worst_day": -2.11,
+     "max_dd": 6.04,
+     "near_days": 0,
+     "max_open": 4.8,
+     "max_side": 3.96,
+     "guard_cut": 99,
+     "guard_skipped": 4
+    }
+   },
+   "at": "2026-11-15T11:20:16+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "a861444dba0d",
+   "bot": "bot4",
+   "type": "card",
+   "card": "d2920e6938ce",
+   "kind": "info",
+   "tier": "regular",
+   "title": "SC083|1Hour|GBPJPY: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-15T11:20:16+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "373a73fdd369",
+   "bot": "bot4",
+   "type": "card",
+   "card": "591aff6770aa",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ BK05|15Min|EURUSD: v_sqzm",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.15R לעסקה, 58.0 עסקאות אפקטיביות, +0.04R מעל המצב הקיים) · בבוט השלם על 2026: רווח +107.45% → +108.14%, בלי יותר סיכון (יום גרוע -2.11%, ירידה 5.63%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 2568,
+     "total": 107.45,
+     "worst_day": -2.11,
+     "max_dd": 5.79,
+     "near_days": 0,
+     "max_open": 4.8,
+     "max_side": 3.96,
+     "guard_cut": 104,
+     "guard_skipped": 4
+    },
+    "after": {
+     "trades": 2565,
+     "total": 108.14,
+     "worst_day": -2.11,
+     "max_dd": 5.63,
+     "near_days": 0,
+     "max_open": 4.8,
+     "max_side": 3.96,
+     "guard_cut": 103,
+     "guard_skipped": 4
+    }
+   },
+   "at": "2026-11-15T11:20:16+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "3cd2159a3e1f",
+   "bot": "bot4",
+   "type": "card",
+   "card": "3d952baf9fa3",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC361|1Hour|XAUUSD · Trend Intensity Index over 80 / under 20, out through 50, 2 ATR, 3R (Pee)",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.11% → -2.23%, ירידה 5.63% → 6.46%) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2565,
+     "total": 108.14,
+     "worst_day": -2.11,
+     "max_dd": 5.63,
+     "near_days": 0,
+     "max_open": 4.8,
+     "max_side": 3.96,
+     "guard_cut": 103,
+     "guard_skipped": 4
+    },
+    "after": {
+     "trades": 2627,
+     "total": 109.21,
+     "worst_day": -2.23,
+     "max_dd": 6.46,
+     "near_days": 0,
+     "max_open": 5.25,
+     "max_side": 4.06,
+     "guard_cut": 134,
+     "guard_skipped": 6
+    }
+   },
+   "at": "2026-11-15T11:20:16+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "d3ec52c65ec1",
+   "bot": "bot4",
+   "type": "card",
+   "card": "eb10a2eb3e84",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC333|1Hour|GBPJPY · Chande Kroll Trend: close back over Lowest(21) + 3 ATR above the SMA21, out under Highest(21) - 3 ATR, long only (StockSharp 0611)",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+107.86% מול +108.14% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2565,
+     "total": 108.14,
+     "worst_day": -2.11,
+     "max_dd": 5.63,
+     "near_days": 0,
+     "max_open": 4.8,
+     "max_side": 3.96,
+     "guard_cut": 103,
+     "guard_skipped": 4
+    },
+    "after": {
+     "trades": 2665,
+     "total": 107.86,
+     "worst_day": -2.5,
+     "max_dd": 5.87,
+     "near_days": 0,
+     "max_open": 4.9,
+     "max_side": 4.05,
+     "guard_cut": 162,
+     "guard_skipped": 10
+    }
+   },
+   "at": "2026-11-15T11:20:16+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "aef24472dcbc",
    "bot": "bot3",

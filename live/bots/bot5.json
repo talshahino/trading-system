@@ -54,12 +54,14 @@
   "scout:BK07|15Min|US100": 0.0028,
   "scout:BK07|15Min|EURUSD": 0.0028,
   "scout:SC056|15Min|GBPUSD": 0.0028,
-  "scout:QC04|15Min|EURUSD": 0.0028,
-  "scout:SC402|15Min|XAUUSD": 0.0028,
-  "scout:SC333|15Min|XAUUSD": 0.0028,
-  "scout:SC326|15Min|USDCHF": 0.0028,
-  "scout:SC326|15Min|USDJPY": 0.0028,
-  "scout:SC311|15Min|GER40": 0.0028
+  "scout:QC04|15Min|EURUSD": 0.00126,
+  "scout:SC402|15Min|XAUUSD": 0.00126,
+  "scout:SC333|15Min|XAUUSD": 0.00126,
+  "scout:SC326|15Min|USDCHF": 0.00126,
+  "scout:SC326|15Min|USDJPY": 0.00126,
+  "scout:SC311|15Min|GER40": 0.00126,
+  "scout:SC326|5Min|GBPUSD": 0.0018,
+  "scout:SC402|5Min|XAUUSD": 0.0018
  },
  "changes": {
   "a0a49a4ffc34": {
@@ -608,6 +610,46 @@
    "combo": "SC311|15Min|GER40",
    "before": "__none__",
    "star_risk_before": "__none__"
+  },
+  "575619755bcd": {
+   "family": "risk",
+   "track": "scout:QC04|15Min|EURUSD",
+   "before": 0.0028
+  },
+  "cd0db487b431": {
+   "family": "risk",
+   "track": "scout:SC326|5Min|GBPUSD",
+   "before": "__none__"
+  },
+  "919f685239af": {
+   "family": "risk",
+   "track": "scout:SC402|5Min|XAUUSD",
+   "before": "__none__"
+  },
+  "29a6155f4d80": {
+   "family": "risk",
+   "track": "scout:SC402|15Min|XAUUSD",
+   "before": 0.0028
+  },
+  "b956c132ae17": {
+   "family": "risk",
+   "track": "scout:SC326|15Min|USDCHF",
+   "before": 0.0028
+  },
+  "7a1c4d2f095f": {
+   "family": "risk",
+   "track": "scout:SC326|15Min|USDJPY",
+   "before": 0.0028
+  },
+  "ae95ffadb474": {
+   "family": "risk",
+   "track": "scout:SC311|15Min|GER40",
+   "before": 0.0028
+  },
+  "cf8cb80044ba": {
+   "family": "risk",
+   "track": "scout:SC333|15Min|XAUUSD",
+   "before": 0.0028
   }
  },
  "tal_tracks": {

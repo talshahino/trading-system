@@ -94,12 +94,21 @@ def mults(bot):
     return ((RIO.live_json("live/manager_state.json").get("risk") or {}).get(bot) or {}).get("mult") or {}
 
 
+_NEW = {}                # (bot, combo) -> the scout result's doc, read once per process
+
+
 def exp(bot, fam, combo):
     from agent_portfolio import stale_source
     f = ROOT / "reports" / "agents" / bot / "exp" / f"{fam}_{combo.replace('|', '_').replace('/', '-')}.json"
     if fam == "new":                         # the scout's results: a single file or the pack (agents/exp_pack.py)
-        from agents import exp_pack as XP
-        d = XP.read(f.parent, f.name)
+        # read once per process (bots 1-4 smart agent, 15.11.2026: the manager checks every pending new card against
+        # the bot with all the others pending - bot 1 had dozens - and each read decompressed a whole pack shard
+        # again, the shard cache holding 3 of them; the manager's run went over 28 minutes and never finished)
+        key = (bot, combo)
+        if key not in _NEW:
+            from agents import exp_pack as XP
+            _NEW[key] = XP.read(f.parent, f.name)
+        d = _NEW[key]
     else:
         d = _read(f)
     if stale_source(d):
@@ -351,11 +360,12 @@ def check(bot, card, pending=None):
     if bot not in BOTS or card.get("kind") not in ("improve", "new"):
         return None
     cfg = bot_cfg(bot)
-    combo, tr = trades_of_card(bot, card)
+    combo = (card.get("change") or {}).get("combo")
     if combo and combo.count("|") == 2 and combo.split("|")[2] in off_symbols(bot, cfg):
         # an instrument the bot's server cannot trade: the change would never trade (off_server)
         return {"ok": False, "mult": None, "combo": combo, "before": None, "after": None, "missing": [],
                 "why": f"המכשיר {combo.split('|')[2]} לא קיים בשרת של הבוט (MetaQuotes) - האסטרטגיה לא תסחר בו"}
+    combo, tr = trades_of_card(bot, card)
     if not combo or tr is None:
         return None
     book, missing = book_now(bot, cfg)

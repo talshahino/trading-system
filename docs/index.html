@@ -253,6 +253,7 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .tr .tg{display:grid;grid-template-columns:22px minmax(0,1.25fr) minmax(0,1fr) auto 14px;gap:10px;align-items:center}
 .tr .d{font-size:12.5px;line-height:1.35;font-family:var(--mono);direction:ltr;text-align:right}
 .tr .s{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr .s .ss{font-weight:500;font-size:12px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis}
 .tr .pl{font-family:var(--mono);font-weight:700;font-size:15.5px;direction:ltr;unicode-bidi:isolate}
 .arr{width:20px;height:20px}
 .pb{margin:12px 2px 2px;direction:ltr}
@@ -1483,9 +1484,18 @@ function bar(p) {
       <span class="r pos" style="top:0;line-height:1.35;text-align:right">TP ${tp || "—"}<br><b>${tp ? usdL(tpUsd) : "—"}</b></span></div>
     <div class="way">${way}${be ? ' · <span class="pos">הסטופ בנקודת איזון ומעלה</span>' : ""}</div></div>`;
 }
-const trRow = (side, t, sym, pl, key, extra = "") => `<div class="tr" data-t="${esc(key)}"><div class="tg">${side === "buy" ? ICON.up : ICON.down}
+/* the strategy and the timeframe the trade ENTERED on, under the instrument (user, 16.11.2026). Bots 5-6 send entry_tf
+   for the gap tracks (their combo name carries the detection chart); everyone else's combo is "strategy|timeframe|instrument" */
+const STRAT_HE = {TAL: "שיטת הגאפ", OWN: "השיטה שלך", FUT: "השיטה שלך"};
+function stratLine(x) {
+  const p = String((x && x.combo) || "").split("|");
+  if (p.length < 3) return "";
+  const tf = x.entry_tf ? (TFHE[x.entry_tf] || x.entry_tf) : (p[0] === "TAL" ? (TFHE[(p[1].match(/^\d+(?:Min|Hour)(\d+[mh])$/) || [])[1]] || "") : (TF[p[1]] || p[1]));
+  return `<div class="ss">${esc(STRAT_HE[p[0]] || p[0])}${tf ? " · כניסה " + esc(tf) : ""}</div>`;
+}
+const trRow = (side, t, sym, pl, key, extra = "", x = null) => `<div class="tr" data-t="${esc(key)}"><div class="tg">${side === "buy" ? ICON.up : ICON.down}
   <div class="d">${t ? dOnly(t) + "<br>" + tOnly(t) : "—"}</div>
-  <div class="s"><bdi>${esc(sym)}</bdi></div><div class="pl ${cls(pl)}">${usd(pl, true)}</div><span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></div>${extra}</div>`;
+  <div class="s"><bdi>${esc(sym)}</bdi>${stratLine(x)}</div><div class="pl ${cls(pl)}">${usd(pl, true)}</div><span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></span></div>${extra}</div>`;
 const TH = '<div class="th"><span></span><span>פתיחה</span><span>נכס</span><span>רווח/הפסד</span><span></span></div>';
 function filtered(s) {
   const f = UI.filt, q = f.q.trim().toLowerCase(), now = Date.now();
@@ -1496,7 +1506,7 @@ function filtered(s) {
 }
 function trades(s, a, light) {
   const can = viaMgr(UI.cur) && !a.archived, ps = s.positions || [];
-  const open = ps.map(p => `<div class="tcard">${trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p))}
+  const open = ps.map(p => `<div class="tcard">${trRow(p.side || (/קני/.test(p.dir) ? "buy" : "sell"), p.since, p.symbol, p.pnl, "o" + (p.ticket || p.since), bar(p), p)}
     ${p.ticket ? `<div class="tfoot">${slider("t:" + p.ticket, `גרור לסגירת העסקה ב־${esc(p.symbol)}`, false, can)}</div>` : ""}</div>`).join("");
   const openH = `<div class="h4">עסקאות פעילות <span class="badge">${ps.length}</span></div>
     <div class="tcards">${open || '<div class="empty">אין עסקאות פעילות כרגע.</div>'}</div>
@@ -1511,7 +1521,7 @@ function trades(s, a, light) {
     <div class="tl" id="trClosed"></div>`;
   const draw = () => {
     const list = filtered(s);
-    $("trClosed").innerHTML = TH + (list.length ? list.slice(0, 300).map(c => trRow(c.side, c.open_t || c.close_t, c.symbol, c.net, "c" + c.id)).join("") : '<div class="empty" style="border-radius:0">אין עסקאות סגורות שמתאימות.</div>');
+    $("trClosed").innerHTML = TH + (list.length ? list.slice(0, 300).map(c => trRow(c.side, c.open_t || c.close_t, c.symbol, c.net, "c" + c.id, "", c)).join("") : '<div class="empty" style="border-radius:0">אין עסקאות סגורות שמתאימות.</div>');
     $("tfb").classList.toggle("on", UI.filt.day !== "all" || UI.filt.side !== "all" || UI.filt.res !== "all");
   };
   const segs = () => {
@@ -2470,6 +2480,45 @@ $("pop").onclick = e => { if (e.target.id === "pop" || e.target.id === "popOk") 
 
 addEventListener("resize", () => { if ($("eqc") && found[UI.cur]) eqChart(found[UI.cur], accBy(UI.cur)); });
 tick(); setInterval(tick, 60000); setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
+
+/* the phone's back button (user, 16.11.2026: Android's back closed the app) - it goes one screen back inside the app,
+   like the arrow next to the bot's name: a message / question box, then the topmost page, then a side panel, then the
+   bot's screen back to the list. Only on the main list does back leave the app. */
+(function () {
+  const isOn = id => $(id) && $(id).classList.contains("on");
+  function step() {
+    if (isOn("pop")) { $("pop").classList.remove("on"); return true; }
+    if (isOn("ask")) { $("askNo") ? $("askNo").click() : $("ask").classList.remove("on"); return true; }
+    if (isOn("logSheet")) { $("logSheet").classList.remove("on"); return true; }
+    const pages = [...document.querySelectorAll(".page.on")];
+    if (pages.length) {
+      const z = el => +getComputedStyle(el).zIndex || 0;
+      const top = pages.reduce((a, b) => (z(b) >= z(a) ? b : a));
+      const b = top.querySelector(".ph .back");
+      if (b) b.click(); else top.classList.remove("on");
+      return true;
+    }
+    if (isOn("addDrawer")) { panel("addDrawer", false); return true; }
+    if (isOn("drawer")) {
+      const b = document.querySelector("#drawer .back[data-go]");
+      if (b && UI.view !== "list" && UI.view !== "det") { b.click(); return true; }
+      drawer(false); return true;
+    }
+    if (UI.view === "det") { $("dBack").click(); return true; }
+    if (UI.view && UI.view !== "list") { UI.view = "list"; showAcc(); scrollTo(0, 0); return true; }
+    return false;
+  }
+  try {
+    history.replaceState({tt: "root"}, "");
+    history.pushState({tt: "app"}, "");
+    addEventListener("popstate", () => {
+      let did = false;
+      try { did = step(); } catch (e) { did = false; }
+      if (did) history.pushState({tt: "app"}, "");      // stay in the app, ready for the next back
+      else history.back();                               // the main list: back leaves the app
+    });
+  } catch (e) { /* no history API: the back arrows still work */ }
+})();
 </script>
 </body>
 </html>

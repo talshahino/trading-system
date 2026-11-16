@@ -899,6 +899,7 @@ def fut_state(fa, ftrades, fseen, src):
                        f"{FA.TAL_COMBO[t['trk']]}|{t['symbol']}" if t.get("trk") in FA.TAL_COMBO
                        else f"FUT|{'1Min' if t.get('trk') == 'v1m' else '15Min'}|{t['symbol']}")
     lots = lambda t: f"{t['n']} {t['contract']}"  # noqa: E731
+    ent6 = lambda t: (FA.TAL_TRACKS[t["trk"]][0][1] if t.get("trk") in FA.TAL_TRACKS else None)  # noqa: E731 - the entry chart
     rs5 = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "v5"]
     rs1 = [t["r"] for t in closed if t.get("r") is not None and t["trk"] == "v1m"]
     rst = [t["r"] for t in closed if t.get("r") is not None and t["trk"] in FA.TAL_COMBO]
@@ -921,7 +922,7 @@ def fut_state(fa, ftrades, fseen, src):
                         "tal": {"closed": len(rst), "sum_r": round(float(np.sum(rst)), 2) if rst else 0.0},
                         "skipped": sum(1 for t in closed if t.get("skipped") and t["skipped"] != "before")},
             "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
-                           "combo": combo(t), "symbol": t["symbol"], "lots": lots(t), "open": t["entry"],
+                           "combo": combo(t), "entry_tf": ent6(t), "symbol": t["symbol"], "lots": lots(t), "open": t["entry"],
                            "now": t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
                            "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
                            "sl_usd": -(t.get("risk_usd") or 0), "tp_usd": (t.get("risk_usd") or 0) * (t.get("rr") or 0),
@@ -929,7 +930,7 @@ def fut_state(fa, ftrades, fseen, src):
                           for t in live_ if t["status"] == "open" and t.get("n")],
             "trades": [{"time": t["exit_time"], "combo": combo(t), "symbol": t["symbol"], "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                         "lots": lots(t), "price": t["exit"], "pnl": t["pnl"], "why": t.get("reason")} for t in counted],
-            "closed": [{"id": t["id"], "combo": combo(t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
+            "closed": [{"id": t["id"], "combo": combo(t), "entry_tf": ent6(t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
                         "lots": lots(t), "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
                         "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": None, "mfe": None,
                         "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
@@ -1321,13 +1322,16 @@ def main():
         combo = lambda n, t=None: (scout5_combo(t["tal"]) if scout5_combo((t or {}).get("tal"))  # noqa: E731
                                    else f"TAL|{tal5_tf(t['tal'])}|{n}" if (t or {}).get("tal")
                                    else f"OWN|{'1Min' if (t or {}).get('v1m') else '15Min'}|{n}")
+        # the timeframe the trade ENTERS on (user, 16.11.2026: the app shows each trade's strategy and entry timeframe -
+        # for the gap tracks the entry chart, not the detection chart the combo name carries)
+        ent = lambda t: (TAL5[t["tal"]][0][1] if (t or {}).get("tal") in TAL5 and not scout5_combo(t["tal"]) else None)  # noqa: E731
         counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
         state.update({"account": "וירטואלי · שיטת הגאפ של טל", "server": f"צפייה בלבד · בלי כסף · סיכון {RISK_TAL5 * 100:.2f}% לעסקה", "initial": acc["initial"], "risk": RISK_TAL5,
                       "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
                       "halted_until": None, "combos": [f"TAL|{tal5_tf(k)}|{n}" for k in TAL5 for n in (TAL5_SYMS.get(k) or TAL5_SYMBOLS)] + sorted(SCOUT5), "started": acc["started"], "withdrawals": [],
                       "equity_curve": ec, "lows": {},
                       "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
-                                     "combo": combo(t["symbol"], t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
+                                     "combo": combo(t["symbol"], t), "entry_tf": ent(t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
                                      "now": t.get("px_now") or t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
                                      "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
                                      # at the stop / target WITH the costs, as the P&L shown next to them (16.11.2026)
@@ -1338,7 +1342,7 @@ def main():
                       "trades": [{"time": t["exit_time"], "combo": combo(t["symbol"], t), "symbol": t["symbol"],
                                   "dir": "קנייה" if t["dir"] > 0 else "מכירה", "lots": "וירטואלי", "price": t["exit"], "pnl": t["pnl"],
                                   "why": t.get("reason")} for t in counted],
-                      "closed": [{"id": t["id"], "combo": combo(t["symbol"], t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
+                      "closed": [{"id": t["id"], "combo": combo(t["symbol"], t), "entry_tf": ent(t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
                                   "lots": "וירטואלי", "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
                                   "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": None, "mfe": None,
                                   "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",

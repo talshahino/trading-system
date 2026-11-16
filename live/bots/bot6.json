@@ -54,8 +54,9 @@
     "EXPIRY": 120,
     "PROT": "none",
     "EXIT": "be786",
-    "TREND": "day",
-    "BBW": "h20"
+    "BBW": "h20",
+    "WKND": 10,
+    "TREND": "day"
    }
   },
   "t5_1": {
@@ -84,16 +85,19 @@
   "tal": 0.0012,
   "tal4h": 0.0012,
   "scout": 0.004,
-  "scout:SC005|5Min|US100": 0.0028,
-  "scout:SC005|5Min|US500": 0.0028,
-  "scout:SC020|15Min|US500": 0.0028,
+  "scout:SC005|5Min|US100": 0.00042,
+  "scout:SC005|5Min|US500": 0.00042,
+  "scout:SC020|15Min|US500": 0.00042,
   "t15_5": 0.0012,
   "t5_1": 0.00084,
-  "scout:SC051|15Min|US100": 0.0028,
-  "scout:SC258|5Min|US100": 0.0028,
-  "scout:SC261|5Min|US500": 0.0028,
-  "scout:FR03|15Min|US30": 0.0028,
-  "scout:SC084|15Min|US30": 0.0028
+  "scout:SC051|15Min|US100": 0.00042,
+  "scout:SC258|5Min|US100": 0.00042,
+  "scout:SC261|5Min|US500": 0.00042,
+  "scout:FR03|15Min|US30": 0.00042,
+  "scout:SC084|15Min|US30": 0.00042,
+  "scout:SC072|5Min|US500": 0.0006,
+  "scout:SC326|15Min|US30": 0.0006,
+  "scout:SC326|5Min|US30": 0.00042
  },
  "changes": {
   "abb187377383": {
@@ -364,6 +368,94 @@
      "REARM": true
     }
    }
+  },
+  "5d79e66d65cf": {
+   "family": "tal5",
+   "track": "t15_5",
+   "before": {
+    "pair": [
+     "15m",
+     "5m",
+     1
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.6,
+     "SW": 3,
+     "MIN_RR": 2.0,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be786",
+     "TREND": "day",
+     "BBW": "h20"
+    }
+   },
+   "risk_before": 0.0012
+  },
+  "4981890f6e5f": {
+   "family": "risk",
+   "track": "scout:FR03|15Min|US30",
+   "before": 0.0028
+  },
+  "2b945dccfd51": {
+   "family": "risk",
+   "track": "scout:SC005|5Min|US100",
+   "before": 0.0028
+  },
+  "510c9f75ba69": {
+   "family": "risk",
+   "track": "scout:SC005|5Min|US500",
+   "before": 0.0028
+  },
+  "cede5e648989": {
+   "family": "risk",
+   "track": "scout:SC020|15Min|US500",
+   "before": 0.0028
+  },
+  "0222a711835d": {
+   "family": "risk",
+   "track": "scout:SC051|15Min|US100",
+   "before": 0.0028
+  },
+  "85cca7f91ef5": {
+   "family": "risk",
+   "track": "scout:SC072|5Min|US500",
+   "before": "__none__"
+  },
+  "e59c29ba2c51": {
+   "family": "risk",
+   "track": "scout:SC084|15Min|US30",
+   "before": 0.0028
+  },
+  "c2b5a529bdcd": {
+   "family": "risk",
+   "track": "scout:SC258|5Min|US100",
+   "before": 0.0028
+  },
+  "03ba7d8721b1": {
+   "family": "risk",
+   "track": "scout:SC261|5Min|US500",
+   "before": 0.0028
+  },
+  "cb3a58fbc25f": {
+   "family": "risk",
+   "track": "scout:SC326|15Min|US30",
+   "before": "__none__"
+  },
+  "2522a209a07d": {
+   "family": "risk",
+   "track": "scout:SC326|5Min|US30",
+   "before": "__none__"
+  },
+  "84b42101d566": {
+   "family": "scout6",
+   "combo": "SC441|5Min|US100",
+   "before": "__none__"
+  },
+  "be9bd41e279f": {
+   "family": "scout6",
+   "combo": "SC326|5Min|US30",
+   "before": "__none__"
   }
  },
  "scout": {
@@ -466,6 +558,26 @@
    },
    "since": "2026-11-15T07:40:11+00:00",
    "card": "b6fcdec932b5"
+  },
+  "SC441|5Min|US100": {
+   "v": {
+    "target": "own",
+    "stop": 1.5,
+    "time": "own",
+    "be": true
+   },
+   "since": "2026-11-16T08:41:53+00:00",
+   "card": "84b42101d566"
+  },
+  "SC326|5Min|US30": {
+   "v": {
+    "target": "own",
+    "stop": 1.5,
+    "time": "own",
+    "be": true
+   },
+   "since": "2026-11-16T08:41:53+00:00",
+   "card": "be9bd41e279f"
   }
  }
 }

@@ -2,12 +2,45 @@
  "bot": "bot7",
  "account_v": 15,
  "started": "2026-11-16T04:26:05+00:00",
- "ended": "2026-11-16T12:07:46+00:00",
+ "ended": "2026-11-16T16:05:50+00:00",
  "initial": 100000.0,
- "pnl": 0,
- "trades_n": 0,
+ "pnl": -436.62,
+ "trades_n": 4,
  "wins": 0,
- "mean_r": null,
- "ledger": {},
- "trades": []
+ "mean_r": -1.746,
+ "ledger": {
+  "SC264|JP225|202611161230": {
+   "risk_usd": 300.0,
+   "pnl": null,
+   "closed_day": "9999"
+  },
+  "EV04|USDCAD|202611161329": {
+   "risk_usd": 250.0,
+   "pnl": -436.62,
+   "closed_day": "2026-11-16",
+   "r": -1.7465
+  },
+  "IB033|XAUUSD|202611160800": {
+   "risk_usd": 348.47,
+   "pnl": null,
+   "closed_day": "9999"
+  },
+  "SC372|XAUUSD|202611161200": {
+   "risk_usd": 348.47,
+   "pnl": null,
+   "closed_day": "9999"
+  }
+ },
+ "trades": [
+  {
+   "time": "2026-11-16T13:30:00+00:00",
+   "combo": "EV04|1Min|USDCAD",
+   "symbol": "USDCAD",
+   "dir": "מכירה",
+   "lots": "וירטואלי",
+   "price": 1.429068915844749,
+   "pnl": -436.62,
+   "why": "סטופ · אחרי 16.11 15:30 CAD CPI m/m + CAD Median CPI y/y"
+  }
+ ]
 }

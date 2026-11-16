@@ -176,7 +176,11 @@ def report():
                           ("sc071_ema50h", lambda c: "ema50h" if c.startswith("SC071|") else "asis"),
                           ("sc071_both", lambda c: "both" if c.startswith("SC071|") else "asis"),
                           ("sc071_noreent", lambda c: "noreent" if c.startswith("SC071|") else "asis"),
-                          ("all_ema50h", lambda c: "ema50h")]:
+                          ("all_ema50h", lambda c: "ema50h"), ("all_noreent", lambda c: "noreent"),
+                          # the 2025 picks that also held on 2026 (night of 16.11: 3 of the 11 picks) - each alone and together
+                          ("sc333_noreent", lambda c: "noreent" if c == "SC333|15Min|XAUUSD" else "asis"),
+                          ("bk07us100_ema50h", lambda c: "ema50h" if c == "BK07|15Min|US100" else "asis"),
+                          ("held_two", lambda c: {"SC333|15Min|XAUUSD": "noreent", "BK07|15Min|US100": "ema50h"}.get(c, "asis"))]:
         whole[label] = {}
         for p, rr in per.items():
             s = []

@@ -1,7 +1,85 @@
 {
- "updated": "2026-11-16T03:44:33+00:00",
- "new": [],
+ "updated": "2026-11-16T03:59:10+00:00",
+ "new": [
+  "27d72b586b0d",
+  "fbe12c269991",
+  "64ce0c800501"
+ ],
  "decisions": [
+  {
+   "id": "27d72b586b0d",
+   "bot": "bot4",
+   "type": "card",
+   "card": "843c2b4fd489",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "SC295|1Hour|USDJPY: יעד 4R · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.38% → -2.38%, ירידה 6.34% → 7.14%) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3056,
+     "total": 138.33,
+     "worst_day": -2.38,
+     "max_dd": 6.34,
+     "near_days": 0,
+     "max_open": 5.48,
+     "max_side": 4.3,
+     "guard_cut": 269,
+     "guard_skipped": 40
+    },
+    "after": {
+     "trades": 3041,
+     "total": 139.64,
+     "worst_day": -2.38,
+     "max_dd": 7.14,
+     "near_days": 0,
+     "max_open": 5.56,
+     "max_side": 4.3,
+     "guard_cut": 259,
+     "guard_skipped": 34
+    }
+   },
+   "at": "2026-11-16T03:59:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "fbe12c269991",
+   "bot": "bot4",
+   "type": "card",
+   "card": "8285efda4c11",
+   "kind": "info",
+   "tier": "regular",
+   "title": "TV56|4Hour|USDJPY: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-16T03:59:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "64ce0c800501",
+   "bot": "bot4",
+   "type": "card",
+   "card": "2add77ab1f8e",
+   "kind": "info",
+   "tier": "regular",
+   "title": "SC083|1Hour|USDJPY: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-16T03:59:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "aa0fc0051cc7",
    "bot": "bot1",

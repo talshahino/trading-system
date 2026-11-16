@@ -253,6 +253,9 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .tr .tg{display:grid;grid-template-columns:22px minmax(0,1.25fr) minmax(0,1fr) auto 14px;gap:10px;align-items:center}
 .tr .d{font-size:12.5px;line-height:1.35;font-family:var(--mono);direction:ltr;text-align:right}
 .tr .s{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tbadge{display:inline-block;min-width:20px;padding:1px 7px;margin-inline-start:6px;border-radius:999px;background:#D0453A;color:#fff;font-size:12px;font-weight:700;line-height:18px;text-align:center;vertical-align:middle}
+.brand{position:relative}#brandBadge{position:absolute;top:-4px;inset-inline-start:24px;margin:0}
+#dSubt button[data-n]:not([data-n=""])::after{content:attr(data-n);display:inline-block;min-width:18px;padding:0 6px;margin-inline-start:6px;border-radius:999px;background:#D0453A;color:#fff;font-size:12px;font-weight:700;line-height:18px}
 .tr .s .ss{font-weight:500;font-size:12px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis}
 .tr .pl{font-family:var(--mono);font-weight:700;font-size:15.5px;direction:ltr;unicode-bidi:isolate}
 .arr{width:20px;height:20px}
@@ -1196,7 +1199,8 @@ function stateWord(a) { return a.preparing ? ["מכין…", "mid"] : a.archived
 function accCard(a) {
   const s = found[a.name];
   const [w, c] = stateWord(a);
-  const head = `<div class="ah"><i class="dot ${c}"></i><span class="an">${esc(nick(a))}</span><span class="am">${esc(botL(a))}${a.login ? " · #" + String(a.login).slice(-4) : ""} · ${w}</span></div>`;
+  const tn = TALKN[a.name] || 0;
+  const head = `<div class="ah"><i class="dot ${c}"></i><span class="an">${esc(nick(a))}</span>${tn ? `<span class="tbadge" title="תשובות חדשות מהסוכן">💬 ${tn}</span>` : ""}<span class="am">${esc(botL(a))}${a.login ? " · #" + String(a.login).slice(-4) : ""} · ${w}</span></div>`;
   if (!s) return `<div class="acard" data-acc="${esc(a.name)}">${head}<div class="lbl" style="margin-top:10px">${a.prepare_error ? `<span class="neg">ההכנה נכשלה: ${esc(a.prepare_error)}</span>`
     : a.preparing ? "מכין עותק MetaTrader לחשבון הזה… (כדקה)" : a.running ? "MetaTrader נפתח והבוט מתחבר. הנתונים הראשונים יופיעו תוך דקה־שתיים." : "עוד אין נתונים מהחשבון הזה."}</div></div>`;
   const k = calc(s, a);
@@ -1265,7 +1269,7 @@ function renderDet(light) {
          : a.virtual && s && (a.running || Date.now() - new Date(s.updated_utc) < 6 * 60000)
            ? `<span class="pos">● פעיל</span><span>מתעדכן כל 2 דקות · עודכן ${il(s.updated_utc)}</span>`      // virtual: read from GitHub, not live
          : `<span class="neg">● לא מחובר</span>${s ? `<span>עודכן ${il(s.updated_utc)}</span>` : ""}`);
-  $("dSubt").innerHTML = SUBS.map(([k, l]) => `<button data-s="${k}" aria-selected="${UI.sub === k}">${l}${k === "tr" && s && s.positions && s.positions.length ? `<span class="badge">${s.positions.length}</span>` : ""}</button>`).join("");
+  $("dSubt").innerHTML = SUBS.map(([k, l]) => `<button data-s="${k}" aria-selected="${UI.sub === k}" data-n="${k === "ov" ? (TALKN[UI.cur] || "") : ""}">${l}${k === "tr" && s && s.positions && s.positions.length ? `<span class="badge">${s.positions.length}</span>` : ""}</button>`).join("");
   const ban = $("dBan");
   const age = s ? (Date.now() - new Date(s.updated_utc).getTime()) / 60000 : 0;
   if (s && s.halted_until) { ban.className = "banner on neg"; ban.textContent = "עצירת חירום: ההפסד היומי הגיע ל־4.5%. הבוט סגר הכל ולא ייכנס לעסקאות עד חצות (שעון פראג)."; }
@@ -1289,7 +1293,7 @@ function botTalk(s) {
   box.style.display = show ? "" : "none";
   if (!show || box.dataset.bot === UI.cur) return;
   box.dataset.bot = UI.cur;
-  box.innerHTML = `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט</div><div class="card wt">
+  box.innerHTML = `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
       <textarea id="btTxt" rows="3" placeholder="דבר או כתוב לסוכן על הבוט כולו: מה ראית היום, מה מפריע לך, מה לבדוק…"></textarea>
       <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="btMic">🎙 הקלטה</button><button class="btn" id="btSave">שלח לסוכן</button></div>
       <div class="msg mut" id="btMsg"></div><div id="btList"></div></div>`;
@@ -1638,7 +1642,28 @@ async function convData() {
     unseen: x.reps.filter(r => !seen[`${x.bot}|${x.id}|${r.at}`]).length})).sort((a, b) => b.last.localeCompare(a.last));
   return list;
 }
+/* new answers in the running conversations (user, 16.11.2026: "no notification, but a sign"): the manager's on the logo
+   and on the "מנהל הבוטים" button, each bot's on its card in the accounts list and on its "מבט על" tab. Seen = shown in
+   the conversation once. */
+let TALKN = {};
+async function talkBadges() {
+  try {
+    const rd = await repliesDoc(), seen = seenGet(), n = {};
+    for (const [bot, tr] of Object.entries(rd.bots || {})) {
+      const k = (tr.talk || []).filter(r => !seen[`${bot}|talk|${r.at}`]).length;
+      if (k) n[bot] = k;
+    }
+    const changed = JSON.stringify(n) !== JSON.stringify(TALKN); TALKN = n;
+    const m = n.manager || 0;
+    if ($("botsBtn")) $("botsBtn").textContent = m ? `מנהל הבוטים (${m} חדשות)` : "מנהל הבוטים";
+    let lb = $("brandBadge");
+    if (!lb && $("brandBtn")) { lb = document.createElement("span"); lb.id = "brandBadge"; lb.className = "tbadge"; $("brandBtn").appendChild(lb); }
+    if (lb) { lb.textContent = m; lb.style.display = m ? "" : "none"; }
+    if (changed) { if (UI.view === "list") renderList(); else if (UI.view === "det") { const b = document.querySelector('#dSubt [data-s="ov"]'); if (b) b.dataset.n = TALKN[UI.cur] || ""; } }
+  } catch (e) {}
+}
 async function convBadge() {
+  talkBadges();
   try { const l = await convData(), n = l.reduce((a, x) => a + x.unseen, 0); if ($("convBtn")) $("convBtn").textContent = n ? `שיחות עם הסוכנים (${n} חדשות)` : "שיחות עם הסוכנים"; } catch (e) {}
 }
 const BOTNAME = n => ({watch_own: "בוט 5", watch_fut: "בוט 6", news_bot: "בוט 7", manager: "המנהל"})[n] || (n.match(/^bot(\d)/) ? "בוט " + n.match(/^bot(\d)/)[1] : n);
@@ -2560,7 +2585,7 @@ document.addEventListener("pointerdown", ev => {
 $("pop").onclick = e => { if (e.target.id === "pop" || e.target.id === "popOk") $("pop").classList.remove("on"); };
 
 addEventListener("resize", () => { if ($("eqc") && found[UI.cur]) eqChart(found[UI.cur], accBy(UI.cur)); });
-tick(); setInterval(tick, 60000); setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
+tick(); setInterval(tick, 60000); talkBadges(); setInterval(() => repliesDoc(true).then(talkBadges), 120000); setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
 
 /* the phone's back button (user, 16.11.2026): one screen back inside the app each time, and only the accounts list
    leaves it. Inside an account: any tab -> its overview -> the accounts list. Overall statistics / news / management ->

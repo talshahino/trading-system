@@ -314,16 +314,43 @@ def report(bot):
     return out
 
 
+def summary(bots):
+    """Each way against "as today" per bot on both periods (the monthly re-check, user 16.11.2026: change nothing now,
+    look again every month). A way is worth bringing to the user only if it beats "as today" on 2026 in every bot it is
+    measured on, with no larger fall from the peak - the same bar the first study (16.11.2026) found nothing passed."""
+    out = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "bots": {}, "candidates": []}
+    for b in bots:
+        f = out_dir(b) / "report.json"
+        if not f.exists():
+            continue
+        w = json.loads(f.read_text(encoding="utf-8"))["ways"]
+        a = w["asis"]
+        out["bots"][b] = {k: {p: {"total": round(v[p]["total"] - a[p]["total"], 2), "max_dd": round(v[p]["max_dd"] - a[p]["max_dd"], 2)}
+                              for p in ("train", "unseen")} for k, v in w.items() if k != "asis"}
+    for k in WAYS[1:]:
+        rows = [x[k] for x in out["bots"].values() if k in x]
+        if rows and all(r["unseen"]["total"] > 0 and r["unseen"]["max_dd"] <= 0 and r["train"]["total"] > 0 for r in rows):
+            out["candidates"].append(k)
+    (ROOT / "reports" / "agents" / "conflict_summary.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    return out
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=["plan", "run", "report"])
-    ap.add_argument("--bot", default="bot3")
+    ap.add_argument("--bot", default="bot3")          # one bot or several, comma separated
     ap.add_argument("--sym", default="")
+    ap.add_argument("--job", default="")              # "bot:SYMBOL" (the workflow's matrix)
     ap.add_argument("--minutes", type=float, default=100)
     a = ap.parse_args()
+    bots = [x for x in a.bot.split(",") if x]
     if a.mode == "plan":
-        json.dump(plan(a.bot), sys.stdout)
+        json.dump([f"{b}:{s}" for b in bots for s in plan(b)], sys.stdout)
     elif a.mode == "run":
-        run(a.bot, a.sym, a.minutes)
+        b, s = a.job.split(":", 1) if a.job else (bots[0], a.sym)
+        run(b, s, a.minutes)
     else:
-        print(json.dumps(report(a.bot), ensure_ascii=False, indent=1))
+        for b in bots:
+            if out_dir(b).exists():
+                report(b)
+        print(json.dumps(summary(bots), ensure_ascii=False, indent=1))

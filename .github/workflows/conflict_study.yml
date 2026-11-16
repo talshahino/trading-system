@@ -5,6 +5,8 @@ name: Opposite trades study (one bot)
 # closer targets) on the whole bot. Results only - nothing in the bot changes.
 
 on:
+  schedule:
+    - cron: "17 1 1 * *"      # monthly re-check, every bot 1-4 (user, 16.11.2026)
   workflow_dispatch:
     inputs:
       bot:
@@ -21,7 +23,7 @@ jobs:
   plan:
     runs-on: ubuntu-latest
     outputs:
-      syms: ${{ steps.p.outputs.syms }}
+      jobs: ${{ steps.p.outputs.jobs }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -31,7 +33,7 @@ jobs:
       - name: Install
         run: pip install -r requirements.txt
       - id: p
-        run: echo "syms=$(python -m agents.conflict_study plan --bot ${{ inputs.bot }})" >> "$GITHUB_OUTPUT"
+        run: echo "jobs=$(python -m agents.conflict_study plan --bot '${{ inputs.bot || 'bot1,bot2,bot3,bot4' }}')" >> "$GITHUB_OUTPUT"
   run:
     needs: plan
     runs-on: ubuntu-latest
@@ -40,7 +42,7 @@ jobs:
       fail-fast: false
       max-parallel: 20
       matrix:
-        sym: ${{ fromJson(needs.plan.outputs.syms) }}
+        job: ${{ fromJson(needs.plan.outputs.jobs) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -62,12 +64,15 @@ jobs:
         env:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
           ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
-        run: python -u -m agents.conflict_study run --bot ${{ inputs.bot }} --sym "${{ matrix.sym }}" --minutes ${{ inputs.minutes }} 2>&1 | tail -30
+        run: python -u -m agents.conflict_study run --job "${{ matrix.job }}" --minutes ${{ inputs.minutes || '110' }} 2>&1 | tail -30
+      - name: Name
+        id: n
+        run: echo "n=$(echo '${{ matrix.job }}' | tr ':/' '__')" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cf-${{ matrix.sym }}
-          path: reports/agents/${{ inputs.bot }}/conflict
+          name: cf-${{ steps.n.outputs.n }}
+          path: reports/agents/*/conflict
           if-no-files-found: ignore
           retention-days: 5
   report:
@@ -89,13 +94,12 @@ jobs:
           pattern: cf-*
       - name: Report
         run: |
-          mkdir -p reports/agents/${{ inputs.bot }}/conflict
-          for d in parts/*/; do cp -r "$d." reports/agents/${{ inputs.bot }}/conflict/; done
-          python -m agents.conflict_study report --bot ${{ inputs.bot }} | head -120
+          for d in parts/*/; do cp -r "$d." reports/agents/; done
+          python -m agents.conflict_study report --bot '${{ inputs.bot || 'bot1,bot2,bot3,bot4' }}' | head -60
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/agents/${{ inputs.bot }}/conflict || true
-          git commit -qm "Opposite trades study ${{ inputs.bot }} (agents/conflict_study)" || exit 0
+          git add reports/agents/*/conflict || true
+          git commit -qm "Opposite trades study (agents/conflict_study)" || exit 0
           for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

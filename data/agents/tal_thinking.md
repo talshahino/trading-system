@@ -158,3 +158,10 @@
 "אם יש נכסים שלא נכנסים לבוט בגלל שלא נמצא בברוקר הנוכחי, כשיבדקו כל אלו בברוקר אחר כשהבוט יפתח שוב אצל מישהו אחר."
 - אסטרטגיה טובה שנדחתה רק כי המכשיר לא קיים בשרת של הבוט נשמרת ב־data/agents/broker_parked.json עם המספרים שלה.
 - כשהבוט עובר לברוקר שבו המכשיר נסחר - המנהל פותח אותה מחדש אוטומטית ומחליט עליה שוב (agents/autodecide.py).
+
+## Opposite trades on the same instrument (user, 16.11.2026)
+Long and short on the same instrument in one bot are allowed (different timeframes). Studied on bots 1-4
+(agents/conflict_study.py, reports/agents/conflict_summary.json): skip / keep the stronger / half risk / closer
+targets (each before the other's stop) - none beat "as today" on 2026; the conflicting trades earned on balance
+(bot 3 gold +98R in 2026). Decision: no change. Re-checked monthly (GitHub, 1st of the month); a way is brought to
+the user only if it beats "as today" in every bot on 2026 with no larger fall from the peak - never built without him.

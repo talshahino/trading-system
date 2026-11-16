@@ -479,7 +479,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 
 <div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
 <div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>מנהל הבוטים</b></div>
-  <div id="bpDec"></div><div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
+  <div id="bpTalk"></div><div id="bpDec"></div><div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="convPg"><div class="ph"><button class="back" id="convBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>שיחות עם הסוכנים</b></div><div id="convBody" style="padding:0 14px 40px"></div></div>
 <div class="page" id="lrPg"><div class="ph"><button class="back" id="lrBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>דוחות הפסד</b></div><div id="lrBody" style="padding:0 14px 40px;line-height:1.55"><div class="empty">טוען…</div></div></div>
 <div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
@@ -1601,8 +1601,8 @@ async function threadHtml(bot, id, notes) {
   const waiting = (notes || []).some(n => !reps.some(r => r.re === n.at));
   return items.map(n => n.who === "tal"
     ? `<div style="margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--sunk)"><div class="mut" style="font-size:12px">${n.voice ? "🎙 " : ""}טל · ${dtF(n.at)}</div><div style="white-space:pre-wrap">${esc(n.text)}</div></div>`
-    : `<div style="margin-top:8px;padding:8px 10px;border-radius:10px;border:1px solid var(--line,#E6E9EE)"><div class="mut" style="font-size:12px">🤖 הסוכן של הבוט · ${dtF(n.at)}</div><div style="white-space:pre-wrap">${esc(n.text)}</div>${n.did ? `<div class="mut" style="font-size:12px;margin-top:4px">${esc(n.did)}</div>` : ""}</div>`).join("")
-    + (waiting ? `<div class="mut" style="margin-top:8px;font-size:13px">⏳ הסוכן יענה בתוך חצי שעה בערך</div>` : "");
+    : `<div style="margin-top:8px;padding:8px 10px;border-radius:10px;border:1px solid var(--line,#E6E9EE)"><div class="mut" style="font-size:12px">🤖 ${bot === "manager" ? "המנהל" : "הסוכן של הבוט"} · ${dtF(n.at)}</div><div style="white-space:pre-wrap">${esc(n.text)}</div>${n.did ? `<div class="mut" style="font-size:12px;margin-top:4px">${esc(n.did)}</div>` : ""}</div>`).join("")
+    + (waiting ? `<div class="mut" style="margin-top:8px;font-size:13px">⏳ ${bot === "manager" ? "המנהל" : "הסוכן"} יענה בתוך שעה בערך</div>` : "");
 }
 // "שיחות עם הסוכנים": every conversation, newest first, with the number of answers not seen yet on the button
 async function convData() {
@@ -1618,25 +1618,26 @@ async function convData() {
 async function convBadge() {
   try { const l = await convData(), n = l.reduce((a, x) => a + x.unseen, 0); if ($("convBtn")) $("convBtn").textContent = n ? `שיחות עם הסוכנים (${n} חדשות)` : "שיחות עם הסוכנים"; } catch (e) {}
 }
-const BOTNAME = n => ({watch_own: "בוט 5", watch_fut: "בוט 6", news_bot: "בוט 7"})[n] || (n.match(/^bot(\d)/) ? "בוט " + n.match(/^bot(\d)/)[1] : n);
+const BOTNAME = n => ({watch_own: "בוט 5", watch_fut: "בוט 6", news_bot: "בוט 7", manager: "המנהל"})[n] || (n.match(/^bot(\d)/) ? "בוט " + n.match(/^bot(\d)/)[1] : n);
 async function convOpen() {
   $("convPg").classList.add("on"); $("convBody").innerHTML = '<div class="empty">טוען…</div>';
   const l = await convData();
   if (!l.length) { $("convBody").innerHTML = '<div class="empty">עוד אין שיחות. בעמוד הגרף של כל עסקה אפשר להקליט הערה לסוכן.</div>'; return; }
   $("convBody").innerHTML = l.map((x, i) => { const tr = (x.notes[0] || {}).trade || {}, last = [...x.notes, ...x.reps].sort((a, b) => String(a.at).localeCompare(String(b.at))).pop() || {};
-    return `<div class="card" style="margin:10px 0;cursor:pointer" data-cv="${i}"><div class="row"><b>${esc(BOTNAME(x.bot))} · <bdi>${esc(tr.symbol || "")}</bdi> ${tr.side === "buy" ? "קנייה" : tr.side === "sell" ? "מכירה" : ""}</b>
+    return `<div class="card" style="margin:10px 0;cursor:pointer" data-cv="${i}"><div class="row"><b>${x.bot === "manager" ? "🎙 שיחה עם המנהל" : `${esc(BOTNAME(x.bot))} · <bdi>${esc(tr.symbol || "")}</bdi> ${tr.side === "buy" ? "קנייה" : tr.side === "sell" ? "מכירה" : ""}`}</b>
       ${x.unseen ? `<span class="pill pos">${x.unseen} חדשות</span>` : x.notes.some(n => !x.reps.some(r => r.re === n.at)) ? '<span class="pill">ממתין לתשובה</span>' : ""}</div>
       <div class="mut" style="margin-top:4px;white-space:pre-wrap;max-height:3.6em;overflow:hidden">${last.re ? "🤖 " : "טל: "}${esc(last.text || "")}</div><div class="convD" id="convD${i}"></div></div>`; }).join("");
   document.querySelectorAll("#convBody .card").forEach(el => el.onclick = async e => {
     if (e.target.closest("button")) return;
     const x = l[+el.dataset.cv], box = $("convD" + el.dataset.cv);
     if (box.innerHTML) { box.innerHTML = ""; return; }
-    box.innerHTML = (await threadHtml(x.bot, x.id, x.notes)) + `<button class="btn ghost" style="margin-top:8px" data-open="1">פתח את הגרף של העסקה ›</button>`;
+    box.innerHTML = (await threadHtml(x.bot, x.id, x.notes)) + `<button class="btn ghost" style="margin-top:8px" data-open="1">${x.bot === "manager" ? "פתח את השיחה עם המנהל ›" : "פתח את הגרף של העסקה ›"}</button>`;
     box.querySelector("[data-open]").onclick = () => convChart(x);
     convData().then(ll => { const n = ll.reduce((a, y) => a + y.unseen, 0); if ($("convBtn")) $("convBtn").textContent = n ? `שיחות עם הסוכנים (${n} חדשות)` : "שיחות עם הסוכנים"; });
   });
 }
 function convChart(x) {
+  if (x.bot === "manager") return botsOpen();
   const d = found[x.bot];
   if (d && d.watch && d.watch.find(w => w.id === x.id && w.m15)) { WB.doc = d; return wcOpen(x.id); }
   const c = d && ((d.closed || []).find(t => String(t.id) === x.id) || null), o = d && ((d.positions || []).find(t => String(t.ticket) === x.id) || null);
@@ -1680,7 +1681,7 @@ function tradeNotes(t, p = "tn", botName) {
     try {
       const j = await act("/trade/note", {bot, id, text, voice: TN.voice, symbol: t.symbol, combo: t.combo, side: t.side, open_t: t.open_t,
         close_t: t.close_t, open_px: t.open_px, close_px: t.close_px, sl: t.sl0 || t.sl, tp: t.tp || t.tp0, net: t.net, reason: t.reason || t.why});
-      txt.value = ""; TN.voice = false; msg.textContent = "נשמר. הסוכן של הבוט יקרא את ההערה בריצה הבאה שלו."; show(j.notes);
+      txt.value = ""; TN.voice = false; msg.textContent = bot === "manager" ? "נשלח. המנהל יענה בתוך שעה בערך." : "נשמר. הסוכן של הבוט יקרא את ההערה בריצה הבאה שלו."; show(j.notes);
     } catch (e) { msg.textContent = "לא נשמר: " + (e.message || e); }
   };
 }
@@ -2031,8 +2032,20 @@ function bpDecided(bot) {
   return r[bot] || {};
 }
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+/* a conversation with the manager itself (user, 16.11.2026): spoken or typed, about anything across all the bots - how
+   to work, what matters, what to change everywhere. Kept like a trade note (bot "manager", id "talk"); the conversation
+   agent answers as the manager and the manager learns from it (data/agents/tal_thinking.md, tasks for the agents). */
+function mgrTalk() {
+  if (getRole() === "viewer" || !$("bpTalk")) return;
+  $("bpTalk").innerHTML = `<div class="h4">🎙 שיחה עם המנהל</div><div class="card wt">
+      <textarea id="mgTxt" rows="3" placeholder="דבר או כתוב למנהל על כל מה שרוחבי לכל הבוטים: איך לעבוד, מה חשוב לך, מה לשנות בכולם…"></textarea>
+      <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="mgMic">🎙 הקלטה</button><button class="btn" id="mgSave">שלח למנהל</button></div>
+      <div class="msg mut" id="mgMsg"></div><div id="mgList"></div></div>`;
+  tradeNotes({id: "talk"}, "mg", "manager");
+}
 async function botsOpen() {
   $("botsPg").classList.add("on");
+  mgrTalk();
   if (!BP.doc) $("bpBody").innerHTML = '<div class="empty">טוען…</div>';
   await Promise.all([
     fetch(RISK_URL(), {cache: "no-store"}).then(r => r.ok ? r.json() : null).then(j => { if (j) BP.doc = j; }).catch(() => {}),
@@ -2400,7 +2413,7 @@ async function wcTal(t) {
 }
 $("wbBack").onclick = () => $("wbPg").classList.remove("on");
 $("wcBack").onclick = () => { $("wcPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } WC.forEach(c => c.remove()); WC = []; };
-$("bpBack").onclick = () => $("botsPg").classList.remove("on");
+$("bpBack").onclick = () => { $("botsPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } };
 // "how Tal thinks" (data/agents/tal_thinking.md): what the manager and the agents read before every decision
 // daily loss reports (agents/loss_review.py): every losing day of every bot - what lost, why, what is done about it
 const LR = p => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/losses/${p}?t=${Math.floor(Date.now() / 60000)}`;

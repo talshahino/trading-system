@@ -4,7 +4,12 @@ name: Scout strategies on every bot (now, parallel)
 # bot x instrument (agents/scout_wide_gh.py). Results go to reports/agents/<bot>/exp; the bots' agents and the manager
 # make the cards from them. The bots' computer keeps doing the same queue - what is done here it skips.
 
+# Manager 16.11.2026: also once a day by itself - the scout adds new strategies every night and the bots' computer
+# tests 0 of them in its time (bots 2-4: "0 tested, 3,500-4,600 combos left"); here the whole queue takes ~45 min
+# (public repository - the minutes are free).
 on:
+  schedule:
+    - cron: "37 21 * * *"
   workflow_dispatch:
     inputs:
       minutes:
@@ -13,6 +18,10 @@ on:
 
 permissions:
   contents: write
+
+concurrency:
+  group: scout-wide
+  cancel-in-progress: false
 
 jobs:
   plan:
@@ -59,7 +68,7 @@ jobs:
         env:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
           ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
-        run: python -u -m agents.scout_wide_gh run --job "${{ matrix.job }}" --minutes ${{ inputs.minutes }} 2>&1 | tail -30
+        run: python -u -m agents.scout_wide_gh run --job "${{ matrix.job }}" --minutes ${{ inputs.minutes || '75' }} 2>&1 | tail -30
       - name: Name
         id: n
         run: echo "n=$(echo '${{ matrix.job }}' | tr ':/' '__')" >> "$GITHUB_OUTPUT"
@@ -113,4 +122,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports/agents || true
           git commit -qm "Scout strategies on every bot, in parallel (GitHub, scout_wide_gh)" || exit 0
-          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null || true; sleep $((i * 7)); done

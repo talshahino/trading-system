@@ -110,7 +110,7 @@ jobs:
           git commit -qm "Agents: nightly run" || exit 0
           # generated files only: on a clash keep this run's copy (-X theirs = the commit being replayed);
           # anything else the run left changed is put aside (--autostash) so it never blocks the push
-          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null || true; sleep $((i * 7)); done
 
   alpaca:
     # stocks and Alpaca crypto need the Alpaca keys, which only GitHub has: their combos (bots 1-4) are tested here
@@ -162,4 +162,4 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports/agents/*/exp reports/agents/*/cards*.json
           git commit -qm "Agents: stock combos (Alpaca)" || exit 0
-          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null || true; sleep $((i * 7)); done

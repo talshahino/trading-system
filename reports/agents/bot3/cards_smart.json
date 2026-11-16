@@ -1,6 +1,6 @@
 {
  "bot": "bot3",
- "updated": "2026-11-16T15:00:12+00:00",
+ "updated": "2026-11-16T18:57:47+00:00",
  "cards": [
   {
    "bot": "bot3",
@@ -577,6 +577,215 @@
    },
    "made": "2026-11-16T15:00:12+00:00",
    "id": "05879b6873d6"
+  },
+  {
+   "bot": "bot3",
+   "kind": "info",
+   "title": "בוט 3, 16.11 לילה: יציאה חלקית נבדקה על כל האסטרטגיות - לא משפרת כאן",
+   "what": "בדקתי על העסקאות האמיתיות של הבוט: מתוך 21 עסקאות מפסידות בחי רק 7 הגיעו קודם ל־‎+0.5R ורק 2 ל־‎+1R (0 מתוך 16 עם יעד הגיעו לחצי הדרך). בבדיקה של 2026 (1911 מפסידות): 32.7% הגיעו ל־‎+0.5R, 12.8% ל־‎+1R. כלומר כאן רוב ההפסדים לא היו באמת ברווח - שונה מבוט 5. 15 דרכים (סטופ לכניסה ב־‎+0.5/1/1.5/2R, חצי החוצה באותן רמות, ב־50%/60% מהדרך ליעד, נעילה מדורגת) על כל 45 האסטרטגיות, בבוט השלם: כולן פחות רווח מהיום בשתי התקופות. הכי קרובה ב־2026: סטופ לכניסה ב־60% מהדרך (-1.1% מהחשבון). חצי ב־‎+1R: -55.1%; 30% ב־‎+1R נמצא בין 'סטופ לכניסה' ל'חצי' ולכן גם הוא מפסיד (כ־-43.1%). גם בחירה לכל אסטרטגיה עד 2025: -18.0% ב־2026. היום ב־2026: +114.9%, ירידה 5.65%. הבוט כבר מעביר לאיזון ב־60% מהדרך (או ב־2.5R בלי יעד). אין שינוי; MFE/MAE נרשמים בחי לכל עסקה.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "made_by": "smart agent 16.11 night",
+    "task": "tal1611partial",
+    "live_census": {
+     "trades": 41,
+     "losers": 21,
+     "mfe_0.5R": 7,
+     "mfe_1R": 2,
+     "half_way": 0,
+     "with_target": 16,
+     "lost_r": -12.8,
+     "lost_r_0.5R": -3.4
+    },
+    "census_2026": {
+     "trades": 3538,
+     "losers": 1911,
+     "lost_r": -1318.2,
+     "mfe_0.5R": 32.7,
+     "mfe_1R": 12.8,
+     "with_target": 1402,
+     "half_way": 11.0,
+     "mfe_median": 0.3
+    },
+    "vs_asis": {
+     "be@0.5": {
+      "train": {
+       "total": -62.51,
+       "max_dd": 3.96
+      },
+      "unseen": {
+       "total": -76.45,
+       "max_dd": 4.0
+      }
+     },
+     "be@1": {
+      "train": {
+       "total": -27.25,
+       "max_dd": 2.93
+      },
+      "unseen": {
+       "total": -24.99,
+       "max_dd": 1.99
+      }
+     },
+     "be@1.5": {
+      "train": {
+       "total": -13.29,
+       "max_dd": 1.68
+      },
+      "unseen": {
+       "total": -4.43,
+       "max_dd": -0.12
+      }
+     },
+     "be@2": {
+      "train": {
+       "total": -6.58,
+       "max_dd": 0.91
+      },
+      "unseen": {
+       "total": -2.42,
+       "max_dd": 0.0
+      }
+     },
+     "half@0.5": {
+      "train": {
+       "total": -83.88,
+       "max_dd": 3.09
+      },
+      "unseen": {
+       "total": -103.04,
+       "max_dd": 5.8
+      }
+     },
+     "half@1": {
+      "train": {
+       "total": -43.77,
+       "max_dd": 2.02
+      },
+      "unseen": {
+       "total": -55.12,
+       "max_dd": 0.26
+      }
+     },
+     "half@1.5": {
+      "train": {
+       "total": -20.61,
+       "max_dd": 0.21
+      },
+      "unseen": {
+       "total": -30.08,
+       "max_dd": -0.37
+      }
+     },
+     "half@2": {
+      "train": {
+       "total": -11.21,
+       "max_dd": -0.27
+      },
+      "unseen": {
+       "total": -21.14,
+       "max_dd": -0.13
+      }
+     },
+     "bew@0.5": {
+      "train": {
+       "total": -8.63,
+       "max_dd": 1.66
+      },
+      "unseen": {
+       "total": -4.88,
+       "max_dd": 0.13
+      }
+     },
+     "bew@0.6": {
+      "train": {
+       "total": -4.93,
+       "max_dd": 0.38
+      },
+      "unseen": {
+       "total": -1.05,
+       "max_dd": 0.0
+      }
+     },
+     "halfw@0.5": {
+      "train": {
+       "total": -20.21,
+       "max_dd": 1.24
+      },
+      "unseen": {
+       "total": -17.92,
+       "max_dd": -0.08
+      }
+     },
+     "halfw@0.6": {
+      "train": {
+       "total": -11.32,
+       "max_dd": 0.39
+      },
+      "unseen": {
+       "total": -7.81,
+       "max_dd": -0.17
+      }
+     },
+     "lock@1": {
+      "train": {
+       "total": -24.85,
+       "max_dd": 2.03
+      },
+      "unseen": {
+       "total": -44.41,
+       "max_dd": 2.03
+      }
+     },
+     "lock@0.5": {
+      "train": {
+       "total": -79.28,
+       "max_dd": 3.09
+      },
+      "unseen": {
+       "total": -99.26,
+       "max_dd": 8.97
+      }
+     },
+     "pick_per_strategy": {
+      "train": {
+       "total": 13.16,
+       "max_dd": -0.87
+      },
+      "unseen": {
+       "total": -18.0,
+       "max_dd": 0.07
+      }
+     }
+    },
+    "asis": {
+     "train": {
+      "trades": 2666,
+      "total": 90.47,
+      "worst_day": -3.18,
+      "max_dd": 6.87
+     },
+     "unseen": {
+      "trades": 3513,
+      "total": 114.88,
+      "worst_day": -2.96,
+      "max_dd": 5.65
+     }
+    },
+    "report": "reports/agents/gaveback_study.json"
+   },
+   "made": "2026-11-16T18:57:47+00:00",
+   "id": "9642fc0f1ed3"
   }
  ]
 }

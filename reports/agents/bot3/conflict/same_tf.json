@@ -1,0 +1,175 @@
+{
+ "bot": "bot3",
+ "at": "2026-11-16T18:52:05+00:00",
+ "ways": {
+  "asis": {
+   "train": {
+    "conflicts": 112,
+    "changed": 0,
+    "trades": 1647,
+    "total": 79.04,
+    "worst_day": -2.56,
+    "max_dd": 5.5
+   },
+   "unseen": {
+    "conflicts": 144,
+    "changed": 0,
+    "trades": 2237,
+    "total": 88.64,
+    "worst_day": -2.59,
+    "max_dd": 6.92
+   }
+  },
+  "skip": {
+   "train": {
+    "conflicts": 97,
+    "changed": 97,
+    "trades": 1551,
+    "total": 78.95,
+    "worst_day": -2.17,
+    "max_dd": 5.22
+   },
+   "unseen": {
+    "conflicts": 128,
+    "changed": 128,
+    "trades": 2109,
+    "total": 79.3,
+    "worst_day": -2.42,
+    "max_dd": 6.61
+   }
+  },
+  "close_first": {
+   "train": {
+    "conflicts": 75,
+    "changed": 75,
+    "trades": 1648,
+    "total": 76.03,
+    "worst_day": -2.75,
+    "max_dd": 6.4
+   },
+   "unseen": {
+    "conflicts": 101,
+    "changed": 101,
+    "trades": 2237,
+    "total": 84.04,
+    "worst_day": -2.04,
+    "max_dd": 7.5
+   }
+  },
+  "half": {
+   "train": {
+    "conflicts": 112,
+    "changed": 112,
+    "trades": 1648,
+    "total": 78.43,
+    "worst_day": -2.32,
+    "max_dd": 5.36
+   },
+   "unseen": {
+    "conflicts": 144,
+    "changed": 144,
+    "trades": 2237,
+    "total": 83.71,
+    "worst_day": -2.1,
+    "max_dd": 5.66
+   }
+  },
+  "stronger": {
+   "train": {
+    "conflicts": 91,
+    "changed": 91,
+    "trades": 1601,
+    "total": 84.09,
+    "worst_day": -2.03,
+    "max_dd": 5.31
+   },
+   "unseen": {
+    "conflicts": 119,
+    "changed": 119,
+    "trades": 2168,
+    "total": 78.22,
+    "worst_day": -2.31,
+    "max_dd": 6.95
+   }
+  }
+ },
+ "pairs": {
+  "XAUUSD|60": {
+   "train": {
+    "n": 78,
+    "r": -2.88
+   },
+   "unseen": {
+    "n": 78,
+    "r": 41.22
+   }
+  },
+  "USDJPY|60": {
+   "train": {
+    "n": 32,
+    "r": 1.14
+   },
+   "unseen": {
+    "n": 66,
+    "r": -0.17
+   }
+  },
+  "USDCAD|60": {
+   "train": {
+    "n": 2,
+    "r": 2.53
+   }
+  }
+ },
+ "vs_asis": {
+  "skip": {
+   "train": {
+    "total": -0.09,
+    "max_dd": -0.28,
+    "worst_day": 0.39
+   },
+   "unseen": {
+    "total": -9.34,
+    "max_dd": -0.31,
+    "worst_day": 0.17
+   }
+  },
+  "close_first": {
+   "train": {
+    "total": -3.01,
+    "max_dd": 0.9,
+    "worst_day": -0.19
+   },
+   "unseen": {
+    "total": -4.6,
+    "max_dd": 0.58,
+    "worst_day": 0.55
+   }
+  },
+  "half": {
+   "train": {
+    "total": -0.61,
+    "max_dd": -0.14,
+    "worst_day": 0.24
+   },
+   "unseen": {
+    "total": -4.93,
+    "max_dd": -1.26,
+    "worst_day": 0.49
+   }
+  },
+  "stronger": {
+   "train": {
+    "total": 5.05,
+    "max_dd": -0.19,
+    "worst_day": 0.53
+   },
+   "unseen": {
+    "total": -10.42,
+    "max_dd": 0.03,
+    "worst_day": 0.28
+   }
+  }
+ },
+ "both": []
+}

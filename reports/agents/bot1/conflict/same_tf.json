@@ -1,0 +1,241 @@
+{
+ "bot": "bot1",
+ "at": "2026-11-16T18:52:04+00:00",
+ "ways": {
+  "asis": {
+   "train": {
+    "conflicts": 151,
+    "changed": 0,
+    "trades": 2706,
+    "total": 113.47,
+    "worst_day": -2.94,
+    "max_dd": 5.73
+   },
+   "unseen": {
+    "conflicts": 197,
+    "changed": 0,
+    "trades": 3621,
+    "total": 138.07,
+    "worst_day": -2.64,
+    "max_dd": 8.34
+   }
+  },
+  "skip": {
+   "train": {
+    "conflicts": 127,
+    "changed": 127,
+    "trades": 2596,
+    "total": 111.53,
+    "worst_day": -2.94,
+    "max_dd": 5.98
+   },
+   "unseen": {
+    "conflicts": 157,
+    "changed": 157,
+    "trades": 3475,
+    "total": 134.18,
+    "worst_day": -2.55,
+    "max_dd": 8.2
+   }
+  },
+  "close_first": {
+   "train": {
+    "conflicts": 109,
+    "changed": 109,
+    "trades": 2731,
+    "total": 114.35,
+    "worst_day": -2.94,
+    "max_dd": 6.21
+   },
+   "unseen": {
+    "conflicts": 149,
+    "changed": 149,
+    "trades": 3634,
+    "total": 133.67,
+    "worst_day": -2.72,
+    "max_dd": 9.62
+   }
+  },
+  "half": {
+   "train": {
+    "conflicts": 151,
+    "changed": 151,
+    "trades": 2718,
+    "total": 113.32,
+    "worst_day": -2.94,
+    "max_dd": 5.86
+   },
+   "unseen": {
+    "conflicts": 197,
+    "changed": 197,
+    "trades": 3632,
+    "total": 135.54,
+    "worst_day": -2.55,
+    "max_dd": 8.03
+   }
+  },
+  "stronger": {
+   "train": {
+    "conflicts": 136,
+    "changed": 136,
+    "trades": 2642,
+    "total": 113.37,
+    "worst_day": -2.94,
+    "max_dd": 6.42
+   },
+   "unseen": {
+    "conflicts": 165,
+    "changed": 165,
+    "trades": 3535,
+    "total": 132.81,
+    "worst_day": -2.72,
+    "max_dd": 9.06
+   }
+  }
+ },
+ "pairs": {
+  "USDJPY|60": {
+   "train": {
+    "n": 12,
+    "r": -2.85
+   },
+   "unseen": {
+    "n": 11,
+    "r": 2.18
+   }
+  },
+  "JP225|60": {
+   "train": {
+    "n": 74,
+    "r": 5.61
+   },
+   "unseen": {
+    "n": 129,
+    "r": 9.59
+   }
+  },
+  "ETHUSD|60": {
+   "train": {
+    "n": 31,
+    "r": 1.16
+   },
+   "unseen": {
+    "n": 24,
+    "r": 7.71
+   }
+  },
+  "US500|240": {
+   "train": {
+    "n": 5,
+    "r": 2.4
+   },
+   "unseen": {
+    "n": 3,
+    "r": -0.36
+   }
+  },
+  "ARM|15": {
+   "train": {
+    "n": 1,
+    "r": 0.66
+   }
+  },
+  "ETHUSD|240": {
+   "train": {
+    "n": 18,
+    "r": -6.84
+   },
+   "unseen": {
+    "n": 19,
+    "r": -1.09
+   }
+  },
+  "US100|60": {
+   "train": {
+    "n": 1,
+    "r": -1.01
+   }
+  },
+  "XAUUSD|60": {
+   "train": {
+    "n": 3,
+    "r": 2.12
+   },
+   "unseen": {
+    "n": 3,
+    "r": 3.89
+   }
+  },
+  "USDJPY|240": {
+   "train": {
+    "n": 3,
+    "r": 2.41
+   },
+   "unseen": {
+    "n": 6,
+    "r": 0.34
+   }
+  },
+  "GBPUSD|15": {
+   "train": {
+    "n": 3,
+    "r": -3.38
+   },
+   "unseen": {
+    "n": 2,
+    "r": 0.69
+   }
+  }
+ },
+ "vs_asis": {
+  "skip": {
+   "train": {
+    "total": -1.94,
+    "max_dd": 0.25,
+    "worst_day": 0.0
+   },
+   "unseen": {
+    "total": -3.89,
+    "max_dd": -0.14,
+    "worst_day": 0.09
+   }
+  },
+  "close_first": {
+   "train": {
+    "total": 0.88,
+    "max_dd": 0.48,
+    "worst_day": 0.0
+   },
+   "unseen": {
+    "total": -4.4,
+    "max_dd": 1.28,
+    "worst_day": -0.08
+   }
+  },
+  "half": {
+   "train": {
+    "total": -0.15,
+    "max_dd": 0.13,
+    "worst_day": 0.0
+   },
+   "unseen": {
+    "total": -2.53,
+    "max_dd": -0.31,
+    "worst_day": 0.09
+   }
+  },
+  "stronger": {
+   "train": {
+    "total": -0.1,
+    "max_dd": 0.69,
+    "worst_day": 0.0
+   },
+   "unseen": {
+    "total": -5.26,
+    "max_dd": 0.72,
+    "worst_day": -0.08
+   }
+  }
+ },
+ "both": []
+}

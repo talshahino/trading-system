@@ -229,8 +229,14 @@ def apply(cfg, b, card_id):
         cfg.setdefault("changes", {})[card_id] = {"family": "scout5", "combo": b["combo"],
                                                   "before": json.loads(json.dumps(sc.get(b["combo"], "__none__")))}
         sc[b["combo"]] = {"since": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "card": card_id}
-        cfg.setdefault("risk", {}).setdefault("scout", 0.004)     # the bot's risk (principle 8)
-        if b.get("star"):
+        rk = cfg.setdefault("risk", {})
+        rk.setdefault("scout", 0.004)     # the bot's risk (principle 8)
+        # bot 5 (16.11.2026, task b6to5fit1611): as fit6 in bot 6 - a new scout enters at the level the account's
+        # whole-bot rounds already gave the scouts, not the bare "scout" 0.4%; the star on top of it
+        if fit6(cfg, b["combo"], card_id):
+            if b.get("star"):
+                rk[f"scout:{b['combo']}"] = round(rk[f"scout:{b['combo']}"] * STAR6, 6)
+        elif b.get("star"):
             star6(cfg, b["combo"], card_id)                        # "scout:<combo>" = x0.7, as in bot 6
         return
     if b["family"] == "scout6":

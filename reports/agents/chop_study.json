@@ -1,0 +1,2156 @@
+{
+ "at": "2026-11-16T15:19:06+00:00",
+ "bots": {
+  "bot1": {
+   "strategies": 70,
+   "symbols": [
+    "AAPL",
+    "AMZN",
+    "ARM",
+    "ASML",
+    "CSCO",
+    "DXY",
+    "ETHUSD",
+    "EU50",
+    "GBPJPY",
+    "GBPUSD",
+    "GME",
+    "GOOG",
+    "INTC",
+    "JP225",
+    "KO",
+    "LVMH",
+    "MSTR",
+    "N25",
+    "NATGAS",
+    "NVDA",
+    "NZDUSD",
+    "PFE",
+    "PLTR",
+    "RACE",
+    "TSLA",
+    "US100",
+    "US2000",
+    "US30",
+    "US500",
+    "USDCAD",
+    "USDCHF",
+    "USDJPY",
+    "WMT",
+    "WTI",
+    "XAGUSD",
+    "XAUUSD",
+    "XOM",
+    "XPTUSD"
+   ],
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 3895,
+      "total": 104.17,
+      "worst_day": -3.04,
+      "max_dd": 6.17
+     },
+     "unseen": {
+      "trades": 5204,
+      "total": 177.68,
+      "worst_day": -2.53,
+      "max_dd": 8.04
+     }
+    },
+    "adx:no_new": {
+     "train": {
+      "trades": 2844,
+      "total": 85.36,
+      "worst_day": -2.4,
+      "max_dd": 7.13
+     },
+     "unseen": {
+      "trades": 3737,
+      "total": 124.61,
+      "worst_day": -3.01,
+      "max_dd": 9.01
+     }
+    },
+    "adx:be@0.3": {
+     "train": {
+      "trades": 3938,
+      "total": 52.23,
+      "worst_day": -2.73,
+      "max_dd": 7.5
+     },
+     "unseen": {
+      "trades": 5228,
+      "total": 124.08,
+      "worst_day": -2.61,
+      "max_dd": 7.18
+     }
+    },
+    "adx:be@0.5": {
+     "train": {
+      "trades": 3926,
+      "total": 74.76,
+      "worst_day": -2.95,
+      "max_dd": 7.48
+     },
+     "unseen": {
+      "trades": 5221,
+      "total": 141.27,
+      "worst_day": -2.58,
+      "max_dd": 7.43
+     }
+    },
+    "adx:be@1": {
+     "train": {
+      "trades": 3896,
+      "total": 101.18,
+      "worst_day": -3.23,
+      "max_dd": 7.46
+     },
+     "unseen": {
+      "trades": 5204,
+      "total": 169.64,
+      "worst_day": -2.53,
+      "max_dd": 6.82
+     }
+    },
+    "adx:half@0.3": {
+     "train": {
+      "trades": 3944,
+      "total": 19.66,
+      "worst_day": -2.45,
+      "max_dd": 9.27
+     },
+     "unseen": {
+      "trades": 5223,
+      "total": 73.97,
+      "worst_day": -2.64,
+      "max_dd": 13.54
+     }
+    },
+    "adx:half@0.5": {
+     "train": {
+      "trades": 3936,
+      "total": 40.75,
+      "worst_day": -2.61,
+      "max_dd": 7.8
+     },
+     "unseen": {
+      "trades": 5222,
+      "total": 95.69,
+      "worst_day": -2.69,
+      "max_dd": 10.32
+     }
+    },
+    "adx:half@1": {
+     "train": {
+      "trades": 3912,
+      "total": 72.63,
+      "worst_day": -3.22,
+      "max_dd": 7.42
+     },
+     "unseen": {
+      "trades": 5212,
+      "total": 132.97,
+      "worst_day": -2.7,
+      "max_dd": 7.35
+     }
+    },
+    "adx:fib@0.618": {
+     "train": {
+      "trades": 3899,
+      "total": 70.97,
+      "worst_day": -2.37,
+      "max_dd": 6.09
+     },
+     "unseen": {
+      "trades": 5219,
+      "total": 130.55,
+      "worst_day": -2.97,
+      "max_dd": 14.94
+     }
+    },
+    "adx:fib@0.786": {
+     "train": {
+      "trades": 3882,
+      "total": 56.14,
+      "worst_day": -3.05,
+      "max_dd": 9.55
+     },
+     "unseen": {
+      "trades": 5219,
+      "total": 109.82,
+      "worst_day": -2.78,
+      "max_dd": 18.49
+     }
+    },
+    "adx:fib@1": {
+     "train": {
+      "trades": 3912,
+      "total": 47.07,
+      "worst_day": -2.12,
+      "max_dd": 6.74
+     },
+     "unseen": {
+      "trades": 5217,
+      "total": 97.52,
+      "worst_day": -2.81,
+      "max_dd": 14.29
+     }
+    },
+    "adx:fibh@0.618": {
+     "train": {
+      "trades": 3909,
+      "total": 88.61,
+      "worst_day": -2.67,
+      "max_dd": 6.17
+     },
+     "unseen": {
+      "trades": 5206,
+      "total": 153.7,
+      "worst_day": -2.8,
+      "max_dd": 10.27
+     }
+    },
+    "adx:fibh@0.786": {
+     "train": {
+      "trades": 3900,
+      "total": 80.41,
+      "worst_day": -3.05,
+      "max_dd": 6.58
+     },
+     "unseen": {
+      "trades": 5209,
+      "total": 143.5,
+      "worst_day": -2.68,
+      "max_dd": 11.69
+     }
+    },
+    "adx:fibh@1": {
+     "train": {
+      "trades": 3926,
+      "total": 75.83,
+      "worst_day": -2.52,
+      "max_dd": 5.23
+     },
+     "unseen": {
+      "trades": 5213,
+      "total": 136.93,
+      "worst_day": -2.68,
+      "max_dd": 8.72
+     }
+    },
+    "ci:no_new": {
+     "train": {
+      "trades": 3756,
+      "total": 98.96,
+      "worst_day": -3.04,
+      "max_dd": 6.6
+     },
+     "unseen": {
+      "trades": 4988,
+      "total": 173.92,
+      "worst_day": -2.52,
+      "max_dd": 7.28
+     }
+    },
+    "ci:be@0.3": {
+     "train": {
+      "trades": 3903,
+      "total": 94.25,
+      "worst_day": -3.23,
+      "max_dd": 6.69
+     },
+     "unseen": {
+      "trades": 5221,
+      "total": 143.57,
+      "worst_day": -2.78,
+      "max_dd": 9.5
+     }
+    },
+    "ci:be@0.5": {
+     "train": {
+      "trades": 3900,
+      "total": 97.56,
+      "worst_day": -3.23,
+      "max_dd": 6.81
+     },
+     "unseen": {
+      "trades": 5223,
+      "total": 153.57,
+      "worst_day": -2.53,
+      "max_dd": 10.71
+     }
+    },
+    "ci:be@1": {
+     "train": {
+      "trades": 3904,
+      "total": 101.46,
+      "worst_day": -3.04,
+      "max_dd": 6.17
+     },
+     "unseen": {
+      "trades": 5203,
+      "total": 171.09,
+      "worst_day": -2.53,
+      "max_dd": 9.82
+     }
+    },
+    "ci:half@0.3": {
+     "train": {
+      "trades": 3909,
+      "total": 59.26,
+      "worst_day": -3.22,
+      "max_dd": 7.78
+     },
+     "unseen": {
+      "trades": 5226,
+      "total": 98.65,
+      "worst_day": -2.84,
+      "max_dd": 12.24
+     }
+    },
+    "ci:half@0.5": {
+     "train": {
+      "trades": 3908,
+      "total": 67.85,
+      "worst_day": -3.22,
+      "max_dd": 6.78
+     },
+     "unseen": {
+      "trades": 5227,
+      "total": 112.41,
+      "worst_day": -2.74,
+      "max_dd": 11.39
+     }
+    },
+    "ci:half@1": {
+     "train": {
+      "trades": 3910,
+      "total": 80.92,
+      "worst_day": -3.04,
+      "max_dd": 6.73
+     },
+     "unseen": {
+      "trades": 5204,
+      "total": 136.5,
+      "worst_day": -2.55,
+      "max_dd": 10.49
+     }
+    },
+    "ci:fib@0.618": {
+     "train": {
+      "trades": 3899,
+      "total": 88.5,
+      "worst_day": -2.97,
+      "max_dd": 6.47
+     },
+     "unseen": {
+      "trades": 5214,
+      "total": 156.27,
+      "worst_day": -2.86,
+      "max_dd": 7.32
+     }
+    },
+    "ci:fib@0.786": {
+     "train": {
+      "trades": 3899,
+      "total": 79.95,
+      "worst_day": -3.22,
+      "max_dd": 5.66
+     },
+     "unseen": {
+      "trades": 5215,
+      "total": 136.58,
+      "worst_day": -2.82,
+      "max_dd": 9.58
+     }
+    },
+    "ci:fib@1": {
+     "train": {
+      "trades": 3912,
+      "total": 81.39,
+      "worst_day": -3.19,
+      "max_dd": 4.63
+     },
+     "unseen": {
+      "trades": 5218,
+      "total": 126.06,
+      "worst_day": -2.87,
+      "max_dd": 11.0
+     }
+    },
+    "ci:fibh@0.618": {
+     "train": {
+      "trades": 3901,
+      "total": 96.87,
+      "worst_day": -3.0,
+      "max_dd": 6.04
+     },
+     "unseen": {
+      "trades": 5205,
+      "total": 166.58,
+      "worst_day": -2.74,
+      "max_dd": 7.64
+     }
+    },
+    "ci:fibh@0.786": {
+     "train": {
+      "trades": 3904,
+      "total": 93.64,
+      "worst_day": -3.17,
+      "max_dd": 5.83
+     },
+     "unseen": {
+      "trades": 5211,
+      "total": 156.81,
+      "worst_day": -2.7,
+      "max_dd": 8.15
+     }
+    },
+    "ci:fibh@1": {
+     "train": {
+      "trades": 3903,
+      "total": 92.4,
+      "worst_day": -3.12,
+      "max_dd": 5.34
+     },
+     "unseen": {
+      "trades": 5215,
+      "total": 151.47,
+      "worst_day": -2.73,
+      "max_dd": 7.88
+     }
+    }
+   },
+   "chop_share_ci": {
+    "US30": 4.8,
+    "XAUUSD": 8.6,
+    "US100": 4.9,
+    "USDCHF": 8.9,
+    "CSCO": 3.5,
+    "GOOG": 3.1,
+    "USDCAD": 10.4,
+    "ASML": 2.8,
+    "AMZN": 3.1,
+    "DXY": 8.4,
+    "PFE": 5.4,
+    "US500": 6.1,
+    "WTI": 7.2,
+    "GBPJPY": 11.4,
+    "LVMH": 5.3,
+    "RACE": 1.6,
+    "XPTUSD": 8.6,
+    "WMT": 4.7,
+    "ARM": 2.6,
+    "INTC": 1.8,
+    "KO": 5.4,
+    "PLTR": 2.9,
+    "NATGAS": 5.5,
+    "AAPL": 4.6,
+    "NZDUSD": 9.3,
+    "TSLA": 1.9,
+    "NVDA": 3.7,
+    "EU50": 7.8,
+    "GME": 5.8,
+    "GBPUSD": 10.1,
+    "MSTR": 6.3,
+    "XOM": 4.2,
+    "JP225": 7.0,
+    "US2000": 4.6,
+    "N25": 9.6,
+    "USDJPY": 8.7,
+    "ETHUSD": 10.7,
+    "XAGUSD": 11.0
+   },
+   "best_train": {
+    "way": "ci:be@1",
+    "train": -2.71,
+    "unseen": -6.59,
+    "dd_unseen": 1.78
+   }
+  },
+  "bot2": {
+   "strategies": 37,
+   "symbols": [
+    "ARM",
+    "ASML",
+    "EURJPY",
+    "GBPJPY",
+    "GBPUSD",
+    "GME",
+    "INTC",
+    "MSTR",
+    "NVDA",
+    "PLTR",
+    "QCOM",
+    "TSLA",
+    "USDCAD",
+    "USDJPY",
+    "WMT",
+    "XAGUSD",
+    "XAUUSD"
+   ],
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 2129,
+      "total": 101.38,
+      "worst_day": -2.38,
+      "max_dd": 5.92
+     },
+     "unseen": {
+      "trades": 2742,
+      "total": 129.42,
+      "worst_day": -2.52,
+      "max_dd": 6.33
+     }
+    },
+    "adx:no_new": {
+     "train": {
+      "trades": 1496,
+      "total": 48.73,
+      "worst_day": -2.48,
+      "max_dd": 7.19
+     },
+     "unseen": {
+      "trades": 1898,
+      "total": 86.82,
+      "worst_day": -2.41,
+      "max_dd": 5.83
+     }
+    },
+    "adx:be@0.3": {
+     "train": {
+      "trades": 2133,
+      "total": 60.74,
+      "worst_day": -2.2,
+      "max_dd": 5.78
+     },
+     "unseen": {
+      "trades": 2758,
+      "total": 92.48,
+      "worst_day": -2.46,
+      "max_dd": 9.14
+     }
+    },
+    "adx:be@0.5": {
+     "train": {
+      "trades": 2132,
+      "total": 73.27,
+      "worst_day": -2.2,
+      "max_dd": 6.12
+     },
+     "unseen": {
+      "trades": 2751,
+      "total": 103.25,
+      "worst_day": -2.52,
+      "max_dd": 6.59
+     }
+    },
+    "adx:be@1": {
+     "train": {
+      "trades": 2130,
+      "total": 87.49,
+      "worst_day": -2.38,
+      "max_dd": 7.01
+     },
+     "unseen": {
+      "trades": 2744,
+      "total": 113.5,
+      "worst_day": -2.52,
+      "max_dd": 6.1
+     }
+    },
+    "adx:half@0.3": {
+     "train": {
+      "trades": 2134,
+      "total": 36.74,
+      "worst_day": -2.2,
+      "max_dd": 5.16
+     },
+     "unseen": {
+      "trades": 2760,
+      "total": 67.64,
+      "worst_day": -2.43,
+      "max_dd": 7.78
+     }
+    },
+    "adx:half@0.5": {
+     "train": {
+      "trades": 2134,
+      "total": 52.33,
+      "worst_day": -2.2,
+      "max_dd": 5.4
+     },
+     "unseen": {
+      "trades": 2755,
+      "total": 79.82,
+      "worst_day": -2.52,
+      "max_dd": 6.56
+     }
+    },
+    "adx:half@1": {
+     "train": {
+      "trades": 2131,
+      "total": 71.9,
+      "worst_day": -2.26,
+      "max_dd": 7.02
+     },
+     "unseen": {
+      "trades": 2747,
+      "total": 98.71,
+      "worst_day": -2.52,
+      "max_dd": 6.49
+     }
+    },
+    "adx:fib@0.618": {
+     "train": {
+      "trades": 2133,
+      "total": 79.45,
+      "worst_day": -2.3,
+      "max_dd": 4.52
+     },
+     "unseen": {
+      "trades": 2752,
+      "total": 108.42,
+      "worst_day": -2.52,
+      "max_dd": 5.9
+     }
+    },
+    "adx:fib@0.786": {
+     "train": {
+      "trades": 2130,
+      "total": 62.71,
+      "worst_day": -2.3,
+      "max_dd": 5.72
+     },
+     "unseen": {
+      "trades": 2753,
+      "total": 92.92,
+      "worst_day": -2.45,
+      "max_dd": 6.85
+     }
+    },
+    "adx:fib@1": {
+     "train": {
+      "trades": 2131,
+      "total": 43.6,
+      "worst_day": -2.2,
+      "max_dd": 5.52
+     },
+     "unseen": {
+      "trades": 2757,
+      "total": 75.89,
+      "worst_day": -2.51,
+      "max_dd": 6.29
+     }
+    },
+    "adx:fibh@0.618": {
+     "train": {
+      "trades": 2131,
+      "total": 90.62,
+      "worst_day": -2.34,
+      "max_dd": 5.16
+     },
+     "unseen": {
+      "trades": 2750,
+      "total": 118.84,
+      "worst_day": -2.52,
+      "max_dd": 6.31
+     }
+    },
+    "adx:fibh@0.786": {
+     "train": {
+      "trades": 2130,
+      "total": 82.41,
+      "worst_day": -2.33,
+      "max_dd": 5.09
+     },
+     "unseen": {
+      "trades": 2753,
+      "total": 111.11,
+      "worst_day": -2.49,
+      "max_dd": 6.52
+     }
+    },
+    "adx:fibh@1": {
+     "train": {
+      "trades": 2130,
+      "total": 72.67,
+      "worst_day": -2.2,
+      "max_dd": 5.39
+     },
+     "unseen": {
+      "trades": 2750,
+      "total": 102.17,
+      "worst_day": -2.51,
+      "max_dd": 6.5
+     }
+    },
+    "ci:no_new": {
+     "train": {
+      "trades": 2007,
+      "total": 89.15,
+      "worst_day": -2.3,
+      "max_dd": 6.09
+     },
+     "unseen": {
+      "trades": 2561,
+      "total": 110.47,
+      "worst_day": -2.51,
+      "max_dd": 6.45
+     }
+    },
+    "ci:be@0.3": {
+     "train": {
+      "trades": 2130,
+      "total": 83.85,
+      "worst_day": -2.32,
+      "max_dd": 5.71
+     },
+     "unseen": {
+      "trades": 2745,
+      "total": 97.47,
+      "worst_day": -2.51,
+      "max_dd": 7.98
+     }
+    },
+    "ci:be@0.5": {
+     "train": {
+      "trades": 2130,
+      "total": 86.85,
+      "worst_day": -2.34,
+      "max_dd": 6.57
+     },
+     "unseen": {
+      "trades": 2745,
+      "total": 101.5,
+      "worst_day": -2.52,
+      "max_dd": 7.49
+     }
+    },
+    "ci:be@1": {
+     "train": {
+      "trades": 2129,
+      "total": 94.46,
+      "worst_day": -2.34,
+      "max_dd": 7.24
+     },
+     "unseen": {
+      "trades": 2745,
+      "total": 117.58,
+      "worst_day": -2.52,
+      "max_dd": 6.28
+     }
+    },
+    "ci:half@0.3": {
+     "train": {
+      "trades": 2132,
+      "total": 57.5,
+      "worst_day": -2.3,
+      "max_dd": 6.46
+     },
+     "unseen": {
+      "trades": 2746,
+      "total": 67.57,
+      "worst_day": -2.51,
+      "max_dd": 9.76
+     }
+    },
+    "ci:half@0.5": {
+     "train": {
+      "trades": 2132,
+      "total": 65.6,
+      "worst_day": -2.3,
+      "max_dd": 6.06
+     },
+     "unseen": {
+      "trades": 2747,
+      "total": 75.09,
+      "worst_day": -2.52,
+      "max_dd": 8.8
+     }
+    },
+    "ci:half@1": {
+     "train": {
+      "trades": 2129,
+      "total": 82.54,
+      "worst_day": -2.3,
+      "max_dd": 6.76
+     },
+     "unseen": {
+      "trades": 2747,
+      "total": 100.18,
+      "worst_day": -2.52,
+      "max_dd": 5.89
+     }
+    },
+    "ci:fib@0.618": {
+     "train": {
+      "trades": 2131,
+      "total": 102.25,
+      "worst_day": -2.3,
+      "max_dd": 5.49
+     },
+     "unseen": {
+      "trades": 2744,
+      "total": 105.06,
+      "worst_day": -2.52,
+      "max_dd": 6.36
+     }
+    },
+    "ci:fib@0.786": {
+     "train": {
+      "trades": 2131,
+      "total": 88.12,
+      "worst_day": -2.37,
+      "max_dd": 5.86
+     },
+     "unseen": {
+      "trades": 2748,
+      "total": 95.99,
+      "worst_day": -2.52,
+      "max_dd": 6.81
+     }
+    },
+    "ci:fib@1": {
+     "train": {
+      "trades": 2131,
+      "total": 81.84,
+      "worst_day": -2.3,
+      "max_dd": 5.49
+     },
+     "unseen": {
+      "trades": 2749,
+      "total": 86.84,
+      "worst_day": -2.52,
+      "max_dd": 7.24
+     }
+    },
+    "ci:fibh@0.618": {
+     "train": {
+      "trades": 2131,
+      "total": 101.76,
+      "worst_day": -2.34,
+      "max_dd": 5.67
+     },
+     "unseen": {
+      "trades": 2745,
+      "total": 117.24,
+      "worst_day": -2.52,
+      "max_dd": 6.41
+     }
+    },
+    "ci:fibh@0.786": {
+     "train": {
+      "trades": 2131,
+      "total": 94.63,
+      "worst_day": -2.38,
+      "max_dd": 5.86
+     },
+     "unseen": {
+      "trades": 2748,
+      "total": 112.71,
+      "worst_day": -2.52,
+      "max_dd": 6.65
+     }
+    },
+    "ci:fibh@1": {
+     "train": {
+      "trades": 2131,
+      "total": 91.6,
+      "worst_day": -2.33,
+      "max_dd": 5.67
+     },
+     "unseen": {
+      "trades": 2748,
+      "total": 108.14,
+      "worst_day": -2.52,
+      "max_dd": 6.79
+     }
+    }
+   },
+   "chop_share_ci": {
+    "XAUUSD": 8.6,
+    "USDCAD": 10.4,
+    "ASML": 2.8,
+    "EURJPY": 10.2,
+    "GBPJPY": 11.4,
+    "WMT": 4.7,
+    "ARM": 2.6,
+    "INTC": 1.8,
+    "PLTR": 2.9,
+    "QCOM": 5.3,
+    "TSLA": 1.9,
+    "NVDA": 3.7,
+    "GME": 5.8,
+    "GBPUSD": 10.1,
+    "MSTR": 6.3,
+    "USDJPY": 8.7,
+    "XAGUSD": 11.0
+   },
+   "best_train": {
+    "way": "ci:fib@0.618",
+    "train": 0.87,
+    "unseen": -24.36,
+    "dd_unseen": 0.03
+   }
+  },
+  "bot3": {
+   "strategies": 45,
+   "symbols": [
+    "AAPL",
+    "AMZN",
+    "ARM",
+    "ASML",
+    "GOOG",
+    "INTC",
+    "MSTR",
+    "NVDA",
+    "PFE",
+    "T",
+    "TSLA",
+    "USDCAD",
+    "USDJPY",
+    "WMT",
+    "XAGUSD",
+    "XAUUSD",
+    "XOM"
+   ],
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 2657,
+      "total": 94.55,
+      "worst_day": -3.31,
+      "max_dd": 7.1
+     },
+     "unseen": {
+      "trades": 3505,
+      "total": 115.93,
+      "worst_day": -2.98,
+      "max_dd": 6.1
+     }
+    },
+    "adx:no_new": {
+     "train": {
+      "trades": 1853,
+      "total": 45.28,
+      "worst_day": -2.55,
+      "max_dd": 5.74
+     },
+     "unseen": {
+      "trades": 2452,
+      "total": 59.33,
+      "worst_day": -2.85,
+      "max_dd": 6.73
+     }
+    },
+    "adx:be@0.3": {
+     "train": {
+      "trades": 2668,
+      "total": 45.15,
+      "worst_day": -2.58,
+      "max_dd": 9.79
+     },
+     "unseen": {
+      "trades": 3516,
+      "total": 76.19,
+      "worst_day": -3.07,
+      "max_dd": 7.15
+     }
+    },
+    "adx:be@0.5": {
+     "train": {
+      "trades": 2668,
+      "total": 62.93,
+      "worst_day": -2.91,
+      "max_dd": 7.96
+     },
+     "unseen": {
+      "trades": 3507,
+      "total": 81.64,
+      "worst_day": -3.16,
+      "max_dd": 6.22
+     }
+    },
+    "adx:be@1": {
+     "train": {
+      "trades": 2658,
+      "total": 85.6,
+      "worst_day": -3.31,
+      "max_dd": 7.45
+     },
+     "unseen": {
+      "trades": 3505,
+      "total": 109.3,
+      "worst_day": -2.96,
+      "max_dd": 6.1
+     }
+    },
+    "adx:half@0.3": {
+     "train": {
+      "trades": 2671,
+      "total": 29.75,
+      "worst_day": -2.67,
+      "max_dd": 10.22
+     },
+     "unseen": {
+      "trades": 3517,
+      "total": 47.74,
+      "worst_day": -3.04,
+      "max_dd": 8.81
+     }
+    },
+    "adx:half@0.5": {
+     "train": {
+      "trades": 2668,
+      "total": 48.6,
+      "worst_day": -2.62,
+      "max_dd": 7.98
+     },
+     "unseen": {
+      "trades": 3508,
+      "total": 58.79,
+      "worst_day": -3.07,
+      "max_dd": 6.76
+     }
+    },
+    "adx:half@1": {
+     "train": {
+      "trades": 2659,
+      "total": 74.42,
+      "worst_day": -3.31,
+      "max_dd": 7.51
+     },
+     "unseen": {
+      "trades": 3510,
+      "total": 92.45,
+      "worst_day": -2.96,
+      "max_dd": 6.33
+     }
+    },
+    "adx:fib@0.618": {
+     "train": {
+      "trades": 2663,
+      "total": 79.11,
+      "worst_day": -3.31,
+      "max_dd": 7.78
+     },
+     "unseen": {
+      "trades": 3509,
+      "total": 101.98,
+      "worst_day": -2.82,
+      "max_dd": 6.54
+     }
+    },
+    "adx:fib@0.786": {
+     "train": {
+      "trades": 2666,
+      "total": 62.72,
+      "worst_day": -2.78,
+      "max_dd": 9.04
+     },
+     "unseen": {
+      "trades": 3506,
+      "total": 71.8,
+      "worst_day": -3.16,
+      "max_dd": 7.95
+     }
+    },
+    "adx:fib@1": {
+     "train": {
+      "trades": 2650,
+      "total": 35.64,
+      "worst_day": -3.05,
+      "max_dd": 10.24
+     },
+     "unseen": {
+      "trades": 3509,
+      "total": 57.89,
+      "worst_day": -3.09,
+      "max_dd": 7.62
+     }
+    },
+    "adx:fibh@0.618": {
+     "train": {
+      "trades": 2661,
+      "total": 86.74,
+      "worst_day": -3.31,
+      "max_dd": 6.84
+     },
+     "unseen": {
+      "trades": 3510,
+      "total": 109.12,
+      "worst_day": -2.9,
+      "max_dd": 5.98
+     }
+    },
+    "adx:fibh@0.786": {
+     "train": {
+      "trades": 2663,
+      "total": 78.34,
+      "worst_day": -3.07,
+      "max_dd": 6.91
+     },
+     "unseen": {
+      "trades": 3507,
+      "total": 93.98,
+      "worst_day": -2.94,
+      "max_dd": 5.93
+     }
+    },
+    "adx:fibh@1": {
+     "train": {
+      "trades": 2655,
+      "total": 65.79,
+      "worst_day": -3.18,
+      "max_dd": 7.5
+     },
+     "unseen": {
+      "trades": 3509,
+      "total": 86.79,
+      "worst_day": -2.88,
+      "max_dd": 6.0
+     }
+    },
+    "ci:no_new": {
+     "train": {
+      "trades": 2503,
+      "total": 87.63,
+      "worst_day": -3.17,
+      "max_dd": 7.33
+     },
+     "unseen": {
+      "trades": 3284,
+      "total": 106.24,
+      "worst_day": -2.63,
+      "max_dd": 4.88
+     }
+    },
+    "ci:be@0.3": {
+     "train": {
+      "trades": 2661,
+      "total": 77.16,
+      "worst_day": -3.13,
+      "max_dd": 6.92
+     },
+     "unseen": {
+      "trades": 3508,
+      "total": 102.14,
+      "worst_day": -2.7,
+      "max_dd": 6.08
+     }
+    },
+    "ci:be@0.5": {
+     "train": {
+      "trades": 2658,
+      "total": 81.49,
+      "worst_day": -3.31,
+      "max_dd": 6.72
+     },
+     "unseen": {
+      "trades": 3503,
+      "total": 105.83,
+      "worst_day": -2.7,
+      "max_dd": 5.42
+     }
+    },
+    "ci:be@1": {
+     "train": {
+      "trades": 2656,
+      "total": 89.71,
+      "worst_day": -3.31,
+      "max_dd": 7.1
+     },
+     "unseen": {
+      "trades": 3505,
+      "total": 114.72,
+      "worst_day": -2.98,
+      "max_dd": 6.1
+     }
+    },
+    "ci:half@0.3": {
+     "train": {
+      "trades": 2664,
+      "total": 51.37,
+      "worst_day": -3.09,
+      "max_dd": 7.62
+     },
+     "unseen": {
+      "trades": 3507,
+      "total": 78.0,
+      "worst_day": -2.66,
+      "max_dd": 6.59
+     }
+    },
+    "ci:half@0.5": {
+     "train": {
+      "trades": 2657,
+      "total": 59.77,
+      "worst_day": -3.31,
+      "max_dd": 7.66
+     },
+     "unseen": {
+      "trades": 3504,
+      "total": 86.1,
+      "worst_day": -2.63,
+      "max_dd": 6.97
+     }
+    },
+    "ci:half@1": {
+     "train": {
+      "trades": 2656,
+      "total": 77.99,
+      "worst_day": -3.31,
+      "max_dd": 7.56
+     },
+     "unseen": {
+      "trades": 3502,
+      "total": 100.58,
+      "worst_day": -2.98,
+      "max_dd": 6.0
+     }
+    },
+    "ci:fib@0.618": {
+     "train": {
+      "trades": 2660,
+      "total": 89.74,
+      "worst_day": -3.31,
+      "max_dd": 6.8
+     },
+     "unseen": {
+      "trades": 3507,
+      "total": 109.41,
+      "worst_day": -2.96,
+      "max_dd": 6.0
+     }
+    },
+    "ci:fib@0.786": {
+     "train": {
+      "trades": 2660,
+      "total": 76.66,
+      "worst_day": -3.31,
+      "max_dd": 6.77
+     },
+     "unseen": {
+      "trades": 3510,
+      "total": 100.09,
+      "worst_day": -2.96,
+      "max_dd": 6.03
+     }
+    },
+    "ci:fib@1": {
+     "train": {
+      "trades": 2658,
+      "total": 74.73,
+      "worst_day": -3.31,
+      "max_dd": 6.16
+     },
+     "unseen": {
+      "trades": 3511,
+      "total": 93.73,
+      "worst_day": -2.52,
+      "max_dd": 5.8
+     }
+    },
+    "ci:fibh@0.618": {
+     "train": {
+      "trades": 2660,
+      "total": 92.17,
+      "worst_day": -3.31,
+      "max_dd": 6.95
+     },
+     "unseen": {
+      "trades": 3502,
+      "total": 112.6,
+      "worst_day": -2.96,
+      "max_dd": 5.71
+     }
+    },
+    "ci:fibh@0.786": {
+     "train": {
+      "trades": 2659,
+      "total": 85.6,
+      "worst_day": -3.31,
+      "max_dd": 6.94
+     },
+     "unseen": {
+      "trades": 3508,
+      "total": 108.3,
+      "worst_day": -2.96,
+      "max_dd": 5.73
+     }
+    },
+    "ci:fibh@1": {
+     "train": {
+      "trades": 2658,
+      "total": 84.59,
+      "worst_day": -3.31,
+      "max_dd": 6.67
+     },
+     "unseen": {
+      "trades": 3508,
+      "total": 104.96,
+      "worst_day": -2.64,
+      "max_dd": 5.92
+     }
+    }
+   },
+   "chop_share_ci": {
+    "XAUUSD": 8.6,
+    "GOOG": 3.1,
+    "USDCAD": 10.4,
+    "ASML": 2.8,
+    "AMZN": 3.1,
+    "PFE": 5.4,
+    "WMT": 4.7,
+    "ARM": 2.6,
+    "INTC": 1.8,
+    "T": 4.4,
+    "AAPL": 4.6,
+    "TSLA": 1.9,
+    "NVDA": 3.7,
+    "MSTR": 6.3,
+    "XOM": 4.2,
+    "USDJPY": 8.7,
+    "XAGUSD": 11.0
+   },
+   "best_train": {
+    "way": "ci:fibh@0.618",
+    "train": -2.38,
+    "unseen": -3.33,
+    "dd_unseen": -0.39
+   }
+  },
+  "bot4": {
+   "strategies": 44,
+   "symbols": [
+    "ARM",
+    "CSCO",
+    "EURJPY",
+    "EURUSD",
+    "GBPJPY",
+    "GBPUSD",
+    "INTC",
+    "SPCX",
+    "USDCAD",
+    "USDJPY",
+    "WMT",
+    "XAGUSD",
+    "XAUUSD"
+   ],
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 2414,
+      "total": 106.58,
+      "worst_day": -2.94,
+      "max_dd": 8.76
+     },
+     "unseen": {
+      "trades": 3311,
+      "total": 148.9,
+      "worst_day": -2.34,
+      "max_dd": 6.69
+     }
+    },
+    "adx:no_new": {
+     "train": {
+      "trades": 1655,
+      "total": 54.9,
+      "worst_day": -2.86,
+      "max_dd": 8.16
+     },
+     "unseen": {
+      "trades": 2290,
+      "total": 108.2,
+      "worst_day": -2.53,
+      "max_dd": 6.15
+     }
+    },
+    "adx:be@0.3": {
+     "train": {
+      "trades": 2437,
+      "total": 56.17,
+      "worst_day": -2.57,
+      "max_dd": 7.75
+     },
+     "unseen": {
+      "trades": 3337,
+      "total": 101.26,
+      "worst_day": -1.99,
+      "max_dd": 6.25
+     }
+    },
+    "adx:be@0.5": {
+     "train": {
+      "trades": 2430,
+      "total": 73.65,
+      "worst_day": -2.57,
+      "max_dd": 8.06
+     },
+     "unseen": {
+      "trades": 3324,
+      "total": 120.86,
+      "worst_day": -2.0,
+      "max_dd": 6.28
+     }
+    },
+    "adx:be@1": {
+     "train": {
+      "trades": 2425,
+      "total": 95.66,
+      "worst_day": -2.87,
+      "max_dd": 8.7
+     },
+     "unseen": {
+      "trades": 3313,
+      "total": 145.22,
+      "worst_day": -2.34,
+      "max_dd": 5.87
+     }
+    },
+    "adx:half@0.3": {
+     "train": {
+      "trades": 2446,
+      "total": 38.65,
+      "worst_day": -2.56,
+      "max_dd": 7.63
+     },
+     "unseen": {
+      "trades": 3339,
+      "total": 75.75,
+      "worst_day": -2.2,
+      "max_dd": 6.78
+     }
+    },
+    "adx:half@0.5": {
+     "train": {
+      "trades": 2437,
+      "total": 55.64,
+      "worst_day": -2.55,
+      "max_dd": 8.33
+     },
+     "unseen": {
+      "trades": 3329,
+      "total": 97.44,
+      "worst_day": -2.11,
+      "max_dd": 6.24
+     }
+    },
+    "adx:half@1": {
+     "train": {
+      "trades": 2434,
+      "total": 83.89,
+      "worst_day": -2.7,
+      "max_dd": 8.92
+     },
+     "unseen": {
+      "trades": 3318,
+      "total": 127.06,
+      "worst_day": -2.34,
+      "max_dd": 6.05
+     }
+    },
+    "adx:fib@0.618": {
+     "train": {
+      "trades": 2436,
+      "total": 81.95,
+      "worst_day": -2.62,
+      "max_dd": 9.31
+     },
+     "unseen": {
+      "trades": 3315,
+      "total": 124.2,
+      "worst_day": -2.25,
+      "max_dd": 6.86
+     }
+    },
+    "adx:fib@0.786": {
+     "train": {
+      "trades": 2436,
+      "total": 67.36,
+      "worst_day": -2.55,
+      "max_dd": 10.2
+     },
+     "unseen": {
+      "trades": 3312,
+      "total": 93.0,
+      "worst_day": -2.17,
+      "max_dd": 6.89
+     }
+    },
+    "adx:fib@1": {
+     "train": {
+      "trades": 2426,
+      "total": 50.07,
+      "worst_day": -2.94,
+      "max_dd": 8.77
+     },
+     "unseen": {
+      "trades": 3336,
+      "total": 82.37,
+      "worst_day": -2.08,
+      "max_dd": 5.45
+     }
+    },
+    "adx:fibh@0.618": {
+     "train": {
+      "trades": 2423,
+      "total": 94.1,
+      "worst_day": -2.67,
+      "max_dd": 9.03
+     },
+     "unseen": {
+      "trades": 3320,
+      "total": 135.36,
+      "worst_day": -2.3,
+      "max_dd": 6.26
+     }
+    },
+    "adx:fibh@0.786": {
+     "train": {
+      "trades": 2433,
+      "total": 86.41,
+      "worst_day": -2.56,
+      "max_dd": 9.46
+     },
+     "unseen": {
+      "trades": 3316,
+      "total": 120.77,
+      "worst_day": -2.18,
+      "max_dd": 6.54
+     }
+    },
+    "adx:fibh@1": {
+     "train": {
+      "trades": 2426,
+      "total": 78.12,
+      "worst_day": -2.94,
+      "max_dd": 8.76
+     },
+     "unseen": {
+      "trades": 3337,
+      "total": 116.46,
+      "worst_day": -2.05,
+      "max_dd": 5.34
+     }
+    },
+    "ci:no_new": {
+     "train": {
+      "trades": 2305,
+      "total": 107.39,
+      "worst_day": -2.94,
+      "max_dd": 8.04
+     },
+     "unseen": {
+      "trades": 3144,
+      "total": 132.83,
+      "worst_day": -2.28,
+      "max_dd": 5.77
+     }
+    },
+    "ci:be@0.3": {
+     "train": {
+      "trades": 2413,
+      "total": 88.28,
+      "worst_day": -2.94,
+      "max_dd": 8.67
+     },
+     "unseen": {
+      "trades": 3323,
+      "total": 131.82,
+      "worst_day": -2.27,
+      "max_dd": 6.02
+     }
+    },
+    "ci:be@0.5": {
+     "train": {
+      "trades": 2411,
+      "total": 90.93,
+      "worst_day": -2.94,
+      "max_dd": 8.58
+     },
+     "unseen": {
+      "trades": 3317,
+      "total": 135.27,
+      "worst_day": -2.27,
+      "max_dd": 6.82
+     }
+    },
+    "ci:be@1": {
+     "train": {
+      "trades": 2412,
+      "total": 103.8,
+      "worst_day": -2.94,
+      "max_dd": 8.76
+     },
+     "unseen": {
+      "trades": 3311,
+      "total": 148.12,
+      "worst_day": -2.34,
+      "max_dd": 6.39
+     }
+    },
+    "ci:half@0.3": {
+     "train": {
+      "trades": 2418,
+      "total": 67.39,
+      "worst_day": -2.87,
+      "max_dd": 8.7
+     },
+     "unseen": {
+      "trades": 3325,
+      "total": 106.7,
+      "worst_day": -2.42,
+      "max_dd": 7.01
+     }
+    },
+    "ci:half@0.5": {
+     "train": {
+      "trades": 2416,
+      "total": 71.74,
+      "worst_day": -2.77,
+      "max_dd": 8.99
+     },
+     "unseen": {
+      "trades": 3315,
+      "total": 115.48,
+      "worst_day": -2.38,
+      "max_dd": 7.25
+     }
+    },
+    "ci:half@1": {
+     "train": {
+      "trades": 2417,
+      "total": 92.13,
+      "worst_day": -2.72,
+      "max_dd": 8.79
+     },
+     "unseen": {
+      "trades": 3313,
+      "total": 137.17,
+      "worst_day": -2.34,
+      "max_dd": 7.21
+     }
+    },
+    "ci:fib@0.618": {
+     "train": {
+      "trades": 2420,
+      "total": 102.09,
+      "worst_day": -2.94,
+      "max_dd": 9.05
+     },
+     "unseen": {
+      "trades": 3317,
+      "total": 142.14,
+      "worst_day": -2.62,
+      "max_dd": 5.72
+     }
+    },
+    "ci:fib@0.786": {
+     "train": {
+      "trades": 2422,
+      "total": 92.15,
+      "worst_day": -2.63,
+      "max_dd": 8.99
+     },
+     "unseen": {
+      "trades": 3326,
+      "total": 124.44,
+      "worst_day": -2.6,
+      "max_dd": 6.3
+     }
+    },
+    "ci:fib@1": {
+     "train": {
+      "trades": 2416,
+      "total": 84.43,
+      "worst_day": -2.94,
+      "max_dd": 8.37
+     },
+     "unseen": {
+      "trades": 3319,
+      "total": 118.77,
+      "worst_day": -2.53,
+      "max_dd": 6.47
+     }
+    },
+    "ci:fibh@0.618": {
+     "train": {
+      "trades": 2417,
+      "total": 103.89,
+      "worst_day": -2.94,
+      "max_dd": 8.97
+     },
+     "unseen": {
+      "trades": 3317,
+      "total": 145.13,
+      "worst_day": -2.33,
+      "max_dd": 5.75
+     }
+    },
+    "ci:fibh@0.786": {
+     "train": {
+      "trades": 2421,
+      "total": 99.28,
+      "worst_day": -2.65,
+      "max_dd": 8.95
+     },
+     "unseen": {
+      "trades": 3318,
+      "total": 136.48,
+      "worst_day": -2.34,
+      "max_dd": 6.26
+     }
+    },
+    "ci:fibh@1": {
+     "train": {
+      "trades": 2414,
+      "total": 94.98,
+      "worst_day": -2.94,
+      "max_dd": 8.66
+     },
+     "unseen": {
+      "trades": 3321,
+      "total": 134.41,
+      "worst_day": -2.34,
+      "max_dd": 6.09
+     }
+    }
+   },
+   "chop_share_ci": {
+    "XAUUSD": 8.6,
+    "CSCO": 3.5,
+    "USDCAD": 10.4,
+    "EURJPY": 10.2,
+    "GBPJPY": 11.4,
+    "WMT": 4.7,
+    "ARM": 2.6,
+    "SPCX": 4.9,
+    "INTC": 1.8,
+    "GBPUSD": 10.1,
+    "EURUSD": 8.3,
+    "USDJPY": 8.7,
+    "XAGUSD": 11.0
+   },
+   "best_train": {
+    "way": "ci:no_new",
+    "train": 0.81,
+    "unseen": -16.07,
+    "dd_unseen": -0.92
+   }
+  },
+  "bot5": {
+   "strategies": 23,
+   "symbols": [
+    "EURUSD",
+    "GBPUSD",
+    "GER40",
+    "US100",
+    "US30",
+    "USDCHF",
+    "USDJPY",
+    "XAUUSD"
+   ],
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 2901,
+      "total": 102.54,
+      "worst_day": -3.62,
+      "max_dd": 11.27
+     },
+     "unseen": {
+      "trades": 3799,
+      "total": 71.4,
+      "worst_day": -3.76,
+      "max_dd": 14.64
+     }
+    },
+    "adx:no_new": {
+     "train": {
+      "trades": 1971,
+      "total": 47.32,
+      "worst_day": -3.02,
+      "max_dd": 9.53
+     },
+     "unseen": {
+      "trades": 2631,
+      "total": 38.72,
+      "worst_day": -3.13,
+      "max_dd": 13.1
+     }
+    },
+    "adx:be@0.3": {
+     "train": {
+      "trades": 2901,
+      "total": 61.17,
+      "worst_day": -3.2,
+      "max_dd": 12.61
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 45.83,
+      "worst_day": -3.48,
+      "max_dd": 12.6
+     }
+    },
+    "adx:be@0.5": {
+     "train": {
+      "trades": 2901,
+      "total": 66.91,
+      "worst_day": -3.63,
+      "max_dd": 14.56
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 47.96,
+      "worst_day": -3.76,
+      "max_dd": 15.28
+     }
+    },
+    "adx:be@1": {
+     "train": {
+      "trades": 2901,
+      "total": 96.16,
+      "worst_day": -3.62,
+      "max_dd": 10.7
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 62.08,
+      "worst_day": -3.76,
+      "max_dd": 18.21
+     }
+    },
+    "adx:half@0.3": {
+     "train": {
+      "trades": 2903,
+      "total": 37.41,
+      "worst_day": -3.11,
+      "max_dd": 13.35
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 27.11,
+      "worst_day": -3.4,
+      "max_dd": 17.62
+     }
+    },
+    "adx:half@0.5": {
+     "train": {
+      "trades": 2903,
+      "total": 43.06,
+      "worst_day": -3.62,
+      "max_dd": 13.21
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 31.21,
+      "worst_day": -3.76,
+      "max_dd": 20.44
+     }
+    },
+    "adx:half@1": {
+     "train": {
+      "trades": 2903,
+      "total": 72.91,
+      "worst_day": -3.62,
+      "max_dd": 11.9
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 50.2,
+      "worst_day": -3.76,
+      "max_dd": 18.76
+     }
+    },
+    "adx:fib@0.618": {
+     "train": {
+      "trades": 2902,
+      "total": 70.63,
+      "worst_day": -3.66,
+      "max_dd": 13.16
+     },
+     "unseen": {
+      "trades": 3800,
+      "total": 55.7,
+      "worst_day": -3.17,
+      "max_dd": 12.46
+     }
+    },
+    "adx:fib@0.786": {
+     "train": {
+      "trades": 2903,
+      "total": 65.36,
+      "worst_day": -3.31,
+      "max_dd": 11.11
+     },
+     "unseen": {
+      "trades": 3800,
+      "total": 47.62,
+      "worst_day": -3.71,
+      "max_dd": 21.71
+     }
+    },
+    "adx:fib@1": {
+     "train": {
+      "trades": 2903,
+      "total": 61.66,
+      "worst_day": -3.62,
+      "max_dd": 12.06
+     },
+     "unseen": {
+      "trades": 3800,
+      "total": 50.9,
+      "worst_day": -3.14,
+      "max_dd": 15.02
+     }
+    },
+    "adx:fibh@0.618": {
+     "train": {
+      "trades": 2901,
+      "total": 86.57,
+      "worst_day": -3.64,
+      "max_dd": 11.71
+     },
+     "unseen": {
+      "trades": 3800,
+      "total": 63.8,
+      "worst_day": -3.42,
+      "max_dd": 13.14
+     }
+    },
+    "adx:fibh@0.786": {
+     "train": {
+      "trades": 2901,
+      "total": 83.9,
+      "worst_day": -3.47,
+      "max_dd": 10.19
+     },
+     "unseen": {
+      "trades": 3800,
+      "total": 60.33,
+      "worst_day": -3.73,
+      "max_dd": 17.76
+     }
+    },
+    "adx:fibh@1": {
+     "train": {
+      "trades": 2903,
+      "total": 81.99,
+      "worst_day": -3.62,
+      "max_dd": 11.28
+     },
+     "unseen": {
+      "trades": 3800,
+      "total": 61.67,
+      "worst_day": -3.38,
+      "max_dd": 14.86
+     }
+    },
+    "ci:no_new": {
+     "train": {
+      "trades": 2616,
+      "total": 91.06,
+      "worst_day": -3.62,
+      "max_dd": 8.84
+     },
+     "unseen": {
+      "trades": 3414,
+      "total": 51.39,
+      "worst_day": -3.24,
+      "max_dd": 17.0
+     }
+    },
+    "ci:be@0.3": {
+     "train": {
+      "trades": 2903,
+      "total": 88.06,
+      "worst_day": -3.62,
+      "max_dd": 10.14
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 78.96,
+      "worst_day": -3.48,
+      "max_dd": 11.74
+     }
+    },
+    "ci:be@0.5": {
+     "train": {
+      "trades": 2903,
+      "total": 91.33,
+      "worst_day": -3.62,
+      "max_dd": 12.17
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 73.96,
+      "worst_day": -3.76,
+      "max_dd": 13.67
+     }
+    },
+    "ci:be@1": {
+     "train": {
+      "trades": 2903,
+      "total": 98.46,
+      "worst_day": -3.62,
+      "max_dd": 11.56
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 70.6,
+      "worst_day": -3.76,
+      "max_dd": 15.22
+     }
+    },
+    "ci:half@0.3": {
+     "train": {
+      "trades": 2903,
+      "total": 66.1,
+      "worst_day": -3.6,
+      "max_dd": 12.34
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 56.44,
+      "worst_day": -3.3,
+      "max_dd": 12.56
+     }
+    },
+    "ci:half@0.5": {
+     "train": {
+      "trades": 2903,
+      "total": 71.27,
+      "worst_day": -3.59,
+      "max_dd": 12.21
+     },
+     "unseen": {
+      "trades": 3802,
+      "total": 57.27,
+      "worst_day": -3.6,
+      "max_dd": 13.76
+     }
+    },
+    "ci:half@1": {
+     "train": {
+      "trades": 2903,
+      "total": 86.34,
+      "worst_day": -3.62,
+      "max_dd": 10.87
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 61.6,
+      "worst_day": -3.63,
+      "max_dd": 14.64
+     }
+    },
+    "ci:fib@0.618": {
+     "train": {
+      "trades": 2901,
+      "total": 96.29,
+      "worst_day": -3.62,
+      "max_dd": 12.76
+     },
+     "unseen": {
+      "trades": 3799,
+      "total": 61.6,
+      "worst_day": -3.33,
+      "max_dd": 13.1
+     }
+    },
+    "ci:fib@0.786": {
+     "train": {
+      "trades": 2901,
+      "total": 86.36,
+      "worst_day": -3.62,
+      "max_dd": 12.42
+     },
+     "unseen": {
+      "trades": 3799,
+      "total": 68.68,
+      "worst_day": -3.76,
+      "max_dd": 13.98
+     }
+    },
+    "ci:fib@1": {
+     "train": {
+      "trades": 2901,
+      "total": 77.5,
+      "worst_day": -3.62,
+      "max_dd": 11.83
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 56.55,
+      "worst_day": -3.24,
+      "max_dd": 15.28
+     }
+    },
+    "ci:fibh@0.618": {
+     "train": {
+      "trades": 2901,
+      "total": 99.42,
+      "worst_day": -3.62,
+      "max_dd": 11.76
+     },
+     "unseen": {
+      "trades": 3799,
+      "total": 66.55,
+      "worst_day": -3.55,
+      "max_dd": 13.34
+     }
+    },
+    "ci:fibh@0.786": {
+     "train": {
+      "trades": 2901,
+      "total": 94.45,
+      "worst_day": -3.62,
+      "max_dd": 10.9
+     },
+     "unseen": {
+      "trades": 3799,
+      "total": 70.73,
+      "worst_day": -3.76,
+      "max_dd": 12.61
+     }
+    },
+    "ci:fibh@1": {
+     "train": {
+      "trades": 2901,
+      "total": 90.02,
+      "worst_day": -3.62,
+      "max_dd": 10.62
+     },
+     "unseen": {
+      "trades": 3801,
+      "total": 64.66,
+      "worst_day": -3.24,
+      "max_dd": 14.26
+     }
+    }
+   },
+   "chop_share_ci": {
+    "US30": 4.8,
+    "XAUUSD": 8.6,
+    "US100": 4.9,
+    "USDCHF": 8.9,
+    "GER40": 6.3,
+    "GBPUSD": 10.1,
+    "EURUSD": 8.3,
+    "USDJPY": 8.7
+   },
+   "best_train": {
+    "way": "ci:fibh@0.618",
+    "train": -3.12,
+    "unseen": -4.85,
+    "dd_unseen": -1.3
+   }
+  }
+ }
+}

@@ -976,7 +976,12 @@ def scout_scale6(allt, risk, lim):
         k = max(TG.SCALE_FLOOR, round(k - 0.05, 2))
     gap = allt[~allt["trk"].astype(str).str.startswith("scout")]
     gtr, gun = gap[gap["time"] < TG.SPLIT], gap[gap["time"] >= TG.SPLIT]
-    return {"chosen": round(float(k), 2), "fits": fits(b), "margin": TG.MARGIN,
+    try:
+        edge = scout_edge6(tr, un, risk, sk, lim, b, TG.account(un.copy(), rk(k), lim), fits)
+    except Exception as ex:  # noqa: BLE001 - the uniform factor stands without it
+        print(f"scout edge split failed: {ex}")
+        edge = None
+    return {"chosen": round(float(k), 2), "fits": fits(b), "margin": TG.MARGIN, "edge": edge,
             "limits": {"day": L["day"], "all": L["all"], "trail": L["trail"], "use": L["use"]},
             "scouts": sorted(set(allt.loc[allt["trk"].astype(str).str.startswith("scout"), "trk"].astype(str))),
             "now": {"train": TG.account(tr.copy(), risk, lim), "unseen": TG.account(un.copy(), risk, lim)},
@@ -985,11 +990,70 @@ def scout_scale6(allt, risk, lim):
             "tried": tried}
 
 
+# THE SCOUTS' RISK BY EACH ONE'S EDGE (bot 6's smart agent, 16.11.2026 night; principles 2, 8, 11 and case 41's "next
+# stage": the risk shared among the strategies by their edge). The uniform factor (x 0.15 on 16.11) gives a weak scout
+# (SC072: +0.06R a trade to 2025, t 0.16) the same share as a strong one, and at 0.042-0.06% one micro contract is more
+# than most scout trades may risk: 1,597 of the 2024-2025 trades and 1,114 of 2026's were skipped for that alone - the
+# scouts that still trade are the ones with the tightest stops, where the costs weigh most. The variant: each scout's
+# risk = its approved risk x k x w, w = its own time-weighted R a trade on 2024-2025 / the best scout's (continuous,
+# never under EDGE_FLOOR - no edge -> the minimum, so the live data keeps coming - and never over the bot's 0.4%);
+# k = the largest (from the strongest at 0.4%, down by 10%) with which 2024-2025 of the whole bot is NO riskier than with the uniform factor (its
+# deepest fall and worst day) and inside the account's margin. Chosen only on 2024-2025; a card only when it earns more
+# on 2024-2025 AND on 2026, with 2026 still inside the margin. Bot 5 runs one uniform factor (x 0.45) - not tested there.
+EDGE_FLOOR = 0.1
+EDGE_MIN_N = 20
+
+
+def scout_edge6(tr, un, risk, sk, lim, b_uni, u_uni, fits):
+    if not b_uni or not u_uni or tr.empty:
+        return None
+    e = {}
+    for x in sk:
+        t_ = tr[tr["trk"] == x]
+        e[x] = None if len(t_) < EDGE_MIN_N else float(np.average(t_["r"].astype(float), weights=K.weights(t_["time"], now=TG.SPLIT)))
+    best = max([v for v in e.values() if v is not None and v > 0], default=None)
+    if best is None:
+        return None
+    w = {x: (EDGE_FLOOR if v is None or v <= 0 else max(EDGE_FLOOR, v / best)) for x, v in e.items()}
+    cap = 0.4                     # % - the bot's own risk a trade (principle: no trade risks more than the bot's risk)
+
+    def rk(k):
+        return {x: (min(cap, v * k * w[x]) if x in sk else v) for x, v in risk.items()}
+
+    def same_risk(bb):
+        return fits(bb) and bb["max_fall_pct"] <= b_uni["max_fall_pct"] + 1e-9 and bb["worst_day_pct"] >= b_uni["worst_day_pct"] - 1e-9
+    # the scouts' risk in bot6.json is already the uniform factor's (x 0.15 since 16.11), so k may go above 1: from the
+    # k that puts the strongest scout at the bot's own 0.4%, down in steps of 10%
+    top = max((risk[x] * w[x] for x in sk), default=0.0)
+    if top <= 0:
+        return None
+    k, bt, tried = cap / top, None, []
+    while k >= 0.02:
+        bt = TG.account(tr.copy(), rk(k), lim)
+        tried.append({"k": round(k, 3), "fall": (bt or {}).get("max_fall_pct"), "day": (bt or {}).get("worst_day_pct"),
+                      "total": (bt or {}).get("total_pct")})
+        if bt and same_risk(bt):
+            break
+        k, bt = k * 0.9, None
+    if bt is None:
+        return {"better": False, "why": "no k as safe as the uniform factor", "edge_r": e, "w": w, "tried": tried}
+    bu = TG.account(un.copy(), rk(k), lim)
+    L = TG._lim(lim)
+    better = bool(bu and bt["total_pct"] > b_uni["total_pct"] + 1e-9 and bu["total_pct"] > u_uni["total_pct"] + 1e-9
+                  and fits(bu))
+    return {"k": round(k, 3), "edge_r": {x: (None if v is None else round(v, 4)) for x, v in e.items()},
+            "w": {x: round(v, 3) for x, v in w.items()}, "risk": {x: round(v, 5) for x, v in rk(k).items() if x in sk},
+            "train": bt, "unseen": bu, "uniform": {"train": b_uni, "unseen": u_uni}, "better_train": bool(bt["total_pct"] > b_uni["total_pct"] + 1e-9),
+            "better": better, "limits": {"day": L["day"], "all": L["all"]}, "tried": tried}
+
+
 def scout_scale_cards(g, rk):
     """One risk card per scout strategy of bot 6 (live/bots/bot6.json "scout") with the factor of scout_scale6 - also
     the scouts the test could not run in time (the same factor: never more risk than the tested ones)."""
     s = (g or {}).get("scout_scale") or {}
     k = s.get("chosen", 1.0)
+    if s and (s.get("edge") or {}).get("better") and k >= 1.0:
+        return scout_edge_cards(s, rk)
     if not s or k >= 1.0:
         return []
     gt0 = (s.get("gap_only") or {}).get("train") or {}
@@ -1046,6 +1110,40 @@ def scout_scale_cards(g, rk):
                           detail={"world": "bot6", "task": "scout_scale", "account_fit": True, "factor": k, "tested": inn,
                                   "scale": {kk: s.get(kk) for kk in ("chosen", "fits", "limits", "now", "with", "gap_only", "tried")}},
                           change={"track": f"scout:{combo}", "knob": f"RISK_scout:{combo}", "from": r0, "to": to}))
+    return out
+
+
+def scout_edge_cards(s, rk):
+    """The scouts' risk by each one's edge (scout_edge6): one risk card per tested scout whose risk changes."""
+    e = s["edge"]
+    lm = e.get("limits") or {}
+    ut, uu = (e["uniform"].get("train") or {}), (e["uniform"].get("unseen") or {})
+    et, eu = e.get("train") or {}, e.get("unseen") or {}
+    line = lambda x: (f"סה\"כ {x.get('total_pct', 0):+.1f}%, היום הגרוע {x.get('worst_day_pct', 0):+.2f}%, "  # noqa: E731
+                      f"הירידה הגדולה {x.get('max_fall_pct', 0):.1f}%"
+                      + (f", {x['contract_skipped']} עסקאות דולגו כי חוזה מיקרו אחד גדול מהסיכון" if x.get("contract_skipped") else ""))
+    rows = sorted(((x, e["w"].get(x), e["edge_r"].get(x)) for x in e.get("risk", {})), key=lambda r: -(r[1] or 0))
+    table = " · ".join(f"{x[6:]}: {'' if er is None else f'{er:+.2f}R, '}משקל {w_:.2f}" for x, w_, er in rows)
+    out = []
+    for x, to_pct in sorted(e.get("risk", {}).items()):
+        if not str(x).startswith("scout:"):
+            continue
+        r0 = float(rk.get(x, rk.get("scout", FA.RISK_TAL)) or 0)
+        to = round(float(to_pct) / 100, 6)
+        if r0 <= 0 or abs(to - r0) < 1e-6:
+            continue
+        out.append(K.card("bot6", "risk", f"בוט 6: {x[6:]} - סיכון {r0 * 100:g}% ← {to * 100:g}% לפי היתרון שלה (חלוקת הסיכון של הסייר)",
+                          f"היום כל אסטרטגיות הסייר מקבלות אותו מקדם (×0.15 מ־16.11) כדי שהבוט כולו יישאר במגבלות של FTMO Futures "
+                          f"({lm.get('day', 1.5):g}% ביום, {lm.get('all', 4.5):g}% נגרר). כך חלשה מקבלת כמו חזקה, ובסיכון כזה חוזה מיקרו אחד "
+                          f"גדול מהסיכון של רוב העסקאות - הן מדולגות. החלוקה החדשה (עיקרון 8 ומקרה 41): לכל אחת סיכון לפי היתרון שלה "
+                          f"עד 2025 (R לעסקה, משוקלל בזמן), ביחס לחזקה ביותר; בלי יתרון - משקל המינימום ({EDGE_FLOOR:g}; עסקה נלקחת רק כשחוזה מיקרו אחד נכנס בסיכון הזה); "
+                          f"אף עסקה לא מעל 0.4%. המקדם הכללי נבחר רק עד 2025 כך שהבוט כולו לא מסוכן יותר מהיום (אותה ירידה ואותו יום גרוע). "
+                          f"היתרון והמשקל: {table}. הבוט כולו - היום: 2024-2025 {line(ut)}; 2026 {line(uu)}. "
+                          f"עם החלוקה: 2024-2025 {line(et)}; 2026 (לא נראתה) {line(eu)}. "
+                          f"בבוט 5 עדיין מקדם אחד לכל הסייר (×0.45) - החלוקה לפי היתרון לא נבדקה שם.",
+                          None, None, tested=len(e.get("tried") or [1]), risk_pct=round(to * 100, 4),
+                          detail={"world": "bot6", "task": "scout_edge", "account_fit": True, "edge": e},
+                          change={"track": x, "knob": f"RISK_{x}", "from": r0, "to": to}))
     return out
 
 

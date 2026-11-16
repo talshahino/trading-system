@@ -238,8 +238,12 @@ def apply(cfg, b, card_id):
         cfg.setdefault("changes", {})[card_id] = {"family": "scout6", "combo": b["combo"],
                                                   "before": json.loads(json.dumps(sc.get(b["combo"], "__none__")))}
         sc[b["combo"]] = {"v": dict(b["v"]), "since": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "card": card_id}
-        cfg.setdefault("risk", {}).setdefault("scout", 0.004)     # the bot's risk (principle 8)
-        if b.get("star"):
+        rk = cfg.setdefault("risk", {})
+        rk.setdefault("scout", 0.004)     # the bot's risk (principle 8)
+        if fit6(cfg, b["combo"], card_id):
+            if b.get("star"):           # the star on top of the account's level (x STAR6, as star6 does on "scout")
+                rk[f"scout:{b['combo']}"] = round(rk[f"scout:{b['combo']}"] * STAR6, 6)
+        elif b.get("star"):
             star6(cfg, b["combo"], card_id)
         return
     if b["family"] == "tal6":
@@ -352,6 +356,27 @@ def apply(cfg, b, card_id):
 
 
 STAR6 = 0.7          # agents/autodecide.STAR_MULT: the manager's "maybe luck" discount
+
+
+def fit6(cfg, combo, card_id):
+    """Bot 6 (16.11.2026, bot 6's smart agent): a NEW scout strategy enters at the risk the account's limits already
+    gave the scouts, not at the bare "scout" 0.4%. The scouts' factor (agent_bot6.scout_scale6, x 0.15 on 16.11) is a
+    risk of each scout's own ("scout:<combo>"), so a scout added after it - SC441|5Min|US100 at 08:41 - took the full
+    0.4%, ~7x the others: the cause of 16.11's -389$ (SC072 at 0.4%) again. The level = the highest unstarred scout
+    risk the bot has (never above "scout"); the next whole-bot round sets its own number. Taken out with the card."""
+    rk = cfg.setdefault("risk", {})
+    key = f"scout:{combo}"
+    if key in rk:
+        return False
+    base = float(rk.get("scout", 0.004))
+    lv = [float(v) for k, v in rk.items() if str(k).startswith("scout:") and 0 < float(v) < base]
+    if not lv:
+        return False
+    ch = cfg.setdefault("changes", {}).setdefault(card_id, {"family": "scout6", "combo": combo, "before": "__none__"})
+    ch["star_risk_before"] = "__none__"
+    rk[key] = round(max(lv), 6)
+    ch["fit6"] = rk[key]
+    return True
 
 
 def star6(cfg, combo, card_id):

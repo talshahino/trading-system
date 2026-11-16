@@ -1,0 +1,48 @@
+name: Bot 5 night study - scout stacking, SC071 direction, the curve (from a chop_study run)
+
+# agents/b5_night_study.py on the data of an earlier chop_study run (its bot 5 artifacts, kept 5 days): same-instrument
+# same-direction scout stacking (task mgr1611stack), a higher-timeframe direction filter on SC071 US30 and every scout
+# (task b5sc071dir1611), with the curve's numbers (task mgr1611curve). Results only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "chop_study run id"
+        required: true
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          path: parts
+          pattern: ch-bot5_*
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Report
+        run: |
+          rm -rf reports/agents/bot5/conflict
+          for d in parts/*/; do cp -r "$d." reports/agents/; done
+          ls reports/agents/bot5/conflict | head -20
+          python -m agents.b5_night_study report | head -80
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/agents/bot5/night_study.json
+          git commit -qm "Bot 5 night study (agents/b5_night_study)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

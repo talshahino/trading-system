@@ -880,6 +880,27 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
         REP.notify(f"{BOT}: עסקה נחסמה", f"{pretty(combo)}\nבסטופ היא הייתה מפסידה ${loss:,.0f}, יותר מהסיכון המותר (${risk:,.0f}). לא נפתחה.",
                    priority=4, tags=["no_entry"], key="block:" + combo, every=3600)
         return
+    # the margin (user, 16.11.2026: bot 3 SS01|5Min|WMT 272 shares ~$35k came back 10019 'No money' - AAPL 236 shares
+    # was open; stocks on this demo need about their whole value as margin). Too big for the free margin: the size
+    # that fits (a smaller risk, never a bigger one), if it is at least a quarter of the trade; otherwise no trade.
+    try:
+        acc = mt5.account_info()
+        free = float(getattr(acc, "margin_free", 0) or 0)
+        need = float(mt5.order_calc_margin(mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, name, lots, px) or 0)
+    except Exception:  # noqa: BLE001
+        free = need = 0.0
+    if need > 0 and free > 0 and need > 0.9 * free:
+        step = info.volume_step or 0.01
+        fit = float(np.floor(lots * 0.9 * free / need / step + 1e-9) * step)
+        fit = round(fit, max(0, len(f"{step:.8f}".rstrip("0").split(".")[1])))
+        if fit < info.volume_min or fit < 0.25 * lots:
+            log(f"skip {combo}: not enough free margin (${need:,.0f} for {lots} lots, ${free:,.0f} free)")
+            REP.notify(f"{BOT}: אין מספיק מרג'ין", f"{pretty(combo)}\nהעסקה צריכה ${need:,.0f} מרג'ין ופנויים רק ${free:,.0f} "
+                       "(עסקאות פתוחות תופסות אותו). לא נפתחה.", priority=3, tags=["no_entry"], key="margin:" + combo, every=3600)
+            return
+        log(f"{combo}: margin ${need:,.0f} for {lots} lots, free ${free:,.0f} - {fit} lots")
+        loss *= fit / lots
+        lots = fit
     req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": name, "volume": lots,
            "type": mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL, "price": px,
            "sl": sl_r, "tp": round(tp, info.digits) if tp == tp and tp is not None else 0.0,

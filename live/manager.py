@@ -791,10 +791,28 @@ def _recent(x, hours=36):
         return False
 
 
+def _no_risk_down():
+    """The bots whose risk the user said is never lowered: data/agents/user_rules.json "no_risk_down" (empty since
+    12.11.2026 - "bot 3 works like the other bots, its risk may go down too")."""
+    for f in (ROOT / "data" / "agents" / "user_rules.json", AH.WORK / "data" / "agents" / "user_rules.json"):
+        try:
+            v = json.loads(f.read_text(encoding="utf-8")).get("no_risk_down") or []
+            return {str(x.get("bot") if isinstance(x, dict) else x) for x in v}
+        except Exception:  # noqa: BLE001
+            continue
+    return set()
+
+
 def _lowers_bot3(a):
-    """The user's standing rule: bot 3's risk is never lowered - not by a retry or a re-apply either."""
+    """A risk cut on a bot the user keeps from cuts (user_rules "no_risk_down") - not by a retry or a re-apply either.
+    Until 16.11.2026 this was bot 3 hard-coded, from the user's rule of 9.11 that he lifted on 12.11: the re-apply of
+    _reconcile_applied and the retry of a failed apply skipped every cut of bot 3, so the manager's approved cuts there
+    never came back once lost (bots 1-4 smart agent, 16.11.2026 evening: SC380 / SC381 XAUUSD x0.7, SC417 XAUUSD x0.5 of
+    11:32 and TV41 USDJPY x0.31 of 15.11 22:09 approved and marked applied, the bot still at x1 / x1 / x1 / x0.47)."""
     try:
-        return a.get("bot") == "bot3" and a.get("kind") == "mult" and float(a.get("value") or 0) < float(a.get("prev") or 1)
+        if a.get("kind") != "mult" or a.get("bot") not in _no_risk_down():
+            return False
+        return float(a.get("value") or 0) < float(a.get("prev") or 1)
     except Exception:  # noqa: BLE001
         return True
 

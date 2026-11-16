@@ -1,15 +1,16 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-16T23:23:55+00:00",
- "light_at": "2026-11-16T23:14:29+00:00",
+ "updated": "2026-11-16T23:35:10+00:00",
+ "light_at": "2026-11-16T23:35:10+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
   "light": 10,
   "smart": 60
  },
  "smart_minutes": {
-  "bot7-shocks": 15.0
+  "bot7-shocks": 15.0,
+  "bot6-new": 10.0
  },
  "agent_errors": [],
  "agent_last": {
@@ -22,7 +23,7 @@
   "bot4": "2026-11-16T20:29:45+00:00",
   "bot7": "2026-11-16T21:11:20+00:00",
   "bot7-shocks": "2026-11-16T22:55:15+00:00",
-  "bot6-new": "2026-11-16T13:53:25+00:00"
+  "bot6-new": "2026-11-16T23:25:07+00:00"
  },
  "agent_tail": {
   "bot5-new": [
@@ -50,9 +51,8 @@
    "walk-forward book inside 2025 (cont): ['XAUUSD'] train {'n': 77, 'eff_n': 76.9, 'mean': 0.5823, 't': 1.92, 'win': 39.1, 'sum': 44.65} unseen {'n': 192, 'eff_n': 192.0, 'mean': -0.1785, 't': -1.06, 'win': 24.5, 'sum': -34.61}"
   ],
   "bot6-new": [
-   "new strategies: stopped for time, 30 tested, 168 combos left",
-   "{\"bot\": \"bot6\", \"new_cards\": 2737}",
-   "(continued across a manager restart)"
+   "new strategies: stopped for time, 60 tested, 92 combos left",
+   "{\"bot\": \"bot6\", \"new_cards\": 2813}"
   ],
   "bot5": [
    "tal_gap: 14 run, 0 left",
@@ -129,12 +129,11 @@
    "err": null
   },
   "bot6-new": {
-   "at": "2026-11-16T13:54:42+00:00",
-   "sec": 631,
+   "at": "2026-11-16T23:25:07+00:00",
+   "sec": 524,
    "budget_sec": 600,
-   "ok": null,
-   "err": null,
-   "adopted": true
+   "ok": true,
+   "err": null
   },
   "bot5": {
    "at": "2026-11-16T14:10:09+00:00",

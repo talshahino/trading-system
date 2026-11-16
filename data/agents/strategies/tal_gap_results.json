@@ -442085,6 +442085,211 @@
    "tracks": 20,
    "instruments": 11,
    "n": 4409
+  },
+  "night_1611": {
+   "at": "2026-11-16T22:27:30+00:00",
+   "study": "reports/agents/bot5/night_study.json",
+   "stack": {
+    "asis": {
+     "train": {
+      "total": 79.1,
+      "max_dd": 7.95,
+      "worst_day": -2.99,
+      "green_days": 56.0
+     },
+     "unseen": {
+      "total": 56.96,
+      "max_dd": 11.12,
+      "worst_day": -2.83,
+      "green_days": 51.1
+     }
+    },
+    "skip": {
+     "train": {
+      "total": 43.16,
+      "max_dd": 6.32,
+      "worst_day": -2.4,
+      "green_days": 49.1
+     },
+     "unseen": {
+      "total": 31.79,
+      "max_dd": 11.32,
+      "worst_day": -2.08,
+      "green_days": 44.7
+     }
+    },
+    "half": {
+     "train": {
+      "total": 61.0,
+      "max_dd": 5.63,
+      "worst_day": -2.37,
+      "green_days": 54.3
+     },
+     "unseen": {
+      "total": 39.75,
+      "max_dd": 9.56,
+      "worst_day": -2.06,
+      "green_days": 49.3
+     }
+    },
+    "cap2": {
+     "train": {
+      "total": 48.48,
+      "max_dd": 5.39,
+      "worst_day": -2.68,
+      "green_days": 53.1
+     },
+     "unseen": {
+      "total": 39.35,
+      "max_dd": 11.32,
+      "worst_day": -2.21,
+      "green_days": 48.0
+     }
+    }
+   },
+   "direction_whole": {
+    "asis": {
+     "train": {
+      "total": 79.1,
+      "max_dd": 7.95,
+      "worst_day": -2.99,
+      "green_days": 56.0
+     },
+     "unseen": {
+      "total": 56.96,
+      "max_dd": 11.12,
+      "worst_day": -2.83,
+      "green_days": 51.1
+     }
+    },
+    "pick_per_strategy": {
+     "train": {
+      "total": 89.82,
+      "max_dd": 7.11,
+      "worst_day": -2.78,
+      "green_days": 56.6
+     },
+     "unseen": {
+      "total": 52.08,
+      "max_dd": 10.09,
+      "worst_day": -2.78,
+      "green_days": 49.8
+     }
+    },
+    "sc071_ema50h": {
+     "train": {
+      "total": 77.81,
+      "max_dd": 7.95,
+      "worst_day": -2.99,
+      "green_days": 54.9
+     },
+     "unseen": {
+      "total": 56.65,
+      "max_dd": 10.83,
+      "worst_day": -2.83,
+      "green_days": 52.4
+     }
+    },
+    "sc071_both": {
+     "train": {
+      "total": 78.11,
+      "max_dd": 7.95,
+      "worst_day": -2.99,
+      "green_days": 54.9
+     },
+     "unseen": {
+      "total": 56.06,
+      "max_dd": 11.19,
+      "worst_day": -2.83,
+      "green_days": 52.0
+     }
+    },
+    "sc071_noreent": {
+     "train": {
+      "total": 79.39,
+      "max_dd": 7.95,
+      "worst_day": -2.99,
+      "green_days": 55.4
+     },
+     "unseen": {
+      "total": 54.29,
+      "max_dd": 11.12,
+      "worst_day": -2.83,
+      "green_days": 50.7
+     }
+    },
+    "all_ema50h": {
+     "train": {
+      "total": 48.56,
+      "max_dd": 7.83,
+      "worst_day": -1.95,
+      "green_days": 48.3
+     },
+     "unseen": {
+      "total": 32.14,
+      "max_dd": 9.12,
+      "worst_day": -2.34,
+      "green_days": 43.2
+     }
+    },
+    "all_noreent": {
+     "train": {
+      "total": 81.92,
+      "max_dd": 7.57,
+      "worst_day": -2.5,
+      "green_days": 56.6
+     },
+     "unseen": {
+      "total": 52.12,
+      "max_dd": 10.51,
+      "worst_day": -2.67,
+      "green_days": 50.2
+     }
+    },
+    "sc333_noreent": {
+     "train": {
+      "total": 81.25,
+      "max_dd": 7.3,
+      "worst_day": -2.97,
+      "green_days": 54.9
+     },
+     "unseen": {
+      "total": 58.21,
+      "max_dd": 11.24,
+      "worst_day": -2.83,
+      "green_days": 51.5
+     }
+    },
+    "bk07us100_ema50h": {
+     "train": {
+      "total": 80.84,
+      "max_dd": 6.91,
+      "worst_day": -2.99,
+      "green_days": 56.0
+     },
+     "unseen": {
+      "total": 57.88,
+      "max_dd": 10.6,
+      "worst_day": -2.83,
+      "green_days": 51.5
+     }
+    },
+    "held_two": {
+     "train": {
+      "total": 83.0,
+      "max_dd": 6.36,
+      "worst_day": -2.97,
+      "green_days": 54.9
+     },
+     "unseen": {
+      "total": 59.13,
+      "max_dd": 10.72,
+      "worst_day": -2.83,
+      "green_days": 52.0
+     }
+    }
+   },
+   "for_bot6": "BK07|15Min|US100 with the 1-hour EMA50 direction (longs over / shorts under): 2025 +17.0R -> +23.2R, 2026 +12.5R -> +15.8R, fewer trades - worth a test on the futures if bot 6 trades BK07; same-instrument stacking: no change; a higher-timeframe filter on every scout loses."
   }
  }
 }

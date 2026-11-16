@@ -1,7 +1,496 @@
 {
  "bot": "bot5",
- "updated": "2026-11-16T20:45:00+00:00",
+ "updated": "2026-11-16T22:26:54+00:00",
  "cards": [
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: כמה עסקאות סייר באותו מכשיר ובאותו כיוון - דילוג / חצי סיכון / תקרה של 2 נבדקו, נשאר כמו היום",
+   "what": "המשימה של המנהל (16.11: SC441 ו־SC402 קנו זהב באותה דקה ושתיהן הפסידו). נבדק על כל עסקאות הסייר כפי שהבוט סוחר (23 אסטרטגיות, 8 מכשירים, עלויות FTMO, כלל הסיכון הקבוע). כמעט חצי מהעסקאות נפתחות כשכבר יש עסקה פתוחה באותו מכשיר ובאותו כיוון (בעיקר בזהב). 2026: כמו היום ‎+57.0% (ירידה 11.12%, היום הגרוע -2.83%, 51.1% ימים ירוקים); לדלג על השנייה ‎+31.8%; חצי סיכון לשנייה ‎+39.8% (ירידה 9.56%, היום הגרוע -2.06%); תקרה של 2 ‎+39.4%. עד 2025 אותו דבר (‎+79.1% מול ‎+61.0% בחצי סיכון). חצי סיכון מקטין את הירידה, אבל מוריד את הרווח יותר ממה שהוא מקטין את הסיכון, ואחוז הימים הירוקים לא עולה - כלומר זה כמו להוריד סיכון, לא תיקון. העסקאות הצמודות מרוויחות בסך הכל. אין שינוי.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 3,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "task": "mgr1611stack",
+    "study": "reports/agents/bot5/night_study.json",
+    "stack": {
+     "asis": {
+      "train": {
+       "trades": 2904,
+       "total": 79.1,
+       "win": 40.2,
+       "green_days": 56.0,
+       "days": 175,
+       "max_dd": 7.95,
+       "worst_day": -2.99,
+       "day_sd": 1.703,
+       "guard_cut": 4,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3803,
+       "total": 56.96,
+       "win": 39.4,
+       "green_days": 51.1,
+       "days": 227,
+       "max_dd": 11.12,
+       "worst_day": -2.83,
+       "day_sd": 1.57,
+       "guard_cut": 2,
+       "guard_skipped": 0
+      },
+      "stacked": {
+       "train": 1654,
+       "unseen": 2073
+      }
+     },
+     "skip": {
+      "train": {
+       "trades": 1493,
+       "total": 43.16,
+       "win": 39.4,
+       "green_days": 49.1,
+       "days": 175,
+       "max_dd": 6.32,
+       "worst_day": -2.4,
+       "day_sd": 1.223,
+       "guard_cut": 0,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 2036,
+       "total": 31.79,
+       "win": 38.7,
+       "green_days": 44.7,
+       "days": 226,
+       "max_dd": 11.32,
+       "worst_day": -2.08,
+       "day_sd": 1.155,
+       "guard_cut": 0,
+       "guard_skipped": 0
+      },
+      "stacked": null
+     },
+     "half": {
+      "train": {
+       "trades": 2904,
+       "total": 61.0,
+       "win": 40.2,
+       "green_days": 54.3,
+       "days": 175,
+       "max_dd": 5.63,
+       "worst_day": -2.37,
+       "day_sd": 1.368,
+       "guard_cut": 0,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3803,
+       "total": 39.75,
+       "win": 39.4,
+       "green_days": 49.3,
+       "days": 227,
+       "max_dd": 9.56,
+       "worst_day": -2.06,
+       "day_sd": 1.241,
+       "guard_cut": 0,
+       "guard_skipped": 0
+      },
+      "stacked": null
+     },
+     "cap2": {
+      "train": {
+       "trades": 1995,
+       "total": 48.48,
+       "win": 39.0,
+       "green_days": 53.1,
+       "days": 175,
+       "max_dd": 5.39,
+       "worst_day": -2.68,
+       "day_sd": 1.346,
+       "guard_cut": 0,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 2730,
+       "total": 39.35,
+       "win": 38.6,
+       "green_days": 48.0,
+       "days": 227,
+       "max_dd": 11.32,
+       "worst_day": -2.21,
+       "day_sd": 1.292,
+       "guard_cut": 0,
+       "guard_skipped": 0
+      },
+      "stacked": null
+     }
+    }
+   },
+   "made": "2026-11-16T22:26:54+00:00",
+   "id": "44e3789a5267"
+  },
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: SC071 בדאו - מסנן כיוון מהשעה ובלי קנייה חוזרת אחרי סטופ נבדקו, לא משפרים",
+   "what": "ההערה של טל (16.11, 'זה אמור להיות שורט'). SC071 קונה בלבד בפס הקלטנר התחתון. עד 2025 רק 28 עסקאות ‎+2.2R, ב־2026 77 עסקאות ‎+7.6R. קנייה רק מעל EMA50 של שעה: נשארות 4 / 10 עסקאות (-2.4R / +6.5R) - כמעט כל הכניסות שלו הן בשוק יורד, זה מהות האסטרטגיה. EMA20 של שעה לא יורד: 3 / 5 עסקאות. בלי קנייה שנייה באותו יום אחרי סטופ: עד 2025 ‎+3.2R, אבל 2026 ‎+7.6R ← -1.9R. אף דרך לא טובה בשתי התקופות. אותו מסנן על כל 23 אסטרטגיות הסייר: הבוט כולו ב־2026 ‎+57.0% ← ‎+32.1%; בחירה לכל אסטרטגיה עד 2025 ← ‎+52.1% ב־2026. הצד השני (שורט בפס העליון) עוד לא נבדק - צריך קוד חדש באסטרטגיה, נשאר פתוח במשימה. המשפחה של SC071 (8 צירופים, ‎-101R עד 2025) נבדקת במשימה mgr1411fam2 עד 17.11.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 4,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "task": "b5sc071dir1611",
+    "study": "reports/agents/bot5/night_study.json",
+    "sc071": {
+     "asis": {
+      "train": {
+       "n": 28,
+       "sum": 2.21,
+       "mean": 0.079,
+       "win": 35.7
+      },
+      "unseen": {
+       "n": 77,
+       "sum": 7.6,
+       "mean": 0.099,
+       "win": 50.6
+      }
+     },
+     "ema50h": {
+      "train": {
+       "n": 4,
+       "sum": -2.38,
+       "mean": -0.595,
+       "win": 25.0
+      },
+      "unseen": {
+       "n": 10,
+       "sum": 6.48,
+       "mean": 0.648,
+       "win": 90.0
+      }
+     },
+     "slope20h": {
+      "train": {
+       "n": 3,
+       "sum": -1.32,
+       "mean": -0.439,
+       "win": 33.3
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 4.37,
+       "mean": 0.875,
+       "win": 80.0
+      }
+     },
+     "both": {
+      "train": {
+       "n": 3,
+       "sum": -1.32,
+       "mean": -0.439,
+       "win": 33.3
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 4.37,
+       "mean": 0.875,
+       "win": 80.0
+      }
+     },
+     "noreent": {
+      "train": {
+       "n": 24,
+       "sum": 3.25,
+       "mean": 0.135,
+       "win": 37.5
+      },
+      "unseen": {
+       "n": 61,
+       "sum": -1.92,
+       "mean": -0.032,
+       "win": 45.9
+      }
+     },
+     "sides": {
+      "train": {
+       "long": 28,
+       "short": 0
+      },
+      "unseen": {
+       "long": 77,
+       "short": 0
+      }
+     },
+     "pick": "noreent"
+    }
+   },
+   "made": "2026-11-16T22:26:54+00:00",
+   "id": "fc2ad78788b6"
+  },
+  {
+   "bot": "bot5",
+   "kind": "improve",
+   "title": "⭐ בוט 5: SC333 זהב - בלי קנייה חוזרת באותו יום אחרי סטופ",
+   "what": "SC333 קונה זהב בלבד. אחרי שקנייה שלו נעצרה הוא קונה שוב באותו יום, לרוב בשוק שממשיך לרדת - מה שטל אמר על SC071. הכלל: אחרי סטופ אין קנייה נוספת שלו באותו יום (שעון ניו יורק). נבחר על 2025 מתוך 5 דרכים: עד 2025 ‎+42.3R ← ‎+59.4R (293 ← 195 עסקאות), 2026 ‎+6.8R ← ‎+17.3R (378 ← 260). הבוט כולו: 2025 ‎+79.1% ← ‎+81.2% (ירידה 7.95% ← 7.3%), 2026 ‎+57.0% ← ‎+58.2% (ירידה 11.12% ← 11.24%). ⭐ אולי מזל: מתוך 11 אסטרטגיות שהבחירה של 2025 שינתה, רק 3 החזיקו ב־2026, והבחירה לכולן יחד הפסידה ב־2026. לכן בסיכון הנוכחי שלו ובמעקב. צריך קוד בבוט (מסנן לסייר) - נבנה אחרי אישור.",
+   "train": {
+    "n": 195,
+    "eff_n": 195.0,
+    "mean": 0.305,
+    "t": null,
+    "win": 41.0
+   },
+   "unseen": {
+    "n": 260,
+    "eff_n": 260.0,
+    "mean": 0.066,
+    "t": null,
+    "win": 35.4
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.126,
+   "baseline": {
+    "n": 378,
+    "eff_n": 378.0,
+    "mean": 0.018,
+    "t": null,
+    "win": 34.9
+   },
+   "change": {
+    "combo": "SC333|15Min|XAUUSD",
+    "knob": "SCOUT_FILTER",
+    "from": null,
+    "to": "noreent",
+    "code": true
+   },
+   "detail": {
+    "task": "b5sc071dir1611",
+    "study": "reports/agents/bot5/night_study.json",
+    "whole": {
+     "asis": {
+      "train": {
+       "trades": 2904,
+       "total": 79.1,
+       "win": 40.2,
+       "green_days": 56.0,
+       "days": 175,
+       "max_dd": 7.95,
+       "worst_day": -2.99,
+       "day_sd": 1.703,
+       "guard_cut": 4,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3803,
+       "total": 56.96,
+       "win": 39.4,
+       "green_days": 51.1,
+       "days": 227,
+       "max_dd": 11.12,
+       "worst_day": -2.83,
+       "day_sd": 1.57,
+       "guard_cut": 2,
+       "guard_skipped": 0
+      }
+     },
+     "with": {
+      "train": {
+       "trades": 2806,
+       "total": 81.25,
+       "win": 40.5,
+       "green_days": 54.9,
+       "days": 175,
+       "max_dd": 7.3,
+       "worst_day": -2.97,
+       "day_sd": 1.704,
+       "guard_cut": 3,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3685,
+       "total": 58.21,
+       "win": 39.5,
+       "green_days": 51.5,
+       "days": 227,
+       "max_dd": 11.24,
+       "worst_day": -2.83,
+       "day_sd": 1.561,
+       "guard_cut": 2,
+       "guard_skipped": 0
+      }
+     }
+    },
+    "star": true
+   },
+   "made": "2026-11-16T22:26:54+00:00",
+   "id": "5108e04c49ee"
+  },
+  {
+   "bot": "bot5",
+   "kind": "improve",
+   "title": "⭐ בוט 5: BK07 נאסד\"ק - רק בכיוון EMA50 של שעה",
+   "what": "BK07 נכנס לשני הכיוונים. הכלל: קנייה רק כשסגירת השעה האחרונה מעל EMA50 של שעה, מכירה רק מתחת (נרות סגורים בלבד). נבחר על 2025 מתוך 5 דרכים: עד 2025 ‎+17.0R ← ‎+23.2R (45 ← 30 עסקאות), 2026 ‎+12.5R ← ‎+15.8R (59 ← 31). הבוט כולו: 2025 ‎+79.1% ← ‎+80.8% (ירידה 7.95% ← 6.91%), 2026 ‎+57.0% ← ‎+57.9% (ירידה 11.12% ← 10.6%). פחות עסקאות, יותר רווח וירידה קטנה יותר בשתי התקופות. ⭐ אולי מזל (3 מ־11 בחירות החזיקו ב־2026), ולכן בסיכון הנוכחי ובמעקב. צריך קוד בבוט - נבנה אחרי אישור.",
+   "train": {
+    "n": 30,
+    "eff_n": 30.0,
+    "mean": 0.774,
+    "t": null,
+    "win": 30.0
+   },
+   "unseen": {
+    "n": 31,
+    "eff_n": 31.0,
+    "mean": 0.51,
+    "t": null,
+    "win": 29.0
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.28,
+   "baseline": {
+    "n": 59,
+    "eff_n": 59.0,
+    "mean": 0.212,
+    "t": null,
+    "win": 30.5
+   },
+   "change": {
+    "combo": "BK07|15Min|US100",
+    "knob": "SCOUT_FILTER",
+    "from": null,
+    "to": "ema50h",
+    "code": true
+   },
+   "detail": {
+    "task": "b5sc071dir1611",
+    "study": "reports/agents/bot5/night_study.json",
+    "whole": {
+     "asis": {
+      "train": {
+       "trades": 2904,
+       "total": 79.1,
+       "win": 40.2,
+       "green_days": 56.0,
+       "days": 175,
+       "max_dd": 7.95,
+       "worst_day": -2.99,
+       "day_sd": 1.703,
+       "guard_cut": 4,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3803,
+       "total": 56.96,
+       "win": 39.4,
+       "green_days": 51.1,
+       "days": 227,
+       "max_dd": 11.12,
+       "worst_day": -2.83,
+       "day_sd": 1.57,
+       "guard_cut": 2,
+       "guard_skipped": 0
+      }
+     },
+     "with": {
+      "train": {
+       "trades": 2889,
+       "total": 80.84,
+       "win": 40.3,
+       "green_days": 56.0,
+       "days": 175,
+       "max_dd": 6.91,
+       "worst_day": -2.99,
+       "day_sd": 1.682,
+       "guard_cut": 4,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3775,
+       "total": 57.88,
+       "win": 39.4,
+       "green_days": 51.5,
+       "days": 227,
+       "max_dd": 10.6,
+       "worst_day": -2.83,
+       "day_sd": 1.532,
+       "guard_cut": 1,
+       "guard_skipped": 0
+      }
+     }
+    },
+    "star": true,
+    "for_bot6": true
+   },
+   "made": "2026-11-16T22:26:54+00:00",
+   "id": "876520ad763a"
+  },
+  {
+   "bot": "bot5",
+   "kind": "risk",
+   "title": "בוט 5: מסלול 15 דקות (v5) - סיכון 0.4% ← 0.04% עד שיימצא תיקון",
+   "what": "המשימה של המנהל (mgr1611stack 2). v5 רץ בסיכון הגבוה בבוט (0.4%) בלי יתרון: עד 2025 ‎-0.019R לעסקה (מבחן ‎-0.71), ב־2026 ‎-0.000R על 1,385 עסקאות, כל התקופה ‎-0.008R על 3,943; בחי 2 עסקאות, שתיהן סטופ. קודם תיקון: נבדקו 44 גרסאות (חלק ביציאה, איפה יוצא החלק, עוצמת הנר, תוקף הפער, רק הפער הראשון ועוד) - אף אחת לא מרוויחה עד 2025. לפי הנוסחה של טל (סיכון = הסיכון שאושר × היתרון עכשיו ÷ היתרון שאושר): אין יתרון ← כמות מינימלית, כדי שנתוני החי ימשיכו להגיע. 0.04% (עשירית). תיקון שיימצא - הסיכון חוזר. הבוט כולו: פחות סיכון פתוח בלי לוותר על רווח (v5 לא מרוויח בשום תקופה).",
+   "train": {
+    "n": 2558,
+    "eff_n": 2558.0,
+    "mean": -0.019,
+    "t": -0.71,
+    "win": null
+   },
+   "unseen": {
+    "n": 1385,
+    "eff_n": 1384.7,
+    "mean": -0.0004,
+    "t": -0.01,
+    "win": 38.1
+   },
+   "whole": {
+    "n": 3943,
+    "eff_n": 3825.6,
+    "mean": -0.0082,
+    "t": -0.35,
+    "win": 37.9
+   },
+   "halves": null,
+   "neighbours": null,
+   "tested": 44,
+   "cost_r": 0.041,
+   "risk_pct": 0.04,
+   "baseline": null,
+   "change": {
+    "track": "v5",
+    "knob": "RISK_v5",
+    "from": 0.004,
+    "to": 0.0004
+   },
+   "detail": {
+    "task": "mgr1611stack",
+    "fix_attempts": "bot5|v5",
+    "rule": "edge formula: no edge -> minimal"
+   },
+   "made": "2026-11-16T22:26:54+00:00",
+   "id": "54a815623ed4"
+  },
   {
    "bot": "bot5",
    "kind": "info",

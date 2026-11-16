@@ -845,6 +845,22 @@ def fut_lim():
 # What the gap tracks' test did not have: the scout strategies bot 6 also trades (live/bots/bot6.json "scout", their own
 # risk) - so the whole bot here = the gap tracks (as the live bot runs them) + every scout strategy with its live
 # variant, and the card reports how many trades the room rule cut / skipped in each period (a lot = fix the overlap).
+GUARD_KEEP_DAYS = 7
+GUARD_DIR = Path("reports/agents/bot6/scout_fut/guard")
+
+
+def _guard_file(combo, v):
+    """The kept trades of a scout strategy in its live variant (guard6), if fresh enough."""
+    from agents import scout_fut as SF
+    try:
+        f = GUARD_DIR / f"{combo.replace('|', '_')}_{SF.vid(v)}.csv.gz"
+    except Exception:  # noqa: BLE001
+        return None
+    if f.exists() and time.time() - f.stat().st_mtime < GUARD_KEEP_DAYS * 86400:
+        return f
+    return None
+
+
 def guard6(idx, counted, rk, budget_s):
     from agents import scout_fut as SF
     t0, rows = time.time(), []
@@ -867,23 +883,37 @@ def guard6(idx, counted, rk, budget_s):
         sc = {}
     end = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
     data, srows, missing = {}, [], []
-    for combo, e in sc.items():
+    # each scout's trades in its LIVE variant are kept on disk between rounds (bot 6's smart agent, 16.11.2026): the
+    # 15.11 23:06 round reached 1 of the 10 scouts in its 12% of the time (one symbol's minutes + one strategy), so
+    # the whole-bot test and the scouts' factor (scout_scale6) never saw them. A kept file is used for GUARD_KEEP_DAYS,
+    # the ones not kept yet are run first, and each round adds what its time allows until all ten are in.
+    GUARD_DIR.mkdir(parents=True, exist_ok=True)
+    order = sorted(sc.items(), key=lambda kv: _guard_file(kv[0], (kv[1] or {}).get("v") or {}) is not None)
+    for combo, e in order:
         try:
             sid, tf, sym = combo.split("|")
             v = (e or {}).get("v") or {}
-            if sym not in FA.SPEC or time.time() - t0 > budget_s:
+            if sym not in FA.SPEC:
                 missing.append(combo)
                 continue
-            if sym not in data:
-                pr = prep(sym, end)
-                data[sym] = None if pr is None else pr
-            if data[sym] is None:
-                missing.append(combo)
-                continue
-            df, _, _, noent = data[sym]
-            shut, _ = FA.session_masks(df)
-            _, pv, tick = FA.SPEC[sym]
-            t = SF.trades(df, sym, sid, tf, v, noent, shut, tick + (FA.COMM + FA.SLIP_TICKS * tick * pv) / pv)
+            kept = _guard_file(combo, v)
+            if kept is not None:
+                t = pd.read_csv(kept)
+            else:
+                if time.time() - t0 > budget_s:
+                    missing.append(combo)
+                    continue
+                if sym not in data:
+                    pr = prep(sym, end)
+                    data[sym] = None if pr is None else pr
+                if data[sym] is None:
+                    missing.append(combo)
+                    continue
+                df, _, _, noent = data[sym]
+                shut, _ = FA.session_masks(df)
+                _, pv, tick = FA.SPEC[sym]
+                t = SF.trades(df, sym, sid, tf, v, noent, shut, tick + (FA.COMM + FA.SLIP_TICKS * tick * pv) / pv)
+                t.to_csv(GUARD_DIR / f"{combo.replace('|', '_')}_{SF.vid(v)}.csv.gz", index=False)
             if t.empty:
                 continue
             k = f"scout:{combo}" if f"scout:{combo}" in rk else "scout"

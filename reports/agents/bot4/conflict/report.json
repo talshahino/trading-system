@@ -1,0 +1,244 @@
+{
+ "bot": "bot4",
+ "at": "2026-11-16T05:11:16+00:00",
+ "strategies": 36,
+ "missing": [],
+ "ways": {
+  "asis": {
+   "train": {
+    "conflicts": 322,
+    "changed": 0,
+    "trades": 2064,
+    "total": 98.27,
+    "worst_day": -2.65,
+    "max_dd": 8.72,
+    "guard_cut": 253,
+    "guard_skipped": 69
+   },
+   "unseen": {
+    "conflicts": 444,
+    "changed": 0,
+    "trades": 2766,
+    "total": 130.62,
+    "worst_day": -2.6,
+    "max_dd": 6.3,
+    "guard_cut": 295,
+    "guard_skipped": 38
+   }
+  },
+  "skip": {
+   "train": {
+    "conflicts": 256,
+    "changed": 256,
+    "trades": 1846,
+    "total": 109.3,
+    "worst_day": -2.65,
+    "max_dd": 7.81,
+    "guard_cut": 173,
+    "guard_skipped": 31
+   },
+   "unseen": {
+    "conflicts": 375,
+    "changed": 375,
+    "trades": 2413,
+    "total": 124.57,
+    "worst_day": -2.78,
+    "max_dd": 8.52,
+    "guard_cut": 153,
+    "guard_skipped": 16
+   }
+  },
+  "stronger": {
+   "train": {
+    "conflicts": 263,
+    "changed": 263,
+    "trades": 1927,
+    "total": 108.23,
+    "worst_day": -2.64,
+    "max_dd": 8.27,
+    "guard_cut": 170,
+    "guard_skipped": 32
+   },
+   "unseen": {
+    "conflicts": 354,
+    "changed": 354,
+    "trades": 2550,
+    "total": 127.4,
+    "worst_day": -2.44,
+    "max_dd": 7.34,
+    "guard_cut": 151,
+    "guard_skipped": 18
+   }
+  },
+  "half": {
+   "train": {
+    "conflicts": 322,
+    "changed": 322,
+    "trades": 2086,
+    "total": 101.31,
+    "worst_day": -2.65,
+    "max_dd": 8.11,
+    "guard_cut": 195,
+    "guard_skipped": 47
+   },
+   "unseen": {
+    "conflicts": 444,
+    "changed": 444,
+    "trades": 2786,
+    "total": 127.6,
+    "worst_day": -2.49,
+    "max_dd": 7.59,
+    "guard_cut": 213,
+    "guard_skipped": 18
+   }
+  },
+  "tight_new": {
+   "train": {
+    "conflicts": 306,
+    "changed": 290,
+    "trades": 2049,
+    "total": 96.52,
+    "worst_day": -2.65,
+    "max_dd": 9.16,
+    "guard_cut": 236,
+    "guard_skipped": 63
+   },
+   "unseen": {
+    "conflicts": 429,
+    "changed": 380,
+    "trades": 2743,
+    "total": 125.67,
+    "worst_day": -2.64,
+    "max_dd": 6.69,
+    "guard_cut": 281,
+    "guard_skipped": 38
+   }
+  },
+  "tight_short": {
+   "train": {
+    "conflicts": 304,
+    "changed": 273,
+    "trades": 2052,
+    "total": 98.55,
+    "worst_day": -2.65,
+    "max_dd": 9.46,
+    "guard_cut": 233,
+    "guard_skipped": 64
+   },
+   "unseen": {
+    "conflicts": 428,
+    "changed": 344,
+    "trades": 2746,
+    "total": 126.31,
+    "worst_day": -2.64,
+    "max_dd": 6.69,
+    "guard_cut": 285,
+    "guard_skipped": 38
+   }
+  },
+  "tight_both": {
+   "train": {
+    "conflicts": 301,
+    "changed": 430,
+    "trades": 2051,
+    "total": 97.74,
+    "worst_day": -2.65,
+    "max_dd": 9.03,
+    "guard_cut": 236,
+    "guard_skipped": 61
+   },
+   "unseen": {
+    "conflicts": 425,
+    "changed": 552,
+    "trades": 2742,
+    "total": 133.5,
+    "worst_day": -2.64,
+    "max_dd": 6.6,
+    "guard_cut": 279,
+    "guard_skipped": 39
+   }
+  }
+ },
+ "by_symbol": {
+  "XAGUSD": {
+   "train": {
+    "n": 14,
+    "r": 1.48
+   },
+   "unseen": {
+    "n": 45,
+    "r": -1.56
+   }
+  },
+  "GBPJPY": {
+   "train": {
+    "n": 71,
+    "r": 3.96
+   },
+   "unseen": {
+    "n": 70,
+    "r": 0.46
+   }
+  },
+  "USDJPY": {
+   "train": {
+    "n": 95,
+    "r": -1.17
+   },
+   "unseen": {
+    "n": 133,
+    "r": 24.11
+   }
+  },
+  "EURJPY": {
+   "train": {
+    "n": 56,
+    "r": 1.9
+   },
+   "unseen": {
+    "n": 42,
+    "r": 7.43
+   }
+  },
+  "XAUUSD": {
+   "train": {
+    "n": 47,
+    "r": -7.95
+   },
+   "unseen": {
+    "n": 79,
+    "r": 16.77
+   }
+  },
+  "EURUSD": {
+   "train": {
+    "n": 19,
+    "r": -9.02
+   },
+   "unseen": {
+    "n": 39,
+    "r": -13.46
+   }
+  },
+  "ARM": {
+   "train": {
+    "n": 17,
+    "r": 1.14
+   },
+   "unseen": {
+    "n": 34,
+    "r": 3.93
+   }
+  },
+  "INTC": {
+   "train": {
+    "n": 3,
+    "r": 1.91
+   },
+   "unseen": {
+    "n": 2,
+    "r": -1.12
+   }
+  }
+ }
+}

@@ -72,6 +72,12 @@ from agents.indicators.classic5 import (alma, ash, bbtrend, fractal_bands, kairi
 from agents.indicators.structure2 import (darvas_box, gap_type, point_figure, ross_123, swing_grade, three_line_break,
                                           valid_ob, vsa)
 from agents.indicators.levels2 import adr, cbdr, ict_macros, po3_4h, round_levels, rvol
+from agents.indicators.ehlers4 import adaptive_supersmoother, autotune_filter, reversion_index
+from agents.indicators.candles import candle_patterns
+from agents.indicators.divergence import divergence
+from agents.indicators.auction import naked_poc, poor_extremes, single_prints
+from agents.indicators.demark2 import td_pressure, td_rei
+from agents.indicators.daycycle import noise_area, taylor_cycle
 TV = "https://www.tradingview.com/script/"
 TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
@@ -345,6 +351,18 @@ INDICATORS = {
     "po3_4h": (po3_4h, "NY-aligned 4H candle: open, running high / low, previous 4H high / low (TTrades 4H Power of Three)", "https://briefread.pages.dev/en/summary/trading-the-4-hour-power-of"),
     "synthetic_osc": (synthetic_osc, "Ehlers Synthetic Oscillator (TASC 2026.04): cycle-phase sine, 15-25 bar band, Hann-smoothed ROC signals", TT + "2026/04/TradersTips.html"),
     "ultimate_channel": (ultimate_channel, "Ehlers Ultimate Channel (UltimateSmoother of TR) and Ultimate Bands (RMS deviation) around UltimateSmoother 20", TV + "4Plc7Zjk-TASC-2024-05-Ultimate-Channels-and-Ultimate-Bands/"),
+    "reversion_index": (reversion_index, "Ehlers Reversion Index (TASC 2026.01): sum of changes / sum of |changes| 20, SuperSmoother 8 / 4 trigger", TV + "V35NeC45-TASC-2026-01-The-Reversion-Index/"),
+    "adaptive_supersmoother": (adaptive_supersmoother, "Ehlers Adaptive SuperSmoother (TASC 2026.09): period 20 shrunk by the RMS-scaled ROC, vs the fixed SS 20", TV + "FnlMn99W-TASC-2026-09-Adaptive-SuperSmoother/"),
+    "autotune_filter": (autotune_filter, "Ehlers AutoTune Filter (TASC 2026.05): band-pass at 2 x the least-autocorrelated lag of HP 20 (our build of the lag search)", TV + "GqKlw3yv-TASC-2026-05-The-AutoTune-Filter/"),
+    "candle_patterns": (candle_patterns, "15 Japanese candle patterns (TA-Lib definitions; stars / soldiers adapted to no-gap feeds): stars, baby, 3 outside / inside, harami, piercing, soldiers, 3-line strike, kicker, tweezer, marubozu, 3 methods, belt hold, engulfing", "https://ta-lib.org/functions/"),
+    "divergence": (divergence, "Regular + hidden divergence of 7 oscillators (RSI, MACD hist, CCI, MOM, OBV, MFI, Stoch) at confirmed 5-bar pivots (LonesomeTheBlue)", TV + "n8AGnIZd-Divergence-for-Many-Indicators-v4/"),
+    "naked_poc": (naked_poc, "Naked (virgin) session POCs: nearest untouched previous-session POC over / under price, first-touch events", "https://www.luxalgo.com/library/concept/naked-poc-as-level/"),
+    "poor_extremes": (poor_extremes, "Market Profile poor highs / lows: session extreme hit by 2+ 30-minute periods within 0.1 ATR, until repaired", "https://www.luxalgo.com/library/concept/poor-high-poor-low/"),
+    "single_prints": (single_prints, "Market Profile single-print zones (one 30-minute TPO period, inside the range) of completed sessions, until filled", "https://www.luxalgo.com/library/concept/single-prints/"),
+    "td_rei": (td_rei, "DeMark TD Range Expansion Index 5 (-100..100, +/-40 levels) with the bars-beyond-level duration count", "https://linnsoft.com/techind/demark-range-expansion-index"),
+    "td_pressure": (td_pressure, "TD Pressure 5 (our build): volume-weighted close-vs-true-range buying share 0..100", "https://www.luxalgo.com/library/concept/td-pressure/"),
+    "taylor_cycle": (taylor_cycle, "Taylor 3-day cycle inputs: previous day H/L/C, consecutive down / up days, inside day, today's running H/L", "https://futures.stonex.com/blog/the-taylor-trading-technique"),
+    "noise_area": (noise_area, "Zarattini-Aziz-Barbon noise area: open x (1 +/- 14-session mean |move from the open| at the time of day), session VWAP", "https://concretumgroup.com/beat-the-market-an-effective-intraday-momentum-strategy-for-sp500-etf-spy/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

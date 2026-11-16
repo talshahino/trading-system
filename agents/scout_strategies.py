@@ -10197,3 +10197,394 @@ SCOUT.update({
     "SC457": ("Ehlers Ultimate Bands (2 x RMS dev) close back inside, target the basis, 3-bar stop (TASC 2024.05)", s_ultimate_bands, _F),
     "SC458": ("Kacher-Morales buyable gap-up (>= 0.75 ATR40, 1.5x volume), next session open, gap-day-low stop, 2R", s_buyable_gap_up, ["5Min", "15Min", "1Hour"]),
 })
+
+
+# =====================================================================================================================
+# scout 16.11.2026 (night): SC459-SC481 - TA-Lib / Bulkowski candlestick patterns, divergence for many indicators
+# (LonesomeTheBlue), Ehlers TASC 2026 (Reversion Index, Adaptive SuperSmoother, AutoTune), DeMark TD REI / TD Pressure,
+# Market Profile unfinished business (naked POC, poor highs / lows, single prints), the Taylor 3-day cycle, the
+# Zarattini-Aziz-Barbon noise-area intraday momentum and IPF pivot-stop breakouts. Indicators: agents/indicators
+# candles.py, divergence.py, ehlers4.py, demark2.py, auction.py, daycycle.py.
+# =====================================================================================================================
+def _cdl_trend(c, k=3):
+    """Prior trend for a reversal pattern starting k bars back: the close k bars ago under (over) the EMA20 then."""
+    e = ema(c, 20)
+    return _r(c, k) < _r(e, k), _r(c, k) > _r(e, k)
+
+
+def _cdl_rev(df, name, k=3):
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.candle_patterns(df)
+    a = atr(h, l, c, 14)
+    dn, up = _cdl_trend(c, k)
+    L = (p[name] == 1) & dn
+    S = (p[name] == -1) & up
+    L, S = _excl(L, S)
+    return L, S, _plan_r(p["pattern_low"] - 0.1 * a, p["pattern_high"] + 0.1 * a, 2.0)
+
+
+def s_cdl_stars(df):
+    """Morning star / evening star (TA-Lib CDLMORNINGSTAR / CDLEVENINGSTAR, penetration 0.3) or abandoned baby
+    (CDLABANDONEDBABY, shadow gaps) after a move down (up): the close 3 bars ago under (over) its EMA20. Bulkowski
+    ranks the evening star / abandoned babies among the most reliable reversals
+    (https://www.thepatternsite.com/CandlePerformers.html). Stop 0.1 ATR beyond the 3-bar pattern, target 2R (the
+    library standard - the books give no stop). No-gap feeds: the star only needs a body at / beyond the first close."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.candle_patterns(df)
+    a = atr(h, l, c, 14)
+    dn, up = _cdl_trend(c, 3)
+    st = p["morning_star"] + p["abandoned_baby"]
+    L, S = _excl((st > 0) & dn, (st < 0) & up)
+    return L, S, _plan_r(p["pattern_low"] - 0.1 * a, p["pattern_high"] + 0.1 * a, 2.0)
+
+
+def s_cdl_three_outside(df):
+    """Three outside up / down (TA-Lib CDL3OUTSIDE: an engulfing candle and a third candle closing beyond it) after a
+    move down (up), stop 0.1 ATR beyond the pattern, target 2R (ours). Bulkowski: three outside down / up are among his
+    top-performing reversal candles. Differs from the plain engulfing strategies (needs the 3rd-candle confirmation)."""
+    return _cdl_rev(df, "three_outside", 3)
+
+
+def s_cdl_three_inside(df):
+    """Three inside up / down (TA-Lib CDL3INSIDE: a long candle, a small opposite harami inside its body, a third
+    candle closing beyond the first candle's open) after a move down (up); stop beyond the pattern, 2R (ours)."""
+    return _cdl_rev(df, "three_inside", 3)
+
+
+def s_cdl_piercing(df):
+    """Piercing line / dark cloud cover (TA-Lib CDLPIERCING / CDLDARKCLOUDCOVER: a long candle, then a long opposite one
+    opening at / beyond its close and closing past the middle of its body but not past its open) after a move down
+    (up); stop beyond the 2 bars, target 2R (ours)."""
+    return _cdl_rev(df, "piercing", 2)
+
+
+def s_cdl_three_line_strike(df):
+    """Three-line strike traded as Bulkowski measured it (https://www.thepatternsite.com/ThreeLineStrikeBull.html):
+    three rising white candles 'struck' by a black candle that opens at / over the 3rd close and closes under the 1st
+    open - the 'bullish' strike breaks DOWN most of the time, so we sell with the 4th candle (and buy the bearish
+    strike's white 4th candle). Stop 0.1 ATR beyond the 4th candle's extreme, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.candle_patterns(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(p["three_line_strike"] == -1, p["three_line_strike"] == 1)
+    return L, S, _plan_r(l - 0.1 * a, h + 0.1 * a, 2.0)
+
+
+def s_cdl_tweezer_extreme(df):
+    """Tweezer bottom / top (equal lows / highs within 5% of the 10-bar average range, a black then a white candle) that
+    is the 20-bar low (high), confirmed by the next close over the tweezer's high (under its low) within 3 bars; stop
+    0.1 ATR beyond the tweezer, target 2R (ours; Bulkowski: tweezers need the extreme location to work)."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.candle_patterns(df)
+    a = atr(h, l, c, 14)
+    lo2, hi2 = np.minimum(l, _r(l)), np.maximum(h, _r(h))
+    tb = (p["tweezer"] == 1) & (lo2 <= _s(l).rolling(20, min_periods=5).min().to_numpy() + 1e-12)
+    tt = (p["tweezer"] == -1) & (hi2 >= _s(h).rolling(20, min_periods=5).max().to_numpy() - 1e-12)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    for j in np.where(tb)[0]:
+        hi, lo = max(h[j], h[j - 1]), min(l[j], l[j - 1])
+        for t in range(j + 1, min(n, j + 4)):
+            if l[t] < lo:
+                break
+            if c[t] > hi:
+                L[t], sl[t] = True, lo - 0.1 * a[t]
+                break
+    for j in np.where(tt)[0]:
+        hi, lo = max(h[j], h[j - 1]), min(l[j], l[j - 1])
+        for t in range(j + 1, min(n, j + 4)):
+            if h[t] > hi:
+                break
+            if c[t] < lo:
+                S[t], ss[t] = True, hi + 0.1 * a[t]
+                break
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+# ---------------- divergence (LonesomeTheBlue 'Divergence for Many Indicators') ----------------
+def s_rsi_hidden_div(df):
+    """RSI(14) HIDDEN bullish divergence (price higher low, RSI lower low at confirmed 5-bar pivots) with a rising EMA50
+    under the close -> buy on the confirmation bar (trend continuation; therighttrader 'RSI hidden bullish divergence');
+    bearish mirror. Stop 0.1 ATR beyond the pivot, target 2R (ours). New vs SC181 / SC195 (regular divergence)."""
+    o, h, l, c, v = _ohlcv(df)
+    d = IND.divergence(df, k=5)
+    a = atr(h, l, c, 14)
+    e = ema(c, 50)
+    L = d["rsi_bull_hid"] & (c > e) & (e > _r(e, 5))
+    S = d["rsi_bear_hid"] & (c < e) & (e < _r(e, 5))
+    pl = _s(d["piv_low"]).ffill().to_numpy()
+    ph = _s(d["piv_high"]).ffill().to_numpy()
+    L, S = _excl(L, S)
+    return L, S, _plan_r(pl - 0.1 * a, ph + 0.1 * a, 2.0)
+
+
+def s_macd_div(df):
+    """MACD histogram (12/26/9) REGULAR divergence at confirmed 5-bar pivots (price lower low, histogram higher low) ->
+    buy on the confirmation bar (5 bars after the pivot); bearish mirror. Stop 0.1 ATR beyond the pivot, target 2R
+    (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    d = IND.divergence(df, k=5)
+    a = atr(h, l, c, 14)
+    L, S = _excl(d["macd_bull_reg"], d["macd_bear_reg"])
+    pl = _s(d["piv_low"]).ffill().to_numpy()
+    ph = _s(d["piv_high"]).ffill().to_numpy()
+    return L, S, _plan_r(pl - 0.1 * a, ph + 0.1 * a, 2.0)
+
+
+def s_many_div(df):
+    """Divergence for Many Indicators (LonesomeTheBlue v4): at a confirmed 5-bar pivot at least 3 of the 7 oscillators
+    (RSI, MACD hist, CCI, momentum, OBV, MFI, Stochastic) show a regular divergence -> trade the reversal on the
+    confirmation bar; stop 0.1 ATR beyond the pivot, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    d = IND.divergence(df, k=5)
+    a = atr(h, l, c, 14)
+    L, S = _excl(d["bull_reg"] >= 3, d["bear_reg"] >= 3)
+    pl = _s(d["piv_low"]).ffill().to_numpy()
+    ph = _s(d["piv_high"]).ffill().to_numpy()
+    return L, S, _plan_r(pl - 0.1 * a, ph + 0.1 * a, 2.0)
+
+
+# ---------------- Ehlers TASC 2026 ----------------
+def s_reversion_index(df):
+    """Ehlers 'The Reversion Index' (TASC 2026.01): the SuperSmoother-4 trigger crosses over the SuperSmoother-8 line
+    while the index is under zero -> buy (Wealth-Lab / Python listings: buy the trigger's cross over, sell the cross
+    under; the under-zero / over-zero condition is ours - the article calls it a mean-reversion tool); out on the
+    opposite cross. Stop 2 ATR, no target."""
+    o, h, l, c, v = _ohlcv(df)
+    r = IND.reversion_index(df)
+    up, dn = cross_up(r["trigger"], r["smooth"]), cross_down(r["trigger"], r["smooth"])
+    L, S = _excl(up & (r["smooth"] < 0), dn & (r["smooth"] > 0))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": dn, "exit_short": up}
+
+
+def s_adaptive_ss(df):
+    """Ehlers Adaptive SuperSmoother (TASC 2026.09): the adaptive filter crosses over the fixed SuperSmoother(20) ->
+    buy, under -> sell ('preferred direction long while the adaptive filter is above'); out on the opposite cross; stop
+    2 ATR, no target (ours)."""
+    r = IND.adaptive_supersmoother(df)
+    up, dn = cross_up(r["ass"], r["ss"]), cross_down(r["ass"], r["ss"])
+    L, S = _excl(up, dn)
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": dn, "exit_short": up}
+
+
+def s_autotune(df):
+    """Ehlers AutoTune Filter (TASC 2026.05): the band-pass tuned to the dominant cycle crosses zero upward -> buy,
+    downward -> sell (zero crossings are the cited signals); out on the opposite crossing; stop 1.5 ATR, target 2R
+    (ours)."""
+    r = IND.autotune_filter(df)
+    up, dn = cross_up(r["bp"], 0.0), cross_down(r["bp"], 0.0)
+    L, S = _excl(up, dn)
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 2.0), "exit_long": dn, "exit_short": up}
+
+
+# ---------------- DeMark ----------------
+def s_td_rei_duration(df):
+    """DeMark TD REI (5) with his duration rule: REI was under -40 for 1-6 bars in a row (not longer - a longer stay is
+    a trend) and closes back over -40 -> buy; mirror over +40. Stop 0.1 ATR beyond the 5-bar extreme, target 2R (ours;
+    DeMark pairs it with TD POQ - not modelled)."""
+    o, h, l, c, v = _ohlcv(df)
+    r = IND.td_rei(df)
+    a = atr(h, l, c, 14)
+    pb, pa = _r(r["below"]), _r(r["above"])
+    L = (pb >= 1) & (pb <= 6) & (r["rei"] >= -40)
+    S = (pa >= 1) & (pa <= 6) & (r["rei"] <= 40)
+    sl, ss = _swl(h, l, a, 5)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_td_pressure_pullback(df):
+    """TD Pressure (5, our build) as a trend pullback: with a rising EMA50 under the close, pressure dips under 35
+    (supply) and crosses back over 35 -> buy; mirror (over 65 and back under, falling EMA50). Stop 1.5 ATR, target 2R
+    (ours; the 35 / 65 pullback levels are ours - 25 / 75 mark the rare extremes)."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.td_pressure(df)
+    e = ema(c, 50)
+    L = cross_up(p, 35.0) & (c > e) & (e > _r(e, 5))
+    S = cross_down(p, 65.0) & (c < e) & (e < _r(e, 5))
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 2.0)}
+
+
+# ---------------- Market Profile unfinished business ----------------
+def s_npoc_touch_fade(df):
+    """Naked POC first touch (LuxAlgo 'Naked POC As Level': 'fade into a first touch'): a bar touches an untouched
+    previous-session POC coming from above and closes back over it -> buy (from below and closes under it -> sell).
+    Stop 0.25 ATR beyond the bar's extreme, target 2R (ours - the source gives no numbers)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.naked_poc(df)
+    a = atr(h, l, c, 14)
+    t = z["touched"]
+    L = (z["touch_dir"] == 1) & (c > t)
+    S = (z["touch_dir"] == -1) & (c < t)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(l - 0.25 * a, h + 0.25 * a, 2.0)
+
+
+def s_npoc_magnet(df):
+    """Naked POC as a magnet: the close crosses over the previous session's value-area high with a naked POC 1-6 ATR
+    over it -> buy, target that naked POC; mirror under the value-area low toward a naked POC under. Stop 1 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.naked_poc(df)
+    vp = IND.volume_profile(df)
+    a = atr(h, l, c, 14)
+    da, db = z["above"] - c, c - z["below"]
+    L = cross_up(c, vp["vah"]) & (da >= a) & (da <= 6 * a)
+    S = cross_down(c, vp["val"]) & (db >= a) & (db <= 6 * a)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(c - a, c + a, z["above"], z["below"])
+
+
+def s_poor_extreme_revisit(df):
+    """Poor high / poor low revisit (LuxAlgo 'Poor High / Poor Low': unfinished business, a candidate draw when price
+    rotates back): the close crosses over the session open with an unrepaired poor high 0.5-5 ATR over it -> buy, target
+    the poor high + 0.1 ATR (its repair); mirror toward a poor low. Stop 1 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.poor_extremes(df)
+    t = IND.taylor_cycle(df)
+    a = atr(h, l, c, 14)
+    da, db = z["poor_high"] - c, c - z["poor_low"]
+    L = cross_up(c, t["day_open"]) & (da >= 0.5 * a) & (da <= 5 * a)
+    S = cross_down(c, t["day_open"]) & (db >= 0.5 * a) & (db <= 5 * a)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(c - a, c + a, z["poor_high"] + 0.1 * a, z["poor_low"] - 0.1 * a)
+
+
+def s_single_print_fill(df):
+    """Single prints fill (Market Profile: low-acceptance zones of one TPO period tend to be crossed quickly once
+    re-entered): a bar enters a previous session's single-print zone from below -> buy, target the zone's far edge;
+    from above -> sell. Stop 0.3 ATR beyond the bar's extreme (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.single_prints(df)
+    a = atr(h, l, c, 14)
+    fe = z["far_edge"]
+    L = (z["entered"] == 1) & (fe > c)
+    S = (z["entered"] == -1) & (fe < c)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(np.minimum(l, c - 0.5 * a) - 0.3 * a, np.maximum(h, c + 0.5 * a) + 0.3 * a, fe, fe)
+
+
+# ---------------- Taylor 3-day cycle ----------------
+def s_taylor_buy_day(df):
+    """Taylor Trading Technique buy day / sell short day (StoneX summary): after 1-3 lower daily closes the market
+    trades under the previous day's low and a close comes back over it -> buy (trapping the last sellers), target the
+    previous day's high (the sell-day rally target; 2R if that is under 1R away); mirror after 1-3 higher closes over
+    the previous high. First signal per day; stop 0.1 ATR beyond today's extreme (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    t = IND.taylor_cycle(df)
+    a = atr(h, l, c, 14)
+    day = session_day_np(df)
+    L = (t["down_days"] >= 1) & (t["down_days"] <= 3) & (t["day_low"] < t["pdl"]) & cross_up(c, t["pdl"])
+    S = (t["up_days"] >= 1) & (t["up_days"] <= 3) & (t["day_high"] > t["pdh"]) & cross_down(c, t["pdh"])
+    L, S = _first_per_day(L, day), _first_per_day(S, day)
+    sl, ss = t["day_low"] - 0.1 * a, t["day_high"] + 0.1 * a
+    tl = np.where(t["pdh"] - c >= c - sl, t["pdh"], c + 2 * (c - sl))
+    ts = np.where(c - t["pdl"] >= ss - c, t["pdl"], c - 2 * (ss - c))
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl, ss, tl, ts)
+
+
+def s_taylor_inside_day(df):
+    """Taylor inside day 'go with' trade (StoneX summary: on an inside day both its high and low are the references):
+    the last inside day (yesterday or the day before - ours, so the levels live 2 days) -> the first close over its
+    high buys, under its low sells, once per day; stop at the middle of the inside day's range, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    t = IND.taylor_cycle(df)
+    day = session_day_np(df)
+    nd = t["new_day"]
+    ins = (t["inside"] == 1) & nd
+    hi = _s(np.where(ins, t["pdh"], np.nan)).ffill().to_numpy()
+    lo = _s(np.where(ins, t["pdl"], np.nan)).ffill().to_numpy()
+    dcount = np.cumsum(nd)
+    age = dcount - _s(np.where(ins, dcount, np.nan)).ffill().to_numpy()
+    live = age <= 1
+    L = _first_per_day(live & cross_up(c, hi), day)
+    S = _first_per_day(live & cross_down(c, lo), day)
+    mid = (hi + lo) / 2
+    L, S = _excl(L, S)
+    return L, S, _plan_r(mid, mid, 2.0)
+
+
+def session_day_np(df):
+    from agents.indicators._core import session_day
+    return session_day(df, "UTC", 0)
+
+
+# ---------------- Zarattini-Aziz-Barbon noise area ----------------
+def s_noise_area_momentum(df):
+    """'Beat the Market' intraday momentum (Zarattini, Aziz, Barbon 2024, SPY): at each :00 / :30 New York decision
+    time from 10:00, a close over the noise area's upper bound (open x (1 + 14-day mean |move from the open| at that
+    time), gap-adjusted with the previous close) buys, under the lower bound sells; the stop trails at max(UB, VWAP)
+    for longs (min(LB, VWAP) for shorts), checked at the decision times; everything out at the 16:00 close. Ours: the
+    initial hard stop = the trailing level (or 0.25 ATR under the entry close if that is over it); no target; the
+    paper's volatility sizing is left to the bot."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.noise_area(df)
+    a = atr(h, l, c, 14)
+    ck = z["check"]
+    lt = np.fmax(z["ub"], z["vwap"])
+    st = np.fmin(z["lb"], z["vwap"])
+    L = ck & (c > z["ub"])
+    S = ck & (c < z["lb"])
+    sl = np.where(lt < c, lt, c - 0.25 * a)
+    ss = np.where(st > c, st, c + 0.25 * a)
+    step = _bar_minutes(df)
+    t = df.index.tz_convert("America/New_York")
+    mc = t.hour.to_numpy() * 60 + t.minute.to_numpy() + step
+    fe = (mc >= 960) & (mc < 960 + step) | ~z["in_rth"]
+    L, S = _excl(L & ~fe, S & ~fe)
+    return L, S, {"stop": ("level", sl, ss), "target": None, "exit_long": ck & (c < lt), "exit_short": ck & (c > st),
+                  "force_exit": fe}
+
+
+# ---------------- IPF pivot-stop breakouts ----------------
+def s_ipf_pivot_break(df):
+    """IPF Price Action EA (MQL5 blog https://www.mql5.com/en/blogs/post/777967; H4 / D1, no indicators): a confirmed
+    pivot high (5 bars each side) that is the extreme of its area (the 30-bar high) and at least 1 ATR from the close
+    when it is confirmed; a close over it buys (their buy-stop), mirror under a pivot low. The post's 'fake-breakout
+    exit': out if the bar after the entry closes back under the level (ours: on the entry chart, not M1). Stop 1.5
+    ATR, target 2R, break-even at half way (ours - the post gives no numbers)."""
+    o, h, l, c, v = _ohlcv(df)
+    from agents.indicators._core import pivots
+    a = atr(h, l, c, 14)
+    phc, plc, phv, plv, phi, pli = pivots(h, l, 5)
+    hi30, lo30 = _s(h).rolling(30, min_periods=10).max().to_numpy(), _s(l).rolling(30, min_periods=10).min().to_numpy()
+    okh = phc & (phv >= hi30 - 1e-12) & (phv - c >= a)
+    okl = plc & (plv <= lo30 + 1e-12) & (c - plv >= a)
+    lh = _s(np.where(okh, phv, np.nan)).ffill().to_numpy()
+    ll = _s(np.where(okl, plv, np.nan)).ffill().to_numpy()
+    L = cross_up(c, lh)
+    S = cross_down(c, ll)
+    xl = (_r(L.astype(float)) > 0) & (c < _r(lh))
+    xs = (_r(S.astype(float)) > 0) & (c > _r(ll))
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 2.0), "breakeven": (0.5, 0.0), "exit_long": xl,
+                  "exit_short": xs}
+
+
+SCOUT.update({
+    "SC459": ("Morning / evening star or abandoned baby after a move (TA-Lib, Bulkowski), pattern stop, 2R", s_cdl_stars, _F + ["4Hour"]),
+    "SC460": ("Three outside up / down after a move (TA-Lib CDL3OUTSIDE), pattern stop, 2R", s_cdl_three_outside, _F + ["4Hour"]),
+    "SC461": ("Three inside up / down after a move (TA-Lib CDL3INSIDE), pattern stop, 2R", s_cdl_three_inside, _F + ["4Hour"]),
+    "SC462": ("Piercing line / dark cloud cover after a move (TA-Lib), pattern stop, 2R", s_cdl_piercing, _F + ["4Hour"]),
+    "SC463": ("Three-line strike traded the Bulkowski way (with the striking 4th candle), 2R", s_cdl_three_line_strike, _F + ["4Hour"]),
+    "SC464": ("Tweezer bottom / top at the 20-bar extreme + confirmation close within 3 bars, 2R", s_cdl_tweezer_extreme, _F + ["4Hour"]),
+    "SC466": ("RSI 14 hidden divergence with the EMA50 trend (continuation), pivot stop, 2R", s_rsi_hidden_div, _F + ["4Hour"]),
+    "SC467": ("MACD histogram regular divergence at a confirmed 5-bar pivot, pivot stop, 2R", s_macd_div, _F + ["4Hour"]),
+    "SC468": ("Divergence for Many: 3+ of 7 oscillators diverge at a pivot (LonesomeTheBlue), pivot stop, 2R", s_many_div, _F + ["4Hour"]),
+    "SC469": ("Ehlers Reversion Index: SS4 trigger crosses SS8 on the far side of zero, out on the opposite cross (TASC 2026.01)", s_reversion_index, _F + ["4Hour"]),
+    "SC470": ("Ehlers Adaptive SuperSmoother crosses the fixed SuperSmoother 20, stop and reverse-out, 2 ATR (TASC 2026.09)", s_adaptive_ss, _M),
+    "SC471": ("Ehlers AutoTune band-pass zero cross, opposite-cross exit, 1.5 ATR, 2R (TASC 2026.05)", s_autotune, _F + ["4Hour"]),
+    "SC472": ("DeMark TD REI back inside +/-40 after 1-6 bars beyond (duration rule), 5-bar stop, 2R", s_td_rei_duration, _F + ["4Hour"]),
+    "SC473": ("TD Pressure back over 35 (under 65) with the EMA50 trend, 1.5 ATR, 2R", s_td_pressure_pullback, _F),
+    "SC474": ("Naked POC first-touch fade (close back on the approach side), 0.25 ATR beyond the bar, 2R", s_npoc_touch_fade, ["5Min", "15Min"]),
+    "SC475": ("Value-area breakout toward a naked POC 1-6 ATR away, target the naked POC, 1 ATR stop", s_npoc_magnet, ["5Min", "15Min"]),
+    "SC476": ("Rotation over the session open toward an unrepaired poor high (poor low) 0.5-5 ATR away, target its repair, 1 ATR stop", s_poor_extreme_revisit, ["5Min", "15Min"]),
+    "SC477": ("Single-print zone fill: entering a previous session's single prints, target the far edge", s_single_print_fill, ["5Min", "15Min"]),
+    "SC478": ("Taylor buy day / sell short day: after 1-3 down (up) days, reclaim of the previous day's low (high), target its high", s_taylor_buy_day, ["5Min", "15Min", "1Hour"]),
+    "SC479": ("Taylor inside day go-with: close beyond the last inside day's high / low (2 days), mid-range stop, 2R", s_taylor_inside_day, ["15Min", "1Hour"]),
+    "SC480": ("Zarattini noise-area intraday momentum (SPY paper): :00 / :30 breaks of the noise area, VWAP trail, out 16:00 NY", s_noise_area_momentum, ["5Min", "15Min", "30Min"]),
+    "SC481": ("IPF pivot-stop breakout of an area-extreme pivot 1+ ATR away, fake-breakout exit, 1.5 ATR, 2R, BE (MQL5 EA)", s_ipf_pivot_break, ["1Hour", "4Hour", "1Day"]),
+})

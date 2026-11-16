@@ -11542,6 +11542,500 @@
     "bot6"
    ],
    "rules": "Buyable Gap-Up (Kacher & Morales, 'Trade Like an O'Neil Disciple', 2010): the session opens at least 0.75 x the 40-session ATR over the previous session's close (chartmill 'Buyable Gap Ups (ATR based)') on volume >= 1.5 x the 50-session average; buy (Kacher: on the gap day; ours: the next session's 09:30 open, once the gap day's volume is known), stop at the gap day's intraday low (their rule), target 2R (ours - they hold while it acts well). Sessions = New York cash hours 09:30-16:00; feeds without volume pass the volume test. Mirror (a sellable gap-down) for shorts - ours. Differs from GP01 "
+  },
+  {
+   "id": "SC459",
+   "name": "Morning / evening star or abandoned baby after a move (TA-Lib, Bulkowski), pattern stop, 2R",
+   "source": "TA-Lib CDLMORNINGSTAR / CDLEVENINGSTAR / CDLABANDONEDBABY + Bulkowski candle statistics",
+   "url": "https://www.thepatternsite.com/CandlePerformers.html",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Morning star / evening star (TA-Lib CDLMORNINGSTAR / CDLEVENINGSTAR, penetration 0.3) or abandoned baby (CDLABANDONEDBABY, shadow gaps) after a move down (up): the close 3 bars ago under (over) its EMA20. Bulkowski ranks the evening star / abandoned babies among the most reliable reversals (https://www.thepatternsite.com/CandlePerformers.html). Stop 0.1 ATR beyond the 3-bar pattern, target 2R (the library standard - the books give no stop). No-gap feeds: the star only needs a body at / beyond the first close."
+  },
+  {
+   "id": "SC460",
+   "name": "Three outside up / down after a move (TA-Lib CDL3OUTSIDE), pattern stop, 2R",
+   "source": "TA-Lib CDL3OUTSIDE + Bulkowski",
+   "url": "https://www.thepatternsite.com/ThreeOutsideDown.html",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Three outside up / down (TA-Lib CDL3OUTSIDE: an engulfing candle and a third candle closing beyond it) after a move down (up), stop 0.1 ATR beyond the pattern, target 2R (ours). Bulkowski: three outside down / up are among his top-performing reversal candles. Differs from the plain engulfing strategies (needs the 3rd-candle confirmation)."
+  },
+  {
+   "id": "SC461",
+   "name": "Three inside up / down after a move (TA-Lib CDL3INSIDE), pattern stop, 2R",
+   "source": "TA-Lib CDL3INSIDE",
+   "url": "https://ta-lib.org/functions/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Three inside up / down (TA-Lib CDL3INSIDE: a long candle, a small opposite harami inside its body, a third candle closing beyond the first candle's open) after a move down (up); stop beyond the pattern, 2R (ours)."
+  },
+  {
+   "id": "SC462",
+   "name": "Piercing line / dark cloud cover after a move (TA-Lib), pattern stop, 2R",
+   "source": "TA-Lib CDLPIERCING / CDLDARKCLOUDCOVER",
+   "url": "https://ta-lib.org/functions/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Piercing line / dark cloud cover (TA-Lib CDLPIERCING / CDLDARKCLOUDCOVER: a long candle, then a long opposite one opening at / beyond its close and closing past the middle of its body but not past its open) after a move down (up); stop beyond the 2 bars, target 2R (ours)."
+  },
+  {
+   "id": "SC463",
+   "name": "Three-line strike traded the Bulkowski way (with the striking 4th candle), 2R",
+   "source": "Bulkowski three-line strike statistics (the bullish strike breaks down)",
+   "url": "https://www.thepatternsite.com/ThreeLineStrikeBull.html",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Three-line strike traded as Bulkowski measured it (https://www.thepatternsite.com/ThreeLineStrikeBull.html): three rising white candles 'struck' by a black candle that opens at / over the 3rd close and closes under the 1st open - the 'bullish' strike breaks DOWN most of the time, so we sell with the 4th candle (and buy the bearish strike's white 4th candle). Stop 0.1 ATR beyond the 4th candle's extreme, target 2R (ours)."
+  },
+  {
+   "id": "SC464",
+   "name": "Tweezer bottom / top at the 20-bar extreme + confirmation close within 3 bars, 2R",
+   "source": "Tweezer bottom / top at the extreme (Bulkowski, TA-Lib-style equal lows)",
+   "url": "https://www.thepatternsite.com/CandlePerformers.html",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Tweezer bottom / top (equal lows / highs within 5% of the 10-bar average range, a black then a white candle) that is the 20-bar low (high), confirmed by the next close over the tweezer's high (under its low) within 3 bars; stop 0.1 ATR beyond the tweezer, target 2R (ours; Bulkowski: tweezers need the extreme location to work)."
+  },
+  {
+   "id": "SC466",
+   "name": "RSI 14 hidden divergence with the EMA50 trend (continuation), pivot stop, 2R",
+   "source": "RSI hidden divergence continuation (therighttrader; LonesomeTheBlue divergence logic)",
+   "url": "https://therighttrader.com/learn/divergence/rsi-hidden-bullish-divergence",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "RSI(14) HIDDEN bullish divergence (price higher low, RSI lower low at confirmed 5-bar pivots) with a rising EMA50 under the close -> buy on the confirmation bar (trend continuation; therighttrader 'RSI hidden bullish divergence'); bearish mirror. Stop 0.1 ATR beyond the pivot, target 2R (ours). New vs SC181 / SC195 (regular divergence)."
+  },
+  {
+   "id": "SC467",
+   "name": "MACD histogram regular divergence at a confirmed 5-bar pivot, pivot stop, 2R",
+   "source": "MACD histogram regular divergence (LonesomeTheBlue 'Divergence for Many Indicators v4')",
+   "url": "https://www.tradingview.com/script/n8AGnIZd-Divergence-for-Many-Indicators-v4/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "MACD histogram (12/26/9) REGULAR divergence at confirmed 5-bar pivots (price lower low, histogram higher low) -> buy on the confirmation bar (5 bars after the pivot); bearish mirror. Stop 0.1 ATR beyond the pivot, target 2R (ours)."
+  },
+  {
+   "id": "SC468",
+   "name": "Divergence for Many: 3+ of 7 oscillators diverge at a pivot (LonesomeTheBlue), pivot stop, 2R",
+   "source": "LonesomeTheBlue 'Divergence for Many Indicators v4' (TradingView open source)",
+   "url": "https://www.tradingview.com/script/n8AGnIZd-Divergence-for-Many-Indicators-v4/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Divergence for Many Indicators (LonesomeTheBlue v4): at a confirmed 5-bar pivot at least 3 of the 7 oscillators (RSI, MACD hist, CCI, momentum, OBV, MFI, Stochastic) show a regular divergence -> trade the reversal on the confirmation bar; stop 0.1 ATR beyond the pivot, target 2R (ours)."
+  },
+  {
+   "id": "SC469",
+   "name": "Ehlers Reversion Index: SS4 trigger crosses SS8 on the far side of zero, out on the opposite cross (TASC 2026.01)",
+   "source": "Ehlers 'The Reversion Index', TASC 2026.01 (Traders' Tips, Wealth-Lab / Python rules)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2026/01/TradersTips.html",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers 'The Reversion Index' (TASC 2026.01): the SuperSmoother-4 trigger crosses over the SuperSmoother-8 line while the index is under zero -> buy (Wealth-Lab / Python listings: buy the trigger's cross over, sell the cross under; the under-zero / over-zero condition is ours - the article calls it a mean-reversion tool); out on the opposite cross. Stop 2 ATR, no target."
+  },
+  {
+   "id": "SC470",
+   "name": "Ehlers Adaptive SuperSmoother crosses the fixed SuperSmoother 20, stop and reverse-out, 2 ATR (TASC 2026.09)",
+   "source": "Ehlers 'Adaptive SuperSmoother', TASC 2026.09 (PineCodersTASC)",
+   "url": "https://www.tradingview.com/script/FnlMn99W-TASC-2026-09-Adaptive-SuperSmoother/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers Adaptive SuperSmoother (TASC 2026.09): the adaptive filter crosses over the fixed SuperSmoother(20) -> buy, under -> sell ('preferred direction long while the adaptive filter is above'); out on the opposite cross; stop 2 ATR, no target (ours)."
+  },
+  {
+   "id": "SC471",
+   "name": "Ehlers AutoTune band-pass zero cross, opposite-cross exit, 1.5 ATR, 2R (TASC 2026.05)",
+   "source": "Ehlers 'The AutoTune Filter', TASC 2026.05 (PineCodersTASC)",
+   "url": "https://www.tradingview.com/script/GqKlw3yv-TASC-2026-05-The-AutoTune-Filter/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers AutoTune Filter (TASC 2026.05): the band-pass tuned to the dominant cycle crosses zero upward -> buy, downward -> sell (zero crossings are the cited signals); out on the opposite crossing; stop 1.5 ATR, target 2R (ours)."
+  },
+  {
+   "id": "SC472",
+   "name": "DeMark TD REI back inside +/-40 after 1-6 bars beyond (duration rule), 5-bar stop, 2R",
+   "source": "DeMark TD REI with the duration rule (Linn Software / fxcodebase)",
+   "url": "https://linnsoft.com/techind/demark-range-expansion-index",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "DeMark TD REI (5) with his duration rule: REI was under -40 for 1-6 bars in a row (not longer - a longer stay is a trend) and closes back over -40 -> buy; mirror over +40. Stop 0.1 ATR beyond the 5-bar extreme, target 2R (ours; DeMark pairs it with TD POQ - not modelled)."
+  },
+  {
+   "id": "SC473",
+   "name": "TD Pressure back over 35 (under 65) with the EMA50 trend, 1.5 ATR, 2R",
+   "source": "DeMark TD Pressure (our reconstruction) as a trend pullback",
+   "url": "https://www.luxalgo.com/library/concept/td-pressure/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TD Pressure (5, our build) as a trend pullback: with a rising EMA50 under the close, pressure dips under 35 (supply) and crosses back over 35 -> buy; mirror (over 65 and back under, falling EMA50). Stop 1.5 ATR, target 2R (ours; the 35 / 65 pullback levels are ours - 25 / 75 mark the rare extremes)."
+  },
+  {
+   "id": "SC474",
+   "name": "Naked POC first-touch fade (close back on the approach side), 0.25 ATR beyond the bar, 2R",
+   "source": "LuxAlgo 'Naked POC As Level' - fade the first touch",
+   "url": "https://www.luxalgo.com/library/concept/naked-poc-as-level/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Naked POC first touch (LuxAlgo 'Naked POC As Level': 'fade into a first touch'): a bar touches an untouched previous-session POC coming from above and closes back over it -> buy (from below and closes under it -> sell). Stop 0.25 ATR beyond the bar's extreme, target 2R (ours - the source gives no numbers)."
+  },
+  {
+   "id": "SC475",
+   "name": "Value-area breakout toward a naked POC 1-6 ATR away, target the naked POC, 1 ATR stop",
+   "source": "Naked POC as a magnet target (LuxAlgo / NexusFi naked VPOC)",
+   "url": "https://nexusfi.com/a/market-structure/naked-vpoc-futures-trading",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Naked POC as a magnet: the close crosses over the previous session's value-area high with a naked POC 1-6 ATR over it -> buy, target that naked POC; mirror under the value-area low toward a naked POC under. Stop 1 ATR (ours)."
+  },
+  {
+   "id": "SC476",
+   "name": "Rotation over the session open toward an unrepaired poor high (poor low) 0.5-5 ATR away, target its repair, 1 ATR stop",
+   "source": "LuxAlgo 'Poor High / Poor Low' - unfinished business revisit",
+   "url": "https://www.luxalgo.com/library/concept/poor-high-poor-low/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Poor high / poor low revisit (LuxAlgo 'Poor High / Poor Low': unfinished business, a candidate draw when price rotates back): the close crosses over the session open with an unrepaired poor high 0.5-5 ATR over it -> buy, target the poor high + 0.1 ATR (its repair); mirror toward a poor low. Stop 1 ATR (ours)."
+  },
+  {
+   "id": "SC477",
+   "name": "Single-print zone fill: entering a previous session's single prints, target the far edge",
+   "source": "Market Profile single prints fill (LuxAlgo 'Single Prints')",
+   "url": "https://www.luxalgo.com/library/concept/single-prints/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Single prints fill (Market Profile: low-acceptance zones of one TPO period tend to be crossed quickly once re-entered): a bar enters a previous session's single-print zone from below -> buy, target the zone's far edge; from above -> sell. Stop 0.3 ATR beyond the bar's extreme (ours)."
+  },
+  {
+   "id": "SC478",
+   "name": "Taylor buy day / sell short day: after 1-3 down (up) days, reclaim of the previous day's low (high), target its high",
+   "source": "George Taylor, 'The Taylor Trading Technique' - buy day / sell short day (StoneX summary)",
+   "url": "https://futures.stonex.com/blog/the-taylor-trading-technique",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Taylor Trading Technique buy day / sell short day (StoneX summary): after 1-3 lower daily closes the market trades under the previous day's low and a close comes back over it -> buy (trapping the last sellers), target the previous day's high (the sell-day rally target; 2R if that is under 1R away); mirror after 1-3 higher closes over the previous high. First signal per day; stop 0.1 ATR beyond today's extreme (ours)."
+  },
+  {
+   "id": "SC479",
+   "name": "Taylor inside day go-with: close beyond the last inside day's high / low (2 days), mid-range stop, 2R",
+   "source": "Taylor Trading Technique - inside day go-with trade (StoneX summary)",
+   "url": "https://futures.stonex.com/blog/the-taylor-trading-technique",
+   "added": "2026-11-16",
+   "timeframes": [
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Taylor inside day 'go with' trade (StoneX summary: on an inside day both its high and low are the references): the last inside day (yesterday or the day before - ours, so the levels live 2 days) -> the first close over its high buys, under its low sells, once per day; stop at the middle of the inside day's range, target 2R (ours)."
+  },
+  {
+   "id": "SC480",
+   "name": "Zarattini noise-area intraday momentum (SPY paper): :00 / :30 breaks of the noise area, VWAP trail, out 16:00 NY",
+   "source": "Zarattini, Aziz, Barbon 'Beat the Market: An Effective Intraday Momentum Strategy for SPY' (2024)",
+   "url": "https://concretumgroup.com/beat-the-market-an-effective-intraday-momentum-strategy-for-sp500-etf-spy/",
+   "added": "2026-11-16",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "30Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "'Beat the Market' intraday momentum (Zarattini, Aziz, Barbon 2024, SPY): at each :00 / :30 New York decision time from 10:00, a close over the noise area's upper bound (open x (1 + 14-day mean |move from the open| at that time), gap-adjusted with the previous close) buys, under the lower bound sells; the stop trails at max(UB, VWAP) for longs (min(LB, VWAP) for shorts), checked at the decision times; everything out at the 16:00 close. Ours: the initial hard stop = the trailing level (or 0.25 ATR under the entry close if that is over it); no target; the paper's volatility sizing is left to the bot."
+  },
+  {
+   "id": "SC481",
+   "name": "IPF pivot-stop breakout of an area-extreme pivot 1+ ATR away, fake-breakout exit, 1.5 ATR, 2R, BE (MQL5 EA)",
+   "source": "IPF Price Action EA - pivot stop orders with a fake-breakout exit (MQL5 blog)",
+   "url": "https://www.mql5.com/en/blogs/post/777967",
+   "added": "2026-11-16",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "IPF Price Action EA (MQL5 blog https://www.mql5.com/en/blogs/post/777967; H4 / D1, no indicators): a confirmed pivot high (5 bars each side) that is the extreme of its area (the 30-bar high) and at least 1 ATR from the close when it is confirmed; a close over it buys (their buy-stop), mirror under a pivot low. The post's 'fake-breakout exit': out if the bar after the entry closes back under the level (ours: on the entry chart, not M1). Stop 1.5 ATR, target 2R, break-even at half way (ours - the post gives no numbers)."
   }
  ],
  "indicators": [
@@ -12874,6 +13368,90 @@
    "url": "https://www.tradingview.com/script/4Plc7Zjk-TASC-2024-05-Ultimate-Channels-and-Ultimate-Bands/",
    "added": "2026-11-15",
    "uses": "low-lag Keltner / Bollinger replacements: breakouts (SC456), reversion to the basis (SC457), basis as trailing stop"
+  },
+  {
+   "name": "reversion_index",
+   "source": "Ehlers 'The Reversion Index' (TASC 2026.01) - port of the EasyLanguage / Pine listing",
+   "url": "https://www.tradingview.com/script/V35NeC45-TASC-2026-01-The-Reversion-Index/",
+   "added": "2026-11-16",
+   "uses": "mean-reversion entry (SC469), range filter (|ratio| small = chop), exit when the trigger turns"
+  },
+  {
+   "name": "adaptive_supersmoother",
+   "source": "Ehlers 'Adaptive SuperSmoother' (TASC 2026.09) - our build from the published steps",
+   "url": "https://www.tradingview.com/script/FnlMn99W-TASC-2026-09-Adaptive-SuperSmoother/",
+   "added": "2026-11-16",
+   "uses": "trend direction / entry (SC470), low-lag trailing line, the diff's peaks as turning points"
+  },
+  {
+   "name": "autotune_filter",
+   "source": "Ehlers 'The AutoTune Filter' (TASC 2026.05) - our build of the autocorrelation lag search + band-pass",
+   "url": "https://www.tradingview.com/script/GqKlw3yv-TASC-2026-05-The-AutoTune-Filter/",
+   "added": "2026-11-16",
+   "uses": "cycle entries (SC471), dominant cycle 'dc' to set other indicators' lengths adaptively, cycle-phase exits"
+  },
+  {
+   "name": "candle_patterns",
+   "source": "TA-Lib candlestick definitions + Bulkowski (15 patterns, adapted to no-gap feeds)",
+   "url": "https://ta-lib.org/functions/",
+   "added": "2026-11-16",
+   "uses": "reversal entries (SC459-SC464), confirmation candle for any level / zone strategy, continuation filter (soldiers / 3 methods / kicker)"
+  },
+  {
+   "name": "divergence",
+   "source": "LonesomeTheBlue 'Divergence for Many Indicators v4' - regular + hidden, 7 oscillators, confirmed pivots",
+   "url": "https://www.tradingview.com/script/n8AGnIZd-Divergence-for-Many-Indicators-v4/",
+   "added": "2026-11-16",
+   "uses": "reversal entries (SC467, SC468), continuation entries (SC466), exit when a divergence forms against the trade"
+  },
+  {
+   "name": "naked_poc",
+   "source": "Naked / virgin POC (LuxAlgo, NexusFi) - our build on the session volume profile",
+   "url": "https://www.luxalgo.com/library/concept/naked-poc-as-level/",
+   "added": "2026-11-16",
+   "uses": "targets (SC475), first-touch fades (SC474), stop placement away from naked POCs"
+  },
+  {
+   "name": "poor_extremes",
+   "source": "Market Profile poor highs / lows (LuxAlgo) - our build from 30-minute TPO periods",
+   "url": "https://www.luxalgo.com/library/concept/poor-high-poor-low/",
+   "added": "2026-11-16",
+   "uses": "targets (SC476), avoid stops just beyond a poor extreme, filter for breakouts toward one"
+  },
+  {
+   "name": "single_prints",
+   "source": "Market Profile single prints (LuxAlgo) - our build from 30-minute TPO periods",
+   "url": "https://www.luxalgo.com/library/concept/single-prints/",
+   "added": "2026-11-16",
+   "uses": "fill trades (SC477), support / resistance zones, targets"
+  },
+  {
+   "name": "td_rei",
+   "source": "DeMark TD Range Expansion Index (Linn Software formula) with the duration count",
+   "url": "https://linnsoft.com/techind/demark-range-expansion-index",
+   "added": "2026-11-16",
+   "uses": "reversal entries with the 6-bar duration rule (SC472), overbought / oversold filter for every reversal strategy"
+  },
+  {
+   "name": "td_pressure",
+   "source": "DeMark TD Pressure - our own reconstruction (formula closed)",
+   "url": "https://www.luxalgo.com/library/concept/td-pressure/",
+   "added": "2026-11-16",
+   "uses": "trend pullback entries (SC473), volume-weighted demand / supply filter"
+  },
+  {
+   "name": "taylor_cycle",
+   "source": "Taylor Trading Technique 3-day cycle inputs (StoneX summary)",
+   "url": "https://futures.stonex.com/blog/the-taylor-trading-technique",
+   "added": "2026-11-16",
+   "uses": "buy day / sell short day entries (SC478), inside day breakouts (SC479), day-of-cycle filter on any day strategy"
+  },
+  {
+   "name": "noise_area",
+   "source": "Zarattini-Aziz-Barbon noise area + session VWAP (Beat the Market, 2024)",
+   "url": "https://concretumgroup.com/beat-the-market-an-effective-intraday-momentum-strategy-for-sp500-etf-spy/",
+   "added": "2026-11-16",
+   "uses": "intraday momentum entries (SC480), 'inside the noise' no-trade filter for breakouts, VWAP trailing exit"
   }
  ],
  "sources": [
@@ -12881,7 +13459,7 @@
    "name": "TradingView (open-source scripts + ideas)",
    "url": "https://www.tradingview.com/scripts/",
    "look_for": "open-source Pine strategies / indicators to port; ideas with full rules",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-16"
   },
   {
    "name": "FXStreet",
@@ -12911,7 +13489,7 @@
    "name": "Forex Factory (forum + calendar)",
    "url": "https://www.forexfactory.com/forum/71-trading-systems",
    "look_for": "trading-system threads with first-post rules; the calendar for bot 7",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-16"
   },
   {
    "name": "Myfxbook",
@@ -12923,7 +13501,7 @@
    "name": "MQL5 CodeBase / Market / Articles",
    "url": "https://www.mql5.com/en/code",
    "look_for": "EA logic in articles and the CodeBase; indicators to port",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-16"
   },
   {
    "name": "DailyFX / IG education",
@@ -12971,7 +13549,7 @@
    "name": "YouTube",
    "url": "https://www.youtube.com/results?search_query=trading+strategy+rules",
    "look_for": "strategy videos (via transcripts / summaries)",
-   "last_scanned": "2026-11-14"
+   "last_scanned": "2026-11-16"
   },
   {
    "name": "Udemy",
@@ -12995,13 +13573,13 @@
    "name": "Reddit r/algotrading, r/Daytrading, r/Forex",
    "url": "https://www.reddit.com/r/algotrading/",
    "look_for": "shared systems with backtests",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-16"
   },
   {
    "name": "QuantConnect / Quantpedia",
    "url": "https://www.quantconnect.com/forum/",
    "look_for": "community algorithms, documented anomalies",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-16"
   },
   {
    "name": "GitHub (freqtrade, jesse, backtrader)",
@@ -13019,7 +13597,7 @@
    "name": "LuxAlgo library",
    "url": "https://www.luxalgo.com/library/",
    "look_for": "concept pages with exact indicator formulas",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-16"
   },
   {
    "name": "WH SelfInvest free strategies",
@@ -13043,7 +13621,7 @@
    "name": "TASC Traders' Tips (Technical Analysis of Stocks & Commodities)",
    "url": "https://www.traders.com/Documentation/FEEDbk_docs/",
    "look_for": "each month's new indicator with code (Ehlers and others) and the platform rules",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-16"
   }
  ],
  "sources_note": "The scout's standing source list (user, 14.11.2026 12:45, task tal1411src 'super important for the scout'). Every night the scout searches these (rotating, different ones each night) for new strategies and indicators; last_scanned = the last night it searched there (empty = not yet)."

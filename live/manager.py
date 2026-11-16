@@ -537,11 +537,31 @@ MARKS_LOCK = threading.Lock()
 
 
 def watch_source():
-    """The account whose MetaTrader the watch bot reads candles from: bot 1 (FTMO's own symbol names), running."""
-    for a in accounts():
-        if a["name"] == "bot1" and a.get("enabled") and running(a["name"]):
+    """The account whose MetaTrader the virtual bots (5, 6, 7) read candles and quotes from: a running bot 1 account
+    (FTMO's own symbol names). Not only the account named "bot1" (user, 16.11.2026: bot 1's two-week FTMO trial ended,
+    a new bot 1 account was added and the old one closed - bot 5 stopped, "not reporting"): the original if it runs,
+    otherwise the newest running bot 1 account on an FTMO server."""
+    cand = [a for a in accounts() if (a.get("bot") == "bot1" or a["name"] == "bot1") and a.get("enabled")
+            and not a.get("archived") and not a.get("preparing") and running(a["name"])]
+    for a in cand:
+        if a["name"] == "bot1":
             return a
-    return None
+    cand = [a for a in cand if "ftmo" in str(a.get("server") or "").lower()] or cand
+    return max(cand, key=lambda a: str(a.get("created") or ""), default=None)
+
+
+SRC_PORT = {}            # the source port each virtual bot was started with
+
+
+def follow_source():
+    """A virtual bot started on another bot 1 account than the current source (that account was closed or replaced):
+    restart it on the current one."""
+    src = watch_source()
+    for name in (WATCH_NAME, NEWS_NAME):
+        if running(name) and SRC_PORT.get(name) and (not src or SRC_PORT[name] != src["port"]):
+            log(f"{name}: its candle source changed - restarting it on {src['name'] if src else 'none'}")
+            stop_bot(name)
+            SRC_PORT.pop(name, None)
 
 
 def start_watch():
@@ -552,6 +572,7 @@ def start_watch():
         return
     env = os.environ.copy()
     env.update(MANAGED="1", SOURCE_PORT=str(src["port"]), MANAGER_KEY=CFG["local_key"])
+    SRC_PORT[WATCH_NAME] = src["port"]
     py = sys.executable.replace("pythonw.exe", "python.exe")
     PROCS[WATCH_NAME] = subprocess.Popen([py, str(LIVE / "watch_own.py")], cwd=str(ROOT), env=env,
                                          creationflags=0x08000000 if os.name == "nt" else 0, stdout=subprocess.DEVNULL,
@@ -571,6 +592,7 @@ def start_news():
         return
     env = os.environ.copy()
     env.update(MANAGED="1", SOURCE_PORT=str(src["port"]), MANAGER_KEY=CFG["local_key"])
+    SRC_PORT[NEWS_NAME] = src["port"]
     py = sys.executable.replace("pythonw.exe", "python.exe")
     PROCS[NEWS_NAME] = subprocess.Popen([py, str(LIVE / "news_bot.py")], cwd=str(ROOT), env=env,
                                         creationflags=0x08000000 if os.name == "nt" else 0, stdout=subprocess.DEVNULL,
@@ -1070,6 +1092,7 @@ def watchdog():
     while True:
         try:
             if not WATCH.get("installing"):
+                follow_source()
                 start_watch()
                 start_news()
             for a in list(accounts()):

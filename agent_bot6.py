@@ -316,12 +316,44 @@ def trend_runs(idx, budget_s):
     return done
 
 
+def _curve(x):
+    """The equity curve's smoothness on one period (the user, 16.11.2026 20:28, task mgr1611curve: "many small wins
+    every day rather than one big win"): win rate, % green days, the largest fall from the peak (R), the daily spread."""
+    if not len(x):
+        return {"win": None, "green": None, "dd": None, "sd": None}
+    d = x.groupby(x["time"].dt.strftime("%Y-%m-%d"))["r"].sum()
+    eq = d.cumsum()
+    return {"win": round(float((x["r"] > 0).mean() * 100), 1), "green": round(float((d > 0).mean() * 100), 1),
+            "dd": round(float((eq.cummax().clip(lower=0) - eq).max()), 2), "sd": round(float(d.std()), 2) if len(d) > 1 else 0.0}
+
+
 def _day_stats(t):
     tr, un = t[t["time"] < A.SPLIT], t[t["time"] >= A.SPLIT]
     wd = lambda x: round(float(x.groupby(x["time"].dt.strftime("%Y-%m-%d"))["r"].sum().min()), 2) if len(x) else None  # noqa: E731
     return {"train_w": round(TG.score(t), 1), "unseen": round(float(un["r"].sum()), 1), "n_unseen": int(len(un)),
             "mean_unseen": round(float(un["r"].mean()), 3) if len(un) else None,
-            "worst_day_train": wd(tr), "worst_day_unseen": wd(un)}
+            "worst_day_train": wd(tr), "worst_day_unseen": wd(un),
+            "train_sum": round(float(tr["r"].sum()), 1), "curve_train": _curve(tr), "curve_unseen": _curve(un)}
+
+
+def _smoother(x, lv, periods=("train", "unseen")):
+    """mgr1611curve: a way that clearly smooths the curve - more green days and a smaller fall from the peak, the
+    worst day not worse - and still earns (at least CURVE_KEEP of today's total), on each period given. The total may
+    be somewhat lower; the manager decides with the full comparison."""
+    for p in periods:
+        tot, w = ("train_sum", "worst_day_train") if p == "train" else ("unseen", "worst_day_unseen")
+        a, b = (x.get(f"curve_{p}") or {}), (lv.get(f"curve_{p}") or {})
+        if None in (a.get("green"), b.get("green"), a.get("dd"), b.get("dd")):
+            return False
+        if not (a["green"] >= b["green"] + CURVE_GREEN and a["dd"] < b["dd"] and (x.get(w) or -99) >= (lv.get(w) or -99)):
+            return False
+        if (x.get(tot) or 0) <= 0 or (x.get(tot) or 0) < CURVE_KEEP * (lv.get(tot) or 0):
+            return False
+    return True
+
+
+CURVE_GREEN = 2.0     # percentage points more green days, on each period
+CURVE_KEEP = 0.8      # at least 80% of today's total, on each period
 
 
 def trend_cards(idx, b5_res=None):
@@ -506,9 +538,18 @@ FILT_HE["EXIT"] = (lambda f0: lambda v: {
     "be1r": "סטופ לכניסה ב־+1R (be1r)", "be2r": "סטופ לכניסה ב־+2R (be2r)",
     "p50_1r": "חצי החוצה ב־+1R וסטופ לכניסה (p50_1r)", "p30_1r": "30% החוצה ב־+1R וסטופ לכניסה (p30_1r)",
     "p50_2r": "חצי החוצה ב־+2R וסטופ לכניסה (p50_2r)"}.get(v) or f0(v))(FILT_HE["EXIT"])
-TASK6 = {"gaveback": GAVE6, "brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
+# BOT 5'S FOLLOW-THROUGH RULE ON BOT 6'S TRACKS (the user, 16.11.2026, task b5follow1611 - "strong candles in the
+# trade's direction right after the entry = more confidence"; bot 5's agent added tal_gap FOLLOW xN, 61e63edf8, and
+# tests it on its 6 index tracks): at the close of the N-th low-timeframe candle after the fill, a trade closing against
+# its entry leaves there. Shared methods (bots 5 and 6): the same values head to head on bot 6's four running tracks and
+# three indices. FOLLOW is in simulate only, not in live_trades yet - so a winning card is a code card (the smart agent
+# builds it into the live bot after an approval), like PYR.
+FOL6 = (("FOLLOW", "x1"), ("FOLLOW", "x2"), ("FOLLOW", "x3"))
+FILT_HE["FOLLOW"] = lambda v: f"בלי המשך אחרי {str(v)[1:]} נרות של הכניסה (סגירה נגד הכניסה) - יציאה בסגירה (FOLLOW {v})"
+CODE6 = ("PYR", "FOLLOW")     # knobs live_trades does not run yet: an approved card is built by the smart agent
+TASK6 = {"gaveback": GAVE6, "follow": FOL6, "brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
          "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6}
-USER6 = GAVE6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+USER6 = GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
@@ -626,27 +667,48 @@ def filt_cards(idx, group=FILT6):
             if row[f"{k}={v}"]["train_w"] > row["live"]["train_w"] and (best is None or row[f"{k}={v}"]["train_w"] > row[best[0]]["train_w"]):
                 best = (f"{k}={v}", k, v, c, t)           # chosen on the train period only
         res[trk] = row
-        if len(row) < len(vs) + 1 or not best or row["live"]["train_w"] <= -1e8:
-            continue                                     # not every variant ran yet / none better on 2024-2025 / too few
-        name, k, v, c, t = best
-        lv, x = row["live"], row[name]
-        if not ((x["mean_unseen"] or 0) > 0 and x["unseen"] > lv["unseen"] and (x["mean_unseen"] or -9) >= (lv["mean_unseen"] or -9)
-                and (x["worst_day_unseen"] or -99) >= (lv["worst_day_unseen"] or -99)):
-            continue
+        if len(row) < len(vs) + 1 or row["live"]["train_w"] <= -1e8:
+            continue                                     # not every variant ran yet / too few
+        lv, curve = row["live"], False
+        if best:
+            name, k, v, c, t = best
+            x = row[name]
+        if not best or not ((x["mean_unseen"] or 0) > 0 and x["unseen"] > lv["unseen"]
+                            and (x["mean_unseen"] or -9) >= (lv["mean_unseen"] or -9)
+                            and (x["worst_day_unseen"] or -99) >= (lv["worst_day_unseen"] or -99)):
+            # mgr1611curve (the user, 16.11.2026 20:28): no card on the total - a way that clearly smooths the curve and
+            # still earns comes as a card too. CHOSEN on 2024-2025 only (smoother there; the most green days among
+            # them), then it must be smoother on 2026 as well.
+            sm = [q for q in row if q != "live" and _smoother(row[q], lv, ("train",))]
+            pick = max(sm, key=lambda q: row[q]["curve_train"]["green"], default=None)
+            if pick is None or not _smoother(row[pick], lv, ("unseen",)):
+                continue
+            k, v, c = next((k_, v_, c_) for k_, v_, c_ in vs if f"{k_}={v_}" == pick)
+            t, name, x, curve = _t6(idx, pn, c), pick, row[pick], True
+            if t is None:
+                continue
         st, bs = TG._stats(t), TG._stats(base)
         hi, lo = pn.split("/")
         r_ = float(rk.get(trk, FA.RISK_TAL))
         better = sum(1 for q in row if q != "live" and row[q]["train_w"] > lv["train_w"])
-        out.append(K.card("bot6", "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: {FILT_HE[k](v)}",
-                          f"המסלול {trk} עם הכללים שרצים, ועוד: {FILT_HE[k](v)}. נבחר על 2024-2025 בלבד מתוך {len(vs)} מסננים "
+        cv = lambda p_: (lambda a, b: f"ימים ירוקים {b.get('green')}% ← {a.get('green')}%, עסקאות מנצחות {b.get('win')}% ← {a.get('win')}%, "  # noqa: E731
+                                     f"ירידה מהשיא {b.get('dd')}R ← {a.get('dd')}R, פיזור יומי {b.get('sd')}R ← {a.get('sd')}R")(
+            x.get(f"curve_{p_}") or {}, lv.get(f"curve_{p_}") or {})
+        out.append(K.card("bot6", "improve", ("עקומה חלקה יותר · " if curve else "") + f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: {FILT_HE[k](v)}",
+                          (f"עקומת הון חלקה יותר בשתי התקופות (בקשה של טל מ־16.11: הרבה ניצחונות קטנים), גם אם הסכום קצת נמוך יותר - "
+                           f"המנהל מחליט. עד 2025: {cv('train')}, סה\"כ {lv.get('train_sum')}R ← {x.get('train_sum')}R. "
+                           f"2026: {cv('unseen')}. " if curve else "")
+                          + f"המסלול {trk} עם הכללים שרצים, ועוד: {FILT_HE[k](v)}. נבחר על 2024-2025 בלבד מתוך {len(vs)} מסננים "
                           f"({better} מהם טובים מהיום ב־2024-2025; סה\"כ משוקלל {lv['train_w']:+.1f}R ← {x['train_w']:+.1f}R). "
                           f"2026 (לא נראתה): סה\"כ {lv['unseen']:+.1f}R ← {x['unseen']:+.1f}R, {x['n_unseen']} עסקאות, "
                           f"{x['mean_unseen']:+.2f}R לעסקה (היום {lv['mean_unseen']:+.2f}R על {lv['n_unseen']}), היום הגרוע "
                           f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. "
                           + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND", "G3", "SWP", "BRKH", "REARM") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10") else "")
                           + ("משימה של טל מ־16.11 (הפסדים שהיו ברווח - יציאה חלקית). " if (k, v) in GAVE6 else "")
+                          + ("משימה של טל מ־16.11 (נרות חזקים אחרי הכניסה - b5follow1611). " if k == "FOLLOW" else "")
                           + "בבוט 5: " + ("עוד לא נבדק - שיטה של בוט 6, נשלחה לבוט 5 כמשימה (b6to5rearm)." if k == "REARM" else
                                           _b5_gave(v) if (k, v) in GAVE6 else
+                                          _b5_gave(v, ("_follow",)) if k == "FOLLOW" else
                                           _b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND", "G3", "SWP", "BRKH") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10")
                                           else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
@@ -655,13 +717,14 @@ def filt_cards(idx, group=FILT6):
                               [row[q]["unseen"] > lv["unseen"] for q in row if q != "live"])), 2)},
                           detail={"world": "bot6", "filters": row, "bot5": b5.get(pn)},
                           # PYR is not in live_trades yet: a code card (the smart agent builds it after an approval)
-                          change=({"method": "tal_gap_code", "pair": pn, "cfg": c, "track": trk, "knob": "PYR", "to": v}
-                                  if k == "PYR" else
+                          change=({"method": "tal_gap_code", "pair": pn, "cfg": c, "track": trk, "knob": k, "to": v,
+                                   **({"test": "curve"} if curve else {})}
+                                  if k in CODE6 else
                                   # "test" (14.11.2026): the head-to-head card must not share its id with the search's
                                   # card of the same pair and rules - 38531db8b5eb (t5_1 + MAXC 0.2, the fix of the 13.11
                                   # loss) was withdrawn as its own duplicate and an id once decided is never decided again
                                   {"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg",
-                                   "test": "head2head"})))
+                                   "test": "curve" if curve else "head2head"})))
     return out, res
 
 
@@ -714,16 +777,16 @@ def ask_cards(idx):
     return out, res
 
 
-def _b5_gave(val):
+def _b5_gave(val, ends=("_gaveback", "_gavebackr")):
     """What bot 5's agent found for the same partial exit on its tracks (tal_gap_results.json bot5.notes, its
-    tal1611gaveback tests: <track>_gaveback / <track>_gavebackr)."""
+    tal1611gaveback tests: <track>_gaveback / <track>_gavebackr; FOLLOW: <track>_follow, b5follow1611)."""
     try:
         n = (json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot5") or {}).get("notes") or {}
     except Exception:  # noqa: BLE001
         n = {}
     got = []
     for k, r in n.items():
-        if not k.endswith(("_gaveback", "_gavebackr")) or not isinstance(r, dict):
+        if not k.endswith(tuple(ends)) or not isinstance(r, dict):
             continue
         if r.get("state") != "done":
             got.append(f"{r.get('track', k.split('_')[0])} עוד רץ")
@@ -732,7 +795,7 @@ def _b5_gave(val):
         if x.get("unseen") and lv.get("unseen"):
             got.append(f"{r['track']}: 2026 {lv['unseen']['total']:+.1f}R ← {x['unseen']['total']:+.1f}R"
                        + (" (נבחר)" if r.get("chosen") == val and r.get("better") else ""))
-    return ("; ".join(got[:6]) if got else "אותה בדיקה רצה על המסלולים של בוט 5 (tal1611gaveback)") + "."
+    return ("; ".join(got[:6]) if got else "אותה בדיקה רצה על המסלולים של בוט 5 (" + ("b5follow1611" if "_follow" in ends else "tal1611gaveback") + ")") + "."
 
 
 def _b5_ladder(knob="LADDER", val=None):

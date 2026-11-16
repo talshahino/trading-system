@@ -165,7 +165,13 @@ def bot_report(bot):
         flags[s] = chop_flags(b)
         rngs[s] = ranges(b)
     t = t[t["sym"].isin(bars)]
-    risk, mults = PC.bot_risk(bot), PC.mults(bot)
+    cfg = PC.bot_cfg(bot)
+    if isinstance(cfg.get("risk"), dict):          # bot 5: a risk per strategy ("scout:<combo>")
+        rk = cfg["risk"]
+        risk = 1.0
+        mults = {c: float(rk.get("scout:" + c) or rk.get(c) or 0.0018) for c in t["combo"].unique()}
+    else:
+        risk, mults = PC.bot_risk(bot), PC.mults(bot)
     split = int((pd.Timestamp(A.SPLIT, tz="UTC") - pd.Timestamp("1970-01-01", tz="UTC")) // pd.Timedelta(minutes=1))
     per = {"train": t[t["a"] < split], "unseen": t[t["a"] >= split]}
     res = {"strategies": int(t["combo"].nunique()), "symbols": sorted(bars), "ways": {}}
@@ -193,7 +199,10 @@ def report(bots):
     out = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "bots": {}}
     for b in bots:
         if CS.out_dir(b).exists():
-            out["bots"][b] = bot_report(b)
+            try:
+                out["bots"][b] = bot_report(b)
+            except Exception as e:  # noqa: BLE001 - one bot's failure must not lose the others
+                out["bots"][b] = {"error": f"{type(e).__name__}: {e}"}
     OUT.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
     return out
 
@@ -208,4 +217,4 @@ if __name__ == "__main__":
         json.dump([f"{b}:{s}" for b in bots for s in CS.plan(b, 1)], sys.stdout)
     else:
         r = report(bots)
-        print(json.dumps({b: v["best_train"] for b, v in r["bots"].items()}, ensure_ascii=False, indent=1))
+        print(json.dumps({b: v.get("best_train", v.get("error")) for b, v in r["bots"].items()}, ensure_ascii=False, indent=1))

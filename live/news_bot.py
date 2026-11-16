@@ -683,6 +683,37 @@ def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None, ref=None):
     return out
 
 
+def excursion(t, old=None):
+    """The best / worst price a trade reached while open (mfe / mae, prices as live/runner.py) and the same in R
+    (mfe_r / mae_r), from the 1-minute candles held (task tal1611partial part 3, 16.11.2026: how many losers were in
+    profit first). The entry minute counts from the minute after the entry (its own candle may be before the fill);
+    the exit minute is left out (the worse case, as agents/gaveback_study). Keeps the values already measured when
+    the candles held no longer cover the trade (a trade older than DAYS)."""
+    old = old or {}
+    keep = {k: old.get(k) for k in ("mfe", "mae", "mfe_r", "mae_r")}
+    d1 = D1.get(t.get("symbol"))
+    risk = abs(float(t["entry"]) - float(t["stop"])) if t.get("stop") is not None else 0.0
+    if d1 is None or not len(d1) or risk <= 0:
+        return keep
+    a = pd.Timestamp(t["time"])
+    a = a.tz_localize("UTC") if a.tzinfo is None else a
+    if a < d1.index[0]:
+        return keep
+    a = a + pd.Timedelta(minutes=TF_M.get(t.get("tf", "5Min"), 5) if t.get("sid") not in STRADDLE else 1)
+    b = pd.Timestamp(t["exit_time"]) if t.get("exit_time") else d1.index[-1] + pd.Timedelta(minutes=1)
+    b = b.tz_localize("UTC") if b.tzinfo is None else b
+    w = d1[(d1.index >= a) & (d1.index < b)]
+    if not len(w):
+        return {k: (v if v is not None else (float(t["entry"]) if k in ("mfe", "mae") else 0.0)) for k, v in keep.items()}
+    e, d = float(t["entry"]), int(t["dir"])
+    hi, lo = float(w["h"].max()), float(w["l"].min())
+    best, worst = (hi, lo) if d > 0 else (lo, hi)
+    if keep["mfe"] is not None:            # never lose what was measured before (the candles slide)
+        best = max(best, keep["mfe"]) if d > 0 else min(best, keep["mfe"])
+        worst = min(worst, keep["mae"]) if d > 0 else max(worst, keep["mae"])
+    return {"mfe": best, "mae": worst, "mfe_r": round(d * (best - e) / risk, 3), "mae_r": round(d * (worst - e) / risk, 3)}
+
+
 RESET_F = LIVE / "news_bot_reset.json"   # the manager's reset decision (live/manager.py auto_apply, agents/reset_rule.py)
 
 
@@ -817,13 +848,15 @@ def state_of(acc, trades, cal, src):
                            "now": t["entry"] + t["dir"] * (t["r"]) * abs(t["entry"] - t["stop"]),
                            "sl": t["stop"], "tp": t["target"] or 0.0, "sl0": t["stop"], "tp0": t["target"] or 0.0,
                            "sl_usd": -led[t["id"]]["risk_usd"], "tp_usd": None, "pnl": pnl_now(t), "since": t["time"],
-                           "pip": 1.0, "free": False, "mae": None, "mfe": None, "event": t.get("event")} for t in opened],
+                           "pip": 1.0, "free": False, "mae": t.get("mae"), "mfe": t.get("mfe"), "mfe_r": t.get("mfe_r"),
+                           "mae_r": t.get("mae_r"), "event": t.get("event")} for t in opened],
             "trades": [{"time": t["exit_time"], "combo": combo(t), "symbol": t["symbol"], "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                         "lots": "וירטואלי", "price": t["exit"], "pnl": led[t["id"]]["pnl"],
                         "why": t["reason"] + (f" · אחרי {t['event']}" if t.get("event") else "")} for t in closed],
             "closed": [{"id": t["id"], "combo": combo(t), "symbol": t["symbol"], "side": side(t), "lots": "וירטואלי",
                         "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
-                        "sl0": t["stop"], "tp0": t["target"] or 0, "sl": t["stop"], "tp": t["target"] or 0, "mae": None, "mfe": None,
+                        "sl0": t["stop"], "tp0": t["target"] or 0, "sl": t["stop"], "tp": t["target"] or 0, "mae": t.get("mae"),
+                        "mfe": t.get("mfe"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"),
                         "gross": led[t["id"]]["pnl"], "swap": 0, "comm": 0, "net": led[t["id"]]["pnl"],
                         "why": t["reason"] + (f" · אחרי {t['event']}" if t.get("event") else ""), "event": t.get("event"),
                         "reason": "", "pip": 1.0} for t in closed],
@@ -879,6 +912,10 @@ def main():
                 old = trades.get(k)
                 if old and old["status"] == "closed":
                     continue                                    # a closed trade never changes
+                try:
+                    t.update(excursion(t, old))             # mfe / mae while open (task tal1611partial)
+                except Exception:  # noqa: BLE001 - a measurement must never stop the bot
+                    pass
                 trades[k] = t
                 book(acc, t, notify=not first)
             # a trade still open in the account but no longer in the candles held (bot restarted long after): left open

@@ -200,3 +200,6 @@ For the agents: every bot tests partial exits / earlier break-even / stepped loc
 (not only in chop), records MFE/MAE live, and brings a card the moment something wins on both periods; when
 answering him, show that it was checked on his real trades, not a generic answer. (Tasks tal1611gaveback, tal1611partial.)
 Opposite trades on the same instrument AND the same timeframe also look wrong to him (risky), even when allowed (task b2jpy1611).
+
+## Being kept informed of decisions (user, 16.11.2026 19:05)
+After asking for a change Tal waits for the outcome: "I'm waiting for an update... keep going, but I want to know what the decisions are". For the agents: when a task he raised is decided (change or no change), say the decision plainly and briefly in his conversation; do not leave him without a result.

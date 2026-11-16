@@ -1,6 +1,22 @@
 {
  "bot": "bot1",
- "at": "2026-11-16T05:07:16+00:00",
+ "bars": [
+  "AMZN",
+  "ARM",
+  "CSCO",
+  "ETHUSD",
+  "EU50",
+  "GBPUSD",
+  "JP225",
+  "MSTR",
+  "US100",
+  "US500",
+  "USDCAD",
+  "USDCHF",
+  "USDJPY",
+  "XAUUSD"
+ ],
+ "at": "2026-11-16T05:18:35+00:00",
  "strategies": 43,
  "missing": [],
  "ways": {
@@ -97,7 +113,7 @@
     "conflicts": 508,
     "changed": 461,
     "trades": 2672,
-    "total": 113.47,
+    "total": 113.17,
     "worst_day": -2.94,
     "max_dd": 5.54,
     "guard_cut": 202,
@@ -107,10 +123,10 @@
     "conflicts": 640,
     "changed": 569,
     "trades": 3575,
-    "total": 111.5,
+    "total": 110.59,
     "worst_day": -2.36,
     "max_dd": 9.27,
-    "guard_cut": 193,
+    "guard_cut": 195,
     "guard_skipped": 23
    }
   },
@@ -118,44 +134,44 @@
    "train": {
     "conflicts": 514,
     "changed": 363,
-    "trades": 2696,
-    "total": 109.54,
+    "trades": 2689,
+    "total": 102.71,
     "worst_day": -2.94,
-    "max_dd": 5.42,
-    "guard_cut": 221,
-    "guard_skipped": 45
+    "max_dd": 6.08,
+    "guard_cut": 222,
+    "guard_skipped": 52
    },
    "unseen": {
     "conflicts": 669,
     "changed": 461,
-    "trades": 3607,
-    "total": 145.08,
+    "trades": 3603,
+    "total": 138.51,
     "worst_day": -2.55,
-    "max_dd": 7.77,
-    "guard_cut": 203,
-    "guard_skipped": 24
+    "max_dd": 8.52,
+    "guard_cut": 204,
+    "guard_skipped": 28
    }
   },
   "tight_both": {
    "train": {
     "conflicts": 498,
     "changed": 717,
-    "trades": 2677,
-    "total": 128.26,
+    "trades": 2673,
+    "total": 115.3,
     "worst_day": -2.94,
-    "max_dd": 5.18,
-    "guard_cut": 195,
-    "guard_skipped": 36
+    "max_dd": 5.64,
+    "guard_cut": 202,
+    "guard_skipped": 40
    },
    "unseen": {
     "conflicts": 626,
     "changed": 896,
-    "trades": 3578,
-    "total": 130.81,
+    "trades": 3575,
+    "total": 107.9,
     "worst_day": -2.31,
-    "max_dd": 8.44,
-    "guard_cut": 170,
-    "guard_skipped": 20
+    "max_dd": 9.28,
+    "guard_cut": 186,
+    "guard_skipped": 23
    }
   }
  },

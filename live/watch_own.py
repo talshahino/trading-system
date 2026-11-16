@@ -365,18 +365,31 @@ class Source:
 
     def spreads(self, names):
         """FTMO's live bid / ask (bot 1's MetaTrader, GET /quotes; read-only) -> SPREAD5 samples. The first ask only
-        registers the symbols with the server; the samples come from the next minute on. Quiet on any failure."""
-        try:
-            j = requests.get(self.url.rsplit("/", 1)[0] + "/quotes", params={"symbols": ",".join(names)}, timeout=10).json()
-            now = time.time()
-            for n, q in (j.get("quotes") or {}).items():
-                bid, ask, at = float(q[0]), float(q[1]), float(q[2])
-                if bid > 0 and ask > bid and now - at < 300 and (ask - bid) / bid < 0.01:     # a fresh, sane quote
-                    s = SPREAD5.setdefault(n, [])
-                    s.append(round(ask - bid, 6))
-                    del s[:-2000]
-        except Exception:  # noqa: BLE001
-            pass
+        registers the symbols with the server, which forgets them after 30 seconds (live/runner.QUOTE_WANT) - longer
+        than this loop's minute, so a single ask a minute never got a quote (0 samples on every scout strategy, 14-16.11:
+        FTMO's class estimate, 0.03% of the price - 3.3 pips on EURUSD - was charged on every trade). So: ask, and ask
+        again after a moment, up to 3 times (the server reads MetaTrader 4 times a second between its cycles).
+        Quiet on any failure."""
+        got = set()
+        for k in range(3):
+            try:
+                if k:
+                    time.sleep(1.5)
+                j = requests.get(self.url.rsplit("/", 1)[0] + "/quotes", params={"symbols": ",".join(names)}, timeout=10).json()
+                now = time.time()
+                for n, q in (j.get("quotes") or {}).items():
+                    if n in got:
+                        continue
+                    bid, ask, at = float(q[0]), float(q[1]), float(q[2])
+                    if bid > 0 and ask > bid and now - at < 300 and (ask - bid) / bid < 0.01:     # a fresh, sane quote
+                        s = SPREAD5.setdefault(n, [])
+                        s.append(round(ask - bid, 6))
+                        del s[:-2000]
+                        got.add(n)
+            except Exception:  # noqa: BLE001
+                pass
+            if got >= set(names):
+                break
 
     def resolve(self, name):
         now = time.time()

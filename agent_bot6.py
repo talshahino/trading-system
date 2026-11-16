@@ -1661,6 +1661,147 @@ def scout_cards(res):
     return cards
 
 
+# THE SCOUTS' SESSION WINDOW AND BREAKEVEN POINT (bot 6's smart agent, 16.11.2026 night; DISCOVER + principle 7).
+# The futures trade 23 hours; the scout strategies were chosen on all of them. 16.11 00:55 UTC (19:55 New York, an hour
+# after the Sunday open) SC072|5Min|US500 stopped in 5 minutes at 0.4%, -$389 - the day's only trade. Half of the live
+# scouts run with no breakeven at all (the variant test had one point only), against the user's principle 7. Here, per
+# scout strategy bot 6 trades, its LIVE variant against one change at a time: a New York session window
+# (agents/scout_fut.SESS) or the breakeven's own point (BE_WAY with a target, BE_R without). Chosen on 2024-2025 only
+# (the most time-weighted R, at least SESS_MIN_GAIN R over the live variant there, eff_n >= 20), shown on 2026; an
+# 'improve' card with the live variant as the baseline (the manager's judge: more per trade and no less in total in
+# 2026), the change {"family": "scout_fut", "combo", "v"} the builder builds at once. Rerun every SCOUT_RERUN_DAYS.
+SESS_SHARE = 0.15
+SESS_MIN_GAIN = 1.0
+
+
+def _sess_cands(v):
+    from agents import scout_fut as SF
+    out = [dict(v, sess=x) for x in SF.SESS]
+    own_tg = v.get("target") != "none"
+    for b in (SF.BE_WAY if own_tg else SF.BE_R):
+        out.append(dict(v, be=b))
+    return [c for c in out if SF.vid(c) != SF.vid(v)]
+
+
+def sess6_runs(budget_s):
+    from agents import scout_fut as SF
+    t0, f = time.time(), A.OUT / "scout_sess.json"
+    try:
+        res = json.loads(f.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        res = {}
+    try:
+        sc = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8")).get("scout") or {}
+    except Exception:  # noqa: BLE001
+        sc = {}
+    end = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+    now, data = pd.Timestamp.now(tz="UTC"), {}
+
+    def stats(t):
+        if t.empty:
+            return None
+        tt = pd.to_datetime(t["time"], utc=True)
+        tr, un = t[tt < A.SPLIT], t[tt >= A.SPLIT]
+        day = lambda x: round(float(x.groupby(pd.to_datetime(x["time"], utc=True).map(FA.tday))["r"].sum().min()), 2) if len(x) else None  # noqa: E731
+        return {"train": K.wstats(tr["r"], K.weights(tr["time"])) if len(tr) else K.wstats([]),
+                "unseen": K.wstats(un["r"], K.weights(un["time"])) if len(un) else K.wstats([]),
+                "train_sum": round(float(tr["r"].sum()), 2), "unseen_sum": round(float(un["r"].sum()), 2),
+                "train_wsum": round(float((tr["r"] * K.weights(tr["time"])).sum()), 2) if len(tr) else 0.0,
+                "worst_day_train": day(tr), "worst_day_unseen": day(un),
+                "halves": K.halves(tr["time"], tr["r"]) if len(tr) else [None, None]}
+    for combo, e in sc.items():
+        v = dict((e or {}).get("v") or {})
+        old = res.get(combo) or {}
+        if old.get("done") and old.get("live_vid") == SF.vid(v) and (now - pd.Timestamp(old["at"])).days < SCOUT_RERUN_DAYS:
+            continue
+        sid, tf, sym = combo.split("|")
+        if sym not in FA.SPEC or tf not in SF.TF_MIN or time.time() - t0 > budget_s:
+            continue
+        if sym not in data:
+            try:
+                pr = prep(sym, end)
+                if pr is None:
+                    data[sym] = None
+                else:
+                    df, _, _, noent = pr
+                    shut, _ = FA.session_masks(df)
+                    _, pv, tick = FA.SPEC[sym]
+                    data[sym] = (df, noent, shut, tick + (FA.COMM + FA.SLIP_TICKS * tick * pv) / pv)
+            except Exception as ex:  # noqa: BLE001
+                print(f"scout_sess {sym}: no data ({ex})")
+                data[sym] = None
+        if data[sym] is None:
+            continue
+        df, noent, shut, cost_px = data[sym]
+        _, pv_, tick_ = FA.SPEC[sym]
+        rows = dict(old.get("rows") or {}) if old.get("live_vid") == SF.vid(v) else {}
+        for c in [v] + _sess_cands(v):
+            k = SF.vid(c)
+            if k in rows:
+                continue
+            if time.time() - t0 > budget_s:
+                break
+            try:
+                t = SF.trades(df, sym, sid, tf, c, noent, shut, cost_px)
+                if not t.empty:     # one micro contract over the bot's risk is never taken live
+                    per = (t["entry_px"] - t["stop_px"]).abs() * pv_ + FA.COMM + FA.SLIP_TICKS * tick_ * pv_
+                    t = t[per <= FA.INITIAL * FA.RISK_TAL]
+                rows[k] = {"v": c, **(stats(t) or {})}
+            except Exception as ex:  # noqa: BLE001
+                rows[k] = {"v": c, "error": str(ex)[:200]}
+        done = all(SF.vid(c) in rows for c in [v] + _sess_cands(v))
+        res[combo] = {"at": now.isoformat(timespec="seconds"), "live_vid": SF.vid(v), "done": done, "rows": rows}
+        print(f"  scout_sess {combo}: {len(rows)} variants{'' if done else ' (more next run)'}")
+    f.write_text(json.dumps(res, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    return res
+
+
+def sess6_cards(res):
+    from agents import scout_fut as SF
+    try:
+        sc = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8")).get("scout") or {}
+    except Exception:  # noqa: BLE001
+        sc = {}
+    fmt = lambda x: f"{(x or {}).get('mean') or 0:+.2f}R על {(x or {}).get('n', 0)} עסקאות"  # noqa: E731
+    cards, summ = [], []
+    for combo, x in (res or {}).items():
+        e = sc.get(combo)
+        if not x.get("done") or not e or x.get("live_vid") != SF.vid(e.get("v") or {}):
+            continue
+        rows = x["rows"]
+        base = rows.get(x["live_vid"]) or {}
+        if not base.get("train"):
+            continue
+        ok = [r for k, r in rows.items() if k != x["live_vid"] and (r.get("train") or {}).get("eff_n", 0) >= 20
+              and r.get("train_wsum", -1e9) >= base.get("train_wsum", 0) + SESS_MIN_GAIN]
+        best = max(ok, key=lambda r: r["train_wsum"], default=None)
+        if not best:
+            summ.append(f"{combo}: אין שינוי שעדיף עד 2025")
+            continue
+        bt, bu, ct, cu = base["train"], base["unseen"], best["train"], best["unseen"]
+        hold = (cu.get("mean") or 0) > (bu.get("mean") or 0) and best.get("unseen_sum", 0) >= base.get("unseen_sum", 0)
+        summ.append(f"{combo}: {SF.he(best['v'])} - 2026 {best.get('unseen_sum', 0):+.1f}R מול {base.get('unseen_sum', 0):+.1f}R"
+                    + ("" if hold else " (לא מחזיק ב־2026)"))
+        if not hold:
+            continue
+        what = (f"{combo} כפי שהוא רץ עכשיו ({SF.he(e['v'])}) מול שינוי אחד בכל פעם - חלון שעות ניו יורק (4) או נקודת האיזון "
+                f"(עיקרון 7: {'5 רמות פיבונאצ׳י של הדרך ליעד' if e['v'].get('target') != 'none' else '1.5 / 2 / 3R'}), "
+                f"{len(rows) - 1} שינויים. נבחר על 2024-2025 בלבד: {fmt(ct)}, סה\"כ {best.get('train_sum', 0):+.1f}R מול {base.get('train_sum', 0):+.1f}R היום; "
+                f"ב־2026 (לא נראתה): {fmt(cu)}, סה\"כ {best.get('unseen_sum', 0):+.1f}R מול {base.get('unseen_sum', 0):+.1f}R ({fmt(bu)}). "
+                f"היום הגרוע של האסטרטגיה ב־2026: {best.get('worst_day_unseen')}R מול {base.get('worst_day_unseen')}R. "
+                f"חוזי מיקרו, עלויות אמיתיות, שעות FTMO Futures. בבוט 5 אין עדיין בדיקת שעות / איזון לאסטרטגיות הסייר (רק למסלולי הגאפ) - "
+                f"התוצאה עוברת לסוכן של בוט 5.")
+        cards.append(K.card("bot6", "improve", f"בוט 6: {combo} · {SF.he(best['v'])}", what, ct, cu, baseline=bu,
+                            halves_=best.get("halves"), tested=len(rows) - 1, cost_r=None,
+                            change={"family": "scout_fut", "combo": combo, "v": best["v"]},
+                            detail={"world": "bot6", "task": "scout_sess", "live": base, "chosen": best}))
+    if summ:
+        cards.append(K.card("bot6", "info", f"בוט 6: חלון שעות ונקודת איזון לאסטרטגיות הסייר - {len(cards)} שיפורים מחזיקים",
+                            "לכל אסטרטגיית סייר שרצה: שינוי אחד בכל פעם, נבחר עד 2025, מוצג על 2026. " + " · ".join(summ),
+                            None, None, tested=len(summ), detail={"world": "bot6", "task": "scout_sess"}))
+    return cards
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--minutes", type=float, default=None)
@@ -1676,6 +1817,10 @@ def main():
         scards = scout_world(SCOUT_SHARE * mins * 60)
     except Exception as e:  # noqa: BLE001
         print(f"scout_fut failed: {e}")
+    try:            # the scouts' session window / breakeven point (16.11.2026 night)
+        scards += sess6_cards(sess6_runs(SESS_SHARE * mins * 60))
+    except Exception as e:  # noqa: BLE001
+        print(f"scout_sess failed: {e}")
     rest = max(1.0, mins - (time.time() - t0) / 60)
     argv = [x for i, x in enumerate(sys.argv) if x != "--minutes" and (i == 0 or sys.argv[i - 1] != "--minutes")]
     sys.argv = argv + ["--minutes", f"{rest:.1f}"]

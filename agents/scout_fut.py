@@ -28,9 +28,44 @@ BES = (True, False)
 BASE = {"target": "own", "stop": 1.0, "time": "own", "be": True}
 
 
+# THE SESSION WINDOW AND THE BREAKEVEN POINT (bot 6's smart agent, 16.11.2026 night). Two optional keys of a variant,
+# absent = as before (every existing variant id and every live entry in live/bots/bot6.json stays the same):
+#   "sess"  entries only inside a New York window - the futures trade 23 hours, and a scout strategy built on the cash
+#           session may lose in the thin evening / Asian hours (16.11 00:55 UTC = 19:55 New York, an hour after the
+#           Sunday open: SC072|5Min|US500 stopped in 5 minutes, -$389, the day's only trade):
+#           day = 03:00-15:45 (London + New York), ny = 08:00-15:45, rth = 09:30-15:45, noopen = not 18:00-19:59
+#   "be"    True / False as before, or a number - the breakeven's own point (the user's principle 7, timing per strategy;
+#           task 17, Fibonacci levels): below 1 = the share of the way to the target, 1 and above = R (no target; +1R
+#           locked half an R later)
+SESS = {"day": (3 * 60, 15 * 60 + 45), "ny": (8 * 60, 15 * 60 + 45), "rth": (9 * 60 + 30, 15 * 60 + 45),
+        "noopen": (20 * 60, 18 * 60)}
+SESS_HE = {"day": "כניסה רק 03:00-15:45 ניו יורק (לונדון וניו יורק)", "ny": "כניסה רק 08:00-15:45 ניו יורק",
+           "rth": "כניסה רק בשעות המסחר הרגילות 09:30-15:45", "noopen": "בלי כניסה בשעתיים הראשונות אחרי 18:00"}
+BE_WAY = (0.382, 0.5, 0.618, 0.786, 0.886)      # with a target: the share of the way (Fibonacci, task 17)
+BE_R = (1.5, 2.0, 3.0)                          # without one: R (2.5 = True, the rule of principle 7)
+
+
+def _be_num(v):
+    b = v.get("be")
+    return None if isinstance(b, bool) or b is None else float(b)
+
+
 def vid(v):
     t = v["target"] if isinstance(v["target"], str) else f"{float(v['target']):g}R"
-    return f"t{t}_s{float(v['stop']):g}_{'time' if v['time'] == 'own' else 'notime'}_{'be' if v['be'] else 'nobe'}"
+    b = _be_num(v)
+    be = f"be{b:g}" if b is not None else ("be" if v["be"] else "nobe")
+    return (f"t{t}_s{float(v['stop']):g}_{'time' if v['time'] == 'own' else 'notime'}_{be}"
+            + (f"_{v['sess']}" if v.get("sess") else ""))
+
+
+def sess_ok(times, sess):
+    """True where an entry at `times` is inside the New York window `sess` (None = always)."""
+    if not sess:
+        return np.ones(len(times), bool)
+    a, b = SESS[sess]
+    et = pd.DatetimeIndex(times).tz_convert("America/New_York")
+    m = np.asarray(et.hour * 60 + et.minute)
+    return (m >= a) & (m < b) if a < b else (m >= a) | (m < b)
 
 
 def variants():
@@ -42,8 +77,9 @@ def he(v):
     t = "יעד כמו במקור" if v["target"] == "own" else "בלי יעד" if v["target"] == "none" else f"יעד {float(v['target']):g}R"
     s = "" if float(v["stop"]) == 1.0 else f", סטופ x{float(v['stop']):g}"
     m = "" if v["time"] == "own" else ", בלי יציאה בזמן"
-    b = "" if v["be"] else ", בלי איזון"
-    return t + s + m + b
+    bn = _be_num(v)
+    b = (f", איזון ב־{bn:g}R" if bn >= 1 else f", איזון ב־{bn * 100:g}% מהדרך") if bn is not None else ("" if v["be"] else ", בלי איזון")
+    return t + s + m + b + (f", {SESS_HE[v['sess']]}" if v.get("sess") else "")
 
 
 def resample(df1, tf):
@@ -73,8 +109,9 @@ def masks(dft, tf, noent1, shut1, idx1):
     return noent[:n], force[:n]
 
 
-def strategy(sid, v, noent):
-    """The scout's function as bot 6 runs it: the variant's target / stop / time exit, signals in no-entry minutes off."""
+def strategy(sid, v, noent, tf=None):
+    """The scout's function as bot 6 runs it: the variant's target / stop / time exit, signals in no-entry minutes off,
+    and (with "sess") signals whose entry - the next bar's open - is outside the session window off."""
     from agents.rules_agent import STRATEGIES
     fn0 = STRATEGIES[sid][1]
 
@@ -83,6 +120,9 @@ def strategy(sid, v, noent):
         plan = dict(plan)
         lo = np.asarray(lo, bool) & ~noent
         sh = np.asarray(sh, bool) & ~noent
+        if v.get("sess"):
+            ok = sess_ok(df.index + pd.Timedelta(minutes=TF_MIN.get(tf, 0)), v["sess"])
+            lo, sh = lo & ok, sh & ok
         if v["target"] == "none":
             plan["target"] = None
         elif v["target"] != "own":
@@ -92,7 +132,9 @@ def strategy(sid, v, noent):
         if v["time"] == "none":
             plan.pop("max_bars", None)
         if v["be"] and plan.get("target") is None:          # no target: entry at 2.5R, +1R locked at 3R (principle 7)
-            plan["be_r"], plan["lock_r"] = 2.5, (3.0, 1.0)
+            bn = _be_num(v)
+            r0 = bn if bn is not None and bn >= 1 else 2.5
+            plan["be_r"], plan["lock_r"] = r0, (r0 + 0.5, 1.0)
         return lo, sh, plan
     return g
 
@@ -106,8 +148,9 @@ def trades(df1, sym, sid, tf, v, noent1, shut1, cost_px):
     dft.attrs["symbol"] = sym
     noent, force = masks(dft, tf, noent1, shut1, df1.index)
     px = float(dft["c"].median())
-    be = (0.6, cost_px / px) if v["be"] else None
-    t = run(dft, strategy(sid, v, noent), 0.0, breakeven=be, session_exit=force)
+    bn = _be_num(v)
+    be = ((bn if bn is not None and bn < 1 else 0.6), cost_px / px) if v["be"] else None
+    t = run(dft, strategy(sid, v, noent, tf), 0.0, breakeven=be, session_exit=force)
     if t.empty:
         return t
     risk = (t["entry_px"] - t["stop_px"]).abs()

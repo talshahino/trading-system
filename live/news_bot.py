@@ -105,12 +105,53 @@ TF_M = {"1Min": 1, "5Min": 5, "15Min": 15, "1Hour": 60, "4Hour": 240}
 BREAK_W = 10                     # minutes before a market break of 2h+ at which every position is closed (FTMO Standard)
 
 
-def break_exit(d, tf):
+BRK_SURE_H = 20                  # a 20h+ break (weekend, holiday) always counts (as agents/tal_gap.BRK_SURE_H)
+BRK_TOL_MIN = 30                 # a shorter one must recur a week earlier at the same local time, +-30 minutes
+BRK_ZONES = ("UTC", "America/New_York", "Europe/London", "Europe/Berlin", "Australia/Sydney")
+
+
+def break_starts(ns, step):
+    """The start times (int64 ns, UTC) of the 2h+ breaks in sorted bar times ns of bar length step (ns). As
+    agents/tal_gap.pre_break_mask (16.11.2026, task b5to7brk1611): a break shorter than BRK_SURE_H hours counts only
+    if a break began a week earlier at the same local time (any of the clocks, +-BRK_TOL_MIN) - a one-off hole in the
+    candles (a feed stall: US30 / US500 / US100 on 9.11.2026 ~02:21 UTC) is not a market break, and carried a week
+    forward it closed bot 5's index trades at 02:11 UTC on 16.11. With no data a week before, the break counts."""
+    ns = np.asarray(ns, np.int64)
+    if len(ns) < 2:
+        return np.zeros(0, np.int64)
+    brk = np.flatnonzero((ns[1:] - ns[:-1] - step) > 2 * 3600 * 10**9)
+    if not len(brk):
+        return np.zeros(0, np.int64)
+    starts = ns[brk] + step
+    keep = np.ones(len(brk), bool)
+    short = (ns[brk + 1] - starts) < BRK_SURE_H * 3600 * 10**9
+    if short.any():
+        cs = pd.DatetimeIndex(starts[short]).tz_localize("UTC")
+        ok = np.zeros(int(short.sum()), bool)
+        known = np.zeros(int(short.sum()), bool)
+        tol = BRK_TOL_MIN * 60 * 10**9 + step // 2
+        for z in BRK_ZONES:
+            q = (cs.tz_convert(z).tz_localize(None) - pd.Timedelta(days=7)).tz_localize(
+                z, ambiguous="NaT", nonexistent="shift_forward").tz_convert("UTC")
+            qv = q.as_unit("ns").asi8
+            good = ~np.asarray(q.isna())
+            known |= good & (qv - tol > ns[0])
+            j = np.searchsorted(starts, qv - tol)
+            hit = (j < len(starts)) & (np.abs(starts[np.minimum(j, len(starts) - 1)] - qv) <= tol)
+            ok |= good & hit
+        keep[short] = ok | ~known
+    return starts[keep]
+
+
+def break_exit(d, tf, ref=None):
     """FTMO Standard account (user, 14.11.2026, task tal1411wkend): no position held through a market break over 2 hours
     (weekends, holidays). The backtest's rule (run_rules.break_mask, agent_portfolio's --break-exit): the last bar before
     such a gap is closed at its close. Live the gap is not known yet, so the breaks seen in the candles are also carried
     one week forward (as agents/tal_gap.pre_break_mask, earliest of the market time zones): the bars ending from
-    BREAK_W minutes before that time to 2 hours after it. -> (force_exit, no_entry) boolean masks."""
+    BREAK_W minutes before that time to 2 hours after it. ref = the instrument's 1-hour bar times (int64 ns, 125 days):
+    the 1- and 5-minute candles hold only DAYS (6) days, so until 16.11.2026 a break a week earlier was never in them and
+    those strategies were not closed before a weekend live; the breaks are now read from both. A one-off hole in the
+    candles is not a break (break_starts). -> (force_exit, no_entry) boolean masks."""
     n = len(d)
     fe, ne = np.zeros(n, bool), np.zeros(n, bool)
     if n < 2:
@@ -119,11 +160,13 @@ def break_exit(d, tf):
     ns = d.index.as_unit("ns").asi8
     gap = (ns[1:] - ns[:-1] - step) > 2 * 3600 * 10**9
     fe[:-1] = gap
-    brk = np.flatnonzero(gap)
-    if len(brk):
-        c = pd.DatetimeIndex(ns[brk] + step).tz_localize("UTC")
+    st = break_starts(ns, step)
+    if ref is not None and len(ref) > 1:
+        st = np.union1d(st, break_starts(ref, 3600 * 10**9))
+    if len(st):
+        c = pd.DatetimeIndex(st).tz_localize("UTC")
         best = None
-        for z in ("UTC", "America/New_York", "Europe/London", "Europe/Berlin", "Australia/Sydney"):
+        for z in BRK_ZONES:
             loc = c.tz_convert(z).tz_localize(None) + pd.Timedelta(days=7)
             p = loc.tz_localize(z, ambiguous="NaT", nonexistent="shift_forward").tz_convert("UTC")
             v = p.as_unit("ns").asi8.astype(float)
@@ -322,6 +365,26 @@ class Source:
         self.df[name] = d
         return d
 
+
+    def breaks_ref(self, name):
+        """The instrument's 1-hour bar times (int64 ns, UTC, HI_DAYS days) for break_exit: the 1h candles of hi() when
+        read, else read for this alone once an hour. None when not read."""
+        if not self.broker.get(name):
+            return None
+        if not hasattr(self, "_hi"):
+            self._hi = {}
+        t, h1 = self._hi.get(name, (0, None))
+        tb, hb = self._hi.get(name + "|brk", (0, None))
+        if h1 is not None and t >= tb and time.time() - t < 3600:
+            return h1.index.as_unit("ns").asi8
+        if hb is None or time.time() - tb > 3600:
+            try:
+                hb = self.get(self.broker[name], time.time() - HI_DAYS * 86400, time.time(), tf="1h")
+                hb = hb[~hb.index.duplicated(keep="last")].sort_index()
+                self._hi[name + "|brk"] = (time.time(), hb)
+            except Exception as e:  # noqa: BLE001
+                log(f"{name}: 1-hour candles for the market breaks not read ({e})")
+        return hb.index.as_unit("ns").asi8 if hb is not None and len(hb) else None
 
     def hi(self, name, need):
         """1-hour / 4-hour candles for the scout strategies on longer timeframes ({"1Hour": df, "4Hour": df}, only the
@@ -549,7 +612,7 @@ def surprise_event(t):
     return f"{k.tz_convert('Asia/Jerusalem').strftime('%d.%m %H:%M')} USD {x['title']}"
 
 
-def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None):
+def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None, ref=None):
     """Every trade of the three release strategies (and the approved extra ones) on this instrument in the candles
     held, net of FTMO costs (r in R). hi: {"1Hour"/"4Hour": candles} for the scout strategies on those timeframes."""
     out = []
@@ -570,7 +633,7 @@ def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None):
         sp = pd.Series([spread_now], index=[d.index[0]]) if spread_now else None
         p_ = pl.get(f"{sid}|{tf}|{name}") or {}
         fn = filtered(fn0, p_.get("filter"), plan_keys(p_))
-        fe, ne = break_exit(d, tf)                          # no position through a 2h+ market break (FTMO Standard)
+        fe, ne = break_exit(d, tf, ref)                     # no position through a 2h+ market break (FTMO Standard)
         if ne.any():
             fn = CAL.blocked(fn, ne)
         px = float(d["c"].iloc[-1])
@@ -796,7 +859,7 @@ def main():
                 d5.attrs.update(symbol=name, tf="5Min")
                 d1.attrs.update(symbol=name, tf="1Min")
                 hi = src.hi(name, {tf for _, tf, n in ex if n == name and tf in HI_TF})
-                for t in trades_of(name, d5, sp.get(name), d1, ex, hi):
+                for t in trades_of(name, d5, sp.get(name), d1, ex, hi, src.breaks_ref(name)):
                     seen[t["id"]] = t
             seen = straddle_cap(seen, trades)
             for k, t in seen.items():

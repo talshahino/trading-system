@@ -60,6 +60,8 @@ jobs:
           path: cache
           key: poc-cache-${{ github.run_id }}
           restore-keys: poc-cache-
+      - name: Clean (each machine uploads only its own instrument)
+        run: rm -rf reports/agents/*/conflict
       - name: Run
         env:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}

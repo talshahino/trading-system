@@ -54,14 +54,15 @@ def combos_by_sym(bot):
     cfg = PC.bot_cfg(bot)
     off = PC.off_server(bot, cfg)
     by = {}
-    for c in cfg.get("combos") or []:
+    # bot 5 has no combos list - its scout strategies (chop study, 16.11.2026)
+    for c in (cfg.get("combos") or list((cfg.get("scout") or {}).keys())):
         if c not in off and not ((cfg.get("plans") or {}).get(c) or {}).get("off_from"):
             by.setdefault(c.split("|")[2], []).append(c)
     return by
 
 
-def plan(bot):
-    return [s for s, cs in combos_by_sym(bot).items() if len(cs) >= 2]
+def plan(bot, min_n=2):
+    return [s for s, cs in combos_by_sym(bot).items() if len(cs) >= min_n]
 
 
 def run(bot, sym, minutes):
@@ -74,7 +75,7 @@ def run(bot, sym, minutes):
     groups = {}
     for c in combos_by_sym(bot).get(sym, []):
         p = plans.get(c) or {}
-        fam = "pyr" if p.get("pyramid") else A.replay_family(p)
+        fam = "pyr" if p.get("pyramid") else (A.replay_family(p) if cfg.get("combos") else "new")
         one = c.split("|")[1] == "1Min"
         groups.setdefault((fam, c if one else ""), []).append(c)
     t0, parts, missing = time.time(), [], []
@@ -116,7 +117,7 @@ def run(bot, sym, minutes):
         end = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
         bars = P.bars(sym, "5Min", max(A.TEST_FROM, RP.MINUTE_START), end)
         b = pd.DataFrame({"m": ((bars.index - pd.Timestamp("1970-01-01", tz="UTC")) // pd.Timedelta(minutes=1)).astype("int64"),
-                          "h": bars["h"].to_numpy(), "l": bars["l"].to_numpy()})
+                          "h": bars["h"].to_numpy(), "l": bars["l"].to_numpy(), "c": bars["c"].to_numpy()})
         b.to_csv(d / f"{sym}.bars.csv.gz", index=False)
         print(f"{sym}: {len(b)} 5-minute bars")
     except Exception as e:  # noqa: BLE001

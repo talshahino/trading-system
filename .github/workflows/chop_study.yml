@@ -1,0 +1,105 @@
+name: Chop study (open trades while the chart goes sideways)
+
+# Open trades while the chart goes sideways (user, 16.11.2026) - agents/chop_study.py, runs by agents/conflict_study.py:
+# one machine per instrument with 2+ strategies, then the comparison of the ways (as today / skip / stronger / half /
+# closer targets) on the whole bot. Results only - nothing in the bot changes.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bot:
+        description: "bots"
+        default: "bot1,bot2,bot3,bot4,bot5"
+      minutes:
+        description: "minutes per instrument"
+        default: "110"
+
+permissions:
+  contents: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      jobs: ${{ steps.p.outputs.jobs }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - id: p
+        run: echo "jobs=$(python -m agents.chop_study plan --bot '${{ inputs.bot }}')" >> "$GITHUB_OUTPUT"
+  run:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        job: ${{ fromJson(needs.plan.outputs.jobs) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Clean (each machine uploads only its own instrument)
+        run: rm -rf reports/agents/*/conflict
+      - name: Run
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: python -u -m agents.conflict_study run --job "${{ matrix.job }}" --minutes ${{ inputs.minutes || '110' }} 2>&1 | tail -30
+      - name: Name
+        id: n
+        run: echo "n=$(echo '${{ matrix.job }}' | tr ':/' '__')" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ch-${{ steps.n.outputs.n }}
+          path: reports/agents/*/conflict
+          if-no-files-found: ignore
+          retention-days: 5
+  report:
+    needs: run
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          path: parts
+          pattern: ch-*
+      - name: Report
+        run: |
+          for d in parts/*/; do cp -r "$d." reports/agents/; done
+          python -m agents.chop_study report --bot '${{ inputs.bot }}' | head -60
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/agents/chop_study.json || true
+          git commit -qm "Chop study (agents/chop_study)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

@@ -379,7 +379,17 @@ NOTE_TESTS += [
     {"id": f"{trk}_set7b", "track": trk, "knob": "TREND", "vals": ["sqz", "sqzm", "pdbrk"], "src": "tal1411set7",
      "he": "רק בכיוון מומנטום הסקוויז של LazyBear, או בכיוון פריצת השיא / השפל של אתמול"}
     for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
-NOTE_SRC = {"b6to5rearm": "משימה מסוכן בוט 6 מ־14.11 (REARM - התיקון שלו לעלות של כלל FTMO).",
+NOTE_TESTS += [
+    # the user, 16.11.2026 evening (task tal1611gaveback): "almost every trade was in profit at some point and almost all
+    # ended in a loss - trades that reach 50-60% of the target and leave at a loss; maybe take them out partially, as I
+    # keep telling you". On the slow / middle index tracks as they run (t15_5 and t5_1 were tested with p50_50 on 13.11
+    # and it lost there): half / a third out at 50% / 61.8% of the way with the rest's stop to the entry, and the stop to
+    # the entry at 50% - in place of the track's own break-even (EXIT), chosen on 2024-2025, shown on 2026
+    {"id": f"{trk}_gaveback", "track": trk, "knob": "EXIT", "vals": ["p50_50", "p50_618", "p33_618", "be50"],
+     "src": "tal1611gaveback", "he": "יציאה חלקית ב־50%-61.8% מהדרך + סטופ לכניסה (במקום הברייק של המסלול)"}
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t4h_5")]
+NOTE_SRC = {"tal1611gaveback": "משימה של טל מ־16.11 (עסקאות שהיו ברווח ונגמרו בהפסד - יציאה חלקית).",
+            "b6to5rearm": "משימה מסוכן בוט 6 מ־14.11 (REARM - התיקון שלו לעלות של כלל FTMO).",
             "tal1411set7": "משימה של טל מ־14.11 (ממוצעי פיבונאצ'י, הייקין אשי, הסקוויז של LazyBear ושיא / שפל של אתמול מהסרטונים).",
             "tal1411gapplus": "משימה של טל מ־14.11 (שיטות קרובות לגאפ: Silver Bullet, איכות נר 3, גאפ אחרי גריפה).",
             "tal1411set6": "משימה של טל מ־14.11 (פרמיה / דיסקאונט ופיבוט יומי מהסרטונים).",

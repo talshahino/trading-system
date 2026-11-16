@@ -250,6 +250,17 @@ def check(bot, state, now):
         cards.append(K.card(bot, "info", f"הפסד כולל {tot:.1f}%", "החשבון מתקרב למגבלת ההפסד הכולל הקבועה (10%). "
                             "אישור: הסוכן יציע הורדת סיכון לכל הבוט עד שהחשבון יתאושש.", None, None,
                             change={"check": "total", "week": now.strftime("%G-W%V")}))
+    # the broker refuses every order on the account (bots 1-4 smart agent, 16.11.2026: bot 1's FTMO two-week trial
+    # ended and each entry since Monday 08:01 UTC came back 10017 'Trade disabled' - nothing in the app said so)
+    recent = [x for x in (state.get("skips") or [])
+              if "10017" in str(x.get("why", "")) and now - pd.to_datetime(x.get("t"), utc=True, errors="coerce",
+                                                                         format="ISO8601") < pd.Timedelta(hours=24)]
+    if state.get("trade_allowed") is False or len(recent) >= 2:
+        problems.append("הברוקר חוסם את המסחר בחשבון (Trade disabled) - הבוט לא פותח עסקאות")
+        cards.append(K.card(bot, "info", "החשבון חסום למסחר אצל הברוקר",
+                            f"{len(recent)} פקודות נדחו ב־24 השעות האחרונות עם 'Trade disabled' (קוד 10017) - הברוקר "
+                            "לא מאפשר מסחר בחשבון כולו (למשל תקופת ניסיון שנגמרה). רק טל יכול לפתוח חשבון חדש.",
+                            None, None, change={"check": "trade_disabled", "day": now.strftime("%Y-%m-%d")}))
     # stale: no state for a while on a trading day (Mon-Fri)
     up = pd.to_datetime(state.get("updated_utc"), utc=True, errors="coerce", format="ISO8601")
     age = None if pd.isna(up) else (now - up).total_seconds() / 60

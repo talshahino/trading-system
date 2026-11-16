@@ -781,6 +781,13 @@ def send(req, what):
             REP.notify(f"{BOT}: המסחר האוטומטי כבוי", "בחלון MetaTrader של החשבון הזה הכפתור Algo Trading כבוי, ולכן "
                        "הבוט לא יכול לפתוח או לסגור עסקאות. הצג את החלון מהאפליקציה ולחץ על Algo Trading (שיהיה ירוק).",
                        priority=5, tags=["warning"], key="algo_off", every=3600)
+        elif r is not None and r.retcode == 10017:
+            # 10017 = trading is disabled on the whole account by the broker (bots 1-4 smart agent, 16.11.2026: bot 1's
+            # FTMO two-week trial from 01.11 - every order since Monday 08:01 UTC came back 'Trade disabled', on
+            # USDJPY and XAUUSD alike, while bots 3-4 opened the same signals). Only the user can open a new account.
+            REP.notify(f"{BOT}: החשבון חסום למסחר", "הברוקר דוחה כל פקודה (Trade disabled) - כנראה תקופת הניסיון של "
+                       "החשבון נגמרה. הבוט ממשיך לעקוב, אבל לא יכול לפתוח עסקאות עד שיחובר חשבון חדש.",
+                       priority=5, tags=["warning"], key="trade_disabled", every=6 * 3600)
         elif r is None or r.retcode not in (10018,):           # 10018 = market closed: not worth a message
             REP.notify(f"{BOT}: פקודה נכשלה", f"{what}\n{('MetaTrader לא ענה', err) if r is None else (r.retcode, r.comment)}",
                        priority=4, tags=["warning"], key="fail:" + what[:20], every=1800)
@@ -1836,6 +1843,7 @@ def dashboard_state(ai, pos, ds_bal, now):
         "bot": MON["name"], "updated_utc": now.isoformat(), "account": ai.login, "server": ai.server,
         "initial": ACC.initial, "risk": MON["cfg"]["risk"], "free_risk_at_breakeven": ACC.free,
         "balance": ai.balance, "equity": ai.equity, "day_start": ds_bal,
+        "trade_allowed": bool(getattr(ai, "trade_allowed", True)),     # the broker's permission for the whole account
         "halted_until": str(ACC.halt_until) if ACC.halt_until else None, "combos": MON["combos"],
         "positions": positions_doc(pos), "live_url": TUN.URL["url"],
         "trades": trades[-400:], "equity_curve": STATE.get("equity", [])[-4000:],   # the bot's log stays on the computer only

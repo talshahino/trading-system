@@ -109,8 +109,10 @@ def _atr5(d1):
     return pd.Series(a, index=d5.index)
 
 
-def live_straddle(d1, events, spread_px=0.0, x=1.0, hold=30, be=1.0, cancel=5, slip_atr=0.1, start=-1):
+def live_straddle(d1, events, spread_px=0.0, x=1.0, hold=30, be=1.0, cancel=5, slip_atr=0.1, start=-1, fill_from=None):
     """d1: the bot's 1-minute candles (o/h/l/c, UTC index); events: release times (UTC) of the instrument's currencies.
+    fill_from (plan "fill_from", bot 7 smart agent 16.11.2026): the first minute after the release a fill may come in
+    (0 = the release minute); an order touched earlier (the minute before the release) cancels both - no trade.
     -> list of dicts: time (fill minute), exit_time, dir, entry_px, stop_px, exit_px, r (gross, in R), rel, open."""
     if d1 is None or len(d1) < 120 or not events:
         return []
@@ -152,6 +154,8 @@ def live_straddle(d1, events, spread_px=0.0, x=1.0, hold=30, be=1.0, cancel=5, s
                 break
         if q0 is None:
             continue
+        if fill_from is not None and q0 < k0 + int(fill_from):
+            continue                                 # touched before the allowed minute: both orders cancelled
         slip = 0.5 * sp + slip_atr * atr
         lvl = buy if dr > 0 else sell
         e = max(lvl, o[q0]) + slip if dr > 0 else min(lvl, o[q0]) - slip

@@ -324,6 +324,7 @@ def export(df):
         return {}
     syms = [s_ for s_ in b if s_ in set(df["sym"])]
     df = skipped_out(df, b)
+    df = window_out(df, b)
     keys = {}
     for s_ in syms:
         keys.setdefault(built_key(b[s_]), []).append(s_)
@@ -347,6 +348,26 @@ def skipped_out(df, b):
         s_ = sk.get(sym)
         keep.append(not s_ or not (NST.groups_of(sym, pd.Timestamp(rel).tz_convert("UTC"), G, U.CURRENCIES.get(sym, [])) & s_))
     return df[np.array(keep, bool)]
+
+
+def window_out(df, b):
+    """The rows whose fill minute (after the release, -1 = the minute before) is inside each instrument's plan window:
+    from "fill_from" (none = -1) to "cancel_min" - 1 (default CANCEL) - before the per-release cap, as the live bot
+    (agents/news_straddle_live.live_straddle fill_from / cancel; bot 7 smart agent 16.11.2026)."""
+    w = {s_: (p.get("fill_from"), p.get("cancel_min")) for s_, p in b.items()
+         if p.get("fill_from") is not None or (p.get("cancel_min") not in (None, CANCEL))}
+    if not w or df is None or not len(df):
+        return df
+    off = ((pd.to_datetime(df["t"], utc=True, format="ISO8601") - pd.to_datetime(df["rel"], utc=True, format="ISO8601"))
+           // pd.Timedelta(minutes=1)).to_numpy()
+    keep = np.ones(len(df), bool)
+    for i, sym in enumerate(df["sym"]):
+        if sym in w:
+            ff, cn = w[sym]
+            lo = -1 if ff is None else int(ff)
+            hi = CANCEL if cn is None else int(cn)
+            keep[i] = lo <= off[i] < hi
+    return df[keep]
 
 
 def _cached_rows():

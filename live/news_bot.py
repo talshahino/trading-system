@@ -567,7 +567,12 @@ def straddle_trades(sid, name, d1, spread_now, p):
         x, hh, cn, sl = 1.0, 30, 5, 0.1
     evs = NST.skip_events(E._EVENTS.get(name, []), name, STRADDLE_GROUPS, U.CURRENCIES.get(name, []),
                           p.get("skip_groups"))          # release types the plan skips (e.g. ["USD:gdp", "USD:rates"])
-    rows = NST.live_straddle(d1, evs, spread_now or 0.0, x=x, hold=hh, cancel=cn, slip_atr=sl)
+    ff = p.get("fill_from")                              # e.g. 0: a fill in the minute before the release cancels both
+    try:
+        ff = None if ff is None else int(ff)
+    except (TypeError, ValueError):
+        ff = None
+    rows = NST.live_straddle(d1, evs, spread_now or 0.0, x=x, hold=hh, cancel=cn, slip_atr=sl, fill_from=ff)
     if not rows:
         return []
     t = pd.DataFrame(rows)

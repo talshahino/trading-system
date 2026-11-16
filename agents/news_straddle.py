@@ -50,6 +50,7 @@ from agents import ftmo_universe as U  # noqa: E402
 from agents import news_fix as NF  # noqa: E402
 from agents import poc_agent as P  # noqa: E402
 from agents import bot7_trades as BT  # noqa: E402
+from agents import news_straddle_live as NST  # noqa: E402
 
 OUT = ROOT / "reports" / "agents" / "bot7" / "straddle_study.json"
 CACHE = ROOT / "cache" / "news_straddle"
@@ -322,6 +323,7 @@ def export(df):
     if df is None or not len(df) or not b:
         return {}
     syms = [s_ for s_ in b if s_ in set(df["sym"])]
+    df = skipped_out(df, b)
     keys = {}
     for s_ in syms:
         keys.setdefault(built_key(b[s_]), []).append(s_)
@@ -331,6 +333,20 @@ def export(df):
         hold = {s_: int(b[s_].get("hold_min", 30)) + int(b[s_].get("cancel_min", CANCEL)) for s_ in ss}
         out.update(BT.write("EV04", "1Min", z, ss, hold, "agents/news_straddle.py", k))
     return out
+
+
+def skipped_out(df, b):
+    """The rows left after each instrument's skipped release types (plan "skip_groups", e.g. ["USD:gdp"]; bot 7 smart
+    agent 16.11.2026) - before the per-release cap, as the live bot (agents/news_straddle_live.skip_events)."""
+    sk = {s_: set(p.get("skip_groups") or []) for s_, p in b.items() if p.get("skip_groups")}
+    if not sk or df is None or not len(df):
+        return df
+    G = NST.release_groups(json.loads(NF.HIST.read_text(encoding="utf-8")))
+    keep = []
+    for sym, rel in zip(df["sym"], df["rel"]):
+        s_ = sk.get(sym)
+        keep.append(not s_ or not (NST.groups_of(sym, pd.Timestamp(rel).tz_convert("UTC"), G, U.CURRENCIES.get(sym, [])) & s_))
+    return df[np.array(keep, bool)]
 
 
 def _cached_rows():

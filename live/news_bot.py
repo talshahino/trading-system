@@ -90,6 +90,7 @@ CAL_ITEMS = []                 # the calendar items the bot read last (EV08 read
 SEEN = {}                      # (release minute|title) -> the first time the bot read that item WITH its actual (EV08)
 SEEN_F = ROOT / "live" / "news_bot_seen.json"
 FAST = ("claims", "home sales", "housing starts", "building permits")  # US numbers EV08 waits for: the calendar is read every minute for 15 minutes after them
+STRADDLE_GROUPS = {}           # release time -> [(currency, type)] for EV04's skipped release types ("skip_groups")
 REL = {}                       # important releases by currency, from the calendar the bot read (shocks near them are skipped)
 D1 = {}                        # this round's 1-minute candles by instrument (SH01 GER40 checks US100's shocks; card bd7be6c8ae8a)
 END = "סוף הנתונים"            # rules_agent's reason for a trade still open at the last candle
@@ -473,6 +474,8 @@ class Calendar:
             EVENT_TITLES.update(titles)
             REL.clear()
             REL.update(SH.releases_from(self.items))
+            STRADDLE_GROUPS.clear()
+            STRADDLE_GROUPS.update(NST.release_groups(self.items))
             CAL_ITEMS[:] = self.items
             new = False
             for i in self.items:                          # EV08: when each actual was first read (never earlier)
@@ -562,7 +565,9 @@ def straddle_trades(sid, name, d1, spread_now, p):
         sl = float(p.get("slip_atr", 0.1))
     except (TypeError, ValueError):
         x, hh, cn, sl = 1.0, 30, 5, 0.1
-    rows = NST.live_straddle(d1, E._EVENTS.get(name, []), spread_now or 0.0, x=x, hold=hh, cancel=cn, slip_atr=sl)
+    evs = NST.skip_events(E._EVENTS.get(name, []), name, STRADDLE_GROUPS, U.CURRENCIES.get(name, []),
+                          p.get("skip_groups"))          # release types the plan skips (e.g. ["USD:gdp", "USD:rates"])
+    rows = NST.live_straddle(d1, evs, spread_now or 0.0, x=x, hold=hh, cancel=cn, slip_atr=sl)
     if not rows:
         return []
     t = pd.DataFrame(rows)

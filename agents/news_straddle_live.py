@@ -22,6 +22,69 @@ from agents import rules_agent as R
 
 SPREAD_X = 3.0          # x bot 1's median spread, for the fill minute of a release
 
+# The release types EV04 may skip (card "skip_groups" in the plan, bot 7 smart agent 16.11.2026): "<currency>:<type>",
+# the type exactly agents/news_fix.category (copied here so the live bot does not load the study's data).
+PRIO = ("rates", "infl", "jobs", "gdp", "oil", "other")
+
+
+def category(title):
+    t = str(title).lower()
+    if "oil" in t:
+        return "oil"
+    if any(k in t for k in ("rate", "fomc", "monetary", "policy", "mpc", "statement", "minutes", "inflation letter")):
+        return "rates"
+    if any(k in t for k in ("cpi", "ppi", "rpi")):
+        return "infl"
+    if any(k in t for k in ("employment", "unemployment", "payroll", "claims", "labor")):
+        return "jobs"
+    if "gdp" in t:
+        return "gdp"
+    return "other"
+
+
+def release_groups(items):
+    """FTMO calendar items -> {release time (UTC): [(currency, type)]} of the high-impact / restricted ones (as
+    agents/news_fix.releases)."""
+    out = {}
+    for i in items or []:
+        if i.get("impact") != "high" and not i.get("restriction"):
+            continue
+        ins = str(i.get("instrument", ""))
+        cur = "Crude Oil" if ins.startswith("Crude") else (ins.split(" ")[0] if ins else "")
+        try:
+            t = pd.Timestamp(i["date"]).tz_convert("UTC")
+        except Exception:  # noqa: BLE001
+            continue
+        out.setdefault(t, []).append((cur, category(i.get("title", ""))))
+    return out
+
+
+def groups_of(sym, t, groups, curs):
+    """The release's type(s) for this instrument, as agents/news_fix.tag: its own currencies' items first, then the
+    most important type (PRIO) - every item of that type ({"USD:gdp", ...}; a tie keeps all, so the order of the
+    calendar never decides)."""
+    items = groups.get(t, [])
+    mine = [x for x in items if x[0] in (curs or [])]
+    use = mine or items
+    if not use:
+        return {"?:other"}
+    k = min(PRIO.index(x[1]) for x in use)
+    return {f"{c}:{g}" for c, g in use if PRIO.index(g) == k}
+
+
+def skip_events(events, sym, groups, curs, skip):
+    """The release times left after the skipped types (skip: ["USD:gdp", ...]; empty -> all)."""
+    if not skip:
+        return list(events)
+    sk = set(skip)
+    out = []
+    for e in events:
+        t = pd.Timestamp(e)
+        t = t.tz_convert("UTC") if t.tzinfo else t.tz_localize("UTC")
+        if not (groups_of(sym, t, groups, curs) & sk):
+            out.append(e)
+    return out
+
 
 def _exit(o, h, l, c, q0, end, dr, e, stop, tgt, be):
     """agents/news_straddle._exit (copied, so the live bot does not import the study's data loaders)."""

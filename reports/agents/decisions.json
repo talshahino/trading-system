@@ -1,10 +1,127 @@
 {
- "updated": "2026-11-16T20:59:31+00:00",
+ "updated": "2026-11-16T21:19:46+00:00",
  "new": [
-  "7c4a3bd2ec93",
-  "997be912b053"
+  "33125c8e2a97",
+  "a3389b71fecf",
+  "053d13892efd",
+  "22fb2d18b6af"
  ],
  "decisions": [
+  {
+   "id": "33125c8e2a97",
+   "bot": "bot4",
+   "type": "card",
+   "card": "f37190fbdb3a",
+   "kind": "info",
+   "tier": "regular",
+   "title": "IB033|4Hour|XAUUSD: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-16T21:19:46+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "a3389b71fecf",
+   "bot": "bot4",
+   "type": "card",
+   "card": "81771e697a18",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC376|4Hour|XAGUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.29R לעסקה, 47.0 עסקאות אפקטיביות, +0.06R מעל המצב הקיים) · בבוט השלם על 2026: רווח +141.28% → +142.03%, בלי יותר סיכון (יום גרוע -2.23%, ירידה 5.33%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3279,
+     "total": 141.28,
+     "worst_day": -2.23,
+     "max_dd": 5.24,
+     "near_days": 0,
+     "max_open": 5.8,
+     "max_side": 4.48,
+     "guard_cut": 479,
+     "guard_skipped": 128
+    },
+    "after": {
+     "trades": 3279,
+     "total": 142.03,
+     "worst_day": -2.23,
+     "max_dd": 5.33,
+     "near_days": 0,
+     "max_open": 5.88,
+     "max_side": 4.48,
+     "guard_cut": 480,
+     "guard_skipped": 128
+    }
+   },
+   "at": "2026-11-16T21:19:46+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "053d13892efd",
+   "bot": "bot4",
+   "type": "card",
+   "card": "98079805ac94",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "TV58|1Hour|XAUUSD: יעד 3R · סטופ x0.75 · כניסה בלימיט 0.25R טוב יותר",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+141.22% מול +142.03% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3279,
+     "total": 142.03,
+     "worst_day": -2.23,
+     "max_dd": 5.33,
+     "near_days": 0,
+     "max_open": 5.88,
+     "max_side": 4.48,
+     "guard_cut": 480,
+     "guard_skipped": 128
+    },
+    "after": {
+     "trades": 3248,
+     "total": 141.22,
+     "worst_day": -2.23,
+     "max_dd": 5.47,
+     "near_days": 0,
+     "max_open": 5.74,
+     "max_side": 4.29,
+     "guard_cut": 472,
+     "guard_skipped": 130
+    }
+   },
+   "at": "2026-11-16T21:19:46+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "22fb2d18b6af",
+   "bot": "bot5",
+   "type": "card",
+   "card": "b6f80c99f727",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 5: עסקאות הסייר נספרו בבריאות כמסלול v5 - תוקן",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-16T21:19:46+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "7c4a3bd2ec93",
    "bot": "bot2",

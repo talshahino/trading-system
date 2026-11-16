@@ -601,6 +601,42 @@ def follow(t, df, stop_at, part=0.3, way=0.9):
     return {"r_now": round(part_r + rest * d * (c1[-1] - px) / risk, 3), "followed": True}
 
 
+def excursion(t, df):
+    """How far a filled trade went for / against it on the 1-minute bars, from the fill to the exit (or now) - user,
+    16.11.2026: "almost every trade was in profit at some point and almost all ended in a loss" (task tal1611gaveback):
+    the mfe / mae fields were always empty. Prices like a real bot's (live/runner.py), and in R of the first stop;
+    mfe_way = the best point as a share of the way to the target. The fill and exit minutes are included whole (within
+    a minute the order is unknown). {} while the bars do not cover the trade."""
+    if df is None or not len(df) or not t.get("time") or t.get("entry") is None or t.get("stop") is None:
+        return {}
+    d, px = t["dir"], t["entry"]
+    risk = d * (px - t["stop"])
+    a = pd.Timestamp(t["time"])
+    if risk <= 0 or a < df.index[0]:
+        return {"mfe_na": True} if risk > 0 else {}
+    w = df.loc[a:pd.Timestamp(t["exit_time"])] if t.get("exit_time") else df.loc[a:]
+    if not len(w):
+        return {}
+    hi, lo = float(w["h"].max()), float(w["l"].min())
+    best, worst = (hi, lo) if d > 0 else (lo, hi)
+    out = {"mfe_px": best, "mae_px": worst, "mfe_r": round(d * (best - px) / risk, 3),
+           "mae_r": round(d * (worst - px) / risk, 3)}
+    way = d * (t["target"] - px) if t.get("target") is not None else 0
+    out["mfe_way"] = round(d * (best - px) / way, 3) if way > 0 else None
+    return out
+
+
+def excursions(rows, src):
+    """excursion() on every open trade (each loop) and once on every closed one. Quiet on any failure."""
+    for t in rows:
+        if t.get("status") not in ("open", "closed") or (t["status"] == "closed" and (t.get("mfe_r") is not None or t.get("mfe_na"))):
+            continue
+        try:
+            t.update(excursion(t, src.df.get(t["symbol"])))
+        except Exception:  # noqa: BLE001
+            pass
+
+
 def iso(t):
     return pd.Timestamp(t).isoformat() if t is not None and not (isinstance(t, float) and np.isnan(t)) else None
 
@@ -885,6 +921,7 @@ def fut_state(fa, ftrades, fseen, src):
     cancelled = sorted([t for t in ftrades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]
     ftrades.clear()
     ftrades.update({t["id"]: t for t in closed + live_ + cancelled})
+    excursions(closed + live_, src)
     now = pd.Timestamp.now(tz="UTC")
     st = fa.status(now)
     bal = st["balance"]
@@ -926,13 +963,13 @@ def fut_state(fa, ftrades, fseen, src):
                            "now": t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
                            "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
                            "sl_usd": -(t.get("risk_usd") or 0), "tp_usd": (t.get("risk_usd") or 0) * (t.get("rr") or 0),
-                           "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": 1.0, "free": False, "mae": None, "mfe": None}
+                           "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": 1.0, "free": False, "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way")}
                           for t in live_ if t["status"] == "open" and t.get("n")],
             "trades": [{"time": t["exit_time"], "combo": combo(t), "symbol": t["symbol"], "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                         "lots": lots(t), "price": t["exit"], "pnl": t["pnl"], "why": t.get("reason")} for t in counted],
             "closed": [{"id": t["id"], "combo": combo(t), "entry_tf": ent6(t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
                         "lots": lots(t), "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
-                        "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": None, "mfe": None,
+                        "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way"),
                         "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
                         "reason": FUT_WORD.get(t.get("reason"), ""), "pip": 1.0} for t in counted],
             # the charts only on the newest 60 trades (the state stays small for the app)
@@ -1268,6 +1305,7 @@ def main():
         live_ = [t for t in trades.values() if t["status"] in ("pending", "open")]
         cancelled = sorted([t for t in trades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]
         trades = {t["id"]: t for t in closed + live_ + cancelled}
+        excursions(closed + live_, src)
         core_closed = [t for t in closed if not t.get("extra") and not t.get("v4") and not t.get("v5") and not t.get("v1m")]
         rs_v1m = [t["r"] for t in closed if t.get("r") is not None and t.get("v1m")]
         rs_v5 = [t["r"] for t in closed if t.get("r") is not None and t.get("v5")]
@@ -1338,13 +1376,13 @@ def main():
                                      "sl_usd": -round((t.get("risk_usd") or 0) * (1 + (t.get("cost_live") or 0)), 2),
                                      "tp_usd": round((t.get("risk_usd") or 0) * ((t.get("rr") or 0) - (t.get("cost_live") or 0)), 2) if t.get("rr") else 0,
                                      "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": pip(t["symbol"]), "free": False,
-                                     "mae": None, "mfe": None} for t in live_ if t["status"] == "open" and t.get("risk_usd")],
+                                     "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way")} for t in live_ if t["status"] == "open" and t.get("risk_usd")],
                       "trades": [{"time": t["exit_time"], "combo": combo(t["symbol"], t), "symbol": t["symbol"],
                                   "dir": "קנייה" if t["dir"] > 0 else "מכירה", "lots": "וירטואלי", "price": t["exit"], "pnl": t["pnl"],
                                   "why": t.get("reason")} for t in counted],
                       "closed": [{"id": t["id"], "combo": combo(t["symbol"], t), "entry_tf": ent(t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
                                   "lots": "וירטואלי", "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
-                                  "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": None, "mfe": None,
+                                  "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way"),
                                   "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
                                   "reason": {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה", "breakeven": "ברייק (30% יצאו)"}.get(t.get("reason"), ""),
                                   "pip": pip(t["symbol"])} for t in counted]})

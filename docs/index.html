@@ -481,6 +481,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 <div class="page" id="tradePg"><div class="ph"><button class="back" id="tpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="tpTitle"></b></div><div id="tpBody"></div></div>
 <div class="page" id="botsPg"><div class="ph"><button class="back" id="bpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>מנהל הבוטים</b></div>
   <div id="bpTalk"></div><div id="bpDec"></div><div class="seg" id="bpSeg"></div><div id="bpBody"><div class="empty">טוען…</div></div></div>
+<div class="page" id="decPg"><div class="ph"><button class="back" id="decBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>כל ההחלטות של המנהל</b></div><div id="decBody"></div></div>
 <div class="page" id="convPg"><div class="ph"><button class="back" id="convBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>שיחות עם הסוכנים</b></div><div id="convBody" style="padding:0 14px 40px"></div></div>
 <div class="page" id="lrPg"><div class="ph"><button class="back" id="lrBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>דוחות הפסד</b></div><div id="lrBody" style="padding:0 14px 40px;line-height:1.55"><div class="empty">טוען…</div></div></div>
 <div class="page" id="bdPg"><div class="ph"><button class="back" id="bdBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="bdTitle"></b></div><div id="bdBody"></div></div>
@@ -1679,7 +1680,19 @@ function tradeNotes(t, p = "tn", botName) {
   if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; }
   const bot = botName || UI.cur, id = String(t.id || t.ticket || ""), txt = $(p + "Txt"), msg = $(p + "Msg");
   let mine = (((NOTES_DOC || {}).bots || {})[bot] || {})[id] || [];
-  const show = ns => { if (ns) mine = ns; threadHtml(bot, id, mine).then(h => { if ($(p + "List")) $(p + "List").innerHTML = h; }); };
+  const show = ns => { if (ns) mine = ns; threadHtml(bot, id, mine).then(h => {
+    const L = $(p + "List"); if (!L) return;
+    L.innerHTML = h;
+    // a running conversation (manager / bot): the last 4 messages; the earlier ones behind a button (user, 16.11.2026)
+    const items = [...L.children].filter(el => !el.classList.contains("mut"));
+    if (id === "talk" && items.length > 4) {
+      items.slice(0, -4).forEach(el => el.style.display = "none");
+      const b = document.createElement("button"); b.className = "btn ghost"; b.style.marginTop = "8px";
+      b.textContent = `הצג את כל השיחה (${items.length} הודעות)`;
+      b.onclick = () => { items.forEach(el => el.style.display = ""); b.remove(); };
+      L.prepend(b);
+    }
+  }); };
   show(null);
   if (!NOTES_DOC) fetch(NOTES_URL(), {cache: "no-store"}).then(r => r.json()).then(j => { NOTES_DOC = j; if (!mine.length) show(((j.bots || {})[bot] || {})[id] || []); }).catch(() => {});
   if (mgr && mgrInfo) act("/trade/notes", {bot, id}).then(j => show(j.notes)).catch(() => {});
@@ -1931,8 +1944,40 @@ function decItem(x, owner) {
     ${owner && !undone ? `<div class="acts" style="margin-top:8px">${x.decision === "withdrawn" ? "" : `<button class="btn ghost" data-dundo="${esc(x.id)}">בטל</button>`}${read ? "" : `<button class="btn ghost" data-dread="${esc(x.id)}">קראתי</button>`}</div>` : ""}
   </div>`;
 }
+/* the manager's decisions (user, 16.11.2026): under the conversation only the IMPORTANT ones not read yet - a strategy
+   removed or cut to nothing, risk changes, resets, stop changes, something reverted or taken back; everything else
+   (additions, small risk steps, "for information") on its own page behind a button */
+const decImportant = x => ["remove", "reset", "sl"].includes(x.kind) || ["reverted", "withdrawn"].includes(x.decision)
+  || (x.kind === "mult" && x.action && +x.action.value === 0)
+  || (x.kind === "risk" && !/\|/.test(x.title || ""));          // the whole bot's risk; one strategy's risk step is routine
 function decRender() {
   const box = $("bpDec"); if (!box) return;
+  const all = (BP.dec && BP.dec.decisions) || [], owner = getRole() !== "viewer";
+  const isRead = x => x.read || x.undone || (decLocal[x.id] || {}).read || (decLocal[x.id] || {}).undo;
+  const imp = all.filter(x => !isRead(x) && decImportant(x) && Date.now() - new Date(x.at) < 7 * 864e5)      // the last week
+    .sort((a, b) => String(b.at).localeCompare(String(a.at))), unread = all.filter(x => !isRead(x));
+  box.innerHTML = `<div class="card"><div class="row" style="justify-content:space-between"><b>החלטות חשובות של המנהל</b><span class="pill">${imp.length}</span></div>
+    ${imp.length ? imp.slice(0, 5).map(x => decItem(x, owner)).join("") : '<div class="mut" style="margin-top:8px">אין החלטות שדורשות את תשומת ליבך.</div>'}
+    ${imp.length > 5 ? `<div class="mut" style="margin-top:6px">ועוד ${imp.length - 5} בדף כל ההחלטות</div>` : ""}
+    <button class="btn ghost" id="decAllBtn" style="width:100%;margin-top:10px">כל ההחלטות${unread.length ? ` (${unread.length} חדשות)` : ""} ›</button>
+    <div class="msg" id="decMsgS"></div></div>`;
+  $("decAllBtn").onclick = () => { $("decPg").classList.add("on"); decRenderAll(); };
+  decWire(box, all, "decMsgS");
+}
+function decWire(box, all, msgId) {
+  const read = async ids => { ids.forEach(i => decLocal[i] = {...(decLocal[i] || {}), read: 1}); decSave(); decRender(); if ($("decPg").classList.contains("on")) decRenderAll();
+    try { await act("/agent/read", {ids}); } catch (e) { note(msgId, e.message, false); } };
+  box.querySelectorAll("[data-dread]").forEach(x => x.onclick = () => read([x.dataset.dread]));
+  box.querySelectorAll("[data-dundo]").forEach(x => x.onclick = async () => {
+    const d = all.find(y => y.id === x.dataset.dundo);
+    if (!(await askYes("לבטל את ההחלטה?", `${d.title}. הבוט יחזור למצב שלפני ההחלטה, והמנהל לא יחליט אותה שוב.`, "כן, בטל"))) return;
+    try { await act("/agent/undo", {id: d.id}); decLocal[d.id] = {...(decLocal[d.id] || {}), undo: 1, read: 1}; decSave(); decRender(); if ($("decPg").classList.contains("on")) decRenderAll(); note(msgId, "ההחלטה בוטלה.", true); }
+    catch (e) { note(msgId, e.message, false); }
+  });
+  return read;
+}
+function decRenderAll() {
+  const box = $("decBody"); if (!box) return;
   const all = (BP.dec && BP.dec.decisions) || [], owner = getRole() !== "viewer";
   const isRead = x => x.read || x.undone || (decLocal[x.id] || {}).read || (decLocal[x.id] || {}).undo;
   const unread = all.filter(x => !isRead(x)), rest = all.filter(isRead);
@@ -1942,16 +1987,8 @@ function decRender() {
     ${owner && unread.length > 1 ? `<div class="acts" style="margin-top:10px"><button class="btn" id="decAll">קראתי הכל (${unread.length})</button></div>` : ""}
     <div class="msg" id="decMsg"></div></div>
     ${rest.length ? `<details class="card"><summary>ארכיון: ${rest.length} החלטות מ־30 הימים האחרונים</summary>${rest.map(x => decItem(x, owner)).join("")}</details>` : ""}`;
-  const read = async ids => { ids.forEach(i => decLocal[i] = {...(decLocal[i] || {}), read: 1}); decSave(); decRender();
-    try { await act("/agent/read", {ids}); } catch (e) { note("decMsg", e.message, false); } };
-  box.querySelectorAll("[data-dread]").forEach(x => x.onclick = () => read([x.dataset.dread]));
+  const read = decWire(box, all, "decMsg");
   const all_ = $("decAll"); if (all_) all_.onclick = () => read(unread.map(x => x.id));
-  box.querySelectorAll("[data-dundo]").forEach(x => x.onclick = async () => {
-    const d = all.find(y => y.id === x.dataset.dundo);
-    if (!(await askYes("לבטל את ההחלטה?", `${d.title}. הבוט יחזור למצב שלפני ההחלטה, והמנהל לא יחליט אותה שוב.`, "כן, בטל"))) return;
-    try { await act("/agent/undo", {id: d.id}); decLocal[d.id] = {...(decLocal[d.id] || {}), undo: 1, read: 1}; decSave(); decRender(); note("decMsg", "ההחלטה בוטלה.", true); }
-    catch (e) { note("decMsg", e.message, false); }
-  });
 }
 const AG_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/manager.json?t=${Math.floor(Date.now() / 60000)}`;
 const AG_ORDER = ["bot1", "bot2", "bot3", "bot4", "bot5", "bot6", "bot7"];
@@ -2436,6 +2473,7 @@ async function wcTal(t) {
 }
 $("wbBack").onclick = () => $("wbPg").classList.remove("on");
 $("wcBack").onclick = () => { $("wcPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } WC.forEach(c => c.remove()); WC = []; };
+$("decBack").onclick = () => $("decPg").classList.remove("on");
 $("bpBack").onclick = () => { $("botsPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } };
 // "how Tal thinks" (data/agents/tal_thinking.md): what the manager and the agents read before every decision
 // daily loss reports (agents/loss_review.py): every losing day of every bot - what lost, why, what is done about it

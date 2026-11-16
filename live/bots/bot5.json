@@ -61,7 +61,11 @@
   "scout:SC326|15Min|USDJPY": 0.00126,
   "scout:SC311|15Min|GER40": 0.00126,
   "scout:SC326|5Min|GBPUSD": 0.0018,
-  "scout:SC402|5Min|XAUUSD": 0.0018
+  "scout:SC402|5Min|XAUUSD": 0.0018,
+  "scout:SC441|5Min|XAUUSD": 0.0028,
+  "scout:SC432|15Min|XAUUSD": 0.0028,
+  "scout:IB034|15Min|XAUUSD": 0.0028,
+  "scout:SC446|5Min|US30": 0.0028
  },
  "changes": {
   "a0a49a4ffc34": {
@@ -650,6 +654,30 @@
    "family": "risk",
    "track": "scout:SC333|15Min|XAUUSD",
    "before": 0.0028
+  },
+  "50316896f9e8": {
+   "family": "scout5",
+   "combo": "SC441|5Min|XAUUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "cf65db87751d": {
+   "family": "scout5",
+   "combo": "SC432|15Min|XAUUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "29ae5a85fb0d": {
+   "family": "scout5",
+   "combo": "IB034|15Min|XAUUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__"
+  },
+  "e2fc2d7d6dbf": {
+   "family": "scout5",
+   "combo": "SC446|5Min|US30",
+   "before": "__none__",
+   "star_risk_before": "__none__"
   }
  },
  "tal_tracks": {
@@ -1135,6 +1163,22 @@
   "SC311|15Min|GER40": {
    "since": "2026-11-15T09:53:02+00:00",
    "card": "57e76b9a1ff3"
+  },
+  "SC441|5Min|XAUUSD": {
+   "since": "2026-11-16T09:15:53+00:00",
+   "card": "50316896f9e8"
+  },
+  "SC432|15Min|XAUUSD": {
+   "since": "2026-11-16T09:15:53+00:00",
+   "card": "cf65db87751d"
+  },
+  "IB034|15Min|XAUUSD": {
+   "since": "2026-11-16T09:15:53+00:00",
+   "card": "29ae5a85fb0d"
+  },
+  "SC446|5Min|US30": {
+   "since": "2026-11-16T09:15:53+00:00",
+   "card": "e2fc2d7d6dbf"
   }
  }
 }

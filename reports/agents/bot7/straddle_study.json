@@ -1,6 +1,6 @@
 {
- "at": "2026-11-15T01:10:56+00:00",
- "version": 2,
+ "at": "2026-11-16T21:55:31+00:00",
+ "version": 3,
  "symbols": [
   "XAUUSD",
   "US100",
@@ -20,7 +20,7 @@
   "GBPJPY"
  ],
  "partial": false,
- "rows": 106560,
+ "rows": 113688,
  "split": "2026-01-01",
  "test_from": "2025-04-30",
  "base": "pre|x1|opp|t2|h30|cusd|sp0",
@@ -46,26 +46,66 @@
    "gross_unseen": 70.36
   },
   "best": {
-   "v": "pre|x1|opp|be1|h30|cown|sp0",
+   "v": "pre|x1|opp|lock0.5|h30|cown|sp0",
    "train": {
     "n": 380,
     "eff_n": 379.5,
-    "mean": 0.382,
-    "t": 3.32,
-    "win": 38.2,
-    "sum": 144.86
+    "mean": 0.4201,
+    "t": 4.3,
+    "win": 51.3,
+    "sum": 159.97
    },
    "unseen": {
     "n": 504,
     "eff_n": 503.9,
-    "mean": 0.3387,
-    "t": 3.35,
-    "win": 33.7,
-    "sum": 169.31
+    "mean": 0.3668,
+    "t": 4.15,
+    "win": 42.8,
+    "sum": 184.57
    },
-   "gross_unseen": 268.63
+   "gross_unseen": 283.88
   },
   "top": [
+   {
+    "v": "pre|x1|opp|lock0.5|h30|cown|sp0",
+    "train": {
+     "n": 380,
+     "eff_n": 379.5,
+     "mean": 0.4201,
+     "t": 4.3,
+     "win": 51.3,
+     "sum": 159.97
+    },
+    "unseen": {
+     "n": 504,
+     "eff_n": 503.9,
+     "mean": 0.3668,
+     "t": 4.15,
+     "win": 42.8,
+     "sum": 184.57
+    },
+    "gross_unseen": 283.88
+   },
+   {
+    "v": "pre|x1|opp|be0.5|h30|cown|sp0",
+    "train": {
+     "n": 380,
+     "eff_n": 379.5,
+     "mean": 0.3899,
+     "t": 3.43,
+     "win": 35.0,
+     "sum": 148.26
+    },
+    "unseen": {
+     "n": 504,
+     "eff_n": 503.9,
+     "mean": 0.3617,
+     "t": 3.61,
+     "win": 30.8,
+     "sum": 180.85
+    },
+    "gross_unseen": 280.16
+   },
    {
     "v": "pre|x1|opp|be1|h30|cown|sp0",
     "train": {
@@ -79,12 +119,12 @@
     "unseen": {
      "n": 504,
      "eff_n": 503.9,
-     "mean": 0.3387,
+     "mean": 0.3386,
      "t": 3.35,
      "win": 33.7,
-     "sum": 169.31
+     "sum": 169.22
     },
-    "gross_unseen": 268.63
+    "gross_unseen": 268.53
    },
    {
     "v": "pre|x1|opp|be1|h15|cown|sp0",
@@ -99,12 +139,52 @@
     "unseen": {
      "n": 504,
      "eff_n": 503.9,
-     "mean": 0.4351,
+     "mean": 0.4349,
      "t": 4.26,
      "win": 41.4,
-     "sum": 217.84
+     "sum": 217.74
     },
-    "gross_unseen": 317.14
+    "gross_unseen": 317.04
+   },
+   {
+    "v": "pre|x1|opp|lock0.5|h30|cown|sp0|cap9",
+    "train": {
+     "n": 353,
+     "eff_n": 352.6,
+     "mean": 0.3726,
+     "t": 3.73,
+     "win": 49.9,
+     "sum": 131.68
+    },
+    "unseen": {
+     "n": 447,
+     "eff_n": 446.9,
+     "mean": 0.3,
+     "t": 3.24,
+     "win": 41.6,
+     "sum": 134.02
+    },
+    "gross_unseen": 220.56
+   },
+   {
+    "v": "pre|x1|opp|lock1|h30|cown|sp0",
+    "train": {
+     "n": 380,
+     "eff_n": 379.5,
+     "mean": 0.3434,
+     "t": 3.34,
+     "win": 42.4,
+     "sum": 130.12
+    },
+    "unseen": {
+     "n": 504,
+     "eff_n": 503.9,
+     "mean": 0.4332,
+     "t": 4.1,
+     "win": 38.1,
+     "sum": 217.58
+    },
+    "gross_unseen": 316.89
    },
    {
     "v": "pre|x0.5|opp|be1|h30|cown|sp0",
@@ -119,12 +199,32 @@
     "unseen": {
      "n": 548,
      "eff_n": 547.9,
-     "mean": 0.0493,
-     "t": 0.38,
+     "mean": 0.049,
+     "t": 0.37,
      "win": 21.5,
-     "sum": 26.13
+     "sum": 25.99
     },
-    "gross_unseen": 233.66
+    "gross_unseen": 233.52
+   },
+   {
+    "v": "pre|x1|opp|be0.5|h30|cown|sp0|cap9",
+    "train": {
+     "n": 353,
+     "eff_n": 352.6,
+     "mean": 0.3554,
+     "t": 3.03,
+     "win": 34.6,
+     "sum": 125.22
+    },
+    "unseen": {
+     "n": 447,
+     "eff_n": 446.9,
+     "mean": 0.3346,
+     "t": 3.13,
+     "win": 30.4,
+     "sum": 148.5
+    },
+    "gross_unseen": 235.05
    },
    {
     "v": "pre|x1|opp|be1|h30|cown|sp0|cap9",
@@ -139,12 +239,12 @@
     "unseen": {
      "n": 447,
      "eff_n": 446.9,
-     "mean": 0.3187,
+     "mean": 0.3186,
      "t": 2.96,
      "win": 33.5,
-     "sum": 141.47
+     "sum": 141.38
     },
-    "gross_unseen": 228.01
+    "gross_unseen": 227.92
    },
    {
     "v": "pre|x1.5|opp|be1|h30|cown|sp0",
@@ -159,112 +259,12 @@
     "unseen": {
      "n": 456,
      "eff_n": 455.9,
-     "mean": 0.3275,
+     "mean": 0.3274,
      "t": 4.06,
      "win": 41.0,
-     "sum": 147.7
+     "sum": 147.64
     },
-    "gross_unseen": 210.61
-   },
-   {
-    "v": "pre|x1.5|opp|be1|h15|cown|sp0",
-    "train": {
-     "n": 349,
-     "eff_n": 348.6,
-     "mean": 0.3358,
-     "t": 4.0,
-     "win": 45.6,
-     "sum": 116.47
-    },
-    "unseen": {
-     "n": 456,
-     "eff_n": 455.9,
-     "mean": 0.4099,
-     "t": 5.08,
-     "win": 45.4,
-     "sum": 185.22
-    },
-    "gross_unseen": 248.12
-   },
-   {
-    "v": "pre|x1|opp|be1|h15|cown|sp0|cap9",
-    "train": {
-     "n": 353,
-     "eff_n": 352.6,
-     "mean": 0.3266,
-     "t": 3.01,
-     "win": 40.5,
-     "sum": 114.77
-    },
-    "unseen": {
-     "n": 447,
-     "eff_n": 446.9,
-     "mean": 0.3743,
-     "t": 3.53,
-     "win": 40.7,
-     "sum": 166.29
-    },
-    "gross_unseen": 252.83
-   },
-   {
-    "v": "pre|x1.5|opp|be1|h30|cown|sp0|cap9",
-    "train": {
-     "n": 326,
-     "eff_n": 325.6,
-     "mean": 0.333,
-     "t": 3.53,
-     "win": 47.0,
-     "sum": 107.87
-    },
-    "unseen": {
-     "n": 409,
-     "eff_n": 408.9,
-     "mean": 0.2929,
-     "t": 3.44,
-     "win": 40.1,
-     "sum": 118.55
-    },
-    "gross_unseen": 173.79
-   },
-   {
-    "v": "pre|x0.5|opp|be1|h15|cown|sp0",
-    "train": {
-     "n": 405,
-     "eff_n": 404.5,
-     "mean": 0.2609,
-     "t": 1.73,
-     "win": 29.0,
-     "sum": 103.63
-    },
-    "unseen": {
-     "n": 548,
-     "eff_n": 547.9,
-     "mean": 0.1928,
-     "t": 1.4,
-     "win": 28.5,
-     "sum": 104.99
-    },
-    "gross_unseen": 312.51
-   },
-   {
-    "v": "pre|x1.5|opp|be1|h15|cown|sp0|cap9",
-    "train": {
-     "n": 326,
-     "eff_n": 325.6,
-     "mean": 0.3196,
-     "t": 3.69,
-     "win": 45.8,
-     "sum": 103.31
-    },
-    "unseen": {
-     "n": 409,
-     "eff_n": 408.9,
-     "mean": 0.3545,
-     "t": 4.28,
-     "win": 44.0,
-     "sum": 143.71
-    },
-    "gross_unseen": 198.95
+    "gross_unseen": 210.54
    }
   ],
   "robust": {
@@ -275,24 +275,24 @@
   "by": {
    "start": {
     "pre": {
-     "variants": 1152,
-     "train_median_sum": -53.91,
-     "unseen_median_sum": -71.67,
-     "unseen_positive": 236
+     "variants": 1296,
+     "train_median_sum": -41.83,
+     "unseen_median_sum": -43.79,
+     "unseen_positive": 300
     },
     "safe": {
      "variants": 1152,
      "train_median_sum": -95.48,
-     "unseen_median_sum": -77.53,
+     "unseen_median_sum": -77.52,
      "unseen_positive": 10
     }
    },
    "x": {
     "1": {
-     "variants": 768,
-     "train_median_sum": -101.05,
-     "unseen_median_sum": -72.28,
-     "unseen_positive": 47
+     "variants": 912,
+     "train_median_sum": -66.27,
+     "unseen_median_sum": -52.19,
+     "unseen_positive": 111
     },
     "0.5": {
      "variants": 768,
@@ -309,10 +309,10 @@
    },
    "stop": {
     "opp": {
-     "variants": 1152,
-     "train_median_sum": -29.33,
-     "unseen_median_sum": -28.64,
-     "unseen_positive": 239
+     "variants": 1296,
+     "train_median_sum": -24.37,
+     "unseen_median_sum": -22.81,
+     "unseen_positive": 303
     },
     "atr1": {
      "variants": 1152,
@@ -322,11 +322,35 @@
     }
    },
    "exit": {
+    "lock0.5": {
+     "variants": 24,
+     "train_median_sum": 36.73,
+     "unseen_median_sum": 28.79,
+     "unseen_positive": 15
+    },
+    "be0.5": {
+     "variants": 24,
+     "train_median_sum": 39.28,
+     "unseen_median_sum": 24.02,
+     "unseen_positive": 15
+    },
     "be1": {
      "variants": 576,
      "train_median_sum": -70.88,
      "unseen_median_sum": -58.49,
      "unseen_positive": 107
+    },
+    "lock1": {
+     "variants": 24,
+     "train_median_sum": 23.24,
+     "unseen_median_sum": 26.79,
+     "unseen_positive": 16
+    },
+    "h30at1": {
+     "variants": 24,
+     "train_median_sum": 14.21,
+     "unseen_median_sum": -0.77,
+     "unseen_positive": 11
     },
     "be1t2": {
      "variants": 576,
@@ -337,22 +361,34 @@
     "t2": {
      "variants": 576,
      "train_median_sum": -81.35,
-     "unseen_median_sum": -80.75,
+     "unseen_median_sum": -80.74,
      "unseen_positive": 52
+    },
+    "h50at1": {
+     "variants": 24,
+     "train_median_sum": 5.44,
+     "unseen_median_sum": -13.62,
+     "unseen_positive": 5
     },
     "t1.5": {
      "variants": 576,
      "train_median_sum": -87.3,
-     "unseen_median_sum": -81.67,
+     "unseen_median_sum": -81.66,
      "unseen_positive": 36
+    },
+    "h50at0.5": {
+     "variants": 24,
+     "train_median_sum": -5.04,
+     "unseen_median_sum": -25.7,
+     "unseen_positive": 2
     }
    },
    "hold": {
     "30": {
-     "variants": 1152,
-     "train_median_sum": -83.12,
-     "unseen_median_sum": -78.37,
-     "unseen_positive": 108
+     "variants": 1296,
+     "train_median_sum": -63.62,
+     "unseen_median_sum": -57.53,
+     "unseen_positive": 172
     },
     "15": {
      "variants": 1152,
@@ -363,72 +399,72 @@
    },
    "cur": {
     "own": {
-     "variants": 1152,
-     "train_median_sum": -112.62,
-     "unseen_median_sum": -118.61,
-     "unseen_positive": 152
+     "variants": 1224,
+     "train_median_sum": -108.98,
+     "unseen_median_sum": -102.2,
+     "unseen_positive": 203
     },
     "usd": {
-     "variants": 1152,
-     "train_median_sum": -52.58,
-     "unseen_median_sum": -44.65,
-     "unseen_positive": 94
+     "variants": 1224,
+     "train_median_sum": -48.39,
+     "unseen_median_sum": -42.29,
+     "unseen_positive": 107
     }
    },
    "spread": {
     "0": {
-     "variants": 1152,
-     "train_median_sum": -90.06,
-     "unseen_median_sum": -79.88,
-     "unseen_positive": 126
+     "variants": 1224,
+     "train_median_sum": -80.57,
+     "unseen_median_sum": -65.02,
+     "unseen_positive": 158
     },
     "3": {
-     "variants": 1152,
-     "train_median_sum": -72.16,
-     "unseen_median_sum": -71.7,
-     "unseen_positive": 120
+     "variants": 1224,
+     "train_median_sum": -63.89,
+     "unseen_median_sum": -63.03,
+     "unseen_positive": 152
     }
    },
    "cap": {
     "0": {
-     "variants": 384,
-     "train_median_sum": -223.35,
-     "unseen_median_sum": -223.05,
-     "unseen_positive": 46
+     "variants": 408,
+     "train_median_sum": -190.09,
+     "unseen_median_sum": -192.92,
+     "unseen_positive": 65
     },
     "9": {
-     "variants": 384,
-     "train_median_sum": -160.91,
-     "unseen_median_sum": -157.15,
-     "unseen_positive": 38
+     "variants": 408,
+     "train_median_sum": -148.69,
+     "unseen_median_sum": -135.51,
+     "unseen_positive": 51
     },
     "6": {
-     "variants": 384,
-     "train_median_sum": -112.3,
-     "unseen_median_sum": -115.47,
-     "unseen_positive": 28
+     "variants": 408,
+     "train_median_sum": -106.23,
+     "unseen_median_sum": -91.12,
+     "unseen_positive": 36
     },
     "2": {
-     "variants": 384,
-     "train_median_sum": -47.44,
-     "unseen_median_sum": -50.77,
-     "unseen_positive": 41
+     "variants": 408,
+     "train_median_sum": -42.11,
+     "unseen_median_sum": -45.68,
+     "unseen_positive": 48
     },
     "3": {
-     "variants": 384,
-     "train_median_sum": -65.69,
-     "unseen_median_sum": -62.89,
-     "unseen_positive": 38
+     "variants": 408,
+     "train_median_sum": -53.85,
+     "unseen_median_sum": -57.55,
+     "unseen_positive": 44
     },
     "1": {
-     "variants": 384,
-     "train_median_sum": -29.81,
-     "unseen_median_sum": -34.23,
-     "unseen_positive": 55
+     "variants": 408,
+     "train_median_sum": -25.43,
+     "unseen_median_sum": -32.24,
+     "unseen_positive": 66
     }
    }
   },
-  "tested": 2304,
+  "tested": 2448,
   "gold": {
    "baseline": {
     "v": "pre|x1|opp|t2|h30|cusd|sp0",
@@ -463,7 +499,7 @@
     "unseen": {
      "n": 19,
      "eff_n": 19.0,
-     "mean": 0.0678,
+     "mean": 0.0679,
      "t": 0.08,
      "win": 10.6,
      "sum": 1.14
@@ -484,7 +520,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.0678,
+      "mean": 0.0679,
       "t": 0.08,
       "win": 10.6,
       "sum": 1.14
@@ -504,7 +540,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.0678,
+      "mean": 0.0679,
       "t": 0.08,
       "win": 10.6,
       "sum": 1.14
@@ -524,7 +560,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.0678,
+      "mean": 0.0679,
       "t": 0.08,
       "win": 10.6,
       "sum": 1.14
@@ -544,7 +580,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.0678,
+      "mean": 0.0679,
       "t": 0.08,
       "win": 10.6,
       "sum": 1.14
@@ -564,7 +600,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.0678,
+      "mean": 0.0679,
       "t": 0.08,
       "win": 10.6,
       "sum": 1.14
@@ -584,7 +620,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.0678,
+      "mean": 0.0679,
       "t": 0.08,
       "win": 10.6,
       "sum": 1.14
@@ -596,7 +632,7 @@
      "train": {
       "n": 17,
       "eff_n": 17.0,
-      "mean": 1.5767,
+      "mean": 1.5766,
       "t": 1.27,
       "win": 35.7,
       "sum": 26.83
@@ -604,7 +640,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.3803,
+      "mean": 0.3804,
       "t": 0.43,
       "win": 26.3,
       "sum": 7.12
@@ -616,7 +652,7 @@
      "train": {
       "n": 17,
       "eff_n": 17.0,
-      "mean": 1.5767,
+      "mean": 1.5766,
       "t": 1.27,
       "win": 35.7,
       "sum": 26.83
@@ -624,7 +660,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.3803,
+      "mean": 0.3804,
       "t": 0.43,
       "win": 26.3,
       "sum": 7.12
@@ -636,7 +672,7 @@
      "train": {
       "n": 17,
       "eff_n": 17.0,
-      "mean": 1.5767,
+      "mean": 1.5766,
       "t": 1.27,
       "win": 35.7,
       "sum": 26.83
@@ -644,7 +680,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.3803,
+      "mean": 0.3804,
       "t": 0.43,
       "win": 26.3,
       "sum": 7.12
@@ -656,7 +692,7 @@
      "train": {
       "n": 17,
       "eff_n": 17.0,
-      "mean": 1.5767,
+      "mean": 1.5766,
       "t": 1.27,
       "win": 35.7,
       "sum": 26.83
@@ -664,7 +700,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.3803,
+      "mean": 0.3804,
       "t": 0.43,
       "win": 26.3,
       "sum": 7.12
@@ -680,10 +716,10 @@
    "by": {
     "start": {
      "pre": {
-      "variants": 1152,
-      "train_median_sum": 0.08,
-      "unseen_median_sum": -6.3,
-      "unseen_positive": 276
+      "variants": 1296,
+      "train_median_sum": 0.55,
+      "unseen_median_sum": -5.54,
+      "unseen_positive": 348
      },
      "safe": {
       "variants": 1152,
@@ -700,10 +736,10 @@
       "unseen_positive": 84
      },
      "1": {
-      "variants": 768,
-      "train_median_sum": -2.57,
-      "unseen_median_sum": -16.52,
-      "unseen_positive": 96
+      "variants": 912,
+      "train_median_sum": -2.0,
+      "unseen_median_sum": -6.37,
+      "unseen_positive": 168
      },
      "1.5": {
       "variants": 768,
@@ -720,10 +756,10 @@
       "unseen_positive": 48
      },
      "opp": {
-      "variants": 1152,
-      "train_median_sum": -0.83,
-      "unseen_median_sum": -3.28,
-      "unseen_positive": 324
+      "variants": 1296,
+      "train_median_sum": -0.4,
+      "unseen_median_sum": -2.99,
+      "unseen_positive": 396
      }
     },
     "exit": {
@@ -732,6 +768,36 @@
       "train_median_sum": -2.67,
       "unseen_median_sum": -11.12,
       "unseen_positive": 180
+     },
+     "lock1": {
+      "variants": 24,
+      "train_median_sum": 4.29,
+      "unseen_median_sum": 7.52,
+      "unseen_positive": 12
+     },
+     "lock0.5": {
+      "variants": 24,
+      "train_median_sum": 5.8,
+      "unseen_median_sum": 2.97,
+      "unseen_positive": 12
+     },
+     "h30at1": {
+      "variants": 24,
+      "train_median_sum": 3.37,
+      "unseen_median_sum": 3.22,
+      "unseen_positive": 12
+     },
+     "be0.5": {
+      "variants": 24,
+      "train_median_sum": 4.46,
+      "unseen_median_sum": 8.15,
+      "unseen_positive": 12
+     },
+     "h50at1": {
+      "variants": 24,
+      "train_median_sum": 2.69,
+      "unseen_median_sum": 0.43,
+      "unseen_positive": 12
      },
      "be1t2": {
       "variants": 576,
@@ -750,14 +816,20 @@
       "train_median_sum": -3.5,
       "unseen_median_sum": -16.11,
       "unseen_positive": 60
+     },
+     "h50at0.5": {
+      "variants": 24,
+      "train_median_sum": 2.0,
+      "unseen_median_sum": -1.07,
+      "unseen_positive": 12
      }
     },
     "hold": {
      "30": {
-      "variants": 1152,
-      "train_median_sum": -2.73,
-      "unseen_median_sum": -15.0,
-      "unseen_positive": 180
+      "variants": 1296,
+      "train_median_sum": -2.54,
+      "unseen_median_sum": -9.36,
+      "unseen_positive": 252
      },
      "15": {
       "variants": 1152,
@@ -768,72 +840,72 @@
     },
     "cur": {
      "usd": {
-      "variants": 1152,
-      "train_median_sum": -13.76,
-      "unseen_median_sum": -14.88,
-      "unseen_positive": 186
+      "variants": 1224,
+      "train_median_sum": -13.07,
+      "unseen_median_sum": -13.17,
+      "unseen_positive": 222
      },
      "own": {
-      "variants": 1152,
-      "train_median_sum": -1.74,
-      "unseen_median_sum": -14.88,
-      "unseen_positive": 186
+      "variants": 1224,
+      "train_median_sum": -1.48,
+      "unseen_median_sum": -13.17,
+      "unseen_positive": 222
      }
     },
     "spread": {
      "3": {
-      "variants": 1152,
-      "train_median_sum": -2.62,
-      "unseen_median_sum": -10.84,
+      "variants": 1224,
+      "train_median_sum": -2.57,
+      "unseen_median_sum": -7.19,
       "unseen_positive": 132
      },
      "0": {
-      "variants": 1152,
-      "train_median_sum": -5.02,
-      "unseen_median_sum": -16.14,
-      "unseen_positive": 240
+      "variants": 1224,
+      "train_median_sum": -4.84,
+      "unseen_median_sum": -15.81,
+      "unseen_positive": 312
      }
     },
     "cap": {
      "0": {
-      "variants": 384,
-      "train_median_sum": -2.73,
-      "unseen_median_sum": -14.88,
-      "unseen_positive": 62
+      "variants": 408,
+      "train_median_sum": -2.62,
+      "unseen_median_sum": -13.17,
+      "unseen_positive": 74
      },
      "1": {
-      "variants": 384,
-      "train_median_sum": -2.73,
-      "unseen_median_sum": -14.88,
-      "unseen_positive": 62
+      "variants": 408,
+      "train_median_sum": -2.62,
+      "unseen_median_sum": -13.17,
+      "unseen_positive": 74
      },
      "2": {
-      "variants": 384,
-      "train_median_sum": -2.73,
-      "unseen_median_sum": -14.88,
-      "unseen_positive": 62
+      "variants": 408,
+      "train_median_sum": -2.62,
+      "unseen_median_sum": -13.17,
+      "unseen_positive": 74
      },
      "3": {
-      "variants": 384,
-      "train_median_sum": -2.73,
-      "unseen_median_sum": -14.88,
-      "unseen_positive": 62
+      "variants": 408,
+      "train_median_sum": -2.62,
+      "unseen_median_sum": -13.17,
+      "unseen_positive": 74
      },
      "6": {
-      "variants": 384,
-      "train_median_sum": -2.73,
-      "unseen_median_sum": -14.88,
-      "unseen_positive": 62
+      "variants": 408,
+      "train_median_sum": -2.62,
+      "unseen_median_sum": -13.17,
+      "unseen_positive": 74
      },
      "9": {
-      "variants": 384,
-      "train_median_sum": -2.73,
-      "unseen_median_sum": -14.88,
-      "unseen_positive": 62
+      "variants": 408,
+      "train_median_sum": -2.62,
+      "unseen_median_sum": -13.17,
+      "unseen_positive": 74
      }
     }
    },
-   "tested": 2304
+   "tested": 2448
   },
   "by_cat": {
    "gdp": {
@@ -842,7 +914,7 @@
      "train": {
       "n": 13,
       "eff_n": 13.0,
-      "mean": 0.4969,
+      "mean": 0.4968,
       "t": 1.96,
       "win": 76.8,
       "sum": 6.53
@@ -862,7 +934,7 @@
      "train": {
       "n": 30,
       "eff_n": 30.0,
-      "mean": -0.1998,
+      "mean": -0.1997,
       "t": -0.85,
       "win": 30.1,
       "sum": -6.18
@@ -886,7 +958,7 @@
      "train": {
       "n": 111,
       "eff_n": 110.9,
-      "mean": 0.6583,
+      "mean": 0.6585,
       "t": 2.32,
       "win": 38.3,
       "sum": 70.29
@@ -894,7 +966,7 @@
      "unseen": {
       "n": 160,
       "eff_n": 160.0,
-      "mean": -0.1324,
+      "mean": -0.1325,
       "t": -0.7,
       "win": 28.0,
       "sum": -20.49
@@ -906,7 +978,7 @@
      "train": {
       "n": 112,
       "eff_n": 111.9,
-      "mean": 0.2814,
+      "mean": 0.2815,
       "t": 2.08,
       "win": 51.1,
       "sum": 30.8
@@ -921,7 +993,7 @@
      },
      "gross_unseen": 20.03
     },
-    "top_positive_unseen": 3,
+    "top_positive_unseen": 5,
     "top": 10
    },
    "jobs": {
@@ -930,15 +1002,15 @@
      "train": {
       "n": 116,
       "eff_n": 115.8,
-      "mean": 0.8988,
-      "t": 2.08,
+      "mean": 0.8986,
+      "t": 2.07,
       "win": 24.5,
       "sum": 108.89
      },
      "unseen": {
       "n": 137,
       "eff_n": 137.0,
-      "mean": 1.036,
+      "mean": 1.0361,
       "t": 3.04,
       "win": 32.9,
       "sum": 140.88
@@ -950,7 +1022,7 @@
      "train": {
       "n": 116,
       "eff_n": 115.8,
-      "mean": -0.0423,
+      "mean": -0.0424,
       "t": -0.32,
       "win": 41.5,
       "sum": -2.53
@@ -970,24 +1042,24 @@
    },
    "rates": {
     "best": {
-     "v": "pre|x1.5|opp|be1|h15|cown|sp3",
+     "v": "pre|x1|opp|be0.5|h30|cown|sp3|cap2",
      "train": {
-      "n": 95,
-      "eff_n": 94.9,
-      "mean": 0.3772,
-      "t": 2.77,
-      "win": 55.1,
-      "sum": 34.73
+      "n": 73,
+      "eff_n": 72.9,
+      "mean": 0.511,
+      "t": 1.92,
+      "win": 37.2,
+      "sum": 36.27
      },
      "unseen": {
-      "n": 131,
-      "eff_n": 131.0,
-      "mean": 0.3355,
-      "t": 2.16,
-      "win": 40.5,
-      "sum": 43.66
+      "n": 95,
+      "eff_n": 95.0,
+      "mean": 0.3812,
+      "t": 1.57,
+      "win": 30.6,
+      "sum": 36.08
      },
-     "gross_unseen": 61.95
+     "gross_unseen": 54.24
     },
     "baseline": {
      "v": "pre|x1|opp|t2|h30|cusd|sp0",
@@ -1016,24 +1088,24 @@
   "by_sym": {
    "AUDUSD": {
     "best": {
-     "v": "pre|x1.5|opp|be1|h15|cown|sp0",
+     "v": "pre|x1|opp|lock0.5|h30|cown|sp0",
      "train": {
-      "n": 44,
-      "eff_n": 43.9,
-      "mean": 0.7415,
-      "t": 3.38,
-      "win": 59.2,
-      "sum": 32.34
+      "n": 47,
+      "eff_n": 46.9,
+      "mean": 0.7379,
+      "t": 2.28,
+      "win": 57.3,
+      "sum": 34.74
      },
      "unseen": {
-      "n": 55,
-      "eff_n": 55.0,
-      "mean": 0.4417,
-      "t": 1.78,
-      "win": 40.1,
-      "sum": 24.16
+      "n": 56,
+      "eff_n": 56.0,
+      "mean": 0.577,
+      "t": 1.96,
+      "win": 41.0,
+      "sum": 32.32
      },
-     "gross_unseen": 35.46
+     "gross_unseen": 48.86
     },
     "baseline": {
      "v": "pre|x1|opp|t2|h30|cusd|sp0",
@@ -1072,9 +1144,9 @@
      "unseen": {
       "n": 17,
       "eff_n": 17.0,
-      "mean": -0.1528,
+      "mean": -0.1527,
       "t": -0.58,
-      "win": 29.6,
+      "win": 29.7,
       "sum": -2.68
      },
      "gross_unseen": -0.58
@@ -1093,7 +1165,7 @@
       "n": 32,
       "eff_n": 32.0,
       "mean": -0.4089,
-      "t": -2.14,
+      "t": -2.13,
       "win": 28.2,
       "sum": -13.17
      },
@@ -1160,7 +1232,7 @@
      "unseen": {
       "n": 14,
       "eff_n": 14.0,
-      "mean": -0.0189,
+      "mean": -0.0188,
       "t": -0.07,
       "win": 35.9,
       "sum": -0.31
@@ -1196,7 +1268,7 @@
      "train": {
       "n": 40,
       "eff_n": 40.0,
-      "mean": 0.3015,
+      "mean": 0.3016,
       "t": 1.02,
       "win": 45.3,
       "sum": 12.0
@@ -1216,7 +1288,7 @@
      "train": {
       "n": 27,
       "eff_n": 27.0,
-      "mean": -0.123,
+      "mean": -0.1229,
       "t": -0.48,
       "win": 37.5,
       "sum": -3.51
@@ -1248,7 +1320,7 @@
      "unseen": {
       "n": 37,
       "eff_n": 37.0,
-      "mean": -0.2887,
+      "mean": -0.2888,
       "t": -1.61,
       "win": 26.9,
       "sum": -10.54
@@ -1260,7 +1332,7 @@
      "train": {
       "n": 23,
       "eff_n": 23.0,
-      "mean": -0.2533,
+      "mean": -0.2534,
       "t": -1.27,
       "win": 21.5,
       "sum": -5.7
@@ -1304,7 +1376,7 @@
      "train": {
       "n": 27,
       "eff_n": 27.0,
-      "mean": 0.0198,
+      "mean": 0.0199,
       "t": 0.08,
       "win": 33.5,
       "sum": 0.46
@@ -1312,7 +1384,7 @@
      "unseen": {
       "n": 31,
       "eff_n": 31.0,
-      "mean": 0.082,
+      "mean": 0.0819,
       "t": 0.49,
       "win": 45.0,
       "sum": 2.71
@@ -1324,24 +1396,24 @@
    },
    "NZDUSD": {
     "best": {
-     "v": "pre|x1|opp|be1|h30|cown|sp0",
+     "v": "pre|x1|opp|be0.5|h30|cown|sp0",
      "train": {
       "n": 39,
       "eff_n": 39.0,
-      "mean": 1.0144,
-      "t": 2.04,
-      "win": 48.8,
-      "sum": 39.15
+      "mean": 1.0221,
+      "t": 2.07,
+      "win": 46.2,
+      "sum": 39.44
      },
      "unseen": {
       "n": 50,
       "eff_n": 50.0,
-      "mean": 0.8085,
-      "t": 2.03,
-      "win": 44.0,
-      "sum": 39.98
+      "mean": 0.8265,
+      "t": 2.09,
+      "win": 40.1,
+      "sum": 40.88
      },
-     "gross_unseen": 56.6
+     "gross_unseen": 57.48
     },
     "baseline": {
      "v": "pre|x1|opp|t2|h30|cusd|sp0",
@@ -1356,7 +1428,7 @@
      "unseen": {
       "n": 36,
       "eff_n": 36.0,
-      "mean": -0.0064,
+      "mean": -0.0063,
       "t": -0.03,
       "win": 44.5,
       "sum": -0.29
@@ -1372,9 +1444,9 @@
      "train": {
       "n": 15,
       "eff_n": 15.0,
-      "mean": 1.1503,
+      "mean": 1.1505,
       "t": 1.15,
-      "win": 33.3,
+      "win": 33.4,
       "sum": 16.81
      },
      "unseen": {
@@ -1392,7 +1464,7 @@
      "train": {
       "n": 23,
       "eff_n": 23.0,
-      "mean": -0.4097,
+      "mean": -0.4098,
       "t": -2.12,
       "win": 25.5,
       "sum": -9.1
@@ -1416,7 +1488,7 @@
      "train": {
       "n": 29,
       "eff_n": 29.0,
-      "mean": 0.7958,
+      "mean": 0.7957,
       "t": 1.4,
       "win": 34.5,
       "sum": 23.48
@@ -1424,7 +1496,7 @@
      "unseen": {
       "n": 36,
       "eff_n": 36.0,
-      "mean": 0.0943,
+      "mean": 0.0942,
       "t": 0.23,
       "win": 25.0,
       "sum": 3.59
@@ -1444,7 +1516,7 @@
      "unseen": {
       "n": 33,
       "eff_n": 33.0,
-      "mean": 0.1287,
+      "mean": 0.1286,
       "t": 0.61,
       "win": 42.1,
       "sum": 4.54
@@ -1512,7 +1584,7 @@
      "unseen": {
       "n": 35,
       "eff_n": 35.0,
-      "mean": 0.13,
+      "mean": 0.1299,
       "t": 0.35,
       "win": 28.4,
       "sum": 4.83
@@ -1532,7 +1604,7 @@
      "unseen": {
       "n": 30,
       "eff_n": 30.0,
-      "mean": 0.0478,
+      "mean": 0.0477,
       "t": 0.21,
       "win": 39.7,
       "sum": 1.67
@@ -1588,24 +1660,24 @@
    },
    "USDCHF": {
     "best": {
-     "v": "pre|x1|opp|be1|h15|cusd|sp0",
+     "v": "pre|x1|opp|lock0.5|h30|cusd|sp0",
      "train": {
       "n": 28,
       "eff_n": 28.0,
-      "mean": 0.5173,
-      "t": 1.31,
-      "win": 39.0,
-      "sum": 14.7
+      "mean": 0.6777,
+      "t": 1.9,
+      "win": 60.4,
+      "sum": 19.06
      },
      "unseen": {
       "n": 35,
       "eff_n": 35.0,
-      "mean": 0.7062,
-      "t": 1.52,
-      "win": 40.1,
-      "sum": 24.4
+      "mean": 0.4567,
+      "t": 1.23,
+      "win": 42.9,
+      "sum": 15.78
      },
-     "gross_unseen": 32.57
+     "gross_unseen": 23.95
     },
     "baseline": {
      "v": "pre|x1|opp|t2|h30|cusd|sp0",
@@ -1632,24 +1704,24 @@
    },
    "USDJPY": {
     "best": {
-     "v": "pre|x1|opp|be1|h15|cusd|sp0",
+     "v": "pre|x1|opp|lock0.5|h30|cusd|sp0",
      "train": {
       "n": 27,
       "eff_n": 27.0,
-      "mean": 0.3791,
-      "t": 0.79,
-      "win": 33.5,
-      "sum": 10.27
+      "mean": 0.6672,
+      "t": 1.5,
+      "win": 51.5,
+      "sum": 18.29
      },
      "unseen": {
       "n": 33,
       "eff_n": 33.0,
-      "mean": 0.4997,
-      "t": 0.98,
-      "win": 30.5,
-      "sum": 16.21
+      "mean": 0.7537,
+      "t": 1.84,
+      "win": 48.4,
+      "sum": 24.92
      },
-     "gross_unseen": 23.56
+     "gross_unseen": 32.27
     },
     "baseline": {
      "v": "pre|x1|opp|t2|h30|cusd|sp0",
@@ -1688,7 +1760,7 @@
      "unseen": {
       "n": 19,
       "eff_n": 19.0,
-      "mean": 0.0678,
+      "mean": 0.0679,
       "t": 0.08,
       "win": 10.6,
       "sum": 1.14
@@ -1719,9 +1791,237 @@
     "top": 10
    }
   },
-  "both_share": 0.096,
+  "both_share": 0.097,
+  "gaveback": {
+   "census": {
+    "train": {
+     "trades": 189,
+     "losers": 98,
+     "lost_r": -86.3,
+     "mfe_0.5R": 40,
+     "mfe_1R": 33,
+     "mfe_median": 0.21
+    },
+    "unseen": {
+     "trades": 236,
+     "losers": 138,
+     "lost_r": -107.2,
+     "mfe_0.5R": 54,
+     "mfe_1R": 37,
+     "mfe_median": 0.3
+    }
+   },
+   "ways": {
+    "built": {
+     "train": {
+      "n": 189,
+      "eff_n": 188.8,
+      "mean": 0.9554,
+      "t": 5.09,
+      "win": 48.2,
+      "sum": 179.85,
+      "worst_day_r": -8.97
+     },
+     "unseen": {
+      "n": 236,
+      "eff_n": 235.9,
+      "mean": 0.9929,
+      "t": 5.64,
+      "win": 41.6,
+      "sum": 232.61,
+      "worst_day_r": -9.56
+     }
+    },
+    "be0.5": {
+     "train": {
+      "n": 189,
+      "eff_n": 188.8,
+      "mean": 0.9538,
+      "t": 5.13,
+      "win": 46.7,
+      "sum": 179.78,
+      "worst_day_r": -8.97
+     },
+     "unseen": {
+      "n": 236,
+      "eff_n": 235.9,
+      "mean": 1.0083,
+      "t": 5.76,
+      "win": 39.0,
+      "sum": 236.3,
+      "worst_day_r": -9.56
+     }
+    },
+    "h50at0.5": {
+     "train": {
+      "n": 189,
+      "eff_n": 188.8,
+      "mean": 0.3851,
+      "t": 3.51,
+      "win": 62.9,
+      "sum": 72.63,
+      "worst_day_r": -7.72
+     },
+     "unseen": {
+      "n": 236,
+      "eff_n": 235.9,
+      "mean": 0.4071,
+      "t": 4.0,
+      "win": 59.3,
+      "sum": 95.3,
+      "worst_day_r": -9.56
+     }
+    },
+    "h50at1": {
+     "train": {
+      "n": 189,
+      "eff_n": 188.8,
+      "mean": 0.5229,
+      "t": 4.41,
+      "win": 65.7,
+      "sum": 98.35,
+      "worst_day_r": -6.47
+     },
+     "unseen": {
+      "n": 236,
+      "eff_n": 235.9,
+      "mean": 0.5055,
+      "t": 4.62,
+      "win": 57.2,
+      "sum": 118.46,
+      "worst_day_r": -9.56
+     }
+    },
+    "h30at1": {
+     "train": {
+      "n": 189,
+      "eff_n": 188.8,
+      "mean": 0.6959,
+      "t": 4.79,
+      "win": 63.1,
+      "sum": 130.95,
+      "worst_day_r": -7.47
+     },
+     "unseen": {
+      "n": 236,
+      "eff_n": 235.9,
+      "mean": 0.7004,
+      "t": 5.18,
+      "win": 55.9,
+      "sum": 164.12,
+      "worst_day_r": -9.56
+     }
+    },
+    "lock1": {
+     "train": {
+      "n": 189,
+      "eff_n": 188.8,
+      "mean": 0.7683,
+      "t": 5.01,
+      "win": 52.4,
+      "sum": 144.67,
+      "worst_day_r": -7.97
+     },
+     "unseen": {
+      "n": 236,
+      "eff_n": 235.9,
+      "mean": 1.1583,
+      "t": 6.21,
+      "win": 47.9,
+      "sum": 272.04,
+      "worst_day_r": -9.56
+     }
+    },
+    "lock0.5": {
+     "train": {
+      "n": 189,
+      "eff_n": 188.8,
+      "mean": 0.876,
+      "t": 5.83,
+      "win": 63.6,
+      "sum": 165.36,
+      "worst_day_r": -4.47
+     },
+     "unseen": {
+      "n": 236,
+      "eff_n": 235.9,
+      "mean": 0.9099,
+      "t": 6.22,
+      "win": 53.8,
+      "sum": 214.05,
+      "worst_day_r": -9.56
+     }
+    }
+   },
+   "both": [],
+   "best_train": "be0.5"
+  },
   "deploy": {
    "best_capped": [
+    {
+     "v": "pre|x1|opp|lock0.5|h30|cown|sp0|cap9",
+     "train": {
+      "n": 353,
+      "eff_n": 352.6,
+      "mean": 0.3726,
+      "t": 3.73,
+      "win": 49.9,
+      "sum": 131.68
+     },
+     "unseen": {
+      "n": 447,
+      "eff_n": 446.9,
+      "mean": 0.3,
+      "t": 3.24,
+      "win": 41.6,
+      "sum": 134.02
+     },
+     "risk": {
+      "worst_day_r": -13.59,
+      "days_over_limit": 6,
+      "worst_release_r": -11.77,
+      "max_per_release": 9,
+      "days": 157,
+      "stress_unseen": {
+       "slip+0.2atr": 89.32,
+       "slip+0.4atr": 44.62
+      },
+      "unseen_sum": 134.02,
+      "unseen_n": 447
+     }
+    },
+    {
+     "v": "pre|x1|opp|be0.5|h30|cown|sp0|cap9",
+     "train": {
+      "n": 353,
+      "eff_n": 352.6,
+      "mean": 0.3554,
+      "t": 3.03,
+      "win": 34.6,
+      "sum": 125.22
+     },
+     "unseen": {
+      "n": 447,
+      "eff_n": 446.9,
+      "mean": 0.3346,
+      "t": 3.13,
+      "win": 30.4,
+      "sum": 148.5
+     },
+     "risk": {
+      "worst_day_r": -16.62,
+      "days_over_limit": 9,
+      "worst_release_r": -11.89,
+      "max_per_release": 9,
+      "days": 157,
+      "stress_unseen": {
+       "slip+0.2atr": 103.8,
+       "slip+0.4atr": 59.1
+      },
+      "unseen_sum": 148.5,
+      "unseen_n": 447
+     }
+    },
     {
      "v": "pre|x1|opp|be1|h30|cown|sp0|cap9",
      "train": {
@@ -1735,10 +2035,10 @@
      "unseen": {
       "n": 447,
       "eff_n": 446.9,
-      "mean": 0.3187,
+      "mean": 0.3186,
       "t": 2.96,
       "win": 33.5,
-      "sum": 141.47
+      "sum": 141.38
      },
      "risk": {
       "worst_day_r": -16.62,
@@ -1747,10 +2047,10 @@
       "max_per_release": 9,
       "days": 157,
       "stress_unseen": {
-       "slip+0.2atr": 96.77,
-       "slip+0.4atr": 52.07
+       "slip+0.2atr": 96.68,
+       "slip+0.4atr": 51.98
       },
-      "unseen_sum": 141.47,
+      "unseen_sum": 141.38,
       "unseen_n": 447
      }
     },
@@ -1767,10 +2067,10 @@
      "unseen": {
       "n": 447,
       "eff_n": 446.9,
-      "mean": 0.3743,
+      "mean": 0.3741,
       "t": 3.53,
       "win": 40.7,
-      "sum": 166.29
+      "sum": 166.19
      },
      "risk": {
       "worst_day_r": -16.62,
@@ -1779,10 +2079,10 @@
       "max_per_release": 9,
       "days": 157,
       "stress_unseen": {
-       "slip+0.2atr": 121.59,
-       "slip+0.4atr": 76.89
+       "slip+0.2atr": 121.49,
+       "slip+0.4atr": 76.79
       },
-      "unseen_sum": 166.29,
+      "unseen_sum": 166.19,
       "unseen_n": 447
      }
     },
@@ -1799,10 +2099,10 @@
      "unseen": {
       "n": 409,
       "eff_n": 408.9,
-      "mean": 0.2929,
+      "mean": 0.2928,
       "t": 3.44,
       "win": 40.1,
-      "sum": 118.55
+      "sum": 118.48
      },
      "risk": {
       "worst_day_r": -10.89,
@@ -1811,11 +2111,43 @@
       "max_per_release": 9,
       "days": 153,
       "stress_unseen": {
-       "slip+0.2atr": 91.28,
-       "slip+0.4atr": 64.02
+       "slip+0.2atr": 91.22,
+       "slip+0.4atr": 63.95
       },
-      "unseen_sum": 118.55,
+      "unseen_sum": 118.48,
       "unseen_n": 409
+     }
+    },
+    {
+     "v": "pre|x1|opp|lock1|h30|cown|sp0|cap9",
+     "train": {
+      "n": 353,
+      "eff_n": 352.6,
+      "mean": 0.3016,
+      "t": 2.86,
+      "win": 41.9,
+      "sum": 105.91
+     },
+     "unseen": {
+      "n": 447,
+      "eff_n": 446.9,
+      "mean": 0.3811,
+      "t": 3.43,
+      "win": 37.3,
+      "sum": 169.9
+     },
+     "risk": {
+      "worst_day_r": -16.62,
+      "days_over_limit": 7,
+      "worst_release_r": -11.77,
+      "max_per_release": 9,
+      "days": 157,
+      "stress_unseen": {
+       "slip+0.2atr": 125.2,
+       "slip+0.4atr": 80.5
+      },
+      "unseen_sum": 169.9,
+      "unseen_n": 447
      }
     },
     {
@@ -1831,10 +2163,10 @@
      "unseen": {
       "n": 409,
       "eff_n": 408.9,
-      "mean": 0.3545,
+      "mean": 0.3543,
       "t": 4.28,
       "win": 44.0,
-      "sum": 143.71
+      "sum": 143.64
      },
      "risk": {
       "worst_day_r": -10.76,
@@ -1843,10 +2175,10 @@
       "max_per_release": 9,
       "days": 153,
       "stress_unseen": {
-       "slip+0.2atr": 116.44,
-       "slip+0.4atr": 89.18
+       "slip+0.2atr": 116.37,
+       "slip+0.4atr": 89.1
       },
-      "unseen_sum": 143.71,
+      "unseen_sum": 143.64,
       "unseen_n": 409
      }
     },
@@ -1863,10 +2195,10 @@
      "unseen": {
       "n": 480,
       "eff_n": 479.9,
-      "mean": 0.0078,
+      "mean": 0.0075,
       "t": 0.06,
       "win": 21.3,
-      "sum": 3.32
+      "sum": 3.17
      },
      "risk": {
       "worst_day_r": -24.15,
@@ -1875,10 +2207,10 @@
       "max_per_release": 9,
       "days": 158,
       "stress_unseen": {
-       "slip+0.2atr": -92.68,
-       "slip+0.4atr": -188.68
+       "slip+0.2atr": -92.83,
+       "slip+0.4atr": -188.83
       },
-      "unseen_sum": 3.32,
+      "unseen_sum": 3.17,
       "unseen_n": 480
      }
     },
@@ -1895,10 +2227,10 @@
      "unseen": {
       "n": 326,
       "eff_n": 325.9,
-      "mean": 0.173,
-      "t": 1.51,
+      "mean": 0.1727,
+      "t": 1.5,
       "win": 33.1,
-      "sum": 56.19
+      "sum": 56.1
      },
      "risk": {
       "worst_day_r": -11.02,
@@ -1907,143 +2239,79 @@
       "max_per_release": 6,
       "days": 155,
       "stress_unseen": {
-       "slip+0.2atr": 23.59,
-       "slip+0.4atr": -9.01
+       "slip+0.2atr": 23.5,
+       "slip+0.4atr": -9.1
       },
-      "unseen_sum": 56.19,
+      "unseen_sum": 56.1,
       "unseen_n": 326
      }
     },
     {
-     "v": "pre|x1|opp|be1|h30|cown|sp3|cap9",
-     "train": {
-      "n": 246,
-      "eff_n": 245.7,
-      "mean": 0.3786,
-      "t": 2.88,
-      "win": 41.5,
-      "sum": 92.35
-     },
-     "unseen": {
-      "n": 382,
-      "eff_n": 381.9,
-      "mean": 0.2436,
-      "t": 2.22,
-      "win": 34.0,
-      "sum": 92.41
-     },
-     "risk": {
-      "worst_day_r": -11.98,
-      "days_over_limit": 7,
-      "worst_release_r": -11.12,
-      "max_per_release": 9,
-      "days": 155,
-      "stress_unseen": {
-       "slip+0.2atr": 54.21,
-       "slip+0.4atr": 16.01
-      },
-      "unseen_sum": 92.41,
-      "unseen_n": 382
-     }
-    },
-    {
-     "v": "pre|x1.5|opp|be1|h30|cown|sp3|cap6",
-     "train": {
-      "n": 211,
-      "eff_n": 210.8,
-      "mean": 0.3943,
-      "t": 3.71,
-      "win": 52.3,
-      "sum": 82.04
-     },
-     "unseen": {
-      "n": 302,
-      "eff_n": 301.9,
-      "mean": 0.1664,
-      "t": 1.82,
-      "win": 38.1,
-      "sum": 49.54
-     },
-     "risk": {
-      "worst_day_r": -7.83,
-      "days_over_limit": 0,
-      "worst_release_r": -7.77,
-      "max_per_release": 6,
-      "days": 151,
-      "stress_unseen": {
-       "slip+0.2atr": 29.41,
-       "slip+0.4atr": 9.28
-      },
-      "unseen_sum": 49.54,
-      "unseen_n": 302
-     }
-    },
-    {
-     "v": "pre|x1|opp|be1|h15|cown|sp3|cap6",
+     "v": "pre|x1|opp|be0.5|h30|cown|sp3|cap6",
      "train": {
       "n": 235,
       "eff_n": 234.7,
-      "mean": 0.3516,
-      "t": 2.82,
-      "win": 44.2,
-      "sum": 81.86
+      "mean": 0.3968,
+      "t": 2.95,
+      "win": 37.9,
+      "sum": 92.47
      },
      "unseen": {
       "n": 326,
       "eff_n": 325.9,
-      "mean": 0.2575,
-      "t": 2.22,
-      "win": 40.1,
-      "sum": 83.82
+      "mean": 0.1913,
+      "t": 1.68,
+      "win": 30.0,
+      "sum": 62.11
      },
      "risk": {
-      "worst_day_r": -11.92,
+      "worst_day_r": -12.73,
       "days_over_limit": 2,
       "worst_release_r": -8.45,
       "max_per_release": 6,
       "days": 155,
       "stress_unseen": {
-       "slip+0.2atr": 51.22,
-       "slip+0.4atr": 18.62
+       "slip+0.2atr": 29.51,
+       "slip+0.4atr": -3.09
       },
-      "unseen_sum": 83.82,
+      "unseen_sum": 62.11,
       "unseen_n": 326
-     }
-    },
-    {
-     "v": "pre|x1|opp|be1|h15|cown|sp3|cap9",
-     "train": {
-      "n": 246,
-      "eff_n": 245.7,
-      "mean": 0.3316,
-      "t": 2.77,
-      "win": 44.7,
-      "sum": 80.97
-     },
-     "unseen": {
-      "n": 382,
-      "eff_n": 381.9,
-      "mean": 0.3675,
-      "t": 3.21,
-      "win": 40.5,
-      "sum": 139.73
-     },
-     "risk": {
-      "worst_day_r": -11.98,
-      "days_over_limit": 6,
-      "worst_release_r": -10.7,
-      "max_per_release": 9,
-      "days": 155,
-      "stress_unseen": {
-       "slip+0.2atr": 101.53,
-       "slip+0.4atr": 63.33
-      },
-      "unseen_sum": 139.73,
-      "unseen_n": 382
      }
     }
    ],
    "top_check": [
+    {
+     "v": "pre|x1|opp|lock0.5|h30|cown|sp0",
+     "risk": {
+      "worst_day_r": -13.23,
+      "days_over_limit": 7,
+      "worst_release_r": -13.12,
+      "max_per_release": 11,
+      "days": 157,
+      "stress_unseen": {
+       "slip+0.2atr": 134.17,
+       "slip+0.4atr": 83.77
+      },
+      "unseen_sum": 184.57,
+      "unseen_n": 504
+     }
+    },
+    {
+     "v": "pre|x1|opp|be0.5|h30|cown|sp0",
+     "risk": {
+      "worst_day_r": -17.89,
+      "days_over_limit": 9,
+      "worst_release_r": -14.04,
+      "max_per_release": 11,
+      "days": 157,
+      "stress_unseen": {
+       "slip+0.2atr": 130.45,
+       "slip+0.4atr": 80.05
+      },
+      "unseen_sum": 180.85,
+      "unseen_n": 504
+     }
+    },
     {
      "v": "pre|x1|opp|be1|h30|cown|sp0",
      "risk": {
@@ -2053,10 +2321,10 @@
       "max_per_release": 11,
       "days": 157,
       "stress_unseen": {
-       "slip+0.2atr": 118.91,
-       "slip+0.4atr": 68.51
+       "slip+0.2atr": 118.82,
+       "slip+0.4atr": 68.42
       },
-      "unseen_sum": 169.31,
+      "unseen_sum": 169.22,
       "unseen_n": 504
      }
     },
@@ -2069,10 +2337,42 @@
       "max_per_release": 11,
       "days": 157,
       "stress_unseen": {
-       "slip+0.2atr": 167.44,
-       "slip+0.4atr": 117.04
+       "slip+0.2atr": 167.34,
+       "slip+0.4atr": 116.94
       },
-      "unseen_sum": 217.84,
+      "unseen_sum": 217.74,
+      "unseen_n": 504
+     }
+    },
+    {
+     "v": "pre|x1|opp|lock0.5|h30|cown|sp0|cap9",
+     "risk": {
+      "worst_day_r": -13.59,
+      "days_over_limit": 6,
+      "worst_release_r": -11.77,
+      "max_per_release": 9,
+      "days": 157,
+      "stress_unseen": {
+       "slip+0.2atr": 89.32,
+       "slip+0.4atr": 44.62
+      },
+      "unseen_sum": 134.02,
+      "unseen_n": 447
+     }
+    },
+    {
+     "v": "pre|x1|opp|lock1|h30|cown|sp0",
+     "risk": {
+      "worst_day_r": -15.89,
+      "days_over_limit": 8,
+      "worst_release_r": -13.68,
+      "max_per_release": 11,
+      "days": 157,
+      "stress_unseen": {
+       "slip+0.2atr": 167.18,
+       "slip+0.4atr": 116.78
+      },
+      "unseen_sum": 217.58,
       "unseen_n": 504
      }
     },
@@ -2085,11 +2385,27 @@
       "max_per_release": 11,
       "days": 158,
       "stress_unseen": {
-       "slip+0.2atr": -83.47,
-       "slip+0.4atr": -193.07
+       "slip+0.2atr": -83.61,
+       "slip+0.4atr": -193.21
       },
-      "unseen_sum": 26.13,
+      "unseen_sum": 25.99,
       "unseen_n": 548
+     }
+    },
+    {
+     "v": "pre|x1|opp|be0.5|h30|cown|sp0|cap9",
+     "risk": {
+      "worst_day_r": -16.62,
+      "days_over_limit": 9,
+      "worst_release_r": -11.89,
+      "max_per_release": 9,
+      "days": 157,
+      "stress_unseen": {
+       "slip+0.2atr": 103.8,
+       "slip+0.4atr": 59.1
+      },
+      "unseen_sum": 148.5,
+      "unseen_n": 447
      }
     },
     {
@@ -2101,10 +2417,10 @@
       "max_per_release": 9,
       "days": 157,
       "stress_unseen": {
-       "slip+0.2atr": 96.77,
-       "slip+0.4atr": 52.07
+       "slip+0.2atr": 96.68,
+       "slip+0.4atr": 51.98
       },
-      "unseen_sum": 141.47,
+      "unseen_sum": 141.38,
       "unseen_n": 447
      }
     },
@@ -2117,91 +2433,11 @@
       "max_per_release": 11,
       "days": 153,
       "stress_unseen": {
-       "slip+0.2atr": 117.3,
-       "slip+0.4atr": 86.9
+       "slip+0.2atr": 117.24,
+       "slip+0.4atr": 86.84
       },
-      "unseen_sum": 147.7,
+      "unseen_sum": 147.64,
       "unseen_n": 456
-     }
-    },
-    {
-     "v": "pre|x1.5|opp|be1|h15|cown|sp0",
-     "risk": {
-      "worst_day_r": -12.3,
-      "days_over_limit": 5,
-      "worst_release_r": -12.3,
-      "max_per_release": 11,
-      "days": 153,
-      "stress_unseen": {
-       "slip+0.2atr": 154.82,
-       "slip+0.4atr": 124.42
-      },
-      "unseen_sum": 185.22,
-      "unseen_n": 456
-     }
-    },
-    {
-     "v": "pre|x1|opp|be1|h15|cown|sp0|cap9",
-     "risk": {
-      "worst_day_r": -16.62,
-      "days_over_limit": 8,
-      "worst_release_r": -11.89,
-      "max_per_release": 9,
-      "days": 157,
-      "stress_unseen": {
-       "slip+0.2atr": 121.59,
-       "slip+0.4atr": 76.89
-      },
-      "unseen_sum": 166.29,
-      "unseen_n": 447
-     }
-    },
-    {
-     "v": "pre|x1.5|opp|be1|h30|cown|sp0|cap9",
-     "risk": {
-      "worst_day_r": -10.89,
-      "days_over_limit": 4,
-      "worst_release_r": -10.82,
-      "max_per_release": 9,
-      "days": 153,
-      "stress_unseen": {
-       "slip+0.2atr": 91.28,
-       "slip+0.4atr": 64.02
-      },
-      "unseen_sum": 118.55,
-      "unseen_n": 409
-     }
-    },
-    {
-     "v": "pre|x0.5|opp|be1|h15|cown|sp0",
-     "risk": {
-      "worst_day_r": -25.69,
-      "days_over_limit": 22,
-      "worst_release_r": -17.56,
-      "max_per_release": 11,
-      "days": 158,
-      "stress_unseen": {
-       "slip+0.2atr": -4.61,
-       "slip+0.4atr": -114.21
-      },
-      "unseen_sum": 104.99,
-      "unseen_n": 548
-     }
-    },
-    {
-     "v": "pre|x1.5|opp|be1|h15|cown|sp0|cap9",
-     "risk": {
-      "worst_day_r": -10.76,
-      "days_over_limit": 5,
-      "worst_release_r": -10.82,
-      "max_per_release": 9,
-      "days": 153,
-      "stress_unseen": {
-       "slip+0.2atr": 116.44,
-       "slip+0.4atr": 89.18
-      },
-      "unseen_sum": 143.71,
-      "unseen_n": 409
      }
     }
    ],

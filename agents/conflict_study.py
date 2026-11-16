@@ -108,6 +108,19 @@ def run(bot, sym, minutes):
     tt = pd.to_datetime(df["time"], utc=True, format="ISO8601") if len(df) else pd.Series([], dtype="datetime64[ns, UTC]")
     df = df[tt >= pd.Timestamp(A.TEST_FROM, tz="UTC")] if len(df) else df
     df.reindex(columns=COLS).to_csv(d / f"{sym}.csv.gz", index=False)
+    # the instrument's 5-minute highs / lows: whether a closer target is reached AFTER the conflict began (the held
+    # trade's mfe alone may come from before it - the first run's tight_short gain was mostly that)
+    try:
+        import run_poc as RP
+        from agents import poc_agent as P
+        end = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=1)).strftime("%Y-%m-%d")
+        bars = P.bars(sym, "5Min", max(A.TEST_FROM, RP.MINUTE_START), end)
+        b = pd.DataFrame({"m": ((bars.index - pd.Timestamp("1970-01-01", tz="UTC")) // pd.Timedelta(minutes=1)).astype("int64"),
+                          "h": bars["h"].to_numpy(), "l": bars["l"].to_numpy()})
+        b.to_csv(d / f"{sym}.bars.csv.gz", index=False)
+        print(f"{sym}: {len(b)} 5-minute bars")
+    except Exception as e:  # noqa: BLE001
+        print(f"{sym}: no bars - {e}")
     (d / f"{sym}.json").write_text(json.dumps({"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
                                               "trades": int(len(df)), "missing": missing}, ensure_ascii=False), encoding="utf-8")
     print(f"{sym}: {len(df)} trades, missing {missing}")
@@ -122,7 +135,7 @@ def _minute(x):
 
 def load(bot):
     d = out_dir(bot)
-    parts = [pd.read_csv(f) for f in sorted(d.glob("*.csv.gz"))]
+    parts = [pd.read_csv(f) for f in sorted(d.glob("*.csv.gz")) if ".bars." not in f.name]
     parts = [p for p in parts if len(p)]
     if not parts:
         return pd.DataFrame(columns=COLS + ["a", "b", "sym", "tf", "risk_px", "cost_r"])
@@ -158,12 +171,33 @@ def _tight_r(x, other):
     return r
 
 
-def _tighten(x, r):
-    """x with a target r R away: reached if it went that far in its favour while open."""
+BARS = {}                   # sym -> (minutes, highs, lows) - 5-minute bars, when the run stored them
+
+
+def _reached(x, lvl, start):
+    """Did the price reach lvl in x's favour between start and x's own exit (the exit's bar left out: the worse case)?
+    None when no bars are stored."""
+    b = BARS.get(x["sym"])
+    if b is None:
+        return None
+    m, h, lo = b
+    i, j = np.searchsorted(m, start), np.searchsorted(m, x["b"] - 5)
+    if j <= i:
+        return False
+    return bool((h[i:j] >= lvl).any()) if x["dir"] > 0 else bool((lo[i:j] <= lvl).any())
+
+
+def _tighten(x, r, start=None):
+    """x with a target r R away, set at minute start (its entry when None): reached if the price got there between
+    then and x's own exit (5-minute bars; without bars, the furthest it went in its favour while open - mfe_r)."""
     x = dict(x)
-    if np.isfinite(x["mfe_r"]) and x["mfe_r"] >= r:
+    lvl = x["entry_px"] + x["dir"] * r * x["risk_px"]
+    hit = _reached(x, lvl, x["a"] if start is None else start)
+    if hit is None:
+        hit = np.isfinite(x["mfe_r"]) and x["mfe_r"] >= r and start is None
+    if hit:
         x["r"] = r - x["cost_r"]
-    x["target_px"] = x["entry_px"] + x["dir"] * r * x["risk_px"]
+    x["target_px"] = lvl
     x["tight"] = True
     return x
 
@@ -218,7 +252,7 @@ def simulate(t, way, strength):
                     x = taken[i]
                     r = _tight_r(x, row)
                     if r is not None and r >= MIN_TIGHT_R and not x.get("tight"):
-                        taken[i] = _tighten(x, r)
+                        taken[i] = _tighten(x, r, start=row["a"])
                         n_changed += 1
         held.append(len(taken))
         taken.append(row)
@@ -243,12 +277,15 @@ def report(bot):
     from agents import portfolio_check as PC
     import agent_portfolio as A
     t = load(bot)
+    for f in out_dir(bot).glob("*.bars.csv.gz"):
+        b = pd.read_csv(f)
+        BARS[f.name.split(".bars")[0]] = (b["m"].to_numpy(), b["h"].to_numpy(), b["l"].to_numpy())
     risk = PC.bot_risk(bot)
     mults = PC.mults(bot)
     split = int((pd.Timestamp(A.SPLIT, tz="UTC") - pd.Timestamp("1970-01-01", tz="UTC")) // pd.Timedelta(minutes=1))
     train, unseen = t[t["a"] < split], t[t["a"] >= split]
     strength = train.groupby("combo")["r"].mean().to_dict()
-    out = {"bot": bot, "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "strategies": int(t["combo"].nunique()),
+    out = {"bot": bot, "bars": sorted(BARS), "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "strategies": int(t["combo"].nunique()),
            "missing": sorted({c for f in out_dir(bot).glob("*.json") if f.name != "report.json"
                               for c in json.loads(f.read_text(encoding="utf-8")).get("missing", [])}),
            "ways": {}}

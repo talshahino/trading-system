@@ -1,6 +1,6 @@
 {
  "bot": "bot5",
- "updated": "2026-11-16T18:31:11+00:00",
+ "updated": "2026-11-16T20:45:00+00:00",
  "cards": [
   {
    "bot": "bot5",
@@ -4812,6 +4812,28 @@
    },
    "made": "2026-11-16T10:21:20+00:00",
    "id": "b8bc6687fbb3"
+  },
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: עסקאות הסייר נספרו בבריאות כמסלול v5 - תוקן",
+   "what": "8 עסקאות הסייר שהפסידו היום הופיעו בבדיקת הבריאות כ־OWN|15Min (XAUUSD / US30) והושוו לבדיקה של מסלול v5. מעכשיו כל אחת נספרת בשם שלה (SCxxx). הבוט עצמו לא השתנה. הסוכן של הבוט בודק עכשיו כמה עסקאות סייר נכנסות יחד על אותו מכשיר ובאותו כיוון (היום 2 קניות זהב באותה דקה) ואת הסיכון של v5.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "task": "mgr1611stack",
+    "file": "agents/health.py watch_trades"
+   },
+   "made": "2026-11-16T20:45:00+00:00",
+   "id": "b6f80c99f727"
   }
  ]
 }

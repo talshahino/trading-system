@@ -98,7 +98,12 @@ def watch_trades(state, bot):
             continue
         trk = w.get("trk") or (w["id"].split("|")[3] if w.get("id", "").count("|") >= 3 else "")
         tf = "1Min" if str(trk).endswith("1m") else "15Min"
-        if bot in ("bot5", "bot6") and w.get("id", "").count("|") >= 1 and w["id"].split("|")[1] == "tal":
+        if bot in ("bot5", "bot6") and str(trk).startswith("sc:"):
+            # 16.11.2026 night (manager): a scout strategy's watch id is SYM|SCxxx|tf|time|sc:..., not SYM|tal|...,
+            # so its trades fell to OWN|15Min|<sym> and were judged against the v5 track's backtest (bot 5's 8 scout
+            # losses today showed as "OWN|15Min|XAUUSD / US30")
+            combo = str(trk)[3:]
+        elif bot in ("bot5", "bot6") and w.get("id", "").count("|") >= 1 and w["id"].split("|")[1] == "tal":
             # bot 6 (14.11.2026, its smart agent): every gap track by its own name - TAL|<track>|<index> (tal, tal4h,
             # t15_5, t5_1, ...). Before, t15_5 and t5_1 were both FUT|15Min and tal4h's risk change followed them,
             # and the watch never saw a gap card's trades at all (agents/watch.py TRACKS).

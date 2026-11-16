@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-16T02:09:21+00:00",
+ "updated": "2026-11-16T02:16:27+00:00",
  "light_at": "2026-11-16T02:09:21+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -32,9 +32,9 @@
    "{\"bot\": \"bot5\", \"new_cards\": 9423}"
   ],
   "bot2": [
-   "new strategies: stopped for time, 0 tested, 3776 combos left",
-   "{\"bot\": \"bot2\", \"cards\": 28792, \"tiers\": {\"rejected\": 25470, \"watch\": 2854, \"regular\": 468}, \"done\": 93, \"planned\": 180}",
-   "(ended while the manager restarted)"
+   "new strategies: stopped for time, 0 tested, 3656 combos left",
+   "{\"bot\": \"bot2\", \"cards\": 28916, \"tiers\": {\"rejected\": 25578, \"watch\": 2870, \"regular\": 468}, \"done\": 101, \"planned\": 180}",
+   "(continued across a manager restart)"
   ],
   "bot3": [
    "new strategies: stopped for time, 0 tested, 3599 combos left",
@@ -91,11 +91,12 @@
    "err": null
   },
   "bot2": {
-   "at": "2026-11-15T17:04:25+00:00",
-   "sec": null,
+   "at": "2026-11-16T01:41:38+00:00",
+   "sec": 2030,
    "budget_sec": 1800,
    "ok": null,
-   "err": "ended while the manager restarted - published after"
+   "err": null,
+   "adopted": true
   },
   "bot3": {
    "at": "2026-11-15T17:55:11+00:00",
@@ -163,8 +164,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.6,
-   "load_pct": 79
+   "free": 1.7,
+   "load_pct": 77
   }
  }
 }

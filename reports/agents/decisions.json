@@ -1,22 +1,27 @@
 {
- "updated": "2026-11-16T10:21:29+00:00",
+ "updated": "2026-11-16T10:22:58+00:00",
  "new": [
-  "bbdec2cb6230"
+  "7d9bdef9110c"
  ],
  "decisions": [
   {
-   "id": "bbdec2cb6230",
-   "bot": "bot5",
-   "type": "card",
-   "card": "b8bc6687fbb3",
-   "kind": "info",
-   "tier": "regular",
-   "title": "בוט 5: היומן של החשבון הווירטואלי לא תיקן סגירות שקריות - תוקן",
+   "id": "7d9bdef9110c",
+   "bot": "bot2",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV13|15Min|TSLA",
+   "title": "TV13|15Min|TSLA: סיכון ×0.9",
    "decision": "approved",
-   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
-   "star": false,
-   "at": "2026-11-16T10:21:29+00:00",
+   "why": "רווח ממוצע +0.06R מול +0.33R של הבוט, יציבות 0.83, 6 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot2",
+    "combo": "TV13|15Min|TSLA",
+    "kind": "mult",
+    "value": 0.9,
+    "prev": null
+   },
+   "at": "2026-11-16T10:22:58+00:00",
    "by": "manager",
    "read": false,
    "undone": false

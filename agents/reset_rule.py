@@ -34,6 +34,10 @@ BOT = "bot7"
 STATE = ROOT / "data/agents/bot7_reset.json"
 ARCHIVE = ROOT / "data/agents/bot7_archive"
 STABLE_DAYS = 14
+# at most one reset a day (manager, 16.11.2026): 11 resets in 4.5 days (accounts 5-17), most with 2-4 trades - the live
+# account never showed anything and the two stable weeks never started. A material change within MIN_HOURS of the last
+# reset waits (the fingerprint before it stays the baseline), and one reset then covers every change since.
+MIN_HOURS = 24
 CODE = ("agents/event_strategies.py",)
 
 
@@ -153,6 +157,14 @@ def check(add, did, live_json, now, ucards=None, approved=()):
         st["fp"], st["parts"] = fp, parts            # only what is not material changed (or the fingerprint's own rule)
     if fp != st["fp"]:
         what = _what_changed(_norm_parts(st.get("parts")), _norm_parts(parts))
+        hours = days * 24
+        if not st["stable"] and hours < MIN_HOURS:
+            # waits: the baseline stays, so the next check after MIN_HOURS resets once for all the changes since
+            st["waiting"] = {"what": what, "since": (st.get("waiting") or {}).get("since") or now.isoformat(timespec="seconds"),
+                             "reset_after": (pd.Timestamp(st["last_reset"]) + pd.Timedelta(hours=MIN_HOURS)).isoformat(timespec="seconds")}
+            STATE.write_text(json.dumps(st, ensure_ascii=False, indent=1), encoding="utf-8")
+            return
+        st.pop("waiting", None)
         if not st["stable"]:
             _reset(add, did, st, live, cur_v, now, fp, what,
                    f"שינוי מהותי בסגנון האסטרטגיה ({what}), והבוט עוד לא יציב ({days:.0f} ימים מהאיפוס האחרון, פחות מ־{STABLE_DAYS})")

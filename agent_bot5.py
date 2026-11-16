@@ -1176,6 +1176,7 @@ def wide_chosen():
     except Exception:  # noqa: BLE001
         pass
     return out
+POST = {}                  # this run's seconds per part after the budget (summaries, whole-bot replays) -> results bot5.post_sec
 STEPS = {}                 # this run's gap-method steps: {name: {done | err, at, sec, budget_sec}} -> results bot5.steps
 TAL_WORLD = {"symbols": TAL_SYMBOLS, "costs": "FTMO's recorded 1-minute spread + commission",
              "sessions": "FTMO Standard: market breaks and session ends closed, news masks", "stop_buffer": "2 points",
@@ -1354,16 +1355,20 @@ def main():
             STEPS[nm].update(at=pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), sec=round(time.time() - t1),
                              budget_sec=round(tal_left * share))
         tal_left = a.minutes * 60 - (time.time() - t_start)
+        t1 = time.time()
         try:
             TW.run(tal_load, TAL_WIDE_DIR, tal_left * 0.5, wide_chosen())
         except Exception as e:  # noqa: BLE001
             print("tal wide experiments failed:", e)
+        STEPS["wide_run"] = {"sec": round(time.time() - t1), "budget_sec": round(tal_left * 0.5)}
         tal_left = a.minutes * 60 - (time.time() - t_start)
     if tal_left > 60 and BOT == "bot5":
+        t1 = time.time()
         try:
             TG.run(BOT, tal_syms, tal_load, TAL_DIR, tal_left)
         except Exception as e:  # noqa: BLE001
             print("tal gap experiments failed:", e)
+        STEPS["search_run"] = {"sec": round(time.time() - t1), "budget_sec": round(tal_left)}
     if a.no_cards:
         return
     idx = load_index()
@@ -1419,10 +1424,18 @@ def main():
             # bot 6 runs the gap method itself (agent_bot6.tal) - not an error, so nothing is printed as "failed"
             # (manager 13.11.2026: the ops view showed it as a failure every night)
             raise StopIteration
+        # how long each part after the budget takes (manager, 16.11.2026: bot 5's run took 98 minutes on a 40-minute
+        # budget - the steps and the search kept to theirs, so the time went here, unseen): doc bot5.post_sec
+        _tp = [time.time()]
+
+        def _lap(name):
+            POST[name] = round(time.time() - _tp[0])
+            _tp[0] = time.time()
         tidx = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")}
         pairs, answers = TG.summarize(tidx, TAL_SYMBOLS, TAL_DIR)
         planned = len(TG.PAIRS) * len(TG.variants()) * len(TAL_SYMBOLS)
         doc = TG.write_results(BOT, pairs, answers, TAL_WORLD, [len(tidx), planned], out_dir=TAL_DIR)
+        _lap("summary")
         # what bot 5 trades now (live/bots/bot5.json "tal_tracks", 13.11.2026): a card on a running pair carries it as
         # the baseline, so a version that earns less on 2026 in total is not approved over it
         s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
@@ -1438,6 +1451,7 @@ def main():
         except Exception as e:  # noqa: BLE001 - no pair card on the rules without the break rule
             print(f"tal ftmo pairs failed: {e}")
             cpairs = {pn: dict(x, chosen=None) for pn, x in pairs.items()}
+        _lap("ftmo_pairs")
         live5f = {pn: TG.ftmo_cfg(c) for pn, c in live5.items()}
         cards += TG.cards(BOT, cpairs, doc.get("bot6"), "בוט 6", risk_pct=round(min(rk5) * 100, 3) if rk5 else 0.4, live=live5f)
         tal = {"done": len(tidx), "planned": planned}
@@ -1451,6 +1465,7 @@ def main():
                                                        for k, v in (s5.get("tal_tracks") or {}).items()
                                                        if float(rkd.get(k, 0.0028) or 0) > 0 and not v.get("symbols")},
                           risk={k: float(rkd.get(k, 0.0028)) * cur_sc for k in (s5.get("tal_tracks") or {})})
+        _lap("portfolio")
         # every FTMO forex pair, metals, the other indices (agents/tal_wide.py): per instrument and pair
         try:
             widx = {f.stem: json.loads(f.read_text()) for f in (TAL_WIDE_DIR / "idx").glob("*.json")}
@@ -1473,6 +1488,7 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
         except Exception as e:  # noqa: BLE001
             print("tal wide summary failed:", e)
+        _lap("wide")
         # the whole bot (13.11.2026 evening, the manager's task f8643b16aa57): the index tracks AND the instruments' own
         # tracks together, each at its real risk - the rule cards and the risk factor are chosen on this one when
         # every track's runs are there (sym_runs); until then on the index tracks as before
@@ -1485,6 +1501,7 @@ def main():
         except Exception as e:  # noqa: BLE001
             print("tal whole bot failed:", e)
             pf_all = None
+        _lap("whole_bot")
         doc["bot5"]["steps"] = STEPS
         if pf_all:
             doc["bot5"]["portfolio_all"] = pf_all
@@ -1500,6 +1517,7 @@ def main():
                 cards.append(gc5)
         except Exception as e:  # noqa: BLE001
             print("tal risk guard failed:", e)
+        _lap("risk_guard")
         if pf:
             doc["bot5"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
@@ -1515,6 +1533,7 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             except Exception as e:  # noqa: BLE001
                 print("tal trend fix failed:", e)
+            _lap("trend_fix")
             try:
                 scards, sres = stab_cards(tidx)
                 cards += scards
@@ -1522,6 +1541,7 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             except Exception as e:  # noqa: BLE001
                 print("tal stability failed:", e)
+            _lap("stability")
             try:
                 ncards, nres = note_cards(tidx)
                 cards += ncards
@@ -1529,6 +1549,7 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             except Exception as e:  # noqa: BLE001
                 print("tal note tests failed:", e)
+            _lap("notes")
             for key, fn_ in (("anti", lambda: anti_cards(tidx)), ("straddle", straddle_cards)):
                 try:
                     acards, ares = fn_()
@@ -1537,6 +1558,7 @@ def main():
                     TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
                 except Exception as e:  # noqa: BLE001
                     print(f"tal {key} failed:", e)
+                _lap(key)
             try:
                 xcards, xres = shared_cards()
                 cards += xcards
@@ -1544,9 +1566,12 @@ def main():
                 TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
             except Exception as e:  # noqa: BLE001
                 print("tal shared exit failed:", e)
+            _lap("shared_exit")
             sc_card = TG.scale_card(BOT, pf_all or pf, cur_sc)
             if sc_card:
                 cards.append(sc_card)
+        doc["bot5"]["post_sec"] = POST
+        TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     except StopIteration:
         pass
     except Exception as e:  # noqa: BLE001

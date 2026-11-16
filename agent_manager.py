@@ -147,6 +147,9 @@ def ops():
                 left = sum(int(v.get("left") or 0) for v in srch.values())
                 o = _ops_slot(out, b)
                 o["search"] = {"tried": tried, "left": left, "pairs": len(srch), "updated": (res.get(b) or {}).get("updated")}
+                # where a run's minutes went after its budget (agent_bot5 post_sec, manager 16.11.2026)
+                if (res.get(b) or {}).get("post_sec"):
+                    o["post_sec"] = (res.get(b) or {}).get("post_sec")
                 upd0 = (res.get(b) or {}).get("updated")
                 if left and upd0 and now - pd.Timestamp(upd0) > pd.Timedelta(hours=36):
                     o["problems"].append(f"שיטת הגאפ: החיפוש לא התקדם מאז {pd.Timestamp(upd0):%d.%m %H:%M} UTC "

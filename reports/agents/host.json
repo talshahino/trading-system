@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-16T03:49:52+00:00",
+ "updated": "2026-11-16T03:59:53+00:00",
  "light_at": "2026-11-16T03:49:52+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -43,7 +43,8 @@
   ],
   "bot4": [
    "new strategies: stopped for time, 0 tested, 3546 combos left",
-   "{\"bot\": \"bot4\", \"cards\": 15982, \"tiers\": {\"rejected\": 13866, \"watch\": 1810, \"regular\": 306}, \"done\": 117, \"planned\": 258}"
+   "{\"bot\": \"bot4\", \"cards\": 15982, \"tiers\": {\"rejected\": 13866, \"watch\": 1810, \"regular\": 306}, \"done\": 117, \"planned\": 258}",
+   "(ended while the manager restarted)"
   ],
   "bot7-shocks": [
    "walk-forward book inside 2025 (fade): ['GER40', 'US100'] train {'n': 94, 'eff_n': 93.9, 'mean': 0.5177, 't': 1.9, 'win': 38.3, 'sum': 48.82} unseen {'n': 145, 'eff_n': 145.0, 'mean': 0.1565, 't': 0.81, 'win': 33.9, 'sum': 21.94}",
@@ -105,11 +106,11 @@
    "err": "ended while the manager restarted - published after"
   },
   "bot4": {
-   "at": "2026-11-16T03:16:04+00:00",
-   "sec": 1851,
+   "at": "2026-11-16T03:16:59+00:00",
+   "sec": null,
    "budget_sec": 1800,
-   "ok": true,
-   "err": null
+   "ok": null,
+   "err": "ended while the manager restarted - published after"
   },
   "bot7": {
    "at": "2026-11-15T19:34:19+00:00",
@@ -162,8 +163,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.9,
-   "load_pct": 76
+   "free": 1.0,
+   "load_pct": 86
   }
  }
 }

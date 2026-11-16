@@ -1,5 +1,5 @@
 {
- "fp": "c86073d05d05",
+ "fp": "c9ec1dfd68e3",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -477,6 +477,12 @@
     "added": "2026-11-15",
     "on_from": "2026-11-15T12:30:00+00:00"
    },
+   "SC001|1Min|JP225": {
+    "rules": {
+     "dir": 1
+    },
+    "rules_card": "b5de201244b9"
+   },
    "SC033|1Hour|JP225": {
     "added": "2026-11-15",
     "on_from": "2026-11-15T12:30:00+00:00"
@@ -594,8 +600,8 @@
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-15T20:58:26+00:00",
- "account_v": 14,
+ "last_reset": "2026-11-16T04:17:35+00:00",
+ "account_v": 15,
  "resets": [
   {
    "v": 2,
@@ -687,6 +693,13 @@
    "what": "כלל השתנה ב־SC048|1Hour|US100, SC264|15Min|JP225, SC372|4Hour|XAUUSD, TV56|4Hour|USDJPY",
    "archive": "data/agents/bot7_archive/account_v12.json",
    "id": "e9cbfbb118bd"
+  },
+  {
+   "v": 15,
+   "at": "2026-11-16T04:17:35+00:00",
+   "what": "כלל השתנה ב־SC001|1Min|JP225",
+   "archive": "data/agents/bot7_archive/account_v14.json",
+   "id": "2822fc6ae319"
   }
  ],
  "stable": false,

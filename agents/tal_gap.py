@@ -114,6 +114,10 @@ def vid(cfg):
     return hashlib.sha1(json.dumps(cfg, sort_keys=True).encode()).hexdigest()[:10]
 
 
+BRK_SURE_H = 20        # a 20h+ break (the weekend, a holiday closure) is always a break
+BRK_TOL_MIN = 30       # a shorter one must recur a week earlier at the same local time, +-30 minutes (16.11.2026)
+
+
 def pre_break_mask(ns, minutes):
     """Data.pre_break on any sorted 1-minute bar times (int64 ns, UTC) - also the live bot's own masks
     (live/watch_own.py), so every track of bot 5 closes before a break, not only the gap tracks."""
@@ -126,9 +130,34 @@ def pre_break_mask(ns, minutes):
     brk = np.flatnonzero((ns[1:] - ns[:-1] - step) > 2 * 3600 * 10**9)
     if not len(brk):
         return m
-    c = pd.DatetimeIndex(ns[brk] + step).tz_localize("UTC")
+    # a break shorter than BRK_SURE_H hours (not a weekend) counts only if it recurs: the data a week before it shows
+    # a break at the same local time too (any of the clocks, +-BRK_TOL_MIN). A one-off hole in the candles (a feed
+    # stall - US30 / US500 / US100 on 9.11.2026 ~02:21 UTC) is not a market break, and carried a week forward it
+    # closed bot 5's index trades at 02:11 UTC on 16.11 and blocked entries for 2 hours. With no data a week before
+    # (the start of the history), the break counts as before.
+    starts = ns[brk] + step
+    keep = np.ones(len(brk), bool)
+    short = (ns[brk + 1] - ns[brk]) < BRK_SURE_H * 3600 * 10**9
+    zones = ("UTC", "America/New_York", "Europe/London", "Europe/Berlin", "Australia/Sydney")
+    if short.any():
+        cs = pd.DatetimeIndex(starts[short]).tz_localize("UTC")
+        ok = np.zeros(int(short.sum()), bool)
+        known = np.zeros(int(short.sum()), bool)
+        tol = BRK_TOL_MIN * step
+        for z in zones:
+            q = (cs.tz_convert(z).tz_localize(None) - pd.Timedelta(days=7)).tz_localize(z, ambiguous="NaT", nonexistent="shift_forward").tz_convert("UTC")
+            qv = q.as_unit("ns").asi8
+            good = ~np.asarray(q.isna())
+            known |= good & (qv - tol > ns[0])
+            j = np.searchsorted(starts, qv - tol)
+            hit = (j < len(starts)) & (np.abs(starts[np.minimum(j, len(starts) - 1)] - qv) <= tol)
+            ok |= good & hit
+        keep[short] = ok | ~known
+    if not keep.any():
+        return m
+    c = pd.DatetimeIndex(starts[keep]).tz_localize("UTC")
     best = None
-    for z in ("UTC", "America/New_York", "Europe/London", "Europe/Berlin", "Australia/Sydney"):
+    for z in zones:
         loc = c.tz_convert(z).tz_localize(None) + pd.Timedelta(days=7)
         p = loc.tz_localize(z, ambiguous="NaT", nonexistent="shift_forward").tz_convert("UTC")
         v = p.as_unit("ns").asi8.astype(float)

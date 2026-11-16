@@ -10588,3 +10588,412 @@ SCOUT.update({
     "SC480": ("Zarattini noise-area intraday momentum (SPY paper): :00 / :30 breaks of the noise area, VWAP trail, out 16:00 NY", s_noise_area_momentum, ["5Min", "15Min", "30Min"]),
     "SC481": ("IPF pivot-stop breakout of an area-extreme pivot 1+ ATR away, fake-breakout exit, 1.5 ATR, 2R, BE (MQL5 EA)", s_ipf_pivot_break, ["1Hour", "4Hour", "1Day"]),
 })
+
+
+# ================= scout 16.11.2026 night: ProRealCode DAX, StockSharp, Larry Williams (MQL5 series), new indicators =================
+def _local_min(df, tz):
+    t = df.index.tz_convert(tz)
+    return t, t.hour.to_numpy() * 60 + t.minute.to_numpy()
+
+
+def _daily_on_bars(df, lag=1):
+    """Completed UTC days' o, h, l, c shifted by `lag` days, on every intraday bar (known at the bar), + the day's
+    first-bar flag and today's open."""
+    day = pd.Series(df.index.tz_convert("UTC").date)
+    g = pd.DataFrame({"d": day, "o": df["o"].to_numpy(float), "h": df["h"].to_numpy(float),
+                      "l": df["l"].to_numpy(float), "c": df["c"].to_numpy(float)})
+    d = g.groupby("d").agg(o=("o", "first"), h=("h", "max"), l=("l", "min"), c=("c", "last"))
+    out = {}
+    for k in range(lag, lag + 5):
+        sh = d.shift(k)
+        m = g[["d"]].join(sh, on="d")
+        out[k] = {x: m[x].to_numpy(float) for x in "ohlc"}
+    first = (day != day.shift(1)).to_numpy()
+    today_o = g[["d"]].join(d[["o"]], on="d")["o"].to_numpy(float)
+    return out, first, today_o, day
+
+
+# ---------------- SC482 Trend Surfer DAX (ProRealCode) ----------------
+def s_prc_trend_surfer_dax(df):
+    """ProRealCode 'Trend Surfer DAX' (https://www.prorealcode.com/prorealtime-trading-strategies/trend-surfer-dax/ ;
+    DAX 5-minute): RSI 14, priceline = SMA4(RSI), middle band = SMA29(RSI). Entries only 09:00-11:00 and 15:00-17:00
+    Frankfurt. Long: priceline over the middle band, priceline > 35 and middle band > 40 (first bar of that state);
+    short: priceline crosses under the middle band with priceline > 40. Out at 11:00 / 17:00. Source stop 250 points
+    and target 50 points translated for DAX 5m (ATR14 ~ 20 points): stop 12 ATR, target 2.5 ATR."""
+    o, h, l, c, v = _ohlcv(df)
+    r = rsi(c, 14)
+    pl, mb = sma(r, 4), sma(r, 29)
+    t, mm = _local_min(df, "Europe/Berlin")
+    step = _bar_minutes(df)
+    win = ((mm >= 540) & (mm < 660)) | ((mm >= 900) & (mm < 1020))
+    L = _onset((pl > mb) & (pl > 35) & (mb > 40)) & win
+    S = cross_down(pl, mb) & (pl > 40) & win
+    fe = ((mm >= 660) & (mm < 660 + step)) | ((mm >= 1020) & (mm < 1020 + step))
+    L, S = _excl(L & ~fe, S & ~fe)
+    a = atr(h, l, c, 14)
+    return L, S, {"stop": ("atr", 12.0), "target": ("level", c + 2.5 * a, c - 2.5 * a), "force_exit": fe}
+
+
+# ---------------- SC483 VTAD Turnaround Tuesday DAX ----------------
+def s_vtad_turnaround_dax(df):
+    """VTAD Turnaround Tuesday - DAX (ProRealCode https://www.prorealcode.com/prorealtime-trading-strategies/vtad-turnaround-tuesday-dax-15m/ ;
+    15-minute, also 5-minute): on Monday at 17:45 Frankfurt buy if Monday's close is under the daily SMA34 of closes;
+    out on Wednesday 09:00 Frankfurt. Stop 2.6% and target 2.3% (the poster's additions; VTAD has none). Ours: the
+    17:45 bar's close stands for Monday's close, the SMA34 uses the 33 completed days before + that close. Differs
+    from SE03 (Monday down vs Friday, out Tuesday's close, no SMA filter)."""
+    o, h, l, c, v = _ohlcv(df)
+    t, mm = _local_min(df, "Europe/Berlin")
+    step = _bar_minutes(df)
+    dow = t.weekday.to_numpy()
+    dly, first, today_o, day = _daily_on_bars(df, 1)
+    g = pd.DataFrame({"d": day, "c": c})
+    dc = g.groupby("d")["c"].last()
+    s33 = dc.rolling(33, min_periods=3).mean().shift(1) * 33.0  # short history: mean of what exists
+    s33b = g[["d"]].join(s33.rename("s"), on="d")["s"].to_numpy(float)
+    sma34 = (s33b + c) / 34.0
+    sig = (dow == 0) & (mm + step == 17 * 60 + 45) & (c < sma34)
+    fe = (dow == 2) & (mm >= 540) & (mm < 540 + step)
+    sl, tp = c * (1 - 0.026), c * (1 + 0.023)
+    return sig, np.zeros(len(c), bool), {"stop": ("level", sl, c * 1.026), "target": ("level", tp, c * 0.977),
+                                         "force_exit": fe}
+
+
+# ---------------- SC484 StockSharp Breaks and Retests ----------------
+def s_ss_breaks_retests(df):
+    """StockSharp 'Breaks and Retests' (https://doc.stocksharp.com/en/api-examples/0563_Breaks_and_Retests ; 5-minute):
+    levels = highest / lowest CLOSE of the prior 20 bars; after a close over the resistance, a retest 2-4 bars later
+    (the bar's low touches the broken level and it closes back over it) buys; mirror for shorts. Stop 2% from the
+    entry (source). Source trail (after 5% profit, 1% under the best close) - ours: target 2R instead, the plan has
+    no trailing."""
+    o, h, l, c, v = _ohlcv(df)
+    res = _r(_s(c).rolling(20).max().to_numpy())
+    sup = _r(_s(c).rolling(20).min().to_numpy())
+    bu, bd = c > res, c < sup
+    L = np.zeros(len(c), bool)
+    S = np.zeros(len(c), bool)
+    for k in (2, 3, 4):
+        lv_u, lv_d = _r(res, k), _r(sup, k)
+        L |= (_r(bu.astype(float), k) > 0) & (l <= lv_u) & (c > lv_u)
+        S |= (_r(bd.astype(float), k) > 0) & (h >= lv_d) & (c < lv_d)
+    L, S = _excl(_onset(L), _onset(S))
+    return L, S, _plan_r(c * 0.98, c * 1.02, 2.0)
+
+
+# ---------------- SC485 StockSharp S/R breakout 55 + EMA500 ----------------
+def s_ss_sr_break_ema500(df):
+    """StockSharp 'Support & Resistance Breakout' (https://doc.stocksharp.com/en/api-examples/3998_Support_Resistance_Breakout ;
+    1-hour default): resistance / support = the prior 55 bars' high / low; long on a close over the resistance with
+    the close over EMA 500, short mirror; an in-profit close beyond the opposite band exits (ours: the close beyond
+    the 55-bar opposite band). Source stop / target 500 points each - ours 3 ATR / 1R (1:1 like the source).
+    Differs from the turtle 55/20 (TV14): EMA500 filter, 1:1 fixed exits."""
+    o, h, l, c, v = _ohlcv(df)
+    hi = _r(_s(h).rolling(55).max().to_numpy())
+    lo = _r(_s(l).rolling(55).min().to_numpy())
+    e = ema(c, 500)
+    L = cross_up(c, hi) & (c > e)
+    S = cross_down(c, lo) & (c < e)
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 3.0), "target": ("R", 1.0), "exit_long": c < lo, "exit_short": c > hi}
+
+
+# ---------------- SC486-SC489 Larry Williams Market Secrets (MQL5 series) ----------------
+def s_lw_swing_range_breakout(df):
+    """Larry Williams Market Secrets Part 6 (https://www.mql5.com/en/articles/20862 ; daily): range = the larger of
+    |high 4 days ago - low 1 day ago| and |high 2 days ago - low 4 days ago| (swing range); buy when price crosses
+    today's open + 0.5 x range, sell under the open - 0.5 x range (first cross of the day, intraday bars); stop 0.5 x
+    range from the entry level, target 4R. Differs from BK05 (yesterday's range, open stop, day-end exit)."""
+    o, h, l, c, v = _ohlcv(df)
+    d, first, to, day = _daily_on_bars(df, 1)
+    rng = np.fmax(np.abs(d[4]["h"] - d[1]["l"]), np.abs(d[2]["h"] - d[4]["l"]))
+    bl, sl_ = to + 0.5 * rng, to - 0.5 * rng
+    up, dn = c > bl, c < sl_
+    g = pd.DataFrame({"d": day, "u": up, "n": dn})
+    fu = g.groupby("d")["u"].cumsum().to_numpy() == 1
+    fd = g.groupby("d")["n"].cumsum().to_numpy() == 1
+    L, S = _excl(up & fu, dn & fd)
+    return L, S, _plan_r(bl - 0.5 * rng, sl_ + 0.5 * rng, 4.0)
+
+
+def _lw_break(df, cond_l, cond_s, mult=0.5):
+    """On the chart's own bars (a daily chart = the source; on intraday charts each bar stands for a day): the bar
+    closes over its open + mult x the previous bar's range (under open - mult x range) after the pattern on the bars
+    before it. Ours: the close instead of the source's stop-order cross inside the day."""
+    o, h, l, c, v = _ohlcv(df)
+    d = {k: {"o": _r(o, k), "h": _r(h, k), "l": _r(l, k), "c": _r(c, k)} for k in range(1, 5)}
+    rng = d[1]["h"] - d[1]["l"]
+    L = (c > o + mult * rng) & cond_l(d)
+    S = (c < o - mult * rng) & cond_s(d)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(d[1]["l"], d[1]["h"], 3.0, max_bars=3)
+
+
+def s_lw_three_down_break(df):
+    """Larry Williams Market Secrets Part 9 'Patterns to Profit' (https://www.mql5.com/en/articles/21063 ; daily):
+    after three down closes in a row buy the move over the open + 0.5 x the previous bar's range (after three up
+    closes sell under the open - 0.5 x range); stop the previous bar's low (high), target 3R, out after 3 bars."""
+    def cl(d):
+        return (d[1]["c"] < d[2]["c"]) & (d[2]["c"] < d[3]["c"]) & (d[3]["c"] < d[4]["c"])
+
+    def cs(d):
+        return (d[1]["c"] > d[2]["c"]) & (d[2]["c"] > d[3]["c"]) & (d[3]["c"] > d[4]["c"])
+    return _lw_break(df, cl, cs)
+
+
+def s_lw_outside_day_break(df):
+    """Larry Williams Part 9 (https://www.mql5.com/en/articles/21063): the previous bar a bearish outside bar (higher
+    high, lower low - or, ours, a body that engulfs the previous body - close under its open) -> buy the move over the open + 0.5 x its range; mirror after a bullish
+    outside bar; stop its low (high), target 3R, out after 3 bars."""
+    def out(d):  # outside by high / low, or by the body (feeds whose highs / lows are only close +/- spread)
+        hl = (d[1]["h"] > d[2]["h"]) & (d[1]["l"] < d[2]["l"])
+        bd = (np.fmax(d[1]["o"], d[1]["c"]) >= np.fmax(d[2]["o"], d[2]["c"])) & \
+             (np.fmin(d[1]["o"], d[1]["c"]) <= np.fmin(d[2]["o"], d[2]["c"])) & (d[1]["o"] != d[1]["c"])
+        return hl | bd
+
+    def cl(d):
+        return out(d) & (d[1]["c"] < d[1]["o"])
+
+    def cs(d):
+        return out(d) & (d[1]["c"] > d[1]["o"])
+    return _lw_break(df, cl, cs)
+
+
+def s_lw_short_term_swing(df):
+    """Larry Williams Part 4 short-term swing points (https://www.mql5.com/en/articles/20716 ; daily, any chart):
+    bar 2's low under the lows of bars 1 and 3 (bar 1 = the bar just closed), skipped when bar 2 is an outside bar of
+    bar 3 or bar 1 is an inside bar of bar 2 -> buy; mirror with highs -> sell. Stop at bar 2's low (high); the
+    source's default exit: hold one bar (out at the next bar)."""
+    o, h, l, c, v = _ohlcv(df)
+    h1, l1, h2, l2, h3, l3 = h, l, _r(h, 1), _r(l, 1), _r(h, 2), _r(l, 2)
+    outside2 = (h2 > h3) & (l2 < l3)
+    inside1 = (h1 < h2) & (l1 > l2)
+    L = (l2 < l1) & (l2 < l3) & ~outside2 & ~inside1
+    S = (h2 > h1) & (h2 > h3) & ~outside2 & ~inside1
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", l2, h2), "target": None, "max_bars": 1}
+
+
+# ---------------- SC490-SC503 strategies on the new indicators (agents/indicators/classic6.py) ----------------
+def s_cti_trend(df):
+    """Ehlers Correlation Trend Indicator (TASC 2020.05, https://www.traders.com/Documentation/FEEDbk_docs/2020/05/TradersTips.html ):
+    CTI 20 crosses over +0.5 (trend begins) buys, under -0.5 sells; out when it falls back under 0 (over 0); stop 2
+    ATR (ours - the article gives no stop)."""
+    o, h, l, c, v = _ohlcv(df)
+    x = IND.correlation_trend(df)["cti"]
+    L = cross_up(x, np.full(len(c), 0.5))
+    S = cross_down(x, np.full(len(c), -0.5))
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": x < 0, "exit_short": x > 0}
+
+
+def s_ttm_trend_flip(df):
+    """TTM Trend (Carter; our build agents/indicators ttm_trend): the second trend bar of the new colour after 6+
+    bars of the other colour, with the EMA50 slope agreeing; stop 1.5 ATR, target 2R, out on 2 bars of the other
+    colour (Carter: 'stay in while the bars stay blue')."""
+    o, h, l, c, v = _ohlcv(df)
+    tr_ = IND.ttm_trend(df)["trend"]
+    up, dn = tr_ == 1, tr_ == -1
+    run_dn = _s(dn.astype(float)).rolling(6).sum().to_numpy()
+    run_up = _s(up.astype(float)).rolling(6).sum().to_numpy()
+    e = ema(c, 50)
+    es = e > _r(e, 3)
+    L = up & _r(up.astype(float)).astype(bool) & (_r(run_dn, 2) >= 6) & es
+    S = dn & _r(dn.astype(float)).astype(bool) & (_r(run_up, 2) >= 6) & ~es
+    L, S = _excl(L, S)
+    ex_l = dn & _r(dn.astype(float)).astype(bool)
+    ex_s = up & _r(up.astype(float)).astype(bool)
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 2.0), "exit_long": ex_l, "exit_short": ex_s}
+
+
+def s_ttm_scalper_trend(df):
+    """TTM Scalper reversal squares (Carter; our build agents/indicators ttm_scalper) taken only with the trend: buy
+    square while the close is over EMA 50, sell square under it; stop 0.2 ATR beyond the pivot bar, target 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.ttm_scalper(df)
+    a = atr(h, l, c, 14)
+    e = ema(c, 50)
+    L, S = _excl(z["buy"] & (c > e), z["sell"] & (c < e))
+    return L, S, _plan_r(z["pivot_low"] - 0.2 * a, z["pivot_high"] + 0.2 * a, 2.0)
+
+
+def s_murrey_extreme_fade(df):
+    """Murrey Math (LuxAlgo https://www.luxalgo.com/library/indicator/murrey-math-levels/ : 0/8 ultimate support, 8/8
+    ultimate resistance, 4/8 pivot): a bar dips under 0/8 and closes back over it -> buy, target 4/8, stop 1/8 under
+    0/8; mirror at 8/8. Stop and target placement ours (the source names the roles only)."""
+    o, h, l, c, v = _ohlcv(df)
+    m = {k: _r(x) for k, x in IND.murrey_math(df).items()}  # the frame of the bar before (0/8 <= its own low)
+    L = (l < m["l0"]) & (c > m["l0"])
+    S = (h > m["l8"]) & (c < m["l8"])
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(m["l0"] - m["step"], m["l8"] + m["step"], m["l4"], m["l4"])
+
+
+def s_murrey_pivot_cross(df):
+    """Murrey Math 4/8 pivot (LuxAlgo summary: 'closes above / below 4/8'): a close over 4/8 after 3 closes under it
+    buys, target 6/8 (the next reversal rung), stop under 2/8; mirror. Placement ours."""
+    o, h, l, c, v = _ohlcv(df)
+    m = IND.murrey_math(df)
+    below = _s((c < m["l4"]).astype(float)).rolling(3).sum().to_numpy()
+    above = _s((c > m["l4"]).astype(float)).rolling(3).sum().to_numpy()
+    L = (c > m["l4"]) & (_r(below) >= 3)
+    S = (c < m["l4"]) & (_r(above) >= 3)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(m["l2"], m["l6"], m["l6"], m["l2"])
+
+
+def s_chaikin_vol_breakout(df):
+    """Chaikin Volatility (https://www.incrediblecharts.com/indicators/chaikin_volatility.php : expanding range
+    confirms a breakout, contracting range warns it is weak): a close beyond the prior 20-bar high / low taken only
+    while Chaikin Volatility 10/10 is >= 0 and not falling (ranges expanding); skipped when it is under 0 (ranges
+    contracting); stop 2 ATR, target 2R. Combination ours."""
+    o, h, l, c, v = _ohlcv(df)
+    cv = np.nan_to_num(IND.chaikin_volatility(df)["cv"])
+    ok = (cv >= 0) & (cv >= _r(cv) - 1e-12)
+    hi = _r(_s(h).rolling(20).max().to_numpy())
+    lo = _r(_s(l).rolling(20).min().to_numpy())
+    L, S = _excl(cross_up(c, hi) & ok, cross_down(c, lo) & ok)
+    return L, S, {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+def s_se_bands_squeeze_break(df):
+    """Andersen Standard Error Bands (https://www.luxalgo.com/library/indicator/standard-error-bands/ : tight bands =
+    a strong steady trend / coiling, widening after = the move): band width at its 50-bar low within the last 5 bars,
+    then a close outside the band in the direction of the regression slope; out on a close back at the middle; stop
+    2 ATR. Differs from SC322 (fade back inside a linreg / standard-error channel)."""
+    o, h, l, c, v = _ohlcv(df)
+    b = IND.standard_error_bands(df)
+    w = b["width"]
+    tight = _s((w <= _s(w).rolling(50).min().to_numpy() * 1.0001).astype(float)).rolling(5, min_periods=1).max().to_numpy() > 0
+    L = cross_up(c, b["upper"]) & (b["slope"] > 0) & tight
+    S = cross_down(c, b["lower"]) & (b["slope"] < 0) & tight
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": c < b["mid"], "exit_short": c > b["mid"]}
+
+
+def s_projection_osc_turn(df):
+    """Widner Projection Oscillator (https://www.prorealcode.com/prorealtime-indicators/projection-oscillator ;
+    LuxAlgo concept https://www.luxalgo.com/library/concept/projection-bands/ ): PO 14 crosses over its EMA5 trigger
+    with both under 20 -> buy, crosses under with both over 80 -> sell; stop 0.25 ATR beyond the projection band,
+    target the other band."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.projection(df)
+    po, tg = p["po"], p["trigger"]
+    a = atr(h, l, c, 14)
+    L = cross_up(np.nan_to_num(po, nan=50.0), tg) & (tg < 20) & (_r(po) < 20)
+    S = cross_down(np.nan_to_num(po, nan=50.0), tg) & (tg > 80) & (_r(po) > 80)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(p["lower"] - 0.25 * a, p["upper"] + 0.25 * a, p["upper"], p["lower"])
+
+
+def s_wave_pm_release(df):
+    """Mark Whistler's Wave PM (https://www.tradingview.com/script/l9Oqp36g-Wave-PM ; Whistler: energy stored while the
+    wave is low, released when it rises): Wave PM was under 0.5 within the last 10 bars and the close breaks the prior
+    20-bar high (low) while Wave PM rises over 0.5 -> trade the break; stop 2 ATR, target 2R. Combination ours."""
+    o, h, l, c, v = _ohlcv(df)
+    w = IND.wave_pm(df)["wpm"]
+    low_ = _s((w < 0.5).astype(float)).rolling(10, min_periods=1).max().to_numpy() > 0
+    rising = (w > 0.5) & (w > _r(w))
+    hi = _r(_s(h).rolling(20).max().to_numpy())
+    lo = _r(_s(l).rolling(20).min().to_numpy())
+    L, S = _excl(cross_up(c, hi) & low_ & rising, cross_down(c, lo) & low_ & rising)
+    return L, S, {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+def s_szo_zone_trend(df):
+    """Khalil Sentiment Zone Oscillator (TASC 2012.05, https://www.traders.com/Documentation/FEEDbk_docs/2012/05/Khalil.html ):
+    in an uptrend (close over EMA 60) buy when SZO crosses back over the dynamic oversold zone; in a downtrend sell
+    when it crosses back under the overbought zone; out on the opposite zone touch; stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.sentiment_zone(df)
+    s = z["szo"]
+    L = cross_up(s, z["os"]) & z["trend_up"]
+    S = cross_down(s, z["ob"]) & ~z["trend_up"]
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": s >= z["ob"], "exit_short": s <= z["os"]}
+
+
+def s_rainbow_osc_cross(df):
+    """Widner Rainbow Oscillator (cTrader https://help.ctrader.com/indicators/built-in/oscillators/rainbow-oscillator/ :
+    buy when RO crosses over its average, sell under; stop beyond the recent swing; out on the opposite cross), only
+    while the Rainbow Bandwidth widens (over its 20-bar mean, Widner: wide rainbow = trend); stop the 5-bar swing +/-
+    0.1 ATR, opposite-cross exit."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.rainbow(df)
+    ro, sg, rb = z["ro"], z["signal"], z["rb"]
+    wide = rb > sma(rb, 20)
+    a = atr(h, l, c, 14)
+    L = cross_up(ro, sg) & wide & (ro > 0)
+    S = cross_down(ro, sg) & wide & (ro < 0)
+    L, S = _excl(L, S)
+    sl, ss = _swl(h, l, a, 5, 0.1)
+    return L, S, {"stop": ("level", sl, ss), "target": None, "exit_long": cross_down(ro, sg),
+                  "exit_short": cross_up(ro, sg)}
+
+
+def s_madrid_ribbon_turn(df):
+    """Madrid MA Ribbon (https://in.tradingview.com/script/WH01CtjA-Madrid-MA-Ribbon-Bar ): the ribbon turns all lime
+    (score 1: all 18 EMAs rising over EMA100) after being under 0.5 within 10 bars -> buy; all red -> sell; out when
+    the score crosses 0; stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    sc = IND.madrid_ribbon(df)["score"]
+    was_lo = _s((sc < 0.5).astype(float)).rolling(10, min_periods=1).max().to_numpy() > 0
+    was_hi = _s((sc > -0.5).astype(float)).rolling(10, min_periods=1).max().to_numpy() > 0
+    L = _onset(sc >= 0.999) & was_lo
+    S = _onset(sc <= -0.999) & was_hi
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": sc < 0, "exit_short": sc > 0}
+
+
+def s_pitchfork_lower_test(df):
+    """Andrews' Pitchfork (Trading Setups Review https://www.tradingsetupsreview.com/andrews-pitchfork-trading-strategy/ ):
+    in a bull fork (A a pivot low, rising median) price tests the lower parallel - the bar's low reaches it while its
+    high stays over it - and closes as a bull bar over the line -> buy (source: a tick over that bar's high; ours: the
+    close); stop under the bar's low (0.1 ATR), target the median line. Mirror at the upper parallel of a bear fork."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.pitchfork(df)
+    a = atr(h, l, c, 14)
+    bull = (p["dir"] == 1) & (p["median"] > _r(p["median"]))
+    bear = (p["dir"] == -1) & (p["median"] < _r(p["median"]))
+    L = bull & (l <= p["lower"]) & (h > p["lower"]) & (c > o) & (c > p["lower"]) & (p["median"] > c)
+    S = bear & (h >= p["upper"]) & (l < p["upper"]) & (c < o) & (c < p["upper"]) & (p["median"] < c)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(l - 0.1 * a, h + 0.1 * a, p["median"], p["median"])
+
+
+def s_kase_devstop_trend(df):
+    """Kase Dev-Stops (https://www.prorealcode.com/prorealtime-indicators/kase-dev-stop/ ): enter on the SMA 10 / 21
+    cross; exit when the close crosses the Dev-Stop 2 (2.2 std) line; hard stop at Dev-Stop 3 (3.6 std). Entry rule
+    ours (Kase sells the stops, the entry is the trend change)."""
+    o, h, l, c, v = _ohlcv(df)
+    k = IND.kase_devstop(df)
+    f, s_ = sma(c, 10), sma(c, 21)
+    L, S = _excl(cross_up(f, s_), cross_down(f, s_))
+    sl = np.where(k["ds3_long"] < c, k["ds3_long"], c - 3 * atr(h, l, c, 14))
+    ss = np.where(k["ds3_short"] > c, k["ds3_short"], c + 3 * atr(h, l, c, 14))
+    return L, S, {"stop": ("level", sl, ss), "target": None, "exit_long": c < k["ds2_long"],
+                  "exit_short": c > k["ds2_short"]}
+
+
+SCOUT.update({
+    "SC482": ("Trend Surfer DAX: RSI14 SMA4 vs SMA29 (35 / 40), 09-11 + 15-17 Frankfurt, out 11:00 / 17:00, 12 ATR / 2.5 ATR (ProRealCode)", s_prc_trend_surfer_dax, ["5Min"]),
+    "SC483": ("VTAD Turnaround Tuesday DAX: Monday 17:45 buy under the daily SMA34, out Wednesday 09:00, 2.6% / 2.3% (ProRealCode)", s_vtad_turnaround_dax, ["5Min", "15Min"]),
+    "SC484": ("Breaks and retests: 20-bar close extreme break, retest 2-4 bars later closing back, 2% stop, 2R (StockSharp)", s_ss_breaks_retests, ["5Min", "15Min"]),
+    "SC485": ("S/R 55-bar breakout with the EMA500, 3 ATR 1:1, opposite-band exit (StockSharp)", s_ss_sr_break_ema500, ["1Hour", "4Hour"]),
+    "SC486": ("Larry Williams swing-range breakout: open +/- 0.5 x max(|H4-L1|, |H2-L4|), range stop, 4R (MQL5 Part 6)", s_lw_swing_range_breakout, ["15Min", "1Hour"]),
+    "SC487": ("Larry Williams 3 down (up) closes -> open + 0.5 x range break, prior-bar stop, 3R, 3 bars (MQL5 Part 9)", s_lw_three_down_break, ["1Hour", "4Hour", "1Day"]),
+    "SC488": ("Larry Williams bearish (bullish) outside day -> open + 0.5 x range break, 3R, 3 bars (MQL5 Part 9)", s_lw_outside_day_break, ["1Hour", "4Hour", "1Day"]),
+    "SC489": ("Larry Williams short-term swing low / high (no outside / inside bars), pivot-bar stop, hold 1 bar (MQL5 Part 4)", s_lw_short_term_swing, ["1Hour", "4Hour", "1Day"]),
+    "SC490": ("Ehlers Correlation Trend 20 crosses +/-0.5, out at 0, 2 ATR (TASC 2020.05)", s_cti_trend, _F + ["4Hour"]),
+    "SC491": ("TTM Trend flip: 2 bars of the new colour after 6+, EMA50 slope, 1.5 ATR, 2R, 2-bar colour exit (Carter)", s_ttm_trend_flip, _F + ["4Hour"]),
+    "SC492": ("TTM Scalper reversal square with the EMA50 trend, pivot stop, 2R (Carter)", s_ttm_scalper_trend, _F),
+    "SC493": ("Murrey Math 0/8 - 8/8 false break fade, target 4/8, 1/8 stop", s_murrey_extreme_fade, _F + ["4Hour"]),
+    "SC494": ("Murrey Math 4/8 pivot cross after 3 closes on the other side, target 6/8 / 2/8", s_murrey_pivot_cross, _F + ["4Hour"]),
+    "SC495": ("20-bar breakout only while Chaikin Volatility 10/10 is >= 0 and not falling (ranges expanding), 2 ATR, 2R", s_chaikin_vol_breakout, _F + ["4Hour"]),
+    "SC496": ("Standard Error Bands squeeze (50-bar low width) then close outside with the slope, mid exit, 2 ATR (Andersen)", s_se_bands_squeeze_break, _F + ["4Hour"]),
+    "SC497": ("Projection Oscillator crosses its trigger under 20 / over 80, band stop, other-band target (Widner)", s_projection_osc_turn, _F + ["4Hour"]),
+    "SC498": ("Wave PM energy release: 20-bar break as Wave PM rises through 0.5 after compression, 2 ATR, 2R (Whistler)", s_wave_pm_release, _F + ["4Hour"]),
+    "SC499": ("Sentiment Zone Oscillator back over the dynamic oversold (under overbought) with the EMA60 trend, zone exit (Khalil)", s_szo_zone_trend, _F + ["4Hour"]),
+    "SC500": ("Rainbow Oscillator crosses its SMA9 while the rainbow widens, swing stop, opposite-cross exit (Widner)", s_rainbow_osc_cross, _F + ["4Hour"]),
+    "SC501": ("Madrid MA Ribbon turns all lime / all red, out at score 0, 2 ATR", s_madrid_ribbon_turn, _F + ["4Hour"]),
+    "SC502": ("Andrews' Pitchfork lower (upper) parallel test with a bull (bear) bar, bar stop, median-line target", s_pitchfork_lower_test, _F + ["4Hour", "1Day"]),
+    "SC503": ("SMA 10/21 cross, Kase Dev-Stop 2 exit, Dev-Stop 3 hard stop (Kase)", s_kase_devstop_trend, _M + ["1Day"]),
+})

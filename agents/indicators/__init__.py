@@ -78,6 +78,9 @@ from agents.indicators.divergence import divergence
 from agents.indicators.auction import naked_poc, poor_extremes, single_prints
 from agents.indicators.demark2 import td_pressure, td_rei
 from agents.indicators.daycycle import noise_area, taylor_cycle
+from agents.indicators.classic6 import (chaikin_volatility, correlation_trend, kase_devstop, madrid_ribbon, murrey_math,
+                                        pitchfork, projection, rainbow, sentiment_zone, standard_error_bands, ttm_scalper,
+                                        ttm_trend, wave_pm)
 TV = "https://www.tradingview.com/script/"
 TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
@@ -363,6 +366,19 @@ INDICATORS = {
     "td_pressure": (td_pressure, "TD Pressure 5 (our build): volume-weighted close-vs-true-range buying share 0..100", "https://www.luxalgo.com/library/concept/td-pressure/"),
     "taylor_cycle": (taylor_cycle, "Taylor 3-day cycle inputs: previous day H/L/C, consecutive down / up days, inside day, today's running H/L", "https://futures.stonex.com/blog/the-taylor-trading-technique"),
     "noise_area": (noise_area, "Zarattini-Aziz-Barbon noise area: open x (1 +/- 14-session mean |move from the open| at the time of day), session VWAP", "https://concretumgroup.com/beat-the-market-an-effective-intraday-momentum-strategy-for-sp500-etf-spy/"),
+    "correlation_trend": (correlation_trend, "Ehlers Correlation Trend Indicator (TASC 2020.05): correlation of 20 closes with a rising line, -1..1", TV + "azjhI4tC-Correlation-Trend-Indicator-Dr-John-Ehlers"),
+    "ttm_trend": (ttm_trend, "TTM Trend (Carter, our build): close vs the 6-bar average of Heikin-Ashi body midpoints, up / down bars", "https://www.prorealcode.com/prorealtime-indicators/ttm-trend-price/"),
+    "ttm_scalper": (ttm_scalper, "TTM Scalper (Carter, our build): 3-bar reversal square - 5-bar swing extreme then two lower (higher) closes", TV + "CddpDBGA-TTM-scalper-indicator-Strategy"),
+    "murrey_math": (murrey_math, "Murrey Math lines 0/8-8/8 (+/-2/8) of the 64-bar frame snapped to the price octave (MT4 table, no fine adjustments)", "https://www.luxalgo.com/library/indicator/murrey-math-levels/"),
+    "chaikin_volatility": (chaikin_volatility, "Chaikin Volatility: 10-bar % change of EMA10(high - low)", "https://ta-lib.org/functions/cvi.html"),
+    "standard_error_bands": (standard_error_bands, "Andersen Standard Error Bands: linreg 21 endpoint +/- 2 standard errors, SMA 3; band width", "https://www.luxalgo.com/library/indicator/standard-error-bands/"),
+    "projection": (projection, "Widner Projection Bands (highs / lows projected along their regression slope, 14) + Projection Oscillator with EMA5 trigger", "https://www.luxalgo.com/library/concept/projection-bands/"),
+    "wave_pm": (wave_pm, "Whistler Wave PM: tanh(StdDev14 x 1.25 / its 100-bar RMS), 0..1 volatility energy", "https://www.prorealcode.com/prorealtime-indicators/mark-whistlers-wave-pm"),
+    "sentiment_zone": (sentiment_zone, "Khalil Sentiment Zone Oscillator: TEMA14 of +/-1 closes, dynamic 30-bar 95% / 5% zones, EMA60 trend", TT + "2012/05/Khalil.html"),
+    "rainbow": (rainbow, "Widner Rainbow Oscillator + Rainbow Bandwidth: 10 recursive SMA2 vs the 10-bar close range", "https://www.luxalgo.com/library/concept/rainbow-oscillator/"),
+    "madrid_ribbon": (madrid_ribbon, "Madrid MA Ribbon: EMAs 5-90 lime / green / maroon / red vs EMA100, score (lime - red) / 18", "https://in.tradingview.com/script/WH01CtjA-Madrid-MA-Ribbon-Bar"),
+    "pitchfork": (pitchfork, "Automatic Andrews' Pitchfork from the last three confirmed alternating 5-bar pivots: median, upper, lower, bull / bear", "https://www.luxalgo.com/library/indicator/andrews-pitchfork/"),
+    "kase_devstop": (kase_devstop, "Kase Dev-Stops: 2-bar true range avg + 0 / 1 / 2.2 / 3.6 std under the 20-bar high close (over the low), SMA10/21 trend", "https://www.prorealcode.com/prorealtime-indicators/kase-dev-stop/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

@@ -171,3 +171,6 @@ Bot 5's 19 scout strategies at stop x0.75 / 1 / 1.25 / 1.5 (agents/stop_study.py
 all together on 2026 +243R / +270R (as traded) / +235R / +165R; a per-strategy pick on 2025 loses -70R on 2026.
 A wider stop cuts the costs' share but makes the same target fewer R - it does not pay. Bot 6's own grid already
 chose its stops. Decision: no change. (SC326|5Min|GBPUSD: costs 13% of the risk at x1 - its result already includes them.)
+
+## Follow-through after entry (user, 16.11.2026)
+Tal reads the first bars after the entry as order flow: strong bars in the trade's direction = more sellers than buyers (or buyers) = more confidence the trade is right. A good entry for him is one the market confirms at once. (Task b5follow1611 tests it as a management rule.)

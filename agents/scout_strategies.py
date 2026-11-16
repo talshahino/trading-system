@@ -10975,7 +10975,6 @@ def s_kase_devstop_trend(df):
 
 SCOUT.update({
     "SC482": ("Trend Surfer DAX: RSI14 SMA4 vs SMA29 (35 / 40), 09-11 + 15-17 Frankfurt, out 11:00 / 17:00, 12 ATR / 2.5 ATR (ProRealCode)", s_prc_trend_surfer_dax, ["5Min"]),
-    "SC483": ("VTAD Turnaround Tuesday DAX: Monday 17:45 buy under the daily SMA34, out Wednesday 09:00, 2.6% / 2.3% (ProRealCode)", s_vtad_turnaround_dax, ["5Min", "15Min"]),
     "SC484": ("Breaks and retests: 20-bar close extreme break, retest 2-4 bars later closing back, 2% stop, 2R (StockSharp)", s_ss_breaks_retests, ["5Min", "15Min"]),
     "SC485": ("S/R 55-bar breakout with the EMA500, 3 ATR 1:1, opposite-band exit (StockSharp)", s_ss_sr_break_ema500, ["1Hour", "4Hour"]),
     "SC486": ("Larry Williams swing-range breakout: open +/- 0.5 x max(|H4-L1|, |H2-L4|), range stop, 4R (MQL5 Part 6)", s_lw_swing_range_breakout, ["15Min", "1Hour"]),

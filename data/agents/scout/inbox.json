@@ -12060,29 +12060,6 @@
    "rules": "ProRealCode 'Trend Surfer DAX' (https://www.prorealcode.com/prorealtime-trading-strategies/trend-surfer-dax/ ; DAX 5-minute): RSI 14, priceline = SMA4(RSI), middle band = SMA29(RSI). Entries only 09:00-11:00 and 15:00-17:00 Frankfurt. Long: priceline over the middle band, priceline > 35 and middle band > 40 (first bar of that state); short: priceline crosses under the middle band with priceline > 40. Out at 11:00 / 17:00. Source stop 250 points and target 50 points translated for DAX 5m (ATR14 ~ 20 points): stop 12 ATR, target 2.5 ATR."
   },
   {
-   "id": "SC483",
-   "name": "VTAD Turnaround Tuesday DAX: Monday 17:45 buy under the daily SMA34, out Wednesday 09:00, 2.6% / 2.3% (ProRealCode)",
-   "source": "VTAD Turnaround Tuesday - DAX 15m (ProRealCode)",
-   "url": "https://www.prorealcode.com/prorealtime-trading-strategies/vtad-turnaround-tuesday-dax-15m/",
-   "added": "2026-11-16",
-   "timeframes": [
-    "5Min",
-    "15Min"
-   ],
-   "markets": [
-    "index"
-   ],
-   "bots": [
-    "bot1",
-    "bot2",
-    "bot3",
-    "bot4",
-    "bot5",
-    "bot6"
-   ],
-   "rules": "VTAD Turnaround Tuesday - DAX (ProRealCode https://www.prorealcode.com/prorealtime-trading-strategies/vtad-turnaround-tuesday-dax-15m/ ; 15-minute, also 5-minute): on Monday at 17:45 Frankfurt buy if Monday's close is under the daily SMA34 of closes; out on Wednesday 09:00 Frankfurt. Stop 2.6% and target 2.3% (the poster's additions; VTAD has none). Ours: the 17:45 bar's close stands for Monday's close, the SMA34 uses the 33 completed days before + that close. Differs from SE03 (Monday down vs Friday, out Tuesday's close, no SMA filter)."
-  },
-  {
    "id": "SC484",
    "name": "Breaks and retests: 20-bar close extreme break, retest 2-4 bars later closing back, 2% stop, 2R (StockSharp)",
    "source": "StockSharp example 0563 Breaks and Retests",

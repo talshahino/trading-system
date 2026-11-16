@@ -1,0 +1,2245 @@
+{
+ "at": "2026-11-16T22:22:30+00:00",
+ "strategies": [
+  "BK07|15Min|EURUSD",
+  "BK07|15Min|US100",
+  "FR03|15Min|GBPUSD",
+  "IB034|15Min|XAUUSD",
+  "QC04|15Min|EURUSD",
+  "SC042|15Min|XAUUSD",
+  "SC056|15Min|GBPUSD",
+  "SC069|15Min|XAUUSD",
+  "SC071|15Min|US30",
+  "SC077|5Min|US30",
+  "SC138|15Min|XAUUSD",
+  "SC142|15Min|XAUUSD",
+  "SC154|5Min|XAUUSD",
+  "SC311|15Min|GER40",
+  "SC326|15Min|USDCHF",
+  "SC326|15Min|USDJPY",
+  "SC326|5Min|GBPUSD",
+  "SC333|15Min|XAUUSD",
+  "SC402|15Min|XAUUSD",
+  "SC402|5Min|XAUUSD",
+  "SC432|15Min|XAUUSD",
+  "SC441|5Min|XAUUSD",
+  "SC446|5Min|US30"
+ ],
+ "symbols": [
+  "EURUSD",
+  "GBPUSD",
+  "GER40",
+  "US100",
+  "US30",
+  "USDCHF",
+  "USDJPY",
+  "XAUUSD"
+ ],
+ "risk": {
+  "IB034|15Min|XAUUSD": 0.00042,
+  "SC311|15Min|GER40": 0.00126,
+  "SC138|15Min|XAUUSD": 0.0028,
+  "SC402|15Min|XAUUSD": 0.00126,
+  "SC402|5Min|XAUUSD": 0.0018,
+  "SC432|15Min|XAUUSD": 0.00042,
+  "SC154|5Min|XAUUSD": 0.0028,
+  "SC069|15Min|XAUUSD": 0.0028,
+  "SC333|15Min|XAUUSD": 0.00126,
+  "SC071|15Min|US30": 0.0028,
+  "SC042|15Min|XAUUSD": 0.0028,
+  "SC441|5Min|XAUUSD": 0.00042,
+  "SC056|15Min|GBPUSD": 0.0028,
+  "SC077|5Min|US30": 0.0018,
+  "SC326|15Min|USDCHF": 0.00126,
+  "SC326|5Min|GBPUSD": 0.0018,
+  "QC04|15Min|EURUSD": 0.00126,
+  "BK07|15Min|EURUSD": 0.0028,
+  "FR03|15Min|GBPUSD": 0.0028,
+  "BK07|15Min|US100": 0.0028,
+  "SC142|15Min|XAUUSD": 0.0028,
+  "SC326|15Min|USDJPY": 0.00126,
+  "SC446|5Min|US30": 0.00042
+ },
+ "stack": {
+  "asis": {
+   "train": {
+    "trades": 2904,
+    "total": 79.1,
+    "win": 40.2,
+    "green_days": 56.0,
+    "days": 175,
+    "max_dd": 7.95,
+    "worst_day": -2.99,
+    "day_sd": 1.703,
+    "guard_cut": 4,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3803,
+    "total": 56.96,
+    "win": 39.4,
+    "green_days": 51.1,
+    "days": 227,
+    "max_dd": 11.12,
+    "worst_day": -2.83,
+    "day_sd": 1.57,
+    "guard_cut": 2,
+    "guard_skipped": 0
+   },
+   "stacked": {
+    "train": 1654,
+    "unseen": 2073
+   }
+  },
+  "skip": {
+   "train": {
+    "trades": 1493,
+    "total": 43.16,
+    "win": 39.4,
+    "green_days": 49.1,
+    "days": 175,
+    "max_dd": 6.32,
+    "worst_day": -2.4,
+    "day_sd": 1.223,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 2036,
+    "total": 31.79,
+    "win": 38.7,
+    "green_days": 44.7,
+    "days": 226,
+    "max_dd": 11.32,
+    "worst_day": -2.08,
+    "day_sd": 1.155,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   },
+   "stacked": null
+  },
+  "half": {
+   "train": {
+    "trades": 2904,
+    "total": 61.0,
+    "win": 40.2,
+    "green_days": 54.3,
+    "days": 175,
+    "max_dd": 5.63,
+    "worst_day": -2.37,
+    "day_sd": 1.368,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3803,
+    "total": 39.75,
+    "win": 39.4,
+    "green_days": 49.3,
+    "days": 227,
+    "max_dd": 9.56,
+    "worst_day": -2.06,
+    "day_sd": 1.241,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   },
+   "stacked": null
+  },
+  "cap2": {
+   "train": {
+    "trades": 1995,
+    "total": 48.48,
+    "win": 39.0,
+    "green_days": 53.1,
+    "days": 175,
+    "max_dd": 5.39,
+    "worst_day": -2.68,
+    "day_sd": 1.346,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 2730,
+    "total": 39.35,
+    "win": 38.6,
+    "green_days": 48.0,
+    "days": 227,
+    "max_dd": 11.32,
+    "worst_day": -2.21,
+    "day_sd": 1.292,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   },
+   "stacked": null
+  }
+ },
+ "direction": {
+  "BK07|15Min|EURUSD": {
+   "asis": {
+    "train": {
+     "n": 55,
+     "sum": 30.37,
+     "mean": 0.552,
+     "win": 34.5
+    },
+    "unseen": {
+     "n": 68,
+     "sum": 12.87,
+     "mean": 0.189,
+     "win": 30.9
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 28,
+     "sum": 3.23,
+     "mean": 0.115,
+     "win": 32.1
+    },
+    "unseen": {
+     "n": 39,
+     "sum": 8.89,
+     "mean": 0.228,
+     "win": 30.8
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 25,
+     "sum": 3.53,
+     "mean": 0.141,
+     "win": 32.0
+    },
+    "unseen": {
+     "n": 37,
+     "sum": 2.56,
+     "mean": 0.069,
+     "win": 27.0
+    }
+   },
+   "both": {
+    "train": {
+     "n": 21,
+     "sum": 0.65,
+     "mean": 0.031,
+     "win": 33.3
+    },
+    "unseen": {
+     "n": 32,
+     "sum": 0.72,
+     "mean": 0.022,
+     "win": 25.0
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 55,
+     "sum": 30.37,
+     "mean": 0.552,
+     "win": 34.5
+    },
+    "unseen": {
+     "n": 68,
+     "sum": 12.87,
+     "mean": 0.189,
+     "win": 30.9
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 29,
+     "short": 26
+    },
+    "unseen": {
+     "long": 35,
+     "short": 33
+    }
+   },
+   "pick": "asis"
+  },
+  "BK07|15Min|US100": {
+   "asis": {
+    "train": {
+     "n": 45,
+     "sum": 17.0,
+     "mean": 0.378,
+     "win": 24.4
+    },
+    "unseen": {
+     "n": 59,
+     "sum": 12.52,
+     "mean": 0.212,
+     "win": 30.5
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 30,
+     "sum": 23.23,
+     "mean": 0.774,
+     "win": 30.0
+    },
+    "unseen": {
+     "n": 31,
+     "sum": 15.82,
+     "mean": 0.51,
+     "win": 29.0
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 28,
+     "sum": 19.23,
+     "mean": 0.687,
+     "win": 28.6
+    },
+    "unseen": {
+     "n": 29,
+     "sum": 19.92,
+     "mean": 0.687,
+     "win": 34.5
+    }
+   },
+   "both": {
+    "train": {
+     "n": 28,
+     "sum": 19.23,
+     "mean": 0.687,
+     "win": 28.6
+    },
+    "unseen": {
+     "n": 24,
+     "sum": 23.02,
+     "mean": 0.959,
+     "win": 37.5
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 45,
+     "sum": 17.0,
+     "mean": 0.378,
+     "win": 24.4
+    },
+    "unseen": {
+     "n": 59,
+     "sum": 12.52,
+     "mean": 0.212,
+     "win": 30.5
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 30,
+     "short": 15
+    },
+    "unseen": {
+     "long": 32,
+     "short": 27
+    }
+   },
+   "pick": "ema50h"
+  },
+  "FR03|15Min|GBPUSD": {
+   "asis": {
+    "train": {
+     "n": 17,
+     "sum": 22.96,
+     "mean": 1.351,
+     "win": 58.8
+    },
+    "unseen": {
+     "n": 34,
+     "sum": 12.22,
+     "mean": 0.359,
+     "win": 38.2
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 11,
+     "sum": 18.3,
+     "mean": 1.664,
+     "win": 63.6
+    },
+    "unseen": {
+     "n": 24,
+     "sum": 2.86,
+     "mean": 0.119,
+     "win": 41.7
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 12,
+     "sum": 12.83,
+     "mean": 1.069,
+     "win": 50.0
+    },
+    "unseen": {
+     "n": 22,
+     "sum": 1.73,
+     "mean": 0.079,
+     "win": 40.9
+    }
+   },
+   "both": {
+    "train": {
+     "n": 9,
+     "sum": 13.84,
+     "mean": 1.538,
+     "win": 55.6
+    },
+    "unseen": {
+     "n": 21,
+     "sum": 1.22,
+     "mean": 0.058,
+     "win": 38.1
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 17,
+     "sum": 22.96,
+     "mean": 1.351,
+     "win": 58.8
+    },
+    "unseen": {
+     "n": 34,
+     "sum": 12.22,
+     "mean": 0.359,
+     "win": 38.2
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 17,
+     "short": 0
+    },
+    "unseen": {
+     "long": 34,
+     "short": 0
+    }
+   },
+   "pick": "asis"
+  },
+  "IB034|15Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 384,
+     "sum": 25.24,
+     "mean": 0.066,
+     "win": 39.1
+    },
+    "unseen": {
+     "n": 498,
+     "sum": 27.79,
+     "mean": 0.056,
+     "win": 35.9
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 384,
+     "sum": 25.24,
+     "mean": 0.066,
+     "win": 39.1
+    },
+    "unseen": {
+     "n": 494,
+     "sum": 29.04,
+     "mean": 0.059,
+     "win": 36.0
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 378,
+     "sum": 27.75,
+     "mean": 0.073,
+     "win": 39.2
+    },
+    "unseen": {
+     "n": 489,
+     "sum": 26.14,
+     "mean": 0.053,
+     "win": 36.0
+    }
+   },
+   "both": {
+    "train": {
+     "n": 378,
+     "sum": 27.75,
+     "mean": 0.073,
+     "win": 39.2
+    },
+    "unseen": {
+     "n": 487,
+     "sum": 26.05,
+     "mean": 0.053,
+     "win": 35.9
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 241,
+     "sum": 15.4,
+     "mean": 0.064,
+     "win": 39.0
+    },
+    "unseen": {
+     "n": 301,
+     "sum": 14.55,
+     "mean": 0.048,
+     "win": 36.2
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 242,
+     "short": 142
+    },
+    "unseen": {
+     "long": 220,
+     "short": 278
+    }
+   },
+   "pick": "slope20h"
+  },
+  "QC04|15Min|EURUSD": {
+   "asis": {
+    "train": {
+     "n": 46,
+     "sum": 13.6,
+     "mean": 0.296,
+     "win": 32.6
+    },
+    "unseen": {
+     "n": 52,
+     "sum": 24.66,
+     "mean": 0.474,
+     "win": 23.1
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 43,
+     "sum": 14.79,
+     "mean": 0.344,
+     "win": 32.6
+    },
+    "unseen": {
+     "n": 50,
+     "sum": 13.22,
+     "mean": 0.264,
+     "win": 22.0
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 42,
+     "sum": 7.61,
+     "mean": 0.181,
+     "win": 28.6
+    },
+    "unseen": {
+     "n": 48,
+     "sum": 15.35,
+     "mean": 0.32,
+     "win": 22.9
+    }
+   },
+   "both": {
+    "train": {
+     "n": 41,
+     "sum": 8.66,
+     "mean": 0.211,
+     "win": 29.3
+    },
+    "unseen": {
+     "n": 48,
+     "sum": 15.35,
+     "mean": 0.32,
+     "win": 22.9
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 46,
+     "sum": 13.6,
+     "mean": 0.296,
+     "win": 32.6
+    },
+    "unseen": {
+     "n": 52,
+     "sum": 24.66,
+     "mean": 0.474,
+     "win": 23.1
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 22,
+     "short": 24
+    },
+    "unseen": {
+     "long": 26,
+     "short": 26
+    }
+   },
+   "pick": "ema50h"
+  },
+  "SC042|15Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 236,
+     "sum": 4.25,
+     "mean": 0.018,
+     "win": 41.1
+    },
+    "unseen": {
+     "n": 313,
+     "sum": 11.97,
+     "mean": 0.038,
+     "win": 41.9
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 69,
+     "sum": 5.66,
+     "mean": 0.082,
+     "win": 40.6
+    },
+    "unseen": {
+     "n": 94,
+     "sum": 16.18,
+     "mean": 0.172,
+     "win": 45.7
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 44,
+     "sum": -4.74,
+     "mean": -0.108,
+     "win": 31.8
+    },
+    "unseen": {
+     "n": 56,
+     "sum": 4.69,
+     "mean": 0.084,
+     "win": 39.3
+    }
+   },
+   "both": {
+    "train": {
+     "n": 42,
+     "sum": -2.64,
+     "mean": -0.063,
+     "win": 33.3
+    },
+    "unseen": {
+     "n": 51,
+     "sum": 3.58,
+     "mean": 0.07,
+     "win": 39.2
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 199,
+     "sum": 15.08,
+     "mean": 0.076,
+     "win": 42.7
+    },
+    "unseen": {
+     "n": 260,
+     "sum": 6.92,
+     "mean": 0.027,
+     "win": 42.3
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 111,
+     "short": 125
+    },
+    "unseen": {
+     "long": 166,
+     "short": 147
+    }
+   },
+   "pick": "noreent"
+  },
+  "SC056|15Min|GBPUSD": {
+   "asis": {
+    "train": {
+     "n": 92,
+     "sum": 10.64,
+     "mean": 0.116,
+     "win": 60.9
+    },
+    "unseen": {
+     "n": 115,
+     "sum": 5.12,
+     "mean": 0.045,
+     "win": 57.4
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 76,
+     "sum": 7.93,
+     "mean": 0.104,
+     "win": 61.8
+    },
+    "unseen": {
+     "n": 101,
+     "sum": 2.09,
+     "mean": 0.021,
+     "win": 52.5
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 81,
+     "sum": 8.83,
+     "mean": 0.109,
+     "win": 60.5
+    },
+    "unseen": {
+     "n": 104,
+     "sum": 2.93,
+     "mean": 0.028,
+     "win": 55.8
+    }
+   },
+   "both": {
+    "train": {
+     "n": 73,
+     "sum": 7.44,
+     "mean": 0.102,
+     "win": 60.3
+    },
+    "unseen": {
+     "n": 98,
+     "sum": 1.72,
+     "mean": 0.018,
+     "win": 53.1
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 90,
+     "sum": 10.16,
+     "mean": 0.113,
+     "win": 61.1
+    },
+    "unseen": {
+     "n": 113,
+     "sum": 5.31,
+     "mean": 0.047,
+     "win": 57.5
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 28,
+     "short": 64
+    },
+    "unseen": {
+     "long": 32,
+     "short": 83
+    }
+   },
+   "pick": "asis"
+  },
+  "SC069|15Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 107,
+     "sum": 1.21,
+     "mean": 0.011,
+     "win": 50.5
+    },
+    "unseen": {
+     "n": 112,
+     "sum": 9.78,
+     "mean": 0.087,
+     "win": 61.6
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 84,
+     "sum": 3.18,
+     "mean": 0.038,
+     "win": 52.4
+    },
+    "unseen": {
+     "n": 86,
+     "sum": 7.95,
+     "mean": 0.092,
+     "win": 62.8
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 95,
+     "sum": -0.36,
+     "mean": -0.004,
+     "win": 51.6
+    },
+    "unseen": {
+     "n": 94,
+     "sum": 5.01,
+     "mean": 0.053,
+     "win": 60.6
+    }
+   },
+   "both": {
+    "train": {
+     "n": 81,
+     "sum": 3.04,
+     "mean": 0.038,
+     "win": 53.1
+    },
+    "unseen": {
+     "n": 82,
+     "sum": 6.51,
+     "mean": 0.079,
+     "win": 62.2
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 107,
+     "sum": 1.21,
+     "mean": 0.011,
+     "win": 50.5
+    },
+    "unseen": {
+     "n": 112,
+     "sum": 9.78,
+     "mean": 0.087,
+     "win": 61.6
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 69,
+     "short": 38
+    },
+    "unseen": {
+     "long": 54,
+     "short": 58
+    }
+   },
+   "pick": "ema50h"
+  },
+  "SC071|15Min|US30": {
+   "asis": {
+    "train": {
+     "n": 28,
+     "sum": 2.21,
+     "mean": 0.079,
+     "win": 35.7
+    },
+    "unseen": {
+     "n": 77,
+     "sum": 7.6,
+     "mean": 0.099,
+     "win": 50.6
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 4,
+     "sum": -2.38,
+     "mean": -0.595,
+     "win": 25.0
+    },
+    "unseen": {
+     "n": 10,
+     "sum": 6.48,
+     "mean": 0.648,
+     "win": 90.0
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 3,
+     "sum": -1.32,
+     "mean": -0.439,
+     "win": 33.3
+    },
+    "unseen": {
+     "n": 5,
+     "sum": 4.37,
+     "mean": 0.875,
+     "win": 80.0
+    }
+   },
+   "both": {
+    "train": {
+     "n": 3,
+     "sum": -1.32,
+     "mean": -0.439,
+     "win": 33.3
+    },
+    "unseen": {
+     "n": 5,
+     "sum": 4.37,
+     "mean": 0.875,
+     "win": 80.0
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 24,
+     "sum": 3.25,
+     "mean": 0.135,
+     "win": 37.5
+    },
+    "unseen": {
+     "n": 61,
+     "sum": -1.92,
+     "mean": -0.032,
+     "win": 45.9
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 28,
+     "short": 0
+    },
+    "unseen": {
+     "long": 77,
+     "short": 0
+    }
+   },
+   "pick": "noreent"
+  },
+  "SC077|5Min|US30": {
+   "asis": {
+    "train": {
+     "n": 103,
+     "sum": 23.28,
+     "mean": 0.226,
+     "win": 24.3
+    },
+    "unseen": {
+     "n": 150,
+     "sum": 19.61,
+     "mean": 0.131,
+     "win": 24.0
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 47,
+     "sum": 9.25,
+     "mean": 0.197,
+     "win": 27.7
+    },
+    "unseen": {
+     "n": 69,
+     "sum": -26.79,
+     "mean": -0.388,
+     "win": 15.9
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 51,
+     "sum": 12.98,
+     "mean": 0.254,
+     "win": 25.5
+    },
+    "unseen": {
+     "n": 65,
+     "sum": -10.06,
+     "mean": -0.155,
+     "win": 18.5
+    }
+   },
+   "both": {
+    "train": {
+     "n": 41,
+     "sum": 14.86,
+     "mean": 0.362,
+     "win": 29.3
+    },
+    "unseen": {
+     "n": 55,
+     "sum": -20.05,
+     "mean": -0.364,
+     "win": 16.4
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 103,
+     "sum": 23.28,
+     "mean": 0.226,
+     "win": 24.3
+    },
+    "unseen": {
+     "n": 150,
+     "sum": 19.61,
+     "mean": 0.131,
+     "win": 24.0
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 56,
+     "short": 47
+    },
+    "unseen": {
+     "long": 73,
+     "short": 77
+    }
+   },
+   "pick": "asis"
+  },
+  "SC138|15Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 29,
+     "sum": 5.18,
+     "mean": 0.179,
+     "win": 65.5
+    },
+    "unseen": {
+     "n": 48,
+     "sum": 4.07,
+     "mean": 0.085,
+     "win": 66.7
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 10,
+     "sum": 0.1,
+     "mean": 0.01,
+     "win": 60.0
+    },
+    "unseen": {
+     "n": 7,
+     "sum": 1.89,
+     "mean": 0.27,
+     "win": 85.7
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 3,
+     "sum": -1.81,
+     "mean": -0.603,
+     "win": 33.3
+    },
+    "unseen": {
+     "n": 6,
+     "sum": -0.38,
+     "mean": -0.063,
+     "win": 66.7
+    }
+   },
+   "both": {
+    "train": {
+     "n": 3,
+     "sum": -1.81,
+     "mean": -0.603,
+     "win": 33.3
+    },
+    "unseen": {
+     "n": 4,
+     "sum": 0.55,
+     "mean": 0.138,
+     "win": 75.0
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 25,
+     "sum": 7.1,
+     "mean": 0.284,
+     "win": 72.0
+    },
+    "unseen": {
+     "n": 44,
+     "sum": 7.2,
+     "mean": 0.164,
+     "win": 70.5
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 29,
+     "short": 0
+    },
+    "unseen": {
+     "long": 48,
+     "short": 0
+    }
+   },
+   "pick": "noreent"
+  },
+  "SC142|15Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 66,
+     "sum": 28.11,
+     "mean": 0.426,
+     "win": 34.8
+    },
+    "unseen": {
+     "n": 75,
+     "sum": 9.3,
+     "mean": 0.124,
+     "win": 36.0
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 66,
+     "sum": 28.11,
+     "mean": 0.426,
+     "win": 34.8
+    },
+    "unseen": {
+     "n": 75,
+     "sum": 9.3,
+     "mean": 0.124,
+     "win": 36.0
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 64,
+     "sum": 30.25,
+     "mean": 0.473,
+     "win": 35.9
+    },
+    "unseen": {
+     "n": 74,
+     "sum": 9.42,
+     "mean": 0.127,
+     "win": 36.5
+    }
+   },
+   "both": {
+    "train": {
+     "n": 64,
+     "sum": 30.25,
+     "mean": 0.473,
+     "win": 35.9
+    },
+    "unseen": {
+     "n": 74,
+     "sum": 9.42,
+     "mean": 0.127,
+     "win": 36.5
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 57,
+     "sum": 22.78,
+     "mean": 0.4,
+     "win": 35.1
+    },
+    "unseen": {
+     "n": 69,
+     "sum": 12.95,
+     "mean": 0.188,
+     "win": 36.2
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 32,
+     "short": 34
+    },
+    "unseen": {
+     "long": 29,
+     "short": 46
+    }
+   },
+   "pick": "slope20h"
+  },
+  "SC154|5Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 138,
+     "sum": 21.18,
+     "mean": 0.153,
+     "win": 42.8
+    },
+    "unseen": {
+     "n": 288,
+     "sum": 9.04,
+     "mean": 0.031,
+     "win": 38.2
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 54,
+     "sum": 7.39,
+     "mean": 0.137,
+     "win": 38.9
+    },
+    "unseen": {
+     "n": 94,
+     "sum": 9.92,
+     "mean": 0.106,
+     "win": 40.4
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 51,
+     "sum": 11.71,
+     "mean": 0.23,
+     "win": 43.1
+    },
+    "unseen": {
+     "n": 92,
+     "sum": 4.76,
+     "mean": 0.052,
+     "win": 39.1
+    }
+   },
+   "both": {
+    "train": {
+     "n": 48,
+     "sum": 8.57,
+     "mean": 0.178,
+     "win": 41.7
+    },
+    "unseen": {
+     "n": 82,
+     "sum": 2.48,
+     "mean": 0.03,
+     "win": 37.8
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 129,
+     "sum": 20.02,
+     "mean": 0.155,
+     "win": 43.4
+    },
+    "unseen": {
+     "n": 234,
+     "sum": -2.62,
+     "mean": -0.011,
+     "win": 36.8
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 69,
+     "short": 69
+    },
+    "unseen": {
+     "long": 141,
+     "short": 147
+    }
+   },
+   "pick": "asis"
+  },
+  "SC311|15Min|GER40": {
+   "asis": {
+    "train": {
+     "n": 167,
+     "sum": 9.08,
+     "mean": 0.054,
+     "win": 59.9
+    },
+    "unseen": {
+     "n": 223,
+     "sum": 4.53,
+     "mean": 0.02,
+     "win": 58.3
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 57,
+     "sum": 3.02,
+     "mean": 0.053,
+     "win": 59.6
+    },
+    "unseen": {
+     "n": 68,
+     "sum": -1.71,
+     "mean": -0.025,
+     "win": 58.8
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 57,
+     "sum": 4.66,
+     "mean": 0.082,
+     "win": 63.2
+    },
+    "unseen": {
+     "n": 61,
+     "sum": 1.27,
+     "mean": 0.021,
+     "win": 62.3
+    }
+   },
+   "both": {
+    "train": {
+     "n": 48,
+     "sum": 3.14,
+     "mean": 0.065,
+     "win": 60.4
+    },
+    "unseen": {
+     "n": 46,
+     "sum": -1.69,
+     "mean": -0.037,
+     "win": 58.7
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 153,
+     "sum": 8.34,
+     "mean": 0.055,
+     "win": 60.1
+    },
+    "unseen": {
+     "n": 209,
+     "sum": 7.12,
+     "mean": 0.034,
+     "win": 59.8
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 79,
+     "short": 88
+    },
+    "unseen": {
+     "long": 101,
+     "short": 122
+    }
+   },
+   "pick": "asis"
+  },
+  "SC326|15Min|USDCHF": {
+   "asis": {
+    "train": {
+     "n": 119,
+     "sum": 10.91,
+     "mean": 0.092,
+     "win": 37.0
+    },
+    "unseen": {
+     "n": 127,
+     "sum": 9.05,
+     "mean": 0.071,
+     "win": 33.9
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 48,
+     "sum": 8.98,
+     "mean": 0.187,
+     "win": 45.8
+    },
+    "unseen": {
+     "n": 43,
+     "sum": -12.78,
+     "mean": -0.297,
+     "win": 30.2
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 59,
+     "sum": -4.02,
+     "mean": -0.068,
+     "win": 39.0
+    },
+    "unseen": {
+     "n": 54,
+     "sum": -21.98,
+     "mean": -0.407,
+     "win": 31.5
+    }
+   },
+   "both": {
+    "train": {
+     "n": 43,
+     "sum": 0.83,
+     "mean": 0.019,
+     "win": 44.2
+    },
+    "unseen": {
+     "n": 38,
+     "sum": -20.67,
+     "mean": -0.544,
+     "win": 26.3
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 105,
+     "sum": 4.59,
+     "mean": 0.044,
+     "win": 35.2
+    },
+    "unseen": {
+     "n": 114,
+     "sum": 16.47,
+     "mean": 0.144,
+     "win": 34.2
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 82,
+     "short": 37
+    },
+    "unseen": {
+     "long": 63,
+     "short": 64
+    }
+   },
+   "pick": "asis"
+  },
+  "SC326|15Min|USDJPY": {
+   "asis": {
+    "train": {
+     "n": 104,
+     "sum": 32.66,
+     "mean": 0.314,
+     "win": 41.3
+    },
+    "unseen": {
+     "n": 123,
+     "sum": 5.51,
+     "mean": 0.045,
+     "win": 39.8
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 45,
+     "sum": 14.7,
+     "mean": 0.327,
+     "win": 42.2
+    },
+    "unseen": {
+     "n": 49,
+     "sum": 7.27,
+     "mean": 0.148,
+     "win": 40.8
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 54,
+     "sum": 22.01,
+     "mean": 0.408,
+     "win": 42.6
+    },
+    "unseen": {
+     "n": 49,
+     "sum": -0.29,
+     "mean": -0.006,
+     "win": 36.7
+    }
+   },
+   "both": {
+    "train": {
+     "n": 43,
+     "sum": 14.82,
+     "mean": 0.345,
+     "win": 41.9
+    },
+    "unseen": {
+     "n": 41,
+     "sum": 5.1,
+     "mean": 0.124,
+     "win": 39.0
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 96,
+     "sum": 23.3,
+     "mean": 0.243,
+     "win": 39.6
+    },
+    "unseen": {
+     "n": 113,
+     "sum": 6.71,
+     "mean": 0.059,
+     "win": 39.8
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 60,
+     "short": 44
+    },
+    "unseen": {
+     "long": 60,
+     "short": 63
+    }
+   },
+   "pick": "asis"
+  },
+  "SC326|5Min|GBPUSD": {
+   "asis": {
+    "train": {
+     "n": 120,
+     "sum": 15.16,
+     "mean": 0.126,
+     "win": 23.3
+    },
+    "unseen": {
+     "n": 128,
+     "sum": 43.06,
+     "mean": 0.336,
+     "win": 25.0
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 45,
+     "sum": 11.07,
+     "mean": 0.246,
+     "win": 17.8
+    },
+    "unseen": {
+     "n": 49,
+     "sum": -0.7,
+     "mean": -0.014,
+     "win": 20.4
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 60,
+     "sum": 9.57,
+     "mean": 0.159,
+     "win": 20.0
+    },
+    "unseen": {
+     "n": 63,
+     "sum": -10.15,
+     "mean": -0.161,
+     "win": 23.8
+    }
+   },
+   "both": {
+    "train": {
+     "n": 44,
+     "sum": 12.14,
+     "mean": 0.276,
+     "win": 18.2
+    },
+    "unseen": {
+     "n": 45,
+     "sum": -14.83,
+     "mean": -0.33,
+     "win": 20.0
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 105,
+     "sum": 23.27,
+     "mean": 0.222,
+     "win": 24.8
+    },
+    "unseen": {
+     "n": 111,
+     "sum": 34.69,
+     "mean": 0.312,
+     "win": 23.4
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 57,
+     "short": 63
+    },
+    "unseen": {
+     "long": 59,
+     "short": 69
+    }
+   },
+   "pick": "noreent"
+  },
+  "SC333|15Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 293,
+     "sum": 42.3,
+     "mean": 0.144,
+     "win": 37.5
+    },
+    "unseen": {
+     "n": 378,
+     "sum": 6.79,
+     "mean": 0.018,
+     "win": 34.9
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 146,
+     "sum": 38.51,
+     "mean": 0.264,
+     "win": 38.4
+    },
+    "unseen": {
+     "n": 172,
+     "sum": -0.56,
+     "mean": -0.003,
+     "win": 33.1
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 115,
+     "sum": 27.7,
+     "mean": 0.241,
+     "win": 36.5
+    },
+    "unseen": {
+     "n": 130,
+     "sum": 8.24,
+     "mean": 0.063,
+     "win": 33.8
+    }
+   },
+   "both": {
+    "train": {
+     "n": 103,
+     "sum": 30.09,
+     "mean": 0.292,
+     "win": 37.9
+    },
+    "unseen": {
+     "n": 119,
+     "sum": 4.87,
+     "mean": 0.041,
+     "win": 34.5
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 195,
+     "sum": 59.44,
+     "mean": 0.305,
+     "win": 41.0
+    },
+    "unseen": {
+     "n": 260,
+     "sum": 17.29,
+     "mean": 0.066,
+     "win": 35.4
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 293,
+     "short": 0
+    },
+    "unseen": {
+     "long": 378,
+     "short": 0
+    }
+   },
+   "pick": "noreent"
+  },
+  "SC402|15Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 213,
+     "sum": 44.51,
+     "mean": 0.209,
+     "win": 37.1
+    },
+    "unseen": {
+     "n": 273,
+     "sum": 22.8,
+     "mean": 0.084,
+     "win": 37.4
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 137,
+     "sum": 20.25,
+     "mean": 0.148,
+     "win": 38.7
+    },
+    "unseen": {
+     "n": 165,
+     "sum": 28.98,
+     "mean": 0.176,
+     "win": 41.2
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 131,
+     "sum": 24.58,
+     "mean": 0.188,
+     "win": 39.7
+    },
+    "unseen": {
+     "n": 160,
+     "sum": 21.91,
+     "mean": 0.137,
+     "win": 39.4
+    }
+   },
+   "both": {
+    "train": {
+     "n": 118,
+     "sum": 16.59,
+     "mean": 0.141,
+     "win": 40.7
+    },
+    "unseen": {
+     "n": 140,
+     "sum": 24.27,
+     "mean": 0.173,
+     "win": 40.0
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 213,
+     "sum": 44.51,
+     "mean": 0.209,
+     "win": 37.1
+    },
+    "unseen": {
+     "n": 273,
+     "sum": 22.8,
+     "mean": 0.084,
+     "win": 37.4
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 117,
+     "short": 96
+    },
+    "unseen": {
+     "long": 136,
+     "short": 137
+    }
+   },
+   "pick": "asis"
+  },
+  "SC402|5Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 226,
+     "sum": 47.86,
+     "mean": 0.212,
+     "win": 35.8
+    },
+    "unseen": {
+     "n": 276,
+     "sum": 39.75,
+     "mean": 0.144,
+     "win": 36.2
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 139,
+     "sum": 16.06,
+     "mean": 0.116,
+     "win": 36.7
+    },
+    "unseen": {
+     "n": 154,
+     "sum": 39.8,
+     "mean": 0.258,
+     "win": 39.6
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 133,
+     "sum": 22.56,
+     "mean": 0.17,
+     "win": 36.8
+    },
+    "unseen": {
+     "n": 155,
+     "sum": 37.18,
+     "mean": 0.24,
+     "win": 38.1
+    }
+   },
+   "both": {
+    "train": {
+     "n": 118,
+     "sum": 15.22,
+     "mean": 0.129,
+     "win": 38.1
+    },
+    "unseen": {
+     "n": 131,
+     "sum": 37.74,
+     "mean": 0.288,
+     "win": 38.9
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 226,
+     "sum": 47.86,
+     "mean": 0.212,
+     "win": 35.8
+    },
+    "unseen": {
+     "n": 276,
+     "sum": 39.75,
+     "mean": 0.144,
+     "win": 36.2
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 120,
+     "short": 106
+    },
+    "unseen": {
+     "long": 138,
+     "short": 138
+    }
+   },
+   "pick": "asis"
+  },
+  "SC432|15Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 196,
+     "sum": 28.14,
+     "mean": 0.144,
+     "win": 44.9
+    },
+    "unseen": {
+     "n": 236,
+     "sum": 21.27,
+     "mean": 0.09,
+     "win": 44.1
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 123,
+     "sum": 27.87,
+     "mean": 0.227,
+     "win": 48.0
+    },
+    "unseen": {
+     "n": 153,
+     "sum": 16.23,
+     "mean": 0.106,
+     "win": 43.8
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 123,
+     "sum": 29.6,
+     "mean": 0.241,
+     "win": 48.0
+    },
+    "unseen": {
+     "n": 155,
+     "sum": 12.8,
+     "mean": 0.083,
+     "win": 42.6
+    }
+   },
+   "both": {
+    "train": {
+     "n": 110,
+     "sum": 31.14,
+     "mean": 0.283,
+     "win": 49.1
+    },
+    "unseen": {
+     "n": 137,
+     "sum": 14.24,
+     "mean": 0.104,
+     "win": 43.8
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 183,
+     "sum": 26.25,
+     "mean": 0.143,
+     "win": 45.9
+    },
+    "unseen": {
+     "n": 220,
+     "sum": 21.37,
+     "mean": 0.097,
+     "win": 44.5
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 104,
+     "short": 92
+    },
+    "unseen": {
+     "long": 121,
+     "short": 115
+    }
+   },
+   "pick": "both"
+  },
+  "SC441|5Min|XAUUSD": {
+   "asis": {
+    "train": {
+     "n": 62,
+     "sum": 40.88,
+     "mean": 0.659,
+     "win": 32.3
+    },
+    "unseen": {
+     "n": 86,
+     "sum": 4.52,
+     "mean": 0.053,
+     "win": 23.3
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 30,
+     "sum": 18.95,
+     "mean": 0.632,
+     "win": 33.3
+    },
+    "unseen": {
+     "n": 45,
+     "sum": 22.22,
+     "mean": 0.494,
+     "win": 28.9
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 31,
+     "sum": 20.9,
+     "mean": 0.674,
+     "win": 32.3
+    },
+    "unseen": {
+     "n": 44,
+     "sum": 19.92,
+     "mean": 0.453,
+     "win": 27.3
+    }
+   },
+   "both": {
+    "train": {
+     "n": 25,
+     "sum": 9.92,
+     "mean": 0.397,
+     "win": 28.0
+    },
+    "unseen": {
+     "n": 40,
+     "sum": 24.3,
+     "mean": 0.607,
+     "win": 30.0
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 62,
+     "sum": 40.88,
+     "mean": 0.659,
+     "win": 32.3
+    },
+    "unseen": {
+     "n": 86,
+     "sum": 4.52,
+     "mean": 0.053,
+     "win": 23.3
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 25,
+     "short": 37
+    },
+    "unseen": {
+     "long": 45,
+     "short": 41
+    }
+   },
+   "pick": "asis"
+  },
+  "SC446|5Min|US30": {
+   "asis": {
+    "train": {
+     "n": 58,
+     "sum": 5.33,
+     "mean": 0.092,
+     "win": 43.1
+    },
+    "unseen": {
+     "n": 64,
+     "sum": 10.67,
+     "mean": 0.167,
+     "win": 50.0
+    }
+   },
+   "ema50h": {
+    "train": {
+     "n": 30,
+     "sum": -4.24,
+     "mean": -0.141,
+     "win": 36.7
+    },
+    "unseen": {
+     "n": 34,
+     "sum": -0.84,
+     "mean": -0.025,
+     "win": 47.1
+    }
+   },
+   "slope20h": {
+    "train": {
+     "n": 33,
+     "sum": -7.56,
+     "mean": -0.229,
+     "win": 30.3
+    },
+    "unseen": {
+     "n": 38,
+     "sum": 2.07,
+     "mean": 0.054,
+     "win": 47.4
+    }
+   },
+   "both": {
+    "train": {
+     "n": 28,
+     "sum": -4.25,
+     "mean": -0.152,
+     "win": 32.1
+    },
+    "unseen": {
+     "n": 31,
+     "sum": -0.72,
+     "mean": -0.023,
+     "win": 48.4
+    }
+   },
+   "noreent": {
+    "train": {
+     "n": 55,
+     "sum": 2.5,
+     "mean": 0.046,
+     "win": 41.8
+    },
+    "unseen": {
+     "n": 64,
+     "sum": 10.67,
+     "mean": 0.167,
+     "win": 50.0
+    }
+   },
+   "sides": {
+    "train": {
+     "long": 33,
+     "short": 25
+    },
+    "unseen": {
+     "long": 39,
+     "short": 25
+    }
+   },
+   "pick": "asis"
+  }
+ },
+ "direction_whole": {
+  "asis": {
+   "train": {
+    "trades": 2904,
+    "total": 79.1,
+    "win": 40.2,
+    "green_days": 56.0,
+    "days": 175,
+    "max_dd": 7.95,
+    "worst_day": -2.99,
+    "day_sd": 1.703,
+    "guard_cut": 4,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3803,
+    "total": 56.96,
+    "win": 39.4,
+    "green_days": 51.1,
+    "days": 227,
+    "max_dd": 11.12,
+    "worst_day": -2.83,
+    "day_sd": 1.57,
+    "guard_cut": 2,
+    "guard_skipped": 0
+   }
+  },
+  "pick_per_strategy": {
+   "train": {
+    "trades": 2611,
+    "total": 89.82,
+    "win": 41.0,
+    "green_days": 56.6,
+    "days": 175,
+    "max_dd": 7.11,
+    "worst_day": -2.78,
+    "day_sd": 1.655,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3430,
+    "total": 52.08,
+    "win": 39.2,
+    "green_days": 49.8,
+    "days": 227,
+    "max_dd": 10.09,
+    "worst_day": -2.78,
+    "day_sd": 1.462,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   }
+  },
+  "sc071_ema50h": {
+   "train": {
+    "trades": 2880,
+    "total": 77.81,
+    "win": 40.2,
+    "green_days": 54.9,
+    "days": 175,
+    "max_dd": 7.95,
+    "worst_day": -2.99,
+    "day_sd": 1.695,
+    "guard_cut": 4,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3736,
+    "total": 56.65,
+    "win": 39.3,
+    "green_days": 52.4,
+    "days": 227,
+    "max_dd": 10.83,
+    "worst_day": -2.83,
+    "day_sd": 1.561,
+    "guard_cut": 2,
+    "guard_skipped": 0
+   }
+  },
+  "sc071_both": {
+   "train": {
+    "trades": 2879,
+    "total": 78.11,
+    "win": 40.2,
+    "green_days": 54.9,
+    "days": 175,
+    "max_dd": 7.95,
+    "worst_day": -2.99,
+    "day_sd": 1.694,
+    "guard_cut": 4,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3731,
+    "total": 56.06,
+    "win": 39.2,
+    "green_days": 52.0,
+    "days": 227,
+    "max_dd": 11.19,
+    "worst_day": -2.83,
+    "day_sd": 1.561,
+    "guard_cut": 2,
+    "guard_skipped": 0
+   }
+  },
+  "sc071_noreent": {
+   "train": {
+    "trades": 2900,
+    "total": 79.39,
+    "win": 40.2,
+    "green_days": 55.4,
+    "days": 175,
+    "max_dd": 7.95,
+    "worst_day": -2.99,
+    "day_sd": 1.707,
+    "guard_cut": 4,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3787,
+    "total": 54.29,
+    "win": 39.2,
+    "green_days": 50.7,
+    "days": 227,
+    "max_dd": 11.12,
+    "worst_day": -2.83,
+    "day_sd": 1.565,
+    "guard_cut": 2,
+    "guard_skipped": 0
+   }
+  },
+  "all_ema50h": {
+   "train": {
+    "trades": 1706,
+    "total": 48.56,
+    "win": 40.7,
+    "green_days": 48.3,
+    "days": 174,
+    "max_dd": 7.83,
+    "worst_day": -1.95,
+    "day_sd": 1.366,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 2106,
+    "total": 32.14,
+    "win": 39.2,
+    "green_days": 43.2,
+    "days": 227,
+    "max_dd": 9.12,
+    "worst_day": -2.34,
+    "day_sd": 1.139,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   }
+  }
+ }
+}

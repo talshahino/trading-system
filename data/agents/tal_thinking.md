@@ -182,3 +182,6 @@ range's Fibonacci 0.618 / 0.786 / edge, no new trades while choppy. Every way lo
 on 2025 and on 2026 (the least bad: stop to entry at +1R, -1 to -12 points). Trades opened while choppy earn too;
 the profit is in the trades that break out of the range - cutting them in the range cuts the profit. Entries while
 choppy stay allowed (user). Decision: no change. Do not bring chop exits again without a new idea.
+
+## A stop hit before the move (user, 16.11.2026)
+When a trade is stopped and the price then goes on to the target, Tal reads it as a wrong stop placement, not bad luck, and wants it researched and fixed. His structural fix: the stop beyond a further swing (the third swing) when the side that pushes (sellers / buyers) is clearly stronger. A trade that enters and is stopped in the same bar looks "illogical" to him. (Task b5stop1611; the general wider-stop test of 16.11 did not pay - each case is tested on the strategy itself before any change.)

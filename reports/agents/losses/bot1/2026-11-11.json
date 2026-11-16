@@ -121,9 +121,19 @@
    {
     "combo": "YT03|4Hour|GBPUSD",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.63",
+      "decision": "7f89ede95b98",
+      "at": "2026-11-16T22:05:35+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.63
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV39|1Hour|JP225",
@@ -161,13 +171,12 @@
     "cut_only": true
    }
   ],
-  "open": [
-   "YT03|4Hour|GBPUSD"
-  ],
+  "open": [],
   "cut_only": [
+   "YT03|4Hour|GBPUSD",
    "TV39|1Hour|JP225"
   ],
   "total_month_pct": -0.22,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

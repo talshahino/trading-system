@@ -513,9 +513,19 @@ def experiments(bot, budget_s, where):
     st = Store(bot)
     todo = []
     fixing_ = fixing(bot)
+    try:
+        from agents import rules_agent as R
+        known = set(R.STRATEGIES)
+    except Exception:  # noqa: BLE001
+        known = None
     for combo in bot_combos(bot):
         sym = combo.split("|")[2]
         if not runs_here(sym, where):
+            continue
+        if known is not None and combo.split("|")[0] not in known:
+            # a strategy the backtest machine does not know (bot 7, 16.11.2026: EV04 straddle, EV08 surprise, SH01
+            # shocks - each has its own study in agents/news_*.py / shocks.py): run_rules loads a year of minute bars
+            # and returns no variants, ~36 s per family per instrument (7 empty EV04 exits runs on 16.11 04:37-04:41)
             continue
         prio = (loss_priority(bot).get(combo) or {})
         pl = plan_now(bot, combo)

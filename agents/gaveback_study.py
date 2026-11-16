@@ -104,6 +104,16 @@ def census(t):
             "mfe_median": round(float(mf.median()), 2)}
 
 
+def _rep(book, risk):
+    """The whole bot's numbers with the curve beside the total (user, 16.11.2026, task mgr1611curve: "many small wins
+    every day rather than one big win"): win rate, % green days, fall from the peak, worst day, the daily spread."""
+    from agents import portfolio_check as PC
+    from agents import b5_night_study as NS
+    t, _ = PC.guarded(book, risk, True)
+    c = NS.curve(t)
+    return {k: c.get(k) for k in ("trades", "total", "worst_day", "max_dd", "win", "green_days", "day_sd")}
+
+
 def bot_report(bot):
     from agents import portfolio_check as PC
     import agent_portfolio as A
@@ -130,8 +140,7 @@ def bot_report(bot):
         for p, tt in per.items():
             s = apply(tt, way, bars)
             sims[(way, p)] = s
-            rep = PC.replay(CS._book(s, mults), risk)
-            row[p] = {k: rep[k] for k in ("trades", "total", "worst_day", "max_dd")}
+            row[p] = _rep(CS._book(s, mults), risk)
         res["ways"][way] = row
     # per strategy: R in each period under each way, and each strategy's own best way on the choosing period
     ps = {}
@@ -152,8 +161,7 @@ def bot_report(bot):
         s = []
         for c, g in tt.groupby("combo"):
             s += apply(g, pick.get(c, "asis"), bars)
-        rep = PC.replay(CS._book(sorted(s, key=lambda x: (x["a"], x["b"])), mults), risk)
-        row[p] = {k: rep[k] for k in ("trades", "total", "worst_day", "max_dd")}
+        row[p] = _rep(CS._book(sorted(s, key=lambda x: (x["a"], x["b"])), mults), risk)
     res["ways"]["pick_per_strategy"] = row
     a = res["ways"]["asis"]
     res["vs_asis"] = {w: {p: {"total": round(v[p]["total"] - a[p]["total"], 2), "max_dd": round(v[p]["max_dd"] - a[p]["max_dd"], 2)}

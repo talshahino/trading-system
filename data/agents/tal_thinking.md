@@ -185,3 +185,9 @@ choppy stay allowed (user). Decision: no change. Do not bring chop exits again w
 
 ## A stop hit before the move (user, 16.11.2026)
 When a trade is stopped and the price then goes on to the target, Tal reads it as a wrong stop placement, not bad luck, and wants it researched and fixed. His structural fix: the stop beyond a further swing (the third swing) when the side that pushes (sellers / buyers) is clearly stronger. A trade that enters and is stopped in the same bar looks "illogical" to him. (Task b5stop1611; the general wider-stop test of 16.11 did not pay - each case is tested on the strategy itself before any change.)
+
+## Conversation with the manager (user, 16.11.2026)
+Tal talks with the manager (spoken or typed) on the app's "מנהל הבוטים" page about everything across the bots. The
+conversation responder answers as the manager every hour on weekdays, and records what Tal said: principles here,
+standing rules in data/agents/user_rules.json, tasks in data/agents/replies.json "_tasks", and every exchange in
+data/agents/manager_talk.md. Every agent reads data/agents/manager_talk.md together with this file.

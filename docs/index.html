@@ -1616,7 +1616,7 @@ const REPLIES_URL = () => `https://raw.githubusercontent.com/talshahino/trading-
 const NOTES_URL = () => `https://raw.githubusercontent.com/talshahino/trading-system/live/live/trade_notes_state.json?t=${Math.floor(Date.now() / 60000)}`;
 let REP_DOC = null, REP_T = 0, NOTES_DOC = null;
 async function repliesDoc(force) {
-  if (!REP_DOC || force || Date.now() - REP_T > 60000) { try { REP_DOC = await (await fetch(REPLIES_URL(), {cache: "no-store"})).json(); REP_T = Date.now(); } catch (e) { REP_DOC = REP_DOC || {bots: {}}; } }
+  if (!REP_DOC || force || Date.now() - REP_T > 60000) { try { REP_DOC = await (await fetch(force ? REPLIES_URL().replace(/t=\d+/, "t=" + Date.now()) : REPLIES_URL(), {cache: "no-store"})).json(); REP_T = Date.now(); } catch (e) { REP_DOC = REP_DOC || {bots: {}}; } }
   return REP_DOC;
 }
 const seenGet = () => { try { return JSON.parse(localStorage.getItem("seenReplies") || "{}"); } catch (e) { return {}; } };
@@ -2585,7 +2585,8 @@ document.addEventListener("pointerdown", ev => {
 $("pop").onclick = e => { if (e.target.id === "pop" || e.target.id === "popOk") $("pop").classList.remove("on"); };
 
 addEventListener("resize", () => { if ($("eqc") && found[UI.cur]) eqChart(found[UI.cur], accBy(UI.cur)); });
-tick(); setInterval(tick, 60000); talkBadges(); setInterval(() => repliesDoc(true).then(talkBadges), 120000); setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
+tick(); setInterval(tick, 60000); talkBadges(); setInterval(() => { if (!document.hidden) repliesDoc(true).then(talkBadges); }, 20000);     // every 20 seconds (user, 16.11.2026)
+document.addEventListener("visibilitychange", () => { if (!document.hidden) repliesDoc(true).then(talkBadges); });   // and at once when the app comes back setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
 
 /* the phone's back button (user, 16.11.2026): one screen back inside the app each time, and only the accounts list
    leaves it. Inside an account: any tab -> its overview -> the accounts list. Overall statistics / news / management ->

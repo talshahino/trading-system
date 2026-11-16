@@ -165,3 +165,9 @@ Long and short on the same instrument in one bot are allowed (different timefram
 targets (each before the other's stop) - none beat "as today" on 2026; the conflicting trades earned on balance
 (bot 3 gold +98R in 2026). Decision: no change. Re-checked monthly (GitHub, 1st of the month); a way is brought to
 the user only if it beats "as today" in every bot on 2026 with no larger fall from the peak - never built without him.
+
+## Tight stops and costs (user, 16.11.2026)
+Bot 5's 19 scout strategies at stop x0.75 / 1 / 1.25 / 1.5 (agents/stop_study.py, reports/agents/bot5/stop_study):
+all together on 2026 +243R / +270R (as traded) / +235R / +165R; a per-strategy pick on 2025 loses -70R on 2026.
+A wider stop cuts the costs' share but makes the same target fewer R - it does not pay. Bot 6's own grid already
+chose its stops. Decision: no change. (SC326|5Min|GBPUSD: costs 13% of the risk at x1 - its result already includes them.)

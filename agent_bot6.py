@@ -491,9 +491,24 @@ SQZ6 = (("TREND", "sqzm"), ("TREND", "sqz"), ("TREND", "pdbrk"))
 BRK6 = (("REARM", True), ("BRKH", 1), ("BRKH", 3), ("BRKH", 6))
 FILT_HE["REARM"] = lambda v: "הוראת גאפ שבוטלה לפני סוף שבוע / חג חוזרת בפתיחה, כל עוד הגאפ בתוקף (REARM)"
 FILT_HE["BRKH"] = lambda v: f"בלי הוראת גאפ חדשה {v:g} שעות לפני הפסקה של שעתיים ומעלה (BRKH {v:g})"
-TASK6 = {"brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
+# PARTIAL EXITS IN EVERY MARKET (the user, 16.11.2026 17:18, task tal1611partial: "most of today's losses were in profit at
+# some point - take them out partially, as I keep telling you"; bot 5's tal1611gaveback, the same values on its tracks).
+# Head to head on bot 6's four running tracks and three indices, in place of the track's own break-even (EXIT): half /
+# a third out at 50% / 61.8% of the way with the rest's stop to the entry, the stop to the entry at 50%, and in R of the
+# trade's risk (tal_gap.exit_mode "...r", the same in simulate and live_trades): the stop to the entry / half out at
+# +1R / +2R. Bot 6's live losses of 13-16.11 reached +0.58R / +0.64R / +0.14R before the stop (none +1R, none half the
+# way). p50_50 alone was tested on 13.11 (ask_p50_50: worse on 2024-2025 on all four tracks). First in the user's step.
+GAVE6 = tuple(("EXIT", v) for v in ("p50_618", "p33_618", "be50", "be1r", "p50_1r", "p30_1r", "be2r", "p50_2r"))
+FILT_HE["EXIT"] = (lambda f0: lambda v: {
+    "p50_618": "חצי החוצה ב־61.8% מהדרך ליעד וסטופ לכניסה (p50_618)",
+    "p33_618": "שליש החוצה ב־61.8% מהדרך ליעד וסטופ לכניסה (p33_618)",
+    "be50": "סטופ לכניסה בחצי הדרך ליעד (be50)",
+    "be1r": "סטופ לכניסה ב־+1R (be1r)", "be2r": "סטופ לכניסה ב־+2R (be2r)",
+    "p50_1r": "חצי החוצה ב־+1R וסטופ לכניסה (p50_1r)", "p30_1r": "30% החוצה ב־+1R וסטופ לכניסה (p30_1r)",
+    "p50_2r": "חצי החוצה ב־+2R וסטופ לכניסה (p50_2r)"}.get(v) or f0(v))(FILT_HE["EXIT"])
+TASK6 = {"gaveback": GAVE6, "brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
          "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6}
-USER6 = BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+USER6 = GAVE6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
@@ -629,7 +644,9 @@ def filt_cards(idx, group=FILT6):
                           f"{x['mean_unseen']:+.2f}R לעסקה (היום {lv['mean_unseen']:+.2f}R על {lv['n_unseen']}), היום הגרוע "
                           f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. "
                           + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND", "G3", "SWP", "BRKH", "REARM") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10") else "")
+                          + ("משימה של טל מ־16.11 (הפסדים שהיו ברווח - יציאה חלקית). " if (k, v) in GAVE6 else "")
                           + "בבוט 5: " + ("עוד לא נבדק - שיטה של בוט 6, נשלחה לבוט 5 כמשימה (b6to5rearm)." if k == "REARM" else
+                                          _b5_gave(v) if (k, v) in GAVE6 else
                                           _b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND", "G3", "SWP", "BRKH") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10")
                                           else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
@@ -695,6 +712,27 @@ def ask_cards(idx):
                           detail={"world": "bot6", "by": "טל (הערה על עסקה, פעמיים, 13.11)", "ask": res[trk]},
                           change={"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg"}))
     return out, res
+
+
+def _b5_gave(val):
+    """What bot 5's agent found for the same partial exit on its tracks (tal_gap_results.json bot5.notes, its
+    tal1611gaveback tests: <track>_gaveback / <track>_gavebackr)."""
+    try:
+        n = (json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot5") or {}).get("notes") or {}
+    except Exception:  # noqa: BLE001
+        n = {}
+    got = []
+    for k, r in n.items():
+        if not k.endswith(("_gaveback", "_gavebackr")) or not isinstance(r, dict):
+            continue
+        if r.get("state") != "done":
+            got.append(f"{r.get('track', k.split('_')[0])} עוד רץ")
+            continue
+        x, lv = r.get(str(val)) or {}, (r.get("now") or {})
+        if x.get("unseen") and lv.get("unseen"):
+            got.append(f"{r['track']}: 2026 {lv['unseen']['total']:+.1f}R ← {x['unseen']['total']:+.1f}R"
+                       + (" (נבחר)" if r.get("chosen") == val and r.get("better") else ""))
+    return ("; ".join(got[:6]) if got else "אותה בדיקה רצה על המסלולים של בוט 5 (tal1611gaveback)") + "."
 
 
 def _b5_ladder(knob="LADDER", val=None):
@@ -1402,6 +1440,49 @@ def straddle6_cards(b5=None):
 STEPS = {}                 # this run's gap-method steps: {name: {done | err, at, sec, budget_sec}} -> results bot6.steps
 
 
+def census6(budget_s):
+    """Task tal1611partial (1): of the losing trades of each running track (the rules as the live bot runs them, the
+    three indices), how many first reached +0.5R / +1R / half the way to the target (tal_gap.simulate's mfe) - to 2025
+    and on 2026. Kept a week (the tracks' rules change rarely); a census, no choice is made on it."""
+    try:
+        old = (json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot6") or {}).get("gaveback_census") or {}
+        if old.get("at") and pd.Timestamp.now(tz="UTC") - pd.Timestamp(old["at"]) < pd.Timedelta(days=7) \
+                and old.get("tracks") and all(isinstance(v, dict) and "unseen" in v for v in old["tracks"].values()):
+            return old
+    except Exception:  # noqa: BLE001
+        pass
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    t0, got = time.time(), {}
+    run = {k: (pn, TG.ftmo_cfg(c)) for k, (pn, c) in live_tracks().items() if pn in pairs}
+    for sym in WORLD["symbols"]:
+        if time.time() - t0 > budget_s:
+            break
+        D = tal_load(sym)
+        if D is None:
+            continue
+        gcs = {}
+        for trk, (pn, c) in run.items():
+            t = TG.simulate(D, pairs[pn], c, gcs.setdefault(pairs[pn][0], {}))
+            if len(t):
+                got.setdefault(trk, []).append(t)
+    out = {}
+    for trk, ts in got.items():
+        t = pd.concat(ts, ignore_index=True)
+        t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
+        row = {"pair": run[trk][0], "symbols": len(ts)}
+        for nm, x in (("train", t[t["time"] < A.SPLIT]), ("unseen", t[t["time"] >= A.SPLIT])):
+            lo = x[(x["r"] < 0) & x["mfe"].notna()]
+            n = max(len(lo), 1)
+            row[nm] = {"trades": int(len(x)), "losses": int(len(lo)),
+                       "to_05r": round(100 * float((lo["mfe"] >= 0.5).sum()) / n, 1),
+                       "to_1r": round(100 * float((lo["mfe"] >= 1.0).sum()) / n, 1),
+                       "to_half": round(100 * float((lo["mfe"] >= 0.5 * lo["rr"]).sum()) / n, 1),
+                       "r_losses": round(float(lo["r"].sum()), 1)}
+        out[trk] = row
+    return {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "tracks": out,
+            "note": "% of the losing trades that first reached +0.5R / +1R / half the way to the target"}
+
+
 def tal(budget_s):
     t0 = time.time()
     idx0 = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")} if (TAL_DIR / "idx").exists() else {}
@@ -1505,6 +1586,14 @@ def tal(budget_s):
             doc["bot6"]["minstop_fix"] = mres
     except Exception as e:  # noqa: BLE001
         print(f"tal_gap minstop cards failed: {e}")
+    try:            # the losses that were in profit first (tal1611partial (1), 16.11.2026)
+        t1 = time.time()
+        doc["bot6"]["gaveback_census"] = census6(budget_s * 0.08)
+        STEPS["gaveback_census"] = {"done": len(doc["bot6"]["gaveback_census"].get("tracks") or {}),
+                                    "sec": round(time.time() - t1), "budget_sec": round(budget_s * 0.08)}
+    except Exception as e:  # noqa: BLE001
+        STEPS["gaveback_census"] = {"err": str(e)[:300]}
+        print(f"tal_gap census failed: {e}")
     doc["bot6"]["steps"] = STEPS
     TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     try:            # TREND on what runs, head to head (13.11.2026)

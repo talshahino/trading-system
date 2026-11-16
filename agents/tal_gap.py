@@ -1155,13 +1155,18 @@ def simulate(D, pair, cfg, gcache, keep=None):
         if pyr is not None:                               # PYR: the added half from its own fill
             r_all += 0.5 * d * (ex - pyr[0]) / risk
             cost_r += 0.5 * pyr[1]
+        # the best point the trade reached before it closed, in R (MFE; user, 16.11.2026, task tal1611partial: "most
+        # of the losses were in profit at some point") - from the minute after the fill to the exit minute; a census only
+        fv = (hs[1:i + 1] - px) if d > 0 else (px - ls[1:i + 1])
+        mfe = max(0.0, float(fv.max()) / risk) if len(fv) else 0.0
         rows.append({"time": pd.Timestamp(ns[f], tz="UTC").isoformat(), "dir": d, "r": round(r_all - cost_r, 4),
-                     "cost_r": round(cost_r, 4), "rr": round(d * (tgt - px) / risk, 2), "why": why, "mins": i})
+                     "cost_r": round(cost_r, 4), "rr": round(d * (tgt - px) / risk, 2), "why": why, "mins": i,
+                     "mfe": round(mfe, 3)})
         if keep is not None:                              # the trade's path (shared_exit): where it was each minute
             keep.append({"f": int(f), "q": int(q), "d": int(d), "px": float(px), "risk": float(risk), "cost": float(cost_r),
                          "lv": int(f + i_lv) if part_r else None, "part": float(part_r), "frac": float(frac)})
         busy = q + 1
-    return pd.DataFrame(rows, columns=["time", "dir", "r", "cost_r", "rr", "why", "mins"])
+    return pd.DataFrame(rows, columns=["time", "dir", "r", "cost_r", "rr", "why", "mins", "mfe"])
 
 
 # ---------------------------------------------------------------- the nightly run, cached per (pair, variant, instrument)

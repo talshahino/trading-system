@@ -1493,7 +1493,7 @@ function stratLine(x) {
   // short: 1m / 5m / 15m / 1H / 4H (user, 16.11.2026)
   const sh = v => !v ? "" : String(v).replace(/^(\d+)Min$/, "$1m").replace(/^(\d+)Hour$/, "$1H").replace(/^(\d+)Day$/, "$1D").replace(/^(\d+)h$/, "$1H").replace(/^(\d+)d$/, "$1D");
   const tf = sh(x.entry_tf || (p[0] === "TAL" ? (p[1].match(/^\d+(?:Min|Hour)(\d+[mh])$/) || [])[1] : p[1]));
-  return tf ? `<div class="ss">${esc(tf)}</div>` : "";            // the entry timeframe only (user, 16.11.2026)
+  return `<div class="ss">${esc(STRAT_HE[p[0]] || p[0])}${tf ? " · " + esc(tf) : ""}</div>`;   // "SC326 · 5m" (user, 16.11.2026)
 }
 const trRow = (side, t, sym, pl, key, extra = "", x = null) => `<div class="tr" data-t="${esc(key)}"><div class="tg">${side === "buy" ? ICON.up : ICON.down}
   <div class="d">${t ? dOnly(t) + "<br>" + tOnly(t) : "—"}</div>

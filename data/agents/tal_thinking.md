@@ -209,3 +209,9 @@ After asking for a change Tal waits for the outcome: "I'm waiting for an update.
 
 ## Entry location and direction (user, 16.11.2026 19:49)
 On a scout long (SC071 US30, lower Keltner band) in a falling market: "wrong identification, not the place, it should have been a short". Tal judges an entry first by where it is and whether it goes with the move; a long-only mean-reversion buy against a falling market is a wrong read for him. For the agents: a strategy that trades one direction only should be tested with a higher-timeframe direction filter (and the opposite side) before it keeps its risk (task b5sc071dir1611).
+
+## Many small wins over one big win - a smooth equity curve (user, 16.11.2026 20:28)
+"Better, in my opinion, many small wins every day and few losses than one big win once" - Tal values a smooth curve (many green days, few losers) and not only the total. For the agents: every exit / management study, in every bot, reports beside the total also the win rate, % green days, max drawdown, the worst day and the daily spread, on both periods; a way that clearly smooths the curve on both periods and still earns comes to the manager as a card even if its total is somewhat lower (the manager decides). When small wins do NOT smooth it (bot 5 scouts: half out at +1R cut 2026 to about a quarter and the drawdown grew, because the losses stay full), say so plainly. (Task mgr1611curve.)
+
+## His own rules are expected everywhere (user, 16.11.2026 20:29)
+"If an asset passed 60%, why didn't we get to the break-even stop as we set - is there a reason?" Tal remembers the rules he set (break-even at 60% of the way, 9-10.11) and expects them to apply in every bot and track; a place where a rule of his does not apply (bot 5's gap tracks trade with no management) must be tested and explained to him, not left silent. (Task tal1611gaveback, be60 on the gap tracks.)

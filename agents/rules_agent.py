@@ -404,6 +404,31 @@ STRATEGIES = {
 
 
 # ---------------- engine ----------------
+def swing_pivots(h, l, sw):
+    """(swing highs, swing lows): bar j is a swing low when its low is the lowest of the sw bars on each side (known
+    sw bars later). Mirror for highs."""
+    lo = pd.Series(l).rolling(2 * sw + 1, center=True).min().to_numpy()
+    hi = pd.Series(h).rolling(2 * sw + 1, center=True).max().to_numpy()
+    return h >= hi, l <= lo
+
+
+def swing_stop(piv, h, l, i, sw, e, d, k, merge, back=500):
+    """The k-th swing beyond the entry on the stop's side, counting back from the signal bar i (only swings confirmed by
+    then), each one beyond the one counted before by at least `merge` (small, close swings count as one) - the gap
+    method's count (agents/tal_gap._count_back), for the user's structural stop (16.11.2026, task b5stop1611: "the stop
+    beyond the third swing - the sellers are stronger"). None when there are fewer than k."""
+    ph, pl = piv
+    last, cnt = None, 0
+    for j in range(i - sw, max(-1, i - sw - back), -1):
+        if d > 0 and pl[j] and l[j] < e and (last is None or l[j] <= last - merge):
+            last, cnt = l[j], cnt + 1
+        elif d < 0 and ph[j] and h[j] > e and (last is None or h[j] >= last + merge):
+            last, cnt = h[j], cnt + 1
+        if cnt == k:
+            return float(last)
+    return None
+
+
 def run(df, fn, cost_side, breakeven=None, session_exit=None):
     """Trades for one strategy on one instrument/timeframe (one position at a time).
     breakeven=(fraction of the way to the target, offset as share of price): overrides the
@@ -439,6 +464,8 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
             no_entry = (hr >= int(rh[0])) & (hr < int(rh[1]))
         except (TypeError, ValueError):
             no_entry = None
+    ssw = plan.get("stop_swing")           # (k, sw, pad): the stop beyond the k-th swing (test only, see swing_stop)
+    piv = swing_pivots(h, l, int(ssw[1])) if ssw else None
     rows, i = [], 0
     while i < n - 2:
         d = sig[i]
@@ -484,6 +511,14 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
         if rsl and 0.5 <= float(rsl) < 1:
             stop = e - float(rsl) * (e - stop)
             risk = d * (e - stop)
+        if ssw:                                  # the structural stop: the target stays in price as it was
+            sws = swing_stop(piv, h, l, i, int(ssw[1]), e, d, int(ssw[0]), 0.3 * a[i])
+            if sws is not None:
+                stop = sws - d * float(ssw[2]) * a[i]
+                risk = d * (e - stop)
+                if risk < 0.25 * a[i] or (target is not None and d * (target - e) <= 0):
+                    i += 1
+                    continue
         pb = plan.get("entry_pullback")          # variant tests: a limit order k x risk better, valid W bars
         if pb and pb[0] > 0:
             lim = e - d * pb[0] * risk

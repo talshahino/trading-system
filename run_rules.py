@@ -402,6 +402,48 @@ def manage_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
         COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
 
 
+SWING_STOPS = [None, (2, 3, 0.0), (2, 3, 0.1), (3, 3, 0.0), (3, 3, 0.1)]   # (k-th swing, bars each side, pad x ATR)
+
+
+def swing_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """--manage-grid swing (user, 16.11.2026, task b5stop1611: "the stop beyond the third swing"): the combo as the bot
+    trades it now (--plans-file) with its stop moved beyond the 2nd / 3rd swing of its own timeframe (+0 / 0.1 ATR),
+    the target in price as it was (rules_agent.swing_stop). Variant "sw0" = as it trades."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
+    t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
+    pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
+    flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    regime = _regimes(df).get(flt) if flt else None
+    rows, keep = [], {}
+    for sw in SWING_STOPS:
+        def g(d, sw=sw):
+            lo, sh, plan = fn(d)
+            if regime is not None:
+                lo, sh = np.asarray(lo, bool) & regime[0], np.asarray(sh, bool) & regime[1]
+            return lo, sh, {**plan, **pk, **({"stop_swing": sw} if sw else {})}
+        t = R.run(df, g, cost, breakeven=be, session_exit=sess)
+        t = drop_hole_trades(t, df, s, tf)
+        if t.empty:
+            continue
+        if real:
+            t = C.apply(t, s, SPREADS.get(s))
+        if events is not None:
+            t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
+        key = "sw0" if sw is None else f"sw{sw[0]}|p{sw[2]:g}"
+        tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
+        rows.append({"variant": key, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
+        keep[key] = t[t["time"] >= t0]
+    if not rows:
+        return
+    ok = [x for x in rows if x["train"]["n"] >= 20]
+    best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
+    OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": next((x for x in rows if x["variant"] == "sw0"), None),
+                        "all": rows, "has_target": True})
+    for k in set(keep):
+        COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
+
+
 def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
     """Every grid variant of one combo (target x stop distance x entry): stats on the training window and
     on the later window. All variants' trades are kept for improve.py, which decides."""
@@ -563,7 +605,7 @@ def main():
     ap.add_argument("--manage", default="",
                     help="YYYY-MM-DD: with --combos-file, try breakeven points x partial exits per combo (on top of its "
                          "--plans-file plan), choose on --test-from..this date, check on this date..end")
-    ap.add_argument("--manage-grid", default="std", choices=["std", "fib", "ladder", "pyr"],
+    ap.add_argument("--manage-grid", default="std", choices=["std", "fib", "ladder", "pyr", "swing"],
                     help="--manage values: std (40-80%% of the way, 30/50%% out), fib (Fibonacci levels of the way) or "
                          "ladder (the entry split into 2-4 limit orders, same total risk)")
     ap.add_argument("--plans-file", default="",
@@ -699,6 +741,12 @@ def main():
                         pyr_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
                     except Exception:  # noqa: BLE001
                         ERRORS.append(f"pyr {sid} {tf} {s}:\n{traceback.format_exc()}")
+                    continue
+                if args.manage and args.manage_grid == "swing":
+                    try:
+                        swing_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
+                    except Exception:  # noqa: BLE001
+                        ERRORS.append(f"swing {sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue
                 if args.manage and args.manage_grid == "ladder":
                     try:

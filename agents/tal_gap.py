@@ -571,16 +571,28 @@ def _count_back_t(conf, val, atr, t_ns, px, d, side, step_ns, w):
     return None
 
 
-def exit_mode(cfg):
-    """(fraction out, way to the target) for the EXIT knob; (0, way) = only the stop to the entry; None = no management."""
+def exit_mode(cfg, risk=None, span=None):
+    """(fraction out, way to the target) for the EXIT knob; (0, way) = only the stop to the entry; None = no management.
+    A level ending in "r" is in R of the trade's risk (user, 16.11.2026, task tal1611gaveback: the JP225 t15_1 short of
+    16.11 went about +6R toward a 9.4R target and came back to the full stop): "be2r" = the stop to the entry at +2R,
+    "p50_2r" = half out at +2R and the rest's stop to the entry; it needs the trade's risk and its entry-to-target
+    distance (span, in price) and is off when the target is nearer than the level."""
     m = cfg.get("EXIT", "none")
     if m == "none" or m.startswith("tp"):                 # "tp30": the whole position out at 30% (tp_way), no management
         return None
-    way = lambda x: int(x) / (1000 if len(x) == 3 else 100)   # noqa: E731 - "618" = 61.8%, "70" = 70%
+
+    def way(x):
+        if x.endswith("r"):
+            if not risk or not span or float(x[:-1]) * risk >= abs(span):
+                return None
+            return float(x[:-1]) * risk / abs(span)
+        return int(x) / (1000 if len(x) == 3 else 100)  # "618" = 61.8%, "70" = 70%
     if m.startswith("be"):
-        return 0.0, way(m[2:])
+        w = way(m[2:])
+        return None if w is None else (0.0, w)
     f, w = m[1:].split("_")
-    return int(f) / 100, way(w)
+    w = way(w)
+    return None if w is None else (int(f) / 100, w)
 
 
 def follow_at(D, cfg, ltf, f):
@@ -899,7 +911,7 @@ def ladder_trade(D, f, d, legs, stop, tgt, ref, cfg, e):
     i_tg = int(np.argmax(tg)) if tg.any() else big
     i_sh = int(np.argmax(sh)) if sh.any() else big
     i = min(i_st, i_tg, i_sh)
-    em = exit_mode(cfg)
+    em = exit_mode(cfg, abs(ref - stop), tgt - ref)
     i_lv, lvl, frac = big, None, 0.0
     if em is not None:
         frac, way = em
@@ -1081,7 +1093,7 @@ def simulate(D, pair, cfg, gcache, keep=None):
                 break
         if i >= big:
             break                                        # still open at the data's end
-        em = exit_mode(cfg)
+        em = exit_mode(cfg, risk, tgt - px)
         part_r, frac = 0.0, 0.0
         # PYR (user, 14.11.2026: "add to a winning trade"): at +PYR R the trade adds half its size (a stop order, filled
         # at the level or the minute's open if worse, its own spread + commission) and the stop of the whole position
@@ -2193,7 +2205,7 @@ def live_trades(D, pair, cfg, gcache=None):
         i_tg = int(np.argmax(tg)) if tg.any() else big
         i_sh = int(np.argmax(sh)) if sh.any() else big
         i = min(i_st, i_tg, i_sh)
-        em, part_r, frac, moved = exit_mode(cfg), 0.0, 0.0, False
+        em, part_r, frac, moved = exit_mode(cfg, risk, t2 - px), 0.0, 0.0, False
         if em is not None:                               # the same management as simulate()
             frac, way = em
             lvl = px + way * (t2 - px)

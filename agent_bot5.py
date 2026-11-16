@@ -387,7 +387,13 @@ NOTE_TESTS += [
     # the entry at 50% - in place of the track's own break-even (EXIT), chosen on 2024-2025, shown on 2026
     {"id": f"{trk}_gaveback", "track": trk, "knob": "EXIT", "vals": ["p50_50", "p50_618", "p33_618", "be50"],
      "src": "tal1611gaveback", "he": "יציאה חלקית ב־50%-61.8% מהדרך + סטופ לכניסה (במקום הברייק של המסלול)"}
-    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t4h_5")]
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t4h_5")] + [
+    # the same in R for the tracks with far targets (MIN_RR 1.5-2; the JP225 t15_1 short of 16.11 went about +6R toward
+    # its 9.4R target and came back to the full stop): the stop to the entry / half out at +2R / +3R (tal_gap.exit_mode
+    # "be2r", "p50_2r" - simulate and the live bot alike)
+    {"id": f"{trk}_gavebackr", "track": trk, "knob": "EXIT", "vals": ["be2r", "be3r", "p50_2r", "p50_3r"],
+     "src": "tal1611gaveback", "he": "סטופ לכניסה / חצי החוצה ב־+2R / +3R (במקום הברייק של המסלול)"}
+    for trk in ("t15_1", "t1h_15", "t15_5")]
 NOTE_TESTS += [
     # the user, 16.11.2026 (task b5follow1611, JP225 t15_1 short at +7R: "right after the entry strong candles in the
     # trade's direction - more sellers than buyers - more confidence"): no follow-through = out. tal_gap FOLLOW xN: at

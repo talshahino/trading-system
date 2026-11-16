@@ -292,6 +292,9 @@ def plan_keys(p):
             out["partial"] = (float(p["partial"][0]), float(p["partial"][1]))
         if p.get("pyramid") and 0 < float(p["pyramid"][0]) <= 5 and 0 < float(p["pyramid"][1]) <= 1:
             out["pyramid"] = (float(p["pyramid"][0]), float(p["pyramid"][1]))   # run_rules.PYRS (task tal1411anti)
+        r = p.get("rules") or {}
+        if r.get("dir") in (1, -1):     # one direction only (card b5de201244b9: SC001 JP225 buys), as run_rules.rule_keys
+            out["rule_dir"] = int(r["dir"])
     except (TypeError, ValueError, IndexError):
         return {}
     return out

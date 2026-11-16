@@ -68,8 +68,22 @@ def log(msg):
     JOURNAL.append(line)
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(line + "\n")
-    if msg.startswith("skip "):
+    if msg.startswith(("skip ", "BLOCKED ", "FAILED open ")):
         note_skip(msg)
+
+
+def _skip_parts(msg):
+    """(combo, why) of a skip line. Besides "skip <combo>: why", an entry that was blocked at the stop check or whose
+    order failed is recorded too (bots 1-4 smart agent, 16.11.2026 morning: bot 1's GH02|1Hour|USDCAD 03:00 entry was
+    taken as a late entry at three restarts and never opened, with no reason anywhere the agents can read)."""
+    if msg.startswith("BLOCKED "):
+        combo, _, why = msg[8:].partition(": ")
+        return combo, "blocked: " + why
+    if msg.startswith("FAILED open "):
+        rest = msg[12:]
+        return rest.split(" ", 1)[0], "order failed: " + rest.rpartition(": ")[2]
+    combo, _, why = msg[5:].partition(": ")
+    return combo, why
 
 
 def note_skip(msg):
@@ -80,7 +94,7 @@ def note_skip(msg):
         st = globals().get("STATE")
         if not isinstance(st, dict):
             return
-        combo, _, why = msg[5:].partition(": ")
+        combo, why = _skip_parts(msg)
         now = pd.Timestamp.now(tz="UTC")
         key = re.sub(r"[0-9.]+", "#", why)
         sk = st.setdefault("skips", [])
@@ -2047,8 +2061,9 @@ def main():
                     handled = True
                     try:
                         handled = step(combo, sid, tf, sym, off) is not False
-                    except Exception:  # noqa: BLE001
+                    except Exception as e:  # noqa: BLE001
                         log(f"error {combo}:\n{traceback.format_exc()}")
+                        note_skip(f"skip {combo}: error {type(e).__name__}: {e}")   # published for the agents
                         REP.notify(f"{BOT}: שגיאה", f"{pretty(combo)}\n{traceback.format_exc()[-300:]}", priority=4,
                                    tags=["warning"], key="err:" + combo, every=3600)
                     if handled:

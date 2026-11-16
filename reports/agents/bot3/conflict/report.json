@@ -1,0 +1,206 @@
+{
+ "bot": "bot3",
+ "at": "2026-11-16T05:07:59+00:00",
+ "strategies": 29,
+ "missing": [
+  "TV41|1Hour|USDJPY"
+ ],
+ "ways": {
+  "asis": {
+   "train": {
+    "conflicts": 460,
+    "changed": 0,
+    "trades": 1647,
+    "total": 79.39,
+    "worst_day": -2.55,
+    "max_dd": 5.52,
+    "guard_cut": 6,
+    "guard_skipped": 1
+   },
+   "unseen": {
+    "conflicts": 608,
+    "changed": 0,
+    "trades": 2237,
+    "total": 88.92,
+    "worst_day": -2.59,
+    "max_dd": 6.87,
+    "guard_cut": 7,
+    "guard_skipped": 0
+   }
+  },
+  "skip": {
+   "train": {
+    "conflicts": 262,
+    "changed": 262,
+    "trades": 1386,
+    "total": 79.53,
+    "worst_day": -2.03,
+    "max_dd": 4.58,
+    "guard_cut": 1,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "conflicts": 422,
+    "changed": 422,
+    "trades": 1815,
+    "total": 75.26,
+    "worst_day": -1.85,
+    "max_dd": 5.82,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   }
+  },
+  "stronger": {
+   "train": {
+    "conflicts": 262,
+    "changed": 262,
+    "trades": 1522,
+    "total": 76.14,
+    "worst_day": -2.38,
+    "max_dd": 5.4,
+    "guard_cut": 1,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "conflicts": 373,
+    "changed": 373,
+    "trades": 2048,
+    "total": 83.04,
+    "worst_day": -2.23,
+    "max_dd": 6.76,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   }
+  },
+  "half": {
+   "train": {
+    "conflicts": 460,
+    "changed": 460,
+    "trades": 1648,
+    "total": 75.82,
+    "worst_day": -2.25,
+    "max_dd": 4.33,
+    "guard_cut": 1,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "conflicts": 608,
+    "changed": 608,
+    "trades": 2237,
+    "total": 77.22,
+    "worst_day": -1.73,
+    "max_dd": 5.02,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   }
+  },
+  "tight_new": {
+   "train": {
+    "conflicts": 426,
+    "changed": 366,
+    "trades": 1605,
+    "total": 80.01,
+    "worst_day": -2.55,
+    "max_dd": 5.3,
+    "guard_cut": 5,
+    "guard_skipped": 1
+   },
+   "unseen": {
+    "conflicts": 579,
+    "changed": 480,
+    "trades": 2190,
+    "total": 66.61,
+    "worst_day": -2.59,
+    "max_dd": 7.21,
+    "guard_cut": 6,
+    "guard_skipped": 0
+   }
+  },
+  "tight_short": {
+   "train": {
+    "conflicts": 432,
+    "changed": 227,
+    "trades": 1630,
+    "total": 89.97,
+    "worst_day": -2.55,
+    "max_dd": 5.15,
+    "guard_cut": 5,
+    "guard_skipped": 1
+   },
+   "unseen": {
+    "conflicts": 602,
+    "changed": 311,
+    "trades": 2219,
+    "total": 99.85,
+    "worst_day": -2.59,
+    "max_dd": 7.67,
+    "guard_cut": 7,
+    "guard_skipped": 0
+   }
+  },
+  "tight_both": {
+   "train": {
+    "conflicts": 415,
+    "changed": 549,
+    "trades": 1605,
+    "total": 88.19,
+    "worst_day": -2.55,
+    "max_dd": 5.64,
+    "guard_cut": 5,
+    "guard_skipped": 1
+   },
+   "unseen": {
+    "conflicts": 570,
+    "changed": 718,
+    "trades": 2190,
+    "total": 84.38,
+    "worst_day": -2.59,
+    "max_dd": 7.35,
+    "guard_cut": 6,
+    "guard_skipped": 0
+   }
+  }
+ },
+ "by_symbol": {
+  "XAUUSD": {
+   "train": {
+    "n": 364,
+    "r": 21.97
+   },
+   "unseen": {
+    "n": 457,
+    "r": 98.27
+   }
+  },
+  "USDJPY": {
+   "train": {
+    "n": 79,
+    "r": 4.17
+   },
+   "unseen": {
+    "n": 126,
+    "r": -8.88
+   }
+  },
+  "USDCAD": {
+   "train": {
+    "n": 14,
+    "r": 3.7
+   },
+   "unseen": {
+    "n": 20,
+    "r": 2.68
+   }
+  },
+  "ARM": {
+   "train": {
+    "n": 3,
+    "r": -1.51
+   },
+   "unseen": {
+    "n": 5,
+    "r": 1.48
+   }
+  }
+ }
+}

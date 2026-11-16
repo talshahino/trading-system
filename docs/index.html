@@ -390,6 +390,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
       <div class="subt" id="dSubt" role="tablist"></div>
       <div class="banner" id="dBan"></div>
       <div id="dBody"></div>
+      <div id="dTalk"></div>
     </div>
   </section>
 
@@ -1266,11 +1267,28 @@ function renderDet(light) {
   else if (s && !a.archived && a.enabled !== false && !live && age >= (a.virtual ? 15 : 10)) { ban.className = "banner on warn"; ban.textContent = `החשבון לא מדווח כבר ${age < 120 ? Math.round(age) + " דקות" : (age / 60).toFixed(1) + " שעות"}. ${a.virtual ? "בוט הצפייה קורא נרות מבוט 1: בדוק שהמחשב ובוט 1 פועלים (בסוף שבוע השוק סגור)." : "בדוק שהמחשב ו־MetaTrader פתוחים."}`; }
   else ban.className = "banner";
   if (!s) { $("dBody").innerHTML = '<div class="empty">עוד אין נתונים מהחשבון הזה. הם מופיעים כמה דקות אחרי שהבוט מתחיל לעבוד.</div>'; return; }
+  botTalk(s);
   if (UI.sub === "ov") ov(s, a, light);
   else if (UI.sub === "tr") trades(s, a, light);
   else if (!light && UI.sub === "st") statsTab(s, a);
   else if (!light && UI.sub === "ac") details(s, a);
   else if (!light && UI.sub === "wt") { WB.doc = s; wbRender($("dBody")); }
+}
+/* a conversation with this bot's agent about the bot as a whole (user, 16.11.2026: "bot 5 - almost every trade was in
+   profit at some point and in the end almost all lost"), under the overview; kept like a trade note (id "talk") and
+   answered by the conversation agent as the bot's agent. Outside dBody, so the minute refresh keeps what is typed. */
+function botTalk(s) {
+  const box = $("dTalk");
+  if (!box) return;
+  const show = UI.sub === "ov" && s && getRole() !== "viewer";
+  box.style.display = show ? "" : "none";
+  if (!show || box.dataset.bot === UI.cur) return;
+  box.dataset.bot = UI.cur;
+  box.innerHTML = `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט</div><div class="card wt">
+      <textarea id="btTxt" rows="3" placeholder="דבר או כתוב לסוכן על הבוט כולו: מה ראית היום, מה מפריע לך, מה לבדוק…"></textarea>
+      <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="btMic">🎙 הקלטה</button><button class="btn" id="btSave">שלח לסוכן</button></div>
+      <div class="msg mut" id="btMsg"></div><div id="btList"></div></div>`;
+  tradeNotes({id: "talk"}, "bt", UI.cur);
 }
 $("dSubt").onclick = e => { const b = e.target.closest("[data-s]"); if (b) { if (UI.sub === "ov") SNAP.ov = $("dBody").innerHTML.replace(/\sid="[^"]*"/g, ""); UI.sub = b.dataset.s; $("dBody").innerHTML = ""; renderDet();
   setTimeout(() => SUBS.forEach(([k]) => { if (k !== UI.sub) snapTab(k); }), 400); } };
@@ -1624,20 +1642,21 @@ async function convOpen() {
   const l = await convData();
   if (!l.length) { $("convBody").innerHTML = '<div class="empty">עוד אין שיחות. בעמוד הגרף של כל עסקה אפשר להקליט הערה לסוכן.</div>'; return; }
   $("convBody").innerHTML = l.map((x, i) => { const tr = (x.notes[0] || {}).trade || {}, last = [...x.notes, ...x.reps].sort((a, b) => String(a.at).localeCompare(String(b.at))).pop() || {};
-    return `<div class="card" style="margin:10px 0;cursor:pointer" data-cv="${i}"><div class="row"><b>${x.bot === "manager" ? "🎙 שיחה עם המנהל" : `${esc(BOTNAME(x.bot))} · <bdi>${esc(tr.symbol || "")}</bdi> ${tr.side === "buy" ? "קנייה" : tr.side === "sell" ? "מכירה" : ""}`}</b>
+    return `<div class="card" style="margin:10px 0;cursor:pointer" data-cv="${i}"><div class="row"><b>${x.bot === "manager" ? "🎙 שיחה עם המנהל" : x.id === "talk" ? `🎙 שיחה עם הסוכן · ${esc(BOTNAME(x.bot))}` : `${esc(BOTNAME(x.bot))} · <bdi>${esc(tr.symbol || "")}</bdi> ${tr.side === "buy" ? "קנייה" : tr.side === "sell" ? "מכירה" : ""}`}</b>
       ${x.unseen ? `<span class="pill pos">${x.unseen} חדשות</span>` : x.notes.some(n => !x.reps.some(r => r.re === n.at)) ? '<span class="pill">ממתין לתשובה</span>' : ""}</div>
       <div class="mut" style="margin-top:4px;white-space:pre-wrap;max-height:3.6em;overflow:hidden">${last.re ? "🤖 " : "טל: "}${esc(last.text || "")}</div><div class="convD" id="convD${i}"></div></div>`; }).join("");
   document.querySelectorAll("#convBody .card").forEach(el => el.onclick = async e => {
     if (e.target.closest("button")) return;
     const x = l[+el.dataset.cv], box = $("convD" + el.dataset.cv);
     if (box.innerHTML) { box.innerHTML = ""; return; }
-    box.innerHTML = (await threadHtml(x.bot, x.id, x.notes)) + `<button class="btn ghost" style="margin-top:8px" data-open="1">${x.bot === "manager" ? "פתח את השיחה עם המנהל ›" : "פתח את הגרף של העסקה ›"}</button>`;
+    box.innerHTML = (await threadHtml(x.bot, x.id, x.notes)) + `<button class="btn ghost" style="margin-top:8px" data-open="1">${x.bot === "manager" ? "פתח את השיחה עם המנהל ›" : x.id === "talk" ? "פתח את הבוט ›" : "פתח את הגרף של העסקה ›"}</button>`;
     box.querySelector("[data-open]").onclick = () => convChart(x);
     convData().then(ll => { const n = ll.reduce((a, y) => a + y.unseen, 0); if ($("convBtn")) $("convBtn").textContent = n ? `שיחות עם הסוכנים (${n} חדשות)` : "שיחות עם הסוכנים"; });
   });
 }
 function convChart(x) {
   if (x.bot === "manager") return botsOpen();
+  if (x.id === "talk") { $("convPg").classList.remove("on"); return openAcc(x.bot); }
   const d = found[x.bot];
   if (d && d.watch && d.watch.find(w => w.id === x.id && w.m15)) { WB.doc = d; return wcOpen(x.id); }
   const c = d && ((d.closed || []).find(t => String(t.id) === x.id) || null), o = d && ((d.positions || []).find(t => String(t.ticket) === x.id) || null);
@@ -1681,7 +1700,7 @@ function tradeNotes(t, p = "tn", botName) {
     try {
       const j = await act("/trade/note", {bot, id, text, voice: TN.voice, symbol: t.symbol, combo: t.combo, side: t.side, open_t: t.open_t,
         close_t: t.close_t, open_px: t.open_px, close_px: t.close_px, sl: t.sl0 || t.sl, tp: t.tp || t.tp0, net: t.net, reason: t.reason || t.why});
-      txt.value = ""; TN.voice = false; msg.textContent = bot === "manager" ? "נשלח. המנהל יענה בתוך שעה בערך." : "נשמר. הסוכן של הבוט יקרא את ההערה בריצה הבאה שלו."; show(j.notes);
+      txt.value = ""; TN.voice = false; msg.textContent = bot === "manager" ? "נשלח. המנהל יענה בתוך שעה בערך." : id === "talk" ? "נשלח. הסוכן של הבוט יענה בתוך שעה בערך." : "נשמר. הסוכן של הבוט יקרא את ההערה בריצה הבאה שלו."; show(j.notes);
     } catch (e) { msg.textContent = "לא נשמר: " + (e.message || e); }
   };
 }

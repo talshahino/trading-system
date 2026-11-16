@@ -624,12 +624,14 @@ def decide(bots, now=None):
             cur_m = float(((cur_risk.get(bot) or {}).get("mult") or {}).get(combo, 1.0))
             # "maybe luck" is one discount per strategy, not one per card: a second starred card for a strategy
             # already at x0.7 does not take it to x0.49 (12.11.2026: those fell under the 0.5 floor and failed)
-            star_only = star and not (whole and whole.get("mult") and whole["mult"] < 1)
-            value = round(min(cur_m, mult) if star_only else max(0.5, mult * cur_m), 2)
+            # the whole-bot check's multiplier is already the strategy's own (agents/portfolio_check._verdict: m0 x m),
+            # so it is not multiplied by the current one again (manager, 16.11.2026: SC235|1Hour|USDJPY in bot 3, at
+            # x0.7, checked fine at x0.63 and got x0.5 = max(0.5, 0.63 x 0.7) - under what the check had passed)
+            value = round(max(0.5, min(cur_m, mult)), 2)
             if value >= cur_m:
                 continue
             add({"id": _did("cardrisk", c["id"]), "bot": bot, "type": "risk", "kind": "mult", "combo": combo,
-                 "title": f"{combo}: סיכון ×{mult:g}" + (" (⭐ אולי מזל)" if star else " (בדיקת הבוט השלם)"),
+                 "title": f"{combo}: סיכון ×{value:g}" + (" (⭐ אולי מזל)" if star else " (בדיקת הבוט השלם)"),
                  "decision": "approved", "why": why, "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "card_decision": did,
                  "star": star, "action": {"bot": bot, "combo": combo, "kind": "mult", "value": value,
                                           "prev": None if cur_m == 1.0 else cur_m}})

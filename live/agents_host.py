@@ -728,6 +728,44 @@ def host_doc(st, kind):
             "errors_in_row": st.get("errors_in_row", 0), "machine": machine()}
 
 
+def _main_same(st, rels):
+    """True when main's copy of every one of these files is still the one this working copy was refreshed to
+    (tree_index.json), i.e. the moves of main since did not touch them - anything unsure is False."""
+    try:
+        idx = _load_index()
+        h = _h()
+        r = requests.get(f"{API}/git/commits/{main_sha()}", headers=h, timeout=60)
+        r.raise_for_status()
+        trees = {"": r.json()["tree"]["sha"]}          # folder -> its tree sha on main (None: not on main)
+        listed = {}                                     # folder -> {file name: blob sha}
+
+        def tree_of(d):
+            if d not in trees:
+                parent, _, name = d.rpartition("/")
+                files_of(parent)
+                trees.setdefault(d, None)
+            return trees[d]
+
+        def files_of(d):
+            if d not in listed:
+                sha = tree_of(d)
+                entries = _git_tree(h, sha)[0] if sha else []
+                listed[d] = {e["path"]: e["sha"] for e in entries if e["type"] == "blob"}
+                for e in entries:
+                    if e["type"] == "tree":
+                        trees[f"{d}/{e['path']}" if d else e["path"]] = e["sha"]
+            return listed[d]
+
+        for rel in rels:
+            d, _, name = rel.rpartition("/")
+            rec = ((idx.get(d) or {}).get("files") or {}).get(name)
+            if files_of(d).get(name) != (rec[0] if rec else None):
+                return False
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def _publish_changes(st, before, kind, msg, only=None):
     after = snapshot()
     changed = [rel for rel, hsh in after.items() if before.get(rel) != hsh and rel != HOST
@@ -738,8 +776,12 @@ def _publish_changes(st, before, kind, msg, only=None):
             moved = main_sha() != st.get("sha")
         except Exception:  # noqa: BLE001
             moved = True
-        if moved:          # main changed since this copy (e.g. a nightly agent edited a bot): build again on the new one
-            files = {r: v for r, v in files.items() if not r.startswith("live/bots/") and r != "data/agents/replies.json"}
+        # main changed since this copy (e.g. a nightly agent edited a bot): build again on the new one - but only when
+        # main's own copy of these files changed too (manager, 16.11.2026: main moves every few minutes by this
+        # computer's own publishes, so bot 2's and bot 3's approved strategies of 10:58 / 11:32 UTC were dropped again
+        # every cycle and were still not in the bots at 12:30, while their replies said "built")
+        if moved and not _main_same(st, [r for r in files if r.startswith("live/bots/")] + [REPLIES]):
+            files = {r: v for r, v in files.items() if not r.startswith("live/bots/") and r != REPLIES}
     if kind == "light" and time.time() - _S["pub"] < HEARTBEAT:
         prev = st.get("pub_digest", {})
         news = {rel: hashlib.sha1(_meaningful(rel, b)).hexdigest() for rel, b in files.items()}

@@ -134,25 +134,38 @@ def pre_break_mask(ns, minutes):
     # a break at the same local time too (any of the clocks, +-BRK_TOL_MIN). A one-off hole in the candles (a feed
     # stall - US30 / US500 / US100 on 9.11.2026 ~02:21 UTC) is not a market break, and carried a week forward it
     # closed bot 5's index trades at 02:11 UTC on 16.11 and blocked entries for 2 hours. With no data a week before
-    # (the start of the history), the break counts as before.
+    # (the start of the history - the live bot keeps only 14 days, so a hole 7 days ago always sits there: US100's
+    # 1h/15 trade was closed at 06:16 UTC on 16.11, history from 2.11 06:16), the previous 1-3 days decide instead
+    # (a real daily break recurs there too); only with none of those either the break counts as before.
     starts = ns[brk] + step
     keep = np.ones(len(brk), bool)
     short = (ns[brk + 1] - ns[brk]) < BRK_SURE_H * 3600 * 10**9
     zones = ("UTC", "America/New_York", "Europe/London", "Europe/Berlin", "Australia/Sydney")
     if short.any():
         cs = pd.DatetimeIndex(starts[short]).tz_localize("UTC")
-        ok = np.zeros(int(short.sum()), bool)
-        known = np.zeros(int(short.sum()), bool)
         tol = BRK_TOL_MIN * step
-        for z in zones:
-            q = (cs.tz_convert(z).tz_localize(None) - pd.Timedelta(days=7)).tz_localize(z, ambiguous="NaT", nonexistent="shift_forward").tz_convert("UTC")
-            qv = q.as_unit("ns").asi8
-            good = ~np.asarray(q.isna())
-            known |= good & (qv - tol > ns[0])
-            j = np.searchsorted(starts, qv - tol)
-            hit = (j < len(starts)) & (np.abs(starts[np.minimum(j, len(starts) - 1)] - qv) <= tol)
-            ok |= good & hit
-        keep[short] = ok | ~known
+
+        def recurs(days):
+            ok_ = np.zeros(int(short.sum()), bool)
+            known_ = np.zeros(int(short.sum()), bool)
+            for z in zones:
+                q = (cs.tz_convert(z).tz_localize(None) - pd.Timedelta(days=days)).tz_localize(z, ambiguous="NaT", nonexistent="shift_forward").tz_convert("UTC")
+                qv = q.as_unit("ns").asi8
+                good = ~np.asarray(q.isna())
+                known_ |= good & (qv - tol > ns[0])
+                j = np.searchsorted(starts, qv - tol)
+                hit = (j < len(starts)) & (np.abs(starts[np.minimum(j, len(starts) - 1)] - qv) <= tol)
+                ok_ |= good & hit
+            return ok_, known_
+
+        ok, known = recurs(7)
+        ok_d = np.zeros_like(ok)
+        known_d = np.zeros_like(known)
+        for dd in (1, 2, 3):
+            o_, k_ = recurs(dd)
+            ok_d |= o_
+            known_d |= k_
+        keep[short] = np.where(known, ok, ok_d | ~known_d)
     if not keep.any():
         return m
     c = pd.DatetimeIndex(starts[keep]).tz_localize("UTC")

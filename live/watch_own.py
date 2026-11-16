@@ -802,7 +802,12 @@ def scout5_trades(name, df, sc, cal):
                     "exit_time": None if live_now else pd.Timestamp(x["exit_time"]),
                     "exit": None if live_now else float(x["exit_px"]), "reason": None if live_now else why,
                     "r": None if live_now else round(float(x["r"]), 4), "r_now": round(float(x["r"]), 3) if live_now else None,
-                    "why": None, "tal": f"sc:{combo}", "tal_key": f"{sc['sid']}|{tf}|{tm.strftime('%Y%m%d%H%M')}", "geo": None})
+                    "why": None, "tal": f"sc:{combo}", "tal_key": f"{sc['sid']}|{tf}|{tm.strftime('%Y%m%d%H%M')}", "geo": None,
+                    # the app (user, 16.11.2026: GBPUSD SC326 at -$217 with its stop at -$176): r_now is AFTER the costs
+                    # (spread + commission - 0.23R on a 3-pip stop), so the "now" price made of it sat beyond the stop and
+                    # the stop's dollars were without them. The real last price and the costs in R, for the display only.
+                    "px_now": float(x["exit_px"]) if live_now else None,
+                    "cost_live": round(float(x["dir"]) * (float(x["exit_px"]) - e0) / risk - float(x["r"]), 4) if live_now else None})
     return out
 
 
@@ -1089,6 +1094,7 @@ def main():
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
                            "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide")),
                            "why": x.get("why"), "touch_t": iso(x.get("touch_t")),
+                           "px_now": x.get("px_now"), "cost_live": x.get("cost_live"),
                            "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m")),
                            "geo": x.get("geo") or old.get("geo")}
                     if rec["geo"] and rec["status"] in ("open", "closed"):
@@ -1293,9 +1299,11 @@ def main():
                       "equity_curve": ec, "lows": {},
                       "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                                      "combo": combo(t["symbol"], t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
-                                     "now": t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
+                                     "now": t.get("px_now") or t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
                                      "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
-                                     "sl_usd": -(t.get("risk_usd") or 0), "tp_usd": (t.get("risk_usd") or 0) * (t.get("rr") or 0),
+                                     # at the stop / target WITH the costs, as the P&L shown next to them (16.11.2026)
+                                     "sl_usd": -round((t.get("risk_usd") or 0) * (1 + (t.get("cost_live") or 0)), 2),
+                                     "tp_usd": round((t.get("risk_usd") or 0) * ((t.get("rr") or 0) - (t.get("cost_live") or 0)), 2) if t.get("rr") else 0,
                                      "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": pip(t["symbol"]), "free": False,
                                      "mae": None, "mfe": None} for t in live_ if t["status"] == "open" and t.get("risk_usd")],
                       "trades": [{"time": t["exit_time"], "combo": combo(t["symbol"], t), "symbol": t["symbol"],

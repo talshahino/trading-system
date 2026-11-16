@@ -144,6 +144,21 @@
   "TV20|1Hour|XAGUSD": {
    "filter": "vol_low",
    "filter_card": "423fccb91992"
+  },
+  "SC380|4Hour|XAUUSD": {
+   "target": 2.0,
+   "stop": 0.75,
+   "card": "6dce4cf2537e"
+  },
+  "SC381|4Hour|XAUUSD": {
+   "target": 3.0,
+   "stop": 0.75,
+   "card": "5892f1e9ec47"
+  },
+  "SC425|5Min|XAGUSD": {
+   "target": 3.0,
+   "stop": 0.75,
+   "card": "a6bdd49cfd0d"
   }
  },
  "added": {
@@ -188,7 +203,13 @@
    "family": "flag",
    "key": "dd_fit",
    "before": "__none__"
+  },
+  "b7dde522790b": {
+   "family": "flag",
+   "key": "opp_same_tf",
+   "before": "__none__"
   }
  },
- "dd_fit": 4.82
+ "dd_fit": 4.82,
+ "opp_same_tf": "skip"
 }

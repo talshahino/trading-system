@@ -1,0 +1,222 @@
+{
+ "bot": "bot1",
+ "day": "2026-11-16",
+ "at": "2026-11-16T23:10:40+00:00",
+ "summary": [
+  "מה קרה: בוט 1 הפסיד 351$ ב־2026-11-16 (-0.35% מהחשבון). 3 עסקאות: 0 הרוויחו 0$, 3 הפסידו 351$.",
+  "מול הצפי: הבדיקה צפתה ליום כזה +1.1R (+407$). בפועל -1.1R. הפער: -2.2R (-826$) - צריך לסגור אותו.",
+  "למה: 2 עסקאות נסגרו בגלל כלל (חדשות / סוף מסחר / הפסקת שוק); 1 עסקאות נעצרו בלי לזוז לטובה בכלל - הבעיה בכניסה או בכיוון.",
+  "ההפסד הגדול ביותר: TV20|1Hour|XAUUSD, 309$ (88% מכל ההפסד).",
+  "חוזרות על עצמן: TV20|1Hour|XAUUSD - הפסידו ב־3 ימים או יותר בחודש האחרון."
+ ],
+ "pnl": -350.84,
+ "pnl_pct": -0.352,
+ "open_balance": 99649.16,
+ "limit_used": {
+  "bot": 7.8,
+  "ftmo": 7.0
+ },
+ "trades": 3,
+ "winners": 0,
+ "losers_n": 3,
+ "gross_profit": 0.0,
+ "gross_loss": 350.84,
+ "profit_factor": 0.0,
+ "costs": 2.74,
+ "day_r": -1.12,
+ "expected_r": 1.09,
+ "expected_sd": 2.83,
+ "z": -0.78,
+ "normal": true,
+ "causes": {
+  "rules": 2,
+  "entry": 1
+ },
+ "correlated": [],
+ "top_loser": "TV20|1Hour|XAUUSD",
+ "top_share": 88.0,
+ "recurring": [
+  "TV20|1Hour|XAUUSD"
+ ],
+ "recurring_causes": [
+  "entry",
+  "rules"
+ ],
+ "losers": [
+  {
+   "combo": "TV20|1Hour|XAUUSD",
+   "side": "מכירה",
+   "open_t": "2026-11-16T19:00:06+00:00",
+   "close_t": "2026-11-16T19:29:52+00:00",
+   "entry": 3853.84,
+   "exit": 3866.65,
+   "stop": 3866.64,
+   "target": 0.0,
+   "r": -1.005,
+   "net": -308.74,
+   "costs": 1.3,
+   "mfe_r": 0.05,
+   "mae_r": 1.0,
+   "exit_reason": "[sl 3866.64]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": true
+  },
+  {
+   "combo": "YT03|4Hour|RACE",
+   "side": "קנייה",
+   "open_t": "2026-11-16T20:00:21+00:00",
+   "close_t": "2026-11-16T20:45:01+00:00",
+   "entry": 403.85,
+   "exit": 403.47,
+   "stop": 398.43,
+   "target": 433.71,
+   "r": -0.073,
+   "net": -27.34,
+   "costs": 1.12,
+   "mfe_r": 0.13,
+   "mae_r": 0.22,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  },
+  {
+   "combo": "MQ11|4Hour|MSTR",
+   "side": "קנייה",
+   "open_t": "2026-11-16T17:09:27+00:00",
+   "close_t": "2026-11-16T20:45:01+00:00",
+   "entry": 103.44,
+   "exit": 103.25,
+   "stop": 99.02,
+   "target": 0.0,
+   "r": -0.044,
+   "net": -14.76,
+   "costs": 0.32,
+   "mfe_r": 0.14,
+   "mae_r": 0.22,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TV20|1Hour|XAUUSD",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "TV20|1Hour|XAUUSD: נעצר בלי לזוז לטובה (MFE 0.05R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "YT03|4Hour|RACE",
+   "cause": "rules",
+   "priority": [],
+   "task": "YT03|4Hour|RACE: נסגר בגלל כלל (session end) ב־-0.073R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "MQ11|4Hour|MSTR",
+   "cause": "rules",
+   "priority": [],
+   "task": "MQ11|4Hour|MSTR: נסגר בגלל כלל (session end) ב־-0.044R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "TV20|1Hour|XAUUSD",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "TV20|1Hour|XAUUSD: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 4,
+   "avg_loss_pct": -1.159,
+   "worst_pct": -2.939
+  },
+  "prev7": {
+   "loss_days": 4,
+   "avg_loss_pct": -0.874,
+   "worst_pct": -1.984
+  },
+  "improving": false
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "TV20|1Hour|XAUUSD",
+    "cause": "כניסה / כיוון",
+    "fixes": [
+     {
+      "what": "סיכון ×0.77",
+      "decision": "e011afc4f703",
+      "at": "2026-11-16T22:05:35+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.83,
+      "value": 0.77
+     }
+    ],
+    "open": false,
+    "cut_only": true,
+    "edge_mult": 0.77,
+    "edge_parts": [
+     "בבדיקה של 2026: +0.43R לעסקה (75 עסקאות), בתקופת הבחירה +0.22R",
+     "בחי: -0.78R לעסקה (4 עסקאות)",
+     "הבדיקה שווה 92% מהמשקל, החי 8%",
+     "היתרון עכשיו: +0.33R לעסקה",
+     "סיכון = +0.33 ÷ +0.43 = ×0.77"
+    ],
+    "edge0": 0.427,
+    "edge": 0.327
+   },
+   {
+    "combo": "YT03|4Hour|RACE",
+    "cause": "סגירה בגלל כלל",
+    "fixes": [],
+    "open": false,
+    "cut_only": false
+   },
+   {
+    "combo": "MQ11|4Hour|MSTR",
+    "cause": "סגירה בגלל כלל",
+    "fixes": [
+     {
+      "what": "סיכון ×0.77",
+      "decision": "f73c538bb0c0",
+      "at": "2026-11-16T22:05:35+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.88,
+      "value": 0.77
+     }
+    ],
+    "open": false,
+    "cut_only": true,
+    "edge_mult": 0.88,
+    "edge_parts": [
+     "בבדיקה של 2026: +0.11R לעסקה (106 עסקאות), בתקופת הבחירה +0.05R",
+     "בחי: -0.06R לעסקה (5 עסקאות)",
+     "הבדיקה שווה 92% מהמשקל, החי 8%",
+     "היתרון עכשיו: +0.10R לעסקה",
+     "סיכון = +0.10 ÷ +0.11 = ×0.88"
+    ],
+    "edge0": 0.108,
+    "edge": 0.096
+   }
+  ],
+  "open": [],
+  "cut_only": [
+   "TV20|1Hour|XAUUSD",
+   "MQ11|4Hour|MSTR"
+  ],
+  "total_month_pct": 0.0,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+ }
+}

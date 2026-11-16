@@ -1,0 +1,97 @@
+{
+ "bot": "bot6",
+ "day": "2026-11-16",
+ "at": "2026-11-16T23:10:41+00:00",
+ "summary": [
+  "מה קרה: בוט 6 · חוזים הפסיד 389$ ב־2026-11-16 (-0.39% מהחשבון). 1 עסקאות: 0 הרוויחו 0$, 1 הפסידו 389$.",
+  "מול הצפי: לאסטרטגיות של היום אין עדיין צפי מהבדיקה.",
+  "למה: 1 עסקאות נעצרו בלי לזוז לטובה בכלל - הבעיה בכניסה או בכיוון.",
+  "ההפסד הגדול ביותר: SC072|5Min|US500, 389$ (100% מכל ההפסד)."
+ ],
+ "pnl": -388.74,
+ "pnl_pct": -0.387,
+ "open_balance": 100324.41,
+ "limit_used": {
+  "bot": 8.6,
+  "ftmo": 7.7
+ },
+ "trades": 1,
+ "winners": 0,
+ "losers_n": 1,
+ "gross_profit": 0.0,
+ "gross_loss": 388.74,
+ "profit_factor": 0.0,
+ "costs": 0.0,
+ "day_r": -1.0,
+ "expected_r": null,
+ "expected_sd": null,
+ "z": null,
+ "normal": true,
+ "causes": {
+  "entry": 1
+ },
+ "correlated": [],
+ "top_loser": "SC072|5Min|US500",
+ "top_share": 100.0,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "SC072|5Min|US500",
+   "side": "קנייה",
+   "open_t": "2026-11-16T00:55:00+00:00",
+   "close_t": "2026-11-16T01:00:00+00:00",
+   "entry": 7581.35,
+   "exit": 7574.375,
+   "stop": 7574.375,
+   "target": NaN,
+   "r": -1.0,
+   "net": -388.74,
+   "costs": 0.0,
+   "mfe_r": 0.14,
+   "mae_r": 0.99,
+   "exit_reason": "סטופ",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "SC072|5Min|US500",
+   "cause": "entry",
+   "priority": [],
+   "task": "SC072|5Min|US500: נעצר בלי לזוז לטובה (MFE 0.14R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 2,
+   "avg_loss_pct": -0.264,
+   "worst_pct": -0.387
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "SC072|5Min|US500",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true,
+    "cut_only": false
+   }
+  ],
+  "open": [
+   "SC072|5Min|US500"
+  ],
+  "cut_only": [],
+  "total_month_pct": 0.0,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
+ }
+}

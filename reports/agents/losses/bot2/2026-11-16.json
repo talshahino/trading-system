@@ -1,0 +1,274 @@
+{
+ "bot": "bot2",
+ "day": "2026-11-16",
+ "at": "2026-11-16T23:10:41+00:00",
+ "summary": [
+  "מה קרה: בוט 2 הפסיד 161$ ב־2026-11-16 (-0.15% מהחשבון). 8 עסקאות: 5 הרוויחו 253$, 3 הפסידו 414$.",
+  "מול הצפי: הבדיקה צפתה ליום כזה +0.8R (+384$). בפועל +1.3R. הפער: +0.5R (+245$) - צריך לסגור אותו.",
+  "למה: 1 עסקאות נעצרו בלי לזוז לטובה בכלל - הבעיה בכניסה או בכיוון; 1 עסקאות נסגרו בגלל כלל (חדשות / סוף מסחר / הפסקת שוק); 1 עסקאות נסגרו לפי זמן בהפסד.",
+  "ההפסד הגדול ביותר: SC043|4Hour|EURJPY, 314$ (75.8% מכל ההפסד).",
+  "חוזרות על עצמן: SE02|1Hour|USDJPY, TV13|15Min|TSLA - הפסידו ב־3 ימים או יותר בחודש האחרון."
+ ],
+ "pnl": -161.2,
+ "pnl_pct": -0.148,
+ "open_balance": 109109.42,
+ "limit_used": {
+  "bot": 3.3,
+  "ftmo": 3.0
+ },
+ "trades": 8,
+ "winners": 5,
+ "losers_n": 3,
+ "gross_profit": 253.01,
+ "gross_loss": 414.21,
+ "profit_factor": 0.61,
+ "costs": 0.0,
+ "day_r": 1.28,
+ "expected_r": 0.78,
+ "expected_sd": 2.59,
+ "z": 0.19,
+ "normal": true,
+ "causes": {
+  "entry": 1,
+  "rules": 1,
+  "time": 1
+ },
+ "correlated": [],
+ "top_loser": "SC043|4Hour|EURJPY",
+ "top_share": 75.8,
+ "recurring": [
+  "SE02|1Hour|USDJPY",
+  "TV13|15Min|TSLA"
+ ],
+ "recurring_causes": [
+  "rules"
+ ],
+ "losers": [
+  {
+   "combo": "SC043|4Hour|EURJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-16T00:00:07+00:00",
+   "close_t": "2026-11-16T04:03:39+00:00",
+   "entry": 176.166,
+   "exit": 175.825,
+   "stop": 175.825,
+   "target": 176.87,
+   "r": -1.0,
+   "net": -314.06,
+   "costs": 0.0,
+   "mfe_r": 0.09,
+   "mae_r": 0.99,
+   "exit_reason": "[sl 175.825]",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "SE02|1Hour|USDJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-16T15:00:08+00:00",
+   "close_t": "2026-11-16T21:00:07+00:00",
+   "entry": 159.577,
+   "exit": 159.473,
+   "stop": 159.341,
+   "target": 0.0,
+   "r": -0.441,
+   "net": -78.91,
+   "costs": 0.0,
+   "mfe_r": 0.34,
+   "mae_r": 0.91,
+   "exit_reason": "fixed-time exit",
+   "cause": "time",
+   "cause_he": "יציאת זמן",
+   "recurring": true
+  },
+  {
+   "combo": "TV13|15Min|TSLA",
+   "side": "מכירה",
+   "open_t": "2026-11-16T15:15:08+00:00",
+   "close_t": "2026-11-16T20:45:02+00:00",
+   "entry": 376.88,
+   "exit": 377.47,
+   "stop": 384.24,
+   "target": 0.0,
+   "r": -0.08,
+   "net": -21.24,
+   "costs": 0.0,
+   "mfe_r": 0.17,
+   "mae_r": 0.78,
+   "exit_reason": "session end",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": true
+  }
+ ],
+ "actions": [
+  {
+   "combo": "SC043|4Hour|EURJPY",
+   "cause": "entry",
+   "priority": [
+    "filters",
+    "exits"
+   ],
+   "task": "SC043|4Hour|EURJPY: נעצר בלי לזוז לטובה (MFE 0.09R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."
+  },
+  {
+   "combo": "SE02|1Hour|USDJPY",
+   "cause": "time",
+   "priority": [
+    "exits"
+   ],
+   "task": "SE02|1Hour|USDJPY: יציאת זמן בהפסד. יציאות לפי זמן בלבד לא רצויות (טל) - להחליף ביציאה חכמה."
+  },
+  {
+   "combo": "TV13|15Min|TSLA",
+   "cause": "rules",
+   "priority": [],
+   "task": "TV13|15Min|TSLA: נסגר בגלל כלל (session end) ב־-0.08R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  },
+  {
+   "combo": "SE02|1Hour|USDJPY",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "SE02|1Hour|USDJPY: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  },
+  {
+   "combo": "TV13|15Min|TSLA",
+   "cause": "recurring",
+   "priority": [
+    "exits",
+    "filters",
+    "manage"
+   ],
+   "task": "TV13|15Min|TSLA: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 3,
+   "avg_loss_pct": -0.599,
+   "worst_pct": -0.913
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "SC043|4Hour|EURJPY",
+    "cause": "כניסה / כיוון",
+    "fixes": [
+     {
+      "what": "סיכון ×0.57",
+      "decision": "41cc61ba2cc3",
+      "at": "2026-11-16T22:05:35+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.7,
+      "value": 0.57
+     }
+    ],
+    "open": false,
+    "cut_only": true,
+    "edge_mult": 0.81,
+    "edge_parts": [
+     "בבדיקה של 2026: +0.19R לעסקה (41 עסקאות), בתקופת הבחירה +0.03R",
+     "בחי: -1.00R לעסקה (1 עסקאות)",
+     "הבדיקה שווה 97% מהמשקל, החי 3%",
+     "היתרון עכשיו: +0.15R לעסקה",
+     "סיכון = +0.15 ÷ +0.19 = ×0.81"
+    ],
+    "edge0": 0.187,
+    "edge": 0.152
+   },
+   {
+    "combo": "SE02|1Hour|USDJPY",
+    "cause": "יציאת זמן",
+    "fixes": [
+     {
+      "what": "סיכון ×0.37",
+      "decision": "d5d7a1b745ef",
+      "at": "2026-11-16T22:05:35+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.4,
+      "value": 0.37
+     }
+    ],
+    "open": false,
+    "cut_only": true,
+    "edge_mult": 0.55,
+    "edge_parts": [
+     "בבדיקה של 2026: +0.15R לעסקה (219 עסקאות), בתקופת הבחירה +0.05R",
+     "בחי: -0.38R לעסקה (9 עסקאות)",
+     "הבדיקה שווה 87% מהמשקל, החי 13%",
+     "היתרון עכשיו: +0.08R לעסקה",
+     "סיכון = +0.08 ÷ +0.15 = ×0.55"
+    ],
+    "edge0": 0.15,
+    "edge": 0.083
+   },
+   {
+    "combo": "TV13|15Min|TSLA",
+    "cause": "סגירה בגלל כלל",
+    "fixes": [
+     {
+      "what": "סיכון ×0.88",
+      "decision": "fc26c844d6b2",
+      "at": "2026-11-16T22:05:35+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.89,
+      "value": 0.88
+     },
+     {
+      "what": "סיכון ×0.95",
+      "decision": "0e82eefd632b",
+      "at": "2026-11-16T14:00:33+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.9,
+      "value": 0.95
+     },
+     {
+      "what": "סיכון ×0.9",
+      "decision": "7d9bdef9110c",
+      "at": "2026-11-16T10:22:58+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.9
+     }
+    ],
+    "open": false,
+    "cut_only": true,
+    "edge_mult": 0.99,
+    "edge_parts": [
+     "בבדיקה של 2026: +0.06R לעסקה (240 עסקאות), בתקופת הבחירה +0.02R",
+     "בחי: +0.04R לעסקה (7 עסקאות)",
+     "הבדיקה שווה 97% מהמשקל, החי 3%",
+     "היתרון עכשיו: +0.06R לעסקה",
+     "סיכון = +0.06 ÷ +0.06 = ×0.99"
+    ],
+    "edge0": 0.06,
+    "edge": 0.059
+   }
+  ],
+  "open": [],
+  "cut_only": [
+   "SC043|4Hour|EURJPY",
+   "SE02|1Hour|USDJPY",
+   "TV13|15Min|TSLA"
+  ],
+  "total_month_pct": 0.0,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+ }
+}

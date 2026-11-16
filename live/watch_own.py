@@ -483,6 +483,12 @@ class Calendar:
             if not CAL.restricted_affects(name, ins):
                 continue
             a, b = idx.searchsorted(t - pd.Timedelta(minutes=2)), idx.searchsorted(t + pd.Timedelta(minutes=2), side="right")
+            if a >= n:
+                # the event's window is still ahead of the last bar (bot 6's smart agent, 16.11.2026): before this
+                # a-1 was the LAST bar, so every restricted event of the next 2 days (FOMC minutes 18.11 19:00 UTC on
+                # the US indices) force-closed every open gap trade at the newest minute, again each refresh, and
+                # blocked the entry there - from 16.11 00:00 UTC on bots 5 and 6. The window acts when it arrives.
+                continue
             noent[max(0, a - 1):b] = True                    # no entry from 2 minutes before to 2 after
             if a - 1 >= 0:
                 stop_at[a - 1] = True                         # out 2 minutes before

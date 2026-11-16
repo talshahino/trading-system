@@ -1,6 +1,6 @@
 {
  "bot": "bot6",
- "updated": "2026-11-16T11:36:31+00:00",
+ "updated": "2026-11-16T15:35:55+00:00",
  "cards": [
   {
    "bot": "bot6",
@@ -1522,6 +1522,139 @@
    "id": "4e93d0cdd707",
    "tier": "regular",
    "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
+  {
+   "bot": "bot6",
+   "kind": "info",
+   "title": "בוט 6: בסיכון של היום רוב עסקאות הסייר לא נכנסות - חוזה מיקרו אחד גדול מהסיכון",
+   "what": "בחי, כל עסקאות הסייר של היום סומנו 'small' ולא נכנסו לחשבון: בסיכון 0.042%-0.06% (אחרי ×0.15 של הבוקר) חוזה מיקרו אחד גדול מהסיכון של העסקה. לפי עסקאות 2026 של כל אחת: 4 מתוך 12 כמעט לא נכנסות אף פעם (SC020|15Min|US500, SC258|5Min|US100, SC084|15Min|US30, SC051|15Min|US100). SC020|15Min|US500: 0% מהעסקאות (חוזה אחד = 0.15% בחציון) · SC258|5Min|US100: 0% מהעסקאות (חוזה אחד = 0.22% בחציון) · SC084|15Min|US30: 0% מהעסקאות (חוזה אחד = 0.13% בחציון) · SC051|15Min|US100: 0% מהעסקאות (חוזה אחד = 0.10% בחציון) · SC441|5Min|US100: 2% מהעסקאות (חוזה אחד = 0.14% בחציון) · SC326|5Min|US30: 15% מהעסקאות (חוזה אחד = 0.06% בחציון) · FR03|15Min|US30: 26% מהעסקאות (חוזה אחד = 0.07% בחציון) · SC005|5Min|US100: 32% מהעסקאות (חוזה אחד = 0.05% בחציון) · SC261|5Min|US500: 55% מהעסקאות (חוזה אחד = 0.04% בחציון) · SC326|15Min|US30: 58% מהעסקאות (חוזה אחד = 0.06% בחציון) · SC072|5Min|US500: 67% מהעסקאות (חוזה אחד = 0.05% בחציון) · SC005|5Min|US500: 75% מהעסקאות (חוזה אחד = 0.03% בחציון). והעסקאות שכן עוברות הן עם סטופ צמוד, שבהן העלות כבדה: FR03 ‎+0.15R ← ‎-0.35R, SC441 ‎+0.34R ← ‎-0.30R, SC261 ‎+0.17R ← ‎+0.07R. החשבון לא בסכנה (הבוט כולו כמעט רק מסלולי הגאפ), אבל הסייר כמעט כבוי. אין שינוי עכשיו: התיקון הוא חלוקת הסיכון לפי היתרון (4e93d0cdd707) - החזקות מקבלות מספיק לחוזה אחד, החלשות מינימום, ובלי יותר סיכון מהיום עד 2025 - בסבב הקרוב של בוט 6 במחשב. בבוט 5 אין את הבעיה הזאת: ב־CFD אפשר 0.01 לוט.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 12,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "world": "bot6",
+    "task": "tal1411risk",
+    "scouts": [
+     {
+      "combo": "SC005|5Min|US100",
+      "risk_pct": 0.042,
+      "n26": 31,
+      "takeable_pct": 32.3,
+      "one_micro_median_pct": 0.051,
+      "r26_all": 0.544,
+      "r26_takeable": 0.456
+     },
+     {
+      "combo": "SC005|5Min|US500",
+      "risk_pct": 0.042,
+      "n26": 32,
+      "takeable_pct": 75.0,
+      "one_micro_median_pct": 0.029,
+      "r26_all": 0.577,
+      "r26_takeable": 0.446
+     },
+     {
+      "combo": "SC020|15Min|US500",
+      "risk_pct": 0.042,
+      "n26": 58,
+      "takeable_pct": 0.0,
+      "one_micro_median_pct": 0.147,
+      "r26_all": 0.012,
+      "r26_takeable": null
+     },
+     {
+      "combo": "SC072|5Min|US500",
+      "risk_pct": 0.06,
+      "n26": 110,
+      "takeable_pct": 67.3,
+      "one_micro_median_pct": 0.046,
+      "r26_all": 0.095,
+      "r26_takeable": 0.066
+     },
+     {
+      "combo": "SC051|15Min|US100",
+      "risk_pct": 0.042,
+      "n26": 204,
+      "takeable_pct": 0.5,
+      "one_micro_median_pct": 0.104,
+      "r26_all": 0.036,
+      "r26_takeable": 0.009
+     },
+     {
+      "combo": "SC258|5Min|US100",
+      "risk_pct": 0.042,
+      "n26": 186,
+      "takeable_pct": 0.0,
+      "one_micro_median_pct": 0.219,
+      "r26_all": -0.002,
+      "r26_takeable": null
+     },
+     {
+      "combo": "SC326|15Min|US30",
+      "risk_pct": 0.06,
+      "n26": 153,
+      "takeable_pct": 57.5,
+      "one_micro_median_pct": 0.056,
+      "r26_all": 0.144,
+      "r26_takeable": 0.141
+     },
+     {
+      "combo": "SC261|5Min|US500",
+      "risk_pct": 0.042,
+      "n26": 31,
+      "takeable_pct": 54.8,
+      "one_micro_median_pct": 0.039,
+      "r26_all": 0.169,
+      "r26_takeable": 0.068
+     },
+     {
+      "combo": "FR03|15Min|US30",
+      "risk_pct": 0.042,
+      "n26": 39,
+      "takeable_pct": 25.6,
+      "one_micro_median_pct": 0.068,
+      "r26_all": 0.146,
+      "r26_takeable": -0.345
+     },
+     {
+      "combo": "SC084|15Min|US30",
+      "risk_pct": 0.042,
+      "n26": 56,
+      "takeable_pct": 0.0,
+      "one_micro_median_pct": 0.128,
+      "r26_all": 0.098,
+      "r26_takeable": null
+     },
+     {
+      "combo": "SC441|5Min|US100",
+      "risk_pct": 0.06,
+      "n26": 195,
+      "takeable_pct": 2.1,
+      "one_micro_median_pct": 0.137,
+      "r26_all": 0.337,
+      "r26_takeable": -0.3
+     },
+     {
+      "combo": "SC326|5Min|US30",
+      "risk_pct": 0.042,
+      "n26": 154,
+      "takeable_pct": 14.9,
+      "one_micro_median_pct": 0.064,
+      "r26_all": 0.126,
+      "r26_takeable": -0.996
+     }
+    ],
+    "next": "agent_bot6.scout_edge6 (4e93d0cdd707)"
+   },
+   "made": "2026-11-16T15:35:55+00:00",
+   "id": "3b78a3d67a20"
   }
  ]
 }

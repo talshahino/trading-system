@@ -1694,8 +1694,12 @@ function tradeNotes(t, p = "tn", botName) {
     }
   }); };
   show(null);
-  if (!NOTES_DOC) fetch(NOTES_URL(), {cache: "no-store"}).then(r => r.json()).then(j => { NOTES_DOC = j; if (!mine.length) show(((j.bots || {})[bot] || {})[id] || []); }).catch(() => {});
-  if (mgr && mgrInfo) act("/trade/notes", {bot, id}).then(j => show(j.notes)).catch(() => {});
+  // always the newest copy (user, 16.11.2026: the conversation with the manager looked deleted - an older copy of the
+  // notes file, read earlier for the conversations' badge, had no note yet); the longer list wins
+  const take = ns => { if (Array.isArray(ns) && ns.length >= mine.length) show(ns); };
+  fetch(NOTES_URL().replace(/t=\d+/, "t=" + Date.now()), {cache: "no-store"}).then(r => r.json())
+    .then(j => { NOTES_DOC = j; take(((j.bots || {})[bot] || {})[id] || []); }).catch(() => {});
+  if (mgr && mgrInfo) act("/trade/notes", {bot, id}).then(j => take(j.notes)).catch(() => {});
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   $(p + "Mic").onclick = () => {
     if (TN.rec) { try { TN.rec.stop(); } catch (e) {} return; }

@@ -981,6 +981,27 @@ def main():
 
     def day_pnl(day):
         return sum(x["pnl"] for x in acc["ledger"] if prague_day(x["exit_time"]) == day)
+
+    def book(k_, exit_time, pnl, risk_usd=0.0):
+        """The ledger follows the trade as it is computed now (bot 5's smart agent, 16.11.2026 - task b6to5news1611):
+        a close booked by a bookkeeping fault (the data hole of 9.11, the FOMC mask of 18.11) used to stay in the
+        ledger for good, even when the next refresh showed the trade still open or closed elsewhere. Returns True
+        when the ledger changed."""
+        for x in acc["ledger"]:
+            if x["id"] == k_:
+                # the same exit with a slightly different cost estimate stays as first booked (a closed trade is closed)
+                if x["exit_time"] == exit_time and abs(float(x["pnl"]) - float(pnl)) <= max(0.005, 0.1 * float(risk_usd or 0)):
+                    return False
+                x["exit_time"], x["pnl"], x["fixed"] = exit_time, pnl, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+                return True
+        acc["ledger"].append({"id": k_, "exit_time": exit_time, "pnl": pnl})
+        return True
+
+    def unbook(k_):
+        """A trade the ledger holds as closed that is computed again as open / not taken - the close was not real."""
+        n_ = len(acc["ledger"])
+        acc["ledger"][:] = [x for x in acc["ledger"] if x["id"] != k_]
+        return len(acc["ledger"]) != n_
     try:
         fstate = json.loads(FUT_F.read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
@@ -1180,14 +1201,17 @@ def main():
                     if rec.get("risk_usd"):
                         if rec["status"] == "closed" and rec.get("r") is not None:
                             rec["pnl"] = round(rec["r"] * rec["risk_usd"], 2)
-                            if not any(x["id"] == k for x in acc["ledger"]):
-                                acc["ledger"].append({"id": k, "exit_time": rec["exit_time"], "pnl": rec["pnl"]})
+                            if book(k, rec["exit_time"], rec["pnl"], rec["risk_usd"]):
                                 if balance() <= acc["initial"] * (1 - MAX_LOSS) and not acc.get("breached"):
                                     acc["breached"] = rec["exit_time"]
                                     REP.notify("בוט 5 - סקאלפינג: החשבון הווירטואלי נשרף", f"היתרה ירדה ל־${balance():,.0f} (10% הפסד). לא נפתחות עוד עסקאות וירטואליות.",
                                                tags=["eyes"], key="wbreach", every=86400 * 30)
-                        elif rec["status"] == "open" and rec.get("r_now") is not None:
-                            rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
+                        elif rec["status"] in ("open", "pending", "cancelled"):
+                            if unbook(k):
+                                rec.pop("pnl", None)
+                                log(f"bot 5 ledger: {k} is {rec['status']} again - its earlier close was removed")
+                            if rec["status"] == "open" and rec.get("r_now") is not None:
+                                rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
                     side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (f" · אסטרטגיה {tal5_name(rec['tal'])}" if scout5_combo(rec.get("tal")) else
                                                                       f" · שיטת הגאפ {tal5_name(rec['tal'])}" if rec.get("tal") else " · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
@@ -1217,8 +1241,7 @@ def main():
                         if t.get("risk_usd"):
                             if t["status"] == "closed":
                                 t["pnl"] = round(t["r"] * t["risk_usd"], 2)
-                                if not any(x["id"] == k for x in acc["ledger"]):
-                                    acc["ledger"].append({"id": k, "exit_time": t["exit_time"], "pnl": t["pnl"]})
+                                book(k, t["exit_time"], t["pnl"], t["risk_usd"])
                                 word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה", "breakeven": "בברייק אחרי יציאה חלקית"}.get(t["reason"], "")
                                 REP.notify(f"בוט 5 - סקאלפינג: {name} נסגרה {word}", f"{'+' if t['r'] >= 0 else ''}{t['r']:.2f} סיכון · "
                                            f"{'+' if t['pnl'] >= 0 else '−'}${abs(t['pnl']):,.0f} · יתרה ${balance():,.0f} (וירטואלי)",

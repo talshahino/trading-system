@@ -167,6 +167,10 @@ def bot_report(bot):
 
 def report(bots):
     out = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "ways": list(WAYS), "bots": {}}
+    try:                       # the other bots' results stay (one bot's run - e.g. bot 7 from its own workflow run)
+        out["bots"] = {k: v for k, v in json.loads(OUT.read_text(encoding="utf-8")).get("bots", {}).items() if k not in bots}
+    except Exception:  # noqa: BLE001
+        pass
     for b in bots:
         if CS.out_dir(b).exists():
             try:

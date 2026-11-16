@@ -98,10 +98,12 @@ jobs:
         run: |
           for d in parts/*/; do cp -r "$d." reports/agents/; done
           python -m agents.conflict_study report --bot '${{ inputs.bot || 'bot1,bot2,bot3,bot4' }}' | head -60
+          # trades that were in profit and ended in a loss - partial exits / stop to entry (task tal1611partial)
+          python -m agents.gaveback_study report --bot '${{ inputs.bot || 'bot1,bot2,bot3,bot4' }}' | head -60 || true
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/agents/*/conflict || true
+          git add reports/agents/*/conflict reports/agents/gaveback_study.json || true
           git commit -qm "Opposite trades study (agents/conflict_study)" || exit 0
           for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

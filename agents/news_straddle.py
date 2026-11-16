@@ -54,18 +54,24 @@ from agents import news_straddle_live as NST  # noqa: E402
 
 OUT = ROOT / "reports" / "agents" / "bot7" / "straddle_study.json"
 CACHE = ROOT / "cache" / "news_straddle"
-VERSION = 1
+VERSION = 2                                # 2: the MANAGE exits and each row's mfe (16.11.2026)
 STARTS = {"pre": -1, "safe": 3}            # the order minute relative to the release minute
 XS = (0.5, 1.0, 1.5)
 STOPS = ("opp", "atr1")
 EXITS = ("t1.5", "t2", "be1t2", "be1")
+# trade management on the live version only (pre, 1 ATR, stop at the other order, 30 minutes; task tal1611partial,
+# 16.11.2026 - "most losses were in profit at some point, take them out partially"): stop to entry at +0.5R; half /
+# 30% out at +0.5R / +1R and the rest's stop to the entry; stepped locking (from +S the stop at the entry, every
+# further S locks S more). No target, out at the time limit, like be1.
+MANAGE = ("be0.5", "h50at0.5", "h50at1", "h30at1", "lock1", "lock0.5")
+MANAGE_ON = ("pre", 1.0, "opp", 30)
 HOLDS = (15, 30)
 CANCEL = 5                                 # minutes after the release (pre) / after the orders (safe)
 SLIP_ATR = 0.1
 CURS = ("usd", "own")
 SPREAD_CAP = (0.0, 3.0)                    # x the instrument's median spread at the order minute (0 = no limit)
 CAPS = (0, 1, 2, 3, 6, 9)               # 6 / 9 (15.11): the live bot counts every open stop - 9 x 0.5% = its 4.5% day
-STUDY_VERSION = 2                          # the output (caps 6/9, day risk, slippage stress); the row cache keeps VERSION
+STUDY_VERSION = 3                          # the output (caps 6/9, day risk, slippage stress); the row cache keeps VERSION
 STRESS_ATR = (0.2, 0.4)                    # extra slippage on the fill, x the 5-minute ATR (stop orders in news)
 DAY_LIMIT_R = -9.0                         # 4.5% day stop / 0.5% risk per trade
 TOP = 10
@@ -101,6 +107,44 @@ def _exit(o, h, l, c, q0, end, dr, e, stop, tgt, be):
         if be is not None and not moved and ((h[q] - e) if dr > 0 else (e - l[q])) >= be * risk:
             s, moved = e, True
     return c[end - 1], end - 1
+
+
+def _manage(o, h, l, c, q0, end, dr, e, stop, kind):
+    """One managed exit (MANAGE) from the fill bar q0, as _exit (stop only in the fill bar; in every bar the stop is
+    checked before a new level; a level reached moves the stop from the next bar) -> (gross r, exit bar)."""
+    risk = abs(e - stop)
+    if (l[q0] <= stop) if dr > 0 else (h[q0] >= stop):
+        return -1.0, q0
+    if kind.startswith("be"):
+        px, qx = _exit(o, h, l, c, q0, end, dr, e, stop, None, float(kind[2:]))
+        return dr * (px - e) / risk, qx
+    if kind.startswith("lock"):
+        st_, s, best = float(kind[4:]), stop, -np.inf
+        for q in range(q0 + 1, end):
+            if (l[q] <= s) if dr > 0 else (h[q] >= s):
+                return dr * (s - e) / risk, q
+            best = max(best, ((h[q] - e) if dr > 0 else (e - l[q])) / risk)
+            if best >= st_:
+                lk = e + dr * (np.floor(best / st_) * st_ - st_) * risk
+                s = max(s, lk) if dr > 0 else min(s, lk)
+        return dr * (c[end - 1] - e) / risk, end - 1
+    f, th = int(kind[1:3]) / 100.0, float(kind.split("at")[1])      # h50at1: half out at +1R
+    s, took = stop, False
+    for q in range(q0 + 1, end):
+        if (l[q] <= s) if dr > 0 else (h[q] >= s):
+            rest = dr * (s - e) / risk
+            return (f * th + (1 - f) * rest if took else rest), q
+        if not took and ((h[q] - e) if dr > 0 else (e - l[q])) >= th * risk:
+            took, s = True, e
+    rest = dr * (c[end - 1] - e) / risk
+    return (f * th + (1 - f) * rest if took else rest), end - 1
+
+
+def _mfe(h, l, q0, qx, dr, e, risk):
+    """The furthest the trade went in its favour (R) from the bar after the fill to the bar before the exit."""
+    if qx <= q0 + 1:
+        return 0.0
+    return float(max(0.0, ((h[q0 + 1:qx].max() - e) if dr > 0 else (e - l[q0 + 1:qx].min())) / risk))
 
 
 def trades_sym(sym, rel):
@@ -165,11 +209,20 @@ def trades_sym(sym, rel):
                     risk = dr * (e - stop)
                     if risk <= 0:
                         continue
-                    for ex, hold in itertools.product(EXITS, HOLDS):
+                    mng = [(m_, MANAGE_ON[3]) for m_ in MANAGE] if (st, x, stop_k) == MANAGE_ON[:3] else []
+                    for ex, hold in list(itertools.product(EXITS, HOLDS)) + mng:
+                        end = min(q0 + hold, len(idx))
+                        if ex in MANAGE:
+                            gr, qx = (-1.0, q0) if both else _manage(o, h, l, c, q0, end, dr, e, stop, ex)
+                            raw.append({"v": vkey(st, x, stop_k, ex, hold), "time": idx[q0], "exit_time": idx[qx], "dir": dr,
+                                        "entry_px": e, "stop_px": stop, "r": gr, "rel": t,
+                                        "usd": int(t in usd), "own": int(t in own), "spr": spr / spm if spm > 0 else 0.0,
+                                        "cat": (g or {}).get("cat", "other"), "both": int(both),
+                                        "mfe": 0.0 if both else _mfe(h, l, q0, qx, dr, e, risk)})
+                            continue
                         tg = {"t1.5": 1.5, "t2": 2.0, "be1t2": 2.0, "be1": None}[ex]
                         be = 1.0 if ex.startswith("be1") else None
                         tgt = None if tg is None else e + dr * tg * risk
-                        end = min(q0 + hold, len(idx))
                         if both:
                             px, qx = stop, q0
                         else:
@@ -177,7 +230,8 @@ def trades_sym(sym, rel):
                         raw.append({"v": vkey(st, x, stop_k, ex, hold), "time": idx[q0], "exit_time": idx[qx], "dir": dr,
                                     "entry_px": e, "stop_px": stop, "r": dr * (px - e) / risk, "rel": t,
                                     "usd": int(t in usd), "own": int(t in own), "spr": spr / spm if spm > 0 else 0.0,
-                                    "cat": (g or {}).get("cat", "other"), "both": int(both)})
+                                    "cat": (g or {}).get("cat", "other"), "both": int(both),
+                                    "mfe": 0.0 if both else _mfe(h, l, q0, qx, dr, e, risk)})
     if not raw:
         return []
     tt = pd.DataFrame(raw)
@@ -187,7 +241,8 @@ def trades_sym(sym, rel):
         rows.append({"v": x.v, "sym": sym, "cls": U.CLASS.get(sym, "?"), "t": pd.Timestamp(x.time).isoformat(),
                      "dir": int(x.dir), "r": round(float(x.r), 4), "gross": round(float(tt.at[x.Index, "r"]), 4),
                      "cat": x.cat, "usd": int(x.usd), "own": int(x.own), "spr": round(float(x.spr), 2), "both": int(x.both),
-                     "rel": pd.Timestamp(x.rel).isoformat(), "x": pd.Timestamp(x.exit_time).isoformat()})
+                     "rel": pd.Timestamp(x.rel).isoformat(), "x": pd.Timestamp(x.exit_time).isoformat(),
+                     "mfe": round(float(x.mfe), 3)})
     return rows
 
 
@@ -220,7 +275,7 @@ def study(df, base_key=BASE):
     base = next((c_ for c_ in cand if c_["v"] == base_key), None)
     by = {}
     for key, pat in (("start", r"^(pre|safe)\|"), ("x", r"\|x([\d.]+)\|"), ("stop", r"\|(opp|atr1)\|"),
-                     ("exit", r"\|(t1\.5|t2|be1t2|be1)\|"), ("hold", r"\|h(\d+)\|"), ("cur", r"\|c(usd|own)\|"),
+                     ("exit", r"\|(t1\.5|t2|be1t2|be1|be0\.5|h50at0\.5|h50at1|h30at1|lock1|lock0\.5)\|"), ("hold", r"\|h(\d+)\|"), ("cur", r"\|c(usd|own)\|"),
                      ("spread", r"\|sp([\d.]+)"), ("cap", r"(?:\|cap(\d+))?$")):
         g = {}
         for c_ in cand:
@@ -336,6 +391,48 @@ def export(df):
     return out
 
 
+def gaveback(df):
+    """Task tal1611partial (16.11.2026): the live version's trades - how many losers first went +0.5R / +1R (mfe), and
+    each MANAGE exit on the same fills (same skipped types, fill window, cap) against the built one, 2025 / 2026."""
+    b = BT.built("EV04", "1Min")
+    if df is None or not len(df) or not b or "mfe" not in df:
+        return {}
+    df = window_out(skipped_out(df, b), b)
+    keys = {}
+    for s_ in b:
+        if s_ in set(df["sym"]):
+            keys.setdefault(built_key(b[s_]), []).append(s_)
+
+    def rows(ex):
+        parts = []
+        for k, ss in keys.items():
+            kk = re.sub(r"^(pre\|x1\|opp)\|[^|]+\|h30\|", rf"\1|{ex}|h30|", k)
+            if kk == k and ex != "built":
+                continue
+            parts.append(_rows_for(df[df["sym"].isin(ss)], k if ex == "built" else kk))
+        z = pd.concat(parts) if parts else df.iloc[0:0]
+        return z.assign(train=pd.to_datetime(z["t"], utc=True) < NF.SPLIT)
+
+    base = rows("built")
+    out = {"census": {}, "ways": {}}
+    for per, z in (("train", base[base.train]), ("unseen", base[~base.train])):
+        lo = z[z["r"] < 0]
+        out["census"][per] = {"trades": int(len(z)), "losers": int(len(lo)), "lost_r": round(float(lo["r"].sum()), 1),
+                              "mfe_0.5R": int((lo["mfe"] >= 0.5).sum()), "mfe_1R": int((lo["mfe"] >= 1).sum()),
+                              "mfe_median": round(float(lo["mfe"].median()), 2) if len(lo) else None}
+    day = lambda z: float(z.groupby(pd.to_datetime(z["t"], utc=True).dt.strftime("%Y-%m-%d"))["r"].sum().min()) if len(z) else 0.0  # noqa: E731
+    for ex in ("built",) + MANAGE:
+        z = base if ex == "built" else rows(ex)
+        out["ways"][ex] = {per: {**NF._w(y), "worst_day_r": round(day(y), 2)}
+                           for per, y in (("train", z[z.train]), ("unseen", z[~z.train]))}
+    bt = out["ways"]["built"]
+    out["both"] = [ex for ex in MANAGE if ex in out["ways"]
+                   and (out["ways"][ex]["train"]["sum"] or 0) > (bt["train"]["sum"] or 0)
+                   and (out["ways"][ex]["unseen"]["sum"] or 0) > (bt["unseen"]["sum"] or 0)]
+    out["best_train"] = max(MANAGE, key=lambda ex: out["ways"].get(ex, {}).get("train", {}).get("sum") or -1e9)
+    return out
+
+
 def skipped_out(df, b):
     """The rows left after each instrument's skipped release types (plan "skip_groups", e.g. ["USD:gdp"]; bot 7 smart
     agent 16.11.2026) - before the per-release cap, as the live bot (agents/news_straddle_live.skip_events)."""
@@ -436,6 +533,10 @@ def main(argv=None):
         res["by_cat"] = by_group(tr.drop(columns="train"), "cat")
         res["by_sym"] = by_group(tr.drop(columns="train"), "sym")
         res["both_share"] = round(float(df["both"].mean()), 3)
+        try:
+            res["gaveback"] = gaveback(df)
+        except Exception as e:  # noqa: BLE001
+            res["gaveback"] = {"error": str(e)}
         try:
             res["deploy"] = deploy(df, res)
         except Exception as e:  # noqa: BLE001 - the extra check never loses the study

@@ -191,3 +191,12 @@ Tal talks with the manager (spoken or typed) on the app's "מנהל הבוטים
 conversation responder answers as the manager every hour on weekdays, and records what Tal said: principles here,
 standing rules in data/agents/user_rules.json, tasks in data/agents/replies.json "_tasks", and every exchange in
 data/agents/manager_talk.md. Every agent reads data/agents/manager_talk.md together with this file.
+
+## A profit that turns into a full loss (user, 16.11.2026)
+Tal judges a day by its trades' path, not only their end: a trade that reached a real profit (50-60% of the target)
+and then closed at the full stop is, for him, a management failure - "I am not willing to have such a day again".
+He has asked many times for partial exits and is losing patience ("I keep saying it, I'm sick of losing like this").
+For the agents: every bot tests partial exits / earlier break-even / stepped locking per strategy in every market
+(not only in chop), records MFE/MAE live, and brings a card the moment something wins on both periods; when
+answering him, show that it was checked on his real trades, not a generic answer. (Tasks tal1611gaveback, tal1611partial.)
+Opposite trades on the same instrument AND the same timeframe also look wrong to him (risky), even when allowed (task b2jpy1611).

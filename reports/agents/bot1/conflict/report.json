@@ -1,0 +1,266 @@
+{
+ "bot": "bot1",
+ "at": "2026-11-16T05:07:16+00:00",
+ "strategies": 43,
+ "missing": [],
+ "ways": {
+  "asis": {
+   "train": {
+    "conflicts": 515,
+    "changed": 0,
+    "trades": 2706,
+    "total": 113.47,
+    "worst_day": -2.94,
+    "max_dd": 5.73,
+    "guard_cut": 216,
+    "guard_skipped": 51
+   },
+   "unseen": {
+    "conflicts": 677,
+    "changed": 0,
+    "trades": 3621,
+    "total": 138.07,
+    "worst_day": -2.64,
+    "max_dd": 8.34,
+    "guard_cut": 217,
+    "guard_skipped": 30
+   }
+  },
+  "skip": {
+   "train": {
+    "conflicts": 380,
+    "changed": 380,
+    "trades": 2357,
+    "total": 128.67,
+    "worst_day": -2.9,
+    "max_dd": 6.31,
+    "guard_cut": 110,
+    "guard_skipped": 20
+   },
+   "unseen": {
+    "conflicts": 509,
+    "changed": 509,
+    "trades": 3132,
+    "total": 124.7,
+    "worst_day": -2.45,
+    "max_dd": 13.69,
+    "guard_cut": 71,
+    "guard_skipped": 10
+   }
+  },
+  "stronger": {
+   "train": {
+    "conflicts": 374,
+    "changed": 374,
+    "trades": 2454,
+    "total": 125.55,
+    "worst_day": -2.9,
+    "max_dd": 5.9,
+    "guard_cut": 114,
+    "guard_skipped": 16
+   },
+   "unseen": {
+    "conflicts": 499,
+    "changed": 499,
+    "trades": 3287,
+    "total": 139.32,
+    "worst_day": -2.45,
+    "max_dd": 7.87,
+    "guard_cut": 79,
+    "guard_skipped": 12
+   }
+  },
+  "half": {
+   "train": {
+    "conflicts": 515,
+    "changed": 515,
+    "trades": 2734,
+    "total": 117.69,
+    "worst_day": -2.9,
+    "max_dd": 5.96,
+    "guard_cut": 132,
+    "guard_skipped": 23
+   },
+   "unseen": {
+    "conflicts": 677,
+    "changed": 677,
+    "trades": 3639,
+    "total": 129.35,
+    "worst_day": -2.27,
+    "max_dd": 8.77,
+    "guard_cut": 113,
+    "guard_skipped": 12
+   }
+  },
+  "tight_new": {
+   "train": {
+    "conflicts": 508,
+    "changed": 461,
+    "trades": 2672,
+    "total": 113.47,
+    "worst_day": -2.94,
+    "max_dd": 5.54,
+    "guard_cut": 202,
+    "guard_skipped": 41
+   },
+   "unseen": {
+    "conflicts": 640,
+    "changed": 569,
+    "trades": 3575,
+    "total": 111.5,
+    "worst_day": -2.36,
+    "max_dd": 9.27,
+    "guard_cut": 193,
+    "guard_skipped": 23
+   }
+  },
+  "tight_short": {
+   "train": {
+    "conflicts": 514,
+    "changed": 363,
+    "trades": 2696,
+    "total": 109.54,
+    "worst_day": -2.94,
+    "max_dd": 5.42,
+    "guard_cut": 221,
+    "guard_skipped": 45
+   },
+   "unseen": {
+    "conflicts": 669,
+    "changed": 461,
+    "trades": 3607,
+    "total": 145.08,
+    "worst_day": -2.55,
+    "max_dd": 7.77,
+    "guard_cut": 203,
+    "guard_skipped": 24
+   }
+  },
+  "tight_both": {
+   "train": {
+    "conflicts": 498,
+    "changed": 717,
+    "trades": 2677,
+    "total": 128.26,
+    "worst_day": -2.94,
+    "max_dd": 5.18,
+    "guard_cut": 195,
+    "guard_skipped": 36
+   },
+   "unseen": {
+    "conflicts": 626,
+    "changed": 896,
+    "trades": 3578,
+    "total": 130.81,
+    "worst_day": -2.31,
+    "max_dd": 8.44,
+    "guard_cut": 170,
+    "guard_skipped": 20
+   }
+  }
+ },
+ "by_symbol": {
+  "CSCO": {
+   "train": {
+    "n": 45,
+    "r": 0.01
+   },
+   "unseen": {
+    "n": 52,
+    "r": -3.88
+   }
+  },
+  "JP225": {
+   "train": {
+    "n": 106,
+    "r": 9.19
+   },
+   "unseen": {
+    "n": 169,
+    "r": 40.55
+   }
+  },
+  "USDJPY": {
+   "train": {
+    "n": 71,
+    "r": -7.09
+   },
+   "unseen": {
+    "n": 76,
+    "r": 31.45
+   }
+  },
+  "XAUUSD": {
+   "train": {
+    "n": 181,
+    "r": 8.55
+   },
+   "unseen": {
+    "n": 268,
+    "r": 37.09
+   }
+  },
+  "ETHUSD": {
+   "train": {
+    "n": 91,
+    "r": -21.89
+   },
+   "unseen": {
+    "n": 94,
+    "r": 5.67
+   }
+  },
+  "MSTR": {
+   "train": {
+    "n": 4,
+    "r": -1.3
+   },
+   "unseen": {
+    "n": 4,
+    "r": 3.78
+   }
+  },
+  "USDCHF": {
+   "train": {
+    "n": 3,
+    "r": -3.47
+   },
+   "unseen": {
+    "n": 4,
+    "r": 3.77
+   }
+  },
+  "US500": {
+   "train": {
+    "n": 5,
+    "r": 2.4
+   },
+   "unseen": {
+    "n": 3,
+    "r": -0.36
+   }
+  },
+  "ARM": {
+   "train": {
+    "n": 1,
+    "r": 0.66
+   }
+  },
+  "US100": {
+   "train": {
+    "n": 1,
+    "r": -1.01
+   }
+  },
+  "GBPUSD": {
+   "train": {
+    "n": 7,
+    "r": -7.32
+   },
+   "unseen": {
+    "n": 7,
+    "r": 2.55
+   }
+  }
+ }
+}

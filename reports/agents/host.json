@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-16T17:30:00+00:00",
+ "updated": "2026-11-16T17:40:56+00:00",
  "light_at": "2026-11-16T17:30:00+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -28,7 +28,8 @@
  "agent_tail": {
   "bot5-new": [
    "new strategies: stopped for time, 30 tested, 811 combos left",
-   "{\"bot\": \"bot5\", \"new_cards\": 10799}"
+   "{\"bot\": \"bot5\", \"new_cards\": 10799}",
+   "(ended while the manager restarted)"
   ],
   "bot2": [
    "new strategies: stopped for time, 0 tested, 1087 combos left",
@@ -85,11 +86,11 @@
    "adopted": true
   },
   "bot5-new": {
-   "at": "2026-11-16T17:10:12+00:00",
-   "sec": 940,
+   "at": "2026-11-16T17:11:27+00:00",
+   "sec": null,
    "budget_sec": 900,
-   "ok": true,
-   "err": null
+   "ok": null,
+   "err": "ended while the manager restarted - published after"
   },
   "bot2": {
    "at": "2026-11-16T09:59:15+00:00",
@@ -162,12 +163,12 @@
  "machine": {
   "disk_gb": {
    "total": 223.0,
-   "free": 136.7
+   "free": 136.8
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.9,
-   "load_pct": 75
+   "free": 1.1,
+   "load_pct": 86
   }
  }
 }

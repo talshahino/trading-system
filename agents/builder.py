@@ -133,6 +133,11 @@ def buildable(c):
     # bot 5 (14.11.2026, bot 5's smart agent): a scout strategy approved on agent_portfolio.py's test (the CFD bots'
     # machine with the live rules, bot 5's instruments, 1-15 minute charts) -> "scout" in live/bots/bot5.json, traded by
     # live/watch_own.py scout5_trades with the same functions. Only a strategy whose code is installed.
+    # bot 5 (16.11.2026 night, bot 5's smart agent): a filter on one scout strategy that trades now - "filter" in its
+    # entry in "scout" (live/watch_own.scout5_filter: noreent / ema50h; None = no filter)
+    if bot == "bot5" and c.get("kind") == "improve" and ch.get("knob") == "SCOUT_FILTER" \
+            and str(ch.get("combo", "")).count("|") == 2 and ch.get("to") in (None, "noreent", "ema50h"):
+        return {"bot": bot, "combo": ch["combo"], "family": "scout5f", "to": ch.get("to")}
     if bot == "bot5" and c.get("kind") in ("new", "improve") and ch.get("kind") == "add" \
             and str(ch.get("combo", "")).count("|") == 2:
         sid, tf, sym = ch["combo"].split("|")
@@ -182,6 +187,9 @@ def manage_plan(v):
 
 
 def describe(b):
+    if b["family"] == "scout5f":
+        return f"{b['combo']}: " + ({"noreent": "בלי עסקה חוזרת באותו יום ובאותו כיוון אחרי הפסד",
+                                     "ema50h": "רק בכיוון EMA50 של שעה"}.get(b["to"]) or "בלי מסנן")
     if b["family"] == "track":
         return f"מסלול {b['track']}: {b['knob']} = {b['to']}"
     if b["family"] == "risk":
@@ -231,6 +239,17 @@ def describe(b):
 
 
 def apply(cfg, b, card_id):
+    if b["family"] == "scout5f":
+        sc = cfg.setdefault("scout", {})
+        if b["combo"] not in sc:
+            return                               # the strategy no longer trades in the bot: nothing to filter
+        cfg.setdefault("changes", {})[card_id] = {"family": "scout5", "combo": b["combo"],
+                                                  "before": json.loads(json.dumps(sc[b["combo"]]))}
+        e = dict(sc[b["combo"]])
+        e.pop("filter", None) if b["to"] is None else e.__setitem__("filter", b["to"])
+        e["filter_from"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")    # trades held before it stay
+        sc[b["combo"]] = e
+        return
     if b["family"] == "scout5":
         sc = cfg.setdefault("scout", {})
         cfg.setdefault("changes", {})[card_id] = {"family": "scout5", "combo": b["combo"],

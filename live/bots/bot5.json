@@ -698,6 +698,22 @@
    "family": "risk",
    "track": "scout:SC441|5Min|XAUUSD",
    "before": 0.0028
+  },
+  "5108e04c49ee": {
+   "family": "scout5",
+   "combo": "SC333|15Min|XAUUSD",
+   "before": {
+    "since": "2026-11-15T09:53:02+00:00",
+    "card": "1bcdf86b80fa"
+   }
+  },
+  "876520ad763a": {
+   "family": "scout5",
+   "combo": "BK07|15Min|US100",
+   "before": {
+    "since": "2026-11-14T21:44:05+00:00",
+    "card": "08a1130475cd"
+   }
   }
  },
  "tal_tracks": {
@@ -1142,7 +1158,9 @@
   },
   "BK07|15Min|US100": {
    "since": "2026-11-14T21:44:05+00:00",
-   "card": "08a1130475cd"
+   "card": "08a1130475cd",
+   "filter": "ema50h",
+   "filter_from": "2026-11-16T22:30:36+00:00"
   },
   "BK07|15Min|EURUSD": {
    "since": "2026-11-14T21:44:05+00:00",
@@ -1170,7 +1188,9 @@
   },
   "SC333|15Min|XAUUSD": {
    "since": "2026-11-15T09:53:02+00:00",
-   "card": "1bcdf86b80fa"
+   "card": "1bcdf86b80fa",
+   "filter": "noreent",
+   "filter_from": "2026-11-16T22:30:36+00:00"
   },
   "SC326|15Min|USDCHF": {
    "since": "2026-11-15T09:53:02+00:00",

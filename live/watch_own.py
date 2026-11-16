@@ -162,6 +162,50 @@ SCOUT5 = {}
 # scout strategies' cost. "spread" in the strategy's entry overrides it; no sample yet -> FTMO's class estimate.
 SPREAD5 = {}
 RISK_SCOUT5 = 0.004
+# a filter on one scout strategy's trades (bot 5's smart agent, 16.11.2026 night, cards 5108e04c49ee / 876520ad763a,
+# agents/b5_night_study.py - the same rule as the test): "filter" in the strategy's entry in live/bots/bot5.json.
+#   noreent = no trade again on the same New York day in the same direction after one of its trades closed at a loss
+#   ema50h  = longs only when the last closed 1-hour close is over the 1-hour EMA50, shorts only under it
+SCOUT5_FILTERS = ("noreent", "ema50h")
+
+
+def scout5_filter(t, x1, way, start=None):
+    """The strategy's trades (rules_agent.run, time order) -> those the filter keeps. x1: the 1-minute bars. Only a
+    trade entered from "start" on (when the filter was built) is dropped: one the bot already holds stays and is
+    followed to its exit (an open trade that leaves the run's list would stay open in the state)."""
+    if not way or t.empty:
+        return t
+    utc = lambda v: (pd.Timestamp(v).tz_localize("UTC") if pd.Timestamp(v).tzinfo is None  # noqa: E731
+                     else pd.Timestamp(v).tz_convert("UTC"))
+    t0 = utc(start) if start else None
+    old = lambda v: t0 is not None and utc(v) < t0  # noqa: E731
+    keep = []
+    if way == "noreent":
+        stopped = {}
+        for i, x in enumerate(t.to_dict("records")):
+            tm = utc(x["time"])
+            key = (tm.tz_convert("America/New_York").date(), int(x["dir"]))
+            if key in stopped and stopped[key] <= tm and not old(tm):
+                continue
+            keep.append(i)
+            if x["reason"] != "סוף הנתונים" and pd.notna(x["r"]) and float(x["r"]) < 0 and pd.notna(x["exit_time"]):
+                ex = utc(x["exit_time"])
+                stopped[key] = min(stopped.get(key, ex), ex)
+        return t.iloc[keep]
+    c = x1["c"]
+    if c.index.tz is None:
+        c = c.tz_localize("UTC")
+    h = c.resample("1h", label="left", closed="left").last().dropna()
+    e50 = h.ewm(span=50, adjust=False).mean()
+    closed = h.index + pd.Timedelta(hours=1)
+    for i, x in enumerate(t.to_dict("records")):
+        j = int(closed.searchsorted(utc(x["time"]), side="right")) - 1
+        if j < 50 or old(x["time"]):                       # too little history (as the test) / held before: stays
+            keep.append(i)
+            continue
+        if bool(h.iloc[j] > e50.iloc[j]) == (int(x["dir"]) > 0):
+            keep.append(i)
+    return t.iloc[keep]
 
 
 def scout5_combo(trk):
@@ -244,7 +288,9 @@ def load_settings():
                         if sid_ in R_.STRATEGIES and tf_ in SF.TF_MIN and sym_ in U.ALL and e_.get("since"):
                             sp_ = e_.get("spread")
                             SCOUT5[str(combo_)] = {"sid": sid_, "tf": tf_, "sym": sym_, "since": str(e_["since"]),
-                                                   "spread": float(sp_) if sp_ is not None and float(sp_) > 0 else None}
+                                                   "spread": float(sp_) if sp_ is not None and float(sp_) > 0 else None,
+                                                   "filter": e_.get("filter") if e_.get("filter") in SCOUT5_FILTERS else None,
+                                                   "filter_from": str(e_.get("filter_from") or e_["since"])}
                             v = rk.get(f"scout:{combo_}", rk.get("scout", RISK_SCOUT5))
                             TAL5_RISK[f"sc:{combo_}"] = float(v) if 0 <= float(v) <= 0.02 else RISK_SCOUT5
                             if sym_ not in SYMBOLS:
@@ -822,6 +868,9 @@ def scout5_trades(name, df, sc, cal):
     if t.empty:
         return []
     t = C.apply(t, name, pd.Series([sp], index=d.index[:1]))
+    t = scout5_filter(t, x1, sc.get("filter"), sc.get("filter_from"))
+    if t.empty:
+        return []
     since = pd.Timestamp(sc["since"])
     since = since.tz_localize("UTC") if since.tzinfo is None else since
     combo = f"{sc['sid']}|{tf}|{name}"

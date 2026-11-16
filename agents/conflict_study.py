@@ -336,9 +336,86 @@ def summary(bots):
     return out
 
 
+SAME_WAYS = ["asis", "skip", "close_first", "half", "stronger"]
+SAME_HE = {"asis": "כמו היום", "skip": "לא לפתוח את השנייה", "close_first": "לסגור את הראשונה בכניסת השנייה",
+           "half": "השנייה בחצי סיכון", "stronger": "רק החזקה מבין השתיים"}
+
+
+def simulate_same_tf(t, way, strength):
+    """Opposite trades on the same instrument AND the same timeframe, both open at once (user, 16.11.2026, bot 2
+    USDJPY 1-hour: SC295 sell and SE02 buy together - "sounds very strange to me... a bit risky"; task b2jpy1611).
+    No range-overlap condition here: any opposite pair on the same instrument and timeframe counts."""
+    taken, held = [], []
+    n_conf = n_changed = 0
+    for row in t.to_dict("records"):
+        row["share"] = 1.0
+        held = [i for i in held if taken[i]["b"] > row["a"]]
+        opp = [i for i in held if taken[i]["sym"] == row["sym"] and taken[i]["tf"] == row["tf"]
+               and taken[i]["combo"] != row["combo"] and taken[i]["dir"] != row["dir"]]
+        if opp and way != "asis":
+            n_conf += 1
+            n_changed += 1
+            if way == "skip":
+                continue
+            if way == "half":
+                row["share"] = 0.5
+            elif way in ("close_first", "stronger"):
+                if way == "stronger" and strength.get(row["combo"], -9) <= max(strength.get(taken[i]["combo"], -9) for i in opp):
+                    continue
+                for i in opp:
+                    x = taken[i]
+                    x["r"] = x["dir"] * (row["entry_px"] - x["entry_px"]) / x["risk_px"] - x["cost_r"]
+                    x["b"] = row["a"]
+                held = [i for i in held if i not in opp]
+        elif opp:
+            n_conf += 1
+        held.append(len(taken))
+        taken.append(row)
+    return taken, {"conflicts": n_conf, "changed": n_changed}
+
+
+def same_tf_report(bot):
+    """Each way against "as today" on the whole bot, chosen on 30.04-31.12.2025, shown on 2026 (task b2jpy1611)."""
+    from agents import portfolio_check as PC
+    import agent_portfolio as A
+    t = load(bot)
+    risk, mults = PC.bot_risk(bot), PC.mults(bot)
+    split = int((pd.Timestamp(A.SPLIT, tz="UTC") - pd.Timestamp("1970-01-01", tz="UTC")) // pd.Timedelta(minutes=1))
+    per = {"train": t[t["a"] < split], "unseen": t[t["a"] >= split]}
+    strength = per["train"].groupby("combo")["r"].mean().to_dict()
+    out = {"bot": bot, "at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "ways": {}, "pairs": {}}
+    for way in SAME_WAYS:
+        row = {}
+        for p, tt in per.items():
+            taken, cnt = simulate_same_tf(tt, way, strength)
+            rep = PC.replay(_book(taken, mults), risk)
+            row[p] = {**cnt, **{k: rep[k] for k in ("trades", "total", "worst_day", "max_dd")}}
+        out["ways"][way] = row
+    for p, tt in per.items():                       # the conflicting second trades as today, by instrument|timeframe
+        taken, _ = simulate_same_tf(tt, "asis", strength)
+        held = []
+        for i, x in enumerate(taken):
+            held = [j for j in held if taken[j]["b"] > x["a"]]
+            if any(taken[j]["sym"] == x["sym"] and taken[j]["tf"] == x["tf"] and taken[j]["combo"] != x["combo"]
+                   and taken[j]["dir"] != x["dir"] for j in held):
+                k = f'{x["sym"]}|{int(x["tf"])}'
+                s = out["pairs"].setdefault(k, {}).setdefault(p, {"n": 0, "r": 0.0})
+                s["n"] += 1
+                s["r"] = round(s["r"] + float(x["r"]), 2)
+            held.append(i)
+    a = out["ways"]["asis"]
+    out["vs_asis"] = {w: {p: {"total": round(v[p]["total"] - a[p]["total"], 2), "max_dd": round(v[p]["max_dd"] - a[p]["max_dd"], 2),
+                              "worst_day": round(v[p]["worst_day"] - a[p]["worst_day"], 2)} for p in per}
+                      for w, v in out["ways"].items() if w != "asis"}
+    out["both"] = [w for w, v in out["vs_asis"].items() if v["train"]["total"] > 0 and v["unseen"]["total"] > 0
+                   and v["unseen"]["max_dd"] <= 0]
+    (out_dir(bot) / "same_tf.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    return out
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=["plan", "run", "report"])
+    ap.add_argument("mode", choices=["plan", "run", "report", "same_tf"])
     ap.add_argument("--bot", default="bot3")          # one bot or several, comma separated
     ap.add_argument("--sym", default="")
     ap.add_argument("--job", default="")              # "bot:SYMBOL" (the workflow's matrix)
@@ -350,6 +427,8 @@ if __name__ == "__main__":
     elif a.mode == "run":
         b, s = a.job.split(":", 1) if a.job else (bots[0], a.sym)
         run(b, s, a.minutes)
+    elif a.mode == "same_tf":
+        print(json.dumps({b: same_tf_report(b) for b in bots if out_dir(b).exists()}, ensure_ascii=False, indent=1))
     else:
         for b in bots:
             if out_dir(b).exists():

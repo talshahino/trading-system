@@ -1208,7 +1208,11 @@ function accCard(a) {
 }
 function renderList() {
   const all = accList(), vis = all.filter(a => !a.hidden);
-  const act = vis.filter(a => !a.archived), hist = all.filter(a => a.archived), hid = all.filter(a => a.hidden);
+  // the active accounts in the bots' order 1 -> 7, whatever was opened or closed (user, 16.11.2026); two accounts of the
+  // same bot: the newer first
+  const BOTN = a => ({watch_own: 5, watch_fut: 6, news_bot: 7})[a.bot || a.name] || +((String(a.bot || a.name).match(/^bot(\d)/) || [])[1] || 99);
+  const act = vis.filter(a => !a.archived).sort((x, y) => BOTN(x) - BOTN(y) || String(y.created || "").localeCompare(String(x.created || ""))),
+    hist = all.filter(a => a.archived), hid = all.filter(a => a.hidden);
   let h = "";
   if (UI.view === "list") {
     h = `<div class="sec">חשבונות פעילים</div>` + (act.length ? act.map(accCard).join("") : '<div class="empty" style="margin-bottom:12px">אין חשבונות פעילים. מוסיפים חשבון בכפתור "הוספת חשבון" למטה.</div>');

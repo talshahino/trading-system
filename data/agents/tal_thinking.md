@@ -174,3 +174,11 @@ chose its stops. Decision: no change. (SC326|5Min|GBPUSD: costs 13% of the risk 
 
 ## Follow-through after entry (user, 16.11.2026)
 Tal reads the first bars after the entry as order flow: strong bars in the trade's direction = more sellers than buyers (or buyers) = more confidence the trade is right. A good entry for him is one the market confirms at once. (Task b5follow1611 tests it as a management rule.)
+
+## Choppy market - managing open trades (user, 16.11.2026)
+Tested on bots 1-5 (agents/chop_study.py, reports/agents/chop_study.json; choppy = 1-hour ADX(14)<20 or
+Choppiness(14)>61.8): stop to entry at +0.3/0.5/1R, half out at +0.3/0.5/1R, exit (whole or half) at the 24-hour
+range's Fibonacci 0.618 / 0.786 / edge, no new trades while choppy. Every way lost against "as today" in every bot,
+on 2025 and on 2026 (the least bad: stop to entry at +1R, -1 to -12 points). Trades opened while choppy earn too;
+the profit is in the trades that break out of the range - cutting them in the range cuts the profit. Entries while
+choppy stay allowed (user). Decision: no change. Do not bring chop exits again without a new idea.

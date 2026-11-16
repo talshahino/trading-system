@@ -203,3 +203,9 @@ Opposite trades on the same instrument AND the same timeframe also look wrong to
 
 ## Being kept informed of decisions (user, 16.11.2026 19:05)
 After asking for a change Tal waits for the outcome: "I'm waiting for an update... keep going, but I want to know what the decisions are". For the agents: when a task he raised is decided (change or no change), say the decision plainly and briefly in his conversation; do not leave him without a result.
+
+## "No change" reads to him as "deciding to lose" (user, 16.11.2026 19:20)
+"So even though all of today's losing trades were in profit at some point, we still decide to lose - is that what you're saying?" A test result that says "no change" after a painful day sounds to Tal like accepting the loss. For the agents: when a rule he asked for loses on the history, say in one plain sentence what it would cost (it cuts the big winners and earns less on both periods), check his claim on the live trades (here 7 of 10 losers were in profit, not all), and say what is still being tested where he may be right - never just "no change".
+
+## Entry location and direction (user, 16.11.2026 19:49)
+On a scout long (SC071 US30, lower Keltner band) in a falling market: "wrong identification, not the place, it should have been a short". Tal judges an entry first by where it is and whether it goes with the move; a long-only mean-reversion buy against a falling market is a wrong read for him. For the agents: a strategy that trades one direction only should be tested with a higher-timeframe direction filter (and the opposite side) before it keeps its risk (task b5sc071dir1611).

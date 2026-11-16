@@ -1,18 +1,58 @@
 {
- "updated": "2026-11-16T01:30:41+00:00",
+ "updated": "2026-11-16T01:49:03+00:00",
  "new": [
-  "b755a1bac52c",
-  "eef2f2b59fcc",
-  "1da552afc49b",
-  "cc652d698d32",
-  "f1742bc2a991",
-  "e57c3a348f91",
-  "f789ecf9f66b",
-  "b702a69e5afd",
-  "11563d2e19d0",
-  "f6288cf0beda"
+  "6af6af7f82aa",
+  "631fda569eeb"
  ],
  "decisions": [
+  {
+   "id": "6af6af7f82aa",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "IM03|4Hour|ETHUSD",
+   "title": "IM03|4Hour|ETHUSD: סיכון ×0.62 במקום ×0.5",
+   "decision": "approved",
+   "card_decision": "b755a1bac52c",
+   "star": true,
+   "why": "ב־2026 השינוי הרוויח +18.6R מול +16.4R לפניו, אבל בסיכון ×0.5 הסך הכולל יוצא נמוך ממה שהיה. ×0.62 הוא הסיכון הנמוך ביותר ששומר על הסך הכולל של היום - ועדיין זהיר כי אולי מזל",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "IM03|4Hour|ETHUSD",
+    "kind": "mult",
+    "value": 0.62,
+    "prev": 0.5
+   },
+   "at": "2026-11-16T01:49:03+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "631fda569eeb",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC069|15Min|XAUUSD",
+   "title": "SC069|15Min|XAUUSD: סיכון ×0.62 במקום ×0.5",
+   "decision": "approved",
+   "card_decision": "e57c3a348f91",
+   "star": true,
+   "why": "ב־2026 השינוי הרוויח +13.2R מול +11.6R לפניו, אבל בסיכון ×0.5 הסך הכולל יוצא נמוך ממה שהיה. ×0.62 הוא הסיכון הנמוך ביותר ששומר על הסך הכולל של היום - ועדיין זהיר כי אולי מזל",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "SC069|15Min|XAUUSD",
+    "kind": "mult",
+    "value": 0.62,
+    "prev": 0.5
+   },
+   "at": "2026-11-16T01:49:03+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "b755a1bac52c",
    "bot": "bot1",

@@ -16,6 +16,7 @@ Writes reports/agents/<bot>/health.json and reports/agents/<bot>/cards_health.js
 from __future__ import annotations
 
 import json
+import re
 import math
 import subprocess
 import tempfile
@@ -55,10 +56,37 @@ def live_states():
     return out
 
 
-def state_of(bot, states):
+def _is_bot_file(bot, n):
     p = STATE_PREFIX[bot]
-    hits = [s for n, s in states.items() if n.startswith(p) and (p.endswith("_") or n == f"{p}_state.json")]
-    return hits[0] if hits else None
+    if p.endswith("_"):
+        return n.startswith(p)
+    if bot == "bot1" and re.fullmatch(r"bot1_\d+_state\.json", n):
+        return True                     # a newer bot 1 account (16.11.2026: a new FTMO trial, live/bot1_<login>_state.json)
+    return n == f"{p}_state.json"
+
+
+def state_of(bot, states):
+    """The bot's live state: its newest account (the one that runs now). Bots 1-4 keep the closed trades of the
+    bot's older accounts too (same strategies, the same live record): 16.11.2026 (bots 1-4 smart agent) - bot 1's
+    FTMO trial ended and a new account (live/bot1_1515308201_state.json) took over, but every agent still read the old
+    blocked account (bot1_state.json, health / loss review / edge risk / watch / portfolio check)."""
+    hits = [s for n, s in states.items() if _is_bot_file(bot, n)]
+    if not hits:
+        return None
+    hits.sort(key=lambda s: str(s.get("updated_utc") or ""), reverse=True)
+    cur = hits[0]
+    if len(hits) == 1 or bot not in ("bot1", "bot2", "bot3", "bot4"):
+        return cur
+    cur, seen, closed = dict(cur), set(), []
+    for s in hits:
+        for c in s.get("closed") or []:
+            k = str(c.get("id"))
+            if k not in seen:
+                seen.add(k)
+                closed.append(c)
+    cur["closed"] = closed
+    cur["accounts"] = [s.get("account") for s in hits]
+    return cur
 
 
 def watch_trades(state, bot):

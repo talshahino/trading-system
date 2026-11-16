@@ -2481,11 +2481,25 @@ $("pop").onclick = e => { if (e.target.id === "pop" || e.target.id === "popOk") 
 addEventListener("resize", () => { if ($("eqc") && found[UI.cur]) eqChart(found[UI.cur], accBy(UI.cur)); });
 tick(); setInterval(tick, 60000); setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
 
-/* the phone's back button (user, 16.11.2026: Android's back closed the app) - it goes one screen back inside the app,
-   like the arrow next to the bot's name: a message / question box, then the topmost page, then a side panel, then the
-   bot's screen back to the list. Only on the main list does back leave the app. */
+/* the phone's back button (user, 16.11.2026): one screen back inside the app each time, and only the accounts list
+   leaves it. Inside an account: any tab -> its overview -> the accounts list. Overall statistics / news / management ->
+   the accounts list. A message box, a page (trade, chart, report...) or a side panel closes first.
+   Android Chrome skips history entries added without a tap, so one entry per open layer is added right after a tap
+   (never inside the back event itself), and extra entries are dropped when a layer was closed with an in-app arrow. */
 (function () {
   const isOn = id => $(id) && $(id).classList.contains("on");
+  const tab = () => (document.querySelector('#tabs button[aria-selected="true"]') || {}).dataset?.v || "v-acc";
+  const toAccounts = () => {
+    const b = document.querySelector('#tabs button[data-v="v-acc"]');
+    if (tab() !== "v-acc" && b) b.click(); else { UI.view = "list"; showAcc(); scrollTo(0, 0); }
+  };
+  function depth() {
+    let n = ["pop", "ask", "logSheet"].filter(isOn).length + document.querySelectorAll(".page.on").length
+      + (isOn("addDrawer") ? 1 : 0) + (isOn("drawer") ? 1 : 0);
+    if (tab() !== "v-acc") return n + 1;
+    if (UI.view === "det") return n + (UI.sub && UI.sub !== "ov" ? 2 : 1);
+    return n + (UI.view && UI.view !== "list" ? 1 : 0);
+  }
   function step() {
     if (isOn("pop")) { $("pop").classList.remove("on"); return true; }
     if (isOn("ask")) { $("askNo") ? $("askNo").click() : $("ask").classList.remove("on"); return true; }
@@ -2499,23 +2513,29 @@ tick(); setInterval(tick, 60000); setInterval(async () => { await findMgr(); mgr
       return true;
     }
     if (isOn("addDrawer")) { panel("addDrawer", false); return true; }
-    if (isOn("drawer")) {
-      const b = document.querySelector("#drawer .back[data-go]");
-      if (b && UI.view !== "list" && UI.view !== "det") { b.click(); return true; }
-      drawer(false); return true;
+    if (isOn("drawer")) { drawer(false); if (tab() !== "v-acc" || UI.view !== "list") toAccounts(); return true; }
+    if (tab() !== "v-acc") { toAccounts(); return true; }
+    if (UI.view === "det") {
+      const ov = document.querySelector('#dSubt [data-s="ov"]');
+      if (UI.sub && UI.sub !== "ov" && ov) { ov.click(); scrollTo(0, 0); return true; }
+      UI.view = "list"; showAcc(); scrollTo(0, 0); return true;
     }
-    if (UI.view === "det") { $("dBack").click(); return true; }
     if (UI.view && UI.view !== "list") { UI.view = "list"; showAcc(); scrollTo(0, 0); return true; }
     return false;
   }
+  let armed = 0, skip = 0;
+  function sync() {                       // right after a tap: one history entry per open layer
+    const d = depth();
+    if (armed < d) { while (armed < d) { history.pushState({tt: armed + 1}, ""); armed++; } }
+    else if (armed > d) { skip++; history.go(d - armed); armed = d; }
+  }
   try {
-    history.replaceState({tt: "root"}, "");
-    history.pushState({tt: "app"}, "");
+    history.replaceState({tt: 0}, "");
+    for (const ev of ["click", "touchend"]) document.addEventListener(ev, () => setTimeout(sync, 0), true);
     addEventListener("popstate", () => {
-      let did = false;
-      try { did = step(); } catch (e) { did = false; }
-      if (did) history.pushState({tt: "app"}, "");      // stay in the app, ready for the next back
-      else history.back();                               // the main list: back leaves the app
+      if (skip) { skip--; return; }
+      armed = Math.max(0, armed - 1);
+      try { step(); } catch (e) { /* the arrows still work */ }
     });
   } catch (e) { /* no history API: the back arrows still work */ }
 })();

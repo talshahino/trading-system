@@ -583,6 +583,21 @@ def exit_mode(cfg):
     return int(f) / 100, way(w)
 
 
+def follow_at(D, cfg, ltf, f):
+    """FOLLOW "xN" (user, 16.11.2026, task b5follow1611: "right after the entry strong candles in the trade's direction =
+    more sellers than buyers = more confidence"; no follow-through = get out): the minute index of the close of the
+    N-th full low-timeframe candle after the fill's own candle - there, a trade whose close is against its entry leaves
+    at that close (why "follow"); a trade that went on stays with its stop and target. None = off. Test only (the
+    live bot is built after an approval)."""
+    v = cfg.get("FOLLOW")
+    if not v or v == "none" or not str(v).startswith("x"):
+        return None
+    step = TF[ltf] * 60 * 10 ** 9
+    b = (int(D.ns[f]) // step + 1 + int(str(v)[1:])) * step
+    j = int(np.searchsorted(D.ns, b)) - 1
+    return j if j > f else None
+
+
 # (user, 13.11.2026: "find a way to pass most of them"): what kills the method on forex is the cost - spread +
 # commission as a share of the risk - and the quiet hours. MAXC = skip a trade whose cost is more than this share of
 # its risk; SESS = only entries in these UTC hours ("ln" London 07-16, "ny" 12-20, "lnny" 07-20). Off unless set.
@@ -1115,6 +1130,9 @@ def simulate(D, pair, cfg, gcache, keep=None):
             ex, why = (max(tgt, o1[q]) if d > 0 else min(tgt, o1[q])), "target"
         else:
             ex, why = o1[q], "session"
+        fo = follow_at(D, cfg, ltf, f) if pyr is None else None
+        if fo is not None and not part_r and fo < q and d * (c1[fo] - px) < 0:
+            q, i, ex, why = fo, fo - f, c1[fo], "follow"   # FOLLOW: no follow-through after N candles - out at the close
         if part_r and why == "stop" and stop == px:
             why = "breakeven"
         if why == "stop":

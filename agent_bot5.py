@@ -388,7 +388,16 @@ NOTE_TESTS += [
     {"id": f"{trk}_gaveback", "track": trk, "knob": "EXIT", "vals": ["p50_50", "p50_618", "p33_618", "be50"],
      "src": "tal1611gaveback", "he": "יציאה חלקית ב־50%-61.8% מהדרך + סטופ לכניסה (במקום הברייק של המסלול)"}
     for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t4h_5")]
-NOTE_SRC = {"tal1611gaveback": "משימה של טל מ־16.11 (עסקאות שהיו ברווח ונגמרו בהפסד - יציאה חלקית).",
+NOTE_TESTS += [
+    # the user, 16.11.2026 (task b5follow1611, JP225 t15_1 short at +7R: "right after the entry strong candles in the
+    # trade's direction - more sellers than buyers - more confidence"): no follow-through = out. tal_gap FOLLOW xN: at
+    # the close of the N-th full low-timeframe candle after the fill, a trade that closes against its entry leaves
+    # there; one that went on keeps its stop and target. Test only ("code": built in the live bot after an approval)
+    {"id": f"{trk}_follow", "track": trk, "knob": "FOLLOW", "vals": ["x1", "x2", "x3"], "src": "b5follow1611", "code": True,
+     "he": "בלי המשך אחרי N נרות של הכניסה (סגירה נגד הכניסה) - יציאה בסגירה"}
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5")]
+NOTE_SRC = {"b5follow1611": "משימה של טל מ־16.11 (נרות חזקים מיד אחרי הכניסה = יותר ביטחון).",
+            "tal1611gaveback": "משימה של טל מ־16.11 (עסקאות שהיו ברווח ונגמרו בהפסד - יציאה חלקית).",
             "b6to5rearm": "משימה מסוכן בוט 6 מ־14.11 (REARM - התיקון שלו לעלות של כלל FTMO).",
             "tal1411set7": "משימה של טל מ־14.11 (ממוצעי פיבונאצ'י, הייקין אשי, הסקוויז של LazyBear ושיא / שפל של אתמול מהסרטונים).",
             "tal1411gapplus": "משימה של טל מ־14.11 (שיטות קרובות לגאפ: Silver Bullet, איכות נר 3, גאפ אחרי גריפה).",

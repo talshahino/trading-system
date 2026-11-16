@@ -1,5 +1,5 @@
 {
- "at": "2026-11-16T09:13:02+00:00",
+ "at": "2026-11-16T17:52:59+00:00",
  "split": "2026-01-01",
  "test_from": "2025-04-30",
  "families": {
@@ -32,176 +32,176 @@
     "TSLA",
     "US100",
     "US2000",
-    "US30"
-   ],
-   "missing": [
+    "US30",
     "US500",
     "USDCAD",
     "USDCHF",
     "USDJPY",
     "WMT",
-    "WTI",
+    "WTI"
+   ],
+   "missing": [
     "XAGUSD",
     "XAUUSD",
     "XOM",
     "XPTUSD"
    ],
    "none": {
-    "train_n": 1869,
-    "train_r": -436.58,
-    "unseen_n": 2431,
-    "unseen_r": -581.18,
+    "train_n": 2524,
+    "train_r": -537.3299999999999,
+    "unseen_n": 3301,
+    "unseen_r": -680.5699999999999,
     "positive_train": 4
    },
    "best": [
     "v_sma3",
     {
-     "train_n": 471,
-     "train_r": -75.34,
-     "unseen_n": 669,
-     "unseen_r": -131.82999999999998,
-     "positive_train": 8
+     "train_n": 629,
+     "train_r": -87.82000000000002,
+     "unseen_n": 897,
+     "unseen_r": -163.05999999999995,
+     "positive_train": 10
     }
    ],
    "filters": {
     "v_sma3": {
-     "train_n": 471,
-     "train_r": -75.34,
-     "unseen_n": 669,
-     "unseen_r": -131.83,
-     "positive_train": 8
+     "train_n": 629,
+     "train_r": -87.82,
+     "unseen_n": 897,
+     "unseen_r": -163.06,
+     "positive_train": 10
     },
     "v_sqz": {
-     "train_n": 342,
-     "train_r": -100.35,
-     "unseen_n": 498,
-     "unseen_r": -103.59,
-     "positive_train": 6
+     "train_n": 449,
+     "train_r": -105.83,
+     "unseen_n": 676,
+     "unseen_r": -122.21,
+     "positive_train": 10
     },
     "v_sqzm": {
-     "train_n": 577,
-     "train_r": -104.73,
-     "unseen_n": 841,
-     "unseen_r": -158.72,
-     "positive_train": 9
+     "train_n": 778,
+     "train_r": -151.95,
+     "unseen_n": 1151,
+     "unseen_r": -204.69,
+     "positive_train": 10
     },
     "vol_high": {
-     "train_n": 887,
-     "train_r": -159.06,
-     "unseen_n": 1255,
-     "unseen_r": -220.21,
+     "train_n": 1172,
+     "train_r": -197.42,
+     "unseen_n": 1674,
+     "unseen_r": -268.79,
      "positive_train": 5
     },
     "ema9_20": {
-     "train_n": 860,
-     "train_r": -181.31,
-     "unseen_n": 1192,
-     "unseen_r": -195.07,
-     "positive_train": 6
-    },
-    "adx_range": {
-     "train_n": 916,
-     "train_r": -209.54,
-     "unseen_n": 1125,
-     "unseen_r": -322.01,
-     "positive_train": 5
+     "train_n": 1124,
+     "train_r": -231.37,
+     "unseen_n": 1577,
+     "unseen_r": -243.06,
+     "positive_train": 8
     },
     "adx_trend": {
-     "train_n": 1026,
-     "train_r": -239.76,
-     "unseen_n": 1394,
-     "unseen_r": -293.53,
-     "positive_train": 8
-    },
-    "v_st": {
-     "train_n": 1004,
-     "train_r": -257.99,
-     "unseen_n": 1350,
-     "unseen_r": -280.76,
-     "positive_train": 8
-    },
-    "bbw_p20": {
-     "train_n": 1237,
-     "train_r": -272.52,
-     "unseen_n": 1668,
-     "unseen_r": -415.58,
-     "positive_train": 6
-    },
-    "vol_normal": {
-     "train_n": 1372,
-     "train_r": -306.39,
-     "unseen_n": 1745,
-     "unseen_r": -414.37,
-     "positive_train": 4
-    },
-    "vol_low": {
-     "train_n": 1083,
-     "train_r": -320.09,
-     "unseen_n": 1264,
-     "unseen_r": -370.29,
+     "train_n": 1381,
+     "train_r": -269.82,
+     "unseen_n": 1884,
+     "unseen_r": -344.44,
      "positive_train": 9
     },
+    "adx_range": {
+     "train_n": 1248,
+     "train_r": -292.99,
+     "unseen_n": 1544,
+     "unseen_r": -375.71,
+     "positive_train": 6
+    },
+    "v_st": {
+     "train_n": 1310,
+     "train_r": -299.42,
+     "unseen_n": 1787,
+     "unseen_r": -344.83,
+     "positive_train": 11
+    },
+    "bbw_p20": {
+     "train_n": 1687,
+     "train_r": -328.35,
+     "unseen_n": 2246,
+     "unseen_r": -457.65,
+     "positive_train": 8
+    },
+    "vol_low": {
+     "train_n": 1487,
+     "train_r": -391.39,
+     "unseen_n": 1749,
+     "unseen_r": -413.81,
+     "positive_train": 9
+    },
+    "vol_normal": {
+     "train_n": 1873,
+     "train_r": -399.46,
+     "unseen_n": 2365,
+     "unseen_r": -463.55,
+     "positive_train": 4
+    },
     "v_rsi50": {
-     "train_n": 1446,
-     "train_r": -327.92,
-     "unseen_n": 1833,
-     "unseen_r": -374.91,
+     "train_n": 1935,
+     "train_r": -405.96,
+     "unseen_n": 2493,
+     "unseen_r": -437.87,
      "positive_train": 7
     },
     "v_ha": {
-     "train_n": 1661,
-     "train_r": -377.17,
-     "unseen_n": 2132,
-     "unseen_r": -460.48,
+     "train_n": 2253,
+     "train_r": -465.75,
+     "unseen_n": 2917,
+     "unseen_r": -554.79,
      "positive_train": 6
     },
     "v_fib5": {
-     "train_n": 1610,
-     "train_r": -384.25,
-     "unseen_n": 2090,
-     "unseen_r": -486.59,
+     "train_n": 2162,
+     "train_r": -472.77,
+     "unseen_n": 2815,
+     "unseen_r": -563.86,
      "positive_train": 8
     },
     "with_trend200": {
-     "train_n": 1827,
-     "train_r": -410.48,
-     "unseen_n": 2368,
-     "unseen_r": -560.47,
-     "positive_train": 4
-    },
-    "rsi_trend": {
-     "train_n": 1865,
-     "train_r": -435.29,
-     "unseen_n": 2430,
-     "unseen_r": -579.51,
+     "train_n": 2462,
+     "train_r": -510.69,
+     "unseen_n": 3220,
+     "unseen_r": -664.64,
      "positive_train": 4
     },
     "v_pdbrk": {
-     "train_n": 1829,
-     "train_r": -436.49,
-     "unseen_n": 2363,
-     "unseen_r": -563.47,
+     "train_n": 2455,
+     "train_r": -534.36,
+     "unseen_n": 3209,
+     "unseen_r": -649.38,
      "positive_train": 5
     },
+    "rsi_trend": {
+     "train_n": 2518,
+     "train_r": -536.71,
+     "unseen_n": 3300,
+     "unseen_r": -678.9,
+     "positive_train": 4
+    },
     "none": {
-     "train_n": 1869,
-     "train_r": -436.58,
-     "unseen_n": 2431,
-     "unseen_r": -581.18,
+     "train_n": 2524,
+     "train_r": -537.33,
+     "unseen_n": 3301,
+     "unseen_r": -680.57,
      "positive_train": 4
     },
     "v_e50_200": {
-     "train_n": 1869,
-     "train_r": -436.58,
-     "unseen_n": 2431,
-     "unseen_r": -581.18,
+     "train_n": 2524,
+     "train_r": -537.33,
+     "unseen_n": 3301,
+     "unseen_r": -680.57,
      "positive_train": 4
     },
     "v_ema5": {
-     "train_n": 1869,
-     "train_r": -436.58,
-     "unseen_n": 2431,
-     "unseen_r": -581.18,
+     "train_n": 2524,
+     "train_r": -537.33,
+     "unseen_n": 3301,
+     "unseen_r": -680.57,
      "positive_train": 4
     }
    }
@@ -280,6 +280,35 @@
     "USDJPY",
     "WTI",
     "XAGUSD",
+    "XPTUSD"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  },
+  "SC425|5Min": {
+   "instruments": [],
+   "missing": [
+    "XAGUSD",
+    "DXY",
+    "ETHUSD",
+    "EU50",
+    "GBPJPY",
+    "GBPUSD",
+    "JP225",
+    "LVMH",
+    "N25",
+    "NATGAS",
+    "NZDUSD",
+    "US100",
+    "US2000",
+    "US30",
+    "US500",
+    "USDCAD",
+    "USDCHF",
+    "USDJPY",
+    "WTI",
+    "XAUUSD",
     "XPTUSD"
    ],
    "none": null,

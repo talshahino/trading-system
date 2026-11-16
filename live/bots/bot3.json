@@ -72,7 +72,12 @@
   "BK05|1Hour|USDJPY",
   "IB012|1Hour|USDJPY",
   "SC006|4Hour|USDJPY",
-  "SC288|1Hour|XAUUSD"
+  "SC288|1Hour|XAUUSD",
+  "SC376|4Hour|XAGUSD",
+  "SC381|4Hour|XAUUSD",
+  "SC380|4Hour|XAUUSD",
+  "SC432|1Hour|USDJPY",
+  "SC417|1Hour|XAUUSD"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 01.11.2026: +7 session/classic combos (SS*), approved by the user; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -136,7 +141,9 @@
   "SC235|1Hour|USDJPY": {
    "target": 2.0,
    "stop": 0.75,
-   "card": "6f04a82c8196"
+   "card": "6f04a82c8196",
+   "be_way": 0.7,
+   "manage_card": "3890927785ff"
   },
   "TV15|4Hour|USDCAD": {
    "target": 2.0,
@@ -163,6 +170,22 @@
    "target": 5.0,
    "stop": 0.75,
    "card": "ee4d2e72e59d"
+  },
+  "SC272|1Hour|USDJPY": {
+   "be_r": 2.5,
+   "partial": [
+    0.5,
+    2.0
+   ],
+   "manage_card": "eab024f815b3"
+  },
+  "SC330|1Hour|USDJPY": {
+   "be_way": 0.7,
+   "manage_card": "f7d4abe8475d"
+  },
+  "SC006|4Hour|USDJPY": {
+   "filter": "v_pdbrk",
+   "filter_card": "9445c448405d"
   }
  },
  "added": {
@@ -206,7 +229,12 @@
   "BK05|1Hour|USDJPY": "955f641c0e6b",
   "IB012|1Hour|USDJPY": "97a62813973e",
   "SC006|4Hour|USDJPY": "eaca6892903b",
-  "SC288|1Hour|XAUUSD": "a59fb871f838"
+  "SC288|1Hour|XAUUSD": "a59fb871f838",
+  "SC376|4Hour|XAGUSD": "26fec9fd8811",
+  "SC381|4Hour|XAUUSD": "df488a5563e5",
+  "SC380|4Hour|XAUUSD": "9c4691ec5b42",
+  "SC432|1Hour|USDJPY": "cf3d64e83cc3",
+  "SC417|1Hour|XAUUSD": "8643233531d6"
  },
  "removed": {
   "SC002|4Hour|FRA40": "bb041d4310f5",

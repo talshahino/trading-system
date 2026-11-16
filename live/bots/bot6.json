@@ -85,18 +85,18 @@
   "tal": 0.0012,
   "tal4h": 0.0012,
   "scout": 0.004,
-  "scout:SC005|5Min|US100": 0.00042,
-  "scout:SC005|5Min|US500": 0.00042,
-  "scout:SC020|15Min|US500": 0.00042,
+  "scout:SC005|5Min|US100": 7.4e-05,
+  "scout:SC005|5Min|US500": 0.000448,
+  "scout:SC020|15Min|US500": 0.000478,
   "t15_5": 0.0012,
   "t5_1": 0.00084,
-  "scout:SC051|15Min|US100": 0.00042,
-  "scout:SC258|5Min|US100": 0.00042,
+  "scout:SC051|15Min|US100": 0.000741,
+  "scout:SC258|5Min|US100": 0.000169,
   "scout:SC261|5Min|US500": 0.00042,
   "scout:FR03|15Min|US30": 0.00042,
   "scout:SC084|15Min|US30": 0.00042,
-  "scout:SC072|5Min|US500": 0.0006,
-  "scout:SC326|15Min|US30": 0.0006,
+  "scout:SC072|5Min|US500": 0.000106,
+  "scout:SC326|15Min|US30": 0.000504,
   "scout:SC326|5Min|US30": 0.00042,
   "scout:SC441|5Min|US100": 0.0006
  },
@@ -461,6 +461,41 @@
   "7d24eedab661": {
    "family": "risk",
    "track": "scout:SC441|5Min|US100",
+   "before": 0.0006
+  },
+  "e4675714094d": {
+   "family": "risk",
+   "track": "scout:SC005|5Min|US100",
+   "before": 0.00042
+  },
+  "9efacdd83b72": {
+   "family": "risk",
+   "track": "scout:SC005|5Min|US500",
+   "before": 0.00042
+  },
+  "b79d76ac56c6": {
+   "family": "risk",
+   "track": "scout:SC020|15Min|US500",
+   "before": 0.00042
+  },
+  "749c1507f8f8": {
+   "family": "risk",
+   "track": "scout:SC051|15Min|US100",
+   "before": 0.00042
+  },
+  "adeebd34fc67": {
+   "family": "risk",
+   "track": "scout:SC072|5Min|US500",
+   "before": 0.0006
+  },
+  "5432fba53334": {
+   "family": "risk",
+   "track": "scout:SC258|5Min|US100",
+   "before": 0.00042
+  },
+  "c5ec54a09125": {
+   "family": "risk",
+   "track": "scout:SC326|15Min|US30",
    "before": 0.0006
   }
  },

@@ -2165,9 +2165,10 @@ function botsRender() {
     if (!r.pend.length) return (r.recs.length ? '<span class="mut">נדחה היום</span>' : '<span class="mut">—</span>')
       + (r.mult === 0 && owner ? `<div class="acts"><button class="btn ghost" data-back="${esc(r.combo)}">החזר</button></div>` : "");
     const first = r.pend[0];
-    return recLine(first, b.risk_pct) + (r.pend.length > 1 ? `<br><small class="mut">ועוד ${r.pend.length - 1}</small>` : "")
-      + (owner ? (r.pend.length === 1 ? `<div class="acts"><button class="btn ok" data-ok="${esc(r.combo)}">אשר</button><button class="btn ghost" data-no="${esc(r.combo)}">דחה</button></div>`
-        : `<div class="acts"><button class="btn" data-open="${esc(r.combo)}">פרטים</button></div>`) : "");
+    // the manager decides these in the user's place (agents/autodecide.py): what is still here is what it chose NOT to
+    // apply (fix first, too few live trades, the strategy's risk set by its own edge...) - shown, not asked (16.11.2026)
+    return `<span class="mut">${recLine(first, b.risk_pct)}</span>` + (r.pend.length > 1 ? `<br><small class="mut">ועוד ${r.pend.length - 1}</small>` : "")
+      + `<br><small class="mut">המנהל השאיר כמו שהוא</small>`;
   };
   const tr = rows.map(r => { const p = parts(r.combo); const ap = Object.entries(r.applied).map(([k, v]) => appliedTxt(k, v)).join(" · ");
     return `<tr class="${r.pend.length ? "has" : ""}" data-row="${esc(r.combo)}"><td class="cb"><b>${esc(p.y)}</b><small>${esc(p.s)} · ${esc(p.t)}</small>${ap ? `<small class="vps" style="display:block;color:var(--vps)">${esc(ap)}</small>` : ""}</td>
@@ -2179,9 +2180,9 @@ function botsRender() {
     <div class="card"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
       <div class="kpi"><small>סיכון הבוט</small><div class="num" style="font-weight:700;margin-top:4px">${pctTxt(b.risk_pct)}</div></div>
       <div class="kpi"><small>עסקאות בדמו</small><div class="num" style="font-weight:700;margin-top:4px">${b.trades}</div></div>
-      <div class="kpi"><small>המלצות</small><div class="num" style="font-weight:700;margin-top:4px">${pend.length}</div></div></div>
-      <div class="foot" style="margin-top:10px;line-height:1.55">כל המלצה נשענת על רווחיות ויציבות בדמו, ונבדקת גם על הבקטסט בשני חצאים. הקש על שורה כדי לראות את המספרים. הנתונים וההמלצות מתחדשים כל בוקר ב־08:00 (עודכן ${esc(upd)}). המנהל מחליט על ההמלצות במקומך, ואפשר לבטל כל החלטה בראש העמוד.</div>
-      ${owner && pend.length > 1 ? `<div class="row" style="margin-top:10px"><button class="btn ok" id="bpAll">אשר הכל (${pend.length})</button></div>` : ""}
+      <div class="kpi"><small>המלצות שלא הוחלו</small><div class="num" style="font-weight:700;margin-top:4px">${pend.length}</div></div></div>
+      <div class="foot" style="margin-top:10px;line-height:1.55">כל המלצה נשענת על רווחיות ויציבות בדמו, ונבדקת גם על הבקטסט בשני חצאים. הקש על שורה כדי לראות את המספרים. הנתונים וההמלצות מתחדשים כל בוקר ב־08:00 (עודכן ${esc(upd)}).</div>
+      <div class="foot" style="margin-top:6px;line-height:1.55">אין צורך לאשר כאן: המנהל כבר החליט על כל ההמלצות. מה שמופיע בטור "המלצה" הוא מה שהוא בחר לא להחיל (קודם מתקנים, מעט עסקאות חיות, או שהסיכון כבר נקבע לפי היתרון של האסטרטגיה). כל החלטה שלו מופיעה ב"כל ההחלטות" ואפשר לבטל אותה שם.</div>
       <div class="msg" id="bpMsg"></div></div>
     <div class="card" style="padding:0"><div class="tw"><table class="rt"><thead><tr><th>אסטרטגיה</th><th>הצלחה</th><th>עסקאות</th><th>סיכון</th><th>המלצה</th></tr></thead><tbody>${tr}</tbody></table></div></div>`;
   $("bpBody").insertAdjacentHTML("afterbegin", agentHtml(bot)); agBind(bot);
@@ -2213,7 +2214,7 @@ function detailRender() {
   const ex = d.exits || {}, dir = d.direction || {}, hr = d.hours || {}, mk = d.market || {}, tg = d.together;
   const recHtml = r.recs.length ? r.recs.map((q, i) => `<div class="li" style="align-items:flex-start"><div style="min-width:0"><b>${recLine(q, b.risk_pct)}</b>
       <div class="mut" style="font-size:12.5px;margin-top:4px;line-height:1.5">${whyHtml(q.why)}</div></div>
-      <div>${q.rejected ? '<span class="mut">נדחה היום</span>' : owner ? `<div class="acts" style="margin:0"><button class="btn ok" data-dok="${i}">אשר</button><button class="btn ghost" data-dno="${i}">דחה</button></div>` : ""}</div></div>`).join("")
+      <div><span class="mut">${q.rejected ? "נדחה היום" : "המנהל השאיר כמו שהוא"}</span></div></div>`).join("")
     : '<div class="li"><span class="mut">אין כרגע המלצה. האסטרטגיה עובדת כמו שהיא.</span></div>';
   const applied = Object.entries(r.applied);
   const chk = (ok, txt) => `<div class="li"><span class="k">${txt}</span><span class="v">${ok == null ? "—" : ok >= 0.99 ? '<span class="pos">✓</span>' : ok <= 0.01 ? '<span class="neg">✗</span>' : `<span class="warn num">${ok}</span>`}</span></div>`;

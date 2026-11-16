@@ -1227,6 +1227,23 @@ def pyramid_add(combo, sym, pos, t, new_sl, last_closed):
     save_state()
 
 
+def opposite_same_tf(combo, sym, tf, d):
+    """Another strategy of this bot holding (or waiting with a limit order on) the opposite side of the same instrument
+    on the same timeframe -> its combo, else None. Used only when live/bots/<bot>.json has "opp_same_tf": "skip" (an
+    approved card): the second, opposite trade is not opened (user, 16.11.2026, bot 2 USDJPY 1-hour - SC295 sell and
+    SE02 buy open together, "a bit risky"; agents/conflict_study.py same_tf: skipping it was better on 2025 and 2026)."""
+    for p in ACC.positions():
+        c = combo_of(p.magic)
+        parts = c.split("|")
+        if c != combo and len(parts) == 3 and parts[1] == tf and parts[2] == sym and (1 if p.type == 0 else -1) != d:
+            return c
+    for c, pk in (STATE.get("pending") or {}).items():
+        parts = c.split("|")
+        if c != combo and len(parts) == 3 and parts[1] == tf and parts[2] == sym and int(pk.get("dir") or 0) == -d:
+            return c
+    return None
+
+
 def step(combo, sid, tf, sym, off):
     df = bars(sym, tf, off)
     now = pd.Timestamp.now(tz="UTC")
@@ -1418,6 +1435,8 @@ def step(combo, sid, tf, sym, off):
         v = rules["vol"]
         if sp is not None and (("max_pct" in v and sp > v["max_pct"]) or ("min_pct" in v and sp <= v["min_pct"])):
             why = f"volatility filter: stop {sp:.3f}% of the price (approved by the user)"
+    if not why and ACC.cfg.get("opp_same_tf") == "skip" and (o := opposite_same_tf(combo, sym, tf, int(t["dir"]))):
+        why = f"{o} holds the opposite side of {sym} on the same timeframe (approved bot rule)"
     if why:
         log(f"skip {combo}: {why}")
         STATE["entry"][combo] = str(t["time"])         # handled: this entry is not taken

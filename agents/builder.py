@@ -95,6 +95,10 @@ def buildable(c):
     if bot in ADD_BOTS and c.get("kind") == "risk" and ch.get("kind") == "dd_fit" \
             and isinstance(ch.get("to"), (int, float)) and 0.5 <= float(ch["to"]) <= 9:
         return {"bot": bot, "combo": "BOT|all", "family": "flag", "key": "dd_fit", "to": round(float(ch["to"]), 2)}
+    # bots 1-4 (16.11.2026 night, task b2jpy1611): no opposite trade on the same instrument and timeframe as one this
+    # bot already holds - "opp_same_tf" in live/bots/<bot>.json, read by live/runner.py (opposite_same_tf)
+    if bot in ADD_BOTS and c.get("kind") == "risk" and ch.get("kind") == "opp_same_tf" and ch.get("to") in ("skip", None):
+        return {"bot": bot, "combo": "BOT|all", "family": "flag", "key": "opp_same_tf", "to": ch.get("to")}
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") and str(ch.get("knob", "")).startswith("RISK") \
             and ch.get("to") is not None:
         return {"bot": bot, "combo": f"{'OWN' if bot == 'bot5' else 'FUT'}|{ch['track']}", "family": "risk",
@@ -190,6 +194,9 @@ def describe(b):
         if b["key"] == "dd_fit":
             return (f"הסיכון של כל הבוט קטן כשנשאר עד המגבלה (9%) פחות מ־{b['to']:g}% (הירידה הגרועה בבדיקת הבוט על 2026), "
                     "וחוזר לרגיל לבד")
+        if b["key"] == "opp_same_tf":
+            return ("לא נפתחת עסקה הפוכה לעסקה פתוחה של אסטרטגיה אחרת על אותו מכשיר ובאותו טיים פריים" if b["to"]
+                    else "בלי הכלל נגד עסקאות הפוכות באותו טיים פריים")
         if b["key"] == "tal_one_micro_up_to":
             return (f"שיטת הגאפ: עסקה שחוזה מיקרו אחד שלה גדול מהסיכון של המסלול נלקחת בחוזה אחד, אם הוא מסכן עד {b['to'] * 100:g}% "
                     "מהחשבון ויש מקום") if b["to"] else "שיטת הגאפ: בלי חוזה אחד מעל הסיכון של המסלול"

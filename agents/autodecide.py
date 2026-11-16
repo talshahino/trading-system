@@ -290,6 +290,8 @@ def _cuts(c):
         return True
     if c.get("kind") == "risk" and ch.get("kind") in RULE_KINDS:
         return False                         # a live rule changed / taken back is a fix, not a cut
+    if c.get("kind") == "risk" and ch.get("kind") == "opp_same_tf":
+        return False                         # a bot rule that earned more on both periods (task b2jpy1611): a fix
     if c.get("kind") == "risk" and ((c.get("detail") or {}).get("account_fit") or ch.get("knob") == "RISK_SCALE"):
         # the whole bot sized into its own fixed limits (tal_gap.risk_scale, chosen on 2024-2025; bot 6's smart agent,
         # 13.11.2026 night): not a cut of a losing strategy - the gap tracks earn in R, but at today's risk the account

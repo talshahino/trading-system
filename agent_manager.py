@@ -138,6 +138,20 @@ def ops():
             pcm = {}
         now = pd.Timestamp.now(tz="UTC")
         for b in ("bot5", "bot6"):
+            # the gap method's search around the best (agents/tal_gap.search) is where these agents work since 12.11;
+            # the old GitHub grid above ("last_experiment") stopped on 11.11 and read as a stuck agent (manager,
+            # 16.11.2026): show the search's own progress, and flag it when it stands still with work left
+            srch = (res.get(b) or {}).get("search") or {}
+            if srch:
+                tried = sum(int(v.get("tried") or 0) for v in srch.values())
+                left = sum(int(v.get("left") or 0) for v in srch.values())
+                o = _ops_slot(out, b)
+                o["search"] = {"tried": tried, "left": left, "pairs": len(srch), "updated": (res.get(b) or {}).get("updated")}
+                upd0 = (res.get(b) or {}).get("updated")
+                if left and upd0 and now - pd.Timestamp(upd0) > pd.Timedelta(hours=36):
+                    o["problems"].append(f"שיטת הגאפ: החיפוש לא התקדם מאז {pd.Timestamp(upd0):%d.%m %H:%M} UTC "
+                                         f"למרות ש־{left} ניסיונות מחכים")
+                    o["actions"].append("הסוכן החכם של המנהל יבדוק למה החיפוש עומד ויתקן")
             ran, upd = last.get(b), (res.get(b) or {}).get("updated")
             # agent_last is stamped when the agent STARTS: one still inside its minutes (+ the host's hour of grace)
             # has not written yet (manager, 13.11.2026: bot 6 started 03:42 and was flagged at 04:02 while running)

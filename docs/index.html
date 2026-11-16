@@ -1491,7 +1491,7 @@ function stratLine(x) {
   const p = String((x && x.combo) || "").split("|");
   if (p.length < 3) return "";
   const tf = x.entry_tf ? (TFHE[x.entry_tf] || x.entry_tf) : (p[0] === "TAL" ? (TFHE[(p[1].match(/^\d+(?:Min|Hour)(\d+[mh])$/) || [])[1]] || "") : (TF[p[1]] || p[1]));
-  return `<div class="ss">${esc(STRAT_HE[p[0]] || p[0])}${tf ? " · כניסה " + esc(tf) : ""}</div>`;
+  return tf ? `<div class="ss">${esc(tf)}</div>` : "";            // the entry timeframe only (user, 16.11.2026)
 }
 const trRow = (side, t, sym, pl, key, extra = "", x = null) => `<div class="tr" data-t="${esc(key)}"><div class="tg">${side === "buy" ? ICON.up : ICON.down}
   <div class="d">${t ? dOnly(t) + "<br>" + tOnly(t) : "—"}</div>

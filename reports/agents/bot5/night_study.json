@@ -1,5 +1,5 @@
 {
- "at": "2026-11-16T22:22:30+00:00",
+ "at": "2026-11-16T22:25:11+00:00",
  "strategies": [
   "BK07|15Min|EURUSD",
   "BK07|15Min|US100",
@@ -2238,6 +2238,110 @@
     "worst_day": -2.34,
     "day_sd": 1.139,
     "guard_cut": 0,
+    "guard_skipped": 0
+   }
+  },
+  "all_noreent": {
+   "train": {
+    "trades": 2531,
+    "total": 81.92,
+    "win": 40.7,
+    "green_days": 56.6,
+    "days": 175,
+    "max_dd": 7.57,
+    "worst_day": -2.5,
+    "day_sd": 1.668,
+    "guard_cut": 0,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3283,
+    "total": 52.12,
+    "win": 39.7,
+    "green_days": 50.2,
+    "days": 227,
+    "max_dd": 10.51,
+    "worst_day": -2.67,
+    "day_sd": 1.515,
+    "guard_cut": 1,
+    "guard_skipped": 0
+   }
+  },
+  "sc333_noreent": {
+   "train": {
+    "trades": 2806,
+    "total": 81.25,
+    "win": 40.5,
+    "green_days": 54.9,
+    "days": 175,
+    "max_dd": 7.3,
+    "worst_day": -2.97,
+    "day_sd": 1.704,
+    "guard_cut": 3,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3685,
+    "total": 58.21,
+    "win": 39.5,
+    "green_days": 51.5,
+    "days": 227,
+    "max_dd": 11.24,
+    "worst_day": -2.83,
+    "day_sd": 1.561,
+    "guard_cut": 2,
+    "guard_skipped": 0
+   }
+  },
+  "bk07us100_ema50h": {
+   "train": {
+    "trades": 2889,
+    "total": 80.84,
+    "win": 40.3,
+    "green_days": 56.0,
+    "days": 175,
+    "max_dd": 6.91,
+    "worst_day": -2.99,
+    "day_sd": 1.682,
+    "guard_cut": 4,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3775,
+    "total": 57.88,
+    "win": 39.4,
+    "green_days": 51.5,
+    "days": 227,
+    "max_dd": 10.6,
+    "worst_day": -2.83,
+    "day_sd": 1.532,
+    "guard_cut": 1,
+    "guard_skipped": 0
+   }
+  },
+  "held_two": {
+   "train": {
+    "trades": 2791,
+    "total": 83.0,
+    "win": 40.6,
+    "green_days": 54.9,
+    "days": 175,
+    "max_dd": 6.36,
+    "worst_day": -2.97,
+    "day_sd": 1.683,
+    "guard_cut": 3,
+    "guard_skipped": 0
+   },
+   "unseen": {
+    "trades": 3657,
+    "total": 59.13,
+    "win": 39.6,
+    "green_days": 52.0,
+    "days": 227,
+    "max_dd": 10.72,
+    "worst_day": -2.83,
+    "day_sd": 1.523,
+    "guard_cut": 1,
     "guard_skipped": 0
    }
   }

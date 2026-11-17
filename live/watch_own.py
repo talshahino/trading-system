@@ -1110,6 +1110,9 @@ def scout5_trades(name, df, sc, cal):
                     # (spread + commission - 0.23R on a 3-pip stop), so the "now" price made of it sat beyond the stop and
                     # the stop's dollars were without them. The real last price and the costs in R, for the display only.
                     "px_now": float(x["exit_px"]) if live_now else None,
+                    # the stop where the management has it now (breakeven / the no-target lock / a trail - rules_agent
+                    # "stop_last"); "stop" stays the original (user, 17.11.2026: the app showed only the first stop)
+                    "stop_now": float(x["stop_last"]) if live_now and "stop_last" in x and pd.notna(x["stop_last"]) else None,
                     "cost_live": round(float(x["dir"]) * (float(x["exit_px"]) - e0) / risk - float(x["r"]), 4) if live_now else None})
     return out
 
@@ -1481,7 +1484,7 @@ def main():
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
                            "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide")),
                            "why": x.get("why"), "touch_t": iso(x.get("touch_t")),
-                           "px_now": x.get("px_now"), "cost_live": x.get("cost_live"),
+                           "px_now": x.get("px_now"), "cost_live": x.get("cost_live"), "stop_now": x.get("stop_now"),
                            "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m")),
                            "geo": x.get("geo") or old.get("geo"), "prop": x.get("prop"), "prop_imp0": x.get("prop_imp0"),
                            "custom": bool(x.get("custom")),
@@ -1756,9 +1759,11 @@ def main():
                         "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                                        "combo": combo(t["symbol"], t), "entry_tf": ent(t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
                                        "now": t.get("px_now") or t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
-                                       "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
+                                       "sl": t.get("stop_now") or t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
                                        # at the stop / target WITH the costs, as the P&L shown next to them (16.11.2026)
-                                       "sl_usd": -round((t.get("risk_usd") or 0) * (1 + (t.get("cost_live") or 0)), 2),
+                                       "sl_usd": (round((t.get("risk_usd") or 0) * (t["dir"] * (t["stop_now"] - t["entry"]) / abs(t["entry"] - t["stop"]) - (t.get("cost_live") or 0)), 2)
+                                                  if t.get("stop_now") and t["entry"] != t["stop"] else
+                                                  -round((t.get("risk_usd") or 0) * (1 + (t.get("cost_live") or 0)), 2)),
                                        "tp_usd": round((t.get("risk_usd") or 0) * ((t.get("rr") or 0) - (t.get("cost_live") or 0)), 2) if t.get("rr") else 0,
                                        "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": pip(t["symbol"]), "free": False,
                                        "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way")}

@@ -1533,6 +1533,9 @@ function bar(p) {
   const per = Math.abs(px - en) > 1e-9 ? p.pnl / ((px - en) * dir) : null;
   const slUsd = p.sl_usd ?? (p.sl && per ? per * (p.sl - en) * dir : null), tpUsd = tp ? (p.tp_usd ?? (per ? per * (tp - en) * dir : null)) : null;
   const usdL = v => v == null ? "—" : usd(v, true);
+  // prices as the instrument shows them (user, 17.11.2026: "SL 3869.871594880547"): the entry's decimals, at least 2 under 1000
+  const dpE = (String(en).split(".")[1] || "").length, dp = Math.min(5, Math.max(dpE, en >= 1000 ? 2 : en >= 10 ? 3 : 5));
+  const fp = v => v == null || v === "" || !isFinite(+v) ? v : (+(+v).toFixed(dp)).toString();
   return `<div class="pb"><div class="trk">
       <div class="seg-l" style="left:0;width:${(fe * 100).toFixed(2)}%;background:rgba(208,69,58,.14)"></div>
       <div class="seg-r" style="left:${(fe * 100).toFixed(2)}%;right:0;background:rgba(30,138,76,.14)"></div>
@@ -1541,8 +1544,8 @@ function bar(p) {
       <div class="ent" style="left:${(fe * 100).toFixed(2)}%"></div>
       <div class="cur" style="left:${(fc * 100).toFixed(2)}%;background:${u >= 0 ? "#1E8A4C" : "#D0453A"}"></div></div>
     <div class="lab" style="height:20px"><span class="m" style="left:${Math.max(12, Math.min(88, fe * 100)).toFixed(2)}%;top:3px">${en}</span></div>
-    <div class="lab" style="height:36px"><span style="left:0;top:0;line-height:1.35"><span class="neg">SL ${sl0 || "—"}${p.sl && Math.abs(p.sl - sl0) > 1e-9 ? ` → ${p.sl}` : ""}</span><br><b class="${slUsd != null && slUsd >= 0 ? "pos" : "neg"}">${usdL(slUsd)}</b></span>
-      <span class="r pos" style="top:0;line-height:1.35;text-align:right">TP ${tp || "—"}<br><b>${tp ? usdL(tpUsd) : "—"}</b></span></div>
+    <div class="lab" style="height:36px"><span style="left:0;top:0;line-height:1.35"><span class="neg">SL ${fp(sl0) || "—"}${p.sl && Math.abs(p.sl - sl0) > 1e-9 ? ` → ${fp(p.sl)}` : ""}</span><br><b class="${slUsd != null && slUsd >= 0 ? "pos" : "neg"}">${usdL(slUsd)}</b></span>
+      <span class="r pos" style="top:0;line-height:1.35;text-align:right">TP ${fp(tp) || "—"}<br><b>${tp ? usdL(tpUsd) : "—"}</b></span></div>
     <div class="way">${way}${be ? ' · <span class="pos">הסטופ בנקודת איזון ומעלה</span>' : ""}</div></div>`;
 }
 /* the strategy and the timeframe the trade ENTERED on, under the instrument (user, 16.11.2026). Bots 5-6 send entry_tf

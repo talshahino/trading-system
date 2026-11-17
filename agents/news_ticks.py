@@ -47,6 +47,7 @@ SYMS = {"AUDUSD": "AUDUSD", "AUDJPY": "AUDJPY", "EURAUD": "EURAUD", "USDCAD": "U
         "NZDUSD": "NZDUSD", "GBPUSD": "GBPUSD", "EURGBP": "EURGBP", "GBPJPY": "GBPJPY", "EURUSD": "EURUSD",
         "USDJPY": "USDJPY", "XAUUSD": "XAUUSD", "US100": "USATECHIDXUSD", "US500": "USA500IDXUSD"}
 SECS = (1, 2, 5, 10, 30, 60)
+BUDGET_MIN = 140                     # GitHub's job limit: stop downloading in time and keep what was done
 STOPS = (1.5, 3.0)
 HOLDS = (15, 30, 60)
 
@@ -98,10 +99,19 @@ def run(sym):
     a5 = NS._atr5(d1)
     sp = U.spec(sym)
     rows, scale = [], None
+    t_end = time.time() + BUDGET_MIN * 60
+    done = 0
     for cur, b in bt.items():
-        for t, x in sorted((rel_all.get(cur) or {}).items()):
+        for t, x in sorted((rel_all.get(cur) or {}).items(), key=lambda kv: kv[0], reverse=True):   # 2026 first
             if t < F.TEST_FROM:
                 continue
+            if time.time() > t_end:
+                print(f"{sym}: time budget - stopped at {t}", flush=True)
+                break
+            done += 1
+            if done % 20 == 0:                                     # partial results survive a cut
+                (OUT / f"{sym}.json").write_text(json.dumps(rows), encoding="utf-8")
+                print(f"{sym}: {done} releases, {len(rows)} rows", flush=True)
             ka = a5.index.searchsorted(t) - 1
             if ka < 14:
                 continue

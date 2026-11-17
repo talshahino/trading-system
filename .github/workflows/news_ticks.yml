@@ -49,6 +49,12 @@ jobs:
           path: cache
           key: poc-cache-${{ github.run_id }}
           restore-keys: poc-cache-
+      - name: Restore ticks cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache/duka_ticks
+          key: duka-ticks-${{ matrix.job }}-${{ github.run_id }}
+          restore-keys: duka-ticks-${{ matrix.job }}-
       - name: Run
         env:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
@@ -56,7 +62,14 @@ jobs:
         run: |
           set -o pipefail
           python -u -m agents.news_ticks run --sym "${{ matrix.job }}" 2>&1 | tail -40
+      - name: Save ticks cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: cache/duka_ticks
+          key: duka-ticks-${{ matrix.job }}-${{ github.run_id }}
       - name: Name
+        if: always()
         id: n
         run: echo "n=$(echo '${{ matrix.job }}' | tr ':/' '__')" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4

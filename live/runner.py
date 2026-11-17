@@ -852,6 +852,23 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
     if d * (px - sl) <= 0:
         log(f"skip {combo}: price {px} already beyond the stop")
         return
+    # the broker's minimum stop distance (user, 17.11.2026: bot 4 FR08|5Min|SPCX sell @139.4 sl 139.9 came back 10016
+    # 'Invalid stops' - SPCX's spread is dollars wide, the stop sat inside it). A sell's stop is checked against the ask,
+    # a buy's against the bid, at least the symbol's stops level away. Too near -> the stop moves out to that distance
+    # (+ a margin) and the size follows it below: the same dollar risk, fewer lots.
+    try:
+        si, tk = mt5.symbol_info(name), (fresh or tick)
+        ref = tk.bid if d > 0 else tk.ask
+        pt = float(si.point or 0)
+        mind = float(si.trade_stops_level or 0) * pt + max(3 * pt, 0.1 * abs(tk.ask - tk.bid))
+        if ref and d * (ref - sl) < mind:
+            new_sl = round(ref - d * mind, si.digits)
+            log(f"{combo}: stop {sl} too near the price ({ref}, minimum {mind:g}) - moved to {new_sl}, the size follows")
+            REP.notify(f"{BOT}: הסטופ הורחק", f"{pretty(combo)}\nהסטופ {sl:g} היה קרוב מדי למחיר (הברוקר דוחה). הוזז ל־{new_sl:g}, "
+                       "עם פחות יחידות - אותו סיכון בדולרים.", priority=2, tags=["stop"], key="minstop:" + combo, every=3600)
+            sl = new_sl
+    except Exception as e:  # noqa: BLE001
+        log(f"{combo}: minimum stop check failed: {e}")
     slip = slip_guess(sym)                              # guard 2: this instrument's usual bad fill
     size_px = px + d * slip
     if slip > 0:

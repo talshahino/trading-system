@@ -722,6 +722,8 @@ def iso(t):
 
 
 def fmt(name, p):
+    if p is None:                     # a strategy with no fixed target / stop (17.11.2026: the open notification crashed)
+        return "—"
     return f"{p:.2f}" if not (len(name) == 6 and name.isalpha()) else (f"{p:.3f}" if name.endswith("JPY") else f"{p:.5f}")
 
 
@@ -1410,7 +1412,7 @@ def main():
                                    f"סטופ {fmt(name, rec['stop'])} · לא נשלחת פקודה", tags=["eyes"], key=f"wp:{k}", every=86400)
                     if not quiet and prev in (None, "pending") and rec["status"] in ("open", "closed"):
                         REP.notify(f"בוט 5 - סקאלפינג: {name} עסקה וירטואלית נפתחה", f"{side} @ {fmt(name, rec['entry'])} · סטופ {fmt(name, rec['stop'])} · "
-                                   f"יעד {fmt(name, rec['target'])} · יחס 1:{rec['rr']}\nפתח את האפליקציה וסמן אם היית לוקח אותה",
+                                   f"יעד {fmt(name, rec['target'])}" + (f" · יחס 1:{rec['rr']}" if rec.get('rr') else "") + "\nפתח את האפליקציה וסמן אם היית לוקח אותה",
                                    tags=["eyes"], key=f"wo:{k}", every=86400)
                     if not quiet and prev != "closed" and rec["status"] == "closed":
                         word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה", "breakeven": "בברייק אחרי יציאה חלקית"}.get(rec["reason"], "")

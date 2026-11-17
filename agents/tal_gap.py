@@ -1124,6 +1124,35 @@ def ladder_trade(D, f, d, legs, stop, tgt, ref, cfg, e):
     return out
 
 
+def wait_cut(D, htf, g, gi, opp_arms, q0, q1, wx):
+    """WAITX (user, 17.11.2026: "I don't want it to wait there forever"): when the waiting limit at the gap's middle
+    is cancelled before EXPIRY, besides the time. "+" joins rules (the earliest wins):
+      tgt   the move went on without a correction: beyond the impulse's end by as much again as from the gap's middle
+            to that end, before the touch
+      hN    after N candles of the high timeframe from the impulse's end (h12, h24)
+      opp   a new impulse with a gap in the other direction is made (armed) before the touch
+    -> the new q1 (the first bar the order is no longer there)."""
+    ns, h1, l1 = D.ns, D.h1, D.l1
+    d, mid, near, far, made, armed = g[gi]
+    for w in str(wx).split("+"):
+        if w.startswith("h") and w[1:].isdigit():
+            q1 = min(q1, int(np.searchsorted(ns, armed + int(w[1:]) * TF[htf] * 60_000_000_000)))
+        elif w == "tgt":
+            qm = int(np.searchsorted(ns, made - TF[htf] * 60_000_000_000))      # from candle 3 to the impulse's end
+            if qm < q0 < q1:
+                ext = float(h1[qm:q0].max()) if d > 0 else float(l1[qm:q0].min())
+                lvl = ext + (ext - mid)
+                hit = (h1[q0:q1] >= lvl) if d > 0 else (l1[q0:q1] <= lvl)
+                if hit.any():
+                    q1 = q0 + int(np.argmax(hit))
+        elif w == "opp":
+            arr = opp_arms[-d]
+            k = int(np.searchsorted(arr, armed, side="right"))
+            if k < len(arr):
+                q1 = min(q1, int(np.searchsorted(ns, arr[k])))
+    return q1
+
+
 def simulate(D, pair, cfg, gcache, keep=None):
     htf, ltf, _ = pair
     g = gap_set(D, htf, cfg, gcache)
@@ -1139,12 +1168,16 @@ def simulate(D, pair, cfg, gcache, keep=None):
     bbw, newsx = bbw_mask(D, cfg, htf, ltf), news_x(D, cfg)
     lad = ladder_of(cfg)
     gk = gap_keep(D, cfg, htf, g)
+    wx = cfg.get("WAITX")
+    opp_arms = {dd: np.array(sorted(x[5] for x in g if x[0] == dd), dtype=np.int64) for dd in (1, -1)} if wx else None
     cands = []
     for gi, (d, mid, near, far, made, armed) in enumerate(g):
         if gk is not None and not gk[gi]:
             continue                                     # G3 / SWP: the gap's own quality (candle 3, a sweep before)
         q0 = int(np.searchsorted(ns, armed))
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))      # from the impulse's end (the order's placing)
+        if wx:
+            q1 = wait_cut(D, htf, g, gi, opp_arms, q0, q1, wx)       # WAITX: the wait ends on the chart's own terms
         ok = order_ok(D, cfg, q0, q1)                                 # REARM: placed again after the break
         if ok is None:
             q1 = min(q1, cancel_bar(D, cfg, q0))                      # WKND: cancelled before a 2+ hour break
@@ -1382,7 +1415,7 @@ def _cfg_runs(p, cfg, symbols, idx):
 
 
 def _norm(c):
-    for k in ("EXIT", "IMP1", "TREND", "LADDER", "BBW", "NEWSX", "PYR", "G3", "SWP"):
+    for k in ("EXIT", "IMP1", "TREND", "LADDER", "BBW", "NEWSX", "PYR", "G3", "SWP", "WAITX"):
         if c.get(k) == "none":
             c.pop(k)                                    # "none" is the base: the same configuration, the same name
     if "WKND" in c and not c["WKND"]:

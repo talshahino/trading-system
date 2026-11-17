@@ -69,7 +69,10 @@
   "scout:SC480|15Min|US100": 0.0028,
   "scout:SC480|5Min|US100": 0.0028,
   "scout:SC480|5Min|GER40": 0.0028,
-  "scout:SC486|15Min|USDCHF": 0.00196
+  "scout:SC486|15Min|USDCHF": 0.00196,
+  "scout:SC501|5Min|XAUUSD": 0.00196,
+  "scout:SC317|15Min|XAUUSD": 0.0028,
+  "scout:SC232|15Min|XAUUSD": 0.00196
  },
  "changes": {
   "a0a49a4ffc34": {
@@ -776,6 +779,27 @@
    "family": "risk",
    "track": "scout:SC071|15Min|US30",
    "before": 0.0028
+  },
+  "312f53f51a71": {
+   "family": "scout5",
+   "combo": "SC501|5Min|XAUUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__",
+   "fit6": 0.0028
+  },
+  "82168fcfcf43": {
+   "family": "scout5",
+   "combo": "SC317|15Min|XAUUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__",
+   "fit6": 0.0028
+  },
+  "f6d4825c394c": {
+   "family": "scout5",
+   "combo": "SC232|15Min|XAUUSD",
+   "before": "__none__",
+   "star_risk_before": "__none__",
+   "fit6": 0.0028
   }
  },
  "tal_tracks": {
@@ -1298,6 +1322,18 @@
   "SC486|15Min|USDCHF": {
    "since": "2026-11-17T03:31:38+00:00",
    "card": "dfba0698f3da"
+  },
+  "SC501|5Min|XAUUSD": {
+   "since": "2026-11-17T09:29:47+00:00",
+   "card": "312f53f51a71"
+  },
+  "SC317|15Min|XAUUSD": {
+   "since": "2026-11-17T09:29:47+00:00",
+   "card": "82168fcfcf43"
+  },
+  "SC232|15Min|XAUUSD": {
+   "since": "2026-11-17T09:29:47+00:00",
+   "card": "f6d4825c394c"
   }
  }
 }

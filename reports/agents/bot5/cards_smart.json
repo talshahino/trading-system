@@ -1,6 +1,6 @@
 {
  "bot": "bot5",
- "updated": "2026-11-17T06:32:38+00:00",
+ "updated": "2026-11-17T10:24:31+00:00",
  "cards": [
   {
    "bot": "bot5",
@@ -5946,6 +5946,172 @@
    },
    "made": "2026-11-16T20:45:00+00:00",
    "id": "b6f80c99f727"
+  },
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: סיכון שקטן עם הירידה בחשבון (סייר) - נבדק, נשאר כמו היום",
+   "what": "משימה mgr1711b5exec (3). על כל אסטרטגיות הסייר יחד, עם כלל הסיכון הקבוע (4.5% ליום, 9% כולל): 4 דרכים - לפי המקום עד 9%, לפי הירידה מהשיא, חצי סיכון מתחת ל־3% / 5%. הבחירה עד 2025 = כמו היום. הכי בטוחה (לפי הירידה מהשיא): 2026 ירידה 11.1% ← 7.2%, אבל הרווח +55.9% ← +31.2% (2025: +78.8% ← +57.2%), פחות ימים ירוקים ורווח ליחידת ירידה נמוך יותר ב־2026. לפי המטרה (יותר רווח ופחות סיכון) - לא נכנס. הכלל הקבוע כבר מונע מעבר ל־9% מיתרת הפתיחה (0 עסקאות נחסמו בשתי התקופות).",
+   "train": {
+    "n": 2904,
+    "sum": 78.79,
+    "max_dd": 7.95,
+    "worst_day": -2.99,
+    "green_days": 54.9
+   },
+   "unseen": {
+    "n": 3803,
+    "sum": 55.91,
+    "max_dd": 11.11,
+    "worst_day": -2.83,
+    "green_days": 52.0
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "ddscale": {
+     "asis": {
+      "train": {
+       "trades": 2904,
+       "total": 78.79,
+       "win": 40.2,
+       "green_days": 54.9,
+       "days": 175,
+       "max_dd": 7.95,
+       "worst_day": -2.99,
+       "day_sd": 1.696,
+       "guard_cut": 4,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3803,
+       "total": 55.91,
+       "win": 39.4,
+       "green_days": 52.0,
+       "days": 227,
+       "max_dd": 11.11,
+       "worst_day": -2.83,
+       "day_sd": 1.563,
+       "guard_cut": 1,
+       "guard_skipped": 0
+      }
+     },
+     "lin9": {
+      "train": {
+       "trades": 2904,
+       "total": 77.59,
+       "win": 40.2,
+       "green_days": 54.9,
+       "days": 175,
+       "max_dd": 7.95,
+       "worst_day": -2.99,
+       "day_sd": 1.684,
+       "guard_cut": 4,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3803,
+       "total": 54.64,
+       "win": 39.4,
+       "green_days": 52.0,
+       "days": 227,
+       "max_dd": 11.11,
+       "worst_day": -2.83,
+       "day_sd": 1.552,
+       "guard_cut": 1,
+       "guard_skipped": 0
+      }
+     },
+     "linpk": {
+      "train": {
+       "trades": 2904,
+       "total": 57.21,
+       "win": 40.2,
+       "green_days": 53.7,
+       "days": 175,
+       "max_dd": 5.6,
+       "worst_day": -2.08,
+       "day_sd": 1.297,
+       "guard_cut": 0,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3803,
+       "total": 31.22,
+       "win": 39.4,
+       "green_days": 49.3,
+       "days": 227,
+       "max_dd": 7.24,
+       "worst_day": -2.32,
+       "day_sd": 1.004,
+       "guard_cut": 0,
+       "guard_skipped": 0
+      }
+     },
+     "half3": {
+      "train": {
+       "trades": 2904,
+       "total": 78.31,
+       "win": 40.2,
+       "green_days": 55.4,
+       "days": 175,
+       "max_dd": 7.95,
+       "worst_day": -2.99,
+       "day_sd": 1.692,
+       "guard_cut": 4,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3803,
+       "total": 54.24,
+       "win": 39.4,
+       "green_days": 52.0,
+       "days": 227,
+       "max_dd": 11.11,
+       "worst_day": -2.83,
+       "day_sd": 1.556,
+       "guard_cut": 1,
+       "guard_skipped": 0
+      }
+     },
+     "half5": {
+      "train": {
+       "trades": 2904,
+       "total": 78.79,
+       "win": 40.2,
+       "green_days": 54.9,
+       "days": 175,
+       "max_dd": 7.95,
+       "worst_day": -2.99,
+       "day_sd": 1.696,
+       "guard_cut": 4,
+       "guard_skipped": 0
+      },
+      "unseen": {
+       "trades": 3803,
+       "total": 55.91,
+       "win": 39.4,
+       "green_days": 52.0,
+       "days": 227,
+       "max_dd": 11.11,
+       "worst_day": -2.83,
+       "day_sd": 1.563,
+       "guard_cut": 1,
+       "guard_skipped": 0
+      }
+     },
+     "pick": "asis"
+    },
+    "src": "reports/agents/bot5/night_study.json"
+   },
+   "made": "2026-11-17T10:24:31+00:00",
+   "id": "8abffe80ffdc"
   }
  ]
 }

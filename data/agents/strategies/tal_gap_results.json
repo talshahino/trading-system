@@ -444681,6 +444681,14 @@
    "anti": 3,
    "straddle": 227,
    "shared_exit": 22
-  }
+  },
+  "findings": [
+   {
+    "at": "2026-11-17",
+    "pair": "15m/1m",
+    "what": "EXIT be618 (stop to entry at 61.8% of the way) vs none on bot 5's indices: 2026 +38.8R vs +20.7R, max fall 18.7R vs 34.4R; to 2025 +71.8R vs +98.1R. Every BE level (38.2-70%) beats none on 2026. For bot 6: worth testing on its 15m/1m track.",
+    "card": "953fbb45af0b"
+   }
+  ]
  }
 }

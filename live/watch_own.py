@@ -825,14 +825,39 @@ def fut_scout(name, df, noent, shut, sc, combo, contract, tick, fa, ftrades, fse
         fseen.add(k)
         old = ftrades.get(k, {})
         tg = None if pd.isna(x["target_px"]) else float(x["target_px"])
+        tfm = SF.TF_MIN.get(sc["tf"], 15)
         rec = {"id": k, "symbol": name, "contract": contract, "trk": "scout", "combo": combo, "dir": int(x["dir"]),
+               # what the strategy saw (task b5scchart1711, as bot 5): its own timeframe, its rule and the signal candle
+               # (the bar before the entry); no gap / impulse fields on a scout trade
+               "sc": {"sid": sc["sid"], "tf": sc["tf"], "rule": _sc_rule(sc["sid"]),
+                      "sig_t": (tm - pd.Timedelta(minutes=tfm)).isoformat()},
                "status": "open" if live_now else "closed", "entry": float(x["entry_px"]), "stop": float(x["stop_px"]),
                "stop_now": float(x["stop_last"]), "target": tg, "rr": round(abs(tg - float(x["entry_px"])) / risk, 2) if tg else None,
                "cost_r": 0.0, "setup_t": tm.isoformat(), "time": tm.isoformat(),
                "exit_time": None if live_now else pd.Timestamp(x["exit_time"]).isoformat(),
                "exit": None if live_now else float(x["exit_px"]), "reason": None if live_now else x["reason"],
                "r": None if live_now else round(r_live, 4), "r_now": round(r_live, 3) if live_now else None}
+        # the two charts of a scout trade (as bot 5, chart_v 4): the strategy's timeframe from 60 bars before the
+        # entry to 4 after the exit, and 1 minute around the trade; a closed trade keeps the charts it already has
+        if rec["status"] != "closed" or old.get("chart_v") != 4 or old.get("status") != "closed":
+            t_out = pd.Timestamp(rec["exit_time"]) if rec["exit_time"] else df.index[-1]
+            rule_ = f"{tfm}min" if tfm < 60 else "1h"
+            rec["m15"] = bars(df, tm - pd.Timedelta(minutes=60 * tfm), max(tm, t_out) + pd.Timedelta(minutes=4 * tfm), rule_)
+            m1_end = t_out + pd.Timedelta(minutes=10)
+            rec["m1"] = bars(df, max(tm - pd.Timedelta(minutes=max(30, 3 * tfm)), m1_end - pd.Timedelta(hours=12)), m1_end, "1min")
+        else:
+            rec["m15"], rec["m1"] = old.get("m15"), old.get("m1")
+        rec["chart_v"] = 4
         fut_rec(rec, old, fa, ftrades)
+
+
+def _sc_rule(sid):
+    """A scout strategy's rule in a few words (agents/rules_agent.STRATEGIES' description), for its chart."""
+    try:
+        from agents import rules_agent as R
+        return str(R.STRATEGIES[sid][0])[:160]
+    except Exception:  # noqa: BLE001 - a missing description must not stop the trade
+        return ""
 
 
 def spread5(name, px, sc):

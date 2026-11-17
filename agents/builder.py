@@ -272,7 +272,7 @@ def apply(cfg, b, card_id):
         sc[b["combo"]] = {"v": dict(b["v"]), "since": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "card": card_id}
         rk = cfg.setdefault("risk", {})
         rk.setdefault("scout", 0.004)     # the bot's risk (principle 8)
-        if fit6(cfg, b["combo"], card_id):
+        if fit6(cfg, b["combo"], card_id, how="median"):
             if b.get("star"):           # the star on top of the account's level (x STAR6, as star6 does on "scout")
                 rk[f"scout:{b['combo']}"] = round(rk[f"scout:{b['combo']}"] * STAR6, 6)
         elif b.get("star"):
@@ -390,12 +390,17 @@ def apply(cfg, b, card_id):
 STAR6 = 0.7          # agents/autodecide.STAR_MULT: the manager's "maybe luck" discount
 
 
-def fit6(cfg, combo, card_id):
+def fit6(cfg, combo, card_id, how="max"):
     """Bot 6 (16.11.2026, bot 6's smart agent): a NEW scout strategy enters at the risk the account's limits already
     gave the scouts, not at the bare "scout" 0.4%. The scouts' factor (agent_bot6.scout_scale6, x 0.15 on 16.11) is a
     risk of each scout's own ("scout:<combo>"), so a scout added after it - SC441|5Min|US100 at 08:41 - took the full
     0.4%, ~7x the others: the cause of 16.11's -389$ (SC072 at 0.4%) again. The level = the highest unstarred scout
-    risk the bot has (never above "scout"); the next whole-bot round sets its own number. Taken out with the card."""
+    risk the bot has (never above "scout"); the next whole-bot round sets its own number. Taken out with the card.
+    how="median" (bot 6, 17.11.2026, bot 6's smart agent): since 16.11 bot 6's scouts are risked by their own edge
+    (agent_bot6.scout_edge6), so the highest level is the strongest scout's (SC261, 0.155%), ~5x the typical one -
+    SC258|1Min|US100 and TV41|15Min|US100 entered there on 17.11 and the whole-bot test then sat at FTMO Futures'
+    4.5% trailing limit in both periods (2026: +13.5% / fall 1.74% before them, -1.5% / 4.5% after). A new scout has
+    no edge of its own yet, so it takes the typical level - the median. Bot 5 (one uniform factor) keeps "max"."""
     rk = cfg.setdefault("risk", {})
     key = f"scout:{combo}"
     if key in rk:
@@ -406,7 +411,7 @@ def fit6(cfg, combo, card_id):
         return False
     ch = cfg.setdefault("changes", {}).setdefault(card_id, {"family": "scout6", "combo": combo, "before": "__none__"})
     ch["star_risk_before"] = "__none__"
-    rk[key] = round(max(lv), 6)
+    rk[key] = round(float(pd.Series(lv).median()) if how == "median" else max(lv), 6)
     ch["fit6"] = rk[key]
     return True
 

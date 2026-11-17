@@ -34,9 +34,9 @@ UA = {"User-Agent": "Mozilla/5.0"}
 
 
 def _csv(url):
-    for k in range(3):
+    for k in range(2):
         try:
-            r = requests.get(url, timeout=40, headers=UA)
+            r = requests.get(url, timeout=(8, 20), headers=UA)
             if r.status_code == 200 and r.text[:200].upper().find("DATE") >= 0:
                 df = pd.read_csv(io.StringIO(r.text))
                 df.columns = ["date", "v"] + list(df.columns[2:])
@@ -45,7 +45,8 @@ def _csv(url):
                 return df.dropna(subset=["v"])
         except Exception:  # noqa: BLE001
             pass
-        time.sleep(2 + 3 * k)
+        print(f"  no answer: {url}", flush=True)
+        time.sleep(2)
     return None
 
 

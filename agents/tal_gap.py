@@ -2286,3 +2286,83 @@ def live_trades(D, pair, cfg, gcache=None):
             busy = q + 1
         out.append(rec)
     return out
+
+
+# ---------------- Tal reviews every setup before the entry (user, 17.11.2026, bot 5) ----------------
+# "When the impulse ends with a gap, before the correction: ask me 'would you enter?'; yes -> show me the position on
+# the low timeframe as the rules would place it - entry, stop, target, each right or wrong; wrong -> I move it; the
+# bot enters by what I set." propose() is the rules' position for a waiting gap as if the order filled now (the stop /
+# target from the swings confirmed by now - the fill may move them, so the app shows them as the proposal);
+# custom_trade() follows a trade with Tal's own levels on the same 1-minute data, with the same costs and forced exits.
+def propose(D, pair, cfg, d, entry):
+    """-> (stop, target, sw_stop_ns, sw_tgt_ns) for an order at `entry` filled now, or None."""
+    htf, ltf, _ = pair
+    if not len(D.ns):
+        return None
+    hi_sw, lo_sw = D.swings(ltf, cfg["SW"])
+    sw_st, sw_tg = (lo_sw, hi_sw) if d > 0 else (hi_sw, lo_sw)
+    t_now = int(D.ns[-1])
+    s2 = _count_back(*sw_st, t_now, entry, d, -d)
+    t2 = _count_back(*sw_tg, t_now, entry, d, d)
+    if s2 is None or t2 is None:
+        return None
+    st_ns, w_ = TF[ltf] * 60_000_000_000, cfg["SW"]
+    ts_s = _count_back_t(*sw_st, t_now, entry, d, -d, st_ns, w_)
+    ts_t = _count_back_t(*sw_tg, t_now, entry, d, d, st_ns, w_)
+    stop = min_stop(D, cfg, htf, t_now, entry, s2 - d * (D.buf + stop_pad(cfg, entry)), d)
+    if tp_way(cfg):
+        t2 = entry + tp_way(cfg) * (t2 - entry)
+    return float(stop), float(t2), ts_s, ts_t
+
+
+def custom_trade(D, cfg, d, entry, stop, target, armed_ns, not_before_ns=None):
+    """A limit at `entry` from the gap's arming (or `not_before_ns`) for EXPIRY hours, then to `stop` / `target`, with
+    the world's forced exits (shut_of) and costs. -> dict like live_trades() (status pending / open / closed /
+    cancelled, time, exit_time, exit, reason, r, r_now)."""
+    ns, o1, h1, l1, c1 = D.ns, D.o1, D.h1, D.l1, D.c1
+    n1 = len(ns)
+    ts = lambda q: pd.Timestamp(int(ns[q]), tz="UTC").isoformat()   # noqa: E731
+    risk = d * (entry - stop)
+    if n1 == 0 or risk <= 0 or (target is not None and d * (target - entry) <= 0):
+        return {"status": "cancelled", "reason": "levels"}
+    q0 = int(np.searchsorted(ns, max(armed_ns, not_before_ns or 0)))
+    q1 = min(n1, int(np.searchsorted(ns, armed_ns + int(cfg["EXPIRY"] * 3600 * 1e9))))
+    if q0 >= n1:
+        return {"status": "pending"}
+    seg = (l1[q0:q1] <= entry) if d > 0 else (h1[q0:q1] >= entry)
+    if not seg.any():
+        return {"status": "cancelled" if q1 < n1 else "pending", "reason": "expired" if q1 < n1 else None}
+    f = q0 + int(np.argmax(seg))
+    px = min(entry, o1[f]) if d > 0 else max(entry, o1[f])
+    risk = d * (px - stop)
+    if risk <= 0:
+        return {"status": "cancelled", "reason": "levels"}
+    cost_r = float(D.cost[f]) / risk
+    hs, ls = h1[f:], l1[f:]
+    big = n1 - f + 1
+    st = (ls <= stop) if d > 0 else (hs >= stop)
+    i_st = int(np.argmax(st)) if st.any() else big
+    if target is not None:
+        tg = (hs >= target) if d > 0 else (ls <= target)
+        tg[0] = False
+        i_tg = int(np.argmax(tg)) if tg.any() else big
+    else:
+        i_tg = big
+    sh = shut_of(D, cfg, f, n1)
+    sh[0] = False
+    i_sh = int(np.argmax(sh)) if sh.any() else big
+    i = min(i_st, i_tg, i_sh)
+    rec = {"entry": float(px), "stop": float(stop), "target": float(target) if target is not None else None,
+           "rr": round(d * (target - px) / risk, 2) if target is not None else None, "time": ts(f)}
+    if i >= big:
+        rec.update(status="open", r_now=round(d * (c1[-1] - px) / risk - cost_r, 3))
+        return rec
+    q = f + i
+    if i == i_st:
+        ex, why = ((min(stop, o1[q]) if d > 0 else max(stop, o1[q])) if i else stop), "stop"
+    elif i == i_tg:
+        ex, why = (max(target, o1[q]) if d > 0 else min(target, o1[q])), "target"
+    else:
+        ex, why = o1[q], "forced"
+    rec.update(status="closed", exit=float(ex), exit_time=ts(q), reason=why, r=round(d * (ex - px) / risk - cost_r, 4))
+    return rec

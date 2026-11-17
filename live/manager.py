@@ -602,12 +602,23 @@ def start_news():
 
 def watch_mark(d):
     k = str(d.get("id") or "")
-    if not k or len(k) > 80 or not re.fullmatch(r"[A-Za-z0-9./|-]+", k):
+    if not k or len(k) > 120 or not re.fullmatch(r"[A-Za-z0-9./|_-]+", k):
         raise ValueError("עסקה לא מוכרת")
     take = d.get("take")
     if take not in ("yes", "no", None):
         raise ValueError("סימון לא מוכר")
     why = str(d.get("why") or "")[:500]
+    # the review of a gap setup (user, 17.11.2026): his own entry / stop / target when the rules' were wrong, and
+    # which of the three he called right - the examples the method learns from
+    lv = {}
+    for f in ("entry", "stop", "target"):
+        v = d.get(f)
+        if v is not None:
+            v = float(v)
+            if not (v > 0 and v < 1e9):
+                raise ValueError("מחיר לא תקין")
+            lv[f] = v
+    oks = {f"ok_{f}": bool(d[f"ok_{f}"]) for f in ("entry", "stop", "target") if d.get(f"ok_{f}") is not None}
     with MARKS_LOCK:
         try:
             marks = json.loads(MARKS_FILE.read_text(encoding="utf-8"))
@@ -616,7 +627,7 @@ def watch_mark(d):
         if take is None and not why:
             marks.pop(k, None)
         else:
-            marks[k] = {"take": take, "why": why, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+            marks[k] = {"take": take, "why": why, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), **lv, **oks}
         tmp = MARKS_FILE.with_suffix(".tmp")
         tmp.write_text(json.dumps(marks, ensure_ascii=False, indent=1), encoding="utf-8")
         tmp.replace(MARKS_FILE)
@@ -1499,7 +1510,10 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/push":                                   # from a bot on this computer
             if self.headers.get("X-Local") != CFG["local_key"]:
                 return self._send(403, {"error": "forbidden"})
-            push(d.get("title", ""), d.get("body", ""), urgent=bool(d.get("urgent")), tag=d.get("tag"))
+            # a gap setup to review (bot 5, 17.11.2026): the notification opens the review and vibrates long
+            act_ = "review" if d.get("action") == "review" else None
+            push(d.get("title", ""), d.get("body", ""), urgent=bool(d.get("urgent")), tag=d.get("tag"), action=act_,
+                 extra={"id": str(d.get("id") or "")[:120], "bot": "watch_own"} if act_ else None)
             return self._send(200, {"ok": True})
         if path == "/subscribe" and not (self.headers.get("X-Pin") or d.get("pin")):
             # notifications only (view): a device without the secret code may subscribe; every action still needs it

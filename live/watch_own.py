@@ -589,6 +589,40 @@ def tal_chart(df, geo, t_in, t_out):
     return bars(df, st_h, end_h, RULE.get(geo["htf"], "15min")), bars(df, st_l, end_l, RULE.get(geo["ltf"], "1min"))
 
 
+# ---------------- Tal reviews every gap setup before the entry (user, 17.11.2026) ----------------
+# The impulse ended with a gap (the order waits for the correction): a notification "would you enter?" (long vibration;
+# not in the quiet hours). In the app: the high timeframe -> yes / no; yes -> the low timeframe with the position the
+# rules would place (entry, stop, target - each right or wrong; wrong -> his own price). The gap tracks' trades are taken
+# ONLY as he answered: no -> not taken; yes -> the rules, or his levels (TG.custom_trade); no answer -> not taken; a
+# setup that came in his quiet hours -> the rules (no question at night). Every answer stays in live/watch_marks.json:
+# the examples the method learns from (task tal1711review).
+REVIEW_ON = True
+
+
+def quiet_at(t):
+    """Was `t` (UTC, ISO) inside the quiet hours (live/notify.json, Israel time, default 21:00-08:00)?"""
+    try:
+        a, b = REP._CFG.get("quiet_from", 21), REP._CFG.get("quiet_to", 8)
+        h = pd.Timestamp(t).tz_convert("Asia/Jerusalem").hour
+        return (h >= a or h < b) if a > b else (a <= h < b)
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def review_push(rec):
+    key = os.environ.get("MANAGER_KEY")
+    if not key:
+        return
+    side = "קנייה" if rec["dir"] > 0 else "מכירה"
+    try:
+        requests.post("http://127.0.0.1:8760/push", timeout=8, headers={"X-Local": key},
+                      json={"title": f"בוט 5: היית נכנס? {rec['symbol']} {side}",
+                            "body": f"{tal5_name(rec['tal'])} · דחף עם גאפ, לפני התיקון. פתח וענה לפני שהמחיר חוזר לגאפ.",
+                            "urgent": True, "tag": f"rv:{rec['id']}"[:60], "action": "review", "id": rec["id"]})
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def tid(x):
     if x.get("tal"):
         return f"{x['symbol']}|{x['tal_key']}|{x['tal']}"
@@ -1172,6 +1206,29 @@ def main():
                         if name not in (TAL5_SYMS.get(trk) or TAL5_SYMBOLS):
                             continue                      # an instrument's own track / the indices' tracks
                         for x in TG.live_trades(D5, pair, TG.ftmo_cfg(cfg)):   # FTMO: closed / cancelled before a 2h+ break
+                            k_ = f"{name}|{x['id_key']}|{trk}"
+                            mk_ = (trades.get(k_) or {}).get("mark") or {}
+                            if x["status"] == "pending":
+                                try:
+                                    pr_ = TG.propose(D5, pair, TG.ftmo_cfg(cfg), x["dir"], x["entry"])
+                                except Exception:  # noqa: BLE001
+                                    pr_ = None
+                                if pr_:
+                                    x["prop"] = [round(pr_[0], 6), round(pr_[1], 6)]
+                                    if x.get("geo"):
+                                        x["geo"] = dict(x["geo"], sw_stop=[pd.Timestamp(int(pr_[2]), tz="UTC").isoformat(), pr_[0]] if pr_[2] else None,
+                                                        sw_tgt=[pd.Timestamp(int(pr_[3]), tz="UTC").isoformat(), pr_[1]] if pr_[3] else None)
+                            if mk_.get("take") == "yes" and any(mk_.get(f_) is not None for f_ in ("entry", "stop", "target")):
+                                e_ = float(mk_.get("entry") or x["entry"])
+                                s_ = mk_.get("stop") if mk_.get("stop") is not None else (x.get("stop") or (x.get("prop") or [None, None])[0])
+                                t_ = mk_.get("target") if mk_.get("target") is not None else (x.get("target") or (x.get("prop") or [None, None])[1])
+                                if s_ is not None:
+                                    cx_ = TG.custom_trade(D5, TG.ftmo_cfg(cfg), x["dir"], e_, float(s_), float(t_) if t_ is not None else None,
+                                                          pd.Timestamp(x["setup_t"]).value)
+                                    for f_ in ("time", "exit_time", "exit", "reason", "r", "r_now", "rr"):
+                                        x[f_] = cx_.get(f_)
+                                    x.update(status=cx_["status"], entry=cx_.get("entry", e_), stop=cx_.get("stop", float(s_)),
+                                             target=cx_.get("target", t_), custom=True)
                             g_ = x.get("gap") or [x["entry"], x["entry"]]
                             res.append({"symbol": name, "dir": x["dir"], "status": x["status"], "entry": x["entry"],
                                         "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,
@@ -1180,7 +1237,8 @@ def main():
                                         "exit_time": x.get("exit_time"), "exit": x.get("exit"), "reason": x.get("reason"),
                                         "r": x.get("r"), "r_now": x.get("r_now"),
                                         "why": x.get("reason") if x["status"] == "cancelled" else None,
-                                        "tal": trk, "tal_key": x["id_key"], "geo": x.get("geo")})
+                                        "tal": trk, "tal_key": x["id_key"], "geo": x.get("geo"),
+                                        "prop": x.get("prop"), "custom": bool(x.get("custom"))})
                 for combo_, sc_ in list(SCOUT5.items()):
                     if sc_["sym"] != name:
                         continue
@@ -1210,14 +1268,24 @@ def main():
                            "why": x.get("why"), "touch_t": iso(x.get("touch_t")),
                            "px_now": x.get("px_now"), "cost_live": x.get("cost_live"),
                            "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m")),
-                           "geo": x.get("geo") or old.get("geo")}
-                    if rec["geo"] and rec["status"] in ("open", "closed"):
+                           "geo": x.get("geo") or old.get("geo"), "prop": x.get("prop"), "custom": bool(x.get("custom")),
+                           "asked": old.get("asked"), "sleep": old.get("sleep")}
+                    # the review (17.11.2026): ask once, when the setup first waits for its entry
+                    rev_ = REVIEW_ON and bool(rec.get("tal")) and not scout5_combo(rec["tal"]) \
+                        and (rec.get("setup_t") or "") >= acc.setdefault("review_from", pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
+                    if rev_ and rec["status"] == "pending" and not rec["asked"]:
+                        rec["asked"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+                        if quiet_at(rec["asked"]):
+                            rec["sleep"] = True              # his quiet hours: no question - the rules decide
+                    if rec["geo"] and rec["status"] in ("open", "closed", "pending"):
                         # gap-method trades: the two charts of the method (high / low timeframe), user 13.11.2026
                         if x["status"] != "closed" or old.get("chart_v") != 3 or old.get("status") != "closed":
                             t_in = pd.Timestamp(x["time"]) if x.get("time") else df.index[-1]
                             t_out = pd.Timestamp(x["exit_time"]) if x.get("exit_time") else df.index[-1]
                             rec["m15"], rec["m1"] = tal_chart(df, rec["geo"], t_in, t_out)
                             rec["chart_v"] = 3
+                            if rev_ and rec["status"] == "pending" and rec["asked"] and not rec["sleep"] and not old.get("asked"):
+                                review_push(rec)                  # with the charts ready in the state
                         else:
                             rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 3
                     elif x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:
@@ -1258,7 +1326,14 @@ def main():
                                                                    and o.get("dir") == rec["dir"] and o.get("id", o) != rec.get("id")) >= TAL5_MAXDIR[0]
                         ts_ = pd.Timestamp(rec["time"])
                         hour_ = gap_ and bool(TAL5_HOURS_OFF) and (ts_.tz_convert("UTC") if ts_.tzinfo else ts_).hour in TAL5_HOURS_OFF
-                        if acc.get("breached"):
+                        mk_ = rec.get("mark") or {}
+                        if rev_ and mk_.get("take") == "yes":
+                            hour_ = side_ = dir_ = False     # his yes decides; only the risk limits below still hold
+                        if rev_ and mk_.get("take") == "no":
+                            rec["skipped"] = "tal_no"        # Tal: would not enter
+                        elif rev_ and mk_.get("take") != "yes" and not rec.get("sleep") and rec.get("asked"):
+                            rec["skipped"] = "tal_none"      # asked, no answer before the entry
+                        elif acc.get("breached"):
                             rec["skipped"] = "breach"
                         elif hour_:
                             rec["skipped"] = "hours"         # an hour the tracks lost in together on 2024-2025
@@ -1413,7 +1488,19 @@ def main():
         # for the gap tracks the entry chart, not the detection chart the combo name carries)
         ent = lambda t: (TAL5[t["tal"]][0][1] if (t or {}).get("tal") in TAL5 and not scout5_combo(t["tal"]) else None)  # noqa: E731
         counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
-        state.update({"account": "וירטואלי · שיטת הגאפ של טל", "server": f"צפייה בלבד · בלי כסף · סיכון {RISK_TAL5 * 100:.2f}% לעסקה", "initial": acc["initial"], "risk": RISK_TAL5,
+        # the review's own statistics (17.11.2026): his answers and what each kind of trade earned
+        rv_ = [t for t in trades.values() if t.get("asked")]
+        def _rs(ts_):
+            r_ = [t["r"] for t in ts_ if t.get("status") == "closed" and t.get("r") is not None]
+            return {"n": len(ts_), "closed": len(r_), "r": round(sum(r_), 2), "win": round(100 * sum(1 for x in r_ if x > 0) / len(r_)) if r_ else None}
+        mk_of = lambda t: (t.get("mark") or {}).get("take")  # noqa: E731
+        review = {"from": acc.get("review_from"), "asked": len(rv_),
+                  "yes_rules": _rs([t for t in rv_ if mk_of(t) == "yes" and not t.get("custom")]),
+                  "yes_own": _rs([t for t in rv_ if mk_of(t) == "yes" and t.get("custom")]),
+                  "no": _rs([t for t in rv_ if mk_of(t) == "no"]),          # what the rules' trade would have done
+                  "unanswered": _rs([t for t in rv_ if not mk_of(t) and not t.get("sleep")]),
+                  "sleep": _rs([t for t in rv_ if t.get("sleep")])}
+        state.update({"review": review, "account": "וירטואלי · שיטת הגאפ של טל", "server": f"צפייה בלבד · בלי כסף · סיכון {RISK_TAL5 * 100:.2f}% לעסקה", "initial": acc["initial"], "risk": RISK_TAL5,
                       "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
                       "halted_until": None, "combos": [f"TAL|{tal5_tf(k)}|{n}" for k in TAL5 for n in (TAL5_SYMS.get(k) or TAL5_SYMBOLS)] + sorted(SCOUT5), "started": acc["started"], "withdrawals": [],
                       "equity_curve": ec, "lows": {},

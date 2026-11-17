@@ -1293,7 +1293,11 @@ function botTalk(s) {
   box.style.display = show ? "" : "none";
   if (!show || box.dataset.bot === UI.cur) return;
   box.dataset.bot = UI.cur;
-  box.innerHTML = `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
+  // bot 5: Tal's review of the gap setups (17.11.2026) - his answers and what each kind earned
+  const rv = s && s.review, rl = (k, l) => { const x = rv[k] || {}; return x.n ? `<tr><td>${l}</td><td>${x.n}</td><td>${x.closed}</td><td class="${x.r >= 0 ? "pos" : "neg"}">${x.r >= 0 ? "+" : ""}${x.r}R</td><td>${x.win == null ? "—" : x.win + "%"}</td></tr>` : ""; };
+  const rvHtml = rv && rv.asked ? `<div class="h4" style="margin-top:18px">הסקירה שלך לפני כניסה</div><div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th></th><th>זיהויים</th><th>נסגרו</th><th>R</th><th>הצלחה</th></tr>
+      ${rl("yes_rules", "כן, לפי הכללים")}${rl("yes_own", "כן, עם התיקונים שלך")}${rl("no", "לא (מה שהכללים היו עושים)")}${rl("sleep", "שעות שינה, לפי הכללים")}${rl("unanswered", "לא נענו")}</table></div></div>` : "";
+  box.innerHTML = rvHtml + `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
       <textarea id="btTxt" rows="3" placeholder="דבר או כתוב לסוכן על הבוט כולו: מה ראית היום, מה מפריע לך, מה לבדוק…"></textarea>
       <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="btMic">🎙 הקלטה</button><button class="btn" id="btSave">שלח לסוכן</button></div>
       <div class="msg mut" id="btMsg"></div><div id="btList"></div></div>`;
@@ -2420,7 +2424,61 @@ async function wcOpen(id) {
    comes out of them; the low timeframe - the same box, the entry, and the stop / target lines starting at the swings
    that set them, the position box to the exit, and why */
 const TFHE = {"1m": "דקה", "5m": "5 דק'", "15m": "15 דק'", "1h": "שעה", "4h": "4 שעות", "1d": "יום"};
+/* Tal reviews every gap setup of bot 5 before the entry (17.11.2026): step 1 - the high timeframe, "would you
+   enter?"; yes -> step 2 - the low timeframe with the position the rules would place: entry, stop, target, each right
+   or wrong (wrong -> his own price). The bot takes the trade only as he answered (live/watch_own.py). */
+const rvNeeded = t => t && t.status === "pending" && t.tal && !/\|/.test(t.tal) && t.asked && !t.sleep;
+function rvPanel(t, dec) {
+  const box = $("rvBox"); if (!box) return;
+  const m = WB.marks[t.id] || t.mark || {}, buy = t.dir > 0, owner = getRole() !== "viewer";
+  const showLtf = on => { const el = $("wcLtf"); if (el) el.style.display = on ? "" : "none"; };
+  if (!owner) { box.innerHTML = ""; showLtf(true); return; }
+  if (t.status !== "pending") {
+    box.innerHTML = m.take ? `<div class="card" style="margin-bottom:10px">ענית: <b>${m.take === "yes" ? "הייתי נכנס" + (m.entry || m.stop || m.target ? " (עם התיקונים שלך)" : "") : "לא הייתי נכנס"}</b></div>` : "";
+    showLtf(true); return;
+  }
+  const done = m.take ? `<div class="mut" style="margin-top:8px">ענית: <b>${m.take === "yes" ? "כן" : "לא"}</b>. אפשר לשנות עד שהמחיר מגיע לכניסה.</div>` : "";
+  box.innerHTML = `<div class="card" style="margin-bottom:10px;border:2px solid #C8922E">
+      <b style="font-size:17px">היית נכנס?</b>
+      <div class="mut" style="margin:4px 0 10px">דחף ${buy ? "עולה" : "יורד"} עם גאפ בגרף ${TFHE[(t.geo || {}).htf] || ""}, לפני התיקון. הבוט ייכנס רק לפי מה שתענה.</div>
+      <div class="row" style="gap:8px"><button class="btn ok" id="rvYes">כן</button><button class="btn ghost" id="rvNo">לא</button></div>${done}
+      <div id="rvLv"></div><div class="msg" id="rvMsg"></div></div>`;
+  showLtf(m.take === "yes");
+  const send = async body => {
+    try { const j = await act("/watch/mark", {id: t.id, ...body}); WB.marks[t.id] = j.mark || body; note("rvMsg", body.take === "no" ? "נשמר: לא נכנסים." : "נשמר: הבוט ייכנס לפי מה שסימנת.", true); setTimeout(() => rvPanel(t, dec), 900); }
+    catch (e) { note("rvMsg", e.message, false); }
+  };
+  $("rvNo").onclick = () => send({take: "no"});
+  $("rvYes").onclick = () => {
+    showLtf(true);
+    const lv = [["entry", "כניסה", t.entry], ["stop", "סטופ", t.stop], ["target", "יעד", t.target]];
+    $("rvLv").innerHTML = `<div class="mut" style="margin:12px 0 6px">הפוזיציה לפי הכללים (בגרף ${TFHE[(t.geo || {}).ltf] || ""} למטה). מה נכון?</div>` + lv.map(([k, l, v]) =>
+      `<div class="row" style="gap:6px;align-items:center;margin-top:6px"><b style="min-width:52px">${l}</b><bdi style="min-width:90px">${v != null ? (+v).toFixed(dec) : "—"}</bdi>
+        <button class="btn ghost" data-ok="${k}" aria-pressed="true">נכון</button><button class="btn ghost" data-bad="${k}">לא נכון</button>
+        <input type="number" step="any" inputmode="decimal" id="rv_${k}" value="${v != null ? (+v).toFixed(dec) : ""}" style="display:none;width:110px"></div>`).join("")
+      + `<button class="btn ok" id="rvSend" style="width:100%;margin-top:12px">אשר</button>`;
+    const ok = {entry: true, stop: true, target: true};
+    $("rvLv").querySelectorAll("[data-ok]").forEach(b => b.onclick = () => { ok[b.dataset.ok] = true; $("rv_" + b.dataset.ok).style.display = "none"; b.classList.add("on"); b.nextElementSibling.classList.remove("on"); });
+    $("rvLv").querySelectorAll("[data-bad]").forEach(b => b.onclick = () => { ok[b.dataset.bad] = false; $("rv_" + b.dataset.bad).style.display = ""; b.classList.add("on"); b.previousElementSibling.classList.remove("on"); });
+    $("rvSend").onclick = () => {
+      const body = {take: "yes", ok_entry: ok.entry, ok_stop: ok.stop, ok_target: ok.target};
+      for (const k of ["entry", "stop", "target"]) if (!ok[k]) { const v = parseFloat($("rv_" + k).value); if (!(v > 0)) return note("rvMsg", "חסר מחיר", false); body[k] = v; }
+      const e_ = body.entry ?? t.entry, s_ = body.stop ?? t.stop, g_ = body.target ?? t.target;
+      if (s_ != null && (buy ? s_ >= e_ : s_ <= e_)) return note("rvMsg", `הסטופ צריך להיות ${buy ? "מתחת" : "מעל"} לכניסה`, false);
+      if (g_ != null && (buy ? g_ <= e_ : g_ >= e_)) return note("rvMsg", `היעד צריך להיות ${buy ? "מעל" : "מתחת"} לכניסה`, false);
+      send(body);
+    };
+  };
+}
+async function openReview(id) {
+  for (let i = 0; i < 20 && !(found.watch_own && (found.watch_own.watch || []).some(x => x.id === id)); i++) await new Promise(r => setTimeout(r, 1000));
+  const d = found.watch_own; if (!d) return;
+  WB.doc = d;
+  const t = (d.watch || []).find(x => x.id === id);
+  if (t) wcTal(t);
+}
 async function wcTal(t) {
+  if (t.status === "pending" && t.prop && t.stop == null) t = {...t, stop: t.prop[0], target: t.prop[1]};   // the rules' proposal
   const g = t.geo, buy = t.dir > 0, dec = wDec(t.symbol);
   $("wcPg").classList.add("on");
   $("wcTitle").textContent = `${t.symbol} · ${buy ? "קנייה" : "מכירה"} · שיטת הגאפ`;
@@ -2430,9 +2488,10 @@ async function wcTal(t) {
     g.sw_stop ? `סטופ מעבר לסווינג השני ${buy ? "מתחת" : "מעל"} לכניסה (<bdi>${(+g.sw_stop[1]).toFixed(dec)}</bdi>)${t.stop != null ? `: <bdi>${(+t.stop).toFixed(dec)}</bdi>` : ""}.` : "",
     g.sw_tgt ? `יעד בסווינג השני ${buy ? "מעל" : "מתחת"} לכניסה${t.target != null ? `: <bdi>${(+t.target).toFixed(dec)}</bdi>` : ""}.` : "",
     t.exit_time ? `יציאה: ${RS[t.reason] || esc(t.reason || "")}${t.r != null ? ` (${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}R)` : ""}.` : (t.status === "open" ? "העסקה פתוחה." : "")].filter(Boolean);
-  $("wcBody").innerHTML = `<div class="card" style="margin-bottom:10px">${why.map(x => `<p style="margin:3px 0">${x}</p>`).join("")}</div>
+  $("wcBody").innerHTML = `<div id="rvBox"></div><div class="card" style="margin-bottom:10px">${why.map(x => `<p style="margin:3px 0">${x}</p>`).join("")}</div>
     <div class="mut" style="margin-bottom:6px">גרף ${TFHE[g.htf] || g.htf} (זיהוי): הדחף, נר 1 ונר 3, והגאפ שיוצא מהם</div><div class="card"><div class="wchart" id="wc15"></div></div>
-    <div class="mut" style="margin-bottom:6px">גרף ${TFHE[g.ltf] || g.ltf} (כניסה): הגאפ, הכניסה, הסטופ והיעד מהסווינגים שקבעו אותם, עד היציאה</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>${notesHtml("wn")}`;
+    <div id="wcLtf"><div class="mut" style="margin-bottom:6px">גרף ${TFHE[g.ltf] || g.ltf} (כניסה): הגאפ, הכניסה, הסטופ והיעד מהסווינגים שקבעו אותם, עד היציאה</div><div class="card"><div class="wchart small" id="wc1"></div></div></div><div class="msg mut" id="wcMsg"></div>${notesHtml("wn")}`;
+  rvPanel(t, dec);
   tradeNotes(recTrade(t), "wn", (WB.doc && WB.doc.bot) || UI.cur);
   WC.forEach(c => c.remove()); WC = [];
   const LW = await loadTV().catch(() => null);
@@ -2585,7 +2644,12 @@ document.addEventListener("pointerdown", ev => {
 $("pop").onclick = e => { if (e.target.id === "pop" || e.target.id === "popOk") $("pop").classList.remove("on"); };
 
 addEventListener("resize", () => { if ($("eqc") && found[UI.cur]) eqChart(found[UI.cur], accBy(UI.cur)); });
-tick(); setInterval(tick, 60000); talkBadges(); setInterval(() => { if (!document.hidden) repliesDoc(true).then(talkBadges); }, 20000);     // every 20 seconds (user, 16.11.2026)
+tick(); setInterval(tick, 60000);
+try {   // a review notification (bot 5's gap setups, 17.11.2026): from the link or from the open app
+  const rq = new URLSearchParams(location.search).get("review");
+  if (rq) { history.replaceState(history.state, "", location.pathname); openReview(rq); }
+  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener("message", e => { if (e.data && e.data.review) openReview(e.data.review); });
+} catch (e) {} talkBadges(); setInterval(() => { if (!document.hidden) repliesDoc(true).then(talkBadges); }, 20000);     // every 20 seconds (user, 16.11.2026)
 document.addEventListener("visibilitychange", () => { if (!document.hidden) repliesDoc(true).then(talkBadges); });   // and at once when the app comes back setInterval(async () => { await findMgr(); mgrBots(); }, 60000);
 
 /* the phone's back button (user, 16.11.2026): one screen back inside the app each time, and only the accounts list

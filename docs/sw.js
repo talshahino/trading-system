@@ -31,6 +31,8 @@ self.addEventListener("push", e => {
   const opt = {body: d.body || "", dir: "rtl", lang: "he", icon: "icon-192.png", badge: "badge.png",
                silent: !!d.silent, tag: d.tag || undefined, renotify: !!d.tag, data: d, requireInteraction: d.action === "approve_update"};
   if (d.action === "approve_update") opt.actions = [{action: "approve", title: "אשר עדכון"}, {action: "later", title: "אחר כך"}];
+  // a gap setup of bot 5 to review before the entry (user, 17.11.2026): a long vibration, stays until opened
+  if (d.action === "review" && !d.silent) { opt.vibrate = [800, 250, 800, 250, 1400]; opt.requireInteraction = true; }
   e.waitUntil(self.registration.showNotification(d.title || "Taloona Trade", opt));
 });
 
@@ -101,8 +103,10 @@ self.addEventListener("notificationclick", e => {
     })());
     return;
   }
+  const nd = e.notification.data || {};
+  const rv = nd.action === "review" && nd.id ? nd.id : null;
   e.waitUntil(self.clients.matchAll({type: "window", includeUncontrolled: true}).then(cs => {
-    for (const c of cs) if ("focus" in c) return c.focus();
-    return self.clients.openWindow("./");
+    for (const c of cs) if ("focus" in c) { if (rv) c.postMessage({review: rv}); return c.focus(); }
+    return self.clients.openWindow(rv ? "./?review=" + encodeURIComponent(rv) : "./");
   }));
 });

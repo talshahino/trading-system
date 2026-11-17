@@ -2341,8 +2341,9 @@ function wbRender(box = $("wbBody")) {
   for (const t of trades) {
     const st = WB_ST[t.status] || [t.status, ""], buy = t.dir > 0, m = WB.marks[t.id] || t.mark || {};
     const money = v => v == null ? "" : ` · <bdi>${v >= 0 ? "+" : "−"}$${Math.abs(v).toLocaleString("en-US", {maximumFractionDigits: 0})}</bdi>`;
-    const res = t.skipped ? `<span class="pill">${t.skipped === "old" || t.skipped === "v4" ? "מסלול ישן · לא בחשבון הווירטואלי" : t.skipped === "before" ? "לפני פתיחת החשבון" : t.skipped === "v5" || t.skipped === "v1m" ? "מסלול נפרד · לא בחשבון הווירטואלי" : t.skipped === "extra" ? "איסוף נתונים · לא בחשבון" : `לא נספרה בחשבון (${{daily: "עצירה יומית", room: "אין מקום במגבלה עם העסקאות הפתוחות", side: "מסלול אחר כבר באותו כיוון", dir: "תקרת עסקאות באותו כיוון", hours: "שעה חסומה", breach: "החשבון נשרף"}[t.skipped] || t.skipped})`}</span>`
-      : t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון${money(t.pnl)}</span>`
+    const res = t.skipped ? `<span class="pill">${t.skipped === "old" || t.skipped === "v4" ? "מסלול ישן · לא בחשבון הווירטואלי" : t.skipped === "before" ? "לפני פתיחת החשבון" : t.skipped === "v5" || t.skipped === "v1m" ? "מסלול נפרד · לא בחשבון הווירטואלי" : t.skipped === "extra" ? "איסוף נתונים · לא בחשבון" : `לא נספרה בחשבון (${{daily: "עצירה יומית", room: "אין מקום במגבלה עם העסקאות הפתוחות", side: "מסלול אחר כבר באותו כיוון", dir: "תקרת עסקאות באותו כיוון", hours: "שעה חסומה", breach: "החשבון נשרף", tal_no: "ענית: לא", tal_none: "לא ענית בזמן"}[t.skipped] || t.skipped})`}</span>`
+      : t.status === "cancelled" && TALWHY[t.why] ? `<span class="pill">${TALWHY[t.why]}</span>`
+      : t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : t.reason === "breakeven" ? "בנקודת הכניסה" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון${money(t.pnl)}</span>`
       : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון${money(t.pnl_now)}</span>` : `<span class="pill ${st[1]}">${st[0]}</span>`;
     h += `<div class="card wt" data-id="${esc(t.id)}"><div class="hd"><b>${esc(t.symbol)}</b><span class="pill ${buy ? "pos" : "neg"}">${buy ? "קנייה" : "מכירה"}</span>${t.wide ? '<span class="pill">מסלול רחב</span>' : ""}${t.extra ? '<span class="pill">איסוף נתונים</span>' : ""}${t.v4 ? '<span class="pill pos">מתוקן v4</span>' : ""}${t.v5 ? '<span class="pill pos">פערים v5</span>' : ""}${t.v1m ? '<span class="pill pos">פערים בדקה</span>' : ""}${res}</div>
       <div class="mut">כניסה <bdi>${wPx(t.symbol, t.entry)}</bdi> · סטופ <bdi>${wPx(t.symbol, t.stop)}</bdi> · יעד <bdi>${wPx(t.symbol, t.target)}</bdi>${t.rr ? ` · יחס 1:${t.rr}` : ""}<br>
@@ -2435,10 +2436,11 @@ async function wcScout(t) {
     `האות בנר שנסגר לפני הכניסה (מסומן "אות"), כניסה בפתיחת הנר הבא${t.entry != null ? `: <bdi>${(+t.entry).toFixed(dec)}</bdi>` : ""}.`,
     t.stop != null ? `סטופ: <bdi>${(+t.stop).toFixed(dec)}</bdi>${t.target != null ? ` · יעד: <bdi>${(+t.target).toFixed(dec)}</bdi>` : " · בלי יעד קבוע"}.` : "",
     t.exit_time ? `יציאה: ${RS[t.reason] || esc(t.reason || "")}${t.r != null ? ` (${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}R)` : ""}.` : (t.status === "open" ? "העסקה פתוחה." : "")].filter(Boolean);
-  $("wcBody").innerHTML = `<div class="card" style="margin-bottom:10px">${why.map(x => `<p style="margin:3px 0">${x}</p>`).join("")}</div>
+  $("wcBody").innerHTML = `<div id="rvBox"></div><div class="card" style="margin-bottom:10px">${why.map(x => `<p style="margin:3px 0">${x}</p>`).join("")}</div>
     <div class="mut" style="margin-bottom:6px">גרף ${tfh} (גרף האסטרטגיה): נר האות והכניסה</div><div class="card"><div class="wchart" id="wc15"></div></div>
     <div class="mut" style="margin-bottom:6px">גרף דקה: הכניסה, הסטופ והיעד עד היציאה (ירוק עד היעד, אדום עד הסטופ)</div><div class="card"><div class="wchart small" id="wc1"></div></div><div class="msg mut" id="wcMsg"></div>${notesHtml("wn")}`;
   tradeNotes(recTrade(t), "wn", (WB.doc && WB.doc.bot) || UI.cur);
+  if (t.asked || (t.mark && t.mark.take)) rvPanel(t, dec);       // a gap scout strategy waiting for Tal (17.11.2026)
   WC.forEach(c => c.remove()); WC = [];
   if (!t.m15) { $("wcMsg").textContent = "אין עדיין נרות לגרף של העסקה הזו."; return; }
   const LW = await loadTV().catch(() => null);
@@ -2495,7 +2497,8 @@ const TFHE = {"1m": "דקה", "5m": "5 דק'", "15m": "15 דק'", "1h": "שעה"
 /* Tal reviews every gap setup of bot 5 before the entry (17.11.2026): step 1 - the high timeframe, "would you
    enter?"; yes -> step 2 - the low timeframe with the position the rules would place: entry, stop, target, each right
    or wrong (wrong -> his own price). The bot takes the trade only as he answered (live/watch_own.py). */
-const rvNeeded = t => t && t.status === "pending" && t.tal && !/\|/.test(t.tal) && t.asked && !t.sleep;
+const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא ענית בזמן", levels: "לא נכנסה · המחיר כבר עבר את הרמות"};
+const rvNeeded = t => t && t.status === "pending" && t.tal && t.asked && !t.sleep;
 function rvPanel(t, dec) {
   const box = $("rvBox"); if (!box) return;
   const m = WB.marks[t.id] || t.mark || {}, buy = t.dir > 0, owner = getRole() !== "viewer";
@@ -2508,7 +2511,7 @@ function rvPanel(t, dec) {
   const done = m.take ? `<div class="mut" style="margin-top:8px">ענית: <b>${m.take === "yes" ? "כן" : "לא"}</b>. אפשר לשנות עד שהמחיר מגיע לכניסה.</div>` : "";
   box.innerHTML = `<div class="card" style="margin-bottom:10px;border:2px solid #C8922E">
       <b style="font-size:17px">היית נכנס?</b>
-      <div class="mut" style="margin:4px 0 10px">דחף ${buy ? "עולה" : "יורד"} עם גאפ בגרף ${TFHE[(t.geo || {}).htf] || ""}, לפני התיקון. הבוט ייכנס רק לפי מה שתענה.</div>
+      <div class="mut" style="margin:4px 0 10px">${t.sc ? `אסטרטגיית ${esc(t.sc.sid || "")} מצאה ${buy ? "קנייה" : "מכירה"} בגאפ (גרף ${(SCTF[t.sc.tf] || [t.sc.tf])[0]}). הבוט מחכה לך: אם תאשר, הכניסה תהיה במחיר של רגע האישור. בלי תשובה תוך כ־15 דקות, לא נכנסים.` : `דחף ${buy ? "עולה" : "יורד"} עם גאפ בגרף ${TFHE[(t.geo || {}).htf] || ""}, לפני התיקון. הבוט ייכנס רק לפי מה שתענה.`}</div>
       <div class="row" style="gap:8px"><button class="btn ok" id="rvYes">כן</button><button class="btn ghost" id="rvNo">לא</button></div>${done}
       <div id="rvLv"></div><div class="msg" id="rvMsg"></div></div>`;
   showLtf(m.take === "yes");
@@ -2520,7 +2523,7 @@ function rvPanel(t, dec) {
   $("rvYes").onclick = () => {
     showLtf(true);
     const lv = [["entry", "כניסה", t.entry], ["stop", "סטופ", t.stop], ["target", "יעד", t.target]];
-    $("rvLv").innerHTML = `<div class="mut" style="margin:12px 0 6px">הפוזיציה לפי הכללים (בגרף ${TFHE[(t.geo || {}).ltf] || ""} למטה). מה נכון?</div>` + lv.map(([k, l, v]) =>
+    $("rvLv").innerHTML = `<div class="mut" style="margin:12px 0 6px">הפוזיציה לפי הכללים (בגרף ${t.sc ? "הדקה" : TFHE[(t.geo || {}).ltf] || ""} למטה). מה נכון?</div>` + lv.map(([k, l, v]) =>
       `<div class="row" style="gap:6px;align-items:center;margin-top:6px"><b style="min-width:52px">${l}</b><bdi style="min-width:90px">${v != null ? (+v).toFixed(dec) : "—"}</bdi>
         <button class="btn ghost" data-ok="${k}" aria-pressed="true">נכון</button><button class="btn ghost" data-bad="${k}">לא נכון</button>
         <input type="number" step="any" inputmode="decimal" id="rv_${k}" value="${v != null ? (+v).toFixed(dec) : ""}" style="display:none;width:110px"></div>`).join("")

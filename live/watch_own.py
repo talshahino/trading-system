@@ -597,6 +597,96 @@ def tal_chart(df, geo, t_in, t_out):
 # setup that came in his quiet hours -> the rules (no question at night). Every answer stays in live/watch_marks.json:
 # the examples the method learns from (task tal1711review).
 REVIEW_ON = True
+# bot 5's scout strategies built on gaps go through him too (user, 17.11.2026: "all of bot 5's trades based on gaps,
+# all of them, go through me"): SC232 (CHoCH, then the return into the FVG) and SC446 (a breakaway gap + iFVG, the
+# return into the gap). Their signal enters at the next bar's open, so the trade waits for his answer instead: the
+# question at the signal, no answer within REVIEW_SC_WAIT minutes (at least 2 of the strategy's bars) -> not taken;
+# no -> not taken; yes -> in at the first 1-minute open after his answer (or his own entry as a limit for an hour), the
+# strategy's stop / target in price (or his), breakeven at 60% of the way + costs as tested, out before a 2h+ break.
+# In his quiet hours -> the strategy as tested. Counted from the first run of this code (vacct "review_sc_from").
+REVIEW_SC = {"SC232", "SC446"}
+REVIEW_SC_WAIT = 15
+
+
+def rv_sc(tal):
+    c = scout5_combo(tal)
+    return bool(c) and c.split("|")[0] in REVIEW_SC
+
+
+def sc_review(x, df, cst, stop_at, sc, trades, acc):
+    """A gap scout trade of bot 5 as Tal answered (see REVIEW_SC)."""
+    since = acc.setdefault("review_sc_from", pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
+    st0 = iso(x.get("setup_t"))
+    if not REVIEW_ON or not st0 or st0 < since or quiet_at(st0):
+        return x
+    mk = (trades.get(tid(x)) or {}).get("mark") or {}
+    x["prop"] = [x["stop"], x["target"]]
+    blank = dict(time=None, exit_time=None, exit=None, r=None, r_now=None, px_now=None, cost_live=None)
+    t0 = pd.Timestamp(x["time"])
+    take = mk.get("take")
+    if take == "no":
+        x.update(blank, status="cancelled", reason="tal_no", why="tal_no")
+        return x
+    if take != "yes":
+        wait = pd.Timedelta(minutes=max(REVIEW_SC_WAIT, 2 * SF.TF_MIN.get(sc["tf"], 15)))
+        if df.index[-1] < t0 + wait:
+            x.update(blank, status="pending", reason=None)
+        else:
+            x.update(blank, status="cancelled", reason="tal_none", why="tal_none")
+        return x
+    d = int(x["dir"])
+    stop = float(mk["stop"]) if mk.get("stop") is not None else float(x["stop"])
+    tg = float(mk["target"]) if mk.get("target") is not None else x.get("target")
+    tg = float(tg) if tg is not None else None
+    idx = df.index
+    o, h, l, c = (df[k].to_numpy(float) for k in ("o", "h", "l", "c"))
+    n = len(idx)
+    start = max(t0, pd.Timestamp(mk.get("at") or t0))
+    q0 = int(idx.searchsorted(start))
+    if q0 >= n:
+        x.update(blank, status="pending", reason=None)
+        return x
+    if mk.get("entry") is not None:
+        ent = float(mk["entry"])
+        q1 = int(idx.searchsorted(start + pd.Timedelta(hours=1)))
+        seg = (l[q0:q1] <= ent) if d > 0 else (h[q0:q1] >= ent)
+        if not seg.any():
+            x.update(blank, status="cancelled" if q1 < n else "pending", reason="expired" if q1 < n else None)
+            return x
+        f = q0 + int(np.argmax(seg))
+        px = min(ent, o[f]) if d > 0 else max(ent, o[f])
+    else:
+        f, px = q0, float(o[q0])
+    risk = d * (px - stop)
+    if risk <= 0 or (tg is not None and d * (tg - px) <= 0):
+        x.update(blank, status="cancelled", reason="levels", why="levels")     # the price already passed his levels
+        return x
+    cost = float(np.asarray(cst, float)[f])
+    sa = np.asarray(stop_at, bool)
+    cur, be, ex, why, q = stop, False, None, None, None
+    for k in range(f, n):
+        if (l[k] <= cur) if d > 0 else (h[k] >= cur):
+            ex = (min(cur, o[k]) if d > 0 else max(cur, o[k])) if k > f else cur
+            why, q = ("breakeven" if be else "stop"), k
+            break
+        if tg is not None and k > f and ((h[k] >= tg) if d > 0 else (l[k] <= tg)):
+            ex, why, q = tg, "target", k
+            break
+        if sa[k]:
+            ex, why, q = float(c[k]), "forced", k
+            break
+        if tg is not None and not be and d * (((h[k] if d > 0 else l[k])) - px) >= 0.6 * d * (tg - px):
+            cur, be = px + d * cost, True
+    cost_r = cost / risk
+    x.update(entry=float(px), stop=stop, target=tg, rr=round(d * (tg - px) / risk, 2) if tg is not None else None,
+             time=idx[f], custom=any(mk.get(k) is not None for k in ("entry", "stop", "target")))
+    if ex is None:
+        x.update(status="open", exit_time=None, exit=None, reason=None, r=None,
+                 r_now=round(d * (c[-1] - px) / risk - cost_r, 3), px_now=float(c[-1]), cost_live=round(cost_r, 4))
+    else:
+        x.update(status="closed", exit_time=idx[q], exit=float(ex), reason=why, r=round(d * (ex - px) / risk - cost_r, 4),
+                 r_now=None, px_now=None, cost_live=None)
+    return x
 
 
 def quiet_at(t):
@@ -618,7 +708,9 @@ def review_push(rec):
     try:
         r = requests.post("http://127.0.0.1:8760/push", timeout=8, headers={"X-Local": key},
                       json={"title": f"בוט 5: היית נכנס? {rec['symbol']} {side}",
-                            "body": f"{tal5_name(rec['tal'])} · דחף עם גאפ, לפני התיקון. פתח וענה לפני שהמחיר חוזר לגאפ.",
+                            "body": (f"{tal5_name(rec['tal'])} · כניסה בגאפ. הבוט מחכה לתשובה שלך (עד {REVIEW_SC_WAIT} דקות)."
+                                 if scout5_combo(rec["tal"]) else
+                                 f"{tal5_name(rec['tal'])} · דחף עם גאפ, לפני התיקון. פתח וענה לפני שהמחיר חוזר לגאפ."),
                             "urgent": True, "tag": f"rv:{rec['id']}"[:60], "action": "review", "id": rec["id"]})
         return str(r.status_code)
     except Exception as e:  # noqa: BLE001
@@ -1277,7 +1369,10 @@ def main():
                     if sc_["sym"] != name:
                         continue
                     try:
-                        res.extend(scout5_trades(name, df, sc_, cal))
+                        xs_ = scout5_trades(name, df, sc_, cal)
+                        if sc_["sid"] in REVIEW_SC:
+                            xs_ = [sc_review(x, df, cst, stop_at, sc_, trades, acc) for x in xs_]
+                        res.extend(xs_)
                     except Exception:  # noqa: BLE001 - one strategy must not stop the instrument's other tracks
                         errors.append(f"{name} {combo_}: {traceback.format_exc()[-300:]}")
                 cutoff = df.index[-1] - pd.Timedelta(days=2)       # only what happened recently is reported
@@ -1308,8 +1403,9 @@ def main():
                            "geo": x.get("geo") or old.get("geo"), "prop": x.get("prop"), "custom": bool(x.get("custom")),
                            "asked": old.get("asked"), "sleep": old.get("sleep"), "pushed": old.get("pushed")}
                     # the review (17.11.2026): ask once, when the setup first waits for its entry
-                    rev_ = REVIEW_ON and bool(rec.get("tal")) and not scout5_combo(rec["tal"]) \
-                        and (rec.get("setup_t") or "") >= acc.setdefault("review_from", pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
+                    rev_ = REVIEW_ON and bool(rec.get("tal")) and (
+                        (not scout5_combo(rec["tal"]) and (rec.get("setup_t") or "") >= acc.setdefault("review_from", pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")))
+                        or (rv_sc(rec["tal"]) and (rec.get("setup_t") or "") >= acc.get("review_sc_from", "9")))
                     if rev_ and rec["status"] == "pending" and not rec["asked"]:
                         rec["asked"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
                         if quiet_at(rec["asked"]):
@@ -1339,6 +1435,8 @@ def main():
                             rec["chart_v"] = 4
                         else:
                             rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 4
+                        if rev_ and rec["status"] == "pending" and rec["asked"] and not rec["sleep"] and not old.get("asked"):
+                            rec["pushed"] = review_push(rec)   # a gap scout strategy (REVIEW_SC), with its charts ready
                     elif x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:
                         rec["chart_v"] = 2
                         ls = pd.Timestamp(x["leg_start"])

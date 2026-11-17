@@ -2212,6 +2212,1482 @@
    },
    "made": "2026-11-17T11:49:20+00:00",
    "id": "d4f01f5ce357"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: FR03|15Min|US30 - סיכון 0.038% ← 0.0546% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0546,
+   "baseline": null,
+   "change": {
+    "track": "scout:FR03|15Min|US30",
+    "knob": "RISK_scout:FR03|15Min|US30",
+    "from": 0.00038,
+    "to": 0.000546
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision 5cd98d15bab4); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "5cd98d15bab4"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "3c70aebac2ae"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC005|5Min|US100 - סיכון 0.002% ← 0.0027% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0027,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC005|5Min|US100",
+    "knob": "RISK_scout:SC005|5Min|US100",
+    "from": 2e-05,
+    "to": 2.7e-05
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision 05ce0e02188f); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "05ce0e02188f"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "96f70323c393"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC005|5Min|US500 - סיכון 0.02% ← 0.0279% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0279,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC005|5Min|US500",
+    "knob": "RISK_scout:SC005|5Min|US500",
+    "from": 0.0002,
+    "to": 0.000279
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision d15e9744ea09); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "d15e9744ea09"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "24cb562f5788"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC020|15Min|US500 - סיכון 0.022% ← 0.0318% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0318,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC020|15Min|US500",
+    "knob": "RISK_scout:SC020|15Min|US500",
+    "from": 0.00022,
+    "to": 0.000318
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision 35b9d255a477); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "35b9d255a477"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "e7d8ce84c3d9"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC051|15Min|US100 - סיכון 0.053% ← 0.0764% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0764,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC051|15Min|US100",
+    "knob": "RISK_scout:SC051|15Min|US100",
+    "from": 0.00053,
+    "to": 0.000764
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision d6b8498eb24b); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "d6b8498eb24b"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "a7c262855d28"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC072|5Min|US500 - סיכון 0.003% ← 0.0039% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0039,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC072|5Min|US500",
+    "knob": "RISK_scout:SC072|5Min|US500",
+    "from": 3e-05,
+    "to": 3.9e-05
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision 207bb831f103); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "207bb831f103"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "302590c6ef34"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC084|15Min|US30 - סיכון 0.012% ← 0.0178% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0178,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC084|15Min|US30",
+    "knob": "RISK_scout:SC084|15Min|US30",
+    "from": 0.00012,
+    "to": 0.000178
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision 16f3af812c35); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "16f3af812c35"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "9a00de6c253f"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC258|5Min|US100 - סיכון 0.004% ← 0.0062% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0062,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC258|5Min|US100",
+    "knob": "RISK_scout:SC258|5Min|US100",
+    "from": 4e-05,
+    "to": 6.2e-05
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision 54595871feb4); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "54595871feb4"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "cd0c7ccdea69"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC261|5Min|US500 - סיכון 0.108% ← 0.155% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.155,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC261|5Min|US500",
+    "knob": "RISK_scout:SC261|5Min|US500",
+    "from": 0.00108,
+    "to": 0.00155
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision dd817c898fbd); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "dd817c898fbd"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "325277015f24"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC326|15Min|US30 - סיכון 0.017% ← 0.0247% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0247,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC326|15Min|US30",
+    "knob": "RISK_scout:SC326|15Min|US30",
+    "from": 0.00017,
+    "to": 0.000247
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision c48160bc1d87); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "c48160bc1d87"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "ad312ae2db1c"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC326|5Min|US30 - סיכון 0.011% ← 0.0155% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0155,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC326|5Min|US30",
+    "knob": "RISK_scout:SC326|5Min|US30",
+    "from": 0.00011,
+    "to": 0.000155
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision 57a61e9ac8ea); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "57a61e9ac8ea"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "98abe74ea66f"
+  },
+  {
+   "bot": "bot6",
+   "kind": "risk",
+   "title": "בוט 6: SC441|5Min|US100 - סיכון 0.02% ← 0.0287% (חוזר לסיכון שלפני ×0.7)",
+   "what": "למה: ב־11:40 נבנה ×0.7 על כל 14 אסטרטגיות הסייר, כי שתי החדשות (SC258|1Min|US100, TV41|15Min|US100) דחפו את הבוט למגבלה הנגררת. ב־12:19 שתיהן ירדו לרמה הרגילה (כרטיסים 8515d11d6e1a, 090f23956a21) - אבל ×0.7 על 12 האחרות כבר נבנה ונשאר, אף שהסוכן התכוון שהן יישארו כמו בבוקר. הבדיקה של הסוכן על אותן עסקאות (חשבון FTMO Futures, חוזי מיקרו): כמו עכשיו (שתיהן רגילות + ×0.7 על השאר) - עד 2025 +8.9%, ירידה 1.00%; 2026 +0.7%, ירידה 0.79%. שתיהן רגילות והשאר חוזרות - עד 2025 +10.6%, ירידה 2.08%; 2026 +2.5%, ירידה 1.48% (הבוקר 1.43%-1.74%). כלומר +1.8% רווח כולל ב־2026, והסיכון חוזר בדיוק לרמה של הבוקר - לפי הכלל של טל זה נכנס. (מנהל, 17.11 צהריים)",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 5,
+   "cost_r": null,
+   "risk_pct": 0.0287,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC441|5Min|US100",
+    "knob": "RISK_scout:SC441|5Min|US100",
+    "from": 0.0002,
+    "to": 0.000287
+   },
+   "detail": {
+    "world": "bot6",
+    "task": "scout_newcomers",
+    "scan": {
+     "now": {
+      "train": {
+       "total_pct": -3.46,
+       "worst_day_pct": -0.47,
+       "max_fall_pct": 4.49,
+       "room_skipped": 4079,
+       "contract_skipped": 346,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": -2.11,
+       "worst_day_pct": -0.4,
+       "max_fall_pct": 4.5,
+       "room_skipped": 1798,
+       "contract_skipped": 561,
+       "stopped": null
+      }
+     },
+     "before": {
+      "train": {
+       "total_pct": 9.85,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 1.96,
+       "room_skipped": 2165,
+       "contract_skipped": 2165,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.64,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.43,
+       "room_skipped": 1125,
+       "contract_skipped": 1125,
+       "stopped": null
+      }
+     },
+     "all07": {
+      "train": {
+       "total_pct": 21.29,
+       "worst_day_pct": -0.5,
+       "max_fall_pct": 4.3,
+       "room_skipped": 3037,
+       "contract_skipped": 3035,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.89,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 2.81,
+       "room_skipped": 1669,
+       "contract_skipped": 1669,
+       "stopped": null
+      }
+     },
+     "mine": {
+      "train": {
+       "total_pct": 10.61,
+       "worst_day_pct": -0.35,
+       "max_fall_pct": 2.08,
+       "room_skipped": 3554,
+       "contract_skipped": 3554,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 2.5,
+       "worst_day_pct": -0.31,
+       "max_fall_pct": 1.48,
+       "room_skipped": 1781,
+       "contract_skipped": 1781,
+       "stopped": null
+      }
+     },
+     "mine_o07": {
+      "train": {
+       "total_pct": 8.86,
+       "worst_day_pct": -0.2,
+       "max_fall_pct": 1.0,
+       "room_skipped": 3729,
+       "contract_skipped": 3729,
+       "stopped": null
+      },
+      "unseen": {
+       "total_pct": 0.66,
+       "worst_day_pct": -0.21,
+       "max_fall_pct": 0.79,
+       "room_skipped": 1849,
+       "contract_skipped": 1849,
+       "stopped": null
+      }
+     }
+    },
+    "note": "restores the x0.7 of 11:40 (decision 90f2d5472bda); the two newcomers stay at the median",
+    "account_fit": true,
+    "made_by": "manager 17.11 midday",
+    "of": "90f2d5472bda"
+   },
+   "made": "2026-11-17T12:40:00+00:00",
+   "id": "28ab39d787b8"
   }
  ]
 }

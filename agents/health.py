@@ -31,7 +31,7 @@ ROOT = K.ROOT
 SINCE = "2026-11-01"
 STATE_PREFIX = {"bot1": "bot1", "bot2": "bot2_", "bot3": "bot3_", "bot4": "bot4_", "bot5": "watch_own",
                 "bot6": "watch_fut", "bot7": "news_bot"}
-NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 - סקאלפינג",
+NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 (גאפ) + 5ב (סייר)",
          "bot6": "בוט 6 · חוזים עתידיים", "bot7": "בוט 7 · פרסומים כלכליים"}
 NO_RISK_DOWN = set()                # 12.11.2026: bot 3 works like the other bots (lowering its risk too)
 MIN_N, Z_BAD, STREAK_P, STREAK_MIN = 8, -2.0, 0.02, 4
@@ -75,6 +75,16 @@ def state_of(bot, states):
         return None
     hits.sort(key=lambda s: str(s.get("updated_utc") or ""), reverse=True)
     cur = hits[0]
+    if bot == "bot5" and states.get("watch_scout_state.json"):
+        # 17.11.2026 evening (Tal): bot 5 split - his gap method stays in watch_own, the scout strategies trade in their
+        # own virtual account 5ב (live/watch_scout_state.json). Bot 5's agents (health, loss review, edge risk, watch,
+        # portfolio check) look after both: the trades of both, the account numbers of bot 5's own.
+        sc = states["watch_scout_state.json"]
+        cur = dict(cur)
+        for k in ("watch", "closed", "trades", "positions"):
+            cur[k] = list(cur.get(k) or []) + list(sc.get(k) or [])
+        cur["scout_account"] = {k: sc.get(k) for k in ("balance", "equity", "day_start", "initial", "started")}
+        return cur
     if len(hits) == 1 or bot not in ("bot1", "bot2", "bot3", "bot4"):
         return cur
     cur, seen, closed = dict(cur), set(), []

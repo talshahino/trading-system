@@ -550,6 +550,36 @@ def _num(x):
         return None
 
 
+_HIST = []
+_MERGED = {}
+
+
+def cal_items():
+    """The calendar the bot reads now + FTMO's calendar history with the actuals (reports/agents/bot7/calendar_full.json,
+    from 03.2025): the trades of the days before (and of the accounts before a reset) find their release too."""
+    if not _HIST:
+        try:
+            _HIST[:] = json.loads((ROOT / "reports" / "agents" / "bot7" / "calendar_full.json").read_text(encoding="utf-8")).get("items") or []
+        except Exception:  # noqa: BLE001
+            _HIST.append({})
+    key = (len(CAL_ITEMS), sum(1 for i in CAL_ITEMS if i.get("actual") not in (None, "")))
+    if _MERGED.get("key") == key:
+        return _MERGED["items"]
+    by = {}
+    for i in [x for x in _HIST if x.get("date")] + list(CAL_ITEMS):
+        k = (str(i.get("date"))[:16], i.get("title"), i.get("instrument"))
+        if k not in by or i.get("actual") not in (None, ""):
+            by[k] = i
+    out = []
+    for i in by.values():
+        try:
+            out.append(dict(i, _t=pd.Timestamp(i["date"]).tz_convert("UTC")))
+        except Exception:  # noqa: BLE001
+            pass
+    _MERGED.update(key=key, items=out)
+    return out
+
+
 def trade_info(t):
     """What a trade of bot 7 is about, shown on the trade itself (user, 17.11.2026: "every trade should say which
     release it came out of, at what time, which currency / index the release was about, and the release's direction -
@@ -588,15 +618,15 @@ def trade_info(t):
     if not curs:
         return dict(info, text=None)
     # the release: for EV04 its own minute; else the latest of the instrument's releases within 3 hours before the entry
-    cand = sorted({pd.Timestamp(i["date"]).tz_convert("UTC") for i in CAL_ITEMS
-                   if str(i.get("instrument", "")).split(" ")[0] in curs and i.get("impact") == "high"
-                   and pd.Timestamp(i["date"]).tz_convert("UTC") <= t0 and t0 - pd.Timestamp(i["date"]).tz_convert("UTC") <= pd.Timedelta(hours=3)})
+    items_ = cal_items()
+    cand = sorted({i["_t"] for i in items_ if str(i.get("instrument", "")).split(" ")[0] in curs and i.get("impact") == "high"
+                   and i["_t"] <= t0 and t0 - i["_t"] <= pd.Timedelta(hours=3)})
     if not cand:
         return dict(info, text=(None if kind == "other" else "לא נמצא פרסום בלוח לפני העסקה."))
     k = cand[-1]
     items = []
-    for i in CAL_ITEMS:
-        if pd.Timestamp(i["date"]).tz_convert("UTC") != k or str(i.get("instrument", "")).split(" ")[0] not in curs:
+    for i in items_:
+        if i["_t"] != k or str(i.get("instrument", "")).split(" ")[0] not in curs:
             continue
         a, f = _num(i.get("actual")), _num(i.get("forecast"))
         cur = str(i.get("instrument", "")).split(" ")[0]
@@ -909,7 +939,7 @@ def book(acc, t, notify):
     return t["id"] not in led
 
 
-def learn_book(closed):
+def learn_book(closed, trades=None, acc=None):
     """Bot 7's learning record (user, 17.11.2026: "the agent should learn from the releases and the shocks to get
     better - right now this bot is not good at all"): every closed trade, once, with its result and what it was
     about (trade_info), kept past the account's resets and the state's KEEP; and the totals the agent reads first -
@@ -921,6 +951,19 @@ def learn_book(closed):
         doc = {"trades": {}}
     tr = doc.setdefault("trades", {})
     new = 0
+    # the trades of the accounts before a reset too (user, 17.11.2026: "we agreed not to delete them - learn from them
+    # as well"): every closed trade the bot saw (all_trades) that an account booked, the past ones included
+    if trades is not None and acc is not None:
+        booked = {k for a_ in [acc.a] + list(acc.a.get("past") or []) for k, e in (a_.get("ledger") or {}).items()
+                  if "skipped" not in e and e.get("r") is not None}
+        more = [t for t in trades.values() if t["id"] in booked and t["status"] == "closed" and t["id"] not in tr]
+        for t in more:
+            if not t.get("info"):
+                try:
+                    t["info"] = trade_info(t)
+                except Exception:  # noqa: BLE001
+                    t["info"] = {}
+        closed = list(closed) + more
     for t in closed:
         if t["id"] in tr or t.get("r") is None:
             continue
@@ -995,7 +1038,7 @@ def state_of(acc, trades, cal, src):
              + "".join(f" · נוספה (כרטיס מאושר): {s} {sname(s)} על {n}, נרות {TF_HE.get(tf, tf)}"
                        f" (סיכון ×{risk_mult(plans(), f'{s}|{tf}|{n}'):g})" for s, tf, n in ex))
     try:
-        learn = learn_book(closed)
+        learn = learn_book(closed, trades, acc)
     except Exception as e:  # noqa: BLE001
         learn = {"error": str(e)[:200]}
     return {"bot": NAME, "label": LABEL, "watch_only": True, "rules": rules, "learn": learn, "account": "וירטואלי · פרסומים כלכליים",

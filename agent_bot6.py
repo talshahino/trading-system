@@ -558,10 +558,52 @@ FILT_HE["EXIT"] = (lambda f0: lambda v: {
 # builds it into the live bot after an approval), like PYR.
 FOL6 = (("FOLLOW", "x1"), ("FOLLOW", "x2"), ("FOLLOW", "x3"))
 FILT_HE["FOLLOW"] = lambda v: f"בלי המשך אחרי {str(v)[1:]} נרות של הכניסה (סגירה נגד הכניסה) - יציאה בסגירה (FOLLOW {v})"
-CODE6 = ("PYR", "FOLLOW")     # knobs live_trades does not run yet: an approved card is built by the smart agent
+# THE USER'S REVIEW OF 17.11.2026 (bot 5's tasks tal1711review / b5stopimp1711 / tal1711gapclose and its WAITX study -
+# shared methods, the same tal_gap knobs): FIRSTG = only each impulse's first gap ("1"; "lo" = found at a lower
+# strength), STOPAT = the stop beyond the impulse's origin (imp0 always / imp0late only for a later gap / sw0 the swing
+# the impulse started from), GAPX full = a gap is closed only by a wick through all of it (the user's definition),
+# WAITX = when a waiting order is cancelled besides EXPIRY (the move went on / 12 or 24 high candles / an opposite gap).
+# FIRSTG / STOPAT / GAPX are in simulate and live_trades alike (a settings card); WAITX only in simulate (a code card).
+# One knob each, head to head on bot 6's running tracks and three indices, first in the user's step.
+GAPX6 = (("GAPX", "full"),)
+FG6 = (("FIRSTG", "1"), ("FIRSTG", "lo"))
+STOP6 = (("STOPAT", "imp0"), ("STOPAT", "imp0late"), ("STOPAT", "sw0"))
+WAIT6 = tuple(("WAITX", w) for w in ("tgt", "h12", "h24", "opp", "tgt+h24"))
+REV6 = GAPX6 + FG6 + STOP6 + WAIT6
+FILT_HE["GAPX"] = lambda v: "סגירת גאפ לפי טל: רק וויק שעובר את כל הגאפ פוסל אותו (GAPX full)"
+FILT_HE["FIRSTG"] = lambda v: {"1": "רק הגאפ הראשון בכל דחף (FIRSTG 1)",
+                               "lo": "רק הגאפ הראשון בכל דחף, גם בעוצמה נמוכה יותר (FIRSTG lo)"}.get(str(v), f"FIRSTG {v}")
+FILT_HE["STOPAT"] = lambda v: {"imp0": "סטופ מעבר לתחילת הדחף (STOPAT imp0)",
+                               "imp0late": "סטופ מעבר לתחילת הדחף רק לגאפ שאינו הראשון (STOPAT imp0late)",
+                               "sw0": "סטופ מעבר לסווינג שממנו הדחף התחיל (STOPAT sw0)"}.get(str(v), f"STOPAT {v}")
+FILT_HE["WAITX"] = lambda v: {"tgt": "הוראה ממתינה מתבטלת כשהתנועה המשיכה בלי תיקון",
+                              "h12": "הוראה ממתינה מתבטלת אחרי 12 נרות של הטיים פריים הגבוה",
+                              "h24": "הוראה ממתינה מתבטלת אחרי 24 נרות של הטיים פריים הגבוה",
+                              "opp": "הוראה ממתינה מתבטלת כשנוצר גאפ בכיוון ההפוך",
+                              "tgt+h24": "הוראה ממתינה מתבטלת כשהתנועה המשיכה או אחרי 24 נרות"}.get(str(v), "WAITX") + f" (WAITX {v})"
+REV6_SRC = {"GAPX": ("_gapx", "tal1711gapclose"), "FIRSTG": ("_firstg", "tal1711review"), "STOPAT": ("_stopat", "b5stopimp1711")}
+
+
+def _b5_rev(k, v):
+    """What bot 5's agent found for the same knob of the 17.11 review (its NOTE_TESTS rows, or its WAITX study)."""
+    if k == "WAITX":
+        try:
+            a = json.loads(Path("reports/agents/bot5/tal_wait/report.json").read_text(encoding="utf-8")).get("all") or {}
+            n, x = a.get("now") or {}, a.get(str(v)) or {}
+            return (f"מחקר ההמתנה על כל מסלולי הגאפ שלו: עד 2025 {n['train_sum']:+.0f}R ← {x['train_sum']:+.0f}R, "
+                    f"2026 {n['unseen_sum']:+.0f}R ← {x['unseen_sum']:+.0f}R (אין שינוי בבוט 5).")
+        except Exception:  # noqa: BLE001
+            return "מחקר ההמתנה (agents/tal_wait_study) עוד לא הסתיים."
+    end, src = REV6_SRC[k]
+    t = _b5_gave(v, (end,))
+    return t if "עוד רץ" in t or "←" in t else f"אותה בדיקה רצה על המסלולים של בוט 5 ({src})."
+
+
+CODE6 = ("PYR", "FOLLOW", "WAITX")     # knobs live_trades does not run yet: an approved card is built by the smart agent
 TASK6 = {"gaveback": GAVE6, "follow": FOL6, "brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
-         "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6}
-USER6 = GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+         "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6,
+         "gapx": GAPX6, "firstg": FG6, "stopat": STOP6, "waitx": WAIT6}
+USER6 = REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
@@ -718,9 +760,11 @@ def filt_cards(idx, group=FILT6):
                           + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND", "G3", "SWP", "BRKH", "REARM") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10") else "")
                           + ("משימה של טל מ־16.11 (הפסדים שהיו ברווח - יציאה חלקית). " if (k, v) in GAVE6 else "")
                           + ("משימה של טל מ־16.11 (נרות חזקים אחרי הכניסה - b5follow1611). " if k == "FOLLOW" else "")
+                          + ("משימה של טל מ־17.11 (הסקירה של הגאפים בבוט 5 - שיטה משותפת). " if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX") else "")
                           + "בבוט 5: " + ("עוד לא נבדק - שיטה של בוט 6, נשלחה לבוט 5 כמשימה (b6to5rearm)." if k == "REARM" else
                                           _b5_gave(v) if (k, v) in GAVE6 else
                                           _b5_gave(v, ("_follow",)) if k == "FOLLOW" else
+                                          _b5_rev(k, v) if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX") else
                                           _b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND", "G3", "SWP", "BRKH") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10")
                                           else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
@@ -1797,7 +1841,9 @@ DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC325", ("5Min", "15Min")), (
 # gap - the 09:30 New York open against the last 16:00 close, sized by the 10-day cash range - faded when small and
 # rejected (FG01), followed when large and confirmed (FG02). The library's SS08 measured the gap at the UTC day's first
 # bar, which is not the cash gap of a 23-hour market. One trade a day at most - quick to run, so first.
-FUT_FIRST = [f"{sid}|{tf}|{sym}" for sid in ("FG01", "FG02") for tf in ("5Min", "15Min", "1Min") for sym in ("US100", "US500", "US30")]
+# + the overnight range (18.11.2026 night): its sweep against it (FG03) and its break with it (FG04)
+FUT_FIRST = [f"{sid}|{tf}|{sym}" for sid in ("FG01", "FG02", "FG03", "FG04") for tf in ("5Min", "15Min", "1Min")
+             for sym in ("US100", "US500", "US30")]
 
 
 # BOT 5'S LIVE SCOUTS (bot 6's smart agent, 17.11.2026 night; bots 5 and 6 share methods): 31 scout strategies trade
@@ -2034,7 +2080,45 @@ def _sess_cands(v):
         out.append(dict(v, filt=f_))
         if not v.get("sess"):
             out.append(dict(v, sess="noopen", filt=f_))
+    # every family (the user, 17.11.2026 17:26, task tal1711lossall - "not only the management: other entry points, a
+    # different stop or target"): the entry (a limit pullback), the structural stop (2nd / 3rd swing), half out at half
+    # the way, the pyramid - one change each on the strategy as it runs (target / stop size / time are the 96 variants)
+    for k_, vals in SF.FAMS:
+        if not v.get(k_):
+            out += [dict(v, **{k_: x}) for x in vals]
     return [c for c in out if SF.vid(c) != SF.vid(v)]
+
+
+def sess6_families(res):
+    """Per running scout strategy, the best of each fix family on 2024-2025 and what it does on 2026 (the loss reports'
+    answer per family, tal1711lossall) - the numbers only, the card rule stays sess6_cards'."""
+    from agents import scout_fut as SF
+
+    def fam(r):
+        v = r.get("v") or {}
+        return ("direction" if v.get("filt") else "hours" if v.get("sess") else "entry" if v.get("ent") else
+                "stop" if v.get("ssw") else "partial" if v.get("part") else "pyramid" if v.get("pyr") else "breakeven")
+    out = {}
+    for combo, x in (res or {}).items():
+        rows = x.get("rows") or {}
+        base = rows.get(x.get("live_vid")) or {}
+        if not base.get("train"):
+            continue
+        fams = {}
+        for k, r in rows.items():
+            if k == x.get("live_vid") or not r.get("train"):
+                continue
+            f = fam(r)
+            if f not in fams or r.get("train_wsum", -1e9) > fams[f].get("train_wsum", -1e9):
+                fams[f] = r
+        out[combo] = {"live": {q: base.get(q) for q in ("train_wsum", "unseen_sum", "worst_day_unseen")},
+                      "done": bool(x.get("done")),
+                      "families": {f: {"what": SF.he(r["v"]), "train_wsum": r.get("train_wsum"), "unseen_sum": r.get("unseen_sum"),
+                                       "unseen_mean": (r.get("unseen") or {}).get("mean"), "worst_day_unseen": r.get("worst_day_unseen"),
+                                       "better_train": r.get("train_wsum", -1e9) > (base.get("train_wsum") or 0),
+                                       "better_2026": (r.get("unseen_sum") or -1e9) > (base.get("unseen_sum") or 0)}
+                                   for f, r in fams.items()}}
+    return out
 
 
 def sess6_runs(budget_s):
@@ -2142,7 +2226,7 @@ def sess6_cards(res):
                     + ("" if hold else " (לא מחזיק ב־2026)"))
         if not hold:
             continue
-        what = (f"{combo} כפי שהוא רץ עכשיו ({SF.he(e['v'])}) מול שינוי אחד בכל פעם - חלון שעות ניו יורק (4), כיוון (EMA50 בגרף השעה / בלי כניסה חוזרת אחרי סטופ, כמו בבוט 5) או נקודת האיזון "
+        what = (f"{combo} כפי שהוא רץ עכשיו ({SF.he(e['v'])}) מול שינוי אחד בכל פעם - חלון שעות ניו יורק (4), כיוון (EMA50 בגרף השעה / בלי כניסה חוזרת אחרי סטופ, כמו בבוט 5), כניסה (לימיט 0.25R / 0.5R), סטופ (מעבר לסווינג השני / השלישי), חצי בחצי הדרך, פירמידה או נקודת האיזון "
                 f"(עיקרון 7: {'5 רמות פיבונאצ׳י של הדרך ליעד' if e['v'].get('target') != 'none' else '1.5 / 2 / 3R'}), "
                 f"{len(rows) - 1} שינויים. נבחר על 2024-2025 בלבד: {fmt(ct)}, סה\"כ {best.get('train_sum', 0):+.1f}R מול {base.get('train_sum', 0):+.1f}R היום; "
                 f"ב־2026 (לא נראתה): {fmt(cu)}, סה\"כ {best.get('unseen_sum', 0):+.1f}R מול {base.get('unseen_sum', 0):+.1f}R ({fmt(bu)}). "
@@ -2176,7 +2260,10 @@ def main():
     except Exception as e:  # noqa: BLE001
         print(f"scout_fut failed: {e}")
     try:            # the scouts' session window / breakeven point (16.11.2026 night)
-        scards += sess6_cards(sess6_runs(SESS_SHARE * mins * 60))
+        sres6 = sess6_runs(SESS_SHARE * mins * 60)
+        scards += sess6_cards(sres6)
+        (A.OUT / "scout_families.json").write_text(json.dumps(sess6_families(sres6), ensure_ascii=False, indent=1,
+                                                              default=str), encoding="utf-8")   # tal1711lossall
     except Exception as e:  # noqa: BLE001
         print(f"scout_sess failed: {e}")
     rest = max(1.0, mins - (time.time() - t0) / 60)

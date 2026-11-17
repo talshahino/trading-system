@@ -953,7 +953,11 @@ def fut_scout(name, df, noent, shut, sc, combo, contract, tick, fa, ftrades, fse
     was built ("since") on. A trade still running at the last bar is open; the account books the closed ones."""
     _, pv, _ = FA.SPEC[name]
     cost_px = tick + (FA.COMM + FA.SLIP_TICKS * tick * pv) / pv
-    t = SF.trades(df[["o", "h", "l", "c"]], name, sc["sid"], sc["tf"], sc["v"], np.asarray(noent, bool), np.asarray(shut, bool), cost_px)
+    # the volume column as the test has it (bot 6's smart agent, 17.11.2026 night): agent_bot6.prep keeps it, or 1.0
+    # when the bars have none - without it a scout strategy that reads volume (SC071, the VWAP ones) fails here
+    dfs = df[["o", "h", "l", "c"]].copy()
+    dfs["v"] = df["v"].to_numpy(float) if "v" in df else 1.0
+    t = SF.trades(dfs, name, sc["sid"], sc["tf"], sc["v"], np.asarray(noent, bool), np.asarray(shut, bool), cost_px)
     if t.empty:
         return
     since = pd.Timestamp(sc["since"])

@@ -50,6 +50,26 @@ SESS_HE = {"day": "כניסה רק 03:00-15:45 ניו יורק (לונדון ו�
 FILT = ("ema50h", "noreent")
 FILT_HE = {"ema50h": "רק בכיוון של EMA50 בגרף השעה (קניות מעליו, מכירות מתחתיו)",
            "noreent": "אחרי סטופ - בלי כניסה נוספת באותו כיוון באותו יום"}
+# EVERY FIX FAMILY FOR A LOSING SCOUT STRATEGY (the user, 17.11.2026 17:26, task tal1711lossall: "you only manage the
+# trade instead of also looking for different entry points and exit points - a different stop or target. I want all of
+# it"). Optional keys of a variant, absent = as before (every variant id and every live entry stays the same), each the
+# rules_agent.run mechanism the CFD bots' tests already use, so the live bot (live/watch_own.fut_scout -> trades) runs
+# exactly what was tested:
+#   "ent"   the entry: a limit order k x the risk better than the signal's open, valid 3 bars (pb25 / pb50), else no trade
+#   "ssw"   the stop: beyond the 2nd / 3rd swing (3-bar pivots) on the stop's side + 0.1 ATR - the user's structural
+#           stop (his gap method: beyond the 2nd swing; 16.11.2026: the 3rd when the other side is stronger)
+#   "part"  the management: half out at half the way to the target (no target: at +1R), the rest's stop to the entry
+#           (h50 - the user's rule for the fast charts, 13.11.2026)
+#   "pyr"   the pyramid: half a position more at +1R, the whole stop moved so a stop still loses 1R (py1, tal1411anti)
+ENT = {"pb25": (0.25, 3), "pb50": (0.5, 3)}
+SSW = {"sw2": (2, 3, 0.1), "sw3": (3, 3, 0.1)}
+PART = {"h50": (0.5, 0.5, 1.0)}                 # (share out, way with a target, R without one)
+PYR = {"py1": (1.0, 0.5)}
+FAM_HE = {"ent": {"pb25": "כניסה בלימיט 0.25R טוב יותר (עד 3 נרות)", "pb50": "כניסה בלימיט 0.5R טוב יותר (עד 3 נרות)"},
+          "ssw": {"sw2": "סטופ מעבר לסווינג השני", "sw3": "סטופ מעבר לסווינג השלישי"},
+          "part": {"h50": "חצי החוצה בחצי הדרך (בלי יעד: ב־+1R) וסטופ לכניסה"},
+          "pyr": {"py1": "חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)"}}
+FAMS = (("ent", ENT), ("ssw", SSW), ("part", PART), ("pyr", PYR))
 BE_WAY = (0.382, 0.5, 0.618, 0.786, 0.886)      # with a target: the share of the way (Fibonacci, task 17)
 BE_R = (1.5, 2.0, 3.0)                          # without one: R (2.5 = True, the rule of principle 7)
 
@@ -64,7 +84,8 @@ def vid(v):
     b = _be_num(v)
     be = f"be{b:g}" if b is not None else ("be" if v["be"] else "nobe")
     return (f"t{t}_s{float(v['stop']):g}_{'time' if v['time'] == 'own' else 'notime'}_{be}"
-            + (f"_{v['sess']}" if v.get("sess") else "") + (f"_{v['filt']}" if v.get("filt") else ""))
+            + (f"_{v['sess']}" if v.get("sess") else "") + (f"_{v['filt']}" if v.get("filt") else "")
+            + "".join(f"_{v[k]}" for k, vals in FAMS if v.get(k) in vals))
 
 
 def sess_ok(times, sess):
@@ -89,7 +110,8 @@ def he(v):
     bn = _be_num(v)
     b = (f", איזון ב־{bn:g}R" if bn >= 1 else f", איזון ב־{bn * 100:g}% מהדרך") if bn is not None else ("" if v["be"] else ", בלי איזון")
     return (t + s + m + b + (f", {SESS_HE[v['sess']]}" if v.get("sess") else "")
-            + (f", {FILT_HE[v['filt']]}" if v.get("filt") in FILT_HE else ""))
+            + (f", {FILT_HE[v['filt']]}" if v.get("filt") in FILT_HE else "")
+            + "".join(f", {FAM_HE[k][v[k]]}" for k, vals in FAMS if v.get(k) in vals))
 
 
 def dir_filter(t, df1, way):
@@ -180,6 +202,15 @@ def strategy(sid, v, noent, tf=None):
             plan["stop_scale"] = float(v["stop"])
         if v["time"] == "none":
             plan.pop("max_bars", None)
+        if v.get("ent") in ENT:                             # tal1711lossall: the entry family
+            plan["entry_pullback"] = ENT[v["ent"]]
+        if v.get("ssw") in SSW:                             # the structural stop family
+            plan["stop_swing"] = SSW[v["ssw"]]
+        if v.get("part") in PART:                           # the partial exit family (on the target as set above)
+            fr, way, r_ = PART[v["part"]]
+            plan["partial"] = (fr, way if plan.get("target") is not None else r_)
+        if v.get("pyr") in PYR:
+            plan["pyramid"] = PYR[v["pyr"]]
         if v["be"] and plan.get("target") is None:          # no target: entry at 2.5R, +1R locked at 3R (principle 7)
             bn = _be_num(v)
             r0 = bn if bn is not None and bn >= 1 else 2.5

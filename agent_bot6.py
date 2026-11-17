@@ -1140,7 +1140,12 @@ def scout_scale6(allt, risk, lim):
     except Exception as ex:  # noqa: BLE001 - the uniform factor stands without it
         print(f"scout edge split failed: {ex}")
         edge = None
-    return {"chosen": round(float(k), 2), "fits": fits(b), "margin": TG.MARGIN, "edge": edge,
+    try:
+        pick = scout_pick6(tr, un, rk(k), sk, lim, b, TG.account(un.copy(), rk(k), lim), fits) if k >= 1.0 else None
+    except Exception as ex:  # noqa: BLE001 - the uniform factor stands without it
+        print(f"scout pick failed: {ex}")
+        pick = None
+    return {"chosen": round(float(k), 2), "fits": fits(b), "margin": TG.MARGIN, "edge": edge, "pick": pick,
             "limits": {"day": L["day"], "all": L["all"], "trail": L["trail"], "use": L["use"]},
             "scouts": sorted(set(allt.loc[allt["trk"].astype(str).str.startswith("scout"), "trk"].astype(str))),
             "now": {"train": TG.account(tr.copy(), risk, lim), "unseen": TG.account(un.copy(), risk, lim)},
@@ -1206,11 +1211,119 @@ def scout_edge6(tr, un, risk, sk, lim, b_uni, u_uni, fits):
             "better": better, "limits": {"day": L["day"], "all": L["all"]}, "tried": tried}
 
 
+# THE STRONG SCOUTS AT ONE CONTRACT (bot 6's smart agent, 18.11.2026 night; principles 8, 10, 11, case 41's "next
+# stage"). Live since 16.11 every scout signal of bot 6 was skipped ("small": one MNQ / MES / MYM risks more than the
+# scout's share - $6-$76 against $62-$420), and on 2024-2026 most scouts can never trade at their share: TV41|15Min|US100
+# (916 trades to 2025, +0.11R a trade; 2026 +117R on 357) takes 0% of its trades at 0.0198% - one contract is 0.12% in
+# the median. Splitting the same risk by edge (scout_edge6) cannot fix that: a smaller share of a share is still under
+# one contract. The variant: the scouts in the order of their own t on 2024-2025 (time-weighted; many trades are not
+# luck, principle 10), each in its turn raised to the risk that lets PICK_Q of its trades take one contract (never over
+# the bot's 0.4%), and kept only if the whole bot on 2024-2025 stays as safe as it is now (no deeper fall, no worse day,
+# inside the margin); the others keep the risk they have. Q in PICK_QS chosen on 2024-2025; a card only when the whole
+# bot earns more on 2024-2025 AND on 2026 with 2026 inside the margin. A scout left as it is still has its signals
+# followed live (watch, "small"), so its live record keeps coming. Bot 5 trades CFDs (0.01 lot) - no such problem there.
+PICK_QS = (50, 75)
+PICK_MIN_T = 1.0
+
+
+def scout_pick6(tr, un, risk, sk, lim, b_uni, u_uni, fits):
+    if not b_uni or not u_uni or tr.empty:
+        return None
+    L = TG._lim(lim)
+    ct = L.get("contracts")
+    if not ct or not {"sym", "cost_r"} <= set(tr.columns):
+        return None
+    init = float(ct.get("initial", 100_000.0))
+    cap = 0.4
+    st = {}
+    for x in sk:
+        t_ = tr[tr["trk"] == x]
+        if len(t_) < EDGE_MIN_N:
+            continue
+        w_ = K.weights(t_["time"], now=TG.SPLIT)
+        r_ = t_["r"].astype(float).to_numpy()
+        m_ = float(np.average(r_, weights=w_))
+        sd = float(np.sqrt(np.average((r_ - m_) ** 2, weights=w_)))
+        neff = float(w_.sum() ** 2 / max(1e-12, (w_ ** 2).sum()))
+        tt = m_ / sd * np.sqrt(neff) if sd > 0 else 0.0
+        per1, _ = TG._contract_risk(t_, ct)
+        need = per1[np.isfinite(per1)] / init * 100
+        if m_ <= 0 or tt < PICK_MIN_T or not len(need):
+            continue
+        st[x] = {"edge_r": round(m_, 4), "t": round(float(tt), 2), "n": int(len(t_)),
+                 "need": {q: round(float(np.percentile(need, q)) * 1.02, 5) for q in PICK_QS}}
+    if not st:
+        return {"better": False, "why": "no scout with an edge (t >= PICK_MIN_T) to 2025"}
+
+    def same_risk(bb):
+        return fits(bb) and bb["max_fall_pct"] <= b_uni["max_fall_pct"] + 1e-9 and bb["worst_day_pct"] >= b_uni["worst_day_pct"] - 1e-9
+    order = sorted(st, key=lambda x: -st[x]["t"])
+    best = None
+    for q in PICK_QS:
+        cur, kept, bt = dict(risk), [], b_uni
+        for x in order:
+            to = min(cap, st[x]["need"][q])
+            if to <= cur.get(x, 0.0) + 1e-9:
+                continue
+            trial = dict(cur)
+            trial[x] = to
+            bb = TG.account(tr.copy(), trial, lim)
+            if bb and same_risk(bb) and bb["total_pct"] > bt["total_pct"] + 1e-9:
+                cur, bt = trial, bb
+                kept.append(x)
+        if kept and (best is None or bt["total_pct"] > best["train"]["total_pct"]):
+            best = {"q": q, "kept": kept, "risk": cur, "train": bt}
+    if best is None:
+        return {"better": False, "why": "no scout raised to one contract keeps the whole bot as safe as now", "scouts": st}
+    bu = TG.account(un.copy(), best["risk"], lim)
+    better = bool(bu and best["train"]["total_pct"] > b_uni["total_pct"] + 1e-9 and bu["total_pct"] > u_uni["total_pct"] + 1e-9
+                  and fits(bu))
+    return {"q": best["q"], "kept": best["kept"], "scouts": st,
+            "risk": {x: round(v, 5) for x, v in best["risk"].items() if x in best["kept"]},
+            "train": best["train"], "unseen": bu, "uniform": {"train": b_uni, "unseen": u_uni}, "better": better,
+            "limits": {"day": L["day"], "all": L["all"]}}
+
+
+def scout_pick_cards(s, rk):
+    """The strong scouts at one contract (scout_pick6): one risk card per scout it raises."""
+    p = s["pick"]
+    lm = p.get("limits") or {}
+    ut, uu = (p["uniform"].get("train") or {}), (p["uniform"].get("unseen") or {})
+    pt, pu = p.get("train") or {}, p.get("unseen") or {}
+    line = lambda x: (f"סה\"כ {x.get('total_pct', 0):+.1f}%, היום הגרוע {x.get('worst_day_pct', 0):+.2f}%, "  # noqa: E731
+                      f"הירידה הגדולה {x.get('max_fall_pct', 0):.1f}%"
+                      + (f", {x['contract_skipped']} עסקאות דולגו כי חוזה מיקרו אחד גדול מהסיכון" if x.get("contract_skipped") else ""))
+    out = []
+    for x in p.get("kept", []):
+        r0 = float(rk.get(x, rk.get("scout", FA.RISK_TAL)) or 0)
+        to = round(float(p["risk"][x]) / 100, 6)
+        sx = p["scouts"].get(x) or {}
+        if to <= r0 + 1e-7:
+            continue
+        out.append(K.card("bot6", "risk", f"בוט 6: {x[6:]} - סיכון {r0 * 100:g}% ← {to * 100:g}%, כדי שחוזה מיקרו אחד ייכנס (החזקות בלבד)",
+                          f"בחי, מאז 16.11 כל עסקאות הסייר של בוט 6 דולגו: בסיכון שלהן חוזה מיקרו אחד גדול מהסיכון של העסקה. "
+                          f"{x[6:]}: עד 2025 {sx.get('n')} עסקאות, {sx.get('edge_r', 0):+.2f}R לעסקה משוקלל, t {sx.get('t')}. "
+                          f"הכלל (עיקרון 8, 10, 11 ומקרה 41): לפי הסדר של ה־t עד 2025, כל אסטרטגיה בתורה עולה לסיכון שבו {p['q']}% מהעסקאות "
+                          f"שלה נכנסות בחוזה אחד (לא מעל 0.4%), ונשארת רק אם הבוט כולו עד 2025 לא מסוכן יותר מהיום (ירידה לא עמוקה יותר, "
+                          f"יום גרוע לא גרוע יותר, בתוך המגבלות {lm.get('day', 1.5):g}% ביום / {lm.get('all', 4.5):g}% נגרר) ומרוויח יותר. "
+                          f"השאר נשארות כמו שהן (העסקאות שלהן ממשיכות להירשם בחי). נבחרו: {', '.join(k_[6:] for k_ in p['kept'])}. "
+                          f"הבוט כולו - היום: 2024-2025 {line(ut)}; 2026 {line(uu)}. עם השינוי: 2024-2025 {line(pt)}; 2026 (לא נראתה) {line(pu)}. "
+                          f"בבוט 5 אין את הבעיה (CFD, 0.01 לוט).",
+                          None, None, tested=len(p.get("scouts") or {}), risk_pct=round(to * 100, 4),
+                          detail={"world": "bot6", "task": "scout_pick", "account_fit": True, "pick": p},
+                          change={"track": x, "knob": f"RISK_{x}", "from": r0, "to": to}))
+    return out
+
+
 def scout_scale_cards(g, rk):
     """One risk card per scout strategy of bot 6 (live/bots/bot6.json "scout") with the factor of scout_scale6 - also
     the scouts the test could not run in time (the same factor: never more risk than the tested ones)."""
     s = (g or {}).get("scout_scale") or {}
     k = s.get("chosen", 1.0)
+    pk, ed = (s.get("pick") or {}), (s.get("edge") or {})
+    if s and k >= 1.0 and pk.get("better") and (not ed.get("better")
+                                              or (pk.get("train") or {}).get("total_pct", 0) > (ed.get("train") or {}).get("total_pct", 0)):
+        return scout_pick_cards(s, rk)
     if s and (s.get("edge") or {}).get("better") and k >= 1.0:
         return scout_edge_cards(s, rk)
     if not s or k >= 1.0:

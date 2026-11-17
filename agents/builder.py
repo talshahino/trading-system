@@ -97,6 +97,16 @@ def buildable(c):
         return {"bot": bot, "combo": "BOT|all", "family": "flag", "key": "dd_fit", "to": round(float(ch["to"]), 2)}
     # bots 1-4 (16.11.2026 night, task b2jpy1611): no opposite trade on the same instrument and timeframe as one this
     # bot already holds - "opp_same_tf" in live/bots/<bot>.json, read by live/runner.py (opposite_same_tf)
+    # bots 1-4 (17.11.2026 night, task tal1711riskmgmt, agents/risk_brakes.py): soft risk brakes under the fixed guard -
+    # "loss_streak" {"days", "mult"} / "day_brake" {"pct", "mode"} in live/bots/<bot>.json, read by runner brake_mult
+    if bot in ADD_BOTS and c.get("kind") == "risk" and ch.get("kind") == "loss_streak" and isinstance(ch.get("to"), dict) \
+            and 1 <= int(ch["to"].get("days", 0)) <= 5 and 0.25 <= float(ch["to"].get("mult", 0)) < 1:
+        return {"bot": bot, "combo": "BOT|all", "family": "flag", "key": "loss_streak",
+                "to": {"days": int(ch["to"]["days"]), "mult": round(float(ch["to"]["mult"]), 3)}}
+    if bot in ADD_BOTS and c.get("kind") == "risk" and ch.get("kind") == "day_brake" and isinstance(ch.get("to"), dict) \
+            and 0.5 <= float(ch["to"].get("pct", 0)) <= 4 and ch["to"].get("mode") in ("half", "stop"):
+        return {"bot": bot, "combo": "BOT|all", "family": "flag", "key": "day_brake",
+                "to": {"pct": round(float(ch["to"]["pct"]), 2), "mode": ch["to"]["mode"]}}
     if bot in ADD_BOTS and c.get("kind") == "risk" and ch.get("kind") == "opp_same_tf" and ch.get("to") in ("skip", None):
         return {"bot": bot, "combo": "BOT|all", "family": "flag", "key": "opp_same_tf", "to": ch.get("to")}
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") and str(ch.get("knob", "")).startswith("RISK") \
@@ -202,6 +212,12 @@ def describe(b):
         if b["key"] == "dd_fit":
             return (f"הסיכון של כל הבוט קטן כשנשאר עד המגבלה (9%) פחות מ־{b['to']:g}% (הירידה הגרועה בבדיקת הבוט על 2026), "
                     "וחוזר לרגיל לבד")
+        if b["key"] == "loss_streak":
+            return (f"אחרי {b['to']['days']} ימי הפסד ברצף - סיכון ×{b['to']['mult']:g} לעסקאות חדשות עד יום ירוק" if b["to"]
+                    else "בלי בלם אחרי ימי הפסד")
+        if b["key"] == "day_brake":
+            return ((f"אחרי ‎-{b['to']['pct']:g}% מתחילת היום - " + ("חצי סיכון לעסקאות חדשות" if b["to"]["mode"] == "half"
+                     else "בלי עסקאות חדשות") + " עד מחר") if b["to"] else "בלי בלם יומי רך")
         if b["key"] == "opp_same_tf":
             return ("לא נפתחת עסקה הפוכה לעסקה פתוחה של אסטרטגיה אחרת על אותו מכשיר ובאותו טיים פריים" if b["to"]
                     else "בלי הכלל נגד עסקאות הפוכות באותו טיים פריים")

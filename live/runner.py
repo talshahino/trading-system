@@ -670,10 +670,56 @@ class Account:
             room_total = ai.balance - self.initial * (1 - GUARD_TOTAL)
             base *= min(1.0, max(0.0, room_total / (self.initial * fit / 100)))
         ds = self.day_start_balance()
+        base *= self.brake_mult(ai.balance, ds)
         left = ai.balance - self.open_risk()
         room = min(left - self.initial * (1 - GUARD_TOTAL), left - (ds - self.initial * GUARD_DAILY))
         r = min(base, GRADE_SHARE * room)
         return r if r >= GRADE_MIN * base else 0.0
+
+    def brake_mult(self, balance, ds):
+        """Soft risk brakes (user, 17.11.2026, task tal1711riskmgmt; agents/risk_brakes.py tests them on the whole bot).
+        Only with an approved card in live/bots/<bot>.json, off otherwise; always under the fixed 4.5% / 9% guard:
+          "loss_streak": {"days": 2, "mult": 0.75} - after that many losing days in a row (FTMO's day, the realised
+                         result), new trades take risk x mult until a green day
+          "day_brake":   {"pct": 2.0, "mode": "half"|"stop"} - once today's realised result is -pct% of the account,
+                         new trades take half risk / none until tomorrow"""
+        m = 1.0
+        try:
+            db = self.cfg.get("day_brake") or {}
+            if db and (balance - ds) <= -self.initial * float(db["pct"]) / 100:
+                m *= 0.0 if db.get("mode") == "stop" else 0.5
+            ls = self.cfg.get("loss_streak") or {}
+            if ls and self.losing_days() >= int(ls["days"]):
+                m *= max(0.0, min(1.0, float(ls["mult"])))
+        except (KeyError, TypeError, ValueError):
+            return 1.0
+        return m
+
+    def losing_days(self):
+        """Losing FTMO days in a row before today (days without a closed deal do not count either way), read once
+        a day; 0 when MT5 does not answer (the brake is off rather than wrong)."""
+        today = prague_midnight_utc()
+        if getattr(self, "_streak", None) and self._streak[0] == today:
+            return self._streak[1]
+        n = 0
+        try:
+            deals = mt5.history_deals_get(utc_to_server(today - pd.Timedelta(days=21)), utc_to_server(today))
+            if deals is None:
+                return 0
+            day = {}
+            for d in deals:
+                if d.type in (0, 1):
+                    k = server_ts(d.time).tz_convert("Europe/Prague").date()
+                    day[k] = day.get(k, 0.0) + d.profit + d.commission + d.swap + getattr(d, "fee", 0.0)
+            for k in sorted(day, reverse=True):
+                if day[k] < -1e-9:
+                    n += 1
+                elif day[k] > 1e-9:
+                    break
+        except Exception:  # noqa: BLE001
+            return 0
+        self._streak = (today, n)
+        return n
 
     def guard(self):
         """Emergency stop: floating daily loss reaches 4.5% -> close everything until Prague midnight."""

@@ -706,6 +706,47 @@ def quiet_at(t):
         return False
 
 
+def learning5(marks):
+    """What bot 5's agent learned from Tal's marks (user, 17.11.2026: "how many marks did I make, from how many could it
+    learn, from how many did it really learn, and how many more until it understands the method"). His answers
+    (live/watch_marks.json) and his notes (live/trade_notes.json) on the gap method's trades (not the scout ones, not
+    the bot conversation), against the lessons the agent wrote (data/agents/bot5_lessons.json: each lesson names the
+    trades it came from; recorded / tested / built). The estimate: until there are 30 answers on each of the gap
+    tracks and 20 "no" answers (what tells a no from a yes) at the pace of his "no" so far."""
+    own = lambda k: "sc:" not in k and k != "talk"  # noqa: E731
+    try:
+        notes = (json.loads((LIVE / "trade_notes.json").read_text(encoding="utf-8")).get(NAME) or {})
+    except Exception:  # noqa: BLE001
+        notes = {}
+    try:
+        les = json.loads((ROOT / "data" / "agents" / "bot5_lessons.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        les = {}
+    ans = {k: m for k, m in (marks or {}).items() if own(k) and (m or {}).get("take") in ("yes", "no")}
+    nts = {k: v for k, v in notes.items() if own(k) and v}
+    learnable = set(ans) | set(nts)
+    ls = les.get("lessons") or []
+    learned = learnable & {k for x in ls for k in (x.get("from") or [])}
+    built = learnable & {k for x in ls if x.get("status") == "built" for k in (x.get("from") or [])}
+    yes = [m for m in ans.values() if m["take"] == "yes"]
+    nos = sum(1 for m in ans.values() if m["take"] == "no")
+    stop_ok = sum(1 for m in yes if m.get("ok_stop") is not False and m.get("stop") is None)
+    fams = sorted({t.split("@")[0] for t in TAL5})          # the gap tracks (pairs of timeframes), each instrument together
+    per = {}
+    for k in ans:
+        trk = k.split("|")[-1].split("@")[0]
+        if trk in fams:
+            per[trk] = per.get(trk, 0) + 1
+    no_rate = max(nos / len(ans), 0.1) if ans else 0.1
+    rem = max(max(0, 20 - nos) / no_rate, sum(max(0, 30 - per.get(t, 0)) for t in fams))
+    return {"marks": len(ans) + sum(len(v) for v in nts.values()), "answers": len(ans), "yes": len(yes), "no": nos,
+            "notes": sum(len(v) for v in nts.values()), "trades": len(learnable), "learnable": len(learnable),
+            "learned": len(learned), "built": len(built), "unclear": sorted(learnable - learned)[:30],
+            "lessons": [{k: x.get(k) for k in ("id", "text", "status", "task")} | {"n": len(learnable & set(x.get("from") or []))} for x in ls],
+            "stop_agree": round(100 * stop_ok / len(yes)) if yes else None, "take_agree": round(100 * len(yes) / len(ans)) if ans else None,
+            "per_track": per, "estimate": int(round(rem / 10.0) * 10)}
+
+
 def review_push(rec):
     """-> what happened (kept on the trade: "pushed")."""
     key = os.environ.get("MANAGER_KEY")
@@ -1600,6 +1641,7 @@ def main():
         for k, t in list(trades.items()):
             if t["status"] == "pending" and k not in seen_now and t["symbol"] in src.df:
                 t["status"] = "cancelled"
+        marks = {}
         try:
             marks = json.loads(MARKS_F.read_text(encoding="utf-8"))
             olds = {t["old_id"]: k for k, t in trades.items() if t.get("old_id")}
@@ -1609,6 +1651,10 @@ def main():
                     trades[k]["mark"] = m
         except Exception:  # noqa: BLE001
             pass
+        try:
+            state["learning"] = learning5(marks)
+        except Exception:  # noqa: BLE001
+            errors.append(f"learning: {traceback.format_exc()[-200:]}")
         closed = sorted([t for t in trades.values() if t["status"] == "closed"], key=lambda t: t["time"] or "")[-KEEP:]
         live_ = [t for t in trades.values() if t["status"] in ("pending", "open")]
         cancelled = sorted([t for t in trades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]

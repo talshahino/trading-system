@@ -126,10 +126,16 @@ def dir_filter(t, df1, way):
 
 
 def resample(df1, tf):
+    # the volume column is kept (bot 6's smart agent, 17.11.2026 night): strategies that read it (SC071's Keltner reversal,
+    # the VWAP ones) raised KeyError 'v' on every variant here, so they could never pass on bot 6's world
+    cols = ["o", "h", "l", "c"] + (["v"] if "v" in df1 else [])
     if tf == "1Min":
-        return df1[["o", "h", "l", "c"]].copy()
+        return df1[cols].copy()
     rule = f"{TF_MIN[tf]}min" if TF_MIN[tf] < 60 else "1h"
-    agg = df1.resample(rule, label="left", closed="left").agg({"o": "first", "h": "max", "l": "min", "c": "last"}).dropna()
+    how = {"o": "first", "h": "max", "l": "min", "c": "last"}
+    if "v" in df1:
+        how["v"] = "sum"
+    agg = df1.resample(rule, label="left", closed="left").agg(how).dropna(subset=["o", "h", "l", "c"])
     return agg
 
 

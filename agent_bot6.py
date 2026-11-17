@@ -1793,6 +1793,41 @@ DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC325", ("5Min", "15Min")), (
             for tf in tfs for sym in ("US100", "US500", "US30")]
 
 
+# BOT 5'S LIVE SCOUTS (bot 6's smart agent, 17.11.2026 night; bots 5 and 6 share methods): 31 scout strategies trade
+# live in bot 5 (live/bots/bot5.json "scout", each passed bot 5's fair test), and 23 of their strategies were never run
+# on bot 6's world - among them index ones bot 5 trades on US100 / US30 / GER40 (BK07, SC446, SC480, SC311, SC512), and
+# SC077 / SC071 waited at the end of DISCOVER. Every strategy bot 5 trades live is tested here on the three indices at
+# its own timeframe, before DISCOVER: the ones bot 5 trades on an index first, then the gold / forex ones. Read from
+# bot 5's live file on every run, so a strategy bot 5 adds later reaches bot 6 by itself. Like DISCOVER: a pass is a
+# 'new' card, a fail is only recorded (bot 6 never traded it - not a fix attempt).
+B5_INDEX = ("US100", "US500", "US30", "GER40", "UK100", "JP225", "EU50", "FRA40", "AUS200", "HK50", "SPN35", "N25")
+
+
+def bot5_live_scouts():
+    from agents import scout_fut as SF
+    try:
+        sc = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8")).get("scout") or {}
+    except Exception as e:  # noqa: BLE001
+        print(f"scout_fut: bot 5's live scouts not read: {e}")
+        return []
+    first, rest = [], []
+    for k in sc:
+        try:
+            sid, tf, sym = k.split("|")
+        except ValueError:
+            continue
+        if tf not in SF.TF_MIN:
+            continue
+        (first if sym in B5_INDEX else rest).append((sid, tf))
+    out = []
+    for sid, tf in first + rest:
+        for sym in WORLD["symbols"]:
+            c = f"{sid}|{tf}|{sym}"
+            if c not in out:
+                out.append(c)
+    return out
+
+
 def _approved_scout():
     """The scout strategies the manager approved for bot 6 on the CFD test (change {"combo", "kind": "add"}), not undone,
     plus every bot 6 combo with a fix task (data/agents/fix_attempts.json) - each is tested on bot 6's world here."""
@@ -1816,6 +1851,8 @@ def _approved_scout():
                 out.setdefault(k.split("|", 1)[1], None)
     except Exception as e:  # noqa: BLE001
         print(f"scout_fut: approved list not read: {e}")
+    for combo in bot5_live_scouts():
+        out.setdefault(combo, "bot5")
     for combo in DISCOVER:
         out.setdefault(combo, "discover")
     return out
@@ -1911,6 +1948,10 @@ def scout_cards(res):
         b5 = {(c.get("change") or {}).get("combo"): c for c in json.loads(Path("reports/agents/bot5/cards_new.json").read_text(encoding="utf-8")).get("cards", [])}
     except Exception:  # noqa: BLE001
         b5 = {}
+    try:
+        b5live = json.loads(Path("live/bots/bot5.json").read_text(encoding="utf-8")).get("scout") or {}
+    except Exception:  # noqa: BLE001
+        b5live = {}
     today = pd.Timestamp.now(tz="UTC").strftime("%Y-%m-%d")
     for combo, x in res.items():
         if not x.get("done"):
@@ -1923,7 +1964,10 @@ def scout_cards(res):
         fmt = lambda s: f"{s.get('mean') or 0:+.2f}R על {s.get('n', 0)} עסקאות"  # noqa: E731
         win = ch and (ch["unseen"].get("mean") or 0) > 0
         key = f"bot6|{combo}"
-        disc = x.get("card") == "discover"
+        disc = x.get("card") in ("discover", "bot5")
+        if x.get("card") == "bot5" and not c5:     # bot 5 trades this strategy live on its own instruments
+            on5 = [k for k in b5live if k.split("|")[0] == combo.split("|")[0] and k.split("|")[1] == combo.split("|")[1]]
+            s5 = f" · בבוט 5 היא סוחרת בחי על {', '.join(k.split('|')[2] for k in on5)}" if on5 else s5
         if disc and not win:
             continue            # never traded by the bot: nothing to fix, no card (the result stays in scout_fut.json)
         if not disc and (key in fx or not win):

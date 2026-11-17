@@ -1476,7 +1476,10 @@ class Handler(BaseHTTPRequestHandler):
         parts = path.strip("/").split("/")
         if path in ("", "/status"):
             return self._send(200, {"ok": True, "accounts": public_accounts(), "version": (UPD.local() or "")[:7],
-                                    "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"]} if UPDATE["sha"] and not auto_update_on() and UPDATE["sha"] != UPD.local() else None,
+                                    # a waiting version is shown with automatic installs on too (user, 17.11.2026: "where do I approve") - he can
+                                    # install it now instead of waiting for the quiet moment / the agents' cycle
+                                    "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"], "auto": auto_update_on(),
+                                               "waiting_min": round((time.time() - UPDATE.get("seen", time.time())) / 60)} if UPDATE["sha"] and UPDATE["sha"] != UPD.local() and UPDATE.get("title") else None,
                                     "auto_update": {"on": auto_update_on(), "prev": (CFG.get("prev_version") or "")[:7],
                                                     "pending": (UPDATE["sha"] or "")[:7] if UPDATE["sha"] and UPDATE["sha"] != UPD.local() else None,
                                                     "last": (CFG.get("auto_updates") or [{}])[-1]},

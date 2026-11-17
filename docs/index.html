@@ -874,7 +874,9 @@ function renderMgr() {
     ? "פעיל: התראות מהבוטים, וגם התראה אם המחשב כבה או מתנתק."
     : "התראות מהבוטים פעילות. להתראה כשהמחשב כבה צריך להוסיף הרשאה ב־GitHub (פעם אחת).";
   $("updCard").style.display = m && m.update ? "" : "none";
-  if (m && m.update) $("updText").innerHTML = `<b>${esc(m.update.title)}</b> <span class="mut num">${esc(m.update.sha)}</span>`;
+  if (m && m.update) $("updText").innerHTML = `<b>${esc(m.update.title)}</b> <span class="mut num">${esc(m.update.sha)}</span>`
+    + (m.update.auto ? `<div class="mut" style="margin-top:4px">יותקן לבד ברגע שקט${m.update.waiting_min ? ` (מחכה ${m.update.waiting_min} דק')` : ""}. אפשר להתקין עכשיו.</div>` : "");
+  if (m && m.update) $("updBtn").textContent = m.update.auto ? "התקן עכשיו" : "אשר עדכון";
   const au = m && m.auto_update, own = getRole() !== "viewer";
   // Tal, 15.11.2026: the automatic-updates card and the notifications card only when they need him - the card shows
   // when automatic updates are paused; going back a version is a small link in the bots' computer card

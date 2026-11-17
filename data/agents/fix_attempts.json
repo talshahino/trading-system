@@ -1147,5 +1147,38 @@
   "status": "failed",
   "at": "2026-11-17",
   "verdict": "לפי היתרון"
+ },
+ "bot6|SC072|5Min|US500": {
+  "status": "trying",
+  "tried": [
+   {
+    "what": "bot6_world target/stop/time/be",
+    "at": "2026-11-14",
+    "variants": 96,
+    "chosen": "tnone_s0.75_time_nobe"
+   },
+   {
+    "what": "session windows + BE points",
+    "at": "2026-11-16",
+    "variants": 7,
+    "chosen": "noopen",
+    "train_sum": [
+     -4.16,
+     25.99
+    ],
+    "unseen_sum": [
+     23.56,
+     21.73
+    ],
+    "card": "82af1b812ee3",
+    "state": "watch"
+   },
+   {
+    "what": "direction: ema50h / noreent (bot 5's filters), alone and with noopen",
+    "at": "2026-11-17",
+    "state": "queued on the bots' computer (agent_bot6._sess_cands)"
+   }
+  ],
+  "at": "2026-11-17"
  }
-}
+}

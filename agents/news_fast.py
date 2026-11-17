@@ -137,7 +137,7 @@ def run(sym):
             for m in (1, 5, 15, 60):
                 km = min(len(idx) - 1, idx.searchsorted(t + pd.Timedelta(minutes=m)) - 1)
                 mv[f"m{m}"] = round(float(x["g"] * (b or 1) * (c[km] - e0) / atr), 3)
-            k15 = min(len(idx), idx.searchsorted(t + pd.Timedelta(minutes=15)))
+            k15 = max(k0 + 1, min(len(idx), idx.searchsorted(t + pd.Timedelta(minutes=15))))
             mv["range15"] = round(float((h[k0:k15].max() - l[k0:k15].min()) / atr), 3)
             moves.append({"sym": sym, "cur": cur, "title": x["title"], "t": t.isoformat(), "big": x["big"], **mv})
             for dl in DELAYS:

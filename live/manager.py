@@ -230,8 +230,11 @@ def push(title, body, urgent=False, action=None, tag=None, extra=None):
     dead, res = [], []
     for s in subs:
         try:
+            # Urgency high: without it Android holds the push while the phone sleeps (17.11.2026: bot 5's open
+            # notification sent 11:26 showed at 11:40, the review questions not at all) - quiet hours stay normal
             webpush(subscription_info=s, data=data, vapid_private_key=str(VAPID_FILE),
-                    vapid_claims={"sub": "mailto:bots@trading-system.local"}, ttl=24 * 3600)
+                    vapid_claims={"sub": "mailto:bots@trading-system.local"}, ttl=(15 * 60 if action == "review" else 24 * 3600),
+                    headers={"Urgency": "normal" if quiet else "high"})
             res.append("ok")
         except WebPushException as e:
             code = getattr(e.response, "status_code", None)

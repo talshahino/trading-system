@@ -489,8 +489,26 @@ class Data:
 
 
 # ---------------------------------------------------------------- the impulse's gaps on the high timeframe
-def gaps(D, htf, gbody, min_gap, cache):
-    key = (htf, gbody, min_gap)
+GAPX_VALS = ("mid", "full")
+
+
+def gapx_of(cfg):
+    """GAPX (the user's gap-close definition, 17.11.2026, task tal1711gapclose - data/agents/strategies/tal_gap.md
+    'סגירת גאפ'): "mid" = as before (the price back to the gap's middle during the impulse kills it); "full" = only a
+    wick of the same impulse through the WHOLE gap, to its far edge (longs: a low under candle 1's high), closes it -
+    a partial touch, even to the middle, leaves it open; the swing that ends the impulse is confirmed the same way."""
+    v = cfg.get("GAPX", "mid") if isinstance(cfg, dict) else "mid"
+    return v if v in GAPX_VALS else "mid"
+
+
+def _gkey(htf, cfg):
+    """gaps()' cache key for a configuration (GAPX "mid" keeps the old key, so the old caches stay the same)."""
+    x = gapx_of(cfg)
+    return (htf, cfg["GBODY"], cfg["MIN_GAP"]) + (() if x == "mid" else (x,))
+
+
+def gaps(D, htf, gbody, min_gap, cache, gapx="mid"):
+    key = (htf, gbody, min_gap) + (() if gapx == "mid" else (gapx,))
     if key in cache:
         return cache[key]
     ts, o, h, l, c, _ = D.tf(htf)
@@ -518,12 +536,13 @@ def gaps(D, htf, gbody, min_gap, cache):
         if abs(near - far) < min_gap * avgr[k]:
             continue
         mid = (near + far) / 2
+        kill = far if gapx == "full" else mid           # GAPX: the whole gap to its far edge / its middle
         arm = None
         for j in range(k + 1, min(n - 2, k + 40)):
-            if j >= k + 2 and ((l[j] <= mid) if d > 0 else (h[j] >= mid)):
-                break                                   # back to the middle during the impulse: not a gap
+            if j >= k + 2 and ((l[j] <= kill) if d > 0 else (h[j] >= kill)):
+                break                                   # back through the gap during the impulse: not a gap
             if (s_hi[j] if d > 0 else s_lo[j]):
-                if all((l[x] > mid) if d > 0 else (h[x] < mid) for x in (j + 1, j + 2)):
+                if all((l[x] > kill) if d > 0 else (h[x] < kill) for x in (j + 1, j + 2)):
                     arm = j
                 break
         if arm is None:
@@ -706,7 +725,7 @@ def gap_keep(D, cfg, htf, g):
     sw = sw if sw in SWP_VALS + SWP2_VALS else None
     if not (q3 or sw) or not g:
         return None
-    key = ("gkeep", htf, cfg["GBODY"], cfg["MIN_GAP"], q3, sw, len(g))
+    key = ("gkeep",) + _gkey(htf, cfg) + (q3, sw, len(g))
     if key in D.sw:
         return D.sw[key]
     ts, o, h, l, c, atr = D.tf(htf)
@@ -989,7 +1008,7 @@ def ladder_trade(D, f, d, legs, stop, tgt, ref, cfg, e):
 
 def simulate(D, pair, cfg, gcache, keep=None):
     htf, ltf, _ = pair
-    g = gaps(D, htf, cfg["GBODY"], cfg["MIN_GAP"], gcache)
+    g = gaps(D, htf, cfg["GBODY"], cfg["MIN_GAP"], gcache, gapx_of(cfg))
     hi_sw, lo_sw = D.swings(ltf, cfg["SW"])
     ns, o1, h1, l1, c1 = D.ns, D.o1, D.h1, D.l1, D.c1
     n1 = len(ns)
@@ -1250,6 +1269,8 @@ def _norm(c):
         c.pop("BRKH")                                   # BRKH 0 = off: the same name
     if "REARM" in c and not c["REARM"]:
         c.pop("REARM")                                  # REARM off: the same name
+    if c.get("GAPX") == "mid":
+        c.pop("GAPX")                                   # GAPX mid = the gap rule as before: the same name
     return c
 
 
@@ -2094,7 +2115,7 @@ def live_trades(D, pair, cfg, gcache=None):
     Returns dicts: id_key, dir, status, entry, stop, target, rr, setup_t, time, exit_time, exit, reason, r, r_now."""
     gcache = {} if gcache is None else gcache
     htf, ltf, _ = pair
-    g = gaps(D, htf, cfg["GBODY"], cfg["MIN_GAP"], gcache)
+    g = gaps(D, htf, cfg["GBODY"], cfg["MIN_GAP"], gcache, gapx_of(cfg))
     hi_sw, lo_sw = D.swings(ltf, cfg["SW"])
     ns, o1, h1, l1, c1 = D.ns, D.o1, D.h1, D.l1, D.c1
     n1 = len(ns)
@@ -2111,7 +2132,7 @@ def live_trades(D, pair, cfg, gcache=None):
     gk = gap_keep(D, cfg, htf, g)
     out, cands = [], []
     # pass 1: every gap -> pending / cancelled, or a candidate fill (exactly simulate()'s checks, protection included)
-    geo = gcache.get((htf, cfg["GBODY"], cfg["MIN_GAP"], "geo")) or []
+    geo = gcache.get(_gkey(htf, cfg) + ("geo",)) or []
     iso_ = lambda v: pd.Timestamp(int(v), tz="UTC").isoformat()   # noqa: E731
     for gi, (d, mid, near, far, made, armed) in enumerate(g):
         key = f"tal|{int(d)}|g{pd.Timestamp(made, tz='UTC').strftime('%Y%m%d%H%M')}"

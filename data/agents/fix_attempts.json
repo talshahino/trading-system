@@ -1388,5 +1388,41 @@
   "status": "failed",
   "at": "2026-11-17",
   "verdict": "מפסידה בכל גרסה בשתי התקופות (‎-9.3R / ‎-10.0R) - כמות מינימלית"
+ },
+ "bot6|scout:FG01|15Min|US30": {
+  "status": "trying",
+  "tried": [
+   {
+    "what": "bot6_world target/stop/time/be",
+    "at": "2026-11-17",
+    "variants": 96,
+    "chosen": "t3R_s1_time_nobe",
+    "train": {
+     "n": 146,
+     "mean": 0.141,
+     "t": 1.06
+    },
+    "unseen": {
+     "n": 46,
+     "mean": 0.16
+    }
+   },
+   {
+    "what": "same variant on US100 / US500 (luck check, mgr1811fg01)",
+    "at": "2026-11-18",
+    "unseen_sum": {
+     "US100": -18.27,
+     "US500": -8.87,
+     "US30": 7.41
+    },
+    "state": "failed"
+   },
+   {
+    "what": "hours / direction / entry / structural stop / half at half way / pyramid (scout_sess, scout_families)",
+    "at": "2026-11-18",
+    "state": "queued on the bots' computer"
+   }
+  ],
+  "at": "2026-11-18"
  }
 }

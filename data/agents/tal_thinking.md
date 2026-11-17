@@ -239,3 +239,8 @@ What this means for the agents:
 
 ## Which gap: the first one, inside the impulse (user, 17.11.2026 15:51-16:09)
 Reviewing bot 5's gap setups: "an impulse built of one candle - there is an impulse, but no gap comes out of it inside the impulse, so there is no trade"; and on GER40: "there is another, higher gap at the start of the impulse (around 26,417) - that is the gap you must reach, the entry is there". For Tal the trade is born from a gap INSIDE the impulse, and the gap that counts is the first one at its start (the origin), not a later one near its end - even when its candle 2 is not exceptionally strong by our threshold. For the agents: test "the first gap of each impulse" (with a lower strength threshold for it) against today's choice (task tal1711review, FIRSTG). He also judges the stop on the high timeframe: a review chart must show enough candles before the impulse and the stop's swing, or he cannot decide (task b5revchart1711).
+
+## הפרדת בוט 5 (טל, 17.11.2026 ערב)
+- בוט 5 = רק שיטת הגאפ של טל, עם שאלות "היית נכנס?". החשבון הווירטואלי אופס (ACCT_V 5).
+- "בוט 5ב · סייר" = חשבון וירטואלי חדש ($100K) לכל אסטרטגיות הסייר של בוט 5, בדיוק כמו שעברו את הבדיקה, בלי שאלות (live/watch_scout_state.json).
+- המסלולים הישנים (v4, v5, פערים בדקה, רחב, איסוף נתונים) - מוצגים ולא נספרים; ההחלטה עליהם אצל טל.

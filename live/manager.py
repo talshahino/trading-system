@@ -1234,7 +1234,13 @@ def public_accounts(with_run=True):
                     "mt5_hidden": bool(a.get("mt5_hidden"))})
     if CFG.get("watch_own", True):
         # the scalping watch bot's virtual $100,000 account, listed like the demo accounts (user, 06.11.2026)
-        out.append({"name": WATCH_NAME, "label": "בוט 5 - סקאלפינג (וירטואלי)", "nickname": "בוט 5 - סקאלפינג", "bot": WATCH_NAME,
+        out.append({"name": WATCH_NAME, "label": "בוט 5 - שיטת הגאפ (וירטואלי)", "nickname": "בוט 5 - שיטת הגאפ", "bot": WATCH_NAME,
+                    "login": None, "server": "וירטואלי · בלי כסף", "enabled": True, "running": running(WATCH_NAME) if with_run else None,
+                    "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
+                    "platform": "צפייה בלבד", "target_pct": 10, "preparing": False, "prepare_error": None, "mt5_hidden": True,
+                    "virtual": True})
+        # 5ב (user, 17.11.2026): bot 5's scout strategies in their own virtual account, computed by the same watch bot
+        out.append({"name": "watch_scout", "label": "בוט 5ב · אסטרטגיות סייר (וירטואלי)", "nickname": "בוט 5ב · סייר", "bot": "watch_scout",
                     "login": None, "server": "וירטואלי · בלי כסף", "enabled": True, "running": running(WATCH_NAME) if with_run else None,
                     "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
                     "platform": "צפייה בלבד", "target_pct": 10, "preparing": False, "prepare_error": None, "mt5_hidden": True,

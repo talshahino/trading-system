@@ -48,6 +48,9 @@ STATE_F = LIVE / f"{NAME}_state.json"
 MARKS_F = LIVE / "watch_marks.json"
 FUT_NAME = "watch_fut"          # bot 6: the virtual futures account (live/fut_account.py)
 FUT_F = LIVE / f"{FUT_NAME}_state.json"
+SCOUT_NAME = "watch_scout"      # 5ב (17.11.2026): bot 5's scout strategies in their own virtual account
+SCOUT_F = LIVE / f"{SCOUT_NAME}_state.json"
+SACCT_V = 1
 VARIANT = (2.0, False, "1m", "struct")
 # wide track (user, 09.11.2026: "I want more trades, it's scalping"): the same rules with a weaker candle-body filter
 # (1.8 instead of 2.5 x the average body) - about 4x the setups in the backtest (3.6 a week on these 16 instruments
@@ -86,7 +89,7 @@ BOT_MAX_LOSS = 0.09     # the bots' own total limit (data/agents/tal_thinking.md
 # version starts, only the two gap tracks count, each with its own risk: v5 (15m) 0.4%, the 1-minute track 0.075%.
 # FTMO rules: no new trades after a 4.5% loss in the day, the account burns at a 10% loss from the start.
 # v3 (10.11.2026, the review before the user's calibration): a fresh start with the corrected trade selection
-ACCT_V, RISK_V5, RISK_V1M = 4, 0.004, 0.00075     # 4 (12.11.2026): the user's gap method - a fresh $100K account
+ACCT_V, RISK_V5, RISK_V1M = 5, 0.004, 0.00075     # 4 (12.11.2026): the user's gap method - a fresh $100K account
 # the user's gap method on bot 5 (agents/tal_gap.py; cards approved by the manager 12.11.2026, each "maybe luck" -> risk
 # x0.7 of the bot's 0.4%). Since then the only tracks of bot 5's virtual account; the old gap tracks (v5 / 1-minute)
 # are still shown but no longer counted.
@@ -607,7 +610,7 @@ REVIEW_ON = True
 # no -> not taken; yes -> in at the first 1-minute open after his answer (or his own entry as a limit for an hour), the
 # strategy's stop / target in price (or his), breakeven at 60% of the way + costs as tested, out before a 2h+ break.
 # In his quiet hours -> the strategy as tested. Counted from the first run of this code (vacct "review_sc_from").
-REVIEW_SC = {"SC232", "SC446"}
+REVIEW_SC = set()      # 17.11.2026 evening: the scout strategies moved to their own account, as tested - no questions
 REVIEW_SC_WAIT = 15
 
 
@@ -1211,6 +1214,22 @@ def main():
                            "יעד 2 פיפס לפני התיקון האמיתי האחרון לפני הכניסה · יחס מינימום 1:1 · מסלול פערים בדקה: אותם כללים בגרף הדקה, המתנה של 96 דקות לנגיעה · מסלול פערים (v5): כל פער של נר חזק במדדים (גם JP225), כניסה בנגיעה אחרי שהמהלך פנה, סטופ מתחת לבסיס הפער, יעד בשיא המהלך, 30% יוצאים ב־90% מהדרך והשאר לברייק · מסלול מתוקן (v4): הדחף הוא המהלך הגדול, הפער הראשון שנשאר פתוח, סטופ מעבר לסווינג השלישי, יציאה ב־80% מהדרך ליעד, 12 מכשירים · מסלול רחב: אותם כללים עם נרות חזקים פחות (פי 1.8 מהממוצע במקום 2.5), בערך פי 4 עסקאות · "
                            "איסוף נתונים: נפט, כסף, USDCAD, ‏EURGBP, ‏EU50, ‏AUS200 - הפסידו בבדיקה, מוצגים בנפרד ולא נכנסים לחשבון הווירטואלי"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
+    # bot 5 split (user, 17.11.2026): bot 5 = only his gap method (account reset); the scout strategies trade in their
+    # own virtual account "בוט 5ב" (live/watch_scout_state.json), exactly as they passed the tests, no review questions
+    try:
+        sstate = json.loads(SCOUT_F.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        sstate = {}
+    for t in (sstate.get("watch") or []):
+        trades.setdefault(t["id"], t)
+    sacc = sstate.get("vacct") or {}
+    if sacc.get("v") != SACCT_V:
+        sacc = {"v": SACCT_V, "initial": INITIAL, "ledger": [], "breached": None,
+                "started": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
+        for t in trades.values():
+            if scout5_combo(t.get("tal")):
+                for f in ("risk_usd", "skipped", "pnl", "pnl_now"):
+                    t.pop(f, None)
     acc = state.get("vacct") or {}
     trades = gap_id_fix(trades, acc)
     for n_, s_ in (state.get("spreads5") or {}).items():
@@ -1220,38 +1239,41 @@ def main():
         acc = {"v": ACCT_V, "initial": INITIAL, "risk_pct": round(RISK_V5 * 100, 3), "risk_v1m_pct": round(RISK_V1M * 100, 4),
                "ledger": [], "breached": None, "started": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
         for t in trades.values():
-            for f in ("risk_usd", "skipped", "pnl", "pnl_now"):
-                t.pop(f, None)
+            if not scout5_combo(t.get("tal")):
+                for f in ("risk_usd", "skipped", "pnl", "pnl_now"):
+                    t.pop(f, None)
+    cur = [acc]               # the account the trade in hand belongs to: bot 5 (gap method) or 5ב (scout)
 
     def balance():
-        return acc["initial"] + sum(x["pnl"] for x in acc["ledger"])
+        a_ = cur[0]
+        return a_["initial"] + sum(x["pnl"] for x in a_["ledger"])
 
     def prague_day(ts):
         return pd.Timestamp(ts).tz_convert("Europe/Prague").strftime("%Y-%m-%d")
 
     def day_pnl(day):
-        return sum(x["pnl"] for x in acc["ledger"] if prague_day(x["exit_time"]) == day)
+        return sum(x["pnl"] for x in cur[0]["ledger"] if prague_day(x["exit_time"]) == day)
 
     def book(k_, exit_time, pnl, risk_usd=0.0):
         """The ledger follows the trade as it is computed now (bot 5's smart agent, 16.11.2026 - task b6to5news1611):
         a close booked by a bookkeeping fault (the data hole of 9.11, the FOMC mask of 18.11) used to stay in the
         ledger for good, even when the next refresh showed the trade still open or closed elsewhere. Returns True
         when the ledger changed."""
-        for x in acc["ledger"]:
+        for x in cur[0]["ledger"]:
             if x["id"] == k_:
                 # the same exit with a slightly different cost estimate stays as first booked (a closed trade is closed)
                 if x["exit_time"] == exit_time and abs(float(x["pnl"]) - float(pnl)) <= max(0.005, 0.1 * float(risk_usd or 0)):
                     return False
                 x["exit_time"], x["pnl"], x["fixed"] = exit_time, pnl, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
                 return True
-        acc["ledger"].append({"id": k_, "exit_time": exit_time, "pnl": pnl})
+        cur[0]["ledger"].append({"id": k_, "exit_time": exit_time, "pnl": pnl})
         return True
 
     def unbook(k_):
         """A trade the ledger holds as closed that is computed again as open / not taken - the close was not real."""
-        n_ = len(acc["ledger"])
-        acc["ledger"][:] = [x for x in acc["ledger"] if x["id"] != k_]
-        return len(acc["ledger"]) != n_
+        n_ = len(cur[0]["ledger"])
+        cur[0]["ledger"][:] = [x for x in cur[0]["ledger"] if x["id"] != k_]
+        return len(cur[0]["ledger"]) != n_
     try:
         fstate = json.loads(FUT_F.read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
@@ -1260,6 +1282,7 @@ def main():
     ftrades = {t["id"]: t for t in (fstate.get("watch") or [])} if (fstate.get("vacct") or {}).get("v") == FA.VERSION else {}
     REP.remember_alerts(LIVE / f"{NAME}_alerts.json")
     last_push = last_fpush = 0
+    last_spush = [0]
     while True:
         t_cycle = time.time()
         load_settings()
@@ -1455,6 +1478,10 @@ def main():
                     else:
                         rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), old.get("chart_v")
                     prev = old.get("status")
+                    sc_ = bool(scout5_combo(rec.get("tal")))
+                    cur[0] = sacc if sc_ else acc
+                    A_ = cur[0]
+                    P5 = "בוט 5ב - סייר" if sc_ else "בוט 5 - סקאלפינג"
                     # the virtual account: the risk is fixed when the trade opens, from the balance at that moment
                     for f in ("risk_usd", "skipped"):
                         if f in old:
@@ -1463,7 +1490,7 @@ def main():
                         if not rec.get("tal"):
                             # only the user's gap method counts since 12.11.2026 (the old tracks are shown, not counted)
                             rec["skipped"] = "v4" if rec["v4"] else "extra" if rec["extra"] else "old"
-                        elif rec["status"] in ("open", "closed") and rec["time"] and rec["time"] < acc["started"]:
+                        elif rec["status"] in ("open", "closed") and rec["time"] and rec["time"] < A_["started"]:
                             rec["skipped"] = "before"                                       # before the account opened
                     if rec["status"] in ("open", "closed") and "risk_usd" not in rec and "skipped" not in rec:
                         bal, day = balance(), prague_day(rec["time"])
@@ -1486,7 +1513,7 @@ def main():
                             rec["skipped"] = "tal_no"        # Tal: would not enter
                         elif rev_ and mk_.get("take") != "yes" and not rec.get("sleep") and rec.get("asked"):
                             rec["skipped"] = "tal_none"      # asked, no answer before the entry
-                        elif acc.get("breached"):
+                        elif A_.get("breached"):
                             rec["skipped"] = "breach"
                         elif hour_:
                             rec["skipped"] = "hours"         # an hour the tracks lost in together on 2024-2025
@@ -1506,9 +1533,10 @@ def main():
                             # tal_risk_scale is the gap tracks' factor; a scout strategy has its own risk
                             want_ = bal * TAL5_RISK.get(rec["tal"], RISK_TAL5) * (TAL5_SCALE[0] if gap_ else 1.0)
                             open_ = sum(float(o.get("risk_usd") or 0) for kk_, o in trades.items()
-                                        if kk_ != k and o.get("status") == "open" and o.get("risk_usd"))
+                                        if kk_ != k and o.get("status") == "open" and o.get("risk_usd")
+                                        and bool(scout5_combo(o.get("tal"))) == sc_)          # the same account's
                             room_ = min(DAILY_STOP * start + day_pnl(day) - open_,
-                                        bal - open_ - acc["initial"] * (1 - BOT_MAX_LOSS))
+                                        bal - open_ - A_["initial"] * (1 - BOT_MAX_LOSS))
                             if room_ < 0.25 * want_:
                                 rec["skipped"] = "room"
                             else:
@@ -1517,9 +1545,9 @@ def main():
                         if rec["status"] == "closed" and rec.get("r") is not None:
                             rec["pnl"] = round(rec["r"] * rec["risk_usd"], 2)
                             if book(k, rec["exit_time"], rec["pnl"], rec["risk_usd"]):
-                                if balance() <= acc["initial"] * (1 - MAX_LOSS) and not acc.get("breached"):
-                                    acc["breached"] = rec["exit_time"]
-                                    REP.notify("בוט 5 - סקאלפינג: החשבון הווירטואלי נשרף", f"היתרה ירדה ל־${balance():,.0f} (10% הפסד). לא נפתחות עוד עסקאות וירטואליות.",
+                                if balance() <= A_["initial"] * (1 - MAX_LOSS) and not A_.get("breached"):
+                                    A_["breached"] = rec["exit_time"]
+                                    REP.notify(f"{P5}: החשבון הווירטואלי נשרף", f"היתרה ירדה ל־${balance():,.0f} (10% הפסד). לא נפתחות עוד עסקאות וירטואליות.",
                                                tags=["eyes"], key="wbreach", every=86400 * 30)
                         elif rec["status"] in ("open", "pending", "cancelled"):
                             if unbook(k):
@@ -1541,14 +1569,15 @@ def main():
                         REP.notify(f"בוט 5 - סקאלפינג: {name} מחכה לכניסה", f"{side} · דחף של {rec['leg']} נרות · כניסה בנגיעה ב־{fmt(name, rec['entry'])}\n"
                                    f"סטופ {fmt(name, rec['stop'])} · לא נשלחת פקודה", tags=["eyes"], key=f"wp:{k}", every=86400)
                     if not quiet and prev in (None, "pending") and rec["status"] in ("open", "closed"):
-                        REP.notify(f"בוט 5 - סקאלפינג: {name} עסקה וירטואלית נפתחה", f"{side} @ {fmt(name, rec['entry'])} · סטופ {fmt(name, rec['stop'])} · "
-                                   f"יעד {fmt(name, rec['target'])}" + (f" · יחס 1:{rec['rr']}" if rec.get('rr') else "") + "\nפתח את האפליקציה וסמן אם היית לוקח אותה",
+                        REP.notify(f"{P5}: {name} עסקה וירטואלית נפתחה", f"{side} @ {fmt(name, rec['entry'])} · סטופ {fmt(name, rec['stop'])} · "
+                                   f"יעד {fmt(name, rec['target'])}" + (f" · יחס 1:{rec['rr']}" if rec.get('rr') else "") + ("" if sc_ else "\nפתח את האפליקציה וסמן אם היית לוקח אותה"),
                                    tags=["eyes"], key=f"wo:{k}", every=86400)
                     if not quiet and prev != "closed" and rec["status"] == "closed":
                         word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה", "breakeven": "בברייק אחרי יציאה חלקית"}.get(rec["reason"], "")
                         usd = f" · {'+' if rec.get('pnl', 0) >= 0 else '−'}${abs(rec.get('pnl', 0)):,.0f} · יתרה ${balance():,.0f}" if rec.get("pnl") is not None else ""
-                        REP.notify(f"בוט 5 - סקאלפינג: {name} נסגרה {word}", f"{side} · {'+' if (rec['r'] or 0) >= 0 else ''}{rec['r']:.2f} סיכון{usd} (וירטואלי)",
+                        REP.notify(f"{P5}: {name} נסגרה {word}", f"{side} · {'+' if (rec['r'] or 0) >= 0 else ''}{rec['r']:.2f} סיכון{usd} (וירטואלי)",
                                    tags=["eyes"], key=f"wc:{k}", every=86400)
+                cur[0] = acc
                 for k, t in list(trades.items()):
                     if t["symbol"] == name and t["status"] == "open" and k not in seen_now and (t.get("v5") or t.get("v1m")):
                         seen_now.add(k)
@@ -1583,7 +1612,8 @@ def main():
         cancelled = sorted([t for t in trades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]
         trades = {t["id"]: t for t in closed + live_ + cancelled}
         excursions(closed + live_, src)
-        core_closed = [t for t in closed if not t.get("extra") and not t.get("v4") and not t.get("v5") and not t.get("v1m")]
+        core_closed = [t for t in closed if not t.get("extra") and not t.get("v4") and not t.get("v5") and not t.get("v1m")
+                       and not scout5_combo(t.get("tal"))]
         rs_v1m = [t["r"] for t in closed if t.get("r") is not None and t.get("v1m")]
         rs_v5 = [t["r"] for t in closed if t.get("r") is not None and t.get("v5")]
         rs_v4 = [t["r"] for t in closed if t.get("r") is not None and t.get("v4")]
@@ -1592,11 +1622,12 @@ def main():
         rs_wide = [t["r"] for t in core_closed if t.get("r") is not None and t.get("wide")]
         rs_extra = [t["r"] for t in closed if t.get("r") is not None and t.get("extra")]
         state.update({"updated_utc": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
-                      "watch": sorted(trades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
+                      "watch": sorted([t for t in trades.values() if not scout5_combo(t.get("tal"))],
+                                      key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
                       "summary": {"closed": len(rs), "sum_r": round(float(np.sum(rs)), 2) if rs else 0.0,
                                   "avg_r": round(float(np.mean(rs)), 3) if rs else None, "win_pct": round(100 * float(np.mean(np.array(rs) > 0)), 1) if rs else None,
-                                  "open": sum(t["status"] == "open" and not any(t.get(k_) for k_ in ("extra", "v4", "v5", "v1m")) for t in live_),
-                                  "pending": sum(t["status"] == "pending" and not any(t.get(k_) for k_ in ("extra", "v4", "v5", "v1m")) for t in live_),
+                                  "open": sum(t["status"] == "open" and not any(t.get(k_) for k_ in ("extra", "v4", "v5", "v1m")) and not scout5_combo(t.get("tal")) for t in live_),
+                                  "pending": sum(t["status"] == "pending" and not any(t.get(k_) for k_ in ("extra", "v4", "v5", "v1m")) and not scout5_combo(t.get("tal")) for t in live_),
                                   "strict": {"closed": len(rs_strict), "sum_r": round(float(np.sum(rs_strict)), 2) if rs_strict else 0.0},
                                   "wide": {"closed": len(rs_wide), "sum_r": round(float(np.sum(rs_wide)), 2) if rs_wide else 0.0},
                                   "v1m": {"closed": len(rs_v1m), "sum_r": round(float(np.sum(rs_v1m)), 2) if rs_v1m else 0.0,
@@ -1617,22 +1648,6 @@ def main():
                       "spreads5": {n_: s_[-500:] for n_, s_ in SPREAD5.items()},
                       "scout5": {c_: {"spread": round(spread5(v_["sym"], 1.0, v_), 6) if (v_.get("spread") or len(SPREAD5.get(v_["sym"]) or []) >= 20) else None,
                                       "samples": len(SPREAD5.get(v_["sym"]) or []), "since": v_["since"]} for c_, v_ in SCOUT5.items()}})
-        bal = balance()
-        eq = bal + sum(t.get("pnl_now") or 0 for t in live_ if t["status"] == "open")
-        today = prague_day(pd.Timestamp.now(tz="UTC"))
-        curve, run = [[None, acc["initial"]]], acc["initial"]
-        for x in sorted(acc["ledger"], key=lambda x: x["exit_time"] or ""):
-            run += x["pnl"]
-            curve.append([x["exit_time"], round(run, 2)])
-        acc.update({"balance": round(bal, 2), "equity": round(eq, 2), "profit": round(bal - acc["initial"], 2),
-                    "today": round(day_pnl(today), 2), "curve": curve[-300:]})
-        # the same fields as a real bot's state, so the app shows this account like the demo accounts
-        now_iso = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
-        ec = acc.setdefault("eq_curve", [])
-        if not ec or ec[-1][1] != round(bal, 2) or ec[-1][2] != round(eq, 2) or now_iso[:15] != ec[-1][0][:15]:
-            ec.append([now_iso, round(bal, 2), round(eq, 2)])
-            del ec[:-4000]
-        acc.setdefault("started", now_iso)
         pip = lambda n: 0.01 if n.endswith("JPY") else 0.0001 if (len(n) == 6 and n.isalpha()) else 1.0  # noqa: E731
         combo = lambda n, t=None: (scout5_combo(t["tal"]) if scout5_combo((t or {}).get("tal"))  # noqa: E731
                                    else f"TAL|{tal5_tf(t['tal'])}|{n}" if (t or {}).get("tal")
@@ -1640,7 +1655,6 @@ def main():
         # the timeframe the trade ENTERS on (user, 16.11.2026: the app shows each trade's strategy and entry timeframe -
         # for the gap tracks the entry chart, not the detection chart the combo name carries)
         ent = lambda t: (TAL5[t["tal"]][0][1] if (t or {}).get("tal") in TAL5 and not scout5_combo(t["tal"]) else None)  # noqa: E731
-        counted = [t for t in closed if t.get("risk_usd") and t.get("pnl") is not None]
         # the review's own statistics (17.11.2026): his answers and what each kind of trade earned
         rv_ = [t for t in trades.values() if t.get("asked")]
         def _rs(ts_):
@@ -1653,28 +1667,77 @@ def main():
                   "no": _rs([t for t in rv_ if mk_of(t) == "no"]),          # what the rules' trade would have done
                   "unanswered": _rs([t for t in rv_ if not mk_of(t) and not t.get("sleep")]),
                   "sleep": _rs([t for t in rv_ if t.get("sleep")])}
-        state.update({"review": review, "account": "וירטואלי · שיטת הגאפ של טל", "server": f"צפייה בלבד · בלי כסף · סיכון {RISK_TAL5 * 100:.2f}% לעסקה", "initial": acc["initial"], "risk": RISK_TAL5,
-                      "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
-                      "halted_until": None, "combos": [f"TAL|{tal5_tf(k)}|{n}" for k in TAL5 for n in (TAL5_SYMS.get(k) or TAL5_SYMBOLS)] + sorted(SCOUT5), "started": acc["started"], "withdrawals": [],
-                      "equity_curve": ec, "lows": {},
-                      "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
-                                     "combo": combo(t["symbol"], t), "entry_tf": ent(t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
-                                     "now": t.get("px_now") or t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
-                                     "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
-                                     # at the stop / target WITH the costs, as the P&L shown next to them (16.11.2026)
-                                     "sl_usd": -round((t.get("risk_usd") or 0) * (1 + (t.get("cost_live") or 0)), 2),
-                                     "tp_usd": round((t.get("risk_usd") or 0) * ((t.get("rr") or 0) - (t.get("cost_live") or 0)), 2) if t.get("rr") else 0,
-                                     "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": pip(t["symbol"]), "free": False,
-                                     "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way")} for t in live_ if t["status"] == "open" and t.get("risk_usd")],
-                      "trades": [{"time": t["exit_time"], "combo": combo(t["symbol"], t), "symbol": t["symbol"],
-                                  "dir": "קנייה" if t["dir"] > 0 else "מכירה", "lots": "וירטואלי", "price": t["exit"], "pnl": t["pnl"],
-                                  "why": t.get("reason")} for t in counted],
-                      "closed": [{"id": t["id"], "combo": combo(t["symbol"], t), "entry_tf": ent(t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
-                                  "lots": "וירטואלי", "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
-                                  "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way"),
-                                  "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
-                                  "reason": {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה", "breakeven": "ברייק (30% יצאו)"}.get(t.get("reason"), ""),
-                                  "pip": pip(t["symbol"])} for t in counted]})
+        def acct_view(a_, scout, st_):
+            """The account fields (as a real bot's state, so the app shows it like the demo accounts) of bot 5 (the gap
+            method) or of 5ב (the scout strategies) - each only its own trades."""
+            cur[0] = a_
+            mine = lambda t: bool(scout5_combo(t.get("tal"))) == scout  # noqa: E731
+            live_a = [t for t in live_ if mine(t)]
+            bal = balance()
+            eq = bal + sum(t.get("pnl_now") or 0 for t in live_a if t["status"] == "open")
+            today = prague_day(pd.Timestamp.now(tz="UTC"))
+            curve, run = [[None, a_["initial"]]], a_["initial"]
+            for x in sorted(a_["ledger"], key=lambda x: x["exit_time"] or ""):
+                run += x["pnl"]
+                curve.append([x["exit_time"], round(run, 2)])
+            a_.update({"balance": round(bal, 2), "equity": round(eq, 2), "profit": round(bal - a_["initial"], 2),
+                       "today": round(day_pnl(today), 2), "curve": curve[-300:]})
+            now_iso = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+            ec = a_.setdefault("eq_curve", [])
+            if not ec or ec[-1][1] != round(bal, 2) or ec[-1][2] != round(eq, 2) or now_iso[:15] != ec[-1][0][:15]:
+                ec.append([now_iso, round(bal, 2), round(eq, 2)])
+                del ec[:-4000]
+            a_.setdefault("started", now_iso)
+            counted = [t for t in closed if mine(t) and t.get("risk_usd") and t.get("pnl") is not None]
+            st_.update({"initial": a_["initial"], "balance": round(bal, 2), "equity": round(eq, 2), "day_start": round(bal - day_pnl(today), 2),
+                        "halted_until": None, "started": a_["started"], "withdrawals": [], "equity_curve": ec, "lows": {},
+                        "positions": [{"ticket": t["id"], "side": "buy" if t["dir"] > 0 else "sell", "dir": "קנייה" if t["dir"] > 0 else "מכירה",
+                                       "combo": combo(t["symbol"], t), "entry_tf": ent(t), "symbol": t["symbol"], "lots": "וירטואלי", "open": t["entry"],
+                                       "now": t.get("px_now") or t["entry"] + t["dir"] * (t.get("r_now") or 0) * abs(t["entry"] - t["stop"]),
+                                       "sl": t["stop"], "tp": t["target"], "sl0": t["stop"], "tp0": t["target"],
+                                       # at the stop / target WITH the costs, as the P&L shown next to them (16.11.2026)
+                                       "sl_usd": -round((t.get("risk_usd") or 0) * (1 + (t.get("cost_live") or 0)), 2),
+                                       "tp_usd": round((t.get("risk_usd") or 0) * ((t.get("rr") or 0) - (t.get("cost_live") or 0)), 2) if t.get("rr") else 0,
+                                       "pnl": t.get("pnl_now") or 0, "since": t["time"], "pip": pip(t["symbol"]), "free": False,
+                                       "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way")}
+                                      for t in live_a if t["status"] == "open" and t.get("risk_usd")],
+                        "trades": [{"time": t["exit_time"], "combo": combo(t["symbol"], t), "symbol": t["symbol"],
+                                    "dir": "קנייה" if t["dir"] > 0 else "מכירה", "lots": "וירטואלי", "price": t["exit"], "pnl": t["pnl"],
+                                    "why": t.get("reason")} for t in counted],
+                        "closed": [{"id": t["id"], "combo": combo(t["symbol"], t), "entry_tf": ent(t), "symbol": t["symbol"], "side": "buy" if t["dir"] > 0 else "sell",
+                                    "lots": "וירטואלי", "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
+                                    "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way"),
+                                    "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
+                                    "reason": {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה", "breakeven": "ברייק (30% יצאו)"}.get(t.get("reason"), ""),
+                                    "pip": pip(t["symbol"])} for t in counted]})
+            cur[0] = acc
+        state.update({"review": review, "account": "וירטואלי · שיטת הגאפ של טל", "server": f"צפייה בלבד · בלי כסף · סיכון {RISK_TAL5 * 100:.2f}% לעסקה", "risk": RISK_TAL5,
+                      "combos": [f"TAL|{tal5_tf(k)}|{n}" for k in TAL5 for n in (TAL5_SYMS.get(k) or TAL5_SYMBOLS)]})
+        acct_view(acc, False, state)
+        # 5ב: the scout strategies' own account and trades (the same shape; the app lists it next to bot 5)
+        rs_sc = [t["r"] for t in closed if t.get("r") is not None and scout5_combo(t.get("tal"))]
+        live_sc = [t for t in live_ if scout5_combo(t.get("tal"))]
+        sstate = {"bot": SCOUT_NAME, "updated_utc": state["updated_utc"], "virtual": True,
+                  "rules": "אסטרטגיות הסייר של בוט 5, בדיוק כמו שעברו את הבדיקות: כל אסטרטגיה בגרף שלה, סטופ ויעד שלה, "
+                           "סטופ לנקודת הכניסה + עלויות ב־60% מהדרך ליעד, עלויות FTMO, הכללים של חשבון FTMO · בלי שאלות",
+                  "watch": sorted([t for t in trades.values() if scout5_combo(t.get("tal"))],
+                                  key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True),
+                  "summary": {"closed": len(rs_sc), "sum_r": round(float(np.sum(rs_sc)), 2) if rs_sc else 0.0,
+                              "win_pct": round(100 * float(np.mean(np.array(rs_sc) > 0)), 1) if rs_sc else None,
+                              "open": sum(t["status"] == "open" for t in live_sc), "pending": sum(t["status"] == "pending" for t in live_sc)},
+                  "account": "וירטואלי · אסטרטגיות הסייר", "server": "צפייה בלבד · בלי כסף", "risk": RISK_SCOUT5,
+                  "combos": sorted(SCOUT5), "errors": errors[-5:]}
+        acct_view(sacc, True, sstate)
+        sstate["vacct"] = sacc
+        try:
+            SCOUT_F.write_text(json.dumps(sstate, ensure_ascii=False, default=str), encoding="utf-8")
+        except Exception as e:  # noqa: BLE001
+            log(f"scout state not saved: {e}")
+        if time.time() - last_spush[0] > 120:
+            err = REP.push_state(SCOUT_NAME, sstate)
+            if err:
+                log(err)
+            last_spush[0] = time.time()
         state["vacct"] = acc
         try:
             STATE_F.write_text(json.dumps(state, ensure_ascii=False, default=str), encoding="utf-8")

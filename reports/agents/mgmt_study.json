@@ -1,0 +1,760 @@
+{
+ "at": "2026-11-17T06:02:56+00:00",
+ "bots": {
+  "bot1": {
+   "strategies": 70,
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 3894,
+      "total": 103.1,
+      "worst_day": -3.04,
+      "max_dd": 5.83
+     },
+     "unseen": {
+      "trades": 5212,
+      "total": 175.0,
+      "worst_day": -2.43,
+      "max_dd": 7.82
+     }
+    },
+    "cap@1": {
+     "train": {
+      "trades": 3246,
+      "total": 86.94,
+      "worst_day": -2.55,
+      "max_dd": 8.46
+     },
+     "unseen": {
+      "trades": 4357,
+      "total": 126.28,
+      "worst_day": -2.25,
+      "max_dd": 5.98
+     }
+    },
+    "cap@2": {
+     "train": {
+      "trades": 3707,
+      "total": 90.22,
+      "worst_day": -3.04,
+      "max_dd": 7.72
+     },
+     "unseen": {
+      "trades": 4972,
+      "total": 159.09,
+      "worst_day": -2.43,
+      "max_dd": 6.96
+     }
+    },
+    "streak@2": {
+     "train": {
+      "trades": 3723,
+      "total": 113.9,
+      "worst_day": -2.83,
+      "max_dd": 5.43
+     },
+     "unseen": {
+      "trades": 4936,
+      "total": 197.57,
+      "worst_day": -2.45,
+      "max_dd": 6.79
+     }
+    },
+    "streak@3": {
+     "train": {
+      "trades": 3838,
+      "total": 106.88,
+      "worst_day": -2.84,
+      "max_dd": 5.99
+     },
+     "unseen": {
+      "trades": 5103,
+      "total": 191.06,
+      "worst_day": -2.47,
+      "max_dd": 7.31
+     }
+    },
+    "halfchop": {
+     "train": {
+      "trades": 3914,
+      "total": 101.22,
+      "worst_day": -3.04,
+      "max_dd": 6.92
+     },
+     "unseen": {
+      "trades": 5235,
+      "total": 173.98,
+      "worst_day": -2.48,
+      "max_dd": 6.74
+     }
+    },
+    "time@4": {
+     "train": {
+      "trades": 4084,
+      "total": 89.88,
+      "worst_day": -2.8,
+      "max_dd": 11.54
+     },
+     "unseen": {
+      "trades": 5414,
+      "total": 125.54,
+      "worst_day": -2.55,
+      "max_dd": 12.33
+     }
+    },
+    "time@8": {
+     "train": {
+      "trades": 4051,
+      "total": 109.55,
+      "worst_day": -3.04,
+      "max_dd": 8.55
+     },
+     "unseen": {
+      "trades": 5370,
+      "total": 150.66,
+      "worst_day": -2.27,
+      "max_dd": 11.11
+     }
+    },
+    "trail@3": {
+     "train": {
+      "trades": 4136,
+      "total": 31.47,
+      "worst_day": -2.89,
+      "max_dd": 13.4
+     },
+     "unseen": {
+      "trades": 5429,
+      "total": 44.37,
+      "worst_day": -2.71,
+      "max_dd": 16.08
+     }
+    },
+    "trail@6": {
+     "train": {
+      "trades": 4127,
+      "total": 54.31,
+      "worst_day": -2.99,
+      "max_dd": 8.27
+     },
+     "unseen": {
+      "trades": 5415,
+      "total": 77.25,
+      "worst_day": -2.94,
+      "max_dd": 13.85
+     }
+    }
+   },
+   "best_train": {
+    "way": "streak@2",
+    "train": 10.8,
+    "unseen": 22.57,
+    "dd_unseen": -1.03
+   }
+  },
+  "bot2": {
+   "strategies": 37,
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 2130,
+      "total": 101.54,
+      "worst_day": -2.35,
+      "max_dd": 5.49
+     },
+     "unseen": {
+      "trades": 2746,
+      "total": 126.7,
+      "worst_day": -2.52,
+      "max_dd": 6.26
+     }
+    },
+    "cap@1": {
+     "train": {
+      "trades": 1717,
+      "total": 64.31,
+      "worst_day": -2.1,
+      "max_dd": 4.56
+     },
+     "unseen": {
+      "trades": 2237,
+      "total": 84.65,
+      "worst_day": -2.49,
+      "max_dd": 5.47
+     }
+    },
+    "cap@2": {
+     "train": {
+      "trades": 2019,
+      "total": 90.97,
+      "worst_day": -2.13,
+      "max_dd": 5.61
+     },
+     "unseen": {
+      "trades": 2639,
+      "total": 121.7,
+      "worst_day": -2.5,
+      "max_dd": 5.99
+     }
+    },
+    "streak@2": {
+     "train": {
+      "trades": 2030,
+      "total": 103.4,
+      "worst_day": -2.29,
+      "max_dd": 5.03
+     },
+     "unseen": {
+      "trades": 2627,
+      "total": 126.2,
+      "worst_day": -2.52,
+      "max_dd": 6.02
+     }
+    },
+    "streak@3": {
+     "train": {
+      "trades": 2106,
+      "total": 103.09,
+      "worst_day": -2.29,
+      "max_dd": 5.49
+     },
+     "unseen": {
+      "trades": 2711,
+      "total": 130.48,
+      "worst_day": -2.52,
+      "max_dd": 6.02
+     }
+    },
+    "halfchop": {
+     "train": {
+      "trades": 2131,
+      "total": 95.86,
+      "worst_day": -2.29,
+      "max_dd": 5.26
+     },
+     "unseen": {
+      "trades": 2750,
+      "total": 117.34,
+      "worst_day": -2.5,
+      "max_dd": 6.31
+     }
+    },
+    "time@4": {
+     "train": {
+      "trades": 2142,
+      "total": 68.3,
+      "worst_day": -2.15,
+      "max_dd": 3.88
+     },
+     "unseen": {
+      "trades": 2767,
+      "total": 104.13,
+      "worst_day": -2.32,
+      "max_dd": 6.45
+     }
+    },
+    "time@8": {
+     "train": {
+      "trades": 2141,
+      "total": 87.43,
+      "worst_day": -2.21,
+      "max_dd": 5.25
+     },
+     "unseen": {
+      "trades": 2765,
+      "total": 114.72,
+      "worst_day": -2.71,
+      "max_dd": 6.59
+     }
+    },
+    "trail@3": {
+     "train": {
+      "trades": 590,
+      "total": -8.97,
+      "worst_day": -2.36,
+      "max_dd": 8.98
+     },
+     "unseen": {
+      "trades": 2768,
+      "total": 17.57,
+      "worst_day": -2.73,
+      "max_dd": 9.16
+     }
+    },
+    "trail@6": {
+     "train": {
+      "trades": 2136,
+      "total": 34.78,
+      "worst_day": -2.46,
+      "max_dd": 8.65
+     },
+     "unseen": {
+      "trades": 2768,
+      "total": 59.04,
+      "worst_day": -2.87,
+      "max_dd": 8.27
+     }
+    }
+   },
+   "best_train": {
+    "way": "streak@2",
+    "train": 1.86,
+    "unseen": -0.5,
+    "dd_unseen": -0.24
+   }
+  },
+  "bot3": {
+   "strategies": 45,
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 2672,
+      "total": 86.22,
+      "worst_day": -3.23,
+      "max_dd": 6.93
+     },
+     "unseen": {
+      "trades": 3520,
+      "total": 111.92,
+      "worst_day": -2.96,
+      "max_dd": 5.55
+     }
+    },
+    "cap@1": {
+     "train": {
+      "trades": 1717,
+      "total": 12.64,
+      "worst_day": -2.18,
+      "max_dd": 10.04
+     },
+     "unseen": {
+      "trades": 2335,
+      "total": 51.78,
+      "worst_day": -2.35,
+      "max_dd": 4.07
+     }
+    },
+    "cap@2": {
+     "train": {
+      "trades": 2132,
+      "total": 36.9,
+      "worst_day": -2.43,
+      "max_dd": 8.31
+     },
+     "unseen": {
+      "trades": 2934,
+      "total": 71.79,
+      "worst_day": -2.48,
+      "max_dd": 5.01
+     }
+    },
+    "streak@2": {
+     "train": {
+      "trades": 2344,
+      "total": 65.5,
+      "worst_day": -2.9,
+      "max_dd": 6.39
+     },
+     "unseen": {
+      "trades": 3011,
+      "total": 100.06,
+      "worst_day": -3.37,
+      "max_dd": 6.33
+     }
+    },
+    "streak@3": {
+     "train": {
+      "trades": 2490,
+      "total": 75.12,
+      "worst_day": -3.1,
+      "max_dd": 6.68
+     },
+     "unseen": {
+      "trades": 3224,
+      "total": 98.28,
+      "worst_day": -2.96,
+      "max_dd": 5.37
+     }
+    },
+    "halfchop": {
+     "train": {
+      "trades": 2678,
+      "total": 82.54,
+      "worst_day": -3.17,
+      "max_dd": 6.92
+     },
+     "unseen": {
+      "trades": 3524,
+      "total": 108.24,
+      "worst_day": -2.74,
+      "max_dd": 5.26
+     }
+    },
+    "time@4": {
+     "train": {
+      "trades": 2695,
+      "total": 54.35,
+      "worst_day": -3.23,
+      "max_dd": 7.19
+     },
+     "unseen": {
+      "trades": 3538,
+      "total": 77.35,
+      "worst_day": -2.42,
+      "max_dd": 5.71
+     }
+    },
+    "time@8": {
+     "train": {
+      "trades": 2694,
+      "total": 68.57,
+      "worst_day": -3.07,
+      "max_dd": 7.35
+     },
+     "unseen": {
+      "trades": 3538,
+      "total": 93.83,
+      "worst_day": -2.95,
+      "max_dd": 5.26
+     }
+    },
+    "trail@3": {
+     "train": {
+      "trades": 2697,
+      "total": -1.52,
+      "worst_day": -2.63,
+      "max_dd": 11.83
+     },
+     "unseen": {
+      "trades": 3538,
+      "total": 26.96,
+      "worst_day": -2.19,
+      "max_dd": 10.8
+     }
+    },
+    "trail@6": {
+     "train": {
+      "trades": 2695,
+      "total": 20.38,
+      "worst_day": -2.7,
+      "max_dd": 10.09
+     },
+     "unseen": {
+      "trades": 3537,
+      "total": 62.64,
+      "worst_day": -2.57,
+      "max_dd": 7.72
+     }
+    }
+   },
+   "best_train": {
+    "way": "halfchop",
+    "train": -3.68,
+    "unseen": -3.68,
+    "dd_unseen": -0.29
+   }
+  },
+  "bot4": {
+   "strategies": 44,
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 2438,
+      "total": 106.23,
+      "worst_day": -2.87,
+      "max_dd": 8.74
+     },
+     "unseen": {
+      "trades": 3337,
+      "total": 150.01,
+      "worst_day": -2.32,
+      "max_dd": 6.12
+     }
+    },
+    "cap@1": {
+     "train": {
+      "trades": 1759,
+      "total": 67.47,
+      "worst_day": -2.57,
+      "max_dd": 6.55
+     },
+     "unseen": {
+      "trades": 2512,
+      "total": 112.29,
+      "worst_day": -2.55,
+      "max_dd": 7.4
+     }
+    },
+    "cap@2": {
+     "train": {
+      "trades": 2224,
+      "total": 101.34,
+      "worst_day": -2.64,
+      "max_dd": 7.39
+     },
+     "unseen": {
+      "trades": 3111,
+      "total": 130.89,
+      "worst_day": -2.13,
+      "max_dd": 7.89
+     }
+    },
+    "streak@2": {
+     "train": {
+      "trades": 2334,
+      "total": 102.22,
+      "worst_day": -2.98,
+      "max_dd": 8.86
+     },
+     "unseen": {
+      "trades": 3170,
+      "total": 150.08,
+      "worst_day": -2.36,
+      "max_dd": 5.82
+     }
+    },
+    "streak@3": {
+     "train": {
+      "trades": 2403,
+      "total": 105.02,
+      "worst_day": -2.87,
+      "max_dd": 8.09
+     },
+     "unseen": {
+      "trades": 3298,
+      "total": 146.81,
+      "worst_day": -2.37,
+      "max_dd": 5.96
+     }
+    },
+    "halfchop": {
+     "train": {
+      "trades": 2454,
+      "total": 107.17,
+      "worst_day": -2.87,
+      "max_dd": 8.3
+     },
+     "unseen": {
+      "trades": 3360,
+      "total": 141.73,
+      "worst_day": -2.23,
+      "max_dd": 5.75
+     }
+    },
+    "time@4": {
+     "train": {
+      "trades": 2554,
+      "total": 91.59,
+      "worst_day": -3.04,
+      "max_dd": 8.73
+     },
+     "unseen": {
+      "trades": 3470,
+      "total": 137.3,
+      "worst_day": -2.5,
+      "max_dd": 8.04
+     }
+    },
+    "time@8": {
+     "train": {
+      "trades": 2537,
+      "total": 109.82,
+      "worst_day": -3.08,
+      "max_dd": 8.51
+     },
+     "unseen": {
+      "trades": 3455,
+      "total": 143.42,
+      "worst_day": -2.4,
+      "max_dd": 8.1
+     }
+    },
+    "trail@3": {
+     "train": {
+      "trades": 2574,
+      "total": 40.66,
+      "worst_day": -3.52,
+      "max_dd": 7.29
+     },
+     "unseen": {
+      "trades": 3479,
+      "total": 83.85,
+      "worst_day": -2.65,
+      "max_dd": 10.74
+     }
+    },
+    "trail@6": {
+     "train": {
+      "trades": 2567,
+      "total": 57.37,
+      "worst_day": -2.77,
+      "max_dd": 6.49
+     },
+     "unseen": {
+      "trades": 3476,
+      "total": 101.87,
+      "worst_day": -2.82,
+      "max_dd": 8.3
+     }
+    }
+   },
+   "best_train": {
+    "way": "time@8",
+    "train": 3.59,
+    "unseen": -6.59,
+    "dd_unseen": 1.98
+   }
+  },
+  "bot5": {
+   "strategies": 23,
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 2904,
+      "total": 79.1,
+      "worst_day": -2.99,
+      "max_dd": 7.95
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 56.96,
+      "worst_day": -2.83,
+      "max_dd": 11.12
+     }
+    },
+    "cap@1": {
+     "train": {
+      "trades": 1493,
+      "total": 43.07,
+      "worst_day": -2.4,
+      "max_dd": 6.32
+     },
+     "unseen": {
+      "trades": 2036,
+      "total": 31.24,
+      "worst_day": -2.08,
+      "max_dd": 11.67
+     }
+    },
+    "cap@2": {
+     "train": {
+      "trades": 1995,
+      "total": 47.78,
+      "worst_day": -2.68,
+      "max_dd": 5.39
+     },
+     "unseen": {
+      "trades": 2730,
+      "total": 38.8,
+      "worst_day": -2.21,
+      "max_dd": 11.48
+     }
+    },
+    "streak@2": {
+     "train": {
+      "trades": 1843,
+      "total": 63.62,
+      "worst_day": -2.02,
+      "max_dd": 7.43
+     },
+     "unseen": {
+      "trades": 2299,
+      "total": 46.36,
+      "worst_day": -2.33,
+      "max_dd": 9.02
+     }
+    },
+    "streak@3": {
+     "train": {
+      "trades": 2082,
+      "total": 66.34,
+      "worst_day": -2.59,
+      "max_dd": 7.46
+     },
+     "unseen": {
+      "trades": 2630,
+      "total": 53.23,
+      "worst_day": -2.16,
+      "max_dd": 8.29
+     }
+    },
+    "halfchop": {
+     "train": {
+      "trades": 2904,
+      "total": 73.53,
+      "worst_day": -2.93,
+      "max_dd": 7.5
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 49.86,
+      "worst_day": -2.83,
+      "max_dd": 10.84
+     }
+    },
+    "time@4": {
+     "train": {
+      "trades": 2904,
+      "total": 32.1,
+      "worst_day": -2.49,
+      "max_dd": 10.0
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 22.67,
+      "worst_day": -2.41,
+      "max_dd": 14.39
+     }
+    },
+    "time@8": {
+     "train": {
+      "trades": 2904,
+      "total": 56.76,
+      "worst_day": -2.67,
+      "max_dd": 6.43
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 36.78,
+      "worst_day": -2.54,
+      "max_dd": 12.52
+     }
+    },
+    "trail@3": {
+     "train": {
+      "trades": 2904,
+      "total": 39.57,
+      "worst_day": -2.28,
+      "max_dd": 8.48
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 16.14,
+      "worst_day": -2.45,
+      "max_dd": 10.17
+     }
+    },
+    "trail@6": {
+     "train": {
+      "trades": 2904,
+      "total": 50.43,
+      "worst_day": -2.95,
+      "max_dd": 9.82
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 33.34,
+      "worst_day": -2.63,
+      "max_dd": 13.01
+     }
+    }
+   },
+   "best_train": {
+    "way": "halfchop",
+    "train": -5.57,
+    "unseen": -7.1,
+    "dd_unseen": -0.28
+   }
+  }
+ }
+}

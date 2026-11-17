@@ -4,9 +4,17 @@ name: News ticks study (bot 7)
 
 on:
   workflow_dispatch:
+    inputs:
+      syms:
+        description: "only these instruments (comma separated); empty = all"
+        default: ""
+      prev_run:
+        description: "also take the finished instruments of this earlier run (its artifacts)"
+        default: ""
 
 permissions:
   contents: write
+  actions: read
 
 jobs:
   plan:
@@ -22,7 +30,8 @@ jobs:
       - name: Install
         run: pip install -r requirements.txt
       - id: p
-        run: echo "jobs=$(python -m agents.news_ticks plan)" >> "$GITHUB_OUTPUT"
+        run: |
+          if [ -n "${{ inputs.syms }}" ]; then echo "jobs=$(python -c "import json;print(json.dumps('${{ inputs.syms }}'.split(',')))")" >> "$GITHUB_OUTPUT"; else echo "jobs=$(python -m agents.news_ticks plan)" >> "$GITHUB_OUTPUT"; fi
   run:
     needs: plan
     runs-on: ubuntu-latest
@@ -92,6 +101,13 @@ jobs:
           cache: pip
       - name: Install
         run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        if: inputs.prev_run != ''
+        with:
+          path: parts
+          pattern: nt-*
+          run-id: ${{ inputs.prev_run }}
+          github-token: ${{ github.token }}
       - uses: actions/download-artifact@v4
         with:
           path: parts

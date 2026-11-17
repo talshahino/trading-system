@@ -72,7 +72,7 @@ SYMBOLS.update(EXTRA)
 # opposite move before it is a correction), the first gap that stayed open during the move, stop beyond the 3rd swing
 # back, the whole position out at 80% of the way to the target. Best of the grid on these 12 low-cost instruments
 # (+0.11R a trade, positive in both halves, ~0.7 trades a week). Shown as its own track ('v4'), its own summary.
-OLD_OFF = {"wide", "v5", "v4", "extra"}     # 17.11.2026: Tal took these old tracks off bot 5
+OLD_OFF = {"wide", "v5", "v4"}     # 17.11.2026: Tal took these old tracks off bot 5; the data-collection assets stay ("don't remove assets - we test them as we go")
 V4_SYMBOLS = ["XAUUSD", "EURUSD", "GBPUSD", "USDJPY", "USDCHF", "USDCAD", "AUDUSD", "EURJPY", "US100", "US30", "GER40", "US500"]
 # v5 (user, 10.11.2026: "run v5"): every gap of a strong 15m candle, entry on the touch after the move turned, stop beyond
 # the gap's base, target the move's peak, trades with costs above 10% of the risk skipped. The backtest's best result:
@@ -1210,7 +1210,7 @@ def main():
     state.update({"bot": NAME, "label": LABEL, "watch_only": True, "symbols": list(SYMBOLS),
                   "rules": "מ־12.11.2026 החשבון הווירטואלי סופר רק את שיטת הגאפ של טל: דחף בגרף הגבוה, הגאפ בין נר 1 לנר 3 שנשאר פתוח, "
                            "כניסה באמצע הגאפ, סטופ 2 נקודות מעבר לסווינג השני, יעד בסווינג השני בצד השני · 5 צמדים: 15 דק'/דקה (עם הגנה מזעזועים), "
-                           "שעה/15 דק', 4 שעות/שעה, 4 שעות/15 דק' (סטופ לנקודת הכניסה כשעברו 70% מהדרך ליעד, בלי כניסה ±15 דק' מפרסום חשוב), 15 דק'/5 דק' · סיכון 0.28% לעסקה (⭐ אולי מזל: x0.7) · מוצגים ולא נספרים: המסלול המקורי (דחף ב־15 דקות) ופערים בדקה"})
+                           "שעה/15 דק', 4 שעות/שעה, 4 שעות/15 דק' (סטופ לנקודת הכניסה כשעברו 70% מהדרך ליעד, בלי כניסה ±15 דק' מפרסום חשוב), 15 דק'/5 דק' · סיכון 0.28% לעסקה (⭐ אולי מזל: x0.7) · מוצגים ולא נספרים: המסלול המקורי (דחף ב־15 דקות), פערים בדקה, ואיסוף נתונים על נפט, כסף, USDCAD, EURGBP ועוד"})
     trades = {t["id"]: t for t in (state.get("watch") or [])}
     # bot 5 split (user, 17.11.2026): bot 5 = only his gap method (account reset); the scout strategies trade in their
     # own virtual account "בוט 5ב" (live/watch_scout_state.json), exactly as they passed the tests, no review questions
@@ -1295,9 +1295,9 @@ def main():
                     continue
                 stop_at, noent = cal.masks(df, name)
                 cst = cost_of(name, df)
-                # the old tracks taken off (user, 17.11.2026 evening): data collection (EXTRA), the wide track, v5, v4.
+                # the old tracks taken off (user, 17.11.2026 evening): the wide track, v5, v4; data collection (EXTRA) stays.
                 # Kept: the original 15-minute track and "gaps on 1 minute" (v1m) - shown, not counted.
-                res = [] if name in EXTRA else CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
+                res = [] if (name in EXTRA and "extra" in OLD_OFF) else CORE.run_symbol(name, df, cst, stop_at, noent, [VARIANT], live=True)
                 strict = {tid(x) for x in res}
                 wide = []
                 keep_bx = CORE.BODY_X

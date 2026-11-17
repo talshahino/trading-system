@@ -11396,3 +11396,94 @@ SCOUT.update({
     "SC525": ("Hull Butterfly Oscillator turn dots beyond the adaptive levels, 2 ATR, 2R (LuxAlgo, reconstruction)", s_hull_butterfly, _F + ["4Hour"]),
     "SC526": ("Range Detector: close through a 20+ bar range (SMA20 +/- ATR500), range-mid stop, 2R (LuxAlgo, reconstruction)", s_range_detector_break, _F + ["4Hour"]),
 })
+
+
+# ---------------- SC527-SC530 the range pack: trade only while the 1-hour chart is choppy (user, 16-17.11.2026) ----------
+# "If it is choppy, there are strategies for chop - I did not see them act yesterday." Almost every strategy the bots
+# trade looks for a trend; on 16.11 (gold sideways all day) nothing earned. These four trade the range ONLY while the
+# 1-hour chart is choppy - Choppiness Index(14) over 61.8 or ADX(14) under 20, read on CLOSED hours (no look-ahead) -
+# so they add trades on the days the trend strategies lose. Our own pack (classic range rules); the pool tests each on
+# every bot's instruments and timeframes.
+def _chop_1h(df):
+    def ci(g):
+        h, l, c = (g[x].to_numpy(dtype=float) for x in "hlc")
+        pc = np.r_[c[0], c[:-1]]
+        tr = np.maximum(h, pc) - np.minimum(l, pc)
+        s = pd.Series(tr).rolling(14).sum()
+        rng = pd.Series(h).rolling(14).max() - pd.Series(l).rolling(14).min()
+        return (100 * np.log10(s / rng.replace(0, np.nan)) / np.log10(14)).to_numpy()
+
+    def ax(g):
+        return adx(g["h"].to_numpy(dtype=float), g["l"].to_numpy(dtype=float), g["c"].to_numpy(dtype=float), 14)
+
+    with np.errstate(invalid="ignore"):
+        return (_htf(df, "1h", ci) > 61.8) | (_htf(df, "1h", ax) < 20)
+
+
+def s_range_bb_reentry(df):
+    """Choppy 1-hour chart: a close back inside the Bollinger band (20, 2) after a close outside it - buy back above
+    the lower band, sell back under the upper. Stop beyond the last 10 bars' extreme + 0.2 ATR, target the middle
+    band (also an exit when the close reaches it)."""
+    o, h, l, c, v = _ohlcv(df)
+    mid = sma(c, 20)
+    sd = _s(c).rolling(20).std(ddof=0).to_numpy()
+    lo, up = mid - 2 * sd, mid + 2 * sd
+    a = atr(h, l, c, 14)
+    ch = _chop_1h(df)
+    pc, plo, pup = np.r_[np.nan, c[:-1]], np.r_[np.nan, lo[:-1]], np.r_[np.nan, up[:-1]]
+    L = ch & (pc < plo) & (c > lo) & (c < mid)
+    S = ch & (pc > pup) & (c < up) & (c > mid)
+    L, S = _excl(L, S)
+    ll, hh = _s(l).rolling(10).min().to_numpy(), _s(h).rolling(10).max().to_numpy()
+    return L, S, _plan_lv(ll - 0.2 * a, hh + 0.2 * a, mid, mid, exit_long=c >= mid, exit_short=c <= mid)
+
+
+def s_range_edge_reject(df):
+    """Choppy 1-hour chart, range = the last 24 bars' high / low (at least 2 ATR wide): a bar that reaches the lowest
+    15% of the range and closes up in its upper half (a rejection) -> buy; the mirror at the top -> sell. Stop
+    beyond the range edge + 0.25 ATR, target the range's 0.618 level (Fibonacci) from the entry side."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    hi = _s(h).shift(1).rolling(24).max().to_numpy()
+    lo = _s(l).shift(1).rolling(24).min().to_numpy()
+    rg = hi - lo
+    ch = _chop_1h(df) & (rg >= 2 * a)
+    mid_bar = (h + l) / 2
+    L = ch & (l <= lo + 0.15 * rg) & (c > mid_bar) & (c > o) & (c < lo + 0.5 * rg)
+    S = ch & (h >= hi - 0.15 * rg) & (c < mid_bar) & (c < o) & (c > lo + 0.5 * rg)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(np.minimum(lo, l) - 0.25 * a, np.maximum(hi, h) + 0.25 * a,
+                          lo + 0.618 * rg, hi - 0.618 * rg)
+
+
+def s_range_rsi2(df):
+    """Choppy 1-hour chart: RSI(2) under 10 -> buy, over 90 -> sell (a short-term stretch inside a range). Stop 1.5
+    ATR, target 1.5 ATR, out when the close crosses the 5-bar average back."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    r2 = rsi(c, 2)
+    ch = _chop_1h(df)
+    L, S = _excl(ch & (r2 < 10), ch & (r2 > 90))
+    s5 = sma(c, 5)
+    return L, S, _plan_lv(c - 1.5 * a, c + 1.5 * a, c + 1.5 * a, c - 1.5 * a, exit_long=c > s5, exit_short=c < s5)
+
+
+def s_range_vwap_revert(df):
+    """Choppy 1-hour chart: price 1.5 ATR or more under the day's VWAP and a bar that closes up -> buy back toward the
+    VWAP; the mirror over it -> sell. Stop 1 ATR beyond the bar's extreme, target the VWAP."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    vw = _vwap_day(df)
+    ch = _chop_1h(df)
+    L = ch & (c <= vw - 1.5 * a) & (c > o)
+    S = ch & (c >= vw + 1.5 * a) & (c < o)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(l - a, h + a, vw, vw, exit_long=c >= vw, exit_short=c <= vw)
+
+
+SCOUT.update({
+    "SC527": ("Range pack: Bollinger 20/2 re-entry only while the 1-hour chart is choppy (CI > 61.8 or ADX < 20), 10-bar extreme stop, middle-band target (ours, 17.11.2026)", s_range_bb_reentry, ["5Min", "15Min", "1Hour"]),
+    "SC528": ("Range pack: 24-bar range edge rejection while the 1-hour chart is choppy, edge stop, Fibonacci 0.618 target (ours, 17.11.2026)", s_range_edge_reject, ["5Min", "15Min", "1Hour"]),
+    "SC529": ("Range pack: RSI(2) under 10 / over 90 while the 1-hour chart is choppy, 1.5 ATR, out at the 5-bar average (ours, 17.11.2026)", s_range_rsi2, ["5Min", "15Min", "1Hour"]),
+    "SC530": ("Range pack: 1.5 ATR away from the day's VWAP with a turning bar while the 1-hour chart is choppy, VWAP target (ours, 17.11.2026)", s_range_vwap_revert, ["5Min", "15Min", "1Hour"]),
+})

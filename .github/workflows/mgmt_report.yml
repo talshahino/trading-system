@@ -1,0 +1,49 @@
+name: Management study - report from a chop_study run
+
+# agents/mgmt_study.py (user, 17.11.2026) on the data of a chop_study run (its artifacts, kept 5 days). Results only.
+
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "chop_study run id"
+        required: true
+      bot:
+        description: "bots"
+        default: "bot1,bot2,bot3,bot4,bot5"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          path: parts
+          pattern: ch-*
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Report
+        run: |
+          rm -rf reports/agents/*/conflict
+          for d in parts/*/; do cp -r "$d." reports/agents/; done
+          python -m agents.mgmt_study report --bot '${{ inputs.bot }}' | head -60
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/agents/mgmt_study.json
+          git commit -qm "Management study report (agents/mgmt_study)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

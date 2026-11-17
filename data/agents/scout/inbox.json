@@ -13043,6 +13043,98 @@
     "bot6"
    ],
    "rules": "Range Detector (LuxAlgo, our reconstruction): a close through the top (bottom) of a range that held 20+ bars -> trade the break; stop at the range's middle; target 2R (ours)."
+  },
+  {
+   "id": "SC527",
+   "name": "Range pack: Bollinger 20/2 re-entry while the 1-hour chart is choppy",
+   "source": "ours - the range pack (Tal, 17.11.2026: strategies that earn while the market is choppy)",
+   "url": "",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Choppy 1-hour chart (CI(14)>61.8 or ADX(14)<20, closed hours): close back inside the Bollinger band (20,2) after a close outside it. Stop beyond the last 10 bars' extreme + 0.2 ATR; target / exit the middle band."
+  },
+  {
+   "id": "SC528",
+   "name": "Range pack: 24-bar range edge rejection while choppy, Fibonacci 0.618 target",
+   "source": "ours - the range pack (Tal, 17.11.2026: strategies that earn while the market is choppy)",
+   "url": "",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Choppy 1-hour chart, 24-bar range >= 2 ATR: a bar reaching the lowest (highest) 15% of the range and closing back in its upper (lower) half -> buy (sell). Stop beyond the range edge + 0.25 ATR; target the range's 0.618 level from the entry side."
+  },
+  {
+   "id": "SC529",
+   "name": "Range pack: RSI(2) stretch while choppy",
+   "source": "ours - the range pack (Tal, 17.11.2026: strategies that earn while the market is choppy)",
+   "url": "",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Choppy 1-hour chart: RSI(2) < 10 buy, > 90 sell. Stop / target 1.5 ATR; out when the close crosses back over (under) the 5-bar average."
+  },
+  {
+   "id": "SC530",
+   "name": "Range pack: day-VWAP reversion while choppy",
+   "source": "ours - the range pack (Tal, 17.11.2026: strategies that earn while the market is choppy)",
+   "url": "",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Choppy 1-hour chart: 1.5 ATR or more under (over) the day's VWAP with a bar closing up (down) -> buy (sell) back to the VWAP. Stop 1 ATR beyond the bar's extreme; target / exit the VWAP."
   }
  ],
  "indicators": [

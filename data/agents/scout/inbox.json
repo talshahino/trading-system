@@ -13826,6 +13826,44 @@
     "bot7"
    ],
    "rules": "Over the EMA200 Stochastic CCI %K crosses up through 20 -> buy (mirror through 80 under it); 5-bar swing stop, 2R."
+  },
+  {
+   "id": "SC560",
+   "name": "SC071 both sides: Keltner band tag + reversal candle on light volume, short mirrored at the upper band, to the EMA20",
+   "source": "JournalPlus (article) + user 16.11.2026 (task b5sc071dir1611)",
+   "url": "https://journalplus.co/strategies/keltner-channel-strategy",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "5m/15m / long = SC071 (lower KC EMA20-2ATR14 tag, hammer or bullish engulfing, volume <= SMA20, close < EMA20); short = mirror (upper KC tag, shooting star or bearish engulfing, light volume, close > EMA20) / stop 0.25 ATR beyond the wick / target the EMA20 / flat before 16:00 NY"
+  },
+  {
+   "id": "SC561",
+   "name": "SC560 with the higher timeframe's EMA20 side (longs over it, shorts under it)",
+   "source": "JournalPlus (article) + user 16.11.2026 (task b5sc071dir1611)",
+   "url": "https://journalplus.co/strategies/keltner-channel-strategy",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "as SC560, longs only when the 4x-bar timeframe closes over its EMA20, shorts only under it (closed bars)"
   }
  ],
  "indicators": [

@@ -12015,3 +12015,44 @@ SCOUT.update({
     "SC558": ("Chande-Kroll Dynamic Momentum Index back over 30 / under 70, 1.5 ATR, 2R", s_dynamic_momentum, _F + ["4Hour"]),
     "SC559": ("Stochastic CCI 20/14 crosses 20 / 80 with the EMA200, swing stop, 2R", s_stoch_cci_trend, _F + ["4Hour"]),
 })
+
+
+# ---------------- SC560 / SC561 SC071 both sides: the Keltner reversal mirrored to the upper band (user, 16.11.2026) ----------------
+def _jp_keltner_both(df, trend=False):
+    """SC071 (JournalPlus Keltner reversal) with the short side the page does not state, built for the user's task
+    b5sc071dir1611 ("a wrong read - in a falling market it should have been a short"): long = SC071 exactly (lower
+    band EMA20 - 2 ATR14 tagged, hammer / bullish engulfing, volume at/under its 20-bar average, close under the EMA);
+    short = the mirror (upper band EMA20 + 2 ATR14 tagged, shooting star / bearish engulfing, light volume, close over
+    the EMA). Stop 0.25 ATR beyond the tagging wick, target the 20 EMA, flat before the last 15 minutes (16:00 New
+    York). trend=True (SC561): each side only with the higher timeframe (4x the bar) - longs over its EMA20, shorts
+    under it, from closed higher-timeframe bars only."""
+    o = _open(df)
+    h, l, c, v = (df[x].to_numpy(float) for x in "hlcv")
+    m = ema(c, 20)
+    a = atr(h, l, c, 14)
+    bull, bear = _engulf(o, c)
+    quiet = v <= sma(v, 20)
+    long_ = (l <= m - 2 * a) & (_hammer(o, h, l, c) | bull) & (c < m) & quiet
+    short = (h >= m + 2 * a) & (_star(o, h, l, c) | bear) & (c > m) & quiet
+    if trend:
+        up = _htf_above_ema20(df)
+        long_, short = long_ & up, short & ~up
+    long_, short = _excl(long_, short)
+    ny, _, _, _, _ = _local(df, "America/New_York")
+    stl, sts = l - 0.25 * a, h + 0.25 * a
+    return long_, short, {"stop": ("level", stl, sts), "target": ("level", m, m),
+                          "force_exit": (ny >= 15.75) & (ny < 16.0)}
+
+
+def s_jp_keltner_both(df):
+    return _jp_keltner_both(df, False)
+
+
+def s_jp_keltner_both_trend(df):
+    return _jp_keltner_both(df, True)
+
+
+SCOUT.update({
+    "SC560": ("SC071 both sides: Keltner band tag + reversal candle on light volume, the short mirrored at the upper band, to the EMA20 (JournalPlus + user 16.11)", s_jp_keltner_both, ["5Min", "15Min"]),
+    "SC561": ("SC560 with the higher timeframe's EMA20 side: longs over it, shorts under it (user 16.11: in a falling market a short, not a long)", s_jp_keltner_both_trend, ["5Min", "15Min"]),
+})

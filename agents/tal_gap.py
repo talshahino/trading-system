@@ -1385,6 +1385,9 @@ def search(symbols, load, out_dir, idx, idx_dir, budget_s):
     return done
 
 
+SUMMARY_CACHE = "summary_cache.json"   # summarize(): stats per (pair, configuration), by its files (17.11.2026)
+
+
 def _stats(t):
     tr, un = t[t["time"] < SPLIT], t[t["time"] >= SPLIT]
     return {"train": K.wstats(tr["r"], K.weights(tr["time"])), "unseen": K.wstats(un["r"], K.weights(un["time"])),
@@ -1398,29 +1401,57 @@ def summarize(idx, symbols, out_dir):
     """Per pair: the base, every variant, the one chosen on the train period, shown on the unseen one; and the open
     questions of tal_gap.md answered from the data (the knob values that win on train across the pairs)."""
     out_dir = Path(out_dir)
+    # 17.11.2026 (manager): this took ~27 of bot 5's ~93 minutes every run (agent_bot5 post_sec "summary") - every
+    # (pair, configuration) scanned the whole index again (the search adds thousands of configurations) and read its
+    # CSVs again though nothing changed. Now the index is grouped once by (pair, configuration), and each one's stats
+    # are kept in SUMMARY_CACHE keyed by its files' names / sizes / times - recomputed only when a file changes.
+    # Same rows, same numbers.
+    groups = {}
+    for v in idx.values():
+        groups.setdefault((v["pair"], vid(v["cfg"])), []).append(v)
+    cpath = out_dir / SUMMARY_CACHE
+    try:
+        cache = json.loads(cpath.read_text())
+    except Exception:  # noqa: BLE001
+        cache = {}
+    used = {}
 
-    def trades(p, cfg):
-        fs = [v for v in idx.values() if v["pair"] == pair_name(p) and v["cfg"] == cfg]
+    def stats_of(p, cfg):
+        fs = [v for v in groups.get((pair_name(p), vid(cfg)), []) if v["cfg"] == cfg]
         if {v["sym"] for v in fs} != set(symbols):
             return None
+        sig = []
+        for v in sorted(fs, key=lambda v: v["file"]):
+            try:
+                st_ = (out_dir / v["file"]).stat()
+                sig.append([v["file"], st_.st_size, int(st_.st_mtime)])
+            except OSError:
+                sig.append([v["file"], None, None])
+        key = f"{pair_name(p)}|{vid(cfg)}"
+        hit = cache.get(key)
+        if hit and hit.get("sig") == sig:
+            used[key] = hit
+            return hit["stats"]
         t = pd.concat([pd.read_csv(out_dir / v["file"]) for v in fs], ignore_index=True)
         t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
-        return t
+        s_ = _stats(t)
+        used[key] = {"sig": sig, "stats": s_}
+        return s_
     pairs, votes = {}, {}
     for p in PAIRS:
         rows = []
         for knob, val, cfg in variants():
-            t = trades(p, cfg)
-            if t is None:
+            s_ = stats_of(p, cfg)
+            if s_ is None:
                 continue
-            rows.append({"knob": knob, "val": val, "cfg": cfg, **_stats(t)})
+            rows.append({"knob": knob, "val": val, "cfg": cfg, **s_})
         seen = {vid(r["cfg"]) for r in rows}
         for v in idx.values():                          # the never-ending search's configurations
             if v.get("knob") == "search" and v["pair"] == pair_name(p) and vid(v["cfg"]) not in seen:
-                t = trades(p, v["cfg"])
+                s_ = stats_of(p, v["cfg"])
                 seen.add(vid(v["cfg"]))
-                if t is not None:
-                    rows.append({"knob": "search", "val": vid(v["cfg"]), "cfg": v["cfg"], **_stats(t)})
+                if s_ is not None:
+                    rows.append({"knob": "search", "val": vid(v["cfg"]), "cfg": v["cfg"], **s_})
         if not rows:
             continue
         base = next((r for r in rows if r["knob"] == "base"), None)
@@ -1444,6 +1475,12 @@ def summarize(idx, symbols, out_dir):
     for knob, vs in votes.items():
         cnt = pd.Series([str(v) for v, _ in vs]).value_counts()
         answers[knob] = {"name": NAMES[knob], "best_on_train": cnt.index[0], "pairs_voting": int(cnt.iloc[0]), "pairs": len(vs)}
+    try:
+        tmp = cpath.with_suffix(".tmp")
+        tmp.write_text(json.dumps(used))
+        tmp.replace(cpath)
+    except Exception as e:  # noqa: BLE001
+        print("tal summary cache not saved:", e)
     return pairs, answers
 
 

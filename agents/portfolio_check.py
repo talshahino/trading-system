@@ -416,8 +416,11 @@ def _verdict(bot, out, book, combo, tr, m0, risk, before, after):
                     "why": f"בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×{m0 * m:.2f} לאסטרטגיה: רווח "
                            f"{before['total']:+.2f}% → {a2['total']:+.2f}% והסיכון לא עולה"}
     return {**out, "ok": False, "mult": None,
+            # the days near the limit too (manager, 17.11.2026: bot 7 SE02 GBPJPY was declined on near-limit days 2 -> 4,
+            # and the reason showed only "-3.20% -> -3.20%, 5.43% -> 5.43%" - as if nothing changed)
             "why": f"בבוט השלם מוסיף סיכון (יום גרוע {before['worst_day']:.2f}% → {after['worst_day']:.2f}%, "
-                   f"ירידה {before['max_dd']:.2f}% → {after['max_dd']:.2f}%) גם בסיכון מוקטן"}
+                   f"ירידה {before['max_dd']:.2f}% → {after['max_dd']:.2f}%, "
+                   f"ימים קרובים למגבלה {before.get('near_days', 0)} → {after.get('near_days', 0)}) גם בסיכון מוקטן"}
 
 
 def cut_hurts(bot, combo, cur, val):

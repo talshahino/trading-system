@@ -1,7 +1,1353 @@
 {
  "bot": "bot5",
- "updated": "2026-11-17T12:55:00+00:00",
+ "updated": "2026-11-17T14:25:50+00:00",
  "cards": [
+  {
+   "bot": "bot5",
+   "kind": "risk",
+   "title": "בוט 5: SC501|5Min|XAUUSD - סיכון 0.049% ← 0.012% (בלעדיה הבוט יורד פחות על אותו רווח)",
+   "what": "משימה mgr1711b5scale (2). השמטה של אחת-אחת על כל 31 אסטרטגיות הסייר יחד (כלל הסיכון הקבוע, אחרי ×0.25): כל אחת מוסיפה רווח עד 2025, אבל SC501 בולטת - בלעדיה הירידה מהשיא במאי-דצמבר 2025 8.15% ← 5.5% והרווח רק +33.1% ← +29.3%. ב־2026 היא כמעט בלי יתרון (‎+0.011R לעסקה על 897, t 0.12). קודם תיקון: בלי כניסה חוזרת באותו יום אחרי סטופ (כמו בחי) - עד 2025 טוב, אבל ב־2026 ‎+27.8% ← ‎+24.52% והאסטרטגיה עצמה ‎-0.13R - לא מחזיק; כיוון אחד (קנייה / מכירה) - ההפך בין התקופות; מסנן שעות (13 מ־24 שעות שנבחרו עד 2025) - בחירה מתוך הרבה גרסאות, ב־2026 הירידה לא קטנה - לא נכנס. אז סיכון: נבחר על מאי-דצמבר 2025 בלבד, היחס רווח / ירידה הכי טוב שעדיין סוחר (×1 / 0.75 / 0.5 / 0.25): ×0.25. עד 2025: רווח +33.1% ← +30.3%, ירידה 8.15% ← 6.16%. 2026 (לא נראה): רווח +27.8% ← +27.4%, ירידה 5.62% ← 4.52%, יום גרוע -1.37% ← -1.29%. כמעט אותו רווח, סיכון קטן ברבע. נשארת בסיכון קטן כדי שנתוני החי ימשיכו להגיע. נמדד על חלק הסייר (העסקאות של הגאפ נמצאות רק במחשב הבוטים); הבוט כולו נמדד שם בסבב הבא (risk_guard 'loo').",
+   "train": {
+    "n": 637,
+    "eff_n": 636.4,
+    "mean": 0.1217,
+    "t": 1.07,
+    "win": 23.2
+   },
+   "unseen": {
+    "n": 897,
+    "eff_n": 896.8,
+    "mean": 0.0105,
+    "t": 0.12,
+    "win": 24.1
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": 0.0123,
+   "baseline": null,
+   "change": {
+    "track": "scout:SC501|5Min|XAUUSD",
+    "knob": "RISK_scout:SC501|5Min|XAUUSD",
+    "from": 0.00049,
+    "to": 0.000123
+   },
+   "detail": {
+    "world": "bot5",
+    "task": "mgr1711b5scale",
+    "grid": {
+     "x1.0": {
+      "train": {
+       "total_pct": 33.15,
+       "max_fall_pct": 8.15,
+       "worst_day_pct": -1.35,
+       "stopped": null,
+       "ratio": 4.07
+      },
+      "unseen": {
+       "total_pct": 27.77,
+       "max_fall_pct": 5.62,
+       "worst_day_pct": -1.37,
+       "stopped": null,
+       "ratio": 4.94
+      }
+     },
+     "x0.75": {
+      "train": {
+       "total_pct": 32.19,
+       "max_fall_pct": 7.49,
+       "worst_day_pct": -1.23,
+       "stopped": null,
+       "ratio": 4.3
+      },
+      "unseen": {
+       "total_pct": 27.66,
+       "max_fall_pct": 5.25,
+       "worst_day_pct": -1.33,
+       "stopped": null,
+       "ratio": 5.27
+      }
+     },
+     "x0.5": {
+      "train": {
+       "total_pct": 31.24,
+       "max_fall_pct": 6.82,
+       "worst_day_pct": -1.18,
+       "stopped": null,
+       "ratio": 4.58
+      },
+      "unseen": {
+       "total_pct": 27.54,
+       "max_fall_pct": 4.88,
+       "worst_day_pct": -1.31,
+       "stopped": null,
+       "ratio": 5.64
+      }
+     },
+     "x0.25": {
+      "train": {
+       "total_pct": 30.29,
+       "max_fall_pct": 6.16,
+       "worst_day_pct": -1.16,
+       "stopped": null,
+       "ratio": 4.92
+      },
+      "unseen": {
+       "total_pct": 27.42,
+       "max_fall_pct": 4.52,
+       "worst_day_pct": -1.29,
+       "stopped": null,
+       "ratio": 6.07
+      }
+     },
+     "x0.0": {
+      "train": {
+       "total_pct": 29.33,
+       "max_fall_pct": 5.5,
+       "worst_day_pct": -1.13,
+       "stopped": null,
+       "ratio": 5.33
+      },
+      "unseen": {
+       "total_pct": 27.3,
+       "max_fall_pct": 4.16,
+       "worst_day_pct": -1.26,
+       "stopped": null,
+       "ratio": 6.56
+      }
+     }
+    },
+    "tried_fixes": {
+     "hours": {
+      "train": {
+       "total_pct": 37.15,
+       "max_fall_pct": 6.96,
+       "worst_day_pct": -1.09,
+       "stopped": null,
+       "ratio": 5.34
+      },
+      "unseen": {
+       "total_pct": 29.1,
+       "max_fall_pct": 5.6,
+       "worst_day_pct": -1.32,
+       "stopped": null,
+       "ratio": 5.2
+      },
+      "keep_hours": [
+       0,
+       1,
+       2,
+       4,
+       5,
+       7,
+       10,
+       11,
+       14,
+       20,
+       21,
+       22,
+       23
+      ]
+     },
+     "dir1": {
+      "train": {
+       "total_pct": 33.47,
+       "max_fall_pct": 7.52,
+       "worst_day_pct": -1.21,
+       "stopped": null,
+       "ratio": 4.45
+      },
+      "unseen": {
+       "total_pct": 26.39,
+       "max_fall_pct": 5.1,
+       "worst_day_pct": -1.37,
+       "stopped": null,
+       "ratio": 5.17
+      }
+     },
+     "dir-1": {
+      "train": {
+       "total_pct": 29.01,
+       "max_fall_pct": 6.22,
+       "worst_day_pct": -1.17,
+       "stopped": null,
+       "ratio": 4.66
+      },
+      "unseen": {
+       "total_pct": 28.68,
+       "max_fall_pct": 4.92,
+       "worst_day_pct": -1.26,
+       "stopped": null,
+       "ratio": 5.83
+      }
+     },
+     "noreent": {
+      "acct": {
+       "train": {
+        "total_pct": 34.26,
+        "max_fall_pct": 6.27,
+        "worst_day_pct": -1.22,
+        "stopped": null,
+        "ratio": 5.46
+       },
+       "unseen": {
+        "total_pct": 24.52,
+        "max_fall_pct": 5.04,
+        "worst_day_pct": -1.31,
+        "stopped": null,
+        "ratio": 4.87
+       }
+      },
+      "train": {
+       "n": 316,
+       "eff_n": 315.7,
+       "mean": 0.3177,
+       "t": 1.69,
+       "win": 23.7
+      },
+      "unseen": {
+       "n": 430,
+       "eff_n": 429.9,
+       "mean": -0.1328,
+       "t": -1.28,
+       "win": 24.2
+      },
+      "base_train": {
+       "n": 637,
+       "eff_n": 636.4,
+       "mean": 0.1217,
+       "t": 1.07,
+       "win": 23.2
+      },
+      "base_unseen": {
+       "n": 897,
+       "eff_n": 896.8,
+       "mean": 0.0105,
+       "t": 0.12,
+       "win": 24.1
+      },
+      "dropped": 788
+     }
+    },
+    "chosen_on": "2025-04-30..2025-12-31, best total/fall among x>0",
+    "part": "scouts (31) at today's risks, fixed risk rule"
+   },
+   "made": "2026-11-17T14:25:50+00:00",
+   "id": "2def6a47d00b"
+  },
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: אחרי ×0.25 - השמטה של אחת-אחת ותקרה לזהב נבדקו; רק SC501 יורדת",
+   "what": "משימה mgr1711b5scale. (1) הסייר לבד אחרי ×0.25: עד 2025 +33.1%, ירידה 8.15%; 2026 +27.8%, ירידה 5.62%, לא נעצר. הבוט כולו (עם הגאפ ×0.468) נבדק במחשב הבוטים בסבב הבא - נוסף לבדיקה גם חיפוש מקדם נפרד לגאפ ולסייר (נבחר עד 2025, ירידה מתחת ל־9%), כרטיס רק אם צריך. (2) השמטה של אחת-אחת: אף אסטרטגיה לא מעלה את הרווח עד 2025 כשמוציאים אותה (הכי פחות חסרות: SC446|5Min|US30 -0.1%, SC071|15Min|US30 -0.1%, SC069|15Min|XAUUSD -0.1%). רק SC501 מורידה את הירידה הרבה יותר מהרווח - כרטיס סיכון נפרד. (3) תקרה לזהב (14 אסטרטגיות, 7,137 עסקאות): הנבחרת עד 2025 - עסקה אחת פתוחה בזהב - מורידה את 2026 מ־+27.8% ל־+17.4% והירידה לא קטנה (5.77%); 3 פתוחות: +21.5% / 3.85%. כל תקרה חותכת הרבה רווח - אין שינוי.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 40,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "world": "bot5",
+    "task": "mgr1711b5scale",
+    "loo": {
+     "base": {
+      "train": {
+       "total_pct": 33.15,
+       "max_fall_pct": 8.15,
+       "worst_day_pct": -1.35,
+       "low_pct": -1.11,
+       "stopped": null,
+       "room_skipped": 0,
+       "open_peak_pct": 0.95,
+       "n": 4530
+      },
+      "unseen": {
+       "total_pct": 27.77,
+       "max_fall_pct": 5.62,
+       "worst_day_pct": -1.37,
+       "low_pct": -4.13,
+       "stopped": null,
+       "room_skipped": 0,
+       "open_peak_pct": 1.03,
+       "n": 6105
+      }
+     },
+     "loo": {
+      "scout:BK07|15Min|EURUSD": {
+       "train": {
+        "total_pct": 31.02,
+        "max_fall_pct": 8.88,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.03,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.92,
+        "n": 4475
+       },
+       "unseen": {
+        "total_pct": 26.87,
+        "max_fall_pct": 5.8,
+        "worst_day_pct": -1.36,
+        "low_pct": -3.97,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 6037
+       }
+      },
+      "scout:BK07|15Min|US100": {
+       "train": {
+        "total_pct": 31.96,
+        "max_fall_pct": 8.11,
+        "worst_day_pct": -1.27,
+        "low_pct": -1.03,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.94,
+        "n": 4485
+       },
+       "unseen": {
+        "total_pct": 26.9,
+        "max_fall_pct": 6.33,
+        "worst_day_pct": -1.37,
+        "low_pct": -3.91,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 6046
+       }
+      },
+      "scout:FR03|15Min|GBPUSD": {
+       "train": {
+        "total_pct": 31.54,
+        "max_fall_pct": 8.31,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.03,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4513
+       },
+       "unseen": {
+        "total_pct": 26.92,
+        "max_fall_pct": 5.73,
+        "worst_day_pct": -1.37,
+        "low_pct": -4.17,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 6071
+       }
+      },
+      "scout:IB034|15Min|XAUUSD": {
+       "train": {
+        "total_pct": 32.88,
+        "max_fall_pct": 7.95,
+        "worst_day_pct": -1.32,
+        "low_pct": -1.15,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4146
+       },
+       "unseen": {
+        "total_pct": 27.48,
+        "max_fall_pct": 5.54,
+        "worst_day_pct": -1.35,
+        "low_pct": -4.07,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 5607
+       }
+      },
+      "scout:QC04|15Min|EURUSD": {
+       "train": {
+        "total_pct": 32.72,
+        "max_fall_pct": 8.08,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.07,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4484
+       },
+       "unseen": {
+        "total_pct": 27.0,
+        "max_fall_pct": 5.44,
+        "worst_day_pct": -1.36,
+        "low_pct": -4.03,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.99,
+        "n": 6053
+       }
+      },
+      "scout:SC042|15Min|XAUUSD": {
+       "train": {
+        "total_pct": 32.85,
+        "max_fall_pct": 7.86,
+        "worst_day_pct": -1.43,
+        "low_pct": -1.17,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.94,
+        "n": 4294
+       },
+       "unseen": {
+        "total_pct": 26.94,
+        "max_fall_pct": 5.74,
+        "worst_day_pct": -1.38,
+        "low_pct": -3.86,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.96,
+        "n": 5792
+       }
+      },
+      "scout:SC056|15Min|GBPUSD": {
+       "train": {
+        "total_pct": 32.4,
+        "max_fall_pct": 8.22,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.14,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.88,
+        "n": 4438
+       },
+       "unseen": {
+        "total_pct": 27.42,
+        "max_fall_pct": 5.61,
+        "worst_day_pct": -1.39,
+        "low_pct": -4.2,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.96,
+        "n": 5990
+       }
+      },
+      "scout:SC069|15Min|XAUUSD": {
+       "train": {
+        "total_pct": 33.06,
+        "max_fall_pct": 7.83,
+        "worst_day_pct": -1.37,
+        "low_pct": -1.09,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.88,
+        "n": 4423
+       },
+       "unseen": {
+        "total_pct": 27.09,
+        "max_fall_pct": 5.65,
+        "worst_day_pct": -1.42,
+        "low_pct": -4.01,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.96,
+        "n": 5993
+       }
+      },
+      "scout:SC071|15Min|US30": {
+       "train": {
+        "total_pct": 33.07,
+        "max_fall_pct": 8.25,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.07,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4502
+       },
+       "unseen": {
+        "total_pct": 27.5,
+        "max_fall_pct": 5.59,
+        "worst_day_pct": -1.37,
+        "low_pct": -4.13,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 6028
+       }
+      },
+      "scout:SC077|5Min|US30": {
+       "train": {
+        "total_pct": 30.82,
+        "max_fall_pct": 7.47,
+        "worst_day_pct": -1.35,
+        "low_pct": -0.89,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4427
+       },
+       "unseen": {
+        "total_pct": 25.81,
+        "max_fall_pct": 5.73,
+        "worst_day_pct": -1.36,
+        "low_pct": -4.46,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.0,
+        "n": 5955
+       }
+      },
+      "scout:SC138|15Min|XAUUSD": {
+       "train": {
+        "total_pct": 32.78,
+        "max_fall_pct": 8.13,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.13,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4501
+       },
+       "unseen": {
+        "total_pct": 27.49,
+        "max_fall_pct": 5.7,
+        "worst_day_pct": -1.36,
+        "low_pct": -4.17,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 6057
+       }
+      },
+      "scout:SC142|15Min|XAUUSD": {
+       "train": {
+        "total_pct": 31.18,
+        "max_fall_pct": 8.17,
+        "worst_day_pct": -1.28,
+        "low_pct": -1.11,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.92,
+        "n": 4464
+       },
+       "unseen": {
+        "total_pct": 27.12,
+        "max_fall_pct": 5.76,
+        "worst_day_pct": -1.37,
+        "low_pct": -4.11,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 6030
+       }
+      },
+      "scout:SC154|5Min|XAUUSD": {
+       "train": {
+        "total_pct": 31.66,
+        "max_fall_pct": 7.98,
+        "worst_day_pct": -1.3,
+        "low_pct": -0.92,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.88,
+        "n": 4392
+       },
+       "unseen": {
+        "total_pct": 27.14,
+        "max_fall_pct": 5.64,
+        "worst_day_pct": -1.39,
+        "low_pct": -4.2,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.96,
+        "n": 5817
+       }
+      },
+      "scout:SC232|15Min|XAUUSD": {
+       "train": {
+        "total_pct": 32.03,
+        "max_fall_pct": 8.05,
+        "worst_day_pct": -1.38,
+        "low_pct": -1.3,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.94,
+        "n": 4375
+       },
+       "unseen": {
+        "total_pct": 27.34,
+        "max_fall_pct": 5.55,
+        "worst_day_pct": -1.44,
+        "low_pct": -3.91,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.98,
+        "n": 5889
+       }
+      },
+      "scout:SC311|15Min|GER40": {
+       "train": {
+        "total_pct": 32.86,
+        "max_fall_pct": 8.1,
+        "worst_day_pct": -1.34,
+        "low_pct": -1.08,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4363
+       },
+       "unseen": {
+        "total_pct": 27.63,
+        "max_fall_pct": 5.45,
+        "worst_day_pct": -1.4,
+        "low_pct": -4.27,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.99,
+        "n": 5882
+       }
+      },
+      "scout:SC317|15Min|XAUUSD": {
+       "train": {
+        "total_pct": 31.4,
+        "max_fall_pct": 6.56,
+        "worst_day_pct": -1.04,
+        "low_pct": -0.86,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.88,
+        "n": 4252
+       },
+       "unseen": {
+        "total_pct": 24.61,
+        "max_fall_pct": 5.25,
+        "worst_day_pct": -1.3,
+        "low_pct": -3.67,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.96,
+        "n": 5684
+       }
+      },
+      "scout:SC326|15Min|USDCHF": {
+       "train": {
+        "total_pct": 32.8,
+        "max_fall_pct": 8.1,
+        "worst_day_pct": -1.31,
+        "low_pct": -1.05,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.92,
+        "n": 4411
+       },
+       "unseen": {
+        "total_pct": 27.49,
+        "max_fall_pct": 5.77,
+        "worst_day_pct": -1.37,
+        "low_pct": -4.13,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.99,
+        "n": 5978
+       }
+      },
+      "scout:SC326|15Min|USDJPY": {
+       "train": {
+        "total_pct": 32.12,
+        "max_fall_pct": 8.25,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.11,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4426
+       },
+       "unseen": {
+        "total_pct": 27.6,
+        "max_fall_pct": 5.48,
+        "worst_day_pct": -1.37,
+        "low_pct": -4.13,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.99,
+        "n": 5982
+       }
+      },
+      "scout:SC326|5Min|GBPUSD": {
+       "train": {
+        "total_pct": 32.46,
+        "max_fall_pct": 7.83,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.0,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4410
+       },
+       "unseen": {
+        "total_pct": 25.84,
+        "max_fall_pct": 6.27,
+        "worst_day_pct": -1.32,
+        "low_pct": -4.42,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.98,
+        "n": 5977
+       }
+      },
+      "scout:SC333|15Min|XAUUSD": {
+       "train": {
+        "total_pct": 31.81,
+        "max_fall_pct": 8.13,
+        "worst_day_pct": -1.25,
+        "low_pct": -1.17,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.92,
+        "n": 4237
+       },
+       "unseen": {
+        "total_pct": 27.56,
+        "max_fall_pct": 5.56,
+        "worst_day_pct": -1.38,
+        "low_pct": -4.05,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.99,
+        "n": 5727
+       }
+      },
+      "scout:SC402|15Min|XAUUSD": {
+       "train": {
+        "total_pct": 31.74,
+        "max_fall_pct": 7.81,
+        "worst_day_pct": -1.32,
+        "low_pct": -1.01,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.92,
+        "n": 4317
+       },
+       "unseen": {
+        "total_pct": 27.06,
+        "max_fall_pct": 5.45,
+        "worst_day_pct": -1.35,
+        "low_pct": -3.86,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.99,
+        "n": 5832
+       }
+      },
+      "scout:SC402|5Min|XAUUSD": {
+       "train": {
+        "total_pct": 30.99,
+        "max_fall_pct": 7.58,
+        "worst_day_pct": -1.3,
+        "low_pct": -0.97,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.91,
+        "n": 4304
+       },
+       "unseen": {
+        "total_pct": 25.99,
+        "max_fall_pct": 5.63,
+        "worst_day_pct": -1.35,
+        "low_pct": -3.8,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.98,
+        "n": 5829
+       }
+      },
+      "scout:SC432|15Min|XAUUSD": {
+       "train": {
+        "total_pct": 32.85,
+        "max_fall_pct": 8.16,
+        "worst_day_pct": -1.34,
+        "low_pct": -1.08,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4334
+       },
+       "unseen": {
+        "total_pct": 27.61,
+        "max_fall_pct": 5.57,
+        "worst_day_pct": -1.37,
+        "low_pct": -4.09,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.02,
+        "n": 5869
+       }
+      },
+      "scout:SC441|5Min|XAUUSD": {
+       "train": {
+        "total_pct": 32.72,
+        "max_fall_pct": 8.1,
+        "worst_day_pct": -1.34,
+        "low_pct": -1.1,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.94,
+        "n": 4468
+       },
+       "unseen": {
+        "total_pct": 27.73,
+        "max_fall_pct": 5.6,
+        "worst_day_pct": -1.37,
+        "low_pct": -4.08,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 6019
+       }
+      },
+      "scout:SC446|5Min|US30": {
+       "train": {
+        "total_pct": 33.09,
+        "max_fall_pct": 8.2,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.11,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4472
+       },
+       "unseen": {
+        "total_pct": 27.66,
+        "max_fall_pct": 5.7,
+        "worst_day_pct": -1.37,
+        "low_pct": -4.11,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 6041
+       }
+      },
+      "scout:SC480|15Min|US100": {
+       "train": {
+        "total_pct": 31.07,
+        "max_fall_pct": 7.3,
+        "worst_day_pct": -1.26,
+        "low_pct": -1.04,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.88,
+        "n": 4381
+       },
+       "unseen": {
+        "total_pct": 26.01,
+        "max_fall_pct": 5.41,
+        "worst_day_pct": -1.47,
+        "low_pct": -3.67,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.96,
+        "n": 5889
+       }
+      },
+      "scout:SC480|5Min|GER40": {
+       "train": {
+        "total_pct": 32.73,
+        "max_fall_pct": 8.01,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.03,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4371
+       },
+       "unseen": {
+        "total_pct": 25.89,
+        "max_fall_pct": 5.11,
+        "worst_day_pct": -1.37,
+        "low_pct": -3.23,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 5893
+       }
+      },
+      "scout:SC480|5Min|US100": {
+       "train": {
+        "total_pct": 31.29,
+        "max_fall_pct": 7.36,
+        "worst_day_pct": -1.26,
+        "low_pct": -1.04,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.88,
+        "n": 4370
+       },
+       "unseen": {
+        "total_pct": 23.53,
+        "max_fall_pct": 5.58,
+        "worst_day_pct": -1.28,
+        "low_pct": -3.66,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.96,
+        "n": 5871
+       }
+      },
+      "scout:SC486|15Min|USDCHF": {
+       "train": {
+        "total_pct": 32.68,
+        "max_fall_pct": 8.28,
+        "worst_day_pct": -1.34,
+        "low_pct": -1.06,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.92,
+        "n": 4482
+       },
+       "unseen": {
+        "total_pct": 27.44,
+        "max_fall_pct": 5.63,
+        "worst_day_pct": -1.44,
+        "low_pct": -4.16,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.98,
+        "n": 6044
+       }
+      },
+      "scout:SC501|5Min|XAUUSD": {
+       "train": {
+        "total_pct": 29.33,
+        "max_fall_pct": 5.5,
+        "worst_day_pct": -1.13,
+        "low_pct": -1.44,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 3893
+       },
+       "unseen": {
+        "total_pct": 27.3,
+        "max_fall_pct": 4.16,
+        "worst_day_pct": -1.26,
+        "low_pct": -3.15,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.98,
+        "n": 5208
+       }
+      },
+      "scout:SC512|5Min|GER40": {
+       "train": {
+        "total_pct": 32.47,
+        "max_fall_pct": 8.25,
+        "worst_day_pct": -1.35,
+        "low_pct": -1.01,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 0.95,
+        "n": 4490
+       },
+       "unseen": {
+        "total_pct": 27.26,
+        "max_fall_pct": 5.57,
+        "worst_day_pct": -1.37,
+        "low_pct": -4.27,
+        "stopped": null,
+        "room_skipped": 0,
+        "open_peak_pct": 1.03,
+        "n": 6060
+       }
+      }
+     },
+     "per": {
+      "scout:BK07|15Min|EURUSD": {
+       "risk": 0.06999999999999999,
+       "n25": 55,
+       "R25": 30.4,
+       "n26": 68,
+       "R26": 12.9
+      },
+      "scout:BK07|15Min|US100": {
+       "risk": 0.06999999999999999,
+       "n25": 45,
+       "R25": 17.0,
+       "n26": 59,
+       "R26": 12.5
+      },
+      "scout:FR03|15Min|GBPUSD": {
+       "risk": 0.06999999999999999,
+       "n25": 17,
+       "R25": 23.0,
+       "n26": 34,
+       "R26": 12.2
+      },
+      "scout:IB034|15Min|XAUUSD": {
+       "risk": 0.0105,
+       "n25": 384,
+       "R25": 25.2,
+       "n26": 498,
+       "R26": 27.8
+      },
+      "scout:QC04|15Min|EURUSD": {
+       "risk": 0.0315,
+       "n25": 46,
+       "R25": 13.6,
+       "n26": 52,
+       "R26": 24.7
+      },
+      "scout:SC042|15Min|XAUUSD": {
+       "risk": 0.06999999999999999,
+       "n25": 236,
+       "R25": 4.3,
+       "n26": 313,
+       "R26": 12.0
+      },
+      "scout:SC056|15Min|GBPUSD": {
+       "risk": 0.06999999999999999,
+       "n25": 92,
+       "R25": 10.6,
+       "n26": 115,
+       "R26": 5.1
+      },
+      "scout:SC069|15Min|XAUUSD": {
+       "risk": 0.06999999999999999,
+       "n25": 107,
+       "R25": 1.2,
+       "n26": 112,
+       "R26": 9.8
+      },
+      "scout:SC071|15Min|US30": {
+       "risk": 0.0358,
+       "n25": 28,
+       "R25": 2.2,
+       "n26": 77,
+       "R26": 7.6
+      },
+      "scout:SC077|5Min|US30": {
+       "risk": 0.1,
+       "n25": 103,
+       "R25": 23.3,
+       "n26": 150,
+       "R26": 19.6
+      },
+      "scout:SC138|15Min|XAUUSD": {
+       "risk": 0.06999999999999999,
+       "n25": 29,
+       "R25": 5.2,
+       "n26": 48,
+       "R26": 4.1
+      },
+      "scout:SC142|15Min|XAUUSD": {
+       "risk": 0.06999999999999999,
+       "n25": 66,
+       "R25": 28.1,
+       "n26": 75,
+       "R26": 9.3
+      },
+      "scout:SC154|5Min|XAUUSD": {
+       "risk": 0.06999999999999999,
+       "n25": 138,
+       "R25": 21.2,
+       "n26": 288,
+       "R26": 9.0
+      },
+      "scout:SC232|15Min|XAUUSD": {
+       "risk": 0.049,
+       "n25": 155,
+       "R25": 22.9,
+       "n26": 216,
+       "R26": 9.0
+      },
+      "scout:SC311|15Min|GER40": {
+       "risk": 0.0315,
+       "n25": 167,
+       "R25": 9.1,
+       "n26": 223,
+       "R26": 4.5
+      },
+      "scout:SC317|15Min|XAUUSD": {
+       "risk": 0.06999999999999999,
+       "n25": 278,
+       "R25": 24.9,
+       "n26": 421,
+       "R26": 45.2
+      },
+      "scout:SC326|15Min|USDCHF": {
+       "risk": 0.0315,
+       "n25": 119,
+       "R25": 10.9,
+       "n26": 127,
+       "R26": 9.0
+      },
+      "scout:SC326|15Min|USDJPY": {
+       "risk": 0.0315,
+       "n25": 104,
+       "R25": 32.7,
+       "n26": 123,
+       "R26": 5.5
+      },
+      "scout:SC326|5Min|GBPUSD": {
+       "risk": 0.045,
+       "n25": 120,
+       "R25": 15.2,
+       "n26": 128,
+       "R26": 43.1
+      },
+      "scout:SC333|15Min|XAUUSD": {
+       "risk": 0.0315,
+       "n25": 293,
+       "R25": 42.3,
+       "n26": 378,
+       "R26": 6.8
+      },
+      "scout:SC402|15Min|XAUUSD": {
+       "risk": 0.0315,
+       "n25": 213,
+       "R25": 44.5,
+       "n26": 273,
+       "R26": 22.8
+      },
+      "scout:SC402|5Min|XAUUSD": {
+       "risk": 0.045,
+       "n25": 226,
+       "R25": 47.9,
+       "n26": 276,
+       "R26": 39.8
+      },
+      "scout:SC432|15Min|XAUUSD": {
+       "risk": 0.0105,
+       "n25": 196,
+       "R25": 28.1,
+       "n26": 236,
+       "R26": 15.4
+      },
+      "scout:SC441|5Min|XAUUSD": {
+       "risk": 0.0105,
+       "n25": 62,
+       "R25": 40.9,
+       "n26": 86,
+       "R26": 4.5
+      },
+      "scout:SC446|5Min|US30": {
+       "risk": 0.0105,
+       "n25": 58,
+       "R25": 5.3,
+       "n26": 64,
+       "R26": 10.7
+      },
+      "scout:SC480|15Min|US100": {
+       "risk": 0.06999999999999999,
+       "n25": 149,
+       "R25": 29.7,
+       "n26": 216,
+       "R26": 25.2
+      },
+      "scout:SC480|5Min|GER40": {
+       "risk": 0.06999999999999999,
+       "n25": 159,
+       "R25": 5.9,
+       "n26": 212,
+       "R26": 26.9
+      },
+      "scout:SC480|5Min|US100": {
+       "risk": 0.06999999999999999,
+       "n25": 160,
+       "R25": 26.5,
+       "n26": 234,
+       "R26": 60.6
+      },
+      "scout:SC486|15Min|USDCHF": {
+       "risk": 0.049,
+       "n25": 48,
+       "R25": 9.5,
+       "n26": 61,
+       "R26": 6.8
+      },
+      "scout:SC501|5Min|XAUUSD": {
+       "risk": 0.049,
+       "n25": 637,
+       "R25": 77.8,
+       "n26": 897,
+       "R26": 9.7
+      },
+      "scout:SC512|5Min|GER40": {
+       "risk": 0.049,
+       "n25": 40,
+       "R25": 13.8,
+       "n26": 45,
+       "R26": 10.5
+      }
+     }
+    },
+    "gold_cap": {
+     "base": {
+      "train": {
+       "total_pct": 33.15,
+       "max_fall_pct": 8.15,
+       "worst_day_pct": -1.35,
+       "stopped": null,
+       "ratio": 4.07
+      },
+      "unseen": {
+       "total_pct": 27.77,
+       "max_fall_pct": 5.62,
+       "worst_day_pct": -1.37,
+       "stopped": null,
+       "ratio": 4.94
+      }
+     },
+     "count1": {
+      "train": {
+       "total_pct": 18.73,
+       "max_fall_pct": 2.51,
+       "worst_day_pct": -0.93,
+       "stopped": null,
+       "ratio": 7.46
+      },
+      "unseen": {
+       "total_pct": 17.44,
+       "max_fall_pct": 5.77,
+       "worst_day_pct": -0.92,
+       "stopped": null,
+       "ratio": 3.02
+      }
+     },
+     "count2": {
+      "train": {
+       "total_pct": 17.34,
+       "max_fall_pct": 3.9,
+       "worst_day_pct": -0.9,
+       "stopped": null,
+       "ratio": 4.45
+      },
+      "unseen": {
+       "total_pct": 20.17,
+       "max_fall_pct": 3.76,
+       "worst_day_pct": -0.9,
+       "stopped": null,
+       "ratio": 5.36
+      }
+     },
+     "count3": {
+      "train": {
+       "total_pct": 19.28,
+       "max_fall_pct": 3.88,
+       "worst_day_pct": -1.13,
+       "stopped": null,
+       "ratio": 4.97
+      },
+      "unseen": {
+       "total_pct": 21.54,
+       "max_fall_pct": 3.85,
+       "worst_day_pct": -1.14,
+       "stopped": null,
+       "ratio": 5.59
+      }
+     },
+     "count4": {
+      "train": {
+       "total_pct": 19.68,
+       "max_fall_pct": 5.44,
+       "worst_day_pct": -1.15,
+       "stopped": null,
+       "ratio": 3.62
+      },
+      "unseen": {
+       "total_pct": 23.89,
+       "max_fall_pct": 4.32,
+       "worst_day_pct": -1.13,
+       "stopped": null,
+       "ratio": 5.53
+      }
+     },
+     "count6": {
+      "train": {
+       "total_pct": 23.26,
+       "max_fall_pct": 7.4,
+       "worst_day_pct": -1.23,
+       "stopped": null,
+       "ratio": 3.14
+      },
+      "unseen": {
+       "total_pct": 25.64,
+       "max_fall_pct": 5.36,
+       "worst_day_pct": -1.35,
+       "stopped": null,
+       "ratio": 4.78
+      }
+     },
+     "risk0.1": {
+      "train": {
+       "total_pct": 19.08,
+       "max_fall_pct": 3.14,
+       "worst_day_pct": -1.17,
+       "stopped": null,
+       "ratio": 6.08
+      },
+      "unseen": {
+       "total_pct": 16.53,
+       "max_fall_pct": 4.95,
+       "worst_day_pct": -1.01,
+       "stopped": null,
+       "ratio": 3.34
+      }
+     },
+     "risk0.15": {
+      "train": {
+       "total_pct": 17.92,
+       "max_fall_pct": 3.84,
+       "worst_day_pct": -0.93,
+       "stopped": null,
+       "ratio": 4.67
+      },
+      "unseen": {
+       "total_pct": 21.94,
+       "max_fall_pct": 4.0,
+       "worst_day_pct": -1.18,
+       "stopped": null,
+       "ratio": 5.49
+      }
+     },
+     "risk0.2": {
+      "train": {
+       "total_pct": 17.38,
+       "max_fall_pct": 6.48,
+       "worst_day_pct": -1.25,
+       "stopped": null,
+       "ratio": 2.68
+      },
+      "unseen": {
+       "total_pct": 19.59,
+       "max_fall_pct": 4.66,
+       "worst_day_pct": -1.41,
+       "stopped": null,
+       "ratio": 4.2
+      }
+     },
+     "risk0.3": {
+      "train": {
+       "total_pct": 24.18,
+       "max_fall_pct": 6.68,
+       "worst_day_pct": -1.23,
+       "stopped": null,
+       "ratio": 3.62
+      },
+      "unseen": {
+       "total_pct": 24.45,
+       "max_fall_pct": 5.31,
+       "worst_day_pct": -1.46,
+       "stopped": null,
+       "ratio": 4.6
+      }
+     }
+    }
+   },
+   "made": "2026-11-17T14:25:50+00:00",
+   "id": "2e2048ce8c67"
+  },
   {
    "bot": "bot5",
    "kind": "info",
@@ -466,54 +1812,6 @@
    },
    "made": "2026-11-17T06:32:38+00:00",
    "id": "22f7ec92a937"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC071|15Min|US30 - סיכון 0.28% ← 0.14% לפי היתרון, עד שיימצא תיקון",
-   "what": "דוח ההפסד של 16.11 והמשימה mgr1411fam2 (מועד 17.11). קודם תיקון - נבדקו ונכשלו: מסנן כיוון מהשעה (EMA50 / שיפוע EMA20 / שניהם - נשארות 3-10 עסקאות), בלי קנייה חוזרת אחרי סטופ (2026 ‎+7.6R ← ‎-1.9R), 6 מסנני משפחה (המשפחה ב־4 מדדים ‎-16R עד 2025; הטוב adx_range ‎-1.8R / ‎-5.5R), סטופ רחב / צר ויציאה חלקית (stop_study, gaveback). לפי הנוסחה של טל: היתרון שאושר = ‎+0.099R לעסקה (2026, 77 עסקאות); בחי 4 עסקאות ‎-0.86R בממוצע; היתרון עכשיו ‎+0.051R ← ×0.51. 0.28% ← 0.14%. הבוט כולו ב־2026 בערך ‎+57.0% ← ‎+55.9% (SC071 תורמת ‎+7.6R), פחות סיכון פתוח בקניות מדדים. עוד פתוח: הצד השני (שורט בפס העליון) - נמצא תיקון, הסיכון חוזר.",
-   "train": {
-    "n": 28,
-    "eff_n": 28.0,
-    "mean": 0.079,
-    "t": null,
-    "win": 35.7
-   },
-   "unseen": {
-    "n": 77,
-    "eff_n": 77.0,
-    "mean": 0.099,
-    "t": null,
-    "win": 50.6
-   },
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 11,
-   "cost_r": null,
-   "risk_pct": 0.14,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC071|15Min|US30",
-    "knob": "RISK_scout:SC071|15Min|US30",
-    "from": 0.0028,
-    "to": 0.00143
-   },
-   "detail": {
-    "task": "e61b48594aa6",
-    "also": "mgr1411fam2",
-    "fix_attempts": "bot5|SC071|15Min|US30",
-    "rule": "edge formula (loss_review.edge_now, variance from the win rate)",
-    "edge": {
-     "m0": 0.099,
-     "live_n": 4,
-     "live_mean": -0.86,
-     "m": 0.051,
-     "mult": 0.51
-    }
-   },
-   "made": "2026-11-17T06:32:38+00:00",
-   "id": "0011fbf741e5"
   },
   {
    "bot": "bot5",
@@ -1161,2510 +2459,6 @@
   },
   {
    "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC441|5Min|XAUUSD - סיכון 0.28% ← 0.042% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 4 האסטרטגיות שנוספו היום (16.11, 09:15) - שלוש בזהב ואחת ב־US30 - נכנסו ב־0.28% כל אחת, מעל המקדם ×0.45 שהבוט נתן לסייר אתמול, והגדילו שוב את הסיכון: בחלק הסייר ב־2026 היום הגרוע ‎-2.75% ← ‎-3.73%, הנפילה מההתחלה ‎-2.51% ← ‎-6.93%, הירידה מהשיא 10.35% ← 11.54%. בזהב יש עכשיו 12 אסטרטגיות סייר, והיום (16.11) שלוש מהן נכנסו לקנייה יחד ב־01:00 ונעצרו יחד. רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד באותו כלל של אתמול (המקדם הגדול ביותר שהיום הגרוע עד שני שלישים מ־4.5%): ×0.15, 0.28% ← 0.042%. 2026 (לא נראתה): סה\"כ 73.9% ← 61.0%, ירידה 11.54% ← 9.93%, היום הגרוע ‎-3.73% ← ‎-2.83%, הנפילה מההתחלה ‎-6.93% ← ‎-3.17%. בלי הארבע: 58.5%, ירידה 10.35% - כלומר נשאר רווח נוסף של כ־2.6% בסיכון נמוך יותר. האסטרטגיה עצמה רווחית (+40.9R עד 2025, +4.5R ב־2026). נבדק גם 'תקרה של 1-4 עסקאות סייר באותו מכשיר וכיוון' - חותך רווח ולא מוריד את הירידה ב־2026, לא מוצע.",
-   "train": {
-    "n": 62,
-    "eff_n": 61.9,
-    "mean": 0.6845,
-    "t": 1.79,
-    "win": 32.7
-   },
-   "unseen": {
-    "n": 86,
-    "eff_n": 86.0,
-    "mean": 0.0525,
-    "t": 0.21,
-    "win": 23.3
-   },
-   "whole": {
-    "n": 148,
-    "eff_n": 147.7,
-    "mean": 0.3045,
-    "t": 1.39,
-    "win": 27.0
-   },
-   "halves": [
-    0.5588,
-    0.0547
-   ],
-   "neighbours": {
-    "values": [
-     0.3,
-     0.25,
-     0.2,
-     0.15,
-     0.1,
-     0.05
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 12,
-   "cost_r": null,
-   "risk_pct": 0.042,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC441|5Min|XAUUSD",
-    "knob": "RISK_scout:SC441|5Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.00042
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.15,
-    "group": [
-     "SC441|5Min|XAUUSD",
-     "SC432|15Min|XAUUSD",
-     "IB034|15Min|XAUUSD",
-     "SC446|5Min|US30"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 108.0,
-       "max_fall_pct": 13.27,
-       "worst_day_pct": -3.55,
-       "low_pct": -4.08,
-       "room_cut": 11,
-       "room_skipped": 5,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 73.87,
-       "max_fall_pct": 11.54,
-       "worst_day_pct": -3.73,
-       "low_pct": -6.93,
-       "room_cut": 12,
-       "room_skipped": 19,
-       "n": 3803
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 99.74,
-       "max_fall_pct": 11.61,
-       "worst_day_pct": -3.33,
-       "low_pct": -4.12,
-       "room_cut": 2,
-       "room_skipped": 2,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 69.44,
-       "max_fall_pct": 10.75,
-       "worst_day_pct": -3.31,
-       "low_pct": -5.6,
-       "room_cut": 4,
-       "room_skipped": 6,
-       "n": 3803
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 96.85,
-       "max_fall_pct": 11.06,
-       "worst_day_pct": -3.27,
-       "low_pct": -4.13,
-       "room_cut": 1,
-       "room_skipped": 2,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 67.9,
-       "max_fall_pct": 10.62,
-       "worst_day_pct": -3.17,
-       "low_pct": -5.16,
-       "room_cut": 3,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 93.99,
-       "max_fall_pct": 10.55,
-       "worst_day_pct": -3.21,
-       "low_pct": -4.14,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 66.92,
-       "max_fall_pct": 10.12,
-       "worst_day_pct": -3.03,
-       "low_pct": -4.72,
-       "room_cut": 2,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 92.6,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -3.18,
-       "low_pct": -4.15,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 66.32,
-       "max_fall_pct": 10.02,
-       "worst_day_pct": -2.97,
-       "low_pct": -4.5,
-       "room_cut": 1,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 91.2,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -3.15,
-       "low_pct": -4.16,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 65.52,
-       "max_fall_pct": 9.97,
-       "worst_day_pct": -2.95,
-       "low_pct": -4.28,
-       "room_cut": 2,
-       "room_skipped": 2,
-       "n": 3803
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 88.4,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.09,
-       "low_pct": -4.17,
-       "room_cut": 2,
-       "room_skipped": 0,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 63.64,
-       "max_fall_pct": 9.87,
-       "worst_day_pct": -2.9,
-       "low_pct": -3.84,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 3803
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 85.6,
-       "max_fall_pct": 9.58,
-       "worst_day_pct": -3.03,
-       "low_pct": -4.18
-      },
-      "unseen": {
-       "total_pct": 61.84,
-       "max_fall_pct": 9.79,
-       "worst_day_pct": -2.85,
-       "low_pct": -3.39
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "room_cut": 0,
-       "room_skipped": 0,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "room_cut": 0,
-       "room_skipped": 0,
-       "n": 3803
-      }
-     },
-     "0.25": {
-      "train": {
-       "total_pct": 87.0,
-       "max_fall_pct": 9.67,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.17
-      },
-      "unseen": {
-       "total_pct": 62.71,
-       "max_fall_pct": 9.82,
-       "worst_day_pct": -2.88,
-       "low_pct": -3.61
-      }
-     },
-     "0.15": {
-      "train": {
-       "total_pct": 84.2,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -3.0,
-       "low_pct": -4.18
-      },
-      "unseen": {
-       "total_pct": 60.96,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.83,
-       "low_pct": -3.17
-      }
-     },
-     "0.1": {
-      "train": {
-       "total_pct": 82.81,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.97,
-       "low_pct": -4.19
-      },
-      "unseen": {
-       "total_pct": 60.12,
-       "max_fall_pct": 10.07,
-       "worst_day_pct": -2.8,
-       "low_pct": -2.95
-      }
-     },
-     "0.05": {
-      "train": {
-       "total_pct": 81.41,
-       "max_fall_pct": 9.3,
-       "worst_day_pct": -2.94,
-       "low_pct": -4.2
-      },
-      "unseen": {
-       "total_pct": 59.28,
-       "max_fall_pct": 10.21,
-       "worst_day_pct": -2.78,
-       "low_pct": -2.73
-      }
-     }
-    },
-    "cap_test": {
-     "1|0|sym": {
-      "train": {
-       "total_pct": 108.06,
-       "max_fall_pct": 13.27,
-       "worst_day_pct": -3.55,
-       "low_pct": -4.08,
-       "n": 2904,
-       "sumR": 482.1
-      },
-      "unseen": {
-       "total_pct": 73.87,
-       "max_fall_pct": 11.54,
-       "worst_day_pct": -3.73,
-       "low_pct": -6.93,
-       "n": 3803,
-       "sumR": 328.6
-      }
-     },
-     "1|1|sym": {
-      "train": {
-       "total_pct": 48.36,
-       "max_fall_pct": 9.72,
-       "worst_day_pct": -2.52,
-       "low_pct": -2.42,
-       "n": 1479,
-       "sumR": 203.7
-      },
-      "unseen": {
-       "total_pct": 41.0,
-       "max_fall_pct": 10.9,
-       "worst_day_pct": -2.22,
-       "low_pct": -3.68,
-       "n": 1980,
-       "sumR": 177.3
-      }
-     },
-     "1|1|symonly": {
-      "train": {
-       "total_pct": 58.48,
-       "max_fall_pct": 11.29,
-       "worst_day_pct": -1.86,
-       "low_pct": -0.61,
-       "n": 1191,
-       "sumR": 247.7
-      },
-      "unseen": {
-       "total_pct": 30.58,
-       "max_fall_pct": 17.08,
-       "worst_day_pct": -2.51,
-       "low_pct": -1.54,
-       "n": 1670,
-       "sumR": 145.0
-      }
-     },
-     "1|2|sym": {
-      "train": {
-       "total_pct": 65.02,
-       "max_fall_pct": 9.67,
-       "worst_day_pct": -3.04,
-       "low_pct": -1.86,
-       "n": 1952,
-       "sumR": 280.2
-      },
-      "unseen": {
-       "total_pct": 50.08,
-       "max_fall_pct": 13.9,
-       "worst_day_pct": -2.93,
-       "low_pct": -4.09,
-       "n": 2666,
-       "sumR": 212.0
-      }
-     },
-     "1|2|symonly": {
-      "train": {
-       "total_pct": 56.91,
-       "max_fall_pct": 12.0,
-       "worst_day_pct": -2.76,
-       "low_pct": -2.07,
-       "n": 1601,
-       "sumR": 243.9
-      },
-      "unseen": {
-       "total_pct": 48.49,
-       "max_fall_pct": 14.85,
-       "worst_day_pct": -3.06,
-       "low_pct": -3.34,
-       "n": 2242,
-       "sumR": 217.4
-      }
-     },
-     "1|3|sym": {
-      "train": {
-       "total_pct": 69.28,
-       "max_fall_pct": 11.39,
-       "worst_day_pct": -3.26,
-       "low_pct": -2.05,
-       "n": 2305,
-       "sumR": 299.3
-      },
-      "unseen": {
-       "total_pct": 62.41,
-       "max_fall_pct": 13.73,
-       "worst_day_pct": -3.15,
-       "low_pct": -4.6,
-       "n": 3135,
-       "sumR": 271.6
-      }
-     },
-     "1|3|symonly": {
-      "train": {
-       "total_pct": 64.86,
-       "max_fall_pct": 10.9,
-       "worst_day_pct": -3.26,
-       "low_pct": -2.14,
-       "n": 1935,
-       "sumR": 276.8
-      },
-      "unseen": {
-       "total_pct": 51.05,
-       "max_fall_pct": 16.88,
-       "worst_day_pct": -3.35,
-       "low_pct": -4.19,
-       "n": 2745,
-       "sumR": 234.4
-      }
-     },
-     "1|4|sym": {
-      "train": {
-       "total_pct": 82.95,
-       "max_fall_pct": 12.86,
-       "worst_day_pct": -3.55,
-       "low_pct": -2.84,
-       "n": 2554,
-       "sumR": 366.7
-      },
-      "unseen": {
-       "total_pct": 62.88,
-       "max_fall_pct": 11.53,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.99,
-       "n": 3454,
-       "sumR": 285.3
-      }
-     },
-     "1|4|symonly": {
-      "train": {
-       "total_pct": 71.72,
-       "max_fall_pct": 11.31,
-       "worst_day_pct": -3.55,
-       "low_pct": -3.07,
-       "n": 2278,
-       "sumR": 319.3
-      },
-      "unseen": {
-       "total_pct": 65.04,
-       "max_fall_pct": 12.76,
-       "worst_day_pct": -3.29,
-       "low_pct": -4.63,
-       "n": 3119,
-       "sumR": 291.6
-      }
-     },
-     "0.15|0|sym": {
-      "train": {
-       "total_pct": 84.2,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -3.0,
-       "low_pct": -4.18,
-       "n": 2904,
-       "sumR": 482.1
-      },
-      "unseen": {
-       "total_pct": 61.06,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.83,
-       "low_pct": -3.17,
-       "n": 3803,
-       "sumR": 328.6
-      }
-     },
-     "0.15|1|sym": {
-      "train": {
-       "total_pct": 47.53,
-       "max_fall_pct": 7.98,
-       "worst_day_pct": -2.39,
-       "low_pct": -2.93,
-       "n": 1479,
-       "sumR": 203.7
-      },
-      "unseen": {
-       "total_pct": 38.25,
-       "max_fall_pct": 12.22,
-       "worst_day_pct": -2.11,
-       "low_pct": -4.61,
-       "n": 1980,
-       "sumR": 177.3
-      }
-     },
-     "0.15|1|symonly": {
-      "train": {
-       "total_pct": 53.84,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -1.66,
-       "low_pct": -2.24,
-       "n": 1191,
-       "sumR": 247.7
-      },
-      "unseen": {
-       "total_pct": 26.58,
-       "max_fall_pct": 16.15,
-       "worst_day_pct": -2.02,
-       "low_pct": -4.02,
-       "n": 1670,
-       "sumR": 145.0
-      }
-     },
-     "0.15|2|sym": {
-      "train": {
-       "total_pct": 55.66,
-       "max_fall_pct": 7.9,
-       "worst_day_pct": -2.68,
-       "low_pct": -3.52,
-       "n": 1952,
-       "sumR": 280.2
-      },
-      "unseen": {
-       "total_pct": 45.2,
-       "max_fall_pct": 12.24,
-       "worst_day_pct": -2.48,
-       "low_pct": -2.29,
-       "n": 2666,
-       "sumR": 212.0
-      }
-     },
-     "0.15|2|symonly": {
-      "train": {
-       "total_pct": 54.71,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.18,
-       "low_pct": -3.39,
-       "n": 1601,
-       "sumR": 243.9
-      },
-      "unseen": {
-       "total_pct": 44.23,
-       "max_fall_pct": 10.67,
-       "worst_day_pct": -2.57,
-       "low_pct": -1.83,
-       "n": 2242,
-       "sumR": 217.4
-      }
-     },
-     "0.15|3|sym": {
-      "train": {
-       "total_pct": 56.48,
-       "max_fall_pct": 8.34,
-       "worst_day_pct": -2.69,
-       "low_pct": -3.42,
-       "n": 2305,
-       "sumR": 299.3
-      },
-      "unseen": {
-       "total_pct": 53.75,
-       "max_fall_pct": 11.2,
-       "worst_day_pct": -2.61,
-       "low_pct": -1.76,
-       "n": 3135,
-       "sumR": 271.6
-      }
-     },
-     "0.15|3|symonly": {
-      "train": {
-       "total_pct": 59.41,
-       "max_fall_pct": 8.72,
-       "worst_day_pct": -2.38,
-       "low_pct": -3.19,
-       "n": 1935,
-       "sumR": 276.8
-      },
-      "unseen": {
-       "total_pct": 44.65,
-       "max_fall_pct": 12.25,
-       "worst_day_pct": -2.65,
-       "low_pct": -1.41,
-       "n": 2745,
-       "sumR": 234.4
-      }
-     },
-     "0.15|4|sym": {
-      "train": {
-       "total_pct": 68.08,
-       "max_fall_pct": 8.97,
-       "worst_day_pct": -2.76,
-       "low_pct": -3.57,
-       "n": 2554,
-       "sumR": 366.7
-      },
-      "unseen": {
-       "total_pct": 55.44,
-       "max_fall_pct": 9.44,
-       "worst_day_pct": -2.64,
-       "low_pct": -2.68,
-       "n": 3454,
-       "sumR": 285.3
-      }
-     },
-     "0.15|4|symonly": {
-      "train": {
-       "total_pct": 65.42,
-       "max_fall_pct": 7.91,
-       "worst_day_pct": -2.55,
-       "low_pct": -3.61,
-       "n": 2278,
-       "sumR": 319.3
-      },
-      "unseen": {
-       "total_pct": 54.02,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -2.61,
-       "low_pct": -1.89,
-       "n": 3119,
-       "sumR": 291.6
-      }
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-16T14:18:27+00:00",
-   "id": "eb07a8f8919a"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC432|15Min|XAUUSD - סיכון 0.28% ← 0.042% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 4 האסטרטגיות שנוספו היום (16.11, 09:15) - שלוש בזהב ואחת ב־US30 - נכנסו ב־0.28% כל אחת, מעל המקדם ×0.45 שהבוט נתן לסייר אתמול, והגדילו שוב את הסיכון: בחלק הסייר ב־2026 היום הגרוע ‎-2.75% ← ‎-3.73%, הנפילה מההתחלה ‎-2.51% ← ‎-6.93%, הירידה מהשיא 10.35% ← 11.54%. בזהב יש עכשיו 12 אסטרטגיות סייר, והיום (16.11) שלוש מהן נכנסו לקנייה יחד ב־01:00 ונעצרו יחד. רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד באותו כלל של אתמול (המקדם הגדול ביותר שהיום הגרוע עד שני שלישים מ־4.5%): ×0.15, 0.28% ← 0.042%. 2026 (לא נראתה): סה\"כ 73.9% ← 61.0%, ירידה 11.54% ← 9.93%, היום הגרוע ‎-3.73% ← ‎-2.83%, הנפילה מההתחלה ‎-6.93% ← ‎-3.17%. בלי הארבע: 58.5%, ירידה 10.35% - כלומר נשאר רווח נוסף של כ־2.6% בסיכון נמוך יותר. האסטרטגיה עצמה רווחית (+28.1R עד 2025, +15.4R ב־2026). נבדק גם 'תקרה של 1-4 עסקאות סייר באותו מכשיר וכיוון' - חותך רווח ולא מוריד את הירידה ב־2026, לא מוצע.",
-   "train": {
-    "n": 196,
-    "eff_n": 195.8,
-    "mean": 0.1433,
-    "t": 1.6,
-    "win": 45.0
-   },
-   "unseen": {
-    "n": 236,
-    "eff_n": 235.9,
-    "mean": 0.0648,
-    "t": 0.83,
-    "win": 43.2
-   },
-   "whole": {
-    "n": 432,
-    "eff_n": 431.0,
-    "mean": 0.0989,
-    "t": 1.67,
-    "win": 44.0
-   },
-   "halves": [
-    0.1556,
-    0.046
-   ],
-   "neighbours": {
-    "values": [
-     0.3,
-     0.25,
-     0.2,
-     0.15,
-     0.1,
-     0.05
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 12,
-   "cost_r": null,
-   "risk_pct": 0.042,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC432|15Min|XAUUSD",
-    "knob": "RISK_scout:SC432|15Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.00042
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.15,
-    "group": [
-     "SC441|5Min|XAUUSD",
-     "SC432|15Min|XAUUSD",
-     "IB034|15Min|XAUUSD",
-     "SC446|5Min|US30"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 108.0,
-       "max_fall_pct": 13.27,
-       "worst_day_pct": -3.55,
-       "low_pct": -4.08,
-       "room_cut": 11,
-       "room_skipped": 5,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 73.87,
-       "max_fall_pct": 11.54,
-       "worst_day_pct": -3.73,
-       "low_pct": -6.93,
-       "room_cut": 12,
-       "room_skipped": 19,
-       "n": 3803
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 99.74,
-       "max_fall_pct": 11.61,
-       "worst_day_pct": -3.33,
-       "low_pct": -4.12,
-       "room_cut": 2,
-       "room_skipped": 2,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 69.44,
-       "max_fall_pct": 10.75,
-       "worst_day_pct": -3.31,
-       "low_pct": -5.6,
-       "room_cut": 4,
-       "room_skipped": 6,
-       "n": 3803
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 96.85,
-       "max_fall_pct": 11.06,
-       "worst_day_pct": -3.27,
-       "low_pct": -4.13,
-       "room_cut": 1,
-       "room_skipped": 2,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 67.9,
-       "max_fall_pct": 10.62,
-       "worst_day_pct": -3.17,
-       "low_pct": -5.16,
-       "room_cut": 3,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 93.99,
-       "max_fall_pct": 10.55,
-       "worst_day_pct": -3.21,
-       "low_pct": -4.14,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 66.92,
-       "max_fall_pct": 10.12,
-       "worst_day_pct": -3.03,
-       "low_pct": -4.72,
-       "room_cut": 2,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 92.6,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -3.18,
-       "low_pct": -4.15,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 66.32,
-       "max_fall_pct": 10.02,
-       "worst_day_pct": -2.97,
-       "low_pct": -4.5,
-       "room_cut": 1,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 91.2,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -3.15,
-       "low_pct": -4.16,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 65.52,
-       "max_fall_pct": 9.97,
-       "worst_day_pct": -2.95,
-       "low_pct": -4.28,
-       "room_cut": 2,
-       "room_skipped": 2,
-       "n": 3803
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 88.4,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.09,
-       "low_pct": -4.17,
-       "room_cut": 2,
-       "room_skipped": 0,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 63.64,
-       "max_fall_pct": 9.87,
-       "worst_day_pct": -2.9,
-       "low_pct": -3.84,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 3803
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 85.6,
-       "max_fall_pct": 9.58,
-       "worst_day_pct": -3.03,
-       "low_pct": -4.18
-      },
-      "unseen": {
-       "total_pct": 61.84,
-       "max_fall_pct": 9.79,
-       "worst_day_pct": -2.85,
-       "low_pct": -3.39
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "room_cut": 0,
-       "room_skipped": 0,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "room_cut": 0,
-       "room_skipped": 0,
-       "n": 3803
-      }
-     },
-     "0.25": {
-      "train": {
-       "total_pct": 87.0,
-       "max_fall_pct": 9.67,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.17
-      },
-      "unseen": {
-       "total_pct": 62.71,
-       "max_fall_pct": 9.82,
-       "worst_day_pct": -2.88,
-       "low_pct": -3.61
-      }
-     },
-     "0.15": {
-      "train": {
-       "total_pct": 84.2,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -3.0,
-       "low_pct": -4.18
-      },
-      "unseen": {
-       "total_pct": 60.96,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.83,
-       "low_pct": -3.17
-      }
-     },
-     "0.1": {
-      "train": {
-       "total_pct": 82.81,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.97,
-       "low_pct": -4.19
-      },
-      "unseen": {
-       "total_pct": 60.12,
-       "max_fall_pct": 10.07,
-       "worst_day_pct": -2.8,
-       "low_pct": -2.95
-      }
-     },
-     "0.05": {
-      "train": {
-       "total_pct": 81.41,
-       "max_fall_pct": 9.3,
-       "worst_day_pct": -2.94,
-       "low_pct": -4.2
-      },
-      "unseen": {
-       "total_pct": 59.28,
-       "max_fall_pct": 10.21,
-       "worst_day_pct": -2.78,
-       "low_pct": -2.73
-      }
-     }
-    },
-    "cap_test": {
-     "1|0|sym": {
-      "train": {
-       "total_pct": 108.06,
-       "max_fall_pct": 13.27,
-       "worst_day_pct": -3.55,
-       "low_pct": -4.08,
-       "n": 2904,
-       "sumR": 482.1
-      },
-      "unseen": {
-       "total_pct": 73.87,
-       "max_fall_pct": 11.54,
-       "worst_day_pct": -3.73,
-       "low_pct": -6.93,
-       "n": 3803,
-       "sumR": 328.6
-      }
-     },
-     "1|1|sym": {
-      "train": {
-       "total_pct": 48.36,
-       "max_fall_pct": 9.72,
-       "worst_day_pct": -2.52,
-       "low_pct": -2.42,
-       "n": 1479,
-       "sumR": 203.7
-      },
-      "unseen": {
-       "total_pct": 41.0,
-       "max_fall_pct": 10.9,
-       "worst_day_pct": -2.22,
-       "low_pct": -3.68,
-       "n": 1980,
-       "sumR": 177.3
-      }
-     },
-     "1|1|symonly": {
-      "train": {
-       "total_pct": 58.48,
-       "max_fall_pct": 11.29,
-       "worst_day_pct": -1.86,
-       "low_pct": -0.61,
-       "n": 1191,
-       "sumR": 247.7
-      },
-      "unseen": {
-       "total_pct": 30.58,
-       "max_fall_pct": 17.08,
-       "worst_day_pct": -2.51,
-       "low_pct": -1.54,
-       "n": 1670,
-       "sumR": 145.0
-      }
-     },
-     "1|2|sym": {
-      "train": {
-       "total_pct": 65.02,
-       "max_fall_pct": 9.67,
-       "worst_day_pct": -3.04,
-       "low_pct": -1.86,
-       "n": 1952,
-       "sumR": 280.2
-      },
-      "unseen": {
-       "total_pct": 50.08,
-       "max_fall_pct": 13.9,
-       "worst_day_pct": -2.93,
-       "low_pct": -4.09,
-       "n": 2666,
-       "sumR": 212.0
-      }
-     },
-     "1|2|symonly": {
-      "train": {
-       "total_pct": 56.91,
-       "max_fall_pct": 12.0,
-       "worst_day_pct": -2.76,
-       "low_pct": -2.07,
-       "n": 1601,
-       "sumR": 243.9
-      },
-      "unseen": {
-       "total_pct": 48.49,
-       "max_fall_pct": 14.85,
-       "worst_day_pct": -3.06,
-       "low_pct": -3.34,
-       "n": 2242,
-       "sumR": 217.4
-      }
-     },
-     "1|3|sym": {
-      "train": {
-       "total_pct": 69.28,
-       "max_fall_pct": 11.39,
-       "worst_day_pct": -3.26,
-       "low_pct": -2.05,
-       "n": 2305,
-       "sumR": 299.3
-      },
-      "unseen": {
-       "total_pct": 62.41,
-       "max_fall_pct": 13.73,
-       "worst_day_pct": -3.15,
-       "low_pct": -4.6,
-       "n": 3135,
-       "sumR": 271.6
-      }
-     },
-     "1|3|symonly": {
-      "train": {
-       "total_pct": 64.86,
-       "max_fall_pct": 10.9,
-       "worst_day_pct": -3.26,
-       "low_pct": -2.14,
-       "n": 1935,
-       "sumR": 276.8
-      },
-      "unseen": {
-       "total_pct": 51.05,
-       "max_fall_pct": 16.88,
-       "worst_day_pct": -3.35,
-       "low_pct": -4.19,
-       "n": 2745,
-       "sumR": 234.4
-      }
-     },
-     "1|4|sym": {
-      "train": {
-       "total_pct": 82.95,
-       "max_fall_pct": 12.86,
-       "worst_day_pct": -3.55,
-       "low_pct": -2.84,
-       "n": 2554,
-       "sumR": 366.7
-      },
-      "unseen": {
-       "total_pct": 62.88,
-       "max_fall_pct": 11.53,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.99,
-       "n": 3454,
-       "sumR": 285.3
-      }
-     },
-     "1|4|symonly": {
-      "train": {
-       "total_pct": 71.72,
-       "max_fall_pct": 11.31,
-       "worst_day_pct": -3.55,
-       "low_pct": -3.07,
-       "n": 2278,
-       "sumR": 319.3
-      },
-      "unseen": {
-       "total_pct": 65.04,
-       "max_fall_pct": 12.76,
-       "worst_day_pct": -3.29,
-       "low_pct": -4.63,
-       "n": 3119,
-       "sumR": 291.6
-      }
-     },
-     "0.15|0|sym": {
-      "train": {
-       "total_pct": 84.2,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -3.0,
-       "low_pct": -4.18,
-       "n": 2904,
-       "sumR": 482.1
-      },
-      "unseen": {
-       "total_pct": 61.06,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.83,
-       "low_pct": -3.17,
-       "n": 3803,
-       "sumR": 328.6
-      }
-     },
-     "0.15|1|sym": {
-      "train": {
-       "total_pct": 47.53,
-       "max_fall_pct": 7.98,
-       "worst_day_pct": -2.39,
-       "low_pct": -2.93,
-       "n": 1479,
-       "sumR": 203.7
-      },
-      "unseen": {
-       "total_pct": 38.25,
-       "max_fall_pct": 12.22,
-       "worst_day_pct": -2.11,
-       "low_pct": -4.61,
-       "n": 1980,
-       "sumR": 177.3
-      }
-     },
-     "0.15|1|symonly": {
-      "train": {
-       "total_pct": 53.84,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -1.66,
-       "low_pct": -2.24,
-       "n": 1191,
-       "sumR": 247.7
-      },
-      "unseen": {
-       "total_pct": 26.58,
-       "max_fall_pct": 16.15,
-       "worst_day_pct": -2.02,
-       "low_pct": -4.02,
-       "n": 1670,
-       "sumR": 145.0
-      }
-     },
-     "0.15|2|sym": {
-      "train": {
-       "total_pct": 55.66,
-       "max_fall_pct": 7.9,
-       "worst_day_pct": -2.68,
-       "low_pct": -3.52,
-       "n": 1952,
-       "sumR": 280.2
-      },
-      "unseen": {
-       "total_pct": 45.2,
-       "max_fall_pct": 12.24,
-       "worst_day_pct": -2.48,
-       "low_pct": -2.29,
-       "n": 2666,
-       "sumR": 212.0
-      }
-     },
-     "0.15|2|symonly": {
-      "train": {
-       "total_pct": 54.71,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.18,
-       "low_pct": -3.39,
-       "n": 1601,
-       "sumR": 243.9
-      },
-      "unseen": {
-       "total_pct": 44.23,
-       "max_fall_pct": 10.67,
-       "worst_day_pct": -2.57,
-       "low_pct": -1.83,
-       "n": 2242,
-       "sumR": 217.4
-      }
-     },
-     "0.15|3|sym": {
-      "train": {
-       "total_pct": 56.48,
-       "max_fall_pct": 8.34,
-       "worst_day_pct": -2.69,
-       "low_pct": -3.42,
-       "n": 2305,
-       "sumR": 299.3
-      },
-      "unseen": {
-       "total_pct": 53.75,
-       "max_fall_pct": 11.2,
-       "worst_day_pct": -2.61,
-       "low_pct": -1.76,
-       "n": 3135,
-       "sumR": 271.6
-      }
-     },
-     "0.15|3|symonly": {
-      "train": {
-       "total_pct": 59.41,
-       "max_fall_pct": 8.72,
-       "worst_day_pct": -2.38,
-       "low_pct": -3.19,
-       "n": 1935,
-       "sumR": 276.8
-      },
-      "unseen": {
-       "total_pct": 44.65,
-       "max_fall_pct": 12.25,
-       "worst_day_pct": -2.65,
-       "low_pct": -1.41,
-       "n": 2745,
-       "sumR": 234.4
-      }
-     },
-     "0.15|4|sym": {
-      "train": {
-       "total_pct": 68.08,
-       "max_fall_pct": 8.97,
-       "worst_day_pct": -2.76,
-       "low_pct": -3.57,
-       "n": 2554,
-       "sumR": 366.7
-      },
-      "unseen": {
-       "total_pct": 55.44,
-       "max_fall_pct": 9.44,
-       "worst_day_pct": -2.64,
-       "low_pct": -2.68,
-       "n": 3454,
-       "sumR": 285.3
-      }
-     },
-     "0.15|4|symonly": {
-      "train": {
-       "total_pct": 65.42,
-       "max_fall_pct": 7.91,
-       "worst_day_pct": -2.55,
-       "low_pct": -3.61,
-       "n": 2278,
-       "sumR": 319.3
-      },
-      "unseen": {
-       "total_pct": 54.02,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -2.61,
-       "low_pct": -1.89,
-       "n": 3119,
-       "sumR": 291.6
-      }
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-16T14:18:27+00:00",
-   "id": "b4cebbcccae5"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: IB034|15Min|XAUUSD - סיכון 0.28% ← 0.042% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 4 האסטרטגיות שנוספו היום (16.11, 09:15) - שלוש בזהב ואחת ב־US30 - נכנסו ב־0.28% כל אחת, מעל המקדם ×0.45 שהבוט נתן לסייר אתמול, והגדילו שוב את הסיכון: בחלק הסייר ב־2026 היום הגרוע ‎-2.75% ← ‎-3.73%, הנפילה מההתחלה ‎-2.51% ← ‎-6.93%, הירידה מהשיא 10.35% ← 11.54%. בזהב יש עכשיו 12 אסטרטגיות סייר, והיום (16.11) שלוש מהן נכנסו לקנייה יחד ב־01:00 ונעצרו יחד. רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד באותו כלל של אתמול (המקדם הגדול ביותר שהיום הגרוע עד שני שלישים מ־4.5%): ×0.15, 0.28% ← 0.042%. 2026 (לא נראתה): סה\"כ 73.9% ← 61.0%, ירידה 11.54% ← 9.93%, היום הגרוע ‎-3.73% ← ‎-2.83%, הנפילה מההתחלה ‎-6.93% ← ‎-3.17%. בלי הארבע: 58.5%, ירידה 10.35% - כלומר נשאר רווח נוסף של כ־2.6% בסיכון נמוך יותר. האסטרטגיה עצמה רווחית (+25.2R עד 2025, +27.8R ב־2026). נבדק גם 'תקרה של 1-4 עסקאות סייר באותו מכשיר וכיוון' - חותך רווח ולא מוריד את הירידה ב־2026, לא מוצע.",
-   "train": {
-    "n": 384,
-    "eff_n": 383.6,
-    "mean": 0.0668,
-    "t": 1.08,
-    "win": 39.0
-   },
-   "unseen": {
-    "n": 498,
-    "eff_n": 497.9,
-    "mean": 0.0551,
-    "t": 0.84,
-    "win": 35.9
-   },
-   "whole": {
-    "n": 882,
-    "eff_n": 880.1,
-    "mean": 0.06,
-    "t": 1.3,
-    "win": 37.2
-   },
-   "halves": [
-    0.1021,
-    0.0181
-   ],
-   "neighbours": {
-    "values": [
-     0.3,
-     0.25,
-     0.2,
-     0.15,
-     0.1,
-     0.05
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 12,
-   "cost_r": null,
-   "risk_pct": 0.042,
-   "baseline": null,
-   "change": {
-    "track": "scout:IB034|15Min|XAUUSD",
-    "knob": "RISK_scout:IB034|15Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.00042
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.15,
-    "group": [
-     "SC441|5Min|XAUUSD",
-     "SC432|15Min|XAUUSD",
-     "IB034|15Min|XAUUSD",
-     "SC446|5Min|US30"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 108.0,
-       "max_fall_pct": 13.27,
-       "worst_day_pct": -3.55,
-       "low_pct": -4.08,
-       "room_cut": 11,
-       "room_skipped": 5,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 73.87,
-       "max_fall_pct": 11.54,
-       "worst_day_pct": -3.73,
-       "low_pct": -6.93,
-       "room_cut": 12,
-       "room_skipped": 19,
-       "n": 3803
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 99.74,
-       "max_fall_pct": 11.61,
-       "worst_day_pct": -3.33,
-       "low_pct": -4.12,
-       "room_cut": 2,
-       "room_skipped": 2,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 69.44,
-       "max_fall_pct": 10.75,
-       "worst_day_pct": -3.31,
-       "low_pct": -5.6,
-       "room_cut": 4,
-       "room_skipped": 6,
-       "n": 3803
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 96.85,
-       "max_fall_pct": 11.06,
-       "worst_day_pct": -3.27,
-       "low_pct": -4.13,
-       "room_cut": 1,
-       "room_skipped": 2,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 67.9,
-       "max_fall_pct": 10.62,
-       "worst_day_pct": -3.17,
-       "low_pct": -5.16,
-       "room_cut": 3,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 93.99,
-       "max_fall_pct": 10.55,
-       "worst_day_pct": -3.21,
-       "low_pct": -4.14,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 66.92,
-       "max_fall_pct": 10.12,
-       "worst_day_pct": -3.03,
-       "low_pct": -4.72,
-       "room_cut": 2,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 92.6,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -3.18,
-       "low_pct": -4.15,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 66.32,
-       "max_fall_pct": 10.02,
-       "worst_day_pct": -2.97,
-       "low_pct": -4.5,
-       "room_cut": 1,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 91.2,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -3.15,
-       "low_pct": -4.16,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 65.52,
-       "max_fall_pct": 9.97,
-       "worst_day_pct": -2.95,
-       "low_pct": -4.28,
-       "room_cut": 2,
-       "room_skipped": 2,
-       "n": 3803
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 88.4,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.09,
-       "low_pct": -4.17,
-       "room_cut": 2,
-       "room_skipped": 0,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 63.64,
-       "max_fall_pct": 9.87,
-       "worst_day_pct": -2.9,
-       "low_pct": -3.84,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 3803
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 85.6,
-       "max_fall_pct": 9.58,
-       "worst_day_pct": -3.03,
-       "low_pct": -4.18
-      },
-      "unseen": {
-       "total_pct": 61.84,
-       "max_fall_pct": 9.79,
-       "worst_day_pct": -2.85,
-       "low_pct": -3.39
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "room_cut": 0,
-       "room_skipped": 0,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "room_cut": 0,
-       "room_skipped": 0,
-       "n": 3803
-      }
-     },
-     "0.25": {
-      "train": {
-       "total_pct": 87.0,
-       "max_fall_pct": 9.67,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.17
-      },
-      "unseen": {
-       "total_pct": 62.71,
-       "max_fall_pct": 9.82,
-       "worst_day_pct": -2.88,
-       "low_pct": -3.61
-      }
-     },
-     "0.15": {
-      "train": {
-       "total_pct": 84.2,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -3.0,
-       "low_pct": -4.18
-      },
-      "unseen": {
-       "total_pct": 60.96,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.83,
-       "low_pct": -3.17
-      }
-     },
-     "0.1": {
-      "train": {
-       "total_pct": 82.81,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.97,
-       "low_pct": -4.19
-      },
-      "unseen": {
-       "total_pct": 60.12,
-       "max_fall_pct": 10.07,
-       "worst_day_pct": -2.8,
-       "low_pct": -2.95
-      }
-     },
-     "0.05": {
-      "train": {
-       "total_pct": 81.41,
-       "max_fall_pct": 9.3,
-       "worst_day_pct": -2.94,
-       "low_pct": -4.2
-      },
-      "unseen": {
-       "total_pct": 59.28,
-       "max_fall_pct": 10.21,
-       "worst_day_pct": -2.78,
-       "low_pct": -2.73
-      }
-     }
-    },
-    "cap_test": {
-     "1|0|sym": {
-      "train": {
-       "total_pct": 108.06,
-       "max_fall_pct": 13.27,
-       "worst_day_pct": -3.55,
-       "low_pct": -4.08,
-       "n": 2904,
-       "sumR": 482.1
-      },
-      "unseen": {
-       "total_pct": 73.87,
-       "max_fall_pct": 11.54,
-       "worst_day_pct": -3.73,
-       "low_pct": -6.93,
-       "n": 3803,
-       "sumR": 328.6
-      }
-     },
-     "1|1|sym": {
-      "train": {
-       "total_pct": 48.36,
-       "max_fall_pct": 9.72,
-       "worst_day_pct": -2.52,
-       "low_pct": -2.42,
-       "n": 1479,
-       "sumR": 203.7
-      },
-      "unseen": {
-       "total_pct": 41.0,
-       "max_fall_pct": 10.9,
-       "worst_day_pct": -2.22,
-       "low_pct": -3.68,
-       "n": 1980,
-       "sumR": 177.3
-      }
-     },
-     "1|1|symonly": {
-      "train": {
-       "total_pct": 58.48,
-       "max_fall_pct": 11.29,
-       "worst_day_pct": -1.86,
-       "low_pct": -0.61,
-       "n": 1191,
-       "sumR": 247.7
-      },
-      "unseen": {
-       "total_pct": 30.58,
-       "max_fall_pct": 17.08,
-       "worst_day_pct": -2.51,
-       "low_pct": -1.54,
-       "n": 1670,
-       "sumR": 145.0
-      }
-     },
-     "1|2|sym": {
-      "train": {
-       "total_pct": 65.02,
-       "max_fall_pct": 9.67,
-       "worst_day_pct": -3.04,
-       "low_pct": -1.86,
-       "n": 1952,
-       "sumR": 280.2
-      },
-      "unseen": {
-       "total_pct": 50.08,
-       "max_fall_pct": 13.9,
-       "worst_day_pct": -2.93,
-       "low_pct": -4.09,
-       "n": 2666,
-       "sumR": 212.0
-      }
-     },
-     "1|2|symonly": {
-      "train": {
-       "total_pct": 56.91,
-       "max_fall_pct": 12.0,
-       "worst_day_pct": -2.76,
-       "low_pct": -2.07,
-       "n": 1601,
-       "sumR": 243.9
-      },
-      "unseen": {
-       "total_pct": 48.49,
-       "max_fall_pct": 14.85,
-       "worst_day_pct": -3.06,
-       "low_pct": -3.34,
-       "n": 2242,
-       "sumR": 217.4
-      }
-     },
-     "1|3|sym": {
-      "train": {
-       "total_pct": 69.28,
-       "max_fall_pct": 11.39,
-       "worst_day_pct": -3.26,
-       "low_pct": -2.05,
-       "n": 2305,
-       "sumR": 299.3
-      },
-      "unseen": {
-       "total_pct": 62.41,
-       "max_fall_pct": 13.73,
-       "worst_day_pct": -3.15,
-       "low_pct": -4.6,
-       "n": 3135,
-       "sumR": 271.6
-      }
-     },
-     "1|3|symonly": {
-      "train": {
-       "total_pct": 64.86,
-       "max_fall_pct": 10.9,
-       "worst_day_pct": -3.26,
-       "low_pct": -2.14,
-       "n": 1935,
-       "sumR": 276.8
-      },
-      "unseen": {
-       "total_pct": 51.05,
-       "max_fall_pct": 16.88,
-       "worst_day_pct": -3.35,
-       "low_pct": -4.19,
-       "n": 2745,
-       "sumR": 234.4
-      }
-     },
-     "1|4|sym": {
-      "train": {
-       "total_pct": 82.95,
-       "max_fall_pct": 12.86,
-       "worst_day_pct": -3.55,
-       "low_pct": -2.84,
-       "n": 2554,
-       "sumR": 366.7
-      },
-      "unseen": {
-       "total_pct": 62.88,
-       "max_fall_pct": 11.53,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.99,
-       "n": 3454,
-       "sumR": 285.3
-      }
-     },
-     "1|4|symonly": {
-      "train": {
-       "total_pct": 71.72,
-       "max_fall_pct": 11.31,
-       "worst_day_pct": -3.55,
-       "low_pct": -3.07,
-       "n": 2278,
-       "sumR": 319.3
-      },
-      "unseen": {
-       "total_pct": 65.04,
-       "max_fall_pct": 12.76,
-       "worst_day_pct": -3.29,
-       "low_pct": -4.63,
-       "n": 3119,
-       "sumR": 291.6
-      }
-     },
-     "0.15|0|sym": {
-      "train": {
-       "total_pct": 84.2,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -3.0,
-       "low_pct": -4.18,
-       "n": 2904,
-       "sumR": 482.1
-      },
-      "unseen": {
-       "total_pct": 61.06,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.83,
-       "low_pct": -3.17,
-       "n": 3803,
-       "sumR": 328.6
-      }
-     },
-     "0.15|1|sym": {
-      "train": {
-       "total_pct": 47.53,
-       "max_fall_pct": 7.98,
-       "worst_day_pct": -2.39,
-       "low_pct": -2.93,
-       "n": 1479,
-       "sumR": 203.7
-      },
-      "unseen": {
-       "total_pct": 38.25,
-       "max_fall_pct": 12.22,
-       "worst_day_pct": -2.11,
-       "low_pct": -4.61,
-       "n": 1980,
-       "sumR": 177.3
-      }
-     },
-     "0.15|1|symonly": {
-      "train": {
-       "total_pct": 53.84,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -1.66,
-       "low_pct": -2.24,
-       "n": 1191,
-       "sumR": 247.7
-      },
-      "unseen": {
-       "total_pct": 26.58,
-       "max_fall_pct": 16.15,
-       "worst_day_pct": -2.02,
-       "low_pct": -4.02,
-       "n": 1670,
-       "sumR": 145.0
-      }
-     },
-     "0.15|2|sym": {
-      "train": {
-       "total_pct": 55.66,
-       "max_fall_pct": 7.9,
-       "worst_day_pct": -2.68,
-       "low_pct": -3.52,
-       "n": 1952,
-       "sumR": 280.2
-      },
-      "unseen": {
-       "total_pct": 45.2,
-       "max_fall_pct": 12.24,
-       "worst_day_pct": -2.48,
-       "low_pct": -2.29,
-       "n": 2666,
-       "sumR": 212.0
-      }
-     },
-     "0.15|2|symonly": {
-      "train": {
-       "total_pct": 54.71,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.18,
-       "low_pct": -3.39,
-       "n": 1601,
-       "sumR": 243.9
-      },
-      "unseen": {
-       "total_pct": 44.23,
-       "max_fall_pct": 10.67,
-       "worst_day_pct": -2.57,
-       "low_pct": -1.83,
-       "n": 2242,
-       "sumR": 217.4
-      }
-     },
-     "0.15|3|sym": {
-      "train": {
-       "total_pct": 56.48,
-       "max_fall_pct": 8.34,
-       "worst_day_pct": -2.69,
-       "low_pct": -3.42,
-       "n": 2305,
-       "sumR": 299.3
-      },
-      "unseen": {
-       "total_pct": 53.75,
-       "max_fall_pct": 11.2,
-       "worst_day_pct": -2.61,
-       "low_pct": -1.76,
-       "n": 3135,
-       "sumR": 271.6
-      }
-     },
-     "0.15|3|symonly": {
-      "train": {
-       "total_pct": 59.41,
-       "max_fall_pct": 8.72,
-       "worst_day_pct": -2.38,
-       "low_pct": -3.19,
-       "n": 1935,
-       "sumR": 276.8
-      },
-      "unseen": {
-       "total_pct": 44.65,
-       "max_fall_pct": 12.25,
-       "worst_day_pct": -2.65,
-       "low_pct": -1.41,
-       "n": 2745,
-       "sumR": 234.4
-      }
-     },
-     "0.15|4|sym": {
-      "train": {
-       "total_pct": 68.08,
-       "max_fall_pct": 8.97,
-       "worst_day_pct": -2.76,
-       "low_pct": -3.57,
-       "n": 2554,
-       "sumR": 366.7
-      },
-      "unseen": {
-       "total_pct": 55.44,
-       "max_fall_pct": 9.44,
-       "worst_day_pct": -2.64,
-       "low_pct": -2.68,
-       "n": 3454,
-       "sumR": 285.3
-      }
-     },
-     "0.15|4|symonly": {
-      "train": {
-       "total_pct": 65.42,
-       "max_fall_pct": 7.91,
-       "worst_day_pct": -2.55,
-       "low_pct": -3.61,
-       "n": 2278,
-       "sumR": 319.3
-      },
-      "unseen": {
-       "total_pct": 54.02,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -2.61,
-       "low_pct": -1.89,
-       "n": 3119,
-       "sumR": 291.6
-      }
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-16T14:18:27+00:00",
-   "id": "5ffb7868b454"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC446|5Min|US30 - סיכון 0.28% ← 0.042% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 4 האסטרטגיות שנוספו היום (16.11, 09:15) - שלוש בזהב ואחת ב־US30 - נכנסו ב־0.28% כל אחת, מעל המקדם ×0.45 שהבוט נתן לסייר אתמול, והגדילו שוב את הסיכון: בחלק הסייר ב־2026 היום הגרוע ‎-2.75% ← ‎-3.73%, הנפילה מההתחלה ‎-2.51% ← ‎-6.93%, הירידה מהשיא 10.35% ← 11.54%. בזהב יש עכשיו 12 אסטרטגיות סייר, והיום (16.11) שלוש מהן נכנסו לקנייה יחד ב־01:00 ונעצרו יחד. רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד באותו כלל של אתמול (המקדם הגדול ביותר שהיום הגרוע עד שני שלישים מ־4.5%): ×0.15, 0.28% ← 0.042%. 2026 (לא נראתה): סה\"כ 73.9% ← 61.0%, ירידה 11.54% ← 9.93%, היום הגרוע ‎-3.73% ← ‎-2.83%, הנפילה מההתחלה ‎-6.93% ← ‎-3.17%. בלי הארבע: 58.5%, ירידה 10.35% - כלומר נשאר רווח נוסף של כ־2.6% בסיכון נמוך יותר. האסטרטגיה עצמה רווחית (+5.3R עד 2025, +10.7R ב־2026). נבדק גם 'תקרה של 1-4 עסקאות סייר באותו מכשיר וכיוון' - חותך רווח ולא מוריד את הירידה ב־2026, לא מוצע.",
-   "train": {
-    "n": 58,
-    "eff_n": 57.9,
-    "mean": 0.0852,
-    "t": 0.52,
-    "win": 39.7
-   },
-   "unseen": {
-    "n": 64,
-    "eff_n": 64.0,
-    "mean": 0.1669,
-    "t": 1.05,
-    "win": 50.1
-   },
-   "whole": {
-    "n": 122,
-    "eff_n": 121.7,
-    "mean": 0.1297,
-    "t": 1.13,
-    "win": 45.3
-   },
-   "halves": [
-    0.0525,
-    0.2097
-   ],
-   "neighbours": {
-    "values": [
-     0.3,
-     0.25,
-     0.2,
-     0.15,
-     0.1,
-     0.05
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 12,
-   "cost_r": null,
-   "risk_pct": 0.042,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC446|5Min|US30",
-    "knob": "RISK_scout:SC446|5Min|US30",
-    "from": 0.0028,
-    "to": 0.00042
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.15,
-    "group": [
-     "SC441|5Min|XAUUSD",
-     "SC432|15Min|XAUUSD",
-     "IB034|15Min|XAUUSD",
-     "SC446|5Min|US30"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 108.0,
-       "max_fall_pct": 13.27,
-       "worst_day_pct": -3.55,
-       "low_pct": -4.08,
-       "room_cut": 11,
-       "room_skipped": 5,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 73.87,
-       "max_fall_pct": 11.54,
-       "worst_day_pct": -3.73,
-       "low_pct": -6.93,
-       "room_cut": 12,
-       "room_skipped": 19,
-       "n": 3803
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 99.74,
-       "max_fall_pct": 11.61,
-       "worst_day_pct": -3.33,
-       "low_pct": -4.12,
-       "room_cut": 2,
-       "room_skipped": 2,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 69.44,
-       "max_fall_pct": 10.75,
-       "worst_day_pct": -3.31,
-       "low_pct": -5.6,
-       "room_cut": 4,
-       "room_skipped": 6,
-       "n": 3803
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 96.85,
-       "max_fall_pct": 11.06,
-       "worst_day_pct": -3.27,
-       "low_pct": -4.13,
-       "room_cut": 1,
-       "room_skipped": 2,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 67.9,
-       "max_fall_pct": 10.62,
-       "worst_day_pct": -3.17,
-       "low_pct": -5.16,
-       "room_cut": 3,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 93.99,
-       "max_fall_pct": 10.55,
-       "worst_day_pct": -3.21,
-       "low_pct": -4.14,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 66.92,
-       "max_fall_pct": 10.12,
-       "worst_day_pct": -3.03,
-       "low_pct": -4.72,
-       "room_cut": 2,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 92.6,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -3.18,
-       "low_pct": -4.15,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 66.32,
-       "max_fall_pct": 10.02,
-       "worst_day_pct": -2.97,
-       "low_pct": -4.5,
-       "room_cut": 1,
-       "room_skipped": 3,
-       "n": 3803
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 91.2,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -3.15,
-       "low_pct": -4.16,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 65.52,
-       "max_fall_pct": 9.97,
-       "worst_day_pct": -2.95,
-       "low_pct": -4.28,
-       "room_cut": 2,
-       "room_skipped": 2,
-       "n": 3803
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 88.4,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.09,
-       "low_pct": -4.17,
-       "room_cut": 2,
-       "room_skipped": 0,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 63.64,
-       "max_fall_pct": 9.87,
-       "worst_day_pct": -2.9,
-       "low_pct": -3.84,
-       "room_cut": 2,
-       "room_skipped": 1,
-       "n": 3803
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 85.6,
-       "max_fall_pct": 9.58,
-       "worst_day_pct": -3.03,
-       "low_pct": -4.18
-      },
-      "unseen": {
-       "total_pct": 61.84,
-       "max_fall_pct": 9.79,
-       "worst_day_pct": -2.85,
-       "low_pct": -3.39
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "room_cut": 0,
-       "room_skipped": 0,
-       "n": 2904
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "room_cut": 0,
-       "room_skipped": 0,
-       "n": 3803
-      }
-     },
-     "0.25": {
-      "train": {
-       "total_pct": 87.0,
-       "max_fall_pct": 9.67,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.17
-      },
-      "unseen": {
-       "total_pct": 62.71,
-       "max_fall_pct": 9.82,
-       "worst_day_pct": -2.88,
-       "low_pct": -3.61
-      }
-     },
-     "0.15": {
-      "train": {
-       "total_pct": 84.2,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -3.0,
-       "low_pct": -4.18
-      },
-      "unseen": {
-       "total_pct": 60.96,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.83,
-       "low_pct": -3.17
-      }
-     },
-     "0.1": {
-      "train": {
-       "total_pct": 82.81,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.97,
-       "low_pct": -4.19
-      },
-      "unseen": {
-       "total_pct": 60.12,
-       "max_fall_pct": 10.07,
-       "worst_day_pct": -2.8,
-       "low_pct": -2.95
-      }
-     },
-     "0.05": {
-      "train": {
-       "total_pct": 81.41,
-       "max_fall_pct": 9.3,
-       "worst_day_pct": -2.94,
-       "low_pct": -4.2
-      },
-      "unseen": {
-       "total_pct": 59.28,
-       "max_fall_pct": 10.21,
-       "worst_day_pct": -2.78,
-       "low_pct": -2.73
-      }
-     }
-    },
-    "cap_test": {
-     "1|0|sym": {
-      "train": {
-       "total_pct": 108.06,
-       "max_fall_pct": 13.27,
-       "worst_day_pct": -3.55,
-       "low_pct": -4.08,
-       "n": 2904,
-       "sumR": 482.1
-      },
-      "unseen": {
-       "total_pct": 73.87,
-       "max_fall_pct": 11.54,
-       "worst_day_pct": -3.73,
-       "low_pct": -6.93,
-       "n": 3803,
-       "sumR": 328.6
-      }
-     },
-     "1|1|sym": {
-      "train": {
-       "total_pct": 48.36,
-       "max_fall_pct": 9.72,
-       "worst_day_pct": -2.52,
-       "low_pct": -2.42,
-       "n": 1479,
-       "sumR": 203.7
-      },
-      "unseen": {
-       "total_pct": 41.0,
-       "max_fall_pct": 10.9,
-       "worst_day_pct": -2.22,
-       "low_pct": -3.68,
-       "n": 1980,
-       "sumR": 177.3
-      }
-     },
-     "1|1|symonly": {
-      "train": {
-       "total_pct": 58.48,
-       "max_fall_pct": 11.29,
-       "worst_day_pct": -1.86,
-       "low_pct": -0.61,
-       "n": 1191,
-       "sumR": 247.7
-      },
-      "unseen": {
-       "total_pct": 30.58,
-       "max_fall_pct": 17.08,
-       "worst_day_pct": -2.51,
-       "low_pct": -1.54,
-       "n": 1670,
-       "sumR": 145.0
-      }
-     },
-     "1|2|sym": {
-      "train": {
-       "total_pct": 65.02,
-       "max_fall_pct": 9.67,
-       "worst_day_pct": -3.04,
-       "low_pct": -1.86,
-       "n": 1952,
-       "sumR": 280.2
-      },
-      "unseen": {
-       "total_pct": 50.08,
-       "max_fall_pct": 13.9,
-       "worst_day_pct": -2.93,
-       "low_pct": -4.09,
-       "n": 2666,
-       "sumR": 212.0
-      }
-     },
-     "1|2|symonly": {
-      "train": {
-       "total_pct": 56.91,
-       "max_fall_pct": 12.0,
-       "worst_day_pct": -2.76,
-       "low_pct": -2.07,
-       "n": 1601,
-       "sumR": 243.9
-      },
-      "unseen": {
-       "total_pct": 48.49,
-       "max_fall_pct": 14.85,
-       "worst_day_pct": -3.06,
-       "low_pct": -3.34,
-       "n": 2242,
-       "sumR": 217.4
-      }
-     },
-     "1|3|sym": {
-      "train": {
-       "total_pct": 69.28,
-       "max_fall_pct": 11.39,
-       "worst_day_pct": -3.26,
-       "low_pct": -2.05,
-       "n": 2305,
-       "sumR": 299.3
-      },
-      "unseen": {
-       "total_pct": 62.41,
-       "max_fall_pct": 13.73,
-       "worst_day_pct": -3.15,
-       "low_pct": -4.6,
-       "n": 3135,
-       "sumR": 271.6
-      }
-     },
-     "1|3|symonly": {
-      "train": {
-       "total_pct": 64.86,
-       "max_fall_pct": 10.9,
-       "worst_day_pct": -3.26,
-       "low_pct": -2.14,
-       "n": 1935,
-       "sumR": 276.8
-      },
-      "unseen": {
-       "total_pct": 51.05,
-       "max_fall_pct": 16.88,
-       "worst_day_pct": -3.35,
-       "low_pct": -4.19,
-       "n": 2745,
-       "sumR": 234.4
-      }
-     },
-     "1|4|sym": {
-      "train": {
-       "total_pct": 82.95,
-       "max_fall_pct": 12.86,
-       "worst_day_pct": -3.55,
-       "low_pct": -2.84,
-       "n": 2554,
-       "sumR": 366.7
-      },
-      "unseen": {
-       "total_pct": 62.88,
-       "max_fall_pct": 11.53,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.99,
-       "n": 3454,
-       "sumR": 285.3
-      }
-     },
-     "1|4|symonly": {
-      "train": {
-       "total_pct": 71.72,
-       "max_fall_pct": 11.31,
-       "worst_day_pct": -3.55,
-       "low_pct": -3.07,
-       "n": 2278,
-       "sumR": 319.3
-      },
-      "unseen": {
-       "total_pct": 65.04,
-       "max_fall_pct": 12.76,
-       "worst_day_pct": -3.29,
-       "low_pct": -4.63,
-       "n": 3119,
-       "sumR": 291.6
-      }
-     },
-     "0.15|0|sym": {
-      "train": {
-       "total_pct": 84.2,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -3.0,
-       "low_pct": -4.18,
-       "n": 2904,
-       "sumR": 482.1
-      },
-      "unseen": {
-       "total_pct": 61.06,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.83,
-       "low_pct": -3.17,
-       "n": 3803,
-       "sumR": 328.6
-      }
-     },
-     "0.15|1|sym": {
-      "train": {
-       "total_pct": 47.53,
-       "max_fall_pct": 7.98,
-       "worst_day_pct": -2.39,
-       "low_pct": -2.93,
-       "n": 1479,
-       "sumR": 203.7
-      },
-      "unseen": {
-       "total_pct": 38.25,
-       "max_fall_pct": 12.22,
-       "worst_day_pct": -2.11,
-       "low_pct": -4.61,
-       "n": 1980,
-       "sumR": 177.3
-      }
-     },
-     "0.15|1|symonly": {
-      "train": {
-       "total_pct": 53.84,
-       "max_fall_pct": 9.49,
-       "worst_day_pct": -1.66,
-       "low_pct": -2.24,
-       "n": 1191,
-       "sumR": 247.7
-      },
-      "unseen": {
-       "total_pct": 26.58,
-       "max_fall_pct": 16.15,
-       "worst_day_pct": -2.02,
-       "low_pct": -4.02,
-       "n": 1670,
-       "sumR": 145.0
-      }
-     },
-     "0.15|2|sym": {
-      "train": {
-       "total_pct": 55.66,
-       "max_fall_pct": 7.9,
-       "worst_day_pct": -2.68,
-       "low_pct": -3.52,
-       "n": 1952,
-       "sumR": 280.2
-      },
-      "unseen": {
-       "total_pct": 45.2,
-       "max_fall_pct": 12.24,
-       "worst_day_pct": -2.48,
-       "low_pct": -2.29,
-       "n": 2666,
-       "sumR": 212.0
-      }
-     },
-     "0.15|2|symonly": {
-      "train": {
-       "total_pct": 54.71,
-       "max_fall_pct": 9.93,
-       "worst_day_pct": -2.18,
-       "low_pct": -3.39,
-       "n": 1601,
-       "sumR": 243.9
-      },
-      "unseen": {
-       "total_pct": 44.23,
-       "max_fall_pct": 10.67,
-       "worst_day_pct": -2.57,
-       "low_pct": -1.83,
-       "n": 2242,
-       "sumR": 217.4
-      }
-     },
-     "0.15|3|sym": {
-      "train": {
-       "total_pct": 56.48,
-       "max_fall_pct": 8.34,
-       "worst_day_pct": -2.69,
-       "low_pct": -3.42,
-       "n": 2305,
-       "sumR": 299.3
-      },
-      "unseen": {
-       "total_pct": 53.75,
-       "max_fall_pct": 11.2,
-       "worst_day_pct": -2.61,
-       "low_pct": -1.76,
-       "n": 3135,
-       "sumR": 271.6
-      }
-     },
-     "0.15|3|symonly": {
-      "train": {
-       "total_pct": 59.41,
-       "max_fall_pct": 8.72,
-       "worst_day_pct": -2.38,
-       "low_pct": -3.19,
-       "n": 1935,
-       "sumR": 276.8
-      },
-      "unseen": {
-       "total_pct": 44.65,
-       "max_fall_pct": 12.25,
-       "worst_day_pct": -2.65,
-       "low_pct": -1.41,
-       "n": 2745,
-       "sumR": 234.4
-      }
-     },
-     "0.15|4|sym": {
-      "train": {
-       "total_pct": 68.08,
-       "max_fall_pct": 8.97,
-       "worst_day_pct": -2.76,
-       "low_pct": -3.57,
-       "n": 2554,
-       "sumR": 366.7
-      },
-      "unseen": {
-       "total_pct": 55.44,
-       "max_fall_pct": 9.44,
-       "worst_day_pct": -2.64,
-       "low_pct": -2.68,
-       "n": 3454,
-       "sumR": 285.3
-      }
-     },
-     "0.15|4|symonly": {
-      "train": {
-       "total_pct": 65.42,
-       "max_fall_pct": 7.91,
-       "worst_day_pct": -2.55,
-       "low_pct": -3.61,
-       "n": 2278,
-       "sumR": 319.3
-      },
-      "unseen": {
-       "total_pct": 54.02,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -2.61,
-       "low_pct": -1.89,
-       "n": 3119,
-       "sumR": 291.6
-      }
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-16T14:18:27+00:00",
-   "id": "2b9374062a46"
-  },
-  {
-   "bot": "bot5",
    "kind": "info",
    "title": "בוט 5: אסטרטגיית סייר חדשה נכנסת עכשיו ברמה שהבוט כבר נתן לסייר, לא ב־0.4% המלא",
    "what": "כמו התיקון בבוט 6 (SC441): בבוט 5 כל אסטרטגיות הסייר עם סיכון משלהן, חוץ מ־SC077|5Min|US30 (0.4%, נכנסה לפני המקדם, בלי כוכבית). נבדק: הורדה שלה לא משתלמת - היא מפזרת את הסיכון, וב־2026 הירידה עולה אם מקטינים אותה (10.0% ← 11.2% ב־0.28%) - נשארת. הבונה עודכן: אסטרטגיית סייר חדשה בבוט 5 נכנסת בסיכון הגבוה שכבר ניתן לסייר (היום 0.28%), והכוכבית מעליו. 4 החדשות של היום נכנסו ב־0.28% - כרטיסי סיכון נפרדים (×0.15).",
@@ -3683,1878 +2477,6 @@
    },
    "made": "2026-11-16T14:18:27+00:00",
    "id": "5e9ee1c7fed3"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: QC04|15Min|EURUSD - סיכון 0.28% ← 0.126% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 8 האסטרטגיות שנוספו ב־15.11 בבוקר הגדילו את הסיכון של הבוט - הירידה מהשיא ב־2026 עלתה מ־9.5% ל־18% (בדיקת הבוט כולו, 14:24). רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד, לפי הכלל של הבוט (היום הגרוע עד שני שלישים מ־4.5%): סיכון ×0.45 לשמונה החדשות, 0.28% ← 0.126%. חלק הסייר, 2026 (לא נראתה): סה\"כ 87.38% ← 58.45%, ירידה 18.56% ← 10.35%, היום הגרוע -3.95% ← -2.75%. בלי השמונה: 34.3%, ירידה 10.14% - כלומר נשאר רווח נוסף של כ־24% באותה רמת סיכון. לא הקטנה של מפסידה: האסטרטגיה עצמה רווחית (+13.6R עד 2025, +24.7R ב־2026). הבדיקה של הבוט כולו (עם מסלולי הגאפ) חוזרת בכל סבב במחשב הבוטים.",
-   "train": {
-    "n": 46,
-    "eff_n": 46.0,
-    "mean": 0.2996,
-    "t": 0.9,
-    "win": 32.8
-   },
-   "unseen": {
-    "n": 52,
-    "eff_n": 52.0,
-    "mean": 0.4743,
-    "t": 0.95,
-    "win": 23.1
-   },
-   "whole": {
-    "n": 98,
-    "eff_n": 97.8,
-    "mean": 0.3971,
-    "t": 1.27,
-    "win": 27.4
-   },
-   "halves": [
-    0.2119,
-    0.5691
-   ],
-   "neighbours": {
-    "values": [
-     0.7,
-     0.6,
-     0.5,
-     0.45,
-     0.4,
-     0.3
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 9,
-   "cost_r": null,
-   "risk_pct": 0.126,
-   "baseline": null,
-   "change": {
-    "track": "scout:QC04|15Min|EURUSD",
-    "knob": "RISK_scout:QC04|15Min|EURUSD",
-    "from": 0.0028,
-    "to": 0.00126
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.45,
-    "group": [
-     "QC04|15Min|EURUSD",
-     "SC326|5Min|GBPUSD",
-     "SC402|5Min|XAUUSD",
-     "SC402|15Min|XAUUSD",
-     "SC333|15Min|XAUUSD",
-     "SC326|15Min|USDCHF",
-     "SC326|15Min|USDJPY",
-     "SC311|15Min|GER40"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 117.82,
-       "max_fall_pct": 16.72,
-       "worst_day_pct": -4.33,
-       "low_pct": -6.37,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 87.38,
-       "max_fall_pct": 18.56,
-       "worst_day_pct": -3.95,
-       "low_pct": -4.36,
-       "n": 2919
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 97.46,
-       "max_fall_pct": 11.99,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.19,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 70.97,
-       "max_fall_pct": 13.2,
-       "worst_day_pct": -3.38,
-       "low_pct": -3.35,
-       "n": 2919
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 90.3,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -3.34,
-       "low_pct": -4.79,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 67.01,
-       "max_fall_pct": 11.22,
-       "worst_day_pct": -3.13,
-       "low_pct": -3.02,
-       "n": 2919
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 83.44,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.4,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 61.3,
-       "max_fall_pct": 10.54,
-       "worst_day_pct": -2.88,
-       "low_pct": -2.68,
-       "n": 2919
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "n": 2919
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 76.62,
-       "max_fall_pct": 8.67,
-       "worst_day_pct": -2.73,
-       "low_pct": -4.01,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 55.76,
-       "max_fall_pct": 10.16,
-       "worst_day_pct": -2.63,
-       "low_pct": -2.34,
-       "n": 2919
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 69.81,
-       "max_fall_pct": 7.57,
-       "worst_day_pct": -2.39,
-       "low_pct": -3.61,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 50.4,
-       "max_fall_pct": 9.78,
-       "worst_day_pct": -2.38,
-       "low_pct": -2.0,
-       "n": 2919
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 63.0,
-       "max_fall_pct": 6.48,
-       "worst_day_pct": -2.04,
-       "low_pct": -3.22,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 45.03,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.17,
-       "low_pct": -1.67,
-       "n": 2919
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 49.39,
-       "max_fall_pct": 4.89,
-       "worst_day_pct": -1.69,
-       "low_pct": -2.43,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 34.3,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -1.93,
-       "low_pct": -1.1,
-       "n": 2919
-      }
-     }
-    },
-    "without_new8": {
-     "train": {
-      "total_pct": 49.39,
-      "max_fall_pct": 4.89,
-      "worst_day_pct": -1.69,
-      "low_pct": -2.43,
-      "n": 916
-     },
-     "unseen": {
-      "total_pct": 34.3,
-      "max_fall_pct": 10.14,
-      "worst_day_pct": -1.93,
-      "low_pct": -1.1,
-      "n": 1339
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-15T22:18:43+00:00",
-   "id": "575619755bcd"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC326|5Min|GBPUSD - סיכון 0.4% ← 0.18% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 8 האסטרטגיות שנוספו ב־15.11 בבוקר הגדילו את הסיכון של הבוט - הירידה מהשיא ב־2026 עלתה מ־9.5% ל־18% (בדיקת הבוט כולו, 14:24). רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד, לפי הכלל של הבוט (היום הגרוע עד שני שלישים מ־4.5%): סיכון ×0.45 לשמונה החדשות, 0.4% ← 0.18%. חלק הסייר, 2026 (לא נראתה): סה\"כ 87.38% ← 58.45%, ירידה 18.56% ← 10.35%, היום הגרוע -3.95% ← -2.75%. בלי השמונה: 34.3%, ירידה 10.14% - כלומר נשאר רווח נוסף של כ־24% באותה רמת סיכון. לא הקטנה של מפסידה: האסטרטגיה עצמה רווחית (+15.2R עד 2025, +43.1R ב־2026). הבדיקה של הבוט כולו (עם מסלולי הגאפ) חוזרת בכל סבב במחשב הבוטים.",
-   "train": {
-    "n": 120,
-    "eff_n": 119.9,
-    "mean": 0.1122,
-    "t": 0.39,
-    "win": 23.3
-   },
-   "unseen": {
-    "n": 128,
-    "eff_n": 128.0,
-    "mean": 0.3365,
-    "t": 1.01,
-    "win": 25.0
-   },
-   "whole": {
-    "n": 248,
-    "eff_n": 247.5,
-    "mean": 0.2309,
-    "t": 1.04,
-    "win": 24.2
-   },
-   "halves": [
-    0.1374,
-    0.3322
-   ],
-   "neighbours": {
-    "values": [
-     0.7,
-     0.6,
-     0.5,
-     0.45,
-     0.4,
-     0.3
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 9,
-   "cost_r": null,
-   "risk_pct": 0.18,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC326|5Min|GBPUSD",
-    "knob": "RISK_scout:SC326|5Min|GBPUSD",
-    "from": 0.004,
-    "to": 0.0018
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.45,
-    "group": [
-     "QC04|15Min|EURUSD",
-     "SC326|5Min|GBPUSD",
-     "SC402|5Min|XAUUSD",
-     "SC402|15Min|XAUUSD",
-     "SC333|15Min|XAUUSD",
-     "SC326|15Min|USDCHF",
-     "SC326|15Min|USDJPY",
-     "SC311|15Min|GER40"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 117.82,
-       "max_fall_pct": 16.72,
-       "worst_day_pct": -4.33,
-       "low_pct": -6.37,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 87.38,
-       "max_fall_pct": 18.56,
-       "worst_day_pct": -3.95,
-       "low_pct": -4.36,
-       "n": 2919
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 97.46,
-       "max_fall_pct": 11.99,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.19,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 70.97,
-       "max_fall_pct": 13.2,
-       "worst_day_pct": -3.38,
-       "low_pct": -3.35,
-       "n": 2919
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 90.3,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -3.34,
-       "low_pct": -4.79,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 67.01,
-       "max_fall_pct": 11.22,
-       "worst_day_pct": -3.13,
-       "low_pct": -3.02,
-       "n": 2919
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 83.44,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.4,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 61.3,
-       "max_fall_pct": 10.54,
-       "worst_day_pct": -2.88,
-       "low_pct": -2.68,
-       "n": 2919
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "n": 2919
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 76.62,
-       "max_fall_pct": 8.67,
-       "worst_day_pct": -2.73,
-       "low_pct": -4.01,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 55.76,
-       "max_fall_pct": 10.16,
-       "worst_day_pct": -2.63,
-       "low_pct": -2.34,
-       "n": 2919
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 69.81,
-       "max_fall_pct": 7.57,
-       "worst_day_pct": -2.39,
-       "low_pct": -3.61,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 50.4,
-       "max_fall_pct": 9.78,
-       "worst_day_pct": -2.38,
-       "low_pct": -2.0,
-       "n": 2919
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 63.0,
-       "max_fall_pct": 6.48,
-       "worst_day_pct": -2.04,
-       "low_pct": -3.22,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 45.03,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.17,
-       "low_pct": -1.67,
-       "n": 2919
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 49.39,
-       "max_fall_pct": 4.89,
-       "worst_day_pct": -1.69,
-       "low_pct": -2.43,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 34.3,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -1.93,
-       "low_pct": -1.1,
-       "n": 2919
-      }
-     }
-    },
-    "without_new8": {
-     "train": {
-      "total_pct": 49.39,
-      "max_fall_pct": 4.89,
-      "worst_day_pct": -1.69,
-      "low_pct": -2.43,
-      "n": 916
-     },
-     "unseen": {
-      "total_pct": 34.3,
-      "max_fall_pct": 10.14,
-      "worst_day_pct": -1.93,
-      "low_pct": -1.1,
-      "n": 1339
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-15T22:18:43+00:00",
-   "id": "cd0db487b431"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC402|5Min|XAUUSD - סיכון 0.4% ← 0.18% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 8 האסטרטגיות שנוספו ב־15.11 בבוקר הגדילו את הסיכון של הבוט - הירידה מהשיא ב־2026 עלתה מ־9.5% ל־18% (בדיקת הבוט כולו, 14:24). רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד, לפי הכלל של הבוט (היום הגרוע עד שני שלישים מ־4.5%): סיכון ×0.45 לשמונה החדשות, 0.4% ← 0.18%. חלק הסייר, 2026 (לא נראתה): סה\"כ 87.38% ← 58.45%, ירידה 18.56% ← 10.35%, היום הגרוע -3.95% ← -2.75%. בלי השמונה: 34.3%, ירידה 10.14% - כלומר נשאר רווח נוסף של כ־24% באותה רמת סיכון. לא הקטנה של מפסידה: האסטרטגיה עצמה רווחית (+47.9R עד 2025, +39.8R ב־2026). הבדיקה של הבוט כולו (עם מסלולי הגאפ) חוזרת בכל סבב במחשב הבוטים.",
-   "train": {
-    "n": 226,
-    "eff_n": 225.8,
-    "mean": 0.2068,
-    "t": 1.53,
-    "win": 35.7
-   },
-   "unseen": {
-    "n": 276,
-    "eff_n": 276.0,
-    "mean": 0.144,
-    "t": 1.25,
-    "win": 36.2
-   },
-   "whole": {
-    "n": 502,
-    "eff_n": 500.9,
-    "mean": 0.1717,
-    "t": 1.96,
-    "win": 36.0
-   },
-   "halves": [
-    0.1681,
-    0.181
-   ],
-   "neighbours": {
-    "values": [
-     0.7,
-     0.6,
-     0.5,
-     0.45,
-     0.4,
-     0.3
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 9,
-   "cost_r": null,
-   "risk_pct": 0.18,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC402|5Min|XAUUSD",
-    "knob": "RISK_scout:SC402|5Min|XAUUSD",
-    "from": 0.004,
-    "to": 0.0018
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.45,
-    "group": [
-     "QC04|15Min|EURUSD",
-     "SC326|5Min|GBPUSD",
-     "SC402|5Min|XAUUSD",
-     "SC402|15Min|XAUUSD",
-     "SC333|15Min|XAUUSD",
-     "SC326|15Min|USDCHF",
-     "SC326|15Min|USDJPY",
-     "SC311|15Min|GER40"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 117.82,
-       "max_fall_pct": 16.72,
-       "worst_day_pct": -4.33,
-       "low_pct": -6.37,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 87.38,
-       "max_fall_pct": 18.56,
-       "worst_day_pct": -3.95,
-       "low_pct": -4.36,
-       "n": 2919
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 97.46,
-       "max_fall_pct": 11.99,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.19,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 70.97,
-       "max_fall_pct": 13.2,
-       "worst_day_pct": -3.38,
-       "low_pct": -3.35,
-       "n": 2919
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 90.3,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -3.34,
-       "low_pct": -4.79,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 67.01,
-       "max_fall_pct": 11.22,
-       "worst_day_pct": -3.13,
-       "low_pct": -3.02,
-       "n": 2919
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 83.44,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.4,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 61.3,
-       "max_fall_pct": 10.54,
-       "worst_day_pct": -2.88,
-       "low_pct": -2.68,
-       "n": 2919
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "n": 2919
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 76.62,
-       "max_fall_pct": 8.67,
-       "worst_day_pct": -2.73,
-       "low_pct": -4.01,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 55.76,
-       "max_fall_pct": 10.16,
-       "worst_day_pct": -2.63,
-       "low_pct": -2.34,
-       "n": 2919
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 69.81,
-       "max_fall_pct": 7.57,
-       "worst_day_pct": -2.39,
-       "low_pct": -3.61,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 50.4,
-       "max_fall_pct": 9.78,
-       "worst_day_pct": -2.38,
-       "low_pct": -2.0,
-       "n": 2919
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 63.0,
-       "max_fall_pct": 6.48,
-       "worst_day_pct": -2.04,
-       "low_pct": -3.22,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 45.03,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.17,
-       "low_pct": -1.67,
-       "n": 2919
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 49.39,
-       "max_fall_pct": 4.89,
-       "worst_day_pct": -1.69,
-       "low_pct": -2.43,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 34.3,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -1.93,
-       "low_pct": -1.1,
-       "n": 2919
-      }
-     }
-    },
-    "without_new8": {
-     "train": {
-      "total_pct": 49.39,
-      "max_fall_pct": 4.89,
-      "worst_day_pct": -1.69,
-      "low_pct": -2.43,
-      "n": 916
-     },
-     "unseen": {
-      "total_pct": 34.3,
-      "max_fall_pct": 10.14,
-      "worst_day_pct": -1.93,
-      "low_pct": -1.1,
-      "n": 1339
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-15T22:18:43+00:00",
-   "id": "919f685239af"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC402|15Min|XAUUSD - סיכון 0.28% ← 0.126% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 8 האסטרטגיות שנוספו ב־15.11 בבוקר הגדילו את הסיכון של הבוט - הירידה מהשיא ב־2026 עלתה מ־9.5% ל־18% (בדיקת הבוט כולו, 14:24). רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד, לפי הכלל של הבוט (היום הגרוע עד שני שלישים מ־4.5%): סיכון ×0.45 לשמונה החדשות, 0.28% ← 0.126%. חלק הסייר, 2026 (לא נראתה): סה\"כ 87.38% ← 58.45%, ירידה 18.56% ← 10.35%, היום הגרוע -3.95% ← -2.75%. בלי השמונה: 34.3%, ירידה 10.14% - כלומר נשאר רווח נוסף של כ־24% באותה רמת סיכון. לא הקטנה של מפסידה: האסטרטגיה עצמה רווחית (+44.5R עד 2025, +22.8R ב־2026). הבדיקה של הבוט כולו (עם מסלולי הגאפ) חוזרת בכל סבב במחשב הבוטים.",
-   "train": {
-    "n": 213,
-    "eff_n": 212.8,
-    "mean": 0.2026,
-    "t": 1.53,
-    "win": 36.9
-   },
-   "unseen": {
-    "n": 273,
-    "eff_n": 273.0,
-    "mean": 0.0835,
-    "t": 0.79,
-    "win": 37.4
-   },
-   "whole": {
-    "n": 486,
-    "eff_n": 484.9,
-    "mean": 0.1338,
-    "t": 1.61,
-    "win": 37.2
-   },
-   "halves": [
-    0.1301,
-    0.1469
-   ],
-   "neighbours": {
-    "values": [
-     0.7,
-     0.6,
-     0.5,
-     0.45,
-     0.4,
-     0.3
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 9,
-   "cost_r": null,
-   "risk_pct": 0.126,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC402|15Min|XAUUSD",
-    "knob": "RISK_scout:SC402|15Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.00126
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.45,
-    "group": [
-     "QC04|15Min|EURUSD",
-     "SC326|5Min|GBPUSD",
-     "SC402|5Min|XAUUSD",
-     "SC402|15Min|XAUUSD",
-     "SC333|15Min|XAUUSD",
-     "SC326|15Min|USDCHF",
-     "SC326|15Min|USDJPY",
-     "SC311|15Min|GER40"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 117.82,
-       "max_fall_pct": 16.72,
-       "worst_day_pct": -4.33,
-       "low_pct": -6.37,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 87.38,
-       "max_fall_pct": 18.56,
-       "worst_day_pct": -3.95,
-       "low_pct": -4.36,
-       "n": 2919
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 97.46,
-       "max_fall_pct": 11.99,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.19,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 70.97,
-       "max_fall_pct": 13.2,
-       "worst_day_pct": -3.38,
-       "low_pct": -3.35,
-       "n": 2919
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 90.3,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -3.34,
-       "low_pct": -4.79,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 67.01,
-       "max_fall_pct": 11.22,
-       "worst_day_pct": -3.13,
-       "low_pct": -3.02,
-       "n": 2919
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 83.44,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.4,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 61.3,
-       "max_fall_pct": 10.54,
-       "worst_day_pct": -2.88,
-       "low_pct": -2.68,
-       "n": 2919
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "n": 2919
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 76.62,
-       "max_fall_pct": 8.67,
-       "worst_day_pct": -2.73,
-       "low_pct": -4.01,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 55.76,
-       "max_fall_pct": 10.16,
-       "worst_day_pct": -2.63,
-       "low_pct": -2.34,
-       "n": 2919
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 69.81,
-       "max_fall_pct": 7.57,
-       "worst_day_pct": -2.39,
-       "low_pct": -3.61,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 50.4,
-       "max_fall_pct": 9.78,
-       "worst_day_pct": -2.38,
-       "low_pct": -2.0,
-       "n": 2919
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 63.0,
-       "max_fall_pct": 6.48,
-       "worst_day_pct": -2.04,
-       "low_pct": -3.22,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 45.03,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.17,
-       "low_pct": -1.67,
-       "n": 2919
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 49.39,
-       "max_fall_pct": 4.89,
-       "worst_day_pct": -1.69,
-       "low_pct": -2.43,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 34.3,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -1.93,
-       "low_pct": -1.1,
-       "n": 2919
-      }
-     }
-    },
-    "without_new8": {
-     "train": {
-      "total_pct": 49.39,
-      "max_fall_pct": 4.89,
-      "worst_day_pct": -1.69,
-      "low_pct": -2.43,
-      "n": 916
-     },
-     "unseen": {
-      "total_pct": 34.3,
-      "max_fall_pct": 10.14,
-      "worst_day_pct": -1.93,
-      "low_pct": -1.1,
-      "n": 1339
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-15T22:18:43+00:00",
-   "id": "29a6155f4d80"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC333|15Min|XAUUSD - סיכון 0.28% ← 0.126% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 8 האסטרטגיות שנוספו ב־15.11 בבוקר הגדילו את הסיכון של הבוט - הירידה מהשיא ב־2026 עלתה מ־9.5% ל־18% (בדיקת הבוט כולו, 14:24). רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד, לפי הכלל של הבוט (היום הגרוע עד שני שלישים מ־4.5%): סיכון ×0.45 לשמונה החדשות, 0.28% ← 0.126%. חלק הסייר, 2026 (לא נראתה): סה\"כ 87.38% ← 58.45%, ירידה 18.56% ← 10.35%, היום הגרוע -3.95% ← -2.75%. בלי השמונה: 34.3%, ירידה 10.14% - כלומר נשאר רווח נוסף של כ־24% באותה רמת סיכון. לא הקטנה של מפסידה: האסטרטגיה עצמה רווחית (+42.3R עד 2025, +6.8R ב־2026). הבדיקה של הבוט כולו (עם מסלולי הגאפ) חוזרת בכל סבב במחשב הבוטים.",
-   "train": {
-    "n": 293,
-    "eff_n": 292.7,
-    "mean": 0.1453,
-    "t": 1.86,
-    "win": 37.5
-   },
-   "unseen": {
-    "n": 378,
-    "eff_n": 378.0,
-    "mean": 0.0179,
-    "t": 0.3,
-    "win": 34.7
-   },
-   "whole": {
-    "n": 671,
-    "eff_n": 669.5,
-    "mean": 0.0699,
-    "t": 1.47,
-    "win": 35.8
-   },
-   "halves": [
-    0.1685,
-    -0.022
-   ],
-   "neighbours": {
-    "values": [
-     0.7,
-     0.6,
-     0.5,
-     0.45,
-     0.4,
-     0.3
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 9,
-   "cost_r": null,
-   "risk_pct": 0.126,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC333|15Min|XAUUSD",
-    "knob": "RISK_scout:SC333|15Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.00126
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.45,
-    "group": [
-     "QC04|15Min|EURUSD",
-     "SC326|5Min|GBPUSD",
-     "SC402|5Min|XAUUSD",
-     "SC402|15Min|XAUUSD",
-     "SC333|15Min|XAUUSD",
-     "SC326|15Min|USDCHF",
-     "SC326|15Min|USDJPY",
-     "SC311|15Min|GER40"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 117.82,
-       "max_fall_pct": 16.72,
-       "worst_day_pct": -4.33,
-       "low_pct": -6.37,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 87.38,
-       "max_fall_pct": 18.56,
-       "worst_day_pct": -3.95,
-       "low_pct": -4.36,
-       "n": 2919
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 97.46,
-       "max_fall_pct": 11.99,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.19,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 70.97,
-       "max_fall_pct": 13.2,
-       "worst_day_pct": -3.38,
-       "low_pct": -3.35,
-       "n": 2919
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 90.3,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -3.34,
-       "low_pct": -4.79,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 67.01,
-       "max_fall_pct": 11.22,
-       "worst_day_pct": -3.13,
-       "low_pct": -3.02,
-       "n": 2919
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 83.44,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.4,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 61.3,
-       "max_fall_pct": 10.54,
-       "worst_day_pct": -2.88,
-       "low_pct": -2.68,
-       "n": 2919
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "n": 2919
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 76.62,
-       "max_fall_pct": 8.67,
-       "worst_day_pct": -2.73,
-       "low_pct": -4.01,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 55.76,
-       "max_fall_pct": 10.16,
-       "worst_day_pct": -2.63,
-       "low_pct": -2.34,
-       "n": 2919
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 69.81,
-       "max_fall_pct": 7.57,
-       "worst_day_pct": -2.39,
-       "low_pct": -3.61,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 50.4,
-       "max_fall_pct": 9.78,
-       "worst_day_pct": -2.38,
-       "low_pct": -2.0,
-       "n": 2919
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 63.0,
-       "max_fall_pct": 6.48,
-       "worst_day_pct": -2.04,
-       "low_pct": -3.22,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 45.03,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.17,
-       "low_pct": -1.67,
-       "n": 2919
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 49.39,
-       "max_fall_pct": 4.89,
-       "worst_day_pct": -1.69,
-       "low_pct": -2.43,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 34.3,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -1.93,
-       "low_pct": -1.1,
-       "n": 2919
-      }
-     }
-    },
-    "without_new8": {
-     "train": {
-      "total_pct": 49.39,
-      "max_fall_pct": 4.89,
-      "worst_day_pct": -1.69,
-      "low_pct": -2.43,
-      "n": 916
-     },
-     "unseen": {
-      "total_pct": 34.3,
-      "max_fall_pct": 10.14,
-      "worst_day_pct": -1.93,
-      "low_pct": -1.1,
-      "n": 1339
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-15T22:18:43+00:00",
-   "id": "cf8cb80044ba"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC326|15Min|USDCHF - סיכון 0.28% ← 0.126% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 8 האסטרטגיות שנוספו ב־15.11 בבוקר הגדילו את הסיכון של הבוט - הירידה מהשיא ב־2026 עלתה מ־9.5% ל־18% (בדיקת הבוט כולו, 14:24). רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד, לפי הכלל של הבוט (היום הגרוע עד שני שלישים מ־4.5%): סיכון ×0.45 לשמונה החדשות, 0.28% ← 0.126%. חלק הסייר, 2026 (לא נראתה): סה\"כ 87.38% ← 58.45%, ירידה 18.56% ← 10.35%, היום הגרוע -3.95% ← -2.75%. בלי השמונה: 34.3%, ירידה 10.14% - כלומר נשאר רווח נוסף של כ־24% באותה רמת סיכון. לא הקטנה של מפסידה: האסטרטגיה עצמה רווחית (+10.9R עד 2025, +9.0R ב־2026). הבדיקה של הבוט כולו (עם מסלולי הגאפ) חוזרת בכל סבב במחשב הבוטים.",
-   "train": {
-    "n": 119,
-    "eff_n": 118.9,
-    "mean": 0.0854,
-    "t": 0.46,
-    "win": 36.8
-   },
-   "unseen": {
-    "n": 127,
-    "eff_n": 127.0,
-    "mean": 0.0712,
-    "t": 0.34,
-    "win": 33.9
-   },
-   "whole": {
-    "n": 246,
-    "eff_n": 245.4,
-    "mean": 0.0767,
-    "t": 0.54,
-    "win": 35.2
-   },
-   "halves": [
-    0.1044,
-    0.0579
-   ],
-   "neighbours": {
-    "values": [
-     0.7,
-     0.6,
-     0.5,
-     0.45,
-     0.4,
-     0.3
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 9,
-   "cost_r": null,
-   "risk_pct": 0.126,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC326|15Min|USDCHF",
-    "knob": "RISK_scout:SC326|15Min|USDCHF",
-    "from": 0.0028,
-    "to": 0.00126
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.45,
-    "group": [
-     "QC04|15Min|EURUSD",
-     "SC326|5Min|GBPUSD",
-     "SC402|5Min|XAUUSD",
-     "SC402|15Min|XAUUSD",
-     "SC333|15Min|XAUUSD",
-     "SC326|15Min|USDCHF",
-     "SC326|15Min|USDJPY",
-     "SC311|15Min|GER40"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 117.82,
-       "max_fall_pct": 16.72,
-       "worst_day_pct": -4.33,
-       "low_pct": -6.37,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 87.38,
-       "max_fall_pct": 18.56,
-       "worst_day_pct": -3.95,
-       "low_pct": -4.36,
-       "n": 2919
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 97.46,
-       "max_fall_pct": 11.99,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.19,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 70.97,
-       "max_fall_pct": 13.2,
-       "worst_day_pct": -3.38,
-       "low_pct": -3.35,
-       "n": 2919
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 90.3,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -3.34,
-       "low_pct": -4.79,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 67.01,
-       "max_fall_pct": 11.22,
-       "worst_day_pct": -3.13,
-       "low_pct": -3.02,
-       "n": 2919
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 83.44,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.4,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 61.3,
-       "max_fall_pct": 10.54,
-       "worst_day_pct": -2.88,
-       "low_pct": -2.68,
-       "n": 2919
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "n": 2919
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 76.62,
-       "max_fall_pct": 8.67,
-       "worst_day_pct": -2.73,
-       "low_pct": -4.01,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 55.76,
-       "max_fall_pct": 10.16,
-       "worst_day_pct": -2.63,
-       "low_pct": -2.34,
-       "n": 2919
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 69.81,
-       "max_fall_pct": 7.57,
-       "worst_day_pct": -2.39,
-       "low_pct": -3.61,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 50.4,
-       "max_fall_pct": 9.78,
-       "worst_day_pct": -2.38,
-       "low_pct": -2.0,
-       "n": 2919
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 63.0,
-       "max_fall_pct": 6.48,
-       "worst_day_pct": -2.04,
-       "low_pct": -3.22,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 45.03,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.17,
-       "low_pct": -1.67,
-       "n": 2919
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 49.39,
-       "max_fall_pct": 4.89,
-       "worst_day_pct": -1.69,
-       "low_pct": -2.43,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 34.3,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -1.93,
-       "low_pct": -1.1,
-       "n": 2919
-      }
-     }
-    },
-    "without_new8": {
-     "train": {
-      "total_pct": 49.39,
-      "max_fall_pct": 4.89,
-      "worst_day_pct": -1.69,
-      "low_pct": -2.43,
-      "n": 916
-     },
-     "unseen": {
-      "total_pct": 34.3,
-      "max_fall_pct": 10.14,
-      "worst_day_pct": -1.93,
-      "low_pct": -1.1,
-      "n": 1339
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-15T22:18:43+00:00",
-   "id": "b956c132ae17"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC326|15Min|USDJPY - סיכון 0.28% ← 0.126% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 8 האסטרטגיות שנוספו ב־15.11 בבוקר הגדילו את הסיכון של הבוט - הירידה מהשיא ב־2026 עלתה מ־9.5% ל־18% (בדיקת הבוט כולו, 14:24). רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד, לפי הכלל של הבוט (היום הגרוע עד שני שלישים מ־4.5%): סיכון ×0.45 לשמונה החדשות, 0.28% ← 0.126%. חלק הסייר, 2026 (לא נראתה): סה\"כ 87.38% ← 58.45%, ירידה 18.56% ← 10.35%, היום הגרוע -3.95% ← -2.75%. בלי השמונה: 34.3%, ירידה 10.14% - כלומר נשאר רווח נוסף של כ־24% באותה רמת סיכון. לא הקטנה של מפסידה: האסטרטגיה עצמה רווחית (+32.7R עד 2025, +5.5R ב־2026). הבדיקה של הבוט כולו (עם מסלולי הגאפ) חוזרת בכל סבב במחשב הבוטים.",
-   "train": {
-    "n": 104,
-    "eff_n": 103.9,
-    "mean": 0.3078,
-    "t": 1.57,
-    "win": 41.2
-   },
-   "unseen": {
-    "n": 123,
-    "eff_n": 123.0,
-    "mean": 0.0448,
-    "t": 0.25,
-    "win": 39.8
-   },
-   "whole": {
-    "n": 227,
-    "eff_n": 226.5,
-    "mean": 0.1595,
-    "t": 1.2,
-    "win": 40.4
-   },
-   "halves": [
-    0.3973,
-    -0.059
-   ],
-   "neighbours": {
-    "values": [
-     0.7,
-     0.6,
-     0.5,
-     0.45,
-     0.4,
-     0.3
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 9,
-   "cost_r": null,
-   "risk_pct": 0.126,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC326|15Min|USDJPY",
-    "knob": "RISK_scout:SC326|15Min|USDJPY",
-    "from": 0.0028,
-    "to": 0.00126
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.45,
-    "group": [
-     "QC04|15Min|EURUSD",
-     "SC326|5Min|GBPUSD",
-     "SC402|5Min|XAUUSD",
-     "SC402|15Min|XAUUSD",
-     "SC333|15Min|XAUUSD",
-     "SC326|15Min|USDCHF",
-     "SC326|15Min|USDJPY",
-     "SC311|15Min|GER40"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 117.82,
-       "max_fall_pct": 16.72,
-       "worst_day_pct": -4.33,
-       "low_pct": -6.37,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 87.38,
-       "max_fall_pct": 18.56,
-       "worst_day_pct": -3.95,
-       "low_pct": -4.36,
-       "n": 2919
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 97.46,
-       "max_fall_pct": 11.99,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.19,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 70.97,
-       "max_fall_pct": 13.2,
-       "worst_day_pct": -3.38,
-       "low_pct": -3.35,
-       "n": 2919
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 90.3,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -3.34,
-       "low_pct": -4.79,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 67.01,
-       "max_fall_pct": 11.22,
-       "worst_day_pct": -3.13,
-       "low_pct": -3.02,
-       "n": 2919
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 83.44,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.4,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 61.3,
-       "max_fall_pct": 10.54,
-       "worst_day_pct": -2.88,
-       "low_pct": -2.68,
-       "n": 2919
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "n": 2919
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 76.62,
-       "max_fall_pct": 8.67,
-       "worst_day_pct": -2.73,
-       "low_pct": -4.01,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 55.76,
-       "max_fall_pct": 10.16,
-       "worst_day_pct": -2.63,
-       "low_pct": -2.34,
-       "n": 2919
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 69.81,
-       "max_fall_pct": 7.57,
-       "worst_day_pct": -2.39,
-       "low_pct": -3.61,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 50.4,
-       "max_fall_pct": 9.78,
-       "worst_day_pct": -2.38,
-       "low_pct": -2.0,
-       "n": 2919
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 63.0,
-       "max_fall_pct": 6.48,
-       "worst_day_pct": -2.04,
-       "low_pct": -3.22,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 45.03,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.17,
-       "low_pct": -1.67,
-       "n": 2919
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 49.39,
-       "max_fall_pct": 4.89,
-       "worst_day_pct": -1.69,
-       "low_pct": -2.43,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 34.3,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -1.93,
-       "low_pct": -1.1,
-       "n": 2919
-      }
-     }
-    },
-    "without_new8": {
-     "train": {
-      "total_pct": 49.39,
-      "max_fall_pct": 4.89,
-      "worst_day_pct": -1.69,
-      "low_pct": -2.43,
-      "n": 916
-     },
-     "unseen": {
-      "total_pct": 34.3,
-      "max_fall_pct": 10.14,
-      "worst_day_pct": -1.93,
-      "low_pct": -1.1,
-      "n": 1339
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-15T22:18:43+00:00",
-   "id": "7a1c4d2f095f"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC311|15Min|GER40 - סיכון 0.28% ← 0.126% כדי שהבוט יחזור לסיכון שלפני ההוספה",
-   "what": "הבוט כולו קודם (עיקרון 11): 8 האסטרטגיות שנוספו ב־15.11 בבוקר הגדילו את הסיכון של הבוט - הירידה מהשיא ב־2026 עלתה מ־9.5% ל־18% (בדיקת הבוט כולו, 14:24). רווח שמגיע עם סיכון נוסף נכנס בסיכון מוקטן. נבחר על מאי-דצמבר 2025 בלבד, לפי הכלל של הבוט (היום הגרוע עד שני שלישים מ־4.5%): סיכון ×0.45 לשמונה החדשות, 0.28% ← 0.126%. חלק הסייר, 2026 (לא נראתה): סה\"כ 87.38% ← 58.45%, ירידה 18.56% ← 10.35%, היום הגרוע -3.95% ← -2.75%. בלי השמונה: 34.3%, ירידה 10.14% - כלומר נשאר רווח נוסף של כ־24% באותה רמת סיכון. לא הקטנה של מפסידה: האסטרטגיה עצמה רווחית (+9.1R עד 2025, +4.5R ב־2026). הבדיקה של הבוט כולו (עם מסלולי הגאפ) חוזרת בכל סבב במחשב הבוטים.",
-   "train": {
-    "n": 167,
-    "eff_n": 166.8,
-    "mean": 0.052,
-    "t": 0.79,
-    "win": 59.8
-   },
-   "unseen": {
-    "n": 223,
-    "eff_n": 223.0,
-    "mean": 0.0203,
-    "t": 0.36,
-    "win": 58.3
-   },
-   "whole": {
-    "n": 390,
-    "eff_n": 389.2,
-    "mean": 0.0336,
-    "t": 0.79,
-    "win": 58.9
-   },
-   "halves": [
-    0.0546,
-    0.0152
-   ],
-   "neighbours": {
-    "values": [
-     0.7,
-     0.6,
-     0.5,
-     0.45,
-     0.4,
-     0.3
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 9,
-   "cost_r": null,
-   "risk_pct": 0.126,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC311|15Min|GER40",
-    "knob": "RISK_scout:SC311|15Min|GER40",
-    "from": 0.0028,
-    "to": 0.00126
-   },
-   "detail": {
-    "account_fit": true,
-    "world": "bot5",
-    "why": "principle 11 / main goal",
-    "factor": 0.45,
-    "group": [
-     "QC04|15Min|EURUSD",
-     "SC326|5Min|GBPUSD",
-     "SC402|5Min|XAUUSD",
-     "SC402|15Min|XAUUSD",
-     "SC333|15Min|XAUUSD",
-     "SC326|15Min|USDCHF",
-     "SC326|15Min|USDJPY",
-     "SC311|15Min|GER40"
-    ],
-    "rule": "largest factor with the scouts' worst day on May-Dec 2025 within 2/3 of 4.5%",
-    "grid": {
-     "1": {
-      "train": {
-       "total_pct": 117.82,
-       "max_fall_pct": 16.72,
-       "worst_day_pct": -4.33,
-       "low_pct": -6.37,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 87.38,
-       "max_fall_pct": 18.56,
-       "worst_day_pct": -3.95,
-       "low_pct": -4.36,
-       "n": 2919
-      }
-     },
-     "0.7": {
-      "train": {
-       "total_pct": 97.46,
-       "max_fall_pct": 11.99,
-       "worst_day_pct": -3.33,
-       "low_pct": -5.19,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 70.97,
-       "max_fall_pct": 13.2,
-       "worst_day_pct": -3.38,
-       "low_pct": -3.35,
-       "n": 2919
-      }
-     },
-     "0.6": {
-      "train": {
-       "total_pct": 90.3,
-       "max_fall_pct": 10.87,
-       "worst_day_pct": -3.34,
-       "low_pct": -4.79,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 67.01,
-       "max_fall_pct": 11.22,
-       "worst_day_pct": -3.13,
-       "low_pct": -3.02,
-       "n": 2919
-      }
-     },
-     "0.5": {
-      "train": {
-       "total_pct": 83.44,
-       "max_fall_pct": 9.76,
-       "worst_day_pct": -3.06,
-       "low_pct": -4.4,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 61.3,
-       "max_fall_pct": 10.54,
-       "worst_day_pct": -2.88,
-       "low_pct": -2.68,
-       "n": 2919
-      }
-     },
-     "0.45": {
-      "train": {
-       "total_pct": 80.02,
-       "max_fall_pct": 9.21,
-       "worst_day_pct": -2.9,
-       "low_pct": -4.2,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 58.45,
-       "max_fall_pct": 10.35,
-       "worst_day_pct": -2.75,
-       "low_pct": -2.51,
-       "n": 2919
-      }
-     },
-     "0.4": {
-      "train": {
-       "total_pct": 76.62,
-       "max_fall_pct": 8.67,
-       "worst_day_pct": -2.73,
-       "low_pct": -4.01,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 55.76,
-       "max_fall_pct": 10.16,
-       "worst_day_pct": -2.63,
-       "low_pct": -2.34,
-       "n": 2919
-      }
-     },
-     "0.3": {
-      "train": {
-       "total_pct": 69.81,
-       "max_fall_pct": 7.57,
-       "worst_day_pct": -2.39,
-       "low_pct": -3.61,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 50.4,
-       "max_fall_pct": 9.78,
-       "worst_day_pct": -2.38,
-       "low_pct": -2.0,
-       "n": 2919
-      }
-     },
-     "0.2": {
-      "train": {
-       "total_pct": 63.0,
-       "max_fall_pct": 6.48,
-       "worst_day_pct": -2.04,
-       "low_pct": -3.22,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 45.03,
-       "max_fall_pct": 9.39,
-       "worst_day_pct": -2.17,
-       "low_pct": -1.67,
-       "n": 2919
-      }
-     },
-     "0": {
-      "train": {
-       "total_pct": 49.39,
-       "max_fall_pct": 4.89,
-       "worst_day_pct": -1.69,
-       "low_pct": -2.43,
-       "n": 2204
-      },
-      "unseen": {
-       "total_pct": 34.3,
-       "max_fall_pct": 10.14,
-       "worst_day_pct": -1.93,
-       "low_pct": -1.1,
-       "n": 2919
-      }
-     }
-    },
-    "without_new8": {
-     "train": {
-      "total_pct": 49.39,
-      "max_fall_pct": 4.89,
-      "worst_day_pct": -1.69,
-      "low_pct": -2.43,
-      "n": 916
-     },
-     "unseen": {
-      "total_pct": 34.3,
-      "max_fall_pct": 10.14,
-      "worst_day_pct": -1.93,
-      "low_pct": -1.1,
-      "n": 1339
-     }
-    },
-    "note": "scouts part of the bot (the gap tracks' trades are on the bots' computer); guard5 re-checks the whole bot each round"
-   },
-   "made": "2026-11-15T22:18:43+00:00",
-   "id": "ae95ffadb474"
   },
   {
    "bot": "bot5",

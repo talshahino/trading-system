@@ -1,13 +1,65 @@
 {
- "updated": "2026-11-17T14:04:10+00:00",
+ "updated": "2026-11-17T14:30:29+00:00",
  "new": [
-  "671ca6f170d1",
-  "5084c9f1aa4c",
-  "359cd8c56404",
-  "72565cffc8d5",
-  "ac1340171466"
+  "c9ba1da9cd49"
  ],
  "decisions": [
+  {
+   "id": "c9ba1da9cd49",
+   "bot": "bot5",
+   "type": "card",
+   "card": "2def6a47d00b",
+   "kind": "risk",
+   "tier": "regular",
+   "title": "בוט 5: SC501|5Min|XAUUSD - סיכון 0.049% ← 0.012% (בלעדיה הבוט יורד פחות על אותו רווח)",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": false,
+   "at": "2026-11-17T14:30:29+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "487fc5022fc9",
+   "bot": "bot5",
+   "type": "card",
+   "card": "2e2048ce8c67",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 5: אחרי ×0.25 - השמטה של אחת-אחת ותקרה לזהב נבדקו; רק SC501 יורדת",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-17T14:26:15+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "3018097951a1",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV60|15Min|ARM",
+   "title": "TV60|15Min|ARM: סיכון ×1.15",
+   "decision": "approved",
+   "why": "רווח ממוצע +0.52R מול -0.09R של הבוט, יציבות 0.97, 7 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "TV60|15Min|ARM",
+    "kind": "mult",
+    "value": 1.15,
+    "prev": 1.35
+   },
+   "at": "2026-11-17T14:26:15+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "671ca6f170d1",
    "bot": "bot2",

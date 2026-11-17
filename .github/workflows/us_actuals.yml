@@ -21,12 +21,7 @@ jobs:
           cache: pip
       - name: Install
         run: pip install -r requirements.txt
-      - name: Probe
-        run: |
-          for u in "https://alfred.stlouisfed.org/graph/alfredgraph.csv?id=PAYEMS&vintage_date=2025-06-06" "https://fred.stlouisfed.org/graph/fredgraph.csv?id=PAYEMS" "https://api.bls.gov/publicAPI/v1/timeseries/data/CES0000000001" "https://www.bls.gov/news.release/empsit.nr0.htm" "https://download.bls.gov/pub/time.series/ce/ce.data.0.AllCESSeries" "https://www.forexfactory.com/calendar?month=jun.2025" "https://nfs.faireconomy.media/ff_calendar_thisweek.json"; do
-            echo "$u -> $(curl --http1.1 -m 20 -sS -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36' -o /tmp/p.out -w '%{http_code} %{size_download}' "$u" 2>&1 || true)"; head -c 300 /tmp/p.out 2>/dev/null || true; echo; done
       - name: Run
-        if: false
         timeout-minutes: 20
         run: python -u -m agents.us_actuals
       - name: Commit

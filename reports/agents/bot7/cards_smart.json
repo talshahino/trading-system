@@ -1,6 +1,6 @@
 {
  "bot": "bot7",
- "updated": "2026-11-17T04:40:00+00:00",
+ "updated": "2026-11-17T08:02:41+00:00",
  "cards": [
   {
    "bot": "bot7",
@@ -2890,6 +2890,197 @@
    "made": "2026-11-17T04:13:54+00:00",
    "id": "5efd5fd6078d",
    "tier": "regular"
+  },
+  {
+   "bot": "bot7",
+   "kind": "improve",
+   "title": "EV04 (סטרדל): לדלג גם על החלטות הריבית של אירופה (ECB)",
+   "what": "EV04 (סטרדל) מפסיד בהחלטות הריבית של הבנק המרכזי האירופי (ECB) בשתי התקופות: המחיר קופץ לשני הכיוונים, כמו בהחלטות הפד ובנק אנגליה שכבר מדלגים עליהן. אותו כלל שכבר אושר (כרטיס 4b152c858fb7: לדלג על סוג פרסום שהפסיד ב־2025 עם 8 עסקאות לפחות), על הגרסה שבבוט היום (מילוי רק בדקת הפרסום), בוחר עכשיו גם את ריבית אירופה: 2025 8 עסקאות -2.2R, 2026 (לא נראתה) 6 עסקאות -2.8R (EURJPY -1.8R, GER40 -1.2R). EV04 כולו: 2025 189 עסקאות +179.8R ← 181 עסקאות +182.0R; 2026 236 עסקאות +232.6R ← 230 עסקאות +235.4R. הבוט כולו עם ההגנה 4.5%/9%: 2025 +129.6% ← +130.4%, 2026 +179.1% ← +179.8%, ירידה 5.43% ← 5.43%, יום גרוע -3.2% בלי שינוי. שיפור קטן, בלי סיכון נוסף. EURJPY ב־EV04 נכנס רק בהחלטות ECB - בפועל הוא יפסיק לסחור.",
+   "train": {
+    "n": 181,
+    "eff_n": 181.0,
+    "mean": 1.0058,
+    "t": 5.17,
+    "win": 49.7
+   },
+   "unseen": {
+    "n": 230,
+    "eff_n": 230.0,
+    "mean": 1.0235,
+    "t": 5.72,
+    "win": 42.2
+   },
+   "whole": {
+    "n": 411,
+    "eff_n": 411.0,
+    "mean": 1.0157,
+    "t": 7.71,
+    "win": 45.5
+   },
+   "halves": [
+    0.9157,
+    1.1151
+   ],
+   "neighbours": {
+    "values": 3,
+    "share_positive": 1.0
+   },
+   "tested": 3,
+   "cost_r": null,
+   "risk_pct": 0.25,
+   "baseline": {
+    "n": 236,
+    "eff_n": 236.0,
+    "mean": 0.9856,
+    "t": 5.62,
+    "win": 41.5
+   },
+   "change": {
+    "combo": "EV04|1Min|*",
+    "combos": [
+     "EV04|1Min|XAUUSD",
+     "EV04|1Min|US100",
+     "EV04|1Min|US500",
+     "EV04|1Min|US30",
+     "EV04|1Min|GER40",
+     "EV04|1Min|UK100",
+     "EV04|1Min|JP225",
+     "EV04|1Min|EURUSD",
+     "EV04|1Min|GBPUSD",
+     "EV04|1Min|USDJPY",
+     "EV04|1Min|AUDUSD",
+     "EV04|1Min|USDCAD",
+     "EV04|1Min|USDCHF",
+     "EV04|1Min|NZDUSD",
+     "EV04|1Min|EURJPY",
+     "EV04|1Min|GBPJPY"
+    ],
+    "plan": {
+     "skip_groups": [
+      "USD:gdp",
+      "USD:rates",
+      "GBP:rates",
+      "EUR:rates"
+     ]
+    },
+    "from": "skip USD:gdp,USD:rates,GBP:rates",
+    "to": "skip USD:gdp,USD:rates,GBP:rates,EUR:rates"
+   },
+   "detail": {
+    "fix_key": "bot7|EV04|1Min|*",
+    "rule": "skip (currency:type) groups with n>=8 and sum<0 on 30.04-31.12.2025, on the built version (fill_from 0)",
+    "groups_2025_2026": {
+     "GER40|EUR:rates": {
+      "tr25": [
+       1,
+       -0.0407
+      ],
+      "tr": [
+       2,
+       -1.2465
+      ]
+     },
+     "EURUSD|EUR:rates": {
+      "tr25": [
+       4,
+       -0.6161000000000001
+      ],
+      "tr": [
+       2,
+       0.2733000000000001
+      ]
+     },
+     "EURJPY|EUR:rates": {
+      "tr25": [
+       3,
+       -1.5420000000000003
+      ],
+      "tr": [
+       2,
+       -1.8134
+      ]
+     }
+    },
+    "replay": {
+     "2025": {
+      "now": {
+       "trades": 2046,
+       "total": 129.64,
+       "worst_day": -2.95,
+       "max_dd": 8.5,
+       "near_days": 0,
+       "max_open": 4.35,
+       "max_side": 3.65,
+       "guard_cut": 60,
+       "guard_skipped": 3
+      },
+      "skip": {
+       "trades": 2038,
+       "total": 130.44,
+       "worst_day": -2.95,
+       "max_dd": 8.5,
+       "near_days": 0,
+       "max_open": 4.35,
+       "max_side": 3.65,
+       "guard_cut": 59,
+       "guard_skipped": 3
+      }
+     },
+     "2026": {
+      "now": {
+       "trades": 3551,
+       "total": 179.07,
+       "worst_day": -3.2,
+       "max_dd": 5.43,
+       "near_days": 2,
+       "max_open": 4.85,
+       "max_side": 3.85,
+       "guard_cut": 149,
+       "guard_skipped": 42
+      },
+      "skip": {
+       "trades": 3545,
+       "total": 179.77,
+       "worst_day": -3.2,
+       "max_dd": 5.43,
+       "near_days": 2,
+       "max_open": 4.85,
+       "max_side": 3.85,
+       "guard_cut": 149,
+       "guard_skipped": 42
+      }
+     }
+    },
+    "neighbours": "n>=3 / 5 / 8 on 2025 all pick EUR:rates only",
+    "watch": "GBP:infl: 2025 20 trades +16.0R, 2026 25 trades -15.2R - not skipped (chosen on 2025 only); watched",
+    "code": "agents/news_straddle_live.skip_events (live) = agents/news_straddle.skipped_out (study)"
+   },
+   "made": "2026-11-17T08:02:41+00:00",
+   "id": "10a662c222e4"
+  },
+  {
+   "bot": "bot7",
+   "kind": "info",
+   "title": "בוט 7: EV04 - הצעה לדלג גם על ריבית אירופה; EV03 על המדדים מפסיד בהחלטות הפד ב־2026 - עוד אין תיקון שנבחר על 2025",
+   "what": "17.11 בוקר (ענן). (1) הפסדים בבדיקה (2026, הגרסה שבבוט): EV04 על GBPJPY ‎-4.0R, UK100 ‎-3.0R, EURJPY ‎-1.8R; EV03 על US500 ‎-6.2R, US100 ‎-5.5R. (2) EV04: הסיבה לפי סוג הפרסום - ריבית אירופה מפסידה בשתי התקופות (כרטיס חדש: לדלג). האינפלציה הבריטית: 2025 ‎+16.0R, 2026 ‎-15.2R - לא מדלגים כי זה נבחר לפי 2026; בודקים שוב בכל סבב. (3) EV03 על המדדים: כל ההפסד של 2026 (‎-14.4R ב־15 עסקאות) בכניסה אחרי הפד (ריבית / פרוטוקול: ‎-9.4R ב־6 עסקאות), אבל ב־2025 הפד כמעט אפס (‎-0.1R ב־6) - מתחת לסף של 8 עסקאות, אז אין תיקון שנבחר על 2025. נרשם ניסיון (trying). (4) בחי מאז האיפוס (16.11): ‎-1.2%. TV20 על הזהב הגיע ל־+1.1R ונסגר בסטופ (‎-364$) - יציאה בחלקיות כבר נבדקה ולא מרוויחה כאן. (5) זעזועים: אין חדש מאז 15.11 (הסריקה במחשב הבוטים 16.11 22:55). היום 13:30 UTC (15:30 שעון ישראל) מכירות קמעונאיות בארה\"ב - EV04 פעיל.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot7|*",
+    "note": "info only",
+    "night": "2026-11-17c",
+    "at": "2026-11-17T08:02:41+00:00"
+   },
+   "detail": {},
+   "made": "2026-11-17T08:02:41+00:00",
+   "id": "c33e3854f715"
   }
  ]
 }

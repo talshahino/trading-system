@@ -1,0 +1,6743 @@
+{
+ "at": "2026-11-17T20:06:09+00:00",
+ "rows": 55680,
+ "instruments": [
+  "AUDCAD",
+  "AUDCHF",
+  "AUDJPY",
+  "AUDNZD",
+  "AUS200",
+  "CADCHF",
+  "CADJPY",
+  "CHFJPY",
+  "EU50",
+  "EURAUD",
+  "EURCAD",
+  "EURCHF",
+  "EURGBP",
+  "EURJPY",
+  "EURNZD",
+  "GBPAUD",
+  "GBPCAD",
+  "GBPCHF",
+  "GBPJPY",
+  "GBPNZD",
+  "GER40",
+  "NZDJPY",
+  "UK100",
+  "USDCHF"
+ ],
+ "by_currency": {
+  "AUD": {
+   "d0": {
+    "ftmo": {
+     "v": "d0|s1.5|h60|p1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 78,
+      "sum": 171.96,
+      "mean": 2.205
+     },
+     "unseen": {
+      "n": 140,
+      "sum": 390.03,
+      "mean": 2.786
+     }
+    },
+    "broker": {
+     "v": "d0|s1.5|h60|p1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 78,
+      "sum": 88.82,
+      "mean": 1.139
+     },
+     "unseen": {
+      "n": 140,
+      "sum": 284.16,
+      "mean": 2.03
+     }
+    }
+   },
+   "d1": {
+    "ftmo": {
+     "v": "d1|s3|h60|p-1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 78,
+      "sum": -22.02,
+      "mean": -0.282
+     },
+     "unseen": {
+      "n": 140,
+      "sum": -64.11,
+      "mean": -0.458
+     }
+    },
+    "broker": {
+     "v": "d1|s3|h60|p-1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 78,
+      "sum": -62.1,
+      "mean": -0.796
+     },
+     "unseen": {
+      "n": 140,
+      "sum": -115.48,
+      "mean": -0.825
+     }
+    }
+   },
+   "d2": {
+    "ftmo": {
+     "v": "d2|s3|h30|p-1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 78,
+      "sum": -12.16,
+      "mean": -0.156
+     },
+     "unseen": {
+      "n": 140,
+      "sum": -51.4,
+      "mean": -0.367
+     }
+    },
+    "broker": {
+     "v": "d2|s3|h30|p-1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 78,
+      "sum": -51.23,
+      "mean": -0.657
+     },
+     "unseen": {
+      "n": 140,
+      "sum": -99.94,
+      "mean": -0.714
+     }
+    }
+   },
+   "d3": {
+    "ftmo": {
+     "v": "d3|s3|h60|p1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 78,
+      "sum": -26.54,
+      "mean": -0.34
+     },
+     "unseen": {
+      "n": 140,
+      "sum": 0.17,
+      "mean": 0.001
+     }
+    },
+    "broker": {
+     "v": "d3|s3|h60|p1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 78,
+      "sum": -61.22,
+      "mean": -0.785
+     },
+     "unseen": {
+      "n": 140,
+      "sum": -48.24,
+      "mean": -0.345
+     }
+    }
+   }
+  },
+  "CAD": {
+   "d0": {
+    "ftmo": {
+     "v": "d0|s1.5|h30|p1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 40,
+      "sum": 68.26,
+      "mean": 1.707
+     },
+     "unseen": {
+      "n": 80,
+      "sum": 106.03,
+      "mean": 1.325
+     }
+    },
+    "broker": {
+     "v": "d0|s1.5|h30|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 28,
+      "sum": 37.69,
+      "mean": 1.346
+     },
+     "unseen": {
+      "n": 75,
+      "sum": 49.45,
+      "mean": 0.659
+     }
+    }
+   },
+   "d1": {
+    "ftmo": {
+     "v": "d1|s3|h30|p1",
+     "big": 0,
+     "nomix": 1,
+     "train": {
+      "n": 52,
+      "sum": 6.69,
+      "mean": 0.129
+     },
+     "unseen": {
+      "n": 135,
+      "sum": -13.35,
+      "mean": -0.099
+     }
+    },
+    "broker": {
+     "v": "d1|s3|h30|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 28,
+      "sum": -7.92,
+      "mean": -0.283
+     },
+     "unseen": {
+      "n": 75,
+      "sum": -18.12,
+      "mean": -0.242
+     }
+    }
+   },
+   "d2": {
+    "ftmo": {
+     "v": "d2|s1.5|h30|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 28,
+      "sum": 14.6,
+      "mean": 0.522
+     },
+     "unseen": {
+      "n": 75,
+      "sum": 28.5,
+      "mean": 0.38
+     }
+    },
+    "broker": {
+     "v": "d2|s3|h30|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 28,
+      "sum": -5.15,
+      "mean": -0.184
+     },
+     "unseen": {
+      "n": 75,
+      "sum": -12.86,
+      "mean": -0.171
+     }
+    }
+   },
+   "d3": {
+    "ftmo": {
+     "v": "d3|s3|h30|p1",
+     "big": 0,
+     "nomix": 1,
+     "train": {
+      "n": 52,
+      "sum": 3.31,
+      "mean": 0.064
+     },
+     "unseen": {
+      "n": 135,
+      "sum": -7.03,
+      "mean": -0.052
+     }
+    },
+    "broker": {
+     "v": "d3|s3|h30|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 28,
+      "sum": -11.33,
+      "mean": -0.405
+     },
+     "unseen": {
+      "n": 75,
+      "sum": -24.09,
+      "mean": -0.321
+     }
+    }
+   }
+  },
+  "CHF": {
+   "d0": {
+    "ftmo": {
+     "v": "d0|s1.5|h30|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 24,
+      "sum": 21.18,
+      "mean": 0.883
+     },
+     "unseen": {
+      "n": 6,
+      "sum": -3.15,
+      "mean": -0.526
+     }
+    },
+    "broker": {
+     "v": "d0|s1.5|h30|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 24,
+      "sum": 0.07,
+      "mean": 0.003
+     },
+     "unseen": {
+      "n": 6,
+      "sum": -6.13,
+      "mean": -1.021
+     }
+    }
+   },
+   "d1": {
+    "ftmo": {
+     "v": "d1|s1.5|h15|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 24,
+      "sum": 2.84,
+      "mean": 0.118
+     },
+     "unseen": {
+      "n": 6,
+      "sum": -7.96,
+      "mean": -1.327
+     }
+    },
+    "broker": {
+     "v": "d1|s3|h15|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 24,
+      "sum": -10.01,
+      "mean": -0.417
+     },
+     "unseen": {
+      "n": 6,
+      "sum": -5.46,
+      "mean": -0.91
+     }
+    }
+   },
+   "d2": {
+    "ftmo": {
+     "v": "d2|s3|h15|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 24,
+      "sum": -3.67,
+      "mean": -0.153
+     },
+     "unseen": {
+      "n": 6,
+      "sum": -3.94,
+      "mean": -0.656
+     }
+    },
+    "broker": {
+     "v": "d2|s3|h15|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 24,
+      "sum": -12.98,
+      "mean": -0.541
+     },
+     "unseen": {
+      "n": 6,
+      "sum": -5.92,
+      "mean": -0.987
+     }
+    }
+   },
+   "d3": {
+    "ftmo": {
+     "v": "d3|s3|h15|p-1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 24,
+      "sum": -3.29,
+      "mean": -0.137
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 2.25,
+      "mean": 0.374
+     }
+    },
+    "broker": {
+     "v": "d3|s3|h15|p-1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 24,
+      "sum": -12.3,
+      "mean": -0.513
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 0.44,
+      "mean": 0.073
+     }
+    }
+   }
+  },
+  "EUR": {
+   "d0": {
+    "ftmo": {
+     "v": "d0|s1.5|h15|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 24,
+      "sum": 15.16,
+      "mean": 0.631
+     },
+     "unseen": {
+      "n": 23,
+      "sum": -2.74,
+      "mean": -0.119
+     }
+    },
+    "broker": {
+     "v": "d0|s1.5|h15|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 24,
+      "sum": 3.33,
+      "mean": 0.139
+     },
+     "unseen": {
+      "n": 23,
+      "sum": -14.15,
+      "mean": -0.615
+     }
+    }
+   },
+   "d1": {
+    "ftmo": {
+     "v": "d1|s3|h60|p-1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 47,
+      "sum": 3.5,
+      "mean": 0.074
+     },
+     "unseen": {
+      "n": 31,
+      "sum": -4.06,
+      "mean": -0.131
+     }
+    },
+    "broker": {
+     "v": "d1|s3|h60|p-1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 24,
+      "sum": -4.39,
+      "mean": -0.183
+     },
+     "unseen": {
+      "n": 23,
+      "sum": -9.52,
+      "mean": -0.414
+     }
+    }
+   },
+   "d2": {
+    "ftmo": {
+     "v": "d2|s3|h60|p-1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 47,
+      "sum": 4.09,
+      "mean": 0.087
+     },
+     "unseen": {
+      "n": 31,
+      "sum": -2.74,
+      "mean": -0.088
+     }
+    },
+    "broker": {
+     "v": "d2|s3|h60|p-1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 24,
+      "sum": -1.56,
+      "mean": -0.065
+     },
+     "unseen": {
+      "n": 23,
+      "sum": -7.04,
+      "mean": -0.306
+     }
+    }
+   },
+   "d3": {
+    "ftmo": {
+     "v": "d3|s3|h60|p-1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 47,
+      "sum": 6.54,
+      "mean": 0.139
+     },
+     "unseen": {
+      "n": 31,
+      "sum": -5.69,
+      "mean": -0.183
+     }
+    },
+    "broker": {
+     "v": "d3|s3|h60|p-1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 24,
+      "sum": -0.19,
+      "mean": -0.008
+     },
+     "unseen": {
+      "n": 23,
+      "sum": -9.33,
+      "mean": -0.406
+     }
+    }
+   }
+  },
+  "GBP": {
+   "d0": {
+    "ftmo": {
+     "v": "d0|s1.5|h60|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 126,
+      "sum": 176.02,
+      "mean": 1.397
+     },
+     "unseen": {
+      "n": 210,
+      "sum": 14.93,
+      "mean": 0.071
+     }
+    },
+    "broker": {
+     "v": "d0|s1.5|h60|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 63,
+      "sum": 64.53,
+      "mean": 1.024
+     },
+     "unseen": {
+      "n": 105,
+      "sum": -48.55,
+      "mean": -0.462
+     }
+    }
+   },
+   "d1": {
+    "ftmo": {
+     "v": "d1|s3|h15|p1",
+     "big": 0,
+     "nomix": 1,
+     "train": {
+      "n": 105,
+      "sum": -6.34,
+      "mean": -0.06
+     },
+     "unseen": {
+      "n": 203,
+      "sum": -43.07,
+      "mean": -0.212
+     }
+    },
+    "broker": {
+     "v": "d1|s3|h60|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 63,
+      "sum": -38.97,
+      "mean": -0.619
+     },
+     "unseen": {
+      "n": 105,
+      "sum": -44.63,
+      "mean": -0.425
+     }
+    }
+   },
+   "d2": {
+    "ftmo": {
+     "v": "d2|s1.5|h60|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 63,
+      "sum": 29.68,
+      "mean": 0.471
+     },
+     "unseen": {
+      "n": 105,
+      "sum": 1.01,
+      "mean": 0.01
+     }
+    },
+    "broker": {
+     "v": "d2|s3|h60|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 63,
+      "sum": -18.27,
+      "mean": -0.29
+     },
+     "unseen": {
+      "n": 105,
+      "sum": -40.62,
+      "mean": -0.387
+     }
+    }
+   },
+   "d3": {
+    "ftmo": {
+     "v": "d3|s1.5|h60|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 63,
+      "sum": 39.06,
+      "mean": 0.62
+     },
+     "unseen": {
+      "n": 105,
+      "sum": -20.3,
+      "mean": -0.193
+     }
+    },
+    "broker": {
+     "v": "d3|s3|h60|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 63,
+      "sum": 1.03,
+      "mean": 0.016
+     },
+     "unseen": {
+      "n": 105,
+      "sum": -48.32,
+      "mean": -0.46
+     }
+    }
+   }
+  },
+  "NZD": {
+   "d0": {
+    "ftmo": {
+     "v": "d0|s1.5|h30|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 28,
+      "sum": 105.88,
+      "mean": 3.781
+     },
+     "unseen": {
+      "n": 41,
+      "sum": 171.32,
+      "mean": 4.178
+     }
+    },
+    "broker": {
+     "v": "d0|s1.5|h30|p1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 20,
+      "sum": 65.43,
+      "mean": 3.271
+     },
+     "unseen": {
+      "n": 37,
+      "sum": 102.0,
+      "mean": 2.757
+     }
+    }
+   },
+   "d1": {
+    "ftmo": {
+     "v": "d1|s1.5|h30|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 28,
+      "sum": 18.91,
+      "mean": 0.675
+     },
+     "unseen": {
+      "n": 41,
+      "sum": -46.11,
+      "mean": -1.125
+     }
+    },
+    "broker": {
+     "v": "d1|s3|h30|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 28,
+      "sum": -3.4,
+      "mean": -0.121
+     },
+     "unseen": {
+      "n": 41,
+      "sum": -39.1,
+      "mean": -0.954
+     }
+    }
+   },
+   "d2": {
+    "ftmo": {
+     "v": "d2|s1.5|h30|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 28,
+      "sum": 6.82,
+      "mean": 0.244
+     },
+     "unseen": {
+      "n": 41,
+      "sum": -36.3,
+      "mean": -0.885
+     }
+    },
+    "broker": {
+     "v": "d2|s3|h60|p1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 20,
+      "sum": -14.17,
+      "mean": -0.708
+     },
+     "unseen": {
+      "n": 37,
+      "sum": -32.65,
+      "mean": -0.882
+     }
+    }
+   },
+   "d3": {
+    "ftmo": {
+     "v": "d3|s1.5|h30|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 28,
+      "sum": 4.84,
+      "mean": 0.173
+     },
+     "unseen": {
+      "n": 41,
+      "sum": -21.91,
+      "mean": -0.534
+     }
+    },
+    "broker": {
+     "v": "d3|s3|h60|p1",
+     "big": 1,
+     "nomix": 0,
+     "train": {
+      "n": 20,
+      "sum": -11.81,
+      "mean": -0.591
+     },
+     "unseen": {
+      "n": 37,
+      "sum": -29.26,
+      "mean": -0.791
+     }
+    }
+   }
+  },
+  "USD": {
+   "d0": {
+    "ftmo": {
+     "v": "d0|s1.5|h60|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 61,
+      "sum": 52.65,
+      "mean": 0.863
+     },
+     "unseen": {
+      "n": 73,
+      "sum": 56.13,
+      "mean": 0.769
+     }
+    },
+    "broker": {
+     "v": "d0|s1.5|h60|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 61,
+      "sum": 31.75,
+      "mean": 0.52
+     },
+     "unseen": {
+      "n": 73,
+      "sum": 31.78,
+      "mean": 0.435
+     }
+    }
+   },
+   "d1": {
+    "ftmo": {
+     "v": "d1|s3|h60|p1",
+     "big": 0,
+     "nomix": 0,
+     "train": {
+      "n": 61,
+      "sum": 0.45,
+      "mean": 0.007
+     },
+     "unseen": {
+      "n": 73,
+      "sum": 4.43,
+      "mean": 0.061
+     }
+    },
+    "broker": {
+     "v": "d1|s3|h60|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 38,
+      "sum": -6.63,
+      "mean": -0.174
+     },
+     "unseen": {
+      "n": 34,
+      "sum": -4.95,
+      "mean": -0.146
+     }
+    }
+   },
+   "d2": {
+    "ftmo": {
+     "v": "d2|s1.5|h60|p1",
+     "big": 0,
+     "nomix": 1,
+     "train": {
+      "n": 57,
+      "sum": -1.35,
+      "mean": -0.024
+     },
+     "unseen": {
+      "n": 66,
+      "sum": 14.37,
+      "mean": 0.218
+     }
+    },
+    "broker": {
+     "v": "d2|s3|h30|p-1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 38,
+      "sum": -8.73,
+      "mean": -0.23
+     },
+     "unseen": {
+      "n": 34,
+      "sum": -11.29,
+      "mean": -0.332
+     }
+    }
+   },
+   "d3": {
+    "ftmo": {
+     "v": "d3|s3|h60|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 38,
+      "sum": -2.19,
+      "mean": -0.058
+     },
+     "unseen": {
+      "n": 34,
+      "sum": 1.22,
+      "mean": 0.036
+     }
+    },
+    "broker": {
+     "v": "d3|s3|h60|p1",
+     "big": 1,
+     "nomix": 1,
+     "train": {
+      "n": 38,
+      "sum": -7.71,
+      "mean": -0.203
+     },
+     "unseen": {
+      "n": 34,
+      "sum": -3.58,
+      "mean": -0.105
+     }
+    }
+   }
+  }
+ },
+ "all": {
+  "d0": {
+   "ftmo": {
+    "train": 611.11,
+    "unseen": 732.55,
+    "n_unseen": 573,
+    "positive_2026": 5,
+    "currencies": 7
+   },
+   "broker": {
+    "train": 291.62,
+    "unseen": 398.56,
+    "n_unseen": 459,
+    "positive_2026": 4,
+    "currencies": 7
+   }
+  },
+  "d1": {
+   "ftmo": {
+    "train": 4.03,
+    "unseen": -174.23,
+    "n_unseen": 629,
+    "positive_2026": 1,
+    "currencies": 7
+   },
+   "broker": {
+    "train": -133.42,
+    "unseen": -237.26,
+    "n_unseen": 424,
+    "positive_2026": 0,
+    "currencies": 7
+   }
+  },
+  "d2": {
+   "ftmo": {
+    "train": 38.01,
+    "unseen": -50.5,
+    "n_unseen": 464,
+    "positive_2026": 3,
+    "currencies": 7
+   },
+   "broker": {
+    "train": -112.09,
+    "unseen": -210.32,
+    "n_unseen": 420,
+    "positive_2026": 0,
+    "currencies": 7
+   }
+  },
+  "d3": {
+   "ftmo": {
+    "train": 21.73,
+    "unseen": -51.29,
+    "n_unseen": 492,
+    "positive_2026": 3,
+    "currencies": 7
+   },
+   "broker": {
+    "train": -103.53,
+    "unseen": -162.38,
+    "n_unseen": 420,
+    "positive_2026": 1,
+    "currencies": 7
+   }
+  }
+ },
+ "by_type": {
+  "NZD Official Cash Rate": {
+   "releases": 2,
+   "impact_range15_atr": 35.81,
+   "with_number_5m_pct": 100.0,
+   "move_atr": {
+    "m1": 26.21,
+    "m5": 28.62,
+    "m15": 31.06,
+    "m60": 23.94
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": 69.4,
+       "mean": 17.349
+      },
+      "unseen": {
+       "n": 4,
+       "sum": 88.92,
+       "mean": 22.231
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": 62.88,
+       "mean": 15.721
+      },
+      "unseen": {
+       "n": 4,
+       "sum": 82.09,
+       "mean": 20.522
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": -1.42,
+       "mean": -0.355
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -6.6,
+       "mean": -1.651
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -0.02,
+       "mean": -0.004
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -4.95,
+       "mean": -1.238
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": -8.03,
+       "mean": -2.007
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -7.01,
+       "mean": -1.752
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -9.5,
+       "mean": -2.375
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -7.58,
+       "mean": -1.896
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": -7.47,
+       "mean": -1.868
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -6.91,
+       "mean": -1.727
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -8.66,
+       "mean": -2.166
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -7.16,
+       "mean": -1.79
+      }
+     }
+    }
+   }
+  },
+  "AUD Cash Rate": {
+   "releases": 1,
+   "impact_range15_atr": 23.74,
+   "with_number_5m_pct": 100.0,
+   "move_atr": {
+    "m1": 17.35,
+    "m5": 16.43,
+    "m15": 15.79,
+    "m60": 17.97
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 60.06,
+       "mean": 12.012
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": 52.16,
+       "mean": 10.432
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -6.75,
+       "mean": -1.351
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": -10.65,
+       "mean": -2.129
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -6.49,
+       "mean": -1.297
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": -10.8,
+       "mean": -2.161
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -3.77,
+       "mean": -0.755
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": -7.01,
+       "mean": -1.402
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    }
+   }
+  },
+  "USD Core CPI y/y": {
+   "releases": 2,
+   "impact_range15_atr": 19.86,
+   "with_number_5m_pct": 100.0,
+   "move_atr": {
+    "m1": 13.73,
+    "m5": 14.59,
+    "m15": 17.01,
+    "m60": 17.12
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 22.13,
+       "mean": 11.064
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 21.18,
+       "mean": 10.591
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 1.33,
+       "mean": 0.667
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 0.83,
+       "mean": 0.414
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 2.23,
+       "mean": 1.114
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -1.87,
+       "mean": -0.937
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 0.63,
+       "mean": 0.317
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 0.32,
+       "mean": 0.16
+      }
+     }
+    }
+   }
+  },
+  "USD Unemployment Rate": {
+   "releases": 3,
+   "impact_range15_atr": 15.83,
+   "with_number_5m_pct": 33.3,
+   "move_atr": {
+    "m1": -0.1,
+    "m5": -0.28,
+    "m15": 0.24,
+    "m60": 0.99
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 5.7,
+       "mean": 5.701
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.8,
+       "mean": -0.401
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": 5.17,
+       "mean": 5.167
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -1.46,
+       "mean": -0.731
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": -0.55,
+       "mean": -0.545
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.82,
+       "mean": -0.41
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.68,
+       "mean": -0.342
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    }
+   }
+  },
+  "CAD Employment Change": {
+   "releases": 9,
+   "impact_range15_atr": 9.14,
+   "with_number_5m_pct": 78.0,
+   "move_atr": {
+    "m1": 3.56,
+    "m5": 4.47,
+    "m15": 6.15,
+    "m60": 5.79
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 12,
+       "sum": 41.85,
+       "mean": 3.488
+      },
+      "unseen": {
+       "n": 20,
+       "sum": 42.72,
+       "mean": 2.136
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": 30.77,
+       "mean": 3.846
+      },
+      "unseen": {
+       "n": 20,
+       "sum": 23.85,
+       "mean": 1.193
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 12,
+       "sum": 3.59,
+       "mean": 0.299
+      },
+      "unseen": {
+       "n": 25,
+       "sum": 3.05,
+       "mean": 0.122
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": -1.5,
+       "mean": -0.187
+      },
+      "unseen": {
+       "n": 20,
+       "sum": 1.41,
+       "mean": 0.07
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 14.04,
+       "mean": 1.755
+      },
+      "unseen": {
+       "n": 20,
+       "sum": 24.32,
+       "mean": 1.216
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": 3.88,
+       "mean": 0.484
+      },
+      "unseen": {
+       "n": 20,
+       "sum": 1.54,
+       "mean": 0.077
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 12,
+       "sum": 6.25,
+       "mean": 0.521
+      },
+      "unseen": {
+       "n": 25,
+       "sum": -0.46,
+       "mean": -0.019
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": 0.56,
+       "mean": 0.07
+      },
+      "unseen": {
+       "n": 20,
+       "sum": -7.0,
+       "mean": -0.35
+      }
+     }
+    }
+   }
+  },
+  "USD Retail Sales m/m": {
+   "releases": 1,
+   "impact_range15_atr": 8.56,
+   "with_number_5m_pct": 0.0,
+   "move_atr": {
+    "m1": -2.67,
+    "m5": -2.8,
+    "m15": 2.0,
+    "m60": -0.25
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": -1.36,
+       "mean": -1.363
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": -1.86,
+       "mean": -1.864
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 1.14,
+       "mean": 1.141
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 1.59,
+       "mean": 1.585
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    }
+   }
+  },
+  "AUD Unemployment Rate": {
+   "releases": 4,
+   "impact_range15_atr": 8.27,
+   "with_number_5m_pct": 92.0,
+   "move_atr": {
+    "m1": 5.47,
+    "m5": 5.0,
+    "m15": 2.35,
+    "m60": 10.37
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 11,
+       "sum": 84.65,
+       "mean": 7.695
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -1.47,
+       "mean": -0.211
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 11,
+       "sum": 72.5,
+       "mean": 6.591
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -3.99,
+       "mean": -0.571
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 11,
+       "sum": -11.7,
+       "mean": -1.064
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -2.1,
+       "mean": -0.3
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 11,
+       "sum": -17.48,
+       "mean": -1.589
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -3.38,
+       "mean": -0.483
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 11,
+       "sum": -11.94,
+       "mean": -1.085
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -2.82,
+       "mean": -0.403
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 11,
+       "sum": -17.83,
+       "mean": -1.621
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -4.08,
+       "mean": -0.582
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 11,
+       "sum": 5.21,
+       "mean": 0.474
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -0.54,
+       "mean": -0.077
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 11,
+       "sum": 0.53,
+       "mean": 0.048
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -1.8,
+       "mean": -0.257
+      }
+     }
+    }
+   }
+  },
+  "AUD CPI m/m": {
+   "releases": 4,
+   "impact_range15_atr": 7.94,
+   "with_number_5m_pct": 89.3,
+   "move_atr": {
+    "m1": 5.32,
+    "m5": 4.46,
+    "m15": 2.84,
+    "m60": 2.36
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 28,
+       "sum": 59.19,
+       "mean": 2.114
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 28,
+       "sum": 36.98,
+       "mean": 1.321
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 28,
+       "sum": 9.13,
+       "mean": 0.326
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 28,
+       "sum": -0.7,
+       "mean": -0.025
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 28,
+       "sum": 3.15,
+       "mean": 0.112
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 28,
+       "sum": -6.59,
+       "mean": -0.235
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 28,
+       "sum": -27.73,
+       "mean": -0.99
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 28,
+       "sum": -37.7,
+       "mean": -1.347
+      }
+     }
+    }
+   }
+  },
+  "USD Average Hourly Earnings m/m": {
+   "releases": 8,
+   "impact_range15_atr": 7.84,
+   "with_number_5m_pct": 62.5,
+   "move_atr": {
+    "m1": 1.98,
+    "m5": 1.63,
+    "m15": 3.58,
+    "m60": 5.76
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -2.53,
+       "mean": -1.265
+      },
+      "unseen": {
+       "n": 6,
+       "sum": 17.21,
+       "mean": 2.868
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -3.34,
+       "mean": -1.67
+      },
+      "unseen": {
+       "n": 6,
+       "sum": 13.62,
+       "mean": 2.271
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -0.35,
+       "mean": -0.174
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -1.14,
+       "mean": -0.19
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -0.79,
+       "mean": -0.394
+      },
+      "unseen": {
+       "n": 3,
+       "sum": -1.61,
+       "mean": -0.537
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -2.55,
+       "mean": -1.274
+      },
+      "unseen": {
+       "n": 3,
+       "sum": 0.59,
+       "mean": 0.197
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -0.17,
+       "mean": -0.086
+      },
+      "unseen": {
+       "n": 3,
+       "sum": -3.61,
+       "mean": -1.202
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": 2.32,
+       "mean": 1.16
+      },
+      "unseen": {
+       "n": 3,
+       "sum": 1.01,
+       "mean": 0.335
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": 2.04,
+       "mean": 1.018
+      },
+      "unseen": {
+       "n": 3,
+       "sum": 0.39,
+       "mean": 0.129
+      }
+     }
+    }
+   }
+  },
+  "NZD CPI q/q": {
+   "releases": 6,
+   "impact_range15_atr": 7.31,
+   "with_number_5m_pct": 87.0,
+   "move_atr": {
+    "m1": 3.92,
+    "m5": 4.25,
+    "m15": 4.2,
+    "m60": 5.3
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 3.9,
+       "mean": 0.488
+      },
+      "unseen": {
+       "n": 15,
+       "sum": 25.69,
+       "mean": 1.713
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": -14.09,
+       "mean": -1.762
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -12.46,
+       "mean": -0.831
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": -5.95,
+       "mean": -0.744
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -5.79,
+       "mean": -0.386
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": -8.99,
+       "mean": -1.124
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -12.7,
+       "mean": -0.847
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": -6.85,
+       "mean": -0.856
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -1.59,
+       "mean": -0.106
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": -8.03,
+       "mean": -1.004
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -14.33,
+       "mean": -0.955
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": -7.72,
+       "mean": -0.964
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -0.32,
+       "mean": -0.021
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": -5.83,
+       "mean": -0.729
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -14.52,
+       "mean": -0.968
+      }
+     }
+    }
+   }
+  },
+  "AUD CPI y/y": {
+   "releases": 13,
+   "impact_range15_atr": 6.42,
+   "with_number_5m_pct": 67.5,
+   "move_atr": {
+    "m1": 2.14,
+    "m5": 4.27,
+    "m15": 3.0,
+    "m60": 2.31
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 34,
+       "sum": 43.51,
+       "mean": 1.28
+      },
+      "unseen": {
+       "n": 49,
+       "sum": 121.77,
+       "mean": 2.485
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 34,
+       "sum": 5.79,
+       "mean": 0.17
+      },
+      "unseen": {
+       "n": 49,
+       "sum": 86.88,
+       "mean": 1.773
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 34,
+       "sum": -12.24,
+       "mean": -0.36
+      },
+      "unseen": {
+       "n": 49,
+       "sum": -27.2,
+       "mean": -0.555
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 34,
+       "sum": -30.05,
+       "mean": -0.884
+      },
+      "unseen": {
+       "n": 49,
+       "sum": -45.36,
+       "mean": -0.926
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 34,
+       "sum": 2.6,
+       "mean": 0.076
+      },
+      "unseen": {
+       "n": 49,
+       "sum": -21.25,
+       "mean": -0.434
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 34,
+       "sum": -14.78,
+       "mean": -0.435
+      },
+      "unseen": {
+       "n": 49,
+       "sum": -38.06,
+       "mean": -0.777
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 34,
+       "sum": -12.6,
+       "mean": -0.371
+      },
+      "unseen": {
+       "n": 49,
+       "sum": 6.98,
+       "mean": 0.142
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 34,
+       "sum": -29.07,
+       "mean": -0.855
+      },
+      "unseen": {
+       "n": 49,
+       "sum": -9.66,
+       "mean": -0.197
+      }
+     }
+    }
+   }
+  },
+  "GBP CPI y/y": {
+   "releases": 9,
+   "impact_range15_atr": 6.35,
+   "with_number_5m_pct": 65.1,
+   "move_atr": {
+    "m1": 1.9,
+    "m5": 1.15,
+    "m15": 1.95,
+    "m60": 2.25
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 35,
+       "sum": 87.4,
+       "mean": 2.497
+      },
+      "unseen": {
+       "n": 28,
+       "sum": -36.98,
+       "mean": -1.321
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 21,
+       "sum": 45.91,
+       "mean": 2.186
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -13.55,
+       "mean": -1.936
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 35,
+       "sum": -3.91,
+       "mean": -0.112
+      },
+      "unseen": {
+       "n": 28,
+       "sum": -11.3,
+       "mean": -0.403
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 21,
+       "sum": -21.64,
+       "mean": -1.03
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -9.28,
+       "mean": -1.326
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 21,
+       "sum": 22.41,
+       "mean": 1.067
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -11.07,
+       "mean": -1.582
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 21,
+       "sum": -1.42,
+       "mean": -0.067
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -8.03,
+       "mean": -1.148
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 21,
+       "sum": 26.52,
+       "mean": 1.263
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -10.76,
+       "mean": -1.537
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 21,
+       "sum": 1.65,
+       "mean": 0.079
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -8.01,
+       "mean": -1.144
+      }
+     }
+    }
+   }
+  },
+  "AUD Employment Change": {
+   "releases": 13,
+   "impact_range15_atr": 6.18,
+   "with_number_5m_pct": 58.1,
+   "move_atr": {
+    "m1": 3.39,
+    "m5": 0.9,
+    "m15": 0.3,
+    "m60": 0.77
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 17,
+       "sum": -3.53,
+       "mean": -0.207
+      },
+      "unseen": {
+       "n": 42,
+       "sum": 208.17,
+       "mean": 4.956
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 17,
+       "sum": -17.57,
+       "mean": -1.033
+      },
+      "unseen": {
+       "n": 42,
+       "sum": 172.73,
+       "mean": 4.113
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 17,
+       "sum": 7.62,
+       "mean": 0.448
+      },
+      "unseen": {
+       "n": 42,
+       "sum": -41.77,
+       "mean": -0.994
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 17,
+       "sum": 0.57,
+       "mean": 0.033
+      },
+      "unseen": {
+       "n": 42,
+       "sum": -58.68,
+       "mean": -1.397
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 17,
+       "sum": 1.96,
+       "mean": 0.115
+      },
+      "unseen": {
+       "n": 42,
+       "sum": -31.33,
+       "mean": -0.746
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 17,
+       "sum": -4.38,
+       "mean": -0.258
+      },
+      "unseen": {
+       "n": 42,
+       "sum": -47.0,
+       "mean": -1.119
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 17,
+       "sum": -9.89,
+       "mean": -0.582
+      },
+      "unseen": {
+       "n": 42,
+       "sum": 27.47,
+       "mean": 0.654
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 17,
+       "sum": -15.61,
+       "mean": -0.918
+      },
+      "unseen": {
+       "n": 42,
+       "sum": 12.03,
+       "mean": 0.286
+      }
+     }
+    }
+   }
+  },
+  "USD Core PPI m/m": {
+   "releases": 7,
+   "impact_range15_atr": 5.99,
+   "with_number_5m_pct": 71.4,
+   "move_atr": {
+    "m1": 1.12,
+    "m5": 0.86,
+    "m15": 1.5,
+    "m60": 1.77
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 3,
+       "sum": 4.77,
+       "mean": 1.589
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -3.04,
+       "mean": -0.76
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 3,
+       "sum": 3.63,
+       "mean": 1.209
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -4.4,
+       "mean": -1.1
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 3,
+       "sum": -3.38,
+       "mean": -1.127
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -1.34,
+       "mean": -0.334
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -2.68,
+       "mean": -1.342
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -1.38,
+       "mean": -0.69
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -2.44,
+       "mean": -1.221
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -0.88,
+       "mean": -0.22
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -0.23,
+       "mean": -0.113
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 0.07,
+       "mean": 0.034
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -2.25,
+       "mean": -1.127
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.58,
+       "mean": -0.289
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -2.62,
+       "mean": -1.308
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.83,
+       "mean": -0.413
+      }
+     }
+    }
+   }
+  },
+  "AUD GDP q/q": {
+   "releases": 5,
+   "impact_range15_atr": 5.09,
+   "with_number_5m_pct": 56.2,
+   "move_atr": {
+    "m1": 1.47,
+    "m5": 0.34,
+    "m15": 0.7,
+    "m60": -1.91
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -8.4,
+       "mean": -1.68
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -3.24,
+       "mean": -0.463
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": -13.93,
+       "mean": -2.787
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -10.04,
+       "mean": -1.435
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 6.8,
+       "mean": 1.361
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 0.75,
+       "mean": 0.107
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": 3.91,
+       "mean": 0.783
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -2.4,
+       "mean": -0.343
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 7.51,
+       "mean": 1.501
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -0.15,
+       "mean": -0.022
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": 4.73,
+       "mean": 0.946
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -3.31,
+       "mean": -0.472
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -6.45,
+       "mean": -1.29
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -8.42,
+       "mean": -1.203
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": -8.71,
+       "mean": -1.743
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -11.66,
+       "mean": -1.665
+      }
+     }
+    }
+   }
+  },
+  "CHF CPI m/m": {
+   "releases": 5,
+   "impact_range15_atr": 5.0,
+   "with_number_5m_pct": 80.0,
+   "move_atr": {
+    "m1": 1.42,
+    "m5": 2.04,
+    "m15": 2.23,
+    "m60": 0.52
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 24,
+       "sum": 21.18,
+       "mean": 0.883
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -3.15,
+       "mean": -0.526
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 24,
+       "sum": 0.07,
+       "mean": 0.003
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -6.13,
+       "mean": -1.021
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 24,
+       "sum": 2.84,
+       "mean": 0.118
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -7.96,
+       "mean": -1.327
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 24,
+       "sum": -10.01,
+       "mean": -0.417
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -5.46,
+       "mean": -0.91
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 24,
+       "sum": -3.67,
+       "mean": -0.153
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -3.94,
+       "mean": -0.656
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 24,
+       "sum": -12.98,
+       "mean": -0.541
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -5.92,
+       "mean": -0.987
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 24,
+       "sum": -3.29,
+       "mean": -0.137
+      },
+      "unseen": {
+       "n": 6,
+       "sum": 2.25,
+       "mean": 0.374
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 24,
+       "sum": -12.3,
+       "mean": -0.513
+      },
+      "unseen": {
+       "n": 6,
+       "sum": 0.44,
+       "mean": 0.073
+      }
+     }
+    }
+   }
+  },
+  "CAD Median CPI y/y": {
+   "releases": 3,
+   "impact_range15_atr": 4.99,
+   "with_number_5m_pct": 69.2,
+   "move_atr": {
+    "m1": 0.04,
+    "m5": 0.57,
+    "m15": 0.44,
+    "m60": 0.18
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": -0.59,
+       "mean": -0.148
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -6.51,
+       "mean": -1.303
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -3.16,
+       "mean": -0.791
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -10.29,
+       "mean": -2.057
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": -1.94,
+       "mean": -0.242
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -4.37,
+       "mean": -0.874
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -4.41,
+       "mean": -1.102
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -6.22,
+       "mean": -1.243
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": -5.58,
+       "mean": -1.396
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -7.11,
+       "mean": -1.422
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -5.13,
+       "mean": -1.282
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -6.47,
+       "mean": -1.294
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": -2.18,
+       "mean": -0.273
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -4.77,
+       "mean": -0.954
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -5.68,
+       "mean": -1.421
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -6.78,
+       "mean": -1.356
+      }
+     }
+    }
+   }
+  },
+  "CAD Unemployment Rate": {
+   "releases": 9,
+   "impact_range15_atr": 4.92,
+   "with_number_5m_pct": 65.1,
+   "move_atr": {
+    "m1": 1.53,
+    "m5": 2.66,
+    "m15": 1.33,
+    "m60": 1.85
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 1.18,
+       "mean": 0.147
+      },
+      "unseen": {
+       "n": 20,
+       "sum": 53.04,
+       "mean": 2.652
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -5.98,
+       "mean": -1.495
+      },
+      "unseen": {
+       "n": 15,
+       "sum": 44.41,
+       "mean": 2.96
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": -1.8,
+       "mean": -0.451
+      },
+      "unseen": {
+       "n": 25,
+       "sum": 11.11,
+       "mean": 0.445
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -3.53,
+       "mean": -0.884
+      },
+      "unseen": {
+       "n": 15,
+       "sum": 6.99,
+       "mean": 0.466
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": -3.92,
+       "mean": -0.98
+      },
+      "unseen": {
+       "n": 15,
+       "sum": 28.29,
+       "mean": 1.886
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -3.5,
+       "mean": -0.876
+      },
+      "unseen": {
+       "n": 15,
+       "sum": 8.17,
+       "mean": 0.544
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": -3.19,
+       "mean": -0.798
+      },
+      "unseen": {
+       "n": 25,
+       "sum": 10.01,
+       "mean": 0.4
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -4.56,
+       "mean": -1.141
+      },
+      "unseen": {
+       "n": 15,
+       "sum": 7.01,
+       "mean": 0.467
+      }
+     }
+    }
+   }
+  },
+  "NZD Unemployment Rate": {
+   "releases": 4,
+   "impact_range15_atr": 4.82,
+   "with_number_5m_pct": 73.3,
+   "move_atr": {
+    "m1": 2.42,
+    "m5": 3.07,
+    "m15": 2.38,
+    "m60": 5.55
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 9.24,
+       "mean": 1.154
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 61.94,
+       "mean": 8.848
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -6.43,
+       "mean": -1.609
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 52.75,
+       "mean": 7.536
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 5.95,
+       "mean": 0.743
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -10.86,
+       "mean": -1.551
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": 0.12,
+       "mean": 0.014
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 0.46,
+       "mean": 0.065
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 5.76,
+       "mean": 0.72
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -6.58,
+       "mean": -0.94
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -2.35,
+       "mean": -0.587
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 5.56,
+       "mean": 0.794
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 6.69,
+       "mean": 0.836
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 4.89,
+       "mean": 0.698
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -1.61,
+       "mean": -0.402
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 7.94,
+       "mean": 1.134
+      }
+     }
+    }
+   }
+  },
+  "USD Final GDP q/q": {
+   "releases": 3,
+   "impact_range15_atr": 4.74,
+   "with_number_5m_pct": 0.0,
+   "move_atr": {
+    "m1": -0.93,
+    "m5": -1.55,
+    "m15": -1.13,
+    "m60": 3.31
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": -1.23,
+       "mean": -1.229
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 0.68,
+       "mean": 0.34
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": -1.56,
+       "mean": -1.557
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 0.05,
+       "mean": 0.027
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 1.51,
+       "mean": 1.507
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.27,
+       "mean": -0.133
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 1,
+       "sum": -1.32,
+       "mean": -1.318
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 1.19,
+       "mean": 0.597
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 0.56,
+       "mean": 0.557
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 1,
+       "sum": -1.17,
+       "mean": -1.166
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 1,
+       "sum": -1.39,
+       "mean": -1.394
+      }
+     }
+    }
+   }
+  },
+  "AUD Trimmed Mean CPI m/m": {
+   "releases": 1,
+   "impact_range15_atr": 4.63,
+   "with_number_5m_pct": 71.4,
+   "move_atr": {
+    "m1": 1.74,
+    "m5": 0.14,
+    "m15": -0.4,
+    "m60": 1.96
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 5.62,
+       "mean": 0.803
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 1.62,
+       "mean": 0.231
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -2.93,
+       "mean": -0.418
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -4.95,
+       "mean": -0.707
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 1.01,
+       "mean": 0.144
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -0.9,
+       "mean": -0.129
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 2.4,
+       "mean": 0.343
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 0.56,
+       "mean": 0.079
+      }
+     }
+    }
+   }
+  },
+  "USD Core Retail Sales m/m": {
+   "releases": 7,
+   "impact_range15_atr": 4.18,
+   "with_number_5m_pct": 71.4,
+   "move_atr": {
+    "m1": 0.46,
+    "m5": 0.39,
+    "m15": -1.5,
+    "m60": -1.78
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -2.67,
+       "mean": -1.333
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 1.87,
+       "mean": 0.373
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -3.64,
+       "mean": -1.82
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 0.07,
+       "mean": 0.014
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -2.3,
+       "mean": -1.15
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -0.29,
+       "mean": -0.058
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -2.72,
+       "mean": -1.36
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -0.4,
+       "mean": -0.1
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -2.6,
+       "mean": -1.299
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -0.27,
+       "mean": -0.054
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": 1.53,
+       "mean": 0.763
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -0.6,
+       "mean": -0.151
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -2.27,
+       "mean": -1.133
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -0.23,
+       "mean": -0.058
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -2.62,
+       "mean": -1.31
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -0.82,
+       "mean": -0.204
+      }
+     }
+    }
+   }
+  },
+  "AUD Wage Price Index q/q": {
+   "releases": 1,
+   "impact_range15_atr": 3.98,
+   "with_number_5m_pct": 33.3,
+   "move_atr": {
+    "m1": 0.5,
+    "m5": -0.34,
+    "m15": 0.85,
+    "m60": 1.69
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 6,
+       "sum": -4.32,
+       "mean": -0.721
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 6,
+       "sum": -10.13,
+       "mean": -1.689
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 6,
+       "sum": -5.74,
+       "mean": -0.957
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 6,
+       "sum": -8.41,
+       "mean": -1.402
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 6,
+       "sum": -5.8,
+       "mean": -0.967
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 6,
+       "sum": -8.16,
+       "mean": -1.36
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 6,
+       "sum": 0.95,
+       "mean": 0.159
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 6,
+       "sum": -1.35,
+       "mean": -0.225
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    }
+   }
+  },
+  "GBP GDP m/m": {
+   "releases": 13,
+   "impact_range15_atr": 3.97,
+   "with_number_5m_pct": 75.8,
+   "move_atr": {
+    "m1": 1.16,
+    "m5": 1.65,
+    "m15": 2.0,
+    "m60": 2.29
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 28,
+       "sum": 58.15,
+       "mean": 2.077
+      },
+      "unseen": {
+       "n": 63,
+       "sum": 39.94,
+       "mean": 0.634
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 21,
+       "sum": 27.83,
+       "mean": 1.325
+      },
+      "unseen": {
+       "n": 49,
+       "sum": -8.49,
+       "mean": -0.173
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 28,
+       "sum": 1.0,
+       "mean": 0.036
+      },
+      "unseen": {
+       "n": 63,
+       "sum": -5.06,
+       "mean": -0.08
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 21,
+       "sum": -11.65,
+       "mean": -0.555
+      },
+      "unseen": {
+       "n": 49,
+       "sum": -16.85,
+       "mean": -0.344
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 21,
+       "sum": -0.87,
+       "mean": -0.041
+      },
+      "unseen": {
+       "n": 49,
+       "sum": 16.01,
+       "mean": 0.327
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 21,
+       "sum": -16.78,
+       "mean": -0.799
+      },
+      "unseen": {
+       "n": 49,
+       "sum": -12.5,
+       "mean": -0.255
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 21,
+       "sum": 7.77,
+       "mean": 0.37
+      },
+      "unseen": {
+       "n": 49,
+       "sum": 0.86,
+       "mean": 0.018
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 21,
+       "sum": 0.08,
+       "mean": 0.004
+      },
+      "unseen": {
+       "n": 49,
+       "sum": -16.31,
+       "mean": -0.333
+      }
+     }
+    }
+   }
+  },
+  "GBP Claimant Count Change": {
+   "releases": 9,
+   "impact_range15_atr": 3.89,
+   "with_number_5m_pct": 39.7,
+   "move_atr": {
+    "m1": -0.34,
+    "m5": -0.54,
+    "m15": -0.78,
+    "m60": -2.1
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 7,
+       "sum": -11.27,
+       "mean": -1.61
+      },
+      "unseen": {
+       "n": 56,
+       "sum": -55.89,
+       "mean": -0.998
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": -18.69,
+       "mean": -2.67
+      },
+      "unseen": {
+       "n": 21,
+       "sum": -59.87,
+       "mean": -2.851
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 7,
+       "sum": -3.41,
+       "mean": -0.488
+      },
+      "unseen": {
+       "n": 56,
+       "sum": -20.03,
+       "mean": -0.358
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": -6.34,
+       "mean": -0.905
+      },
+      "unseen": {
+       "n": 21,
+       "sum": -18.47,
+       "mean": -0.879
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 7,
+       "sum": -7.48,
+       "mean": -1.069
+      },
+      "unseen": {
+       "n": 21,
+       "sum": -20.07,
+       "mean": -0.956
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": -2.83,
+       "mean": -0.404
+      },
+      "unseen": {
+       "n": 21,
+       "sum": -18.74,
+       "mean": -0.892
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 7,
+       "sum": -1.62,
+       "mean": -0.231
+      },
+      "unseen": {
+       "n": 21,
+       "sum": -25.25,
+       "mean": -1.202
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": -2.26,
+       "mean": -0.322
+      },
+      "unseen": {
+       "n": 21,
+       "sum": -20.03,
+       "mean": -0.954
+      }
+     }
+    }
+   }
+  },
+  "USD Core PCE Price Index m/m": {
+   "releases": 4,
+   "impact_range15_atr": 3.64,
+   "with_number_5m_pct": 25.0,
+   "move_atr": {
+    "m1": 0.16,
+    "m5": -1.27,
+    "m15": -0.55,
+    "m60": 0.77
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -2.35,
+       "mean": -1.173
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -2.46,
+       "mean": -1.228
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -2.84,
+       "mean": -1.418
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -3.07,
+       "mean": -1.534
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -0.73,
+       "mean": -0.363
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 0.66,
+       "mean": 0.332
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -1.04,
+       "mean": -0.518
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 0.29,
+       "mean": 0.145
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -2.36,
+       "mean": -1.178
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -1.15,
+       "mean": -0.576
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": 1.21,
+       "mean": 0.605
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.05,
+       "mean": -0.027
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -0.69,
+       "mean": -0.346
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 0.09,
+       "mean": 0.043
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -0.96,
+       "mean": -0.48
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.22,
+       "mean": -0.11
+      }
+     }
+    }
+   }
+  },
+  "CAD Trimmed CPI y/y": {
+   "releases": 5,
+   "impact_range15_atr": 3.55,
+   "with_number_5m_pct": 91.7,
+   "move_atr": {
+    "m1": 1.99,
+    "m5": 2.18,
+    "m15": 1.52,
+    "m60": 2.14
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": 13.76,
+       "mean": 3.44
+      },
+      "unseen": {
+       "n": 10,
+       "sum": 5.27,
+       "mean": 0.527
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": 10.25,
+       "mean": 2.562
+      },
+      "unseen": {
+       "n": 10,
+       "sum": -0.79,
+       "mean": -0.079
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": 2.99,
+       "mean": 0.747
+      },
+      "unseen": {
+       "n": 20,
+       "sum": -10.42,
+       "mean": -0.521
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": 0.93,
+       "mean": 0.233
+      },
+      "unseen": {
+       "n": 10,
+       "sum": -4.93,
+       "mean": -0.493
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": 6.04,
+       "mean": 1.51
+      },
+      "unseen": {
+       "n": 10,
+       "sum": -6.52,
+       "mean": -0.652
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": 1.26,
+       "mean": 0.316
+      },
+      "unseen": {
+       "n": 10,
+       "sum": -5.54,
+       "mean": -0.554
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": 2.87,
+       "mean": 0.718
+      },
+      "unseen": {
+       "n": 20,
+       "sum": -6.27,
+       "mean": -0.314
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": 1.22,
+       "mean": 0.305
+      },
+      "unseen": {
+       "n": 10,
+       "sum": -5.15,
+       "mean": -0.515
+      }
+     }
+    }
+   }
+  },
+  "USD Prelim GDP q/q": {
+   "releases": 3,
+   "impact_range15_atr": 3.47,
+   "with_number_5m_pct": 100.0,
+   "move_atr": {
+    "m1": 1.24,
+    "m5": 0.99,
+    "m15": 0.22,
+    "m60": 3.71
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 2.23,
+       "mean": 2.226
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 2.37,
+       "mean": 1.183
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": 1.87,
+       "mean": 1.87
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 1.69,
+       "mean": 0.847
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 0.86,
+       "mean": 0.864
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 1.07,
+       "mean": 0.534
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": 0.69,
+       "mean": 0.686
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 0.73,
+       "mean": 0.366
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": -1.23,
+       "mean": -1.232
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 2.58,
+       "mean": 1.289
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": -0.2,
+       "mean": -0.196
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -1.94,
+       "mean": -0.971
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 0.87,
+       "mean": 0.873
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 1.46,
+       "mean": 0.728
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": 0.71,
+       "mean": 0.712
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 1.14,
+       "mean": 0.568
+      }
+     }
+    }
+   }
+  },
+  "CAD CPI m/m": {
+   "releases": 7,
+   "impact_range15_atr": 3.4,
+   "with_number_5m_pct": 72.7,
+   "move_atr": {
+    "m1": 1.08,
+    "m5": 0.95,
+    "m15": 1.07,
+    "m60": 0.75
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 20,
+       "sum": -0.6,
+       "mean": -0.03
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 20,
+       "sum": -16.32,
+       "mean": -0.816
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": -1.31,
+       "mean": -0.164
+      },
+      "unseen": {
+       "n": 25,
+       "sum": -9.91,
+       "mean": -0.396
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 20,
+       "sum": -16.55,
+       "mean": -0.827
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 20,
+       "sum": -11.3,
+       "mean": -0.565
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 20,
+       "sum": -10.65,
+       "mean": -0.532
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 3.17,
+       "mean": 0.397
+      },
+      "unseen": {
+       "n": 25,
+       "sum": -7.81,
+       "mean": -0.312
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 20,
+       "sum": -11.64,
+       "mean": -0.582
+      }
+     }
+    }
+   }
+  },
+  "NZD GDP q/q": {
+   "releases": 4,
+   "impact_range15_atr": 3.35,
+   "with_number_5m_pct": 68.8,
+   "move_atr": {
+    "m1": 2.44,
+    "m5": 2.59,
+    "m15": 2.16,
+    "m60": 2.29
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 23.34,
+       "mean": 2.917
+      },
+      "unseen": {
+       "n": 8,
+       "sum": 5.91,
+       "mean": 0.739
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": 23.07,
+       "mean": 5.768
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -2.6,
+       "mean": -0.649
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 20.33,
+       "mean": 2.541
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -12.04,
+       "mean": -1.505
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": 5.5,
+       "mean": 0.687
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -10.6,
+       "mean": -1.325
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 15.95,
+       "mean": 1.993
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -10.47,
+       "mean": -1.309
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": 5.71,
+       "mean": 1.427
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -5.89,
+       "mean": -1.474
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 13.34,
+       "mean": 1.667
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -8.88,
+       "mean": -1.109
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": 4.29,
+       "mean": 1.072
+      },
+      "unseen": {
+       "n": 4,
+       "sum": -5.11,
+       "mean": -1.277
+      }
+     }
+    }
+   }
+  },
+  "GBP Flash Manufacturing PMI": {
+   "releases": 8,
+   "impact_range15_atr": 3.24,
+   "with_number_5m_pct": 75.0,
+   "move_atr": {
+    "m1": 1.34,
+    "m5": 1.66,
+    "m15": 2.46,
+    "m60": 3.34
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 28,
+       "sum": 27.19,
+       "mean": 0.971
+      },
+      "unseen": {
+       "n": 28,
+       "sum": 58.38,
+       "mean": 2.085
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": 6.31,
+       "mean": 0.902
+      },
+      "unseen": {
+       "n": 14,
+       "sum": 38.41,
+       "mean": 2.743
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 21,
+       "sum": 4.94,
+       "mean": 0.235
+      },
+      "unseen": {
+       "n": 21,
+       "sum": 11.01,
+       "mean": 0.524
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": 0.78,
+       "mean": 0.112
+      },
+      "unseen": {
+       "n": 14,
+       "sum": 13.32,
+       "mean": 0.952
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 7,
+       "sum": 6.35,
+       "mean": 0.907
+      },
+      "unseen": {
+       "n": 14,
+       "sum": 31.08,
+       "mean": 2.22
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": 0.83,
+       "mean": 0.118
+      },
+      "unseen": {
+       "n": 14,
+       "sum": 10.36,
+       "mean": 0.74
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 7,
+       "sum": 3.8,
+       "mean": 0.542
+      },
+      "unseen": {
+       "n": 14,
+       "sum": 29.21,
+       "mean": 2.086
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": -0.46,
+       "mean": -0.066
+      },
+      "unseen": {
+       "n": 14,
+       "sum": 9.79,
+       "mean": 0.699
+      }
+     }
+    }
+   }
+  },
+  "USD PPI m/m": {
+   "releases": 7,
+   "impact_range15_atr": 3.23,
+   "with_number_5m_pct": 85.7,
+   "move_atr": {
+    "m1": 0.6,
+    "m5": 0.6,
+    "m15": 0.95,
+    "m60": -0.21
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 2.98,
+       "mean": 0.425
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 0.48,
+       "mean": 0.068
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -0.33,
+       "mean": -0.047
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -1.46,
+       "mean": -0.73
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 6,
+       "sum": 1.04,
+       "mean": 0.174
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.91,
+       "mean": -0.456
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -1.41,
+       "mean": -0.703
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -1.71,
+       "mean": -0.854
+      }
+     }
+    }
+   }
+  },
+  "CAD GDP m/m": {
+   "releases": 11,
+   "impact_range15_atr": 3.13,
+   "with_number_5m_pct": 52.9,
+   "move_atr": {
+    "m1": 0.33,
+    "m5": 0.03,
+    "m15": 0.87,
+    "m60": 0.31
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 13.19,
+       "mean": 1.649
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 12.11,
+       "mean": 2.422
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": 5.81,
+       "mean": 0.727
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 8.59,
+       "mean": 1.717
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 16,
+       "sum": 5.17,
+       "mean": 0.323
+      },
+      "unseen": {
+       "n": 35,
+       "sum": -2.82,
+       "mean": -0.081
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": 0.59,
+       "mean": 0.074
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 1.18,
+       "mean": 0.236
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": 4.03,
+       "mean": 0.503
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 0.82,
+       "mean": 0.163
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": -1.66,
+       "mean": -0.207
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 0.09,
+       "mean": 0.018
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 16,
+       "sum": -3.62,
+       "mean": -0.226
+      },
+      "unseen": {
+       "n": 35,
+       "sum": 2.27,
+       "mean": 0.065
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": -2.86,
+       "mean": -0.358
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -0.53,
+       "mean": -0.106
+      }
+     }
+    }
+   }
+  },
+  "NZD Employment Change q/q": {
+   "releases": 2,
+   "impact_range15_atr": 3.13,
+   "with_number_5m_pct": 14.3,
+   "move_atr": {
+    "m1": -0.26,
+    "m5": -0.27,
+    "m15": -1.19,
+    "m60": -3.12
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -11.15,
+       "mean": -1.592
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -17.78,
+       "mean": -2.541
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -10.82,
+       "mean": -1.546
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -11.31,
+       "mean": -1.616
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -10.64,
+       "mean": -1.52
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -10.4,
+       "mean": -1.485
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -10.69,
+       "mean": -1.527
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -10.41,
+       "mean": -1.487
+      }
+     }
+    }
+   }
+  },
+  "USD Unemployment Claims": {
+   "releases": 28,
+   "impact_range15_atr": 3.1,
+   "with_number_5m_pct": 82.1,
+   "move_atr": {
+    "m1": 0.73,
+    "m5": 0.99,
+    "m15": 0.87,
+    "m60": 0.55
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 15,
+       "sum": 7.55,
+       "mean": 0.503
+      },
+      "unseen": {
+       "n": 13,
+       "sum": -3.14,
+       "mean": -0.242
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 15,
+       "sum": 2.02,
+       "mean": 0.135
+      },
+      "unseen": {
+       "n": 13,
+       "sum": -6.9,
+       "mean": -0.531
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 15,
+       "sum": -0.21,
+       "mean": -0.014
+      },
+      "unseen": {
+       "n": 13,
+       "sum": -2.18,
+       "mean": -0.168
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 10,
+       "sum": -1.58,
+       "mean": -0.158
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -0.53,
+       "mean": -0.088
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 15,
+       "sum": -3.19,
+       "mean": -0.213
+      },
+      "unseen": {
+       "n": 13,
+       "sum": -7.08,
+       "mean": -0.545
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 10,
+       "sum": -2.65,
+       "mean": -0.265
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -1.48,
+       "mean": -0.246
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 10,
+       "sum": -2.62,
+       "mean": -0.262
+      },
+      "unseen": {
+       "n": 6,
+       "sum": 0.0,
+       "mean": 0.0
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 10,
+       "sum": -4.22,
+       "mean": -0.422
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -0.81,
+       "mean": -0.135
+      }
+     }
+    }
+   }
+  },
+  "USD ADP Non-Farm Employment Change": {
+   "releases": 11,
+   "impact_range15_atr": 3.05,
+   "with_number_5m_pct": 81.8,
+   "move_atr": {
+    "m1": 0.88,
+    "m5": 1.09,
+    "m15": 1.78,
+    "m60": 3.54
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 6,
+       "sum": 18.31,
+       "mean": 3.052
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 2.87,
+       "mean": 0.574
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 6,
+       "sum": 15.81,
+       "mean": 2.634
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 1.12,
+       "mean": 0.224
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 6,
+       "sum": 3.6,
+       "mean": 0.601
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -0.05,
+       "mean": -0.011
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 3,
+       "sum": -1.26,
+       "mean": -0.419
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 6,
+       "sum": 6.37,
+       "mean": 1.062
+      },
+      "unseen": {
+       "n": 5,
+       "sum": 2.07,
+       "mean": 0.413
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 3,
+       "sum": -2.6,
+       "mean": -0.865
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 3,
+       "sum": -1.2,
+       "mean": -0.4
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 3,
+       "sum": -1.7,
+       "mean": -0.566
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    }
+   }
+  },
+  "USD ISM Services PMI": {
+   "releases": 11,
+   "impact_range15_atr": 3.05,
+   "with_number_5m_pct": 54.5,
+   "move_atr": {
+    "m1": 0.93,
+    "m5": 1.1,
+    "m15": 0.72,
+    "m60": 2.81
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 11.98,
+       "mean": 2.396
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -4.57,
+       "mean": -0.762
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": 10.42,
+       "mean": 2.084
+      },
+      "unseen": {
+       "n": 6,
+       "sum": -6.54,
+       "mean": -1.089
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 2.83,
+       "mean": 0.565
+      },
+      "unseen": {
+       "n": 6,
+       "sum": 0.76,
+       "mean": 0.127
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": 1.82,
+       "mean": 0.455
+      },
+      "unseen": {
+       "n": 1,
+       "sum": -1.19,
+       "mean": -1.192
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 7.09,
+       "mean": 1.417
+      },
+      "unseen": {
+       "n": 5,
+       "sum": -0.31,
+       "mean": -0.062
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": -2.52,
+       "mean": -0.63
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 0.46,
+       "mean": 0.46
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": 1.67,
+       "mean": 0.418
+      },
+      "unseen": {
+       "n": 1,
+       "sum": -1.07,
+       "mean": -1.074
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 4,
+       "sum": 1.14,
+       "mean": 0.286
+      },
+      "unseen": {
+       "n": 1,
+       "sum": -1.17,
+       "mean": -1.173
+      }
+     }
+    }
+   }
+  },
+  "GBP Retail Sales m/m": {
+   "releases": 6,
+   "impact_range15_atr": 2.98,
+   "with_number_5m_pct": 81.0,
+   "move_atr": {
+    "m1": 1.2,
+    "m5": 1.38,
+    "m15": 1.09,
+    "m60": 1.92
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 14,
+       "sum": 4.12,
+       "mean": 0.294
+      },
+      "unseen": {
+       "n": 28,
+       "sum": 13.95,
+       "mean": 0.498
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": 3.17,
+       "mean": 0.453
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 1.57,
+       "mean": 0.224
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 14,
+       "sum": -4.95,
+       "mean": -0.354
+      },
+      "unseen": {
+       "n": 28,
+       "sum": -15.19,
+       "mean": -0.543
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": -0.13,
+       "mean": -0.018
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -8.08,
+       "mean": -1.154
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 7,
+       "sum": 9.26,
+       "mean": 1.323
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -10.91,
+       "mean": -1.559
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": 1.93,
+       "mean": 0.276
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -6.95,
+       "mean": -0.993
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 7,
+       "sum": 2.59,
+       "mean": 0.37
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -10.18,
+       "mean": -1.455
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 7,
+       "sum": 2.01,
+       "mean": 0.287
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -8.82,
+       "mean": -1.261
+      }
+     }
+    }
+   }
+  },
+  "GBP Flash Services PMI": {
+   "releases": 3,
+   "impact_range15_atr": 2.96,
+   "with_number_5m_pct": 66.7,
+   "move_atr": {
+    "m1": 0.35,
+    "m5": 1.51,
+    "m15": 1.17,
+    "m60": 0.68
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 14,
+       "sum": 10.43,
+       "mean": 0.745
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -4.46,
+       "mean": -0.637
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -6.61,
+       "mean": -0.945
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -2.49,
+       "mean": -0.356
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -5.28,
+       "mean": -0.754
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -4.03,
+       "mean": -0.576
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -4.77,
+       "mean": -0.682
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -4.18,
+       "mean": -0.597
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -4.93,
+       "mean": -0.705
+      }
+     }
+    }
+   }
+  },
+  "USD JOLTS Job Openings": {
+   "releases": 8,
+   "impact_range15_atr": 2.96,
+   "with_number_5m_pct": 87.5,
+   "move_atr": {
+    "m1": 0.62,
+    "m5": 0.45,
+    "m15": 0.06,
+    "m60": -0.27
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 1.68,
+       "mean": 0.337
+      },
+      "unseen": {
+       "n": 3,
+       "sum": 1.35,
+       "mean": 0.45
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": 0.37,
+       "mean": 0.074
+      },
+      "unseen": {
+       "n": 3,
+       "sum": 0.6,
+       "mean": 0.202
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -1.53,
+       "mean": -0.306
+      },
+      "unseen": {
+       "n": 3,
+       "sum": 0.07,
+       "mean": 0.023
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 3,
+       "sum": 0.28,
+       "mean": 0.093
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 1.2,
+       "mean": 1.199
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -4.31,
+       "mean": -0.861
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 1.44,
+       "mean": 0.721
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 3,
+       "sum": -0.4,
+       "mean": -0.132
+      },
+      "unseen": {
+       "n": 1,
+       "sum": -0.1,
+       "mean": -0.101
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 3,
+       "sum": 0.2,
+       "mean": 0.066
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 1.19,
+       "mean": 1.191
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 3,
+       "sum": -0.15,
+       "mean": -0.051
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 1.08,
+       "mean": 1.082
+      }
+     }
+    }
+   }
+  },
+  "USD ISM Manufacturing PMI": {
+   "releases": 13,
+   "impact_range15_atr": 2.72,
+   "with_number_5m_pct": 76.9,
+   "move_atr": {
+    "m1": 0.77,
+    "m5": 0.7,
+    "m15": 1.65,
+    "m60": 2.01
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 5.82,
+       "mean": 1.165
+      },
+      "unseen": {
+       "n": 8,
+       "sum": 7.75,
+       "mean": 0.969
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": 4.66,
+       "mean": 0.932
+      },
+      "unseen": {
+       "n": 8,
+       "sum": 5.86,
+       "mean": 0.733
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 0.54,
+       "mean": 0.108
+      },
+      "unseen": {
+       "n": 8,
+       "sum": 1.6,
+       "mean": 0.2
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 3,
+       "sum": -0.38,
+       "mean": -0.127
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -0.2,
+       "mean": -0.029
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 1.21,
+       "mean": 0.242
+      },
+      "unseen": {
+       "n": 8,
+       "sum": 5.75,
+       "mean": 0.718
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 3,
+       "sum": -1.13,
+       "mean": -0.377
+      },
+      "unseen": {
+       "n": 7,
+       "sum": -1.89,
+       "mean": -0.271
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 3,
+       "sum": 0.07,
+       "mean": 0.023
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 1.24,
+       "mean": 0.177
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 3,
+       "sum": -0.22,
+       "mean": -0.073
+      },
+      "unseen": {
+       "n": 7,
+       "sum": 0.46,
+       "mean": 0.066
+      }
+     }
+    }
+   }
+  },
+  "EUR German Flash Services PMI": {
+   "releases": 5,
+   "impact_range15_atr": 2.54,
+   "with_number_5m_pct": 75.0,
+   "move_atr": {
+    "m1": 0.42,
+    "m5": 0.5,
+    "m15": 0.47,
+    "m60": 0.47
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 16,
+       "sum": 15.47,
+       "mean": 0.967
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -2.48,
+       "mean": -0.31
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 16,
+       "sum": 7.3,
+       "mean": 0.456
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -8.15,
+       "mean": -1.019
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 16,
+       "sum": -1.31,
+       "mean": -0.082
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -4.76,
+       "mean": -0.595
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 16,
+       "sum": -5.6,
+       "mean": -0.35
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -7.12,
+       "mean": -0.89
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 16,
+       "sum": 0.36,
+       "mean": 0.022
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -4.48,
+       "mean": -0.56
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 16,
+       "sum": -3.5,
+       "mean": -0.219
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -6.78,
+       "mean": -0.848
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 16,
+       "sum": 2.65,
+       "mean": 0.166
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -6.4,
+       "mean": -0.8
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 16,
+       "sum": -1.46,
+       "mean": -0.091
+      },
+      "unseen": {
+       "n": 8,
+       "sum": -8.76,
+       "mean": -1.096
+      }
+     }
+    }
+   }
+  },
+  "USD Flash Manufacturing PMI": {
+   "releases": 6,
+   "impact_range15_atr": 2.42,
+   "with_number_5m_pct": 66.7,
+   "move_atr": {
+    "m1": 0.41,
+    "m5": 0.54,
+    "m15": 0.79,
+    "m60": 2.26
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": 2.6,
+       "mean": 0.519
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 4.53,
+       "mean": 4.532
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": 0.91,
+       "mean": 0.182
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 4.28,
+       "mean": 4.283
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -0.25,
+       "mean": -0.049
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 2.22,
+       "mean": 2.219
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": 0.74,
+       "mean": 0.369
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": -0.23,
+       "mean": -0.058
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 4.06,
+       "mean": 4.065
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -0.7,
+       "mean": -0.351
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": 1.02,
+       "mean": 0.509
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": 0.77,
+       "mean": 0.385
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    }
+   }
+  },
+  "USD Prelim UoM Consumer Sentiment": {
+   "releases": 7,
+   "impact_range15_atr": 2.37,
+   "with_number_5m_pct": 85.7,
+   "move_atr": {
+    "m1": 0.05,
+    "m5": 0.5,
+    "m15": 0.83,
+    "m60": -1.09
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -1.99,
+       "mean": -0.397
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.88,
+       "mean": -0.44
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 5,
+       "sum": -3.42,
+       "mean": -0.683
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -1.41,
+       "mean": -0.703
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -2.55,
+       "mean": -0.511
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.5,
+       "mean": -0.249
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -1.23,
+       "mean": -0.616
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 5,
+       "sum": -2.42,
+       "mean": -0.485
+      },
+      "unseen": {
+       "n": 2,
+       "sum": -0.37,
+       "mean": -0.184
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": 0.5,
+       "mean": 0.251
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 2,
+       "sum": -1.05,
+       "mean": -0.527
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 2,
+       "sum": -1.33,
+       "mean": -0.666
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    }
+   }
+  },
+  "EUR French Flash Manufacturing PMI": {
+   "releases": 3,
+   "impact_range15_atr": 2.26,
+   "with_number_5m_pct": 50.0,
+   "move_atr": {
+    "m1": 0.06,
+    "m5": -0.02,
+    "m15": -0.26,
+    "m60": -0.96
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 8,
+       "sum": -0.32,
+       "mean": -0.04
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": -3.97,
+       "mean": -0.496
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 16,
+       "sum": 8.22,
+       "mean": 0.513
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": 1.2,
+       "mean": 0.15
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 16,
+       "sum": 8.52,
+       "mean": 0.533
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": 1.94,
+       "mean": 0.242
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 16,
+       "sum": 7.66,
+       "mean": 0.479
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 8,
+       "sum": 1.27,
+       "mean": 0.159
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    }
+   }
+  },
+  "EUR German Flash Manufacturing PMI": {
+   "releases": 6,
+   "impact_range15_atr": 2.19,
+   "with_number_5m_pct": 47.8,
+   "move_atr": {
+    "m1": 0.1,
+    "m5": -0.12,
+    "m15": 0.2,
+    "m60": 0.17
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -0.26,
+       "mean": -0.018
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -6.0,
+       "mean": -0.4
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 15,
+       "sum": -3.41,
+       "mean": -0.227
+      },
+      "unseen": {
+       "n": 23,
+       "sum": 0.7,
+       "mean": 0.03
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -2.39,
+       "mean": -0.16
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 15,
+       "sum": -4.79,
+       "mean": -0.319
+      },
+      "unseen": {
+       "n": 23,
+       "sum": 1.75,
+       "mean": 0.076
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -0.25,
+       "mean": -0.017
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 15,
+       "sum": -3.77,
+       "mean": -0.251
+      },
+      "unseen": {
+       "n": 23,
+       "sum": 0.72,
+       "mean": 0.031
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 15,
+       "sum": -0.57,
+       "mean": -0.038
+      }
+     }
+    }
+   }
+  },
+  "USD Employment Cost Index q/q": {
+   "releases": 2,
+   "impact_range15_atr": 1.99,
+   "with_number_5m_pct": 100.0,
+   "move_atr": {
+    "m1": 0.29,
+    "m5": 1.15,
+    "m15": 1.74,
+    "m60": 2.95
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 3.35,
+       "mean": 3.35
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 0.19,
+       "mean": 0.194
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": 3.01,
+       "mean": 3.015
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 0.0,
+       "mean": 0.001
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 1.54,
+       "mean": 1.544
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 0.21,
+       "mean": 0.205
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": 1.4,
+       "mean": 1.396
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 0.08,
+       "mean": 0.085
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 3.11,
+       "mean": 3.108
+      },
+      "unseen": {
+       "n": 1,
+       "sum": -1.14,
+       "mean": -1.143
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": -1.29,
+       "mean": -1.289
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 0.09,
+       "mean": 0.091
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 1.47,
+       "mean": 1.47
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 0.07,
+       "mean": 0.067
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": 1.28,
+       "mean": 1.284
+      },
+      "unseen": {
+       "n": 1,
+       "sum": -0.02,
+       "mean": -0.018
+      }
+     }
+    }
+   }
+  },
+  "USD Flash Services PMI": {
+   "releases": 3,
+   "impact_range15_atr": 1.66,
+   "with_number_5m_pct": 66.7,
+   "move_atr": {
+    "m1": 0.05,
+    "m5": 0.92,
+    "m15": 1.29,
+    "m60": 2.11
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 0.77,
+       "mean": 0.771
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 7.1,
+       "mean": 3.549
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": 0.54,
+       "mean": 0.538
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 6.57,
+       "mean": 3.285
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 0.25,
+       "mean": 0.255
+      },
+      "unseen": {
+       "n": 2,
+       "sum": 3.41,
+       "mean": 1.706
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": 0.14,
+       "mean": 0.138
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 0.61,
+       "mean": 0.611
+      },
+      "unseen": {
+       "n": 1,
+       "sum": 5.31,
+       "mean": 5.308
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": -0.09,
+       "mean": -0.094
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 1,
+       "sum": 0.27,
+       "mean": 0.269
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 1,
+       "sum": 0.17,
+       "mean": 0.167
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    }
+   }
+  },
+  "CAD Retail Sales m/m": {
+   "releases": 1,
+   "impact_range15_atr": 1.24,
+   "with_number_5m_pct": 25.0,
+   "move_atr": {
+    "m1": 0.06,
+    "m5": -0.46,
+    "m15": -0.58,
+    "m60": 1.05
+   },
+   "by_delay": {
+    "d0": {
+     "ftmo": {
+      "train": {
+       "n": 4,
+       "sum": -1.13,
+       "mean": -0.282
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d1": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d2": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    },
+    "d3": {
+     "ftmo": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     },
+     "broker": {
+      "train": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      },
+      "unseen": {
+       "n": 0,
+       "sum": 0.0,
+       "mean": null
+      }
+     }
+    }
+   }
+  }
+ }
+}

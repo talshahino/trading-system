@@ -1506,6 +1506,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(503, {"error": "bot 1 not answering"})
         if len(parts) == 3 and parts[0] == "bot" and parts[2] in ("live", "state", "candles"):
             port = bot_port(parts[1])
+            if not port and parts[2] == "candles" and parts[1] in ("watch_own", "watch_scout", "watch_fut", "news_bot"):
+                # a virtual account's trade chart (user, 17.11.2026: 5ב's GBPJPY "the bot does not support the chart
+                # yet"): the virtual bots have no MetaTrader of their own - the candles of the account they read from
+                src = watch_source()
+                port = src and bot_port(src["name"])
             if not port:
                 return self._send(404, {"error": "no such bot"})
             try:

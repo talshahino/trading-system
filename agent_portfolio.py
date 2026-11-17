@@ -731,7 +731,10 @@ def families_of(bot):
             syms = [sym] + sorted({c["change"]["combo"].split("|")[2] for c in fam} - {sym})
             out[f"{sid}|{tf}"] = syms
     # the ones the manager named first (SC010 in bots 1-4, then bot 4's SC006 / SC094), then the rest (SC002)
-    first = ("SC010|15Min", "SC006|4Hour", "SC094|1Hour")
+    # bots 1-4 smart agent, 17.11.2026 evening: the manager's deadline families (tasks mgr1411wmt / mgr1411thin, due
+    # 18.11) next - bot 4's SC071|15Min and SC002|1Hour, bot 2's SC043 / SC044|4Hour had 0 instruments after 3 days,
+    # waiting behind SC002|4Hour (bot 4) / SC002|1Hour (bot 2), which were sorted ahead of them by size only
+    first = ("SC010|15Min", "SC006|4Hour", "SC094|1Hour", "SC071|15Min", "SC043|4Hour", "SC044|4Hour", "SC002|1Hour")
     return dict(sorted(out.items(), key=lambda kv: (first.index(kv[0]) if kv[0] in first else 9, len(kv[1]))))
 
 

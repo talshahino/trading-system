@@ -1,6 +1,6 @@
 {
  "bot": "bot2",
- "updated": "2026-11-17T15:13:44+00:00",
+ "updated": "2026-11-17T19:00:09+00:00",
  "cards": [
   {
    "bot": "bot2",
@@ -121,6 +121,262 @@
    "id": "00a74e78fe28",
    "tier": "regular",
    "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
+  {
+   "bot": "bot2",
+   "kind": "info",
+   "title": "בוט 2: בלמי סיכון - נבדקו 11, אין שינוי (שניים עברו בשוליים)",
+   "what": "נבדקו 11 בלמים על בוט 2 השלם (בחירה עד 2025, הצגה 2026). שניים עברו, אבל בשוליים: חצי סיכון אחרי ‎-2% ביום (+138.7% ← +138.9% ב־2026, ירידה 5.77% ← 5.54%; עד 2025 +101.4% ← +102.7%), ו־30 דק' בלי כניסות אחרי נתון אדום של ארה\"ב (+138.7% ← +140.1%, אותה ירידה). השכנים (‎-1.5%, 60 דק') גרועים יותר, כך שזה רעש של בחירה מתוך 11 - לא נכנס (שינוי שלא מוסיף רווח לבוט לא נכנס). בלם אחרי 2 ימי הפסד: מוריד את הירידה מעט (5.77% ← 5.44%) אבל עולה 8.6 נקודות ב־2026. בוט 2 רחוק מהמגבלות (ירידה 5.77%). אין שינוי.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 11,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot2|all",
+    "kind": "review",
+    "study": "risk_brakes_1711"
+   },
+   "detail": {
+    "task": "tal1711riskmgmt",
+    "study": "reports/agents/risk_brakes.json",
+    "bot": {
+     "as_today": {
+      "2025": {
+       "total": 101.44,
+       "max_dd": 4.26,
+       "green": 57.0,
+       "worst_day": -2.65,
+       "spread": 1.66,
+       "days": 179
+      },
+      "2026": {
+       "total": 138.72,
+       "max_dd": 5.77,
+       "green": 56.5,
+       "worst_day": -2.5,
+       "spread": 1.84,
+       "days": 230
+      }
+     },
+     "day1.0_half": {
+      "2025": {
+       "total": 101.81,
+       "max_dd": 3.87,
+       "green": 58.7,
+       "worst_day": -1.91,
+       "spread": 1.63,
+       "days": 179
+      },
+      "2026": {
+       "total": 127.66,
+       "max_dd": 5.9,
+       "green": 56.1,
+       "worst_day": -2.2,
+       "spread": 1.73,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "day1.0_stop": {
+      "2025": {
+       "total": 99.44,
+       "max_dd": 3.58,
+       "green": 57.5,
+       "worst_day": -1.8,
+       "spread": 1.6,
+       "days": 179
+      },
+      "2026": {
+       "total": 117.47,
+       "max_dd": 6.2,
+       "green": 53.7,
+       "worst_day": -2.11,
+       "spread": 1.7,
+       "days": 229
+      },
+      "wins_both": false
+     },
+     "day1.5_half": {
+      "2025": {
+       "total": 101.81,
+       "max_dd": 4.63,
+       "green": 57.0,
+       "worst_day": -2.22,
+       "spread": 1.67,
+       "days": 179
+      },
+      "2026": {
+       "total": 133.38,
+       "max_dd": 5.94,
+       "green": 58.3,
+       "worst_day": -2.42,
+       "spread": 1.77,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "day1.5_stop": {
+      "2025": {
+       "total": 101.36,
+       "max_dd": 4.92,
+       "green": 57.0,
+       "worst_day": -2.07,
+       "spread": 1.66,
+       "days": 179
+      },
+      "2026": {
+       "total": 127.29,
+       "max_dd": 6.42,
+       "green": 57.0,
+       "worst_day": -2.32,
+       "spread": 1.76,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "day2.0_half": {
+      "2025": {
+       "total": 102.7,
+       "max_dd": 4.26,
+       "green": 57.0,
+       "worst_day": -2.48,
+       "spread": 1.67,
+       "days": 179
+      },
+      "2026": {
+       "total": 138.86,
+       "max_dd": 5.54,
+       "green": 57.0,
+       "worst_day": -2.43,
+       "spread": 1.84,
+       "days": 230
+      },
+      "wins_both": true
+     },
+     "day2.0_stop": {
+      "2025": {
+       "total": 102.72,
+       "max_dd": 4.26,
+       "green": 57.0,
+       "worst_day": -2.31,
+       "spread": 1.67,
+       "days": 179
+      },
+      "2026": {
+       "total": 138.52,
+       "max_dd": 5.92,
+       "green": 57.0,
+       "worst_day": -2.32,
+       "spread": 1.84,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "streak2_x0.75": {
+      "2025": {
+       "total": 94.86,
+       "max_dd": 4.06,
+       "green": 58.1,
+       "worst_day": -2.65,
+       "spread": 1.62,
+       "days": 179
+      },
+      "2026": {
+       "total": 130.08,
+       "max_dd": 5.44,
+       "green": 57.0,
+       "worst_day": -2.52,
+       "spread": 1.73,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "streak2_x0.5": {
+      "2025": {
+       "total": 88.63,
+       "max_dd": 4.16,
+       "green": 57.5,
+       "worst_day": -2.65,
+       "spread": 1.6,
+       "days": 179
+      },
+      "2026": {
+       "total": 122.02,
+       "max_dd": 5.39,
+       "green": 57.4,
+       "worst_day": -2.5,
+       "spread": 1.66,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "usdnews30": {
+      "2025": {
+       "total": 102.61,
+       "max_dd": 4.26,
+       "green": 57.5,
+       "worst_day": -2.65,
+       "spread": 1.66,
+       "days": 179
+      },
+      "2026": {
+       "total": 140.12,
+       "max_dd": 5.77,
+       "green": 57.4,
+       "worst_day": -2.5,
+       "spread": 1.83,
+       "days": 230
+      },
+      "wins_both": true
+     },
+     "usdnews60": {
+      "2025": {
+       "total": 102.94,
+       "max_dd": 4.51,
+       "green": 58.1,
+       "worst_day": -2.65,
+       "spread": 1.66,
+       "days": 179
+      },
+      "2026": {
+       "total": 138.3,
+       "max_dd": 5.77,
+       "green": 57.0,
+       "worst_day": -2.51,
+       "spread": 1.81,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "usdnews120": {
+      "2025": {
+       "total": 102.33,
+       "max_dd": 4.5,
+       "green": 57.0,
+       "worst_day": -2.65,
+       "spread": 1.66,
+       "days": 179
+      },
+      "2026": {
+       "total": 131.11,
+       "max_dd": 5.77,
+       "green": 57.0,
+       "worst_day": -2.44,
+       "spread": 1.76,
+       "days": 230
+      },
+      "wins_both": false
+     }
+    }
+   },
+   "made": "2026-11-17T19:00:09+00:00",
+   "id": "1ec47471dbfe",
+   "tier": "info"
   }
  ]
 }

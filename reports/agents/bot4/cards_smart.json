@@ -1,6 +1,6 @@
 {
  "bot": "bot4",
- "updated": "2026-11-17T15:13:44+00:00",
+ "updated": "2026-11-17T19:00:09+00:00",
  "cards": [
   {
    "bot": "bot4",
@@ -404,6 +404,262 @@
    "id": "86ba7ae19c72",
    "tier": "regular",
    "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
+  {
+   "bot": "bot4",
+   "kind": "info",
+   "title": "בוט 4: בלמי סיכון - נבדקו 11, אף אחד לא מחזיק בשתי התקופות",
+   "what": "נבדקו 11 בלמים על הבוט השלם (בחירה עד 2025, הצגה 2026): בלם יומי ‎-1/‎-1.5/‎-2% (חצי סיכון או עצירה), ×0.75/×0.5 אחרי 2 ימי הפסד, 30/60/120 דק' אחרי נתון אדום של ארה\"ב. אף אחד לא עבר בשתי התקופות. הקרוב: ×0.75 אחרי 2 ימי הפסד - ירידה ב־2026 5.57% ← 5.52% אבל רווח +152.1% ← +146.8%, ועד 2025 +91.8% ← +90.8% עם ירידה 4.68% ← 4.58%. בלם יומי ‎-1% חצי: היום הגרוע ב־2026 -2.5% ← -2.13% אבל רווח +146.3%. ההפסדים בבוט הזה מתפזרים על פני ימים, והבלם חותך גם את ימי ההתאוששות. אין שינוי; נבדק שוב אחרי יום קשה הבא.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 11,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot4|all",
+    "kind": "review",
+    "study": "risk_brakes_1711"
+   },
+   "detail": {
+    "task": "tal1711riskmgmt",
+    "study": "reports/agents/risk_brakes.json",
+    "bot": {
+     "as_today": {
+      "2025": {
+       "total": 91.78,
+       "max_dd": 4.68,
+       "green": 58.6,
+       "worst_day": -1.85,
+       "spread": 1.38,
+       "days": 181
+      },
+      "2026": {
+       "total": 152.06,
+       "max_dd": 5.57,
+       "green": 56.5,
+       "worst_day": -2.5,
+       "spread": 2.11,
+       "days": 230
+      }
+     },
+     "day1.0_half": {
+      "2025": {
+       "total": 91.36,
+       "max_dd": 4.66,
+       "green": 57.5,
+       "worst_day": -1.79,
+       "spread": 1.37,
+       "days": 181
+      },
+      "2026": {
+       "total": 146.29,
+       "max_dd": 5.47,
+       "green": 55.7,
+       "worst_day": -2.13,
+       "spread": 2.06,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "day1.0_stop": {
+      "2025": {
+       "total": 89.55,
+       "max_dd": 5.57,
+       "green": 58.0,
+       "worst_day": -1.88,
+       "spread": 1.37,
+       "days": 181
+      },
+      "2026": {
+       "total": 137.36,
+       "max_dd": 5.92,
+       "green": 54.3,
+       "worst_day": -2.05,
+       "spread": 2.05,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "day1.5_half": {
+      "2025": {
+       "total": 91.54,
+       "max_dd": 4.62,
+       "green": 58.6,
+       "worst_day": -1.84,
+       "spread": 1.38,
+       "days": 181
+      },
+      "2026": {
+       "total": 150.95,
+       "max_dd": 6.15,
+       "green": 56.1,
+       "worst_day": -2.32,
+       "spread": 2.11,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "day1.5_stop": {
+      "2025": {
+       "total": 89.78,
+       "max_dd": 5.79,
+       "green": 59.1,
+       "worst_day": -2.15,
+       "spread": 1.39,
+       "days": 181
+      },
+      "2026": {
+       "total": 146.7,
+       "max_dd": 7.24,
+       "green": 56.5,
+       "worst_day": -2.23,
+       "spread": 2.11,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "day2.0_half": {
+      "2025": {
+       "total": 91.28,
+       "max_dd": 4.68,
+       "green": 58.6,
+       "worst_day": -1.85,
+       "spread": 1.39,
+       "days": 181
+      },
+      "2026": {
+       "total": 152.11,
+       "max_dd": 5.81,
+       "green": 56.5,
+       "worst_day": -2.43,
+       "spread": 2.11,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "day2.0_stop": {
+      "2025": {
+       "total": 91.68,
+       "max_dd": 4.68,
+       "green": 59.1,
+       "worst_day": -2.15,
+       "spread": 1.39,
+       "days": 181
+      },
+      "2026": {
+       "total": 151.16,
+       "max_dd": 6.35,
+       "green": 56.5,
+       "worst_day": -2.36,
+       "spread": 2.12,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "streak2_x0.75": {
+      "2025": {
+       "total": 90.79,
+       "max_dd": 4.58,
+       "green": 59.1,
+       "worst_day": -1.85,
+       "spread": 1.37,
+       "days": 181
+      },
+      "2026": {
+       "total": 146.78,
+       "max_dd": 5.52,
+       "green": 57.4,
+       "worst_day": -2.5,
+       "spread": 2.04,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "streak2_x0.5": {
+      "2025": {
+       "total": 88.7,
+       "max_dd": 4.49,
+       "green": 59.1,
+       "worst_day": -1.85,
+       "spread": 1.36,
+       "days": 181
+      },
+      "2026": {
+       "total": 134.61,
+       "max_dd": 5.82,
+       "green": 57.0,
+       "worst_day": -2.5,
+       "spread": 1.82,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "usdnews30": {
+      "2025": {
+       "total": 94.19,
+       "max_dd": 4.11,
+       "green": 59.1,
+       "worst_day": -1.79,
+       "spread": 1.38,
+       "days": 181
+      },
+      "2026": {
+       "total": 144.94,
+       "max_dd": 6.36,
+       "green": 57.4,
+       "worst_day": -2.5,
+       "spread": 2.0,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "usdnews60": {
+      "2025": {
+       "total": 92.71,
+       "max_dd": 4.22,
+       "green": 59.1,
+       "worst_day": -1.79,
+       "spread": 1.38,
+       "days": 181
+      },
+      "2026": {
+       "total": 142.64,
+       "max_dd": 6.48,
+       "green": 57.4,
+       "worst_day": -2.5,
+       "spread": 1.99,
+       "days": 230
+      },
+      "wins_both": false
+     },
+     "usdnews120": {
+      "2025": {
+       "total": 92.26,
+       "max_dd": 3.75,
+       "green": 60.2,
+       "worst_day": -1.79,
+       "spread": 1.37,
+       "days": 181
+      },
+      "2026": {
+       "total": 135.15,
+       "max_dd": 6.63,
+       "green": 57.0,
+       "worst_day": -2.5,
+       "spread": 1.98,
+       "days": 230
+      },
+      "wins_both": false
+     }
+    }
+   },
+   "made": "2026-11-17T19:00:09+00:00",
+   "id": "3e861f2000f8",
+   "tier": "info"
   }
  ]
 }

@@ -495,7 +495,7 @@ body.viewer .slide,body.viewer .allcard,body.viewer #updCard,body.viewer #accs .
 <div class="page" id="wbPg"><div class="ph"><button class="back" id="wbBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b>בוט סקלפינג · צפייה</b></div><div id="wbBody"><div class="empty">טוען…</div></div></div>
 <div class="page" id="wcPg"><div class="ph"><button class="back" id="wcBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="wcTitle"></b></div><div id="wcBody"></div></div>
 <div class="page" id="chartPg" style="z-index:36"><div class="ph"><button class="back" id="cpBack" aria-label="חזרה"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle"><path d="M9 6l6 6-6 6"/></svg></button><b id="cpTitle"></b></div>
-  <div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div><div id="cpNotes" style="padding:0 16px 24px"></div></div>
+  <div id="cpInfo" style="padding:0 16px"></div><div class="tfs" id="tfSeg"></div><div id="tvBox"><div id="tvOver"></div><div class="tvinfo" id="tvInfo"></div></div><div class="msg mut" id="cpMsg"></div><div id="cpNotes" style="padding:0 16px 24px"></div></div>
 <div class="ask" id="ask"><div class="box"><h4 id="askT">האם אתה בטוח?</h4><p id="askB"></p><div class="row"><button class="btn danger" id="askYes" style="background:#D0453A;color:#fff">כן, סגור</button><button class="btn ghost" id="askNo">לא</button></div></div></div>
 <div class="pop" id="pop"><div class="box"><h4 id="popT"></h4><p id="popB"></p><button class="btn" id="popOk">הבנתי</button></div></div>
 <nav class="tabs" id="tabs">
@@ -1323,7 +1323,11 @@ function botTalk(s) {
       <div><small class="mut">עוד כמה סימונים עד שיבין</small><b>~${L.estimate}</b></div></div>
       <div class="mut" style="margin-top:8px">כמה הוא מסכים איתך היום: על הסטופ ב־<b>${L.stop_agree ?? "—"}%</b> מהתשובות, על כן/לא ב־<b>${L.take_agree ?? "—"}%</b>. הוא יבין את השיטה כשיסכים איתך ב־80% ומעלה, וכשיהיו 30 תשובות לכל צמד גרפים ו־20 תשובות "לא" (מהן לומדים מה מבדיל לא מכן).${L.unclear && L.unclear.length ? ` עוד לא הפיק לקח מ־${L.unclear.length} עסקאות (תשובה בלי הסבר).` : ""}</div>
       ${(L.lessons || []).map(x => `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line,#E6E9EE)"><span class="pill ${(ST[x.status] || ["", ""])[1]}">${(ST[x.status] || [x.status])[0]}</span> <span class="mut">מ־${x.n} עסקאות</span><div style="margin-top:4px">${esc(x.text || "")}</div></div>`).join("")}</div>` : "";
-  box.innerHTML = rvHtml + lnHtml + `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
+  // bot 7: what its trades taught so far - by strategy, by the release's direction (17.11.2026)
+  const LN = s && s.learn, gt = (o, h) => { const e = Object.entries(o || {}); return e.length ? `<tr><th colspan="4">${h}</th></tr>` + e.map(([k, g]) => `<tr><td>${esc(k)}</td><td>${g.n}</td><td class="${g.r >= 0 ? "pos" : "neg"}">${g.r >= 0 ? "+" : ""}${g.r}R</td><td>${Math.round(100 * g.win / g.n)}%</td></tr>`).join("") : ""; };
+  const l7Html = LN && LN.n ? `<div class="h4" style="margin-top:18px">מה הבוט למד מהעסקאות (${LN.n} עסקאות)</div><div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th></th><th>עסקאות</th><th>R</th><th>הצלחה</th></tr>
+      ${gt(LN.by_kind, "לפי סוג")}${gt(LN.by_way, "פרסום: העסקה מול הכיוון שלו")}${gt(LN.by_verdict, "הנתון מול הצפי")}${gt(LN.by_sid, "לפי אסטרטגיה")}</table></div></div>` : "";
+  box.innerHTML = rvHtml + lnHtml + l7Html + `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
       <textarea id="btTxt" rows="3" placeholder="דבר או כתוב לסוכן על הבוט כולו: מה ראית היום, מה מפריע לך, מה לבדוק…"></textarea>
       <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="btMic">🎙 הקלטה</button><button class="btn" id="btSave">שלח לסוכן</button></div>
       <div class="msg mut" id="btMsg"></div><div id="btList"></div></div>`;
@@ -1544,13 +1548,31 @@ function bar(p) {
 /* the strategy and the timeframe the trade ENTERED on, under the instrument (user, 16.11.2026). Bots 5-6 send entry_tf
    for the gap tracks (their combo name carries the detection chart); everyone else's combo is "strategy|timeframe|instrument" */
 const STRAT_HE = {TAL: "שיטת הגאפ", OWN: "השיטה שלך", FUT: "השיטה שלך"};
+/* bot 7 (user, 17.11.2026): what each trade is about - the release (time, currency, title, forecast / actual, the
+   direction it pointed and whether the trade went that way), a shock, or a strategy with a release only nearby */
+function infoLine(f) {
+  if (!f || !f.kind) return "";
+  if (f.kind === "shock") return `<div class="ss">⚡ זעזוע ${esc(f.shock_dir || "")} ב־${esc((f.shock_t || "").slice(6))}, העסקה נגדו</div>`;
+  if (!f.rel_t) return "";
+  const it = (f.items || [])[0] || {};
+  return `<div class="ss">${f.kind === "other" ? "פרסום קרוב: " : "📰 "}${esc(f.rel_t.slice(6))} ${esc(it.cur || "")} ${esc(it.title || "")}${f.expect ? ` · צפוי: ${esc(f.expect)} · ${f.matched ? "העסקה איתו" : "העסקה נגדו"}` : it.actual ? ` · ${esc(it.verdict || "")}` : ""}</div>`;
+}
+function infoCard(f) {
+  if (!f || !f.kind) return "";
+  if (f.kind === "shock") return `<div class="card" style="margin:8px 0">⚡ ${esc(f.text || "")}</div>`;
+  if (!f.rel_t) return f.kind === "other" ? "" : `<div class="card" style="margin:8px 0">${esc(f.text || "")}</div>`;
+  const rows = (f.items || []).map(x => `<tr><td>${esc(x.cur)} ${esc(x.title)}${x.impact === "high" ? " 🔴" : ""}</td><td class="num">${esc(x.actual || "—")}</td><td class="num">${esc(x.forecast || "—")}</td><td class="num">${esc(x.previous || "—")}</td><td>${esc(x.verdict || "")}</td></tr>`).join("");
+  return `<div class="card" style="margin:8px 0"><div style="margin-bottom:6px"><b>${f.kind === "other" ? "פרסום קרוב (לא הסיבה לעסקה)" : "העסקה יצאה מהפרסום"}</b> · ${esc(f.rel_t)}</div>
+    <div class="tw"><table class="rt"><tr><th>פרסום</th><th>בפועל</th><th>צפי</th><th>קודם</th><th></th></tr>${rows}</table></div>
+    ${f.expect ? `<div style="margin-top:6px">הכיוון שהפרסום הצביע: <b>${esc(f.expect)}</b> · העסקה <b class="${f.matched ? "pos" : "neg"}">${f.matched ? "עם הכיוון" : "נגד הכיוון"}</b></div>` : (f.items || []).some(x => x.g) ? `<div class="mut" style="margin-top:6px">לנכס הזה אין כיוון חד מהפרסום (מדד: נתון טוב יכול גם להעלות וגם להוריד).</div>` : `<div class="mut" style="margin-top:6px">התוצאה בפועל עוד לא ידועה.</div>`}</div>`;
+}
 function stratLine(x) {
   const p = String((x && x.combo) || "").split("|");
   if (p.length < 3) return "";
   // short: 1m / 5m / 15m / 1H / 4H (user, 16.11.2026)
   const sh = v => !v ? "" : String(v).replace(/^(\d+)Min$/, "$1m").replace(/^(\d+)Hour$/, "$1H").replace(/^(\d+)Day$/, "$1D").replace(/^(\d+)h$/, "$1H").replace(/^(\d+)d$/, "$1D");
   const tf = sh(x.entry_tf || (p[0] === "TAL" ? (p[1].match(/^\d+(?:Min|Hour)(\d+[mh])$/) || [])[1] : p[1]));
-  return `<div class="ss">${esc(STRAT_HE[p[0]] || p[0])}${tf ? " · " + esc(tf) : ""}</div>`;   // "SC326 · 5m" (user, 16.11.2026)
+  return `<div class="ss">${esc(STRAT_HE[p[0]] || p[0])}${tf ? " · " + esc(tf) : ""}</div>` + infoLine(x.info);   // "SC326 · 5m" (user, 16.11.2026)
 }
 const trRow = (side, t, sym, pl, key, extra = "", x = null) => `<div class="tr" data-t="${esc(key)}"><div class="tg">${side === "buy" ? ICON.up : ICON.down}
   <div class="d">${t ? dOnly(t) + "<br>" + tOnly(t) : "—"}</div>
@@ -1803,6 +1825,7 @@ async function chartPage(tf) {
   tf = tf || defaultTf(t);
   $("chartPg").classList.add("on");
   $("cpTitle").textContent = `${t.symbol} · ${t.side === "buy" ? "קנייה" : "מכירה"}`;
+  $("cpInfo").innerHTML = infoCard(t.info);
   if ($("cpNotes").dataset.id !== String(t.id || t.ticket)) { $("cpNotes").innerHTML = notesHtml("cn"); $("cpNotes").dataset.id = String(t.id || t.ticket); tradeNotes(t, "cn"); }
   segment("tfSeg", Object.keys(TFSEC).map(k => [k, TFLBL[k]]), tf, k => chartPage(k));
   $("tfSeg").className = "tfs";

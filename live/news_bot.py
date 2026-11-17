@@ -66,6 +66,7 @@ from agents import scout_strategies as SCS  # noqa: E402
 from agents import shocks as SH  # noqa: E402
 from agents import news_surprise_live as NSL  # noqa: E402
 from agents import news_straddle_live as NST  # noqa: E402
+from agents import news_surprise as NS  # noqa: E402
 from live import reporter as REP  # noqa: E402
 
 NAME = "news_bot"
@@ -542,6 +543,96 @@ def event_of(name, t):
     return f"{k.tz_convert('Asia/Jerusalem').strftime('%d.%m %H:%M')} " + (" + ".join(names[:2]) if names else "פרסום")
 
 
+def _num(x):
+    try:
+        return float(str(x).replace("%", "").replace(",", "").replace("K", "e3").replace("M", "e6").replace("B", "e9").strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def trade_info(t):
+    """What a trade of bot 7 is about, shown on the trade itself (user, 17.11.2026: "every trade should say which
+    release it came out of, at what time, which currency / index the release was about, and the release's direction -
+    should it have gone up or down"). kind: release (EV01-EV04, EV08: the release is the reason), shock (SH01: a sharp
+    minute without a release), other (a scout strategy: a release nearby is only the background).
+    For a release: its items (currency, title, impact, forecast, previous, actual, good / bad for the currency), the
+    direction the release pointed for this instrument (a currency pair / gold from the lead item; an index: none - good
+    numbers can lift or sink it) and whether the trade went that way."""
+    sid, name, d = t.get("sid"), t["symbol"], int(t.get("dir") or 0)
+    kind = "release" if (sid in STRATS or sid in SURPRISE or sid in STRADDLE or str(sid).startswith("EV")) else \
+        "shock" if sid in SHOCK else "other"
+    info = {"kind": kind}
+    t0 = pd.Timestamp(t["rel"]) if t.get("rel") else pd.Timestamp(t["time"])
+    t0 = t0.tz_localize("UTC") if t0.tzinfo is None else t0
+    if kind == "shock":
+        p = plans().get(f"{sid}|{t.get('tf', '1Min')}|{name}") or {}
+        try:
+            dd = int(p.get("D", 1))
+        except (TypeError, ValueError):
+            dd = 1
+        tm = pd.Timestamp(t["time"]) - pd.Timedelta(minutes=dd)
+        tm = tm.tz_localize("UTC") if tm.tzinfo is None else tm
+        d1 = D1.get(name)
+        mv = None
+        if d1 is not None and len(d1):
+            k = d1.index.searchsorted(tm)
+            if k < len(d1):
+                b = d1.iloc[k]
+                mv = float(b["c"] - b["o"])
+        info.update(shock_t=tm.tz_convert("Asia/Jerusalem").strftime("%d.%m %H:%M"),
+                    shock_dir=("עלייה" if (mv or -d) > 0 else "ירידה"), shock_move=round(abs(mv), 5) if mv is not None else None,
+                    text=f"זעזוע בלי פרסום: תנועה חדה של {'עלייה' if (mv or -d) > 0 else 'ירידה'} ב־{name} בדקה של "
+                         f"{tm.tz_convert('Asia/Jerusalem').strftime('%H:%M')}; העסקה נגד הזעזוע ({'קנייה' if d > 0 else 'מכירה'}).")
+        return info
+    curs = list(U.CURRENCIES.get(name) or [])
+    if not curs:
+        return dict(info, text=None)
+    # the release: for EV04 its own minute; else the latest of the instrument's releases within 3 hours before the entry
+    cand = sorted({pd.Timestamp(i["date"]).tz_convert("UTC") for i in CAL_ITEMS
+                   if str(i.get("instrument", "")).split(" ")[0] in curs and i.get("impact") == "high"
+                   and pd.Timestamp(i["date"]).tz_convert("UTC") <= t0 and t0 - pd.Timestamp(i["date"]).tz_convert("UTC") <= pd.Timedelta(hours=3)})
+    if not cand:
+        return dict(info, text=(None if kind == "other" else "לא נמצא פרסום בלוח לפני העסקה."))
+    k = cand[-1]
+    items = []
+    for i in CAL_ITEMS:
+        if pd.Timestamp(i["date"]).tz_convert("UTC") != k or str(i.get("instrument", "")).split(" ")[0] not in curs:
+            continue
+        a, f = _num(i.get("actual")), _num(i.get("forecast"))
+        cur = str(i.get("instrument", "")).split(" ")[0]
+        if a is None:
+            v = "לא ידוע"
+            g = 0
+        elif f is None or a == f:
+            v, g = "כצפוי", 0
+        else:
+            g = -NS.bad_sign(i.get("title", ""), a, f)               # +1 better than expected for the economy
+            v = f"{'טוב' if g > 0 else 'רע'} ל־{cur} מהצפוי"
+        items.append({"cur": cur, "title": i.get("title"), "impact": i.get("impact"), "forecast": i.get("forecast"),
+                      "previous": i.get("previous"), "actual": i.get("actual"), "verdict": v, "g": g})
+    imp = {"high": 0, "medium": 1, "low": 2}
+    items.sort(key=lambda x: (imp.get(x["impact"], 3), x["g"] == 0))
+    lead = items[0] if items else None
+    expect = None
+    if lead and lead["g"] and len(name) == 6 and name.isalpha():
+        if name[:3] == lead["cur"]:
+            expect = lead["g"]
+        elif name[3:] == lead["cur"]:
+            expect = -lead["g"]
+    elif lead and lead["g"] and name in ("XAUUSD", "XAGUSD") and lead["cur"] == "USD":
+        expect = -lead["g"]
+    info.update(rel_t=k.tz_convert("Asia/Jerusalem").strftime("%d.%m %H:%M"), items=items[:4],
+                expect=("עלייה" if expect > 0 else "ירידה") if expect else None,
+                matched=(expect == d) if expect else None)
+    head = f"{info['rel_t']} · " + " + ".join(f"{x['cur']} {x['title']}" for x in items[:2])
+    nums = "; ".join(f"{x['title']}: בפועל {x['actual'] or '—'}, צפי {x['forecast'] or '—'}, קודם {x['previous'] or '—'} ({x['verdict']})"
+                     for x in items[:2])
+    way = (f" הכיוון הצפוי ל־{name}: {info['expect']}; העסקה {'עם הכיוון' if info['matched'] else 'נגד הכיוון'}."
+           if expect else (f" ל־{name} אין כיוון חד מהפרסום." if lead and lead["g"] else ""))
+    info["text"] = (("פרסום קרוב (לא הסיבה לעסקה): " if kind == "other" else "הפרסום: ") + head + ". " + nums + "." + way)
+    return info
+
+
 def shock_fn(sid, name, p):
     """SH01 (card 42c723b87f92): against a shock without a release - K, D (minutes after the shock), H (minutes held)
     from the approved plan in live/bots/bot7.json."""
@@ -725,6 +816,7 @@ def excursion(t, old=None):
     return {"mfe": best, "mae": worst, "mfe_r": round(d * (best - e) / risk, 3), "mae_r": round(d * (worst - e) / risk, 3)}
 
 
+LEARN_F = LIVE / "news_learn.json"     # every closed trade with what it was about - what bot 7's agent learns from
 RESET_F = LIVE / "news_bot_reset.json"   # the manager's reset decision (live/manager.py auto_apply, agents/reset_rule.py)
 
 
@@ -817,10 +909,67 @@ def book(acc, t, notify):
     return t["id"] not in led
 
 
+def learn_book(closed):
+    """Bot 7's learning record (user, 17.11.2026: "the agent should learn from the releases and the shocks to get
+    better - right now this bot is not good at all"): every closed trade, once, with its result and what it was
+    about (trade_info), kept past the account's resets and the state's KEEP; and the totals the agent reads first -
+    by strategy, by kind (release / shock / other), by the release's direction (with / against / none), by the lead
+    release's title and by whether the number came out as expected."""
+    try:
+        doc = json.loads(LEARN_F.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        doc = {"trades": {}}
+    tr = doc.setdefault("trades", {})
+    new = 0
+    for t in closed:
+        if t["id"] in tr or t.get("r") is None:
+            continue
+        f = t.get("info") or {}
+        if f.get("kind") != "shock" and any(x.get("actual") in (None, "") for x in f.get("items") or []) and \
+                pd.Timestamp.now(tz="UTC") - pd.Timestamp(t["exit_time"]) < pd.Timedelta(hours=6):
+            continue                                     # wait for the release's actual (up to 6 hours)
+        it = (f.get("items") or [{}])[0]
+        tr[t["id"]] = {"sid": t["sid"], "symbol": t["symbol"], "dir": t["dir"], "time": t["time"], "exit_time": t["exit_time"],
+                       "r": t["r"], "reason": t.get("reason"), "kind": f.get("kind"), "rel_t": f.get("rel_t"),
+                       "lead": f"{it.get('cur', '')} {it.get('title', '')}".strip() or None, "verdict": it.get("verdict"),
+                       "expect": f.get("expect"), "matched": f.get("matched"), "shock_dir": f.get("shock_dir"), "text": f.get("text")}
+        new += 1
+    if new:
+        try:
+            LEARN_F.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+        except Exception as e:  # noqa: BLE001
+            log(f"learn file: {e}")
+
+    def grp(key):
+        out = {}
+        for x in tr.values():
+            k = key(x)
+            if k is None:
+                continue
+            g = out.setdefault(str(k), {"n": 0, "r": 0.0, "win": 0})
+            g["n"] += 1
+            g["r"] = round(g["r"] + float(x["r"]), 2)
+            g["win"] += int(x["r"] > 0)
+        return dict(sorted(out.items(), key=lambda kv: kv[1]["r"]))
+    return {"n": len(tr), "by_sid": grp(lambda x: x["sid"]), "by_kind": grp(lambda x: x["kind"]),
+            "by_way": grp(lambda x: None if x["kind"] != "release" else
+                          ("עם הכיוון" if x["matched"] else "נגד הכיוון" if x["matched"] is False else "בלי כיוון")),
+            "by_lead": grp(lambda x: x["lead"] if x["kind"] == "release" else None),
+            "by_verdict": grp(lambda x: (x["verdict"] or "").split(" ")[0] or None if x["kind"] == "release" else None)}
+
+
 def state_of(acc, trades, cal, src):
     now = pd.Timestamp.now(tz="UTC")
     led = acc.a["ledger"]
     mine = [t for t in trades.values() if t["id"] in led and "skipped" not in led[t["id"]]]
+    for t in mine:                      # what the trade is about (17.11.2026); kept once the release's actual is known
+        inf = t.get("info") or {}
+        if not inf or (inf.get("kind") != "shock" and any(x.get("actual") in (None, "") for x in inf.get("items") or [])) \
+                or (inf.get("kind") == "release" and not inf.get("items")):
+            try:
+                t["info"] = trade_info(t)
+            except Exception as e:  # noqa: BLE001
+                t["info"] = {"kind": "?", "text": None, "error": str(e)[:120]}
     closed = sorted([t for t in mine if t["status"] == "closed"], key=lambda t: t["exit_time"])[-KEEP:]
     opened = [t for t in mine if t["status"] == "open"]
     bal = acc.balance()
@@ -845,7 +994,11 @@ def state_of(acc, trades, cal, src):
              f"{len(SYMBOLS)} נכסים: {', '.join(SYMBOLS)}"
              + "".join(f" · נוספה (כרטיס מאושר): {s} {sname(s)} על {n}, נרות {TF_HE.get(tf, tf)}"
                        f" (סיכון ×{risk_mult(plans(), f'{s}|{tf}|{n}'):g})" for s, tf, n in ex))
-    return {"bot": NAME, "label": LABEL, "watch_only": True, "rules": rules, "account": "וירטואלי · פרסומים כלכליים",
+    try:
+        learn = learn_book(closed)
+    except Exception as e:  # noqa: BLE001
+        learn = {"error": str(e)[:200]}
+    return {"bot": NAME, "label": LABEL, "watch_only": True, "rules": rules, "learn": learn, "account": "וירטואלי · פרסומים כלכליים",
             "server": "צפייה בלבד · בלי כסף", "initial": acc.a["initial"], "risk": RISK, "balance": round(bal, 2),
             "equity": round(eq, 2), "day_start": round(acc.day_start(israel_day(now)), 2), "halted_until": None,
             "started": acc.a["started"], "withdrawals": [],
@@ -860,7 +1013,7 @@ def state_of(acc, trades, cal, src):
                            "sl": t["stop"], "tp": t["target"] or 0.0, "sl0": t["stop"], "tp0": t["target"] or 0.0,
                            "sl_usd": -led[t["id"]]["risk_usd"], "tp_usd": None, "pnl": pnl_now(t), "since": t["time"],
                            "pip": 1.0, "free": False, "mae": t.get("mae"), "mfe": t.get("mfe"), "mfe_r": t.get("mfe_r"),
-                           "mae_r": t.get("mae_r"), "event": t.get("event")} for t in opened],
+                           "mae_r": t.get("mae_r"), "event": t.get("event"), "info": t.get("info")} for t in opened],
             "trades": [{"time": t["exit_time"], "combo": combo(t), "symbol": t["symbol"], "dir": "קנייה" if t["dir"] > 0 else "מכירה",
                         "lots": "וירטואלי", "price": t["exit"], "pnl": led[t["id"]]["pnl"],
                         "why": t["reason"] + (f" · אחרי {t['event']}" if t.get("event") else "")} for t in closed],
@@ -869,7 +1022,7 @@ def state_of(acc, trades, cal, src):
                         "sl0": t["stop"], "tp0": t["target"] or 0, "sl": t["stop"], "tp": t["target"] or 0, "mae": t.get("mae"),
                         "mfe": t.get("mfe"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"),
                         "gross": led[t["id"]]["pnl"], "swap": 0, "comm": 0, "net": led[t["id"]]["pnl"],
-                        "why": t["reason"] + (f" · אחרי {t['event']}" if t.get("event") else ""), "event": t.get("event"),
+                        "why": t["reason"] + (f" · אחרי {t['event']}" if t.get("event") else ""), "event": t.get("event"), "info": t.get("info"),
                         "reason": "", "pip": 1.0} for t in closed],
             "vacct": {k: v for k, v in acc.a.items() if k not in ("eq_curve", "past")}}
 

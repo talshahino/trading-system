@@ -2634,8 +2634,9 @@ function rvPanel(t, dec) {
   $("rvYes").onclick = () => {
     $("rvYes").classList.add("picked"); $("rvNo").classList.remove("picked");
     showLtf(true);
-    const lv = [["entry", "כניסה", t.entry], ["stop", "סטופ", t.stop]].concat(t.sc ? [["target", "יעד", t.target]] : []);
-    $("rvLv").innerHTML = (t.sc ? "" : `<div class="mut" style="margin:12px 0 0">היעד ייקבע ברגע הכניסה: הסווינג השני ${buy ? "מעל" : "מתחת ל"}מחיר הכניסה.</div>`) + `<div class="mut" style="margin:12px 0 6px">הפוזיציה לפי הכללים (בגרף ${t.sc ? "הדקה" : TFHE[(t.geo || {}).ltf] || ""} למטה). מה נכון?</div>` + lv.map(([k, l, v]) =>
+    // the gap method: the entry is always the gap's middle - only the stop is his to check (user, 17.11.2026)
+    const lv = t.sc ? [["entry", "כניסה", t.entry], ["stop", "סטופ", t.stop], ["target", "יעד", t.target]] : [["stop", "סטופ", t.stop]];
+    $("rvLv").innerHTML = (t.sc ? "" : `<div class="mut" style="margin:12px 0 0">היעד ייקבע ברגע הכניסה: הסווינג השני ${buy ? "מעל" : "מתחת ל"}מחיר הכניסה.</div>`) + `<div class="mut" style="margin:12px 0 6px">${t.sc ? "" : `כניסה באמצע הגאפ: <b><bdi>${t.entry != null ? (+t.entry).toFixed(dec) : "—"}</bdi></b>. `}${t.sc ? "הפוזיציה" : "הסטופ"} לפי הכללים (בגרף ${t.sc ? "הדקה" : TFHE[(t.geo || {}).ltf] || ""} למטה). ${t.sc ? "מה נכון?" : "נכון?"}</div>` + lv.map(([k, l, v]) =>
       `<div class="row" style="gap:6px;align-items:center;margin-top:6px"><b style="min-width:52px">${l}</b><bdi style="min-width:90px">${v != null ? (+v).toFixed(dec) : "—"}</bdi>
         <button class="btn ghost" data-ok="${k}" aria-pressed="true">נכון</button><button class="btn ghost" data-bad="${k}">לא נכון</button>
         <input type="number" step="any" inputmode="decimal" id="rv_${k}" value="${v != null ? (+v).toFixed(dec) : ""}" style="display:none;width:110px"></div>`).join("")

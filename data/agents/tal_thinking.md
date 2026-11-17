@@ -215,3 +215,6 @@ On a scout long (SC071 US30, lower Keltner band) in a falling market: "wrong ide
 
 ## His own rules are expected everywhere (user, 16.11.2026 20:29)
 "If an asset passed 60%, why didn't we get to the break-even stop as we set - is there a reason?" Tal remembers the rules he set (break-even at 60% of the way, 9-10.11) and expects them to apply in every bot and track; a place where a rule of his does not apply (bot 5's gap tracks trade with no management) must be tested and explained to him, not left silent. (Task tal1611gaveback, be60 on the gap tracks.)
+
+## The chart must show the strategy's real reason (user, 17.11.2026 04:33)
+Tal reads every trade's chart as the bot's claim: "you claim there was a gap - I see no gap". A label that does not match the strategy (a "gap" / "impulse" drawn on a moving-average cross) reads to him as a wrong identification and a bad entry. For the agents: each trade's chart shows only what that strategy really saw (its timeframe, its signal candle, its indicator), never the gap method's drawing on a non-gap trade (task b5scchart1711).

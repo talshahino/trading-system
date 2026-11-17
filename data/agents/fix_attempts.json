@@ -1157,7 +1157,7 @@
   "verdict": "כל המשפחות נכשלו - כבר כמות מינימלית"
  },
  "bot6|SC072|5Min|US500": {
-  "status": "trying",
+  "status": "fixed",
   "tried": [
    {
     "what": "bot6_world target/stop/time/be",
@@ -1185,6 +1185,26 @@
     "what": "direction: ema50h / noreent (bot 5's filters), alone and with noopen",
     "at": "2026-11-17",
     "state": "queued on the bots' computer (agent_bot6._sess_cands)"
+   },
+   {
+    "what": "bot6_world",
+    "at": "2026-11-17",
+    "variants": 96,
+    "chosen": "tnone_s0.75_time_nobe",
+    "train": {
+     "n": 221,
+     "eff_n": 213.6,
+     "mean": 0.0599,
+     "t": 0.16,
+     "win": 15.8
+    },
+    "unseen": {
+     "n": 105,
+     "eff_n": 105.0,
+     "mean": 0.2101,
+     "t": 0.4,
+     "win": 15.1
+    }
    }
   ],
   "at": "2026-11-17"
@@ -1282,5 +1302,45 @@
   "tried": [
    "17.11 בוקר (ענן): פירוק לפי סוג הפרסום - אחרי החלטות / פרוטוקול הפד 2026 6 עסקאות -9.4R, אבל 2025 6 עסקאות -0.1R: מתחת לסף 8 עסקאות של כלל הדילוג, אז אין תיקון שנבחר על 2025. אינפלציה ארה\"ב 2025 +6.2R / 2026 -3.1R. הבא: יעד / סטופ / דקת כניסה למדדים בנפרד מהמט\"ח (FX 2026 +12.4R), ומסנן תנודתיות לפני הפרסום."
   ]
+ },
+ "bot6|SC504|15Min|US30": {
+  "status": "failed",
+  "tried": [
+   {
+    "what": "bot6_world",
+    "at": "2026-11-17",
+    "variants": 96,
+    "chosen": "t3R_s1.25_time_be",
+    "train": {
+     "n": 59,
+     "eff_n": 57.2,
+     "mean": 0.1388,
+     "t": 1.79,
+     "win": 61.2
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null
+    }
+   }
+  ],
+  "at": "2026-11-17"
+ },
+ "bot6|SC504|15Min|US100": {
+  "status": "failed",
+  "tried": [
+   {
+    "what": "bot6_world",
+    "at": "2026-11-17",
+    "variants": 96,
+    "chosen": null,
+    "train": null,
+    "unseen": null
+   }
+  ],
+  "at": "2026-11-17"
  }
 }

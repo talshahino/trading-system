@@ -11487,3 +11487,531 @@ SCOUT.update({
     "SC529": ("Range pack: RSI(2) under 10 / over 90 while the 1-hour chart is choppy, 1.5 ATR, out at the 5-bar average (ours, 17.11.2026)", s_range_rsi2, ["5Min", "15Min", "1Hour"]),
     "SC530": ("Range pack: 1.5 ATR away from the day's VWAP with a turning bar while the 1-hour chart is choppy, VWAP target (ours, 17.11.2026)", s_range_vwap_revert, ["5Min", "15Min", "1Hour"]),
 })
+
+
+# ---------------- SC531-SC559 scout 17.11.2026 (afternoon run): StockCharts ChartSchool, Pruitt's classic systems,
+# Jeff Cooper's Hit and Run setups, R-Breaker, Kumo twist, Daye's quarterly theory, the micro pullback, BabyPips, and
+# one strategy for every new indicator (agents/indicators/classic8.py). Where the source gives no stop / target, a
+# standard one is chosen and SAID so in the docstring. Fixed pip distances are translated into ATR multiples.
+def _trail_state(up_evt, dn_evt):
+    """+1 after an up event until a down event, -1 after a down event (0 before the first)."""
+    x = np.where(up_evt, 1.0, np.where(dn_evt, -1.0, np.nan))
+    return _s(x).ffill().fillna(0.0).to_numpy()
+
+
+def _ok(*a):
+    out = np.ones(len(a[0]), bool)
+    for x in a:
+        out &= np.isfinite(np.asarray(x, float))
+    return out
+
+
+def s_cs_stoch_pop_bernstein(df):
+    """Stochastic Pop (Jake Bernstein, as StockCharts ChartSchool 'Stochastic Pop and Drop' describes it,
+    https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/stochastic-pop-and-drop ):
+    ADX(14) under 20 (no trend yet) and Stochastic(14,3) pops over 80 -> buy; drops under 20 -> sell. Exit when the
+    stochastic falls back under 80 (rises over 20) - Bernstein. Stop 2 ATR (ours; the source has none)."""
+    o, h, l, c, v = _ohlcv(df)
+    k, d = _stoch(h, l, c, 14, 3, 3)
+    ax = _r(adx(h, l, c, 14))
+    L, S = _excl(cross_up(k, 80.0) & (ax < 20), cross_down(k, 20.0) & (ax < 20))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": cross_down(k, 80.0), "exit_short": cross_up(k, 20.0)}
+
+
+def s_cs_stoch_pop_hill(df):
+    """Stochastic Pop and Drop, Arthur Hill's version (StockCharts ChartSchool, same page): the long-term stochastic
+    (weekly 14 on a daily chart = Stochastic(70) here, our translation of 'weekly' to 5x the bars) over 50 sets the long
+    bias (under 50 the short bias); ADX(14) under 20; Stochastic(14,3) crosses over 70 -> buy (under 30 -> sell). Exit
+    when the stochastic crosses back through 50 (our reading); stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    k, d = _stoch(h, l, c, 14, 3, 3)
+    lt, _ = _stoch(h, l, c, 70, 1, 1)
+    ax = _r(adx(h, l, c, 14))
+    L, S = _excl(cross_up(k, 70.0) & (ax < 20) & (lt > 50), cross_down(k, 30.0) & (ax < 20) & (lt < 50))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": cross_down(k, 50.0), "exit_short": cross_up(k, 50.0)}
+
+
+def s_cs_cci_correction(df):
+    """CCI Correction (StockCharts ChartSchool,
+    https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/cci-correction ):
+    the long-term CCI (weekly CCI 20 = CCI(100) here, 5x the bars) crossing over +100 sets a bull bias that holds until
+    it crosses under -100 (mirror); in a bull bias the short-term CCI(20) dips under -100 and crosses back over it ->
+    buy (the correction ends); mirror for shorts. Stop beyond the 5-bar swing, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    lt = np.nan_to_num(_cci(h, l, c, 100))
+    st = np.nan_to_num(_cci(h, l, c, 20))
+    bias = _trail_state(cross_up(lt, 100.0), cross_down(lt, -100.0))
+    a = atr(h, l, c, 14)
+    L, S = _excl(cross_up(st, -100.0) & (bias > 0), cross_down(st, 100.0) & (bias < 0))
+    sl, ss = _swl(h, l, a, 5, 0.1)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_cs_moving_momentum(df):
+    """Moving Momentum (Arthur Hill, StockCharts ChartSchool,
+    https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/moving-momentum ):
+    trend = SMA20 over SMA150; correction = Stochastic(14,3) under 20 in the last 10 bars; trigger = the MACD(12,26,9)
+    histogram turns positive -> buy; mirror (SMA20 under SMA150, stochastic over 80, histogram turns negative). Stop
+    under the correction low (10-bar extreme); exit when the SMAs cross back (Hill: the trend changes)."""
+    o, h, l, c, v = _ohlcv(df)
+    s20, s150 = sma(c, 20), sma(c, 150)
+    k, d = _stoch(h, l, c, 14, 3, 3)
+    _, _, hist = macd(c, 12, 26, 9)
+    a = atr(h, l, c, 14)
+    corr_l = _since(k < 20, 10) | (k < 20)
+    corr_s = _since(k > 80, 10) | (k > 80)
+    L, S = _excl(cross_up(hist, 0.0) & (s20 > s150) & corr_l, cross_down(hist, 0.0) & (s20 < s150) & corr_s)
+    sl = _s(l).rolling(10).min().to_numpy() - 0.1 * a
+    ss = _s(h).rolling(10).max().to_numpy() + 0.1 * a
+    return L, S, {"stop": ("level", sl, ss), "target": None, "exit_long": s20 < s150, "exit_short": s20 > s150}
+
+
+def s_cs_pctb_money_flow(df):
+    """Percent B Money Flow (StockCharts ChartSchool,
+    https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/percent-b-money-flow ):
+    %B(20,2) over 0.80 with MFI(10) over 80 -> buy (strength confirmed by money flow); %B under 0.20 with MFI under
+    20 -> sell. Exit at the middle band, stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    lo, mid, up = _bb(c, 20, 2.0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        pb = (c - lo) / (up - lo)
+    mf = _mfi(h, l, c, v, 10)
+    L, S = _excl(_onset((pb > 0.8) & (mf > 80)), _onset((pb < 0.2) & (mf < 20)))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": c < mid, "exit_short": c > mid}
+
+
+def s_r_breaker(df):
+    """R-Breaker (classic Chinese futures intraday system; rules as FMZ / AllTick publish them,
+    https://www.fmz.com/bbs-topic/2269 , https://alltick.io/blog/r-breaker-strategy ): from yesterday's H, L, C and
+    P = (H+L+C)/3: break buy = H + 2(P-L), sell setup = P + (H-L), sell enter = 2P - L, buy enter = 2P - H, buy setup
+    = P - (H-L), break sell = L - 2(H-P). Trend: close over break buy -> buy, under break sell -> sell. Reversal: today's
+    high went over sell setup and the close falls under sell enter -> sell; today's low went under buy setup and the
+    close rises over buy enter -> buy. Flat at the end of the UTC day. Stops: trend trades at the setup level, reversal
+    trades beyond today's extreme (ours, 0.1 ATR buffer); no target (the day close exits)."""
+    o, h, l, c, v = _ohlcv(df)
+    H, Lw, C = _prev_day(df)
+    P = (H + Lw + C) / 3
+    bbreak, ssetup, senter = H + 2 * (P - Lw), P + (H - Lw), 2 * P - Lw
+    benter, bsetup, sbreak = 2 * P - H, P - (H - Lw), Lw - 2 * (H - P)
+    day = pd.Series(df.index.tz_convert("UTC").date).to_numpy()
+    same = np.concatenate([[False], day[1:] == day[:-1]])
+    dh = pd.Series(h).groupby(day).cummax().to_numpy()
+    dl = pd.Series(l).groupby(day).cummin().to_numpy()
+    a = atr(h, l, c, 14)
+    c1 = _r(c)
+    lt = same & (c > bbreak) & (c1 <= bbreak)
+    st = same & (c < sbreak) & (c1 >= sbreak)
+    sr = same & (dh > ssetup) & (c < senter) & (c1 >= senter) & ~st
+    lr = same & (dl < bsetup) & (c > benter) & (c1 <= benter) & ~lt
+    L, S = _excl(lt | lr, st | sr)
+    sl = np.where(lt, ssetup, dl - 0.1 * a)
+    ss = np.where(st, bsetup, dh + 0.1 * a)
+    ok = _ok(P) & (sl < c) & (ss > c)
+    last = np.concatenate([day[1:] != day[:-1], [True]])
+    return L & ok, S & ok, {"stop": ("level", sl, ss), "target": None, "force_exit": last}
+
+
+def s_pruitt_bollinger_bandit(df):
+    """Bollinger Bandit (George Pruitt & John Hill, Building Winning Trading Systems with TradeStation, 2002): close over
+    BB(50, 1 SD) upper band with the close over the close 30 bars ago -> buy (mirror under the lower band). Exit: a
+    liquidation average that starts at 50 bars and shrinks by 1 every bar of the trade down to 10; exit long when the
+    close is under it and it is under the upper band (mirror). Here the trade age is counted from the signal bar (our
+    approximation of 'bars since entry'). Initial stop = the 50-bar average (Pruitt's first liquidation point)."""
+    o, h, l, c, v = _ohlcv(df)
+    lo, mid, up = _bb(c, 50, 1.0)
+    c30 = _r(c, 30)
+    L, S = _excl(_onset((c > up) & (c > c30)), _onset((c < lo) & (c < c30)))
+    cs = np.concatenate([[0.0], np.cumsum(c)])
+    i = np.arange(len(c))
+
+    def _liq(sig):
+        n = np.clip(50 - _bars_since(sig), 10, 50)
+        j = np.clip(i + 1 - n, 0, None)
+        return (cs[i + 1] - cs[j]) / (i + 1 - j)
+
+    ll, ls = _liq(L), _liq(S)
+    return L & _ok(mid), S & _ok(mid), {"stop": ("level", mid, mid), "target": None,
+                                         "exit_long": (c < ll) & (ll < up), "exit_short": (c > ls) & (ls > lo)}
+
+
+def s_pruitt_king_keltner(df):
+    """King Keltner (Pruitt & Hill, Building Winning Trading Systems with TradeStation): MA40 of the typical price +/-
+    ATR(40); the MA rising and the close over the upper band -> buy; MA falling and the close under the lower band ->
+    sell; exit (and stop) at the moving average. Differs from TV15 / SW04 (Keltner breakout + ATR trail) by the MA-slope
+    rule and the MA exit."""
+    o, h, l, c, v = _ohlcv(df)
+    ma = sma((h + l + c) / 3, 40)
+    a = atr(h, l, c, 40)
+    rising, falling = ma > _r(ma), ma < _r(ma)
+    L, S = _excl(_onset((c > ma + a) & rising), _onset((c < ma - a) & falling))
+    return L & _ok(ma), S & _ok(ma), {"stop": ("level", ma, ma), "target": None, "exit_long": c < ma, "exit_short": c > ma}
+
+
+def s_pruitt_thermostat(df):
+    """Thermostat (Pruitt & Hill, Building Winning Trading Systems with TradeStation): Choppy Market Index = |c - c[29]|
+    / (30-bar high - 30-bar low) x 100. Under 20 = swing mode: if the prior close was over its key (h+l+c)/3 the buy is
+    'easier' - buy on a close over the open + 0.5 x ATR(10), sell on a close under the open - 0.75 x ATR(10); otherwise
+    buy at + 0.75, sell at - 0.5 ATR; each swing signal also exits the opposite swing trade; stop 3 ATR (Pruitt's swing
+    protective). 20+ = trend mode: close beyond BB(50, 2) -> trade, exit at the 50-bar average."""
+    o, h, l, c, v = _ohlcv(df)
+    hh = _s(h).rolling(30).max().to_numpy()
+    ll = _s(l).rolling(30).min().to_numpy()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        cmi = 100 * np.abs(c - _r(c, 29)) / (hh - ll)
+    a10 = _r(atr(h, l, c, 10))
+    key = _r((h + l + c) / 3)
+    easy_buy = _r(c) > key
+    swing = cmi < 20
+    trend = cmi >= 20
+    bl = np.where(easy_buy, 0.5, 0.75)
+    sl_ = np.where(easy_buy, 0.75, 0.5)
+    sw_l = swing & (c > o + bl * a10)
+    sw_s = swing & (c < o - sl_ * a10)
+    lo, mid, up = _bb(c, 50, 2.0)
+    tr_l = trend & cross_up(c, up)
+    tr_s = trend & cross_down(c, lo)
+    L, S = _excl(sw_l | tr_l, sw_s | tr_s)
+    return L, S, {"stop": ("atr", 3.0), "target": None, "exit_long": sw_s | (trend & (c < mid)),
+                  "exit_short": sw_l | (trend & (c > mid))}
+
+
+def s_cooper_1234(df):
+    """Jeff Cooper 1-2-3-4 (Hit and Run Trading, 1996): ADX(14) over 30 with +DI over -DI (a strong up trend; read on
+    the bar before the pullback, our choice - the pullback itself lowers ADX / DI), three lower lows in a row (a 3-bar pullback), then a close over the prior bar's high -> buy (Cooper: buy stop over the
+    prior high on day 4); mirror. Stop under the pullback low (0.1 ATR buffer); target 2R and out after 5 bars (ours;
+    Cooper holds 2-5 days)."""
+    o, h, l, c, v = _ohlcv(df)
+    p, m = _di(h, l, c, 14)
+    ax = adx(h, l, c, 14)
+    a = atr(h, l, c, 14)
+    l1, l2, l3, l4 = _r(l, 1), _r(l, 2), _r(l, 3), _r(l, 4)
+    h1, h2, h3, h4 = _r(h, 1), _r(h, 2), _r(h, 3), _r(h, 4)
+    pull_l = (l1 < l2) & (l2 < l3) & (l3 < l4)
+    pull_s = (h1 > h2) & (h2 > h3) & (h3 > h4)
+    up_t = _r(ax, 4) > 30                       # the trend as it stood when the 3-bar pullback began
+    L, S = _excl(up_t & (_r(p, 4) > _r(m, 4)) & pull_l & (c > h1), up_t & (_r(m, 4) > _r(p, 4)) & pull_s & (c < l1))
+    sl = np.minimum(l, l1) - 0.1 * a
+    ss = np.maximum(h, h1) + 0.1 * a
+    return L, S, _plan_r(sl, ss, 2.0, max_bars=5)
+
+
+def s_cooper_expansion_pullback(df):
+    """Jeff Cooper Expansion Breakout (Hit and Run Trading): a bar that makes a 60-bar high with the widest range of the
+    last 9 bars = expansion breakout; within the next 5 bars price pulls back to the breakout bar's middle and a bar
+    closes over the prior bar's high -> buy; mirror at a 60-bar low. Stop under the breakout bar's low, 2R. The pullback
+    entry details are our reconstruction of Cooper's 'buy the first pullback'."""
+    o, h, l, c, v = _ohlcv(df)
+    rng = h - l
+    a = atr(h, l, c, 14)
+    eb_l = (h >= _s(h).rolling(60).max().to_numpy()) & (rng >= _s(rng).rolling(9).max().to_numpy())
+    eb_s = (l <= _s(l).rolling(60).min().to_numpy()) & (rng >= _s(rng).rolling(9).max().to_numpy())
+    mid = (h + l) / 2
+
+    def _carry(ev, x):
+        return _s(np.where(ev, x, np.nan)).ffill().to_numpy()
+
+    bl, bh, bm = _carry(eb_l, l), _carry(eb_l, h), _carry(eb_l, mid)
+    sl_, sh, sm = _carry(eb_s, l), _carry(eb_s, h), _carry(eb_s, mid)
+    age_l, age_s = _bars_since(eb_l), _bars_since(eb_s)
+    touch_l = _s((l <= bm).astype(float)).rolling(3, min_periods=1).max().to_numpy() > 0
+    touch_s = _s((h >= sm).astype(float)).rolling(3, min_periods=1).max().to_numpy() > 0
+    L = (age_l >= 1) & (age_l <= 5) & touch_l & (c > _r(h)) & (c > bl)
+    S = (age_s >= 1) & (age_s <= 5) & touch_s & (c < _r(l)) & (c < sh)
+    L, S = _excl(_onset(L), _onset(S))
+    return L, S, _plan_r(bl - 0.1 * a, sh + 0.1 * a, 2.0)
+
+
+def s_micro_pullback(df):
+    """Micro pullback (Ross Cameron / Warrior Trading; rules from the open TradingView script 'Micro pullback'
+    https://www.tradingview.com/script/yGezVj1o-Micro-pullback-1s-trigger-1min-setup ): a big green 1-minute candle
+    (body >= 1 ATR, volume >= 2 x its 20-bar average) starts the wave; a pullback of 1-4 bars with at most 3 red
+    candles, every red candle on less volume than the big one, never under 50% of the big candle; the first close over
+    the prior bar's high -> buy. Stop 2 ticks under the pullback low (= 0.02 ATR), target 1.5R. The short mirror is ours
+    (the source trades long momentum stocks). A feed without volume (constant v) skips the volume rules."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    va = sma(v, 20)
+    real_v = np.nanstd(v) > 0                  # a feed without volume (constant v): the volume rules are skipped
+    vol_ok = (v >= 2 * va) if real_v else np.ones(len(c), bool)
+    imp_l = (c - o >= a) & vol_ok
+    imp_s = (o - c >= a) & vol_ok
+    red, grn = c < o, c > o
+    n = len(c)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    pbl = np.full(n, np.nan)
+    pbh = np.full(n, np.nan)
+    for g in range(2, 6):
+        w = g - 1
+        j_l, j_s = _r(imp_l.astype(float), g) > 0, _r(imp_s.astype(float), g) > 0
+        jh, jl, jv = _r(np.maximum(h, o), g), _r(np.minimum(l, o), g), _r(v, g)   # the candle's span incl. its open
+        lo_w = _r(_s(l).rolling(w).min().to_numpy())
+        hi_w = _r(_s(h).rolling(w).max().to_numpy())
+        nred = _r(_s(red.astype(float)).rolling(w).sum().to_numpy())
+        ngrn = _r(_s(grn.astype(float)).rolling(w).sum().to_numpy())
+        rv = _r(_s(np.where(red, v, 0.0)).rolling(w).max().to_numpy())
+        gv = _r(_s(np.where(grn, v, 0.0)).rolling(w).max().to_numpy())
+        if not real_v:
+            rv = gv = jv - 1.0
+        cl = j_l & (nred >= 1) & (nred <= 3) & (rv < jv) & (lo_w >= jh - 0.5 * (jh - jl)) & (hi_w <= jh) & (c > _r(h)) & grn
+        cs = j_s & (ngrn >= 1) & (ngrn <= 3) & (gv < jv) & (hi_w <= jl + 0.5 * (jh - jl)) & (lo_w >= jl) & (c < _r(l)) & red
+        pbl = np.where(cl & ~L, np.minimum(lo_w, l), pbl)
+        pbh = np.where(cs & ~S, np.maximum(hi_w, h), pbh)
+        L |= cl
+        S |= cs
+    L, S = _excl(L, S)
+    return L, S, _plan_r(pbl - 0.02 * a, pbh + 0.02 * a, 1.5)
+
+
+def s_kumo_twist(df):
+    """Ichimoku Kumo twist (The Right Trader, https://therighttrader.com/learn/indicator-strategies/kumo-twist ):
+    9/26/52, spans displaced 26 bars (the span on bar t uses data of t-26, no look-ahead); Span A crossing over Span B
+    with the close over both spans -> buy (mirror). Stop at the lower span (upper for shorts); exit on the opposite
+    twist or a close back inside the cloud. No target (the source has none)."""
+    o, h, l, c, v = _ohlcv(df)
+    ten, kij = _mid(h, l, 9), _mid(h, l, 26)
+    A = _r((ten + kij) / 2, 26)
+    B = _r(_mid(h, l, 52), 26)
+    top, bot = np.fmax(A, B), np.fmin(A, B)
+    L, S = _excl(cross_up(A, B) & (c > top), cross_down(A, B) & (c < bot))
+    ok = _ok(A, B)
+    return L & ok, S & ok, {"stop": ("level", bot, top), "target": None,
+                            "exit_long": cross_down(A, B) | (c < top), "exit_short": cross_up(A, B) | (c > bot)}
+
+
+def s_quarterly_theory(df):
+    """Daye's Quarterly Theory, 90-minute quarters (LuxAlgo concept page https://www.luxalgo.com/library/concept/quarterly-theory/ ):
+    the London (00:00-06:00 New York) and New York (06:00-12:00) sessions each split into four 90-minute quarters; Q1
+    builds the range (accumulation), Q2-Q3 is where the manipulation sweeps it and the real move (distribution)
+    follows. Rule (the practitioner use the page describes; the exact rule is ours): in Q2 or Q3 a bar trades over the
+    Q1 high and closes back under it -> sell (mirror at the Q1 low), first signal per side per session; stop over the
+    sweep's extreme (0.1 ATR), target the other side of the Q1 range; flat at the session end."""
+    o, h, l, c, v = _ohlcv(df)
+    hr, day = _ny(df)
+    a = atr(h, l, c, 14)
+    sess = np.where(hr < 6, 0, np.where(hr < 12, 1, -1))
+    base = np.where(sess == 0, 0.0, 6.0)
+    q = np.where(sess >= 0, np.floor((hr - base) / 1.5), -1)
+    key = pd.Series([f"{d}_{s}" for d, s in zip(day, sess)]).to_numpy()
+    g = pd.DataFrame({"k": key, "h": np.where(q == 0, h, np.nan), "l": np.where(q == 0, l, np.nan)})
+    q1h = g.groupby("k")["h"].transform("max").to_numpy()
+    q1l = g.groupby("k")["l"].transform("min").to_numpy()
+    q1h = np.where(q >= 1, q1h, np.nan)       # read only after Q1 has closed
+    q1l = np.where(q >= 1, q1l, np.nan)
+    win = (q == 1) | (q == 2)
+    ext_h = pd.Series(np.where(q >= 1, h, -np.inf)).groupby(key).cummax().to_numpy()
+    ext_l = pd.Series(np.where(q >= 1, l, np.inf)).groupby(key).cummin().to_numpy()
+    S = win & (h > q1h) & (c < q1h) & (c > q1l)
+    L = win & (l < q1l) & (c > q1l) & (c < q1h)
+    S = S & (pd.Series(S.astype(int)).groupby(key).cumsum().to_numpy() == 1)
+    L = L & (pd.Series(L.astype(int)).groupby(key).cumsum().to_numpy() == 1)
+    L, S = _excl(L, S)
+    nxt = np.concatenate([key[1:], ["_end"]])
+    end = (sess >= 0) & (nxt != key)
+    return L, S, _plan_lv(ext_l - 0.1 * a, ext_h + 0.1 * a, q1h, q1l, force_exit=end)
+
+
+def s_bp_amazing_crossover(df):
+    """BabyPips 'Amazing Crossover System - 100+ pips per day' (https://forums.babypips.com/t/amazing-crossover-system-100-pips-per-day/19403 ,
+    rules as a follower of the system describes them in the thread; the first post was not readable): 1-hour chart,
+    EMA5 crosses EMA10, RSI(10) and RVI(10) over 50 (under for shorts), MACD(5,9,4) over 0 as the third confirmation.
+    Stop a few pips past the previous candle (0.1 ATR); target 2R (ours - the thread takes 30-100 pips by feel).
+    RVI here = Dorsey's Relative Volatility Index (the one with a 50 line). Differs from GH03 HLHB (EMA5/10 + RSI10 +
+    ADX) by the RVI and MACD confirmations and the candle stop."""
+    o, h, l, c, v = _ohlcv(df)
+    e5, e10 = ema(c, 5), ema(c, 10)
+    r10 = rsi(c, 10)
+    rv = IND.rvi_vol(df, 10, 14)["rvi"]
+    m, _, _ = macd(c, 5, 9, 4)
+    a = atr(h, l, c, 14)
+    L, S = _excl(cross_up(e5, e10) & (r10 > 50) & (rv > 50) & (m > 0), cross_down(e5, e10) & (r10 < 50) & (rv < 50) & (m < 0))
+    return L, S, _plan_r(_r(l) - 0.1 * a, _r(h) + 0.1 * a, 2.0)
+
+
+def s_bp_so_easy(df):
+    """BabyPips 'My So Easy It's Ridiculous System' (https://forums.babypips.com/t/my-so-easy-it-s-ridiculous-system/17810 ,
+    first post): daily chart, EMA5 crosses EMA10, both Stochastic(10,3,3) lines heading up and not overbought (%K under
+    80), RSI(14) over 50 -> buy; mirror. Stop 30 pips (= 0.5 daily ATR, our translation); exit on the opposite EMA
+    cross or RSI crossing back through 50."""
+    o, h, l, c, v = _ohlcv(df)
+    e5, e10 = ema(c, 5), ema(c, 10)
+    k, d = _stoch(h, l, c, 10, 3, 3)
+    r = rsi(c, 14)
+    up = (k > _r(k)) & (d > _r(d))
+    dn = (k < _r(k)) & (d < _r(d))
+    L, S = _excl(cross_up(e5, e10) & up & (k < 80) & (r > 50), cross_down(e5, e10) & dn & (k > 20) & (r < 50))
+    return L, S, {"stop": ("atr", 0.5), "target": None, "exit_long": cross_down(e5, e10) | cross_down(r, 50.0),
+                  "exit_short": cross_up(e5, e10) | cross_up(r, 50.0)}
+
+
+# ---- one strategy per new indicator (agents/indicators/classic8.py) ----
+def s_uniema_flip(df):
+    """TASC 2026.11 UniEMA (20, 2 poles, EMA weight, full damping - our reconstruction): the slope turns up with the
+    close over the line -> buy; mirror; exit on the opposite turn; stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.uniema(df, 20, 2, 1, 2.0, 1.0)
+    u, sl = z["uniema"], z["slope"]
+    L, S = _excl((sl > 0) & (_r(sl) <= 0) & (c > u), (sl < 0) & (_r(sl) >= 0) & (c < u))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": sl < 0, "exit_short": sl > 0}
+
+
+def s_yz_squeeze_break(df):
+    """Yang-Zhang volatility squeeze: the previous bar's YZ volatility (20) in its lowest 10% of 100 bars, then a close
+    over the prior 20-bar high (under the low) -> trade the expansion; stop 2 ATR, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.range_vol(df)
+    sq = _r(z["yz_rank"]) <= 0.10
+    hi, lo = _r(_s(h).rolling(20).max().to_numpy()), _r(_s(l).rolling(20).min().to_numpy())
+    L, S = _excl(sq & (c > hi), sq & (c < lo))
+    return L, S, {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+def s_vqi_cross(df):
+    """Stridsman VQI: the cumulative VQI crosses its SMA 9 in the direction of the SMA 9 vs SMA 200 (Stridsman: buy when
+    VQI rose over the last bars) -> trade; exit on the cross back; stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.vqi(df)
+    q, f, s = z["vqi"], z["sma_fast"], z["sma_slow"]
+    L, S = _excl(cross_up(q, f) & (f > s), cross_down(q, f) & (f < s))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": cross_down(q, f), "exit_short": cross_up(q, f)}
+
+
+def s_didi_needle(df):
+    """Didi Index needle (agulhada): SMA3 crosses up through SMA8 while SMA20 crosses down through it within 3 bars ->
+    buy; mirror; stop 1.5 ATR, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.didi_index(df)
+    L, S = _excl(z["needle_buy"], z["needle_sell"])
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 2.0)}
+
+
+def s_pivot_supertrend_flip(df):
+    """Pivot Point SuperTrend (LonesomeTheBlue) trend flip -> trade; stop at the trailing line, exit on the opposite
+    flip (the script's own use)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.pivot_supertrend(df)
+    line = z["line"]
+    a = atr(h, l, c, 14)
+    sl = np.where(np.isfinite(line) & (line < c), line, c - 2 * a)
+    ss = np.where(np.isfinite(line) & (line > c), line, c + 2 * a)
+    L, S = _excl(z["flip_up"], z["flip_dn"])
+    return L, S, {"stop": ("level", sl, ss), "target": None, "exit_long": z["flip_dn"], "exit_short": z["flip_up"]}
+
+
+def s_psy_pullback(df):
+    """Psychological Line (12): over the EMA 200, PSY crosses back over 25 (a run of down closes ends) -> buy; mirror
+    under 75 under the EMA; exit at the opposite extreme (75 / 25); stop 2 ATR, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.psy_line(df)
+    e = ema(c, 200)
+    L, S = _excl(cross_up(p, 25.0) & (c > e), cross_down(p, 75.0) & (c < e))
+    return L, S, {"stop": ("atr", 2.0), "target": ("R", 2.0), "exit_long": p > 75, "exit_short": p < 25}
+
+
+def s_adxr_cross(df):
+    """Wilder ADXR: ADX crosses over its ADXR (the trend is accelerating) with ADX over 20 and +DI over -DI -> buy;
+    mirror with -DI on top; stop 2 ATR, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.adxr(df)
+    up = cross_up(np.nan_to_num(z["adx"]), np.nan_to_num(z["adxr"])) & (z["adx"] > 20)
+    L, S = _excl(up & (z["pdi"] > z["ndi"]), up & (z["ndi"] > z["pdi"]))
+    return L, S, {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+def s_gapo_break(df):
+    """Gopalakrishnan Range Index (5): the previous bar's GAPO in its lowest 20% of 100 bars (a tight range), then a
+    close beyond the prior 5-bar high / low -> trade; stop at the other side of the 5-bar range, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    g = IND.gapo(df)
+    q20 = _s(g).rolling(100).quantile(0.2).to_numpy()
+    tight = _r(g) <= _r(q20)
+    hi, lo = _r(_s(h).rolling(5).max().to_numpy()), _r(_s(l).rolling(5).min().to_numpy())
+    L, S = _excl(tight & (c > hi), tight & (c < lo))
+    return L & _ok(lo), S & _ok(hi), _plan_r(lo, hi, 2.0)
+
+
+def s_asi_breakout(df):
+    """Wilder Accumulative Swing Index breakout: ASI crosses over its prior 20-bar high (Wilder: an ASI breakout
+    confirms a price breakout) -> buy; mirror; stop 1.5 ATR, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    s = IND.asi(df)["asi"]
+    hi, lo = _r(_s(s).rolling(20).max().to_numpy()), _r(_s(s).rolling(20).min().to_numpy())
+    L, S = _excl(_onset(s > hi), _onset(s < lo))
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 2.0)}
+
+
+def s_cfo_zero(df):
+    """Chande Forecast Oscillator (14) crosses zero with the EMA 50 trend -> trade; exit on the cross back; stop 2 ATR
+    (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    f = np.nan_to_num(IND.cfo(df))
+    e = ema(c, 50)
+    L, S = _excl(cross_up(f, 0.0) & (c > e), cross_down(f, 0.0) & (c < e))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": cross_down(f, 0.0), "exit_short": cross_up(f, 0.0)}
+
+
+def s_r2_trend_pullback(df):
+    """R-squared trend pullback: R-squared(14) over 0.6 with the slope over 0.05 ATR / bar (a clean trend), the bar dips
+    to the EMA 20 and closes over it -> buy; mirror; stop beyond the 5-bar swing, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.r_squared(df)
+    r2, sl_ = _r(z["r2"]), _r(z["slope_atr"])
+    e = ema(c, 20)
+    a = atr(h, l, c, 14)
+    L, S = _excl((r2 > 0.6) & (sl_ > 0.05) & (l <= e) & (c > e), (r2 > 0.6) & (sl_ < -0.05) & (h >= e) & (c < e))
+    sl, ss = _swl(h, l, a, 5, 0.1)
+    return _onset(L), _onset(S), _plan_r(sl, ss, 2.0)
+
+
+def s_dynamic_momentum(df):
+    """Chande-Kroll Dynamic Momentum Index: crosses back over 30 -> buy, under 70 -> sell (their RSI levels); stop 1.5
+    ATR, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    d = np.nan_to_num(IND.dynamic_momentum(df)["dmi"], nan=50.0)
+    L, S = _excl(cross_up(d, 30.0), cross_down(d, 70.0))
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 2.0)}
+
+
+def s_stoch_cci_trend(df):
+    """Stochastic CCI: over the EMA 200, %K crosses up through 20 -> buy; under it, %K crosses down through 80 -> sell;
+    stop beyond the 5-bar swing, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    k = np.nan_to_num(IND.stoch_cci(df)["k"], nan=50.0)
+    e = ema(c, 200)
+    a = atr(h, l, c, 14)
+    L, S = _excl(cross_up(k, 20.0) & (c > e), cross_down(k, 80.0) & (c < e))
+    sl, ss = _swl(h, l, a, 5, 0.1)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+SCOUT.update({
+    "SC531": ("Stochastic Pop (Bernstein): ADX < 20 and Stochastic 14/3 pops over 80 (drops under 20), out back through 80 / 20, 2 ATR (StockCharts ChartSchool)", s_cs_stoch_pop_bernstein, _F + ["4Hour", "1Day"]),
+    "SC532": ("Stochastic Pop and Drop (Hill): long-term Stoch 70 > 50 + ADX < 20 + Stoch 14 over 70 (under 30), out at 50, 2 ATR (StockCharts ChartSchool)", s_cs_stoch_pop_hill, _F + ["4Hour", "1Day"]),
+    "SC533": ("CCI Correction: CCI 100 bias (+100 / -100) + CCI 20 back over -100 (under +100), swing stop, 2R (StockCharts ChartSchool)", s_cs_cci_correction, _F + ["4Hour", "1Day"]),
+    "SC534": ("Moving Momentum (Hill): SMA20 > SMA150 + Stoch 14 under 20 within 10 + MACD histogram turns up, correction-low stop, SMA-cross exit (StockCharts ChartSchool)", s_cs_moving_momentum, _F + ["4Hour", "1Day"]),
+    "SC535": ("Percent B Money Flow: %B(20,2) > 0.8 + MFI 10 > 80 (< 0.2 / < 20), middle-band exit, 2 ATR (StockCharts ChartSchool)", s_cs_pctb_money_flow, _F + ["4Hour", "1Day"]),
+    "SC536": ("R-Breaker: yesterday's six pivot levels - trend break and setup / enter reversal, flat at the day end (FMZ / Chinese futures classic)", s_r_breaker, ["1Min", "5Min", "15Min"]),
+    "SC537": ("Bollinger Bandit (Pruitt): close over BB(50,1) with c > c[30], shrinking 50 -> 10 liquidation average exit", s_pruitt_bollinger_bandit, _M + ["1Day"]),
+    "SC538": ("King Keltner (Pruitt): rising MA40(typical) + close over MA + ATR40, exit / stop at the MA", s_pruitt_king_keltner, _M + ["1Day"]),
+    "SC539": ("Thermostat (Pruitt): Choppy Market Index < 20 swing open +/- 0.5 / 0.75 ATR10, >= 20 BB(50,2) trend, 3 ATR", s_pruitt_thermostat, _M + ["1Day"]),
+    "SC540": ("Jeff Cooper 1-2-3-4: ADX > 30 + DI trend + 3 lower lows, close over the prior high, pullback stop, 2R / 5 bars (Hit and Run)", s_cooper_1234, _M + ["1Day"]),
+    "SC541": ("Jeff Cooper Expansion Breakout pullback: 60-bar high on the widest 9-bar range, pullback to its middle within 5 bars, 2R (Hit and Run, reconstruction)", s_cooper_expansion_pullback, _M + ["1Day"]),
+    "SC542": ("Micro pullback (Ross Cameron): big-volume impulse candle, 1-4 bar shallow pullback, close over the prior high, pullback-low stop, 1.5R (TradingView script)", s_micro_pullback, ["1Min", "5Min"]),
+    "SC543": ("Ichimoku Kumo twist with the close beyond the cloud, span stop, out on the opposite twist / back in the cloud (The Right Trader)", s_kumo_twist, ["1Hour", "4Hour", "1Day"]),
+    "SC544": ("Daye Quarterly Theory: Q2-Q3 sweep of the Q1 (90-minute) range closing back inside, sweep stop, Q1 other-side target, London + NY (LuxAlgo concept)", s_quarterly_theory, ["1Min", "5Min", "15Min"]),
+    "SC545": ("BabyPips Amazing Crossover: EMA5/10 cross + RSI10 > 50 + RVI10 > 50 + MACD 5/9/4 > 0, prior-candle stop, 2R, 1H", s_bp_amazing_crossover, ["1Hour"]),
+    "SC546": ("BabyPips So Easy It's Ridiculous: EMA5/10 cross + Stoch 10/3/3 rising not overbought + RSI14 > 50, 0.5 ATR (30 pips), cross / RSI-50 exit, daily", s_bp_so_easy, ["4Hour", "1Day"]),
+    "SC547": ("TASC 2026.11 UniEMA 20 (2 poles) slope turn with the close on its side, opposite-turn exit, 2 ATR (reconstruction)", s_uniema_flip, _F + ["4Hour"]),
+    "SC548": ("Yang-Zhang volatility in its lowest 10% of 100 bars, then a 20-bar breakout, 2 ATR, 2R", s_yz_squeeze_break, _F + ["4Hour"]),
+    "SC549": ("Stridsman VQI crosses its SMA9 with SMA9 vs SMA200, cross-back exit, 2 ATR (LazyBear)", s_vqi_cross, _F + ["4Hour"]),
+    "SC550": ("Didi Index needle 3/8/20, 1.5 ATR, 2R (Didi Aguiar)", s_didi_needle, _F + ["4Hour"]),
+    "SC551": ("Pivot Point SuperTrend 2/3/10 flip, line stop, opposite-flip exit (LonesomeTheBlue)", s_pivot_supertrend_flip, _F + ["4Hour"]),
+    "SC552": ("Psychological Line 12 back over 25 (under 75) with the EMA200, 2 ATR, 2R", s_psy_pullback, _F + ["4Hour"]),
+    "SC553": ("Wilder ADX crosses over ADXR (ADX > 20) in the DI direction, 2 ATR, 2R", s_adxr_cross, _F + ["4Hour"]),
+    "SC554": ("Gopalakrishnan Range Index tight (lowest 20%), 5-bar breakout, range stop, 2R", s_gapo_break, _F + ["4Hour"]),
+    "SC555": ("Wilder Accumulative Swing Index breaks its 20-bar high / low, 1.5 ATR, 2R", s_asi_breakout, _F + ["4Hour"]),
+    "SC556": ("Chande Forecast Oscillator 14 zero cross with the EMA50, cross-back exit, 2 ATR", s_cfo_zero, _F + ["4Hour"]),
+    "SC557": ("R-squared 14 > 0.6 trend + EMA20 dip-and-close, swing stop, 2R", s_r2_trend_pullback, _F + ["4Hour"]),
+    "SC558": ("Chande-Kroll Dynamic Momentum Index back over 30 / under 70, 1.5 ATR, 2R", s_dynamic_momentum, _F + ["4Hour"]),
+    "SC559": ("Stochastic CCI 20/14 crosses 20 / 80 with the EMA200, swing stop, 2R", s_stoch_cci_trend, _F + ["4Hour"]),
+})

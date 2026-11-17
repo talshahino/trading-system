@@ -84,6 +84,8 @@ from agents.indicators.classic6 import (chaikin_volatility, correlation_trend, k
 from agents.indicators.classic7 import (dsma, elegant_osc, fib_bollinger, hull_butterfly, impulse_macd, mad,
                                         market_thermometer, range_detector, spearman, super_passband, trama,
                                         universal_osc, voss_predict, williams_ad)
+from agents.indicators.classic8 import (adxr, asi, cfo, didi_index, dynamic_momentum, gapo, pivot_supertrend, psy_line,
+                                        r_squared, range_vol, stoch_cci, uniema, vqi)
 TV = "https://www.tradingview.com/script/"
 TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
@@ -396,6 +398,19 @@ INDICATORS = {
     "fib_bollinger": (fib_bollinger, "Fibonacci Bollinger Bands: VWMA200(hlc3) +/- 0.236 .. 1.0 x 3 stdev (Rashad)", TV + "qIKR3tbN-Fibonacci-Bollinger-Bands"),
     "hull_butterfly": (hull_butterfly, "Hull Butterfly Oscillator (LuxAlgo, our reconstruction): HMA14 kernel minus its mirror, expanding |osc| x 1.5 levels, turn dots", "https://www.luxalgo.com/library/indicator/hull-butterfly-oscillator/"),
     "range_detector": (range_detector, "Range Detector (LuxAlgo, our reconstruction): 20 closes within SMA20 +/- ATR500 -> range top / bottom, close breaks", "https://www.luxalgo.com/library/indicator/range-detector/"),
+    "uniema": (uniema, "TASC 2026.11 UniEMA (our reconstruction): poles 1-3 (EMA / DEMA / TEMA-type), order passes, Wilder / EMA weight, damping", TV + "1ZLcORQR-TASC-2026-11-The-UniEMA/"),
+    "range_vol": (range_vol, "Range-based volatility 20: Parkinson, Garman-Klass, Rogers-Satchell, Yang-Zhang + YZ 100-bar percentile rank", "https://portfoliooptimizer.io/blog/range-based-volatility-estimators-overview-and-examples-of-usage/"),
+    "vqi": (vqi, "Stridsman Volatility Quality Index: cumulative bar quality x move, SMA 9 / SMA 200 (LazyBear)", TV + "MbAO4zo0-Indicator-Volatility-Quality-Index-VQI"),
+    "didi_index": (didi_index, "Didi Index 3/8/20: SMA3 and SMA20 vs SMA8, needle (agulhada) buy / sell", TV + "qt2X6wrd-Didi-Index"),
+    "pivot_supertrend": (pivot_supertrend, "Pivot Point SuperTrend 2/3/10 (LonesomeTheBlue): pivot-weighted centre +/- 3 ATR, trailing trend line", TV + "L0AIiLvH-Pivot-Point-Supertrend/"),
+    "psy_line": (psy_line, "Psychological Line 12: % of up closes", "https://www.luxalgo.com/library/concept/psychological-line/"),
+    "adxr": (adxr, "Wilder ADXR 14: (ADX + ADX 14 bars ago) / 2, with +DI / -DI / ADX", "https://www.investopedia.com/terms/a/adxr.asp"),
+    "gapo": (gapo, "Gopalakrishnan Range Index 5: log(range) / log(n)", "https://lightningchart.com/blog/trader/gopalakrishnan-range-index/"),
+    "asi": (asi, "Wilder Accumulative Swing Index (T = 3 ATR, our choice for CFDs)", "https://www.investopedia.com/terms/a/asi.asp"),
+    "cfo": (cfo, "Chande Forecast Oscillator 14: % distance of the close from its regression forecast", "https://www.metastock.com/customer/resources/taaz/?p=48"),
+    "r_squared": (r_squared, "R-squared 14 of closes on time + regression slope in ATR per bar", "https://www.investopedia.com/terms/r/r-squared.asp"),
+    "dynamic_momentum": (dynamic_momentum, "Chande-Kroll Dynamic Momentum Index: RSI with volatility-adaptive length 5..30", "https://www.investopedia.com/terms/d/dynamicmomentumindex.asp"),
+    "stoch_cci": (stoch_cci, "Stochastic CCI: stochastic 14 of CCI 20, %K / %D SMA 3", "https://www.tradingview.com/scripts/stochasticcci/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

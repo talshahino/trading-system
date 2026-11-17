@@ -13135,6 +13135,697 @@
     "bot7"
    ],
    "rules": "Choppy 1-hour chart: 1.5 ATR or more under (over) the day's VWAP with a bar closing up (down) -> buy (sell) back to the VWAP. Stop 1 ATR beyond the bar's extreme; target / exit the VWAP."
+  },
+  {
+   "id": "SC531",
+   "name": "Stochastic Pop (Bernstein)",
+   "source": "StockCharts ChartSchool - Stochastic Pop and Drop",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/stochastic-pop-and-drop",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "ADX(14) < 20 and Stochastic(14,3) crosses over 80 -> buy (under 20 -> sell); exit back through 80 / 20; stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC532",
+   "name": "Stochastic Pop and Drop (Hill)",
+   "source": "StockCharts ChartSchool - Stochastic Pop and Drop",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/stochastic-pop-and-drop",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Long-term Stochastic(70) (= weekly 14) > 50 bias, ADX(14) < 20, Stochastic(14,3) crosses over 70 -> buy (mirror < 50 / under 30); exit at 50 (our reading); stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC533",
+   "name": "CCI Correction",
+   "source": "StockCharts ChartSchool - CCI Correction",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/cci-correction",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "CCI(100) (= weekly CCI 20) over +100 sets a bull bias until under -100; CCI(20) back over -100 -> buy (mirror); 5-bar swing stop, 2R (ours)."
+  },
+  {
+   "id": "SC534",
+   "name": "Moving Momentum (Arthur Hill)",
+   "source": "StockCharts ChartSchool - Moving Momentum",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/moving-momentum",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "SMA20 > SMA150, Stochastic(14,3) under 20 in the last 10 bars, MACD(12,26,9) histogram turns positive -> buy (mirror); stop the 10-bar correction low; exit when the SMAs cross back."
+  },
+  {
+   "id": "SC535",
+   "name": "Percent B Money Flow",
+   "source": "StockCharts ChartSchool - Percent B Money Flow",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/trading-strategies-and-models/trading-strategies/percent-b-money-flow",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "%B(20,2) > 0.8 with MFI(10) > 80 -> buy; %B < 0.2 with MFI < 20 -> sell; exit at the middle band, stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC536",
+   "name": "R-Breaker",
+   "source": "FMZ / AllTick (Chinese futures classic)",
+   "url": "https://www.fmz.com/bbs-topic/2269",
+   "added": "2026-11-17",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Six levels from yesterday's H/L/C and pivot P: trend = close through break buy / break sell; reversal = day high over sell setup then close under sell enter (mirror). Stops at the setup level (trend) / today's extreme (reversal); flat at the UTC day end."
+  },
+  {
+   "id": "SC537",
+   "name": "Bollinger Bandit (Pruitt)",
+   "source": "George Pruitt & John Hill, Building Winning Trading Systems with TradeStation (2002)",
+   "url": "https://www.oreilly.com/library/view/building-winning-trading/9780471215691/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Close over BB(50,1) upper with c > c[30] -> buy (mirror); exit under a liquidation SMA that shrinks 50 -> 10 bars with the trade's age (counted from the signal) while it is under the upper band; first stop the 50-bar SMA."
+  },
+  {
+   "id": "SC538",
+   "name": "King Keltner (Pruitt)",
+   "source": "George Pruitt & John Hill, Building Winning Trading Systems with TradeStation",
+   "url": "https://www.oreilly.com/library/view/building-winning-trading/9780471215691/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "MA40 of the typical price rising and the close over MA + ATR(40) -> buy (mirror with a falling MA); exit and stop at the MA."
+  },
+  {
+   "id": "SC539",
+   "name": "Thermostat (Pruitt)",
+   "source": "George Pruitt & John Hill, Building Winning Trading Systems with TradeStation",
+   "url": "https://www.oreilly.com/library/view/building-winning-trading/9780471215691/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Choppy Market Index (30) < 20: swing mode - buy over open + 0.5/0.75 ATR10, sell under open - 0.75/0.5 ATR10 depending on the prior close vs its key; >= 20: BB(50,2) breakout, exit at the SMA50; stop 3 ATR."
+  },
+  {
+   "id": "SC540",
+   "name": "Jeff Cooper 1-2-3-4",
+   "source": "Jeff Cooper, Hit and Run Trading (1996)",
+   "url": "https://www.amazon.com/Hit-Run-Trading-Short-Term-Manual/dp/1883272149",
+   "added": "2026-11-17",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "ADX(14) > 30 with +DI > -DI before the pullback, three lower lows in a row, close over the prior bar's high -> buy (mirror); pullback-low stop, 2R, out after 5 bars (ours)."
+  },
+  {
+   "id": "SC541",
+   "name": "Jeff Cooper Expansion Breakout pullback",
+   "source": "Jeff Cooper, Hit and Run Trading (1996) - our reconstruction of the entry",
+   "url": "https://www.amazon.com/Hit-Run-Trading-Short-Term-Manual/dp/1883272149",
+   "added": "2026-11-17",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "60-bar high on the widest range of 9 bars; within 5 bars a pullback to that bar's middle and a close over the prior high -> buy (mirror); stop under the breakout bar, 2R."
+  },
+  {
+   "id": "SC542",
+   "name": "Micro pullback (Ross Cameron)",
+   "source": "TradingView open-source script 'Micro pullback - 1s trigger, 1min setup' (Warrior Trading setup)",
+   "url": "https://www.tradingview.com/script/yGezVj1o-Micro-pullback-1s-trigger-1min-setup",
+   "added": "2026-11-17",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Big green candle (body >= 1 ATR, volume >= 2x SMA20), 1-4 bar pullback with <= 3 red candles on lower volume, never under 50% of the candle, close over the prior high -> buy; stop 2 ticks (0.02 ATR) under the pullback low, 1.5R; short mirror is ours."
+  },
+  {
+   "id": "SC543",
+   "name": "Ichimoku Kumo twist",
+   "source": "The Right Trader - Kumo twist",
+   "url": "https://therighttrader.com/learn/indicator-strategies/kumo-twist",
+   "added": "2026-11-17",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Span A crosses Span B (spans displaced 26) with the close beyond both -> trade; stop at the far span; exit on the opposite twist or a close back in the cloud."
+  },
+  {
+   "id": "SC544",
+   "name": "Daye Quarterly Theory (90-minute quarters)",
+   "source": "LuxAlgo concept page - Quarterly Theory (rule details ours)",
+   "url": "https://www.luxalgo.com/library/concept/quarterly-theory/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "London 00-06 and NY 06-12 New York time, 90-minute quarters; in Q2-Q3 a sweep of the Q1 high (low) closing back inside -> sell (buy), first per side per session; sweep stop, target the other side of Q1; flat at the session end."
+  },
+  {
+   "id": "SC545",
+   "name": "BabyPips Amazing Crossover",
+   "source": "BabyPips forum - Amazing Crossover System (rules as a follower describes them)",
+   "url": "https://forums.babypips.com/t/amazing-crossover-system-100-pips-per-day/19403",
+   "added": "2026-11-17",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "1H: EMA5/10 cross, RSI(10) and RVI(10) beyond 50, MACD(5,9,4) beyond 0; stop past the previous candle; 2R (ours)."
+  },
+  {
+   "id": "SC546",
+   "name": "BabyPips So Easy It's Ridiculous",
+   "source": "BabyPips forum - My So Easy It's Ridiculous System (first post)",
+   "url": "https://forums.babypips.com/t/my-so-easy-it-s-ridiculous-system/17810",
+   "added": "2026-11-17",
+   "timeframes": [
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Daily: EMA5/10 cross, Stochastic(10,3,3) lines both rising and not overbought, RSI(14) > 50 -> buy (mirror); 30-pip stop = 0.5 daily ATR; exit on the opposite cross or RSI back through 50."
+  },
+  {
+   "id": "SC547",
+   "name": "TASC 2026.11 UniEMA slope turn",
+   "source": "TASC 2026.11 The UniEMA (PineCodersTASC) - formula our reconstruction",
+   "url": "https://www.tradingview.com/script/1ZLcORQR-TASC-2026-11-The-UniEMA/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "UniEMA(20, 2 poles, EMA weight, damping 1) slope turns with the close on its side -> trade; exit on the opposite turn; 2 ATR."
+  },
+  {
+   "id": "SC548",
+   "name": "Yang-Zhang volatility squeeze breakout",
+   "source": "ours (Yang-Zhang 2000 estimator)",
+   "url": "https://portfoliooptimizer.io/blog/range-based-volatility-estimators-overview-and-examples-of-usage/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "YZ volatility(20) of the prior bar in its lowest 10% of 100 bars, close beyond the prior 20-bar high / low -> trade; 2 ATR, 2R."
+  },
+  {
+   "id": "SC549",
+   "name": "Stridsman VQI cross",
+   "source": "Volatility Quality Index (Stridsman; LazyBear)",
+   "url": "https://www.tradingview.com/script/MbAO4zo0-Indicator-Volatility-Quality-Index-VQI",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Cumulative VQI crosses its SMA9 with SMA9 above (below) SMA200 -> buy (sell); exit on the cross back; 2 ATR."
+  },
+  {
+   "id": "SC550",
+   "name": "Didi Index needle",
+   "source": "Didi Index (Odir Aguiar)",
+   "url": "https://www.tradingview.com/script/qt2X6wrd-Didi-Index",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "SMA3 crosses up through SMA8 while SMA20 crosses down through it within 3 bars -> buy (mirror); 1.5 ATR, 2R."
+  },
+  {
+   "id": "SC551",
+   "name": "Pivot Point SuperTrend flip",
+   "source": "Pivot Point SuperTrend (LonesomeTheBlue)",
+   "url": "https://www.tradingview.com/script/L0AIiLvH-Pivot-Point-Supertrend/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Trend flip of the pivot-centred SuperTrend (2/3/10) -> trade; stop at the line; exit on the opposite flip."
+  },
+  {
+   "id": "SC552",
+   "name": "Psychological Line pullback",
+   "source": "Psychological Line (LuxAlgo concept)",
+   "url": "https://www.luxalgo.com/library/concept/psychological-line/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Over the EMA200 PSY(12) crosses back over 25 -> buy (mirror under 75 below it); exit at the opposite extreme; 2 ATR, 2R."
+  },
+  {
+   "id": "SC553",
+   "name": "ADX over ADXR",
+   "source": "Wilder ADXR",
+   "url": "https://www.investopedia.com/terms/a/adxr.asp",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "ADX crosses over ADXR with ADX > 20 in the DI direction -> trade; 2 ATR, 2R."
+  },
+  {
+   "id": "SC554",
+   "name": "GAPO tight-range breakout",
+   "source": "Gopalakrishnan Range Index",
+   "url": "https://lightningchart.com/blog/trader/gopalakrishnan-range-index/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "GAPO(5) of the prior bar in its lowest 20% of 100 bars, close beyond the 5-bar range -> trade; stop the other side of the range, 2R."
+  },
+  {
+   "id": "SC555",
+   "name": "Accumulative Swing Index breakout",
+   "source": "Wilder ASI",
+   "url": "https://www.investopedia.com/terms/a/asi.asp",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "ASI crosses over its prior 20-bar high (under the low) -> trade; 1.5 ATR, 2R."
+  },
+  {
+   "id": "SC556",
+   "name": "Chande Forecast Oscillator zero cross",
+   "source": "Chande Forecast Oscillator",
+   "url": "https://www.metastock.com/customer/resources/taaz/?p=48",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "CFO(14) crosses zero with the EMA50 side -> trade; exit on the cross back; 2 ATR."
+  },
+  {
+   "id": "SC557",
+   "name": "R-squared trend pullback",
+   "source": "R-squared of the 14-bar regression",
+   "url": "https://www.investopedia.com/terms/r/r-squared.asp",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "R2 > 0.6 and slope > 0.05 ATR/bar, the bar dips to the EMA20 and closes over it -> buy (mirror); 5-bar swing stop, 2R."
+  },
+  {
+   "id": "SC558",
+   "name": "Dynamic Momentum Index 30 / 70",
+   "source": "Chande-Kroll Dynamic Momentum Index",
+   "url": "https://www.investopedia.com/terms/d/dynamicmomentumindex.asp",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "DMI back over 30 -> buy, back under 70 -> sell; 1.5 ATR, 2R."
+  },
+  {
+   "id": "SC559",
+   "name": "Stochastic CCI with the EMA200",
+   "source": "Stochastic CCI",
+   "url": "https://www.tradingview.com/scripts/stochasticcci/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Over the EMA200 Stochastic CCI %K crosses up through 20 -> buy (mirror through 80 under it); 5-bar swing stop, 2R."
   }
  ],
  "indicators": [
@@ -14740,6 +15431,97 @@
    "url": "https://www.luxalgo.com/library/indicator/range-detector/",
    "added": "2026-11-17",
    "uses": "range breakouts (SC526), in_range as a no-trend filter / range-fade context"
+  },
+  {
+   "name": "uniema",
+   "source": "TASC 2026.11 The UniEMA (PineCodersTASC) - formula our reconstruction from the four described knobs",
+   "url": "https://www.tradingview.com/script/1ZLcORQR-TASC-2026-11-The-UniEMA/",
+   "added": "2026-11-17",
+   "uses": "trend filter / MA crossover with lag control (poles, order, damping); SC547"
+  },
+  {
+   "name": "range_vol",
+   "source": "Parkinson / Garman-Klass / Rogers-Satchell / Yang-Zhang range-based volatility",
+   "url": "https://portfoliooptimizer.io/blog/range-based-volatility-estimators-overview-and-examples-of-usage/",
+   "added": "2026-11-17",
+   "uses": "volatility-compression filter before breakouts (SC548), stop / size scaling, regime filter"
+  },
+  {
+   "name": "vqi",
+   "source": "Volatility Quality Index (Stridsman; LazyBear open source)",
+   "url": "https://www.tradingview.com/script/MbAO4zo0-Indicator-Volatility-Quality-Index-VQI",
+   "added": "2026-11-17",
+   "uses": "trend-quality confirmation filter, cross entries (SC549)"
+  },
+  {
+   "name": "didi_index",
+   "source": "Didi Index 3/8/20 (Odir Aguiar)",
+   "url": "https://www.tradingview.com/script/qt2X6wrd-Didi-Index",
+   "added": "2026-11-17",
+   "uses": "needle entries (SC550), MA-alignment filter"
+  },
+  {
+   "name": "pivot_supertrend",
+   "source": "Pivot Point SuperTrend (LonesomeTheBlue, open source)",
+   "url": "https://www.tradingview.com/script/L0AIiLvH-Pivot-Point-Supertrend/",
+   "added": "2026-11-17",
+   "uses": "trend filter, trailing stop / exit, flip entries (SC551)"
+  },
+  {
+   "name": "psy_line",
+   "source": "Psychological Line",
+   "url": "https://www.luxalgo.com/library/concept/psychological-line/",
+   "added": "2026-11-17",
+   "uses": "overbought / oversold pullback filter (SC552)"
+  },
+  {
+   "name": "adxr",
+   "source": "Wilder ADXR",
+   "url": "https://www.investopedia.com/terms/a/adxr.asp",
+   "added": "2026-11-17",
+   "uses": "trend-strength filter, ADX/ADXR cross entries (SC553)"
+  },
+  {
+   "name": "gapo",
+   "source": "Gopalakrishnan Range Index",
+   "url": "https://lightningchart.com/blog/trader/gopalakrishnan-range-index/",
+   "added": "2026-11-17",
+   "uses": "range-compression filter before breakouts (SC554)"
+  },
+  {
+   "name": "asi",
+   "source": "Wilder Accumulative Swing Index",
+   "url": "https://www.investopedia.com/terms/a/asi.asp",
+   "added": "2026-11-17",
+   "uses": "breakout confirmation (SC555), ASI swing levels as stops"
+  },
+  {
+   "name": "cfo",
+   "source": "Chande Forecast Oscillator",
+   "url": "https://www.metastock.com/customer/resources/taaz/?p=48",
+   "added": "2026-11-17",
+   "uses": "momentum filter / zero-cross entries (SC556)"
+  },
+  {
+   "name": "r_squared",
+   "source": "R-squared + regression slope",
+   "url": "https://www.investopedia.com/terms/r/r-squared.asp",
+   "added": "2026-11-17",
+   "uses": "trend-cleanliness filter for pullback entries (SC557), no-trend filter for range strategies"
+  },
+  {
+   "name": "dynamic_momentum",
+   "source": "Chande-Kroll Dynamic Momentum Index",
+   "url": "https://www.investopedia.com/terms/d/dynamicmomentumindex.asp",
+   "added": "2026-11-17",
+   "uses": "adaptive RSI replacement in mean-reversion entries (SC558)"
+  },
+  {
+   "name": "stoch_cci",
+   "source": "Stochastic CCI",
+   "url": "https://www.tradingview.com/scripts/stochasticcci/",
+   "added": "2026-11-17",
+   "uses": "fast oscillator for pullback timing in trend (SC559)"
   }
  ],
  "sources": [
@@ -14777,7 +15559,7 @@
    "name": "Forex Factory (forum + calendar)",
    "url": "https://www.forexfactory.com/forum/71-trading-systems",
    "look_for": "trading-system threads with first-post rules; the calendar for bot 7",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "Myfxbook",
@@ -14789,7 +15571,7 @@
    "name": "MQL5 CodeBase / Market / Articles",
    "url": "https://www.mql5.com/en/code",
    "look_for": "EA logic in articles and the CodeBase; indicators to port",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "DailyFX / IG education",
@@ -14825,7 +15607,7 @@
    "name": "BabyPips (school + forum)",
    "url": "https://forums.babypips.com/c/trading-systems/free-forex-trading-systems/15",
    "look_for": "free trading systems threads with rules",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "Investopedia",
@@ -14837,7 +15619,7 @@
    "name": "YouTube",
    "url": "https://www.youtube.com/results?search_query=trading+strategy+rules",
    "look_for": "strategy videos (via transcripts / summaries)",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "Udemy",
@@ -14855,13 +15637,13 @@
    "name": "TikTok / Instagram / Facebook / X",
    "url": "https://www.tiktok.com/",
    "look_for": "the user's videos (tal1411*) and the creators behind them; TikTok itself is blocked to reading - search for the creators elsewhere",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "Reddit r/algotrading, r/Daytrading, r/Forex",
    "url": "https://www.reddit.com/r/algotrading/",
    "look_for": "shared systems with backtests",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "QuantConnect / Quantpedia",
@@ -14873,7 +15655,7 @@
    "name": "GitHub (freqtrade, jesse, backtrader)",
    "url": "https://github.com/freqtrade/freqtrade-strategies",
    "look_for": "open strategy code",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "StockSharp examples",
@@ -14885,7 +15667,7 @@
    "name": "LuxAlgo library",
    "url": "https://www.luxalgo.com/library/",
    "look_for": "concept pages with exact indicator formulas",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "WH SelfInvest free strategies",
@@ -14897,7 +15679,7 @@
    "name": "StockCharts ChartSchool",
    "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators",
    "look_for": "classic indicator formulas and their documented signals",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "edgeful reports",
@@ -14916,6 +15698,24 @@
    "url": "https://www.prorealcode.com/prorealtime-trading-strategies/",
    "look_for": "ProBuilder strategies with exact code (DAX / indices intraday), indicator ports with formulas",
    "last_scanned": "2026-11-16"
+  },
+  {
+   "name": "George Pruitt - Building Winning Trading Systems with TradeStation (book systems)",
+   "url": "https://www.oreilly.com/library/view/building-winning-trading/9780471215691/",
+   "look_for": "Bollinger Bandit, King Keltner, Thermostat, Super Combo, Ghost Trader, Dynamic Break Out II - exact TradeStation rules",
+   "last_scanned": "2026-11-17"
+  },
+  {
+   "name": "Jeff Cooper - Hit and Run Trading (books)",
+   "url": "https://www.amazon.com/Hit-Run-Trading-Short-Term-Manual/dp/1883272149",
+   "look_for": "1-2-3-4, Expansion Breakouts, Boomers, Lizards, Slingshots, Holy Grail variants",
+   "last_scanned": "2026-11-17"
+  },
+  {
+   "name": "FMZ Quant strategy square",
+   "url": "https://www.fmz.com/square",
+   "look_for": "Chinese futures classics (R-Breaker, Dual Thrust variants), crypto intraday systems with code",
+   "last_scanned": "2026-11-17"
   }
  ],
  "sources_note": "The scout's standing source list (user, 14.11.2026 12:45, task tal1411src 'super important for the scout'). Every night the scout searches these (rotating, different ones each night) for new strategies and indicators; last_scanned = the last night it searched there (empty = not yet)."

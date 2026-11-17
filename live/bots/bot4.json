@@ -124,7 +124,9 @@
   "SC069|15Min|XAUUSD": {
    "target": 1.5,
    "stop": 1.25,
-   "card": "5851e2ff8c7c"
+   "card": "5851e2ff8c7c",
+   "be_way": 0.786,
+   "manage_card": "5a3313bd9258"
   },
   "QP02|1Hour|XAGUSD": {
    "filter": "v_ema5",
@@ -154,6 +156,13 @@
   "SC094|1Hour|XAGUSD": {
    "filter": "vol_low",
    "filter_card": "8bdfa36c4eec"
+  },
+  "FR03|15Min|GBPUSD": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "3c1fdb03a291"
   }
  },
  "added": {

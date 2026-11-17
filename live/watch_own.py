@@ -610,17 +610,20 @@ def quiet_at(t):
 
 
 def review_push(rec):
+    """-> what happened (kept on the trade: "pushed")."""
     key = os.environ.get("MANAGER_KEY")
     if not key:
-        return
+        return "no key"
     side = "קנייה" if rec["dir"] > 0 else "מכירה"
     try:
-        requests.post("http://127.0.0.1:8760/push", timeout=8, headers={"X-Local": key},
+        r = requests.post("http://127.0.0.1:8760/push", timeout=8, headers={"X-Local": key},
                       json={"title": f"בוט 5: היית נכנס? {rec['symbol']} {side}",
                             "body": f"{tal5_name(rec['tal'])} · דחף עם גאפ, לפני התיקון. פתח וענה לפני שהמחיר חוזר לגאפ.",
                             "urgent": True, "tag": f"rv:{rec['id']}"[:60], "action": "review", "id": rec["id"]})
-    except Exception:  # noqa: BLE001
-        pass
+        return str(r.status_code)
+    except Exception as e:  # noqa: BLE001
+        log(f"review push failed: {e}")
+        return "err"
 
 
 def tid(x):
@@ -1303,7 +1306,7 @@ def main():
                            "px_now": x.get("px_now"), "cost_live": x.get("cost_live"),
                            "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m")),
                            "geo": x.get("geo") or old.get("geo"), "prop": x.get("prop"), "custom": bool(x.get("custom")),
-                           "asked": old.get("asked"), "sleep": old.get("sleep")}
+                           "asked": old.get("asked"), "sleep": old.get("sleep"), "pushed": old.get("pushed")}
                     # the review (17.11.2026): ask once, when the setup first waits for its entry
                     rev_ = REVIEW_ON and bool(rec.get("tal")) and not scout5_combo(rec["tal"]) \
                         and (rec.get("setup_t") or "") >= acc.setdefault("review_from", pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
@@ -1319,7 +1322,7 @@ def main():
                             rec["m15"], rec["m1"] = tal_chart(df, rec["geo"], t_in, t_out)
                             rec["chart_v"] = 3
                             if rev_ and rec["status"] == "pending" and rec["asked"] and not rec["sleep"] and not old.get("asked"):
-                                review_push(rec)                  # with the charts ready in the state
+                                rec["pushed"] = review_push(rec)   # with the charts ready in the state
                         else:
                             rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 3
                     elif rec.get("sc"):

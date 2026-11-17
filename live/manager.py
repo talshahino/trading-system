@@ -217,6 +217,8 @@ def push(title, body, urgent=False, action=None, tag=None, extra=None):
     owner = set(CFG.get("owner_subs") or [])
     subs = [s for s in CFG.get("subs", []) if s.get("endpoint") in owner]
     if not subs:
+        # recorded too (17.11.2026: review notifications that never arrived left no trace)
+        PUSH_LOG.append({"t": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "kind": _kind(title), "to": [], "why": "no owner device"})
         return
     try:
         from pywebpush import WebPushException, webpush

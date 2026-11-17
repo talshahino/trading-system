@@ -443,6 +443,15 @@ def edge_now(bot, combo, live, up=False):
     return round(mult, 2), parts + [f"סיכון = {m:+.2f} ÷ {m0:+.2f} = ×{mult:.2f}"], round(m0, 3), round(m, 3)
 
 
+def _edge_base(bot, combo):
+    """The approved risk the nightly edge rule multiplies (data/agents/edge_risk.json), or None."""
+    try:
+        e = ((_read(ROOT / "data" / "agents" / "edge_risk.json", {}).get("bots") or {}).get(bot) or {}).get(combo) or {}
+        return float(e["base"]) if e.get("base") is not None else None
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
     """The manager owns it (user, 13.11.2026: "the manager takes the improvement into his hands"): a losing strategy
     still without a fix 2 days after its report goes down in risk by its own edge, the formula above (user 13.11),
@@ -496,7 +505,31 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
         last = max((f for f in row["fixes"] if f.get("value") is not None), key=lambda f: f.get("at") or "", default=None)
         cur = float(last["value"]) if last else float(mm.get(c, 1.0) or 1.0)
         base = max([float(f["prev"]) for f in row["fixes"] if f.get("prev") is not None] or [1.0])
+        # the nightly edge rule (agents/edge_risk.py) already holds it at approved risk x edge: the same edge from the
+        # approved risk, never once more on top (manager, 17.11.2026: bot 4 FR01 GBPUSD x0.64 -> x0.34 by the edge
+        # rule at 22:05, then x0.44 x0.53 = x0.23 here at 23:10; bot 2 SE02 USDJPY x0.37 -> x0.22 the same way)
+        appr = _edge_base(rep["bot"], c)
+        if appr is not None:
+            base = appr
         val = MIN_LOT if fm == MIN_LOT else round(base * fm, 2)
+        live_now = float(mm.get(c, cur) or cur)
+        mine = [d for d in decisions if (d.get("action") or {}).get("combo") == c and d.get("bot") == rep["bot"]
+                and d.get("decision") == "approved" and d["id"] not in gone and (d.get("action") or {}).get("kind") == "mult"]
+        last_d = max(mine, key=lambda d: d["at"], default=None)
+        if appr is not None and val != MIN_LOT and last_d is not None and last_d.get("loss_report") \
+                and abs(float(last_d["action"].get("value") or 0) - live_now) < 0.005 and val > live_now + 0.01:
+            # our own earlier cut counted the edge twice: back to approved x edge once
+            did = hashlib.sha1(f"lossonce|{rep['bot']}|{c}|{val}".encode()).hexdigest()[:12]
+            if did not in have_ids:
+                out.append({"id": did, "bot": rep["bot"], "type": "risk", "kind": "mult", "combo": c,
+                            "title": f"{c}: סיכון ×{live_now:g} ← ×{val:g} (היתרון נספר פעמיים - חוזר לפעם אחת)",
+                            "decision": "approved", "by": "manager", "read": False, "undone": False, "at": at,
+                            "why": f"המנהל: הסיכון לפי היתרון כבר הופעל בכלל הלילי (הסיכון המאושר ×{appr:g} כפול ×{fm:.2f}), "
+                                   f"ודוח ההפסד הפעיל את אותו יתרון שוב על התוצאה. חוזר ל־×{val:g} - היתרון מופעל פעם אחת.",
+                            "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_report": f"{rep['bot']}/{rep['day']}",
+                            "action": {"bot": rep["bot"], "combo": c, "kind": "mult", "value": val, "prev": live_now}})
+                have_ids.add(did)
+            continue
         if val > cur - 0.01:          # only deeper: a cut made for another reason (e.g. no profit without the news) stays
             continue
         if PC.cut_hurts(rep["bot"], c, cur, val):     # the whole bot first: a cut that adds risk to the bot is held
@@ -529,6 +562,8 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
             if d.get("type") == "risk" and (d.get("action") or {}).get("combo") == c and d["id"] not in gone \
                     and d.get("loss_report") and (d.get("action") or {}).get("prev") is not None:
                 base = max(base, float(d["action"]["prev"]))
+        if (appr := _edge_base(rep["bot"], c)) is not None:     # the edge rule's approved risk: the edge once (17.11)
+            base = appr
         val = MIN_LOT if fm == MIN_LOT else round(base * fm, 2)
         if val >= cur or PC.cut_hurts(rep["bot"], c, cur, val):
             continue

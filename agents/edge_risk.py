@@ -226,6 +226,16 @@ def run(states=None, force=False):
     at = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
     adds, rows = [], {}
     mine_last = _own_last(ddoc)
+    # the latest approved risk decision per strategy: the loss review's edge cut (agents/loss_review.py enforce) is
+    # the same edge from the same approved risk - it keeps our chain's approved risk instead of becoming a new one
+    # (manager, 17.11.2026: after the loss review set SE02 USDJPY bot 2 to x0.22 the next night would have cut x0.22 by
+    # the same edge again)
+    last_any = {}
+    for d in sorted(ddoc.get("decisions", []), key=lambda x: x.get("at", "")):
+        a_ = d.get("action") or {}
+        if d.get("type") == "risk" and a_.get("kind") == "mult" and a_.get("combo") and d.get("decision") == "approved" \
+                and not d.get("undone"):
+            last_any[(a_.get("bot") or d.get("bot"), a_["combo"])] = d
     for bot in BOTS:
         cfg = PC.bot_cfg(bot)
         if not cfg:
@@ -250,6 +260,10 @@ def run(states=None, force=False):
                 me = {"base": float(own.get("prev") or 1.0), "last": cur}
             # someone else set the risk since our last decision -> that is the approved risk now
             base = me.get("base", cur) if me.get("last") is not None and abs(float(me["last"]) - cur) < 0.005 else cur
+            la = last_any.get((bot, c))
+            if la is not None and la.get("loss_report") and me.get("base") is not None \
+                    and abs(float(la["action"].get("value") or 0) - cur) < 0.005:
+                base = float(me["base"])
             if cur == 0:                       # removed: not ours
                 continue
             lr = [float(x) for x in lt[lt["combo"] == c]["r"]] if len(lt) else []

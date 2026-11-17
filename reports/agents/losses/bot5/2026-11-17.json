@@ -1,0 +1,164 @@
+{
+ "bot": "bot5",
+ "day": "2026-11-17",
+ "at": "2026-11-17T23:10:24+00:00",
+ "summary": [
+  "מה קרה: בוט 5 - סקאלפינג הפסיד 111$ ב־2026-11-17 (-0.11% מהחשבון). 4 עסקאות: 1 הרוויחו 37$, 3 הפסידו 147$.",
+  "מול הצפי: הבדיקה צפתה ליום כזה -0.0R (-3$). בפועל -1.7R. הפער: -1.7R (-463$) - צריך לסגור אותו.",
+  "למה: 3 עסקאות נעצרו בסטופ אחרי תנועה קטנה לטובה.",
+  "ההפסד הגדול ביותר: SC480|15Min|US100, 72$ (49.1% מכל ההפסד)."
+ ],
+ "pnl": -110.51,
+ "pnl_pct": -0.111,
+ "open_balance": 100000.0,
+ "limit_used": {
+  "bot": 2.5,
+  "ftmo": 2.2
+ },
+ "trades": 4,
+ "winners": 1,
+ "losers_n": 3,
+ "gross_profit": 36.63,
+ "gross_loss": 147.14,
+ "profit_factor": 0.25,
+ "costs": 0.0,
+ "day_r": -1.66,
+ "expected_r": -0.01,
+ "expected_sd": 1.2,
+ "z": -1.38,
+ "normal": true,
+ "causes": {
+  "normal": 3
+ },
+ "correlated": [],
+ "top_loser": "SC480|15Min|US100",
+ "top_share": 49.1,
+ "recurring": [],
+ "recurring_causes": [
+  "normal"
+ ],
+ "losers": [
+  {
+   "combo": "SC480|5Min|US100",
+   "side": "מכירה",
+   "open_t": "2026-11-17T20:00:00+00:00",
+   "close_t": "2026-11-17T20:20:00+00:00",
+   "entry": 26803.93,
+   "exit": 26864.187105459205,
+   "stop": 26864.187105459205,
+   "target": null,
+   "r": -1.0,
+   "net": -72.27,
+   "costs": 0.0,
+   "mfe_r": 0.78,
+   "mae_r": 0.74,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "SC480|15Min|US100",
+   "side": "מכירה",
+   "open_t": "2026-11-17T20:00:00+00:00",
+   "close_t": "2026-11-17T20:15:00+00:00",
+   "entry": 26803.93,
+   "exit": 26864.187105459205,
+   "stop": 26864.187105459205,
+   "target": null,
+   "r": -1.0,
+   "net": -72.27,
+   "costs": 0.0,
+   "mfe_r": 0.78,
+   "mae_r": 0.74,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "IB034|15Min|XAUUSD",
+   "side": "מכירה",
+   "open_t": "2026-11-17T19:00:00+00:00",
+   "close_t": "2026-11-17T21:30:00+00:00",
+   "entry": 3854.8,
+   "exit": 3858.0298206095745,
+   "stop": 3869.871594880547,
+   "target": null,
+   "r": -0.214,
+   "net": -2.6,
+   "costs": 0.0,
+   "mfe_r": 0.86,
+   "mae_r": 0.22,
+   "exit_reason": "stop",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  }
+ ],
+ "actions": [],
+ "trend": {
+  "last7": {
+   "loss_days": 4,
+   "avg_loss_pct": -0.98,
+   "worst_pct": -2.232
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "SC480|5Min|US100",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [
+     {
+      "what": "אסטרטגיה חדשה: SC480|5Min|US100 · Zarattini noise-area intraday momentum (SPY paper): :00 / :30 breaks of the noise area, VWAP trail, out 16:00 NY",
+      "decision": "ea6f4c6e65ff",
+      "at": "2026-11-17T03:28:14+00:00",
+      "effect_month_pct": 2.33,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
+    ],
+    "open": false,
+    "cut_only": false
+   },
+   {
+    "combo": "SC480|15Min|US100",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [
+     {
+      "what": "אסטרטגיה חדשה: SC480|15Min|US100 · Zarattini noise-area intraday momentum (SPY paper): :00 / :30 breaks of the noise area, VWAP trail, out 16:00 NY",
+      "decision": "55a92feab935",
+      "at": "2026-11-17T03:28:14+00:00",
+      "effect_month_pct": 0.97,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
+    ],
+    "open": false,
+    "cut_only": false
+   },
+   {
+    "combo": "IB034|15Min|XAUUSD",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [],
+    "open": true,
+    "cut_only": false
+   }
+  ],
+  "open": [
+   "IB034|15Min|XAUUSD"
+  ],
+  "cut_only": [],
+  "total_month_pct": 3.3,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
+ }
+}

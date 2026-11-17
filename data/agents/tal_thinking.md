@@ -236,3 +236,6 @@ What this means for the agents:
 - If bot 1's streak@2 again beats "as today" on BOTH periods with no larger max fall: build it in bot 1 (a card with
   the change, the manager approves) and tell Tal in the app. If not: record the result here and wait for the next
   choppy day. Any other bot only if it passes the same way twice.
+
+## Which gap: the first one, inside the impulse (user, 17.11.2026 15:51-16:09)
+Reviewing bot 5's gap setups: "an impulse built of one candle - there is an impulse, but no gap comes out of it inside the impulse, so there is no trade"; and on GER40: "there is another, higher gap at the start of the impulse (around 26,417) - that is the gap you must reach, the entry is there". For Tal the trade is born from a gap INSIDE the impulse, and the gap that counts is the first one at its start (the origin), not a later one near its end - even when its candle 2 is not exceptionally strong by our threshold. For the agents: test "the first gap of each impulse" (with a lower strength threshold for it) against today's choice (task tal1711review, FIRSTG). He also judges the stop on the high timeframe: a review chart must show enough candles before the impulse and the stop's swing, or he cannot decide (task b5revchart1711).

@@ -64,6 +64,76 @@ def replay(rows, mults):
     return out
 
 
+# 4. risk that shrinks with the account's fall (manager, 17.11.2026, task mgr1711b5exec (3): bot 5's scout part fell
+# 11.1% from its peak on 2026 in the backtest, over the bot's 9% total limit). On top of the fixed rule (guarded): each
+# new trade's risk x a factor from the balance before it (% of the opening balance, realised profit only):
+#   lin9  = the room left to the 9% total limit / 9 (91% -> 0, 100%+ -> 1), at least 0.1
+#   linpk = 1 - the fall from the balance's peak / 9, at least 0.1
+#   half3 / half5 = half risk while the balance is 3% / 5%+ under the opening balance
+# The simulation itself stops at 9% (the fixed rule gives no room there). Chosen on 2025 by the total, shown on 2026.
+DDW = ("asis", "lin9", "linpk", "half3", "half5")
+
+
+def dd_factor(way, bal, peak):
+    if way == "lin9":
+        return 1.0 if bal >= 100 else max(0.1, (bal - (100 - 9.0)) / 9.0)
+    if way == "linpk":
+        return max(0.1, 1.0 - (peak - bal) / 9.0)
+    if way in ("half3", "half5"):
+        return 0.5 if bal <= 100 - float(way[4:]) else 1.0
+    return 1.0
+
+
+def guarded_dd(book, way):
+    """portfolio_check.guarded (the live bots' fixed risk rule) with each new trade's risk x dd_factor(way)."""
+    import heapq
+    from agents import portfolio_check as PC
+    rows = [(a, b, d, r, 100 * m) for combo, (tr, m) in book.items() if tr and m > 0 for a, b, d, r in PC._minutes(tr)]
+    cols = ["a", "b", "d", "pnl", "risk"]
+    if not rows:
+        return pd.DataFrame(rows, columns=cols), {"cut": 0, "skipped": 0}
+    rows.sort(key=lambda x: (x[0], x[1]))
+    ent = pd.to_datetime([x[0] for x in rows], unit="m", utc=True).tz_convert("Europe/Prague")
+    ext = pd.to_datetime([x[1] for x in rows], unit="m", utc=True).tz_convert("Europe/Prague")
+    eday, xday = [x.date() for x in ent], [x.date() for x in ext]
+    bal, peak, ds, cur, open_r = 100.0, 100.0, 100.0, None, 0.0
+    heap, out, cut, skip = [], [], 0, 0
+    for i, (a, b, d, r, k) in enumerate(rows):
+        while heap and heap[0][0] <= a:
+            _, j, pnl, rk = heapq.heappop(heap)
+            if cur is None or xday[j] > cur:
+                ds, cur = bal, xday[j]
+            bal += pnl
+            peak = max(peak, bal)
+            open_r -= rk
+        if cur is None or eday[i] > cur:
+            ds, cur = bal, eday[i]
+        k = k * dd_factor(way, bal, peak)
+        left = bal - open_r
+        room = min(left - (100 - PC.GUARD_ALL), left - (ds - PC.GUARD_DAY))
+        use = min(k, PC.GRADE_SHARE * room) if room < 2 * k else k
+        if use < PC.GRADE_MIN * k:
+            skip += 1
+            continue
+        if use < k - 1e-9:
+            cut += 1
+        open_r += use
+        heapq.heappush(heap, (b, i, r * use, use))
+        out.append((a, b, d, r * use, use))
+    return pd.DataFrame(out, columns=cols), {"cut": cut, "skipped": skip}
+
+
+def replay_dd(rows, mults, way):
+    book = {}
+    for x in rows:
+        book.setdefault(x["combo"], ([], float(mults.get(x["combo"], 0.0018))))[0].append(
+            [int(x["a"]), int(x["b"]), int(x["dir"]), float(x["r"])])
+    t, g = guarded_dd(book, way)
+    out = curve(t)
+    out.update({"guard_cut": g["cut"], "guard_skipped": g["skipped"]})
+    return out
+
+
 def stack(rows, way):
     """rows in time order -> the rows with the stacking rule (scout trades only; an open trade = entered before and
     not yet closed)."""
@@ -188,6 +258,11 @@ def report():
                 s += dir_filter([x for x in rr if x["combo"] == c], choose(c), hts[c.split("|")[2]])
             whole[label][p] = replay(sorted([dict(x, share=1.0) for x in s], key=lambda x: (x["a"], x["b"])), mults)
     res["direction_whole"] = whole
+    # 4. risk that shrinks with the fall (mgr1711b5exec (3)): chosen on 2025 by the total, shown on 2026
+    dd = {w: {p: replay_dd(rr, mults, w) for p, rr in per.items()} for w in DDW}
+    best = max(DDW, key=lambda w: dd[w]["train"]["total"])
+    dd["pick"] = best if dd[best]["train"]["total"] > dd["asis"]["train"]["total"] + 1e-9 else "asis"
+    res["ddscale"] = dd
     # 3. the census of 16.11 for the manager (the day's scout trades in this data, if the run reached it)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(res, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
@@ -196,5 +271,5 @@ def report():
 
 if __name__ == "__main__":
     r = report()
-    print(json.dumps({"stack": r["stack"], "whole": r["direction_whole"],
+    print(json.dumps({"ddscale": r["ddscale"], "stack": r["stack"], "whole": r["direction_whole"],
                       "sc071": {k: v for k, v in r["direction"].items() if k.startswith("SC071")}}, ensure_ascii=False, indent=1))

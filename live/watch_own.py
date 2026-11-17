@@ -1347,10 +1347,11 @@ def main():
                             if mk_.get("take") == "yes" and any(mk_.get(f_) is not None for f_ in ("entry", "stop", "target")):
                                 e_ = float(mk_.get("entry") or x["entry"])
                                 s_ = mk_.get("stop") if mk_.get("stop") is not None else (x.get("stop") or (x.get("prop") or [None, None])[0])
-                                t_ = mk_.get("target") if mk_.get("target") is not None else (x.get("target") or (x.get("prop") or [None, None])[1])
+                                # no target in the question (user, 17.11.2026): his own, else set at the fill by the rules
+                                t_ = mk_.get("target")
                                 if s_ is not None:
                                     cx_ = TG.custom_trade(D5, TG.ftmo_cfg(cfg), x["dir"], e_, float(s_), float(t_) if t_ is not None else None,
-                                                          pd.Timestamp(x["setup_t"]).value)
+                                                          pd.Timestamp(x["setup_t"]).value, pair=pair)
                                     for f_ in ("time", "exit_time", "exit", "reason", "r", "r_now", "rr"):
                                         x[f_] = cx_.get(f_)
                                     x.update(status=cx_["status"], entry=cx_.get("entry", e_), stop=cx_.get("stop", float(s_)),

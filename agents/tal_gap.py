@@ -2336,8 +2336,10 @@ def propose(D, pair, cfg, d, entry):
     return float(stop), float(t2), ts_s, ts_t
 
 
-def custom_trade(D, cfg, d, entry, stop, target, armed_ns, not_before_ns=None):
-    """A limit at `entry` from the gap's arming (or `not_before_ns`) for EXPIRY hours, then to `stop` / `target`, with
+def custom_trade(D, cfg, d, entry, stop, target, armed_ns, not_before_ns=None, pair=None):
+    """target None + pair: the target is set at the fill, as the rules set it - the 2nd swing beyond the fill price on
+    the low timeframe, counted back from the fill (user, 17.11.2026: "the target only once you are in the trade").
+    A limit at `entry` from the gap's arming (or `not_before_ns`) for EXPIRY hours, then to `stop` / `target`, with
     the world's forced exits (shut_of) and costs. -> dict like live_trades() (status pending / open / closed /
     cancelled, time, exit_time, exit, reason, r, r_now)."""
     ns, o1, h1, l1, c1 = D.ns, D.o1, D.h1, D.l1, D.c1
@@ -2358,6 +2360,11 @@ def custom_trade(D, cfg, d, entry, stop, target, armed_ns, not_before_ns=None):
     risk = d * (px - stop)
     if risk <= 0:
         return {"status": "cancelled", "reason": "levels"}
+    if target is None and pair is not None:
+        hi_sw, lo_sw = D.swings(pair[1], cfg["SW"])
+        t2 = _count_back(*(hi_sw if d > 0 else lo_sw), int(ns[f]), px, d, d)
+        if t2 is not None:
+            target = px + tp_way(cfg) * (t2 - px) if tp_way(cfg) else t2
     cost_r = float(D.cost[f]) / risk
     hs, ls = h1[f:], l1[f:]
     big = n1 - f + 1

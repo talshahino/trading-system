@@ -2311,7 +2311,8 @@ function wbRender(box = $("wbBody")) {
   const d = WB.doc;
   if (!d) { box.innerHTML = '<div class="empty">הבוט עוד לא דיווח. הוא מתחיל לעבוד אחרי אישור העדכון, כשבוט 1 פועל והשוק פתוח.</div>'; return; }
   const sm = d.summary || {}, owner = getRole() !== "viewer";
-  const trades = (d.watch || []).filter(t => t.status !== "cancelled");
+  // the "סימונים" tab (dBody): only the gap method's trades - each one marked the same way (user, 17.11.2026)
+  const trades = (d.watch || []).filter(t => t.status !== "cancelled" && (box.id === "wbBody" || t.geo));
   const ac = d.vacct || null, usd = v => (v < 0 ? "−" : "") + "$" + Math.abs(v).toLocaleString("en-US", {maximumFractionDigits: 0});
   let curveSvg = "";
   if (ac && ac.curve && ac.curve.length > 1) {
@@ -2505,14 +2506,15 @@ function rvPanel(t, dec) {
   const m = WB.marks[t.id] || t.mark || {}, buy = t.dir > 0, owner = getRole() !== "viewer";
   const showLtf = on => { const el = $("wcLtf"); if (el) el.style.display = on ? "" : "none"; };
   if (!owner) { box.innerHTML = ""; showLtf(true); return; }
-  if (t.status !== "pending") {
+  if (t.status !== "pending" && (m.take || t.sc)) {
     box.innerHTML = m.take ? `<div class="card" style="margin-bottom:10px">ענית: <b>${m.take === "yes" ? "הייתי נכנס" + (m.entry || m.stop || m.target ? " (עם התיקונים שלך)" : "") : "לא הייתי נכנס"}</b></div>` : "";
     showLtf(true); return;
   }
+  const past = t.status !== "pending";        // a trade already in / out: the same marking, to learn from (17.11.2026)
   const done = m.take ? `<div class="mut" style="margin-top:8px">ענית: <b>${m.take === "yes" ? "כן" : "לא"}</b>. אפשר לשנות עד שהמחיר מגיע לכניסה.</div>` : "";
   box.innerHTML = `<div class="card" style="margin-bottom:10px;border:2px solid #C8922E">
       <b style="font-size:17px">היית נכנס?</b>
-      <div class="mut" style="margin:4px 0 10px">${t.sc ? `אסטרטגיית ${esc(t.sc.sid || "")} מצאה ${buy ? "קנייה" : "מכירה"} בגאפ (גרף ${(SCTF[t.sc.tf] || [t.sc.tf])[0]}). הבוט מחכה לך: אם תאשר, הכניסה תהיה במחיר של רגע האישור. בלי תשובה תוך כ־15 דקות, לא נכנסים.` : `דחף ${buy ? "עולה" : "יורד"} עם גאפ בגרף ${TFHE[(t.geo || {}).htf] || ""}, לפני התיקון. הבוט ייכנס רק לפי מה שתענה.`}</div>
+      <div class="mut" style="margin:4px 0 10px">${t.sc ? `אסטרטגיית ${esc(t.sc.sid || "")} מצאה ${buy ? "קנייה" : "מכירה"} בגאפ (גרף ${(SCTF[t.sc.tf] || [t.sc.tf])[0]}). הבוט מחכה לך: אם תאשר, הכניסה תהיה במחיר של רגע האישור. בלי תשובה תוך כ־15 דקות, לא נכנסים.` : `דחף ${buy ? "עולה" : "יורד"} עם גאפ בגרף ${TFHE[(t.geo || {}).htf] || ""}, לפני התיקון. ${past ? "סמן: זה דחף וזיהוי נכון?" : "הבוט ייכנס רק לפי מה שתענה."}`}</div>
       <div class="row" style="gap:8px"><button class="btn ok" id="rvYes">כן</button><button class="btn ghost" id="rvNo">לא</button></div>${done}
       <div id="rvLv"></div><div class="msg" id="rvMsg"></div></div>`;
   showLtf(m.take === "yes");
@@ -2599,7 +2601,9 @@ async function wcTal(t) {
   // the high timeframe
   const A = mk($("wc15"), t.m15, [lo, hi, g.imp0[1], g.imp1[1]]);
   const aEnd = A.bars.length ? A.bars[A.bars.length - 1][0] + off : c3 + off;
-  band(A, snap(A.bars, c1), tin ? Math.max(snap(A.bars, tin), snap(A.bars, c3)) : aEnd, lo, hi, gapCol, "#B8862B");
+  const gEnd = tin ? Math.max(snap(A.bars, tin), snap(A.bars, c3)) : aEnd;
+  band(A, snap(A.bars, c1), gEnd, lo, hi, gapCol, "#B8862B");
+  if (lo != null && hi != null) seg(A, c1, (lo + hi) / 2, gEnd - off, (lo + hi) / 2, "#B8862B", 1, 2);   // the gap's middle = the entry
   seg(A, sec(g.imp0[0]), g.imp0[1], sec(g.imp1[0]), g.imp1[1], "#1E3A5F", 3);
   A.s.setMarkers([
     {time: snap(A.bars, sec(g.imp1[0])), position: buy ? "aboveBar" : "belowBar", color: "#1E3A5F", shape: buy ? "arrowUp" : "arrowDown", text: "דחף"},

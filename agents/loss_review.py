@@ -39,6 +39,7 @@ midnight Prague time), for every bot whose closed trades of that day add up to a
 """
 from __future__ import annotations
 
+import fnmatch
 import hashlib
 import json
 import math
@@ -314,6 +315,17 @@ def tal5_track(bot, combo, cfg):
     return None
 
 
+def covers(change, combo):
+    """A card's change is about this combo: its own "combo", one of its "combos", or a wildcard ("EV04|1Min|*") that
+    matches it (bot 7, 17.11.2026: card 97a5731bab19 fixed EV04 on all 16 instruments, USDCAD's loss of 16.11
+    included, as "EV04|1Min|*" with the 16 in "combos" - the plan saw no fix and reopened the report)."""
+    ch = change or {}
+    c0 = ch.get("combo")
+    if c0 == combo or combo in (ch.get("combos") or []):
+        return True
+    return bool(c0 and "*" in c0 and combo.count("|") == c0.count("|") and fnmatch.fnmatchcase(combo, c0))
+
+
 def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
     """For every losing strategy of the report: the changes made since (approved, not undone / reverted), each with
     what it is worth in % of the account a month (from its own test on 2026), and what is still open."""
@@ -332,7 +344,7 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
                 continue
             a, card = d.get("action") or {}, cards.get(d.get("card")) or {}
             dc = a.get("combo") or (card.get("change") or {}).get("combo") or (d["title"].split(":")[0].strip() if d["title"].count("|") >= 2 else None)
-            if dc != c:
+            if dc != c and not (card and covers(card.get("change"), c)):
                 continue
             if d.get("type") == "risk" and a.get("kind") == "mult" and a.get("value") and float(a["value"]) >= 1:
                 continue                     # a risk raise is not a fix of a loss
@@ -372,7 +384,7 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
                     total += eff or 0
         for cid, card in cards.items():
             r_ = replies.get(cid) or {}
-            if (card.get("change") or {}).get("combo") == c and r_.get("built") and r_.get("built") != "skipped" \
+            if covers(card.get("change"), c) and r_.get("built") and r_.get("built") != "skipped" \
                     and str(r_.get("at") or "") >= rep["day"] and not any(f.get("card") == cid for f in fixes) \
                     and not any(f["decision"] and (next((d for d in decisions if d["id"] == f["decision"]), {}) or {}).get("card") == cid for f in fixes):
                 eff = card_effect(card, months, bot_risk_pct)

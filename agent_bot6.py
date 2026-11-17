@@ -1793,6 +1793,13 @@ DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC325", ("5Min", "15Min")), (
             for tf in tfs for sym in ("US100", "US500", "US30")]
 
 
+# THE CASH-SESSION GAP (bot 6's smart agent, 17.11.2026 night; agents/fut_patterns.py): the index futures' own overnight
+# gap - the 09:30 New York open against the last 16:00 close, sized by the 10-day cash range - faded when small and
+# rejected (FG01), followed when large and confirmed (FG02). The library's SS08 measured the gap at the UTC day's first
+# bar, which is not the cash gap of a 23-hour market. One trade a day at most - quick to run, so first.
+FUT_FIRST = [f"{sid}|{tf}|{sym}" for sid in ("FG01", "FG02") for tf in ("5Min", "15Min", "1Min") for sym in ("US100", "US500", "US30")]
+
+
 # BOT 5'S LIVE SCOUTS (bot 6's smart agent, 17.11.2026 night; bots 5 and 6 share methods): 31 scout strategies trade
 # live in bot 5 (live/bots/bot5.json "scout", each passed bot 5's fair test), and 23 of their strategies were never run
 # on bot 6's world - among them index ones bot 5 trades on US100 / US30 / GER40 (BK07, SC446, SC480, SC311, SC512), and
@@ -1851,6 +1858,8 @@ def _approved_scout():
                 out.setdefault(k.split("|", 1)[1], None)
     except Exception as e:  # noqa: BLE001
         print(f"scout_fut: approved list not read: {e}")
+    for combo in FUT_FIRST:
+        out.setdefault(combo, "discover")
     for combo in bot5_live_scouts():
         out.setdefault(combo, "bot5")
     for combo in DISCOVER:

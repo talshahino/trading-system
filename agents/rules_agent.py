@@ -775,3 +775,7 @@ STRATEGIES.update(SCALP)
 from agents.scout_strategies import SCOUT  # noqa: E402
 
 STRATEGIES.update(SCOUT)
+# the index futures' cash-session gap (bot 6's smart agent, 17.11.2026 night, agents/fut_patterns.py)
+from agents.fut_patterns import FUT_PATTERNS  # noqa: E402
+
+STRATEGIES.update(FUT_PATTERNS)

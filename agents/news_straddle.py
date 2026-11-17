@@ -423,14 +423,32 @@ def gaveback(df):
     day = lambda z: float(z.groupby(pd.to_datetime(z["t"], utc=True).dt.strftime("%Y-%m-%d"))["r"].sum().min()) if len(z) else 0.0  # noqa: E731
     for ex in ("built",) + MANAGE:
         z = base if ex == "built" else rows(ex)
-        out["ways"][ex] = {per: {**NF._w(y), "worst_day_r": round(day(y), 2)}
+        out["ways"][ex] = {per: {**NF._w(y), "worst_day_r": round(day(y), 2), **_curve(y)}
                            for per, y in (("train", z[z.train]), ("unseen", z[~z.train]))}
     bt = out["ways"]["built"]
+    # task mgr1611curve (16.11.2026): a way that clearly smooths the curve on BOTH periods - 2+ points more green
+    # days, a smaller fall from the peak, the worst day not worse - and keeps 80%+ of today's total (as bot 6)
+    out["smoother"] = [ex for ex in MANAGE if ex in out["ways"] and all(
+        None not in (out["ways"][ex][p]["dd"], bt[p]["dd"])
+        and (out["ways"][ex][p]["green"] or 0) >= (bt[p]["green"] or 0) + 2.0 and out["ways"][ex][p]["dd"] < bt[p]["dd"]
+        and out["ways"][ex][p]["worst_day_r"] >= bt[p]["worst_day_r"]
+        and (out["ways"][ex][p]["sum"] or 0) >= 0.8 * max(bt[p]["sum"] or 0, 0) > 0 for p in ("train", "unseen"))]
     out["both"] = [ex for ex in MANAGE if ex in out["ways"]
                    and (out["ways"][ex]["train"]["sum"] or 0) > (bt["train"]["sum"] or 0)
                    and (out["ways"][ex]["unseen"]["sum"] or 0) > (bt["unseen"]["sum"] or 0)]
     out["best_train"] = max(MANAGE, key=lambda ex: out["ways"].get(ex, {}).get("train", {}).get("sum") or -1e9)
     return out
+
+
+def _curve(z):
+    """The curve's smoothness on one period (task mgr1611curve): % green days, the largest fall from the peak (R) and
+    the daily spread; the win rate is NF._w's "win"."""
+    if not len(z):
+        return {"green": None, "dd": None, "sd": None}
+    d = z.groupby(pd.to_datetime(z["t"], utc=True).dt.strftime("%Y-%m-%d"))["r"].sum()
+    eq = d.cumsum()
+    return {"green": round(float((d > 0).mean() * 100), 1), "dd": round(float((eq.cummax().clip(lower=0) - eq).max()), 2),
+            "sd": round(float(d.std()), 2) if len(d) > 1 else 0.0}
 
 
 def skipped_out(df, b):
@@ -479,6 +497,22 @@ def _cached_rows():
     return pd.DataFrame(rows)
 
 
+def _refresh_gaveback():
+    """The fresh study without the curve stats (task mgr1611curve, 17.11.2026): only the gaveback part again, from the
+    cached rows - minutes, not the whole 2,448-variant grid."""
+    j = json.loads(OUT.read_text(encoding="utf-8"))
+    g = (j.get("study") or {}).get("gaveback") or {}
+    if "smoother" in g:
+        return
+    df = _cached_rows()
+    if not len(df):
+        return
+    j["study"]["gaveback"] = gaveback(df)
+    j["gaveback_at"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+    OUT.write_text(json.dumps(j, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+    print("EV04 gaveback refreshed (curve stats)")
+
+
 def stale():
     try:
         j = json.loads(OUT.read_text(encoding="utf-8"))
@@ -497,6 +531,7 @@ def main(argv=None):
     if not a.force and not stale():
         print("straddle study fresh - skipped")
         BT.safe(lambda: export(_cached_rows()))     # the whole-bot check's trades follow the plans every run
+        BT.safe(_refresh_gaveback)
         return
     t_end = time.time() + a.minutes * 60
     rel = NF.releases()

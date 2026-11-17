@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       run: ${{ steps.c.outputs.run }}
+      pc_alpaca: ${{ steps.c.outputs.pc_alpaca }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,13 +40,17 @@ jobs:
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json, datetime as d
           ev = "${{ github.event_name }}"
+          h = {}
           try:
               h = json.load(open("reports/agents/host.json"))
-              t = d.datetime.fromisoformat(h.get("smart_at") or "1970-01-01T00:00:00+00:00")
+              # the computer is active while its agents start (a long round stamps smart_at only at its end)
+              ts = [h.get("smart_at")] + list((h.get("agent_last") or {}).values())
+              t = max(d.datetime.fromisoformat(x) for x in ts if x) if any(ts) else d.datetime(1970, 1, 1, tzinfo=d.timezone.utc)
               age = (d.datetime.now(d.timezone.utc) - t).total_seconds() / 3600
           except Exception:
               age = 999
           print("run=" + ("true" if ev == "workflow_dispatch" or age > 8 else "false"))
+          print("pc_alpaca=" + ("true" if age <= 8 and h.get("alpaca") is True else "false"))
           PY
   agents:
     needs: pc
@@ -100,17 +105,20 @@ jobs:
           mkdir -p reports/agents
           if [ -z "${{ inputs.symbols }}" ]; then cp agent_*.log reports/agents/ 2>/dev/null || true; fi
           git add reports/agents/*/exp
-          if [ -z "${{ inputs.symbols }}" ]; then git add reports/agents; fi
+          # the gap method writes its results to data/agents/strategies (12.11.2026: left unstaged, the pull failed and the run's work was lost)
+          if [ -z "${{ inputs.symbols }}" ]; then git add reports/agents data/agents/strategies; fi
           git commit -qm "Agents: nightly run" || exit 0
-          # generated files only: on a clash keep this run's copy (-X theirs = the commit being replayed)
-          for i in 1 2 3 4; do git pull -q --rebase -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done
+          # generated files only: on a clash keep this run's copy (-X theirs = the commit being replayed);
+          # anything else the run left changed is put aside (--autostash) so it never blocks the push
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null || true; sleep $((i * 7)); done
 
   alpaca:
     # stocks and Alpaca crypto need the Alpaca keys, which only GitHub has: their combos (bots 1-4) are tested here
     # every night, also while the bots' computer runs everything else (agent_portfolio.py --where github)
     needs: pc
     # one bot a night in turn (GitHub's free minutes are limited)
-    if: needs.pc.outputs.run != 'true'
+    # (not needed once the bots' computer has the keys too - pc_keys.yml)
+    if: needs.pc.outputs.run != 'true' && needs.pc.outputs.pc_alpaca != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -152,6 +160,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/agents/*/exp reports/agents/*/cards.json
+          git add reports/agents/*/exp reports/agents/*/cards*.json
           git commit -qm "Agents: stock combos (Alpaca)" || exit 0
-          for i in 1 2 3 4; do git pull -q --rebase -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null || true; sleep $((i * 7)); done

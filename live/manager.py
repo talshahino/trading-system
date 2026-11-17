@@ -212,9 +212,13 @@ def _kind(title):
 
 
 def push(title, body, urgent=False, action=None, tag=None, extra=None):
-    """Notification to every phone/computer that turned notifications on in the app."""
-    subs = list(CFG.get("subs", []))
+    """Notification to the owner's phones/computers that turned notifications on in the app. Devices that came in with
+    the view code (or none) get nothing (user, 12.11.2026: "מי שעושה צפייה שלא יקפצו לו התראות, אצלי כמנהל שיקפצו")."""
+    owner = set(CFG.get("owner_subs") or [])
+    subs = [s for s in CFG.get("subs", []) if s.get("endpoint") in owner]
     if not subs:
+        # recorded too (17.11.2026: review notifications that never arrived left no trace)
+        PUSH_LOG.append({"t": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "kind": _kind(title), "to": [], "why": "no owner device"})
         return
     try:
         from pywebpush import WebPushException, webpush
@@ -226,8 +230,11 @@ def push(title, body, urgent=False, action=None, tag=None, extra=None):
     dead, res = [], []
     for s in subs:
         try:
+            # Urgency high: without it Android holds the push while the phone sleeps (17.11.2026: bot 5's open
+            # notification sent 11:26 showed at 11:40, the review questions not at all) - quiet hours stay normal
             webpush(subscription_info=s, data=data, vapid_private_key=str(VAPID_FILE),
-                    vapid_claims={"sub": "mailto:bots@trading-system.local"}, ttl=24 * 3600)
+                    vapid_claims={"sub": "mailto:bots@trading-system.local"}, ttl=(15 * 60 if action == "review" else 24 * 3600),
+                    headers={"Urgency": "normal" if quiet else "high"})
             res.append("ok")
         except WebPushException as e:
             code = getattr(e.response, "status_code", None)
@@ -244,7 +251,23 @@ def push(title, body, urgent=False, action=None, tag=None, extra=None):
     if dead:
         with LOCK:
             CFG["subs"] = [s for s in CFG["subs"] if s not in dead]
+            gone = {s.get("endpoint") for s in dead}
+            CFG["owner_subs"] = [e for e in (CFG.get("owner_subs") or []) if e not in gone]
         save()
+
+
+def _sub_role(sub, role):
+    """A device's notifications: the owner's get every notification, a viewer's none (kept only to know it)."""
+    ep = sub["endpoint"]
+    with LOCK:
+        CFG["subs"] = [s for s in CFG.get("subs", []) if s.get("endpoint") != ep] + [sub]
+        CFG["subs"] = CFG["subs"][-30:]
+        own = [e for e in (CFG.get("owner_subs") or []) if e != ep]
+        CFG["owner_subs"] = own + [ep] if role == "owner" else own
+        live = {s.get("endpoint") for s in CFG["subs"]}
+        CFG["owner_subs"] = [e for e in CFG["owner_subs"] if e in live]
+    save()
+    threading.Thread(target=push_manager_state, daemon=True).start()
 
 
 # ---------------- per-combo risk ("ניהול בוטים" in the app) ----------------
@@ -266,8 +289,12 @@ def _risk_value(kind, v):
     """Checks one approved value; None = back to the bot's normal behaviour for that kind."""
     try:
         if kind == "mult":
-            m = round(float(v), 2)
-            if m == 0 or 0.5 <= m <= 1.5:
+            if v is None:                    # "the value before" was the bot's normal risk (no multiplier)
+                return None
+            m = round(float(v), 3)
+            # 0 = no new trades; 0.001 = the instrument's minimum volume (a strategy with no edge left, 13.11.2026);
+            # any value up to 1.5 - a cut by the strategy's own edge can go under 0.5
+            if m == 0 or 0 < m <= 3:         # 3: a guard against a broken value; the ceiling is the whole-bot check
                 return None if m == 1.0 else m
         elif v is None:
             return None
@@ -515,11 +542,31 @@ MARKS_LOCK = threading.Lock()
 
 
 def watch_source():
-    """The account whose MetaTrader the watch bot reads candles from: bot 1 (FTMO's own symbol names), running."""
-    for a in accounts():
-        if a["name"] == "bot1" and a.get("enabled") and running(a["name"]):
+    """The account whose MetaTrader the virtual bots (5, 6, 7) read candles and quotes from: a running bot 1 account
+    (FTMO's own symbol names). Not only the account named "bot1" (user, 16.11.2026: bot 1's two-week FTMO trial ended,
+    a new bot 1 account was added and the old one closed - bot 5 stopped, "not reporting"): the original if it runs,
+    otherwise the newest running bot 1 account on an FTMO server."""
+    cand = [a for a in accounts() if (a.get("bot") == "bot1" or a["name"] == "bot1") and a.get("enabled")
+            and not a.get("archived") and not a.get("preparing") and running(a["name"])]
+    for a in cand:
+        if a["name"] == "bot1":
             return a
-    return None
+    cand = [a for a in cand if "ftmo" in str(a.get("server") or "").lower()] or cand
+    return max(cand, key=lambda a: str(a.get("created") or ""), default=None)
+
+
+SRC_PORT = {}            # the source port each virtual bot was started with
+
+
+def follow_source():
+    """A virtual bot started on another bot 1 account than the current source (that account was closed or replaced):
+    restart it on the current one."""
+    src = watch_source()
+    for name in (WATCH_NAME, NEWS_NAME):
+        if running(name) and SRC_PORT.get(name) and (not src or SRC_PORT[name] != src["port"]):
+            log(f"{name}: its candle source changed - restarting it on {src['name'] if src else 'none'}")
+            stop_bot(name)
+            SRC_PORT.pop(name, None)
 
 
 def start_watch():
@@ -530,6 +577,7 @@ def start_watch():
         return
     env = os.environ.copy()
     env.update(MANAGED="1", SOURCE_PORT=str(src["port"]), MANAGER_KEY=CFG["local_key"])
+    SRC_PORT[WATCH_NAME] = src["port"]
     py = sys.executable.replace("pythonw.exe", "python.exe")
     PROCS[WATCH_NAME] = subprocess.Popen([py, str(LIVE / "watch_own.py")], cwd=str(ROOT), env=env,
                                          creationflags=0x08000000 if os.name == "nt" else 0, stdout=subprocess.DEVNULL,
@@ -549,6 +597,7 @@ def start_news():
         return
     env = os.environ.copy()
     env.update(MANAGED="1", SOURCE_PORT=str(src["port"]), MANAGER_KEY=CFG["local_key"])
+    SRC_PORT[NEWS_NAME] = src["port"]
     py = sys.executable.replace("pythonw.exe", "python.exe")
     PROCS[NEWS_NAME] = subprocess.Popen([py, str(LIVE / "news_bot.py")], cwd=str(ROOT), env=env,
                                         creationflags=0x08000000 if os.name == "nt" else 0, stdout=subprocess.DEVNULL,
@@ -558,12 +607,25 @@ def start_news():
 
 def watch_mark(d):
     k = str(d.get("id") or "")
-    if not k or len(k) > 80 or not re.fullmatch(r"[A-Za-z0-9./|-]+", k):
+    # the gap tracks' ids hold "@" ("UK100|tal|-1|g202611171550|t5_1@UK100") and the scout ones ":" ("sc:SC232|...") -
+    # both were refused here, so every review answer came back "unknown trade" (user, 17.11.2026)
+    if not k or len(k) > 160 or not re.fullmatch(r"[A-Za-z0-9./|_@:+=-]+", k):
         raise ValueError("עסקה לא מוכרת")
     take = d.get("take")
     if take not in ("yes", "no", None):
         raise ValueError("סימון לא מוכר")
     why = str(d.get("why") or "")[:500]
+    # the review of a gap setup (user, 17.11.2026): his own entry / stop / target when the rules' were wrong, and
+    # which of the three he called right - the examples the method learns from
+    lv = {}
+    for f in ("entry", "stop", "target"):
+        v = d.get(f)
+        if v is not None:
+            v = float(v)
+            if not (v > 0 and v < 1e9):
+                raise ValueError("מחיר לא תקין")
+            lv[f] = v
+    oks = {f"ok_{f}": bool(d[f"ok_{f}"]) for f in ("entry", "stop", "target") if d.get(f"ok_{f}") is not None}
     with MARKS_LOCK:
         try:
             marks = json.loads(MARKS_FILE.read_text(encoding="utf-8"))
@@ -572,11 +634,43 @@ def watch_mark(d):
         if take is None and not why:
             marks.pop(k, None)
         else:
-            marks[k] = {"take": take, "why": why, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+            marks[k] = {"take": take, "why": why, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), **lv, **oks}
         tmp = MARKS_FILE.with_suffix(".tmp")
         tmp.write_text(json.dumps(marks, ensure_ascii=False, indent=1), encoding="utf-8")
         tmp.replace(MARKS_FILE)
     return marks.get(k)
+
+
+# the user's notes on any trade of any bot (13.11.2026, spoken or typed in the app's trade page): "would I take it",
+# "the stop is too tight", "out earlier", "take a part here"... kept here and copied to branch live
+# (live/trade_notes_state.json), where the agent of the bot that made the trade reads them and learns from them.
+NOTES_FILE = LIVE / "trade_notes.json"
+NOTES_LOCK = threading.Lock()
+
+
+def trade_note(d, save=True):
+    bot, k = str(d.get("bot") or ""), str(d.get("id") or "")
+    if not bot or len(bot) > 60 or not re.fullmatch(r"[A-Za-z0-9_.-]+", bot) or not k or len(k) > 120:
+        raise ValueError("עסקה לא מוכרת")
+    with NOTES_LOCK:
+        try:
+            doc = json.loads(NOTES_FILE.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            doc = {}
+        lst = doc.setdefault(bot, {}).setdefault(k, [])
+        if save:
+            txt = str(d.get("text") or "").strip()[:2000]
+            if not txt:
+                raise ValueError("ההערה ריקה")
+            info = {f: d.get(f) for f in ("symbol", "combo", "side", "open_t", "close_t", "open_px", "close_px", "sl", "tp", "net", "reason")
+                    if d.get(f) is not None}
+            lst.append({"text": txt, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "voice": bool(d.get("voice")), "trade": info})
+            tmp = NOTES_FILE.with_suffix(".tmp")
+            tmp.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+            tmp.replace(NOTES_FILE)
+            threading.Thread(target=lambda: REP.push_state("trade_notes", {"updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                                                                          "bots": doc}), daemon=True).start()
+        return list(lst)
 
 
 # the agents' manager ("מנהל הבוטים", 11.11.2026): the user's decisions and notes on the agents' cards, kept here and
@@ -618,6 +712,7 @@ def agent_decide(d):
 # (agents/autodecide.py); the risk / removal ones are applied here, keeping the value before so "undo" restores it.
 # The app marks decisions read (they leave the list; the archive keeps 30 days) and can undo any of them.
 AGENT_META = LIVE / "agent_meta.json"
+RESET7_F = LIVE / "news_bot_reset.json"      # bot 7's account reset, read by live/news_bot.py
 DECISIONS_URL = "https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/decisions.json"
 
 
@@ -680,7 +775,16 @@ def agent_undo(d):
             m["read"].append(k)
         a = m["applied"].pop(k, None)
         agent_meta_save(m)
-    if a:                                    # a risk change already applied: put back the value before it
+    if a and a.get("kind") == "reset":       # bot 7's reset undone: the account before comes back, with every trade since
+        try:
+            r = json.loads(RESET7_F.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            r = {}
+        if r.get("id") == k:
+            r["undo"] = True
+            RESET7_F.write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
+        log(f"manager's decision {k} undone by the user: bot 7's account before the reset comes back")
+    elif a:                                  # a risk change already applied: put back the value before it
         risk_change(a["bot"], a["combo"], a["kind"], a.get("prev"))
         log(f"manager's decision {k} undone by the user: {a['bot']} {a['combo']} {a['kind']} back to {a.get('prev')}")
     else:
@@ -689,36 +793,273 @@ def agent_undo(d):
     return {"undone": k, "restored": bool(a)}
 
 
+AUTO_APPLY = {"at": None, "n": 0, "err": None, "src": None}
+
+
+def _decisions():
+    """The manager agent's decisions: the agents' own copy on this computer first (C:\\trading-agents writes them,
+    no waiting for GitHub), GitHub's raw file when that copy is missing or older than an hour."""
+    f = AH.WORK / "reports" / "agents" / "decisions.json"
+    try:
+        if f.exists() and time.time() - f.stat().st_mtime < 3600:
+            j = json.loads(f.read_text(encoding="utf-8"))
+            AUTO_APPLY["src"] = "local"
+            return j
+    except Exception as e:  # noqa: BLE001
+        log(f"local decisions unreadable: {e}")
+    r = requests.get(DECISIONS_URL, params={"t": int(time.time() // 300)}, timeout=20)
+    r.raise_for_status()
+    AUTO_APPLY["src"] = "github"
+    return r.json()
+
+
+def _valid(a):
+    try:
+        _risk_value(a["kind"], a["value"])
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def _recent(x, hours=36):
+    """Only the last day and a half's decisions are tried again / checked (an older one may be stale)."""
+    try:
+        import calendar
+        t = calendar.timegm(time.strptime(str(x.get("at"))[:19], "%Y-%m-%dT%H:%M:%S"))
+        return time.time() - t < hours * 3600
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def _no_risk_down():
+    """The bots whose risk the user said is never lowered: data/agents/user_rules.json "no_risk_down" (empty since
+    12.11.2026 - "bot 3 works like the other bots, its risk may go down too")."""
+    for f in (ROOT / "data" / "agents" / "user_rules.json", AH.WORK / "data" / "agents" / "user_rules.json"):
+        try:
+            v = json.loads(f.read_text(encoding="utf-8")).get("no_risk_down") or []
+            return {str(x.get("bot") if isinstance(x, dict) else x) for x in v}
+        except Exception:  # noqa: BLE001
+            continue
+    return set()
+
+
+def _lowers_bot3(a):
+    """A risk cut on a bot the user keeps from cuts (user_rules "no_risk_down") - not by a retry or a re-apply either.
+    Until 16.11.2026 this was bot 3 hard-coded, from the user's rule of 9.11 that he lifted on 12.11: the re-apply of
+    _reconcile_applied and the retry of a failed apply skipped every cut of bot 3, so the manager's approved cuts there
+    never came back once lost (bots 1-4 smart agent, 16.11.2026 evening: SC380 / SC381 XAUUSD x0.7, SC417 XAUUSD x0.5 of
+    11:32 and TV41 USDJPY x0.31 of 15.11 22:09 approved and marked applied, the bot still at x1 / x1 / x1 / x0.47)."""
+    try:
+        if a.get("kind") != "mult" or a.get("bot") not in _no_risk_down():
+            return False
+        return float(a.get("value") or 0) < float(a.get("prev") or 1)
+    except Exception:  # noqa: BLE001
+        return True
+
+
+def _latest_risk(ordered):
+    """The newest approved risk decision per (bot, strategy, kind): {id: decision}."""
+    last = {}
+    for x in ordered:
+        a = x.get("action")
+        if x.get("type") == "risk" and x.get("decision") == "approved" and a and a.get("combo") and not x.get("undone"):
+            last[(a["bot"], a["combo"], a["kind"])] = x
+    return {x["id"]: x for x in last.values()}
+
+
+def _reconcile_applied(ordered, latest, gone):
+    """The newest applied risk decision of each strategy must be the value the bot has (manager, 14.11.2026: four edge
+    decisions of 13.11 22:11 - TV41 NZDUSD x0.18, TV24 KO x0.91, TT45 GBPJPY x0.64 in bot 1, GH04 EURJPY minimum
+    volume in bot 4 - were marked applied but the bots kept the old values). A value changed on purpose since (you in
+    the app: a later log entry to a value no decision of the manager's gave) is left alone; undone / taken back ones too."""
+    with AGENT_LOCK:
+        m = agent_meta()
+    undo, rev = set(m["undo"]), set((m.get("reverted") or {}).values())
+    rd = risk_doc()
+    for x in latest.values():
+        a, rec = x["action"], m["applied"].get(x["id"])
+        if not rec or rec.get("failed") or x["id"] in undo or x["id"] in rev \
+                or (x.get("card_decision") or x.get("star_of")) in gone or not _recent(x) or _lowers_bot3(a):
+            continue
+        try:
+            want = _risk_value(a["kind"], a["value"])
+        except ValueError:
+            continue
+        b = rd.get(a["bot"], {})
+        if (b.get(a["kind"]) or {}).get(a["combo"]) == want:
+            continue
+        ours = set()
+        for y in ordered:
+            ya = y.get("action") or {}
+            if y.get("type") == "risk" and ya.get("combo") == a["combo"] and ya.get("bot") == a["bot"] \
+                    and ya.get("kind") == a["kind"]:
+                try:
+                    ours.add(json.dumps(_risk_value(ya["kind"], ya.get("value"))))
+                    ours.add(json.dumps(_risk_value(ya["kind"], ya.get("prev"))))
+                except Exception:  # noqa: BLE001
+                    pass
+        later = [e for e in b.get("log") or [] if e.get("combo") == a["combo"] and e.get("kind") == a["kind"]
+                 and str(e.get("t") or "") > str(rec.get("at") or "") and "to" in e]
+        if later and json.dumps(later[-1].get("to")) not in ours:
+            continue                                 # changed on purpose since
+        f = LIVE / "bots" / f"{a['bot']}.json"
+        try:
+            if not f.exists() or a["combo"] not in json.loads(f.read_text(encoding="utf-8"))["combos"]:
+                continue                             # no longer in the bot
+            risk_change(a["bot"], a["combo"], a["kind"], a["value"])
+        except Exception as e:  # noqa: BLE001
+            log(f"manager's decision {x['id']} not re-applied: {e}")
+            continue
+        log(f"manager's decision {x['id']} re-applied (the bot had another value): {a['bot']} {a['combo']} {a['kind']} -> {a['value']}")
+        agent_publish()
+
+
 def auto_apply():
     """Every 10 minutes: apply the manager's risk / removal decisions that are not applied and not undone."""
     time.sleep(90)
     while True:
         try:
-            j = requests.get(DECISIONS_URL, params={"t": int(time.time() // 300)}, timeout=20).json()
+            j = _decisions()
+            AUTO_APPLY.update(at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), n=len(j.get("decisions", [])))
+            # the risk that came with a card (the star's lowered risk, the whole-bot check's): when the card is
+            # undone by you or taken back by the watch, its risk goes back to the value before it too
+            with AGENT_LOCK:
+                m0 = agent_meta()
+            gone = set(m0["undo"]) | {x["of"] for x in j.get("decisions", []) if x.get("decision") == "reverted"
+                                      and x.get("of") and x["id"] not in m0["undo"]}
+            linked = {}
             for x in j.get("decisions", []):
+                link = x.get("card_decision") or x.get("star_of")
+                if link and link in gone and x["id"] in m0["applied"]:
+                    linked.setdefault(link, []).append(x)
+            for link, xs in linked.items():
+                with AGENT_LOCK:
+                    m = agent_meta()
+                    recs = [m["applied"].pop(x["id"]) for x in sorted(xs, key=lambda x: x["at"]) if x["id"] in m["applied"]]
+                    for x in xs:
+                        m.setdefault("reverted", {})[x["id"] + ":linked"] = x["id"]
+                    agent_meta_save(m)
+                ok = [r_ for r_ in recs if not r_.get("failed")]
+                if ok:
+                    risk_change(ok[0]["bot"], ok[0]["combo"], ok[0]["kind"], ok[0].get("prev"))
+                    log(f"risk of card decision {link} back to {ok[0].get('prev')} ({ok[0]['bot']} {ok[0]['combo']})")
+                    agent_publish()
+            # oldest first (manager, 14.11.2026: decisions.json is newest first, so two decisions on one strategy in the
+            # same 10 minutes were applied newest-then-oldest and the older value stayed - TV56 US2000 x0.95 over the
+            # newer x0.48, TV11 USDJPY x0.9 over the newer minimum volume, both 14.11 01:1x-01:3x UTC)
+            ordered = sorted(j.get("decisions", []), key=lambda x: str(x.get("at") or ""))
+            latest = _latest_risk(ordered)
+            for x in ordered:
                 a = x.get("action")
+                if (x.get("card_decision") or x.get("star_of")) in gone:
+                    continue                         # its card is undone / taken back: not applied
+                if x.get("decision") == "reverted" and x.get("of"):
+                    # the watch took an applied risk change back (agents/watch.py): the value before returns
+                    with AGENT_LOCK:
+                        m = agent_meta()
+                        done = x["id"] in m.setdefault("reverted", {}) or x["id"] in m["undo"]
+                        ok_ids = m.setdefault("revert_ok", [])
+                        # a take-back recorded before 12.11.2026 whose risk change failed (prev None): repaired once
+                        stuck = done and x["id"] in m["reverted"] and x["id"] not in ok_ids and x["id"] not in m["undo"]
+                        b = None if done else m["applied"].pop(x["of"], None)
+                        if not done:
+                            m["reverted"][x["id"]] = x["of"]
+                            agent_meta_save(m)
+                    if b and not b.get("failed"):
+                        try:
+                            risk_change(b["bot"], b["combo"], b["kind"], b.get("prev"))
+                        except Exception as e:  # noqa: BLE001
+                            log(f"take-back {x['id']} not applied: {e}")
+                            with AGENT_LOCK:              # keep it for the next round instead of losing it
+                                m = agent_meta()
+                                m["applied"][x["of"]] = b
+                                m.setdefault("reverted", {}).pop(x["id"], None)
+                                agent_meta_save(m)
+                            continue
+                        log(f"manager's decision {x['of']} reverted: {b['bot']} {b['combo']} {b['kind']} back to {b.get('prev')}")
+                        stuck = True
+                    elif stuck:
+                        o = next((y for y in j.get("decisions", []) if y.get("id") == x["of"]), None)
+                        a0 = (o or {}).get("action")
+                        try:
+                            if a0:
+                                cur = (risk_doc().get(a0["bot"], {}).get(a0["kind"]) or {}).get(a0["combo"])
+                                if cur == _risk_value(a0["kind"], a0["value"]):     # still at the cut value
+                                    risk_change(a0["bot"], a0["combo"], a0["kind"], a0.get("prev"))
+                                    log(f"take-back {x['id']} repaired: {a0['bot']} {a0['combo']} {a0['kind']} back to {a0.get('prev')}")
+                        except Exception as e:  # noqa: BLE001
+                            log(f"take-back {x['id']} not repaired: {e}")
+                    if stuck:
+                        with AGENT_LOCK:
+                            m = agent_meta()
+                            m.setdefault("revert_ok", []).append(x["id"])
+                            m["revert_ok"] = m["revert_ok"][-2000:]
+                            agent_meta_save(m)
+                        agent_publish()
+                    continue
+                if x.get("type") == "reset" and x.get("decision") == "approved" and a and a.get("kind") == "reset":
+                    # bot 7's account starts again (agents/reset_rule.py; user, 12.11.2026): live/news_bot.py does it
+                    with AGENT_LOCK:
+                        m = agent_meta()
+                        if x["id"] in m["applied"] or x["id"] in m["undo"]:
+                            continue
+                        RESET7_F.write_text(json.dumps({"v": int(a["v"]), "id": x["id"], "why": x.get("why"),
+                                                        "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())},
+                                                       ensure_ascii=False), encoding="utf-8")
+                        m["applied"][x["id"]] = {"bot": a["bot"], "combo": None, "kind": "reset", "v": int(a["v"]),
+                                                 "prev": None, "failed": False, "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+                        agent_meta_save(m)
+                    log(f"manager's decision {x['id']}: bot 7's account starts again (account {a['v']})")
+                    agent_publish()
+                    continue
                 if x.get("type") != "risk" or x.get("decision") != "approved" or not a:
                     continue
                 with AGENT_LOCK:
                     m = agent_meta()
-                    if x["id"] in m["applied"] or x["id"] in m["undo"]:
-                        continue
+                    rev = {of: rid for rid, of in (m.get("reverted") or {}).items()}
+                    rec = m["applied"].get(x["id"])
+                    # a decision that failed because its strategy was not in the bot yet (the builder adds a new
+                    # strategy minutes after its card is decided) is tried again every round, for up to 3 days;
+                    # one that failed for another reason (e.g. an invalid value) is not
+                    retry = bool(rec and rec.get("failed") and (rec.get("err") in (None, "missing"))
+                                 and rec.get("tries", 1) < 432)
+                    # one that failed as invalid under an older rule (e.g. a cut by the edge under x0.5, before
+                    # 13.11.2026) is tried again a few times while it is still the newest decision on its strategy
+                    retry = retry or bool(rec and rec.get("failed") and rec.get("err") == "invalid"
+                                          and rec.get("tries", 1) < 3 and x["id"] in latest and _valid(a)
+                                          and _recent(x) and not _lowers_bot3(a))
+                    if (rec and not retry) or x["id"] in m["undo"] or (x["id"] in rev and rev[x["id"]] not in m["undo"]):
+                        continue                     # applied, undone, or taken back by the watch (unless you undid that)
+                err = None
                 try:
                     cur = (risk_doc().get(a["bot"], {}).get(a["kind"]) or {}).get(a["combo"])
                     risk_change(a["bot"], a["combo"], a["kind"], a["value"])
                 except Exception as e:  # noqa: BLE001
-                    log(f"manager's decision {x['id']} not applied: {e}")
+                    if not retry:
+                        log(f"manager's decision {x['id']} not applied: {e}")
+                    err = "missing" if "לא נמצאת" in str(e) else "invalid"
                     cur = "failed"
                 with AGENT_LOCK:
                     m = agent_meta()
                     m["applied"][x["id"]] = {"bot": a["bot"], "combo": a["combo"], "kind": a["kind"],
                                              "prev": None if cur == "failed" else cur, "failed": cur == "failed",
                                              "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+                    if err:
+                        m["applied"][x["id"]].update(err=err, tries=(rec or {}).get("tries", 0) + 1 if retry else 1)
                     agent_meta_save(m)
+                if err:
+                    continue
                 log(f"manager's decision applied: {a['bot']} {a['combo']} {a['kind']} -> {a['value']}")
                 agent_publish()
-        except Exception:  # noqa: BLE001
-            pass
+            try:
+                _reconcile_applied(ordered, latest, gone)
+            except Exception as e:  # noqa: BLE001
+                log(f"auto_apply: checking the applied values failed: {e}")
+            AUTO_APPLY["err"] = None
+        except Exception as e:  # noqa: BLE001
+            # never silent again (12.11.2026: the user's revert of 10 decisions waited for hours with no trace)
+            AUTO_APPLY["err"] = f"{type(e).__name__}: {e}"[:300]
+            log(f"auto_apply failed: {AUTO_APPLY['err']}")
         time.sleep(600)
 
 
@@ -743,6 +1084,16 @@ def agents_notify():
                     ups = [u for u in CFG.get("auto_updates") or [] if u.get("at", "") > since]
                     if ups:
                         kinds["עדכוני בוטים שהותקנו"] = len(ups)
+                    # the agents' answers to Tal's notes on trades since the last report (13.11.2026): one line, no
+                    # notification per answer - they are read in "שיחות עם הסוכנים" and next to each trade's chart
+                    nrep = 0
+                    try:
+                        rd = json.loads((AH.WORK / "data" / "agents" / "trade_replies.json").read_text(encoding="utf-8"))
+                        nrep = sum(1 for tr in (rd.get("bots") or {}).values() for rs in tr.values() for r in rs if str(r.get("at", "")) > since)
+                    except Exception:  # noqa: BLE001
+                        pass
+                    if nrep:
+                        kinds["תשובות של הסוכנים להערות שלך"] = nrep
                     body = (" · ".join(f"{v} {k}" for k, v in kinds.items()) or "אין החלטות חדשות") + \
                            f". {len(unread)} לא נקראו. אפשר לבטל כל החלטה במנהל הבוטים."
                     push(f"דוח המנהל: {len(ds)} החלטות", body, tag="agents")
@@ -759,6 +1110,7 @@ def watchdog():
     while True:
         try:
             if not WATCH.get("installing"):
+                follow_source()
                 start_watch()
                 start_news()
             for a in list(accounts()):
@@ -882,7 +1234,13 @@ def public_accounts(with_run=True):
                     "mt5_hidden": bool(a.get("mt5_hidden"))})
     if CFG.get("watch_own", True):
         # the scalping watch bot's virtual $100,000 account, listed like the demo accounts (user, 06.11.2026)
-        out.append({"name": WATCH_NAME, "label": "סקלפינג (צפייה) · חשבון וירטואלי", "nickname": "סקלפינג (צפייה)", "bot": WATCH_NAME,
+        out.append({"name": WATCH_NAME, "label": "בוט 5 - שיטת הגאפ (וירטואלי)", "nickname": "בוט 5 - שיטת הגאפ", "bot": WATCH_NAME,
+                    "login": None, "server": "וירטואלי · בלי כסף", "enabled": True, "running": running(WATCH_NAME) if with_run else None,
+                    "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
+                    "platform": "צפייה בלבד", "target_pct": 10, "preparing": False, "prepare_error": None, "mt5_hidden": True,
+                    "virtual": True})
+        # 5ב (user, 17.11.2026): bot 5's scout strategies in their own virtual account, computed by the same watch bot
+        out.append({"name": "watch_scout", "label": "בוט 5ב · אסטרטגיות סייר (וירטואלי)", "nickname": "בוט 5ב · סייר", "bot": "watch_scout",
                     "login": None, "server": "וירטואלי · בלי כסף", "enabled": True, "running": running(WATCH_NAME) if with_run else None,
                     "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
                     "platform": "צפייה בלבד", "target_pct": 10, "preparing": False, "prepare_error": None, "mt5_hidden": True,
@@ -934,11 +1292,47 @@ def auto_update_on():
     return CFG.get("auto_update", True) and not CFG.get("auto_update_paused")
 
 
+def install_quiet(now=None):
+    """An install stops and restarts the bots (about half a minute). Not when a bar opens (user task 12.11.2026:
+    installs at 16:00 / 16:56 dropped 1-hour and 15-minute entries): only from 1 to 3.5 minutes after a 5-minute
+    open (the last open was already handled, the bots are back before the next one), and never in the first
+    10 minutes of the US or the European stock session (first trades of the day)."""
+    import datetime as _dt
+    from zoneinfo import ZoneInfo
+    now = now or _dt.datetime.now(_dt.timezone.utc)
+    sec = (now.minute % 5) * 60 + now.second
+    if not 60 <= sec < 210:
+        return False
+    for tz, open_min in (("America/New_York", 9 * 60 + 30), ("Europe/Berlin", 9 * 60)):
+        loc = now.astimezone(ZoneInfo(tz))
+        if loc.weekday() < 5 and 0 <= loc.hour * 60 + loc.minute - open_min < 10:
+            return False
+    return True
+
+
+def agents_hold():
+    """The agents' continuous cycle (health, manager, builder, watch) is in its middle: the install waits for its end,
+    at most 40 minutes past the due time (manager, 15.11.2026: a cycle right after a restart took ~25 minutes, the
+    installs came every 25-30 minutes and cut every cycle - no host.json / decisions from 04:41 to 06:10 UTC)."""
+    try:
+        return (CFG.get("agents_host", True) and AH.light_running()
+                and time.time() - UPDATE.get("seen", 0) < AUTO_SETTLE + 40 * 60)
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def update_check():
     while True:
+        nap = 300
         try:
-            sha, title = UPD.remote()
-            if UPD.local() is None:
+            # GitHub is asked every 5 minutes; the quick looks while an install waits for a quiet moment do not ask it
+            fresh = time.time() - UPDATE.get("remote_at", 0) >= 290
+            sha, title = UPD.remote() if fresh else (UPDATE.get("remote_sha"), None)
+            if fresh:
+                UPDATE.update(remote_at=time.time(), remote_sha=sha)
+            if not sha:
+                pass
+            elif UPD.local() is None:
                 UPD.VERSION.write_text(sha)
             elif sha != UPD.local() and UPDATE["sha"] != sha:
                 if UPDATE["sha"] and UPDATE["sha"] != UPD.local() and not UPD.touches_bot(UPDATE["sha"], sha):
@@ -948,13 +1342,25 @@ def update_check():
                 elif not UPD.touches_bot(UPD.local(), sha):
                     UPD.VERSION.write_text(sha)
                 else:
-                    UPDATE.update(sha=sha, title=title, seen=time.time())
+                    # a newer code version while one is already waiting: the newer one is installed, and the wait
+                    # keeps counting from the FIRST waiting version (12.11.2026: agents pushing every few minutes kept
+                    # restarting the 10 minutes and an update waited 45 minutes)
+                    waiting = UPDATE["sha"] and UPDATE["sha"] != UPD.local() and UPDATE.get("seen")
+                    UPDATE.update(sha=sha, title=title, seen=UPDATE["seen"] if waiting else time.time())
                     log(f"update available: {sha[:7]} {title}")
                     if not auto_update_on():
                         # every new waiting version is announced (same tag: it replaces the earlier notice on the
                         # phone), and an approval counts only for the exact version it was given for
                         push("יש עדכון לבוטים", title, action="approve_update", tag="update", extra={"sha": sha[:7]})
             if (UPDATE["sha"] and UPDATE["sha"] != UPD.local() and auto_update_on()
+                    and time.time() - UPDATE.get("seen", 0) >= AUTO_SETTLE and not INSTALL_LOCK.locked()
+                    and UPDATE.get("tried") != UPDATE["sha"] and (not install_quiet() or agents_hold())):
+                nap = 15                                                  # due, but a bar opens: look again soon
+                if UPDATE.get("quiet_wait") != UPDATE["sha"]:
+                    UPDATE["quiet_wait"] = UPDATE["sha"]
+                    log(f"update {UPDATE['sha'][:7]} waits for a quiet moment (no bar opening, not a session's first "
+                        f"minutes, no agents cycle in its middle)")
+            elif (UPDATE["sha"] and UPDATE["sha"] != UPD.local() and auto_update_on()
                     and time.time() - UPDATE.get("seen", 0) >= AUTO_SETTLE and not INSTALL_LOCK.locked()
                     and UPDATE.get("tried") != UPDATE["sha"]):            # a failed version is not retried by itself
                 UPDATE["tried"] = UPDATE["sha"]
@@ -969,7 +1375,7 @@ def update_check():
             UPDATE["checked"] = time.time()
         except Exception as e:  # noqa: BLE001
             log(f"update check failed: {e}")
-        time.sleep(300)
+        time.sleep(nap)
 
 
 INSTALL_LOCK = threading.Lock()
@@ -1076,17 +1482,35 @@ class Handler(BaseHTTPRequestHandler):
         parts = path.strip("/").split("/")
         if path in ("", "/status"):
             return self._send(200, {"ok": True, "accounts": public_accounts(), "version": (UPD.local() or "")[:7],
-                                    "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"]} if UPDATE["sha"] and not auto_update_on() and UPDATE["sha"] != UPD.local() else None,
+                                    # a waiting version is shown with automatic installs on too (user, 17.11.2026: "where do I approve") - he can
+                                    # install it now instead of waiting for the quiet moment / the agents' cycle
+                                    "update": {"sha": (UPDATE["sha"] or "")[:7], "title": UPDATE["title"], "auto": auto_update_on(),
+                                               "waiting_min": round((time.time() - UPDATE.get("seen", time.time())) / 60)} if UPDATE["sha"] and UPDATE["sha"] != UPD.local() and UPDATE.get("title") else None,
                                     "auto_update": {"on": auto_update_on(), "prev": (CFG.get("prev_version") or "")[:7],
                                                     "pending": (UPDATE["sha"] or "")[:7] if UPDATE["sha"] and UPDATE["sha"] != UPD.local() else None,
                                                     "last": (CFG.get("auto_updates") or [{}])[-1]},
-                                    "pin_set": bool(CFG.get("pin_hash")), "viewer_set": bool(CFG.get("viewer_hash")), "push_devices": len(CFG.get("subs", [])),
+                                    "pin_set": bool(CFG.get("pin_hash")), "viewer_set": bool(CFG.get("viewer_hash")), "push_devices": len(CFG.get("owner_subs") or []),
                                     "watchdog_push": WATCH["ok"],
                                     "risk": risk_public()})
         if path == "/vapid":
             return self._send(200, {"key": vapid_public()})
+        if path == "/quotes":
+            # live prices for the virtual bots (5, 6, 7) from bot 1's MetaTrader, read every second by the app
+            src = watch_source()
+            if not src:
+                return self._send(503, {"error": "bot 1 not running"})
+            try:
+                r = requests.get(f"http://127.0.0.1:{src['port']}/quotes?" + self.path.partition("?")[2], timeout=4)
+                return self._send(r.status_code, r.json())
+            except Exception:  # noqa: BLE001
+                return self._send(503, {"error": "bot 1 not answering"})
         if len(parts) == 3 and parts[0] == "bot" and parts[2] in ("live", "state", "candles"):
             port = bot_port(parts[1])
+            if not port and parts[2] == "candles" and parts[1] in ("watch_own", "watch_scout", "watch_fut", "news_bot"):
+                # a virtual account's trade chart (user, 17.11.2026: 5ב's GBPJPY "the bot does not support the chart
+                # yet"): the virtual bots have no MetaTrader of their own - the candles of the account they read from
+                src = watch_source()
+                port = src and bot_port(src["name"])
             if not port:
                 return self._send(404, {"error": "no such bot"})
             try:
@@ -1107,21 +1531,18 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/push":                                   # from a bot on this computer
             if self.headers.get("X-Local") != CFG["local_key"]:
                 return self._send(403, {"error": "forbidden"})
-            push(d.get("title", ""), d.get("body", ""), urgent=bool(d.get("urgent")), tag=d.get("tag"))
+            # a gap setup to review (bot 5, 17.11.2026): the notification opens the review and vibrates long
+            act_ = "review" if d.get("action") == "review" else None
+            push(d.get("title", ""), d.get("body", ""), urgent=bool(d.get("urgent")), tag=d.get("tag"), action=act_,
+                 extra={"id": str(d.get("id") or "")[:120], "bot": "watch_own"} if act_ else None)
             return self._send(200, {"ok": True})
         if path == "/subscribe" and not (self.headers.get("X-Pin") or d.get("pin")):
             # notifications only (view): a device without the secret code may subscribe; every action still needs it
             sub = d.get("subscription")
             if not sub or "endpoint" not in sub or len(json.dumps(sub)) > 2000 or not push_endpoint_ok(sub["endpoint"]):
                 return self._send(400, {"error": "no subscription"})
-            with LOCK:
-                if sub not in CFG["subs"]:
-                    if len(CFG["subs"]) >= 20:
-                        return self._send(429, {"error": "יותר מדי מכשירים מקבלים התראות"})
-                    CFG["subs"].append(sub)
-            save()
-            threading.Thread(target=push_manager_state, daemon=True).start()
-            return self._send(200, {"ok": True})
+            _sub_role(sub, "viewer")
+            return self._send(200, {"ok": True, "role": "viewer", "push": False})
         pin = self.headers.get("X-Pin") or d.get("pin")
         client = self.headers.get("CF-Connecting-IP") or self.client_address[0]
         role = check_codes(pin, client)
@@ -1141,8 +1562,13 @@ class Handler(BaseHTTPRequestHandler):
         if role == "viewer":
             if path == "/auth":
                 return self._send(200, {"ok": True, "role": "viewer"})
-            if path != "/subscribe":
-                return self._send(403, {"error": "קוד צפייה: אפשר לראות בלבד, בלי פעולות"})
+            if path == "/subscribe":
+                sub = d.get("subscription")
+                if not sub or "endpoint" not in sub or len(json.dumps(sub)) > 2000 or not push_endpoint_ok(sub["endpoint"]):
+                    return self._send(400, {"error": "no subscription"})
+                _sub_role(sub, "viewer")
+                return self._send(200, {"ok": True, "role": "viewer", "push": False})
+            return self._send(403, {"error": "קוד צפייה: אפשר לראות בלבד, בלי פעולות"})
         try:
             if path == "/auth":
                 return self._send(200, {"ok": True, "role": "owner"})
@@ -1181,13 +1607,11 @@ class Handler(BaseHTTPRequestHandler):
                 sub = d.get("subscription")
                 if not sub or "endpoint" not in sub or not push_endpoint_ok(sub["endpoint"]):
                     raise ValueError("no subscription")
-                with LOCK:
-                    if sub not in CFG["subs"]:
-                        CFG["subs"].append(sub)
-                save()
-                push("התראות פעילות", "מעכשיו ההתראות של הבוטים יגיעו לאפליקציה הזו.")
-                threading.Thread(target=push_manager_state, daemon=True).start()
-                return self._send(200, {"ok": True})
+                was = sub["endpoint"] in set(CFG.get("owner_subs") or [])
+                _sub_role(sub, "owner")
+                if not (d.get("quiet") and was):
+                    push("התראות פעילות", "מעכשיו ההתראות של הבוטים יגיעו לאפליקציה הזו.")
+                return self._send(200, {"ok": True, "role": "owner", "push": True})
             if path == "/accounts/add":
                 a = add_account(d)
                 return self._send(200, {"ok": True, "name": a["name"]})
@@ -1284,6 +1708,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True, "lines": lines})
             if path == "/watch/mark":
                 return self._send(200, {"ok": True, "mark": watch_mark(d)})
+            if path == "/trade/note":
+                return self._send(200, {"ok": True, "notes": trade_note(d)})
+            if path == "/trade/notes":
+                return self._send(200, {"ok": True, "notes": trade_note(d, save=False)})
             if path == "/risk/set":
                 kind = str(d.get("kind") or "mult")
                 risk_change(d.get("bot"), str(d.get("combo") or ""), kind, d.get("value", d.get("mult")))
@@ -1394,6 +1822,7 @@ def push_manager_state():
              "auto_update": {"on": auto_update_on(), "prev": CFG.get("prev_version"), "rolled_back_from": CFG.get("rolled_back_from"),
                              "installs": (CFG.get("auto_updates") or [])[-10:]},
              "agents_host": AH.status() if CFG.get("agents_host", True) else {"on": False},
+             "auto_apply": dict(AUTO_APPLY),
              "tunnel_error": None if TUN.URL["url"] else (TUN.URL.get("err") or "connecting")}
     err = REP.push_state("manager", state)
     if err:
@@ -1454,7 +1883,10 @@ def main():
         save()
         last = (CFG.get("auto_updates") or [{}])[-1]
         if last.get("sha") == UPD.local():
-            push("המנהל התקין עדכון", f"{last.get('title') or ''} · גרסה {(UPD.local() or '?')[:7]}. אפשר לחזור לגרסה הקודמת בלשונית ניהול.")
+            # no push for routine automatic installs (user, 15.11.2026: they come many times a day and the title is
+            # often the agents' own report commit, e.g. "Agents on the bots' computer: health") - the version and the
+            # rollback stay in the app's management tab
+            log(f"auto update installed: {last.get('title') or ''} {(UPD.local() or '?')[:7]}")
         else:
             push("העדכון הותקן", f"הכל רץ בגרסה {(UPD.local() or '?')[:7]}.")
     for a in accounts():

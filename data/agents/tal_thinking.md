@@ -1,17 +1,252 @@
 # איך טל חושב
 
-## ניהול עסקה
-- 2026-11-13/16: "בגרפים המהירים ברגע שאתה מגיע ל־50% מהדרך ליעד אתה מעביר סטופ לברייק ולוקח חלקיות רווחים". הסיבה: בגרפים של 1-5 דק' המהלכים קיצוניים ומהירים וחוזרים. לסוכנים: כשעסקה מגיעה לרווח - לשאול קודם אם לנעול חלק.
-- 2026-11-16: "עדיף הרבה ניצחונות קטנים מאשר פעם אחת ניצחון גדול". הסיבה: עקביות יומית. לסוכנים: להציג תמיד אחוז הצלחה ואחוז ימים ברווח לצד הממוצע; בממוצע דומה - להעדיף את הדרך עם יותר ניצחונות.
-- 2026-11-16: עסקה שהייתה ברווח וחזרה לסטופ מפריעה לו מאוד; הוא מצפה שכלל שנקבע (ברייק ב־X%) יעבוד כמו שהוא מבין אותו. לסוכנים: להסביר בדיוק איפה כל כלל חל.
+מסמך למנהל הבוטים ולכל הסוכנים. קוראים אותו בתחילת כל ריצה, ולפני כל החלטה שואלים: "בהצעה דומה, מה טל עשה, ולמה?".
+נבנה ב־12.11.2026 מכל ההחלטות שנרשמו בשיחות על המערכת, מהיום הראשון (סוף אוקטובר 2026) ועד היום. מקרים חדשים נוספים בסוף,
+בכל פעם שטל מבטל, משנה או משפר החלטה (ראו "איך המסמך גדל").
 
-## כניסה וזיהוי (שיטת הגאפ)
-- 2026-11-17: "דחף שבנוי מנר אחד... אין בתוך הדחף גאפ שיוצא ממנו אז אין פה עסקה". דחף בלי גאפ פתוח בתוכו - לא עסקה.
-- 2026-11-17: הגאפ הנכון הוא הגאפ הגבוה בתחילת הדחף; אם נכנסים בגאפ נמוך יותר - הסטופ צריך להיות בתחילת הדחף, בנקודה הכי קיצונית.
-- 2026-11-16: נרות חזקים לכיוון מיד אחרי הכניסה = "יותר מוכרים מקונים" = יותר ביטחון בעסקה.
-- 2026-11-16: סטופ צר מדי הוא בעיה חוזרת שהוא רואה; מוכן לסטופ רחוק יותר (סווינג שלישי) כשהכיוון נכון.
-- 2026-11-17: הגרף הגבוה חייב להציג מספיק נרות כדי שהוא יוכל לשפוט את נקודת הסטופ.
+## המטרה המרכזית
 
-## ניהול הבוטים
-- 2026-11-17: "אתה רק מחפש לתרץ ולנהל את העסקה במקום גם לחפש נקודות כניסה שונות ונקודות יציאה". לסוכנים: בניתוח הפסדים לבדוק כניסה, סטופ ויעד - לא רק ניהול, ולא להסביר הפסדים בתירוצים.
-- 2026-11-16/17: שני כיוונים הפוכים על אותו נכס/מטבע באותו זמן נראה לו מסוכן; יומיים של הפסד בכל הבוטים בבת אחת = בעיה בניהול סיכונים, לא מזל.
+**הגדלת הרווחיות והקטנת הסיכון.** זו המטרה, לא מטרת משנה. כל הצעה, כל החלטה וכל שינוי בבוט נמדדים לפיה:
+האם הבוט כולו מרוויח יותר, והאם הסיכון שלו (היום הגרוע, הירידה מהשיא, הקרבה למגבלות) לא עולה.
+כשהשתיים מתנגשות: רווח נוסף שמגיע עם סיכון נוסף נכנס רק בסיכון מוקטן, עד שהסיכון של הבוט חוזר לרמה שלפניו.
+
+## קווים אדומים (לא משתנים, אף סוכן לא נוגע בהם)
+
+- הפסד יומי עד 5% והפסד כולל עד 10% בכל בוט, בכל ברוקר, לתמיד. מגבלות הבוטים עצמם: 4.5% ליום, 9% בסך הכל, וליד מגבלה הסיכון יורד בהדרגה במקום לחסום.
+- אף עסקה לא מסכנת יותר מהסיכון של הבוט.
+- מעבר של בוט לכסף אמיתי הוא החלטה של טל בלבד, לפי הכללים שלו. אף סוכן לא מציע את זה ולא עושה את זה. טל יגיד איזה בוט עובר ויביא את חשבון הברוקר.
+- ה"לא" הקבועים של טל ב־data/agents/user_rules.json (למשל: לא להסיר את KO, GOOG ו־CSCO מבוט 1).
+
+## איך טל חושב (העקרונות, כל אחד מתוך מקרים אמיתיים)
+
+1. **השוק משתנה, ולכן העבר הקרוב חשוב יותר.** "כסף חכם הופך לכסף טיפש": יתרון נשחק. עסקאות אחרונות שוקלות יותר (משקל = 1 − (גיל / 4 שנים)², לא פחות מ־0.2), ובדיקות מסתכלות 2–3 שנים אחורה לכל היותר. (30.10, 10–11.11)
+2. **הכל רציף, לא קטגוריות.** כל מדד הוא ציון 0–100 ולא "גדול/קטן"; כל מסנן ואות מקבל משקל משלו, ולכל ענף בנפרד. (אוקטובר)
+3. **כל אסטרטגיה במקום שבו היא מנצחת.** לא דורשים שאסטרטגיה תרוויח על כל הכלים; כל אסטרטגיה מותאמת לכלי ולטיים פריים שבהם היא מנצחת, ורק שם היא סוחרת. (31.10)
+4. **בודקים הכל, לא מדלגים.** כל אסטרטגיה, על כל טיים פריים מדקה עד 4 שעות ועל כל הכלים של FTMO, עם העלויות האמיתיות של כל כלי (מרווח, עמלה, סוואפ), ובדיוק לפי חוקי FTMO. (31.10–1.11)
+5. **אסטרטגיה נחשבת רק אם יש לה הכל.** מקור שלא אומר טיים פריים, כניסה, יעד וסטופ - לא נכנס. (30.10)
+6. **יציאות חכמות, לא יציאות לפי זמן.** סטופ ויעד לפי תנודתיות ולפי מבנה השוק. יציאה רק כי עבר זמן נדחתה. (אוקטובר)
+7. **כל אסטרטגיה מקטינה סיכון בשלב מסוים.** בכל אסטרטגיה הסטופ עובר לנקודת איזון, והתזמון מותאם לכל אחת. בלי יעד: איזון ב־2.5R ונעילת +1R ב־3R. עם יעד: איזון ב־60% מהדרך. (9–10.11)
+8. **סיכון נקבע מהנתונים, לא מפחד.** אסטרטגיה חדשה נכנסת בסיכון של הבוט, ולא אוטומטית בחצי. אחרי תקופת בדיקה מסתכלים על התוצאות ומכוונים את הסיכון של כל אסטרטגיה: יותר לטובות, פחות לחלשות. ההמלצה תמיד נשענת גם על רווחיות וגם על יציבות. (5.11, 11.11)
+9. **בספק: לאשר בזהירות ולעקוב, לא לדחות.** שיפור קטן על מעט עסקאות (אולי מזל) נכנס בסיכון מופחת, מסומן בכוכבית ⭐, ונבדק לעומק לאורך זמן. אם ממשיך להצליח - הכוכבית יורדת וחוזר לסיכון רגיל. אם מצליח פחות - הסיכון יורד עוד. אם גרוע בבירור - יוצא. (12.11)
+10. **"מזל" זה פעם או פעמיים, לא הרבה עסקאות.** הרבה עסקאות רווחיות הן לא מזל. החשש האמיתי הוא שיפור קטן מהרעש, או בחירת הטובה מתוך הרבה גרסאות. (12.11)
+11. **הבוט כולו קודם לאסטרטגיה אחת.** שינוי טוב לבד שמגדיל את הסיכון של החשבון נכנס רק בסיכון מוקטן; שינוי שלא מוסיף רווח לבוט כולו לא נכנס. (12.11)
+12. **בלי המתנות.** מה שאפשר להחליט עכשיו - מחליטים ומבצעים עכשיו, לא מחכים לדוח של 05:00 או לריצת הלילה. ומה שבוצע - נמצא במעקב מיידי. (11–12.11)
+13. **וירטואלי = אמיתי.** בוטים 5–7 מנוהלים בדיוק כמו חשבון אמיתי: אותם כללים, אותה מהירות, אותו מעקב. (12.11)
+14. **בוט 3 כמו כולם.** אין יותר חריג לבוט 3, כולל הורדת סיכון. (12.11, במקום "לא להוריד את הסיכון של בוט 3" מ־9.11)
+15. **עובדים בשלבים, כיוון אחד בכל פעם**, אבל כשיש החלטה - בונים את כולה ולא חצי. (אוקטובר; 11.11: "לבנות את כולם עכשיו")
+16. **שלושה מסננים, תמיד.** סוכן הבוט מסנן בבדיקה ← המנהל מסנן ← טל (או המנהל במקומו, מאז 11.11) מחליט. המנהל קפדן אבל לא יותר מדי: בסדר שמשהו שהצליח במזל יעבור, כי הוא יורד אחר כך. (10–11.11)
+17. **הכל מהאפליקציה בטלפון.** טל לא נוגע במחשב הבוטים. כל פעולה שלו צריכה להיות כפתור באפליקציה, וכל השאר קורה לבד. (4.11 ואילך)
+18. **חינם קודם.** חישובים כבדים על המחשב של טל ולא בדקות GitHub; בלי API בתשלום נפרד בינתיים. (11.11)
+19. **השיטה של טל עצמו**, הגאפים: אימפולס בטיים פריים הגבוה, הגאפ בין נר 1 לנר 3 שנשאר פתוח, כניסה באמצע הגאפ בטיים פריים הנמוך (שני שלבים מתחת), סטופ 2 פיפס מעבר לסווינג השני, יעד בסווינג השני בצד השני, רק בכיוון האימפולס. הוא מקבל שחלק מהעסקאות הטובות יפסידו. (6–11.11, ראו data/agents/strategies/tal_gap.md)
+20. **לומדים מכל הפסד.** בכל יום שבוט מסיים בהפסד יש דוח מקצועי ופיננסי: מה הפסיד, למה (הסיבה האמיתית, לא רק הקטגוריה), ואיך משתפרים כדי שזה לא יחזור. המנהל דורש מהסוכן של הבוט המפסיד לטפל בזה: משימת "דוח הפסד" ב־data/agents/replies.json קודמת לכל עבודה אחרת, והתשובה בה היא הסיבה, התיקון שנבדק בבדיקה ההוגנת, ומה השתנה. משימה כזאת שלא נענתה בריצה הבאה - המנהל מעלה אותה בדוח שלו. המטרה: שההפסדים יקטנו עם הזמן, והמגמה נמדדת בכל דוח (12.11, agents/loss_review.py). **אין "יום רע רגיל"** (13.11): טל לא מקבל הפסד כי "זה מה שנהוג" או "זה בטווח הסטטיסטי". כל הפסד הוא משהו ללמוד ממנו ולשפר. בכל דוח: מה קרה מול הצפי (הפער ב־$ וב־R), למה, ולכל אסטרטגיה שהפסידה - תיקון שנבדק והשווי שלו ב־% מהחשבון בחודש. "אין באג" או "יום רגיל" אינם תשובה. המנהל אחראי על השיפור: משימה שנסגרה בלי תיקון נפתחת מחדש, ואסטרטגיה שאין לה תיקון יומיים אחרי הדוח יורדת בסיכון **לפי היתרון של הנכס עצמו, בלי שום מספר קבוע, משקל או תקרה** (13.11): סיכון = הסיכון שאושר × (היתרון עכשיו ÷ היתרון שאושר). היתרון שאושר = ממוצע R לעסקה בבדיקה של 2026 כפי שהיא סוחרת עכשיו. היתרון עכשיו = הבדיקה והחי יחד, כל אחד לפי כמה אפשר לסמוך עליו (כמות עסקאות, פיזור, וכמה הבדיקה כבר זזה בין תקופת הבחירה ל־2026). אין יתרון ← כמות מינימלית של הנכס עד תיקון, כדי שנתוני החי ימשיכו להגיע. כל עסקה בחי מעדכנת; נמצא תיקון - הסיכון חוזר (קודם מתקנים, ורק אם אין תיקון - מורידים סיכון).
+
+## מקרים: מה הוצע, מה טל החליט, ולמה
+
+כל מקרה: **הוצע** (מה Claude או סוכן הציע) ← **טל** (מה החליט: קיבל / דחה / שיפר) ← **העיקרון**.
+
+1. **חשבון דמו (אוקטובר).** התכנון היה חשבון דמו של 100,000$. טל שינה ל־10,000$, והסכום האמיתי ייקבע רק אחרי שהדמו מוכיח. ← מתחילים קטן, מגדילים אחרי הוכחה.
+2. **מגבלת הפסד (אוקטובר).** טל קבע: 2% ליום בהתחלה, שמשתנה עם היתרה בצורה לא ליניארית; 10% הפסד כולל נמדד מיתרת הפתיחה, לא מהשיא, ועוצר הכל לבדיקה. ← מגבלה קשיחה מהנקודה ההתחלתית.
+3. **מינוף (אוקטובר).** הוצע מינוף כפרמטר. טל קיבל: בלי מינוף בהתחלה, ועלייה הדרגתית רק אחרי שהיתרון מוכח בחי. ← סיכון גדל רק אחרי הוכחה.
+4. **יציאות (אוקטובר).** הוצעה יציאה לפי זמן. טל דחה: רק יציאות חכמות. ← עיקרון 6.
+5. **שלב 1 נכשל (אוקטובר).** אף חוק של סנטימנט חדשות לא עבר. טל: לא מוותרים, ממשיכים כיוון אחד בכל פעם - קודם קניות של בעלי עניין (Form 4), ולצדו מסלול מגמה שמרני כבסיס להשוואה. ← עיקרון 15.
+6. **סרטונים ממדיה חברתית (30.10).** הוצע שטל ישלח סרטונים. טל: לא להוריד ולא לשלוח; Claude יגלוש בעצמו וילמד. ← טל לא עושה עבודה ידנית שהמערכת יכולה לעשות.
+7. **שני רובוטים על FTMO (30.10).** הוצע להשאיר רק את TV04 ב־0.75% ולזרוק את TV01. טל קיבל, אבל רוצה קודם עוד אסטרטגיות שעוברות את הרף. ← לא נשענים על אסטרטגיה אחת.
+8. **תקופת בדיקה (31.10).** הוצע לבדוק מ־2016. טל: 2–3 שנים לכל היותר, השוק היה אחר. ← עיקרון 1.
+9. **התאמת אסטרטגיה לכלי (31.10).** הוצע לחפש אסטרטגיות שעובדות על הכל. טל: כל אסטרטגיה בכלי ובטיים פריים שבהם היא מנצחת. ← עיקרון 3.
+10. **שיטת הבדיקה (1.11).** הוצעה תקופת בחירה מוקדמת ודילוג על צירופים. טל: כל אסטרטגיה לבד, על כל טיים פריים וכל כלי, בלי לדלג ובלי לשלב עדיין. ← עיקרון 4.
+11. **תיקים (1.11).** טל: לא לשים את כל המצליחים בחשבון אחד, אלא כמה תיקים חלופיים בכמה חשבונות, מדורגים, שאף אחד לא נוגע במגבלה היומית. ← עיקרון 11.
+12. **סיכון התיקים (1.11).** הוצע סיכון מומלץ. טל: 25% פחות מהמומלץ. ← שמרנות בכניסה.
+13. **ביקורת חיצונית (4.11).** אחרי ביקורת: שום אסטרטגיה חדשה לא נכנסת עד שיש שער קבלה קפדני יותר. אבל 5 הצירופים שכבר נכנסו - נשארים בגודל מלא (הוצע להקטין, טל דחה). ← לא מענישים את מה שכבר עבר בדיקה; מחמירים את השער קדימה.
+14. **הסרת אסטרטגיה (4.11).** טל: אסטרטגיה שהכלל הקבוע מסמן להסרה יוצאת רק אחרי אישור. (מאז 11.11 המנהל מאשר במקומו, עם ביטול.) ← הסרה היא החלטה, לא אוטומט עיוור.
+15. **סיכון לאסטרטגיה חדשה (5.11).** הוצע סיכון ניסיון מוקטן. טל דחה: כל אסטרטגיה בסיכון של הבוט, ומכוונים אחרי תקופת בדיקה לפי התוצאות. (11.11 שוב: לא חצי סיכון אוטומטי - הסוכן קובע מהנתונים.) ← עיקרון 8.
+16. **המלצות סיכון (5.11).** טל: כל המלצה חייבת גם רווחיות וגם יציבות (הרבה רווחים קטנים והפסד גדול אחד = לא יציב), ניתוח לפי כיוון (אם הקניות מפסידות - לשקול רק מכירות), ניתוח מיקום יציאה (עסקאות שמגיעות ל־90% מהיעד וחוזרות לסטופ - להזיז את היעד), שעות, ימים, מצב שוק וקורלציה בין אסטרטגיות. ← עומק לפני החלטה.
+17. **הבוט של הסקלפינג (6.11).** טל: בוט נפרד, עם אסטרטגיות שנבנו רק לסקלפינג ונמדדות רק מול עצמן; מרווח ועמלה נמוכים, תנועה כיוונית, והוספת פוזיציות כשהעסקה הולכת בכיוון. ← כל בוט נמדד מול העולם שלו.
+18. **עוד עסקאות (9.11).** טל: "זה סקלפינג, הוא צריך לרוץ" - רוצה יותר עסקאות, וחצי רווח ברמה קבועה עם סטופ לאיזון. ← בסקלפינג תדירות חשובה.
+19. **איזון לכולם (9.11).** טל: כל אסטרטגיה מעבירה סטופ לאיזון בשלב מסוים, כולל בוט 3. ← עיקרון 7.
+20. **v5 (10.11).** הוצעה תצורת "פערים v5" (30% החוצה ב־90% מהדרך, השאר לאיזון). טל קיבל, כצפייה בלבד עד שהעסקאות החיות מושוות לבדיקה. ← מקבל המלצה טובה, אבל מאמת בחי.
+21. **מסלול הדקה (10.11).** טל: "אם זה רווחי בבדיקה, למה לא להוסיף?" ← מה שהוכח בבדיקה נכנס.
+22. **החלקה ב־SPCX (10.11).** עסקה בבוט 4 בוצעה רחוק מהמחיר. טל בחר: לקרוא מחיר שוב רגע לפני השליחה, וזיכרון החלקה לכל כלי שמקטין כמות מראש - ורק בכלים שעברו את הסטופ. ← תיקון ממוקד, לא הגבלה כללית.
+23. **מנהל קפדן (10.11).** טל: המנהל קפדן אבל לא יותר מדי - בסדר שמשהו שהצליח במזל יעבור, כי הוא יורד אחר כך. ← עיקרון 16.
+24. **נוסחת המשקל (11.11).** טל קבע את הנוסחה, וביקש שכל סוכן יבדוק וישפר אותה לאורך זמן מול האסטרטגיות שלו. ← גם הכללים עצמם נבדקים.
+25. **סוכנים חכמים (11.11).** טל: הסוכנים לא רק לוקחים רעיונות מהרשת, הם מגלים לבד מהנתונים (דפוסים חוזרים) ומהחדשות (צפוי מול בפועל, גודל התגובה). ← המערכת צריכה לחשוב, לא רק לאסוף.
+26. **הבוט הראשון (11.11).** טל: הסוכן הראשון לבוט 5 ולא לבוט 1, ואם הסוכן חכם - להעתיק לשאר. באותו ערב: "לבנות את כולם עכשיו". ← כשהכיוון ברור, לא מחכים.
+27. **המנהל מחליט (11.11).** טל: המנהל מחליט על הכל במקומו, כולל התקנת עדכונים בלי PIN, עם דוח ב־05:00 וביטול לכל החלטה. המגבלות 5%/10% קבועות. ← אמון עם בקרה.
+28. **ריצה רציפה (11.11).** הוצעה ריצה בשעה קבועה. טל: רציף - שכבה קלה כל הזמן ושכבה חכמה כל כמה שעות, לכל סוכן. ← עיקרון 12.
+29. **חישוב על המחשב (11.11).** טל: בדיקות כבדות על המחשב שלו בחינם, לא בדקות GitHub. ← עיקרון 18.
+30. **בלי API (11.11).** הוצע צ'אט חי עם המנהל. טל: כרטיסים ואישור בינתיים, בלי API שעולה בנפרד. ← עיקרון 18.
+31. **אסטרטגיה חדשה בכמה בוטים (12.11).** אסטרטגיה של הסייר נכנסה ל־8 מקומות בשלושה בוטים, והוצע כלל של בוט אחד קודם. טל: "זה בסדר". ← לא חוסם; סומך על המעקב.
+32. **מקצה לקצה (12.11).** טל שאל למה החלטות מחכות. מעכשיו: שינויים נבנים מיד, ויש מעקב שמחזיר שינוי גרוע מיד. ← עיקרון 12.
+33. **מזל (12.11).** הוצע: לחכות ליותר עסקאות או לאשר בסיכון קטן. טל שיפר: לאשר, בסיכון **מופחת** (לא קטן), עם כוכבית "אולי מזל" ובדיקה חוזרת מעמיקה; מצליח - הכוכבית יורדת; פחות מצליח - הסיכון יורד עוד. וגם: "מזל זה פעם או פעמיים, לא הרבה עסקאות". ← עקרונות 9–10.
+34. **בדיקת הבוט השלם (12.11).** הוצע: לפני אישור, להריץ את הבוט כולו עם השינוי ובלעדיו. טל וידא שזה לא אופטימיזציה על כל עסקה, ואישר. ← עיקרון 11.
+35. **בוט 3 (12.11).** טל: לא זוכר שביקש חריג לבוט 3; הוא רוצה שבוט 3 יעבוד בשיטות של שאר הבוטים. ← עיקרון 14.
+36. **וירטואלי (12.11).** טל: "אנחנו מסתכלים עליהם כאילו זה חשבון אמיתי". ← עיקרון 13.
+37. **כסף אמיתי (12.11).** הוצעו כללים למעבר. טל: "זה שמור אצלי, אני מחליט". ← קו אדום.
+38. **המטרה (12.11).** טל: המטרה המרכזית, לא המשנית - הגדלת הרווחיות והקטנת הסיכון. ← ראש המסמך.
+39. **לומדים מהפסדים (12.11).** טל: בכל יום הפסד - דוח מה הפסיד, מה הסיבה ואיך משתפרים, "כל פעם ללמוד מהפסדים ולהשתפר כדי שההפסדים לא יחזרו", דוח "מאוד מקצועי ומאוד פיננסי". ← עיקרון 20.
+
+## איך המסמך גדל
+
+- **בכל ריצת לילה של המנהל:** כל החלטה שטל ביטל, דחה, שינה או שיפר מאז הריצה הקודמת (live/agent_decisions_state.json: undo, cards, הערות) נוספת כאן כמקרה חדש בתחתית: מה הוחלט, מה טל עשה, ומה העיקרון. אם מקרה חדש סותר עיקרון - מתקנים את העיקרון (עם התאריך והגרסה הקודמת בסוגריים), לא מוחקים.
+- **בכל שיחה עם Claude על המערכת:** החלטות חדשות של טל נוספות כאן.
+- **שימוש:** לפני כל החלטה, הסוכן או המנהל מחפש מקרה דומה. אם טל דחה משהו דומה - לא מציעים אותו שוב באותה צורה. אם טל שיפר משהו - מציעים בגרסה המשופרת שלו.
+
+## מקרים חדשים
+
+40. **דוח ההפסד (13.11).** הדוח הראשון אמר "יום רע רגיל". טל: "אין דבר כזה. אין מפסידים כי זה מה שנהוג. תלמד מזה, תשתפר. אני דורש מהמנהל לקחת את השיפור לידיים. מה עושים עם הנתונים? איך משפרים את האחוזים?" ← כל דוח מסתיים בתכנית: תיקון לכל אסטרטגיה מפסידה ושווי ב־% בחודש, והמנהל אוכף. טל: הורדת הסיכון לא באחוז קבוע, לא במדרגות ולא במשקולות - נוסחה ליניארית לכל נכס בנפרד מהמספרים שלו; אין יתרון ← כמות מינימלית.
+
+41. **גם להעלות סיכון (13.11).** טל: "ואיך גורמים לאסטרטגיות גם להעלות סיכון?" ← אותה נוסחה לשני הכיוונים, כל יום, לכל אסטרטגיה (agents/edge_risk.py): סיכון = הסיכון שאושר × (היתרון עכשיו ÷ היתרון שאושר). מצליחה בחי יותר מהבדיקה ← עולה, לאט (כמה עסקאות טובות שוקלות מעט מול בדיקה יציבה - ההגנה ממזל). התקרה איננה מספר: הבוט כולו מורץ מחדש על 2026 עם הסיכון החדש, וההעלאה רק עד הנקודה שבה הבוט נשאר במגבלות שלו (4.5% ביום, 9% בסך הכול). בוט שרוב האסטרטגיות שלו עוד בלי בדיקה - לא מעלים. הורדה - רק אחרי שהתיקונים נכשלו (קודם תיקון). השלב הבא שטל השאיר לאחר כך: חלוקת הסיכון בין כל האסטרטגיות של הבוט לפי היתרון והפיזור.
+
+(המנהל מוסיף כאן)
+
+## שיחות על עסקאות (13.11.2026)
+- טל רוצה שיחה קצרה ותמציתית מאוד: משפט אחד או שניים, בלי פירוטים. הפירוט המלא - בכרטיס או בקובץ הלקחים, לא בתשובה לו.
+- בגרפים מהירים (5 דק'/דקה) טל רוצה להקטין סיכון מוקדם: חצי החוצה בחצי הדרך וסטופ לכניסה. בירידה חדה הוא שואל אם סטופ קצת רחב יותר היה משאיר בעסקה - ומבקש לעקוב אחרי העסקה ולבדוק, לא לשנות מיד. (13.11)
+- טל משווה עסקאות אחיות: כששתי עסקאות מאותו דחף מקבלות סטופ שונה מאוד (US500 0.37% מול US100 1.3%, 13.11), הוא שואל אם הצמודה הייתה צריכה מרווח. הסוכן בודק את הרעיון על כל ההיסטוריה ולא משנה מיד. (13.11)
+- כשטל חוזר על בקשה אחרי 'אין שינוי' ("אני רוצה שבכל זאת") - זו העדפה מודעת שלו לניהול סיכון (לנעול רווח בגרפים מהירים), גם כשהנתונים מראים פער קטן לרעתה. לא מתווכחים שוב: כרטיס למנהל עם הבקשה והנתונים, והמנהל מחליט. (13.11)
+
+## סרטונים מטיקטוק / רשתות (טל, 14.11.2026, כלל קבוע)
+כל סרטון אסטרטגיה שטל שולח: פותחים אותו בכרום במחשב הבוטים ומבינים את השיטה. אם אפשר לבצע - עובר דרך המנהל: המנהל מחלק את המשימה לסוכני כל הבוטים לבדיקה כוללת, אוסף את התוצאות ומחליט על הכרטיסים,
+ולא רק בגרסה של הסרטון: מחפשים את הגרסה הרווחית והבטוחה לפי טיים פריים, זמנים (חדשות / פתיחות לונדון וניו יורק / אסיה) ונכסים
+(כל קבוצות FTMO, הגדרה אחת לקבוצה שנבחרת על כל המכשירים יחד). בטוח = סיכון קבוע, סטופ קבוע, בלי הגדלה אחרי הפסד / גריד / גידור־התאוששות
+(החלק הבטוח של שיטה כזאת כן נבדק). בחירה עד 31.12.2025, הצגה על 2026, כרטיס רק אם מחזיק.
+
+## בוטים 1-6 = חשבון FTMO ממומן רגיל (טל, 14.11.2026, כלל קבוע)
+כל הבוטים פרט לבוט 7 מתנהגים כאילו הם חשבונות ממומנים שעברו את המבחנים (FTMO Standard), באותם תנאים בדיוק - בבוט ובבדיקה ההיסטורית:
+הפסד יומי 5%, הפסד כולל 10%; אין עסקה פתוחה ואין הוראה ממתינה מעבר להפסקת מסחר של יותר משעתיים (סוף שבוע, חג) - סוגרים לפני;
+אין פתיחה / סגירה של עסקה מ־2 דקות לפני עד 2 דקות אחרי חדשה מוגבלת של המכשיר (אצלנו 3 דקות, לביטחון); בלי שיטות אסורות של FTMO.
+בוט 7 (חדשות, וירטואלי) מחוץ לכלל הזה.
+
+## אינדיקטורים - לא מוותרים (טל, 14.11.2026, כלל קבוע)
+"אני לא רוצה להתפשר - לא באסטרטגיות וגם לא באינדיקטורים שיכולים לעזור לאסטרטגיות." אינדיקטור מעניין מסרטון / פוסט שאין לנו:
+מחפשים את הקוד הפתוח שלו (TradingView Pine פתוח, GitHub, MQL5) ומתרגמים לפייתון, ואם הקוד סגור - בונים אותו בעצמנו לפי התיאור וההתנהגות בגרף.
+ואז בודקים אותו כמסנן / כניסה / יציאה על האסטרטגיות הקיימות ובשיטת הגאפ. גם "פרסומת לאינדיקטור" - מחפשים מה הוא עושה ובונים גרסה משלנו.
+אינדיקטורים שמציירים מחדש (repaint) - רק בגרסה שמחושבת על נרות סגורים בלבד, אחרת הבדיקה משקרת.
+
+## מאגר משותף לכל הבוטים (14.11.2026)
+"כל הבוטים יקבלו את האסטרטגיות שעוברות למאגר ויכולים להשתמש בהן, ויבדקו אם ניתן להשתמש בהן אצלם."
+- כל אסטרטגיה שבוט כלשהו סוחר בה עכשיו (בוטים 1-4 ו־7, ספריית החוקים) נכנסת למאגר (agent_portfolio.pool) ומוצעת לכל שאר הבוטים בדיוק כמו אסטרטגיה חדשה של הסייר: על כל המכשירים של הבוט, באותה בדיקה (חוקי לייב, עלויות FTMO, בחירה עד 2025, הצגה על 2026). מה שעובר - כרטיס כרגיל.
+- בוטים 5-6 בודקים גם אסטרטגיות של גרפים ארוכים, על גרף 15 דקות. הבדיקה מחליטה, לא ההנחה.
+- גם האסטרטגיה של הגאפ (tal_gap, בוטים 5-6) - לבדוק על המכשירים של בוטים 1-4 שמתאימים לה.
+- אסטרטגיות החדשות של בוט 7 (EV) לא עוברות לבוטים 1-6: חשבון ממומן אוסר מסחר סביב חדשות.
+
+## אינדיקטורים כבונה אסטרטגיות (14.11.2026)
+"אני רוצה שבנוסף לכך אינדיקטורים יעבדו כמעין בונה אסטרטגיות חדשות ולא רק מסנן אסטרטגיות קיימות."
+- מכל אינדיקטור בספרייה בונים אסטרטגיות חדשות (IB###): אינדיקטור לבד, כיוון מאחד + כניסה מאחר, גרף גבוה לכיוון + גרף נמוך לכניסה, עם כמה יציאות.
+- הן נבדקות כמו כל אסטרטגיה של הסייר על כל הבוטים ונכנסות למאגר; הרף מתוקן למספר הצירופים שנוסו.
+
+## כלל קובע ובלתי ניתן לשינוי: סיכון יומי וכללי (14.11.2026)
+"יש כלל קובע ובלתי ניתן לשינוי - הכלל של הסיכון היומי והכללי. אם נפתח סיכון כזה - זה לא תקין."
+- בכל בוט (גם 7): כל עסקה פתוחה וכל פקודה ממתינה נספרות כאילו הגיעו לסטופ. עסקה חדשה מקבלת רק את המקום שנשאר עד 4.5% מתחילת היום ו־9% מגודל החשבון. אין יוצא מן הכלל.
+- בדיקות וריצות של בוט שלם חייבות להפעיל את אותה הגנה. שינוי שמגדיל סיכון פתוח מעבר למקום הזה לא מאושר אף פעם.
+
+## הסייר סורק את טיקטוק לבד (14.11.2026)
+"מעכשיו אני רוצה שהסייר יסתכל על סרטונים לבד. הוא יסרוק דרך המחשב של הבוטים אלפי שילובים של חיפושים... כל אסטרטגיה חדשה או אינדיקטור חדש שחסר במאגר שממנו ניתן להפיק מידע חדש, בין אם זה למידה או בניית אסטרטגיה חדשה."
+- משימה מתוזמנת נפרדת (סייר הטיקטוק) מחפשת בכרום של מחשב הבוטים לפי data/agents/scout/tiktok_explore.json (כ־3,700 חיפושים), כ־20 חיפושים בכל ריצה עם הפסקות, כדי לא להיחסם ולא לפגוע במשימות הקיימות.
+- כשהחיפושים נגמרים: עדכון לטל, ואחר כך רק סרטונים חדשים.
+- הסייר הרגיל בונה את הרעיונות שנאספו (משימה tal1411ttx).
+- אחרי טיקטוק: אינסטגרם, באותו אופן בדיוק - הכל מהכל, בלי לחפף ובלי יוצאים מהכלל. בסוף: דוח.
+- אחרי אינסטגרם: יוטיוב, הכל מהכל. בסוף: דוח מפורט.
+- אחרי יוטיוב: חזרה לטיקטוק לתוכן חדש, וכן הלאה בסבב. הסייר הרגיל ממשיך בעבודה הרגילה שלו בזמן הזה.
+
+## אין מסחר בשבת ובראשון (15.11.2026)
+"שים לב שאין מסחר בשבת וראשון. לכן העבודה של הסוכנים בימים האלו צריכה להיות חד פעמית."
+- כל הסוכנים החכמים (בוטים 1-7, הסייר, המנהל, התשובות להערות) רצים בימים שני-שישי בלבד, לפי הלוח הרגיל.
+- בסוף השבוע: ריצה אחת בלבד של כל אחד, ביום ראשון ב־14:07, לפני פתיחת השווקים בלילה.
+- סייר הרשתות: כל 6 שעות בימי מסחר בלבד.
+
+## מכשיר שלא קיים אצל הברוקר (15.11.2026)
+"אם יש נכסים שלא נכנסים לבוט בגלל שלא נמצא בברוקר הנוכחי, כשיבדקו כל אלו בברוקר אחר כשהבוט יפתח שוב אצל מישהו אחר."
+- אסטרטגיה טובה שנדחתה רק כי המכשיר לא קיים בשרת של הבוט נשמרת ב־data/agents/broker_parked.json עם המספרים שלה.
+- כשהבוט עובר לברוקר שבו המכשיר נסחר - המנהל פותח אותה מחדש אוטומטית ומחליט עליה שוב (agents/autodecide.py).
+
+## Opposite trades on the same instrument (user, 16.11.2026)
+Long and short on the same instrument in one bot are allowed (different timeframes). Studied on bots 1-4
+(agents/conflict_study.py, reports/agents/conflict_summary.json): skip / keep the stronger / half risk / closer
+targets (each before the other's stop) - none beat "as today" on 2026; the conflicting trades earned on balance
+(bot 3 gold +98R in 2026). Decision: no change. Re-checked monthly (GitHub, 1st of the month); a way is brought to
+the user only if it beats "as today" in every bot on 2026 with no larger fall from the peak - never built without him.
+
+## Tight stops and costs (user, 16.11.2026)
+Bot 5's 19 scout strategies at stop x0.75 / 1 / 1.25 / 1.5 (agents/stop_study.py, reports/agents/bot5/stop_study):
+all together on 2026 +243R / +270R (as traded) / +235R / +165R; a per-strategy pick on 2025 loses -70R on 2026.
+A wider stop cuts the costs' share but makes the same target fewer R - it does not pay. Bot 6's own grid already
+chose its stops. Decision: no change. (SC326|5Min|GBPUSD: costs 13% of the risk at x1 - its result already includes them.)
+
+## Follow-through after entry (user, 16.11.2026)
+Tal reads the first bars after the entry as order flow: strong bars in the trade's direction = more sellers than buyers (or buyers) = more confidence the trade is right. A good entry for him is one the market confirms at once. (Task b5follow1611 tests it as a management rule.)
+
+## Choppy market - managing open trades (user, 16.11.2026)
+Tested on bots 1-5 (agents/chop_study.py, reports/agents/chop_study.json; choppy = 1-hour ADX(14)<20 or
+Choppiness(14)>61.8): stop to entry at +0.3/0.5/1R, half out at +0.3/0.5/1R, exit (whole or half) at the 24-hour
+range's Fibonacci 0.618 / 0.786 / edge, no new trades while choppy. Every way lost against "as today" in every bot,
+on 2025 and on 2026 (the least bad: stop to entry at +1R, -1 to -12 points). Trades opened while choppy earn too;
+the profit is in the trades that break out of the range - cutting them in the range cuts the profit. Entries while
+choppy stay allowed (user). Decision: no change. Do not bring chop exits again without a new idea.
+
+## A stop hit before the move (user, 16.11.2026)
+When a trade is stopped and the price then goes on to the target, Tal reads it as a wrong stop placement, not bad luck, and wants it researched and fixed. His structural fix: the stop beyond a further swing (the third swing) when the side that pushes (sellers / buyers) is clearly stronger. A trade that enters and is stopped in the same bar looks "illogical" to him. (Task b5stop1611; the general wider-stop test of 16.11 did not pay - each case is tested on the strategy itself before any change.)
+
+## Conversation with the manager (user, 16.11.2026)
+Tal talks with the manager (spoken or typed) on the app's "מנהל הבוטים" page about everything across the bots. The
+conversation responder answers as the manager every hour on weekdays, and records what Tal said: principles here,
+standing rules in data/agents/user_rules.json, tasks in data/agents/replies.json "_tasks", and every exchange in
+data/agents/manager_talk.md. Every agent reads data/agents/manager_talk.md together with this file.
+
+## A profit that turns into a full loss (user, 16.11.2026)
+Tal judges a day by its trades' path, not only their end: a trade that reached a real profit (50-60% of the target)
+and then closed at the full stop is, for him, a management failure - "I am not willing to have such a day again".
+He has asked many times for partial exits and is losing patience ("I keep saying it, I'm sick of losing like this").
+For the agents: every bot tests partial exits / earlier break-even / stepped locking per strategy in every market
+(not only in chop), records MFE/MAE live, and brings a card the moment something wins on both periods; when
+answering him, show that it was checked on his real trades, not a generic answer. (Tasks tal1611gaveback, tal1611partial.)
+Opposite trades on the same instrument AND the same timeframe also look wrong to him (risky), even when allowed (task b2jpy1611).
+
+## Being kept informed of decisions (user, 16.11.2026 19:05)
+After asking for a change Tal waits for the outcome: "I'm waiting for an update... keep going, but I want to know what the decisions are". For the agents: when a task he raised is decided (change or no change), say the decision plainly and briefly in his conversation; do not leave him without a result.
+
+## "No change" reads to him as "deciding to lose" (user, 16.11.2026 19:20)
+"So even though all of today's losing trades were in profit at some point, we still decide to lose - is that what you're saying?" A test result that says "no change" after a painful day sounds to Tal like accepting the loss. For the agents: when a rule he asked for loses on the history, say in one plain sentence what it would cost (it cuts the big winners and earns less on both periods), check his claim on the live trades (here 7 of 10 losers were in profit, not all), and say what is still being tested where he may be right - never just "no change".
+
+## Entry location and direction (user, 16.11.2026 19:49)
+On a scout long (SC071 US30, lower Keltner band) in a falling market: "wrong identification, not the place, it should have been a short". Tal judges an entry first by where it is and whether it goes with the move; a long-only mean-reversion buy against a falling market is a wrong read for him. For the agents: a strategy that trades one direction only should be tested with a higher-timeframe direction filter (and the opposite side) before it keeps its risk (task b5sc071dir1611).
+
+## Many small wins over one big win - a smooth equity curve (user, 16.11.2026 20:28)
+"Better, in my opinion, many small wins every day and few losses than one big win once" - Tal values a smooth curve (many green days, few losers) and not only the total. For the agents: every exit / management study, in every bot, reports beside the total also the win rate, % green days, max drawdown, the worst day and the daily spread, on both periods; a way that clearly smooths the curve on both periods and still earns comes to the manager as a card even if its total is somewhat lower (the manager decides). When small wins do NOT smooth it (bot 5 scouts: half out at +1R cut 2026 to about a quarter and the drawdown grew, because the losses stay full), say so plainly. (Task mgr1611curve.)
+
+## His own rules are expected everywhere (user, 16.11.2026 20:29)
+"If an asset passed 60%, why didn't we get to the break-even stop as we set - is there a reason?" Tal remembers the rules he set (break-even at 60% of the way, 9-10.11) and expects them to apply in every bot and track; a place where a rule of his does not apply (bot 5's gap tracks trade with no management) must be tested and explained to him, not left silent. (Task tal1611gaveback, be60 on the gap tracks.)
+
+## The chart must show the strategy's real reason (user, 17.11.2026 04:33)
+Tal reads every trade's chart as the bot's claim: "you claim there was a gap - I see no gap". A label that does not match the strategy (a "gap" / "impulse" drawn on a moving-average cross) reads to him as a wrong identification and a bad entry. For the agents: each trade's chart shows only what that strategy really saw (its timeframe, its signal candle, its indicator), never the gap method's drawing on a non-gap trade (task b5scchart1711).
+
+## Choppy-day rule: confirm twice before acting (user, 17.11.2026)
+After the choppy day of 16.11.2026 (46 of 64 closed trades lost, gold -$3,594 in both directions) the tests
+(agents/mgmt_study.py, agents/chop_lab.py; reports/agents/mgmt_study.json, chop_lab.json) found one improvement:
+bot 1 - "no new trade on an instrument for the rest of the day after 2 losing trades on it" (streak@2): +10.8 points
+on 2025, +22.6 on 2026, max fall 7.8% -> 6.8%. It hurt bots 3-5 and did nothing for bot 2. Chop detectors (13 of
+them) did not predict losing trades, and managing trend trades while choppy (15 ways, per bot and per strategy) lost
+on 2026.
+Tal: do NOT turn it on now. "If there is another day like this, repeat this test on that choppy day, and only if it
+repeats itself once more - then turn it on."
+What this means for the agents:
+- A choppy day = a trading day on which 60%+ of the closed trades of bots 1-7 lost AND the instrument that lost the
+  most lost in both directions (buys and sells).
+- After such a day (the bots 1-4 agents check every morning): dispatch .github/workflows/chop_study.yml (fresh data,
+  bots 1-5), then .github/workflows/mgmt_report.yml with that run's id, and compare reports/agents/mgmt_study.json.
+- If bot 1's streak@2 again beats "as today" on BOTH periods with no larger max fall: build it in bot 1 (a card with
+  the change, the manager approves) and tell Tal in the app. If not: record the result here and wait for the next
+  choppy day. Any other bot only if it passes the same way twice.
+
+## Which gap: the first one, inside the impulse (user, 17.11.2026 15:51-16:09)
+Reviewing bot 5's gap setups: "an impulse built of one candle - there is an impulse, but no gap comes out of it inside the impulse, so there is no trade"; and on GER40: "there is another, higher gap at the start of the impulse (around 26,417) - that is the gap you must reach, the entry is there". For Tal the trade is born from a gap INSIDE the impulse, and the gap that counts is the first one at its start (the origin), not a later one near its end - even when its candle 2 is not exceptionally strong by our threshold. For the agents: test "the first gap of each impulse" (with a lower strength threshold for it) against today's choice (task tal1711review, FIRSTG). He also judges the stop on the high timeframe: a review chart must show enough candles before the impulse and the stop's swing, or he cannot decide (task b5revchart1711). On 17.11 16:44-16:50 (GER40 x3, UK100) he added the second half: "the gap should be higher in the impulse, but if we do enter at this one, the stop must be at the start of the impulse, its very beginning, the highest point" - a later gap inside the impulse is not a reason for a tight stop; its stop belongs beyond the impulse's origin (geo.imp0), the place that proves the move wrong. For the agents: test STOPAT imp0 / imp0late against the 2nd-swing stop, with and without FIRSTG (task b5stopimp1711).
+
+## הפרדת בוט 5 (טל, 17.11.2026 ערב)
+- בוט 5 = רק שיטת הגאפ של טל, עם שאלות "היית נכנס?". החשבון הווירטואלי אופס (ACCT_V 5).
+- "בוט 5ב · סייר" = חשבון וירטואלי חדש ($100K) לכל אסטרטגיות הסייר של בוט 5, בדיוק כמו שעברו את הבדיקה, בלי שאלות (live/watch_scout_state.json).
+- המסלולים הישנים (v4, v5, פערים בדקה, רחב, איסוף נתונים) - מוצגים ולא נספרים; ההחלטה עליהם אצל טל.
+
+## Risk management across the bots, after two red days (user, 17.11.2026 16:15)
+"I can't understand how we are on the second day in a row of crazy losses in all the bots... with all the alternatives and our strategy, how do you not have risk-management strategies?" Tal judges the system as a whole: several red days together across bots 1-4 read to him as missing risk management, even when each day is far inside the 5% limit (17.11: bots 1/3/4 about -2% each). For the agents: risk management for him is not only the hard limits and the per-trade risk - he expects active brakes (a soft daily brake, smaller risk after losing days, a pause after big news) and no hidden doubling (the same strategy in several bots losing together). Answer such a question with the real numbers first, then what is being built; test the brakes on the whole-bot and all-bots backtest (task tal1711riskmgmt).
+
+## A loss is fixed in the strategy, not only in the management (user, 17.11.2026 17:26)
+"In the loss reports you only look for excuses and only manage the trade, instead of also looking for different entry points and exit points - a different stop or target. I want you to look for all of it." For Tal a loss review that ends with "manage it better" or "a normal day" is an excuse; he expects the strategy itself to be questioned: where it entered, where its stop and target sit, and only then how it is managed. For the agents: every loss is tested on all families together (entry, stop, target, filter, management and their combinations), and the answer to him says what was found in each (rule loss_all_families, task tal1711lossall).

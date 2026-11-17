@@ -50,7 +50,7 @@ ALL_TRADES = []      # test mode: every combo's trades, passed or not (08.11.202
                      # combos that passed, so pooling those files over-states every strategy)
 OPT_RESULTS = []
 # trade-management grid: target (None = strategy's own, "none" = no target), breakeven fraction (0 = off), ATR-stop scale
-OPT_TARGETS = [None, ("R", 1.0), ("R", 1.5), ("R", 2.0), ("R", 3.0), "none"]
+OPT_TARGETS = [None, ("R", 1.0), ("R", 1.5), ("R", 2.0), ("R", 3.0), ("R", 4.0), ("R", 5.0), "none"]   # 4 / 5R: 12.11.2026 (QB11's 8R)
 OPT_BE = [None]                 # None = the run's own --breakeven (the bots' rule)
 OPT_STOP = [0.75, 1.0, 1.25, 1.5]
 OPT_ENTRY = [0.0, 0.25, 0.5]     # limit order this many R better than the next open, valid 3 bars
@@ -98,19 +98,58 @@ def _regimes(df):
         "vol_normal": ((pr > 0.2) & (pr < 0.9), (pr > 0.2) & (pr < 0.9)),
         "vol_high": (pr >= 0.5, pr >= 0.5),
         "vol_low": (pr < 0.5, pr < 0.5),
+        **_extra_regimes(c),
+        **R.video_regimes(h, l, c, df["o"].to_numpy(), df.index),
     }
 
 
-def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args):
-    """Each regime filter on one combo: choose on the training window, check on the later window."""
-    fn = R.STRATEGIES[sid][1]
+# the user's filters (14.11.2026, task tal1411ema): tried only with --filters-extra (bot 7 first); always known to
+# _regimes so a built plan with one of them resolves
+EXTRA_REGIMES = ("ema9_20", "bbw_p20")
+RSI_REGIMES = ("rsi_trend",)            # tried only with --filters-rsi (bots 1-4 first, task tal1411rsi)
+VIDEO_REGIMES = R.VIDEO_REGIMES         # tried only with --filters-video (bots 1-4, tasks tal1411set2-set5)
+
+
+def _extra_regimes(c):
+    """ema9_20: EMA 9 above EMA 20 = longs only, below = shorts only (the bar's own timeframe).
+    bbw_p20: Bollinger 20/2 width ((upper - lower) / middle) above its 20th percentile of the last 100 bars."""
+    e9, e20 = R.ema(c, 9), R.ema(c, 20)
+    s = pd.Series(c)
+    mid, sd = s.rolling(20).mean(), s.rolling(20).std(ddof=0)
+    w = (4 * sd / mid).to_numpy()
+    lo = pd.Series(w).rolling(100, min_periods=50).quantile(0.2).to_numpy()
+    ok = np.isfinite(w) & np.isfinite(lo) & (w > lo)
+    # rsi_trend (user, 14.11.2026, task tal1411rsi): in a trend the RSI does not reach 30 / 70 - a buy on a low RSI under
+    # the 200 average (a falling market, where the RSI swings ~20-60) or a sell on a high RSI over it (~40-80) is
+    # against the trend: those entries are skipped, everything else trades. One setting (35 / 65), not tuned.
+    e200, rs = R.ema(c, 200), R.rsi(c, 14)
+    with np.errstate(invalid="ignore"):
+        rl = ~((c < e200) & (rs < 35))
+        rsh = ~((c > e200) & (rs > 65))
+    return {"ema9_20": (e9 > e20, e9 < e20), "bbw_p20": (ok, ok), "rsi_trend": (rl, rsh)}
+
+
+def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """Each regime filter on one combo: choose on the training window, check on the later window - on top of the
+    exits / trade management the bot trades now (--plans-file), like manage_combo (13.11.2026: the filters were tested
+    on the strategy's own exits, so a filter card's baseline was not what runs - TV58|1Hour|USDCAD bot 3 got a filter
+    and a new exit plan built together, the pair never tested)."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
     t0, t1 = SPLIT, pd.Timestamp(args.filters, tz="UTC")
+    pk = {k: v for k, v in plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {}).items()}
     regimes = _regimes(df)
     rows, keep = [], {}
     for name, (al, ash) in regimes.items():
+        if name in EXTRA_REGIMES and not getattr(args, "filters_extra", False):
+            continue
+        if name in RSI_REGIMES and not getattr(args, "filters_rsi", False):
+            continue
+        if name in VIDEO_REGIMES and not getattr(args, "filters_video", False):
+            continue
         def g(d, al=al, ash=ash):
             lo, sh, plan = fn(d)
-            return np.asarray(lo, bool) & al, np.asarray(sh, bool) & ash, plan
+            return np.asarray(lo, bool) & al, np.asarray(sh, bool) & ash, {**plan, **pk}
         t = R.run(df, g, cost, breakeven=be, session_exit=sess)
         t = drop_hole_trades(t, df, s, tf)
         if t.empty:
@@ -128,7 +167,280 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args):
     best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
     base = next((x for x in rows if x["variant"] == "none"), None)
     OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows})
-    for k in {best["variant"], "none"} & set(keep):
+    # --filters-all-trades (bots 1-4 smart agent, 14.11.2026): every filter's trades, for the whole-family fix test
+    # (agent_portfolio.family_fix sums each filter over the family's instruments - with only the per-instrument pick
+    # kept, a filter counted only where it happened to win, e.g. SC010|15Min bbw_p20 = ASML alone)
+    # ... and always the filter the bot trades now (bots 1-4 smart agent, 14.11.2026 evening: a built filter that was not
+    # this run's pick had no trades stored - bot 4 BK05|1Hour|EURUSD adx_range, bot 3 TV50|15Min|ASML with_trend200 -
+    # so the whole-bot check, agents/portfolio_check.current_trades, left those strategies out of the bot's replay)
+    built = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    for k in (set(keep) if getattr(args, "filters_all_trades", False) else {best["variant"], "none", built} & set(keep)):
+        COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
+
+
+# trade management per strategy (user, 12.11.2026: "every strategy moves its stop to break-even at some point, the
+# timing tuned per strategy" + partial exits): on top of the combo's exits as the bot trades it now (--plans-file)
+# never without a breakeven: every strategy moves its stop to the entry at some point (user, 09.11.2026) - only WHEN
+MAN_BE = [0.4, 0.5, 0.6, 0.7, 0.8]                      # with a target: breakeven at this share of the way
+MAN_BE_R = [0.75, 1.0, 1.5, 2.0, 2.5, 3.0]               # no target: breakeven once this many R in profit
+# 0.75 / 1R and half at +0.5R (bots 1-4 smart agent, 14.11.2026): 22 live trades of bots 1-4 were +0.5R or more and
+# ended at a full stop (-22R), 11 of them no-target strategies (FR01 GBPUSD +1.16R, TV20 XAUUSD +0.84R, SE02 USDJPY
+# +0.56R x4, FR08 SPCX x3) - the grid never had a point under 1.5R for them. Chosen to 2025 / shown on 2026 as always.
+MAN_PART = [None, (0.5, 0.25), (0.3, 0.5), (0.3, 0.7), (0.5, 0.5), (0.5, 0.7)]   # with a target: (share out, way); half at a quarter: 12.11.2026
+MAN_PART_R = [None, (0.5, 0.5), (0.3, 1.0), (0.5, 1.0), (0.3, 2.0), (0.5, 2.0)]    # no target: (share out, at R)
+# Fibonacci levels of the way from the entry to the target (user, 12.11.2026 - standing task for every bot): the stop to
+# entry at each level, a part out (25% / 33% / 50%) at one level and the rest to breakeven / the target, two levels
+# (a part out at 38.2%, breakeven at 61.8%). --manage-grid fib; strategies with no target have no way to measure.
+FIB_BE = [0.236, 0.382, 0.5, 0.618, 0.786, 0.886]
+FIB_PART = [None] + [(sh, lv) for sh in (0.25, 0.33, 0.5) for lv in (0.382, 0.618, 0.786)]
+PLANS = {}                                              # --plans-file: combo -> the bot's built plan (live/bots/<bot>.json)
+
+
+def plan_keys(p):
+    """The bot's built plan in the engine's words (the same as live/runner.py plan_of)."""
+    out = {}
+    if p.get("target") == "none":
+        out["target"] = None
+    elif p.get("target") is not None:
+        out["target"] = ("R", float(p["target"]))
+    if p.get("stop") is not None and float(p["stop"]) != 1.0:
+        out["stop_scale"] = float(p["stop"])
+    if p.get("limit"):
+        out["entry_pullback"] = (float(p["limit"]), 3)
+    for k in ("be_way", "be_r"):
+        if p.get(k) is not None:
+            out[k] = float(p[k])
+    if p.get("partial"):
+        out["partial"] = tuple(float(x) for x in p["partial"])
+    if p.get("ladder"):
+        out["ladder"] = (tuple(float(x) for x in p["ladder"]), int(p.get("ladder_bars") or LADDER_BARS))
+    # a built pyramid (bots 2 / 4 since 14.11.2026, live/runner.plan_of "pyramid"): every experiment on the combo runs
+    # with it, as the bot trades (bots 1-4 smart agent, 14.11.2026 late night - before, the backtests left it out)
+    if p.get("pyramid") and len(p["pyramid"]) == 2:
+        out["pyramid"] = (float(p["pyramid"][0]), float(p["pyramid"][1]))
+    out.update(rule_keys(p, exits=not any(k in p for k in ("target", "stop", "limit"))))
+    return out
+
+
+def rule_keys(p, exits=True):
+    """The morning review's live rules on a combo (agent_portfolio puts them in the plans file as "rules", 14.11.2026),
+    in the engine's words - as live/runner.combo_rules: direction and hours always, the target / stop factors only
+    when the combo has no built exit plan (the plan wins for the exits)."""
+    r, out = p.get("rules") or {}, {}
+    try:
+        if r.get("dir") in (1, -1):
+            out["rule_dir"] = int(r["dir"])
+        if r.get("hours") and len(r["hours"]) == 2 and 0 <= int(r["hours"][0]) < int(r["hours"][1]) <= 24:
+            out["rule_hours"] = (int(r["hours"][0]), int(r["hours"][1]))
+        if exits and r.get("tp") is not None and 0.3 <= float(r["tp"]) < 1:
+            out["rule_tp"] = float(r["tp"])
+        if exits and r.get("sl") is not None and 0.5 <= float(r["sl"]) < 1:
+            out["rule_sl"] = float(r["sl"])
+    except (TypeError, ValueError):
+        return {}
+    return out
+
+
+# laddered entries (user, 13.11.2026, standing task of the bot 1-4 agents): the same total risk split into equal parts,
+# part k a limit order k x risk better than the signal's open (0 = at the open), valid LADDER_BARS bars, the same stop
+# and target (rules_agent.run, plan "ladder"). "lad0" = one entry at the open, as the bots trade now.
+LADDER_BARS = 3
+LADDERS = {"lad0,0.5": (0.0, 0.5), "lad0,0.25,0.5": (0.0, 0.25, 0.5), "lad0,0.33,0.67": (0.0, 0.33, 0.67),
+           "lad0,0.25,0.5,0.75": (0.0, 0.25, 0.5, 0.75), "lad0.25,0.5": (0.25, 0.5)}
+
+
+def lad_key(levels):
+    return "lad" + ",".join(f"{float(x):g}" for x in levels) if levels else "lad0"
+
+
+def ladder_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """Every laddered entry of one combo, on top of its plan as the bot trades it now (exits, filter, management)."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
+    t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
+    pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
+    if pk.get("entry_pullback"):
+        return                                   # a built limit entry is already one ladder step
+    plan0 = {**fn(df)[2], **pk}
+    flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    regime = _regimes(df).get(flt) if flt else None
+    rows, keep = [], {}
+    for key, lv in [("lad0", None)] + list(LADDERS.items()):
+        extra = {**pk, **({"ladder": (lv, LADDER_BARS)} if lv else {})}
+
+        def g(d, extra=extra):
+            lo, sh, plan = fn(d)
+            if regime is not None:
+                lo, sh = np.asarray(lo, bool) & regime[0], np.asarray(sh, bool) & regime[1]
+            return lo, sh, {**plan, **extra}
+        t = R.run(df, g, cost, breakeven=be, session_exit=sess)
+        t = drop_hole_trades(t, df, s, tf)
+        if t.empty:
+            continue
+        if real:
+            t = C.apply(t, s, SPREADS.get(s))
+        if events is not None:
+            t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
+        tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
+        rows.append({"variant": key, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
+        keep[key] = t[t["time"] >= t0]
+    if not rows:
+        return
+    ok = [x for x in rows if x["train"]["n"] >= 20]
+    best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
+    base = next((x for x in rows if x["variant"] == "lad0"), None)
+    OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows,
+                        "has_target": plan0.get("target") is not None})
+    for k in set(keep):
+        COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
+
+
+# pyramid (user, 14.11.2026, task tal1411anti): add `frac` of a position at `at` R in profit, the whole stop moved so a
+# stop still loses exactly 1R (rules_agent.run, plan "pyramid"). "pyr0" = no adding, as the bots trade now. No
+# martingale: nothing is added to a losing trade and the risk never goes over the bot's 1R.
+PYRS = {"pyr1@0.5": (1.0, 0.5), "pyr1.5@0.5": (1.5, 0.5), "pyr1@0.33": (1.0, 0.33), "pyr2@0.5": (2.0, 0.5)}
+
+
+def pyr_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """Every pyramid variant of one combo, on top of its plan as the bot trades it now (exits, filter, management)."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
+    t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
+    # "pyr0" stays without adding, also when a pyramid is built (it is one of the variants)
+    pk = {k: v for k, v in plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {}).items() if k != "pyramid"}
+    plan0 = {**fn(df)[2], **pk}
+    flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    regime = _regimes(df).get(flt) if flt else None
+    rows, keep = [], {}
+    for key, pv in [("pyr0", None)] + list(PYRS.items()):
+        extra = {**pk, **({"pyramid": pv} if pv else {})}
+
+        def g(d, extra=extra):
+            lo, sh, plan = fn(d)
+            if regime is not None:
+                lo, sh = np.asarray(lo, bool) & regime[0], np.asarray(sh, bool) & regime[1]
+            return lo, sh, {**plan, **extra}
+        t = R.run(df, g, cost, breakeven=be, session_exit=sess)
+        t = drop_hole_trades(t, df, s, tf)
+        if t.empty:
+            continue
+        if real:
+            t = C.apply(t, s, SPREADS.get(s))
+        if events is not None:
+            t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
+        tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
+        rows.append({"variant": key, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
+        keep[key] = t[t["time"] >= t0]
+    if not rows:
+        return
+    ok = [x for x in rows if x["train"]["n"] >= 20]
+    best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
+    base = next((x for x in rows if x["variant"] == "pyr0"), None)
+    OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows,
+                        "has_target": plan0.get("target") is not None})
+    for k in set(keep):
+        COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
+
+
+def man_key(has_target, be, part):
+    b = (f"be{be:g}" if has_target else f"ber{be:g}")
+    return f"{b}|part{'0' if part is None else f'{part[0]:g}@{part[1]:g}'}"
+
+
+def manage_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """Every breakeven point x partial exit of one combo, on top of its exits as the bot trades it now."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
+    t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
+    pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
+    plan0 = {**fn(df)[2], **pk}
+    has_target = plan0.get("target") is not None
+    flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    regime = _regimes(df).get(flt) if flt else None
+    rows, keep = [], {}
+    be_list, part_list = (MAN_BE, MAN_PART) if has_target else (MAN_BE_R, MAN_PART_R)
+    if getattr(args, "manage_grid", "std") == "fib":
+        if not has_target:
+            return
+        # the combo as the bot trades it now stays in the grid (the card's baseline): its own breakeven / partial
+        own_be = float(pk.get("be_way", 0.6))
+        own_part = tuple(pk["partial"]) if pk.get("partial") else None
+        be_list = sorted(set(FIB_BE) | {own_be})
+        part_list = FIB_PART + ([own_part] if own_part and own_part not in FIB_PART else [])
+    for bv in be_list:
+        for part in part_list:
+            extra = {**pk, **({"be_way": bv} if has_target else {"be_r": bv or None, "lock_r": (3.0, 1.0) if bv else None})}
+            if part is not None:
+                extra["partial"] = part
+
+            def g(d, extra=extra):
+                lo, sh, plan = fn(d)
+                if regime is not None:
+                    lo, sh = np.asarray(lo, bool) & regime[0], np.asarray(sh, bool) & regime[1]
+                return lo, sh, {**plan, **{k: v for k, v in extra.items() if v is not None},
+                                **({"be_r": None, "lock_r": None} if not has_target and not bv else {})}
+            t = R.run(df, g, cost, breakeven=be, session_exit=sess)
+            t = drop_hole_trades(t, df, s, tf)
+            if t.empty:
+                continue
+            if real:
+                t = C.apply(t, s, SPREADS.get(s))
+            if events is not None:
+                t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
+            tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
+            key = man_key(has_target, bv, part)
+            rows.append({"variant": key, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
+            keep[key] = t[t["time"] >= t0]
+    if not rows:
+        return
+    base_key = man_key(has_target, 0.6 if has_target else 2.5, None)
+    ok = [x for x in rows if x["train"]["n"] >= 20]
+    best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
+    base = next((x for x in rows if x["variant"] == base_key), None)
+    OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": base, "all": rows, "has_target": has_target})
+    for k in set(keep):
+        COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
+
+
+SWING_STOPS = [None, (2, 3, 0.0), (2, 3, 0.1), (3, 3, 0.0), (3, 3, 0.1)]   # (k-th swing, bars each side, pad x ATR)
+
+
+def swing_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
+    """--manage-grid swing (user, 16.11.2026, task b5stop1611: "the stop beyond the third swing"): the combo as the bot
+    trades it now (--plans-file) with its stop moved beyond the 2nd / 3rd swing of its own timeframe (+0 / 0.1 ATR),
+    the target in price as it was (rules_agent.swing_stop). Variant "sw0" = as it trades."""
+    fn0 = R.STRATEGIES[sid][1]
+    fn = fn0 if news_block is None else _blocked(fn0, news_block)
+    t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
+    pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
+    flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    regime = _regimes(df).get(flt) if flt else None
+    rows, keep = [], {}
+    for sw in SWING_STOPS:
+        def g(d, sw=sw):
+            lo, sh, plan = fn(d)
+            if regime is not None:
+                lo, sh = np.asarray(lo, bool) & regime[0], np.asarray(sh, bool) & regime[1]
+            return lo, sh, {**plan, **pk, **({"stop_swing": sw} if sw else {})}
+        t = R.run(df, g, cost, breakeven=be, session_exit=sess)
+        t = drop_hole_trades(t, df, s, tf)
+        if t.empty:
+            continue
+        if real:
+            t = C.apply(t, s, SPREADS.get(s))
+        if events is not None:
+            t = t[~(NC.blocked(t["time"], s, events) | NC.blocked(t["exit_time"], s, events))]
+        key = "sw0" if sw is None else f"sw{sw[0]}|p{sw[2]:g}"
+        tr, va = t[(t["time"] >= t0) & (t["time"] < t1)], t[t["time"] >= t1]
+        rows.append({"variant": key, "train": _stats(tr["r"]), "valid": _stats(va["r"])})
+        keep[key] = t[t["time"] >= t0]
+    if not rows:
+        return
+    ok = [x for x in rows if x["train"]["n"] >= 20]
+    best = max(ok or rows, key=lambda x: (x["train"]["sum"], x["train"]["pf"]))
+    OPT_RESULTS.append({"combo": f"{sid}|{tf}|{s}", "best": best, "base": next((x for x in rows if x["variant"] == "sw0"), None),
+                        "all": rows, "has_target": True})
+    for k in set(keep):
         COMBO_TRADES.append(keep[k].assign(sid=sid, tf=tf, symbol=s, variant=k))
 
 
@@ -136,14 +448,38 @@ def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_bloc
     """Every grid variant of one combo (target x stop distance x entry): stats on the training window and
     on the later window. All variants' trades are kept for improve.py, which decides."""
     fn0 = R.STRATEGIES[sid][1]
-    fn = fn0 if news_block is None else _blocked(fn0, news_block)
+    fn1 = fn0 if news_block is None else _blocked(fn0, news_block)
+    # the market-regime filter the bot trades now (--plans-file, 13.11.2026), so the exit grid is measured on the
+    # entries that really run
+    flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
+    regime = _regimes(df).get(flt) if flt else None
+
+    def fn(d):
+        lo, sh, plan = fn1(d)
+        if regime is not None:
+            lo, sh = np.asarray(lo, bool) & regime[0], np.asarray(sh, bool) & regime[1]
+        return lo, sh, plan
     t0, t1 = SPLIT, pd.Timestamp(args.optimize, tz="UTC")
     rows, keep = [], {}
     bf = be[0] if be else 0.0
+    # the review's live rules (14.11.2026): direction / hours on every variant; its target / stop factors only on the
+    # strategy's own exits (an approved exit plan replaces them in the live bot, live/runner.combo_rules)
+    rk_all = rule_keys(PLANS.get(f"{sid}|{tf}|{s}") or {}, exits=True)
+    rk_dir = {k: v for k, v in rk_all.items() if k in ("rule_dir", "rule_hours")}
+
+    def with_rules(g, extra):
+        if not extra:
+            return g
+
+        def h(d):
+            lo, sh, plan = g(d)
+            return lo, sh, {**plan, **extra}
+        return h
     for tg in OPT_TARGETS:
         for sc in OPT_STOP:
             for pb in OPT_ENTRY:
-                t = R.run(df, _variant(fn, tg, sc, pb), cost, breakeven=be, session_exit=sess)
+                rk = rk_all if (tg is None and sc == 1.0 and not pb) else rk_dir
+                t = R.run(df, with_rules(_variant(fn, tg, sc, pb), rk), cost, breakeven=be, session_exit=sess)
                 t = drop_hole_trades(t, df, s, tf)
                 if t.empty:
                     continue
@@ -247,6 +583,10 @@ def main():
     ap.add_argument("--news-exit", action="store_true",
                     help="FTMO calendar holidays (data/ftmo_calendar/history.json) close the affected markets for the day; "
                          "restricted events are applied minute by minute later (bots_compare.py --news)")
+    ap.add_argument("--news-minute", action="store_true",
+                    help="FTMO restricted events minute by minute on every trade, like the live bots (13.11.2026): a position "
+                         "open 3 minutes before an event on its instrument is closed then at the 1-minute price, a signal "
+                         "inside the window (3 minutes before to 3 after) is not taken")
     ap.add_argument("--break-exit", action="store_true",
                     help="FTMO Standard account: close every position before any market break longer than 2 hours (weekends too)")
     ap.add_argument("--stock-session-exit", action="store_true",
@@ -262,9 +602,26 @@ def main():
     ap.add_argument("--optimize", default="",
                     help="YYYY-MM-DD: with --combos-file, try a grid of trade-management values per combo, choose on "
                          "--test-from..this date, check on this date..end")
+    ap.add_argument("--manage", default="",
+                    help="YYYY-MM-DD: with --combos-file, try breakeven points x partial exits per combo (on top of its "
+                         "--plans-file plan), choose on --test-from..this date, check on this date..end")
+    ap.add_argument("--manage-grid", default="std", choices=["std", "fib", "ladder", "pyr", "swing"],
+                    help="--manage values: std (40-80%% of the way, 30/50%% out), fib (Fibonacci levels of the way) or "
+                         "ladder (the entry split into 2-4 limit orders, same total risk)")
+    ap.add_argument("--plans-file", default="",
+                    help="a bot's live/bots/<bot>.json: its built per-combo plans are the base of --manage")
     ap.add_argument("--filters", default="",
                     help="YYYY-MM-DD: with --combos-file, try market-regime filters per combo, choose on "
                          "--test-from..this date, check on this date..end")
+    ap.add_argument("--filters-rsi", action="store_true",
+                    help="--filters also tries the user's RSI-against-the-trend filter (14.11.2026)")
+    ap.add_argument("--filters-video", action="store_true",
+                    help="--filters also tries the filters of the user's videos (RSI 50, Supertrend, EMA 50/200, "
+                         "5 EMAs in order, 3 SMAs in order; 14.11.2026)")
+    ap.add_argument("--filters-all-trades", action="store_true",
+                    help="--filters saves the trades of every filter, not only the chosen one (the family fix test)")
+    ap.add_argument("--filters-extra", action="store_true",
+                    help="--filters also tries the user's EMA 9/20 direction and Bollinger-width filters (14.11.2026)")
     ap.add_argument("--combos-file", default="",
                     help="file with sid|timeframe|symbol lines: run only these and save their trades (no Prophet)")
     ap.add_argument("--stock-spread-mult", type=float, default=0.0,
@@ -277,6 +634,16 @@ def main():
     ap.add_argument("--test-from", default="",
                     help="YYYY-MM-DD: judge every (strategy, timeframe, instrument) directly from this date, no earlier selection period")
     args = ap.parse_args()
+    if args.news_minute and not args.demo:
+        NEWS_MIN["on"] = True
+        NEWS_MIN["start"], NEWS_MIN["end"] = args.start, args.end
+        R.run = _news_run(R.run)
+    if args.plans_file:
+        import json as _json
+        try:
+            PLANS.update(_json.loads(Path(args.plans_file).read_text(encoding="utf-8")).get("plans") or {})
+        except Exception as e:  # noqa: BLE001
+            print(f"plans file not read: {e}")
     if args.est_spread:
         C.EST_SPREAD["stock"] = args.est_spread
     if args.stock_spread_mult:
@@ -344,6 +711,12 @@ def main():
             if args.news_exit and not args.demo:
                 nm, news_block = news_masks(df, s, tf)
                 sess = nm if sess is None else (np.asarray(sess, dtype=bool) | nm)
+            if args.stock_session_exit and not args.demo and U.CLASS.get(s) == "stock":
+                # the live bots open no stock trade in the last 15 minutes of the session (live/runner.py), the
+                # backtest did: entries at 15:45 / 15:50 / 15:55 New York held to the 16:00 close - in bots 1-4's
+                # stock combos 2025-2026: 192 trades, -0.13R each in 2026 (13.11.2026) - blocked here the same way
+                late = stock_late_mask(df, s)
+                news_block = late if news_block is None else (np.asarray(news_block, dtype=bool) | late)
             be = None
             if args.breakeven:
                 px = float(df["c"].median())
@@ -363,9 +736,33 @@ def main():
                     continue
                 if args.respect_tf and not R.timeframe_ok(sid, tf):
                     continue
+                if args.manage and args.manage_grid == "pyr":
+                    try:
+                        pyr_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
+                    except Exception:  # noqa: BLE001
+                        ERRORS.append(f"pyr {sid} {tf} {s}:\n{traceback.format_exc()}")
+                    continue
+                if args.manage and args.manage_grid == "swing":
+                    try:
+                        swing_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
+                    except Exception:  # noqa: BLE001
+                        ERRORS.append(f"swing {sid} {tf} {s}:\n{traceback.format_exc()}")
+                    continue
+                if args.manage and args.manage_grid == "ladder":
+                    try:
+                        ladder_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
+                    except Exception:  # noqa: BLE001
+                        ERRORS.append(f"ladder {sid} {tf} {s}:\n{traceback.format_exc()}")
+                    continue
+                if args.manage:
+                    try:
+                        manage_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
+                    except Exception:  # noqa: BLE001
+                        ERRORS.append(f"manage {sid} {tf} {s}:\n{traceback.format_exc()}")
+                    continue
                 if args.filters:
                     try:
-                        filter_combo(df, sid, tf, s, cost, sess, be, real, events, args)
+                        filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block)
                     except Exception:  # noqa: BLE001
                         ERRORS.append(f"filters {sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue
@@ -434,6 +831,11 @@ def main():
         import json as _json
         (config.OUTPUT_DIR / f"filters_{tag}.json").write_text(_json.dumps(OPT_RESULTS, ensure_ascii=False, indent=1), encoding="utf-8")
         print("filtered", len(OPT_RESULTS), "combos")
+    if args.manage:
+        tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
+        import json as _json
+        (config.OUTPUT_DIR / f"manage_{tag}.json").write_text(_json.dumps(OPT_RESULTS, ensure_ascii=False, indent=1), encoding="utf-8")
+        print("managed", len(OPT_RESULTS), "combos")
     if args.optimize:
         tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
         import json as _json
@@ -442,7 +844,7 @@ def main():
     if combos is not None or (args.test_from and COMBO_TRADES):
         cols = ["sid", "tf", "symbol", "time", "exit_time", "dir", "r", "entry_px", "stop_px", "exit_px", "target_px", "reason", "free_time",
                 "mfe_r", "mae_r"]
-        if args.optimize or args.filters:
+        if args.optimize or args.filters or args.manage:
             cols = cols + ["variant"]
         out = pd.concat(COMBO_TRADES, ignore_index=True).reindex(columns=cols) if COMBO_TRADES else pd.DataFrame(columns=cols)
         tag = (args.symbols or "all").replace(",", "_").replace("/", "-")[:60]
@@ -472,6 +874,115 @@ def news_masks(df, s, tf):
     return CAL.masks(df, s, RP.TF_MIN[tf], *_CAL_HIST)
 
 
+# ---- FTMO restricted events, minute by minute (13.11.2026) ----
+# The live bots close every position 3 minutes before a restricted event on its instrument and take no entry from 3
+# minutes before to 3 after (live/runner.py, "restricted news ahead Standard"). The bar engine did not: a trade held
+# through the release kept the move the release made (bot 2 QB11 USDJPY 9.11: the backtest +7.7R at the 8R target,
+# the demo closed at 13:27 UTC before the US CPI at +2.8R; in 2026 13 of QB11's 124 trades were open over an event and
+# made +21.5R of its +20.4R, TV58 USDCAD 9 of 37 made +29.9R of +23.9R).
+NEWS_MIN = {"on": False}
+_MIN1 = {}
+
+
+def _minute_bars(s):
+    if s not in _MIN1:
+        try:
+            _MIN1[s] = P.bars(s, "1Min", NEWS_MIN["start"], NEWS_MIN["end"])
+        except config.TimeBudgetReached:
+            raise
+        except Exception as e:  # noqa: BLE001
+            print(f"  news: no 1-minute bars for {s} ({str(e)[-120:]}) - restricted events not applied")
+            _MIN1[s] = None
+    return _MIN1[s]
+
+
+def _news_events(s):
+    global _CAL_HIST
+    from agents import ftmo_calendar as CAL
+    if _CAL_HIST is None:
+        _CAL_HIST = CAL.parse(json.load(open(Path(__file__).parent / "data" / "ftmo_calendar" / "history.json", encoding="utf-8")))
+    return pd.DatetimeIndex(sorted({t for t, ins in _CAL_HIST[0] if CAL.restricted_affects(s, ins)}))
+
+
+def news_minute(t, df, mb=None, ev=None):
+    """The trades of one run with the live rule for restricted events applied. Each trade's exit happened somewhere in its
+    exit bar; when the window start (event - 3 min) falls inside that bar, the 1-minute path decides whether the stop or
+    the target came first. A trade that took a partial exit before the window is left as it is (its split is not known
+    here - rare). mb / ev: 1-minute bars and event times (tests); else loaded."""
+    if t is None or t.empty:
+        return t
+    s, tf = df.attrs.get("symbol"), df.attrs.get("tf")
+    if not s or not tf:
+        return t
+    ev = _news_events(s) if ev is None else ev
+    if not len(ev):
+        return t
+    mb = _minute_bars(s) if mb is None else mb
+    if mb is None or mb.empty:
+        return t
+    bar = pd.Timedelta(minutes=RP.TF_MIN[tf])
+    win_a, win_b = ev - pd.Timedelta(minutes=3), ev + pd.Timedelta(minutes=3)
+    mi, mo, mh, ml = mb.index, mb["o"].to_numpy(float), mb["h"].to_numpy(float), mb["l"].to_numpy(float)
+    keep, rows = [], t.to_dict("records")
+    for r in rows:
+        t0 = pd.Timestamp(r["time"])
+        k = win_a.searchsorted(t0 - pd.Timedelta(minutes=6))          # first window that can touch the trade
+        if k < len(ev) and win_a[k] <= t0 <= win_b[k]:
+            continue                                                  # signal inside the window: not taken
+        x0 = pd.Timestamp(r["exit_time"])
+        j = win_a.searchsorted(t0, side="right")                      # first window starting after the entry
+        if j >= len(ev) or win_a[j] >= x0 + bar:
+            keep.append(r)
+            continue
+        a = win_a[j]
+        if a > x0:                                                    # the window starts inside the exit bar:
+            i0, i1 = mi.searchsorted(x0), mi.searchsorted(a)          # did the exit come before it?
+            if i1 > i0:
+                d, st, tg = r["dir"], r.get("stop_last", r["stop_px"]), r.get("target_px")
+                lo, hi = ml[i0:i1].min(), mh[i0:i1].max()
+                hit_stop = (lo <= st) if d > 0 else (hi >= st)
+                hit_tg = tg == tg and tg is not None and ((hi >= tg) if d > 0 else (lo <= tg))
+                if hit_stop or hit_tg or r.get("reason") in ("סיגנל יציאה", "סיגנל הפוך"):
+                    keep.append(r)
+                    continue
+        pt = r.get("part_time")
+        if pt is not None and pt == pt and pd.Timestamp(pt) <= a:
+            keep.append(r)
+            continue
+        i = mi.searchsorted(a)
+        if i >= len(mi) or mi[i] - a > pd.Timedelta(minutes=30):
+            keep.append(r)
+            continue
+        e0, st0, d = r["entry_px"], r["stop_px"], r["dir"]
+        risk = abs(e0 - st0)
+        if risk <= 0:
+            keep.append(r)
+            continue
+        cost_px = (d * (r["exit_px"] - e0) / risk - r["r"]) * risk      # the run's costs, in price, kept
+        px = float(mo[i])
+        r["exit_time"], r["exit_px"], r["reason"] = a, px, "נסגרה לפני הודעה מוגבלת"
+        r["r"] = d * (px - e0) / risk - cost_px / risk
+        r["held"] = int(max(0, (a - t0) / bar))
+        ft = r.get("free_time")
+        if ft is not None and ft == ft and pd.Timestamp(ft) > a:
+            r["free_time"] = pd.NaT
+        keep.append(r)
+    return pd.DataFrame(keep, columns=t.columns)
+
+
+def _news_run(orig):
+    def run(df, fn, cost_side, breakeven=None, session_exit=None):
+        t = orig(df, fn, cost_side, breakeven=breakeven, session_exit=session_exit)
+        try:
+            return news_minute(t, df)
+        except config.TimeBudgetReached:
+            raise
+        except Exception:  # noqa: BLE001
+            ERRORS.append(f"news minute {df.attrs.get('symbol')}:\n{traceback.format_exc()}")
+            return t
+    return run
+
+
 def _blocked(fn, noent):
     from agents import ftmo_calendar as CAL
     return CAL.blocked(fn, noent)
@@ -497,6 +1008,14 @@ def session_mask(df, s, tf):
     day = pd.Series(loc.normalize(), index=df.index)
     last = (day != day.shift(-1)).to_numpy()
     return (mins >= close_min - 15) | last
+
+
+def stock_late_mask(df, s):
+    """Stocks: True on the bars that open in the last 15 minutes of the exchange session - the live bots take no new
+    stock trade then (live/runner.py, 'last 15 minutes of the stock session')."""
+    tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[s] else SESSION["EU"]
+    loc = df.index.tz_convert(tz)
+    return np.asarray(loc.hour * 60 + loc.minute >= close_min - 15, dtype=bool)
 
 
 def safe_report(results, args):

@@ -31,8 +31,247 @@
   "SS07|15Min|NVDA",
   "SS11|5Min|AIRF",
   "SS01|5Min|WMT",
-  "SS06|4Hour|MSTR"
+  "SS06|4Hour|MSTR",
+  "SC002|1Hour|INTC",
+  "SC002|1Hour|AMZN",
+  "SC002|4Hour|AIRF",
+  "SC001|1Min|JP225",
+  "SC010|15Min|ARM",
+  "SC069|15Min|XAUUSD",
+  "SC097|1Hour|JP225",
+  "SC154|5Min|XAUUSD",
+  "TV20|1Hour|XAUUSD",
+  "IB033|4Hour|XAUUSD",
+  "SC235|1Hour|USDJPY",
+  "SC272|1Hour|USDJPY",
+  "SC048|1Hour|US100",
+  "TV56|4Hour|US2000",
+  "SC033|1Hour|JP225",
+  "SC330|1Hour|USDJPY",
+  "SC121|1Hour|USDCAD",
+  "SC020|15Min|JP225",
+  "SC253|15Min|USDCAD",
+  "TV58|1Hour|XAUUSD",
+  "TV56|4Hour|US100",
+  "SS14|1Hour|USDJPY",
+  "SC249|4Hour|US30",
+  "TV15|4Hour|USDCAD",
+  "TV56|4Hour|USDJPY",
+  "QB11|1Hour|FRA40",
+  "IB063|4Hour|USDCAD",
+  "SC247|4Hour|US500",
+  "GH09|1Hour|USDJPY",
+  "SC249|4Hour|US500",
+  "GH04|1Hour|JP225",
+  "TV41|1Hour|US100",
+  "GH04|1Hour|US2000",
+  "MQ11|4Hour|US30",
+  "MQ02|1Hour|USDCAD",
+  "SC157|15Min|JP225",
+  "IB056|1Hour|XAUUSD",
+  "BK05|1Hour|USDJPY",
+  "IB012|1Hour|USDJPY",
+  "SC006|4Hour|USDJPY",
+  "SC288|1Hour|XAUUSD",
+  "SC376|4Hour|XAGUSD",
+  "SC381|4Hour|XAUUSD",
+  "SC380|4Hour|XAUUSD",
+  "SC432|1Hour|USDJPY",
+  "SC417|1Hour|XAUUSD",
+  "SC485|4Hour|XAUUSD",
+  "SC486|1Hour|XAUUSD"
  ],
- "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 01.11.2026: +7 session/classic combos (SS*), approved by the user; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user",
- "close_before_breaks": true
+ "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 01.11.2026: +7 session/classic combos (SS*), approved by the user; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
+ "close_before_breaks": true,
+ "plans": {
+  "TV50|15Min|ASML": {
+   "filter": "with_trend200",
+   "card": "cbe4a6d7e7c2"
+  },
+  "TV15|1Hour|INTC": {
+   "filter": "with_trend200",
+   "filter_card": "cad455a12aa0"
+  },
+  "TV12|4Hour|ARM": {
+   "target": 2.0,
+   "stop": 0.75,
+   "limit": 0.5,
+   "card": "7ad731f6bd5b"
+  },
+  "TV60|4Hour|SPN35": {
+   "filter": "adx_range",
+   "filter_card": "43900818af38"
+  },
+  "SC002|1Hour|AMZN": {
+   "filter": "vol_normal",
+   "filter_card": "ecf74af41135"
+  },
+  "TV58|1Hour|USDCAD": {
+   "card": "885935b63bc3",
+   "target": 1.5,
+   "stop": 1.25,
+   "limit": 0.5,
+   "filter": "v_ha",
+   "filter_card": "56b27fa8ec4c"
+  },
+  "TV41|1Hour|USDJPY": {
+   "be_way": 0.786,
+   "manage_card": "ee9c89bb5ff6"
+  },
+  "TV17|15Min|AAPL": {
+   "target": 5.0,
+   "stop": 0.75,
+   "card": "2709b1d6bfa5"
+  },
+  "TV50|1Hour|XAGUSD": {
+   "filter": "vol_low",
+   "filter_card": "fb435e01e723"
+  },
+  "SC069|15Min|XAUUSD": {
+   "target": 1.5,
+   "stop": 1.25,
+   "card": "521dde0cebcd"
+  },
+  "TV21|1Hour|XAUUSD": {
+   "be_r": 2.5,
+   "partial": [
+    0.5,
+    2.0
+   ],
+   "manage_card": "6f0ace93805c"
+  },
+  "SC235|1Hour|USDJPY": {
+   "target": 2.0,
+   "stop": 0.75,
+   "card": "6f04a82c8196",
+   "be_way": 0.7,
+   "manage_card": "3890927785ff"
+  },
+  "TV15|4Hour|USDCAD": {
+   "target": 2.0,
+   "stop": 0.75,
+   "limit": 0.5,
+   "card": "4163cf167ad7"
+  },
+  "SC288|1Hour|XAUUSD": {
+   "target": 4.0,
+   "stop": 0.75,
+   "card": "b9c1ea9be7fb",
+   "be_way": 0.4,
+   "manage_card": "cca050a955e9"
+  },
+  "GH09|1Hour|USDJPY": {
+   "target": 4.0,
+   "stop": 0.75,
+   "card": "59514d549769"
+  },
+  "IB012|1Hour|USDJPY": {
+   "target": 5.0,
+   "stop": 0.75,
+   "card": "c42979f1b81d"
+  },
+  "IB056|1Hour|XAUUSD": {
+   "target": 5.0,
+   "stop": 0.75,
+   "card": "ee4d2e72e59d",
+   "filter": "v_ha",
+   "filter_card": "ac8a8fd8b368"
+  },
+  "SC272|1Hour|USDJPY": {
+   "be_r": 2.5,
+   "partial": [
+    0.5,
+    2.0
+   ],
+   "manage_card": "eab024f815b3"
+  },
+  "SC330|1Hour|USDJPY": {
+   "be_way": 0.7,
+   "manage_card": "f7d4abe8475d"
+  },
+  "SC006|4Hour|USDJPY": {
+   "filter": "v_pdbrk",
+   "filter_card": "9445c448405d"
+  },
+  "SC380|4Hour|XAUUSD": {
+   "target": 2.0,
+   "stop": 0.75,
+   "card": "05ef9c3023c0"
+  },
+  "SC381|4Hour|XAUUSD": {
+   "target": 3.0,
+   "stop": 0.75,
+   "card": "e47eb0cbb8e4"
+  },
+  "IB033|4Hour|XAUUSD": {
+   "filter": "v_st",
+   "filter_card": "40411e976445"
+  },
+  "SC417|1Hour|XAUUSD": {
+   "be_way": 0.5,
+   "manage_card": "2e5f2833bae7"
+  }
+ },
+ "added": {
+  "SC002|1Hour|INTC": "26f0c0414e65",
+  "SC002|1Hour|AMZN": "a5536ad52e6d",
+  "SC002|4Hour|AIRF": "d41a482ae332",
+  "SC001|1Min|JP225": "37b1f7426e51",
+  "SC010|15Min|ARM": "b80754aa5b8a",
+  "SC069|15Min|XAUUSD": "5c613bb21a54",
+  "SC097|1Hour|JP225": "bc69b901f3dc",
+  "SC154|5Min|XAUUSD": "00a8c6765bee",
+  "TV20|1Hour|XAUUSD": "7c6729c96a81",
+  "IB033|4Hour|XAUUSD": "e61b9ea3fed7",
+  "SC235|1Hour|USDJPY": "5031a8054224",
+  "SC272|1Hour|USDJPY": "39cb2260a1b7",
+  "SC048|1Hour|US100": "51c240fe5994",
+  "TV56|4Hour|US2000": "a833e2eea9d2",
+  "SC033|1Hour|JP225": "498fe4152c82",
+  "SC330|1Hour|USDJPY": "0d9495ceaa83",
+  "SC121|1Hour|USDCAD": "ef1690397e28",
+  "SC020|15Min|JP225": "721a598067dc",
+  "SC253|15Min|USDCAD": "f6a2f11c535d",
+  "TV58|1Hour|XAUUSD": "adbb69117ea8",
+  "TV56|4Hour|US100": "a2b94edb1bbc",
+  "SS14|1Hour|USDJPY": "ad0467dfe41b",
+  "SC249|4Hour|US30": "c4d613b5e462",
+  "TV15|4Hour|USDCAD": "d4ff9c26125f",
+  "TV56|4Hour|USDJPY": "6114cd51bce9",
+  "QB11|1Hour|FRA40": "53f6a8ec7400",
+  "IB063|4Hour|USDCAD": "ba774521402c",
+  "SC247|4Hour|US500": "3019c2e58797",
+  "GH09|1Hour|USDJPY": "26e9d7d150d8",
+  "SC249|4Hour|US500": "c2a116fc5fb7",
+  "GH04|1Hour|JP225": "473fdc2e0adc",
+  "TV41|1Hour|US100": "ab2fa87cb10a",
+  "GH04|1Hour|US2000": "6878548dc28d",
+  "MQ11|4Hour|US30": "47c87011ddd9",
+  "MQ02|1Hour|USDCAD": "fcf7c8429cf0",
+  "SC157|15Min|JP225": "90543a76f686",
+  "IB056|1Hour|XAUUSD": "472c550cc8aa",
+  "BK05|1Hour|USDJPY": "955f641c0e6b",
+  "IB012|1Hour|USDJPY": "97a62813973e",
+  "SC006|4Hour|USDJPY": "eaca6892903b",
+  "SC288|1Hour|XAUUSD": "a59fb871f838",
+  "SC376|4Hour|XAGUSD": "26fec9fd8811",
+  "SC381|4Hour|XAUUSD": "df488a5563e5",
+  "SC380|4Hour|XAUUSD": "9c4691ec5b42",
+  "SC432|1Hour|USDJPY": "cf3d64e83cc3",
+  "SC417|1Hour|XAUUSD": "8643233531d6",
+  "SC485|4Hour|XAUUSD": "c3c04b103cfc",
+  "SC486|1Hour|XAUUSD": "1b5deb34faf1"
+ },
+ "removed": {
+  "SC002|4Hour|FRA40": "bb041d4310f5",
+  "SC002|1Hour|ARM": "62e25c58940e"
+ },
+ "changes": {
+  "e5c016b71c3f": {
+   "family": "flag",
+   "key": "dd_fit",
+   "before": "__none__"
+  }
+ },
+ "dd_fit": 8.5
 }

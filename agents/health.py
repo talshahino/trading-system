@@ -16,6 +16,7 @@ Writes reports/agents/<bot>/health.json and reports/agents/<bot>/cards_health.js
 from __future__ import annotations
 
 import json
+import re
 import math
 import subprocess
 import tempfile
@@ -30,9 +31,9 @@ ROOT = K.ROOT
 SINCE = "2026-11-01"
 STATE_PREFIX = {"bot1": "bot1", "bot2": "bot2_", "bot3": "bot3_", "bot4": "bot4_", "bot5": "watch_own",
                 "bot6": "watch_fut", "bot7": "news_bot"}
-NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 · סקלפינג",
+NAMES = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 (גאפ) + 5ב (סייר)",
          "bot6": "בוט 6 · חוזים עתידיים", "bot7": "בוט 7 · פרסומים כלכליים"}
-NO_RISK_DOWN = {"bot3"}            # user: don't lower bot 3's risk - its alerts never suggest it
+NO_RISK_DOWN = set()                # 12.11.2026: bot 3 works like the other bots (lowering its risk too)
 MIN_N, Z_BAD, STREAK_P, STREAK_MIN = 8, -2.0, 0.02, 4
 DAY_WARN, TOTAL_WARN, STALE_MIN = -3.0, -7.0, 45
 
@@ -55,10 +56,47 @@ def live_states():
     return out
 
 
-def state_of(bot, states):
+def _is_bot_file(bot, n):
     p = STATE_PREFIX[bot]
-    hits = [s for n, s in states.items() if n.startswith(p) and (p.endswith("_") or n == f"{p}_state.json")]
-    return hits[0] if hits else None
+    if p.endswith("_"):
+        return n.startswith(p)
+    if bot == "bot1" and re.fullmatch(r"bot1_\d+_state\.json", n):
+        return True                     # a newer bot 1 account (16.11.2026: a new FTMO trial, live/bot1_<login>_state.json)
+    return n == f"{p}_state.json"
+
+
+def state_of(bot, states):
+    """The bot's live state: its newest account (the one that runs now). Bots 1-4 keep the closed trades of the
+    bot's older accounts too (same strategies, the same live record): 16.11.2026 (bots 1-4 smart agent) - bot 1's
+    FTMO trial ended and a new account (live/bot1_1515308201_state.json) took over, but every agent still read the old
+    blocked account (bot1_state.json, health / loss review / edge risk / watch / portfolio check)."""
+    hits = [s for n, s in states.items() if _is_bot_file(bot, n)]
+    if not hits:
+        return None
+    hits.sort(key=lambda s: str(s.get("updated_utc") or ""), reverse=True)
+    cur = hits[0]
+    if bot == "bot5" and states.get("watch_scout_state.json"):
+        # 17.11.2026 evening (Tal): bot 5 split - his gap method stays in watch_own, the scout strategies trade in their
+        # own virtual account 5ב (live/watch_scout_state.json). Bot 5's agents (health, loss review, edge risk, watch,
+        # portfolio check) look after both: the trades of both, the account numbers of bot 5's own.
+        sc = states["watch_scout_state.json"]
+        cur = dict(cur)
+        for k in ("watch", "closed", "trades", "positions"):
+            cur[k] = list(cur.get(k) or []) + list(sc.get(k) or [])
+        cur["scout_account"] = {k: sc.get(k) for k in ("balance", "equity", "day_start", "initial", "started")}
+        return cur
+    if len(hits) == 1 or bot not in ("bot1", "bot2", "bot3", "bot4"):
+        return cur
+    cur, seen, closed = dict(cur), set(), []
+    for s in hits:
+        for c in s.get("closed") or []:
+            k = str(c.get("id"))
+            if k not in seen:
+                seen.add(k)
+                closed.append(c)
+    cur["closed"] = closed
+    cur["accounts"] = [s.get("account") for s in hits]
+    return cur
 
 
 def watch_trades(state, bot):
@@ -70,7 +108,23 @@ def watch_trades(state, bot):
             continue
         trk = w.get("trk") or (w["id"].split("|")[3] if w.get("id", "").count("|") >= 3 else "")
         tf = "1Min" if str(trk).endswith("1m") else "15Min"
-        rows.append({"id": w["id"], "combo": f"{pre}|{tf}|{w['symbol']}", "time": w.get("time"),
+        if bot in ("bot5", "bot6") and str(trk).startswith("sc:"):
+            # 16.11.2026 night (manager): a scout strategy's watch id is SYM|SCxxx|tf|time|sc:..., not SYM|tal|...,
+            # so its trades fell to OWN|15Min|<sym> and were judged against the v5 track's backtest (bot 5's 8 scout
+            # losses today showed as "OWN|15Min|XAUUSD / US30")
+            combo = str(trk)[3:]
+        elif bot in ("bot5", "bot6") and w.get("id", "").count("|") >= 1 and w["id"].split("|")[1] == "tal":
+            # bot 6 (14.11.2026, its smart agent): every gap track by its own name - TAL|<track>|<index> (tal, tal4h,
+            # t15_5, t5_1, ...). Before, t15_5 and t5_1 were both FUT|15Min and tal4h's risk change followed them,
+            # and the watch never saw a gap card's trades at all (agents/watch.py TRACKS).
+            # bot 5 the same (14.11.2026 evening, task b6to5watch): before, all its gap tracks (t15_1, t1h_15, t4h_15,
+            # t1h_5@US30, ...) were one OWN|15Min|<index>, compared with the v5 track's expectation
+            combo = f"TAL|{trk or 'tal'}|{w['symbol']}"
+            if str(trk).startswith("sc:"):
+                combo = str(trk)[3:]                     # a scout strategy bot 5 trades: SCxxx|tf|sym
+        else:
+            combo = (f"TAL|4Hour|{w['symbol']}" if trk == "tal4h" else f"TAL|1Hour|{w['symbol']}") if str(trk).startswith("tal") else f"{pre}|{tf}|{w['symbol']}"   # the user's gap method
+        rows.append({"id": w["id"], "combo": combo, "time": w.get("time"),
                      "close": w.get("exit_time") or w.get("time"), "r": float(w["r"]), "net": None})
     return rows
 
@@ -78,9 +132,12 @@ def watch_trades(state, bot):
 def trades(state, bot=None):
     """Closed trades in R after costs: price R x net / gross (the costs the bot actually paid)."""
     rows = watch_trades(state, bot) if state.get("watch") else []
+    closed = state.get("closed") or []
     if rows:
-        state = {}
-    for c in state.get("closed") or []:
+        # bots 5-6: the gap tracks come from the watch record; the scout strategies they trade (SCxxx|tf|sym) are only
+        # in the account's closed trades - kept, so the watch follows an added scout strategy too (14.11.2026)
+        closed = [c for c in closed if str(c.get("combo", "")).startswith("SC")]
+    for c in closed:
         try:
             side = 1 if c["side"] == "buy" else -1
             o, sl0 = float(c["open_px"]), float(c.get("sl0") or 0)
@@ -127,6 +184,21 @@ def expectations(bot):
                     out["@" + trk] = {"mean": b["mean"], "n": b.get("n"), "win": (b.get("win") or 0) / 100, "sd": None}
         except Exception:  # noqa: BLE001
             pass
+        # the gap tracks (14.11.2026 evening): the test of the rules the track trades now (the chosen rules of its pair
+        # in tal_gap_results, only when they are exactly the live track's rules - else no expectation, not v5's)
+        try:
+            cfg5 = json.loads((ROOT / "live/bots/bot5.json").read_text(encoding="utf-8"))
+            res = json.loads((ROOT / "data/agents/strategies/tal_gap_results.json").read_text(encoding="utf-8")).get("bot5", {})
+            for trk, v in (cfg5.get("tal_tracks") or {}).items():
+                if v.get("symbols"):
+                    continue
+                pr = "/".join(v.get("pair") or [])
+                ch = ((res.get("pairs") or {}).get(pr) or {}).get("chosen") or {}
+                b = ch.get("whole") or {}
+                if ch.get("cfg") == v.get("cfg") and b.get("mean") is not None:
+                    out["@" + trk] = {"mean": b["mean"], "n": b.get("n"), "win": (b.get("win") or 0) / 100, "sd": None}
+        except Exception:  # noqa: BLE001
+            pass
     try:
         extra = json.loads((ROOT / "data/agents/expect.json").read_text(encoding="utf-8")).get(bot, {})
         out.update(extra)
@@ -138,6 +210,10 @@ def expectations(bot):
 def expect_for(bot, combo, exp):
     if combo in exp:
         return exp[combo]
+    if bot == "bot5" and combo.startswith("TAL|"):   # a gap track: its own test only (14.11.2026 evening)
+        return exp.get("@" + combo.split("|")[1])
+    if bot == "bot5" and combo.startswith("SC"):
+        return None
     if bot == "bot5":                           # bot 5: by track (the 1-minute track or the 15-minute one)
         return exp.get("@v1m" if "|1Min|" in combo else "@v5")
     return None
@@ -217,6 +293,17 @@ def check(bot, state, now):
         cards.append(K.card(bot, "info", f"הפסד כולל {tot:.1f}%", "החשבון מתקרב למגבלת ההפסד הכולל הקבועה (10%). "
                             "אישור: הסוכן יציע הורדת סיכון לכל הבוט עד שהחשבון יתאושש.", None, None,
                             change={"check": "total", "week": now.strftime("%G-W%V")}))
+    # the broker refuses every order on the account (bots 1-4 smart agent, 16.11.2026: bot 1's FTMO two-week trial
+    # ended and each entry since Monday 08:01 UTC came back 10017 'Trade disabled' - nothing in the app said so)
+    recent = [x for x in (state.get("skips") or [])
+              if "10017" in str(x.get("why", "")) and now - pd.to_datetime(x.get("t"), utc=True, errors="coerce",
+                                                                         format="ISO8601") < pd.Timedelta(hours=24)]
+    if state.get("trade_allowed") is False or len(recent) >= 2:
+        problems.append("הברוקר חוסם את המסחר בחשבון (Trade disabled) - הבוט לא פותח עסקאות")
+        cards.append(K.card(bot, "info", "החשבון חסום למסחר אצל הברוקר",
+                            f"{len(recent)} פקודות נדחו ב־24 השעות האחרונות עם 'Trade disabled' (קוד 10017) - הברוקר "
+                            "לא מאפשר מסחר בחשבון כולו (למשל תקופת ניסיון שנגמרה). רק טל יכול לפתוח חשבון חדש.",
+                            None, None, change={"check": "trade_disabled", "day": now.strftime("%Y-%m-%d")}))
     # stale: no state for a while on a trading day (Mon-Fri)
     up = pd.to_datetime(state.get("updated_utc"), utc=True, errors="coerce", format="ISO8601")
     age = None if pd.isna(up) else (now - up).total_seconds() / 60

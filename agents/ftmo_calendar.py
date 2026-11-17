@@ -91,13 +91,37 @@ def parse(items):
     return restricted, holidays
 
 
-def fetch(date_from, date_to):
+CHUNK_DAYS = 10     # FTMO's API answers 400 to long ranges (12.11.2026: 17 days failed, 15 worked) - asked in pieces
+
+
+def _fetch_one(a, b):
     import requests
     r = requests.get(API, timeout=20, params={
-        "dateFrom": pd.Timestamp(date_from).strftime("%Y-%m-%dT00:00:00Z"),
-        "dateTo": pd.Timestamp(date_to).strftime("%Y-%m-%dT23:59:59Z"), "timezone": "UTC"})
+        "dateFrom": pd.Timestamp(a).strftime("%Y-%m-%dT00:00:00Z"),
+        "dateTo": pd.Timestamp(b).strftime("%Y-%m-%dT23:59:59Z"), "timezone": "UTC"})
     r.raise_for_status()
     return r.json().get("items", [])
+
+
+def fetch(date_from, date_to):
+    """FTMO's calendar for [date_from, date_to], asked CHUNK_DAYS at a time and merged (one event once)."""
+    a = pd.Timestamp(date_from).normalize()
+    end = pd.Timestamp(date_to).normalize()
+    if a.tzinfo is None:
+        a = a.tz_localize("UTC")
+    if end.tzinfo is None:
+        end = end.tz_localize("UTC")
+    out, seen = [], set()
+    while a <= end:
+        b = min(end, a + pd.Timedelta(days=CHUNK_DAYS - 1))
+        for it in _fetch_one(a, b):
+            k = it.get("id") or (it.get("date"), it.get("title"), it.get("currency") or it.get("instrument"))
+            if k in seen:
+                continue
+            seen.add(k)
+            out.append(it)
+        a = b + pd.Timedelta(days=1)
+    return out
 
 
 def masks(df, sym, tf_minutes, restricted, holidays):

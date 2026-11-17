@@ -17,6 +17,7 @@ Writes reports/agents/manager.json (the app's "מנהל הבוטים").
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -27,7 +28,7 @@ from agents import autodecide as AD
 from agents import repo_io as RIO
 
 OUT = Path("reports/agents/manager.json")
-BOTS = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 · סקלפינג",
+BOTS = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4", "bot5": "בוט 5 - סקאלפינג",
         "bot6": "בוט 6 · חוזים עתידיים", "bot7": "בוט 7 · פרסומים כלכליים"}
 RISK_KEYS = {"bot1": "bot1", "bot2": "bot2", "bot3": "bot3", "bot4": "bot4"}
 AGENT_ON = set(BOTS)                    # every bot has its smart agent (11.11.2026: bot 5 first, then all)
@@ -53,6 +54,14 @@ def risk_counts():
     for b, x in d.get("bots", {}).items():
         out[b] = sum(len(c.get("recs") or []) for c in x.get("combos", []))
     return out
+
+
+def _ops_slot(out, b):
+    """out[b] with problems / actions of the same length (the app shows actions[i] under problems[i])."""
+    o = out.setdefault(b, {})
+    o.setdefault("problems", [])
+    o["actions"] = (list(o.get("actions") or []) + [None] * len(o["problems"]))[:len(o["problems"])]
+    return o
 
 
 def ops():
@@ -96,7 +105,17 @@ def ops():
         except Exception:  # noqa: BLE001
             runs = []
         recent = [r for r in runs if pd.Timestamp(r["t"]) > pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=2)]
-        bad = [r for r in recent if r["s"] == "completed" and r["c"] not in ("success", "skipped")]
+        # a failure that a later successful run already replaced is not a problem any more (manager, 12.11.2026)
+        ok_after = max((r["n"] for r in recent if r["c"] == "success"), default=0)
+        # ... nor one that the bots' computer replaced: since 12.11 the agents run there, and the GitHub run is only the
+        # fallback (manager, 13.11.2026: run #9 of 12.11 08:23 - a commit clash - was shown as a problem a day later)
+        try:
+            pc_last = max((pd.Timestamp(v) for v in (json.loads(Path("reports/agents/host.json").read_text(encoding="utf-8"))
+                                                     .get("agent_last") or {}).values()), default=None)
+        except Exception:  # noqa: BLE001
+            pc_last = None
+        bad = [r for r in recent if r["s"] == "completed" and r["c"] not in ("success", "skipped") and r["n"] > ok_after
+               and not (pc_last is not None and pc_last > pd.Timestamp(r["t"]) + pd.Timedelta(hours=6))]
         if bad:
             problems.append(f"{len(bad)} ריצות של הסוכנים נכשלו ביומיים האחרונים (#{', #'.join(str(r['n']) for r in bad)})")
             actions.append("הסוכן החכם של המנהל יבדוק את הלוג ויריץ מחדש")
@@ -107,7 +126,77 @@ def ops():
                        "problems": problems, "actions": actions, "last_experiment": None if last is None else last.isoformat()}
     except Exception as e:  # noqa: BLE001
         out["bot5"] = {"problems": [f"לא הצלחתי לקרוא את מצב הסוכן ({e})"]}
+    # the bots' computer: an agent that ran but whose gap-method section did not change, and what its log says about
+    # failures (manager, 12.11.2026: bot 6 ran at 16:43 and its section stayed at 02:50 with no error anywhere)
+    try:
+        h = json.loads(Path("reports/agents/host.json").read_text(encoding="utf-8"))
+        res = json.loads(Path("data/agents/strategies/tal_gap_results.json").read_text(encoding="utf-8"))
+        last, tails = h.get("agent_last") or {}, h.get("agent_tail") or {}
+        try:
+            pcm = (json.loads(Path("data/agents/plan.json").read_text(encoding="utf-8")).get("pc") or {})
+        except Exception:  # noqa: BLE001
+            pcm = {}
+        now = pd.Timestamp.now(tz="UTC")
+        for b in ("bot5", "bot6"):
+            # the gap method's search around the best (agents/tal_gap.search) is where these agents work since 12.11;
+            # the old GitHub grid above ("last_experiment") stopped on 11.11 and read as a stuck agent (manager,
+            # 16.11.2026): show the search's own progress, and flag it when it stands still with work left
+            srch = (res.get(b) or {}).get("search") or {}
+            if srch:
+                tried = sum(int(v.get("tried") or 0) for v in srch.values())
+                left = sum(int(v.get("left") or 0) for v in srch.values())
+                o = _ops_slot(out, b)
+                o["search"] = {"tried": tried, "left": left, "pairs": len(srch), "updated": (res.get(b) or {}).get("updated")}
+                # where a run's minutes went after its budget (agent_bot5 post_sec, manager 16.11.2026)
+                if (res.get(b) or {}).get("post_sec"):
+                    o["post_sec"] = (res.get(b) or {}).get("post_sec")
+                upd0 = (res.get(b) or {}).get("updated")
+                if left and upd0 and now - pd.Timestamp(upd0) > pd.Timedelta(hours=36):
+                    o["problems"].append(f"שיטת הגאפ: החיפוש לא התקדם מאז {pd.Timestamp(upd0):%d.%m %H:%M} UTC "
+                                         f"למרות ש־{left} ניסיונות מחכים")
+                    o["actions"].append("הסוכן החכם של המנהל יבדוק למה החיפוש עומד ויתקן")
+            ran, upd = last.get(b), (res.get(b) or {}).get("updated")
+            # agent_last is stamped when the agent STARTS: one still inside its minutes (+ the host's hour of grace)
+            # has not written yet (manager, 13.11.2026: bot 6 started 03:42 and was flagged at 04:02 while running)
+            if ran and now - pd.Timestamp(ran) < pd.Timedelta(minutes=float(pcm.get(b, 60)) + 60):
+                continue
+            if ran and upd and pd.Timestamp(ran) - pd.Timestamp(upd) > pd.Timedelta(hours=2):
+                o = _ops_slot(out, b)
+                o["problems"].append(
+                    f"שיטת הגאפ: הסוכן רץ ב־{pd.Timestamp(ran):%d.%m %H:%M} UTC, והתוצאות לא התעדכנו מאז "
+                    f"{pd.Timestamp(upd):%d.%m %H:%M}")
+                o["actions"].append("הסוכן החכם של המנהל יבדוק את agent_tail ב־host.json ויתקן")
+        # an agent that failed, or ended far inside its minutes while it still has work (manager, 13.11.2026: bot 2 ran
+        # 2 of its 30 minutes at 05:28 and published nothing; the round's error list was gone after the next install)
+        for x in h.get("agent_errors_24h") or []:
+            name = str(x.get("err", "")).split(":")[0]
+            o = _ops_slot(out, name.replace("-new", "") or "pc")
+            o["problems"].append(f"הסוכן {name} נכשל ב־{str(x.get('at', ''))[11:16]} UTC: {str(x.get('err', ''))[len(name) + 2:][:140]}")
+            o["actions"].append("הסוכן החכם של המנהל יבדוק את הלוג ויתקן")
+        for b, r in (h.get("agent_runs") or {}).items():
+            if r.get("adopted") or not r.get("budget_sec") or r.get("err"):
+                continue
+            tail = " ".join(tails.get(b) or [])
+            idle = re.search(r"\b0 left\b|nothing left|nothing to test", tail)
+            if r.get("sec", 0) < 0.15 * r["budget_sec"] and not idle and re.search(r"[1-9]\d* (combos )?left", tail):
+                o = _ops_slot(out, b.replace("-new", ""))
+                o["problems"].append(f"הסוכן {b} רץ רק {r['sec'] // 60} מתוך {r['budget_sec'] // 60} דקות "
+                                     f"(התחיל {str(r.get('at', ''))[11:16]} UTC) למרות שיש לו עבודה")
+                o["actions"].append("הסוכן החכם של המנהל יבדוק למה הסוכן נגמר מוקדם")
+        for b, lines in tails.items():
+            bad = [x for x in lines if "failed" in x or "Traceback" in x or "Error" in x]
+            if bad:
+                o = _ops_slot(out, b.replace("-new", ""))
+                o["problems"].append(f"בלוג של הסוכן ({b}): {bad[-1][:160]}")
+                o["actions"].append("הסוכן החכם של המנהל יבדוק את השורה ויתקן אם זו תקלה")
+    except Exception:  # noqa: BLE001
+        pass
     return out
+
+
+def _tot_r(c):
+    t = c.get("train") or {}
+    return (t.get("eff_n") or t.get("n") or 0) * t["mean"] if t.get("mean") is not None else -9e9
 
 
 def main():
@@ -131,6 +220,14 @@ def main():
         smart += json.loads(nf.read_text(encoding="utf-8")).get("cards", []) if nf.exists() else []
         hf = K.CARDS_DIR / bot / "cards_health.json"
         smart += json.loads(hf.read_text(encoding="utf-8")).get("cards", []) if hf.exists() else []
+        # any other card file of the bot (bot 5's GitHub tests of 13.11.2026: cards_pool.json, cards_wide*.json)
+        for xf in sorted((K.CARDS_DIR / bot).glob("cards_*.json")):
+            if xf.name in ("cards_smart.json", "cards_new.json", "cards_health.json"):
+                continue
+            try:
+                smart += json.loads(xf.read_text(encoding="utf-8")).get("cards", [])
+            except Exception:  # noqa: BLE001
+                pass
         hh = K.CARDS_DIR / bot / "health.json"
         health = json.loads(hh.read_text(encoding="utf-8")) if hh.exists() else None
         cards = []
@@ -145,22 +242,36 @@ def main():
                 c["reply"] = "קיבלתי. הסוכן של הבוט יבדוק את ההערה בריצה הבאה ויענה כאן."
             c["first_seen"] = first_seen.get(c["id"]) or now
             cards.append(c)
-        # across the bot: one proposal per thing changed (same track + knob) - the best on the unseen period
+        # across the bot: one proposal per thing changed (same track + knob) - the one with the most total R on the
+        # choosing period (13.11.2026, data/agents/objective.md: chosen to 2025 only and by the total, not by the R a
+        # trade on 2026 as before)
+        def _tot(c):
+            t = c.get("train") or {}
+            return (t.get("eff_n") or t.get("n") or 0) * t["mean"] if t.get("mean") is not None else -9e9
+        # only a live proposal competes (14.11.2026, bot 6's smart agent): a card already withdrawn / declined kept
+        # every later proposal of the same track + knob at "watch" - 38531db8b5eb (bot 6 t5_1 + MAXC 0.2, the fix of
+        # the 13.11 loss) was withdrawn and then held its re-issued copy back, so the fix could never be decided
+        try:
+            gone = {x.get("card") for x in json.loads(Path("reports/agents/decisions.json").read_text(encoding="utf-8")).get("decisions", [])
+                    if x.get("type") == "card" and x.get("bot") == bot and x.get("decision") in ("withdrawn", "declined")}
+        except Exception:  # noqa: BLE001
+            gone = set()
+        live_st = lambda c: c["status"] in ("pending", "approved") and c["id"] not in gone  # noqa: E731
         best = {}
         for c in cards:
-            if c["tier"] in ("strong", "regular") and c["kind"] == "improve":
+            if c["tier"] in ("strong", "regular") and c["kind"] == "improve" and live_st(c):
                 ch = c["change"] or {}
                 k = ch.get("track") or ch.get("combo"), ch.get("knob") or ch.get("family")
-                if k not in best or (c["unseen"]["mean"] or 0) > (best[k]["unseen"]["mean"] or 0):
+                if k not in best or _tot(c) > _tot(best[k]):
                     best[k] = c
         for c in cards:
-            if c["tier"] in ("strong", "regular") and c["kind"] == "improve":
+            if c["tier"] in ("strong", "regular") and c["kind"] == "improve" and live_st(c):
                 ch = c["change"] or {}
                 k = ch.get("track") or ch.get("combo"), ch.get("knob") or ch.get("family")
                 if best[k] is not c:
                     c["tier"], c["verdict"] = "watch", "יש הצעה טובה יותר לאותו שינוי"
         order = {"strong": 0, "regular": 1, "watch": 2, "rejected": 3}
-        cards.sort(key=lambda c: (c["status"] != "pending", order.get(c["tier"], 9), -(c["unseen"] or {}).get("mean", 0) if c.get("unseen") else 0))
+        cards.sort(key=lambda c: (c["status"] != "pending", order.get(c["tier"], 9), -((c.get("unseen") or {}).get("mean") or 0)))
         pend = [c for c in cards if c["status"] == "pending" and c["tier"] in ("strong", "regular")]
         bots[bot] = {"name": name, "agent": bot in AGENT_ON, "updated": src.get("updated"), "summary": src.get("summary"),
                      "tested": src.get("tested"), "progress": [src.get("done"), src.get("planned")],
@@ -176,6 +287,20 @@ def main():
         b["pending"] = sum(1 for c in b["cards"] if c["status"] == "pending" and c["tier"] in ("strong", "regular"))
     new = [c["id"] for b in bots.values() for c in b["cards"]
            if c["status"] == "pending" and c["tier"] in ("strong", "regular") and c["first_seen"] == now]
+    # 15.11.2026 (manager): the scout's pack brought tens of thousands of "new" cards per bot (bot 2: 25,609) and
+    # manager.json grew to 58 MB, which GitHub refused - the app showed an old file. The decisions above saw every
+    # card; the file the app reads keeps every decided / proposed card and only the best of the undecided "new"
+    # strategies that were rejected or are on watch (by the total R to 2025), with the count of the rest.
+    caps = {"rejected": 50, "watch": 300}
+    for b in bots.values():
+        keep, extra = [], {}
+        for t in caps:
+            extra[t] = sorted((c for c in b["cards"] if c["kind"] == "new" and c["status"] == "pending" and c["tier"] == t),
+                              key=lambda c: -_tot_r(c))
+        drop = {id(c) for t, xs in extra.items() for c in xs[caps[t]:]}
+        if drop:
+            b["hidden_new"] = {t: max(0, len(xs) - caps[t]) for t, xs in extra.items()}
+            b["cards"] = [c for c in b["cards"] if id(c) not in drop]
     OUT.parent.mkdir(parents=True, exist_ok=True)
     op = ops()
     for b, o in op.items():
@@ -189,7 +314,9 @@ def main():
             o["problems"] = (o.get("problems") or []) + hp
             o["actions"] = (o.get("actions") or []) + [None] * len(hp)
     OUT.write_text(json.dumps({"updated": now, "new": new, "bots": bots, "ops": op,
-                                "decisions": {"new": dd.get("new", []), "unread": sum(1 for d in dd["decisions"] if not d.get("read") and not d.get("undone"))}}, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+                                "decisions": {"new": dd.get("new", []), "unread": sum(1 for d in dd["decisions"] if not d.get("read") and not d.get("undone"))}},
+                              ensure_ascii=False, default=str, **K.json_layout([c for b in bots.values() for c in b["cards"]])),
+                   encoding="utf-8")
     print(f"manager: {sum(b['pending'] for b in bots.values())} proposals waiting, {len(new)} new tonight")
 
 

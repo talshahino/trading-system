@@ -22,8 +22,182 @@
   "GH04|1Hour|EURJPY",
   "QC04|4Hour|USDCAD",
   "SE01|1Hour|CSCO",
-  "SE01|1Hour|WMT"
+  "SE01|1Hour|WMT",
+  "SC002|4Hour|USDCAD",
+  "SC002|1Hour|USDCAD",
+  "SC002|1Hour|EURUSD",
+  "SC002|1Hour|INTC",
+  "SC001|1Min|USDCAD",
+  "SC006|4Hour|EURJPY",
+  "SC122|1Hour|EURJPY",
+  "SC094|1Hour|XAGUSD",
+  "SC010|15Min|ARM",
+  "SC069|15Min|XAUUSD",
+  "SC071|15Min|WMT",
+  "SC083|1Hour|GBPJPY",
+  "SC295|1Hour|USDJPY",
+  "FR01|1Hour|ARM",
+  "TV56|4Hour|USDJPY",
+  "SE02|1Hour|USDJPY",
+  "SC083|1Hour|USDJPY",
+  "BK07|1Hour|EURUSD",
+  "TV20|1Hour|XAUUSD",
+  "IB033|4Hour|XAUUSD",
+  "FR03|15Min|GBPUSD",
+  "SC095|1Hour|GBPJPY",
+  "SC184|1Hour|XAUUSD",
+  "IB034|4Hour|XAUUSD",
+  "TV58|1Hour|XAUUSD",
+  "TV36|1Hour|ARM",
+  "SC376|4Hour|XAGUSD",
+  "SC504|15Min|XAGUSD",
+  "SC485|4Hour|XAUUSD"
  ],
- "note": "04.11.2026: built from the new families' combos that passed the first test (GitHub, QuantConnect, forums, books, seasonality, inter-market, Quantpedia), chosen on 2025 and checked on 2026 and by reshuffling; MetaQuotes-demo instruments only (FX, metals, US shares); risk 0.45% chosen by the user; FTMO Standard rule: closed before market breaks over 2 hours",
- "close_before_breaks": true
+ "note": "04.11.2026: built from the new families' combos that passed the first test (GitHub, QuantConnect, forums, books, seasonality, inter-market, Quantpedia), chosen on 2025 and checked on 2026 and by reshuffling; MetaQuotes-demo instruments only (FX, metals, US shares); risk 0.45% chosen by the user; FTMO Standard rule: closed before market breaks over 2 hours; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
+ "close_before_breaks": true,
+ "plans": {
+  "BK05|15Min|EURUSD": {
+   "target": "none",
+   "limit": 0.25,
+   "card": "607634fdbf9a",
+   "filter": "v_sqzm",
+   "filter_card": "591aff6770aa"
+  },
+  "BK05|1Hour|EURUSD": {
+   "target": 1,
+   "limit": 0.5,
+   "card": "f111fc5d12da",
+   "filter": "adx_range",
+   "filter_card": "77b7731e53c8"
+  },
+  "FR01|1Hour|EURUSD": {
+   "target": 3,
+   "stop": 0.75,
+   "card": "99e5c02815c4"
+  },
+  "SE02|1Hour|GBPJPY": {
+   "filter": "vol_normal",
+   "filter_card": "ac5c11074021"
+  },
+  "BK05|15Min|INTC": {
+   "target": "none",
+   "stop": 0.75,
+   "limit": 0.25,
+   "card": "d617f56910cd"
+  },
+  "SC006|4Hour|EURJPY": {
+   "pyramid": [
+    1.0,
+    0.33
+   ],
+   "pyr_card": "13986818f4a4"
+  },
+  "SC002|4Hour|USDCAD": {
+   "pyramid": [
+    1.5,
+    0.5
+   ],
+   "pyr_card": "ed03a13d1cfd"
+  },
+  "IM03|4Hour|USDCAD": {
+   "be_r": 2.5,
+   "partial": [
+    0.5,
+    2.0
+   ],
+   "manage_card": "46ad39923e4f"
+  },
+  "GH09|1Hour|USDJPY": {
+   "target": 4.0,
+   "stop": 0.75,
+   "card": "eebc3e76565a",
+   "pyr_card": "56a0fa23d1b8",
+   "pyramid": [
+    1.0,
+    0.5
+   ]
+  },
+  "GH02|1Hour|USDJPY": {
+   "filter": "v_sqz",
+   "filter_card": "7ec8367ca88b"
+  },
+  "SC069|15Min|XAUUSD": {
+   "target": 1.5,
+   "stop": 1.25,
+   "card": "5851e2ff8c7c"
+  },
+  "QP02|1Hour|XAGUSD": {
+   "filter": "v_ema5",
+   "filter_card": "e9a9b339650b"
+  },
+  "SC376|4Hour|XAGUSD": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "81771e697a18"
+  },
+  "SC184|1Hour|XAUUSD": {
+   "target": 5.0,
+   "limit": 0.25,
+   "card": "8432c0062845"
+  },
+  "TV20|1Hour|XAUUSD": {
+   "target": 5.0,
+   "limit": 0.25,
+   "card": "b222a5369109"
+  },
+  "BK07|1Hour|EURUSD": {
+   "be_r": 1.0,
+   "manage_card": "731f6e249d04"
+  },
+  "SC094|1Hour|XAGUSD": {
+   "filter": "vol_low",
+   "filter_card": "8bdfa36c4eec"
+  }
+ },
+ "added": {
+  "SC002|4Hour|USDCAD": "7732f6ea7833",
+  "SC002|1Hour|USDCAD": "3de5321a7fa2",
+  "SC002|1Hour|EURUSD": "ade0b4666951",
+  "SC002|1Hour|INTC": "c87a40ce05e2",
+  "SC002|4Hour|GBPUSD": "5059ecbe75b4",
+  "SC001|1Min|USDCAD": "be59b1334605",
+  "SC006|4Hour|EURJPY": "34ff6dcac7a6",
+  "SC122|1Hour|EURJPY": "f2572660deb2",
+  "SC094|1Hour|XAGUSD": "d18952323cb5",
+  "SC010|15Min|ARM": "61036dc9719e",
+  "SC069|15Min|XAUUSD": "639da469b229",
+  "SC071|15Min|WMT": "8de7f1778231",
+  "SC083|1Hour|GBPJPY": "23c8839975bf",
+  "SC295|1Hour|USDJPY": "75a97df29f02",
+  "FR01|1Hour|ARM": "23f45f1df6dd",
+  "TV56|4Hour|USDJPY": "71d68e28cb44",
+  "SE02|1Hour|USDJPY": "28806ee0d05f",
+  "SC083|1Hour|USDJPY": "329b09205ee7",
+  "BK07|1Hour|EURUSD": "df858d1524b0",
+  "TV20|1Hour|XAUUSD": "9b3192fec58f",
+  "IB033|4Hour|XAUUSD": "1e2f4c25e568",
+  "FR03|15Min|GBPUSD": "c5e62001e133",
+  "SC095|1Hour|GBPJPY": "6a778b33ee01",
+  "SC184|1Hour|XAUUSD": "21ffc2fd1f4f",
+  "IB034|4Hour|XAUUSD": "aa85ebf8f948",
+  "TV58|1Hour|XAUUSD": "3f6064d316d9",
+  "TV36|1Hour|ARM": "2a32a9bbe1c9",
+  "SC376|4Hour|XAGUSD": "533cd49d281e",
+  "SC504|15Min|XAGUSD": "0a6f39b3461e",
+  "SC485|4Hour|XAUUSD": "e112e9cf3fce"
+ },
+ "removed": {
+  "SC002|1Hour|ARM": "ffe0e8720757",
+  "SC002|4Hour|GBPUSD": "9212156664f5"
+ },
+ "changes": {
+  "9e3614328c20": {
+   "family": "flag",
+   "key": "dd_fit",
+   "before": "__none__"
+  }
+ },
+ "dd_fit": 6.22
 }

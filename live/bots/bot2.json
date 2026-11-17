@@ -34,8 +34,194 @@
   "GH08|1Hour|USDCAD",
   "QB11|1Hour|USDJPY",
   "MQ11|4Hour|MSTR",
-  "MQ02|1Hour|XAUUSD"
+  "MQ02|1Hour|XAUUSD",
+  "SC002|1Hour|INTC",
+  "SC001|1Min|JP225",
+  "SC044|4Hour|EURJPY",
+  "SC043|4Hour|EURJPY",
+  "SC010|15Min|ARM",
+  "SC083|1Hour|GBPJPY",
+  "SC249|4Hour|US30",
+  "SC333|1Hour|GBPJPY",
+  "SC244|15Min|WTI",
+  "MQ11|4Hour|US2000",
+  "SC326|15Min|US30",
+  "SC330|1Hour|USDJPY",
+  "IB017|4Hour|XRP/USD",
+  "TV56|4Hour|US100",
+  "SC295|1Hour|USDJPY",
+  "IB029|4Hour|XRP/USD",
+  "SC200|1Hour|US100",
+  "SC326|15Min|WTI",
+  "SC236|1Hour|WTI",
+  "SC247|4Hour|XRP/USD",
+  "SC086|4Hour|US2000",
+  "TV02|1Hour|JP225",
+  "SC376|4Hour|XAGUSD",
+  "SC381|4Hour|XAUUSD",
+  "SC425|5Min|XAGUSD",
+  "SC380|4Hour|XAUUSD",
+  "SC387|1Hour|MSTR",
+  "SC432|15Min|XAUUSD",
+  "SC399|4Hour|XAUUSD",
+  "SC439|4Hour|EURJPY",
+  "SC485|4Hour|XAUUSD",
+  "SC479|1Hour|XAUUSD"
  ],
- "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added BK07|1Hour|EURJPY and SE02|1Hour|USDJPY (new families, backtest with the bot), approved by the user; 04.11.2026: added FR03|15Min|GBPUSD, GH08|1Hour|USDCAD (GitHub/QuantConnect/forum families, both halves better with the bot), approved by the user; 04.11.2026 (evening): added QB11|1Hour|USDJPY, MQ11|4Hour|MSTR, MQ02|1Hour|XAUUSD (new pool: papers/books/MQL5 EAs; both halves better, Monte Carlo checked), approved by the user",
- "close_before_breaks": true
+ "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added BK07|1Hour|EURJPY and SE02|1Hour|USDJPY (new families, backtest with the bot), approved by the user; 04.11.2026: added FR03|15Min|GBPUSD, GH08|1Hour|USDCAD (GitHub/QuantConnect/forum families, both halves better with the bot), approved by the user; 04.11.2026 (evening): added QB11|1Hour|USDJPY, MQ11|4Hour|MSTR, MQ02|1Hour|XAUUSD (new pool: papers/books/MQL5 EAs; both halves better, Monte Carlo checked), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
+ "close_before_breaks": true,
+ "plans": {
+  "BK07|1Hour|EURJPY": {
+   "target": "none",
+   "stop": 0.75,
+   "card": "50b37a85cf63",
+   "pyramid": [
+    2.0,
+    0.5
+   ],
+   "pyr_card": "41a6e1998b84"
+  },
+  "TV56|4Hour|USDJPY": {
+   "target": 4.0,
+   "stop": 0.75,
+   "card": "b768ab1814b1",
+   "pyramid": [
+    1.5,
+    0.5
+   ],
+   "pyr_card": "0b88f2efa8f9"
+  },
+  "TV02|1Hour|US30": {
+   "target": 5.0,
+   "card": "15722002c75a"
+  },
+  "GH08|1Hour|USDCAD": {
+   "target": 5.0,
+   "stop": 0.75,
+   "card": "56acaf99c684"
+  },
+  "TV13|4Hour|USDCAD": {
+   "be_r": 1.5,
+   "partial": [
+    0.3,
+    1.0
+   ],
+   "manage_card": "5cf1070b4b08"
+  },
+  "TV36|1Hour|ARM": {
+   "be_way": 0.236,
+   "manage_card": "b6961edcbf9d"
+  },
+  "QB11|1Hour|USDJPY": {
+   "pyramid": [
+    1.5,
+    0.5
+   ],
+   "pyr_card": "15ad6a81fce9"
+  },
+  "SC044|4Hour|EURJPY": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "5040484a9442"
+  },
+  "SC043|4Hour|EURJPY": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "5862c9ae2f74"
+  },
+  "SC330|1Hour|USDJPY": {
+   "be_way": 0.7,
+   "manage_card": "6bc0176ed124"
+  },
+  "SC333|1Hour|GBPJPY": {
+   "target": 3.0,
+   "stop": 0.75,
+   "limit": 0.5,
+   "card": "52b33c4dd538"
+  },
+  "TV20|1Hour|XAGUSD": {
+   "filter": "vol_low",
+   "filter_card": "423fccb91992"
+  },
+  "SC380|4Hour|XAUUSD": {
+   "target": 2.0,
+   "stop": 0.75,
+   "card": "6dce4cf2537e"
+  },
+  "SC381|4Hour|XAUUSD": {
+   "target": 3.0,
+   "stop": 0.75,
+   "card": "5892f1e9ec47"
+  },
+  "SC425|5Min|XAGUSD": {
+   "target": 3.0,
+   "stop": 0.75,
+   "card": "a6bdd49cfd0d"
+  },
+  "SC387|1Hour|MSTR": {
+   "filter": "with_trend200",
+   "filter_card": "b583667622ad"
+  },
+  "SC432|15Min|XAUUSD": {
+   "filter": "bbw_p20",
+   "filter_card": "7e99548d5b2b"
+  }
+ },
+ "added": {
+  "SC002|1Hour|INTC": "3ebefa8903a1",
+  "SC002|4Hour|GBPUSD": "adf0caccc2ca",
+  "SC001|1Min|JP225": "ed4d21725322",
+  "SC044|4Hour|EURJPY": "9c68a0c1934e",
+  "SC043|4Hour|EURJPY": "870583f90d93",
+  "SC010|15Min|ARM": "c0b6cb102e54",
+  "SC083|1Hour|GBPJPY": "d36a6e00f76d",
+  "SC249|4Hour|US30": "a5ee6582a61b",
+  "SC333|1Hour|GBPJPY": "3e885898a46a",
+  "SC244|15Min|WTI": "cbb8d61bc0bd",
+  "MQ11|4Hour|US2000": "b271a0555434",
+  "SC326|15Min|US30": "6dd561420f0a",
+  "SC330|1Hour|USDJPY": "e6f15083a4b4",
+  "IB017|4Hour|XRP/USD": "1218c925fe2c",
+  "TV56|4Hour|US100": "73bedca61495",
+  "SC295|1Hour|USDJPY": "3ce08ae01604",
+  "IB029|4Hour|XRP/USD": "f86a6829d42c",
+  "SC200|1Hour|US100": "57a0d218248b",
+  "SC326|15Min|WTI": "993eca8a5e99",
+  "SC236|1Hour|WTI": "ac271795b50b",
+  "SC247|4Hour|XRP/USD": "f63caa05c41b",
+  "SC086|4Hour|US2000": "9fa25d265a9d",
+  "TV02|1Hour|JP225": "763e3b774981",
+  "SC376|4Hour|XAGUSD": "4841d88353b8",
+  "SC381|4Hour|XAUUSD": "b4ca9c6ab673",
+  "SC425|5Min|XAGUSD": "e870491f1853",
+  "SC380|4Hour|XAUUSD": "305dc253a8bf",
+  "SC387|1Hour|MSTR": "b67bc2d7b414",
+  "SC432|15Min|XAUUSD": "01fed27d292b",
+  "SC399|4Hour|XAUUSD": "78ead47ace70",
+  "SC439|4Hour|EURJPY": "c5bdc1bdc581",
+  "SC485|4Hour|XAUUSD": "7ed8b6d5add2",
+  "SC479|1Hour|XAUUSD": "a09ddf3ea1e1"
+ },
+ "removed": {
+  "SC002|1Hour|ARM": "367a7113d211",
+  "SC002|4Hour|GBPUSD": "c8512e16b1eb"
+ },
+ "changes": {
+  "45e70109723a": {
+   "family": "flag",
+   "key": "dd_fit",
+   "before": "__none__"
+  },
+  "b7dde522790b": {
+   "family": "flag",
+   "key": "opp_same_tf",
+   "before": "__none__"
+  }
+ },
+ "dd_fit": 4.82,
+ "opp_same_tf": "skip"
 }

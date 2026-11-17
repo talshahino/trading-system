@@ -112,6 +112,12 @@ PROTECT = ("live/manager.json", "live/vapid_private.pem", "live/github_token.txt
            "live/installed_files.txt")
 
 
+def _not_installed(rel):
+    """The agents' per-strategy result files (reports/agents/<bot>/exp/): never needed by the bots."""
+    p = rel.split("/")
+    return len(p) >= 5 and p[0] == "reports" and p[1] == "agents" and p[3] == "exp"
+
+
 def _py():
     return sys.executable.replace("pythonw", "python")
 
@@ -127,21 +133,34 @@ def apply(sha):
     The version number is written only at the very end."""
     import py_compile
     import shutil
-    r = requests.get(f"https://codeload.github.com/{REPO}/zip/{sha}", timeout=120)
-    r.raise_for_status()
-    z = zipfile.ZipFile(io.BytesIO(r.content))
-    top = z.namelist()[0].split("/")[0]
     stage = ROOT / "_update" / f"stage_{sha[:7]}"
     backup = ROOT / "_update" / f"backup_{sha[:7]}"
     for d in (stage, backup):
         shutil.rmtree(d, ignore_errors=True)
+    # the zip goes to disk, not memory, and the agents' result files are not installed into the bots' folder (manager,
+    # 14.11.2026: the GitHub scout added 83 thousand of them, 2.9 GB - the zip of main grew to 1.35 GB, read whole into
+    # the bots' own process at every install; the bots never read them, the agents have their own copy)
+    zpath = ROOT / "_update" / f"dl_{sha[:7]}.zip"
+    zpath.parent.mkdir(parents=True, exist_ok=True)
+    with requests.get(f"https://codeload.github.com/{REPO}/zip/{sha}", timeout=120, stream=True) as r:
+        r.raise_for_status()
+        with open(zpath, "wb") as out:
+            for chunk in r.iter_content(1 << 20):
+                out.write(chunk)
+    z = zipfile.ZipFile(zpath)
+    top = z.namelist()[0].split("/")[0]
     files = {}
     for info in z.infolist():
         rel = info.filename[len(top) + 1:]
-        if rel and not info.is_dir() and rel not in PROTECT:
-            files[rel] = z.read(info)
+        if rel and not info.is_dir() and rel not in PROTECT and not _not_installed(rel):
+            files[rel] = info.file_size                      # the content stays in the staging folder
             (stage / rel).parent.mkdir(parents=True, exist_ok=True)
-            (stage / rel).write_bytes(files[rel])
+            (stage / rel).write_bytes(z.read(info))
+    z.close()
+    try:
+        zpath.unlink()
+    except OSError:
+        pass
     # 2. check before touching anything
     for rel in files:
         if rel.endswith(".py") and rel.startswith(("live/", "agents/")):
@@ -156,8 +175,9 @@ def apply(sha):
     if pip.returncode != 0:
         raise RuntimeError("installing Python packages failed: " + ((pip.stderr or pip.stdout).strip().splitlines() or ["?"])[-1][-200:])
     old = set(MANIFEST.read_text(encoding="utf-8").split("\n")) - {""} if MANIFEST.exists() else set()
-    gone = [rel for rel in old - set(files) if rel not in PROTECT and (ROOT / rel).is_file()]
-    changed = [rel for rel, data in files.items() if not ((ROOT / rel).exists() and (ROOT / rel).read_bytes() == data)]
+    gone = [rel for rel in old - set(files) if rel not in PROTECT and not _not_installed(rel) and (ROOT / rel).is_file()]
+    changed = [rel for rel, size in files.items() if not ((ROOT / rel).is_file() and (ROOT / rel).stat().st_size == size
+                                                          and (ROOT / rel).read_bytes() == (stage / rel).read_bytes())]
     created = []
     try:
         for rel in changed + gone:                    # 4. backup
@@ -170,7 +190,7 @@ def apply(sha):
                 created.append(rel)
             dest.parent.mkdir(parents=True, exist_ok=True)
             tmp = dest.with_suffix(dest.suffix + ".new")
-            tmp.write_bytes(files[rel])
+            tmp.write_bytes((stage / rel).read_bytes())
             os.replace(tmp, dest)
         for rel in gone:
             (ROOT / rel).unlink()

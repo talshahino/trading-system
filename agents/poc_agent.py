@@ -78,6 +78,9 @@ DUKA = {"EURUSD": "eurusd", "GBPUSD": "gbpusd", "USDJPY": "usdjpy", "AUDUSD": "a
         "BTCUSD": "btcusd", "ETHUSD": "ethusd"}
 DUKA_TF = {"1Min": "m1", "1Hour": "h1", "1Day": "d1"}
 RESAMPLE = {"5Min": "5min", "15Min": "15min"}      # built locally from 1-minute bars
+# instruments whose history moved from Dukascopy's European listing to the US listing on Alpaca (12.11.2026,
+# agents/ftmo_universe.py): their own cache names, so the old European years cached under the same name are never read
+MOVED_US = {"ASML", "RACE"}
 
 
 def _duka_year(symbol, timeframe, y, end, price="bid"):
@@ -183,7 +186,7 @@ def bars(symbol, timeframe, start, end):
     frames = []
     now = pd.Timestamp.now(tz="UTC") - pd.Timedelta(minutes=20)
     for y in range(pd.Timestamp(start).year, pd.Timestamp(end).year + 1):
-        f = config.CACHE_DIR / f"poc_{symbol.replace('/', '-')}_{timeframe}_{y}.csv.gz"
+        f = config.CACHE_DIR / f"poc_{symbol.replace('/', '-')}{'_us' if symbol in MOVED_US else ''}_{timeframe}_{y}.csv.gz"
         cached = None
         if f.exists():
             try:

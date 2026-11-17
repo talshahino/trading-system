@@ -457,6 +457,13 @@ def decide(bots, now=None):
                         did = _did("card", c["id"], "reopen", osym)
                 except Exception:  # noqa: BLE001
                     pass
+            # a smoother-curve card (user, 16.11.2026, task mgr1611curve: "comes to the manager even if its total is
+            # somewhat lower - the manager decides"; agentkit.curve_ok, 17.11.2026) declined before by the total-only
+            # rule below, which did not know that rule: decided once more under it (a new decision id, like the
+            # off-server reopen above) - the whole-bot check still decides
+            curve = (c.get("change") or {}).get("test") == "curve" and K.curve_ok(c)[0] is True
+            if curve and (old.get(did) or {}).get("decision") == "declined" and "לא מגדיל את הרווח הכולל" in (old.get(did) or {}).get("why", ""):
+                did = _did("card", c["id"], "curve")
             prev = old.get(did)
             if c["tier"] not in ("strong", "regular"):
                 # approved earlier, judged lower now (a stricter rule): not built yet -> withdrawn, never built;
@@ -528,7 +535,8 @@ def decide(bots, now=None):
             why, star, mult, whole = c["verdict"], False, None, None
             is_new = did not in old
             tot_new, tot_base = _total(c.get("unseen")), _total(c.get("baseline"))
-            if is_new and c["kind"] == "improve" and tot_new is not None and tot_base is not None and tot_new <= tot_base:
+            if is_new and c["kind"] == "improve" and tot_new is not None and tot_base is not None and tot_new <= tot_base \
+                    and not curve:
                 # THE GOAL (user, 12.11.2026, data/agents/objective.md): the TOTAL profit, not R per trade - a change
                 # goes in only if its 2026 total beats what runs now (12.11: a built change earned more a trade, but
                 # fewer trades made less in all - it had to be taken back)

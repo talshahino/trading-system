@@ -780,7 +780,11 @@ def _publish_changes(st, before, kind, msg, only=None):
         # main's own copy of these files changed too (manager, 16.11.2026: main moves every few minutes by this
         # computer's own publishes, so bot 2's and bot 3's approved strategies of 10:58 / 11:32 UTC were dropped again
         # every cycle and were still not in the bots at 12:30, while their replies said "built")
-        if moved and not _main_same(st, [r for r in files if r.startswith("live/bots/")] + [REPLIES]):
+        # replies.json is not part of the check: publish() merges it into main's copy (merge_replies), and main's
+        # replies move all the time - the cloud agents' answers, the user's notes (manager, 17.11.2026: bot 7's smart
+        # run of 15:01-16:10 UTC kept the light cycles from refreshing, the cloud wrote replies.json at 15:17, and
+        # SC501's approved risk card of 15:10 for bot 5 was built and dropped in every cycle for over an hour)
+        if moved and not _main_same(st, [r for r in files if r.startswith("live/bots/")]):
             files = {r: v for r, v in files.items() if not r.startswith("live/bots/") and r != REPLIES}
     if kind == "light" and time.time() - _S["pub"] < HEARTBEAT:
         prev = st.get("pub_digest", {})

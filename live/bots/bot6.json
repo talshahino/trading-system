@@ -100,8 +100,8 @@
   "scout:SC326|15Min|US30": 0.00017,
   "scout:SC326|5Min|US30": 0.00011,
   "scout:SC441|5Min|US100": 0.0002,
-  "scout:SC258|1Min|US100": 0.00108,
-  "scout:TV41|15Min|US100": 0.00076
+  "scout:SC258|1Min|US100": 0.000283,
+  "scout:TV41|15Min|US100": 0.000198
  },
  "changes": {
   "abb187377383": {
@@ -607,10 +607,11 @@
      "target": "none",
      "stop": 1.0,
      "time": "own",
-     "be": false
+     "be": false,
+     "sess": "day"
     },
-    "since": "2026-11-17T06:05:41+00:00",
-    "card": "d76f1f70497a"
+    "since": "2026-11-17T11:43:03+00:00",
+    "card": "d2081082ff29"
    }
   },
   "44061531496a": {
@@ -629,10 +630,11 @@
      "MIN_RR": 1.0,
      "EXPIRY": 120,
      "PROT": "cal15",
-     "EXIT": "p50_1r",
+     "EXIT": "be886",
      "LADDER": "4",
      "WKND": 10,
-     "REARM": true
+     "REARM": true,
+     "MINSTOP": 1.0
     }
    },
    "risk_before": 0.0012
@@ -706,6 +708,16 @@
    "family": "risk",
    "track": "scout:TV41|15Min|US100",
    "before": 0.001085
+  },
+  "8515d11d6e1a": {
+   "family": "risk",
+   "track": "scout:SC258|1Min|US100",
+   "before": 0.00108
+  },
+  "090f23956a21": {
+   "family": "risk",
+   "track": "scout:TV41|15Min|US100",
+   "before": 0.00076
   }
  },
  "scout": {
@@ -847,7 +859,7 @@
     "be": false,
     "sess": "day"
    },
-   "since": "2026-11-17T11:43:03+00:00",
+   "since": "2026-11-17T12:23:05+00:00",
    "card": "d2081082ff29"
   }
  }

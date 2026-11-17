@@ -1,5 +1,5 @@
 {
- "fp": "7a45103f1ebb",
+ "fp": "ffb7c310b821",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -86,6 +86,11 @@
    "SC265|5Min|XAUUSD",
    "SC358|1Hour|XAUUSD",
    "SC372|4Hour|XAUUSD",
+   "SC389|1Hour|XAUUSD",
+   "SC414|4Hour|EURUSD",
+   "SC504|4Hour|US100",
+   "SC504|4Hour|US30",
+   "SC512|15Min|GER40",
    "SE02|1Hour|GBPJPY",
    "SH01|1Min|GER40",
    "SH01|1Min|US100",
@@ -264,16 +269,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|EURJPY": {
     "start": "pre",
@@ -282,16 +291,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|EURUSD": {
     "start": "pre",
@@ -300,16 +313,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|GBPJPY": {
     "start": "pre",
@@ -318,16 +335,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|GBPUSD": {
     "start": "pre",
@@ -336,16 +357,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|GER40": {
     "start": "pre",
@@ -354,16 +379,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|JP225": {
     "start": "pre",
@@ -372,16 +401,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|NZDUSD": {
     "start": "pre",
@@ -390,16 +423,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|UK100": {
     "start": "pre",
@@ -408,16 +445,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|US100": {
     "start": "pre",
@@ -426,16 +467,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|US30": {
     "start": "pre",
@@ -444,16 +489,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|US500": {
     "start": "pre",
@@ -462,16 +511,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|USDCAD": {
     "start": "pre",
@@ -480,16 +533,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|USDCHF": {
     "start": "pre",
@@ -498,16 +555,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|USDJPY": {
     "start": "pre",
@@ -516,16 +577,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV04|1Min|XAUUSD": {
     "start": "pre",
@@ -534,16 +599,20 @@
     "exit": "be1",
     "hold_min": 30,
     "cur": "own",
-    "cancel_min": 5,
+    "cancel_min": 1,
     "slip_atr": 0.1,
     "cap_per_release": 9,
     "skip_groups": [
      "USD:gdp",
      "USD:rates",
-     "GBP:rates"
+     "GBP:rates",
+     "EUR:rates"
     ],
     "skip_card": "4b152c858fb7",
-    "skip_why": "בלי החלטות ריבית בארה\"ב ובאנגליה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)"
+    "skip_why": "בלי החלטות ריבית בארה\"ב, באנגליה ובאירופה ובלי תמ\"ג ארה\"ב (הפסידו ב־2025 וב־2026)",
+    "fill_from": 0,
+    "window_card": "97a5731bab19",
+    "skip_card2": "10a662c222e4"
    },
    "EV08|1Min|US100": {
     "groups": [
@@ -658,6 +727,28 @@
     "stop": 0.75,
     "limit": 0.5
    },
+   "SC389|1Hour|XAUUSD": {
+    "added": "2026-11-16",
+    "on_from": "2026-11-16T16:30:00+00:00"
+   },
+   "SC414|4Hour|EURUSD": {
+    "added": "2026-11-16",
+    "on_from": "2026-11-16T16:30:00+00:00",
+    "target": 3.0,
+    "stop": 0.75
+   },
+   "SC504|4Hour|US100": {
+    "added": "2026-11-17",
+    "on_from": "2026-11-17T20:00:00+00:00"
+   },
+   "SC504|4Hour|US30": {
+    "added": "2026-11-17",
+    "on_from": "2026-11-17T20:00:00+00:00"
+   },
+   "SC512|15Min|GER40": {
+    "added": "2026-11-17",
+    "on_from": "2026-11-17T20:00:00+00:00"
+   },
    "SE02|1Hour|GBPJPY": {
     "added": "2026-11-15",
     "on_from": "2026-11-15T12:30:00+00:00"
@@ -712,8 +803,8 @@
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-16T12:06:20+00:00",
- "account_v": 16,
+ "last_reset": "2026-11-17T12:19:42+00:00",
+ "account_v": 17,
  "resets": [
   {
    "v": 2,
@@ -819,13 +910,15 @@
    "what": "כלל השתנה ב־EV04|1Min|AUDUSD, EV04|1Min|EURJPY, EV04|1Min|EURUSD, EV04|1Min|GBPJPY",
    "archive": "data/agents/bot7_archive/account_v15.json",
    "id": "d2e4d608a1a2"
+  },
+  {
+   "v": 17,
+   "at": "2026-11-17T12:19:42+00:00",
+   "what": "נוספו 5 אסטרטגיות/מכשירים · כלל השתנה ב־EV04|1Min|AUDUSD, EV04|1Min|EURJPY, EV04|1Min|EURUSD, EV04|1Min|GBPJPY",
+   "archive": "data/agents/bot7_archive/account_v15.json",
+   "id": "9e44f258d40b"
   }
  ],
  "stable": false,
- "proposed": null,
- "waiting": {
-  "what": "נוספו 5 אסטרטגיות/מכשירים · כלל השתנה ב־EV04|1Min|AUDUSD, EV04|1Min|EURJPY, EV04|1Min|EURUSD, EV04|1Min|GBPJPY",
-  "since": "2026-11-16T17:00:53+00:00",
-  "reset_after": "2026-11-17T12:06:20+00:00"
- }
+ "proposed": null
 }

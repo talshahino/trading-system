@@ -72,7 +72,8 @@
   "scout:SC486|15Min|USDCHF": 0.00196,
   "scout:SC501|5Min|XAUUSD": 0.00196,
   "scout:SC317|15Min|XAUUSD": 0.0028,
-  "scout:SC232|15Min|XAUUSD": 0.00196
+  "scout:SC232|15Min|XAUUSD": 0.00196,
+  "scout:SC512|5Min|GER40": 0.00196
  },
  "changes": {
   "a0a49a4ffc34": {
@@ -821,6 +822,13 @@
     }
    },
    "risk_before": 0.00196
+  },
+  "30ac7abbfc75": {
+   "family": "scout5",
+   "combo": "SC512|5Min|GER40",
+   "before": "__none__",
+   "star_risk_before": "__none__",
+   "fit6": 0.0028
   }
  },
  "tal_tracks": {
@@ -1356,6 +1364,10 @@
   "SC232|15Min|XAUUSD": {
    "since": "2026-11-17T09:29:47+00:00",
    "card": "f6d4825c394c"
+  },
+  "SC512|5Min|GER40": {
+   "since": "2026-11-17T12:23:05+00:00",
+   "card": "30ac7abbfc75"
   }
  }
 }

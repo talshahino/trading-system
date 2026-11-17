@@ -1,0 +1,3427 @@
+{
+ "at": "2026-11-17T06:14:12+00:00",
+ "bots": {
+  "bot1": {
+   "strategies": 70,
+   "trades": 9572,
+   "detectors": {
+    "adx": {
+     "train": {
+      "share_choppy": 30.0,
+      "r_choppy": 0.162,
+      "r_other": 0.145,
+      "gap": -0.017
+     },
+     "unseen": {
+      "share_choppy": 30.2,
+      "r_choppy": 0.194,
+      "r_other": 0.122,
+      "gap": -0.072
+     }
+    },
+    "ci": {
+     "train": {
+      "share_choppy": 4.2,
+      "r_choppy": 0.292,
+      "r_other": 0.144,
+      "gap": -0.148
+     },
+     "unseen": {
+      "share_choppy": 4.9,
+      "r_choppy": 0.231,
+      "r_other": 0.139,
+      "gap": -0.092
+     }
+    },
+    "er": {
+     "train": {
+      "share_choppy": 42.8,
+      "r_choppy": 0.161,
+      "r_other": 0.142,
+      "gap": -0.019
+     },
+     "unseen": {
+      "share_choppy": 41.9,
+      "r_choppy": 0.138,
+      "r_other": 0.147,
+      "gap": 0.009
+     }
+    },
+    "vhf": {
+     "train": {
+      "share_choppy": 25.5,
+      "r_choppy": 0.141,
+      "r_other": 0.153,
+      "gap": 0.012
+     },
+     "unseen": {
+      "share_choppy": 24.9,
+      "r_choppy": 0.242,
+      "r_other": 0.111,
+      "gap": -0.131
+     }
+    },
+    "bbw": {
+     "train": {
+      "share_choppy": 20.0,
+      "r_choppy": 0.142,
+      "r_other": 0.152,
+      "gap": 0.011
+     },
+     "unseen": {
+      "share_choppy": 18.7,
+      "r_choppy": 0.213,
+      "r_other": 0.128,
+      "gap": -0.085
+     }
+    },
+    "don": {
+     "train": {
+      "share_choppy": 3.2,
+      "r_choppy": 0.12,
+      "r_other": 0.151,
+      "gap": 0.031
+     },
+     "unseen": {
+      "share_choppy": 2.7,
+      "r_choppy": 0.436,
+      "r_other": 0.135,
+      "gap": -0.301
+     }
+    },
+    "rsi": {
+     "train": {
+      "share_choppy": 21.6,
+      "r_choppy": 0.118,
+      "r_other": 0.159,
+      "gap": 0.041
+     },
+     "unseen": {
+      "share_choppy": 22.2,
+      "r_choppy": 0.147,
+      "r_other": 0.142,
+      "gap": -0.005
+     }
+    },
+    "atr": {
+     "train": {
+      "share_choppy": 9.9,
+      "r_choppy": 0.124,
+      "r_other": 0.153,
+      "gap": 0.03
+     },
+     "unseen": {
+      "share_choppy": 9.5,
+      "r_choppy": 0.198,
+      "r_other": 0.138,
+      "gap": -0.06
+     }
+    },
+    "ma": {
+     "train": {
+      "share_choppy": 3.8,
+      "r_choppy": 0.15,
+      "r_other": 0.15,
+      "gap": 0.001
+     },
+     "unseen": {
+      "share_choppy": 3.8,
+      "r_choppy": 0.244,
+      "r_other": 0.139,
+      "gap": -0.105
+     }
+    },
+    "fail": {
+     "train": {
+      "share_choppy": 62.7,
+      "r_choppy": 0.146,
+      "r_other": 0.158,
+      "gap": 0.012
+     },
+     "unseen": {
+      "share_choppy": 66.1,
+      "r_choppy": 0.124,
+      "r_other": 0.181,
+      "gap": 0.056
+     }
+    },
+    "adr": {
+     "train": {
+      "share_choppy": 22.2,
+      "r_choppy": 0.083,
+      "r_other": 0.17,
+      "gap": 0.087
+     },
+     "unseen": {
+      "share_choppy": 19.8,
+      "r_choppy": 0.157,
+      "r_other": 0.14,
+      "gap": -0.017
+     }
+    },
+    "vote2": {
+     "train": {
+      "share_choppy": 42.7,
+      "r_choppy": 0.109,
+      "r_other": 0.181,
+      "gap": 0.073
+     },
+     "unseen": {
+      "share_choppy": 41.8,
+      "r_choppy": 0.178,
+      "r_other": 0.119,
+      "gap": -0.059
+     }
+    },
+    "vote3": {
+     "train": {
+      "share_choppy": 17.0,
+      "r_choppy": 0.186,
+      "r_other": 0.143,
+      "gap": -0.043
+     },
+     "unseen": {
+      "share_choppy": 17.1,
+      "r_choppy": 0.213,
+      "r_other": 0.129,
+      "gap": -0.084
+     }
+    }
+   },
+   "top5": [
+    "adr",
+    "rsi",
+    "vhf",
+    "fail",
+    "bbw"
+   ],
+   "best_detector": "adr",
+   "management": {
+    "asis": {
+     "train": {
+      "trades": 3894,
+      "total": 103.1,
+      "worst_day": -3.04,
+      "max_dd": 5.83
+     },
+     "unseen": {
+      "trades": 5212,
+      "total": 175.0,
+      "worst_day": -2.43,
+      "max_dd": 7.82
+     }
+    },
+    "adr:per_strategy": {
+     "train": {
+      "trades": 3937,
+      "total": 134.31,
+      "worst_day": -3.04,
+      "max_dd": 5.44
+     },
+     "unseen": {
+      "trades": 5233,
+      "total": 143.94,
+      "worst_day": -2.73,
+      "max_dd": 7.05
+     },
+     "picked": {
+      "be@0.5": 5,
+      "fib@0.618": 5,
+      "time@8": 2,
+      "half@1": 2,
+      "trail@6": 2,
+      "shrink@0.5": 3,
+      "fib@0.786": 6,
+      "be@0.3": 5,
+      "trail@3": 5,
+      "half@0.3": 3
+     },
+     "strategies_changed": 38
+    },
+    "adr:be@0.3": {
+     "train": {
+      "trades": 3941,
+      "total": 71.49,
+      "worst_day": -2.48,
+      "max_dd": 6.97
+     },
+     "unseen": {
+      "trades": 5256,
+      "total": 129.59,
+      "worst_day": -2.24,
+      "max_dd": 5.55
+     }
+    },
+    "adr:be@0.5": {
+     "train": {
+      "trades": 3935,
+      "total": 87.81,
+      "worst_day": -2.76,
+      "max_dd": 7.19
+     },
+     "unseen": {
+      "trades": 5240,
+      "total": 149.98,
+      "worst_day": -2.26,
+      "max_dd": 6.34
+     }
+    },
+    "adr:be@1": {
+     "train": {
+      "trades": 3920,
+      "total": 103.19,
+      "worst_day": -2.76,
+      "max_dd": 6.12
+     },
+     "unseen": {
+      "trades": 5222,
+      "total": 173.74,
+      "worst_day": -2.37,
+      "max_dd": 7.69
+     }
+    },
+    "adr:half@0.3": {
+     "train": {
+      "trades": 3916,
+      "total": 28.2,
+      "worst_day": -2.55,
+      "max_dd": 11.38
+     },
+     "unseen": {
+      "trades": 5261,
+      "total": 72.16,
+      "worst_day": -2.46,
+      "max_dd": 12.4
+     }
+    },
+    "adr:half@0.5": {
+     "train": {
+      "trades": 3927,
+      "total": 46.57,
+      "worst_day": -2.79,
+      "max_dd": 9.47
+     },
+     "unseen": {
+      "trades": 5248,
+      "total": 94.97,
+      "worst_day": -2.34,
+      "max_dd": 10.41
+     }
+    },
+    "adr:half@1": {
+     "train": {
+      "trades": 3925,
+      "total": 73.44,
+      "worst_day": -2.6,
+      "max_dd": 7.56
+     },
+     "unseen": {
+      "trades": 5229,
+      "total": 129.18,
+      "worst_day": -2.43,
+      "max_dd": 10.44
+     }
+    },
+    "adr:shrink@0.5": {
+     "train": {
+      "trades": 3931,
+      "total": 65.83,
+      "worst_day": -2.89,
+      "max_dd": 7.43
+     },
+     "unseen": {
+      "trades": 5238,
+      "total": 108.15,
+      "worst_day": -3.15,
+      "max_dd": 11.94
+     }
+    },
+    "adr:shrink@0.7": {
+     "train": {
+      "trades": 3916,
+      "total": 65.73,
+      "worst_day": -2.92,
+      "max_dd": 8.24
+     },
+     "unseen": {
+      "trades": 5218,
+      "total": 119.13,
+      "worst_day": -3.04,
+      "max_dd": 14.25
+     }
+    },
+    "adr:fib@0.618": {
+     "train": {
+      "trades": 3893,
+      "total": 76.64,
+      "worst_day": -2.97,
+      "max_dd": 6.19
+     },
+     "unseen": {
+      "trades": 5233,
+      "total": 126.13,
+      "worst_day": -2.51,
+      "max_dd": 14.45
+     }
+    },
+    "adr:fib@0.786": {
+     "train": {
+      "trades": 3884,
+      "total": 69.7,
+      "worst_day": -3.26,
+      "max_dd": 7.89
+     },
+     "unseen": {
+      "trades": 5231,
+      "total": 116.26,
+      "worst_day": -2.27,
+      "max_dd": 15.98
+     }
+    },
+    "adr:fibh@0.618": {
+     "train": {
+      "trades": 3905,
+      "total": 90.56,
+      "worst_day": -3.05,
+      "max_dd": 5.89
+     },
+     "unseen": {
+      "trades": 5227,
+      "total": 150.92,
+      "worst_day": -2.44,
+      "max_dd": 9.58
+     }
+    },
+    "adr:time@4": {
+     "train": {
+      "trades": 3909,
+      "total": 99.4,
+      "worst_day": -3.04,
+      "max_dd": 6.57
+     },
+     "unseen": {
+      "trades": 5221,
+      "total": 160.52,
+      "worst_day": -2.66,
+      "max_dd": 11.55
+     }
+    },
+    "adr:time@8": {
+     "train": {
+      "trades": 3903,
+      "total": 103.39,
+      "worst_day": -3.04,
+      "max_dd": 6.28
+     },
+     "unseen": {
+      "trades": 5214,
+      "total": 161.53,
+      "worst_day": -2.86,
+      "max_dd": 12.19
+     }
+    },
+    "adr:trail@3": {
+     "train": {
+      "trades": 3956,
+      "total": 75.49,
+      "worst_day": -2.69,
+      "max_dd": 9.27
+     },
+     "unseen": {
+      "trades": 5258,
+      "total": 95.81,
+      "worst_day": -2.77,
+      "max_dd": 10.09
+     }
+    },
+    "adr:trail@6": {
+     "train": {
+      "trades": 3943,
+      "total": 74.44,
+      "worst_day": -2.63,
+      "max_dd": 8.97
+     },
+     "unseen": {
+      "trades": 5252,
+      "total": 111.28,
+      "worst_day": -2.85,
+      "max_dd": 9.11
+     }
+    },
+    "ci:per_strategy": {
+     "train": {
+      "trades": 3911,
+      "total": 117.18,
+      "worst_day": -3.04,
+      "max_dd": 5.9
+     },
+     "unseen": {
+      "trades": 5213,
+      "total": 160.24,
+      "worst_day": -2.34,
+      "max_dd": 7.77
+     },
+     "picked": {
+      "be@0.5": 1,
+      "fib@0.618": 8,
+      "half@0.5": 4,
+      "time@8": 1,
+      "fib@0.786": 3,
+      "half@0.3": 3,
+      "be@0.3": 4,
+      "trail@3": 2,
+      "time@4": 2
+     },
+     "strategies_changed": 28
+    },
+    "ci:be@0.3": {
+     "train": {
+      "trades": 3902,
+      "total": 92.7,
+      "worst_day": -3.36,
+      "max_dd": 7.19
+     },
+     "unseen": {
+      "trades": 5228,
+      "total": 141.12,
+      "worst_day": -2.71,
+      "max_dd": 10.64
+     }
+    },
+    "ci:be@0.5": {
+     "train": {
+      "trades": 3899,
+      "total": 95.92,
+      "worst_day": -3.36,
+      "max_dd": 7.37
+     },
+     "unseen": {
+      "trades": 5230,
+      "total": 151.27,
+      "worst_day": -2.37,
+      "max_dd": 11.81
+     }
+    },
+    "ci:be@1": {
+     "train": {
+      "trades": 3900,
+      "total": 100.27,
+      "worst_day": -3.04,
+      "max_dd": 6.09
+     },
+     "unseen": {
+      "trades": 5211,
+      "total": 169.25,
+      "worst_day": -2.37,
+      "max_dd": 9.7
+     }
+    },
+    "ci:half@0.3": {
+     "train": {
+      "trades": 3903,
+      "total": 56.58,
+      "worst_day": -3.36,
+      "max_dd": 7.33
+     },
+     "unseen": {
+      "trades": 5225,
+      "total": 96.34,
+      "worst_day": -2.76,
+      "max_dd": 12.95
+     }
+    },
+    "ci:half@0.5": {
+     "train": {
+      "trades": 3903,
+      "total": 65.09,
+      "worst_day": -3.35,
+      "max_dd": 7.71
+     },
+     "unseen": {
+      "trades": 5223,
+      "total": 110.57,
+      "worst_day": -2.58,
+      "max_dd": 12.57
+     }
+    },
+    "ci:half@1": {
+     "train": {
+      "trades": 3905,
+      "total": 77.62,
+      "worst_day": -3.06,
+      "max_dd": 6.34
+     },
+     "unseen": {
+      "trades": 5211,
+      "total": 135.01,
+      "worst_day": -2.43,
+      "max_dd": 11.58
+     }
+    },
+    "ci:shrink@0.5": {
+     "train": {
+      "trades": 3902,
+      "total": 72.33,
+      "worst_day": -2.82,
+      "max_dd": 8.5
+     },
+     "unseen": {
+      "trades": 5224,
+      "total": 149.04,
+      "worst_day": -2.5,
+      "max_dd": 10.98
+     }
+    },
+    "ci:shrink@0.7": {
+     "train": {
+      "trades": 3900,
+      "total": 82.7,
+      "worst_day": -2.98,
+      "max_dd": 7.2
+     },
+     "unseen": {
+      "trades": 5210,
+      "total": 152.57,
+      "worst_day": -2.85,
+      "max_dd": 11.83
+     }
+    },
+    "ci:fib@0.618": {
+     "train": {
+      "trades": 3900,
+      "total": 85.3,
+      "worst_day": -3.04,
+      "max_dd": 7.19
+     },
+     "unseen": {
+      "trades": 5230,
+      "total": 156.53,
+      "worst_day": -2.8,
+      "max_dd": 7.61
+     }
+    },
+    "ci:fib@0.786": {
+     "train": {
+      "trades": 3897,
+      "total": 77.78,
+      "worst_day": -3.34,
+      "max_dd": 5.57
+     },
+     "unseen": {
+      "trades": 5228,
+      "total": 134.53,
+      "worst_day": -2.73,
+      "max_dd": 10.05
+     }
+    },
+    "ci:fibh@0.618": {
+     "train": {
+      "trades": 3898,
+      "total": 95.06,
+      "worst_day": -3.04,
+      "max_dd": 5.7
+     },
+     "unseen": {
+      "trades": 5223,
+      "total": 165.93,
+      "worst_day": -2.63,
+      "max_dd": 7.64
+     }
+    },
+    "ci:time@4": {
+     "train": {
+      "trades": 3897,
+      "total": 103.1,
+      "worst_day": -3.04,
+      "max_dd": 6.05
+     },
+     "unseen": {
+      "trades": 5212,
+      "total": 176.72,
+      "worst_day": -2.43,
+      "max_dd": 7.58
+     }
+    },
+    "ci:time@8": {
+     "train": {
+      "trades": 3898,
+      "total": 103.49,
+      "worst_day": -3.04,
+      "max_dd": 6.25
+     },
+     "unseen": {
+      "trades": 5214,
+      "total": 176.37,
+      "worst_day": -2.43,
+      "max_dd": 7.64
+     }
+    },
+    "ci:trail@3": {
+     "train": {
+      "trades": 3918,
+      "total": 74.15,
+      "worst_day": -3.17,
+      "max_dd": 6.98
+     },
+     "unseen": {
+      "trades": 5242,
+      "total": 128.54,
+      "worst_day": -2.79,
+      "max_dd": 10.73
+     }
+    },
+    "ci:trail@6": {
+     "train": {
+      "trades": 3906,
+      "total": 77.4,
+      "worst_day": -3.23,
+      "max_dd": 6.76
+     },
+     "unseen": {
+      "trades": 5236,
+      "total": 137.54,
+      "worst_day": -2.94,
+      "max_dd": 11.46
+     }
+    }
+   }
+  },
+  "bot2": {
+   "strategies": 37,
+   "trades": 4910,
+   "detectors": {
+    "adx": {
+     "train": {
+      "share_choppy": 30.2,
+      "r_choppy": 0.311,
+      "r_other": 0.12,
+      "gap": -0.191
+     },
+     "unseen": {
+      "share_choppy": 31.4,
+      "r_choppy": 0.158,
+      "r_other": 0.131,
+      "gap": -0.027
+     }
+    },
+    "ci": {
+     "train": {
+      "share_choppy": 5.8,
+      "r_choppy": 0.354,
+      "r_other": 0.167,
+      "gap": -0.187
+     },
+     "unseen": {
+      "share_choppy": 6.8,
+      "r_choppy": 0.371,
+      "r_other": 0.123,
+      "gap": -0.249
+     }
+    },
+    "er": {
+     "train": {
+      "share_choppy": 44.3,
+      "r_choppy": 0.16,
+      "r_other": 0.192,
+      "gap": 0.032
+     },
+     "unseen": {
+      "share_choppy": 45.7,
+      "r_choppy": 0.079,
+      "r_other": 0.191,
+      "gap": 0.112
+     }
+    },
+    "vhf": {
+     "train": {
+      "share_choppy": 27.6,
+      "r_choppy": 0.263,
+      "r_other": 0.145,
+      "gap": -0.118
+     },
+     "unseen": {
+      "share_choppy": 25.2,
+      "r_choppy": 0.139,
+      "r_other": 0.14,
+      "gap": 0.001
+     }
+    },
+    "bbw": {
+     "train": {
+      "share_choppy": 22.7,
+      "r_choppy": 0.299,
+      "r_other": 0.142,
+      "gap": -0.156
+     },
+     "unseen": {
+      "share_choppy": 21.7,
+      "r_choppy": 0.121,
+      "r_other": 0.145,
+      "gap": 0.024
+     }
+    },
+    "don": {
+     "train": {
+      "share_choppy": 4.5,
+      "r_choppy": -0.107,
+      "r_other": 0.191,
+      "gap": 0.298
+     },
+     "unseen": {
+      "share_choppy": 5.0,
+      "r_choppy": 0.377,
+      "r_other": 0.127,
+      "gap": -0.25
+     }
+    },
+    "rsi": {
+     "train": {
+      "share_choppy": 23.5,
+      "r_choppy": 0.23,
+      "r_other": 0.161,
+      "gap": -0.069
+     },
+     "unseen": {
+      "share_choppy": 24.7,
+      "r_choppy": 0.202,
+      "r_other": 0.119,
+      "gap": -0.083
+     }
+    },
+    "atr": {
+     "train": {
+      "share_choppy": 9.4,
+      "r_choppy": 0.107,
+      "r_other": 0.185,
+      "gap": 0.078
+     },
+     "unseen": {
+      "share_choppy": 11.5,
+      "r_choppy": 0.2,
+      "r_other": 0.132,
+      "gap": -0.068
+     }
+    },
+    "ma": {
+     "train": {
+      "share_choppy": 3.0,
+      "r_choppy": 0.246,
+      "r_other": 0.175,
+      "gap": -0.071
+     },
+     "unseen": {
+      "share_choppy": 4.2,
+      "r_choppy": 0.389,
+      "r_other": 0.129,
+      "gap": -0.261
+     }
+    },
+    "fail": {
+     "train": {
+      "share_choppy": 61.7,
+      "r_choppy": 0.169,
+      "r_other": 0.192,
+      "gap": 0.023
+     },
+     "unseen": {
+      "share_choppy": 64.4,
+      "r_choppy": 0.095,
+      "r_other": 0.22,
+      "gap": 0.125
+     }
+    },
+    "adr": {
+     "train": {
+      "share_choppy": 23.9,
+      "r_choppy": 0.116,
+      "r_other": 0.197,
+      "gap": 0.081
+     },
+     "unseen": {
+      "share_choppy": 24.8,
+      "r_choppy": 0.123,
+      "r_other": 0.145,
+      "gap": 0.022
+     }
+    },
+    "vote2": {
+     "train": {
+      "share_choppy": 56.7,
+      "r_choppy": 0.193,
+      "r_other": 0.157,
+      "gap": -0.036
+     },
+     "unseen": {
+      "share_choppy": 57.9,
+      "r_choppy": 0.102,
+      "r_other": 0.191,
+      "gap": 0.089
+     }
+    },
+    "vote3": {
+     "train": {
+      "share_choppy": 25.6,
+      "r_choppy": 0.198,
+      "r_other": 0.171,
+      "gap": -0.027
+     },
+     "unseen": {
+      "share_choppy": 26.7,
+      "r_choppy": 0.102,
+      "r_other": 0.153,
+      "gap": 0.051
+     }
+    }
+   },
+   "top5": [
+    "adr",
+    "er",
+    "fail",
+    "rsi",
+    "vhf"
+   ],
+   "best_detector": "adr",
+   "management": {
+    "asis": {
+     "train": {
+      "trades": 2130,
+      "total": 101.54,
+      "worst_day": -2.35,
+      "max_dd": 5.49
+     },
+     "unseen": {
+      "trades": 2746,
+      "total": 126.7,
+      "worst_day": -2.52,
+      "max_dd": 6.26
+     }
+    },
+    "adr:per_strategy": {
+     "train": {
+      "trades": 2132,
+      "total": 122.35,
+      "worst_day": -2.4,
+      "max_dd": 5.12
+     },
+     "unseen": {
+      "trades": 2751,
+      "total": 102.99,
+      "worst_day": -2.52,
+      "max_dd": 6.28
+     },
+     "picked": {
+      "be@0.5": 1,
+      "fib@0.618": 5,
+      "be@1": 1,
+      "trail@6": 1,
+      "shrink@0.5": 4,
+      "fib@0.786": 2,
+      "be@0.3": 2,
+      "trail@3": 3,
+      "half@0.3": 1
+     },
+     "strategies_changed": 20
+    },
+    "adr:be@0.3": {
+     "train": {
+      "trades": 2134,
+      "total": 82.29,
+      "worst_day": -2.29,
+      "max_dd": 4.51
+     },
+     "unseen": {
+      "trades": 2752,
+      "total": 83.52,
+      "worst_day": -2.45,
+      "max_dd": 8.22
+     }
+    },
+    "adr:be@0.5": {
+     "train": {
+      "trades": 2132,
+      "total": 85.28,
+      "worst_day": -2.29,
+      "max_dd": 6.35
+     },
+     "unseen": {
+      "trades": 2749,
+      "total": 92.72,
+      "worst_day": -2.56,
+      "max_dd": 6.65
+     }
+    },
+    "adr:be@1": {
+     "train": {
+      "trades": 2131,
+      "total": 93.82,
+      "worst_day": -2.31,
+      "max_dd": 5.16
+     },
+     "unseen": {
+      "trades": 2749,
+      "total": 107.73,
+      "worst_day": -2.56,
+      "max_dd": 6.59
+     }
+    },
+    "adr:half@0.3": {
+     "train": {
+      "trades": 2134,
+      "total": 41.7,
+      "worst_day": -2.29,
+      "max_dd": 4.73
+     },
+     "unseen": {
+      "trades": 2754,
+      "total": 45.63,
+      "worst_day": -2.41,
+      "max_dd": 9.24
+     }
+    },
+    "adr:half@0.5": {
+     "train": {
+      "trades": 2132,
+      "total": 51.71,
+      "worst_day": -2.29,
+      "max_dd": 5.5
+     },
+     "unseen": {
+      "trades": 2751,
+      "total": 59.26,
+      "worst_day": -2.39,
+      "max_dd": 7.69
+     }
+    },
+    "adr:half@1": {
+     "train": {
+      "trades": 2132,
+      "total": 69.84,
+      "worst_day": -2.29,
+      "max_dd": 5.46
+     },
+     "unseen": {
+      "trades": 2751,
+      "total": 83.37,
+      "worst_day": -2.52,
+      "max_dd": 5.69
+     }
+    },
+    "adr:shrink@0.5": {
+     "train": {
+      "trades": 2133,
+      "total": 82.93,
+      "worst_day": -2.54,
+      "max_dd": 6.62
+     },
+     "unseen": {
+      "trades": 2747,
+      "total": 77.9,
+      "worst_day": -2.57,
+      "max_dd": 8.6
+     }
+    },
+    "adr:shrink@0.7": {
+     "train": {
+      "trades": 2134,
+      "total": 85.41,
+      "worst_day": -2.66,
+      "max_dd": 5.02
+     },
+     "unseen": {
+      "trades": 2746,
+      "total": 103.83,
+      "worst_day": -2.72,
+      "max_dd": 6.97
+     }
+    },
+    "adr:fib@0.618": {
+     "train": {
+      "trades": 2133,
+      "total": 87.21,
+      "worst_day": -2.42,
+      "max_dd": 5.43
+     },
+     "unseen": {
+      "trades": 2749,
+      "total": 89.12,
+      "worst_day": -2.52,
+      "max_dd": 6.17
+     }
+    },
+    "adr:fib@0.786": {
+     "train": {
+      "trades": 2130,
+      "total": 71.17,
+      "worst_day": -2.32,
+      "max_dd": 5.24
+     },
+     "unseen": {
+      "trades": 2746,
+      "total": 79.54,
+      "worst_day": -2.45,
+      "max_dd": 7.96
+     }
+    },
+    "adr:fibh@0.618": {
+     "train": {
+      "trades": 2132,
+      "total": 94.57,
+      "worst_day": -2.39,
+      "max_dd": 5.43
+     },
+     "unseen": {
+      "trades": 2748,
+      "total": 107.89,
+      "worst_day": -2.52,
+      "max_dd": 6.26
+     }
+    },
+    "adr:time@4": {
+     "train": {
+      "trades": 2132,
+      "total": 97.21,
+      "worst_day": -2.18,
+      "max_dd": 4.66
+     },
+     "unseen": {
+      "trades": 2746,
+      "total": 120.86,
+      "worst_day": -2.52,
+      "max_dd": 6.12
+     }
+    },
+    "adr:time@8": {
+     "train": {
+      "trades": 2132,
+      "total": 99.09,
+      "worst_day": -2.21,
+      "max_dd": 5.14
+     },
+     "unseen": {
+      "trades": 2745,
+      "total": 125.86,
+      "worst_day": -2.52,
+      "max_dd": 6.59
+     }
+    },
+    "adr:trail@3": {
+     "train": {
+      "trades": 2134,
+      "total": 82.22,
+      "worst_day": -2.76,
+      "max_dd": 5.22
+     },
+     "unseen": {
+      "trades": 2753,
+      "total": 55.09,
+      "worst_day": -2.53,
+      "max_dd": 9.11
+     }
+    },
+    "adr:trail@6": {
+     "train": {
+      "trades": 2132,
+      "total": 87.65,
+      "worst_day": -2.83,
+      "max_dd": 6.16
+     },
+     "unseen": {
+      "trades": 2754,
+      "total": 83.68,
+      "worst_day": -2.58,
+      "max_dd": 9.62
+     }
+    },
+    "ci:per_strategy": {
+     "train": {
+      "trades": 2132,
+      "total": 114.1,
+      "worst_day": -2.31,
+      "max_dd": 5.06
+     },
+     "unseen": {
+      "trades": 2747,
+      "total": 123.67,
+      "worst_day": -2.52,
+      "max_dd": 5.87
+     },
+     "picked": {
+      "be@0.5": 1,
+      "fib@0.618": 8,
+      "time@8": 1,
+      "fib@0.786": 2,
+      "be@0.3": 1,
+      "trail@3": 1,
+      "half@0.3": 1
+     },
+     "strategies_changed": 15
+    },
+    "ci:be@0.3": {
+     "train": {
+      "trades": 2131,
+      "total": 84.4,
+      "worst_day": -2.29,
+      "max_dd": 5.12
+     },
+     "unseen": {
+      "trades": 2749,
+      "total": 95.26,
+      "worst_day": -2.5,
+      "max_dd": 8.44
+     }
+    },
+    "ci:be@0.5": {
+     "train": {
+      "trades": 2131,
+      "total": 87.49,
+      "worst_day": -2.31,
+      "max_dd": 5.98
+     },
+     "unseen": {
+      "trades": 2749,
+      "total": 99.44,
+      "worst_day": -2.52,
+      "max_dd": 7.94
+     }
+    },
+    "ci:be@1": {
+     "train": {
+      "trades": 2130,
+      "total": 94.81,
+      "worst_day": -2.31,
+      "max_dd": 6.7
+     },
+     "unseen": {
+      "trades": 2749,
+      "total": 114.59,
+      "worst_day": -2.52,
+      "max_dd": 6.2
+     }
+    },
+    "ci:half@0.3": {
+     "train": {
+      "trades": 2133,
+      "total": 58.31,
+      "worst_day": -2.29,
+      "max_dd": 5.53
+     },
+     "unseen": {
+      "trades": 2750,
+      "total": 66.66,
+      "worst_day": -2.5,
+      "max_dd": 9.92
+     }
+    },
+    "ci:half@0.5": {
+     "train": {
+      "trades": 2133,
+      "total": 66.31,
+      "worst_day": -2.29,
+      "max_dd": 5.61
+     },
+     "unseen": {
+      "trades": 2750,
+      "total": 74.0,
+      "worst_day": -2.52,
+      "max_dd": 8.99
+     }
+    },
+    "ci:half@1": {
+     "train": {
+      "trades": 2130,
+      "total": 82.87,
+      "worst_day": -2.29,
+      "max_dd": 6.23
+     },
+     "unseen": {
+      "trades": 2749,
+      "total": 98.28,
+      "worst_day": -2.52,
+      "max_dd": 5.91
+     }
+    },
+    "ci:shrink@0.5": {
+     "train": {
+      "trades": 2135,
+      "total": 80.96,
+      "worst_day": -2.76,
+      "max_dd": 5.88
+     },
+     "unseen": {
+      "trades": 2753,
+      "total": 92.6,
+      "worst_day": -2.58,
+      "max_dd": 8.53
+     }
+    },
+    "ci:shrink@0.7": {
+     "train": {
+      "trades": 2133,
+      "total": 93.75,
+      "worst_day": -2.61,
+      "max_dd": 5.18
+     },
+     "unseen": {
+      "trades": 2748,
+      "total": 109.32,
+      "worst_day": -2.5,
+      "max_dd": 6.54
+     }
+    },
+    "ci:fib@0.618": {
+     "train": {
+      "trades": 2132,
+      "total": 102.39,
+      "worst_day": -2.29,
+      "max_dd": 5.07
+     },
+     "unseen": {
+      "trades": 2746,
+      "total": 102.37,
+      "worst_day": -2.52,
+      "max_dd": 6.24
+     }
+    },
+    "ci:fib@0.786": {
+     "train": {
+      "trades": 2132,
+      "total": 88.62,
+      "worst_day": -2.34,
+      "max_dd": 5.43
+     },
+     "unseen": {
+      "trades": 2750,
+      "total": 93.89,
+      "worst_day": -2.52,
+      "max_dd": 6.71
+     }
+    },
+    "ci:fibh@0.618": {
+     "train": {
+      "trades": 2132,
+      "total": 101.99,
+      "worst_day": -2.31,
+      "max_dd": 5.25
+     },
+     "unseen": {
+      "trades": 2747,
+      "total": 114.52,
+      "worst_day": -2.52,
+      "max_dd": 6.29
+     }
+    },
+    "ci:time@4": {
+     "train": {
+      "trades": 2130,
+      "total": 98.95,
+      "worst_day": -2.35,
+      "max_dd": 5.21
+     },
+     "unseen": {
+      "trades": 2745,
+      "total": 125.26,
+      "worst_day": -2.5,
+      "max_dd": 6.26
+     }
+    },
+    "ci:time@8": {
+     "train": {
+      "trades": 2130,
+      "total": 99.25,
+      "worst_day": -2.35,
+      "max_dd": 5.14
+     },
+     "unseen": {
+      "trades": 2745,
+      "total": 126.63,
+      "worst_day": -2.5,
+      "max_dd": 6.26
+     }
+    },
+    "ci:trail@3": {
+     "train": {
+      "trades": 2134,
+      "total": 78.27,
+      "worst_day": -2.63,
+      "max_dd": 5.56
+     },
+     "unseen": {
+      "trades": 2753,
+      "total": 89.87,
+      "worst_day": -2.52,
+      "max_dd": 7.31
+     }
+    },
+    "ci:trail@6": {
+     "train": {
+      "trades": 2133,
+      "total": 81.05,
+      "worst_day": -2.63,
+      "max_dd": 5.27
+     },
+     "unseen": {
+      "trades": 2752,
+      "total": 100.5,
+      "worst_day": -2.52,
+      "max_dd": 7.84
+     }
+    }
+   }
+  },
+  "bot3": {
+   "strategies": 45,
+   "trades": 6235,
+   "detectors": {
+    "adx": {
+     "train": {
+      "share_choppy": 31.0,
+      "r_choppy": 0.259,
+      "r_other": 0.1,
+      "gap": -0.16
+     },
+     "unseen": {
+      "share_choppy": 30.6,
+      "r_choppy": 0.202,
+      "r_other": 0.086,
+      "gap": -0.116
+     }
+    },
+    "ci": {
+     "train": {
+      "share_choppy": 6.0,
+      "r_choppy": 0.213,
+      "r_other": 0.145,
+      "gap": -0.068
+     },
+     "unseen": {
+      "share_choppy": 6.5,
+      "r_choppy": 0.201,
+      "r_other": 0.116,
+      "gap": -0.085
+     }
+    },
+    "er": {
+     "train": {
+      "share_choppy": 42.4,
+      "r_choppy": 0.174,
+      "r_other": 0.131,
+      "gap": -0.042
+     },
+     "unseen": {
+      "share_choppy": 42.1,
+      "r_choppy": 0.108,
+      "r_other": 0.132,
+      "gap": 0.023
+     }
+    },
+    "vhf": {
+     "train": {
+      "share_choppy": 26.4,
+      "r_choppy": 0.234,
+      "r_other": 0.119,
+      "gap": -0.115
+     },
+     "unseen": {
+      "share_choppy": 25.7,
+      "r_choppy": 0.179,
+      "r_other": 0.102,
+      "gap": -0.078
+     }
+    },
+    "bbw": {
+     "train": {
+      "share_choppy": 23.3,
+      "r_choppy": 0.26,
+      "r_other": 0.116,
+      "gap": -0.145
+     },
+     "unseen": {
+      "share_choppy": 21.9,
+      "r_choppy": 0.136,
+      "r_other": 0.118,
+      "gap": -0.019
+     }
+    },
+    "don": {
+     "train": {
+      "share_choppy": 4.3,
+      "r_choppy": 0.474,
+      "r_other": 0.135,
+      "gap": -0.339
+     },
+     "unseen": {
+      "share_choppy": 3.8,
+      "r_choppy": 0.37,
+      "r_other": 0.112,
+      "gap": -0.259
+     }
+    },
+    "rsi": {
+     "train": {
+      "share_choppy": 22.7,
+      "r_choppy": 0.171,
+      "r_other": 0.143,
+      "gap": -0.027
+     },
+     "unseen": {
+      "share_choppy": 24.0,
+      "r_choppy": 0.157,
+      "r_other": 0.111,
+      "gap": -0.046
+     }
+    },
+    "atr": {
+     "train": {
+      "share_choppy": 9.9,
+      "r_choppy": 0.255,
+      "r_other": 0.138,
+      "gap": -0.118
+     },
+     "unseen": {
+      "share_choppy": 10.9,
+      "r_choppy": 0.114,
+      "r_other": 0.123,
+      "gap": 0.008
+     }
+    },
+    "ma": {
+     "train": {
+      "share_choppy": 4.0,
+      "r_choppy": 0.375,
+      "r_other": 0.14,
+      "gap": -0.235
+     },
+     "unseen": {
+      "share_choppy": 4.4,
+      "r_choppy": 0.093,
+      "r_other": 0.123,
+      "gap": 0.03
+     }
+    },
+    "fail": {
+     "train": {
+      "share_choppy": 61.8,
+      "r_choppy": 0.163,
+      "r_other": 0.128,
+      "gap": -0.035
+     },
+     "unseen": {
+      "share_choppy": 65.2,
+      "r_choppy": 0.085,
+      "r_other": 0.19,
+      "gap": 0.105
+     }
+    },
+    "adr": {
+     "train": {
+      "share_choppy": 24.7,
+      "r_choppy": 0.156,
+      "r_other": 0.147,
+      "gap": -0.008
+     },
+     "unseen": {
+      "share_choppy": 24.1,
+      "r_choppy": 0.135,
+      "r_other": 0.117,
+      "gap": -0.018
+     }
+    },
+    "vote2": {
+     "train": {
+      "share_choppy": 54.3,
+      "r_choppy": 0.197,
+      "r_other": 0.093,
+      "gap": -0.104
+     },
+     "unseen": {
+      "share_choppy": 55.9,
+      "r_choppy": 0.11,
+      "r_other": 0.137,
+      "gap": 0.027
+     }
+    },
+    "vote3": {
+     "train": {
+      "share_choppy": 25.3,
+      "r_choppy": 0.217,
+      "r_other": 0.126,
+      "gap": -0.091
+     },
+     "unseen": {
+      "share_choppy": 25.4,
+      "r_choppy": 0.117,
+      "r_other": 0.123,
+      "gap": 0.006
+     }
+    }
+   },
+   "top5": [
+    "adr",
+    "rsi",
+    "fail",
+    "er",
+    "vhf"
+   ],
+   "best_detector": "adr",
+   "management": {
+    "asis": {
+     "train": {
+      "trades": 2672,
+      "total": 86.22,
+      "worst_day": -3.23,
+      "max_dd": 6.93
+     },
+     "unseen": {
+      "trades": 3520,
+      "total": 111.92,
+      "worst_day": -2.96,
+      "max_dd": 5.55
+     }
+    },
+    "adr:per_strategy": {
+     "train": {
+      "trades": 2681,
+      "total": 98.16,
+      "worst_day": -3.1,
+      "max_dd": 6.06
+     },
+     "unseen": {
+      "trades": 3521,
+      "total": 105.55,
+      "worst_day": -2.71,
+      "max_dd": 5.7
+     },
+     "picked": {
+      "fib@0.618": 5,
+      "half@0.5": 1,
+      "be@1": 1,
+      "time@8": 2,
+      "trail@6": 2,
+      "shrink@0.5": 3,
+      "fib@0.786": 2,
+      "be@0.3": 1,
+      "trail@3": 2,
+      "time@4": 2
+     },
+     "strategies_changed": 21
+    },
+    "adr:be@0.3": {
+     "train": {
+      "trades": 2681,
+      "total": 63.22,
+      "worst_day": -2.42,
+      "max_dd": 7.4
+     },
+     "unseen": {
+      "trades": 3525,
+      "total": 80.16,
+      "worst_day": -2.66,
+      "max_dd": 6.45
+     }
+    },
+    "adr:be@0.5": {
+     "train": {
+      "trades": 2677,
+      "total": 71.27,
+      "worst_day": -3.04,
+      "max_dd": 7.61
+     },
+     "unseen": {
+      "trades": 3523,
+      "total": 86.34,
+      "worst_day": -2.96,
+      "max_dd": 6.59
+     }
+    },
+    "adr:be@1": {
+     "train": {
+      "trades": 2676,
+      "total": 78.26,
+      "worst_day": -3.1,
+      "max_dd": 6.63
+     },
+     "unseen": {
+      "trades": 3523,
+      "total": 101.01,
+      "worst_day": -2.96,
+      "max_dd": 5.55
+     }
+    },
+    "adr:half@0.3": {
+     "train": {
+      "trades": 2686,
+      "total": 29.18,
+      "worst_day": -2.29,
+      "max_dd": 8.27
+     },
+     "unseen": {
+      "trades": 3525,
+      "total": 48.58,
+      "worst_day": -2.61,
+      "max_dd": 7.94
+     }
+    },
+    "adr:half@0.5": {
+     "train": {
+      "trades": 2683,
+      "total": 44.33,
+      "worst_day": -2.49,
+      "max_dd": 7.99
+     },
+     "unseen": {
+      "trades": 3523,
+      "total": 60.37,
+      "worst_day": -2.96,
+      "max_dd": 7.22
+     }
+    },
+    "adr:half@1": {
+     "train": {
+      "trades": 2679,
+      "total": 63.01,
+      "worst_day": -2.89,
+      "max_dd": 6.7
+     },
+     "unseen": {
+      "trades": 3525,
+      "total": 84.6,
+      "worst_day": -2.96,
+      "max_dd": 6.02
+     }
+    },
+    "adr:shrink@0.5": {
+     "train": {
+      "trades": 2685,
+      "total": 58.38,
+      "worst_day": -2.92,
+      "max_dd": 7.91
+     },
+     "unseen": {
+      "trades": 3527,
+      "total": 82.26,
+      "worst_day": -2.58,
+      "max_dd": 6.44
+     }
+    },
+    "adr:shrink@0.7": {
+     "train": {
+      "trades": 2674,
+      "total": 65.81,
+      "worst_day": -3.21,
+      "max_dd": 8.39
+     },
+     "unseen": {
+      "trades": 3522,
+      "total": 89.55,
+      "worst_day": -2.71,
+      "max_dd": 7.03
+     }
+    },
+    "adr:fib@0.618": {
+     "train": {
+      "trades": 2677,
+      "total": 72.86,
+      "worst_day": -3.21,
+      "max_dd": 6.83
+     },
+     "unseen": {
+      "trades": 3522,
+      "total": 99.29,
+      "worst_day": -2.96,
+      "max_dd": 6.32
+     }
+    },
+    "adr:fib@0.786": {
+     "train": {
+      "trades": 2674,
+      "total": 57.05,
+      "worst_day": -2.68,
+      "max_dd": 6.36
+     },
+     "unseen": {
+      "trades": 3517,
+      "total": 84.52,
+      "worst_day": -2.74,
+      "max_dd": 8.74
+     }
+    },
+    "adr:fibh@0.618": {
+     "train": {
+      "trades": 2675,
+      "total": 79.62,
+      "worst_day": -3.22,
+      "max_dd": 6.65
+     },
+     "unseen": {
+      "trades": 3523,
+      "total": 105.83,
+      "worst_day": -2.96,
+      "max_dd": 5.93
+     }
+    },
+    "adr:time@4": {
+     "train": {
+      "trades": 2676,
+      "total": 79.99,
+      "worst_day": -3.08,
+      "max_dd": 7.52
+     },
+     "unseen": {
+      "trades": 3522,
+      "total": 96.76,
+      "worst_day": -2.96,
+      "max_dd": 5.81
+     }
+    },
+    "adr:time@8": {
+     "train": {
+      "trades": 2676,
+      "total": 82.52,
+      "worst_day": -3.08,
+      "max_dd": 6.71
+     },
+     "unseen": {
+      "trades": 3520,
+      "total": 106.08,
+      "worst_day": -2.96,
+      "max_dd": 5.97
+     }
+    },
+    "adr:trail@3": {
+     "train": {
+      "trades": 2678,
+      "total": 60.86,
+      "worst_day": -2.64,
+      "max_dd": 8.42
+     },
+     "unseen": {
+      "trades": 3524,
+      "total": 78.08,
+      "worst_day": -2.94,
+      "max_dd": 6.48
+     }
+    },
+    "adr:trail@6": {
+     "train": {
+      "trades": 2677,
+      "total": 66.06,
+      "worst_day": -2.94,
+      "max_dd": 8.25
+     },
+     "unseen": {
+      "trades": 3525,
+      "total": 84.68,
+      "worst_day": -2.88,
+      "max_dd": 5.54
+     }
+    },
+    "ci:per_strategy": {
+     "train": {
+      "trades": 2677,
+      "total": 93.98,
+      "worst_day": -3.21,
+      "max_dd": 6.33
+     },
+     "unseen": {
+      "trades": 3523,
+      "total": 110.11,
+      "worst_day": -2.55,
+      "max_dd": 6.6
+     },
+     "picked": {
+      "fib@0.618": 6,
+      "time@8": 2,
+      "shrink@0.5": 1,
+      "fib@0.786": 2,
+      "half@0.3": 3,
+      "be@0.3": 1,
+      "trail@3": 1,
+      "be@0.5": 1
+     },
+     "strategies_changed": 17
+    },
+    "ci:be@0.3": {
+     "train": {
+      "trades": 2676,
+      "total": 70.21,
+      "worst_day": -3.02,
+      "max_dd": 6.64
+     },
+     "unseen": {
+      "trades": 3525,
+      "total": 100.14,
+      "worst_day": -2.58,
+      "max_dd": 6.21
+     }
+    },
+    "ci:be@0.5": {
+     "train": {
+      "trades": 2674,
+      "total": 74.23,
+      "worst_day": -3.23,
+      "max_dd": 6.8
+     },
+     "unseen": {
+      "trades": 3522,
+      "total": 102.94,
+      "worst_day": -2.58,
+      "max_dd": 5.55
+     }
+    },
+    "ci:be@1": {
+     "train": {
+      "trades": 2672,
+      "total": 81.78,
+      "worst_day": -3.23,
+      "max_dd": 6.93
+     },
+     "unseen": {
+      "trades": 3521,
+      "total": 110.69,
+      "worst_day": -2.96,
+      "max_dd": 5.55
+     }
+    },
+    "ci:half@0.3": {
+     "train": {
+      "trades": 2680,
+      "total": 46.85,
+      "worst_day": -2.95,
+      "max_dd": 7.61
+     },
+     "unseen": {
+      "trades": 3526,
+      "total": 76.6,
+      "worst_day": -2.59,
+      "max_dd": 6.65
+     }
+    },
+    "ci:half@0.5": {
+     "train": {
+      "trades": 2674,
+      "total": 54.44,
+      "worst_day": -3.23,
+      "max_dd": 7.65
+     },
+     "unseen": {
+      "trades": 3525,
+      "total": 83.59,
+      "worst_day": -2.55,
+      "max_dd": 7.28
+     }
+    },
+    "ci:half@1": {
+     "train": {
+      "trades": 2673,
+      "total": 70.66,
+      "worst_day": -3.23,
+      "max_dd": 7.71
+     },
+     "unseen": {
+      "trades": 3522,
+      "total": 96.86,
+      "worst_day": -2.96,
+      "max_dd": 5.87
+     }
+    },
+    "ci:shrink@0.5": {
+     "train": {
+      "trades": 2677,
+      "total": 69.44,
+      "worst_day": -3.18,
+      "max_dd": 7.02
+     },
+     "unseen": {
+      "trades": 3524,
+      "total": 96.16,
+      "worst_day": -2.42,
+      "max_dd": 6.36
+     }
+    },
+    "ci:shrink@0.7": {
+     "train": {
+      "trades": 2674,
+      "total": 77.1,
+      "worst_day": -3.23,
+      "max_dd": 6.97
+     },
+     "unseen": {
+      "trades": 3522,
+      "total": 99.71,
+      "worst_day": -2.6,
+      "max_dd": 5.92
+     }
+    },
+    "ci:fib@0.618": {
+     "train": {
+      "trades": 2674,
+      "total": 82.22,
+      "worst_day": -3.23,
+      "max_dd": 6.86
+     },
+     "unseen": {
+      "trades": 3523,
+      "total": 107.0,
+      "worst_day": -2.96,
+      "max_dd": 6.13
+     }
+    },
+    "ci:fib@0.786": {
+     "train": {
+      "trades": 2673,
+      "total": 69.92,
+      "worst_day": -3.23,
+      "max_dd": 6.56
+     },
+     "unseen": {
+      "trades": 3525,
+      "total": 98.06,
+      "worst_day": -2.96,
+      "max_dd": 6.16
+     }
+    },
+    "ci:fibh@0.618": {
+     "train": {
+      "trades": 2673,
+      "total": 84.17,
+      "worst_day": -3.23,
+      "max_dd": 6.9
+     },
+     "unseen": {
+      "trades": 3521,
+      "total": 109.47,
+      "worst_day": -2.96,
+      "max_dd": 5.84
+     }
+    },
+    "ci:time@4": {
+     "train": {
+      "trades": 2674,
+      "total": 85.09,
+      "worst_day": -3.04,
+      "max_dd": 6.86
+     },
+     "unseen": {
+      "trades": 3522,
+      "total": 109.38,
+      "worst_day": -2.96,
+      "max_dd": 5.89
+     }
+    },
+    "ci:time@8": {
+     "train": {
+      "trades": 2674,
+      "total": 86.68,
+      "worst_day": -3.04,
+      "max_dd": 6.83
+     },
+     "unseen": {
+      "trades": 3521,
+      "total": 111.33,
+      "worst_day": -2.96,
+      "max_dd": 5.55
+     }
+    },
+    "ci:trail@3": {
+     "train": {
+      "trades": 2675,
+      "total": 67.37,
+      "worst_day": -3.21,
+      "max_dd": 6.87
+     },
+     "unseen": {
+      "trades": 3525,
+      "total": 93.52,
+      "worst_day": -2.58,
+      "max_dd": 5.48
+     }
+    },
+    "ci:trail@6": {
+     "train": {
+      "trades": 2675,
+      "total": 68.16,
+      "worst_day": -3.23,
+      "max_dd": 7.27
+     },
+     "unseen": {
+      "trades": 3524,
+      "total": 97.12,
+      "worst_day": -2.66,
+      "max_dd": 5.5
+     }
+    }
+   }
+  },
+  "bot4": {
+   "strategies": 44,
+   "trades": 6054,
+   "detectors": {
+    "adx": {
+     "train": {
+      "share_choppy": 35.3,
+      "r_choppy": 0.292,
+      "r_other": 0.108,
+      "gap": -0.184
+     },
+     "unseen": {
+      "share_choppy": 33.8,
+      "r_choppy": 0.181,
+      "r_other": 0.137,
+      "gap": -0.044
+     }
+    },
+    "ci": {
+     "train": {
+      "share_choppy": 5.7,
+      "r_choppy": 0.125,
+      "r_other": 0.176,
+      "gap": 0.051
+     },
+     "unseen": {
+      "share_choppy": 6.4,
+      "r_choppy": 0.189,
+      "r_other": 0.149,
+      "gap": -0.04
+     }
+    },
+    "er": {
+     "train": {
+      "share_choppy": 40.7,
+      "r_choppy": 0.212,
+      "r_other": 0.146,
+      "gap": -0.066
+     },
+     "unseen": {
+      "share_choppy": 41.1,
+      "r_choppy": 0.104,
+      "r_other": 0.185,
+      "gap": 0.081
+     }
+    },
+    "vhf": {
+     "train": {
+      "share_choppy": 29.5,
+      "r_choppy": 0.214,
+      "r_other": 0.156,
+      "gap": -0.058
+     },
+     "unseen": {
+      "share_choppy": 26.5,
+      "r_choppy": 0.21,
+      "r_other": 0.131,
+      "gap": -0.079
+     }
+    },
+    "bbw": {
+     "train": {
+      "share_choppy": 23.0,
+      "r_choppy": 0.275,
+      "r_other": 0.143,
+      "gap": -0.133
+     },
+     "unseen": {
+      "share_choppy": 21.5,
+      "r_choppy": 0.207,
+      "r_other": 0.137,
+      "gap": -0.07
+     }
+    },
+    "don": {
+     "train": {
+      "share_choppy": 4.9,
+      "r_choppy": 0.237,
+      "r_other": 0.17,
+      "gap": -0.068
+     },
+     "unseen": {
+      "share_choppy": 4.4,
+      "r_choppy": 0.398,
+      "r_other": 0.14,
+      "gap": -0.258
+     }
+    },
+    "rsi": {
+     "train": {
+      "share_choppy": 23.5,
+      "r_choppy": 0.208,
+      "r_other": 0.162,
+      "gap": -0.045
+     },
+     "unseen": {
+      "share_choppy": 25.7,
+      "r_choppy": 0.185,
+      "r_other": 0.14,
+      "gap": -0.045
+     }
+    },
+    "atr": {
+     "train": {
+      "share_choppy": 8.7,
+      "r_choppy": 0.242,
+      "r_other": 0.166,
+      "gap": -0.076
+     },
+     "unseen": {
+      "share_choppy": 10.2,
+      "r_choppy": 0.24,
+      "r_other": 0.142,
+      "gap": -0.098
+     }
+    },
+    "ma": {
+     "train": {
+      "share_choppy": 4.7,
+      "r_choppy": 0.37,
+      "r_other": 0.163,
+      "gap": -0.207
+     },
+     "unseen": {
+      "share_choppy": 4.5,
+      "r_choppy": 0.274,
+      "r_other": 0.146,
+      "gap": -0.128
+     }
+    },
+    "fail": {
+     "train": {
+      "share_choppy": 62.3,
+      "r_choppy": 0.16,
+      "r_other": 0.195,
+      "gap": 0.035
+     },
+     "unseen": {
+      "share_choppy": 65.4,
+      "r_choppy": 0.134,
+      "r_other": 0.185,
+      "gap": 0.052
+     }
+    },
+    "adr": {
+     "train": {
+      "share_choppy": 20.7,
+      "r_choppy": 0.146,
+      "r_other": 0.18,
+      "gap": 0.034
+     },
+     "unseen": {
+      "share_choppy": 23.2,
+      "r_choppy": 0.168,
+      "r_other": 0.147,
+      "gap": -0.021
+     }
+    },
+    "vote2": {
+     "train": {
+      "share_choppy": 54.1,
+      "r_choppy": 0.198,
+      "r_other": 0.143,
+      "gap": -0.055
+     },
+     "unseen": {
+      "share_choppy": 54.6,
+      "r_choppy": 0.133,
+      "r_other": 0.174,
+      "gap": 0.041
+     }
+    },
+    "vote3": {
+     "train": {
+      "share_choppy": 25.2,
+      "r_choppy": 0.214,
+      "r_other": 0.159,
+      "gap": -0.054
+     },
+     "unseen": {
+      "share_choppy": 26.6,
+      "r_choppy": 0.15,
+      "r_other": 0.152,
+      "gap": 0.003
+     }
+    }
+   },
+   "top5": [
+    "fail",
+    "adr",
+    "rsi",
+    "vhf",
+    "er"
+   ],
+   "best_detector": "fail",
+   "management": {
+    "asis": {
+     "train": {
+      "trades": 2438,
+      "total": 106.23,
+      "worst_day": -2.87,
+      "max_dd": 8.74
+     },
+     "unseen": {
+      "trades": 3337,
+      "total": 150.01,
+      "worst_day": -2.32,
+      "max_dd": 6.12
+     }
+    },
+    "ci:per_strategy": {
+     "train": {
+      "trades": 2445,
+      "total": 115.17,
+      "worst_day": -2.72,
+      "max_dd": 8.44
+     },
+     "unseen": {
+      "trades": 3338,
+      "total": 145.89,
+      "worst_day": -2.53,
+      "max_dd": 6.36
+     },
+     "picked": {
+      "fib@0.618": 5,
+      "half@1": 1,
+      "be@1": 1,
+      "time@8": 1,
+      "trail@6": 1,
+      "fib@0.786": 3,
+      "be@0.3": 2,
+      "trail@3": 3,
+      "time@4": 1
+     },
+     "strategies_changed": 18
+    },
+    "ci:be@0.3": {
+     "train": {
+      "trades": 2436,
+      "total": 89.03,
+      "worst_day": -2.87,
+      "max_dd": 8.67
+     },
+     "unseen": {
+      "trades": 3347,
+      "total": 132.61,
+      "worst_day": -2.23,
+      "max_dd": 6.06
+     }
+    },
+    "ci:be@0.5": {
+     "train": {
+      "trades": 2435,
+      "total": 91.15,
+      "worst_day": -2.87,
+      "max_dd": 8.54
+     },
+     "unseen": {
+      "trades": 3342,
+      "total": 135.74,
+      "worst_day": -2.23,
+      "max_dd": 6.94
+     }
+    },
+    "ci:be@1": {
+     "train": {
+      "trades": 2436,
+      "total": 103.7,
+      "worst_day": -2.87,
+      "max_dd": 8.74
+     },
+     "unseen": {
+      "trades": 3338,
+      "total": 148.81,
+      "worst_day": -2.32,
+      "max_dd": 6.12
+     }
+    },
+    "ci:half@0.3": {
+     "train": {
+      "trades": 2440,
+      "total": 67.82,
+      "worst_day": -2.81,
+      "max_dd": 8.7
+     },
+     "unseen": {
+      "trades": 3345,
+      "total": 107.55,
+      "worst_day": -2.26,
+      "max_dd": 6.46
+     }
+    },
+    "ci:half@0.5": {
+     "train": {
+      "trades": 2438,
+      "total": 71.6,
+      "worst_day": -2.72,
+      "max_dd": 9.04
+     },
+     "unseen": {
+      "trades": 3339,
+      "total": 116.41,
+      "worst_day": -2.21,
+      "max_dd": 7.03
+     }
+    },
+    "ci:half@1": {
+     "train": {
+      "trades": 2441,
+      "total": 91.94,
+      "worst_day": -2.69,
+      "max_dd": 8.73
+     },
+     "unseen": {
+      "trades": 3339,
+      "total": 137.81,
+      "worst_day": -2.32,
+      "max_dd": 6.93
+     }
+    },
+    "ci:shrink@0.5": {
+     "train": {
+      "trades": 2443,
+      "total": 91.04,
+      "worst_day": -2.85,
+      "max_dd": 9.34
+     },
+     "unseen": {
+      "trades": 3349,
+      "total": 123.96,
+      "worst_day": -2.13,
+      "max_dd": 7.92
+     }
+    },
+    "ci:shrink@0.7": {
+     "train": {
+      "trades": 2441,
+      "total": 92.93,
+      "worst_day": -2.85,
+      "max_dd": 8.27
+     },
+     "unseen": {
+      "trades": 3341,
+      "total": 134.26,
+      "worst_day": -2.2,
+      "max_dd": 7.56
+     }
+    },
+    "ci:fib@0.618": {
+     "train": {
+      "trades": 2443,
+      "total": 102.33,
+      "worst_day": -2.87,
+      "max_dd": 8.91
+     },
+     "unseen": {
+      "trades": 3348,
+      "total": 143.51,
+      "worst_day": -2.56,
+      "max_dd": 5.7
+     }
+    },
+    "ci:fib@0.786": {
+     "train": {
+      "trades": 2441,
+      "total": 91.14,
+      "worst_day": -2.64,
+      "max_dd": 8.95
+     },
+     "unseen": {
+      "trades": 3348,
+      "total": 126.0,
+      "worst_day": -2.54,
+      "max_dd": 6.23
+     }
+    },
+    "ci:fibh@0.618": {
+     "train": {
+      "trades": 2442,
+      "total": 103.9,
+      "worst_day": -2.87,
+      "max_dd": 8.94
+     },
+     "unseen": {
+      "trades": 3344,
+      "total": 146.48,
+      "worst_day": -2.27,
+      "max_dd": 5.74
+     }
+    },
+    "ci:time@4": {
+     "train": {
+      "trades": 2439,
+      "total": 104.64,
+      "worst_day": -2.87,
+      "max_dd": 8.61
+     },
+     "unseen": {
+      "trades": 3338,
+      "total": 149.02,
+      "worst_day": -2.32,
+      "max_dd": 5.79
+     }
+    },
+    "ci:time@8": {
+     "train": {
+      "trades": 2439,
+      "total": 105.62,
+      "worst_day": -2.87,
+      "max_dd": 8.61
+     },
+     "unseen": {
+      "trades": 3339,
+      "total": 150.99,
+      "worst_day": -2.32,
+      "max_dd": 6.06
+     }
+    },
+    "ci:trail@3": {
+     "train": {
+      "trades": 2445,
+      "total": 86.3,
+      "worst_day": -2.77,
+      "max_dd": 8.78
+     },
+     "unseen": {
+      "trades": 3351,
+      "total": 119.55,
+      "worst_day": -2.42,
+      "max_dd": 6.41
+     }
+    },
+    "ci:trail@6": {
+     "train": {
+      "trades": 2440,
+      "total": 84.34,
+      "worst_day": -2.77,
+      "max_dd": 9.11
+     },
+     "unseen": {
+      "trades": 3346,
+      "total": 122.83,
+      "worst_day": -2.29,
+      "max_dd": 6.63
+     }
+    },
+    "fail:per_strategy": {
+     "train": {
+      "trades": 2461,
+      "total": 126.23,
+      "worst_day": -2.39,
+      "max_dd": 6.43
+     },
+     "unseen": {
+      "trades": 3349,
+      "total": 131.77,
+      "worst_day": -2.22,
+      "max_dd": 6.47
+     },
+     "picked": {
+      "fib@0.618": 3,
+      "time@8": 3,
+      "be@1": 4,
+      "shrink@0.7": 1,
+      "trail@6": 2,
+      "shrink@0.5": 2,
+      "time@4": 2,
+      "fib@0.786": 4,
+      "be@0.3": 1,
+      "trail@3": 1,
+      "be@0.5": 1
+     },
+     "strategies_changed": 24
+    },
+    "fail:be@0.3": {
+     "train": {
+      "trades": 2461,
+      "total": 46.36,
+      "worst_day": -2.43,
+      "max_dd": 7.4
+     },
+     "unseen": {
+      "trades": 3379,
+      "total": 96.83,
+      "worst_day": -2.04,
+      "max_dd": 7.14
+     }
+    },
+    "fail:be@0.5": {
+     "train": {
+      "trades": 2442,
+      "total": 61.71,
+      "worst_day": -2.56,
+      "max_dd": 9.44
+     },
+     "unseen": {
+      "trades": 3366,
+      "total": 111.8,
+      "worst_day": -2.09,
+      "max_dd": 7.83
+     }
+    },
+    "fail:be@1": {
+     "train": {
+      "trades": 2441,
+      "total": 93.72,
+      "worst_day": -2.83,
+      "max_dd": 8.91
+     },
+     "unseen": {
+      "trades": 3341,
+      "total": 128.87,
+      "worst_day": -2.32,
+      "max_dd": 8.37
+     }
+    },
+    "fail:half@0.3": {
+     "train": {
+      "trades": 2468,
+      "total": 11.57,
+      "worst_day": -2.35,
+      "max_dd": 7.4
+     },
+     "unseen": {
+      "trades": 3381,
+      "total": 38.7,
+      "worst_day": -2.04,
+      "max_dd": 6.89
+     }
+    },
+    "fail:half@0.5": {
+     "train": {
+      "trades": 2450,
+      "total": 29.99,
+      "worst_day": -2.48,
+      "max_dd": 9.13
+     },
+     "unseen": {
+      "trades": 3368,
+      "total": 60.51,
+      "worst_day": -2.03,
+      "max_dd": 7.74
+     }
+    },
+    "fail:half@1": {
+     "train": {
+      "trades": 2451,
+      "total": 63.95,
+      "worst_day": -2.67,
+      "max_dd": 8.69
+     },
+     "unseen": {
+      "trades": 3343,
+      "total": 90.32,
+      "worst_day": -2.32,
+      "max_dd": 7.97
+     }
+    },
+    "fail:shrink@0.5": {
+     "train": {
+      "trades": 2469,
+      "total": 50.23,
+      "worst_day": -2.5,
+      "max_dd": 13.9
+     },
+     "unseen": {
+      "trades": 3355,
+      "total": 48.02,
+      "worst_day": -2.61,
+      "max_dd": 18.84
+     }
+    },
+    "fail:shrink@0.7": {
+     "train": {
+      "trades": 2450,
+      "total": 57.41,
+      "worst_day": -2.73,
+      "max_dd": 14.71
+     },
+     "unseen": {
+      "trades": 3330,
+      "total": 81.09,
+      "worst_day": -2.63,
+      "max_dd": 14.94
+     }
+    },
+    "fail:fib@0.618": {
+     "train": {
+      "trades": 2448,
+      "total": 72.85,
+      "worst_day": -2.46,
+      "max_dd": 9.0
+     },
+     "unseen": {
+      "trades": 3337,
+      "total": 109.65,
+      "worst_day": -2.27,
+      "max_dd": 7.53
+     }
+    },
+    "fail:fib@0.786": {
+     "train": {
+      "trades": 2453,
+      "total": 77.97,
+      "worst_day": -2.9,
+      "max_dd": 8.33
+     },
+     "unseen": {
+      "trades": 3348,
+      "total": 98.62,
+      "worst_day": -2.16,
+      "max_dd": 6.15
+     }
+    },
+    "fail:fibh@0.618": {
+     "train": {
+      "trades": 2444,
+      "total": 88.72,
+      "worst_day": -2.7,
+      "max_dd": 8.76
+     },
+     "unseen": {
+      "trades": 3339,
+      "total": 128.92,
+      "worst_day": -2.26,
+      "max_dd": 6.51
+     }
+    },
+    "fail:time@4": {
+     "train": {
+      "trades": 2458,
+      "total": 91.39,
+      "worst_day": -2.93,
+      "max_dd": 7.92
+     },
+     "unseen": {
+      "trades": 3366,
+      "total": 131.67,
+      "worst_day": -2.59,
+      "max_dd": 6.86
+     }
+    },
+    "fail:time@8": {
+     "train": {
+      "trades": 2447,
+      "total": 103.83,
+      "worst_day": -2.87,
+      "max_dd": 8.11
+     },
+     "unseen": {
+      "trades": 3356,
+      "total": 131.54,
+      "worst_day": -2.58,
+      "max_dd": 6.79
+     }
+    },
+    "fail:trail@3": {
+     "train": {
+      "trades": 2476,
+      "total": 45.72,
+      "worst_day": -2.46,
+      "max_dd": 6.7
+     },
+     "unseen": {
+      "trades": 3385,
+      "total": 91.89,
+      "worst_day": -2.92,
+      "max_dd": 10.21
+     }
+    },
+    "fail:trail@6": {
+     "train": {
+      "trades": 2467,
+      "total": 56.79,
+      "worst_day": -2.85,
+      "max_dd": 6.48
+     },
+     "unseen": {
+      "trades": 3371,
+      "total": 109.56,
+      "worst_day": -2.21,
+      "max_dd": 7.92
+     }
+    }
+   }
+  },
+  "bot5": {
+   "strategies": 23,
+   "trades": 6707,
+   "detectors": {
+    "adx": {
+     "train": {
+      "share_choppy": 32.1,
+      "r_choppy": 0.277,
+      "r_other": 0.113,
+      "gap": -0.164
+     },
+     "unseen": {
+      "share_choppy": 30.8,
+      "r_choppy": 0.121,
+      "r_other": 0.073,
+      "gap": -0.048
+     }
+    },
+    "ci": {
+     "train": {
+      "share_choppy": 9.9,
+      "r_choppy": 0.218,
+      "r_other": 0.16,
+      "gap": -0.058
+     },
+     "unseen": {
+      "share_choppy": 10.2,
+      "r_choppy": 0.285,
+      "r_other": 0.066,
+      "gap": -0.219
+     }
+    },
+    "er": {
+     "train": {
+      "share_choppy": 53.1,
+      "r_choppy": 0.197,
+      "r_other": 0.131,
+      "gap": -0.065
+     },
+     "unseen": {
+      "share_choppy": 51.7,
+      "r_choppy": 0.097,
+      "r_other": 0.079,
+      "gap": -0.018
+     }
+    },
+    "vhf": {
+     "train": {
+      "share_choppy": 29.5,
+      "r_choppy": 0.138,
+      "r_other": 0.178,
+      "gap": 0.04
+     },
+     "unseen": {
+      "share_choppy": 26.7,
+      "r_choppy": 0.159,
+      "r_other": 0.062,
+      "gap": -0.097
+     }
+    },
+    "bbw": {
+     "train": {
+      "share_choppy": 25.6,
+      "r_choppy": 0.175,
+      "r_other": 0.163,
+      "gap": -0.012
+     },
+     "unseen": {
+      "share_choppy": 24.6,
+      "r_choppy": 0.145,
+      "r_other": 0.069,
+      "gap": -0.075
+     }
+    },
+    "don": {
+     "train": {
+      "share_choppy": 7.2,
+      "r_choppy": -0.054,
+      "r_other": 0.183,
+      "gap": 0.237
+     },
+     "unseen": {
+      "share_choppy": 6.2,
+      "r_choppy": 0.276,
+      "r_other": 0.075,
+      "gap": -0.201
+     }
+    },
+    "rsi": {
+     "train": {
+      "share_choppy": 28.9,
+      "r_choppy": 0.192,
+      "r_other": 0.155,
+      "gap": -0.036
+     },
+     "unseen": {
+      "share_choppy": 28.0,
+      "r_choppy": 0.2,
+      "r_other": 0.044,
+      "gap": -0.156
+     }
+    },
+    "atr": {
+     "train": {
+      "share_choppy": 9.5,
+      "r_choppy": 0.35,
+      "r_other": 0.147,
+      "gap": -0.203
+     },
+     "unseen": {
+      "share_choppy": 11.4,
+      "r_choppy": 0.242,
+      "r_other": 0.068,
+      "gap": -0.174
+     }
+    },
+    "ma": {
+     "train": {
+      "share_choppy": 4.7,
+      "r_choppy": 0.508,
+      "r_other": 0.149,
+      "gap": -0.359
+     },
+     "unseen": {
+      "share_choppy": 4.8,
+      "r_choppy": 0.359,
+      "r_other": 0.074,
+      "gap": -0.285
+     }
+    },
+    "fail": {
+     "train": {
+      "share_choppy": 64.2,
+      "r_choppy": 0.178,
+      "r_other": 0.144,
+      "gap": -0.034
+     },
+     "unseen": {
+      "share_choppy": 67.7,
+      "r_choppy": 0.088,
+      "r_other": 0.088,
+      "gap": 0.0
+     }
+    },
+    "adr": {
+     "train": {
+      "share_choppy": 27.3,
+      "r_choppy": 0.182,
+      "r_other": 0.16,
+      "gap": -0.023
+     },
+     "unseen": {
+      "share_choppy": 24.5,
+      "r_choppy": 0.15,
+      "r_other": 0.068,
+      "gap": -0.082
+     }
+    },
+    "vote2": {
+     "train": {
+      "share_choppy": 50.0,
+      "r_choppy": 0.176,
+      "r_other": 0.156,
+      "gap": -0.019
+     },
+     "unseen": {
+      "share_choppy": 46.3,
+      "r_choppy": 0.149,
+      "r_other": 0.035,
+      "gap": -0.113
+     }
+    },
+    "vote3": {
+     "train": {
+      "share_choppy": 26.0,
+      "r_choppy": 0.202,
+      "r_other": 0.153,
+      "gap": -0.049
+     },
+     "unseen": {
+      "share_choppy": 23.3,
+      "r_choppy": 0.184,
+      "r_other": 0.059,
+      "gap": -0.125
+     }
+    }
+   },
+   "top5": [
+    "vhf",
+    "bbw",
+    "adr",
+    "fail",
+    "rsi"
+   ],
+   "best_detector": "vhf",
+   "management": {
+    "asis": {
+     "train": {
+      "trades": 2904,
+      "total": 79.1,
+      "worst_day": -2.99,
+      "max_dd": 7.95
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 56.96,
+      "worst_day": -2.83,
+      "max_dd": 11.12
+     }
+    },
+    "ci:per_strategy": {
+     "train": {
+      "trades": 2904,
+      "total": 85.64,
+      "worst_day": -2.99,
+      "max_dd": 7.71
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 51.63,
+      "worst_day": -2.83,
+      "max_dd": 9.93
+     },
+     "picked": {
+      "fib@0.618": 4,
+      "half@0.5": 1,
+      "half@1": 1,
+      "time@8": 2,
+      "trail@6": 1,
+      "shrink@0.5": 2,
+      "fib@0.786": 1,
+      "be@0.3": 1,
+      "trail@3": 1,
+      "time@4": 1
+     },
+     "strategies_changed": 15
+    },
+    "ci:be@0.3": {
+     "train": {
+      "trades": 2904,
+      "total": 68.03,
+      "worst_day": -2.39,
+      "max_dd": 7.91
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 63.45,
+      "worst_day": -2.83,
+      "max_dd": 9.48
+     }
+    },
+    "ci:be@0.5": {
+     "train": {
+      "trades": 2904,
+      "total": 70.02,
+      "worst_day": -2.54,
+      "max_dd": 7.97
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 59.24,
+      "worst_day": -2.83,
+      "max_dd": 9.4
+     }
+    },
+    "ci:be@1": {
+     "train": {
+      "trades": 2904,
+      "total": 75.45,
+      "worst_day": -2.72,
+      "max_dd": 8.26
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 57.02,
+      "worst_day": -2.83,
+      "max_dd": 10.24
+     }
+    },
+    "ci:half@0.3": {
+     "train": {
+      "trades": 2904,
+      "total": 49.59,
+      "worst_day": -2.37,
+      "max_dd": 10.19
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 45.58,
+      "worst_day": -2.83,
+      "max_dd": 9.73
+     }
+    },
+    "ci:half@0.5": {
+     "train": {
+      "trades": 2904,
+      "total": 52.82,
+      "worst_day": -2.43,
+      "max_dd": 10.1
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 46.35,
+      "worst_day": -2.83,
+      "max_dd": 9.37
+     }
+    },
+    "ci:half@1": {
+     "train": {
+      "trades": 2904,
+      "total": 63.98,
+      "worst_day": -2.58,
+      "max_dd": 9.62
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 48.39,
+      "worst_day": -2.83,
+      "max_dd": 9.88
+     }
+    },
+    "ci:shrink@0.5": {
+     "train": {
+      "trades": 2904,
+      "total": 69.36,
+      "worst_day": -2.76,
+      "max_dd": 8.26
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 49.25,
+      "worst_day": -2.83,
+      "max_dd": 10.55
+     }
+    },
+    "ci:shrink@0.7": {
+     "train": {
+      "trades": 2904,
+      "total": 74.74,
+      "worst_day": -2.86,
+      "max_dd": 7.76
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 45.78,
+      "worst_day": -3.16,
+      "max_dd": 11.35
+     }
+    },
+    "ci:fib@0.618": {
+     "train": {
+      "trades": 2904,
+      "total": 73.34,
+      "worst_day": -2.99,
+      "max_dd": 9.71
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 47.18,
+      "worst_day": -2.83,
+      "max_dd": 10.07
+     }
+    },
+    "ci:fib@0.786": {
+     "train": {
+      "trades": 2904,
+      "total": 63.97,
+      "worst_day": -2.99,
+      "max_dd": 10.4
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 52.86,
+      "worst_day": -2.83,
+      "max_dd": 10.66
+     }
+    },
+    "ci:fibh@0.618": {
+     "train": {
+      "trades": 2904,
+      "total": 76.22,
+      "worst_day": -2.99,
+      "max_dd": 8.46
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 52.07,
+      "worst_day": -2.83,
+      "max_dd": 10.59
+     }
+    },
+    "ci:time@4": {
+     "train": {
+      "trades": 2904,
+      "total": 74.12,
+      "worst_day": -2.96,
+      "max_dd": 7.78
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 48.74,
+      "worst_day": -2.83,
+      "max_dd": 12.26
+     }
+    },
+    "ci:time@8": {
+     "train": {
+      "trades": 2904,
+      "total": 78.37,
+      "worst_day": -2.99,
+      "max_dd": 7.85
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 51.06,
+      "worst_day": -2.84,
+      "max_dd": 11.11
+     }
+    },
+    "ci:trail@3": {
+     "train": {
+      "trades": 2904,
+      "total": 71.58,
+      "worst_day": -2.39,
+      "max_dd": 8.95
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 53.25,
+      "worst_day": -2.83,
+      "max_dd": 10.69
+     }
+    },
+    "ci:trail@6": {
+     "train": {
+      "trades": 2904,
+      "total": 73.62,
+      "worst_day": -2.98,
+      "max_dd": 8.03
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 56.28,
+      "worst_day": -2.83,
+      "max_dd": 10.39
+     }
+    },
+    "vhf:per_strategy": {
+     "train": {
+      "trades": 2904,
+      "total": 86.65,
+      "worst_day": -2.44,
+      "max_dd": 6.36
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 52.87,
+      "worst_day": -2.83,
+      "max_dd": 10.79
+     },
+     "picked": {
+      "be@0.5": 1,
+      "fib@0.618": 1,
+      "time@8": 1,
+      "be@1": 4,
+      "shrink@0.5": 2,
+      "time@4": 1,
+      "fib@0.786": 1,
+      "be@0.3": 3,
+      "half@0.3": 1
+     },
+     "strategies_changed": 15
+    },
+    "vhf:be@0.3": {
+     "train": {
+      "trades": 2904,
+      "total": 60.45,
+      "worst_day": -2.33,
+      "max_dd": 9.28
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 54.46,
+      "worst_day": -2.83,
+      "max_dd": 9.07
+     }
+    },
+    "vhf:be@0.5": {
+     "train": {
+      "trades": 2904,
+      "total": 64.5,
+      "worst_day": -2.57,
+      "max_dd": 9.47
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 55.2,
+      "worst_day": -2.83,
+      "max_dd": 9.54
+     }
+    },
+    "vhf:be@1": {
+     "train": {
+      "trades": 2904,
+      "total": 77.96,
+      "worst_day": -2.39,
+      "max_dd": 7.37
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 58.13,
+      "worst_day": -2.83,
+      "max_dd": 9.58
+     }
+    },
+    "vhf:half@0.3": {
+     "train": {
+      "trades": 2904,
+      "total": 32.44,
+      "worst_day": -2.29,
+      "max_dd": 9.32
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 24.39,
+      "worst_day": -2.83,
+      "max_dd": 13.01
+     }
+    },
+    "vhf:half@0.5": {
+     "train": {
+      "trades": 2904,
+      "total": 37.57,
+      "worst_day": -2.51,
+      "max_dd": 10.06
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 30.71,
+      "worst_day": -2.83,
+      "max_dd": 11.22
+     }
+    },
+    "vhf:half@1": {
+     "train": {
+      "trades": 2904,
+      "total": 54.36,
+      "worst_day": -2.39,
+      "max_dd": 8.21
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 40.24,
+      "worst_day": -2.83,
+      "max_dd": 11.57
+     }
+    },
+    "vhf:shrink@0.5": {
+     "train": {
+      "trades": 2904,
+      "total": 65.56,
+      "worst_day": -2.56,
+      "max_dd": 10.46
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 34.5,
+      "worst_day": -2.83,
+      "max_dd": 10.26
+     }
+    },
+    "vhf:shrink@0.7": {
+     "train": {
+      "trades": 2904,
+      "total": 75.02,
+      "worst_day": -2.67,
+      "max_dd": 7.49
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 39.83,
+      "worst_day": -2.87,
+      "max_dd": 9.84
+     }
+    },
+    "vhf:fib@0.618": {
+     "train": {
+      "trades": 2904,
+      "total": 55.02,
+      "worst_day": -2.78,
+      "max_dd": 10.4
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 44.25,
+      "worst_day": -2.83,
+      "max_dd": 9.85
+     }
+    },
+    "vhf:fib@0.786": {
+     "train": {
+      "trades": 2904,
+      "total": 49.87,
+      "worst_day": -2.53,
+      "max_dd": 9.3
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 45.98,
+      "worst_day": -2.83,
+      "max_dd": 11.55
+     }
+    },
+    "vhf:fibh@0.618": {
+     "train": {
+      "trades": 2904,
+      "total": 67.05,
+      "worst_day": -2.89,
+      "max_dd": 8.7
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 50.61,
+      "worst_day": -2.83,
+      "max_dd": 10.1
+     }
+    },
+    "vhf:time@4": {
+     "train": {
+      "trades": 2904,
+      "total": 63.56,
+      "worst_day": -2.99,
+      "max_dd": 9.77
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 32.31,
+      "worst_day": -2.83,
+      "max_dd": 13.37
+     }
+    },
+    "vhf:time@8": {
+     "train": {
+      "trades": 2904,
+      "total": 72.87,
+      "worst_day": -3.04,
+      "max_dd": 8.84
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 44.77,
+      "worst_day": -2.83,
+      "max_dd": 11.3
+     }
+    },
+    "vhf:trail@3": {
+     "train": {
+      "trades": 2904,
+      "total": 59.93,
+      "worst_day": -2.38,
+      "max_dd": 9.46
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 52.27,
+      "worst_day": -2.83,
+      "max_dd": 8.65
+     }
+    },
+    "vhf:trail@6": {
+     "train": {
+      "trades": 2904,
+      "total": 66.07,
+      "worst_day": -2.7,
+      "max_dd": 9.62
+     },
+     "unseen": {
+      "trades": 3803,
+      "total": 46.63,
+      "worst_day": -2.83,
+      "max_dd": 10.58
+     }
+    }
+   }
+  }
+ }
+}

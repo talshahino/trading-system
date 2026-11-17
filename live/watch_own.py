@@ -923,7 +923,11 @@ def scout5_trades(name, df, sc, cal):
             "stop" if "סטופ" in str(x["reason"]) else "forced"
         out.append({"symbol": name, "dir": int(x["dir"]), "status": "open" if live_now else "closed", "entry": e0,
                     "stop": st0, "target": tg, "rr": round(abs(tg - e0) / risk, 2) if tg else None, "cost_r": 0.0,
-                    "leg": None, "leg_start": tm, "leg_top": tm, "gap_lo": e0, "gap_hi": e0, "setup_t": tm, "time": tm,
+                    # a scout trade has no gap and no impulse (user, 17.11.2026: "you claim there was a gap - I see
+                    # none"): no gap / impulse fields, but the strategy's own timeframe, rule and signal candle
+                    "leg": None, "leg_start": None, "leg_top": None, "gap_lo": None, "gap_hi": None, "setup_t": tm, "time": tm,
+                    "sc": {"sid": sc["sid"], "tf": tf, "rule": str(R.STRATEGIES[sc["sid"]][0])[:160],
+                           "sig_t": tm - pd.Timedelta(minutes=tfm)},
                     "exit_time": None if live_now else pd.Timestamp(x["exit_time"]),
                     "exit": None if live_now else float(x["exit_px"]), "reason": None if live_now else why,
                     "r": None if live_now else round(float(x["r"]), 4), "r_now": round(float(x["r"]), 3) if live_now else None,
@@ -1261,7 +1265,10 @@ def main():
                            "entry": float(x["entry"]), "stop": float(x["stop"]) if x.get("stop") is not None else None,
                            "target": float(x["target"]) if x.get("target") else None,
                            "rr": x.get("rr"), "cost_r": x.get("cost_r"), "leg": x.get("leg"), "tal": x.get("tal"), "trk": x.get("tal"),
-                           "leg_start": iso(x["leg_start"]), "leg_top": iso(x["leg_top"]), "gap_lo": float(x["gap_lo"]), "gap_hi": float(x["gap_hi"]),
+                           "leg_start": iso(x.get("leg_start")), "leg_top": iso(x.get("leg_top")),
+                           "gap_lo": float(x["gap_lo"]) if x.get("gap_lo") is not None else None,
+                           "gap_hi": float(x["gap_hi"]) if x.get("gap_hi") is not None else None,
+                           "sc": ({**x["sc"], "sig_t": iso(x["sc"].get("sig_t"))} if x.get("sc") else None),
                            "setup_t": iso(x.get("setup_t")) or old.get("setup_t"), "time": iso(x.get("time")), "exit_time": iso(x.get("exit_time")),
                            "exit": float(x["exit"]) if x.get("exit") is not None else None, "reason": x.get("reason"),
                            "r": x.get("r"), "r_now": x.get("r_now"), "mark": old.get("mark"), "wide": bool(x.get("wide")),
@@ -1288,6 +1295,20 @@ def main():
                                 review_push(rec)                  # with the charts ready in the state
                         else:
                             rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 3
+                    elif rec.get("sc"):
+                        # a scout trade: the upper chart on the strategy's own timeframe (signal candle and entry), the
+                        # lower one on 1 minute from a little before the entry to after the exit (user, 17.11.2026)
+                        if x["status"] != "closed" or old.get("chart_v") != 4 or old.get("status") != "closed":
+                            tfm_ = SF.TF_MIN.get(rec["sc"]["tf"], 15)
+                            t_in = pd.Timestamp(x["time"]) if x.get("time") is not None else df.index[-1]
+                            t_out = pd.Timestamp(x["exit_time"]) if x.get("exit_time") is not None else df.index[-1]
+                            rule_ = f"{tfm_}min" if tfm_ < 60 else "1h"
+                            rec["m15"] = bars(df, t_in - pd.Timedelta(minutes=60 * tfm_), max(t_in, t_out) + pd.Timedelta(minutes=4 * tfm_), rule_)
+                            m1_end = t_out + pd.Timedelta(minutes=10)
+                            rec["m1"] = bars(df, max(t_in - pd.Timedelta(minutes=max(30, 3 * tfm_)), m1_end - pd.Timedelta(hours=12)), m1_end, "1min")
+                            rec["chart_v"] = 4
+                        else:
+                            rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 4
                     elif x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:
                         rec["chart_v"] = 2
                         ls = pd.Timestamp(x["leg_start"])

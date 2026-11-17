@@ -918,7 +918,44 @@ def guard5(tidx):
             a = TG.account(t[m].copy(), risk) or {}
             a["n"] = int(m.sum())
             res[nm][per] = a
+    try:
+        res.update(guard5_more(allt, risk, sorted(set(gap["trk"])), sorted(set(scout["trk"]))))
+    except Exception as e:  # noqa: BLE001
+        print("risk guard extras failed:", e)
     return res
+
+
+# The manager's task mgr1711b5scale (17.11.2026): after the scouts' x0.25 - (1) is the WHOLE bot (gap x tal_risk_scale
+# + scouts) under 9% on both periods, and if not, which factors on the gap part / the scout part (chosen on May-Dec 2025
+# only, by the total with the account not stopped and the fall under 9%); (2) leave-one-out on the whole bot: each scout
+# strategy taken out, the total and the fall to 2025 and on 2026 - a scout without which the bot earns more to 2025, or
+# falls less for its profit, is a fix / risk card for the nightly agent (fix first). Numbers only; the cards are the
+# nightly agent's (the whole-bot replay needs the gap tracks' trades, which live only on the bots' computer).
+G5_GRID = (1.0, 0.85, 0.7, 0.55, 0.4, 0.25)
+
+
+def guard5_more(allt, risk, gap_trk, scout_trk):
+    def per(p):
+        return (allt["time"] >= TG.SPLIT) if p == "unseen" else ((allt["time"] >= G5_FROM) & (allt["time"] < TG.SPLIT))
+    masks = {p: per(p) for p in ("train", "unseen")}
+
+    def acc(t, rk, p):
+        a = TG.account(t[masks[p][t.index]].copy(), rk) or {}
+        return {k: a.get(k) for k in ("total_pct", "max_fall_pct", "worst_day_pct", "low_pct", "stopped")}
+    loo = {}
+    for k in scout_trk:
+        t = allt[allt["trk"] != k]
+        loo[k] = {p: acc(t, risk, p) for p in ("train", "unseen")}
+    grid = []
+    for fg in G5_GRID:
+        for fs in G5_GRID:
+            if not (fg == 1.0 or fs == 1.0 or fg == fs):
+                continue                     # the two parts apart, or both by one factor - not every pair
+            rk = {k: v * (fg if k in gap_trk else fs) for k, v in risk.items()}
+            grid.append({"gap": fg, "scout": fs, **{p: acc(allt, rk, p) for p in ("train", "unseen")}})
+    ok = [g for g in grid if g["train"].get("stopped") is None and (g["train"].get("max_fall_pct") or 99) < 9.0]
+    pick = max(ok, key=lambda g: g["train"].get("total_pct") or -99) if ok else None
+    return {"loo": loo, "scale_grid": grid, "scale_pick": pick, "more_at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
 
 
 def guard5_card(g):

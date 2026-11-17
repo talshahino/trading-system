@@ -1,12 +1,12 @@
 {
- "updated": "2026-11-16T22:56:17+00:00",
+ "updated": "2026-11-17T08:15:15+00:00",
  "train": [
   "2025-04-30",
   "2025-12-31"
  ],
  "unseen": [
   "2026-01-01",
-  "2026-11-16"
+  "2026-11-17"
  ],
  "symbols": {
   "GER40": {
@@ -52,7 +52,7 @@
     "train": {
      "n": 30,
      "eff_n": 30.0,
-     "mean": 0.968,
+     "mean": 0.9681,
      "t": 1.68,
      "win": 40.1,
      "sum": 28.6
@@ -81,7 +81,7 @@
      "train": {
       "n": 30,
       "eff_n": 30.0,
-      "mean": 0.968,
+      "mean": 0.9681,
       "t": 1.68,
       "win": 40.1,
       "sum": 28.6
@@ -221,7 +221,7 @@
      "train": {
       "n": 33,
       "eff_n": 33.0,
-      "mean": 0.5839,
+      "mean": 0.5838,
       "t": 1.28,
       "win": 45.2,
       "sum": 19.99
@@ -568,7 +568,7 @@
     "unseen": {
      "n": 78,
      "eff_n": 78.0,
-     "mean": 0.3349,
+     "mean": 0.335,
      "t": 1.0,
      "win": 29.7,
      "sum": 25.4
@@ -645,7 +645,7 @@
      "train": {
       "n": 41,
       "eff_n": 41.0,
-      "mean": 1.0279,
+      "mean": 1.0278,
       "t": 1.67,
       "win": 24.2,
       "sum": 43.12
@@ -709,7 +709,7 @@
      "unseen": {
       "n": 78,
       "eff_n": 78.0,
-      "mean": 0.3349,
+      "mean": 0.335,
       "t": 1.0,
       "win": 29.7,
       "sum": 25.4
@@ -785,7 +785,7 @@
      "train": {
       "n": 39,
       "eff_n": 39.0,
-      "mean": 0.8644,
+      "mean": 0.8643,
       "t": 1.42,
       "win": 25.3,
       "sum": 35.06
@@ -813,18 +813,18 @@
      "train": {
       "n": 36,
       "eff_n": 36.0,
-      "mean": 0.9193,
+      "mean": 0.9192,
       "t": 1.39,
       "win": 21.9,
       "sum": 34.11
      },
      "unseen": {
-      "n": 59,
-      "eff_n": 59.0,
-      "mean": -0.1339,
-      "t": -0.31,
-      "win": 16.9,
-      "sum": -7.45
+      "n": 60,
+      "eff_n": 60.0,
+      "mean": -0.1489,
+      "t": -0.35,
+      "win": 16.7,
+      "sum": -8.46
      }
     },
     {
@@ -875,12 +875,12 @@
       "sum": 33.59
      },
      "unseen": {
-      "n": 49,
-      "eff_n": 49.0,
-      "mean": -0.1769,
-      "t": -0.55,
-      "win": 24.5,
-      "sum": -8.38
+      "n": 50,
+      "eff_n": 50.0,
+      "mean": -0.1939,
+      "t": -0.62,
+      "win": 24.0,
+      "sum": -9.39
      }
     }
    ],
@@ -904,34 +904,34 @@
      "all": {
       "variants": 1224,
       "train_median_sum": -0.75,
-      "unseen_median_sum": 0.53,
-      "unseen_positive": 668
+      "unseen_median_sum": 0.4,
+      "unseen_positive": 651
      },
      "cash": {
       "variants": 876,
       "train_median_sum": 1.84,
-      "unseen_median_sum": 1.51,
-      "unseen_positive": 558
+      "unseen_median_sum": 1.25,
+      "unseen_positive": 553
      },
      "off": {
       "variants": 300,
       "train_median_sum": -4.42,
-      "unseen_median_sum": -1.1,
-      "unseen_positive": 123
+      "unseen_median_sum": -1.73,
+      "unseen_positive": 116
      }
     },
     "side": {
      "all": {
       "variants": 1192,
       "train_median_sum": -1.27,
-      "unseen_median_sum": 1.0,
-      "unseen_positive": 689
+      "unseen_median_sum": 0.78,
+      "unseen_positive": 668
      },
      "down": {
       "variants": 748,
       "train_median_sum": 1.61,
-      "unseen_median_sum": 0.3,
-      "unseen_positive": 394
+      "unseen_median_sum": 0.2,
+      "unseen_positive": 386
      },
      "up": {
       "variants": 460,
@@ -944,108 +944,108 @@
      "all": {
       "variants": 2400,
       "train_median_sum": -0.63,
-      "unseen_median_sum": 0.72,
-      "unseen_positive": 1349
+      "unseen_median_sum": 0.56,
+      "unseen_positive": 1320
      }
     },
     "D": {
      "1": {
       "variants": 720,
       "train_median_sum": -1.54,
-      "unseen_median_sum": 3.3,
-      "unseen_positive": 542
+      "unseen_median_sum": 3.25,
+      "unseen_positive": 534
      },
      "2": {
       "variants": 588,
       "train_median_sum": -0.82,
-      "unseen_median_sum": -2.04,
-      "unseen_positive": 202
+      "unseen_median_sum": -2.27,
+      "unseen_positive": 195
      },
      "3": {
       "variants": 568,
       "train_median_sum": -1.66,
-      "unseen_median_sum": 0.54,
-      "unseen_positive": 323
+      "unseen_median_sum": 0.45,
+      "unseen_positive": 315
      },
      "5": {
       "variants": 524,
       "train_median_sum": 1.52,
-      "unseen_median_sum": 0.62,
-      "unseen_positive": 282
+      "unseen_median_sum": 0.43,
+      "unseen_positive": 276
      }
     },
     "p": {
      "0.25": {
       "variants": 704,
       "train_median_sum": -2.12,
-      "unseen_median_sum": 2.43,
-      "unseen_positive": 454
+      "unseen_median_sum": 2.25,
+      "unseen_positive": 441
      },
      "0.5": {
       "variants": 812,
       "train_median_sum": 0.68,
-      "unseen_median_sum": 0.75,
-      "unseen_positive": 461
+      "unseen_median_sum": 0.59,
+      "unseen_positive": 449
      },
      "1.0": {
       "variants": 884,
       "train_median_sum": -0.8,
-      "unseen_median_sum": -0.11,
-      "unseen_positive": 434
+      "unseen_median_sum": -0.15,
+      "unseen_positive": 430
      }
     },
     "H": {
      "15": {
       "variants": 600,
       "train_median_sum": -1.69,
-      "unseen_median_sum": 0.12,
-      "unseen_positive": 311
+      "unseen_median_sum": 0.04,
+      "unseen_positive": 306
      },
      "30": {
       "variants": 600,
       "train_median_sum": -0.5,
-      "unseen_median_sum": 1.35,
-      "unseen_positive": 363
+      "unseen_median_sum": 1.03,
+      "unseen_positive": 354
      },
      "60": {
       "variants": 600,
       "train_median_sum": 0.1,
-      "unseen_median_sum": 0.98,
-      "unseen_positive": 338
+      "unseen_median_sum": 0.74,
+      "unseen_positive": 332
      },
      "120": {
       "variants": 600,
       "train_median_sum": -0.06,
-      "unseen_median_sum": 0.76,
-      "unseen_positive": 337
+      "unseen_median_sum": 0.61,
+      "unseen_positive": 328
      }
     },
     "tg": {
      "0.0": {
       "variants": 836,
       "train_median_sum": 1.96,
-      "unseen_median_sum": 2.83,
-      "unseen_positive": 541
+      "unseen_median_sum": 2.64,
+      "unseen_positive": 530
      },
      "0.5": {
       "variants": 764,
       "train_median_sum": -2.25,
-      "unseen_median_sum": 0.46,
-      "unseen_positive": 427
+      "unseen_median_sum": 0.38,
+      "unseen_positive": 420
      },
      "1.0": {
       "variants": 800,
       "train_median_sum": -0.43,
-      "unseen_median_sum": -0.29,
-      "unseen_positive": 381
+      "unseen_median_sum": -0.4,
+      "unseen_positive": 370
      }
     },
     "K": {
      "6": {
       "variants": 1044,
       "train_median_sum": -2.91,
-      "unseen_median_sum": -2.51,
-      "unseen_positive": 375
+      "unseen_median_sum": -3.02,
+      "unseen_positive": 346
      },
      "8": {
       "variants": 832,

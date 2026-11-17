@@ -1041,7 +1041,11 @@ def state_of(acc, trades, cal, src):
         learn = learn_book(closed, trades, acc)
     except Exception as e:  # noqa: BLE001
         learn = {"error": str(e)[:200]}
-    return {"bot": NAME, "label": LABEL, "watch_only": True, "rules": rules, "learn": learn, "account": "וירטואלי · פרסומים כלכליים",
+    try:
+        lat = latency_summary()
+    except Exception:  # noqa: BLE001
+        lat = None
+    return {"bot": NAME, "label": LABEL, "watch_only": True, "rules": rules, "learn": learn, "latency": lat, "account": "וירטואלי · פרסומים כלכליים",
             "server": "צפייה בלבד · בלי כסף", "initial": acc.a["initial"], "risk": RISK, "balance": round(bal, 2),
             "equity": round(eq, 2), "day_start": round(acc.day_start(israel_day(now)), 2), "halted_until": None,
             "started": acc.a["started"], "withdrawals": [],
@@ -1070,6 +1074,67 @@ def state_of(acc, trades, cal, src):
             "vacct": {k: v for k, v in acc.a.items() if k not in ("eq_curve", "past")}}
 
 
+LAT_F = LIVE / "news_latency.json"
+
+
+def latency_watch(cal):
+    """How many seconds after a release FTMO's calendar shows its actual (user, 17.11.2026: "enter in the release's
+    own seconds" - what this bot could really do with FTMO's calendar). From 10 seconds before each high-impact
+    release with a forecast until 5 minutes after it, the calendar is read every 5 seconds; the first read with the
+    actual is kept (live/news_latency.json: release, title, currency, seconds). A thread: never stops the bot."""
+    import threading
+
+    def loop():
+        while True:
+            try:
+                now = pd.Timestamp.now(tz="UTC")
+                due = sorted({pd.Timestamp(i["date"]).tz_convert("UTC") for i in (cal.items or [])
+                              if i.get("impact") == "high" and i.get("forecast") not in (None, "")
+                              and -10 <= (now - pd.Timestamp(i["date"]).tz_convert("UTC")).total_seconds() <= 300})
+                if not due:
+                    time.sleep(5)
+                    continue
+                day = due[0].strftime("%Y-%m-%d")
+                got = CAL.fetch(day, (due[0] + pd.Timedelta(days=1)).strftime("%Y-%m-%d"))
+                t_read = pd.Timestamp.now(tz="UTC")
+                try:
+                    doc = json.loads(LAT_F.read_text(encoding="utf-8"))
+                except Exception:  # noqa: BLE001
+                    doc = {}
+                ch = False
+                for i in got or []:
+                    t = pd.Timestamp(i["date"]).tz_convert("UTC")
+                    if t not in due or i.get("impact") != "high" or i.get("actual") in (None, ""):
+                        continue
+                    k = f"{t.isoformat()}|{i.get('instrument')}|{i.get('title')}"
+                    if k not in doc:
+                        doc[k] = {"t": t.isoformat(), "cur": str(i.get("instrument", "")).split(" ")[0], "title": i.get("title"),
+                                  "seen": t_read.isoformat(timespec="seconds"), "lag_s": round((t_read - t).total_seconds(), 1)}
+                        ch = True
+                if ch:
+                    LAT_F.write_text(json.dumps(dict(list(doc.items())[-500:]), ensure_ascii=False, indent=1), encoding="utf-8")
+            except Exception as e:  # noqa: BLE001
+                log(f"latency watch: {e}")
+            time.sleep(5)
+    threading.Thread(target=loop, daemon=True).start()
+
+
+def latency_summary():
+    try:
+        doc = json.loads(LAT_F.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return None
+    lags = [x["lag_s"] for x in doc.values()]
+    if not lags:
+        return None
+    by = {}
+    for x in doc.values():
+        by.setdefault(x["cur"], []).append(x["lag_s"])
+    return {"n": len(lags), "median_s": float(np.median(lags)), "min_s": float(min(lags)), "max_s": float(max(lags)),
+            "by_cur": {k: {"n": len(v), "median_s": float(np.median(v))} for k, v in by.items()},
+            "last": sorted(doc.values(), key=lambda x: x["t"])[-8:]}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--once", action="store_true")
@@ -1078,6 +1143,8 @@ def main():
     if not port:
         sys.exit("SOURCE_PORT not set (the manager starts this bot)")
     src, cal = Source(port), Calendar()
+    if not args.once:
+        latency_watch(cal)
     try:
         SEEN.update(json.loads(SEEN_F.read_text(encoding="utf-8")))
     except Exception:  # noqa: BLE001

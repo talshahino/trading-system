@@ -2469,6 +2469,7 @@ async function wcScout(t) {
   const tin = t.time ? sec(t.time) : null, tout = t.exit_time ? sec(t.exit_time) : null, sig = sc.sig_t ? sec(sc.sig_t) : (tin ? tin - tfs : null);
   // the strategy's timeframe: the signal candle and the entry
   const A = mk($("wc15"), t.m15);
+  rvPickWire(A, dec);
   line(A.s, t.entry, "#1E3A5F", "כניסה", 2); line(A.s, t.stop, "#D0453A", "סטופ", 2); line(A.s, t.target, "#1E8A4C", "יעד", 2);
   const ma = [];
   if (sig != null) ma.push({time: snap(A.bars, sig), position: buy ? "belowBar" : "aboveBar", color: "#B8862B", shape: "circle", text: "אות"});
@@ -2480,6 +2481,7 @@ async function wcScout(t) {
   liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, tfs);
   // 1 minute: the trade itself, with the position box
   const B = mk($("wc1"), t.m1);
+  rvPickWire(B, dec);
   liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, 60);
   if (tin && B.bars.length) {
     const t0 = snap(B.bars, tin), last = B.bars[B.bars.length - 1][0] + off, t1 = tout ? snap(B.bars, tout) : last, pts = [];
@@ -2503,6 +2505,29 @@ const TFHE = {"1m": "דקה", "5m": "5 דק'", "15m": "15 דק'", "1h": "שעה"
 /* Tal reviews every gap setup of bot 5 before the entry (17.11.2026): step 1 - the high timeframe, "would you
    enter?"; yes -> step 2 - the low timeframe with the position the rules would place: entry, stop, target, each right
    or wrong (wrong -> his own price). The bot takes the trade only as he answered (live/watch_own.py). */
+// the review: a level marked wrong is set by touching the chart (user, 17.11.2026: "place the stop on the chart, not type a price")
+const RVP = {key: null, lines: {}, charts: [], dec: 2};
+function rvPickWire(P, dec) {
+  RVP.charts = RVP.charts.filter(C => WC.includes(C.ch)).concat([P]); RVP.dec = dec;
+  P.ch.subscribeClick(p => {
+    const k = RVP.key, inp = k && $("rv_" + k);
+    if (!inp || !p || !p.point) return;
+    const v = P.s.coordinateToPrice(p.point.y); if (v == null || !(v > 0)) return;
+    inp.value = (+v).toFixed(RVP.dec);
+    for (const [C, ln] of (RVP.lines[k] || [])) try { C.s.removePriceLine(ln); } catch (e) {}
+    const tl = {entry: "הכניסה שלך", stop: "הסטופ שלך", target: "היעד שלך"}[k];
+    RVP.lines[k] = RVP.charts.filter(C => WC.includes(C.ch)).map(C => [C, C.s.createPriceLine({price: +v, color: "#C8922E", lineWidth: 2, lineStyle: 2, axisLabelVisible: true, title: tl})]);
+    RVP.key = null;
+    note("rvMsg", `נקבע: ${(+v).toFixed(RVP.dec)} (הקו הכתום). אפשר לגעת שוב ב"לא נכון" כדי לשנות, ואז "אשר".`, true);
+    const bx = $("rvBox"); if (bx) setTimeout(() => bx.scrollIntoView({behavior: "smooth", block: "start"}), 600);
+  });
+}
+function rvToast(msg) {
+  const d = document.createElement("div");
+  d.textContent = msg;
+  d.style.cssText = "position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1E8A4C;color:#fff;padding:12px 20px;border-radius:14px;font-weight:700;font-size:16px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.25);direction:rtl";
+  document.body.appendChild(d); setTimeout(() => d.remove(), 2600);
+}
 const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא ענית בזמן", levels: "לא נכנסה · המחיר כבר עבר את הרמות"};
 const rvNeeded = t => t && t.status === "pending" && t.tal && t.asked && !t.sleep;
 function rvPanel(t, dec) {
@@ -2523,7 +2548,10 @@ function rvPanel(t, dec) {
       <div id="rvLv"></div><div class="msg" id="rvMsg"></div></div>`;
   showLtf(m.take === "yes");
   const send = async body => {
-    try { const j = await act("/watch/mark", {id: t.id, ...body}); WB.marks[t.id] = j.mark || body; note("rvMsg", body.take === "no" ? "נשמר: לא נכנסים." : "נשמר: הבוט ייכנס לפי מה שסימנת.", true); setTimeout(() => rvPanel(t, dec), 900); }
+    try { const j = await act("/watch/mark", {id: t.id, ...body}); WB.marks[t.id] = j.mark || body; note("rvMsg", body.take === "no" ? "נשמר: לא נכנסים." : "נשמר: הבוט ייכנס לפי מה שסימנת.", true);
+      // saved -> a short confirmation and back to the marks screen (user, 17.11.2026)
+      rvToast(body.take === "no" ? "נקלט ✓ לא נכנסים" : "נקלט ✓ הבוט ייכנס לפי מה שסימנת");
+      setTimeout(() => { if ($("wcPg").classList.contains("on")) $("wcBack").click(); try { if (UI.sub === "wt" && $("dBody")) wbRender($("dBody")); } catch (e) {} }, 700); }
     catch (e) { note("rvMsg", e.message, false); }
   };
   $("rvNo").onclick = () => { $("rvNo").classList.add("picked"); $("rvYes").classList.remove("picked"); send({take: "no"}); };
@@ -2538,6 +2566,12 @@ function rvPanel(t, dec) {
       + `<button class="btn ok" id="rvSend" style="width:100%;margin-top:12px">אשר</button>`;
     const ok = {entry: true, stop: true, target: true};   // no target row for the gap method: always the rules' at the fill
     $("rvLv").querySelectorAll("[data-ok]").forEach(b => b.onclick = () => { ok[b.dataset.ok] = true; $("rv_" + b.dataset.ok).style.display = "none"; b.classList.add("on"); b.nextElementSibling.classList.remove("on"); });
+    $("rvLv").querySelectorAll("[data-bad]").forEach(b => b.addEventListener("click", () => {   // wrong -> touch the chart where it should be
+      const k = b.dataset.bad, lb = {entry: "הכניסה", stop: "הסטופ", target: "היעד"}[k];
+      RVP.key = k; note("rvMsg", `גע בגרף בדיוק במקום של ${lb} (בגרף העליון או התחתון). אפשר גם להקליד.`, true);
+      const lt = $("wcLtf"), el = lt && lt.style.display !== "none" && $("wc1") ? $("wc1") : $("wc15");
+      if (el) setTimeout(() => el.scrollIntoView({behavior: "smooth", block: "center"}), 300);
+    }));
     $("rvLv").querySelectorAll("[data-bad]").forEach(b => b.onclick = () => { ok[b.dataset.bad] = false; $("rv_" + b.dataset.bad).style.display = ""; b.classList.add("on"); b.previousElementSibling.classList.remove("on"); });
     $("rvSend").onclick = () => {
       const body = {take: "yes", ok_entry: ok.entry, ok_stop: ok.stop, ok_target: ok.target};
@@ -2605,6 +2639,7 @@ async function wcTal(t) {
   const lo = t.gap_lo, hi = t.gap_hi, gapCol = "rgba(184,134,43,.22)";
   // the high timeframe
   const A = mk($("wc15"), t.m15, [lo, hi, g.imp0[1], g.imp1[1]]);
+  rvPickWire(A, dec);
   const aEnd = A.bars.length ? A.bars[A.bars.length - 1][0] + off : c3 + off;
   const gEnd = tin ? Math.max(snap(A.bars, tin), snap(A.bars, c3)) : aEnd;
   band(A, snap(A.bars, c1), gEnd, lo, hi, gapCol, "#B8862B");
@@ -2623,6 +2658,7 @@ async function wcTal(t) {
   if (isLive) liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, MS[g.htf] || 900);
   // the low timeframe
   const B = mk($("wc1"), t.m1, [lo, hi, t.entry, t.stop, t.target]);
+  rvPickWire(B, dec);
   const bEnd = B.bars.length ? B.bars[B.bars.length - 1][0] + off : null;
   const t0 = tin ? snap(B.bars, tin) : bEnd, t1 = tout ? snap(B.bars, tout) : bEnd;
   band(B, B.bars.length ? B.bars[0][0] + off : t0, t0, lo, hi, gapCol, "#B8862B");

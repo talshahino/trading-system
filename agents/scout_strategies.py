@@ -10996,3 +10996,403 @@ SCOUT.update({
     "SC502": ("Andrews' Pitchfork lower (upper) parallel test with a bull (bear) bar, bar stop, median-line target", s_pitchfork_lower_test, _F + ["4Hour", "1Day"]),
     "SC503": ("SMA 10/21 cross, Kase Dev-Stop 2 exit, Dev-Stop 3 hard stop (Kase)", s_kase_devstop_trend, _M + ["1Day"]),
 })
+
+
+# ---------------- scout 17.11.2026 night: TASC 2026.06 / .08 / .10, TradingView built-ins, Hoffman IRB, session
+# setups (The Right Trader, edgeful, TradeZella) and one strategy per new indicator (agents/indicators/classic7.py) ----
+
+def _wk_shift(df):
+    """Trading-week clock: New York time + 7 h, so the FX week (Sunday 17:00 NY) and the cash week both start on a
+    'Monday'. Returns weekday, hour float and week key per bar."""
+    t = df.index.tz_convert("America/New_York") + pd.Timedelta(hours=7)
+    wk = (pd.Series(t.isocalendar().year.to_numpy()) * 100 + pd.Series(t.isocalendar().week.to_numpy())).to_numpy()
+    return t.weekday.to_numpy(), t.hour.to_numpy() + t.minute.to_numpy() / 60.0, wk
+
+
+def s_tasc_one_pct_week(df):
+    """TASC 2026.06 'One Percent A Week - Adaptive' (Dion Kurczek's variant; PineCoders
+    https://www.tradingview.com/script/CSGmHoik-TASC-2026-06-One-Percent-A-Week-Adaptive/ ): buy at the week's open,
+    hard stop 1.5%, target 7%. After Monday: open profit > 0.3% -> target x 1.011 (8.177%), profit <= 0 -> target 2.5%.
+    Monday return > 2% and Tuesday return < 3% -> out after Tuesday. Out at the end of the week. Long only.
+    Ours: the signal is the week's first bar (entry at the next bar's open, the reference = that first bar's close);
+    targets are taken on a close at / over the level (exit mask) instead of an intrabar limit; the end of the week =
+    Friday 15:00 New York (before the FTMO weekend rule); the week clock is New York + 7 h."""
+    o, h, l, c, v = _ohlcv(df)
+    wd, hr, wk = _wk_shift(df)
+    first = np.r_[True, wk[1:] != wk[:-1]]
+    ref = _s(np.where(first, c, np.nan)).groupby(wk).ffill().to_numpy()
+    mon_c = _s(np.where(wd == 0, c, np.nan)).groupby(wk).ffill().to_numpy()
+    tue_c = _s(np.where(wd == 1, c, np.nan)).groupby(wk).ffill().to_numpy()
+    mon_ret = mon_c / ref - 1
+    tue_ret = tue_c / ref - 1
+    tmult = np.where(wd == 0, 1.07, np.where(mon_ret > 0.003, 1.07 * 1.011, np.where(mon_ret <= 0, 1.025, 1.07)))
+    hit = c >= ref * tmult
+    weak = (wd >= 2) & (mon_ret > 0.02) & (tue_ret < 0.03)
+    fe = (wd == 4) & (hr >= 22.0)
+    L = first & (wd <= 1)
+    return L, np.zeros(len(c), bool), {"stop": ("level", c * 0.985, c * 1.015), "target": None,
+                                        "exit_long": np.nan_to_num(hit | weak, nan=0).astype(bool), "force_exit": fe}
+
+
+def s_tasc_ag_selling(df):
+    """TASC 2026.08 'An Ag Selling Model' (Perry Kaufman; https://www.tradingview.com/script/VFzCk3HX-TASC-2026-08-An-Ag-Selling-Model/ ):
+    sell when price reaches SMA 40 + 3 x ATR, never twice in the same rally. Short only (the model sells crops).
+    Ours: ATR 20 (the length is not given); 'same rally' = no new sale until the close has been back under the SMA and
+    at least 20 bars have passed; harvest has no equivalent -> cover on a close under the SMA 40 or after 120 bars;
+    hard stop 2 ATR over the entry (Kaufman uses none)."""
+    o, h, l, c, v = _ohlcv(df)
+    m = sma(c, 40)
+    a = atr(h, l, c, 20)
+    lvl = m + 3.0 * a
+    n = len(c)
+    S = np.zeros(n, bool)
+    last, reset = -10**9, True
+    for i in range(n):
+        if not (np.isfinite(lvl[i]) and np.isfinite(m[i])):
+            continue
+        if c[i] < m[i]:
+            reset = True
+        if c[i] >= lvl[i] and reset and i - last >= 20:
+            S[i] = True
+            last, reset = i, False
+    return np.zeros(n, bool), S, {"stop": ("atr", 2.0), "target": None, "exit_short": c < m, "max_bars": 120}
+
+
+def s_tasc_katsanos_pullback(df):
+    """TASC 2026.10 'A Low-Risk ETF-Trading Strategy' (Markos Katsanos;
+    https://www.tradingview.com/script/2S4BqQzQ-TASC-2026-10-A-Low-Risk-ETF-Trading-Strategy/ ), single-instrument
+    version: RSMK 35 (EMA4 x 100 of the 35-bar log change) over its SMA 50, over +3, at a 4-bar high and under 25; RSI 10
+    was under 35 within 20 bars and rose 3 bars in a row; EMA 5 over the SMA 15 of 5 bars ago -> buy. Out when RSMK
+    crosses under -3, after 30 bars, or at +25%. Ours: RSMK on the instrument's own log price (the source measures it
+    against SPY, which a single feed lacks), no SPY correlation / volume filters, hard stop 3 ATR (none published)."""
+    o, h, l, c, v = _ohlcv(df)
+    lc = np.log(c)
+    rs = lc - _r(lc, 35)
+    rk = ema(np.nan_to_num(rs), 4) * 100
+    rk[:40] = np.nan
+    r = rsi(c, 10)
+    was_os = _s((r < 35).astype(float)).rolling(20, min_periods=1).max().to_numpy() > 0
+    rising = (r > _r(r)) & (_r(r) > _r(r, 2)) & (_r(r, 2) > _r(r, 3))
+    top4 = rk >= _s(rk).rolling(4).max().to_numpy()
+    L = (rk > sma(rk, 50)) & (rk > 3) & top4 & (rk < 25) & was_os & rising & (ema(c, 5) > _r(sma(c, 15), 5))
+    return L, np.zeros(len(c), bool), {"stop": ("atr", 3.0), "target": ("level", c * 1.25, c * 0.75),
+                                        "exit_long": cross_down(np.nan_to_num(rk), -3.0), "max_bars": 30}
+
+
+def s_tv_pivot_reversal(df):
+    """TradingView built-in 'Pivot Reversal Strategy' (https://www.luxalgo.com/library/indicator/aqVvUNub-pivot-reversal-strategy/ , list https://www.tradingview.com/support/folders/43000587406-built-in-strategies/ ):
+    pivot high / low with 4 bars left and 2 right; buy-stop a tick over the last pivot high, sell-stop under the last
+    pivot low, stop and reverse. Ours: the stop entry as a close through the pivot (entry at the next open), the pivot
+    used only after its 2 right bars have closed, a 2 ATR hard stop (the built-in has none)."""
+    o, h, l, c, v = _ohlcv(df)
+    h2, l2 = _r(h, 2), _r(l, 2)
+    ph = h2 == _s(h).rolling(7).max().to_numpy()          # bar t-2 is the high of t-6..t (4 left, 2 right)
+    pl = l2 == _s(l).rolling(7).min().to_numpy()
+    last_h = _s(np.where(ph, _r(h, 2), np.nan)).ffill().to_numpy()
+    last_l = _s(np.where(pl, _r(l, 2), np.nan)).ffill().to_numpy()
+    L, S = _excl(cross_up(c, last_h), cross_down(c, last_l))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "opposite": True}
+
+
+def s_tv_volty_expan_close(df):
+    """TradingView / TradeStation 'Volty Expan Close' (https://ru.tradingview.com/support/solutions/43000599890 ,
+    https://help.tradestation.com/09_01/tradestationhelp/Subsystems/elanalysis/signal/volty_expan_close_le_signal_.htm ):
+    stop orders at the previous close +/- 0.75 x SMA 5 of the true range; stop and reverse. Ours: a close beyond the
+    band (entry at the next open), 2 ATR hard stop."""
+    o, h, l, c, v = _ohlcv(df)
+    trn = np.maximum(h - l, np.maximum(np.abs(h - _r(c)), np.abs(l - _r(c))))
+    band = 0.75 * _r(sma(np.nan_to_num(trn), 5))
+    L, S = _excl(c > _r(c) + band, c < _r(c) - band)
+    return _onset(L), _onset(S), {"stop": ("atr", 2.0), "target": None, "opposite": True}
+
+
+def s_tv_consecutive_updown(df):
+    """TradingView built-in 'Consecutive Up/Down Strategy' (https://www.tradingview.com/support/solutions/43000599836-consecutive-up-down-strategy/ ):
+    buy after 3 closes in a row over the previous close, sell after 3 under; stop and reverse. Ours: 2 ATR hard stop."""
+    o, h, l, c, v = _ohlcv(df)
+    up = (c > _r(c)).astype(int)
+    dn = (c < _r(c)).astype(int)
+    ups = _s(up).groupby((up == 0).cumsum()).cumsum().to_numpy()
+    dns = _s(dn).groupby((dn == 0).cumsum()).cumsum().to_numpy()
+    L, S = _excl(ups == 3, dns == 3)
+    return L, S, {"stop": ("atr", 2.0), "target": None, "opposite": True}
+
+
+def s_hoffman_irb(df):
+    """Rob Hoffman Inventory Retracement Bar (WH SelfInvest
+    https://www.whselfinvest.de/en-de/trading-platform/trader-tools/technical-analysis/13-rob-hoffman-irb-inventory-retracement-bar ,
+    open source https://www.tradingview.com/script/khxEdmoy-Noski-Rob-Hoffman-Inventory-Retracement-Bar ): in an
+    uptrend, a bar that opens and closes at least 45% under its high (upper wick >= 45% of the range) is an IRB; buy when
+    price trades over the IRB's high; a newer IRB replaces the old one. Mirror for downtrends. Ours: uptrend = close over
+    an EMA 20 that rose at least 0.5 ATR over 5 bars (Hoffman's '45-degree' slope), the buy-stop as a close over the high
+    within 20 bars, stop under the IRB's low (0.1 ATR), target 2R (not published)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    e = ema(c, 20)
+    up = (c > e) & (e - _r(e, 5) >= 0.5 * a)
+    dn = (c < e) & (_r(e, 5) - e >= 0.5 * a)
+    rng = h - l
+    irb_l = up & (rng > 0) & (h - np.maximum(o, c) >= 0.45 * rng)
+    irb_s = dn & (rng > 0) & (np.minimum(o, c) - l >= 0.45 * rng)
+    n = len(c)
+    L = np.zeros(n, bool)
+    S = np.zeros(n, bool)
+    sl = np.full(n, np.nan)
+    ss = np.full(n, np.nan)
+    bl = bs = None
+    for i in range(n):
+        if bl is not None and i - bl[0] <= 20 and c[i] > bl[1] and up[i]:
+            L[i], sl[i] = True, bl[2] - 0.1 * a[i]
+            bl = None
+        if bs is not None and i - bs[0] <= 20 and c[i] < bs[2] and dn[i]:
+            S[i], ss[i] = True, bs[1] + 0.1 * a[i]
+            bs = None
+        if irb_l[i]:
+            bl = (i, h[i], l[i])
+        if irb_s[i]:
+            bs = (i, h[i], l[i])
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", sl, ss), "target": ("R", 2.0)}
+
+
+def _ny_rth(df):
+    """New York regular session (09:30-16:00) per bar: in-session mask, session date, previous session's close /
+    high / low, the session's running low / high before the bar, the session's open, and the bar-end hour."""
+    hs, he, wd, _, day = _local(df, "America/New_York")
+    o, h, l, c, v = _ohlcv(df)
+    rth = (hs >= 9.5) & (he <= 16.0 + 1e-9) & (wd < 5)
+    g = pd.DataFrame({"d": day, "h": np.where(rth, h, np.nan), "l": np.where(rth, l, np.nan),
+                      "c": np.where(rth, c, np.nan), "o": np.where(rth, o, np.nan)})
+    sess = g[rth].groupby("d").agg(h=("h", "max"), l=("l", "min"), c=("c", "last"), o=("o", "first"))
+    prev = sess.shift(1)
+    m = g[["d"]].join(prev, on="d")
+    pdc, pdh, pdl = (m[k].to_numpy(dtype=float) for k in ("c", "h", "l"))
+    sopen = g[["d"]].join(sess[["o"]], on="d")["o"].to_numpy(dtype=float)
+    first_bar = rth & np.r_[True, day[1:] != day[:-1]] | (rth & ~np.r_[False, rth[:-1]])
+    sopen = np.where(rth, _s(np.where(first_bar, o, np.nan)).groupby(day).ffill().to_numpy(), np.nan)
+    lo_b = _s(np.where(rth, l, np.nan)).groupby(day).cummin().to_numpy()
+    hi_b = _s(np.where(rth, h, np.nan)).groupby(day).cummax().to_numpy()
+    return rth, day, pdc, pdh, pdl, _r(lo_b), _r(hi_b), sopen, he, sess
+
+
+def s_rtr_red_to_green(df):
+    """The Right Trader 'Red to Green Move' (https://therighttrader.com/learn/trading-strategies/red-to-green-move ;
+    1-minute bars, 5-minute as the slower version, regular session): price traded under the previous session's close
+    today; the first bar that closes back over it, on volume >= the previous bar's -> buy at the close; stop the signal
+    bar's low; target the previous day's high, taken only when it is >= 2R away; skip when the risk is > 1% of price;
+    out on a close back under the previous close or flat at the session close. Mirror 'green to red' short to the
+    previous day's low. Ours: none beyond the bar timing (entry at the next bar's open)."""
+    o, h, l, c, v = _ohlcv(df)
+    rth, day, pdc, pdh, pdl, lo_b, hi_b, sopen, he, _ = _ny_rth(df)
+    L = rth & (lo_b < pdc) & (c > pdc) & (v >= _r(v)) & (c - l <= 0.01 * c) & (pdh - c >= 2 * (c - l)) & (he < 15.9)
+    S = rth & (hi_b > pdc) & (c < pdc) & (v >= _r(v)) & (h - c <= 0.01 * c) & (c - pdl >= 2 * (h - c)) & (he < 15.9)
+    L = _first_per_day(np.nan_to_num(L).astype(bool), day)
+    S = _first_per_day(np.nan_to_num(S).astype(bool), day)
+    L, S = _excl(L, S)
+    return L, S, {**_plan_lv(l, h, pdh, pdl), "exit_long": c < pdc, "exit_short": c > pdc,
+                  "force_exit": he >= 16.0 - 1e-9}
+
+
+def s_edgeful_streak_bias(df):
+    """edgeful 'green and red streak' (https://www.edgeful.com/blog/posts/green-red-streak-trading-strategy ; YM, New
+    York session): streaks average ~2 days, so after 2+ red sessions (close under the open) lean long, after 2+ green
+    lean short - 'with price-action confirmation'. Ours (the source gives no trigger): the first 15 minutes of the
+    session close with the bias (over the session open for longs) -> enter; stop the session's low (high) so far
+    0.1 ATR beyond, target 2R, flat at 16:00 New York."""
+    o, h, l, c, v = _ohlcv(df)
+    rth, day, pdc, pdh, pdl, lo_b, hi_b, sopen, he, sess = _ny_rth(df)
+    col = np.sign(sess["c"] - sess["o"]).to_numpy()
+    red = np.zeros(len(col))
+    grn = np.zeros(len(col))
+    for k in range(len(col)):
+        red[k] = (red[k - 1] + 1 if k else 1) if col[k] < 0 else 0
+        grn[k] = (grn[k - 1] + 1 if k else 1) if col[k] > 0 else 0
+    st = pd.DataFrame({"red": red, "grn": grn}, index=sess.index).shift(1)
+    m = pd.DataFrame({"d": day}).join(st, on="d")
+    rs, gs = m["red"].to_numpy(dtype=float), m["grn"].to_numpy(dtype=float)
+    a = atr(h, l, c, 14)
+    at15 = rth & (np.abs(he - 9.75) < 1e-6)
+    lo_i = np.fmin(lo_b, l)
+    hi_i = np.fmax(hi_b, h)
+    L = at15 & (rs >= 2) & (c > sopen)
+    S = at15 & (gs >= 2) & (c < sopen)
+    L, S = _excl(np.nan_to_num(L).astype(bool), np.nan_to_num(S).astype(bool))
+    return L, S, _plan_r(lo_i - 0.1 * a, hi_i + 0.1 * a, 2.0, force_exit=he >= 16.0 - 1e-9)
+
+
+def s_voss_cross(df):
+    """Ehlers Voss Predictive Filter (TASC 2019.08): the Voss predictor crosses over its band-pass filter while the filter
+    is under zero (a cycle low turning) -> buy; mirror over zero -> sell; stop 1.5 ATR, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.voss_predict(df)
+    vo, f = np.nan_to_num(z["voss"]), np.nan_to_num(z["filt"])
+    L, S = _excl(cross_up(vo, f) & (f < 0), cross_down(vo, f) & (f > 0))
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 2.0)}
+
+
+def s_super_passband(df):
+    """Ehlers Super Passband (TASC 2016.07): buy when the passband crosses up through -RMS, sell when it crosses down
+    through +RMS; out on the opposite RMS cross (Ehlers' rules); stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.super_passband(df)
+    pb, rm = np.nan_to_num(z["pb"]), np.nan_to_num(z["rms"])
+    L, S = _excl(cross_up(pb, -rm), cross_down(pb, rm))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": cross_down(pb, rm), "exit_short": cross_up(pb, -rm)}
+
+
+def s_universal_osc(df):
+    """Ehlers Universal Oscillator (TASC 2015.01): zero crosses in the direction of the EMA 50 (ours), out on the
+    opposite zero cross; stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    u = np.nan_to_num(IND.universal_osc(df))
+    e = ema(c, 50)
+    L, S = _excl(cross_up(u, 0.0) & (c > e), cross_down(u, 0.0) & (c < e))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": cross_down(u, 0.0), "exit_short": cross_up(u, 0.0)}
+
+
+def s_elegant_osc(df):
+    """Ehlers Elegant Oscillator (TASC 2022.02): buy when it turns up out of the -0.5 zone (crosses back over -0.5),
+    sell when it crosses back under +0.5; stop beyond the 5-bar swing (0.1 ATR), target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    eo = np.nan_to_num(IND.elegant_osc(df))
+    a = atr(h, l, c, 14)
+    L, S = _excl(cross_up(eo, -0.5), cross_down(eo, 0.5))
+    sl, ss = _swl(h, l, a, 5, 0.1)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_dsma_cross(df):
+    """Ehlers Deviation-Scaled MA 40 (TASC 2018.07): close crosses the DSMA while the DSMA slopes the same way -> trade;
+    out on the close back through it; stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    d = IND.dsma(df)
+    dd = np.nan_to_num(d, nan=c[0] if len(c) else 0.0)
+    L, S = _excl(cross_up(c, dd) & (d > _r(d)), cross_down(c, dd) & (d < _r(d)))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": c < d, "exit_short": c > d}
+
+
+def s_trama_cross(df):
+    """LuxAlgo TRAMA 99: close crosses the TRAMA while it slopes the same way and the trend regularity tc is over its
+    100-bar median (ours: only regular trends); out on the close back through; stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.trama(df)
+    t, tc = z["trama"], z["tc"]
+    tt = np.nan_to_num(t, nan=c[0] if len(c) else 0.0)
+    reg = tc >= _s(tc).rolling(100, min_periods=20).median().to_numpy()
+    L, S = _excl(cross_up(c, tt) & (t > _r(t)) & reg, cross_down(c, tt) & (t < _r(t)) & reg)
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": c < t, "exit_short": c > t}
+
+
+def s_impulse_macd(df):
+    """LazyBear Impulse MACD 34 / 9: the impulse leaves zero upward (ZLEMA over the SMMA-high band) with the histogram
+    positive -> buy; mirror -> sell; out when the impulse is back to zero (inside the band); stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.impulse_macd(df)
+    md, hs = np.nan_to_num(z["md"]), np.nan_to_num(z["hist"])
+    L, S = _excl(_onset(md > 0) & (hs > 0), _onset(md < 0) & (hs < 0))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": md <= 0, "exit_short": md >= 0}
+
+
+def s_mad_zero(df):
+    """Ehlers MAD 8 / 23 (TASC 2021.10): zero-line cross -> trade, opposite cross -> out; stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    m = np.nan_to_num(IND.mad(df))
+    L, S = _excl(cross_up(m, 0.0), cross_down(m, 0.0))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": cross_down(m, 0.0), "exit_short": cross_up(m, 0.0)}
+
+
+def s_spearman_pullback(df):
+    """Spearman rank 20 (Ehlers): in an uptrend (close over EMA 200) the rank crosses back over -0.8 (a pullback ends)
+    -> buy; mirror over +0.8 in a downtrend; stop beyond the 5-bar swing, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    sp = np.nan_to_num(IND.spearman(df))
+    e = ema(c, 200)
+    a = atr(h, l, c, 14)
+    L, S = _excl(cross_up(sp, -0.8) & (c > e), cross_down(sp, 0.8) & (c < e))
+    sl, ss = _swl(h, l, a, 5, 0.1)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_elder_thermometer(df):
+    """Elder Market Thermometer: after 5+ quiet bars (thermometer under its EMA 22) a close over the prior 10-bar high
+    (under the low) -> trade the breakout (Elder: quiet markets precede explosive moves); take profit on the first
+    'hot' bar (thermometer > 3 x EMA, Elder's exit); stop 2 ATR, 20-bar time stop (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.market_thermometer(df)
+    q = _r(z["quiet"].astype(float)) > 0
+    hi = _r(_s(h).rolling(10).max().to_numpy())
+    lo = _r(_s(l).rolling(10).min().to_numpy())
+    L, S = _excl(q & (c > hi), q & (c < lo))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": z["hot"], "exit_short": z["hot"], "max_bars": 20}
+
+
+def s_williams_ad_div(df):
+    """Larry Williams A/D divergence: the close makes a 20-bar low while Williams' A/D stays over its prior 20-bar low
+    (no confirmation) -> buy; mirror at a 20-bar high; stop 1.5 ATR, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    w = IND.williams_ad(df)
+    lo_c = c <= _s(c).rolling(20).min().to_numpy()
+    hi_c = c >= _s(c).rolling(20).max().to_numpy()
+    wl = _r(_s(w).rolling(20).min().to_numpy())
+    wh = _r(_s(w).rolling(20).max().to_numpy())
+    L, S = _excl(lo_c & (w > wl), hi_c & (w < wh))
+    return _onset(L), _onset(S), {"stop": ("atr", 1.5), "target": ("R", 2.0)}
+
+
+def s_fib_bollinger_fade(df):
+    """Fibonacci Bollinger Bands (Rashad): the bar pierces the outer 1.0 band and closes back inside it as a reversal bar
+    -> fade; stop beyond the bar (0.25 ATR); target the 0.382 band on the same side (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.fib_bollinger(df)
+    a = atr(h, l, c, 14)
+    L = (l <= z["dn_1000"]) & (c > z["dn_1000"]) & (c > o)
+    S = (h >= z["up_1000"]) & (c < z["up_1000"]) & (c < o)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(l - 0.25 * a, h + 0.25 * a, z["dn_382"], z["up_382"])
+
+
+def s_hull_butterfly(df):
+    """Hull Butterfly Oscillator (LuxAlgo, our reconstruction): green dot (turn up under the lower level) -> buy, red
+    dot -> sell; stop 2 ATR, target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.hull_butterfly(df)
+    L, S = _excl(z["dot_buy"], z["dot_sell"])
+    return L, S, {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+def s_range_detector_break(df):
+    """Range Detector (LuxAlgo, our reconstruction): a close through the top (bottom) of a range that held 20+ bars ->
+    trade the break; stop at the range's middle; target 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.range_detector(df)
+    mid = _r(z["mid"])
+    ok = _r(z["range_len"]) >= 20
+    L, S = _excl(z["break_up"] & ok, z["break_dn"] & ok)
+    return L, S, _plan_r(mid, mid, 2.0)
+
+
+SCOUT.update({
+    "SC504": ("One Percent A Week - Adaptive: buy the week's open, 1.5% stop, 7% target -> 8.177% / 2.5% after Monday, Tuesday weakness exit, out Friday (TASC 2026.06)", s_tasc_one_pct_week, ["15Min", "1Hour", "4Hour"]),
+    "SC505": ("Kaufman Ag selling model: short at SMA40 + 3 ATR once per rally, cover under the SMA / 120 bars, 2 ATR stop (TASC 2026.08)", s_tasc_ag_selling, ["1Hour", "4Hour", "1Day"]),
+    "SC506": ("Katsanos low-risk pullback: RSMK 35 strength + RSI10 oversold within 20 and rising 3 bars + EMA5 > SMA15[5], out RSMK < -3 / 30 bars / +25% (TASC 2026.10)", s_tasc_katsanos_pullback, ["4Hour", "1Day"]),
+    "SC507": ("Pivot Reversal 4/2: close through the last confirmed pivot high / low, stop and reverse, 2 ATR (TradingView built-in)", s_tv_pivot_reversal, _F + ["4Hour"]),
+    "SC508": ("Volty Expan Close: close beyond previous close +/- 0.75 x SMA5(TR), stop and reverse, 2 ATR (TradingView / TradeStation built-in)", s_tv_volty_expan_close, _F + ["4Hour"]),
+    "SC509": ("Consecutive Up/Down 3/3: momentum after 3 closes in a row, stop and reverse, 2 ATR (TradingView built-in)", s_tv_consecutive_updown, _F + ["4Hour"]),
+    "SC510": ("Rob Hoffman Inventory Retracement Bar: 45% wick bar in a steep EMA20 trend, close through its high within 20 bars, IRB stop, 2R", s_hoffman_irb, ["5Min", "15Min", "1Hour", "4Hour"]),
+    "SC511": ("Red to Green / Green to Red: first close back over the previous RTH close on rising volume, bar stop, previous-day high if >= 2R (The Right Trader)", s_rtr_red_to_green, ["1Min", "5Min"]),
+    "SC512": ("edgeful streak bias: after 2+ red (green) NY sessions, first 15 minutes closing with the bias, session-extreme stop, 2R, flat 16:00", s_edgeful_streak_bias, ["5Min", "15Min"]),
+    "SC513": ("Ehlers Voss predictor crosses the band-pass filter at a cycle low / high, 1.5 ATR, 2R (TASC 2019.08)", s_voss_cross, _F + ["4Hour"]),
+    "SC514": ("Ehlers Super Passband crosses -RMS / +RMS, opposite-RMS exit, 2 ATR (TASC 2016.07)", s_super_passband, _F + ["4Hour"]),
+    "SC515": ("Ehlers Universal Oscillator zero cross with the EMA50, opposite-cross exit, 2 ATR (TASC 2015.01)", s_universal_osc, _F + ["4Hour"]),
+    "SC516": ("Ehlers Elegant Oscillator back over -0.5 / under +0.5, swing stop, 2R (TASC 2022.02)", s_elegant_osc, _F + ["4Hour"]),
+    "SC517": ("Close crosses the Ehlers Deviation-Scaled MA 40 with its slope, cross-back exit, 2 ATR (TASC 2018.07)", s_dsma_cross, _F + ["4Hour"]),
+    "SC518": ("Close crosses LuxAlgo TRAMA 99 with its slope while trend regularity is high, cross-back exit, 2 ATR", s_trama_cross, _M + ["1Day"]),
+    "SC519": ("LazyBear Impulse MACD leaves zero with the histogram, out back at zero, 2 ATR", s_impulse_macd, _F + ["4Hour"]),
+    "SC520": ("Ehlers MAD 8/23 zero cross, opposite-cross exit, 2 ATR (TASC 2021.10)", s_mad_zero, _F + ["4Hour"]),
+    "SC521": ("Spearman rank 20 back over -0.8 (under +0.8) with the EMA200 trend, swing stop, 2R (Ehlers)", s_spearman_pullback, _F + ["4Hour"]),
+    "SC522": ("Elder Market Thermometer: 10-bar breakout after 5 quiet bars, out on the first hot bar / 20 bars, 2 ATR", s_elder_thermometer, _F + ["4Hour"]),
+    "SC523": ("Williams A/D divergence at a 20-bar close low / high, 1.5 ATR, 2R", s_williams_ad_div, _F + ["4Hour"]),
+    "SC524": ("Fibonacci Bollinger Bands: reversal bar back inside the 1.0 band, bar stop, 0.382-band target (Rashad)", s_fib_bollinger_fade, _F + ["4Hour"]),
+    "SC525": ("Hull Butterfly Oscillator turn dots beyond the adaptive levels, 2 ATR, 2R (LuxAlgo, reconstruction)", s_hull_butterfly, _F + ["4Hour"]),
+    "SC526": ("Range Detector: close through a 20+ bar range (SMA20 +/- ATR500), range-mid stop, 2R (LuxAlgo, reconstruction)", s_range_detector_break, _F + ["4Hour"]),
+})

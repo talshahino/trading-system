@@ -12509,6 +12509,540 @@
     "bot6"
    ],
    "rules": "Kase Dev-Stops (https://www.prorealcode.com/prorealtime-indicators/kase-dev-stop/ ): enter on the SMA 10 / 21 cross; exit when the close crosses the Dev-Stop 2 (2.2 std) line; hard stop at Dev-Stop 3 (3.6 std). Entry rule ours (Kase sells the stops, the entry is the trend change)."
+  },
+  {
+   "id": "SC504",
+   "name": "One Percent A Week - Adaptive: buy the week's open, 1.5% stop, 7% target -> 8.177% / 2.5% after Monday, Tuesday weakness exit, out Friday (TASC 2026.06)",
+   "source": "TASC 2026.06 One Percent A Week - Adaptive (PineCoders)",
+   "url": "https://www.tradingview.com/script/CSGmHoik-TASC-2026-06-One-Percent-A-Week-Adaptive/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TASC 2026.06 'One Percent A Week - Adaptive' (Dion Kurczek's variant; PineCoders https://www.tradingview.com/script/CSGmHoik-TASC-2026-06-One-Percent-A-Week-Adaptive/ ): buy at the week's open, hard stop 1.5%, target 7%. After Monday: open profit > 0.3% -> target x 1.011 (8.177%), profit <= 0 -> target 2.5%. Monday return > 2% and Tuesday return < 3% -> out after Tuesday. Out at the end of the week. Long only. Ours: the signal is the week's first bar (entry at the next bar's open, the reference = that first bar's close); targets are taken on a close at / over the level (exit mask) instead of an intrabar limit; the end of the week = Friday 15:00 New York (before the FTMO weekend rule); the week clock is New York + 7 h."
+  },
+  {
+   "id": "SC505",
+   "name": "Kaufman Ag selling model: short at SMA40 + 3 ATR once per rally, cover under the SMA / 120 bars, 2 ATR stop (TASC 2026.08)",
+   "source": "TASC 2026.08 An Ag Selling Model (Kaufman, PineCoders)",
+   "url": "https://www.tradingview.com/script/VFzCk3HX-TASC-2026-08-An-Ag-Selling-Model/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [
+    "commodity",
+    "index",
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TASC 2026.08 'An Ag Selling Model' (Perry Kaufman; https://www.tradingview.com/script/VFzCk3HX-TASC-2026-08-An-Ag-Selling-Model/ ): sell when price reaches SMA 40 + 3 x ATR, never twice in the same rally. Short only (the model sells crops). Ours: ATR 20 (the length is not given); 'same rally' = no new sale until the close has been back under the SMA and at least 20 bars have passed; harvest has no equivalent -> cover on a close under the SMA 40 or after 120 bars; hard stop 2 ATR over the entry (Kaufman uses none)."
+  },
+  {
+   "id": "SC506",
+   "name": "Katsanos low-risk pullback: RSMK 35 strength + RSI10 oversold within 20 and rising 3 bars + EMA5 > SMA15[5], out RSMK < -3 / 30 bars / +25% (TASC 2026.10)",
+   "source": "TASC 2026.10 A Low-Risk ETF-Trading Strategy (Katsanos, PineCoders)",
+   "url": "https://www.tradingview.com/script/2S4BqQzQ-TASC-2026-10-A-Low-Risk-ETF-Trading-Strategy/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TASC 2026.10 'A Low-Risk ETF-Trading Strategy' (Markos Katsanos; https://www.tradingview.com/script/2S4BqQzQ-TASC-2026-10-A-Low-Risk-ETF-Trading-Strategy/ ), single-instrument version: RSMK 35 (EMA4 x 100 of the 35-bar log change) over its SMA 50, over +3, at a 4-bar high and under 25; RSI 10 was under 35 within 20 bars and rose 3 bars in a row; EMA 5 over the SMA 15 of 5 bars ago -> buy. Out when RSMK crosses under -3, after 30 bars, or at +25%. Ours: RSMK on the instrument's own log price (the source measures it against SPY, which a single feed lacks), no SPY correlation / volume filters, hard stop 3 ATR (none published)."
+  },
+  {
+   "id": "SC507",
+   "name": "Pivot Reversal 4/2: close through the last confirmed pivot high / low, stop and reverse, 2 ATR (TradingView built-in)",
+   "source": "TradingView built-in Pivot Reversal Strategy",
+   "url": "https://www.luxalgo.com/library/indicator/aqVvUNub-pivot-reversal-strategy/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TradingView built-in 'Pivot Reversal Strategy' (https://www.luxalgo.com/library/indicator/aqVvUNub-pivot-reversal-strategy/ , list https://www.tradingview.com/support/folders/43000587406-built-in-strategies/ ): pivot high / low with 4 bars left and 2 right; buy-stop a tick over the last pivot high, sell-stop under the last pivot low, stop and reverse. Ours: the stop entry as a close through the pivot (entry at the next open), the pivot used only after its 2 right bars have closed, a 2 ATR hard stop (the built-in has none)."
+  },
+  {
+   "id": "SC508",
+   "name": "Volty Expan Close: close beyond previous close +/- 0.75 x SMA5(TR), stop and reverse, 2 ATR (TradingView / TradeStation built-in)",
+   "source": "TradingView / TradeStation built-in Volty Expan Close",
+   "url": "https://ru.tradingview.com/support/solutions/43000599890",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TradingView / TradeStation 'Volty Expan Close' (https://ru.tradingview.com/support/solutions/43000599890 , https://help.tradestation.com/09_01/tradestationhelp/Subsystems/elanalysis/signal/volty_expan_close_le_signal_.htm ): stop orders at the previous close +/- 0.75 x SMA 5 of the true range; stop and reverse. Ours: a close beyond the band (entry at the next open), 2 ATR hard stop."
+  },
+  {
+   "id": "SC509",
+   "name": "Consecutive Up/Down 3/3: momentum after 3 closes in a row, stop and reverse, 2 ATR (TradingView built-in)",
+   "source": "TradingView built-in Consecutive Up/Down Strategy",
+   "url": "https://www.tradingview.com/support/solutions/43000599836-consecutive-up-down-strategy/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TradingView built-in 'Consecutive Up/Down Strategy' (https://www.tradingview.com/support/solutions/43000599836-consecutive-up-down-strategy/ ): buy after 3 closes in a row over the previous close, sell after 3 under; stop and reverse. Ours: 2 ATR hard stop."
+  },
+  {
+   "id": "SC510",
+   "name": "Rob Hoffman Inventory Retracement Bar: 45% wick bar in a steep EMA20 trend, close through its high within 20 bars, IRB stop, 2R",
+   "source": "Rob Hoffman IRB (WH SelfInvest; Noski open source)",
+   "url": "https://www.whselfinvest.de/en-de/trading-platform/trader-tools/technical-analysis/13-rob-hoffman-irb-inventory-retracement-bar",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Rob Hoffman Inventory Retracement Bar (WH SelfInvest https://www.whselfinvest.de/en-de/trading-platform/trader-tools/technical-analysis/13-rob-hoffman-irb-inventory-retracement-bar , open source https://www.tradingview.com/script/khxEdmoy-Noski-Rob-Hoffman-Inventory-Retracement-Bar ): in an uptrend, a bar that opens and closes at least 45% under its high (upper wick >= 45% of the range) is an IRB; buy when price trades over the IRB's high; a newer IRB replaces the old one. Mirror for downtrends. Ours: uptrend = close over an EMA 20 that rose at least 0.5 ATR over 5 bars (Hoffman's '45-degree' slope), the buy-stop as a close over the high within 20 bars, stop under the IRB's low (0.1 ATR), target 2R (not published)."
+  },
+  {
+   "id": "SC511",
+   "name": "Red to Green / Green to Red: first close back over the previous RTH close on rising volume, bar stop, previous-day high if >= 2R (The Right Trader)",
+   "source": "The Right Trader - Red to Green Move",
+   "url": "https://therighttrader.com/learn/trading-strategies/red-to-green-move",
+   "added": "2026-11-17",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "stock",
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The Right Trader 'Red to Green Move' (https://therighttrader.com/learn/trading-strategies/red-to-green-move ; 1-minute bars, 5-minute as the slower version, regular session): price traded under the previous session's close today; the first bar that closes back over it, on volume >= the previous bar's -> buy at the close; stop the signal bar's low; target the previous day's high, taken only when it is >= 2R away; skip when the risk is > 1% of price; out on a close back under the previous close or flat at the session close. Mirror 'green to red' short to the previous day's low. Ours: none beyond the bar timing (entry at the next bar's open)."
+  },
+  {
+   "id": "SC512",
+   "name": "edgeful streak bias: after 2+ red (green) NY sessions, first 15 minutes closing with the bias, session-extreme stop, 2R, flat 16:00",
+   "source": "edgeful - green and red streak",
+   "url": "https://www.edgeful.com/blog/posts/green-red-streak-trading-strategy",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "edgeful 'green and red streak' (https://www.edgeful.com/blog/posts/green-red-streak-trading-strategy ; YM, New York session): streaks average ~2 days, so after 2+ red sessions (close under the open) lean long, after 2+ green lean short - 'with price-action confirmation'. Ours (the source gives no trigger): the first 15 minutes of the session close with the bias (over the session open for longs) -> enter; stop the session's low (high) so far 0.1 ATR beyond, target 2R, flat at 16:00 New York."
+  },
+  {
+   "id": "SC513",
+   "name": "Ehlers Voss predictor crosses the band-pass filter at a cycle low / high, 1.5 ATR, 2R (TASC 2019.08)",
+   "source": "Ehlers Voss Predictive Filter (TASC 2019.08) (indicator voss_predict)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2019/08/TradersTips.html",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers Voss Predictive Filter (TASC 2019.08): the Voss predictor crosses over its band-pass filter while the filter is under zero (a cycle low turning) -> buy; mirror over zero -> sell; stop 1.5 ATR, target 2R (ours)."
+  },
+  {
+   "id": "SC514",
+   "name": "Ehlers Super Passband crosses -RMS / +RMS, opposite-RMS exit, 2 ATR (TASC 2016.07)",
+   "source": "Ehlers Super Passband (TASC 2016.07) (indicator super_passband)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2016/07/TradersTips.html",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers Super Passband (TASC 2016.07): buy when the passband crosses up through -RMS, sell when it crosses down through +RMS; out on the opposite RMS cross (Ehlers' rules); stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC515",
+   "name": "Ehlers Universal Oscillator zero cross with the EMA50, opposite-cross exit, 2 ATR (TASC 2015.01)",
+   "source": "Ehlers Universal Oscillator (TASC 2015.01) (indicator universal_osc)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2015/01/TradersTips.html",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers Universal Oscillator (TASC 2015.01): zero crosses in the direction of the EMA 50 (ours), out on the opposite zero cross; stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC516",
+   "name": "Ehlers Elegant Oscillator back over -0.5 / under +0.5, swing stop, 2R (TASC 2022.02)",
+   "source": "Ehlers Elegant Oscillator (TASC 2022.02) (indicator elegant_osc)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2022/02/TradersTips.html",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers Elegant Oscillator (TASC 2022.02): buy when it turns up out of the -0.5 zone (crosses back over -0.5), sell when it crosses back under +0.5; stop beyond the 5-bar swing (0.1 ATR), target 2R (ours)."
+  },
+  {
+   "id": "SC517",
+   "name": "Close crosses the Ehlers Deviation-Scaled MA 40 with its slope, cross-back exit, 2 ATR (TASC 2018.07)",
+   "source": "Ehlers Deviation-Scaled MA 40 (TASC 2018.07) (indicator dsma)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2018/07/TradersTips.html",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers Deviation-Scaled MA 40 (TASC 2018.07): close crosses the DSMA while the DSMA slopes the same way -> trade; out on the close back through it; stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC518",
+   "name": "Close crosses LuxAlgo TRAMA 99 with its slope while trend regularity is high, cross-back exit, 2 ATR",
+   "source": "LuxAlgo Trend Regularity Adaptive MA 99 (indicator trama)",
+   "url": "https://www.tradingview.com/script/p8wGCPi6-Trend-Regularity-Adaptive-Moving-Average-LuxAlgo",
+   "added": "2026-11-17",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "LuxAlgo TRAMA 99: close crosses the TRAMA while it slopes the same way and the trend regularity tc is over its 100-bar median (ours: only regular trends); out on the close back through; stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC519",
+   "name": "LazyBear Impulse MACD leaves zero with the histogram, out back at zero, 2 ATR",
+   "source": "LazyBear Impulse MACD 34 / 9 (indicator impulse_macd)",
+   "url": "https://www.tradingview.com/script/qt6xLfLi-Impulse-MACD-LazyBear",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "LazyBear Impulse MACD 34 / 9: the impulse leaves zero upward (ZLEMA over the SMMA-high band) with the histogram positive -> buy; mirror -> sell; out when the impulse is back to zero (inside the band); stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC520",
+   "name": "Ehlers MAD 8/23 zero cross, opposite-cross exit, 2 ATR (TASC 2021.10)",
+   "source": "Ehlers Moving Average Difference (TASC 2021.10) (indicator mad)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2021/10/TradersTips.html",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Ehlers MAD 8 / 23 (TASC 2021.10): zero-line cross -> trade, opposite cross -> out; stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC521",
+   "name": "Spearman rank 20 back over -0.8 (under +0.8) with the EMA200 trend, swing stop, 2R (Ehlers)",
+   "source": "Spearman rank correlation of the last 20 closes with time (Ehlers), -1..1 (indicator spearman)",
+   "url": "https://www.tradingview.com/script/rpKPpW51-Ehlers-Spearman-Rank-Indicator-CC",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Spearman rank 20 (Ehlers): in an uptrend (close over EMA 200) the rank crosses back over -0.8 (a pullback ends) -> buy; mirror over +0.8 in a downtrend; stop beyond the 5-bar swing, target 2R (ours)."
+  },
+  {
+   "id": "SC522",
+   "name": "Elder Market Thermometer: 10-bar breakout after 5 quiet bars, out on the first hot bar / 20 bars, 2 ATR",
+   "source": "Elder Market Thermometer (indicator market_thermometer)",
+   "url": "https://www.incrediblecharts.com/indicators/elder_market_thermometer.php",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Elder Market Thermometer: after 5+ quiet bars (thermometer under its EMA 22) a close over the prior 10-bar high (under the low) -> trade the breakout (Elder: quiet markets precede explosive moves); take profit on the first 'hot' bar (thermometer > 3 x EMA, Elder's exit); stop 2 ATR, 20-bar time stop (ours)."
+  },
+  {
+   "id": "SC523",
+   "name": "Williams A/D divergence at a 20-bar close low / high, 1.5 ATR, 2R",
+   "source": "Larry Williams Accumulation / Distribution (indicator williams_ad)",
+   "url": "https://www.metastock.com/customer/resources/taaz/?p=125",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Larry Williams A/D divergence: the close makes a 20-bar low while Williams' A/D stays over its prior 20-bar low (no confirmation) -> buy; mirror at a 20-bar high; stop 1.5 ATR, target 2R (ours)."
+  },
+  {
+   "id": "SC524",
+   "name": "Fibonacci Bollinger Bands: reversal bar back inside the 1.0 band, bar stop, 0.382-band target (Rashad)",
+   "source": "Fibonacci Bollinger Bands (indicator fib_bollinger)",
+   "url": "https://www.tradingview.com/script/qIKR3tbN-Fibonacci-Bollinger-Bands",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Fibonacci Bollinger Bands (Rashad): the bar pierces the outer 1.0 band and closes back inside it as a reversal bar -> fade; stop beyond the bar (0.25 ATR); target the 0.382 band on the same side (ours)."
+  },
+  {
+   "id": "SC525",
+   "name": "Hull Butterfly Oscillator turn dots beyond the adaptive levels, 2 ATR, 2R (LuxAlgo, reconstruction)",
+   "source": "Hull Butterfly Oscillator (LuxAlgo, our reconstruction) (indicator hull_butterfly)",
+   "url": "https://www.luxalgo.com/library/indicator/hull-butterfly-oscillator/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Hull Butterfly Oscillator (LuxAlgo, our reconstruction): green dot (turn up under the lower level) -> buy, red dot -> sell; stop 2 ATR, target 2R (ours)."
+  },
+  {
+   "id": "SC526",
+   "name": "Range Detector: close through a 20+ bar range (SMA20 +/- ATR500), range-mid stop, 2R (LuxAlgo, reconstruction)",
+   "source": "Range Detector (LuxAlgo, our reconstruction) (indicator range_detector)",
+   "url": "https://www.luxalgo.com/library/indicator/range-detector/",
+   "added": "2026-11-17",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Range Detector (LuxAlgo, our reconstruction): a close through the top (bottom) of a range that held 20+ bars -> trade the break; stop at the range's middle; target 2R (ours)."
   }
  ],
  "indicators": [
@@ -14016,6 +14550,104 @@
    "url": "https://www.prorealcode.com/prorealtime-indicators/kase-dev-stop/",
    "added": "2026-11-16",
    "uses": "volatility exits / trailing levels for any trend strategy (SC503), warning line for partial exits"
+  },
+  {
+   "name": "voss_predict",
+   "source": "Ehlers Voss Predictive Filter (TASC 2019.08): band-pass 20 / 0.25 and the 3-bar Voss predictor, crosses = early turns",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2019/08/TradersTips.html",
+   "added": "2026-11-17",
+   "uses": "entry timing at cycle turns (SC513), early-exit warning when Voss crosses back under Filt"
+  },
+  {
+   "name": "super_passband",
+   "source": "Ehlers Super Passband (TASC 2016.07): zero-lag EMA 40 - 60 recursion with its 50-bar RMS band, crosses of -/+RMS",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2016/07/TradersTips.html",
+   "added": "2026-11-17",
+   "uses": "cycle-turn entries (SC514), filter: trade mean-reversion only inside +/-RMS"
+  },
+  {
+   "name": "universal_osc",
+   "source": "Ehlers Universal Oscillator (TASC 2015.01): SuperSmoother 20 of the 2-bar white noise / fast-attack peak, -1..1",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2015/01/TradersTips.html",
+   "added": "2026-11-17",
+   "uses": "zero-cross trend entries (SC515), sign as a direction filter"
+  },
+  {
+   "name": "elegant_osc",
+   "source": "Ehlers Elegant Oscillator (TASC 2022.02): SuperSmoother 20 of tanh(2-bar derivative / RMS 50), -0.5 / +0.5 turns",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2022/02/TradersTips.html",
+   "added": "2026-11-17",
+   "uses": "cycle low / high turns (SC516), exit when it reaches the opposite 0.5 zone"
+  },
+  {
+   "name": "dsma",
+   "source": "Ehlers Deviation-Scaled MA 40 (TASC 2018.07): EMA with alpha = 5 x |RMS-scaled SuperSmoother of the zeros| / period",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2018/07/TradersTips.html",
+   "added": "2026-11-17",
+   "uses": "adaptive trend line for entries / trailing exits (SC517)"
+  },
+  {
+   "name": "trama",
+   "source": "LuxAlgo Trend Regularity Adaptive MA 99: alpha = SMA(new high / new low)^2",
+   "url": "https://www.tradingview.com/script/p8wGCPi6-Trend-Regularity-Adaptive-Moving-Average-LuxAlgo",
+   "added": "2026-11-17",
+   "uses": "trend line that flattens in chop (SC518); tc as a trend-regularity filter for breakout strategies"
+  },
+  {
+   "name": "impulse_macd",
+   "source": "LazyBear Impulse MACD 34 / 9: ZLEMA(hlc3) beyond the SMMA high / low band, 0 inside, SMA9 signal",
+   "url": "https://www.tradingview.com/script/qt6xLfLi-Impulse-MACD-LazyBear",
+   "added": "2026-11-17",
+   "uses": "impulse-only entries (SC519); md == 0 as a no-trade / chop filter"
+  },
+  {
+   "name": "mad",
+   "source": "Ehlers Moving Average Difference (TASC 2021.10): 100 x (SMA8 - SMA23) / SMA23",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2021/10/TradersTips.html",
+   "added": "2026-11-17",
+   "uses": "MA-difference trend entries (SC520) and a momentum filter"
+  },
+  {
+   "name": "spearman",
+   "source": "Spearman rank correlation of the last 20 closes with time (Ehlers), -1..1",
+   "url": "https://www.tradingview.com/script/rpKPpW51-Ehlers-Spearman-Rank-Indicator-CC",
+   "added": "2026-11-17",
+   "uses": "trend pullback timing (SC521), rank sign as a trend filter"
+  },
+  {
+   "name": "market_thermometer",
+   "source": "Elder Market Thermometer: bar extension beyond the prior bar, EMA22, hot (3x) / quiet (5 bars under) states",
+   "url": "https://www.incrediblecharts.com/indicators/elder_market_thermometer.php",
+   "added": "2026-11-17",
+   "uses": "quiet-then-breakout entries (SC522), hot-bar profit taking for any strategy"
+  },
+  {
+   "name": "williams_ad",
+   "source": "Larry Williams Accumulation / Distribution: cumulative close vs true low (up) / true high (down)",
+   "url": "https://www.metastock.com/customer/resources/taaz/?p=125",
+   "added": "2026-11-17",
+   "uses": "divergence entries (SC523), accumulation filter"
+  },
+  {
+   "name": "fib_bollinger",
+   "source": "Fibonacci Bollinger Bands: VWMA200(hlc3) +/- 0.236 .. 1.0 x 3 stdev (Rashad)",
+   "url": "https://www.tradingview.com/script/qIKR3tbN-Fibonacci-Bollinger-Bands",
+   "added": "2026-11-17",
+   "uses": "outer-band reversal fades (SC524), inner bands as targets"
+  },
+  {
+   "name": "hull_butterfly",
+   "source": "Hull Butterfly Oscillator (LuxAlgo, our reconstruction): HMA14 kernel minus its mirror, expanding |osc| x 1.5 levels, turn dots",
+   "url": "https://www.luxalgo.com/library/indicator/hull-butterfly-oscillator/",
+   "added": "2026-11-17",
+   "uses": "turn dots for reversals (SC525), exit warning for trend trades"
+  },
+  {
+   "name": "range_detector",
+   "source": "Range Detector (LuxAlgo, our reconstruction): 20 closes within SMA20 +/- ATR500 -> range top / bottom, close breaks",
+   "url": "https://www.luxalgo.com/library/indicator/range-detector/",
+   "added": "2026-11-17",
+   "uses": "range breakouts (SC526), in_range as a no-trend filter / range-fade context"
   }
  ],
  "sources": [
@@ -14023,7 +14655,7 @@
    "name": "TradingView (open-source scripts + ideas)",
    "url": "https://www.tradingview.com/scripts/",
    "look_for": "open-source Pine strategies / indicators to port; ideas with full rules",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "FXStreet",
@@ -14185,7 +14817,7 @@
    "name": "TASC Traders' Tips (Technical Analysis of Stocks & Commodities)",
    "url": "https://www.traders.com/Documentation/FEEDbk_docs/",
    "look_for": "each month's new indicator with code (Ehlers and others) and the platform rules",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-17"
   },
   {
    "name": "ProRealCode (strategy + indicator library, forum)",

@@ -81,6 +81,9 @@ from agents.indicators.daycycle import noise_area, taylor_cycle
 from agents.indicators.classic6 import (chaikin_volatility, correlation_trend, kase_devstop, madrid_ribbon, murrey_math,
                                         pitchfork, projection, rainbow, sentiment_zone, standard_error_bands, ttm_scalper,
                                         ttm_trend, wave_pm)
+from agents.indicators.classic7 import (dsma, elegant_osc, fib_bollinger, hull_butterfly, impulse_macd, mad,
+                                        market_thermometer, range_detector, spearman, super_passband, trama,
+                                        universal_osc, voss_predict, williams_ad)
 TV = "https://www.tradingview.com/script/"
 TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
@@ -379,6 +382,20 @@ INDICATORS = {
     "madrid_ribbon": (madrid_ribbon, "Madrid MA Ribbon: EMAs 5-90 lime / green / maroon / red vs EMA100, score (lime - red) / 18", "https://in.tradingview.com/script/WH01CtjA-Madrid-MA-Ribbon-Bar"),
     "pitchfork": (pitchfork, "Automatic Andrews' Pitchfork from the last three confirmed alternating 5-bar pivots: median, upper, lower, bull / bear", "https://www.luxalgo.com/library/indicator/andrews-pitchfork/"),
     "kase_devstop": (kase_devstop, "Kase Dev-Stops: 2-bar true range avg + 0 / 1 / 2.2 / 3.6 std under the 20-bar high close (over the low), SMA10/21 trend", "https://www.prorealcode.com/prorealtime-indicators/kase-dev-stop/"),
+    "voss_predict": (voss_predict, "Ehlers Voss Predictive Filter (TASC 2019.08): band-pass 20 / 0.25 and the 3-bar Voss predictor, crosses = early turns", TT + "2019/08/TradersTips.html"),
+    "super_passband": (super_passband, "Ehlers Super Passband (TASC 2016.07): zero-lag EMA 40 - 60 recursion with its 50-bar RMS band, crosses of -/+RMS", TT + "2016/07/TradersTips.html"),
+    "universal_osc": (universal_osc, "Ehlers Universal Oscillator (TASC 2015.01): SuperSmoother 20 of the 2-bar white noise / fast-attack peak, -1..1", TT + "2015/01/TradersTips.html"),
+    "elegant_osc": (elegant_osc, "Ehlers Elegant Oscillator (TASC 2022.02): SuperSmoother 20 of tanh(2-bar derivative / RMS 50), -0.5 / +0.5 turns", TT + "2022/02/TradersTips.html"),
+    "dsma": (dsma, "Ehlers Deviation-Scaled MA 40 (TASC 2018.07): EMA with alpha = 5 x |RMS-scaled SuperSmoother of the zeros| / period", TT + "2018/07/TradersTips.html"),
+    "trama": (trama, "LuxAlgo Trend Regularity Adaptive MA 99: alpha = SMA(new high / new low)^2", TV + "p8wGCPi6-Trend-Regularity-Adaptive-Moving-Average-LuxAlgo"),
+    "impulse_macd": (impulse_macd, "LazyBear Impulse MACD 34 / 9: ZLEMA(hlc3) beyond the SMMA high / low band, 0 inside, SMA9 signal", TV + "qt6xLfLi-Impulse-MACD-LazyBear"),
+    "mad": (mad, "Ehlers Moving Average Difference (TASC 2021.10): 100 x (SMA8 - SMA23) / SMA23", TT + "2021/10/TradersTips.html"),
+    "spearman": (spearman, "Spearman rank correlation of the last 20 closes with time (Ehlers), -1..1", TV + "rpKPpW51-Ehlers-Spearman-Rank-Indicator-CC"),
+    "market_thermometer": (market_thermometer, "Elder Market Thermometer: bar extension beyond the prior bar, EMA22, hot (3x) / quiet (5 bars under) states", "https://www.incrediblecharts.com/indicators/elder_market_thermometer.php"),
+    "williams_ad": (williams_ad, "Larry Williams Accumulation / Distribution: cumulative close vs true low (up) / true high (down)", "https://www.metastock.com/customer/resources/taaz/?p=125"),
+    "fib_bollinger": (fib_bollinger, "Fibonacci Bollinger Bands: VWMA200(hlc3) +/- 0.236 .. 1.0 x 3 stdev (Rashad)", TV + "qIKR3tbN-Fibonacci-Bollinger-Bands"),
+    "hull_butterfly": (hull_butterfly, "Hull Butterfly Oscillator (LuxAlgo, our reconstruction): HMA14 kernel minus its mirror, expanding |osc| x 1.5 levels, turn dots", "https://www.luxalgo.com/library/indicator/hull-butterfly-oscillator/"),
+    "range_detector": (range_detector, "Range Detector (LuxAlgo, our reconstruction): 20 closes within SMA20 +/- ATR500 -> range top / bottom, close breaks", "https://www.luxalgo.com/library/indicator/range-detector/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

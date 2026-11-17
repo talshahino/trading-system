@@ -1,6 +1,6 @@
 {
  "bot": "bot2",
- "updated": "2026-11-17T03:10:34+00:00",
+ "updated": "2026-11-17T07:04:46+00:00",
  "cards": [
   {
    "bot": "bot2",
@@ -30,6 +30,33 @@
    "id": "170adbe07fee",
    "tier": "regular",
    "reason": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
+  {
+   "bot": "bot2",
+   "kind": "info",
+   "title": "בוט 2, 17.11 בוקר: בדיקת שעות וכיוון - אין שינוי",
+   "what": "החי טוב מהבדיקה (‎+0.32R מול ‎+0.21R לעסקה). בדיקה חדשה (ענן): לכל אסטרטגיה בבוט, חלון שעות ללא כניסות (2-8 שעות, שעון ישראל) או קנייה / מכירה בלבד - נבחר על 30.04-31.12.2025 ומוצג על 2026, רק כשהעסקאות שנחתכות הפסידו בבירור ב־2025 (t עד ‎-2.5). נבחרו 2 (QB11 USDJPY 09-14, SC399 XAUUSD 19-24); ב־2026: ‎+4.4R ו־‎+3.9R, אבל t ‎-0.3 עד ‎-0.7 - רעש. אף אחד לא מחזיק ב־2026 - אין כרטיס שעות / כיוון.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 6800,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot2|all",
+    "kind": "review",
+    "study": "hours_dir_1711"
+   },
+   "detail": {
+    "study": "hours_dir_1711",
+    "windows": "Israel time [a,b), 2-8h, + buy/sell only",
+    "bar": "2025 t<=-2.5, >=15 trades cut; 2026 t<=-1 to pass"
+   },
+   "made": "2026-11-17T07:04:46+00:00",
+   "id": "ae1cce05403a"
   }
  ]
 }

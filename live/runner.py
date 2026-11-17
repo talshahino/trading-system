@@ -201,6 +201,17 @@ def bars(sym, tf, off):
         df = df[(m >= 570) & (m < 960)]
         if len(df) < 50:
             return None
+    elif U.CLASS.get(sym) == "stock" and "USD" in U.CURRENCIES.get(sym, ""):
+        # the Dukascopy stocks' backtest has only bars that overlap the regular session (09:30-16:00 New York): the
+        # MetaQuotes-Demo feed also prints bars from 16:00 New York on (bots 1-4 smart agent, 17.11.2026: bot 4's
+        # SE01|1Hour WMT / CSCO saw their entry on a '21:00 UTC' bar the backtest never has - 13 backtest trades
+        # since 04.11, none live), so those bars must not exist here either (they moved the signals too)
+        ny = df.index.tz_convert("America/New_York")
+        m = ny.hour * 60 + ny.minute
+        step_min = TF_MIN["1Hour" if tf == "4Hour" else tf]
+        df = df[(m < 960) & (m + step_min > 570)]
+        if len(df) < 50:
+            return None
     if tf == "4Hour":
         df = df.resample("4h", label="left", closed="left").agg(
             {"o": "first", "h": "max", "l": "min", "c": "last", "v": "sum"}).dropna()
@@ -873,6 +884,39 @@ def note_slip(sym, d, asked, filled):
     del q[:-SLIP_KEEP]
 
 
+def trim_to_risk(name, ticket, lots, real, risk):
+    """A fill that put the loss at the stop over the trade's risk (+10%) is cut back at once to the size that loses the
+    risk at the stop (user's red line: no trade risks more than the bot's risk). Bots 1-4 smart agent, 17.11.2026: on
+    MetaQuotes-Demo the shares' prices arrive 15 minutes late (feed_lag 15.0 on every stock of bots 2-4) while the fills
+    are at the market, so the size worked out on the late price can be far off (FR08 SPCX on bot 4: $1,263-$2,408 at the
+    stop instead of ~$330 on 06.-10.11). Returns the lots closed (0 when nothing was cut)."""
+    try:
+        info = mt5.symbol_info(name)
+        step = info.volume_step or 0.01
+        digits = max(0, len(f"{step:.8f}".rstrip("0").split(".")[1]))
+        keep = round(float(np.floor(lots * risk / real / step + 1e-9) * step), digits)
+        cut = round(float(lots - keep), digits)
+        pos = [p for p in (mt5.positions_get(ticket=int(ticket)) or [])]
+        if not pos or cut < info.volume_min:
+            return 0.0
+        p = pos[0]
+        if keep < info.volume_min:
+            ok = close(p, "fill over the risk") is not None
+            return lots if ok else 0.0
+        tick = mt5.symbol_info_tick(name)
+        req = {"action": mt5.TRADE_ACTION_DEAL, "symbol": name, "volume": cut, "position": p.ticket,
+               "type": mt5.ORDER_TYPE_SELL if p.type == 0 else mt5.ORDER_TYPE_BUY,
+               "price": tick.bid if p.type == 0 else tick.ask, "deviation": 20, "magic": p.magic,
+               "comment": "fill over the risk", "type_filling": mt5.ORDER_FILLING_IOC}
+        if send(req, f"trim {p.comment} {cut}/{lots} (fill over the risk)") is None:
+            return 0.0
+        log(f"{p.comment}: cut {cut} of {lots} lots - the loss at the stop is back to the risk ${risk:,.0f}")
+        return cut
+    except Exception as e:  # noqa: BLE001
+        log(f"trim after fill failed: {e}")
+        return 0.0
+
+
 def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=None):
     risk = ACC.risk_usd * mult if risk is None else risk
     base = ACC.risk_usd * mult
@@ -991,6 +1035,9 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
                            priority=4, tags=["warning"], key="slip:" + combo, every=3600)
                 loss = real
                 STATE.setdefault("slip_over", {})[sym] = str(pd.Timestamp.now(tz="UTC"))
+                cut = trim_to_risk(name, r.order, lots, real, risk)
+                if cut:
+                    loss = real * (lots - cut) / lots
         STATE["entry"][combo] = str(entry_time)
         STATE["risk"][str(r.order)] = loss
         save_state()

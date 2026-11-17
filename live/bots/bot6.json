@@ -34,10 +34,11 @@
     "MIN_RR": 1.0,
     "EXPIRY": 120,
     "PROT": "cal15",
-    "EXIT": "p50_1r",
+    "EXIT": "be886",
     "LADDER": "4",
     "WKND": 10,
-    "REARM": true
+    "REARM": true,
+    "MINSTOP": 1.0
    }
   },
   "t15_5": {
@@ -85,22 +86,22 @@
   "tal": 0.0012,
   "tal4h": 0.0012,
   "scout": 0.004,
-  "scout:SC005|5Min|US100": 2.7e-05,
-  "scout:SC005|5Min|US500": 0.000279,
-  "scout:SC020|15Min|US500": 0.000318,
+  "scout:SC005|5Min|US100": 2e-05,
+  "scout:SC005|5Min|US500": 0.0002,
+  "scout:SC020|15Min|US500": 0.00022,
   "t15_5": 0.0012,
   "t5_1": 0.00084,
-  "scout:SC051|15Min|US100": 0.000764,
-  "scout:SC258|5Min|US100": 6.2e-05,
-  "scout:SC261|5Min|US500": 0.00155,
-  "scout:FR03|15Min|US30": 0.000546,
-  "scout:SC084|15Min|US30": 0.000178,
-  "scout:SC072|5Min|US500": 3.9e-05,
-  "scout:SC326|15Min|US30": 0.000247,
-  "scout:SC326|5Min|US30": 0.000155,
-  "scout:SC441|5Min|US100": 0.000287,
-  "scout:SC258|1Min|US100": 0.00155,
-  "scout:TV41|15Min|US100": 0.001085
+  "scout:SC051|15Min|US100": 0.00053,
+  "scout:SC258|5Min|US100": 4e-05,
+  "scout:SC261|5Min|US500": 0.00108,
+  "scout:FR03|15Min|US30": 0.00038,
+  "scout:SC084|15Min|US30": 0.00012,
+  "scout:SC072|5Min|US500": 3e-05,
+  "scout:SC326|15Min|US30": 0.00017,
+  "scout:SC326|5Min|US30": 0.00011,
+  "scout:SC441|5Min|US100": 0.0002,
+  "scout:SC258|1Min|US100": 0.00108,
+  "scout:TV41|15Min|US100": 0.00076
  },
  "changes": {
   "abb187377383": {
@@ -597,6 +598,114 @@
    "before": "__none__",
    "star_risk_before": "__none__",
    "fit6": 0.00155
+  },
+  "d2081082ff29": {
+   "family": "scout6",
+   "combo": "TV41|15Min|US100",
+   "before": {
+    "v": {
+     "target": "none",
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "since": "2026-11-17T06:05:41+00:00",
+    "card": "d76f1f70497a"
+   }
+  },
+  "44061531496a": {
+   "family": "tal5",
+   "track": "tal4h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h",
+     1
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 2,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "cal15",
+     "EXIT": "p50_1r",
+     "LADDER": "4",
+     "WKND": 10,
+     "REARM": true
+    }
+   },
+   "risk_before": 0.0012
+  },
+  "748213452fb1": {
+   "family": "risk",
+   "track": "scout:FR03|15Min|US30",
+   "before": 0.000546
+  },
+  "49fac539eb78": {
+   "family": "risk",
+   "track": "scout:SC005|5Min|US100",
+   "before": 2.7e-05
+  },
+  "d053dccd35d9": {
+   "family": "risk",
+   "track": "scout:SC005|5Min|US500",
+   "before": 0.000279
+  },
+  "d99e35bc6cdc": {
+   "family": "risk",
+   "track": "scout:SC020|15Min|US500",
+   "before": 0.000318
+  },
+  "94e2da27f125": {
+   "family": "risk",
+   "track": "scout:SC051|15Min|US100",
+   "before": 0.000764
+  },
+  "974b5a78c672": {
+   "family": "risk",
+   "track": "scout:SC072|5Min|US500",
+   "before": 3.9e-05
+  },
+  "4bb94c257fb2": {
+   "family": "risk",
+   "track": "scout:SC084|15Min|US30",
+   "before": 0.000178
+  },
+  "e9f09713426b": {
+   "family": "risk",
+   "track": "scout:SC258|1Min|US100",
+   "before": 0.00155
+  },
+  "6274ddd7761c": {
+   "family": "risk",
+   "track": "scout:SC258|5Min|US100",
+   "before": 6.2e-05
+  },
+  "b0b441d847b7": {
+   "family": "risk",
+   "track": "scout:SC261|5Min|US500",
+   "before": 0.00155
+  },
+  "28bd3615c993": {
+   "family": "risk",
+   "track": "scout:SC326|15Min|US30",
+   "before": 0.000247
+  },
+  "d6acf27bb790": {
+   "family": "risk",
+   "track": "scout:SC326|5Min|US30",
+   "before": 0.000155
+  },
+  "4f3fdc85919b": {
+   "family": "risk",
+   "track": "scout:SC441|5Min|US100",
+   "before": 0.000287
+  },
+  "055f3afac9f6": {
+   "family": "risk",
+   "track": "scout:TV41|15Min|US100",
+   "before": 0.001085
   }
  },
  "scout": {
@@ -735,10 +844,11 @@
     "target": "none",
     "stop": 1.0,
     "time": "own",
-    "be": false
+    "be": false,
+    "sess": "day"
    },
-   "since": "2026-11-17T06:05:41+00:00",
-   "card": "d76f1f70497a"
+   "since": "2026-11-17T11:43:03+00:00",
+   "card": "d2081082ff29"
   }
  }
 }

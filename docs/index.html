@@ -2476,7 +2476,7 @@ async function wcScout(t) {
   if (tin) ma.push({time: snap(A.bars, tin), position: buy ? "belowBar" : "aboveBar", color: "#12161C", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"});
   if (tout) ma.push({time: snap(A.bars, tout), position: "inBar", color: t.r >= 0 ? "#1E8A4C" : "#D0453A", shape: "square", text: "יציאה"});
   A.s.setMarkers(ma.sort((a, b) => a.time - b.time));
-  A.ch.timeScale().fitContent();
+  showRecent(A, sig, 80);
   LC.sym = null; LC.charts = [];
   liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, tfs);
   // 1 minute: the trade itself, with the position box
@@ -2496,7 +2496,7 @@ async function wcScout(t) {
     B.s.setMarkers(ms);
   }
   line(B.s, t.entry, "#12161C", "כניסה", 2); line(B.s, t.stop, "#D0453A", "סטופ", 2); line(B.s, t.target, "#1E8A4C", "יעד", 2);
-  B.ch.timeScale().fitContent();
+  showRecent(B, tin ? tin - 1800 : null, 150);
 }
 /* a trade of Tal's gap method (13.11.2026): the high timeframe - the impulse arrow, candles 1 and 3 and the gap box that
    comes out of them; the low timeframe - the same box, the entry, and the stop / target lines starting at the swings
@@ -2527,6 +2527,15 @@ function rvToast(msg) {
   d.textContent = msg;
   d.style.cssText = "position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1E8A4C;color:#fff;padding:12px 20px;border-radius:14px;font-weight:700;font-size:16px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.25);direction:rtl";
   document.body.appendChild(d); setTimeout(() => d.remove(), 2600);
+}
+// the charts hold a long history now (user, 17.11.2026: "show many more candles"): open on the latest n candles (and
+// anything that must be seen, from tFirst), the rest by scrolling back / pinching
+function showRecent(P, tFirst, n) {
+  const bs = P.bars || [], len = bs.length;
+  if (len <= n) { P.ch.timeScale().fitContent(); return; }
+  let from = len - n;
+  if (tFirst != null && isFinite(tFirst)) { let i = bs.findIndex(b => b[0] >= tFirst); if (i >= 0) from = Math.min(from, Math.max(0, i - 8)); }
+  P.ch.timeScale().setVisibleLogicalRange({from, to: len + 3});
 }
 const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא ענית בזמן", levels: "לא נכנסה · המחיר כבר עבר את הרמות"};
 const rvNeeded = t => t && t.status === "pending" && t.tal && t.asked && !t.sleep;
@@ -2651,7 +2660,7 @@ async function wcTal(t) {
     {time: snap(A.bars, c3), position: buy ? "belowBar" : "aboveBar", color: "#B8862B", shape: "circle", text: "3"},
     ...(tin ? [{time: snap(A.bars, tin), position: buy ? "belowBar" : "aboveBar", color: "#12161C", shape: buy ? "arrowUp" : "arrowDown", text: "כניסה"}] : [])
   ].sort((a, b) => a.time - b.time));
-  A.ch.timeScale().fitContent();
+  showRecent(A, sec(g.imp0[0]), 80);
   const MS = {"1m": 60, "5m": 300, "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400};
   LC.sym = null; LC.charts = [];
   const isLive = true;
@@ -2675,7 +2684,7 @@ async function wcTal(t) {
   if (tout) ms.push({time: t1, position: "inBar", color: t.r >= 0 ? "#1E8A4C" : "#D0453A", shape: "square", text: RS[t.reason] ? "יציאה · " + RS[t.reason] : "יציאה"});
   B.s.setMarkers(ms.sort((a, b) => a.time - b.time));
   if (t.entry != null) B.s.createPriceLine({price: t.entry, color: "#12161C", lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "כניסה"});
-  B.ch.timeScale().fitContent();
+  showRecent(B, Math.min(...[g.sw_stop, g.sw_tgt].filter(Boolean).map(x => sec(x[0])), c1), 150);
   if (isLive) liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, MS[g.ltf] || 60);
 }
 $("wbBack").onclick = () => $("wbPg").classList.remove("on");

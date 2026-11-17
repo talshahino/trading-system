@@ -581,11 +581,14 @@ def tal_chart(df, geo, t_in, t_out):
     entry (the impulse arrow, candles 1-3, the gap box), the low timeframe from the swings that set the stop and the
     target to after the exit. Returns (high bars, low bars) - at most 120 / 480 candles."""
     hm, lm = MINS.get(geo["htf"], 15), MINS.get(geo["ltf"], 1)
-    end_h = max(t_in, pd.Timestamp(geo["c3"])) + pd.Timedelta(minutes=3 * hm)
-    st_h = max(pd.Timestamp(geo["imp0"][0]) - pd.Timedelta(minutes=6 * hm), end_h - pd.Timedelta(minutes=120 * hm))
+    # much more history (user, 17.11.2026: "why only a small part of the chart - show many more candles"): 200 candles
+    # of the high timeframe up to after the entry / now, up to 480 of the low one; the app opens on the latest, scroll back
+    end_h = max(t_in, t_out, pd.Timestamp(geo["c3"])) + pd.Timedelta(minutes=3 * hm)
+    st_h = end_h - pd.Timedelta(minutes=200 * hm)
     pts = [pd.Timestamp(geo["c1"])] + [pd.Timestamp(geo[k][0]) for k in ("sw_stop", "sw_tgt") if geo.get(k)]
     end_l = t_out + pd.Timedelta(minutes=10 * lm)
-    st_l = max(min(pts) - pd.Timedelta(minutes=5 * lm), end_l - pd.Timedelta(minutes=480 * lm))
+    st_l = min(min(pts) - pd.Timedelta(minutes=30 * lm), end_l - pd.Timedelta(minutes=360 * lm))
+    st_l = max(st_l, end_l - pd.Timedelta(minutes=480 * lm))
     return bars(df, st_h, end_h, RULE.get(geo["htf"], "15min")), bars(df, st_l, end_l, RULE.get(geo["ltf"], "1min"))
 
 
@@ -865,13 +868,13 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen, calm=None):
             rec["gap_lo"], rec["gap_hi"] = min(rec["gap"]), max(rec["gap"])
         if rec["geo"] and rec["status"] in ("open", "closed"):
             # the two charts of the method (user, 13.11.2026)
-            if rec["status"] != "closed" or old.get("chart_v") != 3 or old.get("status") != "closed":
+            if rec["status"] != "closed" or old.get("chart_v") != 5 or old.get("status") != "closed":
                 t_in = pd.Timestamp(rec["time"]) if rec.get("time") else df.index[-1]
                 t_out = pd.Timestamp(rec["exit_time"]) if rec.get("exit_time") else df.index[-1]
                 rec["m15"], rec["m1"] = tal_chart(df, rec["geo"], t_in, t_out)
             else:
                 rec["m15"], rec["m1"] = old.get("m15"), old.get("m1")
-            rec["chart_v"] = 3
+            rec["chart_v"] = 5
         fut_rec(rec, old, fa, ftrades)
     for combo_, sc in SCOUT6.items():          # the scout strategies approved on bot 6's own test (13.11.2026)
         if sc["sym"] != name:
@@ -934,15 +937,15 @@ def fut_scout(name, df, noent, shut, sc, combo, contract, tick, fa, ftrades, fse
                "r": None if live_now else round(r_live, 4), "r_now": round(r_live, 3) if live_now else None}
         # the two charts of a scout trade (as bot 5, chart_v 4): the strategy's timeframe from 60 bars before the
         # entry to 4 after the exit, and 1 minute around the trade; a closed trade keeps the charts it already has
-        if rec["status"] != "closed" or old.get("chart_v") != 4 or old.get("status") != "closed":
+        if rec["status"] != "closed" or old.get("chart_v") != 6 or old.get("status") != "closed":
             t_out = pd.Timestamp(rec["exit_time"]) if rec["exit_time"] else df.index[-1]
             rule_ = f"{tfm}min" if tfm < 60 else "1h"
-            rec["m15"] = bars(df, tm - pd.Timedelta(minutes=60 * tfm), max(tm, t_out) + pd.Timedelta(minutes=4 * tfm), rule_)
+            rec["m15"] = bars(df, tm - pd.Timedelta(minutes=150 * tfm), max(tm, t_out) + pd.Timedelta(minutes=4 * tfm), rule_)
             m1_end = t_out + pd.Timedelta(minutes=10)
-            rec["m1"] = bars(df, max(tm - pd.Timedelta(minutes=max(30, 3 * tfm)), m1_end - pd.Timedelta(hours=12)), m1_end, "1min")
+            rec["m1"] = bars(df, max(tm - pd.Timedelta(minutes=max(240, 6 * tfm)), m1_end - pd.Timedelta(hours=12)), m1_end, "1min")
         else:
             rec["m15"], rec["m1"] = old.get("m15"), old.get("m1")
-        rec["chart_v"] = 4
+        rec["chart_v"] = 6
         fut_rec(rec, old, fa, ftrades)
 
 
@@ -1413,29 +1416,29 @@ def main():
                             rec["sleep"] = True              # his quiet hours: no question - the rules decide
                     if rec["geo"] and rec["status"] in ("open", "closed", "pending"):
                         # gap-method trades: the two charts of the method (high / low timeframe), user 13.11.2026
-                        if x["status"] != "closed" or old.get("chart_v") != 3 or old.get("status") != "closed":
+                        if x["status"] != "closed" or old.get("chart_v") != 5 or old.get("status") != "closed":
                             t_in = pd.Timestamp(x["time"]) if x.get("time") else df.index[-1]
                             t_out = pd.Timestamp(x["exit_time"]) if x.get("exit_time") else df.index[-1]
                             rec["m15"], rec["m1"] = tal_chart(df, rec["geo"], t_in, t_out)
-                            rec["chart_v"] = 3
+                            rec["chart_v"] = 5
                             if rev_ and rec["status"] == "pending" and rec["asked"] and not rec["sleep"] and not old.get("asked"):
                                 rec["pushed"] = review_push(rec)   # with the charts ready in the state
                         else:
-                            rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 3
+                            rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 5
                     elif rec.get("sc"):
                         # a scout trade: the upper chart on the strategy's own timeframe (signal candle and entry), the
                         # lower one on 1 minute from a little before the entry to after the exit (user, 17.11.2026)
-                        if x["status"] != "closed" or old.get("chart_v") != 4 or old.get("status") != "closed":
+                        if x["status"] != "closed" or old.get("chart_v") != 6 or old.get("status") != "closed":
                             tfm_ = SF.TF_MIN.get(rec["sc"]["tf"], 15)
                             t_in = pd.Timestamp(x["time"]) if x.get("time") is not None else df.index[-1]
                             t_out = pd.Timestamp(x["exit_time"]) if x.get("exit_time") is not None else df.index[-1]
                             rule_ = f"{tfm_}min" if tfm_ < 60 else "1h"
-                            rec["m15"] = bars(df, t_in - pd.Timedelta(minutes=60 * tfm_), max(t_in, t_out) + pd.Timedelta(minutes=4 * tfm_), rule_)
+                            rec["m15"] = bars(df, t_in - pd.Timedelta(minutes=150 * tfm_), max(t_in, t_out) + pd.Timedelta(minutes=4 * tfm_), rule_)
                             m1_end = t_out + pd.Timedelta(minutes=10)
-                            rec["m1"] = bars(df, max(t_in - pd.Timedelta(minutes=max(30, 3 * tfm_)), m1_end - pd.Timedelta(hours=12)), m1_end, "1min")
-                            rec["chart_v"] = 4
+                            rec["m1"] = bars(df, max(t_in - pd.Timedelta(minutes=max(240, 6 * tfm_)), m1_end - pd.Timedelta(hours=12)), m1_end, "1min")
+                            rec["chart_v"] = 6
                         else:
-                            rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 4
+                            rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 6
                         if rev_ and rec["status"] == "pending" and rec["asked"] and not rec["sleep"] and not old.get("asked"):
                             rec["pushed"] = review_push(rec)   # a gap scout strategy (REVIEW_SC), with its charts ready
                     elif x["status"] != "closed" or "m15" not in old or old.get("status") != x["status"] or old.get("chart_v") != 2:

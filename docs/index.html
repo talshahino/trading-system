@@ -149,6 +149,10 @@ input:focus,select:focus{outline:2px solid var(--vps);outline-offset:1px}
 .btn.ghost{background:var(--seg);color:var(--ink)}
 .btn.danger{background:var(--neg-soft);color:var(--neg)}
 .btn.ok{background:var(--pos);color:#fff}
+/* the review: the button he pressed stays pressed - right in green, wrong in red (user, 17.11.2026) */
+#rvLv .btn[data-ok].on{background:var(--pos);color:#fff}
+#rvLv .btn[data-bad].on{background:var(--neg,#D0453A);color:#fff}
+#rvBox .btn.picked{outline:3px solid var(--ink);outline-offset:2px}
 .btn:disabled{opacity:.5;cursor:default}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .msg{font-size:13px;margin-top:8px;min-height:18px}
@@ -2522,8 +2526,9 @@ function rvPanel(t, dec) {
     try { const j = await act("/watch/mark", {id: t.id, ...body}); WB.marks[t.id] = j.mark || body; note("rvMsg", body.take === "no" ? "נשמר: לא נכנסים." : "נשמר: הבוט ייכנס לפי מה שסימנת.", true); setTimeout(() => rvPanel(t, dec), 900); }
     catch (e) { note("rvMsg", e.message, false); }
   };
-  $("rvNo").onclick = () => send({take: "no"});
+  $("rvNo").onclick = () => { $("rvNo").classList.add("picked"); $("rvYes").classList.remove("picked"); send({take: "no"}); };
   $("rvYes").onclick = () => {
+    $("rvYes").classList.add("picked"); $("rvNo").classList.remove("picked");
     showLtf(true);
     const lv = [["entry", "כניסה", t.entry], ["stop", "סטופ", t.stop]].concat(t.sc ? [["target", "יעד", t.target]] : []);
     $("rvLv").innerHTML = (t.sc ? "" : `<div class="mut" style="margin:12px 0 0">היעד ייקבע ברגע הכניסה: הסווינג השני ${buy ? "מעל" : "מתחת ל"}מחיר הכניסה.</div>`) + `<div class="mut" style="margin:12px 0 6px">הפוזיציה לפי הכללים (בגרף ${t.sc ? "הדקה" : TFHE[(t.geo || {}).ltf] || ""} למטה). מה נכון?</div>` + lv.map(([k, l, v]) =>

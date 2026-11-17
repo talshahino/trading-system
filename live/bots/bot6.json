@@ -101,7 +101,9 @@
   "scout:SC326|5Min|US30": 0.000155,
   "scout:SC441|5Min|US100": 0.000287,
   "scout:SC258|1Min|US100": 0.000283,
-  "scout:TV41|15Min|US100": 0.000198
+  "scout:TV41|15Min|US100": 0.000198,
+  "scout:FG01|5Min|US30": 0.000184,
+  "scout:FG01|15Min|US30": 0.000173
  },
  "changes": {
   "abb187377383": {
@@ -778,6 +780,20 @@
    "family": "risk",
    "track": "scout:SC441|5Min|US100",
    "before": 0.0002
+  },
+  "0df4acb80183": {
+   "family": "scout6",
+   "combo": "FG01|5Min|US30",
+   "before": "__none__",
+   "star_risk_before": "__none__",
+   "fit6": 0.000263
+  },
+  "4503bc3845a6": {
+   "family": "scout6",
+   "combo": "FG01|15Min|US30",
+   "before": "__none__",
+   "star_risk_before": "__none__",
+   "fit6": 0.000247
   }
  },
  "scout": {
@@ -921,6 +937,26 @@
    },
    "since": "2026-11-17T12:23:05+00:00",
    "card": "d2081082ff29"
+  },
+  "FG01|5Min|US30": {
+   "v": {
+    "target": "none",
+    "stop": 0.75,
+    "time": "own",
+    "be": false
+   },
+   "since": "2026-11-17T20:04:09+00:00",
+   "card": "0df4acb80183"
+  },
+  "FG01|15Min|US30": {
+   "v": {
+    "target": 3.0,
+    "stop": 1.0,
+    "time": "own",
+    "be": false
+   },
+   "since": "2026-11-17T20:04:09+00:00",
+   "card": "4503bc3845a6"
   }
  }
 }

@@ -1,8 +1,93 @@
 {
- "at": "2026-11-17T11:54:31+00:00",
+ "at": "2026-11-17T19:55:51+00:00",
  "split": "2026-01-01",
  "test_from": "2025-04-30",
  "families": {
+  "SC071|15Min": {
+   "instruments": [
+    "US30",
+    "AUDUSD",
+    "EURJPY",
+    "EURUSD",
+    "GBPUSD",
+    "GER40",
+    "US100",
+    "US500",
+    "USDCAD",
+    "USDCHF",
+    "USDJPY",
+    "XAUUSD"
+   ],
+   "missing": [],
+   "none": {
+    "train_n": 789,
+    "train_r": -217.18,
+    "unseen_n": 1090,
+    "unseen_r": -193.73,
+    "positive_train": 1
+   },
+   "best": [
+    "adx_range",
+    {
+     "train_n": 90,
+     "train_r": -49.58,
+     "unseen_n": 151,
+     "unseen_r": -48.0,
+     "positive_train": 1
+    }
+   ],
+   "filters": {
+    "adx_range": {
+     "train_n": 90,
+     "train_r": -49.58,
+     "unseen_n": 151,
+     "unseen_r": -48.0,
+     "positive_train": 1
+    },
+    "with_trend200": {
+     "train_n": 148,
+     "train_r": -50.22,
+     "unseen_n": 235,
+     "unseen_r": -71.07,
+     "positive_train": 2
+    },
+    "vol_high": {
+     "train_n": 513,
+     "train_r": -85.65,
+     "unseen_n": 700,
+     "unseen_r": -54.81,
+     "positive_train": 2
+    },
+    "vol_normal": {
+     "train_n": 520,
+     "train_r": -124.22,
+     "unseen_n": 731,
+     "unseen_r": -127.05,
+     "positive_train": 2
+    },
+    "vol_low": {
+     "train_n": 279,
+     "train_r": -134.76,
+     "unseen_n": 398,
+     "unseen_r": -142.16,
+     "positive_train": 1
+    },
+    "adx_trend": {
+     "train_n": 699,
+     "train_r": -167.59,
+     "unseen_n": 945,
+     "unseen_r": -146.46,
+     "positive_train": 1
+    },
+    "none": {
+     "train_n": 789,
+     "train_r": -217.18,
+     "unseen_n": 1090,
+     "unseen_r": -193.73,
+     "positive_train": 1
+    }
+   }
+  },
   "SC042|15Min": {
    "instruments": [
     "XAUUSD",
@@ -258,97 +343,12 @@
     }
    }
   },
-  "SC071|15Min": {
-   "instruments": [
-    "US30",
-    "AUDUSD",
-    "EURJPY",
-    "EURUSD",
-    "GBPUSD",
-    "GER40",
-    "US100",
-    "US500",
-    "USDCAD",
-    "USDCHF"
-   ],
-   "missing": [
-    "USDJPY",
-    "XAUUSD"
-   ],
-   "none": {
-    "train_n": 659,
-    "train_r": -176.98000000000002,
-    "unseen_n": 927,
-    "unseen_r": -154.82,
-    "positive_train": 1
-   },
-   "best": [
-    "with_trend200",
-    {
-     "train_n": 124,
-     "train_r": -36.88,
-     "unseen_n": 197,
-     "unseen_r": -61.32000000000001,
-     "positive_train": 2
-    }
-   ],
-   "filters": {
-    "with_trend200": {
-     "train_n": 124,
-     "train_r": -36.88,
-     "unseen_n": 197,
-     "unseen_r": -61.32,
-     "positive_train": 2
-    },
-    "adx_range": {
-     "train_n": 79,
-     "train_r": -42.59,
-     "unseen_n": 129,
-     "unseen_r": -40.26,
-     "positive_train": 1
-    },
-    "vol_high": {
-     "train_n": 425,
-     "train_r": -65.17,
-     "unseen_n": 594,
-     "unseen_r": -23.04,
-     "positive_train": 2
-    },
-    "vol_normal": {
-     "train_n": 434,
-     "train_r": -93.89,
-     "unseen_n": 630,
-     "unseen_r": -103.88,
-     "positive_train": 2
-    },
-    "vol_low": {
-     "train_n": 236,
-     "train_r": -114.82,
-     "unseen_n": 340,
-     "unseen_r": -135.07,
-     "positive_train": 1
-    },
-    "adx_trend": {
-     "train_n": 580,
-     "train_r": -134.38,
-     "unseen_n": 804,
-     "unseen_r": -115.28,
-     "positive_train": 1
-    },
-    "none": {
-     "train_n": 659,
-     "train_r": -176.98,
-     "unseen_n": 927,
-     "unseen_r": -154.82,
-     "positive_train": 1
-    }
-   }
-  },
   "SC311|15Min": {
-   "instruments": [],
-   "missing": [
+   "instruments": [
     "GER40",
-    "AUDUSD",
+    "AUDUSD"
+   ],
+   "missing": [
     "EURJPY",
     "EURUSD",
     "GBPUSD",
@@ -360,9 +360,74 @@
     "USDJPY",
     "XAUUSD"
    ],
-   "none": null,
-   "best": null,
-   "filters": {}
+   "none": {
+    "train_n": 291,
+    "train_r": 18.03,
+    "unseen_n": 403,
+    "unseen_r": -2.16,
+    "positive_train": 2
+   },
+   "best": [
+    "none",
+    {
+     "train_n": 291,
+     "train_r": 18.03,
+     "unseen_n": 403,
+     "unseen_r": -2.16,
+     "positive_train": 2
+    }
+   ],
+   "filters": {
+    "none": {
+     "train_n": 291,
+     "train_r": 18.03,
+     "unseen_n": 403,
+     "unseen_r": -2.16,
+     "positive_train": 2
+    },
+    "vol_normal": {
+     "train_n": 246,
+     "train_r": 15.91,
+     "unseen_n": 332,
+     "unseen_r": -0.03,
+     "positive_train": 2
+    },
+    "vol_high": {
+     "train_n": 202,
+     "train_r": 14.85,
+     "unseen_n": 270,
+     "unseen_r": -9.04,
+     "positive_train": 2
+    },
+    "adx_trend": {
+     "train_n": 201,
+     "train_r": 9.61,
+     "unseen_n": 293,
+     "unseen_r": -3.0,
+     "positive_train": 1
+    },
+    "adx_range": {
+     "train_n": 118,
+     "train_r": 4.98,
+     "unseen_n": 135,
+     "unseen_r": -4.2,
+     "positive_train": 1
+    },
+    "vol_low": {
+     "train_n": 120,
+     "train_r": 2.56,
+     "unseen_n": 158,
+     "unseen_r": 0.96,
+     "positive_train": 1
+    },
+    "with_trend200": {
+     "train_n": 62,
+     "train_r": 0.02,
+     "unseen_n": 84,
+     "unseen_r": -7.46,
+     "positive_train": 1
+    }
+   }
   },
   "SC446|5Min": {
    "instruments": [],

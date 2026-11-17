@@ -1,0 +1,1801 @@
+{
+ "at": "2026-11-17T19:34:30+00:00",
+ "tracks": {
+  "t1h_5@AUS200": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 15,
+      "sum": 3.72,
+      "mean": 0.248
+     },
+     "unseen": {
+      "n": 10,
+      "sum": -2.06,
+      "mean": -0.206
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 14,
+      "sum": 4.85,
+      "mean": 0.346
+     },
+     "unseen": {
+      "n": 7,
+      "sum": -1.4,
+      "mean": -0.2
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 11,
+      "sum": 8.14,
+      "mean": 0.74
+     },
+     "unseen": {
+      "n": 3,
+      "sum": 2.37,
+      "mean": 0.79
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 13,
+      "sum": 5.92,
+      "mean": 0.455
+     },
+     "unseen": {
+      "n": 3,
+      "sum": 2.37,
+      "mean": 0.79
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 14,
+      "sum": 4.85,
+      "mean": 0.346
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 2.27,
+      "mean": 0.379
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 13,
+      "sum": 5.92,
+      "mean": 0.455
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 0.84,
+      "mean": 0.42
+     },
+     "error": null
+    }
+   },
+   "best": "h12",
+   "passes": true
+  },
+  "t5_1@AUS200": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 1,
+      "sum": 1.42,
+      "mean": 1.422
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 1,
+      "sum": 1.42,
+      "mean": 1.422
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 1,
+      "sum": 1.42,
+      "mean": 1.422
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 1,
+      "sum": 1.42,
+      "mean": 1.422
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 1,
+      "sum": 1.42,
+      "mean": 1.422
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "error": null
+    }
+   },
+   "best": "tgt",
+   "passes": false
+  },
+  "t1h_5@EU50": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 11,
+      "sum": 7.51,
+      "mean": 0.683
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 4.12,
+      "mean": 0.686
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 10,
+      "sum": 4.01,
+      "mean": 0.401
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 4.12,
+      "mean": 0.686
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 5,
+      "sum": -2.87,
+      "mean": -0.575
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 6,
+      "sum": -3.07,
+      "mean": -0.511
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 4.96,
+      "mean": 2.48
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 11,
+      "sum": 7.51,
+      "mean": 0.683
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 4.12,
+      "mean": 0.686
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 6,
+      "sum": -3.07,
+      "mean": -0.511
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 4.96,
+      "mean": 2.48
+     },
+     "error": null
+    }
+   },
+   "best": "opp",
+   "passes": false
+  },
+  "t5_1@EU50": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 2,
+      "sum": 2.31,
+      "mean": 1.153
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 1.09,
+      "mean": 0.543
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 1,
+      "sum": -0.09,
+      "mean": -0.09
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 1.09,
+      "mean": 0.543
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 1,
+      "sum": -0.09,
+      "mean": -0.09
+     },
+     "unseen": {
+      "n": 1,
+      "sum": 2.16,
+      "mean": 2.165
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 2,
+      "sum": 2.31,
+      "mean": 1.153
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 1.09,
+      "mean": 0.543
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 2,
+      "sum": 2.31,
+      "mean": 1.153
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 1.09,
+      "mean": 0.543
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 1,
+      "sum": -0.09,
+      "mean": -0.09
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 1.09,
+      "mean": 0.543
+     },
+     "error": null
+    }
+   },
+   "best": "h24",
+   "passes": false
+  },
+  "t15_1": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 558,
+      "sum": 97.67,
+      "mean": 0.175
+     },
+     "unseen": {
+      "n": 269,
+      "sum": 19.26,
+      "mean": 0.072
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 468,
+      "sum": 69.56,
+      "mean": 0.149
+     },
+     "unseen": {
+      "n": 223,
+      "sum": -2.75,
+      "mean": -0.012
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 389,
+      "sum": 47.58,
+      "mean": 0.122
+     },
+     "unseen": {
+      "n": 194,
+      "sum": 20.54,
+      "mean": 0.106
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 488,
+      "sum": 64.58,
+      "mean": 0.132
+     },
+     "unseen": {
+      "n": 238,
+      "sum": 26.33,
+      "mean": 0.111
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 524,
+      "sum": 94.14,
+      "mean": 0.18
+     },
+     "unseen": {
+      "n": 251,
+      "sum": 23.75,
+      "mean": 0.095
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 434,
+      "sum": 59.83,
+      "mean": 0.138
+     },
+     "unseen": {
+      "n": 207,
+      "sum": 3.68,
+      "mean": 0.018
+     },
+     "error": null
+    }
+   },
+   "best": "opp",
+   "passes": false
+  },
+  "t1h_15": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 627,
+      "sum": 42.87,
+      "mean": 0.068
+     },
+     "unseen": {
+      "n": 306,
+      "sum": 39.21,
+      "mean": 0.128
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 527,
+      "sum": 13.01,
+      "mean": 0.025
+     },
+     "unseen": {
+      "n": 257,
+      "sum": 39.34,
+      "mean": 0.153
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 323,
+      "sum": -3.2,
+      "mean": -0.01
+     },
+     "unseen": {
+      "n": 163,
+      "sum": 15.71,
+      "mean": 0.096
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 431,
+      "sum": 0.2,
+      "mean": 0.0
+     },
+     "unseen": {
+      "n": 205,
+      "sum": 10.64,
+      "mean": 0.052
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 524,
+      "sum": 7.67,
+      "mean": 0.015
+     },
+     "unseen": {
+      "n": 245,
+      "sum": 45.69,
+      "mean": 0.186
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 391,
+      "sum": 0.08,
+      "mean": 0.0
+     },
+     "unseen": {
+      "n": 193,
+      "sum": 5.36,
+      "mean": 0.028
+     },
+     "error": null
+    }
+   },
+   "best": "tgt",
+   "passes": false
+  },
+  "t4h_1h": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 684,
+      "sum": 71.98,
+      "mean": 0.105
+     },
+     "unseen": {
+      "n": 310,
+      "sum": 57.44,
+      "mean": 0.185
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 657,
+      "sum": 67.17,
+      "mean": 0.102
+     },
+     "unseen": {
+      "n": 303,
+      "sum": 55.17,
+      "mean": 0.182
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 556,
+      "sum": 42.54,
+      "mean": 0.077
+     },
+     "unseen": {
+      "n": 262,
+      "sum": 10.61,
+      "mean": 0.04
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 657,
+      "sum": 72.99,
+      "mean": 0.111
+     },
+     "unseen": {
+      "n": 297,
+      "sum": 47.93,
+      "mean": 0.161
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 652,
+      "sum": 68.22,
+      "mean": 0.105
+     },
+     "unseen": {
+      "n": 300,
+      "sum": 58.04,
+      "mean": 0.193
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 633,
+      "sum": 65.47,
+      "mean": 0.103
+     },
+     "unseen": {
+      "n": 291,
+      "sum": 45.49,
+      "mean": 0.156
+     },
+     "error": null
+    }
+   },
+   "best": "h24",
+   "passes": false
+  },
+  "t4h_15": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 557,
+      "sum": 84.01,
+      "mean": 0.151
+     },
+     "unseen": {
+      "n": 317,
+      "sum": 52.21,
+      "mean": 0.165
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 532,
+      "sum": 79.43,
+      "mean": 0.149
+     },
+     "unseen": {
+      "n": 309,
+      "sum": 48.53,
+      "mean": 0.157
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 456,
+      "sum": 66.06,
+      "mean": 0.145
+     },
+     "unseen": {
+      "n": 257,
+      "sum": 16.5,
+      "mean": 0.064
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 538,
+      "sum": 76.28,
+      "mean": 0.142
+     },
+     "unseen": {
+      "n": 305,
+      "sum": 41.8,
+      "mean": 0.137
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 535,
+      "sum": 84.78,
+      "mean": 0.158
+     },
+     "unseen": {
+      "n": 304,
+      "sum": 49.55,
+      "mean": 0.163
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 519,
+      "sum": 74.32,
+      "mean": 0.143
+     },
+     "unseen": {
+      "n": 298,
+      "sum": 37.11,
+      "mean": 0.125
+     },
+     "error": null
+    }
+   },
+   "best": "opp",
+   "passes": false
+  },
+  "t15_5": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 433,
+      "sum": 44.04,
+      "mean": 0.102
+     },
+     "unseen": {
+      "n": 179,
+      "sum": 29.15,
+      "mean": 0.163
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 332,
+      "sum": 26.91,
+      "mean": 0.081
+     },
+     "unseen": {
+      "n": 148,
+      "sum": 29.04,
+      "mean": 0.196
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 278,
+      "sum": -0.53,
+      "mean": -0.002
+     },
+     "unseen": {
+      "n": 116,
+      "sum": 31.85,
+      "mean": 0.275
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 384,
+      "sum": 32.37,
+      "mean": 0.084
+     },
+     "unseen": {
+      "n": 161,
+      "sum": 24.3,
+      "mean": 0.151
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 412,
+      "sum": 29.27,
+      "mean": 0.071
+     },
+     "unseen": {
+      "n": 172,
+      "sum": 25.9,
+      "mean": 0.151
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 312,
+      "sum": 23.79,
+      "mean": 0.076
+     },
+     "unseen": {
+      "n": 140,
+      "sum": 24.96,
+      "mean": 0.178
+     },
+     "error": null
+    }
+   },
+   "best": "h24",
+   "passes": false
+  },
+  "t5_1": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 634,
+      "sum": -4.23,
+      "mean": -0.007
+     },
+     "unseen": {
+      "n": 255,
+      "sum": 21.35,
+      "mean": 0.084
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 477,
+      "sum": -61.11,
+      "mean": -0.128
+     },
+     "unseen": {
+      "n": 189,
+      "sum": 2.01,
+      "mean": 0.011
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 352,
+      "sum": -39.81,
+      "mean": -0.113
+     },
+     "unseen": {
+      "n": 141,
+      "sum": 2.83,
+      "mean": 0.02
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 461,
+      "sum": -17.62,
+      "mean": -0.038
+     },
+     "unseen": {
+      "n": 183,
+      "sum": 2.46,
+      "mean": 0.013
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 554,
+      "sum": -17.43,
+      "mean": -0.031
+     },
+     "unseen": {
+      "n": 228,
+      "sum": 23.77,
+      "mean": 0.104
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 418,
+      "sum": -49.82,
+      "mean": -0.119
+     },
+     "unseen": {
+      "n": 161,
+      "sum": -1.92,
+      "mean": -0.012
+     },
+     "error": null
+    }
+   },
+   "best": "opp",
+   "passes": false
+  },
+  "t4h_5": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 552,
+      "sum": 75.42,
+      "mean": 0.137
+     },
+     "unseen": {
+      "n": 265,
+      "sum": 23.91,
+      "mean": 0.09
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 522,
+      "sum": 64.42,
+      "mean": 0.123
+     },
+     "unseen": {
+      "n": 253,
+      "sum": 25.86,
+      "mean": 0.102
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 404,
+      "sum": 38.27,
+      "mean": 0.095
+     },
+     "unseen": {
+      "n": 202,
+      "sum": -0.67,
+      "mean": -0.003
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 517,
+      "sum": 83.03,
+      "mean": 0.161
+     },
+     "unseen": {
+      "n": 252,
+      "sum": 5.93,
+      "mean": 0.024
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 513,
+      "sum": 82.53,
+      "mean": 0.161
+     },
+     "unseen": {
+      "n": 247,
+      "sum": 22.82,
+      "mean": 0.092
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 497,
+      "sum": 68.37,
+      "mean": 0.138
+     },
+     "unseen": {
+      "n": 241,
+      "sum": 10.59,
+      "mean": 0.044
+     },
+     "error": null
+    }
+   },
+   "best": "h24",
+   "passes": false
+  },
+  "t1h_5@JP225": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 19,
+      "sum": 6.32,
+      "mean": 0.333
+     },
+     "unseen": {
+      "n": 9,
+      "sum": 2.99,
+      "mean": 0.332
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 18,
+      "sum": 7.38,
+      "mean": 0.41
+     },
+     "unseen": {
+      "n": 8,
+      "sum": -0.73,
+      "mean": -0.092
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 15,
+      "sum": 5.98,
+      "mean": 0.399
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 1.39,
+      "mean": 0.232
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 17,
+      "sum": 8.39,
+      "mean": 0.493
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 1.39,
+      "mean": 0.232
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 19,
+      "sum": 6.32,
+      "mean": 0.333
+     },
+     "unseen": {
+      "n": 9,
+      "sum": 2.99,
+      "mean": 0.332
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 16,
+      "sum": 9.44,
+      "mean": 0.59
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 1.39,
+      "mean": 0.232
+     },
+     "error": null
+    }
+   },
+   "best": "tgt+h24",
+   "passes": false
+  },
+  "t1h_5@N25": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 9,
+      "sum": 11.03,
+      "mean": 1.226
+     },
+     "unseen": {
+      "n": 2,
+      "sum": -1.26,
+      "mean": -0.632
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 8,
+      "sum": 7.07,
+      "mean": 0.884
+     },
+     "unseen": {
+      "n": 2,
+      "sum": -1.26,
+      "mean": -0.632
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 3,
+      "sum": 2.58,
+      "mean": 0.861
+     },
+     "unseen": {
+      "n": 2,
+      "sum": -1.26,
+      "mean": -0.632
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 9,
+      "sum": 11.03,
+      "mean": 1.226
+     },
+     "unseen": {
+      "n": 2,
+      "sum": -1.26,
+      "mean": -0.632
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 3,
+      "sum": 2.58,
+      "mean": 0.861
+     },
+     "unseen": {
+      "n": 2,
+      "sum": -1.26,
+      "mean": -0.632
+     },
+     "error": null
+    }
+   },
+   "best": "opp",
+   "passes": false
+  },
+  "t5_1@N25": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 5,
+      "sum": 2.41,
+      "mean": 0.481
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 3.66,
+      "mean": 1.828
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 4,
+      "sum": 3.5,
+      "mean": 0.875
+     },
+     "unseen": {
+      "n": 1,
+      "sum": 1.49,
+      "mean": 1.492
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 4,
+      "sum": 3.5,
+      "mean": 0.874
+     },
+     "unseen": {
+      "n": 1,
+      "sum": 1.49,
+      "mean": 1.492
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 4,
+      "sum": 3.5,
+      "mean": 0.874
+     },
+     "unseen": {
+      "n": 1,
+      "sum": 1.49,
+      "mean": 1.492
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 5,
+      "sum": 2.41,
+      "mean": 0.481
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 3.66,
+      "mean": 1.828
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 3,
+      "sum": 4.59,
+      "mean": 1.529
+     },
+     "unseen": {
+      "n": 1,
+      "sum": 1.49,
+      "mean": 1.492
+     },
+     "error": null
+    }
+   },
+   "best": "tgt+h24",
+   "passes": false
+  },
+  "t1h_5@SPN35": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 10,
+      "sum": 0.56,
+      "mean": 0.056
+     },
+     "unseen": {
+      "n": 11,
+      "sum": -6.55,
+      "mean": -0.596
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 8,
+      "sum": -1.23,
+      "mean": -0.154
+     },
+     "unseen": {
+      "n": 11,
+      "sum": -6.55,
+      "mean": -0.596
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 3,
+      "sum": -0.77,
+      "mean": -0.258
+     },
+     "unseen": {
+      "n": 5,
+      "sum": -0.77,
+      "mean": -0.153
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 7,
+      "sum": -1.45,
+      "mean": -0.207
+     },
+     "unseen": {
+      "n": 8,
+      "sum": -3.23,
+      "mean": -0.403
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 9,
+      "sum": -2.11,
+      "mean": -0.235
+     },
+     "unseen": {
+      "n": 9,
+      "sum": -4.35,
+      "mean": -0.483
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 7,
+      "sum": -1.45,
+      "mean": -0.207
+     },
+     "unseen": {
+      "n": 8,
+      "sum": -3.23,
+      "mean": -0.403
+     },
+     "error": null
+    }
+   },
+   "best": "h12",
+   "passes": false
+  },
+  "t5_1@SPN35": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 1,
+      "sum": 1.67,
+      "mean": 1.674
+     },
+     "unseen": {
+      "n": 1,
+      "sum": -1.06,
+      "mean": -1.065
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 1,
+      "sum": 1.67,
+      "mean": 1.674
+     },
+     "unseen": {
+      "n": 1,
+      "sum": -1.06,
+      "mean": -1.065
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 1,
+      "sum": 1.67,
+      "mean": 1.674
+     },
+     "unseen": {
+      "n": 1,
+      "sum": -1.06,
+      "mean": -1.065
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 1,
+      "sum": 1.67,
+      "mean": 1.674
+     },
+     "unseen": {
+      "n": 1,
+      "sum": -1.06,
+      "mean": -1.065
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null
+     },
+     "unseen": {
+      "n": 1,
+      "sum": -1.06,
+      "mean": -1.065
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 1,
+      "sum": 1.67,
+      "mean": 1.674
+     },
+     "unseen": {
+      "n": 1,
+      "sum": -1.06,
+      "mean": -1.065
+     },
+     "error": null
+    }
+   },
+   "best": "tgt",
+   "passes": false
+  },
+  "t5_1@UK100": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 33,
+      "sum": 1.69,
+      "mean": 0.051
+     },
+     "unseen": {
+      "n": 27,
+      "sum": -1.2,
+      "mean": -0.045
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 22,
+      "sum": 1.64,
+      "mean": 0.075
+     },
+     "unseen": {
+      "n": 26,
+      "sum": -0.14,
+      "mean": -0.005
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 16,
+      "sum": -4.13,
+      "mean": -0.258
+     },
+     "unseen": {
+      "n": 22,
+      "sum": -2.58,
+      "mean": -0.117
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 21,
+      "sum": -5.46,
+      "mean": -0.26
+     },
+     "unseen": {
+      "n": 23,
+      "sum": -3.63,
+      "mean": -0.158
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 30,
+      "sum": -5.7,
+      "mean": -0.19
+     },
+     "unseen": {
+      "n": 25,
+      "sum": -2.34,
+      "mean": -0.094
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 16,
+      "sum": -3.12,
+      "mean": -0.195
+     },
+     "unseen": {
+      "n": 23,
+      "sum": -3.63,
+      "mean": -0.158
+     },
+     "error": null
+    }
+   },
+   "best": "tgt",
+   "passes": false
+  },
+  "t1h_5@US100": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 30,
+      "sum": 7.08,
+      "mean": 0.236
+     },
+     "unseen": {
+      "n": 18,
+      "sum": 23.17,
+      "mean": 1.287
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 26,
+      "sum": 8.06,
+      "mean": 0.31
+     },
+     "unseen": {
+      "n": 17,
+      "sum": -1.7,
+      "mean": -0.1
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 28,
+      "sum": 9.18,
+      "mean": 0.328
+     },
+     "unseen": {
+      "n": 14,
+      "sum": -2.15,
+      "mean": -0.154
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 29,
+      "sum": 8.15,
+      "mean": 0.281
+     },
+     "unseen": {
+      "n": 14,
+      "sum": -2.15,
+      "mean": -0.154
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 30,
+      "sum": 7.08,
+      "mean": 0.236
+     },
+     "unseen": {
+      "n": 17,
+      "sum": 24.18,
+      "mean": 1.422
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 25,
+      "sum": 9.14,
+      "mean": 0.365
+     },
+     "unseen": {
+      "n": 13,
+      "sum": -1.13,
+      "mean": -0.087
+     },
+     "error": null
+    }
+   },
+   "best": "h12",
+   "passes": false
+  },
+  "t1h_5@US2000": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 24,
+      "sum": 2.2,
+      "mean": 0.092
+     },
+     "unseen": {
+      "n": 8,
+      "sum": -3.54,
+      "mean": -0.442
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 21,
+      "sum": 2.1,
+      "mean": 0.1
+     },
+     "unseen": {
+      "n": 8,
+      "sum": -3.54,
+      "mean": -0.442
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 20,
+      "sum": 3.16,
+      "mean": 0.158
+     },
+     "unseen": {
+      "n": 6,
+      "sum": -5.26,
+      "mean": -0.876
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 22,
+      "sum": 4.28,
+      "mean": 0.194
+     },
+     "unseen": {
+      "n": 6,
+      "sum": -5.26,
+      "mean": -0.876
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 24,
+      "sum": 2.2,
+      "mean": 0.092
+     },
+     "unseen": {
+      "n": 8,
+      "sum": -3.54,
+      "mean": -0.442
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 20,
+      "sum": 3.15,
+      "mean": 0.158
+     },
+     "unseen": {
+      "n": 6,
+      "sum": -5.26,
+      "mean": -0.876
+     },
+     "error": null
+    }
+   },
+   "best": "h24",
+   "passes": false
+  },
+  "t1h_5@US30": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 34,
+      "sum": 26.33,
+      "mean": 0.774
+     },
+     "unseen": {
+      "n": 18,
+      "sum": 9.06,
+      "mean": 0.503
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 31,
+      "sum": 24.5,
+      "mean": 0.79
+     },
+     "unseen": {
+      "n": 15,
+      "sum": 2.36,
+      "mean": 0.157
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 33,
+      "sum": 27.38,
+      "mean": 0.83
+     },
+     "unseen": {
+      "n": 15,
+      "sum": 3.89,
+      "mean": 0.259
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 34,
+      "sum": 26.33,
+      "mean": 0.774
+     },
+     "unseen": {
+      "n": 15,
+      "sum": 3.89,
+      "mean": 0.259
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 34,
+      "sum": 26.33,
+      "mean": 0.774
+     },
+     "unseen": {
+      "n": 17,
+      "sum": 10.08,
+      "mean": 0.593
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 31,
+      "sum": 24.5,
+      "mean": 0.79
+     },
+     "unseen": {
+      "n": 13,
+      "sum": 0.87,
+      "mean": 0.067
+     },
+     "error": null
+    }
+   },
+   "best": "h12",
+   "passes": false
+  },
+  "t1h_5@US500": {
+   "rows": {
+    "now": {
+     "train": {
+      "n": 25,
+      "sum": 6.64,
+      "mean": 0.266
+     },
+     "unseen": {
+      "n": 15,
+      "sum": -4.49,
+      "mean": -0.299
+     },
+     "error": null
+    },
+    "tgt": {
+     "train": {
+      "n": 21,
+      "sum": -5.38,
+      "mean": -0.256
+     },
+     "unseen": {
+      "n": 14,
+      "sum": -3.47,
+      "mean": -0.248
+     },
+     "error": null
+    },
+    "h12": {
+     "train": {
+      "n": 21,
+      "sum": -2.88,
+      "mean": -0.137
+     },
+     "unseen": {
+      "n": 11,
+      "sum": -4.45,
+      "mean": -0.405
+     },
+     "error": null
+    },
+    "h24": {
+     "train": {
+      "n": 23,
+      "sum": -4.03,
+      "mean": -0.175
+     },
+     "unseen": {
+      "n": 11,
+      "sum": -4.45,
+      "mean": -0.405
+     },
+     "error": null
+    },
+    "opp": {
+     "train": {
+      "n": 24,
+      "sum": -5.21,
+      "mean": -0.217
+     },
+     "unseen": {
+      "n": 15,
+      "sum": -4.49,
+      "mean": -0.299
+     },
+     "error": null
+    },
+    "tgt+h24": {
+     "train": {
+      "n": 20,
+      "sum": -4.2,
+      "mean": -0.21
+     },
+     "unseen": {
+      "n": 11,
+      "sum": -4.45,
+      "mean": -0.405
+     },
+     "error": null
+    }
+   },
+   "best": "h12",
+   "passes": false
+  }
+ },
+ "all": {
+  "now": {
+   "train_sum": 492.65,
+   "unseen_sum": 266.46,
+   "unseen_n": 2030
+  },
+  "tgt": {
+   "train_sum": 318.89,
+   "unseen_sum": 186.41,
+   "unseen_n": 1800
+  },
+  "h12": {
+   "train_sum": 200.6,
+   "unseen_sum": 92.4,
+   "unseen_n": 1420
+  },
+  "h24": {
+   "train_sum": 362.37,
+   "unseen_sum": 153.54,
+   "unseen_n": 1735
+  },
+  "opp": {
+   "train_sum": 406.2,
+   "unseen_sum": 280.87,
+   "unseen_n": 1866
+  },
+  "tgt+h24": {
+   "train_sum": 292.52,
+   "unseen_sum": 115.89,
+   "unseen_n": 1621
+  }
+ }
+}

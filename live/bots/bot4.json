@@ -49,7 +49,9 @@
   "IB034|4Hour|XAUUSD",
   "TV58|1Hour|XAUUSD",
   "TV36|1Hour|ARM",
-  "SC376|4Hour|XAGUSD"
+  "SC376|4Hour|XAGUSD",
+  "SC504|15Min|XAGUSD",
+  "SC485|4Hour|XAUUSD"
  ],
  "note": "04.11.2026: built from the new families' combos that passed the first test (GitHub, QuantConnect, forums, books, seasonality, inter-market, Quantpedia), chosen on 2025 and checked on 2026 and by reshuffling; MetaQuotes-demo instruments only (FX, metals, US shares); risk 0.45% chosen by the user; FTMO Standard rule: closed before market breaks over 2 hours; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -144,6 +146,10 @@
    "target": 5.0,
    "limit": 0.25,
    "card": "b222a5369109"
+  },
+  "BK07|1Hour|EURUSD": {
+   "be_r": 1.0,
+   "manage_card": "731f6e249d04"
   }
  },
  "added": {
@@ -174,7 +180,9 @@
   "IB034|4Hour|XAUUSD": "aa85ebf8f948",
   "TV58|1Hour|XAUUSD": "3f6064d316d9",
   "TV36|1Hour|ARM": "2a32a9bbe1c9",
-  "SC376|4Hour|XAGUSD": "533cd49d281e"
+  "SC376|4Hour|XAGUSD": "533cd49d281e",
+  "SC504|15Min|XAGUSD": "0a6f39b3461e",
+  "SC485|4Hour|XAUUSD": "e112e9cf3fce"
  },
  "removed": {
   "SC002|1Hour|ARM": "ffe0e8720757",

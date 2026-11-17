@@ -1,14 +1,73 @@
 {
- "updated": "2026-11-17T22:20:26+00:00",
+ "updated": "2026-11-17T22:26:00+00:00",
  "new": [
-  "a33a0860b03c",
-  "70c0ef365637",
-  "e2b5e92dc036",
-  "4ee916a3b034",
-  "36d168e10b0e",
-  "d5defef8fee6"
+  "646d89be0bfc",
+  "1053512033b7"
  ],
  "decisions": [
+  {
+   "id": "1053512033b7",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TT45|1Hour|GBPJPY",
+   "title": "TT45|1Hour|GBPJPY: סיכון ×0.86 ← ×0.64 (היתרון קטן)",
+   "decision": "approved",
+   "by": "manager",
+   "read": false,
+   "undone": false,
+   "at": "2026-11-17T22:33:52+00:00",
+   "why": "המנהל: הסיכון של כל אסטרטגיה הולך אחרי היתרון שלה, למעלה ולמטה: בבדיקה של 2026: +0.26R לעסקה (91 עסקאות), בתקופת הבחירה -0.02R; בחי: -0.05R לעסקה (4 עסקאות); הבדיקה שווה 79% מהמשקל, החי 21%; היתרון עכשיו: +0.19R לעסקה; סיכון = +0.19 ÷ +0.26 = ×0.74; כפול הסיכון המאושר ×0.86 = ×0.64.",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "edge_risk": true,
+   "action": {
+    "bot": "bot1",
+    "combo": "TT45|1Hour|GBPJPY",
+    "kind": "mult",
+    "value": 0.64,
+    "prev": 0.86
+   }
+  },
+  {
+   "id": "646d89be0bfc",
+   "bot": "bot2",
+   "type": "card",
+   "card": "9f68e8b0ba78",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "TV13|4Hour|USDCAD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.49% → -2.49%, ירידה 5.91% → 6.11%, ימים קרובים למגבלה 0 → 0) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2949,
+     "total": 144.45,
+     "worst_day": -2.49,
+     "max_dd": 5.91,
+     "near_days": 0,
+     "max_open": 5.07,
+     "max_side": 4.15,
+     "guard_cut": 193,
+     "guard_skipped": 38
+    },
+    "after": {
+     "trades": 2951,
+     "total": 145.09,
+     "worst_day": -2.49,
+     "max_dd": 6.11,
+     "near_days": 0,
+     "max_open": 5.07,
+     "max_side": 4.15,
+     "guard_cut": 194,
+     "guard_skipped": 37
+    }
+   },
+   "at": "2026-11-17T22:26:00+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "a33a0860b03c",
    "bot": "bot2",
@@ -45,7 +104,7 @@
      "guard_skipped": 29
     }
    },
-   "at": "2026-11-17T22:20:26+00:00",
+   "at": "2026-11-17T22:20:14+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -86,7 +145,7 @@
      "guard_skipped": 31
     }
    },
-   "at": "2026-11-17T22:20:26+00:00",
+   "at": "2026-11-17T22:20:14+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -127,7 +186,7 @@
      "guard_skipped": 33
     }
    },
-   "at": "2026-11-17T22:20:26+00:00",
+   "at": "2026-11-17T22:20:14+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -168,7 +227,7 @@
      "guard_skipped": 39
     }
    },
-   "at": "2026-11-17T22:20:26+00:00",
+   "at": "2026-11-17T22:20:14+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -192,24 +251,7 @@
     "value": 0.7,
     "prev": null
    },
-   "at": "2026-11-17T22:20:26+00:00",
-   "by": "manager",
-   "read": false,
-   "undone": false
-  },
-  {
-   "id": "d5defef8fee6",
-   "bot": "bot5",
-   "type": "card",
-   "card": "13a860f28ae6",
-   "kind": "info",
-   "tier": "regular",
-   "title": "בוט 5: סטופ באורך דחף אחד מהכניסה (מהסקירות שלך) ו־SC071 גם בשורט - נבנו לבדיקה במחשב",
-   "decision": "approved",
-   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
-   "star": false,
-   "at": "2026-11-17T22:20:26+00:00",
+   "at": "2026-11-17T22:20:14+00:00",
    "by": "manager",
    "read": false,
    "undone": false

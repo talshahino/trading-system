@@ -326,6 +326,15 @@
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
      {
+      "what": "סיכון ×0.39",
+      "decision": "829b8ffad15a",
+      "at": "2026-11-17T22:04:07+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.38,
+      "value": 0.39
+     },
+     {
       "what": "סיכון ×0.38",
       "decision": "fc8390f54bdf",
       "at": "2026-11-16T22:05:35+00:00",
@@ -378,9 +387,19 @@
    {
     "combo": "SE02|1Hour|USDJPY",
     "cause": "יציאת זמן",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "סיכון ×0.83",
+      "decision": "33d69f15948f",
+      "at": "2026-11-17T22:04:07+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.83
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.83,
     "edge_parts": [
      "בבדיקה של 2026: +0.14R לעסקה (221 עסקאות), בתקופת הבחירה +0.05R",
@@ -430,15 +449,15 @@
   "open": [
    "BK05|15Min|EURUSD",
    "BK07|1Hour|EURUSD",
-   "SE02|1Hour|USDJPY",
    "FR01|1Hour|EURUSD",
    "QC07|15Min|ARM"
   ],
   "cut_only": [
    "SE02|1Hour|GBPJPY",
-   "FR01|1Hour|GBPUSD"
+   "FR01|1Hour|GBPUSD",
+   "SE02|1Hour|USDJPY"
   ],
   "total_month_pct": 0.0,
-  "status": "פתוח: 5 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

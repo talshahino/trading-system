@@ -349,7 +349,19 @@ def _smoother(x, lv, periods=("train", "unseen")):
             return False
         if (x.get(tot) or 0) <= 0 or (x.get(tot) or 0) < CURVE_KEEP * (lv.get(tot) or 0):
             return False
+        # the main goal (17.11.2026 night, agentkit.curve_ok - the manager's rule): less profit only with at least as
+        # much less risk - the profit per unit of daily spread is not lower
+        if not (a.get("sd") and b.get("sd")) or (x.get(tot) or 0) / a["sd"] < (lv.get(tot) or 0) / b["sd"]:
+            return False
     return True
+
+
+def _curve_block(x, lv):
+    """The card's "curve" block for the manager (agentkit.curve_ok): today vs the way, on each period."""
+    one = lambda s, p: {"sum": s.get("train_sum") if p == "train" else s.get("unseen"),  # noqa: E731
+                        "worst": s.get("worst_day_train") if p == "train" else s.get("worst_day_unseen"),
+                        **{k: (s.get(f"curve_{p}") or {}).get(k) for k in ("green", "dd", "sd", "win")}}
+    return {p: {"live": one(lv, p), "way": one(x, p)} for p in ("train", "unseen")}
 
 
 CURVE_GREEN = 2.0     # percentage points more green days, on each period
@@ -725,6 +737,8 @@ def filt_cards(idx, group=FILT6):
                                   # loss) was withdrawn as its own duplicate and an id once decided is never decided again
                                   {"method": "tal_gap", "pair": pn, "cfg": c, "track": f"tal_gap|{pn}", "knob": "cfg",
                                    "test": "curve" if curve else "head2head"})))
+        if curve:
+            out[-1]["curve"] = _curve_block(x, lv)     # the manager judges a curve card by it (agentkit.curve_ok)
     return out, res
 
 
@@ -1960,6 +1974,13 @@ def _sess_cands(v):
     own_tg = v.get("target") != "none"
     for b in (SF.BE_WAY if own_tg else SF.BE_R):
         out.append(dict(v, be=b))
+    # the direction family (17.11.2026 night, task 2072d266da96 - the manager: every family before the risk goes down):
+    # bot 5's two scout filters (shared methods), alone and on top of the evening window (noopen, the best to 2025
+    # for SC072)
+    for f_ in SF.FILT:
+        out.append(dict(v, filt=f_))
+        if not v.get("sess"):
+            out.append(dict(v, sess="noopen", filt=f_))
     return [c for c in out if SF.vid(c) != SF.vid(v)]
 
 
@@ -2064,7 +2085,7 @@ def sess6_cards(res):
                     + ("" if hold else " (לא מחזיק ב־2026)"))
         if not hold:
             continue
-        what = (f"{combo} כפי שהוא רץ עכשיו ({SF.he(e['v'])}) מול שינוי אחד בכל פעם - חלון שעות ניו יורק (4) או נקודת האיזון "
+        what = (f"{combo} כפי שהוא רץ עכשיו ({SF.he(e['v'])}) מול שינוי אחד בכל פעם - חלון שעות ניו יורק (4), כיוון (EMA50 בגרף השעה / בלי כניסה חוזרת אחרי סטופ, כמו בבוט 5) או נקודת האיזון "
                 f"(עיקרון 7: {'5 רמות פיבונאצ׳י של הדרך ליעד' if e['v'].get('target') != 'none' else '1.5 / 2 / 3R'}), "
                 f"{len(rows) - 1} שינויים. נבחר על 2024-2025 בלבד: {fmt(ct)}, סה\"כ {best.get('train_sum', 0):+.1f}R מול {base.get('train_sum', 0):+.1f}R היום; "
                 f"ב־2026 (לא נראתה): {fmt(cu)}, סה\"כ {best.get('unseen_sum', 0):+.1f}R מול {base.get('unseen_sum', 0):+.1f}R ({fmt(bu)}). "

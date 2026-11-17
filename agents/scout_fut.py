@@ -41,6 +41,15 @@ SESS = {"day": (3 * 60, 15 * 60 + 45), "ny": (8 * 60, 15 * 60 + 45), "rth": (9 *
         "noopen": (20 * 60, 18 * 60)}
 SESS_HE = {"day": "כניסה רק 03:00-15:45 ניו יורק (לונדון וניו יורק)", "ny": "כניסה רק 08:00-15:45 ניו יורק",
            "rth": "כניסה רק בשעות המסחר הרגילות 09:30-15:45", "noopen": "בלי כניסה בשעתיים הראשונות אחרי 18:00"}
+# "filt" (bot 6's smart agent, 17.11.2026 night - the shared methods of bots 5 and 6): bot 5's two scout filters, the
+#           same rule as live/watch_own.scout5_filter (bot 5's live bot) - ema50h = longs only when the last CLOSED
+#           1-hour close is over the 1-hour EMA50, shorts only under it (the user, 16.11.2026 19:49: "a long against a
+#           falling market is a wrong read"); noreent = after a stopped trade, no new entry in the same direction that
+#           New York day. The fix family "direction" for a scout strategy that lost (task 2072d266da96: SC072|5Min|US500
+#           stopped at once on 16.11, MFE 0.14R). Absent = as before (every variant id stays the same).
+FILT = ("ema50h", "noreent")
+FILT_HE = {"ema50h": "רק בכיוון של EMA50 בגרף השעה (קניות מעליו, מכירות מתחתיו)",
+           "noreent": "אחרי סטופ - בלי כניסה נוספת באותו כיוון באותו יום"}
 BE_WAY = (0.382, 0.5, 0.618, 0.786, 0.886)      # with a target: the share of the way (Fibonacci, task 17)
 BE_R = (1.5, 2.0, 3.0)                          # without one: R (2.5 = True, the rule of principle 7)
 
@@ -55,7 +64,7 @@ def vid(v):
     b = _be_num(v)
     be = f"be{b:g}" if b is not None else ("be" if v["be"] else "nobe")
     return (f"t{t}_s{float(v['stop']):g}_{'time' if v['time'] == 'own' else 'notime'}_{be}"
-            + (f"_{v['sess']}" if v.get("sess") else ""))
+            + (f"_{v['sess']}" if v.get("sess") else "") + (f"_{v['filt']}" if v.get("filt") else ""))
 
 
 def sess_ok(times, sess):
@@ -79,7 +88,41 @@ def he(v):
     m = "" if v["time"] == "own" else ", בלי יציאה בזמן"
     bn = _be_num(v)
     b = (f", איזון ב־{bn:g}R" if bn >= 1 else f", איזון ב־{bn * 100:g}% מהדרך") if bn is not None else ("" if v["be"] else ", בלי איזון")
-    return t + s + m + b + (f", {SESS_HE[v['sess']]}" if v.get("sess") else "")
+    return (t + s + m + b + (f", {SESS_HE[v['sess']]}" if v.get("sess") else "")
+            + (f", {FILT_HE[v['filt']]}" if v.get("filt") in FILT_HE else ""))
+
+
+def dir_filter(t, df1, way):
+    """bot 5's scout filter (live/watch_own.scout5_filter, the same rule) on a strategy's trades (time order). df1: the
+    1-minute bars. Nothing to filter / an unknown way = the trades as they are."""
+    if way not in FILT or t.empty:
+        return t
+    utc = lambda v: (pd.Timestamp(v).tz_localize("UTC") if pd.Timestamp(v).tzinfo is None  # noqa: E731
+                     else pd.Timestamp(v).tz_convert("UTC"))
+    keep = []
+    if way == "noreent":
+        stopped = {}
+        for i, x in enumerate(t.to_dict("records")):
+            tm = utc(x["time"])
+            key = (tm.tz_convert("America/New_York").date(), int(x["dir"]))
+            if key in stopped and stopped[key] <= tm:
+                continue
+            keep.append(i)
+            if x["reason"] != "סוף הנתונים" and pd.notna(x["r"]) and float(x["r"]) < 0 and pd.notna(x["exit_time"]):
+                ex = utc(x["exit_time"])
+                stopped[key] = min(stopped.get(key, ex), ex)
+        return t.iloc[keep]
+    c = df1["c"]
+    if c.index.tz is None:
+        c = c.tz_localize("UTC")
+    h = c.resample("1h", label="left", closed="left").last().dropna()
+    e50 = h.ewm(span=50, adjust=False).mean()
+    closed = h.index + pd.Timedelta(hours=1)
+    for i, x in enumerate(t.to_dict("records")):
+        j = int(closed.searchsorted(utc(x["time"]), side="right")) - 1
+        if j < 50 or bool(h.iloc[j] > e50.iloc[j]) == (int(x["dir"]) > 0):
+            keep.append(i)
+    return t.iloc[keep]
 
 
 def resample(df1, tf):
@@ -157,4 +200,6 @@ def trades(df1, sym, sid, tf, v, noent1, shut1, cost_px):
     t = t[risk > 0].copy()
     t["cost_r"] = cost_px / (t["entry_px"] - t["stop_px"]).abs()
     t["r"] = t["r"] - t["cost_r"]
+    if v.get("filt"):
+        t = dir_filter(t.reset_index(drop=True), df1, v["filt"])
     return t

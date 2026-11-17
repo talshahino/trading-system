@@ -87,6 +87,48 @@ def card(bot, kind, title, what, train, unseen, *, whole=None, halves_=None, nei
 
 NEW_MIN_TOTAL = 3.0       # R on 2026: the least a new strategy must add to the total
 
+# A SMOOTHER CURVE (the user, 16.11.2026 20:28, task mgr1611curve: "many small wins every day rather than one big win";
+# data/agents/tal_thinking.md: "a way that clearly smooths the curve on both periods and still earns comes to the
+# manager as a card even if its total is somewhat lower - the manager decides"). Until 17.11.2026 such a card was
+# rejected by the per-trade rule below before the manager could weigh it (bot 6's smart agent, 17.11 night: bot 6's
+# first two curve cards, 7d78b68e5e0c and 22290561222a, both "rejected"). A card whose change says test "curve" carries
+# c["curve"] = {"train": {"live": {...}, "way": {...}}, "unseen": {...}}, each with sum (R), green (% green days),
+# dd (largest fall from the peak, R), worst (worst day, R) and sd (daily spread, R). It passes when on EACH period:
+# more green days (CURVE_GREEN points), a smaller fall, a worst day not worse, at least CURVE_KEEP of today's total -
+# and THE MAIN GOAL (more profit AND less risk): the profit per unit of daily risk (sum / sd) is not lower, so less
+# profit is accepted only together with at least as much less risk (the same rule as "more profit only with less risk").
+CURVE_GREEN = 2.0
+CURVE_KEEP = 0.8
+
+
+def curve_ok(c):
+    """(ok, reason) for a card with a "curve" block (see above); (None, "") when the block is missing / incomplete."""
+    cv = c.get("curve") or {}
+    parts = []
+    for p, he in (("train", "עד 2025"), ("unseen", "2026")):
+        x = cv.get(p) or {}
+        a, b = x.get("way") or {}, x.get("live") or {}
+        if any(d.get(k) is None for d in (a, b) for k in ("sum", "green", "dd", "worst", "sd")):
+            return None, ""
+        ra = a["sum"] / a["sd"] if a["sd"] else None
+        rb = b["sum"] / b["sd"] if b["sd"] else None
+        fails = []
+        if not (a["sum"] > 0 and a["sum"] >= CURVE_KEEP * b["sum"]):
+            fails.append(f"סה\"כ {b['sum']:+.1f}R ← {a['sum']:+.1f}R (פחות מ־{CURVE_KEEP:.0%})")
+        if a["green"] < b["green"] + CURVE_GREEN:
+            fails.append(f"ימים ירוקים {b['green']}% ← {a['green']}%")
+        if not a["dd"] < b["dd"]:
+            fails.append(f"ירידה מהשיא {b['dd']}R ← {a['dd']}R")
+        if a["worst"] < b["worst"]:
+            fails.append(f"היום הגרוע {b['worst']}R ← {a['worst']}R")
+        if ra is None or rb is None or ra < rb:
+            fails.append(f"רווח ליחידת סיכון יומי {rb or 0:.1f} ← {ra or 0:.1f}")
+        if fails:
+            return False, f"{he}: " + ", ".join(fails)
+        parts.append(f"{he}: ימים ירוקים {b['green']}% ← {a['green']}%, ירידה {b['dd']}R ← {a['dd']}R, "
+                     f"רווח ליחידת סיכון {rb:.1f} ← {ra:.1f}")
+    return True, "; ".join(parts)
+
 
 def judge(c):
     """The manager's fixed rules. Returns (tier, reason in Hebrew). Gentle enough that proposals keep coming
@@ -122,6 +164,13 @@ def judge(c):
     if c["kind"] == "new" and base is None and (u.get("eff_n") or u.get("n") or 0) * u["mean"] < NEW_MIN_TOTAL:
         return "watch", (f"ב־2026 בסך הכל רק {(u.get('eff_n') or u.get('n') or 0) * u['mean']:+.1f}R "
                          f"({u['mean']:+.3f}R לעסקה) - פחות מ־{NEW_MIN_TOTAL:g}R, לא מגדיל את הרווח הכולל. נשמר להמשך")
+    if (c.get("change") or {}).get("test") == "curve" and c.get("curve"):
+        ok, why = curve_ok(c)
+        if ok:
+            return "regular", ("עקומה חלקה יותר בשתי התקופות, והרווח ליחידת סיכון לא יורד (בקשת טל 16.11, "
+                               "הרבה ניצחונות קטנים) - " + why)
+        if ok is False:
+            return "rejected", "העקומה לא חלקה מספיק בשתי התקופות - " + why
     if base is not None and u["mean"] <= base:
         return "rejected", f"לא טוב מהמצב הקיים בתקופה שלא נראתה ({u['mean']:+.2f}R מול {base:+.2f}R)"
     # more per trade but fewer trades can mean less money in total (a limit entry, a filter): the total on the

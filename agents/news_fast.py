@@ -114,7 +114,7 @@ def run(sym):
     idx = d1.index
     o, h, l, c = (d1[x].to_numpy(float) for x in "ohlc")
     a5 = NS._atr5(d1)
-    raw = []
+    raw, moves = [], []
     for cur, b in bt.items():
         for t, x in sorted((rel_all.get(cur) or {}).items()):
             if t < TEST_FROM:
@@ -128,6 +128,18 @@ def run(sym):
             atr = float(a5.iloc[ka])
             if not np.isfinite(atr) or atr <= 0:
                 continue
+            # the release's impact on this instrument (user, 17.11.2026: "the impact of each type of release"): the
+            # move from the release minute's open after 1 / 5 / 15 / 60 minutes in 5-minute ATRs, signed so that + is
+            # the way the number points (the currency's strength; an index: + = up after a good number), and the
+            # biggest move either way in the first 15 minutes
+            e0 = o[k0]
+            mv = {}
+            for m in (1, 5, 15, 60):
+                km = min(len(idx) - 1, idx.searchsorted(t + pd.Timedelta(minutes=m)) - 1)
+                mv[f"m{m}"] = round(float(x["g"] * (b or 1) * (c[km] - e0) / atr), 3)
+            k15 = min(len(idx), idx.searchsorted(t + pd.Timedelta(minutes=15)))
+            mv["range15"] = round(float((h[k0:k15].max() - l[k0:k15].min()) / atr), 3)
+            moves.append({"sym": sym, "cur": cur, "title": x["title"], "t": t.isoformat(), "big": x["big"], **mv})
             for dl in DELAYS:
                 ke = idx.searchsorted(t + pd.Timedelta(minutes=dl))
                 if ke >= len(idx) or idx[ke] - t > pd.Timedelta(minutes=dl + 2):
@@ -148,6 +160,7 @@ def run(sym):
                                         "entry_px": e, "stop_px": stop, "r": dr * (px - e) / (s * atr), "rel": t, "cur": cur,
                                         "idx": int(b == 0 or sym not in FX and sym != "XAUUSD"), "big": x["big"], "mixed": x["mixed"],
                                         "title": x["title"]})
+    (OUT / f"{sym}.moves.json").write_text(json.dumps(moves), encoding="utf-8")
     if not raw:
         (OUT / f"{sym}.json").write_text("[]", encoding="utf-8")
         return
@@ -172,7 +185,7 @@ def _st(s):
 def report():
     rows = []
     for f in sorted(OUT.glob("*.json")):
-        if f.name == "report.json":
+        if f.name == "report.json" or f.name.endswith(".moves.json"):
             continue
         try:
             rows += json.loads(f.read_text(encoding="utf-8"))
@@ -219,6 +232,35 @@ def report():
                 t_["positive_2026"] += int((b["unseen"]["sum"] or 0) > 0)
                 t_["currencies"] += 1
     rep["all"] = tot
+    # every type of release (user, 17.11.2026: "how the strategies behave by each type of release, and the impact of
+    # each type"): its impact (moves.json) and how each entry delay did on it - the version chosen for its currency
+    mv = []
+    for f in sorted(OUT.glob("*.moves.json")):
+        try:
+            mv += json.loads(f.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            pass
+    mdf = pd.DataFrame(mv)
+    types = {}
+    if len(mdf):
+        for (cur, title), g in mdf.groupby(["cur", "title"]):
+            types[f"{cur} {title}"] = {
+                "releases": int(g["t"].nunique()),
+                "impact_range15_atr": round(float(g["range15"].median()), 2),
+                "with_number_5m_pct": round(100 * float((g["m5"] > 0).mean()), 1),
+                "move_atr": {m: round(float(g[m].median()), 2) for m in ("m1", "m5", "m15", "m60")}}
+    for key, t_ in types.items():
+        cur, title = key.split(" ", 1)
+        for dl in DELAYS:
+            for ck, cost in (("ftmo", "r"), ("broker", "r3")):
+                b = ((out.get(cur) or {}).get(f"d{dl}") or {}).get(ck)
+                if not b:
+                    continue
+                z = df[(df["cur"] == cur) & (df["title"] == title) & (df["d"] == dl) & (df["v"] == b["v"])]
+                z = z[z["big"] == 1] if b["big"] else z
+                z = z[z["mixed"] == 0] if b["nomix"] else z
+                t_.setdefault("by_delay", {}).setdefault(f"d{dl}", {})[ck] = {"train": _st(z[z.train][cost]), "unseen": _st(z[~z.train][cost])}
+    rep["by_type"] = dict(sorted(types.items(), key=lambda kv: -kv[1]["impact_range15_atr"]))
     (OUT / "report.json").write_text(json.dumps(rep, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps(tot, ensure_ascii=False, indent=1))
     for cur, ds in out.items():

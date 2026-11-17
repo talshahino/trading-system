@@ -1,19 +1,31 @@
 {
  "bot": "bot1",
  "name": "בוט 1",
- "updated": "2026-11-17T15:34:06+00:00",
- "state_updated": "2026-11-17T15:31:49+00:00",
- "minutes_since_state": 2,
- "balance": 98373.65,
- "equity": 97871.33,
- "day_pct": -1.78,
- "total_pct": -2.13,
- "trades": 165,
- "mean_r": -0.123,
- "sum_r": -20.32,
+ "updated": "2026-11-17T15:57:09+00:00",
+ "state_updated": "2026-11-17T15:56:08+00:00",
+ "minutes_since_state": 1,
+ "balance": 97190.89,
+ "equity": 97903.15,
+ "day_pct": -1.75,
+ "total_pct": -2.1,
+ "trades": 171,
+ "mean_r": -0.152,
+ "sum_r": -25.95,
  "bt_mean_r": 0.198,
  "flagged": 0,
  "combos": [
+  {
+   "combo": "SE02|1Hour|USDJPY",
+   "n": 9,
+   "mean": -0.472,
+   "sum": -4.24,
+   "win": 33.3,
+   "streak": 3,
+   "bt_mean": 0.137,
+   "bt_n": 385,
+   "z": -1.94,
+   "flags": []
+  },
   {
    "combo": "TV10|1Hour|US100",
    "n": 8,
@@ -39,18 +51,6 @@
    "flags": []
   },
   {
-   "combo": "SE02|1Hour|USDJPY",
-   "n": 8,
-   "mean": -0.399,
-   "sum": -3.19,
-   "win": 37.5,
-   "streak": 2,
-   "bt_mean": 0.137,
-   "bt_n": 385,
-   "z": -1.61,
-   "flags": []
-  },
-  {
    "combo": "TT56|1Hour|GME",
    "n": 2,
    "mean": -0.781,
@@ -60,6 +60,18 @@
    "bt_mean": 0.415,
    "bt_n": 62,
    "z": -1.3,
+   "flags": []
+  },
+  {
+   "combo": "TV02|15Min|TSLA",
+   "n": 9,
+   "mean": -0.242,
+   "sum": -2.18,
+   "win": 33.3,
+   "streak": 2,
+   "bt_mean": 0.169,
+   "bt_n": 252,
+   "z": -1.28,
    "flags": []
   },
   {
@@ -111,15 +123,27 @@
    "flags": []
   },
   {
-   "combo": "TV02|15Min|TSLA",
-   "n": 8,
-   "mean": -0.137,
-   "sum": -1.09,
-   "win": 37.5,
+   "combo": "TT45|15Min|CSCO",
+   "n": 9,
+   "mean": -0.184,
+   "sum": -1.65,
+   "win": 33.3,
    "streak": 1,
-   "bt_mean": 0.169,
-   "bt_n": 252,
-   "z": -0.9,
+   "bt_mean": 0.052,
+   "bt_n": 255,
+   "z": -0.93,
+   "flags": []
+  },
+  {
+   "combo": "TV08|15Min|NVDA",
+   "n": 7,
+   "mean": -0.245,
+   "sum": -1.71,
+   "win": 42.9,
+   "streak": 1,
+   "bt_mean": 0.111,
+   "bt_n": 272,
+   "z": -0.92,
    "flags": []
   },
   {
@@ -171,30 +195,6 @@
    "flags": []
   },
   {
-   "combo": "TV08|15Min|NVDA",
-   "n": 6,
-   "mean": -0.116,
-   "sum": -0.7,
-   "win": 50.0,
-   "streak": 0,
-   "bt_mean": 0.111,
-   "bt_n": 272,
-   "z": -0.55,
-   "flags": []
-  },
-  {
-   "combo": "TT45|15Min|CSCO",
-   "n": 8,
-   "mean": -0.081,
-   "sum": -0.65,
-   "win": 37.5,
-   "streak": 0,
-   "bt_mean": 0.052,
-   "bt_n": 255,
-   "z": -0.5,
-   "flags": []
-  },
-  {
    "combo": "MQ11|4Hour|MSTR",
    "n": 5,
    "mean": -0.059,
@@ -228,6 +228,18 @@
    "bt_mean": 0.184,
    "bt_n": 163,
    "z": -0.4,
+   "flags": []
+  },
+  {
+   "combo": "TV29|4Hour|US30",
+   "n": 4,
+   "mean": 0.011,
+   "sum": 0.05,
+   "win": 50.0,
+   "streak": 1,
+   "bt_mean": 0.151,
+   "bt_n": 112,
+   "z": -0.37,
    "flags": []
   },
   {
@@ -315,18 +327,6 @@
    "flags": []
   },
   {
-   "combo": "TV29|4Hour|US30",
-   "n": 3,
-   "mean": 0.348,
-   "sum": 1.04,
-   "win": 66.7,
-   "streak": 0,
-   "bt_mean": 0.151,
-   "bt_n": 112,
-   "z": 0.45,
-   "flags": []
-  },
-  {
    "combo": "TV55|15Min|AMZN",
    "n": 4,
    "mean": 0.355,
@@ -395,6 +395,18 @@
    "streak": 1,
    "bt_mean": 0.123,
    "bt_n": 152,
+   "z": null,
+   "flags": []
+  },
+  {
+   "combo": "IB056|1Hour|XAUUSD",
+   "n": 1,
+   "mean": -0.477,
+   "sum": -0.48,
+   "win": 0.0,
+   "streak": 1,
+   "bt_mean": null,
+   "bt_n": null,
    "z": null,
    "flags": []
   },
@@ -532,6 +544,6 @@
   }
  ],
  "problems": [
-  "כל הבוט: -0.11R לעסקה בפועל מול +0.15R בבדיקה (159 עסקאות)"
+  "כל הבוט: -0.14R לעסקה בפועל מול +0.14R בבדיקה (164 עסקאות)"
  ]
 }

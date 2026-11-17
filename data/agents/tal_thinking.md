@@ -218,3 +218,21 @@ On a scout long (SC071 US30, lower Keltner band) in a falling market: "wrong ide
 
 ## The chart must show the strategy's real reason (user, 17.11.2026 04:33)
 Tal reads every trade's chart as the bot's claim: "you claim there was a gap - I see no gap". A label that does not match the strategy (a "gap" / "impulse" drawn on a moving-average cross) reads to him as a wrong identification and a bad entry. For the agents: each trade's chart shows only what that strategy really saw (its timeframe, its signal candle, its indicator), never the gap method's drawing on a non-gap trade (task b5scchart1711).
+
+## Choppy-day rule: confirm twice before acting (user, 17.11.2026)
+After the choppy day of 16.11.2026 (46 of 64 closed trades lost, gold -$3,594 in both directions) the tests
+(agents/mgmt_study.py, agents/chop_lab.py; reports/agents/mgmt_study.json, chop_lab.json) found one improvement:
+bot 1 - "no new trade on an instrument for the rest of the day after 2 losing trades on it" (streak@2): +10.8 points
+on 2025, +22.6 on 2026, max fall 7.8% -> 6.8%. It hurt bots 3-5 and did nothing for bot 2. Chop detectors (13 of
+them) did not predict losing trades, and managing trend trades while choppy (15 ways, per bot and per strategy) lost
+on 2026.
+Tal: do NOT turn it on now. "If there is another day like this, repeat this test on that choppy day, and only if it
+repeats itself once more - then turn it on."
+What this means for the agents:
+- A choppy day = a trading day on which 60%+ of the closed trades of bots 1-7 lost AND the instrument that lost the
+  most lost in both directions (buys and sells).
+- After such a day (the bots 1-4 agents check every morning): dispatch .github/workflows/chop_study.yml (fresh data,
+  bots 1-5), then .github/workflows/mgmt_report.yml with that run's id, and compare reports/agents/mgmt_study.json.
+- If bot 1's streak@2 again beats "as today" on BOTH periods with no larger max fall: build it in bot 1 (a card with
+  the change, the manager approves) and tell Tal in the app. If not: record the result here and wait for the next
+  choppy day. Any other bot only if it passes the same way twice.

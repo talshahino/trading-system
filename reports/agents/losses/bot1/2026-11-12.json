@@ -539,7 +539,7 @@
       "what": "TV11|4Hour|AUDUSD: להסיר (מפסידה בשתי התקופות, התיקון נכשל)",
       "decision": "f87f3970322a",
       "at": "2026-11-13T04:59:21+00:00",
-      "effect_month_pct": 0.07,
+      "effect_month_pct": null,
       "cut": false,
       "prev": null,
       "value": null
@@ -592,8 +592,8 @@
       "what": "TV11|4Hour|USDJPY: הסיכון חוזר ל־×0.9 - נמצא תיקון ונבנה",
       "decision": "2fb169388c03",
       "at": "2026-11-14T03:24:30+00:00",
-      "effect_month_pct": 0.69,
-      "cut": true,
+      "effect_month_pct": null,
+      "cut": false,
       "prev": null,
       "value": null
      },
@@ -726,8 +726,8 @@
       "what": "SE02|1Hour|USDJPY: סיכון ×0.95 ← ×0.79 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.23)",
       "decision": "107f16c55aef",
       "at": "2026-11-13T05:31:47+00:00",
-      "effect_month_pct": -0.19,
-      "cut": true,
+      "effect_month_pct": null,
+      "cut": false,
       "prev": null,
       "value": null
      },
@@ -768,7 +768,7 @@
       "what": "TT45|15Min|CSCO: הסטופ חוזר לסטופ של האסטרטגיה (בלי ×0.6)",
       "decision": "137acbe329fb",
       "at": "2026-11-13T05:31:47+00:00",
-      "effect_month_pct": 0.3,
+      "effect_month_pct": null,
       "cut": false,
       "prev": null,
       "value": null
@@ -803,8 +803,8 @@
       "what": "TT45|1Hour|GBPJPY: סיכון ×0.95 ← ×0.86 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.11)",
       "decision": "5d7f4cbe045b",
       "at": "2026-11-13T05:31:47+00:00",
-      "effect_month_pct": -0.08,
-      "cut": true,
+      "effect_month_pct": null,
+      "cut": false,
       "prev": null,
       "value": null
      },
@@ -819,17 +819,7 @@
      }
     ],
     "open": false,
-    "cut_only": true,
-    "edge_mult": 0.74,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.26R לעסקה (91 עסקאות), בתקופת הבחירה -0.02R",
-     "בחי: -0.05R לעסקה (4 עסקאות)",
-     "הבדיקה שווה 79% מהמשקל, החי 21%",
-     "היתרון עכשיו: +0.19R לעסקה",
-     "סיכון = +0.19 ÷ +0.26 = ×0.74"
-    ],
-    "edge0": 0.256,
-    "edge": 0.19
+    "cut_only": false
    },
    {
     "combo": "TT45|1Hour|WTI",
@@ -882,8 +872,8 @@
       "what": "TV39|1Hour|JP225: סיכון ×1.05 ← ×0.96 (דוח ההפסד של 12.11: אין תיקון שעבר, ציון כישלון 0.12)",
       "decision": "e5b1ee64f049",
       "at": "2026-11-13T05:31:47+00:00",
-      "effect_month_pct": -0.22,
-      "cut": true,
+      "effect_month_pct": null,
+      "cut": false,
       "prev": null,
       "value": null
      },
@@ -898,17 +888,7 @@
      }
     ],
     "open": false,
-    "cut_only": true,
-    "edge_mult": 0.92,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.23R לעסקה (295 עסקאות), בתקופת הבחירה +0.10R",
-     "בחי: -0.03R לעסקה (12 עסקאות)",
-     "הבדיקה שווה 93% מהמשקל, החי 7%",
-     "היתרון עכשיו: +0.21R לעסקה",
-     "סיכון = +0.21 ÷ +0.23 = ×0.92"
-    ],
-    "edge0": 0.23,
-    "edge": 0.211
+    "cut_only": false
    },
    {
     "combo": "TV21|15Min|ASML",
@@ -918,8 +898,8 @@
       "what": "TV21|15Min|ASML: סיכון ×0.5 ← כמות מינימלית (אין יתרון) - לפי היתרון שלה",
       "decision": "b55120d38278",
       "at": "2026-11-13T07:29:29+00:00",
-      "effect_month_pct": 0.18,
-      "cut": true,
+      "effect_month_pct": null,
+      "cut": false,
       "prev": null,
       "value": null
      },
@@ -1091,14 +1071,12 @@
   "open": [],
   "cut_only": [
    "TV41|4Hour|NZDUSD",
-   "TT45|1Hour|GBPJPY",
    "TT45|1Hour|WTI",
-   "TV39|1Hour|JP225",
    "MQ11|4Hour|MSTR",
    "TV10|1Hour|US100",
    "TV33|15Min|MSTR"
   ],
-  "total_month_pct": 2.11,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 7 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 1.36,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

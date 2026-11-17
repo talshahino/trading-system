@@ -501,10 +501,128 @@ def gapx_of(cfg):
     return v if v in GAPX_VALS else "mid"
 
 
+# FIRSTG / STOPAT (the user's review of 17.11.2026 15:51-16:50, tasks tal1711review / b5stopimp1711): "the gap that
+# counts is the first one, at the start of the impulse - even when its candle 2 is not exceptionally strong"; "if we do
+# enter at a later gap, the stop must be at the start of the impulse, its very beginning".
+#   FIRSTG "1"  = per impulse (the same direction and the same swing that ends it) only its first gap is traded;
+#          "lo" = the same, the first gap found at a lower strength (GBODY x FIRSTG_LO[0], MIN_GAP x FIRSTG_LO[1]) - the
+#                 impulse itself must still hold a gap at the full thresholds (its strength is not lowered).
+#   STOPAT "sw2" = as before (2 swings beyond the entry on the low timeframe + BUF); "imp0" = beyond the impulse's
+#          origin (its lowest low / highest high from 6 candles before its first gap) + BUF; "imp0late" = imp0 only for
+#          a gap that is not the impulse's first; "sw0" = beyond the high timeframe's swing (2 candles each side) the
+#          impulse started from - the last swing high (shorts; low for longs) at or before candle 1, within 40 candles,
+#          that no candle since went beyond (Tal's marks of 17.11: his stops were further than imp0 in 16 of 17).
+#          MIN_RR is checked on the stop in use.
+FIRSTG_VALS = ("1", "lo")
+FIRSTG_LO = (2.0 / 3.0, 0.5)
+STOPAT_VALS = ("sw2", "imp0", "imp0late", "sw0")      # sw0: beyond the swing the impulse started from (see _origins)
+
+
+def firstg_of(cfg):
+    v = cfg.get("FIRSTG") if isinstance(cfg, dict) else None
+    return v if v in FIRSTG_VALS else None
+
+
+def stopat_of(cfg):
+    v = cfg.get("STOPAT", "sw2") if isinstance(cfg, dict) else "sw2"
+    return v if v in STOPAT_VALS else "sw2"
+
+
 def _gkey(htf, cfg):
-    """gaps()' cache key for a configuration (GAPX "mid" keeps the old key, so the old caches stay the same)."""
-    x = gapx_of(cfg)
-    return (htf, cfg["GBODY"], cfg["MIN_GAP"]) + (() if x == "mid" else (x,))
+    """gaps()' cache key for a configuration (GAPX "mid" / FIRSTG off keep the old key, so the old caches stay the same)."""
+    x, fg = gapx_of(cfg), firstg_of(cfg)
+    return (htf, cfg["GBODY"], cfg["MIN_GAP"]) + (() if x == "mid" else (x,)) + (() if fg is None else ("fg" + fg,))
+
+
+def gap_set(D, htf, cfg, cache):
+    """The gaps a configuration trades: gaps() as before, or (FIRSTG) only each impulse's first gap. The geometry of
+    the chosen gaps is kept under _gkey(htf, cfg) + ("geo",) and each gap's impulse origin under + ("org",):
+    [(origin price, first gap of its impulse?)] - for STOPAT. Backtest and live bot use the same."""
+    gx, fg = gapx_of(cfg), firstg_of(cfg)
+    gn = gaps(D, htf, cfg["GBODY"], cfg["MIN_GAP"], cache, gx)
+    key = _gkey(htf, cfg)
+    if fg is None:
+        if key + ("org",) not in cache:
+            cache[key + ("org",)] = _origins(gn, cache.get(key + ("geo",)) or [], D, htf)
+        return gn
+    if key in cache:
+        return cache[key]
+    k0 = (htf, cfg["GBODY"], cfg["MIN_GAP"]) + (() if gx == "mid" else (gx,))
+    if fg == "lo":
+        gb, mg = round(cfg["GBODY"] * FIRSTG_LO[0], 6), round(cfg["MIN_GAP"] * FIRSTG_LO[1], 6)
+        gl = gaps(D, htf, gb, mg, cache, gx)
+        kl = (htf, gb, mg) + (() if gx == "mid" else (gx,))
+    else:
+        gl, kl = gn, k0
+    geo_l = cache.get(kl + ("geo",)) or []
+    imps = {(x[0], x[5]) for x in gn}                    # the impulses (direction, armed) with a full-strength gap
+    first = {}
+    for i, x in enumerate(gl):
+        k_ = (x[0], x[5])
+        if k_ in imps and (k_ not in first or x[4] < gl[first[k_]][4]):
+            first[k_] = i
+    pick = sorted(first.values())
+    out = [gl[i] for i in pick]
+    geo = [geo_l[i] for i in pick if i < len(geo_l)] if len(geo_l) == len(gl) else []
+    cache[key] = out
+    cache[key + ("geo",)] = geo
+    cache[key + ("org",)] = _origins(out, geo, D, htf)
+    return out
+
+
+def _origins(g, geo, D=None, htf=None):
+    """Per gap: (the impulse's origin price, is it the impulse's first gap, the swing it started from) - the impulse =
+    the same direction and the same armed time; the origin = the most extreme imp0 of its gaps up to this one; the
+    swing = the last high timeframe swing at or before candle 1 that no candle up to candle 2 went beyond (sw0)."""
+    if len(geo) != len(g):
+        return None
+    sw = [None] * len(g)
+    if D is not None and htf is not None:
+        ts, o, h, l, c, _ = D.tf(htf)
+        step = TF[htf] * 60_000_000_000
+        n = len(c)
+        for i, x in enumerate(g):
+            d, made = x[0], x[4]
+            k = int(np.searchsorted(ts, made - step)) - 1        # candle 2
+            if k < 3 or k >= n:
+                continue
+            for j in range(k - 1, max(1, k - 40), -1):
+                if j + 2 > k + 1:
+                    continue
+                if d < 0 and h[j] >= h[j - 2:j + 3].max() and h[j] >= h[j:k + 1].max():
+                    sw[i] = float(h[j])
+                    break
+                if d > 0 and l[j] <= l[j - 2:j + 3].min() and l[j] <= l[j:k + 1].min():
+                    sw[i] = float(l[j])
+                    break
+    best, bsw = {}, {}
+    order = sorted(range(len(g)), key=lambda i: g[i][4])
+    res = [None] * len(g)
+    ext = lambda d, a, b: (min(a, b) if d > 0 else max(a, b)) if a is not None and b is not None else (a if b is None else b)   # noqa: E731
+    for i in order:
+        d, k_ = g[i][0], (g[i][0], g[i][5])
+        p = float(geo[i]["imp0"][1])
+        o = ext(d, best.get(k_), p)
+        s_ = ext(d, bsw.get(k_), sw[i])
+        res[i] = (o, k_ not in best, s_)
+        best[k_], bsw[k_] = o, s_
+    return res
+
+
+def stop_at(D, cfg, org, gi, px, stop, d):
+    """STOPAT: the stop beyond the impulse's origin instead of the 2nd swing (None = no valid stop)."""
+    sa = stopat_of(cfg)
+    if sa == "sw2" or not org or gi >= len(org) or org[gi] is None:
+        return stop
+    o_px, first, sw0 = org[gi]
+    if sa == "imp0late" and first:
+        return stop
+    if sa == "sw0":
+        if sw0 is None:
+            return None
+        o_px = sw0
+    s = o_px - d * (D.buf + stop_pad(cfg, px))
+    return s if d * (px - s) > 0 else None
 
 
 def gaps(D, htf, gbody, min_gap, cache, gapx="mid"):
@@ -1008,7 +1126,8 @@ def ladder_trade(D, f, d, legs, stop, tgt, ref, cfg, e):
 
 def simulate(D, pair, cfg, gcache, keep=None):
     htf, ltf, _ = pair
-    g = gaps(D, htf, cfg["GBODY"], cfg["MIN_GAP"], gcache, gapx_of(cfg))
+    g = gap_set(D, htf, cfg, gcache)
+    org = gcache.get(_gkey(htf, cfg) + ("org",))
     hi_sw, lo_sw = D.swings(ltf, cfg["SW"])
     ns, o1, h1, l1, c1 = D.ns, D.o1, D.h1, D.l1, D.c1
     n1 = len(ns)
@@ -1061,7 +1180,10 @@ def simulate(D, pair, cfg, gcache, keep=None):
         t2 = _count_back(*sw_tg, ns[f], px, d, d)
         if s2 is None or t2 is None:
             continue
-        stop = min_stop(D, cfg, htf, ns[f], px, s2 - d * (D.buf + stop_pad(cfg, px)), d)
+        stop = stop_at(D, cfg, org, gi, px, s2 - d * (D.buf + stop_pad(cfg, px)), d)   # STOPAT: the impulse's origin
+        if stop is None:
+            continue
+        stop = min_stop(D, cfg, htf, ns[f], px, stop, d)
         risk = d * (px - stop)
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
             continue
@@ -1271,6 +1393,10 @@ def _norm(c):
         c.pop("REARM")                                  # REARM off: the same name
     if c.get("GAPX") == "mid":
         c.pop("GAPX")                                   # GAPX mid = the gap rule as before: the same name
+    if "FIRSTG" in c and c["FIRSTG"] not in FIRSTG_VALS:
+        c.pop("FIRSTG")                                 # FIRSTG off: every gap, as before - the same name
+    if c.get("STOPAT") == "sw2":
+        c.pop("STOPAT")                                 # STOPAT sw2 = the 2nd swing, as before - the same name
     return c
 
 
@@ -2115,7 +2241,8 @@ def live_trades(D, pair, cfg, gcache=None):
     Returns dicts: id_key, dir, status, entry, stop, target, rr, setup_t, time, exit_time, exit, reason, r, r_now."""
     gcache = {} if gcache is None else gcache
     htf, ltf, _ = pair
-    g = gaps(D, htf, cfg["GBODY"], cfg["MIN_GAP"], gcache, gapx_of(cfg))
+    g = gap_set(D, htf, cfg, gcache)
+    org = gcache.get(_gkey(htf, cfg) + ("org",))
     hi_sw, lo_sw = D.swings(ltf, cfg["SW"])
     ns, o1, h1, l1, c1 = D.ns, D.o1, D.h1, D.l1, D.c1
     n1 = len(ns)
@@ -2210,7 +2337,11 @@ def live_trades(D, pair, cfg, gcache=None):
             ts_t = _count_back_t(*sw_tg, ns[f], px, d, d, st_ns, w_)
             base = dict(base, geo=dict(base["geo"], sw_stop=[iso_(ts_s), float(s2)] if ts_s else None,
                                        sw_tgt=[iso_(ts_t), float(t2)] if ts_t else None))
-        stop = min_stop(D, cfg, htf, ns[f], px, s2 - d * (D.buf + stop_pad(cfg, px)), d)
+        stop = stop_at(D, cfg, org, gi, px, s2 - d * (D.buf + stop_pad(cfg, px)), d)   # STOPAT (as simulate)
+        if stop is None:
+            out.append(dict(base, status="cancelled", entry=float(px), stop=None, target=float(t2), reason="rr"))
+            continue
+        stop = min_stop(D, cfg, htf, ns[f], px, stop, d)
         risk = d * (px - stop)
         if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
             out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="rr"))

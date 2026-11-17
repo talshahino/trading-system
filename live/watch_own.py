@@ -1410,6 +1410,15 @@ def main():
                                     pr_ = None
                                 if pr_:
                                     x["prop"] = [round(pr_[0], 6), round(pr_[1], 6) if pr_[1] is not None else None]
+                                    # the alternative stop beyond the impulse's start (user, 17.11.2026 16:44-16:50, task
+                                    # b5stopimp1711: "if we enter at this gap, the stop must be at the start of the
+                                    # impulse") - shown in the review as a choice; the trade keeps the rules' stop
+                                    try:
+                                        o_ = float(x["geo"]["imp0"][1]) - x["dir"] * TG.stop_buffer(name)
+                                        if x["dir"] * (float(x["entry"]) - o_) > 0:
+                                            x["prop_imp0"] = round(o_, 6)
+                                    except Exception:  # noqa: BLE001
+                                        pass
                                     if x.get("geo"):
                                         x["geo"] = dict(x["geo"], sw_stop=[pd.Timestamp(int(pr_[2]), tz="UTC").isoformat(), pr_[0]] if pr_[2] else None,
                                                         sw_tgt=[pd.Timestamp(int(pr_[3]), tz="UTC").isoformat(), pr_[1]] if pr_[3] else None)
@@ -1434,7 +1443,7 @@ def main():
                                         "r": x.get("r"), "r_now": x.get("r_now"),
                                         "why": x.get("reason") if x["status"] == "cancelled" else None,
                                         "tal": trk, "tal_key": x["id_key"], "geo": x.get("geo"),
-                                        "prop": x.get("prop"), "custom": bool(x.get("custom"))})
+                                        "prop": x.get("prop"), "prop_imp0": x.get("prop_imp0"), "custom": bool(x.get("custom"))})
                 for combo_, sc_ in list(SCOUT5.items()):
                     if sc_["sym"] != name:
                         continue
@@ -1470,7 +1479,8 @@ def main():
                            "why": x.get("why"), "touch_t": iso(x.get("touch_t")),
                            "px_now": x.get("px_now"), "cost_live": x.get("cost_live"),
                            "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m")),
-                           "geo": x.get("geo") or old.get("geo"), "prop": x.get("prop"), "custom": bool(x.get("custom")),
+                           "geo": x.get("geo") or old.get("geo"), "prop": x.get("prop"), "prop_imp0": x.get("prop_imp0"),
+                           "custom": bool(x.get("custom")),
                            "asked": old.get("asked"), "sleep": old.get("sleep"), "pushed": old.get("pushed")}
                     # the review (17.11.2026): ask once, when the setup first waits for its entry
                     rev_ = REVIEW_ON and bool(rec.get("tal")) and (

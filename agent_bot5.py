@@ -410,7 +410,24 @@ NOTE_TESTS += [
     {"id": f"{trk}_gapx", "track": trk, "knob": "GAPX", "vals": ["full"], "src": "tal1711gapclose",
      "he": "סגירת גאפ לפי טל: רק וויק שעובר את כל הגאפ פוסל אותו"}
     for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5", "t5_1")]
-NOTE_SRC = {"tal1711gapclose": "משימה של טל מ־17.11 (ההגדרה שלו לסגירת גאפ: וויק שסוגר את כל הגאפ).",
+NOTE_TESTS += [
+    # the user's review of 17.11.2026 (tasks tal1711review FIRSTG, b5stopimp1711 STOPAT): "the gap that counts is the
+    # first one at the start of the impulse" and "if we enter at a later gap, the stop belongs at the impulse's very
+    # beginning". tal_gap FIRSTG "1" / "lo" (only each impulse's first gap; "lo" finds it at a lower strength) and
+    # STOPAT "imp0" / "imp0late" (beyond the impulse's origin, always / only for a gap that is not the first) - the same
+    # in simulate and live_trades, so an approved card is a settings card. STOPAT is also measured on top of FIRSTG lo
+    # ("with", the numbers only) - "with and without FIRSTG"
+    T_ for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5", "t5_1") for T_ in (
+        {"id": f"{trk}_firstg", "track": trk, "knob": "FIRSTG", "vals": ["1", "lo"], "src": "tal1711review",
+         "he": "רק הגאפ הראשון בכל דחף (הקרוב לתחילתו)"},
+        {"id": f"{trk}_stopat", "track": trk, "knob": "STOPAT", "vals": ["imp0", "imp0late", "sw0"], "src": "b5stopimp1711",
+         "he": "סטופ מעבר לתחילת הדחף (תמיד / רק לגאפ שאינו הראשון / מעבר לסווינג שממנו הדחף התחיל)"},
+        {"id": f"{trk}_stopat_fg", "track": trk, "knob": "STOPAT", "vals": ["imp0", "sw0"], "src": "b5stopimp1711",
+         "with": {"FIRSTG": "lo"}, "inform": True,
+         "he": "סטופ מעבר לתחילת הדחף, על הגאפ הראשון בלבד"})]
+NOTE_SRC = {"tal1711review": "משימה של טל מ־17.11 (הסקירה: הגאפ שקובע הוא הראשון, בתחילת הדחף).",
+            "b5stopimp1711": "משימה של טל מ־17.11 (הסקירה: כשנכנסים בגאפ מאוחר - הסטופ בתחילת הדחף).",
+            "tal1711gapclose": "משימה של טל מ־17.11 (ההגדרה שלו לסגירת גאפ: וויק שסוגר את כל הגאפ).",
             "b5follow1611": "משימה של טל מ־16.11 (נרות חזקים מיד אחרי הכניסה = יותר ביטחון).",
             "tal1611gaveback": "משימה של טל מ־16.11 (עסקאות שהיו ברווח ונגמרו בהפסד - יציאה חלקית).",
             "b6to5rearm": "משימה מסוכן בוט 6 מ־14.11 (REARM - התיקון שלו לעלות של כלל FTMO).",

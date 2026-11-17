@@ -232,28 +232,38 @@ def review(bot, state, day, t, history, exp):
             "losers": losers, "actions": actions}
 
 
+# every family for every loser (user, 17.11.2026 17:26, task tal1711lossall: "you only look to manage the trade instead
+# of also looking for different entries and exits - a different stop or target; I want you to look for all of it"):
+# exits = the target and the stop / entry-offset grid, ladder = laddered / pulled-back entries, filters = the entry's
+# conditions, manage + fib = break-even / partial exits, pyr = adding to a winner - the cause only orders the text
+ALL_FAMILIES = ["exits", "ladder", "filters", "manage", "fib", "pyr"]
+ALL_FAMILIES_HE = ("נבדק בכל המשפחות: יעד וסטופ אחרים (מבנה / ATR / סווינג), כניסה אחרת (מדורגת / נסיגה / מאוחרת), "
+                   "מסננים, ניהול (איזון / יציאה חלקית / פיבונאצ'י), הוספה לעסקה מנצחת - והשילוב הטוב ביניהם.")
+
+
 def plan_actions(bot, day, losers, corr, recurring, normal, pct):
     acts = []
     port = bot in ("bot1", "bot2", "bot3", "bot4", "bot7")
+    fam_all = list(ALL_FAMILIES) if port else []
     for x in losers:
         c, k = x["combo"], x["cause"]
         if k == "management":
-            acts.append({"combo": c, "cause": k, "priority": ["manage"] if port else [],
+            acts.append({"combo": c, "cause": k, "priority": fam_all,
                          "task": f"{c}: היה ב־{x['mfe_r']}R רווח ונסגר ב־{x['r']}R. לבדוק נקודת איזון מוקדמת יותר / יציאה חלקית / יעד קרוב יותר, ולהציע כרטיס."})
         elif k == "entry":
-            acts.append({"combo": c, "cause": k, "priority": ["filters", "exits"] if port else [],
+            acts.append({"combo": c, "cause": k, "priority": fam_all,
                          "task": f"{c}: נעצר בלי לזוז לטובה (MFE {x['mfe_r']}R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת."})
         elif k == "execution":
             acts.append({"combo": c, "cause": k, "priority": [],
                          "task": f"{c}: הפסד {x['r']}R - יותר מהסיכון המתוכנן. לבדוק החלקה, מרווח ברגע הסגירה ופער מעבר לסטופ, ולתקן בקוד או בגודל הפוזיציה."})
         elif k == "rules":
-            acts.append({"combo": c, "cause": k, "priority": [],
+            acts.append({"combo": c, "cause": k, "priority": fam_all,
                          "task": f"{c}: נסגר בגלל כלל ({x['exit_reason']}) ב־{x['r']}R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."})
         elif k == "time":
-            acts.append({"combo": c, "cause": k, "priority": ["exits"] if port else [],
+            acts.append({"combo": c, "cause": k, "priority": fam_all,
                          "task": f"{c}: יציאת זמן בהפסד. יציאות לפי זמן בלבד לא רצויות (טל) - להחליף ביציאה חכמה."})
     for c in recurring:
-        acts.append({"combo": c, "cause": "recurring", "priority": ["exits", "filters", "manage"] if port else [],
+        acts.append({"combo": c, "cause": "recurring", "priority": fam_all,
                      "task": f"{c}: הפסד חוזר (3+ ימים בחודש). קודם לתקן (טל: 'קודם לתקן ולשפר'): לנתח את כל ההפסדים שלו, למצוא את המכנה המשותף ולהציע תיקון; רק אם אין תיקון - להוריד סיכון."})
     for g in corr:
         acts.append({"combo": None, "cause": "correlated", "priority": [],
@@ -261,6 +271,9 @@ def plan_actions(bot, day, losers, corr, recurring, normal, pct):
     if not normal:
         acts.append({"combo": None, "cause": "abnormal", "priority": [],
                      "task": f"היום ({pct:+.2f}%) רחוק מאוד מהצפי של הבדיקה: לבדוק קודם תקלה בקוד או בנתונים (פער בין החי לבדיקה), ואז לתקן את האסטרטגיות."})
+    for a in acts:
+        if a["combo"] and a["priority"]:
+            a["task"] += " " + ALL_FAMILIES_HE
     seen, out = set(), []
     for a in acts:
         k = (a["combo"], a["cause"])

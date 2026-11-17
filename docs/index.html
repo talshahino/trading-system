@@ -2690,6 +2690,7 @@ async function wcTal(t) {
   const why = [`<b>${buy ? "קנייה" : "מכירה"}</b>: דחף ${buy ? "עולה" : "יורד"} בגרף ${TFHE[g.htf] || g.htf} (החץ), ונוצר גאפ בין נר 1 לנר 3 שנשאר פתוח (המלבן).`,
     `כניסה באמצע הגאפ בגרף ${TFHE[g.ltf] || g.ltf}${t.entry != null ? `: <bdi>${(+t.entry).toFixed(dec)}</bdi>` : ""}.`,
     g.sw_stop ? `סטופ מעבר לסווינג השני ${buy ? "מתחת" : "מעל"} לכניסה (<bdi>${(+g.sw_stop[1]).toFixed(dec)}</bdi>)${t.stop != null ? `: <bdi>${(+t.stop).toFixed(dec)}</bdi>` : ""}.` : "",
+    (t.status === "pending" && t.prop_imp0 != null) ? `חלופה: סטופ בתחילת הדחף <bdi>${(+t.prop_imp0).toFixed(dec)}</bdi> - אם זה הסטופ הנכון, סמן את הסטופ כלא נכון והזז אותו לשם.` : "",
     g.sw_tgt ? `יעד בסווינג השני ${buy ? "מעל" : "מתחת"} לכניסה${t.target != null ? `: <bdi>${(+t.target).toFixed(dec)}</bdi>` : ""}.` : "",
     t.exit_time ? `יציאה: ${RS[t.reason] || esc(t.reason || "")}${t.r != null ? ` (${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}R)` : ""}.` : (t.status === "open" ? "העסקה פתוחה." : "")].filter(Boolean);
   $("wcBody").innerHTML = `<div id="rvBox"></div><div class="card" style="margin-bottom:10px">${why.map(x => `<p style="margin:3px 0">${x}</p>`).join("")}</div>

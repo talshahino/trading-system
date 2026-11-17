@@ -2013,7 +2013,11 @@ def sess6_runs(budget_s):
     for combo, e in sc.items():
         v = dict((e or {}).get("v") or {})
         old = res.get(combo) or {}
-        if old.get("done") and old.get("live_vid") == SF.vid(v) and (now - pd.Timestamp(old["at"])).days < SCOUT_RERUN_DAYS:
+        # done = every CURRENT candidate has a row (17.11.2026, bot 6's smart agent): the direction family added to
+        # _sess_cands on 17.11 never ran on the 12 scouts already marked done (SC072 of task 2072d266da96 among them)
+        have = old.get("rows") or {}
+        if old.get("live_vid") == SF.vid(v) and (now - pd.Timestamp(old["at"])).days < SCOUT_RERUN_DAYS \
+                and all(SF.vid(c) in have for c in [v] + _sess_cands(v)):
             continue
         sid, tf, sym = combo.split("|")
         if sym not in FA.SPEC or tf not in SF.TF_MIN or time.time() - t0 > budget_s:

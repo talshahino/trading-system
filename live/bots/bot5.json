@@ -800,6 +800,27 @@
    "before": "__none__",
    "star_risk_before": "__none__",
    "fit6": 0.0028
+  },
+  "2b3bb7a1a0b3": {
+   "family": "tal5",
+   "track": "t15_1",
+   "before": {
+    "pair": [
+     "15m",
+     "1m"
+    ],
+    "cfg": {
+     "GBODY": 1.5,
+     "MIN_GAP": 0.3,
+     "SW": 3,
+     "MIN_RR": 2.0,
+     "EXPIRY": 120,
+     "PROT": "shock",
+     "IMP1": true,
+     "EXIT": "be618"
+    }
+   },
+   "risk_before": 0.00196
   }
  },
  "tal_tracks": {
@@ -816,7 +837,8 @@
     "EXPIRY": 120,
     "PROT": "shock",
     "IMP1": true,
-    "EXIT": "be618"
+    "WKND": 10,
+    "REARM": true
    }
   },
   "t1h_15": {

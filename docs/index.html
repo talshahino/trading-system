@@ -2469,7 +2469,7 @@ async function wcScout(t) {
   const tin = t.time ? sec(t.time) : null, tout = t.exit_time ? sec(t.exit_time) : null, sig = sc.sig_t ? sec(sc.sig_t) : (tin ? tin - tfs : null);
   // the strategy's timeframe: the signal candle and the entry
   const A = mk($("wc15"), t.m15);
-  rvPickWire(A, dec);
+  rvPickWire(A, dec, $("wc15"));
   line(A.s, t.entry, "#1E3A5F", "כניסה", 2); line(A.s, t.stop, "#D0453A", "סטופ", 2); line(A.s, t.target, "#1E8A4C", "יעד", 2);
   const ma = [];
   if (sig != null) ma.push({time: snap(A.bars, sig), position: buy ? "belowBar" : "aboveBar", color: "#B8862B", shape: "circle", text: "אות"});
@@ -2481,7 +2481,7 @@ async function wcScout(t) {
   liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, tfs);
   // 1 minute: the trade itself, with the position box
   const B = mk($("wc1"), t.m1);
-  rvPickWire(B, dec);
+  rvPickWire(B, dec, $("wc1"));
   liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, 60);
   if (tin && B.bars.length) {
     const t0 = snap(B.bars, tin), last = B.bars[B.bars.length - 1][0] + off, t1 = tout ? snap(B.bars, tout) : last, pts = [];
@@ -2505,22 +2505,73 @@ const TFHE = {"1m": "דקה", "5m": "5 דק'", "15m": "15 דק'", "1h": "שעה"
 /* Tal reviews every gap setup of bot 5 before the entry (17.11.2026): step 1 - the high timeframe, "would you
    enter?"; yes -> step 2 - the low timeframe with the position the rules would place: entry, stop, target, each right
    or wrong (wrong -> his own price). The bot takes the trade only as he answered (live/watch_own.py). */
-// the review: a level marked wrong is set by touching the chart (user, 17.11.2026: "place the stop on the chart, not type a price")
-const RVP = {key: null, lines: {}, charts: [], dec: 2};
-function rvPickWire(P, dec) {
+// the review: a level marked wrong is DRAGGED on the chart, then "אשר מיקום" (user, 17.11.2026: "not just a touch -
+// drag the stop, then a button that this is the place"). While dragging the chart does not scroll; a touch anywhere on
+// it brings the line to the finger, moving the finger moves it.
+const RVP = {key: null, lines: {}, charts: [], dec: 2, P: null, v: null, off: null};
+function rvPickWire(P, dec, el) {
+  P.el = el;
   RVP.charts = RVP.charts.filter(C => WC.includes(C.ch)).concat([P]); RVP.dec = dec;
-  P.ch.subscribeClick(p => {
-    const k = RVP.key, inp = k && $("rv_" + k);
-    if (!inp || !p || !p.point) return;
-    const v = P.s.coordinateToPrice(p.point.y); if (v == null || !(v > 0)) return;
-    inp.value = (+v).toFixed(RVP.dec);
+}
+function rvLine(k, v) {                  // the orange line of his level, on both charts
+  const tl = {entry: "הכניסה שלך", stop: "הסטופ שלך", target: "היעד שלך"}[k];
+  const live = RVP.charts.filter(C => WC.includes(C.ch));
+  const have = (RVP.lines[k] || []).filter(([C]) => live.includes(C));
+  if (have.length === live.length && have.length) { for (const [, ln] of have) ln.applyOptions({price: v}); return; }
+  for (const [C, ln] of (RVP.lines[k] || [])) try { C.s.removePriceLine(ln); } catch (e) {}
+  RVP.lines[k] = live.map(C => [C, C.s.createPriceLine({price: v, color: "#C8922E", lineWidth: 3, lineStyle: 0, axisLabelVisible: true, title: tl})]);
+}
+function rvDragEnd(save) {
+  const P = RVP.P, k = RVP.key;
+  if (P) {
+    P.ch.applyOptions({handleScroll: true, handleScale: true});
+    if (RVP.off) RVP.off();
+    P.el.style.touchAction = "";
+  }
+  const bar = $("rvDragBar"); if (bar) bar.remove();
+  if (save && k && RVP.v != null) {
+    const inp = $("rv_" + k); if (inp) inp.value = (+RVP.v).toFixed(RVP.dec);
+    note("rvMsg", `נקבע: ${(+RVP.v).toFixed(RVP.dec)} (הקו הכתום). עכשיו "אשר".`, true);
+    const bx = $("rvBox"); if (bx) setTimeout(() => bx.scrollIntoView({behavior: "smooth", block: "start"}), 200);
+  } else if (k) {
     for (const [C, ln] of (RVP.lines[k] || [])) try { C.s.removePriceLine(ln); } catch (e) {}
-    const tl = {entry: "הכניסה שלך", stop: "הסטופ שלך", target: "היעד שלך"}[k];
-    RVP.lines[k] = RVP.charts.filter(C => WC.includes(C.ch)).map(C => [C, C.s.createPriceLine({price: +v, color: "#C8922E", lineWidth: 2, lineStyle: 2, axisLabelVisible: true, title: tl})]);
-    RVP.key = null;
-    note("rvMsg", `נקבע: ${(+v).toFixed(RVP.dec)} (הקו הכתום). אפשר לגעת שוב ב"לא נכון" כדי לשנות, ואז "אשר".`, true);
-    const bx = $("rvBox"); if (bx) setTimeout(() => bx.scrollIntoView({behavior: "smooth", block: "start"}), 600);
-  });
+    RVP.lines[k] = [];
+  }
+  RVP.key = RVP.P = RVP.off = null;
+}
+function rvDragStart(k, start) {
+  if (RVP.key) rvDragEnd(false);
+  const live = RVP.charts.filter(C => WC.includes(C.ch));
+  const lt = $("wcLtf"), ltfOn = lt && lt.style.display !== "none";
+  const P = live.find(C => C.el && C.el.id === (ltfOn ? "wc1" : "wc15")) || live[0];
+  if (!P) return;
+  RVP.key = k; RVP.P = P; RVP.v = start != null ? +start : null;
+  P.ch.applyOptions({handleScroll: false, handleScale: false});
+  P.el.style.touchAction = "none";
+  if (RVP.v != null) rvLine(k, RVP.v);
+  const lb = {entry: "הכניסה", stop: "הסטופ", target: "היעד"}[k];
+  const bar = document.createElement("div"); bar.id = "rvDragBar";
+  bar.style.cssText = "position:fixed;left:12px;right:12px;bottom:16px;z-index:9999;background:#fff;border:2px solid #C8922E;border-radius:16px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.25);direction:rtl";
+  const txt = () => `גרור את קו ${lb} בגרף למקום הנכון${RVP.v != null ? `: <b><bdi>${(+RVP.v).toFixed(RVP.dec)}</bdi></b>` : ""}`;
+  bar.innerHTML = `<div id="rvDragTxt" style="margin-bottom:10px">${txt()}</div><div class="row" style="gap:8px"><button class="btn ok" id="rvDragOk" style="flex:1">אשר מיקום</button><button class="btn ghost" id="rvDragNo">ביטול</button></div>`;
+  document.body.appendChild(bar);
+  $("rvDragOk").onclick = () => { if (RVP.v == null) return; rvDragEnd(true); };
+  $("rvDragNo").onclick = () => rvDragEnd(false);
+  let down = false;
+  const at = e => {
+    const r = P.el.getBoundingClientRect(), y = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
+    const v = P.s.coordinateToPrice(y); if (v == null || !(v > 0)) return;
+    RVP.v = +(+v).toFixed(RVP.dec); rvLine(k, RVP.v); $("rvDragTxt").innerHTML = txt();
+  };
+  const dn = e => { down = true; at(e); e.preventDefault(); e.stopPropagation(); };
+  const mv = e => { if (!down) return; at(e); e.preventDefault(); e.stopPropagation(); };
+  const up = () => { down = false; };
+  const opt = {capture: true, passive: false};
+  P.el.addEventListener("pointerdown", dn, opt); P.el.addEventListener("pointermove", mv, opt);
+  window.addEventListener("pointerup", up, true); window.addEventListener("pointercancel", up, true);
+  RVP.off = () => { P.el.removeEventListener("pointerdown", dn, opt); P.el.removeEventListener("pointermove", mv, opt);
+    window.removeEventListener("pointerup", up, true); window.removeEventListener("pointercancel", up, true); };
+  setTimeout(() => P.el.scrollIntoView({behavior: "smooth", block: "center"}), 250);
 }
 function rvToast(msg) {
   const d = document.createElement("div");
@@ -2574,12 +2625,12 @@ function rvPanel(t, dec) {
         <input type="number" step="any" inputmode="decimal" id="rv_${k}" value="${v != null ? (+v).toFixed(dec) : ""}" style="display:none;width:110px"></div>`).join("")
       + `<button class="btn ok" id="rvSend" style="width:100%;margin-top:12px">אשר</button>`;
     const ok = {entry: true, stop: true, target: true};   // no target row for the gap method: always the rules' at the fill
-    $("rvLv").querySelectorAll("[data-ok]").forEach(b => b.onclick = () => { ok[b.dataset.ok] = true; $("rv_" + b.dataset.ok).style.display = "none"; b.classList.add("on"); b.nextElementSibling.classList.remove("on"); });
+    $("rvLv").querySelectorAll("[data-ok]").forEach(b => b.onclick = () => { if (RVP.key === b.dataset.ok) rvDragEnd(false); ok[b.dataset.ok] = true; $("rv_" + b.dataset.ok).style.display = "none"; b.classList.add("on"); b.nextElementSibling.classList.remove("on"); });
     $("rvLv").querySelectorAll("[data-bad]").forEach(b => b.addEventListener("click", () => {   // wrong -> touch the chart where it should be
       const k = b.dataset.bad, lb = {entry: "הכניסה", stop: "הסטופ", target: "היעד"}[k];
-      RVP.key = k; note("rvMsg", `גע בגרף בדיוק במקום של ${lb} (בגרף העליון או התחתון). אפשר גם להקליד.`, true);
-      const lt = $("wcLtf"), el = lt && lt.style.display !== "none" && $("wc1") ? $("wc1") : $("wc15");
-      if (el) setTimeout(() => el.scrollIntoView({behavior: "smooth", block: "center"}), 300);
+      const cur = parseFloat($("rv_" + k).value);
+      note("rvMsg", `גרור את קו ${lb} בגרף, ואז "אשר מיקום". אפשר גם להקליד.`, true);
+      rvDragStart(k, cur > 0 ? cur : null);
     }));
     $("rvLv").querySelectorAll("[data-bad]").forEach(b => b.onclick = () => { ok[b.dataset.bad] = false; $("rv_" + b.dataset.bad).style.display = ""; b.classList.add("on"); b.previousElementSibling.classList.remove("on"); });
     $("rvSend").onclick = () => {
@@ -2648,7 +2699,7 @@ async function wcTal(t) {
   const lo = t.gap_lo, hi = t.gap_hi, gapCol = "rgba(184,134,43,.22)";
   // the high timeframe
   const A = mk($("wc15"), t.m15, [lo, hi, g.imp0[1], g.imp1[1]]);
-  rvPickWire(A, dec);
+  rvPickWire(A, dec, $("wc15"));
   const aEnd = A.bars.length ? A.bars[A.bars.length - 1][0] + off : c3 + off;
   const gEnd = tin ? Math.max(snap(A.bars, tin), snap(A.bars, c3)) : aEnd;
   band(A, snap(A.bars, c1), gEnd, lo, hi, gapCol, "#B8862B");
@@ -2667,7 +2718,7 @@ async function wcTal(t) {
   if (isLive) liveChart(t.symbol, buy ? "buy" : "sell", A.s, A.bars, off, MS[g.htf] || 900);
   // the low timeframe
   const B = mk($("wc1"), t.m1, [lo, hi, t.entry, t.stop, t.target]);
-  rvPickWire(B, dec);
+  rvPickWire(B, dec, $("wc1"));
   const bEnd = B.bars.length ? B.bars[B.bars.length - 1][0] + off : null;
   const t0 = tin ? snap(B.bars, tin) : bEnd, t1 = tout ? snap(B.bars, tout) : bEnd;
   band(B, B.bars.length ? B.bars[0][0] + off : t0, t0, lo, hi, gapCol, "#B8862B");
@@ -2688,7 +2739,7 @@ async function wcTal(t) {
   if (isLive) liveChart(t.symbol, buy ? "buy" : "sell", B.s, B.bars, off, MS[g.ltf] || 60);
 }
 $("wbBack").onclick = () => $("wbPg").classList.remove("on");
-$("wcBack").onclick = () => { $("wcPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } WC.forEach(c => c.remove()); WC = []; };
+$("wcBack").onclick = () => { if (RVP.key) rvDragEnd(false); $("wcPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } WC.forEach(c => c.remove()); WC = []; };
 $("decBack").onclick = () => $("decPg").classList.remove("on");
 $("bpBack").onclick = () => { $("botsPg").classList.remove("on"); if (TN.rec) { try { TN.rec.stop(); } catch (e) {} TN.rec = null; } };
 // "how Tal thinks" (data/agents/tal_thinking.md): what the manager and the agents read before every decision

@@ -420,9 +420,9 @@ NOTE_TESTS += [
     T_ for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5", "t5_1") for T_ in (
         {"id": f"{trk}_firstg", "track": trk, "knob": "FIRSTG", "vals": ["1", "lo"], "src": "tal1711review",
          "he": "רק הגאפ הראשון בכל דחף (הקרוב לתחילתו)"},
-        {"id": f"{trk}_stopat", "track": trk, "knob": "STOPAT", "vals": ["imp0", "imp0late", "sw0"], "src": "b5stopimp1711",
-         "he": "סטופ מעבר לתחילת הדחף (תמיד / רק לגאפ שאינו הראשון / מעבר לסווינג שממנו הדחף התחיל)"},
-        {"id": f"{trk}_stopat_fg", "track": trk, "knob": "STOPAT", "vals": ["imp0", "sw0"], "src": "b5stopimp1711",
+        {"id": f"{trk}_stopat", "track": trk, "knob": "STOPAT", "vals": ["imp0", "imp0late", "sw0", "leg1"], "src": "b5stopimp1711",
+         "he": "סטופ מעבר לתחילת הדחף (תמיד / רק לגאפ שאינו הראשון / מעבר לסווינג שממנו הדחף התחיל / אורך דחף אחד מהכניסה)"},
+        {"id": f"{trk}_stopat_fg", "track": trk, "knob": "STOPAT", "vals": ["imp0", "sw0", "leg1"], "src": "b5stopimp1711",
          "with": {"FIRSTG": "lo"}, "inform": True,
          "he": "סטופ מעבר לתחילת הדחף, על הגאפ הראשון בלבד"})]
 NOTE_SRC = {"tal1711review": "משימה של טל מ־17.11 (הסקירה: הגאפ שקובע הוא הראשון, בתחילת הדחף).",

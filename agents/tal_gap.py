@@ -512,10 +512,15 @@ def gapx_of(cfg):
 #          a gap that is not the impulse's first; "sw0" = beyond the high timeframe's swing (2 candles each side) the
 #          impulse started from - the last swing high (shorts; low for longs) at or before candle 1, within 40 candles,
 #          that no candle since went beyond (Tal's marks of 17.11: his stops were further than imp0 in 16 of 17).
+#          "leg1" = one impulse length beyond the entry (the impulse = from its origin to the swing that ends it, both
+#          known when the gap is armed) + BUF - Tal's own stops in his 18 "yes" answers of 16-17.11 (all of them moved
+#          further than the rules' stop) sat a median 1.03 impulse lengths from the entry (0.44-2.13), against 2.3 x
+#          imp0's distance and 2.5 x the 2nd swing's (bot 5's smart agent, 17.11.2026 night).
 #          MIN_RR is checked on the stop in use.
 FIRSTG_VALS = ("1", "lo")
 FIRSTG_LO = (2.0 / 3.0, 0.5)
-STOPAT_VALS = ("sw2", "imp0", "imp0late", "sw0")      # sw0: beyond the swing the impulse started from (see _origins)
+STOPAT_VALS = ("sw2", "imp0", "imp0late", "sw0", "leg1")   # sw0: beyond the swing the impulse started from (see _origins)
+LEG_K = {"leg1": 1.0}                                 # STOPAT legK: the stop K impulse lengths beyond the entry
 
 
 def firstg_of(cfg):
@@ -604,7 +609,7 @@ def _origins(g, geo, D=None, htf=None):
         p = float(geo[i]["imp0"][1])
         o = ext(d, best.get(k_), p)
         s_ = ext(d, bsw.get(k_), sw[i])
-        res[i] = (o, k_ not in best, s_)
+        res[i] = (o, k_ not in best, s_, abs(float(geo[i]["imp1"][1]) - o))   # + the impulse's length (STOPAT leg1)
         best[k_], bsw[k_] = o, s_
     return res
 
@@ -614,9 +619,14 @@ def stop_at(D, cfg, org, gi, px, stop, d):
     sa = stopat_of(cfg)
     if sa == "sw2" or not org or gi >= len(org) or org[gi] is None:
         return stop
-    o_px, first, sw0 = org[gi]
+    o_px, first, sw0 = org[gi][:3]
     if sa == "imp0late" and first:
         return stop
+    if sa in LEG_K:
+        leg = org[gi][3] if len(org[gi]) > 3 else None
+        if not leg or not np.isfinite(leg) or leg <= 0:
+            return None
+        return px - d * (LEG_K[sa] * leg + D.buf + stop_pad(cfg, px))
     if sa == "sw0":
         if sw0 is None:
             return None

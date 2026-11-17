@@ -1,7 +1,215 @@
 {
- "updated": "2026-11-17T13:44:55+00:00",
- "new": [],
+ "updated": "2026-11-17T14:04:10+00:00",
+ "new": [
+  "671ca6f170d1",
+  "5084c9f1aa4c",
+  "359cd8c56404",
+  "72565cffc8d5",
+  "ac1340171466"
+ ],
  "decisions": [
+  {
+   "id": "671ca6f170d1",
+   "bot": "bot2",
+   "type": "card",
+   "card": "0af41ee10a54",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC504|15Min|XAGUSD · One Percent A Week - Adaptive: buy the week's open, 1.5% stop, 7% target -> 8.177% / 2.5% after Monday, Tuesday weakness exit, out Friday (TASC 2026.06)",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.50% → -2.50%, ירידה 5.95% → 6.72%, ימים קרובים למגבלה 0 → 0) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2904,
+     "total": 136.0,
+     "worst_day": -2.5,
+     "max_dd": 5.95,
+     "near_days": 0,
+     "max_open": 4.75,
+     "max_side": 4.07,
+     "guard_cut": 173,
+     "guard_skipped": 30
+    },
+    "after": {
+     "trades": 2943,
+     "total": 137.46,
+     "worst_day": -2.5,
+     "max_dd": 6.72,
+     "near_days": 0,
+     "max_open": 4.75,
+     "max_side": 4.07,
+     "guard_cut": 201,
+     "guard_skipped": 36
+    }
+   },
+   "at": "2026-11-17T14:04:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "5084c9f1aa4c",
+   "bot": "bot2",
+   "type": "card",
+   "card": "b583667622ad",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC387|1Hour|MSTR: רק עם המגמה (ממוצע 200)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.15R לעסקה, 31.0 עסקאות אפקטיביות, +0.03R מעל המצב הקיים) · בבוט השלם על 2026: רווח +136.00% → +136.31%, בלי יותר סיכון (יום גרוע -2.50%, ירידה 5.93%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 2904,
+     "total": 136.0,
+     "worst_day": -2.5,
+     "max_dd": 5.95,
+     "near_days": 0,
+     "max_open": 4.75,
+     "max_side": 4.07,
+     "guard_cut": 173,
+     "guard_skipped": 30
+    },
+    "after": {
+     "trades": 2898,
+     "total": 136.31,
+     "worst_day": -2.5,
+     "max_dd": 5.93,
+     "near_days": 0,
+     "max_open": 4.75,
+     "max_side": 4.07,
+     "guard_cut": 170,
+     "guard_skipped": 30
+    }
+   },
+   "at": "2026-11-17T14:04:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "359cd8c56404",
+   "bot": "bot2",
+   "type": "card",
+   "card": "1091dedc421d",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC504|1Hour|XAGUSD · One Percent A Week - Adaptive: buy the week's open, 1.5% stop, 7% target -> 8.177% / 2.5% after Monday, Tuesday weakness exit, out Friday (TASC 2026.06)",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+135.65% מול +136.31% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2898,
+     "total": 136.31,
+     "worst_day": -2.5,
+     "max_dd": 5.93,
+     "near_days": 0,
+     "max_open": 4.75,
+     "max_side": 4.07,
+     "guard_cut": 170,
+     "guard_skipped": 30
+    },
+    "after": {
+     "trades": 2932,
+     "total": 135.65,
+     "worst_day": -2.5,
+     "max_dd": 6.77,
+     "near_days": 0,
+     "max_open": 4.75,
+     "max_side": 3.96,
+     "guard_cut": 201,
+     "guard_skipped": 35
+    }
+   },
+   "at": "2026-11-17T14:04:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "72565cffc8d5",
+   "bot": "bot2",
+   "type": "card",
+   "card": "7e99548d5b2b",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC432|15Min|XAUUSD: לא ברוחב בולינגר נמוך (מתחת לאחוזון 20)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.11R לעסקה, 215.0 עסקאות אפקטיביות, +0.05R מעל המצב הקיים) · בבוט השלם על 2026: רווח +136.31% → +138.72%, בלי יותר סיכון (יום גרוע -2.50%, ירידה 5.77%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 2898,
+     "total": 136.31,
+     "worst_day": -2.5,
+     "max_dd": 5.93,
+     "near_days": 0,
+     "max_open": 4.75,
+     "max_side": 4.07,
+     "guard_cut": 170,
+     "guard_skipped": 30
+    },
+    "after": {
+     "trades": 2877,
+     "total": 138.72,
+     "worst_day": -2.5,
+     "max_dd": 5.77,
+     "near_days": 0,
+     "max_open": 4.75,
+     "max_side": 4.07,
+     "guard_cut": 169,
+     "guard_skipped": 30
+    }
+   },
+   "at": "2026-11-17T14:04:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "ac1340171466",
+   "bot": "bot2",
+   "type": "card",
+   "card": "876595be9542",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC508|4Hour|USDJPY · Volty Expan Close: close beyond previous close +/- 0.75 x SMA5(TR), stop and reverse, 2 ATR (TradingView / TradeStation built-in)",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.50% → -2.74%, ירידה 5.77% → 7.25%, ימים קרובים למגבלה 0 → 0) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2877,
+     "total": 138.72,
+     "worst_day": -2.5,
+     "max_dd": 5.77,
+     "near_days": 0,
+     "max_open": 4.75,
+     "max_side": 4.07,
+     "guard_cut": 169,
+     "guard_skipped": 30
+    },
+    "after": {
+     "trades": 3006,
+     "total": 140.31,
+     "worst_day": -2.74,
+     "max_dd": 7.25,
+     "near_days": 0,
+     "max_open": 5.2,
+     "max_side": 4.24,
+     "guard_cut": 253,
+     "guard_skipped": 57
+    }
+   },
+   "at": "2026-11-17T14:04:10+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "0067458bdfe1",
    "bot": "bot1",

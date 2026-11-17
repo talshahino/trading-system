@@ -2328,7 +2328,8 @@ function wbRender(box = $("wbBody")) {
     <div><small class="mut">רווח מתחילת הדרך</small><b class="${ac.profit >= 0 ? "pos" : "neg"}"><bdi>${usd(ac.profit)}</bdi> (<bdi>${(100 * ac.profit / ac.initial).toFixed(2)}%</bdi>)</b></div>
     <div><small class="mut">היום</small><b class="${ac.today >= 0 ? "pos" : "neg"}"><bdi>${usd(ac.today)}</bdi></b></div></div>
     ${curveSvg}<div class="mut">סיכון לעסקה ${ac.risk_pct}% מהיתרה · עצירה יומית ב־4.5% · נשרף ב־10%, כמו חשבונות הדמו</div></div>` : "";
-  h += `<div class="card"><div class="mut" style="margin-bottom:8px">${esc(d.rules || "")}</div>
+  // the "סימונים" tab of bot 5 (dBody): only the trades to mark, no rules / summary card (user, 17.11.2026)
+  if (box.id === "wbBody") h += `<div class="card"><div class="mut" style="margin-bottom:8px">${esc(d.rules || "")}</div>
     <div class="kv"><div><small class="mut">עסקאות שנסגרו</small><b>${sm.closed ?? 0}</b></div><div><small class="mut">סך הכל (בסיכונים)</small><b class="${(sm.sum_r || 0) >= 0 ? "pos" : "neg"}"><bdi>${(sm.sum_r ?? 0).toFixed(2)}</bdi></b></div>
     <div><small class="mut">אחוז הצלחה</small><b>${sm.win_pct == null ? "—" : sm.win_pct + "%"}</b></div><div><small class="mut">פתוחות · מחכות</small><b>${sm.open ?? 0} · ${sm.pending ?? 0}</b></div></div>
     ${sm.wide ? `<div class="mut">מקורי: ${sm.strict.closed} עסקאות, <bdi>${(+sm.strict.sum_r).toFixed(2)}</bdi> סיכון · מסלול רחב: ${sm.wide.closed} עסקאות, <bdi>${(+sm.wide.sum_r).toFixed(2)}</bdi> סיכון</div>` : ""}

@@ -1343,7 +1343,7 @@ def main():
                                 except Exception:  # noqa: BLE001
                                     pr_ = None
                                 if pr_:
-                                    x["prop"] = [round(pr_[0], 6), round(pr_[1], 6)]
+                                    x["prop"] = [round(pr_[0], 6), round(pr_[1], 6) if pr_[1] is not None else None]
                                     if x.get("geo"):
                                         x["geo"] = dict(x["geo"], sw_stop=[pd.Timestamp(int(pr_[2]), tz="UTC").isoformat(), pr_[0]] if pr_[2] else None,
                                                         sw_tgt=[pd.Timestamp(int(pr_[3]), tz="UTC").isoformat(), pr_[1]] if pr_[3] else None)

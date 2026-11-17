@@ -2325,15 +2325,17 @@ def propose(D, pair, cfg, d, entry):
     t_now = int(D.ns[-1])
     s2 = _count_back(*sw_st, t_now, entry, d, -d)
     t2 = _count_back(*sw_tg, t_now, entry, d, d)
-    if s2 is None or t2 is None:
+    if s2 is None:
         return None
+    # the target may be unknown before the entry - the question shows only the entry and the stop (17.11.2026: a
+    # missing target swing hid the stop too: "סטופ —" on US500)
     st_ns, w_ = TF[ltf] * 60_000_000_000, cfg["SW"]
     ts_s = _count_back_t(*sw_st, t_now, entry, d, -d, st_ns, w_)
-    ts_t = _count_back_t(*sw_tg, t_now, entry, d, d, st_ns, w_)
+    ts_t = _count_back_t(*sw_tg, t_now, entry, d, d, st_ns, w_) if t2 is not None else None
     stop = min_stop(D, cfg, htf, t_now, entry, s2 - d * (D.buf + stop_pad(cfg, entry)), d)
-    if tp_way(cfg):
+    if tp_way(cfg) and t2 is not None:
         t2 = entry + tp_way(cfg) * (t2 - entry)
-    return float(stop), float(t2), ts_s, ts_t
+    return float(stop), (float(t2) if t2 is not None else None), ts_s, ts_t
 
 
 def custom_trade(D, cfg, d, entry, stop, target, armed_ns, not_before_ns=None, pair=None):

@@ -844,8 +844,19 @@ async function pairKey() {         // once per device: take the address key, so 
   pairing = false;
 }
 async function act(path, body = {}) {
+  if (!mgr) await findMgr();
   if (!mgr) throw new Error("אין חיבור למחשב הבוטים");
-  const r = await fetch(mgr + path, {method: "POST", headers: {"Content-Type": "application/json", "X-Pin": getPin()}, body: JSON.stringify(body)});
+  const go = () => fetch(mgr + path, {method: "POST", headers: {"Content-Type": "application/json", "X-Pin": getPin()}, body: JSON.stringify(body)});
+  let r;
+  // the computer's address changes when the manager restarts (an update installs - user, 17.11.2026: "Failed to
+  // fetch" at 18:38 after the 18:32 install): find the new address and send again, up to ~40 seconds
+  for (let i = 0; ; i++) {
+    try { r = await go(); break; }
+    catch (e) {
+      if (i >= 3) throw new Error("אין חיבור למחשב הבוטים כרגע (אולי הוא עולה מחדש אחרי עדכון). נסה שוב בעוד דקה.");
+      apiTry = 0; await findMgr(); await new Promise(res => setTimeout(res, 3000 + 7000 * i));
+    }
+  }
   let j = {}; try { j = await r.json(); } catch (e) {}
   if (!r.ok) throw new Error(j.error || ("שגיאה " + r.status));
   return j;

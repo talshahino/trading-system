@@ -607,7 +607,9 @@ def start_news():
 
 def watch_mark(d):
     k = str(d.get("id") or "")
-    if not k or len(k) > 120 or not re.fullmatch(r"[A-Za-z0-9./|_-]+", k):
+    # the gap tracks' ids hold "@" ("UK100|tal|-1|g202611171550|t5_1@UK100") and the scout ones ":" ("sc:SC232|...") -
+    # both were refused here, so every review answer came back "unknown trade" (user, 17.11.2026)
+    if not k or len(k) > 160 or not re.fullmatch(r"[A-Za-z0-9./|_@:+=-]+", k):
         raise ValueError("עסקה לא מוכרת")
     take = d.get("take")
     if take not in ("yes", "no", None):

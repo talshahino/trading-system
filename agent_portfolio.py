@@ -1140,6 +1140,17 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 straddle study failed: {e}")
+        # EV04 on the high-impact releases that are NOT restricted (bot 7 smart agent, 17.11.2026 evening: the live
+        # bot traded them untested until then - US Retail Sales 17.11, 6 of 7 lost; agents/news_straddle_extra.py):
+        # a sixth of the budget, weekly
+        try:
+            from agents import news_straddle_extra as NSX
+            if NSX.stale():
+                mins = max(5.0, a.minutes / 6)
+                subprocess.run([sys.executable, "-m", "agents.news_straddle_extra", "--minutes", str(mins)], cwd=str(ROOT),
+                               timeout=int(mins * 60 + 1800))
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 straddle extra study failed: {e}")
         # EV05, fading the release spike early (the user's task tal1411fade, 14.11.2026, agents/news_fade.py): a
         # quarter of the budget, right after the straddle, gold first
         try:

@@ -91,6 +91,15 @@ SEEN = {}                      # (release minute|title) -> the first time the bo
 SEEN_F = ROOT / "live" / "news_bot_seen.json"
 FAST = ("claims", "home sales", "housing starts", "building permits")  # US numbers EV08 waits for: the calendar is read every minute for 15 minutes after them
 STRADDLE_GROUPS = {}           # release time -> [(currency, type)] for EV04's skipped release types ("skip_groups")
+# The releases the EV family trades (EV02 / EV03 / EV04 and the scout strategies that use release bars): FTMO's
+# RESTRICTED items only - exactly what every study tested (data/ftmo_calendar/history.json holds only restricted items
+# and holidays). Bot 7 smart agent, 17.11.2026 evening: the live bot read every high-impact item (682 more in
+# 30.04.2025-14.11.2026: Retail Sales, Unemployment Claims, ISM, PPI m/m, Bailey speaks ...), so EV04 traded 7 times on
+# the US Retail Sales of 17.11 (6 losses) - a release type no study had seen; and the high-impact (not restricted)
+# "USD Unemployment Rate" in the NFP minute made the NFP "USD:rates" (agents/news_straddle_live.category: "rate"), so
+# the skip of card 4b152c858fb7 skipped EV04's best release (2025-2026: 107 trades +234.8R on the NFP minute).
+EV_RESTRICTED_ONLY = True
+EVENTS_ALL = {}                # every high-impact / restricted release by instrument - only to name the release a trade followed
 REL = {}                       # important releases by currency, from the calendar the bot read (shocks near them are skipped)
 D1 = {}                        # this round's 1-minute candles by instrument (SH01 GER40 checks US100's shocks; card bd7be6c8ae8a)
 END = "סוף הנתונים"            # rules_agent's reason for a trade still open at the last candle
@@ -463,8 +472,10 @@ class Calendar:
         try:
             now = pd.Timestamp.now(tz="UTC")
             self.items = CAL.fetch((now - pd.Timedelta(days=DAYS + 1)).strftime("%Y-%m-%d"), (now + pd.Timedelta(days=7)).strftime("%Y-%m-%d"))
+            ev_items = [i for i in self.items if i.get("restriction")] if EV_RESTRICTED_ONLY else self.items
             for s in SYMBOLS:
-                E._EVENTS[s] = E.events_from(self.items, s)
+                E._EVENTS[s] = E.events_from(ev_items, s)
+                EVENTS_ALL[s] = E.events_from(self.items, s)
             titles = {}
             for i in self.items:                          # the release names, to show which release a trade followed
                 if i.get("impact") == "high" or i.get("restriction"):
@@ -475,7 +486,7 @@ class Calendar:
             REL.clear()
             REL.update(SH.releases_from(self.items))
             STRADDLE_GROUPS.clear()
-            STRADDLE_GROUPS.update(NST.release_groups(self.items))
+            STRADDLE_GROUPS.update(NST.release_groups(ev_items))
             CAL_ITEMS[:] = self.items
             new = False
             for i in self.items:                          # EV08: when each actual was first read (never earlier)
@@ -523,7 +534,7 @@ EVENT_TITLES = {}            # release time -> names (from the calendar the bot 
 def event_of(name, t):
     """The release a trade followed: the latest of the instrument's releases before its entry (within 3 hours)."""
     t = pd.Timestamp(t)
-    ts = [x for x in E._EVENTS.get(name, []) if x <= t and t - x <= pd.Timedelta(hours=3)]
+    ts = [x for x in (EVENTS_ALL.get(name) or E._EVENTS.get(name, [])) if x <= t and t - x <= pd.Timedelta(hours=3)]
     if not ts:
         return None
     k = max(ts)

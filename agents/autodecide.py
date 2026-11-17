@@ -136,6 +136,30 @@ def _pc_bots():
         return {"bot1", "bot2", "bot3", "bot4", "bot7"}
 
 
+def _b5_over_limits():
+    """Bot 5's own whole-bot replay (agent_bot5.guard5 -> tal_gap_results.json "risk_guard", the live fixed risk rule:
+    4.5% a day, 9% from the start): None when it keeps inside its limits, else a short Hebrew reason. Manager, 17.11.2026:
+    bot 5's new scout strategies were approved one by one (bot 5 has no portfolio_check) while that replay already had
+    the account stopped on 29.1.2026 (-9%) and a 24.6% fall in May-Dec 2025 - each new one added risk to a bot that
+    did not fit its limits. Until the bot fits again (a risk card sized on 2025), a new strategy waits."""
+    try:
+        g = json.loads((ROOT / "data/agents/strategies/tal_gap_results.json").read_text(encoding="utf-8"))
+        w = ((g.get("bot5") or {}).get("risk_guard") or {}).get("whole") or {}
+    except Exception:  # noqa: BLE001
+        return None
+    bad = []
+    for per, he in (("train", "עד 2025"), ("unseen", "ב־2026")):
+        a = w.get(per) or {}
+        if a.get("stopped"):
+            bad.append(f"{he} החשבון נעצר ב־{str(a['stopped'])[:10]}")
+        elif float(a.get("max_fall_pct") or 0) >= B5_FALL_LIM:
+            bad.append(f"{he} ירידה {float(a['max_fall_pct']):.1f}%")
+    return ", ".join(bad) or None
+
+
+B5_FALL_LIM = 9.0      # bot 5's own total limit (live/watch_own.py: the account stops at 9% from the start)
+
+
 def _family_pick(cards, c):
     """A new scout strategy on ONE instrument, picked out of a family that loses on the choosing period (to 2025).
     Manager, 14.11.2026: SC010|15Min (Toto SBL) was tested on ~15 instruments in bots 2-4; together they lost on 2024-2025
@@ -593,6 +617,12 @@ def decide(bots, now=None):
                     if fl is not None and fl > mult and not (whole and whole.get("mult") and whole["mult"] < 1):
                         mult = fl                # not below what keeps the 2026 total at least what runs now
                     why += f" · ⭐ אולי מזל: נכנס בסיכון ×{mult:g} ובמעקב מוקפד"
+            if is_new and c["kind"] == "new" and bot == "bot5":
+                over = _b5_over_limits()
+                if over:
+                    c["status"], c["verdict"] = "watch", (c["verdict"] + f" · מחכה: הבוט כולו לא נשאר במגבלות שלו ({over}) - "
+                                                         "אסטרטגיה חדשה נכנסת רק אחרי שהסיכון של הבוט מותאם")
+                    continue
             if is_new and c["kind"] == "new" and whole is None and bot not in _pc_bots():
                 usym = _sym_of((c.get("change") or {}).get("combo"))
                 if usym:

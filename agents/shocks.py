@@ -223,6 +223,22 @@ def _walk(o, h, l, c, k, end, dr, entry, stop, tgt):
     return dr * (c[end - 1] - entry) / risk
 
 
+def _walk_be(o, h, l, c, k, end, dr, entry, stop, tgt, be):
+    """_walk with a break-even: once a candle's best price reaches be R in favour, the stop moves to the entry from the
+    next candle (SH01 US100 fix attempt, 18.11.2026: the 17.11 live trade went +1.8R and came back to the stop)."""
+    if not be:
+        return _walk(o, h, l, c, k, end, dr, entry, stop, tgt)
+    risk, st, moved = abs(entry - stop), stop, False
+    for q in range(k, end):
+        if (l[q] <= st) if dr > 0 else (h[q] >= st):
+            return 0.0 if moved else -1.0
+        if tgt is not None and ((h[q] >= tgt) if dr > 0 else (l[q] <= tgt)):
+            return dr * (tgt - entry) / risk
+        if not moved and dr * ((h[q] if dr > 0 else l[q]) - entry) >= be * risk:
+            st, moved = entry, True
+    return dr * (c[end - 1] - entry) / risk
+
+
 def trades(d, sp, sym, shocks, k_mult):
     o, h, l, c = (d[x].to_numpy(float) for x in "ohlc")
     idx, n = d.index, len(d)
@@ -458,8 +474,10 @@ def study(df, causes, now):
 # hold H, a target (give-back of tg of the shock), the hour (cash session / outside it) and the shock's direction.
 # Chosen on 30.04-31.12.2025 only (the most total R, 12+ trades), shown on 2026; robustness = of its 10 best on 2025,
 # how many made money on 2026, plus a walk-forward inside 2025 (pick on 30.04-31.08, check on 01.09-31.12).
-SH01_SYMS = {"US100": {"K": 8, "D": 1, "p": 0.25, "H": 60, "tg": 0.0},
-             "GER40": {"K": 8, "D": 3, "p": 0.25, "H": 60, "tg": 0.0}}
+SH01_SYMS = {"US100": {"K": 8, "D": 1, "p": 0.25, "H": 60, "tg": 0.0, "be": 0.0},
+             "GER40": {"K": 6, "D": 1, "p": 0.25, "H": 120, "tg": 0.0, "be": 0.0, "side": "down", "co": "alone"}}
+# GER40's current = card 3718a860cb42 (built 14.11); "be" = the break-even fix attempt of 18.11.2026
+BES = (0.0, 0.6, 1.0)               # break-even at be R (0 = none), only without a target - 18.11.2026
 CASH = {"US100": ("America/New_York", "09:30", "16:00"), "GER40": ("Europe/Berlin", "09:00", "17:30")}
 FIX_OUT = ROOT / "reports" / "agents" / "bot7" / "sh01_fix.json"
 
@@ -517,8 +535,9 @@ def fade_grid(d, sp, sym, shocks, k_mult, co_ref=None):
                         tgt = None if not tg else c[i] - dr * tg * mv
                         if tgt is not None and dr * (e - tgt) <= 0:
                             continue
-                        rows.append({**base, "D": D, "p": p, "H": H, "tg": tg,
-                                     "r": _walk(o, h, l, c, ke, min(ke + H, n), -dr, e, stop, tgt) - cr})
+                        for be in (BES if not tg else (0.0,)):
+                            rows.append({**base, "D": D, "p": p, "H": H, "tg": tg, "be": be,
+                                         "r": _walk_be(o, h, l, c, ke, min(ke + H, n), -dr, e, stop, tgt, be) - cr})
     return rows
 
 
@@ -527,9 +546,11 @@ def fix_sh01(rows, now):
     if not rows:
         return {}
     df = pd.DataFrame(rows)
-    keys = ["K", "D", "p", "H", "tg", "hours", "side", "co"]
+    keys = ["K", "D", "p", "H", "tg", "be", "hours", "side", "co"]
     if "co" not in df:
         df = df.assign(co=-1)
+    if "be" not in df:
+        df = df.assign(be=0.0)
     parts = []
     for hours, mh in (("all", None), ("cash", 1), ("off", 0)):
         for side, ms in (("all", None), ("up", 1), ("down", 0)):
@@ -560,7 +581,8 @@ def fix_sh01(rows, now):
                     "train": {**stats(a, now), "sum": round(float(a["r"].sum()), 2)} if len(a) else None,
                     "unseen": {**stats(b, now), "sum": round(float(b["r"].sum()), 2)} if len(b) else None}
         cur = SH01_SYMS.get(sym, {})
-        k_cur = (cur.get("K"), cur.get("D"), cur.get("p"), cur.get("H"), cur.get("tg"), "all", "all", "all")
+        k_cur = (cur.get("K"), cur.get("D"), cur.get("p"), cur.get("H"), cur.get("tg"), cur.get("be", 0.0),
+                 cur.get("hours", "all"), cur.get("side", "all"), cur.get("co", "all"))
         top = list(g.head(10).index)
         a_, b_ = tr_[tr_["t"] < MID], tr_[tr_["t"] >= MID]
         ga = a_.groupby(keys)["r"].agg(["sum", "count"])
@@ -571,7 +593,7 @@ def fix_sh01(rows, now):
             wf = {"pick_a": show(ka)["v"], "a_sum": round(float(ga.iloc[0]["sum"]), 2),
                   "b_sum": round(float(b_[(b_[keys] == pd.Series(ka, index=keys)).all(axis=1)]["r"].sum()), 2)}
         by = {}
-        for col in ("hours", "side", "co", "D", "p", "H", "tg", "K"):
+        for col in ("hours", "side", "co", "D", "p", "H", "tg", "be", "K"):
             for v, y in g.reset_index().groupby(col):
                 u = [float(ug.loc[k, "sum"]) if k in ug.index else 0.0 for k in y[keys].itertuples(index=False, name=None)]
                 by.setdefault(col, {})[str(v)] = {"variants": int(len(y)), "train_median_sum": round(float(y["sum"].median()), 2),

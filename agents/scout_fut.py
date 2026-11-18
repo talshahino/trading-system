@@ -38,9 +38,15 @@ BASE = {"target": "own", "stop": 1.0, "time": "own", "be": True}
 #           task 17, Fibonacci levels): below 1 = the share of the way to the target, 1 and above = R (no target; +1R
 #           locked half an R later)
 SESS = {"day": (3 * 60, 15 * 60 + 45), "ny": (8 * 60, 15 * 60 + 45), "rth": (9 * 60 + 30, 15 * 60 + 45),
-        "noopen": (20 * 60, 18 * 60)}
+        "noopen": (20 * 60, 18 * 60),
+        # no10 (bot 6's smart agent, 18.11.2026 night): not 10:00-10:59 New York - the hour of the shadow cluster of
+        # 16-17.11 (9 scout longs stopped 09:45-10:15 on two falling days, all three indices at once); on the scouts'
+        # own trades the hour holds 35% of them at about +0.03R each (2024-2025 and 2026 alike), SC258|1Min|US100
+        # -0.20R on 181 trades there to 2025. One more candidate of the hours family, the same fair test.
+        "no10": (11 * 60, 10 * 60)}
 SESS_HE = {"day": "כניסה רק 03:00-15:45 ניו יורק (לונדון וניו יורק)", "ny": "כניסה רק 08:00-15:45 ניו יורק",
-           "rth": "כניסה רק בשעות המסחר הרגילות 09:30-15:45", "noopen": "בלי כניסה בשעתיים הראשונות אחרי 18:00"}
+           "rth": "כניסה רק בשעות המסחר הרגילות 09:30-15:45", "noopen": "בלי כניסה בשעתיים הראשונות אחרי 18:00",
+           "no10": "בלי כניסה 10:00-10:59 ניו יורק (השעה שאחרי פתיחת המסחר הרגיל)"}
 # "filt" (bot 6's smart agent, 17.11.2026 night - the shared methods of bots 5 and 6): bot 5's two scout filters, the
 #           same rule as live/watch_own.scout5_filter (bot 5's live bot) - ema50h = longs only when the last CLOSED
 #           1-hour close is over the 1-hour EMA50, shorts only under it (the user, 16.11.2026 19:49: "a long against a

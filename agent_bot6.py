@@ -568,6 +568,12 @@ FILT_HE["FOLLOW"] = lambda v: f"בלי המשך אחרי {str(v)[1:]} נרות �
 GAPX6 = (("GAPX", "full"),)
 FG6 = (("FIRSTG", "1"), ("FIRSTG", "lo"))
 STOP6 = (("STOPAT", "imp0"), ("STOPAT", "imp0late"), ("STOPAT", "sw0"))
+# bot 5's 18.11.2026 night find (task b5stopimp1711, shared methods - bot 6's smart agent, 18.11.2026 night): in the
+# user's 9 closed "yes, with my stop" reviews the target stayed the rules' and his RR was 0.31-1.84, so MIN_RR on the
+# far stop drops nearly every trade he takes. leg1 = one impulse length; leg1r / sw0r / imp0r = the setup chosen on the
+# rules' own stop (MIN_RR there), the trade on the far stop with the same target (tal_gap.RR_RULES, simulate and
+# live_trades alike - a settings card). One knob each, head to head on bot 6's running tracks and three indices.
+STOP6 += (("STOPAT", "leg1"), ("STOPAT", "leg1r"), ("STOPAT", "sw0r"), ("STOPAT", "imp0r"))
 WAIT6 = tuple(("WAITX", w) for w in ("tgt", "h12", "h24", "opp", "tgt+h24"))
 REV6 = GAPX6 + FG6 + STOP6 + WAIT6
 FILT_HE["GAPX"] = lambda v: "סגירת גאפ לפי טל: רק וויק שעובר את כל הגאפ פוסל אותו (GAPX full)"
@@ -575,13 +581,17 @@ FILT_HE["FIRSTG"] = lambda v: {"1": "רק הגאפ הראשון בכל דחף (F
                                "lo": "רק הגאפ הראשון בכל דחף, גם בעוצמה נמוכה יותר (FIRSTG lo)"}.get(str(v), f"FIRSTG {v}")
 FILT_HE["STOPAT"] = lambda v: {"imp0": "סטופ מעבר לתחילת הדחף (STOPAT imp0)",
                                "imp0late": "סטופ מעבר לתחילת הדחף רק לגאפ שאינו הראשון (STOPAT imp0late)",
-                               "sw0": "סטופ מעבר לסווינג שממנו הדחף התחיל (STOPAT sw0)"}.get(str(v), f"STOPAT {v}")
+                               "sw0": "סטופ מעבר לסווינג שממנו הדחף התחיל (STOPAT sw0)",
+                               "leg1": "סטופ במרחק אורך דחף אחד (STOPAT leg1)",
+                               "leg1r": "כמו בסקירות שלך: העסקה נבחרת לפי הסטופ של הכללים, הסטופ באורך דחף והיעד נשאר (STOPAT leg1r)",
+                               "sw0r": "כמו בסקירות שלך: העסקה נבחרת לפי הסטופ של הכללים, הסטופ מעבר לסווינג שממנו הדחף התחיל והיעד נשאר (STOPAT sw0r)",
+                               "imp0r": "כמו בסקירות שלך: העסקה נבחרת לפי הסטופ של הכללים, הסטופ מעבר לתחילת הדחף והיעד נשאר (STOPAT imp0r)"}.get(str(v), f"STOPAT {v}")
 FILT_HE["WAITX"] = lambda v: {"tgt": "הוראה ממתינה מתבטלת כשהתנועה המשיכה בלי תיקון",
                               "h12": "הוראה ממתינה מתבטלת אחרי 12 נרות של הטיים פריים הגבוה",
                               "h24": "הוראה ממתינה מתבטלת אחרי 24 נרות של הטיים פריים הגבוה",
                               "opp": "הוראה ממתינה מתבטלת כשנוצר גאפ בכיוון ההפוך",
                               "tgt+h24": "הוראה ממתינה מתבטלת כשהתנועה המשיכה או אחרי 24 נרות"}.get(str(v), "WAITX") + f" (WAITX {v})"
-REV6_SRC = {"GAPX": ("_gapx", "tal1711gapclose"), "FIRSTG": ("_firstg", "tal1711review"), "STOPAT": ("_stopat", "b5stopimp1711")}
+REV6_SRC = {"GAPX": ("_gapx", "tal1711gapclose"), "FIRSTG": ("_firstg", "tal1711review"), "STOPAT": (("_stopat", "_stopatr"), "b5stopimp1711")}
 
 
 def _b5_rev(k, v):
@@ -595,7 +605,7 @@ def _b5_rev(k, v):
         except Exception:  # noqa: BLE001
             return "מחקר ההמתנה (agents/tal_wait_study) עוד לא הסתיים."
     end, src = REV6_SRC[k]
-    t = _b5_gave(v, (end,))
+    t = _b5_gave(v, end if isinstance(end, tuple) else (end,))
     return t if "עוד רץ" in t or "←" in t else f"אותה בדיקה רצה על המסלולים של בוט 5 ({src})."
 
 
@@ -2339,7 +2349,7 @@ def sess6_cards(res):
                     + ("" if hold else " (לא מחזיק ב־2026)"))
         if not hold:
             continue
-        what = (f"{combo} כפי שהוא רץ עכשיו ({SF.he(e['v'])}) מול שינוי אחד בכל פעם - חלון שעות ניו יורק (4), כיוון (EMA50 בגרף השעה / בלי כניסה חוזרת אחרי סטופ, כמו בבוט 5), כניסה (לימיט 0.25R / 0.5R), סטופ (מעבר לסווינג השני / השלישי), חצי בחצי הדרך, פירמידה או נקודת האיזון "
+        what = (f"{combo} כפי שהוא רץ עכשיו ({SF.he(e['v'])}) מול שינוי אחד בכל פעם - חלון שעות ניו יורק ({len(SF.SESS)}), כיוון (EMA50 בגרף השעה / בלי כניסה חוזרת אחרי סטופ, כמו בבוט 5), כניסה (לימיט 0.25R / 0.5R), סטופ (מעבר לסווינג השני / השלישי), חצי בחצי הדרך, פירמידה או נקודת האיזון "
                 f"(עיקרון 7: {'5 רמות פיבונאצ׳י של הדרך ליעד' if e['v'].get('target') != 'none' else '1.5 / 2 / 3R'}), "
                 f"{len(rows) - 1} שינויים. נבחר על 2024-2025 בלבד: {fmt(ct)}, סה\"כ {best.get('train_sum', 0):+.1f}R מול {base.get('train_sum', 0):+.1f}R היום; "
                 f"ב־2026 (לא נראתה): {fmt(cu)}, סה\"כ {best.get('unseen_sum', 0):+.1f}R מול {base.get('unseen_sum', 0):+.1f}R ({fmt(bu)}). "

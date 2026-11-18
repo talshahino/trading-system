@@ -50,7 +50,10 @@ def bot_cfg(bot):
 
 def bot_risk(bot, cfg=None):
     cfg = cfg or bot_cfg(bot)
-    return float(cfg.get("risk") or RISK7)
+    r = cfg.get("risk")
+    if isinstance(r, dict):              # bot 5: {"tal": .., "scout": .., per track} - the scouts' risk (5ב)
+        r = r.get("scout") or r.get("tal")
+    return float(r or RISK7)
 
 
 _OFF = {}

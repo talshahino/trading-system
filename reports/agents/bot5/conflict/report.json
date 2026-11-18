@@ -1,0 +1,239 @@
+{
+ "bot": "bot5",
+ "bars": [
+  "EURUSD",
+  "GBPUSD",
+  "GER40",
+  "US100",
+  "US30",
+  "USDCHF",
+  "XAUUSD"
+ ],
+ "at": "2026-11-18T15:54:01+00:00",
+ "strategies": 30,
+ "missing": [],
+ "ways": {
+  "asis": {
+   "train": {
+    "conflicts": 2173,
+    "changed": 0,
+    "trades": 3462,
+    "total": 98.64,
+    "worst_day": -4.46,
+    "max_dd": 48.19,
+    "guard_cut": 916,
+    "guard_skipped": 964
+   },
+   "unseen": {
+    "conflicts": 2940,
+    "changed": 0,
+    "trades": 186,
+    "total": -8.94,
+    "worst_day": -4.2,
+    "max_dd": 9.01,
+    "guard_cut": 94,
+    "guard_skipped": 5877
+   }
+  },
+  "skip": {
+   "train": {
+    "conflicts": 1297,
+    "changed": 1297,
+    "trades": 2750,
+    "total": 209.51,
+    "worst_day": -4.46,
+    "max_dd": 27.57,
+    "guard_cut": 500,
+    "guard_skipped": 379
+   },
+   "unseen": {
+    "conflicts": 1708,
+    "changed": 1708,
+    "trades": 167,
+    "total": -8.97,
+    "worst_day": -3.11,
+    "max_dd": 8.97,
+    "guard_cut": 63,
+    "guard_skipped": 4188
+   }
+  },
+  "stronger": {
+   "train": {
+    "conflicts": 907,
+    "changed": 907,
+    "trades": 3318,
+    "total": 169.08,
+    "worst_day": -4.54,
+    "max_dd": 35.57,
+    "guard_cut": 549,
+    "guard_skipped": 490
+   },
+   "unseen": {
+    "conflicts": 1326,
+    "changed": 1326,
+    "trades": 199,
+    "total": -8.97,
+    "worst_day": -3.9,
+    "max_dd": 8.97,
+    "guard_cut": 60,
+    "guard_skipped": 4946
+   }
+  },
+  "half": {
+   "train": {
+    "conflicts": 2173,
+    "changed": 2173,
+    "trades": 3900,
+    "total": 159.89,
+    "worst_day": -4.46,
+    "max_dd": 29.92,
+    "guard_cut": 609,
+    "guard_skipped": 526
+   },
+   "unseen": {
+    "conflicts": 2940,
+    "changed": 2940,
+    "trades": 220,
+    "total": -8.97,
+    "worst_day": -2.8,
+    "max_dd": 8.97,
+    "guard_cut": 56,
+    "guard_skipped": 5843
+   }
+  },
+  "tight_new": {
+   "train": {
+    "conflicts": 2089,
+    "changed": 1908,
+    "trades": 1949,
+    "total": -8.93,
+    "worst_day": -4.43,
+    "max_dd": 49.5,
+    "guard_cut": 575,
+    "guard_skipped": 2374
+   },
+   "unseen": {
+    "conflicts": 2817,
+    "changed": 2618,
+    "trades": 205,
+    "total": -8.96,
+    "worst_day": -3.53,
+    "max_dd": 8.96,
+    "guard_cut": 85,
+    "guard_skipped": 5683
+   }
+  },
+  "tight_short": {
+   "train": {
+    "conflicts": 2088,
+    "changed": 1507,
+    "trades": 3465,
+    "total": 53.14,
+    "worst_day": -4.43,
+    "max_dd": 44.82,
+    "guard_cut": 984,
+    "guard_skipped": 888
+   },
+   "unseen": {
+    "conflicts": 2875,
+    "changed": 2182,
+    "trades": 208,
+    "total": -8.96,
+    "worst_day": -3.93,
+    "max_dd": 8.96,
+    "guard_cut": 93,
+    "guard_skipped": 5747
+   }
+  },
+  "tight_both": {
+   "train": {
+    "conflicts": 2066,
+    "changed": 2327,
+    "trades": 986,
+    "total": -8.96,
+    "worst_day": -3.98,
+    "max_dd": 36.36,
+    "guard_cut": 320,
+    "guard_skipped": 3332
+   },
+   "unseen": {
+    "conflicts": 2796,
+    "changed": 3252,
+    "trades": 201,
+    "total": -8.95,
+    "worst_day": -3.57,
+    "max_dd": 8.95,
+    "guard_cut": 86,
+    "guard_skipped": 5683
+   }
+  }
+ },
+ "by_symbol": {
+  "XAUUSD": {
+   "train": {
+    "n": 2062,
+    "r": 142.53
+   },
+   "unseen": {
+    "n": 2795,
+    "r": -24.01
+   }
+  },
+  "GER40": {
+   "train": {
+    "n": 60,
+    "r": 2.74
+   },
+   "unseen": {
+    "n": 80,
+    "r": 52.76
+   }
+  },
+  "USDCHF": {
+   "train": {
+    "n": 26,
+    "r": 2.37
+   },
+   "unseen": {
+    "n": 23,
+    "r": 1.45
+   }
+  },
+  "GBPUSD": {
+   "train": {
+    "n": 19,
+    "r": -1.08
+   },
+   "unseen": {
+    "n": 26,
+    "r": 17.73
+   }
+  },
+  "US30": {
+   "train": {
+    "n": 4,
+    "r": -1.34
+   },
+   "unseen": {
+    "n": 6,
+    "r": 14.82
+   }
+  },
+  "EURUSD": {
+   "train": {
+    "n": 2,
+    "r": -0.91
+   },
+   "unseen": {
+    "n": 8,
+    "r": -5.03
+   }
+  },
+  "US100": {
+   "unseen": {
+    "n": 2,
+    "r": -2.02
+   }
+  }
+ }
+}

@@ -1,16 +1,16 @@
 {
  "bot": "bot1",
  "name": "בוט 1",
- "updated": "2026-11-18T20:45:29+00:00",
- "state_updated": "2026-11-18T20:42:34+00:00",
- "minutes_since_state": 3,
- "balance": 95823.6,
- "equity": 96200.43,
- "day_pct": -0.82,
- "total_pct": -3.8,
- "trades": 202,
- "mean_r": -0.182,
- "sum_r": -36.74,
+ "updated": "2026-11-18T21:09:01+00:00",
+ "state_updated": "2026-11-18T21:06:42+00:00",
+ "minutes_since_state": 2,
+ "balance": 95873.35,
+ "equity": 96185.36,
+ "day_pct": -0.83,
+ "total_pct": -3.81,
+ "trades": 207,
+ "mean_r": -0.174,
+ "sum_r": -35.95,
  "bt_mean_r": 0.198,
  "flagged": 0,
  "combos": [
@@ -51,18 +51,6 @@
    "flags": []
   },
   {
-   "combo": "TT45|15Min|CSCO",
-   "n": 12,
-   "mean": -0.338,
-   "sum": -4.05,
-   "win": 25.0,
-   "streak": 4,
-   "bt_mean": 0.052,
-   "bt_n": 255,
-   "z": -1.78,
-   "flags": []
-  },
-  {
    "combo": "TT56|1Hour|GME",
    "n": 3,
    "mean": -0.854,
@@ -72,6 +60,18 @@
    "bt_mean": 0.415,
    "bt_n": 62,
    "z": -1.69,
+   "flags": []
+  },
+  {
+   "combo": "TT45|15Min|CSCO",
+   "n": 13,
+   "mean": -0.28,
+   "sum": -3.64,
+   "win": 30.8,
+   "streak": 0,
+   "bt_mean": 0.052,
+   "bt_n": 255,
+   "z": -1.58,
    "flags": []
   },
   {
@@ -159,6 +159,18 @@
    "flags": []
   },
   {
+   "combo": "MQ11|4Hour|MSTR",
+   "n": 6,
+   "mean": -0.147,
+   "sum": -0.88,
+   "win": 33.3,
+   "streak": 2,
+   "bt_mean": 0.098,
+   "bt_n": 182,
+   "z": -0.83,
+   "flags": []
+  },
+  {
    "combo": "TT45|1Hour|WTI",
    "n": 3,
    "mean": -0.489,
@@ -231,18 +243,6 @@
    "flags": []
   },
   {
-   "combo": "MQ11|4Hour|MSTR",
-   "n": 5,
-   "mean": -0.059,
-   "sum": -0.29,
-   "win": 40.0,
-   "streak": 1,
-   "bt_mean": 0.098,
-   "bt_n": 182,
-   "z": -0.49,
-   "flags": []
-  },
-  {
    "combo": "YT03|4Hour|GBPUSD",
    "n": 2,
    "mean": -0.271,
@@ -291,6 +291,18 @@
    "flags": []
   },
   {
+   "combo": "SE01|1Hour|CSCO",
+   "n": 2,
+   "mean": 0.066,
+   "sum": 0.13,
+   "win": 50.0,
+   "streak": 0,
+   "bt_mean": 0.167,
+   "bt_n": 371,
+   "z": -0.16,
+   "flags": []
+  },
+  {
    "combo": "TV24|15Min|KO",
    "n": 6,
    "mean": 0.066,
@@ -328,14 +340,14 @@
   },
   {
    "combo": "TV60|15Min|ARM",
-   "n": 9,
-   "mean": 0.175,
-   "sum": 1.57,
-   "win": 33.3,
-   "streak": 3,
+   "n": 10,
+   "mean": 0.17,
+   "sum": 1.7,
+   "win": 40.0,
+   "streak": 0,
    "bt_mean": 0.129,
    "bt_n": 328,
-   "z": 0.11,
+   "z": 0.1,
    "flags": []
   },
   {
@@ -519,14 +531,14 @@
    "flags": []
   },
   {
-   "combo": "SE01|1Hour|CSCO",
+   "combo": "SC425|5Min|XAGUSD",
    "n": 1,
-   "mean": -0.468,
-   "sum": -0.47,
-   "win": 0.0,
-   "streak": 1,
-   "bt_mean": 0.167,
-   "bt_n": 371,
+   "mean": 0.245,
+   "sum": 0.25,
+   "win": 100.0,
+   "streak": 0,
+   "bt_mean": null,
+   "bt_n": null,
    "z": null,
    "flags": []
   },
@@ -604,57 +616,28 @@
   }
  ],
  "problems": [
-  "כל הבוט: -0.17R לעסקה בפועל מול +0.15R בבדיקה (190 עסקאות)"
+  "כל הבוט: -0.17R לעסקה בפועל מול +0.15R בבדיקה (194 עסקאות)"
  ],
+ "cumulative": null,
  "ledger_tail": [],
  "positions_now": [
   {
    "ticket": 585993083,
-   "pnl": 241.77,
+   "pnl": 222.77,
    "sl_usd": -139.72,
    "since": "2026-11-17T12:00:07+00:00"
   },
   {
    "ticket": 586563105,
-   "pnl": 108.47,
-   "sl_usd": -170.03,
+   "pnl": 106.82,
+   "sl_usd": -170.04,
    "since": "2026-11-18T00:00:11+00:00"
   },
   {
-   "ticket": 587163962,
-   "pnl": 22.95,
-   "sl_usd": -116.5,
-   "since": "2026-11-18T14:30:09+00:00"
-  },
-  {
-   "ticket": 587177981,
-   "pnl": 73.5,
-   "sl_usd": -119.56,
-   "since": "2026-11-18T14:35:22+00:00"
-  },
-  {
-   "ticket": 587228407,
-   "pnl": 0.76,
-   "sl_usd": -1.82,
-   "since": "2026-11-18T15:00:09+00:00"
-  },
-  {
    "ticket": 587309072,
-   "pnl": -15.75,
-   "sl_usd": -137.65,
+   "pnl": -17.58,
+   "sl_usd": -134.7,
    "since": "2026-11-18T16:00:06+00:00"
-  },
-  {
-   "ticket": 587309277,
-   "pnl": -67.77,
-   "sl_usd": -126.63,
-   "since": "2026-11-18T16:00:12+00:00"
-  },
-  {
-   "ticket": 587429142,
-   "pnl": 12.9,
-   "sl_usd": -176.3,
-   "since": "2026-11-18T18:15:03+00:00"
   }
  ]
 }

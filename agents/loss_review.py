@@ -356,7 +356,7 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
                     or d.get("bot") != rep["bot"]:          # another bot's decision on the same strategy is not this bot's fix
                 continue
             a, card = d.get("action") or {}, cards.get(d.get("card")) or {}
-            dc = a.get("combo") or (card.get("change") or {}).get("combo") or (d["title"].split(":")[0].strip() if d["title"].count("|") >= 2 else None)
+            dc = a.get("combo") or (card.get("change") or {}).get("combo") or (d["title"].replace("⭐", "").split(":")[0].strip() if d["title"].count("|") >= 2 else None)
             if dc != c and not (card and covers(card.get("change"), c)):
                 continue
             if d.get("type") == "risk" and a.get("kind") == "mult" and a.get("value") and float(a["value"]) >= 1:

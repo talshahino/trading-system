@@ -1,7 +1,43 @@
 {
  "bot": "bot2",
- "updated": "2026-11-18T11:01:40+00:00",
+ "updated": "2026-11-18T15:09:13+00:00",
  "cards": [
+  {
+   "bot": "bot2",
+   "kind": "info",
+   "title": "בוט 2 מול הבדיקה (5-18.11): החי מעל הצפוי",
+   "what": "בחי ‎+10.0R ב־67 עסקאות, ולפי הבדיקה היה צפוי ‎+6.8R. הפירוק: השוק ‎-1.5R (גם הבדיקה הפסידה באותם ימים), ביצוע ‎-0.5R, שינויי תכנית באמצע התקופה ‎+3.3R, עסקאות שהבוט לא לקח ‎-6.7R, עסקאות שרק בחי ‎-0.4R, עסקאות בלי בדיקה שמורה ‎+9.0R. לפי תקופה: עד 2025 ‎+0.20R לעסקה, 2026 לפני התקופה ‎+0.13R, ובתקופה עצמה ‎+0.11R. אין פער לתקן. עסקאות שהבוט לא לקח היו מרוויחות ‎+6.7R, בעיקר GH08 USDCAD ‎+4.2R ו־BK07 EURJPY ‎+3.4R. אין שינוי.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot2|all",
+    "kind": "review",
+    "study": "live_gap_1811"
+   },
+   "detail": {
+    "made_by": "bots 1-4 smart agent 18.11 afternoon",
+    "file": "reports/agents/live_gap.json",
+    "parts": {
+     "expected": 6.8,
+     "market": -1.52,
+     "execution": -0.45,
+     "plan_changes": 3.33,
+     "missed": -6.7,
+     "extra": -0.4,
+     "uncovered": 8.98
+    },
+    "task": "mgr1811live"
+   },
+   "made": "2026-11-18T15:09:13+00:00",
+   "id": "8a9b0f907c90"
+  },
   {
    "bot": "bot2",
    "kind": "info",

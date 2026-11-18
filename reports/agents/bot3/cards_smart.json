@@ -1,7 +1,43 @@
 {
  "bot": "bot3",
- "updated": "2026-11-18T12:41:00+00:00",
+ "updated": "2026-11-18T15:09:13+00:00",
  "cards": [
+  {
+   "bot": "bot3",
+   "kind": "info",
+   "title": "בוט 3 מול הבדיקה (5-18.11): הפער הוא השוק",
+   "what": "בחי ‎-4.0R ב־54 עסקאות, ולפי הבדיקה היה צפוי ‎+4.5R. הפירוק: השוק ‎-6.8R (גם הבדיקה הפסידה באותם ימים), ביצוע ‎-2.2R, שינויי תכנית באמצע התקופה ‎+5.4R, עסקאות שהבוט לא לקח ‎+0.5R, עסקאות שרק בחי ‎+0.3R, עסקאות בלי בדיקה שמורה ‎-5.8R. הציפייה לא מנופחת מהבחירה: עד 2025 ‎+0.12R לעסקה, 2026 לפני התקופה ‎+0.10R, ובתקופה עצמה ‎-0.04R. השוק: בעיקר SC235 דולר־ין ‎-3.3R ו־TV41 דולר־ין ‎-1.5R. הביצוע קטן. אין שינוי מהבדיקה הזאת לבד.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot3|all",
+    "kind": "review",
+    "study": "live_gap_1811"
+   },
+   "detail": {
+    "made_by": "bots 1-4 smart agent 18.11 afternoon",
+    "file": "reports/agents/live_gap.json",
+    "parts": {
+     "expected": 4.51,
+     "market": -6.79,
+     "execution": -2.18,
+     "plan_changes": 5.38,
+     "missed": 0.54,
+     "extra": 0.33,
+     "uncovered": -5.75
+    },
+    "task": "mgr1811live"
+   },
+   "made": "2026-11-18T15:09:13+00:00",
+   "id": "6897eb6e7cae"
+  },
   {
    "bot": "bot3",
    "kind": "info",

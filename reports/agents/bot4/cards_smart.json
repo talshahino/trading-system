@@ -1,7 +1,43 @@
 {
  "bot": "bot4",
- "updated": "2026-11-18T11:01:40+00:00",
+ "updated": "2026-11-18T15:09:13+00:00",
  "cards": [
+  {
+   "bot": "bot4",
+   "kind": "info",
+   "title": "בוט 4 מול הבדיקה (5-18.11): השוק, ו־SPCX שכבר תוקן",
+   "what": "בחי ‎-13.7R ב־79 עסקאות, ולפי הבדיקה היה צפוי ‎+10.2R. הפירוק: השוק ‎-14.3R (גם הבדיקה הפסידה באותם ימים), ביצוע ‎-6.0R, שינויי תכנית באמצע התקופה ‎-0.7R, עסקאות שהבוט לא לקח ‎-0.2R, עסקאות שרק בחי ‎+1.1R, עסקאות בלי בדיקה שמורה ‎-3.8R. הציפייה לא מנופחת מהבחירה: עד 2025 ‎+0.19R לעסקה, 2026 לפני התקופה ‎+0.16R, ובתקופה עצמה ‎-0.06R. הביצוע: ‎-5.6R מתוך ‎-6.0R הם FR08 SPCX, מחיר מאחר ב־15 דקות (תוקן ב־17.11, ed49a4448). הימור אחד? חלקית: ב־17.11 בין 14:22 ל־17:15 נעצרו 6 עסקאות (‎-6.0R), 3 מהן באותו כיוון סיכון (ARM, SPCX, USDJPY). אין שינוי נוסף מהבדיקה הזאת לבד.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot4|all",
+    "kind": "review",
+    "study": "live_gap_1811"
+   },
+   "detail": {
+    "made_by": "bots 1-4 smart agent 18.11 afternoon",
+    "file": "reports/agents/live_gap.json",
+    "parts": {
+     "expected": 10.21,
+     "market": -14.27,
+     "execution": -6.0,
+     "plan_changes": -0.71,
+     "missed": -0.17,
+     "extra": 1.06,
+     "uncovered": -3.83
+    },
+    "task": "mgr1811live"
+   },
+   "made": "2026-11-18T15:09:13+00:00",
+   "id": "7c26b4923661"
+  },
   {
    "bot": "bot4",
    "kind": "info",

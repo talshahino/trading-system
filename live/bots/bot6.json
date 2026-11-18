@@ -35,7 +35,7 @@
     "MIN_RR": 1.0,
     "EXPIRY": 120,
     "PROT": "cal15",
-    "EXIT": "be886",
+    "EXIT": "p50_1r",
     "LADDER": "4",
     "WKND": 10,
     "REARM": true,
@@ -985,6 +985,46 @@
    "family": "risk",
    "track": "scout:FG01|15Min|US30",
    "before": 0.000173
+  },
+  "d1d0282628e1": {
+   "family": "tal5",
+   "track": "tal4h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h",
+     1
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 2,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "cal15",
+     "EXIT": "be886",
+     "LADDER": "4",
+     "WKND": 10,
+     "REARM": true,
+     "MINSTOP": 1.0,
+     "STOPAT": "imp0late"
+    }
+   },
+   "risk_before": 0.0012
+  },
+  "c5b2b5ddf4bf": {
+   "family": "scout6",
+   "combo": "SC258|1Min|US100",
+   "before": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "since": "2026-11-17T06:05:41+00:00",
+    "card": "068a12576305"
+   }
   }
  },
  "scout": {
@@ -1119,10 +1159,11 @@
     "target": "none",
     "stop": 0.75,
     "time": "own",
-    "be": true
+    "be": true,
+    "sess": "no10"
    },
-   "since": "2026-11-17T06:05:41+00:00",
-   "card": "068a12576305"
+   "since": "2026-11-18T15:24:48+00:00",
+   "card": "c5b2b5ddf4bf"
   },
   "TV41|15Min|US100": {
    "v": {

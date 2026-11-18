@@ -320,7 +320,13 @@ def check(bot, state, now):
             "trades": int(len(allr)), "mean_r": None if not len(allr) else round(float(allr.mean()), 3),
             "sum_r": None if not len(allr) else round(float(allr.sum()), 2),
             "bt_mean_r": None if not bt_all else round(float(np.mean(bt_all)), 3),
-            "flagged": sum(1 for c in combos if c["flags"]), "combos": combos, "problems": problems}, cards
+            "flagged": sum(1 for c in combos if c["flags"]), "combos": combos, "problems": problems,
+            # the virtual accounts' last bookings (user, 18.11.2026: bot 5 fell ~$1,300 with no trade that explains it -
+            # GitHub's copy of the state had stopped; the bookings themselves, from the bots' computer)
+            "ledger_tail": [{"id": x.get("id"), "exit_time": x.get("exit_time"), "pnl": x.get("pnl"), "fixed": x.get("fixed")}
+                            for x in ((state.get("vacct") or {}).get("ledger") or [])[-30:]],
+            "positions_now": [{"ticket": p_.get("ticket"), "pnl": p_.get("pnl"), "sl_usd": p_.get("sl_usd"), "since": p_.get("since")}
+                              for p_ in (state.get("positions") or [])]}, cards
 
 
 def main():

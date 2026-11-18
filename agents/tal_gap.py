@@ -2517,6 +2517,8 @@ def live_trades(D, pair, cfg, gcache=None):
         if stop is None:
             out.append(dict(base, status="cancelled", entry=float(px), stop=None, target=float(t2), reason="rr"))
             continue
+        if stopat_of(cfg) != "sw2":
+            stop = stop - d * ipad(D, cfg, htf, ns[f], f)  # IPAD (as simulate)
         stop = min_stop(D, cfg, htf, ns[f], px, stop, d)
         risk = d * (px - stop)
         rk_rr = rr_risk(D, cfg, htf, ns[f], px, stop0, risk, d)    # STOPAT ...r (as simulate)

@@ -862,13 +862,41 @@ def excursion(t, df):
            "mae_r": round(d * (worst - px) / risk, 3)}
     way = d * (t["target"] - px) if t.get("target") is not None else 0
     out["mfe_way"] = round(d * (best - px) / way, 3) if way > 0 else None
+    # the stop to the entry at 60% of the way, in the shadow (user, 18.11.2026: "this week and the next we will see by
+    # the trades whether we should have moved the stop or not"): reach = the price got 60% of the way to the target;
+    # back = after that it came back to the entry (a stop at the entry would have closed it there, about 0R)
+    if way > 0 and t.get("tal") and not str(t["tal"]).startswith("sc:"):
+        lvl = px + d * 0.6 * way
+        hh, ll = w["h"].to_numpy(float), w["l"].to_numpy(float)
+        hit = np.flatnonzero((hh >= lvl) if d > 0 else (ll <= lvl))
+        reach = bool(len(hit))
+        back = bool(reach and (((ll[hit[0] + 1:] <= px).any()) if d > 0 else ((hh[hit[0] + 1:] >= px).any())))
+        out["be60"] = {"reach": reach, "back": back}
     return out
+
+
+BE_FROM = "2026-11-18"
+
+
+def be_watch(rows):
+    """The shadow of a stop to the entry at 60% (excursion's be60) on bot 5's closed gap trades from 18.11.2026 (the
+    stop beyond the impulse's start + room went in then): how many reached 60%, how many came back to the entry after
+    it, and the R as they ran against the R with the stop at the entry (those that came back: about 0R)."""
+    xs = [t for t in rows if t.get("status") == "closed" and t.get("tal") and not str(t["tal"]).startswith("sc:")
+          and (t.get("time") or "") >= BE_FROM and t.get("be60") and t.get("r") is not None]
+    real = sum(float(t["r"]) for t in xs)
+    shadow = sum((-float(t.get("cost_r") or 0.0)) if t["be60"]["back"] else float(t["r"]) for t in xs)
+    back = [t for t in xs if t["be60"]["back"]]
+    return {"from": BE_FROM, "n": len(xs), "reach": sum(t["be60"]["reach"] for t in xs), "back": len(back),
+            "back_lost": sum(1 for t in back if float(t["r"]) < 0), "back_won": sum(1 for t in back if float(t["r"]) > 0),
+            "r_real": round(real, 2), "r_be60": round(shadow, 2)}
 
 
 def excursions(rows, src):
     """excursion() on every open trade (each loop) and once on every closed one. Quiet on any failure."""
     for t in rows:
-        if t.get("status") not in ("open", "closed") or (t["status"] == "closed" and (t.get("mfe_r") is not None or t.get("mfe_na"))):
+        if t.get("status") not in ("open", "closed") or (t["status"] == "closed" and (t.get("mfe_r") is not None or t.get("mfe_na"))
+                                                         and ("be60" in t or not t.get("tal"))):
             continue
         try:
             t.update(excursion(t, src.df.get(t["symbol"])))
@@ -1720,6 +1748,10 @@ def main():
                     trades[k]["mark"] = m
         except Exception:  # noqa: BLE001
             pass
+        try:
+            state["be_watch"] = be_watch(trades.values())
+        except Exception:  # noqa: BLE001
+            errors.append(f"be_watch: {traceback.format_exc()[-200:]}")
         try:
             state["learning"] = learning5(marks)
         except Exception:  # noqa: BLE001

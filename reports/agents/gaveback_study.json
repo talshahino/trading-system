@@ -1,5 +1,5 @@
 {
- "at": "2026-11-16T22:51:38+00:00",
+ "at": "2026-11-18T04:50:08+00:00",
  "ways": [
   "asis",
   "be@0.5",
@@ -15,915 +15,18 @@
   "halfw@0.5",
   "halfw@0.6",
   "lock@1",
-  "lock@0.5"
+  "lock@0.5",
+  "trl@2_1",
+  "trl@2_1.5",
+  "trl@3_1",
+  "trl@3_1.5",
+  "trl@3_2",
+  "trl@4_1.5",
+  "trl@4_2",
+  "trl@5_2",
+  "trl@5_3"
  ],
  "bots": {
-  "bot5": {
-   "strategies": 23,
-   "symbols": [
-    "EURUSD",
-    "GBPUSD",
-    "GER40",
-    "US100",
-    "US30",
-    "USDCHF",
-    "USDJPY",
-    "XAUUSD"
-   ],
-   "census": {
-    "train": {
-     "trades": 2904,
-     "losers": 1738,
-     "lost_r": -1475.1,
-     "mfe_0.5R": 39.8,
-     "mfe_1R": 19.3,
-     "with_target": 654,
-     "half_way": 21.3,
-     "mfe_median": 0.37
-    },
-    "unseen": {
-     "trades": 3803,
-     "losers": 2306,
-     "lost_r": -1973.7,
-     "mfe_0.5R": 43.0,
-     "mfe_1R": 19.5,
-     "with_target": 909,
-     "half_way": 19.4,
-     "mfe_median": 0.42
-    }
-   },
-   "ways": {
-    "asis": {
-     "train": {
-      "trades": 2904,
-      "total": 79.1,
-      "worst_day": -2.99,
-      "max_dd": 7.95
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 56.96,
-      "worst_day": -2.83,
-      "max_dd": 11.12
-     }
-    },
-    "be@0.5": {
-     "train": {
-      "trades": 2904,
-      "total": 32.07,
-      "worst_day": -2.41,
-      "max_dd": 11.87
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 22.91,
-      "worst_day": -2.52,
-      "max_dd": 12.17
-     }
-    },
-    "be@1": {
-     "train": {
-      "trades": 2904,
-      "total": 63.87,
-      "worst_day": -2.39,
-      "max_dd": 9.02
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 36.44,
-      "worst_day": -2.83,
-      "max_dd": 11.9
-     }
-    },
-    "be@1.5": {
-     "train": {
-      "trades": 2904,
-      "total": 76.12,
-      "worst_day": -2.44,
-      "max_dd": 7.99
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 50.88,
-      "worst_day": -2.83,
-      "max_dd": 11.05
-     }
-    },
-    "be@2": {
-     "train": {
-      "trades": 2904,
-      "total": 81.81,
-      "worst_day": -2.44,
-      "max_dd": 8.31
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 47.01,
-      "worst_day": -2.83,
-      "max_dd": 10.68
-     }
-    },
-    "half@0.5": {
-     "train": {
-      "trades": 2904,
-      "total": 1.81,
-      "worst_day": -2.33,
-      "max_dd": 14.87
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": -0.45,
-      "worst_day": -1.98,
-      "max_dd": 12.41
-     }
-    },
-    "half@1": {
-     "train": {
-      "trades": 2904,
-      "total": 32.15,
-      "worst_day": -2.31,
-      "max_dd": 9.43
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 13.52,
-      "worst_day": -2.79,
-      "max_dd": 14.01
-     }
-    },
-    "half@1.5": {
-     "train": {
-      "trades": 2904,
-      "total": 49.78,
-      "worst_day": -2.27,
-      "max_dd": 8.03
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 30.58,
-      "worst_day": -2.75,
-      "max_dd": 9.56
-     }
-    },
-    "half@2": {
-     "train": {
-      "trades": 2904,
-      "total": 55.11,
-      "worst_day": -2.22,
-      "max_dd": 9.0
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 29.59,
-      "worst_day": -2.83,
-      "max_dd": 13.06
-     }
-    },
-    "bew@0.5": {
-     "train": {
-      "trades": 2904,
-      "total": 75.64,
-      "worst_day": -2.72,
-      "max_dd": 9.33
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 53.47,
-      "worst_day": -3.08,
-      "max_dd": 10.13
-     }
-    },
-    "bew@0.6": {
-     "train": {
-      "trades": 2904,
-      "total": 79.2,
-      "worst_day": -2.99,
-      "max_dd": 7.95
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 56.96,
-      "worst_day": -2.83,
-      "max_dd": 11.12
-     }
-    },
-    "halfw@0.5": {
-     "train": {
-      "trades": 2904,
-      "total": 72.75,
-      "worst_day": -2.48,
-      "max_dd": 8.04
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 50.46,
-      "worst_day": -2.93,
-      "max_dd": 10.74
-     }
-    },
-    "halfw@0.6": {
-     "train": {
-      "trades": 2904,
-      "total": 76.88,
-      "worst_day": -3.02,
-      "max_dd": 7.82
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 56.05,
-      "worst_day": -2.86,
-      "max_dd": 11.57
-     }
-    },
-    "lock@1": {
-     "train": {
-      "trades": 2904,
-      "total": 31.72,
-      "worst_day": -2.14,
-      "max_dd": 12.11
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 8.58,
-      "worst_day": -2.83,
-      "max_dd": 16.19
-     }
-    },
-    "lock@0.5": {
-     "train": {
-      "trades": 2758,
-      "total": -8.92,
-      "worst_day": -1.95,
-      "max_dd": 15.9
-     },
-     "unseen": {
-      "trades": 3328,
-      "total": -8.99,
-      "worst_day": -2.08,
-      "max_dd": 11.19
-     }
-    },
-    "pick_per_strategy": {
-     "train": {
-      "trades": 2904,
-      "total": 90.34,
-      "worst_day": -2.43,
-      "max_dd": 6.74
-     },
-     "unseen": {
-      "trades": 3803,
-      "total": 41.27,
-      "worst_day": -2.86,
-      "max_dd": 10.51
-     }
-    }
-   },
-   "per_strategy": {
-    "IB034|15Min|XAUUSD": {
-     "pick": "be@1",
-     "asis": {
-      "train": [
-       384,
-       25.24
-      ],
-      "unseen": [
-       498,
-       27.79
-      ]
-     },
-     "be@1": {
-      "train": [
-       384,
-       27.19
-      ],
-      "unseen": [
-       498,
-       19.56
-      ]
-     }
-    },
-    "SC311|15Min|GER40": {
-     "pick": "asis",
-     "asis": {
-      "train": [
-       167,
-       9.08
-      ],
-      "unseen": [
-       223,
-       4.53
-      ]
-     }
-    },
-    "SC138|15Min|XAUUSD": {
-     "pick": "asis",
-     "asis": {
-      "train": [
-       29,
-       5.18
-      ],
-      "unseen": [
-       48,
-       4.07
-      ]
-     }
-    },
-    "SC402|15Min|XAUUSD": {
-     "pick": "be@1.5",
-     "asis": {
-      "train": [
-       213,
-       44.51
-      ],
-      "unseen": [
-       273,
-       22.8
-      ]
-     },
-     "be@1.5": {
-      "train": [
-       213,
-       51.5
-      ],
-      "unseen": [
-       273,
-       7.84
-      ]
-     }
-    },
-    "SC402|5Min|XAUUSD": {
-     "pick": "be@1.5",
-     "asis": {
-      "train": [
-       226,
-       47.86
-      ],
-      "unseen": [
-       276,
-       39.75
-      ]
-     },
-     "be@1.5": {
-      "train": [
-       226,
-       57.26
-      ],
-      "unseen": [
-       276,
-       35.22
-      ]
-     }
-    },
-    "SC432|15Min|XAUUSD": {
-     "pick": "be@1",
-     "asis": {
-      "train": [
-       196,
-       28.14
-      ],
-      "unseen": [
-       236,
-       21.27
-      ]
-     },
-     "be@1": {
-      "train": [
-       196,
-       33.05
-      ],
-      "unseen": [
-       236,
-       25.4
-      ]
-     }
-    },
-    "SC154|5Min|XAUUSD": {
-     "pick": "be@1",
-     "asis": {
-      "train": [
-       138,
-       21.18
-      ],
-      "unseen": [
-       288,
-       9.04
-      ]
-     },
-     "be@1": {
-      "train": [
-       138,
-       22.07
-      ],
-      "unseen": [
-       288,
-       8.21
-      ]
-     }
-    },
-    "SC069|15Min|XAUUSD": {
-     "pick": "halfw@0.6",
-     "asis": {
-      "train": [
-       107,
-       1.21
-      ],
-      "unseen": [
-       112,
-       9.78
-      ]
-     },
-     "halfw@0.6": {
-      "train": [
-       107,
-       2.74
-      ],
-      "unseen": [
-       112,
-       9.94
-      ]
-     }
-    },
-    "SC333|15Min|XAUUSD": {
-     "pick": "lock@1",
-     "asis": {
-      "train": [
-       293,
-       42.3
-      ],
-      "unseen": [
-       378,
-       6.79
-      ]
-     },
-     "lock@1": {
-      "train": [
-       293,
-       48.73
-      ],
-      "unseen": [
-       378,
-       2.7
-      ]
-     }
-    },
-    "SC071|15Min|US30": {
-     "pick": "half@2",
-     "asis": {
-      "train": [
-       28,
-       2.21
-      ],
-      "unseen": [
-       77,
-       7.6
-      ]
-     },
-     "half@2": {
-      "train": [
-       28,
-       6.63
-      ],
-      "unseen": [
-       77,
-       5.7
-      ]
-     }
-    },
-    "SC042|15Min|XAUUSD": {
-     "pick": "halfw@0.6",
-     "asis": {
-      "train": [
-       236,
-       4.25
-      ],
-      "unseen": [
-       313,
-       11.97
-      ]
-     },
-     "halfw@0.6": {
-      "train": [
-       236,
-       5.28
-      ],
-      "unseen": [
-       313,
-       13.76
-      ]
-     }
-    },
-    "SC441|5Min|XAUUSD": {
-     "pick": "asis",
-     "asis": {
-      "train": [
-       62,
-       40.88
-      ],
-      "unseen": [
-       86,
-       4.52
-      ]
-     }
-    },
-    "SC056|15Min|GBPUSD": {
-     "pick": "halfw@0.6",
-     "asis": {
-      "train": [
-       92,
-       10.64
-      ],
-      "unseen": [
-       115,
-       5.12
-      ]
-     },
-     "halfw@0.6": {
-      "train": [
-       92,
-       10.81
-      ],
-      "unseen": [
-       115,
-       5.32
-      ]
-     }
-    },
-    "SC077|5Min|US30": {
-     "pick": "halfw@0.5",
-     "asis": {
-      "train": [
-       103,
-       23.28
-      ],
-      "unseen": [
-       150,
-       19.61
-      ]
-     },
-     "halfw@0.5": {
-      "train": [
-       103,
-       28.64
-      ],
-      "unseen": [
-       150,
-       11.04
-      ]
-     }
-    },
-    "SC326|15Min|USDCHF": {
-     "pick": "be@1.5",
-     "asis": {
-      "train": [
-       119,
-       10.91
-      ],
-      "unseen": [
-       127,
-       9.05
-      ]
-     },
-     "be@1.5": {
-      "train": [
-       119,
-       17.72
-      ],
-      "unseen": [
-       127,
-       11.15
-      ]
-     }
-    },
-    "SC326|5Min|GBPUSD": {
-     "pick": "be@0.5",
-     "asis": {
-      "train": [
-       120,
-       15.16
-      ],
-      "unseen": [
-       128,
-       43.06
-      ]
-     },
-     "be@0.5": {
-      "train": [
-       120,
-       25.7
-      ],
-      "unseen": [
-       128,
-       -3.22
-      ]
-     }
-    },
-    "QC04|15Min|EURUSD": {
-     "pick": "asis",
-     "asis": {
-      "train": [
-       46,
-       13.6
-      ],
-      "unseen": [
-       52,
-       24.66
-      ]
-     }
-    },
-    "BK07|15Min|EURUSD": {
-     "pick": "asis",
-     "asis": {
-      "train": [
-       55,
-       30.37
-      ],
-      "unseen": [
-       68,
-       12.87
-      ]
-     }
-    },
-    "FR03|15Min|GBPUSD": {
-     "pick": "be@1",
-     "asis": {
-      "train": [
-       17,
-       22.96
-      ],
-      "unseen": [
-       34,
-       12.22
-      ]
-     },
-     "be@1": {
-      "train": [
-       17,
-       23.96
-      ],
-      "unseen": [
-       34,
-       7.75
-      ]
-     }
-    },
-    "BK07|15Min|US100": {
-     "pick": "be@2",
-     "asis": {
-      "train": [
-       45,
-       17.0
-      ],
-      "unseen": [
-       59,
-       12.52
-      ]
-     },
-     "be@2": {
-      "train": [
-       45,
-       18.94
-      ],
-      "unseen": [
-       59,
-       13.33
-      ]
-     }
-    },
-    "SC142|15Min|XAUUSD": {
-     "pick": "be@2",
-     "asis": {
-      "train": [
-       66,
-       28.11
-      ],
-      "unseen": [
-       75,
-       9.3
-      ]
-     },
-     "be@2": {
-      "train": [
-       66,
-       30.11
-      ],
-      "unseen": [
-       75,
-       8.79
-      ]
-     }
-    },
-    "SC326|15Min|USDJPY": {
-     "pick": "be@0.5",
-     "asis": {
-      "train": [
-       104,
-       32.66
-      ],
-      "unseen": [
-       123,
-       5.51
-      ]
-     },
-     "be@0.5": {
-      "train": [
-       104,
-       33.93
-      ],
-      "unseen": [
-       123,
-       -5.0
-      ]
-     }
-    },
-    "SC446|5Min|US30": {
-     "pick": "halfw@0.6",
-     "asis": {
-      "train": [
-       58,
-       5.33
-      ],
-      "unseen": [
-       64,
-       10.67
-      ]
-     },
-     "halfw@0.6": {
-      "train": [
-       58,
-       7.26
-      ],
-      "unseen": [
-       64,
-       12.88
-      ]
-     }
-    }
-   },
-   "vs_asis": {
-    "be@0.5": {
-     "train": {
-      "total": -47.03,
-      "max_dd": 3.92
-     },
-     "unseen": {
-      "total": -34.05,
-      "max_dd": 1.05
-     }
-    },
-    "be@1": {
-     "train": {
-      "total": -15.23,
-      "max_dd": 1.07
-     },
-     "unseen": {
-      "total": -20.52,
-      "max_dd": 0.78
-     }
-    },
-    "be@1.5": {
-     "train": {
-      "total": -2.98,
-      "max_dd": 0.04
-     },
-     "unseen": {
-      "total": -6.08,
-      "max_dd": -0.07
-     }
-    },
-    "be@2": {
-     "train": {
-      "total": 2.71,
-      "max_dd": 0.36
-     },
-     "unseen": {
-      "total": -9.95,
-      "max_dd": -0.44
-     }
-    },
-    "half@0.5": {
-     "train": {
-      "total": -77.29,
-      "max_dd": 6.92
-     },
-     "unseen": {
-      "total": -57.41,
-      "max_dd": 1.29
-     }
-    },
-    "half@1": {
-     "train": {
-      "total": -46.95,
-      "max_dd": 1.48
-     },
-     "unseen": {
-      "total": -43.44,
-      "max_dd": 2.89
-     }
-    },
-    "half@1.5": {
-     "train": {
-      "total": -29.32,
-      "max_dd": 0.08
-     },
-     "unseen": {
-      "total": -26.38,
-      "max_dd": -1.56
-     }
-    },
-    "half@2": {
-     "train": {
-      "total": -23.99,
-      "max_dd": 1.05
-     },
-     "unseen": {
-      "total": -27.37,
-      "max_dd": 1.94
-     }
-    },
-    "bew@0.5": {
-     "train": {
-      "total": -3.46,
-      "max_dd": 1.38
-     },
-     "unseen": {
-      "total": -3.49,
-      "max_dd": -0.99
-     }
-    },
-    "bew@0.6": {
-     "train": {
-      "total": 0.1,
-      "max_dd": 0.0
-     },
-     "unseen": {
-      "total": 0.0,
-      "max_dd": 0.0
-     }
-    },
-    "halfw@0.5": {
-     "train": {
-      "total": -6.35,
-      "max_dd": 0.09
-     },
-     "unseen": {
-      "total": -6.5,
-      "max_dd": -0.38
-     }
-    },
-    "halfw@0.6": {
-     "train": {
-      "total": -2.22,
-      "max_dd": -0.13
-     },
-     "unseen": {
-      "total": -0.91,
-      "max_dd": 0.45
-     }
-    },
-    "lock@1": {
-     "train": {
-      "total": -47.38,
-      "max_dd": 4.16
-     },
-     "unseen": {
-      "total": -48.38,
-      "max_dd": 5.07
-     }
-    },
-    "lock@0.5": {
-     "train": {
-      "total": -88.02,
-      "max_dd": 7.95
-     },
-     "unseen": {
-      "total": -65.95,
-      "max_dd": 0.07
-     }
-    },
-    "pick_per_strategy": {
-     "train": {
-      "total": 11.24,
-      "max_dd": -1.21
-     },
-     "unseen": {
-      "total": -15.69,
-      "max_dd": -0.61
-     }
-    }
-   },
-   "best_train": {
-    "way": "pick_per_strategy",
-    "train": {
-     "total": 11.24,
-     "max_dd": -1.21
-    },
-    "unseen": {
-     "total": -15.69,
-     "max_dd": -0.61
-    }
-   },
-   "both": []
-  },
   "bot7": {
    "strategies": 52,
    "symbols": [
@@ -8304,6 +7407,1422 @@
     "unseen": {
      "total": -10.35,
      "max_dd": 2.92
+    }
+   },
+   "both": []
+  },
+  "bot5": {
+   "strategies": 31,
+   "symbols": [
+    "EURUSD",
+    "GBPUSD",
+    "GER40",
+    "US100",
+    "US30",
+    "USDCHF",
+    "USDJPY",
+    "XAUUSD"
+   ],
+   "census": {
+    "train": {
+     "trades": 4530,
+     "losers": 2895,
+     "lost_r": -2584.0,
+     "mfe_0.5R": 44.4,
+     "mfe_1R": 23.9,
+     "with_target": 780,
+     "half_way": 20.9,
+     "mfe_median": 0.41
+    },
+    "unseen": {
+     "trades": 6148,
+     "losers": 3992,
+     "lost_r": -3530.7,
+     "mfe_0.5R": 45.9,
+     "mfe_1R": 23.1,
+     "with_target": 1104,
+     "half_way": 18.0,
+     "mfe_median": 0.45
+    }
+   },
+   "ways": {
+    "asis": {
+     "train": {
+      "trades": 4530,
+      "total": 30.29,
+      "worst_day": -1.16,
+      "max_dd": 5.64,
+      "win": 36.1,
+      "green_days": 51.7,
+      "day_sd": 0.89
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 26.27,
+      "worst_day": -1.36,
+      "max_dd": 4.14,
+      "win": 35.1,
+      "green_days": 46.7,
+      "day_sd": 0.81
+     }
+    },
+    "be@0.5": {
+     "train": {
+      "trades": 4530,
+      "total": 8.52,
+      "worst_day": -1.08,
+      "max_dd": 5.52,
+      "win": 23.1,
+      "green_days": 47.2,
+      "day_sd": 0.758
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 9.45,
+      "worst_day": -1.21,
+      "max_dd": 4.36,
+      "win": 22.4,
+      "green_days": 39.7,
+      "day_sd": 0.658
+     }
+    },
+    "be@1": {
+     "train": {
+      "trades": 4530,
+      "total": 18.63,
+      "worst_day": -1.18,
+      "max_dd": 5.06,
+      "win": 30.9,
+      "green_days": 49.4,
+      "day_sd": 0.813
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 13.93,
+      "worst_day": -1.3,
+      "max_dd": 3.99,
+      "win": 29.8,
+      "green_days": 43.7,
+      "day_sd": 0.734
+     }
+    },
+    "be@1.5": {
+     "train": {
+      "trades": 4530,
+      "total": 24.01,
+      "worst_day": -1.16,
+      "max_dd": 5.17,
+      "win": 33.7,
+      "green_days": 52.8,
+      "day_sd": 0.849
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 18.53,
+      "worst_day": -1.56,
+      "max_dd": 4.79,
+      "win": 32.6,
+      "green_days": 45.4,
+      "day_sd": 0.772
+     }
+    },
+    "be@2": {
+     "train": {
+      "trades": 4530,
+      "total": 25.56,
+      "worst_day": -1.16,
+      "max_dd": 5.55,
+      "win": 34.7,
+      "green_days": 51.7,
+      "day_sd": 0.858
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 18.89,
+      "worst_day": -1.49,
+      "max_dd": 5.26,
+      "win": 33.3,
+      "green_days": 46.3,
+      "day_sd": 0.774
+     }
+    },
+    "half@0.5": {
+     "train": {
+      "trades": 4530,
+      "total": -4.06,
+      "worst_day": -0.86,
+      "max_dd": 7.08,
+      "win": 59.8,
+      "green_days": 45.5,
+      "day_sd": 0.44
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": -6.65,
+      "worst_day": -1.02,
+      "max_dd": 7.55,
+      "win": 60.8,
+      "green_days": 38.9,
+      "day_sd": 0.4
+     }
+    },
+    "half@1": {
+     "train": {
+      "trades": 4530,
+      "total": 6.84,
+      "worst_day": -1.03,
+      "max_dd": 4.52,
+      "win": 49.4,
+      "green_days": 49.4,
+      "day_sd": 0.491
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 0.58,
+      "worst_day": -1.13,
+      "max_dd": 4.72,
+      "win": 47.6,
+      "green_days": 47.2,
+      "day_sd": 0.487
+     }
+    },
+    "half@1.5": {
+     "train": {
+      "trades": 4530,
+      "total": 12.44,
+      "worst_day": -1.08,
+      "max_dd": 4.79,
+      "win": 43.8,
+      "green_days": 53.4,
+      "day_sd": 0.551
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 7.27,
+      "worst_day": -1.37,
+      "max_dd": 3.52,
+      "win": 42.2,
+      "green_days": 48.0,
+      "day_sd": 0.544
+     }
+    },
+    "half@2": {
+     "train": {
+      "trades": 4530,
+      "total": 13.98,
+      "worst_day": -1.13,
+      "max_dd": 5.41,
+      "win": 40.3,
+      "green_days": 55.1,
+      "day_sd": 0.589
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 9.47,
+      "worst_day": -1.35,
+      "max_dd": 4.03,
+      "win": 38.9,
+      "green_days": 48.9,
+      "day_sd": 0.571
+     }
+    },
+    "bew@0.5": {
+     "train": {
+      "trades": 4530,
+      "total": 29.73,
+      "worst_day": -1.16,
+      "max_dd": 5.53,
+      "win": 34.9,
+      "green_days": 51.1,
+      "day_sd": 0.891
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 25.2,
+      "worst_day": -1.29,
+      "max_dd": 4.26,
+      "win": 34.1,
+      "green_days": 46.3,
+      "day_sd": 0.809
+     }
+    },
+    "bew@0.6": {
+     "train": {
+      "trades": 4530,
+      "total": 30.31,
+      "worst_day": -1.16,
+      "max_dd": 5.64,
+      "win": 36.1,
+      "green_days": 51.7,
+      "day_sd": 0.89
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 26.27,
+      "worst_day": -1.36,
+      "max_dd": 4.14,
+      "win": 35.1,
+      "green_days": 46.7,
+      "day_sd": 0.81
+     }
+    },
+    "halfw@0.5": {
+     "train": {
+      "trades": 4530,
+      "total": 29.09,
+      "worst_day": -1.12,
+      "max_dd": 5.24,
+      "win": 39.5,
+      "green_days": 51.1,
+      "day_sd": 0.876
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 23.84,
+      "worst_day": -1.3,
+      "max_dd": 4.15,
+      "win": 37.9,
+      "green_days": 48.0,
+      "day_sd": 0.778
+     }
+    },
+    "halfw@0.6": {
+     "train": {
+      "trades": 4530,
+      "total": 29.85,
+      "worst_day": -1.11,
+      "max_dd": 5.29,
+      "win": 38.5,
+      "green_days": 51.7,
+      "day_sd": 0.879
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 25.06,
+      "worst_day": -1.36,
+      "max_dd": 3.8,
+      "win": 36.9,
+      "green_days": 48.0,
+      "day_sd": 0.783
+     }
+    },
+    "lock@1": {
+     "train": {
+      "trades": 4530,
+      "total": 2.58,
+      "worst_day": -1.14,
+      "max_dd": 5.83,
+      "win": 35.3,
+      "green_days": 50.6,
+      "day_sd": 0.477
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": -2.25,
+      "worst_day": -1.2,
+      "max_dd": 5.25,
+      "win": 34.3,
+      "green_days": 45.0,
+      "day_sd": 0.46
+     }
+    },
+    "lock@0.5": {
+     "train": {
+      "trades": 4530,
+      "total": -7.01,
+      "worst_day": -0.95,
+      "max_dd": 7.36,
+      "win": 37.0,
+      "green_days": 42.6,
+      "day_sd": 0.395
+     },
+     "unseen": {
+      "trades": 4736,
+      "total": -9.0,
+      "worst_day": -0.93,
+      "max_dd": 9.01,
+      "win": 36.0,
+      "green_days": 35.8,
+      "day_sd": 0.338
+     }
+    },
+    "trl@2_1": {
+     "train": {
+      "trades": 4530,
+      "total": 7.65,
+      "worst_day": -1.09,
+      "max_dd": 5.89,
+      "win": 40.1,
+      "green_days": 52.8,
+      "day_sd": 0.522
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 3.21,
+      "worst_day": -1.28,
+      "max_dd": 4.52,
+      "win": 38.7,
+      "green_days": 49.3,
+      "day_sd": 0.471
+     }
+    },
+    "trl@2_1.5": {
+     "train": {
+      "trades": 4530,
+      "total": 9.6,
+      "worst_day": -1.12,
+      "max_dd": 5.85,
+      "win": 40.0,
+      "green_days": 51.1,
+      "day_sd": 0.544
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 3.14,
+      "worst_day": -1.28,
+      "max_dd": 6.24,
+      "win": 38.6,
+      "green_days": 46.3,
+      "day_sd": 0.532
+     }
+    },
+    "trl@3_1": {
+     "train": {
+      "trades": 4530,
+      "total": 11.49,
+      "worst_day": -1.11,
+      "max_dd": 6.02,
+      "win": 37.5,
+      "green_days": 52.3,
+      "day_sd": 0.537
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 11.68,
+      "worst_day": -1.29,
+      "max_dd": 3.0,
+      "win": 36.6,
+      "green_days": 51.1,
+      "day_sd": 0.537
+     }
+    },
+    "trl@3_1.5": {
+     "train": {
+      "trades": 4530,
+      "total": 13.36,
+      "worst_day": -1.1,
+      "max_dd": 6.18,
+      "win": 37.5,
+      "green_days": 52.3,
+      "day_sd": 0.552
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 10.77,
+      "worst_day": -1.3,
+      "max_dd": 3.79,
+      "win": 36.5,
+      "green_days": 48.9,
+      "day_sd": 0.572
+     }
+    },
+    "trl@3_2": {
+     "train": {
+      "trades": 4530,
+      "total": 12.78,
+      "worst_day": -1.11,
+      "max_dd": 6.32,
+      "win": 37.4,
+      "green_days": 51.1,
+      "day_sd": 0.565
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 14.38,
+      "worst_day": -1.35,
+      "max_dd": 3.75,
+      "win": 36.5,
+      "green_days": 48.5,
+      "day_sd": 0.618
+     }
+    },
+    "trl@4_1.5": {
+     "train": {
+      "trades": 4530,
+      "total": 16.29,
+      "worst_day": -1.1,
+      "max_dd": 6.25,
+      "win": 36.8,
+      "green_days": 52.8,
+      "day_sd": 0.569
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 15.15,
+      "worst_day": -1.31,
+      "max_dd": 3.54,
+      "win": 35.7,
+      "green_days": 49.3,
+      "day_sd": 0.602
+     }
+    },
+    "trl@4_2": {
+     "train": {
+      "trades": 4530,
+      "total": 15.55,
+      "worst_day": -1.11,
+      "max_dd": 6.43,
+      "win": 36.8,
+      "green_days": 52.8,
+      "day_sd": 0.571
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 17.3,
+      "worst_day": -1.35,
+      "max_dd": 4.08,
+      "win": 35.6,
+      "green_days": 49.8,
+      "day_sd": 0.637
+     }
+    },
+    "trl@5_2": {
+     "train": {
+      "trades": 4530,
+      "total": 17.73,
+      "worst_day": -1.11,
+      "max_dd": 6.18,
+      "win": 36.4,
+      "green_days": 53.4,
+      "day_sd": 0.587
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 18.2,
+      "worst_day": -1.29,
+      "max_dd": 4.39,
+      "win": 35.4,
+      "green_days": 50.7,
+      "day_sd": 0.655
+     }
+    },
+    "trl@5_3": {
+     "train": {
+      "trades": 4530,
+      "total": 19.86,
+      "worst_day": -1.12,
+      "max_dd": 6.22,
+      "win": 36.4,
+      "green_days": 51.7,
+      "day_sd": 0.607
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 17.67,
+      "worst_day": -1.29,
+      "max_dd": 5.27,
+      "win": 35.4,
+      "green_days": 48.9,
+      "day_sd": 0.685
+     }
+    },
+    "pick_per_strategy": {
+     "train": {
+      "trades": 4530,
+      "total": 33.94,
+      "worst_day": -1.13,
+      "max_dd": 4.39,
+      "win": 36.3,
+      "green_days": 52.8,
+      "day_sd": 0.853
+     },
+     "unseen": {
+      "trades": 6148,
+      "total": 22.04,
+      "worst_day": -1.51,
+      "max_dd": 3.86,
+      "win": 34.3,
+      "green_days": 45.9,
+      "day_sd": 0.764
+     }
+    }
+   },
+   "per_strategy": {
+    "SC501|5Min|XAUUSD": {
+     "pick": "asis",
+     "asis": {
+      "train": [
+       637,
+       77.81
+      ],
+      "unseen": [
+       904,
+       5.48
+      ]
+     }
+    },
+    "SC317|15Min|XAUUSD": {
+     "pick": "be@1.5",
+     "asis": {
+      "train": [
+       278,
+       24.95
+      ],
+      "unseen": [
+       425,
+       41.04
+      ]
+     },
+     "be@1.5": {
+      "train": [
+       278,
+       25.27
+      ],
+      "unseen": [
+       425,
+       39.29
+      ]
+     }
+    },
+    "IB034|15Min|XAUUSD": {
+     "pick": "be@1",
+     "asis": {
+      "train": [
+       384,
+       25.24
+      ],
+      "unseen": [
+       501,
+       27.66
+      ]
+     },
+     "be@1": {
+      "train": [
+       384,
+       27.19
+      ],
+      "unseen": [
+       501,
+       19.43
+      ]
+     }
+    },
+    "SC311|15Min|GER40": {
+     "pick": "asis",
+     "asis": {
+      "train": [
+       167,
+       9.08
+      ],
+      "unseen": [
+       223,
+       4.53
+      ]
+     }
+    },
+    "SC138|15Min|XAUUSD": {
+     "pick": "asis",
+     "asis": {
+      "train": [
+       29,
+       5.18
+      ],
+      "unseen": [
+       48,
+       4.07
+      ]
+     }
+    },
+    "SC402|15Min|XAUUSD": {
+     "pick": "trl@3_2",
+     "asis": {
+      "train": [
+       213,
+       44.51
+      ],
+      "unseen": [
+       274,
+       21.77
+      ]
+     },
+     "trl@3_2": {
+      "train": [
+       213,
+       56.75
+      ],
+      "unseen": [
+       274,
+       17.31
+      ]
+     }
+    },
+    "SC402|5Min|XAUUSD": {
+     "pick": "be@1.5",
+     "asis": {
+      "train": [
+       226,
+       47.86
+      ],
+      "unseen": [
+       278,
+       37.66
+      ]
+     },
+     "be@1.5": {
+      "train": [
+       226,
+       57.26
+      ],
+      "unseen": [
+       278,
+       33.13
+      ]
+     }
+    },
+    "SC432|15Min|XAUUSD": {
+     "pick": "be@1",
+     "asis": {
+      "train": [
+       196,
+       28.14
+      ],
+      "unseen": [
+       238,
+       20.2
+      ]
+     },
+     "be@1": {
+      "train": [
+       196,
+       33.05
+      ],
+      "unseen": [
+       238,
+       24.33
+      ]
+     }
+    },
+    "SC154|5Min|XAUUSD": {
+     "pick": "be@1",
+     "asis": {
+      "train": [
+       138,
+       21.18
+      ],
+      "unseen": [
+       289,
+       9.25
+      ]
+     },
+     "be@1": {
+      "train": [
+       138,
+       22.07
+      ],
+      "unseen": [
+       289,
+       8.19
+      ]
+     }
+    },
+    "SC069|15Min|XAUUSD": {
+     "pick": "halfw@0.6",
+     "asis": {
+      "train": [
+       107,
+       1.21
+      ],
+      "unseen": [
+       112,
+       9.78
+      ]
+     },
+     "halfw@0.6": {
+      "train": [
+       107,
+       2.74
+      ],
+      "unseen": [
+       112,
+       9.94
+      ]
+     }
+    },
+    "SC333|15Min|XAUUSD": {
+     "pick": "lock@1",
+     "asis": {
+      "train": [
+       293,
+       42.3
+      ],
+      "unseen": [
+       382,
+       5.28
+      ]
+     },
+     "lock@1": {
+      "train": [
+       293,
+       48.73
+      ],
+      "unseen": [
+       382,
+       1.18
+      ]
+     }
+    },
+    "SC071|15Min|US30": {
+     "pick": "trl@2_1",
+     "asis": {
+      "train": [
+       28,
+       2.21
+      ],
+      "unseen": [
+       78,
+       6.58
+      ]
+     },
+     "trl@2_1": {
+      "train": [
+       28,
+       7.54
+      ],
+      "unseen": [
+       78,
+       0.89
+      ]
+     }
+    },
+    "SC042|15Min|XAUUSD": {
+     "pick": "halfw@0.6",
+     "asis": {
+      "train": [
+       236,
+       4.25
+      ],
+      "unseen": [
+       316,
+       11.87
+      ]
+     },
+     "halfw@0.6": {
+      "train": [
+       236,
+       5.28
+      ],
+      "unseen": [
+       316,
+       13.65
+      ]
+     }
+    },
+    "SC441|5Min|XAUUSD": {
+     "pick": "asis",
+     "asis": {
+      "train": [
+       62,
+       40.88
+      ],
+      "unseen": [
+       87,
+       3.44
+      ]
+     }
+    },
+    "SC056|15Min|GBPUSD": {
+     "pick": "halfw@0.6",
+     "asis": {
+      "train": [
+       92,
+       10.64
+      ],
+      "unseen": [
+       115,
+       5.12
+      ]
+     },
+     "halfw@0.6": {
+      "train": [
+       92,
+       10.81
+      ],
+      "unseen": [
+       115,
+       5.32
+      ]
+     }
+    },
+    "SC077|5Min|US30": {
+     "pick": "halfw@0.5",
+     "asis": {
+      "train": [
+       103,
+       23.28
+      ],
+      "unseen": [
+       151,
+       18.57
+      ]
+     },
+     "halfw@0.5": {
+      "train": [
+       103,
+       28.64
+      ],
+      "unseen": [
+       151,
+       10.0
+      ]
+     }
+    },
+    "SC480|5Min|GER40": {
+     "pick": "asis",
+     "asis": {
+      "train": [
+       159,
+       5.94
+      ],
+      "unseen": [
+       212,
+       26.9
+      ]
+     }
+    },
+    "SC480|15Min|US100": {
+     "pick": "asis",
+     "asis": {
+      "train": [
+       149,
+       29.7
+      ],
+      "unseen": [
+       216,
+       25.17
+      ]
+     }
+    },
+    "SC480|5Min|US100": {
+     "pick": "asis",
+     "asis": {
+      "train": [
+       160,
+       26.48
+      ],
+      "unseen": [
+       234,
+       60.58
+      ]
+     }
+    },
+    "SC232|15Min|XAUUSD": {
+     "pick": "be@1",
+     "asis": {
+      "train": [
+       155,
+       22.87
+      ],
+      "unseen": [
+       221,
+       4.31
+      ]
+     },
+     "be@1": {
+      "train": [
+       155,
+       26.7
+      ],
+      "unseen": [
+       221,
+       -1.49
+      ]
+     }
+    },
+    "SC326|15Min|USDCHF": {
+     "pick": "be@1.5",
+     "asis": {
+      "train": [
+       119,
+       10.91
+      ],
+      "unseen": [
+       129,
+       6.67
+      ]
+     },
+     "be@1.5": {
+      "train": [
+       119,
+       17.72
+      ],
+      "unseen": [
+       129,
+       9.78
+      ]
+     }
+    },
+    "SC486|15Min|USDCHF": {
+     "pick": "trl@3_1",
+     "asis": {
+      "train": [
+       48,
+       9.53
+      ],
+      "unseen": [
+       61,
+       6.75
+      ]
+     },
+     "trl@3_1": {
+      "train": [
+       48,
+       9.94
+      ],
+      "unseen": [
+       61,
+       5.94
+      ]
+     }
+    },
+    "SC512|5Min|GER40": {
+     "pick": "half@1",
+     "asis": {
+      "train": [
+       40,
+       13.78
+      ],
+      "unseen": [
+       45,
+       10.49
+      ]
+     },
+     "half@1": {
+      "train": [
+       40,
+       19.09
+      ],
+      "unseen": [
+       45,
+       15.45
+      ]
+     }
+    },
+    "SC326|5Min|GBPUSD": {
+     "pick": "be@0.5",
+     "asis": {
+      "train": [
+       120,
+       15.16
+      ],
+      "unseen": [
+       130,
+       40.62
+      ]
+     },
+     "be@0.5": {
+      "train": [
+       120,
+       25.7
+      ],
+      "unseen": [
+       130,
+       -3.66
+      ]
+     }
+    },
+    "QC04|15Min|EURUSD": {
+     "pick": "asis",
+     "asis": {
+      "train": [
+       46,
+       13.6
+      ],
+      "unseen": [
+       52,
+       24.66
+      ]
+     }
+    },
+    "BK07|15Min|EURUSD": {
+     "pick": "asis",
+     "asis": {
+      "train": [
+       55,
+       30.37
+      ],
+      "unseen": [
+       70,
+       11.66
+      ]
+     }
+    },
+    "FR03|15Min|GBPUSD": {
+     "pick": "be@1",
+     "asis": {
+      "train": [
+       17,
+       22.96
+      ],
+      "unseen": [
+       34,
+       12.22
+      ]
+     },
+     "be@1": {
+      "train": [
+       17,
+       23.96
+      ],
+      "unseen": [
+       34,
+       7.75
+      ]
+     }
+    },
+    "BK07|15Min|US100": {
+     "pick": "be@2",
+     "asis": {
+      "train": [
+       45,
+       17.0
+      ],
+      "unseen": [
+       60,
+       11.51
+      ]
+     },
+     "be@2": {
+      "train": [
+       45,
+       18.94
+      ],
+      "unseen": [
+       60,
+       12.32
+      ]
+     }
+    },
+    "SC142|15Min|XAUUSD": {
+     "pick": "be@2",
+     "asis": {
+      "train": [
+       66,
+       28.11
+      ],
+      "unseen": [
+       75,
+       9.3
+      ]
+     },
+     "be@2": {
+      "train": [
+       66,
+       30.11
+      ],
+      "unseen": [
+       75,
+       8.79
+      ]
+     }
+    },
+    "SC326|15Min|USDJPY": {
+     "pick": "be@0.5",
+     "asis": {
+      "train": [
+       104,
+       32.66
+      ],
+      "unseen": [
+       124,
+       6.4
+      ]
+     },
+     "be@0.5": {
+      "train": [
+       104,
+       33.93
+      ],
+      "unseen": [
+       124,
+       -5.09
+      ]
+     }
+    },
+    "SC446|5Min|US30": {
+     "pick": "halfw@0.6",
+     "asis": {
+      "train": [
+       58,
+       5.33
+      ],
+      "unseen": [
+       64,
+       10.67
+      ]
+     },
+     "halfw@0.6": {
+      "train": [
+       58,
+       7.26
+      ],
+      "unseen": [
+       64,
+       12.88
+      ]
+     }
+    }
+   },
+   "vs_asis": {
+    "be@0.5": {
+     "train": {
+      "total": -21.77,
+      "max_dd": -0.12
+     },
+     "unseen": {
+      "total": -16.82,
+      "max_dd": 0.22
+     }
+    },
+    "be@1": {
+     "train": {
+      "total": -11.66,
+      "max_dd": -0.58
+     },
+     "unseen": {
+      "total": -12.34,
+      "max_dd": -0.15
+     }
+    },
+    "be@1.5": {
+     "train": {
+      "total": -6.28,
+      "max_dd": -0.47
+     },
+     "unseen": {
+      "total": -7.74,
+      "max_dd": 0.65
+     }
+    },
+    "be@2": {
+     "train": {
+      "total": -4.73,
+      "max_dd": -0.09
+     },
+     "unseen": {
+      "total": -7.38,
+      "max_dd": 1.12
+     }
+    },
+    "half@0.5": {
+     "train": {
+      "total": -34.35,
+      "max_dd": 1.44
+     },
+     "unseen": {
+      "total": -32.92,
+      "max_dd": 3.41
+     }
+    },
+    "half@1": {
+     "train": {
+      "total": -23.45,
+      "max_dd": -1.12
+     },
+     "unseen": {
+      "total": -25.69,
+      "max_dd": 0.58
+     }
+    },
+    "half@1.5": {
+     "train": {
+      "total": -17.85,
+      "max_dd": -0.85
+     },
+     "unseen": {
+      "total": -19.0,
+      "max_dd": -0.62
+     }
+    },
+    "half@2": {
+     "train": {
+      "total": -16.31,
+      "max_dd": -0.23
+     },
+     "unseen": {
+      "total": -16.8,
+      "max_dd": -0.11
+     }
+    },
+    "bew@0.5": {
+     "train": {
+      "total": -0.56,
+      "max_dd": -0.11
+     },
+     "unseen": {
+      "total": -1.07,
+      "max_dd": 0.12
+     }
+    },
+    "bew@0.6": {
+     "train": {
+      "total": 0.02,
+      "max_dd": 0.0
+     },
+     "unseen": {
+      "total": 0.0,
+      "max_dd": 0.0
+     }
+    },
+    "halfw@0.5": {
+     "train": {
+      "total": -1.2,
+      "max_dd": -0.4
+     },
+     "unseen": {
+      "total": -2.43,
+      "max_dd": 0.01
+     }
+    },
+    "halfw@0.6": {
+     "train": {
+      "total": -0.44,
+      "max_dd": -0.35
+     },
+     "unseen": {
+      "total": -1.21,
+      "max_dd": -0.34
+     }
+    },
+    "lock@1": {
+     "train": {
+      "total": -27.71,
+      "max_dd": 0.19
+     },
+     "unseen": {
+      "total": -28.52,
+      "max_dd": 1.11
+     }
+    },
+    "lock@0.5": {
+     "train": {
+      "total": -37.3,
+      "max_dd": 1.72
+     },
+     "unseen": {
+      "total": -35.27,
+      "max_dd": 4.87
+     }
+    },
+    "trl@2_1": {
+     "train": {
+      "total": -22.64,
+      "max_dd": 0.25
+     },
+     "unseen": {
+      "total": -23.06,
+      "max_dd": 0.38
+     }
+    },
+    "trl@2_1.5": {
+     "train": {
+      "total": -20.69,
+      "max_dd": 0.21
+     },
+     "unseen": {
+      "total": -23.13,
+      "max_dd": 2.1
+     }
+    },
+    "trl@3_1": {
+     "train": {
+      "total": -18.8,
+      "max_dd": 0.38
+     },
+     "unseen": {
+      "total": -14.59,
+      "max_dd": -1.14
+     }
+    },
+    "trl@3_1.5": {
+     "train": {
+      "total": -16.93,
+      "max_dd": 0.54
+     },
+     "unseen": {
+      "total": -15.5,
+      "max_dd": -0.35
+     }
+    },
+    "trl@3_2": {
+     "train": {
+      "total": -17.51,
+      "max_dd": 0.68
+     },
+     "unseen": {
+      "total": -11.89,
+      "max_dd": -0.39
+     }
+    },
+    "trl@4_1.5": {
+     "train": {
+      "total": -14.0,
+      "max_dd": 0.61
+     },
+     "unseen": {
+      "total": -11.12,
+      "max_dd": -0.6
+     }
+    },
+    "trl@4_2": {
+     "train": {
+      "total": -14.74,
+      "max_dd": 0.79
+     },
+     "unseen": {
+      "total": -8.97,
+      "max_dd": -0.06
+     }
+    },
+    "trl@5_2": {
+     "train": {
+      "total": -12.56,
+      "max_dd": 0.54
+     },
+     "unseen": {
+      "total": -8.07,
+      "max_dd": 0.25
+     }
+    },
+    "trl@5_3": {
+     "train": {
+      "total": -10.43,
+      "max_dd": 0.58
+     },
+     "unseen": {
+      "total": -8.6,
+      "max_dd": 1.13
+     }
+    },
+    "pick_per_strategy": {
+     "train": {
+      "total": 3.65,
+      "max_dd": -1.25
+     },
+     "unseen": {
+      "total": -4.23,
+      "max_dd": -0.28
+     }
+    }
+   },
+   "best_train": {
+    "way": "pick_per_strategy",
+    "train": {
+     "total": 3.65,
+     "max_dd": -1.25
+    },
+    "unseen": {
+     "total": -4.23,
+     "max_dd": -0.28
     }
    },
    "both": []

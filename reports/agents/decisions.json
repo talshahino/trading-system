@@ -1,7 +1,100 @@
 {
- "updated": "2026-11-18T13:48:14+00:00",
- "new": [],
+ "updated": "2026-11-18T14:10:45+00:00",
+ "new": [
+  "6206a103ba8d",
+  "40c94fecbd60",
+  "62ab3d394226",
+  "576ff3e98b9e"
+ ],
  "decisions": [
+  {
+   "id": "6206a103ba8d",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV60|15Min|ARM",
+   "title": "TV60|15Min|ARM: סיכון ×1.15",
+   "decision": "approved",
+   "why": "רווח ממוצע +0.32R מול -0.16R של הבוט, יציבות 0.96, 8 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "TV60|15Min|ARM",
+    "kind": "mult",
+    "value": 1.15,
+    "prev": 1.28
+   },
+   "at": "2026-11-18T14:10:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "40c94fecbd60",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "remove",
+   "combo": "SE02|1Hour|USDJPY",
+   "title": "SE02|1Hour|USDJPY: להסיר",
+   "decision": "approved",
+   "why": "-8.8R ב־20 עסקאות, מתחת לקו -8.1R (כלל ההסרה)",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "SE02|1Hour|USDJPY",
+    "kind": "mult",
+    "value": 0,
+    "prev": 0.45
+   },
+   "at": "2026-11-18T14:10:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "62ab3d394226",
+   "bot": "bot2",
+   "type": "risk",
+   "kind": "remove",
+   "combo": "SE02|1Hour|USDJPY",
+   "title": "SE02|1Hour|USDJPY: להסיר",
+   "decision": "approved",
+   "why": "-8.8R ב־20 עסקאות, מתחת לקו -8.1R (כלל ההסרה)",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot2",
+    "combo": "SE02|1Hour|USDJPY",
+    "kind": "mult",
+    "value": 0,
+    "prev": 0.39
+   },
+   "at": "2026-11-18T14:10:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "576ff3e98b9e",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "remove",
+   "combo": "SE02|1Hour|USDJPY",
+   "title": "SE02|1Hour|USDJPY: להסיר",
+   "decision": "approved",
+   "why": "-8.8R ב־20 עסקאות, מתחת לקו -8.1R (כלל ההסרה)",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot4",
+    "combo": "SE02|1Hour|USDJPY",
+    "kind": "mult",
+    "value": 0,
+    "prev": 0.83
+   },
+   "at": "2026-11-18T14:10:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "3b9914bafd5b",
    "bot": "bot3",

@@ -15,6 +15,9 @@ on:
       key:
         description: "results key (wide / wide_tp30)"
         default: "wide"
+      groups:
+        description: 'JSON list of machine groups, e.g. ["EURUSD","GBPUSD"]; empty = the full list'
+        default: ""
 
 permissions:
   contents: write
@@ -25,9 +28,9 @@ jobs:
     timeout-minutes: 175
     strategy:
       fail-fast: false
-      max-parallel: 20
+      max-parallel: 30
       matrix:
-        symbols: ["US100,US30", "US500,GER40,JP225", "XAUUSD,EURUSD", "AUDCAD,AUDCHF", "AUDJPY,AUDNZD", "AUDUSD,CADCHF", "CADJPY,CHFJPY", "EURAUD,EURCAD", "EURCHF,EURGBP", "EURJPY,EURNZD", "GBPAUD,GBPCAD", "GBPCHF,GBPJPY", "GBPNZD,GBPUSD", "NZDCAD,NZDCHF", "NZDJPY,NZDUSD", "USDCAD,USDCHF", "USDJPY,XAGUSD", "XPTUSD,UK100", "FRA40,EU50", "AUS200,HK50", "N25,SPN35", "US2000"]
+        symbols: ${{ fromJSON(inputs.groups != '' && inputs.groups || '["US100,US30", "US500,GER40,JP225", "XAUUSD,EURUSD", "AUDCAD,AUDCHF", "AUDJPY,AUDNZD", "AUDUSD,CADCHF", "CADJPY,CHFJPY", "EURAUD,EURCAD", "EURCHF,EURGBP", "EURJPY,EURNZD", "GBPAUD,GBPCAD", "GBPCHF,GBPJPY", "GBPNZD,GBPUSD", "NZDCAD,NZDCHF", "NZDJPY,NZDUSD", "USDCAD,USDCHF", "USDJPY,XAGUSD", "XPTUSD,UK100", "FRA40,EU50", "AUS200,HK50", "N25,SPN35", "US2000"]') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

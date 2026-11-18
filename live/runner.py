@@ -902,6 +902,19 @@ def note_slip(sym, d, asked, filled):
     del q[:-SLIP_KEEP]
 
 
+def fit_lots_to_risk(info, lots, loss, risk, most=0.05):
+    """The size that loses no more than `risk` at the stop, when MetaTrader's loss for the rounded size is a hair over it
+    (bots 1-4 smart agent, 18.11.2026: bot 1 TV37|4Hour|N25 was blocked at 24.36 lots, $179.11 against $179.06 allowed -
+    5 cents - and the trade was lost). Rounded down to the volume step, so the red line holds: never above the risk.
+    More than `most` over means the size itself is wrong: 0.0, and the trade stays blocked."""
+    if not (loss > 0 and lots > 0 and risk > 0) or loss > risk * (1 + most):
+        return 0.0
+    step = info.volume_step or 0.01
+    digits = max(0, len(f"{step:.8f}".rstrip("0").split(".")[1]))
+    fit = round(float(np.floor(lots * risk / loss / step + 1e-9) * step), digits)
+    return fit if info.volume_min <= fit < lots else 0.0
+
+
 def trim_to_risk(name, ticket, lots, real, risk):
     """A fill that put the loss at the stop over the trade's risk (+10%) is cut back at once to the size that loses the
     risk at the stop (user's red line: no trade risks more than the bot's risk). Bots 1-4 smart agent, 17.11.2026: on
@@ -1000,6 +1013,10 @@ def open_trade(combo, sym, d, sl, tp, entry_time, risk=None, mult=1.0, rules=Non
         loss = 0.0
     if not loss:
         loss = lots * abs(size_px - sl_r) / info.trade_tick_size * info.trade_tick_value
+    if loss > risk + 0.01 and (fit := fit_lots_to_risk(info, lots, loss, risk)):
+        log(f"{combo}: {lots} lots would lose ${loss:,.2f} at the stop, the risk is ${risk:,.2f} - {fit} lots")
+        loss *= fit / lots
+        lots = fit
     if loss > risk + 0.01:
         log(f"BLOCKED {combo}: {lots} lots would lose ${loss:,.2f} at the stop, above the allowed risk ${risk:,.2f}")
         REP.notify(f"{BOT}: עסקה נחסמה", f"{pretty(combo)}\nבסטופ היא הייתה מפסידה ${loss:,.0f}, יותר מהסיכון המותר (${risk:,.0f}). לא נפתחה.",
@@ -1115,6 +1132,10 @@ def send_limit(combo, sym, d, lim, sl, tp, risk, mult=1.0, rules=None, note=""):
         loss = 0.0
     if not loss:
         loss = lots * abs(lim - sl) / info.trade_tick_size * info.trade_tick_value
+    if loss > risk + 0.01 and (fit := fit_lots_to_risk(info, lots, loss, risk)):
+        log(f"{combo}: {lots} lots would lose ${loss:,.2f} at the stop, the risk is ${risk:,.2f} - {fit} lots")
+        loss *= fit / lots
+        lots = fit
     if loss > risk + 0.01:
         log(f"BLOCKED {combo}: {lots} lots would lose ${loss:,.2f} at the stop, above the allowed risk ${risk:,.2f}")
         return None

@@ -1151,6 +1151,17 @@ def main():
                                timeout=int(mins * 60 + 1800))
         except Exception as e:  # noqa: BLE001
             print(f"bot7 straddle extra study failed: {e}")
+        # EV04 replayed on real ticks (bot 7 smart agent, 18.11.2026, agents/news_straddle_ticks.py): is the candle
+        # study's profit there at the prices a stop order really gets in the release's first seconds? A quarter of the
+        # budget until it is complete (it resumes), then weekly
+        try:
+            from agents import news_straddle_ticks as NSTK
+            if NSTK.stale() and not NS.stale():
+                mins = max(6.0, a.minutes / 4)
+                subprocess.run([sys.executable, "-m", "agents.news_straddle_ticks", "--minutes", str(mins)], cwd=str(ROOT),
+                               timeout=int(mins * 60 + 1800))
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 straddle ticks study failed: {e}")
         # EV05, fading the release spike early (the user's task tal1411fade, 14.11.2026, agents/news_fade.py): a
         # quarter of the budget, right after the straddle, gold first
         try:

@@ -1,0 +1,45 @@
+name: AUD release watch (bot 7, no money)
+
+# The Australian dollar's day after its releases, watched on the side (user, 18.11.2026) - agents/aud_watch.py.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Run
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: python -u -m agents.aud_watch 2>&1 | tail -30
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/agents/bot7/aud_watch.json reports/agents/bot7/calendar_full.json || true
+          git commit -qm "AUD release watch bot 7 (agents/aud_watch)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

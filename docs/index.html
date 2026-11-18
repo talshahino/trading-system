@@ -1352,11 +1352,12 @@ function botTalk(s) {
       <div><small class="mut">חזרו אחר כך לכניסה</small><b>${BW.back}</b><small class="mut">${BW.back_lost} מהן נסגרו בהפסד · ${BW.back_won} ברווח</small></div>
       <div><small class="mut">R כמו שרץ / עם סטופ לכניסה</small><b class="${BW.r_real >= 0 ? "pos" : "neg"}">${BW.r_real}</b> / <b class="${BW.r_be60 >= BW.r_real ? "pos" : "neg"}">${BW.r_be60}</b></div></div>
       <div class="mut" style="margin-top:8px">${BW.n < 20 ? `עוד ${20 - BW.n} עסקאות עד שיהיה על מה להחליט.` : BW.r_be60 > BW.r_real ? "עד עכשיו סטופ לכניסה ב־60% היה עדיף." : "עד עכשיו הניהול של היום עדיף."}</div></div>` : "";
-  box.innerHTML = rvHtml + lnHtml + bwHtml + cbHtml + l7Html + `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
+  box.innerHTML = rvHtml + lnHtml + bwHtml + cbHtml + l7Html + (UI.cur === "news_bot" ? `<div id="audCard"></div>` : "") + `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
       <textarea id="btTxt" rows="3" placeholder="דבר או כתוב לסוכן על הבוט כולו: מה ראית היום, מה מפריע לך, מה לבדוק…"></textarea>
       <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="btMic">🎙 הקלטה</button><button class="btn" id="btSave">שלח לסוכן</button></div>
       <div class="msg mut" id="btMsg"></div><div id="btList"></div></div>`;
   if (L) comboFill();
+  if (UI.cur === "news_bot") audFill();
   tradeNotes({id: "talk"}, "bt", UI.cur);
 }
 $("dSubt").onclick = e => { const b = e.target.closest("[data-s]"); if (b) { if (UI.sub === "ov") SNAP.ov = $("dBody").innerHTML.replace(/\sid="[^"]*"/g, ""); UI.sub = b.dataset.s; $("dBody").innerHTML = ""; renderDet();
@@ -2678,6 +2679,20 @@ function showRecent(P, tFirst, n) {
 }
 /* bot 5: the gap method by track x instrument (user, 18.11.2026: "which instrument is good for which timeframes") -
    reports/agents/bot5/combo_stats.json (agents/tal_combo.py): backtest 2025 / 2026, live, his answers, the verdict */
+/* bot 7: the Australian dollar's day after its releases, watched on the side with no money (user, 18.11.2026) -
+   reports/agents/bot7/aud_watch.json (agents/aud_watch.py) */
+async function audFill() {
+  let d = null;
+  try { const r = await fetch(`https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/bot7/aud_watch.json?t=${Math.floor(Date.now() / 300000)}`, {cache: "no-store"}); if (r.ok) d = await r.json(); } catch (e) {}
+  const el = $("audCard"); if (!d || !el) return;
+  const T = d.total || {}, f = v => v == null ? "—" : (v >= 0 ? "+" : "") + v;
+  const tr = (d.trades || []).filter(x => x.hold === 24).slice(0, 12).map(x => `<tr><td><bdi>${esc(x.sym)}</bdi></td><td>${dOnly(x.release)} ${tOnly(x.release)}<br><small class="mut">${esc(x.title)} · ${x.good > 0 ? "טוב ל־AUD" : "רע ל־AUD"}</small></td><td>${x.dir > 0 ? "לונג" : "שורט"}</td><td class="${x.r >= 0 ? "pos" : "neg"}">${f(x.r)}R${x.status === "open" ? ` <small class="mut">פתוחה</small>` : ""}</td></tr>`).join("");
+  const row = (k, l) => { const x = T[k] || {}; return `<div><small class="mut">${l}</small><b class="${(x.sum || 0) >= 0 ? "pos" : "neg"}">${f(x.sum)}R</b><small class="mut">${x.closed || 0} נסגרו · ממוצע ${f(x.mean)} מול ${f(x.bt_mean)} בהיסטוריה</small></div>`; };
+  el.innerHTML = `<div class="h4" style="margin-top:18px">בדיקה בצד: הדולר האוסטרלי אחרי פרסום (בלי כסף)</div><div class="card">
+    <div class="mut" style="margin-bottom:8px">${esc(d.rules || "")}. מ־18.11: ${d.releases} פרסומים.</div>
+    <div class="kv">${row("24", "החזקה של יום")}${row("72", "החזקה של 3 ימים")}</div>
+    ${tr ? `<div class="tw" style="margin-top:8px"><table class="rt"><tr><th>נכס</th><th>פרסום</th><th>כיוון</th><th>R</th></tr>${tr}</table></div>` : `<div class="mut" style="margin-top:8px">עוד לא היה פרסום.</div>`}</div>`;
+}
 async function comboFill() {
   const el = $("comboCard"); if (!el) return;
   let d = null;

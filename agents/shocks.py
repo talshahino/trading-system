@@ -605,7 +605,14 @@ def fix_sh01(rows, now):
                 by.setdefault(col, {})[str(v)] = {"variants": int(len(y)), "train_median_sum": round(float(y["sum"].median()), 2),
                                                   "unseen_median_sum": round(float(np.median(u)), 2),
                                                   "unseen_positive": int(sum(1 for z in u if z > 0))}
-        out[sym] = {"current": show(k_cur) if cur else None, "best": show(top[0]), "top": [show(k) for k in top],
+        # the live version itself with a stop moved to the entry (18.11.2026): the top 10 of 2025 did not show it
+        be_cur = {}
+        if cur:
+            for be in BES:
+                k_be = k_cur[:5] + (float(be),) + k_cur[6:]
+                if k_be in g.index or k_be in ug.index:
+                    be_cur[str(be)] = show(k_be)
+        out[sym] = {"current": show(k_cur) if cur else None, "current_be": be_cur, "best": show(top[0]), "top": [show(k) for k in top],
                     "top10_positive_unseen": int(sum(1 for k in top if k in ug.index and ug.loc[k, "sum"] > 0)),
                     "walk_forward_2025": wf, "by": by, "tested": int(len(g))}
     return out

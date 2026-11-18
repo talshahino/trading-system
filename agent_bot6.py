@@ -614,11 +614,26 @@ def _b5_rev(k, v):
     return t if "עוד רץ" in t or "←" in t else f"אותה בדיקה רצה על המסלולים של בוט 5 ({src})."
 
 
+# BOT 5'S TESTS OF 18.11.2026 ON BOT 6'S FOUR TRACKS (shared methods, bot 6's smart agent, 19.11.2026 night). (1) The room
+# beyond the stop and the far minimum stop (b5widestop1811, the user on JP225: "a slightly wider stop would have paid"):
+# IPAD works on every stop but the 2nd swing's. (2) The stop beyond the whole move's extreme (STOPAT move / mover, the user,
+# 18.11). (3) A floor on the gap's size (b5mingap1811, the user on US30: "too small, that doesn't count as a gap"): tal4h
+# and t5_1 run with MIN_GAP 0. One knob each, the same in simulate and in live_trades, a card only if better on 2026 too.
+WIDE6 = tuple(("IPAD", v) for v in ("p0.1", "p0.2", "p0.4", "a0.1", "a0.25", "a0.5")) + (("MINSTOP", 1.5), ("MINSTOP", 2.0))
+MOVE6 = (("STOPAT", "move"), ("STOPAT", "mover"))
+MING6 = (("MIN_GAP", 0.05), ("MIN_GAP", 0.1), ("MIN_GAP", 0.15))
+FILT_HE["IPAD"] = lambda v: (f"מרווח נוסף מעבר לסטופ: {str(v)[1:]}% מהמחיר" if str(v).startswith("p")
+                             else f"מרווח נוסף מעבר לסטופ: {str(v)[1:]} × ATR של הטיים פריים הגבוה") + f" (IPAD {v})"
+FILT_HE["MIN_GAP"] = lambda v: f"גאפ בגודל של לפחות {v:g} מהטווח הממוצע (MIN_GAP {v:g})"
+FILT_HE["STOPAT"] = (lambda f0: lambda v: {"move": "סטופ מעבר לקיצון של כל התנועה (STOPAT move)",
+                                           "mover": "כמו בסקירות שלך: העסקה נבחרת לפי הסטופ של הכללים, הסטופ מעבר לקיצון של כל התנועה והיעד נשאר (STOPAT mover)"}.get(str(v)) or f0(v))(FILT_HE["STOPAT"])
+REV6_SRC.update({"IPAD": (("_widestop",), "b5widestop1811"), "MIN_GAP": (("_mingap",), "b5mingap1811")})
+
 CODE6 = ("PYR", "FOLLOW", "WAITX")     # knobs live_trades does not run yet: an approved card is built by the smart agent
 TASK6 = {"gaveback": GAVE6, "follow": FOL6, "brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
          "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6,
-         "gapx": GAPX6, "firstg": FG6, "stopat": STOP6, "waitx": WAIT6}
-USER6 = REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+         "gapx": GAPX6, "firstg": FG6, "stopat": STOP6, "waitx": WAIT6, "widestop": WIDE6, "stopmove": MOVE6, "mingap": MING6}
+USER6 = WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
@@ -776,10 +791,11 @@ def filt_cards(idx, group=FILT6):
                           + ("משימה של טל מ־16.11 (הפסדים שהיו ברווח - יציאה חלקית). " if (k, v) in GAVE6 else "")
                           + ("משימה של טל מ־16.11 (נרות חזקים אחרי הכניסה - b5follow1611). " if k == "FOLLOW" else "")
                           + ("משימה של טל מ־17.11 (הסקירה של הגאפים בבוט 5 - שיטה משותפת). " if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX") else "")
+                          + ("משימה של טל מ־18.11 (סטופ רחב יותר וגודל גאפ - שיטה משותפת עם בוט 5). " if k in ("IPAD", "MIN_GAP") or (k, v) in WIDE6 else "")
                           + "בבוט 5: " + ("עוד לא נבדק - שיטה של בוט 6, נשלחה לבוט 5 כמשימה (b6to5rearm)." if k == "REARM" else
                                           _b5_gave(v) if (k, v) in GAVE6 else
                                           _b5_gave(v, ("_follow",)) if k == "FOLLOW" else
-                                          _b5_rev(k, v) if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX") else
+                                          _b5_rev(k, v) if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX", "IPAD", "MIN_GAP") else
                                           _b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND", "G3", "SWP", "BRKH") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10")
                                           else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],

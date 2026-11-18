@@ -438,7 +438,15 @@ NOTE_TESTS += [
         {"id": f"{trk}_stopatr_fg", "track": trk, "knob": "STOPAT", "vals": ["leg1r", "sw0r"], "src": "b5stopimp1711",
          "with": {"FIRSTG": "lo"}, "inform": True,
          "he": "כמו בסקירות שלך, על הגאפ הראשון בלבד"})]
+NOTE_TESTS += [
+    # bot 6's shared method (task b6to5beor1811, 18.11.2026): the stop to the entry at a share of the way or at +1R, the
+    # earlier of the two - on a far target a share of the way is many R away (US30 t5_1 of 18.11 reached +1.44R, 35.6% of
+    # the way, and came back to the full stop). Against each track's management as it runs; a settings card when it wins
+    {"id": f"{trk}_beor", "track": trk, "knob": "EXIT", "vals": ["be382o1r", "be50o1r", "be618o1r"], "src": "b6to5beor1811",
+     "he": "סטופ לכניסה במוקדם מבין אחוז מהדרך ו־+1R"}
+    for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5", "t5_1")]
 NOTE_SRC = {"tal1711review": "משימה של טל מ־17.11 (הסקירה: הגאפ שקובע הוא הראשון, בתחילת הדחף).",
+            "b6to5beor1811": "שיטה משותפת מסוכן בוט 6 מ־18.11 (סטופ לכניסה במוקדם מבין אחוז מהדרך ו־+1R).",
             "b5stopimp1711": "משימה של טל מ־17.11 (הסקירה: כשנכנסים בגאפ מאוחר - הסטופ בתחילת הדחף).",
             "tal1711gapclose": "משימה של טל מ־17.11 (ההגדרה שלו לסגירת גאפ: וויק שסוגר את כל הגאפ).",
             "b5follow1611": "משימה של טל מ־16.11 (נרות חזקים מיד אחרי הכניסה = יותר ביטחון).",
@@ -480,7 +488,7 @@ def _note_cfgs():
 # whole backlog at once with the budget checked only between symbols - about one symbol per pass, and a test counts only
 # with all five, so nothing he asked for finished before the fifth pass, about a day later (GAPX, asked on 17.11, was
 # still "running" on 18.11). Now: his tests first, a few settings at a time on all five symbols.
-NOTE_FIRST = ("stopatr", "firstg", "gapx", "stopat", "follow", "stopatr_fg", "stopat_fg")
+NOTE_FIRST = ("stopatr", "firstg", "gapx", "stopat", "follow", "stopatr_fg", "stopat_fg", "beor")
 NOTE_BATCH = 12          # settings per round: all five symbols of a round end before the next round starts
 
 

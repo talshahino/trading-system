@@ -723,6 +723,7 @@ def host_doc(st, kind):
             "smart_minutes": st.get("smart_minutes"), "agent_errors": st.get("agent_errors") or [],
             "agent_last": st.get("agent_last") or {}, "agent_tail": st.get("agent_tail") or {},
             "agent_runs": st.get("agent_runs") or {}, "agent_errors_24h": st.get("agent_errors_24h") or [],
+            "portfolio": st.get("portfolio"),
             "box_pub": box_pub(), "alpaca": bool(secrets()), "pub_skipped": _S.get("pub_skipped") or [],
             "last_error": st.get("last_error"),
             "errors_in_row": st.get("errors_in_row", 0), "machine": machine()}
@@ -943,9 +944,23 @@ def _smart(st, log, t0):
 
 
 def _portfolio_check(st):
-    run(st, ["-m", "agents.portfolio_check"], timeout=600, logname="portfolio_check.log")
-    st["portfolio_at"] = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
-    _save(st)
+    """The daily whole-bot replay (reports/agents/<bot>/portfolio.json). Its outcome goes to host.json "portfolio"
+    (manager, 18.11.2026: portfolio.json stayed from 16.11 12:31 for 36 hours while every agent round published - a
+    failure here was only written to the manager's own log, and with portfolio_at never stamped it was tried again
+    after every agent, up to 10 minutes each time). A failed try waits 3 hours too, and shows in host.json."""
+    t0 = time.time()
+    now = time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime())
+    try:
+        run(st, ["-m", "agents.portfolio_check"], timeout=1500, logname="portfolio_check.log")
+        st["portfolio"] = {"at": now, "ok": True, "sec": int(time.time() - t0)}
+    except Exception as e:  # noqa: BLE001
+        st["portfolio"] = {"at": now, "ok": False, "sec": int(time.time() - t0), "err": str(e)[-300:]}
+        hist = [x for x in st.get("agent_errors_24h") or [] if time.time() - (_ts(x.get("at")) or 0.0) < 86400]
+        st["agent_errors_24h"] = (hist + [{"at": now, "err": f"portfolio_check: {e}"[:300]}])[-20:]
+        raise
+    finally:
+        st["portfolio_at"] = now
+        _save(st)
 
 
 def _tail(logname):

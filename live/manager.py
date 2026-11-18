@@ -1113,7 +1113,9 @@ def watchdog():
                 follow_source()
                 start_watch()
                 start_news()
-            for a in list(accounts()):
+            # while an update installs, the bots are stopped on purpose: starting them again here (18.11.2026) made
+            # them run on half-replaced files for ~5 minutes, then the restarted manager killed them as "an older copy"
+            for a in ([] if WATCH.get("installing") else list(accounts())):
                 if a.get("enabled") and not a.get("preparing") and not running(a["name"]):
                     if a.get("started") and time.time() - a["started"] < 120:
                         continue                              # it just stopped right after starting: wait

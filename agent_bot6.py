@@ -1527,6 +1527,29 @@ def scale_cards(pf, rk):
 # in total, its worst day and deepest fall stay inside the same margin. Bot 5 trades CFDs in fractions of a lot - it has
 # no such skip, so this is bot 6's own.
 ONE6 = (0.002, 0.003, 0.004)
+# ONE MICRO ON THE STRONG TRACKS ONLY (bot 6's smart agent, 19.11.2026 night; a test, nothing changes in the trading). On all
+# four tracks the 0.3% version earned more on both periods (2026 +11.3% -> +17.6%) but its worst day and deepest fall grew, so
+# no card. The skipped trades are worth most on the slow tracks, whose edge per trade is the largest and whose stops are the
+# widest: the same rule for 1 hour / 5 minutes alone and with 4 hours / 1 hour. The rule is fixed here, before the result:
+# chosen on 2024-2025 by one6_cards' test (more profit, the worst day and the fall no worse, inside 80% of the limits), then
+# it must pass the same test on 2026. Only then a card, and the per-track setting is built in the live bot.
+ONE6_TRK = {f"{'+'.join(ts_)}@{x_:g}": {t_: x_ for t_ in ts_} for ts_ in (("tal",), ("tal", "tal4h")) for x_ in ONE6}
+
+
+def one6_trk_view(pf):
+    a = (pf or {}).get("account") or {}
+    om, now = a.get("one_micro_trk") or {}, a.get("now") or {}
+    nt, nu = now.get("train") or {}, now.get("unseen") or {}
+    if not om or not nt or not nu:
+        return {}
+    L = fut_lim()
+    better = lambda x, b: bool(x) and not x.get("stopped") and x.get("max_fall_pct", 99) <= 0.8 * L["all"] + 1e-9 \
+        and x.get("worst_day_pct", -99) >= -0.8 * L["day"] - 1e-9 and x.get("total_pct", -99) > b.get("total_pct", -99) \
+        and x.get("worst_day_pct", -99) >= b.get("worst_day_pct", 0) - 1e-9 \
+        and x.get("max_fall_pct", 99) <= b.get("max_fall_pct", 0) + 1e-9      # noqa: E731
+    ok = [k for k, r in om.items() if better(r.get("train"), nt)]
+    best = max(ok, key=lambda k: om[k]["train"]["total_pct"], default=None)
+    return {"now": now, "variants": om, "chosen": best, "holds_2026": bool(best and better(om[best].get("unseen"), nu))}
 
 
 def one6_cards(pf):
@@ -1960,7 +1983,7 @@ def tal(budget_s):
         # the account in % with each track's real risk (bot 5's rule, 13.11.2026 night, shared): the bot's limits
         # in % - not in R - and one factor on the tracks' risk chosen on 2024-2025 (scale_cards)
         pf = TG.portfolio(idx, WORLD["symbols"], TAL_DIR, counted, hour_min_n=30,
-                          risk={k: float(rk.get(k, FA.RISK_TAL)) for k in counted}, lim=fut_lim(), one_ups=ONE6)
+                          risk={k: float(rk.get(k, FA.RISK_TAL)) for k in counted}, lim=fut_lim(), one_ups=ONE6, one_tracks=ONE6_TRK)
         if pf:
             try:
                 pcards += scale_cards(pf, {k: float(rk.get(k, FA.RISK_TAL)) for k in counted})
@@ -1970,6 +1993,7 @@ def tal(budget_s):
                 oc_, ores_ = one6_cards(pf)
                 pcards += oc_
                 doc["bot6"]["one_micro"] = ores_
+                doc["bot6"]["one_micro_trk"] = one6_trk_view(pf)
             except Exception as e:  # noqa: BLE001
                 print(f"tal_gap one micro failed: {e}")
             doc["bot6"]["portfolio"] = pf

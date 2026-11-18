@@ -476,39 +476,70 @@ def _note_cfgs():
     return out
 
 
+# Tal's own open questions run first (bot 5's smart agent, 18.11.2026 morning): the queue went symbol by symbol, a symbol's
+# whole backlog at once with the budget checked only between symbols - about one symbol per pass, and a test counts only
+# with all five, so nothing he asked for finished before the fifth pass, about a day later (GAPX, asked on 17.11, was
+# still "running" on 18.11). Now: his tests first, a few settings at a time on all five symbols.
+NOTE_FIRST = ("stopatr", "firstg", "gapx", "stopat", "follow", "stopatr_fg", "stopat_fg")
+NOTE_BATCH = 12          # settings per round: all five symbols of a round end before the next round starts
+
+
+def _note_queue():
+    """[(pair name, cfg)] without repeats: the tests of NOTE_FIRST in that order, then the others as listed."""
+    pairs = {TG.pair_name(p) for p in TG.PAIRS}
+    rank = lambda T: NOTE_FIRST.index(T["id"][len(T["track"]) + 1:]) if T["id"][len(T["track"]) + 1:] in NOTE_FIRST else len(NOTE_FIRST)  # noqa: E731
+    out, seen = [], set()
+    for T, pn, now, vs in sorted(_note_cfgs(), key=lambda x: rank(x[0])):      # sorted() keeps the listed order inside a rank
+        if pn not in pairs:
+            continue
+        for c in [now] + [c for _, c in vs]:
+            k = (pn, TG.vid(c))
+            if k not in seen:
+                seen.add(k)
+                out.append((pn, c))
+    return out
+
+
 def note_runs(budget_s):
-    """The runs of NOTE_TESTS (the track's rules now and each value), saved in the gap method's index like trend_runs()."""
+    """The runs of NOTE_TESTS (the track's rules now and each value), saved in the gap method's index like trend_runs().
+    NOTE_BATCH settings at a time on all of TAL_SYMBOLS, one symbol's data in memory at a time (the bots' computer has
+    8 GB and the live bots on it); the budget is checked before every run, and the next pass goes on from the same place."""
     pairs = {TG.pair_name(p): p for p in TG.PAIRS}
     idx_dir = TAL_DIR / "idx"
     idx_dir.mkdir(parents=True, exist_ok=True)
     have = {f.stem for f in idx_dir.glob("*.json")}
-    want = []
-    for T, pn, now, vs in _note_cfgs():
-        if pn in pairs:
-            want += [(pn, now)] + [(pn, c) for _, c in vs]
-    t0, done = time.time(), 0
-    for sym in TAL_SYMBOLS:
-        todo = [(pn, c) for pn, c in want if f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}" not in have]
-        if not todo or time.time() - t0 > budget_s:
-            continue
-        D, gc = tal_load(sym), {}
-        if D is None:
-            continue
-        for pn, c in todo:
-            key = f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}"
-            if key in have:
+    key_of = lambda pn, c, sym: f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}"  # noqa: E731
+    queue = [(pn, c) for pn, c in _note_queue() if any(key_of(pn, c, s) not in have for s in TAL_SYMBOLS)]
+    t0, done, no_data = time.time(), 0, set()
+    for i in range(0, len(queue), NOTE_BATCH):
+        for sym in TAL_SYMBOLS:
+            todo = [(pn, c) for pn, c in queue[i:i + NOTE_BATCH] if key_of(pn, c, sym) not in have]
+            if not todo or sym in no_data:
                 continue
-            try:      # one failing test (14.11.2026: LADDER at the data's end) no longer stops the others
-                t = TG.simulate(D, pairs[pn], c, gc.setdefault(pn.split("/")[0], {}))
-            except Exception as e:  # noqa: BLE001
-                print(f"tal note test {key} failed: {e}")
+            if time.time() - t0 > budget_s:
+                print(f"tal note tests: {done} run, stopped for time")
+                return done
+            D, cache = None, None                 # the last symbol's data is freed before the next one loads
+            D, cache = tal_load(sym), {}
+            if D is None:
+                no_data.add(sym)
                 continue
-            t.to_csv(TAL_DIR / f"{key}.csv.gz", index=False)
-            (idx_dir / f"{key}.json").write_text(json.dumps(
-                {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": pairs[pn][2],
-                 "knob": "note", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f"{key}.csv.gz", "n": len(t)}, default=str))
-            have.add(key)
-            done += 1
+            for pn, c in todo:
+                if time.time() - t0 > budget_s:
+                    print(f"tal note tests: {done} run, stopped for time")
+                    return done
+                key = key_of(pn, c, sym)
+                try:      # one failing test (14.11.2026: LADDER at the data's end) no longer stops the others
+                    t = TG.simulate(D, pairs[pn], c, cache.setdefault(pn.split("/")[0], {}))
+                except Exception as e:  # noqa: BLE001
+                    print(f"tal note test {key} failed: {e}")
+                    continue
+                t.to_csv(TAL_DIR / f"{key}.csv.gz", index=False)
+                (idx_dir / f"{key}.json").write_text(json.dumps(
+                    {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": pairs[pn][2],
+                     "knob": "note", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f"{key}.csv.gz", "n": len(t)}, default=str))
+                have.add(key)
+                done += 1
     print(f"tal note tests: {done} run")
     return done
 
@@ -1437,6 +1468,7 @@ def main():
         # half of what is left, the indices' never-ending search the rest
         # each step's outcome is kept in the results (bot5.steps, 14.11.2026): the bots' computer keeps its logs to
         # itself, so a step that failed or found no time was invisible to the nightly smart agent in the cloud
+        spare = 0.0        # what the steps before the notes did not use goes to Tal's tests (18.11.2026: instrument_tracks had 420 s and used 0)
         for nm, fn, share in (("instrument_tracks", sym_runs, 0.25),  # the instrument tracks, so the whole bot is tested together
                               ("trend_fix", trend_runs, 0.15),        # the fix of the 12.11 loss against exactly what runs
                               ("notes", note_runs, 0.2),              # the user's notes on live trades + the tasks of 14.11
@@ -1448,13 +1480,15 @@ def main():
             # now take at most 70% of what was left, 30% stays for the wide test and the search (manager, 15.11.2026)
             share *= 0.7
             t1 = time.time()
+            step_s = tal_left * share + (spare if nm == "notes" else 0.0)
             try:
-                STEPS[nm] = {"done": fn(tal_left * share)}
+                STEPS[nm] = {"done": fn(step_s)}
             except Exception as e:  # noqa: BLE001
                 STEPS[nm] = {"err": str(e)[:300]}
                 print(f"tal {nm} runs failed:", e)
             STEPS[nm].update(at=pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), sec=round(time.time() - t1),
-                             budget_sec=round(tal_left * share))
+                             budget_sec=round(step_s))
+            spare = 0.0 if nm == "notes" else max(0.0, spare + step_s - (time.time() - t1))
         tal_left = a.minutes * 60 - (time.time() - t_start)
         t1 = time.time()
         try:

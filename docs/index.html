@@ -658,7 +658,7 @@ document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
 });
 
 /* real time through the manager: the open account 4 times a second (full state every 20 s), the list every 2 s */
-let liveOk = false, liveBusy = false, lastFull = 0, listBusy = false, listT = 0, vBusy = false, vT = 0;
+let liveOk = false, liveBusy = false, lastFull = 0, listBusy = false, listT = 0, vBusy = false, vT = 0, sBusy = false, sT = 0;
 const viaMgr = n => mgr && mgrInfo && mgrInfo.accounts.some(a => a.name === n && !a.archived && !a.virtual);   // the virtual account is read from GitHub
 function onLive(n, j, full) {
   const s = found[n] || (found[n] = {});
@@ -684,8 +684,9 @@ async function livePoll() {
   }
   // the virtual accounts straight from the bots' computer every 10 seconds (user, 18.11.2026: a trade at its target
   // still showed open - GitHub's copy is 2-5 minutes old); GitHub stays the fallback when the manager is not reachable
-  if (accOn && mgr && mgrInfo && !vBusy && Date.now() - vT > 10000) {
-    const vs = UI.view === "det" ? (VIRT.includes(UI.cur) ? [UI.cur] : []) : VIRT.filter(v => found[v]);
+  const statsOn = $("v-stats").classList.contains("on");
+  if ((accOn || statsOn) && mgr && mgrInfo && !vBusy && Date.now() - vT > 10000) {
+    const vs = accOn && UI.view === "det" ? (VIRT.includes(UI.cur) ? [UI.cur] : []) : VIRT.filter(v => found[v]);
     if (vs.length) {
       vBusy = true; vT = Date.now();
       await Promise.all(vs.map(async v => {
@@ -694,9 +695,19 @@ async function livePoll() {
           if (r.ok) { const j = await r.json(); if (j && j.updated_utc && (!found[v] || !found[v].updated_utc || j.updated_utc >= found[v].updated_utc)) { provApply(v, j); found[v] = j; LIVE[v] = Date.now(); } }
         } catch (e) {}
       }));
-      if (UI.view === "det" && VIRT.includes(UI.cur)) renderDet(UI.sub === "ov" && !!$("ovTiles")); else if (UI.view !== "det") renderList();
+      if (statsOn) renderAll();
+      else if (UI.view === "det" && VIRT.includes(UI.cur)) renderDet(UI.sub === "ov" && !!$("ovTiles")); else if (UI.view !== "det") renderList();
       vBusy = false;
     }
+  }
+  // the overall statistics: bots 1-4's full state (closed trades too) from the bots' computer every 30 seconds
+  if (statsOn && mgr && mgrInfo && !sBusy && Date.now() - sT > 30000) {
+    sBusy = true; sT = Date.now();
+    await Promise.all(accList().filter(a => viaMgr(a.name)).map(async a => {
+      try { const r = await fetch(`${mgr}/bot/${encodeURIComponent(a.name)}/state`, {cache: "no-store"}); if (r.ok) { const j = await r.json(); if (j && j.updated_utc) onLive(a.name, j, true); } } catch (e) {}
+    }));
+    if ($("v-stats").classList.contains("on")) renderAll();
+    sBusy = false;
   }
   if (accOn && UI.view !== "det" && !listBusy && Date.now() - listT > 2000 && mgr && mgrInfo) {
     listBusy = true; listT = Date.now();
@@ -1147,6 +1158,9 @@ async function tick() {
     const st = await load(b);
     if (!st) return;
     if (isLive(b) && found[b]) { found[b] = Object.assign(st, {balance: found[b].balance, equity: found[b].equity, positions: found[b].positions, updated_utc: found[b].updated_utc, lows: found[b].lows || st.lows}); return; }
+    // a virtual bot's copy from the bots' computer (every 10 s) is newer than GitHub's: keep it (user, 18.11.2026: a
+    // US500 trade closed at its target, showed, then vanished - the minute's GitHub copy, 50 minutes old, replaced it)
+    if (found[b] && found[b].updated_utc && st.updated_utc && found[b].updated_utc > st.updated_utc) return;
     found[b] = st;
   }));
   if (!found[cur]) cur = BOTS.find(b => found[b]) || cur;

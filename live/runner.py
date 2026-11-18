@@ -1271,6 +1271,14 @@ def close_part(p, frac, why="partial exit"):
 def move_stop(p, new_sl):
     info = mt5.symbol_info(p.symbol)
     new_sl = round(new_sl, info.digits)
+    g = (STATE.get("rg") or {}).get(str(p.ticket))
+    if g:
+        # the rollover guard holds this position's stop out for a few minutes: the trade's own stop is kept as the
+        # guard's virtual stop (checked on the middle price) and goes back to the broker when the spread is normal
+        if (p.type == 0 and new_sl > g["sl"] + info.point) or (p.type == 1 and new_sl < g["sl"] - info.point):
+            g["sl"] = new_sl
+            save_state()
+        return
     better = (p.type == 0 and new_sl > p.sl + info.point) or (p.type == 1 and (p.sl == 0 or new_sl < p.sl - info.point))
     tick = mt5.symbol_info_tick(p.symbol)
     if better and ((p.type == 0 and new_sl >= tick.bid) or (p.type == 1 and new_sl <= tick.ask)):
@@ -1279,6 +1287,84 @@ def move_stop(p, new_sl):
     if better:
         send({"action": mt5.TRADE_ACTION_SLTP, "position": p.ticket, "symbol": p.symbol, "sl": new_sl, "tp": p.tp},
              f"stop {p.comment} -> {new_sl}")
+
+
+# ---------------- the daily rollover's spread ----------------
+# 16.11.2026 23:00:11 UTC (Prague midnight, MetaQuotes-Demo's rollover) XAUUSD's ask jumped to 3897.71 for seconds
+# and stopped six gold sells of bots 3-4 at once (TV20 / SC184 at 3866.77, IB056 3884.07, TV58 3895.25: -$1,435, the
+# 17.11 loss reports), stops ~12-38$ above a market at ~3855 that the backtest never reached. A broker stop on a sell
+# is hit by the ask, so a spread spike is a stop the backtest does not have. "rollover_guard" in live/bots/<bot>.json
+# (an approved card only; off without it): from before_min minutes before Prague midnight to after_min after it, each
+# open position's broker stop is moved mult x its distance further out (only while the extra loss fits in half the
+# room left to the 4.5% / 9% limits - the open risk counts the wider stop), the trade's own stop is kept as a virtual
+# stop checked every loop on the MIDDLE price (closed at the market when crossed), and the stop goes back to the
+# broker once the spread is under 3x the usual (at the latest 30 minutes after the window).
+def rollover_guard(now):
+    cfg = ACC.cfg.get("rollover_guard")
+    rg = STATE.setdefault("rg", {})
+    if not cfg and not rg:
+        return
+    try:
+        before, after = float((cfg or {}).get("before_min", 2)), float((cfg or {}).get("after_min", 10))
+        k = max(0.25, min(2.0, float((cfg or {}).get("mult", 1.0))))
+    except (TypeError, ValueError, AttributeError):
+        cfg = None
+    m0 = now.tz_convert("Europe/Prague").normalize().tz_convert("UTC")
+    wins = [(m - pd.Timedelta(minutes=before), m + pd.Timedelta(minutes=after)) for m in (m0, m0 + pd.Timedelta(days=1))]
+    inwin = bool(cfg) and any(a <= now < b for a, b in wins)
+    late = not any(a <= now < b + pd.Timedelta(minutes=30) for a, b in wins)
+    pos = {p.ticket: p for p in ACC.positions()}
+    changed = False
+    for tk in list(rg):
+        if int(tk) not in pos:
+            rg.pop(tk)
+            changed = True
+    for tk, p in pos.items():
+        tick = mt5.symbol_info_tick(p.symbol)
+        if tick is None or not tick.bid or not tick.ask:
+            continue
+        mid = (tick.bid + tick.ask) / 2
+        g = rg.get(str(tk))
+        if g:
+            if (p.type == 0 and mid <= g["sl"]) or (p.type == 1 and mid >= g["sl"]):
+                if close(p, "stop (rollover guard, middle price)") is not None:
+                    rg.pop(str(tk), None)
+                    changed = True
+                continue
+            q = SPREADS.get(g.get("our") or "") or (STATE.get("spreads") or {}).get(g.get("our") or "") or []
+            usual = float(np.median(list(q))) if len(q) else 0.0      # read only: the spike is not added to it
+            normal = usual > 0 and (tick.ask - tick.bid) <= 3 * usual
+            if not inwin and (normal or late):
+                ok = (p.type == 0 and tick.bid > g["sl"]) or (p.type == 1 and tick.ask < g["sl"])
+                if ok and send({"action": mt5.TRADE_ACTION_SLTP, "position": p.ticket, "symbol": p.symbol,
+                                "sl": round(g["sl"], mt5.symbol_info(p.symbol).digits), "tp": p.tp},
+                               f"stop {p.comment} back to {g['sl']} (rollover over)") is not None:
+                    rg.pop(str(tk), None)
+                    changed = True
+            continue
+        if not inwin or not p.sl or U.CLASS.get(combo_of(p.magic).split("|")[-1]) == "stock":
+            continue
+        d = 1 if p.type == 0 else -1
+        info = mt5.symbol_info(p.symbol)
+        wide = round(p.sl - d * k * abs(mid - p.sl), info.digits)
+        try:
+            extra = abs(mt5.order_calc_profit(p.type, p.symbol, p.volume, p.sl, wide) or 0.0)
+        except Exception:  # noqa: BLE001
+            continue
+        ai = mt5.account_info()
+        left = ai.balance - ACC.open_risk()
+        ds = ACC.day_start_balance()
+        room = min(left - ACC.initial * (1 - GUARD_TOTAL), left - (ds - ACC.initial * GUARD_DAILY))
+        if not extra or extra > GRADE_SHARE * room:
+            log(f"rollover guard: {p.comment} kept at its stop (the wider stop would need ${extra:,.0f}, room ${room:,.0f})")
+            continue
+        if send({"action": mt5.TRADE_ACTION_SLTP, "position": p.ticket, "symbol": p.symbol, "sl": wide, "tp": p.tp},
+                f"stop {p.comment} {p.sl} -> {wide} for the rollover (virtual stop {p.sl} on the middle price)") is not None:
+            rg[str(tk)] = {"sl": float(p.sl), "wide": float(wide), "sym": p.symbol, "our": combo_of(p.magic).split("|")[-1],
+                           "at": now.isoformat(timespec="seconds")}
+            changed = True
+    if changed:
+        save_state()
 
 
 # ---------------- strategy step ----------------
@@ -2325,6 +2411,7 @@ def main():
                 stock_session_close(now)
                 break_close(now)
                 pending_guard(now)
+                rollover_guard(now)
                 for combo, sid, tf, sym in combos:
                     bar_start = now.floor(f"{TF_MIN[tf]}min")
                     if done.get(combo) == bar_start or (now - bar_start).total_seconds() < 3:

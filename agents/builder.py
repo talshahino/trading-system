@@ -111,6 +111,14 @@ def buildable(c):
             and 0.5 <= float(ch["to"].get("pct", 0)) <= 4 and ch["to"].get("mode") in ("half", "stop"):
         return {"bot": bot, "combo": "BOT|all", "family": "flag", "key": "day_brake",
                 "to": {"pct": round(float(ch["to"]["pct"]), 2), "mode": ch["to"]["mode"]}}
+    # bots 1-4 (18.11.2026, bots 1-4 smart agent): the broker stops held out over the daily rollover's spread spike,
+    # the trade's own stop kept virtual on the middle price - "rollover_guard" in live/bots/<bot>.json (runner)
+    if bot in ADD_BOTS and c.get("kind") == "risk" and ch.get("kind") == "rollover_guard" and isinstance(ch.get("to"), dict) \
+            and 0 <= float(ch["to"].get("before_min", -1)) <= 10 and 1 <= float(ch["to"].get("after_min", 0)) <= 30 \
+            and 0.25 <= float(ch["to"].get("mult", 0)) <= 2:
+        return {"bot": bot, "combo": "BOT|all", "family": "flag", "key": "rollover_guard",
+                "to": {"before_min": float(ch["to"]["before_min"]), "after_min": float(ch["to"]["after_min"]),
+                       "mult": float(ch["to"]["mult"])}}
     if bot in ADD_BOTS and c.get("kind") == "risk" and ch.get("kind") == "opp_same_tf" and ch.get("to") in ("skip", None):
         return {"bot": bot, "combo": "BOT|all", "family": "flag", "key": "opp_same_tf", "to": ch.get("to")}
     if bot in SET_BOTS and c.get("kind") == "risk" and ch.get("track") and str(ch.get("knob", "")).startswith("RISK") \
@@ -230,6 +238,9 @@ def describe(b):
         if b["key"] == "dd_fit":
             return (f"הסיכון של כל הבוט קטן כשנשאר עד המגבלה (9%) פחות מ־{b['to']:g}% (הירידה הגרועה בבדיקת הבוט על 2026), "
                     "וחוזר לרגיל לבד")
+        if b["key"] == "rollover_guard":
+            return (f"בחצות של השרת (גלגול יומי): הסטופ אצל הברוקר מורחק ×{b['to']['mult']:g} מ־{b['to']['before_min']:g} דק' לפני "
+                    f"עד {b['to']['after_min']:g} דק' אחרי, והסטופ של העסקה נבדק על מחיר האמצע - קפיצת ספרד לא עוצרת עסקה")
         if b["key"] == "loss_streak":
             return (f"אחרי {b['to']['days']} ימי הפסד ברצף - סיכון ×{b['to']['mult']:g} לעסקאות חדשות עד יום ירוק" if b["to"]
                     else "בלי בלם אחרי ימי הפסד")

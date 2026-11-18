@@ -2404,9 +2404,10 @@ function wbRender(box = $("wbBody")) {
   // the ones waiting for his answer first, then the newest (user, 18.11.2026: "I got a review notification and I don't see
   // it in the marks tab" - the list was by instrument, the question 50th of 99)
   const tk_ = t => String(t.time || t.setup_t || "");
+  const wait_ = t => rvNeeded(t) && !((WB.marks || {})[t.id] || t.mark || {}).take;   // answered = not waiting (18.11.2026)
   const trades = (d.watch || []).filter(t => t.status !== "cancelled" && (box.id === "wbBody" || t.geo))
-    .sort((a, b) => (rvNeeded(b) - rvNeeded(a)) || tk_(b).localeCompare(tk_(a)));
-  const waiting_ = trades.filter(rvNeeded).length;
+    .sort((a, b) => (wait_(b) - wait_(a)) || tk_(b).localeCompare(tk_(a)));
+  const waiting_ = trades.filter(wait_).length;
   const ac = d.vacct || null, usd = v => (v < 0 ? "−" : "") + "$" + Math.abs(v).toLocaleString("en-US", {maximumFractionDigits: 0});
   let curveSvg = "";
   if (ac && ac.curve && ac.curve.length > 1) {
@@ -2446,7 +2447,7 @@ function wbRender(box = $("wbBody")) {
       : t.status === "cancelled" && TALWHY[t.why] ? `<span class="pill">${TALWHY[t.why]}</span>`
       : t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : t.reason === "breakeven" ? "בנקודת הכניסה" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון${money(t.pnl)}</span>`
       : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון${money(t.pnl_now)}</span>` : `<span class="pill ${st[1]}">${st[0]}</span>`;
-    h += `<div class="card wt" data-id="${esc(t.id)}"${rvNeeded(t) ? ' style="border:2px solid #E0A100"' : ""}><div class="hd"><b>${esc(t.symbol)}</b>${rvNeeded(t) ? '<span class="pill warn">מחכה לתשובה שלך</span>' : ""}<span class="pill ${buy ? "pos" : "neg"}">${buy ? "קנייה" : "מכירה"}</span>${t.wide ? '<span class="pill">מסלול רחב</span>' : ""}${t.extra ? '<span class="pill">איסוף נתונים</span>' : ""}${t.v4 ? '<span class="pill pos">מתוקן v4</span>' : ""}${t.v5 ? '<span class="pill pos">פערים v5</span>' : ""}${t.v1m ? '<span class="pill pos">פערים בדקה</span>' : ""}${res}</div>
+    h += `<div class="card wt" data-id="${esc(t.id)}"${wait_(t) ? ' style="border:2px solid #E0A100"' : ""}><div class="hd"><b>${esc(t.symbol)}</b>${wait_(t) ? '<span class="pill warn">מחכה לתשובה שלך</span>' : ""}<span class="pill ${buy ? "pos" : "neg"}">${buy ? "קנייה" : "מכירה"}</span>${t.wide ? '<span class="pill">מסלול רחב</span>' : ""}${t.extra ? '<span class="pill">איסוף נתונים</span>' : ""}${t.v4 ? '<span class="pill pos">מתוקן v4</span>' : ""}${t.v5 ? '<span class="pill pos">פערים v5</span>' : ""}${t.v1m ? '<span class="pill pos">פערים בדקה</span>' : ""}${res}</div>
       <div class="mut">כניסה <bdi>${wPx(t.symbol, t.entry)}</bdi> · סטופ <bdi>${wPx(t.symbol, t.stop)}</bdi> · יעד <bdi>${wPx(t.symbol, t.target)}</bdi>${t.rr ? ` · יחס 1:${t.rr}` : ""}<br>
       ${t.time ? "נכנסה " + wTime(t.time) : "נוצרה " + wTime(t.setup_t)}${t.exit_time ? " · יצאה " + wTime(t.exit_time) : ""} · דחף של ${t.leg || "?"} נרות</div>
       <div class="acts"><button class="btn ghost" data-chart="${esc(t.id)}">גרף העסקה</button>

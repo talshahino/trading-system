@@ -592,6 +592,22 @@ def decide(bots, now=None):
                      "title": c["title"], "decision": "declined", "why": why, "effect": "לא ייבנה בבוט"})
                 c["status"], c["by"], c["verdict"] = "rejected", "manager", c["verdict"] + " · " + why
                 continue
+            if is_new and risk_card:
+                # a bot agent's risk cut passes the same whole-bot test as the manager's own cuts (bots 1-4 smart agent,
+                # 18.11.2026: card 64c17694673d, SC002 EURUSD in bot 4 at the minimum lot, took the bot's 2026 fall from
+                # 5.75% to 7.40% - PC.check sees only "improve" / "new" cards, so nothing replayed it)
+                try:
+                    from agents import portfolio_check as PC
+                    rc_combo = (c.get("change") or {}).get("combo")
+                    rc_cur = float(((cur_risk.get(bot) or {}).get("mult") or {}).get(rc_combo, 1.0))
+                    hurt = PC.cut_hurts(bot, rc_combo, rc_cur, risk_card) if risk_card < rc_cur else None
+                except Exception:  # noqa: BLE001
+                    hurt = None
+                if hurt:
+                    add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
+                         "title": c["title"], "decision": "declined", "why": hurt, "effect": "הסיכון לא משתנה"})
+                    c["status"], c["by"], c["verdict"] = "rejected", "manager", c["verdict"] + " · " + hurt
+                    continue
             fam = _family_pick(b.get("cards", []), c) if is_new and c["kind"] == "new" else None
             if fam:
                 c["status"], c["verdict"] = "watch", c["verdict"] + " · " + fam

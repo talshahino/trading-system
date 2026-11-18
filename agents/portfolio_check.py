@@ -442,6 +442,19 @@ def cut_hurts(bot, combo, cur, val):
     if riskier(after, before):
         return (f"בבוט השלם על 2026 ההורדה מוסיפה סיכון (ירידה מהשיא {before['max_dd']:.2f}% → {after['max_dd']:.2f}%, "
                 f"יום גרוע {before['worst_day']:.2f}% → {after['worst_day']:.2f}%) - העסקאות שלה מקזזות ימים רעים של אחרות")
+    # the choosing period too, where its trades are stored (bots 1-4 smart agent, 18.11.2026: TV17 DXY in bot 1 at the
+    # minimum lot looked harmless on 2026, +0.03 of fall, and took the 2025 fall from 6.51% to 7.82% and 4.28% of profit)
+    try:
+        b25, _ = book_now(bot, cfg, "tr25")
+        if b25.get(combo, (None,))[0]:
+            tr25 = b25[combo][0]
+            before, after = replay({**b25, combo: (tr25, cur)}, risk), replay({**b25, combo: (tr25, val)}, risk)
+            # only the clear case on this period: a deeper fall AND less profit (a cut that earns more there stays allowed)
+            if after["max_dd"] > before["max_dd"] + EPS and after["total"] < before["total"]:
+                return (f"בבוט השלם על 2025 ההורדה מוסיפה סיכון ומורידה רווח (ירידה מהשיא {before['max_dd']:.2f}% → {after['max_dd']:.2f}%, "
+                        f"רווח {before['total']:+.2f}% → {after['total']:+.2f}%) - העסקאות שלה מקזזות ימים רעים של אחרות")
+    except Exception:  # noqa: BLE001
+        return None
     return None
 
 

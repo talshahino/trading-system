@@ -423,19 +423,25 @@ def decide(bots, now=None):
         reps = json.loads((ROOT / "data/agents/replies.json").read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         reps = {}
-    built_at = {}                                               # (bot, combo) -> the last time a change was built
+    # (bot, combo) -> {card id: when it was built}. Per card, so a card is never held back by its own build
+    # (manager, 18.11.2026: bot 7's smart agent built its gold release-guard card ee3116706ab9 at 00:12 together with
+    # the card; the card then read "waiting: another change on this strategy was built after the experiment" - its own
+    # build - so it never got a decision and the user's 05:00 list did not show a change already running in the bot)
+    built_by = {}
     for bot, b in bots.items():
         for c in b.get("cards", []):
             r = reps.get(c["id"]) if isinstance(reps.get(c["id"]), dict) else {}
             combo = _strat(c)
             if r.get("built") and combo and c.get("kind") == "improve":
-                k = (bot, combo)
-                built_at[k] = max(built_at.get(k, ""), str(r.get("at") or ""))
+                built_by.setdefault((bot, combo), {})[c["id"]] = str(r.get("at") or "")
     for o in old.values():                                      # cards built before that left the cards list
         if o.get("type") == "card" and o.get("kind") == "improve" and o.get("decision") == "approved" \
                 and (reps.get(o.get("card")) or {}).get("built") and o["title"].count("|") >= 2:
             k = (o["bot"], o["title"].lstrip("⭐ ").split(":")[0].strip())
-            built_at[k] = max(built_at.get(k, ""), str((reps.get(o.get("card")) or {}).get("at") or ""))
+            built_by.setdefault(k, {})[o.get("card")] = str((reps.get(o.get("card")) or {}).get("at") or "")
+
+    def built_after(k, own):
+        return max([t for cid, t in (built_by.get(k) or {}).items() if cid != own] or [""])
     best_now = {}                                               # (bot, combo) -> the new card with the most total gain
     for bot, b in bots.items():
         for c in b.get("cards", []):
@@ -537,7 +543,7 @@ def decide(bots, now=None):
                                                          "ייבדק שוב מעליו בניסוי הבא")
                     continue
                 exp_at = str((c.get("detail") or {}).get("exp_at") or c.get("made") or "")
-                if exp_at and built_at.get((bot, ccombo), "") > exp_at:
+                if exp_at and built_after((bot, ccombo), c["id"]) > exp_at:
                     c["status"], c["verdict"] = "watch", (c["verdict"] + " · מחכה: שינוי אחר באסטרטגיה הזו נבנה אחרי הניסוי - "
                                                          "ייבדק שוב מעליו בניסוי הבא")
                     continue
@@ -555,11 +561,26 @@ def decide(bots, now=None):
             risk_card = _risk_card(c, bot)
             rule_card = _rule_card(c, bot)
             what = ("לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב" if c["kind"] == "info" else
+                    "כבר נבנה בבוט על ידי הסוכן של הבוט" if c["id"] in built else
                     "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות" if buildable else
                     "יוחל במחשב הבוטים תוך כ־10 דקות" if risk_card or rule_card else
                     "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה")
             why, star, mult, whole = c["verdict"], False, None, None
             is_new = did not in old
+            if is_new and c["id"] in built and c["kind"] == "improve":
+                # built already by the bot's own (smart) agent with the card: recorded as it is - no whole-bot check
+                # against itself and no "maybe luck" risk (the agent set the risk when it built it)
+                tot_new, tot_base = _total(c.get("unseen")), _total(c.get("baseline"))
+                ok = tot_new is None or tot_base is None or tot_new > tot_base or curve
+                bat = str((reps.get(c["id"]) or {}).get("built_at") or (reps.get(c["id"]) or {}).get("at") or "")[:10]
+                why = (c["verdict"] + f" · נבנה כבר על ידי הסוכן של הבוט ({bat})" if ok else
+                       f"נבנה על ידי הסוכן של הבוט ({bat}), אבל ב־2026 בסך הכל {tot_new:+.1f}R מול {tot_base:+.1f}R - "
+                       "הסוכן צריך להחזיר את השינוי או להראות שהוא מגדיל את הרווח הכולל")
+                d = add({"id": did, "bot": bot, "type": "card", "card": c["id"], "kind": c["kind"], "tier": c["tier"],
+                         "title": c["title"], "decision": "approved", "why": why,
+                         "effect": what if ok else "רץ בבוט - הסוכן של הבוט בודק אם להחזיר", "star": False})
+                c["status"], c["by"], c["decided"], c["decision_id"] = "approved", "manager", d["at"], did
+                continue
             tot_new, tot_base = _total(c.get("unseen")), _total(c.get("baseline"))
             if is_new and c["kind"] == "improve" and tot_new is not None and tot_base is not None and tot_new <= tot_base \
                     and not curve:

@@ -14337,6 +14337,876 @@
     "bot7"
    ],
    "rules": "Elder's rule on a pullback: over the EMA 65 (his long-term screen, 5 x EMA13), a dip that touches the EMA 13 and closes over it buys only when the Elder Impulse is not red (and shorts only when not green); stop beyond the 5-bar swing, target 2R (ours). (TV47 trades the colour flips themselves.)"
+  },
+  {
+   "id": "SC582",
+   "name": "Bat harmonic: AB 0.382-0.5, D 0.886 XA, stop beyond D, target 61.8% of CD (IG / QuantVue / Altrady)",
+   "source": "IG / QuantVue harmonic cheat sheet / Altrady",
+   "url": "https://www.ig.com/ae/trading-strategies/top-7-harmonic-patterns-every-trader-should-know-210608",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Bat (ProjectSyndicate / QuantVue cheat sheet): AB 0.382-0.5 of XA, BC 0.382-0.886 of AB, D = 0.886 of XA, CD 1.618-2.618 of BC (IG). Enter at D, stop 0.1 XA beyond D, target 61.8% of CD (Altrady). Ours: 2-bar zigzag, +/-8% tolerance."
+  },
+  {
+   "id": "SC583",
+   "name": "Crab harmonic: AB 0.382-0.618, D the 1.618 XA extension, CD 2.618-3.618 BC, target 61.8% of CD (IG / QuantVue)",
+   "source": "IG / QuantVue harmonic cheat sheet / Altrady",
+   "url": "https://th.tradingview.com/chart/BTCUSDT/zTac2Bid-Harmonic-Patterns-Cheat-Sheet",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Crab (IG / ProjectSyndicate): AB 0.382-0.618 of XA, BC 0.382-0.886 of AB, D = the 1.618 extension of XA, CD 2.618-3.618 of BC. Enter at D, stop 0.1 XA beyond D, target 61.8% of CD (Altrady). Ours: 2-bar zigzag, +/-15% tolerance."
+  },
+  {
+   "id": "SC584",
+   "name": "Deep Crab harmonic: B 0.886 XA, D the 2.24 XA extension, target 61.8% of CD (IG / ProjectSyndicate)",
+   "source": "IG / ProjectSyndicate harmonic guide",
+   "url": "https://my.tradingview.com/chart/EURUSD/8yx8sdbO-Harmonic-Pattern-Trading-Ultimate-Guide-for-2025",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Deep Crab (IG: B at 0.886 of XA; ProjectSyndicate: D at the 2.24-2.618 extension of XA): BC 0.382-0.886 of AB, D = 2.24 x XA. Enter at D, stop 0.1 XA beyond D, target 61.8% of CD. Ours: 2-bar zigzag, +/-15% tolerance, the 2.24 end of the zone."
+  },
+  {
+   "id": "SC585",
+   "name": "Shark harmonic: AB 1.13-1.618 XA, BC 1.13-1.618 AB, D 0.886 XA, target 61.8% of CD (ProjectSyndicate)",
+   "source": "ProjectSyndicate harmonic guide",
+   "url": "https://my.tradingview.com/chart/EURUSD/8yx8sdbO-Harmonic-Pattern-Trading-Ultimate-Guide-for-2025",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Shark (ProjectSyndicate): AB 1.13-1.618 of XA, BC 1.13-1.618 of AB, D = 0.886 of XA. Enter at D, stop 0.1 XA beyond D, target 61.8% of CD. (IG labels the points differently; the ProjectSyndicate ratios are the codable ones.)"
+  },
+  {
+   "id": "SC586",
+   "name": "Cypher harmonic: B 0.382-0.618, C the 1.272-1.414 XA extension, D 0.786 XC, target 61.8% of CD (QuantVue)",
+   "source": "QuantVue harmonic cheat sheet",
+   "url": "https://th.tradingview.com/chart/BTCUSDT/zTac2Bid-Harmonic-Patterns-Cheat-Sheet",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Cypher (QuantVue cheat sheet): B 0.382-0.618 of XA, C at the 1.272-1.414 extension of XA, D = the 0.786 retracement of XC. Enter at D, stop 0.1 XA beyond D, target 61.8% of CD. (ProjectSyndicate measures the same numbers from other legs.)"
+  },
+  {
+   "id": "SC587",
+   "name": "AB=CD: BC 0.618 of AB, CD equal to AB in size and time, fade at D, target 61.8% of CD (IG)",
+   "source": "IG harmonic patterns",
+   "url": "https://www.ig.com/ae/trading-strategies/top-7-harmonic-patterns-every-trader-should-know-210608",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "AB=CD (IG): BC = 0.618 of AB, CD the same length as AB and taking about the same time. Enter at D, stop 0.5 AB beyond D, target 61.8% of CD. Ours: +/-10% on the ratio, CD's time 0.5-2 x AB's, the stop."
+  },
+  {
+   "id": "SC588",
+   "name": "Three Drives: 0.618 retracements, 1.272-1.618 drives, fade the third at the 1.272 extension, target B (QuantVue)",
+   "source": "QuantVue harmonic cheat sheet",
+   "url": "https://th.tradingview.com/chart/BTCUSDT/zTac2Bid-Harmonic-Patterns-Cheat-Sheet",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Three Drives (QuantVue cheat sheet): A = 0.618 retracement of drive 1, drive 2 = the 1.272-1.618 extension of A, B = 0.618 retracement of drive 2, drive 3 = the 1.272 extension of B: fade it there. Ours: +/-15% tolerance, stop at the 1.618 extension of B, target the B level (the source's stop is not stated and its target is unclear)."
+  },
+  {
+   "id": "SC589",
+   "name": "Quasimodo: return to the shoulder after the break of structure, stop past the head, 2R, BE at 1R (MQL5 art. 23141)",
+   "source": "MQL5 article 23141 (Quasimodo)",
+   "url": "https://www.mql5.com/en/articles/23141",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Quasimodo (MQL5 article 23141 defaults): 5-bar pivots, head beyond the shoulder, close through the leg, sell the return to the shoulder within 30 bars; stop beyond the head and at least 1 ATR away, 2R, break-even at 1R."
+  },
+  {
+   "id": "SC590",
+   "name": "Quasimodo rejection close at the shoulder, stop past the head, target the broken swing (MQL5 art. 23141)",
+   "source": "MQL5 article 23141 (Quasimodo)",
+   "url": "https://www.mql5.com/en/articles/23141",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Quasimodo with the article's confirmation mode: the bar pierces the shoulder and closes back through it; target the broken swing (its TP_STRUCTURE mode), stop beyond the head."
+  },
+  {
+   "id": "SC591",
+   "name": "Fisher ACD: A level held half the opening range, stop the far side of the range, target C, flat 16:00 NY",
+   "source": "Mark Fisher ACD (LuxAlgo / NexusFi)",
+   "url": "https://nexusfi.com/a/strategies/acd-trading-method",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Mark Fisher ACD: an A level held for half the opening range -> with it; stop the far side of the opening range, target the C level (NexusFi), flat 16:00 New York. A / C sizes are ours (0.10 / 0.20 of the 14-day range)."
+  },
+  {
+   "id": "SC592",
+   "name": "Fisher ACD failed A: through the other side of the range by C, stop the failed A, 2R, flat 16:00 NY",
+   "source": "Mark Fisher ACD (LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/acd-method.md",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "ACD failed A: after a held A, a close through the other side of the opening range by C is the reversal signal (LuxAlgo); stop the A level on the failed side, 2R, flat 16:00 New York (stop and target ours)."
+  },
+  {
+   "id": "SC593",
+   "name": "Fisher ACD A with the 30-day number line and the pivot range on its side, target C, flat 16:00 NY",
+   "source": "Mark Fisher ACD (LuxAlgo / NexusFi)",
+   "url": "https://www.luxalgo.com/library/concept/acd-method.md",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "SC592 only with Fisher's number line (30-day score) and the pivot range: longs with the score over 0 and the close over the pivot range, shorts the mirror."
+  },
+  {
+   "id": "SC594",
+   "name": "TheStrat 2-2 reversal, stop past the first bar, target the bar before it (LuxAlgo / TrendSpider)",
+   "source": "TheStrat (LuxAlgo / TrendSpider)",
+   "url": "https://www.luxalgo.com/library/concept/the-strat.md",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "TheStrat 2-2 reversal: a directional bar reversed at once by the opposite 2; stop the first bar's far side, target its extreme's other end (the bar before)."
+  },
+  {
+   "id": "SC595",
+   "name": "TheStrat 2-1-2 on 4-bar candles: inside-bar break, stop its other side, target the prior extreme",
+   "source": "TheStrat (LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/the-strat.md",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "TheStrat 2-1-2 (continuation and reversal) on candles of 4 bars: the break of the inside bar; stop its other side, target the extreme of the bar before it (LuxAlgo). Ours: 4-bar candles."
+  },
+  {
+   "id": "SC596",
+   "name": "TheStrat 3-1-2 on 4-bar candles: outside, inside, break; stop the inside bar, target the outside bar's extreme",
+   "source": "TheStrat (TrendSpider)",
+   "url": "https://trendspider.com/learning-center/thestrat-candlestick-patterns-a-traders-guide/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "TheStrat 3-1-2 on candles of 4 bars: outside bar, inside bar, break of the inside bar; stop its other side, target the outside bar's extreme. Ours: 4-bar candles."
+  },
+  {
+   "id": "SC597",
+   "name": "TheStrat 1-2-2 RevStrat on 4-bar candles: failed break reverses, stop past the failed bar",
+   "source": "TheStrat (TrendSpider)",
+   "url": "https://trendspider.com/learning-center/thestrat-candlestick-patterns-a-traders-guide/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "TheStrat 1-2-2 RevStrat on candles of 4 bars: inside bar, a break that fails, a 2 the other way; stop beyond the failed bar, target the inside bar's far side. Ours: 4-bar candles."
+  },
+  {
+   "id": "SC598",
+   "name": "Stacey Burke First Red / Green Day: day-3 close back through the EMA20 at the day's extreme, 0.5 ADR target, no overnight",
+   "source": "Stacey Burke playbook (TraderLoft)",
+   "url": "https://traderloft.pages.dev/playbook/tds-5-frd",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "fx",
+    "metal",
+    "energy",
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Stacey Burke First Red Day / First Green Day (TraderLoft): pump day, then a day closing under its open; on day 3 sell at the day's high once it has run 0.5 ADR off the low, on the first bearish close back under the EMA20 (First Green Day mirrors it). Stop over the peak, target 0.5 ADR (the 50 pips), no overnight. Ours: 50-75 pips = 0.5 ADR, 'at the high' = within 0.1 ADR, stop cap 0.35 ADR, windows 07-10 / 13-16 UTC."
+  },
+  {
+   "id": "SC599",
+   "name": "Al Brooks High 2 / Low 2 on the EMA20 side, stop past the pullback, 2R",
+   "source": "Al Brooks (NexusFi / The Right Trader)",
+   "url": "https://nexusfi.com/a/strategies/al-brooks-price-action-method",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Al Brooks High 2 / Low 2 with the EMA20: the second bar over the prior high in a pullback above the EMA buys (mirror under it); stop beyond the pullback's extreme, 2R (NexusFi: prior high / measured move; 2R ours)."
+  },
+  {
+   "id": "SC600",
+   "name": "Al Brooks three-push wedge: close through the wedge line, stop past the third push, 2R",
+   "source": "Al Brooks wedge reversals (NexusFi)",
+   "url": "https://nexusfi.com/a/strategies/wedge-reversals-price-action",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Al Brooks three-push wedge: three higher highs with rising lows, the third push no bigger than the second, then a close through the line of the two lows within 20 bars -> reverse; stop beyond the third push, 2R (mirror for falling wedges). Ours: 3-bar swings, the push-size limits 0.5-1.0."
+  },
+  {
+   "id": "SC601",
+   "name": "Stockbee 4% burst: +4% day on rising volume, not up two days running, day-low stop, out after 5 days (long)",
+   "source": "Stockbee 4% momentum burst (tikamalma / Retail Trader's Repository)",
+   "url": "https://tikamalma.substack.com/p/4-momentum-burst-detailed-research",
+   "added": "2026-11-18",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Stockbee 4% momentum burst (tikamalma's scan of Bonde's setup), long: the day closes at least 4% over the prior close, over its open, on more volume than the prior day, and the prior day was not up (2Lynch: not up two days in a row). Enter next bar, stop the day's low, out after 5 days (Bonde holds 3-5). Works on daily candles of any chart."
+  },
+  {
+   "id": "SC602",
+   "name": "Camarilla H3 / L3 rejection: stop H4 / L4, target the opposite H3 / L3 (MQL5 blog)",
+   "source": "Camarilla (MQL5 blog)",
+   "url": "https://www.mql5.com/en/blogs/post/720680",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Camarilla H3 / L3 fade (MQL5 blog 720680): a bar pierces H3 and closes back under it -> sell, stop H4, target L3; mirror at L3. First signal per side per day."
+  },
+  {
+   "id": "SC603",
+   "name": "Camarilla H4 / L4 breakout with the EMA20, stop H3 / L3, 2R, 30 minutes (TradingView)",
+   "source": "Camarilla Pivots + 20 EMA (TradingView, vinaygaur97)",
+   "url": "https://in.tradingview.com/script/0Y4mi2k0-Camarilla-Pivots-20-EMA-Strategy",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Camarilla H4 / L4 breakout with the EMA20 (vinaygaur97, TradingView, 30 minutes): close over H4 and the EMA20 -> buy, stop H3, 2R; mirror under L4."
+  },
+  {
+   "id": "SC604",
+   "name": "Bollinger W bottom / M top: second swing holds inside the band, close through the middle swing, 2R (StockCharts)",
+   "source": "Bollinger W / M (StockCharts ChartSchool)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-overlays/bollinger-bands",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Bollinger W bottom / M top (StockCharts): a low under the lower band, a bounce to the middle band, a second low that holds over the lower band, then a close over the bounce high -> buy; the M top mirrors it. Stop beyond the second swing, 2R (ours)."
+  },
+  {
+   "id": "SC605",
+   "name": "Landry Bow Tie: SMA10 / EMA20 / EMA30 converge and fan out, first correction, 2R (TradingMarkets)",
+   "source": "Dave Landry Bow Tie (TradingMarkets)",
+   "url": "https://tradingmarkets.com/?p=647056",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Dave Landry Bow Tie (TradingMarkets): SMA10, EMA20, EMA30 converge tightly and spread in the new order within 4 bars; after the first correction, buy the close over the prior bar's high (mirror for shorts). Ours: tight = within 0.25 ATR, the correction = a lower low in the last 3 bars, stop under it, 2R."
+  },
+  {
+   "id": "SC606",
+   "name": "Carter HOLP / LOHP: 20-bar extreme close, close through the extreme bar, 2-bar trailing exit (WH SelfInvest)",
+   "source": "John Carter HOLP / LOHP (WH SelfInvest)",
+   "url": "https://www.whselfinvest.de/en-de/trading-platform/free-trading-strategies/tradingsystem/19-holp",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "John Carter HOLP / LOHP (WH SelfInvest systems 19 / 20): a close at the 20-bar low, then the first close over the high of the lowest-low bar -> buy (only in an up trend); stop that bar's low, out on a close under the low of two bars back. LOHP mirrors it. Ours: trend = the EMA50 rising over 10 bars; the trailing stop is applied on closes."
+  },
+  {
+   "id": "SC607",
+   "name": "Twenty Entry & Three Exit: 20-bar low in an up trend, target the 3-candle high close, 9-hour stop (WH SelfInvest)",
+   "source": "Twenty Entry & Three Exit, Joachim Struck (WH SelfInvest)",
+   "url": "https://whselfinvest.com/en-ch/trading-platform/free-trading-strategies/tradingsystem/67-twenty-entry-three-exit-larry-connors",
+   "added": "2026-11-18",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Twenty Entry & Three Exit (Joachim Struck, WH SelfInvest system 67), forex 60 minutes: a 20-bar low in a bullish trend -> buy, target the highest close of the last 3 candles, 9-hour time stop (mirror at a 20-bar high). Ours: trend = EMA100, the 'far' stop = 3 ATR."
+  },
+  {
+   "id": "SC608",
+   "name": "Pivot Boss wick reversal on 4-bar candles, wick stop, 2R (Ochoa)",
+   "source": "Frank Ochoa, Secrets of a Pivot Boss (book notes)",
+   "url": "https://paisaconsultant.blogspot.com/2020/07/book-notes-secret-of-pivot-boss-by.html",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Ochoa (Pivot Boss) wick reversal on candles of 4 bars: wick at least 2.5 x the body at the 10-candle extreme, closing near the far end; stop the wick's end, 2R (ours)."
+  },
+  {
+   "id": "SC609",
+   "name": "Pivot Boss extreme reversal on 4-bar candles, pair-extreme stop, 2R (Ochoa)",
+   "source": "Frank Ochoa, Secrets of a Pivot Boss (book notes)",
+   "url": "https://paisaconsultant.blogspot.com/2020/07/book-notes-secret-of-pivot-boss-by.html",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Ochoa extreme reversal on candles of 4 bars: a candle about 2 x the average (1.6 x, ours) with a 50-85% body, then an opposite candle; stop the pair's extreme, 2R (ours)."
+  },
+  {
+   "id": "SC610",
+   "name": "Pivot Boss outside reversal on 4-bar candles, bar stop, 2R (Ochoa)",
+   "source": "Frank Ochoa, Secrets of a Pivot Boss (book notes)",
+   "url": "https://paisaconsultant.blogspot.com/2020/07/book-notes-secret-of-pivot-boss-by.html",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Ochoa outside reversal on candles of 4 bars: takes the prior low and closes over the prior high, at least 5% larger than average; stop its extreme, 2R (ours)."
+  },
+  {
+   "id": "SC611",
+   "name": "Pivot Boss doji reversal off the SMA10, pattern stop, 2R (Ochoa)",
+   "source": "Frank Ochoa, Secrets of a Pivot Boss (book notes)",
+   "url": "https://paisaconsultant.blogspot.com/2020/07/book-notes-secret-of-pivot-boss-by.html",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Ochoa doji reversal: open and close within 1% of the range, the doji wholly under the SMA10, one of the next two bars closes over its high -> buy (mirror over the SMA10); stop the pattern's extreme, 2R (ours)."
+  },
+  {
+   "id": "SC612",
+   "name": "Connors TPS first unit: RSI(2) under 25 twice over the SMA200, out over 70, no scale-ins (long)",
+   "source": "Connors TPS (TuringTrader)",
+   "url": "https://turingtrader-com.web.app/portfolios/connors-tps",
+   "added": "2026-11-18",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Connors TPS, first unit only (TuringTrader's reading): over the SMA200 with RSI(2) under 25 two bars in a row -> buy, out when RSI(2) closes over 70. Long only. The source's scale-ins add to a losing trade, so they are left out; the 3 ATR stop is ours."
+  },
+  {
+   "id": "SC613",
+   "name": "Kagi yin / yang flip on a 2 ATR reversal, opposite-flip exit, 2 ATR stop",
+   "source": "Kagi (StockCharts ChartSchool)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/chart-analysis/chart-types/kagi-charts",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Kagi: thin line turns thick (the close breaks the last shoulder) -> buy; thick turns thin -> sell; out on the opposite turn, 2 ATR stop (ours). Reversal = 2 x ATR14 (ours)."
+  },
+  {
+   "id": "SC614",
+   "name": "Weis Wave high effort (1.5 x the average wave) on the EMA50 side, 2 ATR, 2R",
+   "source": "Weis Wave Volume (LazyBear / ADXAE)",
+   "url": "https://my.tradingview.com/script/HFGx4ote-Indicator-Weis-Wave-Volume-LazyBear",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Weis Wave: the running wave's volume passes 1.5 x the average finished wave in the EMA50's direction -> with it; 2 ATR, 2R (ours)."
+  },
+  {
+   "id": "SC615",
+   "name": "Better Volume climax at a 20-bar extreme, close through the climax bar within 3 bars, 2R",
+   "source": "Better Volume (ProRealCode)",
+   "url": "https://prorealcode.com/prorealtime-indicators/better-volume",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Better Volume climax reversal: a climax-down bar at the 20-bar low, then a close over its high within 3 bars -> buy (climax-up mirror); stop the climax bar's extreme, 2R (entry rule ours: the source has none)."
+  },
+  {
+   "id": "SC616",
+   "name": "DeMark TD Clopwin break on the EMA50 side, bar stop, 2R",
+   "source": "TD Clopwin (wickra docs)",
+   "url": "https://4e3995d1.wickra-docs.pages.dev/Indicators/Indicator-TdClopwin",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "DeMark TD Clopwin: the bar's open and close sit inside the prior bar's body; the next close beyond its range in the signalled direction, with the EMA50 -> enter; stop its other side, 2R (stop, target and the trend filter ours)."
+  },
+  {
+   "id": "SC617",
+   "name": "Beat the Market Maker extended M / W away from the EMA 50 / 100 / 200, setup-candle stop, target the nearest EMA",
+   "source": "Beat the Market Maker extended M / W",
+   "url": "https://w-m-complete.pages.dev/extended-m-and-w",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Beat the Market Maker extended M / W (w-m-complete): price stretched away from the EMA 50, 100 and 200, a double top (M) there, a close through its neckline -> sell, stop over the setup candle (the source's tightest stop option), target the nearest EMA (W mirrors it), at least 1:1. Ours: stretched = the peaks 1 ATR from the nearest EMA, the two peaks within 1 ATR, 3-bar swings."
+  },
+  {
+   "id": "SC618",
+   "name": "Buy the pullback: day beyond the prior high, pullback to a SuperTrend line, 1.5R, BE halfway (MQL5 blog 777944)",
+   "source": "Buy the Pullback, Not the Breakout (MQL5 blog)",
+   "url": "https://www.mql5.com/en/blogs/post/777944",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "'Buy the Pullback, Not the Breakout' (MQL5 blog 777944): the day has closed beyond the previous day's high, price pulls back to the trailing line, the first close over the prior bar's high -> buy (mirror under the low); stop beyond the line, 1.5R, break-even halfway. Ours: the source's commercial 'dots' are replaced by a SuperTrend 10 x 2 line."
   }
  ],
  "indicators": [
@@ -16096,6 +16966,76 @@
    "url": "https://oxfordstrat.com/trading-strategies/wide-range-pattern/",
    "added": "2026-11-18",
    "uses": "NR / WR setups and volatility compression filters (SC569)"
+  },
+  {
+   "name": "camarilla",
+   "source": "Camarilla pivots (MQL5 blog)",
+   "url": "https://www.mql5.com/en/blogs/post/720680",
+   "added": "2026-11-18",
+   "uses": "H3 / L3 fades and H4 / L4 breakouts (SC602, SC603); intraday targets for any strategy"
+  },
+  {
+   "name": "acd",
+   "source": "Mark Fisher ACD (LuxAlgo / NexusFi; A / C sizes ours)",
+   "url": "https://www.luxalgo.com/library/concept/acd-method.md",
+   "added": "2026-11-18",
+   "uses": "day bias from the A level and number line; failed-A reversals (SC591-SC593)"
+  },
+  {
+   "name": "the_strat",
+   "source": "TheStrat (LuxAlgo / TrendSpider)",
+   "url": "https://www.luxalgo.com/library/concept/the-strat.md",
+   "added": "2026-11-18",
+   "uses": "bar-type entries and higher-timeframe continuity filter (SC594-SC597)"
+  },
+  {
+   "name": "weis_wave",
+   "source": "Weis Wave Volume (our reconstruction from the LazyBear / ADXAE descriptions)",
+   "url": "https://my.tradingview.com/script/HFGx4ote-Indicator-Weis-Wave-Volume-LazyBear",
+   "added": "2026-11-18",
+   "uses": "effort vs result filter on breakouts and pullbacks (SC614)"
+  },
+  {
+   "name": "better_volume",
+   "source": "Better Volume (ProRealCode, public domain)",
+   "url": "https://prorealcode.com/prorealtime-indicators/better-volume",
+   "added": "2026-11-18",
+   "uses": "climax reversals, churn as a no-breakout filter (SC615)"
+  },
+  {
+   "name": "td_patterns",
+   "source": "DeMark TD Clop / Clopwin / Camouflage (wickra docs)",
+   "url": "https://4e3995d1.wickra-docs.pages.dev/Indicators/Indicator-TdClopwin",
+   "added": "2026-11-18",
+   "uses": "short-term reversal entries (SC616); Clop and Camouflage need real opening gaps, so they have no strategy yet"
+  },
+  {
+   "name": "kagi",
+   "source": "Kagi (StockCharts ChartSchool; 2 ATR reversal ours)",
+   "url": "https://chartschool.stockcharts.com/table-of-contents/chart-analysis/chart-types/kagi-charts",
+   "added": "2026-11-18",
+   "uses": "trend state filter, yin / yang flips (SC613)"
+  },
+  {
+   "name": "quasimodo",
+   "source": "Quasimodo (MQL5 article 23141)",
+   "url": "https://www.mql5.com/en/articles/23141",
+   "added": "2026-11-18",
+   "uses": "reversal entries at the shoulder (SC589, SC590)"
+  },
+  {
+   "name": "brooks_count",
+   "source": "Al Brooks bar count (NexusFi)",
+   "url": "https://nexusfi.com/a/strategies/al-brooks-price-action-method",
+   "added": "2026-11-18",
+   "uses": "pullback entry timing on any trend strategy (SC599)"
+  },
+  {
+   "name": "pivot_boss",
+   "source": "Frank Ochoa reversal candles (book notes)",
+   "url": "https://paisaconsultant.blogspot.com/2020/07/book-notes-secret-of-pivot-boss-by.html",
+   "added": "2026-11-18",
+   "uses": "reversal confirmation at levels (SC608-SC611)"
   }
  ],
  "sources": [
@@ -16127,13 +17067,13 @@
    "name": "MarketSmith / IBD (O'Neil)",
    "url": "https://www.luxalgo.com/library/concept/pocket-pivot/",
    "look_for": "O'Neil / Kacher-Morales setups: pocket pivots, buyable gap-ups, bases",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "Forex Factory (forum + calendar)",
    "url": "https://www.forexfactory.com/forum/71-trading-systems",
    "look_for": "trading-system threads with first-post rules; the calendar for bot 7",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "Myfxbook",
@@ -16163,7 +17103,7 @@
    "name": "Investing.com",
    "url": "https://www.investing.com/analysis/",
    "look_for": "strategy articles; economic calendar",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "Bloomberg",
@@ -16247,7 +17187,7 @@
    "name": "WH SelfInvest free strategies",
    "url": "https://whselfinvest.com/en/trading_strategies_33_Kaufman_Efficiency_Ratio.php",
    "look_for": "free strategies with rules",
-   "last_scanned": "2026-11-15"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "StockCharts ChartSchool",

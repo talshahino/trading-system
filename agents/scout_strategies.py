@@ -12428,3 +12428,630 @@ SCOUT.update({
     "SC580": ("Chandelier Exit (everget, close-based ratchet) flip with the EMA200, chandelier trailing stop, opposite-flip exit", s_chandelier_everget, _F + ["4Hour"]),
     "SC581": ("EMA13 pullback over the EMA65 only when the Elder Impulse is not red (shorts: not green), swing stop, 2R", s_elder_impulse_pullback, _F + ["4Hour"]),
 })
+
+
+# =====================================================================================================================
+# scout 18.11.2026 (evening): SC582-SC618 - the harmonic family (Bat, Crab, Deep Crab, Shark, Cypher, AB=CD, Three Drives),
+# Quasimodo, Fisher's ACD, TheStrat, Stacey Burke, Al Brooks, Stockbee, Camarilla, Bollinger W / M, Landry's Bow Tie,
+# Carter's HOLP / LOHP, Ochoa's Pivot Boss reversals. Indicators: agents/indicators/classic10.py.
+# =====================================================================================================================
+def _harm_new(df, spec, k=2, tol=0.08, tg=0.618):
+    """XABCD on the confirmed zigzag. spec(XA, AB, BC, X, A, B, C, s) -> the D price or None. Entry at the first bar
+    reaching D, stop 0.1 XA beyond D, target tg of CD back from D (Altrady: 38.2% / 61.8% of CD; we use the second)."""
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    n = len(c)
+    piv, snaps = _zigzag_snapshots(h, l, k)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    st_l, st_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    for t in range(1, n):
+        m = snaps[t]
+        if m < 4:
+            continue
+        (xi, X, xt), (ai, A, _), (bi, B, _), (ci, C, ct) = piv[m - 4:m]
+        s = xt
+        XA, AB, BC = s * (X - A), s * (B - A), s * (B - C)
+        if XA <= 0 or AB <= 0 or BC <= 0:
+            continue
+        D = spec(XA, AB, BC, X, A, B, C, s, tol)
+        if D is None or s * (D - C) <= 0:
+            continue
+        seg = h[ci + 1:t] if s > 0 else l[ci + 1:t]
+        Dz = D - s * tol * XA
+        tgt = D + tg * (C - D)
+        if s > 0:
+            if h[t] < Dz or (len(seg) and seg.max() >= Dz):
+                continue
+            stop = D + 0.1 * XA
+            if tgt < c[t] < stop:
+                S[t], st_s[t], tg_s[t] = True, stop, tgt
+        else:
+            if l[t] > Dz or (len(seg) and seg.min() <= Dz):
+                continue
+            stop = D - 0.1 * XA
+            if stop < c[t] < tgt:
+                L[t], st_l[t], tg_l[t] = True, stop, tgt
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(st_l, st_s, tg_l, tg_s)
+
+
+def _in(x, lo, hi, tol):
+    return lo * (1 - tol) <= x <= hi * (1 + tol)
+
+
+def s_harm_bat(df):
+    """Bat (ProjectSyndicate / QuantVue cheat sheet): AB 0.382-0.5 of XA, BC 0.382-0.886 of AB, D = 0.886 of XA, CD 1.618-2.618
+    of BC (IG). Enter at D, stop 0.1 XA beyond D, target 61.8% of CD (Altrady). Ours: 2-bar zigzag, +/-8% tolerance."""
+    def f(XA, AB, BC, X, A, B, C, s, tol):
+        D = A + s * 0.886 * XA
+        return D if _in(AB / XA, 0.382, 0.5, tol) and _in(BC / AB, 0.382, 0.886, tol) and _in(s * (D - C) / BC, 1.618, 2.618, tol) else None
+    return _harm_new(df, f)
+
+
+def s_harm_crab(df):
+    """Crab (IG / ProjectSyndicate): AB 0.382-0.618 of XA, BC 0.382-0.886 of AB, D = the 1.618 extension of XA, CD 2.618-3.618
+    of BC. Enter at D, stop 0.1 XA beyond D, target 61.8% of CD (Altrady). Ours: 2-bar zigzag, +/-15% tolerance."""
+    def f(XA, AB, BC, X, A, B, C, s, tol):
+        D = A + s * 1.618 * XA
+        return D if _in(AB / XA, 0.382, 0.618, tol) and _in(BC / AB, 0.382, 0.886, tol) and _in(s * (D - C) / BC, 2.618, 3.618, tol) else None
+    return _harm_new(df, f, tol=0.15)
+
+
+def s_harm_deep_crab(df):
+    """Deep Crab (IG: B at 0.886 of XA; ProjectSyndicate: D at the 2.24-2.618 extension of XA): BC 0.382-0.886 of AB, D = 2.24
+    x XA. Enter at D, stop 0.1 XA beyond D, target 61.8% of CD. Ours: 2-bar zigzag, +/-15% tolerance, the 2.24 end of the zone."""
+    def f(XA, AB, BC, X, A, B, C, s, tol):
+        D = A + s * 2.24 * XA
+        return D if _in(AB / XA, 0.886, 0.886, tol) and _in(BC / AB, 0.382, 0.886, tol) else None
+    return _harm_new(df, f, tol=0.15)
+
+
+def s_harm_shark(df):
+    """Shark (ProjectSyndicate): AB 1.13-1.618 of XA, BC 1.13-1.618 of AB, D = 0.886 of XA. Enter at D, stop 0.1 XA beyond D,
+    target 61.8% of CD. (IG labels the points differently; the ProjectSyndicate ratios are the codable ones.)"""
+    def f(XA, AB, BC, X, A, B, C, s, tol):
+        D = A + s * 0.886 * XA
+        return D if _in(AB / XA, 1.13, 1.618, tol) and _in(BC / AB, 1.13, 1.618, tol) else None
+    return _harm_new(df, f)
+
+
+def s_harm_cypher(df):
+    """Cypher (QuantVue cheat sheet): B 0.382-0.618 of XA, C at the 1.272-1.414 extension of XA, D = the 0.786 retracement of
+    XC. Enter at D, stop 0.1 XA beyond D, target 61.8% of CD. (ProjectSyndicate measures the same numbers from other legs.)"""
+    def f(XA, AB, BC, X, A, B, C, s, tol):
+        XC = s * (X - C)
+        return C + s * 0.786 * XC if _in(AB / XA, 0.382, 0.618, tol) and _in(XC / XA, 1.272, 1.414, tol) else None
+    return _harm_new(df, f)
+
+
+def s_harm_abcd(df):
+    """AB=CD (IG): BC = 0.618 of AB, CD the same length as AB and taking about the same time. Enter at D, stop 0.5 AB beyond D,
+    target 61.8% of CD. Ours: +/-10% on the ratio, CD's time 0.5-2 x AB's, the stop."""
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    n = len(c)
+    piv, snaps = _zigzag_snapshots(h, l, 2)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    st_l, st_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    for t in range(1, n):
+        m = snaps[t]
+        if m < 3:
+            continue
+        (ai, A, at), (bi, B, _), (ci, C, _) = piv[m - 3:m]
+        s = -at                                  # s = +1: A low, B high, C low, D high -> sell at D
+        AB, BC = s * (B - A), s * (B - C)
+        if AB <= 0 or BC <= 0 or not _in(BC / AB, 0.618, 0.618, 0.10):
+            continue
+        D = C + s * AB
+        dt = t - ci
+        if not 0.5 * (bi - ai) <= dt <= 2.0 * (bi - ai):
+            continue
+        seg = h[ci + 1:t] if s > 0 else l[ci + 1:t]
+        tgt = D + 0.618 * (C - D)
+        if s > 0 and h[t] >= D and not (len(seg) and seg.max() >= D) and tgt < c[t] < D + 0.5 * AB:
+            S[t], st_s[t], tg_s[t] = True, D + 0.5 * AB, tgt
+        elif s < 0 and l[t] <= D and not (len(seg) and seg.min() <= D) and D - 0.5 * AB < c[t] < tgt:
+            L[t], st_l[t], tg_l[t] = True, D - 0.5 * AB, tgt
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(st_l, st_s, tg_l, tg_s)
+
+
+def s_harm_three_drives(df):
+    """Three Drives (QuantVue cheat sheet): A = 0.618 retracement of drive 1, drive 2 = the 1.272-1.618 extension of A, B = 0.618
+    retracement of drive 2, drive 3 = the 1.272 extension of B: fade it there. Ours: +/-15% tolerance, stop at the 1.618 extension
+    of B, target the B level (the source's stop is not stated and its target is unclear)."""
+    h, l, c = (df[x].to_numpy(dtype=float) for x in "hlc")
+    n = len(c)
+    piv, snaps = _zigzag_snapshots(h, l, 2)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    st_l, st_s, tg_l, tg_s = (np.full(n, np.nan) for _ in range(4))
+    for t in range(1, n):
+        m = snaps[t]
+        if m < 5:
+            continue
+        (_, P0, pt), (_, D1, _), (_, A, _), (_, D2, _), (bi, B, _) = piv[m - 5:m]
+        s = -pt                                  # s = +1: rising drives -> sell the third
+        d1, ra, d2, rb = s * (D1 - P0), s * (D1 - A), s * (D2 - A), s * (D2 - B)
+        if min(d1, ra, d2, rb) <= 0 or not (_in(ra / d1, 0.618, 0.618, 0.15) and _in(d2 / ra, 1.272, 1.618, 0.15)
+                                            and _in(rb / d2, 0.618, 0.618, 0.15)):
+            continue
+        D3, stop = B + s * 1.272 * rb, B + s * 1.618 * rb
+        seg = h[bi + 1:t] if s > 0 else l[bi + 1:t]
+        if s > 0 and h[t] >= D3 and not (len(seg) and seg.max() >= D3) and B < c[t] < stop:
+            S[t], st_s[t], tg_s[t] = True, stop, B
+        elif s < 0 and l[t] <= D3 and not (len(seg) and seg.min() <= D3) and stop < c[t] < B:
+            L[t], st_l[t], tg_l[t] = True, stop, B
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(st_l, st_s, tg_l, tg_s)
+
+
+def s_quasimodo_touch(df):
+    """Quasimodo (MQL5 article 23141 defaults): 5-bar pivots, head beyond the shoulder, close through the leg, sell the return
+    to the shoulder within 30 bars; stop beyond the head and at least 1 ATR away, 2R, break-even at 1R."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.quasimodo(df)
+    a = atr(h, l, c, 14)
+    sl = np.minimum(z["head"] - 0.1 * a, c - a)
+    ss = np.maximum(z["head"] + 0.1 * a, c + a)
+    L, S = _excl(z["buy"], z["sell"])
+    return L, S, _plan_r(sl, ss, 2.0, breakeven=(0.5, 0.0))
+
+
+def s_quasimodo_rejection(df):
+    """Quasimodo with the article's confirmation mode: the bar pierces the shoulder and closes back through it; target the
+    broken swing (its TP_STRUCTURE mode), stop beyond the head."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.quasimodo(df)
+    a = atr(h, l, c, 14)
+    L, S = _excl(z["buy_rej"], z["sell_rej"])
+    return L, S, _plan_lv(z["head"] - 0.1 * a, z["head"] + 0.1 * a, z["bos"], z["bos"])
+
+
+def _ny_flat(df):
+    ny = df.index.tz_convert("America/New_York")
+    return (ny.hour.to_numpy() + ny.minute.to_numpy() / 60.0) >= 16.0
+
+
+def s_acd_a(df):
+    """Mark Fisher ACD: an A level held for half the opening range -> with it; stop the far side of the opening range, target
+    the C level (NexusFi), flat 16:00 New York. A / C sizes are ours (0.10 / 0.20 of the 14-day range)."""
+    z = IND.acd(df)
+    L, S = _excl(z["a_long"], z["a_short"])
+    return L, S, _plan_lv(z["orl"], z["orh"], z["c_up"], z["c_dn"], force_exit=_ny_flat(df))
+
+
+def s_acd_failed_a(df):
+    """ACD failed A: after a held A, a close through the other side of the opening range by C is the reversal signal
+    (LuxAlgo); stop the A level on the failed side, 2R, flat 16:00 New York (stop and target ours)."""
+    z = IND.acd(df)
+    L, S = _excl(z["c_long"], z["c_short"])
+    return L, S, _plan_r(z["a_dn"], z["a_up"], 2.0, force_exit=_ny_flat(df))
+
+
+def s_acd_number_line(df):
+    """SC592 only with Fisher's number line (30-day score) and the pivot range: longs with the score over 0 and the close over
+    the pivot range, shorts the mirror."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.acd(df)
+    L, S = _excl(z["a_long"] & (z["number"] > 0) & (c > z["pr_hi"]), z["a_short"] & (z["number"] < 0) & (c < z["pr_lo"]))
+    return L, S, _plan_lv(z["orl"], z["orh"], z["c_up"], z["c_dn"], force_exit=_ny_flat(df))
+
+
+def _strat_plan(z, key):
+    d = z[key]
+    L, S = _excl(d > 0, d < 0)
+    return L, S, _plan_lv(z["stop"], z["stop"], z["tgt"], z["tgt"])
+
+
+def s_strat_22(df):
+    """TheStrat 2-2 reversal: a directional bar reversed at once by the opposite 2; stop the first bar's far side, target its
+    extreme's other end (the bar before)."""
+    return _strat_plan(IND.the_strat(df, 1), "r22")
+
+
+def s_strat_212(df):
+    """TheStrat 2-1-2 (continuation and reversal) on candles of 4 bars: the break of the inside bar; stop its other side, target
+    the extreme of the bar before it (LuxAlgo). Ours: 4-bar candles."""
+    return _strat_plan(IND.the_strat(df, 4), "s212")
+
+
+def s_strat_312(df):
+    """TheStrat 3-1-2 on candles of 4 bars: outside bar, inside bar, break of the inside bar; stop its other side, target the
+    outside bar's extreme. Ours: 4-bar candles."""
+    return _strat_plan(IND.the_strat(df, 4), "s312")
+
+
+def s_strat_122(df):
+    """TheStrat 1-2-2 RevStrat on candles of 4 bars: inside bar, a break that fails, a 2 the other way; stop beyond the failed
+    bar, target the inside bar's far side. Ours: 4-bar candles."""
+    return _strat_plan(IND.the_strat(df, 4), "s122")
+
+
+def s_burke_frd_fgd(df):
+    """Stacey Burke First Red Day / First Green Day (TraderLoft): pump day, then a day closing under its open; on day 3 sell at
+    the day's high once it has run 0.5 ADR off the low, on the first bearish close back under the EMA20 (First Green Day mirrors
+    it). Stop over the peak, target 0.5 ADR (the 50 pips), no overnight. Ours: 50-75 pips = 0.5 ADR, 'at the high' = within 0.1 ADR, stop cap 0.35 ADR,
+    windows 07-10 / 13-16 UTC."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    ix = df.index.tz_convert("UTC")
+    d = pd.Series(ix.date)
+    g = pd.DataFrame({"d": d, "o": o, "h": h, "l": l, "c": c})
+    dd = g.groupby("d").agg(o=("o", "first"), h=("h", "max"), l=("l", "min"), c=("c", "last"))
+    up, dn = dd["c"] > dd["o"], dd["c"] < dd["o"]
+    fr = pd.DataFrame({"sell": up.shift(2).fillna(False).astype(bool) & dn.shift(1).fillna(False).astype(bool),
+                       "buy": dn.shift(2).fillna(False).astype(bool) & up.shift(1).fillna(False).astype(bool),
+                       "adr": (dd["h"] - dd["l"]).rolling(14, min_periods=3).mean().shift(1)})
+    m = g[["d"]].join(fr, on="d")
+    adr = m["adr"].to_numpy(dtype=float)
+    dh, dl = g.groupby("d")["h"].cummax().to_numpy(), g.groupby("d")["l"].cummin().to_numpy()
+    e = ema(c, 20)
+    hr = ix.hour.to_numpy()
+    win = ((hr >= 7) & (hr < 10)) | ((hr >= 13) & (hr < 16))
+    pk, tr = _s(h).rolling(6, min_periods=1).max().to_numpy(), _s(l).rolling(6, min_periods=1).min().to_numpy()
+    S_ = m["sell"].to_numpy(bool) & win & (dh - dl >= 0.5 * adr) & (pk >= dh - 0.1 * adr) & cross_down(c, e) & (c < o) & (pk + 0.1 * a - c <= 0.35 * adr)
+    L_ = m["buy"].to_numpy(bool) & win & (dh - dl >= 0.5 * adr) & (tr <= dl + 0.1 * adr) & cross_up(c, e) & (c > o) & (c - tr + 0.1 * a <= 0.35 * adr)
+    L, S = _excl(L_, S_)
+    return L, S, _plan_lv(tr - 0.1 * a, pk + 0.1 * a, c + 0.5 * adr, c - 0.5 * adr, force_exit=hr >= 21)
+
+
+def s_brooks_h2(df):
+    """Al Brooks High 2 / Low 2 with the EMA20: the second bar over the prior high in a pullback above the EMA buys (mirror
+    under it); stop beyond the pullback's extreme, 2R (NexusFi: prior high / measured move; 2R ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.brooks_count(df)
+    e = ema(c, 20)
+    a = atr(h, l, c, 14)
+    L, S = _excl(z["h2"] & (c > e), z["l2"] & (c < e))
+    return L, S, _plan_r(z["pb_low"] - 0.1 * a, z["pb_high"] + 0.1 * a, 2.0)
+
+
+def s_brooks_wedge(df):
+    """Al Brooks three-push wedge: three higher highs with rising lows, the third push no bigger than the second, then a close
+    through the line of the two lows within 20 bars -> reverse; stop beyond the third push, 2R (mirror for falling wedges).
+    Ours: 3-bar swings, the push-size limits 0.5-1.0."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    a = atr(h, l, c, 14)
+    piv, snaps = _zigzag_snapshots(h, l, 3)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    for t in range(1, n):
+        m = snaps[t]
+        if m < 5:
+            continue
+        (_, p1, ty), (i2, p2, _), (_, p3, _), (i4, p4, _), (i5, p5, _) = piv[m - 5:m]
+        s = ty
+        if t - i5 > 20 or not (s * (p3 - p1) > 0 and s * (p5 - p3) > 0 and s * (p4 - p2) > 0):
+            continue
+        push2, push3 = s * (p3 - p2), s * (p5 - p4)
+        if push2 <= 0 or not 0.5 <= push3 / push2 <= 1.0:
+            continue
+        slope = (p4 - p2) / (i4 - i2)
+        now, prev = p4 + slope * (t - i4), p4 + slope * (t - 1 - i4)
+        if s > 0 and c[t] < now and c[t - 1] >= prev:
+            S[t], ss[t] = True, p5 + 0.1 * a[t]
+        elif s < 0 and c[t] > now and c[t - 1] <= prev:
+            L[t], sl[t] = True, p5 - 0.1 * a[t]
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_stockbee_4pct(df):
+    """Stockbee 4% momentum burst (tikamalma's scan of Bonde's setup), long: the day closes at least 4% over the prior close,
+    over its open, on more volume than the prior day, and the prior day was not up (2Lynch: not up two days in a row). Enter
+    next bar, stop the day's low, out after 5 days (Bonde holds 3-5). Works on daily candles of any chart."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    d = pd.Series(df.index.tz_convert("UTC").date)
+    g = pd.DataFrame({"d": d, "o": o, "h": h, "l": l, "c": c, "v": v, "i": np.arange(n)})
+    dd = g.groupby("d").agg(o=("o", "first"), l=("l", "min"), c=("c", "last"), v=("v", "sum"), i=("i", "last"), m=("i", "size"))
+    full = dd["m"] >= 0.8 * dd["m"].median()
+    pc = dd["c"].shift(1)
+    sig = (dd["c"] >= 1.04 * pc) & (dd["c"] > dd["o"]) & (dd["v"] >= dd["v"].shift(1)) & ~(pc > dd["c"].shift(2)) & full
+    L = np.zeros(n, bool)
+    st = np.full(n, np.nan)
+    idx = dd["i"].to_numpy(int)[sig.to_numpy(bool)]
+    L[idx] = True
+    st[idx] = dd["l"].to_numpy(float)[sig.to_numpy(bool)]
+    bars = int(max(dd["m"].median() * 5, 5))
+    return L, np.zeros(n, bool), {"stop": ("level", st, st), "target": None, "max_bars": bars}
+
+
+def s_camarilla_fade(df):
+    """Camarilla H3 / L3 fade (MQL5 blog 720680): a bar pierces H3 and closes back under it -> sell, stop H4, target L3; mirror
+    at L3. First signal per side per day."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.camarilla(df)
+    d = pd.Series(df.index.tz_convert("UTC").date)
+    S_ = (h >= z["h3"]) & (c < z["h3"]) & (c > z["l3"])
+    L_ = (l <= z["l3"]) & (c > z["l3"]) & (c < z["h3"])
+    S_ = S_ & (pd.Series(S_).groupby(d).cumsum().to_numpy() == 1)
+    L_ = L_ & (pd.Series(L_).groupby(d).cumsum().to_numpy() == 1)
+    L, S = _excl(L_, S_)
+    return L, S, _plan_lv(z["l4"], z["h4"], z["h3"], z["l3"])
+
+
+def s_camarilla_break(df):
+    """Camarilla H4 / L4 breakout with the EMA20 (vinaygaur97, TradingView, 30 minutes): close over H4 and the EMA20 -> buy, stop
+    H3, 2R; mirror under L4."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.camarilla(df)
+    e = ema(c, 20)
+    L, S = _excl(cross_up(c, z["h4"]) & (c > e), cross_down(c, z["l4"]) & (c < e))
+    return L, S, _plan_r(z["h3"], z["l3"], 2.0)
+
+
+def s_bollinger_w_m(df):
+    """Bollinger W bottom / M top (StockCharts): a low under the lower band, a bounce to the middle band, a second low that holds
+    over the lower band, then a close over the bounce high -> buy; the M top mirrors it. Stop beyond the second swing, 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    a = atr(h, l, c, 14)
+    mid = sma(c, 20)
+    sd = _s(c).rolling(20).std(ddof=0).to_numpy()
+    up, lo = mid + 2 * sd, mid - 2 * sd
+    piv, snaps = _zigzag_snapshots(h, l, 3)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    for t in range(1, n):
+        m = snaps[t]
+        if m < 3:
+            continue
+        (i1, p1, ty), (i2, p2, _), (i3, p3, _) = piv[m - 3:m]
+        if t - i3 > 15:
+            continue
+        if ty < 0 and p1 <= lo[i1] and p2 >= mid[i2] and p3 > lo[i3] and c[t] > p2 and c[t - 1] <= p2:
+            L[t], sl[t] = True, p3 - 0.1 * a[t]
+        elif ty > 0 and p1 >= up[i1] and p2 <= mid[i2] and p3 < up[i3] and c[t] < p2 and c[t - 1] >= p2:
+            S[t], ss[t] = True, p3 + 0.1 * a[t]
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_landry_bow_tie(df):
+    """Dave Landry Bow Tie (TradingMarkets): SMA10, EMA20, EMA30 converge tightly and spread in the new order within 4 bars; after
+    the first correction, buy the close over the prior bar's high (mirror for shorts). Ours: tight = within 0.25 ATR, the correction
+    = a lower low in the last 3 bars, stop under it, 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    s10, e20, e30 = sma(c, 10), ema(c, 20), ema(c, 30)
+    hi_, lo_ = np.maximum.reduce([s10, e20, e30]), np.minimum.reduce([s10, e20, e30])
+    tight = _s((hi_ - lo_) <= 0.25 * a).rolling(8, min_periods=1).max().to_numpy() > 0
+    up_o, dn_o = (s10 > e20) & (e20 > e30), (s10 < e20) & (e20 < e30)
+    wide = (hi_ - lo_) >= 0.4 * a
+    dip = _s(l < _r(l)).rolling(3, min_periods=1).max().to_numpy() > 0
+    pop = _s(h > _r(h)).rolling(3, min_periods=1).max().to_numpy() > 0
+    L_ = tight & up_o & wide & dip & (c > _r(h))
+    S_ = tight & dn_o & wide & pop & (c < _r(l))
+    L, S = _excl(_onset(L_), _onset(S_))
+    sl, ss = _swl(h, l, a, 4, 0.1)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_holp_lohp(df):
+    """John Carter HOLP / LOHP (WH SelfInvest systems 19 / 20): a close at the 20-bar low, then the first close over the high of the
+    lowest-low bar -> buy (only in an up trend); stop that bar's low, out on a close under the low of two bars back. LOHP mirrors it.
+    Ours: trend = the EMA50 rising over 10 bars; the trailing stop is applied on closes."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    e = ema(c, 50)
+    up_t, dn_t = e > _r(e, 10), e < _r(e, 10)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    lv_h, lv_l, wait_l, hv_l, hv_h, wait_s = np.nan, np.nan, 0, np.nan, np.nan, 0
+    for t in range(20, n):
+        if c[t] <= c[t - 19:t + 1].min():
+            j = t - 19 + int(np.argmin(l[t - 19:t + 1]))
+            lv_h, lv_l, wait_l = h[j], l[j], 20
+        elif wait_l > 0:
+            wait_l -= 1
+            if c[t] > lv_h and up_t[t]:
+                L[t], sl[t], wait_l = True, lv_l, 0
+        if c[t] >= c[t - 19:t + 1].max():
+            j = t - 19 + int(np.argmax(h[t - 19:t + 1]))
+            hv_l, hv_h, wait_s = l[j], h[j], 20
+        elif wait_s > 0:
+            wait_s -= 1
+            if c[t] < hv_l and dn_t[t]:
+                S[t], ss[t], wait_s = True, hv_h, 0
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", sl, ss), "target": None, "exit_long": c < _r(l, 2), "exit_short": c > _r(h, 2)}
+
+
+def s_twenty_three(df):
+    """Twenty Entry & Three Exit (Joachim Struck, WH SelfInvest system 67), forex 60 minutes: a 20-bar low in a bullish trend -> buy,
+    target the highest close of the last 3 candles, 9-hour time stop (mirror at a 20-bar high). Ours: trend = EMA100, the 'far' stop
+    = 3 ATR."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    e = ema(c, 100)
+    lo20, hi20 = _s(l).rolling(20).min().to_numpy(), _s(h).rolling(20).max().to_numpy()
+    L, S = _excl(_onset((l <= lo20) & (c > e)), _onset((h >= hi20) & (c < e)))
+    tl, ts = _s(c).rolling(3).max().to_numpy(), _s(c).rolling(3).min().to_numpy()
+    bars = max(int(round(540.0 / max(_bar_minutes(df), 1.0))), 1)
+    return L, S, _plan_lv(c - 3 * a, c + 3 * a, tl, ts, max_bars=bars)
+
+
+def s_pb_wick(df):
+    """Ochoa (Pivot Boss) wick reversal on candles of 4 bars: wick at least 2.5 x the body at the 10-candle extreme, closing near
+    the far end; stop the wick's end, 2R (ours)."""
+    z = IND.pivot_boss(df, 4)
+    L, S = _excl(z["wick"] > 0, z["wick"] < 0)
+    return L, S, _plan_r(z["stop"], z["stop"], 2.0)
+
+
+def s_pb_extreme(df):
+    """Ochoa extreme reversal on candles of 4 bars: a candle about 2 x the average (1.6 x, ours) with a 50-85% body, then an opposite candle; stop
+    the pair's extreme, 2R (ours)."""
+    z = IND.pivot_boss(df, 4)
+    L, S = _excl(z["extreme"] > 0, z["extreme"] < 0)
+    return L, S, _plan_r(z["stop"], z["stop"], 2.0)
+
+
+def s_pb_outside(df):
+    """Ochoa outside reversal on candles of 4 bars: takes the prior low and closes over the prior high, at least 5% larger than
+    average; stop its extreme, 2R (ours)."""
+    z = IND.pivot_boss(df, 4)
+    L, S = _excl(z["outside"] > 0, z["outside"] < 0)
+    return L, S, _plan_r(z["stop"], z["stop"], 2.0)
+
+
+def s_pb_doji(df):
+    """Ochoa doji reversal: open and close within 1% of the range, the doji wholly under the SMA10, one of the next two bars closes
+    over its high -> buy (mirror over the SMA10); stop the pattern's extreme, 2R (ours)."""
+    z = IND.pivot_boss(df, 1)
+    L, S = _excl(z["doji"] > 0, z["doji"] < 0)
+    return L, S, _plan_r(z["stop"], z["stop"], 2.0)
+
+
+def s_connors_tps_first(df):
+    """Connors TPS, first unit only (TuringTrader's reading): over the SMA200 with RSI(2) under 25 two bars in a row -> buy, out when
+    RSI(2) closes over 70. Long only. The source's scale-ins add to a losing trade, so they are left out; the 3 ATR stop is ours."""
+    o, h, l, c, v = _ohlcv(df)
+    r = rsi(c, 2)
+    a = atr(h, l, c, 14)
+    L = _onset((c > sma(c, 200)) & (r < 25) & (_r(r) < 25))
+    return L, np.zeros(len(c), bool), {"stop": ("level", c - 3 * a, c + 3 * a), "target": None, "exit_long": r > 70}
+
+
+def s_kagi_flip(df):
+    """Kagi: thin line turns thick (the close breaks the last shoulder) -> buy; thick turns thin -> sell; out on the opposite turn,
+    2 ATR stop (ours). Reversal = 2 x ATR14 (ours)."""
+    z = IND.kagi(df)
+    L, S = _excl(z["buy"], z["sell"])
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": z["sell"], "exit_short": z["buy"]}
+
+
+def s_weis_effort(df):
+    """Weis Wave: the running wave's volume passes 1.5 x the average finished wave in the EMA50's direction -> with it; 2 ATR, 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.weis_wave(df)
+    e = ema(c, 50)
+    he = z["high_effort"]
+    L, S = _excl(_onset(he & (z["wave"] > 0) & (c > e)), _onset(he & (z["wave"] < 0) & (c < e)))
+    return L, S, {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+def s_better_volume_climax(df):
+    """Better Volume climax reversal: a climax-down bar at the 20-bar low, then a close over its high within 3 bars -> buy (climax-up
+    mirror); stop the climax bar's extreme, 2R (entry rule ours: the source has none)."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    z = IND.better_volume(df)
+    lo20, hi20 = _s(l).rolling(20).min().to_numpy(), _s(h).rolling(20).max().to_numpy()
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    for t in range(1, n):
+        for b in (1, 2, 3):
+            j = t - b
+            if j < 0:
+                break
+            if z["climax_dn"][j] and l[j] <= lo20[j] and c[t] > h[j] and not (c[j + 1:t] > h[j]).any():
+                L[t], sl[t] = True, l[j]
+                break
+            if z["climax_up"][j] and h[j] >= hi20[j] and c[t] < l[j] and not (c[j + 1:t] < l[j]).any():
+                S[t], ss[t] = True, h[j]
+                break
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_td_clopwin(df):
+    """DeMark TD Clopwin: the bar's open and close sit inside the prior bar's body; the next close beyond its range in the signalled
+    direction, with the EMA50 -> enter; stop its other side, 2R (stop, target and the trend filter ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    w = IND.td_patterns(df)["clopwin"]
+    e = ema(c, 50)
+    pw, ph, pl = _r(w), _r(h), _r(l)
+    L, S = _excl((pw > 0) & (c > ph) & (c > e), (pw < 0) & (c < pl) & (c < e))
+    return L, S, _plan_r(pl, ph, 2.0)
+
+
+def s_btmm_extended(df):
+    """Beat the Market Maker extended M / W (w-m-complete): price stretched away from the EMA 50, 100 and 200, a double top (M) there,
+    a close through its neckline -> sell, stop over the setup candle (the source's tightest stop option), target the nearest EMA (W mirrors it), at least 1:1. Ours: stretched =
+    the peaks 1 ATR from the nearest EMA, the two peaks within 1 ATR, 3-bar swings."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    a = atr(h, l, c, 14)
+    e1, e2, e3 = ema(c, 50), ema(c, 100), ema(c, 200)
+    top, bot = np.maximum.reduce([e1, e2, e3]), np.minimum.reduce([e1, e2, e3])
+    piv, snaps = _zigzag_snapshots(h, l, 3)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss, tl, ts = (np.full(n, np.nan) for _ in range(4))
+    for t in range(200, n):
+        m = snaps[t]
+        if m < 3:
+            continue
+        (_, p1, ty), (_, p2, _), (i3, p3, _) = piv[m - 3:m]
+        if t - i3 > 25 or abs(p1 - p3) > 1.0 * a[t]:
+            continue
+        if ty > 0 and max(p1, p3) - top[t] >= 1.0 * a[t] and c[t] < p2 and c[t - 1] >= p2:
+            stop = h[t] + 0.1 * a[t]
+            if c[t] - top[t] >= stop - c[t]:
+                S[t], ss[t], ts[t] = True, stop, top[t]
+        elif ty < 0 and bot[t] - min(p1, p3) >= 1.0 * a[t] and c[t] > p2 and c[t - 1] <= p2:
+            stop = l[t] - 0.1 * a[t]
+            if bot[t] - c[t] >= c[t] - stop:
+                L[t], sl[t], tl[t] = True, stop, bot[t]
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl, ss, tl, ts)
+
+
+def s_pullback_workflow(df):
+    """'Buy the Pullback, Not the Breakout' (MQL5 blog 777944): the day has closed beyond the previous day's high, price pulls back to
+    the trailing line, the first close over the prior bar's high -> buy (mirror under the low); stop beyond the line, 1.5R, break-even
+    halfway. Ours: the source's commercial 'dots' are replaced by a SuperTrend 10 x 2 line."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    ph, pl, _ = _prev_day(df)
+    d = pd.Series(df.index.tz_convert("UTC").date)
+    bull = pd.Series(c > ph).groupby(d).cummax().to_numpy(bool)
+    bear = pd.Series(c < pl).groupby(d).cummax().to_numpy(bool)
+    line = _supertrend_line(h, l, c, 10, 2.0)
+    touch_l = _s(l <= line + 0.25 * a).rolling(3, min_periods=1).max().to_numpy() > 0
+    touch_s = _s(h >= line - 0.25 * a).rolling(3, min_periods=1).max().to_numpy() > 0
+    L_ = bull & ~bear & (c > line) & touch_l & (c > _r(h))
+    S_ = bear & ~bull & (c < line) & touch_s & (c < _r(l))
+    L, S = _excl(_onset(L_), _onset(S_))
+    return L, S, _plan_r(line - 0.25 * a, line + 0.25 * a, 1.5, breakeven=(0.33, 0.0))
+
+
+SCOUT.update({
+    "SC582": ("Bat harmonic: AB 0.382-0.5, D 0.886 XA, stop beyond D, target 61.8% of CD (IG / QuantVue / Altrady)", s_harm_bat, _M),
+    "SC583": ("Crab harmonic: AB 0.382-0.618, D the 1.618 XA extension, CD 2.618-3.618 BC, target 61.8% of CD (IG / QuantVue)", s_harm_crab, _M),
+    "SC584": ("Deep Crab harmonic: B 0.886 XA, D the 2.24 XA extension, target 61.8% of CD (IG / ProjectSyndicate)", s_harm_deep_crab, _M),
+    "SC585": ("Shark harmonic: AB 1.13-1.618 XA, BC 1.13-1.618 AB, D 0.886 XA, target 61.8% of CD (ProjectSyndicate)", s_harm_shark, _M),
+    "SC586": ("Cypher harmonic: B 0.382-0.618, C the 1.272-1.414 XA extension, D 0.786 XC, target 61.8% of CD (QuantVue)", s_harm_cypher, _M),
+    "SC587": ("AB=CD: BC 0.618 of AB, CD equal to AB in size and time, fade at D, target 61.8% of CD (IG)", s_harm_abcd, _M),
+    "SC588": ("Three Drives: 0.618 retracements, 1.272-1.618 drives, fade the third at the 1.272 extension, target B (QuantVue)", s_harm_three_drives, _M),
+    "SC589": ("Quasimodo: return to the shoulder after the break of structure, stop past the head, 2R, BE at 1R (MQL5 art. 23141)", s_quasimodo_touch, _F + ["4Hour"]),
+    "SC590": ("Quasimodo rejection close at the shoulder, stop past the head, target the broken swing (MQL5 art. 23141)", s_quasimodo_rejection, _F + ["4Hour"]),
+    "SC591": ("Fisher ACD: A level held half the opening range, stop the far side of the range, target C, flat 16:00 NY", s_acd_a, ["5Min", "15Min"]),
+    "SC592": ("Fisher ACD failed A: through the other side of the range by C, stop the failed A, 2R, flat 16:00 NY", s_acd_failed_a, ["5Min", "15Min"]),
+    "SC593": ("Fisher ACD A with the 30-day number line and the pivot range on its side, target C, flat 16:00 NY", s_acd_number_line, ["5Min", "15Min"]),
+    "SC594": ("TheStrat 2-2 reversal, stop past the first bar, target the bar before it (LuxAlgo / TrendSpider)", s_strat_22, _F + ["4Hour"]),
+    "SC595": ("TheStrat 2-1-2 on 4-bar candles: inside-bar break, stop its other side, target the prior extreme", s_strat_212, _F),
+    "SC596": ("TheStrat 3-1-2 on 4-bar candles: outside, inside, break; stop the inside bar, target the outside bar's extreme", s_strat_312, _F),
+    "SC597": ("TheStrat 1-2-2 RevStrat on 4-bar candles: failed break reverses, stop past the failed bar", s_strat_122, _F),
+    "SC598": ("Stacey Burke First Red / Green Day: day-3 close back through the EMA20 at the day's extreme, 0.5 ADR target, no overnight", s_burke_frd_fgd, ["5Min", "15Min"]),
+    "SC599": ("Al Brooks High 2 / Low 2 on the EMA20 side, stop past the pullback, 2R", s_brooks_h2, _F),
+    "SC600": ("Al Brooks three-push wedge: close through the wedge line, stop past the third push, 2R", s_brooks_wedge, _F + ["4Hour"]),
+    "SC601": ("Stockbee 4% burst: +4% day on rising volume, not up two days running, day-low stop, out after 5 days (long)", s_stockbee_4pct, ["1Hour", "4Hour", "1Day"]),
+    "SC602": ("Camarilla H3 / L3 rejection: stop H4 / L4, target the opposite H3 / L3 (MQL5 blog)", s_camarilla_fade, _F),
+    "SC603": ("Camarilla H4 / L4 breakout with the EMA20, stop H3 / L3, 2R, 30 minutes (TradingView)", s_camarilla_break, _F),
+    "SC604": ("Bollinger W bottom / M top: second swing holds inside the band, close through the middle swing, 2R (StockCharts)", s_bollinger_w_m, _M),
+    "SC605": ("Landry Bow Tie: SMA10 / EMA20 / EMA30 converge and fan out, first correction, 2R (TradingMarkets)", s_landry_bow_tie, _M + ["1Day"]),
+    "SC606": ("Carter HOLP / LOHP: 20-bar extreme close, close through the extreme bar, 2-bar trailing exit (WH SelfInvest)", s_holp_lohp, _M),
+    "SC607": ("Twenty Entry & Three Exit: 20-bar low in an up trend, target the 3-candle high close, 9-hour stop (WH SelfInvest)", s_twenty_three, ["1Hour"]),
+    "SC608": ("Pivot Boss wick reversal on 4-bar candles, wick stop, 2R (Ochoa)", s_pb_wick, _F),
+    "SC609": ("Pivot Boss extreme reversal on 4-bar candles, pair-extreme stop, 2R (Ochoa)", s_pb_extreme, _F),
+    "SC610": ("Pivot Boss outside reversal on 4-bar candles, bar stop, 2R (Ochoa)", s_pb_outside, _F),
+    "SC611": ("Pivot Boss doji reversal off the SMA10, pattern stop, 2R (Ochoa)", s_pb_doji, _F),
+    "SC612": ("Connors TPS first unit: RSI(2) under 25 twice over the SMA200, out over 70, no scale-ins (long)", s_connors_tps_first, ["1Hour", "4Hour", "1Day"]),
+    "SC613": ("Kagi yin / yang flip on a 2 ATR reversal, opposite-flip exit, 2 ATR stop", s_kagi_flip, _M),
+    "SC614": ("Weis Wave high effort (1.5 x the average wave) on the EMA50 side, 2 ATR, 2R", s_weis_effort, _F + ["4Hour"]),
+    "SC615": ("Better Volume climax at a 20-bar extreme, close through the climax bar within 3 bars, 2R", s_better_volume_climax, _F),
+    "SC616": ("DeMark TD Clopwin break on the EMA50 side, bar stop, 2R", s_td_clopwin, _F),
+    "SC617": ("Beat the Market Maker extended M / W away from the EMA 50 / 100 / 200, setup-candle stop, target the nearest EMA", s_btmm_extended, _F),
+    "SC618": ("Buy the pullback: day beyond the prior high, pullback to a SuperTrend line, 1.5R, BE halfway (MQL5 blog 777944)", s_pullback_workflow, ["5Min", "15Min"]),
+})

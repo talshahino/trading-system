@@ -88,6 +88,8 @@ from agents.indicators.classic8 import (adxr, asi, cfo, didi_index, dynamic_mome
                                         r_squared, range_vol, stoch_cci, uniema, vqi)
 from agents.indicators.classic9 import (autocorr_periodogram, chandelier_exit, damiani_volatmeter, elder_impulse, jma,
                                         livermore_pivots, nrtr, range_rank, vpci)
+from agents.indicators.classic10 import (acd, better_volume, brooks_count, camarilla, kagi, pivot_boss, quasimodo,
+                                         td_patterns, the_strat, weis_wave)
 TV = "https://www.tradingview.com/script/"
 TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
@@ -422,6 +424,16 @@ INDICATORS = {
     "elder_impulse": (elder_impulse, "Elder Impulse System: EMA13 and MACD histogram slopes -> +1 green / -1 red / 0 blue", TV + "oCbEFfpg-Indicator-Elder-Impulse-System"),
     "livermore_pivots": (livermore_pivots, "Livermore supply / demand pivots (ATR-swing or DeMark-size), last two of each + noise base", "https://oxfordstrat.com/trading-strategies/livermore-system-1/"),
     "range_rank": (range_rank, "Crabel narrow / wide N-bar range vs the lookback (nr / wr flags + percentile rank)", "https://oxfordstrat.com/trading-strategies/wide-range-pattern/"),
+    "camarilla": (camarilla, "Camarilla levels H1-H4 / L1-L4 from the previous day's range x 1.1 / 12, 6, 4, 2", "https://www.mql5.com/en/blogs/post/720680"),
+    "acd": (acd, "Mark Fisher ACD: opening range, A / C levels, pivot range, held A, failed-A C reversal, number line (A / C sizes ours)", "https://www.luxalgo.com/library/concept/acd-method.md"),
+    "the_strat": (the_strat, "TheStrat bar types 1 / 2 / 3 and the 2-2, 2-1-2, 3-1-2, 1-2-2 combos on candles of n bars", "https://www.luxalgo.com/library/concept/the-strat.md"),
+    "weis_wave": (weis_wave, "Weis Wave Volume: cumulative volume per wave, high effort over 1.5 x the average wave (our reconstruction)", TV + "HFGx4ote-Indicator-Weis-Wave-Volume-LazyBear"),
+    "better_volume": (better_volume, "Better Volume: low volume, climax up / down, churn from the buy / sell volume split", "https://prorealcode.com/prorealtime-indicators/better-volume"),
+    "td_patterns": (td_patterns, "DeMark TD Clop, TD Clopwin, TD Camouflage bar patterns as +1 / -1", "https://4e3995d1.wickra-docs.pages.dev/Indicators/Indicator-TdClopwin"),
+    "kagi": (kagi, "Kagi on closes with a 2 ATR reversal: line, yang / yin, shoulder and waist breaks", "https://chartschool.stockcharts.com/table-of-contents/chart-analysis/chart-types/kagi-charts"),
+    "quasimodo": (quasimodo, "Quasimodo: shoulder, leg, head, break of structure, return to the shoulder within 30 bars", "https://www.mql5.com/en/articles/23141"),
+    "brooks_count": (brooks_count, "Al Brooks High 1 / High 2 / Low 1 / Low 2 pullback bar count", "https://nexusfi.com/a/strategies/al-brooks-price-action-method"),
+    "pivot_boss": (pivot_boss, "Ochoa (Pivot Boss) wick, extreme, outside and doji reversal candles on candles of n bars", "https://paisaconsultant.blogspot.com/2020/07/book-notes-secret-of-pivot-boss-by.html"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

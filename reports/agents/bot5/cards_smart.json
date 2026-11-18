@@ -1,12 +1,138 @@
 {
  "bot": "bot5",
- "updated": "2026-11-18T06:22:43+00:00",
+ "updated": "2026-11-18T10:43:34+00:00",
  "cards": [
   {
    "bot": "bot5",
+   "kind": "improve",
+   "title": "⭐ שיטת הגאפ · 4 שעות / שעה: רק הגאפ הראשון בכל דחף - משימה של טל",
+   "what": "ביקשת: הגאפ שקובע הוא הראשון, בתחילת הדחף. במסלול 4 שעות / שעה זה עובד: עד 2025 +197.1R ← +199.4R, ב־2026 (לא נראתה) +30.9R ← +33.6R, עם 55 עסקאות פחות. הירידה הגדולה ב־2026 13.6R ← 10.6R, היום הגרוע לא השתנה (‎-4.0R). עד 2025 הירידה כמעט זהה (15.4R ← 16.1R). שווי: +0.07% מהחשבון בחודש. ⭐ כי השיפור קטן, ובשאר המסלולים הכלל לא עבר: 4 שעות / 15 דק' ב־2026 +18.7R ← +14.2R, 4 שעות / 5 דק' +12.2R ← +10.7R - ולכן רק כאן.",
+   "train": {
+    "n": 521,
+    "eff_n": 505.0,
+    "mean": 0.4342,
+    "t": 1.6,
+    "win": 47.6
+   },
+   "unseen": {
+    "n": 252,
+    "eff_n": 251.9,
+    "mean": 0.133,
+    "t": 1.74,
+    "win": 47.1
+   },
+   "whole": {
+    "n": 773,
+    "eff_n": 747.9,
+    "mean": 0.3183,
+    "t": 1.79,
+    "win": 47.4
+   },
+   "halves": [
+    0.4448,
+    0.1585
+   ],
+   "neighbours": {
+    "values": [
+     "1",
+     "lo"
+    ],
+    "share_positive": 0.44
+   },
+   "tested": 2,
+   "cost_r": 0.013,
+   "risk_pct": 0.28,
+   "baseline": {
+    "n": 307,
+    "eff_n": 306.9,
+    "mean": 0.1004,
+    "t": 1.61,
+    "win": 47.5
+   },
+   "change": {
+    "method": "tal_gap",
+    "pair": "4h/1h",
+    "cfg": {
+     "STOPAT": "imp0",
+     "IPAD": "c4",
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 2,
+     "MIN_RR": 0.0,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be618",
+     "LADDER": "2",
+     "WKND": 10,
+     "REARM": true,
+     "FIRSTG": "1"
+    },
+    "track": "tal_gap|4h/1h",
+    "knob": "cfg"
+   },
+   "detail": {
+    "study": "agents/tal_asks_study.py",
+    "report": "reports/agents/bot5/tal_asks/report.json",
+    "now": {
+     "train": {
+      "n": 680,
+      "total": 197.13,
+      "wtotal": 168.83,
+      "mean": 0.2899,
+      "win": 49.0,
+      "max_fall": 15.41,
+      "worst_day": -3.59,
+      "green": 54.4
+     },
+     "unseen": {
+      "n": 307,
+      "total": 30.85,
+      "wtotal": 30.32,
+      "mean": 0.1005,
+      "win": 47.6,
+      "max_fall": 13.62,
+      "worst_day": -4.04,
+      "green": 51.2
+     }
+    },
+    "way": {
+     "train": {
+      "n": 521,
+      "total": 199.45,
+      "wtotal": 172.21,
+      "mean": 0.3828,
+      "win": 47.0,
+      "max_fall": 16.14,
+      "worst_day": -3.05,
+      "green": 52.4
+     },
+     "unseen": {
+      "n": 252,
+      "total": 33.6,
+      "wtotal": 32.96,
+      "mean": 0.1333,
+      "win": 47.2,
+      "max_fall": 10.56,
+      "worst_day": -4.04,
+      "green": 53.9
+     }
+    },
+    "worth_month_pct": 0.073,
+    "tracks_better_2026": [
+     "t1h_5@",
+     "t1h_15",
+     "t4h_1h",
+     "t5_1"
+    ]
+   },
+   "made": "2026-11-18T10:43:34+00:00",
+   "id": "86c38ea0ca95"
+  },
+  {
+   "bot": "bot5",
    "kind": "info",
-   "title": "בוט 5: הבדיקות ששאלת עליהן רצות עכשיו ראשונות",
-   "what": "סגירת הגאפ, הגאפ הראשון בדחף והסטופ הרחוק שלך עמדו בתור כיום שלם: כל סבב במחשב סיים בערך מכשיר אחד, ובדיקה נספרת רק עם כל 5 המדדים. תיקנתי: השאלות שלך ראשונות, וכל הגדרה רצה על 5 המדדים יחד. בסימולציה הסטופ הרחוק, הגאפ הראשון וסגירת הגאפ מסתיימים בסבב או שניים, במקום חמישה. עוד אין תוצאות, ולכן אין עדיין המלצה. שיפור בשתי התקופות יגיע ככרטיס.",
+   "title": "בוט 5: גאפ קטן מדי - רצפת גודל לא משפרת, לא נבנתה",
+   "what": "בדקתי רצפה על שלושת מסלולי 4 השעות: 8 ערכים, לפי גודל מול הטווח הממוצע ולפי אחוז מהדחף. הטובה עד 2025 היא גאפ של לפחות 1% מהדחף, והיא גם מסננת את גאפ US30 שסימנת (0.67%). עד 2025 +229.8R ← +234.7R, אבל ב־2026 +61.8R ← +58.2R, עם 27 עסקאות פחות מתוך 780. כלומר כמעט בלי השפעה על הרווח, אז לא בניתי. אם אתה רוצה את זה כהגדרה שלך למה נחשב גאפ, כתוב לי בהערה ואעביר למנהל. על אותו גאפ ענית 'כן' ב־4 שעות / שעה וב־4 שעות / 15 דק', והן עדיין ממתינות: אפשר לשנות תשובה עד שהמחיר מגיע לכניסה.",
    "train": null,
    "unseen": null,
    "whole": null,
@@ -18,16 +144,492 @@
    "baseline": null,
    "change": null,
    "detail": {
-    "tasks": [
-     "tal1711gapclose",
-     "tal1711review",
-     "b5stopimp1711",
-     "b5follow1611"
-    ],
-    "commit": "ca60baf0b"
+    "task": "b5mingap1811",
+    "report": "reports/agents/bot5/tal_asks/report.json"
    },
-   "made": "2026-11-18T06:22:43+00:00",
-   "id": "74bc00738a69"
+   "made": "2026-11-18T10:43:34+00:00",
+   "id": "bab927c0b3ea"
+  },
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: סגירת גאפ לפי ההגדרה שלך - מורידה רווח, לא נבנתה",
+   "what": "בדקתי את ההגדרה שלך (רק וויק שעובר את כל הגאפ סוגר אותו) בכל המסלולים. נכנסות יותר עסקאות (1693 ← 2023 ב־2026), והן מרוויחות פחות: עד 2025 +370.9R ← +355.5R, ב־2026 +122.7R ← +79.8R. הגאפים שהכלל של היום פוסל (המחיר חזר לאמצע בתוך הדחף) הם בממוצע עסקאות חלשות. נשאר כמו היום.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 0,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "task": "tal1711gapclose",
+    "report": "reports/agents/bot5/tal_asks/report.json"
+   },
+   "made": "2026-11-18T10:43:34+00:00",
+   "id": "ac4eb7ffeb29"
+  },
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: יציאה כשאין המשך אחרי הכניסה - מורידה רווח, לא נבנתה",
+   "what": "בדקתי: אם אחרי 1 / 2 / 3 נרות העסקה סוגרת נגד הכניסה, יוצאים. בכל המסלולים יחד, היום +370.9R עד 2025 ו־+122.7R ב־2026. אחרי נר אחד +294.2R / +58.8R, אחרי שניים +323.1R / +73.7R, אחרי שלושה +330.6R / +106.5R. גם הימים הירוקים ב־2026 יורדים (בממוצע למסלול 38.5% ← 29.0% אחרי שלושה נרות). נשאר כמו היום.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 0,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "task": "b5follow1611",
+    "report": "reports/agents/bot5/tal_asks/report.json"
+   },
+   "made": "2026-11-18T10:43:34+00:00",
+   "id": "e9246b5211a9"
+  },
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: הסטופ החדש לפי מסלול - מסלול שעה / 15 דק' מפסיד ב־2026",
+   "what": "הסטופ בתחילת הדחף (ההחלטה שלך מ־18.11) נשאר בכל המסלולים, לא שיניתי כלום. הסטופ הקודם ← הסטופ החדש, כל המסלולים יחד: עד 2025 +389.6R ← +370.9R, ב־2026 +231.0R ← +122.7R. בתמורה הירידות קטנות יותר ברוב המסלולים (15 דק' / דקה ב־2026: 34.4R ← 7.7R). החריג הוא שעה / 15 דק': ב־2026 +39.2R ← ‎-8.7R, הירידה 16.7R ← 28.1R והיום הגרוע ‎-3.5R ← ‎-7.1R. עד 2025 דווקא הסטופ החדש טוב בו יותר (+42.9R ← +57.9R), ולכן הבדיקה לא מכריעה. ההחלטה אם להשאיר אותו שם אצלך.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 0,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": null,
+   "detail": {
+    "report": "reports/agents/bot5/tal_asks/report.json",
+    "tracks": {
+     "t1h_5@": {
+      "sw2": {
+       "train": {
+        "n": 140,
+        "total": 48.85,
+        "wtotal": 37.35,
+        "mean": 0.3489,
+        "win": 43.6,
+        "max_fall": 10.19,
+        "worst_day": -3.46,
+        "green": 48.5
+       },
+       "unseen": {
+        "n": 65,
+        "total": -10.02,
+        "wtotal": -9.76,
+        "mean": -0.1542,
+        "win": 27.7,
+        "max_fall": 14.86,
+        "worst_day": -4.18,
+        "green": 33.3
+       }
+      },
+      "now": {
+       "train": {
+        "n": 59,
+        "total": 10.88,
+        "wtotal": 9.7,
+        "mean": 0.1845,
+        "win": 40.7,
+        "max_fall": 8.98,
+        "worst_day": -2.09,
+        "green": 44.0
+       },
+       "unseen": {
+        "n": 32,
+        "total": -6.85,
+        "wtotal": -6.76,
+        "mean": -0.2141,
+        "win": 28.1,
+        "max_fall": 11.51,
+        "worst_day": -3.1,
+        "green": 27.3
+       }
+      }
+     },
+     "t5_1@": {
+      "sw2": {
+       "train": {
+        "n": 42,
+        "total": 8.27,
+        "wtotal": 6.99,
+        "mean": 0.197,
+        "win": 40.5,
+        "max_fall": 6.59,
+        "worst_day": -2.13,
+        "green": 40.5
+       },
+       "unseen": {
+        "n": 32,
+        "total": 2.43,
+        "wtotal": 2.04,
+        "mean": 0.076,
+        "win": 34.4,
+        "max_fall": 13.88,
+        "worst_day": -1.09,
+        "green": 34.4
+       }
+      },
+      "now": {
+       "train": {
+        "n": 37,
+        "total": 12.44,
+        "wtotal": 9.4,
+        "mean": 0.3363,
+        "win": 40.5,
+        "max_fall": 11.35,
+        "worst_day": -1.1,
+        "green": 38.2
+       },
+       "unseen": {
+        "n": 28,
+        "total": -4.45,
+        "wtotal": -4.46,
+        "mean": -0.1588,
+        "win": 28.6,
+        "max_fall": 9.01,
+        "worst_day": -1.09,
+        "green": 26.9
+       }
+      }
+     },
+     "t15_1": {
+      "sw2": {
+       "train": {
+        "n": 558,
+        "total": 97.67,
+        "wtotal": 77.9,
+        "mean": 0.175,
+        "win": 35.3,
+        "max_fall": 30.74,
+        "worst_day": -5.51,
+        "green": 43.1
+       },
+       "unseen": {
+        "n": 271,
+        "total": 17.19,
+        "wtotal": 16.94,
+        "mean": 0.0634,
+        "win": 29.9,
+        "max_fall": 34.42,
+        "worst_day": -6.19,
+        "green": 43.2
+       }
+      },
+      "now": {
+       "train": {
+        "n": 125,
+        "total": 25.2,
+        "wtotal": 19.9,
+        "mean": 0.2016,
+        "win": 36.8,
+        "max_fall": 10.13,
+        "worst_day": -3.16,
+        "green": 39.0
+       },
+       "unseen": {
+        "n": 64,
+        "total": 20.0,
+        "wtotal": 19.81,
+        "mean": 0.3126,
+        "win": 39.1,
+        "max_fall": 7.65,
+        "worst_day": -2.18,
+        "green": 43.1
+       }
+      }
+     },
+     "t1h_15": {
+      "sw2": {
+       "train": {
+        "n": 627,
+        "total": 42.87,
+        "wtotal": 39.07,
+        "mean": 0.0684,
+        "win": 32.9,
+        "max_fall": 21.44,
+        "worst_day": -4.24,
+        "green": 39.5
+       },
+       "unseen": {
+        "n": 306,
+        "total": 39.21,
+        "wtotal": 38.55,
+        "mean": 0.1281,
+        "win": 27.5,
+        "max_fall": 16.7,
+        "worst_day": -3.49,
+        "green": 36.1
+       }
+      },
+      "now": {
+       "train": {
+        "n": 830,
+        "total": 57.85,
+        "wtotal": 46.96,
+        "mean": 0.0697,
+        "win": 32.2,
+        "max_fall": 17.12,
+        "worst_day": -5.15,
+        "green": 41.1
+       },
+       "unseen": {
+        "n": 428,
+        "total": -8.74,
+        "wtotal": -8.56,
+        "mean": -0.0204,
+        "win": 22.9,
+        "max_fall": 28.11,
+        "worst_day": -7.08,
+        "green": 29.8
+       }
+      }
+     },
+     "t4h_1h": {
+      "sw2": {
+       "train": {
+        "n": 684,
+        "total": 71.98,
+        "wtotal": 61.81,
+        "mean": 0.1052,
+        "win": 49.4,
+        "max_fall": 18.3,
+        "worst_day": -4.02,
+        "green": 55.0
+       },
+       "unseen": {
+        "n": 310,
+        "total": 57.44,
+        "wtotal": 56.33,
+        "mean": 0.1853,
+        "win": 48.4,
+        "max_fall": 14.16,
+        "worst_day": -4.02,
+        "green": 51.9
+       }
+      },
+      "now": {
+       "train": {
+        "n": 680,
+        "total": 197.13,
+        "wtotal": 168.83,
+        "mean": 0.2899,
+        "win": 49.0,
+        "max_fall": 15.41,
+        "worst_day": -3.59,
+        "green": 54.4
+       },
+       "unseen": {
+        "n": 307,
+        "total": 30.85,
+        "wtotal": 30.32,
+        "mean": 0.1005,
+        "win": 47.6,
+        "max_fall": 13.62,
+        "worst_day": -4.04,
+        "green": 51.2
+       }
+      }
+     },
+     "t4h_15": {
+      "sw2": {
+       "train": {
+        "n": 557,
+        "total": 84.01,
+        "wtotal": 66.1,
+        "mean": 0.1508,
+        "win": 47.2,
+        "max_fall": 10.92,
+        "worst_day": -3.56,
+        "green": 52.1
+       },
+       "unseen": {
+        "n": 317,
+        "total": 52.21,
+        "wtotal": 51.21,
+        "mean": 0.1647,
+        "win": 45.4,
+        "max_fall": 20.11,
+        "worst_day": -5.31,
+        "green": 43.8
+       }
+      },
+      "now": {
+       "train": {
+        "n": 527,
+        "total": 53.0,
+        "wtotal": 42.1,
+        "mean": 0.1006,
+        "win": 49.5,
+        "max_fall": 9.15,
+        "worst_day": -3.57,
+        "green": 53.3
+       },
+       "unseen": {
+        "n": 294,
+        "total": 18.74,
+        "wtotal": 18.43,
+        "mean": 0.0637,
+        "win": 48.0,
+        "max_fall": 14.29,
+        "worst_day": -4.0,
+        "green": 51.0
+       }
+      }
+     },
+     "t15_5": {
+      "sw2": {
+       "train": {
+        "n": 431,
+        "total": 44.12,
+        "wtotal": 31.45,
+        "mean": 0.1024,
+        "win": 31.6,
+        "max_fall": 31.61,
+        "worst_day": -6.29,
+        "green": 36.7
+       },
+       "unseen": {
+        "n": 179,
+        "total": 27.41,
+        "wtotal": 26.55,
+        "mean": 0.1531,
+        "win": 32.4,
+        "max_fall": 16.32,
+        "worst_day": -4.1,
+        "green": 36.9
+       }
+      },
+      "now": {
+       "train": {
+        "n": 427,
+        "total": 41.66,
+        "wtotal": 30.53,
+        "mean": 0.0976,
+        "win": 32.8,
+        "max_fall": 33.23,
+        "worst_day": -4.16,
+        "green": 38.0
+       },
+       "unseen": {
+        "n": 194,
+        "total": 42.63,
+        "wtotal": 41.54,
+        "mean": 0.2197,
+        "win": 34.0,
+        "max_fall": 14.61,
+        "worst_day": -4.27,
+        "green": 38.7
+       }
+      }
+     },
+     "t5_1": {
+      "sw2": {
+       "train": {
+        "n": 633,
+        "total": -3.08,
+        "wtotal": 9.23,
+        "mean": -0.0049,
+        "win": 27.8,
+        "max_fall": 58.64,
+        "worst_day": -6.61,
+        "green": 37.8
+       },
+       "unseen": {
+        "n": 255,
+        "total": 21.17,
+        "wtotal": 21.5,
+        "mean": 0.083,
+        "win": 28.2,
+        "max_fall": 25.86,
+        "worst_day": -4.18,
+        "green": 37.5
+       }
+      },
+      "now": {
+       "train": {
+        "n": 273,
+        "total": 24.34,
+        "wtotal": 24.6,
+        "mean": 0.0892,
+        "win": 31.1,
+        "max_fall": 21.69,
+        "worst_day": -3.37,
+        "green": 38.9
+       },
+       "unseen": {
+        "n": 167,
+        "total": 18.35,
+        "wtotal": 18.44,
+        "mean": 0.1099,
+        "win": 28.7,
+        "max_fall": 21.23,
+        "worst_day": -3.08,
+        "green": 31.6
+       }
+      }
+     },
+     "t4h_5": {
+      "sw2": {
+       "train": {
+        "n": 552,
+        "total": 75.42,
+        "wtotal": 59.65,
+        "mean": 0.1366,
+        "win": 40.6,
+        "max_fall": 22.51,
+        "worst_day": -6.11,
+        "green": 47.6
+       },
+       "unseen": {
+        "n": 265,
+        "total": 23.91,
+        "wtotal": 23.67,
+        "mean": 0.0902,
+        "win": 37.7,
+        "max_fall": 25.14,
+        "worst_day": -5.26,
+        "green": 41.2
+       }
+      },
+      "now": {
+       "train": {
+        "n": 354,
+        "total": 24.22,
+        "wtotal": 18.91,
+        "mean": 0.0684,
+        "win": 45.5,
+        "max_fall": 9.06,
+        "worst_day": -3.07,
+        "green": 48.7
+       },
+       "unseen": {
+        "n": 179,
+        "total": 12.16,
+        "wtotal": 11.84,
+        "mean": 0.0679,
+        "win": 45.3,
+        "max_fall": 6.45,
+        "worst_day": -3.03,
+        "green": 47.3
+       }
+      }
+     }
+    }
+   },
+   "made": "2026-11-18T10:43:34+00:00",
+   "id": "7a7fc5e3625f"
   },
   {
    "bot": "bot5",
@@ -93,1465 +695,6 @@
    },
    "made": "2026-11-18T06:22:43+00:00",
    "id": "4144ecb1bd77"
-  },
-  {
-   "bot": "bot5",
-   "kind": "info",
-   "title": "בוט 5: הסטופ הרחוק שלך עם היעד של הכללים - נבנה לבדיקה במחשב",
-   "what": "מהסקירות שלך (17-18.11): ב־9 העסקאות שנסגרו עם הסטופ שלך, כולן הגיעו ליעד (+6.2R). היעד נשאר של הכללים, הסטופ רחוק (תמיד מעבר לתחילת הדחף), והיחס יעד/סטופ ירד ל־0.3-0.9. הבדיקה הקודמת של סטופ רחוק דרשה יחס מינימלי 2 על הסטופ החדש - ולכן כמעט לא נשארו עסקאות. נבנה STOPAT leg1r / sw0r / imp0r: העסקה נבחרת לפי הכללים, הסטופ רחוק והיעד נשאר - כמו שאתה עושה. רץ במחשב על 7 המסלולים, עם ובלי 'הגאפ הראשון'; בחירה עד 2025, הצגה על 2026, עלויות FTMO. משפר בשתי התקופות - כרטיס שהבונה בונה מיד.",
-   "train": {
-    "n": 9,
-    "sum": 6.21,
-    "win": 100.0
-   },
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 3,
-   "cost_r": null,
-   "risk_pct": null,
-   "baseline": null,
-   "change": null,
-   "detail": {
-    "task": "b5stopimp1711",
-    "live_review": {
-     "yes_own_closed": 9,
-     "r": 6.21,
-     "rr_range": [
-      0.31,
-      1.84
-     ]
-    },
-    "code": "agents/tal_gap.py STOPAT leg1r/sw0r/imp0r, agent_bot5.py NOTE_TESTS *_stopatr"
-   },
-   "made": "2026-11-18T02:23:24+00:00",
-   "id": "fea055313c0b"
-  },
-  {
-   "bot": "bot5",
-   "kind": "info",
-   "title": "בוט 5: סטופ באורך דחף אחד מהכניסה (מהסקירות שלך) ו־SC071 גם בשורט - נבנו לבדיקה במחשב",
-   "what": "ב־18 תשובות 'כן' שלך (16-17.11) הרחקת את הסטופ בכולן. הסטופ שלך היה בממוצע (חציון) כאורך דחף אחד מהכניסה (0.44-2.1), פי 2.3 מהסטופ בתחילת הדחף ופי 2.5 מהסטופ של הכללים. נבנה סטופ חדש לבדיקה: אורך דחף אחד מהכניסה, על 7 המסלולים, עם ובלי 'רק הגאפ הראשון'. ו־SC071 (הדאו): נבנתה הגרסה עם השורט בפס העליון (SC560) וגם עם כיוון הגרף הגבוה (SC561). הכל נבחר עד 31.12.2025, מוצג על 2026, עלויות FTMO; כרטיס שיפור רק אם עובר בשתי התקופות.",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 2,
-   "cost_r": null,
-   "risk_pct": null,
-   "baseline": null,
-   "change": null,
-   "detail": {
-    "tasks": [
-     "b5stopimp1711",
-     "b5sc071dir1611"
-    ],
-    "knobs": {
-     "STOPAT": [
-      "leg1"
-     ]
-    },
-    "new": [
-     "SC560",
-     "SC561"
-    ],
-    "marks": {
-     "yes_with_stop": 18,
-     "moved_further": 18,
-     "median_x_leg": 1.03,
-     "range_x_leg": [
-      0.44,
-      2.13
-     ],
-     "median_x_imp0": 2.31,
-     "median_x_rule": 2.55
-    }
-   },
-   "made": "2026-11-17T22:20:17+00:00",
-   "id": "13a860f28ae6"
-  },
-  {
-   "bot": "bot5",
-   "kind": "info",
-   "title": "בוט 5: הגאפ הראשון בדחף וסטופ בתחילת הדחף - נבנו לבדיקה במחשב",
-   "what": "מהסקירה שלך מ־17.11: (1) רק הגאפ הראשון בכל דחף (גם אם נר 2 שלו פחות חזק); (2) סטופ מעבר לתחילת הדחף, תמיד או רק לגאפ מאוחר, או מעבר לסווינג שממנו הדחף התחיל (ב־16 מ־17 תיקוני הסטופ שלך הסטופ שלך רחוק יותר). נבדק על 7 המסלולים, בחירה עד 31.12.2025, הצגה על 2026, עלויות FTMO. כרטיס שיפור יגיע רק אם עובר בשתי התקופות. בסקירה מוצגת עכשיו גם חלופת הסטופ בתחילת הדחף.",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 21,
-   "cost_r": null,
-   "risk_pct": null,
-   "baseline": null,
-   "change": null,
-   "detail": {
-    "tasks": [
-     "tal1711review",
-     "b5stopimp1711"
-    ],
-    "knobs": {
-     "FIRSTG": [
-      "1",
-      "lo"
-     ],
-     "STOPAT": [
-      "imp0",
-      "imp0late",
-      "sw0"
-     ]
-    }
-   },
-   "made": "2026-11-17T18:29:01+00:00",
-   "id": "b8bb03ef125f"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC501|5Min|XAUUSD - סיכון 0.049% ← 0.012% (בלעדיה הבוט יורד פחות על אותו רווח)",
-   "what": "משימה mgr1711b5scale (2). השמטה של אחת-אחת על כל 31 אסטרטגיות הסייר יחד (כלל הסיכון הקבוע, אחרי ×0.25): כל אחת מוסיפה רווח עד 2025, אבל SC501 בולטת - בלעדיה הירידה מהשיא במאי-דצמבר 2025 8.15% ← 5.5% והרווח רק +33.1% ← +29.3%. ב־2026 היא כמעט בלי יתרון (‎+0.011R לעסקה על 897, t 0.12). קודם תיקון: בלי כניסה חוזרת באותו יום אחרי סטופ (כמו בחי) - עד 2025 טוב, אבל ב־2026 ‎+27.8% ← ‎+24.52% והאסטרטגיה עצמה ‎-0.13R - לא מחזיק; כיוון אחד (קנייה / מכירה) - ההפך בין התקופות; מסנן שעות (13 מ־24 שעות שנבחרו עד 2025) - בחירה מתוך הרבה גרסאות, ב־2026 הירידה לא קטנה - לא נכנס. אז סיכון: נבחר על מאי-דצמבר 2025 בלבד, היחס רווח / ירידה הכי טוב שעדיין סוחר (×1 / 0.75 / 0.5 / 0.25): ×0.25. עד 2025: רווח +33.1% ← +30.3%, ירידה 8.15% ← 6.16%. 2026 (לא נראה): רווח +27.8% ← +27.4%, ירידה 5.62% ← 4.52%, יום גרוע -1.37% ← -1.29%. כמעט אותו רווח, סיכון קטן ברבע. נשארת בסיכון קטן כדי שנתוני החי ימשיכו להגיע. נמדד על חלק הסייר (העסקאות של הגאפ נמצאות רק במחשב הבוטים); הבוט כולו נמדד שם בסבב הבא (risk_guard 'loo').",
-   "train": {
-    "n": 637,
-    "eff_n": 636.4,
-    "mean": 0.1217,
-    "t": 1.07,
-    "win": 23.2
-   },
-   "unseen": {
-    "n": 897,
-    "eff_n": 896.8,
-    "mean": 0.0105,
-    "t": 0.12,
-    "win": 24.1
-   },
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 7,
-   "cost_r": null,
-   "risk_pct": 0.0123,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC501|5Min|XAUUSD",
-    "knob": "RISK_scout:SC501|5Min|XAUUSD",
-    "from": 0.00049,
-    "to": 0.000123
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "grid": {
-     "x1.0": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null,
-       "ratio": 4.07
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null,
-       "ratio": 4.94
-      }
-     },
-     "x0.75": {
-      "train": {
-       "total_pct": 32.19,
-       "max_fall_pct": 7.49,
-       "worst_day_pct": -1.23,
-       "stopped": null,
-       "ratio": 4.3
-      },
-      "unseen": {
-       "total_pct": 27.66,
-       "max_fall_pct": 5.25,
-       "worst_day_pct": -1.33,
-       "stopped": null,
-       "ratio": 5.27
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 31.24,
-       "max_fall_pct": 6.82,
-       "worst_day_pct": -1.18,
-       "stopped": null,
-       "ratio": 4.58
-      },
-      "unseen": {
-       "total_pct": 27.54,
-       "max_fall_pct": 4.88,
-       "worst_day_pct": -1.31,
-       "stopped": null,
-       "ratio": 5.64
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 30.29,
-       "max_fall_pct": 6.16,
-       "worst_day_pct": -1.16,
-       "stopped": null,
-       "ratio": 4.92
-      },
-      "unseen": {
-       "total_pct": 27.42,
-       "max_fall_pct": 4.52,
-       "worst_day_pct": -1.29,
-       "stopped": null,
-       "ratio": 6.07
-      }
-     },
-     "x0.0": {
-      "train": {
-       "total_pct": 29.33,
-       "max_fall_pct": 5.5,
-       "worst_day_pct": -1.13,
-       "stopped": null,
-       "ratio": 5.33
-      },
-      "unseen": {
-       "total_pct": 27.3,
-       "max_fall_pct": 4.16,
-       "worst_day_pct": -1.26,
-       "stopped": null,
-       "ratio": 6.56
-      }
-     }
-    },
-    "tried_fixes": {
-     "hours": {
-      "train": {
-       "total_pct": 37.15,
-       "max_fall_pct": 6.96,
-       "worst_day_pct": -1.09,
-       "stopped": null,
-       "ratio": 5.34
-      },
-      "unseen": {
-       "total_pct": 29.1,
-       "max_fall_pct": 5.6,
-       "worst_day_pct": -1.32,
-       "stopped": null,
-       "ratio": 5.2
-      },
-      "keep_hours": [
-       0,
-       1,
-       2,
-       4,
-       5,
-       7,
-       10,
-       11,
-       14,
-       20,
-       21,
-       22,
-       23
-      ]
-     },
-     "dir1": {
-      "train": {
-       "total_pct": 33.47,
-       "max_fall_pct": 7.52,
-       "worst_day_pct": -1.21,
-       "stopped": null,
-       "ratio": 4.45
-      },
-      "unseen": {
-       "total_pct": 26.39,
-       "max_fall_pct": 5.1,
-       "worst_day_pct": -1.37,
-       "stopped": null,
-       "ratio": 5.17
-      }
-     },
-     "dir-1": {
-      "train": {
-       "total_pct": 29.01,
-       "max_fall_pct": 6.22,
-       "worst_day_pct": -1.17,
-       "stopped": null,
-       "ratio": 4.66
-      },
-      "unseen": {
-       "total_pct": 28.68,
-       "max_fall_pct": 4.92,
-       "worst_day_pct": -1.26,
-       "stopped": null,
-       "ratio": 5.83
-      }
-     },
-     "noreent": {
-      "acct": {
-       "train": {
-        "total_pct": 34.26,
-        "max_fall_pct": 6.27,
-        "worst_day_pct": -1.22,
-        "stopped": null,
-        "ratio": 5.46
-       },
-       "unseen": {
-        "total_pct": 24.52,
-        "max_fall_pct": 5.04,
-        "worst_day_pct": -1.31,
-        "stopped": null,
-        "ratio": 4.87
-       }
-      },
-      "train": {
-       "n": 316,
-       "eff_n": 315.7,
-       "mean": 0.3177,
-       "t": 1.69,
-       "win": 23.7
-      },
-      "unseen": {
-       "n": 430,
-       "eff_n": 429.9,
-       "mean": -0.1328,
-       "t": -1.28,
-       "win": 24.2
-      },
-      "base_train": {
-       "n": 637,
-       "eff_n": 636.4,
-       "mean": 0.1217,
-       "t": 1.07,
-       "win": 23.2
-      },
-      "base_unseen": {
-       "n": 897,
-       "eff_n": 896.8,
-       "mean": 0.0105,
-       "t": 0.12,
-       "win": 24.1
-      },
-      "dropped": 788
-     }
-    },
-    "chosen_on": "2025-04-30..2025-12-31, best total/fall among x>0",
-    "part": "scouts (31) at today's risks, fixed risk rule"
-   },
-   "made": "2026-11-17T14:25:50+00:00",
-   "id": "2def6a47d00b"
-  },
-  {
-   "bot": "bot5",
-   "kind": "info",
-   "title": "בוט 5: אחרי ×0.25 - השמטה של אחת-אחת ותקרה לזהב נבדקו; רק SC501 יורדת",
-   "what": "משימה mgr1711b5scale. (1) הסייר לבד אחרי ×0.25: עד 2025 +33.1%, ירידה 8.15%; 2026 +27.8%, ירידה 5.62%, לא נעצר. הבוט כולו (עם הגאפ ×0.468) נבדק במחשב הבוטים בסבב הבא - נוסף לבדיקה גם חיפוש מקדם נפרד לגאפ ולסייר (נבחר עד 2025, ירידה מתחת ל־9%), כרטיס רק אם צריך. (2) השמטה של אחת-אחת: אף אסטרטגיה לא מעלה את הרווח עד 2025 כשמוציאים אותה (הכי פחות חסרות: SC446|5Min|US30 -0.1%, SC071|15Min|US30 -0.1%, SC069|15Min|XAUUSD -0.1%). רק SC501 מורידה את הירידה הרבה יותר מהרווח - כרטיס סיכון נפרד. (3) תקרה לזהב (14 אסטרטגיות, 7,137 עסקאות): הנבחרת עד 2025 - עסקה אחת פתוחה בזהב - מורידה את 2026 מ־+27.8% ל־+17.4% והירידה לא קטנה (5.77%); 3 פתוחות: +21.5% / 3.85%. כל תקרה חותכת הרבה רווח - אין שינוי.",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 40,
-   "cost_r": null,
-   "risk_pct": null,
-   "baseline": null,
-   "change": null,
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "loo": {
-     "base": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "low_pct": -1.11,
-       "stopped": null,
-       "room_skipped": 0,
-       "open_peak_pct": 0.95,
-       "n": 4530
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "low_pct": -4.13,
-       "stopped": null,
-       "room_skipped": 0,
-       "open_peak_pct": 1.03,
-       "n": 6105
-      }
-     },
-     "loo": {
-      "scout:BK07|15Min|EURUSD": {
-       "train": {
-        "total_pct": 31.02,
-        "max_fall_pct": 8.88,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.03,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.92,
-        "n": 4475
-       },
-       "unseen": {
-        "total_pct": 26.87,
-        "max_fall_pct": 5.8,
-        "worst_day_pct": -1.36,
-        "low_pct": -3.97,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 6037
-       }
-      },
-      "scout:BK07|15Min|US100": {
-       "train": {
-        "total_pct": 31.96,
-        "max_fall_pct": 8.11,
-        "worst_day_pct": -1.27,
-        "low_pct": -1.03,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.94,
-        "n": 4485
-       },
-       "unseen": {
-        "total_pct": 26.9,
-        "max_fall_pct": 6.33,
-        "worst_day_pct": -1.37,
-        "low_pct": -3.91,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 6046
-       }
-      },
-      "scout:FR03|15Min|GBPUSD": {
-       "train": {
-        "total_pct": 31.54,
-        "max_fall_pct": 8.31,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.03,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4513
-       },
-       "unseen": {
-        "total_pct": 26.92,
-        "max_fall_pct": 5.73,
-        "worst_day_pct": -1.37,
-        "low_pct": -4.17,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 6071
-       }
-      },
-      "scout:IB034|15Min|XAUUSD": {
-       "train": {
-        "total_pct": 32.88,
-        "max_fall_pct": 7.95,
-        "worst_day_pct": -1.32,
-        "low_pct": -1.15,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4146
-       },
-       "unseen": {
-        "total_pct": 27.48,
-        "max_fall_pct": 5.54,
-        "worst_day_pct": -1.35,
-        "low_pct": -4.07,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 5607
-       }
-      },
-      "scout:QC04|15Min|EURUSD": {
-       "train": {
-        "total_pct": 32.72,
-        "max_fall_pct": 8.08,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.07,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4484
-       },
-       "unseen": {
-        "total_pct": 27.0,
-        "max_fall_pct": 5.44,
-        "worst_day_pct": -1.36,
-        "low_pct": -4.03,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.99,
-        "n": 6053
-       }
-      },
-      "scout:SC042|15Min|XAUUSD": {
-       "train": {
-        "total_pct": 32.85,
-        "max_fall_pct": 7.86,
-        "worst_day_pct": -1.43,
-        "low_pct": -1.17,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.94,
-        "n": 4294
-       },
-       "unseen": {
-        "total_pct": 26.94,
-        "max_fall_pct": 5.74,
-        "worst_day_pct": -1.38,
-        "low_pct": -3.86,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.96,
-        "n": 5792
-       }
-      },
-      "scout:SC056|15Min|GBPUSD": {
-       "train": {
-        "total_pct": 32.4,
-        "max_fall_pct": 8.22,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.14,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.88,
-        "n": 4438
-       },
-       "unseen": {
-        "total_pct": 27.42,
-        "max_fall_pct": 5.61,
-        "worst_day_pct": -1.39,
-        "low_pct": -4.2,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.96,
-        "n": 5990
-       }
-      },
-      "scout:SC069|15Min|XAUUSD": {
-       "train": {
-        "total_pct": 33.06,
-        "max_fall_pct": 7.83,
-        "worst_day_pct": -1.37,
-        "low_pct": -1.09,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.88,
-        "n": 4423
-       },
-       "unseen": {
-        "total_pct": 27.09,
-        "max_fall_pct": 5.65,
-        "worst_day_pct": -1.42,
-        "low_pct": -4.01,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.96,
-        "n": 5993
-       }
-      },
-      "scout:SC071|15Min|US30": {
-       "train": {
-        "total_pct": 33.07,
-        "max_fall_pct": 8.25,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.07,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4502
-       },
-       "unseen": {
-        "total_pct": 27.5,
-        "max_fall_pct": 5.59,
-        "worst_day_pct": -1.37,
-        "low_pct": -4.13,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 6028
-       }
-      },
-      "scout:SC077|5Min|US30": {
-       "train": {
-        "total_pct": 30.82,
-        "max_fall_pct": 7.47,
-        "worst_day_pct": -1.35,
-        "low_pct": -0.89,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4427
-       },
-       "unseen": {
-        "total_pct": 25.81,
-        "max_fall_pct": 5.73,
-        "worst_day_pct": -1.36,
-        "low_pct": -4.46,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.0,
-        "n": 5955
-       }
-      },
-      "scout:SC138|15Min|XAUUSD": {
-       "train": {
-        "total_pct": 32.78,
-        "max_fall_pct": 8.13,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.13,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4501
-       },
-       "unseen": {
-        "total_pct": 27.49,
-        "max_fall_pct": 5.7,
-        "worst_day_pct": -1.36,
-        "low_pct": -4.17,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 6057
-       }
-      },
-      "scout:SC142|15Min|XAUUSD": {
-       "train": {
-        "total_pct": 31.18,
-        "max_fall_pct": 8.17,
-        "worst_day_pct": -1.28,
-        "low_pct": -1.11,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.92,
-        "n": 4464
-       },
-       "unseen": {
-        "total_pct": 27.12,
-        "max_fall_pct": 5.76,
-        "worst_day_pct": -1.37,
-        "low_pct": -4.11,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 6030
-       }
-      },
-      "scout:SC154|5Min|XAUUSD": {
-       "train": {
-        "total_pct": 31.66,
-        "max_fall_pct": 7.98,
-        "worst_day_pct": -1.3,
-        "low_pct": -0.92,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.88,
-        "n": 4392
-       },
-       "unseen": {
-        "total_pct": 27.14,
-        "max_fall_pct": 5.64,
-        "worst_day_pct": -1.39,
-        "low_pct": -4.2,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.96,
-        "n": 5817
-       }
-      },
-      "scout:SC232|15Min|XAUUSD": {
-       "train": {
-        "total_pct": 32.03,
-        "max_fall_pct": 8.05,
-        "worst_day_pct": -1.38,
-        "low_pct": -1.3,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.94,
-        "n": 4375
-       },
-       "unseen": {
-        "total_pct": 27.34,
-        "max_fall_pct": 5.55,
-        "worst_day_pct": -1.44,
-        "low_pct": -3.91,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.98,
-        "n": 5889
-       }
-      },
-      "scout:SC311|15Min|GER40": {
-       "train": {
-        "total_pct": 32.86,
-        "max_fall_pct": 8.1,
-        "worst_day_pct": -1.34,
-        "low_pct": -1.08,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4363
-       },
-       "unseen": {
-        "total_pct": 27.63,
-        "max_fall_pct": 5.45,
-        "worst_day_pct": -1.4,
-        "low_pct": -4.27,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.99,
-        "n": 5882
-       }
-      },
-      "scout:SC317|15Min|XAUUSD": {
-       "train": {
-        "total_pct": 31.4,
-        "max_fall_pct": 6.56,
-        "worst_day_pct": -1.04,
-        "low_pct": -0.86,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.88,
-        "n": 4252
-       },
-       "unseen": {
-        "total_pct": 24.61,
-        "max_fall_pct": 5.25,
-        "worst_day_pct": -1.3,
-        "low_pct": -3.67,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.96,
-        "n": 5684
-       }
-      },
-      "scout:SC326|15Min|USDCHF": {
-       "train": {
-        "total_pct": 32.8,
-        "max_fall_pct": 8.1,
-        "worst_day_pct": -1.31,
-        "low_pct": -1.05,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.92,
-        "n": 4411
-       },
-       "unseen": {
-        "total_pct": 27.49,
-        "max_fall_pct": 5.77,
-        "worst_day_pct": -1.37,
-        "low_pct": -4.13,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.99,
-        "n": 5978
-       }
-      },
-      "scout:SC326|15Min|USDJPY": {
-       "train": {
-        "total_pct": 32.12,
-        "max_fall_pct": 8.25,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.11,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4426
-       },
-       "unseen": {
-        "total_pct": 27.6,
-        "max_fall_pct": 5.48,
-        "worst_day_pct": -1.37,
-        "low_pct": -4.13,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.99,
-        "n": 5982
-       }
-      },
-      "scout:SC326|5Min|GBPUSD": {
-       "train": {
-        "total_pct": 32.46,
-        "max_fall_pct": 7.83,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.0,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4410
-       },
-       "unseen": {
-        "total_pct": 25.84,
-        "max_fall_pct": 6.27,
-        "worst_day_pct": -1.32,
-        "low_pct": -4.42,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.98,
-        "n": 5977
-       }
-      },
-      "scout:SC333|15Min|XAUUSD": {
-       "train": {
-        "total_pct": 31.81,
-        "max_fall_pct": 8.13,
-        "worst_day_pct": -1.25,
-        "low_pct": -1.17,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.92,
-        "n": 4237
-       },
-       "unseen": {
-        "total_pct": 27.56,
-        "max_fall_pct": 5.56,
-        "worst_day_pct": -1.38,
-        "low_pct": -4.05,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.99,
-        "n": 5727
-       }
-      },
-      "scout:SC402|15Min|XAUUSD": {
-       "train": {
-        "total_pct": 31.74,
-        "max_fall_pct": 7.81,
-        "worst_day_pct": -1.32,
-        "low_pct": -1.01,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.92,
-        "n": 4317
-       },
-       "unseen": {
-        "total_pct": 27.06,
-        "max_fall_pct": 5.45,
-        "worst_day_pct": -1.35,
-        "low_pct": -3.86,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.99,
-        "n": 5832
-       }
-      },
-      "scout:SC402|5Min|XAUUSD": {
-       "train": {
-        "total_pct": 30.99,
-        "max_fall_pct": 7.58,
-        "worst_day_pct": -1.3,
-        "low_pct": -0.97,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.91,
-        "n": 4304
-       },
-       "unseen": {
-        "total_pct": 25.99,
-        "max_fall_pct": 5.63,
-        "worst_day_pct": -1.35,
-        "low_pct": -3.8,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.98,
-        "n": 5829
-       }
-      },
-      "scout:SC432|15Min|XAUUSD": {
-       "train": {
-        "total_pct": 32.85,
-        "max_fall_pct": 8.16,
-        "worst_day_pct": -1.34,
-        "low_pct": -1.08,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4334
-       },
-       "unseen": {
-        "total_pct": 27.61,
-        "max_fall_pct": 5.57,
-        "worst_day_pct": -1.37,
-        "low_pct": -4.09,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.02,
-        "n": 5869
-       }
-      },
-      "scout:SC441|5Min|XAUUSD": {
-       "train": {
-        "total_pct": 32.72,
-        "max_fall_pct": 8.1,
-        "worst_day_pct": -1.34,
-        "low_pct": -1.1,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.94,
-        "n": 4468
-       },
-       "unseen": {
-        "total_pct": 27.73,
-        "max_fall_pct": 5.6,
-        "worst_day_pct": -1.37,
-        "low_pct": -4.08,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 6019
-       }
-      },
-      "scout:SC446|5Min|US30": {
-       "train": {
-        "total_pct": 33.09,
-        "max_fall_pct": 8.2,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.11,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4472
-       },
-       "unseen": {
-        "total_pct": 27.66,
-        "max_fall_pct": 5.7,
-        "worst_day_pct": -1.37,
-        "low_pct": -4.11,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 6041
-       }
-      },
-      "scout:SC480|15Min|US100": {
-       "train": {
-        "total_pct": 31.07,
-        "max_fall_pct": 7.3,
-        "worst_day_pct": -1.26,
-        "low_pct": -1.04,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.88,
-        "n": 4381
-       },
-       "unseen": {
-        "total_pct": 26.01,
-        "max_fall_pct": 5.41,
-        "worst_day_pct": -1.47,
-        "low_pct": -3.67,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.96,
-        "n": 5889
-       }
-      },
-      "scout:SC480|5Min|GER40": {
-       "train": {
-        "total_pct": 32.73,
-        "max_fall_pct": 8.01,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.03,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4371
-       },
-       "unseen": {
-        "total_pct": 25.89,
-        "max_fall_pct": 5.11,
-        "worst_day_pct": -1.37,
-        "low_pct": -3.23,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 5893
-       }
-      },
-      "scout:SC480|5Min|US100": {
-       "train": {
-        "total_pct": 31.29,
-        "max_fall_pct": 7.36,
-        "worst_day_pct": -1.26,
-        "low_pct": -1.04,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.88,
-        "n": 4370
-       },
-       "unseen": {
-        "total_pct": 23.53,
-        "max_fall_pct": 5.58,
-        "worst_day_pct": -1.28,
-        "low_pct": -3.66,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.96,
-        "n": 5871
-       }
-      },
-      "scout:SC486|15Min|USDCHF": {
-       "train": {
-        "total_pct": 32.68,
-        "max_fall_pct": 8.28,
-        "worst_day_pct": -1.34,
-        "low_pct": -1.06,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.92,
-        "n": 4482
-       },
-       "unseen": {
-        "total_pct": 27.44,
-        "max_fall_pct": 5.63,
-        "worst_day_pct": -1.44,
-        "low_pct": -4.16,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.98,
-        "n": 6044
-       }
-      },
-      "scout:SC501|5Min|XAUUSD": {
-       "train": {
-        "total_pct": 29.33,
-        "max_fall_pct": 5.5,
-        "worst_day_pct": -1.13,
-        "low_pct": -1.44,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 3893
-       },
-       "unseen": {
-        "total_pct": 27.3,
-        "max_fall_pct": 4.16,
-        "worst_day_pct": -1.26,
-        "low_pct": -3.15,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.98,
-        "n": 5208
-       }
-      },
-      "scout:SC512|5Min|GER40": {
-       "train": {
-        "total_pct": 32.47,
-        "max_fall_pct": 8.25,
-        "worst_day_pct": -1.35,
-        "low_pct": -1.01,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 0.95,
-        "n": 4490
-       },
-       "unseen": {
-        "total_pct": 27.26,
-        "max_fall_pct": 5.57,
-        "worst_day_pct": -1.37,
-        "low_pct": -4.27,
-        "stopped": null,
-        "room_skipped": 0,
-        "open_peak_pct": 1.03,
-        "n": 6060
-       }
-      }
-     },
-     "per": {
-      "scout:BK07|15Min|EURUSD": {
-       "risk": 0.06999999999999999,
-       "n25": 55,
-       "R25": 30.4,
-       "n26": 68,
-       "R26": 12.9
-      },
-      "scout:BK07|15Min|US100": {
-       "risk": 0.06999999999999999,
-       "n25": 45,
-       "R25": 17.0,
-       "n26": 59,
-       "R26": 12.5
-      },
-      "scout:FR03|15Min|GBPUSD": {
-       "risk": 0.06999999999999999,
-       "n25": 17,
-       "R25": 23.0,
-       "n26": 34,
-       "R26": 12.2
-      },
-      "scout:IB034|15Min|XAUUSD": {
-       "risk": 0.0105,
-       "n25": 384,
-       "R25": 25.2,
-       "n26": 498,
-       "R26": 27.8
-      },
-      "scout:QC04|15Min|EURUSD": {
-       "risk": 0.0315,
-       "n25": 46,
-       "R25": 13.6,
-       "n26": 52,
-       "R26": 24.7
-      },
-      "scout:SC042|15Min|XAUUSD": {
-       "risk": 0.06999999999999999,
-       "n25": 236,
-       "R25": 4.3,
-       "n26": 313,
-       "R26": 12.0
-      },
-      "scout:SC056|15Min|GBPUSD": {
-       "risk": 0.06999999999999999,
-       "n25": 92,
-       "R25": 10.6,
-       "n26": 115,
-       "R26": 5.1
-      },
-      "scout:SC069|15Min|XAUUSD": {
-       "risk": 0.06999999999999999,
-       "n25": 107,
-       "R25": 1.2,
-       "n26": 112,
-       "R26": 9.8
-      },
-      "scout:SC071|15Min|US30": {
-       "risk": 0.0358,
-       "n25": 28,
-       "R25": 2.2,
-       "n26": 77,
-       "R26": 7.6
-      },
-      "scout:SC077|5Min|US30": {
-       "risk": 0.1,
-       "n25": 103,
-       "R25": 23.3,
-       "n26": 150,
-       "R26": 19.6
-      },
-      "scout:SC138|15Min|XAUUSD": {
-       "risk": 0.06999999999999999,
-       "n25": 29,
-       "R25": 5.2,
-       "n26": 48,
-       "R26": 4.1
-      },
-      "scout:SC142|15Min|XAUUSD": {
-       "risk": 0.06999999999999999,
-       "n25": 66,
-       "R25": 28.1,
-       "n26": 75,
-       "R26": 9.3
-      },
-      "scout:SC154|5Min|XAUUSD": {
-       "risk": 0.06999999999999999,
-       "n25": 138,
-       "R25": 21.2,
-       "n26": 288,
-       "R26": 9.0
-      },
-      "scout:SC232|15Min|XAUUSD": {
-       "risk": 0.049,
-       "n25": 155,
-       "R25": 22.9,
-       "n26": 216,
-       "R26": 9.0
-      },
-      "scout:SC311|15Min|GER40": {
-       "risk": 0.0315,
-       "n25": 167,
-       "R25": 9.1,
-       "n26": 223,
-       "R26": 4.5
-      },
-      "scout:SC317|15Min|XAUUSD": {
-       "risk": 0.06999999999999999,
-       "n25": 278,
-       "R25": 24.9,
-       "n26": 421,
-       "R26": 45.2
-      },
-      "scout:SC326|15Min|USDCHF": {
-       "risk": 0.0315,
-       "n25": 119,
-       "R25": 10.9,
-       "n26": 127,
-       "R26": 9.0
-      },
-      "scout:SC326|15Min|USDJPY": {
-       "risk": 0.0315,
-       "n25": 104,
-       "R25": 32.7,
-       "n26": 123,
-       "R26": 5.5
-      },
-      "scout:SC326|5Min|GBPUSD": {
-       "risk": 0.045,
-       "n25": 120,
-       "R25": 15.2,
-       "n26": 128,
-       "R26": 43.1
-      },
-      "scout:SC333|15Min|XAUUSD": {
-       "risk": 0.0315,
-       "n25": 293,
-       "R25": 42.3,
-       "n26": 378,
-       "R26": 6.8
-      },
-      "scout:SC402|15Min|XAUUSD": {
-       "risk": 0.0315,
-       "n25": 213,
-       "R25": 44.5,
-       "n26": 273,
-       "R26": 22.8
-      },
-      "scout:SC402|5Min|XAUUSD": {
-       "risk": 0.045,
-       "n25": 226,
-       "R25": 47.9,
-       "n26": 276,
-       "R26": 39.8
-      },
-      "scout:SC432|15Min|XAUUSD": {
-       "risk": 0.0105,
-       "n25": 196,
-       "R25": 28.1,
-       "n26": 236,
-       "R26": 15.4
-      },
-      "scout:SC441|5Min|XAUUSD": {
-       "risk": 0.0105,
-       "n25": 62,
-       "R25": 40.9,
-       "n26": 86,
-       "R26": 4.5
-      },
-      "scout:SC446|5Min|US30": {
-       "risk": 0.0105,
-       "n25": 58,
-       "R25": 5.3,
-       "n26": 64,
-       "R26": 10.7
-      },
-      "scout:SC480|15Min|US100": {
-       "risk": 0.06999999999999999,
-       "n25": 149,
-       "R25": 29.7,
-       "n26": 216,
-       "R26": 25.2
-      },
-      "scout:SC480|5Min|GER40": {
-       "risk": 0.06999999999999999,
-       "n25": 159,
-       "R25": 5.9,
-       "n26": 212,
-       "R26": 26.9
-      },
-      "scout:SC480|5Min|US100": {
-       "risk": 0.06999999999999999,
-       "n25": 160,
-       "R25": 26.5,
-       "n26": 234,
-       "R26": 60.6
-      },
-      "scout:SC486|15Min|USDCHF": {
-       "risk": 0.049,
-       "n25": 48,
-       "R25": 9.5,
-       "n26": 61,
-       "R26": 6.8
-      },
-      "scout:SC501|5Min|XAUUSD": {
-       "risk": 0.049,
-       "n25": 637,
-       "R25": 77.8,
-       "n26": 897,
-       "R26": 9.7
-      },
-      "scout:SC512|5Min|GER40": {
-       "risk": 0.049,
-       "n25": 40,
-       "R25": 13.8,
-       "n26": 45,
-       "R26": 10.5
-      }
-     }
-    },
-    "gold_cap": {
-     "base": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null,
-       "ratio": 4.07
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null,
-       "ratio": 4.94
-      }
-     },
-     "count1": {
-      "train": {
-       "total_pct": 18.73,
-       "max_fall_pct": 2.51,
-       "worst_day_pct": -0.93,
-       "stopped": null,
-       "ratio": 7.46
-      },
-      "unseen": {
-       "total_pct": 17.44,
-       "max_fall_pct": 5.77,
-       "worst_day_pct": -0.92,
-       "stopped": null,
-       "ratio": 3.02
-      }
-     },
-     "count2": {
-      "train": {
-       "total_pct": 17.34,
-       "max_fall_pct": 3.9,
-       "worst_day_pct": -0.9,
-       "stopped": null,
-       "ratio": 4.45
-      },
-      "unseen": {
-       "total_pct": 20.17,
-       "max_fall_pct": 3.76,
-       "worst_day_pct": -0.9,
-       "stopped": null,
-       "ratio": 5.36
-      }
-     },
-     "count3": {
-      "train": {
-       "total_pct": 19.28,
-       "max_fall_pct": 3.88,
-       "worst_day_pct": -1.13,
-       "stopped": null,
-       "ratio": 4.97
-      },
-      "unseen": {
-       "total_pct": 21.54,
-       "max_fall_pct": 3.85,
-       "worst_day_pct": -1.14,
-       "stopped": null,
-       "ratio": 5.59
-      }
-     },
-     "count4": {
-      "train": {
-       "total_pct": 19.68,
-       "max_fall_pct": 5.44,
-       "worst_day_pct": -1.15,
-       "stopped": null,
-       "ratio": 3.62
-      },
-      "unseen": {
-       "total_pct": 23.89,
-       "max_fall_pct": 4.32,
-       "worst_day_pct": -1.13,
-       "stopped": null,
-       "ratio": 5.53
-      }
-     },
-     "count6": {
-      "train": {
-       "total_pct": 23.26,
-       "max_fall_pct": 7.4,
-       "worst_day_pct": -1.23,
-       "stopped": null,
-       "ratio": 3.14
-      },
-      "unseen": {
-       "total_pct": 25.64,
-       "max_fall_pct": 5.36,
-       "worst_day_pct": -1.35,
-       "stopped": null,
-       "ratio": 4.78
-      }
-     },
-     "risk0.1": {
-      "train": {
-       "total_pct": 19.08,
-       "max_fall_pct": 3.14,
-       "worst_day_pct": -1.17,
-       "stopped": null,
-       "ratio": 6.08
-      },
-      "unseen": {
-       "total_pct": 16.53,
-       "max_fall_pct": 4.95,
-       "worst_day_pct": -1.01,
-       "stopped": null,
-       "ratio": 3.34
-      }
-     },
-     "risk0.15": {
-      "train": {
-       "total_pct": 17.92,
-       "max_fall_pct": 3.84,
-       "worst_day_pct": -0.93,
-       "stopped": null,
-       "ratio": 4.67
-      },
-      "unseen": {
-       "total_pct": 21.94,
-       "max_fall_pct": 4.0,
-       "worst_day_pct": -1.18,
-       "stopped": null,
-       "ratio": 5.49
-      }
-     },
-     "risk0.2": {
-      "train": {
-       "total_pct": 17.38,
-       "max_fall_pct": 6.48,
-       "worst_day_pct": -1.25,
-       "stopped": null,
-       "ratio": 2.68
-      },
-      "unseen": {
-       "total_pct": 19.59,
-       "max_fall_pct": 4.66,
-       "worst_day_pct": -1.41,
-       "stopped": null,
-       "ratio": 4.2
-      }
-     },
-     "risk0.3": {
-      "train": {
-       "total_pct": 24.18,
-       "max_fall_pct": 6.68,
-       "worst_day_pct": -1.23,
-       "stopped": null,
-       "ratio": 3.62
-      },
-      "unseen": {
-       "total_pct": 24.45,
-       "max_fall_pct": 5.31,
-       "worst_day_pct": -1.46,
-       "stopped": null,
-       "ratio": 4.6
-      }
-     }
-    }
-   },
-   "made": "2026-11-17T14:25:50+00:00",
-   "id": "2e2048ce8c67"
   },
   {
    "bot": "bot5",
@@ -2665,27 +1808,6 @@
   {
    "bot": "bot5",
    "kind": "info",
-   "title": "בוט 5: אסטרטגיית סייר חדשה נכנסת עכשיו ברמה שהבוט כבר נתן לסייר, לא ב־0.4% המלא",
-   "what": "כמו התיקון בבוט 6 (SC441): בבוט 5 כל אסטרטגיות הסייר עם סיכון משלהן, חוץ מ־SC077|5Min|US30 (0.4%, נכנסה לפני המקדם, בלי כוכבית). נבדק: הורדה שלה לא משתלמת - היא מפזרת את הסיכון, וב־2026 הירידה עולה אם מקטינים אותה (10.0% ← 11.2% ב־0.28%) - נשארת. הבונה עודכן: אסטרטגיית סייר חדשה בבוט 5 נכנסת בסיכון הגבוה שכבר ניתן לסייר (היום 0.28%), והכוכבית מעליו. 4 החדשות של היום נכנסו ב־0.28% - כרטיסי סיכון נפרדים (×0.15).",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 1,
-   "cost_r": null,
-   "risk_pct": null,
-   "baseline": null,
-   "change": null,
-   "detail": {
-    "task": "b6to5fit1611"
-   },
-   "made": "2026-11-16T14:18:27+00:00",
-   "id": "5e9ee1c7fed3"
-  },
-  {
-   "bot": "bot5",
-   "kind": "info",
    "title": "בוט 5: REARM נבנה עכשיו באמת על 4 המסלולים האיטיים - הבנייה של 07:40 לא הגיעה לבוט",
    "what": "ב־07:40 המנהל אישר את REARM על 4 המסלולים האיטיים, והבונה רשם 'נבנה' - אבל הקובץ של בוט 5 לא השתנה (רק של בוט 6). תוקן עכשיו: REARM נכנס לבוט 5 ויותקן אוטומטית. מה זה: הוראת גאפ שבוטלה לפני הפסקה של שעתיים+ (כלל FTMO) חוזרת בפתיחה, כל עוד הגאפ בתוקף. ב־2026 (R בסך הכל, לפני ← אחרי): 4ש/שעה +24.6 ← +59.0, 4ש/15 +27.2 ← +56.1, שעה/15 +8.9 ← +37.2, 4ש/5 -2.0 ← +26.6; היום הגרוע לא השתנה. עד 2025 השיפור קטן יותר (+7 עד +21R) - לכן שלושה מהם עם ⭐ ובמעקב. 15ד/דקה ו־15ד/5: שיפור זניח, לא נבנה. BRKH (בלי הוראה 1-3 שעות לפני ההפסקה) והטיה יומית (dbias) - לא שיפרו באף מסלול. ADX על שעה/15 שיפר לבד; ייבדק שוב מעל REARM בסבב הבא.",
    "train": null,
@@ -3239,2796 +2361,6 @@
    },
    "made": "2026-11-17T10:24:31+00:00",
    "id": "8abffe80ffdc"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC042|15Min|XAUUSD - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC042|15Min|XAUUSD",
-    "knob": "RISK_scout:SC042|15Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "a550e3afcc9b"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC069|15Min|XAUUSD - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC069|15Min|XAUUSD",
-    "knob": "RISK_scout:SC069|15Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "2aeba61b28f1"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC077|5Min|US30 - סיכון 0.4% ← 0.1% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.1,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC077|5Min|US30",
-    "knob": "RISK_scout:SC077|5Min|US30",
-    "from": 0.004,
-    "to": 0.001
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "b49b82f29817"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC142|15Min|XAUUSD - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC142|15Min|XAUUSD",
-    "knob": "RISK_scout:SC142|15Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "fbdd82921e36"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC071|15Min|US30 - סיכון 0.143% ← 0.0358% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0358,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC071|15Min|US30",
-    "knob": "RISK_scout:SC071|15Min|US30",
-    "from": 0.00143,
-    "to": 0.000358
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "a2d8e9faeda0"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC138|15Min|XAUUSD - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC138|15Min|XAUUSD",
-    "knob": "RISK_scout:SC138|15Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "0034117690c5"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC154|5Min|XAUUSD - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC154|5Min|XAUUSD",
-    "knob": "RISK_scout:SC154|5Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "094501134d6c"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: FR03|15Min|GBPUSD - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:FR03|15Min|GBPUSD",
-    "knob": "RISK_scout:FR03|15Min|GBPUSD",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "1f82e8af084d"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: BK07|15Min|US100 - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:BK07|15Min|US100",
-    "knob": "RISK_scout:BK07|15Min|US100",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "83f18491dc05"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: BK07|15Min|EURUSD - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:BK07|15Min|EURUSD",
-    "knob": "RISK_scout:BK07|15Min|EURUSD",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "4b7f5f8867b1"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC056|15Min|GBPUSD - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC056|15Min|GBPUSD",
-    "knob": "RISK_scout:SC056|15Min|GBPUSD",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "864a812b5620"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: QC04|15Min|EURUSD - סיכון 0.126% ← 0.0315% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0315,
-   "baseline": null,
-   "change": {
-    "track": "scout:QC04|15Min|EURUSD",
-    "knob": "RISK_scout:QC04|15Min|EURUSD",
-    "from": 0.00126,
-    "to": 0.000315
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "05fd91e1d899"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC326|5Min|GBPUSD - סיכון 0.18% ← 0.045% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.045,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC326|5Min|GBPUSD",
-    "knob": "RISK_scout:SC326|5Min|GBPUSD",
-    "from": 0.0018,
-    "to": 0.00045
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "82be8a589a04"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC402|5Min|XAUUSD - סיכון 0.18% ← 0.045% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.045,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC402|5Min|XAUUSD",
-    "knob": "RISK_scout:SC402|5Min|XAUUSD",
-    "from": 0.0018,
-    "to": 0.00045
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "f3e73370b440"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC402|15Min|XAUUSD - סיכון 0.126% ← 0.0315% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0315,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC402|15Min|XAUUSD",
-    "knob": "RISK_scout:SC402|15Min|XAUUSD",
-    "from": 0.00126,
-    "to": 0.000315
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "43c4b1b7dca9"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC333|15Min|XAUUSD - סיכון 0.126% ← 0.0315% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0315,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC333|15Min|XAUUSD",
-    "knob": "RISK_scout:SC333|15Min|XAUUSD",
-    "from": 0.00126,
-    "to": 0.000315
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "6d84bf9bc77b"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC326|15Min|USDCHF - סיכון 0.126% ← 0.0315% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0315,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC326|15Min|USDCHF",
-    "knob": "RISK_scout:SC326|15Min|USDCHF",
-    "from": 0.00126,
-    "to": 0.000315
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "ea61babdad75"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC326|15Min|USDJPY - סיכון 0.126% ← 0.0315% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0315,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC326|15Min|USDJPY",
-    "knob": "RISK_scout:SC326|15Min|USDJPY",
-    "from": 0.00126,
-    "to": 0.000315
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "75157c723d50"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC311|15Min|GER40 - סיכון 0.126% ← 0.0315% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0315,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC311|15Min|GER40",
-    "knob": "RISK_scout:SC311|15Min|GER40",
-    "from": 0.00126,
-    "to": 0.000315
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "2bfe5384f6f1"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC441|5Min|XAUUSD - סיכון 0.042% ← 0.0105% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0105,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC441|5Min|XAUUSD",
-    "knob": "RISK_scout:SC441|5Min|XAUUSD",
-    "from": 0.00042,
-    "to": 0.000105
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "899473876fcd"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC432|15Min|XAUUSD - סיכון 0.042% ← 0.0105% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0105,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC432|15Min|XAUUSD",
-    "knob": "RISK_scout:SC432|15Min|XAUUSD",
-    "from": 0.00042,
-    "to": 0.000105
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "96b952d77ba2"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: IB034|15Min|XAUUSD - סיכון 0.042% ← 0.0105% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0105,
-   "baseline": null,
-   "change": {
-    "track": "scout:IB034|15Min|XAUUSD",
-    "knob": "RISK_scout:IB034|15Min|XAUUSD",
-    "from": 0.00042,
-    "to": 0.000105
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "ed7f03e62cf9"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC446|5Min|US30 - סיכון 0.042% ← 0.0105% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.0105,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC446|5Min|US30",
-    "knob": "RISK_scout:SC446|5Min|US30",
-    "from": 0.00042,
-    "to": 0.000105
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "e94892ff6bb2"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC480|15Min|US100 - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC480|15Min|US100",
-    "knob": "RISK_scout:SC480|15Min|US100",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "89686d8557d5"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC480|5Min|US100 - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC480|5Min|US100",
-    "knob": "RISK_scout:SC480|5Min|US100",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "4aad34f15bae"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC480|5Min|GER40 - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC480|5Min|GER40",
-    "knob": "RISK_scout:SC480|5Min|GER40",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "f3210ce3e3bf"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC486|15Min|USDCHF - סיכון 0.196% ← 0.049% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.049,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC486|15Min|USDCHF",
-    "knob": "RISK_scout:SC486|15Min|USDCHF",
-    "from": 0.00196,
-    "to": 0.00049
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "9dd9e17d58d8"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC501|5Min|XAUUSD - סיכון 0.196% ← 0.049% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.049,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC501|5Min|XAUUSD",
-    "knob": "RISK_scout:SC501|5Min|XAUUSD",
-    "from": 0.00196,
-    "to": 0.00049
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "32fcf59b3aa2"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC317|15Min|XAUUSD - סיכון 0.28% ← 0.07% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.07,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC317|15Min|XAUUSD",
-    "knob": "RISK_scout:SC317|15Min|XAUUSD",
-    "from": 0.0028,
-    "to": 0.0007
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "fe806bc353b8"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC232|15Min|XAUUSD - סיכון 0.196% ← 0.049% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.049,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC232|15Min|XAUUSD",
-    "knob": "RISK_scout:SC232|15Min|XAUUSD",
-    "from": 0.00196,
-    "to": 0.00049
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "986631d2b0ff"
-  },
-  {
-   "bot": "bot5",
-   "kind": "risk",
-   "title": "בוט 5: SC512|5Min|GER40 - סיכון 0.196% ← 0.049% (כל הסייר ×0.25 כדי שהבוט יישאר במגבלות)",
-   "what": "למה: בבדיקת החשבון של בוט 5 (אותו כלל סיכון קבוע כמו בחי: 4.5% ליום, 9% מההתחלה) כל 31 אסטרטגיות הסייר יחד בסיכון של היום יורדות עד 26.5% מהשיא במאי-דצמבר 2025, וב־2026 החשבון נעצר כבר ב־15.1.2026 על ‎-9% (גם הבוט כולו עם הגאפ נעצר ב־29.1). כל אסטרטגיה לבד מרוויחה - הבעיה היא הגודל של כולן יחד (14 מהן על זהב). נבחר על מאי-דצמבר 2025 בלבד: המקדם הכי גדול שהירידה מהשיא נשארת מתחת ל־9% - ×0.25 (ירידה 8.2%, רווח +33%; ×0.33 כבר 10.8%). ב־2026 (לא נראה): +27.8%, ירידה 5.6%, יום גרוע ‎-1.4%, לא נעצר - מול ‎-9% ועצירה בינואר היום. אותו מקדם על כל הסייר, היחס בין האסטרטגיות (לפי היתרון) נשמר; מסלולי הגאפ לא משתנים. בחי הבוט ב־‎-5.8% - זה גם משאיר מקום. (מנהל, 17.11 צהריים)",
-   "train": null,
-   "unseen": null,
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 8,
-   "cost_r": null,
-   "risk_pct": 0.049,
-   "baseline": null,
-   "change": {
-    "track": "scout:SC512|5Min|GER40",
-    "knob": "RISK_scout:SC512|5Min|GER40",
-    "from": 0.00196,
-    "to": 0.00049
-   },
-   "detail": {
-    "world": "bot5",
-    "task": "mgr1711b5scale",
-    "scan": {
-     "now_x1": {
-      "train": {
-       "total_pct": 130.76,
-       "max_fall_pct": 26.53,
-       "worst_day_pct": -4.25,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": -9.02,
-       "max_fall_pct": 9.29,
-       "worst_day_pct": -2.73,
-       "stopped": "2026-01-15T16:16:00+00:00"
-      }
-     },
-     "x0.5": {
-      "train": {
-       "total_pct": 66.29,
-       "max_fall_pct": 16.31
-      },
-      "unseen": {
-       "total_pct": 55.57,
-       "max_fall_pct": 11.25
-      }
-     },
-     "x0.33": {
-      "train": {
-       "total_pct": 43.75,
-       "max_fall_pct": 10.76
-      },
-      "unseen": {
-       "total_pct": 36.66,
-       "max_fall_pct": 7.42
-      }
-     },
-     "x0.25": {
-      "train": {
-       "total_pct": 33.15,
-       "max_fall_pct": 8.15,
-       "worst_day_pct": -1.35,
-       "stopped": null
-      },
-      "unseen": {
-       "total_pct": 27.77,
-       "max_fall_pct": 5.62,
-       "worst_day_pct": -1.37,
-       "stopped": null
-      }
-     },
-     "x0.2": {
-      "train": {
-       "total_pct": 26.52,
-       "max_fall_pct": 6.52
-      },
-      "unseen": {
-       "total_pct": 22.22,
-       "max_fall_pct": 4.5
-      }
-     }
-    },
-    "account_fit": true,
-    "made_by": "manager 17.11 midday",
-    "note": "one factor on every scout, chosen on 2025-04-30..2025-12-31 (largest with max fall < 9%); gap tracks unchanged"
-   },
-   "made": "2026-11-17T12:55:00+00:00",
-   "id": "6d0e82521d4a"
   }
  ]
 }

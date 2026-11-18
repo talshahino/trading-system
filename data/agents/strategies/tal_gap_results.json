@@ -467404,6 +467404,313 @@
    "anti": 2,
    "straddle": 196,
    "shared_exit": 2
+  },
+  "tal_asks": {
+   "at": "2026-11-18T10:41:02+00:00",
+   "report": "reports/agents/bot5/tal_asks/report.json",
+   "note": "על הכללים שרצים בבוט 5 מ־18.11 (סטופ בתחילת הדחף + מרווח). בחירה עד 2025, הצגה על 2026.",
+   "families": {
+    "t1h_5@": {
+     "size": {
+      "tested": 4,
+      "chosen": null,
+      "passes": false
+     },
+     "gapx": {
+      "tested": 1,
+      "chosen": null,
+      "passes": false
+     },
+     "firstg": {
+      "tested": 2,
+      "chosen": "fglo",
+      "passes": true
+     },
+     "follow": {
+      "tested": 3,
+      "chosen": "x2",
+      "passes": false
+     },
+     "stop": {
+      "tested": 1,
+      "chosen": "sw2",
+      "passes": false
+     }
+    },
+    "t5_1@": {
+     "size": {
+      "tested": 4,
+      "chosen": null,
+      "passes": false
+     },
+     "gapx": {
+      "tested": 1,
+      "chosen": "full",
+      "passes": false
+     },
+     "firstg": {
+      "tested": 2,
+      "chosen": "fglo",
+      "passes": false
+     },
+     "follow": {
+      "tested": 3,
+      "chosen": null,
+      "passes": false
+     },
+     "stop": {
+      "tested": 1,
+      "chosen": null,
+      "passes": false
+     }
+    },
+    "t15_1": {
+     "size": {
+      "tested": 4,
+      "chosen": null,
+      "passes": false
+     },
+     "gapx": {
+      "tested": 1,
+      "chosen": null,
+      "passes": false
+     },
+     "firstg": {
+      "tested": 2,
+      "chosen": null,
+      "passes": false
+     },
+     "follow": {
+      "tested": 3,
+      "chosen": "x2",
+      "passes": false
+     },
+     "stop": {
+      "tested": 1,
+      "chosen": "sw2",
+      "passes": false
+     }
+    },
+    "t1h_15": {
+     "size": {
+      "tested": 4,
+      "chosen": "gl05",
+      "passes": false
+     },
+     "gapx": {
+      "tested": 1,
+      "chosen": "full",
+      "passes": false
+     },
+     "firstg": {
+      "tested": 2,
+      "chosen": "fg1",
+      "passes": true
+     },
+     "follow": {
+      "tested": 3,
+      "chosen": null,
+      "passes": false
+     },
+     "stop": {
+      "tested": 1,
+      "chosen": null,
+      "passes": false
+     }
+    },
+    "t4h_1h": {
+     "size": {
+      "tested": 8,
+      "chosen": "gl01",
+      "passes": false
+     },
+     "gapx": {
+      "tested": 1,
+      "chosen": null,
+      "passes": false
+     },
+     "firstg": {
+      "tested": 2,
+      "chosen": "fg1",
+      "passes": true
+     },
+     "follow": {
+      "tested": 3,
+      "chosen": null,
+      "passes": false
+     },
+     "stop": {
+      "tested": 1,
+      "chosen": null,
+      "passes": false
+     }
+    },
+    "t4h_15": {
+     "size": {
+      "tested": 8,
+      "chosen": "gl01",
+      "passes": false
+     },
+     "gapx": {
+      "tested": 1,
+      "chosen": "full",
+      "passes": false
+     },
+     "firstg": {
+      "tested": 2,
+      "chosen": "fg1",
+      "passes": false
+     },
+     "follow": {
+      "tested": 3,
+      "chosen": null,
+      "passes": false
+     },
+     "stop": {
+      "tested": 1,
+      "chosen": "sw2",
+      "passes": false
+     }
+    },
+    "t15_5": {
+     "size": {
+      "tested": 4,
+      "chosen": "gl05",
+      "passes": false
+     },
+     "gapx": {
+      "tested": 1,
+      "chosen": null,
+      "passes": false
+     },
+     "firstg": {
+      "tested": 2,
+      "chosen": null,
+      "passes": false
+     },
+     "follow": {
+      "tested": 3,
+      "chosen": "x3",
+      "passes": false
+     },
+     "stop": {
+      "tested": 1,
+      "chosen": "sw2",
+      "passes": false
+     }
+    },
+    "t5_1": {
+     "size": {
+      "tested": 4,
+      "chosen": "gl05",
+      "passes": true
+     },
+     "gapx": {
+      "tested": 1,
+      "chosen": null,
+      "passes": false
+     },
+     "firstg": {
+      "tested": 2,
+      "chosen": null,
+      "passes": false
+     },
+     "follow": {
+      "tested": 3,
+      "chosen": "x2",
+      "passes": false
+     },
+     "stop": {
+      "tested": 1,
+      "chosen": null,
+      "passes": false
+     }
+    },
+    "t4h_5": {
+     "size": {
+      "tested": 8,
+      "chosen": null,
+      "passes": false
+     },
+     "gapx": {
+      "tested": 1,
+      "chosen": "full",
+      "passes": false
+     },
+     "firstg": {
+      "tested": 2,
+      "chosen": "fg1",
+      "passes": false
+     },
+     "follow": {
+      "tested": 3,
+      "chosen": null,
+      "passes": false
+     },
+     "stop": {
+      "tested": 1,
+      "chosen": "sw2",
+      "passes": false
+     }
+    }
+   },
+   "all_tracks": {
+    "now": {
+     "train_wR": 370.9,
+     "unseen_R": 122.7,
+     "unseen_n": 1693
+    },
+    "full": {
+     "train_wR": 355.5,
+     "unseen_R": 79.8,
+     "unseen_n": 2023
+    },
+    "fg1": {
+     "train_wR": 381.2,
+     "unseen_R": 114.3,
+     "unseen_n": 1509
+    },
+    "fglo": {
+     "train_wR": 354.2,
+     "unseen_R": 113.6,
+     "unseen_n": 1562
+    },
+    "x1": {
+     "train_wR": 294.2,
+     "unseen_R": 58.8,
+     "unseen_n": 1802
+    },
+    "x2": {
+     "train_wR": 323.1,
+     "unseen_R": 73.7,
+     "unseen_n": 1796
+    },
+    "x3": {
+     "train_wR": 330.6,
+     "unseen_R": 106.5,
+     "unseen_n": 1798
+    },
+    "gl01": {
+     "train_wR": 375.8,
+     "unseen_R": 119.1,
+     "unseen_n": 1666
+    },
+    "gl02": {
+     "train_wR": 356.2,
+     "unseen_R": 123.6,
+     "unseen_n": 1643
+    },
+    "gl05": {
+     "train_wR": 345.8,
+     "unseen_R": 118.4,
+     "unseen_n": 1559
+    },
+    "sw2": {
+     "train_wR": 389.6,
+     "unseen_R": 231.0,
+     "unseen_n": 2000
+    }
+   }
   }
  }
 }

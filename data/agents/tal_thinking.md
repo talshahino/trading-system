@@ -257,3 +257,6 @@ Reviewing bot 5's gap setups: "an impulse built of one candle - there is an impu
 
 ## A gap must have real size (user, 18.11.2026 09:20)
 "Too small, that doesn't count as a gap." Said of a US30 4-hour gap of about 5% of the average candle's range, the smallest he has reviewed. For Tal a gap is not just any space between candle 1 and candle 3: it has to be big enough to matter next to the move that made it. For the agents: one example so far, so it sets no threshold by itself - the floor comes from the test (task b5mingap1811).
+
+## After a mixed day: learn from it and come back with a proposal (user, 18.11.2026 19:03)
+"What did you learn from this day? You have very profitable trades and less profitable ones. Could we have anticipated it and reduced it? Maybe think about what can be done and tell me." Tal expects the bot's agent to study the day on its own initiative, ask whether the losers could have been told apart at entry, and bring him an idea rather than a description of the day. For the agents: answer with what separated the winners from the losers that day, test it, and say plainly whether it holds up.

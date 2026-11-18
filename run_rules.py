@@ -590,6 +590,11 @@ def main():
                          "inside the window (3 minutes before to 3 after) is not taken")
     ap.add_argument("--break-exit", action="store_true",
                     help="FTMO Standard account: close every position before any market break longer than 2 hours (weekends too)")
+    ap.add_argument("--crypto-break", action="store_true",
+                    help="crypto: FTMO's Saturday maintenance (08:00 server time, 4 hours - the live bots close 15 minutes "
+                         "before it, bot 1's ETH 14.11.2026) is not in the 24/7 data: close there as live does")
+    ap.add_argument("--crypto-noentry", type=float, default=0.0,
+                    help="with --crypto-break: no new crypto trade this many hours before the Saturday break")
     ap.add_argument("--stock-session-exit", action="store_true",
                     help="stocks: close every position at the end of the trading session (no overnight gaps)")
     ap.add_argument("--breakeven", type=float, default=0.0,
@@ -708,10 +713,17 @@ def main():
             if args.break_exit and not args.demo:
                 bm = break_mask(df, tf)
                 sess = bm if sess is None else (np.asarray(sess, dtype=bool) | bm)
+            if args.crypto_break and not args.demo and U.CLASS.get(s) == "crypto":
+                cbm, cne = crypto_break_mask(df, tf, args.crypto_noentry)
+                sess = cbm if sess is None else (np.asarray(sess, dtype=bool) | cbm)
+            else:
+                cne = None
             news_block = None
             if args.news_exit and not args.demo:
                 nm, news_block = news_masks(df, s, tf)
                 sess = nm if sess is None else (np.asarray(sess, dtype=bool) | nm)
+            if cne is not None and cne.any():
+                news_block = cne if news_block is None else (np.asarray(news_block, dtype=bool) | cne)
             if args.stock_session_exit and not args.demo and U.CLASS.get(s) == "stock":
                 # the live bots open no stock trade in the last 15 minutes of the session (live/runner.py), the
                 # backtest did: entries at 15:45 / 15:50 / 15:55 New York held to the 16:00 close - in bots 1-4's
@@ -996,6 +1008,24 @@ def break_mask(df, tf):
     gap = start.shift(-1) - (start + pd.Timedelta(minutes=RP.TF_MIN[tf]))
     return (gap > pd.Timedelta(hours=2)).to_numpy()
 
+
+
+def crypto_break_mask(df, tf, noentry_h=0.0):
+    """FTMO's crypto maintenance: Saturday 08:00-12:00 server time (Europe/Athens clock, UTC+2/+3; bot 1's breaks
+    schedule "5-480": 240 minutes). The live bots close 15 minutes before it (live/runner.break_close). -> (exit mask:
+    True on the last bar that ends by then, entry block: True on bars opening within noentry_h hours before it)."""
+    st = df.index
+    loc = st.tz_convert("Europe/Athens")
+    bar = pd.Timedelta(minutes=RP.TF_MIN[tf])
+    sat = loc.normalize() + pd.to_timedelta((5 - loc.weekday) % 7, unit="D") + pd.Timedelta(hours=8)
+    cut = sat - pd.Timedelta(minutes=15)                       # the next close-out moment at or after each bar's start
+    end = loc + bar
+    nxt_end = end + bar
+    exit_ = np.asarray((end <= cut) & (nxt_end > cut), bool)
+    block = np.zeros(len(df), bool)
+    if noentry_h > 0:
+        block = np.asarray((cut - loc) <= pd.Timedelta(hours=noentry_h), bool) & np.asarray(loc < sat, bool)
+    return exit_, block
 
 def session_mask(df, s, tf):
     """Stocks only: True on the bars whose close is within 15 minutes of the exchange close,

@@ -276,6 +276,10 @@ def key_of(combo):
 # instruments whose history source changed: results made before are of another market and are run again
 # (12.11.2026: FTMO's ASML and RACE are the US listings, agents/ftmo_universe.py)
 SOURCE_SINCE = {"ASML": "2026-11-12T16:00:00+00:00", "RACE": "2026-11-12T16:00:00+00:00"}   # after the fix is installed on the bots' computer
+# crypto results made before LIVE_RULES closed trades ahead of FTMO's Saturday maintenance (cbc9f01, 18.11.2026) held
+# through it: the stored trades, the whole-bot replay and the edge rule still read bot 1's ETH 2026 as +69.7R (+11.6R as
+# the bot really trades; agents/crypto_break_study). Task b1ethbreak1811. Run again; until then "no test yet".
+CRYPTO_BREAK_SINCE = "2026-11-18T16:10:00+00:00"
 
 
 def stale_source(doc):
@@ -283,6 +287,8 @@ def stale_source(doc):
         return False
     sym = str(doc.get("combo") or "").split("|")[-1]
     if sym in SOURCE_SINCE and str(doc.get("at") or "") < SOURCE_SINCE[sym]:
+        return True
+    if U.CLASS.get(sym) == "crypto" and str(doc.get("at") or "") < CRYPTO_BREAK_SINCE:
         return True
     # measured before FTMO's real stock spreads / the restricted events were part of the experiments (13.11.2026)
     return doc.get("costs") != COSTS and (U.CLASS.get(sym) == "stock" or news_touched(sym))

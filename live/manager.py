@@ -1506,6 +1506,16 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(503, {"error": "bot 1 not answering"})
         if len(parts) == 3 and parts[0] == "bot" and parts[2] in ("live", "state", "candles"):
             port = bot_port(parts[1])
+            if not port and parts[2] in ("state", "live") and parts[1] in ("watch_own", "watch_scout", "watch_fut", "news_bot"):
+                # a virtual account's state straight from this computer (user, 18.11.2026: "US100 reached 100% - why is
+                # it still open?" - through GitHub the app saw it 2-5 minutes late): the file the bot writes every minute
+                try:
+                    j_ = json.loads((ROOT / "live" / f"{parts[1]}_state.json").read_text(encoding="utf-8"))
+                    for k_ in ("vacct_full", "all_trades"):          # bot 7's local bookkeeping, not for the app
+                        j_.pop(k_, None)
+                    return self._send(200, j_)
+                except Exception as e:  # noqa: BLE001
+                    return self._send(503, {"error": str(e)[:120]})
             if not port and parts[2] == "candles" and parts[1] in ("watch_own", "watch_scout", "watch_fut", "news_bot"):
                 # a virtual account's trade chart (user, 17.11.2026: 5ב's GBPJPY "the bot does not support the chart
                 # yet"): the virtual bots have no MetaTrader of their own - the candles of the account they read from

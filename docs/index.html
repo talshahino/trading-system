@@ -658,7 +658,7 @@ document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
 });
 
 /* real time through the manager: the open account 4 times a second (full state every 20 s), the list every 2 s */
-let liveOk = false, liveBusy = false, lastFull = 0, listBusy = false, listT = 0;
+let liveOk = false, liveBusy = false, lastFull = 0, listBusy = false, listT = 0, vBusy = false, vT = 0;
 const viaMgr = n => mgr && mgrInfo && mgrInfo.accounts.some(a => a.name === n && !a.archived && !a.virtual);   // the virtual account is read from GitHub
 function onLive(n, j, full) {
   const s = found[n] || (found[n] = {});
@@ -681,6 +681,22 @@ async function livePoll() {
       }
     } catch (e) {}
     liveBusy = false;
+  }
+  // the virtual accounts straight from the bots' computer every 10 seconds (user, 18.11.2026: a trade at its target
+  // still showed open - GitHub's copy is 2-5 minutes old); GitHub stays the fallback when the manager is not reachable
+  if (accOn && mgr && mgrInfo && !vBusy && Date.now() - vT > 10000) {
+    const vs = UI.view === "det" ? (VIRT.includes(UI.cur) ? [UI.cur] : []) : VIRT.filter(v => found[v]);
+    if (vs.length) {
+      vBusy = true; vT = Date.now();
+      await Promise.all(vs.map(async v => {
+        try {
+          const r = await fetch(`${mgr}/bot/${v}/state`, {cache: "no-store"});
+          if (r.ok) { const j = await r.json(); if (j && j.updated_utc && (!found[v] || !found[v].updated_utc || j.updated_utc >= found[v].updated_utc)) { found[v] = j; LIVE[v] = Date.now(); } }
+        } catch (e) {}
+      }));
+      if (UI.view === "det" && VIRT.includes(UI.cur)) renderDet(UI.sub === "ov" && !!$("ovTiles")); else if (UI.view !== "det") renderList();
+      vBusy = false;
+    }
   }
   if (accOn && UI.view !== "det" && !listBusy && Date.now() - listT > 2000 && mgr && mgrInfo) {
     listBusy = true; listT = Date.now();
@@ -1284,7 +1300,7 @@ function renderDet(light) {
   $("dSub").innerHTML = `<span class="pill vps">${esc(botL(a))}</span>` + (a.archived ? '<span class="pill">החשבון סגור</span>' :
     live ? `<span class="pos">● בזמן אמת</span><span class="num">${new Date(s.updated_utc).toLocaleTimeString("he-IL", IL)}</span>`
          : a.virtual && s && (a.running || Date.now() - new Date(s.updated_utc) < 6 * 60000)
-           ? `<span class="pos">● פעיל</span><span>מתעדכן כל 2 דקות · עודכן ${il(s.updated_utc)}</span>`      // virtual: read from GitHub, not live
+           ? `<span class="pos">● פעיל</span><span>${mgr && mgrInfo ? "מתעדכן כל 10 שניות" : "מתעדכן כל 2 דקות"} · עודכן ${il(s.updated_utc)}</span>`      // virtual: read from GitHub, not live
          : `<span class="neg">● לא מחובר</span>${s ? `<span>עודכן ${il(s.updated_utc)}</span>` : ""}`);
   $("dSubt").innerHTML = SUBS.map(([k, l]) => `<button data-s="${k}" aria-selected="${UI.sub === k}" data-n="${k === "ov" ? (TALKN[UI.cur] || "") : ""}">${l}${k === "tr" && s && s.positions && s.positions.length ? `<span class="badge">${s.positions.length}</span>` : ""}</button>`).join("");
   const ban = $("dBan");

@@ -752,18 +752,49 @@ function provApply(n, s) {
     add += v.row.net || 0;
   }
   s.positions = (s.positions || []).filter(p => !PROV[n + "|" + p.ticket]);
+  const have = new Set((s.positions || []).map(p => String(p.ticket))), closedIds = new Set((s.closed || []).map(c => String(c.id)));
+  for (const [k, v] of Object.entries(PROVO)) {
+    if (!k.startsWith(n + "|")) continue;
+    const id = k.slice(n.length + 1), w = (s.watch || []).find(t => String(t.id) === id);
+    // the bot opened it (or closed it already), or did not take it, or it is too old: the bot's word stands
+    if (have.has(id) && !(s.positions.find(p => String(p.ticket) === id) || {}).prov || closedIds.has(id) || PROV[k]
+        || (w && (w.skipped || w.status === "cancelled")) || Date.now() - v.at > 6 * 60000) { delete PROVO[k]; continue; }
+    if (!have.has(id)) s.positions = [...(s.positions || []), {...v.pos}];
+  }
   if (add && s.balance != null) { s.balance = Math.round((s.balance + add) * 100) / 100; }
   s.equity = Math.round(((s.balance || 0) + (s.positions || []).reduce((t, p) => t + (p.pnl || 0), 0)) * 100) / 100;
+}
+const PROVO = {};         // "<bot>|<id>" -> a gap order filled on the live price, until the bot's state has it
+const PROV_RISK = {watch_own: 0.0028};
+function provWaiting(n, s) {
+  if (!PROV_RISK[n] || !s || !s.watch) return [];
+  const have = new Set((s.positions || []).map(p => String(p.ticket)));
+  return s.watch.filter(t => t.status === "pending" && t.tal && !String(t.tal).startsWith("sc:") && !t.v1m && !t.v5 && !t.v4
+    && t.entry != null && t.stop != null && !t.skipped && !have.has(String(t.id)) && !PROVO[n + "|" + t.id]
+    && !(rvNeeded(t) && (((WB.marks || {})[t.id] || t.mark || {}).take !== "yes")));
+}
+function provOpen(n, s, t) {
+  const risk = Math.round((s.balance || 100000) * PROV_RISK[n] * 100) / 100, buy = t.dir > 0;
+  const tpUsd = t.target != null ? Math.round(risk * Math.abs(t.target - t.entry) / Math.abs(t.entry - t.stop) * 100) / 100 : 0;
+  PROVO[n + "|" + t.id] = {at: Date.now(), pos: {ticket: t.id, side: buy ? "buy" : "sell", dir: buy ? "קנייה" : "מכירה",
+    combo: `TAL|${t.tal}|${t.symbol}`, entry_tf: (t.geo || {}).ltf || "", symbol: t.symbol, lots: "וירטואלי", open: t.entry, now: t.entry,
+    sl: t.stop, tp: t.target, sl0: t.stop, tp0: t.target, sl_usd: -risk, tp_usd: tpUsd, pnl: 0, since: new Date().toISOString(),
+    pip: 1, free: false, prov: true, note: "נפתחה עכשיו (מחיר חי)"}};
+  provApply(n, s);
 }
 async function virtLive() {
   const accOn = $("v-acc").classList.contains("on"), n = accOn && UI.view === "det" ? UI.cur : null;
   if (!n || !VIRT.includes(n) || qBusy || Date.now() - qT < 1000) return;
-  const s = found[n], pos = (s && s.positions) || [];
-  if (!pos.length) return;
+  const s = found[n], pos = (s && s.positions) || [], wait = provWaiting(n, s);
+  if (!pos.length && !wait.length) return;
   qBusy = true; qT = Date.now();
   try {
-    const q = await getQuotes([...new Set(pos.map(p => p.symbol))]);
+    const q = await getQuotes([...new Set([...pos.map(p => p.symbol), ...wait.map(t => t.symbol)])]);
     if (q && UI.cur === n) {
+      // a waiting gap order the live price has reached: open on the screen at once (user, 18.11.2026), until the bot's
+      // own cycle (~2 minutes) opens it - or decides not to (no room in the risk limits, his "no" in the review)
+      wait.forEach(t => { const x = q[t.symbol]; if (!x) return; const buy = t.dir > 0, px = buy ? x[1] : x[0];
+        if (buy ? px <= t.entry : px >= t.entry) provOpen(n, s, t); });
       let tot = 0;
       pos.forEach(p => { const x = q[p.symbol]; if (!x) { tot += p.pnl || 0; return; }
         const px = p.side === "buy" ? x[0] : x[1], risk = -(p.sl_usd || 0), d = p.open - p.sl;

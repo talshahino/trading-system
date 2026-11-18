@@ -1,0 +1,622 @@
+{
+ "at": "2026-11-18T22:27:08+00:00",
+ "task": "b5scoutday1811",
+ "trades": 10489,
+ "strategies": 30,
+ "not_in_data": [
+  "SC326|15Min|USDJPY"
+ ],
+ "base": {
+  "train": {
+   "n": 4426,
+   "total": 48.94,
+   "fall": 7.5,
+   "worst": -2.18,
+   "green": 45.5,
+   "stopped": null,
+   "skipped_room": 0
+  },
+  "unseen": {
+   "n": 6063,
+   "total": 45.92,
+   "fall": 8.8,
+   "worst": -2.01,
+   "green": 43.4,
+   "stopped": null,
+   "skipped_room": 0
+  }
+ },
+ "rules": [
+  {
+   "th": 0.5,
+   "act": "skip",
+   "train": {
+    "n": 4235,
+    "total": 50.45,
+    "fall": 7.35,
+    "worst": -2.18,
+    "green": 46.0,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 5744,
+    "total": 49.73,
+    "fall": 8.44,
+    "worst": -2.01,
+    "green": 42.6,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 191,
+     "mean": -0.0122,
+     "t": -0.13,
+     "win": 42.5
+    },
+    "unseen": {
+     "n": 319,
+     "mean": -0.1321,
+     "t": -1.85,
+     "win": 36.7
+    }
+   }
+  },
+  {
+   "th": 0.5,
+   "act": "half",
+   "train": {
+    "n": 4426,
+    "total": 49.69,
+    "fall": 7.43,
+    "worst": -2.18,
+    "green": 46.0,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 6063,
+    "total": 47.82,
+    "fall": 8.62,
+    "worst": -2.01,
+    "green": 43.4,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 191,
+     "mean": -0.0122,
+     "t": -0.13,
+     "win": 42.5
+    },
+    "unseen": {
+     "n": 319,
+     "mean": -0.1321,
+     "t": -1.85,
+     "win": 36.7
+    }
+   }
+  },
+  {
+   "th": 0.75,
+   "act": "skip",
+   "train": {
+    "n": 4348,
+    "total": 48.87,
+    "fall": 7.19,
+    "worst": -2.18,
+    "green": 46.0,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 5901,
+    "total": 49.67,
+    "fall": 8.41,
+    "worst": -2.01,
+    "green": 43.8,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 78,
+     "mean": -0.0016,
+     "t": -0.01,
+     "win": 45.0
+    },
+    "unseen": {
+     "n": 162,
+     "mean": -0.2575,
+     "t": -3.31,
+     "win": 35.2
+    }
+   }
+  },
+  {
+   "th": 0.75,
+   "act": "half",
+   "train": {
+    "n": 4426,
+    "total": 48.9,
+    "fall": 7.34,
+    "worst": -2.18,
+    "green": 45.5,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 6063,
+    "total": 47.8,
+    "fall": 8.54,
+    "worst": -2.01,
+    "green": 43.4,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 78,
+     "mean": -0.0016,
+     "t": -0.01,
+     "win": 45.0
+    },
+    "unseen": {
+     "n": 162,
+     "mean": -0.2575,
+     "t": -3.31,
+     "win": 35.2
+    }
+   }
+  },
+  {
+   "th": 1.0,
+   "act": "skip",
+   "train": {
+    "n": 4393,
+    "total": 49.54,
+    "fall": 7.4,
+    "worst": -2.18,
+    "green": 45.5,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 5982,
+    "total": 48.19,
+    "fall": 8.65,
+    "worst": -2.01,
+    "green": 43.4,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 33,
+     "mean": -0.0332,
+     "t": -0.19,
+     "win": 51.6
+    },
+    "unseen": {
+     "n": 81,
+     "mean": -0.355,
+     "t": -3.46,
+     "win": 30.9
+    }
+   }
+  },
+  {
+   "th": 1.0,
+   "act": "half",
+   "train": {
+    "n": 4426,
+    "total": 49.24,
+    "fall": 7.45,
+    "worst": -2.18,
+    "green": 45.5,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 6063,
+    "total": 47.06,
+    "fall": 8.73,
+    "worst": -2.01,
+    "green": 43.4,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 33,
+     "mean": -0.0332,
+     "t": -0.19,
+     "win": 51.6
+    },
+    "unseen": {
+     "n": 81,
+     "mean": -0.355,
+     "t": -3.46,
+     "win": 30.9
+    }
+   }
+  }
+ ],
+ "rules_prev_close": [
+  {
+   "th": 0.5,
+   "act": "skip",
+   "train": {
+    "n": 4236,
+    "total": 50.52,
+    "fall": 7.22,
+    "worst": -2.18,
+    "green": 45.5,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 5719,
+    "total": 44.76,
+    "fall": 9.36,
+    "worst": -2.01,
+    "green": 42.2,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 190,
+     "mean": -0.0255,
+     "t": -0.26,
+     "win": 40.1
+    },
+    "unseen": {
+     "n": 344,
+     "mean": -0.0375,
+     "t": -0.47,
+     "win": 37.5
+    }
+   }
+  },
+  {
+   "th": 0.5,
+   "act": "half",
+   "train": {
+    "n": 4426,
+    "total": 49.73,
+    "fall": 7.36,
+    "worst": -2.18,
+    "green": 45.5,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 6063,
+    "total": 45.34,
+    "fall": 9.01,
+    "worst": -2.01,
+    "green": 43.0,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 190,
+     "mean": -0.0255,
+     "t": -0.26,
+     "win": 40.1
+    },
+    "unseen": {
+     "n": 344,
+     "mean": -0.0375,
+     "t": -0.47,
+     "win": 37.5
+    }
+   }
+  },
+  {
+   "th": 0.75,
+   "act": "skip",
+   "train": {
+    "n": 4334,
+    "total": 50.17,
+    "fall": 7.32,
+    "worst": -2.18,
+    "green": 46.0,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 5877,
+    "total": 48.66,
+    "fall": 9.26,
+    "worst": -2.01,
+    "green": 43.4,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 92,
+     "mean": -0.1222,
+     "t": -0.94,
+     "win": 41.5
+    },
+    "unseen": {
+     "n": 186,
+     "mean": -0.1503,
+     "t": -1.47,
+     "win": 35.6
+    }
+   }
+  },
+  {
+   "th": 0.75,
+   "act": "half",
+   "train": {
+    "n": 4426,
+    "total": 49.56,
+    "fall": 7.41,
+    "worst": -2.18,
+    "green": 45.5,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 6063,
+    "total": 47.29,
+    "fall": 8.74,
+    "worst": -2.01,
+    "green": 43.4,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 92,
+     "mean": -0.1222,
+     "t": -0.94,
+     "win": 41.5
+    },
+    "unseen": {
+     "n": 186,
+     "mean": -0.1503,
+     "t": -1.47,
+     "win": 35.6
+    }
+   }
+  },
+  {
+   "th": 1.0,
+   "act": "skip",
+   "train": {
+    "n": 4387,
+    "total": 49.86,
+    "fall": 7.4,
+    "worst": -2.18,
+    "green": 45.0,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 5966,
+    "total": 47.23,
+    "fall": 9.45,
+    "worst": -2.01,
+    "green": 43.4,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 39,
+     "mean": -0.0769,
+     "t": -0.45,
+     "win": 46.2
+    },
+    "unseen": {
+     "n": 97,
+     "mean": -0.2256,
+     "t": -1.67,
+     "win": 34.1
+    }
+   }
+  },
+  {
+   "th": 1.0,
+   "act": "half",
+   "train": {
+    "n": 4426,
+    "total": 49.4,
+    "fall": 7.45,
+    "worst": -2.18,
+    "green": 45.0,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "unseen": {
+    "n": 6063,
+    "total": 46.57,
+    "fall": 9.06,
+    "worst": -2.01,
+    "green": 43.4,
+    "stopped": null,
+    "skipped_room": 0
+   },
+   "caught": {
+    "train": {
+     "n": 39,
+     "mean": -0.0769,
+     "t": -0.45,
+     "win": 46.2
+    },
+    "unseen": {
+     "n": 97,
+     "mean": -0.2256,
+     "t": -1.67,
+     "win": 34.1
+    }
+   }
+  }
+ ],
+ "pick_on_2025": {
+  "th": 0.5,
+  "act": "skip"
+ },
+ "pick_holds_2026": true,
+ "tested": 18,
+ "t_needed_after_correction": 2.77,
+ "per_symbol": {
+  "chosen": {
+   "GBPUSD": {
+    "th": 0.5,
+    "act": "skip",
+    "train_gain_r": 1.1,
+    "train_n": 22
+   },
+   "GER40": {
+    "th": 0.5,
+    "act": "skip",
+    "train_gain_r": 4.3,
+    "train_n": 52
+   },
+   "USDCHF": {
+    "th": 0.5,
+    "act": "skip",
+    "train_gain_r": 6.0,
+    "train_n": 17
+   },
+   "XAUUSD": {
+    "th": 0.75,
+    "act": "skip",
+    "train_gain_r": 1.7,
+    "train_n": 34
+   }
+  },
+  "train": {
+   "n": 4301,
+   "total": 50.88,
+   "fall": 7.23,
+   "worst": -2.18,
+   "green": 47.1,
+   "stopped": null,
+   "skipped_room": 0
+  },
+  "unseen": {
+   "n": 5857,
+   "total": 48.23,
+   "fall": 8.08,
+   "worst": -2.01,
+   "green": 43.0,
+   "stopped": null,
+   "skipped_room": 0
+  }
+ },
+ "per_symbol_prev_close": {
+  "chosen": {
+   "GBPUSD": {
+    "th": 0.5,
+    "act": "skip",
+    "train_gain_r": 1.6,
+    "train_n": 20
+   },
+   "GER40": {
+    "th": 0.5,
+    "act": "skip",
+    "train_gain_r": 3.3,
+    "train_n": 51
+   },
+   "USDCHF": {
+    "th": 0.5,
+    "act": "skip",
+    "train_gain_r": 4.8,
+    "train_n": 16
+   },
+   "XAUUSD": {
+    "th": 0.75,
+    "act": "skip",
+    "train_gain_r": 1.7,
+    "train_n": 41
+   }
+  },
+  "train": {
+   "n": 4298,
+   "total": 50.6,
+   "fall": 7.1,
+   "worst": -2.18,
+   "green": 46.0,
+   "stopped": null,
+   "skipped_room": 0
+  },
+  "unseen": {
+   "n": 5830,
+   "total": 46.71,
+   "fall": 8.48,
+   "worst": -2.01,
+   "green": 43.0,
+   "stopped": null,
+   "skipped_room": 0
+  }
+ },
+ "per_strategy": {
+  "chosen": {
+   "SC311|15Min|GER40": {
+    "th": 0.5,
+    "act": "skip",
+    "train_gain_r": 1.2,
+    "train_n": 45
+   },
+   "SC326|15Min|USDCHF": {
+    "th": 0.5,
+    "act": "skip",
+    "train_gain_r": 6.0,
+    "train_n": 17
+   },
+   "SC326|5Min|GBPUSD": {
+    "th": 0.5,
+    "act": "skip",
+    "train_gain_r": 1.1,
+    "train_n": 22
+   }
+  },
+  "train": {
+   "n": 4342,
+   "total": 50.43,
+   "fall": 7.35,
+   "worst": -2.18,
+   "green": 46.6,
+   "stopped": null,
+   "skipped_room": 0
+  },
+  "unseen": {
+   "n": 5958,
+   "total": 47.54,
+   "fall": 8.44,
+   "worst": -2.01,
+   "green": 43.0,
+   "stopped": null,
+   "skipped_room": 0
+  }
+ },
+ "day_18_11": {
+  "n": 0,
+  "sum_r": 0.0,
+  "by_th": {
+   "0.5": {
+    "caught": 0,
+    "caught_r": 0.0
+   },
+   "0.75": {
+    "caught": 0,
+    "caught_r": 0.0
+   },
+   "1.0": {
+    "caught": 0,
+    "caught_r": 0.0
+   }
+  }
+ }
+}

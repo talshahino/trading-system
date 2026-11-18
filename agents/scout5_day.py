@@ -154,13 +154,14 @@ def main():
            "by_th": {str(th): {"caught": int((d18["x"] <= -th).sum()), "caught_r": round(float(d18.loc[d18["x"] <= -th, "r"].sum()), 2)} for th in THS}}
     # the same rules with the other reading of "the day's start": a rule that lives on one reading is not a rule
     t2 = add_move(t0, "prev").dropna(subset=["x"]).reset_index(drop=True)
+    sym_prev_pick, sym_prev_res = pick_by(t2, risk, "sym")
     other = [{"th": th, "act": act, **both(t2, risk, act, t2["x"] <= -th), "caught": caught(t2, t2["x"] <= -th)} for th in THS for act in ACTS]
     verdict = bool(pick and better(pick["unseen"], base["unseen"]) and pick["unseen"]["total"] > base["unseen"]["total"])
     rep = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "task": "b5scoutday1811", "trades": int(len(t)),
            "strategies": int(t["combo"].nunique()), "not_in_data": sorted(set(nsym) - set(t["combo"])), "base": base, "rules": rows, "rules_prev_close": other,
            "pick_on_2025": None if not pick else {k: pick[k] for k in ("th", "act")}, "pick_holds_2026": verdict,
            "tested": tested, "t_needed_after_correction": round(z_need, 2),
-           "per_symbol": {"chosen": sym_pick, **sym_res}, "per_strategy": {"chosen": combo_pick, **combo_res}, "day_18_11": day}
+           "per_symbol": {"chosen": sym_pick, **sym_res}, "per_symbol_prev_close": {"chosen": sym_prev_pick, **sym_prev_res}, "per_strategy": {"chosen": combo_pick, **combo_res}, "day_18_11": day}
     OUT.write_text(json.dumps(rep, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     print("BASE", base)
     for r in rows:

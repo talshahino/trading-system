@@ -88,40 +88,57 @@ def size_remember(acct, k, rec):
         m.pop(next(iter(m)))
 
 
-# the eight 5ב trades booked at the wrong size until 18.11.2026 (the size each opened with, the result in dollars)
-REPAIR_5B_1811 = {"US100|SC480|15Min|202611172000|sc:SC480|15Min|US100": (70.0, -72.27),
-                  "US100|SC480|5Min|202611172000|sc:SC480|5Min|US100": (70.0, -72.27),
-                  "GER40|SC480|5Min|202611171800|sc:SC480|5Min|GER40": (70.0, 34.36),
-                  "XAUUSD|IB034|15Min|202611171900|sc:IB034|15Min|XAUUSD": (10.5, -2.6),
-                  "XAUUSD|SC432|15Min|202611171845|sc:SC432|15Min|XAUUSD": (10.5, 20.74),
-                  "XAUUSD|SC432|15Min|202611172000|sc:SC432|15Min|XAUUSD": (10.5, 20.84),
-                  "XAUUSD|SC501|5Min|202611171850|sc:SC501|5Min|XAUUSD": (12.3, 130.48),
-                  "XAUUSD|SC317|15Min|202611171945|sc:SC317|15Min|XAUUSD": (70.0, 305.38)}
+# 5ב's trades up to the fix of 18.11.2026: the size each opened with and its result in R (None = still open then)
+REPAIR_5B_1811 = {
+                  "US100|SC480|15Min|202611172000|sc:SC480|15Min|US100": (70.0, -1.0324),
+                  "US100|SC480|5Min|202611172000|sc:SC480|5Min|US100": (70.0, -1.0324),
+                  "GER40|SC480|5Min|202611171800|sc:SC480|5Min|GER40": (70.0, 0.4908),
+                  "XAUUSD|IB034|15Min|202611171900|sc:IB034|15Min|XAUUSD": (10.5, -0.2473),
+                  "XAUUSD|SC432|15Min|202611171845|sc:SC432|15Min|XAUUSD": (10.5, 1.9756),
+                  "XAUUSD|SC432|15Min|202611172000|sc:SC432|15Min|XAUUSD": (10.5, 1.9843),
+                  "GBPUSD|SC056|15Min|202611180730|sc:SC056|15Min|GBPUSD": (399.72, 0.4858),
+                  "XAUUSD|IB034|15Min|202611180000|sc:IB034|15Min|XAUUSD": (10.49, 5.5218),
+                  "XAUUSD|SC402|5Min|202611180735|sc:SC402|5Min|XAUUSD": (399.72, -1.0308),
+                  "XAUUSD|SC402|15Min|202611180745|sc:SC402|15Min|XAUUSD": (399.72, -1.0264),
+                  "XAUUSD|SC154|5Min|202611180550|sc:SC154|5Min|XAUUSD": (69.94, -1.0131),
+                  "XAUUSD|SC432|15Min|202611180015|sc:SC432|15Min|XAUUSD": (10.49, 1.9878),
+                  "XAUUSD|IB034|15Min|202611181115|sc:IB034|15Min|XAUUSD": (397.43, -0.1343),
+                  "XAUUSD|SC432|15Min|202611181245|sc:SC432|15Min|XAUUSD": (400.91, -1.016),
+                  "XAUUSD|SC501|5Min|202611171850|sc:SC501|5Min|XAUUSD": (12.3, 10.6081),
+                  "XAUUSD|SC317|15Min|202611171945|sc:SC317|15Min|XAUUSD": (70.0, 4.3626),
+                  "XAUUSD|SC501|5Min|202611181440|sc:SC501|5Min|XAUUSD": (434.61, None),
+                  "XAUUSD|SC042|15Min|202611181400|sc:SC042|15Min|XAUUSD": (424.75, None),
+                  "XAUUSD|SC333|15Min|202611181345|sc:SC333|15Min|XAUUSD": (424.75, None),
+                  "XAUUSD|SC432|15Min|202611181345|sc:SC432|15Min|XAUUSD": (424.75, None),
+                  "XAUUSD|SC154|5Min|202611181340|sc:SC154|5Min|XAUUSD": (399.06, None),
+                  "XAUUSD|SC069|15Min|202611181215|sc:SC069|15Min|XAUUSD": (397.43, None),
+                  "XAUUSD|SC232|15Min|202611180230|sc:SC232|15Min|XAUUSD": (48.95, None)}
 
 
 def repair_5b(sacc, trades, now):
-    """Once: put the eight trades back at their real size, in the ledger, the trade list and the equity curve."""
-    if sacc.get("repair_1811") or sacc.get("v") != SACCT_V:
+    """Once: every booking back at the size its trade opened with, in the ledger, the trade list and the equity curve
+    (the curve from the first wrong booking on is dropped, it builds again from the corrected balance)."""
+    if sacc.get("repair_1811b") or sacc.get("v") != SACCT_V:
         return 0.0
-    gone, moved = 0.0, []
+    gone, first = 0.0, None
     for x in sacc.get("ledger") or []:
-        fix = REPAIR_5B_1811.get(x["id"])
-        if fix:
-            d = float(x["pnl"]) - fix[1]
-            gone += d
-            moved.append((x.get("fixed") or x["exit_time"], d))
-            x["pnl"], x["fixed"] = fix[1], now
-    for k, (risk, pnl) in REPAIR_5B_1811.items():
+        risk, r = REPAIR_5B_1811.get(x["id"], (None, None))
+        if risk is None or r is None:
+            continue
+        pnl = round(r * risk, 2)
+        if abs(float(x["pnl"]) - pnl) > max(1.0, 0.15 * abs(pnl)):
+            gone += float(x["pnl"]) - pnl
+            first = min(first or now, x.get("fixed") or now)
+            x["pnl"], x["fixed"] = pnl, now
+    for k, (risk, r) in REPAIR_5B_1811.items():
         sacc.setdefault("sized", {})[k] = risk
         if k in trades:
-            trades[k].update({"risk_usd": risk, "pnl": pnl})
-    def booking(t):      # the minutes around a wrong booking: the curve moved there before the entry's last "fixed" time
-        return any(pd.Timestamp(f) - pd.Timedelta(minutes=10) <= pd.Timestamp(t) <= pd.Timestamp(f) for f, _ in moved)
-    sacc["eq_curve"] = [p for p in sacc.get("eq_curve") or [] if not booking(p[0])]
-    for p in sacc["eq_curve"]:
-        off = sum(d for t, d in moved if t <= p[0])
-        p[1], p[2] = round(p[1] - off, 2), round(p[2] - off, 2)
-    sacc["repair_1811"] = now
+            trades[k]["risk_usd"] = risk
+            if r is not None and trades[k].get("status") == "closed":
+                trades[k]["pnl"] = round(r * risk, 2)
+    if first:
+        sacc["eq_curve"] = [p for p in sacc.get("eq_curve") or [] if p[0] < first]
+    sacc["repair_1811b"] = now
     return round(gone, 2)
 VARIANT = (2.0, False, "1m", "struct")
 # wide track (user, 09.11.2026: "I want more trades, it's scalping"): the same rules with a weaker candle-body filter

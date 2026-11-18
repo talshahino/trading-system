@@ -866,6 +866,21 @@ def learning5(marks):
             "per_track": per, "estimate": int(round(rem / 10.0) * 10)}
 
 
+def risk_left(o):
+    """An open trade's risk still at stake: its risk at the opening x how far its stop is now from the entry against how
+    far it was - a stop moved to the entry holds nothing (as bots 1-4, free_risk_at_breakeven; user, 18.11.2026: gap
+    trades at their target were left out of the account for "room" while trades already at break-even held it)."""
+    r0 = float(o.get("risk_usd") or 0)
+    try:
+        d, e, s0 = int(o["dir"]), float(o["entry"]), float(o.get("stop"))
+        sn = float(o.get("stop_now") if o.get("stop_now") is not None else s0)
+        if d * (e - s0) <= 0:
+            return r0
+        return r0 * max(0.0, min(1.0, d * (e - sn) / (d * (e - s0))))
+    except (TypeError, ValueError, KeyError):
+        return r0
+
+
 _PUSHED_G = {}     # "<symbol>|tal|<dir>|<gap>" -> when its question was pushed
 
 
@@ -1802,7 +1817,7 @@ def main():
                             # trade's risk left -> not taken.
                             # tal_risk_scale is the gap tracks' factor; a scout strategy has its own risk
                             want_ = bal * TAL5_RISK.get(f"{rec['tal']}|{name}", TAL5_RISK.get(rec["tal"], RISK_TAL5)) * (TAL5_SCALE[0] if gap_ else 1.0)
-                            open_ = sum(float(o.get("risk_usd") or 0) for kk_, o in trades.items()
+                            open_ = sum(risk_left(o) for kk_, o in trades.items()
                                         if kk_ != k and o.get("status") == "open" and o.get("risk_usd")
                                         and bool(scout5_combo(o.get("tal"))) == sc_)          # the same account's
                             room_ = min(DAILY_STOP * start + day_pnl(day) - open_,

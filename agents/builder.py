@@ -54,8 +54,28 @@ def all_cards():
     return out
 
 
+def _gap_risk_fixed():
+    """Tal, 18.11.2026: bot 5's gap method trades at the risk planned at the start (0.28% on every track, no common
+    factor) - no card lowers it (data/agents/user_rules.json "bot5_gap_risk")."""
+    try:
+        return float(json.loads((ROOT / "data" / "agents" / "user_rules.json").read_text(encoding="utf-8")).get("bot5_gap_risk") or 0)
+    except Exception:  # noqa: BLE001
+        return 0.0
+
+
 def buildable(c):
     """What a card changes, when it is exactly a setting (else None)."""
+    b_ = _buildable(c)
+    fx = _gap_risk_fixed()
+    if b_ and fx and b_.get("bot") == "bot5":
+        if b_.get("family") == "flag" and b_.get("key") == "tal_risk_scale" and float(b_["to"]) < 1.0:
+            return None
+        if b_.get("family") == "risk" and str(b_.get("track", "")).startswith("t") and float(b_["to"]) < fx:
+            return None
+    return b_
+
+
+def _buildable(c):
     ch, bot = c.get("change") or {}, c.get("bot")
     if c.get("kind") == "improve" and bot in PLAN_BOTS and ch.get("combo") and ch.get("family") in ("exits", "filters", "manage") and ch.get("to"):
         return {"bot": bot, "combo": ch["combo"], "family": ch["family"], "to": ch["to"]}

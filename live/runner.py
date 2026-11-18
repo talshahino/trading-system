@@ -250,6 +250,8 @@ def session_mask(df, sym, tf):
 
 
 CLOSE_BREAKS = False          # FTMO Standard account: no positions through market breaks over 2 hours
+CRYPTO_NOENTRY = [0.0]        # hours: no new crypto trade this long before its 2h+ break (FTMO's Saturday maintenance;
+#                               bots' "crypto_noentry_h" - bot 1, approved by the user 18.11.2026, agents/crypto_break_study)
 BREAKS = {}                   # symbol -> {(server weekday, server minute of day)} where such a break starts
 BREAK_LEN = {}                # symbol -> {"weekday-minute": median length in minutes} (reporting only)
 _BREAKS_AT = {}
@@ -1747,6 +1749,10 @@ def step(combo, sid, tf, sym, off):
     if break_soon(sym, pd.Timestamp.now(tz="UTC")):
         log(f"skip {combo}: market break over 2 hours starts within 15 minutes (Standard rule)")
         return
+    if CRYPTO_NOENTRY[0] > 0 and U.CLASS.get(sym) == "crypto" \
+            and break_soon(sym, pd.Timestamp.now(tz="UTC"), minutes=int(CRYPTO_NOENTRY[0] * 60)):
+        note_skip(f"skip {combo}: crypto - FTMO's Saturday break within {CRYPTO_NOENTRY[0]:g} hours, no new trade")
+        return
     if not CLOSE_BREAKS and news_near(sym):
         log(f"skip {combo}: high-impact news within 5 minutes")
         return
@@ -2360,6 +2366,10 @@ def main():
         log(f"approved plan {c}: {PLANS[c]} -> {plan_of(c)}")
     global CLOSE_BREAKS
     CLOSE_BREAKS = bool(cfg.get("close_before_breaks"))
+    try:
+        CRYPTO_NOENTRY[0] = max(0.0, min(72.0, float(cfg.get("crypto_noentry_h") or 0)))
+    except (TypeError, ValueError):
+        CRYPTO_NOENTRY[0] = 0.0
     if CLOSE_BREAKS:
         for c, sid, tf, sym in combos:
             if sym not in BREAKS:

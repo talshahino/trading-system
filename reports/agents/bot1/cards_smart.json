@@ -1,7 +1,110 @@
 {
  "bot": "bot1",
- "updated": "2026-11-18T07:06:39+00:00",
+ "updated": "2026-11-18T11:01:40+00:00",
  "cards": [
+  {
+   "bot": "bot1",
+   "kind": "info",
+   "title": "בוט 1: תקרה לעסקאות באותו כיוון בנכסים מתואמים - נבדק, לא נכנס",
+   "what": "הרעיון: ירידה אחת עוצרת הרבה עסקאות באותו כיוון על נכסים שזזים יחד (כמו 17.11). נבדקה תקרה למספר העסקאות הפתוחות באותו כיוון בקבוצה: 40 גרסאות (מדדים ומניות ארה\"ב, ין, מתכות; 2-6 עסקאות; דילוג או חצי סיכון), על הבוט השלם. הגרסה שנבחרה עד 2025: מדדים ומניות ארה\"ב, עד 3 עסקאות, ומעבר לזה לא נפתחת עסקה נוספת. עד 2025: רווח ‎+105.8% ← ‎+111.2%, ירידה 7.07% ← 5.55%. 2026: רווח ‎+168.2% ← ‎+157.5%, ירידה 6.12% ← 5.89%, היום הגרוע -2.40% ← -2.44%. יותר רווח עד 2025, אבל ב־2026 פחות רווח. לא נכנס.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 40,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot1|all",
+    "kind": "review",
+    "study": "group_cap_1811"
+   },
+   "detail": {
+    "made_by": "bots 1-4 smart agent 18.11 midday",
+    "chosen": {
+     "groups": [
+      "us_eq"
+     ],
+     "k": 3,
+     "mode": "skip",
+     "train": {
+      "total": 111.18,
+      "max_dd": 5.55,
+      "worst_day": -2.58,
+      "near_days": 0,
+      "hit": 212,
+      "green": 53.5
+     },
+     "unseen": {
+      "total": 157.51,
+      "max_dd": 5.89,
+      "worst_day": -2.44,
+      "near_days": 0,
+      "hit": 440,
+      "green": 50.5
+     }
+    },
+    "base": {
+     "train": {
+      "trades": 3390,
+      "total": 105.76,
+      "worst_day": -3.04,
+      "max_dd": 7.07,
+      "near_days": 1,
+      "max_open": 4.96,
+      "max_side": 3.83,
+      "guard_cut": 242,
+      "guard_skipped": 57
+     },
+     "unseen": {
+      "trades": 5192,
+      "total": 168.24,
+      "worst_day": -2.4,
+      "max_dd": 6.12,
+      "near_days": 0,
+      "max_open": 5.59,
+      "max_side": 4.09,
+      "guard_cut": 502,
+      "guard_skipped": 146
+     }
+    },
+    "passed_both_of": [
+     7,
+     40
+    ],
+    "note": "הגרסאות שעברו בשתי התקופות כמעט לא משנות דבר (עד +1.5% ב־2026), ולא נבחרו עד 2025"
+   },
+   "made": "2026-11-18T11:01:40+00:00",
+   "id": "896be2712123"
+  },
+  {
+   "bot": "bot1",
+   "kind": "info",
+   "title": "בוט 1: עסקה נחסמה בגלל 5 סנט - תוקן בבוט החי",
+   "what": "TV37 על N25 (18.11, 08:00): הכמות 24.36 הייתה מפסידה בסטופ 179.11$ מול 179.06$ מותר, והעסקה לא נפתחה. מעכשיו, בחריגה של עד 5%, הכמות יורדת לכמות המותרת (כאן 24.35, הפסד 179.04$) והעסקה נפתחת. הסיכון אף פעם לא עובר את המותר; חריגה גדולה מ־5% נשארת חסומה עם התראה. התיקון בכל ארבעת הבוטים.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot1|all",
+    "kind": "review",
+    "study": "lot_fit_1811",
+    "commit": "7538ea77d"
+   },
+   "detail": {
+    "made_by": "bots 1-4 smart agent 18.11 midday"
+   },
+   "made": "2026-11-18T11:01:40+00:00",
+   "id": "e8ecb9edd25f"
+  },
   {
    "bot": "bot1",
    "kind": "info",

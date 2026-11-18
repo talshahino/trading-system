@@ -1,7 +1,111 @@
 {
  "bot": "bot2",
- "updated": "2026-11-18T07:06:39+00:00",
+ "updated": "2026-11-18T11:01:40+00:00",
  "cards": [
+  {
+   "bot": "bot2",
+   "kind": "info",
+   "title": "בוט 2: תקרה לעסקאות באותו כיוון בנכסים מתואמים - נבדק, לא נכנס",
+   "what": "הרעיון: ירידה אחת עוצרת הרבה עסקאות באותו כיוון על נכסים שזזים יחד (כמו 17.11). נבדקה תקרה למספר העסקאות הפתוחות באותו כיוון בקבוצה: 40 גרסאות (מדדים ומניות ארה\"ב, ין, מתכות; 2-6 עסקאות; דילוג או חצי סיכון), על הבוט השלם. הגרסה שנבחרה עד 2025: מדדים ומניות ארה\"ב, עד 2 עסקאות, ומעבר לזה לא נפתחת עסקה נוספת. עד 2025: רווח ‎+105.2% ← ‎+106.8%, ירידה 4.56% ← 4.40%. 2026: רווח ‎+142.1% ← ‎+135.4%, ירידה 5.99% ← 7.41%, היום הגרוע -2.49% ← -2.49%. ב־2026 פחות רווח וירידה גדולה יותר. לא נכנס.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 40,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot2|all",
+    "kind": "review",
+    "study": "group_cap_1811"
+   },
+   "detail": {
+    "made_by": "bots 1-4 smart agent 18.11 midday",
+    "chosen": {
+     "groups": [
+      "us_eq"
+     ],
+     "k": 2,
+     "mode": "skip",
+     "train": {
+      "total": 106.81,
+      "max_dd": 4.4,
+      "worst_day": -2.6,
+      "near_days": 0,
+      "hit": 156,
+      "green": 60.6
+     },
+     "unseen": {
+      "total": 135.44,
+      "max_dd": 7.41,
+      "worst_day": -2.49,
+      "near_days": 0,
+      "hit": 224,
+      "green": 53.4
+     }
+    },
+    "base": {
+     "train": {
+      "trades": 2015,
+      "total": 105.19,
+      "worst_day": -2.64,
+      "max_dd": 4.56,
+      "near_days": 0,
+      "max_open": 4.97,
+      "max_side": 4.04,
+      "guard_cut": 86,
+      "guard_skipped": 8
+     },
+     "unseen": {
+      "trades": 2978,
+      "total": 142.06,
+      "worst_day": -2.49,
+      "max_dd": 5.99,
+      "near_days": 0,
+      "max_open": 5.22,
+      "max_side": 4.46,
+      "guard_cut": 209,
+      "guard_skipped": 50
+     }
+    },
+    "passed_both_of": [
+     3,
+     40
+    ],
+    "note": "הגרסאות שעברו בשתי התקופות כמעט לא משנות דבר (עד +1.5% ב־2026), ולא נבחרו עד 2025"
+   },
+   "made": "2026-11-18T11:01:40+00:00",
+   "id": "5c7d1556f51c"
+  },
+  {
+   "bot": "bot2",
+   "kind": "info",
+   "title": "בוט 2: התיקונים של SC432 זהב ו־GH08 נספרים עכשיו - לא תהיה הורדת סיכון בטעות",
+   "what": "דוח ההפסד של 17.11 סימן את SC432 זהב ואת GH08 USDCAD כ\"בלי תיקון\", למרות ששני התיקונים נבנו ב־17.11 בלילה (איזון ב־50% מהדרך, פירמידה ב־2R). הסיבה: תקלה בקריאת כרטיס עם כוכבית. תוקן: אין יותר אסטרטגיה פתוחה בדוח הזה, והסיכון שלהן לא יורד בגלל התקלה.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot2|all",
+    "kind": "review",
+    "study": "loss_plan_star_1811",
+    "commit": "b48f41ec6"
+   },
+   "detail": {
+    "made_by": "bots 1-4 smart agent 18.11 midday",
+    "task": "8dd4e8b939d9"
+   },
+   "made": "2026-11-18T11:01:40+00:00",
+   "id": "99abc189c67f"
+  },
   {
    "bot": "bot2",
    "kind": "info",

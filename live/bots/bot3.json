@@ -161,12 +161,19 @@
    "stop": 0.75,
    "card": "b9c1ea9be7fb",
    "be_way": 0.4,
-   "manage_card": "cca050a955e9"
+   "manage_card": "cca050a955e9",
+   "filter": "v_pdbrk",
+   "filter_card": "6c563efb5b73"
   },
   "GH09|1Hour|USDJPY": {
    "target": 4.0,
    "stop": 0.75,
-   "card": "59514d549769"
+   "card": "59514d549769",
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "c997327d9445"
   },
   "IB012|1Hour|USDJPY": {
    "target": 5.0,
@@ -220,7 +227,19 @@
     0.5,
     2.0
    ],
-   "manage_card": "c8c462676f81"
+   "manage_card": "c8c462676f81",
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "dee8fbfd86c6"
+  },
+  "SC432|1Hour|USDJPY": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "09e4488dbd31"
   }
  },
  "added": {

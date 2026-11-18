@@ -76,7 +76,8 @@
   "SC440|4Hour|ETHUSD",
   "SC376|4Hour|XAGUSD",
   "SC425|5Min|XAGUSD",
-  "SC514|4Hour|WTI"
+  "SC514|4Hour|WTI",
+  "SC543|1Hour|WTI"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added SE02|1Hour|USDJPY and IM01|1Hour|JP225 (new families, backtest with the bot), approved by the user; 04.11.2026: added FR03|15Min|GBPUSD, QC02|1Hour|ETHUSD (GitHub/QuantConnect/forum families, both halves better with the bot), approved by the user; 04.11.2026 (evening): added MQ11|4Hour|MSTR, MQ02|1Hour|XAUUSD (new pool: papers/books/MQL5 EAs; both halves better, Monte Carlo checked), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -104,7 +105,12 @@
   "TV02|15Min|TSLA": {
    "target": "none",
    "stop": 0.75,
-   "card": "c675e7194d4d"
+   "card": "c675e7194d4d",
+   "pyramid": [
+    1.5,
+    0.5
+   ],
+   "pyr_card": "a411f129f088"
   },
   "TV33|15Min|MSTR": {
    "target": 1.5,
@@ -157,7 +163,12 @@
   "SC048|1Hour|US100": {
    "stop": 0.75,
    "limit": 0.25,
-   "card": "7012da1ef8dd"
+   "card": "7012da1ef8dd",
+   "pyramid": [
+    1.0,
+    0.33
+   ],
+   "pyr_card": "2abaaeb19bfe"
   },
   "SC440|4Hour|ETHUSD": {
    "target": "none",
@@ -168,6 +179,20 @@
    "target": 5.0,
    "stop": 0.75,
    "card": "85546cf64a47"
+  },
+  "TV39|1Hour|JP225": {
+   "pyramid": [
+    1.5,
+    0.5
+   ],
+   "pyr_card": "67cf8317fc37"
+  },
+  "SC020|15Min|JP225": {
+   "pyramid": [
+    1.0,
+    0.33
+   ],
+   "pyr_card": "3c8893bb898f"
   }
  },
  "added": {
@@ -197,7 +222,8 @@
   "SC440|4Hour|ETHUSD": "baeb2476a404",
   "SC376|4Hour|XAGUSD": "c4a730ead702",
   "SC425|5Min|XAGUSD": "2529e9e46da5",
-  "SC514|4Hour|WTI": "01e31adbfe71"
+  "SC514|4Hour|WTI": "01e31adbfe71",
+  "SC543|1Hour|WTI": "99de25192f32"
  },
  "removed": {
   "SC002|1Hour|ARM": "617a4b123340",

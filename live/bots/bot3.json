@@ -80,7 +80,9 @@
   "SC417|1Hour|XAUUSD",
   "SC485|4Hour|XAUUSD",
   "SC486|1Hour|XAUUSD",
-  "SC508|4Hour|USDJPY"
+  "SC508|4Hour|USDJPY",
+  "SC537|4Hour|USDCAD",
+  "SC539|4Hour|XAGUSD"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 01.11.2026: +7 session/classic combos (SS*), approved by the user; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -211,6 +213,14 @@
   "SC417|1Hour|XAUUSD": {
    "be_way": 0.5,
    "manage_card": "2e5f2833bae7"
+  },
+  "SC508|4Hour|USDJPY": {
+   "be_r": 0.75,
+   "partial": [
+    0.5,
+    2.0
+   ],
+   "manage_card": "c8c462676f81"
   }
  },
  "added": {
@@ -262,7 +272,9 @@
   "SC417|1Hour|XAUUSD": "8643233531d6",
   "SC485|4Hour|XAUUSD": "c3c04b103cfc",
   "SC486|1Hour|XAUUSD": "1b5deb34faf1",
-  "SC508|4Hour|USDJPY": "71836ddd8925"
+  "SC508|4Hour|USDJPY": "71836ddd8925",
+  "SC537|4Hour|USDCAD": "48314d78ad30",
+  "SC539|4Hour|XAGUSD": "6dbd0e544c4a"
  },
  "removed": {
   "SC002|4Hour|FRA40": "bb041d4310f5",

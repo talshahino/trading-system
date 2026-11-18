@@ -548,13 +548,45 @@ def stopat_of(cfg):
     return v if v in STOPAT_VALS else "sw2"
 
 
+# GAPLEG (the user, 18.11.2026 09:20, task b5mingap1811, a US30 4-hour gap of 0.67% of its impulse: "too small, that does
+# not count as a gap"): the gap must be at least this share of its impulse's length (origin to the swing that ends it,
+# both known when the gap is armed). Off unless set; the same in simulate and live_trades (both read gap_set).
+def gapleg_of(cfg):
+    try:
+        v = float(cfg.get("GAPLEG") or 0) if isinstance(cfg, dict) else 0.0
+    except (TypeError, ValueError):
+        return None
+    return v if v > 0 else None
+
+
 def _gkey(htf, cfg):
-    """gaps()' cache key for a configuration (GAPX "mid" / FIRSTG off keep the old key, so the old caches stay the same)."""
-    x, fg = gapx_of(cfg), firstg_of(cfg)
-    return (htf, cfg["GBODY"], cfg["MIN_GAP"]) + (() if x == "mid" else (x,)) + (() if fg is None else ("fg" + fg,))
+    """gaps()' cache key for a configuration (GAPX "mid" / FIRSTG / GAPLEG off keep the old key, so the old caches stay the same)."""
+    x, fg, gl = gapx_of(cfg), firstg_of(cfg), gapleg_of(cfg)
+    return (htf, cfg["GBODY"], cfg["MIN_GAP"]) + (() if x == "mid" else (x,)) + (() if fg is None else ("fg" + fg,)) \
+        + (() if gl is None else ("gl", gl))
 
 
 def gap_set(D, htf, cfg, cache):
+    """The gaps a configuration trades: _gap_set(), and (GAPLEG) without the gaps too small for their impulse."""
+    gl = gapleg_of(cfg)
+    if gl is None:
+        return _gap_set(D, htf, cfg, cache)
+    key = _gkey(htf, cfg)
+    if key in cache:
+        return cache[key]
+    c0 = {k: v for k, v in cfg.items() if k != "GAPLEG"}
+    g0 = _gap_set(D, htf, c0, cache)
+    k0 = _gkey(htf, c0)
+    geo0, org0 = cache.get(k0 + ("geo",)) or [], cache.get(k0 + ("org",))
+    keep = [i for i, x in enumerate(g0)
+            if not org0 or org0[i] is None or not org0[i][3] or abs(x[2] - x[3]) >= gl * org0[i][3]]
+    cache[key] = [g0[i] for i in keep]
+    cache[key + ("geo",)] = [geo0[i] for i in keep] if len(geo0) == len(g0) else []
+    cache[key + ("org",)] = [org0[i] for i in keep] if org0 else None
+    return cache[key]
+
+
+def _gap_set(D, htf, cfg, cache):
     """The gaps a configuration trades: gaps() as before, or (FIRSTG) only each impulse's first gap. The geometry of
     the chosen gaps is kept under _gkey(htf, cfg) + ("geo",) and each gap's impulse origin under + ("org",):
     [(origin price, first gap of its impulse?)] - for STOPAT. Backtest and live bot use the same."""
@@ -1572,6 +1604,8 @@ def _norm(c):
         c.pop("FIRSTG")                                 # FIRSTG off: every gap, as before - the same name
     if c.get("STOPAT") == "sw2":
         c.pop("STOPAT")                                 # STOPAT sw2 = the 2nd swing, as before - the same name
+    if "GAPLEG" in c and not c["GAPLEG"]:
+        c.pop("GAPLEG")                                 # GAPLEG off: every gap, as before - the same name
     return c
 
 

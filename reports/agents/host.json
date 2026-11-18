@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-18T17:57:29+00:00",
+ "updated": "2026-11-18T18:45:44+00:00",
  "light_at": "2026-11-18T16:20:01+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -19,7 +19,7 @@
   "bot6": "2026-11-18T13:59:14+00:00",
   "bot1": "2026-11-18T15:59:05+00:00",
   "bot2": "2026-11-18T17:18:26+00:00",
-  "bot3": "2026-11-18T07:32:11+00:00",
+  "bot3": "2026-11-18T17:59:55+00:00",
   "bot4": "2026-11-18T08:31:53+00:00",
   "bot7": "2026-11-18T09:16:36+00:00",
   "bot7-shocks": "2026-11-18T11:07:06+00:00",
@@ -36,8 +36,8 @@
    "(continued across a manager restart)"
   ],
   "bot3": [
-   "this run: 35 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
-   "{\"bot\": \"bot3\", \"cards\": 41495, \"tiers\": {\"rejected\": 36385, \"watch\": 4543, \"regular\": 567}, \"done\": 203, \"planned\": 294}",
+   "this run: 67 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
+   "{\"bot\": \"bot3\", \"cards\": 41517, \"tiers\": {\"rejected\": 36396, \"watch\": 4550, \"regular\": 571}, \"done\": 247, \"planned\": 306}",
    "(ended while the manager restarted)"
   ],
   "bot4": [
@@ -100,7 +100,7 @@
    "adopted": true
   },
   "bot3": {
-   "at": "2026-11-18T07:33:47+00:00",
+   "at": "2026-11-18T18:01:07+00:00",
    "sec": null,
    "budget_sec": 1800,
    "ok": null,
@@ -167,12 +167,12 @@
  "box_pub": "UT9R6umHmW2BY3ghrGz5Lt7nM5l7jNp88LK8mtnz9VQ=",
  "alpaca": true,
  "pub_skipped": [],
- "last_error": "18.11 19:46 -m: 1 ·     for x in ((state.get(\"vacct\") or {}).get(\"ledger\") or [])[-30:]], |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^ | KeyError: slice(-30, None, None)",
- "errors_in_row": 6,
+ "last_error": "18.11 20:44 -m: 1 ·     for x in ((state.get(\"vacct\") or {}).get(\"ledger\") or [])[-30:]], |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^ | KeyError: slice(-30, None, None)",
+ "errors_in_row": 11,
  "machine": {
   "disk_gb": {
    "total": 223.0,
-   "free": 133.7
+   "free": 133.8
   },
   "ram_gb": {
    "total": 7.9,

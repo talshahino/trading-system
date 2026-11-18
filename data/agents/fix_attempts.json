@@ -868,11 +868,13 @@
   "why": "משימה tal1411bot3dd"
  },
  "bot7|EV08|1Min|*": {
-  "status": "fixed",
-  "at": "2026-11-15T01:50:00+00:00",
+  "status": "trying",
+  "at": "2026-11-18T16:03:32+00:00",
+  "why": "EV08 בחי 18.11: 3 עסקאות אחרי מכירות בתים ממתינות (‎-4.7% מול ‎-2%), כולן בסטופ, ‎-3.3R. מספרי הגרסה שבבוט (עם מסנני הפתעה גדולה ולבד בדקה) על המדדים לבד עוד לא נמדדו.",
   "tried": [
-   "15.11: BTCUSD (2025 -25.5R, 2026 -33.0R) והזהב (2025 -0.8R, 2026 -17.2R) הפסידו כבר ב־2025 - הוצאו (כרטיס 1160aad14f11). שלושת המדדים: 2025 +34.4R, 2026 +123.2R."
-  ]
+   "18.11 ערב (ענן): נבנתה agents/news_surprise_fix.py - פירוק לפי סוג נתון / כיוון / מדד, כלל הדילוג של EV04 (הפסד ב־2025 עם 8 עסקאות לפחות) ויציאות, נבחר על 2025 ומוצג על 2026. תוצאות 2026 עוד אין: השורות נמצאות רק במחשב הבוטים."
+  ],
+  "next": "לקרוא את reports/agents/bot7/surprise_fix.json אחרי הסבב הבא; כרטיס improve רק אם skip_helps או exit_helps נכונים."
  },
  "bot7|EV04|1Min|*": {
   "status": "fixed",
@@ -1235,7 +1237,19 @@
      "win": 15.1
     }
    },
-    {"what": "no10 (no entry 10:00-10:59 New York)", "at": "2026-11-18", "train_sum": [-4.16, 0.72], "unseen_sum": [23.56, 29.84], "state": "better on both, not proposed: the idea came from the same data, no edge to 2025, the risk is under one contract"}
+   {
+    "what": "no10 (no entry 10:00-10:59 New York)",
+    "at": "2026-11-18",
+    "train_sum": [
+     -4.16,
+     0.72
+    ],
+    "unseen_sum": [
+     23.56,
+     29.84
+    ],
+    "state": "better on both, not proposed: the idea came from the same data, no edge to 2025, the risk is under one contract"
+   }
   ],
   "at": "2026-11-18"
  },

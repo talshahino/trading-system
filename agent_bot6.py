@@ -2209,6 +2209,8 @@ def _sess_cands(v):
     for k_, vals in SF.FAMS:
         if not v.get(k_):
             out += [dict(v, **{k_: x}) for x in vals]
+    if v.get("pyr"):        # the running pyramid against the same strategy without it, on whole contracts (18.11.2026)
+        out.append({k_: x for k_, x in v.items() if k_ != "pyr"})
     return [c for c in out if SF.vid(c) != SF.vid(v)]
 
 

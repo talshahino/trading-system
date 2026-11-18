@@ -92,7 +92,7 @@ def _st(rs):
 def report():
     agg, novol = {}, []
     for f in sorted(OUT.glob("*.json")):
-        if f.name == "report.json":
+        if f.name in ("report.json", "marks.json"):
             continue
         doc = json.loads(f.read_text(encoding="utf-8"))
         if not (doc.get("_vol") or {}).get("real", True):

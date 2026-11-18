@@ -542,11 +542,16 @@ FILT_HE["BRKH"] = lambda v: f"בלי הוראת גאפ חדשה {v:g} שעות �
 # trade's risk (tal_gap.exit_mode "...r", the same in simulate and live_trades): the stop to the entry / half out at
 # +1R / +2R. Bot 6's live losses of 13-16.11 reached +0.58R / +0.64R / +0.14R before the stop (none +1R, none half the
 # way). p50_50 alone was tested on 13.11 (ask_p50_50: worse on 2024-2025 on all four tracks). First in the user's step.
-GAVE6 = tuple(("EXIT", v) for v in ("p50_618", "p33_618", "be50", "be1r", "p50_1r", "p30_1r", "be2r", "p50_2r"))
+# 18.11.2026 (smart agent): the first live loss that did reach +1R - US30 t5_1 short, target 4.03R, +1.44R = 35.6% of the
+# way, just short of be382, then the full stop. The earlier of the track's share of the way and +1R, head to head.
+GAVE6 = tuple(("EXIT", v) for v in ("be382o1r", "be618o1r", "be786o1r", "p50_618", "p33_618", "be50", "be1r", "p50_1r", "p30_1r", "be2r", "p50_2r"))
 FILT_HE["EXIT"] = (lambda f0: lambda v: {
     "p50_618": "חצי החוצה ב־61.8% מהדרך ליעד וסטופ לכניסה (p50_618)",
     "p33_618": "שליש החוצה ב־61.8% מהדרך ליעד וסטופ לכניסה (p33_618)",
     "be50": "סטופ לכניסה בחצי הדרך ליעד (be50)",
+    "be382o1r": "סטופ לכניסה ב־38.2% מהדרך או ב־+1R, המוקדם מביניהם (be382o1r)",
+    "be618o1r": "סטופ לכניסה ב־61.8% מהדרך או ב־+1R, המוקדם מביניהם (be618o1r)",
+    "be786o1r": "סטופ לכניסה ב־78.6% מהדרך או ב־+1R, המוקדם מביניהם (be786o1r)",
     "be1r": "סטופ לכניסה ב־+1R (be1r)", "be2r": "סטופ לכניסה ב־+2R (be2r)",
     "p50_1r": "חצי החוצה ב־+1R וסטופ לכניסה (p50_1r)", "p30_1r": "30% החוצה ב־+1R וסטופ לכניסה (p30_1r)",
     "p50_2r": "חצי החוצה ב־+2R וסטופ לכניסה (p50_2r)"}.get(v) or f0(v))(FILT_HE["EXIT"])

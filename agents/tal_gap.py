@@ -771,12 +771,18 @@ def exit_mode(cfg, risk=None, span=None):
     A level ending in "r" is in R of the trade's risk (user, 16.11.2026, task tal1611gaveback: the JP225 t15_1 short of
     16.11 went about +6R toward a 9.4R target and came back to the full stop): "be2r" = the stop to the entry at +2R,
     "p50_2r" = half out at +2R and the rest's stop to the entry; it needs the trade's risk and its entry-to-target
-    distance (span, in price) and is off when the target is nearer than the level."""
+    distance (span, in price) and is off when the target is nearer than the level.
+    Two levels joined by "o" = whichever comes first (bot 6's smart agent, 18.11.2026): "be382o1r" = the stop to the entry
+    at 38.2% of the way or at +1R, the earlier of the two. On a far target a share of the way is many R away: the US30
+    t5_1 short of 18.11 (target 4.03R) reached +1.44R, 35.6% of the way, and came back to the full stop."""
     m = cfg.get("EXIT", "none")
     if m == "none" or m.startswith("tp"):                 # "tp30": the whole position out at 30% (tp_way), no management
         return None
 
     def way(x):
+        if "o" in x:
+            ws = [w for w in (way(q) for q in x.split("o")) if w is not None]
+            return min(ws) if ws else None
         if x.endswith("r"):
             if not risk or not span or float(x[:-1]) * risk >= abs(span):
                 return None

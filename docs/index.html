@@ -2669,9 +2669,9 @@ async function comboFill() {
   try { const r = await fetch(`https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/bot5/combo_stats.json?t=${Math.floor(Date.now() / 300000)}`, {cache: "no-store"}); if (r.ok) d = await r.json(); } catch (e) {}
   if (!d || !$("comboCard")) return;
   const f = v => v == null ? "—" : (v >= 0 ? "+" : "") + v.toFixed(2);
-  const V = {strong: ["חזק", "pos"], weak: ["חלש", "neg"], none: ["", ""]};
-  const rows = d.rows.filter(x => x.y2025.n + x.y2026.n >= 20).map(x => `<tr><td>${esc(x.sym)}</td><td>${esc(x.pair)}</td><td class="${(x.y2025.mean || 0) >= 0 ? "pos" : "neg"}">${f(x.y2025.mean)} <small class="mut">(${x.y2025.n})</small></td><td class="${(x.y2026.mean || 0) >= 0 ? "pos" : "neg"}">${f(x.y2026.mean)} <small class="mut">(${x.y2026.n})</small></td><td>${x.live.n ? `${f(x.live.mean)} <small class="mut">(${x.live.n})</small>` : "—"}</td><td class="${V[x.verdict][1]}">${V[x.verdict][0]}</td></tr>`).join("");
-  $("comboCard").innerHTML = `<div class="h4" style="margin-top:18px">איזה נכס טוב לאיזה צמד גרפים</div><div class="mut" style="margin-bottom:6px">R ממוצע לעסקה (מספר עסקאות). "חזק" / "חלש" רק כשזה מחזיק גם ב־2025 וגם ב־2026. ${esc((d.check || {}).note || "")}</div>
+  const V = {strong: ["להגדיל", "pos"], weak: ["להקטין", "neg"], hold: ["להשאיר", ""], wait: ["", ""], none: ["", ""]};
+  const rows = d.rows.filter(x => x.y2025.n + x.y2026.n >= 20).map(x => `<tr><td>${esc(x.sym)}</td><td>${esc(x.pair)}</td><td class="${(x.y2025.mean || 0) >= 0 ? "pos" : "neg"}">${f(x.y2025.mean)} <small class="mut">(${x.y2025.n})</small></td><td class="${(x.y2026.mean || 0) >= 0 ? "pos" : "neg"}">${f(x.y2026.mean)} <small class="mut">(${x.y2026.n})</small></td><td>${x.live.n ? `${f(x.live.mean)} <small class="mut">(${x.live.n})</small>` : "—"}</td><td class="${(V[x.verdict] || ["", ""])[1]}">${x.verdict === "wait" ? `<small class="mut">${x.live.n}/20</small>` : (V[x.verdict] || [""])[0]}</td></tr>`).join("");
+  $("comboCard").innerHTML = `<div class="h4" style="margin-top:18px">איזה נכס טוב לאיזה צמד גרפים</div><div class="mut" style="margin-bottom:6px">R ממוצע לעסקה (מספר עסקאות). ${esc((d.check || {}).note || "")}</div>
     <div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th>נכס</th><th>צמד גרפים</th><th>2025</th><th>2026</th><th>חי</th><th></th></tr>${rows}</table></div></div>`;
 }
 const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא ענית בזמן", levels: "לא נכנסה · המחיר כבר עבר את הרמות"};

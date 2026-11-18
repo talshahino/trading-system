@@ -7,11 +7,13 @@ Per (track, instrument):
   backtest  the track as it runs, FTMO's costs (agents/tal_wait_study "now" rows): 30.04-31.12.2025 and 2026 apart
   live      bot 5's own closed trades of the combination (counted in the account or not), and Tal's answers
             ("היית נכנס?" yes / no) on its setups
-  verdict   strong = both backtest periods >= +0.2R a trade on 30+ trades each and live not against it;
-            weak   = both periods below 0 on 30+ trades each; else "no clear signal".
-The suggestion (strong x1.5, weak x0.5) is a card for Tal - nothing changes by itself: the honest check below showed
-that a choice made on 2025 alone barely carries into 2026 (R per unit of risk 0.131 -> 0.137, the drawdown up), so
-only a combination that holds on BOTH periods (and live) earns a change.
+  verdict   decided by the LIVE trades against the history (user, 18.11.2026: "raising and lowering happen when live
+            trades succeed against the history and against the live statistics"): until 20 live trades - "wait";
+            then the live mean against the backtest's (2025 + 2026 together), z = (live - backtest) / (live sd / sqrt n):
+            raise (x1.5) = live > 0, the backtest > 0 on both periods and live not below it (z >= -1);
+            lower (x0.5) = live < 0 and clearly below the backtest (z <= -2); else "hold".
+The suggestion is a card for Tal - nothing changes by itself. (A choice on the backtest alone barely carried from 2025
+into 2026: R per unit of risk 0.131 -> 0.137, the drawdown up.)
 
   python -m agents.tal_combo [--state live/watch_own_state.json]
 """
@@ -26,6 +28,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parent.parent
 WAIT = ROOT / "reports" / "agents" / "bot5" / "tal_wait"
 OUT = ROOT / "reports" / "agents" / "bot5" / "combo_stats.json"
+LIVE_MIN = 20
 SPLIT, FROM = pd.Timestamp("2026-01-01", tz="UTC"), pd.Timestamp("2025-04-30", tz="UTC")
 PAIR_HE = {"t15_1": "15 דק' / דקה", "t15_5": "15 דק' / 5 דק'", "t5_1": "5 דק' / דקה", "t1h_15": "שעה / 15 דק'",
            "t1h_5": "שעה / 5 דק'", "t4h_1h": "4 שעות / שעה", "t4h_15": "4 שעות / 15 דק'", "t4h_5": "4 שעות / 5 דק'"}
@@ -66,16 +69,23 @@ def main(state_path=None):
         a, b = _st(g[g["t"] < SPLIT]["r"]), _st(g[g["t"] >= SPLIT]["r"])
         lv = _st(live.get((trk, sym), []))
         mk = marks.get((trk, sym), [])
-        strong = a["n"] >= 30 and b["n"] >= 30 and a["mean"] >= 0.2 and b["mean"] >= 0.2 and not (lv["n"] >= 10 and lv["mean"] < 0)
-        weak = a["n"] >= 30 and b["n"] >= 30 and a["mean"] < 0 and b["mean"] < 0
+        ls = pd.Series(live.get((trk, sym), []), dtype=float)
+        btm = float(g["r"].mean()) if len(g) else 0.0
+        z = None
+        if len(ls) >= 2 and ls.std() > 0:
+            z = round(float((ls.mean() - btm) / (ls.std() / len(ls) ** 0.5)), 2)
+        ready = lv["n"] >= LIVE_MIN
+        strong = ready and lv["mean"] > 0 and (a["mean"] or 0) > 0 and (b["mean"] or 0) > 0 and z is not None and z >= -1
+        weak = ready and lv["mean"] < 0 and z is not None and z <= -2
         out.append({"track": trk, "pair": PAIR_HE.get(trk, trk), "sym": sym, "y2025": a, "y2026": b, "live": lv,
                     "tal_yes": mk.count("yes"), "tal_no": mk.count("no"),
-                    "verdict": "strong" if strong else "weak" if weak else "none",
+                    "bt_mean": round(btm, 3), "z": z,
+                    "verdict": "strong" if strong else "weak" if weak else ("hold" if ready else "wait"),
                     "suggest": 1.5 if strong else 0.5 if weak else 1.0})
     out.sort(key=lambda x: -((x["y2025"]["mean"] or 0) + (x["y2026"]["mean"] or 0)))
     doc = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "rows": out,
-           "check": {"note": "בחירה לפי 2025 בלבד (הקטנה למה שהפסיד, הגדלה למה שהרוויח) כמעט לא החזיקה ב־2026: "
-                             "0.131 -> 0.137 R ליחידת סיכון, והירידה המקסימלית גדלה. לכן משנים רק צירוף שמחזיק בשתי התקופות."}}
+           "check": {"note": "מגדילים או מקטינים לפי העסקאות החיות מול ההיסטוריה: אחרי 20 עסקאות חיות בצירוף. "
+                             "הגדלה: החי ברווח ולא נופל מההיסטוריה. הקטנה: החי בהפסד ונמוך בבירור מההיסטוריה."}}
     OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
     for x in out:
         print(f"{x['track']:7} {x['sym']:7} 25:{x['y2025']['n']:3} {x['y2025']['mean']} 26:{x['y2026']['n']:3} {x['y2026']['mean']} live {x['live']['n']} {x['live']['mean']} {x['verdict']}")

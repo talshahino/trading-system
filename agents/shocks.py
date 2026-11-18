@@ -68,6 +68,12 @@ def releases():
     """Important releases (high impact or FTMO-restricted): FTMO's history + the live calendar (branch live)."""
     items = json.loads((ROOT / "data" / "ftmo_calendar" / "history.json").read_text(encoding="utf-8"))
     items += (RIO.live_json("live/calendar.json") or {}).get("items", [])
+    # the full calendar too (bot 7 agent, 18.11.2026): history.json stopped at 06.11 and the live calendar holds only
+    # the current week, so the US CPI of 10.11 13:30 was logged as a shock without a release (202611101330)
+    try:
+        items += json.loads((ROOT / "reports" / "agents" / "bot7" / "calendar_full.json").read_text(encoding="utf-8")).get("items", [])
+    except Exception:  # noqa: BLE001
+        pass
     out = {}
     for i in items:
         if i.get("impact") != "high" and not i.get("restriction"):

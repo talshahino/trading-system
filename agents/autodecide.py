@@ -318,6 +318,9 @@ def _cuts(c):
         return False                         # a bot rule that earned more on both periods (task b2jpy1611): a fix
     if c.get("kind") == "risk" and ch.get("kind") in ("loss_streak", "day_brake"):
         return False                         # a whole-bot risk brake (task tal1711riskmgmt, agents/risk_brakes.py)
+    if c.get("kind") == "risk" and ch.get("kind") == "rollover_guard":
+        return False                         # a protection of the bot's open trades, no strategy is cut (18.11.2026: the
+                                             # four cards of 03:03 waited for a "fix first" that has nothing to fix)
     if c.get("kind") == "risk" and ((c.get("detail") or {}).get("account_fit") or ch.get("knob") == "RISK_SCALE"):
         # the whole bot sized into its own fixed limits (tal_gap.risk_scale, chosen on 2024-2025; bot 6's smart agent,
         # 13.11.2026 night): not a cut of a losing strategy - the gap tracks earn in R, but at today's risk the account

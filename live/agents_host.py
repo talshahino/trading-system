@@ -876,6 +876,7 @@ def _smart(st, log, t0):
         mins_all[name] = mins
         if mins <= 0:
             continue
+        _portfolio_if_due(st)
         # the newest main before every agent (manager, 13.11.2026: the round refreshed only at its start and the
         # continuous layer does not refresh under a running agent - a 6-hour round kept the old agent_manager.py, which
         # failed every 10 minutes from 11:18 to 14:16 UTC although the fix was on main since 12:25). Between agents
@@ -961,6 +962,24 @@ def _portfolio_check(st):
     finally:
         st["portfolio_at"] = now
         _save(st)
+
+
+def _portfolio_if_due(st):
+    """The whole-bot replay before an agent's turn too (manager, 18.11.2026: it ran only right after an agent that ended
+    in this round, but most runs end across an install's restart and are adopted, so it did not run on the computer at
+    all - "portfolio" in host.json stayed empty and portfolio.json stayed from the cloud's run of 00:37 UTC)."""
+    if time.time() - (_ts(st.get("portfolio_at")) or 0.0) < 3 * 3600:
+        return
+    before = snapshot()
+    try:
+        _portfolio_check(st)
+    except Exception as e:  # noqa: BLE001 - shown in host.json by _portfolio_check; the agents go on
+        _S["log"](f"portfolio check failed: {e}")
+    try:
+        _publish_changes(st, before, "agent", "Agents on the bots' computer: whole-bot check",
+                         only=re.compile(r"^reports/agents/[^/]+/portfolio\.json$"))
+    except Exception as e:  # noqa: BLE001
+        _S["log"](f"publishing the whole-bot check failed: {e}")
 
 
 def _tail(logname):

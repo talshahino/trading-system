@@ -1110,6 +1110,19 @@ def cards_for(bot):
     return cards, tested
 
 
+def _study(module, mins, t0, budget):
+    """One of bot 7's studies, inside the round's time (manager, 18.11.2026: the studies ran one after the other, each
+    up to its minutes + 30, so the round of 09:17 UTC reached the computer's limit of budget + 60 minutes and was stopped
+    at 105 minutes before its cards were written - bot 7's cards stayed from 17.11 07:40). No study starts after 70% of the
+    budget, and a running one ends 25 minutes before the limit: the experiments and the cards always get their turn."""
+    now = time.time()
+    if now - t0 >= budget * 0.7:
+        print(f"bot7 study {module}: left for the next round ({(now - t0) / 60:.0f} of {budget / 60:.0f} minutes used)")
+        return
+    left = t0 + budget + 3600 - 25 * 60 - now
+    subprocess.run([sys.executable, "-m", module, "--minutes", str(mins)], cwd=str(ROOT), timeout=int(min(mins * 60 + 1800, left)))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--bot", required=True, choices=sorted(NAMES))
@@ -1134,8 +1147,7 @@ def main():
             from agents import news_fix as NF
             if NF.stale():
                 mins = max(8.0, a.minutes / 2)
-                subprocess.run([sys.executable, "-m", "agents.news_fix", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
+                _study("agents.news_fix", mins, t0, budget)
         except Exception as e:  # noqa: BLE001 - the study's failure never stops the experiments
             print(f"bot7 fix study failed: {e}")
         # the market-regime filters (ADX, Choppiness, volatility, trend) on EV02 / EV03 pooled over the 16 instruments
@@ -1145,8 +1157,7 @@ def main():
             from agents import news_regime as NRG
             if NRG.stale():
                 mins = max(5.0, a.minutes / 6)
-                subprocess.run([sys.executable, "-m", "agents.news_regime", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
+                _study("agents.news_regime", mins, t0, budget)
         except Exception as e:  # noqa: BLE001
             print(f"bot7 regime study failed: {e}")
         # EV04, the straddle before a release (the user's task tal1411strad, 14.11.2026, agents/news_straddle.py): a
@@ -1155,8 +1166,7 @@ def main():
             from agents import news_straddle as NS
             if NS.stale():
                 mins = max(6.0, a.minutes / 3)
-                subprocess.run([sys.executable, "-m", "agents.news_straddle", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
+                _study("agents.news_straddle", mins, t0, budget)
         except Exception as e:  # noqa: BLE001
             print(f"bot7 straddle study failed: {e}")
         # EV04 on the high-impact releases that are NOT restricted (bot 7 smart agent, 17.11.2026 evening: the live
@@ -1166,8 +1176,7 @@ def main():
             from agents import news_straddle_extra as NSX
             if NSX.stale():
                 mins = max(5.0, a.minutes / 6)
-                subprocess.run([sys.executable, "-m", "agents.news_straddle_extra", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
+                _study("agents.news_straddle_extra", mins, t0, budget)
         except Exception as e:  # noqa: BLE001
             print(f"bot7 straddle extra study failed: {e}")
         # EV04 replayed on real ticks (bot 7 smart agent, 18.11.2026, agents/news_straddle_ticks.py): is the candle
@@ -1177,8 +1186,7 @@ def main():
             from agents import news_straddle_ticks as NSTK
             if NSTK.stale() and not NS.stale():
                 mins = max(6.0, a.minutes / 4)
-                subprocess.run([sys.executable, "-m", "agents.news_straddle_ticks", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
+                _study("agents.news_straddle_ticks", mins, t0, budget)
         except Exception as e:  # noqa: BLE001
             print(f"bot7 straddle ticks study failed: {e}")
         # EV05, fading the release spike early (the user's task tal1411fade, 14.11.2026, agents/news_fade.py): a
@@ -1187,8 +1195,7 @@ def main():
             from agents import news_fade as NFD
             if NFD.stale():
                 mins = max(6.0, a.minutes / 4)
-                subprocess.run([sys.executable, "-m", "agents.news_fade", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
+                _study("agents.news_fade", mins, t0, budget)
         except Exception as e:  # noqa: BLE001
             print(f"bot7 fade study failed: {e}")
         # EV06 (retests of the broken levels, the user's task tal1411fade 09:17) and EV07 (absorption after the release,
@@ -1198,15 +1205,15 @@ def main():
             from agents import news_retest as NRT
             if NRT.stale() and not NS.stale() and not NFD.stale():
                 mins = max(6.0, a.minutes / 3)
-                subprocess.run([sys.executable, "-m", "agents.news_retest", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
+                _study("agents.news_retest", mins, t0, budget)
         except Exception as e:  # noqa: BLE001
             print(f"bot7 retest study failed: {e}")
         # SC001's whole family (the manager's task mgr1411fam, deadline 16.11.2026): one instrument's filter test per
         # round (up to 20 minutes), then the sum per filter over the family
         try:
             BOT_NOW["bot"] = a.bot
-            family_fix(a.bot, max(20 * 60, budget / 4), one=True)   # a 1-minute filter run: ~15 minutes
+            if time.time() - t0 < budget * 0.85:                    # (manager, 18.11.2026: the cards come first, see _study)
+                family_fix(a.bot, max(20 * 60, budget / 4), one=True)   # a 1-minute filter run: ~15 minutes
             family_report(a.bot)
         except Exception as e:  # noqa: BLE001
             print(f"bot7 family fix failed: {e}")
@@ -1218,8 +1225,7 @@ def main():
                 # half the budget (14.11.2026: the user's rule - fix the losers first; EV03's attempt 5 was 9/16 after
                 # a whole round and attempt 6, the box before the release, waits behind it)
                 mins = max(6.0, a.minutes / 2)
-                subprocess.run([sys.executable, "-m", "agents.news_entry", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
+                _study("agents.news_entry", mins, t0, budget)
         except Exception as e:  # noqa: BLE001
             print(f"bot7 entry study failed: {e}")
         # EV08, the release's surprise by its direction (the user's task, 14.11.2026, item 41 - Dewonggo: jobless claims
@@ -1230,8 +1236,7 @@ def main():
             from agents import news_surprise as NSU
             if NSU.stale() and (not NE.stale() or NSU.no_cache()):       # no rows here: EV08 is blind in the whole-bot check
                 mins = max(6.0, a.minutes / 3)
-                subprocess.run([sys.executable, "-m", "agents.news_surprise", "--minutes", str(mins)], cwd=str(ROOT),
-                               timeout=int(mins * 60 + 1800))
+                _study("agents.news_surprise", mins, t0, budget)
         except Exception as e:  # noqa: BLE001
             print(f"bot7 surprise study failed: {e}")
         # the trades of bot 7's own strategies for the whole-bot check (agents/bot7_trades.py, 15.11.2026: 46 of 55

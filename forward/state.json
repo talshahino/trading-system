@@ -1,24 +1,6 @@
 {
  "last_day": "2026-11-08",
  "open": {
-  "ENPH": {
-   "order_id": "ins-ENPH-20261104",
-   "entry_day": "2026-11-04",
-   "ref_price": 33.47,
-   "qty": 11.0,
-   "entry": 33.483636,
-   "sigma": 0.1905789580948603,
-   "insider_value": 535028.0
-  },
-  "RBBN": {
-   "order_id": "ins-RBBN-20261104",
-   "entry_day": "2026-11-04",
-   "ref_price": 1.545,
-   "qty": 177.0,
-   "entry": 1.54,
-   "sigma": 0.20647795582735234,
-   "insider_value": 192480.0
-  },
   "INTC": {
    "order_id": "ins-INTC-20261105",
    "entry_day": "2026-11-05",
@@ -69,6 +51,34 @@
    "exit": 76.3,
    "pnl": -11.230000000000004,
    "exit_day": "2026-11-12",
+   "reason": "10 days"
+  },
+  {
+   "order_id": "ins-ENPH-20261104",
+   "entry_day": "2026-11-04",
+   "ref_price": 33.47,
+   "qty": 11.0,
+   "entry": 33.483636,
+   "sigma": 0.1905789580948603,
+   "insider_value": 535028.0,
+   "symbol": "ENPH",
+   "exit": 22.55,
+   "pnl": -120.26999599999996,
+   "exit_day": "2026-11-18",
+   "reason": "10 days"
+  },
+  {
+   "order_id": "ins-RBBN-20261104",
+   "entry_day": "2026-11-04",
+   "ref_price": 1.545,
+   "qty": 177.0,
+   "entry": 1.54,
+   "sigma": 0.20647795582735234,
+   "insider_value": 192480.0,
+   "symbol": "RBBN",
+   "exit": 1.38,
+   "pnl": -28.320000000000025,
+   "exit_day": "2026-11-18",
    "reason": "10 days"
   }
  ],

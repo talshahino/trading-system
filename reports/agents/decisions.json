@@ -1,10 +1,128 @@
 {
- "updated": "2026-11-18T19:19:03+00:00",
+ "updated": "2026-11-18T19:39:39+00:00",
  "new": [
-  "9289ff3e7ed3",
-  "4062af942807"
+  "63e5d46eef27",
+  "9e296f2fdf4a",
+  "8ace493d2a76",
+  "069131d1bc0a"
  ],
  "decisions": [
+  {
+   "id": "63e5d46eef27",
+   "bot": "bot1",
+   "type": "card",
+   "card": "ef7fc8b9ceba",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 1: אתריום - הבדיקות הישנות נפסלו ורצות מחדש; SC319 מפסידה באמת",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-18T19:39:39+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "9e296f2fdf4a",
+   "bot": "bot4",
+   "type": "card",
+   "card": "27ce73ff8c31",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC095|1Hour|GBPJPY: ב־2R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־+0.00R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.31R לעסקה, 103.0 עסקאות אפקטיביות, +0.06R מעל המצב הקיים) · בבוט השלם על 2026: רווח +155.03% → +156.35%, בלי יותר סיכון (יום גרוע -2.52%, ירידה 5.93%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3324,
+     "total": 155.03,
+     "worst_day": -2.52,
+     "max_dd": 5.93,
+     "near_days": 0,
+     "max_open": 5.93,
+     "max_side": 4.29,
+     "guard_cut": 442,
+     "guard_skipped": 127
+    },
+    "after": {
+     "trades": 3325,
+     "total": 156.35,
+     "worst_day": -2.52,
+     "max_dd": 5.93,
+     "near_days": 0,
+     "max_open": 5.93,
+     "max_side": 4.29,
+     "guard_cut": 440,
+     "guard_skipped": 127
+    }
+   },
+   "at": "2026-11-18T19:39:39+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "8ace493d2a76",
+   "bot": "bot4",
+   "type": "card",
+   "card": "2d74b6217797",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ TV36|1Hour|ARM: איזון ב־23.6% מהדרך ליעד",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.11R לעסקה, 51.0 עסקאות אפקטיביות, +0.03R מעל המצב הקיים) · נבדקו 70 שילובים, אז חלק מהיתרון עלול להיות מזל · בבוט השלם על 2026: רווח +158.53% → +158.80%, בלי יותר סיכון (יום גרוע -2.52%, ירידה 6.14%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3320,
+     "total": 158.53,
+     "worst_day": -2.52,
+     "max_dd": 6.14,
+     "near_days": 0,
+     "max_open": 6.0,
+     "max_side": 4.38,
+     "guard_cut": 457,
+     "guard_skipped": 132
+    },
+    "after": {
+     "trades": 3321,
+     "total": 158.8,
+     "worst_day": -2.52,
+     "max_dd": 6.14,
+     "near_days": 0,
+     "max_open": 6.0,
+     "max_side": 4.38,
+     "guard_cut": 457,
+     "guard_skipped": 132
+    }
+   },
+   "at": "2026-11-18T19:39:39+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "069131d1bc0a",
+   "bot": "bot6",
+   "type": "card",
+   "card": "ead59037d397",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 6: ארבעת הרעיונות מהסקירות נבדקו על החוזים - אף אחד לא עובר, ו־US100 כמעט לא נכנס בחוזה שלם",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-18T19:39:39+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "9289ff3e7ed3",
    "bot": "bot4",

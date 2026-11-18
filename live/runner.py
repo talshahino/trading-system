@@ -320,6 +320,14 @@ def plan_of(combo):
         # of a position more, the whole stop moved so a stop still loses 1R in all (rules_agent.run plan "pyramid")
         if p.get("pyramid") and 0 < float(p["pyramid"][0]) <= 5 and 0 < float(p["pyramid"][1]) <= 1:
             out["pyramid"] = (float(p["pyramid"][0]), float(p["pyramid"][1]))
+        # laddered entry (18.11.2026, bot 2 card 3025702847d8 TV13|4Hour|USDCAD "lad0.25,0.5"; run_rules LADDERS /
+        # rules_agent.run plan "ladder"): the same total risk in len(levels) equal parts, part k a limit order k x the
+        # stop distance better than the signal's open (0 = at the open, a market order), valid LADDER_BARS bars, all
+        # with the trade's stop and target. step() keeps the trade's management on the signal's open (strat() leaves
+        # "ladder" out of the replay) and place_ladder() sends the parts. Not together with a built limit entry.
+        lad = p.get("ladder")
+        if lad and "entry_pullback" not in out and 2 <= len(lad) <= 4 and all(0 <= float(x) < 1 for x in lad):
+            out["ladder"] = (tuple(sorted(float(x) for x in lad)), LIMIT_BARS)
     except (TypeError, ValueError, IndexError):
         return {}
     return out
@@ -365,6 +373,7 @@ def strat(sid, df, sym, tf):
     fn = CAL.blocked(fn, cal_masks(df, sym, tf)[1]) if CLOSE_BREAKS else fn
     pl = plan_of(f"{sid}|{tf}|{sym}")
     flt = pl.pop("filter", None)
+    pl.pop("ladder", None)          # the replay keeps the trade on the signal's open; place_ladder() sends the parts
 
     def g(d):
         L, S, plan = fn(d)
@@ -660,6 +669,15 @@ class Account:
         for combo, pk in STATE.get("pending", {}).items():   # a waiting limit order counts as if filled and stopped
             if MAGICS_BY_COMBO.get(combo) not in held:
                 tot += float(pk.get("risk") or self.risk_usd)
+        if STATE.get("ladder"):                              # every waiting part of a laddered entry, the same way
+            try:
+                alive = {int(o.ticket) for o in (mt5.orders_get() or [])}
+            except Exception:  # noqa: BLE001
+                alive = None
+            for lk in STATE["ladder"].values():
+                for tk, part in (lk.get("orders") or {}).items():
+                    if alive is None or int(tk) in alive:
+                        tot += float(part.get("risk") or 0.0)
         return tot
 
     def allowed_risk(self, mult=1.0):
@@ -1057,6 +1075,25 @@ def place_limit(combo, sym, d, lim, sl, tp, sig, until, risk, mult=1.0, rules=No
         STATE["entry"][combo] = str(sig)
         save_state()
         return
+    got = send_limit(combo, sym, d, lim, sl, tp, risk, mult, rules, f"until {until:%d.%m %H:%M} UTC")
+    if got is None:
+        return
+    order, lim, loss = got
+    STATE.setdefault("pending", {})[combo] = {"order": order, "sig": str(sig), "until": str(until), "sym": sym,
+                                              "dir": d, "lim": lim, "risk": loss}
+    STATE["entry"][combo] = str(sig)
+    STATE["risk"][str(order)] = loss
+    save_state()
+
+
+def send_limit(combo, sym, d, lim, sl, tp, risk, mult=1.0, rules=None, note=""):
+    """One buy / sell limit order at `lim` with the trade's stop and target, sized so that a fill at the limit loses
+    `risk` at the stop (the minimum volume when a cut risk is under it). (order ticket, limit, loss) or None."""
+    rules = rules or {}
+    name = mt5_name(sym)
+    info = mt5.symbol_info(name)
+    if info is None:
+        return None
     if rules.get("sl"):
         sl = lim - d * rules["sl"] * abs(lim - sl)
     if rules.get("tp") and tp == tp:
@@ -1070,7 +1107,7 @@ def place_limit(combo, sym, d, lim, sl, tp, sig, until, risk, mult=1.0, rules=No
             risk = cap
     if lots <= 0:
         log(f"skip {combo}: lot size too small")
-        return
+        return None
     kind = mt5.ORDER_TYPE_BUY if d > 0 else mt5.ORDER_TYPE_SELL
     try:
         loss = abs(mt5.order_calc_profit(kind, name, lots, lim, sl) or 0.0)
@@ -1080,18 +1117,65 @@ def place_limit(combo, sym, d, lim, sl, tp, sig, until, risk, mult=1.0, rules=No
         loss = lots * abs(lim - sl) / info.trade_tick_size * info.trade_tick_value
     if loss > risk + 0.01:
         log(f"BLOCKED {combo}: {lots} lots would lose ${loss:,.2f} at the stop, above the allowed risk ${risk:,.2f}")
-        return
+        return None
     req = {"action": mt5.TRADE_ACTION_PENDING, "symbol": name, "volume": lots,
            "type": mt5.ORDER_TYPE_BUY_LIMIT if d > 0 else mt5.ORDER_TYPE_SELL_LIMIT, "price": lim,
            "sl": sl, "tp": round(tp, info.digits) if tp == tp and tp is not None else 0.0,
            "magic": MAGICS_BY_COMBO[combo], "comment": combo[:31], "type_time": mt5.ORDER_TIME_GTC}
-    r = send(req, f"limit {combo} {'buy' if d > 0 else 'sell'} {lots} @ {lim} sl {sl:.5g} tp {tp} until {until:%d.%m %H:%M} UTC")
+    r = send(req, f"limit {combo} {'buy' if d > 0 else 'sell'} {lots} @ {lim} sl {sl:.5g} tp {tp} {note}".rstrip())
     if r is None:
+        return None
+    return int(r.order), lim, loss
+
+
+def place_ladder(combo, sym, d, e, sl, tp, sig, until, risk, levels, mult=1.0, rules=None):
+    """An approved laddered entry (plans "ladder", run_rules LADDERS): the trade's risk in len(levels) equal parts,
+    part k a limit order k x the stop distance better than the signal's open `e` (0 = a market order now), each sized
+    so that a fill loses risk / len(levels) at the trade's stop, with its target; waiting parts are cancelled when
+    the backtest's trade ends or after LIMIT_BARS bars (step / pending_guard). A part whose price is already
+    reached is taken at the market - the backtest fills it on this bar too."""
+    each = risk / len(levels)
+    dist = abs(e - sl)
+    name = mt5_name(sym)
+    tick = mt5.symbol_info_tick(name)
+    if tick is None or dist <= 0:
         return
-    STATE.setdefault("pending", {})[combo] = {"order": int(r.order), "sig": str(sig), "until": str(until), "sym": sym,
-                                              "dir": d, "lim": lim, "risk": loss}
+    px = tick.ask if d > 0 else tick.bid
+    orders, n_mkt = {}, 0
+    for k in levels:
+        lim = e - d * k * dist
+        if k <= 0 or d * (px - lim) <= 0:
+            if d * (px - sl) > 0:
+                open_trade(combo, sym, d, sl, tp, sig, each, mult, rules)      # sets STATE["entry"] / ["risk"]
+                n_mkt += 1
+            continue
+        got = send_limit(combo, sym, d, lim, sl, tp, each, mult, rules, f"ladder {k:g}R until {until:%d.%m %H:%M} UTC")
+        if got is not None:
+            orders[str(got[0])] = {"lim": got[1], "risk": got[2], "k": k}
+            STATE["risk"][str(got[0])] = got[2]
     STATE["entry"][combo] = str(sig)
-    STATE["risk"][str(r.order)] = loss
+    if orders:
+        STATE.setdefault("ladder", {})[combo] = {"sig": str(sig), "until": str(until), "sym": sym, "dir": d,
+                                                 "orders": orders}
+    save_state()
+    log(f"{combo}: laddered entry {list(levels)} - {n_mkt} at the market, {len(orders)} limit orders, ${each:,.2f} each")
+
+
+def cancel_ladder(combo, why):
+    """Remove the laddered entry's waiting parts (the filled ones are positions: the trade's management has them)."""
+    lk = (STATE.get("ladder") or {}).get(combo)
+    if not lk:
+        return
+    left = {}
+    for tk, part in (lk.get("orders") or {}).items():
+        if mt5.orders_get(ticket=int(tk)):
+            if not ACC.dry and send({"action": mt5.TRADE_ACTION_REMOVE, "order": int(tk)},
+                                    f"cancel ladder part {combo} {part.get('k')}R ({why})") is None:
+                left[tk] = part
+    if left:
+        lk["orders"] = left
+    else:
+        STATE["ladder"].pop(combo, None)
     save_state()
 
 
@@ -1133,6 +1217,22 @@ def pending_guard(now, everything=False):
                 why = "stock session ends"
         if why:
             cancel_pending(combo, why)
+    for combo, lk in list((STATE.get("ladder") or {}).items()):
+        sym = lk["sym"]
+        why = "emergency" if everything else None
+        if why is None and now >= pd.Timestamp(lk["until"]):
+            why = "3 bars over"
+        elif why is None and (break_soon(sym, now) or holiday_block(sym, now)):
+            why = "market break / holiday ahead"
+        elif why is None and news_window(sym, now) == "close":
+            why = "restricted news ahead"
+        elif why is None and U.CLASS.get(sym) == "stock":
+            tz, close_min = SESSION["US"] if "USD" in U.CURRENCIES[sym] else SESSION["EU"]
+            loc = now.tz_convert(tz)
+            if loc.hour * 60 + loc.minute >= close_min - 15:
+                why = "stock session ends"
+        if why:
+            cancel_ladder(combo, why)
 
 
 # the replay's exit reasons are Hebrew; MT5 comments keep only ASCII (_comment), so they reached the trade history
@@ -1347,7 +1447,7 @@ def opposite_same_tf(combo, sym, tf, d):
         parts = c.split("|")
         if c != combo and len(parts) == 3 and parts[1] == tf and parts[2] == sym and (1 if p.type == 0 else -1) != d:
             return c
-    for c, pk in (STATE.get("pending") or {}).items():
+    for c, pk in list((STATE.get("pending") or {}).items()) + list((STATE.get("ladder") or {}).items()):
         parts = c.split("|")
         if c != combo and len(parts) == 3 and parts[1] == tf and parts[2] == sym and int(pk.get("dir") or 0) == -d:
             return c
@@ -1400,6 +1500,7 @@ def step(combo, sid, tf, sym, off):
     be = (0.6, be_offset(sym, float(df["c"].iloc[-3])))
     tr = R.run(df, strat(sid, df, sym, tf), 0.0, breakeven=be, session_exit=exit_mask(df, sym, tf))
     limit = "entry_pullback" in plan_of(combo)
+    ladder = plan_of(combo).get("ladder")
     pend = tr.iloc[0:0]
     if len(tr):
         pend = tr[tr["reason"] == "pending"]
@@ -1443,6 +1544,15 @@ def step(combo, sid, tf, sym, off):
         elif not cancel_pending(combo, "the backtest's order is no longer waiting"):
             return
 
+    lk = (STATE.get("ladder") or {}).get(combo)
+    if lk:
+        # a laddered entry's waiting parts live as long as the backtest's trade (anchored on the signal's open) and
+        # LIMIT_BARS bars: a trade that ended on a closed bar (target, stop, exit signal) cancels what did not fill
+        mt = tr[tr["time"].astype(str) == lk["sig"]] if len(tr) else tr
+        if mt.empty or (mt.iloc[-1]["reason"] != "סוף הנתונים" and mt.iloc[-1]["exit_time"] <= last_closed) \
+                or now >= pd.Timestamp(lk["until"]):
+            cancel_ladder(combo, "the backtest's trade is over" if len(mt) else "the backtest's trade is gone")
+
     def stop_now():
         """The stop as the backtest has it after the last CLOSED bar (the helper bars must not move it)."""
         tc = R.run(df.iloc[:-2], strat(sid, df.iloc[:-2], sym, tf), 0.0, breakeven=be, session_exit=exit_mask(df.iloc[:-2], sym, tf))
@@ -1465,8 +1575,10 @@ def step(combo, sid, tf, sym, off):
         pt = t.get("part_time") if hasattr(t, "get") else None
         if part and pt is not None and not pd.isna(pt) and pd.Timestamp(pt) <= last_closed \
                 and STATE.setdefault("part", {}).get(combo) != STATE["entry"].get(combo, ""):
-            # the backtest took the partial exit on a closed bar: the same here, once per trade
-            if close_part(p, part[0]):                # done, or too small to split (then not tried again)
+            # the backtest took the partial exit on a closed bar: the same here, once per trade (a laddered entry:
+            # every part filled by then - rules_agent.run takes the partial on the parts filled before it)
+            done_p = [close_part(q, part[0]) for q in (pos if ladder else [p]) if q.ticket not in added]
+            if done_p and all(done_p):                # done, or too small to split (then not tried again)
                 STATE["part"][combo] = STATE["entry"].get(combo, "")
                 save_state()
         if reason == "יעד" or "סטופ" in reason:
@@ -1504,7 +1616,7 @@ def step(combo, sid, tf, sym, off):
         # another trade: skipped (and remembered as handled). Otherwise the same trade is still there: taken
         # (user task 12.11.2026 - restarts after installs had dropped entries; every saved one is recorded).
         mins = (feed_now - started).total_seconds() / 60
-        ok, why = (False, "limit order combo") if limit else late_entry_ok(
+        ok, why = (False, "limit order combo") if limit or ladder else late_entry_ok(
             sym, int(t["dir"]), bar_o, float(t["stop_px"]), float(t["target_px"]), bar_h, bar_l)
         if not ok:
             log(f"skip {combo}: entry signal seen {mins:.1f} min into the bar ({why})")
@@ -1559,6 +1671,11 @@ def step(combo, sid, tf, sym, off):
     if limit:
         until = forming + pd.Timedelta(minutes=TF_MIN[tf] * int(t["bars_left"]))
         place_limit(combo, sym, int(t["dir"]), float(t["entry_px"]), float(t["stop_px"]), float(t["target_px"]), t["time"], until, risk, mult, rules)
+        return
+    if ladder:
+        until = forming + pd.Timedelta(minutes=TF_MIN[tf] * int(ladder[1]))
+        place_ladder(combo, sym, int(t["dir"]), float(t["entry_px"]), float(t["stop_px"]), float(t["target_px"]),
+                     t["time"], until, risk, ladder[0], mult, rules)
         return
     open_trade(combo, sym, int(t["dir"]), float(t["stop_px"]), float(t["target_px"]), t["time"], risk, mult, rules)
 

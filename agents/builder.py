@@ -63,6 +63,10 @@ def buildable(c):
     if c.get("kind") == "improve" and bot in PLAN_BOTS and ch.get("combo") and ch.get("family") == "pyr" \
             and pyr_plan(ch.get("to")) is not None:
         return {"bot": bot, "combo": ch["combo"], "family": "pyr", "to": ch["to"]}
+    # the laddered entry (18.11.2026, bot 2 card 3025702847d8): live/runner.py place_ladder (bots 1-4 only)
+    if c.get("kind") == "improve" and bot in ADD_BOTS and ch.get("combo") and ch.get("family") == "ladder" \
+            and ladder_plan(ch.get("to")) is not None:
+        return {"bot": bot, "combo": ch["combo"], "family": "ladder", "to": ch["to"]}
     if c.get("kind") == "new" and bot in ADD_BOTS and ch.get("combo") and ch.get("kind") == "add":
         return {"bot": bot, "combo": ch["combo"], "family": "add"}
     # bots 5-6: a gap track's rule, a track's risk, the user's gap method's timeframes / rules (bot 6 trades it)
@@ -186,6 +190,20 @@ def pyr_plan(v):
     return [at, fr] if str(v).startswith("pyr") and 0 < at <= 5 and 0 < fr <= 1 else None
 
 
+def ladder_plan(v):
+    """lad0.25,0.5 -> [0.25, 0.5] (run_rules.LADDERS: equal parts, part k a limit k x risk better than the signal's
+    open, 0 = at the open); lad0 -> []; anything else None. Read by live/runner.py plan_of "ladder" (18.11.2026)."""
+    if v == "lad0":
+        return []
+    try:
+        lv = [float(x) for x in str(v)[3:].split(",")]
+    except (TypeError, ValueError):
+        return None
+    if not str(v).startswith("lad") or not 2 <= len(lv) <= 4 or any(not 0 <= x < 1 for x in lv) or lv != sorted(set(lv)):
+        return None
+    return lv
+
+
 def manage_plan(v):
     """be0.6|part0.3@0.5 / ber2.5|part0 -> the plan keys live/runner.py and live/news_bot.py read."""
     b, pa = v.split("|")
@@ -248,6 +266,9 @@ def describe(b):
     if b["family"] == "pyr":
         v = pyr_plan(b["to"])
         return f"{b['combo']}: " + (f"ב־{v[0]:g}R רווח מוסיפים {v[1]:g} פוזיציה, והסטופ של הכול זז כך שסטופ מפסיד 1R" if v else "בלי הוספה")
+    if b["family"] == "ladder":
+        from agent_portfolio import explain_ladder
+        return f"{b['combo']}: {explain_ladder(b['to'])}"
     p = exit_plan(b["to"])
     parts = [("בלי יעד" if p.get("target") == "none" else f"יעד {p['target']:g}R") if "target" in p else None,
              f"סטופ x{p['stop']:g}" if "stop" in p else None, f"כניסה בלימיט {p['limit']:g}R טוב יותר" if "limit" in p else None]
@@ -390,6 +411,13 @@ def apply(cfg, b, card_id):
             p["pyramid"] = v
         p["pyr_card"] = card_id
         return
+    if b["family"] == "ladder":
+        v = ladder_plan(b["to"])
+        p.pop("ladder", None)
+        if v:
+            p["ladder"] = v
+        p["ladder_card"] = card_id
+        return
     if b["family"] == "filters":
         if b["to"] == "none":
             p.pop("filter", None)
@@ -495,14 +523,18 @@ def revert(cfg, card_id):
             p.pop("pyramid", None)
             p.pop("pyr_card", None)
             done = True
-        if not {k for k in p if k not in ("card", "filter_card", "manage_card", "pyr_card")}:
+        if p.get("ladder_card") == card_id:
+            p.pop("ladder", None)
+            p.pop("ladder_card", None)
+            done = True
+        if not {k for k in p if k not in ("card", "filter_card", "manage_card", "pyr_card", "ladder_card")}:
             cfg["plans"].pop(combo)
     return done
 
 
 HEAL_HOURS = 24
-HEAL_FAMILIES = ("add", "exits", "filters", "manage", "pyr")
-_SLOT = {"exits": "card", "filters": "filter_card", "manage": "manage_card", "pyr": "pyr_card"}
+HEAL_FAMILIES = ("add", "exits", "filters", "manage", "pyr", "ladder")
+_SLOT = {"exits": "card", "filters": "filter_card", "manage": "manage_card", "pyr": "pyr_card", "ladder": "ladder_card"}
 
 
 def lost_build(cfg, b, cid):

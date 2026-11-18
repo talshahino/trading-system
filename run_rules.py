@@ -265,6 +265,7 @@ def ladder_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
     flt = (PLANS.get(f"{sid}|{tf}|{s}") or {}).get("filter")
     regime = _regimes(df).get(flt) if flt else None
     rows, keep = [], {}
+    pk.pop("ladder", None)                      # a built ladder (18.11.2026) is one of the variants, not the base
     for key, lv in [("lad0", None)] + list(LADDERS.items()):
         extra = {**pk, **({"ladder": (lv, LADDER_BARS)} if lv else {})}
 

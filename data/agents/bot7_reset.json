@@ -1,5 +1,5 @@
 {
- "fp": "ffb7c310b821",
+ "fp": "61733963962a",
  "parts": {
   "combos": [
    "EV01|5Min|AUDUSD",
@@ -652,7 +652,19 @@
    },
    "IB033|4Hour|XAUUSD": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "release_guard": {
+     "mode": "pre",
+     "min": 240,
+     "impact": [
+      "high"
+     ],
+     "cur": [
+      "USD"
+     ],
+     "from": "2026-11-18T00:11:24+00:00",
+     "card": "ee3116706ab9"
+    }
    },
    "MQ11|4Hour|US30": {
     "added": "2026-11-15",
@@ -676,7 +688,19 @@
    },
    "SC054|1Hour|XAUUSD": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "release_guard": {
+     "mode": "pre",
+     "min": 240,
+     "impact": [
+      "high"
+     ],
+     "cur": [
+      "USD"
+     ],
+     "from": "2026-11-18T00:11:24+00:00",
+     "card": "ee3116706ab9"
+    }
    },
    "SC070|5Min|JP225": {
     "added": "2026-11-14",
@@ -693,7 +717,19 @@
    },
    "SC138|15Min|XAUUSD": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "release_guard": {
+     "mode": "pre",
+     "min": 240,
+     "impact": [
+      "high"
+     ],
+     "cur": [
+      "USD"
+     ],
+     "from": "2026-11-18T00:11:24+00:00",
+     "card": "ee3116706ab9"
+    }
    },
    "SC200|1Hour|US100": {
     "added": "2026-11-15",
@@ -714,22 +750,70 @@
    },
    "SC265|5Min|XAUUSD": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "release_guard": {
+     "mode": "pre",
+     "min": 240,
+     "impact": [
+      "high"
+     ],
+     "cur": [
+      "USD"
+     ],
+     "from": "2026-11-18T00:11:24+00:00",
+     "card": "ee3116706ab9"
+    }
    },
    "SC358|1Hour|XAUUSD": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "release_guard": {
+     "mode": "pre",
+     "min": 240,
+     "impact": [
+      "high"
+     ],
+     "cur": [
+      "USD"
+     ],
+     "from": "2026-11-18T00:11:24+00:00",
+     "card": "ee3116706ab9"
+    }
    },
    "SC372|4Hour|XAUUSD": {
     "added": "2026-11-15",
     "on_from": "2026-11-15T12:30:00+00:00",
     "target": 3.0,
     "stop": 0.75,
-    "limit": 0.5
+    "limit": 0.5,
+    "release_guard": {
+     "mode": "pre",
+     "min": 240,
+     "impact": [
+      "high"
+     ],
+     "cur": [
+      "USD"
+     ],
+     "from": "2026-11-18T00:11:24+00:00",
+     "card": "ee3116706ab9"
+    }
    },
    "SC389|1Hour|XAUUSD": {
     "added": "2026-11-16",
-    "on_from": "2026-11-16T16:30:00+00:00"
+    "on_from": "2026-11-16T16:30:00+00:00",
+    "release_guard": {
+     "mode": "pre",
+     "min": 240,
+     "impact": [
+      "high"
+     ],
+     "cur": [
+      "USD"
+     ],
+     "from": "2026-11-18T00:11:24+00:00",
+     "card": "ee3116706ab9"
+    }
    },
    "SC414|4Hour|EURUSD": {
     "added": "2026-11-16",
@@ -779,11 +863,35 @@
    },
    "TV20|1Hour|XAUUSD": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "release_guard": {
+     "mode": "pre",
+     "min": 240,
+     "impact": [
+      "high"
+     ],
+     "cur": [
+      "USD"
+     ],
+     "from": "2026-11-18T00:11:24+00:00",
+     "card": "ee3116706ab9"
+    }
    },
    "TV41|4Hour|XAUUSD": {
     "added": "2026-11-15",
-    "on_from": "2026-11-15T12:30:00+00:00"
+    "on_from": "2026-11-15T12:30:00+00:00",
+    "release_guard": {
+     "mode": "pre",
+     "min": 240,
+     "impact": [
+      "high"
+     ],
+     "cur": [
+      "USD"
+     ],
+     "from": "2026-11-18T00:11:24+00:00",
+     "card": "ee3116706ab9"
+    }
    },
    "TV56|4Hour|GER40": {
     "added": "2026-11-15",
@@ -803,8 +911,8 @@
   "agents/event_strategies.py": "9c84dab149ee",
   "strats": "[\"EV01\", \"EV02\", \"EV03\"]"
  },
- "last_reset": "2026-11-17T12:19:42+00:00",
- "account_v": 17,
+ "last_reset": "2026-11-18T12:41:08+00:00",
+ "account_v": 18,
  "resets": [
   {
    "v": 2,
@@ -917,13 +1025,15 @@
    "what": "נוספו 5 אסטרטגיות/מכשירים · כלל השתנה ב־EV04|1Min|AUDUSD, EV04|1Min|EURJPY, EV04|1Min|EURUSD, EV04|1Min|GBPJPY",
    "archive": "data/agents/bot7_archive/account_v15.json",
    "id": "9e44f258d40b"
+  },
+  {
+   "v": 18,
+   "at": "2026-11-18T12:41:08+00:00",
+   "what": "כלל השתנה ב־IB033|4Hour|XAUUSD, SC054|1Hour|XAUUSD, SC138|15Min|XAUUSD, SC265|5Min|XAUUSD",
+   "archive": "data/agents/bot7_archive/account_v17.json",
+   "id": "2d9543110b53"
   }
  ],
  "stable": false,
- "proposed": null,
- "waiting": {
-  "what": "כלל השתנה ב־IB033|4Hour|XAUUSD, SC054|1Hour|XAUUSD, SC138|15Min|XAUUSD, SC265|5Min|XAUUSD",
-  "since": "2026-11-18T00:30:21+00:00",
-  "reset_after": "2026-11-18T12:19:42+00:00"
- }
+ "proposed": null
 }

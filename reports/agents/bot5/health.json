@@ -1,16 +1,16 @@
 {
  "bot": "bot5",
  "name": "בוט 5 (גאפ) + 5ב (סייר)",
- "updated": "2026-11-18T16:50:06+00:00",
- "state_updated": "2026-11-18T16:49:31+00:00",
- "minutes_since_state": 1,
- "balance": 102220.36,
- "equity": 102403.19,
- "day_pct": 2.4,
- "total_pct": 2.4,
- "trades": 19,
- "mean_r": -0.003,
- "sum_r": -0.06,
+ "updated": "2026-11-18T17:46:03+00:00",
+ "state_updated": "2026-11-18T17:43:43+00:00",
+ "minutes_since_state": 2,
+ "balance": 101525.81,
+ "equity": 102008.25,
+ "day_pct": 2.01,
+ "total_pct": 2.01,
+ "trades": 16,
+ "mean_r": -0.297,
+ "sum_r": -4.76,
  "bt_mean_r": -0.035,
  "flagged": 0,
  "combos": [
@@ -63,6 +63,18 @@
    "flags": []
   },
   {
+   "combo": "SC311|15Min|GER40",
+   "n": 1,
+   "mean": -1.012,
+   "sum": -1.01,
+   "win": 0.0,
+   "streak": 1,
+   "bt_mean": null,
+   "bt_n": null,
+   "z": null,
+   "flags": []
+  },
+  {
    "combo": "SC326|5Min|GBPUSD",
    "n": 1,
    "mean": -1.11,
@@ -89,7 +101,7 @@
   {
    "combo": "SC432|15Min|XAUUSD",
    "n": 2,
-   "mean": -1.015,
+   "mean": -1.014,
    "sum": -2.03,
    "win": 0.0,
    "streak": 2,
@@ -111,18 +123,6 @@
    "flags": []
   },
   {
-   "combo": "TAL|t15_1|US30",
-   "n": 1,
-   "mean": 1.114,
-   "sum": 1.11,
-   "win": 100.0,
-   "streak": 0,
-   "bt_mean": null,
-   "bt_n": null,
-   "z": null,
-   "flags": []
-  },
-  {
    "combo": "TAL|t15_5|JP225",
    "n": 1,
    "mean": 0.761,
@@ -135,46 +135,10 @@
    "flags": []
   },
   {
-   "combo": "TAL|t15_5|US30",
-   "n": 1,
-   "mean": 1.002,
-   "sum": 1.0,
-   "win": 100.0,
-   "streak": 0,
-   "bt_mean": null,
-   "bt_n": null,
-   "z": null,
-   "flags": []
-  },
-  {
-   "combo": "TAL|t1h_15|US500",
-   "n": 1,
-   "mean": 1.144,
-   "sum": 1.14,
-   "win": 100.0,
-   "streak": 0,
-   "bt_mean": null,
-   "bt_n": null,
-   "z": null,
-   "flags": []
-  },
-  {
    "combo": "TAL|t1h_5@US2000|US2000",
    "n": 1,
    "mean": 0.284,
    "sum": 0.28,
-   "win": 100.0,
-   "streak": 0,
-   "bt_mean": null,
-   "bt_n": null,
-   "z": null,
-   "flags": []
-  },
-  {
-   "combo": "TAL|t1h_5@US500|US500",
-   "n": 1,
-   "mean": 0.43,
-   "sum": 0.43,
    "win": 100.0,
    "streak": 0,
    "bt_mean": null,
@@ -219,5 +183,117 @@
    "flags": []
   }
  ],
- "problems": []
+ "problems": [],
+ "ledger_tail": [
+  {
+   "id": "GER40|tal|-1|g202611171530|t15_1",
+   "exit_time": "2026-11-18T01:41:00+00:00",
+   "pnl": 74.02,
+   "fixed": null
+  },
+  {
+   "id": "GER40|tal|-1|g202611180130|t15_1",
+   "exit_time": "2026-11-18T12:01:00+00:00",
+   "pnl": 156.67,
+   "fixed": null
+  },
+  {
+   "id": "US2000|tal|-1|g202611180300|t1h_5@US2000",
+   "exit_time": "2026-11-18T12:36:00+00:00",
+   "pnl": 79.61,
+   "fixed": null
+  },
+  {
+   "id": "US30|tal|-1|g202611180110|t5_1",
+   "exit_time": "2026-11-18T12:41:00+00:00",
+   "pnl": 671.14,
+   "fixed": null
+  },
+  {
+   "id": "JP225|tal|1|g202611180340|t5_1",
+   "exit_time": "2026-11-18T14:41:00+00:00",
+   "pnl": -295.45,
+   "fixed": null
+  },
+  {
+   "id": "JP225|tal|1|g202611180305|t5_1",
+   "exit_time": "2026-11-18T15:20:00+00:00",
+   "pnl": 406.16,
+   "fixed": null
+  },
+  {
+   "id": "US500|tal|1|g202611172105|t5_1",
+   "exit_time": "2026-11-18T16:20:00+00:00",
+   "pnl": -292.8,
+   "fixed": null
+  },
+  {
+   "id": "JP225|tal|-1|g202611181300|t15_5",
+   "exit_time": "2026-11-18T16:20:00+00:00",
+   "pnl": 218.54,
+   "fixed": null
+  },
+  {
+   "id": "US500|tal|-1|g202611180300|t1h_15",
+   "exit_time": "2026-11-18T16:18:00+00:00",
+   "pnl": 507.92,
+   "fixed": "2026-11-18T17:35:01+00:00"
+  }
+ ],
+ "positions_now": [
+  {
+   "ticket": "N25|tal|-1|g202611181545|t5_1@N25",
+   "pnl": -86.35,
+   "sl_usd": -285.92,
+   "since": "2026-11-18T17:04:00+00:00"
+  },
+  {
+   "ticket": "SPN35|tal|-1|g202611181545|t5_1@SPN35",
+   "pnl": 51.92,
+   "sl_usd": -286.84,
+   "since": "2026-11-18T17:28:00+00:00"
+  },
+  {
+   "ticket": "US100|tal|1|g202611172105|t5_1",
+   "pnl": 222.86,
+   "sl_usd": -287.93,
+   "since": "2026-11-18T14:40:00+00:00"
+  },
+  {
+   "ticket": "JP225|tal|-1|g202611180200|t1h_15",
+   "pnl": 294.01,
+   "sl_usd": -286.84,
+   "since": "2026-11-18T09:21:00+00:00"
+  },
+  {
+   "ticket": "XAUUSD|SC432|15Min|202611181630|sc:SC432|15Min|XAUUSD",
+   "pnl": 1.91,
+   "sl_usd": -28.06,
+   "since": "2026-11-18T16:30:00+00:00"
+  },
+  {
+   "ticket": "XAUUSD|SC441|5Min|202611181450|sc:SC441|5Min|XAUUSD",
+   "pnl": 1589.48,
+   "sl_usd": 381.51,
+   "since": "2026-11-18T14:50:00+00:00"
+  },
+  {
+   "ticket": "XAUUSD|SC501|5Min|202611181440|sc:SC501|5Min|XAUUSD",
+   "pnl": 1019.16,
+   "sl_usd": -0.77,
+   "since": "2026-11-18T14:40:00+00:00"
+  },
+  {
+   "ticket": "XAUUSD|SC069|15Min|202611181215|sc:SC069|15Min|XAUUSD",
+   "pnl": 163.34,
+   "sl_usd": -399.97,
+   "since": "2026-11-18T12:15:00+00:00"
+  },
+  {
+   "ticket": "XAUUSD|SC232|15Min|202611180230|sc:SC232|15Min|XAUUSD",
+   "pnl": 56.54,
+   "sl_usd": -0.02,
+   "since": "2026-11-18T02:30:00+00:00"
+  }
+ ]
 }

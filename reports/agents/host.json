@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-18T17:04:41+00:00",
+ "updated": "2026-11-18T17:17:41+00:00",
  "light_at": "2026-11-18T16:20:01+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -159,16 +159,15 @@
   }
  ],
  "portfolio": {
-  "at": "2026-11-18T13:22:23+00:00",
-  "ok": false,
-  "sec": 1500,
-  "err": "-m: timeout · "
+  "at": "2026-11-18T17:14:46+00:00",
+  "ok": true,
+  "sec": 106
  },
  "box_pub": "UT9R6umHmW2BY3ghrGz5Lt7nM5l7jNp88LK8mtnz9VQ=",
  "alpaca": true,
  "pub_skipped": [],
- "last_error": "18.11 19:03 -m: timeout · ",
- "errors_in_row": 2,
+ "last_error": "18.11 19:15 -m: 1 ·     for x in ((state.get(\"vacct\") or {}).get(\"ledger\") or [])[-30:]], |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^ | KeyError: slice(-30, None, None)",
+ "errors_in_row": 3,
  "machine": {
   "disk_gb": {
    "total": 223.0,
@@ -176,8 +175,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 2.9,
-   "load_pct": 63
+   "free": 2.0,
+   "load_pct": 74
   }
  }
 }

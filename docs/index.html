@@ -691,7 +691,7 @@ async function livePoll() {
       await Promise.all(vs.map(async v => {
         try {
           const r = await fetch(`${mgr}/bot/${v}/state`, {cache: "no-store"});
-          if (r.ok) { const j = await r.json(); if (j && j.updated_utc && (!found[v] || !found[v].updated_utc || j.updated_utc >= found[v].updated_utc)) { found[v] = j; LIVE[v] = Date.now(); } }
+          if (r.ok) { const j = await r.json(); if (j && j.updated_utc && (!found[v] || !found[v].updated_utc || j.updated_utc >= found[v].updated_utc)) { provApply(v, j); found[v] = j; LIVE[v] = Date.now(); } }
         } catch (e) {}
       }));
       if (UI.view === "det" && VIRT.includes(UI.cur)) renderDet(UI.sub === "ov" && !!$("ovTiles")); else if (UI.view !== "det") renderList();
@@ -718,6 +718,32 @@ async function getQuotes(syms) {
   if (!r.ok) return null;
   return (await r.json()).quotes || null;
 }
+const PROV = {};          // "<bot>|<ticket>" -> a close seen on the live price, until the bot's own state has it
+function provClose(n, s, p, why, px) {
+  const k = n + "|" + p.ticket;
+  if (PROV[k]) return;
+  const net = Math.round((why === "target" ? (p.tp_usd ?? p.pnl) : (p.sl_usd ?? p.pnl)) * 100) / 100;
+  PROV[k] = {at: Date.now(), row: {id: p.ticket, combo: p.combo, entry_tf: p.entry_tf, symbol: p.symbol, side: p.side, lots: p.lots,
+    open_t: p.since, open_px: p.open, close_t: new Date().toISOString(), close_px: px, sl0: p.sl0, tp0: p.tp0, sl: p.sl, tp: p.tp,
+    gross: net, swap: 0, comm: 0, net, why: why === "target" ? "target" : "stop", reason: "נסגר עכשיו (מחיר חי)", pip: p.pip, prov: true}};
+  provApply(n, s);
+}
+function provApply(n, s) {
+  if (!s) return;
+  const now = Date.now(), ids = new Set((s.closed || []).map(c => String(c.id)));
+  let add = 0;
+  for (const [k, v] of Object.entries(PROV)) {
+    if (!k.startsWith(n + "|")) continue;
+    const id = k.slice(n.length + 1);
+    if (ids.has(id) || now - v.at > 15 * 60000) { delete PROV[k]; continue; }        // the bot booked it (or too old)
+    if ((s.closed || []).some(c => c.prov && String(c.id) === id)) continue;
+    s.closed = [...(s.closed || []), v.row];
+    add += v.row.net || 0;
+  }
+  s.positions = (s.positions || []).filter(p => !PROV[n + "|" + p.ticket]);
+  if (add && s.balance != null) { s.balance = Math.round((s.balance + add) * 100) / 100; }
+  s.equity = Math.round(((s.balance || 0) + (s.positions || []).reduce((t, p) => t + (p.pnl || 0), 0)) * 100) / 100;
+}
 async function virtLive() {
   const accOn = $("v-acc").classList.contains("on"), n = accOn && UI.view === "det" ? UI.cur : null;
   if (!n || !VIRT.includes(n) || qBusy || Date.now() - qT < 1000) return;
@@ -730,7 +756,13 @@ async function virtLive() {
       let tot = 0;
       pos.forEach(p => { const x = q[p.symbol]; if (!x) { tot += p.pnl || 0; return; }
         const px = p.side === "buy" ? x[0] : x[1], risk = -(p.sl_usd || 0), d = p.open - p.sl;
-        p.now = px; if (risk > 0 && d) p.pnl = Math.round(risk * (px - p.open) / d * 100) / 100; tot += p.pnl || 0; });
+        p.now = px; if (risk > 0 && d) p.pnl = Math.round(risk * (px - p.open) / d * 100) / 100;
+        // the price reached the target / stop: closed on the screen at once (user, 18.11.2026: "I want trades to show
+        // the moment they happen") - the bot's own close comes with its next cycle (~2 minutes) and replaces it
+        const buy = p.side === "buy", hitT = p.tp && (buy ? px >= p.tp : px <= p.tp), hitS = p.sl && (buy ? px <= p.sl : px >= p.sl);
+        if (hitT || hitS) provClose(n, s, p, hitT ? "target" : "stop", hitT ? p.tp : p.sl);
+        else tot += p.pnl || 0; });
+      s.positions = (s.positions || []).filter(p => !PROV[n + "|" + p.ticket]);
       if (s.balance != null) s.equity = Math.round((s.balance + tot) * 100) / 100;
       renderDet(true);
     }

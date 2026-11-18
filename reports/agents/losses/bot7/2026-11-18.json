@@ -1,0 +1,339 @@
+{
+ "bot": "bot7",
+ "day": "2026-11-18",
+ "at": "2026-11-18T23:04:06+00:00",
+ "summary": [
+  "מה קרה: בוט 7 · פרסומים הפסיד 2,348$ ב־2026-11-18 (-2.40% מהחשבון). 6 עסקאות: 0 הרוויחו 0$, 6 הפסידו 2,348$.",
+  "מול הצפי: לאסטרטגיות של היום אין עדיין צפי מהבדיקה.",
+  "למה: 2 עסקאות נעצרו בלי לזוז לטובה בכלל - הבעיה בכניסה או בכיוון; 2 עסקאות היו ברווח ונגמרו בהפסד - הבעיה בניהול העסקה; 2 עסקאות נעצרו בסטופ אחרי תנועה קטנה לטובה.",
+  "ההפסד הגדול ביותר: EV03|5Min|USDJPY, 903$ (38.4% מכל ההפסד).",
+  "הפסדים שבאו יחד: 3 עסקאות קנייה בindex (821$)."
+ ],
+ "pnl": -2347.85,
+ "pnl_pct": -2.404,
+ "open_balance": 97652.15,
+ "limit_used": {
+  "bot": 53.4,
+  "ftmo": 48.1
+ },
+ "trades": 6,
+ "winners": 0,
+ "losers_n": 6,
+ "gross_profit": 0.0,
+ "gross_loss": 2347.85,
+ "profit_factor": 0.0,
+ "costs": 0.0,
+ "day_r": -6.0,
+ "expected_r": null,
+ "expected_sd": null,
+ "z": null,
+ "normal": true,
+ "causes": {
+  "entry": 2,
+  "management": 2,
+  "normal": 2
+ },
+ "correlated": [
+  {
+   "class": "index",
+   "side": "קנייה",
+   "trades": 3,
+   "loss": -821.35
+  }
+ ],
+ "top_loser": "EV03|5Min|USDJPY",
+ "top_share": 38.4,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "EV03|5Min|USDJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-18T19:35:00+00:00",
+   "close_t": "2026-11-18T20:15:00+00:00",
+   "entry": 159.35649999999998,
+   "exit": 159.322,
+   "stop": 159.322,
+   "target": 159.52899999999997,
+   "r": -1.0,
+   "net": -902.6,
+   "costs": 0.0,
+   "mfe_r": 1.32,
+   "mae_r": 0.74,
+   "exit_reason": "סטופ · אחרי 18.11 21:00 USD + US Indices + XAUUSD + DXY FOMC Meeting Minutes",
+   "cause": "management",
+   "cause_he": "ניהול העסקה",
+   "recurring": false
+  },
+  {
+   "combo": "SE02|1Hour|GBPJPY",
+   "side": "קנייה",
+   "open_t": "2026-11-18T15:00:00+00:00",
+   "close_t": "2026-11-18T16:00:00+00:00",
+   "entry": 209.616,
+   "exit": 209.24118623893978,
+   "stop": 209.24118623893978,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -370.3,
+   "costs": 0.0,
+   "mfe_r": 0.0,
+   "mae_r": 0.0,
+   "exit_reason": "סטופ · אחרי 18.11 17:00 GBP BOE Gov Bailey Speaks",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  },
+  {
+   "combo": "EV08|1Min|US30",
+   "side": "קנייה",
+   "open_t": "2026-11-18T15:10:00+00:00",
+   "close_t": "2026-11-18T15:41:00+00:00",
+   "entry": 50301.25,
+   "exit": 50167.71545927935,
+   "stop": 50167.71545927935,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -277.55,
+   "costs": 0.0,
+   "mfe_r": 0.55,
+   "mae_r": 1.0,
+   "exit_reason": "סטופ · אחרי 18.11 17:00 USD Pending Home Sales m/m",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "EV08|1Min|US500",
+   "side": "קנייה",
+   "open_t": "2026-11-18T15:10:00+00:00",
+   "close_t": "2026-11-18T15:40:00+00:00",
+   "entry": 7331.35,
+   "exit": 7311.054449933913,
+   "stop": 7311.054449933913,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -276.4,
+   "costs": 0.0,
+   "mfe_r": 0.96,
+   "mae_r": 0.82,
+   "exit_reason": "סטופ · אחרי 18.11 17:00 USD Pending Home Sales m/m",
+   "cause": "normal",
+   "cause_he": "סטופ אחרי תנועה קטנה לטובה",
+   "recurring": false
+  },
+  {
+   "combo": "EV08|1Min|US100",
+   "side": "קנייה",
+   "open_t": "2026-11-18T15:10:00+00:00",
+   "close_t": "2026-11-18T15:40:00+00:00",
+   "entry": 27091.83,
+   "exit": 26979.342264973042,
+   "stop": 26979.342264973042,
+   "target": 0.0,
+   "r": -1.0,
+   "net": -267.4,
+   "costs": 0.0,
+   "mfe_r": 1.02,
+   "mae_r": 0.78,
+   "exit_reason": "סטופ · אחרי 18.11 17:00 USD Pending Home Sales m/m",
+   "cause": "management",
+   "cause_he": "ניהול העסקה",
+   "recurring": false
+  },
+  {
+   "combo": "SC358|1Hour|XAUUSD",
+   "side": "מכירה",
+   "open_t": "2026-11-18T13:00:00+00:00",
+   "close_t": "2026-11-18T13:00:00+00:00",
+   "entry": 3743.42,
+   "exit": 3777.769982146749,
+   "stop": 3777.769982146749,
+   "target": 3674.720035706502,
+   "r": -1.0,
+   "net": -253.6,
+   "costs": 0.0,
+   "mfe_r": -0.0,
+   "mae_r": -0.0,
+   "exit_reason": "סטופ",
+   "cause": "entry",
+   "cause_he": "כניסה / כיוון",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "EV03|5Min|USDJPY",
+   "cause": "management",
+   "priority": [
+    "exits",
+    "ladder",
+    "filters",
+    "manage",
+    "fib",
+    "pyr"
+   ],
+   "task": "EV03|5Min|USDJPY: היה ב־1.32R רווח ונסגר ב־-1.0R. לבדוק נקודת איזון מוקדמת יותר / יציאה חלקית / יעד קרוב יותר, ולהציע כרטיס. נבדק בכל המשפחות: יעד וסטופ אחרים (מבנה / ATR / סווינג), כניסה אחרת (מדורגת / נסיגה / מאוחרת), מסננים, ניהול (איזון / יציאה חלקית / פיבונאצ'י), הוספה לעסקה מנצחת - והשילוב הטוב ביניהם."
+  },
+  {
+   "combo": "SE02|1Hour|GBPJPY",
+   "cause": "entry",
+   "priority": [
+    "exits",
+    "ladder",
+    "filters",
+    "manage",
+    "fib",
+    "pyr"
+   ],
+   "task": "SE02|1Hour|GBPJPY: נעצר בלי לזוז לטובה (MFE 0.0R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת. נבדק בכל המשפחות: יעד וסטופ אחרים (מבנה / ATR / סווינג), כניסה אחרת (מדורגת / נסיגה / מאוחרת), מסננים, ניהול (איזון / יציאה חלקית / פיבונאצ'י), הוספה לעסקה מנצחת - והשילוב הטוב ביניהם."
+  },
+  {
+   "combo": "EV08|1Min|US100",
+   "cause": "management",
+   "priority": [
+    "exits",
+    "ladder",
+    "filters",
+    "manage",
+    "fib",
+    "pyr"
+   ],
+   "task": "EV08|1Min|US100: היה ב־1.02R רווח ונסגר ב־-1.0R. לבדוק נקודת איזון מוקדמת יותר / יציאה חלקית / יעד קרוב יותר, ולהציע כרטיס. נבדק בכל המשפחות: יעד וסטופ אחרים (מבנה / ATR / סווינג), כניסה אחרת (מדורגת / נסיגה / מאוחרת), מסננים, ניהול (איזון / יציאה חלקית / פיבונאצ'י), הוספה לעסקה מנצחת - והשילוב הטוב ביניהם."
+  },
+  {
+   "combo": "SC358|1Hour|XAUUSD",
+   "cause": "entry",
+   "priority": [
+    "exits",
+    "ladder",
+    "filters",
+    "manage",
+    "fib",
+    "pyr"
+   ],
+   "task": "SC358|1Hour|XAUUSD: נעצר בלי לזוז לטובה (MFE -0.0R). לבדוק אם הכניסה נגד המגמה הגבוהה / במצב שוק לא מתאים / מוקדמת מדי, ולהציע מסנן או כניסה אחרת. נבדק בכל המשפחות: יעד וסטופ אחרים (מבנה / ATR / סווינג), כניסה אחרת (מדורגת / נסיגה / מאוחרת), מסננים, ניהול (איזון / יציאה חלקית / פיבונאצ'י), הוספה לעסקה מנצחת - והשילוב הטוב ביניהם."
+  },
+  {
+   "combo": null,
+   "cause": "correlated",
+   "priority": [],
+   "task": "3 הפסדים יחד בקנייה של index (-821$): להציע תקרה לחשיפה לאותו צד באותו סוג נכס, לבדוק בבדיקת הבוט השלם."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 3,
+   "avg_loss_pct": -1.646,
+   "worst_pct": -2.404
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "EV03|5Min|USDJPY",
+    "cause": "ניהול העסקה",
+    "fixes": [
+     {
+      "what": "EV03 (פריצת טווח): יעד 2R במקום 3R בכל המכשירים",
+      "decision": "27b8f4f7753c",
+      "at": "2026-11-18T01:06:41+00:00",
+      "effect_month_pct": 0.13,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
+    ],
+    "open": false,
+    "cut_only": false
+   },
+   {
+    "combo": "SE02|1Hour|GBPJPY",
+    "cause": "כניסה / כיוון",
+    "fixes": [],
+    "open": true,
+    "cut_only": false
+   },
+   {
+    "combo": "EV08|1Min|US30",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [
+     {
+      "what": "EV08 (הפתעת הפרסום): רק על המדדים - בלי BTCUSD והזהב שהפסידו כבר ב־2025",
+      "decision": "5f39765957d0",
+      "at": "2026-11-18T01:06:41+00:00",
+      "effect_month_pct": 3.01,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
+    ],
+    "open": false,
+    "cut_only": false
+   },
+   {
+    "combo": "EV08|1Min|US500",
+    "cause": "סטופ אחרי תנועה קטנה לטובה",
+    "fixes": [
+     {
+      "what": "EV08 (הפתעת הפרסום): רק על המדדים - בלי BTCUSD והזהב שהפסידו כבר ב־2025",
+      "decision": "5f39765957d0",
+      "at": "2026-11-18T01:06:41+00:00",
+      "effect_month_pct": 3.01,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
+    ],
+    "open": false,
+    "cut_only": false
+   },
+   {
+    "combo": "EV08|1Min|US100",
+    "cause": "ניהול העסקה",
+    "fixes": [
+     {
+      "what": "EV08 (הפתעת הפרסום): רק על המדדים - בלי BTCUSD והזהב שהפסידו כבר ב־2025",
+      "decision": "5f39765957d0",
+      "at": "2026-11-18T01:06:41+00:00",
+      "effect_month_pct": 3.01,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
+    ],
+    "open": false,
+    "cut_only": false
+   },
+   {
+    "combo": "SC358|1Hour|XAUUSD",
+    "cause": "כניסה / כיוון",
+    "fixes": [
+     {
+      "what": "הזהב (9 אסטרטגיות): לא נכנסים 4 שעות לפני פרסום חשוב של הדולר",
+      "decision": "c087e10454d4",
+      "at": "2026-11-18T01:06:41+00:00",
+      "effect_month_pct": 0.5,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
+    ],
+    "open": false,
+    "cut_only": false
+   }
+  ],
+  "open": [
+   "SE02|1Hour|GBPJPY"
+  ],
+  "cut_only": [],
+  "total_month_pct": 9.66,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
+ }
+}

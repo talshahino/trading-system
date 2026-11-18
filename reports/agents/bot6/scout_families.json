@@ -841,71 +841,26 @@
  },
  "SC258|1Min|US100": {
   "live": {
-   "train_wsum": 61.39,
-   "unseen_sum": 21.94,
+   "train_wsum": 87.15,
+   "unseen_sum": 26.9,
    "worst_day_unseen": -1.3
   },
   "done": true,
   "families": {
    "hours": {
-    "what": "בלי יעד, סטופ x0.75, בלי כניסה 10:00-10:59 ניו יורק (השעה שאחרי פתיחת המסחר הרגיל)",
-    "train_wsum": 87.17,
+    "what": "בלי יעד, סטופ x0.75, בלי כניסה 10:00-10:59 ניו יורק (השעה שאחרי פתיחת המסחר הרגיל), חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": 87.15,
     "unseen_sum": 26.9,
     "unseen_mean": 0.1798,
     "worst_day_unseen": -1.3,
-    "better_train": true,
-    "better_2026": true
-   },
-   "breakeven": {
-    "what": "בלי יעד, סטופ x0.75, איזון ב־3R",
-    "train_wsum": 48.07,
-    "unseen_sum": 43.62,
-    "unseen_mean": 0.1973,
-    "worst_day_unseen": -1.3,
     "better_train": false,
-    "better_2026": true
+    "better_2026": false
    },
    "direction": {
-    "what": "בלי יעד, סטופ x0.75, אחרי סטופ - בלי כניסה נוספת באותו כיוון באותו יום",
-    "train_wsum": 61.39,
-    "unseen_sum": 21.94,
-    "unseen_mean": 0.1001,
-    "worst_day_unseen": -1.3,
-    "better_train": false,
-    "better_2026": false
-   },
-   "entry": {
-    "what": "בלי יעד, סטופ x0.75, כניסה בלימיט 0.25R טוב יותר (עד 3 נרות)",
-    "train_wsum": 15.31,
-    "unseen_sum": 8.3,
-    "unseen_mean": 0.0573,
-    "worst_day_unseen": -1.4,
-    "better_train": false,
-    "better_2026": false
-   },
-   "stop": {
-    "what": "בלי יעד, סטופ x0.75, סטופ מעבר לסווינג השני",
-    "train_wsum": 43.88,
-    "unseen_sum": 23.0,
-    "unseen_mean": 0.1031,
-    "worst_day_unseen": -1.19,
-    "better_train": false,
-    "better_2026": true
-   },
-   "partial": {
-    "what": "בלי יעד, סטופ x0.75, חצי החוצה בחצי הדרך (בלי יעד: ב־+1R) וסטופ לכניסה",
-    "train_wsum": 5.2,
-    "unseen_sum": 1.58,
-    "unseen_mean": 0.0086,
-    "worst_day_unseen": -1.3,
-    "better_train": false,
-    "better_2026": false
-   },
-   "pyramid": {
-    "what": "בלי יעד, סטופ x0.75, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
-    "train_wsum": 61.12,
-    "unseen_sum": 20.92,
-    "unseen_mean": 0.095,
+    "what": "בלי יעד, סטופ x0.75, בלי כניסה 10:00-10:59 ניו יורק (השעה שאחרי פתיחת המסחר הרגיל), אחרי סטופ - בלי כניסה נוספת באותו כיוון באותו יום",
+    "train_wsum": 87.15,
+    "unseen_sum": 26.9,
+    "unseen_mean": 0.1798,
     "worst_day_unseen": -1.3,
     "better_train": false,
     "better_2026": false
@@ -918,7 +873,7 @@
    "unseen_sum": 116.95,
    "worst_day_unseen": -4.32
   },
-  "done": false,
+  "done": true,
   "families": {
    "hours": {
     "what": "בלי יעד, איזון ב־1.5R, כניסה רק 03:00-15:45 ניו יורק (לונדון וניו יורק), חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
@@ -928,6 +883,15 @@
     "worst_day_unseen": -4.05,
     "better_train": true,
     "better_2026": false
+   },
+   "direction": {
+    "what": "בלי יעד, בלי איזון, כניסה רק 03:00-15:45 ניו יורק (לונדון וניו יורק), אחרי סטופ - בלי כניסה נוספת באותו כיוון באותו יום, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": 60.78,
+    "unseen_sum": 129.27,
+    "unseen_mean": 0.4338,
+    "worst_day_unseen": -2.07,
+    "better_train": false,
+    "better_2026": true
    }
   }
  },
@@ -995,35 +959,35 @@
    },
    "pyramid": {
     "what": "בלי יעד, סטופ x0.75, בלי איזון, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
-    "train_wsum": 28.21,
-    "unseen_sum": 31.86,
-    "unseen_mean": 0.7311,
+    "train_wsum": 39.59,
+    "unseen_sum": 18.43,
+    "unseen_mean": 0.4223,
     "worst_day_unseen": -1.31,
-    "better_train": false,
-    "better_2026": true
+    "better_train": true,
+    "better_2026": false
    }
   }
  },
  "FG01|15Min|US30": {
   "live": {
-   "train_wsum": 15.33,
+   "train_wsum": 15.31,
    "unseen_sum": 7.41,
    "worst_day_unseen": -1.31
   },
   "done": true,
   "families": {
    "hours": {
-    "what": "יעד 3R, בלי איזון, כניסה רק 03:00-15:45 ניו יורק (לונדון וניו יורק)",
-    "train_wsum": 15.33,
+    "what": "יעד 3R, בלי איזון, כניסה רק 03:00-15:45 ניו יורק (לונדון וניו יורק), חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": 15.31,
     "unseen_sum": 7.41,
     "unseen_mean": 0.1601,
     "worst_day_unseen": -1.31,
     "better_train": false,
     "better_2026": false
    },
-   "breakeven": {
-    "what": "יעד 3R, איזון ב־88.6% מהדרך",
-    "train_wsum": 15.33,
+   "pyramid": {
+    "what": "יעד 3R, איזון ב־88.6% מהדרך, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": 15.31,
     "unseen_sum": 7.41,
     "unseen_mean": 0.1601,
     "worst_day_unseen": -1.31,
@@ -1031,8 +995,8 @@
     "better_2026": false
    },
    "direction": {
-    "what": "יעד 3R, בלי איזון, אחרי סטופ - בלי כניסה נוספת באותו כיוון באותו יום",
-    "train_wsum": 15.33,
+    "what": "יעד 3R, בלי איזון, אחרי סטופ - בלי כניסה נוספת באותו כיוון באותו יום, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": 15.31,
     "unseen_sum": 7.41,
     "unseen_mean": 0.1601,
     "worst_day_unseen": -1.31,
@@ -1040,8 +1004,8 @@
     "better_2026": false
    },
    "entry": {
-    "what": "יעד 3R, בלי איזון, כניסה בלימיט 0.25R טוב יותר (עד 3 נרות)",
-    "train_wsum": 5.02,
+    "what": "יעד 3R, בלי איזון, כניסה בלימיט 0.25R טוב יותר (עד 3 נרות), חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": 5.01,
     "unseen_sum": -3.11,
     "unseen_mean": -0.0973,
     "worst_day_unseen": -1.41,
@@ -1049,8 +1013,8 @@
     "better_2026": false
    },
    "stop": {
-    "what": "יעד 3R, בלי איזון, סטופ מעבר לסווינג השני",
-    "train_wsum": 5.28,
+    "what": "יעד 3R, בלי איזון, סטופ מעבר לסווינג השני, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": 5.27,
     "unseen_sum": 8.97,
     "unseen_mean": 0.1924,
     "worst_day_unseen": -1.19,
@@ -1058,22 +1022,22 @@
     "better_2026": true
    },
    "partial": {
-    "what": "יעד 3R, בלי איזון, חצי החוצה בחצי הדרך (בלי יעד: ב־+1R) וסטופ לכניסה",
-    "train_wsum": -39.47,
+    "what": "יעד 3R, בלי איזון, חצי החוצה בחצי הדרך (בלי יעד: ב־+1R) וסטופ לכניסה, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": -39.45,
     "unseen_sum": -20.18,
     "unseen_mean": -0.4411,
     "worst_day_unseen": -1.31,
     "better_train": false,
     "better_2026": false
    },
-   "pyramid": {
-    "what": "יעד 3R, בלי איזון, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
-    "train_wsum": 16.62,
-    "unseen_sum": 11.12,
-    "unseen_mean": 0.2409,
+   "breakeven": {
+    "what": "יעד 3R, בלי איזון",
+    "train_wsum": 15.31,
+    "unseen_sum": 7.41,
+    "unseen_mean": 0.1601,
     "worst_day_unseen": -1.31,
-    "better_train": true,
-    "better_2026": true
+    "better_train": false,
+    "better_2026": false
    }
   }
  }

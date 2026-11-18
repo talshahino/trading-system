@@ -517,10 +517,24 @@ def gapx_of(cfg):
 #          further than the rules' stop) sat a median 1.03 impulse lengths from the entry (0.44-2.13), against 2.3 x
 #          imp0's distance and 2.5 x the 2nd swing's (bot 5's smart agent, 17.11.2026 night).
 #          MIN_RR is checked on the stop in use.
+#          "leg1r" / "sw0r" / "imp0r" = the same far stops, but the setup is chosen as Tal chooses it in his reviews: MIN_RR
+#          is checked on the rules' own stop (the 2nd swing + BUF) and the trade then takes the far stop with the same
+#          target - in his 9 closed "yes, with my stop" trades of 17-18.11 (all 9 at the target) the target stayed the
+#          rules' and his RR was 0.31-1.84 (8 of 9 below MIN_RR 2), so MIN_RR on the far stop drops almost all he takes
+#          (bot 5's smart agent, 18.11.2026 night, task b5stopimp1711).
 FIRSTG_VALS = ("1", "lo")
 FIRSTG_LO = (2.0 / 3.0, 0.5)
-STOPAT_VALS = ("sw2", "imp0", "imp0late", "sw0", "leg1")   # sw0: beyond the swing the impulse started from (see _origins)
+STOPAT_VALS = ("sw2", "imp0", "imp0late", "sw0", "leg1", "leg1r", "sw0r", "imp0r")   # sw0: beyond the swing the impulse started from (see _origins)
 LEG_K = {"leg1": 1.0}                                 # STOPAT legK: the stop K impulse lengths beyond the entry
+RR_RULES = {"leg1r": "leg1", "sw0r": "sw0", "imp0r": "imp0"}   # STOPAT ...r: MIN_RR on the rules' stop, the trade on this one
+
+
+def rr_risk(D, cfg, htf, t_ns, px, stop0, risk, d):
+    """The risk MIN_RR is measured on: the stop in use, or (STOPAT ...r) the rules' own stop (the 2nd swing + BUF,
+    after MINSTOP) - the setup chosen by the rules, the trade on the far stop (simulate and live_trades alike)."""
+    if stopat_of(cfg) not in RR_RULES:
+        return risk
+    return d * (px - min_stop(D, cfg, htf, t_ns, px, stop0, d))
 
 
 def firstg_of(cfg):
@@ -617,6 +631,7 @@ def _origins(g, geo, D=None, htf=None):
 def stop_at(D, cfg, org, gi, px, stop, d):
     """STOPAT: the stop beyond the impulse's origin instead of the 2nd swing (None = no valid stop)."""
     sa = stopat_of(cfg)
+    sa = RR_RULES.get(sa, sa)
     if sa == "sw2" or not org or gi >= len(org) or org[gi] is None:
         return stop
     o_px, first, sw0 = org[gi][:3]
@@ -1223,12 +1238,14 @@ def simulate(D, pair, cfg, gcache, keep=None):
         t2 = _count_back(*sw_tg, ns[f], px, d, d)
         if s2 is None or t2 is None:
             continue
-        stop = stop_at(D, cfg, org, gi, px, s2 - d * (D.buf + stop_pad(cfg, px)), d)   # STOPAT: the impulse's origin
+        stop0 = s2 - d * (D.buf + stop_pad(cfg, px))
+        stop = stop_at(D, cfg, org, gi, px, stop0, d)   # STOPAT: the impulse's origin
         if stop is None:
             continue
         stop = min_stop(D, cfg, htf, ns[f], px, stop, d)
         risk = d * (px - stop)
-        if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
+        rk_rr = rr_risk(D, cfg, htf, ns[f], px, stop0, risk, d)    # STOPAT ...r: MIN_RR on the rules' stop
+        if risk <= 0 or rk_rr <= 0 or d * (t2 - px) / rk_rr < cfg["MIN_RR"]:
             continue
         if not filt_ok(cfg, D.cost[f], risk, ns[f]):
             continue
@@ -2380,13 +2397,15 @@ def live_trades(D, pair, cfg, gcache=None):
             ts_t = _count_back_t(*sw_tg, ns[f], px, d, d, st_ns, w_)
             base = dict(base, geo=dict(base["geo"], sw_stop=[iso_(ts_s), float(s2)] if ts_s else None,
                                        sw_tgt=[iso_(ts_t), float(t2)] if ts_t else None))
-        stop = stop_at(D, cfg, org, gi, px, s2 - d * (D.buf + stop_pad(cfg, px)), d)   # STOPAT (as simulate)
+        stop0 = s2 - d * (D.buf + stop_pad(cfg, px))
+        stop = stop_at(D, cfg, org, gi, px, stop0, d)   # STOPAT (as simulate)
         if stop is None:
             out.append(dict(base, status="cancelled", entry=float(px), stop=None, target=float(t2), reason="rr"))
             continue
         stop = min_stop(D, cfg, htf, ns[f], px, stop, d)
         risk = d * (px - stop)
-        if risk <= 0 or d * (t2 - px) / risk < cfg["MIN_RR"]:
+        rk_rr = rr_risk(D, cfg, htf, ns[f], px, stop0, risk, d)    # STOPAT ...r (as simulate)
+        if risk <= 0 or rk_rr <= 0 or d * (t2 - px) / rk_rr < cfg["MIN_RR"]:
             out.append(dict(base, status="cancelled", entry=float(px), stop=float(stop), target=float(t2), reason="rr"))
             continue
         if not filt_ok(cfg, D.cost[f], risk, ns[f]):

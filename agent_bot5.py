@@ -425,6 +425,19 @@ NOTE_TESTS += [
         {"id": f"{trk}_stopat_fg", "track": trk, "knob": "STOPAT", "vals": ["imp0", "sw0", "leg1"], "src": "b5stopimp1711",
          "with": {"FIRSTG": "lo"}, "inform": True,
          "he": "סטופ מעבר לתחילת הדחף, על הגאפ הראשון בלבד"})]
+NOTE_TESTS += [
+    # bot 5's smart agent, 18.11.2026 night (task b5stopimp1711): in Tal's 9 closed "yes, with my stop" reviews of
+    # 17-18.11 (state.review yes_own: 9 of 9 at the target, +6.2R) his stop was far (0.4-2.1 impulse lengths, always
+    # further than the rules'), the target stayed the rules' 2nd swing, and his RR was 0.31-1.84 - so the tests
+    # above (MIN_RR on the far stop) drop nearly every trade he takes (leg1 on a 2.0 track: almost no trades). STOPAT
+    # leg1r / sw0r / imp0r: the setup chosen by the rules (MIN_RR on the 2nd swing's stop), the trade on the far stop
+    # with the same target - his way; also on top of FIRSTG lo (numbers only)
+    T_ for trk in ("t15_1", "t1h_15", "t4h_1h", "t4h_15", "t15_5", "t4h_5", "t5_1") for T_ in (
+        {"id": f"{trk}_stopatr", "track": trk, "knob": "STOPAT", "vals": ["leg1r", "sw0r", "imp0r"], "src": "b5stopimp1711",
+         "he": "כמו בסקירות שלך: העסקה נבחרת לפי הכללים, הסטופ רחוק (אורך דחף / הסווינג שממנו התחיל / תחילת הדחף) והיעד נשאר"},
+        {"id": f"{trk}_stopatr_fg", "track": trk, "knob": "STOPAT", "vals": ["leg1r", "sw0r"], "src": "b5stopimp1711",
+         "with": {"FIRSTG": "lo"}, "inform": True,
+         "he": "כמו בסקירות שלך, על הגאפ הראשון בלבד"})]
 NOTE_SRC = {"tal1711review": "משימה של טל מ־17.11 (הסקירה: הגאפ שקובע הוא הראשון, בתחילת הדחף).",
             "b5stopimp1711": "משימה של טל מ־17.11 (הסקירה: כשנכנסים בגאפ מאוחר - הסטופ בתחילת הדחף).",
             "tal1711gapclose": "משימה של טל מ־17.11 (ההגדרה שלו לסגירת גאפ: וויק שסוגר את כל הגאפ).",

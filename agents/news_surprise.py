@@ -364,8 +364,23 @@ def _cached_rows():
     return pd.DataFrame(rows)
 
 
+def no_cache():
+    """The built symbols' rows are not on this computer (the study of 14.11 ran on GitHub and cache/ is not in the
+    repository), so the whole-bot check has no EV08 trades (mgr1811b7blind, 18.11.2026)."""
+    have = set()
+    for f in CACHE.glob("*.json") if CACHE.exists() else []:
+        try:
+            if str(json.loads(f.read_text(encoding="utf-8")).get("sig", "")).startswith(f"{VERSION}|"):
+                have.add(f.stem)
+        except Exception:  # noqa: BLE001
+            pass
+    return not set(BT.built("EV08", "1Min")) <= have
+
+
 def stale():
     try:
+        if no_cache():
+            return True
         j = json.loads(OUT.read_text(encoding="utf-8"))
         return (pd.Timestamp.now(tz="UTC") - pd.Timestamp(j["at"]) > pd.Timedelta(days=STALE_DAYS) or j.get("partial", True)
                 or j.get("version") != VERSION)
@@ -393,7 +408,8 @@ def main(argv=None):
     rows, done = [], []
     sig = f"{VERSION}|{len(rel)}"                     # a calendar with more numbers makes the cache old
     if n_tr >= MIN_N:
-        for sym in SYMBOLS:
+        first = [s_ for s_ in SYMBOLS if s_ in BT.built("EV08", "1Min")]     # what the bot trades first: the time may end
+        for sym in first + [s_ for s_ in SYMBOLS if s_ not in first]:
             f = CACHE / f"{sym}.json"
             try:
                 c_ = json.loads(f.read_text(encoding="utf-8"))

@@ -1121,6 +1121,13 @@ def main():
     budget = a.minutes * 60
     t0 = time.time()
     if a.bot == "bot7" and a.where in ("pc", "all"):
+        # the whole-bot check's trades FIRST (mgr1811b7blind, 18.11.2026): the export at the end of this block is not
+        # reached when a round is stopped, and every card of bot 7 was then judged without 23 of its 57 combos
+        try:
+            from agents import bot7_trades as BT7_
+            BT7_.export_all("round start")
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 trades export failed: {e}")
         # bot 7's fix study (agents/news_fix.py): the three strategies pooled over all instruments, split by release
         # type / instrument / exits - at most once every 3 days, in its own process, up to half the budget
         try:
@@ -1221,7 +1228,7 @@ def main():
         # entry study is complete (it is not stale for 3 days after it finished)
         try:
             from agents import news_surprise as NSU
-            if NSU.stale() and not NE.stale():
+            if NSU.stale() and (not NE.stale() or NSU.no_cache()):       # no rows here: EV08 is blind in the whole-bot check
                 mins = max(6.0, a.minutes / 3)
                 subprocess.run([sys.executable, "-m", "agents.news_surprise", "--minutes", str(mins)], cwd=str(ROOT),
                                timeout=int(mins * 60 + 1800))
@@ -1229,14 +1236,11 @@ def main():
             print(f"bot7 surprise study failed: {e}")
         # the trades of bot 7's own strategies for the whole-bot check (agents/bot7_trades.py, 15.11.2026: 46 of 55
         # combos were unknown there): from the studies' caches every round, so they follow the built plans
-        import importlib
-        from agents import bot7_trades as BT7
-        for mod in ("news_regime", "news_straddle", "news_surprise"):
-            try:
-                m_ = importlib.import_module(f"agents.{mod}")
-                BT7.safe(lambda m_=m_: m_.export(m_._cached_rows()))
-            except Exception as e:  # noqa: BLE001
-                print(f"bot7 trades export ({mod}) failed: {e}")
+        try:
+            from agents import bot7_trades as BT7
+            BT7.export_all("round end")
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 trades export failed: {e}")
     if a.bot in ("bot1", "bot2", "bot3", "bot4", "bot5") and a.where in ("pc", "all"):
         # the scout strategies picked out of a losing family (the manager's tasks mgr1411fam / mgr1411fam2, deadline
         # 16-17.11.2026): one instrument's filter test per round (a fifth of the budget, at least 10 minutes), then the

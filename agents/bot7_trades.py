@@ -27,6 +27,9 @@ PLANS_F = ROOT / "live" / "bots" / "bot7.json"
 TEST_FROM, SPLIT = pd.Timestamp("2025-04-30", tz="UTC"), pd.Timestamp("2026-01-01", tz="UTC")
 _EPOCH = pd.Timestamp("1970-01-01", tz="UTC")
 _SKIP = ("card", "why", "added", "on_from", "prev", "risk_mult", "note")
+REPORT = ROOT / "reports" / "agents" / "bot7" / "trades_export.json"
+MODS = ("news_regime", "news_straddle", "news_surprise")
+STUDIES = (("EV02", "5Min"), ("EV03", "5Min"), ("SH01", "1Min"), ("EV04", "1Min"), ("EV08", "1Min"))
 
 
 def plans():
@@ -97,11 +100,56 @@ def write(sid, tf, z, syms, hold_min, source, variant):
             tr25.sort()
         combo = f"{sid}|{tf}|{sym}"
         doc = {"at": now, "combo": combo, "family": "study", "source": source, "variant": variant,
-               "plan_sig": plan_sig(pl.get(sym)), "costs": COSTS, "exit_approx": approx,
+               "plan_sig": plan_sig(pl.get(sym)), "costs": COSTS, "exit_approx": approx, "no_rows": not len(y),
                "tr": {"built": tr}, "tr25": {"built": tr25}}
         (EXP / f"study_{sid}_{tf}_{sym}.json").write_text(json.dumps(doc, ensure_ascii=False), encoding="utf-8")
         out[sym] = (len(tr25), len(tr))
     return out
+
+
+def status():
+    """Every live combo of the studies: is the whole-bot check able to use its trades, and if not - why."""
+    pl, out = plans(), {}
+    for sid, tf in STUDIES:
+        for sym, p_ in built(sid, tf).items():
+            combo = f"{sid}|{tf}|{sym}"
+            try:
+                d = json.loads((EXP / f"study_{sid}_{tf}_{sym}.json").read_text(encoding="utf-8"))
+            except Exception:  # noqa: BLE001
+                out[combo] = {"state": "no file"}
+                continue
+            ok = d.get("plan_sig") == plan_sig(pl.get(combo) or p_)
+            out[combo] = {"state": "ok" if ok else "old plan", "at": d.get("at"), "n25": len((d.get("tr25") or {}).get("built") or []),
+                          "n26": len((d.get("tr") or {}).get("built") or []), "no_rows": bool(d.get("no_rows"))}
+    return out
+
+
+def export_all(when="round"):
+    """All three studies' exports from their caches, and a report of what is still unknown (the manager's task
+    mgr1811b7blind, 18.11.2026: the export sat at the end of a long round, so a round that was stopped left the trades
+    of an older plan and the whole-bot check judged bot 7 without 23 of its 57 combos)."""
+    import importlib
+    mods = {}
+    for mod in MODS:
+        try:
+            m_ = importlib.import_module(f"agents.{mod}")
+            df = m_._cached_rows()
+            r = safe(m_.export, df)
+            mods[mod] = {"cached_rows": int(len(df)), "written": len(r or {})}
+        except Exception as e:  # noqa: BLE001 - the export never stops a round
+            mods[mod] = {"error": str(e)[-200:]}
+    st = status()
+    doc = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "when": when, "studies": mods,
+           "known": sum(1 for v in st.values() if v["state"] == "ok"),
+           "unknown": {k: v["state"] for k, v in st.items() if v["state"] != "ok"},
+           "zero_trades": [k for k, v in st.items() if v.get("no_rows")], "combos": st}
+    try:
+        REPORT.parent.mkdir(parents=True, exist_ok=True)
+        REPORT.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        print(f"bot7 trades report failed ({e})")
+    print(f"bot7 trades export ({when}): {doc['known']} known, {len(doc['unknown'])} unknown {list(doc['unknown'])[:12]}")
+    return doc
 
 
 def safe(fn, *a, **k):
@@ -114,3 +162,7 @@ def safe(fn, *a, **k):
     except Exception as e:  # noqa: BLE001
         print(f"bot7 trades export failed ({str(e)[-200:]})")
         return None
+
+
+if __name__ == "__main__":
+    export_all("by hand")

@@ -204,17 +204,31 @@ def study(df):
 HOLD_MIN = {"EV02": 90, "EV03": 120}          # the strategies' max_bars x 5 minutes (rows cached before "x")
 
 
+def _covered():
+    """The symbols this version of the study really ran on. A built combo with no row on one of them made no trade in
+    the whole period (JP225: 295,893 bars, 0 rows): known, with zero trades - not "missing" (mgr1811b7blind, 18.11.2026)."""
+    out = set()
+    for f in CACHE.glob("*.json") if CACHE.exists() else []:
+        try:
+            if json.loads(f.read_text(encoding="utf-8")).get("version") == VERSION:
+                out.add(f.stem)
+        except Exception:  # noqa: BLE001
+            pass
+    return out
+
+
 def export(df):
     """The built version's trades of EV02 / EV03 / SH01 for the whole-bot check (agents/bot7_trades.py): the rows of
     the filter each combo trades with now (its plan's "filter", else none)."""
     out = {}
     if df is None or not len(df):
         return out
+    covered = _covered()
     for sid, tf in (("EV02", "5Min"), ("EV03", "5Min"), ("SH01", "1Min")):
         b = BT.built(sid, tf)
         x = df[df["sid"] == sid]
         have = set(x["sym"]) if len(x) else set()
-        syms = [s_ for s_ in b if s_ in have]
+        syms = [s_ for s_ in b if s_ in have or s_ in covered]
         if not syms:
             continue
         z = pd.concat([x[(x["sym"] == s_) & (x["f"] == (b[s_].get("filter") or "none"))] for s_ in syms])

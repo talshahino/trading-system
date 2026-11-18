@@ -866,6 +866,47 @@ def learning5(marks):
             "per_track": per, "estimate": int(round(rem / 10.0) * 10)}
 
 
+FREEZE_MIN = 20       # minutes after its exit a booked close can still be corrected (data arriving late)
+
+
+def frozen(t):
+    """A trade the account booked as closed stays closed with its booking (user, 18.11.2026: closes vanished from bot 5's
+    account and its balance fell $731 with no trade behind it - after every restart the watch list is computed again with
+    the rules of now (today: a new stop), a closed trade came back 'cancelled' / with another result, and the ledger
+    removed or rewrote its close: GER40 +$104.93 became -$303.08, seven targets were removed). Only in its first
+    FREEZE_MIN minutes is a close followed again (a late minute bar may still change it)."""
+    if t.get("status") != "closed" or not t.get("risk_usd") or t.get("pnl") is None or not t.get("exit_time"):
+        return False
+    try:
+        return pd.Timestamp.now(tz="UTC") - pd.Timestamp(t["exit_time"]) > pd.Timedelta(minutes=FREEZE_MIN)
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def repair_5_1811(acc, trades, now):
+    """Once: bot 5's closes removed / rewritten on 18.11.2026 back in the ledger and the trade list
+    (live/bots/bot5_repair_1811.json, from the state's own copies on the live branch)."""
+    if acc.get("repair5_1811"):
+        return 0.0
+    try:
+        recs = json.loads((LIVE / "bots" / "bot5_repair_1811.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return 0.0
+    diff = 0.0
+    for k, r in recs.items():
+        led = next((x for x in acc["ledger"] if x["id"] == k), None)
+        if led is None:
+            acc["ledger"].append({"id": k, "exit_time": r["exit_time"], "pnl": r["pnl"], "fixed": now})
+            diff += r["pnl"]
+        elif abs(float(led["pnl"]) - r["pnl"]) > 0.01:
+            diff += r["pnl"] - float(led["pnl"])
+            led.update(pnl=r["pnl"], exit_time=r["exit_time"], fixed=now)
+        trades[k] = {**(trades.get(k) or {}), **r, "restored": now}
+        acc.setdefault("sized", {})[k] = r["risk_usd"]
+    acc["repair5_1811"] = now
+    return round(diff, 2)
+
+
 def risk_left(o):
     """An open trade's risk still at stake: its risk at the opening x how far its stop is now from the entry against how
     far it was - a stop moved to the entry holds nothing (as bots 1-4, free_risk_at_breakeven; user, 18.11.2026: gap
@@ -1498,6 +1539,9 @@ def main():
             if not scout5_combo(t.get("tal")):
                 for f in ("risk_usd", "skipped", "pnl", "pnl_now"):
                     t.pop(f, None)
+    back_ = repair_5_1811(acc, trades, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
+    if back_:
+        log(f"bot 5 ledger repaired: {back_:+.2f} of closes removed / rewritten on 18.11 put back")
     gone_ = repair_5b(sacc, trades, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
     if gone_:
         log(f"5b ledger repaired: {gone_:+.2f} booked at the wrong size removed")
@@ -1658,6 +1702,25 @@ def main():
                                         x[f_] = cx_.get(f_)
                                     x.update(status=cx_["status"], entry=cx_.get("entry", e_), stop=cx_.get("stop", float(s_)),
                                              target=cx_.get("target", t_), custom=True)
+                            # an open trade keeps the entry / stop / target it opened with (18.11.2026: a rule changed
+                            # since - today the stop - computed it again as another trade or as cancelled, and it left
+                            # the account); it is followed to its exit with them
+                            o5_ = trades.get(k_) or {}
+                            if (o5_.get("status") == "open" and o5_.get("risk_usd") and o5_.get("stop") is not None
+                                    and o5_.get("time") and not x.get("custom")
+                                    and (x["status"] not in ("open", "closed") or x.get("stop") is None
+                                         or abs(float(x["stop"]) - float(o5_["stop"])) > 1e-9 or x.get("time") != o5_.get("time"))):
+                                try:
+                                    cx_ = TG.custom_trade(D5, TG.ftmo_cfg(cfg), int(o5_["dir"]), float(o5_["entry"]), float(o5_["stop"]),
+                                                          float(o5_["target"]) if o5_.get("target") is not None else None,
+                                                          pd.Timestamp(x["setup_t"]).value, pair=pair)
+                                    if cx_.get("status") in ("open", "closed"):
+                                        for f_ in ("time", "exit_time", "exit", "reason", "r", "r_now", "rr"):
+                                            x[f_] = cx_.get(f_)
+                                        x.update(status=cx_["status"], entry=cx_.get("entry", o5_["entry"]), stop=cx_.get("stop", o5_["stop"]),
+                                                 target=cx_.get("target", o5_.get("target")), kept=True)
+                                except Exception:  # noqa: BLE001
+                                    errors.append(f"{k_} keep: {traceback.format_exc()[-200:]}")
                             g_ = x.get("gap") or [x["entry"], x["entry"]]
                             if x["status"] in ("open", "closed") and x.get("time"):          # + FTMO's swap (18.11.2026)
                                 w_ = swap_r(name, x["dir"], x["entry"], x.get("stop"), x["time"], x.get("exit_time"))
@@ -1696,6 +1759,8 @@ def main():
                     k = tid(x)
                     seen_now.add(k)
                     old = trades.get(k, {})
+                    if frozen(old):
+                        continue        # a booked close is final (user, 18.11.2026 - see frozen())
                     rec = {"id": k, "symbol": name, "broker": src.broker.get(name), "dir": int(x["dir"]), "status": x["status"],
                            "entry": float(x["entry"]), "stop": float(x["stop"]) if x.get("stop") is not None else None,
                            "target": float(x["target"]) if x.get("target") else None,

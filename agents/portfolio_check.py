@@ -23,6 +23,7 @@ must not add up to too much risk; an info card when the 2026 replay comes near t
 from __future__ import annotations
 
 import json
+import time
 from pathlib import Path
 
 import numpy as np
@@ -92,9 +93,20 @@ def off_symbols(bot, cfg=None):
     return {c.split("|")[2] for c in off_server(bot, cfg)}
 
 
+_MM = {"at": 0.0, "risk": {}}
+MM_TTL = 60              # seconds the multipliers read from branch live are reused
+
+
 def mults(bot):
-    """The risk multipliers in force on the bots' computer (branch live, live/manager_state.json)."""
-    return ((RIO.live_json("live/manager_state.json").get("risk") or {}).get(bot) or {}).get("mult") or {}
+    """The risk multipliers in force on the bots' computer (branch live, live/manager_state.json). Read once a minute
+    (manager, 18.11.2026: side_conflicts asked for them once per trade; on the bots' computer each ask is a GitHub API
+    call, 27,000 in one check, so it hit its 25-minute limit on bot 1 and never finished there; now 49)."""
+    if time.time() - _MM["at"] > MM_TTL:
+        risk = RIO.live_json("live/manager_state.json").get("risk") or {}
+        if risk:                         # a failed read is not kept: the next ask tries again
+            _MM.update(at=time.time(), risk=risk)
+        return dict((risk.get(bot) or {}).get("mult") or {})
+    return dict((_MM["risk"].get(bot) or {}).get("mult") or {})
 
 
 _NEW = {}                # (bot, combo) -> the scout result's doc, read once per process
@@ -515,10 +527,10 @@ def side_conflicts(bot, cfg=None):
                 continue
             held.append((b, sym, d, c))
         sk = [rows[i][3] for i in skip]
-        keep = {}
+        keep, mm = {}, mults(bot)
         for i, (a, b, d, r, c) in enumerate(rows):
             if i not in skip:
-                keep.setdefault(c, ([], float(mults(bot).get(c, 1.0))))[0].append([a, b, d, r])
+                keep.setdefault(c, ([], float(mm.get(c, 1.0))))[0].append([a, b, d, r])
         before = replay(book, risk)
         out[per] = {"combos": len(book), "missing": len(missing), "skipped": len(sk), "skipped_r": round(sum(sk), 2),
                     "skipped_mean": round(sum(sk) / len(sk), 3) if sk else None, "before": before,

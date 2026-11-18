@@ -882,6 +882,23 @@ def decide(bots, now=None):
              "why": f"המנהל: הסוכן של הבוט החזיר ל־×{v:g} אחרי בדיקת הבוט השלם, והכלל האוטומטי הוריד שוב ל־×{m_now:g}. {hurt}.",
              "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
              "action": {"bot": bot, "combo": combo, "kind": "mult", "value": v, "prev": m_now}})
+    # 2d) repair, once: SE02|1Hour|USDJPY was removed on 18.11 14:10 by a count of fills, not signals (trade_review.removal_rule:
+    # 20 fills = 10 signals, -4.4R against a line of -5.7R, so the rule was not met). Back to the risk it had before.
+    for rid in ("40c94fecbd60", "62ab3d394226", "576ff3e98b9e"):
+        o = old.get(rid)
+        if not o or o.get("decision") != "approved" or rid in uundo or o.get("undone"):
+            continue
+        a, combo = o.get("action") or {}, o.get("combo")
+        if a.get("prev") is None or float(((cur.get(o["bot"]) or {}).get("mult") or {}).get(combo, 1.0)) != 0:
+            continue
+        v = float(a["prev"])
+        add({"id": _did("removal_signals", rid), "bot": o["bot"], "type": "risk", "kind": "mult", "combo": combo,
+             "title": f"{combo}: חוזר לסיכון ×{v:g} - ההסרה נספרה פעמיים",
+             "decision": "approved", "of_removal": rid,
+             "why": "המנהל: כלל ההסרה ספר כל חשבון כעסקה נפרדת. 20 העסקאות הן 10 אותות בלבד: ‎-4.4R מול קו של ‎-5.7R, "
+                    "כלומר הכלל לא התקיים. הכלל תוקן לספור כל אות פעם אחת.",
+             "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+             "action": {"bot": o["bot"], "combo": combo, "kind": "mult", "value": v, "prev": 0}})
     # 3) bot 7's account reset (user, 12.11.2026): the manager decides it on a material change of bot 7's strategies,
     # stops resetting by itself after two stable weeks (then it asks), and archives the trades first (agents/reset_rule.py)
     try:

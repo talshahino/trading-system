@@ -40,7 +40,11 @@ BT_LIVE = ("reports/2026-11-04_bots_compare_run14/news_trades.csv.gz", "reports/
 def removal_rule(t):
     """GATE.md rule 4 (registered 04.11.2026; the user removes, after approving): a combo's demo record since
     2026-11-01, all accounts together, after at least 6 trades, below -2 x sqrt(n) x its backtest standard
-    deviation of R. A combo with no loss in expectation falls that low less than 2.5% of the time."""
+    deviation of R. A combo with no loss in expectation falls that low less than 2.5% of the time.
+    One signal counts once (manager, 18.11.2026): accounts that take the same signal are not independent trades, and
+    counting each fill made the 2.5% untrue - SE02|1Hour|USDJPY was removed from bots 1, 2 and 4 on 20 fills that were
+    10 signals (-8.8R against a line of -8.1R; per signal -4.4R against -5.7R). A signal = combo, side and entry bar
+    (at least 5 minutes wide), its R = the mean over the accounts that took it."""
     sd = {}
     for pat in BT_LIVE:
         for f in glob.glob(str(ROOT / pat)):
@@ -54,11 +58,15 @@ def removal_rule(t):
                 sd.setdefault(k, float(v))
     x = t[pd.to_datetime(t["open_t"], utc=True) >= pd.Timestamp(HOLDOUT_FROM, tz="UTC")]
     out = []
+    bar = {"1Hour": "1h", "4Hour": "4h", "15Min": "15min", "30Min": "30min"}
+    opened = pd.to_datetime(x["open_t"], utc=True)
     for k, g in x.groupby("combo"):
-        n, cum = len(g), float(g["exit_r"].sum())
+        tf = bar.get(k.split("|")[1] if k.count("|") == 2 else "", "5min")
+        sig = g.groupby([opened[g.index].dt.floor(tf), "side"])["exit_r"].mean()
+        n, cum = len(sig), float(sig.sum())
         s_ = sd.get(k, 1.0)
         line = -2.0 * np.sqrt(n) * s_
-        out.append({"combo": k, "trades": n, "cum_r": round(cum, 2), "line_r": round(line, 2), "bt_sd": round(s_, 2),
+        out.append({"combo": k, "trades": n, "fills": len(g), "cum_r": round(cum, 2), "line_r": round(line, 2), "bt_sd": round(s_, 2),
                     "remove": bool(n >= MIN_LIVE and cum < line)})
     return sorted(out, key=lambda r: r["cum_r"] - r["line_r"])
 

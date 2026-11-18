@@ -869,6 +869,15 @@ def learning5(marks):
 FREEZE_MIN = 20       # minutes after its exit a booked close can still be corrected (data arriving late)
 
 
+def settled(x):
+    """A ledger entry whose exit is FREEZE_MIN+ minutes old: final - no restart, rule change or recomputed trade
+    removes or rewrites it (user, 18.11.2026: closes kept vanishing from bot 5's account)."""
+    try:
+        return pd.Timestamp.now(tz="UTC") - pd.Timestamp(x["exit_time"]) > pd.Timedelta(minutes=FREEZE_MIN)
+    except Exception:  # noqa: BLE001
+        return False
+
+
 def frozen(t):
     """A trade the account booked as closed stays closed with its booking (user, 18.11.2026: closes vanished from bot 5's
     account and its balance fell $731 with no trade behind it - after every restart the watch list is computed again with
@@ -885,25 +894,28 @@ def frozen(t):
 
 def repair_5_1811(acc, trades, now):
     """Once: bot 5's closes removed / rewritten on 18.11.2026 back in the ledger and the trade list
-    (live/bots/bot5_repair_1811.json, from the state's own copies on the live branch)."""
-    if acc.get("repair5_1811"):
+    (live/bots/bot5_repair_1811.json: the ledger as it stood at 17:53 Israel time + the closes after it, from the state's
+    own copies on the live branch; GER40 g0145 t5_1 back to +104.93, US500 g0300 t1h_15 back to +320.33)."""
+    if acc.get("repair5_1811b"):
         return 0.0
     try:
-        recs = json.loads((LIVE / "bots" / "bot5_repair_1811.json").read_text(encoding="utf-8"))
+        doc = json.loads((LIVE / "bots" / "bot5_repair_1811.json").read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         return 0.0
     diff = 0.0
-    for k, r in recs.items():
-        led = next((x for x in acc["ledger"] if x["id"] == k), None)
+    for r in doc.get("ledger") or []:
+        led = next((x for x in acc["ledger"] if x["id"] == r["id"]), None)
         if led is None:
-            acc["ledger"].append({"id": k, "exit_time": r["exit_time"], "pnl": r["pnl"], "fixed": now})
+            acc["ledger"].append({"id": r["id"], "exit_time": r["exit_time"], "pnl": r["pnl"], "fixed": now})
             diff += r["pnl"]
         elif abs(float(led["pnl"]) - r["pnl"]) > 0.01:
             diff += r["pnl"] - float(led["pnl"])
             led.update(pnl=r["pnl"], exit_time=r["exit_time"], fixed=now)
+    for k, r in (doc.get("trades") or {}).items():
         trades[k] = {**(trades.get(k) or {}), **r, "restored": now}
-        acc.setdefault("sized", {})[k] = r["risk_usd"]
-    acc["repair5_1811"] = now
+        if r.get("risk_usd"):
+            acc.setdefault("sized", {})[k] = r["risk_usd"]
+    acc["repair5_1811b"] = now
     return round(diff, 2)
 
 
@@ -1569,6 +1581,8 @@ def main():
                 # the same exit with a slightly different cost estimate stays as first booked (a closed trade is closed)
                 if x["exit_time"] == exit_time and abs(float(x["pnl"]) - float(pnl)) <= max(0.005, 0.1 * float(risk_usd or 0)):
                     return False
+                if settled(x):
+                    return False      # a close booked FREEZE_MIN+ minutes ago is final (18.11.2026)
                 x["exit_time"], x["pnl"], x["fixed"] = exit_time, pnl, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
                 return True
         cur[0]["ledger"].append({"id": k_, "exit_time": exit_time, "pnl": pnl})
@@ -1577,7 +1591,7 @@ def main():
     def unbook(k_):
         """A trade the ledger holds as closed that is computed again as open / not taken - the close was not real."""
         n_ = len(cur[0]["ledger"])
-        cur[0]["ledger"][:] = [x for x in cur[0]["ledger"] if x["id"] != k_]
+        cur[0]["ledger"][:] = [x for x in cur[0]["ledger"] if x["id"] != k_ or settled(x)]   # a settled close stays
         return len(cur[0]["ledger"]) != n_
     try:
         fstate = json.loads(FUT_F.read_text(encoding="utf-8"))
@@ -1967,7 +1981,12 @@ def main():
             state["learning"] = learning5(marks)
         except Exception:  # noqa: BLE001
             errors.append(f"learning: {traceback.format_exc()[-200:]}")
-        closed = sorted([t for t in trades.values() if t["status"] == "closed"], key=lambda t: t["time"] or "")[-KEEP:]
+        closed_all = sorted([t for t in trades.values() if t["status"] == "closed"], key=lambda t: t["time"] or "")
+        wk_ = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=7)).isoformat()
+        # the newest KEEP + every close an account booked in the last 7 days (18.11.2026: a busy day pushed the
+        # morning's booked gap trades out of the list, they were computed again with the rules of now and lost)
+        closed = [t for i_, t in enumerate(closed_all) if i_ >= len(closed_all) - KEEP
+                  or (t.get("risk_usd") and t.get("pnl") is not None and (t.get("exit_time") or "") >= wk_)]
         live_ = [t for t in trades.values() if t["status"] in ("pending", "open")]
         cancelled = sorted([t for t in trades.values() if t["status"] == "cancelled"], key=lambda t: t.get("setup_t") or "")[-20:]
         trades = {t["id"]: t for t in closed + live_ + cancelled}

@@ -254,3 +254,6 @@ Reviewing bot 5's gap setups: "an impulse built of one candle - there is an impu
 
 ## A loss is fixed in the strategy, not only in the management (user, 17.11.2026 17:26)
 "In the loss reports you only look for excuses and only manage the trade, instead of also looking for different entry points and exit points - a different stop or target. I want you to look for all of it." For Tal a loss review that ends with "manage it better" or "a normal day" is an excuse; he expects the strategy itself to be questioned: where it entered, where its stop and target sit, and only then how it is managed. For the agents: every loss is tested on all families together (entry, stop, target, filter, management and their combinations), and the answer to him says what was found in each (rule loss_all_families, task tal1711lossall).
+
+## A gap must have real size (user, 18.11.2026 09:20)
+"Too small, that doesn't count as a gap." Said of a US30 4-hour gap of about 5% of the average candle's range, the smallest he has reviewed. For Tal a gap is not just any space between candle 1 and candle 3: it has to be big enough to matter next to the move that made it. For the agents: one example so far, so it sets no threshold by itself - the floor comes from the test (task b5mingap1811).

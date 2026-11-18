@@ -194,6 +194,7 @@ class Data:
         self.t1 = df.index
         self.ns = self.t1.as_unit("ns").asi8
         self.o1, self.h1, self.l1, self.c1 = (df[x].to_numpy(float) for x in "ohlc")
+        self.v1 = df["v"].to_numpy(float) if "v" in df else np.ones(len(df))   # tick volume (MGMT VOLP)
         self.cost, self.shut, self.late, self.buf = np.asarray(cost, float), np.asarray(shut, bool), np.asarray(late, bool), buf
         self.cal = cal                                    # {"cal15": mask, "cal60": mask}
         r = self.h1 - self.l1
@@ -1178,6 +1179,108 @@ def wait_cut(D, htf, g, gi, opp_arms, q0, q1, wx):
     return q1
 
 
+# MGMT (user, 18.11.2026, voice, task tal1811mgmt: "the stop beyond the impulse's start with a small margin, so a return
+# exactly to the start does not stop us; move the stop after every new break of structure; at 60% of the way the stop to
+# the entry; a part out at 60% only when the volume toward the target is not strong"). Test only (agents/tal_mgmt_study);
+# the live bot is built after an approval.
+#   IPAD  room beyond the impulse's start (with STOPAT imp0 / imp0r), on top of the 2 points / pips: "a0.25" = 0.25 x the
+#         ATR(14) of the high timeframe's last closed candle, "c2" = 2 x the spread + commission of the entry minute
+#   BOS   after every break of the last confirmed low-timeframe swing in the trade's favour, the stop to beyond the last
+#         confirmed swing on the other side, with the same room (IPAD, or "a0.1" when unset) - only closer, never back
+#   VOLP  "1.5": at EXIT's level (be60 = 60%) half out only when the tick volume of the last 3 low-timeframe candles is
+#         under 1.5 x its average of the 60 before (not strong); strong - only the stop to the entry
+def ipad(D, cfg, htf, t_ns, f, key="IPAD", dflt=None):
+    v = cfg.get(key) or dflt
+    if not v or v == "none":
+        return 0.0
+    v = str(v)
+    if v[0] == "c":
+        return float(v[1:]) * float(D.cost[f])
+    ts, _, _, _, _, atr = D.tf(htf)
+    j = int(np.searchsorted(ts, int(t_ns) - TF[htf] * 60_000_000_000, side="right")) - 1
+    if j < 0 or not np.isfinite(atr[j]):
+        return 0.0
+    return float(v[1:]) * float(atr[j])
+
+
+def mg_walk(D, cfg, htf, ltf, f, d, px, stop, tgt, risk, hi_sw, lo_sw, n1):
+    """One trade minute by minute (MGMT): (row, exit bar) or None while open at the data's end."""
+    ns, o1, h1, l1, v1 = D.ns, D.o1, D.h1, D.l1, D.v1
+    e = min(n1, f + 40 * 1440)
+    sh = shut_of(D, cfg, f, e)
+    em = exit_mode(cfg, risk, tgt - px)
+    lvl = px + em[1] * (tgt - px) if em is not None else None
+    frac0 = em[0] if em is not None else 0.0
+    volp = float(cfg["VOLP"]) if cfg.get("VOLP") else None
+    bos = bool(cfg.get("BOS"))
+    room = D.buf + ipad(D, cfg, htf, ns[f], f, dflt="a0.1") if bos else 0.0
+    fav, opp = (hi_sw, lo_sw) if d > 0 else (lo_sw, hi_sw)
+    fc, fv = fav[0], fav[1]
+    oc, ov = opp[0], opp[1]
+    k_ref = int(np.searchsorted(fc, ns[f], side="right")) - 1   # the last confirmed swing in favour at the fill
+    used = -1 if k_ref < 0 else None
+    part_r, frac, moved, lv_done, nstop = 0.0, 0.0, False, False, None
+    stp = stop
+    W = 3 * TF[ltf]
+    for i in range(0, e - f):
+        q = f + i
+        if nstop is not None:
+            stp, nstop = nstop, None
+        if (l1[q] <= stp) if d > 0 else (h1[q] >= stp):
+            ex = (min(stp, o1[q]) if d > 0 else max(stp, o1[q])) if i else stp
+            why = "stop" if not moved else ("breakeven" if abs(stp - px) < 1e-12 else "trail")
+            break
+        if i and ((h1[q] >= tgt) if d > 0 else (l1[q] <= tgt)):
+            ex, why = (max(tgt, o1[q]) if d > 0 else min(tgt, o1[q])), "target"
+            break
+        if i and sh[i]:
+            ex, why = o1[q], "session"
+            break
+        if i == 0:
+            continue
+        cand = stp
+        if lvl is not None and not lv_done and ((h1[q] >= lvl) if d > 0 else (l1[q] <= lvl)):
+            lv_done = True
+            take = frac0
+            if volp is not None:
+                a = v1[max(0, q - W + 1):q + 1].mean()
+                b = v1[max(0, q - 21 * W + 1):max(1, q - W + 1)].mean()
+                take = 0.0 if (b > 0 and a >= volp * b) else 0.5
+            if take:
+                part_r = take * em[1] * d * (tgt - px) / risk
+                frac = take
+            cand = px if d * (px - cand) > 0 else cand
+        if bos:
+            t = ns[q]
+            k = int(np.searchsorted(fc, t, side="right")) - 1
+            if k >= 0 and (used is None or k > used):
+                ref = fv[k]
+                if (h1[q] > ref) if d > 0 else (l1[q] < ref):
+                    used = k
+                    j = int(np.searchsorted(oc, t, side="right")) - 1
+                    if j >= 0:
+                        s_ = ov[j] - d * room
+                        if d * (s_ - cand) > 0 and ((s_ < l1[q]) if d > 0 else (s_ > h1[q])):
+                            cand = s_
+        if d * (cand - stp) > 0:
+            nstop, moved = cand, True
+    else:
+        if e >= n1:
+            return None
+        q = e - 1
+        ex, why = o1[q], "session"
+    i = q - f
+    cost_r = D.cost[f] / risk
+    r_rest = d * (ex - px) / risk
+    r_all = part_r + (1 - frac) * r_rest
+    hs, ls = h1[f:q + 1], l1[f:q + 1]
+    fvv = (hs[1:] - px) if d > 0 else (px - ls[1:])
+    mfe = max(0.0, float(fvv.max()) / risk) if len(fvv) else 0.0
+    return ({"time": pd.Timestamp(ns[f], tz="UTC").isoformat(), "dir": d, "r": round(r_all - cost_r, 4),
+             "cost_r": round(cost_r, 4), "rr": round(d * (tgt - px) / risk, 2), "why": why, "mins": i,
+             "mfe": round(mfe, 3)}, q)
+
+
 def simulate(D, pair, cfg, gcache, keep=None):
     htf, ltf, _ = pair
     g = gap_set(D, htf, cfg, gcache)
@@ -1242,6 +1345,8 @@ def simulate(D, pair, cfg, gcache, keep=None):
         stop = stop_at(D, cfg, org, gi, px, stop0, d)   # STOPAT: the impulse's origin
         if stop is None:
             continue
+        if stopat_of(cfg) != "sw2":
+            stop = stop - d * ipad(D, cfg, htf, ns[f], f)  # IPAD: room beyond the impulse's start (MGMT study)
         stop = min_stop(D, cfg, htf, ns[f], px, stop, d)
         risk = d * (px - stop)
         rk_rr = rr_risk(D, cfg, htf, ns[f], px, stop0, risk, d)    # STOPAT ...r: MIN_RR on the rules' stop
@@ -1276,6 +1381,16 @@ def simulate(D, pair, cfg, gcache, keep=None):
                          "cost_r": round(lt["cost_r"], 4), "rr": round(d * (tgt - px) / risk, 2), "why": lt["why"],
                          "mins": lt["end"]})
             busy = f + lt["end"] + 1
+            continue
+        if cfg.get("BOS") or cfg.get("VOLP") or cfg.get("MGW"):   # MGMT study: the minute-by-minute walk
+            w_ = mg_walk(D, cfg, htf, ltf, f, d, px, stop, tgt, risk, hi_sw, lo_sw, n1)
+            if w_ is None:
+                break                                    # still open at the data's end
+            row_, q_ = w_
+            if row_["why"] == "stop":
+                dead.add((armed, d))
+            rows.append(row_)
+            busy = q_ + 1
             continue
         for span in (4 * 1440, 40 * 1440):              # most trades end within a day; the rest within weeks
             e = min(n1, f + span)

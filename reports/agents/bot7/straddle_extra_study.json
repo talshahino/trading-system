@@ -1,0 +1,1100 @@
+{
+ "at": "2026-11-18T09:25:47+00:00",
+ "version": 1,
+ "symbols": [
+  "US100",
+  "US500",
+  "US30",
+  "GER40",
+  "UK100",
+  "JP225",
+  "XAUUSD",
+  "EURUSD",
+  "GBPUSD",
+  "USDJPY"
+ ],
+ "partial": true,
+ "extra_items": 697,
+ "split": "2026-01-01",
+ "test_from": "2025-04-30",
+ "study": {
+  "all": {
+   "train": {
+    "n": 483,
+    "eff_n": 482.5,
+    "mean": 0.1657,
+    "t": 2.38,
+    "win": 41.1,
+    "sum": 81.28
+   },
+   "unseen": {
+    "n": 281,
+    "eff_n": 280.9,
+    "mean": 0.0414,
+    "t": 0.49,
+    "win": 37.7,
+    "sum": 11.94
+   }
+  },
+  "pick_rule": "titles with n>=8 and sum>0 on 30.04-31.12.2025",
+  "pick": [
+   "ADP Non-Farm Employment Change",
+   "Core PCE Price Index m/m",
+   "Core PPI m/m + PPI m/m",
+   "Fed Chair Powell Speaks",
+   "Final GDP q/q + Unemployment Claims",
+   "GDP m/m",
+   "German Flash Manufacturing PMI + German Flash Services PMI",
+   "Prelim GDP q/q + Unemployment Claims",
+   "Retail Sales m/m"
+  ],
+  "picked": {
+   "train": {
+    "n": 169,
+    "eff_n": 168.9,
+    "mean": 0.7015,
+    "t": 4.39,
+    "win": 51.8,
+    "sum": 120.09
+   },
+   "unseen": {
+    "n": 98,
+    "eff_n": 98.0,
+    "mean": 0.0753,
+    "t": 0.62,
+    "win": 42.6,
+    "sum": 7.77
+   }
+  },
+  "by_title": {
+   "Unemployment Claims": {
+    "train": {
+     "n": 68,
+     "eff_n": 67.9,
+     "mean": -0.2538,
+     "t": -2.11,
+     "win": 31.1,
+     "sum": -17.7
+    },
+    "unseen": {
+     "n": 26,
+     "eff_n": 26.0,
+     "mean": -0.3166,
+     "t": -1.12,
+     "win": 15.3,
+     "sum": -8.15
+    }
+   },
+   "Core PPI m/m + PPI m/m": {
+    "train": {
+     "n": 27,
+     "eff_n": 27.0,
+     "mean": 0.8231,
+     "t": 2.4,
+     "win": 47.8,
+     "sum": 22.26
+    },
+    "unseen": {
+     "n": 64,
+     "eff_n": 64.0,
+     "mean": 0.0259,
+     "t": 0.17,
+     "win": 37.2,
+     "sum": 1.91
+    }
+   },
+   "ISM Services PMI": {
+    "train": {
+     "n": 46,
+     "eff_n": 45.9,
+     "mean": -0.0535,
+     "t": -0.46,
+     "win": 36.9,
+     "sum": -2.33
+    },
+    "unseen": {
+     "n": 14,
+     "eff_n": 14.0,
+     "mean": -0.4051,
+     "t": -1.33,
+     "win": 28.6,
+     "sum": -5.65
+    }
+   },
+   "ADP Non-Farm Employment Change": {
+    "train": {
+     "n": 42,
+     "eff_n": 41.9,
+     "mean": 0.7088,
+     "t": 2.41,
+     "win": 44.8,
+     "sum": 30.9
+    },
+    "unseen": {
+     "n": 8,
+     "eff_n": 8.0,
+     "mean": 0.0602,
+     "t": 0.16,
+     "win": 50.2,
+     "sum": 0.43
+    }
+   },
+   "ISM Manufacturing PMI": {
+    "train": {
+     "n": 33,
+     "eff_n": 33.0,
+     "mean": -0.0618,
+     "t": -0.38,
+     "win": 39.1,
+     "sum": -1.86
+    },
+    "unseen": {
+     "n": 15,
+     "eff_n": 15.0,
+     "mean": -0.0908,
+     "t": -0.49,
+     "win": 39.4,
+     "sum": -1.28
+    }
+   },
+   "Flash Manufacturing PMI + Flash Services PMI": {
+    "train": {
+     "n": 31,
+     "eff_n": 31.0,
+     "mean": -0.0073,
+     "t": -0.04,
+     "win": 48.5,
+     "sum": -0.34
+    },
+    "unseen": {
+     "n": 6,
+     "eff_n": 6.0,
+     "mean": -0.0831,
+     "t": -0.23,
+     "win": 33.6,
+     "sum": -0.52
+    }
+   },
+   "Core Retail Sales m/m + Retail Sales m/m": {
+    "train": {
+     "n": 18,
+     "eff_n": 18.0,
+     "mean": -0.0019,
+     "t": -0.01,
+     "win": 38.8,
+     "sum": -0.05
+    },
+    "unseen": {
+     "n": 18,
+     "eff_n": 18.0,
+     "mean": -0.2852,
+     "t": -1.47,
+     "win": 22.2,
+     "sum": -5.12
+    }
+   },
+   "GDP m/m": {
+    "train": {
+     "n": 14,
+     "eff_n": 14.0,
+     "mean": 0.2843,
+     "t": 0.81,
+     "win": 50.1,
+     "sum": 4.07
+    },
+    "unseen": {
+     "n": 16,
+     "eff_n": 16.0,
+     "mean": 0.244,
+     "t": 0.82,
+     "win": 56.0,
+     "sum": 4.02
+    }
+   },
+   "Core PCE Price Index m/m": {
+    "train": {
+     "n": 26,
+     "eff_n": 26.0,
+     "mean": 0.2398,
+     "t": 1.23,
+     "win": 60.8,
+     "sum": 6.6
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "JOLTS Job Openings": {
+    "train": {
+     "n": 22,
+     "eff_n": 22.0,
+     "mean": -0.2022,
+     "t": -0.89,
+     "win": 27.3,
+     "sum": -4.5
+    },
+    "unseen": {
+     "n": 4,
+     "eff_n": 4.0,
+     "mean": -0.3427,
+     "t": null,
+     "win": 50.2,
+     "sum": -1.38
+    }
+   },
+   "Core PCE Price Index m/m + Final GDP q/q": {
+    "train": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    },
+    "unseen": {
+     "n": 21,
+     "eff_n": 21.0,
+     "mean": 0.1333,
+     "t": 0.7,
+     "win": 52.6,
+     "sum": 2.68
+    }
+   },
+   "Core PPI m/m + Core Retail Sales m/m": {
+    "train": {
+     "n": 14,
+     "eff_n": 14.0,
+     "mean": -0.5507,
+     "t": -3.72,
+     "win": 6.8,
+     "sum": -7.44
+    },
+    "unseen": {
+     "n": 7,
+     "eff_n": 7.0,
+     "mean": -0.5138,
+     "t": -2.77,
+     "win": 0.0,
+     "sum": -3.6
+    }
+   },
+   "Fed Chair Powell Speaks": {
+    "train": {
+     "n": 16,
+     "eff_n": 16.0,
+     "mean": 2.1974,
+     "t": 2.01,
+     "win": 56.2,
+     "sum": 35.42
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "Final GDP q/q + Unemployment Claims": {
+    "train": {
+     "n": 14,
+     "eff_n": 14.0,
+     "mean": 1.031,
+     "t": 2.2,
+     "win": 58.1,
+     "sum": 14.13
+    },
+    "unseen": {
+     "n": 2,
+     "eff_n": 2.0,
+     "mean": 1.6013,
+     "t": null,
+     "win": 50.0,
+     "sum": 3.2
+    }
+   },
+   "Claimant Count Change": {
+    "train": {
+     "n": 5,
+     "eff_n": 5.0,
+     "mean": -0.1732,
+     "t": null,
+     "win": 20.2,
+     "sum": -0.9
+    },
+    "unseen": {
+     "n": 10,
+     "eff_n": 10.0,
+     "mean": 0.0014,
+     "t": 0.0,
+     "win": 29.7,
+     "sum": 0.2
+    }
+   },
+   "Core PCE Price Index m/m + Prelim GDP q/q": {
+    "train": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    },
+    "unseen": {
+     "n": 14,
+     "eff_n": 14.0,
+     "mean": 0.7208,
+     "t": 1.94,
+     "win": 71.3,
+     "sum": 10.14
+    }
+   },
+   "Prelim UoM Consumer Sentiment + Prelim UoM Inflation Expectations": {
+    "train": {
+     "n": 13,
+     "eff_n": 13.0,
+     "mean": -0.7141,
+     "t": -4.08,
+     "win": 15.8,
+     "sum": -9.36
+    },
+    "unseen": {
+     "n": 1,
+     "eff_n": 1.0,
+     "mean": 1.3258,
+     "t": null,
+     "win": 100.0,
+     "sum": 1.33
+    }
+   },
+   "Retail Sales m/m": {
+    "train": {
+     "n": 8,
+     "eff_n": 8.0,
+     "mean": 0.0028,
+     "t": 0.01,
+     "win": 48.9,
+     "sum": 0.17
+    },
+    "unseen": {
+     "n": 6,
+     "eff_n": 6.0,
+     "mean": -0.2236,
+     "t": -0.74,
+     "win": 49.6,
+     "sum": -1.3
+    }
+   },
+   "German Flash Manufacturing PMI + German Flash Services PMI": {
+    "train": {
+     "n": 10,
+     "eff_n": 10.0,
+     "mean": 0.1468,
+     "t": 0.68,
+     "win": 49.8,
+     "sum": 1.49
+    },
+    "unseen": {
+     "n": 2,
+     "eff_n": 2.0,
+     "mean": -0.2438,
+     "t": null,
+     "win": 49.6,
+     "sum": -0.48
+    }
+   },
+   "Prelim GDP q/q + Unemployment Claims": {
+    "train": {
+     "n": 12,
+     "eff_n": 12.0,
+     "mean": 0.4125,
+     "t": 1.03,
+     "win": 58.3,
+     "sum": 5.05
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "BOJ Press Conference": {
+    "train": {
+     "n": 4,
+     "eff_n": 4.0,
+     "mean": 0.1532,
+     "t": null,
+     "win": 48.0,
+     "sum": 0.7
+    },
+    "unseen": {
+     "n": 7,
+     "eff_n": 7.0,
+     "mean": -0.0958,
+     "t": -0.26,
+     "win": 57.3,
+     "sum": -0.7
+    }
+   },
+   "BOJ Policy Rate + Monetary Policy Statement": {
+    "train": {
+     "n": 5,
+     "eff_n": 5.0,
+     "mean": -0.7344,
+     "t": null,
+     "win": 0.0,
+     "sum": -3.65
+    },
+    "unseen": {
+     "n": 5,
+     "eff_n": 5.0,
+     "mean": 2.6133,
+     "t": null,
+     "win": 60.4,
+     "sum": 12.96
+    }
+   },
+   "Core PCE Price Index m/m + Employment Cost Index q/q": {
+    "train": {
+     "n": 9,
+     "eff_n": 9.0,
+     "mean": -0.3437,
+     "t": -1.34,
+     "win": 44.5,
+     "sum": -3.11
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "BOJ Gov Ueda Speaks": {
+    "train": {
+     "n": 6,
+     "eff_n": 6.0,
+     "mean": 0.6523,
+     "t": 0.99,
+     "win": 48.7,
+     "sum": 4.2
+    },
+    "unseen": {
+     "n": 2,
+     "eff_n": 2.0,
+     "mean": 0.2364,
+     "t": null,
+     "win": 50.3,
+     "sum": 0.47
+    }
+   },
+   "BOJ Outlook Report + BOJ Policy Rate": {
+    "train": {
+     "n": 1,
+     "eff_n": 1.0,
+     "mean": -1.0744,
+     "t": null,
+     "win": 0.0,
+     "sum": -1.07
+    },
+    "unseen": {
+     "n": 7,
+     "eff_n": 7.0,
+     "mean": -0.6829,
+     "t": -3.2,
+     "win": 14.6,
+     "sum": -4.82
+    }
+   },
+   "FOMC Press Conference": {
+    "train": {
+     "n": 5,
+     "eff_n": 5.0,
+     "mean": -0.6237,
+     "t": null,
+     "win": 0.0,
+     "sum": -3.14
+    },
+    "unseen": {
+     "n": 3,
+     "eff_n": 3.0,
+     "mean": -1.0643,
+     "t": null,
+     "win": 0.0,
+     "sum": -3.19
+    }
+   },
+   "President Trump Speaks": {
+    "train": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    },
+    "unseen": {
+     "n": 7,
+     "eff_n": 7.0,
+     "mean": 2.1812,
+     "t": 2.16,
+     "win": 42.9,
+     "sum": 15.27
+    }
+   },
+   "Prelim GDP q/q": {
+    "train": {
+     "n": 6,
+     "eff_n": 6.0,
+     "mean": 1.7604,
+     "t": 10.62,
+     "win": 100.0,
+     "sum": 10.56
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "BOE Gov Bailey Speaks": {
+    "train": {
+     "n": 2,
+     "eff_n": 2.0,
+     "mean": -0.7627,
+     "t": null,
+     "win": 0.0,
+     "sum": -1.53
+    },
+    "unseen": {
+     "n": 3,
+     "eff_n": 3.0,
+     "mean": -0.1004,
+     "t": null,
+     "win": 33.7,
+     "sum": -0.31
+    }
+   },
+   "Average Hourly Earnings m/m + Unemployment Rate": {
+    "train": {
+     "n": 4,
+     "eff_n": 4.0,
+     "mean": 0.0886,
+     "t": null,
+     "win": 50.0,
+     "sum": 0.35
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "ISM Manufacturing PMI + JOLTS Job Openings": {
+    "train": {
+     "n": 4,
+     "eff_n": 4.0,
+     "mean": 0.035,
+     "t": null,
+     "win": 75.0,
+     "sum": 0.14
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "Core PCE Price Index m/m + Prelim UoM Consumer Sentiment": {
+    "train": {
+     "n": 3,
+     "eff_n": 3.0,
+     "mean": -0.132,
+     "t": null,
+     "win": 66.7,
+     "sum": -0.4
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "Fed Chair Powell Testifies": {
+    "train": {
+     "n": 3,
+     "eff_n": 3.0,
+     "mean": 0.4251,
+     "t": null,
+     "win": 66.7,
+     "sum": 1.28
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "Fed Chairman-Designate Warsh Testifies": {
+    "train": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    },
+    "unseen": {
+     "n": 3,
+     "eff_n": 3.0,
+     "mean": 0.0734,
+     "t": null,
+     "win": 33.3,
+     "sum": 0.22
+    }
+   },
+   "French Flash Manufacturing PMI + French Flash Services PMI": {
+    "train": {
+     "n": 3,
+     "eff_n": 3.0,
+     "mean": -0.745,
+     "t": null,
+     "win": 0.0,
+     "sum": -2.24
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "ISM Services PMI + JOLTS Job Openings": {
+    "train": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    },
+    "unseen": {
+     "n": 3,
+     "eff_n": 3.0,
+     "mean": -0.3484,
+     "t": null,
+     "win": 33.3,
+     "sum": -1.05
+    }
+   },
+   "ADP Weekly Employment Change": {
+    "train": {
+     "n": 2,
+     "eff_n": 2.0,
+     "mean": -0.9085,
+     "t": null,
+     "win": 0.0,
+     "sum": -1.82
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "BOJ Outlook Report": {
+    "train": {
+     "n": 2,
+     "eff_n": 2.0,
+     "mean": 2.6951,
+     "t": null,
+     "win": 100.0,
+     "sum": 5.39
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "ECB Press Conference": {
+    "train": {
+     "n": 2,
+     "eff_n": 2.0,
+     "mean": -0.0905,
+     "t": null,
+     "win": 50.6,
+     "sum": -0.2
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "Fed Chairman Warsh Speaks + Prelim Benchmark Payrolls Revision": {
+    "train": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    },
+    "unseen": {
+     "n": 2,
+     "eff_n": 2.0,
+     "mean": -1.0171,
+     "t": null,
+     "win": 0.0,
+     "sum": -2.03
+    }
+   },
+   "Flash Manufacturing PMI": {
+    "train": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    },
+    "unseen": {
+     "n": 2,
+     "eff_n": 2.0,
+     "mean": 0.2045,
+     "t": null,
+     "win": 50.0,
+     "sum": 0.41
+    }
+   },
+   "Autumn Forecast Statement": {
+    "train": {
+     "n": 1,
+     "eff_n": 1.0,
+     "mean": -1.0633,
+     "t": null,
+     "win": 0.0,
+     "sum": -1.06
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "BOJ Policy Rate + BOJ Press Conference": {
+    "train": {
+     "n": 1,
+     "eff_n": 1.0,
+     "mean": 1.2794,
+     "t": null,
+     "win": 100.0,
+     "sum": 1.28
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "Fed Chairman Warsh Speaks": {
+    "train": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    },
+    "unseen": {
+     "n": 1,
+     "eff_n": 1.0,
+     "mean": -1.0726,
+     "t": null,
+     "win": 0.0,
+     "sum": -1.07
+    }
+   },
+   "Fed Chairman Warsh Testifies": {
+    "train": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    },
+    "unseen": {
+     "n": 1,
+     "eff_n": 1.0,
+     "mean": -1.0117,
+     "t": null,
+     "win": 0.0,
+     "sum": -1.01
+    }
+   },
+   "German Flash Manufacturing PMI": {
+    "train": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    },
+    "unseen": {
+     "n": 1,
+     "eff_n": 1.0,
+     "mean": 0.3849,
+     "t": null,
+     "win": 100.0,
+     "sum": 0.38
+    }
+   },
+   "German Prelim CPI m/m": {
+    "train": {
+     "n": 1,
+     "eff_n": 1.0,
+     "mean": -0.0113,
+     "t": null,
+     "win": 0.0,
+     "sum": -0.01
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   }
+  },
+  "by_sym": {
+   "EURUSD": {
+    "train": {
+     "n": 77,
+     "eff_n": 76.9,
+     "mean": 0.124,
+     "t": 0.69,
+     "win": 32.4,
+     "sum": 9.72
+    },
+    "unseen": {
+     "n": 35,
+     "eff_n": 35.0,
+     "mean": -0.3408,
+     "t": -2.44,
+     "win": 31.2,
+     "sum": -11.89
+    }
+   },
+   "GBPUSD": {
+    "train": {
+     "n": 78,
+     "eff_n": 77.9,
+     "mean": 0.0271,
+     "t": 0.17,
+     "win": 39.8,
+     "sum": 2.12
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": 0.002,
+     "t": 0.01,
+     "win": 32.6,
+     "sum": 0.29
+    }
+   },
+   "GER40": {
+    "train": {
+     "n": 4,
+     "eff_n": 4.0,
+     "mean": -0.3122,
+     "t": null,
+     "win": 48.8,
+     "sum": -1.18
+    },
+    "unseen": {
+     "n": 0,
+     "eff_n": 0.0,
+     "mean": null,
+     "t": null,
+     "win": null,
+     "sum": 0.0
+    }
+   },
+   "JP225": {
+    "train": {
+     "n": 9,
+     "eff_n": 9.0,
+     "mean": 0.1403,
+     "t": 0.39,
+     "win": 43.6,
+     "sum": 1.36
+    },
+    "unseen": {
+     "n": 10,
+     "eff_n": 10.0,
+     "mean": 0.629,
+     "t": 1.16,
+     "win": 60.3,
+     "sum": 6.19
+    }
+   },
+   "UK100": {
+    "train": {
+     "n": 19,
+     "eff_n": 19.0,
+     "mean": -0.1218,
+     "t": -0.44,
+     "win": 37.0,
+     "sum": -2.4
+    },
+    "unseen": {
+     "n": 16,
+     "eff_n": 16.0,
+     "mean": -0.2083,
+     "t": -0.8,
+     "win": 43.5,
+     "sum": -3.2
+    }
+   },
+   "US100": {
+    "train": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.1478,
+     "t": 0.75,
+     "win": 43.3,
+     "sum": 7.56
+    },
+    "unseen": {
+     "n": 30,
+     "eff_n": 30.0,
+     "mean": 0.3581,
+     "t": 1.28,
+     "win": 36.8,
+     "sum": 10.75
+    }
+   },
+   "US30": {
+    "train": {
+     "n": 52,
+     "eff_n": 51.9,
+     "mean": 0.2422,
+     "t": 1.33,
+     "win": 50.2,
+     "sum": 12.76
+    },
+    "unseen": {
+     "n": 27,
+     "eff_n": 27.0,
+     "mean": 0.4336,
+     "t": 1.23,
+     "win": 48.2,
+     "sum": 11.87
+    }
+   },
+   "US500": {
+    "train": {
+     "n": 54,
+     "eff_n": 53.9,
+     "mean": 0.0721,
+     "t": 0.4,
+     "win": 40.8,
+     "sum": 3.89
+    },
+    "unseen": {
+     "n": 31,
+     "eff_n": 31.0,
+     "mean": 0.0339,
+     "t": 0.17,
+     "win": 38.8,
+     "sum": 1.01
+    }
+   },
+   "USDJPY": {
+    "train": {
+     "n": 88,
+     "eff_n": 87.9,
+     "mean": 0.558,
+     "t": 2.6,
+     "win": 45.2,
+     "sum": 49.7
+    },
+    "unseen": {
+     "n": 50,
+     "eff_n": 50.0,
+     "mean": -0.1177,
+     "t": -0.58,
+     "win": 33.9,
+     "sum": -5.89
+    }
+   },
+   "XAUUSD": {
+    "train": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0474,
+     "t": -0.27,
+     "win": 39.1,
+     "sum": -2.25
+    },
+    "unseen": {
+     "n": 30,
+     "eff_n": 30.0,
+     "mean": 0.0939,
+     "t": 0.35,
+     "win": 39.8,
+     "sum": 2.8
+    }
+   }
+  }
+ }
+}

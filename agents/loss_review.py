@@ -559,6 +559,8 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
             continue
         if PC.cut_hurts(rep["bot"], c, cur, val):     # the whole bot first: a cut that adds risk to the bot is held
             continue
+        if PC.agent_raise(decisions, rep["bot"], c):  # the bot's agent raised it after replaying the whole bot
+            continue
         did = hashlib.sha1(f"losscut|{rep['bot']}|{c}|{val}".encode()).hexdigest()[:12]
         if did in have_ids:
             continue
@@ -590,7 +592,7 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
         if (appr := _edge_base(rep["bot"], c)) is not None:     # the edge rule's approved risk: the edge once (17.11)
             base = appr
         val = MIN_LOT if fm == MIN_LOT else round(base * fm, 2)
-        if val >= cur or PC.cut_hurts(rep["bot"], c, cur, val):
+        if val >= cur or PC.cut_hurts(rep["bot"], c, cur, val) or PC.agent_raise(decisions, rep["bot"], c):
             continue
         out.append({"id": did, "bot": rep["bot"], "type": "risk", "kind": "mult", "combo": c,
                     "title": f"{c}: " + ("כמות מינימלית - אין יתרון" if val == MIN_LOT else f"סיכון ×{val} - היתרון קטן")

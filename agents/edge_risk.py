@@ -292,6 +292,11 @@ def run(states=None, force=False):
                     target = cap
             own_back = target < cur and me.get("last") is not None and abs(float(me["last"]) - cur) < 0.005 \
                 and target >= base - 0.005                       # only taking back its own raise: no fix needed first
+            if target < cur and not own_back and (ar := PC.agent_raise(ddoc.get("decisions", []), bot, c)):
+                # the bot's agent raised it after replaying the whole bot: the edge alone does not cut it back
+                out["combos"][c] = {"base": base, "now": cur, "target": target, "edge0": m0, "edge": m, "parts": parts,
+                                    "held": f"הסוכן החזיר ל־×{float(ar['action']['value']):g} אחרי בדיקת הבוט השלם"}
+                continue
             if target < cur and not own_back and not fixes_failed(bot, c):
                 # not yet: first a fix - the strategy goes first in its agent's test queue
                 out["combos"][c] = {"base": base, "now": cur, "target": target, "edge0": m0, "edge": m, "parts": parts,

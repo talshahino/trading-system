@@ -458,6 +458,37 @@ def cut_hurts(bot, combo, cur, val):
     return None
 
 
+AGENT_RAISE_DAYS = 14
+
+
+def agent_raise(decisions, bot, combo, now=None):
+    """A bot agent's risk card that took a strategy's risk UP after testing the whole bot, in the last AGENT_RAISE_DAYS days:
+    that decision, else None. The automatic cuts (agents/edge_risk.py, agents/loss_review.py, the morning review) hold
+    while it stands: they know the strategy's edge, the card knows what the cut does to the bot (manager, 18.11.2026: bot 4
+    BK07 EURUSD went back to x0.7 at 07:07 on the replay +152.07% / fall 5.48% against +151.87% / 5.75% at x0.5, and the loss
+    review cut it to x0.5 again at 07:25, before the card's other half, SC002 EURUSD, was applied on the bots' computer)."""
+    now = pd.Timestamp.now(tz="UTC") if now is None else now
+    by_id = {d.get("id"): d for d in decisions}
+    best = None
+    for d in decisions:
+        a = d.get("action") or {}
+        if not (d.get("type") == "risk" and d.get("bot") == bot and a.get("combo") == combo and a.get("kind") == "mult"
+                and d.get("card_decision") and d.get("decision") == "approved" and not d.get("undone")):
+            continue
+        card = by_id.get(d["card_decision"]) or {}
+        if card.get("undone") or card.get("decision") != "approved" or a.get("value") is None:
+            continue
+        if card.get("kind") != "risk" or d.get("star"):
+            continue                                  # only the agent's own risk card, not the risk of a new / improved version
+        if float(a["value"]) <= float(a["prev"] if a.get("prev") is not None else 1.0) + 1e-9:
+            continue                                  # a cut or a same-level card is not a raise
+        if (now - pd.Timestamp(d["at"])).total_seconds() > AGENT_RAISE_DAYS * 86400:
+            continue
+        if best is None or d["at"] > best["at"]:
+            best = d
+    return best
+
+
 def side_conflicts(bot, cfg=None):
     """A pattern in the bots' own trades (13.11.2026): a trade opened while ANOTHER strategy of the same bot holds the
     opposite side of the same instrument. On the demo (bot 1, USDJPY 12.11: SE02 buy and TV11 sell both stopped within

@@ -806,6 +806,10 @@ def decide(bots, now=None):
                     continue                                          # first fix (user, 12.11.2026); cut only after that failed
                 if kind == "mult" and bot in NO_RISK_DOWN and float(val) < mult:
                     continue                                          # user: never lower bot 3's risk
+                if kind == "mult" and float(val) < mult:
+                    from agents import portfolio_check as PC
+                    if PC.agent_raise(list(old.values()) + new, bot, combo, now):
+                        continue                                      # the bot's agent raised it after replaying the whole bot
                 if kind == "mult" and (c.get("trades") or 0) < MIN_TRADES_MULT:
                     continue                                          # too few live trades to move the risk yet
                 if kind == "mult" and float(val) > mult and loss_hold(bot, combo):
@@ -850,6 +854,34 @@ def decide(bots, now=None):
                         "שהיתרון יגדל או שיימצא תיקון. מעכשיו בדיקת הבוקר לא מעלה אסטרטגיה כזו.",
                  "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
                  "action": {"bot": bot, "combo": combo, "kind": "mult", "value": v, "prev": float(m_now)}})
+    # 2c) repair: an automatic cut that came right after a bot agent's whole-bot raise goes back to the agent's level, once,
+    # only when the replay of the whole bot says the cut adds risk (manager, 18.11.2026: BK07 EURUSD in bot 4)
+    from agents import portfolio_check as PC
+    latest = {}
+    for d in sorted(list(old.values()) + new, key=lambda x: x.get("at", "")):
+        a = d.get("action") or {}
+        if d.get("type") == "risk" and a.get("kind") == "mult" and a.get("combo") and d.get("decision") == "approved" \
+                and d["id"] not in uundo and not d.get("undone"):
+            latest[(d["bot"], a["combo"])] = d
+    for (bot, combo), d in sorted(latest.items()):
+        if not (d.get("loss_report") or d.get("edge_risk")):
+            continue
+        r = PC.agent_raise(list(old.values()) + new, bot, combo, now)
+        if not r or r["id"] in uundo or r.get("card_decision") in uundo or r["at"] >= d["at"]:
+            continue
+        v, m_now = float(r["action"]["value"]), float(((cur.get(bot) or {}).get("mult") or {}).get(combo, 1.0))
+        did = _did("agentraise", r["id"], d["id"])
+        if did in old or did in uundo or abs(m_now - float(d["action"]["value"])) > 0.005 or v <= m_now + 0.005:
+            continue
+        hurt = PC.cut_hurts(bot, combo, v, m_now)
+        if not hurt:
+            continue
+        add({"id": did, "bot": bot, "type": "risk", "kind": "mult", "combo": combo,
+             "title": f"{combo}: סיכון חוזר ל־×{v:g} - ההורדה האוטומטית באה אחרי בדיקת הבוט השלם של הסוכן",
+             "decision": "approved", "card_decision": r.get("card_decision"),
+             "why": f"המנהל: הסוכן של הבוט החזיר ל־×{v:g} אחרי בדיקת הבוט השלם, והכלל האוטומטי הוריד שוב ל־×{m_now:g}. {hurt}.",
+             "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+             "action": {"bot": bot, "combo": combo, "kind": "mult", "value": v, "prev": m_now}})
     # 3) bot 7's account reset (user, 12.11.2026): the manager decides it on a material change of bot 7's strategies,
     # stops resetting by itself after two stable weeks (then it asks), and archives the trades first (agents/reset_rule.py)
     try:

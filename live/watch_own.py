@@ -51,6 +51,78 @@ FUT_F = LIVE / f"{FUT_NAME}_state.json"
 SCOUT_NAME = "watch_scout"      # 5ב (17.11.2026): bot 5's scout strategies in their own virtual account
 SCOUT_F = LIVE / f"{SCOUT_NAME}_state.json"
 SACCT_V = 1
+# A trade's size is decided once, when it opens (bot 5's smart agent, 18.11.2026). The state keeps only the last KEEP closed
+# trades of both accounts, so a trade that closed after a long hold fell out of the list at once, came back from the next
+# refresh with no memory of its size, and was sized again at today's full risk: 5ב's SC501 risked $12.30 and made 10.6R =
+# $130, and the ledger booked $4,491. The account remembers each size ("sized": {id: dollars, or the reason it was skipped}).
+SIZED_KEEP = 600
+
+
+def size_recall(acct, k, rec):
+    """Give a trade the size the account already decided for it; a closed trade the account booked before this memory
+    existed gets the size its booked result implies, so the booking stays as it is."""
+    if "risk_usd" in rec or "skipped" in rec:
+        return
+    v = (acct.get("sized") or {}).get(k)
+    if isinstance(v, str):
+        rec["skipped"] = v
+    elif v:
+        rec["risk_usd"] = v
+    elif rec.get("status") == "closed" and rec.get("r"):
+        for x in acct.get("ledger") or []:
+            if x["id"] == k and x.get("pnl"):
+                rec["risk_usd"] = round(abs(float(x["pnl"]) / float(rec["r"])), 2)
+                return
+
+
+def size_remember(acct, k, rec):
+    """Keep the decision of a trade that opened (its dollars at risk, or why it was not taken)."""
+    if rec.get("status") not in ("open", "closed"):
+        return
+    v = rec.get("risk_usd") or (rec.get("skipped") if rec.get("tal") else None)   # the old tracks are never counted anyway
+    if not v:
+        return
+    m = acct.setdefault("sized", {})
+    m[k] = v
+    while len(m) > SIZED_KEEP:
+        m.pop(next(iter(m)))
+
+
+# the eight 5ב trades booked at the wrong size until 18.11.2026 (the size each opened with, the result in dollars)
+REPAIR_5B_1811 = {"US100|SC480|15Min|202611172000|sc:SC480|15Min|US100": (70.0, -72.27),
+                  "US100|SC480|5Min|202611172000|sc:SC480|5Min|US100": (70.0, -72.27),
+                  "GER40|SC480|5Min|202611171800|sc:SC480|5Min|GER40": (70.0, 34.36),
+                  "XAUUSD|IB034|15Min|202611171900|sc:IB034|15Min|XAUUSD": (10.5, -2.6),
+                  "XAUUSD|SC432|15Min|202611171845|sc:SC432|15Min|XAUUSD": (10.5, 20.74),
+                  "XAUUSD|SC432|15Min|202611172000|sc:SC432|15Min|XAUUSD": (10.5, 20.84),
+                  "XAUUSD|SC501|5Min|202611171850|sc:SC501|5Min|XAUUSD": (12.3, 130.48),
+                  "XAUUSD|SC317|15Min|202611171945|sc:SC317|15Min|XAUUSD": (70.0, 305.38)}
+
+
+def repair_5b(sacc, trades, now):
+    """Once: put the eight trades back at their real size, in the ledger, the trade list and the equity curve."""
+    if sacc.get("repair_1811") or sacc.get("v") != SACCT_V:
+        return 0.0
+    gone, moved = 0.0, []
+    for x in sacc.get("ledger") or []:
+        fix = REPAIR_5B_1811.get(x["id"])
+        if fix:
+            d = float(x["pnl"]) - fix[1]
+            gone += d
+            moved.append((x.get("fixed") or x["exit_time"], d))
+            x["pnl"], x["fixed"] = fix[1], now
+    for k, (risk, pnl) in REPAIR_5B_1811.items():
+        sacc.setdefault("sized", {})[k] = risk
+        if k in trades:
+            trades[k].update({"risk_usd": risk, "pnl": pnl})
+    def booking(t):      # the minutes around a wrong booking: the curve moved there before the entry's last "fixed" time
+        return any(pd.Timestamp(f) - pd.Timedelta(minutes=10) <= pd.Timestamp(t) <= pd.Timestamp(f) for f, _ in moved)
+    sacc["eq_curve"] = [p for p in sacc.get("eq_curve") or [] if not booking(p[0])]
+    for p in sacc["eq_curve"]:
+        off = sum(d for t, d in moved if t <= p[0])
+        p[1], p[2] = round(p[1] - off, 2), round(p[2] - off, 2)
+    sacc["repair_1811"] = now
+    return round(gone, 2)
 VARIANT = (2.0, False, "1m", "struct")
 # wide track (user, 09.11.2026: "I want more trades, it's scalping"): the same rules with a weaker candle-body filter
 # (1.8 instead of 2.5 x the average body) - about 4x the setups in the backtest (3.6 a week on these 16 instruments
@@ -1362,6 +1434,11 @@ def main():
             if not scout5_combo(t.get("tal")):
                 for f in ("risk_usd", "skipped", "pnl", "pnl_now"):
                     t.pop(f, None)
+    gone_ = repair_5b(sacc, trades, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
+    if gone_:
+        log(f"5b ledger repaired: {gone_:+.2f} booked at the wrong size removed")
+    for t in trades.values():                                 # what the accounts decided before they had a memory
+        size_remember(sacc if scout5_combo(t.get("tal")) else acc, t["id"], t)
     cur = [acc]               # the account the trade in hand belongs to: bot 5 (gap method) or 5ב (scout)
 
     def balance():
@@ -1629,6 +1706,7 @@ def main():
                     for f in ("risk_usd", "skipped"):
                         if f in old:
                             rec[f] = old[f]
+                    size_recall(A_, k, rec)
                     if "risk_usd" not in rec and "skipped" not in rec:
                         if not rec.get("tal"):
                             # only the user's gap method counts since 12.11.2026 (the old tracks are shown, not counted)
@@ -1684,6 +1762,7 @@ def main():
                                 rec["skipped"] = "room"
                             else:
                                 rec["risk_usd"] = round(min(want_, room_), 2)
+                    size_remember(A_, k, rec)
                     if rec.get("risk_usd"):
                         if rec["status"] == "closed" and rec.get("r") is not None:
                             rec["pnl"] = round(rec["r"] * rec["risk_usd"], 2)

@@ -1732,6 +1732,129 @@ def census6(budget_s):
             "note": "% of the losing trades that first reached +0.5R / +1R / half the way to the target"}
 
 
+def whole6(budget_s):
+    """Whole micro contracts against what the tests book (bot 6's smart agent, 18.11.2026 night). A test's R assumes any
+    share of a position: half out at +1R, a ladder of 4 entries. The account trades whole contracts, and at 0.12% most
+    gap trades hold one, so card d1d0282628e1 (4 hours / 1 hour, EXIT p50_1r on LADDER 4) may be booking half of one
+    contract. Per running track, the rules as the live bot runs them, the three indices, the contracts live/fut_account
+    would size: how many trades are taken and with how many contracts; for a track with a partial exit its result as
+    booked, with the part cut to whole contracts (k = int(n x share), the rest as the break-even version of the same
+    level), with no part at all; for a laddered track the same with one entry. % of $100K, to 2025 and on 2026. A census:
+    no choice is made here, and nothing changes in the trading. Kept a week unless the rules or the risk change."""
+    import hashlib
+    try:
+        s6 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8"))
+        risks = {k: float(v) for k, v in (s6.get("risk") or {}).items()}
+    except Exception:  # noqa: BLE001
+        risks = {}
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    run = {k: (pn, TG.ftmo_cfg(c)) for k, (pn, c) in live_tracks().items() if pn in pairs and risks.get(k, 0) > 0}
+    sig = hashlib.sha1(json.dumps([run, {k: risks[k] for k in run}], sort_keys=True, default=str).encode()).hexdigest()[:12]
+    try:
+        old = (json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot6") or {}).get("whole_contracts") or {}
+        if old.get("sig") == sig and old.get("state") == "done" \
+                and pd.Timestamp.now(tz="UTC") - pd.Timestamp(old["at"]) < pd.Timedelta(days=7):
+            return old
+    except Exception:  # noqa: BLE001
+        pass
+
+    def versions(c):
+        """{name: cfg} of a track: as it runs, and the forms whole contracts can really hold."""
+        m, out = str(c.get("EXIT", "none")), {"run": c}
+        part = m.startswith("p") and "_" in m
+        lad = str(c.get("LADDER") or "none") != "none"
+        if part:
+            out["be"] = dict(c, EXIT="be" + m.split("_", 1)[1])
+        if lad:
+            out["one"] = dict(c, LADDER="none")
+            if part:
+                out["one_be"] = dict(c, LADDER="none", EXIT="be" + m.split("_", 1)[1])
+        return out
+
+    # the laddered / partial tracks first: they are what the question is about
+    order = sorted(run, key=lambda k: len(versions(run[k][1])), reverse=True)
+    t0, got, cut = time.time(), {}, False
+    for sym in WORLD["symbols"]:
+        if time.time() - t0 > budget_s:
+            cut = True
+            break
+        D = tal_load(sym)
+        if D is None:
+            continue
+        gcs = {}
+        for trk in order:
+            pn, c = run[trk]
+            for nm, cf in versions(c).items():
+                if time.time() - t0 > budget_s:
+                    cut = True
+                    break
+                t = TG.simulate(D, pairs[pn], cf, gcs.setdefault(pairs[pn][0], {}))
+                if len(t):
+                    got.setdefault(trk, {}).setdefault(nm, []).append(t.assign(sym=sym))
+
+    def sized(t, risk):
+        """The contracts live/fut_account.size takes at the starting balance, and $ per 1R of one contract."""
+        t = t.copy()
+        dist, per = np.full(len(t), np.nan), np.full(len(t), np.nan)
+        for i, (sym, cr) in enumerate(zip(t["sym"], t["cost_r"])):
+            _, pv, tick = FA.SPEC[sym]
+            if cr and np.isfinite(cr) and cr > 0:
+                dist[i] = (tick + (FA.COMM + FA.SLIP_TICKS * tick * pv) / pv) / float(cr) * pv
+                per[i] = dist[i] + FA.COMM + FA.SLIP_TICKS * tick * pv
+        t["usd1"] = dist
+        t["n"] = np.minimum(np.floor(FA.INITIAL * risk / per), FA.MAX_MICROS)
+        t["n"] = t["n"].fillna(0).astype(int)
+        return t
+
+    def stats(x, r):
+        """% of $100K of the taken trades, with the trades' own R column r."""
+        x = x[x["n"] > 0]
+        pct = x["n"] * x["usd1"] * x[r] / FA.INITIAL * 100
+        day = pct.groupby(x["time"].dt.strftime("%Y-%m-%d")).sum().sort_index()
+        eq = day.cumsum()
+        return {"taken": int(len(x)), "pct": round(float(pct.sum()), 2), "worst_day": round(float(day.min()), 2) if len(day) else 0.0,
+                "fall": round(float((eq.cummax().clip(lower=0) - eq).max()), 2) if len(day) else 0.0}
+
+    out = {}
+    for trk, vs in got.items():
+        pn, c = run[trk]
+        if "run" not in vs:
+            continue
+        frac = (TG.exit_mode(c, 1.0, 10.0) or (0.0, 0.0))[0]
+        row = {"pair": pn, "risk_pct": round(risks[trk] * 100, 4), "exit": c.get("EXIT", "none"), "ladder": c.get("LADDER", "none")}
+        tabs = {nm: sized(pd.concat(v, ignore_index=True), risks[trk]) for nm, v in vs.items()}
+        for t in tabs.values():
+            t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
+
+        def whole(a, b):
+            """a's trades with the part cut to whole contracts; b = the same trades with no part (the break-even version)."""
+            if b is None or frac <= 0:
+                return a.assign(rw=a["r"])
+            m = a.merge(b.drop_duplicates(["time", "sym"])[["time", "sym", "r"]].rename(columns={"r": "rb"}), on=["time", "sym"], how="left")
+            share = np.floor(m["n"] * frac) / m["n"].where(m["n"] > 0, 1)
+            return m.assign(rw=m["rb"].where(m["rb"].notna(), m["r"]) + (share / frac) * (m["r"] - m["rb"]).fillna(0.0))
+
+        forms = {"booked": (tabs["run"].assign(rw=tabs["run"]["r"]), "rw")}
+        if frac > 0 and "be" in tabs:
+            forms["whole_part"] = (whole(tabs["run"], tabs["be"]), "rw")
+            forms["no_part"] = (tabs["be"].assign(rw=tabs["be"]["r"]), "rw")
+        if "one" in tabs:
+            forms["one_entry_whole"] = (whole(tabs["one"], tabs.get("one_be")), "rw")
+        if "one_be" in tabs:
+            forms["one_entry_no_part"] = (tabs["one_be"].assign(rw=tabs["one_be"]["r"]), "rw")
+        for per, cond in (("train", lambda x: x["time"] < A.SPLIT), ("unseen", lambda x: x["time"] >= A.SPLIT)):
+            b = tabs["run"][cond(tabs["run"])]
+            n_ = b["n"]
+            row[per] = {"trades": int(len(b)), "no_contract": int((n_ < 1).sum()), "one": int((n_ == 1).sum()), "two": int((n_ == 2).sum()),
+                        "three_up": int((n_ >= 3).sum()),
+                        "part_cut": int(((n_ > 0) & (np.floor(n_ * frac) / n_.where(n_ > 0, 1) < frac - 1e-9)).sum()) if frac > 0 else 0,
+                        "forms": {nm: stats(x[cond(x)], col) for nm, (x, col) in forms.items()}}
+        out[trk] = row
+    return {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "sig": sig, "state": "partial" if cut else "done",
+            "tracks": out, "note": "% of $100K at each track's risk, whole contracts as live/fut_account.size; booked = as the tests and "
+                                   "the ledger count it; a ladder's stop distance is its legs' average"}
+
+
 def tal(budget_s):
     t0 = time.time()
     idx0 = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")} if (TAL_DIR / "idx").exists() else {}
@@ -1843,6 +1966,15 @@ def tal(budget_s):
     except Exception as e:  # noqa: BLE001
         STEPS["gaveback_census"] = {"err": str(e)[:300]}
         print(f"tal_gap census failed: {e}")
+    try:            # what whole contracts really hold of the partial exits and ladders (18.11.2026 night)
+        t1 = time.time()
+        doc["bot6"]["whole_contracts"] = whole6(budget_s * 0.1)
+        STEPS["whole_contracts"] = {"done": len(doc["bot6"]["whole_contracts"].get("tracks") or {}),
+                                    "state": doc["bot6"]["whole_contracts"].get("state"),
+                                    "sec": round(time.time() - t1), "budget_sec": round(budget_s * 0.1)}
+    except Exception as e:  # noqa: BLE001
+        STEPS["whole_contracts"] = {"err": str(e)[:300]}
+        print(f"tal_gap whole contracts failed: {e}")
     doc["bot6"]["steps"] = STEPS
     TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     try:            # TREND on what runs, head to head (13.11.2026)

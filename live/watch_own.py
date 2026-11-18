@@ -1003,7 +1003,14 @@ def fmt(name, p):
     return f"{p:.2f}" if not (len(name) == 6 and name.isalpha()) else (f"{p:.3f}" if name.endswith("JPY") else f"{p:.5f}")
 
 
-FUT_WORD = {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה", "breakeven": "ברייק (30% יצאו)"}
+FUT_WORD = {"target": "יעד", "stop": "סטופ", "forced": "סגירה כפויה", "breakeven": "ברייק"}
+
+
+def fut_word(t):
+    """Bot 6's exit in words. "30% out" was written on every break-even exit, also on tracks that take nothing out
+    (t5_1 moves only the stop, 18.11.2026): the share is shown only when the trade really took one."""
+    w = FUT_WORD.get(t.get("reason"), "")
+    return f"{w} ({round(t['part'] * 100)}% יצאו)" if t.get("reason") == "breakeven" and t.get("part") else w
 
 
 def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen, calm=None):
@@ -1041,7 +1048,7 @@ def fut_step(name, df, cst, stop_at, noent, fa, ftrades, fseen, calm=None):
                "entry": x["entry"], "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,
                "setup_t": x["setup_t"], "time": x.get("time"), "exit_time": x.get("exit_time"), "exit": x.get("exit"),
                "reason": x.get("reason"), "r": x.get("r"), "r_now": x.get("r_now"), "gap": x.get("gap"),
-               "geo": x.get("geo") or old.get("geo")}
+               "geo": x.get("geo") or old.get("geo"), "part": x.get("part")}
         if rec["gap"]:
             rec["gap_lo"], rec["gap_hi"] = min(rec["gap"]), max(rec["gap"])
         if rec["geo"] and rec["status"] in ("open", "closed"):
@@ -1330,7 +1337,7 @@ def fut_rec(rec, old, fa, ftrades):
                 rec["sent_close"] = True
                 extra = {"breach_max": " · החשבון נשרף (הפסד מקסימלי)", "breach_daily": " · נגע במגבלה היומית, החשבון נשרף",
                          "passed": " · עבר את ההערכה ✓"}
-                word = FUT_WORD.get(rec.get("reason"), "")
+                word = fut_word(rec)
                 REP.notify(f"בוט 6: נסגרה {side} {lots} {'+' if rec['pnl'] >= 0 else '-'}${abs(rec['pnl']):,.0f}",
                            f"{name} ({tf}) · {word} · יתרה ${fa.balance():,.0f}" + "".join(extra[e] for e in events), tags=["eyes"])
         elif rec["status"] == "open" and rec.get("r_now") is not None:
@@ -1398,7 +1405,7 @@ def fut_state(fa, ftrades, fseen, src):
                         "lots": lots(t), "open_t": t["time"], "open_px": t["entry"], "close_t": t["exit_time"], "close_px": t["exit"],
                         "sl0": t["stop"], "tp0": t["target"], "sl": t["stop"], "tp": t["target"], "mae": t.get("mae_px"), "mfe": t.get("mfe_px"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"), "mfe_way": t.get("mfe_way"),
                         "gross": t["pnl"], "swap": 0, "comm": 0, "net": t["pnl"], "why": t.get("reason") or "",
-                        "reason": FUT_WORD.get(t.get("reason"), ""), "pip": 1.0} for t in counted],
+                        "reason": fut_word(t), "pip": 1.0} for t in counted],
             # the charts only on the newest 60 trades (the state stays small for the app)
             "watch": [t if i < 60 else {k_: v_ for k_, v_ in t.items() if k_ not in ("m15", "m1")} for i, t in
                       enumerate(sorted(ftrades.values(), key=lambda t: t.get("time") or t.get("setup_t") or "", reverse=True))],

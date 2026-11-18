@@ -2461,7 +2461,7 @@ function wbRender(box = $("wbBody")) {
     const save = async take => {
       const cur = WB.marks[id] || ((WB.doc.watch || []).find(x => x.id === id) || {}).mark || {};
       const body = {id, take: take === undefined ? (cur.take ?? null) : take, why: ta ? ta.value.trim() : ""};
-      try { const j = await act("/watch/mark", body); WB.marks[id] = j.mark || body; if (msg) note(msg.id = msg.id || "wm" + Math.random().toString(36).slice(2), "נשמר", true); wbRender(box); }
+      try { const j = await act("/watch/mark", body); WB.marks[id] = j.mark || body; if (take !== undefined) await rvCopy(id, body); if (msg) note(msg.id = msg.id || "wm" + Math.random().toString(36).slice(2), "נשמר", true); wbRender(box); }
       catch (e) { if (msg) { msg.id = msg.id || "wm" + Math.random().toString(36).slice(2); note(msg.id, e.message || "לא נשמר. בדוק שהמחשב מחובר.", false); } }
     };
     card.querySelectorAll("[data-take]").forEach(b => b.onclick = () => save(b.dataset.take));
@@ -2713,6 +2713,12 @@ async function comboFill() {
 }
 const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא ענית בזמן", levels: "לא נכנסה · המחיר כבר עבר את הרמות"};
 const rvNeeded = t => t && t.status === "pending" && t.tal && t.asked && !t.sleep;
+/* the same gap seen by another track (id "<sym>|tal|<dir>|<gap>|<track>"): one question - his answer goes to all of
+   them (user, 18.11.2026: "two trades wait for my mark and the marks tab shows one") */
+const rvSiblings = id => { const g = String(id).split("|").slice(0, 4).join("|");
+  return (WB.doc && WB.doc.watch || []).filter(x => x.id !== id && String(x.id).split("|").slice(0, 4).join("|") === g
+    && x.status === "pending" && x.tal && !String(x.tal).startsWith("sc:")).map(x => x.id); };
+async function rvCopy(id, body) { for (const sid of rvSiblings(id)) { try { const j = await act("/watch/mark", {...body, id: sid}); WB.marks[sid] = j.mark || {...body, id: sid}; } catch (e) {} } }
 function rvPanel(t, dec) {
   const box = $("rvBox"); if (!box) return;
   const m = WB.marks[t.id] || t.mark || {}, buy = t.dir > 0, owner = getRole() !== "viewer";
@@ -2731,7 +2737,7 @@ function rvPanel(t, dec) {
       <div id="rvLv"></div><div class="msg" id="rvMsg"></div></div>`;
   showLtf(m.take === "yes");
   const send = async body => {
-    try { const j = await act("/watch/mark", {id: t.id, ...body}); WB.marks[t.id] = j.mark || body; note("rvMsg", body.take === "no" ? "נשמר: לא נכנסים." : "נשמר: הבוט ייכנס לפי מה שסימנת.", true);
+    try { const j = await act("/watch/mark", {id: t.id, ...body}); WB.marks[t.id] = j.mark || body; rvCopy(t.id, {id: t.id, ...body}); note("rvMsg", body.take === "no" ? "נשמר: לא נכנסים." : "נשמר: הבוט ייכנס לפי מה שסימנת.", true);
       // saved -> a short confirmation and back to the marks screen (user, 17.11.2026)
       rvToast(body.take === "no" ? "נקלט ✓ לא נכנסים" : "נקלט ✓ הבוט ייכנס לפי מה שסימנת");
       setTimeout(() => { if ($("wcPg").classList.contains("on")) $("wcBack").click(); try { if (UI.sub === "wt" && $("dBody")) wbRender($("dBody")); } catch (e) {} }, 700); }

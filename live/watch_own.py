@@ -866,8 +866,19 @@ def learning5(marks):
             "per_track": per, "estimate": int(round(rem / 10.0) * 10)}
 
 
+_PUSHED_G = {}     # "<symbol>|tal|<dir>|<gap>" -> when its question was pushed
+
+
 def review_push(rec):
-    """-> what happened (kept on the trade: "pushed")."""
+    """-> what happened (kept on the trade: "pushed"). One gap seen by two tracks (e.g. 15m/1m and 15m/5m) is one
+    question: one notification (user, 18.11.2026: "two trades wait for my mark and the marks tab has one") - the app
+    copies his answer to the same gap's other tracks."""
+    g_ = str(rec.get("id", "")).rsplit("|", 1)[0]
+    now_ = time.time()
+    if g_ and now_ - _PUSHED_G.get(g_, 0) < 3600:
+        return "same gap - asked once"
+    if g_:
+        _PUSHED_G[g_] = now_
     key = os.environ.get("MANAGER_KEY")
     if not key:
         return "no key"

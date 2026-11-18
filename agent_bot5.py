@@ -986,8 +986,20 @@ def guard5(tidx):
                                        "dir": a[:, 2].astype(int), "r": a[:, 3], "trk": k, "sym": combo.split("|")[-1]}))
     scout = pd.concat(srows, ignore_index=True) if srows else gap.iloc[:0][["time", "out", "dir", "r", "trk", "sym"]]
     risk = {t_: float(rk.get(t_, 0.0028)) * sc * 100 for t_ in set(gap["trk"])}
-    risk.update({t_: float(rk.get(t_, rk.get("scout", 0.004))) * 100 for t_ in set(scout["trk"])})
-    allt = pd.concat([gap[["time", "out", "dir", "r", "trk", "sym"]], scout], ignore_index=True)
+    # as live/watch_own.py sizes them (18.11.2026): one budget per instrument ("scout_per_symbol") split among the
+    # instrument's strategies, unless a strategy has its own "scout:<combo>" risk. Before this the replay took 0.4% for
+    # EACH strategy (14 on gold = 5.6% at once): it showed 5ב stopped on 15.1.2026 at -9% while the bot's real sizing
+    # earns +45.9% that year, and autodecide._b5_over_limits reads this replay to hold back bot 5's new strategies.
+    psb = float(rk.get("scout_per_symbol") or 0)
+    per_sym = pd.Series([c.split("|")[-1] for c in (s5.get("scout") or {})]).value_counts().to_dict()
+
+    def scout_risk(t_):
+        combo = t_.split(":", 1)[1]
+        if t_ in rk:
+            return float(rk[t_])
+        return psb / per_sym[combo.split("|")[-1]] if 0 < psb <= 0.02 else float(rk.get("scout", 0.004))
+    risk.update({t_: scout_risk(t_) * 100 for t_ in set(scout["trk"])})
+    allt =pd.concat([gap[["time", "out", "dir", "r", "trk", "sym"]], scout], ignore_index=True)
     res = {"tracks": sorted(set(gap["trk"])), "scouts": sorted(s5.get("scout") or {}), "missing": missing,
            "stored_rules": stored, "scale": sc, "risk_pct": {k_: round(v_, 4) for k_, v_ in risk.items()},
            "train_from": str(G5_FROM.date())}

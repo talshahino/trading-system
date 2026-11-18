@@ -826,6 +826,15 @@ def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None, ref=None):
         comm = (px * float(spec["commission"]) / (float(spec["contractSize"]) * U.BASE_USD.get(spec["code"].split("/")[0], 1.0))
                 if spec["commissionType"] == "flat_USD" else px * 2 * float(spec["commission"]) / 100.0)
         be = (0.6, ((spread_now or 0.0) + comm) / px)
+        # the no-target protection the strategies were tested with (+2.5R -> entry, +3R -> +1R; live/runner.PROTECT),
+        # missing here as in bot 5ב until 18.11.2026
+        fn1 = fn
+
+        def fn(dd, fn1=fn1, scout_=(sid not in STRATS and sid not in SHOCK and sid not in SURPRISE)):
+            lo_, sh_, plan_ = fn1(dd)
+            if scout_ and plan_.get("target") is None and plan_.get("be_r") is None and plan_.get("lock_r") is None and not plan_.get("trail2_r"):
+                plan_ = {**plan_, "be_r": 2.5, "lock_r": (3.0, 1.0)}
+            return lo_, sh_, plan_
         t = R.run(d, fn, 0.0, breakeven=be, session_exit=fe if fe.any() else None)
         if t is None or not len(t):
             continue

@@ -1083,6 +1083,16 @@ def scout5_trades(name, df, sc, cal):
     ex, ne = CAL.masks(d, name, tfm, cal.restricted, cal.holidays)
     sess = sess | np.asarray(ex, bool)
     fn = CAL.blocked(R.STRATEGIES[sc["sid"]][1], np.asarray(ne, bool))
+    # the no-target protection the strategies were tested with (agent_portfolio: "without a target ber2.5") and bots
+    # 1-4 trade with (live/runner.PROTECT): the stop to the entry at +2.5R, +1R locked at +3R. Missing here until
+    # 18.11.2026 (user: SC317 at +4.5R and SC501 at +11R with the stop still at the full risk)
+    fn0 = fn
+
+    def fn(dd, fn0=fn0):
+        lo_, sh_, plan_ = fn0(dd)
+        if plan_.get("target") is None and plan_.get("be_r") is None and plan_.get("lock_r") is None and not plan_.get("trail2_r"):
+            plan_ = {**plan_, "be_r": 2.5, "lock_r": (3.0, 1.0)}
+        return lo_, sh_, plan_
     px = float(d["c"].median())
     sp = spread5(name, px, sc)
     spec = U.spec(name)

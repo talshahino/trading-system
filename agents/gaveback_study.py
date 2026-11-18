@@ -36,7 +36,10 @@ from agents import conflict_study as CS
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "reports" / "agents" / "gaveback_study.json"
 WAYS = (["asis"] + [f"{k}@{x:g}" for k in ("be", "half") for x in (0.5, 1, 1.5, 2)]
-        + [f"{k}@{x:g}" for k in ("bew", "halfw") for x in (0.5, 0.6)] + ["lock@1", "lock@0.5"])
+        + [f"{k}@{x:g}" for k in ("bew", "halfw") for x in (0.5, 0.6)] + ["lock@1", "lock@0.5"]
+        # trailing far out (user, 18.11.2026: "trades 2, 3, 4 times the risk in profit and the stop still at the full
+        # risk - lower the risk during the trade"): from A R in profit the stop follows B R behind the best price
+        + [f"trl@{a:g}_{b:g}" for a, b in ((2, 1), (2, 1.5), (3, 1), (3, 1.5), (3, 2), (4, 1.5), (4, 2), (5, 2), (5, 3))])
 
 
 def _span(x, m):
@@ -44,6 +47,27 @@ def _span(x, m):
 
 
 def manage(x, bars, kind, th):
+    if kind == "trl":
+        a_, b_ = (float(v) for v in str(th).split("_"))
+        m, h, lo = bars
+        i, j = _span(x, m)
+        if j <= i:
+            return x["r"]
+        d, e, rk = x["dir"], x["entry_px"], x["risk_px"]
+        fav = ((h[i:j] - e) if d > 0 else (e - lo[i:j])) / rk
+        adv = ((lo[i:j] - e) if d > 0 else (e - h[i:j])) / rk
+        best, stop = -np.inf, None
+        for q in range(j - i):
+            if stop is not None and adv[q] <= stop:       # the rule acts from the bar after the one that set it
+                return stop - x["cost_r"]
+            best = max(best, fav[q])
+            if best >= a_:
+                stop = max(stop if stop is not None else -np.inf, best - b_)
+        return x["r"]
+    return _manage(x, bars, kind, th)
+
+
+def _manage(x, bars, kind, th):
     """One trade under one rule, in every market -> its new r."""
     m, h, lo = bars
     i, j = _span(x, m)
@@ -84,7 +108,7 @@ def apply(t, way, bars):
         x["share"] = 1.0
         if way != "asis" and x["sym"] in bars:
             kind, th = way.split("@")
-            x["r"] = manage(x, bars[x["sym"]], kind, float(th))
+            x["r"] = manage(x, bars[x["sym"]], kind, th if kind == "trl" else float(th))
         out.append(x)
     return out
 

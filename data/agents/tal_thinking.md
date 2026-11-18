@@ -236,6 +236,10 @@ What this means for the agents:
 - If bot 1's streak@2 again beats "as today" on BOTH periods with no larger max fall: build it in bot 1 (a card with
   the change, the manager approves) and tell Tal in the app. If not: record the result here and wait for the next
   choppy day. Any other bot only if it passes the same way twice.
+- 18.11.2026 (second choppy day, 17.11; chop_study 44196065261, mgmt_report 44226994100): bot 1 streak@2 earned more
+  on both periods (2025 +112.8 -> +121.8, 2026 +185.5 -> +199.0) but its 2025 fall grew 5.41% -> 5.73% - not passed
+  again, not turned on. streak@3 passed both periods this time (failed on 16.11) - once only. Bots 2-4: less profit.
+  Waiting for the next choppy day; test both.
 
 ## Which gap: the first one, inside the impulse (user, 17.11.2026 15:51-16:09)
 Reviewing bot 5's gap setups: "an impulse built of one candle - there is an impulse, but no gap comes out of it inside the impulse, so there is no trade"; and on GER40: "there is another, higher gap at the start of the impulse (around 26,417) - that is the gap you must reach, the entry is there". For Tal the trade is born from a gap INSIDE the impulse, and the gap that counts is the first one at its start (the origin), not a later one near its end - even when its candle 2 is not exceptionally strong by our threshold. For the agents: test "the first gap of each impulse" (with a lower strength threshold for it) against today's choice (task tal1711review, FIRSTG). He also judges the stop on the high timeframe: a review chart must show enough candles before the impulse and the stop's swing, or he cannot decide (task b5revchart1711). On 17.11 16:44-16:50 (GER40 x3, UK100) he added the second half: "the gap should be higher in the impulse, but if we do enter at this one, the stop must be at the start of the impulse, its very beginning, the highest point" - a later gap inside the impulse is not a reason for a tight stop; its stop belongs beyond the impulse's origin (geo.imp0), the place that proves the move wrong. For the agents: test STOPAT imp0 / imp0late against the 2nd-swing stop, with and without FIRSTG (task b5stopimp1711).

@@ -33,7 +33,9 @@ FAMS = {"size": {"mg05": {"MIN_GAP": 0.05}, "mg10": {"MIN_GAP": 0.1}, "mg15": {"
                  "gl01": {"GAPLEG": 0.01}, "gl02": {"GAPLEG": 0.02}, "gl03": {"GAPLEG": 0.03}, "gl05": {"GAPLEG": 0.05}},
         "gapx": {"full": {"GAPX": "full"}},
         "firstg": {"fg1": {"FIRSTG": "1"}, "fglo": {"FIRSTG": "lo"}},
-        "follow": {"x1": {"FOLLOW": "x1"}, "x2": {"FOLLOW": "x2"}, "x3": {"FOLLOW": "x3"}}}
+        "follow": {"x1": {"FOLLOW": "x1"}, "x2": {"FOLLOW": "x2"}, "x3": {"FOLLOW": "x3"}},
+        # for comparison only: the stop before 18.11.2026 (the 2nd swing), per track - Tal chose the stop, nothing is built from this
+        "stop": {"sw2": {"STOPAT": "sw2"}}}
 
 
 def tracks():
@@ -57,7 +59,10 @@ def ways_of(cfg):
         for w, x in vals.items():
             if "MIN_GAP" in x and x["MIN_GAP"] <= float(cfg.get("MIN_GAP") or 0):
                 continue
-            out[w] = TG._norm(dict(cfg, **x))
+            c = dict(cfg, **x)
+            if x.get("STOPAT") == "sw2":
+                c.pop("IPAD", None)
+            out[w] = TG._norm(c)
     return out
 
 

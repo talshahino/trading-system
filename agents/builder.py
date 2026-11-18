@@ -63,9 +63,22 @@ def _gap_risk_fixed():
         return 0.0
 
 
+def _scout_risk_fixed():
+    """Tal, 18.11.2026: bot 5ב's scout strategies at the risk set at the start (0.4%), no lowered risk per strategy -
+    lowered only when a strategy's live trades fall below its history (data/agents/user_rules.json "bot5_scout_risk")."""
+    try:
+        return float(json.loads((ROOT / "data" / "agents" / "user_rules.json").read_text(encoding="utf-8")).get("bot5_scout_risk") or 0)
+    except Exception:  # noqa: BLE001
+        return 0.0
+
+
 def buildable(c):
     """What a card changes, when it is exactly a setting (else None)."""
     b_ = _buildable(c)
+    sfx = _scout_risk_fixed()
+    if b_ and sfx and b_.get("bot") == "bot5" and b_.get("family") == "risk" \
+            and str(b_.get("track", "")).startswith("scout") and float(b_["to"]) < sfx:
+        return None
     fx = _gap_risk_fixed()
     if b_ and fx and b_.get("bot") == "bot5":
         if b_.get("family") == "flag" and b_.get("key") == "tal_risk_scale" and float(b_["to"]) < 1.0:
@@ -325,6 +338,8 @@ def apply(cfg, b, card_id):
         sc[b["combo"]] = {"since": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "card": card_id}
         rk = cfg.setdefault("risk", {})
         rk.setdefault("scout", 0.004)     # the bot's risk (principle 8)
+        if _scout_risk_fixed():           # Tal, 18.11.2026: every scout at the risk set at the start - no fit, no star
+            return
         # bot 5 (16.11.2026, task b6to5fit1611): as fit6 in bot 6 - a new scout enters at the level the account's
         # whole-bot rounds already gave the scouts, not the bare "scout" 0.4%; the star on top of it
         if fit6(cfg, b["combo"], card_id):

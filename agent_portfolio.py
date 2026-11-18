@@ -63,7 +63,10 @@ COSTS = f"stock-x{STOCK_SPREAD_MULT}+news-minute"
 # no new stock trade in the last 15 minutes of the session, as the live bots (13.11.2026, run_rules.stock_late_mask);
 # results stored before carry no stamp - the whole-bot check drops those entries when it reads them (portfolio_check)
 STOCK_ENTRY = "live15"
-LIVE_RULES = ["--break-exit", "--stock-session-exit", "--news-exit", "--news-minute", "--breakeven", "0.6",
+# FTMO's crypto Saturday maintenance (08:00-12:00 server time) - the live bots close before it, the 24/7 data had no
+# gap there, so the backtest held through it (18.11.2026, agents/crypto_break_study: bot 1's ETH 2026 +69.7R as held,
+# +11.6R as the bot really trades; bot 2's XRP +26.3R -> +4.4R)
+LIVE_RULES = ["--crypto-break", "--break-exit", "--stock-session-exit", "--news-exit", "--news-minute", "--breakeven", "0.6",
               "--stock-spread-mult", str(STOCK_SPREAD_MULT)]
 _NEWS_HIT = {}
 

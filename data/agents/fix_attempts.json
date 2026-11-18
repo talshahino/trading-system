@@ -1179,7 +1179,7 @@
   "verdict": "כל המשפחות נכשלו - כבר כמות מינימלית"
  },
  "bot6|SC072|5Min|US500": {
-  "status": "trying",
+  "status": "fixed",
   "tried": [
    {
     "what": "bot6_world target/stop/time/be",
@@ -1209,6 +1209,13 @@
     "state": "queued on the bots' computer (agent_bot6._sess_cands)"
    },
    {
+    "what": "all 7 families (hours, direction, breakeven, entry, structural stop, partial, pyramid)",
+    "at": "2026-11-18",
+    "state": "none better on both periods",
+    "file": "reports/agents/bot6/scout_families.json",
+    "pending": "no10"
+   },
+   {
     "what": "bot6_world",
     "at": "2026-11-18",
     "variants": 96,
@@ -1227,13 +1234,6 @@
      "t": 0.4,
      "win": 15.1
     }
-   },
-   {
-    "what": "all 7 families (hours, direction, breakeven, entry, structural stop, partial, pyramid)",
-    "at": "2026-11-18",
-    "state": "none better on both periods",
-    "file": "reports/agents/bot6/scout_families.json",
-    "pending": "no10"
    }
   ],
   "at": "2026-11-18"
@@ -1531,6 +1531,32 @@
   ],
   "why": "דוח הפסד 17.11",
   "status": "failed",
+  "at": "2026-11-18"
+ },
+ "bot6|SC536|5Min|US100": {
+  "status": "failed",
+  "tried": [
+   {
+    "what": "bot6_world",
+    "at": "2026-11-18",
+    "variants": 96,
+    "chosen": "town_s1_time_nobe",
+    "train": {
+     "n": 367,
+     "eff_n": 353.9,
+     "mean": 0.1011,
+     "t": 0.79,
+     "win": 31.4
+    },
+    "unseen": {
+     "n": 121,
+     "eff_n": 121.0,
+     "mean": -0.0885,
+     "t": -0.64,
+     "win": 31.5
+    }
+   }
+  ],
   "at": "2026-11-18"
  }
 }

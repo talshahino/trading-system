@@ -23,8 +23,10 @@ from __future__ import annotations
 import argparse
 import json
 import lzma
+import os
 import struct
 import sys
+import threading
 import time
 from pathlib import Path
 
@@ -56,21 +58,28 @@ def plan():
     return list(SYMS)
 
 
-def hour_ticks(inst, h):
-    """One hour of ticks: DataFrame(t, ask, bid) with raw integer prices (scaled later), cached."""
+def fetch_hour(inst, h):
+    """One hour of ticks -> (rows, ok). rows: array(t ms, ask, bid) with raw integer prices (scaled later). ok False = the
+    download failed (a network error, not an hour without ticks): nothing is cached, so the next run tries again. Until
+    18.11.2026 a failed download was cached as an empty hour for good. Safe to call from several threads."""
     f = CACHE / inst / f"{h.strftime('%Y%m%d%H')}.npy"
     if f.exists():
-        a = np.load(f)
-        return a
+        try:
+            a = np.load(f)
+            if len(a):
+                return a, True
+        except Exception:  # noqa: BLE001  (a file cut by a restart: download it again)
+            pass
     url = f"https://datafeed.dukascopy.com/datafeed/{inst}/{h.year}/{h.month - 1:02d}/{h.day:02d}/{h.hour:02d}h_ticks.bi5"
-    data = b""
+    data, ok = b"", False
     for k in range(4):
         try:
             r = requests.get(url, timeout=30, headers={"User-Agent": "Mozilla/5.0"})
             if r.status_code == 200:
-                data = r.content
+                data, ok = r.content, True
                 break
             if r.status_code == 404:
+                ok = True
                 break
         except Exception:  # noqa: BLE001
             pass
@@ -83,10 +92,19 @@ def hour_ticks(inst, h):
             recs = struct.iter_unpack(">IIIff", raw[:n * 20])
             rows = np.array([(h.value / 1e6 + ms, ask, bid) for ms, ask, bid, _, _ in recs], dtype=np.float64)  # ms since epoch
         except Exception:  # noqa: BLE001
-            rows = np.zeros((0, 3), dtype=np.float64)
-    f.parent.mkdir(parents=True, exist_ok=True)
-    np.save(f, rows)
-    return rows
+            return np.zeros((0, 3), dtype=np.float64), False
+    if ok:
+        f.parent.mkdir(parents=True, exist_ok=True)
+        tmp = f.with_suffix(f".{threading.get_ident()}.tmp")
+        with open(tmp, "wb") as fh:
+            np.save(fh, rows)
+        os.replace(tmp, f)
+    return rows, ok
+
+
+def hour_ticks(inst, h):
+    """One hour of ticks: array(t, ask, bid) with raw integer prices (scaled later), cached."""
+    return fetch_hour(inst, h)[0]
 
 
 def run(sym):

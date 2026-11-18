@@ -27,6 +27,7 @@ import argparse
 import json
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -40,6 +41,8 @@ HOLD_MS = 30 * 60_000
 OUT = ROOT / "reports" / "agents" / "bot7" / "straddle_ticks.json"
 ROWS = ROOT / "reports" / "agents" / "bot7" / "straddle_ticks"
 STALE_DAYS = 7
+BATCH = 24                   # trades per round of parallel downloads
+WORKERS = 6                  # parallel downloads
 SPLIT = pd.Timestamp("2026-01-01", tz="UTC")
 
 
@@ -157,6 +160,13 @@ def _load(sym):
         return []
 
 
+def _hours(rel):
+    """The hours of ticks one release needs (the minute before it may be in the hour before)."""
+    t = pd.Timestamp(rel)
+    h0 = t.floor("h")
+    return ([h0 - pd.Timedelta(hours=1)] if t.minute == 0 else []) + [h0, h0 + pd.Timedelta(hours=1)]
+
+
 def run(minutes):
     from agents import news_ticks as NT
     ROWS.mkdir(parents=True, exist_ok=True)
@@ -169,35 +179,39 @@ def run(minutes):
     left = [x for x in todo if (x["sym"], x["rel"]) not in seen]
     print(f"EV04 ticks: {len(todo)} trades, {len(left)} left", flush=True)
     t_end = time.time() + minutes * 60
-    scale = {}
-    for n, x in enumerate(left):
+    scale, failed = {}, 0
+    for k in range(0, len(left), BATCH):
         if time.time() > t_end:
-            print(f"EV04 ticks: time budget, {len(left) - n} left", flush=True)
+            print(f"EV04 ticks: time budget, {len(left) - k} left", flush=True)
             break
-        sym, t = x["sym"], pd.Timestamp(x["rel"])
-        h0 = t.floor("h")
-        hours = [h0 - pd.Timedelta(hours=1)] if t.minute == 0 else []     # the minute before the release may be the hour before
-        hours += [h0, h0 + pd.Timedelta(hours=1)]
-        tk = np.concatenate([NT.hour_ticks(_inst(sym), h) for h in hours])
-        row = {"rel": x["rel"], "dir_bar": x["dir"], "r_bar": x["r_bar"], "gross_bar": x["gross_bar"], "atr": x["atr"]}
-        if len(tk) < 50:
-            row["out"] = "noticks"
-        else:
-            if sym not in scale:
-                scale[sym] = 10.0 ** round(np.log10(tk[0, 2] / x["ref"]))
-            ts, ask, bid = tk[:, 0], tk[:, 1] / scale[sym], tk[:, 2] / scale[sym]
-            buy, sell = x["ref"] + x["x"] * x["atr"], x["ref"] - x["x"] * x["atr"]
-            t0 = t.value / 1e6
-            comm = _comm_px(sym, x["ref"])
-            for L in LATENCY_MS:
-                res = replay(ts, ask, bid, t0, buy, sell, latency=L, cancel_ms=x["cancel"] * 60_000, comm_px=comm)
-                row[f"L{L}"] = {k: (round(v, 6) if isinstance(v, float) else v) for k, v in res.items()}
-        have[sym].append(row)
-        if n % 25 == 0:
-            for s_, rows in have.items():
-                (ROWS / f"{s_}.json").write_text(json.dumps(rows), encoding="utf-8")
-    for s_, rows in have.items():
-        (ROWS / f"{s_}.json").write_text(json.dumps(rows), encoding="utf-8")
+        batch = left[k:k + BATCH]
+        need = sorted({(_inst(x["sym"]), h) for x in batch for h in _hours(x["rel"])}, key=str)
+        with ThreadPoolExecutor(WORKERS) as ex:             # the downloads were one by one: 8 trades in a whole round
+            got = dict(zip(need, ex.map(lambda q: NT.fetch_hour(*q), need)))
+        for x in batch:
+            sym = x["sym"]
+            parts = [got[(_inst(sym), h)] for h in _hours(x["rel"])]
+            if not all(ok for _, ok in parts):              # a failed download is not "no ticks": the next run retries it
+                failed += 1
+                continue
+            tk = np.concatenate([p_ for p_, _ in parts])
+            row = {"rel": x["rel"], "dir_bar": x["dir"], "r_bar": x["r_bar"], "gross_bar": x["gross_bar"], "atr": x["atr"]}
+            if len(tk) < 50:
+                row["out"] = "noticks"
+            else:
+                if sym not in scale:
+                    scale[sym] = 10.0 ** round(np.log10(tk[0, 2] / x["ref"]))
+                ts, ask, bid = tk[:, 0], tk[:, 1] / scale[sym], tk[:, 2] / scale[sym]
+                buy, sell = x["ref"] + x["x"] * x["atr"], x["ref"] - x["x"] * x["atr"]
+                t0 = pd.Timestamp(x["rel"]).value / 1e6
+                comm = _comm_px(sym, x["ref"])
+                for L in LATENCY_MS:
+                    res = replay(ts, ask, bid, t0, buy, sell, latency=L, cancel_ms=x["cancel"] * 60_000, comm_px=comm)
+                    row[f"L{L}"] = {k_: (round(v, 6) if isinstance(v, float) else v) for k_, v in res.items()}
+            have[sym].append(row)
+        for s_, rows in have.items():                       # after every batch: a restart loses one batch at most
+            (ROWS / f"{s_}.json").write_text(json.dumps(rows), encoding="utf-8")
+        print(f"EV04 ticks: {min(k + BATCH, len(left))}/{len(left)} done, {failed} failed downloads", flush=True)
     report(total=len(todo))
     return True
 

@@ -1571,12 +1571,19 @@ function bar(p) {
 const STRAT_HE = {TAL: "שיטת הגאפ", OWN: "השיטה שלך", FUT: "השיטה שלך"};
 /* bot 7 (user, 17.11.2026): what each trade is about - the release (time, currency, title, forecast / actual, the
    direction it pointed and whether the trade went that way), a shock, or a strategy with a release only nearby */
-function infoLine(f) {
+function infoLine(f, x) {
+  /* every trade of bot 7, open or closed (user, 18.11.2026): which release, for which currency / asset, the direction
+     it pointed (long / short) and the trade's own side */
   if (!f || !f.kind) return "";
-  if (f.kind === "shock") return `<div class="ss">⚡ זעזוע ${esc(f.shock_dir || "")} ב־${esc((f.shock_t || "").slice(6))}, העסקה נגדו</div>`;
-  if (!f.rel_t) return "";
+  const dir = x ? (x.side ? (x.side === "buy" ? 1 : -1) : (+x.dir || 0)) : 0;
+  const me = dir ? ` · העסקה: ${dir > 0 ? "לונג" : "שורט"}` : "";
+  if (f.kind === "shock") return `<div class="ss">⚡ זעזוע ${esc(f.shock_dir || "")} ב־${esc((f.shock_t || "").slice(6))} בלי פרסום${me} (נגד הזעזוע)</div>`;
+  if (!f.rel_t) return f.kind === "other" ? `<div class="ss mut">בלי פרסום קשור${me}</div>` : "";
   const it = (f.items || [])[0] || {};
-  return `<div class="ss">${f.kind === "other" ? "פרסום קרוב: " : "📰 "}${esc(f.rel_t.slice(6))} ${esc(it.cur || "")} ${esc(it.title || "")}${f.expect ? ` · צפוי: ${esc(f.expect)} · ${f.matched ? "העסקה איתו" : "העסקה נגדו"}` : it.actual ? ` · ${esc(it.verdict || "")}` : ""}</div>`;
+  const exp = f.expect ? (f.expect === "עלייה" ? "לונג" : "שורט") : null;
+  const way = exp ? ` · צפוי: ${exp}${dir ? (f.matched ? " · העסקה איתו ✓" : " · העסקה נגדו") : ""}`
+    : (it.g ? " · לנכס אין כיוון חד" : "");
+  return `<div class="ss">${f.kind === "other" ? "פרסום קרוב: " : "📰 "}${esc(f.rel_t.slice(6))} · ${esc(it.cur || "")} ${esc(it.title || "")}${it.verdict ? ` (${esc(it.verdict)})` : ""}${way}${me}</div>`;
 }
 function infoCard(f) {
   if (!f || !f.kind) return "";
@@ -1589,11 +1596,11 @@ function infoCard(f) {
 }
 function stratLine(x) {
   const p = String((x && x.combo) || "").split("|");
-  if (p.length < 3) return "";
+  if (p.length < 3) return infoLine(x && x.info, x);
   // short: 1m / 5m / 15m / 1H / 4H (user, 16.11.2026)
   const sh = v => !v ? "" : String(v).replace(/^(\d+)Min$/, "$1m").replace(/^(\d+)Hour$/, "$1H").replace(/^(\d+)Day$/, "$1D").replace(/^(\d+)h$/, "$1H").replace(/^(\d+)d$/, "$1D");
   const tf = sh(x.entry_tf || (p[0] === "TAL" ? (p[1].match(/^\d+(?:Min|Hour)(\d+[mh])$/) || [])[1] : p[1]));
-  return `<div class="ss">${esc(STRAT_HE[p[0]] || p[0])}${tf ? " · " + esc(tf) : ""}</div>` + infoLine(x.info);   // "SC326 · 5m" (user, 16.11.2026)
+  return `<div class="ss">${esc(STRAT_HE[p[0]] || p[0])}${tf ? " · " + esc(tf) : ""}</div>` + infoLine(x.info, x);   // "SC326 · 5m" (user, 16.11.2026)
 }
 const trRow = (side, t, sym, pl, key, extra = "", x = null) => `<div class="tr" data-t="${esc(key)}"><div class="tg">${side === "buy" ? ICON.up : ICON.down}
   <div class="d">${t ? dOnly(t) + "<br>" + tOnly(t) : "—"}</div>

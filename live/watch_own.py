@@ -283,6 +283,15 @@ def load_settings():
                     v = rk.get(trk, rk.get("tal"))
                     if v is not None and 0 <= float(v) <= 0.02:
                         TAL5_RISK[trk] = float(v)
+                # a risk per track AND instrument (user, 18.11.2026: "tell the instruments apart against each track's
+                # timeframes - lower what is weaker, raise what is better"): "<track>|<symbol>" in "risk" wins
+                for k_, v in rk.items():
+                    if "|" in str(k_) and str(k_).split("|")[0] in TAL5:
+                        try:
+                            if 0 <= float(v) <= 0.02:
+                                TAL5_RISK[str(k_)] = float(v)
+                        except (TypeError, ValueError):
+                            pass
                 SCOUT5.clear()
                 from agents import rules_agent as R_
                 for combo_, e_ in (d.get("scout") or {}).items():
@@ -1634,7 +1643,7 @@ def main():
                             # Near a limit the risk shrinks (Tal: lower gradually, not block); under a quarter of the
                             # trade's risk left -> not taken.
                             # tal_risk_scale is the gap tracks' factor; a scout strategy has its own risk
-                            want_ = bal * TAL5_RISK.get(rec["tal"], RISK_TAL5) * (TAL5_SCALE[0] if gap_ else 1.0)
+                            want_ = bal * TAL5_RISK.get(f"{rec['tal']}|{name}", TAL5_RISK.get(rec["tal"], RISK_TAL5)) * (TAL5_SCALE[0] if gap_ else 1.0)
                             open_ = sum(float(o.get("risk_usd") or 0) for kk_, o in trades.items()
                                         if kk_ != k and o.get("status") == "open" and o.get("risk_usd")
                                         and bool(scout5_combo(o.get("tal"))) == sc_)          # the same account's

@@ -1343,10 +1343,12 @@ function botTalk(s) {
   const LN = s && s.learn, gt = (o, h) => { const e = Object.entries(o || {}); return e.length ? `<tr><th colspan="4">${h}</th></tr>` + e.map(([k, g]) => `<tr><td>${esc(k)}</td><td>${g.n}</td><td class="${g.r >= 0 ? "pos" : "neg"}">${g.r >= 0 ? "+" : ""}${g.r}R</td><td>${Math.round(100 * g.win / g.n)}%</td></tr>`).join("") : ""; };
   const l7Html = LN && LN.n ? `<div class="h4" style="margin-top:18px">מה הבוט למד מהעסקאות (${LN.n} עסקאות)</div><div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th></th><th>עסקאות</th><th>R</th><th>הצלחה</th></tr>
       ${gt(LN.by_kind, "לפי סוג")}${gt(LN.by_way, "פרסום: העסקה מול הכיוון שלו")}${gt(LN.by_verdict, "הנתון מול הצפי")}${gt(LN.by_sid, "לפי אסטרטגיה")}</table></div></div>` : "";
-  box.innerHTML = rvHtml + lnHtml + l7Html + `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
+  const cbHtml = L ? `<div id="comboCard"></div>` : "";
+  box.innerHTML = rvHtml + lnHtml + cbHtml + l7Html + `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
       <textarea id="btTxt" rows="3" placeholder="דבר או כתוב לסוכן על הבוט כולו: מה ראית היום, מה מפריע לך, מה לבדוק…"></textarea>
       <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="btMic">🎙 הקלטה</button><button class="btn" id="btSave">שלח לסוכן</button></div>
       <div class="msg mut" id="btMsg"></div><div id="btList"></div></div>`;
+  if (L) comboFill();
   tradeNotes({id: "talk"}, "bt", UI.cur);
 }
 $("dSubt").onclick = e => { const b = e.target.closest("[data-s]"); if (b) { if (UI.sub === "ov") SNAP.ov = $("dBody").innerHTML.replace(/\sid="[^"]*"/g, ""); UI.sub = b.dataset.s; $("dBody").innerHTML = ""; renderDet();
@@ -2658,6 +2660,19 @@ function showRecent(P, tFirst, n) {
   let from = len - n;
   if (tFirst != null && isFinite(tFirst)) { let i = bs.findIndex(b => b[0] >= tFirst); if (i >= 0) from = Math.min(from, Math.max(0, i - 8)); }
   P.ch.timeScale().setVisibleLogicalRange({from, to: len + 3});
+}
+/* bot 5: the gap method by track x instrument (user, 18.11.2026: "which instrument is good for which timeframes") -
+   reports/agents/bot5/combo_stats.json (agents/tal_combo.py): backtest 2025 / 2026, live, his answers, the verdict */
+async function comboFill() {
+  const el = $("comboCard"); if (!el) return;
+  let d = null;
+  try { const r = await fetch(`https://raw.githubusercontent.com/talshahino/trading-system/main/reports/agents/bot5/combo_stats.json?t=${Math.floor(Date.now() / 300000)}`, {cache: "no-store"}); if (r.ok) d = await r.json(); } catch (e) {}
+  if (!d || !$("comboCard")) return;
+  const f = v => v == null ? "—" : (v >= 0 ? "+" : "") + v.toFixed(2);
+  const V = {strong: ["חזק", "pos"], weak: ["חלש", "neg"], none: ["", ""]};
+  const rows = d.rows.filter(x => x.y2025.n + x.y2026.n >= 20).map(x => `<tr><td>${esc(x.sym)}</td><td>${esc(x.pair)}</td><td class="${(x.y2025.mean || 0) >= 0 ? "pos" : "neg"}">${f(x.y2025.mean)} <small class="mut">(${x.y2025.n})</small></td><td class="${(x.y2026.mean || 0) >= 0 ? "pos" : "neg"}">${f(x.y2026.mean)} <small class="mut">(${x.y2026.n})</small></td><td>${x.live.n ? `${f(x.live.mean)} <small class="mut">(${x.live.n})</small>` : "—"}</td><td class="${V[x.verdict][1]}">${V[x.verdict][0]}</td></tr>`).join("");
+  $("comboCard").innerHTML = `<div class="h4" style="margin-top:18px">איזה נכס טוב לאיזה צמד גרפים</div><div class="mut" style="margin-bottom:6px">R ממוצע לעסקה (מספר עסקאות). "חזק" / "חלש" רק כשזה מחזיק גם ב־2025 וגם ב־2026. ${esc((d.check || {}).note || "")}</div>
+    <div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th>נכס</th><th>צמד גרפים</th><th>2025</th><th>2026</th><th>חי</th><th></th></tr>${rows}</table></div></div>`;
 }
 const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא ענית בזמן", levels: "לא נכנסה · המחיר כבר עבר את הרמות"};
 const rvNeeded = t => t && t.status === "pending" && t.tal && t.asked && !t.sleep;

@@ -1689,6 +1689,33 @@ def straddle6_cards(b5=None):
 STEPS = {}                 # this run's gap-method steps: {name: {done | err, at, sec, budget_sec}} -> results bot6.steps
 
 
+def by_symbol(name, sig, budget_s, fn):
+    """{symbol: fn(symbol, data)} over the rounds (bot 6's smart agent, 19.11.2026 night). The census and the whole-contract
+    count started from US100 every round and ran out of time before US30, so MYM - the one contract small enough for most
+    gap trades - was never counted. A finished symbol is kept on the bots' computer under the rules' signature; a round
+    goes on from the first symbol missing and always finishes the symbol it started. Returns (results, all symbols done)."""
+    cdir = TAL_DIR / name
+    cdir.mkdir(parents=True, exist_ok=True)
+    for f in cdir.glob("*.pkl"):
+        if not f.name.startswith(f"{sig}_"):
+            f.unlink(missing_ok=True)
+    t0, done, todo = time.time(), {}, []
+    for sym in WORLD["symbols"]:
+        try:
+            done[sym] = pd.read_pickle(cdir / f"{sig}_{sym}.pkl")
+        except Exception:  # noqa: BLE001 - not counted yet (or an unreadable file): count it again
+            todo.append(sym)
+    for i_, sym in enumerate(todo):
+        if i_ and time.time() - t0 > budget_s:      # at least one symbol every round, however short the round's time
+            break
+        D = tal_load(sym)
+        if D is None:
+            continue
+        done[sym] = fn(sym, D)
+        pd.to_pickle(done[sym], cdir / f"{sig}_{sym}.pkl")
+    return {s_: done[s_] for s_ in WORLD["symbols"] if s_ in done}, all(s_ in done for s_ in WORLD["symbols"])
+
+
 def census6(budget_s):
     """Task tal1611partial (1): of the losing trades of each running track (the rules as the live bot runs them, the
     three indices), how many first reached +0.5R / +1R / half the way to the target (tal_gap.simulate's mfe) - to 2025
@@ -1696,24 +1723,28 @@ def census6(budget_s):
     try:
         old = (json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot6") or {}).get("gaveback_census") or {}
         if old.get("at") and pd.Timestamp.now(tz="UTC") - pd.Timestamp(old["at"]) < pd.Timedelta(days=7) \
+                and old.get("state") == "done" \
                 and old.get("tracks") and all(isinstance(v, dict) and "unseen" in v for v in old["tracks"].values()):
             return old
     except Exception:  # noqa: BLE001
         pass
+    import hashlib
     pairs = {TG.pair_name(p): p for p in TG.PAIRS}
-    t0, got = time.time(), {}
     run = {k: (pn, TG.ftmo_cfg(c)) for k, (pn, c) in live_tracks().items() if pn in pairs}
-    for sym in WORLD["symbols"]:
-        if time.time() - t0 > budget_s:
-            break
-        D = tal_load(sym)
-        if D is None:
-            continue
-        gcs = {}
+    sig = hashlib.sha1(json.dumps(run, sort_keys=True, default=str).encode()).hexdigest()[:12]
+
+    def one(sym, D):
+        gcs, rows = {}, {}
         for trk, (pn, c) in run.items():
             t = TG.simulate(D, pairs[pn], c, gcs.setdefault(pairs[pn][0], {}))
             if len(t):
-                got.setdefault(trk, []).append(t)
+                rows[trk] = t
+        return rows
+    by_sym, full = by_symbol("census", sig, budget_s, one)
+    got = {}
+    for rows in by_sym.values():
+        for trk, t in rows.items():
+            got.setdefault(trk, []).append(t)
     out = {}
     for trk, ts in got.items():
         t = pd.concat(ts, ignore_index=True)
@@ -1728,7 +1759,8 @@ def census6(budget_s):
                        "to_half": round(100 * float((lo["mfe"] >= 0.5 * lo["rr"]).sum()) / n, 1),
                        "r_losses": round(float(lo["r"].sum()), 1)}
         out[trk] = row
-    return {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "tracks": out,
+    return {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "state": "done" if full else "partial",
+            "symbols": list(by_sym), "tracks": out,
             "note": "% of the losing trades that first reached +0.5R / +1R / half the way to the target"}
 
 
@@ -1773,24 +1805,22 @@ def whole6(budget_s):
 
     # the laddered / partial tracks first: they are what the question is about
     order = sorted(run, key=lambda k: len(versions(run[k][1])), reverse=True)
-    t0, got, cut = time.time(), {}, False
-    for sym in WORLD["symbols"]:
-        if time.time() - t0 > budget_s:
-            cut = True
-            break
-        D = tal_load(sym)
-        if D is None:
-            continue
-        gcs = {}
+
+    def one(sym, D):
+        gcs, rows = {}, {}
         for trk in order:
             pn, c = run[trk]
             for nm, cf in versions(c).items():
-                if time.time() - t0 > budget_s:
-                    cut = True
-                    break
                 t = TG.simulate(D, pairs[pn], cf, gcs.setdefault(pairs[pn][0], {}))
                 if len(t):
-                    got.setdefault(trk, {}).setdefault(nm, []).append(t.assign(sym=sym))
+                    rows.setdefault(trk, {})[nm] = t.assign(sym=sym)
+        return rows
+    by_sym, full = by_symbol("whole", sig, budget_s, one)
+    got = {}
+    for rows in by_sym.values():
+        for trk, vs in rows.items():
+            for nm, t in vs.items():
+                got.setdefault(trk, {}).setdefault(nm, []).append(t)
 
     def sized(t, risk):
         """The contracts live/fut_account.size takes at the starting balance, and $ per 1R of one contract."""
@@ -1850,8 +1880,8 @@ def whole6(budget_s):
                         "part_cut": int(((n_ > 0) & (np.floor(n_ * frac) / n_.where(n_ > 0, 1) < frac - 1e-9)).sum()) if frac > 0 else 0,
                         "forms": {nm: stats(x[cond(x)], col) for nm, (x, col) in forms.items()}}
         out[trk] = row
-    return {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "sig": sig, "state": "partial" if cut else "done",
-            "tracks": out, "note": "% of $100K at each track's risk, whole contracts as live/fut_account.size; booked = as the tests and "
+    return {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "sig": sig, "state": "done" if full else "partial",
+            "symbols": list(by_sym), "tracks": out, "note": "% of $100K at each track's risk, whole contracts as live/fut_account.size; booked = as the tests and "
                                    "the ledger count it; a ladder's stop distance is its legs' average"}
 
 

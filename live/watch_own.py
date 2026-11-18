@@ -561,7 +561,14 @@ REAL_COST = {"GER40": 1.42, "US100": 1.22, "US30": 2.13, "US500": 0.51, "JP225":
 
 
 def cost_of(name, df):
+    """The gap tracks' cost per trade in price: FTMO's live spread (the median of the bid / ask sampled from bot 1's
+    MetaTrader here, at least 20 samples - user, 18.11.2026: "take FTMO's spreads into account": the backtest's fixed
+    numbers were 15-60% under the live ones, GER40 1.42 vs 2.33) + FTMO's commission; before enough samples the
+    backtest's numbers / the class estimate. The swap is added per trade (swap_r)."""
     c = df["c"].to_numpy(float)
+    s_ = SPREAD5.get(name) or []
+    if len(s_) >= 20:
+        return np.full(len(c), float(np.median(s_))) + CORE.comm_px(name, c)
     if name in REAL_COST:
         return np.full(len(c), REAL_COST[name])
     cls = U.CLASS.get(name, "fx")
@@ -1018,6 +1025,23 @@ def spread5(name, px, sc):
     return px * C.EST_SPREAD.get(U.CLASS.get(name), 0.0003)
 
 
+def swap_r(name, d, entry, stop, t_in, t_out):
+    """FTMO's swap of a gap trade held over a rollover, in R (+ = paid to the trader), agents/ftmo_costs' own rule."""
+    try:
+        if t_in is None or entry is None or stop is None or entry == stop:
+            return 0.0
+        sp = U.spec(name)
+        n = float(C._nights([pd.Timestamp(t_in)], [pd.Timestamp(t_out or pd.Timestamp.now(tz="UTC"))], U.CLASS.get(name) == "crypto")[0])
+        if not n:
+            return 0.0
+        sw = float(sp["swapLong"] if d > 0 else sp["swapShort"])
+        px = entry * sw / 100.0 / 360.0 * n if sp["swapType"] == "percentage" else \
+            sw * 10.0 ** (-int(sp["digits"])) * n / C.PRICE_SCALE.get(name, 1.0)
+        return px / abs(entry - stop)
+    except Exception:  # noqa: BLE001
+        return 0.0
+
+
 _RR = []
 
 
@@ -1333,8 +1357,10 @@ def main():
         t_cycle = time.time()
         load_settings()
         cal.refresh()
-        if SCOUT5:
-            src.spreads(sorted({v["sym"] for v in SCOUT5.values()}))
+        # FTMO's live spreads: the scout strategies' instruments and the gap tracks' (18.11.2026)
+        sp_names = {v["sym"] for v in SCOUT5.values()} | set(TAL5_SYMBOLS) | {n for v in TAL5_SYMS.values() for n in v}
+        if sp_names:
+            src.spreads(sorted(sp_names))
         seen_now, errors, fseen = set(), [], set()
         for name in SYMBOLS:
             try:
@@ -1442,6 +1468,13 @@ def main():
                                     x.update(status=cx_["status"], entry=cx_.get("entry", e_), stop=cx_.get("stop", float(s_)),
                                              target=cx_.get("target", t_), custom=True)
                             g_ = x.get("gap") or [x["entry"], x["entry"]]
+                            if x["status"] in ("open", "closed") and x.get("time"):          # + FTMO's swap (18.11.2026)
+                                w_ = swap_r(name, x["dir"], x["entry"], x.get("stop"), x["time"], x.get("exit_time"))
+                                if w_:
+                                    if x.get("r") is not None:
+                                        x["r"] = round(float(x["r"]) + w_, 4)
+                                    if x.get("r_now") is not None:
+                                        x["r_now"] = round(float(x["r_now"]) + w_, 4)
                             res.append({"symbol": name, "dir": x["dir"], "status": x["status"], "entry": x["entry"],
                                         "stop": x.get("stop"), "target": x.get("target"), "rr": x.get("rr"), "cost_r": 0.0,
                                         "leg": None, "leg_start": x["setup_t"], "leg_top": x["setup_t"],

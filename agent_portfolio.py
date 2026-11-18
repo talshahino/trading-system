@@ -892,6 +892,18 @@ def untested_new(bot, where):
 NEW_BATCH = 30                         # combos of one instrument in one backtest run (its bars are loaded once)
 
 
+def scout_gh_fresh(bot, hours=36, min_docs=300):
+    """The daily GitHub scout (agents/scout_wide_gh.py, free minutes) tested this bot's new strategies lately.
+    Manager, 18.11.2026: on the bots' computer the first pass over the new strategies took a third of the budget of
+    bots 1-4 and 7 and tested 0-120 combos a round, while the GitHub run tests 1,900-6,300 of them a day - that third
+    goes to the experiments now. If the GitHub run stops, the count falls under min_docs and the pass comes back."""
+    try:
+        cut = (pd.Timestamp.now(tz="UTC") - pd.Timedelta(hours=hours)).isoformat(timespec="seconds")
+        return sum(1 for v in XP.index(Store(bot).dir)["docs"].values() if str(v[0]) >= cut) >= min_docs
+    except Exception:  # noqa: BLE001 - unknown: the pass runs as before
+        return False
+
+
 def _new_caps(bot):
     """Per-instrument batch sizes cut after a batch timed out (reports/agents/<bot>/new_batch.json)."""
     try:
@@ -1237,9 +1249,12 @@ def main():
             print(f"{a.bot} family fix failed: {e}")
     # the scout's strategies first, with up to a third of the time, while some are still untested (12.11.2026: with
     # 0.8 of the budget for the experiments, the leftover was under the 2-minute minimum and they never ran)
-    first = test_new(a.bot, budget / 3, a.where) if untested_new(a.bot, a.where) else 0
+    skip_first = a.where == "pc" and a.bot not in NEW_ONLY and scout_gh_fresh(a.bot)
+    first = 0 if skip_first else (test_new(a.bot, budget / 3, a.where) if untested_new(a.bot, a.where) else 0)
     done, left = experiments(a.bot, budget - (time.time() - t0), a.where)
     new = first + test_new(a.bot, budget - (time.time() - t0), a.where)
+    # the whole run's count (the "stopped for time, 0 tested" line above is only the last pass, and read as if nothing ran)
+    print(f"this run: {done} experiments, {new} new-strategy combos" + (" (first pass left to the GitHub scout)" if skip_first else ""))
     if a.no_cards:
         return
     cards, tested = cards_for(a.bot)

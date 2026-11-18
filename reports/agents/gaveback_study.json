@@ -1,5 +1,5 @@
 {
- "at": "2026-11-18T04:50:08+00:00",
+ "at": "2026-11-18T15:52:37+00:00",
  "ways": [
   "asis",
   "be@0.5",
@@ -7412,7 +7412,7 @@
    "both": []
   },
   "bot5": {
-   "strategies": 31,
+   "strategies": 30,
    "symbols": [
     "EURUSD",
     "GBPUSD",
@@ -7420,530 +7420,529 @@
     "US100",
     "US30",
     "USDCHF",
-    "USDJPY",
     "XAUUSD"
    ],
    "census": {
     "train": {
-     "trades": 4530,
-     "losers": 2895,
-     "lost_r": -2584.0,
-     "mfe_0.5R": 44.4,
-     "mfe_1R": 23.9,
+     "trades": 4426,
+     "losers": 2834,
+     "lost_r": -2526.4,
+     "mfe_0.5R": 44.5,
+     "mfe_1R": 24.2,
      "with_target": 780,
      "half_way": 20.9,
-     "mfe_median": 0.41
+     "mfe_median": 0.42
     },
     "unseen": {
-     "trades": 6148,
-     "losers": 3992,
-     "lost_r": -3530.7,
-     "mfe_0.5R": 45.9,
-     "mfe_1R": 23.1,
-     "with_target": 1104,
-     "half_way": 18.0,
-     "mfe_median": 0.45
+     "trades": 6063,
+     "losers": 3950,
+     "lost_r": -3488.0,
+     "mfe_0.5R": 45.8,
+     "mfe_1R": 23.3,
+     "with_target": 1115,
+     "half_way": 18.1,
+     "mfe_median": 0.44
     }
    },
    "ways": {
     "asis": {
      "train": {
-      "trades": 4530,
-      "total": 30.29,
-      "worst_day": -1.16,
-      "max_dd": 5.64,
+      "trades": 4355,
+      "total": 116.87,
+      "worst_day": -4.1,
+      "max_dd": 22.44,
       "win": 36.1,
-      "green_days": 51.7,
-      "day_sd": 0.89
+      "green_days": 55.1,
+      "day_sd": 3.033
      },
      "unseen": {
-      "trades": 6148,
-      "total": 26.27,
-      "worst_day": -1.36,
-      "max_dd": 4.14,
-      "win": 35.1,
-      "green_days": 46.7,
-      "day_sd": 0.81
+      "trades": 472,
+      "total": -8.99,
+      "worst_day": -2.81,
+      "max_dd": 8.99,
+      "win": 37.7,
+      "green_days": 29.6,
+      "day_sd": 1.119
      }
     },
     "be@0.5": {
      "train": {
-      "trades": 4530,
-      "total": 8.52,
-      "worst_day": -1.08,
-      "max_dd": 5.52,
-      "win": 23.1,
-      "green_days": 47.2,
-      "day_sd": 0.758
+      "trades": 4417,
+      "total": 29.62,
+      "worst_day": -3.49,
+      "max_dd": 23.02,
+      "win": 23.0,
+      "green_days": 45.5,
+      "day_sd": 2.368
      },
      "unseen": {
-      "trades": 6148,
-      "total": 9.45,
-      "worst_day": -1.21,
-      "max_dd": 4.36,
-      "win": 22.4,
-      "green_days": 39.7,
-      "day_sd": 0.658
+      "trades": 303,
+      "total": -8.97,
+      "worst_day": -2.21,
+      "max_dd": 8.97,
+      "win": 20.1,
+      "green_days": 23.1,
+      "day_sd": 0.868
      }
     },
     "be@1": {
      "train": {
-      "trades": 4530,
-      "total": 18.63,
-      "worst_day": -1.18,
-      "max_dd": 5.06,
+      "trades": 4383,
+      "total": 78.35,
+      "worst_day": -4.05,
+      "max_dd": 20.43,
       "win": 30.9,
-      "green_days": 49.4,
-      "day_sd": 0.813
+      "green_days": 54.5,
+      "day_sd": 2.685
      },
      "unseen": {
-      "trades": 6148,
-      "total": 13.93,
-      "worst_day": -1.3,
-      "max_dd": 3.99,
-      "win": 29.8,
-      "green_days": 43.7,
-      "day_sd": 0.734
+      "trades": 258,
+      "total": -8.99,
+      "worst_day": -2.57,
+      "max_dd": 8.99,
+      "win": 27.5,
+      "green_days": 20.0,
+      "day_sd": 1.013
      }
     },
     "be@1.5": {
      "train": {
-      "trades": 4530,
-      "total": 24.01,
-      "worst_day": -1.16,
-      "max_dd": 5.17,
+      "trades": 4372,
+      "total": 89.54,
+      "worst_day": -4.1,
+      "max_dd": 21.51,
       "win": 33.7,
-      "green_days": 52.8,
-      "day_sd": 0.849
+      "green_days": 56.2,
+      "day_sd": 2.845
      },
      "unseen": {
-      "trades": 6148,
-      "total": 18.53,
-      "worst_day": -1.56,
-      "max_dd": 4.79,
-      "win": 32.6,
-      "green_days": 45.4,
-      "day_sd": 0.772
+      "trades": 259,
+      "total": -8.99,
+      "worst_day": -2.85,
+      "max_dd": 8.99,
+      "win": 30.5,
+      "green_days": 20.0,
+      "day_sd": 0.912
      }
     },
     "be@2": {
      "train": {
-      "trades": 4530,
-      "total": 25.56,
-      "worst_day": -1.16,
-      "max_dd": 5.55,
+      "trades": 4360,
+      "total": 97.4,
+      "worst_day": -4.1,
+      "max_dd": 22.89,
       "win": 34.7,
-      "green_days": 51.7,
-      "day_sd": 0.858
+      "green_days": 55.7,
+      "day_sd": 2.903
      },
      "unseen": {
-      "trades": 6148,
-      "total": 18.89,
-      "worst_day": -1.49,
-      "max_dd": 5.26,
-      "win": 33.3,
-      "green_days": 46.3,
-      "day_sd": 0.774
+      "trades": 262,
+      "total": -8.99,
+      "worst_day": -2.77,
+      "max_dd": 8.99,
+      "win": 31.7,
+      "green_days": 30.0,
+      "day_sd": 1.075
      }
     },
     "half@0.5": {
      "train": {
-      "trades": 4530,
-      "total": -4.06,
-      "worst_day": -0.86,
-      "max_dd": 7.08,
-      "win": 59.8,
-      "green_days": 45.5,
-      "day_sd": 0.44
+      "trades": 1975,
+      "total": -8.98,
+      "worst_day": -3.11,
+      "max_dd": 15.66,
+      "win": 59.5,
+      "green_days": 45.2,
+      "day_sd": 1.147
      },
      "unseen": {
-      "trades": 6148,
-      "total": -6.65,
-      "worst_day": -1.02,
-      "max_dd": 7.55,
-      "win": 60.8,
-      "green_days": 38.9,
-      "day_sd": 0.4
+      "trades": 720,
+      "total": -8.98,
+      "worst_day": -2.25,
+      "max_dd": 8.98,
+      "win": 58.6,
+      "green_days": 29.3,
+      "day_sd": 0.591
      }
     },
     "half@1": {
      "train": {
-      "trades": 4530,
-      "total": 6.84,
-      "worst_day": -1.03,
-      "max_dd": 4.52,
-      "win": 49.4,
-      "green_days": 49.4,
-      "day_sd": 0.491
+      "trades": 4406,
+      "total": 31.49,
+      "worst_day": -3.24,
+      "max_dd": 17.79,
+      "win": 49.5,
+      "green_days": 51.1,
+      "day_sd": 1.711
      },
      "unseen": {
-      "trades": 6148,
-      "total": 0.58,
-      "worst_day": -1.13,
-      "max_dd": 4.72,
-      "win": 47.6,
-      "green_days": 47.2,
-      "day_sd": 0.487
+      "trades": 764,
+      "total": -8.96,
+      "worst_day": -3.23,
+      "max_dd": 8.96,
+      "win": 46.9,
+      "green_days": 32.5,
+      "day_sd": 0.926
      }
     },
     "half@1.5": {
      "train": {
-      "trades": 4530,
-      "total": 12.44,
-      "worst_day": -1.08,
-      "max_dd": 4.79,
-      "win": 43.8,
-      "green_days": 53.4,
-      "day_sd": 0.551
+      "trades": 4388,
+      "total": 47.64,
+      "worst_day": -3.52,
+      "max_dd": 19.98,
+      "win": 43.9,
+      "green_days": 55.1,
+      "day_sd": 1.963
      },
      "unseen": {
-      "trades": 6148,
-      "total": 7.27,
-      "worst_day": -1.37,
-      "max_dd": 3.52,
-      "win": 42.2,
-      "green_days": 48.0,
-      "day_sd": 0.544
+      "trades": 723,
+      "total": -8.98,
+      "worst_day": -2.77,
+      "max_dd": 8.98,
+      "win": 41.5,
+      "green_days": 44.7,
+      "day_sd": 1.066
      }
     },
     "half@2": {
      "train": {
-      "trades": 4530,
-      "total": 13.98,
-      "worst_day": -1.13,
-      "max_dd": 5.41,
-      "win": 40.3,
+      "trades": 4384,
+      "total": 56.73,
+      "worst_day": -3.81,
+      "max_dd": 21.93,
+      "win": 40.4,
       "green_days": 55.1,
-      "day_sd": 0.589
+      "day_sd": 2.147
      },
      "unseen": {
-      "trades": 6148,
-      "total": 9.47,
-      "worst_day": -1.35,
-      "max_dd": 4.03,
-      "win": 38.9,
-      "green_days": 48.9,
-      "day_sd": 0.571
+      "trades": 745,
+      "total": -8.97,
+      "worst_day": -3.45,
+      "max_dd": 8.97,
+      "win": 39.9,
+      "green_days": 40.5,
+      "day_sd": 1.222
      }
     },
     "bew@0.5": {
      "train": {
-      "trades": 4530,
-      "total": 29.73,
-      "worst_day": -1.16,
-      "max_dd": 5.53,
-      "win": 34.9,
-      "green_days": 51.1,
-      "day_sd": 0.891
+      "trades": 4356,
+      "total": 114.99,
+      "worst_day": -4.1,
+      "max_dd": 22.0,
+      "win": 34.8,
+      "green_days": 55.7,
+      "day_sd": 3.026
      },
      "unseen": {
-      "trades": 6148,
-      "total": 25.2,
-      "worst_day": -1.29,
-      "max_dd": 4.26,
-      "win": 34.1,
-      "green_days": 46.3,
-      "day_sd": 0.809
+      "trades": 539,
+      "total": -8.98,
+      "worst_day": -2.81,
+      "max_dd": 8.98,
+      "win": 36.9,
+      "green_days": 37.5,
+      "day_sd": 0.969
      }
     },
     "bew@0.6": {
      "train": {
-      "trades": 4530,
-      "total": 30.31,
-      "worst_day": -1.16,
-      "max_dd": 5.64,
+      "trades": 4355,
+      "total": 116.94,
+      "worst_day": -4.1,
+      "max_dd": 22.44,
       "win": 36.1,
-      "green_days": 51.7,
-      "day_sd": 0.89
+      "green_days": 55.1,
+      "day_sd": 3.033
      },
      "unseen": {
-      "trades": 6148,
-      "total": 26.27,
-      "worst_day": -1.36,
-      "max_dd": 4.14,
-      "win": 35.1,
-      "green_days": 46.7,
-      "day_sd": 0.81
+      "trades": 472,
+      "total": -8.99,
+      "worst_day": -2.81,
+      "max_dd": 8.99,
+      "win": 37.7,
+      "green_days": 29.6,
+      "day_sd": 1.119
      }
     },
     "halfw@0.5": {
      "train": {
-      "trades": 4530,
-      "total": 29.09,
-      "worst_day": -1.12,
-      "max_dd": 5.24,
-      "win": 39.5,
-      "green_days": 51.1,
-      "day_sd": 0.876
+      "trades": 4362,
+      "total": 111.23,
+      "worst_day": -3.87,
+      "max_dd": 21.76,
+      "win": 39.6,
+      "green_days": 54.5,
+      "day_sd": 2.958
      },
      "unseen": {
-      "trades": 6148,
-      "total": 23.84,
-      "worst_day": -1.3,
-      "max_dd": 4.15,
-      "win": 37.9,
-      "green_days": 48.0,
-      "day_sd": 0.778
+      "trades": 280,
+      "total": -8.97,
+      "worst_day": -2.75,
+      "max_dd": 8.97,
+      "win": 38.6,
+      "green_days": 23.1,
+      "day_sd": 1.157
      }
     },
     "halfw@0.6": {
      "train": {
-      "trades": 4530,
-      "total": 29.85,
-      "worst_day": -1.11,
-      "max_dd": 5.29,
+      "trades": 4358,
+      "total": 113.91,
+      "worst_day": -3.9,
+      "max_dd": 22.23,
       "win": 38.5,
-      "green_days": 51.7,
-      "day_sd": 0.879
+      "green_days": 53.4,
+      "day_sd": 2.979
      },
      "unseen": {
-      "trades": 6148,
-      "total": 25.06,
-      "worst_day": -1.36,
-      "max_dd": 3.8,
-      "win": 36.9,
-      "green_days": 48.0,
-      "day_sd": 0.783
+      "trades": 785,
+      "total": -8.98,
+      "worst_day": -2.66,
+      "max_dd": 8.98,
+      "win": 39.2,
+      "green_days": 35.9,
+      "day_sd": 1.31
      }
     },
     "lock@1": {
      "train": {
-      "trades": 4530,
-      "total": 2.58,
-      "worst_day": -1.14,
-      "max_dd": 5.83,
-      "win": 35.3,
-      "green_days": 50.6,
-      "day_sd": 0.477
+      "trades": 4395,
+      "total": 24.38,
+      "worst_day": -3.44,
+      "max_dd": 20.83,
+      "win": 35.4,
+      "green_days": 52.8,
+      "day_sd": 1.821
      },
      "unseen": {
-      "trades": 6148,
-      "total": -2.25,
-      "worst_day": -1.2,
-      "max_dd": 5.25,
-      "win": 34.3,
-      "green_days": 45.0,
-      "day_sd": 0.46
+      "trades": 332,
+      "total": -8.98,
+      "worst_day": -3.53,
+      "max_dd": 9.2,
+      "win": 32.5,
+      "green_days": 33.3,
+      "day_sd": 1.036
      }
     },
     "lock@0.5": {
      "train": {
-      "trades": 4530,
-      "total": -7.01,
-      "worst_day": -0.95,
-      "max_dd": 7.36,
-      "win": 37.0,
-      "green_days": 42.6,
-      "day_sd": 0.395
+      "trades": 1768,
+      "total": -8.98,
+      "worst_day": -2.68,
+      "max_dd": 11.77,
+      "win": 37.3,
+      "green_days": 41.8,
+      "day_sd": 1.056
      },
      "unseen": {
-      "trades": 4736,
-      "total": -9.0,
-      "worst_day": -0.93,
-      "max_dd": 9.01,
-      "win": 36.0,
-      "green_days": 35.8,
-      "day_sd": 0.338
+      "trades": 1408,
+      "total": -8.97,
+      "worst_day": -3.22,
+      "max_dd": 9.29,
+      "win": 34.9,
+      "green_days": 40.4,
+      "day_sd": 1.054
      }
     },
     "trl@2_1": {
      "train": {
-      "trades": 4530,
-      "total": 7.65,
-      "worst_day": -1.09,
-      "max_dd": 5.89,
-      "win": 40.1,
-      "green_days": 52.8,
-      "day_sd": 0.522
+      "trades": 4385,
+      "total": 37.55,
+      "worst_day": -3.8,
+      "max_dd": 23.14,
+      "win": 40.2,
+      "green_days": 52.3,
+      "day_sd": 1.925
      },
      "unseen": {
-      "trades": 6148,
-      "total": 3.21,
-      "worst_day": -1.28,
-      "max_dd": 4.52,
-      "win": 38.7,
-      "green_days": 49.3,
-      "day_sd": 0.471
+      "trades": 1601,
+      "total": -8.98,
+      "worst_day": -3.59,
+      "max_dd": 13.75,
+      "win": 38.1,
+      "green_days": 44.1,
+      "day_sd": 1.538
      }
     },
     "trl@2_1.5": {
      "train": {
-      "trades": 4530,
-      "total": 9.6,
-      "worst_day": -1.12,
-      "max_dd": 5.85,
-      "win": 40.0,
-      "green_days": 51.1,
-      "day_sd": 0.544
+      "trades": 4376,
+      "total": 48.46,
+      "worst_day": -3.81,
+      "max_dd": 23.06,
+      "win": 40.1,
+      "green_days": 52.8,
+      "day_sd": 2.117
      },
      "unseen": {
-      "trades": 6148,
-      "total": 3.14,
-      "worst_day": -1.28,
-      "max_dd": 6.24,
-      "win": 38.6,
-      "green_days": 46.3,
-      "day_sd": 0.532
+      "trades": 484,
+      "total": -8.97,
+      "worst_day": -3.66,
+      "max_dd": 8.97,
+      "win": 37.6,
+      "green_days": 33.3,
+      "day_sd": 1.174
      }
     },
     "trl@3_1": {
      "train": {
-      "trades": 4530,
-      "total": 11.49,
-      "worst_day": -1.11,
-      "max_dd": 6.02,
+      "trades": 4361,
+      "total": 55.14,
+      "worst_day": -3.82,
+      "max_dd": 22.05,
       "win": 37.5,
-      "green_days": 52.3,
-      "day_sd": 0.537
+      "green_days": 55.7,
+      "day_sd": 2.051
      },
      "unseen": {
-      "trades": 6148,
-      "total": 11.68,
-      "worst_day": -1.29,
-      "max_dd": 3.0,
-      "win": 36.6,
-      "green_days": 51.1,
-      "day_sd": 0.537
+      "trades": 5872,
+      "total": 19.31,
+      "worst_day": -4.41,
+      "max_dd": 17.86,
+      "win": 36.3,
+      "green_days": 47.8,
+      "day_sd": 2.046
      }
     },
     "trl@3_1.5": {
      "train": {
-      "trades": 4530,
-      "total": 13.36,
-      "worst_day": -1.1,
-      "max_dd": 6.18,
+      "trades": 4359,
+      "total": 66.0,
+      "worst_day": -3.82,
+      "max_dd": 22.53,
       "win": 37.5,
-      "green_days": 52.3,
-      "day_sd": 0.552
+      "green_days": 55.7,
+      "day_sd": 2.195
      },
      "unseen": {
-      "trades": 6148,
-      "total": 10.77,
-      "worst_day": -1.3,
-      "max_dd": 3.79,
-      "win": 36.5,
-      "green_days": 48.9,
-      "day_sd": 0.572
+      "trades": 453,
+      "total": -8.98,
+      "worst_day": -3.71,
+      "max_dd": 9.34,
+      "win": 36.9,
+      "green_days": 33.3,
+      "day_sd": 1.166
      }
     },
     "trl@3_2": {
      "train": {
-      "trades": 4530,
-      "total": 12.78,
-      "worst_day": -1.11,
-      "max_dd": 6.32,
+      "trades": 4358,
+      "total": 65.49,
+      "worst_day": -3.82,
+      "max_dd": 23.28,
       "win": 37.4,
-      "green_days": 51.1,
-      "day_sd": 0.565
+      "green_days": 55.7,
+      "day_sd": 2.266
      },
      "unseen": {
-      "trades": 6148,
-      "total": 14.38,
-      "worst_day": -1.35,
-      "max_dd": 3.75,
-      "win": 36.5,
-      "green_days": 48.5,
-      "day_sd": 0.618
+      "trades": 456,
+      "total": -8.98,
+      "worst_day": -3.71,
+      "max_dd": 9.55,
+      "win": 36.8,
+      "green_days": 29.2,
+      "day_sd": 1.239
      }
     },
     "trl@4_1.5": {
      "train": {
-      "trades": 4530,
-      "total": 16.29,
-      "worst_day": -1.1,
-      "max_dd": 6.25,
+      "trades": 4355,
+      "total": 71.23,
+      "worst_day": -3.82,
+      "max_dd": 21.48,
       "win": 36.8,
-      "green_days": 52.8,
-      "day_sd": 0.569
+      "green_days": 57.4,
+      "day_sd": 2.211
      },
      "unseen": {
-      "trades": 6148,
-      "total": 15.15,
-      "worst_day": -1.31,
-      "max_dd": 3.54,
-      "win": 35.7,
-      "green_days": 49.3,
-      "day_sd": 0.602
+      "trades": 440,
+      "total": -8.98,
+      "worst_day": -3.71,
+      "max_dd": 9.04,
+      "win": 36.4,
+      "green_days": 33.3,
+      "day_sd": 1.132
      }
     },
     "trl@4_2": {
      "train": {
-      "trades": 4530,
-      "total": 15.55,
-      "worst_day": -1.11,
-      "max_dd": 6.43,
+      "trades": 4354,
+      "total": 71.04,
+      "worst_day": -3.82,
+      "max_dd": 22.17,
       "win": 36.8,
-      "green_days": 52.8,
-      "day_sd": 0.571
+      "green_days": 56.2,
+      "day_sd": 2.26
      },
      "unseen": {
-      "trades": 6148,
-      "total": 17.3,
-      "worst_day": -1.35,
-      "max_dd": 4.08,
-      "win": 35.6,
-      "green_days": 49.8,
-      "day_sd": 0.637
+      "trades": 448,
+      "total": -8.98,
+      "worst_day": -3.71,
+      "max_dd": 9.63,
+      "win": 35.9,
+      "green_days": 33.3,
+      "day_sd": 1.224
      }
     },
     "trl@5_2": {
      "train": {
-      "trades": 4530,
-      "total": 17.73,
-      "worst_day": -1.11,
-      "max_dd": 6.18,
-      "win": 36.4,
-      "green_days": 53.4,
-      "day_sd": 0.587
+      "trades": 4354,
+      "total": 78.07,
+      "worst_day": -3.82,
+      "max_dd": 21.36,
+      "win": 36.5,
+      "green_days": 55.7,
+      "day_sd": 2.328
      },
      "unseen": {
-      "trades": 6148,
-      "total": 18.2,
-      "worst_day": -1.29,
-      "max_dd": 4.39,
-      "win": 35.4,
-      "green_days": 50.7,
-      "day_sd": 0.655
+      "trades": 446,
+      "total": -8.97,
+      "worst_day": -3.71,
+      "max_dd": 9.13,
+      "win": 36.1,
+      "green_days": 33.3,
+      "day_sd": 1.177
      }
     },
     "trl@5_3": {
      "train": {
-      "trades": 4530,
-      "total": 19.86,
-      "worst_day": -1.12,
-      "max_dd": 6.22,
-      "win": 36.4,
-      "green_days": 51.7,
-      "day_sd": 0.607
+      "trades": 4354,
+      "total": 85.12,
+      "worst_day": -3.82,
+      "max_dd": 22.67,
+      "win": 36.5,
+      "green_days": 56.2,
+      "day_sd": 2.447
      },
      "unseen": {
-      "trades": 6148,
-      "total": 17.67,
-      "worst_day": -1.29,
-      "max_dd": 5.27,
-      "win": 35.4,
-      "green_days": 48.9,
-      "day_sd": 0.685
+      "trades": 462,
+      "total": -8.97,
+      "worst_day": -3.54,
+      "max_dd": 8.97,
+      "win": 36.6,
+      "green_days": 29.2,
+      "day_sd": 1.246
      }
     },
     "pick_per_strategy": {
      "train": {
-      "trades": 4530,
-      "total": 33.94,
-      "worst_day": -1.13,
-      "max_dd": 4.39,
-      "win": 36.3,
-      "green_days": 52.8,
-      "day_sd": 0.853
+      "trades": 4375,
+      "total": 133.13,
+      "worst_day": -3.86,
+      "max_dd": 19.42,
+      "win": 36.6,
+      "green_days": 55.7,
+      "day_sd": 2.963
      },
      "unseen": {
-      "trades": 6148,
-      "total": 22.04,
-      "worst_day": -1.51,
-      "max_dd": 3.86,
-      "win": 34.3,
-      "green_days": 45.9,
-      "day_sd": 0.764
+      "trades": 262,
+      "total": -8.98,
+      "worst_day": -2.8,
+      "max_dd": 8.98,
+      "win": 34.7,
+      "green_days": 30.0,
+      "day_sd": 1.108
      }
     }
    },
@@ -7956,8 +7955,8 @@
        77.81
       ],
       "unseen": [
-       904,
-       5.48
+       911,
+       0.52
       ]
      }
     },
@@ -7969,8 +7968,8 @@
        24.95
       ],
       "unseen": [
-       425,
-       41.04
+       428,
+       39.09
       ]
      },
      "be@1.5": {
@@ -7979,8 +7978,8 @@
        25.27
       ],
       "unseen": [
-       425,
-       39.29
+       428,
+       37.34
       ]
      }
     },
@@ -7992,8 +7991,8 @@
        25.24
       ],
       "unseen": [
-       501,
-       27.66
+       504,
+       26.01
       ]
      },
      "be@1": {
@@ -8002,8 +8001,8 @@
        27.19
       ],
       "unseen": [
-       501,
-       19.43
+       504,
+       17.78
       ]
      }
     },
@@ -8015,8 +8014,8 @@
        9.08
       ],
       "unseen": [
-       223,
-       4.53
+       224,
+       3.52
       ]
      }
     },
@@ -8041,8 +8040,8 @@
        44.51
       ],
       "unseen": [
-       274,
-       21.77
+       275,
+       20.74
       ]
      },
      "trl@3_2": {
@@ -8051,8 +8050,8 @@
        56.75
       ],
       "unseen": [
-       274,
-       17.31
+       275,
+       16.28
       ]
      }
     },
@@ -8064,8 +8063,8 @@
        47.86
       ],
       "unseen": [
-       278,
-       37.66
+       279,
+       36.62
       ]
      },
      "be@1.5": {
@@ -8074,8 +8073,8 @@
        57.26
       ],
       "unseen": [
-       278,
-       33.13
+       279,
+       33.08
       ]
      }
     },
@@ -8087,8 +8086,8 @@
        28.14
       ],
       "unseen": [
-       238,
-       20.2
+       241,
+       17.12
       ]
      },
      "be@1": {
@@ -8097,8 +8096,8 @@
        33.05
       ],
       "unseen": [
-       238,
-       24.33
+       241,
+       22.25
       ]
      }
     },
@@ -8111,7 +8110,7 @@
       ],
       "unseen": [
        289,
-       9.25
+       9.54
       ]
      },
      "be@1": {
@@ -8156,8 +8155,8 @@
        42.3
       ],
       "unseen": [
-       382,
-       5.28
+       384,
+       5.35
       ]
      },
      "lock@1": {
@@ -8166,8 +8165,8 @@
        48.73
       ],
       "unseen": [
-       382,
-       1.18
+       384,
+       1.2
       ]
      }
     },
@@ -8202,8 +8201,8 @@
        4.25
       ],
       "unseen": [
-       316,
-       11.87
+       319,
+       9.16
       ]
      },
      "halfw@0.6": {
@@ -8212,8 +8211,8 @@
        5.28
       ],
       "unseen": [
-       316,
-       13.65
+       319,
+       10.95
       ]
      }
     },
@@ -8225,8 +8224,8 @@
        40.88
       ],
       "unseen": [
-       87,
-       3.44
+       88,
+       2.37
       ]
      }
     },
@@ -8284,8 +8283,8 @@
        5.94
       ],
       "unseen": [
-       212,
-       26.9
+       213,
+       27.24
       ]
      }
     },
@@ -8297,8 +8296,8 @@
        29.7
       ],
       "unseen": [
-       216,
-       25.17
+       219,
+       22.14
       ]
      }
     },
@@ -8310,8 +8309,8 @@
        26.48
       ],
       "unseen": [
-       234,
-       60.58
+       238,
+       56.46
       ]
      }
     },
@@ -8323,8 +8322,8 @@
        22.87
       ],
       "unseen": [
-       221,
-       4.31
+       224,
+       1.09
       ]
      },
      "be@1": {
@@ -8333,8 +8332,8 @@
        26.7
       ],
       "unseen": [
-       221,
-       -1.49
+       224,
+       -3.71
       ]
      }
     },
@@ -8346,8 +8345,8 @@
        10.91
       ],
       "unseen": [
-       129,
-       6.67
+       130,
+       7.84
       ]
      },
      "be@1.5": {
@@ -8356,8 +8355,8 @@
        17.72
       ],
       "unseen": [
-       129,
-       9.78
+       130,
+       10.95
       ]
      }
     },
@@ -8415,8 +8414,8 @@
        15.16
       ],
       "unseen": [
-       130,
-       40.62
+       131,
+       42.85
       ]
      },
      "be@0.5": {
@@ -8425,8 +8424,8 @@
        25.7
       ],
       "unseen": [
-       130,
-       -3.66
+       131,
+       -1.44
       ]
      }
     },
@@ -8510,8 +8509,8 @@
        28.11
       ],
       "unseen": [
-       75,
-       9.3
+       76,
+       8.27
       ]
      },
      "be@2": {
@@ -8520,31 +8519,8 @@
        30.11
       ],
       "unseen": [
-       75,
-       8.79
-      ]
-     }
-    },
-    "SC326|15Min|USDJPY": {
-     "pick": "be@0.5",
-     "asis": {
-      "train": [
-       104,
-       32.66
-      ],
-      "unseen": [
-       124,
-       6.4
-      ]
-     },
-     "be@0.5": {
-      "train": [
-       104,
-       33.93
-      ],
-      "unseen": [
-       124,
-       -5.09
+       76,
+       7.75
       ]
      }
     },
@@ -8575,97 +8551,97 @@
    "vs_asis": {
     "be@0.5": {
      "train": {
-      "total": -21.77,
-      "max_dd": -0.12
+      "total": -87.25,
+      "max_dd": 0.58
      },
      "unseen": {
-      "total": -16.82,
-      "max_dd": 0.22
+      "total": 0.02,
+      "max_dd": -0.02
      }
     },
     "be@1": {
      "train": {
-      "total": -11.66,
-      "max_dd": -0.58
+      "total": -38.52,
+      "max_dd": -2.01
      },
      "unseen": {
-      "total": -12.34,
-      "max_dd": -0.15
+      "total": 0.0,
+      "max_dd": 0.0
      }
     },
     "be@1.5": {
      "train": {
-      "total": -6.28,
-      "max_dd": -0.47
+      "total": -27.33,
+      "max_dd": -0.93
      },
      "unseen": {
-      "total": -7.74,
-      "max_dd": 0.65
+      "total": 0.0,
+      "max_dd": 0.0
      }
     },
     "be@2": {
      "train": {
-      "total": -4.73,
-      "max_dd": -0.09
+      "total": -19.47,
+      "max_dd": 0.45
      },
      "unseen": {
-      "total": -7.38,
-      "max_dd": 1.12
+      "total": 0.0,
+      "max_dd": 0.0
      }
     },
     "half@0.5": {
      "train": {
-      "total": -34.35,
-      "max_dd": 1.44
+      "total": -125.85,
+      "max_dd": -6.78
      },
      "unseen": {
-      "total": -32.92,
-      "max_dd": 3.41
+      "total": 0.01,
+      "max_dd": -0.01
      }
     },
     "half@1": {
      "train": {
-      "total": -23.45,
-      "max_dd": -1.12
+      "total": -85.38,
+      "max_dd": -4.65
      },
      "unseen": {
-      "total": -25.69,
-      "max_dd": 0.58
+      "total": 0.03,
+      "max_dd": -0.03
      }
     },
     "half@1.5": {
      "train": {
-      "total": -17.85,
-      "max_dd": -0.85
+      "total": -69.23,
+      "max_dd": -2.46
      },
      "unseen": {
-      "total": -19.0,
-      "max_dd": -0.62
+      "total": 0.01,
+      "max_dd": -0.01
      }
     },
     "half@2": {
      "train": {
-      "total": -16.31,
-      "max_dd": -0.23
+      "total": -60.14,
+      "max_dd": -0.51
      },
      "unseen": {
-      "total": -16.8,
-      "max_dd": -0.11
+      "total": 0.02,
+      "max_dd": -0.02
      }
     },
     "bew@0.5": {
      "train": {
-      "total": -0.56,
-      "max_dd": -0.11
+      "total": -1.88,
+      "max_dd": -0.44
      },
      "unseen": {
-      "total": -1.07,
-      "max_dd": 0.12
+      "total": 0.01,
+      "max_dd": -0.01
      }
     },
     "bew@0.6": {
      "train": {
-      "total": 0.02,
+      "total": 0.07,
       "max_dd": 0.0
      },
      "unseen": {
@@ -8675,157 +8651,159 @@
     },
     "halfw@0.5": {
      "train": {
-      "total": -1.2,
-      "max_dd": -0.4
+      "total": -5.64,
+      "max_dd": -0.68
      },
      "unseen": {
-      "total": -2.43,
-      "max_dd": 0.01
+      "total": 0.02,
+      "max_dd": -0.02
      }
     },
     "halfw@0.6": {
      "train": {
-      "total": -0.44,
-      "max_dd": -0.35
+      "total": -2.96,
+      "max_dd": -0.21
      },
      "unseen": {
-      "total": -1.21,
-      "max_dd": -0.34
+      "total": 0.01,
+      "max_dd": -0.01
      }
     },
     "lock@1": {
      "train": {
-      "total": -27.71,
-      "max_dd": 0.19
+      "total": -92.49,
+      "max_dd": -1.61
      },
      "unseen": {
-      "total": -28.52,
-      "max_dd": 1.11
+      "total": 0.01,
+      "max_dd": 0.21
      }
     },
     "lock@0.5": {
      "train": {
-      "total": -37.3,
-      "max_dd": 1.72
+      "total": -125.85,
+      "max_dd": -10.67
      },
      "unseen": {
-      "total": -35.27,
-      "max_dd": 4.87
+      "total": 0.02,
+      "max_dd": 0.3
      }
     },
     "trl@2_1": {
      "train": {
-      "total": -22.64,
-      "max_dd": 0.25
+      "total": -79.32,
+      "max_dd": 0.7
      },
      "unseen": {
-      "total": -23.06,
-      "max_dd": 0.38
+      "total": 0.01,
+      "max_dd": 4.76
      }
     },
     "trl@2_1.5": {
      "train": {
-      "total": -20.69,
-      "max_dd": 0.21
+      "total": -68.41,
+      "max_dd": 0.62
      },
      "unseen": {
-      "total": -23.13,
-      "max_dd": 2.1
+      "total": 0.02,
+      "max_dd": -0.02
      }
     },
     "trl@3_1": {
      "train": {
-      "total": -18.8,
-      "max_dd": 0.38
+      "total": -61.73,
+      "max_dd": -0.39
      },
      "unseen": {
-      "total": -14.59,
-      "max_dd": -1.14
+      "total": 28.3,
+      "max_dd": 8.87
      }
     },
     "trl@3_1.5": {
      "train": {
-      "total": -16.93,
-      "max_dd": 0.54
+      "total": -50.87,
+      "max_dd": 0.09
      },
      "unseen": {
-      "total": -15.5,
-      "max_dd": -0.35
+      "total": 0.01,
+      "max_dd": 0.35
      }
     },
     "trl@3_2": {
      "train": {
-      "total": -17.51,
-      "max_dd": 0.68
+      "total": -51.38,
+      "max_dd": 0.84
      },
      "unseen": {
-      "total": -11.89,
-      "max_dd": -0.39
+      "total": 0.01,
+      "max_dd": 0.56
      }
     },
     "trl@4_1.5": {
      "train": {
-      "total": -14.0,
-      "max_dd": 0.61
+      "total": -45.64,
+      "max_dd": -0.96
      },
      "unseen": {
-      "total": -11.12,
-      "max_dd": -0.6
+      "total": 0.01,
+      "max_dd": 0.05
      }
     },
     "trl@4_2": {
      "train": {
-      "total": -14.74,
-      "max_dd": 0.79
+      "total": -45.83,
+      "max_dd": -0.27
      },
      "unseen": {
-      "total": -8.97,
-      "max_dd": -0.06
+      "total": 0.01,
+      "max_dd": 0.64
      }
     },
     "trl@5_2": {
      "train": {
-      "total": -12.56,
-      "max_dd": 0.54
+      "total": -38.8,
+      "max_dd": -1.08
      },
      "unseen": {
-      "total": -8.07,
-      "max_dd": 0.25
+      "total": 0.02,
+      "max_dd": 0.14
      }
     },
     "trl@5_3": {
      "train": {
-      "total": -10.43,
-      "max_dd": 0.58
+      "total": -31.75,
+      "max_dd": 0.23
      },
      "unseen": {
-      "total": -8.6,
-      "max_dd": 1.13
+      "total": 0.02,
+      "max_dd": -0.02
      }
     },
     "pick_per_strategy": {
      "train": {
-      "total": 3.65,
-      "max_dd": -1.25
+      "total": 16.26,
+      "max_dd": -3.02
      },
      "unseen": {
-      "total": -4.23,
-      "max_dd": -0.28
+      "total": 0.01,
+      "max_dd": -0.01
      }
     }
    },
    "best_train": {
     "way": "pick_per_strategy",
     "train": {
-     "total": 3.65,
-     "max_dd": -1.25
+     "total": 16.26,
+     "max_dd": -3.02
     },
     "unseen": {
-     "total": -4.23,
-     "max_dd": -0.28
+     "total": 0.01,
+     "max_dd": -0.01
     }
    },
-   "both": []
+   "both": [
+    "pick_per_strategy"
+   ]
   }
  }
 }

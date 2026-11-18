@@ -37,12 +37,36 @@ STABLE_DAYS = 14
 # at most one reset a day (manager, 16.11.2026): 11 resets in 4.5 days (accounts 5-17), most with 2-4 trades - the live
 # account never showed anything and the two stable weeks never started. A material change within MIN_HOURS of the last
 # reset waits (the fingerprint before it stays the baseline), and one reset then covers every change since.
-MIN_HOURS = 24
+# 72 hours (manager, 18.11.2026 night; 24 until then): the agent changes a rule almost every day, so the account was
+# reset every day (accounts 17 and 18 lived 24 hours) and its total loss never added up - see cumulative().
+MIN_HOURS = 72
 CODE = ("agents/event_strategies.py",)
 
 
 def _sha(b):
     return hashlib.sha1(b).hexdigest()[:12]
+
+
+def cumulative(current_pnl=0.0):
+    """Bot 7's result over all its accounts, the archived ones and the one running, in $ and in % of one $100,000 account
+    (manager, 18.11.2026 night: each reset starts the account's total-loss count from zero, so no single account shows what
+    the strategies lost together). For the report only: the bot's own 5% / 10% limits are not changed by it."""
+    try:
+        now_v = int(json.loads(STATE.read_text(encoding="utf-8")).get("account_v") or 0)
+    except Exception:  # noqa: BLE001
+        now_v = 0
+    pnl, n, accounts = float(current_pnl or 0.0), 0, 1
+    for f in ARCHIVE.glob("account_v*.json"):
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            continue
+        if now_v and int(d.get("account_v") or 0) >= now_v:      # an undone reset: this account is the live one again
+            continue
+        pnl += float(d.get("pnl") or 0.0)
+        n += int(d.get("trades_n") or 0)
+        accounts += 1
+    return {"pnl": round(pnl, 2), "pct": round(pnl / 100000.0 * 100, 2), "archived_trades": n, "accounts": accounts}
 
 
 # not material (the rule above): a risk multiplier and its card are left out of a strategy's plan (manager, 13.11.2026:

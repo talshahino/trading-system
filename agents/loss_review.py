@@ -468,6 +468,17 @@ def edge_now(bot, combo, live, up=False):
     return round(mult, 2), parts + [f"סיכון = {m:+.2f} ÷ {m0:+.2f} = ×{mult:.2f}"], round(m0, 3), round(m, 3)
 
 
+# a cut smaller than this share of the risk in force is not a decision (manager, 18.11.2026 night): 71 of the 254 risk
+# changes of the last week moved a strategy by under 12% (TV11 USDJPY x0.43 -> x0.42), each one a line in the morning list
+# and a change in the bot, for an edge estimate that moves more than that with every trade.
+MIN_CUT_STEP = 0.10
+
+
+def _cut_is_small(val, ref):
+    """True when going from the risk in force `ref` to `val` is not a cut worth making."""
+    return val > float(ref) * (1 - MIN_CUT_STEP)
+
+
 def _edge_base(bot, combo):
     """The approved risk the nightly edge rule multiplies (data/agents/edge_risk.json), or None."""
     try:
@@ -555,7 +566,14 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
                             "action": {"bot": rep["bot"], "combo": c, "kind": "mult", "value": val, "prev": live_now}})
                 have_ids.add(did)
             continue
-        if val > cur - 0.01:          # only deeper: a cut made for another reason (e.g. no profit without the news) stays
+        # only deeper: a cut made for another reason (e.g. no profit without the news) stays. Measured from the risk in
+        # force too (manager, 18.11.2026 night: `cur` is the last fix's value - TV11 USDJPY read "instead of x0.49" while
+        # x0.43 was running, and went x0.43 -> x0.42)
+        if _cut_is_small(val, min(cur, live_now)):
+            continue
+        # one cut per strategy in a run (manager, 18.11.2026 night: QC07 ARM was cut twice at 19:24 from the reports of
+        # 13.11 and 16.11, the same x0.82 in two decisions)
+        if f"cut|{rep['bot']}|{c}" in have_ids:
             continue
         if PC.cut_hurts(rep["bot"], c, cur, val):     # the whole bot first: a cut that adds risk to the bot is held
             continue
@@ -566,13 +584,14 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
             continue
         out.append({"id": did, "bot": rep["bot"], "type": "risk", "kind": "mult", "combo": c,
                     "title": f"{c}: " + ("כמות מינימלית - אין יתרון" if val == MIN_LOT else f"סיכון ×{val} לפי היתרון שלה")
-                             + f" (במקום ×{cur:g}), דוח ההפסד של {rep['day']}",
+                             + f" (במקום ×{live_now:g}), דוח ההפסד של {rep['day']}",
                     "decision": "approved", "by": "manager", "read": False, "undone": False, "at": at,
                     "why": "המנהל: התיקונים נכשלו והסיכון הורד - גודל ההורדה נקבע מהיתרון של האסטרטגיה עצמה: " + "; ".join(parts)
                            + ". כשיימצא תיקון - הסיכון חוזר; כל עסקה בחי מעדכנת את החישוב.",
                     "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_report": f"{rep['bot']}/{rep['day']}",
-                    "action": {"bot": rep["bot"], "combo": c, "kind": "mult", "value": val, "prev": cur}})
+                    "action": {"bot": rep["bot"], "combo": c, "kind": "mult", "value": val, "prev": live_now}})
         have_ids.add(did)
+        have_ids.add(f"cut|{rep['bot']}|{c}")
     if (pd.Timestamp.now(tz=TZ).date() - pd.Timestamp(rep["day"]).date()).days < 2:
         return out
     for c in plan["open"]:
@@ -592,7 +611,9 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
         if (appr := _edge_base(rep["bot"], c)) is not None:     # the edge rule's approved risk: the edge once (17.11)
             base = appr
         val = MIN_LOT if fm == MIN_LOT else round(base * fm, 2)
-        if val >= cur or PC.cut_hurts(rep["bot"], c, cur, val) or PC.agent_raise(decisions, rep["bot"], c):
+        if f"cut|{rep['bot']}|{c}" in have_ids:       # already cut in this run, from another day's report
+            continue
+        if _cut_is_small(val, cur) or PC.cut_hurts(rep["bot"], c, cur, val) or PC.agent_raise(decisions, rep["bot"], c):
             continue
         out.append({"id": did, "bot": rep["bot"], "type": "risk", "kind": "mult", "combo": c,
                     "title": f"{c}: " + ("כמות מינימלית - אין יתרון" if val == MIN_LOT else f"סיכון ×{val} - היתרון קטן")
@@ -603,6 +624,7 @@ def enforce(rep, plan, decisions, have_ids, at, idx=None, live=None):
                     "effect": "יוחל במחשב הבוטים תוך כ־10 דקות", "loss_report": f"{rep['bot']}/{rep['day']}",
                     "action": {"bot": rep["bot"], "combo": c, "kind": "mult", "value": val, "prev": cur}})
         have_ids.add(did)
+        have_ids.add(f"cut|{rep['bot']}|{c}")
     return out
 
 

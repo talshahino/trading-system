@@ -170,6 +170,11 @@ def ops():
         # 2 of its 30 minutes at 05:28 and published nothing; the round's error list was gone after the next install)
         for x in h.get("agent_errors_24h") or []:
             name = str(x.get("err", "")).split(":")[0]
+            # the whole-bot check passed since: the failure is over (manager, 18.11.2026 night: the 13:22 timeout was still
+            # reported as open after the fix, with the check ok at 17:14)
+            pf = h.get("portfolio") or {}
+            if name == "portfolio_check" and pf.get("ok") and str(pf.get("at", "")) > str(x.get("at", "")):
+                continue
             o = _ops_slot(out, name.replace("-new", "") or "pc")
             o["problems"].append(f"הסוכן {name} נכשל ב־{str(x.get('at', ''))[11:16]} UTC: {str(x.get('err', ''))[len(name) + 2:][:140]}")
             o["actions"].append("הסוכן החכם של המנהל יבדוק את הלוג ויתקן")

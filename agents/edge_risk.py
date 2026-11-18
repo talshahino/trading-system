@@ -314,7 +314,9 @@ def run(states=None, force=False):
                                     "held": hurt}
                 continue
             out["combos"][c] = {"base": base, "now": cur, "target": target, "edge0": m0, "edge": m, "parts": parts}
-            if abs(target - cur) < 0.01:
+            # a step under 10% of the risk in force is noise in the edge estimate, not a decision (manager, 18.11.2026
+            # night: 71 of 254 risk changes in a week were that small); the minimum volume always goes through
+            if abs(target - cur) < 0.01 or (target != LR.MIN_LOT and abs(target - cur) < LR.MIN_CUT_STEP * cur):
                 mine[c] = {"base": base, "last": cur}
                 continue
             did = hashlib.sha1(f"edge|{bot}|{c}|{target}|{today}".encode()).hexdigest()[:12]

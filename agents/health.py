@@ -293,6 +293,20 @@ def check(bot, state, now):
         cards.append(K.card(bot, "info", f"הפסד כולל {tot:.1f}%", "החשבון מתקרב למגבלת ההפסד הכולל הקבועה (10%). "
                             "אישור: הסוכן יציע הורדת סיכון לכל הבוט עד שהחשבון יתאושש.", None, None,
                             change={"check": "total", "week": now.strftime("%G-W%V")}))
+    # bot 7's account starts again at every material change: its loss over all the accounts (manager, 18.11.2026 night)
+    cum = None
+    if bot == "bot7" and tot is not None:
+        try:
+            from agents import reset_rule as RR
+            cum = RR.cumulative(float(state.get("equity")) - float(state.get("initial")))
+        except Exception:  # noqa: BLE001 - the report goes on without it
+            cum = None
+        if cum and cum["pct"] <= TOTAL_WARN:
+            problems.append(f"הפסד מצטבר {cum['pct']:.1f}% על פני {cum['accounts']} חשבונות (האיפוסים מסתירים אותו בחשבון הנוכחי)")
+            cards.append(K.card(bot, "info", f"הפסד מצטבר {cum['pct']:.1f}% מאז תחילת הבוט",
+                                f"בכל {cum['accounts']} החשבונות יחד, אחרי האיפוסים. אישור: הסוכן יבדוק אילו אסטרטגיות "
+                                "גרמו להפסד ויציע תיקון. המגבלות הקבועות לא משתנות.", None, None,
+                                change={"check": "cumulative", "week": now.strftime("%G-W%V")}))
     # the broker refuses every order on the account (bots 1-4 smart agent, 16.11.2026: bot 1's FTMO two-week trial
     # ended and each entry since Monday 08:01 UTC came back 10017 'Trade disabled' - nothing in the app said so)
     recent = [x for x in (state.get("skips") or [])
@@ -320,7 +334,7 @@ def check(bot, state, now):
             "trades": int(len(allr)), "mean_r": None if not len(allr) else round(float(allr.mean()), 3),
             "sum_r": None if not len(allr) else round(float(allr.sum()), 2),
             "bt_mean_r": None if not bt_all else round(float(np.mean(bt_all)), 3),
-            "flagged": sum(1 for c in combos if c["flags"]), "combos": combos, "problems": problems,
+            "flagged": sum(1 for c in combos if c["flags"]), "combos": combos, "problems": problems, "cumulative": cum,
             # the virtual accounts' last bookings (user, 18.11.2026: bot 5 fell ~$1,300 with no trade that explains it -
             # GitHub's copy of the state had stopped; the bookings themselves, from the bots' computer)
             "ledger_tail": [{"id": x.get("id"), "exit_time": x.get("exit_time"), "pnl": x.get("pnl"), "fixed": x.get("fixed")}

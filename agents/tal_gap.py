@@ -1257,6 +1257,8 @@ def ipad(D, cfg, htf, t_ns, f, key="IPAD", dflt=None):
     v = str(v)
     if v[0] == "c":
         return float(v[1:]) * float(D.cost[f])
+    if v[0] == "p":                                   # "p0.2" = 0.2% of the price (task b5widestop1811)
+        return float(v[1:]) / 100.0 * abs(float(D.o1[f]))
     ts, _, _, _, _, atr = D.tf(htf)
     j = int(np.searchsorted(ts, int(t_ns) - TF[htf] * 60_000_000_000, side="right")) - 1
     if j < 0 or not np.isfinite(atr[j]):

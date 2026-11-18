@@ -987,6 +987,79 @@
     }
    },
    "risk_before": 0.0028
+  },
+  "75e229c5620c": {
+   "family": "tal5",
+   "track": "t4h_15",
+   "before": {
+    "pair": [
+     "4h",
+     "15m"
+    ],
+    "cfg": {
+     "STOPAT": "imp0",
+     "IPAD": "c4",
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 5,
+     "MIN_RR": 0.0,
+     "EXPIRY": 120,
+     "PROT": "cal15",
+     "EXIT": "be70",
+     "WKND": 10,
+     "REARM": true
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "a30eaa4ce7d6": {
+   "family": "tal5",
+   "track": "t1h_15",
+   "before": {
+    "pair": [
+     "1h",
+     "15m"
+    ],
+    "cfg": {
+     "STOPAT": "imp0",
+     "IPAD": "c4",
+     "GBODY": 0.0,
+     "MIN_GAP": 0.3,
+     "SW": 5,
+     "MIN_RR": 1.5,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be382",
+     "IMP1": true,
+     "WKND": 10,
+     "REARM": true
+    }
+   },
+   "risk_before": 0.0028
+  },
+  "9f1e479e1aa6": {
+   "family": "tal5",
+   "track": "t5_1",
+   "before": {
+    "pair": [
+     "5m",
+     "1m"
+    ],
+    "cfg": {
+     "STOPAT": "imp0",
+     "IPAD": "c4",
+     "GBODY": 2.0,
+     "MIN_GAP": 0.6,
+     "SW": 3,
+     "MIN_RR": 2.0,
+     "EXPIRY": 24,
+     "PROT": "shock",
+     "EXIT": "be70",
+     "IMP1": true,
+     "TREND": "day"
+    }
+   },
+   "risk_before": 0.0028
   }
  },
  "tal_tracks": {
@@ -1015,8 +1088,6 @@
     "15m"
    ],
    "cfg": {
-    "STOPAT": "imp0",
-    "IPAD": "c4",
     "GBODY": 0.0,
     "MIN_GAP": 0.3,
     "SW": 5,
@@ -1026,7 +1097,8 @@
     "EXIT": "be382",
     "IMP1": true,
     "WKND": 10,
-    "REARM": true
+    "REARM": true,
+    "BRKH": 6
    }
   },
   "t4h_1h": {
@@ -1056,8 +1128,6 @@
     "15m"
    ],
    "cfg": {
-    "STOPAT": "imp0",
-    "IPAD": "c4",
     "GBODY": 0.0,
     "MIN_GAP": 0.0,
     "SW": 5,
@@ -1066,7 +1136,8 @@
     "PROT": "cal15",
     "EXIT": "be70",
     "WKND": 10,
-    "REARM": true
+    "REARM": true,
+    "LADDER": "2"
    }
   },
   "t15_5": {
@@ -1093,8 +1164,6 @@
     "1m"
    ],
    "cfg": {
-    "STOPAT": "imp0",
-    "IPAD": "c4",
     "GBODY": 2.0,
     "MIN_GAP": 0.6,
     "SW": 3,
@@ -1103,7 +1172,8 @@
     "PROT": "shock",
     "EXIT": "be70",
     "IMP1": true,
-    "TREND": "day"
+    "TREND": "day",
+    "WKND": 10
    }
   },
   "t4h_5": {

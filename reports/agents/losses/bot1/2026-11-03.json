@@ -301,9 +301,19 @@
    {
     "combo": "YT03|1Hour|PFE",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "סיכון ×0.001",
+      "decision": "b3003804b70d",
+      "at": "2026-11-18T22:19:36+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 1.0,
+      "value": 0.001
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TV24|15Min|KO",
@@ -380,6 +390,15 @@
     "combo": "TV62|1Hour|USDCAD",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
+     {
+      "what": "סיכון ×0.07",
+      "decision": "f6f73e1eba52",
+      "at": "2026-11-18T22:19:36+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.12,
+      "value": 0.07
+     },
      {
       "what": "סיכון ×0.12",
       "decision": "c775d9cf4648",
@@ -460,15 +479,14 @@
     "cut_only": false
    }
   ],
-  "open": [
-   "YT03|1Hour|PFE"
-  ],
+  "open": [],
   "cut_only": [
+   "YT03|1Hour|PFE",
    "TV24|15Min|KO",
    "TV62|1Hour|USDCAD",
    "TV38|15Min|GOOG"
   ],
   "total_month_pct": 3.37,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 4 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

@@ -17,7 +17,8 @@
    "PROT": "none",
    "WKND": 10,
    "REARM": true,
-   "BRKH": 6
+   "BRKH": 6,
+   "STOPAT": "imp0late"
   }
  },
  "tal_tracks": {
@@ -38,7 +39,8 @@
     "LADDER": "4",
     "WKND": 10,
     "REARM": true,
-    "MINSTOP": 1.0
+    "MINSTOP": 1.0,
+    "STOPAT": "imp0late"
    }
   },
   "t15_5": {
@@ -57,7 +59,8 @@
     "EXIT": "be786",
     "BBW": "h20",
     "WKND": 10,
-    "TREND": "day"
+    "TREND": "day",
+    "STOPAT": "imp0late"
    }
   },
   "t5_1": {
@@ -103,7 +106,7 @@
   "scout:SC258|1Min|US100": 0.000283,
   "scout:TV41|15Min|US100": 0.000198,
   "scout:FG01|5Min|US30": 0.000184,
-  "scout:FG01|15Min|US30": 0.000173
+  "scout:FG01|15Min|US30": 0.0
  },
  "changes": {
   "abb187377383": {
@@ -794,6 +797,194 @@
    "before": "__none__",
    "star_risk_before": "__none__",
    "fit6": 0.000247
+  },
+  "54904636222a": {
+   "family": "scout6",
+   "combo": "SC258|5Min|US100",
+   "before": {
+    "v": {
+     "target": "none",
+     "stop": 1.25,
+     "time": "own",
+     "be": true
+    },
+    "since": "2026-11-14T21:44:05+00:00",
+    "card": "c49201c6a29c"
+   }
+  },
+  "f9678ba8bef2": {
+   "family": "scout6",
+   "combo": "TV41|15Min|US100",
+   "before": {
+    "v": {
+     "target": "none",
+     "stop": 1.0,
+     "time": "own",
+     "be": false,
+     "sess": "day"
+    },
+    "since": "2026-11-17T12:23:05+00:00",
+    "card": "d2081082ff29"
+   }
+  },
+  "2bd658c9aa0b": {
+   "family": "scout6",
+   "combo": "FR03|15Min|US30",
+   "before": {
+    "v": {
+     "target": "own",
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "since": "2026-11-15T07:40:11+00:00",
+    "card": "d7d20b5c0d23"
+   }
+  },
+  "1fcc96ae5ce7": {
+   "family": "scout6",
+   "combo": "SC005|5Min|US500",
+   "before": {
+    "v": {
+     "target": 2.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "since": "2026-11-13T00:13:28+00:00",
+    "card": "cefeafe4d4d1"
+   }
+  },
+  "223d9b1b4d48": {
+   "family": "tal",
+   "before": {
+    "pair": [
+     "1h",
+     "5m",
+     2
+    ],
+    "cfg": {
+     "GBODY": 1.5,
+     "MIN_GAP": 0.3,
+     "SW": 3,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "WKND": 10,
+     "REARM": true,
+     "BRKH": 6
+    }
+   }
+  },
+  "8b83bb47cf26": {
+   "family": "scout6",
+   "combo": "SC261|5Min|US500",
+   "before": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "since": "2026-11-15T07:40:11+00:00",
+    "card": "89dc29914b40"
+   }
+  },
+  "58d2eb41d0ff": {
+   "family": "scout6",
+   "combo": "FG01|15Min|US30",
+   "before": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "since": "2026-11-17T20:04:09+00:00",
+    "card": "4503bc3845a6"
+   }
+  },
+  "5d008c32e412": {
+   "family": "tal5",
+   "track": "t15_5",
+   "before": {
+    "pair": [
+     "15m",
+     "5m",
+     1
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.6,
+     "SW": 3,
+     "MIN_RR": 2.0,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be786",
+     "BBW": "h20",
+     "WKND": 10,
+     "TREND": "day"
+    }
+   },
+   "risk_before": 0.0012
+  },
+  "0eadbfeaf7c8": {
+   "family": "tal5",
+   "track": "tal4h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h",
+     1
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 2,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "cal15",
+     "EXIT": "be886",
+     "LADDER": "4",
+     "WKND": 10,
+     "REARM": true,
+     "MINSTOP": 1.0
+    }
+   },
+   "risk_before": 0.0012
+  },
+  "60fad3f2f2d1": {
+   "family": "scout6",
+   "combo": "SC051|15Min|US100",
+   "before": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "since": "2026-11-14T07:59:04+00:00",
+    "card": "c24bbe546a30"
+   }
+  },
+  "9114f9b02905": {
+   "family": "scout6",
+   "combo": "SC326|5Min|US30",
+   "before": {
+    "v": {
+     "target": "own",
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "since": "2026-11-16T08:41:53+00:00",
+    "card": "be9bd41e279f"
+   }
+  },
+  "dc0e4813788b": {
+   "family": "risk",
+   "track": "scout:FG01|15Min|US30",
+   "before": 0.000173
   }
  },
  "scout": {
@@ -812,10 +1003,11 @@
     "target": 2.0,
     "stop": 0.75,
     "time": "own",
-    "be": true
+    "be": true,
+    "pyr": "py1"
    },
-   "since": "2026-11-13T00:13:28+00:00",
-   "card": "cefeafe4d4d1"
+   "since": "2026-11-18T03:50:47+00:00",
+   "card": "1fcc96ae5ce7"
   },
   "SC020|15Min|US500": {
    "v": {
@@ -842,20 +1034,22 @@
     "target": "none",
     "stop": 0.75,
     "time": "own",
-    "be": false
+    "be": false,
+    "pyr": "py1"
    },
-   "since": "2026-11-14T07:59:04+00:00",
-   "card": "c24bbe546a30"
+   "since": "2026-11-18T03:50:47+00:00",
+   "card": "60fad3f2f2d1"
   },
   "SC258|5Min|US100": {
    "v": {
     "target": "none",
     "stop": 1.25,
     "time": "own",
-    "be": true
+    "be": true,
+    "ent": "pb50"
    },
-   "since": "2026-11-14T21:44:05+00:00",
-   "card": "c49201c6a29c"
+   "since": "2026-11-18T03:50:47+00:00",
+   "card": "54904636222a"
   },
   "SC326|15Min|US30": {
    "v": {
@@ -872,20 +1066,22 @@
     "target": "none",
     "stop": 0.75,
     "time": "own",
-    "be": true
+    "be": true,
+    "pyr": "py1"
    },
-   "since": "2026-11-15T07:40:11+00:00",
-   "card": "89dc29914b40"
+   "since": "2026-11-18T03:50:47+00:00",
+   "card": "8b83bb47cf26"
   },
   "FR03|15Min|US30": {
    "v": {
     "target": "own",
     "stop": 1.0,
     "time": "own",
-    "be": false
+    "be": false,
+    "pyr": "py1"
    },
-   "since": "2026-11-15T07:40:11+00:00",
-   "card": "d7d20b5c0d23"
+   "since": "2026-11-18T03:50:47+00:00",
+   "card": "2bd658c9aa0b"
   },
   "SC084|15Min|US30": {
    "v": {
@@ -912,10 +1108,11 @@
     "target": "own",
     "stop": 1.5,
     "time": "own",
-    "be": true
+    "be": true,
+    "pyr": "py1"
    },
-   "since": "2026-11-16T08:41:53+00:00",
-   "card": "be9bd41e279f"
+   "since": "2026-11-18T03:50:47+00:00",
+   "card": "9114f9b02905"
   },
   "SC258|1Min|US100": {
    "v": {
@@ -933,10 +1130,11 @@
     "stop": 1.0,
     "time": "own",
     "be": false,
-    "sess": "day"
+    "sess": "day",
+    "pyr": "py1"
    },
-   "since": "2026-11-17T12:23:05+00:00",
-   "card": "d2081082ff29"
+   "since": "2026-11-18T03:50:47+00:00",
+   "card": "f9678ba8bef2"
   },
   "FG01|5Min|US30": {
    "v": {
@@ -953,10 +1151,11 @@
     "target": 3.0,
     "stop": 1.0,
     "time": "own",
-    "be": false
+    "be": false,
+    "pyr": "py1"
    },
-   "since": "2026-11-17T20:04:09+00:00",
-   "card": "4503bc3845a6"
+   "since": "2026-11-18T03:50:47+00:00",
+   "card": "58d2eb41d0ff"
   }
  }
 }

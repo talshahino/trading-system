@@ -480,9 +480,28 @@
    {
     "combo": "SC002|1Hour|EURUSD",
     "cause": "ניהול העסקה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "SC002|1Hour|EURUSD: כמות מינימלית - מפסידה עד 2025 ובחצי השנה האחרונה, כל 6 המשפחות נכשלו",
+      "decision": "b54f373185b4",
+      "at": "2026-11-18T03:47:49+00:00",
+      "effect_month_pct": -0.11,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.001",
+      "decision": "303931b0d9ea",
+      "at": "2026-11-18T03:47:49+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.7,
+      "value": 0.001
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 1.0,
     "edge_parts": [
      "בבדיקה של 2026: +0.05R לעסקה (80 עסקאות), בתקופת הבחירה -0.12R",
@@ -617,16 +636,16 @@
    }
   ],
   "open": [
-   "SC002|1Hour|EURUSD",
    "TV58|1Hour|XAUUSD",
    "QC07|15Min|ARM"
   ],
   "cut_only": [
    "SE02|1Hour|USDJPY",
+   "SC002|1Hour|EURUSD",
    "GH09|1Hour|USDJPY",
    "FR08|5Min|SPCX"
   ],
-  "total_month_pct": 1.91,
-  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 1.8,
+  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 4 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

@@ -1170,7 +1170,7 @@
   "verdict": "כל המשפחות נכשלו - כבר כמות מינימלית"
  },
  "bot6|SC072|5Min|US500": {
-  "status": "fixed",
+  "status": "trying",
   "tried": [
    {
     "what": "bot6_world target/stop/time/be",
@@ -1218,6 +1218,13 @@
      "t": 0.4,
      "win": 15.1
     }
+   },
+   {
+    "what": "all 7 families (hours, direction, breakeven, entry, structural stop, partial, pyramid)",
+    "at": "2026-11-18",
+    "state": "none better on both periods",
+    "file": "reports/agents/bot6/scout_families.json",
+    "pending": "no10"
    }
   ],
   "at": "2026-11-18"

@@ -962,6 +962,31 @@
    "family": "risk",
    "track": "scout:SC501|5Min|XAUUSD",
    "before": 0.00049
+  },
+  "86c38ea0ca95": {
+   "family": "tal5",
+   "track": "t4h_1h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h"
+    ],
+    "cfg": {
+     "STOPAT": "imp0",
+     "IPAD": "c4",
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 2,
+     "MIN_RR": 0.0,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be618",
+     "LADDER": "2",
+     "WKND": 10,
+     "REARM": true
+    }
+   },
+   "risk_before": 0.0028
   }
  },
  "tal_tracks": {
@@ -1021,7 +1046,8 @@
     "EXIT": "be618",
     "LADDER": "2",
     "WKND": 10,
-    "REARM": true
+    "REARM": true,
+    "FIRSTG": "1"
    }
   },
   "t4h_15": {

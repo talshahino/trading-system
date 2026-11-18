@@ -273,36 +273,45 @@
    {
     "combo": "GH08|1Hour|USDCAD",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
-    "edge_mult": 1.0,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.38R לעסקה (82 עסקאות), בתקופת הבחירה +0.70R",
-     "בחי: +0.40R לעסקה (3 עסקאות)",
-     "הבדיקה שווה 92% מהמשקל, החי 8%",
-     "היתרון עכשיו: +0.38R לעסקה",
-     "סיכון = +0.38 ÷ +0.38 = ×1.00"
+    "fixes": [
+     {
+      "what": "⭐ GH08|1Hour|USDCAD: ב־2R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־+0.00R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+      "decision": "70c0ef365637",
+      "at": "2026-11-17T22:20:14+00:00",
+      "effect_month_pct": null,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
     ],
-    "edge0": 0.381,
-    "edge": 0.382
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "SC432|15Min|XAUUSD",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
-    "edge_mult": 0.75,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.11R לעסקה (215 עסקאות), בתקופת הבחירה +0.19R",
-     "בחי: -1.00R לעסקה (3 עסקאות)",
-     "הבדיקה שווה 97% מהמשקל, החי 3%",
-     "היתרון עכשיו: +0.08R לעסקה",
-     "סיכון = +0.08 ÷ +0.11 = ×0.75"
+    "fixes": [
+     {
+      "what": "⭐ SC432|15Min|XAUUSD: איזון ב־50% מהדרך ליעד",
+      "decision": "e2b5e92dc036",
+      "at": "2026-11-17T22:20:14+00:00",
+      "effect_month_pct": null,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "⭐ SC432|15Min|XAUUSD: לא ברוחב בולינגר נמוך (מתחת לאחוזון 20)",
+      "decision": "72565cffc8d5",
+      "at": "2026-11-17T14:04:10+00:00",
+      "effect_month_pct": null,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
     ],
-    "edge0": 0.111,
-    "edge": 0.083
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "TT13|15Min|INTC",
@@ -346,14 +355,11 @@
     "cut_only": false
    }
   ],
-  "open": [
-   "GH08|1Hour|USDCAD",
-   "SC432|15Min|XAUUSD"
-  ],
+  "open": [],
   "cut_only": [
    "TT13|15Min|INTC"
   ],
   "total_month_pct": 0.0,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

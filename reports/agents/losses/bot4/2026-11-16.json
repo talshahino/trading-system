@@ -307,9 +307,28 @@
    {
     "combo": "BK07|1Hour|EURUSD",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "BK07|1Hour|EURUSD: חוזרת ל־×0.7 - ההורדה ל־×0.5 מורידה רווח ומוסיפה ירידה",
+      "decision": "c25aa94a93d8",
+      "at": "2026-11-18T07:07:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "547a8f012339",
+      "at": "2026-11-18T07:07:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.5,
+      "value": 0.7
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.72,
     "edge_parts": [
      "בבדיקה של 2026: +0.10R לעסקה (68 עסקאות), בתקופת הבחירה +0.32R",
@@ -448,16 +467,16 @@
   ],
   "open": [
    "BK05|15Min|EURUSD",
-   "BK07|1Hour|EURUSD",
    "FR01|1Hour|EURUSD",
    "QC07|15Min|ARM"
   ],
   "cut_only": [
+   "BK07|1Hour|EURUSD",
    "SE02|1Hour|GBPJPY",
    "FR01|1Hour|GBPUSD",
    "SE02|1Hour|USDJPY"
   ],
   "total_month_pct": 0.0,
-  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 4 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

@@ -163,6 +163,11 @@
    "target": "none",
    "limit": 0.25,
    "card": "81a3d57ad074"
+  },
+  "IB056|1Hour|XAUUSD": {
+   "target": 5.0,
+   "stop": 0.75,
+   "card": "85546cf64a47"
   }
  },
  "added": {
@@ -218,11 +223,21 @@
    "family": "flag",
    "key": "loss_streak",
    "before": "__none__"
+  },
+  "99b2cb016a52": {
+   "family": "flag",
+   "key": "rollover_guard",
+   "before": "__none__"
   }
  },
  "dd_fit": 8.3,
  "loss_streak": {
   "days": 2,
   "mult": 0.75
+ },
+ "rollover_guard": {
+  "before_min": 2.0,
+  "after_min": 10.0,
+  "mult": 1.0
  }
 }

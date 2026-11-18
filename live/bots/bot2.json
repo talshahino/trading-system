@@ -67,7 +67,8 @@
   "SC439|4Hour|EURJPY",
   "SC485|4Hour|XAUUSD",
   "SC479|1Hour|XAUUSD",
-  "SC533|4Hour|EURJPY"
+  "SC533|4Hour|EURJPY",
+  "SC539|4Hour|XAGUSD"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added BK07|1Hour|EURJPY and SE02|1Hour|USDJPY (new families, backtest with the bot), approved by the user; 04.11.2026: added FR03|15Min|GBPUSD, GH08|1Hour|USDCAD (GitHub/QuantConnect/forum families, both halves better with the bot), approved by the user; 04.11.2026 (evening): added QB11|1Hour|USDJPY, MQ11|4Hour|MSTR, MQ02|1Hour|XAUUSD (new pool: papers/books/MQL5 EAs; both halves better, Monte Carlo checked), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -182,6 +183,13 @@
    "filter_card": "7e99548d5b2b",
    "be_way": 0.5,
    "manage_card": "9c7380a1f48e"
+  },
+  "SC533|4Hour|EURJPY": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "f1d350609757"
   }
  },
  "added": {
@@ -218,7 +226,8 @@
   "SC439|4Hour|EURJPY": "c5bdc1bdc581",
   "SC485|4Hour|XAUUSD": "7ed8b6d5add2",
   "SC479|1Hour|XAUUSD": "a09ddf3ea1e1",
-  "SC533|4Hour|EURJPY": "a5f8edef7a0d"
+  "SC533|4Hour|EURJPY": "a5f8edef7a0d",
+  "SC539|4Hour|XAGUSD": "f083193307f9"
  },
  "removed": {
   "SC002|1Hour|ARM": "367a7113d211",
@@ -234,8 +243,18 @@
    "family": "flag",
    "key": "opp_same_tf",
    "before": "__none__"
+  },
+  "a304b2112b49": {
+   "family": "flag",
+   "key": "rollover_guard",
+   "before": "__none__"
   }
  },
  "dd_fit": 4.82,
- "opp_same_tf": "skip"
+ "opp_same_tf": "skip",
+ "rollover_guard": {
+  "before_min": 2.0,
+  "after_min": 10.0,
+  "mult": 1.0
+ }
 }

@@ -482,11 +482,29 @@
     "cause": "ניהול העסקה",
     "fixes": [
      {
+      "what": "SC002|1Hour|EURUSD: חוזרת ל־×0.7 - הורדה לכמות מינימלית הגדילה את הירידה של הבוט מ־5.75% ל־7.40%",
+      "decision": "1caa65e42428",
+      "at": "2026-11-18T07:07:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "f16944767149",
+      "at": "2026-11-18T07:07:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.001,
+      "value": 0.7
+     },
+     {
       "what": "SC002|1Hour|EURUSD: כמות מינימלית - מפסידה עד 2025 ובחצי השנה האחרונה, כל 6 המשפחות נכשלו",
       "decision": "b54f373185b4",
       "at": "2026-11-18T03:47:49+00:00",
-      "effect_month_pct": -0.11,
-      "cut": true,
+      "effect_month_pct": null,
+      "cut": false,
       "prev": null,
       "value": null
      },
@@ -501,17 +519,7 @@
      }
     ],
     "open": false,
-    "cut_only": true,
-    "edge_mult": 1.0,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.05R לעסקה (80 עסקאות), בתקופת הבחירה -0.12R",
-     "בחי: +0.15R לעסקה (2 עסקאות)",
-     "הבדיקה שווה 95% מהמשקל, החי 5%",
-     "היתרון עכשיו: +0.05R לעסקה",
-     "סיכון = +0.05 ÷ +0.05 = ×1.00"
-    ],
-    "edge0": 0.048,
-    "edge": 0.053
+    "cut_only": false
    },
    {
     "combo": "TV58|1Hour|XAUUSD",
@@ -641,11 +649,10 @@
   ],
   "cut_only": [
    "SE02|1Hour|USDJPY",
-   "SC002|1Hour|EURUSD",
    "GH09|1Hour|USDJPY",
    "FR08|5Min|SPCX"
   ],
-  "total_month_pct": 1.8,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 4 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 1.91,
+  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

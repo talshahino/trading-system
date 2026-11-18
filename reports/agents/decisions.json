@@ -1,12 +1,288 @@
 {
- "updated": "2026-11-18T07:09:21+00:00",
+ "updated": "2026-11-18T07:20:51+00:00",
  "new": [
-  "078952d66bd4",
-  "8675ea8e9b5e",
-  "19fea5ecfc72",
-  "ea4199f8d8b1"
+  "802efbefdb98",
+  "f2db343ef43e",
+  "784a49da2ade",
+  "036f7c885cfd",
+  "3cd91e748f87",
+  "daaf3ed8bfd5",
+  "90f4d3375c36",
+  "7f78a9e5bab0"
  ],
  "decisions": [
+  {
+   "id": "90f4d3375c36",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "IB056|1Hour|XAUUSD",
+   "title": "IB056|1Hour|XAUUSD: סיכון חוזר ל־×0.63 - נמצא תיקון אחרי דוח ההפסד של 2026-11-17",
+   "decision": "approved",
+   "by": "manager",
+   "read": false,
+   "undone": false,
+   "at": "2026-11-18T07:25:57+00:00",
+   "why": "המנהל: ההורדה הייתה רק עד שיימצא תיקון. נמצא: סיכון ×0.63; ⭐ IB056|1Hour|XAUUSD: יעד 5R · סטופ x0.75 - תיקון מדוח ההפסד של 17.11",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "loss_back": "bot3/2026-11-17",
+   "action": {
+    "bot": "bot3",
+    "combo": "IB056|1Hour|XAUUSD",
+    "kind": "mult",
+    "value": 0.63,
+    "prev": 0.001
+   }
+  },
+  {
+   "id": "7f78a9e5bab0",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "BK07|1Hour|EURUSD",
+   "title": "BK07|1Hour|EURUSD: סיכון ×0.5 לפי היתרון שלה (במקום ×0.7), דוח ההפסד של 2026-11-16",
+   "decision": "approved",
+   "by": "manager",
+   "read": false,
+   "undone": false,
+   "at": "2026-11-18T07:25:57+00:00",
+   "why": "המנהל: התיקונים נכשלו והסיכון הורד - גודל ההורדה נקבע מהיתרון של האסטרטגיה עצמה: בבדיקה של 2026: +0.10R לעסקה (68 עסקאות), בתקופת הבחירה +0.32R; בחי: -0.40R לעסקה (2 עסקאות); הבדיקה שווה 94% מהמשקל, החי 6%; היתרון עכשיו: +0.07R לעסקה; סיכון = +0.07 ÷ +0.10 = ×0.72. כשיימצא תיקון - הסיכון חוזר; כל עסקה בחי מעדכנת את החישוב.",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "loss_report": "bot4/2026-11-16",
+   "action": {
+    "bot": "bot4",
+    "combo": "BK07|1Hour|EURUSD",
+    "kind": "mult",
+    "value": 0.5,
+    "prev": 0.7
+   }
+  },
+  {
+   "id": "802efbefdb98",
+   "bot": "bot2",
+   "type": "card",
+   "card": "b1bb00c2d796",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "SC479|1Hour|XAUUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.49% → -2.49%, ירידה 5.98% → 6.25%, ימים קרובים למגבלה 0 → 0) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2929,
+     "total": 141.52,
+     "worst_day": -2.49,
+     "max_dd": 5.98,
+     "near_days": 0,
+     "max_open": 5.07,
+     "max_side": 4.15,
+     "guard_cut": 187,
+     "guard_skipped": 34
+    },
+    "after": {
+     "trades": 2930,
+     "total": 142.38,
+     "worst_day": -2.49,
+     "max_dd": 6.25,
+     "near_days": 0,
+     "max_open": 5.07,
+     "max_side": 4.15,
+     "guard_cut": 188,
+     "guard_skipped": 34
+    }
+   },
+   "at": "2026-11-18T07:20:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "f2db343ef43e",
+   "bot": "bot2",
+   "type": "card",
+   "card": "f083193307f9",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC539|4Hour|XAGUSD · Thermostat (Pruitt)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.11R לעסקה, 65.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +141.52% → +142.36%, בלי יותר סיכון (יום גרוע -2.49%, ירידה 6.08%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 2929,
+     "total": 141.52,
+     "worst_day": -2.49,
+     "max_dd": 5.98,
+     "near_days": 0,
+     "max_open": 5.07,
+     "max_side": 4.15,
+     "guard_cut": 187,
+     "guard_skipped": 34
+    },
+    "after": {
+     "trades": 2974,
+     "total": 142.36,
+     "worst_day": -2.49,
+     "max_dd": 6.08,
+     "near_days": 0,
+     "max_open": 5.27,
+     "max_side": 4.6,
+     "guard_cut": 236,
+     "guard_skipped": 54
+    }
+   },
+   "at": "2026-11-18T07:20:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "784a49da2ade",
+   "bot": "bot2",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC539|4Hour|XAGUSD",
+   "title": "SC539|4Hour|XAGUSD: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.11R לעסקה, 65.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +141.52% → +142.36%, בלי יותר סיכון (יום גרוע -2.49%, ירידה 6.08%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "f2db343ef43e",
+   "star": true,
+   "action": {
+    "bot": "bot2",
+    "combo": "SC539|4Hour|XAGUSD",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-18T07:20:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "036f7c885cfd",
+   "bot": "bot2",
+   "type": "card",
+   "card": "f1d350609757",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC533|4Hour|EURJPY: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.11R לעסקה, 56.0 עסקאות אפקטיביות, +0.03R מעל המצב הקיים) · בבוט השלם על 2026: רווח +141.91% → +142.46%, בלי יותר סיכון (יום גרוע -2.49%, ירידה 6.06%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 2978,
+     "total": 141.91,
+     "worst_day": -2.49,
+     "max_dd": 6.06,
+     "near_days": 0,
+     "max_open": 5.22,
+     "max_side": 4.46,
+     "guard_cut": 210,
+     "guard_skipped": 50
+    },
+    "after": {
+     "trades": 2978,
+     "total": 142.46,
+     "worst_day": -2.49,
+     "max_dd": 6.06,
+     "near_days": 0,
+     "max_open": 5.22,
+     "max_side": 4.46,
+     "guard_cut": 209,
+     "guard_skipped": 50
+    }
+   },
+   "at": "2026-11-18T07:20:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "3cd91e748f87",
+   "bot": "bot2",
+   "type": "card",
+   "card": "b521ab669207",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC568|1Hour|USDCAD · Dual Momentum Vortex 100 / 50 both long, extreme-point entry, 60-bar exit, 6 ATR (Oxford Capital)",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.49% → -2.49%, ירידה 6.06% → 6.68%, ימים קרובים למגבלה 0 → 0) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2978,
+     "total": 142.46,
+     "worst_day": -2.49,
+     "max_dd": 6.06,
+     "near_days": 0,
+     "max_open": 5.22,
+     "max_side": 4.46,
+     "guard_cut": 209,
+     "guard_skipped": 50
+    },
+    "after": {
+     "trades": 3011,
+     "total": 142.61,
+     "worst_day": -2.49,
+     "max_dd": 6.68,
+     "near_days": 0,
+     "max_open": 5.22,
+     "max_side": 4.46,
+     "guard_cut": 260,
+     "guard_skipped": 67
+    }
+   },
+   "at": "2026-11-18T07:20:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "daaf3ed8bfd5",
+   "bot": "bot2",
+   "type": "card",
+   "card": "720673c20c19",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC568|15Min|XAUUSD · Dual Momentum Vortex 100 / 50 both long, extreme-point entry, 60-bar exit, 6 ATR (Oxford Capital)",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.49% → -2.90%, ירידה 6.06% → 6.55%, ימים קרובים למגבלה 0 → 0) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 2978,
+     "total": 142.46,
+     "worst_day": -2.49,
+     "max_dd": 6.06,
+     "near_days": 0,
+     "max_open": 5.22,
+     "max_side": 4.46,
+     "guard_cut": 209,
+     "guard_skipped": 50
+    },
+    "after": {
+     "trades": 3181,
+     "total": 146.1,
+     "worst_day": -2.9,
+     "max_dd": 6.55,
+     "near_days": 0,
+     "max_open": 5.36,
+     "max_side": 4.68,
+     "guard_cut": 336,
+     "guard_skipped": 74
+    }
+   },
+   "at": "2026-11-18T07:20:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "078952d66bd4",
    "bot": "bot1",

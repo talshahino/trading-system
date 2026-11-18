@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-18T15:32:18+00:00",
+ "updated": "2026-11-18T15:51:50+00:00",
  "light_at": "2026-11-18T15:32:18+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -9,12 +9,12 @@
   "smart": 60
  },
  "smart_minutes": {
-  "bot6-new": 10.0
+  "bot5-new": 15.0
  },
  "agent_errors": [],
  "agent_last": {
   "bot5": "2026-11-18T12:06:24+00:00",
-  "bot5-new": "2026-11-18T03:57:40+00:00",
+  "bot5-new": "2026-11-18T15:33:19+00:00",
   "bot6": "2026-11-18T13:59:14+00:00",
   "bot1": "2026-11-18T04:18:33+00:00",
   "bot2": "2026-11-18T05:56:56+00:00",
@@ -26,9 +26,8 @@
  },
  "agent_tail": {
   "bot5-new": [
-   "new strategies: stopped for time, 0 tested, 948 combos left",
-   "{\"bot\": \"bot5\", \"new_cards\": 12258}",
-   "(continued across a manager restart)"
+   "this run: 0 experiments, 30 new-strategy combos",
+   "{\"bot\": \"bot5\", \"new_cards\": 13236}"
   ],
   "bot2": [
    "this run: 43 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
@@ -85,12 +84,11 @@
    "err": "ended while the manager restarted - published after"
   },
   "bot5-new": {
-   "at": "2026-11-18T03:58:59+00:00",
-   "sec": 920,
+   "at": "2026-11-18T15:33:19+00:00",
+   "sec": 926,
    "budget_sec": 900,
-   "ok": null,
-   "err": null,
-   "adopted": true
+   "ok": true,
+   "err": null
   },
   "bot2": {
    "at": "2026-11-18T05:58:01+00:00",
@@ -178,7 +176,7 @@
   "ram_gb": {
    "total": 7.9,
    "free": 2.0,
-   "load_pct": 75
+   "load_pct": 74
   }
  }
 }

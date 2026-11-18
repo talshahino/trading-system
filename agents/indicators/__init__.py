@@ -86,6 +86,8 @@ from agents.indicators.classic7 import (dsma, elegant_osc, fib_bollinger, hull_b
                                         universal_osc, voss_predict, williams_ad)
 from agents.indicators.classic8 import (adxr, asi, cfo, didi_index, dynamic_momentum, gapo, pivot_supertrend, psy_line,
                                         r_squared, range_vol, stoch_cci, uniema, vqi)
+from agents.indicators.classic9 import (autocorr_periodogram, chandelier_exit, damiani_volatmeter, elder_impulse, jma,
+                                        livermore_pivots, nrtr, range_rank, vpci)
 TV = "https://www.tradingview.com/script/"
 TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
@@ -411,6 +413,15 @@ INDICATORS = {
     "r_squared": (r_squared, "R-squared 14 of closes on time + regression slope in ATR per bar", "https://www.investopedia.com/terms/r/r-squared.asp"),
     "dynamic_momentum": (dynamic_momentum, "Chande-Kroll Dynamic Momentum Index: RSI with volatility-adaptive length 5..30", "https://www.investopedia.com/terms/d/dynamicmomentumindex.asp"),
     "stoch_cci": (stoch_cci, "Stochastic CCI: stochastic 14 of CCI 20, %K / %D SMA 3", "https://www.tradingview.com/scripts/stochasticcci/"),
+    "damiani_volatmeter": (damiani_volatmeter, "Damiani Volatmeter: ATR13/ATR40 with lag suppressor vs 1.4 - StDev20/StDev100 -> volatility trade-on state", TV + "z95IdM4a-Damiani-Volatmeter-loxx"),
+    "vpci": (vpci, "Dormeier Volume Price Confirmation Indicator 5/20 + SMA 8 signal", "https://www.traders.com/Documentation/FEEDbk_docs/2007/07/Abstracts_new/DORMEIER/dormeier.html"),
+    "nrtr": (nrtr, "Nick Rypock Trailing Reverse (ATR 40 x 2 from the extreme close), trend + flips", "https://www.mql5.com/en/articles/3690"),
+    "jma": (jma, "Jurik Moving Average (open-source approximation, length 7 phase 50 power 2)", TV + "gwzRz6tI-Jurik-Moving-Average"),
+    "autocorr_periodogram": (autocorr_periodogram, "Ehlers Autocorrelation Periodogram dominant cycle 10..48 + the cycle-adaptive RSI (dc / 2)", "https://in.tradingview.com/script/df3Ofxvr-Ehlers-Autocorrelation-Periodogram-Loxx"),
+    "chandelier_exit": (chandelier_exit, "Chandelier Exit 22 / 3 ATR from closes with ratchet (everget), direction + buy / sell flips", "https://tradingview.com/script/AqXxNS7j-Chandelier-Exit"),
+    "elder_impulse": (elder_impulse, "Elder Impulse System: EMA13 and MACD histogram slopes -> +1 green / -1 red / 0 blue", TV + "oCbEFfpg-Indicator-Elder-Impulse-System"),
+    "livermore_pivots": (livermore_pivots, "Livermore supply / demand pivots (ATR-swing or DeMark-size), last two of each + noise base", "https://oxfordstrat.com/trading-strategies/livermore-system-1/"),
+    "range_rank": (range_rank, "Crabel narrow / wide N-bar range vs the lookback (nr / wr flags + percentile rank)", "https://oxfordstrat.com/trading-strategies/wide-range-pattern/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

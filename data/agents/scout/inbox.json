@@ -13864,6 +13864,479 @@
     "bot6"
    ],
    "rules": "as SC560, longs only when the 4x-bar timeframe closes over its EMA20, shorts only under it (closed bars)"
+  },
+  {
+   "id": "SC562",
+   "name": "Pruitt Super Combo: 10-day range breakout (0.3 / 0.6 by the easier side) + failed-breakout reverse, 0.25-range stop, BE, flat 16:00 NY",
+   "source": "George Pruitt - Building Winning Trading Systems with TradeStation (Super Combo chapter)",
+   "url": "https://c.mql5.com/forextsd/forum/161/super_combo_day_trading_strategy.pdf",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "George Pruitt 'Super Combo' day-trading system (Building Winning Trading Systems with TradeStation, ch. 'Super Combo'; chapter text https://c.mql5.com/forextsd/forum/161/super_combo_day_trading_strategy.pdf ; S&P 5-minute, daily values from daily bars). Daily, from the completed NY cash sessions (09:30-16:00 NY): avgR = 10-session average range (H - L, not true range), avgOC = 10-session average |O - C|; trade only if yesterday's |O - C| < 0.85 avgOC. Buy-easier day (yesterday's close <= the day before's): buy level = today's open + 0.30 avgR, sell level = open - 0.60 avgR; sell-easier day: sell = open - 0.30 avgR, buy = open + 0.60 avgR. Failed breakouts: once today's high has gone over yesterday's high + 0.25 avgR, sell at yesterday's high - 0.25 avgR; once today's low went under yesterday's low - 0.25 avgR, buy at yesterday's low + 0.25 avgR. No entries in the first 30 minutes, none from 15:30 NY (14:30 CT); at most one long and one short a day. Stop 0.25 avgR (the source's floor of 3 S&P points is dropped - it is contract-specific); break-even once 0.50 avgR in profit (= 2R here, lock_r); from 15:30 NY out on a close under the 3-bar low (over the 3-bar high) - the source trails a stop there (our close-based version); flat at 16:00 NY. Our engine differences: the stop-order entries become a close through the level (entry at the next open); the source's liquidation reversals (stop-and-reverse before 12:00 CT) are left out (one position at a time)."
+  },
+  {
+   "id": "SC563",
+   "name": "Pezzutti ADX Gapper: ADX12 > 30 with DI28 trend, open gaps past the prior low / high and closes back, bar stop, 2R (Traders.com)",
+   "source": "Paolo Pezzutti - Short-Term Pattern: ADX Gapper (Traders.com 2005)",
+   "url": "https://technical.traders.com/tradersonline/display.asp?art=2794",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Paolo Pezzutti 'Short-Term Pattern: ADX Gapper' (Traders.com, 12/2005, https://technical.traders.com/tradersonline/display.asp?art=2794 ; daily bars): ADX 12 > 30 and +DI 28 > -DI 28 (strong up trend), the bar opens with a gap under the previous bar's low -> buy stop at the previous low; stop under the bar's low. Sells: 'the opposite' (ADX > 30, -DI > +DI, gap over the previous high, sell stop at it, stop over the bar's high - the mirror is the article's one sentence). 24-hour feeds rarely gap (the open is the prior close), so a trade under the previous low by >= 0.25 ATR14 counts as the gap too (our translation). Bar-by-bar on any timeframe; the stop-order entry becomes 'the bar closes back over the previous low' (entry at the next open). Exit: the article says a trailing stop with no formula - ours: target 2R."
+  },
+  {
+   "id": "SC564",
+   "name": "Livermore System 1 (Oxford Capital): 4-ATR swing pivots, over both last supply / under both demand pivots, out through the opposite pivot, 6 ATR",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - Livermore System Part 1",
+   "url": "https://oxfordstrat.com/trading-strategies/livermore-system-1/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Livermore System 1 (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/livermore-system-1/ ; 42 futures, daily): pivots = swings of at least 4 x ATR20 (supply = a high followed by a 4-ATR fall, demand = a low followed by a 4-ATR rise); penetration filter 0 (their base case); entries over both last supply pivots / under both last demand pivots, out through the latest opposite pivot, stop 6 ATR20. On any bar timeframe."
+  },
+  {
+   "id": "SC565",
+   "name": "SC564 with penetration noise 0.5 x the smaller last swing (Oxford Capital)",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - Livermore System Part 1 (penetration filter)",
+   "url": "https://oxfordstrat.com/trading-strategies/livermore-system-1/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "SC564 with their penetration filter 0.5: the pivots must be beaten by 0.5 x the smaller of the last two swings (entries and exits)."
+  },
+  {
+   "id": "SC566",
+   "name": "Livermore System 2 (Oxford Capital): DeMark pivots size 20, noise 0.5 ATR20, two-pivot break, opposite-pivot exit, 6 ATR",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - Livermore System Part 2",
+   "url": "https://oxfordstrat.com/trading-strategies/livermore-system-2/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Livermore System 2 (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/livermore-system-2/ ): DeMark pivots of size 20 (a high with 20 lower highs each side; known 20 bars later), noise = 0.5 x ATR20 (their 0.50 case), same entry / exit / 6-ATR stop as SC564."
+  },
+  {
+   "id": "SC567",
+   "name": "Dual Momentum ROC 100 / 50 both > 0, close over the setup bar's high (extreme point), 60-bar exit, 6 ATR (Oxford Capital)",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - Dual Momentum & Rate of Change",
+   "url": "https://oxfordstrat.com/trading-strategies/dual-momentum-rate-of-change/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Dual Momentum & Rate of Change (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/dual-momentum-rate-of-change/ ): slow ROC 100 > 0 (filter) and fast ROC 50 > 0 (setup) -> the setup bar's high is the extreme, buy on a close over it (mirror short); time exit 60 bars (they prefer > 50), stop 6 ATR20. Their case 2 lengths (50 / 100)."
+  },
+  {
+   "id": "SC568",
+   "name": "Dual Momentum Vortex 100 / 50 both long, extreme-point entry, 60-bar exit, 6 ATR (Oxford Capital)",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - Dual Momentum & Vortex Indicator",
+   "url": "https://oxfordstrat.com/trading-strategies/dual-momentum-vortex-indicator/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Dual Momentum & Vortex (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/dual-momentum-vortex-indicator/ ; Botes & Siepman): slow Vortex 100 (+VI > -VI) and fast Vortex 50 (+VI > -VI) both long -> buy a close over the setup bar's high (mirror); time exit 60 bars, stop 6 ATR20."
+  },
+  {
+   "id": "SC569",
+   "name": "Crabel Wide Range 2-bar (widest of 20): next bar open +/- 2 x stretch breakout, opposite stretch stop, 10-bar exit (Oxford Capital)",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - Wide Range N-Day Pattern (Crabel)",
+   "url": "https://oxfordstrat.com/trading-strategies/wide-range-pattern/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Crabel Wide Range N-day pattern (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/wide-range-pattern/ ; base N 2, lookback 20; daily in the source, here bar by bar on any timeframe): the previous 2-bar range is the widest 2-bar range of the last 20 bars -> this bar closing over its open + 2 x stretch buys (stretch = SMA10 of min(H - O, O - L)), under the open - 2 x stretch sells (their buy / sell stops; entry at the next open); the opposite stretch level is the stop; time exit 10 bars. Their test showed wide range losing (narrow range better) - brought as the documented variant, the bots' tests decide."
+  },
+  {
+   "id": "SC570",
+   "name": "Crabel ORBP with 20-bar price channel mode: open +/- stretch in the channel's direction, opposite stretch stop, 5-bar exit (Oxford Capital)",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - ORBP with Price Channel Filter (Crabel)",
+   "url": "https://oxfordstrat.com/trading-strategies/orbp-with-price-channel-filter/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "ORBP with Price Channel filter (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/orbp-with-price-channel-filter/ ; Crabel opening-range breakout + Donchian mode; daily in the source, here bar by bar): mode = long after a bar's high beats the prior 20-bar high, short after a low breaks the prior 20-bar low (held until the other side breaks); in long mode a bar closing over its open + 1 x stretch (SMA10 of min(H - O, O - L)) buys, in short mode under the open - stretch sells. Stop: the opposite stretch level (ours - their 6 x ATR20 stop is far for the bots); time exit 5 bars (their Time_Index 1-50, no base given)."
+  },
+  {
+   "id": "SC571",
+   "name": "Gap Type A: low over the prior high + 20-bar high breakout, next open, gap stop, 10-bar exit (Oxford Capital / Dahlquist-Bauer)",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - Gap Pattern Type A",
+   "url": "https://oxfordstrat.com/trading-strategies/gap-pattern/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Gap Pattern Type A (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/gap-pattern/ ; Dahlquist & Bauer): a full gap (low over the previous HIGH) on a bar that also breaks the 20-bar high (their price channel filter) -> buy the next open; out under the gap (the previous high, a hair below) or after 10 bars (their Time_Index 1-50, no base - ours 10); short mirror. Bar-by-bar (daily in the source)."
+  },
+  {
+   "id": "SC572",
+   "name": "Gap Type B: low over the prior close + 20-bar high breakout, gap stop, 10-bar exit (Oxford Capital / Hill-Pruitt-Hill)",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - Gap Pattern Type B",
+   "url": "https://oxfordstrat.com/trading-strategies/gap-pattern-2/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Gap Pattern Type B (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/gap-pattern-2/ ; Hill, Pruitt & Hill): the gap is the low over the previous CLOSE (not its high), else as SC572."
+  },
+  {
+   "id": "SC573",
+   "name": "Doji trend: doji (body <= 5%) with 10-bar trend, close past the doji extreme, quick 2-bar stop, 20-bar exit (Oxford Capital)",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - Doji Pattern Trend",
+   "url": "https://oxfordstrat.com/trading-strategies/doji-trend-1/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Doji Pattern - Trend (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/doji-trend-1/ ): a doji (|C - O| <= 5% of the range), the close over the close 10 bars before (their Trend_Index 1-40 - ours 10) -> buy when the next bar closes over the doji high (their buy stop a tick over it); quick exit under min(doji low, entry-bar low); time exit 20 bars. Short mirror."
+  },
+  {
+   "id": "SC574",
+   "name": "Doji reversal: doji against the 10-bar trend, close past the doji extreme, quick stop, 20-bar exit (Oxford Capital)",
+   "source": "Oxford Capital Strategies (oxfordstrat.com) - Doji Pattern Reversal",
+   "url": "https://oxfordstrat.com/trading-strategies/doji-countertrend-1/",
+   "added": "2026-11-18",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Doji Pattern - Reversal (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/doji-countertrend-1/ ): as SC574 with the trend filter inverted (longs after a falling 10 bars, shorts after a rising 10)."
+  },
+  {
+   "id": "SC575",
+   "name": "Donchian 20 breakout only while the Damiani Volatmeter is ON, 2 ATR, 2R",
+   "source": "Damiani Volatmeter (loxx, TradingView open source) - filter on a Donchian breakout (ours)",
+   "url": "https://in.tradingview.com/script/z95IdM4a-Damiani-Volatmeter-loxx",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Donchian 20 breakout (close over the prior 20-bar high / under the low) only while the Damiani Volatmeter says volatility is ON (vol > 1.4 - StDev20/StDev100); stop 2 ATR, target 2R (ours) - the Volatmeter's intended use as a trade / no-trade filter."
+  },
+  {
+   "id": "SC576",
+   "name": "Dormeier VPCI crosses its signal on its side of zero with the SMA50, cross-back exit, 2 ATR",
+   "source": "Dormeier VPCI (TASC 2007.07) - signal cross (ours)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2007/07/Abstracts_new/DORMEIER/dormeier.html",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Dormeier VPCI crosses over its signal while over zero (volume confirms the up trend), with the close over SMA50 -> buy; mirror; out on the cross back; stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC577",
+   "name": "NRTR (ATR40 x 2) flip, NRTR line trailing stop, opposite-flip exit (MQL5)",
+   "source": "NRTR (MQL5 article 3690)",
+   "url": "https://www.mql5.com/en/articles/3690",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "NRTR (ATR 40 x 2) flips up -> buy, down -> sell; the NRTR line is the stop (trailing), out on the opposite flip (the MQL5 article's NRTR trading module, ATR version)."
+  },
+  {
+   "id": "SC578",
+   "name": "Jurik MA 7 slope turn with the close on its side and the EMA200, opposite-turn exit, 2 ATR",
+   "source": "Jurik MA approximation (everget, TradingView open source) - slope turn (ours)",
+   "url": "https://www.tradingview.com/script/gwzRz6tI-Jurik-Moving-Average",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Jurik MA (7, phase 50) turns up with the close over it and over the EMA200 -> buy; mirror; out on the opposite turn; stop 2 ATR (ours)."
+  },
+  {
+   "id": "SC579",
+   "name": "Ehlers cycle-adaptive RSI (Autocorrelation Periodogram dc / 2) back over 30 / under 70, 1.5 ATR, 2R",
+   "source": "Ehlers Autocorrelation Periodogram (Cycle Analytics; loxx port) - cycle-adaptive RSI",
+   "url": "https://in.tradingview.com/script/df3Ofxvr-Ehlers-Autocorrelation-Periodogram-Loxx",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Ehlers cycle-adaptive RSI: RSI with length = half the dominant cycle of the Autocorrelation Periodogram, crosses back over 30 -> buy, under 70 -> sell; stop 1.5 ATR, target 2R (ours)."
+  },
+  {
+   "id": "SC580",
+   "name": "Chandelier Exit (everget, close-based ratchet) flip with the EMA200, chandelier trailing stop, opposite-flip exit",
+   "source": "Chandelier Exit (everget, TradingView open source)",
+   "url": "https://tradingview.com/script/AqXxNS7j-Chandelier-Exit",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Chandelier Exit (everget: 22 / 3 ATR from closes, ratcheting) flips to buy over the EMA200 -> buy; sell flip under it -> sell; the chandelier stop trails; out on the opposite flip. (TV39 = LeBeau's plain lines on highs / lows without the ratchet or the trend filter.)"
+  },
+  {
+   "id": "SC581",
+   "name": "EMA13 pullback over the EMA65 only when the Elder Impulse is not red (shorts: not green), swing stop, 2R",
+   "source": "Elder Impulse System (open source) - Elder's no-trade-against-the-impulse rule on an EMA13 pullback (ours)",
+   "url": "https://www.tradingview.com/script/oCbEFfpg-Indicator-Elder-Impulse-System",
+   "added": "2026-11-18",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Elder's rule on a pullback: over the EMA 65 (his long-term screen, 5 x EMA13), a dip that touches the EMA 13 and closes over it buys only when the Elder Impulse is not red (and shorts only when not green); stop beyond the 5-bar swing, target 2R (ours). (TV47 trades the colour flips themselves.)"
   }
  ],
  "indicators": [
@@ -15560,6 +16033,69 @@
    "url": "https://www.tradingview.com/scripts/stochasticcci/",
    "added": "2026-11-17",
    "uses": "fast oscillator for pullback timing in trend (SC559)"
+  },
+  {
+   "name": "damiani_volatmeter",
+   "source": "Damiani Volatmeter (loxx port)",
+   "url": "https://in.tradingview.com/script/z95IdM4a-Damiani-Volatmeter-loxx",
+   "added": "2026-11-18",
+   "uses": "no-trade filter for trend / breakout systems: trade only while volatility is ON (SC575)"
+  },
+  {
+   "name": "vpci",
+   "source": "Volume Price Confirmation Indicator (Dormeier, TASC 2007)",
+   "url": "https://www.traders.com/Documentation/FEEDbk_docs/2007/07/Abstracts_new/DORMEIER/dormeier.html",
+   "added": "2026-11-18",
+   "uses": "volume confirmation filter on trend entries; VPCI / signal crosses (SC576)"
+  },
+  {
+   "name": "nrtr",
+   "source": "Nick Rypock Trailing Reverse (MQL5)",
+   "url": "https://www.mql5.com/en/articles/3690",
+   "added": "2026-11-18",
+   "uses": "trend flips as entries; the line as a trailing stop for any trend strategy (SC577)"
+  },
+  {
+   "name": "jma",
+   "source": "Jurik Moving Average (everget open-source approximation)",
+   "url": "https://www.tradingview.com/script/gwzRz6tI-Jurik-Moving-Average",
+   "added": "2026-11-18",
+   "uses": "low-lag trend line: slope turns, price vs JMA as a filter (SC578)"
+  },
+  {
+   "name": "autocorr_periodogram",
+   "source": "Ehlers Autocorrelation Periodogram (Cycle Analytics; loxx port)",
+   "url": "https://in.tradingview.com/script/df3Ofxvr-Ehlers-Autocorrelation-Periodogram-Loxx",
+   "added": "2026-11-18",
+   "uses": "dominant cycle to adapt lengths of RSI / stochastic / bands; cycle-adaptive RSI (SC579)"
+  },
+  {
+   "name": "chandelier_exit",
+   "source": "Chandelier Exit (everget)",
+   "url": "https://tradingview.com/script/AqXxNS7j-Chandelier-Exit",
+   "added": "2026-11-18",
+   "uses": "trailing exit for any trend trade; flips as entries (SC580)"
+  },
+  {
+   "name": "elder_impulse",
+   "source": "Elder Impulse System",
+   "url": "https://www.tradingview.com/script/oCbEFfpg-Indicator-Elder-Impulse-System",
+   "added": "2026-11-18",
+   "uses": "no longs on red, no shorts on green - a filter on every pullback / breakout entry (SC581)"
+  },
+  {
+   "name": "livermore_pivots",
+   "source": "Livermore market-key pivots (Oxford Capital Strategies)",
+   "url": "https://oxfordstrat.com/trading-strategies/livermore-system-1/",
+   "added": "2026-11-18",
+   "uses": "structural supply / demand levels for breakouts and stops (SC564-SC566)"
+  },
+  {
+   "name": "range_rank",
+   "source": "Crabel narrow / wide N-bar range rank",
+   "url": "https://oxfordstrat.com/trading-strategies/wide-range-pattern/",
+   "added": "2026-11-18",
+   "uses": "NR / WR setups and volatility compression filters (SC569)"
   }
  ],
  "sources": [
@@ -15567,7 +16103,7 @@
    "name": "TradingView (open-source scripts + ideas)",
    "url": "https://www.tradingview.com/scripts/",
    "look_for": "open-source Pine strategies / indicators to port; ideas with full rules",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "FXStreet",
@@ -15609,7 +16145,7 @@
    "name": "MQL5 CodeBase / Market / Articles",
    "url": "https://www.mql5.com/en/code",
    "look_for": "EA logic in articles and the CodeBase; indicators to port",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "DailyFX / IG education",
@@ -15651,7 +16187,7 @@
    "name": "Investopedia",
    "url": "https://www.investopedia.com/trading-4427765",
    "look_for": "indicator definitions and classic strategies",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "YouTube",
@@ -15681,7 +16217,7 @@
    "name": "Reddit r/algotrading, r/Daytrading, r/Forex",
    "url": "https://www.reddit.com/r/algotrading/",
    "look_for": "shared systems with backtests",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "QuantConnect / Quantpedia",
@@ -15705,7 +16241,7 @@
    "name": "LuxAlgo library",
    "url": "https://www.luxalgo.com/library/",
    "look_for": "concept pages with exact indicator formulas",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "WH SelfInvest free strategies",
@@ -15729,7 +16265,7 @@
    "name": "TASC Traders' Tips (Technical Analysis of Stocks & Commodities)",
    "url": "https://www.traders.com/Documentation/FEEDbk_docs/",
    "look_for": "each month's new indicator with code (Ehlers and others) and the platform rules",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "ProRealCode (strategy + indicator library, forum)",
@@ -15741,19 +16277,37 @@
    "name": "George Pruitt - Building Winning Trading Systems with TradeStation (book systems)",
    "url": "https://www.oreilly.com/library/view/building-winning-trading/9780471215691/",
    "look_for": "Bollinger Bandit, King Keltner, Thermostat, Super Combo, Ghost Trader, Dynamic Break Out II - exact TradeStation rules",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "Jeff Cooper - Hit and Run Trading (books)",
    "url": "https://www.amazon.com/Hit-Run-Trading-Short-Term-Manual/dp/1883272149",
    "look_for": "1-2-3-4, Expansion Breakouts, Boomers, Lizards, Slingshots, Holy Grail variants",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-18"
   },
   {
    "name": "FMZ Quant strategy square",
    "url": "https://www.fmz.com/square",
    "look_for": "Chinese futures classics (R-Breaker, Dual Thrust variants), crypto intraday systems with code",
    "last_scanned": "2026-11-17"
+  },
+  {
+   "name": "Oxford Capital Strategies (oxfordstrat.com)",
+   "url": "https://oxfordstrat.com/trading-strategies/",
+   "look_for": "fully specified futures systems with parameters (Livermore, dual momentum, Crabel NR/WR/ORBP, gap types, doji, Aroon, Ross hook, MACD, RSI model) - many pages not yet read (narrow-range, aroon-2/3, doji-2, macd-2, ross-hook-filter, long equity, volatility squeeze)",
+   "last_scanned": "2026-11-18"
+  },
+  {
+   "name": "Algomatic Trading Database (Substack)",
+   "url": "https://algomatictrading.substack.com/t/tradingstrategies",
+   "look_for": "index CFD daily systems (5-day mean reversion, 3-down pullback) - rules mostly paywalled",
+   "last_scanned": "2026-11-18"
+  },
+  {
+   "name": "Automated Trading Strategies (Substack)",
+   "url": "https://automatedtradingstrategies.substack.com/p/strategy-descriptions",
+   "look_for": "~200 futures strategies - only #1 and #5 unlocked, rest paywalled",
+   "last_scanned": "2026-11-18"
   }
  ],
  "sources_note": "The scout's standing source list (user, 14.11.2026 12:45, task tal1411src 'super important for the scout'). Every night the scout searches these (rotating, different ones each night) for new strategies and indicators; last_scanned = the last night it searched there (empty = not yet)."

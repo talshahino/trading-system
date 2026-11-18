@@ -12056,3 +12056,375 @@ SCOUT.update({
     "SC560": ("SC071 both sides: Keltner band tag + reversal candle on light volume, the short mirrored at the upper band, to the EMA20 (JournalPlus + user 16.11)", s_jp_keltner_both, ["5Min", "15Min"]),
     "SC561": ("SC560 with the higher timeframe's EMA20 side: longs over it, shorts under it (user 16.11: in a falling market a short, not a long)", s_jp_keltner_both_trend, ["5Min", "15Min"]),
 })
+
+
+# ---------------- SC562-SC580 scout 18.11.2026: Pruitt Super Combo, Pezzutti ADX Gapper, Oxford Capital Strategies
+# (Livermore, dual momentum, Crabel wide range / ORBP, gap types, doji), new indicators ----------
+def _rth_days(df, tz="America/New_York", start=9.5, end=16.0):
+    """Per bar: NY local hour, the session key (NY date), and for the COMPLETED previous RTH sessions (start-end NY) the
+    daily o, h, l, c (lag 1 and 2) + 10-session averages of the range and of |o - c| (all known at the bar), plus
+    today's RTH open (the first RTH bar's open) and today's running RTH high / low up to this bar."""
+    o, h, l, c, v = _ohlcv(df)
+    t = df.index.tz_convert(tz)
+    hr = t.hour.to_numpy() + t.minute.to_numpy() / 60.0
+    day = pd.Series(t.date).to_numpy()
+    rth = (hr >= start) & (hr < end)
+    g = pd.DataFrame({"d": day[rth], "o": o[rth], "h": h[rth], "l": l[rth], "c": c[rth]})
+    d = g.groupby("d").agg(o=("o", "first"), h=("h", "max"), l=("l", "min"), c=("c", "last"))
+    d["rng10"] = (d["h"] - d["l"]).rolling(10).mean()
+    d["oc10"] = (d["o"] - d["c"]).abs().rolling(10).mean()
+    p1, p2 = d.shift(1), d.shift(2)
+    key = pd.DataFrame({"d": day})
+    m1, m2 = key.join(p1, on="d"), key.join(p2, on="d")
+    m0 = key.join(d[["o"]], on="d")
+    tod_o = np.where(rth, m0["o"].to_numpy(float), np.nan)
+    hh = pd.Series(np.where(rth, h, np.nan)).groupby(day).cummax().to_numpy()
+    ll = pd.Series(np.where(rth, l, np.nan)).groupby(day).cummin().to_numpy()
+    return hr, day, rth, m1, m2, tod_o, hh, ll
+
+
+def s_pruitt_super_combo(df):
+    """George Pruitt 'Super Combo' day-trading system (Building Winning Trading Systems with TradeStation, ch. 'Super
+    Combo'; chapter text https://c.mql5.com/forextsd/forum/161/super_combo_day_trading_strategy.pdf ; S&P 5-minute,
+    daily values from daily bars). Daily, from the completed NY cash sessions (09:30-16:00 NY): avgR = 10-session average
+    range (H - L, not true range), avgOC = 10-session average |O - C|; trade only if yesterday's |O - C| < 0.85 avgOC.
+    Buy-easier day (yesterday's close <= the day before's): buy level = today's open + 0.30 avgR, sell level = open -
+    0.60 avgR; sell-easier day: sell = open - 0.30 avgR, buy = open + 0.60 avgR. Failed breakouts: once today's high has
+    gone over yesterday's high + 0.25 avgR, sell at yesterday's high - 0.25 avgR; once today's low went under yesterday's
+    low - 0.25 avgR, buy at yesterday's low + 0.25 avgR. No entries in the first 30 minutes, none from 15:30 NY (14:30
+    CT); at most one long and one short a day. Stop 0.25 avgR (the source's floor of 3 S&P points is dropped - it is
+    contract-specific); break-even once 0.50 avgR in profit (= 2R here, lock_r); from 15:30 NY out on a close under the
+    3-bar low (over the 3-bar high) - the source trails a stop there (our close-based version); flat at 16:00 NY.
+    Our engine differences: the stop-order entries become a close through the level (entry at the next open); the
+    source's liquidation reversals (stop-and-reverse before 12:00 CT) are left out (one position at a time)."""
+    o, h, l, c, v = _ohlcv(df)
+    hr, day, rth, m1, m2, to, hh, ll = _rth_days(df)
+    ar, oc10 = m1["rng10"].to_numpy(float), m1["oc10"].to_numpy(float)
+    yo, yh, yl, yc = (m1[x].to_numpy(float) for x in "ohlc")
+    pc = m2["c"].to_numpy(float)
+    can = np.abs(yo - yc) < 0.85 * oc10
+    easy_buy = yc <= pc
+    buy = np.where(easy_buy, to + 0.30 * ar, to + 0.60 * ar)
+    sell = np.where(easy_buy, to - 0.60 * ar, to - 0.30 * ar)
+    win = rth & (hr >= 10.0) & (hr < 15.5) & can & np.isfinite(ar)
+    c1 = _r(c)
+    lb = win & (c > buy) & ~(c1 > buy)
+    sb = win & (c < sell) & ~(c1 < sell)
+    up_bo = hh > yh + 0.25 * ar
+    dn_bo = ll < yl - 0.25 * ar
+    sf = win & up_bo & (c < yh - 0.25 * ar) & ~(c1 < yh - 0.25 * ar)
+    lf = win & dn_bo & (c > yl + 0.25 * ar) & ~(c1 > yl + 0.25 * ar)
+    L0, S0 = lb | lf, sb | sf
+    L, S = np.zeros(len(c), bool), np.zeros(len(c), bool)
+    seen_l, seen_s, cur = False, False, None
+    for i in range(len(c)):
+        if day[i] != cur:
+            cur, seen_l, seen_s = day[i], False, False
+        if L0[i] and not seen_l:
+            L[i], seen_l = True, True
+        elif S0[i] and not seen_s:
+            S[i], seen_s = True, True
+    a = atr(h, l, c, 14)
+    stl, sts = c - 0.25 * ar, c + 0.25 * ar
+    late = hr >= 15.5
+    lo3, hi3 = _r(_s(l).rolling(3).min().to_numpy()), _r(_s(h).rolling(3).max().to_numpy())
+    return L, S, {"stop": ("level", stl, sts), "target": None, "lock_r": (2.0, 0.0),
+                  "exit_long": late & (c < lo3), "exit_short": late & (c > hi3),
+                  "force_exit": (_local(df, "America/New_York")[1] >= 16.0) | (hr < 9.5)}
+
+
+def s_pezzutti_adx_gapper(df):
+    """Paolo Pezzutti 'Short-Term Pattern: ADX Gapper' (Traders.com, 12/2005,
+    https://technical.traders.com/tradersonline/display.asp?art=2794 ; daily bars): ADX 12 > 30 and +DI 28 > -DI 28
+    (strong up trend), the bar opens with a gap under the previous bar's low -> buy stop at the previous low; stop under
+    the bar's low. Sells: 'the opposite' (ADX > 30, -DI > +DI, gap over the previous high, sell stop at it, stop over the
+    bar's high - the mirror is the article's one sentence). 24-hour feeds rarely gap (the open is the prior close), so
+    a trade under the previous low by >= 0.25 ATR14 counts as the gap too (our translation). Bar-by-bar on any timeframe; the stop-order entry becomes
+    'the bar closes back over the previous low' (entry at the next open). Exit: the article says a trailing stop with
+    no formula - ours: target 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    from agents.indicators._core import dmi
+    _, _, ad = dmi(h, l, c, 12)
+    pdi, ndi, _ = dmi(h, l, c, 28)
+    a = atr(h, l, c, 14)
+    pl, ph = _r(l), _r(h)
+    gap_dn = (o < pl) | (l < pl - 0.25 * a)
+    gap_up = (o > ph) | (h > ph + 0.25 * a)
+    L = (ad > 30) & (pdi > ndi) & gap_dn & (c > pl)
+    S = (ad > 30) & (ndi > pdi) & gap_up & (c < ph)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(l - 0.1 * a, h + 0.1 * a, 2.0)
+
+
+def _livermore(df, mode, swing, size, pen):
+    """Oxford Capital Strategies' Livermore System (Kaufman, Trading Systems and Methods ch. 5): long when the close
+    is over BOTH of the last two supply pivots + noise, short under both of the last two demand pivots - noise; out
+    when the close goes through the most recent opposite pivot -/+ noise; stop 6 x ATR20 (their stop); no target."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.livermore_pivots(df, mode=mode, swing=swing, size=size)
+    a20 = atr(h, l, c, 20)
+    noise = pen * (z["swing_min"] if mode == "atr" else a20)
+    noise = np.nan_to_num(noise)
+    up_lvl = np.fmax(z["sup1"], z["sup2"]) + noise
+    dn_lvl = np.fmin(z["dem1"], z["dem2"]) - noise
+    ok = np.isfinite(z["sup2"]) & np.isfinite(z["dem2"])
+    L = _onset(ok & (c > up_lvl))
+    S = _onset(ok & (c < dn_lvl))
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", c - 6 * a20, c + 6 * a20), "target": None,
+                  "exit_long": c < z["dem1"] - noise, "exit_short": c > z["sup1"] + noise}
+
+
+def s_livermore_atr(df):
+    """Livermore System 1 (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/livermore-system-1/ ;
+    42 futures, daily): pivots = swings of at least 4 x ATR20 (supply = a high followed by a 4-ATR fall, demand = a low
+    followed by a 4-ATR rise); penetration filter 0 (their base case); entries over both last supply pivots / under
+    both last demand pivots, out through the latest opposite pivot, stop 6 ATR20. On any bar timeframe."""
+    return _livermore(df, "atr", 4.0, 20, 0.0)
+
+
+def s_livermore_atr_noise(df):
+    """SC564 with their penetration filter 0.5: the pivots must be beaten by 0.5 x the smaller of the last two swings
+    (entries and exits)."""
+    return _livermore(df, "atr", 4.0, 20, 0.5)
+
+
+def s_livermore_demark(df):
+    """Livermore System 2 (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/livermore-system-2/ ):
+    DeMark pivots of size 20 (a high with 20 lower highs each side; known 20 bars later), noise = 0.5 x ATR20 (their
+    0.50 case), same entry / exit / 6-ATR stop as SC564."""
+    return _livermore(df, "bars", 4.0, 20, 0.5)
+
+
+def _dual_extreme(df, fast_up, slow_up, fast_dn, slow_dn, hold):
+    """The 'extreme point rule' of Oxford Capital Strategies: when both filters turn long, the bar's high is the
+    extreme; buy on a later close over it while both still hold (mirror short). Time exit `hold` bars, stop 6 ATR20."""
+    o, h, l, c, v = _ohlcv(df)
+    a20 = atr(h, l, c, 20)
+    bu, bd = fast_up & slow_up, fast_dn & slow_dn
+    ext_h = _s(np.where(_onset(bu), h, np.nan)).ffill().to_numpy()
+    ext_l = _s(np.where(_onset(bd), l, np.nan)).ffill().to_numpy()
+    L = _onset(bu & (c > _r(ext_h)) & ~_onset(bu))
+    S = _onset(bd & (c < _r(ext_l)) & ~_onset(bd))
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", c - 6 * a20, c + 6 * a20), "target": None, "max_bars": hold}
+
+
+def s_dual_momentum_roc(df):
+    """Dual Momentum & Rate of Change (Oxford Capital Strategies,
+    https://oxfordstrat.com/trading-strategies/dual-momentum-rate-of-change/ ): slow ROC 100 > 0 (filter) and fast
+    ROC 50 > 0 (setup) -> the setup bar's high is the extreme, buy on a close over it (mirror short); time exit 60 bars
+    (they prefer > 50), stop 6 ATR20. Their case 2 lengths (50 / 100)."""
+    o, h, l, c, v = _ohlcv(df)
+    r1, r2 = c - _r(c, 99), c - _r(c, 49)
+    return _dual_extreme(df, r2 > 0, r1 > 0, r2 < 0, r1 < 0, 60)
+
+
+def s_dual_momentum_vortex(df):
+    """Dual Momentum & Vortex (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/dual-momentum-vortex-indicator/ ;
+    Botes & Siepman): slow Vortex 100 (+VI > -VI) and fast Vortex 50 (+VI > -VI) both long -> buy a close over the
+    setup bar's high (mirror); time exit 60 bars, stop 6 ATR20."""
+    v1, v2 = IND.vortex(df, 100), IND.vortex(df, 50)
+    return _dual_extreme(df, v2["vi_plus"] > v2["vi_minus"], v1["vi_plus"] > v1["vi_minus"],
+                         v2["vi_minus"] > v2["vi_plus"], v1["vi_minus"] > v1["vi_plus"], 60)
+
+
+def _bar_stretch(o, h, l, mult, n=10):
+    """Crabel stretch on bars: SMA n of min(H - O, O - L) of the previous bars, x mult."""
+    return _r(sma(np.minimum(h - o, o - l), n)) * mult
+
+
+def s_crabel_wide_range(df):
+    """Crabel Wide Range N-day pattern (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/wide-range-pattern/ ;
+    base N 2, lookback 20; daily in the source, here bar by bar on any timeframe): the previous 2-bar range is the
+    widest 2-bar range of the last 20 bars -> this bar closing over its open + 2 x stretch buys (stretch = SMA10 of
+    min(H - O, O - L)), under the open - 2 x stretch sells (their buy / sell stops; entry at the next open); the
+    opposite stretch level is the stop; time exit 10 bars. Their test showed wide range losing (narrow range better) -
+    brought as the documented variant, the bots' tests decide."""
+    o, h, l, c, v = _ohlcv(df)
+    wr = _r(IND.range_rank(df, n=2, lookback=20)["wr"].astype(float)) == 1
+    st = _bar_stretch(o, h, l, 2.0)
+    up, dn = o + st, o - st
+    L, S = _excl(wr & (c > up), wr & (c < dn))
+    return L, S, {"stop": ("level", dn, up), "target": None, "max_bars": 10}
+
+
+def s_crabel_orbp_channel(df):
+    """ORBP with Price Channel filter (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/orbp-with-price-channel-filter/ ;
+    Crabel opening-range breakout + Donchian mode; daily in the source, here bar by bar): mode = long after a bar's high
+    beats the prior 20-bar high, short after a low breaks the prior 20-bar low (held until the other side breaks); in
+    long mode a bar closing over its open + 1 x stretch (SMA10 of min(H - O, O - L)) buys, in short mode under the open
+    - stretch sells. Stop: the opposite stretch level (ours - their 6 x ATR20 stop is far for the bots); time exit 5 bars
+    (their Time_Index 1-50, no base given)."""
+    o, h, l, c, v = _ohlcv(df)
+    up_b = h > _r(_s(h).rolling(20).max().to_numpy())
+    dn_b = l < _r(_s(l).rolling(20).min().to_numpy())
+    md = _r(_s(np.where(up_b, 1.0, np.where(dn_b, -1.0, np.nan))).ffill().to_numpy())
+    st = _bar_stretch(o, h, l, 1.0)
+    up, dn = o + st, o - st
+    L, S = _excl((md == 1) & (c > up), (md == -1) & (c < dn))
+    return L, S, {"stop": ("level", dn, up), "target": None, "max_bars": 5}
+
+
+def _gap_channel(df, typ, flb=20, hold=10):
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    ph, pl, pc = _r(h), _r(l), _r(c)
+    up_gap = (l > ph) if typ == "A" else (l > pc)
+    dn_gap = (h < pl) if typ == "A" else (h < pc)
+    uc, lc = _r(_s(h).rolling(flb).max().to_numpy()), _r(_s(l).rolling(flb).min().to_numpy())
+    L = up_gap & (h > uc)
+    S = dn_gap & (l < lc)
+    L, S = _excl(L, S)
+    gl = (ph if typ == "A" else pc) - 0.05 * a
+    gs = (pl if typ == "A" else pc) + 0.05 * a
+    return L, S, {"stop": ("level", np.fmax(gl, c - 6 * a), np.fmin(gs, c + 6 * a)), "target": None, "max_bars": hold}
+
+
+def s_gap_a_channel(df):
+    """Gap Pattern Type A (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/gap-pattern/ ;
+    Dahlquist & Bauer): a full gap (low over the previous HIGH) on a bar that also breaks the 20-bar high (their price
+    channel filter) -> buy the next open; out under the gap (the previous high, a hair below) or after 10 bars (their
+    Time_Index 1-50, no base - ours 10); short mirror. Bar-by-bar (daily in the source)."""
+    return _gap_channel(df, "A")
+
+
+def s_gap_b_channel(df):
+    """Gap Pattern Type B (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/gap-pattern-2/ ;
+    Hill, Pruitt & Hill): the gap is the low over the previous CLOSE (not its high), else as SC572."""
+    return _gap_channel(df, "B")
+
+
+def _doji(df, trend_follow, body=0.05, tn=10, hold=20):
+    o, h, l, c, v = _ohlcv(df)
+    rg = h - l
+    with np.errstate(divide="ignore", invalid="ignore"):
+        dj = np.abs(c - o) / rg <= body
+    dj &= rg > 0
+    d1, h1, l1, c1 = _r(dj.astype(float)) == 1, _r(h), _r(l), _r(c)
+    ct = _r(c, 1 + tn)
+    up_tr, dn_tr = c1 > ct, c1 < ct
+    if not trend_follow:
+        up_tr, dn_tr = dn_tr, up_tr
+    L = d1 & up_tr & (c > h1)
+    S = d1 & dn_tr & (c < l1)
+    L, S = _excl(L, S)
+    a = atr(h, l, c, 14)
+    return L, S, {"stop": ("level", np.fmin(l1, l) - 0.05 * a, np.fmax(h1, h) + 0.05 * a), "target": None,
+                  "max_bars": hold}
+
+
+def s_doji_trend(df):
+    """Doji Pattern - Trend (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/doji-trend-1/ ):
+    a doji (|C - O| <= 5% of the range), the close over the close 10 bars before (their Trend_Index 1-40 - ours 10) ->
+    buy when the next bar closes over the doji high (their buy stop a tick over it); quick exit under min(doji low,
+    entry-bar low); time exit 20 bars. Short mirror."""
+    return _doji(df, True)
+
+
+def s_doji_reversal(df):
+    """Doji Pattern - Reversal (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/doji-countertrend-1/ ):
+    as SC574 with the trend filter inverted (longs after a falling 10 bars, shorts after a rising 10)."""
+    return _doji(df, False)
+
+
+def s_damiani_donchian(df):
+    """Donchian 20 breakout (close over the prior 20-bar high / under the low) only while the Damiani Volatmeter says
+    volatility is ON (vol > 1.4 - StDev20/StDev100); stop 2 ATR, target 2R (ours) - the Volatmeter's intended use as a
+    trade / no-trade filter."""
+    o, h, l, c, v = _ohlcv(df)
+    on = IND.damiani_volatmeter(df)["on"]
+    hi, lo = _r(_s(h).rolling(20).max().to_numpy()), _r(_s(l).rolling(20).min().to_numpy())
+    L, S = _excl(_onset(on & (c > hi)), _onset(on & (c < lo)))
+    return L, S, {"stop": ("atr", 2.0), "target": ("R", 2.0)}
+
+
+def s_vpci_cross(df):
+    """Dormeier VPCI crosses over its signal while over zero (volume confirms the up trend), with the close over SMA50
+    -> buy; mirror; out on the cross back; stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.vpci(df)
+    x, s = np.nan_to_num(z["vpci"]), np.nan_to_num(z["signal"])
+    m = sma(c, 50)
+    L, S = _excl(cross_up(x, s) & (x > 0) & (c > m), cross_down(x, s) & (x < 0) & (c < m))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": cross_down(x, s), "exit_short": cross_up(x, s)}
+
+
+def s_nrtr_flip(df):
+    """NRTR (ATR 40 x 2) flips up -> buy, down -> sell; the NRTR line is the stop (trailing), out on the opposite
+    flip (the MQL5 article's NRTR trading module, ATR version)."""
+    z = IND.nrtr(df)
+    line = z["line"]
+    return z["flip_up"], z["flip_dn"] & ~z["flip_up"], {"stop": ("trail_line",), "line": line, "target": None,
+                                                        "opposite": True}
+
+
+def s_jma_slope(df):
+    """Jurik MA (7, phase 50) turns up with the close over it and over the EMA200 -> buy; mirror; out on the opposite
+    turn; stop 2 ATR (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    j = IND.jma(df)
+    d = j - _r(j)
+    up, dn = (d > 0) & (_r(d) <= 0), (d < 0) & (_r(d) >= 0)
+    e = ema(c, 200)
+    L, S = _excl(up & (c > j) & (c > e), dn & (c < j) & (c < e))
+    return L, S, {"stop": ("atr", 2.0), "target": None, "exit_long": dn, "exit_short": up}
+
+
+def s_cycle_rsi(df):
+    """Ehlers cycle-adaptive RSI: RSI with length = half the dominant cycle of the Autocorrelation Periodogram, crosses
+    back over 30 -> buy, under 70 -> sell; stop 1.5 ATR, target 2R (ours)."""
+    r = np.nan_to_num(IND.autocorr_periodogram(df)["rsi_dc"], nan=50.0)
+    L, S = _excl(cross_up(r, 30.0), cross_down(r, 70.0))
+    return L, S, {"stop": ("atr", 1.5), "target": ("R", 2.0)}
+
+
+def s_chandelier_everget(df):
+    """Chandelier Exit (everget: 22 / 3 ATR from closes, ratcheting) flips to buy over the EMA200 -> buy; sell flip under
+    it -> sell; the chandelier stop trails; out on the opposite flip. (TV39 = LeBeau's plain lines on highs / lows
+    without the ratchet or the trend filter.)"""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.chandelier_exit(df)
+    e = ema(c, 200)
+    line = np.where(z["dir"] > 0, z["long_stop"], z["short_stop"])
+    L, S = _excl(z["buy"] & (c > e), z["sell"] & (c < e))
+    return L, S, {"stop": ("trail_line",), "line": line, "target": None, "exit_long": z["sell"], "exit_short": z["buy"]}
+
+
+def s_elder_impulse_pullback(df):
+    """Elder's rule on a pullback: over the EMA 65 (his long-term screen, 5 x EMA13), a dip that touches the EMA 13 and
+    closes over it buys only when the Elder Impulse is not red (and shorts only when not green); stop beyond the 5-bar
+    swing, target 2R (ours). (TV47 trades the colour flips themselves.)"""
+    o, h, l, c, v = _ohlcv(df)
+    im = IND.elder_impulse(df)
+    e13, e65 = ema(c, 13), ema(c, 65)
+    a = atr(h, l, c, 14)
+    L = (c > e65) & (l <= e13) & (c > e13) & (im >= 0)
+    S = (c < e65) & (h >= e13) & (c < e13) & (im <= 0)
+    L, S = _excl(_onset(L), _onset(S))
+    sl, ss = _swl(h, l, a, 5, 0.1)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+SCOUT.update({
+    "SC562": ("Pruitt Super Combo: 10-day range breakout (0.3 / 0.6 by the easier side) + failed-breakout reverse, 0.25-range stop, BE, flat 16:00 NY", s_pruitt_super_combo, ["5Min", "15Min"]),
+    "SC563": ("Pezzutti ADX Gapper: ADX12 > 30 with DI28 trend, open gaps past the prior low / high and closes back, bar stop, 2R (Traders.com)", s_pezzutti_adx_gapper, _M + ["1Day"]),
+    "SC564": ("Livermore System 1 (Oxford Capital): 4-ATR swing pivots, over both last supply / under both demand pivots, out through the opposite pivot, 6 ATR", s_livermore_atr, _M + ["1Day"]),
+    "SC565": ("SC564 with penetration noise 0.5 x the smaller last swing (Oxford Capital)", s_livermore_atr_noise, _M + ["1Day"]),
+    "SC566": ("Livermore System 2 (Oxford Capital): DeMark pivots size 20, noise 0.5 ATR20, two-pivot break, opposite-pivot exit, 6 ATR", s_livermore_demark, _M + ["1Day"]),
+    "SC567": ("Dual Momentum ROC 100 / 50 both > 0, close over the setup bar's high (extreme point), 60-bar exit, 6 ATR (Oxford Capital)", s_dual_momentum_roc, _M + ["1Day"]),
+    "SC568": ("Dual Momentum Vortex 100 / 50 both long, extreme-point entry, 60-bar exit, 6 ATR (Oxford Capital)", s_dual_momentum_vortex, _M + ["1Day"]),
+    "SC569": ("Crabel Wide Range 2-bar (widest of 20): next bar open +/- 2 x stretch breakout, opposite stretch stop, 10-bar exit (Oxford Capital)", s_crabel_wide_range, _M + ["1Day"]),
+    "SC570": ("Crabel ORBP with 20-bar price channel mode: open +/- stretch in the channel's direction, opposite stretch stop, 5-bar exit (Oxford Capital)", s_crabel_orbp_channel, _M + ["1Day"]),
+    "SC571": ("Gap Type A: low over the prior high + 20-bar high breakout, next open, gap stop, 10-bar exit (Oxford Capital / Dahlquist-Bauer)", s_gap_a_channel, ["1Hour", "4Hour", "1Day"]),
+    "SC572": ("Gap Type B: low over the prior close + 20-bar high breakout, gap stop, 10-bar exit (Oxford Capital / Hill-Pruitt-Hill)", s_gap_b_channel, ["1Hour", "4Hour", "1Day"]),
+    "SC573": ("Doji trend: doji (body <= 5%) with 10-bar trend, close past the doji extreme, quick 2-bar stop, 20-bar exit (Oxford Capital)", s_doji_trend, _M + ["1Day"]),
+    "SC574": ("Doji reversal: doji against the 10-bar trend, close past the doji extreme, quick stop, 20-bar exit (Oxford Capital)", s_doji_reversal, _M + ["1Day"]),
+    "SC575": ("Donchian 20 breakout only while the Damiani Volatmeter is ON, 2 ATR, 2R", s_damiani_donchian, _F + ["4Hour"]),
+    "SC576": ("Dormeier VPCI crosses its signal on its side of zero with the SMA50, cross-back exit, 2 ATR", s_vpci_cross, _F + ["4Hour"]),
+    "SC577": ("NRTR (ATR40 x 2) flip, NRTR line trailing stop, opposite-flip exit (MQL5)", s_nrtr_flip, _F + ["4Hour"]),
+    "SC578": ("Jurik MA 7 slope turn with the close on its side and the EMA200, opposite-turn exit, 2 ATR", s_jma_slope, _F + ["4Hour"]),
+    "SC579": ("Ehlers cycle-adaptive RSI (Autocorrelation Periodogram dc / 2) back over 30 / under 70, 1.5 ATR, 2R", s_cycle_rsi, _F + ["4Hour"]),
+    "SC580": ("Chandelier Exit (everget, close-based ratchet) flip with the EMA200, chandelier trailing stop, opposite-flip exit", s_chandelier_everget, _F + ["4Hour"]),
+    "SC581": ("EMA13 pullback over the EMA65 only when the Elder Impulse is not red (shorts: not green), swing stop, 2R", s_elder_impulse_pullback, _F + ["4Hour"]),
+})

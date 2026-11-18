@@ -400,6 +400,20 @@ def load_settings():
                                 SYMBOLS[sym_] = list(dict.fromkeys([code_.replace("/", ""), code_, sym_]))
                     except Exception:  # noqa: BLE001 - an odd entry is skipped, the rest trade
                         continue
+                # one risk budget per instrument, split among its scout strategies (user, 18.11.2026, after
+                # agents/scout5_review: 14 of the 30 on gold lose on the same days - 0.4% each fell 53% in the 2026
+                # replay; 0.4% an instrument split: 2025 +48.9%, 2026 +45.9%, the deepest fall 8%): risk "scout_per_symbol"
+                try:
+                    psb_ = float(rk.get("scout_per_symbol") or 0)
+                except (TypeError, ValueError):
+                    psb_ = 0.0
+                if 0 < psb_ <= 0.02:
+                    cnt_ = {}
+                    for v_ in SCOUT5.values():
+                        cnt_[v_["sym"]] = cnt_.get(v_["sym"], 0) + 1
+                    for c_, v_ in SCOUT5.items():
+                        if f"scout:{c_}" not in rk:
+                            TAL5_RISK[f"sc:{c_}"] = psb_ / cnt_[v_["sym"]]
             else:
                 tal = d.get("tal") or {}
                 if tal.get("pair") and tuple(tal["pair"]) in {tuple(p_) for p_ in TG.PAIRS}:

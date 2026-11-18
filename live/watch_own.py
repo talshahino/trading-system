@@ -1001,7 +1001,9 @@ def fut_scout(name, df, noent, shut, sc, combo, contract, tick, fa, ftrades, fse
     # when the bars have none - without it a scout strategy that reads volume (SC071, the VWAP ones) fails here
     dfs = df[["o", "h", "l", "c"]].copy()
     dfs["v"] = df["v"].to_numpy(float) if "v" in df else 1.0
-    t = SF.trades(dfs, name, sc["sid"], sc["tf"], sc["v"], np.asarray(noent, bool), np.asarray(shut, bool), cost_px)
+    # a pyramid adds only what whole contracts hold, on the risk this trade is really sized with (agents/scout_fut.add_gate)
+    risk_usd = fa.balance() * FA.RISK.get(f"scout:{combo}", FA.RISK.get("scout", 0.0))
+    t = SF.trades(dfs, name, sc["sid"], sc["tf"], sc["v"], np.asarray(noent, bool), np.asarray(shut, bool), cost_px, risk_usd)
     if t.empty:
         return
     since = pd.Timestamp(sc["since"])
@@ -1010,7 +1012,8 @@ def fut_scout(name, df, noent, shut, sc, combo, contract, tick, fa, ftrades, fse
         if tm < since:
             continue
         risk = abs(float(x["entry_px"]) - float(x["stop_px"]))
-        r_live = float(x["r"]) + float(x["cost_r"]) - tick / risk     # the spread here; commission + slippage in pnl_of
+        # the spread here, commission + slippage of the opening contracts in pnl_of; the added contracts' costs stay in r
+        r_live = float(x["r"]) + float(x["cost_r"]) - float(x.get("add_cost_r", 0.0) or 0.0) - tick / risk
         live_now = x["reason"] == "סוף הנתונים"
         k = f"{name}|{sc['sid']}|{sc['tf']}|{tm.isoformat()}"
         fseen.add(k)

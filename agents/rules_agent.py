@@ -560,6 +560,9 @@ def run(df, fn, cost_side, breakeven=None, session_exit=None):
         best = e
         worst = e
         stop0 = stop
+        # bot 6 only (agents/scout_fut.add_gate, 18.11.2026): no add on a trade whose whole contracts cannot hold it
+        if pyr and plan.get("pyramid_gate") is not None and not plan["pyramid_gate"](e, stop0):
+            pyr = None
         free_t = None    # first bar from which the stop sits at/beyond entry (no money at risk)
         exit_px, exit_t, reverse_at, reason = None, None, None, ""
         for t in range(e_t, min(n, e_t + (plan.get("max_bars") or 10**9))):

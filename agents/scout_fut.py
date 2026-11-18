@@ -17,8 +17,13 @@ test, and bot 6 trades none of them: its live loop (live/watch_own.py fut_step) 
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
+
+from live import fut_account as FA
 
 TF_MIN = {"1Min": 1, "5Min": 5, "15Min": 15, "1Hour": 60}
 TARGETS = ("own", "none", 1.0, 1.5, 2.0, 3.0)
@@ -91,7 +96,8 @@ def vid(v):
     be = f"be{b:g}" if b is not None else ("be" if v["be"] else "nobe")
     return (f"t{t}_s{float(v['stop']):g}_{'time' if v['time'] == 'own' else 'notime'}_{be}"
             + (f"_{v['sess']}" if v.get("sess") else "") + (f"_{v['filt']}" if v.get("filt") else "")
-            + "".join(f"_{v[k]}" for k, vals in FAMS if v.get(k) in vals))
+            # "w": the pyramid on whole contracts (18.11.2026) - results kept from before it are not reused
+            + "".join(f"_{v[k]}" + ("w" if k == "pyr" else "") for k, vals in FAMS if v.get(k) in vals))
 
 
 def sess_ok(times, sess):
@@ -186,7 +192,36 @@ def masks(dft, tf, noent1, shut1, idx1):
     return noent[:n], force[:n]
 
 
-def strategy(sid, v, noent, tf=None):
+BOT6_FILE = Path(__file__).resolve().parents[1] / "live" / "bots" / "bot6.json"
+_RISK_CACHE = [None, {}]
+
+
+def risk_usd_of(combo):
+    """The dollars one trade of this scout strategy risks on the account's opening balance (live/bots/bot6.json "risk":
+    the strategy's own share, else the scouts' common one, else the file's absence: the bot's base risk)."""
+    try:
+        mt = BOT6_FILE.stat().st_mtime
+        if _RISK_CACHE[0] != mt:
+            _RISK_CACHE[0], _RISK_CACHE[1] = mt, json.loads(BOT6_FILE.read_text(encoding="utf-8")).get("risk") or {}
+    except (OSError, ValueError):
+        _RISK_CACHE[0], _RISK_CACHE[1] = None, {}
+    rk = _RISK_CACHE[1]
+    return FA.INITIAL * float(rk.get(f"scout:{combo}", rk.get("scout", FA.RISK_TAL)))
+
+
+def add_gate(sym, risk_usd, frac):
+    """The pyramid on whole micro contracts (bot 6's smart agent, 18.11.2026): the add is `frac` of the position, so it
+    exists only when the contracts the trade opens with hold it exactly (half of 2, 4, 6...). One contract has no half:
+    the trade then runs without the add and without its moved stop - in the test and in the live bot alike."""
+    def ok(entry, stop):
+        per = FA.per_contract(sym, entry, stop)
+        n = int(risk_usd // per) if per > 0 else 0
+        add = n * float(frac)
+        return n >= 1 and add >= 1 and abs(add - round(add)) < 1e-9
+    return ok
+
+
+def strategy(sid, v, noent, tf=None, gate=None):
     """The scout's function as bot 6 runs it: the variant's target / stop / time exit, signals in no-entry minutes off,
     and (with "sess") signals whose entry - the next bar's open - is outside the session window off."""
     from agents.rules_agent import STRATEGIES
@@ -217,6 +252,8 @@ def strategy(sid, v, noent, tf=None):
             plan["partial"] = (fr, way if plan.get("target") is not None else r_)
         if v.get("pyr") in PYR:
             plan["pyramid"] = PYR[v["pyr"]]
+            if gate is not None:
+                plan["pyramid_gate"] = gate
         if v["be"] and plan.get("target") is None:          # no target: entry at 2.5R, +1R locked at 3R (principle 7)
             bn = _be_num(v)
             r0 = bn if bn is not None and bn >= 1 else 2.5
@@ -225,8 +262,10 @@ def strategy(sid, v, noent, tf=None):
     return g
 
 
-def trades(df1, sym, sid, tf, v, noent1, shut1, cost_px):
-    """Trades of one strategy on one futures contract (the CFD's prices), r net of the futures' costs."""
+def trades(df1, sym, sid, tf, v, noent1, shut1, cost_px, risk_usd=None):
+    """Trades of one strategy on one futures contract (the CFD's prices), r net of the futures' costs. With a pyramid
+    the add happens only where whole contracts hold it (add_gate; risk_usd: the live bot's, else live/bots/bot6.json's)
+    and pays its own costs: "add_cost_r" is the part of cost_r that belongs to the added contracts."""
     from agents.rules_agent import run
     dft = resample(df1, tf)
     if len(dft) < 300:
@@ -236,12 +275,18 @@ def trades(df1, sym, sid, tf, v, noent1, shut1, cost_px):
     px = float(dft["c"].median())
     bn = _be_num(v)
     be = ((bn if bn is not None and bn < 1 else 0.6), cost_px / px) if v["be"] else None
-    t = run(dft, strategy(sid, v, noent, tf), 0.0, breakeven=be, session_exit=force)
+    gate = None
+    if v.get("pyr") in PYR:
+        gate = add_gate(sym, risk_usd_of(f"{sid}|{tf}|{sym}") if risk_usd is None else float(risk_usd), PYR[v["pyr"]][1])
+    t = run(dft, strategy(sid, v, noent, tf, gate), 0.0, breakeven=be, session_exit=force)
     if t.empty:
         return t
     risk = (t["entry_px"] - t["stop_px"]).abs()
     t = t[risk > 0].copy()
-    t["cost_r"] = cost_px / (t["entry_px"] - t["stop_px"]).abs()
+    base_r = cost_px / (t["entry_px"] - t["stop_px"]).abs()
+    added = t["pyr_time"].notna().to_numpy(bool) if "pyr_time" in t else np.zeros(len(t), bool)
+    t["add_cost_r"] = base_r * added * (PYR[v["pyr"]][1] if v.get("pyr") in PYR else 0.0)
+    t["cost_r"] = base_r + t["add_cost_r"]
     t["r"] = t["r"] - t["cost_r"]
     if v.get("filt"):
         t = dir_filter(t.reset_index(drop=True), df1, v["filt"])

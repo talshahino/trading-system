@@ -324,7 +324,8 @@ def check(bot, state, now):
             # the virtual accounts' last bookings (user, 18.11.2026: bot 5 fell ~$1,300 with no trade that explains it -
             # GitHub's copy of the state had stopped; the bookings themselves, from the bots' computer)
             "ledger_tail": [{"id": x.get("id"), "exit_time": x.get("exit_time"), "pnl": x.get("pnl"), "fixed": x.get("fixed")}
-                            for x in ((state.get("vacct") or {}).get("ledger") or [])[-30:]],
+                            for x in (lambda l_: l_ if isinstance(l_, list) else [])((state.get("vacct") or {}).get("ledger") or [])[-30:]
+                            if isinstance(x, dict)],
             "positions_now": [{"ticket": p_.get("ticket"), "pnl": p_.get("pnl"), "sl_usd": p_.get("sl_usd"), "since": p_.get("since")}
                               for p_ in (state.get("positions") or [])]}, cards
 

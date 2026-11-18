@@ -525,9 +525,9 @@ def gapx_of(cfg):
 #          (bot 5's smart agent, 18.11.2026 night, task b5stopimp1711).
 FIRSTG_VALS = ("1", "lo")
 FIRSTG_LO = (2.0 / 3.0, 0.5)
-STOPAT_VALS = ("sw2", "imp0", "imp0late", "sw0", "leg1", "leg1r", "sw0r", "imp0r")   # sw0: beyond the swing the impulse started from (see _origins)
+STOPAT_VALS = ("sw2", "imp0", "imp0late", "sw0", "leg1", "leg1r", "sw0r", "imp0r", "move", "mover")   # sw0: beyond the swing the impulse started from (see _origins)
 LEG_K = {"leg1": 1.0}                                 # STOPAT legK: the stop K impulse lengths beyond the entry
-RR_RULES = {"leg1r": "leg1", "sw0r": "sw0", "imp0r": "imp0"}   # STOPAT ...r: MIN_RR on the rules' stop, the trade on this one
+RR_RULES = {"leg1r": "leg1", "sw0r": "sw0", "imp0r": "imp0", "mover": "move"}   # STOPAT ...r: MIN_RR on the rules' stop, the trade on this one
 
 
 def rr_risk(D, cfg, htf, t_ns, px, stop0, risk, d):
@@ -629,6 +629,7 @@ def _origins(g, geo, D=None, htf=None):
     if len(geo) != len(g):
         return None
     sw = [None] * len(g)
+    mv = [None] * len(g)      # the whole move's extreme (STOPAT move)
     if D is not None and htf is not None:
         ts, o, h, l, c, _ = D.tf(htf)
         step = TF[htf] * 60_000_000_000
@@ -638,6 +639,18 @@ def _origins(g, geo, D=None, htf=None):
             k = int(np.searchsorted(ts, made - step)) - 1        # candle 2
             if k < 3 or k >= n:
                 continue
+            # the move (user, 18.11.2026: "usually beyond the extreme of that move, even if it is above / below the
+            # impulse - even on the higher timeframe"): back from the impulse on the high timeframe while the price
+            # stayed on the far side of the impulse's end; the move's extreme over that span
+            try:
+                ie = float(geo[i]["imp1"][1])
+                j = k
+                lim = max(0, k - 3000)
+                while j > lim and ((l[j - 1] > ie) if d < 0 else (h[j - 1] < ie)):
+                    j -= 1
+                mv[i] = float(h[j:k + 1].max()) if d < 0 else float(l[j:k + 1].min())
+            except Exception:  # noqa: BLE001
+                mv[i] = None
             for j in range(k - 1, max(1, k - 40), -1):
                 if j + 2 > k + 1:
                     continue
@@ -656,9 +669,14 @@ def _origins(g, geo, D=None, htf=None):
         p = float(geo[i]["imp0"][1])
         o = ext(d, best.get(k_), p)
         s_ = ext(d, bsw.get(k_), sw[i])
-        res[i] = (o, k_ not in best, s_, abs(float(geo[i]["imp1"][1]) - o))   # + the impulse's length (STOPAT leg1)
+        res[i] = (o, k_ not in best, s_, abs(float(geo[i]["imp1"][1]) - o), mv[i])   # + the impulse's length (leg1), the move's extreme (move)
         best[k_], bsw[k_] = o, s_
     return res
+
+
+def ext_px(d, a, b):
+    """The farther of two prices from a trade in direction d (a sell: the higher)."""
+    return min(a, b) if d > 0 else max(a, b)
 
 
 def stop_at(D, cfg, org, gi, px, stop, d):
@@ -679,6 +697,11 @@ def stop_at(D, cfg, org, gi, px, stop, d):
         if sw0 is None:
             return None
         o_px = sw0
+    if sa == "move":
+        mv_ = org[gi][4] if len(org[gi]) > 4 else None
+        if mv_ is None:
+            return None
+        o_px = ext_px(d, o_px, mv_)
     s = o_px - d * (D.buf + stop_pad(cfg, px))
     return s if d * (px - s) > 0 else None
 

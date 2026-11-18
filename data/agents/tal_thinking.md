@@ -260,3 +260,6 @@ Reviewing bot 5's gap setups: "an impulse built of one candle - there is an impu
 
 ## After a mixed day: learn from it and come back with a proposal (user, 18.11.2026 19:03)
 "What did you learn from this day? You have very profitable trades and less profitable ones. Could we have anticipated it and reduced it? Maybe think about what can be done and tell me." Tal expects the bot's agent to study the day on its own initiative, ask whether the losers could have been told apart at entry, and bring him an idea rather than a description of the day. For the agents: answer with what separated the winners from the losers that day, test it, and say plainly whether it holds up.
+
+## Sharing the risk between strategies by edge (bots 1-4 smart agent, 18.11.2026)
+The step Tal left for later (case 41). agents/risk_alloc_study.py, reports/agents/risk_alloc.json: 54 ways on bots 1-4 (lower the weak, lower the crowded, raise the strong up to x1), set on 2025 only and shown on 2026 with the live guard. None held in bots 1-3. In bot 4 the way chosen on 2025 raised the 2026 fall; one stricter version passed both periods, one success in 54 tries. Decision: no change. Bring it again only with a new idea, or when more live trades exist.

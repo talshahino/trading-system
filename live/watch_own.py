@@ -1844,7 +1844,7 @@ def main():
                     sc_ = bool(scout5_combo(rec.get("tal")))
                     cur[0] = sacc if sc_ else acc
                     A_ = cur[0]
-                    P5 = "בוט 5ב - סייר" if sc_ else "בוט 5 - סקאלפינג"
+                    P5 = "בוט 5ב - סייר" if sc_ else "בוט 5 - שיטת הגאפ"
                     # the virtual account: the risk is fixed when the trade opens, from the balance at that moment
                     for f in ("risk_usd", "skipped"):
                         if f in old:
@@ -1922,7 +1922,7 @@ def main():
                                 rec["pnl_now"] = round(rec["r_now"] * rec["risk_usd"], 2)
                     trades[k] = rec
                     side = ("קנייה" if rec["dir"] > 0 else "מכירה") + (f" · אסטרטגיה {tal5_name(rec['tal'])}" if scout5_combo(rec.get("tal")) else
-                                                                      f" · שיטת הגאפ {tal5_name(rec['tal'])}" if rec.get("tal") else " · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] else "")
+                                                                      f" · שיטת הגאפ {tal5_name(rec['tal'])}" if rec.get("tal") else " · פערים בדקה" if rec["v1m"] else " · פערים (v5)" if rec["v5"] else " · מתוקן (v4)" if rec["v4"] else " · מסלול רחב" if rec["wide"] else "") + (" · איסוף נתונים בלבד" if rec["extra"] and not rec.get("tal") else "")
                     # notifications (user, 10.11.2026: "I'm bombarded"): only trades of the virtual account - opened and closed.
                     # Waiting setups and touched-but-skipped ones stay in the app, without a push.
                     quiet = not rec.get("risk_usd")
@@ -1938,7 +1938,7 @@ def main():
                                    f"יעד {fmt(name, rec['target'])}" + (f" · יחס 1:{rec['rr']}" if rec.get('rr') else "") + ("" if sc_ else "\nפתח את האפליקציה וסמן אם היית לוקח אותה"),
                                    tags=["eyes"], key=f"wo:{k}", every=86400)
                     if not quiet and prev != "closed" and rec["status"] == "closed":
-                        word = {"target": "ביעד", "stop": "בסטופ", "forced": "בסגירה כפויה", "breakeven": "בברייק אחרי יציאה חלקית"}.get(rec["reason"], "")
+                        word = {"target": "ביעד", "stop": "בסטופ", "forced": "לפני סגירת השוק", "breakeven": "בברייק אחרי יציאה חלקית"}.get(rec["reason"], "")
                         usd = f" · {'+' if rec.get('pnl', 0) >= 0 else '−'}${abs(rec.get('pnl', 0)):,.0f} · יתרה ${balance():,.0f}" if rec.get("pnl") is not None else ""
                         REP.notify(f"{P5}: {name} נסגרה {word}", f"{side} · {'+' if (rec['r'] or 0) >= 0 else ''}{rec['r']:.2f} סיכון{usd} (וירטואלי)",
                                    tags=["eyes"], key=f"wc:{k}", every=86400)

@@ -324,6 +324,44 @@ def filtered(fn, flt, pk=None):
     return g
 
 
+def release_guard(fn, g):
+    """No new entry in the minutes before an important release (card ee3116706ab9, 18.11.2026: bot 7's 9 gold
+    strategies, no entry 240 minutes before a high-impact USD release - chosen on 2025, 2026 +138.5R -> +144.2R;
+    reports/agents/bot7/release_filter_study.json). g = {"mode": "pre", "min": 240, "impact": ["high"], "cur": ["USD"],
+    "from": ISO}: a signal bar is blocked when the next such release (FTMO's calendar the bot read) comes within "min"
+    minutes of its close; bars before "from" (the build) are left as they were, so no older trade changes."""
+    try:
+        H = pd.Timedelta(minutes=float(g.get("min", 240)))
+        imp, cur = set(g.get("impact") or ["high"]), set(g.get("cur") or ["USD"])
+        t0 = pd.Timestamp(g["from"]) if g.get("from") else None
+    except (TypeError, ValueError):
+        return fn
+    if g.get("mode", "pre") != "pre":
+        return fn
+
+    def h(d):
+        L, S, plan = fn(d)
+        T = sorted({pd.Timestamp(i["date"]).tz_convert("UTC") for i in CAL_ITEMS if i.get("date")
+                    and i.get("impact") in imp and str(i.get("instrument", "")).split(" ")[0] in cur})
+        if not T or not len(d):
+            return L, S, plan
+        ix = pd.DatetimeIndex(d.index)
+        ix = ix.tz_localize("UTC") if ix.tz is None else ix.tz_convert("UTC")
+        step = ix[1] - ix[0] if len(ix) > 1 else pd.Timedelta(0)
+        ix = ix.as_unit("ns")                                # one unit for all (a parsed date can be in seconds)
+        close = (ix + step).asi8
+        Tn = pd.DatetimeIndex(T).as_unit("ns").asi8
+        j = np.searchsorted(Tn, close, side="right")
+        nxt = np.where(j < len(Tn), Tn[np.minimum(j, len(Tn) - 1)], np.iinfo(np.int64).max)
+        blk = (nxt - close) <= H.as_unit("ns").value
+        if t0 is not None:
+            blk &= ix.asi8 >= t0.as_unit("ns").value
+        if blk.any():
+            L, S = np.asarray(L, bool) & ~blk, np.asarray(S, bool) & ~blk
+        return L, S, plan
+    return h
+
+
 def log(msg):
     line = f"{time.strftime('%Y-%m-%d %H:%M:%S')} {msg}"
     print(line, flush=True)
@@ -778,6 +816,8 @@ def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None, ref=None):
         sp = pd.Series([spread_now], index=[d.index[0]]) if spread_now else None
         p_ = pl.get(f"{sid}|{tf}|{name}") or {}
         fn = filtered(fn0, p_.get("filter"), plan_keys(p_))
+        if p_.get("release_guard"):                         # no entry before an important release (card ee3116706ab9)
+            fn = release_guard(fn, p_["release_guard"])
         fe, ne = break_exit(d, tf, ref)                     # no position through a 2h+ market break (FTMO Standard)
         if ne.any():
             fn = CAL.blocked(fn, ne)

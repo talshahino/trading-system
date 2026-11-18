@@ -657,8 +657,12 @@ def trade_info(t):
         return dict(info, text=None)
     # the release: for EV04 its own minute; else the latest of the instrument's releases within 3 hours before the entry
     items_ = cal_items()
-    cand = sorted({i["_t"] for i in items_ if str(i.get("instrument", "")).split(" ")[0] in curs and i.get("impact") == "high"
-                   and i["_t"] <= t0 and t0 - i["_t"] <= pd.Timedelta(hours=3)})
+    # EV08 trades US numbers FTMO marks low impact (claims, home sales): its own release, up to 15 minutes before the entry
+    surprise = sid in SURPRISE
+    back = pd.Timedelta(minutes=15) if surprise else pd.Timedelta(hours=3)
+    cand = sorted({i["_t"] for i in items_ if str(i.get("instrument", "")).split(" ")[0] in curs
+                   and (i.get("impact") == "high" or (surprise and i.get("actual") not in (None, "")))
+                   and i["_t"] <= t0 and t0 - i["_t"] <= back})
     if not cand:
         return dict(info, text=(None if kind == "other" else "לא נמצא פרסום בלוח לפני העסקה."))
     k = cand[-1]

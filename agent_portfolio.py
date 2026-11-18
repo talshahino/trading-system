@@ -1144,6 +1144,24 @@ def main():
             BT7_.export_all("round start")
         except Exception as e:  # noqa: BLE001
             print(f"bot7 trades export failed: {e}")
+        # the two checks everything else of bot 7 is judged by go first (bot 7 smart agent, 18.11.2026): at the end of the
+        # round they were left for "the next round" - EV08 has no trades in the whole-bot check, and EV04, most of the
+        # backtest's profit, stands at 8 of 411 trades on real ticks
+        try:
+            from agents import news_surprise as NSU0
+            if NSU0.no_cache():
+                _study("agents.news_surprise", max(6.0, a.minutes / 6), t0, budget)
+            from agents import news_surprise_fix as NSF
+            if NSF.stale():
+                _study("agents.news_surprise_fix", 2.0, t0, budget)
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 surprise check failed: {e}")
+        try:
+            from agents import news_straddle as NS0, news_straddle_ticks as NSTK0
+            if NSTK0.stale() and not NS0.stale():
+                _study("agents.news_straddle_ticks", max(10.0, a.minutes / 3), t0, budget)
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 straddle ticks check failed: {e}")
         # bot 7's fix study (agents/news_fix.py): the three strategies pooled over all instruments, split by release
         # type / instrument / exits - at most once every 3 days, in its own process, up to half the budget
         try:

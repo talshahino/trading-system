@@ -347,6 +347,7 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
     gone = {x.get("of") for x in decisions if x.get("decision") == "reverted"} | set(undo)
     months = max(1.0, (pd.Timestamp.now(tz="UTC") - pd.Timestamp("2026-01-01", tz="UTC")).days / 30.4)
     rows, total = [], 0.0
+    fx_all = _read(ROOT / "data" / "agents" / "fix_attempts.json", {}) or {}
     for x in rep.get("losers", []):
         c = x["combo"]
         if any(r["combo"] == c for r in rows):
@@ -404,6 +405,17 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
                 eff = card_effect(card, months, bot_risk_pct)
                 fixes.append({"what": card.get("title"), "decision": None, "card": cid, "at": r_.get("at"), "effect_month_pct": eff})
                 total += eff or 0
+        # every family tested and failed after the day (the bot's agent records it in data/agents/fix_attempts.json):
+        # that IS the answer the manager asks for ("a tested fix, or proof that all the families were tested and
+        # failed - then the risk goes down"), so the strategy is no longer open - it is a cut-only row, and enforce()
+        # sizes its risk by its own edge from then on (bots 1-4 smart agent, 19.11.2026: TV60 ARM, TV10 US100, TT45
+        # CSCO, TV58 XAUUSD, QC07 ARM, BK05 / FR01 EURUSD were "failed" in fix_attempts and still reopened every night,
+        # several of them already at the minimum lot, so the reports could never close)
+        if not fixes:
+            fa = fx_all.get(f"{rep['bot']}|{c}") or {}
+            if fa.get("status") == "failed" and str(fa.get("at") or "") >= rep["day"]:
+                fixes.append({"what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון", "decision": None, "at": fa.get("at"),
+                              "effect_month_pct": None, "cut": True, "prev": None, "value": None, "failed": True})
         # only a risk cut, no real fix: the size of the cut follows the strategy's own edge (enforce)
         rows.append({"combo": c, "cause": x["cause_he"], "fixes": fixes, "open": not fixes and x["cause"] != "rules",
                      "cut_only": bool(fixes) and all(f.get("cut") for f in fixes)})

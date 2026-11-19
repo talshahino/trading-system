@@ -851,6 +851,24 @@
     "cause": "כניסה / כיוון",
     "fixes": [
      {
+      "what": "⭐ TV20|1Hour|XAUUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+      "decision": "3bc1a36c3f5f",
+      "at": "2026-11-19T17:45:55+00:00",
+      "effect_month_pct": 0.27,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "aa4857f06f6b",
+      "at": "2026-11-19T17:45:55+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.77,
+      "value": 0.7
+     },
+     {
       "what": "⭐ TV20|1Hour|XAUUSD: יעד 5R · כניסה בלימיט 0.25R טוב יותר",
       "decision": null,
       "card": "b222a5369109",
@@ -995,6 +1013,15 @@
     "combo": "IB056|1Hour|XAUUSD",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
+     {
+      "what": "IB056|1Hour|XAUUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+      "decision": "113c2d995496",
+      "at": "2026-11-19T17:45:55+00:00",
+      "effect_month_pct": 0.42,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
      {
       "what": "⭐ ⭐ IB056|1Hour|XAUUSD: יעד 5R · סטופ x0.75 - תיקון מדוח ההפסד של 17.11",
       "decision": "e5a76d41c82a",
@@ -1176,7 +1203,7 @@
    "TV10|1Hour|US100",
    "TT45|15Min|CSCO"
   ],
-  "total_month_pct": 0.99,
+  "total_month_pct": 1.68,
   "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 9 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

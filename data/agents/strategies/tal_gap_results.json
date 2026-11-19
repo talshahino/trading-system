@@ -466173,5 +466173,196 @@
    "risk_guard": 144,
    "scout_dir": 45
   }
+ },
+ "bot5_smart": {
+  "updated": "2026-11-19T18:56:27+00:00",
+  "for": "bot6",
+  "dbrk": {
+   "what": "DBRK (agents/tal_gap.py): c = cancel a waiting gap order 10 min before an expected 30+ min break shorter than 2h (seen a day / a week earlier), x = close an open trade then, oN = no fill N min after a reopening. Bot 5: no rule beats today on the whole bot; passes only on t15_1 (x). The 4h tracks lose most (fills at the reopening earn). Bot 6's futures have the CME daily break (60 min) - worth the same test.",
+   "all": {
+    "now|base": {
+     "train": {
+      "n": 1483,
+      "sum": 386.7,
+      "mean": 0.261,
+      "win": 47.1,
+      "dd": 31.54,
+      "worst": -11.39,
+      "green": 50.8,
+      "wmean": 0.255,
+      "t": 2.13
+     },
+     "unseen": {
+      "n": 2199,
+      "sum": 152.29,
+      "mean": 0.069,
+      "win": 45.7,
+      "dd": 28.14,
+      "worst": -12.56,
+      "green": 52.6,
+      "wmean": 0.0694,
+      "t": 3.29
+     }
+    },
+    "db|c": {
+     "train": {
+      "n": 1182,
+      "sum": 310.76,
+      "mean": 0.263,
+      "win": 45.9,
+      "dd": 35.64,
+      "worst": -10.38,
+      "green": 49.7,
+      "wmean": 0.2561,
+      "t": 1.72
+     },
+     "unseen": {
+      "n": 1728,
+      "sum": 77.72,
+      "mean": 0.045,
+      "win": 44.4,
+      "dd": 30.47,
+      "worst": -8.51,
+      "green": 47.9,
+      "wmean": 0.0452,
+      "t": 1.86
+     }
+    },
+    "db|x": {
+     "train": {
+      "n": 1623,
+      "sum": 336.29,
+      "mean": 0.207,
+      "win": 49.2,
+      "dd": 29.8,
+      "worst": -10.72,
+      "green": 49.2,
+      "wmean": 0.2022,
+      "t": 1.86
+     },
+     "unseen": {
+      "n": 2443,
+      "sum": 127.33,
+      "mean": 0.052,
+      "win": 46.3,
+      "dd": 31.05,
+      "worst": -9.59,
+      "green": 48.4,
+      "wmean": 0.0523,
+      "t": 2.94
+     }
+    },
+    "db|c+x": {
+     "train": {
+      "n": 1220,
+      "sum": 291.71,
+      "mean": 0.239,
+      "win": 48.4,
+      "dd": 28.38,
+      "worst": -8.82,
+      "green": 48.1,
+      "wmean": 0.2326,
+      "t": 1.61
+     },
+     "unseen": {
+      "n": 1811,
+      "sum": 81.16,
+      "mean": 0.045,
+      "win": 45.7,
+      "dd": 30.14,
+      "worst": -8.63,
+      "green": 47.5,
+      "wmean": 0.0452,
+      "t": 2.06
+     }
+    },
+    "db|o10": {
+     "train": {
+      "n": 1468,
+      "sum": 125.12,
+      "mean": 0.085,
+      "win": 46.9,
+      "dd": 30.49,
+      "worst": -11.39,
+      "green": 49.7,
+      "wmean": 0.085,
+      "t": 3.22
+     },
+     "unseen": {
+      "n": 2178,
+      "sum": 153.97,
+      "mean": 0.071,
+      "win": 45.7,
+      "dd": 27.05,
+      "worst": -12.56,
+      "green": 52.6,
+      "wmean": 0.0707,
+      "t": 3.3
+     }
+    },
+    "db|x+o10": {
+     "train": {
+      "n": 1608,
+      "sum": 76.4,
+      "mean": 0.048,
+      "win": 49.0,
+      "dd": 29.15,
+      "worst": -10.72,
+      "green": 48.7,
+      "wmean": 0.0476,
+      "t": 2.2
+     },
+     "unseen": {
+      "n": 2422,
+      "sum": 129.63,
+      "mean": 0.054,
+      "win": 46.4,
+      "dd": 29.92,
+      "worst": -9.59,
+      "green": 49.2,
+      "wmean": 0.0537,
+      "t": 2.98
+     }
+    },
+    "db|c+o10+x": {
+     "train": {
+      "n": 1216,
+      "sum": 44.37,
+      "mean": 0.036,
+      "win": 48.2,
+      "dd": 28.38,
+      "worst": -8.82,
+      "green": 46.4,
+      "wmean": 0.0366,
+      "t": 1.44
+     },
+     "unseen": {
+      "n": 1809,
+      "sum": 85.09,
+      "mean": 0.047,
+      "win": 45.8,
+      "dd": 30.12,
+      "worst": -8.63,
+      "green": 47.9,
+      "wmean": 0.0473,
+      "t": 2.16
+     }
+    }
+   },
+   "tracks_pass": [
+    "t15_1",
+    "t1h_5@N25",
+    "t1h_5@SPN35",
+    "t5_1@UK100",
+    "t1h_5@US100",
+    "t1h_5@US30",
+    "t1h_5@US500"
+   ],
+   "report": "reports/agents/bot5/tal_dbrk/report.json"
+  },
+  "cluster": {
+   "what": "skip a gap entry while K trades are already open the same way (same instrument / indices / all) - every cap loses most of 2026's profit on bot 5",
+   "report": "reports/agents/bot5/tal_cluster.json"
+  }
  }
 }

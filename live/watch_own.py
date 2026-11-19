@@ -600,7 +600,9 @@ class Source:
         if time.time() - self._saved.get(name, 0) > 600 and len(d):
             try:
                 CACHE_DIR.mkdir(exist_ok=True)
-                d.to_pickle(CACHE_DIR / f"{self.broker[name]}.pkl")
+                tmp_ = CACHE_DIR / f"{self.broker[name]}.{os.getpid()}.tmp"
+                d.to_pickle(tmp_)
+                os.replace(tmp_, CACHE_DIR / f"{self.broker[name]}.pkl")   # whole or nothing (two bots share it)
                 self._saved[name] = time.time()
             except Exception:  # noqa: BLE001
                 pass
@@ -1807,6 +1809,8 @@ def main():
                     old = trades.get(k, {})
                     if frozen(old):
                         continue        # a booked close is final (user, 18.11.2026 - see frozen())
+                    if not old and any(x_["id"] == k and settled(x_) for a_ in (acc, sacc) for x_ in a_["ledger"]):
+                        continue        # its record is gone but its close is booked: never a second, recomputed trade
                     rec = {"id": k, "symbol": name, "broker": src.broker.get(name), "dir": int(x["dir"]), "status": x["status"],
                            "entry": float(x["entry"]), "stop": float(x["stop"]) if x.get("stop") is not None else None,
                            "target": float(x["target"]) if x.get("target") else None,

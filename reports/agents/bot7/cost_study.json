@@ -1,115 +1,109 @@
 {
- "at": "2026-11-19T03:30:55+00:00",
+ "at": "2026-11-19T12:04:13+00:00",
  "version": 1,
  "split": "2026-01-01",
- "partial": true,
- "left": [
-  "USDJPY",
-  "XAUUSD"
- ],
- "trades": 588,
- "not_priced": {
-  "EV02": 2,
-  "EV03": 8
- },
+ "partial": false,
+ "left": [],
+ "trades": 598,
+ "not_priced": {},
  "scopes": {
   "all": {
    "today": {
     "y2025": {
-     "n": 260,
-     "sum": 236.49,
-     "mean": 0.9096,
+     "n": 261,
+     "sum": 235.46,
+     "mean": 0.9021,
      "worst": -2.21,
      "skipped": 0,
      "skipped_r": 0.0,
      "over_1_5r": 3,
-     "cost_mean": 0.213
+     "cost_mean": 0.212
     },
     "y2026": {
-     "n": 328,
-     "sum": 267.37,
-     "mean": 0.8152,
+     "n": 337,
+     "sum": 269.05,
+     "mean": 0.7984,
      "worst": -2.48,
      "skipped": 0,
      "skipped_r": 0.0,
      "over_1_5r": 4,
-     "cost_mean": 0.173
+     "cost_mean": 0.172
     }
    },
    "chosen": "skip_c0.75",
    "chosen_result": {
     "y2025": {
-     "n": 258,
-     "sum": 240.91,
-     "mean": 0.9338,
+     "n": 259,
+     "sum": 239.87,
+     "mean": 0.9262,
      "worst": -1.53,
      "skipped": 2,
      "skipped_r": -4.41,
      "over_1_5r": 1,
-     "cost_mean": 0.205
+     "cost_mean": 0.204
     },
     "y2026": {
-     "n": 324,
-     "sum": 274.04,
-     "mean": 0.8458,
+     "n": 333,
+     "sum": 275.71,
+     "mean": 0.828,
      "worst": -1.57,
      "skipped": 4,
      "skipped_r": -6.66,
      "over_1_5r": 1,
-     "cost_mean": 0.166
+     "cost_mean": 0.164
     }
    },
    "passes": true,
    "rules": {
     "today": {
      "y2025": {
-      "n": 260,
-      "sum": 236.49,
-      "mean": 0.9096,
+      "n": 261,
+      "sum": 235.46,
+      "mean": 0.9021,
       "worst": -2.21,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.213
+      "cost_mean": 0.212
      },
      "y2026": {
-      "n": 328,
-      "sum": 267.37,
-      "mean": 0.8152,
+      "n": 337,
+      "sum": 269.05,
+      "mean": 0.7984,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 4,
-      "cost_mean": 0.173
+      "cost_mean": 0.172
      }
     },
     "net": {
      "y2025": {
-      "n": 260,
-      "sum": 201.6,
-      "mean": 0.7754,
+      "n": 261,
+      "sum": 200.6,
+      "mean": 0.7686,
       "worst": -1.0,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.213
+      "cost_mean": 0.212
      },
      "y2026": {
-      "n": 328,
-      "sum": 224.37,
-      "mean": 0.684,
+      "n": 337,
+      "sum": 225.71,
+      "mean": 0.6698,
       "worst": -1.39,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.173
+      "cost_mean": 0.172
      }
     },
     "skip_c0.3": {
      "y2025": {
-      "n": 193,
-      "sum": 175.68,
-      "mean": 0.9102,
+      "n": 194,
+      "sum": 174.64,
+      "mean": 0.9002,
       "worst": -1.3,
       "skipped": 67,
       "skipped_r": 60.82,
@@ -117,21 +111,21 @@
       "cost_mean": 0.15
      },
      "y2026": {
-      "n": 278,
-      "sum": 189.7,
-      "mean": 0.6824,
+      "n": 287,
+      "sum": 191.38,
+      "mean": 0.6668,
       "worst": -1.29,
       "skipped": 50,
       "skipped_r": 77.67,
       "over_1_5r": 0,
-      "cost_mean": 0.133
+      "cost_mean": 0.132
      }
     },
     "net_skip_c0.3": {
      "y2025": {
-      "n": 193,
-      "sum": 155.49,
-      "mean": 0.8056,
+      "n": 194,
+      "sum": 154.49,
+      "mean": 0.7963,
       "worst": -1.0,
       "skipped": 67,
       "skipped_r": 60.82,
@@ -139,263 +133,263 @@
       "cost_mean": 0.15
      },
      "y2026": {
-      "n": 278,
-      "sum": 165.74,
-      "mean": 0.5962,
+      "n": 287,
+      "sum": 167.09,
+      "mean": 0.5822,
       "worst": -1.0,
       "skipped": 50,
       "skipped_r": 77.67,
       "over_1_5r": 0,
-      "cost_mean": 0.133
+      "cost_mean": 0.132
      }
     },
     "skip_c0.5": {
      "y2025": {
-      "n": 255,
-      "sum": 240.52,
-      "mean": 0.9432,
+      "n": 256,
+      "sum": 239.48,
+      "mean": 0.9355,
       "worst": -1.48,
       "skipped": 5,
       "skipped_r": -4.02,
       "over_1_5r": 0,
-      "cost_mean": 0.2
+      "cost_mean": 0.199
      },
      "y2026": {
-      "n": 322,
-      "sum": 273.23,
-      "mean": 0.8485,
+      "n": 331,
+      "sum": 274.9,
+      "mean": 0.8305,
       "worst": -1.42,
       "skipped": 6,
       "skipped_r": -5.85,
       "over_1_5r": 0,
-      "cost_mean": 0.163
+      "cost_mean": 0.162
      }
     },
     "net_skip_c0.5": {
      "y2025": {
-      "n": 255,
-      "sum": 203.4,
-      "mean": 0.7977,
+      "n": 256,
+      "sum": 202.4,
+      "mean": 0.7906,
       "worst": -1.0,
       "skipped": 5,
       "skipped_r": -4.02,
       "over_1_5r": 0,
-      "cost_mean": 0.2
+      "cost_mean": 0.199
      },
      "y2026": {
-      "n": 322,
-      "sum": 227.58,
-      "mean": 0.7068,
+      "n": 331,
+      "sum": 228.93,
+      "mean": 0.6916,
       "worst": -1.0,
       "skipped": 6,
       "skipped_r": -5.85,
       "over_1_5r": 0,
-      "cost_mean": 0.163
+      "cost_mean": 0.162
      }
     },
     "skip_c0.75": {
      "y2025": {
-      "n": 258,
-      "sum": 240.91,
-      "mean": 0.9338,
+      "n": 259,
+      "sum": 239.87,
+      "mean": 0.9262,
       "worst": -1.53,
       "skipped": 2,
       "skipped_r": -4.41,
       "over_1_5r": 1,
-      "cost_mean": 0.205
+      "cost_mean": 0.204
      },
      "y2026": {
-      "n": 324,
-      "sum": 274.04,
-      "mean": 0.8458,
+      "n": 333,
+      "sum": 275.71,
+      "mean": 0.828,
       "worst": -1.57,
       "skipped": 4,
       "skipped_r": -6.66,
       "over_1_5r": 1,
-      "cost_mean": 0.166
+      "cost_mean": 0.164
      }
     },
     "net_skip_c0.75": {
      "y2025": {
-      "n": 258,
-      "sum": 203.6,
-      "mean": 0.7891,
+      "n": 259,
+      "sum": 202.6,
+      "mean": 0.7822,
       "worst": -1.0,
       "skipped": 2,
       "skipped_r": -4.41,
       "over_1_5r": 0,
-      "cost_mean": 0.205
+      "cost_mean": 0.204
      },
      "y2026": {
-      "n": 324,
-      "sum": 228.07,
-      "mean": 0.7039,
+      "n": 333,
+      "sum": 229.41,
+      "mean": 0.6889,
       "worst": -1.0,
       "skipped": 4,
       "skipped_r": -6.66,
       "over_1_5r": 0,
-      "cost_mean": 0.166
+      "cost_mean": 0.164
      }
     },
     "skip_c1": {
      "y2025": {
-      "n": 258,
-      "sum": 240.91,
-      "mean": 0.9338,
+      "n": 259,
+      "sum": 239.87,
+      "mean": 0.9262,
       "worst": -1.53,
       "skipped": 2,
       "skipped_r": -4.41,
       "over_1_5r": 1,
-      "cost_mean": 0.205
+      "cost_mean": 0.204
      },
      "y2026": {
-      "n": 328,
-      "sum": 267.37,
-      "mean": 0.8152,
+      "n": 337,
+      "sum": 269.05,
+      "mean": 0.7984,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 4,
-      "cost_mean": 0.173
+      "cost_mean": 0.172
      }
     },
     "net_skip_c1": {
      "y2025": {
-      "n": 258,
-      "sum": 203.6,
-      "mean": 0.7891,
+      "n": 259,
+      "sum": 202.6,
+      "mean": 0.7822,
       "worst": -1.0,
       "skipped": 2,
       "skipped_r": -4.41,
       "over_1_5r": 0,
-      "cost_mean": 0.205
+      "cost_mean": 0.204
      },
      "y2026": {
-      "n": 328,
-      "sum": 224.37,
-      "mean": 0.684,
+      "n": 337,
+      "sum": 225.71,
+      "mean": 0.6698,
       "worst": -1.39,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.173
+      "cost_mean": 0.172
      }
     },
     "skip_c1.5": {
      "y2025": {
-      "n": 260,
-      "sum": 236.49,
-      "mean": 0.9096,
+      "n": 261,
+      "sum": 235.46,
+      "mean": 0.9021,
       "worst": -2.21,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.213
+      "cost_mean": 0.212
      },
      "y2026": {
-      "n": 328,
-      "sum": 267.37,
-      "mean": 0.8152,
+      "n": 337,
+      "sum": 269.05,
+      "mean": 0.7984,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 4,
-      "cost_mean": 0.173
+      "cost_mean": 0.172
      }
     },
     "net_skip_c1.5": {
      "y2025": {
-      "n": 260,
-      "sum": 201.6,
-      "mean": 0.7754,
+      "n": 261,
+      "sum": 200.6,
+      "mean": 0.7686,
       "worst": -1.0,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.213
+      "cost_mean": 0.212
      },
      "y2026": {
-      "n": 328,
-      "sum": 224.37,
-      "mean": 0.684,
+      "n": 337,
+      "sum": 225.71,
+      "mean": 0.6698,
       "worst": -1.39,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.173
+      "cost_mean": 0.172
      }
     },
     "minstop_atr0.25": {
      "y2025": {
-      "n": 260,
-      "sum": 236.49,
-      "mean": 0.9096,
+      "n": 261,
+      "sum": 235.46,
+      "mean": 0.9021,
       "worst": -2.21,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.213
+      "cost_mean": 0.212
      },
      "y2026": {
-      "n": 328,
-      "sum": 267.37,
-      "mean": 0.8152,
+      "n": 337,
+      "sum": 269.05,
+      "mean": 0.7984,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 4,
-      "cost_mean": 0.173
+      "cost_mean": 0.172
      }
     },
     "minstop_atr0.5": {
      "y2025": {
-      "n": 260,
-      "sum": 236.49,
-      "mean": 0.9096,
+      "n": 261,
+      "sum": 235.46,
+      "mean": 0.9021,
       "worst": -2.21,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.213
+      "cost_mean": 0.212
      },
      "y2026": {
-      "n": 328,
-      "sum": 267.37,
-      "mean": 0.8152,
+      "n": 337,
+      "sum": 269.05,
+      "mean": 0.7984,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 4,
-      "cost_mean": 0.173
+      "cost_mean": 0.172
      }
     },
     "minstop_atr0.75": {
      "y2025": {
-      "n": 260,
-      "sum": 236.49,
-      "mean": 0.9096,
+      "n": 261,
+      "sum": 235.46,
+      "mean": 0.9021,
       "worst": -2.21,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.213
+      "cost_mean": 0.212
      },
      "y2026": {
-      "n": 328,
-      "sum": 267.37,
-      "mean": 0.8152,
+      "n": 337,
+      "sum": 269.05,
+      "mean": 0.7984,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 4,
-      "cost_mean": 0.173
+      "cost_mean": 0.172
      }
     },
     "minstop_atr1": {
      "y2025": {
-      "n": 255,
-      "sum": 239.73,
-      "mean": 0.9401,
+      "n": 256,
+      "sum": 238.69,
+      "mean": 0.9324,
       "worst": -1.53,
       "skipped": 5,
       "skipped_r": -3.23,
@@ -403,14 +397,14 @@
       "cost_mean": 0.204
      },
      "y2026": {
-      "n": 326,
-      "sum": 263.61,
-      "mean": 0.8086,
+      "n": 333,
+      "sum": 261.64,
+      "mean": 0.7857,
       "worst": -2.48,
-      "skipped": 2,
-      "skipped_r": 3.77,
+      "skipped": 4,
+      "skipped_r": 7.41,
       "over_1_5r": 4,
-      "cost_mean": 0.174
+      "cost_mean": 0.172
      }
     }
    }
@@ -428,14 +422,14 @@
      "cost_mean": 0.11
     },
     "y2026": {
-     "n": 12,
-     "sum": 1.57,
-     "mean": 0.1311,
+     "n": 14,
+     "sum": 1.9,
+     "mean": 0.1358,
      "worst": -0.04,
      "skipped": 0,
      "skipped_r": 0.0,
      "over_1_5r": 0,
-     "cost_mean": 0.067
+     "cost_mean": 0.063
     }
    },
    "chosen": null,
@@ -454,14 +448,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.57,
-      "mean": 0.1311,
+      "n": 14,
+      "sum": 1.9,
+      "mean": 0.1358,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "net": {
@@ -476,14 +470,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.45,
-      "mean": 0.1204,
+      "n": 14,
+      "sum": 1.76,
+      "mean": 0.1259,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "skip_c0.3": {
@@ -498,14 +492,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.57,
-      "mean": 0.1311,
+      "n": 14,
+      "sum": 1.9,
+      "mean": 0.1358,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "net_skip_c0.3": {
@@ -520,14 +514,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.45,
-      "mean": 0.1204,
+      "n": 14,
+      "sum": 1.76,
+      "mean": 0.1259,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "skip_c0.5": {
@@ -542,14 +536,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.57,
-      "mean": 0.1311,
+      "n": 14,
+      "sum": 1.9,
+      "mean": 0.1358,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "net_skip_c0.5": {
@@ -564,14 +558,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.45,
-      "mean": 0.1204,
+      "n": 14,
+      "sum": 1.76,
+      "mean": 0.1259,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "skip_c0.75": {
@@ -586,14 +580,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.57,
-      "mean": 0.1311,
+      "n": 14,
+      "sum": 1.9,
+      "mean": 0.1358,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "net_skip_c0.75": {
@@ -608,14 +602,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.45,
-      "mean": 0.1204,
+      "n": 14,
+      "sum": 1.76,
+      "mean": 0.1259,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "skip_c1": {
@@ -630,14 +624,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.57,
-      "mean": 0.1311,
+      "n": 14,
+      "sum": 1.9,
+      "mean": 0.1358,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "net_skip_c1": {
@@ -652,14 +646,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.45,
-      "mean": 0.1204,
+      "n": 14,
+      "sum": 1.76,
+      "mean": 0.1259,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "skip_c1.5": {
@@ -674,14 +668,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.57,
-      "mean": 0.1311,
+      "n": 14,
+      "sum": 1.9,
+      "mean": 0.1358,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "net_skip_c1.5": {
@@ -696,14 +690,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.45,
-      "mean": 0.1204,
+      "n": 14,
+      "sum": 1.76,
+      "mean": 0.1259,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "minstop_atr0.25": {
@@ -718,14 +712,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.57,
-      "mean": 0.1311,
+      "n": 14,
+      "sum": 1.9,
+      "mean": 0.1358,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "minstop_atr0.5": {
@@ -740,14 +734,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.57,
-      "mean": 0.1311,
+      "n": 14,
+      "sum": 1.9,
+      "mean": 0.1358,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "minstop_atr0.75": {
@@ -762,14 +756,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.57,
-      "mean": 0.1311,
+      "n": 14,
+      "sum": 1.9,
+      "mean": 0.1358,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     },
     "minstop_atr1": {
@@ -784,14 +778,14 @@
       "cost_mean": 0.11
      },
      "y2026": {
-      "n": 12,
-      "sum": 1.57,
-      "mean": 0.1311,
+      "n": 14,
+      "sum": 1.9,
+      "mean": 0.1358,
       "worst": -0.04,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.067
+      "cost_mean": 0.063
      }
     }
    }
@@ -799,42 +793,42 @@
   "EV03": {
    "today": {
     "y2025": {
-     "n": 29,
-     "sum": 5.24,
-     "mean": 0.1807,
+     "n": 30,
+     "sum": 4.21,
+     "mean": 0.1402,
      "worst": -2.21,
      "skipped": 0,
      "skipped_r": 0.0,
      "over_1_5r": 2,
-     "cost_mean": 0.27
+     "cost_mean": 0.262
     },
     "y2026": {
-     "n": 35,
-     "sum": -1.91,
-     "mean": -0.0547,
+     "n": 42,
+     "sum": -0.57,
+     "mean": -0.0135,
      "worst": -2.48,
      "skipped": 0,
      "skipped_r": 0.0,
      "over_1_5r": 3,
-     "cost_mean": 0.186
+     "cost_mean": 0.176
     }
    },
    "chosen": "skip_c0.75",
    "chosen_result": {
     "y2025": {
-     "n": 27,
-     "sum": 9.66,
-     "mean": 0.3576,
+     "n": 28,
+     "sum": 8.62,
+     "mean": 0.3079,
      "worst": -1.45,
      "skipped": 2,
      "skipped_r": -4.41,
      "over_1_5r": 0,
-     "cost_mean": 0.2
+     "cost_mean": 0.194
     },
     "y2026": {
-     "n": 32,
-     "sum": 4.4,
-     "mean": 0.1375,
+     "n": 39,
+     "sum": 5.74,
+     "mean": 0.1473,
      "worst": -1.28,
      "skipped": 3,
      "skipped_r": -6.31,
@@ -846,107 +840,107 @@
    "rules": {
     "today": {
      "y2025": {
-      "n": 29,
-      "sum": 5.24,
-      "mean": 0.1807,
+      "n": 30,
+      "sum": 4.21,
+      "mean": 0.1402,
       "worst": -2.21,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 2,
-      "cost_mean": 0.27
+      "cost_mean": 0.262
      },
      "y2026": {
-      "n": 35,
-      "sum": -1.91,
-      "mean": -0.0547,
+      "n": 42,
+      "sum": -0.57,
+      "mean": -0.0135,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.186
+      "cost_mean": 0.176
      }
     },
     "net": {
      "y2025": {
-      "n": 29,
-      "sum": 5.51,
-      "mean": 0.19,
+      "n": 30,
+      "sum": 4.51,
+      "mean": 0.1503,
       "worst": -1.0,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.27
+      "cost_mean": 0.262
      },
      "y2026": {
-      "n": 35,
-      "sum": -0.28,
-      "mean": -0.008,
+      "n": 42,
+      "sum": 0.75,
+      "mean": 0.0178,
       "worst": -1.39,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.186
+      "cost_mean": 0.176
      }
     },
     "skip_c0.3": {
      "y2025": {
-      "n": 19,
-      "sum": 2.78,
-      "mean": 0.1462,
+      "n": 20,
+      "sum": 1.74,
+      "mean": 0.0871,
       "worst": -1.26,
       "skipped": 10,
       "skipped_r": 2.46,
       "over_1_5r": 0,
-      "cost_mean": 0.117
+      "cost_mean": 0.113
      },
      "y2026": {
-      "n": 31,
-      "sum": 4.37,
-      "mean": 0.1411,
+      "n": 38,
+      "sum": 5.72,
+      "mean": 0.1505,
       "worst": -1.28,
       "skipped": 4,
       "skipped_r": -6.29,
       "over_1_5r": 0,
-      "cost_mean": 0.119
+      "cost_mean": 0.12
      }
     },
     "net_skip_c0.3": {
      "y2025": {
-      "n": 19,
-      "sum": 2.68,
-      "mean": 0.1412,
+      "n": 20,
+      "sum": 1.68,
+      "mean": 0.0842,
       "worst": -1.0,
       "skipped": 10,
       "skipped_r": 2.46,
       "over_1_5r": 0,
-      "cost_mean": 0.117
+      "cost_mean": 0.113
      },
      "y2026": {
-      "n": 31,
-      "sum": 3.21,
-      "mean": 0.1035,
+      "n": 38,
+      "sum": 4.23,
+      "mean": 0.1114,
       "worst": -1.0,
       "skipped": 4,
       "skipped_r": -6.29,
       "over_1_5r": 0,
-      "cost_mean": 0.119
+      "cost_mean": 0.12
      }
     },
     "skip_c0.5": {
      "y2025": {
-      "n": 26,
-      "sum": 6.34,
-      "mean": 0.2438,
+      "n": 27,
+      "sum": 5.3,
+      "mean": 0.1964,
       "worst": -1.45,
       "skipped": 3,
       "skipped_r": -1.1,
       "over_1_5r": 0,
-      "cost_mean": 0.184
+      "cost_mean": 0.178
      },
      "y2026": {
-      "n": 32,
-      "sum": 4.4,
-      "mean": 0.1375,
+      "n": 39,
+      "sum": 5.74,
+      "mean": 0.1473,
       "worst": -1.28,
       "skipped": 3,
       "skipped_r": -6.31,
@@ -956,19 +950,19 @@
     },
     "net_skip_c0.5": {
      "y2025": {
-      "n": 26,
-      "sum": 5.47,
-      "mean": 0.2105,
+      "n": 27,
+      "sum": 4.47,
+      "mean": 0.1657,
       "worst": -1.0,
       "skipped": 3,
       "skipped_r": -1.1,
       "over_1_5r": 0,
-      "cost_mean": 0.184
+      "cost_mean": 0.178
      },
      "y2026": {
-      "n": 32,
-      "sum": 3.23,
-      "mean": 0.1008,
+      "n": 39,
+      "sum": 4.25,
+      "mean": 0.109,
       "worst": -1.0,
       "skipped": 3,
       "skipped_r": -6.31,
@@ -978,19 +972,19 @@
     },
     "skip_c0.75": {
      "y2025": {
-      "n": 27,
-      "sum": 9.66,
-      "mean": 0.3576,
+      "n": 28,
+      "sum": 8.62,
+      "mean": 0.3079,
       "worst": -1.45,
       "skipped": 2,
       "skipped_r": -4.41,
       "over_1_5r": 0,
-      "cost_mean": 0.2
+      "cost_mean": 0.194
      },
      "y2026": {
-      "n": 32,
-      "sum": 4.4,
-      "mean": 0.1375,
+      "n": 39,
+      "sum": 5.74,
+      "mean": 0.1473,
       "worst": -1.28,
       "skipped": 3,
       "skipped_r": -6.31,
@@ -1000,19 +994,19 @@
     },
     "net_skip_c0.75": {
      "y2025": {
-      "n": 27,
-      "sum": 7.51,
-      "mean": 0.2782,
+      "n": 28,
+      "sum": 6.51,
+      "mean": 0.2325,
       "worst": -1.0,
       "skipped": 2,
       "skipped_r": -4.41,
       "over_1_5r": 0,
-      "cost_mean": 0.2
+      "cost_mean": 0.194
      },
      "y2026": {
-      "n": 32,
-      "sum": 3.23,
-      "mean": 0.1008,
+      "n": 39,
+      "sum": 4.25,
+      "mean": 0.109,
       "worst": -1.0,
       "skipped": 3,
       "skipped_r": -6.31,
@@ -1022,178 +1016,178 @@
     },
     "skip_c1": {
      "y2025": {
-      "n": 27,
-      "sum": 9.66,
-      "mean": 0.3576,
+      "n": 28,
+      "sum": 8.62,
+      "mean": 0.3079,
       "worst": -1.45,
       "skipped": 2,
       "skipped_r": -4.41,
       "over_1_5r": 0,
-      "cost_mean": 0.2
+      "cost_mean": 0.194
      },
      "y2026": {
-      "n": 35,
-      "sum": -1.91,
-      "mean": -0.0547,
+      "n": 42,
+      "sum": -0.57,
+      "mean": -0.0135,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.186
+      "cost_mean": 0.176
      }
     },
     "net_skip_c1": {
      "y2025": {
-      "n": 27,
-      "sum": 7.51,
-      "mean": 0.2782,
+      "n": 28,
+      "sum": 6.51,
+      "mean": 0.2325,
       "worst": -1.0,
       "skipped": 2,
       "skipped_r": -4.41,
       "over_1_5r": 0,
-      "cost_mean": 0.2
+      "cost_mean": 0.194
      },
      "y2026": {
-      "n": 35,
-      "sum": -0.28,
-      "mean": -0.008,
+      "n": 42,
+      "sum": 0.75,
+      "mean": 0.0178,
       "worst": -1.39,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.186
+      "cost_mean": 0.176
      }
     },
     "skip_c1.5": {
      "y2025": {
-      "n": 29,
-      "sum": 5.24,
-      "mean": 0.1807,
+      "n": 30,
+      "sum": 4.21,
+      "mean": 0.1402,
       "worst": -2.21,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 2,
-      "cost_mean": 0.27
+      "cost_mean": 0.262
      },
      "y2026": {
-      "n": 35,
-      "sum": -1.91,
-      "mean": -0.0547,
+      "n": 42,
+      "sum": -0.57,
+      "mean": -0.0135,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.186
+      "cost_mean": 0.176
      }
     },
     "net_skip_c1.5": {
      "y2025": {
-      "n": 29,
-      "sum": 5.51,
-      "mean": 0.19,
+      "n": 30,
+      "sum": 4.51,
+      "mean": 0.1503,
       "worst": -1.0,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.27
+      "cost_mean": 0.262
      },
      "y2026": {
-      "n": 35,
-      "sum": -0.28,
-      "mean": -0.008,
+      "n": 42,
+      "sum": 0.75,
+      "mean": 0.0178,
       "worst": -1.39,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 0,
-      "cost_mean": 0.186
+      "cost_mean": 0.176
      }
     },
     "minstop_atr0.25": {
      "y2025": {
-      "n": 29,
-      "sum": 5.24,
-      "mean": 0.1807,
+      "n": 30,
+      "sum": 4.21,
+      "mean": 0.1402,
       "worst": -2.21,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 2,
-      "cost_mean": 0.27
+      "cost_mean": 0.262
      },
      "y2026": {
-      "n": 35,
-      "sum": -1.91,
-      "mean": -0.0547,
+      "n": 42,
+      "sum": -0.57,
+      "mean": -0.0135,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.186
+      "cost_mean": 0.176
      }
     },
     "minstop_atr0.5": {
      "y2025": {
-      "n": 29,
-      "sum": 5.24,
-      "mean": 0.1807,
+      "n": 30,
+      "sum": 4.21,
+      "mean": 0.1402,
       "worst": -2.21,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 2,
-      "cost_mean": 0.27
+      "cost_mean": 0.262
      },
      "y2026": {
-      "n": 35,
-      "sum": -1.91,
-      "mean": -0.0547,
+      "n": 42,
+      "sum": -0.57,
+      "mean": -0.0135,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.186
+      "cost_mean": 0.176
      }
     },
     "minstop_atr0.75": {
      "y2025": {
-      "n": 29,
-      "sum": 5.24,
-      "mean": 0.1807,
+      "n": 30,
+      "sum": 4.21,
+      "mean": 0.1402,
       "worst": -2.21,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 2,
-      "cost_mean": 0.27
+      "cost_mean": 0.262
      },
      "y2026": {
-      "n": 35,
-      "sum": -1.91,
-      "mean": -0.0547,
+      "n": 42,
+      "sum": -0.57,
+      "mean": -0.0135,
       "worst": -2.48,
       "skipped": 0,
       "skipped_r": 0.0,
       "over_1_5r": 3,
-      "cost_mean": 0.186
+      "cost_mean": 0.176
      }
     },
     "minstop_atr1": {
      "y2025": {
-      "n": 24,
-      "sum": 8.48,
-      "mean": 0.3532,
+      "n": 25,
+      "sum": 7.44,
+      "mean": 0.2976,
       "worst": -1.45,
       "skipped": 5,
       "skipped_r": -3.23,
       "over_1_5r": 0,
-      "cost_mean": 0.193
+      "cost_mean": 0.187
      },
      "y2026": {
-      "n": 33,
-      "sum": -5.68,
-      "mean": -0.1721,
+      "n": 38,
+      "sum": -7.98,
+      "mean": -0.21,
       "worst": -2.48,
-      "skipped": 2,
-      "skipped_r": 3.77,
+      "skipped": 4,
+      "skipped_r": 7.41,
       "over_1_5r": 3,
-      "cost_mean": 0.19
+      "cost_mean": 0.179
      }
     }
    }

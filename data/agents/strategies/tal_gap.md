@@ -116,3 +116,5 @@
 
 - 19.11.2026: MIN_RR 0.9 on all gap tracks except the 4h tracks (t4h_1h / t4h_15 stay 0, t4h_5 stays 0.5). Study tal_minrr: 2025 +376 / 2026 +146 vs 0.5 +304 / +67 and the old rule +356 / +127. Checked at fill with the swings known then; open trades unchanged.
 - 19.11.2026: t4h_5 MIN_RR 0.5 -> 0 (no minimum). tal_minrr: 2025 +15.7 / 2026 +13.4 vs 0.5 +5.0 / +7.5. All 4h tracks now have no minimum.
+
+- 19.11.2026 (בוט 7, זעזועים): גאפ בפתיחה של US100 / US500 אחרי דוח של חברת ענק (כמו אנבידיה 17.11 אחרי הסגירה: המניה +4% בלילה, ‎-2.9% למחרת) הוא גאפ של חדשות. לא נבדק עדיין כמסנן - רעיון לבדיקה כשיהיו תאריכי הדוחות (data/agents/strategies/shocks.md).

@@ -1435,6 +1435,19 @@ DIAG = {}
 LATE_TOL_R = 0.1          # a late entry is taken only while the price is within 0.1R of the backtest's entry (bar open)
 
 
+def feed_lag_td(sym):
+    """How far behind the wall clock the symbol's own feed runs (median of its last checks, step() records them):
+    whole minutes, only for a real delay (5+ minutes, e.g. MetaQuotes-Demo shares 15.0); otherwise none."""
+    try:
+        q = [float(x) for x in ((STATE.get("feed_lag") or {}).get(sym) or [])]
+        if len(q) < 5:
+            return pd.Timedelta(0)
+        m = float(np.median(q))
+        return pd.Timedelta(minutes=int(m)) if 5 <= m < 60 else pd.Timedelta(0)
+    except Exception:  # noqa: BLE001
+        return pd.Timedelta(0)
+
+
 def bar_first_tick(sym, tf, forming):
     """When the forming bar really started trading: the first 1-minute bar inside it. A stock's first bar of the
     session is labelled before the open (14:00 for a 14:30 open) and some feeds start a few minutes late - the
@@ -2466,11 +2479,19 @@ def main():
                 pending_guard(now)
                 rollover_guard(now)
                 for combo, sid, tf, sym in combos:
-                    bar_start = now.floor(f"{TF_MIN[tf]}min")
-                    if done.get(combo) == bar_start or (now - bar_start).total_seconds() < 3:
+                    # the bar on the symbol's OWN clock: a delayed feed (MetaQuotes-Demo shares, 15 minutes) shows the
+                    # 17:00 hour bar only at 17:15. On the wall clock the 1-hour / 4-hour stock combos of bots 2-4
+                    # were checked at 17:00 (their newest bar then: 16:00, already 45 minutes old), marked done for the
+                    # hour, and the 17:00 bar was first seen at 18:00 - every entry of the session after its first bar
+                    # came 45 minutes late and was skipped unless the price was still within 0.1R of the bar's open
+                    # (bots 1-4 smart agent, 19.11.2026 night: 20 skips "45.1 min into the bar" since 09.11 - TV36 QCOM
+                    # / GOOG, SC002 INTC, SE01 WMT / CSCO, TV15 INTC; 5 / 15-minute combos were not hit)
+                    fnow = now - feed_lag_td(sym)
+                    bar_start = fnow.floor(f"{TF_MIN[tf]}min")
+                    if done.get(combo) == bar_start or (fnow - bar_start).total_seconds() < 3:
                         continue
                     # a bar that MT5 has not produced yet is retried, at most once a minute, until it appears
-                    wait = 5 if (now - bar_start).total_seconds() < 120 or combo in NEWS_RETRY else 60
+                    wait = 5 if (fnow - bar_start).total_seconds() < 120 or combo in NEWS_RETRY else 60
                     if tried_bar.get(combo) == bar_start and (now - tried[combo]).total_seconds() < wait:
                         continue
                     handled = True

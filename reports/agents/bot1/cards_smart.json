@@ -1,7 +1,135 @@
 {
  "bot": "bot1",
- "updated": "2026-11-19T15:04:38+00:00",
+ "updated": "2026-11-19T19:01:00+00:00",
  "cards": [
+  {
+   "bot": "bot1",
+   "kind": "info",
+   "title": "בוט 1, 19.11 ערב: ‎-1.22% סגור (‎+0.8% פתוח); 11 סטופים ב־15:15-17:05",
+   "what": "ב־15:15-15:40 (UTC) השוק הסתובב: מניות ארה\"ב ירדו והין התחזק. נעצרו קניות: TV60 ARM, TV10 US100, TV02 INTC, SE01 CSCO, SE02 דולר־ין, TT45 פאונד־ין, TV39 JP225 (הפסד שלישי היום), SC154 זהב. אף אחד לא הגיע ל־60% מהדרך, אז האיזון לא היה פועל. TV60 ARM: קנייה נעצרה, מכירה נעצרה, מכירה שלישית פתוחה ברווח קטן. SC154 זהב: איזון ב־80% מהדרך טוב בשתי התקופות ובבוט השלם (2026 ‎+224.0% ← ‎+226.2%), אבל המנהל השאיר אותו בהמתנה - רק ‎+0.015R לעסקה. SE02 דולר־ין: כל 6 המשפחות נכשלו בשלושה בוטים - הסיכון לפי היתרון (×0.45). אותו אות בבוטים 1, 2, 4 נעצר באותה דקה - בבוט 4 כרטיס הורדה. דוח 18.11 נסגר.",
+   "train": {
+    "n": 0,
+    "eff_n": 0.0,
+    "mean": null,
+    "t": null,
+    "win": null
+   },
+   "unseen": {
+    "n": 0,
+    "eff_n": 0.0,
+    "mean": null,
+    "t": null,
+    "win": null
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot1|all",
+    "kind": "review",
+    "study": "evening_1911"
+   },
+   "detail": {
+    "made_by": "bots 1-4 smart agent 19.11 evening"
+   },
+   "made": "2026-11-19T19:01:00+00:00",
+   "id": "f5fa674344f7"
+  },
+  {
+   "bot": "bot1",
+   "kind": "improve",
+   "title": "⭐ SC154|5Min|XAUUSD: איזון ב־80% מהדרך במקום 60%",
+   "what": "היום הסטופ עובר לכניסה ב־60% מהדרך ליעד. בבדיקת הניהול (19.11, עלויות FTMO): איזון ב־80% - עד 2025 ‎+31.7R מול ‎+21.1R, ב־2026 ‎+12.0R מול ‎+8.9R; גם 70% טוב משניהם (‎+25.1R / ‎+10.7R) - מגמה עקבית, לא בחירה אחת. אחוז המנצחות עולה (2025 42.8% ← 47.5%). הסיבה: בזהב של 5 דק' הרבה עסקאות חוזרות לכניסה מ־60-70% ואז ממשיכות ליעד. יציאה חלקית (חצי ב־50%) גרועה מאוד (‎-117R ב־2026) - לא מוצעת. השיפור קטן לעסקה (‎+0.01R ב־2026) ולכן ⭐.",
+   "train": {
+    "n": 129,
+    "eff_n": 129.0,
+    "mean": 0.2457,
+    "t": null,
+    "win": null
+   },
+   "unseen": {
+    "n": 264,
+    "eff_n": 264.0,
+    "mean": 0.0455,
+    "t": null,
+    "win": null
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 7,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": {
+    "train": {
+     "n": 138,
+     "eff_n": 138.0,
+     "mean": 0.1529,
+     "t": null,
+     "win": null
+    },
+    "unseen": {
+     "n": 292,
+     "eff_n": 292.0,
+     "mean": 0.0305,
+     "t": null,
+     "win": null
+    }
+   },
+   "change": {
+    "combo": "SC154|5Min|XAUUSD",
+    "family": "manage",
+    "from": "be0.6|part0",
+    "to": "be0.8|part0"
+   },
+   "detail": {
+    "made_by": "bots 1-4 smart agent 19.11 evening",
+    "neighbours": {
+     "be0.7|part0": [
+      25.1,
+      10.7
+     ],
+     "be0.5|part0": [
+      21.2,
+      -0.2
+     ],
+     "be0.4|part0": [
+      14.4,
+      12.1
+     ]
+    },
+    "whole_bot": {
+     "before": {
+      "trades": 5574,
+      "total": 223.96,
+      "worst_day": -3.15,
+      "max_dd": 5.87,
+      "near_days": 1,
+      "max_open": 5.63,
+      "max_side": 4.32,
+      "guard_cut": 553,
+      "guard_skipped": 209
+     },
+     "after": {
+      "trades": 5543,
+      "total": 226.17,
+      "worst_day": -3.15,
+      "max_dd": 5.87,
+      "near_days": 1,
+      "max_open": 5.63,
+      "max_side": 4.32,
+      "guard_cut": 550,
+      "guard_skipped": 212
+     }
+    }
+   },
+   "made": "2026-11-19T19:00:08+00:00",
+   "id": "a395fe022ff1"
+  },
   {
    "bot": "bot1",
    "kind": "info",

@@ -12,6 +12,7 @@ import json
 from agents import tal_mgmt_study as M
 
 M.OUT = M.ROOT / "reports" / "agents" / "bot5" / "tal_minrr"
+RRS = (0, 0.6, 0.7, 0.75, 0.8, 0.9, 1.0, 1.5)        # user, 19.11.2026: "and 0.8, 0.7, 0.6, 0.9, 0.75?"
 BEFORE = {"t1h_15": 1.5, "t4h_1h": 0.0, "t4h_15": 0.0, "t4h_5": 0.5, "t1h_5@XAUUSD": 1.0, "t1h_15@NZDCHF": 1.0,
           "t1h_15@GBPNZD": 1.0}
 
@@ -34,8 +35,8 @@ def run(sym):
             v = dict(v, cfg=dict(v["cfg"]))
             t[k] = v
         return t
-    M.ways = lambda: {"now|base": {}, "before|base": {"MIN_RR": "__before__"}, "rr|0": {"MIN_RR": 0.0},
-                      "rr|1": {"MIN_RR": 1.0}, "now|walk": {"MGW": 1}}
+    M.ways = lambda: {"now|base": {}, "before|base": {"MIN_RR": "__before__"}, "now|walk": {"MGW": 1},
+                      **{f"rr|{v}": {"MIN_RR": v} for v in RRS}}
     import agents.tal_gap as TG
     n0 = TG._norm
 
@@ -59,5 +60,5 @@ if __name__ == "__main__":
     elif a.mode == "run":
         run(a.sym)
     else:
-        M.ways = lambda: {"now|base": {}, "before|base": {}, "rr|0": {}, "rr|1": {}, "now|walk": {}}
+        M.ways = lambda: {"now|base": {}, "before|base": {}, "now|walk": {}, **{f"rr|{v}": {} for v in RRS}}
         M.report()

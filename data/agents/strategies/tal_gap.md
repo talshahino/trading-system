@@ -115,3 +115,4 @@
 - 19.11.2026 08:37 (טל): "אין לי בעיה גם שיחס של הפסד 1 ליעד 0.5" - MIN_RR בכל המסלולים לכל היותר 0.5 (היה 2 / 1.5 / 1), כדי שהסטופ הרחב (שיא המהלך) לא יפסול עסקאות.
 
 - 19.11.2026: MIN_RR 0.9 on all gap tracks except the 4h tracks (t4h_1h / t4h_15 stay 0, t4h_5 stays 0.5). Study tal_minrr: 2025 +376 / 2026 +146 vs 0.5 +304 / +67 and the old rule +356 / +127. Checked at fill with the swings known then; open trades unchanged.
+- 19.11.2026: t4h_5 MIN_RR 0.5 -> 0 (no minimum). tal_minrr: 2025 +15.7 / 2026 +13.4 vs 0.5 +5.0 / +7.5. All 4h tracks now have no minimum.

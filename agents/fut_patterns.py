@@ -102,7 +102,55 @@ def s_on_break(df):
     return up & ev, dn & ev, {"stop": ("level", l, h), "target": ("R", 2.0), "force_exit": he >= 16.0}
 
 
+# INTRADAY MOMENTUM AND THE INITIAL BALANCE (bot 6's smart agent, 19.11.2026 night, the same DISCOVER):
+#   FG05  the first half hour sets the last one (Gao, Han, Li, Zhou 2018, "Market intraday momentum", JFE - on SPY and
+#         the index futures): the move from the last 16:00 close to 10:00 New York, when over 0.1 of the 10-day cash
+#         range, is followed at 15:30 in its direction: entry at the 15:30 open (before FTMO Futures' 15:45 no-entry
+#         rule), stop 1 ATR, 2R, flat 16:00 (the session rule)
+#   FG06  the initial balance (the 09:30-10:30 range, the index futures traders' "IB"): the first 10:30-14:00 bar that
+#         closes beyond it -> with it, stop at the IB's middle, target one IB range beyond the broken side, flat 16:00
+# One trade a day at most.
+def _day_level(mask, vals, day, how):
+    s = pd.Series(np.where(mask, vals, np.nan))
+    return s.groupby(pd.Series(day)).transform(how).to_numpy(float)
+
+
+def s_intraday_mom(df):
+    o, h, l, c = (df[x].to_numpy(float) for x in "ohlc")
+    hs, he, _, _, day = _local(df, "America/New_York")
+    rth = (hs >= 9.5) & (he <= 16.0)
+    dk = pd.Series(day)
+    close_d = pd.Series(np.where(rth & (he >= 15.99), c, np.nan)).groupby(dk).last()
+    hi_d = pd.Series(np.where(rth, h, np.nan)).groupby(dk).max()
+    lo_d = pd.Series(np.where(rth, l, np.nan)).groupby(dk).min()
+    rg = dk.map((hi_d - lo_d).rolling(10, min_periods=5).mean().shift(1)).to_numpy(float)
+    pc = dk.map(close_d.ffill().shift(1)).to_numpy(float)
+    c10 = _day_level(rth & (np.abs(he - 10.0) < 1e-9), c, day, "max")
+    with np.errstate(invalid="ignore", divide="ignore"):
+        m1 = (c10 - pc) / rg
+    sig = (np.abs(he - 15.5) < 1e-9) & np.isfinite(m1) & (rg > 0) & (np.abs(m1) >= 0.1)
+    return sig & (m1 > 0), sig & (m1 < 0), {"stop": ("atr", 1.0), "target": ("R", 2.0), "force_exit": he >= 16.0}
+
+
+def s_ib_break(df):
+    o, h, l, c = (df[x].to_numpy(float) for x in "ohlc")
+    hs, he, _, _, day = _local(df, "America/New_York")
+    ib = (hs >= 9.5) & (he <= 10.5)
+    ib_h = _day_level(ib, h, day, "max")
+    ib_l = _day_level(ib, l, day, "min")
+    ok = (hs >= 10.5) & (he <= 14.0) & np.isfinite(ib_h) & np.isfinite(ib_l) & (ib_h > ib_l)
+    up, dn = ok & (c > ib_h), ok & (c < ib_l)
+    ev = _first_per_day(up | dn, day)
+    mid, w = (ib_h + ib_l) / 2.0, ib_h - ib_l
+    return up & ev, dn & ev & ~up, {"stop": ("level", mid, mid), "target": ("level", ib_h + w, ib_l - w),
+                                    "force_exit": he >= 16.0}
+
+
 FUT_PATTERNS = {
+    "FG05": ("Intraday momentum (Gao et al. 2018): the move from the last 16:00 close to 10:00 NY over 0.1 of the 10-day "
+             "range -> with it at the 15:30 open, stop 1 ATR, 2R, flat 16:00", s_intraday_mom, ["1Min", "5Min", "15Min"]),
+    "FG06": ("Initial balance break: the first 10:30-14:00 NY bar that closes beyond the 09:30-10:30 range -> with it, "
+             "stop at the range's middle, target one range beyond, flat 16:00", s_ib_break, ["1Min", "5Min", "15Min"]),
     "FG03": ("Overnight range sweep: the first 09:30-11:30 bar beyond the Globex 18:00-09:30 high / low that closes back "
              "inside -> against it, stop beyond the bar, target the range's middle, flat 16:00", s_on_sweep, ["1Min", "5Min", "15Min"]),
     "FG04": ("Overnight range break: the first 09:30-11:30 bar that closes beyond the Globex 18:00-09:30 high / low -> with "

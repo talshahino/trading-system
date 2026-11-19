@@ -2172,7 +2172,8 @@ DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC325", ("5Min", "15Min")), (
 # rejected (FG01), followed when large and confirmed (FG02). The library's SS08 measured the gap at the UTC day's first
 # bar, which is not the cash gap of a 23-hour market. One trade a day at most - quick to run, so first.
 # + the overnight range (18.11.2026 night): its sweep against it (FG03) and its break with it (FG04)
-FUT_FIRST = [f"{sid}|{tf}|{sym}" for sid in ("FG01", "FG02", "FG03", "FG04") for tf in ("5Min", "15Min", "1Min")
+# + intraday momentum (the first half hour sets the last, FG05) and the initial balance break (FG06), 19.11.2026 night
+FUT_FIRST = [f"{sid}|{tf}|{sym}" for sid in ("FG01", "FG02", "FG03", "FG04", "FG05", "FG06") for tf in ("5Min", "15Min", "1Min")
              for sym in ("US100", "US500", "US30")]
 
 

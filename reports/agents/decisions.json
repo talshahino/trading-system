@@ -1,7 +1,338 @@
 {
- "updated": "2026-11-19T12:35:43+00:00",
- "new": [],
+ "updated": "2026-11-19T12:58:08+00:00",
+ "new": [
+  "797af514e1b7",
+  "bc6e82a1ed78",
+  "452ec83d88f8",
+  "a3890cd76cf8",
+  "70cd24901375",
+  "cfd7d3017510",
+  "e9f36a4687a3",
+  "2ee2e4d17c60"
+ ],
  "decisions": [
+  {
+   "id": "797af514e1b7",
+   "bot": "bot7",
+   "type": "card",
+   "card": "401af9232c41",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC647|4Hour|EURUSD · Adaptive Kalman trend oscillator zero cross with strength, 2 ATR, 2R",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 31.0 עסקאות אפקטיביות) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.80 לאסטרטגיה: רווח +200.87% → +202.71% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3753,
+     "total": 200.87,
+     "worst_day": -3.34,
+     "max_dd": 5.87,
+     "near_days": 2,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 270,
+     "guard_skipped": 85
+    },
+    "after": {
+     "trades": 3778,
+     "total": 202.71,
+     "worst_day": -3.34,
+     "max_dd": 6.0,
+     "near_days": 2,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 298,
+     "guard_skipped": 91
+    }
+   },
+   "at": "2026-11-19T12:58:08+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "bc6e82a1ed78",
+   "bot": "bot7",
+   "type": "card",
+   "card": "685ec9ab0d80",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC613|1Hour|XAUUSD · Kagi yin / yang flip on a 2 ATR reversal, opposite-flip exit, 2 ATR stop",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+200.27% מול +202.84% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3779,
+     "total": 202.84,
+     "worst_day": -3.34,
+     "max_dd": 5.89,
+     "near_days": 2,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 294,
+     "guard_skipped": 90
+    },
+    "after": {
+     "trades": 3804,
+     "total": 200.27,
+     "worst_day": -3.34,
+     "max_dd": 6.0,
+     "near_days": 3,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 333,
+     "guard_skipped": 107
+    }
+   },
+   "at": "2026-11-19T12:58:08+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "452ec83d88f8",
+   "bot": "bot7",
+   "type": "card",
+   "card": "a13ed2a1ba52",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC652|4Hour|XAUUSD · T3 + zero-lag flow turn together on the EMA50 side, 2 ATR, 2R",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+199.64% מול +202.84% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3779,
+     "total": 202.84,
+     "worst_day": -3.34,
+     "max_dd": 5.89,
+     "near_days": 2,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 294,
+     "guard_skipped": 90
+    },
+    "after": {
+     "trades": 3822,
+     "total": 199.64,
+     "worst_day": -3.72,
+     "max_dd": 6.09,
+     "near_days": 3,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 366,
+     "guard_skipped": 111
+    }
+   },
+   "at": "2026-11-19T12:58:08+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "a3890cd76cf8",
+   "bot": "bot7",
+   "type": "card",
+   "card": "abe29ae37ed9",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC643|15Min|XAUUSD · Radius Trend band flip, band stop, 2R",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+199.96% מול +202.84% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3779,
+     "total": 202.84,
+     "worst_day": -3.34,
+     "max_dd": 5.89,
+     "near_days": 2,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 294,
+     "guard_skipped": 90
+    },
+    "after": {
+     "trades": 3852,
+     "total": 199.96,
+     "worst_day": -3.65,
+     "max_dd": 7.19,
+     "near_days": 6,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 321,
+     "guard_skipped": 106
+    }
+   },
+   "at": "2026-11-19T12:58:08+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "70cd24901375",
+   "bot": "bot7",
+   "type": "card",
+   "card": "a32aa5a212c4",
+   "kind": "new",
+   "tier": "regular",
+   "title": "⭐ אסטרטגיה חדשה: SC623|1Hour|US100 · Quantified Strategies low break: close under the prior 5 candles' low, out over the prior high (long)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 96.0 עסקאות אפקטיביות) · בבוט השלם על 2026: רווח +202.84% → +206.49%, בלי יותר סיכון (יום גרוע -3.34%, ירידה 5.78%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "שינוי בקוד: הסוכן של הבוט יבנה אותו בריצת הלילה",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3779,
+     "total": 202.84,
+     "worst_day": -3.34,
+     "max_dd": 5.89,
+     "near_days": 2,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 294,
+     "guard_skipped": 90
+    },
+    "after": {
+     "trades": 3872,
+     "total": 206.49,
+     "worst_day": -3.34,
+     "max_dd": 5.78,
+     "near_days": 1,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 331,
+     "guard_skipped": 93
+    }
+   },
+   "at": "2026-11-19T12:58:08+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "cfd7d3017510",
+   "bot": "bot7",
+   "type": "card",
+   "card": "fa485cc06189",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC638|1Hour|XAUUSD · Frequency Momentum Oscillator zero cross on the EMA50 side, 2 ATR, 2R",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+202.15% מול +206.02% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3874,
+     "total": 206.02,
+     "worst_day": -3.34,
+     "max_dd": 5.73,
+     "near_days": 1,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 322,
+     "guard_skipped": 91
+    },
+    "after": {
+     "trades": 3971,
+     "total": 202.15,
+     "worst_day": -3.43,
+     "max_dd": 7.68,
+     "near_days": 3,
+     "max_open": 5.35,
+     "max_side": 4.64,
+     "guard_cut": 402,
+     "guard_skipped": 124
+    }
+   },
+   "at": "2026-11-19T12:58:08+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "e9f36a4687a3",
+   "bot": "bot7",
+   "type": "card",
+   "card": "0a8fd7f9a13a",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC623|1Hour|US500 · Quantified Strategies low break: close under the prior 5 candles' low, out over the prior high (long)",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+203.34% מול +206.02% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3874,
+     "total": 206.02,
+     "worst_day": -3.34,
+     "max_dd": 5.73,
+     "near_days": 1,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 322,
+     "guard_skipped": 91
+    },
+    "after": {
+     "trades": 3963,
+     "total": 203.34,
+     "worst_day": -3.34,
+     "max_dd": 7.8,
+     "near_days": 2,
+     "max_open": 5.31,
+     "max_side": 4.52,
+     "guard_cut": 373,
+     "guard_skipped": 98
+    }
+   },
+   "at": "2026-11-19T12:58:08+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "2ee2e4d17c60",
+   "bot": "bot7",
+   "type": "card",
+   "card": "75d37255dcf4",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC652|1Hour|XAUUSD · T3 + zero-lag flow turn together on the EMA50 side, 2 ATR, 2R",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+201.77% מול +206.02% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3874,
+     "total": 206.02,
+     "worst_day": -3.34,
+     "max_dd": 5.73,
+     "near_days": 1,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 322,
+     "guard_skipped": 91
+    },
+    "after": {
+     "trades": 4039,
+     "total": 201.77,
+     "worst_day": -3.39,
+     "max_dd": 7.27,
+     "near_days": 4,
+     "max_open": 5.29,
+     "max_side": 4.64,
+     "guard_cut": 447,
+     "guard_skipped": 137
+    }
+   },
+   "at": "2026-11-19T12:58:08+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "5d936d7ae00d",
    "bot": "bot1",

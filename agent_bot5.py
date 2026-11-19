@@ -163,11 +163,18 @@ def trend_runs(budget_s):
     return done
 
 
+SYM_LEFT = {}             # what sym_runs() did not reach in this pass: {track: runs missing} -> results bot5.steps
+
+
 def sym_runs(budget_s):
-    """The instrument tracks (13.11.2026 evening, the manager's task f8643b16aa57): every track in "tal_tracks" with
-    "symbols" and a risk > 0 (t1h_5@US30, t5_1@EU50, ... - chosen by agents/tal_pool_gh.py on GitHub) run with exactly
-    its rules on its instrument here, saved in the gap method's index - so the whole-bot test (TG.portfolio) takes
-    them together with the index tracks, as the account does."""
+    """Every track the bot trades (13.11.2026 evening, the manager's task f8643b16aa57; the index tracks too since
+    19.11.2026, task mgr1911pub): each track in "tal_tracks" with a risk > 0 runs with exactly its rules on its
+    instruments here, saved in the gap method's index - so the whole-bot test (TG.portfolio, guard5) takes them all
+    together, as the account does. Until 19.11 only the tracks with "symbols" ran here; an index track's rules waited
+    for their turn in the notes' queue, so after the stop changed on 18.11 the whole-bot test saw 4 of 24 tracks.
+    Two rounds: the rules as they run (FTMO's break rule on, tal_gap.ftmo_cfg - enough for guard5), then the rules as
+    stored (TG.portfolio). The budget is checked before every run."""
+    SYM_LEFT.clear()
     try:
         s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
@@ -177,34 +184,55 @@ def sym_runs(budget_s):
     idx_dir = TAL_DIR / "idx"
     idx_dir.mkdir(parents=True, exist_ok=True)
     have = {f.stem for f in idx_dir.glob("*.json")}
-    want = {}
+    key_of = lambda pn, c, sym: f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}"  # noqa: E731
+    rounds, owner = ({}, {}), {}
     for k, v in (s5.get("tal_tracks") or {}).items():
         pn = f"{v['pair'][0]}/{v['pair'][1]}"
-        if not v.get("symbols") or float(rk.get(k, 0) or 0) <= 0 or pn not in pairs:
+        if float(rk.get(k, 0.0028) or 0) <= 0:
             continue
-        # the rules as they run (FTMO's break rule on, tal_gap.ftmo_cfg - as live/watch_own.py trades them) first, for
-        # the fixed risk rule's whole-bot test (guard5, task tal1411risk); then the rules as stored (TG.portfolio)
-        for c in (TG.ftmo_cfg(v["cfg"]), TG._norm(dict(v["cfg"]))):
-            for sym in v["symbols"]:
-                if f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}" not in have and (pn, c) not in want.get(sym, []):
-                    want.setdefault(sym, []).append((pn, c))
-    t0, done = time.time(), 0
-    for sym, todo in want.items():
-        if time.time() - t0 > budget_s:
-            break
-        D, gc = tal_load(sym), {}
-        if D is None:
-            print(f"tal instrument tracks {sym}: no data")
+        if pn not in pairs:
+            SYM_LEFT[k] = "pair not in the method's list"
             continue
-        for pn, c in todo:
-            key = f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}"
-            t = TG.simulate(D, pairs[pn], c, gc.setdefault(pn.split("/")[0], {}))
-            t.to_csv(TAL_DIR / f"{key}.csv.gz", index=False)
-            (idx_dir / f"{key}.json").write_text(json.dumps(
-                {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": pairs[pn][2],
-                 "knob": "track", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f"{key}.csv.gz", "n": len(t)}, default=str))
-            done += 1
-    print(f"tal instrument tracks: {done} run, {sum(len(v) for v in want.values()) - done} left")
+        for rnd, c in enumerate((TG.ftmo_cfg(v["cfg"]), TG._norm(dict(v["cfg"])))):
+            for sym in (v.get("symbols") or TAL_SYMBOLS):
+                key = key_of(pn, c, sym)
+                if key not in have and not any(key in r for r in rounds):
+                    rounds[rnd][key] = (sym, pn, c)
+                    owner[key] = k
+    t0, done, no_data, stop = time.time(), 0, set(), False
+    for todo in rounds:
+        for sym in dict.fromkeys(x[0] for x in todo.values()):
+            if stop or sym in no_data:
+                continue
+            D, gc = None, {}                      # the last symbol's data is freed before the next one loads
+            for key, (s_, pn, c) in todo.items():
+                if s_ != sym or key in have:
+                    continue
+                if time.time() - t0 > budget_s:
+                    stop = True
+                    break
+                if D is None:
+                    D = tal_load(sym)
+                    if D is None:
+                        no_data.add(sym)
+                        print(f"tal instrument tracks {sym}: no data")
+                        break
+                try:      # one failing run no longer stops the other tracks
+                    t = TG.simulate(D, pairs[pn], c, gc.setdefault(pn.split("/")[0], {}))
+                except Exception as e:  # noqa: BLE001
+                    print(f"tal track run {key} failed: {e}")
+                    continue
+                t.to_csv(TAL_DIR / f"{key}.csv.gz", index=False)
+                (idx_dir / f"{key}.json").write_text(json.dumps(
+                    {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": pairs[pn][2],
+                     "knob": "track", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f"{key}.csv.gz", "n": len(t)}, default=str))
+                have.add(key)
+                done += 1
+    for todo in rounds:
+        for key in todo:
+            if key not in have:
+                SYM_LEFT[owner[key]] = SYM_LEFT.get(owner[key], 0) + 1
+    print(f"tal track runs: {done} run, left {SYM_LEFT or 'none'}")
     return done
 
 
@@ -517,6 +545,23 @@ def _note_queue():
                 seen.add(k)
                 out.append((pn, c))
     return out
+
+
+def note_first_left():
+    """How many runs of Tal's own open questions (NOTE_FIRST) are still missing on the gap method's instruments."""
+    idx_dir = TAL_DIR / "idx"
+    have = {f.stem for f in idx_dir.glob("*.json")} if idx_dir.exists() else set()
+    pairs, seen, left = {TG.pair_name(p) for p in TG.PAIRS}, set(), 0
+    for T, pn, now, vs in _note_cfgs():
+        if pn not in pairs or T["id"][len(T["track"]) + 1:] not in NOTE_FIRST:
+            continue
+        for c in [now] + [c_ for _, c_ in vs]:
+            for sym in TAL_SYMBOLS:
+                key = f"{pn.replace('/', '_')}_{TG.vid(c)}_{sym}"
+                if key not in seen:
+                    seen.add(key)
+                    left += key not in have
+    return left
 
 
 def note_runs(budget_s):
@@ -1500,7 +1545,8 @@ def main():
         # each step's outcome is kept in the results (bot5.steps, 14.11.2026): the bots' computer keeps its logs to
         # itself, so a step that failed or found no time was invisible to the nightly smart agent in the cloud
         spare = 0.0        # what the steps before the notes did not use goes to Tal's tests (18.11.2026: instrument_tracks had 420 s and used 0)
-        for nm, fn, share in (("instrument_tracks", sym_runs, 0.25),  # the instrument tracks, so the whole bot is tested together
+        # instrument_tracks 0.25 -> 0.5 (19.11.2026, task mgr1911pub): what it does not use goes on to the notes (spare)
+        for nm, fn, share in (("instrument_tracks", sym_runs, 0.5),   # every track the bot trades, so the whole bot is tested together
                               ("trend_fix", trend_runs, 0.15),        # the fix of the 12.11 loss against exactly what runs
                               ("notes", note_runs, 0.2),              # the user's notes on live trades + the tasks of 14.11
                               ("straddle", straddle_runs, 0.05),       # EV04 on bot 5's instruments (tal1411strad, 14.11.2026)
@@ -1520,6 +1566,21 @@ def main():
             STEPS[nm].update(at=pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), sec=round(time.time() - t1),
                              budget_sec=round(step_s))
             spare = 0.0 if nm == "notes" else max(0.0, spare + step_s - (time.time() - t1))
+        if SYM_LEFT:
+            STEPS["instrument_tracks"]["left"] = dict(SYM_LEFT)
+        # Tal's own open questions before the never-ending search (19.11.2026): on 18.11 they had 336 s of a pass and the
+        # search 903 s, and his wide-stop question needs about 245 runs - weeks at that pace. While one of them is still
+        # open, most of what is left goes to them; the wide test and the search take the rest.
+        tal_left = a.minutes * 60 - (time.time() - t_start)
+        if note_first_left() and tal_left > 120:
+            t1 = time.time()
+            try:
+                STEPS["notes_first"] = {"done": note_runs(tal_left * 0.7)}
+            except Exception as e:  # noqa: BLE001
+                STEPS["notes_first"] = {"err": str(e)[:300]}
+                print("tal notes first failed:", e)
+            STEPS["notes_first"].update(at=pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), sec=round(time.time() - t1),
+                                        budget_sec=round(tal_left * 0.7), left=note_first_left())
         tal_left = a.minutes * 60 - (time.time() - t_start)
         t1 = time.time()
         try:

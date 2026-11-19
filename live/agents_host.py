@@ -544,6 +544,7 @@ def adopt_orphan(st):
         except Exception as e:  # noqa: BLE001
             log(f"publishing {name} failed: {e}")
             st["agent_errors"] = (st.get("agent_errors") or []) + [f"{name}: publishing failed: {e}"[:300]]
+            _keep_unpublished(st, name, r.get("before") or {}, f"Agents on the bots' computer: {name} smart layer")
     finally:
         st.pop("run", None)
         _save(st)
@@ -635,6 +636,31 @@ def _main_file(h, sha, rel):
     return raw.content
 
 
+PUB_TRIES = 4
+PUB_WAIT = 10
+UNPUBLISHED_TRIES = 6
+
+
+def _gh(method, url, timeout=60, **kw):
+    """One GitHub call of a publish, again on a passing failure, with the token read anew each time (manager, 19.11.2026:
+    bot 5's run of 20:13-21:17 UTC ended in one "401 ... git/blobs" while the publishes before and after it went through,
+    and 64 minutes of results were gone at the next refresh)."""
+    for attempt in range(PUB_TRIES):
+        last = attempt == PUB_TRIES - 1
+        try:
+            r = requests.request(method, url, headers=_h(), timeout=timeout, **kw)
+        except requests.RequestException:
+            if last:
+                raise
+            time.sleep(PUB_WAIT * (attempt + 1))
+            continue
+        if r.status_code in (401, 500, 502, 503, 504) and not last:
+            time.sleep(PUB_WAIT * (attempt + 1))
+            continue
+        return r
+    return r
+
+
 def publish(files, message):
     """files: {path: bytes}. One commit on main; when main moved meanwhile, again on the new main (these files
     are generated here, so this run's copy wins)."""
@@ -644,8 +670,8 @@ def publish(files, message):
     blobs = {}
     skipped = []
     for rel, data in files.items():
-        r = requests.post(f"{API}/git/blobs", headers=h, timeout=120,
-                          json={"content": base64.b64encode(data).decode(), "encoding": "base64"})
+        r = _gh("POST", f"{API}/git/blobs", timeout=120,
+                json={"content": base64.b64encode(data).decode(), "encoding": "base64"})
         # one file GitHub refuses (422, e.g. too large) no longer loses the whole run (bots 1-4 smart agent,
         # 14.11.2026 night 3: bot 1's smart run of 21:40 UTC was never published - "422 ... git/blobs"); the rest
         # goes, the refused files are named in host.json ("pub_skipped") and in the commit message
@@ -661,28 +687,30 @@ def publish(files, message):
     if not blobs:
         return None
     for attempt in range(5):
-        head = requests.get(f"{API}/git/ref/heads/main", headers=h, timeout=30)
+        head = _gh("GET", f"{API}/git/ref/heads/main", timeout=30)
         head.raise_for_status()
         hsha = head.json()["object"]["sha"]
         if REPLIES in files:                          # merged into main's replies.json, never over it
             try:
                 mb = _main_file(h, hsha, REPLIES)
                 data = merge_replies(mb, files[REPLIES]) if mb else files[REPLIES]
-                r = requests.post(f"{API}/git/blobs", headers=h, timeout=120,
-                                  json={"content": base64.b64encode(data).decode(), "encoding": "base64"})
+                r = _gh("POST", f"{API}/git/blobs", timeout=120,
+                        json={"content": base64.b64encode(data).decode(), "encoding": "base64"})
                 r.raise_for_status()
                 blobs[REPLIES] = r.json()["sha"]
             except Exception:  # noqa: BLE001  - unreadable: leave main's file as it is this time
                 blobs.pop(REPLIES, None)
-        base_tree = requests.get(f"{API}/git/commits/{hsha}", headers=h, timeout=30).json()["tree"]["sha"]
-        tree = requests.post(f"{API}/git/trees", headers=h, timeout=60, json={
+        bt = _gh("GET", f"{API}/git/commits/{hsha}", timeout=30)
+        bt.raise_for_status()
+        base_tree = bt.json()["tree"]["sha"]
+        tree = _gh("POST", f"{API}/git/trees", timeout=60, json={
             "base_tree": base_tree,
             "tree": [{"path": rel, "mode": "100644", "type": "blob", "sha": s} for rel, s in blobs.items()]})
         tree.raise_for_status()
-        c = requests.post(f"{API}/git/commits", headers=h, timeout=60,
-                          json={"message": message, "tree": tree.json()["sha"], "parents": [hsha]})
+        c = _gh("POST", f"{API}/git/commits", timeout=60,
+                json={"message": message, "tree": tree.json()["sha"], "parents": [hsha]})
         c.raise_for_status()
-        u = requests.patch(f"{API}/git/refs/heads/main", headers=h, timeout=30, json={"sha": c.json()["sha"]})
+        u = _gh("PATCH", f"{API}/git/refs/heads/main", timeout=30, json={"sha": c.json()["sha"]})
         if u.status_code == 200:
             return c.json()["sha"]
         time.sleep(5 * (attempt + 1))
@@ -805,6 +833,42 @@ def _publish_changes(st, before, kind, msg, only=None):
     return len(files)
 
 
+def _keep_unpublished(st, name, before, msg):
+    """An agent's results that GitHub did not take stay on record, to be published before any refresh writes main's copy
+    over them (manager, 19.11.2026: see _gh)."""
+    st["unpublished"] = {"name": name, "before": before, "msg": msg, "tries": 0}
+    _save(st)
+
+
+def _flush_unpublished(st):
+    """True: nothing is waiting any more, a refresh may go ahead. False: still waiting, no refresh now."""
+    u = st.get("unpublished")
+    if not u:
+        return True
+    try:
+        _publish_changes(st, u.get("before") or {}, "agent", f"{u.get('msg')} (published after a failed attempt)")
+    except Exception as e:  # noqa: BLE001
+        u["tries"] = int(u.get("tries") or 0) + 1
+        _S["log"](f"publishing {u.get('name')} failed again ({u['tries']}): {e}")
+        if u["tries"] < UNPUBLISHED_TRIES:
+            _save(st)
+            return False
+        hist = [x for x in st.get("agent_errors_24h") or [] if time.time() - (_ts(x.get("at")) or 0.0) < 86400]
+        st["agent_errors_24h"] = (hist + [{"at": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
+                                           "err": f"{u.get('name')}: results lost, publishing failed {u['tries']} times: {e}"[:300]}])[-20:]
+    st.pop("unpublished", None)
+    _save(st)
+    return True
+
+
+def _refresh_safe(st):
+    """refresh(), unless an agent's results are still waiting to be published (the refresh would overwrite them)."""
+    if _flush_unpublished(st):
+        return refresh(st)
+    _S["log"]("refresh put off: an agent's results are still waiting to be published")
+    return st.get("sha")
+
+
 def light(st, refresh_first=True):
     """The continuous layer: every bot's health + the manager agent."""
     with _LIGHT:                              # the smart round's refresh between agents waits for this cycle to end
@@ -826,7 +890,7 @@ def _light(st, refresh_first=True):
     busy = _S["smart_running"]                # a smart agent is running: no refresh under it, publish only own files
     if refresh_first and not busy:
         with _REFRESH:
-            refresh(st)
+            _refresh_safe(st)
     before = snapshot()
     kw = {"track": False}
     run(st, ["-m", "agents.health"], timeout=900, logname="health.log", **kw)
@@ -848,7 +912,7 @@ def smart(st):
     log = _S["log"]
     t0 = time.time()
     with _REFRESH:
-        refresh(st)
+        _refresh_safe(st)
         _S["smart_running"] = True
     try:
         return _smart(st, log, t0)
@@ -883,7 +947,7 @@ def _smart(st, log, t0):
         # nothing of the round is unpublished; the continuous layer's cycle is waited for.
         try:
             with _LIGHT, _REFRESH:
-                refresh(st)
+                _refresh_safe(st)
         except Exception as e:  # noqa: BLE001
             log(f"refresh before {name} failed: {e}")
         prev_last = last.get(name)
@@ -934,6 +998,7 @@ def _smart(st, log, t0):
             log(f"publishing {name} failed: {e}")
             errs.append(f"{name}: publishing failed: {e}"[:300])     # shown in host.json on the next publish
             st["agent_errors"] = errs
+            _keep_unpublished(st, name, before, f"Agents on the bots' computer: {name} smart layer")
         st.pop("run", None)
         _save(st)
     before = snapshot()

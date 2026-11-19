@@ -2300,6 +2300,16 @@ DISCOVER = [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC325", ("5Min", "15Min")), (
 # + intraday momentum (the first half hour sets the last, FG05) and the initial balance break (FG06), 19.11.2026 night
 FUT_FIRST = [f"{sid}|{tf}|{sym}" for sid in ("FG01", "FG02", "FG03", "FG04", "FG05", "FG06") for tf in ("5Min", "15Min", "1Min")
              for sym in ("US100", "US500", "US30")]
+# + the scout's New York open strategies of 19.11.2026 (bot 6's smart agent, 19.11 evening; DISCOVER) - the cash open's
+# own patterns, built for index futures, one or two trades a day (quick): SC657 the edgeful first-hour colour, SC658 the
+# opening drive, SC659 the trend day (narrow initial balance), SC660 / SC661 / SC662 the open types (test-drive,
+# rejection-reverse, drive + the first VWAP pullback), SC665 the first 4-hour candle's break and retest. At their own
+# timeframes, right after the FG patterns.
+FUT_FIRST += [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC658", ("1Min", "5Min")), ("SC660", ("1Min", "5Min", "15Min")),
+                                                   ("SC661", ("1Min", "5Min", "15Min")), ("SC662", ("1Min", "5Min", "15Min")),
+                                                   ("SC657", ("5Min", "15Min")), ("SC659", ("5Min", "15Min")),
+                                                   ("SC665", ("5Min", "15Min", "1Hour")))
+              for tf in tfs for sym in ("US100", "US500", "US30")]
 
 
 # BOT 5'S LIVE SCOUTS (bot 6's smart agent, 17.11.2026 night; bots 5 and 6 share methods): 31 scout strategies trade

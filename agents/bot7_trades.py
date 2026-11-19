@@ -68,6 +68,34 @@ def _minutes(ts):
     return ((ts - _EPOCH) // pd.Timedelta(minutes=1)).astype("int64")
 
 
+COST_CACHE = ROOT / "cache" / "news_cost"
+
+
+def cost_out(sid, sym, y, max_c):
+    """The built plan's cost skip (card 1dfedee52375, 19.11.2026: no entry when spread + commission is above max_cost_r
+    of the stop's distance) on the study's rows, as the live bot does it - so the plan with "max_cost_r" is no longer
+    "old plan" in the whole-bot check (the 10:12 UTC check of 19.11 missed 23 combos after the card was built).
+    The cost of a row: EV04 / EV08 rows keep gross and net (cost = gross - r); EV02 / EV03 / SH01 from the cost study's
+    engine rows (cache/news_cost/<sym>.json, agents/news_cost.py). A row with no known cost is kept (never guessed).
+    Returns (rows, {"skipped": n, "unpriced": n})."""
+    if max_c is None or y is None or not len(y):
+        return y, None
+    c = pd.Series(float("nan"), index=y.index)
+    if "gross" in y:
+        c = (y["gross"].astype(float) - y["r"].astype(float))
+    else:
+        try:
+            j = json.loads((COST_CACHE / f"{sym}.json").read_text(encoding="utf-8"))
+            e = {(x["sid"], int(x["m"]), int(x["dir"])): float(x["c"]) for x in j.get("rows") or [] if x.get("sid") == sid}
+        except Exception:  # noqa: BLE001
+            e = {}
+        if e:
+            m = _minutes(pd.to_datetime(y["t"], utc=True, format="ISO8601"))
+            c = pd.Series([e.get((sid, int(a), int(d)), float("nan")) for a, d in zip(m, y["dir"])], index=y.index)
+    skip = c > float(max_c)
+    return y[~skip.fillna(False)], {"skipped": int(skip.sum()), "unpriced": int(c.isna().sum()), "max_cost_r": float(max_c)}
+
+
 def write(sid, tf, z, syms, hold_min, source, variant):
     """z: the built version's rows (sym, t, dir, r and, when known, x) of every symbol in syms -> one exp file each.
     hold_min: {symbol: minutes} or a number - the exit when a row has no "x". Returns {symbol: (2025 n, 2026 n)}."""
@@ -78,6 +106,7 @@ def write(sid, tf, z, syms, hold_min, source, variant):
     out = {}
     for sym in syms:
         y = z[z["sym"] == sym] if len(z) else z
+        y, cost_skip = cost_out(sid, sym, y, (pl.get(sym) or {}).get("max_cost_r"))
         tr, tr25, approx = [], [], 0
         if len(y):
             t = pd.to_datetime(y["t"], utc=True, format="ISO8601")
@@ -101,6 +130,7 @@ def write(sid, tf, z, syms, hold_min, source, variant):
         combo = f"{sid}|{tf}|{sym}"
         doc = {"at": now, "combo": combo, "family": "study", "source": source, "variant": variant,
                "plan_sig": plan_sig(pl.get(sym)), "costs": COSTS, "exit_approx": approx, "no_rows": not len(y),
+               "cost_skip": cost_skip,
                "tr": {"built": tr}, "tr25": {"built": tr25}}
         (EXP / f"study_{sid}_{tf}_{sym}.json").write_text(json.dumps(doc, ensure_ascii=False), encoding="utf-8")
         out[sym] = (len(tr25), len(tr))

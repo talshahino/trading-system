@@ -145,6 +145,7 @@ VARIANT = (2.0, False, "1m", "struct")
 # (1.8 instead of 2.5 x the average body) - about 4x the setups in the backtest (3.6 a week on these 16 instruments
 # since 2024, vs 0.9), but they lost a little there (-0.09R a trade vs -0.03R). Shown apart in the app ('wide').
 WIDE_BODY_X = 1.8
+CACHE_DIR = Path(__file__).resolve().parent / "cache_watch"   # the candles between restarts (not in git)
 DAYS = 14                     # history kept per instrument (the 4-hour gaps stay valid 5 days; 12.11.2026)
 # the instruments where spread + commission are the smallest share of a trade's risk (optimisation, 06.11.2026)
 SYMBOLS = {"US100": ["US100.cash", "US100"], "US30": ["US30.cash", "US30"], "US500": ["US500.cash", "US500"],
@@ -571,9 +572,20 @@ class Source:
                 return None
             self.broker[name] = b
             parts, now, step = [], time.time(), 2 * 86400       # the server returns at most 3000 candles a call
-            for k in range(DAYS // 2, 0, -1):
-                parts.append(self.get(b, now - k * step, now - (k - 1) * step))   # bot 1 busy: retried next minute
-            self.df[name] = pd.concat(parts)
+            # the candles kept on disk (19.11.2026: a restart after every install reloaded 14 days of every
+            # instrument, ~10 minutes with bot 5 frozen in the app): only what came since is fetched
+            cached = self._disk(name, b)
+            if cached is not None and len(cached):
+                last = cached.index[-1].timestamp()
+                k_ = 0
+                while last + k_ * step < now:
+                    parts.append(self.get(b, last - 180 + k_ * step, min(now, last + (k_ + 1) * step)))
+                    k_ += 1
+                self.df[name] = pd.concat([cached] + parts)
+            else:
+                for k in range(DAYS // 2, 0, -1):
+                    parts.append(self.get(b, now - k * step, now - (k - 1) * step))   # bot 1 busy: retried next minute
+                self.df[name] = pd.concat(parts)
         else:
             last = self.df[name].index[-1].timestamp() if len(self.df[name]) else time.time() - DAYS * 86400
             new = self.get(self.broker[name], last - 180, time.time())
@@ -585,7 +597,27 @@ class Source:
         if len(d) and d.index[-1] > pd.Timestamp.now(tz="UTC") - pd.Timedelta(minutes=1):
             d = d.iloc[:-1]
         self.df[name] = d
+        if time.time() - self._saved.get(name, 0) > 600 and len(d):
+            try:
+                CACHE_DIR.mkdir(exist_ok=True)
+                d.to_pickle(CACHE_DIR / f"{self.broker[name]}.pkl")
+                self._saved[name] = time.time()
+            except Exception:  # noqa: BLE001
+                pass
         return d
+
+    _saved = {}
+
+    def _disk(self, name, b):
+        """The candles saved on disk for this instrument (under a day old), else None."""
+        f = CACHE_DIR / f"{b}.pkl"
+        try:
+            if f.exists() and time.time() - f.stat().st_mtime < 86400:
+                d = pd.read_pickle(f)
+                return d if isinstance(d, pd.DataFrame) and len(d) else None
+        except Exception:  # noqa: BLE001
+            return None
+        return None
 
 
 class Calendar:

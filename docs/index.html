@@ -1697,7 +1697,7 @@ function filtered(s) {
   return closedOf(s).filter(c => (!q || c.symbol.toLowerCase().includes(q) || String(c.id).includes(q) || String(c.combo).toLowerCase().includes(q))
     && (f.side === "all" || c.side === f.side) && (f.res === "all" || (f.res === "win" ? c.net > 0 : c.net < 0))
     && (f.day === "all" || (f.day === "today" ? pragueDay(c.close_t) === pragueDay(new Date()) : f.day === "7" ? now - new Date(c.close_t) < 7 * 864e5 : f.day === "30" ? now - new Date(c.close_t) < 30 * 864e5 : ilKey(c.close_t) === f.day)))
-    .slice().reverse();
+    .map((c, i) => [c, i]).sort((a, b) => (new Date(b[0].close_t || 0) - new Date(a[0].close_t || 0)) || b[1] - a[1]).map(x => x[0]);   // newest close first (19.11.2026: a restored close sat in the middle)
 }
 function trades(s, a, light) {
   const can = viaMgr(UI.cur) && !a.archived, ps = s.positions || [];

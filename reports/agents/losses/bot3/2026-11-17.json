@@ -424,6 +424,15 @@
     "cause": "כניסה / כיוון",
     "fixes": [
      {
+      "what": "⭐ TV20|1Hour|XAUUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+      "decision": "e309b35c2b5a",
+      "at": "2026-11-19T02:43:56+00:00",
+      "effect_month_pct": 0.27,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
       "what": "סיכון ×0.6",
       "decision": "c7e8ef1eb9d4",
       "at": "2026-11-17T22:04:07+00:00",
@@ -454,6 +463,24 @@
     "combo": "IB056|1Hour|XAUUSD",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
+     {
+      "what": "⭐ IB056|1Hour|XAUUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+      "decision": "2e12d7dc3b34",
+      "at": "2026-11-19T02:43:56+00:00",
+      "effect_month_pct": 0.39,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.5",
+      "decision": "d85dc1df8205",
+      "at": "2026-11-19T02:43:56+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.63,
+      "value": 0.5
+     },
      {
       "what": "סיכון ×0.63",
       "decision": "90f4d3375c36",
@@ -616,7 +643,7 @@
       "what": "⭐ GH09|1Hour|USDJPY: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
       "decision": "68b829cc113a",
       "at": "2026-11-18T18:57:14+00:00",
-      "effect_month_pct": 0.16,
+      "effect_month_pct": null,
       "cut": false,
       "prev": null,
       "value": null
@@ -690,7 +717,7 @@
    "SC235|1Hour|USDJPY",
    "SC002|1Hour|AMZN"
   ],
-  "total_month_pct": 1.08,
+  "total_month_pct": 1.58,
   "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

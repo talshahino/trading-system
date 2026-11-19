@@ -1039,7 +1039,7 @@ def shut_of(D, cfg, f, e):
         sh |= D.pre_break(wk)[f:e]
     db = dbrk_of(cfg)
     if db and db["x"]:
-        sh |= dbrk_masks(D)[0][f:e]                       # DBRK x: closed at the last bar before a daily break
+        sh |= dbrk_masks(D)[0][f:e]                       # DBRK x: closed before an expected daily break
     return sh
 
 
@@ -1085,11 +1085,11 @@ def rearm(cfg):
 # DBRK (bot 5's smart agent, 19.11.2026, task b5reopen1911): the daily break of 30+ minutes that is shorter than FTMO's
 # 2 hours (the indices' ~21:00-23:05 UTC close) is not a break for WKND, so a gap order waits over it and a trade is held
 # through it - 18.11.2026: US100 / JP225 stopped 2 minutes after the reopening, US500 / GER40 / UK100 filled at the
-# reopening's first minute. "+" joins rules: c = a waiting order is cancelled at the last bar before such a break (when
-# the break recurs at the same time 1-3 or 7 days earlier, so it is known in advance; not placed again), oN = no fill in
-# the first N minutes after any 30+ minute break (the order waits), x = an open trade is closed at the last bar before
-# such a break. Off (absent) = the rules as before, the same name. The same in simulate() and live_trades().
+# reopening's first minute. "+" joins rules: c = a waiting order is cancelled DBRK_PRE minutes before such a break
+# (expected at the time it came a day / a week earlier; not placed again), oN = no fill in the first N minutes after any
+# 30+ minute break (the order waits), x = an open trade is closed DBRK_PRE minutes before such a break. Off (absent) = the rules as before, the same name. The same in simulate() and live_trades().
 DBRK_GAP_MIN = 30
+DBRK_PRE = 10          # minutes before the expected daily break (as WKND_MIN before a 2+ hour one)
 
 
 def dbrk_of(cfg):
@@ -1106,34 +1106,37 @@ def dbrk_of(cfg):
 
 
 def dbrk_masks(D):
-    """(last, reopen): last[i] - bar i is the last before a recurring 30+ minute break; reopen - the bar positions just
-    after any 30+ minute break."""
-    key = ("dbrk", DBRK_GAP_MIN)
+    """(pre, reopen): pre[i] - bar i is inside the DBRK_PRE minutes before an expected daily break (a 30+ minute,
+    under-20-hour hole in the bars seen the day before or a week before, carried forward at the same UTC time - known in
+    advance, the same on the backtest and on the live bot's 14 days of minutes); reopen - the bar positions just after
+    any 30+ minute break (known once the market reopens)."""
+    key = ("dbrk", DBRK_GAP_MIN, DBRK_PRE)
     if key not in D.sw:
         ns = D.ns
         n = len(ns)
-        last = np.zeros(n, bool)
+        pre = np.zeros(n, bool)
         if n < 2:
-            D.sw[key] = (last, np.zeros(0, np.int64))
+            D.sw[key] = (pre, np.zeros(0, np.int64))
             return D.sw[key]
         step = 60_000_000_000
         gap = ns[1:] - ns[:-1] - step
         brk = np.flatnonzero(gap >= DBRK_GAP_MIN * step)
-        starts = ns[brk] + step
-        tol, day = 70 * step, 86_400 * 10**9
-        rec = np.zeros(len(brk), bool)
-        for dd in (1, 2, 3, 7):
-            q = starts - dd * day
-            j = np.searchsorted(starts, q - tol)
-            jj = np.minimum(j, max(len(starts) - 1, 0))
-            rec |= (j < len(starts)) & (np.abs(starts[jj] - q) <= tol)
-        last[brk[rec]] = True
-        D.sw[key] = (last, (brk + 1).astype(np.int64))
+        short = brk[gap[brk] < 20 * 3600 * 10**9]
+        starts = ns[short] + step
+        day = 86_400 * 10**9
+        p = np.concatenate([starts + day, starts + 7 * day])
+        a = np.searchsorted(ns, p - DBRK_PRE * step)
+        b = np.searchsorted(ns, p)
+        dm = np.zeros(n + 1, int)
+        np.add.at(dm, a, 1)
+        np.add.at(dm, b, -1)
+        pre = np.cumsum(dm[:-1]) > 0
+        D.sw[key] = (pre, (brk + 1).astype(np.int64))
     return D.sw[key]
 
 
 def dbrk_cut(D, cfg, q0, q1):
-    """DBRK c: the order's end - the last bar before the first recurring daily break at or after q0 (exclusive)."""
+    """DBRK c: the order's end - the first bar at or after q0 inside the window before an expected daily break."""
     db = dbrk_of(cfg)
     if not db or not db["c"]:
         return q1

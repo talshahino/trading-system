@@ -2,8 +2,8 @@
 18.11.2026: the 5m/1m gap of 19:10 UTC gave 7 index sells; US100 / JP225 stopped 2 minutes after the daily reopening
 (no candles 21:49-23:05), US500 / GER40 / UK100 filled at the reopening's first minute. A break under 2 hours is not a
 break for WKND, so orders wait over it and trades are held through it. DBRK (agents/tal_gap.dbrk_of): c = cancel a
-waiting order before a recurring 30+ minute break, oN = no fill in the first N minutes after one, x = close an open
-trade before one - alone and together, on every gap track of bot 5 as it runs, FTMO's costs. Chosen on 30.04-31.12.2025,
+waiting order 10 minutes before an expected 30+ minute break, oN = no fill in the first N minutes after one, x = close an open
+trade 10 minutes before one - alone and together, on every gap track of bot 5 as it runs, FTMO's costs. Chosen on 30.04-31.12.2025,
 shown on 2026, with the time weights, the largest fall from the peak and the worst day. Results only.
   python -m agents.tal_dbrk_study plan | run --sym US100 | report
 """
@@ -20,7 +20,7 @@ from agents import tal_gap as TG
 from agents import tal_mgmt_study as M
 
 M.OUT = M.ROOT / "reports" / "agents" / "bot5" / "tal_dbrk"
-DB = ["c", "o5", "o10", "o15", "x", "c+o10", "c+x", "x+o10", "c+o10+x", "c+o5+x"]
+DB = ["c", "x", "c+x", "o10", "x+o10", "c+o10+x"]
 
 
 def ways():

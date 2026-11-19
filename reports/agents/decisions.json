@@ -1,7 +1,54 @@
 {
- "updated": "2026-11-19T14:06:50+00:00",
- "new": [],
+ "updated": "2026-11-19T14:23:29+00:00",
+ "new": [
+  "432ceb9a8a7b",
+  "975d991d2212"
+ ],
  "decisions": [
+  {
+   "id": "432ceb9a8a7b",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV60|15Min|ARM",
+   "title": "TV60|15Min|ARM: סיכון ×1.1",
+   "decision": "approved",
+   "why": "רווח ממוצע +0.17R מול -0.17R של הבוט, יציבות 0.82, 10 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "TV60|15Min|ARM",
+    "kind": "mult",
+    "value": 1.1,
+    "prev": 1.15
+   },
+   "at": "2026-11-19T14:23:29+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "975d991d2212",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV29|4Hour|US30",
+   "title": "TV29|4Hour|US30: סיכון ×1",
+   "decision": "approved",
+   "why": "רווח ממוצע -0.19R מול -0.17R של הבוט, יציבות 0.75, 5 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "TV29|4Hour|US30",
+    "kind": "mult",
+    "value": 1.0,
+    "prev": 0.92
+   },
+   "at": "2026-11-19T14:23:29+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "16f4ccdec554",
    "bot": "bot7",

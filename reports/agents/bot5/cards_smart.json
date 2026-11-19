@@ -1,6 +1,6 @@
 {
  "bot": "bot5",
- "updated": "2026-11-19T10:37:25+00:00",
+ "updated": "2026-11-19T14:40:00+00:00",
  "cards": [
   {
    "bot": "bot5",
@@ -245,127 +245,6 @@
    },
    "made": "2026-11-19T10:37:07+00:00",
    "id": "cd8bfc12b2e1"
-  },
-  {
-   "bot": "bot5",
-   "kind": "improve",
-   "title": "⭐ שיטת הגאפ · 5 דק' / דקה: סטופ לכניסה ב־38.2% מהדרך או ב־‎+1R, המוקדם",
-   "what": "שיטה משותפת מבוט 6 (סטופ לכניסה במוקדם מבין 38.2% מהדרך ו־‎+1R, במקום be70). עד 2025: ‎+12.9R ← ‎+25.1R. 2026 (לא נראתה): ‎-9.7R ← ‎-1.8R, ירידה 25.7R ← 22.08R, היום הגרוע -3.2R ← -3.08R. שווי: ‎+0.208% מהחשבון בחודש. ⭐ כי השיפור קטן ונבחר מתוך 3 גרסאות. המסלול עדיין מפסיד ב־2026, אבל פחות - זה התיקון הראשון שעובר בו.",
-   "train": {
-    "n": 498,
-    "eff_n": 484.3,
-    "mean": 0.0563,
-    "t": 1.36,
-    "win": 31.2
-   },
-   "unseen": {
-    "n": 291,
-    "eff_n": 290.9,
-    "mean": -0.0057,
-    "t": -0.11,
-    "win": 26.2
-   },
-   "whole": {
-    "n": 789,
-    "eff_n": 767.0,
-    "mean": 0.0299,
-    "t": 0.92,
-    "win": 29.1
-   },
-   "halves": [
-    0.0139,
-    0.0451
-   ],
-   "neighbours": {
-    "values": [
-     "be382o1r",
-     "be50o1r",
-     "be618o1r"
-    ],
-    "share_positive": 1.0
-   },
-   "tested": 3,
-   "cost_r": 0.049,
-   "risk_pct": 0.28,
-   "baseline": {
-    "n": 290,
-    "eff_n": 289.9,
-    "mean": -0.0333,
-    "t": -0.53,
-    "win": 36.6
-   },
-   "change": {
-    "method": "tal_gap",
-    "pair": "5m/1m",
-    "cfg": {
-     "GBODY": 2.0,
-     "MIN_GAP": 0.6,
-     "SW": 3,
-     "MIN_RR": 0.9,
-     "EXPIRY": 24,
-     "PROT": "shock",
-     "EXIT": "be382o1r",
-     "IMP1": true,
-     "TREND": "day",
-     "WKND": 10,
-     "STOPAT": "move",
-     "IPAD": "c4"
-    },
-    "track": "tal_gap|5m/1m",
-    "knob": "cfg"
-   },
-   "detail": {
-    "study": "agents/tal_asks_study.py",
-    "report": "reports/agents/bot5/tal_asks/report_widestop_beor.json",
-    "task": "b6to5beor1811",
-    "now": {
-     "train": {
-      "n": 495,
-      "total": 12.92,
-      "wtotal": 11.85,
-      "mean": 0.0261,
-      "win": 41.6,
-      "max_fall": 18.51,
-      "worst_day": -4.27,
-      "green": 47.2
-     },
-     "unseen": {
-      "n": 290,
-      "total": -9.68,
-      "wtotal": -9.52,
-      "mean": -0.0334,
-      "win": 36.6,
-      "max_fall": 25.7,
-      "worst_day": -3.2,
-      "green": 42.8
-     }
-    },
-    "way": {
-     "train": {
-      "n": 498,
-      "total": 25.08,
-      "wtotal": 21.78,
-      "mean": 0.0504,
-      "win": 30.9,
-      "max_fall": 12.26,
-      "worst_day": -3.2,
-      "green": 38.8
-     },
-     "unseen": {
-      "n": 291,
-      "total": -1.79,
-      "wtotal": -1.62,
-      "mean": -0.0062,
-      "win": 26.1,
-      "max_fall": 22.08,
-      "worst_day": -3.08,
-      "green": 32.5
-     }
-    },
-    "worth_month_pct": 0.208
-   },
-   "made": "2026-11-19T10:37:07+00:00",
-   "id": "73849bcef13e"
   },
   {
    "bot": "bot5",

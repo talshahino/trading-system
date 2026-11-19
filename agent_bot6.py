@@ -681,12 +681,41 @@ def _b5_minrr(k, v):
     return (f"מחקר היחס של בוט 5 (סטופ מעבר לתנועה), כל המסלולים: {f(s['now|base'], s[key])}; על US100/US500/US30 בלבד: "
             f"{f(s_ix['now|base'], s_ix[key])}. בבוט 5 רץ עכשיו 0.9, ו־0 במסלולי 4 השעות.")
 
+# THE GAP'S SIZE BY THE PRICE / BY ITS IMPULSE (shared method, bot 6's smart agent, 19.11.2026 midday): bot 5's agent built
+# GAPPCT (the gap at least v% of the price) beside GAPLEG (at least v of its impulse's length) for the user's "too small,
+# that doesn't count as a gap" (b5mingap1811, a 13-point US30 4-hour gap) - both in tal_gap.gap_set, the same in simulate
+# and in live_trades. Bot 6's MIN_GAP floors (by the average range) ran this morning and none held to 2025; the same two
+# knobs on bot 6's four tracks (tal4h / t5_1 run MIN_GAP 0). The contracts' gaps on 5m / 1m are small, so the % floors
+# start lower than bot 5's 4-hour ones (0.05 / 0.1 / 0.2).
+GSIZE6 = tuple(("GAPPCT", v) for v in (0.02, 0.05, 0.1)) + tuple(("GAPLEG", v) for v in (0.02, 0.05))
+FILT_HE["GAPPCT"] = lambda v: f"גאפ בגודל של לפחות {float(v):g}% מהמחיר (GAPPCT {float(v):g})"
+FILT_HE["GAPLEG"] = lambda v: f"גאפ בגודל של לפחות {float(v) * 100:g}% מאורך הדחף (GAPLEG {float(v):g})"
+
+
+def _b5_size(k, v):
+    """What bot 5's agent found for the gap-size floors (agents/tal_asks_study, report_size_size2.json: its three 4-hour
+    tracks, 'now' against MIN_GAP / GAPLEG / GAPPCT floors; 2025 / 2026 totals)."""
+    try:
+        g = json.loads(Path("reports/agents/bot5/tal_asks/report_size_size2.json").read_text(encoding="utf-8")).get("groups") or {}
+    except Exception:  # noqa: BLE001
+        return "בדיקת גודל הגאפ של בוט 5 (b5mingap1811) עוד לא נקראה."
+    w = {"GAPPCT": {0.05: "pp005", 0.1: "pp01", 0.2: "pp02"}, "GAPLEG": {0.01: "gl01", 0.02: "gl02", 0.03: "gl03", 0.05: "gl05"}}[k].get(float(v))
+    s = lambda nm: [sum(((x.get("ways") or {}).get(nm) or {}).get(p, {}).get("total", 0.0) for x in g.values()) for p in ("train", "unseen")]  # noqa: E731
+    n0 = s("now")
+    if w and any(nm in (x.get("ways") or {}) for x in g.values() for nm in (w,)):
+        n1 = s(w)
+        return (f"על 3 מסלולי 4 השעות שלו: עד 2025 {n0[0]:+.0f}R ← {n1[0]:+.0f}R, 2026 {n0[1]:+.0f}R ← {n1[1]:+.0f}R; "
+                f"אף אחד מ־13 הספים לא מרוויח יותר עד 2025 (כרטיס cd0434848bb3), אין שינוי בבוט 5.")
+    return (f"{k} {float(v):g} לא נבדק שם; על 3 מסלולי 4 השעות שלו אף אחד מ־13 הספים (MIN_GAP / GAPLEG / GAPPCT) "
+            f"לא מרוויח יותר עד 2025 (כרטיס cd0434848bb3), אין שינוי בבוט 5.")
+
+
 CODE6 = ("PYR", "FOLLOW", "WAITX")     # knobs live_trades does not run yet: an approved card is built by the smart agent
 TASK6 = {"gaveback": GAVE6, "follow": FOL6, "brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
          "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6,
          "gapx": GAPX6, "firstg": FG6, "stopat": STOP6, "waitx": WAIT6, "widestop": WIDE6, "stopmove": MOVE6, "mingap": MING6,
-         "minrr": MINRR6, "moverr": MOVERR6}
-USER6 = MINRR6 + MOVERR6 + WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+         "minrr": MINRR6, "moverr": MOVERR6, "gapsize": GSIZE6}
+USER6 = MINRR6 + MOVERR6 + GSIZE6 + WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
@@ -844,13 +873,14 @@ def filt_cards(idx, group=FILT6):
                           + ("משימה של טל מ־16.11 (הפסדים שהיו ברווח - יציאה חלקית). " if (k, v) in GAVE6 else "")
                           + ("משימה של טל מ־16.11 (נרות חזקים אחרי הכניסה - b5follow1611). " if k == "FOLLOW" else "")
                           + ("משימה של טל מ־17.11 (הסקירה של הגאפים בבוט 5 - שיטה משותפת). " if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX") else "")
-                          + ("משימה של טל מ־18.11 (סטופ רחב יותר וגודל גאפ - שיטה משותפת עם בוט 5). " if k in ("IPAD", "MIN_GAP") or (k, v) in WIDE6 else "")
+                          + ("משימה של טל מ־18.11 (סטופ רחב יותר וגודל גאפ - שיטה משותפת עם בוט 5). " if k in ("IPAD", "MIN_GAP", "GAPPCT", "GAPLEG") or (k, v) in WIDE6 else "")
                           + ("משימה של טל מ־19.11 (\"אין לי בעיה גם ביחס 1 ל־0.5\" - שיטה משותפת עם בוט 5). " if k in ("MIN_RR", "MOVE_RR") else "")
                           + "בבוט 5: " + ("עוד לא נבדק - שיטה של בוט 6, נשלחה לבוט 5 כמשימה (b6to5rearm)." if k == "REARM" else
                                           _b5_gave(v) if (k, v) in GAVE6 else
                                           _b5_gave(v, ("_follow",)) if k == "FOLLOW" else
                                           _b5_rev(k, v) if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX", "IPAD", "MIN_GAP") else
                                           _b5_minrr(k, v) if k in ("MIN_RR", "MOVE_RR") else
+                                          _b5_size(k, v) if k in ("GAPPCT", "GAPLEG") else
                                           _b5_ladder(k, v) if k in ("LADDER", "BBW", "NEWSX", "PYR", "MINSTOP", "WKND", "G3", "SWP", "BRKH") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10")
                                           else f"{b5.get(pn, 'לזוג הזה אין הגדרת קבוצה עם מסננים')}."),
                           st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],

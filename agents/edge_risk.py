@@ -6,6 +6,7 @@
   When someone else changes it, that becomes the new approved risk.
 - down: as the edge shrinks; no edge left -> the instrument's minimum volume (until a fix is found - the bot's agent
   gets the strategy first in its test queue).
+- neither way from fewer than MIN_LIVE_UP live trades (manager, 19.11.2026): until then the approved risk stands.
 - up: as the live trades prove more than the test - slowly, because a few good trades weigh little against a stable
   test (no "maybe luck" raise). The ceiling is not a number: the whole bot is replayed on 2026 with the new risk, and
   the raise goes only as far as the bot stays inside its own limits (4.5% a day, 9% in all - live/runner.py).
@@ -275,7 +276,23 @@ def run(states=None, force=False):
             # "×0.69" in the why and "×0.48" in the title - the ×0.7 approved before was not shown)
             why_cap = (f"; כפול הסיכון המאושר ×{base:g} = ×{target:g}"
                        if mult != LR.MIN_LOT and abs(base - 1.0) >= 0.005 else "")
-            if target > cur and len(lr) < MIN_LIVE_UP:
+            thin_back = False
+            if len(lr) < MIN_LIVE_UP and m0 is not None and m0 > 0:
+                # neither way from fewer than MIN_LIVE_UP live trades (manager, 19.11.2026): 62 of the 99 cuts of
+                # 13-18.11 came from 1-4 live trades - one ordinary -1R loser (a 40% strategy's most common trade) cut
+                # SC439 EURJPY bot 2 x0.5 -> x0.04 and SS06 MSTR bot 3 x0.95 -> x0.1, while a raise already waited for
+                # 5 trades: the risk only ratcheted down, against the total profit. Our own cut made from too few trades
+                # goes back to the approved risk (a raise through the whole-bot ceiling below); a loss review's cut is
+                # its own rule and stays.
+                if la is not None and la.get("loss_report"):
+                    continue
+                out["combos"][c] = {"base": base, "now": cur, "target": target,
+                                    "held": f"רק {len(lr)} עסקאות בחי - משנים מ־{MIN_LIVE_UP}"}
+                if abs(base - cur) < 0.01:
+                    continue
+                thin_back, target = True, base
+                why_cap = f"; רק {len(lr)} עסקאות בחי - הנוסחה משנה סיכון רק מ־{MIN_LIVE_UP}, חוזר לסיכון המאושר ×{base:g}"
+            if target > cur and len(lr) < MIN_LIVE_UP and not thin_back:
                 out["combos"][c] = {"base": base, "now": cur, "target": target,
                                     "held": f"רק {len(lr)} עסקאות בחי - מעלים מ־{MIN_LIVE_UP}"}
                 # an own earlier raise from fewer trades goes back (every bot, bot 3 too)
@@ -324,7 +341,8 @@ def run(states=None, force=False):
                 continue
             up = target > cur
             adds.append({"id": did, "bot": bot, "type": "risk", "kind": "mult", "combo": c,
-                         "title": f"{c}: " + ("כמות מינימלית - אין יתרון" if target == LR.MIN_LOT else
+                         "title": f"{c}: " + (f"סיכון ×{cur:g} ← ×{target:g} (רק {len(lr)} עסקאות בחי - חוזר לסיכון המאושר)"
+                                              if thin_back else "כמות מינימלית - אין יתרון" if target == LR.MIN_LOT else
                                               f"סיכון ×{cur:g} ← ×{target:g} ({'מצליחה יותר מהבדיקה' if up else 'היתרון קטן'})"),
                          "decision": "approved", "by": "manager", "read": False, "undone": False, "at": at,
                          "why": "המנהל: הסיכון של כל אסטרטגיה הולך אחרי היתרון שלה, למעלה ולמטה: " + "; ".join(parts) + why_cap + ".",

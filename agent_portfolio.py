@@ -545,8 +545,15 @@ def experiments(bot, budget_s, where):
             d = st.get(fam, combo) or {}
             if d.get("variants") and age < RERUN_DAYS and (d.get("plan") or {}) != pl:
                 # the bot's plan for this strategy changed since this experiment (13.11.2026: TV58 USDCAD bot 3 - a
-                # filter card measured on the old exits): run again on top of what runs now, before the regular re-runs
-                todo.append((0.5, fam, -age, sym, combo))
+                # filter card measured on the old exits): run again on top of what runs now, before the regular re-runs.
+                # When the daily loss review also asked for this family after the experiment, it keeps the loss
+                # review's place (first) - bots 1-4 smart agent, 19.11.2026: TV29|4Hour|US30's exits (13.11, on the
+                # plan before its exits card) sat in this tier at place 68 of bot 1's 173 groups behind the loss-review
+                # ones, so its built variant had no stored trades, the 2026 whole-bot replay of bot 1 ran without it
+                # ("missing") and its loss report of 17.11 stayed open
+                ld = max((str(w)[:10] for w in (prio.get("why") or [])), default=str(prio.get("at") or "")[:10])
+                asked = fam in (prio.get("families") or []) and str(d.get("at") or "")[:10] <= ld
+                todo.append((-1 if asked else 0.5, fam, -age, sym, combo))
                 continue
             # the loss day the review asked about ("why": "2026-11-12: ..."): a result measured after that day, with
             # today's costs (Store.get drops stale ones), already answers it (13.11.2026: the reports were written again

@@ -1,16 +1,157 @@
 {
- "updated": "2026-11-19T01:12:28+00:00",
+ "updated": "2026-11-19T01:35:47+00:00",
  "new": [
-  "5667cd1e02a6",
-  "0d7bf27a825a",
-  "78b7aae8b1d6",
-  "58fe7295bb0a",
-  "f7c86284306a",
-  "79c3950eb65d",
-  "bc3b12a32229",
-  "46449d40c4e0"
+  "40371c75f7e7",
+  "d0f59d1ae1be",
+  "89c1e41baebb",
+  "32b96683c655"
  ],
  "decisions": [
+  {
+   "id": "40371c75f7e7",
+   "bot": "bot1",
+   "type": "card",
+   "card": "78023f4f29ac",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "SC440|4Hour|ETHUSD: v_fib5",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+176.22% מול +180.14% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 5375,
+     "total": 180.14,
+     "worst_day": -2.35,
+     "max_dd": 10.27,
+     "near_days": 0,
+     "max_open": 5.47,
+     "max_side": 3.74,
+     "guard_cut": 385,
+     "guard_skipped": 104
+    },
+    "after": {
+     "trades": 5367,
+     "total": 176.22,
+     "worst_day": -2.35,
+     "max_dd": 9.77,
+     "near_days": 0,
+     "max_open": 5.47,
+     "max_side": 3.74,
+     "guard_cut": 378,
+     "guard_skipped": 104
+    }
+   },
+   "at": "2026-11-19T01:35:47+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "d0f59d1ae1be",
+   "bot": "bot1",
+   "type": "card",
+   "card": "01dcf9cc3f6f",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "TV15|4Hour|ETHUSD: איזון ב־0.75R רווח",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+180.14% מול +180.14% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 5375,
+     "total": 180.14,
+     "worst_day": -2.35,
+     "max_dd": 10.27,
+     "near_days": 0,
+     "max_open": 5.47,
+     "max_side": 3.74,
+     "guard_cut": 385,
+     "guard_skipped": 104
+    },
+    "after": {
+     "trades": 5379,
+     "total": 180.14,
+     "worst_day": -2.35,
+     "max_dd": 10.27,
+     "near_days": 0,
+     "max_open": 5.47,
+     "max_side": 3.74,
+     "guard_cut": 385,
+     "guard_skipped": 104
+    }
+   },
+   "at": "2026-11-19T01:35:47+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "89c1e41baebb",
+   "bot": "bot1",
+   "type": "card",
+   "card": "e59aecc0a9f6",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ QC02|1Hour|ETHUSD: רק בכיוון EMA 50 מול 200",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 58.0 עסקאות אפקטיביות, +0.14R מעל המצב הקיים) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.88 לאסטרטגיה: רווח +180.14% → +182.53% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 5375,
+     "total": 180.14,
+     "worst_day": -2.35,
+     "max_dd": 10.27,
+     "near_days": 0,
+     "max_open": 5.47,
+     "max_side": 3.74,
+     "guard_cut": 385,
+     "guard_skipped": 104
+    },
+    "after": {
+     "trades": 5359,
+     "total": 182.53,
+     "worst_day": -2.35,
+     "max_dd": 10.14,
+     "near_days": 0,
+     "max_open": 5.45,
+     "max_side": 3.71,
+     "guard_cut": 344,
+     "guard_skipped": 90
+    }
+   },
+   "at": "2026-11-19T01:35:47+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "32b96683c655",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "QC02|1Hour|ETHUSD",
+   "title": "QC02|1Hour|ETHUSD: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.14R לעסקה, 58.0 עסקאות אפקטיביות, +0.14R מעל המצב הקיים) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.88 לאסטרטגיה: רווח +180.14% → +182.53% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "89c1e41baebb",
+   "star": true,
+   "action": {
+    "bot": "bot1",
+    "combo": "QC02|1Hour|ETHUSD",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": 0.98
+   },
+   "at": "2026-11-19T01:35:47+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "5667cd1e02a6",
    "bot": "bot1",

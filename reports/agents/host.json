@@ -1,20 +1,17 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-19T17:59:28+00:00",
- "light_at": "2026-11-19T17:59:28+00:00",
+ "updated": "2026-11-19T18:26:36+00:00",
+ "light_at": "2026-11-19T18:26:36+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
   "light": 10,
   "smart": 60
  },
  "smart_minutes": {
-  "bot6": 50.0,
-  "bot5-new": 15.0
+  "bot2": 30.0
  },
- "agent_errors": [
-  "bot1: publishing failed: 401 Client Error: Unauthorized for url: https://api.github.com/repos/talshahino/trading-system/git/blobs"
- ],
+ "agent_errors": [],
  "agent_last": {
   "bot5": "2026-11-19T13:37:46+00:00",
   "bot5-new": "2026-11-19T16:03:45+00:00",
@@ -34,9 +31,8 @@
    "(continued across a manager restart)"
   ],
   "bot2": [
-   "this run: 36 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
-   "{\"bot\": \"bot2\", \"cards\": 41324, \"tiers\": {\"rejected\": 35765, \"watch\": 4949, \"regular\": 610}, \"done\": 224, \"planned\": 252}",
-   "(continued across a manager restart)"
+   "this run: 23 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
+   "{\"bot\": \"bot2\", \"cards\": 41330, \"tiers\": {\"rejected\": 35770, \"watch\": 4950, \"regular\": 610}, \"done\": 234, \"planned\": 270}"
   ],
   "bot3": [
    "this run: 32 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
@@ -99,12 +95,11 @@
    "adopted": true
   },
   "bot2": {
-   "at": "2026-11-19T09:26:47+00:00",
-   "sec": 2362,
+   "at": "2026-11-19T17:42:42+00:00",
+   "sec": 2384,
    "budget_sec": 1800,
-   "ok": null,
-   "err": null,
-   "adopted": true
+   "ok": true,
+   "err": null
   },
   "bot3": {
    "at": "2026-11-19T10:17:14+00:00",
@@ -184,8 +179,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.9,
-   "load_pct": 76
+   "free": 2.3,
+   "load_pct": 71
   }
  }
 }

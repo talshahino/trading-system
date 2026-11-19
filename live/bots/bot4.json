@@ -52,7 +52,10 @@
   "SC376|4Hour|XAGUSD",
   "SC504|15Min|XAGUSD",
   "SC485|4Hour|XAUUSD",
-  "SC539|4Hour|XAGUSD"
+  "SC539|4Hour|XAGUSD",
+  "SC635|15Min|GBPJPY",
+  "SC625|15Min|USDJPY",
+  "SC627|15Min|XAGUSD"
  ],
  "note": "04.11.2026: built from the new families' combos that passed the first test (GitHub, QuantConnect, forums, books, seasonality, inter-market, Quantpedia), chosen on 2025 and checked on 2026 and by reshuffling; MetaQuotes-demo instruments only (FX, metals, US shares); risk 0.45% chosen by the user; FTMO Standard rule: closed before market breaks over 2 hours; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -192,6 +195,15 @@
   "TV36|1Hour|ARM": {
    "be_way": 0.236,
    "manage_card": "2d74b6217797"
+  },
+  "FR08|5Min|SPCX": {
+   "filter": "v_fib5",
+   "filter_card": "35d0767c1a19"
+  },
+  "SC539|4Hour|XAGUSD": {
+   "target": 2.0,
+   "stop": 0.75,
+   "card": "bf15762e718a"
   }
  },
  "added": {
@@ -225,7 +237,10 @@
   "SC376|4Hour|XAGUSD": "533cd49d281e",
   "SC504|15Min|XAGUSD": "0a6f39b3461e",
   "SC485|4Hour|XAUUSD": "e112e9cf3fce",
-  "SC539|4Hour|XAGUSD": "29555dbbc97f"
+  "SC539|4Hour|XAGUSD": "29555dbbc97f",
+  "SC635|15Min|GBPJPY": "0283c5cc6907",
+  "SC625|15Min|USDJPY": "537b6e1ca4cc",
+  "SC627|15Min|XAGUSD": "8aed1fcfa676"
  },
  "removed": {
   "SC002|1Hour|ARM": "ffe0e8720757",

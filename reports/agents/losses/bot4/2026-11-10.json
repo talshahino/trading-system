@@ -143,6 +143,24 @@
     "cause": "כניסה / כיוון",
     "fixes": [
      {
+      "what": "⭐ FR08|5Min|SPCX: v_fib5",
+      "decision": "cdf5283aee7c",
+      "at": "2026-11-19T12:12:39+00:00",
+      "effect_month_pct": 0.13,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "967e5744eca5",
+      "at": "2026-11-19T12:12:39+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.73,
+      "value": 0.7
+     },
+     {
       "what": "סיכון ×0.73",
       "decision": "93cf60c4be7f",
       "at": "2026-11-17T22:04:07+00:00",
@@ -247,7 +265,7 @@
   ],
   "open": [],
   "cut_only": [],
-  "total_month_pct": 0.0,
+  "total_month_pct": 0.13,
   "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון"
  }
 }

@@ -926,14 +926,14 @@ def frozen(t):
         return False
 
 
-def repair_5_1811(acc, trades, now):
+def repair_5_1811(acc, trades, now, fname="bot5_repair_1811.json", flag="repair5_1811b"):
     """Once: bot 5's closes removed / rewritten on 18.11.2026 back in the ledger and the trade list
     (live/bots/bot5_repair_1811.json: the ledger as it stood at 17:53 Israel time + the closes after it, from the state's
     own copies on the live branch; GER40 g0145 t5_1 back to +104.93, US500 g0300 t1h_15 back to +320.33)."""
-    if acc.get("repair5_1811b"):
+    if acc.get(flag):
         return 0.0
     try:
-        doc = json.loads((LIVE / "bots" / "bot5_repair_1811.json").read_text(encoding="utf-8"))
+        doc = json.loads((LIVE / "bots" / fname).read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         return 0.0
     diff = 0.0
@@ -949,7 +949,7 @@ def repair_5_1811(acc, trades, now):
         trades[k] = {**(trades.get(k) or {}), **r, "restored": now}
         if r.get("risk_usd"):
             acc.setdefault("sized", {})[k] = r["risk_usd"]
-    acc["repair5_1811b"] = now
+    acc[flag] = now
     return round(diff, 2)
 
 
@@ -1588,6 +1588,11 @@ def main():
     back_ = repair_5_1811(acc, trades, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
     if back_:
         log(f"bot 5 ledger repaired: {back_:+.2f} of closes removed / rewritten on 18.11 put back")
+    # 19.11.2026: USDCHF g0100 t15_1 (target, +$116.91) removed by the MIN_RR change before its close settled
+    back_ = repair_5_1811(acc, trades, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"),
+                          "bot5_repair_1911.json", "repair5_1911")
+    if back_:
+        log(f"bot 5 ledger repaired: {back_:+.2f} of closes removed on 19.11 put back")
     gone_ = repair_5b(sacc, trades, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
     if gone_:
         log(f"5b ledger repaired: {gone_:+.2f} booked at the wrong size removed")
@@ -1752,9 +1757,11 @@ def main():
                                              target=cx_.get("target", t_), custom=True)
                             # an open trade keeps the entry / stop / target it opened with (18.11.2026: a rule changed
                             # since - today the stop - computed it again as another trade or as cancelled, and it left
-                            # the account); it is followed to its exit with them
+                            # the account); it is followed to its exit with them. A close in its first FREEZE_MIN minutes
+                            # too (19.11.2026: USDCHF g0100 t15_1 hit its target at 07:55 UTC, +$116.91; the next refresh
+                            # computed it with MIN_RR 0.9 as not taken, and the close left the ledger before it settled)
                             o5_ = trades.get(k_) or {}
-                            if (o5_.get("status") == "open" and o5_.get("risk_usd") and o5_.get("stop") is not None
+                            if (o5_.get("status") in ("open", "closed") and o5_.get("risk_usd") and o5_.get("stop") is not None
                                     and o5_.get("time") and not x.get("custom")
                                     and (x["status"] not in ("open", "closed") or x.get("stop") is None
                                          or abs(float(x["stop"]) - float(o5_["stop"])) > 1e-9 or x.get("time") != o5_.get("time"))):

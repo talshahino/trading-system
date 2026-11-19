@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-19T16:00:43+00:00",
+ "updated": "2026-11-19T16:23:03+00:00",
  "light_at": "2026-11-19T16:00:43+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -15,7 +15,7 @@
  "agent_errors": [],
  "agent_last": {
   "bot5": "2026-11-19T13:37:46+00:00",
-  "bot5-new": "2026-11-19T07:36:38+00:00",
+  "bot5-new": "2026-11-19T16:03:45+00:00",
   "bot6": "2026-11-19T14:44:03+00:00",
   "bot1": "2026-11-19T08:10:53+00:00",
   "bot2": "2026-11-19T09:25:23+00:00",
@@ -28,7 +28,8 @@
  "agent_tail": {
   "bot5-new": [
    "this run: 0 experiments, 0 new-strategy combos",
-   "{\"bot\": \"bot5\", \"new_cards\": 14406}"
+   "{\"bot\": \"bot5\", \"new_cards\": 14406}",
+   "(continued across a manager restart)"
   ],
   "bot2": [
    "this run: 36 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
@@ -88,11 +89,12 @@
    "err": null
   },
   "bot5-new": {
-   "at": "2026-11-19T07:36:38+00:00",
-   "sec": 631,
+   "at": "2026-11-19T16:05:08+00:00",
+   "sec": 992,
    "budget_sec": 900,
-   "ok": true,
-   "err": null
+   "ok": null,
+   "err": null,
+   "adopted": true
   },
   "bot2": {
    "at": "2026-11-19T09:26:47+00:00",
@@ -179,8 +181,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 2.4,
-   "load_pct": 69
+   "free": 1.0,
+   "load_pct": 86
   }
  }
 }

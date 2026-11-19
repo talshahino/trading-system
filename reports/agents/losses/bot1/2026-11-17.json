@@ -825,9 +825,20 @@
    {
     "combo": "TV29|4Hour|US30",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-19",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": null,
     "edge_parts": [
      "עוד אין בדיקה של 2026 כפי שהיא סוחרת עכשיו - היא ראשונה בתור לבדיקה, ועד אז הסיכון לא נוגע"
@@ -895,9 +906,20 @@
    {
     "combo": "SC247|4Hour|US500",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-19",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.59,
     "edge_parts": [
      "בבדיקה של 2026: +0.14R לעסקה (46 עסקאות), בתקופת הבחירה +0.36R",
@@ -1142,12 +1164,11 @@
     "edge": -0.129
    }
   ],
-  "open": [
-   "TV29|4Hour|US30",
-   "SC247|4Hour|US500"
-  ],
+  "open": [],
   "cut_only": [
    "TV60|15Min|ARM",
+   "TV29|4Hour|US30",
+   "SC247|4Hour|US500",
    "TV11|4Hour|USDJPY",
    "TV56|1Hour|US2000",
    "SC002|1Hour|AMZN",
@@ -1156,6 +1177,6 @@
    "TT45|15Min|CSCO"
   ],
   "total_month_pct": 1.15,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 7 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 9 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

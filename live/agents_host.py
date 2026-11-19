@@ -643,7 +643,7 @@ UNPUBLISHED_TRIES = 6
 
 def _gh(method, url, timeout=60, **kw):
     """One GitHub call of a publish, again on a passing failure, with the token read anew each time (manager, 19.11.2026:
-    bot 5's run of 20:13-21:17 UTC ended in one "401 ... git/blobs" while the publishes before and after it went through,
+    bot 5's run of 21:17-22:21 UTC on 18.11 ended in one "401 ... git/blobs" while the publishes before and after it went through,
     and 64 minutes of results were gone at the next refresh)."""
     for attempt in range(PUB_TRIES):
         last = attempt == PUB_TRIES - 1

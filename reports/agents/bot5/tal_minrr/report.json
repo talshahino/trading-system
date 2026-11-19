@@ -1,0 +1,3242 @@
+{
+ "at": "2026-11-19T06:48:31+00:00",
+ "no_volume": [],
+ "tracks": {
+  "t1h_5@AUS200": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 11,
+      "sum": -1.12,
+      "mean": -0.102,
+      "win": 36.4,
+      "dd": 2.74
+     },
+     "unseen": {
+      "n": 21,
+      "sum": 6.87,
+      "mean": 0.327,
+      "win": 71.4,
+      "dd": 0.34
+     },
+     "error": null,
+     "why26": {
+      "session": 10,
+      "target": 9,
+      "stop": 2
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {}
+    },
+    "rr|0": {
+     "train": {
+      "n": 58,
+      "sum": -3.52,
+      "mean": -0.061,
+      "win": 50.0,
+      "dd": 4.81
+     },
+     "unseen": {
+      "n": 79,
+      "sum": 5.56,
+      "mean": 0.07,
+      "win": 55.7,
+      "dd": 1.68
+     },
+     "error": null,
+     "why26": {
+      "session": 41,
+      "target": 30,
+      "stop": 8
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 3,
+      "sum": 0.88,
+      "mean": 0.295,
+      "win": 66.7,
+      "dd": 1.05
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 4.4,
+      "mean": 0.733,
+      "win": 100.0,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {
+      "session": 3,
+      "target": 3
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 11,
+      "sum": -1.12,
+      "mean": -0.102,
+      "win": 36.4,
+      "dd": 2.74
+     },
+     "unseen": {
+      "n": 21,
+      "sum": 6.87,
+      "mean": 0.327,
+      "win": 71.4,
+      "dd": 0.34
+     },
+     "error": null,
+     "why26": {
+      "session": 10,
+      "target": 9,
+      "breakeven": 2
+     }
+    }
+   },
+   "best": "rr|1",
+   "passes": false
+  },
+  "t5_1@AUS200": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 17,
+      "sum": -1.64,
+      "mean": -0.097,
+      "win": 41.2,
+      "dd": 3.25
+     },
+     "error": null,
+     "why26": {
+      "target": 5,
+      "stop": 5,
+      "session": 7
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {}
+    },
+    "rr|0": {
+     "train": {
+      "n": 97,
+      "sum": -4.95,
+      "mean": -0.051,
+      "win": 46.4,
+      "dd": 5.11
+     },
+     "unseen": {
+      "n": 197,
+      "sum": -10.77,
+      "mean": -0.055,
+      "win": 54.3,
+      "dd": 11.1
+     },
+     "error": null,
+     "why26": {
+      "session": 62,
+      "stop": 32,
+      "target": 103
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {}
+    },
+    "now|walk": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 17,
+      "sum": -1.64,
+      "mean": -0.097,
+      "win": 41.2,
+      "dd": 3.25
+     },
+     "error": null,
+     "why26": {
+      "target": 5,
+      "breakeven": 3,
+      "session": 7,
+      "stop": 2
+     }
+    }
+   },
+   "best": "now|base",
+   "passes": false
+  },
+  "t1h_5@EU50": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 6,
+      "sum": 5.04,
+      "mean": 0.84,
+      "win": 100.0,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 18,
+      "sum": 2.25,
+      "mean": 0.125,
+      "win": 50.0,
+      "dd": 2.29
+     },
+     "error": null,
+     "why26": {
+      "session": 12,
+      "stop": 2,
+      "target": 4
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 1,
+      "sum": 3.1,
+      "mean": 3.102,
+      "win": 100.0,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 2.75,
+      "mean": 1.373,
+      "win": 100.0,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {
+      "session": 1,
+      "target": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 26,
+      "sum": 1.77,
+      "mean": 0.068,
+      "win": 38.5,
+      "dd": 1.41
+     },
+     "unseen": {
+      "n": 37,
+      "sum": 1.83,
+      "mean": 0.05,
+      "win": 51.4,
+      "dd": 2.15
+     },
+     "error": null,
+     "why26": {
+      "session": 25,
+      "target": 9,
+      "stop": 3
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 3,
+      "sum": 3.62,
+      "mean": 1.207,
+      "win": 100.0,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 7,
+      "sum": 4.4,
+      "mean": 0.628,
+      "win": 71.4,
+      "dd": 0.84
+     },
+     "error": null,
+     "why26": {
+      "session": 5,
+      "target": 2
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 6,
+      "sum": 5.04,
+      "mean": 0.84,
+      "win": 100.0,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 18,
+      "sum": 2.25,
+      "mean": 0.125,
+      "win": 50.0,
+      "dd": 2.29
+     },
+     "error": null,
+     "why26": {
+      "session": 12,
+      "stop": 2,
+      "target": 4
+     }
+    }
+   },
+   "best": "now|base",
+   "passes": false
+  },
+  "t5_1@EU50": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 32,
+      "sum": -1.34,
+      "mean": -0.042,
+      "win": 50.0,
+      "dd": 5.34
+     },
+     "unseen": {
+      "n": 76,
+      "sum": -6.01,
+      "mean": -0.079,
+      "win": 44.7,
+      "dd": 6.64
+     },
+     "error": null,
+     "why26": {
+      "stop": 33,
+      "session": 14,
+      "target": 29
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 1,
+      "sum": -1.09,
+      "mean": -1.089,
+      "win": 0.0,
+      "dd": 1.09
+     },
+     "error": null,
+     "why26": {
+      "stop": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 190,
+      "sum": -5.86,
+      "mean": -0.031,
+      "win": 57.4,
+      "dd": 8.8
+     },
+     "unseen": {
+      "n": 271,
+      "sum": -13.95,
+      "mean": -0.051,
+      "win": 52.8,
+      "dd": 17.03
+     },
+     "error": null,
+     "why26": {
+      "stop": 71,
+      "target": 132,
+      "session": 68
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 2,
+      "sum": -1.51,
+      "mean": -0.756,
+      "win": 0.0,
+      "dd": 1.51
+     },
+     "unseen": {
+      "n": 13,
+      "sum": -0.69,
+      "mean": -0.053,
+      "win": 46.2,
+      "dd": 6.41
+     },
+     "error": null,
+     "why26": {
+      "session": 2,
+      "target": 5,
+      "stop": 6
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 32,
+      "sum": -1.34,
+      "mean": -0.042,
+      "win": 50.0,
+      "dd": 5.34
+     },
+     "unseen": {
+      "n": 77,
+      "sum": -7.08,
+      "mean": -0.092,
+      "win": 44.2,
+      "dd": 7.71
+     },
+     "error": null,
+     "why26": {
+      "stop": 21,
+      "session": 14,
+      "target": 29,
+      "breakeven": 13
+     }
+    }
+   },
+   "best": "before|base",
+   "passes": true
+  },
+  "t1h_1@EURUSD": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 19,
+      "sum": -5.01,
+      "mean": -0.264,
+      "win": 47.4,
+      "dd": 7.61
+     },
+     "unseen": {
+      "n": 20,
+      "sum": -7.49,
+      "mean": -0.375,
+      "win": 35.0,
+      "dd": 7.49
+     },
+     "error": null,
+     "why26": {
+      "stop": 12,
+      "target": 7,
+      "session": 1
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {}
+    },
+    "rr|0": {
+     "train": {
+      "n": 74,
+      "sum": -6.87,
+      "mean": -0.093,
+      "win": 67.6,
+      "dd": 10.18
+     },
+     "unseen": {
+      "n": 97,
+      "sum": -11.3,
+      "mean": -0.117,
+      "win": 67.0,
+      "dd": 11.3
+     },
+     "error": null,
+     "why26": {
+      "stop": 22,
+      "target": 64,
+      "session": 11
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 2,
+      "sum": 0.24,
+      "mean": 0.119,
+      "win": 50.0,
+      "dd": 1.03
+     },
+     "unseen": {
+      "n": 5,
+      "sum": -2.43,
+      "mean": -0.486,
+      "win": 20.0,
+      "dd": 2.43
+     },
+     "error": null,
+     "why26": {
+      "stop": 3,
+      "session": 1,
+      "target": 1
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 19,
+      "sum": -5.01,
+      "mean": -0.264,
+      "win": 47.4,
+      "dd": 7.61
+     },
+     "unseen": {
+      "n": 20,
+      "sum": -7.49,
+      "mean": -0.375,
+      "win": 35.0,
+      "dd": 7.49
+     },
+     "error": null,
+     "why26": {
+      "stop": 12,
+      "target": 7,
+      "session": 1
+     }
+    }
+   },
+   "best": "rr|1",
+   "passes": true
+  },
+  "t1h_15@GBPNZD": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 19,
+      "sum": 1.18,
+      "mean": 0.062,
+      "win": 57.9,
+      "dd": 2.53
+     },
+     "unseen": {
+      "n": 25,
+      "sum": 5.4,
+      "mean": 0.216,
+      "win": 68.0,
+      "dd": 2.14
+     },
+     "error": null,
+     "why26": {
+      "session": 8,
+      "target": 12,
+      "stop": 5
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 7,
+      "sum": 2.38,
+      "mean": 0.34,
+      "win": 57.1,
+      "dd": 1.08
+     },
+     "unseen": {
+      "n": 11,
+      "sum": 3.83,
+      "mean": 0.349,
+      "win": 63.6,
+      "dd": 1.75
+     },
+     "error": null,
+     "why26": {
+      "session": 6,
+      "target": 3,
+      "stop": 2
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 40,
+      "sum": 0.94,
+      "mean": 0.024,
+      "win": 60.0,
+      "dd": 2.2
+     },
+     "unseen": {
+      "n": 40,
+      "sum": 3.78,
+      "mean": 0.094,
+      "win": 62.5,
+      "dd": 4.73
+     },
+     "error": null,
+     "why26": {
+      "session": 16,
+      "target": 19,
+      "stop": 5
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 7,
+      "sum": 2.38,
+      "mean": 0.34,
+      "win": 57.1,
+      "dd": 1.08
+     },
+     "unseen": {
+      "n": 11,
+      "sum": 3.83,
+      "mean": 0.349,
+      "win": 63.6,
+      "dd": 1.75
+     },
+     "error": null,
+     "why26": {
+      "session": 6,
+      "target": 3,
+      "stop": 2
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 19,
+      "sum": 1.18,
+      "mean": 0.062,
+      "win": 57.9,
+      "dd": 2.53
+     },
+     "unseen": {
+      "n": 25,
+      "sum": 5.4,
+      "mean": 0.216,
+      "win": 68.0,
+      "dd": 2.14
+     },
+     "error": null,
+     "why26": {
+      "session": 8,
+      "target": 12,
+      "stop": 5
+     }
+    }
+   },
+   "best": "before|base",
+   "passes": false
+  },
+  "t15_1": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 358,
+      "sum": 14.26,
+      "mean": 0.04,
+      "win": 58.9,
+      "dd": 15.33
+     },
+     "unseen": {
+      "n": 511,
+      "sum": 20.72,
+      "mean": 0.041,
+      "win": 55.2,
+      "dd": 24.49
+     },
+     "error": null,
+     "why26": {
+      "target": 275,
+      "stop": 214,
+      "session": 22
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 13,
+      "sum": -2.69,
+      "mean": -0.207,
+      "win": 23.1,
+      "dd": 8.32
+     },
+     "unseen": {
+      "n": 22,
+      "sum": 9.27,
+      "mean": 0.422,
+      "win": 40.9,
+      "dd": 9.21
+     },
+     "error": null,
+     "why26": {
+      "target": 8,
+      "stop": 12,
+      "session": 2
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 951,
+      "sum": -9.61,
+      "mean": -0.01,
+      "win": 72.6,
+      "dd": 24.67
+     },
+     "unseen": {
+      "n": 1284,
+      "sum": -5.5,
+      "mean": -0.004,
+      "win": 72.4,
+      "dd": 28.14
+     },
+     "error": null,
+     "why26": {
+      "target": 911,
+      "session": 98,
+      "stop": 275
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 98,
+      "sum": 3.92,
+      "mean": 0.04,
+      "win": 45.9,
+      "dd": 9.47
+     },
+     "unseen": {
+      "n": 175,
+      "sum": 22.85,
+      "mean": 0.131,
+      "win": 46.9,
+      "dd": 21.87
+     },
+     "error": null,
+     "why26": {
+      "target": 80,
+      "stop": 90,
+      "session": 5
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 358,
+      "sum": 14.26,
+      "mean": 0.04,
+      "win": 58.9,
+      "dd": 15.33
+     },
+     "unseen": {
+      "n": 511,
+      "sum": 20.72,
+      "mean": 0.041,
+      "win": 55.2,
+      "dd": 24.49
+     },
+     "error": null,
+     "why26": {
+      "target": 275,
+      "stop": 214,
+      "session": 22
+     }
+    }
+   },
+   "best": "now|base",
+   "passes": false
+  },
+  "t1h_15": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 312,
+      "sum": 22.21,
+      "mean": 0.071,
+      "win": 31.7,
+      "dd": 16.22
+     },
+     "unseen": {
+      "n": 445,
+      "sum": 29.54,
+      "mean": 0.066,
+      "win": 28.5,
+      "dd": 19.44
+     },
+     "error": null,
+     "why26": {
+      "stop": 283,
+      "session": 58,
+      "target": 104
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 145,
+      "sum": 27.08,
+      "mean": 0.187,
+      "win": 27.6,
+      "dd": 14.63
+     },
+     "unseen": {
+      "n": 227,
+      "sum": 25.32,
+      "mean": 0.112,
+      "win": 27.8,
+      "dd": 12.72
+     },
+     "error": null,
+     "why26": {
+      "stop": 153,
+      "target": 46,
+      "session": 28
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 427,
+      "sum": 27.53,
+      "mean": 0.064,
+      "win": 35.1,
+      "dd": 11.18
+     },
+     "unseen": {
+      "n": 594,
+      "sum": 23.67,
+      "mean": 0.04,
+      "win": 29.8,
+      "dd": 23.33
+     },
+     "error": null,
+     "why26": {
+      "target": 150,
+      "stop": 345,
+      "session": 99
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 224,
+      "sum": 28.72,
+      "mean": 0.128,
+      "win": 29.5,
+      "dd": 10.36
+     },
+     "unseen": {
+      "n": 302,
+      "sum": 34.27,
+      "mean": 0.113,
+      "win": 29.1,
+      "dd": 11.43
+     },
+     "error": null,
+     "why26": {
+      "stop": 191,
+      "target": 68,
+      "session": 43
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 321,
+      "sum": 26.54,
+      "mean": 0.083,
+      "win": 31.8,
+      "dd": 18.29
+     },
+     "unseen": {
+      "n": 460,
+      "sum": 25.54,
+      "mean": 0.056,
+      "win": 28.7,
+      "dd": 19.02
+     },
+     "error": null,
+     "why26": {
+      "breakeven": 179,
+      "session": 63,
+      "stop": 111,
+      "target": 107
+     }
+    }
+   },
+   "best": "rr|1",
+   "passes": true
+  },
+  "t4h_1h": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 167,
+      "sum": 158.59,
+      "mean": 0.95,
+      "win": 51.5,
+      "dd": 3.51
+     },
+     "unseen": {
+      "n": 230,
+      "sum": 32.0,
+      "mean": 0.139,
+      "win": 55.2,
+      "dd": 4.18
+     },
+     "error": null,
+     "why26": {
+      "session": 98,
+      "target": 76,
+      "stop": 31,
+      "breakeven": 25
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 167,
+      "sum": 158.59,
+      "mean": 0.95,
+      "win": 51.5,
+      "dd": 3.51
+     },
+     "unseen": {
+      "n": 230,
+      "sum": 32.0,
+      "mean": 0.139,
+      "win": 55.2,
+      "dd": 4.18
+     },
+     "error": null,
+     "why26": {
+      "session": 98,
+      "target": 76,
+      "stop": 31,
+      "breakeven": 25
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 167,
+      "sum": 158.59,
+      "mean": 0.95,
+      "win": 51.5,
+      "dd": 3.51
+     },
+     "unseen": {
+      "n": 230,
+      "sum": 32.0,
+      "mean": 0.139,
+      "win": 55.2,
+      "dd": 4.18
+     },
+     "error": null,
+     "why26": {
+      "session": 98,
+      "target": 76,
+      "stop": 31,
+      "breakeven": 25
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 73,
+      "sum": 143.91,
+      "mean": 1.971,
+      "win": 43.8,
+      "dd": 4.88
+     },
+     "unseen": {
+      "n": 110,
+      "sum": 13.09,
+      "mean": 0.119,
+      "win": 50.0,
+      "dd": 6.15
+     },
+     "error": null,
+     "why26": {
+      "session": 34,
+      "stop": 39,
+      "target": 31,
+      "breakeven": 6
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 167,
+      "sum": 158.59,
+      "mean": 0.95,
+      "win": 51.5,
+      "dd": 3.51
+     },
+     "unseen": {
+      "n": 230,
+      "sum": 32.0,
+      "mean": 0.139,
+      "win": 55.2,
+      "dd": 4.18
+     },
+     "error": null,
+     "why26": {
+      "session": 98,
+      "target": 76,
+      "stop": 31,
+      "breakeven": 25
+     }
+    }
+   },
+   "best": "now|base",
+   "passes": false
+  },
+  "t4h_15": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 225,
+      "sum": 148.84,
+      "mean": 0.662,
+      "win": 60.9,
+      "dd": 2.88
+     },
+     "unseen": {
+      "n": 275,
+      "sum": 28.66,
+      "mean": 0.104,
+      "win": 55.6,
+      "dd": 4.38
+     },
+     "error": null,
+     "why26": {
+      "session": 108,
+      "target": 111,
+      "breakeven": 34,
+      "stop": 22
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 225,
+      "sum": 148.84,
+      "mean": 0.662,
+      "win": 60.9,
+      "dd": 2.88
+     },
+     "unseen": {
+      "n": 275,
+      "sum": 28.66,
+      "mean": 0.104,
+      "win": 55.6,
+      "dd": 4.38
+     },
+     "error": null,
+     "why26": {
+      "session": 108,
+      "target": 111,
+      "breakeven": 34,
+      "stop": 22
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 225,
+      "sum": 148.84,
+      "mean": 0.662,
+      "win": 60.9,
+      "dd": 2.88
+     },
+     "unseen": {
+      "n": 275,
+      "sum": 28.66,
+      "mean": 0.104,
+      "win": 55.6,
+      "dd": 4.38
+     },
+     "error": null,
+     "why26": {
+      "session": 108,
+      "target": 111,
+      "breakeven": 34,
+      "stop": 22
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 69,
+      "sum": 130.36,
+      "mean": 1.889,
+      "win": 46.4,
+      "dd": 5.01
+     },
+     "unseen": {
+      "n": 83,
+      "sum": 18.42,
+      "mean": 0.222,
+      "win": 55.4,
+      "dd": 4.79
+     },
+     "error": null,
+     "why26": {
+      "session": 24,
+      "stop": 26,
+      "target": 29,
+      "breakeven": 4
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 225,
+      "sum": 148.84,
+      "mean": 0.662,
+      "win": 60.9,
+      "dd": 2.88
+     },
+     "unseen": {
+      "n": 275,
+      "sum": 28.66,
+      "mean": 0.104,
+      "win": 55.6,
+      "dd": 4.38
+     },
+     "error": null,
+     "why26": {
+      "session": 108,
+      "target": 111,
+      "breakeven": 34,
+      "stop": 22
+     }
+    }
+   },
+   "best": "now|base",
+   "passes": false
+  },
+  "t15_5": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 272,
+      "sum": 4.39,
+      "mean": 0.016,
+      "win": 49.3,
+      "dd": 17.35
+     },
+     "unseen": {
+      "n": 347,
+      "sum": 24.66,
+      "mean": 0.071,
+      "win": 52.7,
+      "dd": 10.82
+     },
+     "error": null,
+     "why26": {
+      "target": 160,
+      "stop": 148,
+      "session": 39
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 31,
+      "sum": 5.68,
+      "mean": 0.183,
+      "win": 25.8,
+      "dd": 8.24
+     },
+     "unseen": {
+      "n": 32,
+      "sum": 12.24,
+      "mean": 0.382,
+      "win": 37.5,
+      "dd": 4.35
+     },
+     "error": null,
+     "why26": {
+      "stop": 19,
+      "target": 12,
+      "session": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 505,
+      "sum": -5.87,
+      "mean": -0.012,
+      "win": 57.2,
+      "dd": 22.16
+     },
+     "unseen": {
+      "n": 609,
+      "sum": 7.37,
+      "mean": 0.012,
+      "win": 60.1,
+      "dd": 13.69
+     },
+     "error": null,
+     "why26": {
+      "target": 329,
+      "stop": 176,
+      "session": 104
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 138,
+      "sum": 7.14,
+      "mean": 0.052,
+      "win": 41.3,
+      "dd": 13.6
+     },
+     "unseen": {
+      "n": 173,
+      "sum": 32.88,
+      "mean": 0.19,
+      "win": 47.4,
+      "dd": 11.09
+     },
+     "error": null,
+     "why26": {
+      "stop": 86,
+      "target": 74,
+      "session": 13
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 272,
+      "sum": 4.39,
+      "mean": 0.016,
+      "win": 49.3,
+      "dd": 17.35
+     },
+     "unseen": {
+      "n": 347,
+      "sum": 24.66,
+      "mean": 0.071,
+      "win": 52.7,
+      "dd": 10.82
+     },
+     "error": null,
+     "why26": {
+      "target": 160,
+      "stop": 136,
+      "breakeven": 12,
+      "session": 39
+     }
+    }
+   },
+   "best": "rr|1",
+   "passes": true
+  },
+  "t5_1": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 499,
+      "sum": -14.56,
+      "mean": -0.029,
+      "win": 44.7,
+      "dd": 18.02
+     },
+     "unseen": {
+      "n": 652,
+      "sum": -20.96,
+      "mean": -0.032,
+      "win": 43.7,
+      "dd": 26.66
+     },
+     "error": null,
+     "why26": {
+      "stop": 363,
+      "target": 277,
+      "session": 12
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 10,
+      "sum": 8.08,
+      "mean": 0.808,
+      "win": 50.0,
+      "dd": 2.07
+     },
+     "unseen": {
+      "n": 32,
+      "sum": 9.14,
+      "mean": 0.286,
+      "win": 34.4,
+      "dd": 4.15
+     },
+     "error": null,
+     "why26": {
+      "stop": 21,
+      "target": 11
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 1311,
+      "sum": -27.43,
+      "mean": -0.021,
+      "win": 55.7,
+      "dd": 27.97
+     },
+     "unseen": {
+      "n": 1631,
+      "sum": -45.75,
+      "mean": -0.028,
+      "win": 54.4,
+      "dd": 56.4
+     },
+     "error": null,
+     "why26": {
+      "stop": 678,
+      "session": 90,
+      "target": 863
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 132,
+      "sum": 10.61,
+      "mean": 0.08,
+      "win": 43.2,
+      "dd": 7.18
+     },
+     "unseen": {
+      "n": 256,
+      "sum": -12.56,
+      "mean": -0.049,
+      "win": 34.8,
+      "dd": 15.1
+     },
+     "error": null,
+     "why26": {
+      "stop": 165,
+      "target": 84,
+      "session": 7
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 501,
+      "sum": -14.96,
+      "mean": -0.03,
+      "win": 44.7,
+      "dd": 19.09
+     },
+     "unseen": {
+      "n": 652,
+      "sum": -20.96,
+      "mean": -0.032,
+      "win": 43.7,
+      "dd": 26.66
+     },
+     "error": null,
+     "why26": {
+      "stop": 254,
+      "target": 277,
+      "session": 12,
+      "breakeven": 109
+     }
+    }
+   },
+   "best": "rr|1",
+   "passes": true
+  },
+  "t4h_5": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 53,
+      "sum": 5.01,
+      "mean": 0.095,
+      "win": 45.3,
+      "dd": 3.16
+     },
+     "unseen": {
+      "n": 91,
+      "sum": 7.47,
+      "mean": 0.082,
+      "win": 49.5,
+      "dd": 4.63
+     },
+     "error": null,
+     "why26": {
+      "session": 28,
+      "target": 32,
+      "stop": 31
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 53,
+      "sum": 5.01,
+      "mean": 0.095,
+      "win": 45.3,
+      "dd": 3.16
+     },
+     "unseen": {
+      "n": 91,
+      "sum": 7.47,
+      "mean": 0.082,
+      "win": 49.5,
+      "dd": 4.63
+     },
+     "error": null,
+     "why26": {
+      "session": 28,
+      "target": 32,
+      "stop": 31
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 175,
+      "sum": 15.71,
+      "mean": 0.09,
+      "win": 56.6,
+      "dd": 2.26
+     },
+     "unseen": {
+      "n": 235,
+      "sum": 13.37,
+      "mean": 0.057,
+      "win": 56.2,
+      "dd": 5.05
+     },
+     "error": null,
+     "why26": {
+      "stop": 55,
+      "session": 73,
+      "target": 107
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 18,
+      "sum": 2.55,
+      "mean": 0.142,
+      "win": 33.3,
+      "dd": 1.25
+     },
+     "unseen": {
+      "n": 37,
+      "sum": 0.84,
+      "mean": 0.023,
+      "win": 45.9,
+      "dd": 5.31
+     },
+     "error": null,
+     "why26": {
+      "stop": 16,
+      "target": 10,
+      "session": 11
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 53,
+      "sum": 5.01,
+      "mean": 0.095,
+      "win": 45.3,
+      "dd": 3.16
+     },
+     "unseen": {
+      "n": 91,
+      "sum": 7.47,
+      "mean": 0.082,
+      "win": 49.5,
+      "dd": 4.63
+     },
+     "error": null,
+     "why26": {
+      "session": 28,
+      "target": 32,
+      "breakeven": 11,
+      "stop": 20
+     }
+    }
+   },
+   "best": "rr|0",
+   "passes": true
+  },
+  "t1h_5@JP225": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 13,
+      "sum": -5.07,
+      "mean": -0.39,
+      "win": 38.5,
+      "dd": 5.56
+     },
+     "unseen": {
+      "n": 21,
+      "sum": 5.46,
+      "mean": 0.26,
+      "win": 57.1,
+      "dd": 2.29
+     },
+     "error": null,
+     "why26": {
+      "stop": 7,
+      "target": 10,
+      "session": 4
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 1,
+      "sum": 3.37,
+      "mean": 3.37,
+      "win": 100.0,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {
+      "target": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 50,
+      "sum": -5.6,
+      "mean": -0.112,
+      "win": 64.0,
+      "dd": 8.4
+     },
+     "unseen": {
+      "n": 74,
+      "sum": 10.72,
+      "mean": 0.145,
+      "win": 71.6,
+      "dd": 3.03
+     },
+     "error": null,
+     "why26": {
+      "target": 49,
+      "stop": 15,
+      "session": 10
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 5,
+      "sum": -5.11,
+      "mean": -1.023,
+      "win": 0.0,
+      "dd": 5.11
+     },
+     "unseen": {
+      "n": 7,
+      "sum": 5.16,
+      "mean": 0.738,
+      "win": 71.4,
+      "dd": 1.03
+     },
+     "error": null,
+     "why26": {
+      "target": 3,
+      "session": 2,
+      "stop": 2
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 13,
+      "sum": -5.07,
+      "mean": -0.39,
+      "win": 38.5,
+      "dd": 5.56
+     },
+     "unseen": {
+      "n": 21,
+      "sum": 5.46,
+      "mean": 0.26,
+      "win": 57.1,
+      "dd": 2.29
+     },
+     "error": null,
+     "why26": {
+      "stop": 6,
+      "target": 10,
+      "session": 4,
+      "breakeven": 1
+     }
+    }
+   },
+   "best": "before|base",
+   "passes": false
+  },
+  "t1h_5@N25": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 8,
+      "sum": 1.19,
+      "mean": 0.149,
+      "win": 62.5,
+      "dd": 1.11
+     },
+     "unseen": {
+      "n": 8,
+      "sum": -0.55,
+      "mean": -0.069,
+      "win": 25.0,
+      "dd": 0.94
+     },
+     "error": null,
+     "why26": {
+      "session": 7,
+      "stop": 1
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {}
+    },
+    "rr|0": {
+     "train": {
+      "n": 31,
+      "sum": -4.06,
+      "mean": -0.131,
+      "win": 45.2,
+      "dd": 4.06
+     },
+     "unseen": {
+      "n": 39,
+      "sum": 2.21,
+      "mean": 0.057,
+      "win": 59.0,
+      "dd": 0.67
+     },
+     "error": null,
+     "why26": {
+      "session": 23,
+      "target": 14,
+      "stop": 2
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 2,
+      "sum": 1.06,
+      "mean": 0.528,
+      "win": 50.0,
+      "dd": 0.07
+     },
+     "unseen": {
+      "n": 2,
+      "sum": 0.16,
+      "mean": 0.078,
+      "win": 50.0,
+      "dd": 0.23
+     },
+     "error": null,
+     "why26": {
+      "session": 2
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 8,
+      "sum": 1.19,
+      "mean": 0.149,
+      "win": 62.5,
+      "dd": 1.11
+     },
+     "unseen": {
+      "n": 8,
+      "sum": -0.55,
+      "mean": -0.069,
+      "win": 25.0,
+      "dd": 0.94
+     },
+     "error": null,
+     "why26": {
+      "session": 7,
+      "breakeven": 1
+     }
+    }
+   },
+   "best": "now|base",
+   "passes": false
+  },
+  "t5_1@N25": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 37,
+      "sum": -2.22,
+      "mean": -0.06,
+      "win": 54.1,
+      "dd": 4.89
+     },
+     "unseen": {
+      "n": 67,
+      "sum": 1.07,
+      "mean": 0.016,
+      "win": 55.2,
+      "dd": 6.46
+     },
+     "error": null,
+     "why26": {
+      "stop": 22,
+      "target": 31,
+      "session": 14
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 1,
+      "sum": -1.06,
+      "mean": -1.063,
+      "win": 0.0,
+      "dd": 1.06
+     },
+     "unseen": {
+      "n": 1,
+      "sum": -1.05,
+      "mean": -1.048,
+      "win": 0.0,
+      "dd": 1.05
+     },
+     "error": null,
+     "why26": {
+      "stop": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 242,
+      "sum": -8.14,
+      "mean": -0.034,
+      "win": 56.2,
+      "dd": 10.89
+     },
+     "unseen": {
+      "n": 286,
+      "sum": -12.29,
+      "mean": -0.043,
+      "win": 54.9,
+      "dd": 14.81
+     },
+     "error": null,
+     "why26": {
+      "stop": 70,
+      "target": 146,
+      "session": 70
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 2,
+      "sum": 0.1,
+      "mean": 0.052,
+      "win": 50.0,
+      "dd": 1.06
+     },
+     "unseen": {
+      "n": 7,
+      "sum": 1.73,
+      "mean": 0.247,
+      "win": 57.1,
+      "dd": 1.06
+     },
+     "error": null,
+     "why26": {
+      "stop": 2,
+      "target": 3,
+      "session": 2
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 37,
+      "sum": -2.22,
+      "mean": -0.06,
+      "win": 54.1,
+      "dd": 4.89
+     },
+     "unseen": {
+      "n": 67,
+      "sum": 1.07,
+      "mean": 0.016,
+      "win": 55.2,
+      "dd": 6.46
+     },
+     "error": null,
+     "why26": {
+      "stop": 16,
+      "target": 31,
+      "breakeven": 6,
+      "session": 14
+     }
+    }
+   },
+   "best": "rr|1",
+   "passes": true
+  },
+  "t1h_15@NZDCHF": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 21,
+      "sum": 1.15,
+      "mean": 0.055,
+      "win": 42.9,
+      "dd": 2.15
+     },
+     "unseen": {
+      "n": 21,
+      "sum": 8.51,
+      "mean": 0.405,
+      "win": 76.2,
+      "dd": 1.73
+     },
+     "error": null,
+     "why26": {
+      "session": 8,
+      "target": 12,
+      "stop": 1
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 8,
+      "sum": 3.22,
+      "mean": 0.402,
+      "win": 50.0,
+      "dd": 2.15
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 6.29,
+      "mean": 1.048,
+      "win": 100.0,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {
+      "session": 2,
+      "target": 4
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 42,
+      "sum": 2.3,
+      "mean": 0.055,
+      "win": 59.5,
+      "dd": 2.6
+     },
+     "unseen": {
+      "n": 44,
+      "sum": 7.15,
+      "mean": 0.162,
+      "win": 68.2,
+      "dd": 1.58
+     },
+     "error": null,
+     "why26": {
+      "session": 16,
+      "target": 24,
+      "stop": 4
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 8,
+      "sum": 3.22,
+      "mean": 0.402,
+      "win": 50.0,
+      "dd": 2.15
+     },
+     "unseen": {
+      "n": 6,
+      "sum": 6.29,
+      "mean": 1.048,
+      "win": 100.0,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {
+      "session": 2,
+      "target": 4
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 21,
+      "sum": 1.15,
+      "mean": 0.055,
+      "win": 42.9,
+      "dd": 2.15
+     },
+     "unseen": {
+      "n": 21,
+      "sum": 8.51,
+      "mean": 0.405,
+      "win": 76.2,
+      "dd": 1.73
+     },
+     "error": null,
+     "why26": {
+      "session": 8,
+      "target": 12,
+      "stop": 1
+     }
+    }
+   },
+   "best": "before|base",
+   "passes": false
+  },
+  "t1h_5@SPN35": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 10,
+      "sum": -2.27,
+      "mean": -0.227,
+      "win": 30.0,
+      "dd": 4.18
+     },
+     "unseen": {
+      "n": 18,
+      "sum": -4.72,
+      "mean": -0.262,
+      "win": 22.2,
+      "dd": 6.22
+     },
+     "error": null,
+     "why26": {
+      "session": 8,
+      "target": 3,
+      "stop": 7
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 2,
+      "sum": -1.78,
+      "mean": -0.888,
+      "win": 0.0,
+      "dd": 1.78
+     },
+     "unseen": {
+      "n": 3,
+      "sum": -2.32,
+      "mean": -0.774,
+      "win": 0.0,
+      "dd": 2.32
+     },
+     "error": null,
+     "why26": {
+      "stop": 3
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 28,
+      "sum": -2.33,
+      "mean": -0.083,
+      "win": 42.9,
+      "dd": 4.72
+     },
+     "unseen": {
+      "n": 38,
+      "sum": -7.54,
+      "mean": -0.198,
+      "win": 26.3,
+      "dd": 7.54
+     },
+     "error": null,
+     "why26": {
+      "stop": 9,
+      "session": 23,
+      "target": 6
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 4,
+      "sum": -1.85,
+      "mean": -0.461,
+      "win": 25.0,
+      "dd": 2.22
+     },
+     "unseen": {
+      "n": 11,
+      "sum": -4.83,
+      "mean": -0.439,
+      "win": 18.2,
+      "dd": 5.67
+     },
+     "error": null,
+     "why26": {
+      "session": 4,
+      "target": 1,
+      "stop": 6
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 10,
+      "sum": -2.27,
+      "mean": -0.227,
+      "win": 30.0,
+      "dd": 4.18
+     },
+     "unseen": {
+      "n": 18,
+      "sum": -4.72,
+      "mean": -0.262,
+      "win": 22.2,
+      "dd": 6.22
+     },
+     "error": null,
+     "why26": {
+      "session": 8,
+      "target": 3,
+      "stop": 5,
+      "breakeven": 2
+     }
+    }
+   },
+   "best": "before|base",
+   "passes": true
+  },
+  "t5_1@SPN35": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 26,
+      "sum": -2.58,
+      "mean": -0.099,
+      "win": 38.5,
+      "dd": 4.14
+     },
+     "unseen": {
+      "n": 72,
+      "sum": -8.29,
+      "mean": -0.115,
+      "win": 45.8,
+      "dd": 12.83
+     },
+     "error": null,
+     "why26": {
+      "target": 26,
+      "session": 20,
+      "stop": 26
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 1,
+      "sum": -0.58,
+      "mean": -0.581,
+      "win": 0.0,
+      "dd": 0.58
+     },
+     "unseen": {
+      "n": 1,
+      "sum": -1.06,
+      "mean": -1.063,
+      "win": 0.0,
+      "dd": 1.06
+     },
+     "error": null,
+     "why26": {
+      "stop": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 135,
+      "sum": -7.4,
+      "mean": -0.055,
+      "win": 54.8,
+      "dd": 9.93
+     },
+     "unseen": {
+      "n": 240,
+      "sum": -21.27,
+      "mean": -0.089,
+      "win": 49.2,
+      "dd": 22.67
+     },
+     "error": null,
+     "why26": {
+      "target": 104,
+      "session": 82,
+      "stop": 54
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 4,
+      "sum": 0.47,
+      "mean": 0.119,
+      "win": 50.0,
+      "dd": 1.09
+     },
+     "unseen": {
+      "n": 13,
+      "sum": -0.33,
+      "mean": -0.026,
+      "win": 53.8,
+      "dd": 3.26
+     },
+     "error": null,
+     "why26": {
+      "session": 2,
+      "stop": 6,
+      "target": 5
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 26,
+      "sum": -2.58,
+      "mean": -0.099,
+      "win": 38.5,
+      "dd": 4.14
+     },
+     "unseen": {
+      "n": 72,
+      "sum": -8.29,
+      "mean": -0.115,
+      "win": 45.8,
+      "dd": 12.83
+     },
+     "error": null,
+     "why26": {
+      "target": 26,
+      "session": 20,
+      "stop": 19,
+      "breakeven": 7
+     }
+    }
+   },
+   "best": "rr|1",
+   "passes": true
+  },
+  "t5_1@UK100": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 111,
+      "sum": -10.08,
+      "mean": -0.091,
+      "win": 45.0,
+      "dd": 14.09
+     },
+     "unseen": {
+      "n": 173,
+      "sum": -21.46,
+      "mean": -0.124,
+      "win": 45.1,
+      "dd": 22.57
+     },
+     "error": null,
+     "why26": {
+      "target": 73,
+      "stop": 89,
+      "session": 11
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 1,
+      "sum": -1.07,
+      "mean": -1.071,
+      "win": 0.0,
+      "dd": 1.07
+     },
+     "unseen": {
+      "n": 6,
+      "sum": -3.22,
+      "mean": -0.536,
+      "win": 16.7,
+      "dd": 4.23
+     },
+     "error": null,
+     "why26": {
+      "stop": 5,
+      "target": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 221,
+      "sum": -10.38,
+      "mean": -0.047,
+      "win": 57.5,
+      "dd": 13.53
+     },
+     "unseen": {
+      "n": 315,
+      "sum": -26.28,
+      "mean": -0.083,
+      "win": 52.7,
+      "dd": 26.45
+     },
+     "error": null,
+     "why26": {
+      "session": 27,
+      "stop": 128,
+      "target": 160
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 25,
+      "sum": -6.83,
+      "mean": -0.273,
+      "win": 28.0,
+      "dd": 8.04
+     },
+     "unseen": {
+      "n": 64,
+      "sum": -8.51,
+      "mean": -0.133,
+      "win": 39.1,
+      "dd": 11.39
+     },
+     "error": null,
+     "why26": {
+      "target": 22,
+      "stop": 39,
+      "session": 3
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 111,
+      "sum": -10.08,
+      "mean": -0.091,
+      "win": 45.0,
+      "dd": 14.09
+     },
+     "unseen": {
+      "n": 173,
+      "sum": -21.46,
+      "mean": -0.124,
+      "win": 45.1,
+      "dd": 22.57
+     },
+     "error": null,
+     "why26": {
+      "target": 73,
+      "stop": 73,
+      "breakeven": 16,
+      "session": 11
+     }
+    }
+   },
+   "best": "before|base",
+   "passes": true
+  },
+  "t1h_5@US100": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 19,
+      "sum": 6.04,
+      "mean": 0.318,
+      "win": 63.2,
+      "dd": 1.49
+     },
+     "unseen": {
+      "n": 28,
+      "sum": -0.28,
+      "mean": -0.01,
+      "win": 50.0,
+      "dd": 6.31
+     },
+     "error": null,
+     "why26": {
+      "stop": 12,
+      "target": 12,
+      "session": 4
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 2,
+      "sum": 1.35,
+      "mean": 0.675,
+      "win": 50.0,
+      "dd": 1.01
+     },
+     "unseen": {
+      "n": 5,
+      "sum": -1.51,
+      "mean": -0.303,
+      "win": 20.0,
+      "dd": 3.44
+     },
+     "error": null,
+     "why26": {
+      "stop": 4,
+      "target": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 33,
+      "sum": 5.6,
+      "mean": 0.17,
+      "win": 66.7,
+      "dd": 2.03
+     },
+     "unseen": {
+      "n": 58,
+      "sum": 2.59,
+      "mean": 0.045,
+      "win": 58.6,
+      "dd": 4.49
+     },
+     "error": null,
+     "why26": {
+      "target": 31,
+      "stop": 18,
+      "session": 9
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 10,
+      "sum": 5.96,
+      "mean": 0.596,
+      "win": 70.0,
+      "dd": 1.11
+     },
+     "unseen": {
+      "n": 15,
+      "sum": 2.08,
+      "mean": 0.139,
+      "win": 46.7,
+      "dd": 3.97
+     },
+     "error": null,
+     "why26": {
+      "stop": 7,
+      "target": 6,
+      "session": 2
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 19,
+      "sum": 6.04,
+      "mean": 0.318,
+      "win": 63.2,
+      "dd": 1.49
+     },
+     "unseen": {
+      "n": 28,
+      "sum": -0.28,
+      "mean": -0.01,
+      "win": 50.0,
+      "dd": 6.31
+     },
+     "error": null,
+     "why26": {
+      "stop": 11,
+      "breakeven": 1,
+      "target": 12,
+      "session": 4
+     }
+    }
+   },
+   "best": "now|base",
+   "passes": false
+  },
+  "t1h_5@US2000": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 12,
+      "sum": -2.81,
+      "mean": -0.234,
+      "win": 25.0,
+      "dd": 3.91
+     },
+     "unseen": {
+      "n": 18,
+      "sum": -6.02,
+      "mean": -0.334,
+      "win": 38.9,
+      "dd": 8.9
+     },
+     "error": null,
+     "why26": {
+      "stop": 10,
+      "session": 3,
+      "target": 5
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 1,
+      "sum": -1.02,
+      "mean": -1.02,
+      "win": 0.0,
+      "dd": 1.02
+     },
+     "unseen": {
+      "n": 1,
+      "sum": -0.12,
+      "mean": -0.119,
+      "win": 0.0,
+      "dd": 0.12
+     },
+     "error": null,
+     "why26": {
+      "session": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 34,
+      "sum": -2.48,
+      "mean": -0.073,
+      "win": 47.1,
+      "dd": 3.65
+     },
+     "unseen": {
+      "n": 51,
+      "sum": -3.15,
+      "mean": -0.062,
+      "win": 64.7,
+      "dd": 7.67
+     },
+     "error": null,
+     "why26": {
+      "stop": 15,
+      "target": 27,
+      "session": 9
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 6,
+      "sum": -2.29,
+      "mean": -0.382,
+      "win": 16.7,
+      "dd": 3.39
+     },
+     "unseen": {
+      "n": 8,
+      "sum": -2.78,
+      "mean": -0.348,
+      "win": 25.0,
+      "dd": 4.24
+     },
+     "error": null,
+     "why26": {
+      "stop": 5,
+      "target": 2,
+      "session": 1
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 12,
+      "sum": -2.81,
+      "mean": -0.234,
+      "win": 25.0,
+      "dd": 3.91
+     },
+     "unseen": {
+      "n": 18,
+      "sum": -6.02,
+      "mean": -0.334,
+      "win": 38.9,
+      "dd": 8.9
+     },
+     "error": null,
+     "why26": {
+      "stop": 10,
+      "session": 3,
+      "target": 5
+     }
+    }
+   },
+   "best": "before|base",
+   "passes": true
+  },
+  "t1h_5@US30": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 13,
+      "sum": -0.88,
+      "mean": -0.068,
+      "win": 38.5,
+      "dd": 2.1
+     },
+     "unseen": {
+      "n": 31,
+      "sum": 1.97,
+      "mean": 0.064,
+      "win": 45.2,
+      "dd": 5.23
+     },
+     "error": null,
+     "why26": {
+      "session": 4,
+      "stop": 14,
+      "target": 13
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 1,
+      "sum": -1.01,
+      "mean": -1.01,
+      "win": 0.0,
+      "dd": 1.01
+     },
+     "unseen": {
+      "n": 7,
+      "sum": 2.19,
+      "mean": 0.313,
+      "win": 42.9,
+      "dd": 2.25
+     },
+     "error": null,
+     "why26": {
+      "stop": 4,
+      "target": 2,
+      "session": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 30,
+      "sum": -1.74,
+      "mean": -0.058,
+      "win": 43.3,
+      "dd": 3.32
+     },
+     "unseen": {
+      "n": 54,
+      "sum": 4.5,
+      "mean": 0.083,
+      "win": 59.3,
+      "dd": 5.44
+     },
+     "error": null,
+     "why26": {
+      "session": 6,
+      "target": 29,
+      "stop": 19
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 6,
+      "sum": 0.62,
+      "mean": 0.103,
+      "win": 33.3,
+      "dd": 2.08
+     },
+     "unseen": {
+      "n": 12,
+      "sum": 0.94,
+      "mean": 0.079,
+      "win": 33.3,
+      "dd": 3.57
+     },
+     "error": null,
+     "why26": {
+      "stop": 6,
+      "session": 3,
+      "target": 3
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 13,
+      "sum": -0.88,
+      "mean": -0.068,
+      "win": 38.5,
+      "dd": 2.1
+     },
+     "unseen": {
+      "n": 31,
+      "sum": 1.97,
+      "mean": 0.064,
+      "win": 45.2,
+      "dd": 5.23
+     },
+     "error": null,
+     "why26": {
+      "session": 4,
+      "stop": 11,
+      "target": 13,
+      "breakeven": 3
+     }
+    }
+   },
+   "best": "rr|1",
+   "passes": false
+  },
+  "t1h_5@US500": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 15,
+      "sum": -3.32,
+      "mean": -0.221,
+      "win": 40.0,
+      "dd": 4.41
+     },
+     "unseen": {
+      "n": 27,
+      "sum": -1.35,
+      "mean": -0.05,
+      "win": 40.7,
+      "dd": 5.24
+     },
+     "error": null,
+     "why26": {
+      "target": 11,
+      "stop": 12,
+      "session": 4
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 1,
+      "sum": 2.51,
+      "mean": 2.513,
+      "win": 100.0,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 5,
+      "sum": -1.93,
+      "mean": -0.387,
+      "win": 20.0,
+      "dd": 3.07
+     },
+     "error": null,
+     "why26": {
+      "stop": 4,
+      "target": 1
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 37,
+      "sum": -0.46,
+      "mean": -0.013,
+      "win": 62.2,
+      "dd": 2.9
+     },
+     "unseen": {
+      "n": 53,
+      "sum": -3.62,
+      "mean": -0.068,
+      "win": 52.8,
+      "dd": 5.45
+     },
+     "error": null,
+     "why26": {
+      "target": 26,
+      "stop": 18,
+      "session": 9
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 4,
+      "sum": -1.11,
+      "mean": -0.278,
+      "win": 25.0,
+      "dd": 2.03
+     },
+     "unseen": {
+      "n": 12,
+      "sum": -3.44,
+      "mean": -0.287,
+      "win": 25.0,
+      "dd": 5.15
+     },
+     "error": null,
+     "why26": {
+      "stop": 8,
+      "target": 3,
+      "session": 1
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 15,
+      "sum": -3.32,
+      "mean": -0.221,
+      "win": 40.0,
+      "dd": 4.41
+     },
+     "unseen": {
+      "n": 27,
+      "sum": -1.35,
+      "mean": -0.05,
+      "win": 40.7,
+      "dd": 5.24
+     },
+     "error": null,
+     "why26": {
+      "target": 11,
+      "stop": 10,
+      "session": 4,
+      "breakeven": 2
+     }
+    }
+   },
+   "best": "before|base",
+   "passes": false
+  },
+  "t15_1@USDCHF": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 52,
+      "sum": -3.51,
+      "mean": -0.068,
+      "win": 57.7,
+      "dd": 9.01
+     },
+     "unseen": {
+      "n": 81,
+      "sum": 2.12,
+      "mean": 0.026,
+      "win": 64.2,
+      "dd": 5.76
+     },
+     "error": null,
+     "why26": {
+      "stop": 25,
+      "target": 52,
+      "session": 4
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {}
+    },
+    "rr|0": {
+     "train": {
+      "n": 207,
+      "sum": -0.84,
+      "mean": -0.004,
+      "win": 76.8,
+      "dd": 10.81
+     },
+     "unseen": {
+      "n": 283,
+      "sum": -16.47,
+      "mean": -0.058,
+      "win": 73.9,
+      "dd": 17.77
+     },
+     "error": null,
+     "why26": {
+      "stop": 53,
+      "session": 18,
+      "target": 212
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 3,
+      "sum": 1.65,
+      "mean": 0.55,
+      "win": 66.7,
+      "dd": 0.29
+     },
+     "unseen": {
+      "n": 10,
+      "sum": -6.26,
+      "mean": -0.626,
+      "win": 20.0,
+      "dd": 7.41
+     },
+     "error": null,
+     "why26": {
+      "target": 2,
+      "stop": 7,
+      "session": 1
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 52,
+      "sum": -3.51,
+      "mean": -0.068,
+      "win": 57.7,
+      "dd": 9.01
+     },
+     "unseen": {
+      "n": 81,
+      "sum": 2.12,
+      "mean": 0.026,
+      "win": 64.2,
+      "dd": 5.76
+     },
+     "error": null,
+     "why26": {
+      "stop": 25,
+      "target": 52,
+      "session": 4
+     }
+    }
+   },
+   "best": "rr|1",
+   "passes": false
+  },
+  "t15_1@USDJPY": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 58,
+      "sum": -16.86,
+      "mean": -0.291,
+      "win": 41.4,
+      "dd": 18.37
+     },
+     "unseen": {
+      "n": 80,
+      "sum": -5.25,
+      "mean": -0.066,
+      "win": 56.2,
+      "dd": 7.72
+     },
+     "error": null,
+     "why26": {
+      "target": 43,
+      "stop": 34,
+      "session": 3
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "unseen": {
+      "n": 0,
+      "sum": 0.0,
+      "mean": null,
+      "dd": 0.0
+     },
+     "error": null,
+     "why26": {}
+    },
+    "rr|0": {
+     "train": {
+      "n": 181,
+      "sum": -12.09,
+      "mean": -0.067,
+      "win": 70.2,
+      "dd": 13.87
+     },
+     "unseen": {
+      "n": 248,
+      "sum": -11.45,
+      "mean": -0.046,
+      "win": 72.6,
+      "dd": 12.6
+     },
+     "error": null,
+     "why26": {
+      "stop": 50,
+      "target": 179,
+      "session": 19
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 10,
+      "sum": -3.92,
+      "mean": -0.392,
+      "win": 30.0,
+      "dd": 4.02
+     },
+     "unseen": {
+      "n": 21,
+      "sum": -0.52,
+      "mean": -0.025,
+      "win": 47.6,
+      "dd": 4.28
+     },
+     "error": null,
+     "why26": {
+      "stop": 11,
+      "target": 10
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 58,
+      "sum": -16.86,
+      "mean": -0.291,
+      "win": 41.4,
+      "dd": 18.37
+     },
+     "unseen": {
+      "n": 80,
+      "sum": -5.25,
+      "mean": -0.066,
+      "win": 56.2,
+      "dd": 7.72
+     },
+     "error": null,
+     "why26": {
+      "target": 43,
+      "stop": 34,
+      "session": 3
+     }
+    }
+   },
+   "best": "before|base",
+   "passes": true
+  },
+  "t15_5@XAGUSD": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 119,
+      "sum": 4.98,
+      "mean": 0.042,
+      "win": 58.0,
+      "dd": 6.69
+     },
+     "unseen": {
+      "n": 194,
+      "sum": -23.43,
+      "mean": -0.121,
+      "win": 47.4,
+      "dd": 23.43
+     },
+     "error": null,
+     "why26": {
+      "session": 20,
+      "stop": 94,
+      "target": 80
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 12,
+      "sum": 0.02,
+      "mean": 0.001,
+      "win": 41.7,
+      "dd": 3.41
+     },
+     "unseen": {
+      "n": 25,
+      "sum": -2.28,
+      "mean": -0.091,
+      "win": 36.0,
+      "dd": 8.75
+     },
+     "error": null,
+     "why26": {
+      "stop": 16,
+      "target": 5,
+      "session": 4
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 155,
+      "sum": 9.06,
+      "mean": 0.058,
+      "win": 66.5,
+      "dd": 4.02
+     },
+     "unseen": {
+      "n": 215,
+      "sum": -28.21,
+      "mean": -0.131,
+      "win": 56.3,
+      "dd": 28.25
+     },
+     "error": null,
+     "why26": {
+      "session": 39,
+      "target": 111,
+      "stop": 65
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 54,
+      "sum": 4.53,
+      "mean": 0.084,
+      "win": 51.9,
+      "dd": 3.38
+     },
+     "unseen": {
+      "n": 110,
+      "sum": -6.2,
+      "mean": -0.056,
+      "win": 43.6,
+      "dd": 13.15
+     },
+     "error": null,
+     "why26": {
+      "stop": 60,
+      "target": 37,
+      "session": 13
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 119,
+      "sum": 4.98,
+      "mean": 0.042,
+      "win": 58.0,
+      "dd": 6.69
+     },
+     "unseen": {
+      "n": 194,
+      "sum": -23.43,
+      "mean": -0.121,
+      "win": 47.4,
+      "dd": 23.43
+     },
+     "error": null,
+     "why26": {
+      "session": 20,
+      "stop": 94,
+      "target": 80
+     }
+    }
+   },
+   "best": "rr|0",
+   "passes": false
+  },
+  "t1h_5@XAUUSD": {
+   "rows": {
+    "now|base": {
+     "train": {
+      "n": 30,
+      "sum": 2.55,
+      "mean": 0.085,
+      "win": 53.3,
+      "dd": 3.79
+     },
+     "unseen": {
+      "n": 39,
+      "sum": -1.96,
+      "mean": -0.05,
+      "win": 53.8,
+      "dd": 6.21
+     },
+     "error": null,
+     "why26": {
+      "stop": 15,
+      "target": 17,
+      "session": 7
+     }
+    },
+    "before|base": {
+     "train": {
+      "n": 8,
+      "sum": -0.24,
+      "mean": -0.03,
+      "win": 25.0,
+      "dd": 3.12
+     },
+     "unseen": {
+      "n": 12,
+      "sum": -0.95,
+      "mean": -0.08,
+      "win": 41.7,
+      "dd": 3.45
+     },
+     "error": null,
+     "why26": {
+      "stop": 6,
+      "session": 2,
+      "target": 4
+     }
+    },
+    "rr|0": {
+     "train": {
+      "n": 73,
+      "sum": -0.91,
+      "mean": -0.013,
+      "win": 71.2,
+      "dd": 3.31
+     },
+     "unseen": {
+      "n": 85,
+      "sum": -8.29,
+      "mean": -0.097,
+      "win": 60.0,
+      "dd": 9.4
+     },
+     "error": null,
+     "why26": {
+      "session": 22,
+      "target": 47,
+      "stop": 16
+     }
+    },
+    "rr|1": {
+     "train": {
+      "n": 8,
+      "sum": -0.24,
+      "mean": -0.03,
+      "win": 25.0,
+      "dd": 3.12
+     },
+     "unseen": {
+      "n": 12,
+      "sum": -0.95,
+      "mean": -0.08,
+      "win": 41.7,
+      "dd": 3.45
+     },
+     "error": null,
+     "why26": {
+      "stop": 6,
+      "session": 2,
+      "target": 4
+     }
+    },
+    "now|walk": {
+     "train": {
+      "n": 30,
+      "sum": 2.55,
+      "mean": 0.085,
+      "win": 53.3,
+      "dd": 3.79
+     },
+     "unseen": {
+      "n": 39,
+      "sum": -1.96,
+      "mean": -0.05,
+      "win": 53.8,
+      "dd": 6.21
+     },
+     "error": null,
+     "why26": {
+      "stop": 15,
+      "target": 17,
+      "session": 7
+     }
+    }
+   },
+   "best": "now|base",
+   "passes": false
+  }
+ },
+ "all": {
+  "now|base": {
+   "train_sum": 303.8,
+   "unseen_sum": 67.29,
+   "train_n": 2517,
+   "unseen_n": 3606
+  },
+  "before|base": {
+   "train_sum": 356.41,
+   "unseen_sum": 127.0,
+   "train_n": 690,
+   "unseen_n": 996
+  },
+  "rr|0": {
+   "train_sum": 249.8,
+   "unseen_sum": -82.43,
+   "train_n": 5745,
+   "unseen_n": 7662
+  },
+  "rr|1": {
+   "train_sum": 329.08,
+   "unseen_sum": 101.84,
+   "train_n": 920,
+   "unseen_n": 1488
+  },
+  "now|walk": {
+   "train_sum": 307.73,
+   "unseen_sum": 62.22,
+   "train_n": 2528,
+   "unseen_n": 3622
+  }
+ },
+ "pick_per_track": {
+  "train": 415.95,
+  "unseen": 121.81
+ }
+}

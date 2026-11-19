@@ -1285,6 +1285,17 @@ def mg_walk(D, cfg, htf, ltf, f, d, px, stop, tgt, risk, hi_sw, lo_sw, n1):
     part_r, frac, moved, lv_done, nstop = 0.0, 0.0, False, False, None
     stp = stop
     W = 3 * TF[ltf]
+    # time stop / ATR trail / break-even with the costs (user, 19.11.2026: "research how to manage a live trade";
+    # agents/tal_mgmt2_study): TSTOP "N:m" - after N low-timeframe candles with the best excursion under m R, out at
+    # the next minute's open; ATRTR "k:a" - from +a R the stop trails k x the low timeframe's ATR(14) behind the best
+    # price (only closer); BECR "a" - at +a R the stop to the entry + the costs (a trade that came back pays nothing)
+    tst = [float(x) for x in str(cfg["TSTOP"]).split(":")] if cfg.get("TSTOP") else None
+    atr_t = [float(x) for x in str(cfg["ATRTR"]).split(":")] if cfg.get("ATRTR") else None
+    becr = float(cfg["BECR"]) if cfg.get("BECR") else None
+    if atr_t:
+        lts, _, _, _, _, latr = D.tf(ltf)
+    best = px
+    cst = float(D.cost[f])
     for i in range(0, e - f):
         q = f + i
         if nstop is not None:
@@ -1301,7 +1312,22 @@ def mg_walk(D, cfg, htf, ltf, f, d, px, stop, tgt, risk, hi_sw, lo_sw, n1):
             break
         if i == 0:
             continue
+        best = max(best, h1[q]) if d > 0 else min(best, l1[q])
+        mfe_ = d * (best - px) / risk
+        if tst and i >= tst[0] * TF[ltf] and mfe_ < tst[1] and not moved:
+            ex, why = (o1[q + 1] if q + 1 < n1 else o1[q]), "time"
+            q = min(q + 1, n1 - 1)
+            break
         cand = stp
+        if becr is not None and mfe_ >= becr:
+            b_ = px + d * cst
+            cand = b_ if d * (b_ - cand) > 0 else cand
+        if atr_t and mfe_ >= atr_t[1]:
+            j_ = int(np.searchsorted(lts, ns[q], side="right")) - 2         # the last closed low-timeframe candle
+            if j_ >= 0 and np.isfinite(latr[j_]):
+                t_ = best - d * atr_t[0] * float(latr[j_])
+                if d * (t_ - cand) > 0 and ((t_ < l1[q]) if d > 0 else (t_ > h1[q])):
+                    cand = t_
         if lvl is not None and not lv_done and ((h1[q] >= lvl) if d > 0 else (l1[q] <= lvl)):
             lv_done = True
             take = frac0
@@ -1445,7 +1471,7 @@ def simulate(D, pair, cfg, gcache, keep=None):
                          "mins": lt["end"]})
             busy = f + lt["end"] + 1
             continue
-        if cfg.get("BOS") or cfg.get("VOLP") or cfg.get("MGW"):   # MGMT study: the minute-by-minute walk
+        if cfg.get("BOS") or cfg.get("VOLP") or cfg.get("MGW") or cfg.get("TSTOP") or cfg.get("ATRTR") or cfg.get("BECR"):   # MGMT study: the minute-by-minute walk
             w_ = mg_walk(D, cfg, htf, ltf, f, d, px, stop, tgt, risk, hi_sw, lo_sw, n1)
             if w_ is None:
                 break                                    # still open at the data's end

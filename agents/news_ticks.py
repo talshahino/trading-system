@@ -45,6 +45,9 @@ from agents import ftmo_universe as U  # noqa: E402
 
 OUT = ROOT / "reports" / "agents" / "bot7" / "news_ticks"
 CACHE = ROOT / "cache" / "duka_ticks"
+# why downloads fail (manager, 19.11.2026: EV04 ticks lose a third of its hours a round and nobody knows why):
+# the last failure reason of each attempt, counted - printed by the callers so the agent sees 503 / 429 / timeout
+FAIL_WHY: dict = {}
 SYMS = {"AUDUSD": "AUDUSD", "AUDJPY": "AUDJPY", "EURAUD": "EURAUD", "USDCAD": "USDCAD", "CADJPY": "CADJPY",
         "NZDUSD": "NZDUSD", "GBPUSD": "GBPUSD", "EURGBP": "EURGBP", "GBPJPY": "GBPJPY", "EURUSD": "EURUSD",
         "USDJPY": "USDJPY", "XAUUSD": "XAUUSD", "US100": "USATECHIDXUSD", "US500": "USA500IDXUSD"}
@@ -81,8 +84,10 @@ def fetch_hour(inst, h):
             if r.status_code == 404:
                 ok = True
                 break
-        except Exception:  # noqa: BLE001
-            pass
+            why = f"http{r.status_code}"
+        except Exception as e:  # noqa: BLE001
+            why = type(e).__name__
+        FAIL_WHY[why] = FAIL_WHY.get(why, 0) + 1
         time.sleep(1 + 2 * k)
     rows = np.zeros((0, 3), dtype=np.float64)
     if data:

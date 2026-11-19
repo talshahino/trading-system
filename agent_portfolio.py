@@ -1126,6 +1126,9 @@ def cards_for(bot):
     return cards, tested
 
 
+TICKS_RAN = [False]
+
+
 def _study(module, mins, t0, budget):
     """One of bot 7's studies, inside the round's time (manager, 18.11.2026: the studies ran one after the other, each
     up to its minutes + 30, so the round of 09:17 UTC reached the computer's limit of budget + 60 minutes and was stopped
@@ -1180,6 +1183,7 @@ def main():
             from agents import news_straddle as NS0, news_straddle_ticks as NSTK0
             if NSTK0.stale() and not NS0.stale():
                 _study("agents.news_straddle_ticks", max(10.0, a.minutes / 3), t0, budget)
+                TICKS_RAN[0] = True
         except Exception as e:  # noqa: BLE001
             print(f"bot7 straddle ticks check failed: {e}")
         # bot 7's fix study (agents/news_fix.py): the three strategies pooled over all instruments, split by release
@@ -1225,7 +1229,9 @@ def main():
         # budget until it is complete (it resumes), then weekly
         try:
             from agents import news_straddle_ticks as NSTK
-            if NSTK.stale() and not NS.stale():
+            # (manager, 19.11.2026: it also ran above in the same round - 26 of 45 minutes on downloads and 0
+            # experiments in the 12:00 round, 101 of 486 done; once a round is enough, it resumes)
+            if NSTK.stale() and not NS.stale() and not TICKS_RAN[0]:
                 mins = max(6.0, a.minutes / 4)
                 _study("agents.news_straddle_ticks", mins, t0, budget)
         except Exception as e:  # noqa: BLE001
@@ -1301,7 +1307,9 @@ def main():
     # 0.8 of the budget for the experiments, the leftover was under the 2-minute minimum and they never ran)
     skip_first = a.where == "pc" and a.bot not in NEW_ONLY and scout_gh_fresh(a.bot)
     first = 0 if skip_first else (test_new(a.bot, budget / 3, a.where) if untested_new(a.bot, a.where) else 0)
-    done, left = experiments(a.bot, budget - (time.time() - t0), a.where)
+    # the experiments always get at least a quarter of the budget (manager, 19.11.2026: bot 7's studies took the whole
+    # round - 3,156 of 2,700 s - and its experiments ran 0 for days with 385 left; the computer's limit is budget + 60)
+    done, left = experiments(a.bot, max(budget / 4, budget - (time.time() - t0)), a.where)
     new = first + test_new(a.bot, budget - (time.time() - t0), a.where)
     # the whole run's count (the "stopped for time, 0 tested" line above is only the last pass, and read as if nothing ran)
     print(f"this run: {done} experiments, {new} new-strategy combos" + (" (first pass left to the GitHub scout)" if skip_first else ""))

@@ -218,7 +218,8 @@ def run(minutes):
             have[sym].append(row)
         for s_, rows in have.items():                       # after every batch: a restart loses one batch at most
             (ROWS / f"{s_}.json").write_text(json.dumps(rows), encoding="utf-8")
-        print(f"EV04 ticks: {min(k + BATCH, len(left))}/{len(left)} done, {failed} failed downloads", flush=True)
+        print(f"EV04 ticks: {min(k + BATCH, len(left))}/{len(left)} done, {failed} failed downloads"
+              + (f" (attempts failed: {dict(sorted(NT.FAIL_WHY.items(), key=lambda kv: -kv[1]))})" if NT.FAIL_WHY else ""), flush=True)
     report(total=len(todo))
     return True
 

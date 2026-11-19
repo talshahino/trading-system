@@ -121,7 +121,12 @@ def dir_keep(t, kind):
             ema = b.ewm(span=20, adjust=False).mean()
             ref = pd.DataFrame({"x": b - ema}, index=b.index + pd.Timedelta(rule))              # known at the bar's close
         ref = ref.sort_index()
-        x = pd.merge_asof(pd.DataFrame({"time": tt.values}).sort_values("time"), ref, left_on="time", right_index=True)["x"]
+        # keep the tz (tt.values dropped it -> "incompatible merge keys") and map back to the trades' own order
+        q = pd.DataFrame({"time": pd.to_datetime(tt, utc=True).to_numpy(), "pos": np.arange(len(tt))})
+        q["time"] = pd.to_datetime(q["time"], utc=True)
+        ref.index = pd.to_datetime(ref.index, utc=True)
+        q = pd.merge_asof(q.sort_values("time"), ref, left_on="time", right_index=True).sort_values("pos")
+        x = q["x"]
         sgn = np.sign(x.to_numpy(float))
         d = t.loc[m, "dir"].to_numpy()
         keep[np.where(m)[0]] = ~(np.isfinite(sgn) & (sgn != 0) & (sgn != d))

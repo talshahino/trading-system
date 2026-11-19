@@ -316,6 +316,24 @@
     "cause": "סגירה בגלל כלל",
     "fixes": [
      {
+      "what": "⭐ TV24|15Min|TSLA: לא נגד מגמה חזקה (5 ממוצעים 9/21/50/100/200 בסדר)",
+      "decision": "1491ca01b4f4",
+      "at": "2026-11-19T19:27:02+00:00",
+      "effect_month_pct": 0.13,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "e9cf2a5f28ea",
+      "at": "2026-11-19T19:27:02+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.97,
+      "value": 0.7
+     },
+     {
       "what": "סיכון ×0.97",
       "decision": "091060e6d03c",
       "at": "2026-11-13T22:11:46+00:00",
@@ -326,14 +344,12 @@
      }
     ],
     "open": false,
-    "cut_only": true
+    "cut_only": false
    }
   ],
   "open": [],
-  "cut_only": [
-   "TV24|15Min|TSLA"
-  ],
-  "total_month_pct": 0.0,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "cut_only": [],
+  "total_month_pct": 0.13,
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון"
  }
 }

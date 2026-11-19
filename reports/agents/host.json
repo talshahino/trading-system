@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-19T02:53:37+00:00",
+ "updated": "2026-11-19T03:10:22+00:00",
  "light_at": "2026-11-19T02:53:37+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -9,12 +9,9 @@
   "smart": 60
  },
  "smart_minutes": {
-  "bot5": 40.0,
-  "bot6": 50.0
+  "bot4": 30.0
  },
- "agent_errors": [
-  "bot5: publishing failed: 401 Client Error: Unauthorized for url: https://api.github.com/repos/talshahino/trading-system/git/blobs"
- ],
+ "agent_errors": [],
  "agent_last": {
   "bot5": "2026-11-18T21:17:40+00:00",
   "bot5-new": "2026-11-18T23:30:17+00:00",
@@ -44,9 +41,8 @@
    "(continued across a manager restart)"
   ],
   "bot4": [
-   "this run: 45 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
-   "{\"bot\": \"bot4\", \"cards\": 23770, \"tiers\": {\"rejected\": 20587, \"watch\": 2733, \"regular\": 450}, \"done\": 217, \"planned\": 282}",
-   "(continued across a manager restart)"
+   "this run: 37 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
+   "{\"bot\": \"bot4\", \"cards\": 23773, \"tiers\": {\"rejected\": 20590, \"watch\": 2734, \"regular\": 449}, \"done\": 221, \"planned\": 282}"
   ],
   "bot7-shocks": [
    "walk-forward book inside 2025 (fade): ['GER40'] train {'n': 37, 'eff_n': 37.0, 'mean': 0.3123, 't': 1.08, 'win': 46.1, 'sum': 11.41} unseen {'n': 56, 'eff_n': 56.0, 'mean': -0.0532, 't': -0.27, 'win': 32.0, 'sum': -2.75}",
@@ -113,12 +109,11 @@
    "adopted": true
   },
   "bot4": {
-   "at": "2026-11-18T18:50:58+00:00",
-   "sec": 2025,
+   "at": "2026-11-19T02:31:58+00:00",
+   "sec": 2021,
    "budget_sec": 1800,
-   "ok": null,
-   "err": null,
-   "adopted": true
+   "ok": true,
+   "err": null
   },
   "bot7": {
    "at": "2026-11-18T19:32:06+00:00",
@@ -165,9 +160,9 @@
   }
  ],
  "portfolio": {
-  "at": "2026-11-18T23:53:25+00:00",
+  "at": "2026-11-19T03:06:51+00:00",
   "ok": true,
-  "sec": 108
+  "sec": 117
  },
  "box_pub": "UT9R6umHmW2BY3ghrGz5Lt7nM5l7jNp88LK8mtnz9VQ=",
  "alpaca": true,
@@ -181,8 +176,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.8,
-   "load_pct": 77
+   "free": 1.0,
+   "load_pct": 86
   }
  }
 }

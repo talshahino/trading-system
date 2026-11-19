@@ -2520,7 +2520,7 @@ function wbRender(box = $("wbBody")) {
     // opened - "at least show whether they succeeded, counted or not")
     const how = t.status === "closed" && t.r != null ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "הצליחה · ביעד" : t.reason === "stop" ? "נכשלה · בסטופ" : t.reason === "breakeven" ? "בנקודת הכניסה" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון</span>`
       : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון</span>` : "";
-    const res = t.skipped ? how + `<span class="pill">${t.skipped === "old" || t.skipped === "v4" ? "מסלול ישן · לא בחשבון הווירטואלי" : t.skipped === "before" ? "לפני פתיחת החשבון" : t.skipped === "v5" || t.skipped === "v1m" ? "מסלול נפרד · לא בחשבון הווירטואלי" : t.skipped === "extra" ? "איסוף נתונים · לא בחשבון" : `לא נספרה בחשבון (${{daily: "עצירה יומית", room: "אין מקום במגבלה עם העסקאות הפתוחות", side: "מסלול אחר כבר באותו כיוון", dir: "תקרת עסקאות באותו כיוון", hours: "שעה חסומה", breach: "החשבון נשרף", tal_no: "ענית: לא", tal_none: "לא ענית בזמן"}[t.skipped] || t.skipped})`}</span>`
+    const res = t.skipped ? how + `<span class="pill">${t.skipped === "old" || t.skipped === "v4" ? "מסלול ישן · לא בחשבון הווירטואלי" : t.skipped === "before" ? "לפני פתיחת החשבון" : t.skipped === "v5" || t.skipped === "v1m" ? "מסלול נפרד · לא בחשבון הווירטואלי" : t.skipped === "extra" ? "איסוף נתונים · לא בחשבון" : `לא נספרה בחשבון (${{daily: "עצירה יומית", room: "אין מקום במגבלה עם העסקאות הפתוחות", side: "מסלול אחר כבר באותו כיוון", dir: "תקרת עסקאות באותו כיוון", hours: "שעה חסומה", breach: "החשבון נשרף", tal_no: "ענית: לא", tal_none: "לא סימנת \"הייתי לוקח\" לפני הכניסה"}[t.skipped] || t.skipped})`}</span>`
       : t.status === "cancelled" && TALWHY[t.why] ? `<span class="pill">${TALWHY[t.why]}</span>`
       : t.status === "closed" ? `<span class="pill ${t.r >= 0 ? "pos" : "neg"}">${t.reason === "target" ? "ביעד" : t.reason === "stop" ? "בסטופ" : t.reason === "breakeven" ? "בנקודת הכניסה" : "סגירה כפויה"} · <bdi>${t.r >= 0 ? "+" : ""}${(+t.r).toFixed(2)}</bdi> סיכון${money(t.pnl)}</span>`
       : t.status === "open" && t.r_now != null ? `<span class="pill warn">עכשיו <bdi>${t.r_now >= 0 ? "+" : ""}${(+t.r_now).toFixed(2)}</bdi> סיכון${money(t.pnl_now)}</span>` : `<span class="pill ${st[1]}">${st[0]}</span>`;
@@ -2788,8 +2788,8 @@ async function comboFill() {
   $("comboCard").innerHTML = `<div class="h4" style="margin-top:18px">איזה נכס טוב לאיזה צמד גרפים</div><div class="mut" style="margin-bottom:6px">R ממוצע לעסקה (מספר עסקאות). ${esc((d.check || {}).note || "")}</div>
     <div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th>נכס</th><th>צמד גרפים</th><th>2025</th><th>2026</th><th>חי</th><th></th></tr>${rows}</table></div></div>`;
 }
-const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא ענית בזמן", levels: "לא נכנסה · המחיר כבר עבר את הרמות"};
-const rvNeeded = t => t && t.status === "pending" && t.tal && t.asked && !t.sleep;
+const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא סימנת \"הייתי לוקח\" לפני הכניסה", levels: "לא נכנסה · המחיר כבר עבר את הרמות"};
+const rvNeeded = t => t && t.status === "pending" && t.tal && t.asked;   // night ones too: only his yes enters (19.11.2026)
 /* the same gap seen by another track (id "<sym>|tal|<dir>|<gap>|<track>"): one question - his answer goes to all of
    them (user, 18.11.2026: "two trades wait for my mark and the marks tab shows one") */
 const rvSiblings = id => { const g = String(id).split("|").slice(0, 4).join("|");

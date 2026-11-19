@@ -1911,8 +1911,10 @@ def main():
                             hour_ = side_ = dir_ = False     # his yes decides; only the risk limits below still hold
                         if rev_ and mk_.get("take") == "no":
                             rec["skipped"] = "tal_no"        # Tal: would not enter
-                        elif rev_ and mk_.get("take") != "yes" and not rec.get("sleep") and rec.get("asked"):
-                            rec["skipped"] = "tal_none"      # asked, no answer before the entry
+                        elif rev_ and mk_.get("take") != "yes":
+                            # only a trade he marked "would take" goes in (user, 19.11.2026: "you do not enter trades I
+                            # did not mark as ones I would take - none are taken like that"), asked or not, night or day
+                            rec["skipped"] = "tal_none"
                         elif A_.get("breached"):
                             rec["skipped"] = "breach"
                         elif hour_:

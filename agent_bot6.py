@@ -710,12 +710,48 @@ def _b5_size(k, v):
             f"לא מרוויח יותר עד 2025 (כרטיס cd0434848bb3), אין שינוי בבוט 5.")
 
 
+# THE STOP TO THE ENTRY AT A SHARE OF THE WAY ON THE 1h / 5m TRACK (bot 6's smart agent, 19.11.2026 evening; the user's
+# rule of 9-10.11 "break-even at 60% of the way", and 16.11 "a profit that turns into a full loss"): the 1h / 5m track
+# (tal) runs with no management at all (EXIT none) - on 19.11 its US500 long (1 MES, entry 7381.9, stop 7359.45, target
+# 7415.05) went to 7410.65 = +1.28R, 86.7% of the way, and came back to the full stop (-116$) in 35 minutes. The
+# gave-back tests (GAVE6) tried the "o1r" levels, partials and +R levels - partials do not exist in one micro contract
+# (most of this track's trades) and every one earned less. The plain levels were never run on this track's live rules:
+# be618 (his 60%), be70, be786 (bot 5 trades 1h / 5m on the same three indices with be786), be886. Settings knobs (EXIT is
+# in simulate and live_trades alike), head to head on the four tracks, first in the user's step.
+BEWAY6 = tuple(("EXIT", v) for v in ("be618", "be70", "be786", "be886"))
+FILT_HE["EXIT"] = (lambda f0: lambda v: {
+    "be618": "סטופ לכניסה ב־61.8% מהדרך ליעד (be618)", "be70": "סטופ לכניסה ב־70% מהדרך ליעד (be70)",
+    "be786": "סטופ לכניסה ב־78.6% מהדרך ליעד (be786)", "be886": "סטופ לכניסה ב־88.6% מהדרך ליעד (be886)"}.get(v) or f0(v))(FILT_HE["EXIT"])
+# BOT 5'S DAILY-BREAK QUESTION ON THE CONTRACTS (task b5reopen1911, shared methods): its 5m / 1m gap of 18.11 gave 4 stops
+# right at the indices' reopen. On bot 6 every trade is already closed at 16:05 and no entry is made 15:45-18:00; "no
+# entry in the first hour after 18:00" (SESS xreopen) lost on all four tracks (tal 2026 +63.4R -> +42.7R). The finer
+# windows bot 5 asked for: no entry in the first 5 / 15 minutes after the 18:00 reopen (tal_gap.SESS_NY xreo5 / xreo15).
+REO6 = (("SESS", "xreo5"), ("SESS", "xreo15"))
+FILT_HE["SESS"] = (lambda f0: lambda v: {
+    "xreo5": "בלי כניסה ב־5 הדקות הראשונות אחרי הפתיחה של 18:00 (SESS xreo5)",
+    "xreo15": "בלי כניסה ב־15 הדקות הראשונות אחרי הפתיחה של 18:00 (SESS xreo15)"}.get(v) or f0(v))(FILT_HE.get("SESS", lambda v: f"SESS {v}"))
+
+
+def _b5_beway(v):
+    """Which of bot 5's tracks trade the same stop-to-the-entry level (live/bots/bot5.json tal_tracks)."""
+    try:
+        tr = json.loads(Path("live/bots/bot5.json").read_text(encoding="utf-8")).get("tal_tracks") or {}
+    except Exception:  # noqa: BLE001
+        tr = {}
+    on = sorted(k for k, x in tr.items() if isinstance(x, dict) and (x.get("cfg") or {}).get("EXIT") == v)
+    if not on:
+        return f"אף מסלול של בוט 5 לא סוחר ב־{v}."
+    ix = [k.split("@")[1] for k in on if "@" in k and k.split("@")[1] in ("US100", "US500", "US30")]
+    return (f"בוט 5 סוחר ב־{v} ב־{len(on)} מסלולים" + (f", כולל שעה / 5 דק' על {' / '.join(ix)}" if ix and any(k.startswith('t1h_5@') for k in on) else "")
+            + " (נבחר שם על 2025 ונבדק על 2026).")
+
+
 CODE6 = ("PYR", "FOLLOW", "WAITX")     # knobs live_trades does not run yet: an approved card is built by the smart agent
 TASK6 = {"gaveback": GAVE6, "follow": FOL6, "brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
          "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6,
          "gapx": GAPX6, "firstg": FG6, "stopat": STOP6, "waitx": WAIT6, "widestop": WIDE6, "stopmove": MOVE6, "mingap": MING6,
-         "minrr": MINRR6, "moverr": MOVERR6, "gapsize": GSIZE6}
-USER6 = MINRR6 + MOVERR6 + GSIZE6 + WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+         "minrr": MINRR6, "moverr": MOVERR6, "gapsize": GSIZE6, "beway": BEWAY6, "reopen": REO6}
+USER6 = BEWAY6 + MINRR6 + MOVERR6 + GSIZE6 + REO6 + WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
@@ -871,12 +907,16 @@ def filt_cards(idx, group=FILT6):
                           f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R. בסיכון {r_ * 100:g}%. "
                           + (f"משימה של טל מ־14.11. " if k in ("BBW", "NEWSX", "PYR", "WKND", "G3", "SWP", "BRKH", "REARM") or str(v).startswith("e920") or v in TASK_TREND or v in ("sb", "sb10") else "")
                           + ("משימה של טל מ־16.11 (הפסדים שהיו ברווח - יציאה חלקית). " if (k, v) in GAVE6 else "")
+                          + ("הכלל של טל (סטופ לכניסה ב־60% מהדרך) וההפסד של 19.11 (US500 שעה / 5 דק', ‎+1.28R, 86.7% מהדרך, וחזר לסטופ מלא). " if (k, v) in BEWAY6 else "")
+                          + ("השאלה של בוט 5 על הפתיחה היומית (b5reopen1911 - שיטה משותפת). " if (k, v) in REO6 else "")
                           + ("משימה של טל מ־16.11 (נרות חזקים אחרי הכניסה - b5follow1611). " if k == "FOLLOW" else "")
                           + ("משימה של טל מ־17.11 (הסקירה של הגאפים בבוט 5 - שיטה משותפת). " if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX") else "")
                           + ("משימה של טל מ־18.11 (סטופ רחב יותר וגודל גאפ - שיטה משותפת עם בוט 5). " if k in ("IPAD", "MIN_GAP", "GAPPCT", "GAPLEG") or (k, v) in WIDE6 else "")
                           + ("משימה של טל מ־19.11 (\"אין לי בעיה גם ביחס 1 ל־0.5\" - שיטה משותפת עם בוט 5). " if k in ("MIN_RR", "MOVE_RR") else "")
                           + "בבוט 5: " + ("עוד לא נבדק - שיטה של בוט 6, נשלחה לבוט 5 כמשימה (b6to5rearm)." if k == "REARM" else
                                           _b5_gave(v) if (k, v) in GAVE6 else
+                                          _b5_beway(v) if (k, v) in BEWAY6 else
+                                          "הבדיקה נבנית אצלו עכשיו (b5reopen1911)." if (k, v) in REO6 else
                                           _b5_gave(v, ("_follow",)) if k == "FOLLOW" else
                                           _b5_rev(k, v) if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX", "IPAD", "MIN_GAP") else
                                           _b5_minrr(k, v) if k in ("MIN_RR", "MOVE_RR") else

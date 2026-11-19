@@ -867,6 +867,9 @@ SESS_NY = {"rth": [(570, 960)], "nyam": [(570, 690)], "xopen": [(0, 570), (600, 
            # 15:45 cutoff, 15:00-15:45 (on 13.11 a 5m/1m long at 15:25 was stopped at 15:40, -1R) - little time left
            # before the forced exit at 16:05 and the close's own swings
            "xreopen": [(0, 1080), (1140, 1440)], "xlate": [(0, 900), (945, 1440)],
+           # (bot 6's smart agent, 19.11.2026 evening - bot 5's task b5reopen1911, shared): no entry in the first 5 / 15
+           # minutes after the 18:00 New York reopen (its 5m / 1m gap of 18.11 gave 4 stops at the indices' reopen)
+           "xreo5": [(0, 1080), (1085, 1440)], "xreo15": [(0, 1080), (1095, 1440)],
            # ICT Silver Bullet (the user's video of 14.11.2026, task tal1411gapplus (1), Flux): entries only in the
            # three New York windows 03:00-04:00, 10:00-11:00 and 14:00-15:00
            "sb": [(180, 240), (600, 660), (840, 900)], "sb10": [(600, 660)]}

@@ -1,5 +1,5 @@
 {
- "at": "2026-11-19T06:49:49+00:00",
+ "at": "2026-11-19T07:01:53+00:00",
  "no_volume": [],
  "tracks": {
   "t1h_5@AUS200": {
@@ -3132,6 +3132,28 @@
       "target": 4
      }
     },
+    "now|walk": {
+     "train": {
+      "n": 30,
+      "sum": 2.55,
+      "mean": 0.085,
+      "win": 53.3,
+      "dd": 3.79
+     },
+     "unseen": {
+      "n": 39,
+      "sum": -1.96,
+      "mean": -0.05,
+      "win": 53.8,
+      "dd": 6.21
+     },
+     "error": null,
+     "why26": {
+      "stop": 15,
+      "target": 17,
+      "session": 7
+     }
+    },
     "rr|0": {
      "train": {
       "n": 73,
@@ -3154,7 +3176,117 @@
       "stop": 16
      }
     },
-    "rr|1": {
+    "rr|0.6": {
+     "train": {
+      "n": 27,
+      "sum": 1.9,
+      "mean": 0.07,
+      "win": 51.9,
+      "dd": 3.79
+     },
+     "unseen": {
+      "n": 33,
+      "sum": -4.18,
+      "mean": -0.127,
+      "win": 48.5,
+      "dd": 6.65
+     },
+     "error": null,
+     "why26": {
+      "stop": 16,
+      "target": 14,
+      "session": 3
+     }
+    },
+    "rr|0.7": {
+     "train": {
+      "n": 20,
+      "sum": 0.18,
+      "mean": 0.009,
+      "win": 45.0,
+      "dd": 4.15
+     },
+     "unseen": {
+      "n": 29,
+      "sum": -3.16,
+      "mean": -0.109,
+      "win": 48.3,
+      "dd": 6.05
+     },
+     "error": null,
+     "why26": {
+      "stop": 14,
+      "target": 12,
+      "session": 3
+     }
+    },
+    "rr|0.75": {
+     "train": {
+      "n": 16,
+      "sum": 2.66,
+      "mean": 0.166,
+      "win": 50.0,
+      "dd": 3.12
+     },
+     "unseen": {
+      "n": 26,
+      "sum": -2.47,
+      "mean": -0.095,
+      "win": 46.2,
+      "dd": 6.05
+     },
+     "error": null,
+     "why26": {
+      "stop": 13,
+      "target": 10,
+      "session": 3
+     }
+    },
+    "rr|0.8": {
+     "train": {
+      "n": 16,
+      "sum": 2.66,
+      "mean": 0.166,
+      "win": 50.0,
+      "dd": 3.12
+     },
+     "unseen": {
+      "n": 23,
+      "sum": -1.21,
+      "mean": -0.053,
+      "win": 47.8,
+      "dd": 5.03
+     },
+     "error": null,
+     "why26": {
+      "stop": 11,
+      "target": 9,
+      "session": 3
+     }
+    },
+    "rr|0.9": {
+     "train": {
+      "n": 8,
+      "sum": -0.24,
+      "mean": -0.03,
+      "win": 25.0,
+      "dd": 3.12
+     },
+     "unseen": {
+      "n": 19,
+      "sum": 1.09,
+      "mean": 0.057,
+      "win": 52.6,
+      "dd": 4.0
+     },
+     "error": null,
+     "why26": {
+      "stop": 8,
+      "target": 8,
+      "session": 3
+     }
+    },
+    "rr|1.0": {
      "train": {
       "n": 8,
       "sum": -0.24,
@@ -3176,30 +3308,29 @@
       "target": 4
      }
     },
-    "now|walk": {
+    "rr|1.5": {
      "train": {
-      "n": 30,
-      "sum": 2.55,
-      "mean": 0.085,
-      "win": 53.3,
-      "dd": 3.79
+      "n": 3,
+      "sum": 2.01,
+      "mean": 0.67,
+      "win": 33.3,
+      "dd": 2.1
      },
      "unseen": {
-      "n": 39,
-      "sum": -1.96,
-      "mean": -0.05,
-      "win": 53.8,
-      "dd": 6.21
+      "n": 3,
+      "sum": -0.33,
+      "mean": -0.108,
+      "win": 33.3,
+      "dd": 2.06
      },
      "error": null,
      "why26": {
-      "stop": 15,
-      "target": 17,
-      "session": 7
+      "stop": 2,
+      "target": 1
      }
     }
    },
-   "best": "now|base",
+   "best": "rr|0.75",
    "passes": false
   }
  },
@@ -3216,27 +3347,63 @@
    "train_n": 690,
    "unseen_n": 996
   },
+  "now|walk": {
+   "train_sum": 307.73,
+   "unseen_sum": 62.22,
+   "train_n": 2528,
+   "unseen_n": 3622
+  },
   "rr|0": {
    "train_sum": 249.8,
    "unseen_sum": -82.43,
    "train_n": 5745,
    "unseen_n": 7662
   },
-  "rr|1": {
-   "train_sum": 329.08,
-   "unseen_sum": 101.84,
-   "train_n": 920,
-   "unseen_n": 1488
+  "rr|0.6": {
+   "train_sum": 1.9,
+   "unseen_sum": -4.18,
+   "train_n": 27,
+   "unseen_n": 33
   },
-  "now|walk": {
-   "train_sum": 307.73,
-   "unseen_sum": 62.22,
-   "train_n": 2528,
-   "unseen_n": 3622
+  "rr|0.7": {
+   "train_sum": 0.18,
+   "unseen_sum": -3.16,
+   "train_n": 20,
+   "unseen_n": 29
+  },
+  "rr|0.75": {
+   "train_sum": 2.66,
+   "unseen_sum": -2.47,
+   "train_n": 16,
+   "unseen_n": 26
+  },
+  "rr|0.8": {
+   "train_sum": 2.66,
+   "unseen_sum": -1.21,
+   "train_n": 16,
+   "unseen_n": 23
+  },
+  "rr|0.9": {
+   "train_sum": -0.24,
+   "unseen_sum": 1.09,
+   "train_n": 8,
+   "unseen_n": 19
+  },
+  "rr|1.0": {
+   "train_sum": -0.24,
+   "unseen_sum": -0.95,
+   "train_n": 8,
+   "unseen_n": 12
+  },
+  "rr|1.5": {
+   "train_sum": 2.01,
+   "unseen_sum": -0.33,
+   "train_n": 3,
+   "unseen_n": 3
   }
  },
  "pick_per_track": {
-  "train": 415.95,
-  "unseen": 121.81
+  "train": 416.06,
+  "unseen": 121.3
  }
 }

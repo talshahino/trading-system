@@ -1,7 +1,32 @@
 {
  "updated": "2026-11-19T00:24:58+00:00",
- "new": [],
+ "new": [
+  "ce11b6a63b43"
+ ],
  "decisions": [
+  {
+   "id": "ce11b6a63b43",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV11|4Hour|USDJPY",
+   "title": "TV11|4Hour|USDJPY: סיכון ×0.42 ← ×0.46 (היתרון נספר פעמיים - חוזר לפעם אחת)",
+   "decision": "approved",
+   "by": "manager",
+   "read": false,
+   "undone": false,
+   "at": "2026-11-19T00:55:49+00:00",
+   "why": "המנהל: הסיכון לפי היתרון כבר הופעל בכלל הלילי (הסיכון המאושר ×0.85 כפול ×0.54), ודוח ההפסד הפעיל את אותו יתרון שוב על התוצאה. חוזר ל־×0.46 - היתרון מופעל פעם אחת.",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "loss_report": "bot1/2026-11-17",
+   "action": {
+    "bot": "bot1",
+    "combo": "TV11|4Hour|USDJPY",
+    "kind": "mult",
+    "value": 0.46,
+    "prev": 0.42
+   }
+  },
   {
    "id": "8d27c76cce52",
    "bot": "bot6",

@@ -150,7 +150,9 @@
   "IM03|4Hour|ETHUSD": {
    "target": "none",
    "stop": 0.75,
-   "card": "a18febdc9d6c"
+   "card": "a18febdc9d6c",
+   "filter": "v_e50_200",
+   "filter_card": "11fddbcac832"
   },
   "IB034|4Hour|XAUUSD": {
    "be_r": 1.5,
@@ -173,7 +175,12 @@
   "SC440|4Hour|ETHUSD": {
    "target": "none",
    "limit": 0.25,
-   "card": "81a3d57ad074"
+   "card": "81a3d57ad074",
+   "pyramid": [
+    1.5,
+    0.5
+   ],
+   "pyr_card": "9057fc0f01f1"
   },
   "IB056|1Hour|XAUUSD": {
    "target": 5.0,
@@ -193,6 +200,21 @@
     0.33
    ],
    "pyr_card": "3c8893bb898f"
+  },
+  "SC247|4Hour|US500": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "00f84abc53e6"
+  },
+  "TV29|4Hour|US500": {
+   "be_r": 1.5,
+   "partial": [
+    0.3,
+    1.0
+   ],
+   "manage_card": "1f03e167839a"
   }
  },
  "added": {

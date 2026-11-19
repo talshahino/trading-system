@@ -61,6 +61,19 @@ TZ = "Asia/Jerusalem"
 
 
 # ---------------- data ----------------
+def _lagged(state):
+    """Symbols whose quotes arrive late (MetaQuotes-Demo shares): before 19.11.2026 their recorded mfe / mae began from a
+    quote older than the fill; a record without mfe_ok from them carries no mfe / mae."""
+    out = set()
+    for k, v in (state.get("feed_lag") or {}).items():
+        try:
+            if float(v.get("median") or 0) >= 5:
+                out.add(str(k).split(".")[0])
+        except Exception:  # noqa: BLE001
+            pass
+    return out
+
+
 def demo_trades(states):
     rows = []
     for f in sorted(Path(states).glob("*_state.json")):
@@ -69,12 +82,15 @@ def demo_trades(states):
         except Exception:  # noqa: BLE001
             continue
         acc = f.stem.replace("_state", "")
+        lagged = _lagged(s)
         for c in s.get("closed") or []:
             try:
                 side = 1 if c["side"] == "buy" else -1
                 o, sl0 = float(c["open_px"]), float(c.get("sl0") or 0)
                 risk = side * (o - sl0) if sl0 else 0
                 ok = risk > 0
+                if not c.get("mfe_ok") and str(c.get("symbol") or "").split(".")[0] in lagged:
+                    c = {**c, "mfe": None, "mae": None}       # a delayed feed's mfe / mae (agents/loss_review.trade_rows)
                 rows.append({"account": acc, "bot": acc.split("_")[0], "id": str(c["id"]), "combo": c["combo"],
                              "time": c["open_t"], "dir": side, "net": float(c.get("net") or 0),
                              "r": side * (float(c["close_px"]) - o) / risk if ok else np.nan,

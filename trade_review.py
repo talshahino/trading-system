@@ -79,12 +79,16 @@ def live_trades(states):
         except Exception:  # noqa: BLE001
             continue
         acc = str(s.get("bot") or f.stem.replace("_state", ""))
+        lagged = {str(k).split(".")[0] for k, v in (s.get("feed_lag") or {}).items()
+                  if isinstance(v, dict) and float(v.get("median") or 0) >= 5}
         for c in s.get("closed") or []:
             try:
                 side = 1 if c["side"] == "buy" else -1
                 o, sl0 = float(c["open_px"]), float(c["sl0"] or 0)
                 if not sl0 or c.get("mfe") is None or c.get("mae") is None:
                     continue
+                if not c.get("mfe_ok") and str(c.get("symbol") or "").split(".")[0] in lagged:
+                    continue        # a delayed feed's mfe / mae from before 19.11.2026 (agents/loss_review.trade_rows)
                 risk = side * (o - sl0)
                 if risk <= 0:
                     continue

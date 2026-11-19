@@ -2006,16 +2006,30 @@ def track_live(ai, pos):
     lw["day_low"] = min(lw["day_low"], ai.equity)
     lw["all_low"] = min(lw["all_low"], ai.equity)
     meta = STATE.setdefault("pos_meta", {})
+    clock = {}
     for tk, p in pos.items():
         px, buy = p.price_current, p.type == 0
-        m = meta.setdefault(str(tk), {"sl0": p.sl, "tp0": p.tp, "mae": px, "mfe": px})
+        # worst / best price from the fill, not from the first quote seen (bots 1-4 smart agent, 19.11.2026): on
+        # MetaQuotes-Demo the shares' quotes arrive 15 minutes late (feed_lag 15.0), so price_current is the price of 15
+        # minutes BEFORE the fill for the trade's first 15 minutes - bot 3 TV12 ARM (19.11) read mfe +2.13R / mae above its
+        # entry and bot 2 TV13 TSLA mfe +3.46R on a 15-minute trade that never was in profit, and the loss review called
+        # them "a profit that turned into a loss". Quotes older than the fill are skipped; mfe_ok marks the new records.
+        m = meta.setdefault(str(tk), {"sl0": p.sl, "tp0": p.tp, "mae": p.price_open, "mfe": p.price_open, "mfe_ok": 1})
         if not m.get("sl0") and p.sl:
             m["sl0"] = p.sl
         if not m.get("tp0") and p.tp:
             m["tp0"] = p.tp
+        m["sl"], m["tp"] = p.sl, p.tp
+        if p.symbol not in clock:
+            try:
+                t = mt5.symbol_info_tick(p.symbol)
+                clock[p.symbol] = int(t.time) if t is not None and t.time else 0
+            except Exception:  # noqa: BLE001
+                clock[p.symbol] = 0
+        if clock[p.symbol] and clock[p.symbol] < int(p.time):
+            continue                                    # a delayed feed's quote from before the fill
         m["mae"] = min(m["mae"], px) if buy else max(m["mae"], px)
         m["mfe"] = max(m["mfe"], px) if buy else min(m["mfe"], px)
-        m["sl"], m["tp"] = p.sl, p.tp
     if len(meta) > 800:
         for k in sorted(meta, key=int)[:len(meta) - 800]:
             meta.pop(k)
@@ -2050,12 +2064,18 @@ def closed_doc(days=60):
                     sl0, tp0 = od[0].sl, od[0].tp
             except Exception:  # noqa: BLE001
                 pass
+        cpx = round(sum(d.price * d.volume for d in outs) / vol, 6)
+        mae, mfe = m.get("mae"), m.get("mfe")
+        if m.get("mfe_ok") and mae is not None and mfe is not None:
+            # the fill and the close are real prices too (a delayed feed misses the last minutes before the stop)
+            lo, hi = min(o.price, cpx), max(o.price, cpx)
+            mae, mfe = (min(mae, lo), max(mfe, hi)) if o.type == 0 else (max(mae, hi), min(mfe, lo))
         cache[key] = {
             "id": pid, "combo": combo_of(o.magic), "symbol": o.symbol, "side": "buy" if o.type == 0 else "sell",
             "lots": o.volume, "open_t": server_ts(o.time).isoformat(), "open_px": o.price,
-            "close_t": server_ts(outs[-1].time).isoformat(), "close_px": round(sum(d.price * d.volume for d in outs) / vol, 6),
+            "close_t": server_ts(outs[-1].time).isoformat(), "close_px": cpx,
             "sl0": sl0 or 0, "tp0": tp0 or 0, "sl": m.get("sl", sl0) or 0, "tp": m.get("tp", tp0) or 0,
-            "mae": m.get("mae"), "mfe": m.get("mfe"),
+            "mae": mae, "mfe": mfe, **({"mfe_ok": 1} if m.get("mfe_ok") else {}),
             "gross": round(sum(d.profit for d in ds), 2), "swap": round(sum(d.swap for d in ds), 2),
             "comm": round(sum(d.commission + getattr(d, "fee", 0.0) for d in ds), 2),
             "net": round(sum(d.profit + d.swap + d.commission + getattr(d, "fee", 0.0) for d in ds), 2),

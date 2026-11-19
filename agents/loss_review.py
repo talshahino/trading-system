@@ -87,6 +87,11 @@ def _f(x):
 
 def trade_rows(state):
     rows = []
+    # symbols whose quotes arrive late (MetaQuotes-Demo shares, feed_lag 15 min): their worst / best price recorded
+    # before 19.11.2026 started from a quote older than the fill - not the trade's (bot 3 TV12 ARM 19.11: "+2.13R" on a
+    # trade that never was in profit). Records without mfe_ok from such a symbol get no mfe / mae.
+    lagged = {str(k).split(".")[0] for k, v in (state.get("feed_lag") or {}).items()
+              if isinstance(v, dict) and (_f(v.get("median")) or 0) >= 5}
     for c in state.get("closed") or []:
         o, cl, sl0 = _f(c.get("open_px")), _f(c.get("close_px")), _f(c.get("sl0"))
         net, gross = _f(c.get("net")), _f(c.get("gross"))
@@ -100,6 +105,8 @@ def trade_rows(state):
         r = r_px * (net / gross) if gross and gross * net > 0 else (net / abs(gross) * abs(r_px) if gross else r_px)
         r = _f(c.get("r_net")) if _f(c.get("r_net")) is not None else r      # bot 7: the true R, costs in (mgr1811cost)
         tp0, mfe, mae = _f(c.get("tp0")), _f(c.get("mfe")), _f(c.get("mae"))
+        if not c.get("mfe_ok") and str(c.get("symbol") or "").split(".")[0] in lagged:
+            mfe = mae = None
         rows.append({
             "combo": c.get("combo"), "symbol": c.get("symbol"), "side": side, "open_t": c.get("open_t"),
             "close_t": c.get("close_t"), "open_px": o, "close_px": cl, "sl0": sl0, "tp0": tp0, "net": net,

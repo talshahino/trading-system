@@ -168,9 +168,20 @@
    {
     "combo": "SE02|1Hour|GBPJPY",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-17T16:05:53+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "SC264|15Min|JP225",
@@ -180,11 +191,11 @@
     "cut_only": false
    }
   ],
-  "open": [
+  "open": [],
+  "cut_only": [
    "SE02|1Hour|GBPJPY"
   ],
-  "cut_only": [],
   "total_month_pct": 3.96,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

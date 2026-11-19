@@ -621,9 +621,20 @@
    {
     "combo": "TV58|1Hour|XAUUSD",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-18",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.94,
     "edge_parts": [
      "בבדיקה של 2026: +0.20R לעסקה (106 עסקאות), בתקופת הבחירה +0.22R",
@@ -691,9 +702,20 @@
    {
     "combo": "SS07|15Min|NVDA",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-18",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.001,
     "edge_parts": [
      "בבדיקה של 2026: -0.06R לעסקה (142 עסקאות), בתקופת הבחירה +0.09R",
@@ -706,18 +728,17 @@
     "edge": -0.092
    }
   ],
-  "open": [
-   "TV58|1Hour|XAUUSD",
-   "SS07|15Min|NVDA"
-  ],
+  "open": [],
   "cut_only": [
    "TV15|4Hour|USDCAD",
    "TV21|1Hour|XAUUSD",
    "SS01|5Min|WMT",
    "SC235|1Hour|USDJPY",
-   "SC002|1Hour|AMZN"
+   "TV58|1Hour|XAUUSD",
+   "SC002|1Hour|AMZN",
+   "SS07|15Min|NVDA"
   ],
   "total_month_pct": 1.58,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 7 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

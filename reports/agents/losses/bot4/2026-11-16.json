@@ -290,9 +290,20 @@
    {
     "combo": "BK05|15Min|EURUSD",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-17",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 1.0,
     "edge_parts": [
      "בבדיקה של 2026: +0.12R לעסקה (59 עסקאות), בתקופת הבחירה +0.40R",
@@ -449,9 +460,20 @@
    {
     "combo": "FR01|1Hour|EURUSD",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-17",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.001,
     "edge_parts": [
      "בבדיקה של 2026: +0.03R לעסקה (37 עסקאות), בתקופת הבחירה +0.67R",
@@ -466,9 +488,20 @@
    {
     "combo": "QC07|15Min|ARM",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-17",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.82,
     "edge_parts": [
      "בבדיקה של 2026: +0.03R לעסקה (302 עסקאות), בתקופת הבחירה +0.02R",
@@ -481,16 +514,15 @@
     "edge": 0.023
    }
   ],
-  "open": [
+  "open": [],
+  "cut_only": [
    "BK05|15Min|EURUSD",
+   "SE02|1Hour|GBPJPY",
+   "FR01|1Hour|GBPUSD",
    "FR01|1Hour|EURUSD",
    "QC07|15Min|ARM"
   ],
-  "cut_only": [
-   "SE02|1Hour|GBPJPY",
-   "FR01|1Hour|GBPUSD"
-  ],
   "total_month_pct": 0.0,
-  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

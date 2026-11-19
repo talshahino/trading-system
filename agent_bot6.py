@@ -2310,6 +2310,17 @@ FUT_FIRST += [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC658", ("1Min", "5Min")), 
                                                    ("SC657", ("5Min", "15Min")), ("SC659", ("5Min", "15Min")),
                                                    ("SC665", ("5Min", "15Min", "1Hour")))
               for tf in tfs for sym in ("US100", "US500", "US30")]
+# + the scout's index-futures systems of 18-19.11.2026 (bot 6's smart agent, 19.11 night; DISCOVER, the user's "test
+# everything, skip nothing"): SC562 George Pruitt's Super Combo - built for the S&P futures on 5 minutes, flat at 16:00
+# New York, one long and one short a day; SC669 Stop Hunter - the stop entry just before a round level (the index
+# futures' round numbers); SC563 Pezzutti's ADX gapper (an opening gap past yesterday's extreme that closes back) and
+# SC570 Crabel's ORBP (the open +/- the stretch with the 20-bar channel) - both index-futures day systems. On the CFD
+# test of bot 1 (US indices, FTMO Standard) none earned to 2025 as the source has them (SC562 -0.01..+0.11R, SC563
+# -0.14..-0.06R on 15 minutes, SC570 -0.20..-0.18R) - here the futures' own world and 96 variants decide, after the
+# New York open ones. SC571 / SC572 (gap types A / B on 1 hour, 16-46 trades to 2025, a 10-bar time exit) are left out.
+FUT_FIRST += [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC562", ("5Min", "15Min")), ("SC669", ("5Min", "15Min")),
+                                                   ("SC563", ("15Min",)), ("SC570", ("15Min",)))
+              for tf in tfs for sym in ("US100", "US500", "US30")]
 
 
 # BOT 5'S LIVE SCOUTS (bot 6's smart agent, 17.11.2026 night; bots 5 and 6 share methods): 31 scout strategies trade

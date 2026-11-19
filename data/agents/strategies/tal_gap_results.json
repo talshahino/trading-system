@@ -466188,7 +466188,7 @@
   }
  },
  "bot5_smart": {
-  "updated": "2026-11-19T18:56:27+00:00",
+  "updated": "2026-11-19T22:22:20+00:00",
   "for": "bot6",
   "dbrk": {
    "what": "DBRK (agents/tal_gap.py): c = cancel a waiting gap order 10 min before an expected 30+ min break shorter than 2h (seen a day / a week earlier), x = close an open trade then, oN = no fill N min after a reopening. Bot 5: no rule beats today on the whole bot; passes only on t15_1 (x). The 4h tracks lose most (fills at the reopening earn). Bot 6's futures have the CME daily break (60 min) - worth the same test.",
@@ -466376,6 +466376,11 @@
   "cluster": {
    "what": "skip a gap entry while K trades are already open the same way (same instrument / indices / all) - every cap loses most of 2026's profit on bot 5",
    "report": "reports/agents/bot5/tal_cluster.json"
+  },
+  "cluster_risk": {
+   "what": "size instead of skipping in a same-move cluster: half / 1/(1+n) / a K-R budget all lose 2026 even at the same fall from the peak; the opposite - x1.5 on a gap trade taken while another track holds the same instrument the same way - earns more on both periods at the same fall (2025 387->401R, 2026 152->174R, fall 28.1->27.8R). Such trades earn ~2x (2025 +0.37 vs +0.19R, 2026 +0.16 vs +0.02R). Not built in bot 5 (needs the lone trade below Tal's fixed 0.28%). For bot 6: worth testing on its own gap tracks.",
+   "report": "reports/agents/bot5/tal_cluster_risk.json",
+   "card": "52b6c302b631"
   }
  }
 }

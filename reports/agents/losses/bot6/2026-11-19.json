@@ -1,0 +1,130 @@
+{
+ "bot": "bot6",
+ "day": "2026-11-19",
+ "at": "2026-11-19T23:01:59+00:00",
+ "summary": [
+  "מה קרה: בוט 6 · חוזים הפסיד 120$ ב־2026-11-19 (-0.12% מהחשבון). 2 עסקאות: 0 הרוויחו 0$, 2 הפסידו 120$.",
+  "מול הצפי: לאסטרטגיות של היום אין עדיין צפי מהבדיקה.",
+  "למה: 1 עסקאות נסגרו בגלל כלל (חדשות / סוף מסחר / הפסקת שוק); 1 עסקאות היו ברווח ונגמרו בהפסד - הבעיה בניהול העסקה.",
+  "ההפסד הגדול ביותר: TAL|1Hour|US500, 116$ (96.7% מכל ההפסד)."
+ ],
+ "pnl": -120.25,
+ "pnl_pct": -0.12,
+ "open_balance": 99961.5,
+ "limit_used": {
+  "bot": 2.7,
+  "ftmo": 2.4
+ },
+ "trades": 2,
+ "winners": 0,
+ "losers_n": 2,
+ "gross_profit": 0.0,
+ "gross_loss": 120.25,
+ "profit_factor": 0.0,
+ "costs": 0.0,
+ "day_r": -1.0,
+ "expected_r": null,
+ "expected_sd": null,
+ "z": null,
+ "normal": true,
+ "causes": {
+  "rules": 1,
+  "management": 1
+ },
+ "correlated": [],
+ "top_loser": "TAL|1Hour|US500",
+ "top_share": 96.7,
+ "recurring": [],
+ "recurring_causes": [],
+ "losers": [
+  {
+   "combo": "TAL|1Hour|US500",
+   "side": "קנייה",
+   "open_t": "2026-11-19T14:39:00+00:00",
+   "close_t": "2026-11-19T15:14:00+00:00",
+   "entry": 7381.9,
+   "exit": 7359.45,
+   "stop": 7359.45,
+   "target": 7415.05,
+   "r": -1.0,
+   "net": -116.25,
+   "costs": 0.0,
+   "mfe_r": 1.28,
+   "mae_r": 1.09,
+   "exit_reason": "stop",
+   "cause": "management",
+   "cause_he": "ניהול העסקה",
+   "recurring": false
+  },
+  {
+   "combo": "TAL|5Min1m|US500",
+   "side": "קנייה",
+   "open_t": "2026-11-19T12:22:00+00:00",
+   "close_t": "2026-11-19T13:30:00+00:00",
+   "entry": 7401.4,
+   "exit": 7401.4,
+   "stop": 7392.65,
+   "target": 7421.65,
+   "r": 0.0,
+   "net": -4.0,
+   "costs": 0.0,
+   "mfe_r": 1.56,
+   "mae_r": 0.57,
+   "exit_reason": "breakeven",
+   "cause": "rules",
+   "cause_he": "סגירה בגלל כלל",
+   "recurring": false
+  }
+ ],
+ "actions": [
+  {
+   "combo": "TAL|1Hour|US500",
+   "cause": "management",
+   "priority": [],
+   "task": "TAL|1Hour|US500: היה ב־1.28R רווח ונסגר ב־-1.0R. לבדוק נקודת איזון מוקדמת יותר / יציאה חלקית / יעד קרוב יותר, ולהציע כרטיס."
+  },
+  {
+   "combo": "TAL|5Min1m|US500",
+   "cause": "rules",
+   "priority": [],
+   "task": "TAL|5Min1m|US500: נסגר בגלל כלל (breakeven) ב־0.0R. לבדוק אם עדיף לא להיכנס לפני אירוע כזה, או לצאת מוקדם יותר."
+  }
+ ],
+ "trend": {
+  "last7": {
+   "loss_days": 3,
+   "avg_loss_pct": -0.216,
+   "worst_pct": -0.387
+  },
+  "prev7": {
+   "loss_days": 0,
+   "avg_loss_pct": 0.0,
+   "worst_pct": 0.0
+  },
+  "improving": null
+ },
+ "plan": {
+  "rows": [
+   {
+    "combo": "TAL|1Hour|US500",
+    "cause": "ניהול העסקה",
+    "fixes": [],
+    "open": true,
+    "cut_only": false
+   },
+   {
+    "combo": "TAL|5Min1m|US500",
+    "cause": "סגירה בגלל כלל",
+    "fixes": [],
+    "open": false,
+    "cut_only": false
+   }
+  ],
+  "open": [
+   "TAL|1Hour|US500"
+  ],
+  "cut_only": [],
+  "total_month_pct": 0.0,
+  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין"
+ }
+}

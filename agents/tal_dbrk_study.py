@@ -30,6 +30,37 @@ def ways():
 M.ways = ways
 
 
+def run(sym):
+    """M.run with the direction and the minutes held kept too (the same-move cluster check reads them)."""
+    import time
+    import agent_bot5 as A
+    M.OUT.mkdir(parents=True, exist_ok=True)
+    D = A.tal_load(sym)
+    if D is None:
+        raise SystemExit(f"no data for {sym}")
+    out, t_end = {}, time.time() + M.BUDGET_MIN * 60
+    for tk, tv in M.W.tracks().items():
+        if sym not in M.W.syms_of(tk):
+            continue
+        pair = next(p for p in TG.PAIRS if p[0] == tv["pair"][0] and p[1] == tv["pair"][1])
+        base = TG._norm(dict(tv["cfg"]))
+        gc = {}
+        for w, extra in ways().items():
+            if time.time() > t_end:
+                out.setdefault(tk, {})[w] = {"error": "time budget"}
+                continue
+            try:
+                t = TG.simulate(D, pair, TG._norm(dict(base, **extra)), gc)
+            except Exception as e:  # noqa: BLE001
+                out.setdefault(tk, {})[w] = {"error": f"{type(e).__name__}: {e}"}
+                continue
+            out.setdefault(tk, {})[w] = [{"time": str(a), "r": float(b), "why": str(y), "dir": int(d_), "mins": int(m_)}
+                                         for a, b, y, d_, m_ in zip(t["time"], t["r"], t["why"], t["dir"], t["mins"])]
+        print(sym, tk, {w: len(x) if isinstance(x, list) else x for w, x in out[tk].items()}, flush=True)
+        (M.OUT / f"{sym}.json").write_text(json.dumps(out), encoding="utf-8")
+    (M.OUT / f"{sym}.json").write_text(json.dumps(out), encoding="utf-8")
+
+
 def _st(rows):
     if not rows:
         return {"n": 0, "sum": 0.0, "mean": None, "dd": 0.0, "worst": 0.0, "green": None, "wmean": None}
@@ -108,6 +139,6 @@ if __name__ == "__main__":
     if a.mode == "plan":
         print(json.dumps(M.plan()))
     elif a.mode == "run":
-        M.run(a.sym)
+        run(a.sym)
     else:
         report()

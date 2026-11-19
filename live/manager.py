@@ -1334,6 +1334,8 @@ def update_check():
                 UPDATE.update(remote_at=time.time(), remote_sha=sha)
             if not sha:
                 pass
+            elif fresh and UPD.local() and sha != UPD.local() and settings_only(sha):
+                pass                                   # only settings changed: in place, no stop (19.11.2026)
             elif UPD.local() is None:
                 UPD.VERSION.write_text(sha)
             elif sha != UPD.local() and UPDATE["sha"] != sha:
@@ -1378,6 +1380,41 @@ def update_check():
         except Exception as e:  # noqa: BLE001
             log(f"update check failed: {e}")
         time.sleep(nap)
+
+
+def settings_only(sha):
+    """When the only bot files that changed are settings (live/bots/<bot>.json): put them in place without stopping
+    the bots (user, 19.11.2026: "nothing should stop the bots"). Bots 5 / 6 read theirs every cycle; a changed bots 1-4
+    or bot 7 settings file restarts only that bot. -> True when done this way."""
+    if INSTALL_LOCK.locked():
+        return False
+    try:
+        from live import loaded as LD
+        files = UPD.changed_files(UPD.local(), sha)
+        if files is None:
+            return False
+        used = LD.used()
+        mine = [f for f in files if UPD.counts(f, used)]
+        if not mine or not all(UPD.is_setting(f) for f in mine):
+            return False
+        with INSTALL_LOCK:
+            done = UPD.apply_settings(sha, mine)
+        bots_ = {Path(f).stem for f in done}
+        log(f"settings {', '.join(sorted(bots_))} in place ({sha[:7]}) without stopping the bots")
+        for a in accounts():
+            if a.get("enabled") and a.get("bot") in bots_ and running(a["name"]):
+                stop_bot(a["name"])
+                free_port(a)
+                start_bot(a)
+                log(f"{a['name']}: restarted for its new settings")
+        if "bot7" in bots_:
+            stop_bot(NEWS_NAME)
+            start_news()
+        UPDATE.update(sha=sha, title=None)
+        return True
+    except Exception as e:  # noqa: BLE001
+        log(f"settings in place failed ({e}) - the full install runs")
+        return False
 
 
 INSTALL_LOCK = threading.Lock()

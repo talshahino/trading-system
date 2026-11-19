@@ -47,6 +47,51 @@ RESEARCH = tuple(f"agents/{x}_strategies.py" for x in
                  ("seasonal", "intermarket", "momentum", "event", "gap_breakout", "quantpedia", "book", "scout"))
 
 
+def changed_files(a, b):
+    """The files changed between versions a and b (GitHub's compare), or None when it cannot be told."""
+    try:
+        r = requests.get(f"https://api.github.com/repos/{REPO}/compare/{a}...{b}", headers=_headers(), timeout=20)
+        r.raise_for_status()
+        files = [f["filename"] for f in r.json().get("files", [])]
+        return None if len(files) >= 300 else files
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def counts(f, used):
+    """Does file f matter to a running bot? (used = live/loaded.py's record, None = not known)"""
+    if f.endswith("_state.json") or f.startswith(("live/loaded_", "live/cache_watch/")):
+        return False
+    if used is not None:
+        return f in used or f.startswith(("live/", "config.py", "requirements.txt", "data/ftmo_symbols/"))
+    return f.startswith(BOT_CODE) and f not in RESEARCH and not f.startswith("data/agents/")
+
+
+def is_setting(f):
+    """A bot's settings file (live/bots/<bot>.json): put in place without stopping the bots (19.11.2026)."""
+    return f.startswith("live/bots/") and f.endswith(".json") and "/" not in f[len("live/bots/"):]
+
+
+def apply_settings(sha, files):
+    """Only the settings files of version sha, each checked as JSON and written whole-or-nothing; the version number
+    moves to sha (nothing else the bots use changed). Raises when one cannot be fetched or read - the full install
+    then runs as before."""
+    got = {}
+    for f in files:
+        r = requests.get(f"https://api.github.com/repos/{REPO}/contents/{f}", params={"ref": sha},
+                         headers={**_headers(), "Accept": "application/vnd.github.raw"}, timeout=30)
+        r.raise_for_status()
+        json.loads(r.content.decode("utf-8"))
+        got[f] = r.content
+    for f, data in got.items():
+        p = ROOT / f
+        tmp = p.with_suffix(p.suffix + ".new")
+        tmp.write_bytes(data)
+        os.replace(tmp, p)
+    VERSION.write_text(sha)
+    return list(got)
+
+
 def touches_bot(a, b):
     """Did anything the running bot uses change between versions a and b? (GitHub Actions commit
     reports and data all the time; those are not offered as updates.)"""
@@ -57,14 +102,8 @@ def touches_bot(a, b):
         if len(files) >= 300:
             return True
         from live import loaded as LD
-        used = LD.used()
-        if used is not None:
-            # only what a running bot really loaded (live/loaded.py), its own folder and its settings (19.11.2026)
-            return any((f in used) or (f.startswith(("live/", "config.py", "requirements.txt", "data/ftmo_symbols/"))
-                                       and not f.endswith("_state.json") and not f.startswith(("live/loaded_", "live/cache_watch/")))
-                       for f in files)
-        return any(f.startswith(BOT_CODE) and not f.endswith("_state.json") and f not in RESEARCH
-                   and not f.startswith("data/agents/") for f in files)
+        used = LD.used()          # only what a running bot really loaded (live/loaded.py), its folder and settings
+        return any(counts(f, used) for f in files)
     except Exception:  # noqa: BLE001
         return True
 

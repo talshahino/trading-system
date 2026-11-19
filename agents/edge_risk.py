@@ -38,6 +38,10 @@ MIN_LIVE_UP = 5
 # trades - TV50 XAGUSD x0.7 -> x1.36, TV28 AMZN x1 -> x1.39, TV17 AAPL x0.7 -> x0.95, SS01 WMT x0.8 -> x0.92 - stayed only
 # because of it: the whole bot on 2026 +86.5% / fall 5.81% -> +88.4% / 6.18%, worst day -2.45% -> -2.61%.)
 KEEP_UP = set()
+# the rule's version (manager, 19.11.2026 morning): the daily run runs again the same day when the rule changed. The
+# "neither way from fewer than 5 live trades" fix landed at 04:36 UTC, after that day's run (22:44 UTC) - its 14
+# thin cuts in bots 2-4 would have waited until the next midnight, ~18 hours of trading at the cut risk.
+RULES_VER = "2026-11-19a"
 
 
 def _read(p, d):
@@ -219,7 +223,7 @@ def run(states=None, force=False):
     st = _read(STATE, {})
     today = str(pd.Timestamp.now(tz=TZ).date())
     twice = unwind_twice()
-    if st.get("day") == today and not force:
+    if st.get("day") == today and st.get("ver") == RULES_VER and not force:
         return unwind_thin(states) + twice
     states = states if states is not None else H.live_states()
     ddoc = _read(DEC, {"decisions": []})
@@ -350,13 +354,18 @@ def run(states=None, force=False):
                          "action": {"bot": bot, "combo": c, "kind": "mult", "value": target, "prev": cur}})
             have.add(did)
             mine[c] = {"base": base, "last": target}
+            if c in book:
+                # the next strategy's ceiling is checked on the bot with this change in (manager, 19.11.2026: each raise
+                # was checked alone on the bot as it ran - 11 raises of bot 1 in one run, each inside the limits by itself,
+                # could together take the 2026 replay past them)
+                book[c] = (book[c][0], target)
     if adds:
         ddoc["decisions"] = adds + ddoc.get("decisions", [])
         ddoc["new"] = list(ddoc.get("new") or []) + [x["id"] for x in adds]
         _write(DEC, ddoc)
         for x in adds:
             print("edge risk:", x["title"])
-    st["day"], st["at"], st["now"] = today, at, rows
+    st["day"], st["at"], st["now"], st["ver"] = today, at, rows, RULES_VER
     _write(STATE, st)
     return adds + twice
 

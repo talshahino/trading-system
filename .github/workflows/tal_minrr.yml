@@ -61,7 +61,7 @@ jobs:
         if: always()
         with:
           name: tr-${{ steps.n.outputs.n }}
-          path: reports/agents/bot5/tal_minrr
+          path: reports/agents/bot5/tal_minrr/${{ matrix.job }}.json   # only this job's own file (the folder holds the repo's older ones)
           if-no-files-found: ignore
           retention-days: 5
   report:

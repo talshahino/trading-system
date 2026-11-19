@@ -61,7 +61,7 @@ jobs:
         if: always()
         with:
           name: na-${{ steps.n.outputs.n }}
-          path: reports/agents/bot7/news_after
+          path: reports/agents/bot7/news_after/${{ matrix.job }}.json   # only this job's own file
           if-no-files-found: ignore
           retention-days: 5
   report:

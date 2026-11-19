@@ -1108,6 +1108,62 @@ def be_watch(rows):
             "r_real": round(real, 2), "r_be60": round(shadow, 2)}
 
 
+AFTER_FROM = "2026-11-19"
+AFTER_H = 24          # hours a stopped trade is followed after its stop
+
+
+def after_stop(t, df):
+    """A gap trade closed at its stop, followed on (user, 19.11.2026 17:46: "4-5 trades went out at the stop with a wick
+    and came back toward the target - I want the bot to sample these losses and see where it really went; maybe a few
+    more pips of stop and it was a win"): up to AFTER_H hours after the stop - did the price reach the target, and how
+    far beyond the stop it went before that (in R of the stop) = the room that would have kept the trade. No money."""
+    d, px, sl, tg = t["dir"], float(t["entry"]), float(t["stop"]), t.get("target")
+    risk = d * (px - sl)
+    if df is None or not len(df) or risk <= 0 or tg is None:
+        return None
+    a = pd.Timestamp(t["exit_time"])
+    end = a + pd.Timedelta(hours=AFTER_H)
+    w = df.loc[a:end]
+    if not len(w):
+        return None
+    hh, ll = w["h"].to_numpy(float), w["l"].to_numpy(float)
+    hit = np.flatnonzero((hh >= tg) if d > 0 else (ll <= tg))
+    k = int(hit[0]) if len(hit) else len(w) - 1
+    worst = float(ll[:k + 1].min()) if d > 0 else float(hh[:k + 1].max())
+    beyond = max(0.0, d * (sl - worst))
+    last = float(w["c"].iloc[-1])
+    return {"hit": iso(w.index[k]) if len(hit) else None, "need_r": round(beyond / risk, 3),
+            "need_px": round(beyond, 6), "now_r": round(d * (last - px) / risk, 3),
+            "done": bool(len(hit)) or df.index[-1] >= end, "at": iso(w.index[-1])}
+
+
+def after_watch(rows, src):
+    """after_stop() on bot 5's gap trades stopped from AFTER_FROM, and the summary for the app."""
+    xs = []
+    for t in rows:
+        if (t.get("status") != "closed" or t.get("reason") != "stop" or not t.get("tal") or str(t["tal"]).startswith("sc:")
+                or (t.get("exit_time") or "") < AFTER_FROM or t.get("stop") is None or t.get("entry") is None):
+            continue
+        if not (t.get("after") or {}).get("done"):
+            try:
+                x = after_stop(t, src.df.get(t["symbol"]))
+                if x:
+                    t["after"] = x
+            except Exception:  # noqa: BLE001
+                pass
+        if t.get("after"):
+            xs.append(t)
+    hit = [t for t in xs if t["after"]["hit"]]
+    band = {"0.1": 0, "0.25": 0, "0.5": 0, "1": 0, "more": 0}
+    for t in hit:
+        n = t["after"]["need_r"]
+        band["0.1" if n <= 0.1 else "0.25" if n <= 0.25 else "0.5" if n <= 0.5 else "1" if n <= 1 else "more"] += 1
+    last = sorted(xs, key=lambda t: t["exit_time"], reverse=True)[:15]
+    return {"from": AFTER_FROM, "n": len(xs), "done": sum(1 for t in xs if t["after"]["done"]), "hit": len(hit),
+            "band": band, "rows": [{"symbol": t["symbol"], "tal": t["tal"], "dir": t["dir"], "stop_t": t["exit_time"],
+                                    **{k: t["after"][k] for k in ("hit", "need_r", "need_px", "now_r", "done")}} for t in last]}
+
+
 def excursions(rows, src):
     """excursion() on every open trade (each loop) and once on every closed one. Quiet on any failure."""
     for t in rows:
@@ -2018,6 +2074,10 @@ def main():
                     trades[k]["mark"] = m
         except Exception:  # noqa: BLE001
             pass
+        try:
+            state["after_stop"] = after_watch(trades.values(), src)
+        except Exception:  # noqa: BLE001
+            errors.append(f"after_stop: {traceback.format_exc()[-200:]}")
         try:
             state["be_watch"] = be_watch(trades.values())
         except Exception:  # noqa: BLE001

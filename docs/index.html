@@ -1429,7 +1429,16 @@ function botTalk(s) {
       <div><small class="mut">חזרו אחר כך לכניסה</small><b>${BW.back}</b><small class="mut">${BW.back_lost} מהן נסגרו בהפסד · ${BW.back_won} ברווח</small></div>
       <div><small class="mut">R כמו שרץ / עם סטופ לכניסה</small><b class="${BW.r_real >= 0 ? "pos" : "neg"}">${BW.r_real}</b> / <b class="${BW.r_be60 >= BW.r_real ? "pos" : "neg"}">${BW.r_be60}</b></div></div>
       <div class="mut" style="margin-top:8px">${BW.n < 20 ? `עוד ${20 - BW.n} עסקאות עד שיהיה על מה להחליט.` : BW.r_be60 > BW.r_real ? "עד עכשיו סטופ לכניסה ב־60% היה עדיף." : "עד עכשיו הניהול של היום עדיף."}</div></div>` : "";
-  box.innerHTML = rvHtml + lnHtml + bwHtml + cbHtml + l7Html + (UI.cur === "news_bot" ? `<div id="audCard"></div>` : "") + `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
+  // bot 5: every gap trade stopped out, followed 24h after its stop (user, 19.11.2026: "a few more pips and it was a win?")
+  const AS = s && s.after_stop, asB = AS && AS.band || {};
+  const asHtml = AS && AS.n ? `<div class="h4" style="margin-top:18px">עסקאות שנסגרו בסטופ – לאן המחיר הלך אחר כך? (מעקב בצל)</div><div class="card">
+      <div class="kv"><div><small class="mut">נסגרו בסטופ מ־19.11</small><b>${AS.n}</b><small class="mut">${AS.done} סיימו מעקב (יעד או 24 שעות)</small></div>
+      <div><small class="mut">הגיעו אחר כך ליעד</small><b>${AS.hit}</b></div>
+      <div><small class="mut">כמה סטופ נוסף היה מציל (מתוך מי שהגיעו ליעד)</small><b style="font-size:14px">עד 0.1R: ${asB["0.1"] || 0} · עד 0.25R: ${asB["0.25"] || 0} · עד 0.5R: ${asB["0.5"] || 0} · עד 1R: ${asB["1"] || 0} · יותר: ${asB.more || 0}</b></div></div>
+      <div class="tw" style="margin-top:8px"><table class="rt"><tr><th>נכס</th><th>סטופ</th><th>יעד אחר כך</th><th>מעבר לסטופ</th><th>עכשיו</th></tr>
+      ${(AS.rows || []).map(r => `<tr><td><bdi>${esc(r.symbol)}</bdi> <span class="mut">${r.dir > 0 ? "קנייה" : "מכירה"}</span></td><td>${tOnly(r.stop_t).slice(0, 5)}</td><td>${r.hit ? "✓ " + tOnly(r.hit).slice(0, 5) : r.done ? "✗" : "…"}</td><td>${r.need_r}R</td><td class="${r.now_r >= 0 ? "pos" : "neg"}">${r.now_r >= 0 ? "+" : ""}${r.now_r}R</td></tr>`).join("")}</table></div>
+      <div class="mut" style="margin-top:8px">"מעבר לסטופ" = כמה רחוק המחיר עבר את הסטופ לפני שהגיע ליעד (או עד עכשיו). בלי כסף – רק מעקב.</div></div>` : "";
+  box.innerHTML = rvHtml + lnHtml + bwHtml + asHtml + cbHtml + l7Html + (UI.cur === "news_bot" ? `<div id="audCard"></div>` : "") + `<div class="h4" style="margin-top:18px">🎙 שיחה עם הסוכן של הבוט${TALKN[UI.cur] ? ` <span class="tbadge">${TALKN[UI.cur]} חדשות</span>` : ""}</div><div class="card wt">
       <textarea id="btTxt" rows="3" placeholder="דבר או כתוב לסוכן על הבוט כולו: מה ראית היום, מה מפריע לך, מה לבדוק…"></textarea>
       <div class="row" style="gap:8px;margin-top:8px"><button class="btn ghost" id="btMic">🎙 הקלטה</button><button class="btn" id="btSave">שלח לסוכן</button></div>
       <div class="msg mut" id="btMsg"></div><div id="btList"></div></div>`;

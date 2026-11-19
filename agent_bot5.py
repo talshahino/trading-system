@@ -1785,6 +1785,17 @@ def main():
         except Exception as e:  # noqa: BLE001
             print("tal risk guard failed:", e)
         _lap("risk_guard")
+        # the scout account's day-lessons (task b5scdir1811, 18.11.2026): against an open trade / same-direction clusters /
+        # with the higher timeframe's direction, on all the 5b strategies together - the direction part needs the bars,
+        # so it runs here (reports/agents/bot5/scout_dir.json; the nightly agent writes the card)
+        try:
+            from agents import scout5_dir as SD
+            sd = SD.main(dirs=True)
+            doc["bot5"]["scout_dir"] = {"at": sd["at"], "chosen_on_train": sd["chosen_on_train"], "no_bars": sd["no_bars"]}
+            TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
+        except Exception as e:  # noqa: BLE001
+            print("scout direction study failed:", e)
+        _lap("scout_dir")
         if pf:
             doc["bot5"]["portfolio"] = pf
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")

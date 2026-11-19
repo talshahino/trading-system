@@ -36,6 +36,13 @@ FAMS = {"size": {"mg05": {"MIN_GAP": 0.05}, "mg10": {"MIN_GAP": 0.1}, "mg15": {"
         # the price (GAPPCT, % of the gap's middle) - on the 4-hour tracks (TAL_ASKS_ONLY=size2 TAL_ASKS_TRACKS=t4h_)
         "size2": {"mg20": {"MIN_GAP": 0.2}, "mg50": {"MIN_GAP": 0.5},
                   "pp005": {"GAPPCT": 0.05}, "pp01": {"GAPPCT": 0.1}, "pp02": {"GAPPCT": 0.2}},
+        # Tal's JP225 note of 18.11 (task b5widestop1811) and bot 6's shared method (b6to5beor1811), queued on the bots'
+        # computer since 18.11 behind ~1,000 runs - asked here (19.11.2026): room beyond the stop / a least stop distance,
+        # and the stop to the entry at the earlier of a share of the way and +1R
+        "widestop": {"ipp01": {"IPAD": "p0.1"}, "ipp02": {"IPAD": "p0.2"}, "ipp04": {"IPAD": "p0.4"},
+                     "ipa01": {"IPAD": "a0.1"}, "ipa025": {"IPAD": "a0.25"}, "ipa05": {"IPAD": "a0.5"},
+                     "ms10": {"MINSTOP": 1.0}, "ms15": {"MINSTOP": 1.5}, "ms20": {"MINSTOP": 2.0}},
+        "beor": {"b382o1r": {"EXIT": "be382o1r"}, "b50o1r": {"EXIT": "be50o1r"}, "b618o1r": {"EXIT": "be618o1r"}},
         "gapx": {"full": {"GAPX": "full"}},
         "firstg": {"fg1": {"FIRSTG": "1"}, "fglo": {"FIRSTG": "lo"}},
         "follow": {"x1": {"FOLLOW": "x1"}, "x2": {"FOLLOW": "x2"}, "x3": {"FOLLOW": "x3"}},

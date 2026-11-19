@@ -4,6 +4,17 @@ name: Gap method - Tal's open questions (bot 5)
 
 on:
   workflow_dispatch:
+    inputs:
+      only:
+        description: "families only (comma, empty = all)"
+        default: ""
+      tracks:
+        description: "track name prefixes (comma, empty = all)"
+        default: ""
+
+env:
+  TAL_ASKS_ONLY: ${{ inputs.only }}
+  TAL_ASKS_TRACKS: ${{ inputs.tracks }}
 
 permissions:
   contents: write
@@ -90,6 +101,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/agents/bot5/tal_asks/report.json || true
+          git add reports/agents/bot5/tal_asks/report*.json || true
           git commit -qm "Gap method: Tal's open questions on the running rules (agents/tal_asks_study)" || exit 0
           for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null; sleep $((i * 7)); done

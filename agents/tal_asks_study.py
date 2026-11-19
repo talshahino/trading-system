@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import time
 from pathlib import Path
 
@@ -31,6 +32,10 @@ BUDGET_MIN = 150
 SKIP = ("EURUSD", "USDJPY", "XAUUSD")     # Tal, 18.11: these three are followed live for a week or two first (tal1811fx)
 FAMS = {"size": {"mg05": {"MIN_GAP": 0.05}, "mg10": {"MIN_GAP": 0.1}, "mg15": {"MIN_GAP": 0.15}, "mg30": {"MIN_GAP": 0.3},
                  "gl01": {"GAPLEG": 0.01}, "gl02": {"GAPLEG": 0.02}, "gl03": {"GAPLEG": 0.03}, "gl05": {"GAPLEG": 0.05}},
+        # the manager re-opened b5mingap1811 on 19.11.2026: also 0.2 / 0.5 x the average range, and a floor by a share of
+        # the price (GAPPCT, % of the gap's middle) - on the 4-hour tracks (TAL_ASKS_ONLY=size2 TAL_ASKS_TRACKS=t4h_)
+        "size2": {"mg20": {"MIN_GAP": 0.2}, "mg50": {"MIN_GAP": 0.5},
+                  "pp005": {"GAPPCT": 0.05}, "pp01": {"GAPPCT": 0.1}, "pp02": {"GAPPCT": 0.2}},
         "gapx": {"full": {"GAPX": "full"}},
         "firstg": {"fg1": {"FIRSTG": "1"}, "fglo": {"FIRSTG": "lo"}},
         "follow": {"x1": {"FOLLOW": "x1"}, "x2": {"FOLLOW": "x2"}, "x3": {"FOLLOW": "x3"}},
@@ -38,9 +43,18 @@ FAMS = {"size": {"mg05": {"MIN_GAP": 0.05}, "mg10": {"MIN_GAP": 0.1}, "mg15": {"
         "stop": {"sw2": {"STOPAT": "sw2"}}}
 
 
+# a run on part of the questions (19.11.2026): TAL_ASKS_ONLY = families (comma), TAL_ASKS_TRACKS = track name prefixes
+# (comma); the report then goes to report_<families>.json and report.json (all the questions) stays as it is
+ONLY = [x for x in os.environ.get("TAL_ASKS_ONLY", "").split(",") if x]
+TRK_ONLY = [x for x in os.environ.get("TAL_ASKS_TRACKS", "").split(",") if x]
+if ONLY:
+    FAMS = {k: v for k, v in FAMS.items() if k in ONLY}
+
+
 def tracks():
     s5 = json.loads((ROOT / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
-    return {k: v for k, v in (s5.get("tal_tracks") or {}).items() if not any(k.endswith("@" + x) for x in SKIP)}
+    return {k: v for k, v in (s5.get("tal_tracks") or {}).items() if not any(k.endswith("@" + x) for x in SKIP)
+            and (not TRK_ONLY or any(k.startswith(x) for x in TRK_ONLY))}
 
 
 def syms_of(track):
@@ -149,7 +163,7 @@ def report():
                                                                             and u["max_fall"] <= nu["max_fall"] * 1.1)}
         rep["groups"][g] = {"ways": st, "families": fams}
     OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / "report.json").write_text(json.dumps(rep, ensure_ascii=False, indent=1), encoding="utf-8")
+    (OUT / (f"report_{'_'.join(ONLY)}.json" if ONLY else "report.json")).write_text(json.dumps(rep, ensure_ascii=False, indent=1), encoding="utf-8")
     for g, v in rep["groups"].items():
         n = v["ways"].get("now")
         print(g, "now", n and (n["train"]["n"], n["train"]["total"], n["unseen"]["n"], n["unseen"]["total"]), v["families"])

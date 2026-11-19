@@ -559,27 +559,46 @@ def gapleg_of(cfg):
     return v if v > 0 else None
 
 
+# GAPPCT (the user, 18.11.2026 09:20, task b5mingap1811 as the manager re-opened it on 19.11: a floor "by a share of the
+# price"): the gap must be at least this % of the price (0.1 = 0.1% of the gap's middle). Off unless set; the same in
+# simulate and live_trades (both read gap_set).
+def gappct_of(cfg):
+    try:
+        v = float(cfg.get("GAPPCT") or 0) if isinstance(cfg, dict) else 0.0
+    except (TypeError, ValueError):
+        return None
+    return v if v > 0 else None
+
+
 def _gkey(htf, cfg):
-    """gaps()' cache key for a configuration (GAPX "mid" / FIRSTG / GAPLEG off keep the old key, so the old caches stay the same)."""
-    x, fg, gl = gapx_of(cfg), firstg_of(cfg), gapleg_of(cfg)
+    """gaps()' cache key for a configuration (GAPX "mid" / FIRSTG / GAPLEG / GAPPCT off keep the old key, so the old caches stay the same)."""
+    x, fg, gl, gp = gapx_of(cfg), firstg_of(cfg), gapleg_of(cfg), gappct_of(cfg)
     return (htf, cfg["GBODY"], cfg["MIN_GAP"]) + (() if x == "mid" else (x,)) + (() if fg is None else ("fg" + fg,)) \
-        + (() if gl is None else ("gl", gl))
+        + (() if gl is None else ("gl", gl)) + (() if gp is None else ("gp", gp))
 
 
 def gap_set(D, htf, cfg, cache):
-    """The gaps a configuration trades: _gap_set(), and (GAPLEG) without the gaps too small for their impulse."""
-    gl = gapleg_of(cfg)
-    if gl is None:
+    """The gaps a configuration trades: _gap_set(), and (GAPLEG) without the gaps too small for their impulse, (GAPPCT)
+    without the gaps smaller than a share of the price."""
+    gl, gp = gapleg_of(cfg), gappct_of(cfg)
+    if gl is None and gp is None:
         return _gap_set(D, htf, cfg, cache)
     key = _gkey(htf, cfg)
     if key in cache:
         return cache[key]
-    c0 = {k: v for k, v in cfg.items() if k != "GAPLEG"}
+    c0 = {k: v for k, v in cfg.items() if k not in ("GAPLEG", "GAPPCT")}
     g0 = _gap_set(D, htf, c0, cache)
     k0 = _gkey(htf, c0)
     geo0, org0 = cache.get(k0 + ("geo",)) or [], cache.get(k0 + ("org",))
-    keep = [i for i, x in enumerate(g0)
-            if not org0 or org0[i] is None or not org0[i][3] or abs(x[2] - x[3]) >= gl * org0[i][3]]
+
+    def ok(i, x):
+        w = abs(x[2] - x[3])
+        if gl is not None and org0 and org0[i] is not None and org0[i][3] and w < gl * org0[i][3]:
+            return False
+        if gp is not None and w < gp / 100.0 * abs(x[2] + x[3]) / 2.0:
+            return False
+        return True
+    keep = [i for i, x in enumerate(g0) if ok(i, x)]
     cache[key] = [g0[i] for i in keep]
     cache[key + ("geo",)] = [geo0[i] for i in keep] if len(geo0) == len(g0) else []
     cache[key + ("org",)] = [org0[i] for i in keep] if org0 else None
@@ -1663,6 +1682,8 @@ def _norm(c):
         c.pop("STOPAT")                                 # STOPAT sw2 = the 2nd swing, as before - the same name
     if "GAPLEG" in c and not c["GAPLEG"]:
         c.pop("GAPLEG")                                 # GAPLEG off: every gap, as before - the same name
+    if "GAPPCT" in c and not c["GAPPCT"]:
+        c.pop("GAPPCT")                                 # GAPPCT off: every gap, as before - the same name
     return c
 
 

@@ -2404,6 +2404,8 @@ def main():
     REP.remember_alerts(ROOT / "live" / f"{name}_alerts.json")
     if not args.dry_run and not MANAGED:
         UPD.startup(log, BOT)
+        from live import loaded as LD_
+        LD_.record(BOT)
         UPD.announce(log, BOT, STATE, save_state)
     if not args.dry_run:
         port = int(os.environ.get("BOT_PORT") or 8760 + int("".join(ch for ch in name if ch.isdigit())[:1] or 0))

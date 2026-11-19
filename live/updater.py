@@ -54,8 +54,17 @@ def touches_bot(a, b):
         r = requests.get(f"https://api.github.com/repos/{REPO}/compare/{a}...{b}", headers=_headers(), timeout=20)
         r.raise_for_status()
         files = [f["filename"] for f in r.json().get("files", [])]
+        if len(files) >= 300:
+            return True
+        from live import loaded as LD
+        used = LD.used()
+        if used is not None:
+            # only what a running bot really loaded (live/loaded.py), its own folder and its settings (19.11.2026)
+            return any((f in used) or (f.startswith(("live/", "config.py", "requirements.txt", "data/ftmo_symbols/"))
+                                       and not f.endswith("_state.json") and not f.startswith(("live/loaded_", "live/cache_watch/")))
+                       for f in files)
         return any(f.startswith(BOT_CODE) and not f.endswith("_state.json") and f not in RESEARCH
-                   and not f.startswith("data/agents/") for f in files) or len(files) >= 300
+                   and not f.startswith("data/agents/") for f in files)
     except Exception:  # noqa: BLE001
         return True
 

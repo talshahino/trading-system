@@ -1923,4 +1923,9 @@ def main():
 
 
 if __name__ == "__main__":
+    try:
+        from live import loaded as LD_     # which files this process uses: an update restarts the bots only for those
+        LD_.record("manager" + ("_" + "_".join(sys.argv[1:])[:40] if len(sys.argv) > 1 else ""))
+    except Exception:  # noqa: BLE001
+        pass
     main()

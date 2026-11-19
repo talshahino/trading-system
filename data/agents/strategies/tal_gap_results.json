@@ -256613,6 +256613,19 @@
     "ftmo_unseen": null,
     "ftmo_versions": 0
    }
+  },
+  "shared_1911n": {
+   "at": "2026-11-19T19:50:00+00:00",
+   "dbrk": {
+    "bot5": "no DBRK rule beats today on bot 5's whole bot (+387R / +152R; x +336R / +127R; c +311R / +78R); passes only on t15_1 (x), held by the manager in watch (card 9122161d89e6)",
+    "bot6": "already in bot 6's rules, not a new test: the CME daily break (17:00-18:00 NY) sits inside FTMO Futures' forced-flat window - every bot 6 trade is closed at 16:05 (DBRK x, 55 min earlier) and no order fills from 15:45 (DBRK c, 75 min earlier); the reopening part (oN) runs as SESS xreo5 / xreo15 on the four tracks (queued 19.11, commit 3a8b6167c); 'no entry in the first hour after 18:00' (xreopen) already lost on all four (1h/5m 2026 +63.4R -> +42.7R)"
+   },
+   "cluster": {
+    "bot5": "same-move cluster cap - no change in bot 5",
+    "bot6": "bot 6 trades one gap pair + three tracks on 3 indices, one micro contract mostly - the cap has nothing to cut beyond MAXC 0.2 (t5_1); not queued"
+   },
+   "queue_note": "the 14:44 UTC run of bot 6 on the bots' computer (67 min, over its 50-min budget) published at 15:16; the head-to-head stop-to-the-entry levels (be618 / be70 / be786 / be886) and xreo5 / xreo15 were added after it (15:40) and run in the next round",
+   "discover": "SC562 (Pruitt Super Combo, S&P futures 5m), SC669 (Stop Hunter, round levels), SC563 (Pezzutti ADX gapper), SC570 (Crabel ORBP) queued on the contracts after the New York open strategies; bot 1's CFD test: none earned to 2025 as the source"
   }
  },
  "bot5": {

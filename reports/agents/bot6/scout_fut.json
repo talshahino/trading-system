@@ -208554,9 +208554,9 @@
   "share_positive_train": 0.0
  },
  "FG02|1Min|US100": {
-  "at": "2026-11-19T07:09:50+00:00",
+  "at": "2026-11-19T15:37:53+00:00",
   "card": "discover",
-  "done": false,
+  "done": true,
   "variants": {
    "town_s0.75_time_be": {
     "v": {
@@ -208865,6 +208865,2386 @@
      0.4321,
      -0.1215
     ]
+   },
+   "town_s1.25_notime_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 1.25,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1312,
+     "t": 0.84,
+     "win": 39.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0028,
+     "t": -0.01,
+     "win": 35.3
+    },
+    "unseen_sum": -0.1,
+    "cost_r": 0.037,
+    "halves": [
+     0.4012,
+     -0.147
+    ]
+   },
+   "town_s1.5_time_be": {
+    "v": {
+     "target": "own",
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1021,
+     "t": 0.69,
+     "win": 35.9
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0515,
+     "t": 0.28,
+     "win": 47.1
+    },
+    "unseen_sum": 2.63,
+    "cost_r": 0.031,
+    "halves": [
+     0.354,
+     -0.1552
+    ]
+   },
+   "town_s1.5_time_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 1.5,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0691,
+     "t": 0.45,
+     "win": 37.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0295,
+     "t": 0.15,
+     "win": 37.3
+    },
+    "unseen_sum": 1.46,
+    "cost_r": 0.031,
+    "halves": [
+     0.3455,
+     -0.2024
+    ]
+   },
+   "town_s1.5_notime_be": {
+    "v": {
+     "target": "own",
+     "stop": 1.5,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1021,
+     "t": 0.69,
+     "win": 35.9
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0515,
+     "t": 0.28,
+     "win": 47.1
+    },
+    "unseen_sum": 2.63,
+    "cost_r": 0.031,
+    "halves": [
+     0.354,
+     -0.1552
+    ]
+   },
+   "town_s1.5_notime_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 1.5,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0691,
+     "t": 0.45,
+     "win": 37.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0295,
+     "t": 0.15,
+     "win": 37.3
+    },
+    "unseen_sum": 1.46,
+    "cost_r": 0.031,
+    "halves": [
+     0.3455,
+     -0.2024
+    ]
+   },
+   "tnone_s0.75_time_be": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.4262,
+     "t": 0.92,
+     "win": 33.9
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.3882,
+     "t": 0.66,
+     "win": 29.4
+    },
+    "unseen_sum": 19.63,
+    "cost_r": 0.062,
+    "halves": [
+     1.5105,
+     -0.3535
+    ]
+   },
+   "tnone_s0.75_time_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1576,
+     "t": 0.29,
+     "win": 8.5
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0575,
+     "t": 0.1,
+     "win": 7.9
+    },
+    "unseen_sum": 2.75,
+    "cost_r": 0.062,
+    "halves": [
+     1.5031,
+     -0.8557
+    ]
+   },
+   "tnone_s0.75_notime_be": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.4262,
+     "t": 0.92,
+     "win": 33.9
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.3882,
+     "t": 0.66,
+     "win": 29.4
+    },
+    "unseen_sum": 19.63,
+    "cost_r": 0.062,
+    "halves": [
+     1.5105,
+     -0.3535
+    ]
+   },
+   "tnone_s0.75_notime_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1576,
+     "t": 0.29,
+     "win": 8.5
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0575,
+     "t": 0.1,
+     "win": 7.9
+    },
+    "unseen_sum": 2.75,
+    "cost_r": 0.062,
+    "halves": [
+     1.5031,
+     -0.8557
+    ]
+   },
+   "tnone_s1_time_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.0,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2813,
+     "t": 0.77,
+     "win": 33.2
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.2716,
+     "t": 0.6,
+     "win": 33.3
+    },
+    "unseen_sum": 13.77,
+    "cost_r": 0.046,
+    "halves": [
+     1.2605,
+     -0.4671
+    ]
+   },
+   "tnone_s1_time_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1935,
+     "t": 0.44,
+     "win": 12.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1207,
+     "t": -0.26,
+     "win": 11.8
+    },
+    "unseen_sum": -6.32,
+    "cost_r": 0.046,
+    "halves": [
+     1.3058,
+     -0.6828
+    ]
+   },
+   "tnone_s1_notime_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.0,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2813,
+     "t": 0.77,
+     "win": 33.2
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.2716,
+     "t": 0.6,
+     "win": 33.3
+    },
+    "unseen_sum": 13.77,
+    "cost_r": 0.046,
+    "halves": [
+     1.2605,
+     -0.4671
+    ]
+   },
+   "tnone_s1_notime_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.0,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1935,
+     "t": 0.44,
+     "win": 12.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1207,
+     "t": -0.26,
+     "win": 11.8
+    },
+    "unseen_sum": -6.32,
+    "cost_r": 0.046,
+    "halves": [
+     1.3058,
+     -0.6828
+    ]
+   },
+   "tnone_s1.25_time_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.25,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.3264,
+     "t": 0.92,
+     "win": 36.1
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.2815,
+     "t": 0.62,
+     "win": 29.5
+    },
+    "unseen_sum": 14.11,
+    "cost_r": 0.037,
+    "halves": [
+     1.411,
+     -0.5018
+    ]
+   },
+   "tnone_s1.25_time_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.25,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2127,
+     "t": 0.53,
+     "win": 15.0
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.2478,
+     "t": 0.49,
+     "win": 15.7
+    },
+    "unseen_sum": 12.51,
+    "cost_r": 0.037,
+    "halves": [
+     1.3219,
+     -0.6535
+    ]
+   },
+   "tnone_s1.25_notime_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.25,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.3264,
+     "t": 0.92,
+     "win": 36.1
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.2815,
+     "t": 0.62,
+     "win": 29.5
+    },
+    "unseen_sum": 14.11,
+    "cost_r": 0.037,
+    "halves": [
+     1.411,
+     -0.5018
+    ]
+   },
+   "tnone_s1.25_notime_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.25,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2127,
+     "t": 0.53,
+     "win": 15.0
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.2478,
+     "t": 0.49,
+     "win": 15.7
+    },
+    "unseen_sum": 12.51,
+    "cost_r": 0.037,
+    "halves": [
+     1.3219,
+     -0.6535
+    ]
+   },
+   "tnone_s1.5_time_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0951,
+     "t": 0.32,
+     "win": 28.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.1946,
+     "t": 0.51,
+     "win": 33.4
+    },
+    "unseen_sum": 9.66,
+    "cost_r": 0.031,
+    "halves": [
+     1.056,
+     -0.6441
+    ]
+   },
+   "tnone_s1.5_time_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.5,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0357,
+     "t": 0.1,
+     "win": 15.0
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.1211,
+     "t": 0.28,
+     "win": 17.7
+    },
+    "unseen_sum": 6.03,
+    "cost_r": 0.031,
+    "halves": [
+     0.9719,
+     -0.6968
+    ]
+   },
+   "tnone_s1.5_notime_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.5,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0951,
+     "t": 0.32,
+     "win": 28.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.1946,
+     "t": 0.51,
+     "win": 33.4
+    },
+    "unseen_sum": 9.66,
+    "cost_r": 0.031,
+    "halves": [
+     1.056,
+     -0.6441
+    ]
+   },
+   "tnone_s1.5_notime_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.5,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0357,
+     "t": 0.1,
+     "win": 15.0
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.1211,
+     "t": 0.28,
+     "win": 17.7
+    },
+    "unseen_sum": 6.03,
+    "cost_r": 0.031,
+    "halves": [
+     0.9719,
+     -0.6968
+    ]
+   },
+   "t1R_s0.75_time_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.1559,
+     "t": -1.4,
+     "win": 36.7
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1626,
+     "t": -1.16,
+     "win": 48.9
+    },
+    "unseen_sum": -8.17,
+    "cost_r": 0.062,
+    "halves": [
+     -0.1857,
+     -0.137
+    ]
+   },
+   "t1R_s0.75_time_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0811,
+     "t": -0.64,
+     "win": 45.5
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1705,
+     "t": -1.04,
+     "win": 39.3
+    },
+    "unseen_sum": -8.68,
+    "cost_r": 0.062,
+    "halves": [
+     -0.0699,
+     -0.1188
+    ]
+   },
+   "t1R_s0.75_notime_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 0.75,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.1559,
+     "t": -1.4,
+     "win": 36.7
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1626,
+     "t": -1.16,
+     "win": 48.9
+    },
+    "unseen_sum": -8.17,
+    "cost_r": 0.062,
+    "halves": [
+     -0.1857,
+     -0.137
+    ]
+   },
+   "t1R_s0.75_notime_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 0.75,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0811,
+     "t": -0.64,
+     "win": 45.5
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1705,
+     "t": -1.04,
+     "win": 39.3
+    },
+    "unseen_sum": -8.68,
+    "cost_r": 0.062,
+    "halves": [
+     -0.0699,
+     -0.1188
+    ]
+   },
+   "t1R_s1_time_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.0,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.1531,
+     "t": -1.51,
+     "win": 34.6
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1908,
+     "t": -1.54,
+     "win": 51.0
+    },
+    "unseen_sum": -9.65,
+    "cost_r": 0.046,
+    "halves": [
+     -0.1985,
+     -0.1347
+    ]
+   },
+   "t1R_s1_time_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0821,
+     "t": -0.71,
+     "win": 46.9
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.2042,
+     "t": -1.36,
+     "win": 39.2
+    },
+    "unseen_sum": -10.37,
+    "cost_r": 0.046,
+    "halves": [
+     -0.046,
+     -0.1598
+    ]
+   },
+   "t1R_s1_notime_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.0,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.1531,
+     "t": -1.51,
+     "win": 34.6
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1908,
+     "t": -1.54,
+     "win": 51.0
+    },
+    "unseen_sum": -9.65,
+    "cost_r": 0.046,
+    "halves": [
+     -0.1985,
+     -0.1347
+    ]
+   },
+   "t1R_s1_notime_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.0,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0821,
+     "t": -0.71,
+     "win": 46.9
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.2042,
+     "t": -1.36,
+     "win": 39.2
+    },
+    "unseen_sum": -10.37,
+    "cost_r": 0.046,
+    "halves": [
+     -0.046,
+     -0.1598
+    ]
+   },
+   "t1R_s1.25_time_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.25,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0722,
+     "t": -0.75,
+     "win": 39.0
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.264,
+     "t": -2.15,
+     "win": 43.2
+    },
+    "unseen_sum": -13.45,
+    "cost_r": 0.037,
+    "halves": [
+     -0.0613,
+     -0.1107
+    ]
+   },
+   "t1R_s1.25_time_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.25,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0581,
+     "t": -0.52,
+     "win": 48.6
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.221,
+     "t": -1.54,
+     "win": 39.2
+    },
+    "unseen_sum": -11.25,
+    "cost_r": 0.037,
+    "halves": [
+     0.0923,
+     -0.2268
+    ]
+   },
+   "t1R_s1.25_notime_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.25,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0722,
+     "t": -0.75,
+     "win": 39.0
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.264,
+     "t": -2.15,
+     "win": 43.2
+    },
+    "unseen_sum": -13.45,
+    "cost_r": 0.037,
+    "halves": [
+     -0.0613,
+     -0.1107
+    ]
+   },
+   "t1R_s1.25_notime_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.25,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0581,
+     "t": -0.52,
+     "win": 48.6
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.221,
+     "t": -1.54,
+     "win": 39.2
+    },
+    "unseen_sum": -11.25,
+    "cost_r": 0.037,
+    "halves": [
+     0.0923,
+     -0.2268
+    ]
+   },
+   "t1R_s1.5_time_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.071,
+     "t": -0.73,
+     "win": 42.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1424,
+     "t": -1.11,
+     "win": 45.2
+    },
+    "unseen_sum": -7.27,
+    "cost_r": 0.031,
+    "halves": [
+     -0.035,
+     -0.1294
+    ]
+   },
+   "t1R_s1.5_time_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.5,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0955,
+     "t": -0.88,
+     "win": 46.9
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0677,
+     "t": -0.47,
+     "win": 47.1
+    },
+    "unseen_sum": -3.45,
+    "cost_r": 0.031,
+    "halves": [
+     0.1073,
+     -0.2832
+    ]
+   },
+   "t1R_s1.5_notime_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.5,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.071,
+     "t": -0.73,
+     "win": 42.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1424,
+     "t": -1.11,
+     "win": 45.2
+    },
+    "unseen_sum": -7.27,
+    "cost_r": 0.031,
+    "halves": [
+     -0.035,
+     -0.1294
+    ]
+   },
+   "t1R_s1.5_notime_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.5,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0955,
+     "t": -0.88,
+     "win": 46.9
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0677,
+     "t": -0.47,
+     "win": 47.1
+    },
+    "unseen_sum": -3.45,
+    "cost_r": 0.031,
+    "halves": [
+     0.1073,
+     -0.2832
+    ]
+   },
+   "t1.5R_s0.75_time_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0648,
+     "t": -0.51,
+     "win": 33.6
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1666,
+     "t": -1.06,
+     "win": 45.1
+    },
+    "unseen_sum": -8.44,
+    "cost_r": 0.062,
+    "halves": [
+     -0.1949,
+     0.0097
+    ]
+   },
+   "t1.5R_s0.75_time_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0098,
+     "t": -0.07,
+     "win": 41.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.213,
+     "t": -1.19,
+     "win": 31.4
+    },
+    "unseen_sum": -10.84,
+    "cost_r": 0.062,
+    "halves": [
+     -0.0461,
+     -0.021
+    ]
+   },
+   "t1.5R_s0.75_notime_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 0.75,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0648,
+     "t": -0.51,
+     "win": 33.6
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1666,
+     "t": -1.06,
+     "win": 45.1
+    },
+    "unseen_sum": -8.44,
+    "cost_r": 0.062,
+    "halves": [
+     -0.1949,
+     0.0097
+    ]
+   },
+   "t1.5R_s0.75_notime_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 0.75,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0098,
+     "t": -0.07,
+     "win": 41.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.213,
+     "t": -1.19,
+     "win": 31.4
+    },
+    "unseen_sum": -10.84,
+    "cost_r": 0.062,
+    "halves": [
+     -0.0461,
+     -0.021
+    ]
+   },
+   "t1.5R_s1_time_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.0,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0605,
+     "t": -0.5,
+     "win": 36.7
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1884,
+     "t": -1.21,
+     "win": 37.3
+    },
+    "unseen_sum": -9.56,
+    "cost_r": 0.046,
+    "halves": [
+     -0.0754,
+     -0.081
+    ]
+   },
+   "t1.5R_s1_time_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0578,
+     "t": -0.43,
+     "win": 39.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.083,
+     "t": -0.47,
+     "win": 37.3
+    },
+    "unseen_sum": -4.18,
+    "cost_r": 0.046,
+    "halves": [
+     0.0849,
+     -0.2183
+    ]
+   },
+   "t1.5R_s1_notime_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.0,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0605,
+     "t": -0.5,
+     "win": 36.7
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1884,
+     "t": -1.21,
+     "win": 37.3
+    },
+    "unseen_sum": -9.56,
+    "cost_r": 0.046,
+    "halves": [
+     -0.0754,
+     -0.081
+    ]
+   },
+   "t1.5R_s1_notime_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.0,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0578,
+     "t": -0.43,
+     "win": 39.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.083,
+     "t": -0.47,
+     "win": 37.3
+    },
+    "unseen_sum": -4.18,
+    "cost_r": 0.046,
+    "halves": [
+     0.0849,
+     -0.2183
+    ]
+   },
+   "t1.5R_s1.25_time_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.25,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.074,
+     "t": 0.6,
+     "win": 43.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1196,
+     "t": -0.74,
+     "win": 39.3
+    },
+    "unseen_sum": -6.11,
+    "cost_r": 0.037,
+    "halves": [
+     0.1537,
+     -0.0397
+    ]
+   },
+   "t1.5R_s1.25_time_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.25,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0554,
+     "t": 0.41,
+     "win": 44.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0611,
+     "t": -0.36,
+     "win": 39.2
+    },
+    "unseen_sum": -3.1,
+    "cost_r": 0.037,
+    "halves": [
+     0.2124,
+     -0.1217
+    ]
+   },
+   "t1.5R_s1.25_notime_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.25,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.074,
+     "t": 0.6,
+     "win": 43.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1196,
+     "t": -0.74,
+     "win": 39.3
+    },
+    "unseen_sum": -6.11,
+    "cost_r": 0.037,
+    "halves": [
+     0.1537,
+     -0.0397
+    ]
+   },
+   "t1.5R_s1.25_notime_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.25,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0554,
+     "t": 0.41,
+     "win": 44.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0611,
+     "t": -0.36,
+     "win": 39.2
+    },
+    "unseen_sum": -3.1,
+    "cost_r": 0.037,
+    "halves": [
+     0.2124,
+     -0.1217
+    ]
+   },
+   "t1.5R_s1.5_time_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0307,
+     "t": 0.25,
+     "win": 39.1
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0453,
+     "t": -0.28,
+     "win": 45.1
+    },
+    "unseen_sum": -2.33,
+    "cost_r": 0.031,
+    "halves": [
+     0.2334,
+     -0.1731
+    ]
+   },
+   "t1.5R_s1.5_time_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.5,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0067,
+     "t": -0.05,
+     "win": 41.7
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0352,
+     "t": 0.2,
+     "win": 43.2
+    },
+    "unseen_sum": 1.75,
+    "cost_r": 0.031,
+    "halves": [
+     0.2233,
+     -0.2312
+    ]
+   },
+   "t1.5R_s1.5_notime_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.5,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0307,
+     "t": 0.25,
+     "win": 39.1
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0453,
+     "t": -0.28,
+     "win": 45.1
+    },
+    "unseen_sum": -2.33,
+    "cost_r": 0.031,
+    "halves": [
+     0.2334,
+     -0.1731
+    ]
+   },
+   "t1.5R_s1.5_notime_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.5,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": -0.0067,
+     "t": -0.05,
+     "win": 41.7
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0352,
+     "t": 0.2,
+     "win": 43.2
+    },
+    "unseen_sum": 1.75,
+    "cost_r": 0.031,
+    "halves": [
+     0.2233,
+     -0.2312
+    ]
+   },
+   "t2R_s0.75_time_be": {
+    "v": {
+     "target": 2.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0457,
+     "t": 0.31,
+     "win": 35.4
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1613,
+     "t": -0.87,
+     "win": 33.4
+    },
+    "unseen_sum": -8.24,
+    "cost_r": 0.062,
+    "halves": [
+     -0.0033,
+     0.05
+    ]
+   },
+   "t2R_s0.75_time_nobe": {
+    "v": {
+     "target": 2.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0247,
+     "t": 0.15,
+     "win": 36.5
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0769,
+     "t": -0.37,
+     "win": 31.4
+    },
+    "unseen_sum": -3.92,
+    "cost_r": 0.062,
+    "halves": [
+     0.091,
+     -0.0664
+    ]
+   },
+   "t2R_s0.75_notime_be": {
+    "v": {
+     "target": 2.0,
+     "stop": 0.75,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0457,
+     "t": 0.31,
+     "win": 35.4
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1613,
+     "t": -0.87,
+     "win": 33.4
+    },
+    "unseen_sum": -8.24,
+    "cost_r": 0.062,
+    "halves": [
+     -0.0033,
+     0.05
+    ]
+   },
+   "t2R_s0.75_notime_nobe": {
+    "v": {
+     "target": 2.0,
+     "stop": 0.75,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0247,
+     "t": 0.15,
+     "win": 36.5
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0769,
+     "t": -0.37,
+     "win": 31.4
+    },
+    "unseen_sum": -3.92,
+    "cost_r": 0.062,
+    "halves": [
+     0.091,
+     -0.0664
+    ]
+   },
+   "t2R_s1_time_be": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.0,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0586,
+     "t": 0.4,
+     "win": 34.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0689,
+     "t": -0.37,
+     "win": 37.3
+    },
+    "unseen_sum": -3.47,
+    "cost_r": 0.046,
+    "halves": [
+     0.1795,
+     -0.0802
+    ]
+   },
+   "t2R_s1_time_nobe": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0902,
+     "t": 0.57,
+     "win": 38.6
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.001,
+     "t": 0.01,
+     "win": 35.3
+    },
+    "unseen_sum": 0.13,
+    "cost_r": 0.046,
+    "halves": [
+     0.3182,
+     -0.1491
+    ]
+   },
+   "t2R_s1_notime_be": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.0,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0586,
+     "t": 0.4,
+     "win": 34.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0689,
+     "t": -0.37,
+     "win": 37.3
+    },
+    "unseen_sum": -3.47,
+    "cost_r": 0.046,
+    "halves": [
+     0.1795,
+     -0.0802
+    ]
+   },
+   "t2R_s1_notime_nobe": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.0,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0902,
+     "t": 0.57,
+     "win": 38.6
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.001,
+     "t": 0.01,
+     "win": 35.3
+    },
+    "unseen_sum": 0.13,
+    "cost_r": 0.046,
+    "halves": [
+     0.3182,
+     -0.1491
+    ]
+   },
+   "t2R_s1.25_time_be": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.25,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1588,
+     "t": 1.05,
+     "win": 37.7
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0455,
+     "t": -0.24,
+     "win": 37.3
+    },
+    "unseen_sum": -2.27,
+    "cost_r": 0.037,
+    "halves": [
+     0.4321,
+     -0.1215
+    ]
+   },
+   "t2R_s1.25_time_nobe": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.25,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1312,
+     "t": 0.84,
+     "win": 39.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0028,
+     "t": -0.01,
+     "win": 35.3
+    },
+    "unseen_sum": -0.1,
+    "cost_r": 0.037,
+    "halves": [
+     0.4012,
+     -0.147
+    ]
+   },
+   "t2R_s1.25_notime_be": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.25,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1588,
+     "t": 1.05,
+     "win": 37.7
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0455,
+     "t": -0.24,
+     "win": 37.3
+    },
+    "unseen_sum": -2.27,
+    "cost_r": 0.037,
+    "halves": [
+     0.4321,
+     -0.1215
+    ]
+   },
+   "t2R_s1.25_notime_nobe": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.25,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1312,
+     "t": 0.84,
+     "win": 39.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0028,
+     "t": -0.01,
+     "win": 35.3
+    },
+    "unseen_sum": -0.1,
+    "cost_r": 0.037,
+    "halves": [
+     0.4012,
+     -0.147
+    ]
+   },
+   "t2R_s1.5_time_be": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1021,
+     "t": 0.69,
+     "win": 35.9
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0515,
+     "t": 0.28,
+     "win": 47.1
+    },
+    "unseen_sum": 2.63,
+    "cost_r": 0.031,
+    "halves": [
+     0.354,
+     -0.1552
+    ]
+   },
+   "t2R_s1.5_time_nobe": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.5,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0691,
+     "t": 0.45,
+     "win": 37.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0295,
+     "t": 0.15,
+     "win": 37.3
+    },
+    "unseen_sum": 1.46,
+    "cost_r": 0.031,
+    "halves": [
+     0.3455,
+     -0.2024
+    ]
+   },
+   "t2R_s1.5_notime_be": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.5,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1021,
+     "t": 0.69,
+     "win": 35.9
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0515,
+     "t": 0.28,
+     "win": 47.1
+    },
+    "unseen_sum": 2.63,
+    "cost_r": 0.031,
+    "halves": [
+     0.354,
+     -0.1552
+    ]
+   },
+   "t2R_s1.5_notime_nobe": {
+    "v": {
+     "target": 2.0,
+     "stop": 1.5,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0691,
+     "t": 0.45,
+     "win": 37.3
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0295,
+     "t": 0.15,
+     "win": 37.3
+    },
+    "unseen_sum": 1.46,
+    "cost_r": 0.031,
+    "halves": [
+     0.3455,
+     -0.2024
+    ]
+   },
+   "t3R_s0.75_time_be": {
+    "v": {
+     "target": 3.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2524,
+     "t": 1.3,
+     "win": 32.5
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0168,
+     "t": -0.07,
+     "win": 29.5
+    },
+    "unseen_sum": -0.84,
+    "cost_r": 0.062,
+    "halves": [
+     0.3504,
+     0.1317
+    ]
+   },
+   "t3R_s0.75_time_nobe": {
+    "v": {
+     "target": 3.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2296,
+     "t": 1.14,
+     "win": 33.2
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0602,
+     "t": 0.24,
+     "win": 27.5
+    },
+    "unseen_sum": 3.08,
+    "cost_r": 0.062,
+    "halves": [
+     0.4021,
+     0.0376
+    ]
+   },
+   "t3R_s0.75_notime_be": {
+    "v": {
+     "target": 3.0,
+     "stop": 0.75,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2524,
+     "t": 1.3,
+     "win": 32.5
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0168,
+     "t": -0.07,
+     "win": 29.5
+    },
+    "unseen_sum": -0.84,
+    "cost_r": 0.062,
+    "halves": [
+     0.3504,
+     0.1317
+    ]
+   },
+   "t3R_s0.75_notime_nobe": {
+    "v": {
+     "target": 3.0,
+     "stop": 0.75,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2296,
+     "t": 1.14,
+     "win": 33.2
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0602,
+     "t": 0.24,
+     "win": 27.5
+    },
+    "unseen_sum": 3.08,
+    "cost_r": 0.062,
+    "halves": [
+     0.4021,
+     0.0376
+    ]
+   },
+   "t3R_s1_time_be": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.0,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2712,
+     "t": 1.4,
+     "win": 32.5
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.123,
+     "t": 0.52,
+     "win": 37.3
+    },
+    "unseen_sum": 6.35,
+    "cost_r": 0.046,
+    "halves": [
+     0.5526,
+     -0.0266
+    ]
+   },
+   "t3R_s1_time_nobe": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2089,
+     "t": 1.05,
+     "win": 32.1
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0412,
+     "t": 0.17,
+     "win": 29.4
+    },
+    "unseen_sum": 2.19,
+    "cost_r": 0.046,
+    "halves": [
+     0.5182,
+     -0.1188
+    ]
+   },
+   "t3R_s1_notime_be": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.0,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2712,
+     "t": 1.4,
+     "win": 32.5
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.123,
+     "t": 0.52,
+     "win": 37.3
+    },
+    "unseen_sum": 6.35,
+    "cost_r": 0.046,
+    "halves": [
+     0.5526,
+     -0.0266
+    ]
+   },
+   "t3R_s1_notime_nobe": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.0,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2089,
+     "t": 1.05,
+     "win": 32.1
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0412,
+     "t": 0.17,
+     "win": 29.4
+    },
+    "unseen_sum": 2.19,
+    "cost_r": 0.046,
+    "halves": [
+     0.5182,
+     -0.1188
+    ]
+   },
+   "t3R_s1.25_time_be": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.25,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2613,
+     "t": 1.38,
+     "win": 35.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0118,
+     "t": 0.05,
+     "win": 37.3
+    },
+    "unseen_sum": 0.61,
+    "cost_r": 0.037,
+    "halves": [
+     0.7209,
+     -0.1681
+    ]
+   },
+   "t3R_s1.25_time_nobe": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.25,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1815,
+     "t": 0.93,
+     "win": 31.4
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0318,
+     "t": -0.13,
+     "win": 27.5
+    },
+    "unseen_sum": -1.65,
+    "cost_r": 0.037,
+    "halves": [
+     0.7124,
+     -0.3035
+    ]
+   },
+   "t3R_s1.25_notime_be": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.25,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.2613,
+     "t": 1.38,
+     "win": 35.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": 0.0118,
+     "t": 0.05,
+     "win": 37.3
+    },
+    "unseen_sum": 0.61,
+    "cost_r": 0.037,
+    "halves": [
+     0.7209,
+     -0.1681
+    ]
+   },
+   "t3R_s1.25_notime_nobe": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.25,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1815,
+     "t": 0.93,
+     "win": 31.4
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0318,
+     "t": -0.13,
+     "win": 27.5
+    },
+    "unseen_sum": -1.65,
+    "cost_r": 0.037,
+    "halves": [
+     0.7124,
+     -0.3035
+    ]
+   },
+   "t3R_s1.5_time_be": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0861,
+     "t": 0.49,
+     "win": 33.1
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0656,
+     "t": -0.31,
+     "win": 37.3
+    },
+    "unseen_sum": -3.43,
+    "cost_r": 0.031,
+    "halves": [
+     0.5092,
+     -0.3175
+    ]
+   },
+   "t3R_s1.5_time_nobe": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.5,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1223,
+     "t": 0.64,
+     "win": 29.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1301,
+     "t": -0.58,
+     "win": 25.6
+    },
+    "unseen_sum": -6.77,
+    "cost_r": 0.031,
+    "halves": [
+     0.7233,
+     -0.387
+    ]
+   },
+   "t3R_s1.5_notime_be": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.5,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.0861,
+     "t": 0.49,
+     "win": 33.1
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.0656,
+     "t": -0.31,
+     "win": 37.3
+    },
+    "unseen_sum": -3.43,
+    "cost_r": 0.031,
+    "halves": [
+     0.5092,
+     -0.3175
+    ]
+   },
+   "t3R_s1.5_notime_nobe": {
+    "v": {
+     "target": 3.0,
+     "stop": 1.5,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 91,
+     "eff_n": 88.3,
+     "mean": 0.1223,
+     "t": 0.64,
+     "win": 29.8
+    },
+    "unseen": {
+     "n": 51,
+     "eff_n": 51.0,
+     "mean": -0.1301,
+     "t": -0.58,
+     "win": 25.6
+    },
+    "unseen_sum": -6.77,
+    "cost_r": 0.031,
+    "halves": [
+     0.7233,
+     -0.387
+    ]
    }
   },
   "base": {
@@ -208897,32 +211277,1944 @@
   },
   "chosen": {
    "v": {
-    "target": "own",
-    "stop": 1.25,
+    "target": "none",
+    "stop": 0.75,
     "time": "own",
     "be": true
    },
    "train": {
     "n": 91,
     "eff_n": 88.3,
-    "mean": 0.1587,
-    "t": 1.05,
-    "win": 37.7
+    "mean": 0.4262,
+    "t": 0.92,
+    "win": 33.9
    },
    "unseen": {
     "n": 51,
     "eff_n": 51.0,
-    "mean": -0.0455,
-    "t": -0.24,
-    "win": 37.3
+    "mean": 0.3882,
+    "t": 0.66,
+    "win": 29.4
    },
-   "unseen_sum": -2.27,
-   "cost_r": 0.037,
+   "unseen_sum": 19.63,
+   "cost_r": 0.062,
    "halves": [
-    0.4321,
-    -0.1215
+    1.5105,
+    -0.3535
    ]
   },
-  "share_positive_train": 1.0
+  "share_positive_train": 0.73
+ },
+ "FG02|1Min|US500": {
+  "at": "2026-11-19T15:37:53+00:00",
+  "card": "discover",
+  "done": false,
+  "variants": {
+   "town_s0.75_time_be": {
+    "v": {
+     "target": "own",
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.01,
+     "t": -0.05,
+     "win": 36.2
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4109,
+     "t": -2.65,
+     "win": 38.3
+    },
+    "unseen_sum": -21.24,
+    "cost_r": 0.211,
+    "halves": [
+     -0.3638,
+     0.2244
+    ]
+   },
+   "town_s0.75_time_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": 0.0357,
+     "t": 0.17,
+     "win": 41.3
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4634,
+     "t": -2.55,
+     "win": 24.9
+    },
+    "unseen_sum": -23.97,
+    "cost_r": 0.211,
+    "halves": [
+     -0.2131,
+     0.1589
+    ]
+   },
+   "town_s0.75_notime_be": {
+    "v": {
+     "target": "own",
+     "stop": 0.75,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.01,
+     "t": -0.05,
+     "win": 36.2
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4109,
+     "t": -2.65,
+     "win": 38.3
+    },
+    "unseen_sum": -21.24,
+    "cost_r": 0.211,
+    "halves": [
+     -0.3638,
+     0.2244
+    ]
+   },
+   "town_s0.75_notime_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 0.75,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": 0.0357,
+     "t": 0.17,
+     "win": 41.3
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4634,
+     "t": -2.55,
+     "win": 24.9
+    },
+    "unseen_sum": -23.97,
+    "cost_r": 0.211,
+    "halves": [
+     -0.2131,
+     0.1589
+    ]
+   },
+   "town_s1_time_be": {
+    "v": {
+     "target": "own",
+     "stop": 1.0,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.11,
+     "t": 0.65,
+     "win": 40.6
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.3785,
+     "t": -2.43,
+     "win": 40.2
+    },
+    "unseen_sum": -19.41,
+    "cost_r": 0.159,
+    "halves": [
+     -0.3153,
+     0.4124
+    ]
+   },
+   "town_s1_time_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.1076,
+     "t": 0.57,
+     "win": 43.3
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4807,
+     "t": -2.75,
+     "win": 22.9
+    },
+    "unseen_sum": -24.73,
+    "cost_r": 0.159,
+    "halves": [
+     -0.1701,
+     0.2793
+    ]
+   },
+   "town_s1_notime_be": {
+    "v": {
+     "target": "own",
+     "stop": 1.0,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.11,
+     "t": 0.65,
+     "win": 40.6
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.3785,
+     "t": -2.43,
+     "win": 40.2
+    },
+    "unseen_sum": -19.41,
+    "cost_r": 0.159,
+    "halves": [
+     -0.3153,
+     0.4124
+    ]
+   },
+   "town_s1_notime_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 1.0,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.1076,
+     "t": 0.57,
+     "win": 43.3
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4807,
+     "t": -2.75,
+     "win": 22.9
+    },
+    "unseen_sum": -24.73,
+    "cost_r": 0.159,
+    "halves": [
+     -0.1701,
+     0.2793
+    ]
+   },
+   "town_s1.25_time_be": {
+    "v": {
+     "target": "own",
+     "stop": 1.25,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.1116,
+     "t": 0.7,
+     "win": 39.2
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.4281,
+     "t": -2.65,
+     "win": 31.9
+    },
+    "unseen_sum": -22.42,
+    "cost_r": 0.13,
+    "halves": [
+     -0.1922,
+     0.3039
+    ]
+   },
+   "town_s1.25_time_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 1.25,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0545,
+     "t": 0.3,
+     "win": 40.6
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.45,
+     "t": -2.58,
+     "win": 24.3
+    },
+    "unseen_sum": -23.51,
+    "cost_r": 0.13,
+    "halves": [
+     -0.0968,
+     0.1154
+    ]
+   },
+   "town_s1.25_notime_be": {
+    "v": {
+     "target": "own",
+     "stop": 1.25,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.1116,
+     "t": 0.7,
+     "win": 39.2
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.4281,
+     "t": -2.65,
+     "win": 31.9
+    },
+    "unseen_sum": -22.42,
+    "cost_r": 0.13,
+    "halves": [
+     -0.1922,
+     0.3039
+    ]
+   },
+   "town_s1.25_notime_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 1.25,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0545,
+     "t": 0.3,
+     "win": 40.6
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.45,
+     "t": -2.58,
+     "win": 24.3
+    },
+    "unseen_sum": -23.51,
+    "cost_r": 0.13,
+    "halves": [
+     -0.0968,
+     0.1154
+    ]
+   },
+   "town_s1.5_time_be": {
+    "v": {
+     "target": "own",
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0348,
+     "t": 0.22,
+     "win": 36.8
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.5036,
+     "t": -3.38,
+     "win": 30.0
+    },
+    "unseen_sum": -26.44,
+    "cost_r": 0.109,
+    "halves": [
+     -0.372,
+     0.2989
+    ]
+   },
+   "town_s1.5_time_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 1.5,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.004,
+     "t": 0.02,
+     "win": 39.0
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.5934,
+     "t": -3.8,
+     "win": 18.7
+    },
+    "unseen_sum": -31.23,
+    "cost_r": 0.109,
+    "halves": [
+     -0.3121,
+     0.172
+    ]
+   },
+   "town_s1.5_notime_be": {
+    "v": {
+     "target": "own",
+     "stop": 1.5,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0348,
+     "t": 0.22,
+     "win": 36.8
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.5036,
+     "t": -3.38,
+     "win": 30.0
+    },
+    "unseen_sum": -26.44,
+    "cost_r": 0.109,
+    "halves": [
+     -0.372,
+     0.2989
+    ]
+   },
+   "town_s1.5_notime_nobe": {
+    "v": {
+     "target": "own",
+     "stop": 1.5,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.004,
+     "t": 0.02,
+     "win": 39.0
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.5934,
+     "t": -3.8,
+     "win": 18.7
+    },
+    "unseen_sum": -31.23,
+    "cost_r": 0.109,
+    "halves": [
+     -0.3121,
+     0.172
+    ]
+   },
+   "tnone_s0.75_time_be": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.2682,
+     "t": -1.09,
+     "win": 34.7
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4991,
+     "t": -1.46,
+     "win": 21.1
+    },
+    "unseen_sum": -25.44,
+    "cost_r": 0.211,
+    "halves": [
+     -0.7255,
+     0.0368
+    ]
+   },
+   "tnone_s0.75_time_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.6986,
+     "t": -2.56,
+     "win": 7.7
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.8241,
+     "t": -2.46,
+     "win": 3.8
+    },
+    "unseen_sum": -42.4,
+    "cost_r": 0.211,
+    "halves": [
+     -1.214,
+     -0.352
+    ]
+   },
+   "tnone_s0.75_notime_be": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.2682,
+     "t": -1.09,
+     "win": 34.7
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4991,
+     "t": -1.46,
+     "win": 21.1
+    },
+    "unseen_sum": -25.44,
+    "cost_r": 0.211,
+    "halves": [
+     -0.7255,
+     0.0368
+    ]
+   },
+   "tnone_s0.75_notime_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 0.75,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.6986,
+     "t": -2.56,
+     "win": 7.7
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.8241,
+     "t": -2.46,
+     "win": 3.8
+    },
+    "unseen_sum": -42.4,
+    "cost_r": 0.211,
+    "halves": [
+     -1.214,
+     -0.352
+    ]
+   },
+   "tnone_s1_time_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.0,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.109,
+     "t": -0.38,
+     "win": 34.3
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.6397,
+     "t": -2.46,
+     "win": 19.0
+    },
+    "unseen_sum": -32.81,
+    "cost_r": 0.159,
+    "halves": [
+     -0.2857,
+     -0.0363
+    ]
+   },
+   "tnone_s1_time_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.5592,
+     "t": -1.85,
+     "win": 8.9
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.5965,
+     "t": -1.74,
+     "win": 7.6
+    },
+    "unseen_sum": -30.78,
+    "cost_r": 0.159,
+    "halves": [
+     -0.7176,
+     -0.5057
+    ]
+   },
+   "tnone_s1_notime_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.0,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.109,
+     "t": -0.38,
+     "win": 34.3
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.6397,
+     "t": -2.46,
+     "win": 19.0
+    },
+    "unseen_sum": -32.81,
+    "cost_r": 0.159,
+    "halves": [
+     -0.2857,
+     -0.0363
+    ]
+   },
+   "tnone_s1_notime_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.0,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.5592,
+     "t": -1.85,
+     "win": 8.9
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.5965,
+     "t": -1.74,
+     "win": 7.6
+    },
+    "unseen_sum": -30.78,
+    "cost_r": 0.159,
+    "halves": [
+     -0.7176,
+     -0.5057
+    ]
+   },
+   "tnone_s1.25_time_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.25,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.2091,
+     "t": -0.88,
+     "win": 32.2
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.6759,
+     "t": -3.13,
+     "win": 16.8
+    },
+    "unseen_sum": -35.43,
+    "cost_r": 0.13,
+    "halves": [
+     -0.3912,
+     -0.1422
+    ]
+   },
+   "tnone_s1.25_time_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.25,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.6224,
+     "t": -2.52,
+     "win": 8.9
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.6586,
+     "t": -2.38,
+     "win": 9.4
+    },
+    "unseen_sum": -34.72,
+    "cost_r": 0.13,
+    "halves": [
+     -0.7475,
+     -0.5829
+    ]
+   },
+   "tnone_s1.25_notime_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.25,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.2091,
+     "t": -0.88,
+     "win": 32.2
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.6759,
+     "t": -3.13,
+     "win": 16.8
+    },
+    "unseen_sum": -35.43,
+    "cost_r": 0.13,
+    "halves": [
+     -0.3912,
+     -0.1422
+    ]
+   },
+   "tnone_s1.25_notime_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.25,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.6224,
+     "t": -2.52,
+     "win": 8.9
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.6586,
+     "t": -2.38,
+     "win": 9.4
+    },
+    "unseen_sum": -34.72,
+    "cost_r": 0.13,
+    "halves": [
+     -0.7475,
+     -0.5829
+    ]
+   },
+   "tnone_s1.5_time_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.1648,
+     "t": -0.69,
+     "win": 32.2
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.6928,
+     "t": -3.68,
+     "win": 16.9
+    },
+    "unseen_sum": -36.45,
+    "cost_r": 0.109,
+    "halves": [
+     -0.4767,
+     -0.01
+    ]
+   },
+   "tnone_s1.5_time_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.5,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.491,
+     "t": -1.99,
+     "win": 12.1
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.6995,
+     "t": -2.97,
+     "win": 9.4
+    },
+    "unseen_sum": -36.91,
+    "cost_r": 0.109,
+    "halves": [
+     -0.7757,
+     -0.3407
+    ]
+   },
+   "tnone_s1.5_notime_be": {
+    "v": {
+     "target": "none",
+     "stop": 1.5,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.1648,
+     "t": -0.69,
+     "win": 32.2
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.6928,
+     "t": -3.68,
+     "win": 16.9
+    },
+    "unseen_sum": -36.45,
+    "cost_r": 0.109,
+    "halves": [
+     -0.4767,
+     -0.01
+    ]
+   },
+   "tnone_s1.5_notime_nobe": {
+    "v": {
+     "target": "none",
+     "stop": 1.5,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.491,
+     "t": -1.99,
+     "win": 12.1
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.6995,
+     "t": -2.97,
+     "win": 9.4
+    },
+    "unseen_sum": -36.91,
+    "cost_r": 0.109,
+    "halves": [
+     -0.7757,
+     -0.3407
+    ]
+   },
+   "t1R_s0.75_time_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.179,
+     "t": -1.13,
+     "win": 43.6
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4931,
+     "t": -4.21,
+     "win": 40.3
+    },
+    "unseen_sum": -25.58,
+    "cost_r": 0.211,
+    "halves": [
+     -0.3976,
+     -0.0353
+    ]
+   },
+   "t1R_s0.75_time_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.2182,
+     "t": -1.31,
+     "win": 45.1
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.281,
+     "t": -1.84,
+     "win": 44.1
+    },
+    "unseen_sum": -14.47,
+    "cost_r": 0.211,
+    "halves": [
+     -0.4156,
+     -0.1078
+    ]
+   },
+   "t1R_s0.75_notime_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 0.75,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.179,
+     "t": -1.13,
+     "win": 43.6
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4931,
+     "t": -4.21,
+     "win": 40.3
+    },
+    "unseen_sum": -25.58,
+    "cost_r": 0.211,
+    "halves": [
+     -0.3976,
+     -0.0353
+    ]
+   },
+   "t1R_s0.75_notime_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 0.75,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.2182,
+     "t": -1.31,
+     "win": 45.1
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.281,
+     "t": -1.84,
+     "win": 44.1
+    },
+    "unseen_sum": -14.47,
+    "cost_r": 0.211,
+    "halves": [
+     -0.4156,
+     -0.1078
+    ]
+   },
+   "t1R_s1_time_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.0,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.0211,
+     "t": -0.15,
+     "win": 50.2
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4232,
+     "t": -3.75,
+     "win": 42.2
+    },
+    "unseen_sum": -21.91,
+    "cost_r": 0.159,
+    "halves": [
+     -0.3557,
+     0.2196
+    ]
+   },
+   "t1R_s1_time_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.0376,
+     "t": -0.25,
+     "win": 53.9
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.2619,
+     "t": -1.82,
+     "win": 44.0
+    },
+    "unseen_sum": -13.39,
+    "cost_r": 0.159,
+    "halves": [
+     -0.391,
+     0.1914
+    ]
+   },
+   "t1R_s1_notime_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.0,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.0211,
+     "t": -0.15,
+     "win": 50.2
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4232,
+     "t": -3.75,
+     "win": 42.2
+    },
+    "unseen_sum": -21.91,
+    "cost_r": 0.159,
+    "halves": [
+     -0.3557,
+     0.2196
+    ]
+   },
+   "t1R_s1_notime_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.0,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": -0.0376,
+     "t": -0.25,
+     "win": 53.9
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.2619,
+     "t": -1.82,
+     "win": 44.0
+    },
+    "unseen_sum": -13.39,
+    "cost_r": 0.159,
+    "halves": [
+     -0.391,
+     0.1914
+    ]
+   },
+   "t1R_s1.25_time_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.25,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0453,
+     "t": 0.37,
+     "win": 52.4
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.2691,
+     "t": -2.22,
+     "win": 50.7
+    },
+    "unseen_sum": -14.05,
+    "cost_r": 0.13,
+    "halves": [
+     -0.3533,
+     0.3225
+    ]
+   },
+   "t1R_s1.25_time_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.25,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0397,
+     "t": 0.29,
+     "win": 56.5
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.2726,
+     "t": -1.93,
+     "win": 43.2
+    },
+    "unseen_sum": -14.17,
+    "cost_r": 0.13,
+    "halves": [
+     -0.252,
+     0.2191
+    ]
+   },
+   "t1R_s1.25_notime_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.25,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0453,
+     "t": 0.37,
+     "win": 52.4
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.2691,
+     "t": -2.22,
+     "win": 50.7
+    },
+    "unseen_sum": -14.05,
+    "cost_r": 0.13,
+    "halves": [
+     -0.3533,
+     0.3225
+    ]
+   },
+   "t1R_s1.25_notime_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.25,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0397,
+     "t": 0.29,
+     "win": 56.5
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.2726,
+     "t": -1.93,
+     "win": 43.2
+    },
+    "unseen_sum": -14.17,
+    "cost_r": 0.13,
+    "halves": [
+     -0.252,
+     0.2191
+    ]
+   },
+   "t1R_s1.5_time_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0302,
+     "t": 0.26,
+     "win": 47.7
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.2802,
+     "t": -2.41,
+     "win": 48.8
+    },
+    "unseen_sum": -14.66,
+    "cost_r": 0.109,
+    "halves": [
+     -0.3374,
+     0.2928
+    ]
+   },
+   "t1R_s1.5_time_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.5,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0187,
+     "t": 0.14,
+     "win": 55.5
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.4402,
+     "t": -3.32,
+     "win": 33.8
+    },
+    "unseen_sum": -23.14,
+    "cost_r": 0.109,
+    "halves": [
+     -0.2887,
+     0.2051
+    ]
+   },
+   "t1R_s1.5_notime_be": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.5,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0302,
+     "t": 0.26,
+     "win": 47.7
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.2802,
+     "t": -2.41,
+     "win": 48.8
+    },
+    "unseen_sum": -14.66,
+    "cost_r": 0.109,
+    "halves": [
+     -0.3374,
+     0.2928
+    ]
+   },
+   "t1R_s1.5_notime_nobe": {
+    "v": {
+     "target": 1.0,
+     "stop": 1.5,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0187,
+     "t": 0.14,
+     "win": 55.5
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.4402,
+     "t": -3.32,
+     "win": 33.8
+    },
+    "unseen_sum": -23.14,
+    "cost_r": 0.109,
+    "halves": [
+     -0.2887,
+     0.2051
+    ]
+   },
+   "t1.5R_s0.75_time_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.1013,
+     "t": -0.58,
+     "win": 39.3
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4217,
+     "t": -2.98,
+     "win": 38.4
+    },
+    "unseen_sum": -21.82,
+    "cost_r": 0.211,
+    "halves": [
+     -0.4266,
+     0.1107
+    ]
+   },
+   "t1.5R_s0.75_time_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.1029,
+     "t": -0.56,
+     "win": 43.0
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.2882,
+     "t": -1.66,
+     "win": 36.4
+    },
+    "unseen_sum": -14.82,
+    "cost_r": 0.211,
+    "halves": [
+     -0.3798,
+     0.0504
+    ]
+   },
+   "t1.5R_s0.75_notime_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 0.75,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.1013,
+     "t": -0.58,
+     "win": 39.3
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4217,
+     "t": -2.98,
+     "win": 38.4
+    },
+    "unseen_sum": -21.82,
+    "cost_r": 0.211,
+    "halves": [
+     -0.4266,
+     0.1107
+    ]
+   },
+   "t1.5R_s0.75_notime_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 0.75,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.1029,
+     "t": -0.56,
+     "win": 43.0
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.2882,
+     "t": -1.66,
+     "win": 36.4
+    },
+    "unseen_sum": -14.82,
+    "cost_r": 0.211,
+    "halves": [
+     -0.3798,
+     0.0504
+    ]
+   },
+   "t1.5R_s1_time_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.0,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0633,
+     "t": 0.4,
+     "win": 43.0
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.3595,
+     "t": -2.7,
+     "win": 42.1
+    },
+    "unseen_sum": -18.51,
+    "cost_r": 0.159,
+    "halves": [
+     -0.3829,
+     0.3852
+    ]
+   },
+   "t1.5R_s1_time_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.0,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0773,
+     "t": 0.46,
+     "win": 49.4
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4888,
+     "t": -3.15,
+     "win": 26.8
+    },
+    "unseen_sum": -25.23,
+    "cost_r": 0.159,
+    "halves": [
+     -0.2677,
+     0.2942
+    ]
+   },
+   "t1.5R_s1_notime_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.0,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0633,
+     "t": 0.4,
+     "win": 43.0
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.3595,
+     "t": -2.7,
+     "win": 42.1
+    },
+    "unseen_sum": -18.51,
+    "cost_r": 0.159,
+    "halves": [
+     -0.3829,
+     0.3852
+    ]
+   },
+   "t1.5R_s1_notime_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.0,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0773,
+     "t": 0.46,
+     "win": 49.4
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4888,
+     "t": -3.15,
+     "win": 26.8
+    },
+    "unseen_sum": -25.23,
+    "cost_r": 0.159,
+    "halves": [
+     -0.2677,
+     0.2942
+    ]
+   },
+   "t1.5R_s1.25_time_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.25,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.1396,
+     "t": 0.98,
+     "win": 46.4
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.243,
+     "t": -1.7,
+     "win": 48.8
+    },
+    "unseen_sum": -12.55,
+    "cost_r": 0.13,
+    "halves": [
+     -0.2444,
+     0.392
+    ]
+   },
+   "t1.5R_s1.25_time_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.25,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.1458,
+     "t": 0.91,
+     "win": 51.2
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.4429,
+     "t": -2.83,
+     "win": 28.1
+    },
+    "unseen_sum": -23.17,
+    "cost_r": 0.13,
+    "halves": [
+     -0.1965,
+     0.3457
+    ]
+   },
+   "t1.5R_s1.25_notime_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.25,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.1396,
+     "t": 0.98,
+     "win": 46.4
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.243,
+     "t": -1.7,
+     "win": 48.8
+    },
+    "unseen_sum": -12.55,
+    "cost_r": 0.13,
+    "halves": [
+     -0.2444,
+     0.392
+    ]
+   },
+   "t1.5R_s1.25_notime_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.25,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.1458,
+     "t": 0.91,
+     "win": 51.2
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.4429,
+     "t": -2.83,
+     "win": 28.1
+    },
+    "unseen_sum": -23.17,
+    "cost_r": 0.13,
+    "halves": [
+     -0.1965,
+     0.3457
+    ]
+   },
+   "t1.5R_s1.5_time_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.5,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0329,
+     "t": 0.24,
+     "win": 42.1
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.417,
+     "t": -3.08,
+     "win": 39.4
+    },
+    "unseen_sum": -21.88,
+    "cost_r": 0.109,
+    "halves": [
+     -0.2792,
+     0.2434
+    ]
+   },
+   "t1.5R_s1.5_time_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.5,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0279,
+     "t": 0.18,
+     "win": 46.4
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.4903,
+     "t": -3.27,
+     "win": 26.2
+    },
+    "unseen_sum": -25.73,
+    "cost_r": 0.109,
+    "halves": [
+     -0.1727,
+     0.1314
+    ]
+   },
+   "t1.5R_s1.5_notime_be": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.5,
+     "time": "none",
+     "be": true
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0329,
+     "t": 0.24,
+     "win": 42.1
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.417,
+     "t": -3.08,
+     "win": 39.4
+    },
+    "unseen_sum": -21.88,
+    "cost_r": 0.109,
+    "halves": [
+     -0.2792,
+     0.2434
+    ]
+   },
+   "t1.5R_s1.5_notime_nobe": {
+    "v": {
+     "target": 1.5,
+     "stop": 1.5,
+     "time": "none",
+     "be": false
+    },
+    "train": {
+     "n": 73,
+     "eff_n": 71.0,
+     "mean": 0.0279,
+     "t": 0.18,
+     "win": 46.4
+    },
+    "unseen": {
+     "n": 53,
+     "eff_n": 53.0,
+     "mean": -0.4903,
+     "t": -3.27,
+     "win": 26.2
+    },
+    "unseen_sum": -25.73,
+    "cost_r": 0.109,
+    "halves": [
+     -0.1727,
+     0.1314
+    ]
+   },
+   "t2R_s0.75_time_be": {
+    "v": {
+     "target": 2.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": true
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": -0.01,
+     "t": -0.05,
+     "win": 36.2
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4109,
+     "t": -2.65,
+     "win": 38.3
+    },
+    "unseen_sum": -21.24,
+    "cost_r": 0.211,
+    "halves": [
+     -0.3638,
+     0.2244
+    ]
+   },
+   "t2R_s0.75_time_nobe": {
+    "v": {
+     "target": 2.0,
+     "stop": 0.75,
+     "time": "own",
+     "be": false
+    },
+    "train": {
+     "n": 72,
+     "eff_n": 70.0,
+     "mean": 0.0357,
+     "t": 0.17,
+     "win": 41.3
+    },
+    "unseen": {
+     "n": 52,
+     "eff_n": 52.0,
+     "mean": -0.4634,
+     "t": -2.55,
+     "win": 24.9
+    },
+    "unseen_sum": -23.97,
+    "cost_r": 0.211,
+    "halves": [
+     -0.2131,
+     0.1589
+    ]
+   }
+  },
+  "base": {
+   "v": {
+    "target": "own",
+    "stop": 1.0,
+    "time": "own",
+    "be": true
+   },
+   "train": {
+    "n": 73,
+    "eff_n": 71.0,
+    "mean": 0.11,
+    "t": 0.65,
+    "win": 40.6
+   },
+   "unseen": {
+    "n": 52,
+    "eff_n": 52.0,
+    "mean": -0.3785,
+    "t": -2.43,
+    "win": 40.2
+   },
+   "unseen_sum": -19.41,
+   "cost_r": 0.159,
+   "halves": [
+    -0.3153,
+    0.4124
+   ]
+  },
+  "chosen": {
+   "v": {
+    "target": 1.5,
+    "stop": 1.25,
+    "time": "own",
+    "be": false
+   },
+   "train": {
+    "n": 73,
+    "eff_n": 71.0,
+    "mean": 0.1458,
+    "t": 0.91,
+    "win": 51.2
+   },
+   "unseen": {
+    "n": 53,
+    "eff_n": 53.0,
+    "mean": -0.4429,
+    "t": -2.83,
+    "win": 28.1
+   },
+   "unseen_sum": -23.17,
+   "cost_r": 0.13,
+   "halves": [
+    -0.1965,
+    0.3457
+   ]
+  },
+  "share_positive_train": 0.53
  }
 }

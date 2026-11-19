@@ -1040,5 +1040,151 @@
     "better_2026": false
    }
   }
+ },
+ "SC641|15Min|US30": {
+  "live": {
+   "train_wsum": 39.29,
+   "unseen_sum": 17.36,
+   "worst_day_unseen": -3.65
+  },
+  "done": true,
+  "families": {
+   "hours": {
+    "what": "יעד 3R, סטופ x1.5, בלי איזון, בלי כניסה 10:00-10:59 ניו יורק (השעה שאחרי פתיחת המסחר הרגיל)",
+    "train_wsum": 40.19,
+    "unseen_sum": 19.33,
+    "unseen_mean": 0.1896,
+    "worst_day_unseen": -3.17,
+    "better_train": true,
+    "better_2026": true
+   },
+   "breakeven": {
+    "what": "יעד 3R, סטופ x1.5, איזון ב־88.6% מהדרך",
+    "train_wsum": 35.09,
+    "unseen_sum": 17.36,
+    "unseen_mean": 0.1611,
+    "worst_day_unseen": -3.65,
+    "better_train": false,
+    "better_2026": false
+   },
+   "direction": {
+    "what": "יעד 3R, סטופ x1.5, בלי איזון, בלי כניסה בשעתיים הראשונות אחרי 18:00, אחרי סטופ - בלי כניסה נוספת באותו כיוון באותו יום",
+    "train_wsum": 27.75,
+    "unseen_sum": 17.3,
+    "unseen_mean": 0.2521,
+    "worst_day_unseen": -1.09,
+    "better_train": false,
+    "better_2026": false
+   },
+   "entry": {
+    "what": "יעד 3R, סטופ x1.5, בלי איזון, כניסה בלימיט 0.25R טוב יותר (עד 3 נרות)",
+    "train_wsum": 15.58,
+    "unseen_sum": 8.18,
+    "unseen_mean": 0.1261,
+    "worst_day_unseen": -3.24,
+    "better_train": false,
+    "better_2026": false
+   },
+   "stop": {
+    "what": "יעד 3R, סטופ x1.5, בלי איזון, סטופ מעבר לסווינג השלישי",
+    "train_wsum": 32.06,
+    "unseen_sum": 10.42,
+    "unseen_mean": 0.1063,
+    "worst_day_unseen": -3.17,
+    "better_train": false,
+    "better_2026": false
+   },
+   "partial": {
+    "what": "יעד 3R, סטופ x1.5, בלי איזון, חצי החוצה בחצי הדרך (בלי יעד: ב־+1R) וסטופ לכניסה",
+    "train_wsum": -134.29,
+    "unseen_sum": -70.83,
+    "unseen_mean": -0.4939,
+    "worst_day_unseen": -4.96,
+    "better_train": false,
+    "better_2026": false
+   },
+   "pyramid": {
+    "what": "יעד 3R, סטופ x1.5, בלי איזון, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": 39.29,
+    "unseen_sum": 17.36,
+    "unseen_mean": 0.1611,
+    "worst_day_unseen": -3.65,
+    "better_train": false,
+    "better_2026": false
+   }
+  }
+ },
+ "SC641|15Min|US100": {
+  "live": {
+   "train_wsum": 35.65,
+   "unseen_sum": 3.61,
+   "worst_day_unseen": -3.05
+  },
+  "done": true,
+  "families": {
+   "hours": {
+    "what": "בלי יעד, בלי כניסה בשעתיים הראשונות אחרי 18:00",
+    "train_wsum": 34.24,
+    "unseen_sum": 6.5,
+    "unseen_mean": 0.0561,
+    "worst_day_unseen": -3.05,
+    "better_train": false,
+    "better_2026": true
+   },
+   "breakeven": {
+    "what": "בלי יעד, איזון ב־3R",
+    "train_wsum": 38.02,
+    "unseen_sum": 3.69,
+    "unseen_mean": 0.0278,
+    "worst_day_unseen": -3.05,
+    "better_train": true,
+    "better_2026": true
+   },
+   "direction": {
+    "what": "בלי יעד, אחרי סטופ - בלי כניסה נוספת באותו כיוון באותו יום",
+    "train_wsum": 27.19,
+    "unseen_sum": 14.65,
+    "unseen_mean": 0.1945,
+    "worst_day_unseen": -2.04,
+    "better_train": false,
+    "better_2026": true
+   },
+   "entry": {
+    "what": "בלי יעד, כניסה בלימיט 0.25R טוב יותר (עד 3 נרות)",
+    "train_wsum": 42.08,
+    "unseen_sum": 30.57,
+    "unseen_mean": 0.3828,
+    "worst_day_unseen": -3.08,
+    "better_train": true,
+    "better_2026": true
+   },
+   "stop": {
+    "what": "בלי יעד, סטופ מעבר לסווינג השלישי",
+    "train_wsum": 34.96,
+    "unseen_sum": -13.53,
+    "unseen_mean": -0.1668,
+    "worst_day_unseen": -3.05,
+    "better_train": false,
+    "better_2026": false
+   },
+   "partial": {
+    "what": "בלי יעד, חצי החוצה בחצי הדרך (בלי יעד: ב־+1R) וסטופ לכניסה",
+    "train_wsum": 24.23,
+    "unseen_sum": -0.08,
+    "unseen_mean": -0.0029,
+    "worst_day_unseen": -2.73,
+    "better_train": false,
+    "better_2026": false
+   },
+   "pyramid": {
+    "what": "בלי יעד, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": 35.65,
+    "unseen_sum": 3.61,
+    "unseen_mean": 0.027,
+    "worst_day_unseen": -3.05,
+    "better_train": false,
+    "better_2026": false
+   }
+  }
  }
 }

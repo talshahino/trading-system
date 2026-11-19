@@ -1162,6 +1162,13 @@ def main():
                 _study("agents.news_surprise_fix", 2.0, t0, budget)
         except Exception as e:  # noqa: BLE001
             print(f"bot7 surprise check failed: {e}")
+        # what a tight stop really costs (manager's task mgr1811cost, agents/news_cost.py): early, its rows are few
+        try:
+            from agents import news_cost as NCO
+            if NCO.stale():
+                _study("agents.news_cost", max(8.0, a.minutes / 4), t0, budget)
+        except Exception as e:  # noqa: BLE001
+            print(f"bot7 cost study failed: {e}")
         try:
             from agents import news_straddle as NS0, news_straddle_ticks as NSTK0
             if NSTK0.stale() and not NS0.stale():

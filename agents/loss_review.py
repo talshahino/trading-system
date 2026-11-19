@@ -98,6 +98,7 @@ def trade_rows(state):
             continue
         r_px = side * (cl - o) / risk
         r = r_px * (net / gross) if gross and gross * net > 0 else (net / abs(gross) * abs(r_px) if gross else r_px)
+        r = _f(c.get("r_net")) if _f(c.get("r_net")) is not None else r      # bot 7: the true R, costs in (mgr1811cost)
         tp0, mfe, mae = _f(c.get("tp0")), _f(c.get("mfe")), _f(c.get("mae"))
         rows.append({
             "combo": c.get("combo"), "symbol": c.get("symbol"), "side": side, "open_t": c.get("open_t"),

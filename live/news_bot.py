@@ -1124,6 +1124,7 @@ def state_of(acc, trades, cal, src):
                         "sl0": t["stop"], "tp0": t["target"] or 0, "sl": t["stop"], "tp": t["target"] or 0, "mae": t.get("mae"),
                         "mfe": t.get("mfe"), "mfe_r": t.get("mfe_r"), "mae_r": t.get("mae_r"),
                         "gross": led[t["id"]]["pnl"], "swap": 0, "comm": 0, "net": led[t["id"]]["pnl"],
+                        "r_net": led[t["id"]].get("r", t["r"]),      # the true R, costs in (task mgr1811cost): -2.62R, not -1R
                         "why": t["reason"] + (f" · אחרי {t['event']}" if t.get("event") else ""), "event": t.get("event"), "info": t.get("info"),
                         "reason": "", "pip": 1.0} for t in closed],
             "vacct": {k: v for k, v in acc.a.items() if k not in ("eq_curve", "past")}}

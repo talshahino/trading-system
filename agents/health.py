@@ -150,6 +150,8 @@ def trades(state, bot=None):
                 r *= n / g
             elif g and n and np.sign(g) != np.sign(n):
                 r = n / (abs(g) / abs(r)) if r else r      # a small winner turned into a loss by the costs
+            if c.get("r_net") is not None:                 # bot 7 books its costs inside the result: its own true R
+                r = float(c["r_net"])
             rows.append({"id": str(c["id"]), "combo": c["combo"], "time": c["open_t"], "close": c.get("close_t") or c["open_t"],
                          "r": r, "net": n})
         except Exception:  # noqa: BLE001

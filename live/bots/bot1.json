@@ -77,7 +77,11 @@
   "SC376|4Hour|XAGUSD",
   "SC425|5Min|XAGUSD",
   "SC514|4Hour|WTI",
-  "SC543|1Hour|WTI"
+  "SC543|1Hour|WTI",
+  "SC641|1Hour|JP225",
+  "SC278|1Hour|ETHUSD",
+  "SC651|4Hour|WTI",
+  "SC470|4Hour|ETHUSD"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added SE02|1Hour|USDJPY and IM01|1Hour|JP225 (new families, backtest with the bot), approved by the user; 04.11.2026: added FR03|15Min|GBPUSD, QC02|1Hour|ETHUSD (GitHub/QuantConnect/forum families, both halves better with the bot), approved by the user; 04.11.2026 (evening): added MQ11|4Hour|MSTR, MQ02|1Hour|XAUUSD (new pool: papers/books/MQL5 EAs; both halves better, Monte Carlo checked), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -130,7 +134,12 @@
   "GH09|1Hour|USDJPY": {
    "target": 4.0,
    "stop": 0.75,
-   "card": "30acb80afef6"
+   "card": "30acb80afef6",
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "1d2d01794f88"
   },
   "SC069|15Min|XAUUSD": {
    "target": 1.5,
@@ -219,6 +228,18 @@
   "QC02|1Hour|ETHUSD": {
    "filter": "v_e50_200",
    "filter_card": "e59aecc0a9f6"
+  },
+  "TV05|15Min|WMT": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "c0f7cc6420d4"
+  },
+  "SC425|5Min|XAGUSD": {
+   "target": 3.0,
+   "stop": 0.75,
+   "card": "16c886f71010"
   }
  },
  "added": {
@@ -249,7 +270,11 @@
   "SC376|4Hour|XAGUSD": "c4a730ead702",
   "SC425|5Min|XAGUSD": "2529e9e46da5",
   "SC514|4Hour|WTI": "01e31adbfe71",
-  "SC543|1Hour|WTI": "99de25192f32"
+  "SC543|1Hour|WTI": "99de25192f32",
+  "SC641|1Hour|JP225": "a8f4d04d9764",
+  "SC278|1Hour|ETHUSD": "0e363688b873",
+  "SC651|4Hour|WTI": "675973419765",
+  "SC470|4Hour|ETHUSD": "97d991fc130e"
  },
  "removed": {
   "SC002|1Hour|ARM": "617a4b123340",

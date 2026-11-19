@@ -1,76 +1,324 @@
 {
- "updated": "2026-11-19T11:00:08+00:00",
+ "updated": "2026-11-19T11:08:07+00:00",
  "new": [
-  "5d936d7ae00d",
-  "8e4ceed74dc9",
-  "f2ebad92aae3",
-  "8d4f9fb8356a"
+  "1945b66d0ebc",
+  "624ef85cfcd6",
+  "4e9a7dd9209d",
+  "2d94c42e24c5",
+  "4aba39e3f914",
+  "812b1367ed2f",
+  "a67d7281a3f6",
+  "f08cacf7185a",
+  "3cb1bde2a08d",
+  "df51d494dd05"
  ],
  "decisions": [
   {
-   "id": "5d936d7ae00d",
-   "bot": "bot1",
-   "type": "card",
-   "card": "41ad5e2dfcca",
-   "kind": "info",
-   "tier": "regular",
-   "title": "בוט 1, 19.11 צהריים: דוח 17.11 נסגר, TV39 JP225 שוב הלוך ושוב - נבדק, הכניסה ההפוכה מרוויחה",
-   "decision": "approved",
-   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
-   "star": false,
-   "at": "2026-11-19T11:00:08+00:00",
-   "by": "manager",
-   "read": false,
-   "undone": false
-  },
-  {
-   "id": "8e4ceed74dc9",
-   "bot": "bot2",
-   "type": "card",
-   "card": "a3ef67822ea3",
-   "kind": "info",
-   "tier": "regular",
-   "title": "בוט 2, 19.11 צהריים: ‎+1.03% עד עכשיו, הפסד אחד (GH08 דולר־קנדי)",
-   "decision": "approved",
-   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
-   "star": false,
-   "at": "2026-11-19T11:00:08+00:00",
-   "by": "manager",
-   "read": false,
-   "undone": false
-  },
-  {
-   "id": "f2ebad92aae3",
+   "id": "1945b66d0ebc",
    "bot": "bot3",
    "type": "card",
-   "card": "cb477759ae2c",
-   "kind": "info",
+   "card": "99e6694439cf",
+   "kind": "improve",
    "tier": "regular",
-   "title": "בוט 3, 19.11 צהריים: ‎+0.36%, SC154 זהב שוב קנייה שנעצרה",
+   "title": "⭐ IB056|1Hour|XAUUSD: איזון ב־23.6% מהדרך ליעד",
    "decision": "approved",
-   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
-   "star": false,
-   "at": "2026-11-19T11:00:08+00:00",
+   "why": "חיובי בתקופה שלא נראתה (+0.31R לעסקה, 87.0 עסקאות אפקטיביות, +0.02R מעל המצב הקיים) · נבדקו 70 שילובים, אז חלק מהיתרון עלול להיות מזל · בבוט השלם על 2026: רווח +142.86% → +143.17%, בלי יותר סיכון (יום גרוע -3.03%, ירידה 6.19%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3998,
+     "total": 142.86,
+     "worst_day": -3.03,
+     "max_dd": 6.22,
+     "near_days": 1,
+     "max_open": 5.41,
+     "max_side": 4.22,
+     "guard_cut": 211,
+     "guard_skipped": 45
+    },
+    "after": {
+     "trades": 3999,
+     "total": 143.17,
+     "worst_day": -3.03,
+     "max_dd": 6.19,
+     "near_days": 1,
+     "max_open": 5.41,
+     "max_side": 4.22,
+     "guard_cut": 212,
+     "guard_skipped": 44
+    }
+   },
+   "at": "2026-11-19T11:08:07+00:00",
    "by": "manager",
    "read": false,
    "undone": false
   },
   {
-   "id": "8d4f9fb8356a",
-   "bot": "bot4",
+   "id": "624ef85cfcd6",
+   "bot": "bot3",
    "type": "card",
-   "card": "29958980070f",
+   "card": "d29f4d834c6e",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC614|4Hour|USDCAD · Weis Wave high effort (1.5 x the average wave) on the EMA50 side, 2 ATR, 2R",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -3.03% → -3.03%, ירידה 6.28% → 6.67%, ימים קרובים למגבלה 1 → 1) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3995,
+     "total": 145.15,
+     "worst_day": -3.03,
+     "max_dd": 6.28,
+     "near_days": 1,
+     "max_open": 5.43,
+     "max_side": 4.22,
+     "guard_cut": 224,
+     "guard_skipped": 48
+    },
+    "after": {
+     "trades": 4022,
+     "total": 146.32,
+     "worst_day": -3.03,
+     "max_dd": 6.67,
+     "near_days": 1,
+     "max_open": 5.53,
+     "max_side": 4.35,
+     "guard_cut": 242,
+     "guard_skipped": 52
+    }
+   },
+   "at": "2026-11-19T11:08:07+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "4e9a7dd9209d",
+   "bot": "bot3",
+   "type": "card",
+   "card": "4e739defde32",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC432|1Hour|USDJPY: איזון ב־40% מהדרך ליעד",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.18R לעסקה, 74.0 עסקאות אפקטיביות, +0.02R מעל המצב הקיים) · בבוט השלם על 2026: רווח +145.15% → +145.79%, בלי יותר סיכון (יום גרוע -3.03%, ירידה 6.28%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3995,
+     "total": 145.15,
+     "worst_day": -3.03,
+     "max_dd": 6.28,
+     "near_days": 1,
+     "max_open": 5.43,
+     "max_side": 4.22,
+     "guard_cut": 224,
+     "guard_skipped": 48
+    },
+    "after": {
+     "trades": 4001,
+     "total": 145.79,
+     "worst_day": -3.03,
+     "max_dd": 6.28,
+     "near_days": 1,
+     "max_open": 5.36,
+     "max_side": 4.22,
+     "guard_cut": 222,
+     "guard_skipped": 48
+    }
+   },
+   "at": "2026-11-19T11:08:07+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "2d94c42e24c5",
+   "bot": "bot3",
+   "type": "card",
+   "card": "47c2a3892269",
    "kind": "info",
    "tier": "regular",
-   "title": "בוט 4, 19.11 צהריים: ‎+0.84%, בלי הפסד; שתי אסטרטגיות חסרות בבדיקת הבוט השלם",
+   "title": "SC539|4Hour|XAGUSD: היתרון נשחק",
    "decision": "approved",
    "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
    "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
    "star": false,
-   "at": "2026-11-19T11:00:08+00:00",
+   "at": "2026-11-19T11:08:07+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "4aba39e3f914",
+   "bot": "bot3",
+   "type": "card",
+   "card": "a392f26653e0",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC631|1Hour|USDCAD · Oliver Velez elephant bar with price > SMA20 > SMA200, break of the bar, bar stop, 2R",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -3.03% → -3.03%, ירידה 6.28% → 6.75%, ימים קרובים למגבלה 1 → 1) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 4001,
+     "total": 145.79,
+     "worst_day": -3.03,
+     "max_dd": 6.28,
+     "near_days": 1,
+     "max_open": 5.36,
+     "max_side": 4.22,
+     "guard_cut": 222,
+     "guard_skipped": 48
+    },
+    "after": {
+     "trades": 4062,
+     "total": 146.82,
+     "worst_day": -3.03,
+     "max_dd": 6.75,
+     "near_days": 1,
+     "max_open": 5.43,
+     "max_side": 4.22,
+     "guard_cut": 263,
+     "guard_skipped": 55
+    }
+   },
+   "at": "2026-11-19T11:08:07+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "812b1367ed2f",
+   "bot": "bot3",
+   "type": "card",
+   "card": "f561b2b28c19",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC633|15Min|USDCAD · Oliver Velez 180 reversal bar with price > SMA20 > SMA200, break of the bar, bar stop, 2R",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+144.40% מול +145.79% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 4001,
+     "total": 145.79,
+     "worst_day": -3.03,
+     "max_dd": 6.28,
+     "near_days": 1,
+     "max_open": 5.36,
+     "max_side": 4.22,
+     "guard_cut": 222,
+     "guard_skipped": 48
+    },
+    "after": {
+     "trades": 4052,
+     "total": 144.4,
+     "worst_day": -3.43,
+     "max_dd": 6.28,
+     "near_days": 1,
+     "max_open": 5.09,
+     "max_side": 4.22,
+     "guard_cut": 239,
+     "guard_skipped": 62
+    }
+   },
+   "at": "2026-11-19T11:08:07+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "a67d7281a3f6",
+   "bot": "bot3",
+   "type": "card",
+   "card": "265907be7cb3",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC627|15Min|XAGUSD · Gold night hold: buy 18:00 New York, sell 03:00, Monday to Thursday, 2.3% stop (long)",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -3.03% → -3.23%, ירידה 6.28% → 6.69%, ימים קרובים למגבלה 1 → 2) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 4001,
+     "total": 145.79,
+     "worst_day": -3.03,
+     "max_dd": 6.28,
+     "near_days": 1,
+     "max_open": 5.36,
+     "max_side": 4.22,
+     "guard_cut": 222,
+     "guard_skipped": 48
+    },
+    "after": {
+     "trades": 4177,
+     "total": 147.57,
+     "worst_day": -3.23,
+     "max_dd": 6.69,
+     "near_days": 2,
+     "max_open": 5.43,
+     "max_side": 4.22,
+     "guard_cut": 240,
+     "guard_skipped": 47
+    }
+   },
+   "at": "2026-11-19T11:08:07+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "f08cacf7185a",
+   "bot": "bot5",
+   "type": "card",
+   "card": "b7e551398b0f",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 5: סטופ קצת רחב יותר - נבדק על כל המסלולים, לא משפר",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-19T11:08:07+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "3cb1bde2a08d",
+   "bot": "bot5",
+   "type": "card",
+   "card": "cd0434848bb3",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 5: גאפ קטן מדי - גם רצפה לפי אחוז מהמחיר לא משפרת",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-19T11:08:07+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "df51d494dd05",
+   "bot": "bot5",
+   "type": "card",
+   "card": "31567e473f7e",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 5ב: לא לפתוח נגד עסקה פתוחה / תקרה לכניסות צמודות - נבדק, מוריד רווח",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-19T11:08:07+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -110,7 +358,7 @@
      "guard_skipped": 45
     }
    },
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -151,7 +399,7 @@
      "guard_skipped": 45
     }
    },
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -175,7 +423,7 @@
     "value": 0.86,
     "prev": null
    },
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -216,7 +464,7 @@
      "guard_skipped": 50
     }
    },
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -240,7 +488,7 @@
     "value": 0.7,
     "prev": null
    },
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -281,7 +529,7 @@
      "guard_skipped": 50
     }
    },
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -305,7 +553,7 @@
     "value": 0.86,
     "prev": null
    },
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -346,7 +594,7 @@
      "guard_skipped": 50
     }
    },
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -370,7 +618,7 @@
     "value": 0.7,
     "prev": null
    },
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -411,7 +659,7 @@
      "guard_skipped": 54
     }
    },
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -435,58 +683,7 @@
     "value": 0.7,
     "prev": null
    },
-   "at": "2026-11-19T10:37:50+00:00",
-   "by": "manager",
-   "read": false,
-   "undone": false
-  },
-  {
-   "id": "f08cacf7185a",
-   "bot": "bot5",
-   "type": "card",
-   "card": "b7e551398b0f",
-   "kind": "info",
-   "tier": "regular",
-   "title": "בוט 5: סטופ קצת רחב יותר - נבדק על כל המסלולים, לא משפר",
-   "decision": "approved",
-   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
-   "star": false,
-   "at": "2026-11-19T10:37:50+00:00",
-   "by": "manager",
-   "read": false,
-   "undone": false
-  },
-  {
-   "id": "3cb1bde2a08d",
-   "bot": "bot5",
-   "type": "card",
-   "card": "cd0434848bb3",
-   "kind": "info",
-   "tier": "regular",
-   "title": "בוט 5: גאפ קטן מדי - גם רצפה לפי אחוז מהמחיר לא משפרת",
-   "decision": "approved",
-   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
-   "star": false,
-   "at": "2026-11-19T10:37:50+00:00",
-   "by": "manager",
-   "read": false,
-   "undone": false
-  },
-  {
-   "id": "df51d494dd05",
-   "bot": "bot5",
-   "type": "card",
-   "card": "31567e473f7e",
-   "kind": "info",
-   "tier": "regular",
-   "title": "בוט 5ב: לא לפתוח נגד עסקה פתוחה / תקרה לכניסות צמודות - נבדק, מוריד רווח",
-   "decision": "approved",
-   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
-   "star": false,
-   "at": "2026-11-19T10:37:50+00:00",
+   "at": "2026-11-19T10:25:29+00:00",
    "by": "manager",
    "read": false,
    "undone": false

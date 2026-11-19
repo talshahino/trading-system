@@ -1037,6 +1037,9 @@ def shut_of(D, cfg, f, e):
     wk = wknd(cfg)
     if wk:
         sh |= D.pre_break(wk)[f:e]
+    db = dbrk_of(cfg)
+    if db and db["x"]:
+        sh |= dbrk_masks(D)[0][f:e]                       # DBRK x: closed at the last bar before a daily break
     return sh
 
 
@@ -1077,6 +1080,83 @@ def rearm(cfg):
     is filled at the reopening's price when the market opened beyond the order (as any fill). Off (absent / False) =
     cancelled for good, as before. The same in simulate() and live_trades()."""
     return bool(cfg.get("REARM"))
+
+
+# DBRK (bot 5's smart agent, 19.11.2026, task b5reopen1911): the daily break of 30+ minutes that is shorter than FTMO's
+# 2 hours (the indices' ~21:00-23:05 UTC close) is not a break for WKND, so a gap order waits over it and a trade is held
+# through it - 18.11.2026: US100 / JP225 stopped 2 minutes after the reopening, US500 / GER40 / UK100 filled at the
+# reopening's first minute. "+" joins rules: c = a waiting order is cancelled at the last bar before such a break (when
+# the break recurs at the same time 1-3 or 7 days earlier, so it is known in advance; not placed again), oN = no fill in
+# the first N minutes after any 30+ minute break (the order waits), x = an open trade is closed at the last bar before
+# such a break. Off (absent) = the rules as before, the same name. The same in simulate() and live_trades().
+DBRK_GAP_MIN = 30
+
+
+def dbrk_of(cfg):
+    x = cfg.get("DBRK")
+    if not x:
+        return None
+    out = {"c": False, "x": False, "o": 0}
+    for p in str(x).split("+"):
+        if p in ("c", "x"):
+            out[p] = True
+        elif p.startswith("o") and p[1:].isdigit():
+            out["o"] = int(p[1:])
+    return out
+
+
+def dbrk_masks(D):
+    """(last, reopen): last[i] - bar i is the last before a recurring 30+ minute break; reopen - the bar positions just
+    after any 30+ minute break."""
+    key = ("dbrk", DBRK_GAP_MIN)
+    if key not in D.sw:
+        ns = D.ns
+        n = len(ns)
+        last = np.zeros(n, bool)
+        if n < 2:
+            D.sw[key] = (last, np.zeros(0, np.int64))
+            return D.sw[key]
+        step = 60_000_000_000
+        gap = ns[1:] - ns[:-1] - step
+        brk = np.flatnonzero(gap >= DBRK_GAP_MIN * step)
+        starts = ns[brk] + step
+        tol, day = 70 * step, 86_400 * 10**9
+        rec = np.zeros(len(brk), bool)
+        for dd in (1, 2, 3, 7):
+            q = starts - dd * day
+            j = np.searchsorted(starts, q - tol)
+            jj = np.minimum(j, max(len(starts) - 1, 0))
+            rec |= (j < len(starts)) & (np.abs(starts[jj] - q) <= tol)
+        last[brk[rec]] = True
+        D.sw[key] = (last, (brk + 1).astype(np.int64))
+    return D.sw[key]
+
+
+def dbrk_cut(D, cfg, q0, q1):
+    """DBRK c: the order's end - the last bar before the first recurring daily break at or after q0 (exclusive)."""
+    db = dbrk_of(cfg)
+    if not db or not db["c"]:
+        return q1
+    last, _ = dbrk_masks(D)
+    pos = np.flatnonzero(last[q0:q1])
+    return q0 + int(pos[0]) if len(pos) else q1
+
+
+def dbrk_ok(D, cfg, q0, q1):
+    """DBRK oN: per bar of [q0, q1) False in the first N minutes after a 30+ minute break; None when off."""
+    db = dbrk_of(cfg)
+    if not db or not db["o"]:
+        return None
+    key = ("dbrk_o", DBRK_GAP_MIN, db["o"])
+    if key not in D.sw:
+        _, ro = dbrk_masks(D)
+        ns = D.ns
+        b = np.searchsorted(ns, ns[ro] + db["o"] * 60_000_000_000) if len(ro) else ro
+        dm = np.zeros(len(ns) + 1, int)
+        np.add.at(dm, ro, 1)
+        np.add.at(dm, b, -1)
+        D.sw[key] = np.cumsum(dm[:-1]) <= 0
+    return D.sw[key][q0:q1]
 
 
 def order_ok(D, cfg, q0, q1):
@@ -1420,12 +1500,19 @@ def simulate(D, pair, cfg, gcache, keep=None):
         ok = order_ok(D, cfg, q0, q1)                                 # REARM: placed again after the break
         if ok is None:
             q1 = min(q1, cancel_bar(D, cfg, q0))                      # WKND: cancelled before a 2+ hour break
+        q1c = dbrk_cut(D, cfg, q0, q1)                                # DBRK c: cancelled before a daily break
+        if ok is not None and q1c < q1:
+            ok = ok[:q1c - q0]
+        q1 = q1c
         if q0 >= q1:
             continue
         lv0 = (near + lad[0][0] * (far - near)) if lad else mid       # LADDER: the first level's touch starts the trade
         seg = (l1[q0:q1] <= lv0) if d > 0 else (h1[q0:q1] >= lv0)
         if ok is not None:
             seg &= ok
+        dk = dbrk_ok(D, cfg, q0, q1)                                  # DBRK oN: no fill just after a reopening
+        if dk is not None:
+            seg &= dk
         if not seg.any():
             continue
         f = q0 + int(np.argmax(seg))
@@ -2586,9 +2673,26 @@ def live_trades(D, pair, cfg, gcache=None):
                 continue
             q1 = qc
         lv0 = (near + lad[0][0] * (far - near)) if lad else mid       # LADDER: the first level's touch (as simulate)
+        q1c = dbrk_cut(D, cfg, q0, q1)                                # DBRK c (as simulate)
+        if q1c < q1:
+            if ok is not None:
+                ok = ok[:q1c - q0]
+            hit = (l1[q0:q1c] <= lv0) if d > 0 else (h1[q0:q1c] >= lv0)
+            if ok is not None:
+                hit &= ok
+            dk0 = dbrk_ok(D, cfg, q0, q1c)
+            if dk0 is not None:
+                hit &= dk0
+            if not hit.any():
+                out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="break"))
+                continue
+            q1 = q1c
         seg = (l1[q0:q1] <= lv0) if d > 0 else (h1[q0:q1] >= lv0)
         if ok is not None:
             seg &= ok
+        dk = dbrk_ok(D, cfg, q0, q1)                                  # DBRK oN (as simulate)
+        if dk is not None:
+            seg &= dk
             if not seg.any() and q1 == n1 and not ok[-1] and armed + exp_ns > ns[-1]:
                 # inside a break's window now: no order at the broker; it comes back (pending) after the reopening
                 out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="break"))

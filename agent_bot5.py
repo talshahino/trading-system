@@ -171,7 +171,7 @@ def sym_runs(budget_s):
     19.11.2026, task mgr1911pub): each track in "tal_tracks" with a risk > 0 runs with exactly its rules on its
     instruments here, saved in the gap method's index - so the whole-bot test (TG.portfolio, guard5) takes them all
     together, as the account does. Until 19.11 only the tracks with "symbols" ran here; an index track's rules waited
-    for their turn in the notes' queue, so after the stop changed on 18.11 the whole-bot test saw 4 of 24 tracks.
+    for their turn in the notes' queue, so the whole-bot test of 18.11 13:10 had trades of 4 of the 24 tracks (18 missing).
     Two rounds: the rules as they run (FTMO's break rule on, tal_gap.ftmo_cfg - enough for guard5), then the rules as
     stored (TG.portfolio). The budget is checked before every run."""
     SYM_LEFT.clear()

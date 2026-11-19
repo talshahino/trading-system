@@ -1,9 +1,133 @@
 {
- "updated": "2026-11-19T20:46:56+00:00",
+ "updated": "2026-11-19T21:30:23+00:00",
  "new": [
-  "eaf14436f474"
+  "58e1a4c4f5e8",
+  "880f014c24a6",
+  "f0541d4d37ef"
  ],
  "decisions": [
+  {
+   "id": "58e1a4c4f5e8",
+   "bot": "bot7",
+   "type": "card",
+   "card": "8047e65d5f69",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC504|4Hour|US30: איזון ב־0.75R רווח · 30% יוצאים ב־1R והשאר לאיזון",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.32R לעסקה, 34.0 עסקאות אפקטיביות, +0.07R מעל המצב הקיים) · בבוט השלם על 2026: רווח +208.22% → +209.19%, בלי יותר סיכון (יום גרוע -3.34%, ירידה 5.73%) · ⭐ אולי מזל: נכנס בסיכון ×0.71 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3871,
+     "total": 208.22,
+     "worst_day": -3.34,
+     "max_dd": 5.73,
+     "near_days": 1,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 322,
+     "guard_skipped": 90
+    },
+    "after": {
+     "trades": 3872,
+     "total": 209.19,
+     "worst_day": -3.34,
+     "max_dd": 5.73,
+     "near_days": 1,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 324,
+     "guard_skipped": 92
+    }
+   },
+   "at": "2026-11-19T21:30:23+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "880f014c24a6",
+   "bot": "bot7",
+   "type": "card",
+   "card": "63bd8f4e67f0",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC504|4Hour|US100: איזון ב־1R רווח · 30% יוצאים ב־2R והשאר לאיזון",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.27R לעסקה, 37.0 עסקאות אפקטיביות, +0.02R מעל המצב הקיים) · בבוט השלם על 2026: רווח +209.21% → +211.13%, בלי יותר סיכון (יום גרוע -3.12%, ירידה 5.73%) · ⭐ אולי מזל: נכנס בסיכון ×0.83 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3872,
+     "total": 209.21,
+     "worst_day": -3.35,
+     "max_dd": 5.73,
+     "near_days": 1,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 325,
+     "guard_skipped": 92
+    },
+    "after": {
+     "trades": 3876,
+     "total": 211.13,
+     "worst_day": -3.12,
+     "max_dd": 5.73,
+     "near_days": 1,
+     "max_open": 5.17,
+     "max_side": 4.52,
+     "guard_cut": 328,
+     "guard_skipped": 92
+    }
+   },
+   "at": "2026-11-19T21:30:23+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "f0541d4d37ef",
+   "bot": "bot7",
+   "type": "card",
+   "card": "e3ade45e47f7",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "MQ11|4Hour|US30: כניסה מדורגת ב־4 חלקים שווים (בפתיחה, בנסיגה של 0.25R, בנסיגה של 0.5R, בנסיגה של 0.75R), אותו סיכון כולל, סטופ ויעד; חלק שלא התמלא תוך 3 נרות מתבטל",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -3.12% → -2.88%, ירידה 5.86% → 6.15%, ימים קרובים למגבלה 1 → 0) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3872,
+     "total": 211.47,
+     "worst_day": -3.12,
+     "max_dd": 5.86,
+     "near_days": 1,
+     "max_open": 5.18,
+     "max_side": 4.53,
+     "guard_cut": 336,
+     "guard_skipped": 96
+    },
+    "after": {
+     "trades": 3877,
+     "total": 216.41,
+     "worst_day": -2.88,
+     "max_dd": 6.15,
+     "near_days": 0,
+     "max_open": 5.18,
+     "max_side": 4.53,
+     "guard_cut": 321,
+     "guard_skipped": 95
+    }
+   },
+   "at": "2026-11-19T21:30:23+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "eaf14436f474",
    "bot": "bot2",

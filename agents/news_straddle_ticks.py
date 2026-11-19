@@ -135,7 +135,13 @@ def _built():
             out.append({"sym": sym, "rel": t.isoformat(), "ref": float(o[k0 - 1]), "atr": atr, "x": X,
                         "cancel": int(p.get("cancel_min", 1)), "dir": int(x.dir), "r_bar": float(x.r), "gross_bar": float(x.gross)})
     out.sort(key=lambda r: r["rel"], reverse=True)
-    return out
+    # 2025 and 2026 alternate (bot 7 smart agent, 19.11.2026): newest-first filled 142 rows, all of 2026, so no fix could be
+    # chosen on 2025 as the rule demands; now every cut run adds rows to both periods.
+    new_, old_ = [r for r in out if r["rel"] >= SPLIT.isoformat()], [r for r in out if r["rel"] < SPLIT.isoformat()]
+    mixed = []
+    for k in range(max(len(new_), len(old_))):
+        mixed += ([old_[k]] if k < len(old_) else []) + ([new_[k]] if k < len(new_) else [])
+    return mixed
 
 
 def _comm_px(sym, e):
@@ -179,18 +185,21 @@ def run(minutes):
     left = [x for x in todo if (x["sym"], x["rel"]) not in seen]
     print(f"EV04 ticks: {len(todo)} trades, {len(left)} left", flush=True)
     t_end = time.time() + minutes * 60
-    scale, failed = {}, 0
+    scale, failed, workers = {}, 0, WORKERS
     for k in range(0, len(left), BATCH):
         if time.time() > t_end:
             print(f"EV04 ticks: time budget, {len(left) - k} left", flush=True)
             break
         batch = left[k:k + BATCH]
         need = sorted({(_inst(x["sym"]), h) for x in batch for h in _hours(x["rel"])}, key=str)
-        with ThreadPoolExecutor(WORKERS) as ex:             # the downloads were one by one: 8 trades in a whole round
+        with ThreadPoolExecutor(workers) as ex:             # the downloads were one by one: 8 trades in a whole round
             got = dict(zip(need, ex.map(lambda q: NT.fetch_hour(*q), need)))
         bad = [q for q in need if not got[q][1]]            # (manager, 19.11.2026: 22 of 72 failed in a round - the
-        if bad and time.time() < t_end:                     # parallel burst is throttled; one slow pass saves most)
-            time.sleep(15)
+        if len(bad) * 4 > len(need) and workers > 2:        # parallel burst is throttled; one slow pass saves most)
+            workers = max(2, workers // 2)                  # (task mgr1911b7ticks: a quarter failed -> half the parallel
+            print(f"EV04 ticks: {len(bad)}/{len(need)} hours failed, {workers} parallel downloads from now", flush=True)
+        if bad and time.time() < t_end:                     # downloads for the rest of the run, and a longer pause)
+            time.sleep(15 if workers >= WORKERS else 30)
             for q in bad:
                 if time.time() > t_end:
                     break

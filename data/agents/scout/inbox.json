@@ -15207,6 +15207,794 @@
     "bot7"
    ],
    "rules": "'Buy the Pullback, Not the Breakout' (MQL5 blog 777944): the day has closed beyond the previous day's high, price pulls back to the trailing line, the first close over the prior bar's high -> buy (mirror under the low); stop beyond the line, 1.5R, break-even halfway. Ours: the source's commercial 'dots' are replaced by a SuperTrend 10 x 2 line."
+  },
+  {
+   "id": "SC619",
+   "name": "Raschke 80-20: candle from its top 20% to its bottom 20%, next candle under its low and back through, extreme stop, out at its end",
+   "source": "Raschke & Connors 80-20 (The Right Trader)",
+   "url": "https://therighttrader.com/learn/trading-strategies/eighty-twenty-setup",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Raschke & Connors 80-20 (Street Smarts; rules https://therighttrader.com/learn/trading-strategies/eighty-twenty-setup): a candle opening in its top 20% and closing in its bottom 20%; the next candle trades under its low and comes back through it -> buy (mirror for shorts). Stop past the extreme printed since, skip a stop over 2 ATR, out when that next candle ends. Translation: the source's daily bar = a candle of 4 chart bars."
+  },
+  {
+   "id": "SC620",
+   "name": "Raschke Anti on the slow stochastic 14/3: rising EMA20, %K back over 20, stretch stop, 2R, 8 bars",
+   "source": "Raschke Anti, stochastic reading (The Right Trader)",
+   "url": "https://therighttrader.com/learn/trading-strategies/anti-setup",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Raschke Anti, the stochastic reading (https://therighttrader.com/learn/trading-strategies/anti-setup): close over a rising EMA20 (over its value 5 bars ago), slow %K 14/3 stretched under 20 and crossing back over it -> buy (mirror at 80). Stop past the stretch's extreme, skip a stop over 2 ATR, 2R, out after 8 bars. SC246 is the 3/10 oscillator version."
+  },
+  {
+   "id": "SC621",
+   "name": "3-Step Pullback (Deutsch): Keltner 15 / 2 break, pullback into 20-80% within 3-15 bars, with-trend bar, 2.5 ATR, 1:1",
+   "source": "3-Step Pullback, Deutsch / Galen Woods (Trading Setups Review)",
+   "url": "https://www.tradingsetupsreview.com/3-step-pullback-trading-method/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "3-Step Pullback (Richard Deutsch, as read by Galen Woods https://www.tradingsetupsreview.com/3-step-pullback-trading-method/): Keltner EMA15 +/- 2 ATR15; a close over the ceiling, a pullback into 20-80% of the channel within 3-15 bars, a with-trend bar closing over the prior high -> buy (mirror). Stop 2.5 ATR, target 1:1."
+  },
+  {
+   "id": "SC622",
+   "name": "Market Profile 80% rule: open outside value, two 30-minute periods inside, target the far edge",
+   "source": "Market Profile 80% rule (LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/80-percent-rule.md",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Market Profile 80% rule (https://www.luxalgo.com/library/concept/80-percent-rule.md): the session opens outside the previous value area, then two 30-minute periods hold inside it -> trade to the far edge of value. Stop 0.25 ATR back outside the entry edge (the source gives no offset), flat at 21:00 UTC. Sessions = UTC days on tick volume."
+  },
+  {
+   "id": "SC623",
+   "name": "Quantified Strategies low break: close under the prior 5 candles' low, out over the prior high (long)",
+   "source": "Quantified Strategies - 5-Day Low",
+   "url": "https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Quantified Strategies 5-Day Low (https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners): a close under the lowest low of the previous 5 candles -> buy, out on a close over the prior candle's high. Long only. The source's daily bar = a candle of 4 chart bars; the source has no stop, the 3 ATR one is ours."
+  },
+  {
+   "id": "SC624",
+   "name": "Quantified Strategies ADX(5) over 40 + narrowest candle of 6, out over the prior high (long)",
+   "source": "Quantified Strategies - Volatility Contraction",
+   "url": "https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Quantified Strategies Volatility Contraction (same article): ADX(5) over 40 and the narrowest candle of the last 6 -> buy, out on a close over the prior candle's high. Long only. The source's daily bar = a candle of 4 chart bars; the 3 ATR stop is ours."
+  },
+  {
+   "id": "SC625",
+   "name": "Quantified Strategies new 10-candle high with IBS under 0.15, out over the prior high (long)",
+   "source": "Quantified Strategies - New Highs with Low IBS",
+   "url": "https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Quantified Strategies New Highs with Low IBS (same article): a high over the prior 10 candles' high with IBS under 0.15 -> buy, out on a close over the prior candle's high. Long only. The source's daily bar = a candle of 4 chart bars; the 3 ATR stop is ours."
+  },
+  {
+   "id": "SC626",
+   "name": "Buying Weakness: RSI(3) under 10 in high volatility, limit under the low, quick target (long)",
+   "source": "Buying Weakness on the Nasdaq 100 (Substack)",
+   "url": "https://backtest.substack.com/p/buying-weakness-on-the-nasdaq-100",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Buying Weakness (https://backtest.substack.com/p/buying-weakness-on-the-nasdaq-100): the more volatile half, RSI(3) under 10 -> a limit 1% under the candle's low for the next candle, sold 1.75% over the close. Translations: the daily bar = a candle of 4 chart bars; 1% / 1.75% = 0.4 / 0.7 candle ATR; 'top half of the universe' = ATR% over its own 63-candle median; the entry is on the touch. The source has no stop, 3 ATR is ours. Long only."
+  },
+  {
+   "id": "SC627",
+   "name": "Gold night hold: buy 18:00 New York, sell 03:00, Monday to Thursday, 2.3% stop (long)",
+   "source": "Is your edge real? gold timing rule (MQL5 blog)",
+   "url": "https://www.mql5.com/en/blogs/post/779464",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "XAUUSD"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Gold night hold (https://www.mql5.com/en/blogs/post/779464): buy at 18:00 New York, sell 9 hours later at 03:00 New York, Monday to Thursday evenings. The 2.3% stop is the source's test version. Long only."
+  },
+  {
+   "id": "SC628",
+   "name": "NNFX VP: HMA20 baseline cross + SSL10 + TDFI 4 within 1 ATR, 1.5 ATR stop, 1 ATR target, RVI exit",
+   "source": "No Nonsense NNFX VP Strategy (jiehonglim, TradingView)",
+   "url": "https://www.tradingview.com/script/wmJpD8xR-No-Nonsense-NNFX-VP-Strategy-for-Back-Testing-jh",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "NNFX VP (jiehonglim, https://www.tradingview.com/script/wmJpD8xR-No-Nonsense-NNFX-VP-Strategy-for-Back-Testing-jh): close crosses the HMA20 baseline within the last candle, SSL10 agrees, TDFI 4 clears its trigger, price within 1 ATR of the baseline -> trade. Stop 1.5 ATR, target 1 ATR, out on the RVI 4 cross or a baseline flip."
+  },
+  {
+   "id": "SC629",
+   "name": "Gold Donchian 96 break + volume + LWTI 25, night session, one a day, wick stop, 4R",
+   "source": "Gold Breakout Strategy RR 4 (TradingView)",
+   "url": "https://www.tradingview.com/script/LpO7kcS9",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "XAUUSD"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Gold Breakout RR 4 (https://www.tradingview.com/script/LpO7kcS9): 5 minutes, 20:00-08:00 GMT-5, one trade a day. A close over the previous Donchian 96 high while the channel rises, volume over its SMA 30 (ours: at least), LWTI 25 over its 5-bar line -> buy (mirror). Stop past the breakout candle's wick, target 4R."
+  },
+  {
+   "id": "SC630",
+   "name": "Phoenix Gold: HMA55 side + Donchian 25 close, 2 ATR, 2.6R, break-even, no Friday evening",
+   "source": "Phoenix Gold V3.2 (TradingView), without its sizing after a loss",
+   "url": "https://tr.tradingview.com/script/Bjez8v7B/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "XAUUSD"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Phoenix Gold V3.2 (https://tr.tradingview.com/script/Bjez8v7B/): 15-30 minutes, HMA55 side, a close beyond the Donchian 25 -> trade, about 1:2.6, break-even on the way, no new trades Friday after 16:00 New York. Ours: 2 ATR stop, break-even at 40% of the target. The script's 1.4x sizing after a loss is left out on purpose (no martingale)."
+  },
+  {
+   "id": "SC631",
+   "name": "Oliver Velez elephant bar with price > SMA20 > SMA200, break of the bar, bar stop, 2R",
+   "source": "Oliver Velez System Visual Helper (CocoChoco, TradingView)",
+   "url": "https://br.tradingview.com/script/MTQNwtFZ-Oliver-Velez-System-Visual-Helper-CocoChoco/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Oliver Velez elephant bar (https://br.tradingview.com/script/MTQNwtFZ-Oliver-Velez-System-Visual-Helper-CocoChoco/): price > SMA20 > SMA200, a body 1.5 x the average closing near its extreme, break of the bar -> trade, stop at its far side. Size thresholds and the 2R target are ours; candles of 3 chart bars."
+  },
+  {
+   "id": "SC632",
+   "name": "Oliver Velez tail bar with price > SMA20 > SMA200, break of the bar, tail stop, 2R",
+   "source": "Oliver Velez System Visual Helper (CocoChoco, TradingView)",
+   "url": "https://br.tradingview.com/script/MTQNwtFZ-Oliver-Velez-System-Visual-Helper-CocoChoco/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Oliver Velez tail bar (same source): price > SMA20 > SMA200, a tail twice the body and half the range, break of the bar -> trade, stop at the tail. Size thresholds and the 2R target are ours; candles of 3 chart bars."
+  },
+  {
+   "id": "SC633",
+   "name": "Oliver Velez 180 reversal bar with price > SMA20 > SMA200, break of the bar, bar stop, 2R",
+   "source": "Oliver Velez System Visual Helper (CocoChoco, TradingView)",
+   "url": "https://br.tradingview.com/script/MTQNwtFZ-Oliver-Velez-System-Visual-Helper-CocoChoco/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Oliver Velez 180 (same source): price > SMA20 > SMA200, a full red bar then a green bar taking back 75% of it, break of the bar -> trade, stop at its low. Size thresholds and the 2R target are ours; candles of 3 chart bars."
+  },
+  {
+   "id": "SC634",
+   "name": "Kullamagi parabolic short: 3 stretched green candles, break of the last low, high stop, target the 10 average",
+   "source": "Systemizing Kullamagi's Parabolic Short (Substack)",
+   "url": "https://stonkscapital.substack.com/p/systemizing-kullamagis-parabolic",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Kullamagi parabolic short (https://stonkscapital.substack.com/p/systemizing-kullamagis-parabolic): 3 green candles in a row after a stretched run, short the break of the last candle's low, stop at the high, target the 10-period average. Translations: daily bars = candles of 4 chart bars; 'up 50% in 3 days' = up 1.5 candle ATR. Short only."
+  },
+  {
+   "id": "SC635",
+   "name": "Minervini VCP: 3 shrinking pullbacks, close over the pivot on volume, base stop, 3R (long)",
+   "source": "Volatility Contraction Pattern (LuxAlgo)",
+   "url": "https://www.luxalgo.com/library/concept/volatility-contraction-pattern.md",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Minervini VCP (https://www.luxalgo.com/library/concept/volatility-contraction-pattern.md): 3 pullbacks each shallower than the last over the SMA50, a close over the last pivot on at least average volume -> buy, stop under the final contraction. The source has no target, 3R is ours. Long only."
+  },
+  {
+   "id": "SC636",
+   "name": "Bollinger 20 / 2 whole body outside the band, fade to the middle, signal-candle stop, 3 bars",
+   "source": "Bulls n Bears scalping setups, R1",
+   "url": "https://bullsnbears-trading.netlify.app/scalping-setups",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Bollinger body outside (https://bullsnbears-trading.netlify.app/scalping-setups R1): the whole body of a candle closes outside the 20 / 2 band -> fade, stop past the signal candle, target the middle band, out within 3 candles."
+  },
+  {
+   "id": "SC637",
+   "name": "Asia range false break in London / New York with RSI turning, 1.5 ATR, 2R, one a session",
+   "source": "Session Liquidity Reversion, Asia range false breakout (TradingView)",
+   "url": "https://il.tradingview.com/script/uHN2BQiV-Session-Liquidity-Reversion-Strategy-Asia-Range-False-Breakout",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Session Liquidity Reversion (https://il.tradingview.com/script/uHN2BQiV-Session-Liquidity-Reversion-Strategy-Asia-Range-False-Breakout): the Asian range locks, London / New York breaks it and closes back inside with RSI turning -> fade, ATR stop, fixed R, one trade a session. Ours (the page has no numbers): Asia 00-07 UTC, trades 07-20 UTC, RSI 14 under 60 and falling (mirror over 40 and rising), 1.5 ATR, 2R."
+  },
+  {
+   "id": "SC638",
+   "name": "Frequency Momentum Oscillator zero cross on the EMA50 side, 2 ATR, 2R",
+   "source": "frequency_momentum indicator",
+   "url": "https://www.tradingview.com/script/ciGgoWUr-Frequency-Momentum-Oscillator-QuantAlgo",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Frequency Momentum Oscillator (QuantAlgo) zero cross on the EMA50 side, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC639",
+   "name": "Ehlers Precision Trend ROC cross with the trend line, 2 ATR, 2R (TASC 2024.09)",
+   "source": "precision_trend indicator",
+   "url": "https://www.tradingview.com/script/XxSVTg0v-TASC-2024-09-Precision-Trend-Analysis",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Ehlers Precision Trend (TASC 2024.09): ROC crosses zero with the trend line on its side, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC640",
+   "name": "Adaptive Resonance Oscillator signal cross from the far half, 2 ATR, 2R",
+   "source": "adaptive_resonance indicator",
+   "url": "https://www.tradingview.com/script/gqtSuLQt-Adaptive-Resonance-Oscillator-AlgoAlpha/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Adaptive Resonance Oscillator (AlgoAlpha): cycle-tuned RSI crosses its signal from the far half, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC641",
+   "name": "Trend Reversal Probability over 84% + EMA20 cross against the trend, 2 ATR, 2R",
+   "source": "trend_reversal_prob indicator",
+   "url": "https://tradingview.com/script/7gnQovYe-Trend-Reversal-Probability-Algoalpha",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Trend Reversal Probability (AlgoAlpha): the trend is older than 84% of past trends and the close crosses the EMA20 against it -> reversal, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC642",
+   "name": "Trend Pulse band break / pivot-low break, 2 ATR, 2R",
+   "source": "trend_pulse indicator",
+   "url": "https://it.tradingview.com/script/J5o0F0GR-Trend-Pulse-BigBeluga/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Trend Pulse (BigBeluga): a close over the widening band buys, the break of a confirmed pivot low sells, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC643",
+   "name": "Radius Trend band flip, band stop, 2R",
+   "source": "radius_trend indicator",
+   "url": "https://www.tradingview.com/script/4KIHf36j-Radius-Trend-ChartPrime",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Radius Trend (ChartPrime): band flip, stop at the band, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC644",
+   "name": "Polynomial Regression Keltner: back inside band 3, fade to the line, band 4 stop",
+   "source": "poly_keltner indicator",
+   "url": "https://www.tradingview.com/script/NZAHz4G1-Polynomial-Regression-Keltner-Channel-ChartPrime",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Polynomial Regression Keltner (ChartPrime): a close back inside the third band -> fade to the regression line, stop at the fourth band (ours)."
+  },
+  {
+   "id": "SC645",
+   "name": "Volatility Gaussian Bands trend flip, 2 ATR, 2R",
+   "source": "vol_gaussian_bands indicator",
+   "url": "https://www.tradingview.com/script/ZRD7xSGy-Volatility-Gaussian-Bands-BigBeluga",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Volatility Gaussian Bands (BigBeluga): a close beyond a band flips the trend, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC646",
+   "name": "Prime Bands: back inside 2 SD, fade to the midline, 3 SD stop",
+   "source": "prime_bands indicator",
+   "url": "https://my.tradingview.com/script/99KbMjoz-Prime-Bands-ChartPrime/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Prime Bands (ChartPrime): back inside the 2 SD band -> fade to the midline, stop at the 3 SD band (ours)."
+  },
+  {
+   "id": "SC647",
+   "name": "Adaptive Kalman trend oscillator zero cross with strength, 2 ATR, 2R",
+   "source": "kalman_trend_osc indicator",
+   "url": "https://it.tradingview.com/script/PDi6enZR-Adaptive-Kalman-filter-Trend-Strength-Oscillator-Zeiierman/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Adaptive Kalman trend oscillator (Zeiierman): zero cross with rising strength, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC648",
+   "name": "Dynamic Range Filter line turn, 2 ATR, 2R",
+   "source": "dynamic_range_filter indicator",
+   "url": "https://in.tradingview.com/script/vzKdIrEh-Dynamic-Range-Filter-with-Trend-Candlesticks-Zeiierman",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Dynamic Range Filter (Zeiierman): filter line turns, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC649",
+   "name": "Adaptive SuperTrend Oscillator leaves neutral with the trend, line stop, 2R",
+   "source": "adaptive_st_osc indicator",
+   "url": "https://pl.tradingview.com/script/ABYvsqNS-Adaptive-SuperTrend-Oscillator-QuantAlgo/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Adaptive SuperTrend Oscillator (QuantAlgo): the score leaves the neutral zone on the SuperTrend's side, stop at the line, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC650",
+   "name": "Adaptive Composite Oscillator regime signals on volume, 2 ATR, 2R",
+   "source": "aco indicator",
+   "url": "https://kr.tradingview.com/script/vEMWSCP3-Adaptive-Composite-Oscillator-ACO/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "Adaptive Composite Oscillator: z-score reversal when ADX ranges, zero cross with the DI when it trends, on at least average volume, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC651",
+   "name": "WaveTrend X Kalman cross from the far half under the entropy gate, 2 ATR, 2R",
+   "source": "wavetrend_x indicator",
+   "url": "https://www.tradingview.com/script/EsEtVFFX-WaveTrend-X/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "WaveTrend X: Kalman WT1 crosses WT2 from the far half of its 100-bar rank while the return entropy is under 0.85, 2 ATR, 2R (stop and target ours). The source's gate is 0.72; ours is looser because 0.72 almost never passes on an 8-bin histogram of bar returns."
+  },
+  {
+   "id": "SC652",
+   "name": "T3 + zero-lag flow turn together on the EMA50 side, 2 ATR, 2R",
+   "source": "zl_flow indicator",
+   "url": "https://tradingview.com/script/hpuNvNCf-TREND-and-ZL-FLOW",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6",
+    "bot7"
+   ],
+   "rules": "TREND and ZL FLOW: T3 and the zero-lag average turn together on the EMA50 side, 2 ATR, 2R (stop and target ours)."
   }
  ],
  "indicators": [
@@ -17036,6 +17824,139 @@
    "url": "https://paisaconsultant.blogspot.com/2020/07/book-notes-secret-of-pivot-boss-by.html",
    "added": "2026-11-18",
    "uses": "reversal confirmation at levels (SC608-SC611)"
+  },
+  {
+   "name": "tdfi",
+   "source": "Trend Direction Force Index (NNFX volume indicator), -1..1 with a 0.05 trigger",
+   "url": "https://www.tradingview.com/script/wmJpD8xR-No-Nonsense-NNFX-VP-Strategy-for-Back-Testing-jh",
+   "added": "2026-11-19",
+   "uses": "volume / conviction filter on baseline crosses (SC628)"
+  },
+  {
+   "name": "lwti",
+   "source": "Larry Williams Large Trade Index 25 around 50 with a 5-bar signal (our scaling)",
+   "url": "https://www.tradingview.com/script/LpO7kcS9",
+   "added": "2026-11-19",
+   "uses": "breakout confirmation (SC629)"
+  },
+  {
+   "name": "velez_bars",
+   "source": "Oliver Velez elephant, tail and 180 bars on candles of n bars + the SMA20 / 200 narrow state (thresholds ours)",
+   "url": "https://br.tradingview.com/script/MTQNwtFZ-Oliver-Velez-System-Visual-Helper-CocoChoco/",
+   "added": "2026-11-19",
+   "uses": "entry bars in a trend, narrow state as a pre-breakout filter (SC631-SC633)"
+  },
+  {
+   "name": "vcp",
+   "source": "Minervini Volatility Contraction Pattern: shrinking pullbacks, pivot, base low, breakout",
+   "url": "https://www.luxalgo.com/library/concept/volatility-contraction-pattern.md",
+   "added": "2026-11-19",
+   "uses": "breakout entry, base low as the stop (SC635)"
+  },
+  {
+   "name": "frequency_momentum",
+   "source": "Fourier low-minus-high harmonic power x momentum sign, 32 / 3 (QuantAlgo, our reconstruction)",
+   "url": "https://www.tradingview.com/script/ciGgoWUr-Frequency-Momentum-Oscillator-QuantAlgo",
+   "added": "2026-11-19",
+   "uses": "trend entry, spectral balance as a regime filter (SC638)"
+  },
+  {
+   "name": "precision_trend",
+   "source": "Ehlers Precision Trend: high-pass 250 minus high-pass 40 and its ROC (TASC 2024.09)",
+   "url": "https://www.tradingview.com/script/XxSVTg0v-TASC-2024-09-Precision-Trend-Analysis",
+   "added": "2026-11-19",
+   "uses": "trend entry and exit (SC639)"
+  },
+  {
+   "name": "adaptive_resonance",
+   "source": "RSI tuned to half the Hilbert dominant cycle, HMA smoothed (AlgoAlpha, our reconstruction)",
+   "url": "https://www.tradingview.com/script/gqtSuLQt-Adaptive-Resonance-Oscillator-AlgoAlpha/",
+   "added": "2026-11-19",
+   "uses": "cycle-tuned RSI entries (SC640)"
+  },
+  {
+   "name": "trend_reversal_prob",
+   "source": "Share of past trends shorter than the current one, 0..1 (AlgoAlpha, our reconstruction)",
+   "url": "https://tradingview.com/script/7gnQovYe-Trend-Reversal-Probability-Algoalpha",
+   "added": "2026-11-19",
+   "uses": "exit or tighten when a trend is old, reversal entry (SC641)"
+  },
+  {
+   "name": "trend_pulse",
+   "source": "Confirmed pivot-low break vs a widening SMA + ATR band (BigBeluga, our reconstruction)",
+   "url": "https://it.tradingview.com/script/J5o0F0GR-Trend-Pulse-BigBeluga/",
+   "added": "2026-11-19",
+   "uses": "trend filter and entry (SC642)"
+  },
+  {
+   "name": "radius_trend",
+   "source": "Stepped sloping trend band, step 0.15, distance 2 (ChartPrime, our reconstruction)",
+   "url": "https://www.tradingview.com/script/4KIHf36j-Radius-Trend-ChartPrime",
+   "added": "2026-11-19",
+   "uses": "trend entry, the band as a trailing stop (SC643)"
+  },
+  {
+   "name": "poly_keltner",
+   "source": "Polynomial regression end point 100 with four ATR bands a side (ChartPrime, our reconstruction)",
+   "url": "https://www.tradingview.com/script/NZAHz4G1-Polynomial-Regression-Keltner-Channel-ChartPrime",
+   "added": "2026-11-19",
+   "uses": "mean-reversion levels and targets (SC644)"
+  },
+  {
+   "name": "vol_gaussian_bands",
+   "source": "Causal Gaussian midline with volatility bands and trend flips (BigBeluga, our reconstruction)",
+   "url": "https://www.tradingview.com/script/ZRD7xSGy-Volatility-Gaussian-Bands-BigBeluga",
+   "added": "2026-11-19",
+   "uses": "trend filter and entry (SC645)"
+  },
+  {
+   "name": "prime_bands",
+   "source": "Mid of the n-bar range with 1-3 SD bands and mean-reversion marks (ChartPrime, our reconstruction)",
+   "url": "https://my.tradingview.com/script/99KbMjoz-Prime-Bands-ChartPrime/",
+   "added": "2026-11-19",
+   "uses": "mean-reversion entries (SC646)"
+  },
+  {
+   "name": "kalman_trend_osc",
+   "source": "Level + velocity Kalman filter oscillator +/-100 with trend strength (Zeiierman, our reconstruction)",
+   "url": "https://it.tradingview.com/script/PDi6enZR-Adaptive-Kalman-filter-Trend-Strength-Oscillator-Zeiierman/",
+   "added": "2026-11-19",
+   "uses": "trend filter, strength as an exit (SC647)"
+  },
+  {
+   "name": "dynamic_range_filter",
+   "source": "HMA range filter with the 2.618 scaled range (Zeiierman, our reconstruction)",
+   "url": "https://in.tradingview.com/script/vzKdIrEh-Dynamic-Range-Filter-with-Trend-Candlesticks-Zeiierman",
+   "added": "2026-11-19",
+   "uses": "chop filter and entry (SC648)"
+  },
+  {
+   "name": "adaptive_st_osc",
+   "source": "Close minus SuperTrend in % of an efficiency-blended ATR, 2 SD extremes (QuantAlgo, our reconstruction)",
+   "url": "https://pl.tradingview.com/script/ABYvsqNS-Adaptive-SuperTrend-Oscillator-QuantAlgo/",
+   "added": "2026-11-19",
+   "uses": "trend filter, 2 SD extremes as exits (SC649)"
+  },
+  {
+   "name": "aco",
+   "source": "Adaptive RSI + KAMA + z-score with ADX regime signals (AlwaysBearish, our reconstruction)",
+   "url": "https://kr.tradingview.com/script/vEMWSCP3-Adaptive-Composite-Oscillator-ACO/",
+   "added": "2026-11-19",
+   "uses": "regime-switching entries (SC650)"
+  },
+  {
+   "name": "wavetrend_x",
+   "source": "WaveTrend with a Kalman line, Shannon entropy gate and percentile rank (TradeSymbiotic, our reconstruction)",
+   "url": "https://www.tradingview.com/script/EsEtVFFX-WaveTrend-X/",
+   "added": "2026-11-19",
+   "uses": "entry, entropy as a no-trade filter (SC651)"
+  },
+  {
+   "name": "zl_flow",
+   "source": "T3 8 / 0.7 slope + zero-lag WMA 9 slope agreement",
+   "url": "https://tradingview.com/script/hpuNvNCf-TREND-and-ZL-FLOW",
+   "added": "2026-11-19",
+   "uses": "momentum agreement filter (SC652)"
   }
  ],
  "sources": [
@@ -17043,7 +17964,7 @@
    "name": "TradingView (open-source scripts + ideas)",
    "url": "https://www.tradingview.com/scripts/",
    "look_for": "open-source Pine strategies / indicators to port; ideas with full rules",
-   "last_scanned": "2026-11-18"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "FXStreet",
@@ -17085,7 +18006,7 @@
    "name": "MQL5 CodeBase / Market / Articles",
    "url": "https://www.mql5.com/en/code",
    "look_for": "EA logic in articles and the CodeBase; indicators to port",
-   "last_scanned": "2026-11-18"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "DailyFX / IG education",
@@ -17181,7 +18102,7 @@
    "name": "LuxAlgo library",
    "url": "https://www.luxalgo.com/library/",
    "look_for": "concept pages with exact indicator formulas",
-   "last_scanned": "2026-11-18"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "WH SelfInvest free strategies",
@@ -17248,6 +18169,24 @@
    "url": "https://automatedtradingstrategies.substack.com/p/strategy-descriptions",
    "look_for": "~200 futures strategies - only #1 and #5 unlocked, rest paywalled",
    "last_scanned": "2026-11-18"
+  },
+  {
+   "name": "Quantified Strategies (Substack)",
+   "url": "https://quantifiedstrategies.substack.com/",
+   "look_for": "rule-based swing systems - most rules paywalled, the free 5-strategy article is built",
+   "last_scanned": "2026-11-19"
+  },
+  {
+   "name": "The Right Trader - strategy guides",
+   "url": "https://therighttrader.com/learn/trading-strategies",
+   "look_for": "66 guides with exact rules; classic setups, day types (opening drive, trend day, double distribution) still to mine",
+   "last_scanned": "2026-11-19"
+  },
+  {
+   "name": "Trading Setups Review",
+   "url": "https://www.tradingsetupsreview.com/",
+   "look_for": "reviews of named trading methods with their rules",
+   "last_scanned": "2026-11-19"
   }
  ],
  "sources_note": "The scout's standing source list (user, 14.11.2026 12:45, task tal1411src 'super important for the scout'). Every night the scout searches these (rotating, different ones each night) for new strategies and indicators; last_scanned = the last night it searched there (empty = not yet)."

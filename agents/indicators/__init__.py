@@ -90,6 +90,9 @@ from agents.indicators.classic9 import (autocorr_periodogram, chandelier_exit, d
                                         livermore_pivots, nrtr, range_rank, vpci)
 from agents.indicators.classic10 import (acd, better_volume, brooks_count, camarilla, kagi, pivot_boss, quasimodo,
                                          td_patterns, the_strat, weis_wave)
+from agents.indicators.classic11 import (aco, adaptive_resonance, adaptive_st_osc, dynamic_range_filter, frequency_momentum,
+                                         kalman_trend_osc, lwti, poly_keltner, precision_trend, prime_bands, radius_trend, tdfi,
+                                         trend_pulse, trend_reversal_prob, vcp, velez_bars, vol_gaussian_bands, wavetrend_x, zl_flow)
 TV = "https://www.tradingview.com/script/"
 TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
@@ -434,6 +437,25 @@ INDICATORS = {
     "quasimodo": (quasimodo, "Quasimodo: shoulder, leg, head, break of structure, return to the shoulder within 30 bars", "https://www.mql5.com/en/articles/23141"),
     "brooks_count": (brooks_count, "Al Brooks High 1 / High 2 / Low 1 / Low 2 pullback bar count", "https://nexusfi.com/a/strategies/al-brooks-price-action-method"),
     "pivot_boss": (pivot_boss, "Ochoa (Pivot Boss) wick, extreme, outside and doji reversal candles on candles of n bars", "https://paisaconsultant.blogspot.com/2020/07/book-notes-secret-of-pivot-boss-by.html"),
+    "tdfi": (tdfi, "Trend Direction Force Index (NNFX volume indicator), -1..1 with a 0.05 trigger", TV + "wmJpD8xR-No-Nonsense-NNFX-VP-Strategy-for-Back-Testing-jh"),
+    "lwti": (lwti, "Larry Williams Large Trade Index 25 around 50 with a 5-bar signal (our scaling)", TV + "LpO7kcS9"),
+    "velez_bars": (velez_bars, "Oliver Velez elephant, tail and 180 bars on candles of n bars + the SMA20 / 200 narrow state (thresholds ours)", "https://br.tradingview.com/script/MTQNwtFZ-Oliver-Velez-System-Visual-Helper-CocoChoco/"),
+    "vcp": (vcp, "Minervini Volatility Contraction Pattern: shrinking pullbacks, pivot, base low, breakout", "https://www.luxalgo.com/library/concept/volatility-contraction-pattern.md"),
+    "frequency_momentum": (frequency_momentum, "Fourier low-minus-high harmonic power x momentum sign, 32 / 3 (QuantAlgo, our reconstruction)", TV + "ciGgoWUr-Frequency-Momentum-Oscillator-QuantAlgo"),
+    "precision_trend": (precision_trend, "Ehlers Precision Trend: high-pass 250 minus high-pass 40 and its ROC (TASC 2024.09)", TV + "XxSVTg0v-TASC-2024-09-Precision-Trend-Analysis"),
+    "adaptive_resonance": (adaptive_resonance, "RSI tuned to half the Hilbert dominant cycle, HMA smoothed (AlgoAlpha, our reconstruction)", TV + "gqtSuLQt-Adaptive-Resonance-Oscillator-AlgoAlpha/"),
+    "trend_reversal_prob": (trend_reversal_prob, "Share of past trends shorter than the current one, 0..1 (AlgoAlpha, our reconstruction)", "https://tradingview.com/script/7gnQovYe-Trend-Reversal-Probability-Algoalpha"),
+    "trend_pulse": (trend_pulse, "Confirmed pivot-low break vs a widening SMA + ATR band (BigBeluga, our reconstruction)", "https://it.tradingview.com/script/J5o0F0GR-Trend-Pulse-BigBeluga/"),
+    "radius_trend": (radius_trend, "Stepped sloping trend band, step 0.15, distance 2 (ChartPrime, our reconstruction)", TV + "4KIHf36j-Radius-Trend-ChartPrime"),
+    "poly_keltner": (poly_keltner, "Polynomial regression end point 100 with four ATR bands a side (ChartPrime, our reconstruction)", TV + "NZAHz4G1-Polynomial-Regression-Keltner-Channel-ChartPrime"),
+    "vol_gaussian_bands": (vol_gaussian_bands, "Causal Gaussian midline with volatility bands and trend flips (BigBeluga, our reconstruction)", TV + "ZRD7xSGy-Volatility-Gaussian-Bands-BigBeluga"),
+    "prime_bands": (prime_bands, "Mid of the n-bar range with 1-3 SD bands and mean-reversion marks (ChartPrime, our reconstruction)", "https://my.tradingview.com/script/99KbMjoz-Prime-Bands-ChartPrime/"),
+    "kalman_trend_osc": (kalman_trend_osc, "Level + velocity Kalman filter oscillator +/-100 with trend strength (Zeiierman, our reconstruction)", "https://it.tradingview.com/script/PDi6enZR-Adaptive-Kalman-filter-Trend-Strength-Oscillator-Zeiierman/"),
+    "dynamic_range_filter": (dynamic_range_filter, "HMA range filter with the 2.618 scaled range (Zeiierman, our reconstruction)", "https://in.tradingview.com/script/vzKdIrEh-Dynamic-Range-Filter-with-Trend-Candlesticks-Zeiierman"),
+    "adaptive_st_osc": (adaptive_st_osc, "Close minus SuperTrend in % of an efficiency-blended ATR, 2 SD extremes (QuantAlgo, our reconstruction)", "https://pl.tradingview.com/script/ABYvsqNS-Adaptive-SuperTrend-Oscillator-QuantAlgo/"),
+    "aco": (aco, "Adaptive RSI + KAMA + z-score with ADX regime signals (AlwaysBearish, our reconstruction)", "https://kr.tradingview.com/script/vEMWSCP3-Adaptive-Composite-Oscillator-ACO/"),
+    "wavetrend_x": (wavetrend_x, "WaveTrend with a Kalman line, Shannon entropy gate and percentile rank (TradeSymbiotic, our reconstruction)", TV + "EsEtVFFX-WaveTrend-X/"),
+    "zl_flow": (zl_flow, "T3 8 / 0.7 slope + zero-lag WMA 9 slope agreement", "https://tradingview.com/script/hpuNvNCf-TREND-and-ZL-FLOW"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

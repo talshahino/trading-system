@@ -13055,3 +13055,493 @@ SCOUT.update({
     "SC617": ("Beat the Market Maker extended M / W away from the EMA 50 / 100 / 200, setup-candle stop, target the nearest EMA", s_btmm_extended, _F),
     "SC618": ("Buy the pullback: day beyond the prior high, pullback to a SuperTrend line, 1.5R, BE halfway (MQL5 blog 777944)", s_pullback_workflow, ["5Min", "15Min"]),
 })
+
+
+# ---------------- SC619 - SC652 scout 19.11.2026 ----------------
+from agents.indicators._core import hma as _hma_n19  # noqa: E402
+from agents.indicators.classic10 import agg_candles as _agg_n19  # noqa: E402
+
+
+def _cmask(m, pos, n):
+    """Candle mask -> bar mask, True on the bar that completes the candle."""
+    out = np.zeros(n, bool)
+    out[pos] = np.asarray(m, bool)
+    return out
+
+
+def _clev(x, pos, n):
+    """Candle value -> bar array, carried forward from the bar that completes the candle."""
+    out = np.full(n, np.nan)
+    out[pos] = np.asarray(x, float)
+    return pd.Series(out).ffill().to_numpy()
+
+
+def _first_of_key(mask, key):
+    """Only the first True of each key (one trade per session)."""
+    m = pd.Series(np.asarray(mask, bool))
+    return (m & (m.groupby(pd.Series(key)).cumsum() == 1)).to_numpy()
+
+
+def s_raschke_8020(df):
+    """Raschke & Connors 80-20 (Street Smarts; rules https://therighttrader.com/learn/trading-strategies/eighty-twenty-setup): a candle opening in
+    its top 20% and closing in its bottom 20%; the next candle trades under its low and comes back through it -> buy (mirror for shorts). Stop
+    past the extreme printed since, skip a stop over 2 ATR, out when that next candle ends. Translation: the source's daily bar = a candle of 4 chart bars."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    co, ch, cl, cc, _, pos = _agg_n19(df, 4)
+    rg = np.where(ch - cl > 0, ch - cl, np.nan)
+    fo, fc = (co - cl) / rg, (cc - cl) / rg
+    bear, bull = _cmask((fo >= 0.8) & (fc <= 0.2), pos, n), _cmask((fo <= 0.2) & (fc >= 0.8), pos, n)
+    cand_l, cand_h = _clev(cl, pos, n), _clev(ch, pos, n)
+    a = atr(h, l, c, 14)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = c - 2 * a, c + 2 * a
+    side, lvl, ext, age = 0, np.nan, np.nan, 0
+    for i in range(n):
+        if bear[i] or bull[i]:
+            side, lvl, ext, age = (1 if bear[i] else -1), (cand_l[i] if bear[i] else cand_h[i]), np.nan, 0
+            continue
+        if side == 0:
+            continue
+        age += 1
+        if age > 4:
+            side = 0
+            continue
+        if side > 0 and l[i] < lvl:
+            ext = np.nanmin([ext, l[i]])
+        if side < 0 and h[i] > lvl:
+            ext = np.nanmax([ext, h[i]])
+        if ext == ext and side > 0 and c[i] > lvl and c[i] - ext <= 2 * a[i]:
+            L[i], sl[i], side = True, ext - 0.1 * a[i], 0
+        elif ext == ext and side < 0 and c[i] < lvl and ext - c[i] <= 2 * a[i]:
+            S[i], ss[i], side = True, ext + 0.1 * a[i], 0
+    return L, S, {"stop": ("level", sl, ss), "target": None, "max_bars": 4}
+
+
+def s_raschke_anti_stoch(df):
+    """Raschke Anti, the stochastic reading (https://therighttrader.com/learn/trading-strategies/anti-setup): close over a rising EMA20 (over its value 5 bars ago),
+    slow %K 14/3 stretched under 20 and crossing back over it -> buy (mirror at 80). Stop past the stretch's extreme, skip a stop over 2 ATR, 2R, out after 8 bars.
+    SC246 is the 3/10 oscillator version."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    hh, ll = _s(h).rolling(14).max().to_numpy(), _s(l).rolling(14).min().to_numpy()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        k = sma(np.where(hh > ll, 100 * (c - ll) / (hh - ll), 50.0), 3)
+    e, a = ema(c, 20), atr(h, l, c, 14)
+    up, dn = (c > e) & (e > _r(e, 5)), (c < e) & (e < _r(e, 5))
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = c - 2 * a, c + 2 * a
+    lo, hi = np.nan, np.nan
+    for i in range(1, n):
+        lo = np.nanmin([lo, l[i]]) if k[i] <= 20 or k[i - 1] <= 20 else np.nan
+        hi = np.nanmax([hi, h[i]]) if k[i] >= 80 or k[i - 1] >= 80 else np.nan
+        if k[i - 1] <= 20 < k[i] and up[i] and lo == lo and c[i] - lo <= 2 * a[i]:
+            L[i], sl[i] = True, lo - 0.1 * a[i]
+        if k[i - 1] >= 80 > k[i] and dn[i] and hi == hi and hi - c[i] <= 2 * a[i]:
+            S[i], ss[i] = True, hi + 0.1 * a[i]
+    return L, S, _plan_r(sl, ss, 2.0, max_bars=8)
+
+
+def s_keltner_3step(df):
+    """3-Step Pullback (Richard Deutsch, as read by Galen Woods https://www.tradingsetupsreview.com/3-step-pullback-trading-method/): Keltner EMA15 +/- 2 ATR15; a close over the
+    ceiling, a pullback into 20-80% of the channel within 3-15 bars, a with-trend bar closing over the prior high -> buy (mirror). Stop 2.5 ATR, target 1:1."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    e, a = ema(c, 15), atr(h, l, c, 15)
+    up, lo = e + 2 * a, e - 2 * a
+    with np.errstate(divide="ignore", invalid="ignore"):
+        p = (c - lo) / (up - lo)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    u, d = -999, -999
+    for i in range(1, n):
+        if c[i] > up[i]:
+            u = i
+        if c[i] < lo[i]:
+            d = i
+        inz = 0.2 <= p[i] <= 0.8
+        if 3 <= i - u <= 15 and d < u and inz and c[i] > o[i] and c[i] > h[i - 1]:
+            L[i], u = True, -999
+        elif 3 <= i - d <= 15 and u < d and inz and c[i] < o[i] and c[i] < l[i - 1]:
+            S[i], d = True, -999
+    return L, S, _atr_plan(c, a, 2.5, 1.0)
+
+
+def s_80pct_rule(df):
+    """Market Profile 80% rule (https://www.luxalgo.com/library/concept/80-percent-rule.md): the session opens outside the previous value area, then two 30-minute periods hold
+    inside it -> trade to the far edge of value. Stop 0.25 ATR back outside the entry edge (the source gives no offset), flat at 21:00 UTC. Sessions = UTC days on tick volume."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    z = IND.volume_profile(df)
+    vah, val = z["vah"], z["val"]
+    a = atr(h, l, c, 14)
+    m = max(int(np.ceil(60.0 / _bar_minutes(df))), 2)
+    d = pd.Series(df.index.tz_convert("UTC").date)
+    first = (d != d.shift(1)).to_numpy()
+    op = pd.Series(np.where(first, o, np.nan)).ffill().to_numpy()
+    ins = pd.Series((c < vah) & (c > val)).rolling(m).sum().to_numpy() >= m
+    L_, S_ = ins & (op < val), ins & (op > vah)
+    L, S = _first_of_key(L_, d.to_numpy()), _first_of_key(S_, d.to_numpy())
+    L, S = _excl(L, S)
+    hr = df.index.tz_convert("UTC").hour.to_numpy()
+    return L, S, _plan_lv(val - 0.25 * a, vah + 0.25 * a, vah, val, force_exit=hr >= 21)
+
+
+def _qs_plan(df, ch, pos, c, a):
+    return {"stop": ("level", c - 3 * a, c + 3 * a), "target": None, "exit_long": c > _clev(ch, pos, len(c))}
+
+
+def s_qs_low_break(df):
+    """Quantified Strategies 5-Day Low (https://quantifiedstrategies.substack.com/p/5-swing-trading-strategies-for-beginners): a close under the lowest low of the previous 5 candles -> buy,
+    out on a close over the prior candle's high. Long only. The source's daily bar = a candle of 4 chart bars; the source has no stop, the 3 ATR one is ours."""
+    o, h, l, c, v = _ohlcv(df)
+    co, ch, cl, cc, _, pos = _agg_n19(df, 4)
+    m = cc < _s(cl).shift(1).rolling(5).min().to_numpy()
+    return _cmask(m, pos, len(c)), np.zeros(len(c), bool), _qs_plan(df, ch, pos, c, atr(h, l, c, 14))
+
+
+def s_qs_adx_nr6(df):
+    """Quantified Strategies Volatility Contraction (same article): ADX(5) over 40 and the narrowest candle of the last 6 -> buy, out on a close over the prior candle's high. Long only.
+    The source's daily bar = a candle of 4 chart bars; the 3 ATR stop is ours."""
+    o, h, l, c, v = _ohlcv(df)
+    co, ch, cl, cc, _, pos = _agg_n19(df, 4)
+    rg = ch - cl
+    m = (_dmi(ch, cl, cc, 5)[2] > 40) & (rg <= _s(rg).rolling(6).min().to_numpy())
+    return _cmask(m, pos, len(c)), np.zeros(len(c), bool), _qs_plan(df, ch, pos, c, atr(h, l, c, 14))
+
+
+def s_qs_high_low_ibs(df):
+    """Quantified Strategies New Highs with Low IBS (same article): a high over the prior 10 candles' high with IBS under 0.15 -> buy, out on a close over the prior candle's high. Long only.
+    The source's daily bar = a candle of 4 chart bars; the 3 ATR stop is ours."""
+    o, h, l, c, v = _ohlcv(df)
+    co, ch, cl, cc, _, pos = _agg_n19(df, 4)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ibs = np.where(ch > cl, (cc - cl) / (ch - cl), 0.5)
+    m = (ch > _s(ch).shift(1).rolling(10).max().to_numpy()) & (ibs < 0.15)
+    return _cmask(m, pos, len(c)), np.zeros(len(c), bool), _qs_plan(df, ch, pos, c, atr(h, l, c, 14))
+
+
+def s_rsi3_limit_dip(df):
+    """Buying Weakness (https://backtest.substack.com/p/buying-weakness-on-the-nasdaq-100): the more volatile half, RSI(3) under 10 -> a limit 1% under the candle's low for the next candle, sold 1.75% over the close.
+    Translations: the daily bar = a candle of 4 chart bars; 1% / 1.75% = 0.4 / 0.7 candle ATR; 'top half of the universe' = ATR% over its own 63-candle median; the entry is on the touch. The source has no stop, 3 ATR is ours. Long only."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    co, ch, cl, cc, _, pos = _agg_n19(df, 4)
+    ca = atr(ch, cl, cc, 14)
+    atrp = ca / cc
+    sig = _cmask((rsi(cc, 3) < 10) & (atrp >= _s(atrp).rolling(63, min_periods=20).median().to_numpy()), pos, n)
+    lim, cav = _clev(cl - 0.4 * ca, pos, n), _clev(ca, pos, n)
+    L = np.zeros(n, bool)
+    age = 99
+    for i in range(n):
+        if sig[i]:
+            age = 0
+            continue
+        age += 1
+        if age <= 4 and l[i] <= lim[i]:
+            L[i], age = True, 99
+    a = atr(h, l, c, 14)
+    return L, np.zeros(n, bool), _plan_lv(c - 3 * a, c + 3 * a, c + 0.7 * cav, c - 0.7 * cav)
+
+
+def s_gold_night_hold(df):
+    """Gold night hold (https://www.mql5.com/en/blogs/post/779464): buy at 18:00 New York, sell 9 hours later at 03:00 New York, Monday to Thursday evenings. The 2.3% stop is the source's test version. Long only."""
+    t = df.index.tz_convert("America/New_York")
+    hr = t.hour.to_numpy() + t.minute.to_numpy() / 60.0
+    bh = _bar_minutes(df) / 60.0
+    L = (hr <= 18.0) & (hr + bh > 18.0) & (t.dayofweek.to_numpy() <= 3)
+    c = df["c"].to_numpy(dtype=float)
+    return L, np.zeros(len(c), bool), {"stop": ("level", c * 0.977, c * 1.023), "target": None, "force_exit": (hr >= 3.0) & (hr < 3.0 + bh)}
+
+
+def s_nnfx_vp(df):
+    """NNFX VP (jiehonglim, https://www.tradingview.com/script/wmJpD8xR-No-Nonsense-NNFX-VP-Strategy-for-Back-Testing-jh): close crosses the HMA20 baseline within the last candle, SSL10 agrees, TDFI 4 clears its trigger, price within
+    1 ATR of the baseline -> trade. Stop 1.5 ATR, target 1 ATR, out on the RVI 4 cross or a baseline flip."""
+    o, h, l, c, v = _ohlcv(df)
+    b, a = _hma_n19(c, 20), atr(h, l, c, 14)
+    u, d = cross_up(c, b), cross_down(c, b)
+    u, d = u | (_r(u.astype(float)) > 0), d | (_r(d.astype(float)) > 0)
+    ss, td, rv = IND.ssl_channel(df, 10)["hlv"], IND.tdfi(df, 4), IND.rvi(df, 4)
+    near = np.abs(c - b) < a
+    L, S = _excl(_onset(u & (ss > 0) & td["up"] & near), _onset(d & (ss < 0) & td["dn"] & near))
+    return L, S, {"stop": ("atr", 1.5), "target": ("atr", 1.0), "exit_long": rv["dn"] | (c < b), "exit_short": rv["up"] | (c > b)}
+
+
+def s_gold_donchian_lwti(df):
+    """Gold Breakout RR 4 (https://www.tradingview.com/script/LpO7kcS9): 5 minutes, 20:00-08:00 GMT-5, one trade a day. A close over the previous Donchian 96 high while the channel rises, volume over its SMA 30 (ours: at least),
+    LWTI 25 over its 5-bar line -> buy (mirror). Stop past the breakout candle's wick, target 4R."""
+    o, h, l, c, v = _ohlcv(df)
+    dh, dl = _s(h).rolling(96).max().to_numpy(), _s(l).rolling(96).min().to_numpy()
+    w, a = IND.lwti(df, 25, 5), atr(h, l, c, 14)
+    t = df.index.tz_convert("UTC") - pd.Timedelta(hours=5)
+    hr = t.hour.to_numpy()
+    ses = (hr >= 20) | (hr < 8)
+    key = (t - pd.Timedelta(hours=20)).date
+    vk = v >= sma(v, 30)
+    L_ = (c > _r(dh)) & (dh > _r(dh)) & vk & (w["lwti"] > w["signal"]) & ses
+    S_ = (c < _r(dl)) & (dl < _r(dl)) & vk & (w["lwti"] < w["signal"]) & ses
+    both = _first_of_key(L_ | S_, np.asarray(key))
+    L, S = _excl(both & L_, both & S_)
+    return L, S, _plan_r(l - 0.1 * a, h + 0.1 * a, 4.0)
+
+
+def s_hull_donchian_gold(df):
+    """Phoenix Gold V3.2 (https://tr.tradingview.com/script/Bjez8v7B/): 15-30 minutes, HMA55 side, a close beyond the Donchian 25 -> trade, about 1:2.6, break-even on the way, no new trades Friday after 16:00 New York.
+    Ours: 2 ATR stop, break-even at 40% of the target. The script's 1.4x sizing after a loss is left out on purpose (no martingale)."""
+    o, h, l, c, v = _ohlcv(df)
+    m, a = _hma_n19(c, 55), atr(h, l, c, 14)
+    dh, dl = _r(_s(h).rolling(25).max().to_numpy()), _r(_s(l).rolling(25).min().to_numpy())
+    t = df.index.tz_convert("America/New_York")
+    ok = ~((t.dayofweek.to_numpy() == 4) & (t.hour.to_numpy() >= 16))
+    L, S = _excl(_onset((c > dh) & (c > m) & ok), _onset((c < dl) & (c < m) & ok))
+    return L, S, _atr_plan(c, a, 2.0, 2.6, breakeven=(0.4, 0.0))
+
+
+def _velez(df, key):
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    z = IND.velez_bars(df, 3)
+    s20, s200, a = sma(c, 20), sma(c, 200), atr(h, l, c, 14)
+    f = z[key]
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = c - 2 * a, c + 2 * a
+    side, age, hi, lo = 0, 0, np.nan, np.nan
+    for i in range(n):
+        if f[i] > 0 and c[i] > s20[i] > s200[i]:
+            side, age, hi, lo = 1, 0, z["bar_h"][i], z["bar_l"][i]
+            continue
+        if f[i] < 0 and c[i] < s20[i] < s200[i]:
+            side, age, hi, lo = -1, 0, z["bar_h"][i], z["bar_l"][i]
+            continue
+        if side == 0:
+            continue
+        age += 1
+        if age > 3:
+            side = 0
+        elif side > 0 and c[i] > hi:
+            L[i], sl[i], side = True, lo - 0.1 * a[i], 0
+        elif side < 0 and c[i] < lo:
+            S[i], ss[i], side = True, hi + 0.1 * a[i], 0
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_velez_elephant(df):
+    """Oliver Velez elephant bar (https://br.tradingview.com/script/MTQNwtFZ-Oliver-Velez-System-Visual-Helper-CocoChoco/): price > SMA20 > SMA200, a body 1.5 x the average closing near its extreme, break of the bar -> trade, stop at its far side. Size thresholds and the 2R target are ours; candles of 3 chart bars."""
+    return _velez(df, "elephant")
+
+
+def s_velez_tail(df):
+    """Oliver Velez tail bar (same source): price > SMA20 > SMA200, a tail twice the body and half the range, break of the bar -> trade, stop at the tail. Size thresholds and the 2R target are ours; candles of 3 chart bars."""
+    return _velez(df, "tail")
+
+
+def s_velez_180(df):
+    """Oliver Velez 180 (same source): price > SMA20 > SMA200, a full red bar then a green bar taking back 75% of it, break of the bar -> trade, stop at its low. Size thresholds and the 2R target are ours; candles of 3 chart bars."""
+    return _velez(df, "one80")
+
+
+def s_parabolic_short(df):
+    """Kullamagi parabolic short (https://stonkscapital.substack.com/p/systemizing-kullamagis-parabolic): 3 green candles in a row after a stretched run, short the break of the last candle's low, stop at the high, target the 10-period average.
+    Translations: daily bars = candles of 4 chart bars; 'up 50% in 3 days' = up 1.5 candle ATR. Short only."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    co, ch, cl, cc, _, pos = _agg_n19(df, 4)
+    g = cc > co
+    m = g & _s(g).shift(1).fillna(False).astype(bool).to_numpy() & _s(g).shift(2).fillna(False).astype(bool).to_numpy()
+    m &= (cc - _s(co).shift(2).to_numpy()) >= 1.5 * atr(ch, cl, cc, 14)
+    sig, lo, top, ma = _cmask(m, pos, n), _clev(cl, pos, n), _clev(ch, pos, n), _clev(sma(cc, 10), pos, n)
+    a = atr(h, l, c, 14)
+    S = np.zeros(n, bool)
+    age = 99
+    for i in range(n):
+        if sig[i]:
+            age = 0
+            continue
+        age += 1
+        if age <= 4 and c[i] < lo[i] and ma[i] < c[i]:
+            S[i], age = True, 99
+    return np.zeros(n, bool), S, _plan_lv(c - 2 * a, top + 0.1 * a, c + 2 * a, ma)
+
+
+def s_vcp_breakout(df):
+    """Minervini VCP (https://www.luxalgo.com/library/concept/volatility-contraction-pattern.md): 3 pullbacks each shallower than the last over the SMA50, a close over the last pivot on at least average volume -> buy, stop under the final contraction. The source has no target, 3R is ours. Long only."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.vcp(df)
+    a = atr(h, l, c, 14)
+    return z["buy"], np.zeros(len(c), bool), _plan_r(z["base_low"] - 0.1 * a, c + 2 * a, 3.0)
+
+
+def s_bb_body_outside(df):
+    """Bollinger body outside (https://bullsnbears-trading.netlify.app/scalping-setups R1): the whole body of a candle closes outside the 20 / 2 band -> fade, stop past the signal candle, target the middle band, out within 3 candles."""
+    o, h, l, c, v = _ohlcv(df)
+    m, sd, a = sma(c, 20), _s(c).rolling(20).std(ddof=0).to_numpy(), atr(h, l, c, 14)
+    L, S = _excl(_onset(np.maximum(o, c) < m - 2 * sd), _onset(np.minimum(o, c) > m + 2 * sd))
+    return L, S, _plan_lv(l - 0.1 * a, h + 0.1 * a, m, m, max_bars=3)
+
+
+def s_asia_false_break_rsi(df):
+    """Session Liquidity Reversion (https://il.tradingview.com/script/uHN2BQiV-Session-Liquidity-Reversion-Strategy-Asia-Range-False-Breakout): the Asian range locks, London / New York breaks it and closes back inside with RSI turning -> fade, ATR stop, fixed R, one trade a session.
+    Ours (the page has no numbers): Asia 00-07 UTC, trades 07-20 UTC, RSI 14 under 60 and falling (mirror over 40 and rising), 1.5 ATR, 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    n = len(c)
+    ix = df.index.tz_convert("UTC")
+    hr, day = ix.hour.to_numpy(), ix.date
+    r, a = rsi(c, 14), atr(h, l, c, 14)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    cur, ah, al, up, dn, done = None, np.nan, np.nan, False, False, False
+    for i in range(1, n):
+        if day[i] != cur:
+            cur, ah, al, up, dn, done = day[i], np.nan, np.nan, False, False, False
+        if hr[i] < 7:
+            ah, al = np.nanmax([ah, h[i]]), np.nanmin([al, l[i]])
+            continue
+        if done or ah != ah or hr[i] >= 20:
+            continue
+        up, dn = up or h[i] > ah, dn or l[i] < al
+        if up and al < c[i] < ah and r[i] < 60 and r[i] < r[i - 1]:
+            S[i], done = True, True
+        elif dn and al < c[i] < ah and r[i] > 40 and r[i] > r[i - 1]:
+            L[i], done = True, True
+    return L, S, _atr_plan(c, a, 1.5, 2.0)
+
+
+def _ind_flip(df, buy, sell, k=2.0, r=2.0, **kw):
+    o, h, l, c, v = _ohlcv(df)
+    L, S = _excl(buy, sell)
+    return L, S, _atr_plan(c, atr(h, l, c, 14), k, r, **kw)
+
+
+def s_fmo_cross(df):
+    """Frequency Momentum Oscillator (QuantAlgo) zero cross on the EMA50 side, 2 ATR, 2R (stop and target ours)."""
+    z, c = IND.frequency_momentum(df), df["c"].to_numpy(dtype=float)
+    e = ema(c, 50)
+    return _ind_flip(df, z["buy"] & (c > e), z["sell"] & (c < e))
+
+
+def s_precision_trend(df):
+    """Ehlers Precision Trend (TASC 2024.09): ROC crosses zero with the trend line on its side, 2 ATR, 2R (stop and target ours)."""
+    z = IND.precision_trend(df)
+    return _ind_flip(df, z["up"] & (z["trend"] > 0), z["dn"] & (z["trend"] < 0))
+
+
+def s_adaptive_resonance(df):
+    """Adaptive Resonance Oscillator (AlgoAlpha): cycle-tuned RSI crosses its signal from the far half, 2 ATR, 2R (stop and target ours)."""
+    z = IND.adaptive_resonance(df)
+    return _ind_flip(df, z["up"], z["dn"])
+
+
+def s_trend_age_reversal(df):
+    """Trend Reversal Probability (AlgoAlpha): the trend is older than 84% of past trends and the close crosses the EMA20 against it -> reversal, 2 ATR, 2R (stop and target ours)."""
+    z, c = IND.trend_reversal_prob(df), df["c"].to_numpy(dtype=float)
+    e, old = ema(c, 20), z["prob"] >= 0.84
+    return _ind_flip(df, old & (z["dir"] < 0) & cross_up(c, e), old & (z["dir"] > 0) & cross_down(c, e))
+
+
+def s_trend_pulse(df):
+    """Trend Pulse (BigBeluga): a close over the widening band buys, the break of a confirmed pivot low sells, 2 ATR, 2R (stop and target ours)."""
+    z = IND.trend_pulse(df)
+    return _ind_flip(df, z["buy"], z["sell"])
+
+
+def s_radius_trend(df):
+    """Radius Trend (ChartPrime): band flip, stop at the band, 2R (stop and target ours)."""
+    z = IND.radius_trend(df)
+    L, S = _excl(z["buy"], z["sell"])
+    return L, S, _plan_r(z["band"], z["band"], 2.0)
+
+
+def s_poly_keltner_fade(df):
+    """Polynomial Regression Keltner (ChartPrime): a close back inside the third band -> fade to the regression line, stop at the fourth band (ours)."""
+    z, c = IND.poly_keltner(df), df["c"].to_numpy(dtype=float)
+    L, S = _excl(cross_up(c, z["dn3"]), cross_down(c, z["up3"]))
+    return L, S, _plan_lv(z["dn4"], z["up4"], z["mid"], z["mid"])
+
+
+def s_vol_gaussian(df):
+    """Volatility Gaussian Bands (BigBeluga): a close beyond a band flips the trend, 2 ATR, 2R (stop and target ours)."""
+    z = IND.vol_gaussian_bands(df)
+    return _ind_flip(df, z["buy"], z["sell"])
+
+
+def s_prime_bands_rev(df):
+    """Prime Bands (ChartPrime): back inside the 2 SD band -> fade to the midline, stop at the 3 SD band (ours)."""
+    z = IND.prime_bands(df)
+    L, S = _excl(z["rev_up"], z["rev_dn"])
+    return L, S, _plan_lv(z["l3"], z["u3"], z["mid"], z["mid"])
+
+
+def s_kalman_trend_osc(df):
+    """Adaptive Kalman trend oscillator (Zeiierman): zero cross with rising strength, 2 ATR, 2R (stop and target ours)."""
+    z = IND.kalman_trend_osc(df)
+    return _ind_flip(df, z["up"] & (z["strength"] > 0), z["dn"] & (z["strength"] < 0))
+
+
+def s_dynamic_range_filter(df):
+    """Dynamic Range Filter (Zeiierman): filter line turns, 2 ATR, 2R (stop and target ours)."""
+    z = IND.dynamic_range_filter(df)
+    return _ind_flip(df, z["buy"], z["sell"])
+
+
+def s_adaptive_st_osc(df):
+    """Adaptive SuperTrend Oscillator (QuantAlgo): the score leaves the neutral zone on the SuperTrend's side, stop at the line, 2R (stop and target ours)."""
+    z = IND.adaptive_st_osc(df)
+    L, S = _excl(z["buy"] & (z["trend"] > 0), z["sell"] & (z["trend"] < 0))
+    return L, S, _plan_r(z["line"], z["line"], 2.0)
+
+
+def s_aco(df):
+    """Adaptive Composite Oscillator: z-score reversal when ADX ranges, zero cross with the DI when it trends, on at least average volume, 2 ATR, 2R (stop and target ours)."""
+    z = IND.aco(df)
+    return _ind_flip(df, z["long"], z["short"])
+
+
+def s_wavetrend_x(df):
+    """WaveTrend X: Kalman WT1 crosses WT2 from the far half of its 100-bar rank while the return entropy is under 0.85, 2 ATR, 2R (stop and target ours). The source's gate is 0.72;
+    ours is looser because 0.72 almost never passes on an 8-bin histogram of bar returns."""
+    z = IND.wavetrend_x(df)
+    ok = z["entropy"] <= 0.85
+    return _ind_flip(df, z["cross_up"] & (z["rank"] < 50) & ok, z["cross_dn"] & (z["rank"] > 50) & ok)
+
+
+def s_zl_flow(df):
+    """TREND and ZL FLOW: T3 and the zero-lag average turn together on the EMA50 side, 2 ATR, 2R (stop and target ours)."""
+    z, c = IND.zl_flow(df), df["c"].to_numpy(dtype=float)
+    e = ema(c, 50)
+    return _ind_flip(df, z["buy"] & (c > e), z["sell"] & (c < e))
+
+
+SCOUT.update({
+    "SC619": ("Raschke 80-20: candle from its top 20% to its bottom 20%, next candle under its low and back through, extreme stop, out at its end", s_raschke_8020, _M),
+    "SC620": ("Raschke Anti on the slow stochastic 14/3: rising EMA20, %K back over 20, stretch stop, 2R, 8 bars", s_raschke_anti_stoch, _M + ["1Day"]),
+    "SC621": ("3-Step Pullback (Deutsch): Keltner 15 / 2 break, pullback into 20-80% within 3-15 bars, with-trend bar, 2.5 ATR, 1:1", s_keltner_3step, _F),
+    "SC622": ("Market Profile 80% rule: open outside value, two 30-minute periods inside, target the far edge", s_80pct_rule, ["5Min", "15Min"]),
+    "SC623": ("Quantified Strategies low break: close under the prior 5 candles' low, out over the prior high (long)", s_qs_low_break, _M + ["1Day"]),
+    "SC624": ("Quantified Strategies ADX(5) over 40 + narrowest candle of 6, out over the prior high (long)", s_qs_adx_nr6, _M + ["1Day"]),
+    "SC625": ("Quantified Strategies new 10-candle high with IBS under 0.15, out over the prior high (long)", s_qs_high_low_ibs, _M + ["1Day"]),
+    "SC626": ("Buying Weakness: RSI(3) under 10 in high volatility, limit under the low, quick target (long)", s_rsi3_limit_dip, _M + ["1Day"]),
+    "SC627": ("Gold night hold: buy 18:00 New York, sell 03:00, Monday to Thursday, 2.3% stop (long)", s_gold_night_hold, ["15Min", "1Hour"]),
+    "SC628": ("NNFX VP: HMA20 baseline cross + SSL10 + TDFI 4 within 1 ATR, 1.5 ATR stop, 1 ATR target, RVI exit", s_nnfx_vp, _M + ["1Day"]),
+    "SC629": ("Gold Donchian 96 break + volume + LWTI 25, night session, one a day, wick stop, 4R", s_gold_donchian_lwti, ["5Min"]),
+    "SC630": ("Phoenix Gold: HMA55 side + Donchian 25 close, 2 ATR, 2.6R, break-even, no Friday evening", s_hull_donchian_gold, ["15Min", "1Hour"]),
+    "SC631": ("Oliver Velez elephant bar with price > SMA20 > SMA200, break of the bar, bar stop, 2R", s_velez_elephant, _F),
+    "SC632": ("Oliver Velez tail bar with price > SMA20 > SMA200, break of the bar, tail stop, 2R", s_velez_tail, _F),
+    "SC633": ("Oliver Velez 180 reversal bar with price > SMA20 > SMA200, break of the bar, bar stop, 2R", s_velez_180, _F),
+    "SC634": ("Kullamagi parabolic short: 3 stretched green candles, break of the last low, high stop, target the 10 average", s_parabolic_short, _M),
+    "SC635": ("Minervini VCP: 3 shrinking pullbacks, close over the pivot on volume, base stop, 3R (long)", s_vcp_breakout, _M + ["1Day"]),
+    "SC636": ("Bollinger 20 / 2 whole body outside the band, fade to the middle, signal-candle stop, 3 bars", s_bb_body_outside, ["5Min", "15Min"]),
+    "SC637": ("Asia range false break in London / New York with RSI turning, 1.5 ATR, 2R, one a session", s_asia_false_break_rsi, ["5Min", "15Min"]),
+    "SC638": ("Frequency Momentum Oscillator zero cross on the EMA50 side, 2 ATR, 2R", s_fmo_cross, _M),
+    "SC639": ("Ehlers Precision Trend ROC cross with the trend line, 2 ATR, 2R (TASC 2024.09)", s_precision_trend, _M),
+    "SC640": ("Adaptive Resonance Oscillator signal cross from the far half, 2 ATR, 2R", s_adaptive_resonance, _M),
+    "SC641": ("Trend Reversal Probability over 84% + EMA20 cross against the trend, 2 ATR, 2R", s_trend_age_reversal, _M),
+    "SC642": ("Trend Pulse band break / pivot-low break, 2 ATR, 2R", s_trend_pulse, _M),
+    "SC643": ("Radius Trend band flip, band stop, 2R", s_radius_trend, _M),
+    "SC644": ("Polynomial Regression Keltner: back inside band 3, fade to the line, band 4 stop", s_poly_keltner_fade, _M),
+    "SC645": ("Volatility Gaussian Bands trend flip, 2 ATR, 2R", s_vol_gaussian, _M),
+    "SC646": ("Prime Bands: back inside 2 SD, fade to the midline, 3 SD stop", s_prime_bands_rev, _M),
+    "SC647": ("Adaptive Kalman trend oscillator zero cross with strength, 2 ATR, 2R", s_kalman_trend_osc, _M),
+    "SC648": ("Dynamic Range Filter line turn, 2 ATR, 2R", s_dynamic_range_filter, _M),
+    "SC649": ("Adaptive SuperTrend Oscillator leaves neutral with the trend, line stop, 2R", s_adaptive_st_osc, _M),
+    "SC650": ("Adaptive Composite Oscillator regime signals on volume, 2 ATR, 2R", s_aco, _M),
+    "SC651": ("WaveTrend X Kalman cross from the far half under the entropy gate, 2 ATR, 2R", s_wavetrend_x, _M),
+    "SC652": ("T3 + zero-lag flow turn together on the EMA50 side, 2 ATR, 2R", s_zl_flow, _M),
+})

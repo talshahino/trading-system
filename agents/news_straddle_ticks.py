@@ -188,6 +188,13 @@ def run(minutes):
         need = sorted({(_inst(x["sym"]), h) for x in batch for h in _hours(x["rel"])}, key=str)
         with ThreadPoolExecutor(WORKERS) as ex:             # the downloads were one by one: 8 trades in a whole round
             got = dict(zip(need, ex.map(lambda q: NT.fetch_hour(*q), need)))
+        bad = [q for q in need if not got[q][1]]            # (manager, 19.11.2026: 22 of 72 failed in a round - the
+        if bad and time.time() < t_end:                     # parallel burst is throttled; one slow pass saves most)
+            time.sleep(15)
+            for q in bad:
+                if time.time() > t_end:
+                    break
+                got[q] = NT.fetch_hour(*q)
         for x in batch:
             sym = x["sym"]
             parts = [got[(_inst(sym), h)] for h in _hours(x["rel"])]

@@ -2049,6 +2049,115 @@ def whole6(budget_s):
                                    "the ledger count it; a ladder's stop distance is its legs' average"}
 
 
+CLUSTER6 = {"now": None, "instU": ("inst", 1.5), "grpU": ("grp", 1.5), "instH": ("inst", 0.5), "grpH": ("grp", 0.5)}
+
+
+def _per_contract(t):
+    """$ per 1R of one micro contract (usd1) and its whole cost per contract (per), from each trade's cost_r - as whole6."""
+    dist, per = np.full(len(t), np.nan), np.full(len(t), np.nan)
+    for i, (sym, cr) in enumerate(zip(t["sym"], t["cost_r"])):
+        _, pv, tick = FA.SPEC[sym]
+        if cr and np.isfinite(cr) and cr > 0:
+            dist[i] = (tick + (FA.COMM + FA.SLIP_TICKS * tick * pv) / pv) / float(cr) * pv
+            per[i] = dist[i] + FA.COMM + FA.SLIP_TICKS * tick * pv
+    return dist, per
+
+
+def cluster6(budget_s):
+    """Bot 5's same-move sizing on bot 6's gap tracks (bot 6's smart agent, 19.11.2026 late night; bot 5's
+    agents/tal_cluster_risk_study.py, card 52b6c302b631, "for bot 6: worth testing on its own gap tracks"). On bot 5 a gap
+    trade opened while another track already holds the same instrument the same way earned about 2x (2026 +0.16R vs
+    +0.02R) and x1.5 on it earned more on both periods at the same fall. Here: every running track at its risk, the rules
+    as the live bot runs them, the three indices in time order, whole micro contracts as live/fut_account.size (n =
+    floor(balance x risk x w / per contract), no contract = not taken, so only taken trades count as held):
+      instU / grpU  x1.5 while a taken trade is open the same way on the same index / on any of the three (one US group)
+      instH / grpH  x0.5 the same way (bot 5's split, for comparison)
+    % of $100K to 2025 and on 2026, plus each way at today's largest fall to 2025 (bot 5's 'same risk'). Results only -
+    nothing in the trading changes; a sizing rule needs code in live/watch_own.py and the user's word on x1.5."""
+    import hashlib
+    try:
+        s6 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot6.json").read_text(encoding="utf-8"))
+        risks = {k: float(v) for k, v in (s6.get("risk") or {}).items()}
+    except Exception:  # noqa: BLE001
+        risks = {}
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    run = {k: (pn, TG.ftmo_cfg(c)) for k, (pn, c) in live_tracks().items() if pn in pairs and risks.get(k, 0) > 0}
+    sig = hashlib.sha1(json.dumps([run, {k: risks[k] for k in run}], sort_keys=True, default=str).encode()).hexdigest()[:12]
+    try:
+        old = (json.loads(TG.RESULTS.read_text(encoding="utf-8")).get("bot6") or {}).get("cluster_risk") or {}
+        if old.get("sig") == sig and old.get("state") == "done" \
+                and pd.Timestamp.now(tz="UTC") - pd.Timestamp(old["at"]) < pd.Timedelta(days=7):
+            return old
+    except Exception:  # noqa: BLE001
+        pass
+
+    def one(sym, D):
+        gcs, rows = {}, []
+        for trk, (pn, c) in run.items():
+            t = TG.simulate(D, pairs[pn], c, gcs.setdefault(pairs[pn][0], {}))
+            if len(t):
+                rows.append(t.assign(sym=sym, trk=trk))
+        return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+    by_sym, full = by_symbol("cluster", sig, budget_s, one)
+    parts = [x for x in by_sym.values() if len(x)]
+    if not parts:
+        return {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "sig": sig, "state": "partial", "symbols": []}
+    t = pd.concat(parts, ignore_index=True)
+    t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
+    t["out"] = t["time"] + pd.to_timedelta(t["mins"].fillna(0).astype(float) + 1, unit="min")
+    t = t.sort_values("time", kind="stable").reset_index(drop=True)
+    t["usd1"], t["per"] = _per_contract(t)
+
+    def apply(rule):
+        n_out, open_ = np.zeros(len(t), int), []
+        for i, x in enumerate(t.itertuples(index=False)):
+            open_ = [o for o in open_ if o[0] > x.time]
+            w = 1.0
+            if rule is not None:
+                same = [o for o in open_ if o[2] == x.dir and (rule[0] == "grp" or o[1] == x.sym)]
+                w = rule[1] if same else 1.0
+            if not np.isfinite(x.per) or x.per <= 0:
+                continue
+            n = int(min(np.floor(FA.INITIAL * risks[x.trk] * w / x.per), FA.MAX_MICROS))
+            if n >= 1:
+                n_out[i] = n
+                open_.append((x.out, x.sym, x.dir))
+        return n_out
+
+    def stats(x, n):
+        k = n > 0
+        x, n = x[k], n[k]
+        pct = n * x["usd1"] * x["r"] / FA.INITIAL * 100
+        day = pct.groupby(x["time"].dt.strftime("%Y-%m-%d")).sum().sort_index()
+        eq = day.cumsum()
+        return {"taken": int(len(x)), "contracts": int(n.sum()), "pct": round(float(pct.sum()), 2),
+                "worst_day": round(float(day.min()), 3) if len(day) else 0.0,
+                "fall": round(float((eq.cummax().clip(lower=0) - eq).max()), 3) if len(day) else 0.0,
+                "green": round(100 * float((day > 0).mean()), 1) if len(day) else 0.0}
+
+    tr, un = (t["time"] < A.SPLIT).to_numpy(), (t["time"] >= A.SPLIT).to_numpy()
+    rows = {}
+    for name, rule in CLUSTER6.items():
+        n = apply(rule)
+        rows[name] = {"train": stats(t[tr], n[tr]), "unseen": stats(t[un], n[un])}
+    now = rows["now"]
+    for name, v in rows.items():
+        f = now["train"]["fall"] / max(v["train"]["fall"], 1e-9)       # the scale chosen on 2025 only
+        v["same_risk"] = {"scale": round(f, 3), **{p: {"pct": round(v[p]["pct"] * f, 2), "fall": round(v[p]["fall"] * f, 3),
+                                                       "worst_day": round(v[p]["worst_day"] * f, 3)} for p in ("train", "unseen")}}
+        v["passes"] = bool(name != "now" and v["train"]["pct"] > now["train"]["pct"] and v["unseen"]["pct"] > now["unseen"]["pct"]
+                           and v["unseen"]["fall"] <= now["unseen"]["fall"] and v["unseen"]["worst_day"] >= now["unseen"]["worst_day"])
+        s = v["same_risk"]
+        v["passes_same_risk"] = bool(name != "now" and s["train"]["pct"] > now["train"]["pct"] and s["unseen"]["pct"] > now["unseen"]["pct"]
+                                     and s["unseen"]["fall"] <= now["unseen"]["fall"] and s["unseen"]["worst_day"] >= now["unseen"]["worst_day"])
+    held = t.assign(n=apply(None))
+    return {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "sig": sig, "state": "done" if full else "partial",
+            "symbols": list(by_sym), "tracks": {k: v[0] for k, v in run.items()}, "rules": rows,
+            "taken_now": {"train": int((held["n"][tr] > 0).sum()), "unseen": int((held["n"][un] > 0).sum()), "all": int(len(t))},
+            "note": "% of $100K at each track's risk, whole micro contracts; x1.5 / x0.5 on a trade opened while a taken trade "
+                    "is open the same way (inst = same index, grp = any of the three); same_risk = scaled to today's 2025 fall"}
+
+
 def tal(budget_s):
     t0 = time.time()
     idx0 = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")} if (TAL_DIR / "idx").exists() else {}
@@ -2170,6 +2279,14 @@ def tal(budget_s):
     except Exception as e:  # noqa: BLE001
         STEPS["whole_contracts"] = {"err": str(e)[:300]}
         print(f"tal_gap whole contracts failed: {e}")
+    try:            # bot 5's same-move sizing on bot 6's tracks, whole contracts (19.11.2026 late night, shared method)
+        t1 = time.time()
+        doc["bot6"]["cluster_risk"] = cluster6(budget_s * 0.06)
+        STEPS["cluster_risk"] = {"state": doc["bot6"]["cluster_risk"].get("state"),
+                                 "sec": round(time.time() - t1), "budget_sec": round(budget_s * 0.06)}
+    except Exception as e:  # noqa: BLE001
+        STEPS["cluster_risk"] = {"err": str(e)[:300]}
+        print(f"tal_gap cluster risk failed: {e}")
     doc["bot6"]["steps"] = STEPS
     TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     try:            # TREND on what runs, head to head (13.11.2026)

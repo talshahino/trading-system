@@ -626,7 +626,11 @@ def experiments(bot, budget_s, where):
             print(f"  {sym} {fam}: failed - {str(e)[-300:]}")
             # a combo that cannot run is retried tomorrow; a 1-minute one that ran out of a whole run's minutes alone
             # in 3 days (it would take most of every run and still not finish - manager, 13.11.2026 night)
-            wait = 3 if (_one and "Time budget reached" in str(e)) else 1
+            # (manager, 19.11.2026 night: bot 4's SC001|1Min|USDCAD ladder hit the run's subprocess timeout - 'timed
+            # out after 1455 seconds', 24 of the run's 30 minutes - and was set to retry the next day; a timeout is the
+            # same out-of-minutes case, and the optional ladder / fib / pyr grids on 1-minute bars wait a week)
+            slow = "Time budget reached" in str(e) or "timed out" in str(e).lower()
+            wait = (7 if fam in ("fib", "ladder", "pyr") else 3) if (_one and slow) else 1
             for c in combos:
                 st.put(fam, c, {"at": (pd.Timestamp.now(tz="UTC") - pd.Timedelta(days=RERUN_DAYS - wait)).isoformat(),
                                 "combo": c, "error": str(e)[-300:]})

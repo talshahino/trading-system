@@ -1702,7 +1702,12 @@ def main():
                     wst = json.loads((TAL_WIDE_DIR / TW.STATUS).read_text())
                 except Exception:  # noqa: BLE001
                     wst = {}
-                doc["bot5"]["wide"] = {"status": wst, "table": TW.table(summ), "pairs": summ}
+                # the GitHub run's instruments stay (19.11.2026: this computer's own slower run had 12 instruments done
+                # and replaced the 30 of the GitHub run - its pairs only update the ones it has)
+                old_w = (doc["bot5"].get("wide") or {}) if isinstance(doc["bot5"].get("wide"), dict) else {}
+                merged = {**(old_w.get("pairs") or {}), **summ}
+                doc["bot5"]["wide"] = {"status": wst, "status_before": old_w.get("status"), "table": TW.table(merged),
+                                       "pairs": merged}
                 # the shared pool (task tal1411pool): the gap method on bots 1-4's stocks - a report for them via the
                 # manager (TW.REPORT_ONLY never makes a bot 5 card)
                 doc["bot5"]["pool14"] = {"at": wst.get("at"), "for": ["bot1", "bot2", "bot3", "bot4"],

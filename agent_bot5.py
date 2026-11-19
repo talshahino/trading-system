@@ -1092,7 +1092,41 @@ def guard5_more(allt, risk, gap_trk, scout_trk):
             grid.append({"gap": fg, "scout": fs, **{p: acc(allt, rk, p) for p in ("train", "unseen")}})
     ok = [g for g in grid if g["train"].get("stopped") is None and (g["train"].get("max_fall_pct") or 99) < 9.0]
     pick = max(ok, key=lambda g: g["train"].get("total_pct") or -99) if ok else None
-    return {"loo": loo, "scale_grid": grid, "scale_pick": pick, "more_at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
+    # SEPARATE ACCOUNTS (19.11.2026): since 17.11 evening bot 5 (the gap tracks) and 5ב (the scouts) are two accounts of
+    # 100,000$ each, every one with its own 4.5% / 9% - the combined replay above is not an account that exists. Each part
+    # alone at each factor; the pick per account on May-Dec 2025 only: not stopped and inside MARGIN of the limits (a fall
+    # <= 7.2%, a day >= -3.6%), the largest total. 2026 is shown, never used to choose. Numbers only (cards: nightly agent).
+    acct_grid, acct_pick = {}, {}
+    for nm, ks in (("gap", set(gap_trk)), ("scout", set(scout_trk))):
+        t = allt[allt["trk"].isin(ks)]
+        rows_ = []
+        for f in G5_GRID:
+            rk = {k: v * f for k, v in risk.items() if k in ks}
+            rows_.append({"f": f, **{p: acc(t, rk, p) for p in ("train", "unseen")}})
+        acct_grid[nm] = rows_
+        okk = [g for g in rows_ if g["train"].get("stopped") is None
+               and (g["train"].get("max_fall_pct") or 99) <= 9.0 * TG.MARGIN
+               and (g["train"].get("worst_day_pct") or -99) >= -4.5 * TG.MARGIN]
+        acct_pick[nm] = max(okk, key=lambda g: g["train"].get("total_pct") or -99) if okk else None
+    return {"loo": loo, "scale_grid": grid, "scale_pick": pick, "acct_grid": acct_grid, "acct_pick": acct_pick,
+            "more_at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")}
+
+
+def _acct_text(g):
+    """Since 17.11 the gap tracks (bot 5) and the scouts (5ב) are two accounts: each one's factor picked on 2025 alone."""
+    ap = g.get("acct_pick") or {}
+    if not ap:
+        return ""
+    out = []
+    for nm, he in (("gap", "בוט 5 (גאפ)"), ("scout", "בוט 5ב (סייר)")):
+        p_ = ap.get(nm)
+        if not p_:
+            out.append(f"{he}: אין מקדם שעומד ב־80% מהמגבלות ב־2025")
+            continue
+        u = p_.get("unseen") or {}
+        out.append(f"{he}: מקדם ×{p_['f']} (נבחר על 2025), ב־2026 {u.get('total_pct')}%, ירידה {u.get('max_fall_pct')}%, "
+                   f"היום הגרוע {u.get('worst_day_pct')}%")
+    return " · שני חשבונות נפרדים (מאז 17.11): " + "; ".join(out) + "."
 
 
 def guard5_card(g):
@@ -1111,7 +1145,8 @@ def guard5_card(g):
             f"לבד ב־2026: הגאפ ירידה {gu.get('max_fall_pct')}%, הסייר ירידה {su.get('max_fall_pct')}%. "
             + ("זה הרבה - הבא: לתקן את החפיפה בין האסטרטגיות (קודם מתקנים)." if many else
                "מעט - אין חפיפה לתקן; שום שינוי לא יאושר אם הוא פותח סיכון מעבר למקום הזה.")
-            + (f" חסרו: {', '.join(g['missing'])}." if g["missing"] else ""))
+            + (f" חסרו: {', '.join(g['missing'])}." if g["missing"] else "")
+            + _acct_text(g))
     return K.card(BOT, "info", f"בוט 5: כלל הסיכון הקבוע על הבוט כולו - ב־2026 {w.get('room_cut', 0)} הוקטנו ו־"
                   f"{w.get('room_skipped', 0)} דולגו (מתוך {w.get('n', 0)}), ירידה {w.get('max_fall_pct')}%", what, None, None,
                   tested=1, detail={"world": "bot5", "task": "tal1411risk", "guard": g})

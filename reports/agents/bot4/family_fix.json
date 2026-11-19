@@ -1,5 +1,5 @@
 {
- "at": "2026-11-19T11:06:27+00:00",
+ "at": "2026-11-19T19:23:35+00:00",
  "split": "2026-01-01",
  "test_from": "2025-04-30",
  "families": {
@@ -1060,6 +1060,179 @@
     }
    }
   },
+  "SC627|15Min": {
+   "instruments": [
+    "XAGUSD",
+    "EURJPY",
+    "EURUSD",
+    "GBPJPY"
+   ],
+   "missing": [
+    "GBPUSD",
+    "USDCAD",
+    "USDJPY",
+    "XAUUSD"
+   ],
+   "none": {
+    "train_n": 549,
+    "train_r": -0.5800000000000005,
+    "unseen_n": 722,
+    "unseen_r": -0.019999999999999796,
+    "positive_train": 1
+   },
+   "best": [
+    "bbw_p20",
+    {
+     "train_n": 299,
+     "train_r": 5.65,
+     "unseen_n": 392,
+     "unseen_r": 0.54,
+     "positive_train": 3
+    }
+   ],
+   "filters": {
+    "bbw_p20": {
+     "train_n": 299,
+     "train_r": 5.65,
+     "unseen_n": 392,
+     "unseen_r": 0.54,
+     "positive_train": 3
+    },
+    "v_sqz": {
+     "train_n": 163,
+     "train_r": 4.09,
+     "unseen_n": 194,
+     "unseen_r": 1.62,
+     "positive_train": 2
+    },
+    "vol_low": {
+     "train_n": 413,
+     "train_r": 0.85,
+     "unseen_n": 504,
+     "unseen_r": -6.84,
+     "positive_train": 1
+    },
+    "adx_trend": {
+     "train_n": 273,
+     "train_r": 0.37,
+     "unseen_n": 387,
+     "unseen_r": 5.21,
+     "positive_train": 2
+    },
+    "v_st": {
+     "train_n": 271,
+     "train_r": -0.31,
+     "unseen_n": 326,
+     "unseen_r": -8.65,
+     "positive_train": 1
+    },
+    "v_sqzm": {
+     "train_n": 272,
+     "train_r": -0.32,
+     "unseen_n": 316,
+     "unseen_r": 0.57,
+     "positive_train": 2
+    },
+    "v_ema5": {
+     "train_n": 423,
+     "train_r": -0.52,
+     "unseen_n": 530,
+     "unseen_r": 0.61,
+     "positive_train": 1
+    },
+    "none": {
+     "train_n": 549,
+     "train_r": -0.58,
+     "unseen_n": 722,
+     "unseen_r": -0.02,
+     "positive_train": 1
+    },
+    "v_pdbrk": {
+     "train_n": 436,
+     "train_r": -0.85,
+     "unseen_n": 542,
+     "unseen_r": 3.4,
+     "positive_train": 1
+    },
+    "adx_range": {
+     "train_n": 276,
+     "train_r": -0.96,
+     "unseen_n": 335,
+     "unseen_r": -5.21,
+     "positive_train": 1
+    },
+    "rsi_trend": {
+     "train_n": 539,
+     "train_r": -1.09,
+     "unseen_n": 686,
+     "unseen_r": 0.93,
+     "positive_train": 1
+    },
+    "vol_high": {
+     "train_n": 136,
+     "train_r": -1.43,
+     "unseen_n": 218,
+     "unseen_r": 6.84,
+     "positive_train": 1
+    },
+    "ema9_20": {
+     "train_n": 249,
+     "train_r": -1.49,
+     "unseen_n": 318,
+     "unseen_r": -7.67,
+     "positive_train": 1
+    },
+    "v_sma3": {
+     "train_n": 159,
+     "train_r": -1.93,
+     "unseen_n": 186,
+     "unseen_r": -8.78,
+     "positive_train": 1
+    },
+    "v_e50_200": {
+     "train_n": 311,
+     "train_r": -2.36,
+     "unseen_n": 359,
+     "unseen_r": -0.3,
+     "positive_train": 1
+    },
+    "v_rsi50": {
+     "train_n": 346,
+     "train_r": -2.46,
+     "unseen_n": 403,
+     "unseen_r": -7.39,
+     "positive_train": 1
+    },
+    "vol_normal": {
+     "train_n": 310,
+     "train_r": -2.7,
+     "unseen_n": 430,
+     "unseen_r": -2.43,
+     "positive_train": 0
+    },
+    "v_fib5": {
+     "train_n": 404,
+     "train_r": -2.81,
+     "unseen_n": 482,
+     "unseen_r": -6.29,
+     "positive_train": 1
+    },
+    "v_ha": {
+     "train_n": 379,
+     "train_r": -3.73,
+     "unseen_n": 554,
+     "unseen_r": -5.96,
+     "positive_train": 0
+    },
+    "with_trend200": {
+     "train_n": 320,
+     "train_r": -4.48,
+     "unseen_n": 382,
+     "unseen_r": -2.73,
+     "positive_train": 0
+    }
+   }
+  },
   "SC002|4Hour": {
    "instruments": [
     "USDCAD",
@@ -1275,6 +1448,48 @@
     "USDJPY",
     "WMT",
     "XAGUSD"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  },
+  "SC635|15Min": {
+   "instruments": [],
+   "missing": [
+    "GBPJPY",
+    "ARM",
+    "CSCO",
+    "EURJPY",
+    "EURUSD",
+    "GBPUSD",
+    "INTC",
+    "SPCX",
+    "USDCAD",
+    "USDJPY",
+    "WMT",
+    "XAGUSD",
+    "XAUUSD"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  },
+  "SC625|15Min": {
+   "instruments": [],
+   "missing": [
+    "USDJPY",
+    "ARM",
+    "CSCO",
+    "EURJPY",
+    "EURUSD",
+    "GBPJPY",
+    "GBPUSD",
+    "INTC",
+    "SPCX",
+    "USDCAD",
+    "WMT",
+    "XAGUSD",
+    "XAUUSD"
    ],
    "none": null,
    "best": null,

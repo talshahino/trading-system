@@ -13545,3 +13545,495 @@ SCOUT.update({
     "SC651": ("WaveTrend X Kalman cross from the far half under the entropy gate, 2 ATR, 2R", s_wavetrend_x, _M),
     "SC652": ("T3 + zero-lag flow turn together on the EMA50 side, 2 ATR, 2R", s_zl_flow, _M),
 })
+
+
+# =====================================================================================================================
+# scout 19.11.2026 afternoon run: ProRealCode DAX systems, Oxford Capital Aroon, edgeful first hour, Market Profile
+# open types (The Right Trader / NexusFi), TradeThatSwing gold IB, MQL5 CodeBase gold EAs, BabyPips BTS, StockSharp EA
+# ports, and one strategy per new indicator (aroon, open_type, vol_gated_trend, l1_trend_swing, true_trend_osc,
+# trend_bias_osc in agents/indicators/classic12.py).
+# =====================================================================================================================
+def _prev_day_tz(df, tz):
+    """Previous local day's high / low in `tz` on every bar (known at the bar)."""
+    day = pd.Series(df.index.tz_convert(tz).date)
+    g = pd.DataFrame({"d": day, "h": df["h"].to_numpy(float), "l": df["l"].to_numpy(float)})
+    daily = g.groupby("d").agg(h=("h", "max"), l=("l", "min")).shift(1)
+    m = g[["d"]].join(daily, on="d")
+    return m["h"].to_numpy(float), m["l"].to_numpy(float)
+
+
+def _per_day_cap(mask, day, k):
+    """Keep only the first k True bars of every day."""
+    out = np.zeros(len(mask), bool)
+    cnt, cur = 0, None
+    for i in np.where(np.asarray(mask, bool))[0]:
+        if day[i] != cur:
+            cur, cnt = day[i], 0
+        if cnt < k:
+            out[i] = True
+            cnt += 1
+    return out
+
+
+def s_lift_dax(df):
+    """'Lift up and down DAX 5M' (Reiner, ProRealCode
+    https://www.prorealcode.com/prorealtime-trading-strategies/lift-up-down-trading-strategy-dax-5m/ ): from 08:45 CET a
+    close crossing over yesterday's high with close > SMA14 = long (not Friday); a close crossing under yesterday's low
+    with close < SMA9 = short (Monday / Tuesday only); at most 2 a side per day; flat at 11:30 CET. The source's
+    50 / 130 points (long) and 90 / 30 points (short) on 2016 DAX 5-minute bars (ATR ~10 points) are translated into
+    5 / 13 ATR and 9 / 3 ATR of the bar's timeframe (the author calls the levels curve fitted)."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "Europe/Berlin")
+    pdh, pdl = _prev_day_tz(df, "Europe/Berlin")
+    a = atr(h, l, c, 14)
+    win = (hs >= 8.75) & (hs < 11.5)
+    L = cross_up(c, pdh) & (c > sma(c, 14)) & win & (wd != 4)
+    S = cross_down(c, pdl) & (c < sma(c, 9)) & win & (wd < 2)
+    L, S = _per_day_cap(L, day, 2), _per_day_cap(S, day, 2)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(c - 5 * a, c + 9 * a, c + 13 * a, c - 3 * a, force_exit=(he >= 11.5) & (hs < 11.5))
+
+
+def s_dax_range_threshold(df):
+    """ProRealCode 'Breakout intraday trading strategy on DAX' (ALE, 15 min, trailing stop;
+    https://www.prorealcode.com/prorealtime-trading-strategies/breakout-dax-15-min-trailing-stop/ , same frame as
+    Cosmic1's 'Breakout DAX 15Min'): from the 09:15 CET bar the day's high / low are tracked; once the close has come
+    back 20% of the day's range from the high, a buy stop waits 7 points under the high (sell stop 7 points over the low
+    once the close is 20% off the low); orders only while the range is <= 120 points and the two thresholds are >= 60
+    points apart; no Monday; no new orders after 18:14, flat 21:00; stop 240 points, trail 22 points, no target.
+    Translation to the bar's ATR (2016 DAX 15m ATR ~20 points): 120 -> 6 ATR, 60 -> 3 ATR, 7 -> 0.35 ATR, stop
+    12 ATR, trail 1.1 ATR. The stop order is taken as a close through the threshold (bar data); one entry a day."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "Europe/Berlin")
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    cur, hi, lo, bt, stt, done = None, -np.inf, np.inf, np.nan, np.nan, False
+    for i in range(n):
+        if hs[i] < 9.25 or wd[i] == 0 or wd[i] > 4:
+            continue
+        if day[i] != cur:
+            cur, hi, lo, bt, stt, done = day[i], -np.inf, np.inf, np.nan, np.nan, False
+        pbt, pst = bt, stt
+        hi, lo = max(hi, h[i]), min(lo, l[i])
+        rng = hi - lo
+        if not np.isfinite(a[i]) or a[i] <= 0:
+            continue
+        if rng <= 6 * a[i]:
+            if hi - c[i] >= 0.2 * rng:
+                bt = hi - 0.35 * a[i]
+            if c[i] - lo >= 0.2 * rng:
+                stt = lo + 0.35 * a[i]
+        if done or hs[i] >= 18.25 or not (np.isfinite(pbt) and np.isfinite(pst)) or pbt - pst < 3 * a[i]:
+            continue
+        if c[i] > pbt and (i == 0 or c[i - 1] <= pbt):
+            L[i], done = True, True
+        elif c[i] < pst and (i == 0 or c[i - 1] >= pst):
+            S[i], done = True, True
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 12.0), "target": None, "trail_atr": 1.1, "force_exit": (he >= 21.0) & (hs < 21.0)}
+
+
+def s_dax_p_daily(df):
+    """ProRealCode forum 'DAX P Daily Strategy' (2026-03,
+    https://www.prorealcode.com/topic/dax-p-daily-strategy-17k-pnl-1-05-sharpe-1-35-pf-15-max-dd-207-trades/ ): long when
+    Stochastic 12 / 5 %K is under 29 (taken on its cross under 29), stop 1.5 x ATR13, target +3.7%; short when SMA20
+    crosses under SMA95 with RSI12 over 70, stop 2.3 x ATR8, target -8.3%. ProBuilder's second average parameter
+    (the MA type) is read as simple averages. Daily as published; also offered on 4H."""
+    o, h, l, c, v = _ohlcv(df)
+    k, _ = _stoch(h, l, c, 12, 5, 1)
+    L = cross_down(k, 29.0)
+    S = cross_down(sma(c, 20), sma(c, 95)) & (rsi(c, 12) > 70)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(c - 1.5 * atr(h, l, c, 13), c + 2.3 * atr(h, l, c, 8), c * 1.037, c * (1 - 0.083))
+
+
+def s_aroon_breakout(df):
+    """Oxford Capital Strategies 'Aroon Indicator Breakout' (setup 2 and exit,
+    https://oxfordstrat.com/trading-strategies/aroon-indicator-breakout-3/ ): Aroon 25 Up over Down and Up >= Min_Aroon
+    = buy at the next open (mirror for shorts); stop 6 x ATR20; out at the close of the 20th bar. The source sweeps
+    Min_Aroon 30-100; we take 70 (ours) and the setup's first bar. Differs from TV41 (Aroon cross, 2R) by the threshold,
+    the wide ATR stop and the time exit."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.aroon(df, 25)
+    a20 = atr(h, l, c, 20)
+    L = _onset((z["up"] > z["down"]) & (z["up"] >= 70))
+    S = _onset((z["down"] > z["up"]) & (z["down"] >= 70))
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("level", c - 6 * a20, c + 6 * a20), "target": None, "max_bars": 20}
+
+
+def s_edgeful_first_hour(df):
+    """edgeful 'Market Open Volume' + 'Opening Candle Continuation' + 'Inside Bars' checklist
+    (https://www.edgeful.com/blog/posts/predict-trading-day-market-open-volume-report ): at 10:30 New York the first
+    hour's colour (close vs the 09:30 open) is the session bias (72% / 70% continuation on YM); the day is skipped when
+    the first 15 minutes' volume is more than 20% under its 20-session mean (choppy-day read; tick volume); target =
+    yesterday's high (long) / low (short) when the session opened inside yesterday's range (82.5% break odds), else 2R;
+    stop the first hour's low / high; flat 16:00. Stop rule and the 2R fallback are ours (the article has none)."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "America/New_York")
+    z = IND.open_type(df)
+    pdh, pdl = _prev_day_tz(df, "America/New_York")
+    n = len(c)
+    v15 = np.full(n, np.nan)
+    first = (hs >= 9.5 - 1e-9) & (he <= 9.75 + 1e-9)
+    vs = pd.Series(np.where(first, v, 0.0)).groupby(day).transform("sum").to_numpy()
+    sess = pd.Series(vs).groupby(day).first()
+    mean20 = sess.shift(1).rolling(20, min_periods=5).mean()
+    v15 = pd.Series(day).map(mean20).to_numpy(float)
+    ok_vol = ~(vs < 0.8 * v15)
+    at = np.abs(he - 10.5) < 1e-6
+    so = z["sopen"]
+    L = at & (c > so) & ok_vol
+    S = at & (c < so) & ok_vol
+    sl_l, sl_s = z["slo"], z["shi"]
+    inside = (so < pdh) & (so > pdl)
+    tl = np.where(inside & (pdh > c), pdh, c + 2 * (c - sl_l))
+    ts = np.where(inside & (pdl < c), pdl, c - 2 * (sl_s - c))
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl_l, sl_s, tl, ts, force_exit=(he >= 16.0) & (hs < 16.0))
+
+
+def s_opening_drive(df):
+    """The Right Trader 'Opening Drive' (https://therighttrader.com/learn/trading-strategies/opening-drive ), mechanical
+    version: the first 5 minutes from 09:30 New York are the reference range; the first later bar (until 10:30, inside
+    the initial balance) that closes beyond it while no close has gone back through the opening print (loose variant)
+    = enter in the drive; stop 0.1 ATR beyond the opening print; target 2R (the page's pre-labelled first target);
+    flat 16:00. One a day."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "America/New_York")
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    cur, op, rh, rl, cmin, cmax, done = None, np.nan, -np.inf, np.inf, np.inf, -np.inf, True
+    for i in range(n):
+        if hs[i] < 9.5 - 1e-9 or hs[i] >= 16.0:
+            continue
+        if day[i] != cur:
+            cur, done = day[i], abs(hs[i] - 9.5) > 1e-6
+            op, rh, rl, cmin, cmax = o[i], -np.inf, np.inf, np.inf, -np.inf
+        if he[i] <= 9.5 + 5 / 60.0 + 1e-9:
+            rh, rl = max(rh, h[i]), min(rl, l[i])
+            cmin, cmax = min(cmin, c[i]), max(cmax, c[i])
+            continue
+        if not done and hs[i] < 10.5:
+            if c[i] > rh and cmin >= op and c[i] > op:
+                L[i], sl[i], done = True, op - 0.1 * a[i], True
+            elif c[i] < rl and cmax <= op and c[i] < op:
+                S[i], ss[i], done = True, op + 0.1 * a[i], True
+        cmin, cmax = min(cmin, c[i]), max(cmax, c[i])
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0, force_exit=(he >= 16.0) & (hs < 16.0))
+
+
+def s_trend_day_ib(df):
+    """The Right Trader 'Trend Day' (https://therighttrader.com/learn/trading-strategies/trend-day ): a narrow initial
+    balance (09:30-10:30 New York range under 0.9 x the mean of the previous 20 sessions' IB - the page says 'narrow
+    relative to a typical day', the 0.9 is ours), a close outside it, then the first pullback that holds the broken edge
+    (low within 0.2 ATR of the IB high, close back over it, up bar) = long; stop back inside the IB (25% of the IB under
+    its high); 2R; at most 2 attempts a session (the page's limit), entries until 15:00, flat 16:00. Mirror for shorts."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "America/New_York")
+    z = IND.open_type(df)
+    a = atr(h, l, c, 14)
+    ih, il, ratio = z["ib_hi"], z["ib_lo"], z["ib_ratio"]
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    cur, bu, bd = None, False, False
+    for i in range(1, n):
+        if not np.isfinite(ih[i]) or hs[i] >= 15.0 or hs[i] < 10.5 - 1e-9:
+            continue
+        if day[i] != cur:
+            cur, bu, bd = day[i], False, False
+        if not (ratio[i] < 0.9):
+            continue
+        R = ih[i] - il[i]
+        if bu and l[i] <= ih[i] + 0.2 * a[i] and c[i] > ih[i] and c[i] > o[i]:
+            L[i], sl[i] = True, ih[i] - 0.25 * R
+        if bd and h[i] >= il[i] - 0.2 * a[i] and c[i] < il[i] and c[i] < o[i]:
+            S[i], ss[i] = True, il[i] + 0.25 * R
+        bu = bu or c[i] > ih[i]
+        bd = bd or c[i] < il[i]
+    L, S = _per_day_cap(L, day, 2), _per_day_cap(S, day, 2)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0, force_exit=(he >= 16.0) & (hs < 16.0))
+
+
+def _open_type_trade(df, codes, stop_mode):
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "America/New_York")
+    z = IND.open_type(df)
+    a = atr(h, l, c, 14)
+    k = z["code"]
+    first = _onset(k != 0)
+    L = first & np.isin(k, codes)
+    S = first & np.isin(k, [-x for x in codes])
+    if stop_mode == "extreme":
+        sl, ss = z["slo"] - 0.1 * a, z["shi"] + 0.1 * a
+    else:
+        sl, ss = z["sopen"] - 0.1 * a, z["sopen"] + 0.1 * a
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0, force_exit=(he >= 16.0) & (hs < 16.0))
+
+
+def s_open_test_drive(df):
+    """Open-Test-Drive (Dalton; NexusFi 'Open Type Classification' https://nexusfi.com/a/concepts/open-type-classification
+    ): in the first 30 minutes from 09:30 New York (45 on 15-minute bars) the market tests one side (0.1-0.4 of the
+    window's range past the open), fails and drives the other way (close in the far 30%) - at the window's end enter with the drive; stop 0.1 ATR beyond
+    the test extreme; 2R (ours); flat 16:00. Classification thresholds ours (agents/indicators open_type)."""
+    return _open_type_trade(df, [2.0], "extreme")
+
+
+def s_open_rejection_reverse(df):
+    """Open-Rejection-Reverse (Dalton; NexusFi 'Open Type Classification'): the first 30 minutes (45 on 15-minute
+    bars) extend one way (>= 0.4 of the window's range past the open), then close back through the open - at the
+    window's end enter the reversal; stop
+    0.1 ATR beyond the rejected extreme; 2R (ours; the page targets prior value); flat 16:00. Thresholds ours."""
+    return _open_type_trade(df, [3.0], "extreme")
+
+
+def s_open_drive_vwap(df):
+    """Open-Drive pullback (NexusFi 'Open Type Classification': enter an open-drive on a pullback to a developing value
+    level): an open-drive in the first 30 minutes (open_type +/-1), then the first bar until 13:00 New York whose low
+    touches the session VWAP and closes back over it (mirror for down drives); stop 0.1 ATR beyond the opening print;
+    2R; flat 16:00. VWAP stands in for the page's developing VPOC (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "America/New_York")
+    z = IND.open_type(df)
+    a = atr(h, l, c, 14)
+    tp = (h + l + c) / 3
+    vv = np.where(v > 0, v, 1.0)
+    insess = z["in_session"]
+    w = np.where(insess, vv, 0.0)
+    vw = pd.Series(tp * w).groupby(day).cumsum().to_numpy() / np.maximum(pd.Series(w).groupby(day).cumsum().to_numpy(), 1e-12)
+    k = z["code"]
+    ok = hs < 13.0
+    L = (k == 1) & (l <= vw) & (c > vw) & ok & (_r(k) == 1)
+    S = (k == -1) & (h >= vw) & (c < vw) & ok & (_r(k) == -1)
+    L, S = _per_day_cap(L, day, 1), _per_day_cap(S, day, 1)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(z["sopen"] - 0.1 * a, z["sopen"] + 0.1 * a, 2.0, force_exit=(he >= 16.0) & (hs < 16.0))
+
+
+def _gold_ib(df, e_in, s_out, t_out, lo_r, hi_r):
+    """TradeThatSwing gold IB frame: after the 09:30-10:30 New York IB, the first break of its high (low) arms one
+    entry e_in x IB inside the broken edge; the bar that trades back to it is the signal (bar data: next open), stop
+    s_out x IB from the broken edge back inside, target t_out x IB beyond it; one a day; flat 16:00."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "America/New_York")
+    z = IND.open_type(df)
+    ih, il, ratio = z["ib_hi"], z["ib_lo"], z["ib_ratio"]
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss, tl, ts = (np.full(n, np.nan) for _ in range(4))
+    cur, side, done = None, 0, False
+    for i in range(n):
+        if not np.isfinite(ih[i]) or hs[i] >= 15.5 or hs[i] < 10.5 - 1e-9:
+            continue
+        if day[i] != cur:
+            cur, side, done = day[i], 0, False
+        R = ih[i] - il[i]
+        if done or R <= 0 or not (lo_r <= ratio[i] <= hi_r):
+            continue
+        if side == 0:
+            if h[i] > ih[i] and not l[i] < il[i]:
+                side = 1
+            elif l[i] < il[i] and not h[i] > ih[i]:
+                side = -1
+            continue
+        if side > 0 and l[i] <= ih[i] - e_in * R:
+            L[i], sl[i], tl[i], done = True, ih[i] - s_out * R, ih[i] + t_out * R, True
+        elif side < 0 and h[i] >= il[i] + e_in * R:
+            S[i], ss[i], ts[i], done = True, il[i] + s_out * R, il[i] - t_out * R, True
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(sl, ss, tl, ts, force_exit=(he >= 16.0) & (hs < 16.0))
+
+
+def s_gold_ib_retrace(df):
+    """TradeThatSwing 'One trade a day gold strategy' (Cory Mitchell, Jan 2026 settings,
+    https://tradethatswing.com/one-trade-a-day-gold-strategy-411-in-last-year-fully-automatable/ ): IB 09:30-10:30 New
+    York; after the IB high breaks, buy back 25% of the IB inside it, stop 60% of the IB under the IB high, target 50% of
+    the IB over it (mirror at the IB low); session close exit; one a day. The source's IB size filter 0.3%-1.5% of the
+    gold price is translated to 0.4-2.0 x the 20-session mean IB (ours, so it fits every instrument). The author paused
+    it in July 2026 (single-break odds fell to ~50%)."""
+    return _gold_ib(df, 0.25, 0.60, 0.50, 0.4, 2.0)
+
+
+def s_gold_ib_retrace_apr(df):
+    """TradeThatSwing gold IB, April 2026 update: entry 25% of the IB back inside, stop 100% of the IB (the far IB
+    edge), target 20% of the IB beyond the broken edge, IB up to 2% of price (here up to 2.7 x the 20-session mean IB,
+    ours); session close exit; one a day."""
+    return _gold_ib(df, 0.25, 1.00, 0.20, 0.0, 2.7)
+
+
+def s_h4_first_retest(df):
+    """MQL5 CodeBase 'H4 Breakout Retest EA for Gold' (https://www.mql5.com/en/code/78537 , listing description): the
+    day's first 4-hour candle (00:00-04:00 UTC, ours - the EA uses server time), a close beyond it, then a retest of
+    the broken edge (touch within 0.1 ATR, close back outside) = enter; stop the candle's middle, 2R (the EA's fixed %
+    SL / TP are not published); one a day, flat 21:00 UTC. Differs from TT01 (first 4H candle false break) and the
+    New York 4H idea by the retest entry."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "UTC")
+    a = atr(h, l, c, 14)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl, ss = np.full(n, np.nan), np.full(n, np.nan)
+    cur, ch, cl, ok, bu, bd, done = None, -np.inf, np.inf, False, False, False, False
+    for i in range(n):
+        if day[i] != cur:
+            cur, ch, cl, bu, bd, done = day[i], -np.inf, np.inf, False, False, False
+            ok = hs[i] < 1e-6
+        if he[i] <= 4.0 + 1e-9 and hs[i] < 4.0:
+            ch, cl = max(ch, h[i]), min(cl, l[i])
+            continue
+        if not ok or done or hs[i] >= 20.0:
+            continue
+        mid = (ch + cl) / 2
+        if bu and l[i] <= ch + 0.1 * a[i] and c[i] > ch:
+            L[i], sl[i], done = True, mid, True
+        elif bd and h[i] >= cl - 0.1 * a[i] and c[i] < cl:
+            S[i], ss[i], done = True, mid, True
+        bu = bu or c[i] > ch
+        bd = bd or c[i] < cl
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl, ss, 2.0, force_exit=(he >= 21.0) & (hs < 21.0))
+
+
+def s_gold_trend_breakout_lite(df):
+    """MQL5 CodeBase 'Gold Trend Breakout Lite' (https://www.mql5.com/en/code/79733 , listing description): an H1 close
+    beyond the previous 20 bars' Donchian channel in the direction of the daily EMA's slope (EMA 50 of daily closes,
+    today's completed value vs the day before - lengths ours, the listing gives none); stop 3 ATR, break-even at +1R;
+    no target in the listing -> 3R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    sl = _htf(df, "1D", lambda g: np.sign(np.diff(ema(g["c"].to_numpy(float), 50), prepend=np.nan)))
+    up = _r(_s(h).rolling(20).max().to_numpy())
+    dn = _r(_s(l).rolling(20).min().to_numpy())
+    L = (c > up) & (_r(c) <= _r(up)) & (sl > 0)
+    S = (c < dn) & (_r(c) >= _r(dn)) & (sl < 0)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(c - 3 * a, c + 3 * a, 3.0, breakeven=(1.0 / 3.0, 0.0))
+
+
+def s_babypips_bts(df):
+    """BabyPips 'A Basic Trading System (BTS)' (https://forums.babypips.com/t/a-basic-trading-system-bts/10728 ): EMA 5
+    of the highs and EMA 5 of the lows, Stochastic 5 / 3 / 3, MACD 12 / 26 / 9. Long: MACD over zero, the setup candle
+    pulls back into the EMA channel (low under the EMA of the highs) while %K is under 50 (ours - the excerpt gives the
+    stochastic only as 'setup'), then the next bar trades over the setup high = enter; stop under the setup low
+    (+0.1 ATR, the source's 'max 5 pips'); target 2R with the stop to break-even at 1R (the source takes half at 1:1 and
+    trails the rest). Mirror for shorts. H1 / H4 / daily."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    eh, el = ema(h, 5), ema(l, 5)
+    k, _ = _stoch(h, l, c, 5, 3, 3)
+    m = ema(c, 12) - ema(c, 26)
+    setup_l = (m > 0) & (l <= eh) & (c >= el) & (k < 50)
+    setup_s = (m < 0) & (h >= el) & (c <= eh) & (k > 50)
+    L = _r(setup_l.astype(float)) > 0
+    S = _r(setup_s.astype(float)) > 0
+    L &= h > _r(h)
+    S &= l < _r(l)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(_r(l) - 0.1 * a, _r(h) + 0.1 * a, 2.0, breakeven=(0.5, 0.0))
+
+
+def s_arttrader(df):
+    """Arttrader v1.5 (MT4 EA, StockSharp port https://doc.stocksharp.com/ja/api-examples/3816_Arttrader ): EMA of the
+    OPENS; when its slope (one bar) is positive and between Slope Min and Slope Max, a bar closing at or under its open
+    (a dip inside the rise) = buy; mirror for shorts; no entry on a bar after a single-bar gap over 'Big Jump' or a
+    two-bar gap over 'Double Jump'. The EA's defaults are not on the page - ours: EMA 11, slope 0.02-0.30 ATR, big jump
+    1 ATR, double jump 1.5 ATR, stop 2 ATR ('emergency stop'), target 1.5 ATR, out after 24 bars; H1."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    eo = ema(o, 11)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        sl = (eo - _r(eo)) / a
+    jump = (np.abs(o - _r(c)) > 1.0 * a) | (np.abs(o - _r(c, 2)) > 1.5 * a)
+    L = (sl > 0.02) & (sl < 0.30) & (c <= o) & ~jump
+    S = (sl < -0.02) & (sl > -0.30) & (c >= o) & ~jump
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 2.0), "target": ("atr", 1.5), "max_bars": 24}
+
+
+def s_stop_hunter(df):
+    """Stop Hunter (MT4 EA, StockSharp port https://doc.stocksharp.com/ja/api-examples/4214_Stop_Hunter ): a buy stop 15
+    points under the next round level above the price (Zeroes 2), take profit and stop 15 points, half out at the first
+    target and the rest to a second leg of the same size. On a 5-digit pair Zeroes 2 = a 100-point (10-pip) level and
+    15 points = 0.15 of the level step; we use the library's '00' step (agents/indicators round_levels) and the same
+    0.15 fraction: a close crossing up through (level above - 0.15 step) = long, stop 0.15 step under the entry, target
+    0.15 step over the level (2R) with the stop to break-even half way (the first target). Mirror for shorts."""
+    o, h, l, c, v = _ohlcv(df)
+    rl = IND.round_levels(df)
+    la, lb, st = _r(rl["above"]), _r(rl["below"]), _r(rl["step"])
+    up_t, dn_t = la - 0.15 * st, lb + 0.15 * st
+    L = (c > up_t) & (_r(c) <= up_t) & (c < la)
+    S = (c < dn_t) & (_r(c) >= dn_t) & (c > lb)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(c - 0.15 * st, c + 0.15 * st, la + 0.15 * st, lb - 0.15 * st, breakeven=(0.5, 0.0))
+
+
+def s_vol_gated_trend(df):
+    """Volatility-Gated Trend Oscillator (QuantAlgo, our reconstruction): the state turns with the EMA50 side, 2 ATR,
+    2R (stop and target ours)."""
+    z, c = IND.vol_gated_trend(df), df["c"].to_numpy(dtype=float)
+    e = ema(c, 50)
+    return _ind_flip(df, z["buy"] & (c > e), z["sell"] & (c < e))
+
+
+def s_l1_trend_swing(df):
+    """L1 Trend Swing Oscillator (blackcat1402, our reconstruction): swing buy / sell from the trend line's extreme zone
+    at a 10-bar price extreme, 2 ATR stop, 3 ATR target (the script's v2 defaults SL 2 ATR / TP 3 ATR), 3-bar cooldown."""
+    z = IND.l1_trend_swing(df)
+    b, s = z["buy"], z["sell"]
+    b = b & ~(_s(b.astype(float)).shift(1).rolling(3, min_periods=1).max().to_numpy() > 0)
+    s = s & ~(_s(s.astype(float)).shift(1).rolling(3, min_periods=1).max().to_numpy() > 0)
+    L, S = _excl(b, s)
+    return L, S, {"stop": ("atr", 2.0), "target": ("atr", 3.0)}
+
+
+def s_true_trend_osc(df):
+    """True Trend Oscillator (MYNAMEISBRANDON): bull crosses over bear (bear over bull) while the trend is active
+    (weaker line over 25), 2 ATR, 2R (stop and target ours; the author says it is a filter - also usable as one)."""
+    z = IND.true_trend_osc(df)
+    return _ind_flip(df, cross_up(z["bull"], z["bear"]) & z["active"], cross_up(z["bear"], z["bull"]) & z["active"])
+
+
+def s_trend_bias_osc(df):
+    """Trend Bias Oscillator (tgregg75, first version): the structure bias turns +1 (close over the last confirmed
+    swing high) with the oscillator over its signal = long, mirror for shorts; stop 0.1 ATR beyond the last swing low /
+    high, 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.trend_bias_osc(df)
+    a = atr(h, l, c, 14)
+    b = z["bias"]
+    L = (b > 0) & (_r(b) <= 0) & (z["osc"] > z["signal"])
+    S = (b < 0) & (_r(b) >= 0) & (z["osc"] < z["signal"])
+    L, S = _excl(L, S)
+    return L, S, _plan_r(z["swing_lo"] - 0.1 * a, z["swing_hi"] + 0.1 * a, 2.0)
+
+
+SCOUT.update({
+    "SC653": ("Lift up / down DAX: yesterday's high / low cross with SMA14 / 9 from 08:45 CET, 5 / 13 and 9 / 3 ATR, flat 11:30", s_lift_dax, ["5Min", "15Min"]),
+    "SC654": ("DAX 15m range threshold breakout: stop orders 0.35 ATR inside the day's extremes after a 20% pullback, 12 ATR stop, 1.1 ATR trail, flat 21:00", s_dax_range_threshold, ["15Min"]),
+    "SC655": ("DAX P daily: Stochastic 12/5 under 29 long (+3.7%), SMA20/95 cross + RSI12 > 70 short (-8.3%), ATR stops", s_dax_p_daily, ["4Hour", "1Day"]),
+    "SC656": ("Oxford Aroon 25 breakout: Up > Down and >= 70, 6 ATR20 stop, out after 20 bars", s_aroon_breakout, _M + ["1Day"]),
+    "SC657": ("edgeful first hour colour at 10:30 NY (no low-volume open), target yesterday's extreme when opened inside, first-hour stop", s_edgeful_first_hour, ["5Min", "15Min"]),
+    "SC658": ("Opening drive: first 5-min range break with no close back through the open, stop past the open, 2R", s_opening_drive, ["1Min", "5Min"]),
+    "SC659": ("Trend day: narrow IB (< 0.9 x avg), pullback holding the broken IB edge, stop back inside, 2R, 2 a day", s_trend_day_ib, ["5Min", "15Min"]),
+    "SC660": ("Open-test-drive at the end of the first 30 min NY with the drive, stop past the test extreme, 2R", s_open_test_drive, ["1Min", "5Min", "15Min"]),
+    "SC661": ("Open-rejection-reverse at the end of the first 30 min NY, stop past the rejected extreme, 2R", s_open_rejection_reverse, ["1Min", "5Min", "15Min"]),
+    "SC662": ("Open-drive then the first session-VWAP pullback, stop past the open, 2R", s_open_drive_vwap, ["1Min", "5Min", "15Min"]),
+    "SC663": ("Gold IB retrace (TradeThatSwing): after the IB break buy back 25% inside, stop 60% IB, target 50% IB, one a day", s_gold_ib_retrace, ["5Min", "15Min"]),
+    "SC664": ("Gold IB retrace (Apr 2026): 25% inside, stop 100% IB, target 20% IB, one a day", s_gold_ib_retrace_apr, ["5Min", "15Min"]),
+    "SC665": ("First 4H candle of the day: break and retest of its edge, stop its middle, 2R, one a day", s_h4_first_retest, ["5Min", "15Min", "1Hour"]),
+    "SC666": ("Gold Trend Breakout Lite: Donchian 20 close with the daily EMA50 slope, 3 ATR, break-even 1R, 3R", s_gold_trend_breakout_lite, ["1Hour"]),
+    "SC667": ("BabyPips BTS: EMA5 high / low channel pullback with MACD side + Stoch 5/3/3, setup-bar break, 2R, BE at 1R", s_babypips_bts, ["1Hour", "4Hour", "1Day"]),
+    "SC668": ("Arttrader: EMA11 of the opens rising within slope bounds, buy the down bar, gap guard, 2 / 1.5 ATR, 24 bars", s_arttrader, ["1Hour"]),
+    "SC669": ("Stop Hunter: stop entry 0.15 step before the round level, 0.15-step stop, target 0.15 step past the level, BE half way", s_stop_hunter, ["5Min", "15Min"]),
+    "SC670": ("Volatility-Gated Trend Oscillator state turn on the EMA50 side, 2 ATR, 2R", s_vol_gated_trend, _M),
+    "SC671": ("L1 Trend Swing Oscillator swing buy / sell at a price extreme, 2 / 3 ATR", s_l1_trend_swing, _F),
+    "SC672": ("True Trend Oscillator bull / bear cross while active, 2 ATR, 2R", s_true_trend_osc, _M),
+    "SC673": ("Trend Bias Oscillator structure flip with the signal, swing stop, 2R", s_trend_bias_osc, _M),
+})

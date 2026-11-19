@@ -15995,6 +15995,459 @@
     "bot7"
    ],
    "rules": "TREND and ZL FLOW: T3 and the zero-lag average turn together on the EMA50 side, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC653",
+   "name": "Lift up / down DAX: yesterday's high / low cross with SMA14 / 9 from 08:45 CET, 5 / 13 and 9 / 3 ATR, flat 11:30",
+   "source": "ProRealCode - Lift up and down DAX 5M (Reiner)",
+   "url": "https://www.prorealcode.com/prorealtime-trading-strategies/lift-up-down-trading-strategy-dax-5m/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "'Lift up and down DAX 5M' (Reiner, ProRealCode https://www.prorealcode.com/prorealtime-trading-strategies/lift-up-down-trading-strategy-dax-5m/ ): from 08:45 CET a close crossing over yesterday's high with close > SMA14 = long (not Friday); a close crossing under yesterday's low with close < SMA9 = short (Monday / Tuesday only); at most 2 a side per day; flat at 11:30 CET. The source's 50 / 130 points (long) and 90 / 30 points (short) on 2016 DAX 5-minute bars (ATR ~10 points) are translated into 5 / 13 ATR and 9 / 3 ATR of the bar's timeframe (the author calls the levels curve fitted)."
+  },
+  {
+   "id": "SC654",
+   "name": "DAX 15m range threshold breakout: stop orders 0.35 ATR inside the day's extremes after a 20% pullback, 12 ATR stop, 1.1 ATR trail, flat 21:00",
+   "source": "ProRealCode - Breakout intraday DAX 15 min trailing stop (ALE / Cosmic1)",
+   "url": "https://www.prorealcode.com/prorealtime-trading-strategies/breakout-dax-15-min-trailing-stop/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "ProRealCode 'Breakout intraday trading strategy on DAX' (ALE, 15 min, trailing stop; https://www.prorealcode.com/prorealtime-trading-strategies/breakout-dax-15-min-trailing-stop/ , same frame as Cosmic1's 'Breakout DAX 15Min'): from the 09:15 CET bar the day's high / low are tracked; once the close has come back 20% of the day's range from the high, a buy stop waits 7 points under the high (sell stop 7 points over the low once the close is 20% off the low); orders only while the range is <= 120 points and the two thresholds are >= 60 points apart; no Monday; no new orders after 18:14, flat 21:00; stop 240 points, trail 22 points, no target. Translation to the bar's ATR (2016 DAX 15m ATR ~20 points): 120 -> 6 ATR, 60 -> 3 ATR, 7 -> 0.35 ATR, stop 12 ATR, trail 1.1 ATR. The stop order is taken as a close through the threshold (bar data); one entry a day."
+  },
+  {
+   "id": "SC655",
+   "name": "DAX P daily: Stochastic 12/5 under 29 long (+3.7%), SMA20/95 cross + RSI12 > 70 short (-8.3%), ATR stops",
+   "source": "ProRealCode forum - DAX P Daily Strategy (2026)",
+   "url": "https://www.prorealcode.com/topic/dax-p-daily-strategy-17k-pnl-1-05-sharpe-1-35-pf-15-max-dd-207-trades/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "ProRealCode forum 'DAX P Daily Strategy' (2026-03, https://www.prorealcode.com/topic/dax-p-daily-strategy-17k-pnl-1-05-sharpe-1-35-pf-15-max-dd-207-trades/ ): long when Stochastic 12 / 5 %K is under 29 (taken on its cross under 29), stop 1.5 x ATR13, target +3.7%; short when SMA20 crosses under SMA95 with RSI12 over 70, stop 2.3 x ATR8, target -8.3%. ProBuilder's second average parameter (the MA type) is read as simple averages. Daily as published; also offered on 4H."
+  },
+  {
+   "id": "SC656",
+   "name": "Oxford Aroon 25 breakout: Up > Down and >= 70, 6 ATR20 stop, out after 20 bars",
+   "source": "Oxford Capital Strategies - Aroon Indicator Breakout (setup 2 and exit)",
+   "url": "https://oxfordstrat.com/trading-strategies/aroon-indicator-breakout-3/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Oxford Capital Strategies 'Aroon Indicator Breakout' (setup 2 and exit, https://oxfordstrat.com/trading-strategies/aroon-indicator-breakout-3/ ): Aroon 25 Up over Down and Up >= Min_Aroon = buy at the next open (mirror for shorts); stop 6 x ATR20; out at the close of the 20th bar. The source sweeps Min_Aroon 30-100; we take 70 (ours) and the setup's first bar. Differs from TV41 (Aroon cross, 2R) by the threshold, the wide ATR stop and the time exit."
+  },
+  {
+   "id": "SC657",
+   "name": "edgeful first hour colour at 10:30 NY (no low-volume open), target yesterday's extreme when opened inside, first-hour stop",
+   "source": "edgeful - market open volume + opening candle continuation + inside bars",
+   "url": "https://www.edgeful.com/blog/posts/predict-trading-day-market-open-volume-report",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "edgeful 'Market Open Volume' + 'Opening Candle Continuation' + 'Inside Bars' checklist (https://www.edgeful.com/blog/posts/predict-trading-day-market-open-volume-report ): at 10:30 New York the first hour's colour (close vs the 09:30 open) is the session bias (72% / 70% continuation on YM); the day is skipped when the first 15 minutes' volume is more than 20% under its 20-session mean (choppy-day read; tick volume); target = yesterday's high (long) / low (short) when the session opened inside yesterday's range (82.5% break odds), else 2R; stop the first hour's low / high; flat 16:00. Stop rule and the 2R fallback are ours (the article has none)."
+  },
+  {
+   "id": "SC658",
+   "name": "Opening drive: first 5-min range break with no close back through the open, stop past the open, 2R",
+   "source": "The Right Trader - Opening Drive",
+   "url": "https://therighttrader.com/learn/trading-strategies/opening-drive",
+   "added": "2026-11-19",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The Right Trader 'Opening Drive' (https://therighttrader.com/learn/trading-strategies/opening-drive ), mechanical version: the first 5 minutes from 09:30 New York are the reference range; the first later bar (until 10:30, inside the initial balance) that closes beyond it while no close has gone back through the opening print (loose variant) = enter in the drive; stop 0.1 ATR beyond the opening print; target 2R (the page's pre-labelled first target); flat 16:00. One a day."
+  },
+  {
+   "id": "SC659",
+   "name": "Trend day: narrow IB (< 0.7 x avg), pullback holding the broken IB edge, stop back inside, 2R, 2 a day",
+   "source": "The Right Trader - Trend Day",
+   "url": "https://therighttrader.com/learn/trading-strategies/trend-day",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "The Right Trader 'Trend Day' (https://therighttrader.com/learn/trading-strategies/trend-day ): a narrow initial balance (09:30-10:30 New York range under 0.7 x the mean of the previous 20 sessions' IB - the page says 'narrow relative to a typical day', the 0.7 is ours), a close outside it, then the first pullback that holds the broken edge (low within 0.2 ATR of the IB high, close back over it, up bar) = long; stop back inside the IB (25% of the IB under its high); 2R; at most 2 attempts a session (the page's limit), entries until 15:00, flat 16:00. Mirror for shorts."
+  },
+  {
+   "id": "SC660",
+   "name": "Open-test-drive at the end of the first 30 min NY with the drive, stop past the test extreme, 2R",
+   "source": "NexusFi - Open Type Classification (open-test-drive)",
+   "url": "https://nexusfi.com/a/concepts/open-type-classification",
+   "added": "2026-11-19",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Open-Test-Drive (Dalton; NexusFi 'Open Type Classification' https://nexusfi.com/a/concepts/open-type-classification ): in the first 30 minutes from 09:30 New York (45 on 15-minute bars) the market tests one side (0.1-0.4 of the window's range past the open), fails and drives the other way (close in the far 30%) - at the window's end enter with the drive; stop 0.1 ATR beyond the test extreme; 2R (ours); flat 16:00. Classification thresholds ours (agents/indicators open_type)."
+  },
+  {
+   "id": "SC661",
+   "name": "Open-rejection-reverse at the end of the first 30 min NY, stop past the rejected extreme, 2R",
+   "source": "NexusFi - Open Type Classification (open-rejection-reverse)",
+   "url": "https://nexusfi.com/a/concepts/open-type-classification",
+   "added": "2026-11-19",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Open-Rejection-Reverse (Dalton; NexusFi 'Open Type Classification'): the first 30 minutes (45 on 15-minute bars) extend one way (>= 0.4 of the window's range past the open), then close back through the open - at the window's end enter the reversal; stop 0.1 ATR beyond the rejected extreme; 2R (ours; the page targets prior value); flat 16:00. Thresholds ours."
+  },
+  {
+   "id": "SC662",
+   "name": "Open-drive then the first session-VWAP pullback, stop past the open, 2R",
+   "source": "NexusFi - Open Type Classification (open-drive pullback)",
+   "url": "https://nexusfi.com/a/concepts/open-type-classification",
+   "added": "2026-11-19",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index",
+    "stock"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Open-Drive pullback (NexusFi 'Open Type Classification': enter an open-drive on a pullback to a developing value level): an open-drive in the first 30 minutes (open_type +/-1), then the first bar until 13:00 New York whose low touches the session VWAP and closes back over it (mirror for down drives); stop 0.1 ATR beyond the opening print; 2R; flat 16:00. VWAP stands in for the page's developing VPOC (ours)."
+  },
+  {
+   "id": "SC663",
+   "name": "Gold IB retrace (TradeThatSwing): after the IB break buy back 25% inside, stop 60% IB, target 50% IB, one a day",
+   "source": "TradeThatSwing - One trade a day gold strategy (Jan 2026 settings)",
+   "url": "https://tradethatswing.com/one-trade-a-day-gold-strategy-411-in-last-year-fully-automatable/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "metal",
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TradeThatSwing 'One trade a day gold strategy' (Cory Mitchell, Jan 2026 settings, https://tradethatswing.com/one-trade-a-day-gold-strategy-411-in-last-year-fully-automatable/ ): IB 09:30-10:30 New York; after the IB high breaks, buy back 25% of the IB inside it, stop 60% of the IB under the IB high, target 50% of the IB over it (mirror at the IB low); session close exit; one a day. The source's IB size filter 0.3%-1.5% of the gold price is translated to 0.4-2.0 x the 20-session mean IB (ours, so it fits every instrument). The author paused it in July 2026 (single-break odds fell to ~50%)."
+  },
+  {
+   "id": "SC664",
+   "name": "Gold IB retrace (Apr 2026): 25% inside, stop 100% IB, target 20% IB, one a day",
+   "source": "TradeThatSwing - One trade a day gold strategy (Apr 2026 update)",
+   "url": "https://tradethatswing.com/one-trade-a-day-gold-strategy-411-in-last-year-fully-automatable/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "metal",
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "TradeThatSwing gold IB, April 2026 update: entry 25% of the IB back inside, stop 100% of the IB (the far IB edge), target 20% of the IB beyond the broken edge, IB up to 2% of price (here up to 2.7 x the 20-session mean IB, ours); session close exit; one a day."
+  },
+  {
+   "id": "SC665",
+   "name": "First 4H candle of the day: break and retest of its edge, stop its middle, 2R, one a day",
+   "source": "MQL5 CodeBase - H4 Breakout Retest EA for Gold",
+   "url": "https://www.mql5.com/en/code/78537",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "metal",
+    "fx",
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "MQL5 CodeBase 'H4 Breakout Retest EA for Gold' (https://www.mql5.com/en/code/78537 , listing description): the day's first 4-hour candle (00:00-04:00 UTC, ours - the EA uses server time), a close beyond it, then a retest of the broken edge (touch within 0.1 ATR, close back outside) = enter; stop the candle's middle, 2R (the EA's fixed % SL / TP are not published); one a day, flat 21:00 UTC. Differs from TT01 (first 4H candle false break) and the New York 4H idea by the retest entry."
+  },
+  {
+   "id": "SC666",
+   "name": "Gold Trend Breakout Lite: Donchian 20 close with the daily EMA50 slope, 3 ATR, break-even 1R, 3R",
+   "source": "MQL5 CodeBase - Gold Trend Breakout Lite",
+   "url": "https://www.mql5.com/en/code/79733",
+   "added": "2026-11-19",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "MQL5 CodeBase 'Gold Trend Breakout Lite' (https://www.mql5.com/en/code/79733 , listing description): an H1 close beyond the previous 20 bars' Donchian channel in the direction of the daily EMA's slope (EMA 50 of daily closes, today's completed value vs the day before - lengths ours, the listing gives none); stop 3 ATR, break-even at +1R; no target in the listing -> 3R (ours)."
+  },
+  {
+   "id": "SC667",
+   "name": "BabyPips BTS: EMA5 high / low channel pullback with MACD side + Stoch 5/3/3, setup-bar break, 2R, BE at 1R",
+   "source": "BabyPips forum - A Basic Trading System (BTS)",
+   "url": "https://forums.babypips.com/t/a-basic-trading-system-bts/10728",
+   "added": "2026-11-19",
+   "timeframes": [
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "BabyPips 'A Basic Trading System (BTS)' (https://forums.babypips.com/t/a-basic-trading-system-bts/10728 ): EMA 5 of the highs and EMA 5 of the lows, Stochastic 5 / 3 / 3, MACD 12 / 26 / 9. Long: MACD over zero, the setup candle pulls back into the EMA channel (low under the EMA of the highs) while %K is under 50 (ours - the excerpt gives the stochastic only as 'setup'), then the next bar trades over the setup high = enter; stop under the setup low (+0.1 ATR, the source's 'max 5 pips'); target 2R with the stop to break-even at 1R (the source takes half at 1:1 and trails the rest). Mirror for shorts. H1 / H4 / daily."
+  },
+  {
+   "id": "SC668",
+   "name": "Arttrader: EMA11 of the opens rising within slope bounds, buy the down bar, gap guard, 2 / 1.5 ATR, 24 bars",
+   "source": "StockSharp - Arttrader (MT4 EA port)",
+   "url": "https://doc.stocksharp.com/ja/api-examples/3816_Arttrader",
+   "added": "2026-11-19",
+   "timeframes": [
+    "1Hour"
+   ],
+   "markets": [
+    "fx"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Arttrader v1.5 (MT4 EA, StockSharp port https://doc.stocksharp.com/ja/api-examples/3816_Arttrader ): EMA of the OPENS; when its slope (one bar) is positive and between Slope Min and Slope Max, a bar closing at or under its open (a dip inside the rise) = buy; mirror for shorts; no entry on a bar after a single-bar gap over 'Big Jump' or a two-bar gap over 'Double Jump'. The EA's defaults are not on the page - ours: EMA 11, slope 0.02-0.30 ATR, big jump 1 ATR, double jump 1.5 ATR, stop 2 ATR ('emergency stop'), target 1.5 ATR, out after 24 bars; H1."
+  },
+  {
+   "id": "SC669",
+   "name": "Stop Hunter: stop entry 0.15 step before the round level, 0.15-step stop, target 0.15 step past the level, BE half way",
+   "source": "StockSharp - Stop Hunter (MT4 EA port)",
+   "url": "https://doc.stocksharp.com/ja/api-examples/4214_Stop_Hunter",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "fx",
+    "metal",
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Stop Hunter (MT4 EA, StockSharp port https://doc.stocksharp.com/ja/api-examples/4214_Stop_Hunter ): a buy stop 15 points under the next round level above the price (Zeroes 2), take profit and stop 15 points, half out at the first target and the rest to a second leg of the same size. On a 5-digit pair Zeroes 2 = a 100-point (10-pip) level and 15 points = 0.15 of the level step; we use the library's '00' step (agents/indicators round_levels) and the same 0.15 fraction: a close crossing up through (level above - 0.15 step) = long, stop 0.15 step under the entry, target 0.15 step over the level (2R) with the stop to break-even half way (the first target). Mirror for shorts."
+  },
+  {
+   "id": "SC670",
+   "name": "Volatility-Gated Trend Oscillator state turn on the EMA50 side, 2 ATR, 2R",
+   "source": "vol_gated_trend indicator",
+   "url": "https://www.tradingview.com/script/NPpLwEi1-Volatility-Gated-Trend-Oscillator-QuantAlgo/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Volatility-Gated Trend Oscillator (QuantAlgo, our reconstruction): the state turns with the EMA50 side, 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC671",
+   "name": "L1 Trend Swing Oscillator swing buy / sell at a price extreme, 2 / 3 ATR",
+   "source": "l1_trend_swing indicator",
+   "url": "https://www.tradingview.com/script/jtgTVb4r-blackcat-L1-Trend-Swing-Oscillator/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "L1 Trend Swing Oscillator (blackcat1402, our reconstruction): swing buy / sell from the trend line's extreme zone at a 10-bar price extreme, 2 ATR stop, 3 ATR target (the script's v2 defaults SL 2 ATR / TP 3 ATR), 3-bar cooldown."
+  },
+  {
+   "id": "SC672",
+   "name": "True Trend Oscillator bull / bear cross while active, 2 ATR, 2R",
+   "source": "true_trend_osc indicator",
+   "url": "https://www.tradingview.com/script/egNqhlKM-True-Trend-Oscillator-Price-Envelope/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "True Trend Oscillator (MYNAMEISBRANDON): bull crosses over bear (bear over bull) while the trend is active (weaker line over 25), 2 ATR, 2R (stop and target ours; the author says it is a filter - also usable as one)."
+  },
+  {
+   "id": "SC673",
+   "name": "Trend Bias Oscillator structure flip with the signal, swing stop, 2R",
+   "source": "trend_bias_osc indicator",
+   "url": "https://www.tradingview.com/script/Un7inhjq-Trend-Bias-Oscillator/",
+   "added": "2026-11-19",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Trend Bias Oscillator (tgregg75, first version): the structure bias turns +1 (close over the last confirmed swing high) with the oscillator over its signal = long, mirror for shorts; stop 0.1 ATR beyond the last swing low / high, 2R (ours)."
   }
  ],
  "indicators": [
@@ -17957,6 +18410,48 @@
    "url": "https://tradingview.com/script/hpuNvNCf-TREND-and-ZL-FLOW",
    "added": "2026-11-19",
    "uses": "momentum agreement filter (SC652)"
+  },
+  {
+   "name": "aroon",
+   "source": "Aroon Up / Down / Oscillator (Chande; Oxford Capital formula)",
+   "url": "https://oxfordstrat.com/trading-strategies/aroon-indicator-breakout-3/",
+   "added": "2026-11-19",
+   "uses": "trend filter (Up > Down and >= 70), entry (SC656)"
+  },
+  {
+   "name": "open_type",
+   "source": "Market Profile open types drive / test-drive / rejection-reverse / auction + initial balance and its ratio (Dalton, NexusFi, The Right Trader; thresholds ours)",
+   "url": "https://nexusfi.com/a/concepts/open-type-classification",
+   "added": "2026-11-19",
+   "uses": "day-type filter for every intraday index / stock strategy (trade breakouts only on drive days, fades on auction days), narrow-IB trend-day filter, entries (SC657-SC664)"
+  },
+  {
+   "name": "vol_gated_trend",
+   "source": "Volatility-Gated Trend Oscillator (QuantAlgo, our reconstruction)",
+   "url": "https://www.tradingview.com/script/NPpLwEi1-Volatility-Gated-Trend-Oscillator-QuantAlgo/",
+   "added": "2026-11-19",
+   "uses": "trend-state filter that ignores moves inside the noise floor, entry (SC670)"
+  },
+  {
+   "name": "l1_trend_swing",
+   "source": "L1 Trend Swing Oscillator (blackcat1402, our reconstruction)",
+   "url": "https://www.tradingview.com/script/jtgTVb4r-blackcat-L1-Trend-Swing-Oscillator/",
+   "added": "2026-11-19",
+   "uses": "swing-extreme entry, ratio differential as an oversold / overbought filter (SC671)"
+  },
+  {
+   "name": "true_trend_osc",
+   "source": "True Trend Oscillator - sqrt(RSI x StochATR) bull / bear (MYNAMEISBRANDON; kernel and lengths ours)",
+   "url": "https://www.tradingview.com/script/egNqhlKM-True-Trend-Oscillator-Price-Envelope/",
+   "added": "2026-11-19",
+   "uses": "volatility-weighted trend filter (active only when both lines are energised), entry (SC672)"
+  },
+  {
+   "name": "trend_bias_osc",
+   "source": "Trend Bias Oscillator - close between the last confirmed swings + structure bias (tgregg75, first version)",
+   "url": "https://www.tradingview.com/script/Un7inhjq-Trend-Bias-Oscillator/",
+   "added": "2026-11-19",
+   "uses": "structure-bias filter (+1 / -1), entry (SC673)"
   }
  ],
  "sources": [
@@ -17970,7 +18465,7 @@
    "name": "FXStreet",
    "url": "https://www.fxstreet.com/education",
    "look_for": "education articles with strategy rules; post-release market reactions (bot 7)",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "Autochartist",
@@ -17994,7 +18489,7 @@
    "name": "Forex Factory (forum + calendar)",
    "url": "https://www.forexfactory.com/forum/71-trading-systems",
    "look_for": "trading-system threads with first-post rules; the calendar for bot 7",
-   "last_scanned": "2026-11-18"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "Myfxbook",
@@ -18042,19 +18537,19 @@
    "name": "BabyPips (school + forum)",
    "url": "https://forums.babypips.com/c/trading-systems/free-forex-trading-systems/15",
    "look_for": "free trading systems threads with rules",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "Investopedia",
    "url": "https://www.investopedia.com/trading-4427765",
    "look_for": "indicator definitions and classic strategies",
-   "last_scanned": "2026-11-18"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "YouTube",
    "url": "https://www.youtube.com/results?search_query=trading+strategy+rules",
    "look_for": "strategy videos (via transcripts / summaries)",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "Udemy",
@@ -18078,25 +18573,25 @@
    "name": "Reddit r/algotrading, r/Daytrading, r/Forex",
    "url": "https://www.reddit.com/r/algotrading/",
    "look_for": "shared systems with backtests",
-   "last_scanned": "2026-11-18"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "QuantConnect / Quantpedia",
    "url": "https://www.quantconnect.com/forum/",
    "look_for": "community algorithms, documented anomalies",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "GitHub (freqtrade, jesse, backtrader)",
    "url": "https://github.com/freqtrade/freqtrade-strategies",
    "look_for": "open strategy code",
-   "last_scanned": "2026-11-17"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "StockSharp examples",
    "url": "https://doc.stocksharp.com/en/api-examples/",
    "look_for": "hundreds of documented strategy examples with exact rules",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "LuxAlgo library",
@@ -18120,19 +18615,19 @@
    "name": "edgeful reports",
    "url": "https://docs.edgeful.com/",
    "look_for": "session statistics setups (power hour, ORB, gap fill) with exact windows",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "TASC Traders' Tips (Technical Analysis of Stocks & Commodities)",
    "url": "https://www.traders.com/Documentation/FEEDbk_docs/",
    "look_for": "each month's new indicator with code (Ehlers and others) and the platform rules",
-   "last_scanned": "2026-11-18"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "ProRealCode (strategy + indicator library, forum)",
    "url": "https://www.prorealcode.com/prorealtime-trading-strategies/",
    "look_for": "ProBuilder strategies with exact code (DAX / indices intraday), indicator ports with formulas",
-   "last_scanned": "2026-11-16"
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "George Pruitt - Building Winning Trading Systems with TradeStation (book systems)",
@@ -18155,8 +18650,8 @@
   {
    "name": "Oxford Capital Strategies (oxfordstrat.com)",
    "url": "https://oxfordstrat.com/trading-strategies/",
-   "look_for": "fully specified futures systems with parameters (Livermore, dual momentum, Crabel NR/WR/ORBP, gap types, doji, Aroon, Ross hook, MACD, RSI model) - many pages not yet read (narrow-range, aroon-2/3, doji-2, macd-2, ross-hook-filter, long equity, volatility squeeze)",
-   "last_scanned": "2026-11-18"
+   "look_for": "fully specified futures systems with parameters (Livermore, dual momentum, Crabel NR/WR/ORBP, gap types, doji, Aroon, Ross hook, MACD, RSI model) - many pages not yet read (narrow-range, doji-2, macd-2, long equity, volatility squeeze); Aroon breakout 3 built (SC656), Aroon crossover = TV41, Ross hook filter = SC430",
+   "last_scanned": "2026-11-19"
   },
   {
    "name": "Algomatic Trading Database (Substack)",

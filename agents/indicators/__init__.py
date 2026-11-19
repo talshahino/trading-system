@@ -93,6 +93,8 @@ from agents.indicators.classic10 import (acd, better_volume, brooks_count, camar
 from agents.indicators.classic11 import (aco, adaptive_resonance, adaptive_st_osc, dynamic_range_filter, frequency_momentum,
                                          kalman_trend_osc, lwti, poly_keltner, precision_trend, prime_bands, radius_trend, tdfi,
                                          trend_pulse, trend_reversal_prob, vcp, velez_bars, vol_gaussian_bands, wavetrend_x, zl_flow)
+from agents.indicators.classic12 import (aroon, l1_trend_swing, open_type, trend_bias_osc, true_trend_osc,
+                                         vol_gated_trend)
 TV = "https://www.tradingview.com/script/"
 TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
@@ -456,6 +458,12 @@ INDICATORS = {
     "aco": (aco, "Adaptive RSI + KAMA + z-score with ADX regime signals (AlwaysBearish, our reconstruction)", "https://kr.tradingview.com/script/vEMWSCP3-Adaptive-Composite-Oscillator-ACO/"),
     "wavetrend_x": (wavetrend_x, "WaveTrend with a Kalman line, Shannon entropy gate and percentile rank (TradeSymbiotic, our reconstruction)", TV + "EsEtVFFX-WaveTrend-X/"),
     "zl_flow": (zl_flow, "T3 8 / 0.7 slope + zero-lag WMA 9 slope agreement", "https://tradingview.com/script/hpuNvNCf-TREND-and-ZL-FLOW"),
+    "aroon": (aroon, "Aroon Up / Down / Oscillator 25 (Chande; Oxford Capital Aroon breakout formula)", "https://oxfordstrat.com/trading-strategies/aroon-indicator-breakout-3/"),
+    "open_type": (open_type, "Market Profile open type in the first 30 minutes (drive / test-drive / rejection-reverse / auction, thresholds ours) + initial balance and its ratio to the 20-session mean", "https://nexusfi.com/a/concepts/open-type-classification"),
+    "vol_gated_trend": (vol_gated_trend, "Volatility-Gated Trend Oscillator: deviation from EMA20 locked past a mean-absolute-deviation noise floor, / ATR (QuantAlgo, our reconstruction)", TV + "NPpLwEi1-Volatility-Gated-Trend-Oscillator-QuantAlgo/"),
+    "l1_trend_swing": (l1_trend_swing, "L1 Trend Swing Oscillator: weighted-price histogram, range trend line, ratio differential, swing buy / sell (blackcat1402, our reconstruction)", TV + "jtgTVb4r-blackcat-L1-Trend-Swing-Oscillator/"),
+    "true_trend_osc": (true_trend_osc, "True Trend Oscillator: bull = sqrt(RSI x StochATR), bear = sqrt((100 - RSI) x StochATR), RQ-kernel smoothed (MYNAMEISBRANDON, kernel and lengths ours)", TV + "egNqhlKM-True-Trend-Oscillator-Price-Envelope/"),
+    "trend_bias_osc": (trend_bias_osc, "Trend Bias Oscillator: close between the last confirmed swing high / low (20 / 5) as -100..100 + structure bias (tgregg75, first version)", TV + "Un7inhjq-Trend-Bias-Oscillator/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

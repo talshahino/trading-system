@@ -1,5 +1,5 @@
 {
- "at": "2026-11-18T20:08:10+00:00",
+ "at": "2026-11-19T03:54:45+00:00",
  "version": 2,
  "symbols": [
   "GER40",
@@ -10,10 +10,17 @@
   "JP225",
   "XAUUSD",
   "EURUSD",
-  "GBPUSD"
+  "GBPUSD",
+  "USDJPY",
+  "AUDUSD",
+  "USDCAD",
+  "USDCHF",
+  "NZDUSD",
+  "EURJPY",
+  "GBPJPY"
  ],
- "partial": true,
- "rows": 1529,
+ "partial": false,
+ "rows": 1946,
  "split": "2026-01-01",
  "test_from": "2025-04-30",
  "filters": [
@@ -33,94 +40,130 @@
  "study": {
   "EV02": {
    "filters": {
-    "adx_trend": {
-     "train": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.3758,
-      "t": null,
-      "win": 60.0,
-      "sum": 1.91
-     },
-     "unseen": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.1233,
-      "t": null,
-      "win": 100.0,
-      "sum": 0.62
-     }
-    },
     "bbw_p20": {
      "train": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.3758,
-      "t": null,
-      "win": 60.0,
-      "sum": 1.91
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.4566,
+      "t": 2.24,
+      "win": 63.8,
+      "sum": 6.54
      },
      "unseen": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.1233,
-      "t": null,
-      "win": 100.0,
-      "sum": 0.62
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.1359,
+      "t": 2.99,
+      "win": 92.9,
+      "sum": 1.9
      }
     },
     "none": {
      "train": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.3758,
-      "t": null,
-      "win": 60.0,
-      "sum": 1.91
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.4566,
+      "t": 2.24,
+      "win": 63.8,
+      "sum": 6.54
      },
      "unseen": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.1233,
-      "t": null,
-      "win": 100.0,
-      "sum": 0.62
-     }
-    },
-    "rsi_trend": {
-     "train": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.3758,
-      "t": null,
-      "win": 60.0,
-      "sum": 1.91
-     },
-     "unseen": {
-      "n": 3,
-      "eff_n": 3.0,
-      "mean": 0.1932,
-      "t": null,
-      "win": 100.0,
-      "sum": 0.58
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.1359,
+      "t": 2.99,
+      "win": 92.9,
+      "sum": 1.9
      }
     },
     "vol_high": {
      "train": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.3758,
-      "t": null,
-      "win": 60.0,
-      "sum": 1.91
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.4566,
+      "t": 2.24,
+      "win": 63.8,
+      "sum": 6.54
      },
      "unseen": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.1233,
-      "t": null,
-      "win": 100.0,
-      "sum": 0.62
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.1359,
+      "t": 2.99,
+      "win": 92.9,
+      "sum": 1.9
+     }
+    },
+    "adx_trend": {
+     "train": {
+      "n": 12,
+      "eff_n": 12.0,
+      "mean": 0.4475,
+      "t": 1.96,
+      "win": 66.1,
+      "sum": 5.52
+     },
+     "unseen": {
+      "n": 12,
+      "eff_n": 12.0,
+      "mean": 0.1306,
+      "t": 2.65,
+      "win": 91.7,
+      "sum": 1.57
+     }
+    },
+    "chop_trend": {
+     "train": {
+      "n": 10,
+      "eff_n": 10.0,
+      "mean": 0.4691,
+      "t": 1.74,
+      "win": 69.2,
+      "sum": 4.85
+     },
+     "unseen": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": 0.1359,
+      "t": 2.99,
+      "win": 92.9,
+      "sum": 1.9
+     }
+    },
+    "rsi_trend": {
+     "train": {
+      "n": 11,
+      "eff_n": 11.0,
+      "mean": 0.4266,
+      "t": 2.48,
+      "win": 63.4,
+      "sum": 4.74
+     },
+     "unseen": {
+      "n": 12,
+      "eff_n": 12.0,
+      "mean": 0.1557,
+      "t": 3.07,
+      "win": 91.8,
+      "sum": 1.87
+     }
+    },
+    "ema9_20": {
+     "train": {
+      "n": 11,
+      "eff_n": 11.0,
+      "mean": 0.2872,
+      "t": 2.47,
+      "win": 45.6,
+      "sum": 3.14
+     },
+     "unseen": {
+      "n": 10,
+      "eff_n": 10.0,
+      "mean": 0.2058,
+      "t": 1.34,
+      "win": 80.0,
+      "sum": 2.05
      }
     },
     "vol_normal": {
@@ -141,50 +184,14 @@
       "sum": 0.26
      }
     },
-    "chop_trend": {
-     "train": {
-      "n": 2,
-      "eff_n": 2.0,
-      "mean": 0.6258,
-      "t": null,
-      "win": 100.0,
-      "sum": 1.28
-     },
-     "unseen": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.1233,
-      "t": null,
-      "win": 100.0,
-      "sum": 0.62
-     }
-    },
-    "ema9_20": {
-     "train": {
-      "n": 6,
-      "eff_n": 6.0,
-      "mean": 0.1734,
-      "t": 1.42,
-      "win": 33.3,
-      "sum": 1.04
-     },
-     "unseen": {
-      "n": 3,
-      "eff_n": 3.0,
-      "mean": 0.378,
-      "t": null,
-      "win": 100.0,
-      "sum": 1.14
-     }
-    },
     "chop_range": {
      "train": {
-      "n": 3,
-      "eff_n": 3.0,
-      "mean": 0.2094,
+      "n": 4,
+      "eff_n": 4.0,
+      "mean": 0.4252,
       "t": null,
-      "win": 33.3,
-      "sum": 0.63
+      "win": 50.3,
+      "sum": 1.68
      },
      "unseen": {
       "n": 0,
@@ -197,43 +204,61 @@
     },
     "with_trend200": {
      "train": {
-      "n": 0,
-      "eff_n": 0.0,
-      "mean": null,
-      "t": null,
-      "win": null,
-      "sum": 0.0
+      "n": 8,
+      "eff_n": 8.0,
+      "mean": 0.1525,
+      "t": 0.6,
+      "win": 37.9,
+      "sum": 1.14
      },
      "unseen": {
-      "n": 4,
-      "eff_n": 4.0,
-      "mean": 0.265,
+      "n": 15,
+      "eff_n": 15.0,
+      "mean": 0.1584,
+      "t": 1.46,
+      "win": 73.4,
+      "sum": 2.36
+     }
+    },
+    "adx_range": {
+     "train": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": 0.511,
+      "t": null,
+      "win": 50.2,
+      "sum": 1.02
+     },
+     "unseen": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": 0.1676,
       "t": null,
       "win": 100.0,
-      "sum": 1.06
+      "sum": 0.33
      }
     }
    },
    "none": {
     "train": {
-     "n": 5,
-     "eff_n": 5.0,
-     "mean": 0.3758,
-     "t": null,
-     "win": 60.0,
-     "sum": 1.91
+     "n": 14,
+     "eff_n": 14.0,
+     "mean": 0.4566,
+     "t": 2.24,
+     "win": 63.8,
+     "sum": 6.54
     },
     "unseen": {
-     "n": 5,
-     "eff_n": 5.0,
-     "mean": 0.1233,
-     "t": null,
-     "win": 100.0,
-     "sum": 0.62
+     "n": 14,
+     "eff_n": 14.0,
+     "mean": 0.1359,
+     "t": 2.99,
+     "win": 92.9,
+     "sum": 1.9
     }
    },
-   "tried": 9,
-   "t_bar": 2.1,
+   "tried": 10,
+   "t_bar": 2.15,
    "pick": null,
    "robust": {
     "better_on_2025": 0,
@@ -241,6 +266,42 @@
     "which": []
    },
    "by_symbol_none": {
+    "AUDUSD": {
+     "train": {
+      "n": 4,
+      "eff_n": 4.0,
+      "mean": 0.6437,
+      "t": null,
+      "win": 74.2,
+      "sum": 2.63
+     },
+     "unseen": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": 0.0277,
+      "t": null,
+      "win": 50.9,
+      "sum": 0.05
+     }
+    },
+    "EURJPY": {
+     "train": {
+      "n": 1,
+      "eff_n": 1.0,
+      "mean": -0.0378,
+      "t": null,
+      "win": 0.0,
+      "sum": -0.04
+     },
+     "unseen": {
+      "n": 0,
+      "eff_n": 0.0,
+      "mean": null,
+      "t": null,
+      "win": null,
+      "sum": 0.0
+     }
+    },
     "EURUSD": {
      "train": {
       "n": 1,
@@ -259,6 +320,24 @@
       "sum": 0.03
      }
     },
+    "GBPJPY": {
+     "train": {
+      "n": 1,
+      "eff_n": 1.0,
+      "mean": 0.7,
+      "t": null,
+      "win": 100.0,
+      "sum": 0.7
+     },
+     "unseen": {
+      "n": 0,
+      "eff_n": 0.0,
+      "mean": null,
+      "t": null,
+      "win": null,
+      "sum": 0.0
+     }
+    },
     "GBPUSD": {
      "train": {
       "n": 1,
@@ -275,6 +354,24 @@
       "t": null,
       "win": 100.0,
       "sum": 0.01
+     }
+    },
+    "NZDUSD": {
+     "train": {
+      "n": 1,
+      "eff_n": 1.0,
+      "mean": 1.4026,
+      "t": null,
+      "win": 100.0,
+      "sum": 1.4
+     },
+     "unseen": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": 0.3145,
+      "t": null,
+      "win": 100.0,
+      "sum": 0.63
      }
     },
     "US100": {
@@ -331,6 +428,60 @@
       "sum": 0.26
      }
     },
+    "USDCAD": {
+     "train": {
+      "n": 1,
+      "eff_n": 1.0,
+      "mean": -1.1172,
+      "t": null,
+      "win": 0.0,
+      "sum": -1.12
+     },
+     "unseen": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": 0.0293,
+      "t": null,
+      "win": 100.0,
+      "sum": 0.06
+     }
+    },
+    "USDCHF": {
+     "train": {
+      "n": 1,
+      "eff_n": 1.0,
+      "mean": 1.0564,
+      "t": null,
+      "win": 100.0,
+      "sum": 1.06
+     },
+     "unseen": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": 0.2694,
+      "t": null,
+      "win": 100.0,
+      "sum": 0.54
+     }
+    },
+    "USDJPY": {
+     "train": {
+      "n": 0,
+      "eff_n": 0.0,
+      "mean": null,
+      "t": null,
+      "win": null,
+      "sum": 0.0
+     },
+     "unseen": {
+      "n": 1,
+      "eff_n": 1.0,
+      "mean": 0.0043,
+      "t": null,
+      "win": 100.0,
+      "sum": 0.0
+     }
+    },
     "XAUUSD": {
      "train": {
       "n": 0,
@@ -353,176 +504,212 @@
   },
   "EV03": {
    "filters": {
-    "ema9_20": {
+    "with_trend200": {
      "train": {
-      "n": 23,
-      "eff_n": 23.0,
-      "mean": 0.3469,
-      "t": 0.96,
-      "win": 48.4,
-      "sum": 7.37
+      "n": 40,
+      "eff_n": 39.9,
+      "mean": 0.3885,
+      "t": 1.32,
+      "win": 45.5,
+      "sum": 15.0
      },
      "unseen": {
-      "n": 43,
-      "eff_n": 43.0,
-      "mean": -0.0802,
-      "t": -0.27,
-      "win": 30.3,
-      "sum": -3.44
-     }
-    },
-    "chop_trend": {
-     "train": {
-      "n": 10,
-      "eff_n": 10.0,
-      "mean": 0.5928,
-      "t": 1.21,
-      "win": 60.3,
-      "sum": 5.79
-     },
-     "unseen": {
-      "n": 12,
-      "eff_n": 12.0,
-      "mean": 0.011,
-      "t": 0.02,
-      "win": 33.4,
-      "sum": 0.12
+      "n": 67,
+      "eff_n": 67.0,
+      "mean": 0.1316,
+      "t": 0.57,
+      "win": 40.3,
+      "sum": 8.87
      }
     },
     "vol_high": {
      "train": {
-      "n": 14,
-      "eff_n": 14.0,
-      "mean": 0.2634,
-      "t": 0.68,
-      "win": 50.9,
-      "sum": 3.31
-     },
-     "unseen": {
-      "n": 20,
-      "eff_n": 20.0,
-      "mean": -0.4459,
-      "t": -1.29,
-      "win": 25.1,
-      "sum": -8.96
-     }
-    },
-    "adx_trend": {
-     "train": {
-      "n": 12,
-      "eff_n": 12.0,
-      "mean": 0.1749,
-      "t": 0.42,
-      "win": 50.7,
-      "sum": 1.86
-     },
-     "unseen": {
-      "n": 19,
-      "eff_n": 19.0,
-      "mean": -0.4135,
-      "t": -1.14,
-      "win": 26.6,
-      "sum": -7.95
-     }
-    },
-    "bbw_p20": {
-     "train": {
-      "n": 16,
-      "eff_n": 16.0,
-      "mean": 0.07,
-      "t": 0.19,
-      "win": 44.5,
-      "sum": 0.79
-     },
-     "unseen": {
-      "n": 23,
-      "eff_n": 23.0,
-      "mean": -0.5392,
-      "t": -1.71,
-      "win": 26.3,
-      "sum": -12.47
-     }
-    },
-    "with_trend200": {
-     "train": {
-      "n": 25,
-      "eff_n": 25.0,
-      "mean": 0.0312,
-      "t": 0.11,
-      "win": 44.6,
-      "sum": 0.32
-     },
-     "unseen": {
-      "n": 43,
-      "eff_n": 43.0,
-      "mean": -0.1875,
-      "t": -0.7,
-      "win": 30.4,
-      "sum": -8.26
-     }
-    },
-    "none": {
-     "train": {
-      "n": 17,
-      "eff_n": 17.0,
-      "mean": -0.0106,
-      "t": -0.03,
-      "win": 41.8,
-      "sum": -0.47
-     },
-     "unseen": {
       "n": 24,
       "eff_n": 24.0,
-      "mean": -0.3164,
-      "t": -0.85,
-      "win": 29.3,
-      "sum": -7.66
+      "mean": 0.5897,
+      "t": 1.54,
+      "win": 50.7,
+      "sum": 13.85
+     },
+     "unseen": {
+      "n": 38,
+      "eff_n": 38.0,
+      "mean": -0.0536,
+      "t": -0.18,
+      "win": 34.2,
+      "sum": -1.87
+     }
+    },
+    "ema9_20": {
+     "train": {
+      "n": 34,
+      "eff_n": 34.0,
+      "mean": 0.3304,
+      "t": 1.09,
+      "win": 44.7,
+      "sum": 10.44
+     },
+     "unseen": {
+      "n": 71,
+      "eff_n": 71.0,
+      "mean": -0.0401,
+      "t": -0.19,
+      "win": 36.6,
+      "sum": -2.68
      }
     },
     "vol_normal": {
      "train": {
-      "n": 11,
-      "eff_n": 11.0,
-      "mean": -0.1537,
-      "t": -0.31,
-      "win": 27.8,
-      "sum": -1.9
-     },
-     "unseen": {
       "n": 15,
       "eff_n": 15.0,
-      "mean": -0.8981,
-      "t": -3.34,
-      "win": 20.1,
-      "sum": -13.51
+      "mean": 0.5799,
+      "t": 1.01,
+      "win": 40.2,
+      "sum": 8.72
+     },
+     "unseen": {
+      "n": 19,
+      "eff_n": 19.0,
+      "mean": -0.5876,
+      "t": -1.62,
+      "win": 26.4,
+      "sum": -11.06
+     }
+    },
+    "chop_trend": {
+     "train": {
+      "n": 16,
+      "eff_n": 16.0,
+      "mean": 0.4972,
+      "t": 1.04,
+      "win": 56.3,
+      "sum": 8.13
+     },
+     "unseen": {
+      "n": 25,
+      "eff_n": 25.0,
+      "mean": 0.2385,
+      "t": 0.64,
+      "win": 39.9,
+      "sum": 6.13
+     }
+    },
+    "bbw_p20": {
+     "train": {
+      "n": 28,
+      "eff_n": 28.0,
+      "mean": 0.2476,
+      "t": 0.68,
+      "win": 43.2,
+      "sum": 6.92
+     },
+     "unseen": {
+      "n": 40,
+      "eff_n": 40.0,
+      "mean": -0.1386,
+      "t": -0.47,
+      "win": 32.5,
+      "sum": -5.4
+     }
+    },
+    "none": {
+     "train": {
+      "n": 30,
+      "eff_n": 30.0,
+      "mean": 0.1407,
+      "t": 0.4,
+      "win": 40.3,
+      "sum": 4.21
+     },
+     "unseen": {
+      "n": 42,
+      "eff_n": 42.0,
+      "mean": -0.017,
+      "t": -0.06,
+      "win": 35.7,
+      "sum": -0.57
      }
     },
     "adx_range": {
      "train": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": -0.4645,
-      "t": null,
-      "win": 20.1,
-      "sum": -2.32
+      "n": 10,
+      "eff_n": 10.0,
+      "mean": 0.2255,
+      "t": 0.33,
+      "win": 30.0,
+      "sum": 2.23
      },
      "unseen": {
-      "n": 5,
-      "eff_n": 5.0,
-      "mean": 0.0518,
-      "t": null,
-      "win": 39.9,
-      "sum": 0.29
+      "n": 9,
+      "eff_n": 9.0,
+      "mean": 0.2971,
+      "t": 0.36,
+      "win": 44.4,
+      "sum": 2.75
+     }
+    },
+    "adx_trend": {
+     "train": {
+      "n": 20,
+      "eff_n": 20.0,
+      "mean": 0.0994,
+      "t": 0.25,
+      "win": 45.4,
+      "sum": 1.98
+     },
+     "unseen": {
+      "n": 33,
+      "eff_n": 33.0,
+      "mean": -0.103,
+      "t": -0.34,
+      "win": 33.4,
+      "sum": -3.32
+     }
+    },
+    "rsi_trend": {
+     "train": {
+      "n": 38,
+      "eff_n": 37.9,
+      "mean": -0.0724,
+      "t": -0.25,
+      "win": 34.6,
+      "sum": -2.96
+     },
+     "unseen": {
+      "n": 65,
+      "eff_n": 65.0,
+      "mean": 0.0676,
+      "t": 0.3,
+      "win": 40.1,
+      "sum": 4.39
+     }
+    },
+    "chop_range": {
+     "train": {
+      "n": 14,
+      "eff_n": 14.0,
+      "mean": -0.2768,
+      "t": -0.57,
+      "win": 21.7,
+      "sum": -3.92
+     },
+     "unseen": {
+      "n": 17,
+      "eff_n": 17.0,
+      "mean": -0.3932,
+      "t": -0.81,
+      "win": 29.6,
+      "sum": -6.7
      }
     },
     "vol_low": {
      "train": {
-      "n": 3,
-      "eff_n": 3.0,
-      "mean": -1.2602,
-      "t": null,
+      "n": 6,
+      "eff_n": 6.0,
+      "mean": -1.6124,
+      "t": -9.13,
       "win": 0.0,
-      "sum": -3.78
+      "sum": -9.65
      },
      "unseen": {
       "n": 4,
@@ -532,94 +719,94 @@
       "win": 50.4,
       "sum": 1.3
      }
-    },
-    "rsi_trend": {
-     "train": {
-      "n": 23,
-      "eff_n": 23.0,
-      "mean": -0.2041,
-      "t": -0.74,
-      "win": 35.2,
-      "sum": -5.01
-     },
-     "unseen": {
-      "n": 38,
-      "eff_n": 38.0,
-      "mean": -0.0732,
-      "t": -0.25,
-      "win": 34.4,
-      "sum": -3.0
-     }
-    },
-    "chop_range": {
-     "train": {
-      "n": 7,
-      "eff_n": 7.0,
-      "mean": -0.8879,
-      "t": -3.99,
-      "win": 14.8,
-      "sum": -6.26
-     },
-     "unseen": {
-      "n": 12,
-      "eff_n": 12.0,
-      "mean": -0.6456,
-      "t": -1.25,
-      "win": 25.2,
-      "sum": -7.78
-     }
     }
    },
    "none": {
     "train": {
-     "n": 17,
-     "eff_n": 17.0,
-     "mean": -0.0106,
-     "t": -0.03,
-     "win": 41.8,
-     "sum": -0.47
+     "n": 30,
+     "eff_n": 30.0,
+     "mean": 0.1407,
+     "t": 0.4,
+     "win": 40.3,
+     "sum": 4.21
     },
     "unseen": {
-     "n": 24,
-     "eff_n": 24.0,
-     "mean": -0.3164,
-     "t": -0.85,
-     "win": 29.3,
-     "sum": -7.66
+     "n": 42,
+     "eff_n": 42.0,
+     "mean": -0.017,
+     "t": -0.06,
+     "win": 35.7,
+     "sum": -0.57
     }
    },
    "tried": 11,
    "t_bar": 2.19,
-   "pick": "ema9_20",
+   "pick": "with_trend200",
    "robust": {
     "better_on_2025": 6,
     "also_better_2026": 2,
     "which": [
      "chop_trend",
-     "ema9_20"
+     "with_trend200"
     ]
    },
    "pick_stats": {
     "train": {
-     "n": 23,
-     "eff_n": 23.0,
-     "mean": 0.3469,
-     "t": 0.96,
-     "win": 48.4,
-     "sum": 7.37
+     "n": 40,
+     "eff_n": 39.9,
+     "mean": 0.3885,
+     "t": 1.32,
+     "win": 45.5,
+     "sum": 15.0
     },
     "unseen": {
-     "n": 43,
-     "eff_n": 43.0,
-     "mean": -0.0802,
-     "t": -0.27,
-     "win": 30.3,
-     "sum": -3.44
+     "n": 67,
+     "eff_n": 67.0,
+     "mean": 0.1316,
+     "t": 0.57,
+     "win": 40.3,
+     "sum": 8.87
     },
     "passes_bar": false,
-    "gain_2026": 4.22
+    "gain_2026": 9.44
    },
    "by_symbol_none": {
+    "AUDUSD": {
+     "train": {
+      "n": 4,
+      "eff_n": 4.0,
+      "mean": 0.5599,
+      "t": null,
+      "win": 49.3,
+      "sum": 2.5
+     },
+     "unseen": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": 4.8067,
+      "t": null,
+      "win": 100.0,
+      "sum": 9.61
+     }
+    },
+    "EURJPY": {
+     "train": {
+      "n": 0,
+      "eff_n": 0.0,
+      "mean": null,
+      "t": null,
+      "win": null,
+      "sum": 0.0
+     },
+     "unseen": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": -1.086,
+      "t": null,
+      "win": 0.0,
+      "sum": -2.17
+     }
+    },
     "EURUSD": {
      "train": {
       "n": 1,
@@ -638,11 +825,29 @@
       "sum": 0.43
      }
     },
+    "GBPJPY": {
+     "train": {
+      "n": 0,
+      "eff_n": 0.0,
+      "mean": null,
+      "t": null,
+      "win": null,
+      "sum": 0.0
+     },
+     "unseen": {
+      "n": 1,
+      "eff_n": 1.0,
+      "mean": -1.273,
+      "t": null,
+      "win": 0.0,
+      "sum": -1.27
+     }
+    },
     "GBPUSD": {
      "train": {
       "n": 3,
       "eff_n": 3.0,
-      "mean": -0.6274,
+      "mean": -0.6275,
       "t": null,
       "win": 32.2,
       "sum": -1.83
@@ -660,7 +865,7 @@
      "train": {
       "n": 2,
       "eff_n": 2.0,
-      "mean": 1.1457,
+      "mean": 1.1458,
       "t": null,
       "win": 51.5,
       "sum": 2.16
@@ -672,6 +877,24 @@
       "t": null,
       "win": null,
       "sum": 0.0
+     }
+    },
+    "NZDUSD": {
+     "train": {
+      "n": 2,
+      "eff_n": 2.0,
+      "mean": -0.0917,
+      "t": null,
+      "win": 49.8,
+      "sum": -0.17
+     },
+     "unseen": {
+      "n": 1,
+      "eff_n": 1.0,
+      "mean": 0.9754,
+      "t": null,
+      "win": 100.0,
+      "sum": 0.98
      }
     },
     "UK100": {
@@ -696,7 +919,7 @@
      "train": {
       "n": 5,
       "eff_n": 5.0,
-      "mean": -0.0912,
+      "mean": -0.0911,
       "t": null,
       "win": 41.0,
       "sum": -0.54
@@ -732,7 +955,7 @@
      "train": {
       "n": 2,
       "eff_n": 2.0,
-      "mean": -0.0527,
+      "mean": -0.0526,
       "t": null,
       "win": 51.4,
       "sum": -0.16
@@ -744,6 +967,60 @@
       "t": null,
       "win": 0.0,
       "sum": -6.22
+     }
+    },
+    "USDCAD": {
+     "train": {
+      "n": 6,
+      "eff_n": 6.0,
+      "mean": 0.5898,
+      "t": 0.58,
+      "win": 33.7,
+      "sum": 3.38
+     },
+     "unseen": {
+      "n": 6,
+      "eff_n": 6.0,
+      "mean": 0.1208,
+      "t": 0.19,
+      "win": 50.0,
+      "sum": 0.76
+     }
+    },
+    "USDCHF": {
+     "train": {
+      "n": 0,
+      "eff_n": 0.0,
+      "mean": null,
+      "t": null,
+      "win": null,
+      "sum": 0.0
+     },
+     "unseen": {
+      "n": 3,
+      "eff_n": 3.0,
+      "mean": -0.2335,
+      "t": null,
+      "win": 33.2,
+      "sum": -0.68
+     }
+    },
+    "USDJPY": {
+     "train": {
+      "n": 1,
+      "eff_n": 1.0,
+      "mean": -1.0361,
+      "t": null,
+      "win": 0.0,
+      "sum": -1.04
+     },
+     "unseen": {
+      "n": 3,
+      "eff_n": 3.0,
+      "mean": -0.0448,
+      "t": null,
+      "win": 33.2,
+      "sum": -0.12
      }
     },
     "XAUUSD": {
@@ -1108,7 +1385,7 @@
      "train": {
       "n": 4,
       "eff_n": 4.0,
-      "mean": 0.4254,
+      "mean": 0.4255,
       "t": null,
       "win": 25.8,
       "sum": 1.51
@@ -1126,7 +1403,7 @@
      "train": {
       "n": 5,
       "eff_n": 5.0,
-      "mean": 0.1372,
+      "mean": 0.1373,
       "t": null,
       "win": 20.7,
       "sum": 0.47

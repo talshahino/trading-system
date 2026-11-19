@@ -765,7 +765,8 @@ def straddle_trades(sid, name, d1, spread_now, p):
                     "exit_time": None if x_["open"] else pd.Timestamp(x_["exit_time"]).isoformat(),
                     "exit": None if x_["open"] else float(x_["exit_px"]), "r": round(r_gross - cost, 4),
                     "reason": "" if x_["open"] else ("זמן" if float(x_["exit_px"]) not in (float(x_["stop_px"]), float(x_["entry_px"])) else "סטופ"),
-                    "rel": pd.Timestamp(x_["rel"]).isoformat(), "event": event_of(name, x_["rel"])})
+                    "rel": pd.Timestamp(x_["rel"]).isoformat(), "event": event_of(name, x_["rel"]),
+                    "cost_r": round(cost, 4)})
     return out
 
 
@@ -786,6 +787,34 @@ def straddle_cap(seen, known):
             del seen[t["id"]]
         else:
             n[t["rel"]] = n.get(t["rel"], 0) + 1
+    return seen
+
+
+COST_SKIPPED = set()             # trade ids skipped for their cost (card 1dfedee52375): never taken later
+
+
+def cost_cap(seen, known):
+    """Card 1dfedee52375 (19.11.2026, task mgr1811cost; reports/agents/bot7/cost_study.json): no new trade whose cost
+    (spread + commission - swap, over the stop's distance) is above the plan's max_cost_r (0.75R on EV03 / EV04 / EV08).
+    Chosen on 2025 over all EV families: 2025 +236.5R -> +240.9R, 2026 +267.4R -> +274.0R (EV03 2026 -1.9R -> +4.4R).
+    A trade the bot already holds always stays; a skipped one is not taken later when the spread narrows."""
+    pl = plans()
+    for k in list(seen):
+        t = seen[k]
+        if k in known:
+            continue
+        if k in COST_SKIPPED:
+            del seen[k]
+            continue
+        cap = (pl.get(f"{t.get('sid')}|{t.get('tf')}|{t.get('symbol')}") or {}).get("max_cost_r")
+        try:
+            cap = None if cap is None else float(cap)
+        except (TypeError, ValueError):
+            cap = None
+        if cap is not None and t.get("cost_r") is not None and float(t["cost_r"]) > cap:
+            COST_SKIPPED.add(k)
+            log(f"{k}: skipped, cost {float(t['cost_r']):.2f}R over {cap:g}R (card 1dfedee52375)")
+            del seen[k]
     return seen
 
 
@@ -864,7 +893,7 @@ def trades_of(name, d5, spread_now, d1=None, extra=(), hi=None, ref=None):
                         "stop_now": float(x["stop_last"]) if open_ and "stop_last" in x and x["stop_last"] == x["stop_last"] else None,
                         "status": "open" if open_ else "closed", "exit_time": None if open_ else pd.Timestamp(x["exit_time"]).isoformat(),
                         "exit": None if open_ else float(x["exit_px"]), "r": round(r_gross - cost_r, 4),
-                        "reason": "" if open_ else str(x["reason"]),
+                        "reason": "" if open_ else str(x["reason"]), "cost_r": round(cost_r, 4),
                         "event": surprise_event(x["time"]) if sid in SURPRISE else event_of(name, x["time"])})
     return out
 
@@ -1238,6 +1267,7 @@ def main():
                 for t in trades_of(name, d5, sp.get(name), d1, ex, hi, src.breaks_ref(name)):
                     seen[t["id"]] = t
             seen = straddle_cap(seen, trades)
+            seen = cost_cap(seen, trades)                   # no trade whose cost is over 0.75R (card 1dfedee52375)
             for k, t in seen.items():
                 old = trades.get(k)
                 if old and old["status"] == "closed":

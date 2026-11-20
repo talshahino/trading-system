@@ -771,7 +771,8 @@ function provWaiting(n, s) {
   const have = new Set((s.positions || []).map(p => String(p.ticket)));
   return s.watch.filter(t => t.status === "pending" && t.tal && !String(t.tal).startsWith("sc:") && !t.v1m && !t.v5 && !t.v4
     && t.entry != null && t.stop != null && !t.skipped && !have.has(String(t.id)) && !PROVO[n + "|" + t.id]
-    && !(rvNeeded(t) && (((WB.marks || {})[t.id] || t.mark || {}).take !== "yes")));
+    && !(rvNeeded(t) && (((WB.marks || {})[t.id] || t.mark || {}).take !== "yes"))
+    && !yesStale((WB.marks || {})[t.id] || t.mark || {}, Date.now()));   // a yes over 2h old is asked again at the fill (20.11.2026)
 }
 function provOpen(n, s, t) {
   const risk = Math.round((s.balance || 100000) * PROV_RISK[n] * 100) / 100, buy = t.dir > 0;
@@ -2490,7 +2491,7 @@ function wbRender(box = $("wbBody")) {
   // the ones waiting for his answer first, then the newest (user, 18.11.2026: "I got a review notification and I don't see
   // it in the marks tab" - the list was by instrument, the question 50th of 99)
   const tk_ = t => String(t.time || t.setup_t || "");
-  const wait_ = t => rvNeeded(t) && !((WB.marks || {})[t.id] || t.mark || {}).take;   // answered = not waiting (18.11.2026)
+  const wait_ = t => reaskWait(t) || (rvNeeded(t) && !((WB.marks || {})[t.id] || t.mark || {}).take);   // answered = not waiting (18.11.2026)
   const trades = (d.watch || []).filter(t => t.status !== "cancelled" && (box.id === "wbBody" || t.geo))
     .sort((a, b) => (wait_(b) - wait_(a)) || tk_(b).localeCompare(tk_(a)));
   const waiting_ = trades.filter(wait_).length;
@@ -2797,8 +2798,13 @@ async function comboFill() {
   $("comboCard").innerHTML = `<div class="h4" style="margin-top:18px">איזה נכס טוב לאיזה צמד גרפים</div><div class="mut" style="margin-bottom:6px">R ממוצע לעסקה (מספר עסקאות). ${esc((d.check || {}).note || "")}</div>
     <div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th>נכס</th><th>צמד גרפים</th><th>2025</th><th>2026</th><th>חי</th><th></th></tr>${rows}</table></div></div>`;
 }
-const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא סימנת \"הייתי לוקח\" לפני הכניסה", levels: "לא נכנסה · המחיר כבר עבר את הרמות"};
-const rvNeeded = t => t && t.status === "pending" && t.tal && t.asked;   // night ones too: only his yes enters (19.11.2026)
+const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא סימנת \"הייתי לוקח\" לפני הכניסה", levels: "לא נכנסה · המחיר כבר עבר את הרמות", tal_stale: "לא נכנסה · האישור היה בן יותר משעתיים ולא הגיעה תשובה חדשה"};
+const rvNeeded = t => t && ((t.status === "pending" && t.tal && t.asked) || reaskWait(t));
+// user, 20.11.2026: a "yes" given more than 2 hours before the fill is asked again when the price reaches the gap -
+// 10 minutes to answer, no answer = not taken (live/watch_own.py yes_stale / REASK_*)
+const yesStale = (m, at) => !!(m && m.take === "yes" && m.at && at - Date.parse(m.at) > 2 * 3600e3);
+const reaskWait = t => !!(t && t.reasked && t.status === "open" && !t.risk_usd && !t.skipped
+  && String((((WB.marks || {})[t.id] || t.mark || {}).at) || "").slice(0, 19) < String(t.reasked).slice(0, 19));   // night ones too: only his yes enters (19.11.2026)
 /* the same gap seen by another track (id "<sym>|tal|<dir>|<gap>|<track>"): one question - his answer goes to all of
    them (user, 18.11.2026: "two trades wait for my mark and the marks tab shows one") */
 const rvSiblings = id => { const g = String(id).split("|").slice(0, 4).join("|");
@@ -2810,7 +2816,8 @@ function rvPanel(t, dec) {
   const m = WB.marks[t.id] || t.mark || {}, buy = t.dir > 0, owner = getRole() !== "viewer";
   const showLtf = on => { const el = $("wcLtf"); if (el) el.style.display = on ? "" : "none"; };
   if (!owner) { box.innerHTML = ""; showLtf(true); return; }
-  if (t.status !== "pending" && (m.take || t.sc)) {
+  const again = reaskWait(t);
+  if (t.status !== "pending" && (m.take || t.sc) && !again) {
     box.innerHTML = m.take ? `<div class="card" style="margin-bottom:10px">ענית: <b>${m.take === "yes" ? "הייתי נכנס" + (m.entry || m.stop || m.target ? " (עם התיקונים שלך)" : "") : "לא הייתי נכנס"}</b></div>` : "";
     showLtf(true); return;
   }
@@ -2818,7 +2825,7 @@ function rvPanel(t, dec) {
   const done = m.take ? `<div class="mut" style="margin-top:8px">ענית: <b>${m.take === "yes" ? "כן" : "לא"}</b>. אפשר לשנות עד שהמחיר מגיע לכניסה.</div>` : "";
   box.innerHTML = `<div class="card" style="margin-bottom:10px;border:2px solid #C8922E">
       <b style="font-size:17px">היית נכנס?</b>
-      <div class="mut" style="margin:4px 0 10px">${t.sc ? `אסטרטגיית ${esc(t.sc.sid || "")} מצאה ${buy ? "קנייה" : "מכירה"} בגאפ (גרף ${(SCTF[t.sc.tf] || [t.sc.tf])[0]}). הבוט מחכה לך: אם תאשר, הכניסה תהיה במחיר של רגע האישור. בלי תשובה תוך כ־15 דקות, לא נכנסים.` : `דחף ${buy ? "עולה" : "יורד"} עם גאפ בגרף ${TFHE[(t.geo || {}).htf] || ""}, לפני התיקון. ${past ? "סמן: זה דחף וזיהוי נכון?" : "הבוט ייכנס רק לפי מה שתענה."}`}</div>
+      <div class="mut" style="margin:4px 0 10px">${t.sc ? `אסטרטגיית ${esc(t.sc.sid || "")} מצאה ${buy ? "קנייה" : "מכירה"} בגאפ (גרף ${(SCTF[t.sc.tf] || [t.sc.tf])[0]}). הבוט מחכה לך: אם תאשר, הכניסה תהיה במחיר של רגע האישור. בלי תשובה תוך כ־15 דקות, לא נכנסים.` : `דחף ${buy ? "עולה" : "יורד"} עם גאפ בגרף ${TFHE[(t.geo || {}).htf] || ""}, לפני התיקון. ${again ? "<b>אישרת לפני יותר משעתיים, והמחיר הגיע עכשיו לגאפ. עדיין נכנס? בלי תשובה תוך 10 דקות העסקה לא נכנסת.</b>" : past ? "סמן: זה דחף וזיהוי נכון?" : "הבוט ייכנס רק לפי מה שתענה."}`}</div>
       <div class="row" style="gap:8px"><button class="btn ok" id="rvYes">כן</button><button class="btn ghost" id="rvNo">לא</button></div>${done}
       <div id="rvLv"></div><div class="msg" id="rvMsg"></div></div>`;
   showLtf(m.take === "yes");

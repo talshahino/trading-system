@@ -971,6 +971,37 @@ def risk_left(o):
 _PUSHED_G = {}     # "<symbol>|tal|<dir>|<gap>" -> when its question was pushed
 
 
+REASK_H = 2          # user, 20.11.2026 (until the method is settled): a "yes" older than 2 hours at the fill is asked again
+REASK_WAIT = 10      # minutes for the new answer; none (or his quiet hours, or the trade closed meanwhile) -> not taken
+
+
+def yes_stale(mk, fill_t):
+    """19.11.2026: the afternoon's 13 longs were marked "yes" 2-11 hours before they filled, when the market still rose -
+    they filled after it turned. A yes given more than REASK_H before the fill is asked again at the fill."""
+    try:
+        return pd.Timestamp(fill_t) - pd.Timestamp(mk.get("at")) > pd.Timedelta(hours=REASK_H)
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def reask_push(rec):
+    """The question again at the fill (one per trade; not the per-gap dedupe of review_push)."""
+    key = os.environ.get("MANAGER_KEY")
+    if not key:
+        return "no key"
+    side = "קנייה" if rec["dir"] > 0 else "מכירה"
+    try:
+        r = requests.post("http://127.0.0.1:8760/push", timeout=8, headers={"X-Local": key},
+                          json={"title": f"בוט 5: עדיין נכנס? {rec['symbol']} {side}",
+                                "body": (f"{tal5_name(rec['tal'])} · אישרת לפני יותר משעתיים, והמחיר הגיע עכשיו לגאפ. "
+                                         f"ענה שוב תוך {REASK_WAIT} דקות - בלי תשובה העסקה לא נכנסת."),
+                                "urgent": True, "tag": f"ra:{rec['id']}"[:60], "action": "review", "id": rec["id"]})
+        return str(r.status_code)
+    except Exception as e:  # noqa: BLE001
+        log(f"reask push failed: {e}")
+        return "err"
+
+
 def review_push(rec):
     """-> what happened (kept on the trade: "pushed"). One gap seen by two tracks (e.g. 15m/1m and 15m/5m) is one
     question: one notification (user, 18.11.2026: "two trades wait for my mark and the marks tab has one") - the app
@@ -1890,7 +1921,8 @@ def main():
                            "extra": name in EXTRA and not x.get("v4"), "v4": bool(x.get("v4")), "v5": bool(x.get("v5")), "v1m": bool(x.get("v1m")),
                            "geo": x.get("geo") or old.get("geo"), "prop": x.get("prop"), "prop_imp0": x.get("prop_imp0"),
                            "custom": bool(x.get("custom")),
-                           "asked": old.get("asked"), "sleep": old.get("sleep"), "pushed": old.get("pushed")}
+                           "asked": old.get("asked"), "sleep": old.get("sleep"), "pushed": old.get("pushed"),
+                           "reasked": old.get("reasked"), "repushed": old.get("repushed")}
                     # the review (17.11.2026): ask once, when the setup first waits for its entry
                     rev_ = REVIEW_ON and bool(rec.get("tal")) and (
                         (not scout5_combo(rec["tal"]) and (rec.get("setup_t") or "") >= acc.setdefault("review_from", pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")))
@@ -1972,7 +2004,17 @@ def main():
                         mk_ = rec.get("mark") or {}
                         if rev_ and mk_.get("take") == "yes":
                             hour_ = side_ = dir_ = False     # his yes decides; only the risk limits below still hold
-                        if rev_ and mk_.get("take") == "no":
+                        stale_ = rev_ and mk_.get("take") == "yes" and yes_stale(mk_, rec["time"])
+                        if stale_ and rec["status"] == "open" and not quiet_at(pd.Timestamp.now(tz="UTC").isoformat()):
+                            if not rec.get("reasked"):
+                                rec["reasked"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
+                                rec["repushed"] = reask_push(rec)
+                        if stale_ and not (rec.get("reasked") and rec["status"] == "open"
+                                           and pd.Timestamp.now(tz="UTC") - pd.Timestamp(rec["reasked"]) <= pd.Timedelta(minutes=REASK_WAIT)):
+                            rec["skipped"] = "tal_stale"     # his yes is older than REASK_H at the fill, no new answer
+                        elif stale_:
+                            pass                             # waiting for his new answer (REASK_WAIT minutes) - not sized yet
+                        elif rev_ and mk_.get("take") == "no":
                             rec["skipped"] = "tal_no"        # Tal: would not enter
                         elif rev_ and mk_.get("take") != "yes":
                             # only a trade he marked "would take" goes in (user, 19.11.2026: "you do not enter trades I

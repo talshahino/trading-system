@@ -268,9 +268,20 @@
    {
     "combo": "SC154|5Min|XAUUSD",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-20T03:30:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.001,
     "edge_parts": [
      "בבדיקה של 2026: +0.03R לעסקה (288 עסקאות), בתקופת הבחירה +0.15R",
@@ -310,11 +321,12 @@
   "open": [
    "TV12|4Hour|ARM",
    "TV15|4Hour|USDCAD",
-   "SC154|5Min|XAUUSD",
    "SS07|15Min|NVDA"
   ],
-  "cut_only": [],
+  "cut_only": [
+   "SC154|5Min|XAUUSD"
+  ],
   "total_month_pct": 0.0,
-  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין"
+  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

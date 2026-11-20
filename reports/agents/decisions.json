@@ -1,7 +1,93 @@
 {
- "updated": "2026-11-20T02:58:45+00:00",
- "new": [],
+ "updated": "2026-11-20T03:11:15+00:00",
+ "new": [
+  "3018a4b671fe",
+  "b64e7231362b",
+  "27cf3662a364"
+ ],
  "decisions": [
+  {
+   "id": "3018a4b671fe",
+   "bot": "bot2",
+   "type": "card",
+   "card": "57648b5769c9",
+   "kind": "info",
+   "tier": "regular",
+   "title": "SC635|15Min|GBPJPY: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-20T03:11:15+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "b64e7231362b",
+   "bot": "bot2",
+   "type": "card",
+   "card": "9ffdde48b974",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC625|15Min|USDJPY: כניסה מדורגת ב־2 חלקים שווים (בנסיגה של 0.25R, בנסיגה של 0.5R), אותו סיכון כולל, סטופ ויעד; חלק שלא התמלא תוך 3 נרות מתבטל",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 56.0 עסקאות אפקטיביות, +0.15R מעל המצב הקיים) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.35 לאסטרטגיה: רווח +146.85% → +148.45% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.35 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3391,
+     "total": 146.85,
+     "worst_day": -2.46,
+     "max_dd": 5.62,
+     "near_days": 0,
+     "max_open": 5.06,
+     "max_side": 4.4,
+     "guard_cut": 185,
+     "guard_skipped": 36
+    },
+    "after": {
+     "trades": 3344,
+     "total": 148.45,
+     "worst_day": -2.35,
+     "max_dd": 5.97,
+     "near_days": 0,
+     "max_open": 5.06,
+     "max_side": 4.4,
+     "guard_cut": 179,
+     "guard_skipped": 35
+    }
+   },
+   "at": "2026-11-20T03:11:15+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "27cf3662a364",
+   "bot": "bot2",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC625|15Min|USDJPY",
+   "title": "SC625|15Min|USDJPY: סיכון ×0.5 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.17R לעסקה, 56.0 עסקאות אפקטיביות, +0.15R מעל המצב הקיים) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.35 לאסטרטגיה: רווח +146.85% → +148.45% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.35 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "b64e7231362b",
+   "star": true,
+   "action": {
+    "bot": "bot2",
+    "combo": "SC625|15Min|USDJPY",
+    "kind": "mult",
+    "value": 0.5,
+    "prev": 0.7
+   },
+   "at": "2026-11-20T03:11:15+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "07dbebce1546",
    "bot": "bot1",

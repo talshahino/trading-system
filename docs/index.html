@@ -771,6 +771,7 @@ function provWaiting(n, s) {
   const have = new Set((s.positions || []).map(p => String(p.ticket)));
   return s.watch.filter(t => t.status === "pending" && t.tal && !String(t.tal).startsWith("sc:") && !t.v1m && !t.v5 && !t.v4
     && t.entry != null && t.stop != null && !t.skipped && !have.has(String(t.id)) && !PROVO[n + "|" + t.id]
+    && !(s.tal_off || []).includes(t.tal)                 // a track taken out of the bot: no new trade (20.11.2026)
     && (s.tal_auto ? (((WB.marks || {})[t.id] || t.mark || {}).take !== "no")      // automatic (20.11.2026): only his "no" keeps it out
       : (!(rvNeeded(t) && (((WB.marks || {})[t.id] || t.mark || {}).take !== "yes"))
          && !yesStale((WB.marks || {})[t.id] || t.mark || {}, Date.now()))));   // a yes over 2h old is asked again at the fill (20.11.2026)
@@ -2801,7 +2802,7 @@ async function comboFill() {
   $("comboCard").innerHTML = `<div class="h4" style="margin-top:18px">איזה נכס טוב לאיזה צמד גרפים</div><div class="mut" style="margin-bottom:6px">R ממוצע לעסקה (מספר עסקאות). ${esc((d.check || {}).note || "")}</div>
     <div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th>נכס</th><th>צמד גרפים</th><th>2025</th><th>2026</th><th>חי</th><th></th></tr>${rows}</table></div></div>`;
 }
-const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא סימנת \"הייתי לוקח\" לפני הכניסה", levels: "לא נכנסה · המחיר כבר עבר את הרמות", tal_stale: "לא נכנסה · האישור היה בן יותר משעתיים ולא הגיעה תשובה חדשה"};
+const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא סימנת \"הייתי לוקח\" לפני הכניסה", levels: "לא נכנסה · המחיר כבר עבר את הרמות", tal_stale: "לא נכנסה · האישור היה בן יותר משעתיים ולא הגיעה תשובה חדשה", track_off: "לא נכנסה · המסלול הוצא מהבוט"};
 const rvNeeded = t => t && ((t.status === "pending" && t.tal && t.asked) || reaskWait(t));
 // user, 20.11.2026: a "yes" given more than 2 hours before the fill is asked again when the price reaches the gap -
 // 10 minutes to answer, no answer = not taken (live/watch_own.py yes_stale / REASK_*)

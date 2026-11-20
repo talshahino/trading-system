@@ -207,6 +207,7 @@ TAL5_RISK = {}
 # other indices): "symbols" in its "tal_tracks" entry - {track: [symbol]}; a track without it trades TAL5_SYMBOLS.
 # Such an instrument is added to SYMBOLS (and EXTRA: the old tracks' results on it stay out of their summary).
 TAL5_SYMS = {}
+TAL5_OFF = set()       # tracks with "off": true in tal_tracks (user, 20.11.2026): no new trade; open ones run to their exit
 TAL5_AUTO = [False]    # "tal_auto" (user, 20.11.2026: "the system enters trades by itself, not me approving"): the rules decide;
                        # his "no" before the fill still keeps a trade out, a yes / no answer changes nothing (off until switched)
 TAL5_ONE = [False]     # "tal_one_per_side": a track does not enter a symbol / direction another track holds (off until approved)
@@ -333,6 +334,8 @@ def load_settings():
                     pairs_ = {(p_[0], p_[1]): tuple(p_) for p_ in TG.PAIRS}
                     new_ = {}
                     syms_ = {}
+                    TAL5_OFF.clear()
+                    TAL5_OFF.update(str(k) for k, v in tt.items() if (v or {}).get("off"))
                     for trk, v in tt.items():
                         pr = pairs_.get(tuple((v or {}).get("pair") or [])[:2])
                         cf = (v or {}).get("cfg")
@@ -2006,6 +2009,8 @@ def main():
                         ts_ = pd.Timestamp(rec["time"])
                         hour_ = gap_ and bool(TAL5_HOURS_OFF) and (ts_.tz_convert("UTC") if ts_.tzinfo else ts_).hour in TAL5_HOURS_OFF
                         mk_ = rec.get("mark") or {}
+                        if str(rec.get("tal")) in TAL5_OFF:
+                            rec["skipped"] = "track_off"     # the track was taken out of the bot (its open trades go on)
                         if rev_ and TAL5_AUTO[0] and not scout5_combo(rec.get("tal")):
                             # automatic: the rules decide; a yes is not needed and does not lift the rules' limits
                             mk_ = {"take": "no"} if mk_.get("take") == "no" and str(mk_.get("at") or "")[:19] <= str(rec["time"])[:19] else {}
@@ -2017,7 +2022,9 @@ def main():
                             if not rec.get("reasked"):
                                 rec["reasked"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
                                 rec["repushed"] = reask_push(rec)
-                        if stale_ and not (rec.get("reasked") and rec["status"] == "open"
+                        if rec.get("skipped") == "track_off":
+                            pass
+                        elif stale_ and not (rec.get("reasked") and rec["status"] == "open"
                                            and pd.Timestamp.now(tz="UTC") - pd.Timestamp(rec["reasked"]) <= pd.Timedelta(minutes=REASK_WAIT)):
                             rec["skipped"] = "tal_stale"     # his yes is older than REASK_H at the fill, no new answer
                         elif stale_:
@@ -2125,6 +2132,7 @@ def main():
         except Exception:  # noqa: BLE001
             pass
         state["tal_auto"] = TAL5_AUTO[0]
+        state["tal_off"] = sorted(TAL5_OFF)
         try:
             state["after_stop"] = after_watch(trades.values(), src)
         except Exception:  # noqa: BLE001

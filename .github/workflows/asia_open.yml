@@ -1,0 +1,47 @@
+name: Asian index reopen after a big US session (bot 5)
+
+# Bot 5's smart agent, 20.11.2026 - agents/asia_open_study.py (bot 7's note: JP225 reopened -4% after a 2% US fall).
+# JP225 / AUS200 against US100 / US500, chosen to 2025-12-31, shown on 2026. Results only.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  TAL_COSTX: "1"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Run
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: python -u -m agents.asia_open_study run 2>&1 | tail -60
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/agents/bot5/asia_open.json || true
+          git commit -qm "Asian reopen study bot 5 (agents/asia_open_study)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null || true; sleep $((i * 7)); done

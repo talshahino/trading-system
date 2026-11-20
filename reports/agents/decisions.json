@@ -1,10 +1,382 @@
 {
- "updated": "2026-11-20T13:02:19+00:00",
+ "updated": "2026-11-20T13:27:35+00:00",
  "new": [
-  "26da01b7d814",
-  "943de5d62bc1"
+  "7aab6234b0bf",
+  "64ffd45fa330",
+  "b96c5f38a728",
+  "a7c5cbe021b8",
+  "2c9b31ec31d4",
+  "79f3ede37345",
+  "c91616ce05f0",
+  "63cdd8b82a86",
+  "193758f80ecd",
+  "a88cc94a587d"
  ],
  "decisions": [
+  {
+   "id": "7aab6234b0bf",
+   "bot": "bot3",
+   "type": "card",
+   "card": "6385a287ebec",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ TV50|1Hour|XAGUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.45R לעסקה, 36.0 עסקאות אפקטיביות, +0.08R מעל המצב הקיים) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.80 לאסטרטגיה: רווח +137.87% → +137.98% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3987,
+     "total": 137.87,
+     "worst_day": -3.03,
+     "max_dd": 6.78,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 180,
+     "guard_skipped": 22
+    },
+    "after": {
+     "trades": 3989,
+     "total": 137.98,
+     "worst_day": -3.03,
+     "max_dd": 6.85,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 173,
+     "guard_skipped": 20
+    }
+   },
+   "at": "2026-11-20T13:27:35+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "64ffd45fa330",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV50|1Hour|XAGUSD",
+   "title": "TV50|1Hour|XAGUSD: סיכון ×0.7 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.45R לעסקה, 36.0 עסקאות אפקטיביות, +0.08R מעל המצב הקיים) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.80 לאסטרטגיה: רווח +137.87% → +137.98% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "7aab6234b0bf",
+   "star": true,
+   "action": {
+    "bot": "bot3",
+    "combo": "TV50|1Hour|XAGUSD",
+    "kind": "mult",
+    "value": 0.7,
+    "prev": null
+   },
+   "at": "2026-11-20T13:27:35+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "b96c5f38a728",
+   "bot": "bot3",
+   "type": "card",
+   "card": "82bb472c7f3f",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC666|1Hour|XAUUSD · Gold Trend Breakout Lite: Donchian 20 close with the daily EMA50 slope, 3 ATR, break-even 1R, 3R",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -3.03% → -3.22%, ירידה 6.79% → 6.70%, ימים קרובים למגבלה 1 → 2) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3989,
+     "total": 137.69,
+     "worst_day": -3.03,
+     "max_dd": 6.79,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 170,
+     "guard_skipped": 20
+    },
+    "after": {
+     "trades": 4036,
+     "total": 143.85,
+     "worst_day": -3.22,
+     "max_dd": 6.7,
+     "near_days": 2,
+     "max_open": 5.61,
+     "max_side": 4.6,
+     "guard_cut": 223,
+     "guard_skipped": 32
+    }
+   },
+   "at": "2026-11-20T13:27:35+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "a7c5cbe021b8",
+   "bot": "bot3",
+   "type": "card",
+   "card": "c02ba85b900d",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC376|4Hour|XAGUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.29R לעסקה, 47.0 עסקאות אפקטיביות, +0.06R מעל המצב הקיים) · בבוט השלם על 2026: רווח +137.69% → +138.41%, בלי יותר סיכון (יום גרוע -3.03%, ירידה 6.75%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3989,
+     "total": 137.69,
+     "worst_day": -3.03,
+     "max_dd": 6.79,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 170,
+     "guard_skipped": 20
+    },
+    "after": {
+     "trades": 3989,
+     "total": 138.41,
+     "worst_day": -3.03,
+     "max_dd": 6.75,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 170,
+     "guard_skipped": 20
+    }
+   },
+   "at": "2026-11-20T13:27:35+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "2c9b31ec31d4",
+   "bot": "bot3",
+   "type": "card",
+   "card": "cb5c219fd743",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ TV24|15Min|TSLA: ב־1R רווח מוסיפים 0.33 פוזיציה, והסטופ של הכול זז ל־-0.50R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.27R לעסקה, 38.0 עסקאות אפקטיביות, +0.05R מעל המצב הקיים) · בבוט השלם על 2026: רווח +138.41% → +139.23%, בלי יותר סיכון (יום גרוע -3.03%, ירידה 6.75%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3989,
+     "total": 138.41,
+     "worst_day": -3.03,
+     "max_dd": 6.75,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 170,
+     "guard_skipped": 20
+    },
+    "after": {
+     "trades": 3989,
+     "total": 139.23,
+     "worst_day": -3.03,
+     "max_dd": 6.75,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 170,
+     "guard_skipped": 20
+    }
+   },
+   "at": "2026-11-20T13:27:35+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "79f3ede37345",
+   "bot": "bot3",
+   "type": "card",
+   "card": "98eeb11a636c",
+   "kind": "info",
+   "tier": "regular",
+   "title": "TV24|15Min|TSLA: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-20T13:27:35+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "c91616ce05f0",
+   "bot": "bot3",
+   "type": "card",
+   "card": "938f1914e6b2",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC673|15Min|XAUUSD · Trend Bias Oscillator structure flip with the signal, swing stop, 2R",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -3.03% → -3.02%, ירידה 6.75% → 7.70%, ימים קרובים למגבלה 1 → 1) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3989,
+     "total": 139.23,
+     "worst_day": -3.03,
+     "max_dd": 6.75,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 170,
+     "guard_skipped": 20
+    },
+    "after": {
+     "trades": 4072,
+     "total": 140.04,
+     "worst_day": -3.02,
+     "max_dd": 7.7,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 232,
+     "guard_skipped": 42
+    }
+   },
+   "at": "2026-11-20T13:27:35+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "63cdd8b82a86",
+   "bot": "bot3",
+   "type": "card",
+   "card": "99031867e7b9",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC698|4Hour|XAUUSD · Pratik trend oscillator zero cross with its signal, 2 ATR, 2R",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+137.09% מול +139.23% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3989,
+     "total": 139.23,
+     "worst_day": -3.03,
+     "max_dd": 6.75,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 170,
+     "guard_skipped": 20
+    },
+    "after": {
+     "trades": 4013,
+     "total": 137.09,
+     "worst_day": -3.22,
+     "max_dd": 6.75,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.6,
+     "guard_cut": 186,
+     "guard_skipped": 32
+    }
+   },
+   "at": "2026-11-20T13:27:35+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "193758f80ecd",
+   "bot": "bot3",
+   "type": "card",
+   "card": "b818c2427e9d",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC667|4Hour|XAUUSD · BabyPips BTS: EMA5 high / low channel pullback with MACD side + Stoch 5/3/3, setup-bar break, 2R, BE at 1R",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+138.08% מול +139.23% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3989,
+     "total": 139.23,
+     "worst_day": -3.03,
+     "max_dd": 6.75,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 170,
+     "guard_skipped": 20
+    },
+    "after": {
+     "trades": 4076,
+     "total": 138.08,
+     "worst_day": -3.24,
+     "max_dd": 7.11,
+     "near_days": 2,
+     "max_open": 5.24,
+     "max_side": 4.6,
+     "guard_cut": 197,
+     "guard_skipped": 37
+    }
+   },
+   "at": "2026-11-20T13:27:35+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "a88cc94a587d",
+   "bot": "bot3",
+   "type": "card",
+   "card": "af8a16aa3808",
+   "kind": "new",
+   "tier": "regular",
+   "title": "אסטרטגיה חדשה: SC656|1Hour|USDJPY · Oxford Aroon 25 breakout: Up > Down and >= 70, 6 ATR20 stop, out after 20 bars",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+138.07% מול +139.23% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3989,
+     "total": 139.23,
+     "worst_day": -3.03,
+     "max_dd": 6.75,
+     "near_days": 1,
+     "max_open": 5.24,
+     "max_side": 4.22,
+     "guard_cut": 170,
+     "guard_skipped": 20
+    },
+    "after": {
+     "trades": 4148,
+     "total": 138.07,
+     "worst_day": -2.96,
+     "max_dd": 6.92,
+     "near_days": 0,
+     "max_open": 5.24,
+     "max_side": 4.6,
+     "guard_cut": 232,
+     "guard_skipped": 38
+    }
+   },
+   "at": "2026-11-20T13:27:35+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "943de5d62bc1",
    "bot": "bot3",

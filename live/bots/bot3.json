@@ -133,7 +133,12 @@
   },
   "TV50|1Hour|XAGUSD": {
    "filter": "vol_low",
-   "filter_card": "fb435e01e723"
+   "filter_card": "fb435e01e723",
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "6385a287ebec"
   },
   "SC069|15Min|XAUUSD": {
    "target": 1.5,
@@ -290,7 +295,19 @@
    "filter_card": "ae5dc97fc1dc",
    "target": 2.0,
    "limit": 0.25,
-   "card": "1589e426ee29"
+   "card": "1589e426ee29",
+   "pyramid": [
+    1.0,
+    0.33
+   ],
+   "pyr_card": "cb5c219fd743"
+  },
+  "SC376|4Hour|XAGUSD": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "c02ba85b900d"
   }
  },
  "added": {

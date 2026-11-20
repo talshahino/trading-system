@@ -1,16 +1,16 @@
 {
  "bot": "bot3",
  "name": "בוט 3",
- "updated": "2026-11-20T21:38:19+00:00",
- "state_updated": "2026-11-20T21:35:38+00:00",
- "minutes_since_state": 3,
- "balance": 102202.76,
- "equity": 103216.43,
- "day_pct": 4.13,
- "total_pct": 3.22,
- "trades": 113,
- "mean_r": 0.105,
- "sum_r": 11.81,
+ "updated": "2026-11-20T21:59:53+00:00",
+ "state_updated": "2026-11-20T21:57:34+00:00",
+ "minutes_since_state": 2,
+ "balance": 103268.52,
+ "equity": 103268.52,
+ "day_pct": 4.18,
+ "total_pct": 3.27,
+ "trades": 121,
+ "mean_r": 0.142,
+ "sum_r": 17.17,
  "bt_mean_r": 0.125,
  "flagged": 0,
  "combos": [
@@ -196,11 +196,11 @@
   },
   {
    "combo": "BK05|1Hour|USDJPY",
-   "n": 2,
-   "mean": -0.48,
-   "sum": -0.96,
-   "win": 50.0,
-   "streak": 1,
+   "n": 3,
+   "mean": -0.388,
+   "sum": -1.16,
+   "win": 33.3,
+   "streak": 2,
    "bt_mean": null,
    "bt_n": null,
    "z": null,
@@ -244,9 +244,9 @@
   },
   {
    "combo": "MQ02|1Hour|USDCAD",
-   "n": 2,
-   "mean": 0.16,
-   "sum": 0.32,
+   "n": 3,
+   "mean": 0.239,
+   "sum": 0.72,
    "win": 100.0,
    "streak": 0,
    "bt_mean": null,
@@ -271,6 +271,18 @@
    "n": 1,
    "mean": 0.168,
    "sum": 0.17,
+   "win": 100.0,
+   "streak": 0,
+   "bt_mean": null,
+   "bt_n": null,
+   "z": null,
+   "flags": []
+  },
+  {
+   "combo": "SC006|4Hour|USDJPY",
+   "n": 1,
+   "mean": 1.612,
+   "sum": 1.61,
    "win": 100.0,
    "streak": 0,
    "bt_mean": null,
@@ -316,11 +328,11 @@
   },
   {
    "combo": "SC272|1Hour|USDJPY",
-   "n": 1,
-   "mean": -1.0,
-   "sum": -1.0,
-   "win": 0.0,
-   "streak": 1,
+   "n": 2,
+   "mean": 0.319,
+   "sum": 0.64,
+   "win": 50.0,
+   "streak": 0,
    "bt_mean": null,
    "bt_n": null,
    "z": null,
@@ -364,11 +376,11 @@
   },
   {
    "combo": "SC432|1Hour|USDJPY",
-   "n": 1,
-   "mean": -0.082,
-   "sum": -0.08,
-   "win": 0.0,
-   "streak": 1,
+   "n": 2,
+   "mean": 0.206,
+   "sum": 0.41,
+   "win": 50.0,
+   "streak": 0,
    "bt_mean": null,
    "bt_n": null,
    "z": null,
@@ -400,11 +412,23 @@
   },
   {
    "combo": "SC508|4Hour|USDJPY",
+   "n": 3,
+   "mean": 0.199,
+   "sum": 0.6,
+   "win": 66.7,
+   "streak": 0,
+   "bt_mean": null,
+   "bt_n": null,
+   "z": null,
+   "flags": []
+  },
+  {
+   "combo": "SC537|4Hour|USDCAD",
    "n": 1,
-   "mean": -0.609,
-   "sum": -0.61,
-   "win": 0.0,
-   "streak": 1,
+   "mean": 0.218,
+   "sum": 0.22,
+   "win": 100.0,
+   "streak": 0,
    "bt_mean": null,
    "bt_n": null,
    "z": null,
@@ -486,54 +510,5 @@
  "problems": [],
  "cumulative": null,
  "ledger_tail": [],
- "positions_now": [
-  {
-   "ticket": 152934973270,
-   "pnl": 15.91,
-   "sl_usd": -81.1,
-   "since": "2026-11-19T20:00:12+00:00"
-  },
-  {
-   "ticket": 152935845077,
-   "pnl": 232.79,
-   "sl_usd": 74.69,
-   "since": "2026-11-20T01:04:25+00:00"
-  },
-  {
-   "ticket": 152935845328,
-   "pnl": 94.22,
-   "sl_usd": -261.54,
-   "since": "2026-11-20T01:04:29+00:00"
-  },
-  {
-   "ticket": 152936877088,
-   "pnl": 408.32,
-   "sl_usd": 5.33,
-   "since": "2026-11-20T04:00:06+00:00"
-  },
-  {
-   "ticket": 152936877712,
-   "pnl": 176.62,
-   "sl_usd": 1.73,
-   "since": "2026-11-20T04:00:15+00:00"
-  },
-  {
-   "ticket": 152938590646,
-   "pnl": 122.96,
-   "sl_usd": -257.42,
-   "since": "2026-11-20T09:00:06+00:00"
-  },
-  {
-   "ticket": 152941784518,
-   "pnl": 14.65,
-   "sl_usd": -72.52,
-   "since": "2026-11-20T16:00:13+00:00"
-  },
-  {
-   "ticket": 152943296933,
-   "pnl": -51.8,
-   "sl_usd": -223.5,
-   "since": "2026-11-20T20:00:14+00:00"
-  }
- ]
+ "positions_now": []
 }

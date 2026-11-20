@@ -1,16 +1,16 @@
 {
  "bot": "bot5",
  "name": "בוט 5 (גאפ) + 5ב (סייר)",
- "updated": "2026-11-20T21:38:19+00:00",
- "state_updated": "2026-11-20T21:36:02+00:00",
- "minutes_since_state": 2,
- "balance": 101467.4,
- "equity": 101280.53,
- "day_pct": -0.43,
- "total_pct": 1.28,
- "trades": 199,
- "mean_r": 0.252,
- "sum_r": 50.16,
+ "updated": "2026-11-20T21:59:53+00:00",
+ "state_updated": "2026-11-20T21:58:27+00:00",
+ "minutes_since_state": 1,
+ "balance": 101289.57,
+ "equity": 101289.57,
+ "day_pct": -0.42,
+ "total_pct": 1.29,
+ "trades": 200,
+ "mean_r": 0.248,
+ "sum_r": 49.56,
  "bt_mean_r": -0.035,
  "flagged": 0,
  "combos": [
@@ -544,11 +544,11 @@
   },
   {
    "combo": "TAL|t1h_1@EURUSD|EURUSD",
-   "n": 2,
-   "mean": 0.5,
-   "sum": 1.0,
-   "win": 100.0,
-   "streak": 0,
+   "n": 3,
+   "mean": 0.132,
+   "sum": 0.4,
+   "win": 66.7,
+   "streak": 1,
    "bt_mean": null,
    "bt_n": null,
    "z": null,
@@ -799,12 +799,6 @@
  "cumulative": null,
  "ledger_tail": [
   {
-   "id": "UK100|tal|-1|g202611191145|t5_1@UK100",
-   "exit_time": "2026-11-19T15:22:00+00:00",
-   "pnl": 95.61,
-   "fixed": null
-  },
-  {
    "id": "US100|tal|1|g202611190640|t5_1",
    "exit_time": "2026-11-19T15:30:00+00:00",
    "pnl": -295.97,
@@ -977,14 +971,26 @@
    "exit_time": "2026-11-20T17:21:00+00:00",
    "pnl": 133.59,
    "fixed": null
+  },
+  {
+   "id": "EURUSD|tal|1|g202611190900|t1h_1@EURUSD",
+   "exit_time": "2026-11-20T21:45:00+00:00",
+   "pnl": -177.83,
+   "fixed": null
   }
  ],
  "positions_now": [
   {
-   "ticket": "EURUSD|tal|1|g202611190900|t1h_1@EURUSD",
-   "pnl": -186.87,
-   "sl_usd": -294.47,
-   "since": "2026-11-19T15:22:00+00:00"
+   "ticket": "XAUUSD|SC154|5Min|202611202020|sc:SC154|5Min|XAUUSD",
+   "pnl": 6.57,
+   "sl_usd": -20.02,
+   "since": "2026-11-20T20:20:00+00:00"
+  },
+  {
+   "ticket": "XAUUSD|SC317|15Min|202611201915|sc:SC317|15Min|XAUUSD",
+   "pnl": -8.92,
+   "sl_usd": -20.03,
+   "since": "2026-11-20T19:15:00+00:00"
   },
   {
    "ticket": "GER40|SC480|5Min|202611201730|sc:SC480|5Min|GER40",
@@ -994,57 +1000,45 @@
   },
   {
    "ticket": "XAUUSD|IB034|15Min|202611201530|sc:IB034|15Min|XAUUSD",
-   "pnl": 8.06,
-   "sl_usd": -2.33,
+   "pnl": 2.28,
+   "sl_usd": -1.79,
    "since": "2026-11-20T15:30:00+00:00"
   },
   {
    "ticket": "XAUUSD|SC432|15Min|202611201530|sc:SC432|15Min|XAUUSD",
-   "pnl": 5.6,
+   "pnl": 4.29,
    "sl_usd": -20.09,
    "since": "2026-11-20T15:30:00+00:00"
   },
   {
    "ticket": "XAUUSD|SC501|5Min|202611201510|sc:SC501|5Min|XAUUSD",
-   "pnl": 46.18,
+   "pnl": 36.74,
    "sl_usd": 19.34,
    "since": "2026-11-20T15:10:00+00:00"
   },
   {
    "ticket": "XAUUSD|SC490|15Min|202611201445|sc:SC490|15Min|XAUUSD",
-   "pnl": 33.53,
+   "pnl": 26.59,
    "sl_usd": -0.03,
    "since": "2026-11-20T14:45:00+00:00"
   },
   {
    "ticket": "XAUUSD|SC319|15Min|202611201330|sc:SC319|15Min|XAUUSD",
-   "pnl": 20.81,
+   "pnl": 15.59,
    "sl_usd": -20.29,
    "since": "2026-11-20T13:30:00+00:00"
   },
   {
    "ticket": "USDCHF|SC486|15Min|202611201245|sc:SC486|15Min|USDCHF",
-   "pnl": -0.6,
-   "sl_usd": -205.27,
+   "pnl": 10.99,
+   "sl_usd": -204.75,
    "since": "2026-11-20T12:45:00+00:00"
   },
   {
    "ticket": "XAUUSD|SC142|15Min|202611200845|sc:SC142|15Min|XAUUSD",
-   "pnl": 49.3,
+   "pnl": 41.94,
    "sl_usd": -0.03,
    "since": "2026-11-20T08:45:00+00:00"
-  },
-  {
-   "ticket": "XAUUSD|SC317|15Min|202611201915|sc:SC317|15Min|XAUUSD",
-   "pnl": -3.75,
-   "sl_usd": -20.03,
-   "since": "2026-11-20T19:15:00+00:00"
-  },
-  {
-   "ticket": "XAUUSD|SC154|5Min|202611202020|sc:SC154|5Min|XAUUSD",
-   "pnl": 1.64,
-   "sl_usd": -20.02,
-   "since": "2026-11-20T20:20:00+00:00"
   }
  ]
 }

@@ -1,21 +1,56 @@
 {
- "updated": "2026-11-20T22:00:35+00:00",
+ "updated": "2026-11-20T22:26:11+00:00",
  "new": [
-  "eca91dc53dd4",
-  "3d4a4f7c1cbf",
-  "37b51b43aa16",
-  "ee3ad306b7c6",
-  "ffbe76d323c1",
-  "f597e529f230",
-  "9aced1c7ec6d",
-  "8a066ccf58c7",
-  "a9ef2638300b",
-  "6fe92e6bc06f",
-  "e8699b700e30",
-  "721d54c65311",
-  "b54ef824a29c"
+  "bbf3eec58e93",
+  "49f049052bc3"
  ],
  "decisions": [
+  {
+   "id": "49f049052bc3",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "IB056|1Hour|XAUUSD",
+   "title": "⭐ IB056|1Hour|XAUUSD: סיכון ×1.00 (אולי מזל)",
+   "decision": "approved",
+   "why": "שיפור קטן על מעט עסקאות - נכנס בסיכון מופחת עד שיוכח שאינו מזל",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "star_of": "e5a76d41c82a",
+   "star_step": "staron",
+   "action": {
+    "bot": "bot1",
+    "combo": "IB056|1Hour|XAUUSD",
+    "kind": "mult",
+    "value": 1.0,
+    "prev": 1.43
+   },
+   "at": "2026-11-20T22:31:04+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "bbf3eec58e93",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SS06|4Hour|MSTR",
+   "title": "SS06|4Hour|MSTR: סיכון ×0.95",
+   "decision": "approved",
+   "why": "רווח ממוצע -0.02R מול +0.10R של הבוט, יציבות 0.54, 6 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot3",
+    "combo": "SS06|4Hour|MSTR",
+    "kind": "mult",
+    "value": 0.95,
+    "prev": 1.09
+   },
+   "at": "2026-11-20T22:26:11+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "3d4a4f7c1cbf",
    "bot": "bot1",

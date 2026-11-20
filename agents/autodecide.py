@@ -277,6 +277,12 @@ def _risk_card(c, bot):
         # the whole bot sized back into its own limits (bots 1-4 smart agent, 14.11.2026: SC001|1Min|JP225 at x0.7 took
         # bot 2's 2026 replay to a 10.3% fall and 7 days of -3% or worse); live/manager accepts any value up to 3
         return v
+    if (c.get("detail") or {}).get("edge_formula") and 0.05 <= v < 0.5:
+        # risk = approved risk x (edge now / approved edge), no fixed floor (user, 13.11.2026 - the same formula as
+        # agents/edge_risk.py, which sets such values daily). Bots 1-4 smart agent, 20.11.2026: the 15-minute delayed
+        # shares of bots 2-4 (task b24lag2011) - bot 4 SC010 ARM's edge with the delay is 0.59 of the test's, x0.7 -> x0.41;
+        # until now any agent card under x0.5 waited for a night build that had no way to apply it (card 694b549d85fd)
+        return v
     return v if 0.5 <= v <= 1.5 else None
 
 

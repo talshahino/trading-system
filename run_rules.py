@@ -134,7 +134,7 @@ def filter_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=
     exits / trade management the bot trades now (--plans-file), like manage_combo (13.11.2026: the filters were tested
     on the strategy's own exits, so a filter card's baseline was not what runs - TV58|1Hour|USDCAD bot 3 got a filter
     and a new exit plan built together, the pair never tested)."""
-    fn0 = R.STRATEGIES[sid][1]
+    fn0 = _strategy_fn(sid, args)
     fn = fn0 if news_block is None else _blocked(fn0, news_block)
     t0, t1 = SPLIT, pd.Timestamp(args.filters, tz="UTC")
     pk = {k: v for k, v in plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {}).items()}
@@ -255,7 +255,7 @@ def lad_key(levels):
 
 def ladder_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
     """Every laddered entry of one combo, on top of its plan as the bot trades it now (exits, filter, management)."""
-    fn0 = R.STRATEGIES[sid][1]
+    fn0 = _strategy_fn(sid, args)
     fn = fn0 if news_block is None else _blocked(fn0, news_block)
     t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
     pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
@@ -304,7 +304,7 @@ PYRS = {"pyr1@0.5": (1.0, 0.5), "pyr1.5@0.5": (1.5, 0.5), "pyr1@0.33": (1.0, 0.3
 
 def pyr_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
     """Every pyramid variant of one combo, on top of its plan as the bot trades it now (exits, filter, management)."""
-    fn0 = R.STRATEGIES[sid][1]
+    fn0 = _strategy_fn(sid, args)
     fn = fn0 if news_block is None else _blocked(fn0, news_block)
     t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
     # "pyr0" stays without adding, also when a pyramid is built (it is one of the variants)
@@ -350,7 +350,7 @@ def man_key(has_target, be, part):
 
 def manage_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
     """Every breakeven point x partial exit of one combo, on top of its exits as the bot trades it now."""
-    fn0 = R.STRATEGIES[sid][1]
+    fn0 = _strategy_fn(sid, args)
     fn = fn0 if news_block is None else _blocked(fn0, news_block)
     t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
     pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
@@ -410,7 +410,7 @@ def swing_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=N
     """--manage-grid swing (user, 16.11.2026, task b5stop1611: "the stop beyond the third swing"): the combo as the bot
     trades it now (--plans-file) with its stop moved beyond the 2nd / 3rd swing of its own timeframe (+0 / 0.1 ATR),
     the target in price as it was (rules_agent.swing_stop). Variant "sw0" = as it trades."""
-    fn0 = R.STRATEGIES[sid][1]
+    fn0 = _strategy_fn(sid, args)
     fn = fn0 if news_block is None else _blocked(fn0, news_block)
     t0, t1 = SPLIT, pd.Timestamp(args.manage, tz="UTC")
     pk = plan_keys(PLANS.get(f"{sid}|{tf}|{s}") or {})
@@ -448,7 +448,7 @@ def swing_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=N
 def optimize_combo(df, sid, tf, s, cost, sess, be, real, events, args, news_block=None):
     """Every grid variant of one combo (target x stop distance x entry): stats on the training window and
     on the later window. All variants' trades are kept for improve.py, which decides."""
-    fn0 = R.STRATEGIES[sid][1]
+    fn0 = _strategy_fn(sid, args)
     fn1 = fn0 if news_block is None else _blocked(fn0, news_block)
     # the market-regime filter the bot trades now (--plans-file, 13.11.2026), so the exit grid is measured on the
     # entries that really run
@@ -565,6 +565,16 @@ def _shifted(fn, k):
             p2["trail_after_px"] = shf(plan["trail_after_px"])
         return sh(_np.asarray(L, bool)), sh(_np.asarray(S, bool)), p2
     return g
+
+
+def _strategy_fn(sid, args):
+    """The strategy as every experiment family runs it: with --null-shift K its signals K bars later (bots 1-4 smart
+    agent, 20.11.2026, task b24lag2011: the 15-minute delayed shares of bots 2-4 on MetaQuotes-Demo - 3 bars on 5-minute,
+    1 on 15-minute - so exits / filters / management / ladder / pyramid can be tested as the bot really trades there;
+    until now only the plain run applied the shift)."""
+    fn = R.STRATEGIES[sid][1]
+    k = int(getattr(args, "null_shift", 0) or 0)
+    return _shifted(fn, k) if k else fn
 
 
 def main():
@@ -786,9 +796,7 @@ def main():
                         ERRORS.append(f"optimize {sid} {tf} {s}:\n{traceback.format_exc()}")
                     continue
                 try:
-                    fn0 = R.STRATEGIES[sid][1]
-                    if args.null_shift:
-                        fn0 = _shifted(fn0, args.null_shift)
+                    fn0 = _strategy_fn(sid, args)          # with --null-shift: the signals K bars later
                     if args.be_r:
                         fn0 = _with_be_r(fn0, args.be_r)
                     if args.lock_r:

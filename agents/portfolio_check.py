@@ -168,10 +168,48 @@ def _worded(p):
     return False
 
 
+# DELAYED SHARES (bots 1-4 smart agent, 20.11.2026, task b24lag2011): bots 2-4 run on MetaQuotes-Demo, where the shares'
+# quotes and bars arrive 15 minutes late while the fills are at the real market (live/runner.py feed_lag 15.0 on every
+# stock). A 5 / 15-minute stock strategy there sees its signal 3 bars / 1 bar late and enters at the price of then. The
+# lag study (rules.yml runs 817 / 818, --null-shift 3 / 1, the live rules) reproduces the demo's fills to the cent (bot 4
+# FR08 SPCX 06.11 14:50: test 131.87, demo 131.68; QC07 ARM 10.11 17:15: 177.98 / 177.75), and on 2026 the lagged
+# trades earn far less than the test without the lag (bot 2 TV13 TSLA +12.2R -> -12.9R, bot 3 TV28 AMZN +12.2R -> -8.2R,
+# bot 4 QC07 ARM +8.6R -> -11.9R). So the whole-bot check of these bots takes the lagged trades where the study stored
+# them (reports/agents/<bot>/exp/lag_<combo>.json, "plan_sig" = the plan they were made for) - every cut, raise and
+# new card is judged on the trades the bot really takes. A combo whose plan changed since falls back to its test.
+LAG_BOTS = ("bot2", "bot3", "bot4")
+
+
+def lag_sig(p):
+    """The part of a combo's plan that changes its trades (card ids left out)."""
+    return json.dumps({k: v for k, v in (p or {}).items() if not str(k).endswith("card")}, sort_keys=True, default=str)
+
+
+def lag_trades(bot, combo, cfg, key="tr"):
+    if bot not in LAG_BOTS:
+        return None
+    d = _read(ROOT / "reports" / "agents" / bot / "exp" / f"lag_{combo.replace('|', '_').replace('/', '-')}.json")
+    if not d or d.get("plan_sig") != lag_sig((cfg.get("plans") or {}).get(combo)):
+        return None
+    try:                                     # a study older than LAG_DAYS is not trusted any more (run it again)
+        if pd.Timestamp.now(tz="UTC") - pd.Timestamp(d.get("at")) > pd.Timedelta(days=LAG_DAYS):
+            return None
+    except Exception:  # noqa: BLE001
+        return None
+    return (d.get(key) or {}).get("lag")
+
+
+LAG_DAYS = 21
+
+
 def current_trades(bot, combo, cfg, key="tr"):
     """The combo's 2026 trades as it trades now (its built exit plan, or its built filter), None when not stored.
-    key "tr25": the choosing period's trades (30.04.2025-31.12.2025) instead, where the agents stored them."""
+    key "tr25": the choosing period's trades (30.04.2025-31.12.2025) instead, where the agents stored them.
+    Bots 2-4: a delayed-share combo's lagged trades first, as the bot really takes them (LAG_BOTS above)."""
     from agent_portfolio import built_variant
+    lt = lag_trades(bot, combo, cfg, key)
+    if lt is not None:
+        return lt
     p = (cfg.get("plans") or {}).get(combo) or {}
     if bot == "bot7":
         # bot 7's own strategies (EV02 / EV03 / SH01 / EV04 / EV08) are measured in their studies, which store the

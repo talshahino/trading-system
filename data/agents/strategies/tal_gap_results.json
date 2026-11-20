@@ -475511,7 +475511,7 @@
   }
  },
  "bot5_smart": {
-  "updated": "2026-11-20T06:20:08+00:00",
+  "updated": "2026-11-20T10:26:12+00:00",
   "for": "bot6",
   "dbrk": {
    "what": "DBRK (agents/tal_gap.py): c = cancel a waiting gap order 10 min before an expected 30+ min break shorter than 2h (seen a day / a week earlier), x = close an open trade then, oN = no fill N min after a reopening. Bot 5: no rule beats today on the whole bot; passes only on t15_1 (x). The 4h tracks lose most (fills at the reopening earn). Bot 6's futures have the CME daily break (60 min) - worth the same test.",
@@ -475722,6 +475722,623 @@
    "trend_pick": {
     "train": 504.84,
     "unseen": 142.22
+   }
+  },
+  "fine2011": {
+   "what": "Tal 20.11 09:08: an exact stop x target per instrument, then the account within 4.5% / 9%. Per-instrument tuning (chosen on 2025) breaks the account in 2026 (hits 9% in January; US100 k0.6|sw6 / US30 alone do it); per-track picks (stop / target / trend, one way for all a track's instruments) also lose or stop on 2026. The one change that wins on both periods at account level: t15_5 SSCALE 0.75 (track 2025 +7.4 -> +22.5R, 2026 +37.8 -> +51.9R; account 2025 +143.4% dd 8.24 -> +153.2% dd 7.92, 2026 +37.3% dd 7.66 -> +42.7% dd 7.52; neighbours x0.70 / x0.80 hold). Card 537f5c48b8ad. Bot 6 may test SSCALE 0.75 on its 15m/5m futures track.",
+   "portfolios": {
+    "a_now": {
+     "2025": {
+      "ret": 143.35,
+      "dd": 8.24,
+      "worst_day": -3.25,
+      "days_stopped": 4,
+      "taken": 1468,
+      "skipped": 11
+     },
+     "2026": {
+      "ret": 36.72,
+      "dd": 7.66,
+      "worst_day": -2.93,
+      "days_stopped": 12,
+      "taken": 2136,
+      "skipped": 67
+     },
+     "symbols": [
+      "AUS200",
+      "EU50",
+      "EURUSD",
+      "GBPNZD",
+      "GER40",
+      "JP225",
+      "N25",
+      "NZDCHF",
+      "SPN35",
+      "UK100",
+      "US100",
+      "US2000",
+      "US30",
+      "US500",
+      "USDCHF",
+      "USDJPY",
+      "XAGUSD",
+      "XAUUSD"
+     ]
+    },
+    "b_tuned": {
+     "2025": {
+      "ret": 303.73,
+      "dd": 11.73,
+      "worst_day": -4.26,
+      "days_stopped": 56,
+      "taken": 2261,
+      "skipped": 245
+     },
+     "2026": {
+      "ret": -9.02,
+      "dd": 9.02,
+      "worst_day": -3.49,
+      "days_stopped": 0,
+      "taken": 122,
+      "skipped": 3499
+     },
+     "symbols": [
+      "AUS200",
+      "EU50",
+      "EURUSD",
+      "GBPNZD",
+      "GER40",
+      "JP225",
+      "N25",
+      "NZDCHF",
+      "SPN35",
+      "UK100",
+      "US100",
+      "US2000",
+      "US30",
+      "US500",
+      "USDCHF",
+      "USDJPY",
+      "XAGUSD",
+      "XAUUSD"
+     ]
+    },
+    "c_tuned_plus_new": {
+     "2025": {
+      "ret": 312.55,
+      "dd": 13.51,
+      "worst_day": -3.26,
+      "days_stopped": 98,
+      "taken": 2545,
+      "skipped": 825
+     },
+     "2026": {
+      "ret": 46.04,
+      "dd": 11.67,
+      "worst_day": -4.2,
+      "days_stopped": 141,
+      "taken": 3372,
+      "skipped": 1362
+     },
+     "symbols": [
+      "AUS200",
+      "CADCHF",
+      "EU50",
+      "EURUSD",
+      "GBPCAD",
+      "GBPNZD",
+      "GBPUSD",
+      "GER40",
+      "JP225",
+      "N25",
+      "NZDCHF",
+      "NZDUSD",
+      "SPN35",
+      "UK100",
+      "US100",
+      "US2000",
+      "US30",
+      "US500",
+      "USDCHF",
+      "USDJPY",
+      "XAGUSD",
+      "XAUUSD",
+      "XPTUSD"
+     ]
+    },
+    "d_tuned_holding_only": {
+     "2025": {
+      "ret": 350.26,
+      "dd": 8.7,
+      "worst_day": -2.67,
+      "days_stopped": 78,
+      "taken": 2215,
+      "skipped": 490
+     },
+     "2026": {
+      "ret": -8.97,
+      "dd": 14.39,
+      "worst_day": -3.93,
+      "days_stopped": 46,
+      "taken": 1143,
+      "skipped": 2579
+     },
+     "symbols": [
+      "CADCHF",
+      "EU50",
+      "GBPCAD",
+      "GBPNZD",
+      "GBPUSD",
+      "GER40",
+      "JP225",
+      "NZDUSD",
+      "US100",
+      "US500",
+      "USDJPY",
+      "XAUUSD",
+      "XPTUSD"
+     ]
+    }
+   },
+   "one_instrument": {
+    "AUS200": {
+     "2025": {
+      "ret": 143.1,
+      "dd": 8.24,
+      "worst_day": -3.25,
+      "days_stopped": 4,
+      "taken": 1467,
+      "skipped": 11
+     },
+     "2026": {
+      "ret": 35.46,
+      "dd": 7.66,
+      "worst_day": -2.93,
+      "days_stopped": 12,
+      "taken": 2132,
+      "skipped": 67
+     }
+    },
+    "EU50": {
+     "2025": {
+      "ret": 148.29,
+      "dd": 7.54,
+      "worst_day": -3.25,
+      "days_stopped": 4,
+      "taken": 1484,
+      "skipped": 12
+     },
+     "2026": {
+      "ret": 36.02,
+      "dd": 7.62,
+      "worst_day": -2.93,
+      "days_stopped": 13,
+      "taken": 2181,
+      "skipped": 67
+     }
+    },
+    "EURUSD": {
+     "2025": {
+      "ret": 143.63,
+      "dd": 8.24,
+      "worst_day": -3.25,
+      "days_stopped": 4,
+      "taken": 1464,
+      "skipped": 11
+     },
+     "2026": {
+      "ret": 37.71,
+      "dd": 7.76,
+      "worst_day": -2.93,
+      "days_stopped": 12,
+      "taken": 2131,
+      "skipped": 67
+     }
+    },
+    "GBPNZD": {
+     "2025": {
+      "ret": 142.75,
+      "dd": 8.46,
+      "worst_day": -3.25,
+      "days_stopped": 4,
+      "taken": 1463,
+      "skipped": 11
+     },
+     "2026": {
+      "ret": 37.02,
+      "dd": 7.66,
+      "worst_day": -2.93,
+      "days_stopped": 11,
+      "taken": 2130,
+      "skipped": 67
+     }
+    },
+    "GER40": {
+     "2025": {
+      "ret": 145.84,
+      "dd": 15.86,
+      "worst_day": -3.19,
+      "days_stopped": 9,
+      "taken": 1612,
+      "skipped": 19
+     },
+     "2026": {
+      "ret": 18.49,
+      "dd": 10.26,
+      "worst_day": -3.21,
+      "days_stopped": 12,
+      "taken": 2189,
+      "skipped": 209
+     }
+    },
+    "JP225": {
+     "2025": {
+      "ret": 195.97,
+      "dd": 6.89,
+      "worst_day": -3.72,
+      "days_stopped": 10,
+      "taken": 1663,
+      "skipped": 24
+     },
+     "2026": {
+      "ret": 44.22,
+      "dd": 8.72,
+      "worst_day": -2.93,
+      "days_stopped": 19,
+      "taken": 2315,
+      "skipped": 98
+     }
+    },
+    "N25": {
+     "2025": {
+      "ret": 148.34,
+      "dd": 7.85,
+      "worst_day": -3.25,
+      "days_stopped": 5,
+      "taken": 1513,
+      "skipped": 12
+     },
+     "2026": {
+      "ret": 34.47,
+      "dd": 8.78,
+      "worst_day": -2.93,
+      "days_stopped": 14,
+      "taken": 2229,
+      "skipped": 77
+     }
+    },
+    "NZDCHF": {
+     "2025": {
+      "ret": 146.94,
+      "dd": 8.77,
+      "worst_day": -3.39,
+      "days_stopped": 4,
+      "taken": 1482,
+      "skipped": 11
+     },
+     "2026": {
+      "ret": 31.78,
+      "dd": 7.5,
+      "worst_day": -2.93,
+      "days_stopped": 13,
+      "taken": 2153,
+      "skipped": 72
+     }
+    },
+    "SPN35": {
+     "2025": {
+      "ret": 142.45,
+      "dd": 8.24,
+      "worst_day": -3.25,
+      "days_stopped": 4,
+      "taken": 1464,
+      "skipped": 11
+     },
+     "2026": {
+      "ret": 37.0,
+      "dd": 7.57,
+      "worst_day": -2.93,
+      "days_stopped": 12,
+      "taken": 2116,
+      "skipped": 66
+     }
+    },
+    "UK100": {
+     "2025": {
+      "ret": 152.0,
+      "dd": 7.12,
+      "worst_day": -3.37,
+      "days_stopped": 3,
+      "taken": 1436,
+      "skipped": 11
+     },
+     "2026": {
+      "ret": 35.7,
+      "dd": 7.17,
+      "worst_day": -2.64,
+      "days_stopped": 12,
+      "taken": 2074,
+      "skipped": 69
+     }
+    },
+    "US100": {
+     "2025": {
+      "ret": 177.49,
+      "dd": 6.65,
+      "worst_day": -2.44,
+      "days_stopped": 10,
+      "taken": 1634,
+      "skipped": 26
+     },
+     "2026": {
+      "ret": -9.01,
+      "dd": 17.61,
+      "worst_day": -5.14,
+      "days_stopped": 13,
+      "taken": 1089,
+      "skipped": 1380
+     }
+    },
+    "US2000": {
+     "2025": {
+      "ret": 144.71,
+      "dd": 8.28,
+      "worst_day": -3.25,
+      "days_stopped": 4,
+      "taken": 1475,
+      "skipped": 11
+     },
+     "2026": {
+      "ret": 35.08,
+      "dd": 7.92,
+      "worst_day": -2.93,
+      "days_stopped": 13,
+      "taken": 2153,
+      "skipped": 67
+     }
+    },
+    "US30": {
+     "2025": {
+      "ret": 151.52,
+      "dd": 10.02,
+      "worst_day": -3.73,
+      "days_stopped": 7,
+      "taken": 1597,
+      "skipped": 20
+     },
+     "2026": {
+      "ret": -8.97,
+      "dd": 9.23,
+      "worst_day": -2.64,
+      "days_stopped": 0,
+      "taken": 147,
+      "skipped": 2262
+     }
+    },
+    "US500": {
+     "2025": {
+      "ret": 202.36,
+      "dd": 6.52,
+      "worst_day": -3.44,
+      "days_stopped": 10,
+      "taken": 1696,
+      "skipped": 29
+     },
+     "2026": {
+      "ret": 44.62,
+      "dd": 9.67,
+      "worst_day": -3.5,
+      "days_stopped": 22,
+      "taken": 2482,
+      "skipped": 126
+     }
+    },
+    "USDCHF": {
+     "2025": {
+      "ret": 142.54,
+      "dd": 9.15,
+      "worst_day": -2.97,
+      "days_stopped": 4,
+      "taken": 1529,
+      "skipped": 9
+     },
+     "2026": {
+      "ret": 38.21,
+      "dd": 7.59,
+      "worst_day": -2.93,
+      "days_stopped": 13,
+      "taken": 2199,
+      "skipped": 79
+     }
+    },
+    "USDJPY": {
+     "2025": {
+      "ret": 145.19,
+      "dd": 8.36,
+      "worst_day": -3.14,
+      "days_stopped": 3,
+      "taken": 1458,
+      "skipped": 9
+     },
+     "2026": {
+      "ret": 37.34,
+      "dd": 7.69,
+      "worst_day": -2.93,
+      "days_stopped": 12,
+      "taken": 2116,
+      "skipped": 62
+     }
+    },
+    "XAGUSD": {
+     "2025": {
+      "ret": 140.31,
+      "dd": 8.9,
+      "worst_day": -3.17,
+      "days_stopped": 4,
+      "taken": 1484,
+      "skipped": 14
+     },
+     "2026": {
+      "ret": 31.89,
+      "dd": 8.8,
+      "worst_day": -2.84,
+      "days_stopped": 13,
+      "taken": 2139,
+      "skipped": 59
+     }
+    },
+    "XAUUSD": {
+     "2025": {
+      "ret": 146.8,
+      "dd": 7.97,
+      "worst_day": -3.25,
+      "days_stopped": 4,
+      "taken": 1466,
+      "skipped": 11
+     },
+     "2026": {
+      "ret": 35.09,
+      "dd": 7.63,
+      "worst_day": -2.93,
+      "days_stopped": 11,
+      "taken": 2136,
+      "skipped": 67
+     }
+    }
+   },
+   "per_track_picks": {
+    "tal_dirtrend": {
+     "base": {
+      "2025": {
+       "ret": 143.35,
+       "dd": 8.24,
+       "worst_day": -3.25,
+       "days_stopped": 4,
+       "taken": 1468,
+       "skipped": 11
+      },
+      "2026": {
+       "ret": 37.32,
+       "dd": 7.66,
+       "worst_day": -2.93,
+       "days_stopped": 12,
+       "taken": 2136,
+       "skipped": 67
+      }
+     },
+     "pick": {
+      "2025": {
+       "ret": 186.18,
+       "dd": 8.2,
+       "worst_day": -3.14,
+       "days_stopped": 3,
+       "taken": 1466,
+       "skipped": 5
+      },
+      "2026": {
+       "ret": 31.89,
+       "dd": 9.99,
+       "worst_day": -2.75,
+       "days_stopped": 11,
+       "taken": 2080,
+       "skipped": 91
+      }
+     }
+    },
+    "tal_stop7": {
+     "base": {
+      "2025": {
+       "ret": 143.35,
+       "dd": 8.24,
+       "worst_day": -3.25,
+       "days_stopped": 4,
+       "taken": 1468,
+       "skipped": 11
+      },
+      "2026": {
+       "ret": 37.32,
+       "dd": 7.66,
+       "worst_day": -2.93,
+       "days_stopped": 12,
+       "taken": 2136,
+       "skipped": 67
+      }
+     },
+     "pick": {
+      "2025": {
+       "ret": 235.75,
+       "dd": 8.03,
+       "worst_day": -3.33,
+       "days_stopped": 10,
+       "taken": 2192,
+       "skipped": 30
+      },
+      "2026": {
+       "ret": -8.98,
+       "dd": 9.47,
+       "worst_day": -1.95,
+       "days_stopped": 0,
+       "taken": 239,
+       "skipped": 3047
+      }
+     }
+    },
+    "tal_tgt": {
+     "base": {
+      "2025": {
+       "ret": 143.35,
+       "dd": 8.24,
+       "worst_day": -3.25,
+       "days_stopped": 4,
+       "taken": 1468,
+       "skipped": 11
+      },
+      "2026": {
+       "ret": 37.32,
+       "dd": 7.66,
+       "worst_day": -2.93,
+       "days_stopped": 12,
+       "taken": 2136,
+       "skipped": 67
+      }
+     },
+     "pick": {
+      "2025": {
+       "ret": 269.01,
+       "dd": 14.52,
+       "worst_day": -4.25,
+       "days_stopped": 31,
+       "taken": 1646,
+       "skipped": 121
+      },
+      "2026": {
+       "ret": -8.96,
+       "dd": 9.22,
+       "worst_day": -2.24,
+       "days_stopped": 0,
+       "taken": 121,
+       "skipped": 2520
+      }
+     }
+    }
+   },
+   "t15_5_sscale": {
+    "0.70": [
+     18.9,
+     47.5
+    ],
+    "0.75": [
+     22.5,
+     51.9
+    ],
+    "0.80": [
+     20.2,
+     43.1
+    ],
+    "1.00": [
+     7.4,
+     37.8
+    ]
    }
   }
  }

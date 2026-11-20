@@ -784,13 +784,14 @@ def agent_undo(d):
             r["undo"] = True
             RESET7_F.write_text(json.dumps(r, ensure_ascii=False), encoding="utf-8")
         log(f"manager's decision {k} undone by the user: bot 7's account before the reset comes back")
-    elif a:                                  # a risk change already applied: put back the value before it
+    elif a and not a.get("failed"):          # a risk change already applied: put back the value before it
+        # (a failed / superseded one changed nothing - its prev is None and would reset the strategy to x1)
         risk_change(a["bot"], a["combo"], a["kind"], a.get("prev"))
         log(f"manager's decision {k} undone by the user: {a['bot']} {a['combo']} {a['kind']} back to {a.get('prev')}")
     else:
         log(f"manager's decision {k} undone by the user")
     agent_publish()
-    return {"undone": k, "restored": bool(a)}
+    return {"undone": k, "restored": bool(a and not a.get("failed"))}
 
 
 AUTO_APPLY = {"at": None, "n": 0, "err": None, "src": None}
@@ -1030,6 +1031,21 @@ def auto_apply():
                                           and _recent(x) and not _lowers_bot3(a))
                     if (rec and not retry) or x["id"] in m["undo"] or (x["id"] in rev and rev[x["id"]] not in m["undo"]):
                         continue                     # applied, undone, or taken back by the watch (unless you undid that)
+                    # an older decision that reaches this computer after a newer one on the same strategy is already
+                    # in force is never applied over it (manager, 20.11.2026: SE02|1Hour|USDJPY in bots 1-2 flapped
+                    # x0.45 <-> x0.39 and x0.39 <-> x0.33 six times in 30 seconds at 22:05 UTC - each pass set the
+                    # stale value first and the re-apply put the newer one back): recorded as superseded, not applied
+                    nw = next((y for y in latest.values() if (y.get("action") or {}).get("bot") == a.get("bot")
+                               and (y.get("action") or {}).get("combo") == a.get("combo")
+                               and (y.get("action") or {}).get("kind") == a.get("kind")), None)
+                    nrec = m["applied"].get(nw["id"]) if nw is not None and nw["id"] != x["id"] else None
+                    if not rec and nrec and not nrec.get("failed") and nw["id"] not in m["undo"] \
+                            and (nw.get("card_decision") or nw.get("star_of")) not in gone:
+                        m["applied"][x["id"]] = {"bot": a["bot"], "combo": a.get("combo"), "kind": a.get("kind"),
+                                                 "prev": None, "failed": True, "err": "superseded", "by": nw["id"],
+                                                 "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+                        agent_meta_save(m)
+                        continue
                 err = None
                 try:
                     cur = (risk_doc().get(a["bot"], {}).get(a["kind"]) or {}).get(a["combo"])

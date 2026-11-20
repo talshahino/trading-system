@@ -1,10 +1,117 @@
 {
- "updated": "2026-11-20T04:17:20+00:00",
+ "updated": "2026-11-20T04:35:26+00:00",
  "new": [
-  "1cf685938256",
-  "6de660687f34"
+  "29b0a538a9ed",
+  "66ec9fa9f8c7",
+  "8e58b4771d92"
  ],
  "decisions": [
+  {
+   "id": "29b0a538a9ed",
+   "bot": "bot3",
+   "type": "card",
+   "card": "1589e426ee29",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ TV24|15Min|TSLA: יעד 2R · כניסה בלימיט 0.25R טוב יותר",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.22R לעסקה, 38.0 עסקאות אפקטיביות, +0.10R מעל המצב הקיים) · נבדקו 96 שילובים, אז חלק מהיתרון עלול להיות מזל · בבוט השלם על 2026: רווח +143.43% → +143.55%, בלי יותר סיכון (יום גרוע -2.97%, ירידה 6.05%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3998,
+     "total": 143.43,
+     "worst_day": -2.97,
+     "max_dd": 6.17,
+     "near_days": 0,
+     "max_open": 5.39,
+     "max_side": 4.22,
+     "guard_cut": 209,
+     "guard_skipped": 33
+    },
+    "after": {
+     "trades": 3986,
+     "total": 143.55,
+     "worst_day": -2.97,
+     "max_dd": 6.05,
+     "near_days": 0,
+     "max_open": 5.39,
+     "max_side": 4.22,
+     "guard_cut": 206,
+     "guard_skipped": 30
+    }
+   },
+   "at": "2026-11-20T04:35:26+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "66ec9fa9f8c7",
+   "bot": "bot3",
+   "type": "card",
+   "card": "63c4f27585a0",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ TV17|15Min|AAPL: ב־1.5R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.17R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.20R לעסקה, 62.0 עסקאות אפקטיביות, +0.04R מעל המצב הקיים) · בבוט השלם על 2026: רווח +143.55% → +145.18%, בלי יותר סיכון (יום גרוע -2.97%, ירידה 6.05%) · ⭐ אולי מזל: נכנס בסיכון ×0.8 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3986,
+     "total": 143.55,
+     "worst_day": -2.97,
+     "max_dd": 6.05,
+     "near_days": 0,
+     "max_open": 5.39,
+     "max_side": 4.22,
+     "guard_cut": 206,
+     "guard_skipped": 30
+    },
+    "after": {
+     "trades": 3987,
+     "total": 145.18,
+     "worst_day": -2.97,
+     "max_dd": 6.05,
+     "near_days": 0,
+     "max_open": 5.39,
+     "max_side": 4.22,
+     "guard_cut": 206,
+     "guard_skipped": 30
+    }
+   },
+   "at": "2026-11-20T04:35:26+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "8e58b4771d92",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV17|15Min|AAPL",
+   "title": "TV17|15Min|AAPL: סיכון ×0.8 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.20R לעסקה, 62.0 עסקאות אפקטיביות, +0.04R מעל המצב הקיים) · בבוט השלם על 2026: רווח +143.55% → +145.18%, בלי יותר סיכון (יום גרוע -2.97%, ירידה 6.05%) · ⭐ אולי מזל: נכנס בסיכון ×0.8 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "66ec9fa9f8c7",
+   "star": true,
+   "action": {
+    "bot": "bot3",
+    "combo": "TV17|15Min|AAPL",
+    "kind": "mult",
+    "value": 0.8,
+    "prev": null
+   },
+   "at": "2026-11-20T04:35:26+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "1cf685938256",
    "bot": "bot6",

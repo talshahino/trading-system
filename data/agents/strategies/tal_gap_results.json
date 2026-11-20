@@ -483705,7 +483705,7 @@
   }
  },
  "bot5_smart": {
-  "updated": "2026-11-20T10:26:12+00:00",
+  "updated": "2026-11-20T18:32:56+00:00",
   "for": "bot6",
   "dbrk": {
    "what": "DBRK (agents/tal_gap.py): c = cancel a waiting gap order 10 min before an expected 30+ min break shorter than 2h (seen a day / a week earlier), x = close an open trade then, oN = no fill N min after a reopening. Bot 5: no rule beats today on the whole bot; passes only on t15_1 (x). The 4h tracks lose most (fills at the reopening earn). Bot 6's futures have the CME daily break (60 min) - worth the same test.",
@@ -484534,6 +484534,288 @@
      37.8
     ]
    }
+  },
+  "near2011": {
+   "what": "ETOL (agents/tal_gap.py, off by default, live_trades = simulate): the gap order a little before the middle - h5/h10/h15 = 5/10/15% of half the box toward the near edge, c1/c2 = one/two FTMO spread+commission; and LADDER 2n. Bot 5 as it runs, FTMO real spreads, account at 0.20%, 4.5%/9%. No way beats today on both periods; a per-track pick on 2025 falls on 2026 (+40% vs +47%). Bot 6: the same knob is ready for its own tracks (task b5neartouch2011).",
+   "account": {
+    "now": {
+     "2025": {
+      "ret": 122.37,
+      "dd": 5.11,
+      "worst_day": -3.2,
+      "days_stopped": 1,
+      "taken": 1838,
+      "skipped": 3
+     },
+     "2026": {
+      "ret": 46.57,
+      "dd": 6.74,
+      "worst_day": -2.31,
+      "days_stopped": 6,
+      "taken": 2662,
+      "skipped": 20
+     }
+    },
+    "h5": {
+     "2025": {
+      "ret": 119.04,
+      "dd": 6.15,
+      "worst_day": -2.99,
+      "days_stopped": 1,
+      "taken": 1835,
+      "skipped": 3
+     },
+     "2026": {
+      "ret": 45.22,
+      "dd": 6.58,
+      "worst_day": -2.32,
+      "days_stopped": 5,
+      "taken": 2673,
+      "skipped": 21
+     }
+    },
+    "h10": {
+     "2025": {
+      "ret": 113.89,
+      "dd": 5.93,
+      "worst_day": -2.8,
+      "days_stopped": 1,
+      "taken": 1822,
+      "skipped": 3
+     },
+     "2026": {
+      "ret": 43.1,
+      "dd": 7.2,
+      "worst_day": -2.84,
+      "days_stopped": 5,
+      "taken": 2703,
+      "skipped": 22
+     }
+    },
+    "h15": {
+     "2025": {
+      "ret": 110.26,
+      "dd": 6.09,
+      "worst_day": -2.62,
+      "days_stopped": 1,
+      "taken": 1828,
+      "skipped": 3
+     },
+     "2026": {
+      "ret": 44.98,
+      "dd": 7.47,
+      "worst_day": -2.44,
+      "days_stopped": 6,
+      "taken": 2709,
+      "skipped": 23
+     }
+    },
+    "c1": {
+     "2025": {
+      "ret": 109.22,
+      "dd": 6.68,
+      "worst_day": -2.55,
+      "days_stopped": 1,
+      "taken": 1835,
+      "skipped": 3
+     },
+     "2026": {
+      "ret": 43.87,
+      "dd": 7.32,
+      "worst_day": -2.32,
+      "days_stopped": 6,
+      "taken": 2720,
+      "skipped": 27
+     }
+    },
+    "c2": {
+     "2025": {
+      "ret": 109.17,
+      "dd": 6.47,
+      "worst_day": -2.47,
+      "days_stopped": 1,
+      "taken": 1839,
+      "skipped": 2
+     },
+     "2026": {
+      "ret": 47.1,
+      "dd": 6.08,
+      "worst_day": -2.34,
+      "days_stopped": 6,
+      "taken": 2765,
+      "skipped": 25
+     }
+    },
+    "lad2n": {
+     "2025": {
+      "ret": 120.6,
+      "dd": 7.48,
+      "worst_day": -2.94,
+      "days_stopped": 2,
+      "taken": 2294,
+      "skipped": 3
+     },
+     "2026": {
+      "ret": 33.13,
+      "dd": 8.73,
+      "worst_day": -2.78,
+      "days_stopped": 8,
+      "taken": 3287,
+      "skipped": 57
+     }
+    },
+    "chosen": {
+     "2025": {
+      "ret": 199.66,
+      "dd": 4.42,
+      "worst_day": -2.57,
+      "days_stopped": 1,
+      "taken": 1871,
+      "skipped": 2
+     },
+     "2026": {
+      "ret": 39.95,
+      "dd": 7.29,
+      "worst_day": -2.75,
+      "days_stopped": 5,
+      "taken": 2798,
+      "skipped": 22
+     }
+    }
+   },
+   "card": "eccad310930a"
+  },
+  "ideas2011": {
+   "what": "G3 fvg/brk, SWP sw20/pdhl, PO3 m/d on bot 5 as it runs (agents/tal_ideas_study): none beats today on both periods; fvg lowers the drawdown but also the profit per unit of risk.",
+   "account": {
+    "now": {
+     "2025": {
+      "ret": 122.37,
+      "dd": 5.11,
+      "worst_day": -3.2,
+      "days_stopped": 1,
+      "taken": 1838,
+      "skipped": 3
+     },
+     "2026": {
+      "ret": 46.57,
+      "dd": 6.74,
+      "worst_day": -2.31,
+      "days_stopped": 6,
+      "taken": 2662,
+      "skipped": 20
+     }
+    },
+    "g3|fvg": {
+     "2025": {
+      "ret": 80.02,
+      "dd": 4.31,
+      "worst_day": -1.23,
+      "days_stopped": 0,
+      "taken": 799,
+      "skipped": 0
+     },
+     "2026": {
+      "ret": 30.57,
+      "dd": 4.75,
+      "worst_day": -1.77,
+      "days_stopped": 0,
+      "taken": 1155,
+      "skipped": 0
+     }
+    },
+    "g3|brk": {
+     "2025": {
+      "ret": 30.49,
+      "dd": 9.75,
+      "worst_day": -2.29,
+      "days_stopped": 0,
+      "taken": 1341,
+      "skipped": 0
+     },
+     "2026": {
+      "ret": 22.4,
+      "dd": 8.4,
+      "worst_day": -2.03,
+      "days_stopped": 2,
+      "taken": 1951,
+      "skipped": 7
+     }
+    },
+    "swp|sw20": {
+     "2025": {
+      "ret": 101.87,
+      "dd": 6.43,
+      "worst_day": -1.79,
+      "days_stopped": 0,
+      "taken": 787,
+      "skipped": 0
+     },
+     "2026": {
+      "ret": 18.47,
+      "dd": 8.11,
+      "worst_day": -1.73,
+      "days_stopped": 0,
+      "taken": 1258,
+      "skipped": 0
+     }
+    },
+    "swp|pdhl": {
+     "2025": {
+      "ret": 84.63,
+      "dd": 5.02,
+      "worst_day": -1.22,
+      "days_stopped": 0,
+      "taken": 777,
+      "skipped": 0
+     },
+     "2026": {
+      "ret": 20.77,
+      "dd": 6.82,
+      "worst_day": -1.94,
+      "days_stopped": 0,
+      "taken": 1253,
+      "skipped": 0
+     }
+    },
+    "po3|m": {
+     "2025": {
+      "ret": 121.47,
+      "dd": 5.92,
+      "worst_day": -3.2,
+      "days_stopped": 1,
+      "taken": 1818,
+      "skipped": 3
+     },
+     "2026": {
+      "ret": 47.35,
+      "dd": 6.76,
+      "worst_day": -2.31,
+      "days_stopped": 5,
+      "taken": 2634,
+      "skipped": 19
+     }
+    },
+    "po3|d": {
+     "2025": {
+      "ret": 46.61,
+      "dd": 5.12,
+      "worst_day": -2.44,
+      "days_stopped": 1,
+      "taken": 1475,
+      "skipped": 3
+     },
+     "2026": {
+      "ret": 26.9,
+      "dd": 8.29,
+      "worst_day": -2.1,
+      "days_stopped": 4,
+      "taken": 2185,
+      "skipped": 18
+     }
+    }
+   },
+   "card": "fcc2bfa0fb4c"
   }
  }
 }

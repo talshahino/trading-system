@@ -1,7 +1,362 @@
 {
  "bot": "bot5",
- "updated": "2026-11-20T14:31:41+00:00",
+ "updated": "2026-11-20T18:32:56+00:00",
  "cards": [
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: FVG / סוויפ / PO3 על שיטת הגאפ - אף אחד לא טוב מהיום",
+   "what": "שלושה רעיונות מטיקטוק על הבוט כפי שהוא רץ (13 מכשירים, ספרדים אמיתיים של FTMO, 0.20% לעסקה, כלל 4.5% / 9%), בחירה עד 2025 והצגה על 2026. היום: 2025 +122% ירידה 5.1%, 2026 +47% ירידה 6.7%. רק גאפ FVG (נר 3 נסגר בתוך נר 2): 2025 +80% ירידה 4.3%, 2026 +31% ירידה 4.8% - פחות ירידה, אבל פחות רווח גם ליחידת סיכון. גאפ פריצה: 2026 +22% ירידה 8.4%. רק אחרי סוויפ של סווינג: 2026 +18% ירידה 8.1% / שיא-שפל של אתמול +21% ירידה 6.8%. PO3 של נר 4 שעות: 2026 +47% ירידה 6.8% - כמעט זהה להיום (2025 מעט פחות), רעש. אף אחד לא טוב מהיום בשתי התקופות - לא נבנה.",
+   "train": {
+    "n": 799,
+    "eff_n": 798.2,
+    "mean": 0.4346,
+    "t": 1.76,
+    "win": 43.3
+   },
+   "unseen": {
+    "n": 1155,
+    "eff_n": 1154.7,
+    "mean": 0.1193,
+    "t": 3.43,
+    "win": 46.0
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 6,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": {
+    "n": 2682,
+    "eff_n": 2681.4,
+    "mean": 0.0752,
+    "t": 3.26,
+    "win": 42.8
+   },
+   "change": null,
+   "detail": {
+    "study": "agents/tal_ideas_study.py",
+    "report": "reports/agents/bot5/tal_ideas/report.json",
+    "ways": {
+     "now": {
+      "2025": {
+       "ret": 122.37,
+       "dd": 5.11,
+       "worst_day": -3.2,
+       "days_stopped": 1,
+       "taken": 1838,
+       "skipped": 3
+      },
+      "2026": {
+       "ret": 46.57,
+       "dd": 6.74,
+       "worst_day": -2.31,
+       "days_stopped": 6,
+       "taken": 2662,
+       "skipped": 20
+      }
+     },
+     "g3|fvg": {
+      "2025": {
+       "ret": 80.02,
+       "dd": 4.31,
+       "worst_day": -1.23,
+       "days_stopped": 0,
+       "taken": 799,
+       "skipped": 0
+      },
+      "2026": {
+       "ret": 30.57,
+       "dd": 4.75,
+       "worst_day": -1.77,
+       "days_stopped": 0,
+       "taken": 1155,
+       "skipped": 0
+      }
+     },
+     "g3|brk": {
+      "2025": {
+       "ret": 30.49,
+       "dd": 9.75,
+       "worst_day": -2.29,
+       "days_stopped": 0,
+       "taken": 1341,
+       "skipped": 0
+      },
+      "2026": {
+       "ret": 22.4,
+       "dd": 8.4,
+       "worst_day": -2.03,
+       "days_stopped": 2,
+       "taken": 1951,
+       "skipped": 7
+      }
+     },
+     "swp|sw20": {
+      "2025": {
+       "ret": 101.87,
+       "dd": 6.43,
+       "worst_day": -1.79,
+       "days_stopped": 0,
+       "taken": 787,
+       "skipped": 0
+      },
+      "2026": {
+       "ret": 18.47,
+       "dd": 8.11,
+       "worst_day": -1.73,
+       "days_stopped": 0,
+       "taken": 1258,
+       "skipped": 0
+      }
+     },
+     "swp|pdhl": {
+      "2025": {
+       "ret": 84.63,
+       "dd": 5.02,
+       "worst_day": -1.22,
+       "days_stopped": 0,
+       "taken": 777,
+       "skipped": 0
+      },
+      "2026": {
+       "ret": 20.77,
+       "dd": 6.82,
+       "worst_day": -1.94,
+       "days_stopped": 0,
+       "taken": 1253,
+       "skipped": 0
+      }
+     },
+     "po3|m": {
+      "2025": {
+       "ret": 121.47,
+       "dd": 5.92,
+       "worst_day": -3.2,
+       "days_stopped": 1,
+       "taken": 1818,
+       "skipped": 3
+      },
+      "2026": {
+       "ret": 47.35,
+       "dd": 6.76,
+       "worst_day": -2.31,
+       "days_stopped": 5,
+       "taken": 2634,
+       "skipped": 19
+      }
+     },
+     "po3|d": {
+      "2025": {
+       "ret": 46.61,
+       "dd": 5.12,
+       "worst_day": -2.44,
+       "days_stopped": 1,
+       "taken": 1475,
+       "skipped": 3
+      },
+      "2026": {
+       "ret": 26.9,
+       "dd": 8.29,
+       "worst_day": -2.1,
+       "days_stopped": 4,
+       "taken": 2185,
+       "skipped": 18
+      }
+     }
+    }
+   },
+   "made": "2026-11-20T18:22:31+00:00",
+   "id": "fcc2bfa0fb4c"
+  },
+  {
+   "bot": "bot5",
+   "kind": "info",
+   "title": "בוט 5: כניסה כשהמחיר רק מתקרב לאמצע הגאפ - לא משפרת (ההערה שלך על GER40 / AUS200)",
+   "what": "ההערה שלך מ־20.11 (GER40 ו־AUS200 נגעו כמעט באמצע וירדו). נבדק על הבוט כפי שהוא רץ (13 מכשירים, כל מסלול לחוד, ספרדים אמיתיים של FTMO, 0.20% לעסקה, כלל 4.5% / 9%): הפקודה 5% / 10% / 15% מחצי הגאפ לפני האמצע, ספרד אחד / שניים לפני האמצע, וכניסה מדורגת קצה + אמצע. היום: 2025 +122% (ירידה 5.1%), 2026 +47% (ירידה 6.7%). 5%: +119% (ירידה 6.2%) / +45% (ירידה 6.6%). ספרד אחד: +109% (ירידה 6.7%) / +44% (ירידה 7.3%). שני ספרדים: +109% (ירידה 6.5%) / +47% (ירידה 6.1%). קצה + אמצע: +121% (ירידה 7.5%) / +33% (ירידה 8.7%). בחירה לכל מסלול על 2025: +200% (ירידה 4.4%) ← 2026 +40% (ירידה 7.3%) - נופל ב־2026. העסקאות שנוספות (מגע קרוב לאמצע) לא מרוויחות בממוצע - חלק כמו GER40 / AUS200 של היום, וחלק ממשיכות עד הסטופ. במסלולי 4 שעות / שעה ו־4 שעות / 15 דק' כבר יש כניסה מדורגת - אין שינוי שם. לא נבנה.",
+   "train": {
+    "n": 1873,
+    "eff_n": 1870.9,
+    "mean": 0.3457,
+    "t": 2.85,
+    "win": 47.1
+   },
+   "unseen": {
+    "n": 2820,
+    "eff_n": 2819.4,
+    "mean": 0.0649,
+    "t": 2.98,
+    "win": 42.5
+   },
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 300,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": {
+    "n": 2682,
+    "eff_n": 2681.4,
+    "mean": 0.0752,
+    "t": 3.26,
+    "win": 42.8
+   },
+   "change": null,
+   "detail": {
+    "study": "agents/tal_near_study.py",
+    "report": "reports/agents/bot5/tal_near/report.json",
+    "task": "b5neartouch2011",
+    "ways": {
+     "now": {
+      "2025": {
+       "ret": 122.37,
+       "dd": 5.11,
+       "worst_day": -3.2,
+       "days_stopped": 1,
+       "taken": 1838,
+       "skipped": 3
+      },
+      "2026": {
+       "ret": 46.57,
+       "dd": 6.74,
+       "worst_day": -2.31,
+       "days_stopped": 6,
+       "taken": 2662,
+       "skipped": 20
+      }
+     },
+     "h5": {
+      "2025": {
+       "ret": 119.04,
+       "dd": 6.15,
+       "worst_day": -2.99,
+       "days_stopped": 1,
+       "taken": 1835,
+       "skipped": 3
+      },
+      "2026": {
+       "ret": 45.22,
+       "dd": 6.58,
+       "worst_day": -2.32,
+       "days_stopped": 5,
+       "taken": 2673,
+       "skipped": 21
+      }
+     },
+     "h10": {
+      "2025": {
+       "ret": 113.89,
+       "dd": 5.93,
+       "worst_day": -2.8,
+       "days_stopped": 1,
+       "taken": 1822,
+       "skipped": 3
+      },
+      "2026": {
+       "ret": 43.1,
+       "dd": 7.2,
+       "worst_day": -2.84,
+       "days_stopped": 5,
+       "taken": 2703,
+       "skipped": 22
+      }
+     },
+     "h15": {
+      "2025": {
+       "ret": 110.26,
+       "dd": 6.09,
+       "worst_day": -2.62,
+       "days_stopped": 1,
+       "taken": 1828,
+       "skipped": 3
+      },
+      "2026": {
+       "ret": 44.98,
+       "dd": 7.47,
+       "worst_day": -2.44,
+       "days_stopped": 6,
+       "taken": 2709,
+       "skipped": 23
+      }
+     },
+     "c1": {
+      "2025": {
+       "ret": 109.22,
+       "dd": 6.68,
+       "worst_day": -2.55,
+       "days_stopped": 1,
+       "taken": 1835,
+       "skipped": 3
+      },
+      "2026": {
+       "ret": 43.87,
+       "dd": 7.32,
+       "worst_day": -2.32,
+       "days_stopped": 6,
+       "taken": 2720,
+       "skipped": 27
+      }
+     },
+     "c2": {
+      "2025": {
+       "ret": 109.17,
+       "dd": 6.47,
+       "worst_day": -2.47,
+       "days_stopped": 1,
+       "taken": 1839,
+       "skipped": 2
+      },
+      "2026": {
+       "ret": 47.1,
+       "dd": 6.08,
+       "worst_day": -2.34,
+       "days_stopped": 6,
+       "taken": 2765,
+       "skipped": 25
+      }
+     },
+     "lad2n": {
+      "2025": {
+       "ret": 120.6,
+       "dd": 7.48,
+       "worst_day": -2.94,
+       "days_stopped": 2,
+       "taken": 2294,
+       "skipped": 3
+      },
+      "2026": {
+       "ret": 33.13,
+       "dd": 8.73,
+       "worst_day": -2.78,
+       "days_stopped": 8,
+       "taken": 3287,
+       "skipped": 57
+      }
+     },
+     "chosen": {
+      "2025": {
+       "ret": 199.66,
+       "dd": 4.42,
+       "worst_day": -2.57,
+       "days_stopped": 1,
+       "taken": 1871,
+       "skipped": 2
+      },
+      "2026": {
+       "ret": 39.95,
+       "dd": 7.29,
+       "worst_day": -2.75,
+       "days_stopped": 5,
+       "taken": 2798,
+       "skipped": 22
+      }
+     }
+    }
+   },
+   "made": "2026-11-20T18:32:37+00:00",
+   "id": "eccad310930a"
+  },
   {
    "bot": "bot5",
    "kind": "info",

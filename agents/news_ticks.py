@@ -48,6 +48,8 @@ CACHE = ROOT / "cache" / "duka_ticks"
 # why downloads fail (manager, 19.11.2026: EV04 ticks lose a third of its hours a round and nobody knows why):
 # the last failure reason of each attempt, counted - printed by the callers so the agent sees 503 / 429 / timeout
 FAIL_WHY: dict = {}
+_COOL = {"until": 0.0}                 # shared pause after a refusal (503 / 429)
+_LOCK = threading.Lock()
 SYMS = {"AUDUSD": "AUDUSD", "AUDJPY": "AUDJPY", "EURAUD": "EURAUD", "USDCAD": "USDCAD", "CADJPY": "CADJPY",
         "NZDUSD": "NZDUSD", "GBPUSD": "GBPUSD", "EURGBP": "EURGBP", "GBPJPY": "GBPJPY", "EURUSD": "EURUSD",
         "USDJPY": "USDJPY", "XAUUSD": "XAUUSD", "US100": "USATECHIDXUSD", "US500": "USA500IDXUSD"}
@@ -76,8 +78,14 @@ def fetch_hour(inst, h):
     url = f"https://datafeed.dukascopy.com/datafeed/{inst}/{h.year}/{h.month - 1:02d}/{h.day:02d}/{h.hour:02d}h_ticks.bi5"
     data, ok = b"", False
     for k in range(4):
+        wait = _COOL["until"] - time.time()             # a 503 / 429 seen by any thread: everyone waits it out
+        if wait > 0:
+            time.sleep(wait)
         try:
-            r = requests.get(url, timeout=30, headers={"User-Agent": "Mozilla/5.0"})
+            # (19.11.2026, task mgr1911b7ticks: the round's reasons were http503 67, ConnectTimeout 62, ReadTimeout 11 - the
+            # server refuses bursts. A 30-second connect timeout x 4 attempts cost ~2 minutes per dead hour and ate the
+            # round: 24 of 269 trades. Connect now gives up after 8 s, and a refusal cools every thread for a while.)
+            r = requests.get(url, timeout=(8, 30), headers={"User-Agent": "Mozilla/5.0"})
             if r.status_code == 200:
                 data, ok = r.content, True
                 break
@@ -85,10 +93,14 @@ def fetch_hour(inst, h):
                 ok = True
                 break
             why = f"http{r.status_code}"
+            if r.status_code in (429, 503):
+                with _LOCK:
+                    _COOL["until"] = max(_COOL["until"], time.time() + 5 * (k + 1))
         except Exception as e:  # noqa: BLE001
             why = type(e).__name__
         FAIL_WHY[why] = FAIL_WHY.get(why, 0) + 1
-        time.sleep(1 + 2 * k)
+        if k < 3:
+            time.sleep(1 + 2 * k)
     rows = np.zeros((0, 3), dtype=np.float64)
     if data:
         try:

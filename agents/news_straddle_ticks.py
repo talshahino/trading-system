@@ -204,6 +204,11 @@ def run(minutes):
                 if time.time() > t_end:
                     break
                 got[q] = NT.fetch_hour(*q)
+            still = sum(1 for q in bad if not got[q][1])
+            if still * 2 > len(need):                       # half the hours still refused after the slow pass: the server
+                print(f"EV04 ticks: {still}/{len(need)} hours still refused - the server blocks now, stop downloading"
+                      " for this round (the next round goes on from the cache)", flush=True)
+                t_end = 0                                   # keep this batch's good rows, give the time to the other studies
         for x in batch:
             sym = x["sym"]
             parts = [got[(_inst(sym), h)] for h in _hours(x["rel"])]

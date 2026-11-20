@@ -730,6 +730,43 @@ REO6 = (("SESS", "xreo5"), ("SESS", "xreo15"))
 FILT_HE["SESS"] = (lambda f0: lambda v: {
     "xreo5": "בלי כניסה ב־5 הדקות הראשונות אחרי הפתיחה של 18:00 (SESS xreo5)",
     "xreo15": "בלי כניסה ב־15 הדקות הראשונות אחרי הפתיחה של 18:00 (SESS xreo15)"}.get(v) or f0(v))(FILT_HE.get("SESS", lambda v: f"SESS {v}"))
+# BOT 5'S STUDIES OF 20.11.2026 ON BOT 6'S FUTURES (shared methods, bot 6's smart agent, 20.11.2026 morning; the user to
+# bot 5, 20.11 06:43-06:44: "where is the stop best - about 7 options" and "which swing is the right target - the 1st? 2nd?
+# ... 6th?"; bot 5's agents/tal_stop7_study / tal_tgt_study, results in tal_gap_results.json bot5_smart.studies2011: its
+# setup of today is best on both periods). On bot 6's four tracks and three indices: the stop's distance x 0.75 / 0.9 /
+# 1.15 / 1.3 / 1.5 (SSCALE, the same $ risk), no room beyond the impulse's start (IPAD c0), and the target at the 1st /
+# 3rd-6th swing instead of the 2nd (TSWN). SSCALE / TSWN are in simulate only - an approved card is a code card (CODE6).
+# (Bot 5's third study, the big picture's direction, is already in bot 6's TREND groups: day / up20 / rth / e920 /
+# e920l / e50200 / pd20 / piv; its same-direction cap is TG.portfolio's max_dir.)
+STOP7_6 = tuple(("SSCALE", v) for v in (0.75, 0.9, 1.15, 1.3, 1.5)) + (("IPAD", "c0"),)
+TGT6 = tuple(("TSWN", n) for n in (1, 3, 4, 5, 6))
+FILT_HE["SSCALE"] = lambda v: (f"סטופ {'קרוב' if float(v) < 1 else 'רחוק'} יותר: המרחק מהכניסה × {float(v):g}, "
+                               f"אותו סיכון ב־$ (SSCALE {float(v):g})")
+FILT_HE["IPAD"] = (lambda f0: lambda v: "סטופ בלי מרווח מעבר לתחילת הדחף (IPAD c0)" if str(v) == "c0" else f0(v))(FILT_HE["IPAD"])
+FILT_HE["TSWN"] = lambda v: f"יעד בסווינג ה־{int(v)} מעבר לכניסה (היום: השני; TSWN {int(v)})"
+B5_2011 = {"SSCALE": ("tal_stop7", lambda v: f"st|k{float(v):g}"), "IPAD": ("tal_stop7", lambda v: "st|nopad"),
+           "TSWN": ("tal_tgt", lambda v: f"sw|{int(v)}")}
+
+
+def _b5_2011(k, v):
+    """What bot 5's agent found for the same stop / target (reports/agents/bot5/<study>/report.json): on its own
+    US100 / US500 / US30 tracks and on everything it runs."""
+    st, wf = B5_2011[k]
+    try:
+        r = json.loads(Path(f"reports/agents/bot5/{st}/report.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return f"המחקר של בוט 5 ({st}) עוד לא נקרא."
+    w = wf(v)
+    lv = (r.get("trend") or {}).get("live", {}).get("ways") or {}
+    n0, n1 = lv.get("now|base") or {}, lv.get(w) or {}
+    s = lambda nm, p: sum(((x.get(nm) or {}).get(p) or {}).get("sum", 0.0) for key, x in (r.get("rows") or {}).items()  # noqa: E731
+                          if key.split("#")[-1] in WORLD["symbols"])
+    ix = (f"על US100 / US500 / US30 שלו: עד 2025 {s('now|base', 'train'):+.0f}R ← {s(w, 'train'):+.0f}R, "
+          f"2026 {s('now|base', 'unseen'):+.0f}R ← {s(w, 'unseen'):+.0f}R; ")
+    if not n1:
+        return ix + "על כל המסלולים שלו הדרך הזו לא נבדקה."
+    return (ix + f"על כל מה שהוא סוחר: עד 2025 {n0.get('train', 0):+.0f}R ← {n1.get('train', 0):+.0f}R, "
+            f"2026 {n0.get('unseen', 0):+.0f}R ← {n1.get('unseen', 0):+.0f}R - ההגדרה של היום נשארת בבוט 5.")
 
 
 def _b5_beway(v):
@@ -746,12 +783,13 @@ def _b5_beway(v):
             + " (נבחר שם על 2025 ונבדק על 2026).")
 
 
-CODE6 = ("PYR", "FOLLOW", "WAITX")     # knobs live_trades does not run yet: an approved card is built by the smart agent
+CODE6 = ("PYR", "FOLLOW", "WAITX", "SSCALE", "TSWN")     # knobs live_trades does not run yet: an approved card is built by the smart agent
 TASK6 = {"gaveback": GAVE6, "follow": FOL6, "brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
          "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6,
          "gapx": GAPX6, "firstg": FG6, "stopat": STOP6, "waitx": WAIT6, "widestop": WIDE6, "stopmove": MOVE6, "mingap": MING6,
-         "minrr": MINRR6, "moverr": MOVERR6, "gapsize": GSIZE6, "beway": BEWAY6, "reopen": REO6}
-USER6 = BEWAY6 + MINRR6 + MOVERR6 + GSIZE6 + REO6 + WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+         "minrr": MINRR6, "moverr": MOVERR6, "gapsize": GSIZE6, "beway": BEWAY6, "reopen": REO6,
+         "stop7": STOP7_6, "tgtsw": TGT6}
+USER6 = STOP7_6 + TGT6 + BEWAY6 + MINRR6 + MOVERR6 + GSIZE6 + REO6 + WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
@@ -909,13 +947,15 @@ def filt_cards(idx, group=FILT6):
                           + ("משימה של טל מ־16.11 (הפסדים שהיו ברווח - יציאה חלקית). " if (k, v) in GAVE6 else "")
                           + ("הכלל של טל (סטופ לכניסה ב־60% מהדרך) וההפסד של 19.11 (US500 שעה / 5 דק', ‎+1.28R, 86.7% מהדרך, וחזר לסטופ מלא). " if (k, v) in BEWAY6 else "")
                           + ("השאלה של בוט 5 על הפתיחה היומית (b5reopen1911 - שיטה משותפת). " if (k, v) in REO6 else "")
+                          + ("משימה של טל לבוט 5 מ־20.11 (איפה הסטופ הכי נכון, באיזה סווינג היעד - שיטה משותפת). " if (k, v) in STOP7_6 + TGT6 else "")
                           + ("משימה של טל מ־16.11 (נרות חזקים אחרי הכניסה - b5follow1611). " if k == "FOLLOW" else "")
                           + ("משימה של טל מ־17.11 (הסקירה של הגאפים בבוט 5 - שיטה משותפת). " if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX") else "")
-                          + ("משימה של טל מ־18.11 (סטופ רחב יותר וגודל גאפ - שיטה משותפת עם בוט 5). " if k in ("IPAD", "MIN_GAP", "GAPPCT", "GAPLEG") or (k, v) in WIDE6 else "")
+                          + ("משימה של טל מ־18.11 (סטופ רחב יותר וגודל גאפ - שיטה משותפת עם בוט 5). " if (k in ("IPAD", "MIN_GAP", "GAPPCT", "GAPLEG") or (k, v) in WIDE6) and (k, v) not in STOP7_6 else "")
                           + ("משימה של טל מ־19.11 (\"אין לי בעיה גם ביחס 1 ל־0.5\" - שיטה משותפת עם בוט 5). " if k in ("MIN_RR", "MOVE_RR") else "")
                           + "בבוט 5: " + ("עוד לא נבדק - שיטה של בוט 6, נשלחה לבוט 5 כמשימה (b6to5rearm)." if k == "REARM" else
                                           _b5_gave(v) if (k, v) in GAVE6 else
                                           _b5_beway(v) if (k, v) in BEWAY6 else
+                                          _b5_2011(k, v) if (k, v) in STOP7_6 + TGT6 else
                                           "הבדיקה נבנית אצלו עכשיו (b5reopen1911)." if (k, v) in REO6 else
                                           _b5_gave(v, ("_follow",)) if k == "FOLLOW" else
                                           _b5_rev(k, v) if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX", "IPAD", "MIN_GAP") else
@@ -2437,6 +2477,15 @@ FUT_FIRST += [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC658", ("1Min", "5Min")), 
 # New York open ones. SC571 / SC572 (gap types A / B on 1 hour, 16-46 trades to 2025, a 10-bar time exit) are left out.
 FUT_FIRST += [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC562", ("5Min", "15Min")), ("SC669", ("5Min", "15Min")),
                                                    ("SC563", ("15Min",)), ("SC570", ("15Min",)))
+              for tf in tfs for sym in ("US100", "US500", "US30")]
+# + the scout's New York cash-open systems from FMZ (bot 6's smart agent, 20.11.2026 morning; DISCOVER - the session
+# open is the futures' strongest repeating intraday moment): SC674 the first NY hour's breakout with EMA9 over the VWAP,
+# SC677 the 09:30-09:45 candle's break with volume, SC679 the first minute's colour (out on RSI 70 / 30), SC681 the last
+# 15-minute candle's breakout on the low chart, SC682 the pivot-9 level breakout 09:30-13:00. Each at its own
+# timeframes, after the queue above; 96 variants on the futures' world decide, a pass is a 'new' card.
+FUT_FIRST += [f"{sid}|{tf}|{sym}" for sid, tfs in (("SC674", ("5Min", "15Min")), ("SC677", ("5Min", "15Min")),
+                                                   ("SC679", ("1Min", "5Min")), ("SC681", ("1Min", "5Min")),
+                                                   ("SC682", ("5Min", "15Min")))
               for tf in tfs for sym in ("US100", "US500", "US30")]
 
 

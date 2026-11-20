@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-19T14:01:07+00:00",
+ "updated": "2026-11-20T13:44:10+00:00",
  "rule": "GATE.md 4 - removed only after the user approves",
  "proposed": [
   "SE02|1Hour|USDJPY"
@@ -7,21 +7,21 @@
  "new": [],
  "combos": [
   {
-   "combo": "SC154|5Min|XAUUSD",
-   "trades": 5,
-   "fills": 9,
-   "cum_r": -5.01,
-   "line_r": -4.47,
+   "combo": "SC071|15Min|US30",
+   "trades": 8,
+   "fills": 8,
+   "cum_r": -5.52,
+   "line_r": -5.66,
    "bt_sd": 1.0,
    "remove": false
   },
   {
-   "combo": "SC042|15Min|XAUUSD",
-   "trades": 4,
-   "fills": 4,
-   "cum_r": -4.0,
-   "line_r": -4.0,
-   "bt_sd": 1.0,
+   "combo": "SE02|1Hour|USDJPY",
+   "trades": 11,
+   "fills": 23,
+   "cum_r": -5.42,
+   "line_r": -6.0,
+   "bt_sd": 0.91,
    "remove": false
   },
   {
@@ -30,6 +30,24 @@
    "fills": 4,
    "cum_r": -3.27,
    "line_r": -4.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "SE02|1Hour|GBPJPY",
+   "trades": 11,
+   "fills": 13,
+   "cum_r": -5.29,
+   "line_r": -6.09,
+   "bt_sd": 0.92,
+   "remove": false
+  },
+  {
+   "combo": "SC020|15Min|JP225",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": -2.0,
+   "line_r": -2.83,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -52,16 +70,7 @@
    "remove": false
   },
   {
-   "combo": "SC402|15Min|XAUUSD",
-   "trades": 2,
-   "fills": 2,
-   "cum_r": -2.0,
-   "line_r": -2.83,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
-   "combo": "SC402|5Min|XAUUSD",
+   "combo": "SC326|5Min|GBPUSD",
    "trades": 2,
    "fills": 2,
    "cum_r": -2.0,
@@ -79,12 +88,21 @@
    "remove": false
   },
   {
-   "combo": "SC247|4Hour|US500",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": -1.01,
-   "line_r": -2.0,
+   "combo": "SC154|5Min|XAUUSD",
+   "trades": 8,
+   "fills": 15,
+   "cum_r": -4.71,
+   "line_r": -5.66,
    "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TV10|1Hour|US100",
+   "trades": 9,
+   "fills": 9,
+   "cum_r": -7.61,
+   "line_r": -8.59,
+   "bt_sd": 1.43,
    "remove": false
   },
   {
@@ -133,24 +151,6 @@
    "remove": false
   },
   {
-   "combo": "SC020|15Min|JP225",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": -1.0,
-   "line_r": -2.0,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
-   "combo": "SC044|4Hour|EURJPY",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": -1.0,
-   "line_r": -2.0,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
    "combo": "SC072|5Min|US500",
    "trades": 1,
    "fills": 1,
@@ -160,7 +160,7 @@
    "remove": false
   },
   {
-   "combo": "SC142|15Min|XAUUSD",
+   "combo": "SC249|4Hour|UK100",
    "trades": 1,
    "fills": 1,
    "cum_r": -1.0,
@@ -178,7 +178,7 @@
    "remove": false
   },
   {
-   "combo": "SC326|5Min|GBPUSD",
+   "combo": "SC319|1Hour|ETHUSD",
    "trades": 1,
    "fills": 1,
    "cum_r": -1.0,
@@ -187,9 +187,9 @@
    "remove": false
   },
   {
-   "combo": "SC358|1Hour|XAUUSD",
+   "combo": "SC330|1Hour|USDJPY",
    "trades": 1,
-   "fills": 1,
+   "fills": 3,
    "cum_r": -1.0,
    "line_r": -2.0,
    "bt_sd": 1.0,
@@ -214,16 +214,34 @@
    "remove": false
   },
   {
-   "combo": "SC480|15Min|US100",
+   "combo": "SC625|15Min|USDJPY",
    "trades": 1,
-   "fills": 1,
+   "fills": 2,
    "cum_r": -1.0,
    "line_r": -2.0,
    "bt_sd": 1.0,
    "remove": false
   },
   {
-   "combo": "SC480|5Min|US100",
+   "combo": "SC627|15Min|XAGUSD",
+   "trades": 1,
+   "fills": 2,
+   "cum_r": -1.0,
+   "line_r": -2.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "SC635|15Min|GBPJPY",
+   "trades": 1,
+   "fills": 2,
+   "cum_r": -1.0,
+   "line_r": -2.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "SH01|1Min|US100",
    "trades": 1,
    "fills": 1,
    "cum_r": -1.0,
@@ -241,15 +259,6 @@
    "remove": false
   },
   {
-   "combo": "TAL|5Min1m|AUS200",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": -1.0,
-   "line_r": -2.0,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
    "combo": "TAL|5Min1m|EU50",
    "trades": 1,
    "fills": 1,
@@ -259,30 +268,30 @@
    "remove": false
   },
   {
-   "combo": "TV58|1Hour|XAUUSD",
+   "combo": "GH04|1Hour|JP225",
    "trades": 1,
-   "fills": 2,
+   "fills": 1,
    "cum_r": -1.0,
+   "line_r": -2.14,
+   "bt_sd": 1.07,
+   "remove": false
+  },
+  {
+   "combo": "FR01|1Hour|GBPUSD",
+   "trades": 4,
+   "fills": 4,
+   "cum_r": -4.0,
+   "line_r": -5.15,
+   "bt_sd": 1.29,
+   "remove": false
+  },
+  {
+   "combo": "SC264|15Min|JP225",
+   "trades": 1,
+   "fills": 1,
+   "cum_r": -0.76,
    "line_r": -2.0,
    "bt_sd": 1.0,
-   "remove": false
-  },
-  {
-   "combo": "GH04|1Hour|EURJPY",
-   "trades": 2,
-   "fills": 2,
-   "cum_r": -2.0,
-   "line_r": -3.12,
-   "bt_sd": 1.1,
-   "remove": false
-  },
-  {
-   "combo": "FR01|1Hour|EURUSD",
-   "trades": 3,
-   "fills": 3,
-   "cum_r": -3.0,
-   "line_r": -4.14,
-   "bt_sd": 1.19,
    "remove": false
   },
   {
@@ -292,15 +301,6 @@
    "cum_r": -0.69,
    "line_r": -1.94,
    "bt_sd": 0.68,
-   "remove": false
-  },
-  {
-   "combo": "SE02|1Hour|USDJPY",
-   "trades": 10,
-   "fills": 20,
-   "cum_r": -4.42,
-   "line_r": -5.72,
-   "bt_sd": 0.91,
    "remove": false
   },
   {
@@ -340,21 +340,12 @@
    "remove": false
   },
   {
-   "combo": "SC520|15Min|XAUUSD",
-   "trades": 2,
-   "fills": 2,
-   "cum_r": -1.46,
-   "line_r": -2.83,
+   "combo": "SC508|4Hour|USDJPY",
+   "trades": 1,
+   "fills": 1,
+   "cum_r": -0.61,
+   "line_r": -2.0,
    "bt_sd": 1.0,
-   "remove": false
-  },
-  {
-   "combo": "FR01|1Hour|GBPUSD",
-   "trades": 3,
-   "fills": 3,
-   "cum_r": -3.0,
-   "line_r": -4.46,
-   "bt_sd": 1.29,
    "remove": false
   },
   {
@@ -367,39 +358,21 @@
    "remove": false
   },
   {
-   "combo": "TV10|1Hour|US100",
-   "trades": 8,
-   "fills": 8,
-   "cum_r": -6.6,
-   "line_r": -8.1,
-   "bt_sd": 1.43,
-   "remove": false
-  },
-  {
-   "combo": "SE02|1Hour|GBPJPY",
-   "trades": 10,
-   "fills": 11,
-   "cum_r": -4.29,
-   "line_r": -5.81,
-   "bt_sd": 0.92,
-   "remove": false
-  },
-  {
-   "combo": "SC333|15Min|XAUUSD",
-   "trades": 3,
-   "fills": 3,
-   "cum_r": -1.93,
-   "line_r": -3.46,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
    "combo": "TV31|4Hour|EU50",
    "trades": 1,
    "fills": 1,
    "cum_r": -0.51,
    "line_r": -2.05,
    "bt_sd": 1.02,
+   "remove": false
+  },
+  {
+   "combo": "SC095|1Hour|GBPJPY",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": -1.27,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -421,6 +394,15 @@
    "remove": false
   },
   {
+   "combo": "TT45|1Hour|WTI",
+   "trades": 4,
+   "fills": 4,
+   "cum_r": -2.48,
+   "line_r": -4.13,
+   "bt_sd": 1.03,
+   "remove": false
+  },
+  {
    "combo": "TT56|1Hour|GME",
    "trades": 2,
    "fills": 2,
@@ -430,11 +412,11 @@
    "remove": false
   },
   {
-   "combo": "SC095|1Hour|GBPJPY",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": -0.27,
-   "line_r": -2.0,
+   "combo": "SC044|4Hour|EURJPY",
+   "trades": 3,
+   "fills": 3,
+   "cum_r": -1.69,
+   "line_r": -3.46,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -457,12 +439,21 @@
    "remove": false
   },
   {
-   "combo": "BK05|15Min|XAUUSD",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": -0.2,
-   "line_r": -2.0,
+   "combo": "TAL|15Min|US100",
+   "trades": 3,
+   "fills": 3,
+   "cum_r": -1.68,
+   "line_r": -3.46,
    "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "FR01|1Hour|EURUSD",
+   "trades": 4,
+   "fills": 4,
+   "cum_r": -3.0,
+   "line_r": -4.78,
+   "bt_sd": 1.19,
    "remove": false
   },
   {
@@ -471,6 +462,15 @@
    "fills": 2,
    "cum_r": -0.19,
    "line_r": -2.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TAL|15Min|JP225",
+   "trades": 3,
+   "fills": 3,
+   "cum_r": -1.63,
+   "line_r": -3.46,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -484,19 +484,19 @@
    "remove": false
   },
   {
-   "combo": "TT45|15Min|CSCO",
-   "trades": 13,
-   "fills": 13,
-   "cum_r": -3.62,
-   "line_r": -5.47,
-   "bt_sd": 0.76,
+   "combo": "SC333|15Min|XAUUSD",
+   "trades": 4,
+   "fills": 4,
+   "cum_r": -2.11,
+   "line_r": -4.0,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
-   "combo": "TAL|5Min1m|SPN35",
+   "combo": "SC432|1Hour|USDJPY",
    "trades": 1,
    "fills": 1,
-   "cum_r": -0.15,
+   "cum_r": -0.08,
    "line_r": -2.0,
    "bt_sd": 1.0,
    "remove": false
@@ -511,12 +511,21 @@
    "remove": false
   },
   {
-   "combo": "SC071|15Min|US30",
-   "trades": 5,
-   "fills": 5,
-   "cum_r": -2.52,
-   "line_r": -4.47,
-   "bt_sd": 1.0,
+   "combo": "TV02|1Hour|INTC",
+   "trades": 3,
+   "fills": 3,
+   "cum_r": -0.54,
+   "line_r": -2.5,
+   "bt_sd": 0.72,
+   "remove": false
+  },
+  {
+   "combo": "BK05|1Hour|USDJPY",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": -0.96,
+   "line_r": -2.94,
+   "bt_sd": 1.04,
    "remove": false
   },
   {
@@ -556,21 +565,30 @@
    "remove": false
   },
   {
-   "combo": "TAL|1Hour|JP225",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": 0.0,
-   "line_r": -2.0,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
    "combo": "YT03|1Hour|PFE",
    "trades": 1,
    "fills": 1,
    "cum_r": -1.06,
    "line_r": -3.07,
    "bt_sd": 1.54,
+   "remove": false
+  },
+  {
+   "combo": "TAL|1Hour5m|US100",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": -0.82,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TAL|1Hour|US100",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": -0.81,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -619,34 +637,25 @@
    "remove": false
   },
   {
-   "combo": "TAL|5Min1m|US500",
-   "trades": 6,
-   "fills": 6,
-   "cum_r": -2.82,
-   "line_r": -4.9,
+   "combo": "TAL|1Hour5m|US30",
+   "trades": 1,
+   "fills": 1,
+   "cum_r": 0.09,
+   "line_r": -2.0,
    "bt_sd": 1.0,
    "remove": false
   },
   {
-   "combo": "TT45|1Hour|WTI",
-   "trades": 3,
-   "fills": 3,
-   "cum_r": -1.47,
-   "line_r": -3.58,
-   "bt_sd": 1.03,
+   "combo": "TAL|5Min1m|US500",
+   "trades": 10,
+   "fills": 10,
+   "cum_r": -4.21,
+   "line_r": -6.32,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
-   "combo": "BK05|1Hour|USDJPY",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": 0.05,
-   "line_r": -2.08,
-   "bt_sd": 1.04,
-   "remove": false
-  },
-  {
-   "combo": "TAL|15Min|US100",
+   "combo": "TAL|1Hour5m|US2000",
    "trades": 2,
    "fills": 2,
    "cum_r": -0.68,
@@ -673,7 +682,16 @@
    "remove": false
   },
   {
-   "combo": "TAL|1Hour5m|US100",
+   "combo": "TAL|1Hour5m|JP225",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": -0.66,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TAL|4Hour15|US30",
    "trades": 1,
    "fills": 1,
    "cum_r": 0.18,
@@ -682,20 +700,20 @@
    "remove": false
   },
   {
-   "combo": "TAL|1Hour|US100",
+   "combo": "TAL|4Hour|US30",
    "trades": 1,
    "fills": 1,
-   "cum_r": 0.19,
+   "cum_r": 0.18,
    "line_r": -2.0,
    "bt_sd": 1.0,
    "remove": false
   },
   {
-   "combo": "TAL|15Min|JP225",
-   "trades": 2,
-   "fills": 2,
-   "cum_r": -0.63,
-   "line_r": -2.83,
+   "combo": "TAL|4Hour|GER40",
+   "trades": 1,
+   "fills": 1,
+   "cum_r": 0.21,
+   "line_r": -2.0,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -763,6 +781,42 @@
    "remove": false
   },
   {
+   "combo": "SC265|5Min|XAUUSD",
+   "trades": 1,
+   "fills": 1,
+   "cum_r": 0.26,
+   "line_r": -2.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TAL|1Hour5m|EU50",
+   "trades": 1,
+   "fills": 1,
+   "cum_r": 0.26,
+   "line_r": -2.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TAL|1Hour5m|US500",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": -0.56,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TAL|15Min1m|USDJPY",
+   "trades": 1,
+   "fills": 1,
+   "cum_r": 0.28,
+   "line_r": -2.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
    "combo": "EV04|1Min|NZDUSD",
    "trades": 1,
    "fills": 1,
@@ -772,29 +826,20 @@
    "remove": false
   },
   {
-   "combo": "TAL|1Hour5m|US2000",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": 0.32,
-   "line_r": -2.0,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
-   "combo": "MQ02|1Hour|XAUUSD",
-   "trades": 3,
-   "fills": 4,
-   "cum_r": -0.28,
-   "line_r": -2.63,
-   "bt_sd": 0.76,
-   "remove": false
-  },
-  {
    "combo": "SC069|15Min|XAUUSD",
    "trades": 1,
    "fills": 4,
    "cum_r": 0.38,
    "line_r": -2.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "SC520|15Min|XAUUSD",
+   "trades": 3,
+   "fills": 3,
+   "cum_r": -1.07,
+   "line_r": -3.46,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -808,20 +853,29 @@
    "remove": false
   },
   {
-   "combo": "TAL|1Hour5m|US500",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": 0.44,
-   "line_r": -2.0,
+   "combo": "TT45|15Min|CSCO",
+   "trades": 14,
+   "fills": 14,
+   "cum_r": -3.26,
+   "line_r": -5.68,
+   "bt_sd": 0.76,
+   "remove": false
+  },
+  {
+   "combo": "SC042|15Min|XAUUSD",
+   "trades": 5,
+   "fills": 5,
+   "cum_r": -2.0,
+   "line_r": -4.47,
    "bt_sd": 1.0,
    "remove": false
   },
   {
-   "combo": "SC485|4Hour|XAUUSD",
-   "trades": 1,
+   "combo": "SC311|15Min|GER40",
+   "trades": 3,
    "fills": 3,
-   "cum_r": 0.48,
-   "line_r": -2.0,
+   "cum_r": -0.99,
+   "line_r": -3.46,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -835,12 +889,21 @@
    "remove": false
   },
   {
-   "combo": "TV02|1Hour|INTC",
-   "trades": 2,
-   "fills": 2,
-   "cum_r": 0.46,
-   "line_r": -2.04,
-   "bt_sd": 0.72,
+   "combo": "TT41|1Hour|USDCHF",
+   "trades": 1,
+   "fills": 1,
+   "cum_r": -0.29,
+   "line_r": -2.79,
+   "bt_sd": 1.39,
+   "remove": false
+  },
+  {
+   "combo": "SC480|15Min|US100",
+   "trades": 6,
+   "fills": 6,
+   "cum_r": -2.4,
+   "line_r": -4.9,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -862,19 +925,19 @@
    "remove": false
   },
   {
-   "combo": "MQ11|4Hour|MSTR",
+   "combo": "SC480|5Min|US100",
    "trades": 7,
-   "fills": 10,
-   "cum_r": -1.15,
-   "line_r": -3.81,
-   "bt_sd": 0.72,
+   "fills": 7,
+   "cum_r": -2.73,
+   "line_r": -5.29,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
-   "combo": "TAL|15Min5m|JP225",
+   "combo": "SC490|15Min|XAUUSD",
    "trades": 1,
    "fills": 1,
-   "cum_r": 0.77,
+   "cum_r": 0.59,
    "line_r": -2.0,
    "bt_sd": 1.0,
    "remove": false
@@ -889,12 +952,21 @@
    "remove": false
   },
   {
-   "combo": "SC311|15Min|GER40",
-   "trades": 2,
-   "fills": 2,
-   "cum_r": 0.01,
-   "line_r": -2.83,
+   "combo": "TAL|1Hour|JP225",
+   "trades": 3,
+   "fills": 3,
+   "cum_r": -0.64,
+   "line_r": -3.46,
    "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "MQ11|4Hour|MSTR",
+   "trades": 8,
+   "fills": 11,
+   "cum_r": -1.23,
+   "line_r": -4.07,
+   "bt_sd": 0.72,
    "remove": false
   },
   {
@@ -904,6 +976,15 @@
    "cum_r": -1.69,
    "line_r": -4.54,
    "bt_sd": 1.6,
+   "remove": false
+  },
+  {
+   "combo": "TAL|15Min|US500",
+   "trades": 2,
+   "fills": 3,
+   "cum_r": 0.04,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -934,6 +1015,15 @@
    "remove": false
   },
   {
+   "combo": "TAL|5Min1m|AUS200",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": 0.11,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
    "combo": "SS01|5Min|WMT",
    "trades": 6,
    "fills": 6,
@@ -949,15 +1039,6 @@
    "cum_r": -0.11,
    "line_r": -3.06,
    "bt_sd": 0.58,
-   "remove": false
-  },
-  {
-   "combo": "SC380|4Hour|XAUUSD",
-   "trades": 1,
-   "fills": 2,
-   "cum_r": 0.96,
-   "line_r": -2.0,
-   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -988,18 +1069,9 @@
    "remove": false
   },
   {
-   "combo": "TV21|15Min|ASML",
-   "trades": 4,
-   "fills": 4,
-   "cum_r": -2.1,
-   "line_r": -5.15,
-   "bt_sd": 1.29,
-   "remove": false
-  },
-  {
-   "combo": "SC480|5Min|GER40",
+   "combo": "TAL|1Hour|US500",
    "trades": 2,
-   "fills": 2,
+   "fills": 4,
    "cum_r": 0.26,
    "line_r": -2.83,
    "bt_sd": 1.0,
@@ -1015,20 +1087,29 @@
    "remove": false
   },
   {
+   "combo": "SE01|1Hour|CSCO",
+   "trades": 3,
+   "fills": 4,
+   "cum_r": 0.03,
+   "line_r": -3.13,
+   "bt_sd": 0.9,
+   "remove": false
+  },
+  {
+   "combo": "SC002|1Hour|EURUSD",
+   "trades": 4,
+   "fills": 4,
+   "cum_r": -0.84,
+   "line_r": -4.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
    "combo": "SC486|1Hour|XAUUSD",
    "trades": 1,
    "fills": 1,
    "cum_r": 1.17,
    "line_r": -2.0,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
-   "combo": "TAL|5Min1m|US30",
-   "trades": 3,
-   "fills": 4,
-   "cum_r": -0.29,
-   "line_r": -3.46,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -1060,6 +1141,15 @@
    "remove": false
   },
   {
+   "combo": "BK05|15Min|XAUUSD",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": 0.38,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
    "combo": "IM01|1Hour|JP225",
    "trades": 2,
    "fills": 2,
@@ -1069,12 +1159,12 @@
    "remove": false
   },
   {
-   "combo": "TAL|1Hour|US500",
-   "trades": 1,
-   "fills": 2,
-   "cum_r": 1.26,
-   "line_r": -2.0,
-   "bt_sd": 1.0,
+   "combo": "GH04|1Hour|EURJPY",
+   "trades": 4,
+   "fills": 4,
+   "cum_r": -1.19,
+   "line_r": -4.42,
+   "bt_sd": 1.1,
    "remove": false
   },
   {
@@ -1096,15 +1186,6 @@
    "remove": false
   },
   {
-   "combo": "TV41|1Hour|USDJPY",
-   "trades": 6,
-   "fills": 6,
-   "cum_r": -2.73,
-   "line_r": -6.06,
-   "bt_sd": 1.24,
-   "remove": false
-  },
-  {
    "combo": "TV41|4Hour|NZDUSD",
    "trades": 5,
    "fills": 5,
@@ -1123,21 +1204,12 @@
    "remove": false
   },
   {
-   "combo": "SE01|1Hour|CSCO",
-   "trades": 2,
-   "fills": 3,
-   "cum_r": 1.03,
-   "line_r": -2.55,
-   "bt_sd": 0.9,
-   "remove": false
-  },
-  {
-   "combo": "GH09|1Hour|USDJPY",
-   "trades": 4,
-   "fills": 6,
-   "cum_r": 0.68,
-   "line_r": -2.91,
-   "bt_sd": 0.73,
+   "combo": "TV62|1Hour|USDCAD",
+   "trades": 7,
+   "fills": 7,
+   "cum_r": -3.02,
+   "line_r": -6.59,
+   "bt_sd": 1.25,
    "remove": false
   },
   {
@@ -1150,11 +1222,20 @@
    "remove": false
   },
   {
-   "combo": "SC002|1Hour|EURUSD",
+   "combo": "SC247|4Hour|US500",
    "trades": 3,
    "fills": 3,
-   "cum_r": 0.16,
+   "cum_r": 0.2,
    "line_r": -3.46,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TV58|1Hour|XAUUSD",
+   "trades": 2,
+   "fills": 4,
+   "cum_r": 0.85,
+   "line_r": -2.83,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -1177,6 +1258,15 @@
    "remove": false
   },
   {
+   "combo": "TAL|5Min1m|SPN35",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": 0.91,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
    "combo": "TV55|15Min|GME",
    "trades": 2,
    "fills": 2,
@@ -1186,11 +1276,29 @@
    "remove": false
   },
   {
+   "combo": "TT45|1Hour|GBPJPY",
+   "trades": 5,
+   "fills": 5,
+   "cum_r": -1.15,
+   "line_r": -4.95,
+   "bt_sd": 1.11,
+   "remove": false
+  },
+  {
    "combo": "TV28|15Min|AMZN",
    "trades": 2,
    "fills": 2,
    "cum_r": 0.99,
    "line_r": -2.82,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "SC358|1Hour|XAUUSD",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": 1.0,
+   "line_r": -2.83,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -1204,12 +1312,12 @@
    "remove": false
   },
   {
-   "combo": "TV62|1Hour|USDCAD",
-   "trades": 6,
-   "fills": 6,
-   "cum_r": -2.23,
-   "line_r": -6.1,
-   "bt_sd": 1.25,
+   "combo": "TAL|1Hour1m|EURUSD",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": 1.06,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -1218,15 +1326,6 @@
    "fills": 2,
    "cum_r": 1.08,
    "line_r": -2.83,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
-   "combo": "IB033|4Hour|XAUUSD",
-   "trades": 1,
-   "fills": 2,
-   "cum_r": 1.98,
-   "line_r": -2.0,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -1240,12 +1339,30 @@
    "remove": false
   },
   {
+   "combo": "TAL|5Min1m|US30",
+   "trades": 4,
+   "fills": 5,
+   "cum_r": 0.02,
+   "line_r": -4.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
    "combo": "TV56|1Hour|US2000",
    "trades": 9,
    "fills": 9,
    "cum_r": -2.05,
    "line_r": -6.11,
    "bt_sd": 1.02,
+   "remove": false
+  },
+  {
+   "combo": "SC402|15Min|XAUUSD",
+   "trades": 4,
+   "fills": 4,
+   "cum_r": 0.1,
+   "line_r": -4.0,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -1258,20 +1375,56 @@
    "remove": false
   },
   {
-   "combo": "TT45|1Hour|GBPJPY",
+   "combo": "MQ02|1Hour|XAUUSD",
    "trades": 4,
-   "fills": 4,
-   "cum_r": -0.15,
-   "line_r": -4.43,
-   "bt_sd": 1.11,
+   "fills": 6,
+   "cum_r": 1.12,
+   "line_r": -3.03,
+   "bt_sd": 0.76,
    "remove": false
   },
   {
-   "combo": "TAL|5Min1m|US100",
-   "trades": 3,
-   "fills": 3,
-   "cum_r": 0.86,
-   "line_r": -3.46,
+   "combo": "TAL|15Min5m|JP225",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": 1.33,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "SC485|4Hour|XAUUSD",
+   "trades": 2,
+   "fills": 6,
+   "cum_r": 1.49,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "GH09|1Hour|USDJPY",
+   "trades": 5,
+   "fills": 9,
+   "cum_r": 1.1,
+   "line_r": -3.25,
+   "bt_sd": 0.73,
+   "remove": false
+  },
+  {
+   "combo": "SC001|1Min|JP225",
+   "trades": 7,
+   "fills": 7,
+   "cum_r": -0.9,
+   "line_r": -5.29,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "SC402|5Min|XAUUSD",
+   "trades": 4,
+   "fills": 4,
+   "cum_r": 0.4,
+   "line_r": -4.0,
    "bt_sd": 1.0,
    "remove": false
   },
@@ -1295,38 +1448,11 @@
   },
   {
    "combo": "TV37|4Hour|GBPUSD",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": 2.01,
-   "line_r": -2.48,
-   "bt_sd": 1.24,
-   "remove": false
-  },
-  {
-   "combo": "TAL|15Min|US30",
    "trades": 2,
    "fills": 2,
-   "cum_r": 1.67,
-   "line_r": -2.83,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
-   "combo": "SC001|1Min|JP225",
-   "trades": 5,
-   "fills": 5,
-   "cum_r": 0.07,
-   "line_r": -4.47,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
-   "combo": "TAL|5Min1m|UK100",
-   "trades": 3,
-   "fills": 3,
-   "cum_r": 1.09,
-   "line_r": -3.46,
-   "bt_sd": 1.0,
+   "cum_r": 1.01,
+   "line_r": -3.51,
+   "bt_sd": 1.24,
    "remove": false
   },
   {
@@ -1339,21 +1465,21 @@
    "remove": false
   },
   {
+   "combo": "TV21|15Min|ASML",
+   "trades": 5,
+   "fills": 5,
+   "cum_r": -0.99,
+   "line_r": -5.75,
+   "bt_sd": 1.29,
+   "remove": false
+  },
+  {
    "combo": "YT03|1Hour|LVMH",
    "trades": 2,
    "fills": 2,
    "cum_r": 0.77,
    "line_r": -4.09,
    "bt_sd": 1.45,
-   "remove": false
-  },
-  {
-   "combo": "TAL|5Min1m|JP225",
-   "trades": 4,
-   "fills": 4,
-   "cum_r": 0.86,
-   "line_r": -4.0,
-   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -1420,30 +1546,48 @@
    "remove": false
   },
   {
-   "combo": "SC317|15Min|XAUUSD",
+   "combo": "TV41|1Hour|USDJPY",
+   "trades": 7,
+   "fills": 7,
+   "cum_r": -1.24,
+   "line_r": -6.54,
+   "bt_sd": 1.24,
+   "remove": false
+  },
+  {
+   "combo": "TAL|15Min|US30",
+   "trades": 3,
+   "fills": 3,
+   "cum_r": 1.86,
+   "line_r": -3.46,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "SC142|15Min|XAUUSD",
+   "trades": 3,
+   "fills": 3,
+   "cum_r": 2.0,
+   "line_r": -3.46,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TAL|5Min1m|UK100",
    "trades": 4,
    "fills": 4,
-   "cum_r": 1.4,
+   "cum_r": 1.46,
    "line_r": -4.0,
    "bt_sd": 1.0,
    "remove": false
   },
   {
-   "combo": "TV02|1Hour|GBPJPY",
-   "trades": 4,
-   "fills": 4,
-   "cum_r": 0.99,
-   "line_r": -4.47,
-   "bt_sd": 1.12,
-   "remove": false
-  },
-  {
-   "combo": "TV08|15Min|NVDA",
-   "trades": 8,
-   "fills": 8,
-   "cum_r": -0.17,
-   "line_r": -5.75,
-   "bt_sd": 1.02,
+   "combo": "TAL|5Min1m|JP225",
+   "trades": 6,
+   "fills": 6,
+   "cum_r": 0.76,
+   "line_r": -4.9,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -1453,6 +1597,15 @@
    "cum_r": 1.44,
    "line_r": -4.3,
    "bt_sd": 1.08,
+   "remove": false
+  },
+  {
+   "combo": "SC380|4Hour|XAUUSD",
+   "trades": 2,
+   "fills": 4,
+   "cum_r": 2.99,
+   "line_r": -2.83,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -1474,12 +1627,21 @@
    "remove": false
   },
   {
-   "combo": "TAL|1Hour|US30",
-   "trades": 2,
-   "fills": 2,
-   "cum_r": 3.24,
-   "line_r": -2.83,
+   "combo": "TAL|5Min1m|US100",
+   "trades": 5,
+   "fills": 5,
+   "cum_r": 1.46,
+   "line_r": -4.47,
    "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TV02|1Hour|GBPJPY",
+   "trades": 5,
+   "fills": 5,
+   "cum_r": 1.04,
+   "line_r": -5.0,
+   "bt_sd": 1.12,
    "remove": false
   },
   {
@@ -1510,30 +1672,12 @@
    "remove": false
   },
   {
-   "combo": "TV21|1Hour|XAUUSD",
-   "trades": 7,
-   "fills": 7,
-   "cum_r": 0.39,
-   "line_r": -6.17,
-   "bt_sd": 1.17,
-   "remove": false
-  },
-  {
    "combo": "TV13|15Min|TSLA",
    "trades": 7,
    "fills": 7,
    "cum_r": 0.27,
    "line_r": -6.35,
    "bt_sd": 1.2,
-   "remove": false
-  },
-  {
-   "combo": "TV05|15Min|WMT",
-   "trades": 1,
-   "fills": 1,
-   "cum_r": 0.98,
-   "line_r": -5.65,
-   "bt_sd": 2.83,
    "remove": false
   },
   {
@@ -1555,12 +1699,21 @@
    "remove": false
   },
   {
-   "combo": "IB056|1Hour|XAUUSD",
-   "trades": 5,
-   "fills": 5,
-   "cum_r": 2.3,
-   "line_r": -4.47,
+   "combo": "IB033|4Hour|XAUUSD",
+   "trades": 2,
+   "fills": 6,
+   "cum_r": 4.02,
+   "line_r": -2.83,
    "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "TV60|15Min|ARM",
+   "trades": 12,
+   "fills": 12,
+   "cum_r": -1.66,
+   "line_r": -8.58,
+   "bt_sd": 1.24,
    "remove": false
   },
   {
@@ -1600,20 +1753,11 @@
    "remove": false
   },
   {
-   "combo": "SC432|15Min|XAUUSD",
-   "trades": 10,
-   "fills": 14,
-   "cum_r": 1.15,
-   "line_r": -6.32,
-   "bt_sd": 1.0,
-   "remove": false
-  },
-  {
    "combo": "GH08|1Hour|USDCAD",
-   "trades": 4,
-   "fills": 4,
-   "cum_r": 0.19,
-   "line_r": -7.36,
+   "trades": 5,
+   "fills": 5,
+   "cum_r": -0.81,
+   "line_r": -8.23,
    "bt_sd": 1.84,
    "remove": false
   },
@@ -1636,21 +1780,30 @@
    "remove": false
   },
   {
-   "combo": "TV60|15Min|ARM",
-   "trades": 9,
-   "fills": 9,
-   "cum_r": 0.44,
-   "line_r": -7.43,
-   "bt_sd": 1.24,
+   "combo": "TV05|15Min|WMT",
+   "trades": 2,
+   "fills": 2,
+   "cum_r": -0.02,
+   "line_r": -7.99,
+   "bt_sd": 2.83,
    "remove": false
   },
   {
-   "combo": "IB034|15Min|XAUUSD",
-   "trades": 6,
-   "fills": 6,
-   "cum_r": 3.68,
-   "line_r": -4.9,
-   "bt_sd": 1.0,
+   "combo": "TV21|1Hour|XAUUSD",
+   "trades": 8,
+   "fills": 8,
+   "cum_r": 1.96,
+   "line_r": -6.59,
+   "bt_sd": 1.17,
+   "remove": false
+  },
+  {
+   "combo": "TV08|15Min|NVDA",
+   "trades": 9,
+   "fills": 9,
+   "cum_r": 2.47,
+   "line_r": -6.1,
+   "bt_sd": 1.02,
    "remove": false
   },
   {
@@ -1663,12 +1816,30 @@
    "remove": false
   },
   {
+   "combo": "TAL|1Hour|US30",
+   "trades": 4,
+   "fills": 4,
+   "cum_r": 5.46,
+   "line_r": -4.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
    "combo": "TV20|1Hour|XAUUSD",
    "trades": 7,
    "fills": 11,
    "cum_r": -0.94,
    "line_r": -10.81,
    "bt_sd": 2.04,
+   "remove": false
+  },
+  {
+   "combo": "SC432|15Min|XAUUSD",
+   "trades": 16,
+   "fills": 23,
+   "cum_r": 2.18,
+   "line_r": -8.0,
+   "bt_sd": 1.0,
    "remove": false
   },
   {
@@ -1681,20 +1852,29 @@
    "remove": false
   },
   {
+   "combo": "SC480|5Min|GER40",
+   "trades": 5,
+   "fills": 5,
+   "cum_r": 6.62,
+   "line_r": -4.47,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
    "combo": "TV39|1Hour|JP225",
-   "trades": 17,
-   "fills": 17,
-   "cum_r": -3.88,
-   "line_r": -16.9,
+   "trades": 18,
+   "fills": 18,
+   "cum_r": -4.5,
+   "line_r": -17.39,
    "bt_sd": 2.05,
    "remove": false
   },
   {
    "combo": "QB11|1Hour|USDJPY",
-   "trades": 6,
-   "fills": 6,
-   "cum_r": 0.24,
-   "line_r": -13.0,
+   "trades": 7,
+   "fills": 7,
+   "cum_r": -0.76,
+   "line_r": -14.05,
    "bt_sd": 2.65,
    "remove": false
   },
@@ -1708,11 +1888,38 @@
    "remove": false
   },
   {
+   "combo": "SC317|15Min|XAUUSD",
+   "trades": 6,
+   "fills": 6,
+   "cum_r": 9.53,
+   "line_r": -4.9,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "IB034|15Min|XAUUSD",
+   "trades": 9,
+   "fills": 9,
+   "cum_r": 10.03,
+   "line_r": -6.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
+   "combo": "IB056|1Hour|XAUUSD",
+   "trades": 9,
+   "fills": 9,
+   "cum_r": 18.84,
+   "line_r": -6.0,
+   "bt_sd": 1.0,
+   "remove": false
+  },
+  {
    "combo": "SC501|5Min|XAUUSD",
-   "trades": 5,
-   "fills": 5,
-   "cum_r": 11.65,
-   "line_r": -4.47,
+   "trades": 6,
+   "fills": 6,
+   "cum_r": 31.04,
+   "line_r": -4.9,
    "bt_sd": 1.0,
    "remove": false
   }

@@ -776,8 +776,10 @@ def gaps(D, htf, gbody, min_gap, cache, gapx="mid"):
     return out
 
 
-def _count_back(conf, val, atr, t_ns, px, d, side):
-    """The 2nd swing beyond px counting back from t_ns. side=-1: below px (lows), +1: above px (highs)."""
+def _count_back(conf, val, atr, t_ns, px, d, side, nth=2):
+    """The 2nd swing beyond px counting back from t_ns. side=-1: below px (lows), +1: above px (highs).
+    nth (TSWN, user 20.11.2026, study only - agents/tal_tgt_study): the 1st..6th swing instead of the 2nd; None when
+    the last 400 candles hold fewer."""
     j = int(np.searchsorted(conf, t_ns, side="right")) - 1
     got, last = [], px
     lo = max(-1, j - 400)
@@ -786,7 +788,7 @@ def _count_back(conf, val, atr, t_ns, px, d, side):
         if side * (v - last) > 0 and (not got or side * (v - last) >= MERGE_ATR * atr[j]):
             got.append(v)
             last = v
-            if len(got) == 2:
+            if len(got) == nth:
                 return v
         j -= 1
     return None
@@ -1539,7 +1541,7 @@ def simulate(D, pair, cfg, gcache, keep=None):
         px = (min(mid, o1[f]) if d > 0 else max(mid, o1[f])) if not lad else mid   # LADDER: the middle's geometry
         sw_st, sw_tg = (lo_sw, hi_sw) if d > 0 else (hi_sw, lo_sw)
         s2 = _count_back(*sw_st, ns[f], px, d, -d)
-        t2 = _count_back(*sw_tg, ns[f], px, d, d)
+        t2 = _count_back(*sw_tg, ns[f], px, d, d, int(cfg.get("TSWN") or 2))
         if s2 is None or t2 is None:
             continue
         stop0 = s2 - d * (D.buf + stop_pad(cfg, px))

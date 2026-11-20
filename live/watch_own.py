@@ -207,6 +207,8 @@ TAL5_RISK = {}
 # other indices): "symbols" in its "tal_tracks" entry - {track: [symbol]}; a track without it trades TAL5_SYMBOLS.
 # Such an instrument is added to SYMBOLS (and EXTRA: the old tracks' results on it stay out of their summary).
 TAL5_SYMS = {}
+TAL5_SYMCFG = {}       # {track: {symbol: {cfg keys}}} - "sym_cfg" in tal_tracks: an instrument's own stop / target on a
+                       # shared track (user, 20.11.2026: JP225 and US500 tuned - agents/tal_costx2_study)
 TAL5_OFF = set()       # tracks with "off": true in tal_tracks (user, 20.11.2026): no new trade; open ones run to their exit
 TAL5_AUTO = [False]    # "tal_auto" (user, 20.11.2026: "the system enters trades by itself, not me approving"): the rules decide;
                        # his "no" before the fill still keeps a trade out, a yes / no answer changes nothing (off until switched)
@@ -336,6 +338,9 @@ def load_settings():
                     syms_ = {}
                     TAL5_OFF.clear()
                     TAL5_OFF.update(str(k) for k, v in tt.items() if (v or {}).get("off"))
+                    TAL5_SYMCFG.clear()
+                    TAL5_SYMCFG.update({str(k): {str(a): dict(b) for a, b in ((v or {}).get("sym_cfg") or {}).items() if isinstance(b, dict)}
+                                        for k, v in tt.items() if isinstance((v or {}).get("sym_cfg"), dict)})
                     for trk, v in tt.items():
                         pr = pairs_.get(tuple((v or {}).get("pair") or [])[:2])
                         cf = (v or {}).get("cfg")
@@ -1814,6 +1819,7 @@ def main():
                     for trk, (pair, cfg) in TAL5.items():
                         if name not in (TAL5_SYMS.get(trk) or TAL5_SYMBOLS):
                             continue                      # an instrument's own track / the indices' tracks
+                        cfg = dict(cfg, **((TAL5_SYMCFG.get(trk) or {}).get(name) or {}))   # the instrument's own stop / target
                         for x in TG.live_trades(D5, pair, TG.ftmo_cfg(cfg)):   # FTMO: closed / cancelled before a 2h+ break
                             k_ = f"{name}|{x['id_key']}|{trk}"
                             mk_ = (trades.get(k_) or {}).get("mark") or {}

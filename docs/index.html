@@ -765,7 +765,7 @@ function provApply(n, s) {
   s.equity = Math.round(((s.balance || 0) + (s.positions || []).reduce((t, p) => t + (p.pnl || 0), 0)) * 100) / 100;
 }
 const PROVO = {};         // "<bot>|<id>" -> a gap order filled on the live price, until the bot's state has it
-const PROV_RISK = {watch_own: 0.0028};
+const PROV_RISK = {watch_own: 0.002};   // bot 5: 0.20% a trade from 20.11.2026
 function provWaiting(n, s) {
   if (!PROV_RISK[n] || !s || !s.watch) return [];
   const have = new Set((s.positions || []).map(p => String(p.ticket)));

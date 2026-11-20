@@ -296,6 +296,24 @@
     "cause": "כניסה / כיוון",
     "fixes": [
      {
+      "what": "QC07|15Min|ARM: כמות מינימלית - עם האיחור של 15 דק' במניות אין לה יתרון",
+      "decision": "81e57f1e2bd8",
+      "at": "2026-11-20T07:13:45+00:00",
+      "effect_month_pct": 0.41,
+      "cut": true,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.001",
+      "decision": "209b95be5ff1",
+      "at": "2026-11-20T07:13:45+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.82,
+      "value": 0.001
+     },
+     {
       "what": "סיכון ×0.95",
       "decision": "dc6b6cbe7205",
       "at": "2026-11-14T14:32:14+00:00",
@@ -322,7 +340,7 @@
   "cut_only": [
    "QC07|15Min|ARM"
   ],
-  "total_month_pct": 0.0,
+  "total_month_pct": 0.41,
   "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

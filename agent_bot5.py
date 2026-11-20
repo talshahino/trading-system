@@ -1839,7 +1839,15 @@ def main():
         # so it runs here (reports/agents/bot5/scout_dir.json; the nightly agent writes the card)
         try:
             from agents import scout5_dir as SD
-            sd = SD.main(dirs=True)
+            # a day-lessons study on the account's own trades: twice a day is enough (manager, 20.11.2026 night: it took
+            # 465 s of every 4-hour run, post_sec scout_dir, while bot 5's runs were 75 min on a 40-min budget)
+            try:
+                sd = json.loads(SD.OUT.read_text(encoding="utf-8"))
+                fresh = (pd.Timestamp.now(tz="UTC") - pd.Timestamp(sd["at"])).total_seconds() < 12 * 3600
+            except Exception:  # noqa: BLE001
+                sd, fresh = None, False
+            if not fresh:
+                sd = SD.main(dirs=True)
             doc["bot5"]["scout_dir"] = {"at": sd["at"], "chosen_on_train": sd["chosen_on_train"], "no_bars": sd["no_bars"]}
             TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
         except Exception as e:  # noqa: BLE001

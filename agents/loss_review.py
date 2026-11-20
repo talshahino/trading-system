@@ -372,6 +372,14 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
                 continue                     # a risk raise is not a fix of a loss
             if d.get("loss_report"):
                 continue                     # the manager's own cut for a missing fix is not the fix itself
+            if d.get("type") == "card" and "יבנה" in (d.get("effect") or ""):
+                rb = (replies.get(d.get("card")) or {}).get("built")
+                if not rb or rb == "skipped":
+                    # a card the bot's agent still has to build, or answered without building, is no fix yet
+                    # (manager, 20.11.2026 night: card 694b549d85fd "SE02|1Hour|USDJPY x0.83 -> x0.4" in bot 4 was
+                    # not built, yet counted as "a fix found" and took the edge cut x0.61 back up to x0.83 at 07:35,
+                    # while the same signal is -0.57R a trade live over 25 trades in bots 1, 2 and 4)
+                    continue
             eff = card_effect(card, months, bot_risk_pct, a.get("value") if a.get("kind") == "mult" else None) if card else None
             what = d["title"]
             if d.get("type") == "risk" and a.get("kind") == "mult":

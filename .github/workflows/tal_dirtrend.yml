@@ -85,7 +85,7 @@ jobs:
         run: |
           mkdir -p reports/agents/bot5/tal_dirtrend
           for d in parts/*/; do cp -r "$d." reports/agents/bot5/tal_dirtrend/; done
-          python -m agents.tal_dirtrend_study report | head -80
+          python -m agents.tal_dirtrend_study report | head -120
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"

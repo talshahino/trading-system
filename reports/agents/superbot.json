@@ -1,0 +1,200 @@
+{
+ "at": "2026-11-20T17:23:51+00:00",
+ "streams": {
+  "5b": 30,
+  "bot1": 40,
+  "bot2": 14,
+  "bot3": 18,
+  "bot4": 28,
+  "bot7": 46,
+  "gap": 50
+ },
+ "pos2025": {
+  "5b": 30,
+  "bot1": 35,
+  "bot2": 13,
+  "bot3": 16,
+  "bot4": 25,
+  "bot7": 30,
+  "gap": 39
+ },
+ "vol2025": {
+  "5b": 0.5717672543209247,
+  "bot1": 0.1644630097856046,
+  "bot2": 0.29988081502878694,
+  "bot3": 0.21010872503621078,
+  "bot4": 0.16419427775758508,
+  "bot7": 0.08827575909374184,
+  "gap": 0.3312489171455815
+ },
+ "allocations": {
+  "gap_alone": {
+   "scale": 0.0018786621093749999,
+   "streams": 50,
+   "2025": {
+    "ret": 112.6,
+    "dd": 4.76,
+    "worst_day": -3.0,
+    "near_days": 1,
+    "taken": 1835,
+    "skipped": 1
+   },
+   "2026": {
+    "ret": 43.0,
+    "dd": 6.36,
+    "worst_day": -2.17,
+    "near_days": 0,
+    "taken": 2664,
+    "skipped": 12
+   },
+   "buckets": [
+    "gap"
+   ]
+  },
+  "equal": {
+   "scale": 0.000528564453125,
+   "streams": 226,
+   "2025": {
+    "ret": 206.0,
+    "dd": 6.96,
+    "worst_day": -2.4,
+    "near_days": 0,
+    "taken": 13429,
+    "skipped": 29
+   },
+   "2026": {
+    "ret": 189.8,
+    "dd": 7.37,
+    "worst_day": -2.29,
+    "near_days": 0,
+    "taken": 18409,
+    "skipped": 55
+   },
+   "buckets": [
+    "5b",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot7",
+    "gap"
+   ]
+  },
+  "bucket": {
+   "scale": 0.00046020507812499995,
+   "streams": 226,
+   "2025": {
+    "ret": 163.7,
+    "dd": 7.0,
+    "worst_day": -2.45,
+    "near_days": 0,
+    "taken": 13446,
+    "skipped": 12
+   },
+   "2026": {
+    "ret": 175.2,
+    "dd": 7.02,
+    "worst_day": -2.12,
+    "near_days": 0,
+    "taken": 18455,
+    "skipped": 9
+   },
+   "buckets": [
+    "5b",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot7",
+    "gap"
+   ]
+  },
+  "bucket_vol": {
+   "scale": 0.0005615234375000001,
+   "streams": 226,
+   "2025": {
+    "ret": 214.6,
+    "dd": 6.99,
+    "worst_day": -2.51,
+    "near_days": 0,
+    "taken": 13311,
+    "skipped": 147
+   },
+   "2026": {
+    "ret": 260.4,
+    "dd": 6.89,
+    "worst_day": -1.76,
+    "near_days": 0,
+    "taken": 18319,
+    "skipped": 145
+   },
+   "buckets": [
+    "5b",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot7",
+    "gap"
+   ]
+  },
+  "pos2025": {
+   "scale": 0.000609130859375,
+   "streams": 188,
+   "2025": {
+    "ret": 291.3,
+    "dd": 6.96,
+    "worst_day": -2.46,
+    "near_days": 0,
+    "taken": 12146,
+    "skipped": 50
+   },
+   "2026": {
+    "ret": 196.4,
+    "dd": 8.7,
+    "worst_day": -2.48,
+    "near_days": 0,
+    "taken": 16591,
+    "skipped": 108
+   },
+   "buckets": [
+    "5b",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot7",
+    "gap"
+   ]
+  },
+  "bucket_pos2025": {
+   "scale": 0.000540771484375,
+   "streams": 188,
+   "2025": {
+    "ret": 231.9,
+    "dd": 6.98,
+    "worst_day": -2.56,
+    "near_days": 0,
+    "taken": 12169,
+    "skipped": 27
+   },
+   "2026": {
+    "ret": 189.8,
+    "dd": 8.08,
+    "worst_day": -2.28,
+    "near_days": 0,
+    "taken": 16670,
+    "skipped": 29
+   },
+   "buckets": [
+    "5b",
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot7",
+    "gap"
+   ]
+  }
+ }
+}

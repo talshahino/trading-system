@@ -734,19 +734,28 @@
    {
     "combo": "TT41|1Hour|USDCHF",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
-    "edge_mult": 0.91,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.09R לעסקה (52 עסקאות), בתקופת הבחירה +0.16R",
-     "בחי: -0.30R לעסקה (1 עסקאות)",
-     "הבדיקה שווה 98% מהמשקל, החי 2%",
-     "היתרון עכשיו: +0.08R לעסקה",
-     "סיכון = +0.08 ÷ +0.09 = ×0.91"
+    "fixes": [
+     {
+      "what": "⭐ TT41|1Hour|USDCHF: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+      "decision": "7e98ec9d245d",
+      "at": "2026-11-20T12:11:16+00:00",
+      "effect_month_pct": 0.22,
+      "cut": false,
+      "prev": null,
+      "value": null
+     },
+     {
+      "what": "סיכון ×0.7",
+      "decision": "d98414185f2a",
+      "at": "2026-11-20T12:11:16+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": 0.7
+     }
     ],
-    "edge0": 0.089,
-    "edge": 0.081
+    "open": false,
+    "cut_only": false
    },
    {
     "combo": "MQ11|4Hour|MSTR",
@@ -844,8 +853,7 @@
   "open": [
    "TV02|1Hour|INTC",
    "TV39|1Hour|JP225",
-   "SE01|1Hour|CSCO",
-   "TT41|1Hour|USDCHF"
+   "SE01|1Hour|CSCO"
   ],
   "cut_only": [
    "TV60|15Min|ARM",
@@ -855,7 +863,7 @@
    "SC319|1Hour|ETHUSD",
    "TV10|1Hour|US100"
   ],
-  "total_month_pct": 0.58,
-  "status": "פתוח: 4 אסטרטגיות בלי תיקון עדיין · 6 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.8,
+  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 6 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

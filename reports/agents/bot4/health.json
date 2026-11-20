@@ -1,16 +1,16 @@
 {
  "bot": "bot4",
  "name": "בוט 4",
- "updated": "2026-11-20T20:44:32+00:00",
- "state_updated": "2026-11-20T20:43:39+00:00",
+ "updated": "2026-11-20T21:11:49+00:00",
+ "state_updated": "2026-11-20T21:11:12+00:00",
  "minutes_since_state": 1,
- "balance": 97668.6,
- "equity": 98953.95,
+ "balance": 98900.75,
+ "equity": 98949.95,
  "day_pct": 0.45,
  "total_pct": -1.05,
- "trades": 115,
- "mean_r": -0.12,
- "sum_r": -13.8,
+ "trades": 121,
+ "mean_r": -0.078,
+ "sum_r": -9.4,
  "bt_mean_r": 0.18,
  "flagged": 1,
  "combos": [
@@ -114,26 +114,14 @@
   },
   {
    "combo": "QC07|15Min|ARM",
-   "n": 9,
-   "mean": -0.127,
-   "sum": -1.14,
-   "win": 33.3,
+   "n": 10,
+   "mean": -0.062,
+   "sum": -0.62,
+   "win": 40.0,
    "streak": 0,
    "bt_mean": 0.042,
    "bt_n": 468,
-   "z": -0.67,
-   "flags": []
-  },
-  {
-   "combo": "QP02|1Hour|XAGUSD",
-   "n": 3,
-   "mean": -0.015,
-   "sum": -0.04,
-   "win": 33.3,
-   "streak": 0,
-   "bt_mean": 0.098,
-   "bt_n": 109,
-   "z": -0.21,
+   "z": -0.44,
    "flags": []
   },
   {
@@ -173,6 +161,18 @@
    "flags": []
   },
   {
+   "combo": "SE01|1Hour|WMT",
+   "n": 3,
+   "mean": 0.484,
+   "sum": 1.45,
+   "win": 66.7,
+   "streak": 1,
+   "bt_mean": 0.143,
+   "bt_n": 370,
+   "z": 0.62,
+   "flags": []
+  },
+  {
    "combo": "BK05|1Hour|EURUSD",
    "n": 4,
    "mean": 0.61,
@@ -197,15 +197,15 @@
    "flags": []
   },
   {
-   "combo": "SE01|1Hour|WMT",
-   "n": 2,
-   "mean": 0.817,
-   "sum": 1.63,
-   "win": 100.0,
+   "combo": "QP02|1Hour|XAGUSD",
+   "n": 4,
+   "mean": 0.869,
+   "sum": 3.47,
+   "win": 50.0,
    "streak": 0,
-   "bt_mean": 0.143,
-   "bt_n": 370,
-   "z": 1.0,
+   "bt_mean": 0.098,
+   "bt_n": 109,
+   "z": 1.64,
    "flags": []
   },
   {
@@ -222,11 +222,11 @@
   },
   {
    "combo": "FR01|1Hour|ARM",
-   "n": 2,
-   "mean": 0.012,
-   "sum": 0.02,
-   "win": 50.0,
-   "streak": 1,
+   "n": 3,
+   "mean": -0.15,
+   "sum": -0.45,
+   "win": 33.3,
+   "streak": 2,
    "bt_mean": null,
    "bt_n": null,
    "z": null,
@@ -246,9 +246,9 @@
   },
   {
    "combo": "IB033|4Hour|XAUUSD",
-   "n": 2,
-   "mean": 2.022,
-   "sum": 4.04,
+   "n": 3,
+   "mean": 1.4,
+   "sum": 4.2,
    "win": 100.0,
    "streak": 0,
    "bt_mean": null,
@@ -449,6 +449,18 @@
    "flags": []
   },
   {
+   "combo": "SC539|4Hour|XAGUSD",
+   "n": 1,
+   "mean": 0.858,
+   "sum": 0.86,
+   "win": 100.0,
+   "streak": 0,
+   "bt_mean": null,
+   "bt_n": null,
+   "z": null,
+   "flags": []
+  },
+  {
    "combo": "SC625|15Min|USDJPY",
    "n": 1,
    "mean": -1.0,
@@ -510,52 +522,16 @@
   }
  ],
  "problems": [
-  "כל הבוט: -0.20R לעסקה בפועל מול +0.13R בבדיקה (80 עסקאות)"
+  "כל הבוט: -0.14R לעסקה בפועל מול +0.13R בבדיקה (83 עסקאות)"
  ],
  "cumulative": null,
  "ledger_tail": [],
  "positions_now": [
   {
-   "ticket": 11400665885,
-   "pnl": 1208.43,
-   "sl_usd": -347.85,
-   "since": "2026-11-16T00:00:06+00:00"
-  },
-  {
-   "ticket": 11492518242,
-   "pnl": 158.6,
-   "sl_usd": -197.5,
-   "since": "2026-11-20T00:00:10+00:00"
-  },
-  {
    "ticket": 11503352250,
-   "pnl": 61.33,
+   "pnl": 49.2,
    "sl_usd": -314.78,
    "since": "2026-11-20T10:00:09+00:00"
-  },
-  {
-   "ticket": 11509982973,
-   "pnl": -48.16,
-   "sl_usd": -415.52,
-   "since": "2026-11-20T14:45:14+00:00"
-  },
-  {
-   "ticket": 11512120372,
-   "pnl": 6.35,
-   "sl_usd": -12.62,
-   "since": "2026-11-20T15:45:05+00:00"
-  },
-  {
-   "ticket": 11512917338,
-   "pnl": -130.4,
-   "sl_usd": -291.68,
-   "since": "2026-11-20T16:15:04+00:00"
-  },
-  {
-   "ticket": 11517564043,
-   "pnl": 29.2,
-   "sl_usd": -296.32,
-   "since": "2026-11-20T20:00:16+00:00"
   }
  ]
 }

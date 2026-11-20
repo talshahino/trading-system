@@ -2311,6 +2311,9 @@ def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None, lim=None, 
     (12.11.2026: t15_1 and t15_5 took the same US500 short at 15:51, both stopped - one idea, twice the loss).
     Returns None while a track's runs are missing."""
     out_dir, rows = Path(out_dir), []
+    # every track's runs are checked BEFORE any file is read (manager, 20.11.2026: bot 5's whole-bot step read the
+    # trades of 20+ complete tracks for 581 s and then met a missing one and returned None - every run, for days)
+    have = {}
     for trk, lv in live.items():
         # (pair, cfg) trades on `symbols`; (pair, cfg, [symbols]) is an instrument's own track (13.11.2026 evening:
         # the manager's task f8643b16aa57 - the instrument tracks were outside the whole-bot test)
@@ -2320,6 +2323,8 @@ def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None, lim=None, 
         fs = list({v["sym"]: v for v in fs}.values())
         if {v["sym"] for v in fs} != set(syms_):
             return None
+        have[trk] = fs
+    for trk, fs in have.items():
         for v in fs:
             t = pd.read_csv(out_dir / v["file"])
             t["trk"], t["sym"] = trk, v["sym"]

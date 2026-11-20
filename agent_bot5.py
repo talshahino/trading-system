@@ -1779,7 +1779,12 @@ def main():
         try:
             live_all = {k: (f"{v['pair'][0]}/{v['pair'][1]}", v["cfg"]) + ((list(v["symbols"]),) if v.get("symbols") else ())
                         for k, v in (s5.get("tal_tracks") or {}).items() if float(rkd.get(k, 0.0028) or 0) > 0}
-            tidx_all = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")}
+            # the index read for the summary above is reused - only files written since are read (manager, 20.11.2026:
+            # reading the whole idx folder again took 581 s of every run, post_sec whole_bot)
+            tidx_all = dict(tidx)
+            for f in (TAL_DIR / "idx").glob("*.json"):
+                if f.stem not in tidx_all:
+                    tidx_all[f.stem] = json.loads(f.read_text())
             pf_all = TG.portfolio(tidx_all, TAL_SYMBOLS, TAL_DIR, live_all,
                                   risk={k: float(rkd.get(k, 0.0028)) * cur_sc for k in (s5.get("tal_tracks") or {})})
         except Exception as e:  # noqa: BLE001

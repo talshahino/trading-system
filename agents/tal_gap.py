@@ -930,7 +930,7 @@ def bbw_mask(D, cfg, htf, ltf):
     return D.bbw_ok(ltf if str(b)[0] == "l" else htf, int(str(b)[1:]) / 100)
 
 
-G3_VALS = ("weak", "nostrong", "nowick", "nobad")
+G3_VALS = ("weak", "nostrong", "nowick", "nobad", "fvg", "brk")   # fvg / brk: study 20.11.2026 (TikTok TT-s-fvg-vs-breakaway)
 SWP_VALS = ("pdhl", "sw20")
 # the sweep's stricter forms (the user's videos of 14.11.2026 14:23-14:26, task tal1411gapplus): sw20r / pdhlr = the
 # sweep as SWP, and the candle that ran through the level closed back inside it (a rejection, Tarzan's "liquidity
@@ -976,8 +976,12 @@ def gap_keep(D, cfg, htf, g):
             body = abs(c[k3] - o[k3]) / a
             wick = (h[k3] - l[k3]) / a - body
             strong, bigw = body >= 1.0, (wick >= 0.5) and (wick >= body)
+            # fvg / brk (user 20.11.2026, the TikTok idea "FVG vs breakaway gap"): candle 3 closes inside candle 2's
+            # range = a fair value gap (expect the return) / beyond candle 2's extreme in the gap's direction = a
+            # breakaway gap (may not come back)
+            brk_ = (c[k3] > h[k]) if d > 0 else (c[k3] < l[k])
             ok = {"weak": body < 0.5 and wick < 0.5, "nostrong": not strong, "nowick": not bigw,
-                  "nobad": not strong and not bigw}[q3]
+                  "nobad": not strong and not bigw, "fvg": l[k] <= c[k3] <= h[k], "brk": brk_}[q3]
             if not ok:
                 keep[gi] = False
                 continue
@@ -1477,6 +1481,25 @@ def mg_walk(D, cfg, htf, ltf, f, d, px, stop, tgt, risk, hi_sw, lo_sw, n1):
              "mfe": round(mfe, 3)}, q)
 
 
+def po3_ok(D, mode, f, d):
+    """PO3 (user 20.11.2026, the TikTok idea "PO3 on 4h" - study only): the 4 hour candle's power of three -
+    accumulation, a manipulation against the move, then the move. m = by the fill the current 4h candle already ran
+    beyond its open against the trade (a long after its low went under the open); d = and the fill is on the
+    manipulation's side of the open (a long under the 4h open = in its discount)."""
+    ts4, o4 = D.tf("4h")[0], D.tf("4h")[1]
+    k = int(np.searchsorted(ts4, D.ns[f], side="right")) - 1
+    if k < 0:
+        return False
+    a = int(np.searchsorted(D.ns, ts4[k]))
+    if a > f:
+        return False
+    op = o4[k]
+    man = (D.l1[a:f + 1].min() < op) if d > 0 else (D.h1[a:f + 1].max() > op)
+    if mode == "m":
+        return bool(man)
+    return bool(man) and ((D.c1[f] <= op) if d > 0 else (D.c1[f] >= op))
+
+
 def simulate(D, pair, cfg, gcache, keep=None):
     htf, ltf, _ = pair
     g = gap_set(D, htf, cfg, gcache)
@@ -1490,6 +1513,7 @@ def simulate(D, pair, cfg, gcache, keep=None):
     shock = prot in ("shock", "cal15shock")
     trend = D.trend(htf, cfg.get("TREND", "none"), ltf)
     bbw, newsx = bbw_mask(D, cfg, htf, ltf), news_x(D, cfg)
+    po3 = cfg.get("PO3")
     lad = ladder_of(cfg)
     gk = gap_keep(D, cfg, htf, g)
     wx = cfg.get("WAITX")
@@ -1529,6 +1553,8 @@ def simulate(D, pair, cfg, gcache, keep=None):
             continue                                     # BBW: a squeeze (Bollinger width under its percentile)
         if newsx is not None and newsx[f]:
             continue                                     # NEWSX: inside a red release's window
+        if po3 and not po3_ok(D, po3, f, d):
+            continue                                     # PO3: the 4 hour candle's power of three (study only)
         if calk:
             if D.cal[calk][f] or D.cal_start[calk][f] - (D.cal_start[calk][q0 - 1] if q0 else 0) > 0:
                 continue                                 # a release window: no entry, the waiting order was cancelled

@@ -165,6 +165,11 @@ def _bot5_tracks(b):
 
 
 def _risk_combo(b):
+    if str(b.get("track", "")).startswith("scout:"):
+        # a scout strategy's own risk (bot 6 "scout:SC326|15Min|US30"): its live trades are named by the strategy
+        # itself, SC326|15Min|US30 (agents/health.py) - "re:^TAL\\|scout:..." matched nothing, and the watch had
+        # followed 19 of bot 6's scout risk changes since 16.11 with no live trade at all (bot 6's smart agent, 20.11.2026)
+        return str(b["track"])[len("scout:"):]
     if b.get("bot") == "bot6" or (b.get("bot") == "bot5" and b["track"] not in ("v5", "v1m")):
         # bots 5-6: each gap track by its name (agents/health.py watch_trades, 14.11.2026)
         return f"re:^TAL\\|{re.escape(b['track'])}\\|"

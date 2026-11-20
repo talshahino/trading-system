@@ -108,7 +108,11 @@ def watch_trades(state, bot):
             continue
         trk = w.get("trk") or (w["id"].split("|")[3] if w.get("id", "").count("|") >= 3 else "")
         tf = "1Min" if str(trk).endswith("1m") else "15Min"
-        if bot in ("bot5", "bot6") and str(trk).startswith("sc:"):
+        if bot in ("bot5", "bot6") and trk == "scout" and str(w.get("combo") or "").count("|") == 2:
+            # bot 6's scout strategies (watch_fut): trk "scout" with the strategy's own combo (SC072|5Min|US500) -
+            # before they fell to FUT|15Min|<sym> (bot 6's smart agent, 20.11.2026)
+            combo = str(w["combo"])
+        elif bot in ("bot5", "bot6") and str(trk).startswith("sc:"):
             # 16.11.2026 night (manager): a scout strategy's watch id is SYM|SCxxx|tf|time|sc:..., not SYM|tal|...,
             # so its trades fell to OWN|15Min|<sym> and were judged against the v5 track's backtest (bot 5's 8 scout
             # losses today showed as "OWN|15Min|XAUUSD / US30")
@@ -136,7 +140,12 @@ def trades(state, bot=None):
     if rows:
         # bots 5-6: the gap tracks come from the watch record; the scout strategies they trade (SCxxx|tf|sym) are only
         # in the account's closed trades - kept, so the watch follows an added scout strategy too (14.11.2026)
-        closed = [c for c in closed if str(c.get("combo", "")).startswith("SC")]
+        # every scout family, not only "SC" (bot 6's smart agent, 20.11.2026: FR03 / FG01 / TV41 on bot 6 and IB / BK on
+        # bot 5's scout account fell out, so the watch and the loss review never saw them) - only the gap tracks'
+        # own rows (TAL| / OWN| / FUT|, already in the watch record above) are left out
+        seen = {(x["combo"], str(x["time"])) for x in rows}       # a scout trade already in the watch record
+        closed = [c for c in closed if not str(c.get("combo", "")).startswith(("TAL|", "OWN|", "FUT|"))
+                  and (c.get("combo"), str(c.get("open_t"))) not in seen]
     for c in closed:
         try:
             side = 1 if c["side"] == "buy" else -1

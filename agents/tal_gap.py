@@ -2758,7 +2758,7 @@ def live_trades(D, pair, cfg, gcache=None):
         px = (min(mid, o1[f]) if d > 0 else max(mid, o1[f])) if not lad else mid
         sw_st, sw_tg = (lo_sw, hi_sw) if d > 0 else (hi_sw, lo_sw)
         s2 = _count_back(*sw_st, ns[f], px, d, -d)
-        t2 = _count_back(*sw_tg, ns[f], px, d, d)
+        t2 = _count_back(*sw_tg, ns[f], px, d, d, int(cfg.get("TSWN") or 2))   # TSWN (as simulate)
         if s2 is None or t2 is None:
             out.append(dict(base, status="cancelled", entry=float(px), stop=None, target=None, reason="no swings"))
             continue
@@ -2775,6 +2775,10 @@ def live_trades(D, pair, cfg, gcache=None):
             continue
         if stopat_of(cfg) != "sw2":
             stop = stop - d * ipad(D, cfg, htf, ns[f], f)  # IPAD (as simulate)
+        if cfg.get("SSCALE"):
+            # SSCALE in the live bot too (bot 5's smart agent, 20.11.2026): the same stop as simulate(), so a card that
+            # sets it is built as a setting and trades as tested; off (no SSCALE) = exactly as before
+            stop = px - float(cfg["SSCALE"]) * (px - stop)
         stop = min_stop(D, cfg, htf, ns[f], px, stop, d)
         risk = d * (px - stop)
         rk_rr = rr_risk(D, cfg, htf, ns[f], px, stop0, risk, d)    # STOPAT ...r (as simulate)

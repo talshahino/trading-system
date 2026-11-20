@@ -2229,7 +2229,7 @@ def cluster6(budget_s):
 
 def tal(budget_s):
     t0 = time.time()
-    idx0 = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")} if (TAL_DIR / "idx").exists() else {}
+    idx0 = TG.read_idx(TAL_DIR / "idx")   # one cache file, only new runs read (manager, 20.11.2026)
     # each step's outcome into the results (bot6.steps, 14.11.2026, as bot 5): the bots' computer keeps its logs to
     # itself, so a step that failed or found no time was invisible to the nightly smart agent in the cloud
     # the user's tasks get the search's minutes once the search has nothing left (bot 6's smart agent, 14.11.2026

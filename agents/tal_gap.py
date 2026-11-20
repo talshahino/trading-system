@@ -1693,13 +1693,64 @@ def simulate(D, pair, cfg, gcache, keep=None):
 
 
 # ---------------------------------------------------------------- the nightly run, cached per (pair, variant, instrument)
+IDX_CACHE = "idx_cache.json"   # read_idx(): the idx folder's entries in one file (manager, 20.11.2026)
+
+
+def read_idx(idx_dir):
+    """{stem: entry} of every idx/*.json. Reading tens of thousands of small files took ~10 minutes on the bots'
+    computer, several times a run (bot 5 20.11: search_run 1,102 s of a 300 s budget, summary 589 s, whole_bot 613 s -
+    the same folder read again each time). The entries are kept in one cache file beside the folder, keyed by each
+    file's size / mtime (os.scandir gives them without an extra call on Windows): only new or rewritten files are
+    read, removed ones dropped. Same entries as reading every file."""
+    import os
+    idx_dir = Path(idx_dir)
+    if not idx_dir.exists():
+        return {}
+    cpath = idx_dir.parent / IDX_CACHE
+    try:
+        cache = json.loads(cpath.read_text())
+    except Exception:  # noqa: BLE001
+        cache = {}
+    out, new, changed = {}, {}, False
+    with os.scandir(idx_dir) as it:
+        for e in it:
+            if not e.name.endswith(".json") or not e.is_file():
+                continue
+            stem = e.name[:-5]
+            try:
+                st = e.stat()
+                sig = [st.st_size, st.st_mtime_ns]
+            except OSError:
+                continue
+            hit = cache.get(stem)
+            if hit and hit[0] == sig:
+                out[stem] = hit[1]
+                new[stem] = hit
+                continue
+            try:
+                v = json.loads(Path(e.path).read_text())
+            except Exception:  # noqa: BLE001 - a file being written: read again next time
+                continue
+            out[stem] = v
+            new[stem] = [sig, v]
+            changed = True
+    if changed or len(new) != len(cache):
+        try:
+            tmp = cpath.with_suffix(".tmp")
+            tmp.write_text(json.dumps(new, default=str))
+            tmp.replace(cpath)
+        except Exception as e:  # noqa: BLE001
+            print("tal idx cache not saved:", e)
+    return out
+
+
 def run(bot, symbols, load, out_dir, budget_s, end=None):
     """load(symbol) -> Data or None. Runs what is missing or older than RERUN_DAYS until the budget ends.
     Returns the index of the runs."""
     out_dir = Path(out_dir)
     idx_dir = out_dir / "idx"
     idx_dir.mkdir(parents=True, exist_ok=True)
-    idx = {f.stem: json.loads(f.read_text()) for f in idx_dir.glob("*.json")}
+    idx = read_idx(idx_dir)
     now = pd.Timestamp.now(tz="UTC")
     todo = []
     for pi, p in enumerate(PAIRS):

@@ -65,7 +65,7 @@ def run(load, out_dir, budget_s, chosen, symbols=None):
     out_dir = Path(out_dir)
     idx_dir = out_dir / "idx"
     idx_dir.mkdir(parents=True, exist_ok=True)
-    idx = {f.stem: json.loads(f.read_text()) for f in idx_dir.glob("*.json")}
+    idx = TG.read_idx(idx_dir)
     try:
         st = json.loads((out_dir / STATUS).read_text())
     except Exception:  # noqa: BLE001

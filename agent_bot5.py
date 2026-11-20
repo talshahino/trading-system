@@ -1719,7 +1719,7 @@ def main():
         def _lap(name):
             POST[name] = round(time.time() - _tp[0])
             _tp[0] = time.time()
-        tidx = {f.stem: json.loads(f.read_text()) for f in (TAL_DIR / "idx").glob("*.json")}
+        tidx = TG.read_idx(TAL_DIR / "idx")   # one cache file, only new runs read (manager, 20.11.2026)
         pairs, answers = TG.summarize(tidx, TAL_SYMBOLS, TAL_DIR)
         planned = len(TG.PAIRS) * len(TG.variants()) * len(TAL_SYMBOLS)
         doc = TG.write_results(BOT, pairs, answers, TAL_WORLD, [len(tidx), planned], out_dir=TAL_DIR)
@@ -1756,7 +1756,7 @@ def main():
         _lap("portfolio")
         # every FTMO forex pair, metals, the other indices (agents/tal_wide.py): per instrument and pair
         try:
-            widx = {f.stem: json.loads(f.read_text()) for f in (TAL_WIDE_DIR / "idx").glob("*.json")}
+            widx = TG.read_idx(TAL_WIDE_DIR / "idx")
             if widx:
                 summ = TW.summarize(widx, TAL_WIDE_DIR)
                 try:
@@ -1790,10 +1790,7 @@ def main():
                         for k, v in (s5.get("tal_tracks") or {}).items() if float(rkd.get(k, 0.0028) or 0) > 0}
             # the index read for the summary above is reused - only files written since are read (manager, 20.11.2026:
             # reading the whole idx folder again took 581 s of every run, post_sec whole_bot)
-            tidx_all = dict(tidx)
-            for f in (TAL_DIR / "idx").glob("*.json"):
-                if f.stem not in tidx_all:
-                    tidx_all[f.stem] = json.loads(f.read_text())
+            tidx_all = {**tidx, **TG.read_idx(TAL_DIR / "idx")}
             pf_all = TG.portfolio(tidx_all, TAL_SYMBOLS, TAL_DIR, live_all,
                                   risk={k: float(rkd.get(k, 0.0028)) * cur_sc for k in (s5.get("tal_tracks") or {})})
         except Exception as e:  # noqa: BLE001

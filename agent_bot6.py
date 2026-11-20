@@ -2227,6 +2227,129 @@ def cluster6(budget_s):
                     "is open the same way (inst = same index, grp = any of the three); same_risk = scaled to today's 2025 fall"}
 
 
+# BOT 5'S PER-INSTRUMENT STOP / TARGET ON BOT 6'S FUTURES (shared methods, bot 6's smart agent, 20.11.2026 night; the
+# user to bot 5, 20.11 09:08: "an exact stop and target for each instrument, then which instruments together within the
+# risk"; bot 5's agents/tal_fine_study + tal_costx2 - tal_gap_results.json bot5_smart.fine2011). Bot 5 found that a
+# per-instrument choice made on 2025 breaks its account in 2026, and since 20.11 it trades US500 with the impulse-start
+# stop and the 6th swing (sym_cfg, chosen AFTER seeing 2026 - a reference only, never a fair pick). Here, from the runs
+# already in the index (the stop7 / tgtsw groups - each track's rules with SSCALE 0.75-1.5 / IPAD c0 / TSWN 1,3-6 - per
+# index): per track, each index takes the one rule (or the rules as they run) with the best time-weighted total on
+# 2024-2025 on that index alone (30+ trades, else as they run), and the track so tuned is compared with the track as it
+# runs on 2026 (total, per trade, worst day, fall from the peak). Plus bot 5's US500 setting (STOPAT imp0 + TSWN 6) on
+# each track's US500 only - a few runs of its own. An "improve" code card only when the tuned track is better on 2026
+# in total and per trade and its worst day and fall are not worse (bot 6 has no sym_cfg in live yet - CODE6).
+PERSYM6 = STOP7_6 + TGT6
+B5SYM6 = {"US500": {"STOPAT": "imp0", "TSWN": 6}}
+
+
+def _t6s(idx, pn, cfg, sym):
+    cfg = TG._norm(dict(cfg))
+    fs = [v for v in idx.values() if v["pair"] == pn and v["sym"] == sym and TG._norm(dict(v["cfg"])) == cfg]
+    if not fs:
+        return None
+    t = pd.read_csv(TAL_DIR / fs[-1]["file"])
+    t["time"] = pd.to_datetime(t["time"], utc=True, format="ISO8601")
+    return t
+
+
+def persym6(idx, budget_s):
+    t0 = time.time()
+    pairs = {TG.pair_name(p): p for p in TG.PAIRS}
+    run = live_tracks()
+    todo = []
+    for trk, (pn, cfg) in run.items():                     # bot 5's US500 setting on each track's US500 (reference)
+        if pn not in pairs:
+            continue
+        for sym, kv in B5SYM6.items():
+            c = TG._norm(dict(TG.ftmo_cfg(cfg), **kv))
+            if _t6s(idx, pn, c, sym) is None:
+                todo.append((pn, c, sym))
+    D_, ran = {}, 0
+    for pn, c, sym in todo:
+        if time.time() - t0 > budget_s * 0.6:
+            break
+        try:
+            D_.setdefault(sym, tal_load(sym))
+        except Exception as e:  # noqa: BLE001
+            print(f"tal persym {sym}: no data ({e})")
+            continue
+        if D_[sym] is None:
+            continue
+        p = pairs[pn]
+        key = f"{p[0]}_{p[1]}_{TG.vid(c)}_{sym}"
+        t = TG.simulate(D_[sym], p, c, {})
+        f = TAL_DIR / f"{key}.csv.gz"
+        t.to_csv(f, index=False)
+        idx[key] = {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "pair": pn, "gap": p[2],
+                    "knob": "search", "val": TG.vid(c), "cfg": c, "sym": sym, "file": f.name, "n": len(t), "from": "bot6_persym"}
+        (TAL_DIR / "idx" / f"{key}.json").write_text(json.dumps(idx[key], default=str))
+        ran += 1
+    out, cards = {}, []
+    for trk, (pn, cfg) in run.items():
+        c0, vs = _filt_variants(cfg, PERSYM6)
+        base = {s: _t6s(idx, pn, c0, s) for s in WORLD["symbols"]}
+        if any(v is None for v in base.values()):
+            out[trk] = {"state": "runs missing (the rules as they run)"}
+            continue
+        pick, rows, full = {}, {}, True
+        for s in WORLD["symbols"]:
+            best, b_sc = "live", TG.score(base[s])
+            rows[s] = {"live": _day_stats(base[s])}
+            for k, v, c in vs:
+                t = _t6s(idx, pn, c, s)
+                if t is None:
+                    full = False
+                    continue
+                sc = TG.score(t)
+                rows[s][f"{k}={v}"] = {"train_w": round(sc, 1), "unseen": round(float(t[t["time"] >= A.SPLIT]["r"].sum()), 1)}
+                if sc > b_sc + 1e-9:
+                    best, b_sc = f"{k}={v}", sc
+            pick[s] = best
+            for s5, kv in B5SYM6.items():               # bot 5's own setting, for the record
+                if s5 == s:
+                    t = _t6s(idx, pn, TG._norm(dict(c0, **kv)), s)
+                    if t is not None:
+                        rows[s]["bot5_sym_cfg"] = _day_stats(t)
+        tuned = []
+        for s in WORLD["symbols"]:
+            if pick[s] == "live":
+                tuned.append(base[s])
+            else:
+                k, v, c = next((k_, v_, c_) for k_, v_, c_ in vs if f"{k_}={v_}" == pick[s])
+                tuned.append(_t6s(idx, pn, c, s))
+        tt, bb = pd.concat(tuned, ignore_index=True), pd.concat(list(base.values()), ignore_index=True)
+        lv, x = _day_stats(bb), _day_stats(tt)
+        out[trk] = {"pair": pn, "full": full, "pick": pick, "live": lv, "tuned": x, "per_symbol": rows}
+        if not full or all(p_ == "live" for p_ in pick.values()):
+            continue
+        if not (x["unseen"] > lv["unseen"] and (x["mean_unseen"] or -9) >= (lv["mean_unseen"] or -9)
+                and (x["worst_day_unseen"] or -99) >= (lv["worst_day_unseen"] or -99)
+                and (x["curve_unseen"].get("dd") or 99) <= (lv["curve_unseen"].get("dd") or 99)):
+            continue
+        st, bs = TG._stats(tt), TG._stats(bb)
+        hi, lo = pn.split("/")
+        conv = {"SSCALE": float, "TSWN": int, "IPAD": str}
+        sc_ = {s: {pick[s].split("=")[0]: conv[pick[s].split("=")[0]](pick[s].split("=")[1])} for s in pick if pick[s] != "live"}
+        cards.append(K.card("bot6", "improve", f"שיטת הגאפ · {TG.TF_HE[hi]} / {TG.TF_HE[lo]}: סטופ / יעד לכל מדד בנפרד",
+                            f"המסלול {trk}, לכל מדד הכלל שלו (נבחר על 2024-2025 בכל מדד לבד): "
+                            + ", ".join(f"{s} {pick[s]}" for s in pick) + ". "
+                            f"2024-2025: {lv['train_sum']:+.1f}R ← {x['train_sum']:+.1f}R. 2026 (לא נראתה): {lv['unseen']:+.1f}R ← "
+                            f"{x['unseen']:+.1f}R, לעסקה {lv['mean_unseen']:+.2f}R ← {x['mean_unseen']:+.2f}R, היום הגרוע "
+                            f"{lv['worst_day_unseen']}R ← {x['worst_day_unseen']}R, ירידה {lv['curve_unseen'].get('dd')}R ← "
+                            f"{x['curve_unseen'].get('dd')}R. שיטה משותפת עם בוט 5 (בקשת טל 20.11 09:08). בבוט 5: בחירה לכל נכס "
+                            f"על 2025 שברה את החשבון ב־2026 (9% בינואר); US500 שם סוחר מאז 20.11 בסטופ בתחילת הדחף וסווינג 6, "
+                            f"שנבחרו אחרי שראו את 2026. בבוט 6 אין עדיין הגדרה לכל מדד במסחר החי - כרטיס קוד.",
+                            st["train"], st["unseen"], whole=st["whole"], halves_=st["halves"], cost_r=st["cost_r"],
+                            tested=len(vs) * len(WORLD["symbols"]), baseline=bs["unseen"],
+                            detail={"world": "bot6", "persym": out[trk]},
+                            change={"method": "tal_gap_code", "pair": pn, "cfg": c0, "track": trk, "knob": "SYM_CFG", "to": sc_}))
+    print(f"tal persym (bot 6): {ran} runs, {len(cards)} cards")
+    return {"at": pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"), "ran": ran, "left": len(todo) - ran,
+            "tracks": out, "bot5_ref": B5SYM6,
+            "note": "per track: each index's own rule from SSCALE / IPAD c0 / TSWN chosen on 2024-2025 on that index alone; "
+                    "bot5_sym_cfg = bot 5's US500 setting (chosen there after seeing 2026, reference only)"}, cards
+
+
 def tal(budget_s):
     t0 = time.time()
     idx0 = TG.read_idx(TAL_DIR / "idx")   # one cache file, only new runs read (manager, 20.11.2026)
@@ -2356,6 +2479,15 @@ def tal(budget_s):
     except Exception as e:  # noqa: BLE001
         STEPS["cluster_risk"] = {"err": str(e)[:300]}
         print(f"tal_gap cluster risk failed: {e}")
+    try:            # bot 5's per-instrument stop / target on bot 6's tracks (20.11.2026 night, shared method)
+        t1 = time.time()
+        doc["bot6"]["persym"], psc = persym6(idx, budget_s * 0.05)
+        pcards += psc
+        STEPS["persym"] = {"done": doc["bot6"]["persym"].get("ran"), "left": doc["bot6"]["persym"].get("left"),
+                           "cards": len(psc), "sec": round(time.time() - t1), "budget_sec": round(budget_s * 0.05)}
+    except Exception as e:  # noqa: BLE001
+        STEPS["persym"] = {"err": str(e)[:300]}
+        print(f"tal_gap persym failed: {e}")
     doc["bot6"]["steps"] = STEPS
     TG.RESULTS.write_text(json.dumps(doc, ensure_ascii=False, indent=1, default=str), encoding="utf-8")
     try:            # TREND on what runs, head to head (13.11.2026)

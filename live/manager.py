@@ -211,9 +211,42 @@ def _kind(title):
     return "other"
 
 
-def push(title, body, urgent=False, action=None, tag=None, extra=None):
+def bot_of(title):
+    """The account a notification is about, from its title ("בוט 5 - שיטת הגאפ: ...", "בוט 5ב - סייר", "X · בוט 2: ...")."""
+    m = re.search(r"בוט\s*(\d)(ב)?", str(title or ""))
+    if not m:
+        return None
+    n = m.group(1)
+    if n == "5":
+        return "watch_scout" if m.group(2) else "watch_own"
+    return {"6": "watch_fut", "7": "news_bot"}.get(n, f"bot{n}")
+
+
+def mute_set(d):
+    """The app's per-account notifications switch (user, 20.11.2026: "a button for each bot's notifications on the
+    account screen - on or off for each account"). Off = no notification about that account reaches any device."""
+    name = str(d.get("bot") or "")
+    if not re.fullmatch(r"[A-Za-z0-9_]{1,40}", name):
+        raise ValueError("חשבון לא מוכר")
+    with LOCK:
+        m = dict(CFG.get("mute") or {})
+        if d.get("on"):
+            m.pop(name, None)
+        else:
+            m[name] = True
+        CFG["mute"] = m
+    save()
+    threading.Thread(target=push_manager_state, daemon=True).start()
+    return sorted(m)
+
+
+def push(title, body, urgent=False, action=None, tag=None, extra=None, acct=None):
     """Notification to the owner's phones/computers that turned notifications on in the app. Devices that came in with
     the view code (or none) get nothing (user, 12.11.2026: "מי שעושה צפייה שלא יקפצו לו התראות, אצלי כמנהל שיקפצו")."""
+    b_ = (acct if acct and re.fullmatch(r"[A-Za-z0-9_]{1,40}", str(acct)) else None) or bot_of(title)
+    if b_ and (CFG.get("mute") or {}).get(b_):
+        PUSH_LOG.append({"t": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "kind": _kind(title), "to": [], "why": f"muted {b_}"})
+        return
     owner = set(CFG.get("owner_subs") or [])
     subs = [s for s in CFG.get("subs", []) if s.get("endpoint") in owner]
     if not subs:
@@ -1545,7 +1578,7 @@ class Handler(BaseHTTPRequestHandler):
                                                     "pending": (UPDATE["sha"] or "")[:7] if UPDATE["sha"] and UPDATE["sha"] != UPD.local() else None,
                                                     "last": (CFG.get("auto_updates") or [{}])[-1]},
                                     "pin_set": bool(CFG.get("pin_hash")), "viewer_set": bool(CFG.get("viewer_hash")), "push_devices": len(CFG.get("owner_subs") or []),
-                                    "watchdog_push": WATCH["ok"],
+                                    "watchdog_push": WATCH["ok"], "mute": sorted(CFG.get("mute") or {}),
                                     "risk": risk_public()})
         if path == "/vapid":
             return self._send(200, {"key": vapid_public()})
@@ -1599,7 +1632,7 @@ class Handler(BaseHTTPRequestHandler):
             # a gap setup to review (bot 5, 17.11.2026): the notification opens the review and vibrates long
             act_ = "review" if d.get("action") == "review" else None
             push(d.get("title", ""), d.get("body", ""), urgent=bool(d.get("urgent")), tag=d.get("tag"), action=act_,
-                 extra={"id": str(d.get("id") or "")[:120], "bot": "watch_own"} if act_ else None)
+                 extra={"id": str(d.get("id") or "")[:120], "bot": "watch_own"} if act_ else None, acct=d.get("acct"))
             return self._send(200, {"ok": True})
         if path == "/subscribe" and not (self.headers.get("X-Pin") or d.get("pin")):
             # notifications only (view): a device without the secret code may subscribe; every action still needs it
@@ -1787,6 +1820,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True, "to": update_rollback()})
             if path == "/update/auto":
                 return self._send(200, {"ok": True, "on": update_auto(d.get("on"))})
+            if path == "/push/mute":
+                return self._send(200, {"ok": True, "mute": mute_set(d)})
             if path == "/agent/read":
                 return self._send(200, {"ok": True, "n": agent_read(d)})
             if path == "/agent/undo":
@@ -1883,7 +1918,7 @@ def push_manager_state():
     state = {"url_enc": seal_url(TUN.URL["url"]), "updated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
              "accounts": public_accounts(with_run=False),
              "subs": CFG.get("subs", []), "push_log": list(PUSH_LOG),
-             "risk": risk_public(),
+             "risk": risk_public(), "mute": sorted(CFG.get("mute") or {}),
              "auto_update": {"on": auto_update_on(), "prev": CFG.get("prev_version"), "rolled_back_from": CFG.get("rolled_back_from"),
                              "installs": (CFG.get("auto_updates") or [])[-10:]},
              "agents_host": AH.status() if CFG.get("agents_host", True) else {"on": False},

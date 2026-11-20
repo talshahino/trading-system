@@ -2073,6 +2073,7 @@ function details(s, a) {
       ${li("סיכון לעסקה", `<span class="num">${((s.risk || 0) * 100).toFixed(3).replace(/\.?0+$/, "")}%</span>`)}${li("ברוקר", "FTMO")}${li("שרת", esc(s.server || a.server || "—"))}${li("פלטפורמה", "MetaTrader 5")}</div>
     ${k.wds.length ? `<div class="h4" style="margin-top:18px">משיכות (מ־MetaTrader)</div><div class="lst">${k.wds.map(w => `<div class="li"><span class="k num">${w.date.split("-").reverse().join(".")}${w.note ? " · " + esc(w.note) : ""}</span><span class="v num">${usd(w.amount)}</span></div>`).join("")}
       <div class="li"><span class="k"><b>סך הכל נמשך</b></span><span class="v num"><b>${usd(k.wd)}</b></span></div></div>` : ""}
+    <div class="card row own" style="justify-content:space-between"><div><b>🔔 התראות מהחשבון הזה</b><div class="mut" style="font-size:12px">${mgrInfo && (mgrInfo.mute || []).includes(a.name) ? "כבויות: שום התראה על החשבון הזה לא תגיע" : "פועלות"}</div></div><label class="sw"><input type="checkbox" id="dPush" ${mgrInfo && (mgrInfo.mute || []).includes(a.name) ? "" : "checked"} ${live && !a.archived ? "" : "disabled"}><span></span></label></div>
     <div class="card row own" style="justify-content:space-between"><b>מוצג ברשימת החשבונות</b><label class="sw"><input type="checkbox" id="dVis" ${a.hidden ? "" : "checked"} ${live ? "" : "disabled"}><span></span></label></div>
     ${a.archived ? "" : `<div class="own"><div class="h4" style="margin-top:22px">אזור מסוכן</div><button class="dangerbtn" id="dClose" ${live ? "" : "disabled"}>סגור חשבון</button>
       <div class="foot" style="margin-top:8px">סגירה עוצרת את הבוט של החשבון הזה לצמיתות ומעבירה את החשבון להיסטוריה. עסקאות פתוחות נשארות עם הסטופ והיעד שלהן.</div></div>`}
@@ -2080,6 +2081,7 @@ function details(s, a) {
   const run = async (path, body, ok) => { try { await act(path, body); note("dMsg", ok, true); await findMgr(); renderDet(); } catch (e) { note("dMsg", e.message, false); } };
   if ($("dRen")) $("dRen").onclick = () => { const v = prompt("שם חדש לחשבון:", nick(a)); if (v) run(`/accounts/${encodeURIComponent(a.name)}/rename`, {nickname: v}, "השם עודכן."); };
   if ($("dTgt")) $("dTgt").onclick = () => { const v = prompt("יעד רווח באחוזים מגודל החשבון:", k.tgt); if (v) run(`/accounts/${encodeURIComponent(a.name)}/target`, {pct: parseFloat(v)}, "היעד עודכן."); };
+  $("dPush").onchange = e => run("/push/mute", {bot: a.name, on: e.target.checked}, e.target.checked ? "ההתראות של החשבון הזה פועלות." : "ההתראות של החשבון הזה כבויות. הבוט ממשיך לעבוד כרגיל.");
   $("dVis").onchange = e => run(`/accounts/${encodeURIComponent(a.name)}/hide`, {hidden: !e.target.checked}, e.target.checked ? "החשבון מוצג ברשימה." : "החשבון הוסתר. הוא ממשיך לעבוד, ואפשר למצוא אותו ב'חשבונות מוסתרים'.");
   if ($("dClose")) $("dClose").onclick = () => { if (prompt(`לסגור את "${nick(a)}"? הבוט ייעצר והחשבון יעבור להיסטוריה. כתוב "סגור" לאישור:`) === "סגור") run(`/accounts/${encodeURIComponent(a.name)}/archive`, {}, "החשבון נסגר ועבר להיסטוריה."); };
 }

@@ -2434,6 +2434,7 @@ def main():
     nick = os.environ.get("BOT_NICKNAME") or cfg.get("nickname")
     BOT = f"{nick} · {bot_label}" if nick else bot_label
     MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])
+    REP.ACCOUNT[0] = name
     REP.remember_alerts(ROOT / "live" / f"{name}_alerts.json")
     if not args.dry_run and not MANAGED:
         UPD.startup(log, BOT)

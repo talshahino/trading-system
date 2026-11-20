@@ -59,6 +59,7 @@ def notify(title, message, priority=3, tags=None, key=None, every=0):
 
 
 PUSH_STAT = {"ok": 0, "fail": 0, "no_key": 0, "last_err": None, "last_t": None}   # published in the bot's state
+ACCOUNT = [None]   # the account this process trades (a runner sets it): the app's per-account notifications switch
 
 
 def _to_app(title, message, urgent):
@@ -71,7 +72,7 @@ def _to_app(title, message, urgent):
         return
     try:
         r = requests.post("http://127.0.0.1:8760/push", timeout=8, headers={"X-Local": key},
-                          json={"title": title, "body": message, "urgent": urgent})
+                          json={"title": title, "body": message, "urgent": urgent, "acct": ACCOUNT[0]})
         if r.status_code == 200:
             PUSH_STAT["ok"] += 1
         else:

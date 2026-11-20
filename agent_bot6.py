@@ -810,13 +810,43 @@ def _b5_dbrk(v):
             f"2026 {g(n0, 'unseen'):+.0f}R ← {g(n1, 'unseen'):+.0f}R - לא נבנה בבוט 5.")
 
 
+# A LITTLE BEFORE THE MIDDLE (user, 20.11.2026 17:07, task b5neartouch2011 - bot 5's GER40 / AUS200 shorts came within
+# a point of the middle and fell hard: "it touched the middle exactly and went down, why didn't it enter?"; shared
+# methods, bot 6's smart agent 20.11 night). Bot 5's study (agents/tal_near_study.py, reports/agents/bot5/tal_near)
+# found no way better than the middle on both periods; on bot 6's futures the same ways, head to head on each running
+# track: the order 5% / 10% / 15% of half the box before the middle (ETOL h5 / h10 / h15), one / two of the futures'
+# spread + commission before it (c1 / c2), and half at the near edge + half at the middle (LADDER 2n). Settings knobs -
+# simulate and live_trades alike (agents/tal_gap.etol_level / LADDERS), so an approved card is built by the builder.
+NEAR6 = tuple(("ETOL", v) for v in TG.ETOL_VALS) + (("LADDER", "2n"),)
+FILT_HE["ETOL"] = lambda v: {"h5": "הכניסה 5% מחצי הגאפ לפני האמצע (ETOL h5)", "h10": "הכניסה 10% מחצי הגאפ לפני האמצע (ETOL h10)",
+                             "h15": "הכניסה 15% מחצי הגאפ לפני האמצע (ETOL h15)",
+                             "c1": "הכניסה ספרד + עמלה אחד לפני האמצע (ETOL c1)",
+                             "c2": "הכניסה שני ספרדים + עמלות לפני האמצע (ETOL c2)"}.get(str(v), f"ETOL {v}")
+FILT_HE["LADDER"] = (lambda f0: lambda v: "חצי בקצה הקרוב של הגאפ וחצי באמצע (LADDER 2n)" if str(v) == "2n" else f0(v))(
+    FILT_HE.get("LADDER") or (lambda v: f"LADDER {v}"))
+
+
+def _b5_near(v):
+    """What bot 5's agent found for the same entry (reports/agents/bot5/tal_near/report.json, its whole account)."""
+    try:
+        w = json.loads(Path("reports/agents/bot5/tal_near/report.json").read_text(encoding="utf-8")).get("ways") or {}
+    except Exception:  # noqa: BLE001
+        return "המחקר של בוט 5 (tal_near) עוד לא נקרא."
+    n0, n1 = w.get("now") or {}, w.get("lad2n" if str(v) == "2n" else str(v)) or {}
+    if not n1:
+        return "בבוט 5 הדרך הזו לא נבדקה."
+    g = lambda x, y: (x.get(y) or {}).get("ret") or 0.0  # noqa: E731
+    return (f"על כל החשבון שלו: 2025 {g(n0, '2025'):+.0f}% ← {g(n1, '2025'):+.0f}%, 2026 {g(n0, '2026'):+.0f}% ← "
+            f"{g(n1, '2026'):+.0f}% - לא נבנה בבוט 5 (כרטיס eccad310930a).")
+
+
 CODE6 = ("PYR", "FOLLOW", "WAITX", "SSCALE", "TSWN")     # knobs live_trades does not run yet: an approved card is built by the smart agent
 TASK6 = {"gaveback": GAVE6, "follow": FOL6, "brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
          "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6,
          "gapx": GAPX6, "firstg": FG6, "stopat": STOP6, "waitx": WAIT6, "widestop": WIDE6, "stopmove": MOVE6, "mingap": MING6,
          "minrr": MINRR6, "moverr": MOVERR6, "gapsize": GSIZE6, "beway": BEWAY6, "reopen": REO6,
-         "stop7": STOP7_6, "tgtsw": TGT6, "dbrk": DBRK6}
-USER6 = DBRK6 + STOP7_6 + TGT6 + BEWAY6 + MINRR6 + MOVERR6 + GSIZE6 + REO6 + WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+         "stop7": STOP7_6, "tgtsw": TGT6, "dbrk": DBRK6, "near": NEAR6}
+USER6 = NEAR6 + DBRK6 + STOP7_6 + TGT6 + BEWAY6 + MINRR6 + MOVERR6 + GSIZE6 + REO6 + WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
@@ -976,6 +1006,7 @@ def filt_cards(idx, group=FILT6):
                           + ("השאלה של בוט 5 על הפתיחה היומית (b5reopen1911 - שיטה משותפת). " if (k, v) in REO6 else "")
                           + ("משימה של טל לבוט 5 מ־20.11 (איפה הסטופ הכי נכון, באיזה סווינג היעד - שיטה משותפת). " if (k, v) in STOP7_6 + TGT6 else "")
                           + ("שיטה משותפת עם בוט 5 (ההפסקה היומית - DBRK, 20.11). " if k == "DBRK" else "")
+                          + ("ההערה של טל מ־20.11 (\"נגע בדיוק באמצע וירד - למה לא נכנס?\", b5neartouch2011 - שיטה משותפת). " if (k, v) in NEAR6 else "")
                           + ("משימה של טל מ־16.11 (נרות חזקים אחרי הכניסה - b5follow1611). " if k == "FOLLOW" else "")
                           + ("משימה של טל מ־17.11 (הסקירה של הגאפים בבוט 5 - שיטה משותפת). " if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX") else "")
                           + ("משימה של טל מ־18.11 (סטופ רחב יותר וגודל גאפ - שיטה משותפת עם בוט 5). " if (k in ("IPAD", "MIN_GAP", "GAPPCT", "GAPLEG") or (k, v) in WIDE6) and (k, v) not in STOP7_6 else "")
@@ -984,6 +1015,7 @@ def filt_cards(idx, group=FILT6):
                                           _b5_gave(v) if (k, v) in GAVE6 else
                                           _b5_beway(v) if (k, v) in BEWAY6 else
                                           _b5_2011(k, v) if (k, v) in STOP7_6 + TGT6 else
+                                          _b5_near(v) if (k, v) in NEAR6 else
                                           _b5_dbrk(v) if k == "DBRK" else
                                           "הבדיקה נבנית אצלו עכשיו (b5reopen1911)." if (k, v) in REO6 else
                                           _b5_gave(v, ("_follow",)) if k == "FOLLOW" else

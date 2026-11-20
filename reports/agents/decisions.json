@@ -1,11 +1,159 @@
 {
- "updated": "2026-11-20T22:26:11+00:00",
+ "updated": "2026-11-20T22:49:51+00:00",
  "new": [
-  "bbf3eec58e93",
-  "49f049052bc3",
-  "d34df2ee0f9e"
+  "a69b93892519",
+  "1c96c18a1cc3",
+  "70cb195362f0",
+  "13cb237a5a9f"
  ],
  "decisions": [
+  {
+   "id": "a69b93892519",
+   "bot": "bot4",
+   "type": "card",
+   "card": "b304dd82b3ea",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC504|15Min|XAGUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.47R לעסקה, 46.0 עסקאות אפקטיביות, +0.22R מעל המצב הקיים) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.42 לאסטרטגיה: רווח +161.24% → +163.31% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.42 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3734,
+     "total": 161.24,
+     "worst_day": -2.71,
+     "max_dd": 5.73,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.4,
+     "guard_cut": 390,
+     "guard_skipped": 111
+    },
+    "after": {
+     "trades": 3744,
+     "total": 163.31,
+     "worst_day": -2.81,
+     "max_dd": 5.62,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.37,
+     "guard_cut": 377,
+     "guard_skipped": 102
+    }
+   },
+   "at": "2026-11-20T22:49:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "1c96c18a1cc3",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC504|15Min|XAGUSD",
+   "title": "SC504|15Min|XAGUSD: סיכון ×0.5 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.47R לעסקה, 46.0 עסקאות אפקטיביות, +0.22R מעל המצב הקיים) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.42 לאסטרטגיה: רווח +161.24% → +163.31% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.42 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "a69b93892519",
+   "star": true,
+   "action": {
+    "bot": "bot4",
+    "combo": "SC504|15Min|XAGUSD",
+    "kind": "mult",
+    "value": 0.5,
+    "prev": 0.7
+   },
+   "at": "2026-11-20T22:49:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "70cb195362f0",
+   "bot": "bot4",
+   "type": "card",
+   "card": "519df711daef",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC635|15Min|GBPJPY: איזון ב־70% מהדרך ליעד",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.38R לעסקה, 72.0 עסקאות אפקטיביות, +0.07R מעל המצב הקיים) · בבוט השלם על 2026: רווח +163.31% → +164.47%, בלי יותר סיכון (יום גרוע -2.81%, ירידה 5.62%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3744,
+     "total": 163.31,
+     "worst_day": -2.81,
+     "max_dd": 5.62,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.37,
+     "guard_cut": 377,
+     "guard_skipped": 102
+    },
+    "after": {
+     "trades": 3743,
+     "total": 164.47,
+     "worst_day": -2.81,
+     "max_dd": 5.62,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.37,
+     "guard_cut": 379,
+     "guard_skipped": 102
+    }
+   },
+   "at": "2026-11-20T22:49:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "13cb237a5a9f",
+   "bot": "bot4",
+   "type": "card",
+   "card": "42a2020eb8dd",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC627|15Min|XAGUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.05R לעסקה, 176.0 עסקאות אפקטיביות, +0.03R מעל המצב הקיים) · בבוט השלם על 2026: רווח +165.77% → +167.41%, בלי יותר סיכון (יום גרוע -2.81%, ירידה 5.64%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3738,
+     "total": 165.77,
+     "worst_day": -2.81,
+     "max_dd": 5.6,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.39,
+     "guard_cut": 376,
+     "guard_skipped": 107
+    },
+    "after": {
+     "trades": 3740,
+     "total": 167.41,
+     "worst_day": -2.81,
+     "max_dd": 5.64,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.39,
+     "guard_cut": 374,
+     "guard_skipped": 106
+    }
+   },
+   "at": "2026-11-20T22:49:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "d34df2ee0f9e",
    "bot": "bot3",

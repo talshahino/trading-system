@@ -124,7 +124,12 @@
   "TV17|15Min|AAPL": {
    "target": 5.0,
    "stop": 0.75,
-   "card": "2709b1d6bfa5"
+   "card": "2709b1d6bfa5",
+   "pyramid": [
+    1.5,
+    0.5
+   ],
+   "pyr_card": "63c4f27585a0"
   },
   "TV50|1Hour|XAGUSD": {
    "filter": "vol_low",
@@ -282,7 +287,10 @@
   },
   "TV24|15Min|TSLA": {
    "filter": "v_ema5",
-   "filter_card": "ae5dc97fc1dc"
+   "filter_card": "ae5dc97fc1dc",
+   "target": 2.0,
+   "limit": 0.25,
+   "card": "1589e426ee29"
   }
  },
  "added": {

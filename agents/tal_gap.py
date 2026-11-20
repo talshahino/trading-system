@@ -1548,6 +1548,10 @@ def simulate(D, pair, cfg, gcache, keep=None):
             continue
         if stopat_of(cfg) != "sw2":
             stop = stop - d * ipad(D, cfg, htf, ns[f], f)  # IPAD: room beyond the impulse's start (MGMT study)
+        if cfg.get("SSCALE"):
+            # SSCALE (user, 20.11.2026, study only - agents/tal_stop7_study): the stop's distance from the entry x k -
+            # under 1 closer to the entry (toward the target), over 1 further away; the same $ risk (another size)
+            stop = px - float(cfg["SSCALE"]) * (px - stop)
         stop = min_stop(D, cfg, htf, ns[f], px, stop, d)
         risk = d * (px - stop)
         rk_rr = rr_risk(D, cfg, htf, ns[f], px, stop0, risk, d)    # STOPAT ...r: MIN_RR on the rules' stop

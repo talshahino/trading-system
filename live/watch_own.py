@@ -1941,7 +1941,8 @@ def main():
                             t_out = pd.Timestamp(x["exit_time"]) if x.get("exit_time") else df.index[-1]
                             rec["m15"], rec["m1"] = tal_chart(df, rec["geo"], t_in, t_out)
                             rec["chart_v"] = 5
-                            if rev_ and rec["status"] == "pending" and rec["asked"] and not rec["sleep"] and not old.get("asked"):
+                            if (rev_ and rec["status"] == "pending" and rec["asked"] and not rec["sleep"] and not old.get("asked")
+                                    and not TAL5_AUTO[0]):   # automatic (20.11.2026): no question - the marks tab stays optional
                                 rec["pushed"] = review_push(rec)   # with the charts ready in the state
                         else:
                             rec["m15"], rec["m1"], rec["chart_v"] = old.get("m15"), old.get("m1"), 5

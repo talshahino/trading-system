@@ -1150,5 +1150,78 @@
     "better_2026": true
    }
   }
+ },
+ "FG02|1Min|US100": {
+  "live": {
+   "train_wsum": 29.92,
+   "unseen_sum": 20.59,
+   "worst_day_unseen": -1.15
+  },
+  "done": true,
+  "families": {
+   "hours": {
+    "what": "בלי יעד, סטופ x0.75, כניסה רק 03:00-15:45 ניו יורק (לונדון וניו יורק)",
+    "train_wsum": 29.92,
+    "unseen_sum": 20.59,
+    "unseen_mean": 0.3993,
+    "worst_day_unseen": -1.15,
+    "better_train": false,
+    "better_2026": false
+   },
+   "breakeven": {
+    "what": "בלי יעד, סטופ x0.75, איזון ב־1.5R",
+    "train_wsum": 37.01,
+    "unseen_sum": 23.89,
+    "unseen_mean": 0.4637,
+    "worst_day_unseen": -1.15,
+    "better_train": true,
+    "better_2026": true
+   },
+   "direction": {
+    "what": "בלי יעד, סטופ x0.75, רק בכיוון של EMA50 בגרף השעה (קניות מעליו, מכירות מתחתיו)",
+    "train_wsum": 34.7,
+    "unseen_sum": 26.82,
+    "unseen_mean": 0.587,
+    "worst_day_unseen": -1.15,
+    "better_train": true,
+    "better_2026": true
+   },
+   "entry": {
+    "what": "בלי יעד, סטופ x0.75, כניסה בלימיט 0.25R טוב יותר (עד 3 נרות)",
+    "train_wsum": 67.22,
+    "unseen_sum": 2.15,
+    "unseen_mean": 0.0455,
+    "worst_day_unseen": -1.19,
+    "better_train": true,
+    "better_2026": false
+   },
+   "stop": {
+    "what": "בלי יעד, סטופ x0.75, סטופ מעבר לסווינג השני",
+    "train_wsum": 26.59,
+    "unseen_sum": 6.77,
+    "unseen_mean": 0.1322,
+    "worst_day_unseen": -1.06,
+    "better_train": false,
+    "better_2026": false
+   },
+   "partial": {
+    "what": "בלי יעד, סטופ x0.75, חצי החוצה בחצי הדרך (בלי יעד: ב־+1R) וסטופ לכניסה",
+    "train_wsum": 2.85,
+    "unseen_sum": 9.8,
+    "unseen_mean": 0.1909,
+    "worst_day_unseen": -1.15,
+    "better_train": false,
+    "better_2026": false
+   },
+   "pyramid": {
+    "what": "בלי יעד, סטופ x0.75, חצי פוזיציה נוספת ב־+1R (הסיכון נשאר 1R)",
+    "train_wsum": 29.63,
+    "unseen_sum": 20.59,
+    "unseen_mean": 0.3993,
+    "worst_day_unseen": -1.15,
+    "better_train": false,
+    "better_2026": false
+   }
+  }
  }
 }

@@ -1,0 +1,38 @@
+{
+ "plans": {
+  "TV17|15Min|AAPL": {
+   "target": 5.0,
+   "stop": 0.75,
+   "card": "2709b1d6bfa5",
+   "pyramid": [
+    1.5,
+    0.5
+   ],
+   "pyr_card": "63c4f27585a0",
+   "rules": {
+    "sl": 0.6
+   }
+  },
+  "TV24|15Min|TSLA": {
+   "filter": "v_ema5",
+   "filter_card": "ae5dc97fc1dc",
+   "target": 2.0,
+   "limit": 0.25,
+   "card": "1589e426ee29",
+   "pyramid": [
+    1.0,
+    0.33
+   ],
+   "pyr_card": "cb5c219fd743"
+  },
+  "BK05|15Min|INTC": {
+   "target": "none",
+   "stop": 0.75,
+   "limit": 0.25,
+   "card": "d617f56910cd",
+   "rules": {
+    "sl": 0.6
+   }
+  }
+ }
+}

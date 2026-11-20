@@ -1,7 +1,37 @@
 {
  "bot": "bot1",
- "updated": "2026-11-20T07:13:09+00:00",
+ "updated": "2026-11-20T11:00:00+00:00",
  "cards": [
+  {
+   "bot": "bot1",
+   "kind": "info",
+   "title": "בוט 1, 20.11 צהריים: ‎+1.8% היום, זהב במכירה ביעד; דוח 19.11 - 2 אסטרטגיות עוד בתור",
+   "what": "היום עד 10:45 UTC: ‎+1.8% (‎+775$ סגור): IB056 זהב שתי מכירות ביעד (‎+6.3R / ‎+2.65R), IB033 ו־MQ02 ברווח. הפסידו: SC330 USDJPY קנייה (הגיעה ל־‎+1.26R, האיזון שלה ב־70% מהדרך לא הגיע - זו הגרסה הטובה בשתי התקופות), SC020 JP225, TT45 WTI, SC154 זהב מכירה. דוח 19.11: מסנן הסקוויז ל־TT45 GBPJPY נבנה (⭐), הפירמידה שלה אצל המנהל; TV02 TSLA (ניהול) ו־TV08 NVDA (בולינגר) - הבוט השלם לא מרוויח יותר, נדחו; MQ11 / SE01 / TV60 - שיפורים זעירים בלבד. TV02 INTC ו־TT41 USDCHF - 6 המשפחות בתור במחשב. הבוט השלם 2026: ‎+218% / ירידה 5.67% / יום גרוע ‎-3.18% - בתוך המגבלות, אין כרטיס סיכון.",
+   "train": null,
+   "unseen": null,
+   "whole": null,
+   "halves": null,
+   "neighbours": null,
+   "tested": 1,
+   "cost_r": null,
+   "risk_pct": null,
+   "baseline": null,
+   "change": {
+    "combo": "bot1|all",
+    "kind": "review",
+    "study": "midday_2011"
+   },
+   "detail": {
+    "made_by": "bots 1-4 smart agent 20.11 midday",
+    "tasks": [
+     "571b618d570e"
+    ]
+   },
+   "made": "2026-11-20T11:00:00+00:00",
+   "id": "2d39d62e9404",
+   "tier": "regular",
+   "verdict": "המלצה של סוכן הבוט, נבדקה ברמת הבוט"
+  },
   {
    "bot": "bot1",
    "kind": "info",
@@ -119,97 +149,6 @@
    },
    "made": "2026-11-19T19:01:00+00:00",
    "id": "f5fa674344f7"
-  },
-  {
-   "bot": "bot1",
-   "kind": "improve",
-   "title": "⭐ SC154|5Min|XAUUSD: איזון ב־80% מהדרך במקום 60%",
-   "what": "היום הסטופ עובר לכניסה ב־60% מהדרך ליעד. בבדיקת הניהול (19.11, עלויות FTMO): איזון ב־80% - עד 2025 ‎+31.7R מול ‎+21.1R, ב־2026 ‎+12.0R מול ‎+8.9R; גם 70% טוב משניהם (‎+25.1R / ‎+10.7R) - מגמה עקבית, לא בחירה אחת. אחוז המנצחות עולה (2025 42.8% ← 47.5%). הסיבה: בזהב של 5 דק' הרבה עסקאות חוזרות לכניסה מ־60-70% ואז ממשיכות ליעד. יציאה חלקית (חצי ב־50%) גרועה מאוד (‎-117R ב־2026) - לא מוצעת. השיפור קטן לעסקה (‎+0.01R ב־2026) ולכן ⭐.",
-   "train": {
-    "n": 129,
-    "eff_n": 129.0,
-    "mean": 0.2457,
-    "t": null,
-    "win": null
-   },
-   "unseen": {
-    "n": 264,
-    "eff_n": 264.0,
-    "mean": 0.0455,
-    "t": null,
-    "win": null
-   },
-   "whole": null,
-   "halves": null,
-   "neighbours": null,
-   "tested": 7,
-   "cost_r": null,
-   "risk_pct": null,
-   "baseline": {
-    "train": {
-     "n": 138,
-     "eff_n": 138.0,
-     "mean": 0.1529,
-     "t": null,
-     "win": null
-    },
-    "unseen": {
-     "n": 292,
-     "eff_n": 292.0,
-     "mean": 0.0305,
-     "t": null,
-     "win": null
-    }
-   },
-   "change": {
-    "combo": "SC154|5Min|XAUUSD",
-    "family": "manage",
-    "from": "be0.6|part0",
-    "to": "be0.8|part0"
-   },
-   "detail": {
-    "made_by": "bots 1-4 smart agent 19.11 evening",
-    "neighbours": {
-     "be0.7|part0": [
-      25.1,
-      10.7
-     ],
-     "be0.5|part0": [
-      21.2,
-      -0.2
-     ],
-     "be0.4|part0": [
-      14.4,
-      12.1
-     ]
-    },
-    "whole_bot": {
-     "before": {
-      "trades": 5574,
-      "total": 223.96,
-      "worst_day": -3.15,
-      "max_dd": 5.87,
-      "near_days": 1,
-      "max_open": 5.63,
-      "max_side": 4.32,
-      "guard_cut": 553,
-      "guard_skipped": 209
-     },
-     "after": {
-      "trades": 5543,
-      "total": 226.17,
-      "worst_day": -3.15,
-      "max_dd": 5.87,
-      "near_days": 1,
-      "max_open": 5.63,
-      "max_side": 4.32,
-      "guard_cut": 550,
-      "guard_skipped": 212
-     }
-    }
-   },
-   "made": "2026-11-19T19:00:08+00:00",
-   "id": "a395fe022ff1"
   },
   {
    "bot": "bot1",

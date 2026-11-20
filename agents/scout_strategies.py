@@ -14037,3 +14037,485 @@ SCOUT.update({
     "SC672": ("True Trend Oscillator bull / bear cross while active, 2 ATR, 2R", s_true_trend_osc, _M),
     "SC673": ("Trend Bias Oscillator structure flip with the signal, swing stop, 2R", s_trend_bias_osc, _M),
 })
+
+
+# =====================================================================================================================
+# Scout 20.11.2026 night: FMZ (fmz.com + dev.to mirrors), ProRealCode DAX, IG scalping, TradingView gold sessions,
+# MQL5 Larry Williams Part 16, and one strategy per new indicator (classic13).
+# =====================================================================================================================
+def _win_range(df, tz, start, end):
+    """High / low / open of the [start, end) local-time window of each local day, known from the bar that ends the
+    window on (NaN before); also hs, he, weekday, day and the 'window just closed' bar flag."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, tz)
+    inw = (hs >= start - 1e-9) & (he <= end + 1e-9) & (he > hs)
+    g = pd.DataFrame({"d": day, "h": np.where(inw, h, np.nan), "l": np.where(inw, l, np.nan),
+                      "o": np.where(inw, o, np.nan)})
+    hi = g.groupby("d")["h"].transform("max").to_numpy()
+    lo = g.groupby("d")["l"].transform("min").to_numpy()
+    op = g.groupby("d")["o"].transform("first").to_numpy()
+    known = (he >= end - 1e-9) | (he < hs)
+    known &= np.isfinite(hi)
+    hi, lo, op = (np.where(known, x, np.nan) for x in (hi, lo, op))
+    closed = inw & (np.abs(he - end) < 1e-6)
+    return hi, lo, op, hs, he, wd, day, closed
+
+
+def s_fmz_first_hour_vwap(df):
+    """FMZ 484091 'Quantitative Breakout Strategy: First Hour ATR Stop-Loss with EMA Slope Optimization'
+    (https://www.fmz.com/lang/en/strategy/484091 ; written for a 09:15 Indian open - here the New York cash open, our
+    translation): after the first hour (09:30-10:30 NY) a close over the first-hour high while EMA 9 crosses up through
+    the session VWAP and the EMA 9 slope is positive = long (mirror short); stop 1 ATR, target a fixed 1% of the price
+    (the source's defaults), entries until 16:00 NY."""
+    o, h, l, c, v = _ohlcv(df)
+    hi, lo, op, hs, he, wd, day, _ = _win_range(df, "America/New_York", 9.5, 10.5)
+    a = atr(h, l, c, 14)
+    vw = _day_vwap_local(df, "America/New_York")
+    e9 = ema(c, 9)
+    ok = (hs >= 10.5) & (he <= 16.0) & (wd < 5)
+    L = ok & (c > hi) & cross_up(e9, vw) & (e9 > _r(e9))
+    S = ok & (c < lo) & cross_down(e9, vw) & (e9 < _r(e9))
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(c - a, c + a, c * 1.01, c * 0.99)
+
+
+def s_fmz_first_candle_colour_eu(df):
+    """FMZ 504550 'Adaptive Opening Range Breakout Momentum Strategy' (https://www.fmz.com/lang/en/strategy/504550 ;
+    Europe/Stockholm session): the first 15 minutes after the 09:00 Stockholm open (the reference candle) - green =
+    buy at its close, red = sell; stop at the reference candle's low / high; target 10R or the session end (17:25
+    Stockholm, the source's 'EoDOnly' / 10R modes - both in one: 10R target + flat at the end). One trade a day."""
+    o, h, l, c, v = _ohlcv(df)
+    hi, lo, op, hs, he, wd, day, closed = _win_range(df, "Europe/Stockholm", 9.0, 9.25)
+    L = closed & (c > op) & (wd < 5)
+    S = closed & (c < op) & (wd < 5)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(lo, hi, 10.0, force_exit=(he >= 17.42) | (he < hs))
+
+
+def s_fmz_hk_30m_orb(df):
+    """FMZ 502627 'First 30-Minute Price Range Breakout' (https://www.fmz.com/lang/en/strategy/502627 ; titled for the
+    Hang Seng, times 09:15-based in the code) - here the Hong Kong cash open 09:30-10:00 HKT (our translation for HK50):
+    after the range is set, the first close beyond its high / low in 10:00-12:00 or 13:00-16:00 HKT = with it; stop
+    the other side of the range, target 1x the range (risk_reward 1.0); one trade a day; flat 16:00 HKT (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    hi, lo, op, hs, he, wd, day, _ = _win_range(df, "Asia/Hong_Kong", 9.5, 10.0)
+    ok = (((hs >= 10.0) & (he <= 12.0)) | ((hs >= 13.0) & (he <= 16.0))) & (wd < 5)
+    L = ok & (c > hi)
+    S = ok & (c < lo)
+    first = _first_per_day(L | S, day)
+    L, S = _excl(L & first, S & first)
+    w = hi - lo
+    return L, S, _plan_lv(lo, hi, c + w, c - w, force_exit=(he >= 16.0) | (he < hs))
+
+
+def s_fmz_first15_volume(df):
+    """FMZ 503852 'First Day Range Breakout' (Nifty 15m, https://www.fmz.com/strategy/503852 ) - here the New York
+    open (our translation): range = the 09:30-09:45 NY candle; after it, a close beyond the range with volume over its
+    5-bar average = with it; stop 2 x ATR 20, trailing 2 ATR; target = entry +/- the range width; flat at 15:30 NY
+    (the source closes 30 minutes before the cash close)."""
+    o, h, l, c, v = _ohlcv(df)
+    hi, lo, op, hs, he, wd, day, _ = _win_range(df, "America/New_York", 9.5, 9.75)
+    a20 = atr(h, l, c, 20)
+    vok = v >= sma(v, 5)  # '>' in the source; '>=' so flat tick-volume feeds are not shut out
+    ok = (hs >= 9.75) & (he <= 15.5) & (wd < 5) & vok
+    L = ok & (c > hi) & (_r(c) <= hi)
+    S = ok & (c < lo) & (_r(c) >= lo)
+    L, S = _excl(L, S)
+    w = hi - lo
+    return L, S, _plan_lv(c - 2 * a20, c + 2 * a20, c + w, c - w, trail_atr=2.0,
+                          force_exit=(he >= 15.5) | (he < hs))
+
+
+def s_fmz_session_vwma(df):
+    """FMZ 484104 'Session-Based VWMA Dynamic Level Breakthrough' (dev.to mirror with code
+    https://dev.to/fmzquant/session-based-vwma-dynamic-level-breakthrough-strategy-53la ; 1-minute, IST - here New York,
+    our translation): VWMA 55 that restarts every session (length = min(bars since the session start, 55)); the first
+    bar whose LOW is over the VWMA = buy, the first bar whose HIGH is under it = sell; sides alternate within the session
+    (the code's lastTradeWasBuy flags); the opposite signal reverses; flat at 15:30 NY (the code's 15:29 close-all).
+    The code has no stop - ours 2 ATR; no target."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "America/New_York")
+    vv = np.where(v > 0, v, 1.0)
+    g = pd.DataFrame({"d": day, "pv": c * vv, "v": vv})
+    num = g.groupby("d")["pv"].transform(lambda x: x.rolling(55, min_periods=1).sum()).to_numpy()
+    den = g.groupby("d")["v"].transform(lambda x: x.rolling(55, min_periods=1).sum()).to_numpy()
+    vw = num / den
+    up, dn = _onset(l > vw), _onset(h < vw)
+    ok = (hs >= 9.5) & (he <= 15.5) & (wd < 5)
+    L = np.zeros(len(c), bool)
+    S = np.zeros(len(c), bool)
+    last, dprev = 0, None
+    for i in range(len(c)):
+        if day[i] != dprev:
+            last, dprev = 0, day[i]
+        if not ok[i]:
+            continue
+        if up[i] and last != 1:
+            L[i], last = True, 1
+        elif dn[i] and last != -1:
+            S[i], last = True, -1
+    return L, S, {"stop": ("atr", 2.0), "target": None, "opposite": True, "force_exit": (he >= 15.5) | (he < hs)}
+
+
+def s_fmz_open_momentum_rsi(df):
+    """FMZ 491510 'Market Open Momentum Reversal RSI' (dev.to mirror https://dev.to/fmzquant/market-open-momentum-
+    reversal-rsi-trading-strategy-iic ): the first 90 seconds after 09:30 NY decide the side (close over the open = long,
+    under = short; on our bars: the first 1-minute bar); out when RSI 14 reaches 70 (long) / 30 (short) or about 10
+    minutes after the window (11 one-minute bars). No stop in the code - ours 1.5 ATR."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "America/New_York")
+    first = (np.abs(hs - 9.5) < 1e-6) & (wd < 5)
+    r = rsi(c, 14)
+    L = first & (c > o)
+    S = first & (c < o)
+    L, S = _excl(L, S)
+    nb = max(1, int(round(11.0 / max(_bar_minutes(df), 1.0))))
+    return L, S, {"stop": ("atr", 1.5), "target": None, "max_bars": nb, "exit_long": r >= 70, "exit_short": r <= 30}
+
+
+def s_fmz_dual_entry(df):
+    """FMZ 489048 'Multi-Indicator Breakout and Reversal - a Dual Entry System with Opening Range' (dev.to mirror
+    https://dev.to/fmzquant/multi-indicator-breakout-and-reversal-trading-strategy-a-dual-entry-system-with-opening-range-3j77 ;
+    2-minute charts): three entries - reversal (close crosses SMA 50 with RSI 14 < 30, under VWAP, over SMA 200;
+    mirror), breakout (EMA 9 crosses EMA 20 on the VWAP and SMA 200 side), opening range (close crosses the first 30
+    minutes' high / low of the NY session with volume over 1.5 x the range bars' average - the code computes the range
+    only once at bar 15, a bug; ours per session). Stop = lowest low of 7 - 0.5 ATR (mirror), TP1 0.5 x risk (25% off,
+    the stop to break-even), TP2 1.1 x risk: here a 1.1R target with break-even at the TP1 point."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    e9, e20, s50, s200 = ema(c, 9), ema(c, 20), sma(c, 50), sma(c, 200)
+    vw = _day_vwap_local(df, "America/New_York")
+    r = rsi(c, 14)
+    hi, lo, op, hs, he, wd, day, _ = _win_range(df, "America/New_York", 9.5, 10.0)
+    ok = (hs >= 9.5) & (he <= 16.0) & (wd < 5)
+    inw = (hs >= 9.5) & (he <= 10.0)
+    g = pd.DataFrame({"d": day, "v": np.where(inw, v, np.nan)})
+    vavg = g.groupby("d")["v"].transform("mean").to_numpy()
+    rev_l = cross_up(c, s50) & (r < 30) & (c < vw) & (c > s200)
+    rev_s = cross_down(c, s50) & (r > 70) & (c > vw) & (c < s200)
+    brk_l = cross_up(e9, e20) & (c > vw) & (c > s200)
+    brk_s = cross_down(e9, e20) & (c < vw) & (c < s200)
+    orb_l = cross_up(c, hi) & (v > 1.5 * vavg)
+    orb_s = cross_down(c, lo) & (v > 1.5 * vavg)
+    L = ok & (rev_l | brk_l | orb_l)
+    S = ok & (rev_s | brk_s | orb_s)
+    L, S = _excl(L, S)
+    sl = _s(l).rolling(7).min().to_numpy() - 0.5 * a
+    ss = _s(h).rolling(7).max().to_numpy() + 0.5 * a
+    return L, S, _plan_r(sl, ss, 1.1, breakeven=(0.5 / 1.1, 0.0))
+
+
+def s_fmz_prev15_break(df):
+    """FMZ 488850 '15-Minute Breakout Multi-Timeframe Synergy' (dev.to mirror https://dev.to/fmzquant/15-minute-breakout-
+    multi-timeframe-synergy-strategy-with-risk-reward-optimization-model-n9 ; executed on 2-minute candles): the last
+    completed 15-minute candle's high / low; a close over its high = long, stop its low, target 3R (mirror). No session
+    or trend filter. (TT19 fades a sweep of the same candle; this one trades the break.)"""
+    o, h, l, c, v = _ohlcv(df)
+    hi = _htf(df, "15min", lambda g: g["h"].to_numpy(float))
+    lo = _htf(df, "15min", lambda g: g["l"].to_numpy(float))
+    L = (c > hi) & (_r(c) <= _r(hi))
+    S = (c < lo) & (_r(c) >= _r(lo))
+    L, S = _excl(L, S)
+    return L, S, _plan_r(lo, hi, 3.0)
+
+
+def s_fmz_pivot_level_break(df):
+    """FMZ 499446 'Dynamic Trendline Breakout - multi-tiered profit targets with time' (dev.to mirror
+    https://dev.to/fmzquant/dynamic-trendline-breakout-quantitative-trading-strategy-multi-tiered-profit-targets-with-time-7ok ;
+    4-minute, intraday): horizontal levels = the last confirmed pivot high / low (9 bars each side); 09:30-13:00 NY a
+    close through the resistance (confirmed within 2 bars) = long with the stop at the support level (mirror); out
+    after 120 bars. The source's targets are fixed price units (0.7 x 0.75 / 1.5 / 3) - not translatable; ours 2R with
+    the stop to break-even at 1R (its scale-out)."""
+    o, h, l, c, v = _ohlcv(df)
+    res, sup = _swings(h, l, 9)
+    hs, he, wd, _, day = _local(df, "America/New_York")
+    ok = (hs >= 9.5) & (he <= 13.0) & (wd < 5)
+    L = ok & cross_up(c, res) & (sup < c)
+    S = ok & cross_down(c, sup) & (res > c)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sup, res, 2.0, max_bars=120, breakeven=(0.5, 0.0))
+
+
+def _kama_fmz(c, n=10):
+    """KAMA as written in the FMZ 498818 code: sc = (ER x 2 / (n + 1))^2, no slow constant."""
+    ch = np.abs(c - _r(c, n))
+    vol = _s(np.abs(c - _r(c))).rolling(n).sum().to_numpy()
+    with np.errstate(invalid="ignore", divide="ignore"):
+        er = np.where(vol > 0, ch / vol, 0.0)
+    sc = (er * 2.0 / (n + 1)) ** 2
+    k = np.full(len(c), np.nan)
+    for i in range(len(c)):
+        if i == 0 or not np.isfinite(k[i - 1]):
+            k[i] = c[i]
+        else:
+            s_ = sc[i] if np.isfinite(sc[i]) else 0.0
+            k[i] = k[i - 1] + s_ * (c[i] - k[i - 1])
+    return k
+
+
+def s_fmz_kama_cloud(df):
+    """FMZ 498818 'Adaptive Momentum Cloud Breakout' (dev.to mirror
+    https://dev.to/fmzquant/adaptive-momentum-cloud-breakout-quantitative-strategy-26kc ; 15m / 1h): cloud = KAMA 10 +/-
+    1.5 ATR 14; a close crossing over the upper cloud with the MACD 12/26/9 histogram over 0 and the close over KAMA =
+    long (mirror); stop 1 ATR, target 2 ATR from the signal close."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    k = _kama_fmz(c, 10)
+    m = ema(c, 12) - ema(c, 26)
+    hist = m - ema(m, 9)
+    L = cross_up(c, k + 1.5 * a) & (hist > 0) & (c > k)
+    S = cross_down(c, k - 1.5 * a) & (hist < 0) & (c < k)
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 1.0), "target": ("atr", 2.0)}
+
+
+def s_fmz_rsi10_dip(df):
+    """FMZ 494065 'Dual-Signal Moving Average Breakout and RSI Oversold Reversal', the RSI leg (dev.to mirror
+    https://dev.to/fmzquant/dual-signal-moving-average-breakout-and-rsi-oversold-reversal-strategy-68n ; H1 BTC in the
+    text): RSI 10 under 30 = buy; out when RSI is over 50; stop 1 ATR, target 5 ATR. Long only."""
+    o, h, l, c, v = _ohlcv(df)
+    r = rsi(c, 10)
+    L = (r < 30) & (_r(r) >= 30)
+    return L, np.zeros(len(c), bool), {"stop": ("atr", 1.0), "target": ("atr", 5.0), "exit_long": r > 50}
+
+
+def s_fmz_close7_breakout(df):
+    """FMZ 494065, the breakout leg: a close over the highest close of the previous 7 bars = buy; 3.5 ATR trailing stop
+    (trail_points = trail_offset = 3.5 ATR), no target. Long only."""
+    o, h, l, c, v = _ohlcv(df)
+    hc = _s(c).shift(1).rolling(7).max().to_numpy()
+    L = (c > hc) & ~(_r(c) > _r(hc))
+    return L, np.zeros(len(c), bool), {"stop": ("atr", 3.5), "trail_atr": 3.5, "target": None}
+
+
+def s_dax40_h1_long_trend(df):
+    """ProRealCode 'DAX40 H1 Long Trend System' (https://www.prorealcode.com/prorealtime-trading-strategies/dax40-h1-long-
+    trend-system/ , DAX CFD, 1-hour, long only): close over SMA 185 and over SMA 16 on a bar closing before 17:30 Berlin
+    (FLATBEFORE 16:59 -> in practice the bar closing at 17:00), weekdays; stop 67 points, target 185 points, flat at
+    22:30 (FLATAFTER). Points translated with a DAX H1 ATR of ~45 points: stop 1.5 ATR, target 4.1 ATR."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, day = _local(df, "Europe/Berlin")
+    ok = (he >= 16.99) & (he <= 17.5) & (hs < he) & (wd < 5)
+    L = ok & (c > sma(c, 185)) & (c > sma(c, 16))
+    return L, np.zeros(len(c), bool), {"stop": ("atr", 1.5), "target": ("atr", 4.1),
+                                       "force_exit": (he >= 22.5) | (he < hs)}
+
+
+def s_dax_deep_cci(df):
+    """ProRealCode 'DAX P (1d): Deep CCI Mean Reversion with ATR Targets' (https://www.prorealcode.com/topic/dax-p-1d-
+    deep-cci-mean-reversion-with-atr-targets-pf-1-28-dd-18/ ; daily, long only): CCI 18 under -147 = buy at the next
+    open; stop 6.7% under the entry, target 4.7 x ATR 20."""
+    o, h, l, c, v = _ohlcv(df)
+    cc = _cci(h, l, c, 18)
+    a20 = atr(h, l, c, 20)
+    L = (cc < -147) & ~(_r(cc) < -147)
+    return L, np.zeros(len(c), bool), _plan_lv(c * (1 - 0.067), c * 2, c + 4.7 * a20, c * 0.5)
+
+
+def s_ig_ma200_scalp(df):
+    """IG 'Four simple scalping trading strategies' - moving averages (https://www.ig.com/en/trading-strategies/four-
+    simple-scalping-trading-strategies-190131 ; EUR/USD 3-minute example): MA 200 rising and MA 5 crossing over MA 20 =
+    long; MA 200 falling and the close crossing under MA 5 while MA 5 is under MA 20 = short. No stop / target given:
+    ours 1.5 ATR and 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    m5, m20, m200 = sma(c, 5), sma(c, 20), sma(c, 200)
+    L = (m200 > _r(m200)) & cross_up(m5, m20)
+    S = (m200 < _r(m200)) & cross_down(c, m5) & (m5 < m20)
+    L, S = _excl(L, S)
+    a = atr(h, l, c, 14)
+    return L, S, _plan_r(c - 1.5 * a, c + 1.5 * a, 2.0)
+
+
+def s_ig_rsi_three_ma(df):
+    """IG 'Four simple scalping trading strategies' - RSI: in an uptrend (three moving averages rising - ours SMA 50 /
+    100 / 200, each over its value 10 bars ago) RSI 14 drops to 30 and moves back over it = long; in a downtrend (all three falling) RSI reaches 70 and
+    turns down = short. Stop beyond the 5-bar swing (+0.1 ATR), target 2R (ours - the page gives none)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    m = [sma(c, n) for n in (50, 100, 200)]
+    up = np.all([x > _r(x, 10) for x in m], axis=0)  # 'rising' = over its value 10 bars ago (ours)
+    dn = np.all([x < _r(x, 10) for x in m], axis=0)
+    r = rsi(c, 14)
+    L = up & cross_up(r, 30)
+    S = dn & cross_down(r, 70)
+    L, S = _excl(L, S)
+    sl, ss = _swl(h, l, a, 5, 0.1)
+    return L, S, _plan_r(sl, ss, 2.0)
+
+
+def s_ig_stoch_scalp(df):
+    """IG 'Four simple scalping trading strategies' - stochastic (Brent 3-minute example): in an uptrend (ours: SMA 50
+    rising with the close over it) %K crosses over %D at the lows (%K under 20) = long; out when the stochastic is over 80
+    or %K crosses back under %D (the page's exits). Mirror for shorts. Stop 1.5 ATR (ours), no target."""
+    o, h, l, c, v = _ohlcv(df)
+    k, d = _stoch(h, l, c, 14, 3, 3)
+    m = sma(c, 50)
+    L = (m > _r(m)) & (c > m) & cross_up(k, d) & (k < 20)
+    S = (m < _r(m)) & (c < m) & cross_down(k, d) & (k > 80)
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 1.5), "target": None, "exit_long": (k > 80) | cross_down(k, d),
+                  "exit_short": (k < 20) | cross_up(k, d)}
+
+
+def s_london_presession_sweep(df):
+    """TradingView 'London Pre-Session Sweep' (XAUUSD 5m, https://in.tradingview.com/script/Y1qwqCHK-London-Pre-Session-
+    Sweep ): box = 08:00-09:00 Berlin high / low; trading windows 09:30-10:25 and 11:00-12:00 Berlin (10:30-10:55 pause);
+    Mon / Wed / Thu only. After the box low has been swept, the first green candle = long, stop its low, target 4R
+    (mirror after a sweep of the box high with a red candle). The script allows up to 3 trades a day, stops after the
+    first win and takes the other side only after a first loss - here one trade a day (the first signal)."""
+    o, h, l, c, v = _ohlcv(df)
+    hi, lo, op, hs, he, wd, day, _ = _win_range(df, "Europe/Berlin", 8.0, 9.0)
+    after = (hs >= 9.0) & np.isfinite(hi)
+    g = pd.DataFrame({"d": day, "sl": (after & (l < lo)).astype(int), "sh": (after & (h > hi)).astype(int)})
+    swl = g.groupby("d")["sl"].cummax().to_numpy() > 0
+    swh = g.groupby("d")["sh"].cummax().to_numpy() > 0
+    win = (((hs >= 9.5) & (he <= 10.42)) | ((hs >= 11.0) & (he <= 12.0))) & np.isin(wd, [0, 2, 3])
+    L = win & swl & (c > o)
+    S = win & swh & (c < o)
+    first = _first_per_day(L | S, day)
+    L, S = _excl(L & first, S & first)
+    a = atr(h, l, c, 14)
+    return L, S, _plan_r(l - 0.01 * a, h + 0.01 * a, 4.0)
+
+
+def s_liq_sweep_mr(df):
+    """TradingView 'Liquidity Sweep Mean Reversion [XAUUSD/XAGUSD]' (Just_Aboy, https://www.tradingview.com/script/fVu5DNuk/ ;
+    M1-M15, best XAUUSD M5), 'Balanced' mode: liquidity = the lowest low of the last 50 bars (longs) / highest high of
+    the last 20 bars (shorts); a wick through it closing back inside = sweep; within the next 5 bars (ours) the close
+    crosses back over EMA 9 while over the session VWAP = long (mirror under VWAP); 08:00-20:00 UTC. Stop beyond the
+    sweep wick + 0.1 ATR (the script's 0.5% buffer has no stated base - ours), target the opposing liquidity (the 50-bar
+    high for longs, the 20-bar low for shorts), skipped under 1.5R (the script's minimum). The 50% partial at the EMA is
+    not modelled."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    ll50 = _s(l).shift(1).rolling(50).min().to_numpy()
+    hh50 = _s(h).shift(1).rolling(50).max().to_numpy()
+    hh20 = _s(h).shift(1).rolling(20).max().to_numpy()
+    ll20 = _s(l).shift(1).rolling(20).min().to_numpy()
+    swl = (l < ll50) & (c > ll50)
+    swh = (h > hh20) & (c < hh20)
+    wl = _s(np.where(swl, l, np.nan)).ffill(limit=5).to_numpy()
+    wh = _s(np.where(swh, h, np.nan)).ffill(limit=5).to_numpy()
+    tl = _s(np.where(swl, hh50, np.nan)).ffill(limit=5).to_numpy()
+    ts = _s(np.where(swh, ll20, np.nan)).ffill(limit=5).to_numpy()
+    e9 = ema(c, 9)
+    vw = _vwap_day(df)
+    hs = df.index.tz_convert("UTC").hour.to_numpy()
+    ok = (hs >= 8) & (hs < 20)
+    stl, sts = wl - 0.1 * a, wh + 0.1 * a
+    with np.errstate(invalid="ignore"):
+        L = ok & np.isfinite(wl) & cross_up(c, e9) & (c > vw) & ((tl - c) >= 1.5 * (c - stl)) & (c > stl)
+        S = ok & np.isfinite(wh) & cross_down(c, e9) & (c < vw) & ((c - ts) >= 1.5 * (sts - c)) & (c < sts)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(stl, sts, tl, ts)
+
+
+def s_gold_prime_confluence(df):
+    """TradingView 'Gold Prime' (Gold Sniper: Liquidity Sweep + RSI Divergence, https://www.tradingview.com/script/hOQRDd8y-Gold-Prime/ ;
+    XAUUSD 5m, 08:00-20:00 UTC) - the confluence signal (both engines the same way): engine A = a sweep of the session
+    high / low closing back inside (ours: the Asian session 00:00-08:00 UTC range, within the last 3 bars), engine B =
+    a regular RSI 14 divergence (pivots 3 bars, confirmed within the last 5 bars). Stop beyond the sweep wick (+0.1 ATR),
+    target 2R (engine A's)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    hi, lo, op, hs, he, wd, day, _ = _win_range(df, "UTC", 0.0, 8.0)
+    sl_ = (l < lo) & (c > lo)
+    sh_ = (h > hi) & (c < hi)
+    dv = IND.divergence(df, k=3, src="rsi")
+    bull = _s(dv["bull_reg"] > 0).astype(float).rolling(6, min_periods=1).max().to_numpy() > 0
+    bear = _s(dv["bear_reg"] > 0).astype(float).rolling(6, min_periods=1).max().to_numpy() > 0
+    rl = _s(sl_.astype(float)).rolling(3, min_periods=1).max().to_numpy() > 0
+    rh = _s(sh_.astype(float)).rolling(3, min_periods=1).max().to_numpy() > 0
+    ok = (hs >= 8.0) & (he <= 20.0)
+    L = ok & rl & bull & (c > o)
+    S = ok & rh & bear & (c < o)
+    L, S = _excl(_onset(L), _onset(S))
+    stl = _s(l).rolling(3, min_periods=1).min().to_numpy() - 0.1 * a
+    sts = _s(h).rolling(3, min_periods=1).max().to_numpy() + 0.1 * a
+    return L, S, _plan_r(stl, sts, 2.0)
+
+
+def s_vol_regime_breakout(df):
+    """Volatility Regime Switches (LuxAlgo, our reconstruction - agents/indicators volatility_regime): a 20-bar close
+    breakout within 5 bars after the regime left 'quiet' (switch up from quiet), percentile-rank mode (ATR 14 rank over
+    100 bars, quiet <= 20, the page's alternative normalization), 2 ATR, 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.volatility_regime(df, mode="pct")
+    st = z["state"]
+    left_q = (st > 0) & (_r(st) == 0)
+    rec = _s(left_q.astype(float)).rolling(6, min_periods=1).max().to_numpy() > 0
+    hh = _s(c).shift(1).rolling(20).max().to_numpy()
+    ll = _s(c).shift(1).rolling(20).min().to_numpy()
+    return _ind_flip(df, rec & (c > hh) & (st > 0), rec & (c < ll) & (st > 0))
+
+
+def s_hmm_trend_cross(df):
+    """Hidden Markov Model regimes (LuxAlgo, our reconstruction - hmm_regime): EMA 20 / 50 cross only while the
+    trending probability is over 0.6, 2 ATR, 2R (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.hmm_regime(df)["p_trend"]
+    e1, e2 = ema(c, 20), ema(c, 50)
+    return _ind_flip(df, cross_up(e1, e2) & (p > 0.6), cross_down(e1, e2) & (p > 0.6))
+
+
+def s_hmm_range_fade(df):
+    """Hidden Markov Model regimes (LuxAlgo, our reconstruction - hmm_regime): in the ranging regime (ranging
+    probability over 0.6) RSI 14 back over 30 = buy, back under 70 = sell (the page's 'mean reversion when Ranging is
+    high'); stop 1.5 ATR, target the 20-bar SMA (exit on the cross), no fixed target (ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    p = IND.hmm_regime(df)["p_range"]
+    r = rsi(c, 14)
+    m = sma(c, 20)
+    L, S = _excl(cross_up(r, 30) & (p > 0.6), cross_down(r, 70) & (p > 0.6))
+    return L, S, {"stop": ("atr", 1.5), "target": None, "exit_long": c > m, "exit_short": c < m}
+
+
+def s_vol_waterfall_release(df):
+    """Multi-Horizon Volatility Waterfall (LuxAlgo, our reconstruction - vol_waterfall): after a compression (aggregate
+    heat under 0.30 within the last 10 bars) the fast horizons heat first (fast / slow ratio over 1.5) and the close
+    breaks the 20-bar high / low = with it, 2 ATR, 2R (the page's 'fast ribbons turning hot before a breakout'; rule
+    ours)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.vol_waterfall(df)
+    comp = _since(z["regime"] < 0, 10)
+    fs = np.nan_to_num(z["fast_slow"], nan=0.0)
+    hh = _s(c).shift(1).rolling(20).max().to_numpy()
+    ll = _s(c).shift(1).rolling(20).min().to_numpy()
+    ok = comp & (fs > 1.5)
+    return _ind_flip(df, ok & (c > hh), ok & (c < ll))
+
+
+def s_pratik_trend(df):
+    """'Trend indicator' (Pratik_4Clover): the oscillator crosses 0 with the oscillator on the right side of its signal
+    line (the page's confirmation), 2 ATR, 2R (stop and target ours)."""
+    z = IND.pratik_trend(df)
+    return _ind_flip(df, z["buy"] & (z["osc"] > z["signal"]), z["sell"] & (z["osc"] < z["signal"]))
+
+
+SCOUT.update({
+    "SC674": ("FMZ first-hour NY breakout + EMA9 crossing the VWAP with a positive slope, 1 ATR stop, 1% target", s_fmz_first_hour_vwap, ["5Min", "15Min"]),
+    "SC675": ("FMZ Stockholm first 15-min candle colour at 09:15, its extreme stop, 10R or flat 17:25, one a day", s_fmz_first_candle_colour_eu, ["5Min", "15Min"]),
+    "SC676": ("FMZ Hong Kong 09:30-10:00 range breakout, other-side stop, 1x range target, one a day", s_fmz_hk_30m_orb, ["5Min", "15Min"]),
+    "SC677": ("FMZ NY 09:30-09:45 candle break with volume over SMA5, 2 ATR20 trail, range-width target, flat 15:30", s_fmz_first15_volume, ["5Min", "15Min"]),
+    "SC678": ("FMZ session VWMA55 first low-over / high-under, alternating stop-and-reverse, 2 ATR, flat 15:30 NY", s_fmz_session_vwma, ["1Min", "5Min"]),
+    "SC679": ("FMZ 09:30 NY first-minute colour, out at RSI 70 / 30 or 11 minutes, 1.5 ATR", s_fmz_open_momentum_rsi, ["1Min", "5Min"]),
+    "SC680": ("FMZ dual entry: SMA50 + RSI reversal / EMA9-20 breakout / 30-min ORB with volume, 7-bar stop, 1.1R, BE", s_fmz_dual_entry, ["1Min", "5Min"]),
+    "SC681": ("FMZ last 15-min candle breakout on the low timeframe, its other end stop, 3R", s_fmz_prev15_break, ["1Min", "5Min"]),
+    "SC682": ("FMZ pivot-9 level breakout 09:30-13:00 NY, opposite-level stop, 2R, BE 1R, 120 bars", s_fmz_pivot_level_break, ["1Min", "5Min", "15Min"]),
+    "SC683": ("FMZ KAMA10 cloud +/- 1.5 ATR breakout with the MACD histogram, 1 / 2 ATR", s_fmz_kama_cloud, _M),
+    "SC684": ("FMZ RSI10 under 30 buy, out over 50, 1 / 5 ATR (long)", s_fmz_rsi10_dip, _M),
+    "SC685": ("FMZ close over the prior 7 closes' high, 3.5 ATR trail (long)", s_fmz_close7_breakout, _M + ["1Day"]),
+    "SC686": ("DAX40 H1 long trend: over SMA185 + SMA16 at the 17:00 Berlin bar, 1.5 / 4.1 ATR, flat 22:30", s_dax40_h1_long_trend, ["1Hour"]),
+    "SC687": ("DAX daily deep CCI18 under -147, 6.7% stop, 4.7 ATR20 target (long)", s_dax_deep_cci, ["4Hour", "1Day"]),
+    "SC688": ("IG MA scalp: MA200 slope + MA5/20 cross (short: close under MA5 under MA20), 1.5 ATR, 2R", s_ig_ma200_scalp, ["1Min", "5Min"]),
+    "SC689": ("IG RSI scalp: three rising MAs + RSI back over 30 (mirror 70), swing stop, 2R", s_ig_rsi_three_ma, ["1Min", "5Min", "15Min"]),
+    "SC690": ("IG stochastic scalp: %K/%D cross under 20 over a rising SMA50, out over 80 or on the cross back, 1.5 ATR", s_ig_stoch_scalp, ["1Min", "5Min"]),
+    "SC691": ("London Pre-Session Sweep (gold): 08-09 Berlin box swept, first reversal candle in 09:30-12:00, candle stop, 4R, Mon/Wed/Thu", s_london_presession_sweep, ["5Min"]),
+    "SC692": ("Liquidity Sweep Mean Reversion: 50 / 20-bar extreme swept, EMA9 reclaim on the VWAP side, wick stop, opposite liquidity", s_liq_sweep_mr, ["1Min", "5Min", "15Min"]),
+    "SC693": ("Gold Prime confluence: Asian-range sweep + RSI divergence, wick stop, 2R, 08-20 UTC", s_gold_prime_confluence, ["5Min", "15Min"]),
+    "SC694": ("Volatility regime leaves quiet + 20-bar breakout, 2 ATR, 2R", s_vol_regime_breakout, _M),
+    "SC695": ("HMM trending probability > 0.6 + EMA20/50 cross, 2 ATR, 2R", s_hmm_trend_cross, _M),
+    "SC696": ("HMM ranging probability > 0.6 + RSI 30/70 return, SMA20 exit, 1.5 ATR", s_hmm_range_fade, _F),
+    "SC697": ("Volatility waterfall: compression then fast-horizon heat + 20-bar breakout, 2 ATR, 2R", s_vol_waterfall_release, _M),
+    "SC698": ("Pratik trend oscillator zero cross with its signal, 2 ATR, 2R", s_pratik_trend, _M),
+})

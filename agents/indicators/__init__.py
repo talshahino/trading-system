@@ -95,6 +95,7 @@ from agents.indicators.classic11 import (aco, adaptive_resonance, adaptive_st_os
                                          trend_pulse, trend_reversal_prob, vcp, velez_bars, vol_gaussian_bands, wavetrend_x, zl_flow)
 from agents.indicators.classic12 import (aroon, l1_trend_swing, open_type, trend_bias_osc, true_trend_osc,
                                          vol_gated_trend)
+from agents.indicators.classic13 import hmm_regime, pratik_trend, vol_waterfall, volatility_regime
 TV = "https://www.tradingview.com/script/"
 TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
@@ -464,6 +465,10 @@ INDICATORS = {
     "l1_trend_swing": (l1_trend_swing, "L1 Trend Swing Oscillator: weighted-price histogram, range trend line, ratio differential, swing buy / sell (blackcat1402, our reconstruction)", TV + "jtgTVb4r-blackcat-L1-Trend-Swing-Oscillator/"),
     "true_trend_osc": (true_trend_osc, "True Trend Oscillator: bull = sqrt(RSI x StochATR), bear = sqrt((100 - RSI) x StochATR), RQ-kernel smoothed (MYNAMEISBRANDON, kernel and lengths ours)", TV + "egNqhlKM-True-Trend-Oscillator-Price-Envelope/"),
     "trend_bias_osc": (trend_bias_osc, "Trend Bias Oscillator: close between the last confirmed swing high / low (20 / 5) as -100..100 + structure bias (tgregg75, first version)", TV + "Un7inhjq-Trend-Bias-Oscillator/"),
+    "volatility_regime": (volatility_regime, "ATR14 / SMA100 ratio regime quiet / normal / stressed, 1.25 / 0.80, hysteresis 0.10, 2-bar confirmation (LuxAlgo, our reconstruction)", "https://www.luxalgo.com/library/indicator/volatility-regime-switches/"),
+    "hmm_regime": (hmm_regime, "Two-state trending / ranging forward filter on 10-bar drift and volatility ratio (LuxAlgo HMM regimes, our reconstruction)", TV + "USWQEica-Hidden-Markov-Model-Market-Regimes-LuxAlgo/"),
+    "vol_waterfall": (vol_waterfall, "ATR percentile heat over 10 horizons (10..100), aggregate heat, expansion / compression, fast / slow ratio (LuxAlgo, our reconstruction)", TV + "QuYs1iMf-Multi-Horizon-Volatility-Waterfall-LuxAlgo/"),
+    "pratik_trend": (pratik_trend, "RMA(EMA(c, n) - SMA(c, n), n) zero cross with an SMA signal, n 20 (Pratik_4Clover)", TV + "lbuVV8u4-Trend-indicator/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

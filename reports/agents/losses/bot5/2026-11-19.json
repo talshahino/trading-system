@@ -1033,30 +1033,62 @@
    {
     "combo": "TAL|1Hour5m|US2000",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "הוסרה מהבוט (מסלול t1h_5@US2000 כבוי)",
+      "decision": null,
+      "at": null,
+      "effect_month_pct": null
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
     "combo": "TAL|5Min1m|EU50",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "תוקן 20.11 (אישור טל): יעד בסווינג הרביעי ב־EU50 (TSWN 4 על t1h_5@EU50 / t5_1@EU50)",
+      "decision": null,
+      "at": "2026-11-20T18:40:00+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
     "combo": "TAL|5Min1m|JP225",
     "cause": "ניהול העסקה",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "תוקן 20.11 (אישור טל): JP225 עם סטופ ×0.70 ויעד בסווינג 5 (sym_cfg בכל המסלולים)",
+      "decision": null,
+      "at": "2026-11-20T18:40:00+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
     "combo": "TAL|15Min5m|XAGUSD",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-20T18:40:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TAL|15Min|US500",
@@ -1091,9 +1123,20 @@
    {
     "combo": "TAL|5Min1m|US100",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-20T18:40:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TAL|1Hour|JP225",
@@ -1105,15 +1148,29 @@
    {
     "combo": "TAL|1Hour5m|JP225",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "תוקן 20.11 (אישור טל): JP225 עם סטופ ×0.70 ויעד בסווינג 5 (cfg של t1h_5@JP225)",
+      "decision": null,
+      "at": "2026-11-20T18:40:00+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
     "combo": "TAL|5Min1m|US500",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "תוקן 20.11 (אישור טל): US500 עם סטופ בתחילת הדחף ויעד בסווינג 6 (sym_cfg בכל המסלולים)",
+      "decision": null,
+      "at": "2026-11-20T18:40:00+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
@@ -1141,15 +1198,33 @@
    {
     "combo": "TAL|1Hour5m|US100",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-20T18:40:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true
    },
    {
     "combo": "TAL|1Hour5m|US500",
     "cause": "ניהול העסקה",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "תוקן 20.11 (אישור טל): US500 עם סטופ בתחילת הדחף ויעד בסווינג 6 (cfg של t1h_5@US500)",
+      "decision": null,
+      "at": "2026-11-20T18:40:00+00:00",
+      "effect_month_pct": null
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
@@ -1259,17 +1334,8 @@
    }
   ],
   "open": [
-   "TAL|1Hour5m|US2000",
-   "TAL|5Min1m|EU50",
-   "TAL|5Min1m|JP225",
-   "TAL|15Min5m|XAGUSD",
-   "TAL|5Min1m|US100",
    "TAL|1Hour|JP225",
-   "TAL|1Hour5m|JP225",
-   "TAL|5Min1m|US500",
    "TAL|1Hour|US100",
-   "TAL|1Hour5m|US100",
-   "TAL|1Hour5m|US500",
    "TAL|1Hour|US500",
    "SC326|5Min|GBPUSD",
    "SC480|5Min|US100",
@@ -1286,8 +1352,12 @@
    "SC333|15Min|XAUUSD",
    "BK05|15Min|XAUUSD"
   ],
-  "cut_only": [],
+  "cut_only": [
+   "TAL|15Min5m|XAGUSD",
+   "TAL|5Min1m|US100",
+   "TAL|1Hour5m|US100"
+  ],
   "total_month_pct": 0.45,
-  "status": "פתוח: 26 אסטרטגיות בלי תיקון עדיין"
+  "status": "פתוח: 17 אסטרטגיות בלי תיקון עדיין · 3 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

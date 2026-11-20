@@ -132,15 +132,33 @@ TREND_MODES = ("day", "up20")
 FIX_FILE = Path("data/agents/fix_attempts.json")
 
 
+# WHAT THE LIVE BOT TRADES (bot 5's smart agent, 20.11.2026 afternoon): since 20.11 a track in "tal_tracks" can be
+# "off" (no new trade - live/watch_own.py TAL5_OFF) and a shared index track can give an instrument its own stop /
+# target ("sym_cfg": {symbol: {cfg keys}} - JP225 SSCALE 0.7 + TSWN 5, US500 STOPAT imp0 + TSWN 6; watch_own trades
+# dict(cfg, **sym_cfg[symbol])). The whole-bot tests here (sym_runs, TG.portfolio, guard5) ran every track with risk > 0
+# on its shared rules for every symbol - six tracks the bot no longer trades in, and JP225 / US500 on rules they no
+# longer trade - so the replay the manager reads (risk_guard: autodecide holds bot 5's new strategies on it) was a bot
+# that does not exist. Now: an "off" track is not counted, and each instrument runs on its own rules.
+def _counted(v, rk, k):
+    """A track the account counts: risk > 0 and not "off"."""
+    return float(rk.get(k, 0.0028) or 0) > 0 and not (v or {}).get("off")
+
+
+def _sym_cfg(v, sym):
+    """The track's rules on one instrument, exactly as live/watch_own.py trades them (its "sym_cfg" over "cfg")."""
+    return dict(v["cfg"], **(((v.get("sym_cfg") or {}).get(sym)) or {}))
+
+
 def _live_tracks():
-    """{track: (pair_name, cfg, risk)} - the index tracks bot 5 counts now (risk > 0, no 'symbols')."""
+    """{track: (pair_name, cfg, risk)} - the index tracks bot 5 counts now (risk > 0, not off, no 'symbols'). The cfg is
+    the track's shared rules (an instrument's own "sym_cfg" is in sym_runs / guard5 / the whole-bot test)."""
     try:
         s5 = json.loads((Path(__file__).resolve().parent / "live" / "bots" / "bot5.json").read_text(encoding="utf-8"))
     except Exception:  # noqa: BLE001
         return {}
     rk = s5.get("risk") or {}
     return {k: (f"{v['pair'][0]}/{v['pair'][1]}", TG._norm(dict(v["cfg"])), float(rk.get(k, 0.0028) or 0))
-            for k, v in (s5.get("tal_tracks") or {}).items() if not v.get("symbols") and float(rk.get(k, 0.0028) or 0) > 0}
+            for k, v in (s5.get("tal_tracks") or {}).items() if not v.get("symbols") and _counted(v, rk, k)}
 
 
 def trend_runs(budget_s):
@@ -197,13 +215,14 @@ def sym_runs(budget_s):
     rounds, owner = ({}, {}), {}
     for k, v in (s5.get("tal_tracks") or {}).items():
         pn = f"{v['pair'][0]}/{v['pair'][1]}"
-        if float(rk.get(k, 0.0028) or 0) <= 0:
+        if not _counted(v, rk, k):
             continue
         if pn not in pairs:
             SYM_LEFT[k] = "pair not in the method's list"
             continue
-        for rnd, c in enumerate((TG.ftmo_cfg(v["cfg"]), TG._norm(dict(v["cfg"])))):
+        for rnd in (0, 1):
             for sym in (v.get("symbols") or TAL_SYMBOLS):
+                c = TG.ftmo_cfg(_sym_cfg(v, sym)) if rnd == 0 else TG._norm(_sym_cfg(v, sym))
                 key = key_of(pn, c, sym)
                 if key not in have and not any(key in r for r in rounds):
                     rounds[rnd][key] = (sym, pn, c)
@@ -1011,16 +1030,17 @@ def guard5(tidx):
     rk, sc = s5.get("risk") or {}, float(s5.get("tal_risk_scale", 1.0) or 1.0)
     rows, missing, stored = [], [], []
     for trk, v in (s5.get("tal_tracks") or {}).items():
-        if float(rk.get(trk, 0.0028) or 0) <= 0:
+        if not _counted(v, rk, trk):
             continue
         pn, syms = f"{v['pair'][0]}/{v['pair'][1]}", list(v.get("symbols") or TAL_SYMBOLS)
         got = None
-        for c in (TG.ftmo_cfg(v["cfg"]), TG._norm(dict(v["cfg"]))):
-            fs = list({x["sym"]: x for x in tidx.values() if x["pair"] == pn and TG._norm(dict(x["cfg"])) == c
-                       and x["sym"] in syms}.values())
+        for rnd in (0, 1):            # the rules as they run (FTMO's break rule on), else as stored - per instrument
+            want = {sy: (TG.ftmo_cfg(_sym_cfg(v, sy)) if rnd == 0 else TG._norm(_sym_cfg(v, sy))) for sy in syms}
+            fs = list({x["sym"]: x for x in tidx.values() if x["pair"] == pn and x["sym"] in want
+                       and TG._norm(dict(x["cfg"])) == want[x["sym"]]}.values())
             if {x["sym"] for x in fs} == set(syms):
                 got = fs
-                if c != TG.ftmo_cfg(v["cfg"]):
+                if rnd:
                     stored.append(trk)
                 break
         if not got:
@@ -1749,9 +1769,9 @@ def main():
         rkd = s5.get("risk") or {}
         # each track's real risk (times the scale that runs, "tal_risk_scale"): the account in % with the bot's limits
         cur_sc = float(s5.get("tal_risk_scale", 1.0) or 1.0)
-        pf = TG.portfolio(tidx, TAL_SYMBOLS, TAL_DIR, {k: (f"{v['pair'][0]}/{v['pair'][1]}", v["cfg"])
+        pf = TG.portfolio(tidx, TAL_SYMBOLS, TAL_DIR, {k: (f"{v['pair'][0]}/{v['pair'][1]}", v["cfg"], None, v.get("sym_cfg") or {})
                                                        for k, v in (s5.get("tal_tracks") or {}).items()
-                                                       if float(rkd.get(k, 0.0028) or 0) > 0 and not v.get("symbols")},
+                                                       if _counted(v, rkd, k) and not v.get("symbols")},
                           risk={k: float(rkd.get(k, 0.0028)) * cur_sc for k in (s5.get("tal_tracks") or {})})
         _lap("portfolio")
         # every FTMO forex pair, metals, the other indices (agents/tal_wide.py): per instrument and pair
@@ -1786,8 +1806,9 @@ def main():
         # tracks together, each at its real risk - the rule cards and the risk factor are chosen on this one when
         # every track's runs are there (sym_runs); until then on the index tracks as before
         try:
-            live_all = {k: (f"{v['pair'][0]}/{v['pair'][1]}", v["cfg"]) + ((list(v["symbols"]),) if v.get("symbols") else ())
-                        for k, v in (s5.get("tal_tracks") or {}).items() if float(rkd.get(k, 0.0028) or 0) > 0}
+            live_all = {k: (f"{v['pair'][0]}/{v['pair'][1]}", v["cfg"], list(v["symbols"]) if v.get("symbols") else None,
+                            v.get("sym_cfg") or {})
+                        for k, v in (s5.get("tal_tracks") or {}).items() if _counted(v, rkd, k)}
             # the index read for the summary above is reused - only files written since are read (manager, 20.11.2026:
             # reading the whole idx folder again took 581 s of every run, post_sec whole_bot)
             tidx_all = {**tidx, **TG.read_idx(TAL_DIR / "idx")}

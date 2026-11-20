@@ -2368,9 +2368,13 @@ def portfolio(idx, symbols, out_dir, live, hour_min_n=100, risk=None, lim=None, 
     for trk, lv in live.items():
         # (pair, cfg) trades on `symbols`; (pair, cfg, [symbols]) is an instrument's own track (13.11.2026 evening:
         # the manager's task f8643b16aa57 - the instrument tracks were outside the whole-bot test)
+        # (pair, cfg, symbols | None, {symbol: cfg keys}): an instrument's own rules on a shared track (bot 5's "sym_cfg",
+        # 20.11.2026 - the live bot trades dict(cfg, **sym_cfg[symbol]))
         pn, cfg = lv[0], lv[1]
         syms_ = list(lv[2]) if len(lv) > 2 and lv[2] else list(symbols)
-        fs = [v for v in idx.values() if v["pair"] == pn and _norm(dict(v["cfg"])) == _norm(dict(cfg)) and v["sym"] in syms_]
+        scf = (lv[3] or {}) if len(lv) > 3 else {}
+        want = {sy: _norm(dict(cfg, **(scf.get(sy) or {}))) for sy in syms_}
+        fs = [v for v in idx.values() if v["pair"] == pn and v["sym"] in want and _norm(dict(v["cfg"])) == want[v["sym"]]]
         fs = list({v["sym"]: v for v in fs}.values())
         if {v["sym"] for v in fs} != set(syms_):
             return None

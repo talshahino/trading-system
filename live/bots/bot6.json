@@ -35,7 +35,7 @@
     "MIN_RR": 1.0,
     "EXPIRY": 120,
     "PROT": "cal15",
-    "EXIT": "p50_1r",
+    "EXIT": "be1r",
     "LADDER": "4",
     "WKND": 10,
     "REARM": true,
@@ -57,7 +57,7 @@
     "MIN_RR": 2.0,
     "EXPIRY": 120,
     "PROT": "none",
-    "EXIT": "be786",
+    "EXIT": "be886",
     "BBW": "h20",
     "WKND": 10,
     "TREND": "day",
@@ -96,12 +96,12 @@
   "t15_5": 0.0012,
   "t5_1": 0.00084,
   "scout:SC051|15Min|US100": 0.000764,
-  "scout:SC258|5Min|US100": 6.2e-05,
+  "scout:SC258|5Min|US100": 0.000951,
   "scout:SC261|5Min|US500": 0.00155,
-  "scout:FR03|15Min|US30": 0.000546,
+  "scout:FR03|15Min|US30": 0.000681,
   "scout:SC084|15Min|US30": 0.000178,
   "scout:SC072|5Min|US500": 3.9e-05,
-  "scout:SC326|15Min|US30": 0.000247,
+  "scout:SC326|15Min|US30": 0.000468,
   "scout:SC326|5Min|US30": 0.000155,
   "scout:SC441|5Min|US100": 0.000287,
   "scout:SC258|1Min|US100": 0.000283,
@@ -1129,6 +1129,73 @@
    "family": "risk",
    "track": "scout:FG01|5Min|US30",
    "before": 0.000184
+  },
+  "fca580fae77e": {
+   "family": "tal5",
+   "track": "t15_5",
+   "before": {
+    "pair": [
+     "15m",
+     "5m",
+     1
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.6,
+     "SW": 3,
+     "MIN_RR": 2.0,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be786",
+     "BBW": "h20",
+     "WKND": 10,
+     "TREND": "day",
+     "STOPAT": "imp0late"
+    }
+   },
+   "risk_before": 0.0012
+  },
+  "c0f616c9d1af": {
+   "family": "tal5",
+   "track": "tal4h",
+   "before": {
+    "pair": [
+     "4h",
+     "1h",
+     1
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.0,
+     "SW": 2,
+     "MIN_RR": 1.0,
+     "EXPIRY": 120,
+     "PROT": "cal15",
+     "EXIT": "p50_1r",
+     "LADDER": "4",
+     "WKND": 10,
+     "REARM": true,
+     "MINSTOP": 1.0,
+     "STOPAT": "imp0late",
+     "BRKH": 1
+    }
+   },
+   "risk_before": 0.0012
+  },
+  "867b9d265933": {
+   "family": "risk",
+   "track": "scout:SC326|15Min|US30",
+   "before": 0.000247
+  },
+  "d07cd35855bd": {
+   "family": "risk",
+   "track": "scout:FR03|15Min|US30",
+   "before": 0.000546
+  },
+  "945d40c6145f": {
+   "family": "risk",
+   "track": "scout:SC258|5Min|US100",
+   "before": 6.2e-05
   }
  },
  "scout": {

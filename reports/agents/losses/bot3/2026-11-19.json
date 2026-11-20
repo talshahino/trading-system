@@ -303,9 +303,19 @@
    {
     "combo": "SS07|15Min|NVDA",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "סיכון ×0.9",
+      "decision": "c274e4fc5b4f",
+      "at": "2026-11-20T14:43:08+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": 0.001,
+      "value": 0.9
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.001,
     "edge_parts": [
      "בבדיקה של 2026: -0.13R לעסקה (140 עסקאות), בתקופת הבחירה +0.09R",
@@ -320,13 +330,13 @@
   ],
   "open": [
    "TV12|4Hour|ARM",
-   "TV15|4Hour|USDCAD",
-   "SS07|15Min|NVDA"
+   "TV15|4Hour|USDCAD"
   ],
   "cut_only": [
-   "SC154|5Min|XAUUSD"
+   "SC154|5Min|XAUUSD",
+   "SS07|15Min|NVDA"
   ],
   "total_month_pct": 0.0,
-  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

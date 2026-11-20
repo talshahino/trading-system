@@ -16965,6 +16965,373 @@
     "bot6"
    ],
    "rules": "'Trend indicator' (Pratik_4Clover): the oscillator crosses 0 with the oscillator on the right side of its signal line (the page's confirmation), 2 ATR, 2R (stop and target ours)."
+  },
+  {
+   "id": "SC699",
+   "name": "ChopFlow ATR scalp: Choppiness 14 < 60 + OBV crosses its SMA10, 09:30-16:00 NY, 1.5 / 1.5 ATR (TradingView)",
+   "source": "ChopFlow ATR Scalp Strategy (TheFuturesPlaybook, TradingView)",
+   "url": "https://www.tradingview.com/script/TgcbEl6W-ChopFlow-ATR-Scalp-Strategy/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "1Min",
+    "5Min",
+    "15Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "ChopFlow ATR Scalp Strategy (TheFuturesPlaybook, https://www.tradingview.com/script/TgcbEl6W-ChopFlow-ATR-Scalp-Strategy/ ; NQ and other futures, scalping): Choppiness Index 14 under 60 (not choppy) and OBV over its SMA10 = long, OBV under it = short, inside the session; stop and target ATR14 x 1.5 each. Ours: the session (custom on the page, default not stated) = 09:30-16:00 New York; entry on the bar where the OBV crosses its SMA (the page enters while the condition holds - the onset avoids re-entering every bar)."
+  },
+  {
+   "id": "SC700",
+   "name": "Hitchhiker morning scalp (NQ): 08:45-09:45 Chicago high over the prior 15-bar high, 2 ATR stop (20 pts), 2R, flat 10:00 (long)",
+   "source": "Hitchhiker Scalp 1-16-2026 v2 Morning Only (mattkelly914, TradingView)",
+   "url": "https://www.tradingview.com/script/pQ7zUvxZ-Hitchhiker-Scalp-1-16-2026-v2-Morning-Only-Scalps/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Hitchhiker Scalp v2 - Morning Only (mattkelly914, https://www.tradingview.com/script/pQ7zUvxZ-Hitchhiker-Scalp-1-16-2026-v2-Morning-Only-Scalps/ ; NQ, Chicago time, long only): 08:45-09:45 Chicago the high breaks the prior 15-bar high = buy; stop 20 points, take profit 40 points on half and 60 with a 10-point trail on the runner; anything open at 10:00 Chicago is closed. Translation (ours): NQ's 1-minute ATR at the open is ~10 points, so 20 points -> 2 ATR14 stop, target 2R (the 40-point half; the runner / trail is left to the bots' management tests), flat 10:00 Chicago."
+  },
+  {
+   "id": "SC701",
+   "name": "INFINITYTRADER: close crosses SMA21 + volume > 70% avg + RSI14 < 70 / > 30, 1.5 / 4 ATR, out on SMA21/50 cross or RSI 68 / 25",
+   "source": "Scalping Strategy Signal v2 by INFINITYTRADER (TradingView)",
+   "url": "https://www.tradingview.com/script/D898fmMY-Scalping-Strategy-Signal-v2-by-INFINITYTRADER/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Scalping Strategy Signal v2 by [INFINITYTRADER] (https://www.tradingview.com/script/D898fmMY-Scalping-Strategy-Signal-v2-by-INFINITYTRADER/ ; BTC, signals on a higher-timeframe close - default 4H - over a 15m chart; here on the chart's own bars, so run it on 1Hour / 4Hour for the source's setting): the close crosses over the SMA21 with volume over 70% of its 20-bar mean and RSI14 under 70 = long; crosses under with RSI14 over 30 = short. Stop 1.5 ATR14, target 4 ATR14; out early when SMA21 crosses SMA50 against the trade or RSI14 passes 68 (long) / 25 (short). The 6 x ATR trail and the profit lock are not specified on the page - left out."
+  },
+  {
+   "id": "SC702",
+   "name": "INFINITYTRADER special: RSI6 over 23 with the close 1.5 ATR under SMA21 / RSI6 under 68 + volume, candle stop, 4 ATR",
+   "source": "Scalping Strategy Signal v2 by INFINITYTRADER - special entries (TradingView)",
+   "url": "https://www.tradingview.com/script/D898fmMY-Scalping-Strategy-Signal-v2-by-INFINITYTRADER/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "INFINITYTRADER Scalping v2 - the 'special' entries (same page as SC701): RSI6 crosses over 23 while the close is more than 1.5 ATR14 under the SMA21 and over the previous close = long, stop the signal candle's low; RSI6 crosses under 68 with volume over 70% of its 20-bar mean = short, stop the signal candle's high. Target 4 ATR14 (the page's TP multiple)."
+  },
+  {
+   "id": "SC703",
+   "name": "Crabel Narrow Range 2-bar (narrowest of 20): open +/- 2 x stretch breakout, opposite stretch stop, 10-bar exit (Oxford Capital)",
+   "source": "Oxford Capital Strategies - Narrow Range N-Day Pattern (Crabel)",
+   "url": "https://oxfordstrat.com/trading-strategies/narrow-range/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "Crabel Narrow Range N-day pattern (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/narrow-range/ ; base N 2, lookback 20; daily in the source, here bar by bar on any timeframe): the previous 2-bar range is the NARROWEST 2-bar range of the last 20 bars -> this bar closing over its open + 2 x stretch buys (stretch = SMA10 of min(H - O, O - L)), under the open - 2 x stretch sells; the opposite stretch level is the stop; time exit 10 bars. Their 6 x ATR20 disaster stop is wider than the stretch stop - left out. The mirror of SC569 (wide range)."
+  },
+  {
+   "id": "SC704",
+   "name": "NQ 1642: back under the upper BB 20/2 after a run + fractal-down V, buy, out after 2 bars (Alpha Algo, long)",
+   "source": "Alpha Algo Trading Research - NQ Daily 1642 ReturnMax",
+   "url": "https://algotr.substack.com/p/from-the-lab-nq-daily-1642-returnmax",
+   "added": "2026-11-20",
+   "timeframes": [
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [
+    "index"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4"
+   ],
+   "rules": "'NQ Daily 1642 ReturnMax' (Alpha Algo Trading Research, https://algotr.substack.com/p/from-the-lab-nq-daily-1642-returnmax ; NQ daily, long only): after a run the close is back under the upper Bollinger band (back inside the range) and a fractal-down 'small V' is completed (the previous bar's low under the lows on both sides) -> buy; out after two bars (their main exit). Ours (not stated / paywalled): Bollinger 20 / 2, 'after a run' = a close over the upper band within the previous 10 bars; their stretch-meter exit (~3.7) has no formula - left out; protective stop the fractal low - 0.25 ATR14 (they place it by MAE, distance not given)."
+  },
+  {
+   "id": "SC705",
+   "name": "Gold Trade Setup: KAMA rising + SuperTrend 10x3 flips up, break of the flip candle's high, its low stop, 2R, 08:30-22:30 IST",
+   "source": "Gold Trade Setup Strategy (Arthavidhi, TradingView)",
+   "url": "https://www.tradingview.com/script/25wTlm4E-Gold-Trade-Setup-Strategy/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Gold Trade Setup Strategy (Arthavidhi, https://www.tradingview.com/script/25wTlm4E-Gold-Trade-Setup-Strategy/ ; XAUUSD 15m / 30m intraday, 1H-1D swing): the Adaptive Moving Average is green (rising), then the SuperTrend turns green -> buy when the trigger candle's (the SuperTrend flip candle's) high is broken; stop its low; target 1:2. Short mirror. Only 08:30-22:30 IST. Ours: AMA = Kaufman KAMA 10 / 2 / 30, SuperTrend 10 x 3 (lengths not stated), the break must come within 5 bars of the flip while both still agree, on a close."
+  },
+  {
+   "id": "SC706",
+   "name": "Gold 1m session ORB (London / NY first 5 min) breakout FVG + EMA50, FVG retest + confirm candle, FVG - 2 ATR stop, 2R, one per session",
+   "source": "Gold 1 minute entry strategy (Patradeso, TradingView)",
+   "url": "https://www.tradingview.com/script/gjb4OtYd-Gold-1-minute-entry-strategy/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "1Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Gold 1 minute entry strategy (Patradeso, https://www.tradingview.com/script/gjb4OtYd-Gold-1-minute-entry-strategy/ ; XAUUSD 1m, protected source - rules from the description): each session's opening range = its first 5 minutes; a breakout through the range that leaves a fair value gap, with the EMA50 on the breakout side; price comes back into the FVG without a body close through its far side, one confirmation candle -> entry; stop beyond the FVG plus a 300-tick buffer; 1:2; one trade per session, out at the session end. Ours: sessions London 08:00-16:30 London and New York 09:30-16:00 New York; 300 ticks of gold = $3.00 ~ 2 ATR14 of a 1-minute bar -> stop the FVG's far edge - 2 ATR; the 'retest' bar touches the gap and closes inside / beyond its near side, the next bar closing in the trade's direction confirms (enters at its close). Differs from SC011 (NY only, engulfing, no EMA50, 3R)."
+  },
+  {
+   "id": "SC707",
+   "name": "XAUUSD trend: EMA9/21 cross + RSI out of 30 / 70 + close through the Bollinger 20/2 band, 1.5 ATR, 2R (TradingView)",
+   "source": "XAUUSD Trend Strategy (Marwanefxx, TradingView)",
+   "url": "https://www.tradingview.com/script/jRFTHVt7/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "XAUUSD Trend Strategy (Marwanefxx, https://www.tradingview.com/script/jRFTHVt7/ ; XAUUSD): the short EMA crosses over the long EMA, RSI leaves oversold (< 30) and the price breaks over the upper Bollinger band = long; mirror short; stop by risk, target a reward-to-risk multiple. Ours (lengths / ratio not stated): EMA 9 / 21 cross within the last 5 bars, RSI14 back over 30 within the last 20 bars, a close crossing the upper Bollinger 20 / 2 now; stop 1.5 ATR14, target 2R; one entry per run (the first bar of the condition)."
+  },
+  {
+   "id": "SC708",
+   "name": "XAUUSD AGRESIV scalp: EMA 5/13 cross + RSI7 50 + ATR over its SMA50, 1.5 / 2 ATR, 07-20 UTC (TradingView)",
+   "source": "XAUUSD Scalping AGRESIV (Andra2525, TradingView)",
+   "url": "https://www.tradingview.com/script/5q4PsY3a-XAUUSD-Scalping-AGRESIV/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "1Min",
+    "5Min"
+   ],
+   "markets": [
+    "metal"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "XAUUSD Scalping AGRESIV (Andra2525, https://www.tradingview.com/script/5q4PsY3a-XAUUSD-Scalping-AGRESIV/ ; XAUUSD M1 / M3, London and New York): EMA 5 / 13 cross confirmed by RSI 7 momentum, only when the ATR is over a minimum; ATR stop and target, trailing stop. Ours (levels not stated): RSI7 over 50 for longs / under 50 for shorts, ATR14 over its SMA50, stop 1.5 ATR, target 2 ATR, 07:00-20:00 UTC. Differs from SC008 (EMA 5/13 + VWAP + ADX, stop at the cross)."
+  },
+  {
+   "id": "SC709",
+   "name": "Breakout and Run: yesterday's tight-base breakout on volume -> 10:15-11:30 NY close over the 5m swing high, swing-low stop, 3R",
+   "source": "TradeThatSwing - The Breakout and Run day trading strategy (Cory Mitchell)",
+   "url": "https://tradethatswing.com/the-breakout-and-run-day-trading-strategy/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "5Min"
+   ],
+   "markets": [
+    "stock",
+    "index"
+   ],
+   "bots": [
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Breakout and Run (Cory Mitchell, TradeThatSwing, https://tradethatswing.com/the-breakout-and-run-day-trading-strategy/ ; stocks, daily setup + 5-minute entry): yesterday broke out of a tight 3+ day consolidation, closing near its high on above-average volume -> today, after the first 45 minutes and before 11:30 New York, buy when the price moves over the most recent 5-minute swing high; stop under the most recent swing low; exits: hourly-low trail, hourly EMA9, or a fixed 3:1. Short = the mirror. Ours: consolidation = the 3 prior days' high-low span under 2.5 x the 10-day mean daily range, breakout = the day's high over that span's high and its close in the top third of the day's range with volume over the 10-day mean; the recent swing high / low = the prior 3 bars' high / low; target the fixed 3R, flat 16:00 New York (they hold overnight only when +2%); one entry a day (the first bar in the window closing over it)."
+  },
+  {
+   "id": "SC710",
+   "name": "Raschke ExtSig: first close across the SMA5 after 7+ closes on the other side, 7-bar extreme stop, 2R",
+   "source": "Raschke Trade Sheet scanner - ExtSig (JoeRodTrades, TradingView)",
+   "url": "https://www.tradingview.com/script/8MVLfKu4-Raschke-Trade-Sheet-scanner/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Raschke Trade Sheet 'ExtSig' (JoeRodTrades scanner, https://www.tradingview.com/script/8MVLfKu4-Raschke-Trade-Sheet-scanner/ ; agents/indicators raschke_sheet): after 7+ closes on one side of the SMA5, the first close back across it. The scanner gives no trade rules - ours: trade the cross (B after closes under the SMA, S after closes over), stop beyond the run's 7-bar extreme + 0.1 ATR, target 2R."
+  },
+  {
+   "id": "SC711",
+   "name": "Raschke Coil: 3 overlapping bars + 3/10 / ROC2 bias, close past the coil, other-side stop, 2R",
+   "source": "Raschke Trade Sheet scanner - Coil + bias (JoeRodTrades, TradingView)",
+   "url": "https://www.tradingview.com/script/8MVLfKu4-Raschke-Trade-Sheet-scanner/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Raschke Trade Sheet 'Coil' + bias (raschke_sheet): the three bars before overlap (lowest high > highest low) and the 3/10 + slow line + ROC2 bias is up -> a close over the coil's high buys (mirror short under its low, bias down); stop the coil's other side - 0.1 ATR, target 2R (trade rules ours - the scanner only flags)."
+  },
+  {
+   "id": "SC712",
+   "name": "Raschke 2ROC: ROC2 30-bar extreme then the first pullback's reversal bar, 3-bar stop, 2R",
+   "source": "Raschke Trade Sheet scanner - 2ROC (JoeRodTrades, TradingView)",
+   "url": "https://www.tradingview.com/script/8MVLfKu4-Raschke-Trade-Sheet-scanner/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour",
+    "4Hour",
+    "1Day"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Raschke Trade Sheet '2ROC' (raschke_sheet): the 2-period ROC made a new 30-bar high within the last 5 bars (a momentum burst) -> the first pullback: a down bar, then a close over its high = buy (mirror short after a new 30-bar ROC2 low); stop the 3-bar low - 0.1 ATR, target 2R (trade rules ours - Raschke's 'first pullback after a momentum extreme')."
+  },
+  {
+   "id": "SC713",
+   "name": "Super Scalper: candle body over WMA(TR,14) + RSI25 vs RSI100, stop-and-reverse, 4 ATR disaster stop (TradingView / dev.to)",
+   "source": "Super Scalper 5 Min 15 Min (VinayKumarKV) - port and test by Moon The Train",
+   "url": "https://dev.to/moonthetrain/tradingview-super-scalper-strategy-best-settings-backtest-2jpn",
+   "added": "2026-11-20",
+   "timeframes": [
+    "5Min",
+    "15Min",
+    "1Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Super Scalper - 5 Min 15 Min (VinayKumarKV, TradingView; code and test in Moon The Train's port, https://dev.to/moonthetrain/tradingview-super-scalper-strategy-best-settings-backtest-2jpn ): long when the open is under close - WMA(TR, 14) (a candle that rose more than one smoothed ATR) and RSI25 > RSI100; short mirror; the opposite signal reverses (the coded stop / target are never used - the article's best runs were H1 gold / USDJPY). Ours: a 4 ATR14 disaster stop (the original has none)."
+  },
+  {
+   "id": "SC714",
+   "name": "IAKF: close crosses the adaptive Kalman estimate with its slope, outside volatility shifts, 2 ATR, 2R",
+   "source": "iakf indicator (jdehorty Innovation Adaptive Kalman Filter Oscillator)",
+   "url": "https://www.tradingview.com/script/06GCx5qL-Innovation-Adaptive-Kalman-Filter-Oscillator/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "Innovation Adaptive Kalman Filter (jdehorty, our reconstruction - agents/indicators iakf): the close crosses the filtered estimate in the direction of its slope (rising for longs), not during a volatility shift; 2 ATR, 2R (the page gives no trade rules - ours; 'price crossing the filtered estimate' is one of its alerts)."
+  },
+  {
+   "id": "SC715",
+   "name": "IAKF unusual move with the filter slope, Surprise < 50, 2 ATR, 2R",
+   "source": "iakf indicator (jdehorty Innovation Adaptive Kalman Filter Oscillator)",
+   "url": "https://www.tradingview.com/script/06GCx5qL-Innovation-Adaptive-Kalman-Filter-Oscillator/",
+   "added": "2026-11-20",
+   "timeframes": [
+    "15Min",
+    "1Hour",
+    "4Hour"
+   ],
+   "markets": [],
+   "bots": [
+    "bot1",
+    "bot2",
+    "bot3",
+    "bot4",
+    "bot5",
+    "bot6"
+   ],
+   "rules": "IAKF (our reconstruction): an unusual move (innovation > 2.05 x its typical size) in the direction of the filter's slope = momentum entry with it, only when the Surprise meter is under 50 (the move is not part of a broad volatility burst); 2 ATR, 2R (ours)."
   }
  ],
  "indicators": [
@@ -18997,6 +19364,20 @@
    "url": "https://www.tradingview.com/script/lbuVV8u4-Trend-indicator/",
    "added": "2026-11-20",
    "uses": "trend-direction filter (osc side), entry on the zero cross (SC698)"
+  },
+  {
+   "name": "iakf",
+   "source": "Innovation Adaptive Kalman Filter Oscillator (jdehorty) - our reconstruction from the description (code not read)",
+   "url": "https://www.tradingview.com/script/06GCx5qL-Innovation-Adaptive-Kalman-Filter-Oscillator/",
+   "added": "2026-11-20",
+   "uses": "trend filter (est slope / dir), volatility-shift filter (shift: stand aside or fade), unusual-move entries (SC714 cross, SC715 unusual move)"
+  },
+  {
+   "name": "raschke_sheet",
+   "source": "Raschke Trade Sheet scanner (JoeRodTrades) - 3/10 + ROC2 bias, 3bar, WR7, coil, ExtSig, 2ROC, 20-bar extremes, from the description",
+   "url": "https://www.tradingview.com/script/8MVLfKu4-Raschke-Trade-Sheet-scanner/",
+   "added": "2026-11-20",
+   "uses": "bias filter for any strategy (bias +1 / -1), setup flags as entries (SC710 ExtSig, SC711 coil, SC712 2ROC), WR7 / 3bar as volatility filters"
   }
  ],
  "sources": [
@@ -19082,7 +19463,7 @@
    "name": "BabyPips (school + forum)",
    "url": "https://forums.babypips.com/c/trading-systems/free-forex-trading-systems/15",
    "look_for": "free trading systems threads with rules",
-   "last_scanned": "2026-11-19"
+   "last_scanned": "2026-11-20"
   },
   {
    "name": "Investopedia",
@@ -19118,7 +19499,7 @@
    "name": "Reddit r/algotrading, r/Daytrading, r/Forex",
    "url": "https://www.reddit.com/r/algotrading/",
    "look_for": "shared systems with backtests",
-   "last_scanned": "2026-11-19"
+   "last_scanned": "2026-11-20"
   },
   {
    "name": "QuantConnect / Quantpedia",
@@ -19166,7 +19547,7 @@
    "name": "TASC Traders' Tips (Technical Analysis of Stocks & Commodities)",
    "url": "https://www.traders.com/Documentation/FEEDbk_docs/",
    "look_for": "each month's new indicator with code (Ehlers and others) and the platform rules",
-   "last_scanned": "2026-11-19"
+   "last_scanned": "2026-11-20"
   },
   {
    "name": "ProRealCode (strategy + indicator library, forum)",
@@ -19195,8 +19576,8 @@
   {
    "name": "Oxford Capital Strategies (oxfordstrat.com)",
    "url": "https://oxfordstrat.com/trading-strategies/",
-   "look_for": "fully specified futures systems with parameters (Livermore, dual momentum, Crabel NR/WR/ORBP, gap types, doji, Aroon, Ross hook, MACD, RSI model) - many pages not yet read (narrow-range, doji-2, macd-2, long equity, volatility squeeze); Aroon breakout 3 built (SC656), Aroon crossover = TV41, Ross hook filter = SC430",
-   "last_scanned": "2026-11-19"
+   "look_for": "fully specified futures systems with parameters (Livermore, dual momentum, Crabel NR/WR/ORBP, gap types, doji, Aroon, Ross hook, MACD, RSI model) - many pages not yet read (doji-2, macd-2, long equity, volatility squeeze); Aroon breakout 3 built (SC656), Aroon crossover = TV41, Ross hook filter = SC430; narrow range built (SC703), hook pattern (needs real opening gaps, fails the gapless synthetic check - not built)",
+   "last_scanned": "2026-11-20"
   },
   {
    "name": "Algomatic Trading Database (Substack)",

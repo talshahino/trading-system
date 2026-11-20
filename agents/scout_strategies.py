@@ -14519,3 +14519,380 @@ SCOUT.update({
     "SC697": ("Volatility waterfall: compression then fast-horizon heat + 20-bar breakout, 2 ATR, 2R", s_vol_waterfall_release, _M),
     "SC698": ("Pratik trend oscillator zero cross with its signal, 2 ATR, 2R", s_pratik_trend, _M),
 })
+
+
+# ---------------- SC699-SC715 scout run 20.11.2026 (day): TradingView scalpers, Oxford / Crabel, Raschke sheet, IAKF ----------------
+def _kama_std(c, n=10, fast=2, slow=30):
+    """Kaufman KAMA (ER n, fast 2, slow 30)."""
+    ch = np.abs(c - _r(c, n))
+    vol = _s(np.abs(c - _r(c))).rolling(n).sum().to_numpy()
+    with np.errstate(invalid="ignore", divide="ignore"):
+        er = np.where(vol > 0, ch / vol, 0.0)
+    sc = (er * (2.0 / (fast + 1) - 2.0 / (slow + 1)) + 2.0 / (slow + 1)) ** 2
+    k = np.full(len(c), np.nan)
+    for i in range(len(c)):
+        k[i] = c[i] if (i == 0 or not np.isfinite(k[i - 1])) else k[i - 1] + np.nan_to_num(sc[i]) * (c[i] - k[i - 1])
+    return k
+
+
+def s_chopflow_atr(df):
+    """ChopFlow ATR Scalp Strategy (TheFuturesPlaybook, https://www.tradingview.com/script/TgcbEl6W-ChopFlow-ATR-Scalp-Strategy/ ;
+    NQ and other futures, scalping): Choppiness Index 14 under 60 (not choppy) and OBV over its SMA10 = long, OBV under
+    it = short, inside the session; stop and target ATR14 x 1.5 each. Ours: the session (custom on the page, default
+    not stated) = 09:30-16:00 New York; entry on the bar where the OBV crosses its SMA (the page enters while the
+    condition holds - the onset avoids re-entering every bar)."""
+    o, h, l, c, v = _ohlcv(df)
+    ci = IND.choppiness(df, 14)
+    ob = IND.obv(df)["obv"]
+    om = sma(ob, 10)
+    hs, he, wd, _, _ = _local(df, "America/New_York")
+    ok = (hs >= 9.5) & (he <= 16.0) & (wd < 5) & (ci < 60)
+    L, S = _excl(ok & cross_up(ob, om), ok & cross_down(ob, om))
+    return L, S, {"stop": ("atr", 1.5), "target": ("atr", 1.5)}
+
+
+def s_hitchhiker_morning(df):
+    """Hitchhiker Scalp v2 - Morning Only (mattkelly914, https://www.tradingview.com/script/pQ7zUvxZ-Hitchhiker-Scalp-1-16-2026-v2-Morning-Only-Scalps/ ;
+    NQ, Chicago time, long only): 08:45-09:45 Chicago the high breaks the prior 15-bar high = buy; stop 20 points, take
+    profit 40 points on half and 60 with a 10-point trail on the runner; anything open at 10:00 Chicago is closed.
+    Translation (ours): NQ's 1-minute ATR at the open is ~10 points, so 20 points -> 2 ATR14 stop, target 2R (the
+    40-point half; the runner / trail is left to the bots' management tests), flat 10:00 Chicago."""
+    o, h, l, c, v = _ohlcv(df)
+    hs, he, wd, _, _ = _local(df, "America/Chicago")
+    hh = _r(_s(h).rolling(15).max().to_numpy())
+    ok = (hs >= 8.75) & (he <= 9.75 + 1e-9) & (wd < 5)
+    L = _onset(ok & (h > hh))
+    return L, np.zeros(len(c), bool), {"stop": ("atr", 2.0), "target": ("R", 2.0), "force_exit": hs >= 10.0}
+
+
+def s_infinity_sma21(df):
+    """Scalping Strategy Signal v2 by [INFINITYTRADER] (https://www.tradingview.com/script/D898fmMY-Scalping-Strategy-Signal-v2-by-INFINITYTRADER/ ;
+    BTC, signals on a higher-timeframe close - default 4H - over a 15m chart; here on the chart's own bars, so run it
+    on 1Hour / 4Hour for the source's setting): the close crosses over the SMA21 with volume over 70% of its 20-bar
+    mean and RSI14 under 70 = long; crosses under with RSI14 over 30 = short. Stop 1.5 ATR14, target 4 ATR14; out
+    early when SMA21 crosses SMA50 against the trade or RSI14 passes 68 (long) / 25 (short). The 6 x ATR trail and
+    the profit lock are not specified on the page - left out."""
+    o, h, l, c, v = _ohlcv(df)
+    m21, m50 = sma(c, 21), sma(c, 50)
+    r = rsi(c, 14)
+    vok = _vol_ok(v, 20, 0.7)
+    L, S = _excl(cross_up(c, m21) & vok & (r < 70), cross_down(c, m21) & vok & (r > 30))
+    return L, S, {"stop": ("atr", 1.5), "target": ("atr", 4.0),
+                  "exit_long": cross_down(m21, m50) | (r > 68), "exit_short": cross_up(m21, m50) | (r < 25)}
+
+
+def s_infinity_rsi6(df):
+    """INFINITYTRADER Scalping v2 - the 'special' entries (same page as SC701): RSI6 crosses over 23 while the close is
+    more than 1.5 ATR14 under the SMA21 and over the previous close = long, stop the signal candle's low; RSI6 crosses
+    under 68 with volume over 70% of its 20-bar mean = short, stop the signal candle's high. Target 4 ATR14 (the
+    page's TP multiple)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    m21 = sma(c, 21)
+    r6 = rsi(c, 6)
+    L = cross_up(r6, 23) & ((m21 - c) > 1.5 * a) & (c > _r(c))
+    S = cross_down(r6, 68) & _vol_ok(v, 20, 0.7)
+    L, S = _excl(L, S)
+    return L, S, _plan_lv(l - 0.05 * a, h + 0.05 * a, c + 4 * a, c - 4 * a)
+
+
+def s_crabel_narrow_range(df):
+    """Crabel Narrow Range N-day pattern (Oxford Capital Strategies, https://oxfordstrat.com/trading-strategies/narrow-range/ ;
+    base N 2, lookback 20; daily in the source, here bar by bar on any timeframe): the previous 2-bar range is the
+    NARROWEST 2-bar range of the last 20 bars -> this bar closing over its open + 2 x stretch buys (stretch = SMA10 of
+    min(H - O, O - L)), under the open - 2 x stretch sells; the opposite stretch level is the stop; time exit 10 bars.
+    Their 6 x ATR20 disaster stop is wider than the stretch stop - left out. The mirror of SC569 (wide range)."""
+    o, h, l, c, v = _ohlcv(df)
+    nr = _r(IND.range_rank(df, n=2, lookback=20)["nr"].astype(float)) == 1
+    st = _bar_stretch(o, h, l, 2.0)
+    up, dn = o + st, o - st
+    L, S = _excl(nr & (c > up), nr & (c < dn))
+    return L, S, {"stop": ("level", dn, up), "target": None, "max_bars": 10}
+
+
+def s_nq_fractal_bb_pullback(df):
+    """'NQ Daily 1642 ReturnMax' (Alpha Algo Trading Research, https://algotr.substack.com/p/from-the-lab-nq-daily-1642-returnmax ;
+    NQ daily, long only): after a run the close is back under the upper Bollinger band (back inside the range) and a
+    fractal-down 'small V' is completed (the previous bar's low under the lows on both sides) -> buy; out after two
+    bars (their main exit). Ours (not stated / paywalled): Bollinger 20 / 2, 'after a run' = a close over the upper
+    band within the previous 10 bars; their stretch-meter exit (~3.7) has no formula - left out; protective stop the
+    fractal low - 0.25 ATR14 (they place it by MAE, distance not given)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    lo, mid, up = _bb(c, 20, 2.0)
+    with np.errstate(invalid="ignore"):
+        ran = _since(c > up, 10)
+        frac = (_r(l) < _r(l, 2)) & (_r(l) < l)
+        L = ran & (c < up) & (c > mid) & frac
+    fl = _r(l) - 0.25 * a
+    return L, np.zeros(len(c), bool), {"stop": ("level", fl, c + 10 * a), "target": None, "max_bars": 2}
+
+
+def s_gold_ama_supertrend(df):
+    """Gold Trade Setup Strategy (Arthavidhi, https://www.tradingview.com/script/25wTlm4E-Gold-Trade-Setup-Strategy/ ;
+    XAUUSD 15m / 30m intraday, 1H-1D swing): the Adaptive Moving Average is green (rising), then the SuperTrend turns
+    green -> buy when the trigger candle's (the SuperTrend flip candle's) high is broken; stop its low; target 1:2.
+    Short mirror. Only 08:30-22:30 IST. Ours: AMA = Kaufman KAMA 10 / 2 / 30, SuperTrend 10 x 3 (lengths not stated),
+    the break must come within 5 bars of the flip while both still agree, on a close."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    k = _kama_std(c)
+    st = IND.supertrend(df, 10, 3.0)
+    tr = st["trend"]
+    kup, kdn = k > _r(k), k < _r(k)
+    fu = (tr > 0) & (_r(tr) < 0) & kup
+    fd = (tr < 0) & (_r(tr) > 0) & kdn
+    th = _s(np.where(fu, h, np.nan)).ffill().to_numpy()
+    tl_u = _s(np.where(fu, l, np.nan)).ffill().to_numpy()
+    tl = _s(np.where(fd, l, np.nan)).ffill().to_numpy()
+    th_d = _s(np.where(fd, h, np.nan)).ffill().to_numpy()
+    bu, bd = _bars_since(fu), _bars_since(fd)
+    hs, he, wd, _, _ = _local(df, "Asia/Kolkata")
+    ok = (hs >= 8.5) & (he <= 22.5) & (wd < 5)
+    with np.errstate(invalid="ignore"):
+        L = ok & (bu >= 1) & (bu <= 5) & (tr > 0) & kup & (c > th) & (_r(c) <= th)
+        S = ok & (bd >= 1) & (bd <= 5) & (tr < 0) & kdn & (c < tl) & (_r(c) >= tl)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(tl_u - 0.05 * a, th_d + 0.05 * a, 2.0)
+
+
+def s_gold_session_orb_fvg(df):
+    """Gold 1 minute entry strategy (Patradeso, https://www.tradingview.com/script/gjb4OtYd-Gold-1-minute-entry-strategy/ ;
+    XAUUSD 1m, protected source - rules from the description): each session's opening range = its first 5 minutes;
+    a breakout through the range that leaves a fair value gap, with the EMA50 on the breakout side; price comes back
+    into the FVG without a body close through its far side, one confirmation candle -> entry; stop beyond the FVG plus
+    a 300-tick buffer; 1:2; one trade per session, out at the session end. Ours: sessions London 08:00-16:30 London
+    and New York 09:30-16:00 New York; 300 ticks of gold = $3.00 ~ 2 ATR14 of a 1-minute bar -> stop the FVG's far
+    edge - 2 ATR; the 'retest' bar touches the gap and closes inside / beyond its near side, the next bar closing in
+    the trade's direction confirms (enters at its close). Differs from SC011 (NY only, engulfing, no EMA50, 3R)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    e50 = ema(c, 50)
+    n = len(c)
+    L, S = np.zeros(n, bool), np.zeros(n, bool)
+    sl_l, sl_s = np.full(n, np.nan), np.full(n, np.nan)
+    fe = np.zeros(n, bool)
+    w = max(5.0, _bar_minutes(df)) / 60.0
+    for tz, s0, s1 in (("Europe/London", 8.0, 16.5), ("America/New_York", 9.5, 16.0)):
+        hi, lo, _, hs, he, wd, day, _ = _win_range(df, tz, s0, s0 + w)
+        fe |= (hs >= s1) & (_r(hs) < s1)
+        state, side, top, bot, done_day, cur = 0, 0, np.nan, np.nan, None, None
+        for i in range(2, n):
+            if day[i] != cur:
+                cur, state, done_day = day[i], 0, False
+            if done_day or wd[i] >= 5 or not (hs[i] >= s0 + w - 1e-9 and he[i] <= s1 + 1e-9) or not np.isfinite(hi[i]):
+                continue
+            if state == 0:
+                if l[i] > h[i - 2] and c[i - 1] > hi[i] and c[i] > e50[i]:
+                    state, side, top, bot = 1, 1, l[i], h[i - 2]
+                elif h[i] < l[i - 2] and c[i - 1] < lo[i] and c[i] < e50[i]:
+                    state, side, top, bot = 1, -1, h[i], l[i - 2]
+            elif state == 1:
+                if side > 0:
+                    if c[i] < bot:
+                        state = 0
+                    elif l[i] <= top:
+                        state = 2
+                else:
+                    if c[i] > top:
+                        state = 0
+                    elif h[i] >= bot:
+                        state = 2
+            elif state == 2:
+                if side > 0 and c[i] > o[i] and c[i] > bot:
+                    L[i], sl_l[i], done_day = True, bot - 2 * a[i], True
+                elif side < 0 and c[i] < o[i] and c[i] < top:
+                    S[i], sl_s[i], done_day = True, top + 2 * a[i], True
+                elif (side > 0 and c[i] < bot) or (side < 0 and c[i] > top):
+                    state = 0
+    L, S = _excl(L, S)
+    sl_l = np.where(np.isfinite(sl_l), sl_l, c - 2 * a)
+    sl_s = np.where(np.isfinite(sl_s), sl_s, c + 2 * a)
+    return L, S, _plan_r(sl_l, sl_s, 2.0, force_exit=fe)
+
+
+def s_xau_trend_bb_rsi_ema(df):
+    """XAUUSD Trend Strategy (Marwanefxx, https://www.tradingview.com/script/jRFTHVt7/ ; XAUUSD): the short EMA crosses
+    over the long EMA, RSI leaves oversold (< 30) and the price breaks over the upper Bollinger band = long; mirror
+    short; stop by risk, target a reward-to-risk multiple. Ours (lengths / ratio not stated): EMA 9 / 21 cross within
+    the last 5 bars, RSI14 back over 30 within the last 20 bars, a close crossing the upper Bollinger 20 / 2 now; stop
+    1.5 ATR14, target 2R; one entry per run (the first bar of the condition)."""
+    o, h, l, c, v = _ohlcv(df)
+    e9, e21 = ema(c, 9), ema(c, 21)
+    r = rsi(c, 14)
+    lo, mid, up = _bb(c, 20, 2.0)
+    xu = cross_up(e9, e21)
+    xd = cross_down(e9, e21)
+    L = (xu | _since(xu, 4)) & (e9 > e21) & (cross_up(r, 30) | _since(cross_up(r, 30), 19)) & (c > up)
+    S = (xd | _since(xd, 4)) & (e9 < e21) & (cross_down(r, 70) | _since(cross_down(r, 70), 19)) & (c < lo)
+    return _ind_flip(df, _onset(L), _onset(S), k=1.5, r=2.0)
+
+
+def s_xau_ema513_rsi7(df):
+    """XAUUSD Scalping AGRESIV (Andra2525, https://www.tradingview.com/script/5q4PsY3a-XAUUSD-Scalping-AGRESIV/ ;
+    XAUUSD M1 / M3, London and New York): EMA 5 / 13 cross confirmed by RSI 7 momentum, only when the ATR is over a
+    minimum; ATR stop and target, trailing stop. Ours (levels not stated): RSI7 over 50 for longs / under 50 for
+    shorts, ATR14 over its SMA50, stop 1.5 ATR, target 2 ATR, 07:00-20:00 UTC. Differs from SC008 (EMA 5/13 + VWAP +
+    ADX, stop at the cross)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    r7 = rsi(c, 7)
+    e5, e13 = ema(c, 5), ema(c, 13)
+    hs = df.index.tz_convert("UTC").hour.to_numpy()
+    ok = (hs >= 7) & (hs < 20) & (a > sma(a, 50))
+    L, S = _excl(ok & cross_up(e5, e13) & (r7 > 50), ok & cross_down(e5, e13) & (r7 < 50))
+    return L, S, {"stop": ("atr", 1.5), "target": ("atr", 2.0)}
+
+
+def _ny_daily(df):
+    """Per bar: the previous New York day's o, h, l, c, v and the 3 days before it (h max, l min), and the 10-day means
+    of the daily range and volume before it (keys rg20 / v20) - all known at the bar."""
+    t = df.index.tz_convert("America/New_York")
+    day = pd.Series(t.date)
+    g = pd.DataFrame({"d": day, "o": df["o"].to_numpy(float), "h": df["h"].to_numpy(float),
+                      "l": df["l"].to_numpy(float), "c": df["c"].to_numpy(float), "v": df["v"].to_numpy(float)})
+    d = g.groupby("d").agg(o=("o", "first"), h=("h", "max"), l=("l", "min"), c=("c", "last"), v=("v", "sum"))
+    d["rg"] = d["h"] - d["l"]
+    d["h3"] = d["h"].shift(1).rolling(3).max()
+    d["l3"] = d["l"].shift(1).rolling(3).min()
+    d["rg20"] = d["rg"].shift(1).rolling(10).mean()
+    d["v20"] = d["v"].shift(1).rolling(10).mean()
+    d = d.shift(1)
+    m = g[["d"]].join(d, on="d")
+    return {k: m[k].to_numpy(dtype=float) for k in d.columns}, day.to_numpy()
+
+
+def s_breakout_and_run(df):
+    """Breakout and Run (Cory Mitchell, TradeThatSwing, https://tradethatswing.com/the-breakout-and-run-day-trading-strategy/ ;
+    stocks, daily setup + 5-minute entry): yesterday broke out of a tight 3+ day consolidation, closing near its high
+    on above-average volume -> today, after the first 45 minutes and before 11:30 New York, buy when the price moves
+    over the most recent 5-minute swing high; stop under the most recent swing low; exits: hourly-low trail, hourly
+    EMA9, or a fixed 3:1. Short = the mirror. Ours: consolidation = the 3 prior days' high-low span under 2.5 x the
+    10-day mean daily range, breakout = the day's high over that span's high and its close in the top third of the day's range with volume over
+    the 10-day mean; the recent swing high / low = the prior 3 bars' high / low; target the fixed 3R, flat 16:00 New York (they hold overnight only
+    when +2%); one entry a day (the first bar in the window closing over it)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    d, day = _ny_daily(df)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        tight = (d["h3"] - d["l3"]) < 2.5 * d["rg20"]
+        volx = (d["v"] > d["v20"]) | np.isclose(d["v"], d["v20"])  # a feed without real volume passes
+        pos = (d["c"] - d["l"]) / d["rg"]
+        up_d = tight & volx & (d["h"] > d["h3"]) & (pos >= 2.0 / 3.0)
+        dn_d = tight & volx & (d["l"] < d["l3"]) & (pos <= 1.0 / 3.0)
+    sh = _r(_s(h).rolling(3).max().to_numpy())
+    sl = _r(_s(l).rolling(3).min().to_numpy())
+    hs, he, wd, _, _ = _local(df, "America/New_York")
+    ok = (hs >= 10.25) & (he <= 11.5 + 1e-9) & (wd < 5)
+    with np.errstate(invalid="ignore"):
+        L = ok & up_d & (c > sh)
+        S = ok & dn_d & (c < sl)
+    L, S = _first_per_day(L, day), _first_per_day(S, day)
+    L, S = _excl(L, S)
+    return L, S, _plan_r(sl - 0.05 * a, sh + 0.05 * a, 3.0, force_exit=hs >= 16.0)
+
+
+def s_raschke_extsig(df):
+    """Raschke Trade Sheet 'ExtSig' (JoeRodTrades scanner, https://www.tradingview.com/script/8MVLfKu4-Raschke-Trade-Sheet-scanner/ ;
+    agents/indicators raschke_sheet): after 7+ closes on one side of the SMA5, the first close back across it. The
+    scanner gives no trade rules - ours: trade the cross (B after closes under the SMA, S after closes over), stop
+    beyond the run's 7-bar extreme + 0.1 ATR, target 2R."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    z = IND.raschke_sheet(df)
+    lo7 = _s(l).rolling(7).min().to_numpy() - 0.1 * a
+    hi7 = _s(h).rolling(7).max().to_numpy() + 0.1 * a
+    L, S = _excl(z["ext_buy"], z["ext_sell"])
+    return L, S, _plan_r(lo7, hi7, 2.0)
+
+
+def s_raschke_coil_bias(df):
+    """Raschke Trade Sheet 'Coil' + bias (raschke_sheet): the three bars before overlap (lowest high > highest low)
+    and the 3/10 + slow line + ROC2 bias is up -> a close over the coil's high buys (mirror short under its low, bias
+    down); stop the coil's other side - 0.1 ATR, target 2R (trade rules ours - the scanner only flags)."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    z = IND.raschke_sheet(df)
+    coil = _shb(z["coil"])
+    ch = _r(_s(h).rolling(3).max().to_numpy())
+    cl = _r(_s(l).rolling(3).min().to_numpy())
+    L, S = _excl(coil & (z["bias"] > 0) & (c > ch), coil & (z["bias"] < 0) & (c < cl))
+    return L, S, _plan_r(cl - 0.1 * a, ch + 0.1 * a, 2.0)
+
+
+def s_raschke_roc2_pullback(df):
+    """Raschke Trade Sheet '2ROC' (raschke_sheet): the 2-period ROC made a new 30-bar high within the last 5 bars
+    (a momentum burst) -> the first pullback: a down bar, then a close over its high = buy (mirror short after a new
+    30-bar ROC2 low); stop the 3-bar low - 0.1 ATR, target 2R (trade rules ours - Raschke's 'first pullback after a
+    momentum extreme')."""
+    o, h, l, c, v = _ohlcv(df)
+    a = atr(h, l, c, 14)
+    z = IND.raschke_sheet(df)
+    hi_r = _since(z["roc2_hi"], 5)
+    lo_r = _since(z["roc2_lo"], 5)
+    L = hi_r & ~z["roc2_hi"] & (_r(c) < _r(c, 2)) & (c > _r(h))
+    S = lo_r & ~z["roc2_lo"] & (_r(c) > _r(c, 2)) & (c < _r(l))
+    L, S = _excl(L, S)
+    lo3 = _s(l).rolling(3).min().to_numpy() - 0.1 * a
+    hi3 = _s(h).rolling(3).max().to_numpy() + 0.1 * a
+    return L, S, _plan_r(lo3, hi3, 2.0)
+
+
+def s_super_scalper(df):
+    """Super Scalper - 5 Min 15 Min (VinayKumarKV, TradingView; code and test in Moon The Train's port,
+    https://dev.to/moonthetrain/tradingview-super-scalper-strategy-best-settings-backtest-2jpn ): long when the open
+    is under close - WMA(TR, 14) (a candle that rose more than one smoothed ATR) and RSI25 > RSI100; short mirror;
+    the opposite signal reverses (the coded stop / target are never used - the article's best runs were H1 gold /
+    USDJPY). Ours: a 4 ATR14 disaster stop (the original has none)."""
+    o, h, l, c, v = _ohlcv(df)
+    pc = _r(c)
+    tr = np.fmax(h - l, np.fmax(np.abs(h - np.nan_to_num(pc, nan=c[0] if len(c) else 0.0)),
+                                np.abs(l - np.nan_to_num(pc, nan=c[0] if len(c) else 0.0))))
+    aw = _wma(tr, 14)
+    r25, r100 = rsi(c, 25), rsi(c, 100)
+    with np.errstate(invalid="ignore"):
+        L = (o < c - aw) & (r25 > r100)
+        S = (o > c + aw) & (r25 < r100)
+    L, S = _excl(L, S)
+    return L, S, {"stop": ("atr", 4.0), "target": None, "exit_long": S, "exit_short": L}
+
+
+def s_iakf_cross(df):
+    """Innovation Adaptive Kalman Filter (jdehorty, our reconstruction - agents/indicators iakf): the close crosses the
+    filtered estimate in the direction of its slope (rising for longs), not during a volatility shift; 2 ATR, 2R
+    (the page gives no trade rules - ours; 'price crossing the filtered estimate' is one of its alerts)."""
+    o, h, l, c, v = _ohlcv(df)
+    z = IND.iakf(df)
+    est, d = z["est"], z["dir"]
+    calm = ~z["shift"]
+    return _ind_flip(df, cross_up(c, est) & (d > 0) & calm, cross_down(c, est) & (d < 0) & calm)
+
+
+def s_iakf_unusual_trend(df):
+    """IAKF (our reconstruction): an unusual move (innovation > 2.05 x its typical size) in the direction of the
+    filter's slope = momentum entry with it, only when the Surprise meter is under 50 (the move is not part of a
+    broad volatility burst); 2 ATR, 2R (ours)."""
+    z = IND.iakf(df)
+    d, sur = z["dir"], z["surprise"]
+    return _ind_flip(df, z["unusual_up"] & (d > 0) & (sur < 50), z["unusual_dn"] & (d < 0) & (sur < 50))
+
+
+SCOUT.update({
+    "SC699": ("ChopFlow ATR scalp: Choppiness 14 < 60 + OBV crosses its SMA10, 09:30-16:00 NY, 1.5 / 1.5 ATR (TradingView)", s_chopflow_atr, ["1Min", "5Min", "15Min"]),
+    "SC700": ("Hitchhiker morning scalp (NQ): 08:45-09:45 Chicago high over the prior 15-bar high, 2 ATR stop (20 pts), 2R, flat 10:00 (long)", s_hitchhiker_morning, ["1Min", "5Min"]),
+    "SC701": ("INFINITYTRADER: close crosses SMA21 + volume > 70% avg + RSI14 < 70 / > 30, 1.5 / 4 ATR, out on SMA21/50 cross or RSI 68 / 25", s_infinity_sma21, ["15Min", "1Hour", "4Hour"]),
+    "SC702": ("INFINITYTRADER special: RSI6 over 23 with the close 1.5 ATR under SMA21 / RSI6 under 68 + volume, candle stop, 4 ATR", s_infinity_rsi6, ["15Min", "1Hour", "4Hour"]),
+    "SC703": ("Crabel Narrow Range 2-bar (narrowest of 20): open +/- 2 x stretch breakout, opposite stretch stop, 10-bar exit (Oxford Capital)", s_crabel_narrow_range, _M + ["1Day"]),
+    "SC704": ("NQ 1642: back under the upper BB 20/2 after a run + fractal-down V, buy, out after 2 bars (Alpha Algo, long)", s_nq_fractal_bb_pullback, ["4Hour", "1Day"]),
+    "SC705": ("Gold Trade Setup: KAMA rising + SuperTrend 10x3 flips up, break of the flip candle's high, its low stop, 2R, 08:30-22:30 IST", s_gold_ama_supertrend, ["15Min", "1Hour", "4Hour"]),
+    "SC706": ("Gold 1m session ORB (London / NY first 5 min) breakout FVG + EMA50, FVG retest + confirm candle, FVG - 2 ATR stop, 2R, one per session", s_gold_session_orb_fvg, ["1Min"]),
+    "SC707": ("XAUUSD trend: EMA9/21 cross + RSI out of 30 / 70 + close through the Bollinger 20/2 band, 1.5 ATR, 2R (TradingView)", s_xau_trend_bb_rsi_ema, ["5Min", "15Min", "1Hour"]),
+    "SC708": ("XAUUSD AGRESIV scalp: EMA 5/13 cross + RSI7 50 + ATR over its SMA50, 1.5 / 2 ATR, 07-20 UTC (TradingView)", s_xau_ema513_rsi7, ["1Min", "5Min"]),
+    "SC709": ("Breakout and Run: yesterday's tight-base breakout on volume -> 10:15-11:30 NY close over the 5m swing high, swing-low stop, 3R", s_breakout_and_run, ["5Min"]),
+    "SC710": ("Raschke ExtSig: first close across the SMA5 after 7+ closes on the other side, 7-bar extreme stop, 2R", s_raschke_extsig, _F + ["4Hour", "1Day"]),
+    "SC711": ("Raschke Coil: 3 overlapping bars + 3/10 / ROC2 bias, close past the coil, other-side stop, 2R", s_raschke_coil_bias, _F + ["4Hour", "1Day"]),
+    "SC712": ("Raschke 2ROC: ROC2 30-bar extreme then the first pullback's reversal bar, 3-bar stop, 2R", s_raschke_roc2_pullback, _F + ["4Hour", "1Day"]),
+    "SC713": ("Super Scalper: candle body over WMA(TR,14) + RSI25 vs RSI100, stop-and-reverse, 4 ATR disaster stop (TradingView / dev.to)", s_super_scalper, ["5Min", "15Min", "1Hour"]),
+    "SC714": ("IAKF: close crosses the adaptive Kalman estimate with its slope, outside volatility shifts, 2 ATR, 2R", s_iakf_cross, _M),
+    "SC715": ("IAKF unusual move with the filter slope, Surprise < 50, 2 ATR, 2R", s_iakf_unusual_trend, _M),
+})

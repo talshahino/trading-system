@@ -96,6 +96,7 @@ from agents.indicators.classic11 import (aco, adaptive_resonance, adaptive_st_os
 from agents.indicators.classic12 import (aroon, l1_trend_swing, open_type, trend_bias_osc, true_trend_osc,
                                          vol_gated_trend)
 from agents.indicators.classic13 import hmm_regime, pratik_trend, vol_waterfall, volatility_regime
+from agents.indicators.classic14 import iakf, raschke_sheet
 TV = "https://www.tradingview.com/script/"
 TT = "https://www.traders.com/Documentation/FEEDbk_docs/"
 SC2 = "https://chartschool.stockcharts.com/table-of-contents/technical-indicators-and-overlays/technical-indicators/"
@@ -469,6 +470,8 @@ INDICATORS = {
     "hmm_regime": (hmm_regime, "Two-state trending / ranging forward filter on 10-bar drift and volatility ratio (LuxAlgo HMM regimes, our reconstruction)", TV + "USWQEica-Hidden-Markov-Model-Market-Regimes-LuxAlgo/"),
     "vol_waterfall": (vol_waterfall, "ATR percentile heat over 10 horizons (10..100), aggregate heat, expansion / compression, fast / slow ratio (LuxAlgo, our reconstruction)", TV + "QuYs1iMf-Multi-Horizon-Volatility-Waterfall-LuxAlgo/"),
     "pratik_trend": (pratik_trend, "RMA(EMA(c, n) - SMA(c, n), n) zero cross with an SMA signal, n 20 (Pratik_4Clover)", TV + "lbuVV8u4-Trend-indicator/"),
+    "iakf": (iakf, "Innovation Adaptive Kalman Filter: level + slope Kalman, surprise / damping meters, unusual moves 2.05 x, volatility shift 30 / 10 (jdehorty, our reconstruction)", TV + "06GCx5qL-Innovation-Adaptive-Kalman-Filter-Oscillator/"),
+    "raschke_sheet": (raschke_sheet, "Raschke Trade Sheet: 3/10 + slow 16 + ROC2 bias, 3bar, WR7, coil, ExtSig (7 closes past SMA5), ROC2 30-bar extreme, 20-bar high / low (JoeRodTrades, from the description)", TV + "8MVLfKu4-Raschke-Trade-Sheet-scanner/"),
 }
 
 __all__ = ["INDICATORS"] + list(INDICATORS)

@@ -1,18 +1,33 @@
 {
- "updated": "2026-11-20T13:27:35+00:00",
+ "updated": "2026-11-20T13:52:59+00:00",
  "new": [
-  "7aab6234b0bf",
-  "64ffd45fa330",
-  "b96c5f38a728",
-  "a7c5cbe021b8",
-  "2c9b31ec31d4",
-  "79f3ede37345",
-  "c91616ce05f0",
-  "63cdd8b82a86",
-  "193758f80ecd",
-  "a88cc94a587d"
+  "b78ed4642fcc"
  ],
  "decisions": [
+  {
+   "id": "b78ed4642fcc",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV50|1Hour|XAGUSD",
+   "title": "TV50|1Hour|XAGUSD: סיכון ×0.83 במקום ×0.7",
+   "decision": "approved",
+   "card_decision": "7aab6234b0bf",
+   "star": true,
+   "why": "ב־2026 השינוי הרוויח +16.0R מול +13.2R לפניו, אבל בסיכון ×0.7 הסך הכולל יוצא נמוך ממה שהיה. ×0.83 הוא הסיכון הנמוך ביותר ששומר על הסך הכולל של היום - ועדיין זהיר כי אולי מזל",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot3",
+    "combo": "TV50|1Hour|XAGUSD",
+    "kind": "mult",
+    "value": 0.83,
+    "prev": 0.7
+   },
+   "at": "2026-11-20T13:52:59+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "7aab6234b0bf",
    "bot": "bot3",

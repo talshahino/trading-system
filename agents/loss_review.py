@@ -395,6 +395,10 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
             rv = (cfg.get("risk") or {}).get(trk)
             if rv is not None and float(rv) == 0 and not any("הוסרה" in (f["what"] or "") for f in fixes):
                 fixes.append({"what": f"הוסרה מהבוט (מסלול {pn}, סיכון 0)", "decision": None, "at": None, "effect_month_pct": None})
+            # a track turned off ("off": true in tal_tracks - no new trade; the user's decision of 20.11.2026 on six
+            # tracks that lose on both periods) is out of the bot as much as one at risk 0 (bot 5's smart agent, 20.11 night)
+            if ((cfg.get("tal_tracks") or {}).get(trk) or {}).get("off") and not any("הוסרה" in (f["what"] or "") for f in fixes):
+                fixes.append({"what": f"הוסרה מהבוט (מסלול {trk} כבוי)", "decision": None, "at": None, "effect_month_pct": None})
             # a built card on this track (its rules, its risk) or on all the gap tracks together (tal_all), after the day
             for cid, card in cards.items():
                 ch, r_ = card.get("change") or {}, replies.get(cid) or {}
@@ -418,6 +422,13 @@ def improvement_plan(rep, decisions, cards, replies, undo, bot_risk_pct):
         # sizes its risk by its own edge from then on (bots 1-4 smart agent, 19.11.2026: TV60 ARM, TV10 US100, TT45
         # CSCO, TV58 XAUUSD, QC07 ARM, BK05 / FR01 EURUSD were "failed" in fix_attempts and still reopened every night,
         # several of them already at the minimum lot, so the reports could never close)
+        if not fixes:
+            fa = fx_all.get(f"{rep['bot']}|{c}") or {}
+            # a fix built straight from the user's approval, with no card (bot 5, 20.11.2026: EU50's target at the 4th
+            # swing, JP225 / US500's own stop and target in tal_tracks sym_cfg) - the bot's agent records it as "fixed"
+            # with what was built; it is a fix like a built card (bot 5's smart agent, 20.11 night)
+            if fa.get("status") == "fixed" and str(fa.get("at") or "") >= rep["day"] and fa.get("built"):
+                fixes.append({"what": str(fa["built"]), "decision": None, "at": fa.get("at"), "effect_month_pct": None})
         if not fixes:
             fa = fx_all.get(f"{rep['bot']}|{c}") or {}
             if fa.get("status") == "failed" and str(fa.get("at") or "") >= rep["day"]:

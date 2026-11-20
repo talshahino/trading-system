@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 import time
 from pathlib import Path
@@ -99,7 +100,15 @@ def prep(s, end):
     if "v" not in df:
         df["v"] = 1.0
     c = df["c"].to_numpy(float)
-    cost = np.abs(sp.sort_index().reindex(df.index, method="ffill").to_numpy(float)) + O15.comm_px(s, c)
+    spx = 1.0
+    if os.environ.get("TAL_COSTX"):
+        # FTMO's real spread on bot 1's account where it is wider than the history (user, 20.11.2026: "check it
+        # counts FTMO's spread and commission for every asset, by bot 1") - data/agents/ftmo_spread_x.json
+        try:
+            spx = float(json.loads(Path("data/agents/ftmo_spread_x.json").read_text(encoding="utf-8"))["x"].get(s, 1.0))
+        except Exception:  # noqa: BLE001
+            spx = 1.0
+    cost = spx * np.abs(sp.sort_index().reindex(df.index, method="ffill").to_numpy(float)) + O15.comm_px(s, c)
     cost = np.where(np.isfinite(cost), cost, np.nanmedian(cost))
     stop_at = O15.RR.break_mask(df, "1Min")
     sm = O15.RR.session_mask(df, s, "1Min")

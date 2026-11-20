@@ -818,6 +818,12 @@ def decide(bots, now=None):
                         continue                                      # the bot's agent raised it after replaying the whole bot
                 if kind == "mult" and (c.get("trades") or 0) < MIN_TRADES_MULT:
                     continue                                          # too few live trades to move the risk yet
+                if kind == "mult" and float(val) > mult and mult < 0.01:
+                    # parked at the instrument's minimum lot ("no edge" - a card or the loss review): only the edge
+                    # rule, a fix found, an agent card or the user lift it, not the morning trade review's stability
+                    # score (manager, 20.11.2026: at 14:43 it took TV21|15Min|ASML bot 1 x0.001 -> x1 at -0.20R live,
+                    # SS07|15Min|NVDA bot 3 -> x0.9 at -0.43R and TV46|15Min|ASML bot 2 -> x1.1 on 5 trades each)
+                    continue
                 if kind == "mult" and float(val) > mult and loss_hold(bot, combo):
                     # the morning trade review does not raise a strategy the loss review / edge rule set by its own edge
                     # (the edge rule raises it itself when the edge grows; the loss review when a fix is found) (manager, 14.11.2026: at 12:38 it took TV41|4Hour|NZDUSD in bot 1 from x0.18 to x1,
@@ -905,6 +911,27 @@ def decide(bots, now=None):
                     "כלומר הכלל לא התקיים. הכלל תוקן לספור כל אות פעם אחת.",
              "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
              "action": {"bot": o["bot"], "combo": combo, "kind": "mult", "value": v, "prev": 0}})
+    # 2e) repair, once: a morning trade-review raise of a strategy parked at the minimum lot (before the rule above,
+    # 20.11.2026) goes back to the minimum lot, only while that raise is still the applied value and nothing came after it
+    for (bot, combo), d in sorted(latest.items()):
+        a = d.get("action") or {}
+        if not str(d.get("why") or "").startswith("רווח ממוצע") or a.get("prev") is None or float(a["prev"]) >= 0.01:
+            continue
+        m_now = float(((cur.get(bot) or {}).get("mult") or {}).get(combo, 1.0))
+        did = _did("parkback", d["id"])
+        if did in old or did in uundo or abs(m_now - float(a.get("value") or 0)) > 1e-9 or bot in NO_RISK_DOWN:
+            continue
+        if any(x.get("type") == "risk" and x.get("bot") == bot and (x.get("action") or {}).get("combo") == combo
+               and x.get("at", "") > d["at"] for x in new):
+            continue
+        add({"id": did, "bot": bot, "type": "risk", "kind": "mult", "combo": combo,
+             "title": f"{combo}: חוזר לכמות מינימלית - בדיקת הבוקר העלתה אסטרטגיה בלי יתרון",
+             "decision": "approved", "park_back": d["id"],
+             "why": f"המנהל: האסטרטגיה הייתה בכמות מינימלית (אין יתרון), ובדיקת העסקאות של הבוקר העלתה אותה ל־×{m_now:g} "
+                    f"לפי ציון יציבות על מעט עסקאות ({d.get('why')}). חוזרת לכמות המינימלית; רק כלל היתרון, תיקון "
+                    "שנמצא, הסוכן או אתה מעלים אותה. מעכשיו בדיקת הבוקר לא מעלה אסטרטגיה כזו.",
+             "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+             "action": {"bot": bot, "combo": combo, "kind": "mult", "value": 0.001, "prev": m_now}})
     # 3) bot 7's account reset (user, 12.11.2026): the manager decides it on a material change of bot 7's strategies,
     # stops resetting by itself after two stable weeks (then it asks), and archives the trades first (agents/reset_rule.py)
     try:

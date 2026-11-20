@@ -223,7 +223,9 @@ def star_steps(d, c, combo, r, e, w, decisions, have, at, adds):
     if m is None:          # approved before the star existed: it gets the star's lowered risk now
         from agents import portfolio_check as PC
         cur = float(PC.mults(d["bot"]).get(combo, 1.0) or 1.0)
-        if cur <= AD.STAR_MULT + 1e-9:
+        if cur <= AD.STAR_MULT + 1e-9 or any(x.get("bot") == d["bot"] and (x.get("action") or {}).get("combo") == combo
+                                             and x.get("star_step") == "staron" for x in adds):
+            # (manager, 20.11.2026: two cards of IB056|1Hour|XAUUSD bot 3 in one run each wrote the same x0.73 step)
             # one "maybe luck" discount per strategy, not one per card (13.11.2026: two improvement cards of
             # TV58|1Hour|USDCAD bot 3, already at x0.7 from an earlier star, each took it to x0.49 -> 0.5)
             w.pop("done", None)

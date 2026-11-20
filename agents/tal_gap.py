@@ -1219,6 +1219,27 @@ def ladder_of(cfg):
     return LADDERS.get(str(m)) if m and m != "none" else None
 
 
+# ETOL (user, 20.11.2026 17:07, task b5neartouch2011: GER40 / AUS200 shorts came within 1 point of the middle and fell
+# hard - "it touched the middle exactly and went down, why didn't it enter?"): the order sits a little before the
+# middle, toward the gap's near edge - "h5" / "h10" / "h15" = 5% / 10% / 15% of half the box, "c1" / "c2" = one / two
+# of FTMO's spread + commission at the order's placing (never beyond the near edge). The stop and the target are
+# counted from the fill as always. Off (absent / "none") = the middle, the same configuration name.
+ETOL_VALS = ("h5", "h10", "h15", "c1", "c2")
+
+
+def etol_level(D, cfg, d, mid, near, q0):
+    e = cfg.get("ETOL")
+    if not e or e == "none":
+        return mid
+    e = str(e)
+    if e[0] == "h":
+        return mid + (near - mid) * float(e[1:]) / 100
+    if e[0] == "c":
+        lv = mid + d * float(e[1:]) * float(D.cost[min(q0, len(D.cost) - 1)])
+        return min(lv, near) if d > 0 else max(lv, near)
+    return mid
+
+
 def ladder_legs(lad, d, near, far, stop, risk_ref):
     """[(price, share of the risk)] of the levels on the right side of the stop (at least a tenth of the middle's
     distance from it), the shares scaled up to 1; [] when none is left."""
@@ -1535,7 +1556,8 @@ def simulate(D, pair, cfg, gcache, keep=None):
         q1 = q1c
         if q0 >= q1:
             continue
-        lv0 = (near + lad[0][0] * (far - near)) if lad else mid       # LADDER: the first level's touch starts the trade
+        mid_e = etol_level(D, cfg, d, mid, near, q0)                  # ETOL: a little before the middle
+        lv0 = (near + lad[0][0] * (far - near)) if lad else mid_e     # LADDER: the first level's touch starts the trade
         seg = (l1[q0:q1] <= lv0) if d > 0 else (h1[q0:q1] >= lv0)
         if ok is not None:
             seg &= ok
@@ -1564,7 +1586,7 @@ def simulate(D, pair, cfg, gcache, keep=None):
                 continue                                 # a shock against the gap while it waited: cancelled
             if D.recent_shock[f] or ((l1[f] < far) if d > 0 else (h1[f] > far)):
                 continue                                 # not a calm correction
-        px = (min(mid, o1[f]) if d > 0 else max(mid, o1[f])) if not lad else mid   # LADDER: the middle's geometry
+        px = (min(mid_e, o1[f]) if d > 0 else max(mid_e, o1[f])) if not lad else mid   # LADDER: the middle's geometry
         sw_st, sw_tg = (lo_sw, hi_sw) if d > 0 else (hi_sw, lo_sw)
         s2 = _count_back(*sw_st, ns[f], px, d, -d)
         t2 = _count_back(*sw_tg, ns[f], px, d, d, int(cfg.get("TSWN") or 2))
@@ -1841,7 +1863,7 @@ def _cfg_runs(p, cfg, symbols, idx):
 
 
 def _norm(c):
-    for k in ("EXIT", "IMP1", "TREND", "LADDER", "BBW", "NEWSX", "PYR", "G3", "SWP", "WAITX"):
+    for k in ("EXIT", "IMP1", "TREND", "LADDER", "BBW", "NEWSX", "PYR", "G3", "SWP", "WAITX", "ETOL"):
         if c.get(k) == "none":
             c.pop(k)                                    # "none" is the base: the same configuration, the same name
     if "WKND" in c and not c["WKND"]:
@@ -2769,14 +2791,15 @@ def live_trades(D, pair, cfg, gcache=None):
             continue
         ok = order_ok(D, cfg, q0, q1)                                 # REARM: placed again after the break (as simulate)
         qc = cancel_bar(D, cfg, q0) if ok is None else n1             # WKND: cancelled before a 2+ hour break (as simulate)
+        mid_e = etol_level(D, cfg, d, mid, near, q0)                  # ETOL (as simulate)
         if qc < q1:
-            seg_c = (l1[q0:qc] <= ((near + lad[0][0] * (far - near)) if lad else mid)) if d > 0 else \
-                (h1[q0:qc] >= ((near + lad[0][0] * (far - near)) if lad else mid))
+            seg_c = (l1[q0:qc] <= ((near + lad[0][0] * (far - near)) if lad else mid_e)) if d > 0 else \
+                (h1[q0:qc] >= ((near + lad[0][0] * (far - near)) if lad else mid_e))
             if not seg_c.any():
                 out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="break"))
                 continue
             q1 = qc
-        lv0 = (near + lad[0][0] * (far - near)) if lad else mid       # LADDER: the first level's touch (as simulate)
+        lv0 = (near + lad[0][0] * (far - near)) if lad else mid_e     # LADDER: the first level's touch (as simulate)
         q1c = dbrk_cut(D, cfg, q0, q1)                                # DBRK c (as simulate)
         if q1c < q1:
             if ok is not None:
@@ -2814,7 +2837,7 @@ def live_trades(D, pair, cfg, gcache=None):
                 out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="waitx"))
                 continue
             expired = armed + exp_ns <= ns[-1]
-            out.append(dict(base, status="cancelled" if expired else "pending", entry=float(mid), stop=None, target=None,
+            out.append(dict(base, status="cancelled" if expired else "pending", entry=float(mid_e), stop=None, target=None,
                             reason="expired" if expired else None))
             continue
         f = q0 + int(np.argmax(seg))
@@ -2836,7 +2859,7 @@ def live_trades(D, pair, cfg, gcache=None):
         if why:
             out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason=why))
             continue
-        px = (min(mid, o1[f]) if d > 0 else max(mid, o1[f])) if not lad else mid
+        px = (min(mid_e, o1[f]) if d > 0 else max(mid_e, o1[f])) if not lad else mid
         sw_st, sw_tg = (lo_sw, hi_sw) if d > 0 else (hi_sw, lo_sw)
         s2 = _count_back(*sw_st, ns[f], px, d, -d)
         t2 = _count_back(*sw_tg, ns[f], px, d, d, int(cfg.get("TSWN") or 2))   # TSWN (as simulate)

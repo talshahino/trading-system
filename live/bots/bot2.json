@@ -71,7 +71,10 @@
   "SC539|4Hour|XAGUSD",
   "SC635|15Min|GBPJPY",
   "SC625|15Min|USDJPY",
-  "SC627|15Min|XAGUSD"
+  "SC627|15Min|XAGUSD",
+  "SC666|1Hour|XAUUSD",
+  "SC698|4Hour|XAUUSD",
+  "SC667|4Hour|XAUUSD"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added BK07|1Hour|EURJPY and SE02|1Hour|USDJPY (new families, backtest with the bot), approved by the user; 04.11.2026: added FR03|15Min|GBPUSD, GH08|1Hour|USDCAD (GitHub/QuantConnect/forum families, both halves better with the bot), approved by the user; 04.11.2026 (evening): added QB11|1Hour|USDJPY, MQ11|4Hour|MSTR, MQ02|1Hour|XAUUSD (new pool: papers/books/MQL5 EAs; both halves better, Monte Carlo checked), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -175,7 +178,12 @@
   "SC425|5Min|XAGUSD": {
    "target": 3.0,
    "stop": 0.75,
-   "card": "a6bdd49cfd0d"
+   "card": "a6bdd49cfd0d",
+   "pyramid": [
+    1.0,
+    0.33
+   ],
+   "pyr_card": "bfb9274123d6"
   },
   "SC387|1Hour|MSTR": {
    "filter": "with_trend200",
@@ -216,7 +224,9 @@
   "SC635|15Min|GBPJPY": {
    "target": 3.0,
    "stop": 0.75,
-   "card": "e7f98bbddfc8"
+   "card": "e7f98bbddfc8",
+   "be_way": 0.786,
+   "manage_card": "9f29079c49aa"
   },
   "SC625|15Min|USDJPY": {
    "ladder": [
@@ -224,6 +234,20 @@
     0.5
    ],
    "ladder_card": "9ffdde48b974"
+  },
+  "SC376|4Hour|XAGUSD": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "c53c83784b03"
+  },
+  "SC627|15Min|XAGUSD": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "806efe1728b5"
   }
  },
  "added": {
@@ -264,7 +288,10 @@
   "SC539|4Hour|XAGUSD": "f083193307f9",
   "SC635|15Min|GBPJPY": "8989ae3886fd",
   "SC625|15Min|USDJPY": "f9c639a42847",
-  "SC627|15Min|XAGUSD": "df7407379181"
+  "SC627|15Min|XAGUSD": "df7407379181",
+  "SC666|1Hour|XAUUSD": "6747d8a84f25",
+  "SC698|4Hour|XAUUSD": "7e3a78e7a140",
+  "SC667|4Hour|XAUUSD": "53436d2e4a37"
  },
  "removed": {
   "SC002|1Hour|ARM": "367a7113d211",

@@ -1105,6 +1105,30 @@
    "family": "scout5",
    "combo": "SC490|15Min|XAUUSD",
    "before": "__none__"
+  },
+  "13114cf9957e": {
+   "family": "tal5",
+   "track": "t15_1",
+   "before": {
+    "pair": [
+     "15m",
+     "1m"
+    ],
+    "cfg": {
+     "STOPAT": "move",
+     "IPAD": "c4",
+     "GBODY": 1.5,
+     "MIN_GAP": 0.3,
+     "SW": 3,
+     "MIN_RR": 0.9,
+     "EXPIRY": 120,
+     "PROT": "shock",
+     "IMP1": true,
+     "WKND": 10,
+     "REARM": true
+    }
+   },
+   "risk_before": 0.0028
   }
  },
  "tal_tracks": {
@@ -1124,7 +1148,8 @@
     "PROT": "shock",
     "IMP1": true,
     "WKND": 10,
-    "REARM": true
+    "REARM": true,
+    "WAITX": "opp"
    }
   },
   "t1h_15": {

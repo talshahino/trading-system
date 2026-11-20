@@ -207,6 +207,8 @@ TAL5_RISK = {}
 # other indices): "symbols" in its "tal_tracks" entry - {track: [symbol]}; a track without it trades TAL5_SYMBOLS.
 # Such an instrument is added to SYMBOLS (and EXTRA: the old tracks' results on it stay out of their summary).
 TAL5_SYMS = {}
+TAL5_AUTO = [False]    # "tal_auto" (user, 20.11.2026: "the system enters trades by itself, not me approving"): the rules decide;
+                       # his "no" before the fill still keeps a trade out, a yes / no answer changes nothing (off until switched)
 TAL5_ONE = [False]     # "tal_one_per_side": a track does not enter a symbol / direction another track holds (off until approved)
 TAL5_MAXDIR = [0]      # "tal_max_dir" (13.11.2026): at most K counted trades open in one direction on all the indices together (0 = off until approved)
 TAL5_SCALE = [1.0]      # "tal_risk_scale" (13.11.2026 night): one factor on every gap track's risk (1 until approved)
@@ -354,6 +356,7 @@ def load_settings():
                                 SYMBOLS[sy] = cand_
                                 EXTRA[sy] = cand_
                 TAL5_ONE[0] = bool(d.get("tal_one_per_side", False))
+                TAL5_AUTO[0] = bool(d.get("tal_auto", False))
                 try:
                     TAL5_MAXDIR[0] = max(0, int(d.get("tal_max_dir", 0) or 0))
                 except (TypeError, ValueError):
@@ -2002,6 +2005,10 @@ def main():
                         ts_ = pd.Timestamp(rec["time"])
                         hour_ = gap_ and bool(TAL5_HOURS_OFF) and (ts_.tz_convert("UTC") if ts_.tzinfo else ts_).hour in TAL5_HOURS_OFF
                         mk_ = rec.get("mark") or {}
+                        if rev_ and TAL5_AUTO[0] and not scout5_combo(rec.get("tal")):
+                            # automatic: the rules decide; a yes is not needed and does not lift the rules' limits
+                            mk_ = {"take": "no"} if mk_.get("take") == "no" and str(mk_.get("at") or "")[:19] <= str(rec["time"])[:19] else {}
+                            rev_ = bool(mk_)
                         if rev_ and mk_.get("take") == "yes":
                             hour_ = side_ = dir_ = False     # his yes decides; only the risk limits below still hold
                         stale_ = rev_ and mk_.get("take") == "yes" and yes_stale(mk_, rec["time"])
@@ -2116,6 +2123,7 @@ def main():
                     trades[k]["mark"] = m
         except Exception:  # noqa: BLE001
             pass
+        state["tal_auto"] = TAL5_AUTO[0]
         try:
             state["after_stop"] = after_watch(trades.values(), src)
         except Exception:  # noqa: BLE001

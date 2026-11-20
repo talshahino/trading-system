@@ -771,8 +771,9 @@ function provWaiting(n, s) {
   const have = new Set((s.positions || []).map(p => String(p.ticket)));
   return s.watch.filter(t => t.status === "pending" && t.tal && !String(t.tal).startsWith("sc:") && !t.v1m && !t.v5 && !t.v4
     && t.entry != null && t.stop != null && !t.skipped && !have.has(String(t.id)) && !PROVO[n + "|" + t.id]
-    && !(rvNeeded(t) && (((WB.marks || {})[t.id] || t.mark || {}).take !== "yes"))
-    && !yesStale((WB.marks || {})[t.id] || t.mark || {}, Date.now()));   // a yes over 2h old is asked again at the fill (20.11.2026)
+    && (s.tal_auto ? (((WB.marks || {})[t.id] || t.mark || {}).take !== "no")      // automatic (20.11.2026): only his "no" keeps it out
+      : (!(rvNeeded(t) && (((WB.marks || {})[t.id] || t.mark || {}).take !== "yes"))
+         && !yesStale((WB.marks || {})[t.id] || t.mark || {}, Date.now()))));   // a yes over 2h old is asked again at the fill (20.11.2026)
 }
 function provOpen(n, s, t) {
   const risk = Math.round((s.balance || 100000) * PROV_RISK[n] * 100) / 100, buy = t.dir > 0;
@@ -2825,7 +2826,7 @@ function rvPanel(t, dec) {
   const done = m.take ? `<div class="mut" style="margin-top:8px">ענית: <b>${m.take === "yes" ? "כן" : "לא"}</b>. אפשר לשנות עד שהמחיר מגיע לכניסה.</div>` : "";
   box.innerHTML = `<div class="card" style="margin-bottom:10px;border:2px solid #C8922E">
       <b style="font-size:17px">היית נכנס?</b>
-      <div class="mut" style="margin:4px 0 10px">${t.sc ? `אסטרטגיית ${esc(t.sc.sid || "")} מצאה ${buy ? "קנייה" : "מכירה"} בגאפ (גרף ${(SCTF[t.sc.tf] || [t.sc.tf])[0]}). הבוט מחכה לך: אם תאשר, הכניסה תהיה במחיר של רגע האישור. בלי תשובה תוך כ־15 דקות, לא נכנסים.` : `דחף ${buy ? "עולה" : "יורד"} עם גאפ בגרף ${TFHE[(t.geo || {}).htf] || ""}, לפני התיקון. ${again ? "<b>אישרת לפני יותר משעתיים, והמחיר הגיע עכשיו לגאפ. עדיין נכנס? בלי תשובה תוך 10 דקות העסקה לא נכנסת.</b>" : past ? "סמן: זה דחף וזיהוי נכון?" : "הבוט ייכנס רק לפי מה שתענה."}`}</div>
+      <div class="mut" style="margin:4px 0 10px">${t.sc ? `אסטרטגיית ${esc(t.sc.sid || "")} מצאה ${buy ? "קנייה" : "מכירה"} בגאפ (גרף ${(SCTF[t.sc.tf] || [t.sc.tf])[0]}). הבוט מחכה לך: אם תאשר, הכניסה תהיה במחיר של רגע האישור. בלי תשובה תוך כ־15 דקות, לא נכנסים.` : `דחף ${buy ? "עולה" : "יורד"} עם גאפ בגרף ${TFHE[(t.geo || {}).htf] || ""}, לפני התיקון. ${(WB.doc && WB.doc.tal_auto) && !past && !t.sc ? "הבוט נכנס לבד לפי הכללים. \"לא\" לפני הכניסה ישאיר את העסקה בחוץ; כל תשובה מלמדת את הבוט." : again ? "<b>אישרת לפני יותר משעתיים, והמחיר הגיע עכשיו לגאפ. עדיין נכנס? בלי תשובה תוך 10 דקות העסקה לא נכנסת.</b>" : past ? "סמן: זה דחף וזיהוי נכון?" : "הבוט ייכנס רק לפי מה שתענה."}`}</div>
       <div class="row" style="gap:8px"><button class="btn ok" id="rvYes">כן</button><button class="btn ghost" id="rvNo">לא</button></div>${done}
       <div id="rvLv"></div><div class="msg" id="rvMsg"></div></div>`;
   showLtf(m.take === "yes");

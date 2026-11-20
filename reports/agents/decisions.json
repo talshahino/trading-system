@@ -1,39 +1,128 @@
 {
- "updated": "2026-11-20T02:29:00+00:00",
+ "updated": "2026-11-20T02:32:51+00:00",
  "new": [
-  "172ca4116bbb"
+  "07dbebce1546",
+  "5955bf1c4984",
+  "ae8c0ee03617"
  ],
  "decisions": [
   {
-   "id": "172ca4116bbb",
-   "bot": "bot5",
+   "id": "07dbebce1546",
+   "bot": "bot1",
    "type": "card",
-   "card": "13114cf9957e",
+   "card": "eb680b4da282",
    "kind": "improve",
    "tier": "regular",
-   "title": "⭐ ⭐ שיטת הגאפ · 15 דק' / דקה: ביטול ההמתנה כשנוצר גאפ בכיוון ההפוך (דוח ההפסד של 19.11)",
+   "title": "⭐ TT45|1Hour|GBPJPY: v_sqzm",
    "decision": "approved",
-   "why": "חיובי בתקופה שלא נראתה (+0.10R לעסקה, 250.9 עסקאות אפקטיביות, +0.02R מעל המצב הקיים) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "why": "חיובי בתקופה שלא נראתה (+0.26R לעסקה, 88.0 עסקאות אפקטיביות, +0.02R מעל המצב הקיים) · בבוט השלם על 2026: רווח +217.28% → +217.81%, בלי יותר סיכון (יום גרוע -3.14%, ירידה 5.77%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
    "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
    "star": true,
-   "at": "2026-11-20T02:29:00+00:00",
+   "whole_bot": {
+    "before": {
+     "trades": 5620,
+     "total": 217.28,
+     "worst_day": -3.14,
+     "max_dd": 5.59,
+     "near_days": 1,
+     "max_open": 5.64,
+     "max_side": 4.27,
+     "guard_cut": 478,
+     "guard_skipped": 179
+    },
+    "after": {
+     "trades": 5612,
+     "total": 217.81,
+     "worst_day": -3.14,
+     "max_dd": 5.77,
+     "near_days": 1,
+     "max_open": 5.64,
+     "max_side": 4.27,
+     "guard_cut": 475,
+     "guard_skipped": 181
+    }
+   },
+   "at": "2026-11-20T02:32:51+00:00",
    "by": "manager",
    "read": false,
    "undone": false
   },
   {
-   "id": "5cc59a4fa0d7",
-   "bot": "bot5",
+   "id": "5955bf1c4984",
+   "bot": "bot1",
    "type": "card",
-   "card": "6b4e025f2e83",
-   "kind": "info",
+   "card": "a716f3bd0f3d",
+   "kind": "improve",
    "tier": "regular",
-   "title": "בוט 5: בלמי סיכון פעילים על שיטת הגאפ - נבדקו, רק בלם ב־‎-2% ביום עובר, ובקטן",
-   "decision": "approved",
-   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
-   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
-   "star": false,
-   "at": "2026-11-20T02:24:52+00:00",
+   "title": "TV02|15Min|TSLA: איזון ב־0.75R רווח · 50% יוצאים ב־2R והשאר לאיזון",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+220.66% מול +221.64% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 5587,
+     "total": 221.64,
+     "worst_day": -3.14,
+     "max_dd": 5.63,
+     "near_days": 1,
+     "max_open": 5.72,
+     "max_side": 4.27,
+     "guard_cut": 506,
+     "guard_skipped": 206
+    },
+    "after": {
+     "trades": 5604,
+     "total": 220.66,
+     "worst_day": -3.14,
+     "max_dd": 6.93,
+     "near_days": 1,
+     "max_open": 5.72,
+     "max_side": 4.27,
+     "guard_cut": 498,
+     "guard_skipped": 202
+    }
+   },
+   "at": "2026-11-20T02:32:51+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "ae8c0ee03617",
+   "bot": "bot1",
+   "type": "card",
+   "card": "f5ad3c694a49",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "TV08|15Min|NVDA: לא ברוחב בולינגר נמוך (מתחת לאחוזון 20)",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+221.64% מול +221.64% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 5587,
+     "total": 221.64,
+     "worst_day": -3.14,
+     "max_dd": 5.63,
+     "near_days": 1,
+     "max_open": 5.72,
+     "max_side": 4.27,
+     "guard_cut": 506,
+     "guard_skipped": 206
+    },
+    "after": {
+     "trades": 5580,
+     "total": 221.64,
+     "worst_day": -3.14,
+     "max_dd": 5.63,
+     "near_days": 1,
+     "max_open": 5.72,
+     "max_side": 4.27,
+     "guard_cut": 506,
+     "guard_skipped": 206
+    }
+   },
+   "at": "2026-11-20T02:32:51+00:00",
    "by": "manager",
    "read": false,
    "undone": false

@@ -566,9 +566,20 @@
    {
     "combo": "TV02|1Hour|INTC",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-20T15:20:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.92,
     "edge_parts": [
      "בבדיקה של 2026: +0.21R לעסקה (63 עסקאות), בתקופת הבחירה +0.21R",
@@ -583,9 +594,20 @@
    {
     "combo": "TV39|1Hour|JP225",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-20T15:20:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.81,
     "edge_parts": [
      "בבדיקה של 2026: +0.27R לעסקה (306 עסקאות), בתקופת הבחירה +0.10R",
@@ -600,9 +622,20 @@
    {
     "combo": "SE01|1Hour|CSCO",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-20T15:20:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.74,
     "edge_parts": [
      "בבדיקה של 2026: +0.07R לעסקה (220 עסקאות), בתקופת הבחירה +0.17R",
@@ -850,13 +883,12 @@
     "edge": -0.124
    }
   ],
-  "open": [
-   "TV02|1Hour|INTC",
-   "TV39|1Hour|JP225",
-   "SE01|1Hour|CSCO"
-  ],
+  "open": [],
   "cut_only": [
    "TV60|15Min|ARM",
+   "TV02|1Hour|INTC",
+   "TV39|1Hour|JP225",
+   "SE01|1Hour|CSCO",
    "SC154|5Min|XAUUSD",
    "SE02|1Hour|USDJPY",
    "MQ11|4Hour|MSTR",
@@ -864,6 +896,6 @@
    "TV10|1Hour|US100"
   ],
   "total_month_pct": 0.8,
-  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 6 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 9 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

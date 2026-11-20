@@ -550,9 +550,20 @@
    {
     "combo": "TV46|15Min|ASML",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-20T15:20:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.001,
     "edge_parts": [
      "בבדיקה של 2026: -0.00R לעסקה (108 עסקאות), בתקופת הבחירה +0.06R",
@@ -565,17 +576,16 @@
     "edge": 0.032
    }
   ],
-  "open": [
-   "TV46|15Min|ASML"
-  ],
+  "open": [],
   "cut_only": [
    "TV37|4Hour|GBPUSD",
    "GH08|1Hour|USDCAD",
    "SE02|1Hour|USDJPY",
    "TV13|15Min|TSLA",
-   "TT13|15Min|INTC"
+   "TT13|15Min|INTC",
+   "TV46|15Min|ASML"
   ],
   "total_month_pct": 1.1,
-  "status": "פתוח: 1 אסטרטגיות בלי תיקון עדיין · 5 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 6 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

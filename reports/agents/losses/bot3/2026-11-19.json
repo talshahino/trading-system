@@ -234,9 +234,20 @@
    {
     "combo": "TV12|4Hour|ARM",
     "cause": "סטופ אחרי תנועה קטנה לטובה",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-20T15:20:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.78,
     "edge_parts": [
      "בבדיקה של 2026: +0.45R לעסקה (31 עסקאות), בתקופת הבחירה +0.21R",
@@ -251,9 +262,20 @@
    {
     "combo": "TV15|4Hour|USDCAD",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
-    "cut_only": false,
+    "fixes": [
+     {
+      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
+      "decision": null,
+      "at": "2026-11-20T15:20:00+00:00",
+      "effect_month_pct": null,
+      "cut": true,
+      "prev": null,
+      "value": null,
+      "failed": true
+     }
+    ],
+    "open": false,
+    "cut_only": true,
     "edge_mult": 0.14,
     "edge_parts": [
      "בבדיקה של 2026: +0.25R לעסקה (49 עסקאות), בתקופת הבחירה +0.73R",
@@ -328,15 +350,14 @@
     "edge": -0.204
    }
   ],
-  "open": [
-   "TV12|4Hour|ARM",
-   "TV15|4Hour|USDCAD"
-  ],
+  "open": [],
   "cut_only": [
+   "TV12|4Hour|ARM",
+   "TV15|4Hour|USDCAD",
    "SC154|5Min|XAUUSD",
    "SS07|15Min|NVDA"
   ],
   "total_month_pct": 0.0,
-  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 2 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 4 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

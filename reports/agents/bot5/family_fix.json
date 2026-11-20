@@ -1,5 +1,5 @@
 {
- "at": "2026-11-19T16:11:30+00:00",
+ "at": "2026-11-20T01:06:47+00:00",
  "split": "2026-01-01",
  "test_from": "2025-04-30",
  "families": {
@@ -436,81 +436,81 @@
     "EURUSD",
     "GBPUSD",
     "GER40",
-    "US100"
-   ],
-   "missing": [
+    "US100",
     "US500",
     "USDCAD",
-    "USDCHF",
+    "USDCHF"
+   ],
+   "missing": [
     "USDJPY",
     "XAUUSD"
    ],
    "none": {
-    "train_n": 448,
-    "train_r": -27.13,
-    "unseen_n": 522,
-    "unseen_r": -49.49,
-    "positive_train": 2
+    "train_n": 634,
+    "train_r": -62.959999999999994,
+    "unseen_n": 790,
+    "unseen_r": -107.59,
+    "positive_train": 3
    },
    "best": [
     "vol_high",
     {
-     "train_n": 210,
-     "train_r": 3.229999999999999,
-     "unseen_n": 269,
-     "unseen_r": -38.75,
-     "positive_train": 3
+     "train_n": 300,
+     "train_r": -1.200000000000001,
+     "unseen_n": 410,
+     "unseen_r": -55.739999999999995,
+     "positive_train": 5
     }
    ],
    "filters": {
     "vol_high": {
-     "train_n": 210,
-     "train_r": 3.23,
-     "unseen_n": 269,
-     "unseen_r": -38.75,
+     "train_n": 300,
+     "train_r": -1.2,
+     "unseen_n": 410,
+     "unseen_r": -55.74,
+     "positive_train": 5
+    },
+    "with_trend200": {
+     "train_n": 433,
+     "train_r": -25.47,
+     "unseen_n": 529,
+     "unseen_r": -89.81,
      "positive_train": 3
     },
     "adx_trend": {
-     "train_n": 216,
-     "train_r": -9.36,
-     "unseen_n": 255,
-     "unseen_r": -4.19,
+     "train_n": 294,
+     "train_r": -29.7,
+     "unseen_n": 377,
+     "unseen_r": -48.23,
      "positive_train": 3
     },
-    "with_trend200": {
-     "train_n": 305,
-     "train_r": -16.55,
-     "unseen_n": 337,
-     "unseen_r": -43.22,
-     "positive_train": 2
-    },
     "vol_normal": {
-     "train_n": 300,
-     "train_r": -26.28,
-     "unseen_n": 358,
-     "unseen_r": -53.68,
-     "positive_train": 2
-    },
-    "none": {
-     "train_n": 448,
-     "train_r": -27.13,
-     "unseen_n": 522,
-     "unseen_r": -49.49,
-     "positive_train": 2
+     "train_n": 429,
+     "train_r": -41.17,
+     "unseen_n": 548,
+     "unseen_r": -102.56,
+     "positive_train": 3
     },
     "adx_range": {
-     "train_n": 264,
-     "train_r": -34.6,
-     "unseen_n": 295,
-     "unseen_r": -44.73,
-     "positive_train": 2
+     "train_n": 386,
+     "train_r": -50.68,
+     "unseen_n": 464,
+     "unseen_r": -64.46,
+     "positive_train": 3
+    },
+    "none": {
+     "train_n": 634,
+     "train_r": -62.96,
+     "unseen_n": 790,
+     "unseen_r": -107.59,
+     "positive_train": 3
     },
     "vol_low": {
-     "train_n": 263,
-     "train_r": -38.08,
-     "unseen_n": 279,
-     "unseen_r": -13.86,
-     "positive_train": 1
+     "train_n": 369,
+     "train_r": -72.06,
+     "unseen_n": 426,
+     "unseen_r": -67.87,
+     "positive_train": 2
     }
    }
   },
@@ -615,6 +615,66 @@
    "filters": {}
   },
   "SC520|15Min": {
+   "instruments": [],
+   "missing": [
+    "XAUUSD",
+    "AUDUSD",
+    "EURJPY",
+    "EURUSD",
+    "GBPUSD",
+    "GER40",
+    "US100",
+    "US30",
+    "US500",
+    "USDCAD",
+    "USDCHF",
+    "USDJPY"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  },
+  "SC641|15Min": {
+   "instruments": [],
+   "missing": [
+    "GER40",
+    "AUDUSD",
+    "EURJPY",
+    "EURUSD",
+    "GBPUSD",
+    "US100",
+    "US30",
+    "US500",
+    "USDCAD",
+    "USDCHF",
+    "USDJPY",
+    "XAUUSD"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  },
+  "SC319|15Min": {
+   "instruments": [],
+   "missing": [
+    "XAUUSD",
+    "AUDUSD",
+    "EURJPY",
+    "EURUSD",
+    "GBPUSD",
+    "GER40",
+    "US100",
+    "US30",
+    "US500",
+    "USDCAD",
+    "USDCHF",
+    "USDJPY"
+   ],
+   "none": null,
+   "best": null,
+   "filters": {}
+  },
+  "SC490|15Min": {
    "instruments": [],
    "missing": [
     "XAUUSD",

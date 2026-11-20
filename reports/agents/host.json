@@ -1,16 +1,15 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-20T19:29:01+00:00",
- "light_at": "2026-11-20T19:29:01+00:00",
+ "updated": "2026-11-20T19:59:52+00:00",
+ "light_at": "2026-11-20T19:59:52+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
   "light": 10,
   "smart": 60
  },
  "smart_minutes": {
-  "bot5": 40.0,
-  "bot6": 50.0
+  "bot1": 35.0
  },
  "agent_errors": [],
  "agent_last": {
@@ -64,9 +63,8 @@
    "(continued across a manager restart)"
   ],
   "bot1": [
-   "this run: 41 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
-   "{\"bot\": \"bot1\", \"cards\": 80219, \"tiers\": {\"rejected\": 70586, \"watch\": 8738, \"regular\": 895}, \"done\": 303, \"planned\": 456}",
-   "(continued across a manager restart)"
+   "this run: 25 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
+   "{\"bot\": \"bot1\", \"cards\": 80218, \"tiers\": {\"rejected\": 70586, \"watch\": 8737, \"regular\": 895}, \"done\": 303, \"planned\": 462}"
   ],
   "bot7": [
    "EV04 ticks: 24/263 done, 3 failed downloads (attempts failed: {'http503': 17, 'ConnectTimeout': 11, 'ReadTimeout': 10})",
@@ -148,12 +146,11 @@
    "err": null
   },
   "bot1": {
-   "at": "2026-11-20T10:47:48+00:00",
-   "sec": 3047,
+   "at": "2026-11-20T19:01:37+00:00",
+   "sec": 3217,
    "budget_sec": 2100,
-   "ok": null,
-   "err": null,
-   "adopted": true
+   "ok": true,
+   "err": null
   }
  },
  "agent_errors_24h": [
@@ -163,9 +160,9 @@
   }
  ],
  "portfolio": {
-  "at": "2026-11-20T16:54:45+00:00",
+  "at": "2026-11-20T19:56:34+00:00",
   "ok": true,
-  "sec": 154
+  "sec": 176
  },
  "box_pub": "UT9R6umHmW2BY3ghrGz5Lt7nM5l7jNp88LK8mtnz9VQ=",
  "alpaca": true,
@@ -179,8 +176,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.9,
-   "load_pct": 76
+   "free": 2.4,
+   "load_pct": 69
   }
  }
 }

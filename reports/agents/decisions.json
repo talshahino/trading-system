@@ -1,7 +1,68 @@
 {
- "updated": "2026-11-20T23:13:37+00:00",
- "new": [],
+ "updated": "2026-11-20T23:43:14+00:00",
+ "new": [
+  "45685971d567",
+  "4e6e1e6bcad6"
+ ],
  "decisions": [
+  {
+   "id": "45685971d567",
+   "bot": "bot7",
+   "type": "card",
+   "card": "c1ce427cafa9",
+   "kind": "info",
+   "tier": "regular",
+   "title": "SC532|1Hour|XAUUSD: היתרון נשחק",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-20T23:43:14+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "4e6e1e6bcad6",
+   "bot": "bot7",
+   "type": "card",
+   "card": "f9e52cc50c38",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC666|1Hour|XAUUSD: לא ברוחב בולינגר נמוך (מתחת לאחוזון 20)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.58R לעסקה, 52.0 עסקאות אפקטיביות, +0.18R מעל המצב הקיים) · בבוט השלם על 2026: רווח +228.03% → +230.67%, בלי יותר סיכון (יום גרוע -2.77%, ירידה 6.19%) · ⭐ אולי מזל: נכנס בסיכון ×0.79 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 4138,
+     "total": 228.03,
+     "worst_day": -2.95,
+     "max_dd": 6.19,
+     "near_days": 0,
+     "max_open": 5.37,
+     "max_side": 4.91,
+     "guard_cut": 392,
+     "guard_skipped": 156
+    },
+    "after": {
+     "trades": 4140,
+     "total": 230.67,
+     "worst_day": -2.77,
+     "max_dd": 6.19,
+     "near_days": 0,
+     "max_open": 5.35,
+     "max_side": 4.91,
+     "guard_cut": 384,
+     "guard_skipped": 147
+    }
+   },
+   "at": "2026-11-20T23:43:14+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "a69b93892519",
    "bot": "bot4",

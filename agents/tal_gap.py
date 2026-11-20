@@ -2648,6 +2648,10 @@ def live_trades(D, pair, cfg, gcache=None):
     bbw, newsx = bbw_mask(D, cfg, htf, ltf), news_x(D, cfg)
     lad = ladder_of(cfg)
     gk = gap_keep(D, cfg, htf, g)
+    # WAITX in the live bot too (bot 5's smart agent, 20.11.2026 night): the same wait_cut() as simulate(), so a card
+    # that sets it is built as a setting and trades as tested; off (no WAITX) = exactly as before
+    wx = cfg.get("WAITX")
+    opp_arms = {dd: np.array(sorted(x[5] for x in g if x[0] == dd), dtype=np.int64) for dd in (1, -1)} if wx else None
     out, cands = [], []
     # pass 1: every gap -> pending / cancelled, or a candidate fill (exactly simulate()'s checks, protection included)
     geo = gcache.get(_gkey(htf, cfg) + ("geo",)) or []
@@ -2661,6 +2665,11 @@ def live_trades(D, pair, cfg, gcache=None):
                            "imp0": [iso_(ge["imp0"][0]), ge["imp0"][1]], "imp1": [iso_(ge["imp1"][0]), ge["imp1"][1]]}
         q0 = int(np.searchsorted(ns, armed))
         q1 = min(n1, int(np.searchsorted(ns, armed + exp_ns)))
+        wcut = False
+        if wx and q0 < n1:
+            qw = wait_cut(D, htf, g, gi, opp_arms, q0, q1, wx)       # WAITX (as simulate): the wait ends on the chart's terms
+            if qw < q1:
+                q1, wcut = qw, True
         if q0 >= n1:
             continue
         if gk is not None and not gk[gi]:                             # G3 / SWP (as simulate): no order for this gap
@@ -2709,6 +2718,9 @@ def live_trades(D, pair, cfg, gcache=None):
                 out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="shock"))
                 continue
         if not seg.any():
+            if wcut:
+                out.append(dict(base, status="cancelled", entry=float(mid), stop=None, target=None, reason="waitx"))
+                continue
             expired = armed + exp_ns <= ns[-1]
             out.append(dict(base, status="cancelled" if expired else "pending", entry=float(mid), stop=None, target=None,
                             reason="expired" if expired else None))

@@ -483,7 +483,18 @@ NOTE_TESTS += [
          "src": "b5widestop1811", "he": "מרווח נוסף מעבר לסטופ (0.1%-0.4% מהמחיר, או חלק מה־ATR)"},
         {"id": f"{trk}_minstop", "track": trk, "knob": "MINSTOP", "vals": [1.0, 1.5, 2.0],
          "src": "b5widestop1811", "he": "סטופ במרחק מינימלי של 1 / 1.5 / 2 ATR מהכניסה"})]
-NOTE_SRC = {"b5widestop1811": "משימה של טל מ־18.11 (JP225: סטופ קצת רחב יותר היה משאיר אותנו בעסקה).",
+NOTE_TESTS += [
+    # the loss report of 19.11.2026 (task c80458266b8c, bot 5's smart agent, 20.11 night): 10 index longs that Tal had
+    # marked "yes" in the morning were filled 15:14-15:22 UTC, hours after their gaps, in one sell-off, and all were
+    # stopped. WAITX (tal_gap.wait_cut) ends the wait when the market answers first: "opp" = a new impulse with a gap the
+    # other way is made before the touch; "tgt" = the move went on without a correction. On the per-symbol runs of
+    # 18.11 (reports/agents/bot5/tal_wait) "opp" won on 15m/1m on both periods; rerun here on the tracks as they run now.
+    # Since 20.11 the live bot runs WAITX too (tal_gap.live_trades), so a winning value is a settings card.
+    {"id": f"{trk}_waitx", "track": trk, "knob": "WAITX", "vals": ["opp", "tgt", "opp+tgt"], "src": "b5loss1911",
+     "he": "ביטול ההמתנה לגאפ כשנוצר דחף עם גאפ בכיוון ההפוך / כשהמהלך ממשיך בלי תיקון"}
+    for trk in ("t15_1", "t5_1", "t1h_15", "t15_5")]
+NOTE_SRC = {"b5loss1911": "דוח ההפסד של 19.11 (קניות במדדים שהתמלאו שעות אחרי הגאפ, באמצע ירידה).",
+            "b5widestop1811": "משימה של טל מ־18.11 (JP225: סטופ קצת רחב יותר היה משאיר אותנו בעסקה).",
             "tal1711review": "משימה של טל מ־17.11 (הסקירה: הגאפ שקובע הוא הראשון, בתחילת הדחף).",
             "b6to5beor1811": "שיטה משותפת מסוכן בוט 6 מ־18.11 (סטופ לכניסה במוקדם מבין אחוז מהדרך ו־+1R).",
             "b5stopimp1711": "משימה של טל מ־17.11 (הסקירה: כשנכנסים בגאפ מאוחר - הסטופ בתחילת הדחף).",
@@ -527,7 +538,7 @@ def _note_cfgs():
 # whole backlog at once with the budget checked only between symbols - about one symbol per pass, and a test counts only
 # with all five, so nothing he asked for finished before the fifth pass, about a day later (GAPX, asked on 17.11, was
 # still "running" on 18.11). Now: his tests first, a few settings at a time on all five symbols.
-NOTE_FIRST = ("widestop", "minstop", "stopatr", "firstg", "gapx", "stopat", "follow", "stopatr_fg", "stopat_fg", "beor")
+NOTE_FIRST = ("waitx", "widestop", "minstop", "stopatr", "firstg", "gapx", "stopat", "follow", "stopatr_fg", "stopat_fg", "beor")
 NOTE_BATCH = 12          # settings per round: all five symbols of a round end before the next round starts
 
 

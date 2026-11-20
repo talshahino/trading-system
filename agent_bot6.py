@@ -783,13 +783,40 @@ def _b5_beway(v):
             + " (נבחר שם על 2025 ונבדק על 2026).")
 
 
+# BOT 5'S DAILY-BREAK RULE ON BOT 6'S FUTURES (shared methods, bot 6's smart agent, 20.11.2026 night; bot 5's
+# tal_gap_results bot5_smart.dbrk: "bot 6's futures have the CME daily break - worth the same test"). On bot 6 an open
+# trade is already out at 16:05 New York (DBRK x adds nothing), but a waiting gap order lives over the 16:05-18:00
+# break (under FTMO's 2 hours, so WKND / BRKH do not touch it) and can fill at the 18:00 reopen. DBRK c = the waiting
+# order is cancelled 10 minutes before the expected daily break and not placed again; o30 = no fill in the first 30
+# minutes after any 30+ minute break (the order waits; wider than SESS xreo5 / xreo15). Settings knobs - simulate and
+# live_trades alike (agents/tal_gap.dbrk_of), so an approved card is built by the builder at once.
+DBRK6 = (("DBRK", "c"), ("DBRK", "o30"))
+FILT_HE["DBRK"] = lambda v: {"c": "הוראה ממתינה מתבטלת 10 דק' לפני ההפסקה היומית של 16:05 (DBRK c)",
+                             "o30": "בלי מילוי ב־30 הדקות הראשונות אחרי הפתיחה מחדש (DBRK o30)"}.get(str(v), f"DBRK {v}")
+
+
+def _b5_dbrk(v):
+    """What bot 5's agent found for the same daily-break rule (reports/agents/bot5/tal_dbrk/report.json)."""
+    try:
+        a = json.loads(Path("reports/agents/bot5/tal_dbrk/report.json").read_text(encoding="utf-8")).get("all") or {}
+    except Exception:  # noqa: BLE001
+        return "המחקר של בוט 5 (tal_dbrk) עוד לא נקרא."
+    w = {"c": "db|c", "o30": "db|o10"}.get(str(v))
+    n0, n1 = a.get("now|base") or {}, a.get(w) or {}
+    if not n1:
+        return "בבוט 5 הדרך הזו לא נבדקה."
+    g = lambda x, p: ((x.get(p) or {}).get("sum") or 0.0)  # noqa: E731
+    return (f"על כל הבוט שלו{' (o10 - חלון של 10 דק)' if str(v) == 'o30' else ''}: עד 2025 {g(n0, 'train'):+.0f}R ← {g(n1, 'train'):+.0f}R, "
+            f"2026 {g(n0, 'unseen'):+.0f}R ← {g(n1, 'unseen'):+.0f}R - לא נבנה בבוט 5.")
+
+
 CODE6 = ("PYR", "FOLLOW", "WAITX", "SSCALE", "TSWN")     # knobs live_trades does not run yet: an approved card is built by the smart agent
 TASK6 = {"gaveback": GAVE6, "follow": FOL6, "brk": BRK6, "wknd": WKND6, "ema920": EMA6, "bbw": BBW6, "newsx": NEWS6, "pyr": PYR6, "video": VID6, "pdpiv": PDP6,
          "gapq": GQ6, "dbias": DB6, "swp2": SWP26, "set7": SET76, "set7b": SQZ6,
          "gapx": GAPX6, "firstg": FG6, "stopat": STOP6, "waitx": WAIT6, "widestop": WIDE6, "stopmove": MOVE6, "mingap": MING6,
          "minrr": MINRR6, "moverr": MOVERR6, "gapsize": GSIZE6, "beway": BEWAY6, "reopen": REO6,
-         "stop7": STOP7_6, "tgtsw": TGT6}
-USER6 = STOP7_6 + TGT6 + BEWAY6 + MINRR6 + MOVERR6 + GSIZE6 + REO6 + WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
+         "stop7": STOP7_6, "tgtsw": TGT6, "dbrk": DBRK6}
+USER6 = DBRK6 + STOP7_6 + TGT6 + BEWAY6 + MINRR6 + MOVERR6 + GSIZE6 + REO6 + WIDE6 + MOVE6 + MING6 + REV6 + GAVE6 + FOL6 + BRK6 + WKND6 + USER6 + EMA6 + BBW6 + NEWS6 + PYR6 + VID6 + PDP6 + GQ6 + DB6 + SWP26 + SET76 + SQZ6
 TASK_TREND = set(TG.VIDEO_TREND) | {"pd20", "pd50", "piv", "dbias", "fib5", "ha", "ha2", "sqzm", "sqz", "pdbrk"}
 FILT_HE["G3"] = lambda v: {"weak": "רק גאפ שנר 3 שלו חלש (גוף ופתילים קטנים מחצי ATR)",
                            "nostrong": "בלי גאפ שנר 3 שלו חזק (גוף מעל ATR)",
@@ -948,6 +975,7 @@ def filt_cards(idx, group=FILT6):
                           + ("הכלל של טל (סטופ לכניסה ב־60% מהדרך) וההפסד של 19.11 (US500 שעה / 5 דק', ‎+1.28R, 86.7% מהדרך, וחזר לסטופ מלא). " if (k, v) in BEWAY6 else "")
                           + ("השאלה של בוט 5 על הפתיחה היומית (b5reopen1911 - שיטה משותפת). " if (k, v) in REO6 else "")
                           + ("משימה של טל לבוט 5 מ־20.11 (איפה הסטופ הכי נכון, באיזה סווינג היעד - שיטה משותפת). " if (k, v) in STOP7_6 + TGT6 else "")
+                          + ("שיטה משותפת עם בוט 5 (ההפסקה היומית - DBRK, 20.11). " if k == "DBRK" else "")
                           + ("משימה של טל מ־16.11 (נרות חזקים אחרי הכניסה - b5follow1611). " if k == "FOLLOW" else "")
                           + ("משימה של טל מ־17.11 (הסקירה של הגאפים בבוט 5 - שיטה משותפת). " if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX") else "")
                           + ("משימה של טל מ־18.11 (סטופ רחב יותר וגודל גאפ - שיטה משותפת עם בוט 5). " if (k in ("IPAD", "MIN_GAP", "GAPPCT", "GAPLEG") or (k, v) in WIDE6) and (k, v) not in STOP7_6 else "")
@@ -956,6 +984,7 @@ def filt_cards(idx, group=FILT6):
                                           _b5_gave(v) if (k, v) in GAVE6 else
                                           _b5_beway(v) if (k, v) in BEWAY6 else
                                           _b5_2011(k, v) if (k, v) in STOP7_6 + TGT6 else
+                                          _b5_dbrk(v) if k == "DBRK" else
                                           "הבדיקה נבנית אצלו עכשיו (b5reopen1911)." if (k, v) in REO6 else
                                           _b5_gave(v, ("_follow",)) if k == "FOLLOW" else
                                           _b5_rev(k, v) if k in ("GAPX", "FIRSTG", "STOPAT", "WAITX", "IPAD", "MIN_GAP") else

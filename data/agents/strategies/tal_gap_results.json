@@ -468405,7 +468405,7 @@
   }
  },
  "bot5_smart": {
-  "updated": "2026-11-19T22:22:20+00:00",
+  "updated": "2026-11-20T06:20:08+00:00",
   "for": "bot6",
   "dbrk": {
    "what": "DBRK (agents/tal_gap.py): c = cancel a waiting gap order 10 min before an expected 30+ min break shorter than 2h (seen a day / a week earlier), x = close an open trade then, oN = no fill N min after a reopening. Bot 5: no rule beats today on the whole bot; passes only on t15_1 (x). The 4h tracks lose most (fills at the reopening earn). Bot 6's futures have the CME daily break (60 min) - worth the same test.",
@@ -468598,6 +468598,25 @@
    "what": "size instead of skipping in a same-move cluster: half / 1/(1+n) / a K-R budget all lose 2026 even at the same fall from the peak; the opposite - x1.5 on a gap trade taken while another track holds the same instrument the same way - earns more on both periods at the same fall (2025 387->401R, 2026 152->174R, fall 28.1->27.8R). Such trades earn ~2x (2025 +0.37 vs +0.19R, 2026 +0.16 vs +0.02R). Not built in bot 5 (needs the lone trade below Tal's fixed 0.28%). For bot 6: worth testing on its own gap tracks.",
    "report": "reports/agents/bot5/tal_cluster_risk.json",
    "card": "52b6c302b631"
+  },
+  "studies2011": {
+   "what": "Bot 5 live tracks, 2025 / 2026 R: trend filters (tal_dirtrend), same-direction caps 1-8, 7 stop placements (tal_stop7), target swing 1-6 (tal_tgt). Today's setup is best on both periods; per-track picks on 2025 add ~0 (stop +9R) or lose (target -38R) on 2026. Bot 6 may run the same three studies on its futures.",
+   "base": {
+    "train": 390.91,
+    "unseen": 143.48
+   },
+   "stop_pick": {
+    "train": 581.09,
+    "unseen": 152.81
+   },
+   "target_pick": {
+    "train": 732.72,
+    "unseen": 105.1
+   },
+   "trend_pick": {
+    "train": 504.84,
+    "unseen": 142.22
+   }
   }
  }
 }

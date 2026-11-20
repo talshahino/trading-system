@@ -1,6 +1,18 @@
 {
- "updated": "2026-11-20T07:00:33+00:00",
+ "updated": "2026-11-20T07:13:45+00:00",
  "new": [
+  "6b6a8f072fad",
+  "13223df25a10",
+  "3023f77e6ffd",
+  "4da42a5d03d7",
+  "d675ae1f2bb1",
+  "5d102f5a5250",
+  "7e9097d88bf3",
+  "b208a21fe7d9",
+  "7424b338354b",
+  "f7d746efa03a",
+  "81e57f1e2bd8",
+  "209b95be5ff1",
   "7c25f3811d76",
   "962cc922f1e8",
   "badf61644d9b",
@@ -24,6 +36,234 @@
  ],
  "decisions": [
   {
+   "id": "6b6a8f072fad",
+   "bot": "bot1",
+   "type": "card",
+   "card": "d71d12460e90",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 1: האיחור של 15 דק' במניות לא נוגע בו (FTMO-Demo), ‎+1.84% היום עד עכשיו",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "13223df25a10",
+   "bot": "bot2",
+   "type": "card",
+   "card": "fa2e457c8cbb",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 2: האיחור של 15 דק' במניות נבדק - TV13 TSLA מאבדת את כל היתרון, השאר מחזיקות",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "3023f77e6ffd",
+   "bot": "bot2",
+   "type": "card",
+   "card": "f2d139b01c3e",
+   "kind": "risk",
+   "tier": "regular",
+   "title": "TV13|15Min|TSLA: כמות מינימלית - עם האיחור של 15 דק' במניות אין לה יתרון",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "star": false,
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "4da42a5d03d7",
+   "bot": "bot2",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV13|15Min|TSLA",
+   "title": "TV13|15Min|TSLA: סיכון ×0.001",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "3023f77e6ffd",
+   "action": {
+    "bot": "bot2",
+    "combo": "TV13|15Min|TSLA",
+    "kind": "mult",
+    "value": 0.001,
+    "prev": 0.78
+   },
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "d675ae1f2bb1",
+   "bot": "bot3",
+   "type": "card",
+   "card": "c7416cc24c3e",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 3: האיחור של 15 דק' במניות נבדק - TV28 AMZN מאבדת את כל היתרון",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "5d102f5a5250",
+   "bot": "bot3",
+   "type": "card",
+   "card": "6bb2ac87fda2",
+   "kind": "risk",
+   "tier": "regular",
+   "title": "TV28|15Min|AMZN: כמות מינימלית - עם האיחור של 15 דק' במניות אין לה יתרון",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "star": false,
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "7e9097d88bf3",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV28|15Min|AMZN",
+   "title": "TV28|15Min|AMZN: סיכון ×0.001",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "5d102f5a5250",
+   "action": {
+    "bot": "bot3",
+    "combo": "TV28|15Min|AMZN",
+    "kind": "mult",
+    "value": 0.001,
+    "prev": null
+   },
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "b208a21fe7d9",
+   "bot": "bot4",
+   "type": "card",
+   "card": "524d5008f4f1",
+   "kind": "info",
+   "tier": "regular",
+   "title": "בוט 4: האיחור של 15 דק' במניות נבדק - QC07 ARM מאבדת את היתרון, FR08 SPCX נשארת",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
+   "star": false,
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "7424b338354b",
+   "bot": "bot4",
+   "type": "card",
+   "card": "f0585f71aff4",
+   "kind": "risk",
+   "tier": "regular",
+   "title": "SC010|15Min|ARM: סיכון ×0.7 ← ×0.41 - עם האיחור במניות נשאר 59% מהיתרון",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "star": false,
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "f7d746efa03a",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC010|15Min|ARM",
+   "title": "SC010|15Min|ARM: סיכון ×0.41",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "7424b338354b",
+   "action": {
+    "bot": "bot4",
+    "combo": "SC010|15Min|ARM",
+    "kind": "mult",
+    "value": 0.41,
+    "prev": 0.7
+   },
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "81e57f1e2bd8",
+   "bot": "bot4",
+   "type": "card",
+   "card": "7bc96ad8405a",
+   "kind": "risk",
+   "tier": "regular",
+   "title": "QC07|15Min|ARM: כמות מינימלית - עם האיחור של 15 דק' במניות אין לה יתרון",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "star": false,
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "209b95be5ff1",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "QC07|15Min|ARM",
+   "title": "QC07|15Min|ARM: סיכון ×0.001",
+   "decision": "approved",
+   "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "81e57f1e2bd8",
+   "action": {
+    "bot": "bot4",
+    "combo": "QC07|15Min|ARM",
+    "kind": "mult",
+    "value": 0.001,
+    "prev": 0.82
+   },
+   "at": "2026-11-20T07:13:45+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
    "id": "7c25f3811d76",
    "bot": "bot5",
    "type": "card",
@@ -35,7 +275,7 @@
    "why": "המלצה של סוכן הבוט, נבדקה ברמת הבוט",
    "effect": "לידיעה בלבד: אין מה לבנות, הסוכן של הבוט ממשיך לעקוב",
    "star": false,
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -75,7 +315,7 @@
      "guard_skipped": 93
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -115,7 +355,7 @@
      "guard_skipped": 100
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -156,7 +396,7 @@
      "guard_skipped": 112
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -197,7 +437,7 @@
      "guard_skipped": 112
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -237,7 +477,7 @@
      "guard_skipped": 121
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -277,7 +517,7 @@
      "guard_skipped": 132
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -317,7 +557,7 @@
      "guard_skipped": 117
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -357,7 +597,7 @@
      "guard_skipped": 120
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -397,7 +637,7 @@
      "guard_skipped": 154
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -437,7 +677,7 @@
      "guard_skipped": 128
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -478,7 +718,7 @@
      "guard_skipped": 123
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -518,7 +758,7 @@
      "guard_skipped": 159
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -558,7 +798,7 @@
      "guard_skipped": 128
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -598,7 +838,7 @@
      "guard_skipped": 162
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -639,7 +879,7 @@
      "guard_skipped": 150
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -679,7 +919,7 @@
      "guard_skipped": 180
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -719,7 +959,7 @@
      "guard_skipped": 177
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -759,7 +999,7 @@
      "guard_skipped": 182
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false
@@ -799,7 +1039,7 @@
      "guard_skipped": 192
     }
    },
-   "at": "2026-11-20T07:00:33+00:00",
+   "at": "2026-11-20T07:13:45+00:00",
    "by": "manager",
    "read": false,
    "undone": false

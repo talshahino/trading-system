@@ -81,7 +81,8 @@
   "SC641|1Hour|JP225",
   "SC278|1Hour|ETHUSD",
   "SC651|4Hour|WTI",
-  "SC470|4Hour|ETHUSD"
+  "SC470|4Hour|ETHUSD",
+  "SC686|1Hour|US500"
  ],
  "note": "risk = 25% below the portfolio's recommended level; stocks closed at session end; stop to breakeven + costs at 60% of the way to the target; 02.11.2026: FTMO Standard account rule - every position closed before market breaks over 2 hours (weekends too), approved by the user; 03.11.2026: added SE02|1Hour|USDJPY and IM01|1Hour|JP225 (new families, backtest with the bot), approved by the user; 04.11.2026: added FR03|15Min|GBPUSD, QC02|1Hour|ETHUSD (GitHub/QuantConnect/forum families, both halves better with the bot), approved by the user; 04.11.2026 (evening): added MQ11|4Hour|MSTR, MQ02|1Hour|XAUUSD (new pool: papers/books/MQL5 EAs; both halves better, Monte Carlo checked), approved by the user; 12.11.2026: per-combo plans (exit / filter variants of the agents' cards approved by the manager) in \"plans\"",
  "close_before_breaks": true,
@@ -263,6 +264,13 @@
   "TT45|1Hour|GBPJPY": {
    "filter": "v_sqzm",
    "filter_card": "eb680b4da282"
+  },
+  "SC641|1Hour|JP225": {
+   "pyramid": [
+    1.0,
+    0.5
+   ],
+   "pyr_card": "4c5107354fcb"
   }
  },
  "added": {
@@ -297,7 +305,8 @@
   "SC641|1Hour|JP225": "a8f4d04d9764",
   "SC278|1Hour|ETHUSD": "0e363688b873",
   "SC651|4Hour|WTI": "675973419765",
-  "SC470|4Hour|ETHUSD": "97d991fc130e"
+  "SC470|4Hour|ETHUSD": "97d991fc130e",
+  "SC686|1Hour|US500": "7f21a7a4dee1"
  },
  "removed": {
   "SC002|1Hour|ARM": "617a4b123340",

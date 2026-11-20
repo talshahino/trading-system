@@ -1419,6 +1419,7 @@ def wide_chosen():
     except Exception:  # noqa: BLE001
         pass
     return out
+SEARCH_MIN_SEC = 300       # the search's floor in a full run (see main)
 POST = {}                  # this run's seconds per part after the budget (summaries, whole-bot replays) -> results bot5.post_sec
 STEPS = {}                 # this run's gap-method steps: {name: {done | err, at, sec, budget_sec}} -> results bot5.steps
 TAL_WORLD = {"symbols": TAL_SYMBOLS, "costs": "FTMO's recorded 1-minute spread + commission",
@@ -1618,12 +1619,17 @@ def main():
                                         budget_sec=round(tal_left * 0.7), left=note_first_left())
         tal_left = a.minutes * 60 - (time.time() - t_start)
         t1 = time.time()
-        try:
-            TW.run(tal_load, TAL_WIDE_DIR, tal_left * 0.5, wide_chosen())
-        except Exception as e:  # noqa: BLE001
-            print("tal wide experiments failed:", e)
+        if tal_left * 0.5 >= 60:          # (19.11.2026: it was started with -44 s and -30 s)
+            try:
+                TW.run(tal_load, TAL_WIDE_DIR, tal_left * 0.5, wide_chosen())
+            except Exception as e:  # noqa: BLE001
+                print("tal wide experiments failed:", e)
         STEPS["wide_run"] = {"sec": round(time.time() - t1), "budget_sec": round(tal_left * 0.5)}
         tal_left = a.minutes * 60 - (time.time() - t_start)
+        # the indices' never-ending search always gets a few minutes (manager, 20.11.2026 night: the steps ran over
+        # their shares - shared_exit 511 s of 252, stability 312 of 168 - and the search got no turn in the runs of
+        # 19.11 14:29 and 23:13, 3,253 tried / 32,223 left for a day; the objective: no agent stops searching)
+        tal_left = max(tal_left, SEARCH_MIN_SEC)
     if tal_left > 60 and BOT == "bot5":
         t1 = time.time()
         try:

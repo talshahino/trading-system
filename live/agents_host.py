@@ -700,7 +700,23 @@ def publish(files, message):
                 blobs[REPLIES] = r.json()["sha"]
             except Exception:  # noqa: BLE001  - unreadable: leave main's file as it is this time
                 blobs.pop(REPLIES, None)
-        bt = _gh("GET", f"{API}/git/commits/{hsha}", timeout=30)
+        # files with sections from two writers (this computer and the cloud's smart agents): section by section, the
+        # newer "updated" wins (manager, 20.11.2026 night: bot5_smart of 22:22 went back to 18:56 in the 23:37 publish)
+        from agents import merge_sections as MS
+        for rel in MS.SECTIONED:
+            if rel not in files or rel not in blobs:
+                continue
+            try:
+                mb = _main_file(h, hsha, rel)
+                if mb:
+                    data = MS.merge_bytes(mb, files[rel])
+                    r = _gh("POST", f"{API}/git/blobs", timeout=120,
+                            json={"content": base64.b64encode(data).decode(), "encoding": "base64"})
+                    r.raise_for_status()
+                    blobs[rel] = r.json()["sha"]
+            except Exception:  # noqa: BLE001  - unreadable: this copy as before
+                pass
+        bt =_gh("GET", f"{API}/git/commits/{hsha}", timeout=30)
         bt.raise_for_status()
         base_tree = bt.json()["tree"]["sha"]
         tree = _gh("POST", f"{API}/git/trees", timeout=60, json={

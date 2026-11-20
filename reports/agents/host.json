@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-20T23:25:15+00:00",
+ "updated": "2026-11-20T23:37:02+00:00",
  "light_at": "2026-11-20T23:25:15+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -69,12 +69,11 @@
    "{\"bot\": \"bot1\", \"cards\": 80218, \"tiers\": {\"rejected\": 70586, \"watch\": 8737, \"regular\": 895}, \"done\": 303, \"planned\": 462}"
   ],
   "bot7": [
-   "EV04 ticks: 24/263 done, 3 failed downloads (attempts failed: {'http503': 17, 'ConnectTimeout': 11, 'ReadTimeout': 10})",
-   "EV04 ticks: 28/50 hours failed, 3 parallel downloads from now",
-   "EV04 ticks: 48/263 done, 20 failed downloads (attempts failed: {'ConnectTimeout': 88, 'http503': 54, 'ReadTimeout': 36})",
-   "this run: 12 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
-   "{\"bot\": \"bot7\", \"cards\": 34436, \"tiers\": {\"rejected\": 31134, \"watch\": 2584, \"regular\": 718}, \"done\": 134, \"planned\": 498}",
-   "(continued across a manager restart)"
+   "EV04 ticks: 17/51 hours failed, 3 parallel downloads from now",
+   "EV04 ticks: 24/235 done, 7 failed downloads (attempts failed: {'ConnectTimeout': 63, 'ReadTimeout': 39, 'http503': 30})",
+   "this run: 52 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
+   "{\"bot\": \"bot7\", \"cards\": 34458, \"tiers\": {\"rejected\": 31149, \"watch\": 2590, \"regular\": 719}, \"done\": 181, \"planned\": 498}",
+   "(ended while the manager restarted)"
   ]
  },
  "agent_runs": {
@@ -117,12 +116,11 @@
    "adopted": true
   },
   "bot7": {
-   "at": "2026-11-20T13:42:44+00:00",
-   "sec": 3099,
+   "at": "2026-11-20T22:39:29+00:00",
+   "sec": null,
    "budget_sec": 2700,
    "ok": null,
-   "err": null,
-   "adopted": true
+   "err": "ended while the manager restarted - published after"
   },
   "bot7-shocks": {
    "at": "2026-11-20T14:39:45+00:00",
@@ -161,9 +159,9 @@
   }
  ],
  "portfolio": {
-  "at": "2026-11-20T19:56:34+00:00",
+  "at": "2026-11-20T23:28:58+00:00",
   "ok": true,
-  "sec": 176
+  "sec": 181
  },
  "box_pub": "UT9R6umHmW2BY3ghrGz5Lt7nM5l7jNp88LK8mtnz9VQ=",
  "alpaca": true,
@@ -173,12 +171,12 @@
  "machine": {
   "disk_gb": {
    "total": 223.0,
-   "free": 135.9
+   "free": 135.7
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.9,
-   "load_pct": 75
+   "free": 1.8,
+   "load_pct": 77
   }
  }
 }

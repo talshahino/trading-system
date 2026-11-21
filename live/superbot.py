@@ -186,7 +186,7 @@ def main():
                     want = st["balance"] * rk_w
                     open_risk = sum(x["risk_usd"] for x in book.values() if x["status"] == "open")
                     day_pnl = sum(x["pnl"] for x in book.values() if x["status"] == "closed" and x.get("day") == today)
-                    room = min(conf.get("day_limit", 0.045) * st["day_start"] + day_pnl - open_risk,
+                    room = min(conf.get("day_limit", 0.045) * st["initial"] + day_pnl - open_risk,
                                st["balance"] - open_risk - st["initial"] * (1 - conf.get("total_limit", 0.09)))
                     b = {"stream": s, "bucket": bucket, "symbol": t.get("symbol"), "combo": t.get("combo"), "side": t.get("side"),
                          "open_t": ot, "open_px": t.get("open_px", t.get("open")), "sl0": t.get("sl0"), "tp0": t.get("tp0"),

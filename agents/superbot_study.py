@@ -98,7 +98,7 @@ def account(A, w, scale):
                 near += day_pnl / day_start <= -0.03
             day, day_start, day_pnl = d0s[i], bal, 0.0
         want = bal * scale * rk_w
-        room = min(DAY * day_start + day_pnl - open_risk, bal - open_risk - init * (1 - TOTAL))
+        room = min(DAY * init + day_pnl - open_risk, bal - open_risk - init * (1 - TOTAL))
         if room < 0.25 * want:
             skipped += 1
             continue

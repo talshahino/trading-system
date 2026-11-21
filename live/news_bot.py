@@ -987,7 +987,7 @@ def book(acc, t, notify):
     if t["id"] not in led:
         bal = acc.balance()
         day = israel_day(pd.Timestamp.now(tz="UTC"))
-        stop_day = acc.day_start(day) * (1 - DAILY_STOP)
+        stop_day = acc.day_start(day) - INITIAL * DAILY_STOP   # FTMO: 5% of the initial amount from the midnight balance
         if acc.a.get("dead") or bal <= INITIAL * (1 - MAX_LOSS) or bal <= stop_day:
             led[t["id"]] = {"skipped": "loss limit", "pnl": None, "closed_day": day}
             return True

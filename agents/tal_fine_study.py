@@ -142,10 +142,10 @@ def account(trades):
                 worst[day] = day_pnl / day_start
             day, day_start, day_pnl = d0, bal, 0.0
         want = bal * RISK
-        room = min(DAY * day_start + day_pnl - sum(open_), bal - sum(open_) - init * (1 - TOTAL))
+        room = min(DAY * init + day_pnl - sum(open_), bal - sum(open_) - init * (1 - TOTAL))
         if room < 0.25 * want:
             skipped += 1
-            if day_pnl - sum(open_) <= -DAY * day_start * 0.9:
+            if day_pnl - sum(open_) <= -DAY * init * 0.9:
                 stopped.add(day)
             continue
         rk = min(want, room)

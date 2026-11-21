@@ -2093,7 +2093,7 @@ def main():
                             rec["skipped"] = "side"          # another track already holds this symbol and direction
                         elif dir_:
                             rec["skipped"] = "dir"           # K trades already open in this direction on the indices
-                        elif day_pnl(day) <= -DAILY_STOP * start:
+                        elif day_pnl(day) <= -DAILY_STOP * A_["initial"]:   # FTMO: 5% of the initial amount from the midnight balance
                             rec["skipped"] = "daily"
                         else:
                             # the red lines hold for the open trades too (bot 5's smart agent, 13.11.2026 evening; the
@@ -2107,7 +2107,7 @@ def main():
                             open_ = sum(risk_left(o) for kk_, o in trades.items()
                                         if kk_ != k and o.get("status") == "open" and o.get("risk_usd")
                                         and bool(scout5_combo(o.get("tal"))) == sc_)          # the same account's
-                            room_ = min(DAILY_STOP * start + day_pnl(day) - open_,
+                            room_ = min(DAILY_STOP * A_["initial"] + day_pnl(day) - open_,
                                         bal - open_ - A_["initial"] * (1 - BOT_MAX_LOSS))
                             if room_ < 0.25 * want_:
                                 rec["skipped"] = "room"

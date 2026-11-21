@@ -125,7 +125,7 @@ def main():
                                 want = bal * per
                                 open_risk = sum(x["risk_usd"] for x in book.values() if x["status"] == "open")
                                 day_pnl = sum(x["pnl"] for x in book.values() if x["status"] == "closed" and x.get("day") == today)
-                                room = min(conf.get("day_limit", 0.045) * st["day_start"] + day_pnl - open_risk,
+                                room = min(conf.get("day_limit", 0.045) * st["initial"] + day_pnl - open_risk,
                                            bal - open_risk - st["initial"] * (1 - conf.get("total_limit", 0.09)))
                                 if room < 0.25 * want:
                                     b.update(status="skipped", risk_usd=0.0, why="no room")

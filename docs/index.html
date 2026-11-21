@@ -2802,7 +2802,7 @@ async function comboFill() {
   $("comboCard").innerHTML = `<div class="h4" style="margin-top:18px">איזה נכס טוב לאיזה צמד גרפים</div><div class="mut" style="margin-bottom:6px">R ממוצע לעסקה (מספר עסקאות). ${esc((d.check || {}).note || "")}</div>
     <div class="card wt" style="padding:0"><div class="tw"><table class="rt"><tr><th>נכס</th><th>צמד גרפים</th><th>2025</th><th>2026</th><th>חי</th><th></th></tr>${rows}</table></div></div>`;
 }
-const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא סימנת \"הייתי לוקח\" לפני הכניסה", levels: "לא נכנסה · המחיר כבר עבר את הרמות", tal_stale: "לא נכנסה · האישור היה בן יותר משעתיים ולא הגיעה תשובה חדשה", track_off: "לא נכנסה · המסלול הוצא מהבוט"};
+const TALWHY = {tal_no: "לא נכנסה · ענית לא", tal_none: "לא נכנסה · לא סימנת \"הייתי לוקח\" לפני הכניסה", levels: "לא נכנסה · המחיר כבר עבר את הרמות", tal_stale: "לא נכנסה · האישור היה בן יותר משעתיים ולא הגיעה תשובה חדשה", track_off: "לא נכנסה · המסלול הוצא מהבוט", late: "לא נכנסה · חושבה רק אחרי מעשה (הבוט לא לקח אותה בזמן אמת)"};
 const rvNeeded = t => t && ((t.status === "pending" && t.tal && t.asked) || reaskWait(t));
 // user, 20.11.2026: a "yes" given more than 2 hours before the fill is asked again when the price reaches the gap -
 // 10 minutes to answer, no answer = not taken (live/watch_own.py yes_stale / REASK_*)

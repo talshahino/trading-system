@@ -911,6 +911,7 @@ def learning5(marks):
             "per_track": per, "estimate": int(round(rem / 10.0) * 10)}
 
 
+LATE_MIN = 60           # a trade first sized more than this after its fill is not booked (no taking trades in hindsight)
 FREEZE_MIN = 20       # minutes after its exit a booked close can still be corrected (data arriving late)
 
 
@@ -1709,6 +1710,17 @@ def main():
             if not scout5_combo(t.get("tal")):
                 for f in ("risk_usd", "skipped", "pnl", "pnl_now"):
                     t.pop(f, None)
+    # 21.11.2026: a US100 t4h_15 trade of 19.11 booked on Saturday in hindsight (+$115.55) - out of the ledger, not taken
+    if not acc.get("undo5_2111"):
+        bad_ = {"US100|tal|-1|g202611162000|t4h_15"}
+        acc["ledger"] = [x for x in acc.get("ledger") or [] if x.get("id") not in bad_]
+        for k_ in bad_:
+            if k_ in trades:
+                for f_ in ("risk_usd", "pnl", "pnl_now"):
+                    trades[k_].pop(f_, None)
+                trades[k_]["skipped"] = "late"
+            acc.setdefault("sized", {})[k_] = "late"
+        acc["undo5_2111"] = pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds")
     back_ = repair_5_1811(acc, trades, pd.Timestamp.now(tz="UTC").isoformat(timespec="seconds"))
     if back_:
         log(f"bot 5 ledger repaired: {back_:+.2f} of closes removed / rewritten on 18.11 put back")
@@ -2026,6 +2038,12 @@ def main():
                             rec["skipped"] = "v4" if rec["v4"] else "extra" if rec["extra"] else "old"
                         elif rec["status"] in ("open", "closed") and rec["time"] and rec["time"] < A_["started"]:
                             rec["skipped"] = "before"                                       # before the account opened
+                        elif rec["status"] in ("open", "closed") and rec["time"] and \
+                                pd.Timestamp.now(tz="UTC") - pd.Timestamp(rec["time"]) > pd.Timedelta(minutes=LATE_MIN):
+                            # first decided long after its fill (user, 21.11.2026: on Saturday 09:27 a US100 trade of
+                            # 19.11 06:53-15:38 "opened" and "closed at target" in the same minute, +$115.55): a trade the
+                            # bot did not take when it happened is not booked afterwards
+                            rec["skipped"] = "late"
                     if rec["status"] in ("open", "closed") and "risk_usd" not in rec and "skipped" not in rec:
                         bal, day = balance(), prague_day(rec["time"])
                         start = bal - day_pnl(day)

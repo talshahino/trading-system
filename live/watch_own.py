@@ -1443,6 +1443,18 @@ def scout5_trades(name, df, sc, cal):
     sess = np.asarray((gap > pd.Timedelta(hours=2)).to_numpy(), dtype=bool)
     ex, ne = CAL.masks(d, name, tfm, cal.restricted, cal.holidays)
     sess = sess | np.asarray(ex, bool)
+    # FTMO Account (standard) - nothing over a 2+ hour break (user, 21.11.2026: "the account must be like a funded
+    # account, not its challenge"): the break in the bars above is seen only once the next bar comes (on Monday - 5ב
+    # held 7 trades over the weekend of 21.11), so the bars from WKND_MIN minutes before a known break (the same weekday
+    # a week earlier, tal_gap.pre_break_mask on the 1-minute bars) close every trade and open none, as the gap tracks
+    try:
+        pre1 = TG.pre_break_mask(pd.DatetimeIndex(x1.index).as_unit("ns").asi8, TG.WKND_MIN + tfm)
+        pre = pd.Series(pre1, index=x1.index).resample(rule, label="left", closed="left").max().reindex(d.index).fillna(False)
+        pre = np.asarray(pre.to_numpy(), dtype=bool)
+        sess = sess | pre
+        ne = np.asarray(ne, bool) | pre
+    except Exception as e:  # noqa: BLE001
+        log(f"{name}: scout pre-break window not computed ({e})")
     fn = CAL.blocked(R.STRATEGIES[sc["sid"]][1], np.asarray(ne, bool))
     # the no-target protection the strategies were tested with (agent_portfolio: "without a target ber2.5") and bots
     # 1-4 trade with (live/runner.PROTECT): the stop to the entry at +2.5R, +1R locked at +3R. Missing here until

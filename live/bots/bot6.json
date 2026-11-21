@@ -130,7 +130,8 @@
   "scout:FG02|1Min|US100": 0.000504,
   "t1h_15": 0.00084,
   "scout:SC658|1Min|US100": 0.000307,
-  "scout:SC657|5Min|US100": 0.00041
+  "scout:SC657|5Min|US100": 0.00041,
+  "scout:FG03|15Min|US500": 0.00041
  },
  "changes": {
   "abb187377383": {
@@ -1284,6 +1285,13 @@
    "before": "__none__",
    "star_risk_before": "__none__",
    "fit6": 0.00041
+  },
+  "1b9865223d10": {
+   "family": "scout6",
+   "combo": "FG03|15Min|US500",
+   "before": "__none__",
+   "star_risk_before": "__none__",
+   "fit6": 0.00041
   }
  },
  "scout": {
@@ -1507,6 +1515,16 @@
    },
    "since": "2026-11-21T05:40:54+00:00",
    "card": "262e9936db68"
+  },
+  "FG03|15Min|US500": {
+   "v": {
+    "target": "none",
+    "stop": 0.75,
+    "time": "own",
+    "be": false
+   },
+   "since": "2026-11-21T17:36:43+00:00",
+   "card": "1b9865223d10"
   }
  }
 }

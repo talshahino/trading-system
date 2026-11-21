@@ -60,8 +60,8 @@
     "EXIT": "be886",
     "BBW": "h20",
     "WKND": 10,
-    "TREND": "day",
-    "STOPAT": "imp0late"
+    "STOPAT": "imp0late",
+    "TREND": "day"
    }
   },
   "t5_1": {
@@ -1243,6 +1243,31 @@
    "family": "risk",
    "track": "scout:FG02|1Min|US100",
    "before": 0.000201
+  },
+  "6e1848eeec6b": {
+   "family": "tal5",
+   "track": "t15_5",
+   "before": {
+    "pair": [
+     "15m",
+     "5m",
+     1
+    ],
+    "cfg": {
+     "GBODY": 0.0,
+     "MIN_GAP": 0.6,
+     "SW": 3,
+     "MIN_RR": 2.0,
+     "EXPIRY": 120,
+     "PROT": "none",
+     "EXIT": "be886",
+     "BBW": "h20",
+     "WKND": 10,
+     "TREND": "day",
+     "STOPAT": "imp0late"
+    }
+   },
+   "risk_before": 0.0012
   }
  },
  "scout": {

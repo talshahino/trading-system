@@ -155,6 +155,9 @@ def main():
     st.setdefault("balance", st["initial"])
     st.setdefault("book", {})            # key -> {stream, bucket, risk_usd, status, r, pnl, ...}
     st.setdefault("equity_curve", [])
+    # every strategy's live record for good (user, 21.11.2026: after 3-4 weeks give more risk to the strategies that
+    # earn live and less to the fading ones) - the book keeps only 14 days, this tally keeps n / sum R / sum R^2 / wins
+    st.setdefault("tally", {})
     log(f"started; {len(st['book'])} booked")
     last_push = 0.0
     while True:
@@ -204,6 +207,7 @@ def main():
                     b.update(status="closed", r=round(r, 4), pnl=pnl, close_t=t.get("close_t"), close_px=t.get("close_px"),
                              why=t.get("why") or t.get("reason"), day=today)
                     st["balance"] = round(st["balance"] + pnl, 2)
+                    tally(st, b, r)
                 else:
                     seen_open[key] = (t, r_open(t))
             # the weekend break: out at the source's last price (FTMO Account standard)
@@ -215,6 +219,7 @@ def main():
                         b.update(status="closed", r=round(r, 4), pnl=pnl, close_t=now.isoformat(timespec="seconds"),
                                  close_px=t.get("now"), why="לפני סגירת השוק (סוף שבוע)", day=today)
                         st["balance"] = round(st["balance"] + pnl, 2)
+                        tally(st, b, r)
                         seen_open.pop(key, None)
             # open trades whose source no longer shows them and never closed (a source reset): closed at 0 after 2 days
             for key, b in book.items():
@@ -229,16 +234,28 @@ def main():
             cut = (now - pd.Timedelta(days=14)).isoformat()
             st["book"] = book = {k: b for k, b in book.items() if b["status"] == "open" or (b.get("close_t") or b["seen"]) >= cut}
             out = view(st, conf, seen_open, now)
-            STATE_F.write_text(json.dumps(out | {"book": book, "day": st["day"]}, ensure_ascii=False, default=str), encoding="utf-8")
+            STATE_F.write_text(json.dumps(out | {"book": book, "day": st["day"], "tally": st["tally"]}, ensure_ascii=False,
+                                          default=str), encoding="utf-8")
             if time.time() - last_push > 60:
                 last_push = time.time()
-                pub = dict(out)
+                pub = dict(out, tally=st["tally"])
                 err = REP.push_state(NAME, pub)
                 if err:
                     log(err)
         except Exception:  # noqa: BLE001
             log(traceback.format_exc()[-800:])
         time.sleep(POLL)
+
+
+def tally(st, b, r):
+    x = st["tally"].setdefault(b["stream"], {"bucket": b["bucket"], "n": 0, "sum_r": 0.0, "sum_r2": 0.0, "wins": 0,
+                                             "usd": 0.0, "first": b["open_t"]})
+    x["n"] += 1
+    x["sum_r"] = round(x["sum_r"] + r, 4)
+    x["sum_r2"] = round(x["sum_r2"] + r * r, 4)
+    x["wins"] += r > 0
+    x["usd"] = round(x["usd"] + b["pnl"], 2)
+    x["last"] = b.get("close_t")
 
 
 def view(st, conf, seen_open, now):

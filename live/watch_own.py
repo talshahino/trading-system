@@ -576,6 +576,32 @@ class Source:
                 continue
         return None
 
+    def h1(self, name, days=125, every=900):
+        """The server's 1-hour candles (UTC, ~days back), cached for "every" seconds - for the 1-hour / 4-hour scout
+        strategies (21.11.2026: 14 days of 1-minute bars gave a 4-hour strategy under 300 bars, so it never traded,
+        and resampled it to 1 hour). None when not read."""
+        b = self.broker.get(name)
+        if not b:
+            return None
+        if not hasattr(self, "_h1"):
+            self._h1 = {}
+        t, h = self._h1.get(name, (0, None))
+        if h is None or time.time() - t > every:
+            try:
+                r = requests.get(self.url, params={"symbol": b, "tf": "1h", "from": int(time.time() - days * 86400),
+                                                    "to": int(time.time())}, timeout=20).json()
+                if r.get("error"):
+                    raise RuntimeError(r["error"])
+                a = np.array(r.get("bars") or [], dtype=float)
+                if len(a):
+                    h = pd.DataFrame({"o": a[:, 1], "h": a[:, 2], "l": a[:, 3], "c": a[:, 4], "v": 1.0},
+                                     index=pd.to_datetime(a[:, 0].astype("int64"), unit="s", utc=True))
+                    h = h[~h.index.duplicated(keep="last")].sort_index()
+                    self._h1[name] = (time.time(), h)
+            except Exception as e:  # noqa: BLE001
+                log(f"{name}: 1-hour candles not read ({e})")
+        return h
+
     def update(self, name):
         if name not in self.df:
             b = self.broker.get(name) or self.resolve(name)
@@ -1421,7 +1447,7 @@ def _run_rules():
     return _RR[0]
 
 
-def scout5_trades(name, df, sc, cal):
+def scout5_trades(name, df, sc, cal, hi=None):
     """Bot 5 (14.11.2026): one scout strategy on the live 1-minute bars, exactly as agent_portfolio.py tested it with
     run_rules.py and the live rules (LIVE_RULES): the strategy's timeframe, no position over a break of 2+ hours (the
     weekend), the holidays (no entry, out before), no entry from 3 minutes before to 3 after a restricted event of the
@@ -1431,13 +1457,23 @@ def scout5_trades(name, df, sc, cal):
     Returns the trades from "since" on, in the records' shape of the gap tracks (tal = "sc:<combo>")."""
     from agents import rules_agent as R
     RR = _run_rules()
-    tf, tfm = sc["tf"], SF.TF_MIN[sc["tf"]]
-    rule = f"{tfm}min" if tfm < 60 else "1h"
+    tf, tfm = sc["tf"], {**SF.TF_MIN, "1Hour": 60, "4Hour": 240}.get(sc["tf"])   # 4Hour was missing (bot 9, 21.11.2026)
+    rule = f"{tfm}min" if tfm < 60 else f"{tfm // 60}h"      # was "1h" for every 1-hour+ timeframe (fixed 21.11.2026)
     x1 = df[["o", "h", "l", "c"]]
-    d = x1.resample(rule, label="left", closed="left").agg({"o": "first", "h": "max", "l": "min", "c": "last"}).dropna()
-    if len(d) < 300:
-        return []
-    d["v"] = df["v"].resample(rule, label="left", closed="left").sum().reindex(d.index).fillna(0.0) if "v" in df else 1.0
+    if tfm >= 60 and hi is not None and len(hi):
+        # 1-hour / 4-hour: the server's 1-hour candles (~125 days), 4 hours resampled on UTC as live/runner and the
+        # backtest; the forming candle left out
+        d = hi[["o", "h", "l", "c"]].resample(rule, label="left", closed="left").agg(
+            {"o": "first", "h": "max", "l": "min", "c": "last"}).dropna()
+        d = d[d.index + pd.Timedelta(minutes=tfm) <= pd.Timestamp.now(tz="UTC")]
+        if len(d) < 300:
+            return []
+        d["v"] = 1.0
+    else:
+        d = x1.resample(rule, label="left", closed="left").agg({"o": "first", "h": "max", "l": "min", "c": "last"}).dropna()
+        if len(d) < 300:
+            return []
+        d["v"] = df["v"].resample(rule, label="left", closed="left").sum().reindex(d.index).fillna(0.0) if "v" in df else 1.0
     d.attrs.update(symbol=name, tf=tf)
     start = d.index.to_series()
     gap = start.shift(-1) - (start + pd.Timedelta(minutes=tfm))
@@ -1457,6 +1493,15 @@ def scout5_trades(name, df, sc, cal):
     except Exception as e:  # noqa: BLE001
         log(f"{name}: scout pre-break window not computed ({e})")
     fn = CAL.blocked(R.STRATEGIES[sc["sid"]][1], np.asarray(ne, bool))
+    if sc.get("plan"):
+        # a strategy that came from bot 7 (bot 9, 21.11.2026) runs with bot 7's built plan: its filter, stop / target /
+        # entry / breakeven / pyramid / one-direction keys, and the no-entry-before-a-release guard - as live/news_bot
+        # ran it (the calendar: live/news_bot.CAL_ITEMS, refreshed by the caller)
+        import news_bot as NB
+        p_ = sc["plan"]
+        fn = NB.filtered(fn, p_.get("filter"), NB.plan_keys(p_))
+        if p_.get("release_guard"):
+            fn = NB.release_guard(fn, p_["release_guard"])
     # the no-target protection the strategies were tested with (agent_portfolio: "without a target ber2.5") and bots
     # 1-4 trade with (live/runner.PROTECT): the stop to the entry at +2.5R, +1R locked at +3R. Missing here until
     # 18.11.2026 (user: SC317 at +4.5R and SC501 at +11R with the stop still at the full risk)

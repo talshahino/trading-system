@@ -89,6 +89,13 @@ def sources():
         j = rd(LIVE / f"{f}_state.json", {}) or {}
         out += [(bucket, "open", t) for t in j.get("positions") or []]
         out += [(bucket, "closed", t) for t in j.get("closed") or []]
+    # bot 7's technical strategies moved to bot 9 (Tal, 21.11.2026: bot 7 = releases and shocks only) stay in this
+    # account as before, in bot 7's risk bucket: read from bot 9's book ("from_pool" in live/bots/superbot.json)
+    fp = set((rd(LIVE / "bots" / "superbot.json", {}) or {}).get("from_pool") or [])
+    if fp:
+        j = rd(LIVE / "pool_bot_state.json", {}) or {}
+        out += [("bot7", "open", t) for t in j.get("positions") or [] if t.get("combo") in fp]
+        out += [("bot7", "closed", t) for t in j.get("closed") or [] if t.get("combo") in fp]
     for n, j in runners().items():
         out += [(f"bot{n}", "open", t) for t in j.get("positions") or []]
         out += [(f"bot{n}", "closed", t) for t in j.get("closed") or []]

@@ -69,6 +69,7 @@ def main():
     st.setdefault("tally", {})
     log(f"started; {len(conf.get('scout') or {})} strategies, {len(st['book'])} booked")
     last_push, missing = 0.0, set()
+    nb_cal = None                       # bot 7's calendar, for the strategies that came from bot 7 with a release guard
     while True:
         t_loop = time.time()
         try:
@@ -78,7 +79,15 @@ def main():
             for combo, v in scouts.items():
                 sid, tf, sym = combo.split("|")
                 by_sym.setdefault(sym, []).append({"sid": sid, "tf": tf, "since": v.get("since") or st["started"],
-                                                   "card": v.get("card")})
+                                                   "card": v.get("card"), "plan": v.get("plan")})
+            if any(v.get("plan", {}).get("release_guard") for v in scouts.values() if isinstance(v.get("plan"), dict)):
+                try:
+                    if nb_cal is None:
+                        import news_bot as NB
+                        nb_cal = NB.Calendar()
+                    nb_cal.refresh()
+                except Exception as e:  # noqa: BLE001
+                    log(f"bot 7's calendar not read ({str(e)[-200:]})")
             for s in by_sym:
                 W.SYMBOLS.setdefault(s, [s, f"{s}.cash"])
             try:
@@ -107,7 +116,8 @@ def main():
                 per = float(conf.get("risk_per_symbol", 0.004)) / len(scs)
                 for sc in scs:
                     try:
-                        recs = W.scout5_trades(sym, df, sc, cal)
+                        hi = src.h1(sym) if sc["tf"] in ("1Hour", "4Hour") else None
+                        recs = W.scout5_trades(sym, df, sc, cal, hi=hi)
                     except Exception as e:  # noqa: BLE001
                         log(f"{sym} {sc['sid']} {sc['tf']}: {str(e)[-200:]}")
                         continue

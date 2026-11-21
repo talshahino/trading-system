@@ -170,6 +170,58 @@ def _py():
     return sys.executable.replace("pythonw", "python")
 
 
+def _blob_sha(data):
+    """git's id of a file's content (the same as the tree's entry for an unchanged file)."""
+    import hashlib
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
+FAST_MAX_FILES, FAST_MAX_BYTES = 600, 300 * 1024 * 1024
+
+
+def _apply_fast(sha, stage):
+    """Step 1 of apply() without the whole repository's zip (21.11.2026: the zip grew to ~3 GB with the agents'
+    reports - an install stopped every bot for ~27 minutes): the version's file list (one call, git tree) and only the
+    files whose content differs from what is here, each checked against its git id. Returns (files, changed) like the
+    zip path - files = every installed path with its size, changed = the ones written to `stage`. Raises when anything
+    is unclear (a truncated list, too many / too big changes, a download that does not match) - apply() then falls
+    back to the zip, exactly as before."""
+    import base64
+    r = requests.get(f"https://api.github.com/repos/{REPO}/git/trees/{sha}", params={"recursive": "1"},
+                     headers=_headers(), timeout=60)
+    r.raise_for_status()
+    t = r.json()
+    if t.get("truncated"):
+        raise RuntimeError("file list truncated")
+    files, todo = {}, []
+    for e in t.get("tree") or []:
+        if e.get("type") != "blob" or e.get("mode") == "120000":
+            continue
+        rel = e["path"]
+        if rel in PROTECT or _not_installed(rel):
+            continue
+        files[rel] = int(e.get("size") or 0)
+        p = ROOT / rel
+        try:
+            same = p.is_file() and p.stat().st_size == files[rel] and _blob_sha(p.read_bytes()) == e["sha"]
+        except OSError:
+            same = False
+        if not same:
+            todo.append((rel, e["sha"]))
+    if len(todo) > FAST_MAX_FILES or sum(files[x] for x, _ in todo) > FAST_MAX_BYTES:
+        raise RuntimeError(f"{len(todo)} files changed - the full download is used")
+    for rel, bsha in todo:
+        g = requests.get(f"https://api.github.com/repos/{REPO}/git/blobs/{bsha}", headers=_headers(), timeout=120)
+        g.raise_for_status()
+        j = g.json()
+        data = base64.b64decode(j["content"]) if j.get("encoding") == "base64" else str(j.get("content", "")).encode("utf-8")
+        if _blob_sha(data) != bsha:
+            raise RuntimeError(f"{rel}: download does not match")
+        (stage / rel).parent.mkdir(parents=True, exist_ok=True)
+        (stage / rel).write_bytes(data)
+    return files, [x for x, _ in todo]
+
+
 def apply(sha):
     """Install version `sha` safely:
     1. download it and unpack it into a staging folder next to the program (nothing changed yet)
@@ -188,6 +240,17 @@ def apply(sha):
     # the zip goes to disk, not memory, and the agents' result files are not installed into the bots' folder (manager,
     # 14.11.2026: the GitHub scout added 83 thousand of them, 2.9 GB - the zip of main grew to 1.35 GB, read whole into
     # the bots' own process at every install; the bots never read them, the agents have their own copy)
+    fast = None
+    try:
+        stage.mkdir(parents=True, exist_ok=True)
+        fast = _apply_fast(sha, stage)
+    except Exception as e:  # noqa: BLE001 - the full download below, as before
+        print(f"updater: the quick install is not used ({str(e)[-200:]}); downloading the whole version", flush=True)
+        shutil.rmtree(stage, ignore_errors=True)
+        fast = None
+    if fast is not None:
+        _install_staged(sha, stage, backup, *fast)
+        return
     zpath = ROOT / "_update" / f"dl_{sha[:7]}.zip"
     zpath.parent.mkdir(parents=True, exist_ok=True)
     with requests.get(f"https://codeload.github.com/{REPO}/zip/{sha}", timeout=120, stream=True) as r:
@@ -209,23 +272,36 @@ def apply(sha):
         zpath.unlink()
     except OSError:
         pass
+    changed = [rel for rel, size in files.items() if not ((ROOT / rel).is_file() and (ROOT / rel).stat().st_size == size
+                                                          and (ROOT / rel).read_bytes() == (stage / rel).read_bytes())]
+    _install_staged(sha, stage, backup, files, changed, full=True)
+
+
+def _install_staged(sha, stage, backup, files, changed, full=False):
+    """Steps 2-6 of apply(): the version is in `stage` - whole (full, the zip) or only its changed files (the quick
+    path; the unchanged ones are the installed ones)."""
+    import py_compile
+    import shutil
     # 2. check before touching anything
-    for rel in files:
+    for rel in (files if full else changed):
         if rel.endswith(".py") and rel.startswith(("live/", "agents/")):
             py_compile.compile(str(stage / rel), doraise=True)
-    chk = subprocess.run([_py(), "-c", "from agents import rules_agent; print(len(rules_agent.STRATEGIES))"],
-                         cwd=str(stage), capture_output=True, text=True, timeout=300)
+    if full:
+        code = "from agents import rules_agent; print(len(rules_agent.STRATEGIES))"
+    else:                                           # the changed files first, the installed ones for the rest
+        code = ("import sys; sys.path[:0] = [%r, %r]; import agents; agents.__path__.insert(0, %r); "
+                "from agents import rules_agent; print(len(rules_agent.STRATEGIES))") % (str(stage), str(ROOT), str(stage / "agents"))
+    chk = subprocess.run([_py(), "-c", code], cwd=str(stage if full else ROOT), capture_output=True, text=True, timeout=300)
     if chk.returncode != 0:
         raise RuntimeError("the new version does not start: " + ((chk.stderr or chk.stdout).strip().splitlines() or ["?"])[-1][-200:])
     # 3. packages first: a failed install leaves the running version untouched
-    pip = subprocess.run([_py(), "-m", "pip", "install", "-q", "-r", str(stage / "live" / "requirements.txt")],
-                         capture_output=True, text=True, timeout=900)
-    if pip.returncode != 0:
-        raise RuntimeError("installing Python packages failed: " + ((pip.stderr or pip.stdout).strip().splitlines() or ["?"])[-1][-200:])
+    if full or "live/requirements.txt" in changed:
+        req = stage / "live" / "requirements.txt"
+        pip = subprocess.run([_py(), "-m", "pip", "install", "-q", "-r", str(req)], capture_output=True, text=True, timeout=900)
+        if pip.returncode != 0:
+            raise RuntimeError("installing Python packages failed: " + ((pip.stderr or pip.stdout).strip().splitlines() or ["?"])[-1][-200:])
     old = set(MANIFEST.read_text(encoding="utf-8").split("\n")) - {""} if MANIFEST.exists() else set()
     gone = [rel for rel in old - set(files) if rel not in PROTECT and not _not_installed(rel) and (ROOT / rel).is_file()]
-    changed = [rel for rel, size in files.items() if not ((ROOT / rel).is_file() and (ROOT / rel).stat().st_size == size
-                                                          and (ROOT / rel).read_bytes() == (stage / rel).read_bytes())]
     created = []
     try:
         for rel in changed + gone:                    # 4. backup

@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-21T04:14:22+00:00",
+ "updated": "2026-11-21T04:16:23+00:00",
  "light_at": "2026-11-21T04:14:22+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -63,8 +63,9 @@
    "{\"cards\": 6, \"summary\": {\"v5\": {\"live\": {\"n\": 14, \"eff_n\": 14.0, \"mean\": 0.0183, \"t\": 0.06, \"win\": 28.6}, \"erosion\": {\"recent_n\": 370, \"recent_mean\": -0.0722, \"before_n\": 1032, \"before_mean\": -0.0267, \"slope_per_year\": 0.0199, \"fading\": fal"
   ],
   "bot1": [
-   "this run: 25 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
-   "{\"bot\": \"bot1\", \"cards\": 80218, \"tiers\": {\"rejected\": 70586, \"watch\": 8737, \"regular\": 895}, \"done\": 303, \"planned\": 462}"
+   "this run: 64 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
+   "{\"bot\": \"bot1\", \"cards\": 80228, \"tiers\": {\"rejected\": 70588, \"watch\": 8741, \"regular\": 899}, \"done\": 313, \"planned\": 462}",
+   "(continued across a manager restart)"
   ],
   "bot7": [
    "EV04 ticks: 17/51 hours failed, 3 parallel downloads from now",
@@ -140,11 +141,12 @@
    "err": null
   },
   "bot1": {
-   "at": "2026-11-20T19:01:37+00:00",
-   "sec": 3217,
+   "at": "2026-11-21T03:29:00+00:00",
+   "sec": 2783,
    "budget_sec": 2100,
-   "ok": true,
-   "err": null
+   "ok": null,
+   "err": null,
+   "adopted": true
   }
  },
  "agent_errors_24h": [
@@ -166,12 +168,12 @@
  "machine": {
   "disk_gb": {
    "total": 223.0,
-   "free": 134.7
+   "free": 134.6
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.6,
-   "load_pct": 79
+   "free": 3.0,
+   "load_pct": 62
   }
  }
 }

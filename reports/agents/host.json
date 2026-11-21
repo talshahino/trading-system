@@ -1,15 +1,16 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-21T19:38:12+00:00",
- "light_at": "2026-11-21T19:22:40+00:00",
+ "updated": "2026-11-21T19:58:55+00:00",
+ "light_at": "2026-11-21T19:44:05+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
   "light": 10,
   "smart": 60
  },
  "smart_minutes": {
-  "bot3": 30.0
+  "bot3": 30.0,
+  "bot4": 30.0
  },
  "agent_errors": [],
  "agent_last": {
@@ -19,7 +20,7 @@
   "bot1": "2026-11-21T17:44:07+00:00",
   "bot2": "2026-11-21T18:33:02+00:00",
   "bot3": "2026-11-21T19:23:13+00:00",
-  "bot4": "2026-11-21T13:03:04+00:00",
+  "bot4": "2026-11-21T19:44:31+00:00",
   "bot7": "2026-11-21T13:41:25+00:00",
   "bot7-shocks": "2026-11-21T14:55:07+00:00",
   "bot6-new": "2026-11-21T15:16:53+00:00"
@@ -39,9 +40,8 @@
    "{\"bot\": \"bot3\", \"cards\": 47140, \"tiers\": {\"rejected\": 40819, \"watch\": 5709, \"regular\": 612}, \"done\": 291, \"planned\": 306}"
   ],
   "bot4": [
-   "this run: 22 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
-   "{\"bot\": \"bot4\", \"cards\": 28195, \"tiers\": {\"rejected\": 24128, \"watch\": 3557, \"regular\": 510}, \"done\": 266, \"planned\": 300}",
-   "(continued across a manager restart)"
+   "this run: 11 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
+   "{\"bot\": \"bot4\", \"cards\": 28198, \"tiers\": {\"rejected\": 24129, \"watch\": 3558, \"regular\": 511}, \"done\": 271, \"planned\": 300}"
   ],
   "bot7-shocks": [
    "walk-forward book inside 2025 (fade): ['GER40'] train {'n': 37, 'eff_n': 37.0, 'mean': 0.3123, 't': 1.08, 'win': 46.1, 'sum': 11.41} unseen {'n': 56, 'eff_n': 56.0, 'mean': -0.0532, 't': -0.27, 'win': 32.0, 'sum': -2.75}",
@@ -101,12 +101,11 @@
    "err": null
   },
   "bot4": {
-   "at": "2026-11-21T13:04:06+00:00",
-   "sec": 2043,
+   "at": "2026-11-21T19:44:31+00:00",
+   "sec": 740,
    "budget_sec": 1800,
-   "ok": null,
-   "err": null,
-   "adopted": true
+   "ok": true,
+   "err": null
   },
   "bot7": {
    "at": "2026-11-21T13:41:25+00:00",
@@ -163,12 +162,12 @@
  "machine": {
   "disk_gb": {
    "total": 223.0,
-   "free": 134.1
+   "free": 133.3
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.6,
-   "load_pct": 79
+   "free": 1.2,
+   "load_pct": 84
   }
  }
 }

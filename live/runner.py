@@ -641,11 +641,31 @@ class Account:
     def __init__(self, cfg, dry):
         self.cfg, self.dry = cfg, dry
         self.initial = cfg["initial"]
-        self.risk_usd = self.initial * cfg["risk"]
+        self.risk_pct = cfg["risk"]
+        self._bal = (0.0, None)
         self.free = cfg["free_risk_at_breakeven"]
         self.halt_until = None
         self._ds = None              # (Prague midnight, day-start balance): the last good reading
         self._halt_retry = 0.0
+
+    @property
+    def risk_usd(self):
+        """The normal risk of a trade in dollars: compounding (Tal, 21.11.2026: "all the accounts" - the risk follows
+        the balance as it is now, as the virtual bots do). FTMO's limits stay fixed: 10% below the initial amount
+        ($90,000) and 5% of the initial amount below the balance at midnight Prague - allowed_risk keeps them.
+        "compound": false in the bot's json -> the old fixed risk on the initial amount."""
+        if self.cfg.get("compound", True) is False:
+            return self.initial * self.risk_pct
+        t, b = self._bal
+        if b is None or time.time() - t > 30:
+            try:
+                ai = mt5.account_info()
+                if ai is not None and ai.balance > 0:
+                    b = float(ai.balance)
+                    self._bal = (time.time(), b)
+            except Exception:  # noqa: BLE001
+                pass
+        return (b or self.initial) * self.risk_pct
 
     def positions(self):
         return [p for p in (mt5.positions_get() or []) if p.magic in MAGICS]

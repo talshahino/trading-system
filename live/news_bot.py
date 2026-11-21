@@ -976,7 +976,11 @@ def israel_day(ts):
     return pd.Timestamp(ts).tz_convert("Europe/Prague").strftime("%Y-%m-%d")      # FTMO's day (midnight Prague)
 
 
-def book(acc, t, notify):
+DAY_CAP = 2          # at most 2 trades a day per strategy x instrument (Tal, 21.11.2026 "yes")
+GROUP_SIDS = {"EV03"}  # one release on several pairs at once = one bet: the risk is split between them (Tal, 21.11.2026)
+
+
+def book(acc, t, notify, group=1):
     """Puts a trade in the virtual account the first time it is seen (from the account's start), and books its
     result when it closes. Returns True when something changed."""
     if t["time"] < acc.a["started"]:
@@ -991,7 +995,14 @@ def book(acc, t, notify):
         if acc.a.get("dead") or bal <= INITIAL * (1 - MAX_LOSS) or bal <= stop_day:
             led[t["id"]] = {"skipped": "loss limit", "pnl": None, "closed_day": day}
             return True
-        m = risk_mult(plans(), f"{t['sid']}|{t.get('tf', '5Min')}|{t['symbol']}")
+        combo = f"{t['sid']}|{t.get('tf', '5Min')}|{t['symbol']}"
+        day0 = israel_day(t["time"])
+        # the day cap (21.11.2026, the replay: SC001 JP225 1Min opened up to 14 trades a day; 2 a day per strategy x
+        # instrument - 2025 $201K -> $210K, deepest fall 12.7% -> 11.0%; 2026 $234K -> $238K, 12.2% -> 8.1%)
+        if sum(1 for x in led.values() if x.get("combo") == combo and x.get("day0") == day0 and "skipped" not in x) >= DAY_CAP:
+            led[t["id"]] = {"skipped": "day cap", "pnl": None, "closed_day": day, "combo": combo, "day0": day0}
+            return True
+        m = risk_mult(plans(), combo) / max(1, int(group))
         # the fixed rule (user, 14.11.2026: "the daily and total limits are fixed and can never change - if such risk
         # opens, it is not OK"): every open trade counts as if it hit its stop, and a new one risks at most the room
         # left to the bot's own 4.5% day / 9% total lines - so the open stops can never cross FTMO's 5% / 10%
@@ -1002,7 +1013,7 @@ def book(acc, t, notify):
         if room < 0.25 * want:
             led[t["id"]] = {"skipped": "room", "pnl": None, "closed_day": day}
             return True
-        led[t["id"]] = {"risk_usd": round(min(want, room), 2), "pnl": None, "closed_day": "9999"}
+        led[t["id"]] = {"risk_usd": round(min(want, room), 2), "pnl": None, "closed_day": "9999", "combo": combo, "day0": day0}
         if notify:
             REP.notify(f"בוט 7: נפתחה {side}", f"{nm}\nכניסה {t['entry']:.5g} · סטופ {t['stop']:.5g}"
                        + (f" · יעד {t['target']:.5g}" if t["target"] else "") + f" · סיכון ${led[t['id']]['risk_usd']:,.0f} (וירטואלי)",
@@ -1268,6 +1279,10 @@ def main():
                     seen[t["id"]] = t
             seen = straddle_cap(seen, trades)
             seen = cost_cap(seen, trades)                   # no trade whose cost is over 0.75R (card 1dfedee52375)
+            grp = {}
+            for t in seen.values():
+                if t.get("sid") in GROUP_SIDS:
+                    grp[(t["sid"], t["time"])] = grp.get((t["sid"], t["time"]), 0) + 1
             for k, t in seen.items():
                 old = trades.get(k)
                 if old and old["status"] == "closed":
@@ -1277,7 +1292,7 @@ def main():
                 except Exception:  # noqa: BLE001 - a measurement must never stop the bot
                     pass
                 trades[k] = t
-                book(acc, t, notify=not first)
+                book(acc, t, notify=not first, group=grp.get((t.get("sid"), t["time"]), 1))
             # a trade still open in the account but no longer in the candles held (bot restarted long after): left open
             first = False
             keep = sorted(trades.values(), key=lambda t: t["time"])[-2000:]

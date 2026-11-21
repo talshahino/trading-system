@@ -1,7 +1,30 @@
 {
- "updated": "2026-11-21T12:26:21+00:00",
- "new": [],
+ "updated": "2026-11-21T12:50:08+00:00",
+ "new": [
+  "030d57258168"
+ ],
  "decisions": [
+  {
+   "id": "030d57258168",
+   "bot": "bot7",
+   "type": "reset",
+   "kind": "reset",
+   "combo": null,
+   "title": "בוט 7: החשבון מתחיל מחדש מ־100,000$ (חשבון 19)",
+   "decision": "approved",
+   "why": "שינוי מהותי בסגנון האסטרטגיה (נוספו 6 אסטרטגיות/מכשירים · כלל השתנה ב־EV03|5Min|AUDUSD, EV03|5Min|EURJPY, EV03|5Min|EURUSD, EV03|5Min|GBPJPY), והבוט עוד לא יציב (3 ימים מהאיפוס האחרון, פחות מ־14)",
+   "effect": "החשבון הקודם (32 עסקאות, -2,630$) נשמר ב־data/agents/bot7_archive/account_v18.json לסוכן של בוט 7 ולמנהל, ללמוד ממנו מה לשפר ומה לשמר. ביטול מחזיר את החשבון הקודם עם כל העסקאות",
+   "archive": "data/agents/bot7_archive/account_v18.json",
+   "action": {
+    "bot": "bot7",
+    "kind": "reset",
+    "v": 19
+   },
+   "at": "2026-11-21T12:50:08+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "f56c2293c936",
    "bot": "bot2",

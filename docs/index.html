@@ -721,7 +721,7 @@ async function livePoll() {
 /* live prices for the virtual bots (5, 6, 7) - user, 13.11.2026: "see the change every second". Their state comes from
    GitHub every minute or two; the prices come from bot 1's MetaTrader through the manager every second, and the open
    trades' price, profit and the equity are recomputed from them (risk x the move in R, like the bot itself). */
-const VIRT = ["watch_own", "watch_scout", "watch_fut", "news_bot", "superbot"];
+const VIRT = ["watch_own", "watch_scout", "watch_fut", "news_bot", "superbot", "pool_bot"];
 let qBusy = false, qT = 0;
 async function getQuotes(syms) {
   if (!syms.length || !mgr || !mgrInfo) return null;
@@ -1328,7 +1328,7 @@ function renderList() {
   const all = accList(), vis = all.filter(a => !a.hidden);
   // the active accounts in the bots' order 1 -> 7, whatever was opened or closed (user, 16.11.2026); two accounts of the
   // same bot: the newer first
-  const BOTN = a => ({watch_own: 5, watch_scout: 5.5, watch_fut: 6, news_bot: 7, superbot: 8})[a.bot || a.name] || +((String(a.bot || a.name).match(/^bot(\d)/) || [])[1] || 99);
+  const BOTN = a => ({watch_own: 5, watch_scout: 5.5, watch_fut: 6, news_bot: 7, superbot: 8, pool_bot: 9})[a.bot || a.name] || +((String(a.bot || a.name).match(/^bot(\d)/) || [])[1] || 99);
   const act = vis.filter(a => !a.archived).sort((x, y) => BOTN(x) - BOTN(y) || String(y.created || "").localeCompare(String(x.created || ""))),
     hist = all.filter(a => a.archived), hid = all.filter(a => a.hidden);
   let h = "";
@@ -1844,7 +1844,7 @@ async function convBadge() {
   talkBadges();
   try { const l = await convData(), n = l.reduce((a, x) => a + x.unseen, 0); if ($("convBtn")) $("convBtn").textContent = n ? `שיחות עם הסוכנים (${n} חדשות)` : "שיחות עם הסוכנים"; } catch (e) {}
 }
-const BOTNAME = n => ({watch_own: "בוט 5", watch_scout: "בוט 5ב", watch_fut: "בוט 6", news_bot: "בוט 7", superbot: "בוט על", manager: "המנהל"})[n] || (n.match(/^bot(\d)/) ? "בוט " + n.match(/^bot(\d)/)[1] : n);
+const BOTNAME = n => ({watch_own: "בוט 5", watch_scout: "בוט 5ב", watch_fut: "בוט 6", news_bot: "בוט 7", superbot: "בוט על", pool_bot: "בוט 9", manager: "המנהל"})[n] || (n.match(/^bot(\d)/) ? "בוט " + n.match(/^bot(\d)/)[1] : n);
 async function convOpen() {
   $("convPg").classList.add("on"); $("convBody").innerHTML = '<div class="empty">טוען…</div>';
   const l = await convData();

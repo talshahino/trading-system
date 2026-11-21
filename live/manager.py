@@ -219,7 +219,7 @@ def bot_of(title):
     n = m.group(1)
     if n == "5":
         return "watch_scout" if m.group(2) else "watch_own"
-    return {"6": "watch_fut", "7": "news_bot", "8": "superbot"}.get(n, f"bot{n}")
+    return {"6": "watch_fut", "7": "news_bot", "8": "superbot", "9": "pool_bot"}.get(n, f"bot{n}")
 
 
 def mute_set(d):
@@ -653,6 +653,27 @@ def start_super():
                                          creationflags=0x08000000 if os.name == "nt" else 0, stdout=subprocess.DEVNULL,
                                          stderr=open(LIVE / f"{SUPER_NAME}_stderr.log", "a"))
     log("started bot 8, the super bot (virtual, no money)")
+
+
+# bot 9 - the pool (user, 21.11.2026): 120 scout strategies that passed but are in no bot, virtual (live/pool_bot.py),
+# on bot 1's candles like bot 5
+POOL_NAME = "pool_bot"
+
+
+def start_pool():
+    if running(POOL_NAME) or not CFG.get("pool_bot", True):
+        return
+    src = watch_source()
+    if not src:
+        return
+    env = os.environ.copy()
+    env.update(MANAGED="1", SOURCE_PORT=str(src["port"]), MANAGER_KEY=CFG["local_key"])
+    SRC_PORT[POOL_NAME] = src["port"]
+    py = sys.executable.replace("pythonw.exe", "python.exe")
+    PROCS[POOL_NAME] = subprocess.Popen([py, str(LIVE / "pool_bot.py")], cwd=str(ROOT), env=env,
+                                        creationflags=0x08000000 if os.name == "nt" else 0, stdout=subprocess.DEVNULL,
+                                        stderr=open(LIVE / f"{POOL_NAME}_stderr.log", "a"))
+    log("started bot 9, the pool (virtual, no money)")
 
 
 def watch_mark(d):
@@ -1180,6 +1201,7 @@ def watchdog():
                 start_watch()
                 start_news()
                 start_super()
+                start_pool()
             # while an update installs, the bots are stopped on purpose: starting them again here (18.11.2026) made
             # them run on half-replaced files for ~5 minutes, then the restarted manager killed them as "an older copy"
             for a in ([] if WATCH.get("installing") else list(accounts())):
@@ -1323,6 +1345,12 @@ def public_accounts(with_run=True):
     if CFG.get("news_bot", True):
         out.append({"name": NEWS_NAME, "label": "בוט 7 · פרסומים כלכליים (וירטואלי)", "nickname": "בוט 7 · פרסומים", "bot": NEWS_NAME,
                     "login": None, "server": "וירטואלי · בלי כסף", "enabled": True, "running": running(NEWS_NAME) if with_run else None,
+                    "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
+                    "platform": "צפייה בלבד", "target_pct": 10, "preparing": False, "prepare_error": None, "mt5_hidden": True,
+                    "virtual": True})
+    if CFG.get("pool_bot", True):
+        out.append({"name": POOL_NAME, "label": "בוט 9 · מאגר (וירטואלי)", "nickname": "בוט 9", "bot": POOL_NAME,
+                    "login": None, "server": "וירטואלי · בלי כסף", "enabled": True, "running": running(POOL_NAME) if with_run else None,
                     "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
                     "platform": "צפייה בלבד", "target_pct": 10, "preparing": False, "prepare_error": None, "mt5_hidden": True,
                     "virtual": True})
@@ -1543,6 +1571,7 @@ def _install_update():
     stop_bot(WATCH_NAME)
     stop_bot(NEWS_NAME)
     stop_bot(SUPER_NAME)
+    stop_bot(POOL_NAME)
     for n in names:
         stop_bot(n)
     for a in accounts():
@@ -1619,7 +1648,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(503, {"error": "bot 1 not answering"})
         if len(parts) == 3 and parts[0] == "bot" and parts[2] in ("live", "state", "candles"):
             port = bot_port(parts[1])
-            if not port and parts[2] in ("state", "live") and parts[1] in ("watch_own", "watch_scout", "watch_fut", "news_bot", "superbot"):
+            if not port and parts[2] in ("state", "live") and parts[1] in ("watch_own", "watch_scout", "watch_fut", "news_bot", "superbot", "pool_bot"):
                 # a virtual account's state straight from this computer (user, 18.11.2026: "US100 reached 100% - why is
                 # it still open?" - through GitHub the app saw it 2-5 minutes late): the file the bot writes every minute
                 try:
@@ -1823,7 +1852,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True})
             if path == "/logs":                          # behind the secret code only; never published
                 which = str(d.get("which") or "manager")
-                if which not in ("manager", WATCH_NAME, NEWS_NAME, SUPER_NAME) and not acc_by(which):
+                if which not in ("manager", WATCH_NAME, NEWS_NAME, SUPER_NAME, POOL_NAME) and not acc_by(which):
                     raise ValueError("אין לוג כזה")
                 f = LIVE / f"{which}.log"
                 lines = f.read_text(encoding="utf-8", errors="replace").splitlines()[-400:] if f.exists() else []

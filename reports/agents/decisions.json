@@ -1,7 +1,92 @@
 {
- "updated": "2026-11-21T06:19:53+00:00",
- "new": [],
+ "updated": "2026-11-21T06:44:15+00:00",
+ "new": [
+  "af953345cd41",
+  "cfb5236f4dea"
+ ],
  "decisions": [
+  {
+   "id": "af953345cd41",
+   "bot": "bot4",
+   "type": "card",
+   "card": "e855ce0e84b2",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC504|15Min|XAGUSD: לא נגד מגמה חזקה (5 ממוצעים 9/21/50/100/200 בסדר)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+1.03R לעסקה, 34.0 עסקאות אפקטיביות, +0.56R מעל המצב הקיים) · בבוט השלם על 2026: רווח +165.80% → +169.08%, בלי יותר סיכון (יום גרוע -2.83%, ירידה 5.48%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3744,
+     "total": 165.8,
+     "worst_day": -2.83,
+     "max_dd": 5.71,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.37,
+     "guard_cut": 383,
+     "guard_skipped": 105
+    },
+    "after": {
+     "trades": 3734,
+     "total": 169.08,
+     "worst_day": -2.83,
+     "max_dd": 5.48,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.37,
+     "guard_cut": 382,
+     "guard_skipped": 103
+    }
+   },
+   "at": "2026-11-21T06:44:15+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "cfb5236f4dea",
+   "bot": "bot4",
+   "type": "card",
+   "card": "1773b33bc6cd",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC635|15Min|GBPJPY: ב־2R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־+0.00R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.42R לעסקה, 73.0 עסקאות אפקטיביות, +0.07R מעל המצב הקיים) · בבוט השלם על 2026: רווח +171.67% → +172.89%, בלי יותר סיכון (יום גרוע -2.88%, ירידה 5.45%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3731,
+     "total": 171.67,
+     "worst_day": -2.88,
+     "max_dd": 5.53,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.4,
+     "guard_cut": 392,
+     "guard_skipped": 106
+    },
+    "after": {
+     "trades": 3731,
+     "total": 172.89,
+     "worst_day": -2.88,
+     "max_dd": 5.45,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.4,
+     "guard_cut": 392,
+     "guard_skipped": 107
+    }
+   },
+   "at": "2026-11-21T06:44:15+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "22991cd73db2",
    "bot": "bot2",

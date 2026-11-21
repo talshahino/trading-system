@@ -55,7 +55,7 @@ SACCT_V = 1
 # trades of both accounts, so a trade that closed after a long hold fell out of the list at once, came back from the next
 # refresh with no memory of its size, and was sized again at today's full risk: 5ב's SC501 risked $12.30 and made 10.6R =
 # $130, and the ledger booked $4,491. The account remembers each size ("sized": {id: dollars, or the reason it was skipped}).
-SIZED_KEEP = 600
+SIZED_KEEP = 5000   # 600 held ~3 days of 5ב + gap decisions; an evicted "not taken" came back as a new trade after a restart (21.11.2026)
 
 
 def size_recall(acct, k, rec):

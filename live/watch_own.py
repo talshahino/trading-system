@@ -48,6 +48,18 @@ STATE_F = LIVE / f"{NAME}_state.json"
 MARKS_F = LIVE / "watch_marks.json"
 FUT_NAME = "watch_fut"          # bot 6: the virtual futures account (live/fut_account.py)
 FUT_F = LIVE / f"{FUT_NAME}_state.json"
+
+
+FUT_ON = [True]
+
+
+def fut_on():
+    """Bot 6 as the futures account here - unless live/bots/bot6.json "mode" is "swing" (user, 21.11.2026: bot 6 is bot
+    5's method on an FTMO Swing account, live/swing_bot.py, which writes the bot 6 card itself)."""
+    try:
+        return json.loads((LIVE / "bots" / "bot6.json").read_text(encoding="utf-8")).get("mode") != "swing"
+    except Exception:  # noqa: BLE001
+        return True
 SCOUT_NAME = "watch_scout"      # 5ב (17.11.2026): bot 5's scout strategies in their own virtual account
 SCOUT_F = LIVE / f"{SCOUT_NAME}_state.json"
 SACCT_V = 1
@@ -1826,6 +1838,7 @@ def main():
         t_cycle = time.time()
         load_settings()
         cal.refresh()
+        FUT_ON[0] = fut_on()
         # FTMO's live spreads: the scout strategies' instruments and the gap tracks' (18.11.2026)
         sp_names = {v["sym"] for v in SCOUT5.values()} | set(TAL5_SYMBOLS) | {n for v in TAL5_SYMS.values() for n in v}
         if sp_names:
@@ -1878,7 +1891,7 @@ def main():
                     finally:
                         for k_, v_ in keep1.items():
                             setattr(OG, k_, v_)
-                if name in FA.SPEC:
+                if name in FA.SPEC and FUT_ON[0]:
                     try:
                         calm = cal.cal_masks(df, name)
                     except Exception as e:  # noqa: BLE001
@@ -2389,6 +2402,8 @@ def main():
                 log(err)
             last_push = time.time()
         try:
+            if not FUT_ON[0]:
+                raise StopIteration
             fstate = fut_state(fa, ftrades, fseen, src)
             FUT_F.write_text(json.dumps(fstate, ensure_ascii=False, default=str), encoding="utf-8")
             if time.time() - last_fpush > 120:
@@ -2396,6 +2411,8 @@ def main():
                 if err:
                     log(err)
                 last_fpush = time.time()
+        except StopIteration:
+            pass
         except Exception:  # noqa: BLE001
             errors.append(f"bot 6: {traceback.format_exc()[-300:]}")
         if errors:

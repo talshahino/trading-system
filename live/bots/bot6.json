@@ -1,6 +1,6 @@
 {
  "name": "bot6",
- "label": "בוט 6 · חוזים עתידיים (וירטואלי)",
+ "label": "בוט 6 · שיטת בוט 5 בחשבון Swing (וירטואלי)",
  "note": "virtual bot (live/watch_own.py fut_step + live/fut_account.py). 'tal' = the user's gap method's main track as bot 6 trades it (pair = higher / lower timeframe / steps, cfg = agents/tal_gap.py rules), 'tal_tracks' = its other tracks (13.11.2026), 'risk' = share of the balance per trade per track. Written by the builder from approved cards.",
  "tal": {
   "pair": [
@@ -1526,5 +1526,7 @@
    "since": "2026-11-21T17:36:43+00:00",
    "card": "1b9865223d10"
   }
- }
+ },
+ "mode": "swing",
+ "mode_note": "Tal 21.11.2026: bot 6 = bot 5's gap tracks exactly as bot 5 runs them (live/swing_bot.py reads bot5.json), on an FTMO Swing account: no close before a break, no news restriction. The futures account (watch_own fut_step) is off while mode = swing; its settings below are kept."
 }

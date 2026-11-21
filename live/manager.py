@@ -676,6 +676,34 @@ def start_pool():
     log("started bot 9, the pool (virtual, no money)")
 
 
+# bot 6 - bot 5's gap method on an FTMO Swing account (user, 21.11.2026): live/swing_bot.py, on bot 1's candles; it
+# writes the bot 6 card (watch_fut) itself, and watch_own stops its futures account ("mode": "swing" in bots/bot6.json)
+SWING_NAME = "swing_bot"
+
+
+def swing_mode():
+    try:
+        return json.loads((LIVE / "bots" / "bot6.json").read_text(encoding="utf-8")).get("mode") == "swing"
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def start_swing():
+    if running(SWING_NAME) or not swing_mode():
+        return
+    src = watch_source()
+    if not src:
+        return
+    env = os.environ.copy()
+    env.update(MANAGED="1", SOURCE_PORT=str(src["port"]), MANAGER_KEY=CFG["local_key"])
+    SRC_PORT[SWING_NAME] = src["port"]
+    py = sys.executable.replace("pythonw.exe", "python.exe")
+    PROCS[SWING_NAME] = subprocess.Popen([py, str(LIVE / "swing_bot.py")], cwd=str(ROOT), env=env,
+                                         creationflags=0x08000000 if os.name == "nt" else 0, stdout=subprocess.DEVNULL,
+                                         stderr=open(LIVE / f"{SWING_NAME}_stderr.log", "a"))
+    log("started bot 6, bot 5's method on a Swing account (virtual, no money)")
+
+
 def watch_mark(d):
     k = str(d.get("id") or "")
     # the gap tracks' ids hold "@" ("UK100|tal|-1|g202611171550|t5_1@UK100") and the scout ones ":" ("sc:SC232|...") -
@@ -1202,6 +1230,7 @@ def watchdog():
                 start_news()
                 start_super()
                 start_pool()
+                start_swing()
             # while an update installs, the bots are stopped on purpose: starting them again here (18.11.2026) made
             # them run on half-replaced files for ~5 minutes, then the restarted manager killed them as "an older copy"
             for a in ([] if WATCH.get("installing") else list(accounts())):
@@ -1337,8 +1366,11 @@ def public_accounts(with_run=True):
                     "platform": "צפייה בלבד", "target_pct": 10, "preparing": False, "prepare_error": None, "mt5_hidden": True,
                     "virtual": True})
         # bot 6 (user, 10.11.2026): the virtual futures account, computed by the same watch bot (live/fut_account.py)
-        out.append({"name": "watch_fut", "label": "בוט 6 · חוזים עתידיים (וירטואלי)", "nickname": "בוט 6 · חוזים", "bot": "watch_fut",
-                    "login": None, "server": "וירטואלי · FTMO Futures · בלי כסף", "enabled": True, "running": running(WATCH_NAME) if with_run else None,
+        sw_ = swing_mode()
+        out.append({"name": "watch_fut", "label": "בוט 6 · שיטת בוט 5 בחשבון Swing (וירטואלי)" if sw_ else "בוט 6 · חוזים עתידיים (וירטואלי)",
+                    "nickname": "בוט 6 · Swing" if sw_ else "בוט 6 · חוזים", "bot": "watch_fut",
+                    "login": None, "server": "וירטואלי · FTMO Swing · בלי כסף" if sw_ else "וירטואלי · FTMO Futures · בלי כסף",
+                    "enabled": True, "running": (running(SWING_NAME) if sw_ else running(WATCH_NAME)) if with_run else None,
                     "archived": False, "archived_at": None, "hidden": False, "created": None, "broker": "וירטואלי",
                     "platform": "צפייה בלבד", "target_pct": 6, "preparing": False, "prepare_error": None, "mt5_hidden": True,
                     "virtual": True})
@@ -1572,6 +1604,7 @@ def _install_update():
     stop_bot(NEWS_NAME)
     stop_bot(SUPER_NAME)
     stop_bot(POOL_NAME)
+    stop_bot(SWING_NAME)
     for n in names:
         stop_bot(n)
     for a in accounts():

@@ -1,0 +1,107 @@
+name: Swing account study (bots 2, 3, 5b, 7)
+
+# The bots without the funded account's news / weekend / break exits (user, 21.11.2026): agents/swing_study.py.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: swing
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      jobs: ${{ steps.p.outputs.jobs }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - id: p
+        run: echo "jobs=$(python -m agents.swing_study plan)" >> "$GITHUB_OUTPUT"
+  run:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        job: ${{ fromJson(needs.plan.outputs.jobs) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Restore data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: poc-cache-${{ github.run_id }}
+          restore-keys: poc-cache-
+      - name: Run
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_API_SECRET_KEY: ${{ secrets.ALPACA_API_SECRET_KEY }}
+        run: python -u -m agents.swing_study run --job "${{ matrix.job }}" 2>&1 | tail -30
+      - name: Name
+        id: n
+        run: echo "n=$(echo '${{ matrix.job }}' | tr ':/' '__')" >> "$GITHUB_OUTPUT"
+      - name: Changed results
+        if: always()
+        run: |
+          mkdir -p out
+          mkdir -p out/reports/agents/swing
+          cp reports/agents/swing/*.json out/reports/agents/swing/ 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sw-${{ steps.n.outputs.n }}
+          path: out
+          if-no-files-found: ignore
+          retention-days: 5
+  merge:
+    needs: run
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          path: parts
+          pattern: sw-*
+      - name: Merge
+        run: |
+          for d in parts/*/; do [ -d "$d/reports" ] && cp -r "$d/reports/." reports/; done
+          git status --porcelain reports/agents | wc -l
+      - name: Report
+        run: python -m agents.swing_study report | head -60
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/agents/swing || true
+          git commit -qm "Swing account study (agents/swing_study)" || exit 0
+          for i in 1 2 3 4; do git pull -q --rebase --autostash -X theirs && git push -q && break; git rebase --abort 2>/dev/null || true; sleep $((i * 7)); done

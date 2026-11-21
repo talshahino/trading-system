@@ -29,5 +29,53 @@
   "bot1": 430,
   "bot2": 318,
   "bot4": 222
+ },
+ "result": {
+  "at": "2026-11-21T08:10:00Z",
+  "approved_after": {
+   "bot6": 33,
+   "bot2": 33,
+   "bot1": 25,
+   "bot7": 29,
+   "bot4": 15,
+   "bot5": 23,
+   "bot3": 43,
+   "total": 201
+  },
+  "approved_before": {
+   "bot6": 34,
+   "bot1": 9,
+   "bot7": 8,
+   "bot4": 21,
+   "bot2": 9,
+   "bot5": 36,
+   "bot3": 10,
+   "total": 127
+  },
+  "live": {
+   "after": {
+    "trading_combos": 82,
+    "trades": 223,
+    "sum_r": 84.2,
+    "mean_r": 0.378,
+    "by_bot_sum_r": {
+     "bot1": 7.14,
+     "bot2": 1.49,
+     "bot3": 17.55,
+     "bot4": 1.13,
+     "bot5": 57.05,
+     "bot6": 0.0,
+     "bot7": -0.16
+    }
+   },
+   "before": {
+    "trading_combos": 38,
+    "trades": 93,
+    "sum_r": -28.81,
+    "mean_r": -0.31
+   },
+   "note": "מתוך health.json של כל בוט, לפי שמות הקומבו בכותרות האישור. הרווח של החדשות מרוכז בזהב (SC501|5Min|XAUUSD +30.5R בבוט 5). בוט 6 עוד לא סחר באף אחת מהחדשות. אף בוט לא הורע בגללן: בוט 7 (הפסד מצטבר -10.2%) ובוטים 1,4 (חלשים מול הבדיקה) - החדשות שלהם ~0 או חיוביות."
+  },
+  "decision": "positive - keep luck_filter=class"
  }
 }

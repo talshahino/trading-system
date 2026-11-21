@@ -1,16 +1,15 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-21T14:25:18+00:00",
- "light_at": "2026-11-21T14:25:18+00:00",
+ "updated": "2026-11-21T14:50:53+00:00",
+ "light_at": "2026-11-21T14:50:53+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
   "light": 10,
   "smart": 60
  },
  "smart_minutes": {
-  "bot3": 30.0,
-  "bot4": 30.0
+  "bot7": 45.0
  },
  "agent_errors": [],
  "agent_last": {
@@ -67,11 +66,10 @@
    "{\"bot\": \"bot1\", \"cards\": 81976, \"tiers\": {\"rejected\": 72240, \"watch\": 8820, \"regular\": 916}, \"done\": 317, \"planned\": 462}"
   ],
   "bot7": [
-   "EV04 ticks: 39/51 hours failed, 3 parallel downloads from now",
-   "EV04 ticks: 24/218 done, 18 failed downloads (attempts failed: {'ConnectTimeout': 122, 'ReadTimeout': 61, 'http503': 10, 'ConnectionError': 1})",
-   "this run: 43 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
-   "{\"bot\": \"bot7\", \"cards\": 35213, \"tiers\": {\"rejected\": 31851, \"watch\": 2621, \"regular\": 741}, \"done\": 211, \"planned\": 498}",
-   "(continued across a manager restart)"
+   "EV04 ticks: 32/50 hours failed, 3 parallel downloads from now",
+   "EV04 ticks: 24/212 done, 18 failed downloads (attempts failed: {'ConnectTimeout': 90, 'http503': 45, 'ReadTimeout': 37, 'ConnectionError': 3})",
+   "this run: 9 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
+   "{\"bot\": \"bot7\", \"cards\": 35210, \"tiers\": {\"rejected\": 31851, \"watch\": 2621, \"regular\": 738}, \"done\": 211, \"planned\": 498}"
   ]
  },
  "agent_runs": {
@@ -113,12 +111,11 @@
    "adopted": true
   },
   "bot7": {
-   "at": "2026-11-21T06:56:51+00:00",
-   "sec": 3008,
+   "at": "2026-11-21T13:41:25+00:00",
+   "sec": 4082,
    "budget_sec": 2700,
-   "ok": null,
-   "err": null,
-   "adopted": true
+   "ok": true,
+   "err": null
   },
   "bot7-shocks": {
    "at": "2026-11-21T07:52:52+00:00",
@@ -174,8 +171,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.6,
-   "load_pct": 80
+   "free": 2.0,
+   "load_pct": 74
   }
  }
 }

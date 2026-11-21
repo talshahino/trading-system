@@ -1,16 +1,49 @@
 {
- "updated": "2026-11-21T13:48:02+00:00",
+ "updated": "2026-11-21T14:12:25+00:00",
  "new": [
-  "36856f390a76",
-  "4c7948204bbc",
-  "ffedb9f3b184",
-  "010f3bec7ea7",
-  "a476a247760e",
-  "8494710f5f91",
-  "9ecbf12eaa4b",
-  "a1552c041220"
+  "6a2d93e27400"
  ],
  "decisions": [
+  {
+   "id": "6a2d93e27400",
+   "bot": "bot4",
+   "type": "card",
+   "card": "ad80863792f4",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "SC504|15Min|XAGUSD: איזון ב־0.75R רווח",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+167.98% מול +168.74% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3543,
+     "total": 168.74,
+     "worst_day": -3.06,
+     "max_dd": 6.12,
+     "near_days": 1,
+     "max_open": 5.28,
+     "max_side": 4.15,
+     "guard_cut": 328,
+     "guard_skipped": 71
+    },
+    "after": {
+     "trades": 3544,
+     "total": 167.98,
+     "worst_day": -2.93,
+     "max_dd": 5.99,
+     "near_days": 0,
+     "max_open": 5.28,
+     "max_side": 4.15,
+     "guard_cut": 324,
+     "guard_skipped": 70
+    }
+   },
+   "at": "2026-11-21T14:12:25+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "a1552c041220",
    "bot": "bot1",

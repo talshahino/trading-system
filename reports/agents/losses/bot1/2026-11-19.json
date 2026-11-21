@@ -695,14 +695,13 @@
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
      {
-      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
-      "decision": null,
-      "at": "2026-11-19T23:20:00+00:00",
+      "what": "סיכון ×0.9",
+      "decision": "010f3bec7ea7",
+      "at": "2026-11-21T13:48:02+00:00",
       "effect_month_pct": null,
       "cut": true,
-      "prev": null,
-      "value": null,
-      "failed": true
+      "prev": 0.6,
+      "value": 0.9
      }
     ],
     "open": false,
@@ -758,28 +757,17 @@
     "cause": "סטופ אחרי תנועה קטנה לטובה",
     "fixes": [
      {
-      "what": "כל המשפחות נבדקו ונכשלו - הסיכון לפי היתרון",
-      "decision": null,
-      "at": "2026-11-19T19:40:00+00:00",
+      "what": "סיכון ×0 (הוסרה)",
+      "decision": "ffedb9f3b184",
+      "at": "2026-11-21T13:48:02+00:00",
       "effect_month_pct": null,
-      "cut": true,
+      "cut": false,
       "prev": null,
-      "value": null,
-      "failed": true
+      "value": null
      }
     ],
     "open": false,
-    "cut_only": true,
-    "edge_mult": 0.4,
-    "edge_parts": [
-     "בבדיקה של 2026: +0.13R לעסקה (225 עסקאות), בתקופת הבחירה +0.05R",
-     "בחי: -0.57R לעסקה (11 עסקאות)",
-     "הבדיקה שווה 89% מהמשקל, החי 11%",
-     "היתרון עכשיו: +0.05R לעסקה",
-     "סיכון = +0.05 ÷ +0.13 = ×0.40"
-    ],
-    "edge0": 0.126,
-    "edge": 0.05
+    "cut_only": false
    },
    {
     "combo": "TT41|1Hour|USDCHF",
@@ -907,12 +895,11 @@
    "TV39|1Hour|JP225",
    "SE01|1Hour|CSCO",
    "SC154|5Min|XAUUSD",
-   "SE02|1Hour|USDJPY",
    "MQ11|4Hour|MSTR",
    "SC319|1Hour|ETHUSD",
    "TV10|1Hour|US100"
   ],
   "total_month_pct": 0.72,
-  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 9 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "status": "סגור - לכל אסטרטגיה שהפסידה יש תיקון · 8 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

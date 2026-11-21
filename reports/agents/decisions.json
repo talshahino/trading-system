@@ -1,7 +1,211 @@
 {
- "updated": "2026-11-21T13:22:24+00:00",
- "new": [],
+ "updated": "2026-11-21T13:48:02+00:00",
+ "new": [
+  "36856f390a76",
+  "4c7948204bbc",
+  "ffedb9f3b184",
+  "010f3bec7ea7",
+  "a476a247760e",
+  "8494710f5f91",
+  "9ecbf12eaa4b",
+  "a1552c041220"
+ ],
  "decisions": [
+  {
+   "id": "a1552c041220",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SE02|1Hour|USDJPY",
+   "title": "SE02|1Hour|USDJPY: סיכון חוזר ל־×0.39 - נמצא תיקון אחרי דוח ההפסד של 2026-11-19",
+   "decision": "approved",
+   "by": "manager",
+   "read": false,
+   "undone": false,
+   "at": "2026-11-21T13:54:04+00:00",
+   "why": "המנהל: ההורדה הייתה רק עד שיימצא תיקון. נמצא: סיכון ×0 (הוסרה)",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "loss_back": "bot1/2026-11-19",
+   "action": {
+    "bot": "bot1",
+    "combo": "SE02|1Hour|USDJPY",
+    "kind": "mult",
+    "value": 0.39,
+    "prev": 0.36
+   }
+  },
+  {
+   "id": "36856f390a76",
+   "bot": "bot4",
+   "type": "card",
+   "card": "d5a2be35bcc6",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "SC504|15Min|XAGUSD: בלי יעד · סטופ x0.75",
+   "decision": "declined",
+   "why": "בבוט השלם על 2026 לא מוסיף רווח (+167.94% מול +170.28% היום)",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3734,
+     "total": 170.28,
+     "worst_day": -2.83,
+     "max_dd": 5.36,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.37,
+     "guard_cut": 383,
+     "guard_skipped": 104
+    },
+    "after": {
+     "trades": 3732,
+     "total": 167.94,
+     "worst_day": -2.71,
+     "max_dd": 5.32,
+     "near_days": 0,
+     "max_open": 5.42,
+     "max_side": 4.37,
+     "guard_cut": 381,
+     "guard_skipped": 105
+    }
+   },
+   "at": "2026-11-21T13:48:02+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "4c7948204bbc",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "TV29|4Hour|US500",
+   "title": "TV29|4Hour|US500: סיכון ×1.1",
+   "decision": "approved",
+   "why": "רווח ממוצע +0.48R מול -0.12R של הבוט, יציבות 0.85, 6 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "TV29|4Hour|US500",
+    "kind": "mult",
+    "value": 1.1,
+    "prev": 1.29
+   },
+   "at": "2026-11-21T13:48:02+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "ffedb9f3b184",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "remove",
+   "combo": "SE02|1Hour|USDJPY",
+   "title": "SE02|1Hour|USDJPY: להסיר",
+   "decision": "approved",
+   "why": "-6.4R ב־12 עסקאות, מתחת לקו -6.3R (כלל ההסרה)",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "SE02|1Hour|USDJPY",
+    "kind": "mult",
+    "value": 0,
+    "prev": 0.36
+   },
+   "at": "2026-11-21T13:48:02+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "010f3bec7ea7",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC154|5Min|XAUUSD",
+   "title": "SC154|5Min|XAUUSD: סיכון ×0.9",
+   "decision": "approved",
+   "why": "רווח ממוצע -0.83R מול -0.12R של הבוט, יציבות 0.38, 6 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot1",
+    "combo": "SC154|5Min|XAUUSD",
+    "kind": "mult",
+    "value": 0.9,
+    "prev": 0.6
+   },
+   "at": "2026-11-21T13:48:02+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "a476a247760e",
+   "bot": "bot2",
+   "type": "risk",
+   "kind": "remove",
+   "combo": "SE02|1Hour|USDJPY",
+   "title": "SE02|1Hour|USDJPY: להסיר",
+   "decision": "approved",
+   "why": "-6.4R ב־12 עסקאות, מתחת לקו -6.3R (כלל ההסרה)",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot2",
+    "combo": "SE02|1Hour|USDJPY",
+    "kind": "mult",
+    "value": 0,
+    "prev": 0.16
+   },
+   "at": "2026-11-21T13:48:02+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "8494710f5f91",
+   "bot": "bot3",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "IB056|1Hour|XAUUSD",
+   "title": "IB056|1Hour|XAUUSD: סיכון ×1.05",
+   "decision": "approved",
+   "why": "רווח ממוצע +1.87R מול +0.14R של הבוט, יציבות 0.59, 5 עסקאות",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot3",
+    "combo": "IB056|1Hour|XAUUSD",
+    "kind": "mult",
+    "value": 1.05,
+    "prev": 1.87
+   },
+   "at": "2026-11-21T13:48:02+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "9ecbf12eaa4b",
+   "bot": "bot4",
+   "type": "risk",
+   "kind": "remove",
+   "combo": "SE02|1Hour|USDJPY",
+   "title": "SE02|1Hour|USDJPY: להסיר",
+   "decision": "approved",
+   "why": "-6.4R ב־12 עסקאות, מתחת לקו -6.3R (כלל ההסרה)",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "action": {
+    "bot": "bot4",
+    "combo": "SE02|1Hour|USDJPY",
+    "kind": "mult",
+    "value": 0,
+    "prev": 0.54
+   },
+   "at": "2026-11-21T13:48:02+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "030d57258168",
    "bot": "bot7",

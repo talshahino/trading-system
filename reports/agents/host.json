@@ -1,15 +1,16 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-21T00:14:48+00:00",
- "light_at": "2026-11-20T23:53:23+00:00",
+ "updated": "2026-11-21T00:29:58+00:00",
+ "light_at": "2026-11-21T00:17:29+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
   "light": 10,
   "smart": 60
  },
  "smart_minutes": {
-  "bot7-shocks": 15.0
+  "bot7-shocks": 15.0,
+  "bot6-new": 10.0
  },
  "agent_errors": [],
  "agent_last": {
@@ -22,7 +23,7 @@
   "bot4": "2026-11-20T21:51:13+00:00",
   "bot7": "2026-11-20T22:38:21+00:00",
   "bot7-shocks": "2026-11-20T23:54:31+00:00",
-  "bot6-new": "2026-11-20T15:05:38+00:00"
+  "bot6-new": "2026-11-21T00:17:59+00:00"
  },
  "agent_tail": {
   "bot5-new": [
@@ -48,9 +49,9 @@
    "walk-forward book inside 2025 (cont): ['GBPUSD', 'US500', 'USDJPY', 'XAUUSD'] train {'n': 152, 'eff_n': 151.8, 'mean': 0.6597, 't': 2.73, 'win': 40.1, 'sum': 99.98} unseen {'n': 369, 'eff_n': 368.9, 'mean': -0.0622, 't': -0.55, 'win': 27.1,"
   ],
   "bot6-new": [
-   "this run: 0 experiments, 52 new-strategy combos",
-   "{\"bot\": \"bot6\", \"new_cards\": 3894}",
-   "(continued across a manager restart)"
+   "this run: 0 experiments, 26 new-strategy combos",
+   "{\"bot\": \"bot6\", \"new_cards\": 3920}",
+   "(ended while the manager restarted)"
   ],
   "bot5": [
    "chosen on 2025: ema4h",
@@ -127,12 +128,11 @@
    "err": null
   },
   "bot6-new": {
-   "at": "2026-11-20T15:07:05+00:00",
-   "sec": 878,
+   "at": "2026-11-21T00:19:01+00:00",
+   "sec": null,
    "budget_sec": 600,
    "ok": null,
-   "err": null,
-   "adopted": true
+   "err": "ended while the manager restarted - published after"
   },
   "bot5": {
    "at": "2026-11-20T15:37:58+00:00",
@@ -172,8 +172,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.0,
-   "load_pct": 87
+   "free": 2.1,
+   "load_pct": 73
   }
  }
 }

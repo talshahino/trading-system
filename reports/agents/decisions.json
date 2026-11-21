@@ -1,7 +1,170 @@
 {
- "updated": "2026-11-21T11:47:13+00:00",
+ "updated": "2026-11-21T12:26:21+00:00",
  "new": [],
  "decisions": [
+  {
+   "id": "f56c2293c936",
+   "bot": "bot2",
+   "type": "card",
+   "card": "f6673b5d7608",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "SC666|1Hour|XAUUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "declined",
+   "why": "בבוט השלם מוסיף סיכון (יום גרוע -2.45% → -2.49%, ירידה 5.85% → 6.06%, ימים קרובים למגבלה 0 → 0) גם בסיכון מוקטן",
+   "effect": "לא ייבנה בבוט",
+   "whole_bot": {
+    "before": {
+     "trades": 3554,
+     "total": 155.19,
+     "worst_day": -2.45,
+     "max_dd": 5.85,
+     "near_days": 0,
+     "max_open": 5.41,
+     "max_side": 4.27,
+     "guard_cut": 180,
+     "guard_skipped": 29
+    },
+    "after": {
+     "trades": 3558,
+     "total": 156.23,
+     "worst_day": -2.49,
+     "max_dd": 6.06,
+     "near_days": 0,
+     "max_open": 5.41,
+     "max_side": 4.27,
+     "guard_cut": 180,
+     "guard_skipped": 29
+    }
+   },
+   "at": "2026-11-21T12:13:29+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "234ab953ecc9",
+   "bot": "bot2",
+   "type": "card",
+   "card": "11fa7ae9368d",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC635|15Min|GBPJPY: ב־2R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־+0.00R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.42R לעסקה, 73.0 עסקאות אפקטיביות, +0.08R מעל המצב הקיים) · בבוט השלם השינוי מוסיף רווח אבל גם סיכון; בסיכון ×0.45 לאסטרטגיה: רווח +155.19% → +155.72% והסיכון לא עולה · ⭐ אולי מזל: נכנס בסיכון ×0.45 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3554,
+     "total": 155.19,
+     "worst_day": -2.45,
+     "max_dd": 5.85,
+     "near_days": 0,
+     "max_open": 5.41,
+     "max_side": 4.27,
+     "guard_cut": 180,
+     "guard_skipped": 29
+    },
+    "after": {
+     "trades": 3554,
+     "total": 155.72,
+     "worst_day": -2.45,
+     "max_dd": 5.98,
+     "near_days": 0,
+     "max_open": 5.41,
+     "max_side": 4.27,
+     "guard_cut": 178,
+     "guard_skipped": 29
+    }
+   },
+   "at": "2026-11-21T12:13:29+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "71de54899367",
+   "bot": "bot2",
+   "type": "card",
+   "card": "54930b9fef06",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC667|4Hour|XAUUSD: ב־2R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־+0.00R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.29R לעסקה, 89.0 עסקאות אפקטיביות, +0.15R מעל המצב הקיים) · בבוט השלם על 2026: רווח +155.72% → +159.51%, בלי יותר סיכון (יום גרוע -2.45%, ירידה 6.00%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3554,
+     "total": 155.72,
+     "worst_day": -2.45,
+     "max_dd": 5.98,
+     "near_days": 0,
+     "max_open": 5.41,
+     "max_side": 4.27,
+     "guard_cut": 178,
+     "guard_skipped": 29
+    },
+    "after": {
+     "trades": 3557,
+     "total": 159.51,
+     "worst_day": -2.45,
+     "max_dd": 6.0,
+     "near_days": 0,
+     "max_open": 5.41,
+     "max_side": 4.27,
+     "guard_cut": 176,
+     "guard_skipped": 30
+    }
+   },
+   "at": "2026-11-21T12:13:29+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "cf3e452e83b2",
+   "bot": "bot2",
+   "type": "card",
+   "card": "1d4e005f1648",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC698|4Hour|XAUUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.20R לעסקה, 39.0 עסקאות אפקטיביות, +0.02R מעל המצב הקיים) · בבוט השלם על 2026: רווח +159.93% → +160.24%, בלי יותר סיכון (יום גרוע -2.48%, ירידה 6.16%) · ⭐ אולי מזל: נכנס בסיכון ×0.7 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 3557,
+     "total": 159.93,
+     "worst_day": -2.48,
+     "max_dd": 6.16,
+     "near_days": 0,
+     "max_open": 5.41,
+     "max_side": 4.27,
+     "guard_cut": 178,
+     "guard_skipped": 30
+    },
+    "after": {
+     "trades": 3557,
+     "total": 160.24,
+     "worst_day": -2.48,
+     "max_dd": 6.16,
+     "near_days": 0,
+     "max_open": 5.41,
+     "max_side": 4.27,
+     "guard_cut": 177,
+     "guard_skipped": 30
+    }
+   },
+   "at": "2026-11-21T12:13:29+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "de2a4d8b12f5",
    "bot": "bot1",

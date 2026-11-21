@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-21T07:43:07+00:00",
+ "updated": "2026-11-21T07:47:59+00:00",
  "light_at": "2026-11-21T07:43:07+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -67,11 +67,11 @@
    "(continued across a manager restart)"
   ],
   "bot7": [
-   "EV04 ticks: 17/51 hours failed, 3 parallel downloads from now",
-   "EV04 ticks: 24/235 done, 7 failed downloads (attempts failed: {'ConnectTimeout': 63, 'ReadTimeout': 39, 'http503': 30})",
-   "this run: 52 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
-   "{\"bot\": \"bot7\", \"cards\": 34458, \"tiers\": {\"rejected\": 31149, \"watch\": 2590, \"regular\": 719}, \"done\": 181, \"planned\": 498}",
-   "(ended while the manager restarted)"
+   "EV04 ticks: 39/51 hours failed, 3 parallel downloads from now",
+   "EV04 ticks: 24/218 done, 18 failed downloads (attempts failed: {'ConnectTimeout': 122, 'ReadTimeout': 61, 'http503': 10, 'ConnectionError': 1})",
+   "this run: 43 experiments, 0 new-strategy combos (first pass left to the GitHub scout)",
+   "{\"bot\": \"bot7\", \"cards\": 35213, \"tiers\": {\"rejected\": 31851, \"watch\": 2621, \"regular\": 741}, \"done\": 211, \"planned\": 498}",
+   "(continued across a manager restart)"
   ]
  },
  "agent_runs": {
@@ -113,11 +113,12 @@
    "err": null
   },
   "bot7": {
-   "at": "2026-11-20T22:39:29+00:00",
-   "sec": null,
+   "at": "2026-11-21T06:56:51+00:00",
+   "sec": 3008,
    "budget_sec": 2700,
    "ok": null,
-   "err": "ended while the manager restarted - published after"
+   "err": null,
+   "adopted": true
   },
   "bot7-shocks": {
    "at": "2026-11-20T23:54:31+00:00",
@@ -168,12 +169,12 @@
  "machine": {
   "disk_gb": {
    "total": 223.0,
-   "free": 134.0
+   "free": 132.9
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 2.0,
-   "load_pct": 75
+   "free": 2.7,
+   "load_pct": 66
   }
  }
 }

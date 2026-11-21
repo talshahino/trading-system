@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-20T13:44:12+00:00",
- "sample": "2026-11-20",
+ "updated": "2026-11-21T13:08:39+00:00",
+ "sample": "2026-11-21",
  "since": "2026-11-01",
  "backtest": {
   "from": "2025-04-30",
@@ -19,34 +19,34 @@
  "bots": {
   "bot1": {
    "risk_pct": 0.375,
-   "trades": 239,
-   "mean_r": -0.141,
+   "trades": 266,
+   "mean_r": -0.115,
    "combos": [
     {
      "combo": "TV39|1Hour|JP225",
-     "trades": 18,
-     "win_pct": 27.8,
-     "mean_r": -0.25,
-     "sum_r": -4.5,
-     "mult": 0.6,
-     "risk_pct": 0.225,
-     "target": 0.926,
+     "trades": 20,
+     "win_pct": 35.0,
+     "mean_r": 0.138,
+     "sum_r": 2.76,
+     "mult": 0.67,
+     "risk_pct": 0.2513,
+     "target": 1.114,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.25R מול -0.14R של הבוט, יציבות 0.62, 18 עסקאות"
+       "value": 1.1,
+       "label": "סיכון ×1.1",
+       "why": "רווח ממוצע +0.14R מול -0.12R של הבוט, יציבות 0.73, 20 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 18,
-        "win_pct": 27.8,
-        "mean_r": -0.25,
-        "sum_r": -4.5,
-        "pf": 0.39
+        "trades": 20,
+        "win_pct": 35.0,
+        "mean_r": 0.138,
+        "sum_r": 2.76,
+        "pf": 1.38
        },
        "backtest": {
         "trades": 499,
@@ -57,18 +57,18 @@
        }
       },
       "stability": {
-       "score": 0.62,
+       "score": 0.73,
        "demo": {
-        "score": 0.2,
-        "without_best_r": -5.89,
+        "score": 0.47,
+        "without_best_r": -1.69,
         "max_loss_r": 1.01,
-        "avg_win_r": 0.57,
+        "avg_win_r": 1.44,
         "drawdown_r": 5.91,
-        "sd_r": 0.64,
+        "sd_r": 1.37,
         "checks": [
          0.0,
-         0.61,
-         0.0
+         1.0,
+         0.41
         ]
        },
        "backtest": {
@@ -92,8 +92,8 @@
          "mean_r": -0.19
         },
         "sell": {
-         "trades": 8,
-         "mean_r": -0.32
+         "trades": 10,
+         "mean_r": 0.47
         }
        },
        "backtest": {
@@ -109,7 +109,7 @@
       },
       "exits": {
        "bt_trades": 499,
-       "demo_trades": 18,
+       "demo_trades": 20,
        "mfe_median_r": 0.66,
        "mae_winners_p90_r": 0.58
       },
@@ -172,13 +172,13 @@
      "sum_r": -2.28,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 0.939,
+     "target": 0.931,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.38R מול -0.14R של הבוט, יציבות 0.81, 6 עסקאות"
+       "why": "רווח ממוצע -0.38R מול -0.12R של הבוט, יציבות 0.81, 6 עסקאות"
       }
      ],
      "detail": {
@@ -308,29 +308,29 @@
     },
     {
      "combo": "TV21|15Min|ASML",
-     "trades": 5,
-     "win_pct": 40.0,
-     "mean_r": -0.198,
-     "sum_r": -0.99,
+     "trades": 6,
+     "win_pct": 50.0,
+     "mean_r": -0.142,
+     "sum_r": -0.85,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.995,
+     "target": 1.0,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.20R מול -0.14R של הבוט, יציבות 0.82, 5 עסקאות"
+       "why": "רווח ממוצע -0.14R מול -0.12R של הבוט, יציבות 0.78, 6 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 5,
-        "win_pct": 40.0,
-        "mean_r": -0.198,
-        "sum_r": -0.99,
-        "pf": 0.62
+        "trades": 6,
+        "win_pct": 50.0,
+        "mean_r": -0.142,
+        "sum_r": -0.85,
+        "pf": 0.67
        },
        "backtest": {
         "trades": 495,
@@ -341,17 +341,17 @@
        }
       },
       "stability": {
-       "score": 0.82,
+       "score": 0.78,
        "demo": {
-        "score": 0.29,
-        "without_best_r": -2.1,
+        "score": 0.21,
+        "without_best_r": -1.96,
         "max_loss_r": 1.0,
-        "avg_win_r": 0.8,
+        "avg_win_r": 0.58,
         "drawdown_r": 2.59,
-        "sd_r": 0.95,
+        "sd_r": 0.86,
         "checks": [
          0.0,
-         0.87,
+         0.64,
          0.0
         ]
        },
@@ -376,8 +376,8 @@
          "mean_r": -0.79
         },
         "sell": {
-         "trades": 3,
-         "mean_r": 0.2
+         "trades": 4,
+         "mean_r": 0.18
         }
        },
        "backtest": {
@@ -393,7 +393,7 @@
       },
       "exits": {
        "bt_trades": 495,
-       "demo_trades": 5,
+       "demo_trades": 6,
        "mfe_median_r": 0.51,
        "mae_winners_p90_r": 0.63
       },
@@ -444,13 +444,13 @@
      "sum_r": -0.38,
      "mult": 0.85,
      "risk_pct": 0.3187,
-     "target": 1.043,
+     "target": 1.033,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע -0.03R מול -0.14R של הבוט, יציבות 0.74, 13 עסקאות"
+       "why": "רווח ממוצע -0.03R מול -0.12R של הבוט, יציבות 0.74, 13 עסקאות"
       }
      ],
      "detail": {
@@ -577,13 +577,13 @@
      "sum_r": -2.16,
      "mult": 0.62,
      "risk_pct": 0.2325,
-     "target": 0.962,
+     "target": 0.951,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.24R מול -0.14R של הבוט, יציבות 0.65, 9 עסקאות"
+       "why": "רווח ממוצע -0.24R מול -0.12R של הבוט, יציבות 0.65, 9 עסקאות"
       }
      ],
      "detail": {
@@ -716,7 +716,7 @@
        "kind": "mult",
        "value": 0.85,
        "label": "סיכון ×0.85",
-       "why": "רווח ממוצע -0.86R מול -0.14R של הבוט, יציבות 0.68, 10 עסקאות"
+       "why": "רווח ממוצע -0.86R מול -0.12R של הבוט, יציבות 0.68, 10 עסקאות"
       }
      ],
      "detail": {
@@ -987,7 +987,7 @@
        "kind": "mult",
        "value": 0.85,
        "label": "סיכון ×0.85",
-       "why": "רווח ממוצע -0.60R מול -0.14R של הבוט, יציבות 0.70, 11 עסקאות"
+       "why": "רווח ממוצע -0.60R מול -0.12R של הבוט, יציבות 0.70, 11 עסקאות"
       }
      ],
      "detail": {
@@ -1120,29 +1120,29 @@
     },
     {
      "combo": "TV56|1Hour|US2000",
-     "trades": 9,
-     "win_pct": 44.4,
-     "mean_r": -0.228,
-     "sum_r": -2.05,
-     "mult": 0.11,
-     "risk_pct": 0.0413,
-     "target": 0.965,
+     "trades": 10,
+     "win_pct": 50.0,
+     "mean_r": -0.115,
+     "sum_r": -1.15,
+     "mult": 0.19,
+     "risk_pct": 0.0713,
+     "target": 0.998,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.23R מול -0.14R של הבוט, יציבות 0.61, 9 עסקאות"
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע -0.11R מול -0.12R של הבוט, יציבות 0.62, 10 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 9,
-        "win_pct": 44.4,
-        "mean_r": -0.228,
-        "sum_r": -2.05,
-        "pf": 0.35
+        "trades": 10,
+        "win_pct": 50.0,
+        "mean_r": -0.115,
+        "sum_r": -1.15,
+        "pf": 0.64
        },
        "backtest": {
         "trades": 283,
@@ -1153,17 +1153,17 @@
        }
       },
       "stability": {
-       "score": 0.61,
+       "score": 0.62,
        "demo": {
-        "score": 0.0,
-        "without_best_r": -2.71,
+        "score": 0.08,
+        "without_best_r": -2.05,
         "max_loss_r": 1.01,
-        "avg_win_r": 0.27,
+        "avg_win_r": 0.4,
         "drawdown_r": 2.31,
-        "sd_r": 0.62,
+        "sd_r": 0.69,
         "checks": [
          0.0,
-         0.0,
+         0.24,
          0.0
         ]
        },
@@ -1184,8 +1184,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 7,
-         "mean_r": -0.29
+         "trades": 8,
+         "mean_r": -0.14
         },
         "sell": {
          "trades": 2,
@@ -1205,7 +1205,7 @@
       },
       "exits": {
        "bt_trades": 283,
-       "demo_trades": 9,
+       "demo_trades": 10,
        "mfe_median_r": 0.7,
        "mae_winners_p90_r": 0.79
       },
@@ -1262,29 +1262,29 @@
     },
     {
      "combo": "TV08|15Min|NVDA",
-     "trades": 9,
-     "win_pct": 55.6,
-     "mean_r": 0.274,
-     "sum_r": 2.47,
+     "trades": 12,
+     "win_pct": 50.0,
+     "mean_r": 0.053,
+     "sum_r": 0.64,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.135,
+     "target": 1.067,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.15,
-       "label": "סיכון ×1.15",
-       "why": "רווח ממוצע +0.27R מול -0.14R של הבוט, יציבות 0.82, 9 עסקאות"
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +0.05R מול -0.12R של הבוט, יציבות 0.79, 12 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 9,
-        "win_pct": 55.6,
-        "mean_r": 0.274,
-        "sum_r": 2.47,
-        "pf": 1.74
+        "trades": 12,
+        "win_pct": 50.0,
+        "mean_r": 0.053,
+        "sum_r": 0.64,
+        "pf": 1.12
        },
        "backtest": {
         "trades": 272,
@@ -1295,18 +1295,18 @@
        }
       },
       "stability": {
-       "score": 0.82,
+       "score": 0.79,
        "demo": {
         "score": 0.54,
-        "without_best_r": -0.17,
+        "without_best_r": -2.0,
         "max_loss_r": 1.02,
-        "avg_win_r": 1.17,
+        "avg_win_r": 1.0,
         "drawdown_r": 2.18,
-        "sd_r": 1.28,
+        "sd_r": 1.2,
         "checks": [
          0.0,
-         1.0,
-         0.63
+         0.99,
+         0.64
         ]
        },
        "backtest": {
@@ -1326,8 +1326,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 8,
-         "mean_r": -0.02
+         "trades": 11,
+         "mean_r": -0.18
         },
         "sell": {
          "trades": 1,
@@ -1347,7 +1347,7 @@
       },
       "exits": {
        "bt_trades": 272,
-       "demo_trades": 9,
+       "demo_trades": 12,
        "mfe_median_r": 0.71,
        "mae_winners_p90_r": 0.76
       },
@@ -1392,29 +1392,29 @@
     },
     {
      "combo": "TV62|1Hour|USDCAD",
-     "trades": 8,
-     "win_pct": 25.0,
-     "mean_r": -0.433,
-     "sum_r": -3.46,
-     "mult": 0.001,
-     "risk_pct": 0.0004,
-     "target": 0.897,
+     "trades": 9,
+     "win_pct": 33.3,
+     "mean_r": -0.32,
+     "sum_r": -2.88,
+     "mult": 0.02,
+     "risk_pct": 0.0075,
+     "target": 0.92,
      "recs": [
       {
        "kind": "mult",
        "value": 0.9,
        "label": "סיכון ×0.9",
-       "why": "רווח ממוצע -0.43R מול -0.14R של הבוט, יציבות 0.69, 8 עסקאות"
+       "why": "רווח ממוצע -0.32R מול -0.12R של הבוט, יציבות 0.66, 9 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 8,
-        "win_pct": 25.0,
-        "mean_r": -0.433,
-        "sum_r": -3.46,
-        "pf": 0.11
+        "trades": 9,
+        "win_pct": 33.3,
+        "mean_r": -0.32,
+        "sum_r": -2.88,
+        "pf": 0.26
        },
        "backtest": {
         "trades": 194,
@@ -1425,14 +1425,14 @@
        }
       },
       "stability": {
-       "score": 0.69,
+       "score": 0.66,
        "demo": {
         "score": 0.0,
-        "without_best_r": -3.79,
+        "without_best_r": -3.46,
         "max_loss_r": 1.0,
-        "avg_win_r": 0.21,
+        "avg_win_r": 0.33,
         "drawdown_r": 3.46,
-        "sd_r": 0.48,
+        "sd_r": 0.56,
         "checks": [
          0.0,
          0.0,
@@ -1456,8 +1456,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 5,
-         "mean_r": -0.32
+         "trades": 6,
+         "mean_r": -0.17
         },
         "sell": {
          "trades": 3,
@@ -1477,7 +1477,7 @@
       },
       "exits": {
        "bt_trades": 194,
-       "demo_trades": 7,
+       "demo_trades": 8,
        "mfe_median_r": 1.04,
        "mae_winners_p90_r": 0.69
       },
@@ -1534,28 +1534,28 @@
     },
     {
      "combo": "TT56|1Hour|GME",
-     "trades": 3,
+     "trades": 4,
      "win_pct": 0.0,
-     "mean_r": -0.853,
-     "sum_r": -2.56,
+     "mean_r": -0.895,
+     "sum_r": -3.58,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.948,
+     "target": 0.929,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.85R מול -0.14R של הבוט, יציבות 0.84, 3 עסקאות"
+       "why": "רווח ממוצע -0.89R מול -0.12R של הבוט, יציבות 0.81, 4 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 3,
+        "trades": 4,
         "win_pct": 0.0,
-        "mean_r": -0.853,
-        "sum_r": -2.56,
+        "mean_r": -0.895,
+        "sum_r": -3.58,
         "pf": 0.0
        },
        "backtest": {
@@ -1567,14 +1567,14 @@
        }
       },
       "stability": {
-       "score": 0.84,
+       "score": 0.81,
        "demo": {
         "score": 0.0,
-        "without_best_r": -2.0,
-        "max_loss_r": 1.0,
+        "without_best_r": -3.02,
+        "max_loss_r": 1.02,
         "avg_win_r": 0.0,
-        "drawdown_r": 2.56,
-        "sd_r": 0.26,
+        "drawdown_r": 3.58,
+        "sd_r": 0.22,
         "checks": [
          0.0,
          0.0,
@@ -1598,8 +1598,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 3,
-         "mean_r": -0.85
+         "trades": 4,
+         "mean_r": -0.89
         },
         "sell": {
          "trades": 0,
@@ -1619,7 +1619,7 @@
       },
       "exits": {
        "bt_trades": 62,
-       "demo_trades": 2,
+       "demo_trades": 3,
        "near_miss_pct": 0.0,
        "reach_pct": 9.7,
        "mfe_of_target_median_pct": 43.0,
@@ -1669,13 +1669,13 @@
      "sum_r": -0.29,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.005,
+     "target": 1.003,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.29R מול -0.14R של הבוט, יציבות 0.97, 1 עסקאות"
+       "why": "רווח ממוצע -0.29R מול -0.12R של הבוט, יציבות 0.97, 1 עסקאות"
       }
      ],
      "detail": {
@@ -1890,29 +1890,29 @@
     },
     {
      "combo": "TV41|4Hour|NZDUSD",
-     "trades": 5,
-     "win_pct": 60.0,
-     "mean_r": -0.176,
-     "sum_r": -0.88,
-     "mult": 0.18,
-     "risk_pct": 0.0675,
-     "target": 0.999,
+     "trades": 6,
+     "win_pct": 50.0,
+     "mean_r": -0.26,
+     "sum_r": -1.56,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 0.964,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.18R מול -0.14R של הבוט, יציבות 0.76, 5 עסקאות"
+       "value": 0.95,
+       "label": "סיכון ×0.95",
+       "why": "רווח ממוצע -0.26R מול -0.12R של הבוט, יציבות 0.73, 6 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 5,
-        "win_pct": 60.0,
-        "mean_r": -0.176,
-        "sum_r": -0.88,
-        "pf": 0.56
+        "trades": 6,
+        "win_pct": 50.0,
+        "mean_r": -0.26,
+        "sum_r": -1.56,
+        "pf": 0.42
        },
        "backtest": {
         "trades": 66,
@@ -1923,14 +1923,14 @@
        }
       },
       "stability": {
-       "score": 0.76,
+       "score": 0.73,
        "demo": {
         "score": 0.05,
-        "without_best_r": -1.48,
+        "without_best_r": -2.16,
         "max_loss_r": 1.0,
         "avg_win_r": 0.37,
-        "drawdown_r": 1.65,
-        "sd_r": 0.77,
+        "drawdown_r": 1.73,
+        "sd_r": 0.72,
         "checks": [
          0.0,
          0.16,
@@ -1954,8 +1954,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
-         "mean_r": -1.0
+         "trades": 3,
+         "mean_r": -0.89
         },
         "sell": {
          "trades": 3,
@@ -1975,7 +1975,7 @@
       },
       "exits": {
        "bt_trades": 66,
-       "demo_trades": 5,
+       "demo_trades": 6,
        "near_miss_pct": 0.0,
        "reach_pct": 0.0,
        "mfe_of_target_median_pct": 43.0,
@@ -2041,13 +2041,13 @@
      "sum_r": -1.05,
      "mult": 0.5,
      "risk_pct": 0.1875,
-     "target": 0.978,
+     "target": 0.973,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.35R מול -0.14R של הבוט, יציבות 0.89, 3 עסקאות"
+       "value": 0.95,
+       "label": "סיכון ×0.95",
+       "why": "רווח ממוצע -0.35R מול -0.12R של הבוט, יציבות 0.89, 3 עסקאות"
       }
      ],
      "detail": {
@@ -2165,29 +2165,29 @@
     },
     {
      "combo": "TV29|4Hour|US30",
-     "trades": 5,
-     "win_pct": 40.0,
-     "mean_r": -0.187,
-     "sum_r": -0.93,
-     "mult": 0.68,
-     "risk_pct": 0.255,
-     "target": 0.996,
+     "trades": 6,
+     "win_pct": 33.3,
+     "mean_r": -0.322,
+     "sum_r": -1.93,
+     "mult": 0.27,
+     "risk_pct": 0.1013,
+     "target": 0.945,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.19R מול -0.14R של הבוט, יציבות 0.75, 5 עסקאות"
+       "value": 0.95,
+       "label": "סיכון ×0.95",
+       "why": "רווח ממוצע -0.32R מול -0.12R של הבוט, יציבות 0.73, 6 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 5,
-        "win_pct": 40.0,
-        "mean_r": -0.187,
-        "sum_r": -0.93,
-        "pf": 0.69
+        "trades": 6,
+        "win_pct": 33.3,
+        "mean_r": -0.322,
+        "sum_r": -1.93,
+        "pf": 0.52
        },
        "backtest": {
         "trades": 112,
@@ -2198,18 +2198,18 @@
        }
       },
       "stability": {
-       "score": 0.75,
+       "score": 0.73,
        "demo": {
-        "score": 0.35,
-        "without_best_r": -2.38,
+        "score": 0.33,
+        "without_best_r": -3.39,
         "max_loss_r": 1.01,
         "avg_win_r": 1.04,
-        "drawdown_r": 2.0,
-        "sd_r": 1.15,
+        "drawdown_r": 3.0,
+        "sd_r": 1.08,
         "checks": [
          0.0,
          1.0,
-         0.04
+         0.0
         ]
        },
        "backtest": {
@@ -2229,8 +2229,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 3,
-         "mean_r": -0.46
+         "trades": 4,
+         "mean_r": -0.59
         },
         "sell": {
          "trades": 2,
@@ -2250,7 +2250,7 @@
       },
       "exits": {
        "bt_trades": 112,
-       "demo_trades": 5,
+       "demo_trades": 6,
        "mfe_median_r": 0.56,
        "mae_winners_p90_r": 0.69
       },
@@ -2319,7 +2319,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.85R מול -0.14R של הבוט, יציבות 0.54, 2 עסקאות"
+       "why": "רווח ממוצע -0.85R מול -0.12R של הבוט, יציבות 0.54, 2 עסקאות"
       }
      ],
      "detail": {
@@ -2437,29 +2437,29 @@
     },
     {
      "combo": "TV29|4Hour|US500",
-     "trades": 4,
-     "win_pct": 100.0,
-     "mean_r": 0.984,
-     "sum_r": 3.94,
-     "mult": 1.05,
-     "risk_pct": 0.3938,
-     "target": 1.084,
+     "trades": 6,
+     "win_pct": 66.7,
+     "mean_r": 0.476,
+     "sum_r": 2.86,
+     "mult": 1.29,
+     "risk_pct": 0.4838,
+     "target": 1.109,
      "recs": [
       {
        "kind": "mult",
        "value": 1.1,
        "label": "סיכון ×1.1",
-       "why": "רווח ממוצע +0.98R מול -0.14R של הבוט, יציבות 0.86, 4 עסקאות"
+       "why": "רווח ממוצע +0.48R מול -0.12R של הבוט, יציבות 0.85, 6 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 4,
-        "win_pct": 100.0,
-        "mean_r": 0.984,
-        "sum_r": 3.94,
-        "pf": null
+        "trades": 6,
+        "win_pct": 66.7,
+        "mean_r": 0.476,
+        "sum_r": 2.86,
+        "pf": 3.65
        },
        "backtest": {
         "trades": 114,
@@ -2470,18 +2470,18 @@
        }
       },
       "stability": {
-       "score": 0.86,
+       "score": 0.85,
        "demo": {
-        "score": 1.0,
-        "without_best_r": 2.06,
-        "max_loss_r": 0.0,
+        "score": 0.91,
+        "without_best_r": 0.98,
+        "max_loss_r": 1.0,
         "avg_win_r": 0.98,
-        "drawdown_r": 0.0,
-        "sd_r": 0.93,
+        "drawdown_r": 1.08,
+        "sd_r": 1.11,
         "checks": [
          1.0,
-         1.0,
-         1.0
+         0.99,
+         0.73
         ]
        },
        "backtest": {
@@ -2501,8 +2501,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 3,
-         "mean_r": 0.69
+         "trades": 5,
+         "mean_r": 0.2
         },
         "sell": {
          "trades": 1,
@@ -2522,7 +2522,7 @@
       },
       "exits": {
        "bt_trades": 114,
-       "demo_trades": 4,
+       "demo_trades": 6,
        "mfe_median_r": 0.59,
        "mae_winners_p90_r": 0.73
       },
@@ -2585,7 +2585,7 @@
      "sum_r": -0.51,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.001,
+     "target": 0.998,
      "recs": [],
      "detail": {
       "profit": {
@@ -2717,7 +2717,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.83R מול -0.14R של הבוט, יציבות 0.90, 1 עסקאות"
+       "why": "רווח ממוצע -0.83R מול -0.12R של הבוט, יציבות 0.90, 1 עסקאות"
       }
      ],
      "detail": {
@@ -2847,7 +2847,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +1.16R מול -0.14R של הבוט, יציבות 0.93, 2 עסקאות"
+       "why": "רווח ממוצע +1.16R מול -0.12R של הבוט, יציבות 0.93, 2 עסקאות"
       }
      ],
      "detail": {
@@ -2971,7 +2971,7 @@
      "sum_r": -0.54,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.005,
+     "target": 1.0,
      "recs": [],
      "detail": {
       "profit": {
@@ -3091,29 +3091,29 @@
     },
     {
      "combo": "TT45|1Hour|WTI",
-     "trades": 4,
-     "win_pct": 25.0,
-     "mean_r": -0.62,
-     "sum_r": -2.48,
+     "trades": 5,
+     "win_pct": 40.0,
+     "mean_r": -0.434,
+     "sum_r": -2.17,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 0.93,
+     "target": 0.926,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.62R מול -0.14R של הבוט, יציבות 0.75, 4 עסקאות"
+       "why": "רווח ממוצע -0.43R מול -0.12R של הבוט, יציבות 0.72, 5 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 4,
-        "win_pct": 25.0,
-        "mean_r": -0.62,
-        "sum_r": -2.48,
-        "pf": 0.02
+        "trades": 5,
+        "win_pct": 40.0,
+        "mean_r": -0.434,
+        "sum_r": -2.17,
+        "pf": 0.14
        },
        "backtest": {
         "trades": 155,
@@ -3124,14 +3124,14 @@
        }
       },
       "stability": {
-       "score": 0.75,
+       "score": 0.72,
        "demo": {
         "score": 0.0,
-        "without_best_r": -2.53,
+        "without_best_r": -2.48,
         "max_loss_r": 1.02,
-        "avg_win_r": 0.05,
+        "avg_win_r": 0.18,
         "drawdown_r": 2.53,
-        "sd_r": 0.51,
+        "sd_r": 0.61,
         "checks": [
          0.0,
          0.0,
@@ -3155,8 +3155,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
-         "mean_r": -0.48
+         "trades": 3,
+         "mean_r": -0.22
         },
         "sell": {
          "trades": 2,
@@ -3176,7 +3176,7 @@
       },
       "exits": {
        "bt_trades": 155,
-       "demo_trades": 4,
+       "demo_trades": 5,
        "near_miss_pct": 1.3,
        "reach_pct": 0.6,
        "mfe_of_target_median_pct": 39.0,
@@ -3236,10 +3236,10 @@
     },
     {
      "combo": "YT03|1Hour|PFE",
-     "trades": 1,
-     "win_pct": 0.0,
-     "mean_r": -1.061,
-     "sum_r": -1.06,
+     "trades": 2,
+     "win_pct": 50.0,
+     "mean_r": -0.311,
+     "sum_r": -0.62,
      "mult": 0.001,
      "risk_pct": 0.0004,
      "target": 0.99,
@@ -3248,17 +3248,17 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.06R מול -0.14R של הבוט, יציבות 0.92, 1 עסקאות"
+       "why": "רווח ממוצע -0.31R מול -0.12R של הבוט, יציבות 0.92, 2 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
-        "win_pct": 0.0,
-        "mean_r": -1.061,
-        "sum_r": -1.06,
-        "pf": 0.0
+        "trades": 2,
+        "win_pct": 50.0,
+        "mean_r": -0.311,
+        "sum_r": -0.62,
+        "pf": 0.41
        },
        "backtest": {
         "trades": 71,
@@ -3292,8 +3292,8 @@
          "mean_r": -1.06
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.44
         }
        },
        "backtest": {
@@ -3309,7 +3309,7 @@
       },
       "exits": {
        "bt_trades": 71,
-       "demo_trades": 1,
+       "demo_trades": 2,
        "near_miss_pct": 2.8,
        "reach_pct": 7.0,
        "mfe_of_target_median_pct": 27.0,
@@ -3353,13 +3353,13 @@
     },
     {
      "combo": "TV24|15Min|KO",
-     "trades": 6,
-     "win_pct": 66.7,
-     "mean_r": 0.073,
-     "sum_r": 0.44,
-     "mult": 0.91,
-     "risk_pct": 0.3412,
-     "target": 1.05,
+     "trades": 7,
+     "win_pct": 57.1,
+     "mean_r": -0.015,
+     "sum_r": -0.1,
+     "mult": 0.67,
+     "risk_pct": 0.2513,
+     "target": 1.026,
      "recs": [
       {
        "kind": "remove",
@@ -3371,11 +3371,11 @@
      "detail": {
       "profit": {
        "demo": {
-        "trades": 6,
-        "win_pct": 66.7,
-        "mean_r": 0.073,
-        "sum_r": 0.44,
-        "pf": 1.25
+        "trades": 7,
+        "win_pct": 57.1,
+        "mean_r": -0.015,
+        "sum_r": -0.1,
+        "pf": 0.95
        },
        "backtest": {
         "trades": 123,
@@ -3386,14 +3386,14 @@
        }
       },
       "stability": {
-       "score": 0.71,
+       "score": 0.69,
        "demo": {
         "score": 0.26,
-        "without_best_r": -0.91,
+        "without_best_r": -1.45,
         "max_loss_r": 1.0,
         "avg_win_r": 0.55,
         "drawdown_r": 1.75,
-        "sd_r": 0.85,
+        "sd_r": 0.81,
         "checks": [
          0.0,
          0.58,
@@ -3417,8 +3417,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 3,
-         "mean_r": 0.31
+         "trades": 4,
+         "mean_r": 0.1
         },
         "sell": {
          "trades": 3,
@@ -3438,7 +3438,7 @@
       },
       "exits": {
        "bt_trades": 123,
-       "demo_trades": 5,
+       "demo_trades": 6,
        "mfe_median_r": 0.61,
        "mae_winners_p90_r": 0.81
       },
@@ -3489,13 +3489,13 @@
      "sum_r": 0.54,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.046,
+     "target": 1.045,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.27R מול -0.14R של הבוט, יציבות 0.76, 2 עסקאות"
+       "why": "רווח ממוצע +0.27R מול -0.12R של הבוט, יציבות 0.76, 2 עסקאות"
       }
      ],
      "detail": {
@@ -3618,7 +3618,7 @@
      "sum_r": 0.36,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.024,
+     "target": 1.019,
      "recs": [
       {
        "kind": "remove",
@@ -3748,7 +3748,7 @@
      "sum_r": -0.51,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.991,
+     "target": 0.99,
      "recs": [],
      "detail": {
       "profit": {
@@ -3876,7 +3876,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.09R מול -0.14R של הבוט, יציבות 0.88, 1 עסקאות"
+       "why": "רווח ממוצע -1.09R מול -0.12R של הבוט, יציבות 0.88, 1 עסקאות"
       }
      ],
      "detail": {
@@ -3997,7 +3997,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.45R מול -0.14R של הבוט, יציבות 0.78, 3 עסקאות"
+       "why": "רווח ממוצע +0.45R מול -0.12R של הבוט, יציבות 0.78, 3 עסקאות"
       }
      ],
      "detail": {
@@ -4130,7 +4130,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.38R מול -0.14R של הבוט, יציבות 0.93, 2 עסקאות"
+       "why": "רווח ממוצע +0.38R מול -0.12R של הבוט, יציבות 0.93, 2 עסקאות"
       }
      ],
      "detail": {
@@ -4251,7 +4251,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.35, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.35, 0 עסקאות"
       }
      ],
      "detail": {
@@ -4378,13 +4378,13 @@
      "sum_r": -0.07,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.018,
+     "target": 1.016,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.07R מול -0.14R של הבוט, יציבות 0.98, 1 עסקאות"
+       "why": "רווח ממוצע -0.07R מול -0.12R של הבוט, יציבות 0.98, 1 עסקאות"
       }
      ],
      "detail": {
@@ -4480,29 +4480,22 @@
     },
     {
      "combo": "TV33|15Min|MSTR",
-     "trades": 4,
-     "win_pct": 25.0,
-     "mean_r": -0.407,
-     "sum_r": -1.63,
+     "trades": 5,
+     "win_pct": 20.0,
+     "mean_r": -0.526,
+     "sum_r": -2.63,
      "mult": 0.89,
      "risk_pct": 0.3337,
-     "target": 0.953,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.41R מול -0.14R של הבוט, יציבות 0.78, 4 עסקאות"
-      }
-     ],
+     "target": 0.913,
+     "recs": [],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 4,
-        "win_pct": 25.0,
-        "mean_r": -0.407,
-        "sum_r": -1.63,
-        "pf": 0.21
+        "trades": 5,
+        "win_pct": 20.0,
+        "mean_r": -0.526,
+        "sum_r": -2.63,
+        "pf": 0.14
        },
        "backtest": {
         "trades": 267,
@@ -4513,14 +4506,14 @@
        }
       },
       "stability": {
-       "score": 0.78,
+       "score": 0.75,
        "demo": {
         "score": 0.09,
-        "without_best_r": -2.05,
+        "without_best_r": -3.06,
         "max_loss_r": 1.04,
         "avg_win_r": 0.43,
-        "drawdown_r": 2.05,
-        "sd_r": 0.73,
+        "drawdown_r": 2.63,
+        "sd_r": 0.69,
         "checks": [
          0.0,
          0.28,
@@ -4544,8 +4537,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 3,
-         "mean_r": -0.21
+         "trades": 4,
+         "mean_r": -0.41
         },
         "sell": {
          "trades": 1,
@@ -4565,7 +4558,7 @@
       },
       "exits": {
        "bt_trades": 267,
-       "demo_trades": 4,
+       "demo_trades": 5,
        "mfe_median_r": 0.66,
        "mae_winners_p90_r": 0.72
       },
@@ -4616,7 +4609,7 @@
      "sum_r": -3.26,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.944,
+     "target": 0.93,
      "recs": [
       {
        "kind": "remove",
@@ -4755,7 +4748,7 @@
        "kind": "mult",
        "value": 1.1,
        "label": "סיכון ×1.1",
-       "why": "רווח ממוצע +0.36R מול -0.14R של הבוט, יציבות 0.86, 4 עסקאות"
+       "why": "רווח ממוצע +0.36R מול -0.12R של הבוט, יציבות 0.86, 4 עסקאות"
       }
      ],
      "detail": {
@@ -4872,29 +4865,29 @@
     },
     {
      "combo": "TT45|1Hour|GBPJPY",
-     "trades": 5,
-     "win_pct": 20.0,
-     "mean_r": -0.23,
-     "sum_r": -1.15,
-     "mult": 0.22,
-     "risk_pct": 0.0825,
-     "target": 0.987,
+     "trades": 6,
+     "win_pct": 33.3,
+     "mean_r": 0.081,
+     "sum_r": 0.49,
+     "mult": 0.4,
+     "risk_pct": 0.15,
+     "target": 1.056,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.23R מול -0.14R של הבוט, יציבות 0.80, 5 עסקאות"
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +0.08R מול -0.12R של הבוט, יציבות 0.82, 6 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 5,
-        "win_pct": 20.0,
-        "mean_r": -0.23,
-        "sum_r": -1.15,
-        "pf": 0.63
+        "trades": 6,
+        "win_pct": 33.3,
+        "mean_r": 0.081,
+        "sum_r": 0.49,
+        "pf": 1.16
        },
        "backtest": {
         "trades": 163,
@@ -4905,18 +4898,18 @@
        }
       },
       "stability": {
-       "score": 0.8,
+       "score": 0.82,
        "demo": {
-        "score": 0.33,
-        "without_best_r": -3.14,
+        "score": 0.48,
+        "without_best_r": -1.5,
         "max_loss_r": 1.02,
-        "avg_win_r": 1.98,
+        "avg_win_r": 1.81,
         "drawdown_r": 2.02,
-        "sd_r": 1.3,
+        "sd_r": 1.39,
         "checks": [
          0.0,
          1.0,
-         0.0
+         0.44
         ]
        },
        "backtest": {
@@ -4940,8 +4933,8 @@
          "mean_r": -1.01
         },
         "sell": {
-         "trades": 2,
-         "mean_r": 0.94
+         "trades": 3,
+         "mean_r": 1.17
         }
        },
        "backtest": {
@@ -4957,7 +4950,7 @@
       },
       "exits": {
        "bt_trades": 163,
-       "demo_trades": 5,
+       "demo_trades": 6,
        "near_miss_pct": 0.0,
        "reach_pct": 0.6,
        "mfe_of_target_median_pct": 46.0,
@@ -5017,29 +5010,29 @@
     },
     {
      "combo": "SE02|1Hour|USDJPY",
-     "trades": 10,
-     "win_pct": 30.0,
-     "mean_r": -0.5,
-     "sum_r": -5.0,
-     "mult": 0.39,
-     "risk_pct": 0.1462,
-     "target": 0.847,
+     "trades": 11,
+     "win_pct": 27.3,
+     "mean_r": -0.546,
+     "sum_r": -6.0,
+     "mult": 0.36,
+     "risk_pct": 0.135,
+     "target": 0.834,
      "recs": [
       {
-       "kind": "mult",
-       "value": 0.85,
-       "label": "סיכון ×0.85",
-       "why": "רווח ממוצע -0.50R מול -0.14R של הבוט, יציבות 0.63, 10 עסקאות"
+       "kind": "remove",
+       "value": 0,
+       "label": "להסיר",
+       "why": "-6.4R ב־12 עסקאות, מתחת לקו -6.3R (כלל ההסרה)"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 10,
-        "win_pct": 30.0,
-        "mean_r": -0.5,
-        "sum_r": -5.0,
-        "pf": 0.19
+        "trades": 11,
+        "win_pct": 27.3,
+        "mean_r": -0.546,
+        "sum_r": -6.0,
+        "pf": 0.17
        },
        "backtest": {
         "trades": 385,
@@ -5050,14 +5043,14 @@
        }
       },
       "stability": {
-       "score": 0.63,
+       "score": 0.61,
        "demo": {
         "score": 0.07,
-        "without_best_r": -5.47,
+        "without_best_r": -6.47,
         "max_loss_r": 1.02,
         "avg_win_r": 0.4,
-        "drawdown_r": 5.0,
-        "sd_r": 0.67,
+        "drawdown_r": 6.0,
+        "sd_r": 0.65,
         "checks": [
          0.0,
          0.22,
@@ -5081,8 +5074,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 10,
-         "mean_r": -0.5
+         "trades": 11,
+         "mean_r": -0.55
         },
         "sell": {
          "trades": 0,
@@ -5102,7 +5095,7 @@
       },
       "exits": {
        "bt_trades": 385,
-       "demo_trades": 10,
+       "demo_trades": 11,
        "mfe_median_r": 0.7,
        "mae_winners_p90_r": 0.74
       },
@@ -5139,29 +5132,29 @@
     },
     {
      "combo": "IM01|1Hour|JP225",
-     "trades": 2,
-     "win_pct": 0.0,
-     "mean_r": -0.534,
-     "sum_r": -1.07,
+     "trades": 3,
+     "win_pct": 33.3,
+     "mean_r": 0.41,
+     "sum_r": 1.23,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.968,
+     "target": 1.07,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.53R מול -0.14R של הבוט, יציבות 0.94, 2 עסקאות"
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +0.41R מול -0.12R של הבוט, יציבות 0.88, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
-        "win_pct": 0.0,
-        "mean_r": -0.534,
-        "sum_r": -1.07,
-        "pf": 0.0
+        "trades": 3,
+        "win_pct": 33.3,
+        "mean_r": 0.41,
+        "sum_r": 1.23,
+        "pf": 2.15
        },
        "backtest": {
         "trades": 120,
@@ -5172,8 +5165,20 @@
        }
       },
       "stability": {
-       "score": 0.94,
-       "demo": null,
+       "score": 0.88,
+       "demo": {
+        "score": 0.51,
+        "without_best_r": -1.07,
+        "max_loss_r": 1.02,
+        "avg_win_r": 2.3,
+        "drawdown_r": 1.07,
+        "sd_r": 1.71,
+        "checks": [
+         0.0,
+         1.0,
+         0.53
+        ]
+       },
        "backtest": {
         "score": 0.94,
         "without_best_r": 23.17,
@@ -5195,8 +5200,8 @@
          "mean_r": -0.05
         },
         "sell": {
-         "trades": 1,
-         "mean_r": -1.02
+         "trades": 2,
+         "mean_r": 0.64
         }
        },
        "backtest": {
@@ -5212,7 +5217,7 @@
       },
       "exits": {
        "bt_trades": 120,
-       "demo_trades": 2,
+       "demo_trades": 3,
        "mfe_median_r": 1.03,
        "mae_winners_p90_r": 0.72
       },
@@ -5281,7 +5286,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +8.08R מול -0.14R של הבוט, יציבות 0.97, 1 עסקאות"
+       "why": "רווח ממוצע +8.08R מול -0.12R של הבוט, יציבות 0.97, 1 עסקאות"
       }
      ],
      "detail": {
@@ -5405,13 +5410,13 @@
      "sum_r": 0.12,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.029,
+     "target": 1.027,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.12R מול -0.14R של הבוט, יציבות 0.95, 1 עסקאות"
+       "why": "רווח ממוצע +0.12R מול -0.12R של הבוט, יציבות 0.95, 1 עסקאות"
       }
      ],
      "detail": {
@@ -5529,29 +5534,29 @@
     },
     {
      "combo": "MQ11|4Hour|MSTR",
-     "trades": 7,
-     "win_pct": 28.6,
-     "mean_r": -0.137,
-     "sum_r": -0.96,
-     "mult": 0.7,
-     "risk_pct": 0.2625,
-     "target": 1.0,
+     "trades": 8,
+     "win_pct": 25.0,
+     "mean_r": -0.189,
+     "sum_r": -1.51,
+     "mult": 0.62,
+     "risk_pct": 0.2325,
+     "target": 0.97,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.14R מול -0.14R של הבוט, יציבות 0.55, 7 עסקאות"
+       "value": 0.95,
+       "label": "סיכון ×0.95",
+       "why": "רווח ממוצע -0.19R מול -0.12R של הבוט, יציבות 0.53, 8 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 7,
-        "win_pct": 28.6,
-        "mean_r": -0.137,
-        "sum_r": -0.96,
-        "pf": 0.32
+        "trades": 8,
+        "win_pct": 25.0,
+        "mean_r": -0.189,
+        "sum_r": -1.51,
+        "pf": 0.23
        },
        "backtest": {
         "trades": 182,
@@ -5562,14 +5567,14 @@
        }
       },
       "stability": {
-       "score": 0.55,
+       "score": 0.53,
        "demo": {
         "score": 0.06,
-        "without_best_r": -1.3,
+        "without_best_r": -1.85,
         "max_loss_r": 0.59,
         "avg_win_r": 0.22,
-        "drawdown_r": 1.07,
-        "sd_r": 0.32,
+        "drawdown_r": 1.62,
+        "sd_r": 0.33,
         "checks": [
          0.0,
          0.17,
@@ -5593,8 +5598,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 7,
-         "mean_r": -0.14
+         "trades": 8,
+         "mean_r": -0.19
         },
         "sell": {
          "trades": 0,
@@ -5614,7 +5619,7 @@
       },
       "exits": {
        "bt_trades": 182,
-       "demo_trades": 7,
+       "demo_trades": 8,
        "mfe_median_r": 0.42,
        "mae_winners_p90_r": 0.49
       },
@@ -5665,13 +5670,13 @@
      "sum_r": 0.97,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.062,
+     "target": 1.061,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.32R מול -0.14R של הבוט, יציבות 0.77, 3 עסקאות"
+       "why": "רווח ממוצע +0.32R מול -0.12R של הבוט, יציבות 0.77, 3 עסקאות"
       }
      ],
      "detail": {
@@ -5807,13 +5812,13 @@
      "sum_r": -0.23,
      "mult": 0.62,
      "risk_pct": 0.2325,
-     "target": 1.006,
+     "target": 1.004,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.23R מול -0.14R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -0.23R מול -0.12R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -5883,7 +5888,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -5953,7 +5958,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.36R מול -0.14R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.36R מול -0.12R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -6011,29 +6016,29 @@
     },
     {
      "combo": "SC154|5Min|XAUUSD",
-     "trades": 4,
-     "win_pct": 0.0,
-     "mean_r": -1.013,
-     "sum_r": -4.05,
+     "trades": 6,
+     "win_pct": 16.7,
+     "mean_r": -0.828,
+     "sum_r": -4.97,
      "mult": 0.6,
      "risk_pct": 0.225,
-     "target": 0.93,
+     "target": 0.897,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -1.01R מול -0.14R של הבוט, יציבות 0.42, 4 עסקאות"
+       "value": 0.9,
+       "label": "סיכון ×0.9",
+       "why": "רווח ממוצע -0.83R מול -0.12R של הבוט, יציבות 0.38, 6 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 4,
-        "win_pct": 0.0,
-        "mean_r": -1.013,
-        "sum_r": -4.05,
-        "pf": 0.0
+        "trades": 6,
+        "win_pct": 16.7,
+        "mean_r": -0.828,
+        "sum_r": -4.97,
+        "pf": 0.02
        },
        "backtest": {
         "trades": 0,
@@ -6044,14 +6049,14 @@
        }
       },
       "stability": {
-       "score": 0.42,
+       "score": 0.38,
        "demo": {
         "score": 0.0,
-        "without_best_r": -3.04,
+        "without_best_r": -5.06,
         "max_loss_r": 1.02,
-        "avg_win_r": 0.0,
-        "drawdown_r": 4.05,
-        "sd_r": 0.0,
+        "avg_win_r": 0.09,
+        "drawdown_r": 5.06,
+        "sd_r": 0.45,
         "checks": [
          0.0,
          0.0,
@@ -6063,8 +6068,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 3,
-         "mean_r": -1.01
+         "trades": 5,
+         "mean_r": -0.79
         },
         "sell": {
          "trades": 1,
@@ -6084,7 +6089,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 4
+       "demo_trades": 6
       },
       "hours": {},
       "market": {},
@@ -6105,7 +6110,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -6169,13 +6174,13 @@
      "sum_r": -0.07,
      "mult": 0.66,
      "risk_pct": 0.2475,
-     "target": 1.024,
+     "target": 1.021,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.03R מול -0.14R של הבוט, יציבות 0.89, 2 עסקאות"
+       "why": "רווח ממוצע -0.03R מול -0.12R של הבוט, יציבות 0.89, 2 עסקאות"
       }
      ],
      "detail": {
@@ -6293,29 +6298,29 @@
     },
     {
      "combo": "SE01|1Hour|CSCO",
-     "trades": 3,
-     "win_pct": 33.3,
-     "mean_r": -0.288,
-     "sum_r": -0.86,
-     "mult": 0.7,
-     "risk_pct": 0.2625,
-     "target": 0.987,
+     "trades": 4,
+     "win_pct": 25.0,
+     "mean_r": -0.468,
+     "sum_r": -1.87,
+     "mult": 0.27,
+     "risk_pct": 0.1013,
+     "target": 0.935,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.29R מול -0.14R של הבוט, יציבות 0.81, 3 עסקאות"
+       "value": 0.95,
+       "label": "סיכון ×0.95",
+       "why": "רווח ממוצע -0.47R מול -0.12R של הבוט, יציבות 0.79, 4 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 3,
-        "win_pct": 33.3,
-        "mean_r": -0.288,
-        "sum_r": -0.86,
-        "pf": 0.41
+        "trades": 4,
+        "win_pct": 25.0,
+        "mean_r": -0.468,
+        "sum_r": -1.87,
+        "pf": 0.24
        },
        "backtest": {
         "trades": 371,
@@ -6326,17 +6331,17 @@
        }
       },
       "stability": {
-       "score": 0.81,
+       "score": 0.79,
        "demo": {
         "score": 0.22,
-        "without_best_r": -1.47,
-        "max_loss_r": 1.0,
+        "without_best_r": -2.47,
+        "max_loss_r": 1.01,
         "avg_win_r": 0.6,
-        "drawdown_r": 1.0,
-        "sd_r": 0.82,
+        "drawdown_r": 2.01,
+        "sd_r": 0.76,
         "checks": [
          0.0,
-         0.67,
+         0.66,
          0.0
         ]
        },
@@ -6357,8 +6362,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 3,
-         "mean_r": -0.29
+         "trades": 4,
+         "mean_r": -0.47
         },
         "sell": {
          "trades": 0,
@@ -6378,7 +6383,7 @@
       },
       "exits": {
        "bt_trades": 371,
-       "demo_trades": 3,
+       "demo_trades": 4,
        "mfe_median_r": 0.76,
        "mae_winners_p90_r": 0.64
       },
@@ -6431,7 +6436,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -6501,7 +6506,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -6559,29 +6564,29 @@
     },
     {
      "combo": "IB033|4Hour|XAUUSD",
-     "trades": 1,
-     "win_pct": 100.0,
-     "mean_r": 2.049,
-     "sum_r": 2.05,
+     "trades": 2,
+     "win_pct": 50.0,
+     "mean_r": 0.988,
+     "sum_r": 1.98,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.023,
+     "target": 1.031,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע +2.05R מול -0.14R של הבוט, יציבות 0.50, 1 עסקאות"
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +0.99R מול -0.12R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
-        "win_pct": 100.0,
-        "mean_r": 2.049,
-        "sum_r": 2.05,
-        "pf": null
+        "trades": 2,
+        "win_pct": 50.0,
+        "mean_r": 0.988,
+        "sum_r": 1.98,
+        "pf": 28.26
        },
        "backtest": {
         "trades": 0,
@@ -6603,8 +6608,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 1,
-         "mean_r": 2.05
+         "trades": 2,
+         "mean_r": 0.99
         }
        },
        "backtest": {
@@ -6620,7 +6625,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 1
+       "demo_trades": 2
       },
       "hours": {},
       "market": {},
@@ -6641,7 +6646,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -6711,7 +6716,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -6781,7 +6786,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -6851,7 +6856,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -6921,7 +6926,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול -0.14R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.12R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -6979,28 +6984,28 @@
     },
     {
      "combo": "SC020|15Min|JP225",
-     "trades": 2,
+     "trades": 3,
      "win_pct": 0.0,
      "mean_r": -1.0,
-     "sum_r": -2.0,
+     "sum_r": -3.0,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 0.968,
+     "target": 0.948,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -1.00R מול -0.14R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.12R של הבוט, יציבות 0.43, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
+        "trades": 3,
         "win_pct": 0.0,
         "mean_r": -1.0,
-        "sum_r": -2.0,
+        "sum_r": -3.0,
         "pf": 0.0
        },
        "backtest": {
@@ -7012,14 +7017,26 @@
        }
       },
       "stability": {
-       "score": 0.5,
-       "demo": null,
+       "score": 0.43,
+       "demo": {
+        "score": 0.0,
+        "without_best_r": -2.0,
+        "max_loss_r": 1.0,
+        "avg_win_r": 0.0,
+        "drawdown_r": 3.0,
+        "sd_r": 0.0,
+        "checks": [
+         0.0,
+         0.0,
+         0.0
+        ]
+       },
        "backtest": null
       },
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
+         "trades": 3,
          "mean_r": -1.0
         },
         "sell": {
@@ -7040,7 +7057,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 2
+       "demo_trades": 3
       },
       "hours": {},
       "market": {},
@@ -7061,7 +7078,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -7131,7 +7148,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -7201,7 +7218,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.90, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.90, 0 עסקאות"
       }
      ],
      "detail": {
@@ -7325,13 +7342,13 @@
      "sum_r": 0.2,
      "mult": 0.64,
      "risk_pct": 0.24,
-     "target": 1.022,
+     "target": 1.019,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.07R מול -0.14R של הבוט, יציבות 0.47, 3 עסקאות"
+       "why": "רווח ממוצע +0.07R מול -0.12R של הבוט, יציבות 0.47, 3 עסקאות"
       }
      ],
      "detail": {
@@ -7413,7 +7430,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול -0.14R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.12R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -7471,29 +7488,29 @@
     },
     {
      "combo": "IB056|1Hour|XAUUSD",
-     "trades": 4,
-     "win_pct": 75.0,
-     "mean_r": 2.377,
-     "sum_r": 9.51,
-     "mult": 0.7,
-     "risk_pct": 0.2625,
-     "target": 1.054,
+     "trades": 5,
+     "win_pct": 80.0,
+     "mean_r": 2.158,
+     "sum_r": 10.79,
+     "mult": 1.0,
+     "risk_pct": 0.375,
+     "target": 1.064,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +2.38R מול -0.14R של הבוט, יציבות 0.58, 4 עסקאות"
+       "why": "רווח ממוצע +2.16R מול -0.12R של הבוט, יציבות 0.60, 5 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 4,
-        "win_pct": 75.0,
-        "mean_r": 2.377,
-        "sum_r": 9.51,
-        "pf": 21.03
+        "trades": 5,
+        "win_pct": 80.0,
+        "mean_r": 2.158,
+        "sum_r": 10.79,
+        "pf": 23.74
        },
        "backtest": {
         "trades": 0,
@@ -7504,18 +7521,18 @@
        }
       },
       "stability": {
-       "score": 0.58,
+       "score": 0.6,
        "demo": {
-        "score": 0.98,
-        "without_best_r": 3.21,
+        "score": 0.99,
+        "without_best_r": 4.49,
         "max_loss_r": 0.47,
-        "avg_win_r": 3.33,
+        "avg_win_r": 2.82,
         "drawdown_r": 0.47,
-        "sd_r": 2.91,
+        "sd_r": 2.57,
         "checks": [
          1.0,
          1.0,
-         0.95
+         0.96
         ]
        },
        "backtest": null
@@ -7527,8 +7544,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 4,
-         "mean_r": 2.38
+         "trades": 5,
+         "mean_r": 2.16
         }
        },
        "backtest": {
@@ -7544,7 +7561,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 4
+       "demo_trades": 5
       },
       "hours": {},
       "market": {},
@@ -7565,7 +7582,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול -0.14R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.12R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -7635,7 +7652,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -7705,7 +7722,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -7769,13 +7786,13 @@
      "sum_r": 0.25,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.023,
+     "target": 1.022,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.25R מול -0.14R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.25R מול -0.12R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -7845,7 +7862,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -7915,7 +7932,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -7985,7 +8002,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -8047,15 +8064,15 @@
      "win_pct": null,
      "mean_r": null,
      "sum_r": 0.0,
-     "mult": 0.7,
-     "risk_pct": 0.2625,
+     "mult": 0.63,
+     "risk_pct": 0.2363,
      "target": 1.014,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -8125,7 +8142,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -8187,10 +8204,17 @@
      "win_pct": null,
      "mean_r": null,
      "sum_r": 0.0,
-     "mult": 1.0,
-     "risk_pct": 0.375,
+     "mult": 0.76,
+     "risk_pct": 0.285,
      "target": 1.014,
-     "recs": [],
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
      "detail": {
       "profit": {
        "demo": {
@@ -8258,7 +8282,77 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.14R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 0
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC704|4Hour|WTI",
+     "trades": 0,
+     "win_pct": null,
+     "mean_r": null,
+     "sum_r": 0.0,
+     "mult": 0.7,
+     "risk_pct": 0.2625,
+     "target": 1.014,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול -0.12R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -8318,8 +8412,8 @@
   },
   "bot2": {
    "risk_pct": 0.44999999999999996,
-   "trades": 106,
-   "mean_r": 0.078,
+   "trades": 116,
+   "mean_r": 0.18,
    "combos": [
     {
      "combo": "TV02|1Hour|US30",
@@ -8329,13 +8423,13 @@
      "sum_r": 0.0,
      "mult": 0.94,
      "risk_pct": 0.423,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.98, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.98, 0 עסקאות"
       }
      ],
      "detail": {
@@ -8456,29 +8550,29 @@
     },
     {
      "combo": "TV13|15Min|TSLA",
-     "trades": 9,
-     "win_pct": 33.3,
-     "mean_r": -0.099,
-     "sum_r": -0.9,
+     "trades": 10,
+     "win_pct": 40.0,
+     "mean_r": 1.222,
+     "sum_r": 12.22,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.926,
+     "target": 1.145,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.10R מול +0.08R של הבוט, יציבות 0.67, 9 עסקאות"
+       "value": 1.15,
+       "label": "סיכון ×1.15",
+       "why": "רווח ממוצע +1.22R מול +0.18R של הבוט, יציבות 0.84, 10 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 9,
-        "win_pct": 33.3,
-        "mean_r": -0.099,
-        "sum_r": -0.9,
-        "pf": 0.56
+        "trades": 10,
+        "win_pct": 40.0,
+        "mean_r": 1.222,
+        "sum_r": 12.22,
+        "pf": 7.0
        },
        "backtest": {
         "trades": 434,
@@ -8489,18 +8583,18 @@
        }
       },
       "stability": {
-       "score": 0.67,
+       "score": 0.84,
        "demo": {
-        "score": 0.06,
-        "without_best_r": -1.36,
+        "score": 0.62,
+        "without_best_r": -0.9,
         "max_loss_r": 1.0,
-        "avg_win_r": 0.38,
+        "avg_win_r": 3.56,
         "drawdown_r": 2.04,
-        "sd_r": 0.46,
+        "sd_r": 4.2,
         "checks": [
          0.0,
-         0.18,
-         0.0
+         1.0,
+         0.86
         ]
        },
        "backtest": {
@@ -8524,8 +8618,8 @@
          "mean_r": -0.07
         },
         "sell": {
-         "trades": 5,
-         "mean_r": -0.12
+         "trades": 6,
+         "mean_r": 2.08
         }
        },
        "backtest": {
@@ -8541,7 +8635,7 @@
       },
       "exits": {
        "bt_trades": 434,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.81,
        "mae_winners_p90_r": 0.72
       },
@@ -8592,13 +8686,13 @@
      "sum_r": 2.25,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.099,
+     "target": 1.076,
      "recs": [
       {
        "kind": "mult",
        "value": 1.1,
        "label": "סיכון ×1.1",
-       "why": "רווח ממוצע +0.45R מול +0.08R של הבוט, יציבות 0.98, 5 עסקאות"
+       "why": "רווח ממוצע +0.45R מול +0.18R של הבוט, יציבות 0.98, 5 עסקאות"
       }
      ],
      "detail": {
@@ -8725,13 +8819,13 @@
      "sum_r": 1.97,
      "mult": 0.85,
      "risk_pct": 0.3825,
-     "target": 1.071,
+     "target": 1.074,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.66R מול +0.08R של הבוט, יציבות 0.97, 3 עסקאות"
+       "why": "רווח ממוצע +0.66R מול +0.18R של הבוט, יציבות 0.97, 3 עסקאות"
       }
      ],
      "detail": {
@@ -8867,13 +8961,13 @@
      "sum_r": 0.13,
      "mult": 0.49,
      "risk_pct": 0.2205,
-     "target": 0.99,
+     "target": 0.967,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.03R מול +0.08R של הבוט, יציבות 0.82, 5 עסקאות"
+       "value": 0.95,
+       "label": "סיכון ×0.95",
+       "why": "רווח ממוצע +0.03R מול +0.18R של הבוט, יציבות 0.82, 5 עסקאות"
       }
      ],
      "detail": {
@@ -9009,13 +9103,13 @@
      "sum_r": 1.04,
      "mult": 0.86,
      "risk_pct": 0.387,
-     "target": 1.036,
+     "target": 1.015,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.21R מול +0.08R של הבוט, יציבות 0.93, 5 עסקאות"
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.21R מול +0.18R של הבוט, יציבות 0.93, 5 עסקאות"
       }
      ],
      "detail": {
@@ -9154,13 +9248,13 @@
      "sum_r": 0.6,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.029,
+     "target": 1.021,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.30R מול +0.08R של הבוט, יציבות 0.90, 2 עסקאות"
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.30R מול +0.18R של הבוט, יציבות 0.90, 2 עסקאות"
       }
      ],
      "detail": {
@@ -9284,7 +9378,7 @@
      "sum_r": 0.33,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.017,
+     "target": 1.015,
      "recs": [],
      "detail": {
       "profit": {
@@ -9344,7 +9438,7 @@
       },
       "exits": {
        "bt_trades": 50,
-       "demo_trades": 1,
+       "demo_trades": 0,
        "mfe_median_r": 0.6,
        "mae_winners_p90_r": 0.73
       },
@@ -9407,13 +9501,13 @@
      "sum_r": 0.0,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.96, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.96, 0 עסקאות"
       }
      ],
      "detail": {
@@ -9524,7 +9618,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [],
      "detail": {
       "profit": {
@@ -9634,7 +9728,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [],
      "detail": {
       "profit": {
@@ -9757,13 +9851,13 @@
      "sum_r": 0.74,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.035,
+     "target": 1.028,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.37R מול +0.08R של הבוט, יציבות 0.88, 2 עסקאות"
+       "why": "רווח ממוצע +0.37R מול +0.18R של הבוט, יציבות 0.88, 2 עסקאות"
       }
      ],
      "detail": {
@@ -9874,7 +9968,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [],
      "detail": {
       "profit": {
@@ -9986,29 +10080,29 @@
     },
     {
      "combo": "TV02|1Hour|WMT",
-     "trades": 1,
-     "win_pct": 100.0,
-     "mean_r": 1.992,
-     "sum_r": 1.99,
+     "trades": 2,
+     "win_pct": 50.0,
+     "mean_r": 0.755,
+     "sum_r": 1.51,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.026,
+     "target": 1.046,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +1.99R מול +0.08R של הבוט, יציבות 0.82, 1 עסקאות"
+       "why": "רווח ממוצע +0.76R מול +0.18R של הבוט, יציבות 0.82, 2 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
-        "win_pct": 100.0,
-        "mean_r": 1.992,
-        "sum_r": 1.99,
-        "pf": null
+        "trades": 2,
+        "win_pct": 50.0,
+        "mean_r": 0.755,
+        "sum_r": 1.51,
+        "pf": 4.14
        },
        "backtest": {
         "trades": 98,
@@ -10038,8 +10132,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 1,
-         "mean_r": 1.99
+         "trades": 2,
+         "mean_r": 0.76
         },
         "sell": {
          "trades": 0,
@@ -10059,7 +10153,7 @@
       },
       "exits": {
        "bt_trades": 98,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 0.0,
        "mfe_of_target_median_pct": 22.0,
@@ -10107,29 +10201,29 @@
     },
     {
      "combo": "TV55|15Min|GME",
-     "trades": 2,
-     "win_pct": 50.0,
-     "mean_r": 0.379,
-     "sum_r": 0.76,
+     "trades": 3,
+     "win_pct": 33.3,
+     "mean_r": 0.164,
+     "sum_r": 0.49,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.038,
+     "target": 1.005,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.38R מול +0.08R של הבוט, יציבות 0.92, 2 עסקאות"
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.16R מול +0.18R של הבוט, יציבות 0.86, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
-        "win_pct": 50.0,
-        "mean_r": 0.379,
-        "sum_r": 0.76,
-        "pf": 1.76
+        "trades": 3,
+        "win_pct": 33.3,
+        "mean_r": 0.164,
+        "sum_r": 0.49,
+        "pf": 1.39
        },
        "backtest": {
         "trades": 155,
@@ -10140,8 +10234,20 @@
        }
       },
       "stability": {
-       "score": 0.92,
-       "demo": null,
+       "score": 0.86,
+       "demo": {
+        "score": 0.48,
+        "without_best_r": -1.27,
+        "max_loss_r": 1.0,
+        "avg_win_r": 1.76,
+        "drawdown_r": 1.0,
+        "sd_r": 1.43,
+        "checks": [
+         0.0,
+         1.0,
+         0.43
+        ]
+       },
        "backtest": {
         "score": 0.92,
         "without_best_r": 8.07,
@@ -10159,8 +10265,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
-         "mean_r": 0.38
+         "trades": 3,
+         "mean_r": 0.16
         },
         "sell": {
          "trades": 0,
@@ -10180,7 +10286,7 @@
       },
       "exits": {
        "bt_trades": 155,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 0.6,
        "mfe_of_target_median_pct": 23.0,
@@ -10234,13 +10340,13 @@
      "sum_r": 0.0,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.96, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.96, 0 עסקאות"
       }
      ],
      "detail": {
@@ -10364,13 +10470,13 @@
      "sum_r": -0.65,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.962,
+     "target": 0.964,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.32R מול +0.08R של הבוט, יציבות 0.81, 2 עסקאות"
+       "why": "רווח ממוצע -0.32R מול +0.18R של הבוט, יציבות 0.81, 2 עסקאות"
       }
      ],
      "detail": {
@@ -10479,29 +10585,29 @@
     },
     {
      "combo": "TT13|15Min|INTC",
-     "trades": 6,
-     "win_pct": 33.3,
-     "mean_r": -0.029,
-     "sum_r": -0.17,
-     "mult": 0.78,
-     "risk_pct": 0.351,
-     "target": 0.969,
+     "trades": 7,
+     "win_pct": 28.6,
+     "mean_r": -0.168,
+     "sum_r": -1.17,
+     "mult": 0.36,
+     "risk_pct": 0.162,
+     "target": 0.883,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.03R מול +0.08R של הבוט, יציבות 0.73, 6 עסקאות"
+       "value": 0.9,
+       "label": "סיכון ×0.9",
+       "why": "רווח ממוצע -0.17R מול +0.18R של הבוט, יציבות 0.60, 7 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 6,
-        "win_pct": 33.3,
-        "mean_r": -0.029,
-        "sum_r": -0.17,
-        "pf": 0.8
+        "trades": 7,
+        "win_pct": 28.6,
+        "mean_r": -0.168,
+        "sum_r": -1.17,
+        "pf": 0.37
        },
        "backtest": {
         "trades": 218,
@@ -10512,18 +10618,18 @@
        }
       },
       "stability": {
-       "score": 0.73,
+       "score": 0.6,
        "demo": {
-        "score": 0.45,
-        "without_best_r": -0.57,
-        "max_loss_r": 0.31,
+        "score": 0.01,
+        "without_best_r": -1.57,
+        "max_loss_r": 1.0,
         "avg_win_r": 0.34,
-        "drawdown_r": 0.44,
-        "sd_r": 0.3,
+        "drawdown_r": 1.44,
+        "sd_r": 0.46,
         "checks": [
          0.0,
-         1.0,
-         0.36
+         0.04,
+         0.0
         ]
        },
        "backtest": {
@@ -10543,8 +10649,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
-         "mean_r": 0.06
+         "trades": 3,
+         "mean_r": -0.29
         },
         "sell": {
          "trades": 4,
@@ -10564,7 +10670,7 @@
       },
       "exits": {
        "bt_trades": 218,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 0.0,
        "mfe_of_target_median_pct": 19.0,
@@ -10608,29 +10714,29 @@
     },
     {
      "combo": "TV37|4Hour|GBPUSD",
-     "trades": 2,
-     "win_pct": 50.0,
-     "mean_r": 0.505,
-     "sum_r": 1.01,
-     "mult": 1.0,
-     "risk_pct": 0.45,
-     "target": 1.05,
+     "trades": 3,
+     "win_pct": 33.3,
+     "mean_r": 0.003,
+     "sum_r": 0.01,
+     "mult": 0.88,
+     "risk_pct": 0.396,
+     "target": 0.979,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.05,
-       "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.50R מול +0.08R של הבוט, יציבות 0.94, 2 עסקאות"
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.86, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
-        "win_pct": 50.0,
-        "mean_r": 0.505,
-        "sum_r": 1.01,
-        "pf": 2.01
+        "trades": 3,
+        "win_pct": 33.3,
+        "mean_r": 0.003,
+        "sum_r": 0.01,
+        "pf": 1.0
        },
        "backtest": {
         "trades": 94,
@@ -10641,8 +10747,20 @@
        }
       },
       "stability": {
-       "score": 0.94,
-       "demo": null,
+       "score": 0.86,
+       "demo": {
+        "score": 0.33,
+        "without_best_r": -2.0,
+        "max_loss_r": 1.0,
+        "avg_win_r": 2.01,
+        "drawdown_r": 2.0,
+        "sd_r": 1.74,
+        "checks": [
+         0.0,
+         1.0,
+         0.0
+        ]
+       },
        "backtest": {
         "score": 0.94,
         "without_best_r": 5.57,
@@ -10660,8 +10778,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
-         "mean_r": 0.5
+         "trades": 3,
+         "mean_r": 0.0
         },
         "sell": {
          "trades": 0,
@@ -10681,7 +10799,7 @@
       },
       "exits": {
        "bt_trades": 94,
-       "demo_trades": 2,
+       "demo_trades": 3,
        "near_miss_pct": 0.0,
        "reach_pct": 2.1,
        "mfe_of_target_median_pct": 28.0,
@@ -10747,7 +10865,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [],
      "detail": {
       "profit": {
@@ -10873,7 +10991,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [],
      "detail": {
       "profit": {
@@ -10996,7 +11114,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [],
      "detail": {
       "profit": {
@@ -11106,13 +11224,13 @@
      "sum_r": 0.12,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.005,
+     "target": 0.996,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.06R מול +0.08R של הבוט, יציבות 0.95, 2 עסקאות"
+       "why": "רווח ממוצע +0.06R מול +0.18R של הבוט, יציבות 0.95, 2 עסקאות"
       }
      ],
      "detail": {
@@ -11228,13 +11346,13 @@
      "sum_r": -4.4,
      "mult": 0.16,
      "risk_pct": 0.072,
-     "target": 0.84,
+     "target": 0.842,
      "recs": [
       {
-       "kind": "mult",
-       "value": 0.85,
-       "label": "סיכון ×0.85",
-       "why": "רווח ממוצע -0.44R מול +0.08R של הבוט, יציבות 0.64, 10 עסקאות"
+       "kind": "remove",
+       "value": 0,
+       "label": "להסיר",
+       "why": "-6.4R ב־12 עסקאות, מתחת לקו -6.3R (כלל ההסרה)"
       }
      ],
      "detail": {
@@ -11350,13 +11468,13 @@
      "sum_r": 8.91,
      "mult": 0.86,
      "risk_pct": 0.387,
-     "target": 1.031,
+     "target": 1.033,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +8.91R מול +0.08R של הבוט, יציבות 0.97, 1 עסקאות"
+       "why": "רווח ממוצע +8.91R מול +0.18R של הבוט, יציבות 0.97, 1 עסקאות"
       }
      ],
      "detail": {
@@ -11480,13 +11598,13 @@
      "sum_r": -0.81,
      "mult": 0.46,
      "risk_pct": 0.207,
-     "target": 0.943,
+     "target": 0.92,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.16R מול +0.08R של הבוט, יציבות 0.84, 5 עסקאות"
+       "value": 0.9,
+       "label": "סיכון ×0.9",
+       "why": "רווח ממוצע -0.16R מול +0.18R של הבוט, יציבות 0.84, 5 עסקאות"
       }
      ],
      "detail": {
@@ -11622,13 +11740,13 @@
      "sum_r": -0.76,
      "mult": 0.59,
      "risk_pct": 0.2655,
-     "target": 0.94,
+     "target": 0.909,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.11R מול +0.08R של הבוט, יציבות 0.80, 7 עסקאות"
+       "value": 0.9,
+       "label": "סיכון ×0.9",
+       "why": "רווח ממוצע -0.11R מול +0.18R של הבוט, יציבות 0.80, 7 עסקאות"
       }
      ],
      "detail": {
@@ -11761,29 +11879,29 @@
     },
     {
      "combo": "MQ11|4Hour|MSTR",
-     "trades": 4,
-     "win_pct": 25.0,
-     "mean_r": -0.222,
-     "sum_r": -0.89,
-     "mult": 0.82,
-     "risk_pct": 0.369,
-     "target": 0.937,
+     "trades": 5,
+     "win_pct": 20.0,
+     "mean_r": -0.311,
+     "sum_r": -1.55,
+     "mult": 0.74,
+     "risk_pct": 0.333,
+     "target": 0.909,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.22R מול +0.08R של הבוט, יציבות 0.64, 4 עסקאות"
+       "value": 0.9,
+       "label": "סיכון ×0.9",
+       "why": "רווח ממוצע -0.31R מול +0.18R של הבוט, יציבות 0.62, 5 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 4,
-        "win_pct": 25.0,
-        "mean_r": -0.222,
-        "sum_r": -0.89,
-        "pf": 0.29
+        "trades": 5,
+        "win_pct": 20.0,
+        "mean_r": -0.311,
+        "sum_r": -1.55,
+        "pf": 0.19
        },
        "backtest": {
         "trades": 182,
@@ -11794,17 +11912,17 @@
        }
       },
       "stability": {
-       "score": 0.64,
+       "score": 0.62,
        "demo": {
-        "score": 0.25,
-        "without_best_r": -1.26,
-        "max_loss_r": 0.55,
+        "score": 0.2,
+        "without_best_r": -1.92,
+        "max_loss_r": 0.67,
         "avg_win_r": 0.37,
-        "drawdown_r": 0.89,
+        "drawdown_r": 1.55,
         "sd_r": 0.4,
         "checks": [
          0.0,
-         0.75,
+         0.6,
          0.0
         ]
        },
@@ -11825,8 +11943,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 4,
-         "mean_r": -0.22
+         "trades": 5,
+         "mean_r": -0.31
         },
         "sell": {
          "trades": 0,
@@ -11846,7 +11964,7 @@
       },
       "exits": {
        "bt_trades": 182,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.42,
        "mae_winners_p90_r": 0.49
       },
@@ -11897,13 +12015,13 @@
      "sum_r": 1.75,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.06,
+     "target": 1.062,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.58R מול +0.08R של הבוט, יציבות 0.83, 3 עסקאות"
+       "why": "רווח ממוצע +0.58R מול +0.18R של הבוט, יציבות 0.83, 3 עסקאות"
       }
      ],
      "detail": {
@@ -11976,7 +12094,7 @@
       },
       "exits": {
        "bt_trades": 107,
-       "demo_trades": 3,
+       "demo_trades": 0,
        "mfe_median_r": 0.61,
        "mae_winners_p90_r": 0.65
       },
@@ -12039,13 +12157,13 @@
      "sum_r": 0.16,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.006,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.16R מול +0.08R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.16R מול +0.18R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -12109,13 +12227,13 @@
      "sum_r": 0.0,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -12179,13 +12297,13 @@
      "sum_r": -1.69,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 0.942,
+     "target": 0.944,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.56R מול +0.08R של הבוט, יציבות 0.43, 3 עסקאות"
+       "why": "רווח ממוצע -0.56R מול +0.18R של הבוט, יציבות 0.43, 3 עסקאות"
       }
      ],
      "detail": {
@@ -12261,13 +12379,13 @@
      "sum_r": -2.0,
      "mult": 0.43,
      "risk_pct": 0.1935,
-     "target": 0.962,
+     "target": 0.964,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -1.00R מול +0.08R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע -1.00R מול +0.18R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -12331,13 +12449,13 @@
      "sum_r": 0.0,
      "mult": 0.5,
      "risk_pct": 0.225,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -12401,13 +12519,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -12471,13 +12589,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -12541,13 +12659,13 @@
      "sum_r": 0.0,
      "mult": 0.6,
      "risk_pct": 0.27,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -12611,13 +12729,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -12681,7 +12799,7 @@
      "sum_r": 0.0,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [],
      "detail": {
       "profit": {
@@ -12744,13 +12862,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -12814,13 +12932,13 @@
      "sum_r": -1.0,
      "mult": 0.83,
      "risk_pct": 0.3735,
-     "target": 0.983,
+     "target": 0.986,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול +0.08R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול +0.18R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -12884,13 +13002,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -12954,13 +13072,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13018,28 +13136,28 @@
     },
     {
      "combo": "SC295|1Hour|USDJPY",
-     "trades": 1,
+     "trades": 2,
      "win_pct": 100.0,
-     "mean_r": 0.048,
-     "sum_r": 0.05,
+     "mean_r": 0.076,
+     "sum_r": 0.15,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.003,
+     "target": 0.992,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.05R מול +0.08R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.08R מול +0.18R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
+        "trades": 2,
         "win_pct": 100.0,
-        "mean_r": 0.048,
-        "sum_r": 0.05,
+        "mean_r": 0.076,
+        "sum_r": 0.15,
         "pf": null
        },
        "backtest": {
@@ -13062,8 +13180,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 1,
-         "mean_r": 0.05
+         "trades": 2,
+         "mean_r": 0.08
         }
        },
        "backtest": {
@@ -13079,7 +13197,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 1
+       "demo_trades": 2
       },
       "hours": {},
       "market": {},
@@ -13094,13 +13212,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13164,13 +13282,13 @@
      "sum_r": 0.0,
      "mult": 0.8,
      "risk_pct": 0.36,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13234,13 +13352,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13304,13 +13422,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13374,13 +13492,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13444,13 +13562,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13514,13 +13632,13 @@
      "sum_r": 0.0,
      "mult": 0.6,
      "risk_pct": 0.27,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13584,13 +13702,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13654,13 +13772,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13724,13 +13842,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13794,13 +13912,13 @@
      "sum_r": 3.01,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.025,
+     "target": 1.027,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע +1.50R מול +0.08R של הבוט, יציבות 0.50, 2 עסקאות"
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +1.50R מול +0.18R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -13849,7 +13967,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 2
+       "demo_trades": 0
       },
       "hours": {},
       "market": {},
@@ -13864,13 +13982,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -13928,29 +14046,29 @@
     },
     {
      "combo": "SC432|15Min|XAUUSD",
-     "trades": 10,
-     "win_pct": 20.0,
-     "mean_r": -0.305,
-     "sum_r": -3.05,
+     "trades": 11,
+     "win_pct": 27.3,
+     "mean_r": -0.198,
+     "sum_r": -2.17,
      "mult": 0.53,
      "risk_pct": 0.2385,
-     "target": 0.84,
+     "target": 0.831,
      "recs": [
       {
        "kind": "mult",
        "value": 0.85,
        "label": "סיכון ×0.85",
-       "why": "רווח ממוצע -0.30R מול +0.08R של הבוט, יציבות 0.47, 10 עסקאות"
+       "why": "רווח ממוצע -0.20R מול +0.18R של הבוט, יציבות 0.49, 11 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 10,
-        "win_pct": 20.0,
-        "mean_r": -0.305,
-        "sum_r": -3.05,
-        "pf": 0.57
+        "trades": 11,
+        "win_pct": 27.3,
+        "mean_r": -0.198,
+        "sum_r": -2.17,
+        "pf": 0.69
        },
        "backtest": {
         "trades": 0,
@@ -13961,18 +14079,18 @@
        }
       },
       "stability": {
-       "score": 0.47,
+       "score": 0.49,
        "demo": {
-        "score": 0.41,
-        "without_best_r": -5.07,
+        "score": 0.46,
+        "without_best_r": -4.19,
         "max_loss_r": 1.0,
-        "avg_win_r": 1.98,
+        "avg_win_r": 1.61,
         "drawdown_r": 3.05,
-        "sd_r": 1.24,
+        "sd_r": 1.23,
         "checks": [
          0.0,
          1.0,
-         0.23
+         0.37
         ]
        },
        "backtest": null
@@ -13984,8 +14102,8 @@
          "mean_r": -0.8
         },
         "sell": {
-         "trades": 5,
-         "mean_r": 0.19
+         "trades": 6,
+         "mean_r": 0.31
         }
        },
        "backtest": {
@@ -14001,7 +14119,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 10
+       "demo_trades": 4
       },
       "hours": {},
       "market": {},
@@ -14016,13 +14134,13 @@
      "sum_r": 2.01,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.016,
+     "target": 1.019,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +2.01R מול +0.08R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +2.01R מול +0.18R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -14071,7 +14189,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 1
+       "demo_trades": 0
       },
       "hours": {},
       "market": {},
@@ -14080,29 +14198,29 @@
     },
     {
      "combo": "SC439|4Hour|EURJPY",
-     "trades": 1,
-     "win_pct": 0.0,
-     "mean_r": -1.0,
-     "sum_r": -1.0,
+     "trades": 2,
+     "win_pct": 50.0,
+     "mean_r": 0.076,
+     "sum_r": 0.15,
      "mult": 0.5,
      "risk_pct": 0.225,
-     "target": 0.983,
+     "target": 0.992,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול +0.08R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.08R מול +0.18R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
-        "win_pct": 0.0,
-        "mean_r": -1.0,
-        "sum_r": -1.0,
-        "pf": 0.0
+        "trades": 2,
+        "win_pct": 50.0,
+        "mean_r": 0.076,
+        "sum_r": 0.15,
+        "pf": 1.15
        },
        "backtest": {
         "trades": 0,
@@ -14124,8 +14242,8 @@
          "mean_r": -1.0
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 1.15
         }
        },
        "backtest": {
@@ -14141,7 +14259,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 1
+       "demo_trades": 2
       },
       "hours": {},
       "market": {},
@@ -14156,13 +14274,13 @@
      "sum_r": 1.49,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.025,
+     "target": 1.027,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.75R מול +0.08R של הבוט, יציבות 0.50, 2 עסקאות"
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +0.75R מול +0.18R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -14211,7 +14329,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 2
+       "demo_trades": 0
       },
       "hours": {},
       "market": {},
@@ -14226,13 +14344,13 @@
      "sum_r": 0.0,
      "mult": 0.69,
      "risk_pct": 0.3105,
-     "target": 1.0,
+     "target": 0.996,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -14281,7 +14399,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 1
+       "demo_trades": 0
       },
       "hours": {},
       "market": {},
@@ -14296,13 +14414,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -14360,28 +14478,28 @@
     },
     {
      "combo": "SC539|4Hour|XAGUSD",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.865,
+     "sum_r": 0.86,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.019,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.86R מול +0.18R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.865,
+        "sum_r": 0.86,
         "pf": null
        },
        "backtest": {
@@ -14404,8 +14522,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.86
         }
        },
        "backtest": {
@@ -14421,7 +14539,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 0
+       "demo_trades": 1
       },
       "hours": {},
       "market": {},
@@ -14436,13 +14554,13 @@
      "sum_r": -1.0,
      "mult": 0.5,
      "risk_pct": 0.225,
-     "target": 0.983,
+     "target": 0.986,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול +0.08R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול +0.18R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -14506,13 +14624,13 @@
      "sum_r": -1.0,
      "mult": 0.5,
      "risk_pct": 0.225,
-     "target": 0.983,
+     "target": 0.986,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול +0.08R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול +0.18R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -14576,13 +14694,13 @@
      "sum_r": -1.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 0.983,
+     "target": 0.986,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול +0.08R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול +0.18R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -14646,13 +14764,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -14716,13 +14834,13 @@
      "sum_r": 0.0,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.007,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -14784,15 +14902,15 @@
      "win_pct": null,
      "mean_r": null,
      "sum_r": 0.0,
-     "mult": 0.7,
-     "risk_pct": 0.315,
-     "target": 1.007,
+     "mult": 0.63,
+     "risk_pct": 0.2835,
+     "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.08R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.18R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -14852,8 +14970,8 @@
   },
   "bot3": {
    "risk_pct": 0.375,
-   "trades": 103,
-   "mean_r": 0.097,
+   "trades": 121,
+   "mean_r": 0.142,
    "combos": [
     {
      "combo": "TV02|15Min|JP225",
@@ -14983,29 +15101,29 @@
     },
     {
      "combo": "TV21|1Hour|XAUUSD",
-     "trades": 8,
-     "win_pct": 62.5,
-     "mean_r": 0.245,
-     "sum_r": 1.96,
-     "mult": 0.75,
-     "risk_pct": 0.2812,
-     "target": 1.055,
+     "trades": 9,
+     "win_pct": 66.7,
+     "mean_r": 0.325,
+     "sum_r": 2.93,
+     "mult": 0.85,
+     "risk_pct": 0.3187,
+     "target": 1.073,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.24R מול +0.10R של הבוט, יציבות 0.92, 8 עסקאות"
+       "why": "רווח ממוצע +0.33R מול +0.14R של הבוט, יציבות 0.93, 9 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 8,
-        "win_pct": 62.5,
-        "mean_r": 0.245,
-        "sum_r": 1.96,
-        "pf": 2.36
+        "trades": 9,
+        "win_pct": 66.7,
+        "mean_r": 0.325,
+        "sum_r": 2.93,
+        "pf": 3.03
        },
        "backtest": {
         "trades": 355,
@@ -15016,18 +15134,18 @@
        }
       },
       "stability": {
-       "score": 0.92,
+       "score": 0.93,
        "demo": {
-        "score": 0.78,
-        "without_best_r": 0.39,
+        "score": 0.83,
+        "without_best_r": 1.36,
         "max_loss_r": 1.0,
-        "avg_win_r": 0.68,
+        "avg_win_r": 0.73,
         "drawdown_r": 1.41,
-        "sd_r": 0.9,
+        "sd_r": 0.87,
         "checks": [
          1.0,
-         0.76,
-         0.58
+         0.81,
+         0.68
         ]
        },
        "backtest": {
@@ -15051,8 +15169,8 @@
          "mean_r": 0.01
         },
         "sell": {
-         "trades": 5,
-         "mean_r": 0.39
+         "trades": 6,
+         "mean_r": 0.48
         }
        },
        "backtest": {
@@ -15068,7 +15186,7 @@
       },
       "exits": {
        "bt_trades": 355,
-       "demo_trades": 8,
+       "demo_trades": 9,
        "mfe_median_r": 0.65,
        "mae_winners_p90_r": 0.62
       },
@@ -15131,13 +15249,13 @@
      "sum_r": -1.24,
      "mult": 0.37,
      "risk_pct": 0.1387,
-     "target": 0.913,
+     "target": 0.898,
      "recs": [
       {
        "kind": "mult",
        "value": 0.9,
        "label": "סיכון ×0.9",
-       "why": "רווח ממוצע -0.18R מול +0.10R של הבוט, יציבות 0.80, 7 עסקאות"
+       "why": "רווח ממוצע -0.18R מול +0.14R של הבוט, יציבות 0.80, 7 עסקאות"
       }
      ],
      "detail": {
@@ -15396,15 +15514,15 @@
      "win_pct": 66.7,
      "mean_r": 0.3,
      "sum_r": 0.9,
-     "mult": 0.7,
-     "risk_pct": 0.2625,
-     "target": 1.036,
+     "mult": 0.83,
+     "risk_pct": 0.3112,
+     "target": 1.03,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.30R מול +0.10R של הבוט, יציבות 0.89, 3 עסקאות"
+       "why": "רווח ממוצע +0.30R מול +0.14R של הבוט, יציבות 0.89, 3 עסקאות"
       }
      ],
      "detail": {
@@ -15543,13 +15661,13 @@
      "sum_r": 0.11,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 0.991,
+     "target": 0.982,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.03R מול +0.10R של הבוט, יציבות 0.84, 4 עסקאות"
+       "why": "רווח ממוצע +0.03R מול +0.14R של הבוט, יציבות 0.84, 4 עסקאות"
       }
      ],
      "detail": {
@@ -15679,7 +15797,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.67R מול +0.10R של הבוט, יציבות 0.81, 3 עסקאות"
+       "why": "רווח ממוצע -0.67R מול +0.14R של הבוט, יציבות 0.81, 3 עסקאות"
       }
      ],
      "detail": {
@@ -15818,13 +15936,13 @@
      "sum_r": 1.82,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.031,
+     "target": 1.032,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +1.82R מול +0.10R של הבוט, יציבות 0.96, 1 עסקאות"
+       "why": "רווח ממוצע +1.82R מול +0.14R של הבוט, יציבות 0.96, 1 עסקאות"
       }
      ],
      "detail": {
@@ -16186,15 +16304,15 @@
      "win_pct": 0.0,
      "mean_r": -0.68,
      "sum_r": -1.36,
-     "mult": 0.64,
-     "risk_pct": 0.24,
+     "mult": 0.55,
+     "risk_pct": 0.2063,
      "target": 0.963,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.68R מול +0.10R של הבוט, יציבות 0.92, 2 עסקאות"
+       "why": "רווח ממוצע -0.68R מול +0.14R של הבוט, יציבות 0.92, 2 עסקאות"
       }
      ],
      "detail": {
@@ -16315,7 +16433,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +1.85R מול +0.10R של הבוט, יציבות 0.97, 2 עסקאות"
+       "why": "רווח ממוצע +1.85R מול +0.14R של הבוט, יציבות 0.97, 2 עסקאות"
       }
      ],
      "detail": {
@@ -16427,7 +16545,7 @@
      "sum_r": 0.22,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 1.014,
+     "target": 1.012,
      "recs": [
       {
        "kind": "remove",
@@ -16548,13 +16666,13 @@
      "sum_r": 0.99,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.045,
+     "target": 1.041,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.50R מול +0.10R של הבוט, יציבות 0.83, 2 עסקאות"
+       "why": "רווח ממוצע +0.50R מול +0.14R של הבוט, יציבות 0.83, 2 עסקאות"
       }
      ],
      "detail": {
@@ -16665,13 +16783,13 @@
      "sum_r": 1.58,
      "mult": 0.82,
      "risk_pct": 0.3075,
-     "target": 1.053,
+     "target": 1.044,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.32R מול +0.10R של הבוט, יציבות 0.86, 5 עסקאות"
+       "why": "רווח ממוצע +0.32R מול +0.14R של הבוט, יציבות 0.86, 5 עסקאות"
       }
      ],
      "detail": {
@@ -16923,7 +17041,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.75, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.75, 0 עסקאות"
       }
      ],
      "detail": {
@@ -17162,13 +17280,13 @@
     },
     {
      "combo": "TV36|1Hour|GOOG",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 1.638,
+     "sum_r": 1.64,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.009,
+     "target": 1.022,
      "recs": [
       {
        "kind": "remove",
@@ -17180,10 +17298,10 @@
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 1.638,
+        "sum_r": 1.64,
         "pf": null
        },
        "backtest": {
@@ -17218,8 +17336,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 1.64
         }
        },
        "backtest": {
@@ -17235,7 +17353,7 @@
       },
       "exits": {
        "bt_trades": 139,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 4.3,
        "mfe_of_target_median_pct": 22.0,
@@ -17405,13 +17523,13 @@
     },
     {
      "combo": "SS09|1Hour|T",
-     "trades": 2,
+     "trades": 3,
      "win_pct": 0.0,
-     "mean_r": -0.347,
-     "sum_r": -0.69,
+     "mean_r": -0.565,
+     "sum_r": -1.69,
      "mult": 1.0,
      "risk_pct": 0.375,
-     "target": 0.963,
+     "target": 0.943,
      "recs": [
       {
        "kind": "remove",
@@ -17423,10 +17541,10 @@
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
+        "trades": 3,
         "win_pct": 0.0,
-        "mean_r": -0.347,
-        "sum_r": -0.69,
+        "mean_r": -0.565,
+        "sum_r": -1.69,
         "pf": 0.0
        },
        "backtest": {
@@ -17438,8 +17556,20 @@
        }
       },
       "stability": {
-       "score": 0.79,
-       "demo": null,
+       "score": 0.69,
+       "demo": {
+        "score": 0.0,
+        "without_best_r": -1.4,
+        "max_loss_r": 1.0,
+        "avg_win_r": 0.0,
+        "drawdown_r": 1.69,
+        "sd_r": 0.38,
+        "checks": [
+         0.0,
+         0.0,
+         0.0
+        ]
+       },
        "backtest": {
         "score": 0.79,
         "without_best_r": 13.1,
@@ -17461,8 +17591,8 @@
          "mean_r": -0.4
         },
         "sell": {
-         "trades": 1,
-         "mean_r": -0.29
+         "trades": 2,
+         "mean_r": -0.64
         }
        },
        "backtest": {
@@ -17478,7 +17608,7 @@
       },
       "exits": {
        "bt_trades": 237,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.4,
        "mae_winners_p90_r": 0.49
       },
@@ -17652,7 +17782,7 @@
        "kind": "mult",
        "value": 0.9,
        "label": "סיכון ×0.9",
-       "why": "רווח ממוצע -0.43R מול +0.10R של הבוט, יציבות 0.75, 5 עסקאות"
+       "why": "רווח ממוצע -0.43R מול +0.14R של הבוט, יציבות 0.75, 5 עסקאות"
       }
      ],
      "detail": {
@@ -17785,7 +17915,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.95, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.95, 0 עסקאות"
       }
      ],
      "detail": {
@@ -17894,13 +18024,13 @@
     },
     {
      "combo": "SS01|5Min|WMT",
-     "trades": 7,
-     "win_pct": 57.1,
-     "mean_r": -0.126,
-     "sum_r": -0.88,
-     "mult": 0.07,
-     "risk_pct": 0.0263,
-     "target": 0.924,
+     "trades": 8,
+     "win_pct": 50.0,
+     "mean_r": -0.202,
+     "sum_r": -1.62,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
+     "target": 0.871,
      "recs": [
       {
        "kind": "remove",
@@ -17912,11 +18042,11 @@
      "detail": {
       "profit": {
        "demo": {
-        "trades": 7,
-        "win_pct": 57.1,
-        "mean_r": -0.126,
-        "sum_r": -0.88,
-        "pf": 0.56
+        "trades": 8,
+        "win_pct": 50.0,
+        "mean_r": -0.202,
+        "sum_r": -1.62,
+        "pf": 0.41
        },
        "backtest": {
         "trades": 341,
@@ -17927,14 +18057,14 @@
        }
       },
       "stability": {
-       "score": 0.63,
+       "score": 0.61,
        "demo": {
         "score": 0.0,
-        "without_best_r": -1.5,
+        "without_best_r": -2.24,
         "max_loss_r": 1.0,
         "avg_win_r": 0.28,
-        "drawdown_r": 1.8,
-        "sd_r": 0.63,
+        "drawdown_r": 2.4,
+        "sd_r": 0.62,
         "checks": [
          0.0,
          0.0,
@@ -17958,8 +18088,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 5,
-         "mean_r": -0.1
+         "trades": 6,
+         "mean_r": -0.21
         },
         "sell": {
          "trades": 2,
@@ -17979,7 +18109,7 @@
       },
       "exits": {
        "bt_trades": 341,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 0.0,
        "mfe_of_target_median_pct": 29.0,
@@ -18023,29 +18153,29 @@
     },
     {
      "combo": "SS06|4Hour|MSTR",
-     "trades": 6,
-     "win_pct": 50.0,
-     "mean_r": -0.025,
-     "sum_r": -0.15,
+     "trades": 7,
+     "win_pct": 57.1,
+     "mean_r": 0.074,
+     "sum_r": 0.52,
      "mult": 0.81,
      "risk_pct": 0.3038,
-     "target": 0.96,
+     "target": 0.973,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.02R מול +0.10R של הבוט, יציבות 0.54, 6 עסקאות"
+       "why": "רווח ממוצע +0.07R מול +0.14R של הבוט, יציבות 0.57, 7 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 6,
-        "win_pct": 50.0,
-        "mean_r": -0.025,
-        "sum_r": -0.15,
-        "pf": 0.87
+        "trades": 7,
+        "win_pct": 57.1,
+        "mean_r": 0.074,
+        "sum_r": 0.52,
+        "pf": 1.45
        },
        "backtest": {
         "trades": 296,
@@ -18056,18 +18186,18 @@
        }
       },
       "stability": {
-       "score": 0.54,
+       "score": 0.57,
        "demo": {
-        "score": 0.0,
-        "without_best_r": -0.63,
+        "score": 0.2,
+        "without_best_r": -0.15,
         "max_loss_r": 1.0,
-        "avg_win_r": 0.33,
+        "avg_win_r": 0.42,
         "drawdown_r": 1.15,
-        "sd_r": 0.53,
+        "sd_r": 0.55,
         "checks": [
          0.0,
-         0.0,
-         0.0
+         0.3,
+         0.31
         ]
        },
        "backtest": {
@@ -18091,8 +18221,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 6,
-         "mean_r": -0.02
+         "trades": 7,
+         "mean_r": 0.07
         }
        },
        "backtest": {
@@ -18108,7 +18238,7 @@
       },
       "exits": {
        "bt_trades": 296,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "near_miss_pct": 0.0,
        "reach_pct": 0.0,
        "mfe_of_target_median_pct": 14.0,
@@ -18162,13 +18292,13 @@
      "sum_r": 0.17,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.008,
+     "target": 1.007,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.17R מול +0.10R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.17R מול +0.14R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -18232,13 +18362,13 @@
      "sum_r": -0.16,
      "mult": 0.64,
      "risk_pct": 0.24,
-     "target": 0.99,
+     "target": 0.988,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.16R מול +0.10R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -0.16R מול +0.14R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -18308,7 +18438,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -18378,7 +18508,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -18448,7 +18578,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -18518,7 +18648,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.36R מול +0.10R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.36R מול +0.14R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -18588,7 +18718,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -18646,29 +18776,29 @@
     },
     {
      "combo": "SC154|5Min|XAUUSD",
-     "trades": 7,
-     "win_pct": 14.3,
-     "mean_r": -0.527,
-     "sum_r": -3.69,
+     "trades": 9,
+     "win_pct": 11.1,
+     "mean_r": -0.565,
+     "sum_r": -5.09,
      "mult": 0.39,
      "risk_pct": 0.1462,
-     "target": 0.878,
+     "target": 0.853,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.9,
-       "label": "סיכון ×0.9",
-       "why": "רווח ממוצע -0.53R מול +0.10R של הבוט, יציבות 0.46, 7 עסקאות"
+       "value": 0.85,
+       "label": "סיכון ×0.85",
+       "why": "רווח ממוצע -0.57R מול +0.14R של הבוט, יציבות 0.45, 9 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 7,
-        "win_pct": 14.3,
-        "mean_r": -0.527,
-        "sum_r": -3.69,
-        "pf": 0.38
+        "trades": 9,
+        "win_pct": 11.1,
+        "mean_r": -0.565,
+        "sum_r": -5.09,
+        "pf": 0.31
        },
        "backtest": {
         "trades": 0,
@@ -18679,14 +18809,14 @@
        }
       },
       "stability": {
-       "score": 0.46,
+       "score": 0.45,
        "demo": {
         "score": 0.33,
-        "without_best_r": -6.0,
+        "without_best_r": -7.4,
         "max_loss_r": 1.0,
         "avg_win_r": 2.31,
-        "drawdown_r": 5.0,
-        "sd_r": 1.25,
+        "drawdown_r": 5.09,
+        "sd_r": 1.1,
         "checks": [
          0.0,
          1.0,
@@ -18698,8 +18828,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 5,
-         "mean_r": -1.0
+         "trades": 7,
+         "mean_r": -0.91
         },
         "sell": {
          "trades": 2,
@@ -18719,7 +18849,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 7
+       "demo_trades": 9
       },
       "hours": {},
       "market": {},
@@ -18734,13 +18864,13 @@
      "sum_r": -0.66,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 0.955,
+     "target": 0.948,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.22R מול +0.10R של הבוט, יציבות 0.88, 3 עסקאות"
+       "why": "רווח ממוצע -0.22R מול +0.14R של הבוט, יציבות 0.88, 3 עסקאות"
       }
      ],
      "detail": {
@@ -18870,28 +19000,28 @@
     },
     {
      "combo": "IB033|4Hour|XAUUSD",
-     "trades": 2,
+     "trades": 3,
      "win_pct": 100.0,
-     "mean_r": 2.003,
-     "sum_r": 4.01,
+     "mean_r": 1.388,
+     "sum_r": 4.16,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.026,
+     "target": 1.039,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +2.00R מול +0.10R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע +1.39R מול +0.14R של הבוט, יציבות 0.57, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
+        "trades": 3,
         "win_pct": 100.0,
-        "mean_r": 2.003,
-        "sum_r": 4.01,
+        "mean_r": 1.388,
+        "sum_r": 4.16,
         "pf": null
        },
        "backtest": {
@@ -18903,8 +19033,20 @@
        }
       },
       "stability": {
-       "score": 0.5,
-       "demo": null,
+       "score": 0.57,
+       "demo": {
+        "score": 1.0,
+        "without_best_r": 2.12,
+        "max_loss_r": 0.0,
+        "avg_win_r": 1.39,
+        "drawdown_r": 0.0,
+        "sd_r": 1.07,
+        "checks": [
+         1.0,
+         1.0,
+         1.0
+        ]
+       },
        "backtest": null
       },
       "direction": {
@@ -18914,8 +19056,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 2,
-         "mean_r": 2.0
+         "trades": 3,
+         "mean_r": 1.39
         }
        },
        "backtest": {
@@ -18931,7 +19073,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 2
+       "demo_trades": 3
       },
       "hours": {},
       "market": {},
@@ -18946,13 +19088,13 @@
      "sum_r": -3.27,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.924,
+     "target": 0.925,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.9,
-       "label": "סיכון ×0.9",
-       "why": "רווח ממוצע -0.82R מול +0.10R של הבוט, יציבות 0.42, 4 עסקאות"
+       "value": 0.95,
+       "label": "סיכון ×0.95",
+       "why": "רווח ממוצע -0.82R מול +0.14R של הבוט, יציבות 0.42, 4 עסקאות"
       }
      ],
      "detail": {
@@ -19022,29 +19164,29 @@
     },
     {
      "combo": "SC272|1Hour|USDJPY",
-     "trades": 1,
-     "win_pct": 0.0,
-     "mean_r": -1.0,
-     "sum_r": -1.0,
+     "trades": 2,
+     "win_pct": 50.0,
+     "mean_r": 0.319,
+     "sum_r": 0.64,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 0.985,
+     "target": 1.014,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול +0.10R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.32R מול +0.14R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
-        "win_pct": 0.0,
-        "mean_r": -1.0,
-        "sum_r": -1.0,
-        "pf": 0.0
+        "trades": 2,
+        "win_pct": 50.0,
+        "mean_r": 0.319,
+        "sum_r": 0.64,
+        "pf": 1.64
        },
        "backtest": {
         "trades": 0,
@@ -19066,8 +19208,8 @@
          "mean_r": -1.0
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 1.64
         }
        },
        "backtest": {
@@ -19083,7 +19225,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 1
+       "demo_trades": 2
       },
       "hours": {},
       "market": {},
@@ -19104,7 +19246,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -19174,7 +19316,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.92, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.92, 0 עסקאות"
       }
      ],
      "detail": {
@@ -19304,7 +19446,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -19374,7 +19516,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול +0.10R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול +0.14R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -19444,7 +19586,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -19514,7 +19656,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -19584,7 +19726,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -19648,13 +19790,13 @@
      "sum_r": 0.87,
      "mult": 0.5,
      "risk_pct": 0.1875,
-     "target": 1.022,
+     "target": 1.02,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.44R מול +0.10R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע +0.44R מול +0.14R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -19724,7 +19866,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -19794,7 +19936,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -19864,7 +20006,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -19934,7 +20076,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -1.00R מול +0.10R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע -1.00R מול +0.14R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -20004,7 +20146,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.90, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.90, 0 עסקאות"
       }
      ],
      "detail": {
@@ -20134,7 +20276,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -20204,7 +20346,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -20274,7 +20416,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -20338,13 +20480,13 @@
      "sum_r": -0.04,
      "mult": 0.66,
      "risk_pct": 0.2475,
-     "target": 0.994,
+     "target": 0.989,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.02R מול +0.10R של הבוט, יציבות 0.89, 2 עסקאות"
+       "why": "רווח ממוצע -0.02R מול +0.14R של הבוט, יציבות 0.89, 2 עסקאות"
       }
      ],
      "detail": {
@@ -20474,7 +20616,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -20544,7 +20686,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -20791,28 +20933,28 @@
     },
     {
      "combo": "MQ02|1Hour|USDCAD",
-     "trades": 2,
+     "trades": 3,
      "win_pct": 100.0,
-     "mean_r": 0.16,
-     "sum_r": 0.32,
+     "mean_r": 0.239,
+     "sum_r": 0.72,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.006,
+     "target": 1.011,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.16R מול +0.10R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע +0.24R מול +0.14R של הבוט, יציבות 0.57, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
+        "trades": 3,
         "win_pct": 100.0,
-        "mean_r": 0.16,
-        "sum_r": 0.32,
+        "mean_r": 0.239,
+        "sum_r": 0.72,
         "pf": null
        },
        "backtest": {
@@ -20824,15 +20966,27 @@
        }
       },
       "stability": {
-       "score": 0.5,
-       "demo": null,
+       "score": 0.57,
+       "demo": {
+        "score": 1.0,
+        "without_best_r": 0.32,
+        "max_loss_r": 0.0,
+        "avg_win_r": 0.24,
+        "drawdown_r": 0.0,
+        "sd_r": 0.21,
+        "checks": [
+         1.0,
+         1.0,
+         1.0
+        ]
+       },
        "backtest": null
       },
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
-         "mean_r": 0.16
+         "trades": 3,
+         "mean_r": 0.24
         },
         "sell": {
          "trades": 0,
@@ -20852,7 +21006,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 2
+       "demo_trades": 3
       },
       "hours": {},
       "market": {},
@@ -20873,7 +21027,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -20935,15 +21089,15 @@
      "win_pct": 60.0,
      "mean_r": 1.867,
      "sum_r": 9.33,
-     "mult": 0.5,
-     "risk_pct": 0.1875,
-     "target": 1.058,
+     "mult": 1.87,
+     "risk_pct": 0.7013,
+     "target": 1.059,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +1.87R מול +0.10R של הבוט, יציבות 0.59, 5 עסקאות"
+       "why": "רווח ממוצע +1.87R מול +0.14R של הבוט, יציבות 0.59, 5 עסקאות"
       }
      ],
      "detail": {
@@ -21013,29 +21167,29 @@
     },
     {
      "combo": "BK05|1Hour|USDJPY",
-     "trades": 2,
-     "win_pct": 50.0,
-     "mean_r": -0.48,
-     "sum_r": -0.96,
+     "trades": 3,
+     "win_pct": 33.3,
+     "mean_r": -0.387,
+     "sum_r": -1.16,
      "mult": 0.6,
      "risk_pct": 0.225,
-     "target": 0.963,
+     "target": 0.943,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.48R מול +0.10R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע -0.39R מול +0.14R של הבוט, יציבות 0.43, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
-        "win_pct": 50.0,
-        "mean_r": -0.48,
-        "sum_r": -0.96,
-        "pf": 0.05
+        "trades": 3,
+        "win_pct": 33.3,
+        "mean_r": -0.387,
+        "sum_r": -1.16,
+        "pf": 0.04
        },
        "backtest": {
         "trades": 0,
@@ -21046,8 +21200,20 @@
        }
       },
       "stability": {
-       "score": 0.5,
-       "demo": null,
+       "score": 0.43,
+       "demo": {
+        "score": 0.0,
+        "without_best_r": -1.22,
+        "max_loss_r": 1.01,
+        "avg_win_r": 0.05,
+        "drawdown_r": 1.22,
+        "sd_r": 0.56,
+        "checks": [
+         0.0,
+         0.0,
+         0.0
+        ]
+       },
        "backtest": null
       },
       "direction": {
@@ -21057,8 +21223,8 @@
          "mean_r": -1.01
         },
         "sell": {
-         "trades": 1,
-         "mean_r": 0.05
+         "trades": 2,
+         "mean_r": -0.07
         }
        },
        "backtest": {
@@ -21074,7 +21240,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 2
+       "demo_trades": 3
       },
       "hours": {},
       "market": {},
@@ -21089,13 +21255,13 @@
      "sum_r": -0.16,
      "mult": 0.5,
      "risk_pct": 0.1875,
-     "target": 0.99,
+     "target": 0.988,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.16R מול +0.10R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -0.16R מול +0.14R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -21153,28 +21319,28 @@
     },
     {
      "combo": "SC006|4Hour|USDJPY",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 1.612,
+     "sum_r": 1.61,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.009,
+     "target": 1.018,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +1.61R מול +0.14R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 1.612,
+        "sum_r": 1.61,
         "pf": null
        },
        "backtest": {
@@ -21197,8 +21363,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 1.61
         }
        },
        "backtest": {
@@ -21214,7 +21380,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 0
+       "demo_trades": 1
       },
       "hours": {},
       "market": {},
@@ -21235,7 +21401,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -21305,7 +21471,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -21375,7 +21541,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול +0.14R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -21445,7 +21611,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +1.49R מול +0.10R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע +1.49R מול +0.14R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -21503,29 +21669,29 @@
     },
     {
      "combo": "SC432|1Hour|USDJPY",
-     "trades": 1,
-     "win_pct": 0.0,
-     "mean_r": -0.081,
-     "sum_r": -0.08,
+     "trades": 2,
+     "win_pct": 50.0,
+     "mean_r": 0.206,
+     "sum_r": 0.41,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 0.995,
+     "target": 1.007,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.08R מול +0.10R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.21R מול +0.14R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
-        "win_pct": 0.0,
-        "mean_r": -0.081,
-        "sum_r": -0.08,
-        "pf": 0.0
+        "trades": 2,
+        "win_pct": 50.0,
+        "mean_r": 0.206,
+        "sum_r": 0.41,
+        "pf": 6.06
        },
        "backtest": {
         "trades": 0,
@@ -21547,8 +21713,8 @@
          "mean_r": -0.08
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.49
         }
        },
        "backtest": {
@@ -21564,7 +21730,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 1
+       "demo_trades": 2
       },
       "hours": {},
       "market": {},
@@ -21579,13 +21745,13 @@
      "sum_r": 0.05,
      "mult": 0.3,
      "risk_pct": 0.1125,
-     "target": 1.003,
+     "target": 1.001,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.05R מול +0.10R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.05R מול +0.14R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -21655,7 +21821,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.74R מול +0.10R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע +0.74R מול +0.14R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -21713,28 +21879,28 @@
     },
     {
      "combo": "SC486|1Hour|XAUUSD",
-     "trades": 1,
+     "trades": 2,
      "win_pct": 100.0,
-     "mean_r": 1.167,
-     "sum_r": 1.17,
+     "mean_r": 0.954,
+     "sum_r": 1.91,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.018,
+     "target": 1.026,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע +1.17R מול +0.10R של הבוט, יציבות 0.50, 1 עסקאות"
+       "value": 1.05,
+       "label": "סיכון ×1.05",
+       "why": "רווח ממוצע +0.95R מול +0.14R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
+        "trades": 2,
         "win_pct": 100.0,
-        "mean_r": 1.167,
-        "sum_r": 1.17,
+        "mean_r": 0.954,
+        "sum_r": 1.91,
         "pf": null
        },
        "backtest": {
@@ -21757,8 +21923,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 1,
-         "mean_r": 1.17
+         "trades": 2,
+         "mean_r": 0.95
         }
        },
        "backtest": {
@@ -21774,7 +21940,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 1
+       "demo_trades": 2
       },
       "hours": {},
       "market": {},
@@ -21783,29 +21949,29 @@
     },
     {
      "combo": "SC508|4Hour|USDJPY",
-     "trades": 1,
-     "win_pct": 0.0,
-     "mean_r": -0.609,
-     "sum_r": -0.61,
+     "trades": 3,
+     "win_pct": 66.7,
+     "mean_r": 0.199,
+     "sum_r": 0.6,
      "mult": 0.5,
      "risk_pct": 0.1875,
-     "target": 0.985,
+     "target": 1.006,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.61R מול +0.10R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.20R מול +0.14R של הבוט, יציבות 0.50, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 1,
-        "win_pct": 0.0,
-        "mean_r": -0.609,
-        "sum_r": -0.61,
-        "pf": 0.0
+        "trades": 3,
+        "win_pct": 66.7,
+        "mean_r": 0.199,
+        "sum_r": 0.6,
+        "pf": 1.98
        },
        "backtest": {
         "trades": 0,
@@ -21817,7 +21983,19 @@
       },
       "stability": {
        "score": 0.5,
-       "demo": null,
+       "demo": {
+        "score": 0.5,
+        "without_best_r": -0.37,
+        "max_loss_r": 0.61,
+        "avg_win_r": 0.6,
+        "drawdown_r": 0.61,
+        "sd_r": 0.79,
+        "checks": [
+         0.0,
+         1.0,
+         0.5
+        ]
+       },
        "backtest": null
       },
       "direction": {
@@ -21827,6 +22005,76 @@
          "mean_r": -0.61
         },
         "sell": {
+         "trades": 2,
+         "mean_r": 0.6
+        }
+       },
+       "backtest": {
+        "buy": {
+         "trades": 0,
+         "mean_r": null
+        },
+        "sell": {
+         "trades": 0,
+         "mean_r": null
+        }
+       }
+      },
+      "exits": {
+       "bt_trades": 0,
+       "demo_trades": 3
+      },
+      "hours": {},
+      "market": {},
+      "together": null
+     }
+    },
+    {
+     "combo": "SC537|4Hour|USDCAD",
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.219,
+     "sum_r": 0.22,
+     "mult": 0.7,
+     "risk_pct": 0.2625,
+     "target": 1.008,
+     "recs": [
+      {
+       "kind": "mult",
+       "value": 1.0,
+       "label": "סיכון ×1",
+       "why": "רווח ממוצע +0.22R מול +0.14R של הבוט, יציבות 0.50, 1 עסקאות"
+      }
+     ],
+     "detail": {
+      "profit": {
+       "demo": {
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.219,
+        "sum_r": 0.22,
+        "pf": null
+       },
+       "backtest": {
+        "trades": 0,
+        "win_pct": null,
+        "mean_r": null,
+        "sum_r": 0.0,
+        "pf": null
+       }
+      },
+      "stability": {
+       "score": 0.5,
+       "demo": null,
+       "backtest": null
+      },
+      "direction": {
+       "demo": {
+        "buy": {
+         "trades": 1,
+         "mean_r": 0.22
+        },
+        "sell": {
          "trades": 0,
          "mean_r": null
         }
@@ -21852,99 +22100,29 @@
      }
     },
     {
-     "combo": "SC537|4Hour|USDCAD",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
-     "mult": 0.7,
-     "risk_pct": 0.2625,
-     "target": 1.009,
-     "recs": [
-      {
-       "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
-      }
-     ],
-     "detail": {
-      "profit": {
-       "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
-       },
-       "backtest": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
-        "pf": null
-       }
-      },
-      "stability": {
-       "score": 0.5,
-       "demo": null,
-       "backtest": null
-      },
-      "direction": {
-       "demo": {
-        "buy": {
-         "trades": 0,
-         "mean_r": null
-        },
-        "sell": {
-         "trades": 0,
-         "mean_r": null
-        }
-       },
-       "backtest": {
-        "buy": {
-         "trades": 0,
-         "mean_r": null
-        },
-        "sell": {
-         "trades": 0,
-         "mean_r": null
-        }
-       }
-      },
-      "exits": {
-       "bt_trades": 0,
-       "demo_trades": 0
-      },
-      "hours": {},
-      "market": {},
-      "together": null
-     }
-    },
-    {
      "combo": "SC539|4Hour|XAGUSD",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.864,
+     "sum_r": 0.86,
      "mult": 0.7,
      "risk_pct": 0.2625,
-     "target": 1.009,
+     "target": 1.018,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול +0.10R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.86R מול +0.14R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.864,
+        "sum_r": 0.86,
         "pf": null
        },
        "backtest": {
@@ -21967,8 +22145,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.86
         }
        },
        "backtest": {
@@ -21984,7 +22162,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 0
+       "demo_trades": 1
       },
       "hours": {},
       "market": {},
@@ -21995,8 +22173,8 @@
   },
   "bot4": {
    "risk_pct": 0.44999999999999996,
-   "trades": 111,
-   "mean_r": -0.088,
+   "trades": 122,
+   "mean_r": -0.076,
    "combos": [
     {
      "combo": "BK05|15Min|EURUSD",
@@ -22012,7 +22190,7 @@
        "kind": "mult",
        "value": 1.1,
        "label": "סיכון ×1.1",
-       "why": "רווח ממוצע +0.63R מול -0.09R של הבוט, יציבות 0.86, 4 עסקאות"
+       "why": "רווח ממוצע +0.63R מול -0.08R של הבוט, יציבות 0.86, 4 עסקאות"
       }
      ],
      "detail": {
@@ -22154,7 +22332,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +2.17R מול -0.09R של הבוט, יציבות 0.94, 1 עסקאות"
+       "why": "רווח ממוצע +2.17R מול -0.08R של הבוט, יציבות 0.94, 1 עסקאות"
       }
      ],
      "detail": {
@@ -22284,7 +22462,7 @@
        "kind": "mult",
        "value": 1.1,
        "label": "סיכון ×1.1",
-       "why": "רווח ממוצע +0.61R מול -0.09R של הבוט, יציבות 0.88, 4 עסקאות"
+       "why": "רווח ממוצע +0.61R מול -0.08R של הבוט, יציבות 0.88, 4 עסקאות"
       }
      ],
      "detail": {
@@ -22420,13 +22598,13 @@
      "sum_r": -0.06,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.014,
+     "target": 1.013,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.03R מול -0.09R של הבוט, יציבות 0.88, 2 עסקאות"
+       "why": "רווח ממוצע -0.03R מול -0.08R של הבוט, יציבות 0.88, 2 עסקאות"
       }
      ],
      "detail": {
@@ -22550,13 +22728,13 @@
      "sum_r": -1.34,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 0.947,
+     "target": 0.945,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.45R מול -0.09R של הבוט, יציבות 0.74, 3 עסקאות"
+       "why": "רווח ממוצע -0.45R מול -0.08R של הבוט, יציבות 0.74, 3 עסקאות"
       }
      ],
      "detail": {
@@ -22674,29 +22852,29 @@
     },
     {
      "combo": "SE02|1Hour|GBPJPY",
-     "trades": 11,
-     "win_pct": 27.3,
-     "mean_r": -0.481,
-     "sum_r": -5.29,
-     "mult": 0.32,
-     "risk_pct": 0.144,
-     "target": 0.831,
+     "trades": 12,
+     "win_pct": 25.0,
+     "mean_r": -0.524,
+     "sum_r": -6.29,
+     "mult": 0.28,
+     "risk_pct": 0.126,
+     "target": 0.821,
      "recs": [
       {
        "kind": "mult",
-       "value": 0.85,
-       "label": "סיכון ×0.85",
-       "why": "רווח ממוצע -0.48R מול -0.09R של הבוט, יציבות 0.66, 11 עסקאות"
+       "value": 0.8,
+       "label": "סיכון ×0.8",
+       "why": "רווח ממוצע -0.52R מול -0.08R של הבוט, יציבות 0.64, 12 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 11,
-        "win_pct": 27.3,
-        "mean_r": -0.481,
-        "sum_r": -5.29,
-        "pf": 0.25
+        "trades": 12,
+        "win_pct": 25.0,
+        "mean_r": -0.524,
+        "sum_r": -6.29,
+        "pf": 0.21
        },
        "backtest": {
         "trades": 388,
@@ -22707,14 +22885,14 @@
        }
       },
       "stability": {
-       "score": 0.66,
+       "score": 0.64,
        "demo": {
         "score": 0.21,
-        "without_best_r": -5.98,
+        "without_best_r": -6.98,
         "max_loss_r": 1.0,
         "avg_win_r": 0.57,
-        "drawdown_r": 5.29,
-        "sd_r": 0.74,
+        "drawdown_r": 6.29,
+        "sd_r": 0.72,
         "checks": [
          0.0,
          0.63,
@@ -22738,8 +22916,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 11,
-         "mean_r": -0.48
+         "trades": 12,
+         "mean_r": -0.52
         },
         "sell": {
          "trades": 0,
@@ -22759,7 +22937,7 @@
       },
       "exits": {
        "bt_trades": 388,
-       "demo_trades": 11,
+       "demo_trades": 12,
        "mfe_median_r": 0.66,
        "mae_winners_p90_r": 0.66
       },
@@ -22808,7 +22986,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.75R מול -0.09R של הבוט, יציבות 0.78, 4 עסקאות"
+       "why": "רווח ממוצע -0.75R מול -0.08R של הבוט, יציבות 0.78, 4 עסקאות"
       }
      ],
      "detail": {
@@ -22932,13 +23110,13 @@
      "sum_r": 1.14,
      "mult": 0.69,
      "risk_pct": 0.3105,
-     "target": 1.072,
+     "target": 1.069,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.23R מול -0.09R של הבוט, יציבות 0.83, 5 עסקאות"
+       "why": "רווח ממוצע +0.23R מול -0.08R של הבוט, יציבות 0.83, 5 עסקאות"
       }
      ],
      "detail": {
@@ -23068,29 +23246,29 @@
     },
     {
      "combo": "QP02|1Hour|XAGUSD",
-     "trades": 3,
-     "win_pct": 33.3,
-     "mean_r": -0.015,
-     "sum_r": -0.04,
+     "trades": 4,
+     "win_pct": 50.0,
+     "mean_r": 0.869,
+     "sum_r": 3.47,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.016,
+     "target": 1.076,
      "recs": [
       {
        "kind": "mult",
-       "value": 1.0,
-       "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.01R מול -0.09R של הבוט, יציבות 0.80, 3 עסקאות"
+       "value": 1.1,
+       "label": "סיכון ×1.1",
+       "why": "רווח ממוצע +0.87R מול -0.08R של הבוט, יציבות 0.83, 4 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 3,
-        "win_pct": 33.3,
-        "mean_r": -0.015,
-        "sum_r": -0.04,
-        "pf": 0.94
+        "trades": 4,
+        "win_pct": 50.0,
+        "mean_r": 0.869,
+        "sum_r": 3.47,
+        "pf": 5.84
        },
        "backtest": {
         "trades": 109,
@@ -23101,18 +23279,18 @@
        }
       },
       "stability": {
-       "score": 0.8,
+       "score": 0.83,
        "demo": {
-        "score": 0.33,
-        "without_best_r": -0.72,
+        "score": 0.61,
+        "without_best_r": -0.04,
         "max_loss_r": 0.6,
-        "avg_win_r": 0.67,
+        "avg_win_r": 2.1,
         "drawdown_r": 0.72,
-        "sd_r": 0.64,
+        "sd_r": 1.84,
         "checks": [
          0.0,
          1.0,
-         0.0
+         0.83
         ]
        },
        "backtest": {
@@ -23136,8 +23314,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 3,
-         "mean_r": -0.01
+         "trades": 4,
+         "mean_r": 0.87
         }
        },
        "backtest": {
@@ -23153,7 +23331,7 @@
       },
       "exits": {
        "bt_trades": 109,
-       "demo_trades": 3,
+       "demo_trades": 4,
        "mfe_median_r": 0.69,
        "mae_winners_p90_r": 0.66
       },
@@ -23210,7 +23388,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -1.00R מול -0.09R של הבוט, יציבות 0.79, 4 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.08R של הבוט, יציבות 0.79, 4 עסקאות"
       },
       {
        "kind": "sl",
@@ -23338,29 +23516,29 @@
     },
     {
      "combo": "QC07|15Min|ARM",
-     "trades": 9,
-     "win_pct": 33.3,
-     "mean_r": -0.127,
-     "sum_r": -1.14,
+     "trades": 10,
+     "win_pct": 40.0,
+     "mean_r": -0.062,
+     "sum_r": -0.62,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 0.98,
+     "target": 0.996,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.13R מול -0.09R של הבוט, יציבות 0.61, 9 עסקאות"
+       "why": "רווח ממוצע -0.06R מול -0.08R של הבוט, יציבות 0.59, 10 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 9,
-        "win_pct": 33.3,
-        "mean_r": -0.127,
-        "sum_r": -1.14,
-        "pf": 0.21
+        "trades": 10,
+        "win_pct": 40.0,
+        "mean_r": -0.062,
+        "sum_r": -0.62,
+        "pf": 0.57
        },
        "backtest": {
         "trades": 468,
@@ -23371,14 +23549,14 @@
        }
       },
       "stability": {
-       "score": 0.61,
+       "score": 0.59,
        "demo": {
         "score": 0.0,
-        "without_best_r": -1.31,
+        "without_best_r": -1.14,
         "max_loss_r": 1.0,
-        "avg_win_r": 0.1,
+        "avg_win_r": 0.21,
         "drawdown_r": 1.32,
-        "sd_r": 0.35,
+        "sd_r": 0.39,
         "checks": [
          0.0,
          0.0,
@@ -23406,8 +23584,8 @@
          "mean_r": -0.49
         },
         "sell": {
-         "trades": 7,
-         "mean_r": -0.02
+         "trades": 8,
+         "mean_r": 0.05
         }
        },
        "backtest": {
@@ -23423,7 +23601,7 @@
       },
       "exits": {
        "bt_trades": 468,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.39,
        "mae_winners_p90_r": 0.49
       },
@@ -23468,19 +23646,19 @@
     },
     {
      "combo": "FR08|5Min|SPCX",
-     "trades": 11,
-     "win_pct": 54.5,
-     "mean_r": -0.25,
-     "sum_r": -2.75,
+     "trades": 12,
+     "win_pct": 50.0,
+     "mean_r": -0.313,
+     "sum_r": -3.75,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 0.92,
+     "target": 0.879,
      "recs": [
       {
        "kind": "mult",
        "value": 0.9,
        "label": "סיכון ×0.9",
-       "why": "רווח ממוצע -0.25R מול -0.09R של הבוט, יציבות 0.62, 11 עסקאות"
+       "why": "רווח ממוצע -0.31R מול -0.08R של הבוט, יציבות 0.61, 12 עסקאות"
       },
       {
        "kind": "sl",
@@ -23496,11 +23674,11 @@
      "detail": {
       "profit": {
        "demo": {
-        "trades": 11,
-        "win_pct": 54.5,
-        "mean_r": -0.25,
-        "sum_r": -2.75,
-        "pf": 0.45
+        "trades": 12,
+        "win_pct": 50.0,
+        "mean_r": -0.313,
+        "sum_r": -3.75,
+        "pf": 0.37
        },
        "backtest": {
         "trades": 164,
@@ -23511,13 +23689,13 @@
        }
       },
       "stability": {
-       "score": 0.62,
+       "score": 0.61,
        "demo": {
         "score": 0.05,
-        "without_best_r": -3.45,
+        "without_best_r": -4.45,
         "max_loss_r": 1.0,
         "avg_win_r": 0.37,
-        "drawdown_r": 4.0,
+        "drawdown_r": 4.68,
         "sd_r": 0.74,
         "checks": [
          0.0,
@@ -23542,8 +23720,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 6,
-         "mean_r": -0.27
+         "trades": 7,
+         "mean_r": -0.37
         },
         "sell": {
          "trades": 5,
@@ -23563,7 +23741,7 @@
       },
       "exits": {
        "bt_trades": 164,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.68,
        "mae_winners_p90_r": 0.67
       },
@@ -23620,7 +23798,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.09R של הבוט, יציבות 0.91, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.08R של הבוט, יציבות 0.91, 0 עסקאות"
       }
      ],
      "detail": {
@@ -23744,13 +23922,13 @@
      "sum_r": -1.19,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 0.962,
+     "target": 0.96,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.30R מול -0.09R של הבוט, יציבות 0.81, 4 עסקאות"
+       "why": "רווח ממוצע -0.30R מול -0.08R של הבוט, יציבות 0.81, 4 עסקאות"
       }
      ],
      "detail": {
@@ -23892,7 +24070,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.01R מול -0.09R של הבוט, יציבות 0.87, 1 עסקאות"
+       "why": "רווח ממוצע +0.01R מול -0.08R של הבוט, יציבות 0.87, 1 עסקאות"
       }
      ],
      "detail": {
@@ -23953,7 +24131,7 @@
       },
       "exits": {
        "bt_trades": 80,
-       "demo_trades": 1,
+       "demo_trades": 0,
        "mfe_median_r": 0.53,
        "mae_winners_p90_r": 0.53
       },
@@ -23998,29 +24176,29 @@
     },
     {
      "combo": "SE01|1Hour|CSCO",
-     "trades": 2,
-     "win_pct": 50.0,
-     "mean_r": 0.691,
-     "sum_r": 1.38,
+     "trades": 3,
+     "win_pct": 33.3,
+     "mean_r": 0.128,
+     "sum_r": 0.38,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.05,
+     "target": 1.035,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.69R מול -0.09R של הבוט, יציבות 0.90, 2 עסקאות"
+       "why": "רווח ממוצע +0.13R מול -0.08R של הבוט, יציבות 0.83, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
-        "win_pct": 50.0,
-        "mean_r": 0.691,
-        "sum_r": 1.38,
-        "pf": 2.38
+        "trades": 3,
+        "win_pct": 33.3,
+        "mean_r": 0.128,
+        "sum_r": 0.38,
+        "pf": 1.19
        },
        "backtest": {
         "trades": 371,
@@ -24031,8 +24209,20 @@
        }
       },
       "stability": {
-       "score": 0.9,
-       "demo": null,
+       "score": 0.83,
+       "demo": {
+        "score": 0.39,
+        "without_best_r": -2.0,
+        "max_loss_r": 1.0,
+        "avg_win_r": 2.38,
+        "drawdown_r": 2.0,
+        "sd_r": 1.95,
+        "checks": [
+         0.0,
+         1.0,
+         0.16
+        ]
+       },
        "backtest": {
         "score": 0.9,
         "without_best_r": 58.89,
@@ -24050,8 +24240,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
-         "mean_r": 0.69
+         "trades": 3,
+         "mean_r": 0.13
         },
         "sell": {
          "trades": 0,
@@ -24071,7 +24261,7 @@
       },
       "exits": {
        "bt_trades": 371,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.76,
        "mae_winners_p90_r": 0.64
       },
@@ -24112,29 +24302,29 @@
     },
     {
      "combo": "SE01|1Hour|WMT",
-     "trades": 2,
-     "win_pct": 100.0,
-     "mean_r": 0.817,
-     "sum_r": 1.63,
+     "trades": 3,
+     "win_pct": 66.7,
+     "mean_r": 0.484,
+     "sum_r": 1.45,
      "mult": 1.0,
      "risk_pct": 0.45,
-     "target": 1.051,
+     "target": 1.07,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.82R מול -0.09R של הבוט, יציבות 0.92, 2 עסקאות"
+       "why": "רווח ממוצע +0.48R מול -0.08R של הבוט, יציבות 0.93, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
-        "win_pct": 100.0,
-        "mean_r": 0.817,
-        "sum_r": 1.63,
-        "pf": null
+        "trades": 3,
+        "win_pct": 66.7,
+        "mean_r": 0.484,
+        "sum_r": 1.45,
+        "pf": 8.92
        },
        "backtest": {
         "trades": 370,
@@ -24145,8 +24335,20 @@
        }
       },
       "stability": {
-       "score": 0.92,
-       "demo": null,
+       "score": 0.93,
+       "demo": {
+        "score": 0.96,
+        "without_best_r": 0.06,
+        "max_loss_r": 0.18,
+        "avg_win_r": 0.82,
+        "drawdown_r": 0.18,
+        "sd_r": 0.82,
+        "checks": [
+         1.0,
+         1.0,
+         0.89
+        ]
+       },
        "backtest": {
         "score": 0.92,
         "without_best_r": 48.77,
@@ -24164,8 +24366,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
-         "mean_r": 0.82
+         "trades": 3,
+         "mean_r": 0.48
         },
         "sell": {
          "trades": 0,
@@ -24185,7 +24387,7 @@
       },
       "exits": {
        "bt_trades": 370,
-       "demo_trades": 0,
+       "demo_trades": 1,
        "mfe_median_r": 0.74,
        "mae_winners_p90_r": 0.6
       },
@@ -24232,13 +24434,13 @@
      "sum_r": 0.26,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.018,
+     "target": 1.017,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.26R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.26R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -24287,7 +24489,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 1
+       "demo_trades": 0
       },
       "hours": {},
       "market": {},
@@ -24308,7 +24510,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.51R מול -0.09R של הבוט, יציבות 0.55, 3 עסקאות"
+       "why": "רווח ממוצע +0.51R מול -0.08R של הבוט, יציבות 0.55, 3 עסקאות"
       }
      ],
      "detail": {
@@ -24369,7 +24571,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 3
+       "demo_trades": 0
       },
       "hours": {},
       "market": {},
@@ -24384,13 +24586,13 @@
      "sum_r": -0.84,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 0.974,
+     "target": 0.971,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.21R מול -0.09R של הבוט, יציבות 0.47, 4 עסקאות"
+       "why": "רווח ממוצע -0.21R מול -0.08R של הבוט, יציבות 0.47, 4 עסקאות"
       }
      ],
      "detail": {
@@ -24472,7 +24674,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.15R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.15R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -24536,13 +24738,13 @@
      "sum_r": 0.23,
      "mult": 0.001,
      "risk_pct": 0.0004,
-     "target": 1.017,
+     "target": 1.016,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.23R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.23R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -24591,7 +24793,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 1
+       "demo_trades": 0
       },
       "hours": {},
       "market": {},
@@ -24612,7 +24814,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -24745,7 +24947,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.09R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.08R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -24807,15 +25009,15 @@
      "win_pct": null,
      "mean_r": null,
      "sum_r": 0.0,
-     "mult": 0.41,
-     "risk_pct": 0.1845,
+     "mult": 0.001,
+     "risk_pct": 0.0004,
      "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.09R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.08R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -24885,7 +25087,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.36R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +0.36R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -24955,7 +25157,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.09R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.08R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -25025,7 +25227,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.06R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -0.06R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -25083,28 +25285,28 @@
     },
     {
      "combo": "SC295|1Hour|USDJPY",
-     "trades": 2,
+     "trades": 3,
      "win_pct": 100.0,
-     "mean_r": 0.089,
-     "sum_r": 0.18,
+     "mean_r": 0.095,
+     "sum_r": 0.29,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.015,
+     "target": 1.019,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.09R מול -0.09R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע +0.10R מול -0.08R של הבוט, יציבות 0.57, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
+        "trades": 3,
         "win_pct": 100.0,
-        "mean_r": 0.089,
-        "sum_r": 0.18,
+        "mean_r": 0.095,
+        "sum_r": 0.29,
         "pf": null
        },
        "backtest": {
@@ -25116,8 +25318,20 @@
        }
       },
       "stability": {
-       "score": 0.5,
-       "demo": null,
+       "score": 0.57,
+       "demo": {
+        "score": 1.0,
+        "without_best_r": 0.15,
+        "max_loss_r": 0.0,
+        "avg_win_r": 0.1,
+        "drawdown_r": 0.0,
+        "sd_r": 0.04,
+        "checks": [
+         1.0,
+         1.0,
+         1.0
+        ]
+       },
        "backtest": null
       },
       "direction": {
@@ -25127,8 +25341,8 @@
          "mean_r": 0.13
         },
         "sell": {
-         "trades": 1,
-         "mean_r": 0.05
+         "trades": 2,
+         "mean_r": 0.08
         }
        },
        "backtest": {
@@ -25144,7 +25358,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 2
+       "demo_trades": 3
       },
       "hours": {},
       "market": {},
@@ -25153,29 +25367,29 @@
     },
     {
      "combo": "FR01|1Hour|ARM",
-     "trades": 2,
-     "win_pct": 50.0,
-     "mean_r": 0.012,
-     "sum_r": 0.02,
+     "trades": 3,
+     "win_pct": 33.3,
+     "mean_r": -0.15,
+     "sum_r": -0.45,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.01,
+     "target": 0.989,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.01R מול -0.09R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע -0.15R מול -0.08R של הבוט, יציבות 0.46, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
-        "win_pct": 50.0,
-        "mean_r": 0.012,
-        "sum_r": 0.02,
-        "pf": 1.1
+        "trades": 3,
+        "win_pct": 33.3,
+        "mean_r": -0.15,
+        "sum_r": -0.45,
+        "pf": 0.37
        },
        "backtest": {
         "trades": 0,
@@ -25186,15 +25400,27 @@
        }
       },
       "stability": {
-       "score": 0.5,
-       "demo": null,
+       "score": 0.46,
+       "demo": {
+        "score": 0.2,
+        "without_best_r": -0.71,
+        "max_loss_r": 0.47,
+        "avg_win_r": 0.26,
+        "drawdown_r": 0.71,
+        "sd_r": 0.38,
+        "checks": [
+         0.0,
+         0.6,
+         0.0
+        ]
+       },
        "backtest": null
       },
       "direction": {
        "demo": {
         "buy": {
-         "trades": 2,
-         "mean_r": 0.01
+         "trades": 3,
+         "mean_r": -0.15
         },
         "sell": {
          "trades": 0,
@@ -25214,7 +25440,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 0
+       "demo_trades": 1
       },
       "hours": {},
       "market": {},
@@ -25235,7 +25461,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.09R של הבוט, יציבות 0.90, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.08R של הבוט, יציבות 0.90, 0 עסקאות"
       }
      ],
      "detail": {
@@ -25353,28 +25579,28 @@
     },
     {
      "combo": "SE02|1Hour|USDJPY",
-     "trades": 3,
+     "trades": 4,
      "win_pct": 0.0,
-     "mean_r": -0.812,
-     "sum_r": -2.44,
-     "mult": 0.83,
-     "risk_pct": 0.3735,
-     "target": 0.944,
+     "mean_r": -0.859,
+     "sum_r": -3.44,
+     "mult": 0.54,
+     "risk_pct": 0.243,
+     "target": 0.926,
      "recs": [
       {
-       "kind": "mult",
-       "value": 0.95,
-       "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.81R מול -0.09R של הבוט, יציבות 0.79, 3 עסקאות"
+       "kind": "remove",
+       "value": 0,
+       "label": "להסיר",
+       "why": "-6.4R ב־12 עסקאות, מתחת לקו -6.3R (כלל ההסרה)"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 3,
+        "trades": 4,
         "win_pct": 0.0,
-        "mean_r": -0.812,
-        "sum_r": -2.44,
+        "mean_r": -0.859,
+        "sum_r": -3.44,
         "pf": 0.0
        },
        "backtest": {
@@ -25386,14 +25612,14 @@
        }
       },
       "stability": {
-       "score": 0.79,
+       "score": 0.76,
        "demo": {
         "score": 0.0,
-        "without_best_r": -2.0,
+        "without_best_r": -3.0,
         "max_loss_r": 1.0,
         "avg_win_r": 0.0,
-        "drawdown_r": 2.44,
-        "sd_r": 0.33,
+        "drawdown_r": 3.44,
+        "sd_r": 0.28,
         "checks": [
          0.0,
          0.0,
@@ -25417,8 +25643,8 @@
       "direction": {
        "demo": {
         "buy": {
-         "trades": 3,
-         "mean_r": -0.81
+         "trades": 4,
+         "mean_r": -0.86
         },
         "sell": {
          "trades": 0,
@@ -25438,7 +25664,7 @@
       },
       "exits": {
        "bt_trades": 385,
-       "demo_trades": 3,
+       "demo_trades": 4,
        "mfe_median_r": 0.7,
        "mae_winners_p90_r": 0.74
       },
@@ -25487,7 +25713,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -0.23R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -0.23R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -25551,13 +25777,13 @@
      "sum_r": -0.79,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 0.969,
+     "target": 0.968,
      "recs": [
       {
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.40R מול -0.09R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע -0.40R מול -0.08R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -25627,7 +25853,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -1.00R מול -0.09R של הבוט, יציבות 0.96, 2 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.08R של הבוט, יציבות 0.96, 2 עסקאות"
       }
      ],
      "detail": {
@@ -25745,28 +25971,28 @@
     },
     {
      "combo": "IB033|4Hour|XAUUSD",
-     "trades": 2,
+     "trades": 3,
      "win_pct": 100.0,
-     "mean_r": 2.023,
-     "sum_r": 4.05,
+     "mean_r": 1.401,
+     "sum_r": 4.2,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.027,
+     "target": 1.04,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +2.02R מול -0.09R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע +1.40R מול -0.08R של הבוט, יציבות 0.57, 3 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 2,
+        "trades": 3,
         "win_pct": 100.0,
-        "mean_r": 2.023,
-        "sum_r": 4.05,
+        "mean_r": 1.401,
+        "sum_r": 4.2,
         "pf": null
        },
        "backtest": {
@@ -25778,8 +26004,20 @@
        }
       },
       "stability": {
-       "score": 0.5,
-       "demo": null,
+       "score": 0.57,
+       "demo": {
+        "score": 1.0,
+        "without_best_r": 2.16,
+        "max_loss_r": 0.0,
+        "avg_win_r": 1.4,
+        "drawdown_r": 0.0,
+        "sd_r": 1.08,
+        "checks": [
+         1.0,
+         1.0,
+         1.0
+        ]
+       },
        "backtest": null
       },
       "direction": {
@@ -25789,8 +26027,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 2,
-         "mean_r": 2.02
+         "trades": 3,
+         "mean_r": 1.4
         }
        },
        "backtest": {
@@ -25806,7 +26044,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 2
+       "demo_trades": 3
       },
       "hours": {},
       "market": {},
@@ -25827,7 +26065,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.09R של הבוט, יציבות 0.97, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.08R של הבוט, יציבות 0.97, 0 עסקאות"
       }
      ],
      "detail": {
@@ -25957,7 +26195,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -0.63R מול -0.09R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע -0.63R מול -0.08R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -26027,7 +26265,7 @@
        "kind": "mult",
        "value": 0.95,
        "label": "סיכון ×0.95",
-       "why": "רווח ממוצע -1.00R מול -0.09R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.08R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -26097,7 +26335,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +1.71R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע +1.71R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -26167,7 +26405,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.42R מול -0.09R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע +0.42R מול -0.08R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -26231,13 +26469,13 @@
      "sum_r": 0.3,
      "mult": 0.7,
      "risk_pct": 0.315,
-     "target": 1.03,
+     "target": 1.029,
      "recs": [
       {
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.30R מול -0.09R של הבוט, יציבות 0.88, 1 עסקאות"
+       "why": "רווח ממוצע +0.30R מול -0.08R של הבוט, יציבות 0.88, 1 עסקאות"
       }
      ],
      "detail": {
@@ -26354,7 +26592,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.09R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.08R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -26416,15 +26654,15 @@
      "win_pct": null,
      "mean_r": null,
      "sum_r": 0.0,
-     "mult": 0.7,
-     "risk_pct": 0.315,
+     "mult": 0.5,
+     "risk_pct": 0.225,
      "target": 1.01,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.09R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.00R מול -0.08R של הבוט, יציבות 0.50, 0 עסקאות"
       }
      ],
      "detail": {
@@ -26494,7 +26732,7 @@
        "kind": "mult",
        "value": 1.05,
        "label": "סיכון ×1.05",
-       "why": "רווח ממוצע +0.75R מול -0.09R של הבוט, יציבות 0.50, 2 עסקאות"
+       "why": "רווח ממוצע +0.75R מול -0.08R של הבוט, יציבות 0.50, 2 עסקאות"
       }
      ],
      "detail": {
@@ -26552,28 +26790,28 @@
     },
     {
      "combo": "SC539|4Hour|XAGUSD",
-     "trades": 0,
-     "win_pct": null,
-     "mean_r": null,
-     "sum_r": 0.0,
+     "trades": 1,
+     "win_pct": 100.0,
+     "mean_r": 0.858,
+     "sum_r": 0.86,
      "mult": 0.63,
      "risk_pct": 0.2835,
-     "target": 1.01,
+     "target": 1.019,
      "recs": [
       {
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע +0.00R מול -0.09R של הבוט, יציבות 0.50, 0 עסקאות"
+       "why": "רווח ממוצע +0.86R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
       "profit": {
        "demo": {
-        "trades": 0,
-        "win_pct": null,
-        "mean_r": null,
-        "sum_r": 0.0,
+        "trades": 1,
+        "win_pct": 100.0,
+        "mean_r": 0.858,
+        "sum_r": 0.86,
         "pf": null
        },
        "backtest": {
@@ -26596,8 +26834,8 @@
          "mean_r": null
         },
         "sell": {
-         "trades": 0,
-         "mean_r": null
+         "trades": 1,
+         "mean_r": 0.86
         }
        },
        "backtest": {
@@ -26613,7 +26851,7 @@
       },
       "exits": {
        "bt_trades": 0,
-       "demo_trades": 0
+       "demo_trades": 1
       },
       "hours": {},
       "market": {},
@@ -26634,7 +26872,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -26704,7 +26942,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {
@@ -26774,7 +27012,7 @@
        "kind": "mult",
        "value": 1.0,
        "label": "סיכון ×1",
-       "why": "רווח ממוצע -1.00R מול -0.09R של הבוט, יציבות 0.50, 1 עסקאות"
+       "why": "רווח ממוצע -1.00R מול -0.08R של הבוט, יציבות 0.50, 1 עסקאות"
       }
      ],
      "detail": {

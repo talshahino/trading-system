@@ -278,8 +278,18 @@
    {
     "combo": "SC623|1Hour|US100",
     "cause": "כניסה / כיוון",
-    "fixes": [],
-    "open": true,
+    "fixes": [
+     {
+      "what": "⭐ SC623|1Hour|US100: לא נגד המגמה לפי RSI (לא קונים ב־RSI מתחת 35 מתחת לממוצע 200, לא מוכרים מעל 65 מעליו)",
+      "decision": "55930e073e54",
+      "at": "2026-11-21T07:56:40+00:00",
+      "effect_month_pct": 0.28,
+      "cut": false,
+      "prev": null,
+      "value": null
+     }
+    ],
+    "open": false,
     "cut_only": false
    },
    {
@@ -305,14 +315,13 @@
    }
   ],
   "open": [
-   "SC623|1Hour|US100",
    "MQ11|4Hour|US30",
    "SC264|15Min|JP225"
   ],
   "cut_only": [
    "SE02|1Hour|GBPJPY"
   ],
-  "total_month_pct": 0.0,
-  "status": "פתוח: 3 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
+  "total_month_pct": 0.28,
+  "status": "פתוח: 2 אסטרטגיות בלי תיקון עדיין · 1 רק עם הורדת סיכון - עדיין מחפשים תיקון"
  }
 }

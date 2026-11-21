@@ -1,13 +1,75 @@
 {
- "updated": "2026-11-21T04:43:21+00:00",
+ "updated": "2026-11-21T05:05:55+00:00",
  "new": [
-  "07dca8e2884d",
-  "233d6dfa0a64",
-  "9cc979dd8875",
-  "24cf396fc2d9",
-  "eacccbbfbf08"
+  "46b71991a3b1",
+  "b4d1d07d7813"
  ],
  "decisions": [
+  {
+   "id": "46b71991a3b1",
+   "bot": "bot1",
+   "type": "card",
+   "card": "8b63e00bd882",
+   "kind": "improve",
+   "tier": "regular",
+   "title": "⭐ SC470|4Hour|ETHUSD: ב־1R רווח מוסיפים 0.5 פוזיציה, והסטופ של הכול זז ל־-0.33R כך שסטופ מפסיד בדיוק 1R (בלי הגדלה אחרי הפסד)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.15R לעסקה, 118.0 עסקאות אפקטיביות, +0.03R מעל המצב הקיים) · בבוט השלם על 2026: רווח +236.71% → +237.56%, בלי יותר סיכון (יום גרוע -2.97%, ירידה 5.65%) · ⭐ אולי מזל: נכנס בסיכון ×0.76 ובמעקב מוקפד",
+   "effect": "נבנה בבוט אוטומטית ויותקן תוך כ־20 דקות",
+   "star": true,
+   "whole_bot": {
+    "before": {
+     "trades": 5760,
+     "total": 236.71,
+     "worst_day": -2.97,
+     "max_dd": 5.65,
+     "near_days": 0,
+     "max_open": 5.56,
+     "max_side": 4.47,
+     "guard_cut": 466,
+     "guard_skipped": 193
+    },
+    "after": {
+     "trades": 5760,
+     "total": 237.56,
+     "worst_day": -2.97,
+     "max_dd": 5.65,
+     "near_days": 0,
+     "max_open": 5.56,
+     "max_side": 4.47,
+     "guard_cut": 474,
+     "guard_skipped": 197
+    }
+   },
+   "at": "2026-11-21T05:05:55+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
+  {
+   "id": "b4d1d07d7813",
+   "bot": "bot1",
+   "type": "risk",
+   "kind": "mult",
+   "combo": "SC470|4Hour|ETHUSD",
+   "title": "SC470|4Hour|ETHUSD: סיכון ×0.76 (⭐ אולי מזל)",
+   "decision": "approved",
+   "why": "חיובי בתקופה שלא נראתה (+0.15R לעסקה, 118.0 עסקאות אפקטיביות, +0.03R מעל המצב הקיים) · בבוט השלם על 2026: רווח +236.71% → +237.56%, בלי יותר סיכון (יום גרוע -2.97%, ירידה 5.65%) · ⭐ אולי מזל: נכנס בסיכון ×0.76 ובמעקב מוקפד",
+   "effect": "יוחל במחשב הבוטים תוך כ־10 דקות",
+   "card_decision": "46b71991a3b1",
+   "star": true,
+   "action": {
+    "bot": "bot1",
+    "combo": "SC470|4Hour|ETHUSD",
+    "kind": "mult",
+    "value": 0.76,
+    "prev": null
+   },
+   "at": "2026-11-21T05:05:55+00:00",
+   "by": "manager",
+   "read": false,
+   "undone": false
+  },
   {
    "id": "07dca8e2884d",
    "bot": "bot1",

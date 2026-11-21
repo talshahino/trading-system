@@ -448,8 +448,23 @@ def _calendar():
                 items = CAL.fetch(now - pd.Timedelta(days=2), now + pd.Timedelta(days=9))
             _CAL["restricted"], _CAL["holidays"] = CAL.parse(items)
             _CAL["warned"] = False
+            try:       # the last good copy, for a time FTMO's calendar does not answer (21.11.2026, a Saturday restart)
+                (ROOT / "live" / "cache_calendar.json").write_text(json.dumps(items), encoding="utf-8")
+            except Exception:  # noqa: BLE001
+                pass
         except Exception as e:  # noqa: BLE001
             log(f"FTMO calendar not available ({e}); trying again in 10 minutes")
+            cf = ROOT / "live" / "cache_calendar.json"
+            try:
+                age_h = (time.time() - cf.stat().st_mtime) / 3600
+                if age_h < 72 and not _CAL["restricted"] and not _CAL["holidays"]:
+                    _CAL["restricted"], _CAL["holidays"] = CAL.parse(json.loads(cf.read_text(encoding="utf-8")))
+                    log(f"FTMO calendar: using the copy from {age_h:.1f} hours ago until it answers")
+                if age_h < 72:
+                    _CAL["t"] = time.time() - 3000
+                    return _CAL          # a recent copy covers the coming days - no warning
+            except Exception:  # noqa: BLE001
+                pass
             if not _CAL["warned"]:
                 REP.notify(f"{BOT}: אין יומן FTMO", "לא הצלחתי לקרוא את יומן האירועים של FTMO. אנסה שוב כל 10 דקות.",
                            priority=4, tags=["warning"])
@@ -2403,6 +2418,14 @@ def main():
         CRYPTO_NOENTRY[0] = max(0.0, min(72.0, float(cfg.get("crypto_noentry_h") or 0)))
     except (TypeError, ValueError):
         CRYPTO_NOENTRY[0] = 0.0
+    # the account's name / label before anything can notify (user, 21.11.2026: "בוט: אין יומן FTMO" came with the
+    # notifications of these accounts switched off - the calendar's warning at startup went out as "bot", no account)
+    global BOT
+    tmpl = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4"}
+    bot_label = cfg.get("bot_label") or tmpl.get(name) or name
+    nick = os.environ.get("BOT_NICKNAME") or cfg.get("nickname")
+    BOT = f"{nick} · {bot_label}" if nick else bot_label
+    REP.ACCOUNT[0] = name
     if CLOSE_BREAKS:
         for c, sid, tf, sym in combos:
             if sym not in BREAKS:
@@ -2428,13 +2451,7 @@ def main():
         for d, hit in sorted(days_hit.items()):
             names = ", ".join(sorted({f"{t} ({c})" for dd, c, t in cal["holidays"] if dd == d and "Daylight" not in t}))
             log(f"  {d.strftime('%a %d.%m')}  holiday: {names} -> market closed for {', '.join(hit)}")
-    global BOT
-    tmpl = {"bot1": "בוט 1", "bot2": "בוט 2", "bot3": "בוט 3", "bot4": "בוט 4"}
-    bot_label = cfg.get("bot_label") or tmpl.get(name) or name
-    nick = os.environ.get("BOT_NICKNAME") or cfg.get("nickname")
-    BOT = f"{nick} · {bot_label}" if nick else bot_label
     MON.update(name=name, cfg=cfg, dry=args.dry_run, combos=[c[0] for c in combos])
-    REP.ACCOUNT[0] = name
     REP.remember_alerts(ROOT / "live" / f"{name}_alerts.json")
     if not args.dry_run and not MANAGED:
         UPD.startup(log, BOT)

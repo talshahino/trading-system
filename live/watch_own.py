@@ -1489,6 +1489,15 @@ def scout5_trades(name, df, sc, cal):
     since = pd.Timestamp(sc["since"])
     since = since.tz_localize("UTC") if since.tzinfo is None else since
     combo = f"{sc['sid']}|{tf}|{name}"
+    # a trade still open when the bars stopped 2+ hours ago (a weekend the pre-break window did not catch - SC432 XAUUSD
+    # stayed open over the weekend of 21.11.2026): the funded account has nothing over the break
+    try:
+        _p = pd.Timestamp.now(tz="Europe/Prague")
+        _wk = (_p.weekday() == 4 and _p.hour * 60 + _p.minute >= 22 * 60 + 45) or _p.weekday() == 5 or \
+            (_p.weekday() == 6 and _p.hour < 23)              # only the weekend: a feed stall is not a market break
+        brk_now = _wk and pd.Timestamp.now(tz="UTC") - pd.Timestamp(x1.index[-1]).tz_convert("UTC") > pd.Timedelta(hours=2)
+    except Exception:  # noqa: BLE001
+        brk_now = False
     out = []
     for _, x in t.iterrows():
         tm = pd.Timestamp(x["time"])
@@ -1499,6 +1508,11 @@ def scout5_trades(name, df, sc, cal):
         if risk <= 0:
             continue
         live_now = x["reason"] == "סוף הנתונים"
+        if live_now and brk_now:
+            live_now = False                          # the market is in a 2+ hour break: out at its last price (funded)
+            x = x.copy()
+            x["reason"] = "forced"
+            x["exit_time"] = x1.index[-1]
         tg = None if pd.isna(x["target_px"]) else float(x["target_px"])
         why = "target" if x["reason"] == "יעד" else "breakeven" if "איזון" in str(x["reason"]) else \
             "stop" if "סטופ" in str(x["reason"]) else "forced"

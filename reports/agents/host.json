@@ -1,7 +1,7 @@
 {
  "pc": true,
  "computer": "DESKTOP-58R637P",
- "updated": "2026-11-21T14:51:55+00:00",
+ "updated": "2026-11-21T15:15:15+00:00",
  "light_at": "2026-11-21T14:50:53+00:00",
  "smart_at": "2026-11-12T11:42:12+00:00",
  "every_min": {
@@ -9,7 +9,8 @@
   "smart": 60
  },
  "smart_minutes": {
-  "bot7": 45.0
+  "bot7": 45.0,
+  "bot7-shocks": 15.0
  },
  "agent_errors": [],
  "agent_last": {
@@ -21,7 +22,7 @@
   "bot3": "2026-11-21T12:38:20+00:00",
   "bot4": "2026-11-21T13:03:04+00:00",
   "bot7": "2026-11-21T13:41:25+00:00",
-  "bot7-shocks": "2026-11-21T07:51:48+00:00",
+  "bot7-shocks": "2026-11-21T14:55:07+00:00",
   "bot6-new": "2026-11-21T08:13:33+00:00"
  },
  "agent_tail": {
@@ -45,8 +46,7 @@
   ],
   "bot7-shocks": [
    "walk-forward book inside 2025 (fade): ['GER40'] train {'n': 37, 'eff_n': 37.0, 'mean': 0.3123, 't': 1.08, 'win': 46.1, 'sum': 11.41} unseen {'n': 56, 'eff_n': 56.0, 'mean': -0.0532, 't': -0.27, 'win': 32.0, 'sum': -2.75}",
-   "walk-forward book inside 2025 (cont): ['GBPUSD', 'USDJPY'] train {'n': 41, 'eff_n': 41.0, 'mean': 0.7191, 't': 1.6, 'win': 43.7, 'sum': 30.08} unseen {'n': 106, 'eff_n': 106.0, 'mean': 0.0858, 't': 0.46, 'win': 31.2, 'sum': 8.95}",
-   "(continued across a manager restart)"
+   "walk-forward book inside 2025 (cont): ['GBPUSD', 'US500', 'XAUUSD'] train {'n': 139, 'eff_n': 138.8, 'mean': 0.6626, 't': 2.6, 'win': 41.0, 'sum': 91.66} unseen {'n': 318, 'eff_n': 317.9, 'mean': -0.0914, 't': -0.74, 'win': 26.1, 'sum': -29"
   ],
   "bot6-new": [
    "this run: 0 experiments, 0 new-strategy combos",
@@ -118,12 +118,11 @@
    "err": null
   },
   "bot7-shocks": {
-   "at": "2026-11-21T07:52:52+00:00",
-   "sec": 1106,
+   "at": "2026-11-21T14:55:07+00:00",
+   "sec": 1044,
    "budget_sec": 900,
-   "ok": null,
-   "err": null,
-   "adopted": true
+   "ok": true,
+   "err": null
   },
   "bot6-new": {
    "at": "2026-11-21T08:13:33+00:00",
@@ -171,8 +170,8 @@
   },
   "ram_gb": {
    "total": 7.9,
-   "free": 1.9,
-   "load_pct": 76
+   "free": 1.6,
+   "load_pct": 79
   }
  }
 }

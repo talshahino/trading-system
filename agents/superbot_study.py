@@ -171,6 +171,22 @@ def main():
     W["pos2025"] = {s: 1.0 for s in pos}
     pb = {b: [s for s in by_b[b] if s in pos] for b in buckets}
     W["bucket_pos2025"] = {s: 1.0 / len(pb[sb[s]]) for s in pos if pb[sb[s]]}
+    # the certainty of the edge (user, 21.11.2026: "the strategies with the highest certainty of profit"): each
+    # stream's 2025 t (mean / its error over its trades); only t >= 1, the weight ~ t (capped at 4), and the same
+    # inside the bucket split
+    rr = {}
+    for _, _, r, s, _b in L25:
+        rr.setdefault(s, []).append(r)
+    tt = {}
+    for s, v in rr.items():
+        if len(v) >= 20 and np.std(v) > 0:
+            tt[s] = float(np.mean(v) / (np.std(v, ddof=1) / np.sqrt(len(v))))
+    for th in (1.0, 2.0):
+        W[f"t{th:g}"] = {s: min(4.0, t) for s, t in tt.items() if t >= th}
+        tb = {b: sum(min(4.0, tt[s]) for s in by_b[b] if tt.get(s, 0) >= th) for b in buckets}
+        W[f"t{th:g}_bucket"] = {s: min(4.0, tt[s]) / tb[sb[s]] for s in sb if tt.get(s, 0) >= th and tb[sb[s]] > 0}
+        W[f"t{th:g}_bucket_vol"] = {s: iv.get(sb[s], 0.0) * min(4.0, tt[s]) / tb[sb[s]] for s in sb
+                                    if tt.get(s, 0) >= th and tb[sb[s]] > 0}
     res = {}
     for name, w in W.items():
         w = norm(w, tr25)

@@ -124,6 +124,24 @@ def open_time(t):
     return str(t.get("open_t") or t.get("since") or "")
 
 
+CRYPTO = ("BTC", "ETH", "LTC", "XRP", "SOL", "ADA", "DOGE", "BNB", "DOT", "AVAX", "LINK", "XMR", "DASH", "NEO", "BCH", "XLM")
+
+
+def weekend(now):
+    """FTMO's weekend break (user, 21.11.2026 "check it keeps the rules - trades are still open and the market is
+    closed"): an FTMO Account (standard) must have nothing open over a 2+ hour break (ftmo.com FAQ "Can I hold positions
+    overnight or over the weekend?" - the Challenge / Verification and Swing accounts may). From Friday 22:45 Prague
+    (15 minutes before FX / metals / indices close) to Sunday 23:00 Prague: the super bot closes its open trades at the
+    source's last price and opens none (crypto trades on)."""
+    p = now.tz_convert("Europe/Prague")
+    wd, hm = p.weekday(), p.hour * 60 + p.minute
+    return (wd == 4 and hm >= 22 * 60 + 45) or wd == 5 or (wd == 6 and hm < 23 * 60)
+
+
+def is_crypto(sym):
+    return str(sym or "").upper().startswith(CRYPTO)
+
+
 def pday(ts):
     return pd.Timestamp(ts).tz_convert("Europe/Prague").date().isoformat()
 
@@ -158,6 +176,8 @@ def main():
                     continue
                 key = f"{bucket}|{s}|{ot[:16]}"
                 b = book.get(key)
+                if b is None and weekend(now) and not is_crypto(t.get("symbol")):
+                    continue                     # nothing new over the weekend break (a source's trade is seen after it)
                 if b is None:
                     rk_w = float(risk_of.get(s, bdef.get(bucket, 0.0)) or 0.0)
                     want = st["balance"] * rk_w
@@ -186,6 +206,16 @@ def main():
                     st["balance"] = round(st["balance"] + pnl, 2)
                 else:
                     seen_open[key] = (t, r_open(t))
+            # the weekend break: out at the source's last price (FTMO Account standard)
+            if weekend(now):
+                for key, b in book.items():
+                    if b["status"] == "open" and not is_crypto(b.get("symbol")):
+                        t, r = seen_open.get(key, ({}, 0.0))
+                        pnl = round(r * b["risk_usd"], 2)
+                        b.update(status="closed", r=round(r, 4), pnl=pnl, close_t=now.isoformat(timespec="seconds"),
+                                 close_px=t.get("now"), why="לפני סגירת השוק (סוף שבוע)", day=today)
+                        st["balance"] = round(st["balance"] + pnl, 2)
+                        seen_open.pop(key, None)
             # open trades whose source no longer shows them and never closed (a source reset): closed at 0 after 2 days
             for key, b in book.items():
                 if b["status"] == "open" and key not in seen_open and now - pd.Timestamp(b["seen"]) > pd.Timedelta(days=2):

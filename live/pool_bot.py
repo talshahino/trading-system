@@ -122,7 +122,9 @@ def main():
                                 b.update(status="skipped", risk_usd=0.0, why="late")
                             else:
                                 bal = balance(st)
-                                want = bal * per
+                                # fixed risk on the initial amount (Tal, 21.11.2026: in the replay compounding earned less
+                                # here - the $5,000 daily cap stops a bigger account sooner); "compound": true -> the balance
+                                want = (bal if conf.get("compound") else st["initial"]) * per
                                 open_risk = sum(x["risk_usd"] for x in book.values() if x["status"] == "open")
                                 day_pnl = sum(x["pnl"] for x in book.values() if x["status"] == "closed" and x.get("day") == today)
                                 room = min(conf.get("day_limit", 0.045) * st["initial"] + day_pnl - open_risk,
